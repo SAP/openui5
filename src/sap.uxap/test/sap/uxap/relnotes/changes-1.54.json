@@ -1,6 +1,5 @@
 {
   "1.54.0": {
-    "data": "February 2018",
     "notes": [
       {
         "id": "6aae96fe4fb2e3153790141326c3cc9f182d3520",
@@ -123,6 +122,109 @@
         "id": "6d621cbbbd0c1d9d374876a1ab74c416d8e855bd",
         "type": "FIX",
         "text": "sap.f.DynamicPageHeader: Fixed toggle header indicator size",
+        "references": []
+      }
+    ]
+  },
+  "1.54.1": {
+    "notes": [
+      {
+        "id": "c7e11b718c7e385daa17d5553d32e1b0203ab1e9",
+        "type": "FIX",
+        "text": "QUnit Designtime Library tests in Firefox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880133369"
+          }
+        ]
+      }
+    ]
+  },
+  "1.54.2": {
+    "notes": [
+      {
+        "id": "1798278b82b350e1954d52f3704cefc53ce0123d",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSubSection: Fixed JS error in removeAggregation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780191583"
+          }
+        ]
+      },
+      {
+        "id": "d0f4334890f21033b429e39089dfbfddf1153f62",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Flickering issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880028962"
+          }
+        ]
+      },
+      {
+        "id": "c3922084608b57890d4fdc4b1444db1a3b1a3392",
+        "type": "FIX",
+        "text": "sap.uxap.AnchorBar: Select icon aligned with visual design",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880193567"
+          }
+        ]
+      },
+      {
+        "id": "e36badf6f0cd3d2cf0c60b5f23367d556763ecda",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Inactive focusable header title fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.54.3": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "0458c0ca6ce4b77c966e7bba06776104799662f4",
+        "type": "FIX",
+        "text": " uxap.HierarchicalSelect: Alignment in FlexibleColumnLayout fixed",
+        "references": []
+      },
+      {
+        "id": "2eb3f968b9537348028e7c8a7388b77df644338d",
+        "type": "FIX",
+        "text": " uxap.ObjectPage: _headerContent aggregation cloning fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.54.6": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "800b8739578a8fd416d276ff69415cf6e2e93e29",
+        "type": "FIX",
+        "text": " uxap.ObjectPage: showEditHeaderButton custom setter added",
+        "references": []
+      }
+    ]
+  },
+  "1.54.7": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "6311f27004a24d64589837b867f2cd0f3442fe43",
+        "type": "FIX",
+        "text": " ObjectPageLayout: Infinity resizing loop fixed",
+        "references": []
+      },
+      {
+        "id": "9996c84a3d5e4d9a814b6679ca2af32b214661aa",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Overflow button visibility fixed",
         "references": []
       }
     ]

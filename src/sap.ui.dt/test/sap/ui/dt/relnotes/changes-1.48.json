@@ -5,106 +5,91 @@
       {
         "id": "503d247a75b12c063c72e030855e14ca333b2e5a",
         "type": "FEATURE",
-        "text": "sap.ui.dt: ability to enable/disable overlays",
+        "text": " sap.ui.dt: ability to enable/disable overlays",
         "references": []
       },
       {
         "id": "513222352385d22dec96fbbbb31e93e47559e415",
         "type": "FIX",
-        "text": "Context menu can be called during rename and throws error",
+        "text": " Context menu can be called during rename and throws error",
         "references": []
       },
       {
         "id": "4a9fb37438967ae49c9eaf3091ba3db38ecce71c",
         "type": "FIX",
-        "text": "Exception throws in HanldeDtPropagation Qunit",
+        "text": " Exception throws in HanldeDtPropagation Qunit",
         "references": []
       },
       {
         "id": "0214a7836155b0d78e99e354e3a2de8ae8db03ce",
         "type": "FIX",
-        "text": "sap.ui.dt - double scrollbars on safari",
+        "text": " sap.ui.dt - double scrollbars on safari",
         "references": []
       },
       {
         "id": "7c4785780a371c78e422703d2d1fbed09e00bc5a",
         "type": "FIX",
-        "text": "sap.ui.dt - fixed issue with relevant container as boolean value",
+        "text": " sap.ui.dt - fixed issue with relevant container as boolean value",
         "references": []
       },
       {
         "id": "d246e9fc8b2acea7a10e75c5cc94619ec72e4387",
         "type": "FIX",
-        "text": "sap.ui.dt - move smart form groups bug",
+        "text": " sap.ui.dt - move smart form groups bug",
         "references": []
       },
       {
         "id": "cd7199929921e04715eef6d581e58eb645bcbde4",
         "type": "FIX",
-        "text": "sap.ui.dt : Dialog handling",
+        "text": " sap.ui.dt : Dialog handling",
         "references": []
       },
       {
         "id": "6e737ea580c18e8397895394e5fd3ab7a23cec90",
         "type": "FIX",
-        "text": "sap.ui.dt : suppress sync during element modification",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770136418"
-          }
-        ]
+        "text": " sap.ui.dt : suppress sync during element modification",
+        "references": []
       },
       {
         "id": "e2a9bb33b85ff068596aca282676135a6d41b8b3",
         "type": "FIX",
-        "text": "sap.ui.dt register overlays at plugins only when dt is synced",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780129678"
-          }
-        ]
+        "text": " sap.ui.dt register overlays at plugins only when dt is synced",
+        "references": []
       },
       {
         "id": "3a22a7983cbd21edad601e791227f640fea8667b",
         "type": "FIX",
-        "text": "sap.ui.dt: Border fixes in HCB theme",
+        "text": " sap.ui.dt: Border fixes in HCB theme",
         "references": []
       },
       {
         "id": "c7e386351ba01a0ccf36108622007fac79ab0ef2",
         "type": "FIX",
-        "text": "sap.ui.dt: MS Edge support for testsuite",
+        "text": " sap.ui.dt: MS Edge support for testsuite",
         "references": []
       },
       {
         "id": "1adcb21046da41e8dda06d9a1293b82a61f8e157",
         "type": "FIX",
-        "text": "sap.ui.dt: Support dependents aggregation when handling overlays",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770116509"
-          }
-        ]
+        "text": " sap.ui.dt: Support dependents aggregation when handling overlays",
+        "references": []
       },
       {
         "id": "307c3a3f4b7e4169ffce1393d8de56e3274a30c3",
         "type": "FIX",
-        "text": "sap.ui.dt: bugfix domUtil",
+        "text": " sap.ui.dt: bugfix domUtil",
         "references": []
       },
       {
         "id": "65fd5f5e8d2e7a01a3a9d7ac88ec229933db7f58",
         "type": "FIX",
-        "text": "sap.ui.dt: new overlay-utils functionality",
+        "text": " sap.ui.dt: new overlay-utils functionality",
         "references": []
       },
       {
         "id": "7367a46fee7e2fdd63ac59c538e103e4260b156b",
         "type": "FIX",
-        "text": "sap.ui.rta - simpleForm move issue",
+        "text": " sap.ui.rta - simpleForm move issue",
         "references": []
       },
       {
@@ -117,6 +102,79 @@
         "id": "adb3f30d2ec42c8f04e77d692b85b075ddbad6cd",
         "type": "FIX",
         "text": ": simpleform fix editable titles (DT-part)",
+        "references": []
+      }
+    ]
+  },
+  "1.48.1": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "3377fd5d932ce772a0bc2e6c220bab948717abb4",
+        "type": "FIX",
+        "text": " sap.ui.dt: Delete actions in aggregations",
+        "references": []
+      },
+      {
+        "id": "b4a6c5b050e56c812ed533ceb3c5e346946c4d4b",
+        "type": "FIX",
+        "text": " sap.ui.dt: checks for empty aggregations in DT metadata",
+        "references": []
+      },
+      {
+        "id": "6d3a125905540bcea3ade2b98637972d03442d56",
+        "type": "FIX",
+        "text": ": DT - only add scrollbar if overflow scroll or auto",
+        "references": []
+      }
+    ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "607cf4f00cc985b5edd58b2259a9287639451f30",
+        "type": "FIX",
+        "text": " Prevent calling unobserve() more than once and eslint fixes",
+        "references": []
+      },
+      {
+        "id": "3cec496f2e80fa888125dc7eec2b1234b8542e76",
+        "type": "FIX",
+        "text": " simpleform getIndex",
+        "references": []
+      }
+    ]
+  },
+  "1.48.3": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "4b80ca567f0ade902e12b5e9d959c202d7626b4a",
+        "type": "FIX",
+        "text": " call aggregation overlay registration for plugins",
+        "references": []
+      }
+    ]
+  },
+  "1.48.4": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "ef73c6ad7c9f2dbd823a3c812eb5838ee8758c16",
+        "type": "FIX",
+        "text": " Revise ElementUtil.isValidForAggregation",
+        "references": []
+      }
+    ]
+  },
+  "1.48.6": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "c833ae3db0e201dbfc9eecd15af8958ac6ec7792",
+        "type": "FIX",
+        "text": " sap.ui.rta: Paste without cut doesn\u0027t cause an error anymore",
         "references": []
       }
     ]

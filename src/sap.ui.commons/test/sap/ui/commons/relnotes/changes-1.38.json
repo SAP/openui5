@@ -1,399 +1,660 @@
 {
-	"1.38.0": {
-		"date": "April 2016",
-		"notes": [
-			{
-				"id": "0ffad962505bfa7845ab3887a59dae27f4bc86e2",
-				"type": "FEATURE",
-				"text": "sap.ui.commons: Provide function getAccessibilityInfo for various controls",
-				"references": []
-			},
-			{
-				"id": "815aac7018dd2ab889109f892821d1c07c71683f",
-				"type": "FIX",
-				"text": "ImageMap: Use Selector As Written In The Spec",
-				"references": []
-			},
-			{
-				"id": "d960aa4a1f8264e7b4605011234278362b30c351",
-				"type": "FIX",
-				"text": "LisBox-GoldReflection.qunit.html - test fixed to cover IE Edge case",
-				"references": []
-			},
-			{
-				"id": "2629b588f28d1b58e708fa96823308a84794225d",
-				"type": "FIX",
-				"text": "[m/commons].Dialog, ux3.ToolPopup: Preserve DOM only if rendered",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670100799"
-					}
-				]
-			},
-			{
-				"id": "7ae011a10cccc86bf5a2c44c755565502a8bafe1",
-				"type": "FIX",
-				"text": "commons.Dialog: Trigger Re-Rendering for Setting Title",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670053490"
-					}
-				]
-			},
-			{
-				"id": "b23117e9d845a4dcaa488643cad595870232c781",
-				"type": "FIX",
-				"text": "commons.TabStrip: Scroll position is fixed",
-				"references": []
-			},
-			{
-				"id": "8bab239018250b75a084000a61851384e7a097d5",
-				"type": "FIX",
-				"text": "m.Dialog,commons.Dialog,ux3.ToolPopup: Preserve Content on Remove",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670033924"
-					}
-				]
-			},
-			{
-				"id": "82f78671b8c222d1f774aa453e62732da5b957b0",
-				"type": "FIX",
-				"text": "sap.commons.Dialog: setInitialFocus is fixed",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "870"
-					}
-				]
-			},
-			{
-				"id": "b4508ae88dc23d5c85efce98ccadcb76480e9188",
-				"type": "FIX",
-				"text": "sap.m.DatePicker: if date is deleted open calendar on today",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100000591562016"
-					}
-				]
-			},
-			{
-				"id": "da672d3693a56bb3c42b91fd54cc81d2966a4937",
-				"type": "FIX",
-				"text": "sap.m.DatePicker: issues with date > 99991231",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580225795"
-					}
-				]
-			},
-			{
-				"id": "93fccb5f22a8cf3bf679297a83f652c9b3814820",
-				"type": "FIX",
-				"text": "sap.m.RadioButtonGroup: setEnabled behaviour corrected",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680010754"
-					}
-				]
-			},
-			{
-				"id": "ae832fbb0665e298dd940d9434d5ff5454ebfcfd",
-				"type": "FIX",
-				"text": "sap.ui.commons.Accordion: fix css img urls",
-				"references": []
-			},
-			{
-				"id": "ab5af6ac97312c741640ced051628119cce9d330",
-				"type": "FIX",
-				"text": "sap.ui.commons.ApplicationHeader: Composite parts are initialized only once now",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "861"
-					},
-					{
-						"type": "BCP",
-						"reference": "1680015262"
-					}
-				]
-			},
-			{
-				"id": "94c09b4cea68abccd1fff5c2dc131a5df08031dd",
-				"type": "FIX",
-				"text": "sap.ui.commons.DatePicker: fix css img urls",
-				"references": []
-			},
-			{
-				"id": "bc196daecf0ac7d1cecf42320069796d855b6026",
-				"type": "FIX",
-				"text": "sap.ui.commons.MenuButton: fix css img urls",
-				"references": []
-			},
-			{
-				"id": "c20b406d0360b9706fbae21b81742afbf5ea868f",
-				"type": "FIX",
-				"text": "sap.ui.commons.MessageToast: fix css img urls",
-				"references": []
-			},
-			{
-				"id": "0a0a85e88602337fc74abcdb9b0de4d591bc2b75",
-				"type": "FIX",
-				"text": "sap.ui.commons.MessageToast: fix css img urls (again)",
-				"references": []
-			},
-			{
-				"id": "3cb56ec05afb7c5bb49ff500b75c0b11a14b741e",
-				"type": "FIX",
-				"text": "sap.ui.commons.Paginator: Aria-disabled state is correctly updated now",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670162929"
-					}
-				]
-			},
-			{
-				"id": "2fc9398f215f698f15722075f7f2c0dd15d3cafd",
-				"type": "FIX",
-				"text": "sap.ui.commons.Paginator: fix css img urls",
-				"references": []
-			},
-			{
-				"id": "6185ff9b29c1448f4303d37aec28cb4bf9b03331",
-				"type": "FIX",
-				"text": "sap.ui.commons.Panel: fix css img urls",
-				"references": []
-			},
-			{
-				"id": "50fee71409885beeca78e00c8eb7e143029aa670",
-				"type": "FIX",
-				"text": "sap.ui.commons.SearchField: fix css img urls",
-				"references": []
-			},
-			{
-				"id": "5400d5df1141f346fb1b753119f3bee05a84f740",
-				"type": "FIX",
-				"text": "sap.ui.commons.Slider: Aria-readonly property is now correctly read",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670085754"
-					}
-				]
-			},
-			{
-				"id": "a5b09e07ddd03db583960487adaca17b30290a5a",
-				"type": "FIX",
-				"text": "sap.ui.commons.Slider: Slider's API call to set value is now properly rendered",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670198768"
-					}
-				]
-			},
-			{
-				"id": "951109730028172d3813c02e39ef97ebe2ca1969",
-				"type": "FIX",
-				"text": "sap.ui.commons.TabStrip: Closing tab is now fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100001790872016"
-					}
-				]
-			},
-			{
-				"id": "518ce4b3972b318bc17753f4afb2151abe3c36da",
-				"type": "FIX",
-				"text": "sap.ui.commons.TabStrip: Event flow is now correct",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002007974700001276222016"
-					}
-				]
-			},
-			{
-				"id": "500294881e78aebd916e1ee3b6a2315b1f4e6e91",
-				"type": "FIX",
-				"text": "sap.ui.commons.TabStrip: Focus outline on IE corrected",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670067006"
-					}
-				]
-			},
-			{
-				"id": "eecaea01ac0087cddb07d5d43ae1896d9ea8faec",
-				"type": "FIX",
-				"text": "sap.ui.commons.TabStrip: Generating correct tab id in createTab() method fixed.",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "803"
-					}
-				]
-			},
-			{
-				"id": "16c6a05367ca7d7eaabc8a377e5fd5dfa6097e7e",
-				"type": "FIX",
-				"text": "sap.ui.commons.TabStrip: Hiding the last visible tab no longer throws an exception",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002007974700000811722016"
-					}
-				]
-			},
-			{
-				"id": "5907bedc4ea638803daa248e6986b3a624bb1246",
-				"type": "FIX",
-				"text": "sap.ui.commons.Tree: fix css img urls",
-				"references": []
-			},
-			{
-				"id": "2d133761402fbd3f2060d7611d5ca433032a3478",
-				"type": "FIX",
-				"text": "sap.ui.commons.TreeNode: Selection of multiple nodes now is properly animated",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670024646"
-					}
-				]
-			},
-			{
-				"id": "b23ba24deef9e2b5d76bb55476acee3f8aed608d",
-				"type": "FIX",
-				"text": "sap.ui.commons.TriStateCheckBox scroll trigger fixed",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "775"
-					}
-				]
-			},
-			{
-				"id": "96536e12543c9608435a4142a3cf85ec49b5cd88",
-				"type": "FIX",
-				"text": "sap.ui.commons.TriStateCheckBox: fix css img urls",
-				"references": []
-			},
-			{
-				"id": "d098eca952fc4528d834e325de76bb595c6d95c3",
-				"type": "FIX",
-				"text": "sap.ui.core.TooltipBase: Tooltip should not be open if visibility is set to false",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670206055"
-					}
-				]
-			}
-		]
-	},
-	"1.38.1": {
-		"date": "May 2016",
-		"notes": [
-			{
-				"id": "036a7606428a8422ca5f317d30138d7d9db5ea2b",
-				"type": "FIX",
-				"text": "sap.ui.commons.TabStrip: Tab content is no longer rendered when the control is destroyed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670190357"
-					}
-				]
-			}
-		]
-	},
-	"1.38.2": {
-		"date": "May 2016",
-		"notes": [
-			{
-				"id": "956c8ff0143822cabdebeed55cdab13cc46f2bc6",
-				"type": "FIX",
-				"text": "sap.ui.commons.ColorPicker: Sets correct position of slider grip",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670279449"
-					}
-				]
-			},
-			{
-				"id": "1623886002d0359ff1f371146b030dbe65053d31",
-				"type": "FIX",
-				"text": "sap.ui.commons.ColorPicker: background applied correctly",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670279449"
-					}
-				]
-			},
-			{
-				"id": "49bf375e753502c5dfef093cdfcbeef50d12f720",
-				"type": "FIX",
-				"text": "sap.ui.commons.Dialog: Dialog position after opening is fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670053490"
-					}
-				]
-			},
-			{
-				"id": "4bee561cdb4b41e3dd2302f76d3ac04bfa1788b3",
-				"type": "FIX",
-				"text": "sap.ui.commons.ValueHelpField - replaced png file icons with icons from the sap font",
-				"references": []
-			}
-		]
-	},
-	"1.38.3": {
-		"date": "June 2016",
-		"notes": [
-			{
-				"id": "f0ed73901043be76d2366e82f571e1b02b7a9471",
-				"type": "FIX",
-				"text": "sap.ui.commond.DropdownBox: select text by opening",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "979"
-					},
-					{
-						"type": "BCP",
-						"reference": "1670303053"
-					}
-				]
-			},
-			{
-				"id": "f0acc7ed1af7462c5db73e703d45baffd559c4f3",
-				"type": "FIX",
-				"text": "sap.ui.commons.MessageBox: Setting title issue fixed.",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "681"
-					},
-					{
-						"type": "BCP",
-						"reference": "1580199951"
-					}
-				]
-			}
-		]
-	}
+  "1.38.0": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "0ffad962505bfa7845ab3887a59dae27f4bc86e2",
+        "type": "FEATURE",
+        "text": "sap.ui.commons: Provide function getAccessibilityInfo for various controls",
+        "references": []
+      },
+      {
+        "id": "815aac7018dd2ab889109f892821d1c07c71683f",
+        "type": "FIX",
+        "text": "ImageMap: Use Selector As Written In The Spec",
+        "references": []
+      },
+      {
+        "id": "d960aa4a1f8264e7b4605011234278362b30c351",
+        "type": "FIX",
+        "text": "LisBox-GoldReflection.qunit.html - test fixed to cover IE Edge case",
+        "references": []
+      },
+      {
+        "id": "2629b588f28d1b58e708fa96823308a84794225d",
+        "type": "FIX",
+        "text": "[m/commons].Dialog, ux3.ToolPopup: Preserve DOM only if rendered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670100799"
+          }
+        ]
+      },
+      {
+        "id": "7ae011a10cccc86bf5a2c44c755565502a8bafe1",
+        "type": "FIX",
+        "text": "commons.Dialog: Trigger Re-Rendering for Setting Title",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670053490"
+          }
+        ]
+      },
+      {
+        "id": "b23117e9d845a4dcaa488643cad595870232c781",
+        "type": "FIX",
+        "text": "commons.TabStrip: Scroll position is fixed",
+        "references": []
+      },
+      {
+        "id": "8bab239018250b75a084000a61851384e7a097d5",
+        "type": "FIX",
+        "text": "m.Dialog,commons.Dialog,ux3.ToolPopup: Preserve Content on Remove",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670033924"
+          }
+        ]
+      },
+      {
+        "id": "82f78671b8c222d1f774aa453e62732da5b957b0",
+        "type": "FIX",
+        "text": "sap.commons.Dialog: setInitialFocus is fixed",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "870"
+          }
+        ]
+      },
+      {
+        "id": "b4508ae88dc23d5c85efce98ccadcb76480e9188",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: if date is deleted open calendar on today",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012002523100000591562016"
+          }
+        ]
+      },
+      {
+        "id": "da672d3693a56bb3c42b91fd54cc81d2966a4937",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: issues with date > 99991231",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580225795"
+          }
+        ]
+      },
+      {
+        "id": "93fccb5f22a8cf3bf679297a83f652c9b3814820",
+        "type": "FIX",
+        "text": "sap.m.RadioButtonGroup: setEnabled behaviour corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680010754"
+          }
+        ]
+      },
+      {
+        "id": "ae832fbb0665e298dd940d9434d5ff5454ebfcfd",
+        "type": "FIX",
+        "text": "sap.ui.commons.Accordion: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "ab5af6ac97312c741640ced051628119cce9d330",
+        "type": "FIX",
+        "text": "sap.ui.commons.ApplicationHeader: Composite parts are initialized only once now",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "861"
+          },
+          {
+            "type": "BCP",
+            "reference": "1680015262"
+          }
+        ]
+      },
+      {
+        "id": "94c09b4cea68abccd1fff5c2dc131a5df08031dd",
+        "type": "FIX",
+        "text": "sap.ui.commons.DatePicker: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "bc196daecf0ac7d1cecf42320069796d855b6026",
+        "type": "FIX",
+        "text": "sap.ui.commons.MenuButton: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "c20b406d0360b9706fbae21b81742afbf5ea868f",
+        "type": "FIX",
+        "text": "sap.ui.commons.MessageToast: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "0a0a85e88602337fc74abcdb9b0de4d591bc2b75",
+        "type": "FIX",
+        "text": "sap.ui.commons.MessageToast: fix css img urls (again)",
+        "references": []
+      },
+      {
+        "id": "3cb56ec05afb7c5bb49ff500b75c0b11a14b741e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Paginator: Aria-disabled state is correctly updated now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670162929"
+          }
+        ]
+      },
+      {
+        "id": "2fc9398f215f698f15722075f7f2c0dd15d3cafd",
+        "type": "FIX",
+        "text": "sap.ui.commons.Paginator: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "6185ff9b29c1448f4303d37aec28cb4bf9b03331",
+        "type": "FIX",
+        "text": "sap.ui.commons.Panel: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "50fee71409885beeca78e00c8eb7e143029aa670",
+        "type": "FIX",
+        "text": "sap.ui.commons.SearchField: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "5400d5df1141f346fb1b753119f3bee05a84f740",
+        "type": "FIX",
+        "text": "sap.ui.commons.Slider: Aria-readonly property is now correctly read",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670085754"
+          }
+        ]
+      },
+      {
+        "id": "a5b09e07ddd03db583960487adaca17b30290a5a",
+        "type": "FIX",
+        "text": "sap.ui.commons.Slider: Slider's API call to set value is now properly rendered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670198768"
+          }
+        ]
+      },
+      {
+        "id": "951109730028172d3813c02e39ef97ebe2ca1969",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Closing tab is now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012002523100001790872016"
+          }
+        ]
+      },
+      {
+        "id": "518ce4b3972b318bc17753f4afb2151abe3c36da",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Event flow is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002007974700001276222016"
+          }
+        ]
+      },
+      {
+        "id": "500294881e78aebd916e1ee3b6a2315b1f4e6e91",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Focus outline on IE corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670067006"
+          }
+        ]
+      },
+      {
+        "id": "eecaea01ac0087cddb07d5d43ae1896d9ea8faec",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Generating correct tab id in createTab() method fixed.",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "803"
+          }
+        ]
+      },
+      {
+        "id": "16c6a05367ca7d7eaabc8a377e5fd5dfa6097e7e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Hiding the last visible tab no longer throws an exception",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002007974700000811722016"
+          }
+        ]
+      },
+      {
+        "id": "5907bedc4ea638803daa248e6986b3a624bb1246",
+        "type": "FIX",
+        "text": "sap.ui.commons.Tree: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "2d133761402fbd3f2060d7611d5ca433032a3478",
+        "type": "FIX",
+        "text": "sap.ui.commons.TreeNode: Selection of multiple nodes now is properly animated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670024646"
+          }
+        ]
+      },
+      {
+        "id": "b23ba24deef9e2b5d76bb55476acee3f8aed608d",
+        "type": "FIX",
+        "text": "sap.ui.commons.TriStateCheckBox scroll trigger fixed",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "775"
+          }
+        ]
+      },
+      {
+        "id": "96536e12543c9608435a4142a3cf85ec49b5cd88",
+        "type": "FIX",
+        "text": "sap.ui.commons.TriStateCheckBox: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "d098eca952fc4528d834e325de76bb595c6d95c3",
+        "type": "FIX",
+        "text": "sap.ui.core.TooltipBase: Tooltip should not be open if visibility is set to false",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670206055"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.1": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "036a7606428a8422ca5f317d30138d7d9db5ea2b",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Tab content is no longer rendered when the control is destroyed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670190357"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.2": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "956c8ff0143822cabdebeed55cdab13cc46f2bc6",
+        "type": "FIX",
+        "text": "sap.ui.commons.ColorPicker: Sets correct position of slider grip",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670279449"
+          }
+        ]
+      },
+      {
+        "id": "1623886002d0359ff1f371146b030dbe65053d31",
+        "type": "FIX",
+        "text": "sap.ui.commons.ColorPicker: background applied correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670279449"
+          }
+        ]
+      },
+      {
+        "id": "49bf375e753502c5dfef093cdfcbeef50d12f720",
+        "type": "FIX",
+        "text": "sap.ui.commons.Dialog: Dialog position after opening is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670053490"
+          }
+        ]
+      },
+      {
+        "id": "4bee561cdb4b41e3dd2302f76d3ac04bfa1788b3",
+        "type": "FIX",
+        "text": "sap.ui.commons.ValueHelpField - replaced png file icons with icons from the sap font",
+        "references": []
+      }
+    ]
+  },
+  "1.38.3": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "f0ed73901043be76d2366e82f571e1b02b7a9471",
+        "type": "FIX",
+        "text": "sap.ui.commond.DropdownBox: select text by opening",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "979"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670303053"
+          }
+        ]
+      },
+      {
+        "id": "f0acc7ed1af7462c5db73e703d45baffd559c4f3",
+        "type": "FIX",
+        "text": "sap.ui.commons.MessageBox: Setting title issue fixed.",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "681"
+          },
+          {
+            "type": "BCP",
+            "reference": "1580199951"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.4": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "a1263f02aca33196541b3db8ee4235ba5cc514b2",
+        "type": "FIX",
+        "text": "HCB theme: Disabled toggled state for sap.ui.commons.ToggleButton fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670333083"
+          }
+        ]
+      },
+      {
+        "id": "09651fa290fa97a5cbc985ae2db42b93f7cbf4c0",
+        "type": "FIX",
+        "text": "HCB theme: Focus outline for sap.ui.commons.SegmentedButton fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670332620"
+          }
+        ]
+      },
+      {
+        "id": "af67642b890b81397366248630f8bbbf68033db2",
+        "type": "FIX",
+        "text": "HCB theme: Pressed state for sap.ui.commons.SegmentedButton fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670332620"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.8": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "25869dd6b78e8567d15ec721cf6f144610fcce7b",
+        "type": "FIX",
+        "text": "core.TooltipBase: show parent control tooltip if no tooltip on child",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "917"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670187459"
+          },
+          {
+            "type": "BCP",
+            "reference": "1570632712"
+          }
+        ]
+      },
+      {
+        "id": "5a05c914fb8c6d3e172171d30e3f447479d42eb6",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: keyboard support wrong if different calendarType used",
+        "references": []
+      },
+      {
+        "id": "5611f7814027f05cc3a2a73e4ec1784aa1319b02",
+        "type": "FIX",
+        "text": "sap.ui.commons.ListBox: Scroll should not have special handling on mobile device",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002364902016"
+          }
+        ]
+      },
+      {
+        "id": "f3ab7d8f523a4dd1470a6b56c97e66c5e145f357",
+        "type": "FIX",
+        "text": "sap.ui.core.Icon: mirroring of Icon should be done on pesudo element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680177863"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.9": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "ad96f88c9bb5a5c3e45bad2eebb6d1eea9e8bfcc",
+        "type": "FIX",
+        "text": "Theme image URLs in commons/ux3/layout libraries",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670427408"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670427766"
+          }
+        ]
+      },
+      {
+        "id": "b86fbea10c6b32fd78e60634bb82d51a36489c21",
+        "type": "FIX",
+        "text": "commons.Dialog: Center dialog according the view point size",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680225299"
+          }
+        ]
+      },
+      {
+        "id": "79a5dd9dcde0691210f258e76af790ca8b05b460",
+        "type": "FIX",
+        "text": "sap.ui.commons.DropDownBox: Selecting text and focusing does not cycle anymore.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002914702016"
+          }
+        ]
+      },
+      {
+        "id": "52c9875335b85f2737b8098d78a91bece2edb9ae",
+        "type": "FIX",
+        "text": "sap.ui.commons.DropDownBox: Selection of the ListBox items work onclick.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680218440"
+          }
+        ]
+      },
+      {
+        "id": "40e5599068c37e10e47d97c8d7c909a57a024cb3",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Destroying tabs is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670428783"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.10": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "0e7801cfb5d06321183b51a2fd067eb7397213ef",
+        "type": "FIX",
+        "text": "sap.ui.commons.Paginator: onsapenter is now handled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670431542"
+          }
+        ]
+      },
+      {
+        "id": "340b7eeede369e9d9bbde1a3815591606c432bc3",
+        "type": "FIX",
+        "text": "sap.ui.commons.Link: Focus visualization in sap.ui.table.Table Cell",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680175114"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.11": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "b885ae0ec5cd9fa346b580706acb7736137991ce",
+        "type": "FIX",
+        "text": "sap.ui.core.Popup: keep blocklayer when there's still modal popup open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670449871"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.17": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "0689060911822025e840caeeabf5620b59995ff8",
+        "type": "FIX",
+        "text": "sap.ui.commons.RadioButton: Memory leak issue",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1273"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.20": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "4459acec7e257abb821e5a123c78bbe8c9bd7d7c",
+        "type": "FIX",
+        "text": "sap.ui.commons.Slider: Setting of limit values work correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780124586"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.28": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "2dae45cbe128981685adbfce5318c5c1466ee4cc",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextField - paste of text with line endings on IE works.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1730434255"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.33": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "56797940069147b2b53ae99d6752f42722bfa898",
+        "type": "FIX",
+        "text": "sap.ui.commons.MatrixLayout: Render calculations corrected for Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000745792018"
+          }
+        ]
+      }
+    ]
+  }
 }

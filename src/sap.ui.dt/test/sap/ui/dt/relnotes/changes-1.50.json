@@ -5,106 +5,143 @@
       {
         "id": "4a586b06162da545bc4e85be62c8bcc22a45415a",
         "type": "FIX",
-        "text": "Prevent calling unobserve() more than once and eslint fixes",
+        "text": " Prevent calling unobserve() more than once and eslint fixes",
         "references": []
       },
       {
         "id": "e9790b900c684c5d3cf14a4bc669a9a65cd1e333",
         "type": "FIX",
-        "text": "Revise ElementUtil.isValidForAggregation",
+        "text": " Revise ElementUtil.isValidForAggregation",
         "references": []
       },
       {
         "id": "d5a9b0b2f7fb6cf4c0cb82fe454e77b1dd53c644",
         "type": "FIX",
-        "text": "Stabalize test case by rounding numbers",
+        "text": " Stabalize test case by rounding numbers",
         "references": []
       },
       {
         "id": "b1009a2f50f936340c112e842fd1362df00398ea",
         "type": "FIX",
-        "text": "add group to simpleForm",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770222315"
-          }
-        ]
+        "text": " add group to simpleForm",
+        "references": []
       },
       {
         "id": "f064d9c82a99bdb2a7ce6649c0d42d4d0dfa60c6",
         "type": "FIX",
-        "text": "call aggregation overlay registration for plugins",
+        "text": " call aggregation overlay registration for plugins",
         "references": []
       },
       {
         "id": "45d164c3abfc53c490130ca4e1cd2be161dd29bf",
         "type": "FIX",
-        "text": "local less parameter names",
+        "text": " local less parameter names",
         "references": []
       },
       {
         "id": "1bb03e71ef6d017bd0774621a6c8b22dbb948237",
         "type": "FIX",
-        "text": "sap.ui.dt ensure observe components as well",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770239631"
-          }
-        ]
+        "text": " sap.ui.dt ensure observe components as well",
+        "references": []
       },
       {
         "id": "12d44a406d3110dd12afe1801dcfebce564e6ff6",
         "type": "FIX",
-        "text": "sap.ui.dt: Delete actions in aggregations",
+        "text": " sap.ui.dt: Delete actions in aggregations",
         "references": []
       },
       {
         "id": "0cc20dc6b519d9a9cc073516bb41692989733662",
         "type": "FIX",
-        "text": "sap.ui.dt: Restore element visibility when disabling overlays",
+        "text": " sap.ui.dt: Restore element visibility when disabling overlays",
         "references": []
       },
       {
         "id": "d7b9645d8344482f7329493864ac8f8459feb0e3",
         "type": "FIX",
-        "text": "sap.ui.dt: checks for empty aggregations in DT metadata",
+        "text": " sap.ui.dt: checks for empty aggregations in DT metadata",
         "references": []
       },
       {
         "id": "5d3d71cac086a9e3520b0b49bb577d3bd0f0c3ff",
         "type": "FIX",
-        "text": "sap.ui.dt: fix cloned DomRef with opacity",
+        "text": " sap.ui.dt: fix cloned DomRef with opacity",
         "references": []
       },
       {
         "id": "5c82b700ef65b91762a973ce7adeab0958f8dc2f",
         "type": "FIX",
-        "text": "sap.ui.dt: fixed TablesInDesignTime Qunit Test",
+        "text": " sap.ui.dt: fixed TablesInDesignTime Qunit Test",
         "references": []
       },
       {
         "id": "758faee031b94be122f679d9a34219f98450abf0",
         "type": "FIX",
-        "text": "simpleform getIndex",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770222315"
-          }
-        ]
+        "text": " simpleform getIndex",
+        "references": []
       },
       {
         "id": "94378072bdb35eaccc827053b2967eece0a99028",
         "type": "FIX",
         "text": ": DT - only add scrollbar if overflow scroll or auto",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770223630"
-          }
-        ]
+        "references": []
+      }
+    ]
+  },
+  "1.50.1": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "6dfcc44e6ce330e6b7ad06802a9503d336eae224",
+        "type": "FIX",
+        "text": " sap.ui.rta: Paste without cut doesn\u0027t cause an error anymore",
+        "references": []
+      },
+      {
+        "id": "2bf07df48cc3c67a6f3566e789af714e7ef7b840",
+        "type": "FIX",
+        "text": "Remove test dependencies to sap.ui.comp",
+        "references": []
+      }
+    ]
+  },
+  "1.50.2": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "9a1d5ebfb3a0659d0454f7608f37f95cfa9adccd",
+        "type": "FIX",
+        "text": " sap.ui.dt: IE doesn\u0027t support document.contains()",
+        "references": []
+      },
+      {
+        "id": "ae6a5ee92e92cba8da05d82f0eb3a2bad77def0b",
+        "type": "FIX",
+        "text": " sap.ui.dt: remove \"enabled\" property from sap.ui.dt.Overlay",
+        "references": []
+      },
+      {
+        "id": "8475f0963e2182448832c9575949689bc2f66437",
+        "type": "FIX",
+        "text": " sap.ui.rta - First rename with double-click not working",
+        "references": []
+      },
+      {
+        "id": "f06e4f5b9c5f213bba3cfc5b0f99246d160400a5",
+        "type": "FIX",
+        "text": " sap.ui.rta: prevent remove action when pressing DELETE button if it\u0027s unavailable",
+        "references": []
+      }
+    ]
+  },
+  "1.50.9": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "cdd03b79323c64b5522d3bded8af30791e5080b8",
+        "type": "FIX",
+        "text": ": RTA - disable actions on binded aggregations",
+        "references": []
       }
     ]
   }

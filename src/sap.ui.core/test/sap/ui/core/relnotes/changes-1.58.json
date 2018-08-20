@@ -531,5 +531,40 @@
         "references": []
       }
     ]
+  },
+  "1.58.1": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "2f84ecfb5721266ff1ec54c404721ab15cb95905",
+        "type": "FEATURE",
+        "text": " Fragment: Fragment.load API",
+        "references": []
+      },
+      {
+        "id": "ef4b00c404722951e9f831e552941f2bf7669687",
+        "type": "FIX",
+        "text": " Manifest: Manifest.load should keep manifest URL in async case",
+        "references": []
+      },
+      {
+        "id": "3fd22ea85562a6695638f1880fc3d19cef6b6acd",
+        "type": "FIX",
+        "text": " Manifest: set component base URL",
+        "references": []
+      },
+      {
+        "id": "cb337617f9c2d8492a63f572c6b27d42e6a84a4e",
+        "type": "FIX",
+        "text": " Register ui5loader modules synchronously",
+        "references": []
+      },
+      {
+        "id": "12f790132873915bd2b76fde3fa5d128221da809",
+        "type": "FIX",
+        "text": " v2.ODataAnnotations: don\u0027t cache invalid annotations",
+        "references": []
+      }
+    ]
   }
 }

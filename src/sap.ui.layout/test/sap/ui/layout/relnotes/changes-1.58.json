@@ -57,5 +57,16 @@
         "references": []
       }
     ]
+  },
+  "1.58.1": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "93d9da777d87e1d3568f97c17861e0b4f11c2783",
+        "type": "FIX",
+        "text": " ResponsiveGridLayout: Form cells must have overflow hidden",
+        "references": []
+      }
+    ]
   }
 }

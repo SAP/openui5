@@ -975,5 +975,118 @@
         "references": []
       }
     ]
+  },
+  "1.58.1": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "739bd68229769006c9f8ff8cb5d2c59169f67488",
+        "type": "FIX",
+        "text": " OverflowToolbar: Cleared focus info upon focus leave",
+        "references": []
+      },
+      {
+        "id": "58e29504ab8d1d74f28606276db60cc0da6fea06",
+        "type": "FIX",
+        "text": " sap.m.BusyDialog: Busy information now read out",
+        "references": []
+      },
+      {
+        "id": "8afd0ab3cfa14ee5ea4ef30f33ba523db735d09f",
+        "type": "FIX",
+        "text": " sap.m.BusyDialog: The dialog is now closing correctly",
+        "references": []
+      },
+      {
+        "id": "b2e3e2e484d7323f269e8b2aae5512cdb4f4da27",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Events order fixed",
+        "references": []
+      },
+      {
+        "id": "4b75fb325b71ddf080be67d673cf83cfe9d1dd73",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Items\u0027 loading indicator returned back",
+        "references": []
+      },
+      {
+        "id": "91183d47fc36ae762209ac4e7b026bce475d3529",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Popup is now correctly displayed",
+        "references": []
+      },
+      {
+        "id": "a199fc54d84a5d6f495de64396213f209156325d",
+        "type": "FIX",
+        "text": " sap.m.Dialog: ESC key sets \u0027origin\u0027 event parameter correctly",
+        "references": []
+      },
+      {
+        "id": "174b8b6d98ab63017cf0a864128468f6a808ab2b",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: search with relative item binding works now.",
+        "references": []
+      },
+      {
+        "id": "df17108042f8c464e405d8550d621fdb9b2cbf13",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Max width and min width are now corrected",
+        "references": []
+      },
+      {
+        "id": "1c207ad438fcd633b29a2d6fe1eb2594553b3176",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: do not set width to content button text when width is 0",
+        "references": []
+      },
+      {
+        "id": "1f2e09d4218eebb99edafb6f50b4599fbe8f232c",
+        "type": "FIX",
+        "text": " sap.m.Page: contentOnlyBusy proper behavior",
+        "references": []
+      },
+      {
+        "id": "79ace4d6e68e5446018829d0e9d44d2465e31599",
+        "type": "FIX",
+        "text": " sap.m.Popover: Default sizes",
+        "references": []
+      },
+      {
+        "id": "e14300e2ac68bd04462a492b159dc0cad4a8e9e0",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Suggestions width is now correct",
+        "references": []
+      },
+      {
+        "id": "b51c8fae1550d95748f855121824779a436f9e08",
+        "type": "FIX",
+        "text": " sap.m.Slider: Fix examples page under IE",
+        "references": []
+      },
+      {
+        "id": "b1f8dba0380fdb3fc9cdb599f73797f09dff423a",
+        "type": "FIX",
+        "text": " sap.m.StepInput: fix boundaries when up/down + alt/ctrl is used",
+        "references": []
+      },
+      {
+        "id": "3f74f9bbb48e3b14858c71691cd4d0949856eacd",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : Uploaded files were showing incorrect size so set property binaryFilesize as true so that file size formating uses base 2.",
+        "references": []
+      },
+      {
+        "id": "8d98a2755b8c41136998dd21e829d786cbf1ba28",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: pass tooltip to the StandardListItem",
+        "references": []
+      },
+      {
+        "id": "140b1c7f8a9f5d2366fab3e6f8fef7755bb9abd8",
+        "type": "FIX",
+        "text": "sap.m - Table Designtime DomRef definition for items aggregation",
+        "references": []
+      }
+    ]
   }
 }

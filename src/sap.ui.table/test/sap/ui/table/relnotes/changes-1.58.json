@@ -69,5 +69,28 @@
         "references": []
       }
     ]
+  },
+  "1.58.1": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "0f2cbd2ba396904b8f0d362b5cc3911eea5d098e",
+        "type": "FIX",
+        "text": " Table: Avoid horizontal scrolling of cell content on focus in rtl",
+        "references": []
+      },
+      {
+        "id": "74ec77e6133c2e6e1cc894763b76c43986457ca1",
+        "type": "FIX",
+        "text": " Table: Clicking on the column resizer no longer causes scrolling",
+        "references": []
+      },
+      {
+        "id": "2fa6d09a2476a684f076f36bacd948c0a3141143",
+        "type": "FIX",
+        "text": " Table: Scrolling to last row with mouse wheel",
+        "references": []
+      }
+    ]
   }
 }

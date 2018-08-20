@@ -75,5 +75,61 @@
         "references": []
       }
     ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "fba9e19b79a45970b943fe7a6a99374add97b85d",
+        "type": "FIX",
+        "text": " set VariantModel to UI5-internal",
+        "references": []
+      }
+    ]
+  },
+  "1.56.2": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "e2a5b60e7b73b8d901863dfec8a37e9d2ddde285",
+        "type": "FIX",
+        "text": " Variant URL parameters should be added depending on the VM control(s) on the current view",
+        "references": []
+      },
+      {
+        "id": "cc7d06dd01b82a68d51c7808119c6b6af1fb1579",
+        "type": "FIX",
+        "text": " sap.ui.fl App variant version validity",
+        "references": []
+      },
+      {
+        "id": "920b7e95c4ed45f903afd2cb15504158a3f58b63",
+        "type": "FIX",
+        "text": " sap.ui.fl - Undefined parsed URL causing dump in VariantUtil",
+        "references": []
+      }
+    ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "43f8961a723437ef0f3de7d178f208fc1854bb86",
+        "type": "FIX",
+        "text": " sap.ui.fl: Fix issues with variants and FLP navigation:",
+        "references": []
+      }
+    ]
+  },
+  "1.56.4": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "f06c05b2efae9cf197a2e288d6d0540e18ca1533",
+        "type": "FIX",
+        "text": " Issues with displaying error messages in case of failed save",
+        "references": []
+      }
+    ]
   }
 }

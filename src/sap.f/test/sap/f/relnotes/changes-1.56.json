@@ -83,5 +83,89 @@
         "references": []
       }
     ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "b23e0ef47c51df0d1a735f89d545f31711481896",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Pin button visibility corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.56.2": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "cd373e12a3c1b20c0d4876d6602510ed733192c3",
+        "type": "FIX",
+        "text": " f.DynamicPage: Header expanding in non-scrollable area changed",
+        "references": []
+      },
+      {
+        "id": "e9693730feae514daf59548768a0a3284a4aba25",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: toggleHeaderOnTitleClick initial state fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "48e119381daab7d64fc3533def607caf1574b207",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Initially snapped header behavior fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.56.4": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "ef4ae2fb627bde00570a583c30fb6e55d3b4329d",
+        "type": "FIX",
+        "text": " f.FlexibleColumnLayout: suspending/resuming of ResizeHander fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.56.5": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "0d02a157134d65120bbc0b89a5005a5ce8a17fb3",
+        "type": "FIX",
+        "text": " DynamicPage: Missing Expand Header icon is fixed",
+        "references": []
+      },
+      {
+        "id": "b0ce3ff4f7ea6aac26d0c38709b11a9d50e41048",
+        "type": "FIX",
+        "text": " FlexibleColumnLayout: Fixed suspend and resume resize handlers",
+        "references": []
+      },
+      {
+        "id": "ff1a03513c62e3a7b15e51ce232a5fb8d212fdd0",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Clone now includes actions",
+        "references": []
+      }
+    ]
+  },
+  "1.56.6": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "a01bb47bd48c73422ea2a3787fc5b4a35f3c8f57",
+        "type": "INETRNAL",
+        "text": "[FIX] tutorial.fiori2: Updated documentation link",
+        "references": []
+      }
+    ]
   }
 }

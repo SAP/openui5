@@ -5,41 +5,37 @@
       {
         "id": "35847319218700ad82e5eef6de42d22474685df9",
         "type": "FIX",
-        "text": "Corrected shared-config.js path",
+        "text": " Corrected shared-config.js path",
         "references": []
       },
       {
         "id": "47afd46b8398a82f66565a642eccfffd9a78b490",
         "type": "FIX",
-        "text": "sap.tnt.SideNavigation: Item navigation is now correct",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129400003036242017"
-          }
-        ]
+        "text": " sap.tnt.SideNavigation: Item navigation is now correct",
+        "references": []
       },
       {
         "id": "45dd08e64c835ccdd5d5c4a142d07b9bf4c36db5",
         "type": "FIX",
-        "text": "sap.tnt.ToolPage: Count information not now read correctly",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780142782"
-          }
-        ]
+        "text": " sap.tnt.ToolPage: Count information not now read correctly",
+        "references": []
       },
       {
         "id": "4eeb21db8867ae73d48a48100c734264ba7b17fb",
         "type": "FIX",
-        "text": "sap.tnt.ToolPage: Tool page is now correctly displayed, when there is no header",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780211583"
-          }
-        ]
+        "text": " sap.tnt.ToolPage: Tool page is now correctly displayed, when there is no header",
+        "references": []
+      }
+    ]
+  },
+  "1.50.4": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "57d59bbf1978a376c4a94e649501900791d45327",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationList: Memory leak when closing popover is now fixed",
+        "references": []
       }
     ]
   }
