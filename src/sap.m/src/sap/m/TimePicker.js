@@ -1340,6 +1340,7 @@ function(
 			if (oTimePicker._checkStyle(sDisplayFormat)) {
 				sMask = LocaleData.getInstance(oLocale).getTimePattern(sDisplayFormat);
 			} else {
+				sDisplayFormat = sDisplayFormat.replace(/'/g, ""); // single quotes (like 'ч') are irrelevant for DateFormat, so they are for the mask
 				sMask = sDisplayFormat;
 			}
 
