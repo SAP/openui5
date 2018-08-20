@@ -506,8 +506,8 @@ sap.ui.define([
 		var iAssertionDelay = Device.browser.msie ? 50 : 0;
 		var done = assert.async();
 
-		/* BCP: 1880420532 */
-		if (Device.browser.msie) {
+		/* BCP: 1880420532 (IE), 1880455493 (Edge) */
+		if (Device.browser.msie || Device.browser.edge) {
 			document.getElementById("qunit-fixture").classList.remove("visible");
 		}
 
@@ -630,7 +630,8 @@ sap.ui.define([
 
 		sequence.then(function() {
 			oBody.classList.add("sapUiSizeCozy");
-			if (Device.browser.msie) {
+			/* BCP: 1880420532 (IE), 1880455493 (Edge) */
+			if (Device.browser.msie || Device.browser.edge) {
 				document.getElementById("qunit-fixture").classList.add("visible");
 			}
 			done();
