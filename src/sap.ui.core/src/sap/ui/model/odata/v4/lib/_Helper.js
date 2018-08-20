@@ -866,8 +866,15 @@ sap.ui.define([
 				aSelect = [];
 				buildPropertyPaths(oPostValue);
 			} else {
-				// fetch the selected properties plus the ETag
-				aSelect = aSelect.concat("@odata.etag");
+				// fetch the selected properties plus the ETag and the key predicate;
+				// _Cache#visitResponse is called with the response data before updateCacheAfterPost
+				// copies the selected values to the cache. visitResponse computes
+				// - $count values for collections, which are not relevant for POST (deep create is
+				//   not yet supported);
+				// - key predicates, which are relevant only for the top level element as no deep
+				//   create is supported
+				// and reports bound messages. Messages need to be copied only if they are selected.
+				aSelect = aSelect.concat("@odata.etag", "@$ui5._/predicate");
 			}
 
 			// take over properties from server response and fire change events

@@ -7758,4 +7758,87 @@ sap.ui.require([
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Create an employee and get messages for the newly created employee
+	QUnit.test("Create a new EMPLOYEE and get messages", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{path : \'/TEAMS(\\\'TEAM_01\\\')\', \
+		parameters : {\
+			$expand : {\
+				\'TEAM_2_EMPLOYEES\' : {\
+					$select : \'__CT__FAKE__Message/__FAKE__Messages\'\
+				}\
+			},\
+			$$updateGroupId : \'foo\'\
+		}}" id="form">\
+	<Text id="teamId" text="{Team_Id}" />\
+	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Text id="name" text="{Name}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest(
+			"TEAMS('TEAM_01')?"
+				+ "$expand=TEAM_2_EMPLOYEES($select=ID,Name,__CT__FAKE__Message/__FAKE__Messages)"
+				+ "&$select=Team_Id", {
+				"Team_Id" : "TEAM_01",
+				"TEAM_2_EMPLOYEES" : [{
+					"ID" : "1",
+					"Name" : "Jonathan Smith",
+					"__CT__FAKE__Message" : { "__FAKE__Messages" : [] }
+				}]
+			})
+			.expectChange("teamId", "TEAM_01")
+			.expectChange("name", ["Jonathan Smith"])
+			.expectMessages([]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oTable = that.oView.byId("table");
+
+			that.expectChange("name", "Jonathan Smith", 1)
+				.expectChange("name", "", 0);
+
+			oTable.getBinding("items").create({Name : ""});
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "TEAMS('TEAM_01')/TEAM_2_EMPLOYEES",
+					payload : {
+						"Name" : ""
+					}
+				}, {
+					"@odata.context" : "../$metadata#TEAMS('TEAM_01')/TEAM_2_EMPLOYEES/$entity",
+					"ID" : "42",
+					"Name" : "",
+					"__CT__FAKE__Message" : {
+						"__FAKE__Messages" : [{
+							"code" : "1",
+							"message" : "Enter a name",
+							"transition" : false,
+							"target" : "Name",
+							"numericSeverity" : 3
+						}]
+					}
+				})
+				.expectMessages([{
+					"code": "1",
+					"message": "Enter a name",
+					"persistent": false,
+					"target": "/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES/-1/Name",
+					"type": "Warning"
+				}]);
+
+			return Promise.all([
+				that.oModel.submitBatch("foo"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 });
