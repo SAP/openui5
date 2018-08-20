@@ -64,12 +64,7 @@ sap.ui.define([
 				// Cache allowed members
 				this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
 
-				var sTopic = oEvent.getParameter("arguments").id;
-				if (sTopic && sTopic.indexOf("module:") === 0) {
-					sTopic = formatter.globalNameToModuleName(sTopic);
-				}
-
-				this._sTopicid = sTopic;
+				this._sTopicid = formatter.decodeModuleName(oEvent.getParameter("arguments").id);
 				this._sEntityType = oEvent.getParameter("arguments").entityType;
 				this._sEntityId = oEvent.getParameter("arguments").entityId;
 
