@@ -2,16 +2,16 @@
  * ${copyright}
  */
 sap.ui.define([
-		'sap/m/Button',
-		'sap/m/Column',
-		'sap/m/ColumnListItem',
-		'sap/m/MessageBox',
-		'sap/m/PlacementType',
-		'sap/m/Popover',
-		'sap/m/Table',
-		'sap/m/Text',
-		'sap/ui/commons/ValueHelpField'
-	], function(Button, Column, ColumnListItem, MessageBox, PlacementType, Popover, Table, Text,
+	"sap/m/Button",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
+	"sap/m/MessageBox",
+	"sap/m/PlacementType",
+	"sap/m/Popover",
+	"sap/m/Table",
+	"sap/m/Text",
+	"sap/ui/commons/ValueHelpField"
+], function (Button, Column, ColumnListItem, MessageBox, PlacementType, Popover, Table, Text,
 		ValueHelpField) {
 	"use strict";
 

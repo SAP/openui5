@@ -3,23 +3,23 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ContextBinding",
 	"sap/ui/model/odata/v4/Context",
-	"sap/ui/model/odata/v4/lib/_Cache",
-	"sap/ui/model/odata/v4/lib/_GroupLock",
-	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/ODataContextBinding",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataParentBinding",
-	"sap/ui/test/TestUtils",
-	"sap/base/Log"
-], function (jQuery, ManagedObject, SyncPromise, Binding, ChangeReason, ContextBinding, Context,
-		_Cache, _GroupLock, _Helper, ODataContextBinding, ODataModel, asODataParentBinding,
-		TestUtils, Log) {
+	"sap/ui/model/odata/v4/lib/_Cache",
+	"sap/ui/model/odata/v4/lib/_GroupLock",
+	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/test/TestUtils"
+], function (jQuery, Log, ManagedObject, SyncPromise, Binding, ChangeReason, ContextBinding,
+		Context, ODataContextBinding, ODataModel, asODataParentBinding, _Cache, _GroupLock, _Helper,
+		TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -1240,6 +1240,7 @@ sap.ui.require([
 				{$$groupId : "groupId"}),
 			oBindingMock = this.mock(oBinding),
 			oModelMock = this.mock(this.oModel),
+			oParentEntity = {},
 			oResponseEntity = {},
 			oReturnValueContextFirstExecute = {destroy : function () {}},
 			oReturnValueContextSecondExecute = {destroy : function () {}},
@@ -1249,6 +1250,7 @@ sap.ui.require([
 		this.mock(this.oModel.getMetaModel()).expects("fetchObject").thrice()
 			.withExactArgs("/TEAMS/name.space.Operation/@$ui5.overload")
 			.returns(SyncPromise.resolve([oOperationMetadata]));
+		_Helper.setPrivateAnnotation(oParentEntity, "predicate", "('42')");
 		_Helper.setPrivateAnnotation(oResponseEntity, "predicate", "('77')");
 		oBindingMock.expects("createCacheAndRequest").twice()
 			.withExactArgs(sinon.match.same(oGroupLock),
@@ -1260,6 +1262,8 @@ sap.ui.require([
 		oBindingMock.expects("hasReturnValueContext").twice()
 			.withExactArgs(sinon.match.same(oOperationMetadata))
 			.returns(true);
+		this.mock(oParentContext).expects("fetchValue").twice()
+			.returns(SyncPromise.resolve(oParentEntity));
 		oContextMock.expects("create")
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 				"/TEAMS('77')")
@@ -1308,6 +1312,47 @@ sap.ui.require([
 					assert.strictEqual(oError0, oError);
 					assert.strictEqual(oBinding.oReturnValueContext, null);
 				});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	["42", "77"].forEach(function (sId) {
+		QUnit.test("_execute: bound operation returning the same entity type with key " + sId,
+				function (assert) {
+			var oParentContext = Context.create(this.oModel, {/*binding*/}, "/TEAMS('42')"),
+				oBinding = this.bindContext("name.space.Operation(...)", oParentContext,
+					{$$groupId : "groupId"}),
+				oBindingMock = this.mock(oBinding),
+				oGroupLock = new _GroupLock("groupId"),
+				oOperationMetadata = {},
+				oParentEntity = {},
+				oResponseEntity = {};
+
+			this.mock(oGroupLock).expects("setGroupId").withExactArgs("groupId");
+			this.mock(this.oModel.getMetaModel()).expects("fetchObject")
+				.withExactArgs("/TEAMS/name.space.Operation/@$ui5.overload")
+				.returns(SyncPromise.resolve([oOperationMetadata]));
+			_Helper.setPrivateAnnotation(oParentEntity, "predicate", "('42')");
+			_Helper.setPrivateAnnotation(oResponseEntity, "predicate", "('" + sId + "')");
+			oBindingMock.expects("createCacheAndRequest")
+				.withExactArgs(sinon.match.same(oGroupLock),
+					"/TEAMS('42')/name.space.Operation(...)",
+					sinon.match.same(oOperationMetadata), sinon.match.func)
+				.returns(Promise.resolve(oResponseEntity));
+			oBindingMock.expects("getDependentBindings").withExactArgs().returns([]);
+			oBindingMock.expects("hasReturnValueContext")
+				.withExactArgs(sinon.match.same(oOperationMetadata))
+				.returns(true);
+			this.mock(oParentContext).expects("fetchValue")
+				.returns(SyncPromise.resolve(oParentEntity));
+			this.mock(oParentContext).expects("patch").exactly(sId === "42" ? 1 : 0)
+				.withExactArgs(sinon.match.same(oResponseEntity));
+
+			// code under test
+			return oBinding._execute(oGroupLock).then(function (oReturnValueContext) {
+				// expect the return value context in any case, even when synchronized
+				assert.strictEqual(oReturnValueContext.getPath(), "/TEAMS('" + sId + "')");
 			});
 		});
 	});

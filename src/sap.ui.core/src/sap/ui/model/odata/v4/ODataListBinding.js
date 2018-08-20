@@ -4,6 +4,13 @@
 
 //Provides class sap.ui.model.odata.v4.ODataListBinding
 sap.ui.define([
+	"./Context",
+	"./ODataParentBinding",
+	"./lib/_AggregationCache",
+	"./lib/_AggregationHelper",
+	"./lib/_Cache",
+	"./lib/_GroupLock",
+	"./lib/_Helper",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
@@ -14,17 +21,10 @@ sap.ui.define([
 	"sap/ui/model/ListBinding",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/OperationMode",
-	"./Context",
-	"./lib/_AggregationCache",
-	"./lib/_AggregationHelper",
-	"./lib/_Cache",
-	"./lib/_GroupLock",
-	"./lib/_Helper",
-	"./ODataParentBinding",
 	"sap/ui/thirdparty/jquery"
-], function (Log, SyncPromise, Binding, ChangeReason, FilterOperator, FilterProcessor, FilterType,
-	ListBinding, Sorter, OperationMode, Context, _AggregationCache, _AggregationHelper, _Cache,
-	_GroupLock, _Helper, asODataParentBinding) {
+], function (Context, asODataParentBinding, _AggregationCache, _AggregationHelper, _Cache,
+		_GroupLock, _Helper, Log, SyncPromise, Binding, ChangeReason, FilterOperator,
+		FilterProcessor, FilterType, ListBinding, Sorter, OperationMode, jQuery) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
@@ -1171,6 +1171,14 @@ sap.ui.define([
 	 * Consumers must not rely on the origin information to be available, future filter
 	 * implementations will not provide this information.
 	 *
+	 * If the system query option <code>$filter</code> is present, it will be added to the AST as a
+	 * node with the following structure:
+	 *   <ul>
+	 *   <li><code>expression</code>: the value of the system query option <code>$filter</code>
+	 *   <li><code>syntax</code>: the OData version of this bindings model, e.g. "OData 4.0"
+	 *   <li><code>type</code>: "Custom"
+	 *   </ul>
+	 *
 	 * @param {boolean} [bIncludeOrigin=false] whether to include information about the filter
 	 *   objects from which the tree has been created
 	 * @returns {object} The AST of the filter tree including the static filter as string or null if
@@ -1191,8 +1199,9 @@ sap.ui.define([
 
 		if (this.mQueryOptions.$filter) {
 			oStaticAST = {
-				args : [this.mQueryOptions.$filter],
-				type : "Static"
+				expression : this.mQueryOptions.$filter,
+				syntax : "OData " + this.oModel.getODataVersion(),
+				type : "Custom"
 			};
 			if (oResultAST) {
 				oResultAST = {

@@ -3,11 +3,11 @@
  */
 //Provides mixin sap.ui.model.odata.v4.ODataBinding for classes extending sap.ui.model.Binding
 sap.ui.define([
+	"./lib/_Helper",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/odata/OperationMode",
-	"./lib/_Helper",
 	"sap/ui/thirdparty/jquery"
-], function(SyncPromise, OperationMode, _Helper, jQuery) {
+], function (_Helper, SyncPromise, OperationMode, jQuery) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataBinding";
@@ -566,7 +566,7 @@ sap.ui.define([
 	 */
 	ODataBinding.prototype.removeCachesAndMessages = function () {
 		var oModel = this.oModel,
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+			sResolvedPath = oModel.resolve(this.sPath, this.oContext);
 
 		if (sResolvedPath) {
 			oModel.reportBoundMessages(sResolvedPath.slice(1), {});
@@ -579,7 +579,7 @@ sap.ui.define([
 		}
 	};
 
-		/**
+	/**
 	 * Resets all pending changes of this binding, see {@link #hasPendingChanges}. Resets also
 	 * invalid user input.
 	 *

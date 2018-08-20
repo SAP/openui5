@@ -2,16 +2,25 @@
  * ${copyright}
  */
 sap.ui.require([
-	"sap/ui/base/BindingParser", "sap/ui/model/BindingMode", "sap/ui/model/ClientContextBinding",
-	"sap/ui/model/Context", "sap/ui/model/FilterProcessor",
-	"sap/ui/model/json/JSONListBinding", "sap/ui/model/json/JSONPropertyBinding",
-	"sap/ui/model/json/JSONTreeBinding", "sap/ui/model/Model",
-	"sap/ui/model/odata/_ODataMetaModelUtils", "sap/ui/model/odata/ODataMetaModel",
-	"sap/ui/model/odata/ODataModel", "sap/ui/model/odata/v2/ODataModel", "sap/ui/test/TestUtils",
-	"sap/base/Log", "sap/ui/performance/Measurement"
-], function (BindingParser, BindingMode, ClientContextBinding, Context, FilterProcessor,
-	JSONListBinding, JSONPropertyBinding, JSONTreeBinding, Model, Utils, ODataMetaModel,
-	ODataModel1, ODataModel, TestUtils, Log, Measurement) {
+	"sap/base/Log",
+	"sap/ui/base/BindingParser",
+	"sap/ui/model/BindingMode",
+	"sap/ui/model/ClientContextBinding",
+	"sap/ui/model/Context",
+	"sap/ui/model/FilterProcessor",
+	"sap/ui/model/Model",
+	"sap/ui/model/json/JSONListBinding",
+	"sap/ui/model/json/JSONPropertyBinding",
+	"sap/ui/model/json/JSONTreeBinding",
+	"sap/ui/model/odata/ODataMetaModel",
+	"sap/ui/model/odata/ODataModel",
+	"sap/ui/model/odata/_ODataMetaModelUtils",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/performance/Measurement",
+	"sap/ui/test/TestUtils"
+], function (Log, BindingParser, BindingMode, ClientContextBinding, Context, FilterProcessor, Model,
+		JSONListBinding, JSONPropertyBinding, JSONTreeBinding, ODataMetaModel, ODataModel1, Utils,
+		ODataModel, Measurement, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0*/
 	"use strict";

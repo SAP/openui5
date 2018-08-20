@@ -3,6 +3,7 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
@@ -18,17 +19,16 @@ sap.ui.require([
 	"sap/ui/model/odata/type/Raw",
 	"sap/ui/model/odata/v4/AnnotationHelper",
 	"sap/ui/model/odata/v4/Context",
-	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ValueListType",
+	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils",
-	"sap/ui/thirdparty/URI",
-	"sap/base/Log"
-], function (jQuery, SyncPromise, BindingMode, ChangeReason, ClientListBinding, BaseContext,
+	"sap/ui/thirdparty/URI"
+], function (jQuery, Log, SyncPromise, BindingMode, ChangeReason, ClientListBinding, BaseContext,
 		ContextBinding, Filter, MetaModel, PropertyBinding, Sorter, OperationMode, Int64, Raw,
-		AnnotationHelper, Context, _Helper, ODataMetaModel, ODataModel, ValueListType, TestUtils,
-		URI, Log) {
+		AnnotationHelper, Context, ODataMetaModel, ODataModel, ValueListType, _Helper, TestUtils,
+		URI) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0 */
 	"use strict";
@@ -713,14 +713,14 @@ sap.ui.require([
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
-			this.oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl);
-			this.oMetaModelMock = this.mock(this.oMetaModel);
 			this.oModel = {
 				reportError : function () {
 					throw new Error("Unsupported operation");
 				},
 				resolve : ODataModel.prototype.resolve
 			};
+			this.oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl, undefined, this.oModel);
+			this.oMetaModelMock = this.mock(this.oMetaModel);
 		},
 
 		/*
@@ -1734,8 +1734,11 @@ sap.ui.require([
 			sSchema = "tea_busi_product.v0001.";
 
 		this.expectFetchEntityContainer(mXServiceScope);
-		this.oLogMock.expects("error")
-			.withExactArgs(sMessage, sSchema, sODataMetaModel);
+		this.mock(this.oModel).expects("reportError")
+			.withExactArgs(sMessage, sODataMetaModel, sinon.match({
+				message : sSchema + ": " + sMessage,
+				name : "Error"
+			}));
 		// simulate 2 references for a schema
 		this.oMetaModel.mSchema2MetadataUrl["tea_busi_product.v0001."]["/second/reference"] = false;
 
@@ -3375,7 +3378,8 @@ sap.ui.require([
 				sTitle = "validate: " + sMessage + ", supportReferences: " + bSupportReferences;
 
 			QUnit.test(sTitle, function (assert) {
-				var sUrl = "/~/$metadata",
+				var oError,
+					sUrl = "/~/$metadata",
 					that = this;
 
 				function codeUnderTest() {
@@ -3391,12 +3395,17 @@ sap.ui.require([
 					"existing." : {"/B/v1/$metadata" : true}
 				};
 				if (bSupportReferences) {
-					this.oLogMock.expects("error")
-						.withExactArgs(sMessage, sUrl, sODataMetaModel);
+					oError =  new Error(sUrl + ": " + sMessage);
+					this.mock(this.oMetaModel.oModel).expects("reportError")
+						.withExactArgs(sMessage, sODataMetaModel, sinon.match({
+								message : oError.message,
+								name : "Error"
+							}
+						));
 				}
 
 				if (bSupportReferences) {
-					assert.throws(codeUnderTest, new Error(sUrl + ": " + sMessage));
+					assert.throws(codeUnderTest, oError);
 				} else {
 					codeUnderTest();
 				}
@@ -3785,6 +3794,7 @@ sap.ui.require([
 				}
 			},
 			sMessage = "A schema cannot span more than one document: tea_busi.ExistingType",
+			oError = new Error("/my/annotation.xml: " + sMessage),
 			oMetadata = {
 				"tea_busi.ExistingType" : {
 					"$kind" : "EntityType"
@@ -3800,13 +3810,16 @@ sap.ui.require([
 			.withExactArgs("n/a", oAnnotation1);
 		this.oMetaModelMock.expects("validate")
 			.withExactArgs("/my/annotation.xml", oAnnotation2);
-		this.oLogMock.expects("error")
-			.withExactArgs(sMessage, "/my/annotation.xml", sODataMetaModel);
+		this.mock(this.oMetaModel.oModel).expects("reportError")
+			.withExactArgs(sMessage, sODataMetaModel, sinon.match({
+				message : oError.message,
+				name : 'Error'
+			}));
 
 		assert.throws(function () {
 			// code under test
 			this.oMetaModel._mergeAnnotations(oMetadata, [oAnnotation1, oAnnotation2]);
-		}, new Error("/my/annotation.xml: " + sMessage));
+		}, oError);
 	});
 
 	//*********************************************************************************************
@@ -3819,6 +3832,7 @@ sap.ui.require([
 					}
 				},
 				sMessage = "A schema cannot span more than one document: tea_busi.",
+				oError = new Error("/my/annotation.xml: " + sMessage),
 				oMetadata = {
 					"$Version" : "4.0",
 					"tea_busi." : {
@@ -3827,8 +3841,12 @@ sap.ui.require([
 				};
 
 			this.oMetaModel.aAnnotationUris = ["n/a", "/my/annotation.xml"];
-			this.oLogMock.expects("error")
-				.withExactArgs(sMessage, "/my/annotation.xml", sODataMetaModel);
+			this.mock(this.oMetaModel.oModel).expects("reportError")
+				.withExactArgs(sMessage, sODataMetaModel, sinon.match({
+						message : oError.message,
+						name : 'Error'
+					}
+				));
 
 			assert.throws(function () {
 				// code under test
@@ -4367,7 +4385,7 @@ sap.ui.require([
 		});
 	});
 
-	// *********************************************************************************************
+	//*********************************************************************************************
 	QUnit.test("requestValueListInfo: property in cross-service reference", function (assert) {
 		var sMappingUrl = "../ValueListService/$metadata",
 			oModel = new ODataModel({
@@ -4445,7 +4463,7 @@ sap.ui.require([
 		});
 	});
 
-	// *********************************************************************************************
+	//*********************************************************************************************
 	QUnit.test("requestValueListInfo: same qualifier in reference and local", function (assert) {
 		var sMappingUrl = "../ValueListService/$metadata",
 			oProperty = {
@@ -4500,7 +4518,7 @@ sap.ui.require([
 		});
 	});
 
-	// *********************************************************************************************
+	//*********************************************************************************************
 	QUnit.test("fetchModule: synchronously", function (assert) {
 		var vModule = {};
 
@@ -4513,7 +4531,7 @@ sap.ui.require([
 			vModule);
 	});
 
-	// *********************************************************************************************
+	//*********************************************************************************************
 	QUnit.test("fetchModule, asynchronous", function (assert) {
 		var vModule = {},
 			sModuleName = "sap/ui/model/odata/type/Int64",
@@ -4531,6 +4549,32 @@ sap.ui.require([
 			.then(function (oResult) {
 				assert.strictEqual(oResult, vModule);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchData", function (assert) {
+		var oMetaData = {
+				"some.schema." : {
+					"$kind" : "Schema"
+				}
+			};
+
+		this.mock(this.oMetaModel).expects("fetchEntityContainer")
+			.withExactArgs()
+			.returns(Promise.resolve(oMetaData));
+
+		// code under test
+		return this.oMetaModel.fetchData().then(function (oResult) {
+			assert.deepEqual(oResult, oMetaData);
+
+			delete oResult["some.schema."].$kind;
+			assert.strictEqual(oMetaData["some.schema."].$kind, "Schema", "original is unchanged");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getData, requestData", function (assert) {
+		return checkGetAndRequest(this, assert, "fetchData");
 	});
 
 	//*********************************************************************************************

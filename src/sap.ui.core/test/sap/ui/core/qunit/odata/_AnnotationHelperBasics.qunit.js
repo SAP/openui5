@@ -2,12 +2,12 @@
  * ${copyright}
  */
 sap.ui.require([
-    "jquery.sap.global",
-    'sap/ui/base/BindingParser',
-    'sap/ui/model/odata/_AnnotationHelperBasics',
-    "sap/base/Log",
-    "sap/ui/performance/Measurement"
-], function(jQuery, BindingParser, Basics, Log, Measurement) {
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/ui/base/BindingParser",
+	"sap/ui/model/odata/_AnnotationHelperBasics",
+	"sap/ui/performance/Measurement"
+], function (jQuery, Log, BindingParser, Basics, Measurement) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0*/
 	"use strict";

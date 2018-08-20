@@ -2,30 +2,19 @@
  *{copyright}
  */
 sap.ui.require([
-    "jquery.sap.global",
-    "sap/ui/core/Control",
-    "sap/ui/core/LocaleData",
-    "sap/ui/core/format/NumberFormat",
-    "sap/ui/model/FormatException",
-    "sap/ui/model/ParseException",
-    "sap/ui/model/ValidateException",
-    "sap/ui/model/odata/type/ODataType",
-    "sap/ui/model/odata/type/Single",
-    "sap/ui/test/TestUtils",
-    "sap/base/Log"
-], function(
-    jQuery,
-	Control,
-	LocaleData,
-	NumberFormat,
-	FormatException,
-	ParseException,
-	ValidateException,
-	ODataType,
-	Single,
-	TestUtils,
-	Log
-) {
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/ui/core/Control",
+	"sap/ui/core/LocaleData",
+	"sap/ui/core/format/NumberFormat",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
+	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/model/odata/type/Single",
+	"sap/ui/test/TestUtils"
+], function (jQuery, Log, Control, LocaleData, NumberFormat, FormatException, ParseException,
+		ValidateException, ODataType, Single, TestUtils) {
 	/*global QUnit, sinon */
 	"use strict";
 	/*eslint no-warning-comments: 0 */

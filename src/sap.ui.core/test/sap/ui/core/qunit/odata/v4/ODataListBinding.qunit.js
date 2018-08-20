@@ -3,6 +3,7 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
@@ -16,20 +17,19 @@ sap.ui.require([
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/Context",
+	"sap/ui/model/odata/v4/ODataListBinding",
+	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/model/odata/v4/ODataParentBinding",
 	"sap/ui/model/odata/v4/lib/_AggregationCache",
 	"sap/ui/model/odata/v4/lib/_AggregationHelper",
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
-	"sap/ui/model/odata/v4/ODataListBinding",
-	"sap/ui/model/odata/v4/ODataModel",
-	"sap/ui/model/odata/v4/ODataParentBinding",
-	"sap/ui/test/TestUtils",
-	"sap/base/Log"
-], function (jQuery, ManagedObject, SyncPromise, Binding, ChangeReason, Filter, FilterOperator,
+	"sap/ui/test/TestUtils"
+], function (jQuery, Log, ManagedObject, SyncPromise, Binding, ChangeReason, Filter, FilterOperator,
 		FilterProcessor, FilterType, ListBinding, Model, Sorter, OperationMode, Context,
-		_AggregationCache, _AggregationHelper, _Cache, _GroupLock, _Helper, ODataListBinding,
-		ODataModel, asODataParentBinding, TestUtils, Log) {
+		ODataListBinding, ODataModel, asODataParentBinding, _AggregationCache, _AggregationHelper,
+		_Cache, _GroupLock, _Helper, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-new: 0, no-warning-comments: 0 */
 	"use strict";
@@ -5112,8 +5112,9 @@ sap.ui.require([
 					left : {},
 					op : "&&",
 					right : {
-						args : ["someFilterExpression"],
-						type : "Static"
+						expression : "someFilterExpression",
+						syntax : "OData 4.0",
+						type : "Custom"
 					},
 					type : "Logical"
 				},
@@ -5166,9 +5167,11 @@ sap.ui.require([
 		var aApplicationFilter = [],
 			oBinding = this.bindList("/Set"),
 			aControlFilter = [],
+			sODataVersion = "foo",
 			oExpectedFilterInfo = {
-				args : ["someFilterExpression"],
-				type : "Static"
+				expression : "someFilterExpression",
+				syntax : "OData " + sODataVersion,
+				type : "Custom"
 			},
 			bIncludeOrigin = {/*true or false*/};
 
@@ -5178,6 +5181,8 @@ sap.ui.require([
 		this.mock(FilterProcessor).expects("combineFilters")
 			.withExactArgs(sinon.match.same(aControlFilter), sinon.match.same(aApplicationFilter))
 			.returns(undefined);
+		this.mock(oBinding.oModel).expects("getODataVersion")
+			.returns(sODataVersion);
 
 		// code under test
 		assert.deepEqual(oBinding.getFilterInfo(bIncludeOrigin),

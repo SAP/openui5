@@ -2,24 +2,15 @@
  * ${copyright}
  */
 sap.ui.require([
-    "jquery.sap.global",
-    "sap/ui/base/SyncPromise",
-    "sap/ui/model/Binding",
-    "sap/ui/model/odata/v4/lib/_Helper",
-    "sap/ui/model/odata/v4/Context",
-    "sap/ui/model/odata/v4/ODataBinding",
-    "sap/ui/model/odata/v4/SubmitMode",
-    "sap/base/Log"
-], function(
-    jQuery,
-	SyncPromise,
-	Binding,
-	_Helper,
-	Context,
-	asODataBinding,
-	SubmitMode,
-	Log
-) {
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/ui/base/SyncPromise",
+	"sap/ui/model/Binding",
+	"sap/ui/model/odata/v4/Context",
+	"sap/ui/model/odata/v4/ODataBinding",
+	"sap/ui/model/odata/v4/SubmitMode",
+	"sap/ui/model/odata/v4/lib/_Helper"
+], function (jQuery, Log, SyncPromise, Binding, Context, asODataBinding, SubmitMode, _Helper) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";

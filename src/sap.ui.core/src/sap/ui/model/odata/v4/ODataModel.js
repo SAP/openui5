@@ -13,56 +13,37 @@
 
 //Provides class sap.ui.model.odata.v4.ODataModel
 sap.ui.define([
-	"sap/ui/base/SyncPromise",
-	"sap/ui/core/MessageType",
-	"sap/ui/core/message/Message",
-	"sap/ui/model/BindingMode",
-	"sap/ui/model/Context",
-	"sap/ui/model/Model",
-	"sap/ui/model/odata/OperationMode",
-	"sap/ui/thirdparty/URI",
-	"./lib/_GroupLock",
-	"./lib/_Helper",
-	"./lib/_MetadataRequestor",
-	"./lib/_Requestor",
-	"./lib/_Parser",
 	"./ODataContextBinding",
 	"./ODataListBinding",
 	"./ODataMetaModel",
 	"./ODataPropertyBinding",
 	"./SubmitMode",
-	"sap/base/Log",
+	"./lib/_GroupLock",
+	"./lib/_Helper",
+	"./lib/_MetadataRequestor",
+	"./lib/_Parser",
+	"./lib/_Requestor",
 	"sap/base/assert",
-	"sap/ui/thirdparty/jquery"
-], function(
-	SyncPromise,
-	MessageType,
-	Message,
-	BindingMode,
-	BaseContext,
-	Model,
-	OperationMode,
-	URI,
-	_GroupLock,
-	_Helper,
-	_MetadataRequestor,
-	_Requestor,
-	_Parser,
-	ODataContextBinding,
-	ODataListBinding,
-	ODataMetaModel,
-	ODataPropertyBinding,
-	SubmitMode,
-	Log,
-	assert,
-	jQuery
-) {
-
+	"sap/base/Log",
+	"sap/ui/base/SyncPromise",
+	"sap/ui/core/library",
+	"sap/ui/core/message/Message",
+	"sap/ui/model/BindingMode",
+	"sap/ui/model/Context",
+	"sap/ui/model/Model",
+	"sap/ui/model/odata/OperationMode",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/URI"
+], function (ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding,
+		SubmitMode, _GroupLock, _Helper, _MetadataRequestor, _Parser, _Requestor, assert, Log,
+		SyncPromise, coreLibrary, Message, BindingMode, BaseContext, Model, OperationMode, jQuery,
+		URI) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
 		rApplicationGroupID = /^\w+$/,
 		rGroupID = /^(\$auto(\.\w+)?|\$direct|\w+)$/,
+		MessageType = coreLibrary.MessageType,
 		aMessageTypes = [
 			undefined,
 			MessageType.Success,
@@ -1228,8 +1209,8 @@ sap.ui.define([
 	 *      "error")
 	 *   {string} target - The target for the message relative to the resource path with key
 	 *      predicates
-	 *   {boolean} transition - Messages marked as transition by the server need to be managed by
-	 *      the application and are reported as persistent
+	 *   {boolean} transition - Whether the message is reported as <code>persistent=true</code> and
+	 *      therefore needs to be managed by the application
 	 * @param {string[]} [aCachePaths]
 	 *    An array of cache-relative paths of the entities for which non-persistent messages have to
 	 *    be removed; if the array is not given, all entities are affected

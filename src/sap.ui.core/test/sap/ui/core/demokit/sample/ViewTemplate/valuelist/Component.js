@@ -8,14 +8,14 @@
  * @version @version@
  */
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/core/mvc/View', // sap.ui.view()
-		'sap/ui/core/mvc/ViewType',
-		'sap/ui/core/sample/common/Component',
-		'sap/ui/core/util/MockServer',
-		'sap/ui/model/json/JSONModel',
-		'sap/ui/model/odata/v2/ODataModel'
-	], function(jQuery, View, ViewType, BaseComponent, MockServer, JSONModel, ODataModel) {
+	"jquery.sap.global",
+	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/ViewType",
+	"sap/ui/core/sample/common/Component",
+	"sap/ui/core/util/MockServer",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/v2/ODataModel"
+], function (jQuery, View, ViewType, BaseComponent, MockServer, JSONModel, ODataModel) {
 	"use strict";
 
 	var Component = BaseComponent.extend("sap.ui.core.sample.ViewTemplate.valuelist.Component", {

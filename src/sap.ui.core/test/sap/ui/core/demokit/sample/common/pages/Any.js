@@ -6,8 +6,7 @@ sap.ui.require([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/TestUtils",
 	"sap/ui/test/matchers/Properties"
-],
-function (Helper, Opa5, TestUtils, Properties) {
+], function (Helper, Opa5, TestUtils, Properties) {
 	"use strict";
 
 	/*
@@ -159,8 +158,9 @@ function (Helper, Opa5, TestUtils, Properties) {
 
 								oIssues = oIssues.filter(function(oIssue) {
 									if (oIssue.severity !== "High" ||
-										// as long as BCP 1870071678 is not solved
-										oIssue.rule.id === "xmlViewUnusedNamespaces") {
+										// ignore rule as long as it is unclear how to solve
+										// ariaDescribedBy issues
+										oIssue.rule.id === "dialogAriaDescribedBy") {
 										return false;
 									}
 									return true;

@@ -3,7 +3,10 @@
  */
 
 //Provides class sap.ui.model.odata.v4.lib._V4MetadataConverter
-sap.ui.define(["./_Helper", "./_MetadataConverter"], function(_Helper, _MetadataConverter) {
+sap.ui.define([
+	"./_Helper",
+	"./_MetadataConverter"
+], function (_Helper, _MetadataConverter) {
 	"use strict";
 
 	/**

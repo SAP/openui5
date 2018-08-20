@@ -1,7 +1,10 @@
 /*!
  * ${copyright}
  */
-sap.ui.require(["sap/ui/model/odata/v4/lib/_GroupLock", "sap/base/Log"], function(_GroupLock, Log) {
+sap.ui.require([
+	"sap/base/Log",
+	"sap/ui/model/odata/v4/lib/_GroupLock"
+], function (Log, _GroupLock) {
 	/*global QUnit */
 	"use strict";
 

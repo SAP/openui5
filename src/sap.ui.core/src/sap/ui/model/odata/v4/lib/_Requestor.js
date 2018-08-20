@@ -4,14 +4,14 @@
 
 //Provides class sap.ui.model.odata.v4.lib._Requestor
 sap.ui.define([
-	"sap/ui/base/SyncPromise",
 	"./_Batch",
 	"./_GroupLock",
 	"./_Helper",
 	"./_V2Requestor",
 	"sap/base/util/deepEqual",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/thirdparty/jquery"
-], function(SyncPromise, _Batch, _GroupLock, _Helper, asV2Requestor, deepEqual, jQuery) {
+], function (_Batch, _GroupLock, _Helper, asV2Requestor, deepEqual, SyncPromise, jQuery) {
 	"use strict";
 
 	var mBatchHeaders = { // headers for the $batch request
@@ -817,8 +817,8 @@ sap.ui.define([
 	 *      3 for "warning" and 4 for "error")
 	 *   {string} target - The target for the message relative to the resource path with key
 	 *      predicates
-	 *   {boolean} transition - Messages marked as transition by the server need to be managed by
-	 *      the application and are reported as persistent
+	 *   {boolean} transition - Whether the message is reported as <code>persistent=true</code> and
+	 *      therefore needs to be managed by the application
 	 * @param {string[]} [aCachePaths]
 	 *    An array of cache-relative paths of the entities for which non-persistent messages have to
 	 *    be removed; if the array is not given, all non-persistent messages whose target start with

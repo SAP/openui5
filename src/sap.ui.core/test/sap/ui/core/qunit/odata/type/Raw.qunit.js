@@ -2,22 +2,14 @@
  * ${copyright}
  */
 sap.ui.require([
-    "jquery.sap.global",
-    "sap/ui/model/FormatException",
-    "sap/ui/model/odata/type/ODataType",
-    "sap/ui/model/odata/type/Raw",
-    "sap/ui/model/ParseException",
-    "sap/ui/model/ValidateException",
-    "sap/base/Log"
-], function(
-    jQuery,
-	FormatException,
-	ODataType,
-	Raw,
-	ParseException,
-	ValidateException,
-	Log
-) {
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
+	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/model/odata/type/Raw"
+], function (jQuery, Log, FormatException, ParseException, ValidateException, ODataType, Raw) {
 	/*global QUnit */
 	/*eslint max-nested-callbacks: 0*/
 	"use strict";

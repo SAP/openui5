@@ -4,13 +4,13 @@
 
 //Provides class sap.ui.model.odata.v4.ODataPropertyBinding
 sap.ui.define([
+	"./ODataBinding",
+	"./lib/_Cache",
+	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/ChangeReason",
-	"sap/ui/model/PropertyBinding",
-	"./lib/_Cache",
-	"./ODataBinding",
-	"sap/base/Log"
-], function (SyncPromise, ChangeReason, PropertyBinding, _Cache, asODataBinding, Log) {
+	"sap/ui/model/PropertyBinding"
+], function (asODataBinding, _Cache, Log, SyncPromise, ChangeReason, PropertyBinding) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",

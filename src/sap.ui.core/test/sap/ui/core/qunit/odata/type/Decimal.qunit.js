@@ -2,30 +2,19 @@
  *{copyright}
  */
 sap.ui.require([
-    "jquery.sap.global",
-    "sap/ui/core/Control",
-    "sap/ui/core/format/NumberFormat",
-    "sap/ui/model/FormatException",
-    "sap/ui/model/ParseException",
-    "sap/ui/model/ValidateException",
-    "sap/ui/model/type/Float",
-    "sap/ui/model/odata/type/Decimal",
-    "sap/ui/model/odata/type/ODataType",
-    "sap/ui/test/TestUtils",
-    "sap/base/Log"
-], function(
-    jQuery,
-	Control,
-	NumberFormat,
-	FormatException,
-	ParseException,
-	ValidateException,
-	Float,
-	Decimal,
-	ODataType,
-	TestUtils,
-	Log
-) {
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/ui/core/Control",
+	"sap/ui/core/format/NumberFormat",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
+	"sap/ui/model/odata/type/Decimal",
+	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/model/type/Float",
+	"sap/ui/test/TestUtils"
+], function (jQuery, Log, Control, NumberFormat, FormatException, ParseException, ValidateException,
+		Decimal, ODataType, Float, TestUtils) {
 	/*global QUnit, sap, sinon */
 	"use strict";
 

@@ -6,19 +6,12 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
-	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
+	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/thirdparty/jquery"
-], function(
-	Log,
-	DateFormat,
-	FormatException,
-	ODataType,
-	ParseException,
-	ValidateException,
-	jQuery
-) {
+], function (Log, DateFormat, FormatException, ParseException, ValidateException, ODataType,
+		jQuery) {
 	"use strict";
 
 	var iFullYear = new Date().getFullYear(),
