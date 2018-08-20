@@ -723,6 +723,7 @@
 	&.sapUiRespGrid.sapUiRespGridHSpace1 > div {
 		&:first-child {
 			height: auto;
+			padding-top: 0;
 		}
 	}
 }
@@ -743,16 +744,12 @@
 	.sapUiColorPicker-ColorPickerOldColor {
 		height: 2.84rem;
 	}
-  .phoneSliders > div:nth-child(3) {
-	text-align: center; //center the "hex value"
+	.phoneSliders > div:nth-child(3) {
+		text-align: center; //center the "hex value"
 	}
 }
-
-.sapUiPopupWithPadding .sapMDialogScrollCont {
+.sapUiPopupWithPadding.colorPickerDialog .sapMDialogScrollCont {
 	padding: 0;
-	.sapUiRespGrid.sapUiRespGridHSpace1 > div:first-child {
-		padding-top: 0;
-	}
 }
 .sapMPopover .sapUiColorPicker-ColorPickerMatrix.sapUiRespGrid.sapUiRespGridHSpace1 {
 	padding-bottom: 0.5rem;
