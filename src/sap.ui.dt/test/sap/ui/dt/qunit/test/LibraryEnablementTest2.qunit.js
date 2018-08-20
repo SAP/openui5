@@ -8,10 +8,10 @@ function(
 ) {
 	"use strict";
 
-	QUnit.module("Given that a sap.ui.layout Library is tested", {
+	QUnit.module("Given that a sap.ui.testLibrary Library is tested", {
 		beforeEach: function() {
 			this.oLibraryEnablementTest2 = new LibraryEnablementTest2();
-			this.aLibraries = ["sap.ui.layout"];
+			this.aLibraries = ["sap.ui.testLibrary"];
 		},
 		afterEach: function() {
 			this.oLibraryEnablementTest2.destroy();
@@ -22,7 +22,7 @@ function(
 
 			this.oLibraryEnablementTest2.run(this.aLibraries).then(function(oResult) {
 				assert.ok(oResult, "A result is returned");
-				assert.ok(oResult.results.length > 1, "Library Test was successfully performed");
+				assert.ok(oResult.results.length > 0, "Library Test was successfully performed");
 				done();
 			});
 		});
