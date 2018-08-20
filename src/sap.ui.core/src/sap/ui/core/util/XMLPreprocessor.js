@@ -1047,7 +1047,7 @@ sap.ui.define([
 			 *   a JavaScript object which is identified by a sequence of names
 			 */
 			function getObject(sName) {
-				// Note: jQuery.sap.getObject("", ...) === undefined
+				// Note: ObjectPath.get("", ...) === undefined
 				return sName && sName.charAt(0) === "."
 					? ObjectPath.get(sName.slice(1), oScope)
 					: ObjectPath.get(sName || "", oScope) || ObjectPath.get(sName || "");
@@ -1303,7 +1303,7 @@ sap.ui.define([
 					if (!oViewInfo.sync) {
 						// map dot-separated module names to slash-separated Unified Resource Names
 						aURNs = aModuleNames.map(function (sModuleName) {
-							return jQuery.sap.getResourceName(sModuleName, /*sSuffix*/"");
+							return sModuleName.replace(/\./g, "/");
 						});
 						return asyncRequire();
 					}

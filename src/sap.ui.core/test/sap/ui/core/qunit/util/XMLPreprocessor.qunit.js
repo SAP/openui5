@@ -3718,9 +3718,7 @@ sap.ui.require([
 				'</mvc:View>'
 			];
 
-		this.oJQuerySapMock.expects("getResourceName").withExactArgs("foo.Helper", "")
-			.returns("~");
-		this.expectRequire(true, ["~"], function () {
+		this.expectRequire(true, ["foo/Helper"], function () {
 			window.foo = {
 				Helper : {
 					bar : function (vValue) {
