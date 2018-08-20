@@ -101,7 +101,7 @@ sap.ui.define([
 			return true;
 		}
 
-		if (sControlName === "sap.m.OnePersonGrid" && sPropertyName === "startDate") {
+		if (sControlName === "sap.m.SinglePlanningCalendarGrid" && sPropertyName === "startDate") {
 			return true;
 		}
 	};
