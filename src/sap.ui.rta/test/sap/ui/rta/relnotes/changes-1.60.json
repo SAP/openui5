@@ -19,6 +19,18 @@
         "type": "FIX",
         "text": "sap.ui.rta - Evaluate AddOData Action after MetaModel is loaded",
         "references": []
+      },
+      {
+        "id": "88480d7accd91bea28a38a80ff3d348269296fa5",
+        "type": "FIX",
+        "text": " Suppress undefined selector in composite command",
+        "references": []
+      },
+      {
+        "id": "a7fdfd623e34cea5c34df5e02f3650efaf6f98a8",
+        "type": "FIX",
+        "text": "sap.ui.rta - Combine plugin not considering triggering element",
+        "references": []
       }
     ]
   }

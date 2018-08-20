@@ -103,6 +103,132 @@
         "type": "FIX",
         "text": "sap.m - Table Designtime DomRef definition for items aggregation",
         "references": []
+      },
+      {
+        "id": "6c68dc89ab4e92beba9f31a9e12a254df539bfa8",
+        "type": "FEATURE",
+        "text": " sap.m.SearchField: on input suggestion event is now fired after 400ms",
+        "references": []
+      },
+      {
+        "id": "de5420ca6554b48e1a2c2e52bac61f28939e6c1e",
+        "type": "FEATURE",
+        "text": " sap.ui.support: System Presets introduced and new System Accessibility Preset added",
+        "references": []
+      },
+      {
+        "id": "176955626306bb3fe08801671e1ddfc4c0bb311c",
+        "type": "FIX",
+        "text": " FacetFilter: Focus moves out of the reset button on second TAB",
+        "references": []
+      },
+      {
+        "id": "9c8351e7c6aa2112e050dc34f1f63f45c60cb4c9",
+        "type": "FIX",
+        "text": " OverflowToolbar: Cleared focus info upon focus leave",
+        "references": []
+      },
+      {
+        "id": "378e28fecd6b580cd11d443138c604104f538c5b",
+        "type": "FIX",
+        "text": " m.routing: call TargetHandler in Targets instead of Router",
+        "references": []
+      },
+      {
+        "id": "046c1dc5edf641150b8f84751f2094d2d22107b5",
+        "type": "FIX",
+        "text": " sap.m.BusyDialog: Busy information now read out",
+        "references": []
+      },
+      {
+        "id": "ec9aa89f20429194d66c6349850fd38b7514a40a",
+        "type": "FIX",
+        "text": " sap.m.BusyDialog: The dialog is now closing correctly",
+        "references": []
+      },
+      {
+        "id": "c465549f731286019bcc890895c1b106a7484a11",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Type conversion removed",
+        "references": []
+      },
+      {
+        "id": "f5bb1a33cf0678bc94c35ed9642190ffd30d76e2",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Popup is now correctly displayed",
+        "references": []
+      },
+      {
+        "id": "d0b25af570ff741395194cd17d6e93842e0675ee",
+        "type": "FIX",
+        "text": " sap.m.Dialog: ESC key sets \u0027origin\u0027 event parameter correctly",
+        "references": []
+      },
+      {
+        "id": "e7ec2a592f1aa5264fe26d07d1999543a6c40b8d",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: search with relative item binding works now.",
+        "references": []
+      },
+      {
+        "id": "91de7734e533cbe5142372fc99f5002ab9ffa412",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Padding corrected",
+        "references": []
+      },
+      {
+        "id": "154fb0e7cfd113088bcf88bb28489767d50c9bdd",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: doesn\u0027t wrap in ObjectPageHeaderContent in IE",
+        "references": []
+      },
+      {
+        "id": "46848fb5fe0c5239e0ab0c50f9f9673cae7d76d0",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: button is not cut when displaying two months and years in Bulgarian",
+        "references": []
+      },
+      {
+        "id": "fdb8e9bf8d5e0bbd8355b5263b12d61f9304ef38",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
+        "references": []
+      },
+      {
+        "id": "dbc6881b0cc013e72afb720e697d70f955e1f9de",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Suggestions width is now correct",
+        "references": []
+      },
+      {
+        "id": "6e772d8c336455be807f9d99d233c9afa81e44fc",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed sample to follow Fiori Guidelines",
+        "references": []
+      },
+      {
+        "id": "d436cc21ce29392eb8f0fb3e27775b37ff4c105c",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed sample to follow Fiori Guidelines",
+        "references": []
+      },
+      {
+        "id": "5454828a2227db0ec2e2081bcf4e558a30d3af3a",
+        "type": "FIX",
+        "text": " sap.m.Select: Rendering QUnits fixed for Edge",
+        "references": []
+      },
+      {
+        "id": "bbd433ebf781add103a6d9f9d0a4210e7429cd45",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: busyIndicatorDelay propagation fixed",
+        "references": []
+      },
+      {
+        "id": "c63a7101637e149c87c336b060759bb5ab2d2a8b",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : Uploaded files were showing incorrect size so set property binaryFilesize as true so that file size formating uses base 2.",
+        "references": []
       }
     ]
   }

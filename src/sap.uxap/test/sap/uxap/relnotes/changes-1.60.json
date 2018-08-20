@@ -13,6 +13,18 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectImageHelper: Setting image alt via property setter",
         "references": []
+      },
+      {
+        "id": "9b23babc9e99562d8edb6cc6c411a153a6189f47",
+        "type": "FIX",
+        "text": " AnchorBar: Overlapping MenuButton\u0027s text is fixed",
+        "references": []
+      },
+      {
+        "id": "0fca36349b6718e55e7756ddf93d034c6c92df3a",
+        "type": "FIX",
+        "text": " uxap.AnchorBar: Custom button in sub-section behavior fixed",
+        "references": []
       }
     ]
   }

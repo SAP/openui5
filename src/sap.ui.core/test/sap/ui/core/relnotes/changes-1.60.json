@@ -19,6 +19,36 @@
         "type": "FIX",
         "text": " v2.ODataAnnotations: don\u0027t cache invalid annotations",
         "references": []
+      },
+      {
+        "id": "93d2c0b3deb45a420d3f37dafd5a8df2c761e025",
+        "type": "FEATURE",
+        "text": " Fragment: Fragment.load API",
+        "references": []
+      },
+      {
+        "id": "52f4ee4441ebb01f3df8fa70fd135346647360e2",
+        "type": "FEATURE",
+        "text": " ManagedObject: support hidden properties and associations",
+        "references": []
+      },
+      {
+        "id": "a08675d8c87fb70c39f5e03e980b81aada06d737",
+        "type": "FIX",
+        "text": " ODataTreeBindingAdapter.expandNodeToLevel: Only expand nodes above given level",
+        "references": []
+      },
+      {
+        "id": "e6d5a41f0574a672aaa075357c364c7105cb53d2",
+        "type": "FIX",
+        "text": " Register ui5loader modules synchronously",
+        "references": []
+      },
+      {
+        "id": "fd676efe8c0d10edc705db8e848e7b02d5e325ac",
+        "type": "FIX",
+        "text": " routing.HashChanager: reset the initialized flag after destroy",
+        "references": []
       }
     ]
   }
