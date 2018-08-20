@@ -166,7 +166,7 @@
 				<Parameter Name="SalesOrder" Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder" Nullable="false" />
 				<ReturnType Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder" Nullable="false" />
 			</Action>
-			<Action Name="SalesOrder_Confirm" IsBound="true">
+			<Action Name="SalesOrder_Confirm" EntitySetPath="SalesOrder" IsBound="true">
 				<Parameter Name="SalesOrder" Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder" Nullable="false" />
 				<ReturnType Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder" Nullable="false" />
 			</Action>

@@ -2,28 +2,18 @@
  * ${copyright}
  */
 sap.ui.require([
-    "jquery.sap.global",
-    "sap/ui/core/Control",
-    "sap/ui/core/format/DateFormat",
-    "sap/ui/model/FormatException",
-    "sap/ui/model/ParseException",
-    "sap/ui/model/ValidateException",
-    "sap/ui/model/odata/type/ODataType",
-    "sap/ui/model/odata/type/TimeOfDay",
-    "sap/ui/test/TestUtils",
-    "sap/base/Log"
-], function(
-    jQuery,
-	Control,
-	DateFormat,
-	FormatException,
-	ParseException,
-	ValidateException,
-	ODataType,
-	TimeOfDay,
-	TestUtils,
-	Log
-) {
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/ui/core/Control",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
+	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/model/odata/type/TimeOfDay",
+	"sap/ui/test/TestUtils"
+], function (jQuery, Log, Control, DateFormat, FormatException, ParseException, ValidateException,
+		ODataType, TimeOfDay, TestUtils) {
 	/*global QUnit */
 	"use strict";
 

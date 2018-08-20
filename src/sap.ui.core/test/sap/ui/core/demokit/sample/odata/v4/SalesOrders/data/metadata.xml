@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value">
-		<edmx:Include Namespace="Org.OData.Core.V1" Alias="Core"/>
-	</edmx:Reference>
 	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_XJG',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="Z__UI" />
 		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Z__COM" />
@@ -35,7 +32,7 @@
 				<NavigationProperty Name="BP_2_PRODUCT" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Product)" />
 				<NavigationProperty Name="BP_2_SO" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder)" />
 				<!-- TODO define property messagesInSalesOrder; TODO add new type for messages -->
-				<Annotation Term="Core.Messages">
+				<Annotation Term="SAP__common.Messages">
 					<Path>messagesInBusinessPartner</Path>
 				</Annotation>
 			</EntityType>
@@ -124,7 +121,7 @@
 				</NavigationProperty>
 				<NavigationProperty Name="SO_2_SOITEM" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.SOLineItem)" Partner="SOITEM_2_SO" ContainsTarget="true" />
 				<!-- TODO define property messagesInSalesOrder; TODO add new type for messages -->
-				<Annotation Term="Core.Messages">
+				<Annotation Term="SAP__common.Messages">
 					<Path>messagesInSalesOrder</Path>
 				</Annotation>
 			</EntityType>
@@ -149,7 +146,7 @@
 				<NavigationProperty Name="SOITEM_2_SCHDL" Type="com.sap.gateway.default.zui5_epm_sample.v0002.ItemSchedule" Nullable="false" ContainsTarget="true" />
 				<NavigationProperty Name="SOITEM_2_SO" Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder" Nullable="false" />
 				<!-- TODO define property messagesInSalesOrderLineItem; TODO add new type for messages -->
-				<Annotation Term="Core.Messages">
+				<Annotation Term="SAP__common.Messages">
 					<Path>messagesInSalesOrderLineItem</Path>
 				</Annotation>
 			</EntityType>

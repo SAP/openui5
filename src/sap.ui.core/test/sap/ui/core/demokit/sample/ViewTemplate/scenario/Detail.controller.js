@@ -1,8 +1,9 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/mvc/Controller'],
-	function(Controller) {
+sap.ui.define([
+	"sap/ui/core/mvc/Controller"
+], function (Controller) {
 	"use strict";
 
 	var DetailController = Controller.extend("sap.ui.core.sample.ViewTemplate.scenario.Detail", {

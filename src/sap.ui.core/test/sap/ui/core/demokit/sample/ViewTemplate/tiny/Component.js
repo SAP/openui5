@@ -8,15 +8,15 @@
  * @version @version@
  */
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/m/MessageBox',
-	'sap/m/Title',
-	'sap/m/VBox',
-	'sap/ui/core/TitleLevel',
-	'sap/ui/core/UIComponent',
-	'sap/ui/core/mvc/View',
-	'sap/ui/core/mvc/ViewType',
-	'sap/ui/model/odata/v2/ODataModel'
+	"jquery.sap.global",
+	"sap/m/MessageBox",
+	"sap/m/Title",
+	"sap/m/VBox",
+	"sap/ui/core/TitleLevel",
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/ViewType",
+	"sap/ui/model/odata/v2/ODataModel"
 ], function (jQuery, MessageBox, Title, VBox, TitleLevel, UIComponent, View, ViewType, ODataModel) {
 	"use strict";
 

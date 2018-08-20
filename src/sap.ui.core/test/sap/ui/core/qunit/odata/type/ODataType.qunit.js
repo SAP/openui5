@@ -2,11 +2,11 @@
  * ${copyright}
  */
 sap.ui.require([
-    "jquery.sap.global",
-    "sap/ui/model/SimpleType",
-    "sap/ui/model/odata/type/ODataType",
-    "sap/base/Log"
-], function(jQuery, SimpleType, ODataType, Log) {
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/ui/model/SimpleType",
+	"sap/ui/model/odata/type/ODataType"
+], function (jQuery, Log, SimpleType, ODataType) {
 	/*global QUnit */
 	"use strict";
 

@@ -8,10 +8,10 @@
  * @version @version@
  */
 sap.ui.define([
-		'sap/ui/core/UIComponent',
-		'sap/ui/test/TestUtils',
-		'sap/ui/thirdparty/sinon'
-	], function (UIComponent, TestUtils, sinon) {
+	"sap/ui/core/UIComponent",
+	"sap/ui/test/TestUtils",
+	"sap/ui/thirdparty/sinon"
+], function (UIComponent, TestUtils, sinon) {
 	"use strict";
 
 	var Component = UIComponent.extend("sap.ui.core.sample.common.Component", {

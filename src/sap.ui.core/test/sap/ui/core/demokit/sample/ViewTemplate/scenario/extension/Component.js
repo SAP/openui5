@@ -7,8 +7,8 @@
  * @version @version@
  */
 sap.ui.define([
-		'sap/ui/core/sample/ViewTemplate/scenario/Component'
-	], function (BaseComponent) {
+	"sap/ui/core/sample/ViewTemplate/scenario/Component"
+], function (BaseComponent) {
 	"use strict";
 
 	function fragment(sFileName) {

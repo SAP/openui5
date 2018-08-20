@@ -3,23 +3,15 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/format/DateFormat',
-	'sap/ui/model/FormatException',
-	'sap/ui/model/odata/type/ODataType',
-	'sap/ui/model/ParseException',
-	'sap/ui/model/ValidateException',
 	"sap/base/Log",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
+	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/thirdparty/jquery"
-],
-	function(
-		DateFormat,
-		FormatException,
-		ODataType,
-		ParseException,
-		ValidateException,
-		Log,
-		jQuery
-	) {
+], function (Log, DateFormat, FormatException, ParseException, ValidateException, ODataType,
+		jQuery) {
 	"use strict";
 
 	var rDate = /\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])/,

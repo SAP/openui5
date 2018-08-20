@@ -3,12 +3,11 @@
  */
 sap.ui.require([
 	"sap/ui/core/sample/common/Helper",
-	"sap/ui/test/actions/EnterText",
-	"sap/ui/test/actions/Press",
 	"sap/ui/test/Opa5",
-	"sap/ui/test/TestUtils"
-],
-function (Helper, EnterText, Press, Opa5, TestUtils) {
+	"sap/ui/test/TestUtils",
+	"sap/ui/test/actions/EnterText",
+	"sap/ui/test/actions/Press"
+], function (Helper, Opa5, TestUtils, EnterText, Press) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.ViewTemplate.types.Types";
 

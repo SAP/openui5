@@ -2,26 +2,17 @@
  * ${copyright}
  */
 sap.ui.require([
-    "jquery.sap.global",
-    "sap/ui/base/BindingParser",
-    "sap/ui/base/ExpressionParser",
-    "sap/ui/core/Icon",
-    "sap/ui/model/json/JSONModel",
-    "sap/ui/model/odata/ODataUtils",
-    "sap/base/util/JSTokenizer",
-    "sap/base/Log",
-    "sap/ui/performance/Measurement"
-], function(
-    jQuery,
-	BindingParser,
-	ExpressionParser,
-	Icon,
-	JSONModel,
-	ODataUtils,
-	JSTokenizer,
-	Log,
-	Measurement
-) {
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/base/util/JSTokenizer",
+	"sap/ui/base/BindingParser",
+	"sap/ui/base/ExpressionParser",
+	"sap/ui/core/Icon",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/performance/Measurement"
+], function (jQuery, Log, JSTokenizer, BindingParser, ExpressionParser, Icon, JSONModel, ODataUtils,
+		Measurement) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";

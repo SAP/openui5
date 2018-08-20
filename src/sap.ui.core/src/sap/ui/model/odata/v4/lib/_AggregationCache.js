@@ -4,14 +4,14 @@
 
 //Provides class sap.ui.model.odata.v4.lib._AggregationCache
 sap.ui.define([
-	"sap/ui/base/SyncPromise",
-	"sap/base/Log",
 	"./_AggregationHelper",
 	"./_Cache",
 	"./_Helper",
 	"./_Parser",
+	"sap/base/Log",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/thirdparty/jquery"
-], function (SyncPromise, Log, _AggregationHelper, _Cache, _Helper, _Parser, jQuery) {
+], function (_AggregationHelper, _Cache, _Helper, _Parser, Log, SyncPromise, jQuery) {
 	"use strict";
 
 	var rComma = /,|%2C|%2c/,

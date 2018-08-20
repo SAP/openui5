@@ -2,22 +2,21 @@
  * ${copyright}
  */
 sap.ui.define([
-		'sap/m/Dialog',
-		'sap/m/MessageBox',
-		'sap/m/MessageItem',
-		'sap/m/MessagePopover',
-		'sap/m/MessageToast',
-		'sap/ui/core/format/DateFormat',
-		'sap/ui/core/Item',
-		'sap/ui/core/MessageType',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/Filter',
-		'sap/ui/model/FilterOperator',
-		'sap/ui/model/FilterType',
-		'sap/ui/model/json/JSONModel',
-		'sap/ui/model/Sorter'
-], function (Dialog, MessageBox, MessageItem, MessagePopover, MessageToast, DateFormat, Item,
-		MessageType, Controller, Filter, FilterOperator, FilterType, JSONModel, Sorter) {
+	"sap/m/Dialog",
+	"sap/m/MessageBox",
+	"sap/m/MessageItem",
+	"sap/m/MessagePopover",
+	"sap/m/MessageToast",
+	"sap/ui/core/Item",
+	"sap/ui/core/MessageType",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/FilterType",
+	"sap/ui/model/Sorter"
+], function (Dialog, MessageBox, MessageItem, MessagePopover, MessageToast, Item, MessageType,
+		DateFormat, Controller, Filter, FilterOperator, FilterType, Sorter) {
 	"use strict";
 
 	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"}),

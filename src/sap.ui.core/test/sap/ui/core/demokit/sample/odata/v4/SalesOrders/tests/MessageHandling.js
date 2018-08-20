@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/core/MessageType',
+	"sap/ui/core/MessageType",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/TestUtils"
 ], function (MessageType, Opa5, TestUtils) {

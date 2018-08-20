@@ -3,12 +3,12 @@
  */
 
 sap.ui.define([
-		"sap/ui/core/Core",
-		"sap/ui/thirdparty/URI",
-		"sap/base/util/UriParameters",
-		"sap/base/Log",
-		"jquery.sap.sjax"
-], function(Core, URI, UriParameters, Log, jQuery) {
+	"jquery.sap.sjax",
+	"sap/base/Log",
+	"sap/base/util/UriParameters",
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/URI"
+], function (jQuery, Log, UriParameters, Core, URI) {
 	"use strict";
 	/*global QUnit, sinon */
 	// Note: The dependency to Sinon.JS has been omitted deliberately. Most test files load it via

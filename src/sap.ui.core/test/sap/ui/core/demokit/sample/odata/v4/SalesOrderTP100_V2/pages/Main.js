@@ -5,8 +5,7 @@ sap.ui.require([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Interactable"
-],
-function (Opa5, Press, Interactable) {
+], function (Opa5, Press, Interactable) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.odata.v4.SalesOrderTP100_V2.Main";
 

@@ -2,13 +2,12 @@
  * ${copyright}
  */
 sap.ui.require([
-    "jquery.sap.global",
-    "sap/ui/model/odata/v4/lib/_V2MetadataConverter",
-    "sap/ui/test/TestUtils",
-    "sap/base/Log",
-    // needed to have jQuery.sap.parseXML
-	"jquery.sap.xml"
-], function(jQuery, _V2MetadataConverter, TestUtils, Log/*, jQuerySapXml*/) {
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/ui/model/odata/v4/lib/_V2MetadataConverter",
+	"sap/ui/test/TestUtils",
+	"jquery.sap.xml" // jQuery.sap.parseXML()
+], function (jQuery, Log, _V2MetadataConverter, TestUtils/*, jQuerySapXml*/) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";

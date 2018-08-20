@@ -54,8 +54,8 @@
 					Type="com.sap.gateway.default.iwbep.tea_busi.v0001.MANAGER"/>
 				<NavigationProperty Name="EMPLOYEE_2_TEAM" Type="com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM"
 					Nullable="false"/>
-				<Property Name="__FAKE__Messages" Type="Collection(SAP__self.__FAKE__Message)" />
-				<Annotation Term="Org.OData.Core.V1.Messages" Path="__FAKE__Messages" />
+				<Property Name="__CT__FAKE__Message" Type="SAP__self.__CT__FAKE__Message" />
+				<Annotation Term="com.sap.vocabularies.Common.v1.Messages" Path="__CT__FAKE__Message/__FAKE__Messages" />
 			</EntityType>
 			<EntityType Name="EQUIPMENT">
 				<Key>
@@ -125,6 +125,9 @@
 				<Property Name="transition" Type="Edm.Boolean" Nullable="false" />
 				<Property Name="numericSeverity" Type="Edm.Byte" Nullable="false" />
 				<Property Name="longtextUrl" Type="Edm.String" Nullable="true" />
+			</ComplexType>
+			<ComplexType Name="__CT__FAKE__Message">
+				<Property Name="__FAKE__Messages" Type="Collection(SAP__self.__FAKE__Message)" Nullable="false" />
 			</ComplexType>
 			<Action Name="AcChangeManagerOfDepartment" IsBound="true">
 				<Parameter Name="DEPARTMENT" Type="com.sap.gateway.default.iwbep.tea_busi.v0001.Department"

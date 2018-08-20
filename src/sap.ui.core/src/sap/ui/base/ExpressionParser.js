@@ -3,13 +3,13 @@
  */
 
 sap.ui.define([
-	'sap/ui/thirdparty/URI',
-	"sap/base/util/JSTokenizer",
-	"sap/base/util/deepEqual",
-	'sap/base/strings/escapeRegExp',
 	"sap/base/Log",
-	"sap/ui/performance/Measurement"
-], function(URI, JSTokenizer, deepEqual, escapeRegExp, Log, Measurement) {
+	"sap/base/strings/escapeRegExp",
+	"sap/base/util/deepEqual",
+	"sap/base/util/JSTokenizer",
+	"sap/ui/performance/Measurement",
+	"sap/ui/thirdparty/URI"
+], function (Log, escapeRegExp, deepEqual, JSTokenizer, Measurement, URI) {
 	"use strict";
 
 	//SAP's Independent Implementation of "Top Down Operator Precedence" by Vaughan R. Pratt,

@@ -4,20 +4,20 @@
 
 //Provides class sap.ui.model.odata.v4.lib._Cache
 sap.ui.define([
-	"sap/ui/base/SyncPromise",
-	"sap/ui/thirdparty/URI",
 	"./_GroupLock",
 	"./_Helper",
 	"./_Requestor",
 	"sap/base/Log",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/thirdparty/jquery"
-], function (SyncPromise, URI, _GroupLock, _Helper, _Requestor, Log, jQuery) {
+], function (_GroupLock, _Helper, _Requestor, Log, SyncPromise, jQuery) {
 	"use strict";
 
+	var sMessagesAnnotation = "@com.sap.vocabularies.Common.v1.Messages",
 		// Matches two cases:  segment with predicate or simply predicate:
 		//   EMPLOYEE(ID='42') -> aMatches[1] === "EMPLOYEE", aMatches[2] === "(ID='42')"
 		//   (ID='42') ->  aMatches[1] === "",  aMatches[2] === "(ID='42')"
-	var rSegmentWithPredicate = /^([^(]*)(\(.*\))$/;
+		rSegmentWithPredicate = /^([^(]*)(\(.*\))$/;
 
 	/**
 	 * Adds the given delta to the collection's $count if there is one.
@@ -453,9 +453,9 @@ sap.ui.define([
 	/**
 	 * Fetches the type from the metadata for the root entity plus all types for $expand and puts
 	 * them into a map from meta path to type. Checks the types' key properties and puts their types
-	 * into the map, too, if they are complex. If a type has an "@Org.OData.Core.V1.Messages"
-	 * annotation for messages, the type is enriched by the property "@Org.OData.Core.V1.Messages"
-	 * containing the annotation object.
+	 * into the map, too, if they are complex. If a type has a
+	 * "@com.sap.vocabularies.Common.v1.Messages" annotation for messages, the type is enriched by
+	 * the property "@com.sap.vocabularies.Common.v1.Messages" containing the annotation object.
 	 *
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved with a map from resource path + entity path to the type
@@ -493,11 +493,11 @@ sap.ui.define([
 		function fetchType(sMetaPath) {
 			aPromises.push(that.oRequestor.fetchTypeForPath(sMetaPath).then(function (oType) {
 				var oMessageAnnotation = that.oRequestor
-						.fetchMetadata(sMetaPath + "/@Org.OData.Core.V1.Messages").getResult();
+						.fetchMetadata(sMetaPath + "/" + sMessagesAnnotation).getResult();
 
 				if (oMessageAnnotation) {
 					oType = Object.create(oType);
-					oType["@Org.OData.Core.V1.Messages"] = oMessageAnnotation;
+					oType[sMessagesAnnotation] = oMessageAnnotation;
 				}
 
 				mTypeForMetaPath[sMetaPath] = oType;
@@ -548,6 +548,22 @@ sap.ui.define([
 			return isSubPath(sRequestPath, sPath);
 		}) || Object.keys(this.mPostRequests).some(function (sRequestPath) {
 			return isSubPath(sRequestPath, sPath);
+		});
+	};
+
+	/**
+	 * Patches the cache at the given path with the given data.
+	 *
+	 * @param {string} sPath The path
+	 * @param {object} oData The data to patch with
+	 *
+	 * @private
+	 */
+	Cache.prototype.patch = function (sPath, oData) {
+		var that = this;
+
+		this.fetchValue(_GroupLock.$cached, sPath).then(function (oCacheValue) {
+			_Helper.updateCache(that.mChangeListeners, sPath, oCacheValue, oData);
 		});
 	};
 
@@ -900,13 +916,20 @@ sap.ui.define([
 		 */
 		function visitInstance(oInstance, sMetaPath, sInstancePath, sContextUrl, bCollection) {
 			var oType = mTypeForMetaPath[sMetaPath],
-				sMessageProperty = oType && oType["@Org.OData.Core.V1.Messages"]
-					&& oType["@Org.OData.Core.V1.Messages"].$Path;
+				sMessageProperty = oType && oType[sMessagesAnnotation]
+					&& oType[sMessagesAnnotation].$Path,
+				aMessages;
 
 			sContextUrl = buildContextUrl(sContextUrl, oInstance["@odata.context"]);
 			that.calculateKeyPredicate(oInstance, mTypeForMetaPath, sMetaPath);
 			if (bCollection) {
 				sInstancePath += _Helper.getPrivateAnnotation(oInstance, "predicate");
+			}
+			if (sMessageProperty) {
+				aMessages = _Helper.drillDown(oInstance, sMessageProperty.split("/"));
+				if (aMessages !== undefined) {
+					addMessages(aMessages, sInstancePath, sContextUrl);
+				}
 			}
 
 			Object.keys(oInstance).forEach(function (sProperty) {
@@ -920,9 +943,6 @@ sap.ui.define([
 				}
 				if (sProperty.includes("@")) { // ignore other annotations
 					return;
-				}
-				if (sProperty === sMessageProperty) {
-					addMessages(vPropertyValue, sInstancePath, sContextUrl);
 				}
 				if (Array.isArray(vPropertyValue)) {
 					// compute count

@@ -2,8 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/model/odata/type/DateTimeBase', "sap/base/Log"],
-	function(DateTimeBase, Log) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/model/odata/type/DateTimeBase"
+], function (Log, DateTimeBase) {
 	"use strict";
 
 	/**

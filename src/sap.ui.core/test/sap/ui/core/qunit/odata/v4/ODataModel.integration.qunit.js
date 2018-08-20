@@ -2,42 +2,27 @@
  * ${copyright}
  */
 sap.ui.require([
-    "jquery.sap.global",
-    "sap/m/ColumnListItem",
-    "sap/m/CustomListItem",
-    "sap/m/Text",
-    "sap/ui/core/mvc/Controller",
-    "sap/ui/core/mvc/View",
-    "sap/ui/model/ChangeReason",
-    "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator",
-    "sap/ui/model/odata/OperationMode",
-    "sap/ui/model/odata/v4/AnnotationHelper",
-    "sap/ui/model/odata/v4/ODataListBinding",
-    "sap/ui/model/odata/v4/ODataModel",
-    "sap/ui/model/Sorter",
-    "sap/ui/test/TestUtils",
-    "sap/base/Log",
-    // load Table resources upfront to avoid loading times > 1 second for the first test using Table
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/m/ColumnListItem",
+	"sap/m/CustomListItem",
+	"sap/m/Text",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/mvc/View",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/odata/OperationMode",
+	"sap/ui/model/odata/v4/AnnotationHelper",
+	"sap/ui/model/odata/v4/ODataListBinding",
+	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/test/TestUtils",
+	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function(
-    jQuery,
-	ColumnListItem,
-	CustomListItem,
-	Text,
-	Controller,
-	View,
-	ChangeReason,
-	Filter,
-	FilterOperator,
-	OperationMode,
-	AnnotationHelper,
-	ODataListBinding,
-	ODataModel,
-	Sorter,
-	TestUtils,
-	Log
-) {
+], function (jQuery, Log, ColumnListItem, CustomListItem, Text, Controller, View, ChangeReason,
+		Filter, FilterOperator, Sorter, OperationMode, AnnotationHelper, ODataListBinding,
+		ODataModel, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0 */
 	"use strict";
@@ -1273,7 +1258,8 @@ sap.ui.require([
 	QUnit.test("Absolute ODLB refresh", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
-<Table id="table" items="{path : \'/EMPLOYEES\', parameters : {$select : \'__FAKE__Messages\'}}">\
+<Table id="table" items="{path : \'/EMPLOYEES\', \
+		parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="name" text="{Name}" />\
@@ -1281,11 +1267,12 @@ sap.ui.require([
 </Table>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES?$select=ID,Name,__FAKE__Messages&$skip=0&$top=100", {
-				"value" : [
-					{
-						"ID": "1",
-						"Name" : "Jonathan Smith",
+		this.expectRequest(
+			"EMPLOYEES?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100", {
+				"value" : [{
+					"ID": "1",
+					"Name" : "Jonathan Smith",
+					"__CT__FAKE__Message" : {
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Text",
@@ -1293,9 +1280,12 @@ sap.ui.require([
 							"target" : "Name",
 							"numericSeverity" : 3
 						}]
-					},
-					{"ID": "2", "Name" : "Frederic Fall", "__FAKE__Messages" : []}
-				]
+					}
+				}, {
+					"ID": "2",
+					"Name" : "Frederic Fall",
+					"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
+				}]
 			})
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
 			.expectMessages([{
@@ -1307,11 +1297,15 @@ sap.ui.require([
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest("EMPLOYEES?$select=ID,Name,__FAKE__Messages&$skip=0&$top=100", {
-					"value" : [
-						{"Name" : "Frederic Fall", "__FAKE__Messages" : []},
-						{"Name" : "Peter Burke", "__FAKE__Messages" : []}
-					]
+			that.expectRequest(
+				"EMPLOYEES?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100", {
+					"value" : [{
+						"Name" : "Frederic Fall",
+						"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
+					}, {
+						"Name" : "Peter Burke",
+						"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
+					}]
 				})
 				.expectChange("name", ["Frederic Fall", "Peter Burke"])
 				.expectMessages([]);
@@ -1329,22 +1323,23 @@ sap.ui.require([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', \
-	parameters : {$select : \'__FAKE__Messages\'}}">\
+	parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 	<Text id="text" text="{Name}" />\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES('2')?$select=ID,Name,__FAKE__Messages", {
+		this.expectRequest("EMPLOYEES('2')?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages", {
 				"ID" : "1",
 				"Name" : "Jonathan Smith",
-				"__FAKE__Messages" : [
-					{
+				"__CT__FAKE__Message" : {
+					"__FAKE__Messages" : [{
 						"code" : "1",
 						"message" : "Text",
 						"transition" : false,
 						"target" : "Name",
 						"numericSeverity" : 3
 					}]
+				}
 			})
 			.expectChange("text", "Jonathan Smith")
 			.expectMessages([{
@@ -1362,7 +1357,8 @@ sap.ui.require([
 				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataContextBinding");
 			that.oLogMock.expects("error").withExactArgs("Failed to read path /EMPLOYEES('2')/Name",
 				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataPropertyBinding");
-			that.expectRequest("EMPLOYEES('2')?$select=ID,Name,__FAKE__Messages", oError)
+			that.expectRequest(
+					"EMPLOYEES('2')?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages", oError)
 				.expectChange("text", null)
 				.expectMessages([{
 					"code": undefined,
@@ -6778,6 +6774,51 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Call an action which returns the binding parameter as return value. Expect that
+	// the result is copied back to the binding parameter.
+	QUnit.test("bound operation: copy result into context", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'42\')}">\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="LifecycleStatusDesc" text="{LifecycleStatusDesc}" />\
+	<FlexBox id="action"\
+		binding="{com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm(...)}">\
+		<layoutData><FlexItemData/></layoutData>\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		that.expectRequest("SalesOrderList('42')?$select=LifecycleStatusDesc,SalesOrderID", {
+				"SalesOrderID" : "42",
+				"LifecycleStatusDesc" : "New"
+			})
+			.expectChange("id", "42")
+			.expectChange("LifecycleStatusDesc", "New");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oOperation = that.oView.byId("action").getObjectBinding();
+
+			that.expectRequest({
+				method : "POST",
+				url : "SalesOrderList('42')/"
+						+ "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
+				payload : {}
+			}, {
+				"SalesOrderID" : "42",
+				"LifecycleStatusDesc" : "Confirmed"
+			})
+			.expectChange("LifecycleStatusDesc", "Confirmed");
+
+			return Promise.all([
+				// code under test
+				oOperation.execute(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Delete return value context obtained from bound action execute.
 	QUnit.test("bound operation: delete return value context", function (assert) {
 		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
@@ -6861,10 +6902,12 @@ sap.ui.require([
 
 		return this.createView(assert, "", oModel).then(function () {
 			that.expectRequest({
-				method: "POST",
-				url: "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction",
-				payload: {}
-			}, {"ArtistID": "42", "IsActiveEntity": false});
+					method: "POST",
+					url: "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction",
+					payload: {}
+				}, {"ArtistID": "42", "IsActiveEntity": false})
+				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)",
+					{"ArtistID": "42", "IsActiveEntity": true});
 
 			return Promise.all([
 				// code under test
@@ -7086,6 +7129,8 @@ sap.ui.require([
 				url : "SalesOrderList('43')/com.sap.gateway.default.zui5_epm_sample"
 					+ ".v0002.SalesOrder_Confirm",
 				payload : {}
+			}, {
+				"SalesOrderID" : "43"
 			});
 
 			return Promise.all([
@@ -7166,7 +7211,7 @@ sap.ui.require([
 	</ColumnListItem>\
 </Table>\
 <Table id="detailTable" items="{path : \'TEAM_2_EMPLOYEES\', \
-		parameters : {$select : \'__FAKE__Messages\'}}">\
+		parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="Name" text="{Name}" />\
@@ -7184,18 +7229,20 @@ sap.ui.require([
 			.expectChange("Name", false);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest("TEAMS('Team_01')/TEAM_2_EMPLOYEES?$select=ID,Name,__FAKE__Messages"
-					+ "&$skip=0&$top=100", {
+			that.expectRequest("TEAMS('Team_01')/TEAM_2_EMPLOYEES"
+					+ "?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100", {
 					value : [{
 						"ID" : "1",
 						"Name" : "Peter Burke",
-						"__FAKE__Messages" : [{
-							"code" : "1",
-							"message" : "Text",
-							"transition" : false,
-							"target" : "Name",
-							"numericSeverity" : 3
-						}]
+						"__CT__FAKE__Message" : {
+							"__FAKE__Messages" : [{
+								"code" : "1",
+								"message" : "Text",
+								"transition" : false,
+								"target" : "Name",
+								"numericSeverity" : 3
+							}]
+						}
 					}]
 				})
 				.expectChange("Name", ["Peter Burke"])
@@ -7211,8 +7258,9 @@ sap.ui.require([
 				that.oView.byId("table").getItems()[0].getBindingContext());
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("TEAMS('Team_02')/TEAM_2_EMPLOYEES?$select=ID,Name,__FAKE__Messages"
-					+ "&$skip=0&$top=100", {value : []})
+			that.expectRequest("TEAMS('Team_02')/TEAM_2_EMPLOYEES"
+					+ "?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100",
+					{value : []})
 				.expectChange("Name", []);
 				// no change in messages
 
@@ -7220,7 +7268,8 @@ sap.ui.require([
 				that.oView.byId("table").getItems()[1].getBindingContext());
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("TEAMS('Team_02')/TEAM_2_EMPLOYEES?$select=ID,Name,__FAKE__Messages"
+			that.expectRequest("TEAMS('Team_02')/TEAM_2_EMPLOYEES"
+					+ "?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages"
 					+ "&$orderby=Name&$skip=0&$top=100", {value : []})
 				.expectMessages([]); // message is gone
 
@@ -7234,7 +7283,8 @@ sap.ui.require([
 	QUnit.test("Delete an entity with messages from an ODataListBinding", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
-<Table id="table" items="{path : \'/EMPLOYEES\', parameters : {$select : \'__FAKE__Messages\'}}">\
+<Table id="table" items="{path : \'/EMPLOYEES\', \
+		parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="name" text="{Name}" />\
@@ -7242,11 +7292,12 @@ sap.ui.require([
 </Table>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES?$select=ID,Name,__FAKE__Messages&$skip=0&$top=100", {
-				"value" : [
-					{
-						"ID": "1",
-						"Name" : "Jonathan Smith",
+		this.expectRequest("EMPLOYEES?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages"
+				+ "&$skip=0&$top=100", {
+				"value" : [{
+					"ID" : "1",
+					"Name" : "Jonathan Smith",
+					"__CT__FAKE__Message" : {
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Text",
@@ -7254,9 +7305,12 @@ sap.ui.require([
 							"target" : "Name",
 							"numericSeverity" : 3
 						}]
-					},
-					{"ID": "2", "Name" : "Frederic Fall", "__FAKE__Messages" : []}
-				]
+					}
+				}, {
+					"ID" : "2",
+					"Name" : "Frederic Fall",
+					"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
+				}]
 			})
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
 			.expectMessages([{
@@ -7288,22 +7342,23 @@ sap.ui.require([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', \
-	parameters : {$select : \'__FAKE__Messages\'}}">\
+	parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 	<Text id="text" text="{Name}" />\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES('2')?$select=ID,Name,__FAKE__Messages", {
+		this.expectRequest("EMPLOYEES('2')?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages", {
 				"ID" : "1",
 				"Name" : "Jonathan Smith",
-				"__FAKE__Messages" : [
-					{
+				"__CT__FAKE__Message" : {
+					"__FAKE__Messages" : [{
 						"code" : "1",
 						"message" : "Text",
 						"transition" : false,
 						"target" : "Name",
 						"numericSeverity" : 3
 					}]
+				}
 			})
 			.expectChange("text", "Jonathan Smith")
 			.expectMessages([{
@@ -7336,8 +7391,8 @@ sap.ui.require([
 			sView = '\
 <FlexBox id="detail" binding="{/TEAMS(\'TEAM_01\')}">\
 	<Text id="Team_Id" text="{Team_Id}" />\
-	<Table id="table" \
-			items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$select : \'__FAKE__Messages\'}}">\
+	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', \
+			parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 		<columns><Column/></columns>\
 		<ColumnListItem>\
 			<Text id="name" text="{Name}" />\
@@ -7347,12 +7402,13 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest("TEAMS('TEAM_01')?$select=Team_Id"
-					+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name,__FAKE__Messages)", {
+					+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name,"
+					+ "__CT__FAKE__Message/__FAKE__Messages)", {
 				"Team_Id" : "TEAM_01",
-				"TEAM_2_EMPLOYEES" : [
-					{
-						"ID": "1",
-						"Name" : "Jonathan Smith",
+				"TEAM_2_EMPLOYEES" : [{
+					"ID": "1",
+					"Name" : "Jonathan Smith",
+					"__CT__FAKE__Message" : {
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Text",
@@ -7360,9 +7416,12 @@ sap.ui.require([
 							"target" : "Name",
 							"numericSeverity" : 3
 						}]
-					},
-					{"ID": "2", "Name" : "Frederic Fall", "__FAKE__Messages" : []}
-				]
+					}
+				}, {
+					"ID": "2",
+					"Name" : "Frederic Fall",
+					"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
+				}]
 			})
 			.expectChange("Team_Id", "TEAM_01")
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
@@ -7396,7 +7455,7 @@ sap.ui.require([
 			sView = '\
 <FlexBox binding="{/Equipments(Category=\'foo\',ID=\'0815\')}">\
 	<FlexBox id="form" binding="{path : \'EQUIPMENT_2_EMPLOYEE\', \
-		parameters : {$select : \'__FAKE__Messages\'}}">\
+		parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 		<layoutData><FlexItemData/></layoutData>\
 		<Text id="text" text="{Name}" />\
 	</FlexBox>\
@@ -7404,19 +7463,22 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest("Equipments(Category='foo',ID='0815')?$select=Category,ID&"
-					+ "$expand=EQUIPMENT_2_EMPLOYEE($select=ID,Name,__FAKE__Messages)", {
+					+ "$expand=EQUIPMENT_2_EMPLOYEE($select=ID,Name,"
+					+ "__CT__FAKE__Message/__FAKE__Messages)", {
 				"Category" : "foo",
 				"ID" : "0815",
 				"EQUIPMENT_2_EMPLOYEE" : {
 					"ID" : "1",
 					"Name" : "Jonathan Smith",
-					"__FAKE__Messages" : [{
-						"code" : "1",
-						"message" : "Text",
-						"transition" : false,
-						"target" : "Name",
-						"numericSeverity" : 3
-					}]
+					"__CT__FAKE__Message" : {
+						"__FAKE__Messages" : [{
+							"code" : "1",
+							"message" : "Text",
+							"transition" : false,
+							"target" : "Name",
+							"numericSeverity" : 3
+						}]
+					}
 				}
 			})
 			.expectChange("text", "Jonathan Smith")

@@ -3,12 +3,12 @@
  */
 //Provides mixin sap.ui.model.odata.v4.lib._V2Requestor
 sap.ui.define([
-	"sap/ui/core/format/DateFormat",
-	"sap/ui/model/odata/ODataUtils",
 	"./_Helper",
 	"./_Parser",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/thirdparty/jquery"
-], function(DateFormat, ODataUtils, _Helper, _Parser, jQuery) {
+], function (_Helper, _Parser, DateFormat, ODataUtils, jQuery) {
 	"use strict";
 
 	var // Example: "/Date(1395705600000)/", matching group: ticks in milliseconds
