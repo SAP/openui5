@@ -2,7 +2,7 @@ sap.ui.define(function() {
 
 	"use strict";
 	return {
-		name: "TestSuite for sap.ui.core: GTP testcase CORE/DATABINDING",
+		name: "TestSuite for sap.ui.core: GTP testcase CORE/XMLMODEL",
 		defaults: {
 			ui5: {
 				language: "en-US"
