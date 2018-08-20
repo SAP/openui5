@@ -9,8 +9,7 @@ sap.ui.define([
 
 	QUnit.module("Support Assistant Rule Presets");
 
-	var ERROR_LOGS_RULE_CHECKBOX_ID = "__xmlview0--analysis--ruleList-rowsel3",
-		MY_SELECTION_TITLE = "My Selection",
+	var	MY_SELECTION_TITLE = "My Selection",
 		EXAMPLE_PRESET_ACCESSIBILITY = "AccessibilityPreset.json",
 		EXAMPLE_PRESET_S4HANA = "S4HanaPreset.json";
 
@@ -183,7 +182,7 @@ sap.ui.define([
 	opaTest("Should be able to switch presets and keep selection", function(Given, When, Then) {
 
 		// change "My Selection" selected rules
-		When.onTheRulesPage.iPressOnTreeTableCheckBox(ERROR_LOGS_RULE_CHECKBOX_ID,  "Rules selection was changed", "Could not change rules selection"); // Error logs - rule
+		When.onTheRulesPage.iPressSelectCheckboxOf("Error logs",  "Rules selection was changed", "Could not change rules selection");
 
 		When.onThePresetsPage.iOpenPresetsPopover();
 
@@ -337,7 +336,7 @@ sap.ui.define([
 
 		When.onThePresetsPage.iPressPresetInPopover(testPreset.title);
 
-		When.onTheRulesPage.iPressOnTreeTableCheckBox(ERROR_LOGS_RULE_CHECKBOX_ID,  "Rules selection was changed", "Could not change rules selection"); // Error logs - rule
+		When.onTheRulesPage.iPressSelectCheckboxOf("Error logs",  "Rules selection was changed", "Could not change rules selection");
 
 		Then.onThePresetsPage.iShouldSeePresetTitleInVariantSelect(testPreset._forTestTitleIfModified);
 
