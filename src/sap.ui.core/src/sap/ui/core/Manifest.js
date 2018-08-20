@@ -177,6 +177,7 @@ sap.ui.define([
 			// apply the manifest related values
 			this._oRawManifest = oManifest;
 			this._bProcess = !(mOptions && mOptions.process === false);
+			this._bAsync = !(mOptions && mOptions.async === false);
 
 			// component name is passed via options (overrides the one defined in manifest)
 			this._sComponentName = mOptions && mOptions.componentName;
@@ -200,42 +201,84 @@ sap.ui.define([
 			// make sure to freeze the raw manifest (avoid manipulations)
 			deepFreeze(this._oRawManifest);
 
-			// placeholder for the processed manifest (i18n translation)
-			// or directly set the reference to the raw manifest if it should
-			// not be processed
-			this._oManifest = this._bProcess ? null : this._oRawManifest;
+			// store the raw manifest for the time being and process the
+			// i18n placeholders in the manifest later
+			// remark: clone the frozen raw manifest to enable changes
+			this._oManifest = jQuery.extend(true, {}, this._oRawManifest);
+
+			// resolve the i18n texts immediately when manifest should be processed
+			if (this._bProcess) {
+				this._processI18n();
+			}
 
 		},
 
-
 		/**
-		 * Replaces template placeholder in manifest with values from
-		 * ResourceBundle referenced in manifest "sap.app/i18n".
+		 * Triggers the processing of the i18n texts to replace them
+		 * with the values from "sap.app/i18n"
 		 *
-		 * @private
+		 * @param {boolean} bAsync true, if the ResourceBundle will be loaded async
+		 * @return {Promise|undefined} when using the API async it will return a Promise which resolves when the texts have been replaced
 		 */
-		_processEntries: function(oManifest) {
+		_processI18n: function(bAsync) {
 
-			var that = this;
-
-			// read out i18n URI, defaults to i18n/i18n.properties
-			var sComponentRelativeI18nUri = (oManifest["sap.app"] && oManifest["sap.app"]["i18n"]) || "i18n/i18n.properties";
-
-			var oResourceBundle;
-
-			processObject(oManifest, function(oObject, sKey, vValue) {
-				oObject[sKey] = vValue.replace(rManifestTemplate, function(sMatch, s1) {
-					// only create a resource bundle if there is something to replace
-					if (!oResourceBundle) {
-						oResourceBundle = ResourceBundle.create({
-							url: that.resolveUri(new URI(sComponentRelativeI18nUri)).toString()
-						});
-					}
-					return oResourceBundle.getText(s1);
-				});
+			// find i18n property paths in the manifest if i18n texts in
+			// the manifest which should be processed
+			var aI18nProperties = [];
+			processObject(this._oManifest, function(oObject, sKey, vValue) {
+				var match = vValue.match(rManifestTemplate);
+				if (match) {
+					aI18nProperties.push({
+						object: oObject,
+						key: sKey
+					});
+				}
 			});
 
-			return oManifest;
+			if (aI18nProperties.length > 0) {
+
+				var fnReplaceI18n = function(oResourceBundle) {
+					var fnReplaceI18nText = function(sMatch, sI18nKey) {
+						return oResourceBundle.getText(sI18nKey);
+					};
+					for (var i = 0, l = aI18nProperties.length; i < l; i++) {
+						var oProperty = aI18nProperties[i];
+						oProperty.object[oProperty.key] = oProperty.object[oProperty.key].replace(rManifestTemplate, fnReplaceI18nText);
+					}
+				};
+
+				if (bAsync) {
+					return this._loadI18n(bAsync).then(fnReplaceI18n);
+				} else {
+					fnReplaceI18n(this._loadI18n(bAsync));
+				}
+
+			} else {
+				return bAsync ? Promise.resolve() : undefined;
+			}
+
+		},
+
+		/**
+		 * Loads the ResourceBundle which is defined in the manifest
+		 * in "sap.app/i18n".
+		 *
+		 * @param {boolean} bAsync flag, whether to load the ResourceBundle async or not
+		 * @return {Promise|ResourceBundle} Promise which resolves with the ResourceBundle (async) or the ResourceBundle itself (sync)
+		 * @private
+		 */
+		_loadI18n: function(bAsync) {
+
+			// extract the i18n URI from the manifest
+			var oManifest = this._oRawManifest,
+				sI18n = (oManifest["sap.app"] && oManifest["sap.app"]["i18n"]) || "i18n/i18n.properties",
+				oI18nURI = new URI(sI18n);
+
+			// load the ResourceBundle relative to the manifest
+			return ResourceBundle.create({
+				url: this.resolveUri(oI18nURI, "manifest").toString(),
+				async: bAsync
+			});
 
 		},
 
@@ -248,13 +291,6 @@ sap.ui.define([
 		 * @public
 		 */
 		getJson: function() {
-			// check if the manifest was already processed
-			// since the processing is done lazy (performance!)
-			if (!this._oManifest) {
-				// clone the frozen raw manifest to enable changes
-				// process manifest and set it as private property
-				this._oManifest = this._processEntries(jQuery.extend(true, {}, this._oRawManifest));
-			}
 			return this._oManifest;
 		},
 
@@ -735,20 +771,19 @@ sap.ui.define([
 			},
 			failOnError: typeof bFailOnError !== "undefined" ? bFailOnError : true
 		});
+
+		var mSettings = {
+			componentName: sComponentName,
+			url: sManifestUrl,
+			process: false
+		};
+
 		if (bAsync) {
 			return oManifestJSON.then(function(oManifestJSON) {
-				return new Manifest(oManifestJSON, {
-					componentName: sComponentName,
-					process: false,
-					url: sManifestUrl
-				});
+				return new Manifest(oManifestJSON, mSettings);
 			});
 		}
-		return new Manifest(oManifestJSON, {
-			componentName: sComponentName,
-			process: false,
-			url: sManifestUrl
-		});
+		return new Manifest(oManifestJSON, mSettings);
 	};
 
 	return Manifest;
