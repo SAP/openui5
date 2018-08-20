@@ -116,4 +116,12 @@ sap.ui.define(['sap/ui/performance/Interaction', 'sap/ui/performance/ResourceTim
 		assert.strictEqual(this.interaction.completeRoundtrips, 2, "only complete requests are counted");
 	});
 
+	QUnit.test("setRequestHeader parameters", function(assert) {
+		var xhr = new XMLHttpRequest();
+		xhr.open("www.sap.com", "GET");
+		xhr.setRequestHeader("header", "value");
+		xhr.setRequestHeader(null, null);
+		assert.ok(true, "no exception was raised on valid parammeters");
+	});
+
 });
