@@ -1,31 +1,16 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta charset="utf-8">
+/*global QUnit */
+sap.ui.define([
+	"sap/ui/model/xml/XMLModel",
+	"sap/ui/model/xml/XMLTreeBinding",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/FilterType",
+	"sap/ui/model/Sorter"
+], function(XMLModel, XMLTreeBinding, Filter, FilterOperator, FilterType, Sorter) {
+	"use strict";
 
-<!-- Initialization -->
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js" data-sap-ui-language="en_US">
-</script>
-
-<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-<!-- Test functions -->
-<script charset="utf-8"> // IE needs this :-/
-
-	var oModel;
-	var testData;
-	var bindings;
-
-	function setup(){
-		// reset bindings
-		bindings = new Array();
-		testData = "<root>" +
+	var testData =
+		"<root>" +
 			"<orgStructure>" +
 				"<level00 name=\"Peter Cliff\" gender=\"male\">" +
 					"<level10 name=\"Inga Horst\" gender=\"female\">" +
@@ -62,97 +47,94 @@
 			"</orgStructureAppControlFilter>" +
 		"</root>";
 
-		oModel = new sap.ui.model.xml.XMLModel();
-		oModel.setXML(testData);
-		sap.ui.getCore().setModel(oModel);
 
-
-	};
-
-	function createTreeBinding(sPath, oContext, aFilters, mParameters, aSorters){
-		// create binding
-		bindings = new Array();
-		bindings[0] = oModel.bindTree(sPath, oContext, aFilters || [], mParameters, aSorters);
-	};
+	QUnit.module("TreeBinding", {
+		beforeEach: function() {
+			this.oModel = new XMLModel();
+			this.oModel.setXML(testData);
+			sap.ui.getCore().setModel(this.oModel);
+		},
+		afterEach: function() {
+			sap.ui.getCore().setModel(null);
+			this.oModel.destroy();
+		},
+		createTreeBinding: function(sPath, oContext, aFilters, mParameters, aSorters) {
+			return this.oModel.bindTree(sPath, oContext, aFilters || [], mParameters, aSorters);
+		}
+	});
 
 	QUnit.test("TreeBinding getRootContexts getNodeContexts", function(assert) {
-		setup();
-		createTreeBinding("/orgStructure");
-		var treeBinding = bindings[0],
-			contexts,
+		var treeBinding = this.createTreeBinding("/orgStructure");
+		var contexts,
 			context;
 
 		assert.equal(treeBinding.getPath(), "/orgStructure", "TreeBinding path");
-		assert.equal(treeBinding.getModel(), oModel, "TreeBinding model");
+		assert.equal(treeBinding.getModel(), this.oModel, "TreeBinding model");
 
 		contexts = treeBinding.getRootContexts();
 		assert.equal(contexts.length, 1, "TreeBinding rootContexts length");
 
 		context = contexts[0];
-		assert.equal(oModel.getProperty("@name",context), "Peter Cliff", "TreeBinding root content");
+		assert.equal(this.oModel.getProperty("@name",context), "Peter Cliff", "TreeBinding root content");
 
 		contexts = treeBinding.getNodeContexts(context);
 		assert.equal(contexts.length, 3, "TreeBinding nodeContexts length");
 
 		context = contexts[0];
-		assert.equal(oModel.getProperty("@name",context), "Inga Horst", "TreeBinding node content");
+		assert.equal(this.oModel.getProperty("@name",context), "Inga Horst", "TreeBinding node content");
 
 		context = contexts[2];
-		assert.equal(oModel.getProperty("@name",context), "Catherine Platte", "TreeBinding node content");
+		assert.equal(this.oModel.getProperty("@name",context), "Catherine Platte", "TreeBinding node content");
 
 		assert.equal(treeBinding.getChildCount(contexts[0]), 3, "TreeBinding childcount");
 		contexts = treeBinding.getNodeContexts(contexts[0]);
 		assert.equal(contexts.length, 3, "TreeBinding nodeContexts length");
 
 		context = contexts[1];
-		assert.equal(oModel.getProperty("@name",context), "Frank Wallace", "TreeBinding node content");
+		assert.equal(this.oModel.getProperty("@name",context), "Frank Wallace", "TreeBinding node content");
 
 	});
 
 	QUnit.test("TreeBinding relative getRootContexts getNodeContexts", function(assert) {
-		 setup();
-		 createTreeBinding("orgStructure");
-		 var treeBinding = bindings[0],
-			 contexts,
-			 context;
+		var treeBinding = this.createTreeBinding("orgStructure"),
+			contexts,
+			context;
 
-		 treeBinding.setContext(oModel.getContext("/"));
+		 treeBinding.setContext(this.oModel.getContext("/"));
 
 		 assert.equal(treeBinding.getPath(), "orgStructure", "TreeBinding path");
-		 assert.equal(treeBinding.getModel(), oModel, "TreeBinding model");
+		 assert.equal(treeBinding.getModel(), this.oModel, "TreeBinding model");
 
 		 contexts = treeBinding.getRootContexts();
 		 assert.equal(contexts.length, 1, "TreeBinding rootContexts length");
 
 		 context = contexts[0];
-		 assert.equal(oModel.getProperty("@name",context), "Peter Cliff", "TreeBinding root content");
+		 assert.equal(this.oModel.getProperty("@name",context), "Peter Cliff", "TreeBinding root content");
 
 		 contexts = treeBinding.getNodeContexts(context);
 		 assert.equal(contexts.length, 3, "TreeBinding nodeContexts length");
 
 		 context = contexts[0];
-		 assert.equal(oModel.getProperty("@name",context), "Inga Horst", "TreeBinding node content");
+		 assert.equal(this.oModel.getProperty("@name",context), "Inga Horst", "TreeBinding node content");
 
 		 context = contexts[2];
-		 assert.equal(oModel.getProperty("@name",context), "Catherine Platte", "TreeBinding node content");
+		 assert.equal(this.oModel.getProperty("@name",context), "Catherine Platte", "TreeBinding node content");
 
 		 assert.equal(treeBinding.getChildCount(contexts[0]), 3, "TreeBinding childcount");
 		 contexts = treeBinding.getNodeContexts(contexts[0]);
 		 assert.equal(contexts.length, 3, "TreeBinding nodeContexts length");
 
 		 context = contexts[1];
-		 assert.equal(oModel.getProperty("@name",context), "Frank Wallace", "TreeBinding node content");
+		 assert.equal(this.oModel.getProperty("@name",context), "Frank Wallace", "TreeBinding node content");
 
 	 });
 
 	QUnit.test("TreeBinding getRootContexts getNodeContexts", function(assert) {
-		setup();
-		createTreeBinding("/orgStructure");
-		var treeBinding = bindings[0],
+		var treeBinding = this.createTreeBinding("/orgStructure"),
 			contexts,
 			context;
 
-		assert.ok(treeBinding instanceof sap.ui.model.xml.XMLTreeBinding, "treeBinding class check");
+		assert.ok(treeBinding instanceof XMLTreeBinding, "treeBinding class check");
 		contexts = treeBinding.getRootContexts();
 		assert.equal(contexts.length, 1, "TreeBinding rootContexts length");
 
@@ -169,43 +151,40 @@
 					"</level01>" +
 				"</orgStructure>" +
 			"</root>";
-		oModel.setXML(newData);
-		createTreeBinding("/orgStructure");
-		treeBinding = bindings[0];
+		this.oModel.setXML(newData);
+		treeBinding = this.createTreeBinding("/orgStructure");
 
 		contexts = treeBinding.getRootContexts();
 		assert.equal(contexts.length, 2, "TreeBinding rootContexts length");
 		context = contexts[1];
-		assert.equal(oModel.getProperty("@name", context), "root2", "TreeBinding node content");
+		assert.equal(this.oModel.getProperty("@name", context), "root2", "TreeBinding node content");
 		contexts = treeBinding.getNodeContexts(context);
 		assert.equal(contexts.length, 1, "TreeBinding nodeContexts length");
 		context = contexts[0];
-		assert.equal(oModel.getProperty("@name", context), "subnode2", "TreeBinding node content");
+		assert.equal(this.oModel.getProperty("@name", context), "subnode2", "TreeBinding node content");
 
-		oModel.createBindingContext("/orgStructure/level00", null, function(newContext){
+		this.oModel.createBindingContext("/orgStructure/level00", null, function(newContext){
 			context = newContext;
 		});
-		assert.equal(oModel.getProperty("@name", context), "root1", "TreeBinding node content");
-		oModel.createBindingContext("/orgStructure/level00/level10", null, function(newContext){
+		assert.equal(this.oModel.getProperty("@name", context), "root1", "TreeBinding node content");
+		this.oModel.createBindingContext("/orgStructure/level00/level10", null, function(newContext){
 			context = newContext;
 		});
-		assert.equal(oModel.getProperty("@name", context), "subnode1", "TreeBinding node content");
-		oModel.createBindingContext("/orgStructure/level00/level10/level20", null, function(newContext){
+		assert.equal(this.oModel.getProperty("@name", context), "subnode1", "TreeBinding node content");
+		this.oModel.createBindingContext("/orgStructure/level00/level10/level20", null, function(newContext){
 			context = newContext;
 		});
-		assert.equal(oModel.getProperty("@name", context), "subsubnode1", "TreeBinding node content");
+		assert.equal(this.oModel.getProperty("@name", context), "subsubnode1", "TreeBinding node content");
 
 	});
 
 	QUnit.test("TreeBinding filters and setData again", function(assert) {
-		setup();
-		createTreeBinding("/orgStructure");
+		var treeBinding = this.createTreeBinding("/orgStructure");
 
-		var treeBinding = bindings[0];
-		oModel.addBinding(treeBinding);
+		this.oModel.addBinding(treeBinding);
 
 		// Filter for node with name containing 'in'
-		var oFilter1 = new sap.ui.model.Filter("@name", sap.ui.model.FilterOperator.Contains, "alla");
+		var oFilter1 = new Filter("@name", FilterOperator.Contains, "alla");
 		treeBinding.filter(oFilter1);
 
 		var filteredContext = treeBinding.getRootContexts();
@@ -222,8 +201,8 @@
 		assert.equal(treeBinding.getChildCount(nodeContexts2[0]), 0, "TreeBinding nodeContexts length");
 		assert.equal(treeBinding.getChildCount(nodeContexts2[1]), 0, "TreeBinding nodeContexts length");
 
-		assert.equal(oModel.getProperty("@name", nodeContexts2[0]), "John Wallace", "TreeBinding filter value");
-		assert.equal(oModel.getProperty("@name", nodeContexts2[1]), "Frank Wallace", "TreeBinding filter value");
+		assert.equal(this.oModel.getProperty("@name", nodeContexts2[0]), "John Wallace", "TreeBinding filter value");
+		assert.equal(this.oModel.getProperty("@name", nodeContexts2[1]), "Frank Wallace", "TreeBinding filter value");
 
 		var newData = "<root>" +
 		"<orgStructure>" +
@@ -234,7 +213,7 @@
 			"</level12>" +
 		"</level00>" +
 		"</orgStructure></root>";
-		oModel.setXML(newData);
+		this.oModel.setXML(newData);
 
 		// check if filter got reapplied:
 		filteredContext = treeBinding.getRootContexts();
@@ -245,21 +224,18 @@
 		assert.equal(nodeContexts1.length, 1, "TreeBinding nodeContexts length");
 		assert.equal(treeBinding.getChildCount(nodeContexts1[0]), 0, "TreeBinding nodeContexts length");
 
-		assert.equal(oModel.getProperty("@name", nodeContexts1[0]), "Catherine Pallate", "TreeBinding filter value");
-		oModel.removeBinding(treeBinding);
+		assert.equal(this.oModel.getProperty("@name", nodeContexts1[0]), "Catherine Pallate", "TreeBinding filter value");
+		this.oModel.removeBinding(treeBinding);
 	});
 
 	QUnit.test("TreeBinding multi filters", function(assert) {
-		setup();
-		createTreeBinding("/orgStructure");
+		var treeBinding = this.createTreeBinding("/orgStructure");
 
-		var treeBinding = bindings[0];
-
-		var oFilter1 = new sap.ui.model.Filter("@name", sap.ui.model.FilterOperator.Contains, "in");
-		var oFilter2 = new sap.ui.model.Filter("@name", sap.ui.model.FilterOperator.Contains, "al");
-		var oMultiFilter1 = new sap.ui.model.Filter([oFilter1, oFilter2], false);
-		var oFilter3 = new sap.ui.model.Filter("@gender", sap.ui.model.FilterOperator.EQ, "female");
-		var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter3], true);
+		var oFilter1 = new Filter("@name", FilterOperator.Contains, "in");
+		var oFilter2 = new Filter("@name", FilterOperator.Contains, "al");
+		var oMultiFilter1 = new Filter([oFilter1, oFilter2], false);
+		var oFilter3 = new Filter("@gender", FilterOperator.EQ, "female");
+		var oMultiFilter2 = new Filter([oMultiFilter1, oFilter3], true);
 		treeBinding.filter([oMultiFilter2]);
 		var filteredContext = treeBinding.getRootContexts();
 		assert.equal(filteredContext.length, 1, "TreeBinding rootContexts length");
@@ -267,46 +243,40 @@
 		assert.equal(nodeContexts1.length, 2, "TreeBinding nodeContexts length");
 		var nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
 		assert.equal(nodeContexts2.length, 1, "TreeBinding nodeContexts length");
-		assert.equal(oModel.getProperty("@name", nodeContexts2[0]), "Gina Rush", "TreeBinding filter value");
-		assert.equal(oModel.getProperty("@name", nodeContexts1[1]), "Catherine Platte", "TreeBinding filter value");
+		assert.equal(this.oModel.getProperty("@name", nodeContexts2[0]), "Gina Rush", "TreeBinding filter value");
+		assert.equal(this.oModel.getProperty("@name", nodeContexts1[1]), "Catherine Platte", "TreeBinding filter value");
 	});
 
 	QUnit.test("TreeBinding - Application & Control filters - initial filters", function(assert) {
-		setup();
-		createTreeBinding("/orgStructureAppControlFilter", null,
-			[new sap.ui.model.Filter("@tree", sap.ui.model.FilterOperator.Contains, "#1")]
+		var treeBinding = this.createTreeBinding("/orgStructureAppControlFilter", null,
+			[new Filter("@tree", FilterOperator.Contains, "#1")]
 		);
 
-		var treeBinding = bindings[0];
-
 		//control filters after initial application filters
-		treeBinding.filter(new sap.ui.model.Filter("@name", sap.ui.model.FilterOperator.Contains, "John"), sap.ui.model.FilterType.Control);
+		treeBinding.filter(new Filter("@name", FilterOperator.Contains, "John"), FilterType.Control);
 
 		//Peter
 		var filteredContext = treeBinding.getRootContexts();
 		assert.equal(filteredContext.length, 1, "TreeBinding rootContexts length");
-		assert.equal(oModel.getProperty("@name", filteredContext[0]), "Peter Cliff", "TreeBinding filter value");
+		assert.equal(this.oModel.getProperty("@name", filteredContext[0]), "Peter Cliff", "TreeBinding filter value");
 
 		//Inga
 		var nodeContexts1 = treeBinding.getNodeContexts(filteredContext[0]);
 		assert.equal(nodeContexts1.length, 1, "TreeBinding nodeContexts length");
-		assert.equal(oModel.getProperty("@name", nodeContexts1[0]), "Inga Horst", "TreeBinding filter value");
+		assert.equal(this.oModel.getProperty("@name", nodeContexts1[0]), "Inga Horst", "TreeBinding filter value");
 
 		//only John Doe filtered
 		var nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
 		assert.equal(nodeContexts2.length, 1, "TreeBinding nodeContexts length");
-		assert.equal(oModel.getProperty("@name", nodeContexts2[0]), "John Doe", "TreeBinding filter value");
+		assert.equal(this.oModel.getProperty("@name", nodeContexts2[0]), "John Doe", "TreeBinding filter value");
 	});
 
 	QUnit.test("TreeBinding - Application & Control filters - clear filters", function(assert) {
-		setup();
-		createTreeBinding("/orgStructureAppControlFilter");
-
-		var treeBinding = bindings[0];
+		var treeBinding = this.createTreeBinding("/orgStructureAppControlFilter");
 
 		// apply application/control filters
-		treeBinding.filter(new sap.ui.model.Filter("@tree", sap.ui.model.FilterOperator.Contains, "#1"), "Application");
-		treeBinding.filter(new sap.ui.model.Filter("@name", sap.ui.model.FilterOperator.Contains, "Jennifer"), sap.ui.model.FilterType.Control);
+		treeBinding.filter(new Filter("@tree", FilterOperator.Contains, "#1"), "Application");
+		treeBinding.filter(new Filter("@name", FilterOperator.Contains, "Jennifer"), FilterType.Control);
 
 		//Peter
 		var filteredContext = treeBinding.getRootContexts();
@@ -319,7 +289,7 @@
 		//only Jennifer Wallace filtered
 		var nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
 		assert.equal(nodeContexts2.length, 1, "TreeBinding nodeContexts length");
-		assert.equal(oModel.getProperty("@name", nodeContexts2[0]), "Jennifer Wallace", "TreeBinding filter value");
+		assert.equal(this.oModel.getProperty("@name", nodeContexts2[0]), "Jennifer Wallace", "TreeBinding filter value");
 
 		//change control filter
 		treeBinding.filter();
@@ -338,17 +308,15 @@
 	});
 
 	QUnit.test("TreeBinding - Application & Control filters - clear filters separately", function(assert) {
-		setup();
-		createTreeBinding("/orgStructureAppControlFilter");
-
-		var treeBinding = bindings[0];
+		var treeBinding = this.createTreeBinding("/orgStructureAppControlFilter"),
+			filteredContext;
 
 		// apply application/control filters
-		treeBinding.filter(new sap.ui.model.Filter("@tree", sap.ui.model.FilterOperator.Contains, "#1"), "Application");
-		treeBinding.filter(new sap.ui.model.Filter("@name", sap.ui.model.FilterOperator.Contains, "Jennifer"), sap.ui.model.FilterType.Control);
+		treeBinding.filter(new Filter("@tree", FilterOperator.Contains, "#1"), "Application");
+		treeBinding.filter(new Filter("@name", FilterOperator.Contains, "Jennifer"), FilterType.Control);
 
 		//Peter
-		var filteredContext = treeBinding.getRootContexts();
+		filteredContext = treeBinding.getRootContexts();
 		assert.equal(filteredContext.length, 1, "TreeBinding rootContexts length");
 
 		//Inga
@@ -358,25 +326,25 @@
 		//only Jennifer Wallace filtered
 		var nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
 		assert.equal(nodeContexts2.length, 1, "TreeBinding nodeContexts length");
-		assert.equal(oModel.getProperty("@name", nodeContexts2[0]), "Jennifer Wallace", "TreeBinding filter value");
+		assert.equal(this.oModel.getProperty("@name", nodeContexts2[0]), "Jennifer Wallace", "TreeBinding filter value");
 
 		//remove app filter but not control filter
-		treeBinding.filter([], sap.ui.model.FilterType.Application);
+		treeBinding.filter([], FilterType.Application);
 
 		//Peter
-		var filteredContext = treeBinding.getRootContexts();
+		filteredContext = treeBinding.getRootContexts();
 		assert.equal(filteredContext.length, 1, "TreeBinding rootContexts length");
 
 		//Inga
-		var nodeContexts1 = treeBinding.getNodeContexts(filteredContext[0]);
+		nodeContexts1 = treeBinding.getNodeContexts(filteredContext[0]);
 		assert.equal(nodeContexts1.length, 1, "TreeBinding nodeContexts length");
 
 		//only Jennifer Wallace filtered
-		var nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
+		nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
 		assert.equal(nodeContexts2.length, 1, "TreeBinding nodeContexts length");
-		assert.equal(oModel.getProperty("@name", nodeContexts2[0]), "Jennifer Wallace", "TreeBinding filter value");
+		assert.equal(this.oModel.getProperty("@name", nodeContexts2[0]), "Jennifer Wallace", "TreeBinding filter value");
 
-		treeBinding.filter([], sap.ui.model.FilterType.Control);
+		treeBinding.filter([], FilterType.Control);
 
 		//1st level
 		filteredContext = treeBinding.getRootContexts();
@@ -392,17 +360,15 @@
 	});
 
 	QUnit.test("TreeBinding - Application & Control filters - changing filters", function(assert) {
-		setup();
-		createTreeBinding("/orgStructureAppControlFilter");
-
-		var treeBinding = bindings[0];
+		var treeBinding = this.createTreeBinding("/orgStructureAppControlFilter"),
+			filteredContext;
 
 		// apply application/control filters
-		treeBinding.filter(new sap.ui.model.Filter("@tree", sap.ui.model.FilterOperator.Contains, "#1"), "Application");
-		treeBinding.filter(new sap.ui.model.Filter("@name", sap.ui.model.FilterOperator.Contains, "Jennifer"), sap.ui.model.FilterType.Control);
+		treeBinding.filter(new Filter("@tree", FilterOperator.Contains, "#1"), "Application");
+		treeBinding.filter(new Filter("@name", FilterOperator.Contains, "Jennifer"), FilterType.Control);
 
 		//Peter
-		var filteredContext = treeBinding.getRootContexts();
+		filteredContext = treeBinding.getRootContexts();
 		assert.equal(filteredContext.length, 1, "TreeBinding rootContexts length");
 
 		//Inga
@@ -412,118 +378,110 @@
 		//only Jennifer Wallace filtered
 		var nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
 		assert.equal(nodeContexts2.length, 1, "TreeBinding nodeContexts length");
-		assert.equal(oModel.getProperty("@name", nodeContexts2[0]), "Jennifer Wallace", "TreeBinding filter value");
+		assert.equal(this.oModel.getProperty("@name", nodeContexts2[0]), "Jennifer Wallace", "TreeBinding filter value");
 
 		//change control filter
-		treeBinding.filter(new sap.ui.model.Filter("@name", sap.ui.model.FilterOperator.Contains, "John"), sap.ui.model.FilterType.Control);
+		treeBinding.filter(new Filter("@name", FilterOperator.Contains, "John"), FilterType.Control);
 
 		//Peter
 		filteredContext = treeBinding.getRootContexts();
 		assert.equal(filteredContext.length, 1, "TreeBinding rootContexts length");
-		assert.equal(oModel.getProperty("@name", filteredContext[0]), "Peter Cliff", "TreeBinding filter value");
+		assert.equal(this.oModel.getProperty("@name", filteredContext[0]), "Peter Cliff", "TreeBinding filter value");
 
 		//Inga
 		nodeContexts1 = treeBinding.getNodeContexts(filteredContext[0]);
 		assert.equal(nodeContexts1.length, 1, "TreeBinding nodeContexts length");
-		assert.equal(oModel.getProperty("@name", nodeContexts1[0]), "Inga Horst", "TreeBinding filter value");
+		assert.equal(this.oModel.getProperty("@name", nodeContexts1[0]), "Inga Horst", "TreeBinding filter value");
 
 		//only John Doe filtered
 		nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
 		assert.equal(nodeContexts2.length, 1, "TreeBinding nodeContexts length");
-		assert.equal(oModel.getProperty("@name", nodeContexts2[0]), "John Doe", "TreeBinding filter value");
+		assert.equal(this.oModel.getProperty("@name", nodeContexts2[0]), "John Doe", "TreeBinding filter value");
 	});
 
 	QUnit.test("Display Root Node", function(assert) {
-		setup();
-		createTreeBinding("/orgStructure/level00", null, [], {
-			displayRootNode: true
-		});
-		var treeBinding = bindings[0],
+		var treeBinding = this.createTreeBinding("/orgStructure/level00", null, [], {
+				displayRootNode: true
+			}),
 			contexts,
 			context;
 
 		assert.equal(treeBinding.getPath(), "/orgStructure/level00", "TreeBinding path");
-		assert.equal(treeBinding.getModel(), oModel, "TreeBinding model");
+		assert.equal(treeBinding.getModel(), this.oModel, "TreeBinding model");
 
 		contexts = treeBinding.getRootContexts();
 		assert.equal(contexts.length, 1, "TreeBinding rootContexts length");
 
 		context = contexts[0];
-		assert.equal(oModel.getProperty("@name",context), "Peter Cliff", "TreeBinding root content");
+		assert.equal(this.oModel.getProperty("@name",context), "Peter Cliff", "TreeBinding root content");
 
 		contexts = treeBinding.getNodeContexts(context);
 		assert.equal(contexts.length, 3, "TreeBinding nodeContexts length");
 
 		context = contexts[0];
-		assert.equal(oModel.getProperty("@name",context), "Inga Horst", "TreeBinding node content");
+		assert.equal(this.oModel.getProperty("@name",context), "Inga Horst", "TreeBinding node content");
 
 		context = contexts[2];
-		assert.equal(oModel.getProperty("@name",context), "Catherine Platte", "TreeBinding node content");
+		assert.equal(this.oModel.getProperty("@name",context), "Catherine Platte", "TreeBinding node content");
 
 		contexts = treeBinding.getNodeContexts(contexts[0]);
 		assert.equal(contexts.length, 3, "TreeBinding nodeContexts length");
 
 		context = contexts[1];
-		assert.equal(oModel.getProperty("@name",context), "Frank Wallace", "TreeBinding node content");
+		assert.equal(this.oModel.getProperty("@name",context), "Frank Wallace", "TreeBinding node content");
 
 	});
 
 	QUnit.test("Bind aggregation (not possible with XML behave normal)", function(assert) {
-		setup();
-		createTreeBinding("/orgStructure2");
-
-		var treeBinding = bindings[0],
+		var treeBinding = this.createTreeBinding("/orgStructure2"),
 			contexts,
 			context;
 
 		assert.equal(treeBinding.getPath(), "/orgStructure2", "TreeBinding path");
-		assert.equal(treeBinding.getModel(), oModel, "TreeBinding model");
+		assert.equal(treeBinding.getModel(), this.oModel, "TreeBinding model");
 
 		contexts = treeBinding.getRootContexts();
 		assert.equal(contexts.length, 3, "TreeBinding rootContexts length");
 
 		context = contexts[0];
-		assert.equal(oModel.getProperty("@name", context), "Inga Horst", "TreeBinding root content");
+		assert.equal(this.oModel.getProperty("@name", context), "Inga Horst", "TreeBinding root content");
 
 		context = contexts[1];
-		assert.equal(oModel.getProperty("@name", context), "Tom Bay", "TreeBinding root content");
+		assert.equal(this.oModel.getProperty("@name", context), "Tom Bay", "TreeBinding root content");
 
 		context = contexts[2];
-		assert.equal(oModel.getProperty("@name", context), "Catherine Platte", "TreeBinding root content");
+		assert.equal(this.oModel.getProperty("@name", context), "Catherine Platte", "TreeBinding root content");
 
 		contexts = treeBinding.getNodeContexts(contexts[0]);
 		assert.equal(contexts.length, 3, "TreeBinding nodeContexts length");
 
 		context = contexts[0];
-		assert.equal(oModel.getProperty("@name", context), "John Wallace", "TreeBinding node content");
+		assert.equal(this.oModel.getProperty("@name", context), "John Wallace", "TreeBinding node content");
 
 		context = contexts[1];
-		assert.equal(oModel.getProperty("@name", context), "Frank Wallace", "TreeBinding node content");
+		assert.equal(this.oModel.getProperty("@name", context), "Frank Wallace", "TreeBinding node content");
 
 		context = contexts[2];
-		assert.equal(oModel.getProperty("@name", context), "Gina Rush", "TreeBinding node content");
+		assert.equal(this.oModel.getProperty("@name", context), "Gina Rush", "TreeBinding node content");
 	});
 
 	QUnit.test("Paging", function(assert) {
-		setup();
-		createTreeBinding("/orgStructure2");
-
-		var treeBinding = bindings[0],
+		var treeBinding = this.createTreeBinding("/orgStructure2"),
 			contexts,
 			context;
 
 		assert.equal(treeBinding.getPath(), "/orgStructure2", "TreeBinding path");
-		assert.equal(treeBinding.getModel(), oModel, "TreeBinding model");
+		assert.equal(treeBinding.getModel(), this.oModel, "TreeBinding model");
 
 		contexts = treeBinding.getRootContexts(0,2);
 		assert.equal(contexts.length, 2, "TreeBinding returned rootContexts length");
 		assert.equal(treeBinding.getChildCount(null), 3, "TreeBinding actual rootContexts length");
 
 		context = contexts[0];
-		assert.equal(oModel.getProperty("@name", context), "Inga Horst", "TreeBinding root content");
+		assert.equal(this.oModel.getProperty("@name", context), "Inga Horst", "TreeBinding root content");
 
 		context = contexts[1];
-		assert.equal(oModel.getProperty("@name", context), "Tom Bay", "TreeBinding root content");
+		assert.equal(this.oModel.getProperty("@name", context), "Tom Bay", "TreeBinding root content");
 
 		context = contexts[0];
 		contexts = treeBinding.getNodeContexts(context, 1, 2);
@@ -531,23 +489,19 @@
 		assert.equal(treeBinding.getChildCount(context), 3, "TreeBinding actual nodeContexts length");
 
 		context = contexts[0];
-		assert.equal(oModel.getProperty("@name", context), "Frank Wallace", "TreeBinding node content");
+		assert.equal(this.oModel.getProperty("@name", context), "Frank Wallace", "TreeBinding node content");
 
 		context = contexts[1];
-		assert.equal(oModel.getProperty("@name", context), "Gina Rush", "TreeBinding node content");
+		assert.equal(this.oModel.getProperty("@name", context), "Gina Rush", "TreeBinding node content");
 	});
 	// sPath, oContext, aFilters, mParameters, aSorters
 	QUnit.test("Sorting - bindTree calls", function (assert) {
-		setup();
-		createTreeBinding("/orgStructure2", null, [], {
-			displayRootNode: false
-		},
-		[new sap.ui.model.Sorter("@name")]); //bindTree parameter
-
-		var treeBinding = bindings[0];
+		var treeBinding = this.createTreeBinding("/orgStructure2", null, [], {
+				displayRootNode: false
+			},
+			[new Sorter("@name")]); //bindTree parameter
 
 		var aRootContexts = treeBinding.getRootContexts(0, 3);
-
 		assert.equal(aRootContexts[0].getProperty("@name"), "Catherine Platte", "1st node after sorting is: Catherine Platte");
 		assert.equal(aRootContexts[1].getProperty("@name"), "Inga Horst", "2nd node after sorting is: Inga Horst");
 		assert.equal(aRootContexts[2].getProperty("@name"), "Tom Bay", "3rd node after sorting is: Tom Bay");
@@ -558,15 +512,14 @@
 		assert.equal(aChildContexts[2].getProperty("@name"), "John Wallace", "Inga child node[2]] after sorting is: John Wallace");
 
 		//change sorters afterwards
-		treeBinding.sort(new sap.ui.model.Sorter("@name", true));
+		treeBinding.sort(new Sorter("@name", true));
 
-		var aRootContexts = treeBinding.getRootContexts(0, 3);
-
+		aRootContexts = treeBinding.getRootContexts(0, 3);
 		assert.equal(aRootContexts[0].getProperty("@name"), "Tom Bay", "1st node after sorting is: Tom Bay");
 		assert.equal(aRootContexts[1].getProperty("@name"), "Inga Horst", "2nd node after sorting is: Inga Horst");
 		assert.equal(aRootContexts[2].getProperty("@name"), "Catherine Platte", "3rd node after sorting is: Catherine Platte");
 
-		var aChildContexts = treeBinding.getNodeContexts(aRootContexts[1]);
+		aChildContexts = treeBinding.getNodeContexts(aRootContexts[1]);
 		assert.equal(aChildContexts[0].getProperty("@name"), "John Wallace", "Inga child node[0] after sorting is: John Wallace");
 		assert.equal(aChildContexts[1].getProperty("@name"), "Gina Rush", "Inga child node[1] after sorting is: Gina Rush");
 		assert.equal(aChildContexts[2].getProperty("@name"), "Frank Wallace", "Inga child node[2]] after sorting is: Frank Wallace");
@@ -574,17 +527,13 @@
 	});
 
 	QUnit.test("Sorting - sort() calls", function (assert) {
-		setup();
-		createTreeBinding("/orgStructure2", {
+		var treeBinding = this.createTreeBinding("/orgStructure2", {
 			displayRootNode: true
 		});
 
-		var treeBinding = bindings[0];
-
-		treeBinding.sort(new sap.ui.model.Sorter("@name"));
+		treeBinding.sort(new Sorter("@name"));
 
 		var aRootContexts = treeBinding.getRootContexts(0, 3);
-
 		assert.equal(aRootContexts[0].getProperty("@name"), "Catherine Platte", "1st node after sorting is: Catherine Platte");
 		assert.equal(aRootContexts[1].getProperty("@name"), "Inga Horst", "2nd node after sorting is: Inga Horst");
 		assert.equal(aRootContexts[2].getProperty("@name"), "Tom Bay", "3rd node after sorting is: Tom Bay");
@@ -595,42 +544,30 @@
 		assert.equal(aChildContexts[2].getProperty("@name"), "John Wallace", "Inga child node[2]] after sorting is: John Wallace");
 
 		//change sorters afterwards -> descending
-		treeBinding.sort(new sap.ui.model.Sorter("@name", true));
+		treeBinding.sort(new Sorter("@name", true));
 
-		var aRootContexts = treeBinding.getRootContexts(0, 3);
-
+		aRootContexts = treeBinding.getRootContexts(0, 3);
 		assert.equal(aRootContexts[0].getProperty("@name"), "Tom Bay", "1st node after sorting is: Tom Bay");
 		assert.equal(aRootContexts[1].getProperty("@name"), "Inga Horst", "2nd node after sorting is: Inga Horst");
 		assert.equal(aRootContexts[2].getProperty("@name"), "Catherine Platte", "3rd node after sorting is: Catherine Platte");
 
-		var aChildContexts = treeBinding.getNodeContexts(aRootContexts[1]);
+		aChildContexts = treeBinding.getNodeContexts(aRootContexts[1]);
 		assert.equal(aChildContexts[0].getProperty("@name"), "John Wallace", "Inga child node[0] after sorting is: John Wallace");
 		assert.equal(aChildContexts[1].getProperty("@name"), "Gina Rush", "Inga child node[1] after sorting is: Gina Rush");
 		assert.equal(aChildContexts[2].getProperty("@name"), "Frank Wallace", "Inga child node[2]] after sorting is: Frank Wallace");
 
-		//empty sort() -> remove sorters
+		// empty sort() -> remove sorters
 		treeBinding.sort();
 
-		var aRootContexts = treeBinding.getRootContexts(0, 3);
-
+		aRootContexts = treeBinding.getRootContexts(0, 3);
 		assert.equal(aRootContexts[0].getProperty("@name"), "Inga Horst", "1st node after sorting is: Inga Horst");
 		assert.equal(aRootContexts[1].getProperty("@name"), "Tom Bay", "2nd node after sorting is: Tom Bay");
 		assert.equal(aRootContexts[2].getProperty("@name"), "Catherine Platte", "3rd node after sorting is: Catherine Platte");
 
-		var aChildContexts = treeBinding.getNodeContexts(aRootContexts[0]);
+		aChildContexts = treeBinding.getNodeContexts(aRootContexts[0]);
 		assert.equal(aChildContexts[0].getProperty("@name"), "John Wallace", "Inga child node[0] after sorting is: John Wallace");
 		assert.equal(aChildContexts[1].getProperty("@name"), "Frank Wallace", "Inga child node[1] after sorting is: Frank Wallace");
 		assert.equal(aChildContexts[2].getProperty("@name"), "Gina Rush", "Inga child node[2] after sorting is: Gina Rush");
 	});
 
-</script>
-
-</head>
-<body>
-<h1 id="qunit-header">QUnit tests: XML Tree Binding</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-</body>
-</html>
+});
