@@ -54,7 +54,7 @@ sap.ui.define(['./AnalyticalBinding', "./AnalyticalTreeBindingAdapter", './odata
 		/*if (iModelVersion === AnalyticalVersionInfo.V2 && !(this.oMetadata && this.oMetadata.isLoaded())) {
 			var that = this;
 			this.attachMetadataLoaded(function () {
-				jQuery.sap.log.info("ODataModelAdapter: Running on ODataModel V2, Metadata was loaded; initialising analytics model.");
+				Log.info("ODataModelAdapter: Running on ODataModel V2, Metadata was loaded; initialising analytics model.");
 				that.getAnalyticalExtensions();
 			});
 		}*/
