@@ -713,6 +713,32 @@
 				}
 			}, this);
 		});
+
+
+		QUnit.test("step's height after discardProgress", function (assert) {
+			var aWizardSteps = this.oWizard.getSteps(),
+				oFirstStep = aWizardSteps[0],
+				iInitialHeight = oFirstStep.getDomRef().offsetHeight,
+				iHeightAfterDiscard;
+
+			// act
+			this.oWizard.nextStep().nextStep();
+			this.oWizard.discardProgress(this.oWizard.getSteps()[0]);
+			this.clock.tick(100);
+
+			iHeightAfterDiscard = oFirstStep.getDomRef().offsetHeight;
+
+			// assert
+			aWizardSteps.forEach(function(oStep, iIndex){
+				if (iIndex === 0) {
+					assert.ok(oStep.getAggregation("_nextButton").$().hasClass("sapMWizardNextButtonVisible"), "The current step next button is visible.");
+				} else {
+					assert.notOk(oStep.$().hasClass("sapMWizardStepActivated"), "The discarded steps are hidden.");
+				}
+			}, this);
+
+			assert.strictEqual(iInitialHeight, iHeightAfterDiscard, "Discarding progress doesn't change the height of the steps.");
+		});
 	</script>
 </head>
 <body id="body" class="sapUiBody">
