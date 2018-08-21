@@ -26,6 +26,7 @@ sap.ui.define([
 
 	/**
 	 * Creates a cache for data aggregation that performs requests using the given requestor.
+	 * Note: The paths in $expand and $select will always be sorted in the cache's query string.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
 	 *   The requestor
@@ -38,24 +39,22 @@ sap.ui.define([
 	 *   <code>aggregate</code>, <code>group</code>, <code>groupLevels</code>
 	 * @param {object} mQueryOptions
 	 *   A map of key-value pairs representing the query string
-	 * @param {boolean} [bSortExpandSelect=false]
-	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 * @throws {Error}
 	 *   If the system query options "$count" or "$filter" are used together with group levels, or
 	 *   if group levels are combined with min/max
 	 *
 	 * @private
 	 */
-	function _AggregationCache(oRequestor, sResourcePath, oAggregation, mQueryOptions,
-			bSortExpandSelect) {
+	function _AggregationCache(oRequestor, sResourcePath, oAggregation, mQueryOptions) {
 		var mAlias2MeasureAndMethod = {},
 			oFirstLevelAggregation,
 			mFirstQueryOptions,
 			fnMeasureRangeResolve;
 
-		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect);
+		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, true);
 
 		if (_AggregationHelper.hasMinOrMax(oAggregation.aggregate)) {
+			// Note: ignore existing mQueryOptions.$apply, e.g. from ODLB#updateAnalyticalInfo
 			if (oAggregation.groupLevels.length) {
 				throw new Error("Unsupported group levels together with min/max");
 			}
@@ -64,12 +63,9 @@ sap.ui.define([
 			});
 			mFirstQueryOptions = _AggregationHelper.buildApply(oAggregation, mQueryOptions,
 				mAlias2MeasureAndMethod); // 1st request only
-			mQueryOptions = jQuery.extend({}, mQueryOptions);
-			delete mQueryOptions.$count; // not needed in 2nd request etc.
-			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath, mFirstQueryOptions,
-				bSortExpandSelect);
+			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath, mFirstQueryOptions, true);
 			this.oFirstLevel.getResourcePath = _AggregationCache.getResourcePath.bind(
-				this.oFirstLevel, oAggregation, mQueryOptions, this.oFirstLevel.getResourcePath);
+				this.oFirstLevel, oAggregation, mQueryOptions);
 			this.oFirstLevel.handleResponse = _AggregationCache.handleResponse
 				.bind(this.oFirstLevel, mAlias2MeasureAndMethod, fnMeasureRangeResolve,
 					this.oFirstLevel.handleResponse);
@@ -87,8 +83,7 @@ sap.ui.define([
 						oFirstLevelAggregation)
 				}); // 1st level only
 			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath,
-				_AggregationHelper.buildApply(oFirstLevelAggregation, mFirstQueryOptions),
-				bSortExpandSelect);
+				_AggregationHelper.buildApply(oFirstLevelAggregation, mFirstQueryOptions), true);
 			this.oFirstLevel.calculateKeyPredicate = _AggregationCache.calculateKeyPredicate
 				.bind(null, oFirstLevelAggregation, this.oFirstLevel.sMetaPath,
 					this.oFirstLevel.aElements.$byPredicate);
@@ -249,6 +244,7 @@ sap.ui.define([
 
 	/**
 	 * Creates a cache for data aggregation that performs requests using the given requestor.
+	 * Note: The paths in $expand and $select will always be sorted in the cache's query string.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
 	 *   The requestor
@@ -267,17 +263,13 @@ sap.ui.define([
 	 *   Examples:
 	 *   {foo : "bar", "bar" : "baz"} results in the query string "foo=bar&bar=baz"
 	 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
-	 * @param {boolean} [bSortExpandSelect=false]
-	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 * @returns {sap.ui.model.odata.v4.lib._AggregationCache}
 	 *   The cache
 	 *
 	 * @public
 	 */
-	_AggregationCache.create = function (oRequestor, sResourcePath, oAggregation, mQueryOptions,
-			bSortExpandSelect) {
-		return new _AggregationCache(oRequestor, sResourcePath, oAggregation, mQueryOptions,
-			bSortExpandSelect);
+	_AggregationCache.create = function (oRequestor, sResourcePath, oAggregation, mQueryOptions) {
+		return new _AggregationCache(oRequestor, sResourcePath, oAggregation, mQueryOptions);
 	};
 
 	/**
@@ -354,16 +346,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the resource path including the query string with "$skip" and "$top", as needed, and
-	 * "$apply" including the aggregation functions for minimum and maximum values. "$top" is
-	 * increased by one to compensate for the additional data row with minimum and maximum values.
+	 * Returns the resource path including the query string with "$apply" which includes the
+	 * aggregation functions for minimum/maximum values and "skip()/top()" as transformations.
+	 * Only the first request requests the count. Follow-up requests do not aggregate minimum or
+	 * maximum values again.
 	 *
 	 * This function is used to replace <code>getResourcePath</code> of the first level cache and
 	 * needs to be called on the first level cache.
-	 *
-	 * The original function given in <code>fnGetResourcePath</code> is restored when calling this
-	 * function. The query string is rebuilt so that future requests do not aggregate minimum or
-	 * maximum values again.
 	 *
 	 * @param {object} oAggregation
 	 *   An object holding the information needed for data aggregation; see also
@@ -371,40 +360,26 @@ sap.ui.define([
 	 *   Extension for Data Aggregation Version 4.0</a>; must contain <code>aggregate</code>
 	 * @param {object} mQueryOptions
 	 *   A map of key-value pairs representing the aggregation cache's original query string
-	 * @param {function} fnGetResourcePath
-	 *   The original <code>getResourcePath</code> of the first level cache
 	 * @param {number} iStart
 	 *   The index of the first element to request ($skip)
 	 * @param {number} iEnd
 	 *   The index after the last element to request ($skip + $top)
 	 * @returns {string} The resource path including the query string
-	 * @throws {Error} If <code>iStart</code> is not 0
 	 *
 	 * @private
 	 */
-	_AggregationCache.getResourcePath = function (oAggregation, mQueryOptions, fnGetResourcePath,
-			iStart, iEnd) {
-		var oAggregationNoMinMax, sResourcePath;
-
-		if (iStart !== 0) {
-			throw new Error("First request needs to start at index 0");
-		}
-
-		sResourcePath = fnGetResourcePath.call(this, iStart, iEnd + 1);
-		// remove min/max from $apply
-		oAggregationNoMinMax = _Helper.clone(oAggregation);
-		Object.keys(oAggregationNoMinMax.aggregate).forEach(function (sAlias) {
-			var oDetails = oAggregationNoMinMax.aggregate[sAlias];
-
-			delete oDetails.min;
-			delete oDetails.max;
+	_AggregationCache.getResourcePath = function (oAggregation, mQueryOptions, iStart, iEnd) {
+		mQueryOptions = jQuery.extend({}, mQueryOptions, {
+			$count : true,
+			$skip : iStart,
+			$top : iEnd - iStart
 		});
-		this.mQueryOptions = _AggregationHelper.buildApply(oAggregationNoMinMax, mQueryOptions);
-		this.sQueryString = this.oRequestor.buildQueryString(this.sMetaPath,
-			this.mQueryOptions, false, this.bSortExpandSelect);
+		mQueryOptions = _AggregationHelper.buildApply(oAggregation, mQueryOptions, null,
+			this.bFollowUp);
+		this.bFollowUp = true; // next request is a follow-up
 
-		this.getResourcePath = fnGetResourcePath;
-		return sResourcePath;
+		return this.sResourcePath + this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions,
+			false, true);
 	};
 
 	/**
@@ -443,10 +418,8 @@ sap.ui.define([
 			return mMeasureRange[sMeasure];
 		}
 
-		if ("@odata.count" in oResult) {
-			oResult["@odata.count"] -= 1;
-		}
 		oMinMaxElement = oResult.value.splice(0, 1)[0];
+		oResult["@odata.count"] = oMinMaxElement.UI5__count;
 		for (sAlias in mAlias2MeasureAndMethod) {
 			getMeasureRange(mAlias2MeasureAndMethod[sAlias].measure)
 				[mAlias2MeasureAndMethod[sAlias].method] = oMinMaxElement[sAlias];

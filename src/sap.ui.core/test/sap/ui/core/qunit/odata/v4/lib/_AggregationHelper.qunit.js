@@ -103,16 +103,64 @@ sap.ui.require([
 	}, {
 		oAggregation : {
 			aggregate : {
-				Amount : {
-					max : true
-				}
+				Amount : {max : true}
 			},
 			group : {
 				BillToParty : {}
 			}
 		},
+		mQueryOptions : {
+			$skip : 0, // special case,
+			$top : Infinity // special case
+		},
 		sApply : "groupby((BillToParty),aggregate(Amount))"
 			+ "/concat(aggregate(Amount with max as UI5max__Amount),identity)",
+		sFollowUpApply : "groupby((BillToParty),aggregate(Amount))",
+		mExpectedAlias2MeasureAndMethod : {
+			"UI5max__Amount" : {measure : "Amount", method : "max"}
+		}
+	}, {
+		oAggregation : {
+			aggregate : {
+				Amount : {max : true, min : true}
+			},
+			group : {
+				BillToParty : {}
+			}
+		},
+		mQueryOptions : {
+			$count : true,
+			$filter : "Amount ge 100",
+			$orderby : "BillToParty desc",
+			$skip : 42,
+			$top : 99
+		},
+		sApply : "groupby((BillToParty),aggregate(Amount))"
+			+ "/filter(Amount ge 100)/orderby(BillToParty desc)"
+			+ "/concat(aggregate(Amount with min as UI5min__Amount"
+			+ ",Amount with max as UI5max__Amount,$count as UI5__count),skip(42)/top(99))",
+		sFollowUpApply : "groupby((BillToParty),aggregate(Amount))"
+			+ "/filter(Amount ge 100)/orderby(BillToParty desc)/skip(42)/top(99)",
+		mExpectedAlias2MeasureAndMethod : {
+			"UI5max__Amount" : {measure : "Amount", method : "max"},
+			"UI5min__Amount" : {measure : "Amount", method : "min"}
+		}
+	}, {
+		oAggregation : {
+			aggregate : {
+				Amount : {max : true}
+			},
+			group : {
+				BillToParty : {}
+			}
+		},
+		mQueryOptions : {
+			$skip : 0, // special case: avoid skip(0)
+			$top : 0 // not really a special case
+		},
+		sApply : "groupby((BillToParty),aggregate(Amount))"
+			+ "/concat(aggregate(Amount with max as UI5max__Amount),top(0))",
+		sFollowUpApply : "groupby((BillToParty),aggregate(Amount))/top(0)",
 		mExpectedAlias2MeasureAndMethod : {
 			"UI5max__Amount" : {measure : "Amount", method : "max"}
 		}
@@ -167,16 +215,30 @@ sap.ui.require([
 	}].forEach(function (oFixture) {
 		QUnit.test("buildApply with " + oFixture.sApply, function (assert) {
 			var mAlias2MeasureAndMethod = {},
+				sQueryOptionsJSON = JSON.stringify(oFixture.mQueryOptions),
 				mResult;
 
 			// code under test
-			mResult = _AggregationHelper.buildApply(oFixture.oAggregation, null,
+			mResult = _AggregationHelper.buildApply(oFixture.oAggregation, oFixture.mQueryOptions,
 				mAlias2MeasureAndMethod);
 
 			assert.deepEqual(mResult, {$apply : oFixture.sApply});
 			if (oFixture.mExpectedAlias2MeasureAndMethod) {
 				assert.deepEqual(mAlias2MeasureAndMethod, oFixture.mExpectedAlias2MeasureAndMethod);
 			}
+
+			if (oFixture.sFollowUpApply) {
+				mAlias2MeasureAndMethod = {};
+
+				// code under test
+				mResult = _AggregationHelper.buildApply(oFixture.oAggregation,
+					oFixture.mQueryOptions, mAlias2MeasureAndMethod, true);
+
+				assert.deepEqual(mResult, {$apply : oFixture.sFollowUpApply});
+				assert.deepEqual(mAlias2MeasureAndMethod, {});
+			}
+			assert.strictEqual(JSON.stringify(oFixture.mQueryOptions), sQueryOptionsJSON,
+				"original mQueryOptions unchanged");
 		});
 	});
 
@@ -193,69 +255,6 @@ sap.ui.require([
 			}),
 			{$apply : "groupby((BillToParty),aggregate(Amount))"
 				+ "/concat(aggregate(Amount with max as UI5max__Amount),identity)"});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("buildApply with mQueryOptions, 1st request", function (assert) {
-		var oAggregation = {
-				aggregate : {
-					SalesNumber : {
-						max : true,
-						min : true
-					}
-				},
-				group : {
-					Name : {}
-				},
-				groupLevels : []
-			},
-			mQueryOptions = {
-				$count : true,
-				$filter : "SalesNumber ge 100",
-				$orderby : "Name desc"
-			};
-
-		assert.deepEqual(_AggregationHelper.buildApply(oAggregation, mQueryOptions), {
-			$apply : "groupby((Name),aggregate(SalesNumber))"
-				+ "/filter(SalesNumber ge 100)/orderby(Name desc)"
-				+ "/concat(aggregate(SalesNumber with min as UI5min__SalesNumber,"
-				+ "SalesNumber with max as UI5max__SalesNumber),identity)",
-			$count : true
-		});
-		assert.deepEqual(mQueryOptions, {
-			$count : true,
-			$filter : "SalesNumber ge 100",
-			$orderby : "Name desc"
-		}, "unmodified");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("buildApply with mQueryOptions, 2nd request", function (assert) {
-		var oAggregation = {
-				aggregate : {
-					SalesNumber : {/*no min/max*/}
-				},
-				group : {
-					Name : {}
-				},
-				groupLevels : []
-			},
-			mQueryOptions = {
-				$count : true,
-				$filter : "SalesNumber ge 100",
-				$orderby : "Name desc"
-			};
-
-		assert.deepEqual(_AggregationHelper.buildApply(oAggregation, mQueryOptions), {
-			$apply : "groupby((Name),aggregate(SalesNumber))"
-				+ "/filter(SalesNumber ge 100)/orderby(Name desc)",
-			$count : true
-		});
-		assert.deepEqual(mQueryOptions, {
-			$count : true,
-			$filter : "SalesNumber ge 100",
-			$orderby : "Name desc"
-		}, "unmodified");
 	});
 
 	//*********************************************************************************************

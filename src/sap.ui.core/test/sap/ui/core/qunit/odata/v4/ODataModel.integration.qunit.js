@@ -642,8 +642,10 @@ sap.ui.require([
 				aExpectations = array(this.mListChanges, sControlId);
 				if (Array.isArray(vValue)) {
 					for (i = 0; i < vValue.length; i += 1) {
-						// This may create a sparse array this.mListChanges[sControlId]
-						array(aExpectations, vRow + i).push(vValue[i]);
+						if (i in vValue) {
+							// This may create a sparse array this.mListChanges[sControlId]
+							array(aExpectations, vRow + i).push(vValue[i]);
+						}
 					}
 				} else {
 					// This may create a sparse array this.mListChanges[sControlId]
@@ -652,7 +654,9 @@ sap.ui.require([
 			} else if (Array.isArray(vValue)) {
 				aExpectations = array(this.mListChanges, sControlId);
 				for (i = 0; i < vValue.length; i += 1) {
-					array(aExpectations, i).push(vValue[i]);
+					if (i in vValue) {
+						array(aExpectations, i).push(vValue[i]);
+					}
 				}
 			} else if (vValue === false) {
 				array(this.mListChanges, sControlId);
@@ -1436,7 +1440,6 @@ sap.ui.require([
 </FlexBox>',
 			that = this;
 
-		//TODO Why is formatter called with null and not undefined?
 		this.expectChange("name", null);
 
 		return this.createView(assert, sView).then(function () {
@@ -6142,6 +6145,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used without group or groupLevels
+	// Note: usage of min/max simulates a Chart, which would actually call ODLB#updateAnalyticalInfo
 	QUnit.test("Analytics by V4: $$aggregation, aggregate but no group", function (assert) {
 		var sView = '\
 <t:Table id="table" rows="{path : \'/SalesOrderList\',\
@@ -6166,16 +6170,15 @@ sap.ui.require([
 
 		this.expectRequest("SalesOrderList?$apply=aggregate(GrossAmount)"
 				+ "/concat(aggregate(GrossAmount%20with%20min%20as%20UI5min__GrossAmount,"
-				+ "GrossAmount%20with%20max%20as%20UI5max__GrossAmount),identity)"
-				+ "&$skip=0&$top=2", {
-				"@odata.count" : "2",
-				"value" : [
-					{
-						"UI5min__AGE": 42,
-						"UI5max__AGE": 77
-					},
-					{"GrossAmount" : 1}
-				]
+				+ "GrossAmount%20with%20max%20as%20UI5max__GrossAmount,$count%20as%20UI5__count)"
+				+ ",top(1))", {
+				"value" : [{
+					"UI5min__AGE": 42,
+					"UI5max__AGE": 77,
+					"UI5__count" : 1
+				}, {
+					"GrossAmount" : 1
+				}]
 			})
 			.expectChange("grossAmount", 1);
 
@@ -6327,8 +6330,105 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	[
+		// Scenario: flat list with aggregated data via $apply, can be combined with $count,
+		// $filter, $orderby and system query options are still used (also for $skip, $top)
+		"Flat list with aggregated data",
+		// Scenario: same as before, but via ODLB#updateAnalyticalInfo; in other words:
+		// a hypothetical chart w/ paging, but w/o min/max; initial $skip > 0!
+		"ODLB#updateAnalyticalInfo without min/max"
+	].forEach(function (sTitle, i) {
+		QUnit.test(sTitle, function (assert) {
+			var aAggregation = [{ // dimension
+					grouped : false,
+					inResult : true,
+					name : "LifecycleStatus"
+				}, { // measure
+					name : "GrossAmount",
+					total : false
+				}],
+				sBasicPath = "SalesOrderList?$count=true&$filter=GrossAmount%20lt%2042"
+					+ "&$orderby=LifecycleStatus%20desc"
+					+ "&$apply=groupby((LifecycleStatus),aggregate(GrossAmount))",
+				sView = '\
+<Text id="count" text="{$count}"/>\
+<t:Table firstVisibleRow="1" id="table" rows="{path : \'/SalesOrderList\',\
+		parameters : {\
+			$count : true,\
+			$filter : \'GrossAmount lt 42\',\
+			$orderby : \'LifecycleStatus desc\'\
+' + (i === 0 ? ",$apply : 'groupby((LifecycleStatus),aggregate(GrossAmount))'" : "") + '\
+		}}" threshold="0" visibleRowCount="4">\
+	<t:Column>\
+		<t:template>\
+			<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="grossAmount" text="{GrossAmount}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+				that = this;
+
+			if (i > 0) {
+				// for simulating Chart, call #updateAnalyticalInfo _before_ #getContexts
+				this.mock(ODataListBinding.prototype)
+					.expects("getContexts")
+					.withExactArgs(1, 4, 0)
+					.callsFake(function () {
+						this.updateAnalyticalInfo(aAggregation);
+						ODataListBinding.prototype.getContexts.restore();
+						return this.getContexts.apply(this, arguments);
+					});
+			}
+			this.expectRequest(sBasicPath + "&$skip=1&$top=4", {
+					"@odata.count" : "26",
+					"value" : [
+						{"GrossAmount" : 2, "LifecycleStatus" : "Y"},
+						{"GrossAmount" : 3, "LifecycleStatus" : "X"},
+						{"GrossAmount" : 4, "LifecycleStatus" : "W"},
+						{"GrossAmount" : 5, "LifecycleStatus" : "V"}
+					]
+				})
+				.expectChange("count")
+				.expectChange("grossAmount", ["2.00", "3.00", "4.00", "5.00"], 1)
+				.expectChange("lifecycleStatus", ["Y", "X", "W", "V"], 1);
+
+			return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+				that.expectChange("count", "26");
+
+				that.oView.byId("count").setBindingContext(
+					that.oView.byId("table").getBinding("rows").getHeaderContext());
+				return that.waitForChanges(assert);
+			}).then(function () {
+				// no additional request for same aggregation data
+				that.oView.byId("table").getBinding("rows").updateAnalyticalInfo(aAggregation);
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				that.expectRequest(sBasicPath + "&$skip=0&$top=1", {
+						"@odata.count" : "26",
+						"value" : [
+							{"GrossAmount" : 1, "LifecycleStatus" : "Z"}
+						]
+					});
+				that.expectChange("grossAmount", null, null)
+					.expectChange("lifecycleStatus", null, null);
+				that.expectChange("grossAmount", ["1.00", "2.00", "3.00", "4.00"])
+					.expectChange("lifecycleStatus", ["Z", "Y", "X", "W"]);
+
+				that.oView.byId("table").setFirstVisibleRow(0);
+
+				return that.waitForChanges(assert);
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Simulate a chart that requests minimum and maximum values for a measure via
-	// #updateAnalyticalInfo
+	// #updateAnalyticalInfo; initial $skip > 0!
 	QUnit.test("ODLB#updateAnalyticalInfo with min/max", function (assert) {
 		var aAggregation = [{ // dimension
 				grouped : false,
@@ -6340,9 +6440,10 @@ sap.ui.require([
 				name : "AGE",
 				total : false
 			}],
+			oMeasureRangePromise,
 			sView = '\
 <Text id="count" text="{$count}"/>\
-<t:Table id="table" rows="{\
+<t:Table firstVisibleRow="1" id="table" rows="{\
 			path : \'/EMPLOYEES\',\
 			parameters : {$count : true},\
 			filters : {path : \'AGE\', operator : \'GE\', value1 : 30},\
@@ -6361,12 +6462,12 @@ sap.ui.require([
 </t:Table>',
 			that = this;
 
-		// for simulating Chart, #updateAnalyticalInfo needs to be called before #getContexts
+		// for simulating Chart, call #updateAnalyticalInfo _before_ #getContexts
 		this.mock(ODataListBinding.prototype)
 			.expects("getContexts")
-			.withExactArgs(0, 3, 0)
+			.withExactArgs(1, 3, 0)
 			.callsFake(function () {
-				this.updateAnalyticalInfo(aAggregation)
+				oMeasureRangePromise = this.updateAnalyticalInfo(aAggregation)
 					.measureRangePromise.then(function (mMeasureRange) {
 						assert.deepEqual(mMeasureRange, {
 							AGE : {
@@ -6374,26 +6475,24 @@ sap.ui.require([
 								min : 42
 							}
 						});
-					}, function (oError) {
-						assert.notOk(oError);
 					});
 				ODataListBinding.prototype.getContexts.restore();
 				return this.getContexts.apply(this, arguments);
 			});
-		this.expectRequest("EMPLOYEES?$count=true&$apply=groupby((Name),aggregate(AGE))"
-				+ "/filter(AGE%20ge%2030)/orderby(AGE)"
-				+ "/concat(aggregate(AGE%20with%20min%20as%20UI5min__AGE,"
-				+ "AGE%20with%20max%20as%20UI5max__AGE),identity)"
-				+ "&$skip=0&$top=4",
-			{
-				"@odata.count": 5,
+		this.expectRequest("EMPLOYEES?$apply=groupby((Name),aggregate(AGE))"
+					+ "/filter(AGE%20ge%2030)/orderby(AGE)"
+					+ "/concat(aggregate(AGE%20with%20min%20as%20UI5min__AGE,"
+					+ "AGE%20with%20max%20as%20UI5max__AGE,$count%20as%20UI5__count)"
+					+ ",skip(1)/top(3))", {
 				"value" : [{
 						// the server response may contain additional data for example @odata.id or
 						// type information "UI5min__AGE@odata.type": "#Int16"
 						"@odata.id": null,
 						"UI5min__AGE@odata.type": "#Int16",
 						"UI5min__AGE": 42,
-						"UI5max__AGE": 77
+						"UI5max__AGE": 77,
+						"UI5__count@odata.type": "#Decimal",
+						"UI5__count": "4"
 					},
 					{"ID" : "1", "Name" : "Jonathan Smith", "AGE" : 50},
 					{"ID" : "0", "Name" : "Frederic Fall", "AGE" : 70},
@@ -6401,8 +6500,8 @@ sap.ui.require([
 				]
 			})
 			.expectChange("count")
-			.expectChange("text", ["Jonathan Smith", "Frederic Fall", "Peter Burke"])
-			.expectChange("age", ["50", "70", "77"]);
+			.expectChange("text", ["Jonathan Smith", "Frederic Fall", "Peter Burke"], 1)
+			.expectChange("age", ["50", "70", "77"], 1);
 
 		return this.createView(assert, sView, createTeaBusiModel()).then(function () {
 			that.expectChange("count", "4");
@@ -6417,27 +6516,21 @@ sap.ui.require([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("EMPLOYEES?$apply=groupby((Name),aggregate(AGE))"
-					// Note: for consistency, we prefer filter() over $filter here
-					// (same for orderby() vs. $orderby)
-					+ "/filter(AGE%20ge%2030)/orderby(AGE)"
-					+ "&$skip=3&$top=1",
-				{
-					"value" : [
-						{"ID" : "3", "Name" : "John Field", "AGE" : 82}
-					]
+						// Note: for consistency, we prefer filter() over $filter here
+						// (same for orderby() vs. $orderby and skip/top)
+						+ "/filter(AGE%20ge%2030)/orderby(AGE)/top(1)", {
+					"value" : [{"ID" : "3", "Name" : "John Field", "AGE" : 42}]
 				})
 				.expectChange("text", null, null)
 				.expectChange("age", null, null)
-				.expectChange("text", "Frederic Fall", 1)
-				.expectChange("text", "Peter Burke", 2)
-				.expectChange("text", "John Field", 3)
-				.expectChange("age", "70", 1)
-				.expectChange("age", "77", 2)
-				.expectChange("age", "82", 3);
+				.expectChange("text", ["John Field", "Jonathan Smith", "Frederic Fall"])
+				.expectChange("age", ["42", "50", "70"]);
 
-			that.oView.byId("table").setFirstVisibleRow(1);
+			that.oView.byId("table").setFirstVisibleRow(0);
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			return oMeasureRangePromise; // no child left behind :-)
 		});
 	});
 
