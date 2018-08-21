@@ -193,14 +193,19 @@ sap.ui.define([
 			var oOldParsed = oURLParsing.parseShellHash(sOldHash);
 			var oNewParsed = oURLParsing.parseShellHash(sNewHash);
 
-			// params should exists on both parsed urls
-			// check 1 for navigation - suppress should only work when variant parameters have changed
+			// checkpoint 1:
+			// - suppress only when parameters exist
+			// - variant parameter should exist on either of the parsed hashes
+			// - undefined parameters will be equal and return false
 			var bSuppressDefaultNavigation = oOldParsed
 				&& oNewParsed
+				&& (oOldParsed.params.hasOwnProperty(sVariantParameterName) || oNewParsed.params.hasOwnProperty(sVariantParameterName))
 				&& !deepEqual(oOldParsed.params[sVariantParameterName], oNewParsed.params[sVariantParameterName]);
 
+			// checkpoint 2:
+			// - other keys except 'appSpecificRoute' and 'params' should match
 			if (bSuppressDefaultNavigation) {
-				// Verify if others parsed url properties are same
+				// Verify if other parsed url properties are the same
 				for (var sKey in oOldParsed) {
 					if (
 						sKey !== "params"
@@ -213,23 +218,19 @@ sap.ui.define([
 				}
 			}
 
+			// checkpoint 3:
+			// - variant parameter should be the only parameter existing
 			if (bSuppressDefaultNavigation) {
-				bSuppressDefaultNavigation = false;
-				[oOldParsed, oNewParsed].forEach(
-					function (oParsedHash) {
-						// Parameter should exists on either of the parsed hashes
-						// If parameter exists but it's not the only one, it's invalid
-						// If parameter doesn't exist but other parameters exist, it's invalid
-						if (oParsedHash.params.hasOwnProperty(sVariantParameterName)) {
-							bSuppressDefaultNavigation = true;
-							if (Object.keys(oParsedHash.params).length !== 1) {
-								bSuppressDefaultNavigation = false;
+				bSuppressDefaultNavigation =
+					// true returned from some() if other parameters exist, which is then negated
+					!( [oOldParsed, oNewParsed].some(function (oParsedHash) {
+							if (oParsedHash.params.hasOwnProperty(sVariantParameterName)) {
+								// If parameter exists but it's not the only one, it's invalid
+								return Object.keys(oParsedHash.params).length > 1;
 							}
-						} else if (Object.keys(oParsedHash.params).length !== 0) {
-							bSuppressDefaultNavigation = false;
+							return Object.keys(oParsedHash.params).length > 0;
 						}
-					}
-				);
+					) );
 			}
 
 			if (bSuppressDefaultNavigation) {
