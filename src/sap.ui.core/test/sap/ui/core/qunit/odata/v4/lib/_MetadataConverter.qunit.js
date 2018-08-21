@@ -2,13 +2,12 @@
  * ${copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/model/odata/v4/lib/_MetadataConverter",
 	"sap/ui/model/odata/v4/lib/_V2MetadataConverter",
 	"sap/ui/model/odata/v4/lib/_V4MetadataConverter",
-	"jquery.sap.xml" // jQuery.sap.parseXML()
-], function (jQuery, Log, _MetadataConverter, _V2MetadataConverter, _V4MetadataConverter) {
+	"sap/ui/util/XMLHelper"
+], function (Log, _MetadataConverter, _V2MetadataConverter, _V4MetadataConverter, XMLHelper) {
 	/*global QUnit */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -28,7 +27,7 @@ sap.ui.require([
 	 * @returns {Document} the DOM document
 	 */
 	function xml(assert, sXml) {
-		var oDocument = jQuery.sap.parseXML(sXml);
+		var oDocument = XMLHelper.parse(sXml);
 		assert.strictEqual(oDocument.parseError.errorCode, 0, "XML parsed correctly");
 		return oDocument;
 	}

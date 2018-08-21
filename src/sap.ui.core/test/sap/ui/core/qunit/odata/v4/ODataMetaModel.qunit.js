@@ -3523,13 +3523,19 @@ sap.ui.require([
 			sCommonText = "@com.sap.vocabularies.Common.v1.Text",
 			sBaseUrl = "/" + window.location.pathname.split("/")[1]
 				+ "/test-resources/sap/ui/core/qunit/odata/v4/data/",
-			oMetadata = jQuery.sap.sjax({url : sBaseUrl + "metadata.json", dataType : 'json'}).data,
+			oMetadata = getDataAsJson("metadata.json"),
 			oExpectedResult = clone(oMetadata),
-			oAnnotation = jQuery.sap.sjax({
-				url : sBaseUrl + "legacy_annotations.json",
-				dataType : 'json'
-			}).data,
+			oAnnotation = getDataAsJson("legacy_annotations.json"),
 			oAnnotationCopy = clone(oAnnotation);
+
+		function getDataAsJson(sFileName) {
+			var oXHR = new XMLHttpRequest();
+
+			oXHR.open("GET", sBaseUrl + sFileName, /*async*/false);
+			oXHR.send();
+
+			return JSON.parse(oXHR.response);
+		}
 
 		// the examples are unrealistic and only need to work in 'legacy mode'
 		this.oMetaModel.bSupportReferences = false;

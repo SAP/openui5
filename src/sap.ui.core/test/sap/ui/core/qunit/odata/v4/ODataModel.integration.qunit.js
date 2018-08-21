@@ -4,6 +4,7 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/base/Log",
+	"sap/base/util/uid",
 	"sap/m/ColumnListItem",
 	"sap/m/CustomListItem",
 	"sap/m/Text",
@@ -20,7 +21,7 @@ sap.ui.require([
 	"sap/ui/test/TestUtils",
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function (jQuery, Log, ColumnListItem, CustomListItem, Text, Controller, View, ChangeReason,
+], function (jQuery, Log, uid, ColumnListItem, CustomListItem, Text, Controller, View, ChangeReason,
 		Filter, FilterOperator, Sorter, OperationMode, AnnotationHelper, ODataListBinding,
 		ODataModel, TestUtils) {
 	/*global QUnit, sinon */
@@ -565,7 +566,7 @@ sap.ui.require([
 			return View.create({
 				type : "XML",
 				controller : oController
-					&& new (Controller.extend(jQuery.sap.uid(), oController))(),
+					&& new (Controller.extend(uid(), oController))(),
 				definition :
 					'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:t="sap.ui.table">'
 						+ sViewXML
