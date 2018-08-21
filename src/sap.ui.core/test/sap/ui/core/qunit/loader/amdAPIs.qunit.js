@@ -104,9 +104,10 @@
 			return undefined;
 		});
 
-		// Waiting for loader queue to be processed
-		setTimeout(function() {
+		// after 'someone' required the module ...
+		require(['sap/test/A'], function() {
 
+			// ... the probing API should succeed
 			var x = require("sap/test/A");
 
 			assert.strictEqual(x, undefined, "undefined is returned");
