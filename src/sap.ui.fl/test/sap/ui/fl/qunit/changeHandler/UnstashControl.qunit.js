@@ -4,27 +4,27 @@ QUnit.config.autostart = false;
 
 sap.ui.require([
 	"sap/ui/fl/changeHandler/UnstashControl",
-	"sap/ui/core/Control",
+	"sap/ui/fl/Change",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
-	"sap/ui/core/Element",
-	"sap/ui/fl/Change",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
-	"sap/ui/core/StashedControlSupport"
+	"sap/ui/core/StashedControlSupport",
+	"sap/ui/core/UIComponent"
 ], function(
 	UnstashControlChangeHandler,
-	Control,
+	Change,
 	ObjectPageLayout,
 	ObjectPageSection,
-	Element,
-	Change,
 	JsControlTreeModifier,
 	XmlTreeModifier,
-	StashedControlSupport
+	StashedControlSupport,
+	UIComponent
 ) {
 	'use strict';
 	QUnit.start();
+
+	var oMockUIComponent = new UIComponent("mockComponent");
 
 	QUnit.module("sap.ui.fl.changeHandler.UnstashControl", {
 		beforeEach: function() {
@@ -96,11 +96,6 @@ sap.ui.require([
 		}
 	});
 
-	QUnit.test('applyChange is called with a stashed ObjectPageSection on a js control tree', function(assert) {
-		var oControl = this.oChangeHandler.applyChange(this.oChange, this.oObjectPageSection3, {modifier: JsControlTreeModifier});
-		assert.ok(oControl instanceof ObjectPageSection, "then the initialized control during unstashing is returned");
-	});
-
 	QUnit.test('applyChange is called with a stashed ObjectPageSection on an xml control tree', function(assert) {
 		var oControl = this.oChangeHandler.applyChange(this.oChange, this.oXmlObjectPageSection3, {modifier: XmlTreeModifier, view: this.oXmlView});
 		assert.deepEqual(oControl, this.oXmlObjectPageSection3, "then the passed control node is returned");
@@ -108,7 +103,8 @@ sap.ui.require([
 
 	QUnit.test('applyChange is called with a stashed ObjectPageSection on a js control tree', function(assert) {
 		assert.equal(this.oObjectPageSection3.getStashed(), true, "getStashed() before unstashing is true");
-		this.oChangeHandler.applyChange(this.oChange, this.oObjectPageSection3, {modifier: JsControlTreeModifier});
+		var oControl = this.oChangeHandler.applyChange(this.oChange, this.oObjectPageSection3, {modifier: JsControlTreeModifier, appComponent: oMockUIComponent});
+		assert.ok(oControl instanceof ObjectPageSection, "then the initialized control during unstashing is returned");
 		assert.equal(this.oObjectPageSection3.getVisible(), true, "unstashed ObjectPageSection is visible");
 		assert.equal(this.oObjectPageSection3.getStashed(), undefined, "getStashed() after unstashing is undefined");
 		assert.deepEqual(this.oObjectPageLayout.getAggregation("sections")[0], this.oObjectPageSection3, "unstashed ObjectPageSection is at the first position");
@@ -169,5 +165,4 @@ sap.ui.require([
 		assert.equal(this.oXmlObjectPageSection3.getAttribute("stashed"), null, "xml stashed node doesn't have the stashed attribute");
 		assert.deepEqual(this.oXmlLayout.childNodes[0].childNodes[2], this.oXmlObjectPageSection3, "unstashed ObjectPageSection is still at 3. position");
 	});
-
 });
