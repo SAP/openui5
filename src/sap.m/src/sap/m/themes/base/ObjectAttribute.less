@@ -11,10 +11,6 @@
 	color: @sapUiContentLabelColor;
 }
 
-.sapMObjectAttributeActive {
-	pointer-events: none;
-}
-
 .sapMObjectAttributeActive .sapMObjectAttributeColon {
 	vertical-align: middle;
 }
@@ -58,13 +54,8 @@
 	text-overflow: ellipsis;
 	max-width: 50%;
 	vertical-align: middle;
-}
-
-html[data-sap-ui-browser^='ie'], html[data-sap-ui-browser^='ed'] {
-	.sapMObjectAttributeActive .sapMObjectAttributeTitle,
-	.sapMObjectAttributeActive .sapMObjectAttributeText {
-		display: inline-block;
-	}
+	/* we need this otherwise the focus get broken when the link is on more lines */
+	display: inline-block;
 }
 
 .sapMListTblCell .sapMObjectAttributeActive .sapMObjectAttributeTitle,
