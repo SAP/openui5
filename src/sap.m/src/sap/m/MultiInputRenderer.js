@@ -17,6 +17,8 @@ sap.ui.define(['./InputRenderer', 'sap/ui/core/Renderer'],
 	};
 
 	MultiInputRenderer.addOuterClasses = function(oRm, oControl) {
+		InputRenderer.addOuterClasses.apply(this, arguments);
+
 		oRm.addClass("sapMMultiInput");
 
 		if (oControl.getTokens().length > 0) {
