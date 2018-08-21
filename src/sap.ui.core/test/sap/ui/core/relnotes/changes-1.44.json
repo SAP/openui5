@@ -2227,5 +2227,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.34": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "b7352b7bdca62ca24be88c7453f9ad5934e1d4df",
+        "type": "FIX",
+        "text": " AppCacheBuster: ignore query parameter for index lookup",
+        "references": []
+      }
+    ]
   }
 }

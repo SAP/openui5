@@ -219,5 +219,16 @@
         ]
       }
     ]
+  },
+  "1.44.34": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "d6475fa2fc7b29f20306023c6161c028450c25db",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: ScrollEnablement now has latest DOMref",
+        "references": []
+      }
+    ]
   }
 }

@@ -695,5 +695,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.34": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "faf19561cdcd4000946b961eff691def0612224f",
+        "type": "FIX",
+        "text": " @sapUiShadowText updated",
+        "references": []
+      },
+      {
+        "id": "b8caab4c4a8164d02dbb17dd615829990e0b708f",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Selection now visible in print",
+        "references": []
+      }
+    ]
   }
 }

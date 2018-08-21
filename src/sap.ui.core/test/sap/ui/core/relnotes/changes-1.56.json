@@ -1030,5 +1030,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.7": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "b2c5ad8632bec8886aa868d3fdc203ee0bf010a3",
+        "type": "FIX",
+        "text": " Register ui5loader modules synchronously",
+        "references": []
+      }
+    ]
   }
 }
