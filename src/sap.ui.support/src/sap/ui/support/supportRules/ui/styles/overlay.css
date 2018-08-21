@@ -168,12 +168,12 @@ body {
 	cursor: pointer;
 }
 
-.sapUiSupportToolVariantCont .sapUiSupportToolVariantLnk {
+.sapUiSupportToolVariantCont .sapUiSupportToolVariantTxt {
 	color: #346187; /* @sapUiButtonTextColor */
 	text-decoration: none !important;
 }
 
-.sapUiSupportToolVariantCont  .sapMLnk.sapUiSupportToolVariantLnk:hover {
+.sapUiSupportToolVariantCont  .sapMLnk.sapUiSupportToolVariantTxt:hover {
 	color: #427cac; /* @sapUiHighlight ?*/
 }
 
@@ -194,3 +194,18 @@ body {
 .sapMScrollCont.sapUiSupportToolImportDescr {
 	max-height: 5rem;
 }
+
+.sapMGHLI.sapMLIB.sapMLIB-CTX.sapMLIBFocusable.sapMLIBShowSeparator.sapMLIBTypeInactive.sapUiSupportToolGHLI {
+	padding-left: 0.5rem;
+}
+
+.sapUiSupportToolVariantTxt.sapMFT {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding-right: 0.2rem;
+}
+
+.sapMFT.sapUiSupportToolPresetTitle {
+	padding-right: 0.2rem;
+}
+

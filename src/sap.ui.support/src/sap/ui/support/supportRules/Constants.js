@@ -62,6 +62,11 @@ sap.ui.define([],
 			LOCAL_STORAGE_SELECTION_PRESETS_KEY: "support-assistant-selection-presets",
 
 			/**
+			 * Stores custom presets list
+			 */
+			LOCAL_STORAGE_CUSTOM_PRESETS_KEY: "support-assistant-custom-presets",
+
+			/**
 			 * The name of the persistence cookie.
 			 */
 			COOKIE_NAME: "persistence-cookie",

@@ -11,8 +11,10 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/support/supportRules/ui/models/Documentation",
 	"sap/ui/core/ValueState",
-	"sap/ui/support/supportRules/util/Utils"
-], function (BaseController, SelectionUtils, PresetsUtils, Fragment, MessageToast, MessageBox, Documentation, ValueState, Utils) {
+	"sap/ui/support/supportRules/util/Utils",
+	"sap/m/GroupHeaderListItem",
+	"sap/ui/thirdparty/jquery"
+], function (BaseController, SelectionUtils, PresetsUtils, Fragment, MessageToast, MessageBox, Documentation, ValueState, Utils, GroupHeaderListItem, jQuery) {
 	"use strict";
 
 	/**
@@ -40,7 +42,27 @@ sap.ui.define([
 		 * @constant
 		 * @type {string}
 		 */
-		IMPORT_FRAGMENT_ID: "presetImport"
+		IMPORT_FRAGMENT_ID: "presetImport",
+
+		/**
+		 * @constant
+		 * @type {string}
+		 */
+		PRESET_GROUP_NONE: "None",
+
+		/**
+		 * Title for the group of system presets
+		 * @constant
+		 * @type {string}
+		 */
+		PRESET_GROUP_SYSTEM: "System Presets",
+
+		/**
+		 * Title for the group of custom presets
+		 * @constant
+		 * @type {string}
+		 */
+		PRESET_GROUP_CUSTOM: "Custom Presets"
 	};
 
 	/**
@@ -115,7 +137,9 @@ sap.ui.define([
 	 */
 	PresetsController.prototype.onPresetItemDelete = function (oEvent) {
 		var sPath = oEvent.getSource().getBindingContext().getPath(),
-			oDeletePreset = this.oModel.getProperty(sPath);
+			oDeletePreset = this.oModel.getProperty(sPath),
+			aCustomPresets = this.oModel.getProperty("/customPresets"),
+			sDeletedItemId = oEvent.getSource().$().closest(".sapMLIB").attr("id");
 
 		// use the path to find and delete
 		var aPresets = this.oModel.getProperty("/selectionPresets");
@@ -131,11 +155,32 @@ sap.ui.define([
 			this._applyPreset(aPresets[0]);
 		}
 
-		if (PresetsUtils.isPersistingAllowed()) {
-			PresetsUtils.persistSelectionPresets();
+		this.oModel.setProperty("/selectionPresets", aPresets);
+
+		if (oDeletePreset.isCustomPreset) {
+			aCustomPresets = aCustomPresets.filter(function (oPreset) {
+				return oPreset.id !== oDeletePreset.id;
+			});
+
+			this.oModel.setProperty("/customPresets", aCustomPresets);
 		}
 
-		this.oModel.setProperty("/selectionPresets", aPresets);
+		if (PresetsUtils.isPersistingAllowed()) {
+			PresetsUtils.persistSelectionPresets();
+			PresetsUtils.persistCustomPresets();
+		}
+
+		// deleting item fires tap event
+		// for the next item in the list which needs to be suppressed
+		if (iDeletedPresetIndex !== aPresets.length) {
+			var oNextListItem = sap.ui.getCore().byId(sDeletedItemId),
+				fnOntap = oNextListItem.ontap;
+
+			oNextListItem.ontap = function() {
+				oNextListItem.ontap = fnOntap;
+			};
+		}
+
 	};
 
 	/**
@@ -145,12 +190,12 @@ sap.ui.define([
 	PresetsController.prototype.onPresetItemReset = function (oEvent) {
 		var sPath = oEvent.getSource().getBindingContext().getPath(),
 			oPreset = this.oModel.getProperty(sPath),
-			aSystemPresets = this.oModel.getProperty("/systemPresets");
+			aPresets = oPreset.isSystemPreset ?  this.oModel.getProperty("/systemPresets") : this.oModel.getProperty("/customPresets");
 
-		aSystemPresets.some(function (oSystemPreset) {
-			if (oSystemPreset.id === oPreset.id) {
-				oPreset.title = oSystemPreset.title;
-				oPreset.selections = oSystemPreset.selections;
+		aPresets.some(function (oInitialPreset) {
+			if (oInitialPreset.id === oPreset.id) {
+				oPreset.title = oInitialPreset.title;
+				oPreset.selections = oInitialPreset.selections;
 				oPreset.isModified = false;
 				return true;
 			}
@@ -564,7 +609,8 @@ sap.ui.define([
 	 * @param {Object} oImportData A valid preset import data
 	 */
 	PresetsController.prototype._importPreset = function (oImportData) {
-		var aPresets = this.oModel.getProperty("/selectionPresets");
+		var aSelectedPresets = this.oModel.getProperty("/selectionPresets"),
+			aCustomPresets = this.oModel.getProperty("/customPresets");
 
 		// do not import all data, only import what is expected to stay in the model
 		var oPresetOptions = {
@@ -576,12 +622,21 @@ sap.ui.define([
 			"selections": oImportData.selections
 		};
 
-		aPresets.forEach(function (oDeselectPreset) {
+		aSelectedPresets.forEach(function (oDeselectPreset) {
 			oDeselectPreset.selected = false;
 		});
-		oPresetOptions.selected = true;
 
-		aPresets.push(oPresetOptions);
+		oPresetOptions.selected = true;
+		oPresetOptions.isCustomPreset = true;
+
+		aSelectedPresets.push(oPresetOptions);
+
+		// keep the original version of the preset
+		aCustomPresets.push(jQuery.extend(true, {}, oPresetOptions));
+
+		if (PresetsUtils.isPersistingAllowed()) {
+			PresetsUtils.persistCustomPresets();
+		}
 
 		this._applyPreset(oPresetOptions);
 	};
@@ -599,6 +654,39 @@ sap.ui.define([
 		if (PresetsUtils.isPersistingAllowed()) {
 			PresetsUtils.persistSelectionPresets();
 		}
+	};
+
+	/**
+	 * Determines preset group according to its properties
+	 * @param {object} oContext Current preset
+	 * @returns {string} Title of the group
+	 * @public
+	 */
+	PresetsController.prototype.grouper = function (oContext) {
+		if (oContext.getProperty("isSystemPreset")) {
+			return Constants.PRESET_GROUP_SYSTEM;
+		}
+
+		if (oContext.getProperty("isCustomPreset")) {
+			return Constants.PRESET_GROUP_CUSTOM;
+		}
+
+		return Constants.PRESET_GROUP_NONE;
+	};
+
+	/**
+	 * Factory for creating list group header objects for the presets list.
+	 * @param {Object} oGroup - group data passed from the list model binding
+	 * @returns {sap.m.GroupHeaderListItem} Group header control
+	 * @public
+	 */
+	PresetsController.prototype.getGroupHeader = function (oGroup) {
+		var bVisible = !(oGroup.key === Constants.PRESET_GROUP_NONE);
+
+		return new GroupHeaderListItem({
+			title: oGroup.key,
+			visible: bVisible
+		}).addStyleClass("sapUiSupportToolGHLI");
 	};
 
 	return PresetsController;

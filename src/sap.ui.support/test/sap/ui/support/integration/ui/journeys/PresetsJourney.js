@@ -13,7 +13,9 @@ sap.ui.define([
 		SYSTEM_ACCESSIBILITY_TITLE = "Accessibility",
 		SYSTEM_ACCESSIBILITY_COUNT = 5,
 		EXAMPLE_PRESET_1 = "TestPreset1.json",
-		EXAMPLE_PRESET_S4HANA = "S4HanaPreset.json";
+		EXAMPLE_PRESET_S4HANA = "S4HanaPreset.json",
+		PRESETS_GROUP_SYSTEM = "System Presets",
+		PRESETS_GROUP_CUSTOM = "Custom Presets";
 
 	function loadExamplePreset(fileName) {
 		var preset = jQuery.sap.syncGetJSON("data/Presets/" + fileName).data;
@@ -30,11 +32,11 @@ sap.ui.define([
 	}
 
 	function getPresetsCount() {
-		return document.activeElement.contentDocument.getElementById("presetsSelect--select").getElementsByTagName("li").length;
+		return document.activeElement.contentDocument.getElementById("presetsSelect--select").getElementsByClassName("sapMCLI").length;
 	}
 
 	function getModifiedPresetTitle(sTitle) {
-		return sTitle + " (*)";
+		return "<em>" + sTitle + " *" + "</em>";
 	}
 
 	opaTest("Should see the Rule Presets variant select", function (Given, When, Then) {
@@ -175,7 +177,6 @@ sap.ui.define([
 	});
 
 	opaTest("Should be able to switch to My Selection", function(Given, When, Then) {
-
 		When.onThePresetsPage.iOpenPresetsPopover();
 
 		When.onThePresetsPage.iPressPresetInPopover(MY_SELECTION_TITLE);
@@ -358,6 +359,32 @@ sap.ui.define([
 
 	});
 
+	opaTest("Should see 'System Presets' and 'Custom Presets' groups", function (Given, When, Then) {
+		Then.onThePresetsPage.iShouldSeeGroupWithTitle(PRESETS_GROUP_SYSTEM)
+			.and.iShouldSeeGroupWithTitle(PRESETS_GROUP_CUSTOM);
+
+		// enable local storage
+		When.onTheRulesPage.iPressSettingsButton();
+
+		When.onTheRulesPage.iPressCheckBoxButton(true);
+
+		Then.iTeardownSupportAssistantFrame();
+	});
+
+	opaTest("Should see custom preset persisted and be able to undo changes", function (Given, When, Then) {
+		var testPreset = loadExamplePreset(EXAMPLE_PRESET_S4HANA);
+
+		Given.iStartMyApp();
+
+		When.onThePresetsPage.iOpenPresetsPopover();
+
+		When.onThePresetsPage.iPressUndoButton(testPreset._forTestTitleIfModified);
+
+		Then.onThePresetsPage.iShouldSeePresetInPopover(testPreset.title);
+
+		Then.onTheRulesPage.iShouldSeeRuleSelectedInView(3); // Error logs - rule
+	});
+
 	opaTest("Should see validation messages when required inputs are not filled", function(Given, When, Then) {
 
 		When.onThePresetsPage.iPressExport();
@@ -457,11 +484,6 @@ sap.ui.define([
 		When.onThePresetsPage.iOpenPresetsPopover();
 		Then.onThePresetsPage.iShouldSeeSelectedPreset(getModifiedPresetTitle(SYSTEM_ACCESSIBILITY_TITLE));
 
-		// allow local storage
-		When.onTheRulesPage.iPressSettingsButton();
-		When.onTheRulesPage.iPressCheckBoxButton(true);
-
-		// finalize all tests
 		Then.iTeardownSupportAssistantFrame();
 	});
 

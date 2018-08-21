@@ -100,6 +100,9 @@ sap.ui.define([
 				disableDelete: true
 			}
 		],
+		customPresets: [
+			// presets added by the user via import
+		],
 		// To add new System Preset include it here and follow AccessibilityPreset as template
 		systemPresets: [
 			{
