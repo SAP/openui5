@@ -1,7 +1,7 @@
 {
 	"explored": {
 		"entitiesDefaults": {
-			"formFactors": "ML"
+			"formFactors": "SML"
 		},
 		"samplesRef": {
 			"namespace": "sap.ui.table.sample",

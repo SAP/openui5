@@ -1,14 +1,10 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	"sap/ui/rta/plugin/RTAElementMover",
+sap.ui.define([
 	"sap/ui/rta/plugin/DragDrop",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/ElementDesignTimeMetadata",
-	"sap/ui/dt/ElementOverlay",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/comp/smartform/SmartForm",
@@ -17,14 +13,13 @@ sap.ui.require([
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
 	"sap/m/Bar",
+	"sap/ui/dt/OverlayUtil",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	RTAElementMover,
 	DragDropPlugin,
 	OverlayRegistry,
 	DesignTime,
 	ElementDesignTimeMetadata,
-	ElementOverlay,
 	CommandFactory,
 	ChangeRegistry,
 	SmartForm,
@@ -33,6 +28,7 @@ sap.ui.require([
 	VerticalLayout,
 	Button,
 	Bar,
+	OverlayUtil,
 	sinon
 ) {
 	"use strict";
@@ -512,14 +508,57 @@ sap.ui.require([
 			sandbox.restore();
 		}
 	}, function () {
-		QUnit.test("when DT is loaded and moving the movedGroupElement1 to the Group2...", function(assert) {
+		QUnit.test("when DT is loaded and movedGroupElement1 is moved to the Group2...", function(assert) {
 			this.oElementMover.setMovedOverlay(this.oMovedGroupElement1Overlay);
+			var oSourceInformation = OverlayUtil.getParentInformation(this.oMovedGroupElement1Overlay);
+
 			assert.ok(this.oElementMover.checkTargetZone(this.oGroupAggregationOverlay), "then the group2 is a possible target zone");
+
+			// mock variant management
+			sandbox.stub(this.oElementMover.oBasePlugin, "getVariantManagementReference").returns("mockVariantReference");
+			// simulate move
+			sandbox.stub(this.oMovedGroupElement1Overlay, "getParent").returns(this.oGroupAggregationOverlay);
+			var oTargetInformation = {
+				parent: OverlayRegistry.getOverlay(this.oGroup2),
+				aggregation: "group",
+				index: this.oGroup2.getGroupElements().length
+			};
+
+			var fnGetCommandForStub = sandbox.stub(this.oElementMover.getCommandFactory(), "getCommandFor").returns(Promise.resolve());
+			sandbox.stub(OverlayUtil, "getParentInformation")
+				.callThrough()
+				.withArgs(this.oMovedGroupElement1Overlay)
+				.returns(oTargetInformation);
+
+			return this.oElementMover.buildMoveCommand()
+				.then(function() {
+					assert.strictEqual(arguments[0], undefined, "then a promise is received resolving to undefined");
+					assert.ok(
+						fnGetCommandForStub.calledWith(this.oMovedGroupElement1Overlay.getRelevantContainer(), "Move", {
+							movedElements: [{
+								element: this.oMovedGroupElement1,
+								sourceIndex: oSourceInformation.index,
+								targetIndex: this.oGroup2.getGroupElements().length
+							}],
+							source: delete oSourceInformation.index && oSourceInformation,
+							target: delete oTargetInformation.index && oTargetInformation
+						}, this.oGroupAggregationOverlay.getDesignTimeMetadata(), "mockVariantReference"),
+						"then CommandFactory.getCommandFor() called with the right parameters"
+					);
+				}.bind(this));
 		});
 
 		QUnit.test("when Group 2 is removed and movedGroupElement1 does not have any valid target zones anymore...", function(assert) {
 			this.oSmartForm1.removeGroup(this.oGroup2);
 			assert.notOk(this.oElementMover.checkMovable(this.oMovedGroupElement1Overlay), "then the movedGroupElement1 is no longer movable");
+		});
+
+		QUnit.test("when DT is loaded and moving a group element to the same Group, to where it originally belonged", function(assert) {
+			this.oElementMover.setMovedOverlay(this.oMovedGroupElement1Overlay);
+			return this.oElementMover.buildMoveCommand()
+				.then(function() {
+					assert.strictEqual(arguments[0], undefined, "then a promise is received resolving to undefined");
+				});
 		});
 	});
 
@@ -584,6 +623,7 @@ sap.ui.require([
 			this.oDesignTime.attachEventOnce("synced", function() {
 
 				this.oMovedButton1Overlay = OverlayRegistry.getOverlay(this.oMovedButton1);
+				this.oBarOverlay = OverlayRegistry.getOverlay(this.oBar);
 				this.oBarRightAggregationOverlay = OverlayRegistry.getOverlay(this.oBar).getAggregationOverlay("contentRight");
 				this.oBarMiddleAggregationOverlay = OverlayRegistry.getOverlay(this.oBar).getAggregationOverlay("contentMiddle");
 				this.oElementMover = this.oDragDropPlugin.getElementMover();
@@ -597,6 +637,7 @@ sap.ui.require([
 			this.oMovedButton1Overlay.destroy();
 			this.oBarRightAggregationOverlay.destroy();
 			this.oBarMiddleAggregationOverlay.destroy();
+			this.oBarOverlay.destroy();
 			this.oDesignTime.destroy();
 			this.oBar.destroy();
 		}
@@ -610,11 +651,21 @@ sap.ui.require([
 			this.oElementMover.setMovedOverlay(this.oMovedButton1Overlay);
 			assert.notOk(this.oElementMover.checkTargetZone(this.oBarMiddleAggregationOverlay), "then the middle bar aggregation is not a possible target zone");
 		});
+
+		QUnit.test("when the bar has no stable id...", function(assert) {
+			sandbox.stub(this.oElementMover.oBasePlugin, "hasStableId").callsFake(function(oOverlay){
+				if (oOverlay === this.oBarOverlay){
+					return false;
+				} else {
+					return true;
+				}
+			}.bind(this));
+
+			assert.equal(this.oElementMover._isMoveAvailableOnRelevantContainer(this.oMovedButton1Overlay), false, "then the move is not available");
+		});
 	});
 
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

@@ -2,13 +2,14 @@
  * ${copyright}
  */
 
-/* global QUnit, assert */
+/* global QUnit */
 
-// Provides class sap.ui.dt.test.qunit.QUnit.
 sap.ui.define([
 	'sap/ui/base/ManagedObject'
 ],
-function(ManagedObject) {
+function(
+	ManagedObject
+) {
 	"use strict";
 
 
@@ -89,9 +90,9 @@ function(ManagedObject) {
 		 * @private
 		 */
 		_createTest : function(oGroup) {
-			QUnit.test(oGroup.name + ": " + oGroup.message, function(assert) {
+			QUnit.test(oGroup.name + ": " + oGroup.message, function (assert) {
 				oGroup.children.forEach(function(oGroup) {
-					this._createAssertion(oGroup);
+					this._createAssertion(assert, oGroup);
 				}, this);
 			}.bind(this));
 		},
@@ -100,7 +101,7 @@ function(ManagedObject) {
 		/**
 		 * @private
 		 */
-		_createAssertion : function(oGroup) {
+		_createAssertion : function(assert, oGroup) {
 			if (oGroup.children.length > 0) {
 				oGroup.children.forEach(function(oTest) {
 					assert.ok(oTest.result, oGroup.name + ": " + oTest.message);

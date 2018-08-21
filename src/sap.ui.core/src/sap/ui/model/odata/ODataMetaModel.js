@@ -16,7 +16,8 @@ sap.ui.define([
 	'sap/ui/model/MetaModel',
 	'./_ODataMetaModelUtils',
 	"sap/ui/performance/Measurement",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	BindingMode,
 	BindingParser,
@@ -31,7 +32,8 @@ sap.ui.define([
 	MetaModel,
 	Utils,
 	Measurement,
-	Log
+	Log,
+	jQuery
 ) {
 	"use strict";
 

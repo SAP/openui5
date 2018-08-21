@@ -10,7 +10,8 @@ sap.ui.define([
 	'../Context',
 	'../ChangeReason',
 	"sap/base/util/uid",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/util/isPlainObject"
 ], function(
 	JSONModel,
 	JSONPropertyBinding,
@@ -20,7 +21,8 @@ sap.ui.define([
 	Context,
 	ChangeReason,
 	uid,
-	Log
+	Log,
+	isPlainObject
 ) {
 	"use strict";
 
@@ -161,12 +163,10 @@ sap.ui.define([
 		var oObject = this._getObject(sObjectPath);
 		if (oObject) {
 			if (oObject instanceof ManagedObject) {
-				var oProperty = oObject.getMetadata().getProperty(sProperty);
+				var oProperty = oObject.getMetadata().getManagedProperty(sProperty);
 				if (oProperty) {
-					var sSetter = oProperty._sMutator,
-						sGetter = oProperty._sGetter;
-					if (oObject[sGetter]() !== oValue) {
-						oObject[sSetter](oValue);
+					if (oProperty.get(oObject) !== oValue) {
+						oProperty.set(oObject, oValue);
 						this.checkUpdate(false, bAsyncUpdate);
 						return true;
 					}
@@ -446,7 +446,7 @@ sap.ui.define([
 			return oParentNode.isBound(sParentPart);
 		} else if (sSpecial === "bindingInfo" && oParentNode && sParentPart) {
 			return oParentNode.getBindingInfo(sParentPart);
-		} else if (jQuery.isArray(oNode)) {
+		} else if (Array.isArray(oNode)) {
 			if (sSpecial === "length") {
 				return oNode.length;
 			} else if (sSpecial.indexOf("id=") === 0) {
@@ -533,13 +533,13 @@ sap.ui.define([
 				} else {
 					oParentNode = oNode;
 					sParentPart = sPart;
-					var oProperty = oNodeMetadata.getProperty(sPart);
+					var oProperty = oNodeMetadata.getManagedProperty(sPart);
 					if (oProperty) {
-						oNode = oNode[oProperty._sGetter]();
+						oNode = oProperty.get(oNode);
 					} else {
-						var oAggregation = oNodeMetadata.getAggregation(sPart) || oNodeMetadata.getAllPrivateAggregations()[sPart];
+						var oAggregation = oNodeMetadata.getManagedAggregation(sPart);
 						if (oAggregation) {
-							oNode = oNode[oAggregation._sGetter] ? oNode[oAggregation._sGetter]() : oNode.getAggregation(sPart);
+							oNode = oAggregation.get(oNode);
 						} else {
 							if (oNode && oNode[sPart] && typeof oNode[sPart] === "function") {
 								oNode = oNode[sPart]();
@@ -549,7 +549,7 @@ sap.ui.define([
 						}
 					}
 				}
-			} else if (jQuery.isArray(oNode) || jQuery.isPlainObject(oNode)) {
+			} else if (Array.isArray(oNode) || isPlainObject(oNode)) {
 				oNode = oNode[sPart];
 			} else {
 				if (oNode && oNode[sPart] && typeof oNode[sPart] === "function") {

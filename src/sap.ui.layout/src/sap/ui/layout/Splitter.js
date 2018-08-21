@@ -4,15 +4,25 @@
 
 // Provides control sap.ui.layout.Splitter.
 sap.ui.define([
-    'sap/ui/core/Control',
-    './library',
-    'sap/ui/core/library',
-    'sap/ui/core/ResizeHandler',
-    'sap/ui/core/RenderManager',
-    './SplitterRenderer',
-    "sap/base/Log"
+	'sap/ui/core/Control',
+	'./library',
+	'sap/ui/core/library',
+	'sap/ui/core/ResizeHandler',
+	'sap/ui/core/RenderManager',
+	'./SplitterRenderer',
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(Control, library, coreLibrary, ResizeHandler, RenderManager, SplitterRenderer, Log) {
+	function(
+		Control,
+		library,
+		coreLibrary,
+		ResizeHandler,
+		RenderManager,
+		SplitterRenderer,
+		Log,
+		jQuery
+	) {
 	"use strict";
 
 	// shortcut for sap.ui.core.Orientation
@@ -966,7 +976,7 @@ sap.ui.define([
 				break;
 
 			default:
-				jQuery.sap.log.warn("[Splitter] Invalid keyboard resize type");
+				Log.warn("[Splitter] Invalid keyboard resize type");
 				break;
 		}
 

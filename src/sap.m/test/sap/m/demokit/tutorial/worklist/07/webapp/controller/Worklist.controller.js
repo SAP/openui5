@@ -51,9 +51,9 @@ sap.ui.define([
 			this.setModel(oViewModel, "worklistView");
 			// Create an object of filters
 			this._mFilters = {
-				"inStock": [new sap.ui.model.Filter("UnitsInStock", "GT", 10)],
-				"outOfStock": [new sap.ui.model.Filter("UnitsInStock", "LE", 0)],
-				"shortage": [new sap.ui.model.Filter("UnitsInStock", "BT", 1, 10)],
+				"inStock": [new Filter("UnitsInStock", "GT", 10)],
+				"outOfStock": [new Filter("UnitsInStock", "LE", 0)],
+				"shortage": [new Filter("UnitsInStock", "BT", 1, 10)],
 				"all": []
 			};
 

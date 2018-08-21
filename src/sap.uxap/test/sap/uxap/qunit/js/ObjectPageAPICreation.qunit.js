@@ -324,8 +324,7 @@
 				oSelectedSection: this.oSecondSection,
 				sSelectedTitle: this.oSecondSection.getSubSections()[0].getTitle()
 			},
-			done = assert.async(),
-			bFirefox = sap.ui.Device.browser.firefox;
+			done = assert.async();
 
 		oObjectPage.setUseIconTabBar(false);
 		oObjectPage.addHeaderContent(oHeaderContent);
@@ -342,7 +341,7 @@
 			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 				setTimeout(function() {
 					sectionIsSelected(oObjectPage, assert, oExpected);
-					assert.strictEqual(oObjectPage._$opWrapper.scrollTop(), bFirefox ? 0 : oObjectPage.iHeaderContentHeight, "top section is selected");
+					assert.strictEqual(oObjectPage._$opWrapper.scrollTop(), oObjectPage.iHeaderContentHeight, "top section is selected");
 					assert.strictEqual(oObjectPage._bStickyAnchorBar, true, "anchor bar is snapped");
 					assert.strictEqual(oObjectPage._bHeaderExpanded, false, "header is snapped");
 
@@ -584,7 +583,8 @@
 
 	QUnit.test("scrollEnablement obtains container ref onAfterRendering", function (assert) {
 		var oObjectPage = this.oObjectPage,
-			done = assert.async(); //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
+			done = assert.async(),  //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
+			vOriginalHeight = jQuery("#qunit-fixture").height();
 
 		// ensure page can be scrolled
 		jQuery("#qunit-fixture").height("200"); // container small enough
@@ -601,6 +601,7 @@
 				assert.strictEqual(oObjectPage._$opWrapper.get(0).scrollTop, 10, "scroller can correctly scroll after we have externally provided the container reference");
 
 				oObjectPage.removeEventDelegate(oDelegate);
+				jQuery("#qunit-fixture").height(vOriginalHeight); // restore the original height
 				done();
 			}
 		};

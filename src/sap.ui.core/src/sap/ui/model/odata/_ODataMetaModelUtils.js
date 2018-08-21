@@ -3,8 +3,10 @@
  */
 
 sap.ui.define([
-	"./_AnnotationHelperBasics", "sap/base/Log"
-], function (_AnnotationHelperBasics, Log) {
+	"./_AnnotationHelperBasics",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function (_AnnotationHelperBasics, Log, jQuery) {
 	"use strict";
 
 	/*global Promise */

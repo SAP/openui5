@@ -1,13 +1,14 @@
 /*global QUnit */
-QUnit.config.autostart = false;
 
-sap.ui.require([
+sap.ui.define([
 	'sap/ui/dt/DesignTime',
 	'sap/ui/rta/command/CommandFactory',
+	'sap/ui/rta/plugin/Combine',
+	'sap/ui/rta/Utils',
+	'sap/ui/rta/util/BindingsExtractor',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/fl/registry/ChangeRegistry',
 	'sap/ui/fl/Utils',
-	'sap/ui/rta/plugin/Combine',
 	'sap/m/Button',
 	'sap/m/Panel',
 	'sap/m/OverflowToolbar',
@@ -18,10 +19,12 @@ sap.ui.require([
 function(
 	DesignTime,
 	CommandFactory,
+	CombinePlugin,
+	Utils,
+	BindingsExtractor,
 	OverlayRegistry,
 	ChangeRegistry,
-	Utils,
-	CombinePlugin,
+	FlUtils,
 	Button,
 	Panel,
 	OverflowToolbar,
@@ -59,7 +62,7 @@ function(
 		getModel: function () {}
 	};
 
-	sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+	sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 
 	var sandbox = sinon.sandbox.create();
 
@@ -81,62 +84,62 @@ function(
 
 	//Designtime Metadata with fake isEnabled function (returns false)
 	var oDesignTimeMetadata1 = {
-			actions : {
-				combine : {
-					changeType: "combineStuff",
-					changeOnRelevantContainer : true,
-					isEnabled : function() {
-						return false;
-					}
+		actions : {
+			combine : {
+				changeType: "combineStuff",
+				changeOnRelevantContainer : true,
+				isEnabled : function() {
+					return false;
 				}
 			}
-		};
+		}
+	};
 
 	//Designtime Metadata with fake isEnabled function (returns true)
 	var oDesignTimeMetadata2 = {
-			actions : {
-				combine : {
-					changeType: "combineStuff",
-					changeOnRelevantContainer : true,
-					isEnabled : function() {
-						return true;
-					}
+		actions : {
+			combine : {
+				changeType: "combineStuff",
+				changeOnRelevantContainer : true,
+				isEnabled : function() {
+					return true;
 				}
 			}
-		};
+		}
+	};
 
 	// DesignTime Metadata without changeType
 	var oDesignTimeMetadata3 = {
-			actions : {
-				combine : {
-					changeOnRelevantContainer : true,
-					isEnabled : true
-				}
+		actions : {
+			combine : {
+				changeOnRelevantContainer : true,
+				isEnabled : true
 			}
-		};
+		}
+	};
 
 	// DesignTime Metadata without changeOnRelevantContainer
 	var oDesigntimeMetadata4 = {
-			actions : {
-				combine : {
-					changeType: "combineStuff",
-					isEnabled : function() {
-						return true;
-					}
+		actions : {
+			combine : {
+				changeType: "combineStuff",
+				isEnabled : function() {
+					return true;
 				}
 			}
-		};
+		}
+	};
 
 	//DesignTime Metadata with different changeType
 	var oDesignTimeMetadata5 = {
-			actions : {
-				combine : {
-					changeType: "combineOtherStuff",
-					changeOnRelevantContainer : true,
-					isEnabled : true
-				}
+		actions : {
+			combine : {
+				changeType: "combineOtherStuff",
+				changeOnRelevantContainer : true,
+				isEnabled : true
 			}
-		};
+		}
+	};
 
 
 	QUnit.module("Given a designTime and combine plugin are instantiated", {
@@ -152,8 +155,10 @@ function(
 				}
 			});
 
+			this.oCommandFactory = new CommandFactory();
+
 			this.oCombinePlugin = new CombinePlugin({
-				commandFactory : new CommandFactory()
+				commandFactory : this.oCommandFactory
 			});
 
 			this.oButton1 = new Button("button1");
@@ -247,7 +252,7 @@ function(
 			this.oPanel2.destroy();
 			this.OverflowToolbar.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when an overlay has no combine action in designTime metadata", function(assert) {
 			fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, {});
 			fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, {});
@@ -287,6 +292,29 @@ function(
 				this.oCombinePlugin._isEditable(this.oButton1Overlay),
 				true,
 				"then the overlay is editable"
+			);
+		});
+
+		QUnit.test("when two elements have different binding context", function(assert) {
+			fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
+			fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, DEFAULT_DTM);
+
+			sandbox.stub(Utils, "getEntityTypeByPath")
+				.onFirstCall().returns("bindingContext0")
+				.onSecondCall().returns("bindingContext1");
+			sandbox.stub(BindingsExtractor, "getBindings").returns([5]);
+			sandbox.stub(this.oButton1, "getBindingContext").returns({getPath: function() {}});
+			sandbox.stub(this.oButton2, "getBindingContext").returns({getPath: function() {}});
+
+			assert.strictEqual(
+				this.oCombinePlugin.isAvailable([this.oButton1Overlay, this.oButton2Overlay]),
+				true,
+				"isAvailable is called and returns true"
+			);
+			assert.strictEqual(
+				this.oCombinePlugin.isEnabled([this.oButton1Overlay, this.oButton2Overlay]),
+				false,
+				"isEnabled is called and returns false"
 			);
 		});
 
@@ -350,14 +378,24 @@ function(
 			);
 		});
 
-		QUnit.test("when handleCombine is called with two specified elements", function(assert) {
-			var spy = sandbox.spy(this.oCombinePlugin, "fireElementModified");
+		QUnit.test("when handleCombine is called with two elements, being triggered on the second element", function(assert) {
+			var oFireElementModifiedSpy = sandbox.spy(this.oCombinePlugin, "fireElementModified");
+			var oGetCommandForSpy = sandbox.spy(this.oCommandFactory, "getCommandFor");
 
 			fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
 			fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, DEFAULT_DTM);
-			this.oCombinePlugin.handleCombine([this.oButton1Overlay, this.oButton2Overlay]);
 
-			assert.ok(spy.calledOnce, "fireElementModified is called once");
+			return this.oCombinePlugin.handleCombine([this.oButton1Overlay, this.oButton2Overlay], this.oButton2)
+
+			.then(function() {
+				assert.ok(oFireElementModifiedSpy.calledOnce, "fireElementModified is called once");
+				assert.ok(oGetCommandForSpy.calledWith(this.oButton2), "command creation is triggered with correct context element");
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
+
 		});
 
 		QUnit.test("when an overlay has a combine action designTime metadata which has no changeOnRelevantContainer", function(assert) {
@@ -366,7 +404,7 @@ function(
 		});
 
 		QUnit.test("when Controls of different type with same change type are specified", function (assert) {
-			assert.expect(8);
+			assert.expect(9);
 			fnSetOverlayDesigntimeMetadata(this.oOverflowToolbarButton1Overlay, DEFAULT_DTM);
 			fnSetOverlayDesigntimeMetadata(this.oButton6Overlay, DEFAULT_DTM);
 
@@ -387,19 +425,20 @@ function(
 				assert.equal(aElementOverlays[0].getId(), this.oButton6Overlay.getId(), "the 'available' function calls isAvailable with the correct overlay");
 				return bIsAvailable;
 			}.bind(this));
-			sinon.stub(this.oCombinePlugin, "handleCombine").callsFake(function (aElementOverlays) {
+			sinon.stub(this.oCombinePlugin, "handleCombine").callsFake(function (aElementOverlays, oCombineElement) {
 				assert.equal(aElementOverlays[0].getId(), this.oButton6Overlay.getId(), "the 'handler' method is called with the right overlay");
+				assert.equal(oCombineElement.getId(), this.oButton6.getId(), "the 'handler' method is called with the right combine element");
 			}.bind(this));
 
-			var aMenuItems = this.oCombinePlugin.getMenuItems([this.oButton6Overlay]);
-			assert.equal(aMenuItems[0].id, "CTX_GROUP_FIELDS", "'getMenuItems' returns the context menu item for the plugin");
+				var aMenuItems = this.oCombinePlugin.getMenuItems([this.oButton6Overlay]);
+				assert.equal(aMenuItems[0].id, "CTX_GROUP_FIELDS", "'getMenuItems' returns the context menu item for the plugin");
 
-			aMenuItems[0].handler([this.oButton6Overlay], { contextElement: this.oButton6 });
-			aMenuItems[0].enabled([this.oButton6Overlay]);
+				aMenuItems[0].handler([this.oButton6Overlay], { contextElement: this.oButton6 });
+				aMenuItems[0].enabled([this.oButton6Overlay]);
 
-			bIsAvailable = false;
-			assert.equal(this.oCombinePlugin.getMenuItems([this.oButton6Overlay]).length, 0, "and if plugin is not available for the overlay, no menu items are returned");
-		});
+				bIsAvailable = false;
+				assert.equal(this.oCombinePlugin.getMenuItems([this.oButton6Overlay]).length, 0, "and if plugin is not available for the overlay, no menu items are returned");
+			});
 
 		QUnit.test("when Controls of different type with different change type are specified", function(assert) {
 			fnSetOverlayDesigntimeMetadata(this.oOverflowToolbarButton1Overlay, DEFAULT_DTM);
@@ -415,12 +454,29 @@ function(
 				"isEnabled is called and returns false"
 			);
 		});
-	});
 
+		QUnit.test("when the relevant container does not have a stable id", function(assert) {
+			fnSetOverlayDesigntimeMetadata(this.oOverflowToolbarButton1Overlay, DEFAULT_DTM);
+
+			sandbox.stub(this.oCombinePlugin, "hasStableId").callsFake(function(oOverlay){
+				if (oOverlay === this.OverflowToolbarOverlay){
+					return false;
+				} else {
+					return true;
+				}
+			}.bind(this));
+
+			assert.strictEqual(
+				this.oCombinePlugin._isEditable(this.oOverflowToolbarButton1Overlay),
+				false,
+				"_isEditable returns false"
+			);
+
+		});
+
+	});
 
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

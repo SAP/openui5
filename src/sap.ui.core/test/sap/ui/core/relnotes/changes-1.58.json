@@ -451,6 +451,84 @@
         "type": "FIX",
         "text": " Opa: parse boolean URL parameters",
         "references": []
+      },
+      {
+        "id": "cd43a71560a273b3809433197b18c3d2aac78c74",
+        "type": "FEATURE",
+        "text": " CLDR: Upgrade to version 33.0.0",
+        "references": []
+      },
+      {
+        "id": "40a943f14426982cfcc5f9bf89d33cdea7bd8fd1",
+        "type": "FEATURE",
+        "text": " ODataTreeBinding: Add expand node to level API",
+        "references": []
+      },
+      {
+        "id": "cd4cf7d15b6fa2411daeb0c23ca158b9fba83b3f",
+        "type": "FIX",
+        "text": " XMLComposite: Bug in cloning events",
+        "references": []
+      },
+      {
+        "id": "c6aa071b8f297f1e897816051a1e38186f51e0a4",
+        "type": "FIX",
+        "text": " XMLComposite: Repairing of listeners for alternative types",
+        "references": []
+      },
+      {
+        "id": "7b654202ebbbae561d6eb68d3de7f5c39d0d5098",
+        "type": "FIX",
+        "text": " events/F6Navigation: Navigation not activated",
+        "references": []
+      },
+      {
+        "id": "44a8a279a0c8a5a3614f1c6b23a5f69d2739e806",
+        "type": "FIX",
+        "text": " performance/trace/FESR: reenabled FESR activation",
+        "references": []
+      },
+      {
+        "id": "3f29c79cb73acd5af890024a03edebd01ca5d6bb",
+        "type": "FIX",
+        "text": " sap.m.Carousel: pageChange event is now fired correctly",
+        "references": []
+      },
+      {
+        "id": "00d60f42042068a9096c98d374ad898a3a53e824",
+        "type": "FEATURE",
+        "text": " routing: add \u0027match\u0027 function to Router and Route to test a URL hash",
+        "references": []
+      },
+      {
+        "id": "2bbb20c42fc05c44bad3f723f891048a1a86dac0",
+        "type": "FEATURE",
+        "text": " thirdparty: update es6-promise polyfill to version 4.2.4",
+        "references": []
+      },
+      {
+        "id": "e606e682edd3d83a25599ba8cb70c5eefb659b09",
+        "type": "FIX",
+        "text": " AppCacheBuster: ignore query parameter for index lookup",
+        "references": []
+      },
+      {
+        "id": "f499a6b468e12707ca8795db231e2c52ea069053",
+        "type": "FEATURE",
+        "text": " XMLComposite: Accessibility and focus",
+        "references": []
+      },
+      {
+        "id": "5e432e282024acb8105fa521635451901702fa06",
+        "type": "FIX",
+        "text": " FilterProcessor: Consider bCaseSensitive even if fnCompare is set",
+        "references": []
+      },
+      {
+        "id": "c05b084b4f64171d9b053a395a8450f3a21d0b63",
+        "type": "FIX",
+        "text": " Core: Library types don\u0027t reset their module value",
+        "references": []
       }
     ]
   }

@@ -1,10 +1,9 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/matchers/AggregationFilled",
-	'sap/ui/test/actions/Press',
-	'sap/ui/test/matchers/PropertyStrictEquals',
-	'sap/ui/test/actions/EnterText'
-], function (Opa5, AggregationFilled, Press, PropertyStrictEquals, EnterText) {
+	"sap/ui/test/actions/Press",
+	"sap/ui/test/matchers/PropertyStrictEquals"
+], function (Opa5, AggregationFilled, Press, PropertyStrictEquals) {
 	"use strict";
 
 	var sTreeTableId = "ruleList",
@@ -18,20 +17,53 @@ sap.ui.define([
 	function isLibrarySelectedInModel(oTable, iLibIndex) {
 		return oTable.getModel().getData().treeModel[iLibIndex].selected;
 	}
+
 	function isSelectedInView(oTable, iRowIndex) {
 		var oModel = oTable.getBinding().getModel(),
 			oContext = oTable.getBinding().getContexts(iRowIndex, 1)[0];
 		return oModel.getProperty("selected", oContext);
 	}
 
-	function createWaitForRulesSelectedCountMatchExpectedCount (iExpectedRulesCount, sSuccessMessage, sErrorMessage) {
+	function countRulesInLibraryFromModel(oTable, iLibIndex) {
+		return oTable.getModel().getData().treeModel[iLibIndex].nodes.length;
+	}
+
+	function getSpecificRuleTitle(oTable, iLibIndex, iRuleIndex) {
+		return oTable.getModel().getData().treeModel[iLibIndex].nodes[iRuleIndex].title;
+	}
+
+	function getRowElements(oTable, sTitle) {
+		var $oTitle = oTable.$().find("span").filter(function() {
+				return (Opa5.getJQuery()(this).text() === sTitle);
+			}),
+			sRowId = $oTitle.parents("tr").attr("id"),
+			$oRow = oTable.$().find("[data-sap-ui-related='" + sRowId + "']"),
+			oCheckbox = $oRow[0],
+			oCopyIcon = $oRow.find("[title='Copy']")[0],
+			oDeleteIcon = $oRow.find("[title='Delete']")[0],
+			oEditIcon = $oRow.find("[title='Edit']")[0],
+			expandCollapse = $oTitle.siblings()[0],
+			bSelected = Opa5.getJQuery()(oCheckbox).hasClass("sapUiTableRowSel");
+
 		return {
-			id: sTreeTableId,
-			matchers: new AggregationFilled({ name: "columns" }),
+			checkbox: oCheckbox,
+			copyIcon: oCopyIcon,
+			deleteIcon: oDeleteIcon,
+			editIcon: oEditIcon,
+			expandCollapse: expandCollapse,
+			isSelected: bSelected
+		};
+	}
+
+	function createWaitForRulesSelectedCountMatchExpectedCount (iExpectedRulesCount, sSuccessMessage, sErrorMessage) {
+		var sLabelValue = "Rules (" + iExpectedRulesCount + " selected)";
+		return {
+			controlType: "sap.m.Label",
+			matchers: new PropertyStrictEquals({name:"text", value:sLabelValue}),
 			viewName: sViewName,
 			viewNamespace: sViewNameSpace,
-			success: function (oTable) {
-				Opa5.assert.strictEqual(oTable.getAggregation("columns")[0].getAggregation("label").getProperty("text"), "Rules (" + iExpectedRulesCount + " selected)", sSuccessMessage);
+			success: function (oColumn) {
+				Opa5.assert.strictEqual(oColumn[0].getProperty("text") , sLabelValue, sSuccessMessage);
 			},
 			errorMessage: sErrorMessage
 		};
@@ -48,16 +80,11 @@ sap.ui.define([
 			errorMessage: sErrorMessage
 		};
 	}
+
 	Opa5.createPageObjects({
 
 		onTheRulesPage: {
 			actions : {
-
-				iPressOnTreeTableCheckBox: function (sId) {
-
-					return this.waitFor(createPressTreeTableButtonElement(sId, "The parent note button in tree table was pressed", "The parent note button in tree table is not there"));
-
-				},
 
 				iPressSettingsButton: function() {
 					return this.waitFor({
@@ -80,7 +107,7 @@ sap.ui.define([
 						actions: new Press(),
 						success: function (oCheckBox) {
 							oCheckBox.setSelected(bSelectedState);
-							Opa5.assert.ok(true, "Checkbox button was pressed and status enabled is:" + bSelectedState);
+							Opa5.assert.ok(true, "Checkbox button was pressed and status checked is: " + bSelectedState);
 						},
 						errorMessage: "Settings button was not found"
 					});
@@ -136,6 +163,141 @@ sap.ui.define([
 						},
 						errorMessage: "Was not able to press Sort ascending"
 					});
+				},
+
+				iPressIconTabHeader: function (sValue) {
+					return this.waitFor({
+						controlType: "sap.m.IconTabFilter",
+						matchers: new PropertyStrictEquals({name:"key", value:sValue}),
+						actions: new Press(),
+						success: function (oIconTabFilter) {
+							Opa5.assert.ok(oIconTabFilter[0].getProperty("key") === sValue, "IconTabHeader with value " + sValue + "was pressed");
+						},
+						errorMessage: "IconTabHeader was not found"
+					});
+				},
+
+				iPressButtonWithText: function(sTextValue) {
+					return this.waitFor({
+						controlType : "sap.m.Button",
+						matchers: new PropertyStrictEquals({name:"text", value:sTextValue}),
+						actions: new Press(),
+						success: function () {
+							Opa5.assert.ok(true, "Create Rule button was pressed");
+						},
+						errorMessage: "Create Rule button was not found"
+					});
+				},
+
+				iSelectAdditionalRuleSet: function (sValue) {
+					return this.waitFor({
+						controlType: "sap.m.StandardListItem",
+						matchers: new PropertyStrictEquals({ name: "title", value: sValue }),
+						actions: new Press(),
+						success: function (oStandartListItem) {
+							Opa5.assert.ok(oStandartListItem[0].getProperty("title") === sValue, "list item with value " + sValue + "was pressed");
+						},
+						errorMessage: "List item was not found"
+					});
+				},
+
+				iPressLoadAdditionalRuleSetButton: function () {
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						matchers: new PropertyStrictEquals({ name: "text", value: "Load" }),
+						actions: new Press(),
+						success: function (oButton) {
+							Opa5.assert.ok(oButton[0].getProperty("text") === "Load", "Button 'Load' was pressed");
+						},
+						errorMessage: "Button was not pressed"
+					});
+				},
+
+				iClickRow: function (sName) {
+					return this.waitFor({
+						controlType: "sap.m.Text",
+						matchers: new PropertyStrictEquals({ name: "text", value: sName }),
+						actions: new Press(),
+						success: function () {
+							Opa5.assert.ok(true, "Row " + sName + " was pressed.");
+						},
+						errorMessage: "The row was not pressed"
+					});
+				},
+				iPressSelectAllCheckbox: function () {
+					var SELECT_ALL_ID = "__xmlview0--analysis--ruleList-selall";
+					return this.waitFor(createPressTreeTableButtonElement(SELECT_ALL_ID, "Select all checkbox was pressed", "Select all checkbox was not found"));
+				},
+				// works both for rules and rule sets
+				iPressSelectCheckboxOf: function (sTitle, sSuccessMessage, sErrorMessage) {
+					return this.waitFor({
+						id: sTreeTableId,
+						matchers: new AggregationFilled({name: "columns"}),
+						viewName: sViewName,
+						viewNamespace: sViewNameSpace,
+						success: function (oTable) {
+							var oRowElements = getRowElements(oTable, sTitle);
+							oRowElements.checkbox.click();
+							Opa5.assert.ok(true, sSuccessMessage);
+						},
+						errorMessage: sErrorMessage
+					});
+				},
+				iPressCloneIconOfRule: function (sTitle) {
+					return this.waitFor({
+						id: sTreeTableId,
+						matchers: new AggregationFilled({name: "columns"}),
+						viewName: sViewName,
+						viewNamespace: sViewNameSpace,
+						success: function (oTable) {
+							var oRowElements = getRowElements(oTable, sTitle);
+							oRowElements.copyIcon.click();
+							Opa5.assert.ok(true, "Clone Icon of Rule with title " + sTitle + " was pressed");
+						},
+						errorMessage: "Clone icon was not found"
+					});
+				},
+				iPressDeleteIconOfTemporaryRule: function (sTitle) {
+					return this.waitFor({
+						id: sTreeTableId,
+						matchers: new AggregationFilled({name: "columns"}),
+						viewName: sViewName,
+						viewNamespace: sViewNameSpace,
+						success: function (oTable) {
+							var oRowElements = getRowElements(oTable, sTitle);
+							oRowElements.deleteIcon.click();
+							Opa5.assert.ok(true, "Delete icon of " + sTitle + " was pressed");
+						},
+						errorMessage: "Delete Rule icon was not found"
+					});
+				},
+				iPressEditIconOfTemporaryRule: function (sTitle) {
+					return this.waitFor({
+						id: sTreeTableId,
+						matchers: new AggregationFilled({name: "columns"}),
+						viewName: sViewName,
+						viewNamespace: sViewNameSpace,
+						success: function (oTable) {
+							var oRowElements = getRowElements(oTable, sTitle);
+							oRowElements.editIcon.click();
+							Opa5.assert.ok(true, "Edit icon of " + sTitle + " was pressed");
+						},
+						errorMessage: "Edit Rule icon was not found"
+					});
+				},
+				iPressExpandCollapseButtonOfRuleSet: function (sTitle, sSuccessMessage, sErrorMessage) {
+					return this.waitFor({
+						id: sTreeTableId,
+						matchers: new AggregationFilled({name: "columns"}),
+						viewName: sViewName,
+						viewNamespace: sViewNameSpace,
+						success: function (oTable) {
+							var oRowElements = getRowElements(oTable, sTitle);
+							oRowElements.expandCollapse.click();
+							Opa5.assert.ok(true, sSuccessMessage);
+						},
+						errorMessage: sErrorMessage
+					});
 				}
 			},
 			assertions: {
@@ -150,6 +312,29 @@ sap.ui.define([
 							Opa5.assert.ok(true, "TreeTable should have rules");
 						},
 						errorMessage: "No rules in the TreeTable"
+					});
+				},
+
+				iShouldSeeVisibleRuleDetailsPage: function () {
+					return this.waitFor({
+						id: "ruleDetailsPage",
+						success: function (oPage) {
+							Opa5.assert.ok(oPage.getVisible(), "Rule details page should be visible.");
+						},
+						errorMessage: "Rule details page is not visible."
+					});
+				},
+
+				iShouldSeeHiddenRuleDetailsPage: function () {
+					return this.waitFor({
+						autoWait: false,
+						check: function () {
+							return Opa5.getWindow().jQuery("#sap-ui-invisible-ruleDetailsPage").length > 0;
+						},
+						success: function () {
+							Opa5.assert.ok(true, "Rule details page should be hidden.");
+						},
+						errorMessage: "Rule details page is not hidden."
 					});
 				},
 
@@ -247,6 +432,19 @@ sap.ui.define([
 					});
 				},
 
+				iShouldSeeDuplicatedRuleSelectedInView: function (sTitle) {
+					return this.waitFor({
+						id: sTreeTableId,
+						matchers: new AggregationFilled({ name: "columns" }),
+						viewName: sViewName,
+						viewNamespace: sViewNameSpace,
+						success: function (oTable) {
+							var oRowElements = getRowElements(oTable, sTitle);
+							Opa5.assert.ok(oRowElements.isSelected, "Rule is selected in view");
+						},
+						errorMessage: "Rule is not selected in view"
+					});
+				},
 
 				iShouldSeeLibrarySelectedInModel: function (iLibIndex) {
 					return this.waitFor({
@@ -293,9 +491,9 @@ sap.ui.define([
 						id: "persistChB",
 						controlType : "sap.m.CheckBox",
 						success: function (oCheckBox) {
-							Opa5.assert.ok(oCheckBox.getSelected() === bState, "Persisting settings has been enabled");
+							Opa5.assert.ok(oCheckBox.getSelected() === bState, "Persisting settings has status " + bState);
 						},
-						errorMessage: "Persisting settings has not been enabled"
+						errorMessage: "Persisting settings does not have status " + bState
 					});
 				},
 
@@ -316,6 +514,33 @@ sap.ui.define([
 							Opa5.assert.ok(oMenuTextFieldItem[0].getValue() === sFilterValue, "filter was applied on column rules with keyword" + sFilterValue);
 						},
 						errorMessage: "Was not able to filter by: " + sFilterValue
+					});
+				},
+
+				iShouldSeeNumberOfRulesInLibrary: function (iLibIndex, iNumberOfRulesInsideLib) {
+					return this.waitFor({
+						id: sTreeTableId,
+						matchers: new AggregationFilled({name: "columns"}),
+						viewName: sViewName,
+						viewNamespace: sViewNameSpace,
+						success: function (oTable) {
+							var iNumberOfRules = countRulesInLibraryFromModel(oTable, iLibIndex);
+							Opa5.assert.ok(iNumberOfRules === iNumberOfRulesInsideLib, "Number of rules inside the library are " + iNumberOfRulesInsideLib);
+						},
+						errorMessage: "Number of rules are incorrect"
+					});
+				},
+				iShouldSeeARuleWithSpecificTitle: function (iLibIndex, iRuleIndex, sRuleTitle) {
+					return this.waitFor({
+						id: sTreeTableId,
+						matchers: new AggregationFilled({name: "columns"}),
+						viewName: sViewName,
+						viewNamespace: sViewNameSpace,
+						success: function (oTable) {
+							var sTitle = getSpecificRuleTitle(oTable, iLibIndex, iRuleIndex);
+							Opa5.assert.ok(sRuleTitle === sTitle, "A rule with this title " + sTitle + " was found");
+						},
+						errorMessage: "A rule with this title was not found"
 					});
 				}
 			}

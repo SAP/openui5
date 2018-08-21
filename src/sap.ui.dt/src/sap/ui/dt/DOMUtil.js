@@ -427,9 +427,10 @@ function(
 
 	/**
 	 * Inserts <style/> tag width specified styles into #overlay-container
-	 * @param {string} sStyles - string with plain CSS to be rendered into the page
+	 * @param {string} sStyles - Plain CSS as a string to be added into the page
+	 * @param {HTMLElement} oTarget - Target DOM Node where to add <style> tag with CSS
 	 */
-	DOMUtil.insertStyles = function (sStyles) {
+	DOMUtil.insertStyles = function (sStyles, oTarget) {
 		var oStyle = document.createElement('style');
 		oStyle.type = 'text/css';
 
@@ -439,8 +440,7 @@ function(
 			oStyle.appendChild(document.createTextNode(sStyles));
 		}
 
-		// FIXME: we can't use Overlay module because of the cycled dependency
-		jQuery('#overlay-container').prepend(oStyle);
+		jQuery(oTarget).prepend(oStyle);
 	};
 
 	DOMUtil.contains = function (sId, oTargetNode) {

@@ -5,9 +5,9 @@ sap.ui.define([
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/AggregationFilled",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"mycompany/myapp/MyWorklistApp/test/integration/pages/Common",
-	"mycompany/myapp/MyWorklistApp/test/integration/pages/shareOptions"
-], function(Opa5, Press, EnterText,AggregationLengthEquals, AggregationFilled, PropertyStrictEquals, Common, shareOptions) {
+	"./Common",
+	"./shareOptions"
+], function(Opa5, Press, EnterText, AggregationLengthEquals, AggregationFilled, PropertyStrictEquals, Common, shareOptions) {
 	"use strict";
 
 	var sViewName = "Worklist",
@@ -290,9 +290,11 @@ sap.ui.define([
 					return this.waitFor({
 						id : "table",
 						viewName : sViewName,
-						matchers : function (oTable) {
-							return new PropertyStrictEquals({name : "busy", value: true}).isMatching(oTable);
-						},
+						matchers : new PropertyStrictEquals({
+							name : "busy",
+							value: true
+						}),
+						autoWait : false,
 						success : function () {
 							Opa5.assert.ok(true, "The worklist table is busy");
 						},
@@ -318,4 +320,5 @@ sap.ui.define([
 		}
 
 	});
+
 });

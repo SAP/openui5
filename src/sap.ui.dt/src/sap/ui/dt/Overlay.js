@@ -12,9 +12,10 @@ sap.ui.define([
 	'sap/ui/dt/DOMUtil',
 	'sap/ui/dt/ScrollbarSynchronizer',
 	'sap/ui/dt/Util',
-	'sap/base/Log'
+	'sap/base/Log',
+	'sap/ui/dt/util/getNextZIndex'
 ],
-function(
+function (
 	jQuery,
 	Element,
 	MutationObserver,
@@ -23,7 +24,8 @@ function(
 	DOMUtil,
 	ScrollbarSynchronizer,
 	Util,
-	Log
+	Log,
+	getNextZIndex
 ) {
 	"use strict";
 
@@ -210,6 +212,14 @@ function(
 						error: oError
 					});
 				}.bind(this));
+
+			// Attach stored browser events
+			this.attachEventOnce('afterRendering', function (oEvent) {
+				var $DomRef = jQuery(oEvent.getParameter('domRef'));
+				this._aBindParameters.forEach(function (mBrowserEvent) {
+					$DomRef.on(mBrowserEvent.sEventType, mBrowserEvent.fnProxy);
+				});
+			}, this);
 		},
 
 		/**
@@ -590,12 +600,31 @@ function(
 	Overlay.prototype._applySizes = function (oGeometry, $RenderingParent) {
 		this._setPosition(this.$(), oGeometry, $RenderingParent);
 		if (oGeometry.domRef) {
+			this._setZIndex(oGeometry, this.$());
 			this._handleOverflowScroll(oGeometry, this.$(), this.getParent());
 		}
 
 		this.getChildren().forEach(function(oChild) {
 			oChild.applyStyles();
 		});
+	};
+
+	/**
+	 * Sets z-index to specified DOM element
+	 * For the root element we use the Popup to retrieve a "high enough" index
+	 * ensuring that the overlays will always be over the controls in the page
+	 * @param {object} oGeometry - Geometry object to get reference z-index from
+	 * @param {jQuery} $overlayDomRef - DOM Element to receive the z-index
+	 */
+	Overlay.prototype._setZIndex = function (oGeometry, $overlayDomRef){
+		var oOriginalDomRef = oGeometry.domRef;
+		var iZIndex = DOMUtil.getZIndex(oOriginalDomRef);
+		if (Util.isInteger(iZIndex)) {
+			$overlayDomRef.css("z-index", iZIndex);
+		} else if (this.isRoot()) {
+			this._iZIndex = this._iZIndex || getNextZIndex();
+			$overlayDomRef.css("z-index", this._iZIndex);
+		}
 	};
 
 	/**
@@ -647,7 +676,7 @@ function(
 				});
 
 				// if control is rendered, directly call bind()
-				this.$().bind(sEventType, fnProxy);
+				this.$().on(sEventType, fnProxy);
 			}
 		}
 
@@ -722,10 +751,6 @@ function(
 	Overlay.prototype._handleOverflowScroll = function(oGeometry, $overlayDomRef, oOverlayParent) {
 		var oOriginalDomRef = oGeometry.domRef;
 		var mSize = oGeometry.size;
-		var iZIndex = DOMUtil.getZIndex(oOriginalDomRef);
-		if (iZIndex) {
-			$overlayDomRef.css("z-index", iZIndex);
-		}
 
 		// OVERFLOW & SCROLLING
 		var oOverflows = DOMUtil.getOverflows(oOriginalDomRef);

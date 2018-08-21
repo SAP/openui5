@@ -54,18 +54,20 @@ sap.ui.define([
 	};
 
 	/**
-	 * @public Triggers the configuration of a variant
+	 * Triggers the configuration of a variant.
+	 * @public
 	 * @returns {Promise} Returns resolve after execution
 	 */
 	ControlVariantConfigure.prototype.execute = function() {
 		var oVariantManagementControl = this.getControl();
 		this.oAppComponent = flUtils.getAppComponentForControl(oVariantManagementControl);
-		this.oModel = this.oAppComponent.getModel(this.MODEL_NAME);
+		this.oOuterAppComponent = flUtils.getAppComponentForControl(this.oAppComponent, true);
+		this.oModel = this.oOuterAppComponent.getModel(this.MODEL_NAME);
 		this.sVariantManagementReference = BaseTreeModifier.getSelector(oVariantManagementControl, this.oAppComponent).id;
 
 		this._aPreparedChanges = [];
 		this.getChanges().forEach(function(mChangeProperties) {
-			mChangeProperties.appComponent = this.oAppComponent;
+			mChangeProperties.appComponent = this.oOuterAppComponent;
 			this._aPreparedChanges.push(this.oModel._setVariantProperties(this.sVariantManagementReference, mChangeProperties, true));
 		}.bind(this));
 
@@ -75,7 +77,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * @public Undo logic for the execution
+	 * Undo logic for the execution.
+	 * @public
 	 * @returns {Promise} Returns resolve after undo
 	 */
 	ControlVariantConfigure.prototype.undo = function() {

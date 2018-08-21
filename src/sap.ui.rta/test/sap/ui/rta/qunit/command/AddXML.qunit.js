@@ -1,35 +1,39 @@
-/* global QUnit sinon */
+/* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	'sap/ui/rta/command/CommandFactory',
-	'sap/ui/fl/registry/ChangeRegistry',
-	'sap/ui/dt/ElementDesignTimeMetadata',
-	'sap/ui/fl/Utils',
-	'sap/m/Button',
 	'sap/ui/fl/changeHandler/AddXML',
-	'sap/ui/rta/command/FlexCommand',
-	'sap/ui/thirdparty/sinon',
-	'sap/ui/thirdparty/sinon-ie',
-	'sap/ui/thirdparty/sinon-qunit'
+	'sap/ui/fl/registry/ChangeRegistry',
+	'sap/ui/fl/Utils',
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/OverlayRegistry",
+	'sap/ui/dt/ElementDesignTimeMetadata',
+	'sap/ui/model/json/JSONModel',
+	'sap/m/Button',
+	'sap/m/Text',
+	'sap/m/List',
+	'sap/m/CustomListItem',
+	'sap/ui/thirdparty/sinon-4'
 ],
 function (
 	CommandFactory,
-	ChangeRegistry,
-	ElementDesignTimeMetadata,
-	Utils,
-	Button,
 	AddXML,
-	FlexCommand
+	ChangeRegistry,
+	Utils,
+	DesignTime,
+	OverlayRegistry,
+	ElementDesignTimeMetadata,
+	JSONModel,
+	Button,
+	Text,
+	List,
+	CustomListItem,
+	sinon
 ) {
 	"use strict";
-	QUnit.start();
 
 	var oMockedAppComponent = {
-		getLocalId: function () {
-			return undefined;
-		},
+		getLocalId: function () {},
 		getManifestEntry: function () {
 			return {};
 		},
@@ -76,59 +80,94 @@ function (
 					layer: "VENDOR"
 				}
 			});
-			var oCommand = oCommandFactory.getCommandFor(this.oButton, "addXML", {
+
+			return oCommandFactory.getCommandFor(this.oButton, "addXML", {
 				fragmentPath: "pathToFragment",
 				fragment: "fragment",
 				targetAggregation: "targetAggregation",
 				index: 0
-			});
-			assert.ok(oCommand, "then command without flex settings is available");
-			assert.strictEqual(oCommand.getTargetAggregation(), "targetAggregation", "and its settings are merged correctly");
-			assert.strictEqual(oCommand.getFragmentPath(), "pathToFragment", "and its settings are merged correctly");
-			assert.strictEqual(oCommand.getFragment(), "fragment", "and its settings are merged correctly");
-			assert.strictEqual(oCommand.getIndex(), 0, "and its settings are merged correctly");
+			})
 
-			oCommandFactory.setFlexSettings({
-				layer: "VENDOR",
-				developerMode: true
-			});
-			var oCommand2 = oCommandFactory.getCommandFor(this.oButton, "addXML", {
-				fragmentPath: "pathToFragment",
-				fragment: "fragment",
-				targetAggregation : "targetAggregation",
-				index: 0
-			});
-			assert.ok(oCommand2, "then command with flex settings is available");
-			assert.strictEqual(oCommand.getTargetAggregation(), "targetAggregation", "and its settings are merged correctly");
-			assert.strictEqual(oCommand.getFragmentPath(), "pathToFragment", "and its settings are merged correctly");
-			assert.strictEqual(oCommand.getFragment(), "fragment", "and its settings are merged correctly");
-			assert.strictEqual(oCommand.getIndex(), 0, "and its settings are merged correctly");
+			.then(function(oAddXmlCommand) {
+				assert.ok(oAddXmlCommand, "then command without flex settings is available");
+				assert.strictEqual(oAddXmlCommand.getTargetAggregation(), "targetAggregation", "and its settings are merged correctly");
+				assert.strictEqual(oAddXmlCommand.getFragmentPath(), "pathToFragment", "and its settings are merged correctly");
+				assert.strictEqual(oAddXmlCommand.getFragment(), "fragment", "and its settings are merged correctly");
+				assert.strictEqual(oAddXmlCommand.getIndex(), 0, "and its settings are merged correctly");
+			})
 
-			oCommandFactory.setFlexSettings({
-				layer: "VENDOR",
-				developerMode: false
-			});
+			.then(function() {
+				oCommandFactory.setFlexSettings({
+					layer: "VENDOR",
+					developerMode: true
+				});
+				return oCommandFactory.getCommandFor(this.oButton, "addXML", {
+					fragmentPath: "pathToFragment",
+					fragment: "fragment",
+					targetAggregation : "targetAggregation",
+					index: 0
+				});
+			}.bind(this))
 
-			assert.notOk(oCommand._oPreparedChange.getDefinition().content.fragment, "after preparing, the fragment content is not yet in the change");
+			.then(function(oAddXmlCommand) {
+				assert.ok(oAddXmlCommand, "then command with flex settings is available");
+				assert.strictEqual(oAddXmlCommand.getTargetAggregation(), "targetAggregation", "and its settings are merged correctly");
+				assert.strictEqual(oAddXmlCommand.getFragmentPath(), "pathToFragment", "and its settings are merged correctly");
+				assert.strictEqual(oAddXmlCommand.getFragment(), "fragment", "and its settings are merged correctly");
+				assert.strictEqual(oAddXmlCommand.getIndex(), 0, "and its settings are merged correctly");
+				oCommandFactory.setFlexSettings({
+					layer: "VENDOR",
+					developerMode: false
+				});
+				assert.notOk(oAddXmlCommand._oPreparedChange.getDefinition().content.fragment, "after preparing, the fragment content is not yet in the change");
+				return oAddXmlCommand.execute()
 
-			return oCommand.execute().then(function() {
+				.then(function() { return oAddXmlCommand; });
+			})
+
+			.then(function(oAddXmlCommand) {
 				assert.equal(oCompleteChangeContentSpy.callCount, 2, "then completeChangeContent is called twice");
 				assert.equal(oApplyChangeStub.callCount, 1, "then applyChange is called once");
-				assert.notOk(oCommand._oPreparedChange.getDefinition().content.fragment, "after applying, the fragment content is not in the change anymore");
+				assert.notOk(oAddXmlCommand._oPreparedChange.getDefinition().content.fragment, "after applying, the fragment content is not in the change anymore");
+			})
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
 			});
 		});
 
-		//Undo is tested in change handler and generic Flex command logic
+		QUnit.test("When addXML is created with a fragment string containing a binding", function(assert) {
+			var oCommandFactory = new CommandFactory({
+				flexSettings: {
+					layer: "VENDOR"
+				}
+			});
+
+			return oCommandFactory.getCommandFor(this.oButton, "addXML", {
+				fragmentPath: "pathToFragment",
+				fragment: "{@i18n>Foo}",
+				targetAggregation: "targetAggregation",
+				index: 0
+			})
+
+			.then(function(oAddXmlCommand) {
+				assert.ok(oAddXmlCommand, "then command without flex settings is available");
+				assert.strictEqual(oAddXmlCommand.getTargetAggregation(), "targetAggregation", "and its settings are merged correctly");
+				assert.strictEqual(oAddXmlCommand.getFragmentPath(), "pathToFragment", "and its settings are merged correctly");
+				assert.strictEqual(oAddXmlCommand.getFragment(), "{@i18n>Foo}", "and its settings are merged correctly");
+				assert.strictEqual(oAddXmlCommand.getIndex(), 0, "and its settings are merged correctly");
+			});
+		});
 
 		QUnit.test("and design time metadata allows change on js only, when getting an AddXML command for the change ...", function(assert) {
-
 			var oCommandFactory = new CommandFactory({
 				flexSettings: {
 					layer: "VENDOR",
 					developerMode: true
 				}
 			});
-			var oCommand = oCommandFactory.getCommandFor(this.oButton, "addXML", {
+
+			return oCommandFactory.getCommandFor(this.oButton, "addXML", {
 				fragmentPath: "pathToFragment",
 				fragment: "fragment",
 				targetAggregation: "targetAggregation",
@@ -141,11 +180,103 @@ function (
 						}
 					}
 				}
-			}));
+			}))
 
-			var oChange = oCommand.getPreparedChange();
+			.then(function(oAddXmlCommand) {
+				var oChange = oAddXmlCommand.getPreparedChange();
+				assert.strictEqual(oChange.getDefinition().jsOnly, true, "then change is marked to be applied on js only");
+			})
 
-			assert.strictEqual(oChange.getDefinition().jsOnly, true, "then change is marked to be applied on js only");
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
+	});
+
+	QUnit.module("Given an AddXML command for a bound control,", {
+		beforeEach : function(assert) {
+			var done = assert.async();
+
+			sandbox.stub(Utils, "getCurrentLayer").returns("VENDOR");
+
+			var aTexts = [{text: "Text 1"}, {text: "Text 2"}, {text: "Text 3"}];
+			var oModel = new JSONModel({
+				texts : aTexts
+			});
+
+			this.oItemTemplate = new CustomListItem("item", {
+				content : new Text("text", {text : "{text}"})
+			});
+			this.oList = new List("list", {
+				items : {
+					path : "/texts",
+					template : this.oItemTemplate
+				}
+			}).setModel(oModel);
+
+			var oChangeRegistry = ChangeRegistry.getInstance();
+			oChangeRegistry.removeRegistryItem({controlType : "sap.m.List"});
+			oChangeRegistry.registerControlsForChanges({
+				"sap.m.List" : {
+					"addXML": "default"
+				}
+			});
+
+			this.oDesignTime = new DesignTime({
+				rootElements : [this.oList]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oListOverlay = OverlayRegistry.getOverlay(this.oList);
+				done();
+			}.bind(this));
+		},
+		afterEach : function() {
+			this.oList.destroy();
+			this.oItemTemplate.destroy();
+			this.oDesignTime.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when getting an AddXML command for the change ...", function(assert) {
+			var oApplyChangeStub = sandbox.stub(AddXML, "applyChange");
+			var oCompleteChangeContentSpy = sandbox.spy(AddXML, "completeChangeContent");
+
+			var oCommandFactory = new CommandFactory({
+				flexSettings: {
+					layer: "VENDOR",
+					developerMode: true
+				}
+			});
+
+			return oCommandFactory.getCommandFor(this.oList.getItems()[1], "addXML", {
+				fragmentPath: "pathToFragment",
+				fragment: "fragment",
+				targetAggregation: "content",
+				index: 0
+			})
+
+			.then(function(oCommand) {
+				assert.ok(oCommand, "then command is available");
+				assert.strictEqual(oCommand.getTargetAggregation(), "content", "and its settings are merged correctly");
+				assert.strictEqual(oCommand.getFragmentPath(), "pathToFragment", "and its settings are merged correctly");
+				assert.strictEqual(oCommand.getFragment(), "fragment", "and its settings are merged correctly");
+				assert.strictEqual(oCommand.getIndex(), 0, "and its settings are merged correctly");
+				assert.strictEqual(oCommand.getPreparedChange().getSelector().id, this.oList.getId(), "and the prepared change contains the bound control as template selector");
+				assert.strictEqual(oCommand.getPreparedChange().getDefinition().dependentSelector.originalSelector.id, "item", "and the prepared change contains the original selector as dependency");
+				assert.strictEqual(oCommand.getPreparedChange().getContent().boundAggregation, "items", "and the bound aggegation is written to the change content");
+				return oCommand.execute().then(function() { return oCommand; });
+			}.bind(this))
+
+			.then(function(oCommand) {
+				assert.equal(oCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
+				assert.equal(oApplyChangeStub.callCount, 1, "then applyChange is called once");
+				assert.notOk(oCommand._oPreparedChange.getDefinition().content.fragment, "after applying, the fragment content is not in the change anymore");
+			});
+		});
+	});
+
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
 	});
 });

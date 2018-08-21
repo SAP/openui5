@@ -34,7 +34,9 @@
 				"category": "User Input",
 				"since": "1.48",
 				"samples": [
-					"sap.ui.unified.sample.ColorPicker"
+					"sap.ui.unified.sample.ColorPicker",
+					"sap.ui.unified.sample.ColorPickerLarge",
+					"sap.ui.unified.sample.ColorPickerSimplified"
 				]
 			},
 			{
@@ -114,8 +116,18 @@
 			},
 			{
 				"id": "sap.ui.unified.sample.ColorPicker",
-				"name": "Color Picker",
+				"name": "Color Picker - displayMode: Default",
 				"description": "Basic example of Color Picker. Note that you have to set the Color Picker mode to HSL to take advantage of the responsiveness of the control on a mobile device."
+			},
+			{
+			"id": "sap.ui.unified.sample.ColorPickerLarge",
+			"name": "Color Picker - displayMode: Large",
+			"description": "Basic example of Color Picker. Note that you have to set the Color Picker mode to HSL to take advantage of the responsiveness of the control on a mobile device."
+			},
+			{
+			"id": "sap.ui.unified.sample.ColorPickerSimplified",
+			"name": "Color Picker - displayMode: Simplified",
+			"description": "Basic example of Color Picker. Note that you have to set the Color Picker mode to HSL to take advantage of the responsiveness of the control on a mobile device."
 			},
 			{
 				"id": "sap.ui.unified.sample.FileUploaderBasic",

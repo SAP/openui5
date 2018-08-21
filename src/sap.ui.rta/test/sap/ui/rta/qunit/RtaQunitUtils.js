@@ -1,4 +1,3 @@
-/* globals QUnit */
 sap.ui.define([
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/fl/FakeLrepSessionStorage",
@@ -40,6 +39,26 @@ sap.ui.define([
 			settings : {
 				componentData : {
 					"showAdaptButton" : true
+				}
+			}
+		});
+
+		var oCompCont = new ComponentContainer({
+			component: oComp
+		}).placeAt(sDomId);
+		sap.ui.getCore().applyChanges();
+
+		return oCompCont;
+	};
+
+	RtaQunitUtils.renderRuntimeAuthoringAppAt = function(sDomId){
+		var oComp = sap.ui.getCore().createComponent({
+			name : "sap.ui.rta.test",
+			id : "Comp1",
+			settings : {
+				componentData : {
+					"showAdaptButton" : true,
+					"useSessionStorage": true
 				}
 			}
 		});
@@ -102,14 +121,5 @@ sap.ui.define([
 		return fnDetachEvent;
 	};
 
-	RtaQunitUtils.removeTestViewAfterTestsWhenCoverageIsRequested = function(){
-		QUnit.done(function(details) {
-			// If coverage is requested, remove the view to not overlap the coverage result
-			if (QUnit.config.coverage == true && details.failed === 0) {
-				jQuery("#test-view").hide();
-			}
-		});
-	};
-
 	return RtaQunitUtils;
-}, /* bExport= */true);
+});

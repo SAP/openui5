@@ -227,7 +227,7 @@ sap.ui.define([
 				*
 				* <b>Note:</b> In order for <code>titleSnappedHeading</code> to be taken into account,
 				* <code>titleHeading</code> has to be empty. Combine <code>titleSnappedHeading</code> with
-				* <code>expandedHeading</code> to switch content when the header switches state.
+				* <code>titleExpandedHeading</code> to switch content when the header switches state.
 				* @since 1.58
 				*/
 				titleSnappedHeading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null, forwarding: {getter: "_getTitle", aggregation: "snappedHeading"}},

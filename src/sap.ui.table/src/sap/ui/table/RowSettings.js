@@ -111,6 +111,7 @@ sap.ui.define([
 			return "";
 		}
 
+		// TBL_ROW_STATE_INFORMATION, TBL_ROW_STATE_ERROR, TBL_ROW_STATE_WARNING, TBL_ROW_STATE_SUCCESS
 		return TableUtils.getResourceText("TBL_ROW_STATE_" + sHighlight.toUpperCase());
 	};
 
@@ -123,7 +124,7 @@ sap.ui.define([
 	RowSettings.prototype._getRow = function() {
 		var oRow = this.getParent();
 
-		if (TableUtils.isInstanceOf(oRow, "sap/ui/table/Row")) {
+		if (TableUtils.isA(oRow, "sap.ui.table.Row")) {
 			return oRow;
 		} else {
 			return null;

@@ -5,9 +5,14 @@
  * Adds support rules of the sap.ui.table library to the support infrastructure.
  */
 sap.ui.define([
-	"sap/ui/support/library", "sap/ui/support/supportRules/RuleSet", "./rules/TableHelper.support", "sap/ui/Device", "sap/ui/table/library",
-	"sap/base/Log"
-], function(SupportLib, Ruleset, SupportHelper, Device, TableLib, Log) {
+	"sap/ui/support/library",
+	"sap/ui/support/supportRules/RuleSet",
+	"./rules/TableHelper.support",
+	"sap/ui/Device",
+	"sap/ui/table/library",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function(SupportLib, Ruleset, SupportHelper, Device, TableLib, Log, jQuery) {
 	"use strict";
 
 	// shortcuts
@@ -41,16 +46,16 @@ sap.ui.define([
 	 *
 	 * @param {function} fnDoCheck Callback
 	 * @param {object} oScope The scope as given in the rule check function.
-	 * @param {string} [sType] If given an additional type check is performed. Module syntax required!
+	 * @param {string} [sType] If given an additional type check is performed.
 	 */
 	function checkColumnTemplate(fnDoCheck, oScope, sType) {
-		var aTables = SupportHelper.find(oScope, true, "sap/ui/table/Table");
+		var aTables = SupportHelper.find(oScope, true, "sap.ui.table.Table");
 		var aColumns, oTemplate;
 		for (var i = 0; i < aTables.length; i++) {
 			aColumns = aTables[i].getColumns();
 			for (var k = 0; k < aColumns.length; k++) {
 				oTemplate = aColumns[k].getTemplate();
-				if (oTemplate && (!sType || SupportHelper.isInstanceOf(oTemplate, sType))) {
+				if (oTemplate && oTemplate.isA(sType)) {
 					fnDoCheck(aTables[i], aColumns[k], oTemplate);
 				}
 			}
@@ -117,7 +122,7 @@ sap.ui.define([
 		description : "Checks whether 'sap.ui.table.Table' controls have an accessible label.",
 		resolution : "Use the 'title' aggregation or the 'ariaLabelledBy' association of the 'sap.ui.table.Table' control to define a proper accessible labeling.",
 		check : function(oIssueManager, oCoreFacade, oScope) {
-			var aTables = SupportHelper.find(oScope, true, "sap/ui/table/Table");
+			var aTables = SupportHelper.find(oScope, true, "sap.ui.table.Table");
 			for (var i = 0; i < aTables.length; i++) {
 				if (!aTables[i].getTitle() && aTables[i].getAriaLabelledBy().length == 0) {
 					SupportHelper.reportIssue(oIssueManager, "Table '" + aTables[i].getId() + "' does not have an accessible label.", Severity.High, aTables[i].getId());
@@ -142,7 +147,7 @@ sap.ui.define([
 					var sId = oColumn.getId();
 					SupportHelper.reportIssue(oIssueManager, "Column '" + sId + "' of table '" + oTable.getId() + "' uses decorative 'sap.ui.core.Icon' control.", Severity.High, sId);
 				}
-			}, oScope, "sap/ui/core/Icon");
+			}, oScope, "sap.ui.core.Icon");
 		}
 	});
 
@@ -166,7 +171,7 @@ sap.ui.define([
 					var sColumnId = oColumn.getId();
 					SupportHelper.reportIssue(oIssueManager, "Column '" + sColumnId + "' of table '" + oTable.getId() + "' uses an 'sap.m.Text' control with renderWhitespace enabled.", Severity.High, sColumnId);
 				}
-			}, oScope, "sap/m/Text");
+			}, oScope, "sap.m.Text");
 		}
 	});
 
@@ -186,7 +191,7 @@ sap.ui.define([
 					var sColumnId = oColumn.getId();
 					SupportHelper.reportIssue(oIssueManager, "Column '" + sColumnId + "' of table '" + oTable.getId() + "' uses an 'sap.m.Link' control with wrapping enabled.", Severity.High, sColumnId);
 				}
-			}, oScope, "sap/m/Link");
+			}, oScope, "sap.m.Link");
 		}
 	});
 
@@ -201,7 +206,7 @@ sap.ui.define([
 		description : "The analytical service returns duplicate IDs. This could also lead to many requests, but the analytical service expects to receive just one record",
 		resolution : "Adjust the service implementation.",
 		check : function(oIssueManager, oCoreFacade, oScope) {
-			var aTables = SupportHelper.find(oScope, true, "sap/ui/table/AnalyticalTable");
+			var aTables = SupportHelper.find(oScope, true, "sap.ui.table.AnalyticalTable");
 			var sAnalyticalErrorId = "NO_DEVIATING_UNITS";
 			var oIssues = {};
 
@@ -249,7 +254,7 @@ sap.ui.define([
 			{text: "SAP Fiori Design Guidelines: Grid Table", href: "https://experience.sap.com/fiori-design-web/grid-table/"}
 		],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			var aTables = SupportHelper.find(oScope, true, "sap/ui/table/Table");
+			var aTables = SupportHelper.find(oScope, true, "sap.ui.table.Table");
 			var aVisibleRows;
 			var fActualRowHeight;
 			var iExpectedRowHeight;
@@ -306,7 +311,7 @@ sap.ui.define([
 			SupportHelper.createDocuRef("API Reference: sap.f.DynamicPage#getFitContent", "#/api/sap.f.DynamicPage/methods/getFitContent")
 		],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			var aTables = SupportHelper.find(oScope, true, "sap/ui/table/Table");
+			var aTables = SupportHelper.find(oScope, true, "sap.ui.table.Table");
 
 			function checkAllParentDynamicPages(oControl, fnCheck) {
 				if (oControl) {

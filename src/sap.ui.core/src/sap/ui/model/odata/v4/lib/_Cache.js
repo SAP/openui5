@@ -4,18 +4,20 @@
 
 //Provides class sap.ui.model.odata.v4.lib._Cache
 sap.ui.define([
-	"sap/ui/base/SyncPromise",
 	"./_GroupLock",
 	"./_Helper",
 	"./_Requestor",
-	"sap/base/Log"
-], function (SyncPromise, _GroupLock, _Helper, _Requestor, Log) {
+	"sap/base/Log",
+	"sap/ui/base/SyncPromise",
+	"sap/ui/thirdparty/jquery"
+], function (_GroupLock, _Helper, _Requestor, Log, SyncPromise, jQuery) {
 	"use strict";
 
+	var sMessagesAnnotation = "@com.sap.vocabularies.Common.v1.Messages",
 		// Matches two cases:  segment with predicate or simply predicate:
 		//   EMPLOYEE(ID='42') -> aMatches[1] === "EMPLOYEE", aMatches[2] === "(ID='42')"
 		//   (ID='42') ->  aMatches[1] === "",  aMatches[2] === "(ID='42')"
-	var rSegmentWithPredicate = /^([^(]*)(\(.*\))$/;
+		rSegmentWithPredicate = /^([^(]*)(\(.*\))$/;
 
 	/**
 	 * Adds the given delta to the collection's $count if there is one.
@@ -133,6 +135,7 @@ sap.ui.define([
 					? vCacheData[vDeleteProperty]
 					: vCacheData, // deleting at root level
 				mHeaders,
+				sKeyPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate"),
 				sTransientGroup = _Helper.getPrivateAnnotation(oEntity, "transient");
 
 			if (sTransientGroup === true) {
@@ -157,7 +160,8 @@ sap.ui.define([
 					} // else: map 404 to 200
 				})
 				.then(function () {
-					var sPredicate;
+					var sMessagePath,
+						sPredicate;
 
 					if (Array.isArray(vCacheData)) {
 						if (vCacheData[vDeleteProperty] !== oEntity) {
@@ -176,6 +180,7 @@ sap.ui.define([
 						addToCount(that.mChangeListeners, sParentPath, vCacheData, -1);
 						that.iLimit -= 1;
 						fnCallback(Number(vDeleteProperty), vCacheData);
+						sMessagePath = _Helper.buildPath(sParentPath, sKeyPredicate);
 					} else {
 						if (vDeleteProperty) {
 							// set to null and notify listeners
@@ -185,7 +190,9 @@ sap.ui.define([
 							oEntity["$ui5.deleted"] = true;
 						}
 						fnCallback();
+						sMessagePath = _Helper.buildPath(sParentPath, vDeleteProperty);
 					}
+					that.oRequestor.reportBoundMessages(that.sResourcePath, [], [sMessagePath]);
 				});
 		});
 	};
@@ -401,10 +408,7 @@ sap.ui.define([
 			if (sPropertyType === "Edm.Stream") {
 				sReadLink = oValue[sSegment + "@odata.mediaReadLink"];
 				sServiceUrl = that.oRequestor.getServiceUrl();
-				if (sReadLink) {
-					return _Helper.makeAbsolute(sReadLink, sServiceUrl);
-				}
-				return sServiceUrl + that.sResourcePath + sPropertyPath;
+				return sReadLink || sServiceUrl + that.sResourcePath + sPropertyPath;
 			}
 			return invalidSegment(sSegment);
 		}
@@ -449,9 +453,9 @@ sap.ui.define([
 	/**
 	 * Fetches the type from the metadata for the root entity plus all types for $expand and puts
 	 * them into a map from meta path to type. Checks the types' key properties and puts their types
-	 * into the map, too, if they are complex. If a type has an "@Org.OData.Core.V1.Messages"
-	 * annotation for messages, the type is enriched by the property "@Org.OData.Core.V1.Messages"
-	 * containing the annotation object.
+	 * into the map, too, if they are complex. If a type has a
+	 * "@com.sap.vocabularies.Common.v1.Messages" annotation for messages, the type is enriched by
+	 * the property "@com.sap.vocabularies.Common.v1.Messages" containing the annotation object.
 	 *
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved with a map from resource path + entity path to the type
@@ -489,11 +493,11 @@ sap.ui.define([
 		function fetchType(sMetaPath) {
 			aPromises.push(that.oRequestor.fetchTypeForPath(sMetaPath).then(function (oType) {
 				var oMessageAnnotation = that.oRequestor
-						.fetchMetadata(sMetaPath + "/@Org.OData.Core.V1.Messages").getResult();
+						.fetchMetadata(sMetaPath + "/" + sMessagesAnnotation).getResult();
 
 				if (oMessageAnnotation) {
 					oType = Object.create(oType);
-					oType["@Org.OData.Core.V1.Messages"] = oMessageAnnotation;
+					oType[sMessagesAnnotation] = oMessageAnnotation;
 				}
 
 				mTypeForMetaPath[sMetaPath] = oType;
@@ -544,6 +548,22 @@ sap.ui.define([
 			return isSubPath(sRequestPath, sPath);
 		}) || Object.keys(this.mPostRequests).some(function (sRequestPath) {
 			return isSubPath(sRequestPath, sPath);
+		});
+	};
+
+	/**
+	 * Patches the cache at the given path with the given data.
+	 *
+	 * @param {string} sPath The path
+	 * @param {object} oData The data to patch with
+	 *
+	 * @private
+	 */
+	Cache.prototype.patch = function (sPath, oData) {
+		var that = this;
+
+		this.fetchValue(_GroupLock.$cached, sPath).then(function (oCacheValue) {
+			_Helper.updateCache(that.mChangeListeners, sPath, oCacheValue, oData);
 		});
 	};
 
@@ -805,17 +825,52 @@ sap.ui.define([
 	 * predicates for all entities in the result. Collects and reports OData messages via
 	 * {@link sap.ui.model.odata.v4.lib._Requestor#reportBoundMessages}.
 	 *
-	 * @param {*} vRoot An array of instances, a single top-level instance or even a simple value
+	 * @param {*} oRoot An OData response, arrays or simple values are wrapped into an object as
+	 *   property "value"
 	 * @param {object} mTypeForMetaPath A map from meta path to the entity type (as delivered by
 	 *   {@link #fetchTypes})
+	 * @param {boolean} [bWrapped] Whether the result is wrapped into an object as property "value"
 	 * @param {string} [sRootMetaPath=this.sMetaPath] The meta path for the cache root entity
 	 *
 	 * @private
 	 */
-	Cache.prototype.visitResponse = function (vRoot, mTypeForMetaPath, sRootMetaPath) {
-		var aKeyPredicates,
+	Cache.prototype.visitResponse = function (oRoot, mTypeForMetaPath, bWrapped, sRootMetaPath) {
+		var bHasMessages = false,
+			aKeyPredicates,
 			mPathToODataMessages = {},
+			sRequestUrl = this.oRequestor.getServiceUrl() + this.sResourcePath,
 			that = this;
+
+		/*
+		 * Adds the messages to mPathToODataMessages after adjusting the message longtext
+		 * @param {object[]} aMessages The message list
+		 * @param {string} sInstancePath The path of the instance in the cache
+		 * @param {string} sContextUrl The context URL for message longtexts
+		 */
+		function addMessages(aMessages, sInstancePath, sContextUrl) {
+			bHasMessages = true;
+			if (aMessages && aMessages.length) {
+				mPathToODataMessages[sInstancePath] = aMessages;
+				aMessages.forEach(function (oMessage) {
+					if (oMessage.longtextUrl) {
+						oMessage.longtextUrl
+							= _Helper.makeAbsolute(oMessage.longtextUrl, sContextUrl);
+					}
+				});
+			}
+		}
+
+		/*
+		 * Builds a new absolute context URL from the given absolute base URL and the URL from
+		 * "@odata.context" (if there is one).
+		 *
+		 * @param {string} sBaseUrl The absolute base URL
+		 * @param {string} [sContextUrl] The context URL (as read from "@odata.context")
+		 * @returns {string} The resulting absolute context URL
+		 */
+		function buildContextUrl(sBaseUrl, sContextUrl) {
+			return sContextUrl ? _Helper.makeAbsolute(sContextUrl, sBaseUrl) : sBaseUrl;
+		}
 
 		/*
 		 * Calls visitInstance for all object entries of the given collection and creates the map
@@ -823,25 +878,25 @@ sap.ui.define([
 		 *
 		 * @param {*[]} aInstances The collection
 		 * @param {string} sMetaPath The meta path of the collection in mTypeForMetaPath
-		 * @param {string} sPathWithKeyPredicates
-		 *    The path of the collection including key predicates
+		 * @param {string} sCollectionPath The path of the collection
+		 * @param {string} sContextUrl The context URL for message longtexts
 		 */
-		function visitArray(aInstances, sMetaPath, sPathWithKeyPredicates) {
-			var i, vInstance, sPredicate;
+		function visitArray(aInstances, sMetaPath, sCollectionPath, sContextUrl) {
+			var mByPredicate = {}, i, vInstance, sPredicate;
 
-			aInstances.$byPredicate = {};
 			for (i = 0; i < aInstances.length; i++) {
 				vInstance = aInstances[i];
 				if (vInstance && typeof vInstance === "object") {
-					visitInstance(vInstance, sMetaPath, sPathWithKeyPredicates, true);
+					visitInstance(vInstance, sMetaPath, sCollectionPath, sContextUrl, true);
 					sPredicate = _Helper.getPrivateAnnotation(vInstance, "predicate");
-					if (!sPathWithKeyPredicates) {
-						// for the root entries remember the key predicates to remove all
-						// messages for entities that have been read
+					if (!sCollectionPath) {
+						// remember the key predicates of the root entries to remove all messages
+						// for entities that have been read
 						aKeyPredicates.push(sPredicate);
 					}
 					if (sPredicate) {
-						aInstances.$byPredicate[sPredicate] = vInstance;
+						mByPredicate[sPredicate] = vInstance;
+						aInstances.$byPredicate = mByPredicate;
 					}
 				}
 			}
@@ -853,31 +908,40 @@ sap.ui.define([
 		 *
 		 * @param {object} oInstance The instance
 		 * @param {string} sMetaPath The meta path of the instance in mTypeForMetaPath
-		 * @param {string} sPathWithKeyPredicates
-		 *    The path of the instance including key predicates
-		 * @param {boolean} [bAddPredicateToPath=false]
-		 *    Whether to add the instance's key predicate to the path with key predicates
+		 * @param {string} sInstancePath The path of the instance in the cache
+		 * @param {string} sContextUrl The context URL for message longtexts
+		 * @param {boolean} [bCollection=false]
+		 *    Whether the instance is part of a collection and the predicate must be added to the
+		 *    instance path
 		 */
-		function visitInstance(oInstance, sMetaPath, sPathWithKeyPredicates, bAddPredicateToPath) {
+		function visitInstance(oInstance, sMetaPath, sInstancePath, sContextUrl, bCollection) {
 			var oType = mTypeForMetaPath[sMetaPath],
-				sMessageProperty = oType && oType["@Org.OData.Core.V1.Messages"]
-					&& oType["@Org.OData.Core.V1.Messages"].$Path;
+				sMessageProperty = oType && oType[sMessagesAnnotation]
+					&& oType[sMessagesAnnotation].$Path,
+				aMessages;
 
+			sContextUrl = buildContextUrl(sContextUrl, oInstance["@odata.context"]);
 			that.calculateKeyPredicate(oInstance, mTypeForMetaPath, sMetaPath);
-			if (bAddPredicateToPath) {
-				sPathWithKeyPredicates += _Helper.getPrivateAnnotation(oInstance, "predicate");
+			if (bCollection) {
+				sInstancePath += _Helper.getPrivateAnnotation(oInstance, "predicate");
 			}
-			if (sMessageProperty) { // collect messages
-				mPathToODataMessages[sPathWithKeyPredicates] = oInstance[sMessageProperty];
+			if (sMessageProperty) {
+				aMessages = _Helper.drillDown(oInstance, sMessageProperty.split("/"));
+				if (aMessages !== undefined) {
+					addMessages(aMessages, sInstancePath, sContextUrl);
+				}
 			}
 
 			Object.keys(oInstance).forEach(function (sProperty) {
 				var sCount,
-					sPropertyPath = sMetaPath + "/" + sProperty,
+					sPropertyMetaPath = sMetaPath + "/" + sProperty,
 					vPropertyValue = oInstance[sProperty],
-					sNewPathWithKeyPredicates = sPathWithKeyPredicates + "/" + sProperty;
+					sPropertyPath = sInstancePath + "/" + sProperty;
 
-				if (sProperty.includes("@")) { // ignore all annotations
+				if (sProperty.endsWith("@odata.mediaReadLink")) {
+					oInstance[sProperty] = _Helper.makeAbsolute(vPropertyValue, sContextUrl);
+				}
+				if (sProperty.includes("@")) { // ignore other annotations
 					return;
 				}
 				if (Array.isArray(vPropertyValue)) {
@@ -892,20 +956,22 @@ sap.ui.define([
 						// Note: This relies on the fact that $skip/$top is not used on nested lists
 						setCount({}, "", vPropertyValue, vPropertyValue.length);
 					}
-					visitArray(vPropertyValue, sPropertyPath, sNewPathWithKeyPredicates);
+					visitArray(vPropertyValue, sPropertyMetaPath, sPropertyPath,
+						buildContextUrl(sContextUrl, oInstance[sProperty + "@odata.context"]));
 				} else if (vPropertyValue && typeof vPropertyValue === "object") {
-					visitInstance(vPropertyValue, sPropertyPath, sNewPathWithKeyPredicates);
+					visitInstance(vPropertyValue, sPropertyMetaPath, sPropertyPath, sContextUrl);
 				}
 			});
 		}
 
-		if (Array.isArray(vRoot)) {
+		if (bWrapped) {
 			aKeyPredicates = [];
-			visitArray(vRoot, sRootMetaPath || this.sMetaPath, "");
-		} else if (vRoot && typeof vRoot === "object") {
-			visitInstance(vRoot, sRootMetaPath || this.sMetaPath, "");
+			visitArray(oRoot.value, sRootMetaPath || this.sMetaPath, "",
+				buildContextUrl(sRequestUrl, oRoot["@odata.context"]));
+		} else if (oRoot && typeof oRoot === "object") {
+			visitInstance(oRoot, sRootMetaPath || this.sMetaPath, "", sRequestUrl);
 		}
-		if (Object.keys(mPathToODataMessages).length) {
+		if (bHasMessages) {
 			this.oRequestor.reportBoundMessages(this.sResourcePath, mPathToODataMessages,
 				aKeyPredicates);
 		}
@@ -1123,7 +1189,7 @@ sap.ui.define([
 			this.iLimit = parseInt(sCount, 10);
 			setCount(this.mChangeListeners, "", this.aElements, this.iLimit);
 		}
-		this.visitResponse(oResult.value, mTypeForMetaPath);
+		this.visitResponse(oResult, mTypeForMetaPath, true);
 		for (i = 0; i < iResultLength; i++) {
 			oElement = oResult.value[i];
 			this.aElements[iStart + i] = oElement;
@@ -1588,7 +1654,7 @@ sap.ui.define([
 					fnDataRequested, undefined, this.sMetaPath),
 				this.fetchTypes()
 			]).then(function (aResult) {
-				that.visitResponse(aResult[0], aResult[1],
+				that.visitResponse(aResult[0], aResult[1], false,
 					that.bFetchOperationReturnType ? that.sMetaPath + "/$Type" : undefined);
 				return aResult[0];
 			});
@@ -1655,7 +1721,7 @@ sap.ui.define([
 		this.oPromise = SyncPromise.all(aPromises).then(function (aResult) {
 			that.bPosting = false;
 			if (that.bFetchOperationReturnType) {
-				that.visitResponse(aResult[0], aResult[1], that.sMetaPath + "/$Type");
+				that.visitResponse(aResult[0], aResult[1], false, that.sMetaPath + "/$Type");
 			}
 			return aResult[0];
 		}, function (oError) {

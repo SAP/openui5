@@ -73,7 +73,7 @@ function(jQuery, Test, ElementEnablementTest) {
 
 					var oElementTestDataWithoutCreate = null;
 					if (oElementTestData.create) {
-						oElementTestDataWithoutCreate = jQuery.extend({}, oElementTestData);
+						oElementTestDataWithoutCreate = Object.assign({}, oElementTestData);
 						delete oElementTestDataWithoutCreate.create;
 						oElementTestData.groupPostfix = "with create method";
 					}

@@ -3,11 +3,11 @@
  */
 
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
-	"sap/ui/model/odata/type/DateTimeBase",
-	"sap/base/Log"
-], function (DateFormat, FormatException, DateTimeBase, Log) {
+	"sap/ui/model/odata/type/DateTimeBase"
+], function (Log, DateFormat, FormatException, DateTimeBase) {
 	"use strict";
 
 	/**

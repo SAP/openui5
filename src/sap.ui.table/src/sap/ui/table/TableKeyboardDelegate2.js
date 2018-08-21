@@ -4,7 +4,13 @@
 
 // Provides helper sap.ui.table.TableKeyboardDelegate2.
 sap.ui.define([
-"sap/ui/base/Object", "sap/ui/Device", "./library", "./TableUtils", "sap/ui/events/KeyCodes"], function(BaseObject, Device, library, TableUtils, KeyCodes) {
+	"sap/ui/base/Object",
+	"sap/ui/Device",
+	"./library",
+	"./TableUtils",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery"
+], function(BaseObject, Device, library, TableUtils, KeyCodes, jQuery) {
 	"use strict";
 
 	// Shortcuts

@@ -1,31 +1,36 @@
 /* global QUnit */
 
-
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/rta/appVariant/manageApps/webapp/controller/ManageApps.controller",
 	"sap/ui/rta/appVariant/Utils",
 	"sap/ui/rta/appVariant/Feature",
-	"sap/ui/thirdparty/sinon"
-], function(
+	"sap/ui/core/Control",
+	"sap/ui/base/Event",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/sinon-4"
+], function (
 	ManageAppsController,
 	AppVariantOverviewUtils,
 	RtaAppVariantFeature,
-	sinon) {
+	Control,
+	Event,
+	jQuery,
+	sinon
+) {
 	"use strict";
-
-	QUnit.start();
 
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given that a ManageApps controller is instantiated", {
-		afterEach : function(assert) {
+		afterEach: function () {
 			sandbox.restore();
+		},
+		after: function() {
+			jQuery("#sapUiBusyIndicator").hide();
 		}
 	}, function() {
 		QUnit.test("when onInit is called in case app variants exist", function(assert) {
-			var oViewStub = new sap.ui.core.Control();
+			var oViewStub = new Control();
 			var oManageAppsController = new ManageAppsController();
 
 			sandbox.stub(oManageAppsController, "getView").returns(oViewStub);
@@ -88,7 +93,7 @@ sap.ui.require([
 		});
 
 		QUnit.test("when onInit is called in case no app variants exist", function(assert) {
-			var oViewStub = new sap.ui.core.Control();
+			var oViewStub = new Control();
 			var oManageAppsController = new ManageAppsController();
 
 			sandbox.stub(oManageAppsController, "getView").returns(oViewStub);
@@ -134,7 +139,7 @@ sap.ui.require([
 				}
 			};
 
-			var oEmptyEvent = new sap.ui.base.Event("emptyEventId", oButton, {
+			var oEmptyEvent = new Event("emptyEventId", oButton, {
 				button : oButton
 			});
 
@@ -174,7 +179,7 @@ sap.ui.require([
 				}
 			};
 
-			var oEmptyEvent = new sap.ui.base.Event("emptyEventId", oButton, {
+			var oEmptyEvent = new Event("emptyEventId", oButton, {
 				button : oButton
 			});
 
@@ -185,14 +190,14 @@ sap.ui.require([
 	});
 
 	QUnit.module("Given that a ManageApps controller is instantiated", {
-		beforeEach : function(assert) {
+		beforeEach: function () {
 			window.bUShellNavigationTriggered = false;
 			this.originalUShell = sap.ushell;
 			// this overrides the ushell globally => we need to restore it!
 
-			sap.ushell = jQuery.extend({}, sap.ushell, {
+			sap.ushell = Object.assign({}, sap.ushell, {
 				Container : {
-					getService : function(sServiceName) {
+					getService: function () {
 						return {
 							toExternal : function() {
 								window.bUShellNavigationTriggered = true;
@@ -202,7 +207,7 @@ sap.ui.require([
 				}
 			});
 		},
-		afterEach : function(assert) {
+		afterEach: function () {
 			sandbox.restore();
 			sap.ushell = this.originalUShell;
 			delete window.bUShellNavigationTriggered;
@@ -227,7 +232,7 @@ sap.ui.require([
 				}
 			};
 
-			var oEmptyEvent = new sap.ui.base.Event("emptyEventId", oButton, {
+			var oEmptyEvent = new Event("emptyEventId", oButton, {
 				button : oButton
 			});
 
@@ -235,5 +240,9 @@ sap.ui.require([
 
 			assert.ok(modelPropertySpy.calledThrice, "the getModelProperty is called three times");
 		});
+	});
+
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
 	});
 });

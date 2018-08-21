@@ -11,15 +11,10 @@
  * might break in future releases.
  */
 
-/*global sap:true, console, document, ES6Promise, Promise, XMLHttpRequest */
+/*global sap:true, console, document, Promise, XMLHttpRequest */
 
 (function(__global) {
 	"use strict";
-
-	// Enable promise polyfill if native promise is not available
-	if (!__global.Promise) {
-		ES6Promise.polyfill();
-	}
 
 	/*
 	 * Helper function that removes any query and/or hash parts from the given URL.
@@ -552,6 +547,15 @@
 
 	}
 
+	/**
+	 * Returns the reporting mode for synchronous calls
+	 *
+	 * @returns {int} sync call behavior
+	 */
+	function getSyncCallBehavior() {
+		return syncCallBehavior;
+	}
+
 	function guessResourceName(sURL) {
 		var sNamePrefix,
 			sUrlPrefix,
@@ -942,6 +946,17 @@
 	}
 
 	/**
+	 * Define an already loaded module synchronously.
+	 * Finds or creates a module by its unified resource name and resolves it with the given value.
+	 *
+	 * @param {string} sResourceName Name of the module in URN syntax
+	 * @param {any} vValue Content of the module
+	 */
+	function defineModuleSync(sResourceName, vValue) {
+		Module.get(sResourceName).ready(vValue);
+	}
+
+	/**
 	 * Queue of modules for which sap.ui.define has been called but for which the name has not been determined yet
 	 * When loading modules via script tag, only the onload handler knows the relationship between executed sap.ui.define calls and
 	 * module name. It then resolves the pending modules in the queue. Only one entry can get the name of the module
@@ -949,6 +964,7 @@
 	 */
 	var queue = new function ModuleDefinitionQueue() {
 		var aQueue = [],
+			iUnnamedEntries = 0,
 			iRun = 0,
 			vTimer;
 
@@ -961,6 +977,9 @@
 				_export: _export,
 				guess: document.currentScript && document.currentScript.getAttribute('data-sap-ui-module')
 			});
+			if ( name == null ) {
+				iUnnamedEntries++;
+			}
 			// trigger queue processing via a timer in case the currently executing script was not created by us
 			if ( !vTimer ) {
 				vTimer = setTimeout(this.process.bind(this, null));
@@ -969,6 +988,7 @@
 
 		this.clear = function() {
 			aQueue = [];
+			iUnnamedEntries = 0;
 			if ( vTimer ) {
 				clearTimeout(vTimer);
 				vTimer = null;
@@ -1008,6 +1028,7 @@
 			while ( aQueue.length > 0 ) {
 				oEntry = aQueue.shift();
 				if ( oEntry.name == null ) {
+					iUnnamedEntries--;
 					if ( sModuleName != null ) {
 						oEntry.name = sModuleName;
 						sModuleName = null;
@@ -1015,7 +1036,7 @@
 						// multiple modules have been queued, but only one module can inherit the name from the require call
 						throw new Error("module id missing in define call: " + oEntry.guess);
 					}
-				} else if ( sModuleName && oEntry.name !== sModuleName ) {
+				} else if ( sModuleName && oEntry.name !== sModuleName && iUnnamedEntries === 0 ) {
 					if ( log.isLoggable() ) {
 						log.debug("module names don't match: requested: " + sModuleName + ", defined: " + oEntry.name);
 					}
@@ -1121,7 +1142,8 @@
 			}
 
 			log.error("failed to load Javascript resource: " + oModule.name);
-			oModule.fail(ensureStacktrace(new Error("script load error")));
+			oModule.fail(
+				ensureStacktrace(new Error("failed to load '" + oModule.name +  "' from " + oModule.url + ": script load error")));
 		}
 
 		oScript = document.createElement('SCRIPT');
@@ -1178,10 +1200,8 @@
 		}
 
 		// Module names should not start with a "/"
-		if ( bLoggable ) {
-			if (sModuleName[0] == "/") {
-				log.error("Module names that start with a slash should not be used, as they are reserved for future use.");
-			}
+		if (sModuleName[0] == "/") {
+			log.error("Module names that start with a slash should not be used, as they are reserved for future use.");
 		}
 
 		oModule = Module.get(sModuleName);
@@ -1251,6 +1271,8 @@
 					return undefined;
 				}
 				// async pending, load sync again
+				log.warning("Sync request triggered for '" + sModuleName + "' while async request was already pending." +
+					" Loading a module twice might cause issues and should be avoided by fully migrating to async APIs.");
 			}
 		}
 
@@ -1607,6 +1629,10 @@
 
 		if ( bForceSyncDefines === false || (bForceSyncDefines == null && bGlobalAsyncMode) ) {
 			queue.push(sResourceName, aDependencies, vFactory, bExport);
+			if ( sResourceName != null ) {
+				var oModule = Module.get(sResourceName);
+				oModule.state = LOADING;
+			}
 			return;
 		}
 
@@ -2097,6 +2123,7 @@
 		declareModule: function(sResourceName) {
 			/* void */ declareModule( normalize(sResourceName) );
 		},
+		defineModuleSync: defineModuleSync,
 		dump: dumpInternals,
 		getAllModules: getAllModules,
 		getModuleContent: getModuleContent,
@@ -2104,6 +2131,7 @@
 			return mModules[sResourceName] ? mModules[sResourceName].state : INITIAL;
 		},
 		getResourcePath: getResourcePath,
+		getSyncCallBehavior: getSyncCallBehavior,
 		getUrlPrefixes: getUrlPrefixes,
 		loadJSResourceAsync: loadJSResourceAsync,
 		resolveURL: resolveURL,
@@ -2144,13 +2172,6 @@
 			}
 		}
 	});
-
-	Module.get('sap/ui/thirdparty/baseuri.js').ready(null); // no module value
-	if ( typeof ES6Promise !== 'undefined' ) {
-		Module.get('sap/ui/thirdparty/es6-promise.js').ready(ES6Promise);
-	}
-	Module.get('sap/ui/thirdparty/es6-object-assign.js').ready(null); // no module value
-	Module.get('sap/ui/thirdparty/es6-string-methods.js').ready(null); // no module value
 
 	// establish APIs in the sap.ui namespace
 

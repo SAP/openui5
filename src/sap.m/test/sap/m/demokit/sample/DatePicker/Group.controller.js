@@ -47,7 +47,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 
 		handleChange: function (oEvent) {
 			var oText = this.byId("textResult");
-			var oDP = oEvent.oSource;
+			var oDP = oEvent.getSource();
 			var sValue = oEvent.getParameter("value");
 			var bValid = oEvent.getParameter("valid");
 			this._iEvent++;

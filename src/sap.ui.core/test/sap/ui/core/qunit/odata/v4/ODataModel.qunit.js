@@ -3,34 +3,33 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/core/MessageType",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/Binding",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Context",
 	"sap/ui/model/Model",
-	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/OperationMode",
+	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/v4/Context",
-	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
-	"sap/ui/model/odata/v4/lib/_GroupLock",
-	"sap/ui/model/odata/v4/lib/_Helper",
-	"sap/ui/model/odata/v4/lib/_Parser",
-	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/ODataContextBinding",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/model/odata/v4/SubmitMode",
-	"sap/ui/test/TestUtils",
-	"sap/ui/thirdparty/URI",
-	"sap/base/Log"
-], function (jQuery, MessageType, Message, Binding, BindingMode, BaseContext, Model, TypeString,
-		ODataUtils, OperationMode, Context, _MetadataRequestor, _GroupLock, _Helper, _Parser,
-		_Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel,
-		ODataPropertyBinding, SubmitMode, TestUtils, URI, Log) {
+	"sap/ui/model/odata/v4/lib/_GroupLock",
+	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
+	"sap/ui/model/odata/v4/lib/_Parser",
+	"sap/ui/model/odata/v4/lib/_Requestor",
+	"sap/ui/test/TestUtils"
+], function (jQuery, Log, MessageType, Message, Binding, BindingMode, BaseContext, Model,
+		ODataUtils, OperationMode, TypeString, Context, ODataContextBinding, ODataListBinding,
+		ODataMetaModel, ODataModel, ODataPropertyBinding, SubmitMode, _GroupLock, _Helper,
+		_MetadataRequestor, _Parser, _Requestor, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -1561,45 +1560,46 @@ sap.ui.require([
 		{numericSeverity : null, type : MessageType.None},
 		{numericSeverity : undefined, type : MessageType.None}
 	].forEach(function (oFixture, i) {
-		QUnit.test("reportBoundMessages, " + i, function (assert) {
+		QUnit.test("reportBoundMessages #" + i, function (assert) {
 			var aMessages = [{
 					"code" : "F42",
-//					"longtextUrl" : "foo/bar",
+					"longtextUrl" : "/service/Messages(3)/LongText/$value",
 					"message" : "foo0",
 					"numericSeverity" : oFixture.numericSeverity,
 					"target" : "Name",
-					"transient" : false
+					"transition" : false
 				}, {
 					"code" : "UF1",
-//					"longtextUrl" : "",
+					"longtextUrl" : "/service/baz",
 					"message" : "foo1",
 					"numericSeverity" : oFixture.numericSeverity,
 					"target" : "",
-					"transient" : true
+					"transition" : true
 				}],
 				oModel = createModel(),
 				oModelMock = this.mock(oModel);
 
-			oModelMock.expects("fireMessageChange")
-				.withExactArgs(sinon.match(function (mArguments) {
+			oModelMock.expects("fireMessageChange").withExactArgs(sinon.match.object)
+				.callsFake(function (mArguments) {
 					var aNewMessages = mArguments.newMessages,
 						aOldMessages = mArguments.oldMessages;
 
-					return aNewMessages.length === aMessages.length
-						&& aOldMessages.length === 0
-						&& aNewMessages.every(function (oMessage, j) {
-							return oMessage instanceof Message
-								&& oMessage.getCode() === aMessages[j].code
-//TODO							&& oMessage.getDescriptionUrl() === aMessages[j].longtextUrl
-								&& oMessage.getMessage() === aMessages[j].message
-								&& oMessage.getMessageProcessor() === oModel
-								&& oMessage.getPersistent() === aMessages[j].transient
-								&& oMessage.getTarget() === "/Team('42')/foo/bar"
-									+ (aMessages[j].target ? "/" + aMessages[j].target : "")
-								&& oMessage.getTechnical() === false
-								&& oMessage.getType() === oFixture.type;
-						});
-				}));
+					assert.strictEqual(aNewMessages.length, aMessages.length);
+					assert.strictEqual(aOldMessages.length, 0);
+
+					aNewMessages.forEach(function (oMessage, j) {
+						assert.ok(oMessage instanceof Message);
+						assert.strictEqual(oMessage.getCode(), aMessages[j].code);
+						assert.strictEqual(oMessage.getDescriptionUrl(), aMessages[j].longtextUrl);
+						assert.strictEqual(oMessage.getMessage(), aMessages[j].message);
+						assert.strictEqual(oMessage.getMessageProcessor(), oModel);
+						assert.strictEqual(oMessage.getPersistent(), aMessages[j].transition);
+						assert.strictEqual(oMessage.getTarget(), "/Team('42')/foo/bar"
+							+ (aMessages[j].target ? "/" + aMessages[j].target : ""));
+						assert.notOk(oMessage.getTechnical());
+						assert.strictEqual(oMessage.getType(), oFixture.type);
+					});
+				});
 
 			// code under test
 			oModel.reportBoundMessages("Team('42')", {"/foo/bar" : aMessages});
@@ -1609,6 +1609,22 @@ sap.ui.require([
 			// code under test
 			oModel.reportBoundMessages("Team('42')", {});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("reportBoundMessages: longtextUrl special cases ", function (assert) {
+		var aMessages = [{"longtextUrl" : ""}, {}],
+			oModel = createModel();
+
+		this.mock(oModel).expects("fireMessageChange")
+			.withExactArgs(sinon.match.object)
+			.callsFake(function (mArguments) {
+				assert.strictEqual(mArguments.newMessages[0].getDescriptionUrl(), undefined);
+				assert.strictEqual(mArguments.newMessages[1].getDescriptionUrl(), undefined);
+			});
+
+		// code under test
+		oModel.reportBoundMessages("Team('42')", {"" : aMessages});
 	});
 
 	//*********************************************************************************************
@@ -1666,7 +1682,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("reportBoundMessages: remove old messages with key predicates", function (assert) {
-		var mMessages = {
+		var oHelperMock = this.mock(_Helper),
+			mMessages = {
 				"/FOO('1')" : [{}, {}],
 				"/FOO('1')/bar" : [{}],
 				"/FOO('2')" : [{persistent : true}, {}, {persistent : true}, {}],
@@ -1678,6 +1695,8 @@ sap.ui.require([
 			oModelMock = this.mock(oModel);
 
 		oModel.mMessages = mMessages;
+		oHelperMock.expects("buildPath").withExactArgs("/FOO", "('1')").returns("/FOO('1')");
+		oHelperMock.expects("buildPath").withExactArgs("/FOO", "('2')").returns("/FOO('2')");
 		oModelMock.expects("fireMessageChange")
 			.withExactArgs(sinon.match.object)
 			.callsFake(function (mArguments) {

@@ -153,6 +153,17 @@ config = {
 	callbacks: {}
 };
 
+//### BEGIN MODIFIED BY SAP
+// downport of fix for https://github.com/qunitjs/qunit/issues/1059
+// take a predefined QUnit.config and extend the defaults
+var globalConfig = window && window.QUnit && window.QUnit.config;
+
+// only extend the global config if there is no QUnit overload
+if (window && window.QUnit && !window.QUnit.version) {
+	extend(config, globalConfig);
+}
+//### END MODIFIED BY SAP
+
 // Push a loose unnamed module to the modules collection
 config.modules.push( config.currentModule );
 

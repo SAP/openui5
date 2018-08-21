@@ -13,7 +13,8 @@ sap.ui.define([
 	'sap/ui/thirdparty/crossroads',
 	"sap/base/util/UriParameters",
 	"sap/base/util/deepEqual",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		library,
@@ -26,7 +27,8 @@ sap.ui.define([
 		crossroads,
 		UriParameters,
 		deepEqual,
-		Log
+		Log,
+		jQuery
 	) {
 	"use strict";
 
@@ -448,6 +450,20 @@ sap.ui.define([
 			},
 
 			/**
+			 * Returns whether the given hash can be matched by any one of the Route in the Router.
+			 *
+			 * @param {string} hash which will be tested by the Router
+			 * @return {boolean} whether the hash can be matched
+			 * @public
+			 * @since 1.58.0
+			 */
+			match : function (sHash) {
+				return Object.keys(this._oRoutes).some(function(sRouteName) {
+					return this._oRoutes[sRouteName].match(sHash);
+				}.bind(this));
+			},
+
+			/**
 			 * Returns the Route with a name, if no route is found undefined is returned
 			 *
 			 * @param {string} sName Name of the route
@@ -493,6 +509,8 @@ sap.ui.define([
 			 * @public
 			 */
 			getView : function (sViewName, sViewType, sViewId) {
+				Log.warning("Deprecated API Router#getView called - use Router#getViews instead.", this);
+
 				var oView = this._oViews._getViewWithGlobalId({
 					viewName: sViewName,
 					type: sViewType,

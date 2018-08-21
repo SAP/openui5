@@ -18,8 +18,8 @@
 					  backgroundDesignAnchorBar="Translucent">
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle 
-				primaryArea="Left" 
-				backgroundDesign="Translucent">
+				areaShrinkRatio="1:1.6:1.6" 
+				backgroundDesign="Solid">
 				<breadcrumbs>
 					<m:Breadcrumbs>
 						<m:Link text='Page 1'/>

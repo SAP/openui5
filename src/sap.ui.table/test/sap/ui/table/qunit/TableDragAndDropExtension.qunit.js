@@ -4,9 +4,10 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/TableUtils",
 	"sap/ui/core/dnd/DragDropInfo",
-	"sap/ui/core/dnd/DropPosition",
-	"sap/ui/Device"
-], function(TableQUnitUtils, TableUtils, DragDropInfo, DropPosition, Device) {
+	"sap/ui/core/library",
+	"sap/ui/Device",
+	"sap/ui/core/Control"
+], function(TableQUnitUtils, TableUtils, DragDropInfo, CoreLibrary, Device, Control) {
 	"use strict";
 
 	// mapping of globals
@@ -18,6 +19,8 @@ sap.ui.define([
 	var getRowAction = window.getRowAction;
 	var fakeGroupRow = window.fakeGroupRow;
 	var fakeSumRow = window.fakeSumRow;
+
+	var DropPosition = CoreLibrary.dnd.DropPosition;
 
 	function createDragEvent(sDragEventType) {
 		var oJQueryDragEvent = jQuery.Event(sDragEventType);
@@ -104,7 +107,7 @@ sap.ui.define([
 			"No drop control: Other session data was not manipulated");
 
 		// Test the session data added by the table in dragenter.
-		oFakeEvent.dragSession.dropControl = "dummy";
+		oFakeEvent.dragSession.dropControl = new Control();
 		this.oDragAndDropExtension._ExtensionDelegate.ondragenter.call(oTable, oFakeEvent);
 
 		mSessionData = oFakeEvent.dragSession.getComplexData("sap.ui.table-" + oTable.getId());
@@ -277,13 +280,13 @@ sap.ui.define([
 
 	QUnit.test("draggable attribute", function(assert) {
 		assert.strictEqual(getRowHeader(0)[0].getAttribute("draggable"), null,
-			"Row header should not have a draggable attribute");
+			"Row header does not have a draggable attribute");
 		assert.strictEqual(getCell(0, 0).parent()[0].getAttribute("draggable"), "true",
-			"Row in the fixed column area should have a draggable attribute with value \"true\"");
+			"Row in the fixed column area does have a draggable attribute with value \"true\"");
 		assert.strictEqual(getCell(0, 1).parent()[0].getAttribute("draggable"), "true",
-			"Row in the scrollable column area should have a draggable attribute with value \"true\"");
+			"Row in the scrollable column area does have a draggable attribute with value \"true\"");
 		assert.strictEqual(getRowAction(0)[0].getAttribute("draggable"), null,
-			"Row action should not have a draggable attribute");
+			"Row action does not have a draggable attribute");
 	});
 
 	QUnit.test("Draggable", function(assert) {
@@ -297,15 +300,15 @@ sap.ui.define([
 
 			if (mParams.sRowType === "Standard") {
 				assert.ok(!oEvent.isDefaultPrevented(),
-					sMessagePrefix + "The default action should not be prevented");
+					sMessagePrefix + "The default action was not prevented");
 				assert.deepEqual(oEvent.dragSession.getComplexData("sap.ui.table-" + oTable.getId()).draggedRowContext,
 					oTable.getContextByIndex(mParams.iRowIndex),
-					sMessagePrefix + "The dragged row context should be stored in the drag session");
+					sMessagePrefix + "The dragged row context was stored in the drag session");
 			} else {
 				assert.ok(oEvent.isDefaultPrevented(),
-					sMessagePrefix + "The default action should be prevented");
+					sMessagePrefix + "The default action was prevented");
 				assert.equal(oEvent.dragSession.getComplexData("sap.ui.table-" + oTable.getId()), null,
-					sMessagePrefix + "No drag session data should be stored in the drag session");
+					sMessagePrefix + "No drag session data was stored in the drag session");
 			}
 		};
 
@@ -377,7 +380,7 @@ sap.ui.define([
 			if ((mParams.sRowType === "Standard" && !bDraggingOverItself)
 				|| (mParams.sRowType === "Empty" && sDropPosition !== DropPosition.On)) {
 
-				assert.ok(!oEvent.isDefaultPrevented(), sMessagePrefix + "The default action should not be prevented");
+				assert.ok(!oEvent.isDefaultPrevented(), sMessagePrefix + "The default action was be prevented");
 
 				var bVerticalScrollbarVisible = oTable._getScrollExtension().isVerticalScrollbarVisible();
 				var mTableCntRect = oTable.getDomRef("sapUiTableCnt").getBoundingClientRect();
@@ -385,18 +388,18 @@ sap.ui.define([
 				if (mParams.sRowType === "Empty") {
 					var oLastNonEmptyRow = this.getRows()[TableUtils.getNonEmptyVisibleRowCount(this) - 1];
 					assert.strictEqual(oEvent.dragSession.getDropControl(), oLastNonEmptyRow,
-						sMessagePrefix + "The drop control should be set to the last non-empty row");
+						sMessagePrefix + "The drop control was set to the last non-empty row");
 				}
 
-				assert.ok(!oEvent.isMarked("NonDroppable"), sMessagePrefix + "The event should not be marked as \"NonDroppable\"");
+				assert.ok(!oEvent.isMarked("NonDroppable"), sMessagePrefix + "The event was not marked as \"NonDroppable\"");
 				assert.deepEqual(oEvent.dragSession.getIndicatorConfig(), {
 					width: mTableCntRect.width - (bVerticalScrollbarVisible ? 16 : 0),
 					left: mTableCntRect.left + (oTable._bRtlMode && bVerticalScrollbarVisible ? 16 : 0)
-				}, sMessagePrefix + "The correct indicator size should be stored in the drag session");
+				}, sMessagePrefix + "The correct indicator size was stored in the drag session");
 			} else {
-				assert.ok(oEvent.isMarked("NonDroppable"), sMessagePrefix + "The event should be marked as \"NonDroppable\"");
+				assert.ok(oEvent.isMarked("NonDroppable"), sMessagePrefix + "The event was marked as \"NonDroppable\"");
 				assert.equal(oEvent.dragSession.getIndicatorConfig(), null,
-					sMessagePrefix + "The indicator size should not be stored in the drag session");
+					sMessagePrefix + "The indicator size was not stored in the drag session");
 			}
 		};
 
@@ -495,10 +498,10 @@ sap.ui.define([
 			var sDropPosition = oTreeTable.getDragDropConfig()[0].getDropPosition();
 			var sMessagePrefix = "[DropPosition=" + sDropPosition + "] " + mParams.sRowAreaType + " area: ";
 
-			assert.ok(!oEvent.isMarked("NonDroppable"), sMessagePrefix + "The event should not be marked as \"NonDroppable\"");
-			assert.strictEqual(oEvent.dragSession.getDropControl(), oTable, sMessagePrefix + "The drop control should be set to the table");
+			assert.ok(!oEvent.isMarked("NonDroppable"), sMessagePrefix + "The event was not marked as \"NonDroppable\"");
+			assert.strictEqual(oEvent.dragSession.getDropControl(), oTable, sMessagePrefix + "The drop control was set to the table");
 			assert.equal(oEvent.dragSession.getIndicatorConfig(), null,
-				sMessagePrefix + "The indicator size should not be stored in the drag session");
+				sMessagePrefix + "The indicator size was not stored in the drag session");
 		};
 
 		function test($Target, mTestParameters) {

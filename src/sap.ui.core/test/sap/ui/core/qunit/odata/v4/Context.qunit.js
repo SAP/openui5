@@ -3,13 +3,13 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Context",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_GroupLock",
-	"sap/ui/model/odata/v4/lib/_Helper",
-	"sap/base/Log"
-], function (jQuery, SyncPromise, BaseContext, Context, _GroupLock, _Helper, Log) {
+	"sap/ui/model/odata/v4/lib/_Helper"
+], function (jQuery, Log, SyncPromise, BaseContext, Context, _GroupLock, _Helper) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -946,5 +946,23 @@ sap.ui.require([
 
 		assert.strictEqual(oResult.isFulfilled(), true);
 		assert.strictEqual(oResult.getResult(), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("patch", function (assert) {
+		var oCache = {
+				patch : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('42')"),
+			oData = {},
+			sPath = "path/to/context";
+
+		this.mock(oContext).expects("withCache").withExactArgs(sinon.match.func, "")
+			.callsArgWith(0, oCache, sPath)
+			.returns(Promise.resolve());
+		this.mock(oCache).expects("patch").withExactArgs(sPath, sinon.match.same(oData));
+
+		// code under test
+		return oContext.patch(oData);
 	});
 });

@@ -23,6 +23,9 @@
 			</ObjectPageSection>
 			<ObjectPageSection id="section2" title="{/sections/1/title}">
 				<ObjectPageSubSection title="second section first">
+					<customAnchorBarButton>
+						<m:Button text="custom sub-section button" icon="sap-icon://show"/>
+					</customAnchorBarButton>
 					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
 				</ObjectPageSubSection>
 				<ObjectPageSubSection title="second section second">
@@ -95,6 +98,16 @@
 			<ObjectPageSection id="section15" title="Section 15">
 				<ObjectPageSubSection>
 					<html:div style="height:300px; background-color: #DFF0FF;"></html:div>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+			<ObjectPageSection id="section16"
+				title="Section with veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+						loooooooooooooooooooooooooooooooooooooong teeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeext">
+				<ObjectPageSubSection>
+					<html:div style="height:300px; background-color: #DFF0FF;"></html:div>
+				</ObjectPageSubSection>
+				<ObjectPageSubSection title="second section second">
+					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 		</sections>

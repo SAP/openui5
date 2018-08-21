@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.core.mvc.JSONView.
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'./View',
 	'./JSONViewRenderer',
 	'./EventHandlerResolver',
@@ -12,7 +12,8 @@ sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/library',
 	'sap/ui/model/resource/ResourceModel',
-	"sap/base/Log"
+	'sap/base/Log',
+	'sap/base/util/LoaderExtensions'
 ],
 	function(
 		jQuery,
@@ -23,7 +24,8 @@ sap.ui.define([
 		ManagedObject,
 		library,
 		ResourceModel,
-		Log
+		Log,
+		LoaderExtensions
 	) {
 	"use strict";
 
@@ -230,15 +232,12 @@ sap.ui.define([
 	 * @private
 	 */
 	JSONView.prototype._loadTemplate = function(sTemplateName, mOptions) {
-		//TODO: global jquery call found
-		var sResourceName = jQuery.sap.getResourceName(sTemplateName, ".view.json");
+		var sResourceName = sTemplateName.replace(/\./g, "/") + ".view.json";
 		if (!mOptions || !mOptions.async) {
-			//TODO: global jquery call found
-			this._oJSONView = jQuery.sap.loadResource(sResourceName);
+			this._oJSONView = LoaderExtensions.loadResource(sResourceName);
 		} else {
 			var that = this;
-			//TODO: global jquery call found
-			return jQuery.sap.loadResource(sResourceName, mOptions).then(function(oJSONView) {
+			return LoaderExtensions.loadResource(sResourceName, mOptions).then(function(oJSONView) {
 				that._oJSONView = oJSONView;
 			});
 		}

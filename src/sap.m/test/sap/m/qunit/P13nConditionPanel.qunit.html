@@ -51,7 +51,7 @@
  		var oKeyField8= {key: "Time", text: "Time", type: "time"};
  		var oKeyField9= {key: "Boolean", text: "Boolean", type: "boolean"};
  		var oKeyField10= {key: "Numc", text: "Numc", type: "numc", formatSettings: { isDigitSequence: true, maxLength: 10}};
- 		var oKeyField11= {key: "DateTime", text: "Date Time", type: "datetime", formatSettings: {}};
+ 		var oKeyField11= {key: "DateTime", text: "Date Time", type: "datetime", formatSettings: { displayFormat: "Date"}};
  		var aKeyFields= [oKeyField1,oKeyField2,oKeyField3,oKeyField4,oKeyField5,oKeyField6,oKeyField7,oKeyField8,oKeyField9,oKeyField10,oKeyField11];
 
 		var oCondition0= { "key": "i0", "text": "", "operation": sap.m.P13nConditionOperation.BT, "keyField": "Numeric", "value1": "1", "value2": "10"};
@@ -567,7 +567,7 @@
 		assert.equal(oConditionGrid.value1.getValue(), "1234", "value1 of condition 5 must be 1234");
 
 		oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[6];
-		assert.equal(oConditionGrid.value1.getValue(), "Jan 1, 1970, 1:00:00 AM", "value1 of condition 5 must be 'Jan 1, 1970, 1:00:00 AM'");
+		assert.equal(oConditionGrid.value1.getValue(), "Jan 1, 1970", "value1 of condition 5 must be 'Jan 1, 1970'");
 
 		// cleanup
 		oP13nConditionPanel.destroy();
@@ -598,7 +598,7 @@
 		var oKeyField10= {key: "odatadate", text: "odata date", typeInstance: new sap.ui.model.odata.type.Date({UTC: false, style: "long", strictParsing: true})};
 		var oKeyField11= {key: "time", text: "time", typeInstance: new sap.ui.model.type.Time({UTC: false, style: "short", strictParsing: true})};
 		var oKeyField12= {key: "odatatime", text: "odata time", typeInstance: new sap.ui.model.odata.type.Time({UTC: false, style: "short", strictParsing: true})};
-		var oKeyField13= {key: "datetime", text: "Datetime", typeInstance: new sap.ui.model.odata.type.DateTime({UTC: false, style: "short", strictParsing: true})};
+		var oKeyField13= {key: "datetime", text: "Datetime", typeInstance: new sap.ui.model.odata.type.DateTime({UTC: false, style: "short", strictParsing: true}, {displayFormat: "Date"})};
 		var oKeyField14= {key: "numc", text: "Numc", typeInstance: new sap.ui.model.odata.type.String({}, {isDigitSequence: true, maxLength: 10})};
 //		var oKeyField15= {key: "stringdate", text: "StringDate", typeInstance: new sap.ui.comp.odata.type.StringDate({UTC: false, style: "long", strictParsing: true})};
 		var oKeyField16= {key: "boolean", text: "boolean", typeInstance: new sap.ui.model.type.Boolean()};
@@ -670,12 +670,59 @@
 		oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
 		assert.equal(oConditionGrid.value1.getSelectedIndex(), 2, "value1 of condition 0 must be true");
 		
-		oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[1];
-		assert.equal(oConditionGrid.value1.getValue(), "1/1/70, 1:00 AM", "value1 of condition 1 must be '1/1/70, 1:00 AM'");
-		
+ 		oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[1];
+		assert.equal(oConditionGrid.value1.getValue(), "1/1/70", "value1 of condition 1 must be '1/1/70'");
+
 		// cleanup
 		oP13nConditionPanel.destroy();
 	});
+
+	QUnit.test("testing empty operator", function(assert) {
+ 		// system under test
+		var oP13nConditionPanel = new sap.m.P13nConditionPanel({
+ 			maxConditions: -1
+		});
+
+		var aOperations= [
+			sap.m.P13nConditionOperation.EQ,
+			sap.m.P13nConditionOperation.Empty];
+
+		var oKeyField2= {key: "CompanyName", text: "Name", typeInstance: new sap.ui.model.odata.type.String()};
+		var oKeyField5= {key: "int16", text: "int16", typeInstance: new sap.ui.model.odata.type.Int16()};
+		var aKeyFields= [oKeyField2,oKeyField5];
+	
+		oP13nConditionPanel.setKeyFields(aKeyFields);
+		oP13nConditionPanel.setOperations(aOperations); //, "string");
+		
+		// arrange
+		oP13nConditionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+ 		var oCondition0= { "key": "i0", "text": "", "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyName", "value1": "foo", "value2": ""};
+  		var oCondition1= { "key": "i1", "text": "", "operation": sap.m.P13nConditionOperation.Empty, "keyField": "CompanyName", "value1": "xxx", "value2": ""};
+ 		var oCondition2= { "key": "i2", "text": "", "operation": sap.m.P13nConditionOperation.Empty, "keyField": "int16", "value1": 1, "value2": ""};
+ 		
+  		oP13nConditionPanel.setConditions([oCondition0, oCondition1, oCondition2]);
+
+ 		oP13nConditionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
+		assert.strictEqual(oConditionGrid.value1.getValue(), "foo", "value1 of condition 0 must be foo!");
+		assert.strictEqual(oConditionGrid.value1.getVisible(), true, "value1 control is visible!");
+
+ 		oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[1];
+		assert.strictEqual(oConditionGrid.value1.getVisible(), false, "value1 control is NOT visible!");
+
+		oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[2];
+		assert.strictEqual(oConditionGrid.value1.getVisible(), false, "value1 control is NOT visible!");
+
+		// cleanup
+		oP13nConditionPanel.destroy();
+	});
+
 
 	QUnit.test("testing suggest callback", function(assert) {
  		// system under test

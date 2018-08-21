@@ -61,6 +61,10 @@
 		assert.ok(oHeaderView.$().find(".sapUxAPObjectPageHeaderChangesBtn").length === 1, "Unsaved chages mark is rendered");
 	});
 
+	QUnit.test("Tooltip rendering", function (assert) {
+		assert.ok(oHeaderView.$().find(".sapUxAPObjectPageHeaderTitleTextWrappable").attr("title") !== undefined, "Heading has title attribute");
+	});
+
 	QUnit.test("SubTitle rendering", function (assert) {
 		assert.ok(oHeaderView.$().find(".sapUxAPObjectPageHeaderIdentifierDescription").length === 1, "SubTitle is rendered");
 	});
@@ -248,6 +252,21 @@
 		assert.equal(oNotifyParentSpy.callCount, 1, "_notifyParentOfChanges called once after runtime change of the title text");
 
 		oObjectPageWithHeaderOnly.destroy();
+	});
+
+	QUnit.test("setting objectImageAlt using binding specific symbols", function (assert) {
+		var sImageAlt = "alt contains {",
+			oHeaderTitle =  new sap.uxap.ObjectPageHeader();
+
+		// act
+		oHeaderTitle.setObjectImageAlt(sImageAlt);
+
+		// assert
+		assert.equal(oHeaderTitle.getObjectImageAlt(), sImageAlt,
+			"Setting curly brace as an image alt does not throw an error");
+
+		// clean up
+		oHeaderTitle.destroy();
 	});
 
 	QUnit.module("Private API", {

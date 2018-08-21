@@ -28,6 +28,7 @@
 
 		<script src="./shared-config.js"></script>
 		<script>
+			window['sap-ui-config'].libs = "sap.ui.dt";
 			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
 
@@ -46,49 +47,59 @@
 
 
 		<script>
-			jQuery.sap.require("sap.ui.dt.DesignTime");
-			jQuery.sap.require("sap.ui.dt.plugin.ControlDragDrop");
-			jQuery.sap.require("sap.ui.dt.plugin.MouseSelection");
+			sap.ui.require([
+					"sap/ui/dt/DesignTime",
+					"sap/ui/dt/plugin/ControlDragDrop",
+					"sap/ui/dt/plugin/MouseSelection",
+					"sap/ui/core/mvc/XMLView",
+					"sap/m/Button"
+				],
+				function (
+					DesignTime,
+					ControlDragDrop,
+					MouseSelection,
+					XMLView,
+					Button
+				) {
+					XMLView.create({definition: jQuery('#view1').html()})
+						.then(function (oView) {
+							oView.placeAt('content');
 
-			var oView = sap.ui.xmlview({viewContent:jQuery('#view1').html()});
-			oView.placeAt('content');
+							var aMOVABLE_TYPES = ["sap.m.Button"];
+							var oSelectionPlugin = new MouseSelection();
+							var oDragPlugin = new ControlDragDrop({
+								draggableTypes: aMOVABLE_TYPES
+							});
 
-			var aMOVABLE_TYPES = ["sap.m.Button"]
-			jQuery(function() {
-				var oSelectionPlugin = new sap.ui.dt.plugin.MouseSelection();
-				var oDragPlugin = new sap.ui.dt.plugin.ControlDragDrop({
-					draggableTypes : aMOVABLE_TYPES
+							window.oDesignTime = new DesignTime({
+								rootElements: [oView],
+								plugins: [
+									oSelectionPlugin,
+									oDragPlugin
+								]
+							});
+
+							var oDraggedOverlay;
+							jQuery("#pallete_button")
+								.on("dragstart", function () {
+									var oButton = new Button({text: "New button"});
+
+									oDesignTime.createOverlay({
+										element: oButton,
+										root: true,
+									}).then(function (oOverlay) {
+										oDraggedOverlay = oOverlay;
+										oDraggedOverlay.placeInOverlayContainer();
+										oDraggedOverlay.$().trigger("dragstart");
+									});
+
+								})
+								.on("dragend", function () {
+									oDraggedOverlay.$().trigger("dragend");
+									// TODO: cleanup
+								});
+						}.bind(this));
 				});
-
-				window.oDesignTime = new sap.ui.dt.DesignTime({
-					rootElements : [oView],
-					plugins : [
-						oSelectionPlugin,
-						oDragPlugin
-					]
-				});
-
-				var oDraggedOverlay;
-				jQuery("#pallete_button")
-					.on("dragstart", function() {
-						var oButton = new sap.m.Button({text: "New button"});
-
-						oDesignTime.createOverlay({
-							element: oButton,
-							root: true,
-						}).then(function (oOverlay) {
-							oDraggedOverlay = oOverlay;
-							oDraggedOverlay.placeInOverlayContainer();
-							oDraggedOverlay.$().trigger("dragstart");
-						});
-
-					})
-					.on("dragend", function() {
-						oDraggedOverlay.$().trigger("dragend");
-						// TODO: cleanup
-					});
-			});
-
 		</script>
 
 	</head>
@@ -96,6 +107,7 @@
 		<div id="palette">
 			<button id="pallete_button" draggable="true">Button: drag me</button>
 		</div>
+		<div id="palette_playground" style="position: absolute; top: -9999px; left: -9999px;"></div>
 		<div id="content"></div>
 	</body>
 </html>

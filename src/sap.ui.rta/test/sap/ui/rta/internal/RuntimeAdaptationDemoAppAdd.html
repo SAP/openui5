@@ -1,18 +1,15 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
-
-		<script src="../../../../../resources/sap-ui-core.js"
-				id="sap-ui-bootstrap"
-				data-sap-ui-noConflict="true"
-				data-sap-ui-libs="sap.m, sap.ui.comp, sap.ui.layout, sap.uxap, sap.ui.rta"
-				data-sap-ui-bindingSyntax="complex"
-				data-sap-ui-resourceroots='{"sap.ui.rta.test.additionalElements": "testdata/additionalElements/"}'
-				data-sap-ui-theme="sap_belize">
+		<script src="../shared-config.js"></script>
+		<script>
+			window["sap-ui-config"].async = "true";
+			window["sap-ui-config"].theme = "sap_belize";
+			window["sap-ui-config"].bindingSyntax = "complex";
+			window["sap-ui-config"].resourceroots = { "sap.ui.rta.test.additionalElements": "testdata/additionalElements/" };
+			window["sap-ui-config"].libs = "sap.m, sap.ui.comp, sap.ui.layout, sap.uxap, sap.ui.rta";
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
-
 		<script>
 			sap.ui.getCore().attachInit(function () {
 				sap.ui.require([
@@ -20,23 +17,33 @@
 					"sap/ui/core/ComponentContainer"
 				], function (Shell, ComponentContainer) {
 
-					// initialize the UI component
-					new Shell({
-						app: new ComponentContainer({
+					return sap.ui.component({
+						name: "sap.ui.rta.test.additionalElements",
+						componentData: {
+							"showAdaptButton" : true
+						},
+						async: true
+					})
+
+					.then(function(oComponent) {
+						return new ComponentContainer({
 							height : "100%",
-							component : sap.ui.component({
-								name: "sap.ui.rta.test.additionalElements",
-								componentData: {
-									"showAdaptButton" : true
-								}
-							})
+							component : oComponent,
+							async: true
 						})
-					}).placeAt("content");
+					})
+
+					.then(function(oComponentContainer) {
+						// initialize the UI component
+						return new Shell({
+							app: oComponentContainer
+						}).placeAt("content");
+					});
 				});
 			});
 		</script>
 	</head>
-	<body class="sapUiBody" role="application">
+	<body class="sapUiBody sapUiSizeCompact" role="application">
 		<div id="content"></div>
 	</body>
 </html>

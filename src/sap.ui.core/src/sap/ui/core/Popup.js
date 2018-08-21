@@ -41,7 +41,7 @@ sap.ui.define([
 	Version,
 	uid,
 	containsOrEquals,
-	jQueryDOM,
+	jQuery,
 	F6Navigation,
 	isMouseEventDelayed
 ) {
@@ -226,6 +226,18 @@ sap.ui.define([
 
 	});
 
+	Popup.prototype.getChildPopups = function() {
+		return this.getAssociation("childPopups", []);
+	};
+
+	Popup.prototype.addChildPopup = function(vChildPopup) {
+		return this.addAssociation("childPopups", vChildPopup);
+	};
+
+	Popup.prototype.removeChildPopup = function(vChildPopup) {
+		return this.removeAssociation("childPopups", vChildPopup);
+	};
+
 	Popup._activateBlindLayer = true;
 
 	// stack used for storing z-indices for blocklayer
@@ -326,7 +338,7 @@ sap.ui.define([
 	 * @private
 	 */
 	//TODO: global jquery call found
-	Popup.prototype.touchEnabled = Device.support.touch || jQuery.sap.simulateMobileOnDesktop;
+	Popup.prototype.touchEnabled = Device.support.touch;
 
 	/**
 	 * On mobile device, the browser may set the focus to somewhere else after
@@ -338,7 +350,7 @@ sap.ui.define([
 	 * @private
 	 */
 	//TODO: global jquery call found
-	Popup.prototype.preventBrowserFocus = (Device.support.touch || jQuery.sap.simulateMobileOnDesktop) && !Device.system.combi;
+	Popup.prototype.preventBrowserFocus = Device.support.touch && !Device.system.combi;
 
 	//****************************************************
 	//Layer et al
@@ -1615,7 +1627,7 @@ sap.ui.define([
 		var $Of;
 
 		if (typeof (oOf) === "string") {
-			$Of = jQueryDOM(document.getElementById(oOf));
+			$Of = jQuery(document.getElementById(oOf));
 		} else if (oOf instanceof jQuery) {
 			$Of = oOf;
 		} else {
@@ -2150,7 +2162,7 @@ sap.ui.define([
 			var oElement;
 			this._aAutoCloseAreas.forEach(function(oAreaRef) {
 				if (oAreaRef.delegate) {
-					oElement = jQueryDOM(document.getElementById(oAreaRef.id)).control(0);
+					oElement = jQuery(document.getElementById(oAreaRef.id)).control(0);
 					if (oElement) {
 						oElement.removeEventDelegate(oAreaRef.delegate);
 					}

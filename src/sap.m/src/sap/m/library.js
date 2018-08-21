@@ -30,7 +30,7 @@ sap.ui.define([
 	ObjectPath,
 	CoreLibrary,
 	capitalize,
-	jQueryDOM,
+	jQuery,
 	assert,
 	Log,
 	defineLazyProperty,
@@ -50,7 +50,7 @@ sap.ui.define([
 			"sap.m.BackgroundDesign",
 			"sap.m.BarDesign",
 			"sap.m.ButtonType",
-			"sap.m.CarouselArrowsAlign",
+			"sap.m.CarouselArrowsPlacement",
 			"sap.m.DateTimeInputType",
 			"sap.m.DialogType",
 			"sap.m.DeviationIndicator",
@@ -88,6 +88,7 @@ sap.ui.define([
 			"sap.m.P13nPanelType",
 			"sap.m.PageBackgroundDesign",
 			"sap.m.PanelAccessibleRole",
+			"sap.m.PDFViewerDisplayTypes",
 			"sap.m.PlacementType",
 			"sap.m.PopinDisplay",
 			"sap.m.PopinLayout",
@@ -103,7 +104,7 @@ sap.ui.define([
 			"sap.m.SwipeDirection",
 			"sap.m.SwitchType",
 			"sap.m.TimePickerMaskMode",
-			"sap.m.TileSizeBehaviour",
+			"sap.m.TileSizeBehavior",
 			"sap.m.ToolbarDesign",
 			"sap.m.VerticalPlacementType",
 			"sap.m.semantic.SemanticRuleSetType"
@@ -283,12 +284,14 @@ sap.ui.define([
 			"sap.m.WizardStep"
 		],
 		elements: [
+			"sap.m.CalendarAppointment",
 			"sap.m.Column",
 			"sap.m.FlexItemData",
 			"sap.m.FeedListItemAction",
 			"sap.m.IconTabFilter",
 			"sap.m.IconTabSeparator",
 			"sap.m.LightBoxItem",
+			"sap.m.OnePersonView",
 			"sap.m.OverflowToolbarLayoutData",
 			"sap.m.MaskInputRule",
 			"sap.m.MenuItem",
@@ -675,6 +678,39 @@ sap.ui.define([
 		 * @public
 		 */
 		OneMonth : "One Month"
+
+	};
+
+	/**
+	 * A list of the default built-in views in a {@link sap.m.OnePersonCalendar}, described by their keys.
+	 * Disclaimer: this control is in beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+	 *
+	 * @enum {string}
+	 * @private
+	 * @since 1.58.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.OnePersonCalendarView = {
+
+		/**
+		 * Represents the key of the built-in view, in which the intervals have the size of one day.
+		 * @private
+		 */
+		Day : "Day",
+
+		/**
+		 * Represents the key of the built-in view, in which the intervals have the size of one day
+		 * where 5 days are displayed, starting with the first working day of the week.
+		 * @private
+		 */
+		WorkWeek : "Work Week",
+
+		/**
+		 * Represents the key of the built-in view, in which the intervals have the size of one day
+		 * where 7 days are displayed, starting with the first day of the week.
+		 * @private
+		 */
+		Week : "Week"
 
 	};
 
@@ -2443,6 +2479,37 @@ sap.ui.define([
 	};
 
 	/**
+	 * PDF viewer display types.
+	 *
+	 * @enum {string}
+	 * @public
+	 */
+	sap.m.PDFViewerDisplayTypes = {
+		/**
+		 * The PDF viewer switches between the <code>Link</code> display type and the <code>Embedded</code> display type,
+		 * depending on the device being used.
+		 *
+		 * @public
+		 */
+		Auto: "auto",
+
+		/**
+		 * The PDF viewer appears embedded in the parent container and displays the PDF file.
+		 *
+		 * @public
+		 */
+		Embedded: "embedded",
+
+		/**
+		 * The PDF viewer appears as a toolbar with a download button that can be used to download the PDF file or
+		 * open it in a new tab.
+		 *
+		 * @public
+		 */
+		Link: "link"
+	};
+
+	/**
 	 * Types for the placement of Popover control.
 	 *
 	 * @enum {string}
@@ -3657,7 +3724,7 @@ sap.ui.define([
 		if (vElement instanceof Element) {
 			vElement = jQuery(vElement);
 		} else if (typeof vElement === "string") {
-			vElement = jQueryDOM(document.getElementById(vElement));
+			vElement = jQuery(document.getElementById(vElement));
 		} else if (!(vElement instanceof jQuery)) {
 			assert(false, 'sap.m.touch.countContained(): vElement must be a jQuery object or Element reference or a string');
 			return 0;

@@ -1,0 +1,31 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "f4497e9e1361f272a4f788b010feecb16965260e",
+        "type": "FIX",
+        "text": " ObjectPageHeader - Fixed styles of navigationBar",
+        "references": []
+      },
+      {
+        "id": "30d40f00c74a5cdd33d5e4ef76eac1260bb7ed67",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectImageHelper: Setting image alt via property setter",
+        "references": []
+      },
+      {
+        "id": "9b23babc9e99562d8edb6cc6c411a153a6189f47",
+        "type": "FIX",
+        "text": " AnchorBar: Overlapping MenuButton\u0027s text is fixed",
+        "references": []
+      },
+      {
+        "id": "0fca36349b6718e55e7756ddf93d034c6c92df3a",
+        "type": "FIX",
+        "text": " uxap.AnchorBar: Custom button in sub-section behavior fixed",
+        "references": []
+      }
+    ]
+  }
+}

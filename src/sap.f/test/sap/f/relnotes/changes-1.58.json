@@ -115,6 +115,36 @@
         "type": "FIX",
         "text": " FlexibleColumnLayout: Fixed suspend and resume resize handlers",
         "references": []
+      },
+      {
+        "id": "48fdf887d83272458adb3b50c515d45d3ba76e1f",
+        "type": "FEATURE",
+        "text": " SemanticPage: Added new titleAreaShrinkRatio property",
+        "references": []
+      },
+      {
+        "id": "c02dacbbc2973178a2e7fab3642da5c4d392fe6a",
+        "type": "FEATURE",
+        "text": " SemanticPage: Added titleSnapped/ExpandedHeading aggregations",
+        "references": []
+      },
+      {
+        "id": "a31c44d645a7bba7ef9d8391a166b65f53200395",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Clone now includes actions",
+        "references": []
+      },
+      {
+        "id": "55d98ab497bf5d25a8482cb124ce995a7f421864",
+        "type": "INETRNAL",
+        "text": "[FIX] tutorial.fiori2: Updated documentation link",
+        "references": []
+      },
+      {
+        "id": "7be8204af9ea68333758887dedba5e31cd9a27f0",
+        "type": "FEATURE",
+        "text": " f.FlexibleColumnLayout: Reveal effect implemented",
+        "references": []
       }
     ]
   }

@@ -89,7 +89,8 @@
 						assert.strictEqual(oNavigateSpy.callCount, 1, "did call the 'navigate' function on the TargetHandler instance");
 						sinon.assert.calledWithExactly(oNavigateSpy, {
 							navigationIdentifier: "myTarget",
-							viewLevel: 5
+							viewLevel: 5,
+							askHistory: true
 						});
 					});
 

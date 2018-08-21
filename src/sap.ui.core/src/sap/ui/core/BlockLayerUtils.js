@@ -3,7 +3,11 @@
  */
 
 // Provides utility class sap.ui.core.BlockLayerUtils
-sap.ui.define(['sap/ui/events/jquery/EventTriggerHook', "sap/base/Log"], function(EventTriggerHook, Log) {
+sap.ui.define([
+	'sap/ui/events/jquery/EventTriggerHook',
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function(EventTriggerHook, Log, jQuery) {
 	"use strict";
 
 	/**

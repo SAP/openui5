@@ -3,8 +3,9 @@ sap.ui.define([
     'sap/ui/core/Manifest',
     'sap/ui/thirdparty/URI',
     "sap/ui/core/Component",
-    "sap/base/Log"
-], function(jQuery, Manifest, URI, Component, Log) {
+    "sap/base/Log",
+    "require"
+], function(jQuery, Manifest, URI, Component, Log, require) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -710,12 +711,16 @@ sap.ui.define([
 
 	QUnit.module("Component Metadata: Resolve URI", {
 		beforeEach: function(assert) {
-			this.assert = assert;
+			this.assertResolvedUri = function(sInput, sBase, sExpected) {
+				// Note: temporarily change the <base href>
+				var oBaseTag = document.querySelector("base"),
+					sOldHRef = oBaseTag.href;
+				oBaseTag.href = "./";
+				var sActual = Manifest._resolveUriRelativeTo(new URI(sInput), new URI(sBase)).toString();
+				oBaseTag.href = sOldHRef;
+				assert.equal(sActual, sExpected, "Resolved URI is correct!");
+			}
 		},
-		assertResolvedUri: function(sInput, sBase, sExpected) {
-			var sActual = Manifest._resolveUriRelativeTo(new URI(sInput), new URI(sBase)).toString();
-			this.assert.equal(sActual, sExpected, "Resolved URI is correct!");
-		}
 	});
 
 	QUnit.test("relative", function(assert){
@@ -852,13 +857,13 @@ sap.ui.define([
 
 	runManifestLoadingTests("manifest", function(path) {
 		return {
-			manifest: path,
+			manifest: require.toUrl(path),
 			async: true
 		};
 	});
 	runManifestLoadingTests("manifestUrl", function(path) {
 		return {
-			manifestUrl: path,
+			manifestUrl: require.toUrl(path),
 			async: true
 		};
 	});
@@ -866,7 +871,7 @@ sap.ui.define([
 	function runManifestLoadingTests(sDescription, fnCreateConfig) {
 		QUnit.module("Component Metadata async loading of manifests: " + sDescription, {
 			beforeEach: function() {
-				sap.ui.loader.config({paths:{"sap/ui/test": "./testdata"}});
+				sap.ui.loader.config({paths:{"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata/"}});
 			},
 			afterEach: function() {
 				sap.ui.loader.config({paths:{"sap/ui/test": null}});
@@ -918,10 +923,10 @@ sap.ui.define([
 			return sap.ui.component(fnCreateConfig("./testdata/inheritAsyncError/manifest.json", "sap.ui.test.inheritAsyncError")).then(function(oComponent) {
 				assert.ok(oComponent instanceof Component, "Component has been created.");
 
-				var aLogEntries = Log.getLog();
+				var aLogEntries = Log.getLogEntries();
 				var result = aLogEntries.filter(function(oEntry){
 					return oEntry.message.indexOf(
-						"Failed to load component manifest from \"./testdata/inheritAsyncError/parentFAIL/manifest.json\""
+						"Failed to load component manifest from \"test-resources/sap/ui/core/qunit/component/testdata/inheritAsyncError/parentFAIL/manifest.json\""
 					) === 0;
 				});
 				assert.equal(result.length, 1, "Error: 'Failed to laod component manifest from...' was logged.");
@@ -948,7 +953,7 @@ sap.ui.define([
 
 	QUnit.module("Component Metadata async loading of manifests: manifest object", {
 		beforeEach: function() {
-			sap.ui.loader.config({paths:{"sap/ui/test":"./testdata"}});
+			sap.ui.loader.config({paths:{"sap/ui/test":"test-resources/sap/ui/core/qunit/component/testdata/"}});
 		},
 		afterEach: function() {
 			sap.ui.loader.config({paths:{"sap/ui/test": null}});

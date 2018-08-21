@@ -15,7 +15,7 @@ new sap.ui.test.Opa5().waitFor({
 
 In this example, we search for a control with the ID `page-title`. The control is located in the `my.Application.Category` view.
 
-After finding the control, OPA5 invokes the check function until it returns `true`. This time, the check function has another parameter with the control instance. By default, OPA5 will try to find the element until the default timeout of 15 seconds is reached. You can override this by passing it as a parameter to the `waitFor` function. 0 means infinite timeout.
+By default, OPA5 will try to find the element until the default timeout of 15 seconds is reached. You can override this by passing it as a parameter to the `waitFor` function. 0 means infinite timeout.
 
 Another example:
 
@@ -56,7 +56,7 @@ Since no ID is specified, OPA passes an array of controls to the check function.
 
 ## More About Matchers
 
-You can use the following predefined matchers to retrieve controls:
+For more information about all matchers, see the [API Reference](https://openui5nightly.hana.ondemand.com/#/api/sap.ui.test.matchers) and the [Samples](https://openui5nightly.hana.ondemand.com/#/entity/sap.ui.test.matchers).
 
 `sap.ui.test.matchers.Properties`: This matcher checks if the controls have properties with given values. The values may also be defined as regular expressions (RegExp) for the string type properties.
 
@@ -73,6 +73,8 @@ return new Opa5().waitFor({
     errorMessage: "No selected root node found"
 });
 ```
+
+>*Note:* `sap.ui.test.matchers.Properties` and `sap.ui.test.matchers.PropertyStrictEquals` serve the same purpose but it's easier to pass parameters to `sap.ui.test.matchers.Properties`.
 
 `sap.ui.test.matchers.Ancestor`: This matcher checks if the control has the specified ancestor (ancestor is of a control type).
 
@@ -155,7 +157,7 @@ return new Opa5().waitFor({
 });
 ```
 
-For more information, see the [API Reference](https://openui5nightly.hana.ondemand.com/#/api/sap.ui.test.Opa5) and [Using Matchers](https://openui5nightly.hana.ondemand.com/#/sample/sap.ui.core.sample.OpaMatchers/preview) in the Samples.
+For more information, see the [API Reference](https://openui5nightly.hana.ondemand.com/#/api/sap.ui.test.Opa5) and the [Sample](https://openui5nightly.hana.ondemand.com/#/sample/sap.ui.core.sample.OpaMatchers/preview).
 
 ## Searching for Controls Inside a Dialog
 

@@ -4,14 +4,15 @@
 
 // Provides control sap.ui.core.ScrollBar.
 sap.ui.define([
-    'sap/ui/Device',
-    './Control',
-    './library',
-    "./ScrollBarRenderer",
-    "sap/ui/performance/trace/Interaction",
+	'sap/ui/Device',
+	'./Control',
+	'./library',
+	"./ScrollBarRenderer",
+	"sap/ui/performance/trace/Interaction",
 	"sap/base/Log",
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/events/jquery/EventSimulation"
+	"sap/ui/events/jquery/EventSimulation",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		Device,
@@ -21,7 +22,8 @@ sap.ui.define([
 		Interaction,
 		Log,
 		containsOrEquals,
-		EventSimulation
+		EventSimulation,
+		jQuery
 	) {
 	"use strict";
 
@@ -212,7 +214,7 @@ sap.ui.define([
 				stepSize = Math.round(40 / (window.outerWidth / jQuery(document).width()));
 			} else {
 				stepSize = Math.round(40 / (document.width / jQuery(document).width()));
-				//jQuery.sap.log.debug( stepSize + " ****************************STEP SIZE*************************************************************");
+				//Log.debug( stepSize + " ****************************STEP SIZE*************************************************************");
 			}
 		}
 
@@ -395,7 +397,7 @@ sap.ui.define([
 	* @private
 	*/
 	ScrollBar.prototype.onscroll = function(oEvent) {
-		//jQuery.sap.log.debug("*****************************onScroll************************ suppress SCROLL:  " + this._bSuppressScroll );
+		//Log.debug("*****************************onScroll************************ suppress SCROLL:  " + this._bSuppressScroll );
 		if (this._bSuppressScroll) {
 			this._bSuppressScroll = false;
 			oEvent.preventDefault();

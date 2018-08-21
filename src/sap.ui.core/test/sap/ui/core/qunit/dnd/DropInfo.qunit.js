@@ -1,8 +1,8 @@
 /*global QUnit,sinon*/
 
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
-	"test/TestControl",
+	"./TestControl",
 	"sap/ui/core/dnd/DropInfo",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/ElementMetadata",

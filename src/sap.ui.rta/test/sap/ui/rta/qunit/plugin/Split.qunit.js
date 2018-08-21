@@ -1,9 +1,7 @@
 /*global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	'jquery.sap.global',
+sap.ui.define([
+	'sap/ui/thirdparty/jquery',
 	'sap/ui/dt/DesignTime',
 	'sap/ui/rta/command/CommandFactory',
 	'sap/ui/dt/OverlayRegistry',
@@ -172,6 +170,39 @@ function (
 		);
 	});
 
+	QUnit.test("when an overlay has a split action in designTime metadata relevant container has no stable id", function (assert) {
+		var oDesignTimeMetadata1 = {
+			actions : {
+				split : {
+					changeType: "splitStuff",
+					changeOnRelevantContainer : true,
+					isEnabled : true,
+					getControlsCount: function() {
+						return 2;
+					}
+				}
+			}
+		};
+		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, oDesignTimeMetadata1);
+
+		this.oSplitPlugin.deregisterElementOverlay(this.oButton1Overlay);
+		this.oSplitPlugin.registerElementOverlay(this.oButton1Overlay);
+
+		sandbox.stub(this.oSplitPlugin, "hasStableId").callsFake(function(oOverlay){
+			if (oOverlay === this.oPanelOverlay){
+				return false;
+			} else {
+				return true;
+			}
+		}.bind(this));
+
+		assert.strictEqual(
+			this.oSplitPlugin._isEditable(this.oButton1Overlay),
+			false,
+			"_isEditable returns false"
+		);
+	});
+
 	QUnit.test("when isEnabled() is a function in designTime metadata and the specified element contains only one control", function (assert) {
 		var oDesignTimeMetadata2 = {
 				actions : {
@@ -261,9 +292,15 @@ function (
 		this.oSplitPlugin.deregisterElementOverlay(this.oButton1Overlay);
 		this.oSplitPlugin.registerElementOverlay(this.oButton1Overlay);
 
-		this.oSplitPlugin.handleSplit(this.oButton1Overlay);
+		return this.oSplitPlugin.handleSplit(this.oButton1Overlay)
 
-		assert.strictEqual(spy.callCount, 1, "fireElementModified is called once");
+		.then(function() {
+			assert.strictEqual(spy.callCount, 1, "fireElementModified is called once");
+		})
+
+		.catch(function (oError) {
+			assert.ok(false, 'catch must never be called - Error: ' + oError);
+		});
 	});
 
 	QUnit.test("when an overlay has a split action designTime metadata", function (assert) {
@@ -319,6 +356,4 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

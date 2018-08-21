@@ -17,9 +17,11 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	 *  2. Chrome on Android from version 32 (exclude the Samsung stock browser which also uses Chrome kernel)
 	 *
 	 * @function
-	 * @private
+	 * @alias module:sap/ui/events/isMouseEventDelayed
 	 * @name sap.base.events.isMouseEventDelayed
 	 * @returns {boolean} True if the mouse event is delayed
+	 * @private
+	 * @ui5-restricted sap.ui.core
 	 */
 	var isMouseEventDelayed = function(oNavigator) {
 		// the navigator argument is a hidden argument, only used for unit testing

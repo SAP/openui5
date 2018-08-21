@@ -10,6 +10,7 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/ui/documentation/sdk/controller/util/APIInfo",
+		"sap/ui/documentation/sdk/model/formatter",
 		"sap/m/Label",
 		"sap/m/Link",
 		"sap/m/Text",
@@ -18,7 +19,7 @@ sap.ui.define([
 		"sap/m/Popover",
 		"sap/m/FlexWrap"
 	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, APIInfo,
-			Label, Link, Text, HBox, ObjectAttribute, Popover, FlexWrap) {
+			formatter, Label, Link, Text, HBox, ObjectAttribute, Popover, FlexWrap) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.SubApiDetail", {
@@ -29,6 +30,7 @@ sap.ui.define([
 				"fields": "properties",
 				"special settings": "specialsettings"
 			},
+			formatter: formatter,
 
 			onInit: function () {
 				this._objectPage = this.byId("apiDetailObjectPage");
@@ -175,9 +177,9 @@ sap.ui.define([
 			_navigateRouter: function(sEntityType, sEntityId, bShouldStoreToHistory) {
 				this._oRouter.stop();
 				this._oRouter.navTo("apiId", {
-					id: this._sTopicId,
+					id: formatter.encodeModuleName(this._sTopicId),
 					entityType: sEntityType,
-					entityId: sEntityId
+					entityId: formatter.encodeModuleName(sEntityId)
 				}, !bShouldStoreToHistory);
 				this._oRouter.initialize(true);
 			},

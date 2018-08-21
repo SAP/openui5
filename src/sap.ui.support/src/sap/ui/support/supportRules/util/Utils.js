@@ -52,6 +52,24 @@ sap.ui.define([],
 				});
 
 				return bCanLoadInternalRules;
+			},
+
+			/**
+			 * Generates v4 uuid (based on random numbers).
+			 * @return {string} The generated v4 uuid
+			 */
+			generateUuidV4: function () {
+				var sUuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (sPosition) {
+					var iRandom = Math.random() * 16 | 0;
+
+					if (sPosition === 'y') {
+						iRandom = iRandom & 0x3 | 0x8;
+					}
+
+					return iRandom.toString(16);
+				});
+
+				return sUuid;
 			}
 		};
 

@@ -1,7 +1,8 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/opaQunit",
+	"./pages/Master"
 ], function (opaTest) {
 	"use strict";
 
@@ -10,9 +11,6 @@ sap.ui.define([
 	opaTest("Should see the master list with all entries", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp();
-
-		//Actions
-		When.onTheMasterPage.iLookAtTheScreen();
 
 		// Assertions
 		Then.onTheMasterPage.iShouldSeeTheList().

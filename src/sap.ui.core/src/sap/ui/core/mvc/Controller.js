@@ -10,16 +10,18 @@ sap.ui.define([
 	'sap/ui/core/mvc/ControllerMetadata',
 	'sap/ui/core/mvc/ControllerExtension',
 	'sap/ui/core/mvc/OverrideExecution',
-	"sap/base/Log"
-	], function(
-		ObjectPath,
-		EventProvider,
-		ManagedObject,
-		ControllerMetadata,
-		ControllerExtension,
-		OverrideExecution,
-		Log
-	) {
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function(
+	ObjectPath,
+	EventProvider,
+	ManagedObject,
+	ControllerMetadata,
+	ControllerExtension,
+	OverrideExecution,
+	Log,
+	jQuery
+) {
 	"use strict";
 
 		var mRegistry = {};

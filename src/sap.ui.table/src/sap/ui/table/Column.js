@@ -18,7 +18,8 @@ sap.ui.define([
 	'./ColumnMenu',
 	'sap/base/util/ObjectPath',
 	"sap/base/util/JSTokenizer",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	Element,
@@ -35,7 +36,8 @@ function(
 	ColumnMenu,
 	ObjectPath,
 	JSTokenizer,
-	Log
+	Log,
+	jQuery
 ) {
 	"use strict";
 
@@ -94,7 +96,7 @@ function(
 			 * @deprecated As of version 1.44 this property has no effect. Use the property <code>minWidth</code> in combination with the property
 			 * <code>width="auto"</code> instead.
 			 */
-			flexible : {type : "boolean", group : "Behavior", defaultValue : true},
+			flexible : {type : "boolean", group : "Behavior", defaultValue : true, deprecated: true},
 
 			/**
 			 * If set to true, the column can be resized either using the resize bar (by mouse) or using
@@ -365,7 +367,7 @@ function(
 		 * rerendered. This is a popup and we use the instance check because of the
 		 * menu behind the getMenu function is lazy created when first accessed.
 		 */
-		if (oOrigin !== this.getTemplate() && !TableUtils.isInstanceOf(oOrigin, "sap/ui/table/ColumnMenu")) {
+		if (oOrigin !== this.getTemplate() && !TableUtils.isA(oOrigin, "sap.ui.table.ColumnMenu")) {
 			// changes on the template require to call invalidate on the column or table
 			Element.prototype.invalidate.apply(this, arguments);
 		}
@@ -501,7 +503,7 @@ function(
 	 */
 	Column.prototype.setMenu = function(oMenu) {
 		this.setAggregation("menu", oMenu, true);
-		this._bMenuIsColumnMenu = TableUtils.isInstanceOf(oMenu, "sap/ui/table/ColumnMenu");
+		this._bMenuIsColumnMenu = TableUtils.isA(oMenu, "sap.ui.table.ColumnMenu");
 		return this;
 	};
 
@@ -687,7 +689,7 @@ function(
 
 				// reset the sorting status of all columns which are not sorted anymore
 				for (var i = 0, l = aColumns.length; i < l; i++) {
-					if (jQuery.inArray(aColumns[i], aSortedCols) < 0) {
+					if (aSortedCols.indexOf(aColumns[i]) < 0) {
 						// column is not sorted anymore -> reset default and remove sorter
 						aColumns[i].setProperty("sorted", false, true);
 						aColumns[i].setProperty("sortOrder", SortOrder.Ascending, true);
@@ -740,14 +742,12 @@ function(
 
 		this.$()
 			.parents(".sapUiTableCHT")
-			.find('td[data-sap-ui-colindex="' + this.getIndex() + '"]') // all td cells in this column header
-			.filter(":not([colspan]):visible") // only visible without a colspan
-			.first()
-			.find(".sapUiTableColCell")
+			.find('td[data-sap-ui-colindex="' + this.getIndex() + '"]:not([colspan]):not(.sapUiTableColInvisible):first .sapUiTableColCell')
 			.toggleClass("sapUiTableColSF", bSorted || bFiltered)
 			.toggleClass("sapUiTableColFiltered", bFiltered)
 			.toggleClass("sapUiTableColSorted", bSorted)
 			.toggleClass("sapUiTableColSortedD", bSorted && this.getSortOrder() === SortOrder.Descending);
+
 		oTable._getAccExtension().updateAriaStateOfColumn(this);
 	};
 

@@ -166,7 +166,8 @@ sap.ui.define([
 			if (oRenameAction.changeOnRelevantContainer) {
 				oElement = oOverlay.getRelevantContainer();
 			}
-			bEditable = this.hasChangeHandler(oRenameAction.changeType, oElement);
+			bEditable = this.hasChangeHandler(oRenameAction.changeType, oElement) &&
+						this._checkRelevantContainerStableID(oRenameAction, oOverlay);
 		}
 
 		if (bEditable) {
@@ -187,30 +188,39 @@ sap.ui.define([
 	};
 
 	/**
+	 * @returns {Promise} Empty promise
 	 * @private
 	 */
 	Rename.prototype._emitLabelChangeEvent = function() {
 		var sText = RenameHandler._getCurrentEditableFieldText.call(this);
 		if (this.getOldValue() !== sText) { //check for real change before creating a command
 			this._$oEditableControlDomRef.text(sText);
-			try {
-				var oRenameCommand;
-				var oRenamedElement = this._oEditedOverlay.getElement();
-				var oDesignTimeMetadata = this._oEditedOverlay.getDesignTimeMetadata();
-				var oRenameAction = this.getAction(this._oEditedOverlay);
-				var sVariantManagementReference = this.getVariantManagementReference(this._oEditedOverlay, oRenameAction);
 
-				oRenameCommand = this.getCommandFactory().getCommandFor(oRenamedElement, "rename", {
+			return Promise.resolve(this._oEditedOverlay)
+
+			.then(function(oEditedOverlay) {
+				var oRenamedElement = oEditedOverlay.getElement();
+				var oDesignTimeMetadata = oEditedOverlay.getDesignTimeMetadata();
+				var oRenameAction = this.getAction(oEditedOverlay);
+				var sVariantManagementReference = this.getVariantManagementReference(oEditedOverlay, oRenameAction);
+
+				return this.getCommandFactory().getCommandFor(oRenamedElement, "rename", {
 					renamedElement : oRenamedElement,
 					newValue : sText
 				}, oDesignTimeMetadata, sVariantManagementReference);
+			}.bind(this))
+
+			.then(function(oRenameCommand) {
 				this.fireElementModified({
 					"command" : oRenameCommand
 				});
-			} catch (oError) {
+			}.bind(this))
+
+			.catch(function(oError) {
 				Log.error("Error during rename : ", oError);
-			}
+			});
 		}
+		return Promise.resolve();
 	};
 
 	/**

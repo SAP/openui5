@@ -3,15 +3,16 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/format/NumberFormat',
-	'sap/ui/model/FormatException',
+	"sap/base/Log",
+	"sap/ui/core/format/NumberFormat",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/ODataUtils",
-	'sap/ui/model/odata/type/ODataType',
-	'sap/ui/model/ParseException',
-	'sap/ui/model/ValidateException',
-	"sap/base/Log"
-], function(NumberFormat, FormatException, BaseODataUtils, ODataType, ParseException, ValidateException,
-		Log) {
+	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/thirdparty/jquery"
+], function (Log, NumberFormat, FormatException, ParseException, ValidateException, BaseODataUtils,
+		ODataType, jQuery) {
 	"use strict";
 
 	var rDecimal = /^[-+]?(\d+)(?:\.(\d+))?$/;

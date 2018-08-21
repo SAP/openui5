@@ -10,8 +10,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange', 'sap/m/M
 		},
 
 		handleCalendarSelect: function(oEvent) {
-			var oCalendar = oEvent.oSource;
-
+			var oCalendar = oEvent.getSource();
 			this._updateText(oCalendar.getSelectedDates()[0]);
 		},
 

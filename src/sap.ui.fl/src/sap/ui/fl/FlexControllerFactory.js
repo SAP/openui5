@@ -50,6 +50,7 @@ sap.ui.define([
 	/**
 	 * Creates or returns an instance of the FlexController for the specified control.
 	 * The control needs to be embedded into a View and the view needs to be embedded into a component.
+	 * If the component is an embedded component, then the responsible app component is used.
 	 * If one of this prerequisites is not fulfilled, no instance of FlexController will be returned.
 	 *
 	 * @public
@@ -58,10 +59,14 @@ sap.ui.define([
 	 * @returns {sap.ui.fl.FlexController} instance
 	 */
 	FlexControllerFactory.createForControl = function(oControl, oManifest) {
-		var sComponentName = Utils.getComponentClassName(oControl);
-		var oLocalManifest = oManifest || Utils.getAppComponentForControl(oControl).getManifest();
-		var sAppVersion = Utils.getAppVersionFromManifest(oLocalManifest);
-		return FlexControllerFactory.create(sComponentName, sAppVersion);
+		try {
+			var oOuterAppComponent = Utils.getAppComponentForControl(oControl, true);
+			var sComponentName = Utils.getComponentClassName(oOuterAppComponent ? oOuterAppComponent : oControl);
+			var sAppVersion = Utils.getAppVersionFromManifest(oOuterAppComponent ? oOuterAppComponent.getManifest() : oManifest);
+			return FlexControllerFactory.create(sComponentName, sAppVersion);
+		} catch (oError){
+			Utils.log.error(oError.message, undefined, "sap.ui.fl.FlexControllerFactory");
+		}
 	};
 
 	/**
@@ -72,15 +77,29 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexControllerFactory.getChangesAndPropagate = function (oComponent, vConfig) {
+		// only manifest with type = "application" will go further
 		var oManifest = oComponent.getManifestObject();
+		var sVariantModelName = "$FlexVariants";
+
+		// if component's manifest is of type 'application' then only a flex controller and change persistence instances are created.
+		// if component's manifest is of type 'component' then no flex controller and change persistence instances are created. The variant model is fetched from the outer app component and applied on this component type.
 		if (Utils.isApplication(oManifest)) {
 			var oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
 			ChangePersistenceFactory._getChangesForComponentAfterInstantiation(vConfig, oManifest, oComponent)
 			.then(function (fnGetChangesMap) {
 				oComponent.addPropagationListener(oFlexController.getBoundApplyChangesOnControl(fnGetChangesMap, oComponent));
 				var oData = oFlexController.getVariantModelData() || {};
-				oComponent.setModel(new VariantModel(oData, oFlexController, oComponent), "$FlexVariants");
+				oComponent.setModel(new VariantModel(oData, oFlexController, oComponent), sVariantModelName);
 			});
+		} else if (Utils.isEmbeddedComponent(oManifest)) {
+			var oOuterAppComponent = Utils.getAppComponentForControl(oComponent, true);
+
+			// oOuterAppComponent can be null when component has no parent component, e.g. sap.ushell.plugins.rta component
+			var oVariantModel = oOuterAppComponent && oOuterAppComponent.getModel(sVariantModelName);
+			if (oVariantModel){
+				oComponent.setModel(oVariantModel, sVariantModelName);
+				oVariantModel.addEmbeddedComponent(oComponent);
+			}
 		}
 	};
 

@@ -1,13 +1,18 @@
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/mvc/Controller',
-	'sap/ui/core/mvc/View'
-], function(jQuery, Component, ComponentContainer, Controller, View) {
+	'sap/ui/core/mvc/View',
+	'sap/ui/qunit/QUnitUtils'
+], function(Component, ComponentContainer, Controller, View, qutils) {
 
 	"use strict";
-	/*global QUnit, sinon, qutils */
+	/*global QUnit, sinon */
+
+	// create content div
+	var oDIV = document.createElement("div");
+	oDIV.id = "content";
+	document.body.appendChild(oDIV);
 
 	// Event handler functions
 	var iStandardSub2ControllerCalled = 0;
@@ -70,15 +75,15 @@ sap.ui.define([
 	// View Replacement
 
 	QUnit.test("View Replacement", function(assert) {
-		assert.ok(!jQuery.sap.domById("theComponent---mainView--sub1View--customTextInCustomSub1"), "Replacement View should not be rendered");
-		assert.ok(jQuery.sap.domById("theComponent---mainView--sub1View--originalSapTextInSub1"), "Original View should be rendered");
+		assert.ok(!document.getElementById("theComponent---mainView--sub1View--customTextInCustomSub1"), "Replacement View should not be rendered");
+		assert.ok(document.getElementById("theComponent---mainView--sub1View--originalSapTextInSub1"), "Original View should be rendered");
 	});
 
 
 	// View Extension
 
 	QUnit.test("View Extension", function(assert) {
-		assert.ok(!jQuery.sap.domById("theComponent---mainView--sub2View--customFrag1BtnWithCustAction"), "View Extension should not be rendered");
+		assert.ok(!document.getElementById("theComponent---mainView--sub2View--customFrag1BtnWithCustAction"), "View Extension should not be rendered");
 	});
 
 

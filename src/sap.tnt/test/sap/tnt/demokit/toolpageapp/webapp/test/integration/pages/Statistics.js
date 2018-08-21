@@ -1,9 +1,8 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"sap/ui/demo/toolpageapp/test/integration/pages/Common",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/actions/Press"
-], function (Opa5,Common, PropertyStrictEquals, Press) {
+], function (Opa5, PropertyStrictEquals, Press) {
 	"use strict";
 
 	var sViewName = "Statistics";
@@ -21,7 +20,6 @@ sap.ui.define([
 	}
 
 	Opa5.createPageObjects({
-		baseClass: Common,
 		onTheStatisticsPage: {
 
 			actions: {

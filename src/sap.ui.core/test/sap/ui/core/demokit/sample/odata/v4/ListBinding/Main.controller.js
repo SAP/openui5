@@ -2,12 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-		'sap/m/Dialog',
-		'sap/m/MessageBox',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel',
-		'sap/ui/model/Sorter'
-	], function(Dialog, MessageBox, Controller, JSONModel, Sorter) {
+	"sap/m/Dialog",
+	"sap/m/MessageBox",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/json/JSONModel"
+], function (Dialog, MessageBox, Controller, Sorter, JSONModel) {
 	"use strict";
 
 //	function onRejected(oError) {

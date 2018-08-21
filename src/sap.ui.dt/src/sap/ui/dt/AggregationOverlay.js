@@ -8,14 +8,16 @@ sap.ui.define([
 	'sap/ui/dt/Overlay',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/ElementUtil',
-	'sap/ui/dt/Util'
+	'sap/ui/dt/Util',
+	'sap/base/util/merge'
 ],
 function(
 	jQuery,
 	Overlay,
 	OverlayRegistry,
 	ElementUtil,
-	Util
+	Util,
+	merge
 ) {
 	"use strict";
 
@@ -77,8 +79,7 @@ function(
 	 * @override
 	 */
 	AggregationOverlay.prototype._getAttributes = function () {
-		return jQuery.extend(
-			true,
+		return merge(
 			{},
 			Overlay.prototype._getAttributes.apply(this, arguments),
 			{
@@ -141,7 +142,8 @@ function(
 
 			if (this.isRendered()) {
 				var iPositionInDom = this._getChildIndex(oChild);
-				var $Child = oChild.isRendered() ? oChild.$() : oChild.render(true);
+				var bChildRendered = oChild.isRendered();
+				var $Child = bChildRendered ? oChild.$() : oChild.render(true);
 				var $Children = jQuery(this.getChildrenDomRef());
 				var iCurrentPosition = $Children.find('>').index($Child);
 				var iInsertIndex;
@@ -156,9 +158,11 @@ function(
 					}
 				}
 
-				oChild.fireAfterRendering({
-					domRef: $Child.get(0)
-				});
+				if (!bChildRendered) {
+					oChild.fireAfterRendering({
+						domRef: $Child.get(0)
+					});
+				}
 			}
 
 			this.fireChildAdded();

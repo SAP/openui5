@@ -1047,7 +1047,7 @@
 					};
 				});
 
-				var oInfoToolbarContainer = oInfoToolbar.$().parent()[0];
+				var oInfoToolbarContainer = sut.getDomRef().querySelector(".sapMListInfoTBarContainer");
 				this.stub(oInfoToolbarContainer, "getBoundingClientRect", function() {
 					return {
 						bottom: 80,
@@ -1065,8 +1065,12 @@
 								};
 							}
 						},
-						querySelector: function() {
-							return oHeaderDomRef;
+						querySelector: function(sSelector) {
+							if (sSelector === ".sapMListHdr") {
+								return oHeaderDomRef;
+							} else if (sSelector === ".sapMListInfoTBarContainer") {
+								return oInfoToolbarContainer;
+							}
 						}
 					};
 				});
@@ -1114,12 +1118,12 @@
 			assert.ok(oHeader2.$().hasClass("sapMColumnHeaderContent"), "Content class is set for the 2nd header");
 
 			assert.ok(oHeader1.$().parent().hasClass("sapMColumnHeader sapMColumnHeaderActive"), "1st Header wrapper has the correct classes");
-			assert.equal(oHeader1.$().parent().attr("aria-haspopup"), "true", "1st Header wrapper has the correct aria settings");
+			assert.equal(oHeader1.$().parent().attr("aria-haspopup"), "dialog", "1st Header wrapper has the correct aria settings");
 			assert.equal(oHeader1.$().parent().attr("tabindex"), "0", "1st Header wrapper has the correct tabindex");
 			assert.equal(oHeader1.$().parent().attr("role"), "button", "1st Header wrapper has the correct role");
 
 			assert.ok(oHeader2.$().parent().hasClass("sapMColumnHeader sapMColumnHeaderActive"), "2nd Header wrapper has the correct classes");
-			assert.equal(oHeader2.$().parent().attr("aria-haspopup"), "true", "2nd Header wrapper has the correct aria settings");
+			assert.equal(oHeader2.$().parent().attr("aria-haspopup"), "dialog", "2nd Header wrapper has the correct aria settings");
 			assert.equal(oHeader2.$().parent().attr("tabindex"), "0", "2nd Header wrapper has the correct tabindex");
 			assert.equal(oHeader2.$().parent().attr("role"), "button", "2nd Header wrapper has the correct role");
 

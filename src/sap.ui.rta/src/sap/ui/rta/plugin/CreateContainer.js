@@ -6,11 +6,13 @@ sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/fl/Utils',
 	'sap/ui/rta/Utils',
-	"sap/base/util/uid"
+	'sap/ui/dt/Util',
+	'sap/base/util/uid'
 ], function(
 	Plugin,
 	FlexUtils,
 	RtaUtils,
+	DtUtil,
 	uid
 ) {
 	"use strict";
@@ -180,17 +182,23 @@ sap.ui.define([
 
 		var sVariantManagementReference = this.getVariantManagementReference(oParentOverlay, vAction);
 
-		var oCommand = this.getCommandFactory().getCommandFor(oParent, "createContainer", {
+		return this.getCommandFactory().getCommandFor(oParent, "createContainer", {
 			newControlId : sNewControlID,
 			label : this._getContainerTitle(vAction, oParent, oDesignTimeMetadata),
 			index : iIndex,
 			parentId : oParent.getId()
-		}, oDesignTimeMetadata, sVariantManagementReference);
+		}, oDesignTimeMetadata, sVariantManagementReference)
 
-		this.fireElementModified({
-			"command" : oCommand,
-			"action" : vAction,
-			"newControlId" : sNewControlID
+		.then(function(oCreateCommand) {
+			this.fireElementModified({
+				"command" : oCreateCommand,
+				"action" : vAction,
+				"newControlId" : sNewControlID
+			});
+		}.bind(this))
+
+		.catch(function(oMessage) {
+			throw DtUtil.createError("CreateContainer#handleCreate", oMessage, "sap.ui.rta");
 		});
 	};
 

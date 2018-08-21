@@ -2,24 +2,15 @@
  * ${copyright}
  */
 sap.ui.require([
-    "jquery.sap.global",
-    "sap/ui/base/SyncPromise",
-    "sap/ui/model/Binding",
-    "sap/ui/model/odata/v4/lib/_Helper",
-    "sap/ui/model/odata/v4/Context",
-    "sap/ui/model/odata/v4/ODataBinding",
-    "sap/ui/model/odata/v4/SubmitMode",
-    "sap/base/Log"
-], function(
-    jQuery,
-	SyncPromise,
-	Binding,
-	_Helper,
-	Context,
-	asODataBinding,
-	SubmitMode,
-	Log
-) {
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/ui/base/SyncPromise",
+	"sap/ui/model/Binding",
+	"sap/ui/model/odata/v4/Context",
+	"sap/ui/model/odata/v4/ODataBinding",
+	"sap/ui/model/odata/v4/SubmitMode",
+	"sap/ui/model/odata/v4/lib/_Helper"
+], function (jQuery, Log, SyncPromise, Binding, Context, asODataBinding, SubmitMode, _Helper) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -1123,12 +1114,12 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		SyncPromise.resolve(undefined),
-		SyncPromise.resolve({ setActive : function () {} })
-	].forEach(function (oCachePromise, i) {
-		QUnit.test("fetchCache: deactivates previous cache, " + i, function (assert) {
+		undefined,
+		{ setActive : function () {} }
+	].forEach(function (oCache, i) {
+		QUnit.test("fetchCache: previous cache, " + i, function (assert) {
 			var oBinding = new ODataBinding({
-					oCachePromise : oCachePromise,
+					oCachePromise : SyncPromise.resolve(oCache),
 					fetchQueryOptionsForOwnCache : function () {
 						return SyncPromise.resolve(undefined);
 					},
@@ -1138,8 +1129,7 @@ sap.ui.require([
 						}
 					},
 					bRelative : true
-				}),
-				oCache = oCachePromise && oCachePromise.getResult();
+				});
 
 			if (oCache) {
 				this.mock(oCache).expects("setActive").withExactArgs(false);
@@ -1820,5 +1810,54 @@ sap.ui.require([
 
 		// code under test
 		assert.strictEqual(oBinding.getDependentBindings(), aDependentBindings);
+	});
+
+	//*********************************************************************************************
+	[undefined, "/~"].forEach(function (sResolvedPath) {
+		QUnit.test("removeCachesAndMessages: resolved path is " + sResolvedPath, function (assert) {
+			var oBinding = new ODataBinding({
+					oContext : {},
+					oModel : {
+						reportBoundMessages : function () {},
+						resolve : function () {}
+					},
+					sPath : "TEAM_2_EMPLOYEES"
+				});
+
+			this.mock(oBinding.oModel).expects("resolve")
+				.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
+				.returns(sResolvedPath);
+			if (sResolvedPath) {
+				this.mock(oBinding.oModel).expects("reportBoundMessages").withExactArgs("~", {});
+			}
+
+			// code under test
+			oBinding.removeCachesAndMessages();
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("removeCachesAndMessages: mCacheByContext", function (assert) {
+		var oBinding = new ODataBinding({
+				mCacheByContext : {"/foo" : {}, "/bar" : {}},
+				oContext : {},
+				oModel : {
+					reportBoundMessages : function () {},
+					resolve : function () {}
+				},
+				sPath : "TEAM_2_EMPLOYEES"
+			}),
+			oModelMock = this.mock(oBinding.oModel);
+
+		oModelMock.expects("resolve")
+			.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext)).returns("/~");
+		oModelMock.expects("reportBoundMessages").withExactArgs("~", {});
+		oModelMock.expects("reportBoundMessages").withExactArgs("foo", {});
+		oModelMock.expects("reportBoundMessages").withExactArgs("bar", {});
+
+		// code under test
+		oBinding.removeCachesAndMessages();
+
+		assert.strictEqual(oBinding.mCacheByContext, undefined);
 	});
 });

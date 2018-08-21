@@ -2,8 +2,9 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/model/json/JSONModel',
 	"sap/ui/demo/iconexplorer/model/formatter",
-	"sap/ui/demo/iconexplorer/controller/BaseController"
-], function (jQuery, JSONModel, formatter, BaseController ) {
+	"sap/ui/demo/iconexplorer/controller/BaseController",
+	"sap/ui/core/Icon"
+], function (jQuery, JSONModel, formatter, BaseController, Icon) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.iconexplorer.controller.Home", {
@@ -37,7 +38,7 @@ sap.ui.define([
 				onAfterRendering: function () {
 					// create a new icon once
 					if (!this.__clearIcon) {
-						this.__clearIcon = new sap.ui.core.Icon(this.getId() + "-__clearIcon", {
+						this.__clearIcon = new Icon(this.getId() + "-__clearIcon", {
 							src : "sap-icon://sys-cancel",
 							press : function (oEvent) {
 								this.setValue("");
@@ -46,18 +47,19 @@ sap.ui.define([
 								//activate press only for the icon, not for the whole input field
 								oEvent.cancelBubble();
 							}.bind(this)
-						}).addStyleClass("sapMInputValHelpInner sapMSFB sapMSFR");
+						}).addStyleClass("sapMInputValHelpInner sapMSFB sapMSFR sapMInputBaseIcon");
 						//add Icon to control tree
 						this.addDependent(this.__clearIcon);
 					}
 					// Create new div container
-					this.$().append('<div class="sapMInputValHelp inputClear" tabindex="-1"></div>');
+					this.$("vhi").before('<div class="sapMInputValHelp inputClear" tabindex="-1"></div>');
 					var oNode = this.$().find(".inputClear")[0];
 					// render icon into created div
 					var oRenderManager = sap.ui.getCore().createRenderManager();
 					oRenderManager.renderControl(this.__clearIcon);
 					oRenderManager.flush(oNode);
 					oRenderManager.destroy();
+					this.__clearIcon.$().attr("tabindex", "-1");
 				//this pointer needs to point to the searchField
 				}.bind(oSearchField),
 

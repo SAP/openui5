@@ -1,7 +1,7 @@
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
-	"mycompany/myapp/MyWorklistApp/test/integration/pages/Common"
+	"./Common"
 ], function(Opa5, Press, Common) {
 	"use strict";
 

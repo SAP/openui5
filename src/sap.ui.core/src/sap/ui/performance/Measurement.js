@@ -11,17 +11,6 @@ sap.ui.define(['sap/base/Log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 
 	"use strict";
 
-	// @evo-todo this is fully browser dependent due to performance API. create a dummy for node.js?
-
-	// @evo-todo module also reads configuration from location.search
-
-	// @evo-todo: jQuery.sap.measure function documentation in global? Or use jsdoc-alias
-
-	// @evo-todo dependencies to thirdparty modules have to be clarified.
-	// Our shim doesn't work within AMD and pure AMD doesn't work with our thirdparty package
-
-	// evo-todo: check activation of methods depending on url param... config?
-
 	var URI = window.URI;
 
 	function PerfMeasurement() {

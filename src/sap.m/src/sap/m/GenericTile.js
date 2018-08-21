@@ -16,7 +16,8 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	"sap/base/strings/camelize",
 	"sap/base/util/deepEqual",
-	"sap/ui/events/PseudoEvents"
+	"sap/ui/events/PseudoEvents",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	library,
 	Control,
@@ -31,7 +32,8 @@ sap.ui.define([
 	ResizeHandler,
 	camelize,
 	deepEqual,
-	PseudoEvents
+	PseudoEvents,
+	jQuery
 ) {
 	"use strict";
 
@@ -393,7 +395,7 @@ sap.ui.define([
 			// attach handler in order to check the device type based on width and invalidate on change
 			Device.media.attachHandler(this._handleMediaChange, this, DEVICE_SET);
 		}
-
+            this._oTitle.clampText();
 	};
 
 	/**

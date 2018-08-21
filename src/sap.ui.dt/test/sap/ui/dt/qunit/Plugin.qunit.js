@@ -1,15 +1,13 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	'sap/ui/dt/DesignTime',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/Plugin',
 	'sap/m/Button',
 	'sap/ui/layout/VerticalLayout',
-	'jquery.sap.global',
-	'sap/ui/thirdparty/sinon'
+	'sap/ui/thirdparty/jquery',
+	'sap/ui/thirdparty/sinon-4'
 ],
 function(
 	DesignTime,
@@ -21,8 +19,6 @@ function(
 	sinon
 ) {
 	"use strict";
-
-	QUnit.start();
 
 	var sandbox = sinon.sandbox.create();
 

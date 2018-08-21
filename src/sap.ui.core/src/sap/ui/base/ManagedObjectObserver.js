@@ -7,13 +7,9 @@ sap.ui.define([
 	'sap/ui/base/Object',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/base/EventProvider',
-	"sap/base/util/array/uniqueSort"
-], function(
-	BaseObject,
-	ManagedObject,
-	EventProvider,
-	uniqueSort
-) {
+	"sap/base/util/array/uniqueSort",
+	"sap/ui/thirdparty/jquery"
+], function(BaseObject, ManagedObject, EventProvider, uniqueSort, jQuery) {
 	"use strict";
 
 	/**

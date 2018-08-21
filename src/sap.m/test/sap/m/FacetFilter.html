@@ -972,6 +972,35 @@
 		var oToolbar = new sap.m.OverflowToolbar({content: [oFFWithModelOfArbitrarySizeLimit]});
 
 		oTestPage.addContent(oToolbar);
+	};
+
+	// BCP: 1880435856
+	function createListOnNavigating() {
+		function fnAddList() {
+			setTimeout(function () {
+				oFacet.setModel(new sap.ui.model.json.JSONModel([{title: "Select and click back Async"}, {title: "List 2"}]));
+				// Custom coding from application side. They should refreshFacetList by hand if
+				// async update is happening in the listClose event
+				oFacet.refreshFacetList();
+			}, 500);
+		}
+
+		var oFacet = new sap.m.FacetFilter("listUpdateModelAsync", {
+			type: "Light",
+			showPersonalization: false,
+			showReset: true,
+			reset: "handleFacetFilterReset"
+		});
+
+		var oFacetListTemplate = new sap.m.FacetFilterList({
+			title: "{title}",
+			listClose: fnAddList
+		});
+
+		oFacet.setModel(new sap.ui.model.json.JSONModel([{title: "Select and click back"}]));
+		oFacet.bindAggregation("lists", "/", oFacetListTemplate);
+
+		oTestPage.addContent(oFacet);
 	}
 
 	////////////////////////////
@@ -982,6 +1011,9 @@
 	fnFacetFilterProperties();
 	fnDependentFacets();
 	fnModelSizeLimit();
+	createListOnNavigating();
+
+
 </script>
 
 </head>

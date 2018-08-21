@@ -3,11 +3,12 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
+	"sap/ui/model/Sorter",
 	"sap/ui/Device",
 	"sap/ui/demo/theming/model/formatter",
 	"sap/m/MessageToast",
 	"jquery.sap.global"
-], function (BaseController, JSONModel,Filter, FilterOperator, Device, formatter, MessageToast, $) {
+], function (BaseController, JSONModel, Filter, FilterOperator, Sorter, Device, formatter, MessageToast, $) {
 	"use strict";
 
 	//var TYPING_DELAY = 200; // ms
@@ -49,8 +50,8 @@ sap.ui.define([
 				aCharacteristic : [],
 				aText : []
 			};
-			var oModel = new sap.ui.model.json.JSONModel();
-			var oComboBoxModel = new sap.ui.model.json.JSONModel();
+			var oModel = new JSONModel();
+			var oComboBoxModel = new JSONModel();
 
 			//Contains the Data for the ComboBox
 			var mData = {
@@ -682,7 +683,7 @@ sap.ui.define([
 			var oTable = this.byId("oTable");
 			var oTableItem = this.byId("oTableItem");
 			if (oEvent.getSource().getPressed()) {
-				var oClassSorter = new sap.ui.model.Sorter("class", false, function(oContext){
+				var oClassSorter = new Sorter("class", false, function(oContext){
 				var sKey = oContext.getProperty("class");
 				return {
 					key: sKey,

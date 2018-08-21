@@ -733,6 +733,246 @@
         "type": "FIX",
         "text": " sap.m.Tokenizer: Tokens\u0027 visibility in small containers fixed",
         "references": []
+      },
+      {
+        "id": "cd43a71560a273b3809433197b18c3d2aac78c74",
+        "type": "FEATURE",
+        "text": " CLDR: Upgrade to version 33.0.0",
+        "references": []
+      },
+      {
+        "id": "bb1b8b191404ed8c5b344c9f7ebb918682357b1a",
+        "type": "FEATURE",
+        "text": " MessageItem: Title now can be interactive",
+        "references": []
+      },
+      {
+        "id": "2820bbf5aacd7891b974a2d71f7dbb83b0cbc2e6",
+        "type": "FEATURE",
+        "text": " sap.m.SelectDialog: Clear button added",
+        "references": []
+      },
+      {
+        "id": "3f29c79cb73acd5af890024a03edebd01ca5d6bb",
+        "type": "FIX",
+        "text": " sap.m.Carousel: pageChange event is now fired correctly",
+        "references": []
+      },
+      {
+        "id": "aacaf4b72127b4e905c29fb8f6221299654e2aee",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: valueFormat in case of invalid entry works now",
+        "references": []
+      },
+      {
+        "id": "76c7600eb846c15f0f2050920f419e6bfe391c47",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Problem with z-index on Safari is now fixed",
+        "references": []
+      },
+      {
+        "id": "ec8723d09839d0e460a7ad764a6a92d842e53de3",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Correct n-more list and tokens sync",
+        "references": []
+      },
+      {
+        "id": "b9f939120068463d722af85e0e4209ea2c125098",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: qunit tests on combi device are fixed",
+        "references": []
+      },
+      {
+        "id": "d1963ea27f5d1a672aa168cad086a590b72cb160",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Control height is now correct",
+        "references": []
+      },
+      {
+        "id": "2e8ec66f8903eb6ac8ebce20c766b9a371df8651",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: removeAllButtons now works well",
+        "references": []
+      },
+      {
+        "id": "471797da49821bd6c70f89fea2acc08cda49b2d1",
+        "type": "FIX",
+        "text": " sap.m.Select: Value state msg is now read correctly",
+        "references": []
+      },
+      {
+        "id": "b96e2f9ff1e0cb49d9c4dc71aa4affc69710e2b2",
+        "type": "FIX",
+        "text": "sap.m.themes.base.SlideTile: Allignmnet issue of play-pause Icon in all themes and TileIndicator issue in HCW and HCB themes.",
+        "references": []
+      },
+      {
+        "id": "266def302e0f14b040a4c4f921c15fba07dd5092",
+        "type": "FEATURE",
+        "text": " Form: allow Switch to be used as Form content",
+        "references": []
+      },
+      {
+        "id": "6bf5f365c6a9961cb68210f1ccfcf8229fcf64f0",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Keyboard flashing when item selected fixed",
+        "references": []
+      },
+      {
+        "id": "7ed245615a9fb1f57d5c7773d7b05cf06c300cbc",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Added filters are displayed now",
+        "references": []
+      },
+      {
+        "id": "bf97ffbb2515002d7a91f6e547f446ca8a5615eb",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: the menu is now closing after a second click",
+        "references": []
+      },
+      {
+        "id": "0f5d900f5deea2b94654f7c5599b2b5cd271782c",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Aria-expanded is now correctly updated",
+        "references": []
+      },
+      {
+        "id": "0859c9bca1ba75e8df1d25d9869b75a235387cc0",
+        "type": "FIX",
+        "text": " sap.m.Panel: Accessibility improvement",
+        "references": []
+      },
+      {
+        "id": "3aa5c2472651c2dba3de3dc02735c1e5f847ddb7",
+        "type": "FIX",
+        "text": " sap.m.Select: aria-live in opened popover removed",
+        "references": []
+      },
+      {
+        "id": "2fe1af6130a82a45fae4bb78470583a0b6b1a3e7",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Selecting item from SelectList works correctly on IE",
+        "references": []
+      },
+      {
+        "id": "90e3d89ba91fc6c0a652640bd20fdd1c1a6135b8",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : While grouping named model is ignored and always default model is taken without considering the model bind to items aggregation.",
+        "references": []
+      },
+      {
+        "id": "cedd9d24c205c8b462be5b8d4406cc88609fae32",
+        "type": "FEATURE",
+        "text": " ComboBoxBase: setFilterFunction API introduced",
+        "references": []
+      },
+      {
+        "id": "1066f77f02deb16d84213f35ddb8b01f0c553c1d",
+        "type": "FEATURE",
+        "text": " sap.m.MultiComboBox: Autocomplete enablement",
+        "references": []
+      },
+      {
+        "id": "825cae63028c2333e1f4f49d77e41daccc57f7b7",
+        "type": "FEATURE",
+        "text": " sap.m.PDFViewer: Force embedded mode on mobile devices",
+        "references": []
+      },
+      {
+        "id": "0da66212298a7718a6b294bbf2ea003c5a22d940",
+        "type": "FEATURE",
+        "text": " sap.m.SelectDialog: Introducing showClearButton property",
+        "references": []
+      },
+      {
+        "id": "b320d2ee53fe0b122d4f99bc04cf608ae6a1ed7a",
+        "type": "FEATURE",
+        "text": " sap.m.SelectionDetails: Remove truncation of labels in ChartContainer legend",
+        "references": []
+      },
+      {
+        "id": "908f9f12dd7faedb79f81b3fdf2437dcf6ecaf31",
+        "type": "FEATURE",
+        "text": " sap.m.TableSelectDialog: Introducing showClearButton property",
+        "references": []
+      },
+      {
+        "id": "bfb4ffdcc95b42e2eb05df0c0c76ef4e4145c798",
+        "type": "FIX",
+        "text": " ComboBox: Filtering with empty value on phone",
+        "references": []
+      },
+      {
+        "id": "275d7ffbba0ee5dbb2c94af83b1b111ace64f101",
+        "type": "FIX",
+        "text": " MessageItem: Link from details callback fixed",
+        "references": []
+      },
+      {
+        "id": "07a88ec72a0b02298442e0e9fffbbb3a38930c13",
+        "type": "FIX",
+        "text": " OverflowToolbar: Resize is now handled correctly when in Dialog",
+        "references": []
+      },
+      {
+        "id": "8fe991c9c279290e6cf8bd9b92e9656b09c65e69",
+        "type": "FIX",
+        "text": " StandardListItem: No screenreader announcement of decorative icon",
+        "references": []
+      },
+      {
+        "id": "3baeb147c82027f1ee702228c44c478a8593eb0c",
+        "type": "FIX",
+        "text": " StandardTreeItem: Label item with title for ACC",
+        "references": []
+      },
+      {
+        "id": "f669494fcc18ca71f4b3e67e2f2a15399976c9fe",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: update FacetPage on navigating",
+        "references": []
+      },
+      {
+        "id": "46b0399f8811e5ab94e4c3fe07d26605adf4309f",
+        "type": "FIX",
+        "text": " sap.m.Label: Color is now correct inside an active list item in table",
+        "references": []
+      },
+      {
+        "id": "fdbed97af896609b63da2f0ed4d9be67ba4db7b3",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: does not throw exception onThemeChanged",
+        "references": []
+      },
+      {
+        "id": "a103a281e67b86b2ae5b86f356171705a6bf801f",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: opens and closes it\u0027s menu correctly",
+        "references": []
+      },
+      {
+        "id": "72c06d5e2a5b5562fd671b80624f5901fe5035b1",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Tap event is added",
+        "references": []
+      },
+      {
+        "id": "d4f814053453e7f48ed7e7d727a681918480f189",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Tokens now destroyed on deselection",
+        "references": []
+      },
+      {
+        "id": "c8520d9b43ac977ae90e1334407c41fb5a9af535",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: Clear button implementation improved",
+        "references": []
+      },
+      {
+        "id": "419746278c6e2e0f65d1a8b661e0c9d1a4866a46",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: initially selected item is now scrolled into view",
+        "references": []
       }
     ]
   }

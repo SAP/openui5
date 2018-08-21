@@ -1,11 +1,10 @@
 /* global QUnit*/
-QUnit.config.autostart = false;
+
 QUnit.dump.maxDepth = 50;
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/rta/service/Outline",
 	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/rta/command/Move",
 	"sap/ui/dt/Util",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
@@ -15,15 +14,11 @@ sap.ui.require([
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
-	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/core/UIComponent",
-	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
-],
-	function(
-	Outline,
+], function (
+	oOutline,
 	RuntimeAuthoring,
-	Move,
 	DtUtil,
 	OverlayRegistry,
 	DesignTime,
@@ -33,9 +28,7 @@ sap.ui.require([
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
-	CommandFactory,
 	UIComponent,
-	Log,
 	sinon
 ) {
 	"use strict";
@@ -44,7 +37,7 @@ sap.ui.require([
 
 	var oPage;
 
-	var oMockComponent = UIComponent.extend("MockController", {
+	var MockComponent = UIComponent.extend("MockController", {
 		metadata: {
 			manifest: {
 				"sap.app" : {
@@ -66,66 +59,11 @@ sap.ui.require([
 		}
 	};
 
-	QUnit.module("Given a RuntimeAuthoring instance", {
-		beforeEach: function() {
-			this.oRta = new RuntimeAuthoring();
-		},
-		afterEach: function() {
-			this.oRta.destroy();
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("when Outline service is requested, designtime is not available and designtime fails later", function(assert) {
-			var oFactoryService = Outline(this.oRta);
-			this.oRta.fireFailed();
-			return oFactoryService.then(
-				function() {
-					assert.ok(false, "promise should never be resolved");
-				},
-				function(oError) {
-					assert.ok(true, "then promise rejected");
-					assert.throws(
-						function() {
-							throw oError;
-						},
-						DtUtil.createError("services.Outline#get", "Designtime failed to load. This is needed to start the Outline service", "sap.ui.rta"),
-						"then the correct error is thrown"
-					);
-				});
-		});
-		QUnit.test("when Outline service is requested, designtime is not available and designtime succeeds later", function(assert) {
-			this.oRta._oDesignTime = {
-				attachEvent : function () {},
-				getRootElements : function () {
-					return [];
-				}
-			};
-			var oFactoryService = Outline(this.oRta);
-			this.oRta.fireStart();
-			return oFactoryService
-				.then(function(oReturn) {
-					delete this.oRta._oDesignTime;
-					assert.ok(true, "then promise resolved");
-					assert.strictEqual(typeof oReturn.exports.get, "function", "then get function is retrieved");
-				}.bind(this));
-
-		});
-		QUnit.test("when Outline service is requested, with designtime loaded", function(assert) {
-			this.oRta._oDesignTime = new DesignTime();
-			var oFactoryService = Outline(this.oRta);
-			return oFactoryService.then(
-				function(oReturn) {
-					assert.ok(true, "then promise resolved");
-					assert.strictEqual(typeof oReturn.exports.get, "function", "then get function is retrieved");
-				});
-		});
-	});
-
 	QUnit.module("Given that RuntimeAuthoring and Outline service are created and get function is called", {
 		before: function(assert) {
 			var done = assert.async();
 
-			this.oComp = new oMockComponent("testComponent");
+			this.oComp = new MockComponent("testComponent");
 
 			// --Root control 1
 			//	page
@@ -208,7 +146,7 @@ sap.ui.require([
 	}, function() {
 		QUnit.test("when get() is called and and no parameter is passed for initial control id and depth", function (assert) {
 			var done = assert.async();
-			jQuery.getJSON("./testResources/FakeOutline.json", function(aExpectedOutlineData){
+			jQuery.getJSON("test-resources/sap/ui/rta/qunit/service/Outline.json", function(aExpectedOutlineData){
 
 				var aRootElements = this.oRta._oDesignTime.getRootElements();
 				this.oOutline.get().then(function(aReceivedResponse) {
@@ -305,7 +243,7 @@ sap.ui.require([
 		beforeEach: function(assert) {
 			var done = assert.async();
 
-			this.oComp = new oMockComponent("testComponent");
+			this.oComp = new MockComponent("testComponent");
 
 			// --Root control
 			//	page
@@ -409,6 +347,9 @@ sap.ui.require([
 								done();
 								return true;
 							}
+							break;
+						default:
+							assert.notOk(true, "then ether 'new' or 'editableChange' type expected");
 					}
 				});
 
@@ -455,7 +396,9 @@ sap.ui.require([
 					"type": "element"
 				}
 			};
-			var oCommand = this.oRta.getDefaultPlugins()["cutPaste"].getCommandFactory().getCommandFor(oRelevantContainer, "move", {
+			var oCommandFactory = this.oRta.getDefaultPlugins()["cutPaste"].getCommandFactory();
+
+			return oCommandFactory.getCommandFor(oRelevantContainer, "move", {
 				movedElements : [{
 					element : this.oButton,
 					sourceIndex : 0,
@@ -469,14 +412,19 @@ sap.ui.require([
 					aggregation: "content",
 					parent: this.oLayout1
 				}
-			}, oParentAggregationOverlay.getDesignTimeMetadata());
+			}, oParentAggregationOverlay.getDesignTimeMetadata())
 
-			this.oOutline.attachEventOnce("update", function(aUpdates) {
-				assert.deepEqual(aUpdates[0], oExpectedResponse, "then expected response for move update was received");
-				done();
-			}, this);
+			.then(function(oMoveCommand) {
+				this.oOutline.attachEventOnce("update", function(aUpdates) {
+					assert.deepEqual(aUpdates[0], oExpectedResponse, "then expected response for move update was received");
+					done();
+				}, this);
+				return oMoveCommand.execute();
+			}.bind(this))
 
-			oCommand.execute();
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 
 		QUnit.test("when a elementPropertyChange is triggered on an element with an existing overlay", function (assert) {
@@ -526,7 +474,7 @@ sap.ui.require([
 
 		QUnit.test("when a root element is added to the design time", function (assert) {
 			var done = assert.async();
-			jQuery.getJSON("./testResources/FakeOutline.json", function (aExpectedOutlineData) {
+			jQuery.getJSON("test-resources/sap/ui/rta/qunit/service/Outline.json", function (aExpectedOutlineData) {
 				var oButton = new Button("button2");
 
 				// control editable property is initially false
@@ -551,5 +499,7 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.start();
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
+	});
 });

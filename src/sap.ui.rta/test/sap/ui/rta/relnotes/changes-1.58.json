@@ -109,6 +109,66 @@
         "type": "FIX",
         "text": "sap.ui.rta - Rename plugin handling of overlays as arrays",
         "references": []
+      },
+      {
+        "id": "c2598768ee67da3087835a99399eeaa63cae7011",
+        "type": "FIX",
+        "text": " : Support UI Adaptation embedded components scenario",
+        "references": []
+      },
+      {
+        "id": "4f6142d15c07b404b51899c9c8eaee11f71b0756",
+        "type": "FIX",
+        "text": " sap.ui.fl - invalidate cache on exit rta",
+        "references": []
+      },
+      {
+        "id": "80f6fa1bc18e958b909b289b17ed60d7f5549ba9",
+        "type": "FIX",
+        "text": " Fix error in Settings changes containing binding",
+        "references": []
+      },
+      {
+        "id": "7801ff77bb9434a5377d63a65a3c0797125d58cd",
+        "type": "FIX",
+        "text": " Fix error in global flex settings modification",
+        "references": []
+      },
+      {
+        "id": "201f13ce60c33c9337bfa30705ed432225b1c20f",
+        "type": "FIX",
+        "text": " sap.ui.rta - remove useless tests",
+        "references": []
+      },
+      {
+        "id": "fa6bd6b7cd55b302d1902cf3a24b6562c3661384",
+        "type": "FIX",
+        "text": "sap.ui.rta: Disable actions in relevant container without stable id",
+        "references": []
+      },
+      {
+        "id": "7c76c9461fee6186d4d7f9fa05ed68a837aea389",
+        "type": "FIX",
+        "text": " Fix errors in stable id check",
+        "references": []
+      },
+      {
+        "id": "7216b4f4c9a0ecf2000a084b3b47455daa05f111",
+        "type": "FIX",
+        "text": " sap.ui.rta - followup - get rid of sync requests change",
+        "references": []
+      },
+      {
+        "id": "2f01d9d8e5b8d0d7f367a90f6993c3ba95e4bd24",
+        "type": "FIX",
+        "text": " sap.ui.rta - settings bug fixed",
+        "references": []
+      },
+      {
+        "id": "e222963cc39901da285f21bacd1c81c41a684c44",
+        "type": "FIX",
+        "text": " sap.ui.rta: Fixing busyindicator in the ManageAppsController",
+        "references": []
       }
     ]
   }

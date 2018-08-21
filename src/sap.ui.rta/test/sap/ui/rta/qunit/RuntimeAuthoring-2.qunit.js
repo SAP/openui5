@@ -1,12 +1,9 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-sap.ui.require([
-	// Controls
+sap.ui.define([
 	'sap/m/Button',
 	'sap/m/MessageBox',
 	'sap/m/MessageToast',
-	// internal
 	'sap/ui/dt/plugin/ContextMenu',
 	'sap/ui/dt/DesignTime',
 	'sap/ui/fl/registry/Settings',
@@ -21,9 +18,9 @@ sap.ui.require([
 	'sap/ui/rta/plugin/CreateContainer',
 	'sap/ui/rta/plugin/Rename',
 	'sap/ui/base/Event',
-	'sap/ui/rta/qunit/RtaQunitUtils',
+	'qunit/RtaQunitUtils',
 	'sap/ui/thirdparty/sinon-4'
-], function(
+], function (
 	Button,
 	MessageBox,
 	MessageToast,
@@ -278,6 +275,9 @@ sap.ui.require([
 			var stubFlexController = {
 				isPersonalized : function(){
 					return Promise.resolve(false);
+				},
+				getComponentChanges : function() {
+					return Promise.resolve();
 				}
 			};
 
@@ -448,7 +448,7 @@ sap.ui.require([
 			}.bind(this));
 		});
 
-		QUnit.test("when personalized changes exist and user exits reloading the personalization...", function(assert) {
+		QUnit.test("when personalized changes exist and user exits and started in FLP reloading the personalization...", function(assert) {
 			whenPersonalizationChangesExist(this.oRta);
 
 			whenUserConfirmsMessage.call(this);
@@ -555,6 +555,18 @@ sap.ui.require([
 				assert.strictEqual(this.fnReloadWithoutPersonalizationChangesSpy.callCount,
 					0,
 					"then reloadWithoutPersonalizationChanges() is not called");
+			}.bind(this));
+		});
+
+		QUnit.test("when _handleReloadOnExit() is called and personalized changes and user exits reloading the personalization...", function(assert) {
+			whenPersonalizationChangesExist(this.oRta);
+			whenUserConfirmsMessage.call(this);
+
+			return this.oRta._handleReloadOnExit().then(function(sShouldReload){
+				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0,
+					"then RTA restart will not be enabled");
+				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
+					"then the page is reloaded");
 			}.bind(this));
 		});
 	});
@@ -728,10 +740,8 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.done(function( details ) {
+	QUnit.done(function() {
 		oComp.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

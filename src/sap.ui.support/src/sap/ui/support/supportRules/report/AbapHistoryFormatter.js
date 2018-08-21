@@ -10,12 +10,7 @@ sap.ui.define([], function () {
 
 	function _generateRootLevelKeys(oRun) {
 		return {
-			loadedLibraries: [],
-			analysisInfo: oRun.analysisInfo,
-			applicationInfo: oRun.applicationInfo,
-			technicalInfo: oRun.technicalInfo,
-			totalIssuesCount: oRun.totalIssuesCount,
-			issues: oRun.issues
+			loadedLibraries: []
 		};
 	}
 
@@ -51,6 +46,24 @@ sap.ui.define([], function () {
 		}
 	}
 
+	function _generateRegistrationIds(oTmp, oRun) {
+		var aRegistrationIds = [];
+
+		oRun.applicationInfo.forEach(function(oAppInfo) {
+			if (oAppInfo.registrationIds) {
+				if (Array.isArray(oAppInfo.registrationIds)) {
+					aRegistrationIds = aRegistrationIds.concat(oAppInfo.registrationIds);
+				} else if (typeof oAppInfo.registrationIds === "string") {
+					aRegistrationIds.push(oAppInfo.registrationIds);
+				}
+			}
+		});
+
+		if (aRegistrationIds.length) {
+			oTmp.registrationIds = aRegistrationIds;
+		}
+	}
+
 	function _format(analysisHistory) {
 		var aOutput = [];
 
@@ -64,6 +77,8 @@ sap.ui.define([], function () {
 					_generateRuleStructure(oTmp, sLibraryName, sRuleName, oRun);
 				}
 			}
+
+			_generateRegistrationIds(oTmp, oRun);
 
 			aOutput.push(oTmp);
 		});

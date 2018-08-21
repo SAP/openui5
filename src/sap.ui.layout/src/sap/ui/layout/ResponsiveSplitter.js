@@ -12,7 +12,8 @@ sap.ui.define([
 	"./SplitPane",
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/core/ResizeHandler",
-	"./ResponsiveSplitterRenderer"
+	"./ResponsiveSplitterRenderer",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	library,
 	Control,
@@ -22,7 +23,8 @@ sap.ui.define([
 	SplitPane,
 	ItemNavigation,
 	ResizeHandler,
-	ResponsiveSplitterRenderer
+	ResponsiveSplitterRenderer,
+	jQuery
 ) {
 	"use strict";
 
@@ -375,7 +377,7 @@ sap.ui.define([
 
 		RSUtil.visitPanes(this.getRootPaneContainer(), function (oPane) {
 			var iRequiredWidth = oPane.getRequiredParentWidth();
-			if (jQuery.inArray(iRequiredWidth, aBreakpoints) == -1) {
+			if (aBreakpoints.indexOf(iRequiredWidth) == -1) {
 				aBreakpoints.push(iRequiredWidth);
 			}
 		});

@@ -5,6 +5,7 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:unified="sap.ui.unified">
 	<Dialog
+		id="importDialog"
 		title="Import a Rule Preset"
 		beforeClose="onImportDialogClose"
 		resizable="true"
@@ -35,6 +36,7 @@
 					<HBox>
 						<Text id="fileName" text="{fileName}" />
 						<Text
+							id="rulesCount"
 							text=" ({= ${selections} ? ${selections}.length : 0} rules selected)"
 							visible="{= ${selections} ? true : false}"
 							renderWhitespace="true"/>
@@ -48,6 +50,16 @@
 				</VBox>
 				<Label text="Title" labelFor="title" class="sapUiTinyMarginBottom" />
 				<Text id="title" text="{title}" class="sapUiTinyMarginBottom" />
+				<Label text="ID" labelFor="presetId" class="sapUiTinyMarginBottom" />
+				<VBox class="sapUiTinyMarginBottom">
+					<Text id="presetId" text="{id}" />
+					<MessageStrip
+						id="duplicateIdError"
+						showIcon="true"
+						type="Error"
+						visible="false"
+						class="sapUiTinyMarginTop" />
+				</VBox>
 				<Label text="Date" labelFor="dateExported" class="sapUiTinyMarginBottom" />
 				<Text
 					id="dateExported"
@@ -66,7 +78,7 @@
 			</f:content>
 		</f:SimpleForm>
 		<beginButton>
-			<Button text="Cancel" press="onImportCancelPress" />
+			<Button id="cancel" text="Cancel" press="onImportCancelPress" />
 		</beginButton>
 		<endButton>
 			<Button id="importBtn" type="Emphasized" text="Import" enabled="false" press="onImportFinalizePress" class="sapUiTinyMarginEnd" />

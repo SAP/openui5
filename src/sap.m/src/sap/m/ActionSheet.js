@@ -12,7 +12,8 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/Device',
-	'./ActionSheetRenderer'
+	'./ActionSheetRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		Dialog,
@@ -23,7 +24,8 @@ sap.ui.define([
 		InvisibleText,
 		ManagedObject,
 		Device,
-		ActionSheetRenderer
+		ActionSheetRenderer,
+		jQuery
 	) {
 	"use strict";
 

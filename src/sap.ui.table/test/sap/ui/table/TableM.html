@@ -15,6 +15,26 @@
 
 <script src="Settings.js"></script>
 
+<style>
+	html {
+		height: 100%;
+	}
+	body {
+		display: flex;
+		flex-direction: column;
+	}
+	#content {
+		display: flex;
+		flex: 1 1 auto;
+	}
+	.vboxborder {
+		border: 1px solid #EC8B46;
+	}
+	.vboxborder > *:not(:last-child) {
+		border-bottom: 1px solid #90BFD7;
+	}
+</style>
+
 <script>
 
 function pressHandler(oEvent) {
@@ -25,14 +45,11 @@ function pressHandler(oEvent) {
 	}
 }
 
-(new sap.m.Button({
-	text: "Just a Button before"
-})).placeAt("content");
-
 var oTable = new sap.ui.table.Table({
 	title: "Title of the Table",
 	footer: "Footer of the Table",
-	selectionMode: sap.ui.table.SelectionMode.MultiToggle
+	selectionMode: sap.ui.table.SelectionMode.MultiToggle,
+	visibleRowCountMode: "Auto"
 });
 
 oTable.setToolbar(new sap.m.Toolbar({content: [
@@ -194,14 +211,10 @@ oTable.addColumn(oColumn);
 
 
 
-
 // set Model and bind Table
 var oModel = new sap.ui.model.json.JSONModel();
 oModel.setData({modelData: TABLESETTINGS.listTestData});
 oTable.setModel(oModel);
-oTable.bindRows("/modelData");
-oTable.placeAt("content");
-(new sap.m.Button({text: "Just a Button after"})).placeAt("content");
 
 var oFlexModel = new sap.ui.model.json.JSONModel();
 oFlexModel.setData({flex: false});
@@ -214,6 +227,57 @@ function showFlexBoxColumns() {
 TABLESETTINGS.init(oTable, function(oButton) {
 	oTable.getToolbar().addContent(oButton);
 });
+
+var oBindingInfo = oTable.getBindingInfo("rows");
+function rebind() {
+	oTable.bindRows(oBindingInfo || {path: "/modelData"});
+}
+function unbind() {
+	oTable.unbindRows();
+}
+
+var bBindTable = jQuery.sap.getUriParameters().get('sap-ui-xx-table-bind') !== "false";
+if (bBindTable) {
+	rebind();
+}
+
+var oTestLayoutToolbar = new sap.m.Toolbar({
+	content: [
+		new sap.m.Label({text: "VBox RenderType"}),
+		new sap.m.Select({
+			width: "100px",
+			items: [
+				new sap.ui.core.Item({key: "Bare", text: "Bare"}),
+				new sap.ui.core.Item({key: "Div", text: "Div"})
+			],
+			selectedKey: "Div",
+			change: function(oEvent) {
+				var oItem = oEvent.getParameters().selectedItem;
+				oVBox.setRenderType(oItem.getKey());
+			}
+		}),
+		new sap.m.CheckBox({
+			text: "Show Borders",
+			select: function(oEvent) {
+				var bSelected = oEvent.getParameters().selected;
+				if (bSelected) {
+					oVBox.addStyleClass("vboxborder");
+				} else {
+					oVBox.removeStyleClass("vboxborder");
+				}
+			}
+		})
+	]
+});
+
+var oVBox = new sap.m.VBox({
+	width: "100%",
+	items: [
+		oTestLayoutToolbar,
+		oTable.setLayoutData(new sap.m.FlexItemData({growFactor: 1})),
+		new sap.m.Button({text: "Just a Button after"})
+	]
+}).placeAt("content");
 
 </script>
 </head>

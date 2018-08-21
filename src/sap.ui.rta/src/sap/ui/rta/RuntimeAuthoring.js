@@ -53,56 +53,56 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes"
 ],
-	function(
-		jQuery,
-		ManagedObject,
-		FioriToolbar,
-		StandaloneToolbar,
-		PersonalizationToolbar,
-		DesignTime,
-		Overlay,
-		CommandStack,
-		CommandFactory,
-		LREPSerializer,
-		RTARenamePlugin,
-		RTADragDropPlugin,
-		RTAElementMover,
-		CutPastePlugin,
-		RemovePlugin,
-		CreateContainerPlugin,
-		AdditionalElementsPlugin,
-		AdditionalElementsDialog,
-		AdditionalElementsAnalyzer,
-		CombinePlugin,
-		SplitPlugin,
-		SelectionPlugin,
-		SettingsPlugin,
-		ControlVariantPlugin,
-		ContextMenuPlugin,
-		TabHandlingPlugin,
-		FlexControllerFactory,
-		Utils,
-		DtUtil,
-		FlexUtils,
-		FlexSettings,
-		MessageBox,
-		MessageToast,
-		PopupManager,
-		BusyIndicator,
-		DOMUtil,
-		StylesLoader,
-		UrlParser,
-		RtaAppVariantFeature,
-		Device,
-		ServicesIndex,
-		ServiceEventBus,
-		OverlayRegistry,
-		capitalize,
-		UriParameters,
-		Measurement,
-		Log,
-		KeyCodes
-	) {
+function(
+	jQuery,
+	ManagedObject,
+	FioriToolbar,
+	StandaloneToolbar,
+	PersonalizationToolbar,
+	DesignTime,
+	Overlay,
+	CommandStack,
+	CommandFactory,
+	LREPSerializer,
+	RTARenamePlugin,
+	RTADragDropPlugin,
+	RTAElementMover,
+	CutPastePlugin,
+	RemovePlugin,
+	CreateContainerPlugin,
+	AdditionalElementsPlugin,
+	AdditionalElementsDialog,
+	AdditionalElementsAnalyzer,
+	CombinePlugin,
+	SplitPlugin,
+	SelectionPlugin,
+	SettingsPlugin,
+	ControlVariantPlugin,
+	ContextMenuPlugin,
+	TabHandlingPlugin,
+	FlexControllerFactory,
+	Utils,
+	DtUtil,
+	FlexUtils,
+	FlexSettings,
+	MessageBox,
+	MessageToast,
+	PopupManager,
+	BusyIndicator,
+	DOMUtil,
+	StylesLoader,
+	UrlParser,
+	RtaAppVariantFeature,
+	Device,
+	ServicesIndex,
+	ServiceEventBus,
+	OverlayRegistry,
+	capitalize,
+	UriParameters,
+	Measurement,
+	Log,
+	KeyCodes
+) {
 	"use strict";
 
 	var FL_MAX_LAYER_PARAM = "sap-ui-fl-max-layer";
@@ -127,8 +127,7 @@ sap.ui.define([
 	 * @alias sap.ui.rta.RuntimeAuthoring
 	 * @experimental This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var RuntimeAuthoring = ManagedObject.extend("sap.ui.rta.RuntimeAuthoring", /** @lends sap.ui.rta.RuntimeAuthoring.prototype */
-	{
+	var RuntimeAuthoring = ManagedObject.extend("sap.ui.rta.RuntimeAuthoring", {
 		metadata : {
 			// ---- control specific ----
 			library : "sap.ui.rta",
@@ -173,7 +172,6 @@ sap.ui.define([
 					type : "any",
 					defaultValue : {}
 				},
-
 
 				/**
 				 * Map with flex-related settings
@@ -230,7 +228,9 @@ sap.ui.define([
 				 */
 				"selectionChange" : {
 					parameters : {
-						selection : { type : "sap.ui.dt.Overlay[]" }
+						selection : {
+							type : "sap.ui.dt.Overlay[]"
+						}
 					}
 				},
 				/**Event fired when the runtime authoring mode is changed */
@@ -471,7 +471,6 @@ sap.ui.define([
 		var oUriLayer = oUriParams.get("sap-ui-layer");
 
 		mFlexSettings = jQuery.extend({}, this.getFlexSettings(), mFlexSettings);
-
 		if (oUriLayer) {
 			mFlexSettings.layer = oUriLayer;
 		}
@@ -494,7 +493,7 @@ sap.ui.define([
 	 * @returns {String} the layer after checking the uri parameters
 	 * @private
 	 */
-	RuntimeAuthoring.prototype.getLayer = function(sLayer) {
+	RuntimeAuthoring.prototype.getLayer = function (sLayer) {
 		return this.getFlexSettings().layer;
 	};
 
@@ -586,7 +585,7 @@ sap.ui.define([
 
 					this._oRootControl.addStyleClass("sapUiRtaRoot");
 
-					this._oDesignTime.attachSelectionChange(function(oEvent) {
+					this._oDesignTime.getSelectionManager().attachChange(function(oEvent) {
 						this.fireSelectionChange({selection: oEvent.getParameter("selection")});
 					}, this);
 
@@ -613,7 +612,6 @@ sap.ui.define([
 							var bShowPublish = aButtonsSupport[0];
 							var bIsAppVariantSupported = aButtonsSupport[1];
 							this._createToolsMenu(bShowPublish, bIsAppVariantSupported);
-							return this.getToolbar().show();
 						}.bind(this));
 				}
 			}.bind(this))
@@ -623,25 +621,27 @@ sap.ui.define([
 				this.fnKeyDown = this._onKeyDown.bind(this);
 				jQuery(document).on("keydown", this.fnKeyDown);
 			}.bind(this))
-			.then(function() {
-				this.getPopupManager().setRta(this);
-				var oRelevantPopups = this.getPopupManager().getRelevantPopups();
-				if (oRelevantPopups.aDialogs || oRelevantPopups.aPopovers) {
-					return this.getShowToolbars() && this.getToolbar().bringToFront();
-				}
-			}.bind(this))
 			.then(function () {
 				// non-blocking style loading
 				StylesLoader
 					.loadStyles('InPageStyles')
 					.then(function (sData) {
 						var sStyles = sData.replace(/%scrollWidth%/g, DOMUtil.getScrollbarWidth() + 'px');
-						DOMUtil.insertStyles(sStyles);
+						DOMUtil.insertStyles(sStyles, Overlay.getOverlayContainer().get(0));
 					});
 			})
 			.then(function () {
 				return oDesignTimePromise;
 			})
+			.then(function () {
+				if (this.getShowToolbars()) {
+					return this.getToolbar().show();
+				}
+			}.bind(this))
+			.then(function () {
+				// Should be initialized after the Toolbar is rendered since it depends on it
+				this.getPopupManager().setRta(this);
+			}.bind(this))
 			.then(
 				function () {
 					this._sStatus = STARTED;
@@ -895,7 +895,12 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype._serializeToLrep = function() {
-		return this._oSerializer.saveCommands();
+		return this._oSerializer.saveCommands()
+		.then(this._invalidateCache.bind(this));
+	};
+
+	RuntimeAuthoring.prototype._invalidateCache = function() {
+		return this._getFlexController().getComponentChanges(undefined, true);
 	};
 
 	RuntimeAuthoring.prototype._onUndo = function() {
@@ -1293,7 +1298,7 @@ sap.ui.define([
 	 * Build the navigation arguments object required to trigger the navigation
 	 * using the CrossApplicationNavigation ushell service.
 	 * @param  {Object} mParsedHash Parsed URL hash
-	 * @return {Object}             Returns argument map ("oArg" parameter of the "toExternal" function)
+	 * @return {Object} Returns argument map ("oArg" parameter of the "toExternal" function)
 	 */
 	RuntimeAuthoring.prototype._buildNavigationArguments = function(mParsedHash){
 		return {
@@ -1425,13 +1430,13 @@ sap.ui.define([
 				bIsPersonalized = aArgs[1];
 			if (bChangesNeedRestart || bIsPersonalized){
 				var sRestart = this._RESTART.RELOAD_PAGE;
-				var sRestartReason;
+				var sRestartReason, oUshellContainer;
 				if (bIsPersonalized) {
 					//Loading the app with personalization means the visualization might change,
 					//therefore this message takes precedence
 					sRestartReason = "MSG_RELOAD_WITH_PERSONALIZATION";
-
-					if (!bChangesNeedRestart){
+					oUshellContainer = Utils.getUshellContainer();
+					if (!bChangesNeedRestart && oUshellContainer){
 						//if changes need restart this method has precedence, but in this case
 						//the faster cross app navigation to the same app (restart via hash) is possible
 						sRestart = this._RESTART.VIA_HASH;

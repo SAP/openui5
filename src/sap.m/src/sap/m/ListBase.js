@@ -37,7 +37,7 @@ function(
 	ListItemBase,
 	ListBaseRenderer,
 	capitalize,
-	jQueryDOM,
+	jQuery,
 	Log
 ) {
 	"use strict";
@@ -1955,7 +1955,7 @@ function(
 
 		// if current section is items container then save the current focus position
 		var oItemsContainerDomRef = this.getItemsContainerDomRef();
-		var $CurrentSection = jQueryDOM(document.getElementById(this._aNavSections[iIndex]));
+		var $CurrentSection = jQuery(document.getElementById(this._aNavSections[iIndex]));
 		if ($CurrentSection[0] === oItemsContainerDomRef && this._oItemNavigation) {
 			$CurrentSection.data("redirect", this._oItemNavigation.getFocusedIndex());
 		}
@@ -1963,7 +1963,7 @@ function(
 		// find the next focusable section
 		this._aNavSections.some(function() {
 			iIndex = (iIndex + iStep + iLength) % iLength;	// circle
-			$TargetSection = jQueryDOM(document.getElementById(this._aNavSections[iIndex]));
+			$TargetSection = jQuery(document.getElementById(this._aNavSections[iIndex]));
 
 			// if target is items container
 			if ($TargetSection[0] === oItemsContainerDomRef && this._oItemNavigation) {
@@ -2250,17 +2250,21 @@ function(
 
 		if (this._iStickyValue & 2 /* InfoToolbar */) {
 			// additional padding is applied in HCW and HCB theme, hence infoToolbarContainer height is required
-			var oInfoToolbarContainer = this.getInfoToolbar().$().parent()[0];
-			var oInfoToolbarContainerRect = oInfoToolbarContainer.getBoundingClientRect();
-			iInfoTBarContainerRectBottom = parseInt(oInfoToolbarContainerRect.bottom, 10);
-			iInfoTBarContainerRectHeight = parseInt(oInfoToolbarContainerRect.height, 10);
+			var oInfoToolbarContainer = this.getDomRef().querySelector(".sapMListInfoTBarContainer");
+			if (oInfoToolbarContainer) {
+				var oInfoToolbarContainerRect = oInfoToolbarContainer.getBoundingClientRect();
+				iInfoTBarContainerRectBottom = parseInt(oInfoToolbarContainerRect.bottom, 10);
+				iInfoTBarContainerRectHeight = parseInt(oInfoToolbarContainerRect.height, 10);
+			}
 		}
 
 		if (this._iStickyValue & 1 /* HeaderToolbar */) {
 			var oHeaderToolbarDomRef = this.getDomRef().querySelector(".sapMListHdr");
-			var oHeaderToolbarRect = oHeaderToolbarDomRef.getBoundingClientRect();
-			iHeaderToolbarRectBottom = parseInt(oHeaderToolbarRect.bottom, 10);
-			iHeaderToolbarRectHeight = parseInt(oHeaderToolbarRect.height, 10);
+			if (oHeaderToolbarDomRef) {
+				var oHeaderToolbarRect = oHeaderToolbarDomRef.getBoundingClientRect();
+				iHeaderToolbarRectBottom = parseInt(oHeaderToolbarRect.bottom, 10);
+				iHeaderToolbarRectHeight = parseInt(oHeaderToolbarRect.height, 10);
+			}
 		}
 
 		var iItemTop = Math.round(oItemDomRef.getBoundingClientRect().top);

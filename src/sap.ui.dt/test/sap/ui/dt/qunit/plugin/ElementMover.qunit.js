@@ -1,7 +1,5 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
 sap.ui.require([
 	"sap/ui/dt/plugin/ElementMover",
 	"sap/ui/dt/OverlayRegistry",
@@ -199,10 +197,7 @@ sap.ui.require([
 		});
 	});
 
-
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

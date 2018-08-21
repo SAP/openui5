@@ -150,10 +150,18 @@ sap.ui.define([
 				},
 
 				theLineItemsTableShouldContainOnlyFormattedUnitNumbers : function () {
-					return this.theUnitNumbersShouldHaveTwoDecimals("sap.m.ObjectNumber",
-						sViewName,
-						"Object numbers are properly formatted",
-						"LineItmes Table has no entries which can be checked for their formatting");
+					var rTwoDecimalPlaces =  /^-?[\d,]+\.\d{2}$/;
+					return this.waitFor({
+						controlType : "sap.m.ObjectNumber",
+						viewName : sViewName,
+						success : function (aNumberControls) {
+							Opa5.assert.ok(aNumberControls.every(function(oNumberControl){
+									return rTwoDecimalPlaces.test(oNumberControl.getNumber());
+								}),
+								"Object numbers are properly formatted");
+						},
+						errorMessage : "LineItems Table has no entries which can be checked for their formatting"
+					});
 				},
 
 				theLineItemsHeaderShouldDisplayTheAmountOfEntries : function () {

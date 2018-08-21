@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
-	function(library, encodeCSS) {
+sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdparty/jquery"],
+	function(library, encodeCSS, jQuery) {
 	"use strict";
 
 	// shortcut for sap.m.GenericTileScope
@@ -223,7 +223,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 				height: oLine.height
 			});
 
-			sHelpers += $Rect.outerHTML();
+			sHelpers += jQuery.trim($Rect.get(0).outerHTML);
 		}
 
 		$StyleHelper.html(sHelpers);

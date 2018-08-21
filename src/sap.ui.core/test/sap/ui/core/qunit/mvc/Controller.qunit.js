@@ -1,7 +1,9 @@
+/*global QUnit */
 sap.ui.define([
 	'sap/ui/core/Component',
-	'sap/ui/core/mvc/Controller',
+	'sap/ui/core/mvc/Controller'
 ], function(Component, Controller) {
+	"use strict";
 
 	QUnit.module("getComponent");
 
@@ -98,7 +100,7 @@ sap.ui.define([
 	/**
 	 * See @evo-todo in Controller.js
 	 */
-	QUnit.test("Controller Loading", function (asser) {
+	QUnit.test("Controller Loading", function (assert) {
 		var done = assert.async();
 		sap.ui.require(["sap/ui/core/mvc/Controller"], function (Controller) {
 			Controller.create({

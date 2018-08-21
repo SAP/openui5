@@ -257,7 +257,10 @@
 			"sap.m.sample.ComboBox",
 			"sap.m.sample.ComboBox2Columns",
 			"sap.m.sample.ComboBoxLazyLoading",
-			"sap.m.sample.ComboBoxSearchBoth"
+			"sap.m.sample.ComboBoxSearchBoth",
+			"sap.m.sample.ComboBoxDefaultFiltering",
+			"sap.m.sample.ComboBoxFilteringContains",
+			"sap.m.sample.ComboBoxFilteringStartsWith"
 		  ]
 		},
 		{
@@ -662,7 +665,10 @@
 		  "name": "Message Popover",
 		  "category": "Popup",
 		  "since": "1.28",
-		  "samples": ["sap.m.sample.MessagePopover"]
+		  "samples": [
+			"sap.m.sample.MessagePopover",
+			"sap.m.sample.MessagePopoverMessageHandling"
+		  ]
 		},
 		{
 		  "id": "sap.m.MessageView",
@@ -1017,7 +1023,11 @@
 		  "name": "Multi Combo Box",
 		  "category": "User Input",
 		  "since": "1.22",
-		  "samples": ["sap.m.sample.MultiComboBox"]
+		  "samples": [
+			"sap.m.sample.MultiComboBox",
+			"sap.m.sample.MultiComboBoxDefaultFiltering",
+			"sap.m.sample.MultiComboBoxCustomFiltering"
+		  ]
 		},
 		{
 		  "id": "sap.m.P13nDialog",
@@ -1037,7 +1047,8 @@
 		  "samples": [
 			"sap.m.sample.MultiInput",
 			"sap.m.sample.MultiInputValidators",
-			"sap.m.sample.MultiInputMultiLine",
+			"sap.m.sample.MultiInputFilteringSuggestions",
+			"sap.m.sample.MultiInputCustomFiltering",
 			"sap.m.sample.MultiInputDatabinding",
 			"sap.m.sample.MultiInputMaxTokens",
 			"sap.m.sample.MultiInputTokenUpdate"
@@ -1366,7 +1377,7 @@
 			"Custom Formatters",
 			"Filtering",
 			"Sorting and Grouping",
-			"Remote OData Service",
+			"(Optional) Remote OData Service",
 			"Mock Server Configuration",
 			"Unit Test with QUnit",
 			"Integration Test with OPA",
@@ -1461,6 +1472,21 @@
 		  "id": "sap.m.sample.ComboBoxSearchBoth",
 		  "name": "Combo box - Search in both columns",
 		  "description": "Combo box dropdown list with search functionality which checks both columns. When you need to display additional information on your options, like e.g. keys of countries or system abbreviations, and want to search in those as well."
+		},
+		{
+		  "id": "sap.m.sample.ComboBoxDefaultFiltering",
+		  "name": "Combo box - Default Filtering",
+		  "description": "The default filtering is 'starts with per term', which filters by the beginning of every word in every column. Autocomplete (type-ahead) works only for the first column, the leading value."
+		},
+		{
+		  "id": "sap.m.sample.ComboBoxFilteringContains",
+		  "name": "Combo box - Custom filtering \"Contains\"",
+		  "description": "You can override the default filtering \"Starts with per term\" with your own filter function using the setFilterFunction method. The \"Contains\" approach searches everywhere in the entries."
+		},
+		{
+		  "id": "sap.m.sample.ComboBoxFilteringStartsWith",
+		  "name": "Combo box - Custom filtering \"Starts with\"",
+		  "description": "You can override the default filtering \"Starts with per term\" with your own filter function using the setFilterFunction method. The \"Starts with\" approach searches only in the beginning of the entries in both columns."
 		},
 		{
 		  "id": "sap.m.sample.DateRangeSelection",
@@ -2023,6 +2049,16 @@
 		  "description": "Choose one or more out of multiple options with the MultiComboBox control."
 		},
 		{
+		  "id": "sap.m.sample.MultiComboBoxDefaultFiltering",
+		  "name": "MultiComboBox - Filtering and Suggestions",
+		  "description": "The default filtering is 'starts with per term', which filters by the beginning of every word in every column."
+		},
+		{
+		  "id": "sap.m.sample.MultiComboBoxCustomFiltering",
+		  "name": "MultiComboBox - Custom Filtering and Suggestions",
+		  "description": "The default filtering for the suggestionsItems aggregation uses a 'starts with per term' style operator. You can override this with your own custom filter function using the setFilterFunction method."
+		},
+		{
 		  "id": "sap.m.sample.P13nDialog",
 		  "name": "P13nDialog stand-alone",
 		  "description": "Dialog for personalization of column order and their visibility."
@@ -2043,9 +2079,14 @@
 		  "description": "MultiInput uses validators to accept, decline and change tokens."
 		},
 		{
-		  "id": "sap.m.sample.MultiInputMultiLine",
-		  "name": "MultiInput Multi-line Mode",
-		  "description": "Multi-line display mode allows you to fully view all tokens and easily edit tokens in the MultiInput. This display mode should be used if you need an overview of all content in the MultiInput."
+		  "id": "sap.m.sample.MultiInputFilteringSuggestions",
+		  "name": "MultiInput Filtering and Suggestions",
+		  "description": "The default filtering is 'starts with per term', which filters by the beginning of every word in every column."
+		},
+		{
+		  "id": "sap.m.sample.MultiInputCustomFiltering",
+		  "name": "MultiInput Custom Filtering",
+		  "description": "The default filtering for the suggestionItems aggregation uses is a 'starts with per term' style operator. You can overwrite this with your own custom filter function using the Input control's setFilterFunction method."
 		},
 		{
 			"id": "sap.m.sample.MultiInputDatabinding",
@@ -2060,7 +2101,7 @@
 		{
 			"id": "sap.m.sample.MultiInputTokenUpdate",
 			"name": "MultiInput tokenUpdate event example",
-			"description": "MultiInput fires several tokenUpdate events depending on when the tokens were validated"
+			"description": "MultiInput fires several tokenUpdate events depending on when the tokens were validated."
 		},
 		{
 			"id": "sap.m.sample.NumericContentDifColors",
@@ -2500,6 +2541,11 @@
 		  "id": "sap.m.sample.MessagePopover",
 		  "name": "MessagePopover",
 		  "description": "MessagePopover is a control that displays a summarized list of different types of messages (errors, warnings, success and information). It provides a handy and systemized way to navigate and explore details for every message."
+		},
+		{
+		  "id": "sap.m.sample.MessagePopoverMessageHandling",
+		  "name": "Message Popover - Message Handling",
+		  "description": "The message handling concept sample shows how you can connect an error inside the page (such as input validation error) with an error, visualized as an item in a message popover."
 		},
 		{
 		  "id": "sap.m.sample.MessageViewInsideDialog",

@@ -5,9 +5,10 @@ sap.ui.define([
 	'./Core',
 	'sap/ui/thirdparty/URI',
 	"sap/base/i18n/ResourceBundle",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(core, URI, ResourceBundle, Log) {
+	function(core, URI, ResourceBundle, Log, jQuery) {
 		"use strict";
 
 		/**
@@ -218,7 +219,15 @@ sap.ui.define([
 
 		};
 
-		var oCoreResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
+		var oCoreResourceBundle;
+
+		// Lazy load core resource bundle
+		function getCoreResourceBundle() {
+			if (!oCoreResourceBundle) {
+				oCoreResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
+			}
+			return oCoreResourceBundle;
+		}
 
 		// lazy dependency, to avoid cycle
 		var Icon;
@@ -440,7 +449,7 @@ sap.ui.define([
 						fontFamily: mFontRegistry[collectionName].config.fontFamily,
 						content: info & 0xFFFF,
 						suppressMirroring: !!(info & 0x10000),
-						resourceBundle: oCoreResourceBundle
+						resourceBundle: getCoreResourceBundle()
 					});
 				}
 

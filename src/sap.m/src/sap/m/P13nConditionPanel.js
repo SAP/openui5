@@ -21,7 +21,7 @@ sap.ui.define([
 	'sap/ui/model/type/Date',
 	'sap/ui/model/type/Time',
 	'sap/ui/model/odata/type/DateTime',
-	'sap/ui/model/odata/type/Double',
+	'sap/ui/model/type/Float',
 	'./Button',
 	'./OverflowToolbar',
 	'./OverflowToolbarLayoutData',
@@ -36,11 +36,44 @@ sap.ui.define([
 	'./DatePicker',
 	'./TimePicker',
 	'./DateTimePicker',
-	"sap/base/Log"
-], function(library, coreLibrary, Control, DateFormat, NumberFormat, IconPool, Device, InvisibleText, ResizeHandler, Item,
-	ListItem, BooleanOdataType, StringType, StringOdataType, DateType, TimeType, DateTimeOdataType, DoubleOdataType, Button,
-	OverflowToolbar, OverflowToolbarLayoutData, ToolbarSpacer, Text, SearchField, CheckBox, ComboBox, Select, Label, Input,
-	DatePicker, TimePicker, DateTimePicker, Log) {
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function(
+	library,
+	coreLibrary,
+	Control,
+	DateFormat,
+	NumberFormat,
+	IconPool,
+	Device,
+	InvisibleText,
+	ResizeHandler,
+	Item,
+	ListItem,
+	BooleanOdataType,
+	StringType,
+	StringOdataType,
+	DateType,
+	TimeType,
+	DateTimeOdataType,
+	FloatType,
+	Button,
+	OverflowToolbar,
+	OverflowToolbarLayoutData,
+	ToolbarSpacer,
+	Text,
+	SearchField,
+	CheckBox,
+	ComboBox,
+	Select,
+	Label,
+	Input,
+	DatePicker,
+	TimePicker,
+	DateTimePicker,
+	Log,
+	jQuery
+) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -516,17 +549,20 @@ sap.ui.define([
 				case "boolean":
 					//TODO in case the model is not an ODataModel we should use the sap.ui.model.type.Boolean
 					oKeyField.typeInstance = new BooleanOdataType();
-					//oKeyField.typeInstance = new sap.ui.model.type.Boolean();
 					break;
 				case "numc":
-					//formatSettings: {isDigitSequence: true, maxLength: 10},
-					if (!!oKeyField.formatSettings.isDigitSequence) {
+					if (!(oKeyField.formatSettings && oKeyField.formatSettings.isDigitSequence)) {
 						Log.error("sap.m.P13nConditionPanel", "NUMC type support requires isDigitSequence==true!");
+						oKeyField.formatSettings = jQuery.extend({}, oKeyField.formatSettings, { isDigitSequence: true });
 					}
-					if (!!oKeyField.formatSettings.maxLength) {
+					var oConstraints = oKeyField.formatSettings;
+					if (oKeyField.maxLength) {
+						oConstraints = jQuery.extend({}, oConstraints, { maxLength: oKeyField.maxLength });
+					}
+					if (!oConstraints.maxLength) {
 						Log.error("sap.m.P13nConditionPanel", "NUMC type suppport requires maxLength!");
 					}
-					oKeyField.typeInstance = new StringOdataType({}, oKeyField.formatSettings);
+					oKeyField.typeInstance = new StringOdataType({}, oConstraints);
 					break;
 				case "date":
 					//TODO we should use the none odata date type, otherwise the returned oValue1 is not a date object
@@ -537,7 +573,7 @@ sap.ui.define([
 					oKeyField.typeInstance = new TimeType(jQuery.extend({}, oKeyField.formatSettings, { strictParsing: true }), {});
 					break;
 				case "datetime":
-					oKeyField.typeInstance = new DateTimeOdataType(jQuery.extend({}, oKeyField.formatSettings, { strictParsing: true }), {});
+					oKeyField.typeInstance = new DateTimeOdataType(jQuery.extend({}, oKeyField.formatSettings, { strictParsing: true }), { displayFormat: "Date" });
 					break;
 				case "stringdate":
 					// TODO: Do we really need the COMP library here???
@@ -556,7 +592,7 @@ sap.ui.define([
 							oContraints["maxFractionDigits"] = parseInt(oKeyField.scale, 10);
 						}
 					}
-					oKeyField.typeInstance = new DoubleOdataType(oContraints);
+					oKeyField.typeInstance = new FloatType(oContraints);
 					break;
 				default:
 					var oFormatOptions = oKeyField.formatSettings;
@@ -727,6 +763,7 @@ sap.ui.define([
 			hSpacing: 0,
 			vSpacing: 0
 		}).toggleStyleClass("conditionRootGrid", this.getLayoutMode() !== "Desktop"); // && !this.getAlwaysShowAddIcon());
+		this._oConditionsGrid.addStyleClass("sapUiRespGridOverflowHidden");
 
 		this._iFirstConditionIndex = 0;
 		this._iConditionPageSize = 10;
@@ -1222,6 +1259,7 @@ sap.ui.define([
 			vSpacing: 0,
 			containerQuery: this.getContainerQuery()
 		}).data("_key", sKey);
+		oConditionGrid.addStyleClass("sapUiRespGridOverflowHidden");
 
 		/* eslint-disable no-loop-func */
 		for (var iField in this._aConditionsFields) {
@@ -1430,11 +1468,16 @@ sap.ui.define([
 
 							// In case vValue is of type string, we try to convert it into the type based format.
 							if (typeof vValue === "string" && oConditionGrid.oType.getName() !== "String") {
-								vValue = oConditionGrid.oType.parseValue(vValue, "string");
-								//jQuery.sap.log.error("sap.m.P13nConditionPanel", "Value '" + vValue + "' does not have the expected type '" + oConditionGrid.oType.getName() + "'.");
+								try {
+									vValue = oConditionGrid.oType.parseValue(vValue, "string");
+									oControl.setValue(oConditionGrid.oType.formatValue(vValue, "string"));
+								} catch (err) {
+									Log.error("sap.m.P13nConditionPanel", "Value '" + vValue + "' does not have the expected type format for " + oConditionGrid.oType.getName() + ".parseValue()");
+								}
+							} else {
+								oControl.setValue(oConditionGrid.oType.formatValue(vValue, "string"));
 							}
 
-							oControl.setValue(oConditionGrid.oType.formatValue(vValue, "string"));
 						} else {
 							oControl.setValue(vValue);
 						}
@@ -1534,6 +1577,16 @@ sap.ui.define([
 			oConditionGridData._oGrid = oConditionGrid;
 			oConditionGridData.value = sConditionText;
 			this._oConditionsMap[sKey] = oConditionGridData;
+		}
+
+		var sOperation = oConditionGrid.operation.getSelectedKey();
+		// in case of a BT and a Date type try to set the minDate/maxDate for the From/To value datepicker
+		if (sOperation === "BT" && oConditionGrid.value1.setMinDate && oConditionGrid.value2.setMaxDate) {
+			var oValue1 = oConditionGrid.value1.getDateValue();
+			var oValue2 = oConditionGrid.value2.getDateValue();
+			this._updateMinMaxDate(oConditionGrid, oValue1, oValue2);
+		} else {
+			this._updateMinMaxDate(oConditionGrid, null, null);
 		}
 
 		return oConditionGrid;
@@ -1645,6 +1698,7 @@ sap.ui.define([
 			if (sCtrlType === "DateTimePicker" && oType.getMetadata().getName() === "sap.ui.model.odata.type.DateTime") {
 				if (!(oType.oConstraints && oType.oConstraints.isDateOnly)) {
 					Log.error("sap.m.P13nConditionPanel", "sap.ui.model.odata.type.DateTime without displayFormat = Date is not supported!");
+					oType.oConstraints = jQuery.extend({}, oType.oConstraints, { isDateOnly : true });
 				}
 				sCtrlType = "DatePicker";
 			}
@@ -1676,10 +1730,9 @@ sap.ui.define([
 				};
 				oControl = new Select(params);
 			} else if (sCtrlType == "TimePicker") {
-				//TODO TimerPicker does not support displayFormat
-				//if (oType.oFormatOptions && oType.oFormatOptions.style) {
-				//	params.displayFormat = oType.oFormatOptions.style;
-				//}
+				if (oType.oFormatOptions && oType.oFormatOptions.style) {
+					params.displayFormat = oType.oFormatOptions.style;
+				}
 				oControl = new TimePicker(params);
 			} else if (sCtrlType == "DateTimePicker") {
 				if (oType.oFormatOptions && oType.oFormatOptions.style) {
@@ -2272,6 +2325,18 @@ sap.ui.define([
 		}
 	};
 
+
+	P13nConditionPanel.prototype._updateMinMaxDate = function(oConditionGrid, oValue1, oValue2) {
+		if (oConditionGrid.value1.setMinDate && oConditionGrid.value2.setMaxDate) {
+			if (oConditionGrid.value1 && oConditionGrid.value1.setMaxDate) {
+				oConditionGrid.value1.setMaxDate(oValue2 instanceof Date ? oValue2 : null);
+			}
+			if (oConditionGrid.value2 && oConditionGrid.value2.setMinDate) {
+				oConditionGrid.value2.setMinDate(oValue1 instanceof Date ? oValue1 : null);
+			}
+		}
+	};
+
 	/**
 	 * called when the user makes a change in one of the condition fields. The function will update, remove or add the conditions for this condition.
 	 *
@@ -2302,13 +2367,7 @@ sap.ui.define([
 				oConditionGrid.oType.validateValue(oValue1);
 			} catch (err) {
 				sValue1 = "";
-			}
-		}
-
-		// in case of a BT and a Date type try to set the minDate for the To value datepicker
-		if (sOperation === "BT" && oConditionGrid.value1.setMinDate) {
-			if (oConditionGrid.value2 && oConditionGrid.value2.setMinDate) {
-				oConditionGrid.value2.setMinDate(oValue1 instanceof Date ? oValue1 : null);
+				Log.error("sap.m.P13nConditionPanel", "not able to parse value1 " + sValue1 + " with type " + oConditionGrid.oType.getName());
 			}
 		}
 
@@ -2321,7 +2380,15 @@ sap.ui.define([
 				oConditionGrid.oType.validateValue(oValue2);
 			} catch (err) {
 				sValue2 = "";
+				Log.error("sap.m.P13nConditionPanel", "not able to parse value2 " + sValue2 + " with type " + oConditionGrid.oType.getName());
 			}
+		}
+
+		// in case of a BT and a Date type try to set the minDate/maxDate for the From/To value datepicker
+		if (sOperation === "BT") {
+			this._updateMinMaxDate(oConditionGrid, oValue1, oValue2);
+		} else {
+			this._updateMinMaxDate(oConditionGrid, null, null);
 		}
 
 		var oCurrentKeyField = this._getCurrentKeyFieldItem(oConditionGrid.keyField);
@@ -2768,23 +2835,34 @@ sap.ui.define([
 	};
 
 	P13nConditionPanel._oConditionMap = {
-		"EQ": "=%1",
-		"GT": ">%1",
-		"GE": ">=%1",
-		"LT": "<%1",
-		"LE": "<=%1",
-		"Contains": "*%1*",
-		"StartsWith": "%1*",
-		"EndsWith": "*%1",
-		"BT": "%1...%2",
-		"Empty": "<%r>"
+		"EQ": "=$0",
+		"GT": ">$0",
+		"GE": ">=$0",
+		"LT": "<$0",
+		"LE": "<=$0",
+		"Contains": "*$0*",
+		"StartsWith": "$0*",
+		"EndsWith": "*$0",
+		"BT": "$0...$1",
+		"Empty": "<$r>"
 	};
 
-	// Replase %r params in operation by resource bundle text
+	// Replase $r params in operation by resource bundle text
 	(function() {
 		var _oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		P13nConditionPanel._oConditionMap[P13nConditionOperation.Empty] = P13nConditionPanel._oConditionMap[P13nConditionOperation.Empty].replace("%r", _oRb.getText("CONDITIONPANEL_OPTIONEmpty"));
+		P13nConditionPanel._oConditionMap[P13nConditionOperation.Empty] = P13nConditionPanel._oConditionMap[P13nConditionOperation.Empty].replace("$r", _oRb.getText("CONDITIONPANEL_OPTIONEmpty"));
 	})();
+
+	/**
+	 * fills the template string placeholder $0, $1 with the values from the aValues array and returns a formatted text for the specified condition
+	 * @private
+	 * @param {string} sTemplate the template which should be filled
+	 * @param {string[]} aValues value array for the template placeholder
+	 * @returns {string} the filled template text
+	 */
+	P13nConditionPanel._templateReplace = function(sTemplate, aValues) {
+		return sTemplate.replace(/\$\d/g, function(sMatch) { return aValues[parseInt(sMatch.substr(1), 10)]; });
+	};
 
 	/**
 	 * creates and returns a formatted text for the specified condition
@@ -2800,8 +2878,7 @@ sap.ui.define([
 
 		switch (sOperation) {
 			case P13nConditionOperation.Empty:
-				// sConditionText = P13nConditionPanel._oConditionMap[sOperation];
-				sConditionText = P13nConditionPanel._oConditionMap[sOperation].replace("%1", sValue1).replace("%2", sValue2);
+				sConditionText = P13nConditionPanel._templateReplace(P13nConditionPanel._oConditionMap[sOperation], []);
 				break;
 
 			case P13nConditionOperation.EQ:
@@ -2813,15 +2890,14 @@ sap.ui.define([
 			case P13nConditionOperation.StartsWith:
 			case P13nConditionOperation.EndsWith:
 				if (sValue1 !== "" && sValue1 !== undefined) {
-					// sConditionText = P13nConditionPanel._oConditionMap[sOperation].replace("%1", sValue1);
-					sConditionText = P13nConditionPanel._oConditionMap[sOperation].replace("%1", sValue1).replace("%2", sValue2);
+					sConditionText = P13nConditionPanel._templateReplace(P13nConditionPanel._oConditionMap[sOperation], [sValue1]);
 				}
 				break;
 
 			case P13nConditionOperation.BT:
 				if (sValue1 !== "" && sValue1 !== undefined) {
 					if (sValue2 !== "" && sValue2 !== undefined) {
-						sConditionText = P13nConditionPanel._oConditionMap[sOperation].replace("%1", sValue1).replace("%2", sValue2);
+						sConditionText = P13nConditionPanel._templateReplace(P13nConditionPanel._oConditionMap[sOperation], [sValue1, sValue2]);
 					}
 				}
 				break;

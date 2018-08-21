@@ -62,7 +62,7 @@ sap.ui.define([
 		});
 		assert.equal(oBinding.getPath(), "/Employees(2)", "TreeBinding path");
 		assert.equal(oBinding.getModel(), oModel, "TreeBinding model");
-		assert.ok(TableUtils.isInstanceOf(oBinding, "sap/ui/model/odata/v2/ODataTreeBinding"), "treeBinding class check");
+		assert.ok(oBinding.isA("sap.ui.model.odata.v2.ODataTreeBinding"), "treeBinding class check");
 	});
 
 	QUnit.test("getRootContexts getNodeContexts", function(assert) {
@@ -1520,7 +1520,8 @@ sap.ui.define([
 	 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
 	 * Data should already be present, since prebuildTree already requested a big set
 	 */
-	QUnit.test("selectionChanged event with selectAll", 3, function(assert) {
+	QUnit.test("selectionChanged event with selectAll", function(assert) {
+		assert.expect(3);
 		var done = assert.async();
 		prebuildTree(function() {
 			var fnSelectionChangeHandler1 = function(oEvent) {
@@ -1540,7 +1541,8 @@ sap.ui.define([
 	 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
 	 * Data should already be present, since prebuildTree already requested a big set
 	 */
-	QUnit.test("selectionChanged event with collapse", 4, function(assert) {
+	QUnit.test("selectionChanged event with collapse", function(assert) {
+		assert.expect(4);
 		var done = assert.async();
 		prebuildTree(function() {
 			oBinding.selectAll();
@@ -1564,7 +1566,8 @@ sap.ui.define([
 	 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
 	 * Data should already be present, since prebuildTree already requested a big set
 	 */
-	QUnit.test("selectionChanged event with collapse: deselect of lead selection", 4, function(assert) {
+	QUnit.test("selectionChanged event with collapse: deselect of lead selection", function(assert) {
+		assert.expect(4);
 		var done = assert.async();
 		prebuildTree(function() {
 			oBinding.setSelectedIndex(2);
@@ -1973,7 +1976,7 @@ sap.ui.define([
 
 				oBinding._expandSubTree = function(oNode, aResults) {
 					assert.deepEqual(oNode, oExpectedNode, "Passed correct node object to _expandSubTree()");
-					assert.deepEqual(aResults, "dummy data array", "Passed correct data array");
+					assert.deepEqual(aResults[0].pony, true, "Passed correct data array");
 				};
 
 				oBinding._fireChange = function(oEvent) {
@@ -1985,12 +1988,52 @@ sap.ui.define([
 					assert.deepEqual(aParams, aExpectedParams, "Generated correct parameters");
 					assert.deepEqual(oNode, oExpectedNode, "Passed correct node object to _loadSubTree()");
 					return Promise.resolve({
-						results: "dummy data array"
+						results: [{ "FinStatementHierarchyLevelVal": 0, pony: true }]
 					});
 				};
 
 
 				oBinding.expandNodeToLevel(0, 2);
+			}
+
+			oBinding.attachChange(fnChangeHandler);
+			oBinding.getContexts(0, 100);
+
+		});
+	});
+
+	QUnit.test("expandNodeToLevel: Expand correct nodes", function(assert) {
+		var done = assert.async();
+		oModel.attachMetadataLoaded(function() {
+			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, null, {
+				rootLevel: 2,
+				displayRootNode: false
+			});
+
+			function fnChangeHandler() {
+				oBinding.getContexts(0, 100);
+
+				oBinding._expandSubTree = function(oNode, aResults) {
+					assert.equal(aResults.length,  1, "Only one node should be expanded");
+					assert.equal(aResults[0]["FinStatementHierarchyLevelVal"],  0, "Only node on level 0 should be expanded");
+				};
+
+				oBinding._fireChange = function(oEvent) {
+					assert.deepEqual(oEvent.reason, "expand", "Change event fired with correct reason");
+					done();
+				};
+
+				oBinding._loadSubTree = function(oNode, aParams) {
+					return Promise.resolve({
+						results: [
+							{ "FinStatementHierarchyLevelVal": 0 },
+							{ "FinStatementHierarchyLevelVal": 1 }
+						]
+					});
+				};
+
+
+				oBinding.expandNodeToLevel(0, 1);
 			}
 
 			oBinding.attachChange(fnChangeHandler);

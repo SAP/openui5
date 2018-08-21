@@ -375,7 +375,7 @@
 			this.oSelectionDetails._getPopover.apply(this.oSelectionDetails, this._aGetPopoverArgs);
 
 			//Assert
-			assert.equal(oAddEventDelegateSpy.callCount, 1, "Method addEventDelegate has been called once on Popover.");
+			assert.equal(oAddEventDelegateSpy.callCount, 2, "Method addEventDelegate has been called twice (one call for WrapLabels) on Popover.");
 
 			//Cleanup
 			oAddEventDelegateSpy.restore();

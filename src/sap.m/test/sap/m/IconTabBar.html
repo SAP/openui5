@@ -335,7 +335,7 @@
 
 			// Checkbox for Compact Content Density for the page
 			var cbCompactContentDensity  = new sap.m.CheckBox("densityModeBox", {
-				selected: "true",
+				selected: true,
 				select: function (oEvent) {
 					var bSelectedValue = oEvent.getSource().getSelected();
 					jQuery("#body").toggleClass("sapUiSizeCompact", !bSelectedValue).toggleClass("sapUiSizeCozy", bSelectedValue);

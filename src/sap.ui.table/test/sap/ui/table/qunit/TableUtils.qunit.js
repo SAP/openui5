@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/table/library",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
-	"sap/ui/table/RowSettings"
-], function(TableQUnitUtils, qutils, TableUtils, Table, Column, RowAction, TableLibrary, CoreLibrary, Control, RowSettings) {
+	"sap/ui/table/RowSettings",
+	"sap/ui/base/Object"
+], function(TableQUnitUtils, qutils, TableUtils, Table, Column, RowAction, TableLibrary, CoreLibrary, Control, RowSettings, BaseObject) {
 	"use strict";
 
 	// Shortcuts
@@ -336,7 +337,7 @@ sap.ui.define([
 			oTable.setEnableSelectAll(bEnableSelectAll);
 			oTable.setSelectionMode(sSelectionMode);
 			assert.strictEqual(TableUtils.hasSelectAll(oTable), bShouldHaveSelectAll,
-				"The table should " + (bShouldHaveSelectAll ? "" : "not ") + "have a SelectAll checkbox"
+				"The table does " + (bShouldHaveSelectAll ? "" : "not ") + "have a SelectAll checkbox"
 			);
 		}
 
@@ -801,53 +802,50 @@ sap.ui.define([
 		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "Rows not bound: Returned true");
 		oTable.getBinding.restore();
 
-		this.stub(TableUtils, "isInstanceOf").withArgs(oTable.getBinding("rows"), "sap/ui/model/analytics/AnalyticalBinding").returns(true);
-		oTable.getBinding("rows").bUseBatchRequests = true;
+		var oBinding = oTable.getBinding("rows");
+		this.stub(oBinding, "isA");
+
+		oBinding.isA.withArgs("sap.ui.model.analytics.AnalyticalBinding").returns(true);
+		oBinding.bUseBatchRequests = true;
 		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "AnalyticalBinding using batch requests: Returned true");
 
-		oTable.getBinding("rows").bUseBatchRequests = false;
+		oBinding.bUseBatchRequests = false;
 		assert.ok(!TableUtils.canUsePendingRequestsCounter(oTable), "AnalyticalBinding not using batch requests: Returned false");
 
-		TableUtils.isInstanceOf.withArgs(oTable.getBinding("rows"), "sap/ui/model/analytics/AnalyticalBinding").returns(false);
-		TableUtils.isInstanceOf.withArgs(oTable.getBinding("rows"), "sap/ui/model/TreeBinding").returns(true);
+		oBinding.isA.withArgs("sap.ui.model.analytics.AnalyticalBinding").returns(false);
+		oBinding.isA.withArgs("sap.ui.model.TreeBinding").returns(true);
 		assert.ok(!TableUtils.canUsePendingRequestsCounter(oTable), "TreeBinding: Returned false");
 
-		TableUtils.isInstanceOf.withArgs(oTable.getBinding("rows"), "sap/ui/model/TreeBinding").returns(false);
-		oTable.getBinding("rows").bUseBatchRequests = true;
+		oBinding.isA.withArgs("sap.ui.model.TreeBinding").returns(false);
+		oBinding.bUseBatchRequests = true;
 		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "Other binding: Returned true");
 
-		TableUtils.isInstanceOf.restore();
-		delete oTable.getBinding("rows").bUseBatchRequests;
+		oBinding.isA.restore();
+		delete oBinding.bUseBatchRequests;
 	});
 
-	QUnit.test("isInstanceOf", function(assert) {
-		var done = assert.async();
+	QUnit.test("isA", function(assert) {
+		var oBaseObjectIsA = this.spy(BaseObject, "isA");
+		var vBaseObjectReturn;
 
-		function checkLoaded(oObj) {
-			if (!oObj || !oObj.prototype || !oObj.prototype.destroy) {
-				//Check whether namespace is already available and whether it is not the lazy initialization hook
-				return false;
-			}
-			return true;
-		}
+		// TableUtils#isA is just a wrapper for sap.ui.base.Object#isA. Therefore, we only check whether TableUtils#isA correctly calls the base
+		// method and returns the same value.
 
-		assert.equal(TableUtils.isInstanceOf(oTable, null), false, "No type");
-		assert.equal(TableUtils.isInstanceOf(null, "sap/ui/table/AnalyticalTable"), false, "No object");
-
-		assert.ok(!checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable not loaded before check");
-		assert.equal(TableUtils.isInstanceOf(oTable, "sap/ui/table/AnalyticalTable"), false, "Not of type sap.ui.table.AnalyticalTable");
-		assert.ok(!checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable not loaded after check");
-
-		sap.ui.require([
-			"sap/ui/table/AnalyticalTable"
-		], function(AnalyticalTable) {
-			var oAnalyticalTable = new AnalyticalTable();
-			assert.ok(checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable loaded before check");
-			assert.equal(TableUtils.isInstanceOf(oAnalyticalTable, "sap/ui/table/AnalyticalTable"), true, "Is of type sap.ui.table.AnalyticalTable");
-			assert.ok(checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable loaded after check");
-			oAnalyticalTable.destroy();
-			done();
+		[
+			[oTable, null],
+			[null, "sap.ui.table.Table"],
+			[oTable, "sap.ui.table.Table"],
+			[oTable, "sap.ui.table.AnalyticalTable"],
+			[oTable, ["sap.ui.table.Table", "sap.ui.table.AnalyticalTable"]]
+		].forEach(function(aArguments) {
+			vBaseObjectReturn = BaseObject.isA.apply(BaseObject, aArguments);
+			assert.ok(oBaseObjectIsA.calledWith(aArguments[0], aArguments[1]),
+				"sap.ui.base.Object#isA was called with the same parameters as TableUtils#isA");
+			assert.strictEqual(vBaseObjectReturn, TableUtils.isA.apply(TableUtils, aArguments),
+				"TableUtils#isA returns the same as sap.ui.base.Object#isA");
 		});
+
+		oBaseObjectIsA.restore();
 	});
 
 	QUnit.test("isFirstScrollableRow / isLastScrollableRow", function(assert) {
@@ -925,46 +923,46 @@ sap.ui.define([
 		/* Synchronous */
 
 		oBundle = TableUtils.getResourceBundle();
-		assert.ok(jQuery.sap.resources.isBundle(oBundle), "{async: false, reload: false} - Should return a bundle");
-		assert.strictEqual(TableUtils.getResourceBundle(), oBundle, "{async: false, reload: false} - Should return the already loaded bundle");
+		assert.ok(jQuery.sap.resources.isBundle(oBundle), "{async: false, reload: false} - Returned a bundle");
+		assert.strictEqual(TableUtils.getResourceBundle(), oBundle, "{async: false, reload: false} - Returned the already loaded bundle");
 
 		sap.ui.getCore().getConfiguration().setLanguage(sTestLanguageA);
 
 		oPreviousBundle = oBundle;
 		assert.strictEqual(TableUtils.getResourceBundle(), oBundle,
-			"{async: false, reload: false} (language changed) - Should return the already loaded bundle");
+			"{async: false, reload: false} (language changed) - Returned the already loaded bundle");
 		oBundle = TableUtils.getResourceBundle({reload: true});
 		assert.ok(oBundle !== oPreviousBundle && jQuery.sap.resources.isBundle(oBundle),
-			"{async: false, reload: true} - Should return a new bundle");
+			"{async: false, reload: true} - Returned a new bundle");
 		assert.strictEqual(TableUtils.getResourceBundle({reload: true}), oBundle,
-			"{async: false, reload: true} - Should return the already loaded bundle");
+			"{async: false, reload: true} - Returned the already loaded bundle");
 
 		/* Asynchronous */
 
 		sap.ui.getCore().getConfiguration().setLanguage(sTestLanguageB);
 
 		pPromise = TableUtils.getResourceBundle({async: true});
-		assert.ok(pPromise instanceof Promise, "{async: true, reload: false} (language changed) - Should return a Promise");
+		assert.ok(pPromise instanceof Promise, "{async: true, reload: false} (language changed) - Returned a Promise");
 		pPromise.then(function(_oBundle) {
 			oPreviousBundle = oBundle;
 			oBundle = _oBundle;
-			assert.strictEqual(oBundle, oPreviousBundle, "Promise should return the already loaded bundle");
+			assert.strictEqual(oBundle, oPreviousBundle, "Promise returned the already loaded bundle");
 
 			pPromise = TableUtils.getResourceBundle({async: true, reload: true});
-			assert.ok(pPromise instanceof Promise, "{async: true, reload: true} - Should return a Promise");
+			assert.ok(pPromise instanceof Promise, "{async: true, reload: true} - Returned a Promise");
 			return pPromise;
 		}).then(function(_oBundle) {
 			oPreviousBundle = oBundle;
 			oBundle = _oBundle;
-			assert.ok(oBundle !== oPreviousBundle && jQuery.sap.resources.isBundle(oBundle), "Promise should return a new bundle");
+			assert.ok(oBundle !== oPreviousBundle && jQuery.sap.resources.isBundle(oBundle), "Promise returned a new bundle");
 
 			pPromise = TableUtils.getResourceBundle({async: true, reload: true});
-			assert.ok(pPromise instanceof Promise, "{async: true, reload: true} - Should return a Promise");
+			assert.ok(pPromise instanceof Promise, "{async: true, reload: true} - Returned a Promise");
 			return pPromise;
 		}).then(function(_oBundle) {
 			oPreviousBundle = oBundle;
 			oBundle = _oBundle;
-			assert.strictEqual(oBundle, oPreviousBundle, "Promise should return the already loaded bundle");
+			assert.strictEqual(oBundle, oPreviousBundle, "Promise returned the already loaded bundle");
 		}).then(function() {
 			// Restore
 			sap.ui.getCore().getConfiguration().setLanguage(sOriginalLanguage);
@@ -987,30 +985,30 @@ sap.ui.define([
 
 		TableUtils.dynamicCall(oTestObject, function(vObject) {
 			bCallbackCalled = true;
-			assert.strictEqual(this, oTestObject, "Callback should be called with the default context");
-			assert.strictEqual(vObject, oTestObject, "The object should be passed to the callback");
+			assert.strictEqual(this, oTestObject, "Callback was called with the default context");
+			assert.strictEqual(vObject, oTestObject, "The object was passed to the callback");
 		});
-		assert.ok(bCallbackCalled, "Callback should be called, if the object exists");
+		assert.ok(bCallbackCalled, "The object exists, so the callback was called");
 		reset();
 
 		TableUtils.dynamicCall(undefined, function() {
 			bCallbackCalled = true;
 		});
-		assert.ok(!bCallbackCalled, "Callback should not be called, if the object does not exist");
+		assert.ok(!bCallbackCalled, "The object does not exist, so the callback was not called");
 		reset();
 
 		TableUtils.dynamicCall(function() {return oTestObject;}, function(vObject) {
 			bCallbackCalled = true;
-			assert.strictEqual(this, oTestContext, "Callback should be called with the specified context");
-			assert.strictEqual(vObject, oTestObject, "The object should be passed to the callback");
+			assert.strictEqual(this, oTestContext, "Callback was called with the specified context");
+			assert.strictEqual(vObject, oTestObject, "The object was passed to the callback");
 		}, oTestContext);
-		assert.ok(bCallbackCalled, "Callback should be called, if the object getter returns an object");
+		assert.ok(bCallbackCalled, "The object getter returns an object, so the callback was called");
 		reset();
 
 		TableUtils.dynamicCall(function() {return undefined;}, function() {
 			bCallbackCalled = true;
 		});
-		assert.ok(!bCallbackCalled, "Callback should not be called, if the object getter does not return an object");
+		assert.ok(!bCallbackCalled, "The object getter does not return an object, so the callback was not called");
 		reset();
 
 		TableUtils.dynamicCall(oTestObject, {
@@ -1019,18 +1017,18 @@ sap.ui.define([
 			funcB: [],
 			funcC: [""] // does not exist
 		});
-		assert.ok(oTestObject.funcA.calledOnce, "The function \"funcA\" should be called once");
-		assert.ok(oTestObject.funcA.calledWith(1, "2", undefined), "The function \"funcA\" should be called with the specified arguments");
-		assert.strictEqual(oTestObject.funcA.thisValues[0], oTestObject, "The function \"funcA\" should be called with the default context");
-		assert.ok(oTestObject.funcB.calledOnce, "The function \"funcB\" should be called once");
-		assert.ok(oTestObject.funcB.calledWith(), "The function \"funcB\" should be called with the specified arguments");
-		assert.strictEqual(oTestObject.funcB.thisValues[0], oTestObject, "The function \"funcB\" should be called with the default context");
+		assert.ok(oTestObject.funcA.calledOnce, "The function \"funcA\" was called once");
+		assert.ok(oTestObject.funcA.calledWith(1, "2", undefined), "The function \"funcA\" was called with the specified arguments");
+		assert.strictEqual(oTestObject.funcA.thisValues[0], oTestObject, "The function \"funcA\" was called with the default context");
+		assert.ok(oTestObject.funcB.calledOnce, "The function \"funcB\" was called once");
+		assert.ok(oTestObject.funcB.calledWith(), "The function \"funcB\" was called with the specified arguments");
+		assert.strictEqual(oTestObject.funcB.thisValues[0], oTestObject, "The function \"funcB\" was called with the default context");
 		reset();
 
 		TableUtils.dynamicCall(oTestObject, {
 			funcA: undefined
 		}, oTestContext);
-		assert.strictEqual(oTestObject.funcA.thisValues[0], oTestContext, "The function should be called with the specified context");
+		assert.strictEqual(oTestObject.funcA.thisValues[0], oTestContext, "The function was called with the specified context");
 	});
 
 	QUnit.module("Cozy", {
@@ -1092,7 +1090,8 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Register/Deregister", 17, function(assert) {
+	QUnit.test("Register/Deregister", function(assert) {
+		assert.expect(17);
 		var done = assert.async();
 		var sResizeHandlerId;
 		var fnTestOuter = function(oEvent) {
@@ -1385,5 +1384,418 @@ sap.ui.define([
 
 		$ParentCell = TableUtils.getParentCell(null, _getFirstInteractiveElement(getCell(0, iNumberOfCols - 1)));
 		assert.strictEqual($ParentCell, null, "No table passed: Null was returned");
+	});
+
+	QUnit.module("Debounce & Throttle", {
+		beforeEach: function() {
+			this.fnTestFunction = sinon.spy();
+		},
+		assert: function(assert, iCallCount, aLastArguments, oContext) {
+			assert.strictEqual(this.fnTestFunction.callCount, iCallCount, "The function was called " + iCallCount + " times");
+			if (iCallCount > 0 && iCallCount === this.fnTestFunction.callCount) {
+				if (oContext != null) {
+					assert.strictEqual(this.fnTestFunction.lastCall.thisValue, oContext, "Context (this) of the last call");
+				}
+				if (aLastArguments != null) {
+					assert.deepEqual(this.fnTestFunction.lastCall.args, aLastArguments,
+						"Arguments of the last call are [" + aLastArguments.join(", ") + "]");
+				}
+			}
+		},
+		testTimeout: function(assert, mOptions, bSecondTestRun) {
+			var that = this;
+
+			mOptions = mOptions != null ? mOptions : {};
+
+			var bLeading = mOptions.leading != null ? mOptions.leading : false;
+			var bAsyncLeading = mOptions.asyncLeading != null ? mOptions.asyncLeading : false;
+			var bTrailing = mOptions.trailing != null ? mOptions.trailing : true;
+
+			return new Promise(function(resolve) {
+				var oContext = {iAmThis: true};
+				var iCallCount;
+				var iArgument;
+				var iIntervalCount = 0;
+				var fnDebounced = TableUtils.debounce(that.fnTestFunction, 50, mOptions);
+				var iIntervalId;
+
+				fnDebounced(1);
+				fnDebounced(2);
+				if (bLeading) {
+					if (bAsyncLeading) {
+						that.assert(assert, 0);
+						Promise.resolve().then(function() {
+							// Leading asynchronous invocation.
+							that.assert(assert, 1, [1]);
+							iCallCount = 1;
+						});
+					} else {
+						// Leading synchronous invocation.
+						that.assert(assert, 1, [1]);
+						iCallCount = 1;
+					}
+				} else {
+					that.assert(assert, 0);
+					iCallCount = 0;
+				}
+				iArgument = 3;
+
+				iIntervalId = setInterval(function() {
+					iIntervalCount++;
+					fnDebounced.call(oContext, iArgument);
+					that.assert(assert, iCallCount);
+					iArgument++;
+
+					if (iIntervalCount === 9) {
+						clearInterval(iIntervalId);
+
+						setTimeout(function() {
+							if (bTrailing) {
+								// Trailing invocation.
+								that.assert(assert, iCallCount + 1, [iArgument - 1], oContext);
+							} else {
+								that.assert(assert, iCallCount);
+							}
+							if (bSecondTestRun) {
+								resolve();
+							} else {
+								// Run the test again to see if the debounced function works correctly in subsequent executions as well.
+								that.fnTestFunction.reset();
+								that.testTimeout(assert, mOptions, true)
+									.then(resolve);
+							}
+						}, 60);
+					}
+				}, 10);
+			});
+		},
+		testAnimationFrame: function(assert, mOptions, bSecondTestRun) {
+			var that = this;
+
+			mOptions = mOptions != null ? mOptions : {};
+
+			var bLeading = mOptions.leading != null ? mOptions.leading : false;
+			var bAsyncLeading = mOptions.asyncLeading != null ? mOptions.asyncLeading : false;
+			var bTrailing = mOptions.trailing != null ? mOptions.trailing : true;
+
+			return new Promise(function(resolve) {
+				var oContext = {iAmThis: true};
+				var iCallCount = 0;
+				var fnDebounced = TableUtils.debounce(that.fnTestFunction, null, mOptions);
+
+				fnDebounced("test", "animation", "frame", 1);
+				fnDebounced("test", "animation", "frame", 2);
+				if (bLeading) {
+					if (bAsyncLeading) {
+						that.assert(assert, 0);
+						Promise.resolve().then(function() {
+							// Leading asynchronous invocation.
+							that.assert(assert, 1, ["test", "animation", "frame", 1]);
+							iCallCount = 1;
+						});
+					} else {
+						// Leading synchronous invocation.
+						that.assert(assert, 1, ["test", "animation", "frame", 1]);
+						iCallCount = 1;
+					}
+				} else {
+					that.assert(assert, 0);
+					iCallCount = 0;
+				}
+
+				fnDebounced.call(oContext, "animation frame");
+				that.assert(assert, iCallCount);
+
+				window.requestAnimationFrame(function() {
+					if (bTrailing) {
+						iCallCount++;
+						// Trailing invocation.
+						that.assert(assert, iCallCount, ["animation frame"], oContext);
+					} else {
+						that.assert(assert, iCallCount);
+					}
+
+					if (bSecondTestRun) {
+						setTimeout(function() {
+							that.assert(assert, iCallCount);
+							resolve();
+						}, 100);
+					} else {
+						// Run the test again to see if the debounced function works correctly in subsequent executions as well.
+						that.fnTestFunction.reset();
+						that.testAnimationFrame(assert, mOptions, true)
+							.then(resolve);
+					}
+				});
+			});
+		}
+	});
+
+	QUnit.test("Debounce - Timeout, Default Options", function(assert) {
+		var done = assert.async();
+
+		assert.expect(26);
+		this.testTimeout(assert)
+			.then(done);
+	});
+
+	QUnit.test("Debounce - Timeout, {leading: true}", function(assert) {
+		var done = assert.async();
+
+		assert.expect(28);
+		this.testTimeout(assert, {
+			leading: true
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - Timeout, {trailing: false}", function(assert) {
+		var done = assert.async();
+
+		assert.expect(22);
+		this.testTimeout(assert, {
+			trailing: false
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - Timeout, {leading: true, trailing: false}", function(assert) {
+		var done = assert.async();
+
+		assert.expect(24);
+		this.testTimeout(assert, {
+			leading: true,
+			trailing: false
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - Timeout, {asyncLeading: true}", function(assert) {
+		var done = assert.async();
+
+		assert.expect(26);
+		this.testTimeout(assert, {
+			asyncLeading: true
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - Timeout, {leading: true, asyncLeading: true}", function(assert) {
+		var done = assert.async();
+
+		assert.expect(30);
+		this.testTimeout(assert, {
+			leading: true,
+			asyncLeading: true
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - Timeout with maxWait, {leading: true}", function(assert) {
+		var done = assert.async();
+		var that = this;
+		var oContext = {iAmThis: true};
+		var fnDebounced = TableUtils.debounce(that.fnTestFunction, 50, {
+			leading: true,
+			maxWait: 100
+		});
+		var iIntervalId;
+
+		assert.expect(20);
+
+		function test() {
+			return new Promise(function(resolve) {
+				var iArgument = 1;
+				var iIntervalCount = 0;
+
+				fnDebounced(1);
+				// Leading synchronous invocation.
+				that.assert(assert, 1, [iArgument]);
+
+				iIntervalId = setInterval(function() {
+					iIntervalCount++;
+					iArgument++;
+					fnDebounced.call(oContext, iArgument);
+
+					if (iIntervalCount === 13) {
+						clearInterval(iIntervalId);
+
+						setTimeout(function() {
+							// Trailing invocation.
+							that.assert(assert, 3, [iArgument], oContext);
+						}, 60);
+
+						setTimeout(function() {
+							that.assert(assert, 3);
+							resolve();
+						}, 160);
+					}
+				}, 10);
+
+				setTimeout(function() {
+					that.assert(assert, 1);
+				}, 90);
+
+				setTimeout(function() {
+					// maxWait invocation.
+					that.assert(assert, 2, undefined /* hardly predictable */, oContext);
+				}, 110);
+
+				setTimeout(function() {
+					that.assert(assert, 2);
+				}, 120);
+			});
+		}
+
+		test().then(function() {
+			// Run the test again to see if the debounced function works correctly in subsequent executions as well.
+			that.fnTestFunction.reset();
+			return test();
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - Timeout, Cancellation, Pending", function(assert) {
+		var done = assert.async();
+		var that = this;
+		var fnDebounced = TableUtils.debounce(that.fnTestFunction, 20);
+
+		fnDebounced();
+		assert.ok(fnDebounced.pending(), "Debounce is pending");
+
+		setTimeout(function() {
+			fnDebounced.cancel();
+			assert.ok(!fnDebounced.pending(), "Debounce is not pending after cancellation");
+		}, 0);
+
+		setTimeout(function() {
+			assert.ok(that.fnTestFunction.notCalled, "The function is not called if debounce was cancelled");
+			fnDebounced();
+			assert.ok(fnDebounced.pending(), "Debounce is pending");
+
+			setTimeout(function() {
+				assert.ok(!fnDebounced.pending(), "Debounce function is not pending after invocation");
+				that.assert(assert, 1);
+				done();
+			}, 30);
+		}, 30);
+	});
+
+	QUnit.test("Debounce - AnimationFrame, Default Options", function(assert) {
+		var done = assert.async();
+
+		assert.expect(11);
+		this.testAnimationFrame(assert)
+			.then(done);
+	});
+
+	QUnit.test("Debounce - AnimationFrame, {leading: true}", function(assert) {
+		var done = assert.async();
+
+		assert.expect(13);
+		this.testAnimationFrame(assert, {
+			leading: true
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - AnimationFrame, {trailing: false}", function(assert) {
+		var done = assert.async();
+
+		assert.expect(7);
+		this.testAnimationFrame(assert, {
+			trailing: false
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - AnimationFrame, {leading: true, trailing: false}", function(assert) {
+		var done = assert.async();
+
+		assert.expect(9);
+		this.testAnimationFrame(assert, {
+			leading: true,
+			trailing: false
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - AnimationFrame, {asyncLeading: true}", function(assert) {
+		var done = assert.async();
+
+		assert.expect(11);
+		this.testAnimationFrame(assert, {
+			asyncLeading: true
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - AnimationFrame, {leading: true, asyncLeading: true}", function(assert) {
+		var done = assert.async();
+
+		assert.expect(15);
+		this.testAnimationFrame(assert, {
+			leading: true,
+			asyncLeading: true
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - AnimationFrame with maxWait, {leading: true}", function(assert) {
+		var done = assert.async();
+
+		assert.expect(13);
+		this.testAnimationFrame(assert, {
+			leading: true,
+			maxWait: 5
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - AnimationFrame, Cancellation, Pending", function(assert) {
+		var done = assert.async();
+		var that = this;
+		var fnDebounced = TableUtils.debounce(that.fnTestFunction);
+
+		fnDebounced();
+		assert.ok(fnDebounced.pending(), "Debounce is pending");
+		fnDebounced.cancel();
+		assert.ok(!fnDebounced.pending(), "Debounce is not pending after cancellation");
+
+		window.requestAnimationFrame(function() {
+			assert.ok(that.fnTestFunction.notCalled, "The function is not called if debounce was cancelled");
+			fnDebounced();
+			assert.ok(fnDebounced.pending(), "Debounce is pending");
+
+			window.requestAnimationFrame(function() {
+				assert.ok(!fnDebounced.pending(), "Debounce is not pending after invocation");
+				that.assert(assert, 1);
+				done();
+			});
+		});
+	});
+
+	QUnit.test("Throttle", function(assert) {
+		var oDebounceSpy = sinon.spy(TableUtils, "debounce");
+		var fnFunction = function() {};
+
+		// Because throttle is just a special case of debounce, we only check whether debounce is called with the correct parameters.
+
+		TableUtils.throttle(fnFunction);
+		assert.ok(oDebounceSpy.calledWith(fnFunction, undefined, {
+			leading: true,
+			trailing: true,
+			maxWait: undefined
+		}), "Throttle calls debounce with the correct parameters");
+
+		TableUtils.throttle(fnFunction, 50);
+		assert.ok(oDebounceSpy.calledWith(fnFunction, 50, {
+			leading: true,
+			trailing: true,
+			maxWait: 50
+		}), "Throttle calls debounce with the correct parameters");
+
+		TableUtils.throttle(fnFunction, null, {maxWait: 100});
+		assert.ok(oDebounceSpy.calledWith(fnFunction, null, {
+			leading: true,
+			trailing: true,
+			maxWait: null
+		}), "Throttle calls debounce with the correct parameters");
+
+		TableUtils.throttle(fnFunction, 50, {leading: false, trailing: false, asyncLeading: true, maxWait: 100});
+		assert.ok(oDebounceSpy.calledWith(fnFunction, 50, {
+			leading: false,
+			trailing: false,
+			asyncLeading: true,
+			maxWait: 50
+		}), "Throttle calls debounce with the correct parameters");
 	});
 });

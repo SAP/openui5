@@ -3,8 +3,15 @@
  */
 
 // Provides class sap.ui.model.odata.v2.ODataAnnotations
-sap.ui.define(['sap/ui/model/odata/AnnotationParser', 'sap/ui/Device', 'sap/ui/base/EventProvider', 'sap/ui/core/cache/CacheManager', "sap/base/assert"],
-	function(AnnotationParser, Device, EventProvider, CacheManager, assert) {
+sap.ui.define([
+	'sap/ui/model/odata/AnnotationParser',
+	'sap/ui/Device',
+	'sap/ui/base/EventProvider',
+	'sap/ui/core/cache/CacheManager',
+	"sap/base/assert",
+	"sap/ui/thirdparty/jquery"
+],
+	function(AnnotationParser, Device, EventProvider, CacheManager, assert, jQuery) {
 	"use strict";
 
 	///////////////////////////////////////////////// Class Definition /////////////////////////////////////////////////
@@ -43,10 +50,13 @@ sap.ui.define(['sap/ui/model/odata/AnnotationParser', 'sap/ui/Device', 'sap/ui/b
 			this._pLoaded = oMetadata.loaded();
 			this._mCustomHeaders = {};
 			this._mAnnotations = {};
+			this._hasErrors = false;
 
 			function writeCache(aResults) {
-				// write annotations to cache
-				CacheManager.set(that.sCacheKey, JSON.stringify(aResults));
+				// write annotations to cache if no errors occured
+				if (!that._hasErrors) {
+					CacheManager.set(that.sCacheKey, JSON.stringify(aResults));
+				}
 			}
 
 			if (!mOptions || !mOptions.skipMetadata) {
@@ -251,6 +261,7 @@ sap.ui.define(['sap/ui/model/odata/AnnotationParser', 'sap/ui/Device', 'sap/ui/b
 					return oResult instanceof Error;
 				});
 				if (aErrors.length > 0) {
+					that._hasErrors = true;
 					if (aErrors.length !== aResults.length) {
 						that._fireSomeLoaded(aResults);
 						that._fireFailed(aResults);

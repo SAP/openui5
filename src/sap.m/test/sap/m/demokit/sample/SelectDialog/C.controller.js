@@ -36,6 +36,10 @@ sap.ui.define([
 			var bRemember = !!oEvent.getSource().data("remember");
 			this._oDialog.setRememberSelections(bRemember);
 
+			//add Clear button if needed
+			var bShowClearButton = !!oEvent.getSource().data("showClearButton");
+			this._oDialog.setShowClearButton(bShowClearButton);
+
 			// Set growing property
 			var bGrowing = oEvent.getSource().data("growing");
 			this._oDialog.setGrowing(bGrowing == "true");
@@ -69,9 +73,39 @@ sap.ui.define([
 				MessageToast.show("No new item was selected.");
 			}
 			oEvent.getSource().getBinding("items").filter([]);
+		},
+
+		handleValueHelp : function() {
+			var sInputValue = this.byId("productInput").getValue(),
+				oModel = this.getView().getModel(),
+				aProducts = oModel.getProperty("/ProductCollection");
+
+			if (!this._oValueHelpDialog) {
+				this._oValueHelpDialog = sap.ui.xmlfragment("sap.m.sample.SelectDialog.ValueHelp",this);
+				this.getView().addDependent(this._oValueHelpDialog);
+			}
+
+			aProducts.forEach(function (oProduct) {
+				oProduct.selected = (oProduct.Name === sInputValue);
+			});
+			oModel.setProperty("/ProductCollection", aProducts);
+
+			this._oValueHelpDialog.open();
+		},
+
+		handleValueHelpClose : function (oEvent) {
+			var oSelectedItem = oEvent.getParameter("selectedItem"),
+				oInput = this.byId("productInput");
+
+			if (oSelectedItem) {
+				this.byId("productInput").setValue(oSelectedItem.getTitle());
+			}
+
+			if (!oSelectedItem) {
+				oInput.resetProperty("");
+			}
 		}
 	});
-
 
 	return CController;
 

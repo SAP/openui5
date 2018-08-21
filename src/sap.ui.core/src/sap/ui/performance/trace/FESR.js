@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define([
 	'sap/ui/thirdparty/URI',
 	'sap/ui/Device',
@@ -153,6 +149,7 @@ sap.ui.define([
 
 	/**
 	 * @namespace FESR API, consumed by E2eTraceLib instead of former EppLib.js <br>
+	 * @alias module:sap/ui/performance/trace/FESR
 	 *<p>
 	 * Provides functionality for creating the headers for the frontend-subrecords which will be sent with each
 	 * first request of an interaction. The headers have a specific format, you may have a look at the createFESR
@@ -168,13 +165,14 @@ sap.ui.define([
 	 * ...<br>
 	 *</p>
 	 * @static
-	 * @private
+	 * @public
 	 */
 	var FESR = {};
 
 	/**
 	 * @param {boolean} bActive State of the FESR header creation
 	 * @private
+	 * @ui5-restricted sap.ui.core
 	 */
 	FESR.setActive = function (bActive) {
 		if (bActive) {
@@ -207,6 +205,7 @@ sap.ui.define([
 	/**
 	 * @return {boolean} State of the FESR header creation
 	 * @private
+	 * @ui5-restricted sap.ui.core
 	 */
 	FESR.getActive = function () {
 		return bFesrActive;

@@ -32,18 +32,18 @@
 
 		<!-- Header Content -->
 		<semantic:headerContent>
-			<FlexBox
-					alignItems="Start"
-					justifyContent="SpaceBetween">
-				<items>
-					<layout:VerticalLayout class="sapUiMediumMarginEnd">
-						<ObjectAttribute title="Functional Area" text="{/objectDescription/category}"/>
-						<ObjectAttribute title="Cost Center" text="{/objectDescription/center}"/>
-						<ObjectAttribute title="Email" text="{/objectDescription/email}"/>
-					</layout:VerticalLayout>
+			<layout:HorizontalLayout allowWrapping="true">
+				<layout:VerticalLayout class="sapUiMediumMarginEnd">
+					<ObjectAttribute title="Functional Area" text="{/objectDescription/category}"/>
+					<ObjectAttribute title="Cost Center" text="{/objectDescription/center}"/>
+					<ObjectAttribute title="Email" text="{/objectDescription/email}"/>
+				</layout:VerticalLayout>
+
+				<layout:VerticalLayout>
+					<ObjectAttribute title="Availability"/>
 					<ObjectStatus text="In Stock" state="{/objectDescription/status}" />
-				</items>
-			</FlexBox>
+				</layout:VerticalLayout>
+			</layout:HorizontalLayout>
 		</semantic:headerContent>
 
 		<!-- Content -->

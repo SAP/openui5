@@ -3,11 +3,11 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'./Core',
 	'./Component',
-	"sap/base/Log",
-	"sap/base/util/ObjectPath"
+	'sap/base/Log',
+	'sap/base/util/ObjectPath'
 ],
 	function(jQuery, Core, Component, Log, ObjectPath) {
 	"use strict";
@@ -98,8 +98,7 @@ sap.ui.define([
 			activateForComponent: function(sComponentName) {
 				Log.info("CustomizingConfiguration: activateForComponent('" + sComponentName + "')");
 				var sFullComponentName = sComponentName + ".Component";
-				//TODO: global jquery call found
-				jQuery.sap.require(sFullComponentName);
+				sap.ui.requireSync(sFullComponentName.replace(/\./g, "/"));
 				var oCustomizingConfig = ObjectPath.get(sFullComponentName).getMetadata().getCustomizing();
 				mComponentConfigs[sComponentName] = oCustomizingConfig;
 
@@ -244,7 +243,7 @@ sap.ui.define([
 						mSettings = oConfig[sViewName];
 					}
 				});
-				return (!jQuery.isEmptyObject(mSettings));
+				return !jQuery.isEmptyObject(mSettings);
 			}
 
 		};

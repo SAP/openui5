@@ -14,9 +14,13 @@
 	</script>
 	<script>
 		sap.ui.getCore().attachInit(function () {
-			new sap.m.Text({
-				text: "Hello World"
-			}).placeAt("content");
+			sap.ui.require([
+				"sap/m/Text"
+			], function (Text) {
+				new Text({
+					text: "Hello World"
+				}).placeAt("content");
+			});
 		});
 	</script>
 </head>

@@ -1,0 +1,13 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "52f4ee4441ebb01f3df8fa70fd135346647360e2",
+        "type": "FEATURE",
+        "text": " ManagedObject: support hidden properties and associations",
+        "references": []
+      }
+    ]
+  }
+}

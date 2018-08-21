@@ -4,13 +4,13 @@
 
 // Provides control sap.ui.core.mvc.JSView.
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'./View',
 	'./JSViewRenderer',
 	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/library',
-	"sap/base/Log"
+	'sap/base/Log'
 ],
 	function(jQuery, View, JSViewRenderer, merge, ManagedObject, library, Log) {
 	"use strict";
@@ -165,8 +165,7 @@ sap.ui.define([
 		} else if (vView && typeof (vView) == "object") { // definition sap.ui.jsview("name",definitionObject)
 			// sId is not given, but contains the desired value of sViewName
 			mRegistry[sId] = vView;
-			//TODO: global jquery call found
-			jQuery.sap.declare({modName:sId,type:"view"}, false);
+			sap.ui.loader._.declareModule(sId.replace(/\./g, "/") + ".view.js");
 			Log.info("For defining views use JSView.extend instead.");
 		} else if (arguments.length == 1 && typeof sId == "string" ||
 			arguments.length == 2 && typeof arguments[0] == "string" && typeof arguments[1] == "boolean") { // instantiation sap.ui.jsview("name", [async])
@@ -187,8 +186,7 @@ sap.ui.define([
 
 		// require view definition if not yet done...
 		if (!mRegistry[mSettings.viewName]) {
-			//TODO: global jquery call found
-			var sModuleName = jQuery.sap.getResourceName(mSettings.viewName, ".view");
+			var sModuleName = mSettings.viewName.replace(/\./g, "/") + ".view";
 			if ( mSettings.async ) {
 				oPromise = new Promise(function(resolve) {
 					sap.ui.require([sModuleName], resolve);

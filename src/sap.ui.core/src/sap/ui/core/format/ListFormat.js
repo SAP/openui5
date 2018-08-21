@@ -3,8 +3,13 @@
  */
 
 // Provides class sap.ui.core.format.ListFormat
-sap.ui.define(['sap/ui/core/Locale', 'sap/ui/core/LocaleData', "sap/base/Log"],
-	function(Locale, LocaleData, Log) {
+sap.ui.define([
+	'sap/ui/core/Locale',
+	'sap/ui/core/LocaleData',
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+],
+	function(Locale, LocaleData, Log, jQuery) {
 	"use strict";
 
 	/**

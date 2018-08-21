@@ -1,7 +1,9 @@
 /**
  * Control which contains Simple aggregations
  */
-sap.ui.define(['sap/ui/core/Control'], function(Control){
+sap.ui.define(['sap/ui/core/Control'], function(Control) {
+	"use strict";
+
 	var SimpleAggregationsControl = Control.extend("sap.ui.core.qunit.mvc.viewprocessing.SimpleAggregationsControl", {
 		library: "sap.ui.core.qunit.mvc.viewprocessing",
 		metadata: {

@@ -8,19 +8,18 @@
  * @version @version@
  */
 sap.ui.define([
+	"./SalesOrdersSandbox",
 	"jquery.sap.global",
 	"sap/m/HBox",
-	"sap/ui/core/mvc/View", // sap.ui.view()
-	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/UIComponent",
+	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/ViewType",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/ODataModel",
-	"sap/ui/test/TestUtils",
-	"sap/ui/thirdparty/URI",
-	"./SalesOrdersSandbox"
-], function (jQuery, HBox, View, ViewType, UIComponent, JSONModel, OperationMode, ODataModel,
-		TestUtils, URI, SalesOrdersSandbox) {
+	"sap/ui/test/TestUtils"
+], function (SalesOrdersSandbox, jQuery, HBox, UIComponent, View, ViewType, JSONModel,
+		OperationMode, ODataModel, TestUtils) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.core.sample.odata.v4.SalesOrders.Component", {

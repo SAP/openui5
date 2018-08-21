@@ -2,26 +2,17 @@
  * ${copyright}
  */
 sap.ui.require([
-    "jquery.sap.global",
-    "sap/ui/base/SyncPromise",
-    "sap/ui/core/format/DateFormat",
-    "sap/ui/model/odata/ODataUtils",
-    "sap/ui/model/odata/v4/lib/_Helper",
-    "sap/ui/model/odata/v4/lib/_Parser",
-    "sap/ui/model/odata/v4/lib/_Requestor",
-    "sap/ui/model/odata/v4/lib/_V2Requestor",
-    "sap/base/Log"
-], function(
-    jQuery,
-	SyncPromise,
-	DateFormat,
-	ODataUtils,
-	_Helper,
-	_Parser,
-	_Requestor,
-	asV2Requestor,
-	Log
-) {
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/ui/base/SyncPromise",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/model/odata/v4/lib/_Parser",
+	"sap/ui/model/odata/v4/lib/_Requestor",
+	"sap/ui/model/odata/v4/lib/_V2Requestor"
+], function (jQuery, Log, SyncPromise, DateFormat, ODataUtils, _Helper, _Parser, _Requestor,
+		asV2Requestor) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";

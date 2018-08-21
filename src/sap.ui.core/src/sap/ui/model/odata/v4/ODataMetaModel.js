@@ -4,42 +4,27 @@
 
 //Provides class sap.ui.model.odata.v4.ODataMetaModel
 sap.ui.define([
+	"./ValueListType",
+	"./lib/_Helper",
+	"sap/base/assert",
+	"sap/base/Log",
+	"sap/base/util/ObjectPath",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ClientListBinding",
-	"sap/ui/model/ContextBinding",
 	"sap/ui/model/Context",
+	"sap/ui/model/ContextBinding",
 	"sap/ui/model/MetaModel",
+	"sap/ui/model/PropertyBinding",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/type/Int64",
 	"sap/ui/model/odata/type/Raw",
-	"sap/ui/model/PropertyBinding",
-	"sap/ui/thirdparty/URI",
-	"./lib/_Helper",
-	"./ValueListType",
-	"sap/base/Log",
-	"sap/base/assert",
-	"sap/base/util/ObjectPath"
-], function(
-	SyncPromise,
-	BindingMode,
-	ChangeReason,
-	ClientListBinding,
-	ContextBinding,
-	BaseContext,
-	MetaModel,
-	OperationMode,
-	Int64,
-	Raw,
-	PropertyBinding,
-	URI,
-	_Helper,
-	ValueListType,
-	Log,
-	assert,
-	ObjectPath
-) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/URI"
+], function (ValueListType, _Helper, assert, Log, ObjectPath, SyncPromise, BindingMode,
+		ChangeReason, ClientListBinding, BaseContext, ContextBinding, MetaModel, PropertyBinding,
+		OperationMode, Int64, Raw, jQuery, URI) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
 
@@ -131,9 +116,9 @@ sap.ui.define([
 			sUrl0 = Object.keys(mUrls)[0];
 			if (mUrls[sUrl0]) {
 				// document already processed, no different URLs allowed
-				logAndThrowError("A schema cannot span more than one document: " + sSchema
-					+ " - expected reference URI " + sUrl0
-					+ " but instead saw " + sReferenceUri, sDocumentUri);
+				reportAndThrowError(oMetaModel, "A schema cannot span more than one document: "
+					+ sSchema + " - expected reference URI " + sUrl0 + " but instead saw "
+					+ sReferenceUri, sDocumentUri);
 			}
 			mUrls[sReferenceUri] = false;
 		}
@@ -196,8 +181,8 @@ sap.ui.define([
 		if (mUrls) {
 			aUrls = Object.keys(mUrls);
 			if (aUrls.length > 1) {
-				logAndThrowError("A schema cannot span more than one document: schema is referenced"
-					+ " by following URLs: " + aUrls.join(", "), sSchema);
+				reportAndThrowError(oMetaModel, "A schema cannot span more than one document: "
+					+ "schema is referenced by following URLs: " + aUrls.join(", "), sSchema);
 			}
 
 			sUrl = aUrls[0];
@@ -241,20 +226,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Logs an error with the given message and details and throws it.
-	 *
-	 * @param {string} sMessage
-	 *   Error message
-	 * @param {string} sDetails
-	 *   Error details
-	 * @throws {Error}
-	 */
-	function logAndThrowError(sMessage, sDetails) {
-		Log.error(sMessage, sDetails, sODataMetaModel);
-		throw new Error(sDetails + ": " + sMessage);
-	}
-
-	/**
 	 * Merges the given schema's annotations into the root scope's $Annotations.
 	 *
 	 * @param {object} oSchema
@@ -293,6 +264,24 @@ sap.ui.define([
 			extend(mAnnotations[sTarget], oSchema.$Annotations[sTarget]);
 		}
 		delete oSchema.$Annotations;
+	}
+
+	/**
+	 * Reports an error with the given message and details and throws it.
+	 *
+	 * @param {sap.ui.model.odata.v4.ODataMetaModel} oMetaModel
+	 *   The OData metadata model
+	 * @param {string} sMessage
+	 *   Error message
+	 * @param {string} sDetails
+	 *   Error details
+	 * @throws {Error}
+	 */
+	function reportAndThrowError(oMetaModel, sMessage, sDetails) {
+		var oError = new Error(sDetails + ": " + sMessage);
+
+		oMetaModel.oModel.reportError(sMessage, sODataMetaModel, oError);
+		throw oError;
 	}
 
 	/**
@@ -589,6 +578,7 @@ sap.ui.define([
 	 *   This model is read-only.
 	 *
 	 * @extends sap.ui.model.MetaModel
+	 * @hideconstructor
 	 * @public
 	 * @since 1.37.0
 	 * @version ${version}
@@ -670,7 +660,7 @@ sap.ui.define([
 			for (sQualifiedName in mAnnotationScope) {
 				if (sQualifiedName[0] !== "$") {
 					if (sQualifiedName in mScope) {
-						logAndThrowError("A schema cannot span more than one document: "
+						reportAndThrowError(that, "A schema cannot span more than one document: "
 							+ sQualifiedName, that.aAnnotationUris[i]);
 					}
 					oElement = mAnnotationScope[sQualifiedName];
@@ -796,6 +786,20 @@ sap.ui.define([
 					+ " does not point to an entity. It should be " + oResult.entityPath);
 			}
 			return "/" + oResult.editUrl;
+		});
+	};
+
+	/**
+	 * Requests the metadata.
+	 *
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise which is resolved with the requested metadata as soon as it is available
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype.fetchData = function () {
+		return this.fetchEntityContainer().then(function (mScope) {
+			return JSON.parse(JSON.stringify(mScope));
 		});
 	};
 
@@ -1628,6 +1632,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a snapshot of each $metadata or annotation file loaded so far, combined into a
+	 * single "JSON" object according to the streamlined OData V4 Metadata JSON Format.
+	 *
+	 * @returns {object}
+	 *   The OData metadata as a "JSON" object, if it is already available, or
+	 *   <code>undefined</code>.
+	 *
+	 * @function
+	 * @public
+	 * @see #requestData
+	 * @since 1.59.0
+	 */
+	ODataMetaModel.prototype.getData = _Helper.createGetMethod("fetchData");
+
+	/**
 	 * Returns a map of entity tags for each $metadata or annotation file loaded so far.
 	 *
 	 * @returns {object}
@@ -1848,6 +1867,28 @@ sap.ui.define([
 	ODataMetaModel.prototype.refresh = function () {
 		throw new Error("Unsupported operation: v4.ODataMetaModel#refresh");
 	};
+
+	/**
+	 * Requests a snapshot of each $metadata or annotation file loaded so far, combined into a
+	 * single "JSON" object according to the streamlined OData V4 Metadata JSON Format. It is a
+	 * map from all currently known qualified names to their values, with the special key
+	 * "$EntityContainer" mapped to the root entity container's qualified name as a starting point.
+	 * See {@link topic:87aac894a40640f89920d7b2a414499b OData V4 Metadata JSON Format}.
+	 *
+	 * Note that this snapshot may change due to load-on-demand of "cross-service references" (see
+	 * parameter <code>supportReferences</code> of
+	 * {@link sap.ui.model.odata.v4.ODataModel#constructor}).
+	 *
+	 * @returns {Promise}
+	 *   A promise which is resolved with the OData metadata as a "JSON" object as soon as it is
+	 *   available.
+	 *
+	 * @function
+	 * @public
+	 * @see #getData
+	 * @since 1.59.0
+	 */
+	ODataMetaModel.prototype.requestData = _Helper.createRequestMethod("fetchData");
 
 	/**
 	 * Requests the metadata value for the given path relative to the given context. Returns a
@@ -2326,13 +2367,13 @@ sap.ui.define([
 			sReferenceUri = new URI(sReferenceUri).absoluteTo(this.sUrl).toString();
 
 			if ("$IncludeAnnotations" in oReference) {
-				logAndThrowError("Unsupported IncludeAnnotations", sUrl);
+				reportAndThrowError(this, "Unsupported IncludeAnnotations", sUrl);
 			}
 			for (i in oReference.$Include) {
 				sSchema = oReference.$Include[i];
 				if (sSchema in mScope) {
-					logAndThrowError("A schema cannot span more than one document: " + sSchema
-						+ " - is both included and defined",
+					reportAndThrowError(this, "A schema cannot span more than one document: "
+						+ sSchema + " - is both included and defined",
 						sUrl);
 				}
 				addUrlForSchema(this, sSchema, sReferenceUri, sUrl);

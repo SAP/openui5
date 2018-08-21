@@ -19,7 +19,8 @@ sap.ui.define([
 	'sap/ui/core/LocaleData',
 	'./TimePickerRenderer',
 	"sap/ui/events/KeyCodes",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	InputBase,
@@ -37,7 +38,8 @@ function(
 	LocaleData,
 	TimePickerRenderer,
 	KeyCodes,
-	Log
+	Log,
+	jQuery
 ) {
 		"use strict";
 
@@ -1338,6 +1340,7 @@ function(
 			if (oTimePicker._checkStyle(sDisplayFormat)) {
 				sMask = LocaleData.getInstance(oLocale).getTimePattern(sDisplayFormat);
 			} else {
+				sDisplayFormat = sDisplayFormat.replace(/'/g, ""); // single quotes (like 'ч') are irrelevant for DateFormat, so they are for the mask
 				sMask = sDisplayFormat;
 			}
 

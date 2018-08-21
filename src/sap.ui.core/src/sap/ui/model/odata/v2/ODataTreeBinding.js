@@ -16,7 +16,8 @@ sap.ui.define([
 	'sap/ui/model/FilterProcessor',
 	'sap/ui/model/FilterType',
 	"sap/base/Log",
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		TreeBinding,
@@ -31,7 +32,8 @@ sap.ui.define([
 		FilterProcessor,
 		FilterType,
 		Log,
-		assert
+		assert,
+		jQuery
 	) {
 	"use strict";
 
@@ -902,7 +904,7 @@ sap.ui.define([
 		for (var i = 0; i < aData.length; i++) {
 			var sID = aData[i][this.oTreeProperties["hierarchy-node-for"]];
 			if (mParentKeys[sID]) {
-				jQuery.sap.log.warning("ODataTreeBinding: Duplicate key: " + sID + "!");
+				Log.warning("ODataTreeBinding: Duplicate key: " + sID + "!");
 			}
 			mParentKeys[sID] = this.oModel._getKey(aData[i]);
 
@@ -1016,12 +1018,10 @@ sap.ui.define([
 			}
 
 			var fnSuccess = function (oData) {
-
-				var sParentKey = this.oModel.getKey(oData.results[0]);
-
 				// Collecting contexts
 				// beware: oData.results can be an empty array -> so the length has to be checked
-				if (Array.isArray(oData.results) && oData.results.length > 0) {
+				if (oData.results.length > 0) {
+					var sParentKey = this.oModel.getKey(oData.results[0]);
 					this._updateNodeKey(oNode, sParentKey);
 					var mKeys = this._createKeyMap(oData.results);
 					this._importCompleteKeysHierarchy(mKeys);

@@ -1,0 +1,23 @@
+<mvc:View
+	controllerName="view.Main"
+	xmlns:l="sap.ui.layout"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:content>
+		<List
+			id="myList"
+			enableBusyIndicator="true"
+			busyIndicatorDelay="100">
+			<StandardListItem
+				title="This is the only list item"
+				description="This is some description" />
+		</List>
+			<Button
+				text="Toggle table busy indicator"
+				press="toggleBusyIndicator" />
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

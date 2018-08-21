@@ -15,7 +15,8 @@ sap.ui.define([
 	'sap/ui/core/Locale',
 	"./TimesRowRenderer",
 	"sap/ui/dom/containsOrEquals",
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Control,
 	LocaleData,
@@ -28,7 +29,8 @@ sap.ui.define([
 	Locale,
 	TimesRowRenderer,
 	containsOrEquals,
-	deepEqual
+	deepEqual,
+	jQuery
 ) {
 	"use strict";
 

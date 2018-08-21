@@ -10,7 +10,8 @@ sap.ui.define([
 	'sap/ui/core/Icon',
 	'./SlideTileRenderer',
 	"sap/ui/events/KeyCodes",
-	"sap/ui/events/PseudoEvents"
+	"sap/ui/events/PseudoEvents",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		library,
@@ -20,7 +21,8 @@ sap.ui.define([
 		Icon,
 		SlideTileRenderer,
 		KeyCodes,
-		PseudoEvents
+		PseudoEvents,
+		jQuery
 	) {
 	"use strict";
 

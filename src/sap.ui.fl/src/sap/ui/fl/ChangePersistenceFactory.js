@@ -58,7 +58,7 @@ sap.ui.define([
 	ChangePersistenceFactory.getChangePersistenceForControl = function(oControl) {
 		var sComponentId;
 		sComponentId = this._getComponentClassNameForControl(oControl);
-		var sAppVersion = Utils.getAppVersionFromManifest(Utils.getAppComponentForControl(oControl).getManifest());
+		var sAppVersion = Utils.getAppVersionFromManifest(Utils.getAppComponentForControl(oControl, true).getManifest());
 		return ChangePersistenceFactory.getChangePersistenceForComponent(sComponentId, sAppVersion);
 	};
 
@@ -154,7 +154,7 @@ sap.ui.define([
 
 		var oChangePersistenceWrapper = this._doLoadComponent(oConfig, oManifest);
 		oChangePersistenceWrapper.oRequestOptions.componentData = {};
-		jQuery.extend(oChangePersistenceWrapper.oRequestOptions.componentData, oConfig.componentData);
+		Object.assign(oChangePersistenceWrapper.oRequestOptions.componentData, oConfig.componentData);
 
 		oChangePersistenceWrapper.oChangePersistence.getChangesForComponent(oChangePersistenceWrapper.oRequestOptions);
 	};

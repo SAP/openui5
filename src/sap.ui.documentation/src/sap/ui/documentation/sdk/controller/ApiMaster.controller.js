@@ -6,9 +6,12 @@
 sap.ui.define([
 		"sap/ui/Device",
 		"sap/ui/documentation/sdk/controller/MasterTreeBaseController",
+		"sap/ui/documentation/sdk/model/formatter",
 		"sap/m/library",
-		"sap/base/Log"
-	], function (Device, MasterTreeBaseController, mobileLibrary, Log) {
+		"sap/base/Log",
+		"sap/ui/model/Filter",
+		"sap/ui/model/FilterOperator"
+	], function (Device, MasterTreeBaseController, formatter, mobileLibrary, Log, Filter, FilterOperator) {
 		"use strict";
 
 
@@ -20,15 +23,19 @@ sap.ui.define([
 
 		return MasterTreeBaseController.extend("sap.ui.documentation.sdk.controller.ApiMaster", {
 
+			formatter: formatter,
 			/**
 			 * Called when the master list controller is instantiated. It sets up the event handling for the master/detail communication and other lifecycle tasks.
 			 * @public
 			 */
 			onInit : function () {
+				// By default we don't show deprecated symbols in the tree
+				this._bIncludeDeprecated = false;
+
 				var oComponent = this.getOwnerComponent();
 
 				oComponent.loadVersionInfo()
-				.then(oComponent.fetchAPIIndex.bind(oComponent))
+					.then(oComponent.fetchAPIIndex.bind(oComponent))
 					.then(function () {
 						this._expandTreeToNode(this._topicId, this.getOwnerComponent().getModel("treeData"));
 					}.bind(this));
@@ -40,6 +47,22 @@ sap.ui.define([
 				this.getRouter().getRoute("deprecated").attachPatternMatched(this._onTopicMatched, this);
 				this.getRouter().getRoute("experimental").attachPatternMatched(this._onTopicMatched, this);
 				this.getRouter().getRoute("since").attachPatternMatched(this._onTopicMatched, this);
+			},
+
+			onBeforeRendering : function () {
+				// Apply default filters
+				this.buildAndApplyFilters();
+			},
+
+			/**
+			 * Selects a deprecated symbol in the tree and switches the filter to displaying deprecated symbols
+			 * @param {string} sTopicId the name of the deprecated symbol to be selected
+			 */
+			selectDeprecatedSymbol: function (sTopicId) {
+				this._bIncludeDeprecated = true; // Switch internal flag
+				this.byId("includeDeprecated").setSelected(true); // Update checkbox UI
+				this.buildAndApplyFilters(); // Apply filters
+				this._expandTreeToNode(sTopicId, this.getModel("treeData")); // Select the searched entity
 			},
 
 			/* =========================================================== */
@@ -61,7 +84,8 @@ sap.ui.define([
 					Log.error(e);
 				}
 
-				this._topicId = event.getParameter("arguments").id || event.getParameter("name");
+				this._topicId = formatter.decodeModuleName(event.getParameter("arguments").id) ||
+					event.getParameter("name");
 
 				this._expandTreeToNode(this._topicId, this.getOwnerComponent().getModel("treeData"));
 			},
@@ -124,9 +148,59 @@ sap.ui.define([
 					return;
 				}
 
-				this.getRouter().navTo("apiId", {id : apiId}, false);
-			}
+				this.getRouter().navTo("apiId", {id : formatter.encodeModuleName(apiId)}, false);
+			},
 
+			/**
+			 * @override
+			 */
+			buildAndApplyFilters: function () {
+				var aFilters = [];
+
+				if (!this._bIncludeDeprecated) {
+					aFilters.push(new Filter({
+						path: "bIsDeprecated",
+						operator: FilterOperator.EQ,
+						value1: false
+					}));
+				}
+
+				if (this._sFilter) {
+					aFilters.push(new Filter({
+						and: false,
+						filters: [
+							new Filter({
+								path: "name",
+								operator: FilterOperator.Contains,
+								value1: this._sFilter
+							}),
+							new Filter({
+								path: "name",
+								operator: FilterOperator.Contains,
+								value1: this._sFilter.replace(/\s/g, '')
+							})
+						]
+					}));
+				}
+
+				this.byId("tree").getBinding("items").filter(new Filter({
+					and: true,
+					filters: aFilters
+				}));
+
+				// Should the tree items be expanded or collapsed - in this case we take into account only the
+				// filter string
+				return !!this._sFilter;
+			},
+
+			/**
+			 * Handler for the Checkbox
+			 * @param {object} oEvent from the checkbox
+			 */
+			onIncludeDeprecatedItemsChange: function (oEvent) {
+				this._bIncludeDeprecated = oEvent.getParameter("selected"); // Update include deprecated flag
+				this.buildAndApplyFilters(); // Update tree
+			}
 		});
 	}
 );

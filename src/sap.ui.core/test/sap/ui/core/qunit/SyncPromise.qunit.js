@@ -2,10 +2,10 @@
  * ${copyright}
  */
 sap.ui.require([
-    "sap/ui/base/SyncPromise",
-    "sap/ui/test/TestUtils",
-    "sap/base/Log"
-], function(SyncPromise, TestUtils, Log) {
+	"sap/base/Log",
+	"sap/ui/base/SyncPromise",
+	"sap/ui/test/TestUtils"
+], function (Log, SyncPromise, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks:[1,5], no-warning-comments: 0 */
 	"use strict";

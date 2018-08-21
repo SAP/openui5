@@ -214,8 +214,11 @@ html .sapUiContainer-Narrow .sapUxAPObjectPageHeaderIdentifier {
 	font-size: 1.375rem;
 	padding-right: 1rem;
 	display: none;
-	vertical-align: baseline;
+	vertical-align: middle;
 	line-height: normal;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100%;
 	.sapUxAPObjectPageHeaderStickied & {
 		display: inline-block;
 	}
@@ -416,7 +419,7 @@ html[dir=rtl] .sapUxAPObjectPageHeaderMarks .sapMObjStatusMarker .sapUiIcon:firs
 
 /* Fiori 2.0 adaptation */
 .sapF2CollapsedHeader .sapUxAPObjectPageHeaderNavigation > .sapMBar {
-  height: 0;
+	display: none;
 }
 
 .sapF2Adapted .sapUxAPObjectPageHeaderNavigation > .sapMIBar {

@@ -6,12 +6,18 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant",
-	"sap/ui/fl/Cache"
+	"sap/ui/fl/Cache",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Component"
 ], function (
 	Utils,
 	Change,
 	Variant,
-	Cache
+	Cache,
+	JsControlTreeModifier,
+	ManagedObject,
+	Component
 ) {
 	"use strict";
 
@@ -284,67 +290,66 @@ sap.ui.define([
 	 * @public
 	 */
 	VariantController.prototype.loadInitialChanges = function() {
-		var aInitialChanges = [];
+		return Object.keys(this._mVariantManagement)
+			.reduce(function (aInitialChanges, sVariantManagementReference) {
+				var sCurrentOrDefaultVariant = this._mVariantManagement[sVariantManagementReference].currentVariant ? "currentVariant" : "defaultVariant";
+				var oInitialVariant = this.getVariant(sVariantManagementReference, this._mVariantManagement[sVariantManagementReference][sCurrentOrDefaultVariant]);
 
-		Object.keys(this._mVariantManagement).forEach(function (sVariantManagementReference) {
-			var aInitialVMChanges = [];
-			var sVariantReference;
-
-			if (this._mVariantManagement[sVariantManagementReference].currentVariant){
-				sVariantReference = this._mVariantManagement[sVariantManagementReference].currentVariant;
-			} else {
-				sVariantReference = this._mVariantManagement[sVariantManagementReference].defaultVariant;
-			}
-
-			//check for visibility of the variant, else use standard variant
-			var sVisible = this.getVariant(sVariantManagementReference, sVariantReference).content.content.visible;
-			if (!sVisible) {
-				if (this._mVariantManagement[sVariantManagementReference].currentVariant) {
-					this._mVariantManagement[sVariantManagementReference].currentVariant = sVariantManagementReference;
-				} else {
-					this._mVariantManagement[sVariantManagementReference].defaultVariant = sVariantManagementReference;
+				// if variant doesn't exist and visible property is unset - fallback to standard variant
+				if (!oInitialVariant || !oInitialVariant.content.content.visible) {
+					this._mVariantManagement[sVariantManagementReference][sCurrentOrDefaultVariant] = sVariantManagementReference;
 				}
-				sVariantReference = sVariantManagementReference;
-			}
 
-			aInitialVMChanges = this.getVariantChanges(sVariantManagementReference, sVariantReference);
-
-			// Concatenate the changes for all valid or default variants of all variant management references
-			aInitialChanges = aInitialChanges.concat(aInitialVMChanges);
-		}.bind(this));
-
-		return aInitialChanges;
+				// Concatenate with the previous flex changes
+				return aInitialChanges.concat(
+					this.getVariantChanges(sVariantManagementReference, this._mVariantManagement[sVariantManagementReference][sCurrentOrDefaultVariant])
+				);
+			}.bind(this), []);
 	};
 
 	/**
 	 * Returns the map with all changes to be reverted and applied when switching variants
 	 *
-	 * @param {String} sVariantManagementReference The variant management id
-	 * @param {String} sCurrentVariant The id of the currently used variant
-	 * @param {String} sNewVariant The id of the newly selected variant
-	 * @param {Object} mChanges The changes inside the current changes map
-	 * @returns {Object} The map containing all changes to be reverted and all new changes
+	 * @param {object} mPropertyBag Additional properties for variant switch
+	 * @param {string} mPropertyBag.variantManagementReference - The variant management id
+	 * @param {string} mPropertyBag.currentVariantReference - The id of the currently used variant
+	 * @param {string} mPropertyBag.newVariantReference - The id of the newly selected variant
+	 * @param {sap.ui.core.Component|sap.ui.core.Component[]} mPropertyBag.component - control component or array of potential components
+	 * @param {object} mPropertyBag.changesMap - The changes inside the current changes map
+	 *
+	 * @typedef {object} SwitchChanges
+	 * @property {array} aRevert - an array of changes to be reverted
+	 * @property {array} aNew - an array of changes to be applied
+	 * @property {sap.ui.core.Component} component - the component responsible
+	 *
+	 * @returns {SwitchChanges} The map containing all changes to be reverted and all new changes
 	 * @public
 	 */
-	VariantController.prototype.getChangesForVariantSwitch = function(sVariantManagementReference, sCurrentVariant, sNewVariant, mChanges) {
-		var aCurrentVariantChanges = this.getVariantChanges(sVariantManagementReference, sCurrentVariant);
+	VariantController.prototype.getChangesForVariantSwitch = function(mPropertyBag) {
+		var aCurrentVariantChanges = this.getVariantChanges(mPropertyBag.variantManagementReference, mPropertyBag.currentVariantReference);
 		var aMapChanges = [], aChangeKeysFromMap = [];
-		Object.keys(mChanges).forEach(function(sControlId) {
-			mChanges[sControlId].forEach(function(oMapChange) {
+		var oControlComponent = mPropertyBag.component instanceof Component ? mPropertyBag.component : undefined;
+		Object.keys(mPropertyBag.changesMap).forEach(function(sControlId) {
+			mPropertyBag.changesMap[sControlId].forEach(function(oMapChange) {
 				aMapChanges = aMapChanges.concat(oMapChange);
 				aChangeKeysFromMap = aChangeKeysFromMap.concat(oMapChange.getId());
 			});
 		});
 
-		aCurrentVariantChanges = aCurrentVariantChanges.reduce(function(aFilteredChanges, oChangeContent, index) {
+		aCurrentVariantChanges = aCurrentVariantChanges.reduce(function(aFilteredChanges, oChangeContent) {
 			var iMapIndex = aChangeKeysFromMap.indexOf(oChangeContent.fileName);
 			if (iMapIndex > -1) {
 				aFilteredChanges = aFilteredChanges.concat(aMapChanges[iMapIndex]);
+				// if vControlComponent is an array of embeddedComponents
+				// retrieve which embeddedComponent is responsible for the change
+				if (!oControlComponent && Array.isArray(mPropertyBag.component)) {
+					oControlComponent = this._getComponentForChange(aMapChanges[iMapIndex], mPropertyBag.component);
+				}
 			}
 			return aFilteredChanges;
-		}, []);
+		}.bind(this), []);
 
-		var aNewChanges = this.getVariantChanges(sVariantManagementReference, sNewVariant).map(function(oChangeContent) {
+		var aNewChanges = this.getVariantChanges(mPropertyBag.variantManagementReference, mPropertyBag.newVariantReference).map(function(oChangeContent) {
 			return new Change(oChangeContent);
 		});
 
@@ -365,10 +370,25 @@ sap.ui.define([
 
 		var mSwitches = {
 			aRevert : aRevertChanges.reverse(),
-			aNew : aNewChanges
+			aNew : aNewChanges,
+			component: oControlComponent
 		};
 
 		return mSwitches;
+	};
+
+	VariantController.prototype._getComponentForChange = function (oChange, aComponents) {
+		var oSelector = oChange.getSelector && oChange.getSelector();
+		var oControlComponent;
+		if (oSelector) {
+			aComponents.some(function(oComponent) {
+				if (JsControlTreeModifier.bySelector(oSelector, oComponent) instanceof ManagedObject) {
+					oControlComponent = oComponent;
+					return true;
+				}
+			});
+		}
+		return oControlComponent;
 	};
 
 	VariantController.prototype._applyChangesOnVariant = function(oVariant) {
@@ -528,6 +548,15 @@ sap.ui.define([
 			this._mVariantManagement[sVariantManagementReference].variants.splice(iIndex, 1);
 		}
 		return iIndex;
+	};
+
+	/**
+	 * Clears variant controller map
+	 *
+	 * @public
+	 */
+	VariantController.prototype.resetMap = function () {
+		this._mVariantManagement = {};
 	};
 
 	return VariantController;

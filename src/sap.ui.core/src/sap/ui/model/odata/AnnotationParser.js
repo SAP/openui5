@@ -3,7 +3,12 @@
  */
 
 // Provides class sap.ui.model.odata.ODataAnnotations
-sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/base/assert"], function(Device, Log, assert) {
+sap.ui.define([
+	"sap/base/assert",
+	"sap/base/Log",
+	"sap/ui/Device",
+	"sap/ui/thirdparty/jquery"
+], function (assert, Log, Device, jQuery) {
 "use strict";
 
 /**
@@ -512,7 +517,7 @@ var AnnotationParser =  {
 				oParent[sProperty][sAnnotation] = oParent[sSiblingName];
 			}
 		} else if (bWarn) {
-			jQuery.sap.log.warning("Wrong path to annotation at array", aSegments,
+			Log.warning("Wrong path to annotation at array", aSegments,
 				"sap.ui.model.odata.AnnotationParser");
 		}
 	},

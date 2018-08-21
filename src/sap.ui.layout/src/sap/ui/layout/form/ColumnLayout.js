@@ -8,9 +8,10 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/layout/library',
 	'./FormLayout',
-	'./ColumnLayoutRenderer'
+	'./ColumnLayoutRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
-	function(Device, ResizeHandler, library, FormLayout, ColumnLayoutRenderer) {
+	function(Device, ResizeHandler, library, FormLayout, ColumnLayoutRenderer, jQuery) {
 	"use strict";
 
 	/**

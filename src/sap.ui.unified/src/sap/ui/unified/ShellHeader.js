@@ -6,9 +6,10 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
-	'sap/ui/core/theming/Parameters'
+	'sap/ui/core/theming/Parameters',
+	"sap/ui/thirdparty/jquery"
 ],
-	function(library, Control, Device, Parameters) {
+	function(library, Control, Device, Parameters, jQuery) {
 	"use strict";
 
 

@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"./library",
 	"sap/ui/performance/trace/Interaction",
-	"sap/base/Log"
-], function(TableExtension, TableUtils, Device, library, Interaction, Log) {
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function(TableExtension, TableUtils, Device, library, Interaction, Log, jQuery) {
 	"use strict";
 
 	// Shortcuts
@@ -750,14 +751,14 @@ sap.ui.define([
 			}
 
 			if (oRowContainer && oCellInfo.columnIndex >= this.getComputedFixedColumnCount()) {
+				var oHSb = this._getScrollExtension().getHorizontalScrollbar();
 				var oCell = oCellInfo.cell[0];
-				var iScrollLeft = oRowContainer.scrollLeft;
+				var iScrollLeft = oHSb.scrollLeft;
 				var iRowContainerWidth = oRowContainer.clientWidth;
 				var iCellLeft = oCell.offsetLeft;
 				var iCellRight = iCellLeft + oCell.offsetWidth;
 				var iOffsetLeft = iCellLeft - iScrollLeft;
 				var iOffsetRight = iCellRight - iRowContainerWidth - iScrollLeft;
-				var oHSb = this._getScrollExtension().getHorizontalScrollbar();
 
 				if (iOffsetLeft < 0 && iOffsetRight < 0) {
 					oHSb.scrollLeft = iScrollLeft + iOffsetLeft;
@@ -774,13 +775,17 @@ sap.ui.define([
 
 			if ($ParentCell) {
 				Promise.resolve().then(function() {
-					var oInnerCellElement = $ParentCell.find(".sapUiTableCell")[0];
+					var $InnerCellElement = $ParentCell.find(".sapUiTableCell");
 
-					if (oInnerCellElement) {
-						oInnerCellElement.scrollLeft = 0;
-						oInnerCellElement.scrollTop = 0;
+					if ($InnerCellElement.length > 0) {
+						if (this._bRtlMode) {
+							$InnerCellElement.scrollLeftRTL($InnerCellElement[0].scrollWidth - $InnerCellElement[0].clientWidth);
+						} else {
+							$InnerCellElement[0].scrollLeft = 0;
+						}
+						$InnerCellElement[0].scrollTop = 0;
 					}
-				});
+				}.bind(this));
 			}
 		}
 	};
@@ -1138,14 +1143,12 @@ sap.ui.define([
 				iScrollPadding += oTableSizes.tableRowHdrScrWidth;
 			}
 
-			if (oTable.getRows().length > 0) {
-				if (oTable._bRtlMode) {
-					oHSb.style.marginRight = iScrollPadding + "px";
-					oHSb.style.marginLeft = "";
-				} else {
-					oHSb.style.marginLeft = iScrollPadding + "px";
-					oHSb.style.marginRight = "";
-				}
+			if (oTable._bRtlMode) {
+				oHSb.style.marginRight = iScrollPadding + "px";
+				oHSb.style.marginLeft = "";
+			} else {
+				oHSb.style.marginLeft = iScrollPadding + "px";
+				oHSb.style.marginRight = "";
 			}
 
 			var oHSbContent = oTable.getDomRef("hsb-content");
@@ -1467,7 +1470,7 @@ sap.ui.define([
 				// large data or when zoomed in Chrome. In this case it can not be scrolled to the last row. To overcome this issue we consider the
 				// table to be scrolled to the end, if the scroll position is less than 1 pixel away from the maximum.
 				var nDistanceToMaximumScrollPosition = iScrollRange - nScrollPosition;
-				var bScrolledViaScrollTop = this.getVerticalScrollbar()._scrollTop == null;
+				var bScrolledViaScrollTop = this.getVerticalScrollbar()._scrollTop == null || this._bIsScrolledVerticallyByWheel;
 				var bScrolledToBottom = nDistanceToMaximumScrollPosition < 1;
 
 				if (bScrolledToBottom && bScrolledViaScrollTop) {

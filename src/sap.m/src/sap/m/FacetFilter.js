@@ -19,9 +19,13 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/ui/events/jquery/EventSimulation",
-	"sap/ui/dom/jquery/scrollRightRTL", // jQuery Plugin "scrollRightRTL"
-	"sap/ui/dom/jquery/scrollLeftRTL", // jQuery Plugin "scrollLeftRTL"
-	"sap/ui/dom/jquery/Selectors" // jQuery custom selectors ":sapTabbable"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "scrollRightRTL"
+	"sap/ui/dom/jquery/scrollRightRTL",
+	// jQuery Plugin "scrollLeftRTL"
+	"sap/ui/dom/jquery/scrollLeftRTL",
+	// jQuery custom selectors ":sapTabbable"
+	"sap/ui/dom/jquery/Selectors"
 ],
 	function(
 		NavContainer,
@@ -38,7 +42,8 @@ sap.ui.define([
 		KeyCodes,
 		assert,
 		Log,
-		EventSimulation
+		EventSimulation,
+		jQuery
 	) {
 	"use strict";
 
@@ -417,6 +422,12 @@ sap.ui.define([
 		var oNavContainer = this._getFacetDialogNavContainer();
 		oDialog.addContent(oNavContainer);
 
+		this.getLists().forEach(function (oList) {
+			if (oList.getMode() === ListMode.MultiSelect) {
+				oList._preserveOriginalActiveState();
+			}
+		});
+
 		//keyboard acc - focus on 1st item of 1st page
 		oDialog.setInitialFocus(oNavContainer.getPages()[0].getContent()[0].getItems()[0]);
 		oDialog.open();
@@ -659,6 +670,7 @@ sap.ui.define([
 			for ( var i = 0; i < this.$().find(":sapTabbable").length; i++) {
 				if (this.$().find(":sapTabbable")[i].parentNode.className == "sapMFFResetDiv") {
 					jQuery(this.$().find(":sapTabbable")[i]).focus();
+					this._invalidateFlag = false;
 					oEvent.preventDefault();
 					oEvent.setMarked();
 					return;
@@ -1188,6 +1200,10 @@ sap.ui.define([
 					that._openPopover(oPopover, oThisButton);
 				};
 
+				if (oList.getMode() === ListMode.MultiSelect) {
+					oList._preserveOriginalActiveState();
+				}
+
 				var oPopover = that._getPopover();
 				if (oPopover.isOpen()) {
 					// create a deferred that will be triggered after the popover is closed
@@ -1519,6 +1535,10 @@ sap.ui.define([
 					if (oNavContainer.getCurrentPage() === oFilterItemsPage) {
 
 						var oList = that._restoreListFromDisplayContainer(oFilterItemsPage);
+
+						if (oList.getMode() === ListMode.MultiSelect) {
+							oList._updateActiveState();
+						}
 						oList._fireListCloseEvent();
 						oList._search("");
 					}
@@ -1593,7 +1613,7 @@ sap.ui.define([
 	 */
 	FacetFilter.prototype._createFacetList = function() {
 
-		var oFacetList =  new sap.m.List({
+		var oFacetList = this._oFacetList = new sap.m.List({
 			mode: ListMode.None,
 			items: {
 				path: "/items",
@@ -1610,16 +1630,7 @@ sap.ui.define([
 		});
 
 		// Create the facet list from a model binding so that we can implement facet list search using a filter.
-		var aFacetFilterLists = [];
-		for ( var i = 0; i < this.getLists().length; i++) {
-			var oList = this.getLists()[i];
-
-			aFacetFilterLists.push({
-				text: oList.getTitle(),
-				count: oList.getAllCount(),
-				index : i
-			});
-		}
+		var aFacetFilterLists = this._getMapFacetLists();
 
 		var oModel = new sap.ui.model.json.JSONModel({
 			items: aFacetFilterLists
@@ -1643,6 +1654,30 @@ sap.ui.define([
 
 		oFacetList.setModel(oModel);
 		return oFacetList;
+	};
+
+	/**
+	 * This method refreshes the internal model for thr FacetList. It should be called everytime when the model
+	 * of FacetFilter is changed and update to the FacetList is needed
+	 *
+	 * @protected
+	 * @sap-restricted hpa.cei.mkt.cal -> FacetFilter.controller -> OnDisplayRefreshed
+	 * @returns {sap.m.FacetFilter}
+	 */
+	FacetFilter.prototype.refreshFacetList = function () {
+		this._oFacetList.getModel().setData({ items: this._getMapFacetLists() });
+
+		return this;
+	};
+
+	FacetFilter.prototype._getMapFacetLists = function () {
+		return this.getLists().map(function (oList, iIndex) {
+			return {
+				text: oList.getTitle(),
+				count: oList.getAllCount(),
+				index: iIndex
+			};
+		});
 	};
 
 	/**
@@ -1755,6 +1790,9 @@ sap.ui.define([
 		var oFilterItemsPage = oNavContainer.getPages()[1];
 		var oList = this._restoreListFromDisplayContainer(oFilterItemsPage);
 
+		if (oList.getMode() === ListMode.MultiSelect) {
+			oList._updateActiveState();
+		}
 		oList._fireListCloseEvent();
 		oList._search("");
 		this._selectedFacetItem.setCounter(oList.getAllCount());

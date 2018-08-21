@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.layout.AssociativeSplitter.
-sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log"],
-	function(Splitter, SplitterRenderer, Log) {
+sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log", "sap/ui/thirdparty/jquery"],
+	function(Splitter, SplitterRenderer, Log, jQuery) {
 	"use strict";
 
 	/**

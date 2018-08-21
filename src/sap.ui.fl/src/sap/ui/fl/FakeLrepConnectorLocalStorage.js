@@ -12,5 +12,19 @@ function(
 ) {
 	"use strict";
 
+	/**
+	 * Class for connecting to Fake LREP storing changes in local storage
+	 *
+	 * @class
+	 *
+	 * @author SAP SE
+	 * @version ${version}
+	 *
+	 * @private
+	 * @static
+	 * @since 1.48
+	 * @alias sap.ui.fl.FakeLrepConnectorLocalStorage
+	 */
+
 	return FakeLrepConnectorStorage(FakeLrepLocalStorage);
 }, /* bExport= */ true);

@@ -41,13 +41,33 @@ sap.ui.define([
 
 		CommunicationBus.subscribe(Channels.ON_INIT_ANALYSIS_CTRL, function () {
 			jQuery.getJSON("data/RuleSets.json").done(function (oRuleSets) {
-				CommunicationBus.publish(Channels.UPDATE_SUPPORT_RULES, oRuleSets);
+				CommunicationBus.publish(Channels.UPDATE_SUPPORT_RULES, {
+					sRuleSet: oRuleSets
+				});
+				CommunicationBus.publish(Channels.POST_APPLICATION_INFORMATION, {
+					// Use deprecated function to ensure this would work for older versions.
+					versionInfo: sap.ui.getVersionInfo()
+				});
 			});
 		});
 
 		CommunicationBus.subscribe(Channels.REQUEST_RULES_MODEL, function (oRuleSets) {
 			CommunicationBus.publish(Channels.GET_RULES_MODEL, IssueManager.getTreeTableViewModel(oRuleSets));
 		});
+
+		CommunicationBus.subscribe(Channels.GET_NON_LOADED_RULE_SETS, function () {
+			CommunicationBus.publish(Channels.POST_AVAILABLE_LIBRARIES, {
+				libNames: ["sap.ui.table", "sap.ui.fl"]
+			});
+		}, this);
+
+		CommunicationBus.subscribe(Channels.LOAD_RULESETS, function () {
+			jQuery.getJSON("data/RuleSetAdditional.json").done(function (oRuleSets) {
+				CommunicationBus.publish(Channels.UPDATE_SUPPORT_RULES, {
+					sRuleSet: oRuleSets
+				});
+			});
+		}, this);
 	};
 
 	CommunicationMock.destroy = function () {

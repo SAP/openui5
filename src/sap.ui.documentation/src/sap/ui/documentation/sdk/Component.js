@@ -12,6 +12,7 @@ sap.ui.define([
     "sap/ui/documentation/sdk/controller/util/ConfigUtil",
     "sap/ui/documentation/sdk/controller/util/APIInfo",
     "sap/base/util/Version",
+    "sap/ui/VersionInfo",
     // used via manifest.json
 	"sap/ui/documentation/sdk/util/DocumentationRouter",
     // implements sap.m.TablePopin
@@ -24,8 +25,9 @@ sap.ui.define([
 	ErrorHandler,
 	JSONModel,
 	ConfigUtil,
-	APIInfo /*, DocumentationRouter, ColumnListItem*/,
-	Version
+	APIInfo,
+	Version,
+	VersionInfo /*, DocumentationRouter, ColumnListItem*/
 ) {
 		"use strict";
 
@@ -117,8 +119,7 @@ sap.ui.define([
 
 			loadVersionInfo: function () {
 				if (!this._oVersionInfoPromise) {
-					this._oVersionInfoPromise = sap.ui.getVersionInfo({async: true})
-						.then(this._bindVersionModel.bind(this));
+					this._oVersionInfoPromise = VersionInfo.load().then(this._bindVersionModel.bind(this));
 				}
 
 				return this._oVersionInfoPromise;
@@ -167,13 +168,14 @@ sap.ui.define([
 						var aNameParts = oJSONElement.name.split("."),
 							sBaseName = aNameParts.pop(),
 							sNodeNamespace = aNameParts.join("."), // Note: Array.pop() on the previous line modifies the array itself
-							oTreeNode = this._createTreeNode(sBaseName, oJSONElement.name, oJSONElement.name === this._topicId, oJSONElement.lib),
+							oTreeNode = this._createTreeNode(sBaseName, oJSONElement.name, oJSONElement.name === this._topicId, oJSONElement.lib, !!oJSONElement.deprecated),
 							oExistingNodeNamespace = this._findNodeNamespaceInTreeStructure(sNodeNamespace);
 
 						if (oExistingNodeNamespace) {
 							if (!oExistingNodeNamespace.nodes) {
 								oExistingNodeNamespace.nodes = [];
 							}
+
 							oExistingNodeNamespace.nodes.push(oTreeNode);
 						} else if (sNodeNamespace) {
 
@@ -184,7 +186,12 @@ sap.ui.define([
 							});
 
 							if (!oHiddenNamespace) {
-								oNewNodeNamespace = this._createTreeNode(sNodeNamespace, sNodeNamespace, sNodeNamespace === this._topicId, oJSONElement.lib);
+								oNewNodeNamespace = this._createTreeNode(sNodeNamespace,
+									sNodeNamespace,
+									sNodeNamespace === this._topicId,
+									oJSONElement.lib,
+									false /* Virtual namespace can't be deprecated */);
+
 								oNewNodeNamespace.nodes = [];
 								oNewNodeNamespace.nodes.push(oTreeNode);
 
@@ -195,22 +202,23 @@ sap.ui.define([
 							}
 						} else {
 							// Entities for which we can't resolve namespace are shown in the root level
-							oNewNodeNamespace = this._createTreeNode(oJSONElement.name, oJSONElement.name, oJSONElement.name === this._topicId, oJSONElement.lib);
+							oNewNodeNamespace = this._createTreeNode(oJSONElement.name, oJSONElement.name, oJSONElement.name === this._topicId, oJSONElement.lib, !!oJSONElement.deprecated);
 							aTreeContent.push(oNewNodeNamespace);
 						}
 					} else {
-						oNewNodeNamespace = this._createTreeNode(oJSONElement.name, oJSONElement.name, oJSONElement.name === this._topicId, oJSONElement.lib);
+						oNewNodeNamespace = this._createTreeNode(oJSONElement.name, oJSONElement.name, oJSONElement.name === this._topicId, oJSONElement.lib, !!oJSONElement.deprecated);
 						aTreeContent.push(oNewNodeNamespace);
 					}
 				}
 			},
 
-			_createTreeNode : function (text, name, isSelected, sLib) {
+			_createTreeNode : function (text, name, isSelected, sLib, bIsDeprecated) {
 				var oTreeNode = {};
 				oTreeNode.text = text;
 				oTreeNode.name = name;
 				oTreeNode.ref = "#/api/" + name;
 				oTreeNode.isSelected = isSelected;
+				oTreeNode.bIsDeprecated = bIsDeprecated;
 				oTreeNode.lib = sLib;
 				return oTreeNode;
 			},
@@ -259,17 +267,20 @@ sap.ui.define([
 						isSelected: false,
 						name : "experimental",
 						ref: "#/api/experimental",
-						text: "Experimental APIs"
+						text: "Experimental APIs",
+						bIsDeprecated: false
 					}, {
 						isSelected: false,
 						name : "deprecated",
 						ref: "#/api/deprecated",
-						text: "Deprecated APIs"
+						text: "Deprecated APIs",
+						bIsDeprecated: false
 					}, {
 						isSelected: false,
 						name : "since",
 						ref: "#/api/since",
-						text: "Index by Version"
+						text: "Index by Version",
+						bIsDeprecated: false
 					});
 				}
 
@@ -277,9 +288,11 @@ sap.ui.define([
 			},
 
 			_bindVersionModel : function (oVersionInfo) {
-				var sVersion,
-					oVersionInfoData,
-					bIsInternal = false;
+				var oVersion,
+					bSnapshot,
+					bOpenUI5,
+					sVersionSuffix,
+					bIsInternal;
 
 				this.aAllowedMembers = ["public", "protected"];
 
@@ -287,45 +300,31 @@ sap.ui.define([
 					return;
 				}
 
-				sVersion = oVersionInfo.version;
+				oVersion = Version(oVersionInfo.version);
+				sVersionSuffix = oVersion.getSuffix();
+				bSnapshot = /-SNAPSHOT$/i.test(sVersionSuffix);
+				bOpenUI5 = oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav);
 
 				// We show restricted members for internal versions and if the documentation is in preview mode
 				if (/internal/i.test(oVersionInfo.name) || !!window['sap-ui-documentation-preview']) {
 					bIsInternal = true;
 					this.aAllowedMembers.push("restricted");
 				}
-				oVersionInfoData = {
+
+				this.getModel("versionData").setData({
 					versionGav: oVersionInfo.gav,
 					versionName: oVersionInfo.name,
-					version: Version(sVersion).getMajor() + "." + Version(sVersion).getMinor() + "." + Version(sVersion).getPatch(),
-					fullVersion: sVersion,
+					version: [oVersion.getMajor(), oVersion.getMinor(), oVersion.getPatch()].join("."),
+					fullVersion: oVersionInfo.version,
 					openUi5Version: sap.ui.version,
-					isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav),
-					isSnapshotVersion: oVersionInfo && oVersionInfo.gav && /snapshot/i.test(oVersionInfo.gav),
-					isDevVersion: sVersion.indexOf("SNAPSHOT") > -1 || (sVersion.split(".").length > 1 && parseInt(sVersion.split(".")[1], 10) % 2 === 1),
-					isBetaVersion: false,
-					isInternal: bIsInternal,
+					isOpenUI5: bOpenUI5,
+					isSnapshotVersion: bSnapshot,
+					isDevVersion: bSnapshot || oVersion.getMinor() % 2 === 1,
+					isBetaVersion: !bOpenUI5 && !bSnapshot && /-beta$/i.test(sVersionSuffix),
+					isInternal: !!bIsInternal,
 					libraries: oVersionInfo.libraries,
 					allowedMembers: this.aAllowedMembers
-				};
-
-				if (!oVersionInfoData.isOpenUI5 && !oVersionInfoData.isSnapshotVersion) {
-					jQuery.ajax({
-						url: "neo-app.json"
-					}).done(function(data) {
-						if (data.routes && data.routes.length) {
-							var sOpenUI5BetaVersion = oVersionInfoData.openUi5Version + '-beta'; // Concatenates openUI5 version with '-beta' string
-							oVersionInfoData.isBetaVersion = data.routes.some(function (element) {
-								return element.target && element.target.version && (element.target.version === sOpenUI5BetaVersion);
-							});
-						}
-						this.getModel("versionData").setData(oVersionInfoData, false /* mo merge with previous data */);
-					}.bind(this)).fail(function () {
-						this.getModel("versionData").setData(oVersionInfoData, false /* mo merge with previous data */);
-					}.bind(this));
-				} else {
-					this.getModel("versionData").setData(oVersionInfoData, false /* mo merge with previous data */);
-				}
+				});
 			}
 		});
 	}

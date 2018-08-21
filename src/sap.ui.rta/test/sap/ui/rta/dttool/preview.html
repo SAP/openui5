@@ -4,11 +4,12 @@
 <head>
 	<title>DT Tool Preview</title>
 	<script id="sap-ui-bootstrap"
-		src="../../../../../resources/sap-ui-core.js"
-		data-sap-ui-theme="sap_belize"
-		data-sap-ui-libs="sap.m,sap.ui.codeeditor"
-		data-sap-ui-compatVersion="edge"
-		data-sap-ui-resourceroots='{
+            src="../../../../../resources/sap-ui-core.js"
+            data-sap-ui-theme="sap_belize"
+            data-sap-ui-libs="sap.m,sap.ui.codeeditor"
+            data-sap-ui-compatVersion="edge"
+            data-sap-ui-preload="async"
+            data-sap-ui-resourceroots='{
 				"sap.ui.rta.dttool": "./",
 				"sap.m.sample": "./../../../../sap/m/demokit/sample/",
 				"sap.ui.layout.sample": "./../../../../sap/ui/layout/demokit/sample/",
@@ -20,7 +21,7 @@
 		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
 				"sap/ui/core/postmessage/Bus",
-				"sap/ui/rta/dttool/Preview"
+				"sap/ui/rta/dttool/preview"
 			], function (
 				PostMessageBus,
 				Preview

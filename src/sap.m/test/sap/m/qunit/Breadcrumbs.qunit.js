@@ -1,10 +1,11 @@
-/*global QUnit,sinon*/
-
-(function ($, QUnit, sinon, Breadcrumbs) {
+/*global QUnit, sinon, jQuery*/
+sap.ui.require([
+	"sap/ui/dom/units/Rem",
+	"sap/ui/core/theming/Parameters",
+	"sap/m/Breadcrumbs"],
+function(DomUnitsRem, Parameters, Breadcrumbs) {
 	"use strict";
-	var core, oFactory, helpers;
-
-	$.sap.require("sap.m.Breadcrumbs");
+	var core, oFactory, helpers, $ = jQuery;
 
 	sinon.config.useFakeTimers = true;
 
@@ -32,7 +33,7 @@
 			return aLinks;
 		},
 		getBreadCrumbControlWithLinks: function (iLinkCount, sCurrentLocationText) {
-			return new sap.m.Breadcrumbs({
+			return new Breadcrumbs({
 				links: [this.getLinks(iLinkCount)],
 				currentLocationText: sCurrentLocationText
 			});
@@ -271,6 +272,9 @@
 		var $lastSeparator = this.oStandardBreadCrumbsControl.$().find("li.sapMBreadcrumbsItem:last-child > span.sapMBreadcrumbsSeparator");
 
 		assert.ok($lastSeparator.length, "There is a '/' separator after last link");
+		assert.strictEqual(parseInt($lastSeparator.css("fontSize"), 10),
+			DomUnitsRem.toPx(Parameters.get("sapMFontMediumSize")),
+			"Font-size of the separator is 14px");
 	});
 
 	QUnit.test("Only current location", function (assert) {
@@ -284,8 +288,8 @@
 	});
 
 	QUnit.test("Prevent dependency bug with select's popover", function (assert) {
-		var pickerAfterOpenSpy = this.spy(sap.m.Breadcrumbs.prototype, "_removeItemNavigation"),
-			pickerBeforeCloseSpy = this.spy(sap.m.Breadcrumbs.prototype, "_restoreItemNavigation");
+		var pickerAfterOpenSpy = this.spy(Breadcrumbs.prototype, "_removeItemNavigation"),
+			pickerBeforeCloseSpy = this.spy(Breadcrumbs.prototype, "_restoreItemNavigation");
 		this.oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(15, "Current location text");
 
 		helpers.renderObject(this.oStandardBreadCrumbsControl);
@@ -421,5 +425,4 @@
 
 		assert.strictEqual(oStandardBreadCrumbsControl.$().attr("tabindex"), undefined, "Tabindex should not be set for empty breadcrumbs");
 	});
-
-}(jQuery, QUnit, sinon, sap.m.Breadcrumbs));
+ });

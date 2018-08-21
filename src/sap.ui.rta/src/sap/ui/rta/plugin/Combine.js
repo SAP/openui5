@@ -4,13 +4,13 @@
 
 sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/rta/Utils',
+	'sap/ui/rta/util/BindingsExtractor',
 	'sap/ui/dt/Util'
 ], function(
 	Plugin,
-	OverlayRegistry,
 	Utils,
+	BindingsExtractor,
 	DtUtil
 ) {
 	"use strict";
@@ -50,7 +50,10 @@ sap.ui.define([
 	Combine.prototype._isEditable = function (oOverlay) {
 		var oCombineAction = this.getAction(oOverlay);
 		if (oCombineAction && oCombineAction.changeType && oCombineAction.changeOnRelevantContainer) {
-			return this.hasChangeHandler(oCombineAction.changeType, oOverlay.getRelevantContainer()) && this.hasStableId(oOverlay);
+			var oRelevantContainer = oOverlay.getRelevantContainer();
+			return this.hasChangeHandler(oCombineAction.changeType, oRelevantContainer) &&
+				this.hasStableId(oOverlay) &&
+				this._checkRelevantContainerStableID(oCombineAction, oOverlay);
 		} else {
 			return false;
 		}
@@ -128,34 +131,68 @@ sap.ui.define([
 			return true;
 		}, this);
 
+		// check if all the target elements have the same binding context
+		if (bActionCheck) {
+			var oFirstControl = aControls.shift();
+			var aBindings = BindingsExtractor.getBindings(oFirstControl, oFirstControl.getModel());
+			if (aBindings.length > 0 && oFirstControl.getBindingContext()) {
+				var sFirstElementBindingContext = Utils.getEntityTypeByPath(
+					oFirstControl.getModel(),
+					oFirstControl.getBindingContext().getPath()
+				);
+
+				bActionCheck = aControls.some(function(oControl) {
+					if (oControl.getBindingContext()) {
+						var sBindingContext = Utils.getEntityTypeByPath(
+							oControl.getModel(),
+							oControl.getBindingContext().getPath()
+						);
+						return sFirstElementBindingContext === sBindingContext;
+					} else {
+						return false;
+					}
+				});
+			}
+		}
+
 		return bActionCheck;
 	};
 
 	/**
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - specified overlays
+	 * @param {sap.ui.core.Element} oCombineElement - element where the combine was triggered
 	 */
-	Combine.prototype.handleCombine = function(aElementOverlays) {
-		var oElementOverlay = aElementOverlays[0];
-		var oCombineElement = oElementOverlay.getElement();
-		var oDesignTimeMetadata = oElementOverlay.getDesignTimeMetadata();
+	Combine.prototype.handleCombine = function(aElementOverlays, oCombineElement) {
+		var oCombineElementOverlay;
 		var aElements = aElementOverlays.map(function (oElementOverlay) {
+			if (oElementOverlay.getElement().getId() === oCombineElement.getId()){
+				oCombineElementOverlay = oElementOverlay;
+			}
 			return oElementOverlay.getElement();
 		});
-		var oCombineAction = this.getAction(oElementOverlay);
-		var sVariantManagementReference = this.getVariantManagementReference(oElementOverlay, oCombineAction);
+		var oDesignTimeMetadata = oCombineElementOverlay.getDesignTimeMetadata();
+		var oCombineAction = this.getAction(oCombineElementOverlay);
+		var sVariantManagementReference = this.getVariantManagementReference(oCombineElementOverlay, oCombineAction);
 
-		var oCombineCommand = this.getCommandFactory().getCommandFor(
+		return this.getCommandFactory().getCommandFor(
 			oCombineElement,
 			"combine",
 			{
-				source: oCombineElement,
-				combineFields: aElements
+				source : oCombineElement,
+				combineFields : aElements
 			},
 			oDesignTimeMetadata,
 			sVariantManagementReference
-		);
-		this.fireElementModified({
-			"command": oCombineCommand
+		)
+
+		.then(function(oCombineCommand) {
+			this.fireElementModified({
+				"command" : oCombineCommand
+			});
+		}.bind(this))
+
+		.catch(function(oMessage) {
+			throw DtUtil.createError("Combine#handleCombine", oMessage, "sap.ui.rta");
 		});
 	};
 
@@ -186,9 +223,10 @@ sap.ui.define([
 	/**
 	 * Trigger the plugin execution.
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
+	 * @param {sap.ui.core.Element} mPropertyBag.contextElement - The element where combine was triggered
 	 */
-	Combine.prototype.handler = function (aElementOverlays) {
-		this.handleCombine(aElementOverlays);
+	Combine.prototype.handler = function (aElementOverlays, mPropertyBag) {
+		this.handleCombine(aElementOverlays, mPropertyBag.contextElement);
 	};
 
 	return Combine;

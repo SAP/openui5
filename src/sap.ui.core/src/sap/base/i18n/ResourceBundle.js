@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define([
 		'sap/base/assert',
 		'sap/base/Log',
@@ -236,8 +232,9 @@ sap.ui.define([
 	 *
 	 * @author SAP SE
 	 * @version ${version}
-	 * @name sap/base/i18n/ResourceBundle
-	 * @private
+	 * @function
+	 * @alias module:sap/base/i18n/ResourceBundle
+	 * @public
 	 */
 	function ResourceBundle(sUrl, sLocale, bIncludeInfo, bAsync){
 		this.sLocale = this._sNextLocale = normalize(sLocale) || defaultLocale();
@@ -293,52 +290,44 @@ sap.ui.define([
 	 *     (<i>n</i> is the index) in the found locale-specific string value. Note that the replacement is done
 	 *     whenever <code>aArgs</code> is given, no matter whether the text contains placeholders or not
 	 *     and no matter whether <code>aArgs</code> contains a value for <i>n</i> or not.
-	 * @returns {string} The value belonging to the key, if found; otherwise the key itself.
+	 * @param {boolean} bIgnoreKeyFallback If set, <code>undefined</code> is returned when the key is not found in any bundle or fallback bundle, instead of the key string.
+	 * @returns {string} The value belonging to the key, if found; Otherwise the key itself or <code>undefined</code> depending on bIgnoreKeyFallback.
 	 *
 	 * @function
-	 * @name sap/base/i18n/ResourceBundle.prototype.getText
+	 * @public
+	 */
+	ResourceBundle.prototype.getText = function(sKey, aArgs, bIgnoreKeyFallback){
+
+		// 1. try to retrieve text from properties (including custom properties)
+		var sValue = this._getTextFromProperties(sKey, aArgs);
+		if (sValue != null) {
+			return sValue;
+		}
+
+		// 2. try to retrieve text from fallback properties (including custom fallback properties)
+		sValue = this._getTextFromFallback(sKey, aArgs);
+		if (sValue != null) {
+			return sValue;
+		}
+
+		assert(false, "could not find any translatable text for key '" + sKey + "' in bundle '" + this.oUrlInfo.url + "'");
+		if (bIgnoreKeyFallback){
+			return undefined;
+		} else {
+			return this._formatValue(sKey, sKey, aArgs);
+		}
+	};
+
+	/**
+	 * Enriches the input value with originInfo if <code>this.bIncludeInfo</code> is truthy.
+	 * Uses args to format the message.
+	 * @param {string} sValue the given input value
+	 * @param {string} sKey the key within the bundle
+	 * @param {array} [aArgs] arguments to format the message
+	 * @returns {string} formatted string, <code>null</code> if sValue is not a string
 	 * @private
 	 */
-	ResourceBundle.prototype.getText = function(sKey, aArgs, bCustomBundle){
-		var sValue = null,
-			i;
-
-		// loop over the custom bundles before resolving this one
-		// lookup the custom resource bundles (last one first!)
-		for (i = this.aCustomBundles.length - 1; i >= 0; i--) {
-			sValue = this.aCustomBundles[i].getText(sKey, aArgs, true /* bCustomBundle */);
-			// value found - so return it!
-			if (sValue != null) {
-				return sValue; // found!
-			}
-		}
-
-		// loop over all loaded property files and return the value for the key if any
-		for (i = 0; i < this.aPropertyFiles.length; i++) {
-			sValue = this.aPropertyFiles[i].getProperty(sKey);
-			if (typeof sValue === "string") {
-				break;
-			}
-		}
-
-		// value for this key was not found in the currently loaded property files,
-		// load the fallback locales
-		while ( typeof sValue !== "string" && this._sNextLocale != null ) {
-
-			var oProperties = loadNextPropertiesSync(this);
-
-			// check whether the key is included in the newly loaded property file
-			if (oProperties) {
-				sValue = oProperties.getProperty(sKey);
-			}
-
-		}
-
-		if (!bCustomBundle && typeof sValue !== "string") {
-			assert(false, "could not find any translatable text for key '" + sKey + "' in bundle '" + this.oUrlInfo.url + "'");
-			sValue = sKey;
-		}
-
+	ResourceBundle.prototype._formatValue = function(sValue, sKey, aArgs){
 		if (typeof sValue === "string") {
 			if (aArgs) {
 				sValue = formatMessage(sValue, aArgs);
@@ -356,8 +345,79 @@ sap.ui.define([
 				};
 			}
 		}
-
 		return sValue;
+	};
+
+	/**
+	 * Recursively loads synchronously the fallback locale's properties and looks up the value by key.
+	 * The custom bundles are checked first in reverse order.
+	 * @param {string} sKey the key within the bundle
+	 * @param {array} [aArgs] arguments to format the message
+	 * @returns {string} the formatted value if found, <code>null</code> otherwise
+	 * @private
+	 */
+	ResourceBundle.prototype._getTextFromFallback = function(sKey, aArgs){
+
+		var sValue, i;
+
+		// loop over the custom bundles before resolving this one
+		// lookup the custom resource bundles (last one first!)
+		for (i = this.aCustomBundles.length - 1; i >= 0; i--) {
+			sValue = this.aCustomBundles[i]._getTextFromFallback(sKey, aArgs);
+			// value found - so return it!
+			if (sValue != null) {
+				return sValue; // found!
+			}
+		}
+
+		// value for this key was not found in the currently loaded property files,
+		// load the fallback locales
+		while ( typeof sValue !== "string" && this._sNextLocale != null ) {
+
+			var oProperties = loadNextPropertiesSync(this);
+
+			// check whether the key is included in the newly loaded property file
+			if (oProperties) {
+				sValue = oProperties.getProperty(sKey);
+				if (typeof sValue === "string") {
+					return this._formatValue(sValue, sKey, aArgs);
+				}
+			}
+		}
+		return null;
+	};
+
+	/**
+	 * Recursively loads locale's properties and looks up the value by key.
+	 * The custom bundles are checked first in reverse order.
+	 * @param {string} sKey the key within the bundle
+	 * @param {array} [aArgs] arguments to format the message
+	 * @returns {string} the formatted value if found, <code>null</code> otherwise
+	 * @private
+	 */
+	ResourceBundle.prototype._getTextFromProperties = function(sKey, aArgs){
+		var sValue = null,
+			i;
+
+		// loop over the custom bundles before resolving this one
+		// lookup the custom resource bundles (last one first!)
+		for (i = this.aCustomBundles.length - 1; i >= 0; i--) {
+			sValue = this.aCustomBundles[i]._getTextFromProperties(sKey, aArgs);
+			// value found - so return it!
+			if (sValue != null) {
+				return sValue; // found!
+			}
+		}
+
+		// loop over all loaded property files and return the value for the key if any
+		for (i = 0; i < this.aPropertyFiles.length; i++) {
+			sValue = this.aPropertyFiles[i].getProperty(sKey);
+			if (typeof sValue === "string") {
+				return this._formatValue(sValue, sKey, aArgs);
+			}
+		}
+
+		return null;
 	};
 
 	/**
@@ -375,8 +435,7 @@ sap.ui.define([
 	 * @returns {boolean} true if the text has been found in the concrete bundle
 	 *
 	 * @function
-	 * @name sap/base/i18n/ResourceBundle.prototype.hasText
-	 * @private
+	 * @public
 	 */
 	ResourceBundle.prototype.hasText = function(sKey) {
 		return this.aPropertyFiles.length > 0 && typeof this.aPropertyFiles[0].getProperty(sKey) === "string";
@@ -489,7 +548,7 @@ sap.ui.define([
 	 * Creates and returns a new instance of {@link sap/base/i18n/ResourceBundle}
 	 * using the given URL and locale to determine what to load.
 	 *
-	 * @private
+	 * @public
 	 * @function
 	 * @param {object} [mParams] Parameters used to initialize the resource bundle
 	 * @param {string} [mParams.url=''] URL pointing to the base .properties file of a bundle (.properties file without any locale information, e.g. "mybundle.properties")
@@ -499,7 +558,7 @@ sap.ui.define([
 	 * @param {boolean} [mParams.includeInfo=false] Whether to include origin information into the returned property values
 	 * @param {boolean} [mParams.async=false] Whether the first bundle should be loaded asynchronously
 	 *     Note: Fallback bundles loaded by {@link #getText} are always loaded synchronously.
-	 * @returns {sap/base/i18n/ResourceBundle|Promise} A new resource bundle or a Promise on that bundle (in asynchronous case)
+	 * @returns {module:sap/base/i18n/ResourceBundle|Promise} A new resource bundle or a Promise on that bundle (in asynchronous case)
 	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
 	 */
 	ResourceBundle.create = function(mParams) {

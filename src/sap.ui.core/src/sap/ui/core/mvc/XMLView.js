@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.core.mvc.XMLView.
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'./View',
 	"./XMLViewRenderer",
 	"sap/base/util/merge",
@@ -15,10 +15,10 @@ sap.ui.define([
 	'sap/ui/core/RenderManager',
 	'sap/ui/core/cache/CacheManager',
 	'sap/ui/model/resource/ResourceModel',
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/util/XMLHelper",
-	"sap/base/strings/hash",
-		"sap/base/Log"
+	'sap/ui/util/XMLHelper',
+	'sap/base/strings/hash',
+	'sap/base/Log',
+	'sap/base/util/LoaderExtensions'
 ],
 	function(
 		jQuery,
@@ -32,10 +32,10 @@ sap.ui.define([
 		RenderManager,
 		Cache,
 		ResourceModel,
-		jQueryDOM,
 		XMLHelper,
 		hash,
-		Log
+		Log,
+		LoaderExtensions
 	) {
 	"use strict";
 
@@ -475,8 +475,7 @@ sap.ui.define([
 			}
 
 			function loadResourceAsync(sResourceName) {
-				//TODO: global jquery call found
-				return jQuery.sap.loadResource(sResourceName, {async: true}).then(function(oData) {
+				return LoaderExtensions.loadResource(sResourceName, {async: true}).then(function(oData) {
 					return oData.documentElement; // result is the document node
 				});
 			}
@@ -525,8 +524,7 @@ sap.ui.define([
 
 			// either template name or XML node is given
 			if (mSettings.viewName) {
-				//TODO: global jquery call found
-				var sResourceName = jQuery.sap.getResourceName(mSettings.viewName, ".view.xml");
+				var sResourceName = mSettings.viewName.replace(/\./g, "/") + ".view.xml";
 				if (mSettings.async) {
 					// in async mode we need to return here as processing takes place in Promise callbacks
 					if (mSettings.cache && XMLView._bUseCache) {
@@ -535,8 +533,7 @@ sap.ui.define([
 						return loadResourceAsync(sResourceName).then(runPreprocessorsAsync).then(processView);
 					}
 				} else {
-					//TODO: global jquery call found
-					_xContent = jQuery.sap.loadResource(sResourceName).documentElement;
+					_xContent = LoaderExtensions.loadResource(sResourceName).documentElement;
 				}
 			} else if (mSettings.viewContent) {
 				if (mSettings.viewContent.nodeType === window.Node.DOCUMENT_NODE) { // Check for XML Document
@@ -619,7 +616,7 @@ sap.ui.define([
 		XMLView.prototype.onAfterRenderingBeforeChildren = function() {
 
 			if ( this._$oldContent.length !== 0 ) {
-				// jQuery.sap.log.debug("after rendering for " + this);
+				// Log.debug("after rendering for " + this);
 
 				// move DOM of children into correct place in preserved DOM
 				var aChildren = this.getAggregation("content");
@@ -632,13 +629,13 @@ sap.ui.define([
 
 						// if DOM exists, replace the preservation dummy with it
 						if ( oChildDOM ) {
-							jQueryDOM(document.getElementById(RenderPrefixes.Dummy + aChildren[i].getId())).replaceWith(oChildDOM);
+							jQuery(document.getElementById(RenderPrefixes.Dummy + aChildren[i].getId())).replaceWith(oChildDOM);
 						} // otherwise keep the dummy placeholder
 					}
 				}
 				// move preserved DOM into place
-				// jQuery.sap.log.debug("moving preserved dom into place for " + this);
-				jQueryDOM(document.getElementById(RenderPrefixes.Dummy + this.getId())).replaceWith(this._$oldContent);
+				// Log.debug("moving preserved dom into place for " + this);
+				jQuery(document.getElementById(RenderPrefixes.Dummy + this.getId())).replaceWith(this._$oldContent);
 			}
 			this._$oldContent = undefined;
 		};

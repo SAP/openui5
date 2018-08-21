@@ -103,7 +103,10 @@ sap.ui.define([
 		 * @return {boolean} true if one of the collections is not empty, otherwise - false.
 		 */
 		hasItems: function (oCollection1, oCollection2) {
-			return !(jQuery.isEmptyObject(oCollection1) && jQuery.isEmptyObject(oCollection2));
+			var bCollection1Filled = !!(oCollection1 && Object.keys(oCollection1).length),
+				bCollection2Filled = !!(oCollection2 && Object.keys(oCollection2).length);
+
+			return bCollection1Filled || bCollection2Filled;
 		}
 	};
 

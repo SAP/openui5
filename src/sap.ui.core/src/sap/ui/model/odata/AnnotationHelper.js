@@ -4,11 +4,11 @@
 
 // Provides object sap.ui.model.odata.AnnotationHelper
 sap.ui.define([
-	"sap/ui/base/BindingParser",
 	"./_AnnotationHelperBasics",
 	"./_AnnotationHelperExpression",
-	"sap/base/Log"
-], function(BindingParser, Basics, Expression, Log) {
+	"sap/base/Log",
+	"sap/ui/base/BindingParser"
+], function (Basics, Expression, Log, BindingParser) {
 		'use strict';
 
 		/**

@@ -9,6 +9,7 @@ sap.ui.define([
     "sap/ui/documentation/sdk/controller/util/ControlsInfo",
     "sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
     "sap/ui/documentation/sdk/controller/util/APIInfo",
+    "sap/ui/documentation/sdk/model/formatter",
     "sap/ui/core/library",
     "sap/base/Log"
 ], function(
@@ -17,6 +18,7 @@ sap.ui.define([
 	ControlsInfo,
 	ToggleFullScreenHandler,
 	APIInfo,
+	formatter,
 	CoreLibrary,
 	Log
 ) {
@@ -62,7 +64,7 @@ sap.ui.define([
 				// Cache allowed members
 				this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
 
-				this._sTopicid = oEvent.getParameter("arguments").id;
+				this._sTopicid = formatter.decodeModuleName(oEvent.getParameter("arguments").id);
 				this._sEntityType = oEvent.getParameter("arguments").entityType;
 				this._sEntityId = oEvent.getParameter("arguments").entityId;
 
@@ -204,29 +206,47 @@ sap.ui.define([
 			 */
 			_processApiIndexAndLoadApiJson: function (aData) {
 				var oEntityData,
-					bFound = false,
-					iLen,
-					i;
+					oMasterController,
+					bVirtualNamespace,
+					sTopicId = this._sTopicid;
 
 				// Cache api-index data
 				this._aApiIndex = aData;
 
-				// Find entity in api-index
-				for (i = 0, iLen = aData.length; i < iLen; i++) {
-					if (aData[i].name === this._sTopicid || aData[i].name.indexOf(this._sTopicid) === 0) {
-						oEntityData = aData[i];
-						this._oEntityData = oEntityData;
-						bFound = true;
-						break;
+				aData.some(function (oEntry) {
+					if (oEntry.name === sTopicId) {
+						oEntityData = oEntry;
+						return true;
 					}
+				});
+
+				if (!oEntityData) {
+					// Search for possible virtual namespace
+					aData.some(function (oEntry) {
+						// This check is not perfect but will handle both modules and global namespace items
+						if (oEntry.name.indexOf(sTopicId) === 0) {
+							oEntityData = oEntry;
+							bVirtualNamespace = true;
+							return true;
+						}
+					});
 				}
 
-				if (bFound) {
+				if (oEntityData) {
+					// Cache entity data
+					this._oEntityData = oEntityData;
+
+					// If target symbol is deprecated - all deprecated records should be shown in the tree
+					// Virtual namespace's can't be deprecated
+					if (!bVirtualNamespace && oEntityData.deprecated) {
+						oMasterController = this.getOwnerComponent().getConfigUtil().getMasterView("apiId").getController();
+						oMasterController.selectDeprecatedSymbol(this._sTopicid);
+					}
+
 					// Load API.json only for selected lib
 					return APIInfo.getLibraryElementsJSONPromise(oEntityData.lib).then(function (aData) {
-						this._aLibsData = aData; // Cache received data
 						return Promise.resolve(aData); // We have found the symbol and loaded the corresponding api.json
-					}.bind(this));
+					});
 				}
 
 				// If we are here - the object does not exist so we reject the promise.
@@ -249,16 +269,34 @@ sap.ui.define([
 				oControlData.hasSpecialSettings = false;
 				oControlData.hasAnnotations = false;
 
+				var fnIsAllowedMember = function(oElement) {
+					return (this._aAllowedMembers.indexOf(oElement.visibility) >= 0);
+				}.bind(this);
+
+				var fnFormatName = function(oElement) {
+
+					oElement.name && (oElement.name = formatter.apiRefEntityName(oElement.name)); //TODO: this will be moved to the preprocessing step instead
+					oElement.code && (oElement.code = formatter.apiRefEntityName(oElement.code)); //TODO: this will be moved to the preprocessing step instead
+
+					if (oElement.name) {
+						var sPlaceholderId = oElement.name.replace(/[$#/]/g, ".");
+						oElement.placeholderId = sPlaceholderId + "_method";
+						oElement.subPlaceholderId = sPlaceholderId + "__method";
+					}
+
+					return oElement;
+				};
+
 				// Filter and leave only visible elements
 				if (oControlData.properties) {
-					oControlData.properties = this.filterElements(oControlData.properties);
+					oControlData.properties = this.transformElements(oControlData.properties, fnIsAllowedMember, fnFormatName);
 
 					// Are there remaining visible properties?
 					oControlData.hasProperties = !!oControlData.properties.length;
 				}
 
 				if (oControlData.methods) {
-					oControlData.methods = this.filterElements(oControlData.methods);
+					oControlData.methods = this.transformElements(oControlData.methods, fnIsAllowedMember, fnFormatName);
 
 					// Are there remaining visible methods?
 					oControlData.hasOwnMethods = !!oControlData.methods.length;
@@ -267,22 +305,25 @@ sap.ui.define([
 				if (oUi5Metadata) {
 					oControlData.dnd = oUi5Metadata.dnd;
 					if (oUi5Metadata.properties) {
-						oUi5Metadata.properties = this.filterElements(oUi5Metadata.properties);
+						oUi5Metadata.properties = this.transformElements(oUi5Metadata.properties, fnIsAllowedMember);
 						oControlData.hasControlProperties = !!oUi5Metadata.properties.length;
 					}
 
 					if (oUi5Metadata.associations) {
-						oUi5Metadata.associations = this.filterElements(oUi5Metadata.associations);
+						oUi5Metadata.associations = this.transformElements(oUi5Metadata.associations, fnIsAllowedMember);
 						oControlData.hasAssociations = !!oUi5Metadata.associations.length;
 					}
 
 					if (oUi5Metadata.aggregations) {
-						oUi5Metadata.aggregations = this.filterElements(oUi5Metadata.aggregations);
+						oUi5Metadata.aggregations = this.transformElements(oUi5Metadata.aggregations, fnIsAllowedMember);
 						oControlData.hasAggregations = !!oUi5Metadata.aggregations.length;
+						oControlData.hasAggregationAltTypes = oUi5Metadata.aggregations.some(function (oElement) {
+							return !!oElement.altTypes;
+						});
 					}
 
 					if (oUi5Metadata.specialSettings) {
-						oUi5Metadata.specialSettings = this.filterElements(oUi5Metadata.specialSettings);
+						oUi5Metadata.specialSettings = this.transformElements(oUi5Metadata.specialSettings, fnIsAllowedMember);
 						oControlData.hasSpecialSettings = !!oUi5Metadata.specialSettings.length;
 					}
 
@@ -454,11 +495,13 @@ sap.ui.define([
 			},
 
 			/**
-			 * Remove not allowed elements from list
+			 * Filter and format elements
 			 * @param {array} aElements list of elements
-			 * @returns {array} filtered elements list
+			 * @param {function} fnFilter filtering function
+			 * @param {function} fnFormat formatting function
+			 * @returns {array} transformed elements list
 			 */
-			filterElements: function (aElements) {
+			transformElements: function (aElements, fnFilter, fnFormat) {
 				var i,
 					iLength = aElements.length,
 					aNewElements = [],
@@ -466,9 +509,14 @@ sap.ui.define([
 
 				for (i = 0; i < iLength; i++) {
 					oElement = aElements[i];
-					if (this._aAllowedMembers.indexOf(oElement.visibility) >= 0) {
-						aNewElements.push(oElement);
+
+					if (fnFilter && !fnFilter(oElement)) {
+						continue;
 					}
+					if (fnFormat) {
+						fnFormat(oElement);
+					}
+					aNewElements.push(oElement);
 				}
 				return aNewElements;
 			}

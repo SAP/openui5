@@ -14,7 +14,8 @@ sap.ui.define([
 	'sap/ui/core/LocaleData',
 	'sap/ui/Device',
 	'sap/ui/core/Locale',
-	'./TimePickerSlidersRenderer'
+	'./TimePickerSlidersRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		coreLibrary,
@@ -28,7 +29,8 @@ sap.ui.define([
 		LocaleData,
 		Device,
 		Locale,
-		TimePickerSlidersRenderer
+		TimePickerSlidersRenderer,
+		jQuery
 	) {
 		"use strict";
 
@@ -192,6 +194,8 @@ sap.ui.define([
 		TimePickerSliders.prototype.onAfterRendering = function() {
 			this.$().off(!!Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
 			this.$().on(!!Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", jQuery.proxy(this._onmousewheel, this));
+
+			this.$().on('selectstart', fnFalse);
 
 			if (!Device.browser.msie && this._getShouldOpenSliderAfterRendering()) {
 				/* This method is called here prematurely to ensure slider loading on time.
@@ -1204,6 +1208,10 @@ sap.ui.define([
 			}
 
 			return sResult;
+		}
+
+		function fnFalse() {
+			return false;
 		}
 
 		return TimePickerSliders;

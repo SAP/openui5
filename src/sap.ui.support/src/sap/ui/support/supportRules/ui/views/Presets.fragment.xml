@@ -2,6 +2,7 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
 	<ResponsivePopover
+		id="presetsPopover"
 		title="Selection Preset"
 		placement="Bottom"
 		contentWidth="300px"
@@ -12,7 +13,7 @@
 					<Title text="Rule Presets" />
 				</contentMiddle>
 				<contentRight>
-					<core:Icon width="18px" src="sap-icon://sys-help" decorative="false" press="openHelp" />
+					<core:Icon id="help" width="18px" src="sap-icon://sys-help" decorative="false" press="openHelp" />
 				</contentRight>
 			</Bar>
 		</customHeader>
@@ -35,14 +36,22 @@
 							type="Transparent"
 							press="onPresetItemDelete"
 							visible="{= ${disableDelete} ? false : true}" />
+						<Button
+							id = "undoButton"
+							class="sapUiTinyMarginEnd"
+							tooltip="Return to default selection"
+							icon="sap-icon://synchronize"
+							type="Transparent"
+							press="onPresetItemReset"
+							visible="{= ${isSystemPreset} &amp;&amp; ${isModified} ? true : false}" />
 					</HBox>
 				</CustomListItem>
 			</List>
 			<footer>
 				<Toolbar>
 					<ToolbarSpacer />
-					<Button text="Import" press="onImportPress" />
-					<Button text="Export" press="onExportPress" />
+					<Button id="presetImport" text="Import" press="onImportPress" />
+					<Button id="presetExport" text="Export" press="onExportPress" />
 				</Toolbar>
 			</footer>
 		</Page>

@@ -31,6 +31,10 @@
 				<NavigationProperty Name="BP_2_CONTACT" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Contact)" />
 				<NavigationProperty Name="BP_2_PRODUCT" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Product)" />
 				<NavigationProperty Name="BP_2_SO" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder)" />
+				<!-- TODO define property messagesInSalesOrder; TODO add new type for messages -->
+				<Annotation Term="SAP__common.Messages">
+					<Path>messagesInBusinessPartner</Path>
+				</Annotation>
 			</EntityType>
 			<EntityType Name="Contact">
 				<Key>
@@ -116,6 +120,10 @@
 					<OnDelete Action="Cascade" />
 				</NavigationProperty>
 				<NavigationProperty Name="SO_2_SOITEM" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.SOLineItem)" Partner="SOITEM_2_SO" ContainsTarget="true" />
+				<!-- TODO define property messagesInSalesOrder; TODO add new type for messages -->
+				<Annotation Term="SAP__common.Messages">
+					<Path>messagesInSalesOrder</Path>
+				</Annotation>
 			</EntityType>
 			<EntityType Name="SOLineItem">
 				<Key>
@@ -137,6 +145,10 @@
 				<NavigationProperty Name="SOITEM_2_PRODUCT" Type="com.sap.gateway.default.zui5_epm_sample.v0002.Product" />
 				<NavigationProperty Name="SOITEM_2_SCHDL" Type="com.sap.gateway.default.zui5_epm_sample.v0002.ItemSchedule" Nullable="false" ContainsTarget="true" />
 				<NavigationProperty Name="SOITEM_2_SO" Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder" Nullable="false" />
+				<!-- TODO define property messagesInSalesOrderLineItem; TODO add new type for messages -->
+				<Annotation Term="SAP__common.Messages">
+					<Path>messagesInSalesOrderLineItem</Path>
+				</Annotation>
 			</EntityType>
 			<EntityType Name="SalesOrderSchedule">
 				<Key>

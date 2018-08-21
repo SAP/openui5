@@ -26,6 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Eleme
 	 * @public
 	 * @alias sap.ui.commons.layout.PositionContainer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	var PositionContainer = Element.extend("sap.ui.commons.layout.PositionContainer", /** @lends sap.ui.commons.layout.PositionContainer.prototype */ { metadata : {
 

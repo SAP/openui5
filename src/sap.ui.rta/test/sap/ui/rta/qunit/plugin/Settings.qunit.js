@@ -1,8 +1,6 @@
 /*global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
@@ -19,6 +17,7 @@ sap.ui.require([
 	"sap/ui/rta/command/Stack",
 	"sap/ui/fl/Utils",
 	"sap/ui/dt/Util",
+	'sap/ui/base/ManagedObject',
 	"sap/base/Log"
 ],
 function (
@@ -38,6 +37,7 @@ function (
 	Stack,
 	Utils,
 	DtUtil,
+	ManagedObject,
 	BaseLog
 ) {
 	"use strict";
@@ -281,7 +281,6 @@ function (
 			var oButtonOverlay = new ElementOverlay({
 				element : this.oButton,
 				designTimeMetadata : new ElementDesignTimeMetadata({
-					libraryName : "sap.m",
 					data : {
 						actions : {
 							settings : function() {
@@ -301,7 +300,14 @@ function (
 
 			var aSelectedOverlays = [oButtonOverlay];
 
+			var fnAssertSpy = sandbox.spy(ManagedObject.prototype, "applySettings");
+
 			this.oSettingsPlugin.attachEventOnce("elementModified", function (oEvent) {
+				var mPassedSettings = fnAssertSpy.getCall(1).args[0];
+				var bHasSelector = Object.keys(mPassedSettings).some(function(sKey){
+					return sKey === "selector";
+				});
+				assert.notOk(bHasSelector, "the selector is not part of the passed settings");
 				var oCompositeCommand = oEvent.getParameter("command");
 				assert.ok(oCompositeCommand, "Composite command is created");
 				var oSettingsCommand = oCompositeCommand.getCommands()[0];
@@ -311,11 +317,45 @@ function (
 			return this.oSettingsPlugin.handler(aSelectedOverlays, { eventItem: {}, contextElement: this.oButton });
 		});
 
+		QUnit.test("when the handle settings function is called and the handler returns a an empty change object,", function(assert) {
+			var oButtonOverlay = new ElementOverlay({
+				element : this.oButton,
+				designTimeMetadata : new ElementDesignTimeMetadata({
+					data : {
+						actions : {
+							settings : function() {
+								return {
+									isEnabled : true,
+									handler : function() {
+										return new Promise(function(resolve) {
+											resolve([]);
+										});
+									}
+								};
+							}
+						}
+					}
+				})
+			});
+
+			var oCommandFactory = this.oSettingsPlugin.getCommandFactory(),
+				oGetCommandForSpy = sinon.spy(oCommandFactory, 'getCommandFor'),
+				oFireEventSpy = sinon.spy(this.oSettingsPlugin, 'fireElementModified'),
+				aSelectedOverlays = [oButtonOverlay];
+
+			return this.oSettingsPlugin.handler(aSelectedOverlays, { eventItem: {}, contextElement: this.oButton })
+
+			.then(function() {
+				assert.equal(oGetCommandForSpy.callCount, 0, "then commandFactory.getCommandFor function is not called");
+				assert.equal(oFireEventSpy.callCount, 0, "then commandFactory.fireElementModified function is not called");
+				assert.ok(true, "CompositeCommand is not created");
+			});
+		});
+
 		QUnit.test("when the handle settings function is called and no handler is present in Designtime Metadata,", function(assert) {
 			var oButtonOverlay = new ElementOverlay({
 				element : this.oButton,
 				designTimeMetadata : new ElementDesignTimeMetadata({
-					libraryName : "sap.m",
 					data : {
 						actions : {
 							settings : function() {
@@ -346,7 +386,6 @@ function (
 			var oButtonOverlay = new ElementOverlay({
 				element : this.oButton,
 				designTimeMetadata : new ElementDesignTimeMetadata({
-					libraryName : "sap.m",
 					data : {
 						actions : {
 							settings : function() {
@@ -366,35 +405,15 @@ function (
 
 			var aSelectedOverlays = [oButtonOverlay];
 
-			return this.oSettingsPlugin.handler(aSelectedOverlays, { eventItem: {}, contextElement: this.oButton }).catch(function() {
+			return this.oSettingsPlugin.handler(aSelectedOverlays, { eventItem: {}, contextElement: this.oButton })
+
+			.catch(function() {
 				assert.notOk(that.oSettingsCommand, "... command is not created");
 			});
 		});
 
 		QUnit.test("when two changes are on the command stack,", function(assert) {
-			var done = assert.async();
-
-			var oSettingsCmd1 = this.oSettingsPlugin.getCommandFactory().getCommandFor(
-				{
-					id : "stableNavPopoverId",
-					controlType : "sap.m.Button",
-					appComponent : oMockedAppComponent
-				},
-				"settings",
-				{
-				changeType : "changeSettings",
-				content : "testchange1"
-				},
-				new ElementDesignTimeMetadata({
-				libraryName : "sap.m",
-				data : {
-					actions : {
-						settings : function() {}
-					}
-				}
-			}));
-
-			var oSettingsCmd2 = this.oSettingsPlugin.getCommandFactory().getCommandFor(
+			return this.oSettingsPlugin.getCommandFactory().getCommandFor(
 				{
 					id : "stableNavPopoverId",
 					controlType : "sap.m.Button",
@@ -403,26 +422,57 @@ function (
 				"settings",
 				{
 					changeType : "changeSettings",
-					content : "testchange2"
+					content : "testchange1"
 				},
 				new ElementDesignTimeMetadata({
-					libraryName : "sap.m",
 					data : {
 						actions : {
 							settings : function() {}
 						}
 					}
-				}));
+				})
+			)
 
-			oSettingsCmd1.prepare();
-			oSettingsCmd2.prepare();
-			this.oCommandStack.pushAndExecute(oSettingsCmd1).then(function(){
-				this.oCommandStack.pushAndExecute(oSettingsCmd2).then(function(){
-					var aUnsavedChanges = this.oSettingsPlugin._getUnsavedChanges("stableNavPopoverId", ["changeSettings"]);
-					assert.equal(aUnsavedChanges.length, 2, "these commands are returned by _getUnsavedChanges");
-					done();
-				}.bind(this));
-			}.bind(this));
+			.then(function(oSettingsCommand) {
+				oSettingsCommand.prepare();
+				return this.oCommandStack.pushAndExecute(oSettingsCommand);
+			}.bind(this))
+
+			.then(function() {
+				return this.oSettingsPlugin.getCommandFactory().getCommandFor(
+					{
+						id : "stableNavPopoverId",
+						controlType : "sap.m.Button",
+						appComponent : oMockedAppComponent
+					},
+					"settings",
+					{
+						changeType : "changeSettings",
+						content : "testchange2"
+					},
+					new ElementDesignTimeMetadata({
+						data : {
+							actions : {
+								settings : function() {}
+							}
+						}
+					})
+				);
+			}.bind(this))
+
+			.then(function(oSettingsCommand) {
+				oSettingsCommand.prepare();
+				return this.oCommandStack.pushAndExecute(oSettingsCommand);
+			}.bind(this))
+
+			.then(function(){
+				var aUnsavedChanges = this.oSettingsPlugin._getUnsavedChanges("stableNavPopoverId", ["changeSettings"]);
+				assert.equal(aUnsavedChanges.length, 2, "these commands are returned by _getUnsavedChanges");
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 
 		QUnit.test("when the handle settings function is called and the handler returns a change object with an app descriptor change,", function(assert) {
@@ -445,7 +495,6 @@ function (
 			var oButtonOverlay = new ElementOverlay({
 				element : this.oButton,
 				designTimeMetadata : new ElementDesignTimeMetadata({
-					libraryName : "sap.m",
 					data : {
 						actions : {
 							settings : function() {
@@ -510,7 +559,6 @@ function (
 			var oButtonOverlay = new ElementOverlay({
 				element : this.oButton,
 				designTimeMetadata : new ElementDesignTimeMetadata({
-					libraryName : "sap.m",
 					data : {
 						actions : {
 							settings : function() {
@@ -552,7 +600,6 @@ function (
 			var oButtonOverlay = new ElementOverlay({
 				element: this.oButton,
 				designTimeMetadata: new ElementDesignTimeMetadata({
-					libraryName: "sap.m",
 					data: {
 						actions: {
 							settings: function() {
@@ -612,7 +659,6 @@ function (
 			var oButtonOverlay = new ElementOverlay({
 				element: this.oButton,
 				designTimeMetadata: new ElementDesignTimeMetadata({
-					libraryName: "sap.m",
 					data: {
 						actions:
 						{
@@ -691,7 +737,6 @@ function (
 			var oButtonOverlay = new ElementOverlay({
 				element : this.oButton,
 				designTimeMetadata : new ElementDesignTimeMetadata({
-					libraryName : "sap.m",
 					data : {
 						actions : {
 							settings : function() {
@@ -732,13 +777,103 @@ function (
 			assert.equal(spyLog.callCount, 1, "then there is a warning in the log saying the handler was not found for action 2");
 		});
 
+		QUnit.test(
+			"when retrieving the menu items for two 'settings', but one has changeOnRelevantContainer true and the relevant container doesn't have a stable id",
+			function(assert) {
+
+			var oButtonOverlay = new ElementOverlay({
+				element : this.oButton,
+				designTimeMetadata : new ElementDesignTimeMetadata({
+					data : {
+						actions : {
+							settings : function() {
+								return {
+									"Action1" : {
+										name : "CTX_ACTION1",
+										handler: function() {}
+									},
+									"Action2" : {
+										name : "CTX_ACTION2",
+										changeOnRelevantContainer: true,
+										handler: function() {}
+									}
+								};
+							}
+						}
+					}
+				})
+			});
+
+			var oVerticalLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+
+			sandbox.stub(this.oSettingsPlugin, "hasStableId").callsFake(function(oOverlay){
+				if (oOverlay === oVerticalLayoutOverlay){
+					return false;
+				} else {
+					return true;
+				}
+			});
+
+			sandbox.stub(oButtonOverlay, "getRelevantContainer").returns(oVerticalLayoutOverlay);
+
+			var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
+			assert.equal(aMenuItems[0].id, "CTX_SETTINGS0", "'getMenuItems' returns the context menu item for action 1");
+			assert.equal(aMenuItems[0].rank, 110, "'getMenuItems' returns the correct item rank for action 1");
+			assert.equal(aMenuItems.length, 1, "'getMenuItems' doesn't return the action where the relevant container has no stable id");
+			assert.equal(this.oSettingsPlugin._isEditable(oButtonOverlay), true, "and _isEditable() returns true because one action is valid");
+		});
+
+		QUnit.test(
+			"when retrieving the menu items for two 'settings', but both have changeOnRelevantContainer true and the relevant container doesn't have a stable id",
+			function(assert) {
+
+			var oButtonOverlay = new ElementOverlay({
+				element : this.oButton,
+				designTimeMetadata : new ElementDesignTimeMetadata({
+					data : {
+						actions : {
+							settings : function() {
+								return {
+									"Action1" : {
+										name : "CTX_ACTION1",
+										changeOnRelevantContainer: true,
+										handler: function() {}
+									},
+									"Action2" : {
+										name : "CTX_ACTION2",
+										changeOnRelevantContainer: true,
+										handler: function() {}
+									}
+								};
+							}
+						}
+					}
+				})
+			});
+
+			var oVerticalLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+
+			sandbox.stub(this.oSettingsPlugin, "hasStableId").callsFake(function(oOverlay){
+				if (oOverlay === oVerticalLayoutOverlay){
+					return false;
+				} else {
+					return true;
+				}
+			});
+
+			sandbox.stub(oButtonOverlay, "getRelevantContainer").returns(oVerticalLayoutOverlay);
+
+			var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
+			assert.equal(aMenuItems.length, 0, "then no menu items are returned");
+			assert.equal(this.oSettingsPlugin._isEditable(oButtonOverlay), false, "and _isEditable() returns false because no actions are valid");
+		});
+
 		QUnit.test("when retrieving the context menu items for two 'settings' actions, but one is disabled", function (assert) {
 			var oButton = this.oButton;
 
 			var oButtonOverlay = new ElementOverlay({
 				element: this.oButton,
 				designTimeMetadata: new ElementDesignTimeMetadata({
-					libraryName: "sap.m",
 					data: {
 						actions: {
 							settings: {
@@ -783,7 +918,6 @@ function (
 			var oButtonOverlay = new ElementOverlay({
 				element : this.oButton,
 				designTimeMetadata : new ElementDesignTimeMetadata({
-					libraryName : "sap.m",
 					data : {
 						actions :
 						{
@@ -846,10 +980,7 @@ function (
 		});
 	});
 
-
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

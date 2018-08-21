@@ -341,4 +341,55 @@
 		assert.strictEqual($btnToolbar.is(":focus"), true, "Button must be focused");
 	});
 
+	function testKeyboardEvent(sTestName, sKeyPressed, sButtonId, sSectionId) {
+		QUnit.test(sTestName, function (assert) {
+			assert.expect(1);
+
+			var oAnchorBarButtonControl = core.byId(sButtonId),
+				$anchorBarButton = oAnchorBarButtonControl.$(),
+				$subSection = core.byId(sSectionId).$(),
+				fDone = assert.async();
+
+			$anchorBarButton.focus();
+
+			switch (sKeyPressed) {
+				case "ENTER":
+					sap.ui.test.qunit.triggerKeydown($anchorBarButton, sKeyPressed);
+					break;
+				case "SPACE":
+					sap.ui.test.qunit.triggerKeyup($anchorBarButton, sKeyPressed);
+					break;
+				default:
+				oAnchorBarButtonControl.firePress();
+					break;
+			}
+
+			setTimeout(function () {
+				assert.strictEqual($subSection.is(":focus"), true, "SubSection must be focused");
+				fDone();
+			}, 1000);
+		});
+	}
+
+	testKeyboardEvent(
+		"ObjectPageSection F7 - from toolbar move focus to coresponding section upon Space press",
+		"SPACE",
+		"UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar-__section3-anchor",
+		"__section3"
+	);
+
+	testKeyboardEvent(
+		"ObjectPageSection F7 - from toolbar move focus to coresponding section upon Enter press",
+		"ENTER",
+		"UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar-__section5-anchor",
+		"__section5"
+	);
+
+	testKeyboardEvent(
+		"ObjectPageSection F7 - from toolbar move focus to coresponding section upon mouse click",
+		"Click",
+		"UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar-__section11-anchor",
+		"__section11"
+	);
+
 }(jQuery, QUnit, sinon));

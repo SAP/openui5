@@ -2,9 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([
-	"sap/base/Log"
-], function (Log) {
+sap.ui.define(["sap/base/Log", "sap/ui/thirdparty/jquery"], function(Log, jQuery) {
 	"use strict";
 
 	/**

@@ -2,8 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['./Delegate', "sap/base/util/deepEqual", "sap/base/security/encodeXML"],
-	function(Delegate, deepEqual, encodeXML) {
+sap.ui.define([
+	'./Delegate',
+	"sap/base/util/deepEqual",
+	"sap/base/security/encodeXML",
+	"sap/ui/thirdparty/jquery"
+],
+	function(Delegate, deepEqual, encodeXML, jQuery) {
 	"use strict";
 
 

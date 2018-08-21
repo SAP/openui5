@@ -6,8 +6,7 @@ sap.ui.require([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Properties"
-],
-function (Helper, Opa5, Press, Properties) {
+], function (Helper, Opa5, Press, Properties) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.odata.v4.ListBinding.Main";
 

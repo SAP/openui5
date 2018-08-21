@@ -20,7 +20,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/security/encodeURL"
 ],
-	function(Sorter, FilterProcessor, DateFormat, Log, assert, jquery, encodeURL ) {
+	function(Sorter, FilterProcessor, DateFormat, Log, assert, jQuery, encodeURL ) {
 	"use strict";
 
 	var rDecimal = /^([-+]?)0*(\d+)(\.\d+|)$/,
@@ -420,7 +420,7 @@ sap.ui.define([
 			case "NotEndsWith":
 				return "not%20endswith(" + sPath + "," + oValue1 + ")";
 			default:
-				jQuery.sap.log.error("ODataUtils :: Unknown filter operator " + sOperator);
+				Log.error("ODataUtils :: Unknown filter operator " + sOperator);
 				return "true";
 		}
 	};

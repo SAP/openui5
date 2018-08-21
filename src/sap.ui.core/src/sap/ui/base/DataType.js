@@ -3,8 +3,13 @@
  */
 
 // Provides class sap.ui.base.DataType
-sap.ui.define(['sap/base/util/ObjectPath', "sap/base/assert", "sap/base/Log"],
-	function(ObjectPath, assert, Log) {
+sap.ui.define([
+	'sap/base/util/ObjectPath',
+	"sap/base/assert",
+	"sap/base/Log",
+	"sap/base/util/isPlainObject"
+],
+	function(ObjectPath, assert, Log, isPlainObject) {
 	"use strict";
 
 
@@ -528,7 +533,7 @@ sap.ui.define(['sap/base/util/ObjectPath', "sap/base/assert", "sap/base/Log"],
 				oType = ObjectPath.get(sTypeName);
 				if ( oType instanceof DataType ) {
 					mTypes[sTypeName] = oType;
-				} else if ( jQuery.isPlainObject(oType) ) {
+				} else if ( isPlainObject(oType) ) {
 					oType = mTypes[sTypeName] = createEnumType(sTypeName, oType);
 				} else {
 					if ( oType ) {

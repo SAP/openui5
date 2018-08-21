@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/core/library',
 	"./ViewRenderer",
 	"sap/base/assert",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		ManagedObject,
@@ -21,7 +22,8 @@ sap.ui.define([
 		library,
 		ViewRenderer,
 		assert,
-		Log
+		Log,
+		jQuery
 	) {
 	"use strict";
 
@@ -912,6 +914,13 @@ sap.ui.define([
 			}
 		});
 	};
+
+	/**
+	 * @sap-restricted sap.ui.core
+	 * @private
+	 * @see {sap.ui.view}
+	 */
+	View._legacyCreate = viewFactory;
 
 	/**
 	 * Creates a view of the given type, name and with the given id.

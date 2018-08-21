@@ -7,26 +7,33 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	'sap/ui/base/DataType',
-	'sap/ui/core/CSSColor',
+	'sap/ui/core/library',
 	'sap/ui/core/delegate/ItemNavigation',
 	'./Button',
 	'./Dialog',
 	'./library',
 	'./ColorPaletteRenderer',
-	"sap/ui/dom/containsOrEquals"
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Control,
 	Device,
 	DataType,
-	CSSColor,
+	coreLibrary,
 	ItemNavigation,
 	Button,
 	Dialog,
 	library,
 	ColorPaletteRenderer,
-	containsOrEquals
+	containsOrEquals,
+	KeyCodes,
+	jQuery
 ) {
 		"use strict";
+
+		// shortcut to CSSColor of the core library
+		var CSSColor = coreLibrary.CSSColor;
 
 		// shortcut to ColorPicker (lazy initialized)
 		var ColorPicker;
@@ -577,7 +584,7 @@ sap.ui.define([
 			aAllSwatches = this._getAllSwatches();
 
 			if (oFocusInfo.bIsMoreColorsButton) {
-				vNextElement = oEvent.keyCode === jQuery.sap.KeyCodes.ARROW_UP ?
+				vNextElement = oEvent.keyCode === KeyCodes.ARROW_UP ?
 					aAllSwatches[this._oItemNavigation._getIndexOfTheFirstItemInLastRow()] : aAllSwatches[aAllSwatches.length - 1];
 			} else { // Default Color Button
 				vNextElement = this._getShowMoreColorsButton() ? this._getMoreColorsButton() :
@@ -605,9 +612,9 @@ sap.ui.define([
 		 * @private
 		 */
 		ColorPalette.prototype._getElementInfo = function (oElement) {
-			var bIsDefaultColorButton = this._getShowDefaultColorButton() && jQuery.sap.containsOrEquals(oElement,
+			var bIsDefaultColorButton = this._getShowDefaultColorButton() && containsOrEquals(oElement,
 					this._getDefaultColorButton().getDomRef()),
-				bIsMoreColorsButton = !bIsDefaultColorButton && this._getShowMoreColorsButton() && jQuery.sap.containsOrEquals(oElement,
+				bIsMoreColorsButton = !bIsDefaultColorButton && this._getShowMoreColorsButton() && containsOrEquals(oElement,
 					this._getMoreColorsButton().getDomRef()),
 				bIsASwatch = !bIsMoreColorsButton && !bIsDefaultColorButton && jQuery(oElement).hasClass(CSS_CLASS_SWATCH);
 
@@ -686,8 +693,8 @@ sap.ui.define([
 		 * @param {jQuery.Event} oEvent the keyboard event
 		 */
 		ItemNavigationHomeEnd.prototype.onsapprevious = function (oEvent) {
-			var bIsOnItem = jQuery.sap.containsOrEquals(this.getRootDomRef(), oEvent.target),
-				bArrowUpOnFirstItem = oEvent.keyCode === jQuery.sap.KeyCodes.ARROW_UP && this.getFocusedIndex() === 0;
+			var bIsOnItem = containsOrEquals(this.getRootDomRef(), oEvent.target),
+				bArrowUpOnFirstItem = oEvent.keyCode === KeyCodes.ARROW_UP && this.getFocusedIndex() === 0;
 
 			if (!bIsOnItem) {
 				return;
@@ -716,7 +723,7 @@ sap.ui.define([
 		 * @param {jQuery.Event} oEvent the keyboard event
 		 */
 		ItemNavigationHomeEnd.prototype.onsapnext = function (oEvent) {
-			var bIsOnItem = jQuery.sap.containsOrEquals(this.getRootDomRef(), oEvent.target),
+			var bIsOnItem = containsOrEquals(this.getRootDomRef(), oEvent.target),
 				aItemDomRefs,
 				iCurrentIndex,
 				oItemInfo;
@@ -725,7 +732,7 @@ sap.ui.define([
 				return;
 			}
 
-			if (oEvent.keyCode !== jQuery.sap.KeyCodes.ARROW_DOWN) {
+			if (oEvent.keyCode !== KeyCodes.ARROW_DOWN) {
 				ItemNavigation.prototype.onsapnext.apply(this, arguments);
 				return;
 			}
@@ -758,7 +765,7 @@ sap.ui.define([
 		};
 
 		ItemNavigationHomeEnd.prototype.onsaphome = function(oEvent) {
-			var bIsOnItem = jQuery.sap.containsOrEquals(this.getRootDomRef(), oEvent.target),
+			var bIsOnItem = containsOrEquals(this.getRootDomRef(), oEvent.target),
 				oItemInfo;
 
 			if (!bIsOnItem) {
@@ -786,7 +793,7 @@ sap.ui.define([
 		};
 
 		ItemNavigationHomeEnd.prototype.onsapend = function(oEvent) {
-			var bIsOnItem = jQuery.sap.containsOrEquals(this.getRootDomRef(), oEvent.target),
+			var bIsOnItem = containsOrEquals(this.getRootDomRef(), oEvent.target),
 				oItemInfo;
 
 			if (!bIsOnItem) {

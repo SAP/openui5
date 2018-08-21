@@ -9,7 +9,11 @@
 sap.ui.define([], function() {
 
 	"use strict";
-
+	/**
+	 * @function
+	 * @alias module:sap/ui/base/syncXHRFix
+	 * @private
+	 */
 	return function() {
 		// Firefox has an issue with synchronous and asynchronous requests running in parallel,
 		// where callbacks of the asynchronous call are executed while waiting on the synchronous

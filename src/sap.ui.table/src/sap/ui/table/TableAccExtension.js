@@ -9,17 +9,8 @@ sap.ui.define([
 	"./TableExtension",
 	"./TableAccRenderExtension",
 	"./TableUtils",
-	"sap/ui/Device",
-	"sap/ui/thirdparty/jquery"
-], function(
-	Control,
-	library,
-	TableExtension,
-	TableAccRenderExtension,
-	TableUtils,
-	Device,
-	jQueryDOM
-) {
+	"sap/ui/Device"
+], function(Control, library, TableExtension, TableAccRenderExtension, TableUtils, Device) {
 	"use strict";
 
 	// shortcuts
@@ -669,7 +660,7 @@ sap.ui.define([
 
 					if (mParams && mParams.headerId) {
 						var aHeaders = ExtensionHelper.getRelevantColumnHeaders(oTable, oColumn);
-						var iIdx = jQuery.inArray(mParams.headerId, aHeaders);
+						var iIdx = aHeaders.indexOf(mParams.headerId);
 						aLabels = iIdx > 0 ? aHeaders.slice(0, iIdx + 1) : [mParams.headerId];
 					}
 					for (var i = 0; i < aLabels.length; i++) {
@@ -1111,7 +1102,7 @@ sap.ui.define([
 
 		var aHeaders = ExtensionHelper.getRelevantColumnHeaders(this.getTable(), oColumn);
 		for (var i = 0; i < aHeaders.length; i++) {
-			var $Header = jQueryDOM(document.getElementById(aHeaders[i]));
+			var $Header = jQuery(document.getElementById(aHeaders[i]));
 			if (!$Header.attr("colspan")) {
 				$Header.attr({
 					"aria-sort": mAttributes["aria-sort"] || null
@@ -1288,14 +1279,13 @@ sap.ui.define([
 			mTooltipTexts.mouse.rowSelect = bShowTooltips ? TableUtils.getResourceText("TBL_ROW_SELECT_MULTI_TOGGLE") : "";
 			// text for de-select is the same like for single selection
 			mTooltipTexts.mouse.rowDeselect = bShowTooltips ? TableUtils.getResourceText("TBL_ROW_DESELECT") : "";
-			mTooltipTexts.keyboard.rowSelect = TableUtils.getResourceText("TBL_ROW_SELECT_MULTI_TOGGLE_KEY");
+			mTooltipTexts.keyboard.rowSelect = TableUtils.getResourceText("TBL_ROW_SELECT_KEY");
 			// text for de-select is the same like for single selection
 			mTooltipTexts.keyboard.rowDeselect = TableUtils.getResourceText("TBL_ROW_DESELECT_KEY");
 
 			if (bConsiderSelectionState === true && iSelectedIndicesCount === 0) {
 				// if there is no row selected yet, the selection is like in single selection case
 				mTooltipTexts.mouse.rowSelect = bShowTooltips ? TableUtils.getResourceText("TBL_ROW_SELECT") : "";
-				mTooltipTexts.keyboard.rowSelect = TableUtils.getResourceText("TBL_ROW_SELECT_KEY");
 			}
 		}
 
@@ -1335,7 +1325,7 @@ sap.ui.define([
 			}
 		}
 		var aLabels = oControl.getAriaLabelledBy();
-		if (sLabel && jQuery.inArray(sLabel, aLabels) < 0) {
+		if (sLabel && aLabels.indexOf(sLabel) < 0) {
 			oControl.addAriaLabelledBy(sLabel);
 		}
 	};

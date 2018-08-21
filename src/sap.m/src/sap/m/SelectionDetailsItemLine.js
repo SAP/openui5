@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Element"],
-	function(Element) {
+sap.ui.define(["sap/ui/core/Element", "sap/base/Log", "sap/base/util/isPlainObject", "sap/ui/thirdparty/jquery"],
+	function(Element, Log, isPlainObject, jQuery) {
 	"use strict";
 
 	/**
@@ -78,7 +78,7 @@ sap.ui.define(["sap/ui/core/Element"],
 			sValue = oValue;
 		} else if (jQuery.type(oValue) === "number") {
 			sValue = oValue.toString();
-		} else if (jQuery.isPlainObject(oValue)) {
+		} else if (isPlainObject(oValue)) {
 			if (oValue.day && oValue.day.length > 0) {
 				sValue = oValue.day;
 			}
@@ -86,7 +86,7 @@ sap.ui.define(["sap/ui/core/Element"],
 				sValue = (sValue.length > 0) ? oValue.time + " " + sValue : oValue.time;
 			}
 		} else {
-			jQuery.sap.log.warning("Value '" + oValue + "' is not supported. Expected type is a string, number or a plain object, including date and time properties of type string.");
+			Log.warning("Value '" + oValue + "' is not supported. Expected type is a string, number or a plain object, including date and time properties of type string.");
 		}
 		return sValue;
 	};

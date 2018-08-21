@@ -98,6 +98,8 @@ describe('sap.m.MultiInput', function() {
 	});
 
 	it("multiinput should be in condensed mode", function() {
-		expect(takeScreenshot(element(by.id("condensed-table")))).toLookAs("table-in-condensed-mode");
+		browser.executeScript('document.getElementById("condensed-table").scrollIntoView()').then(function() {
+			expect(takeScreenshot(element(by.id("condensed-table")))).toLookAs("table-in-condensed-mode");
+		});
 	});
 });

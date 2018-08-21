@@ -665,6 +665,7 @@
 		var sPanelHeaderId = this.oPanel.getId() + '-header';
 
 		this.oPanel.setExpandable(true);
+		this.oPanel.setAccessibleRole(sap.m.PanelAccessibleRole.Region);
 		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(this.oPanel.$().attr("aria-labelledby"), sPanelHeaderId, "should have a labelledby reference to the header");
@@ -673,6 +674,7 @@
 
 	QUnit.test("Expandable panel with headerText and header toolbar", function(assert) {
 		this.oPanel.setExpandable(true);
+		this.oPanel.setAccessibleRole(sap.m.PanelAccessibleRole.Region);
 		this.oPanel.setAggregation("headerToolbar", this.createToolbar());
 		sap.ui.getCore().applyChanges();
 
@@ -686,6 +688,7 @@
 		var sHeaderToolbarTitleId, sNewHeaderToolbarTitleId;
 
 		this.oPanel.setExpandable(true);
+		this.oPanel.setAccessibleRole(sap.m.PanelAccessibleRole.Region);
 		this.oPanel.setAggregation("headerToolbar", this.createToolbar());
 		sap.ui.getCore().applyChanges();
 		sHeaderToolbarTitleId = this.oPanel.getHeaderToolbar().getTitleId();
@@ -698,6 +701,30 @@
 		assert.notStrictEqual(sHeaderToolbarTitleId, sNewHeaderToolbarTitleId, "The new header toolbar should have different id than the initial one")
 		assert.strictEqual(this.oPanel.$().attr("aria-labelledby"), sNewHeaderToolbarTitleId, "should have a labelledby reference to the new toolbar title");
 		assert.strictEqual(this.oPanel.oIconCollapsed.$().attr("aria-labelledby"), sNewHeaderToolbarTitleId, "should have collapse button having a labelledby reference to the new toolbar title");
+	});
+
+	QUnit.test("Expandable panel with role Form", function(assert) {
+		var sHeaderToolbarTitleId;
+		this.oPanel.setExpandable(true);
+		this.oPanel.setAccessibleRole(sap.m.PanelAccessibleRole.Form);
+		this.oPanel.setAggregation("headerToolbar", this.createToolbar());
+		sap.ui.getCore().applyChanges();
+
+		sHeaderToolbarTitleId = this.oPanel.getHeaderToolbar().getTitleId();
+
+		assert.strictEqual(this.oPanel.$().attr("aria-labelledby"), sHeaderToolbarTitleId, "should have a labelledby reference to the new toolbar title");
+		assert.strictEqual(this.oPanel.oIconCollapsed.$().attr("aria-labelledby"), undefined, "should have collapse button with no labelledby reference to the toolbar title");
+	});
+
+	QUnit.test("Expandable panel with aria-controls attribute", function(assert) {
+		var sContentId;
+		this.oPanel.setExpandable(true);
+		this.oPanel.setAggregation("headerToolbar", this.createToolbar());
+		sap.ui.getCore().applyChanges();
+
+		sContentId = this.oPanel.getDomRef("content").id;
+		assert.strictEqual(this.oPanel.oIconCollapsed.$().attr("aria-controls"), sContentId,
+				"an aria-controls attribute with reference to the content should be added to the collapse button");
 	});
 </script>
 </head>

@@ -1,628 +1,625 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define([], function() {
 	"use strict";
 
 	/**
-	 * @exports sap/ui/events/KeyCodes
+	 * @alias module:sap/ui/events/KeyCodes
 	 * @enum {Number}
+	 * @public
 	 */
 	var mKeyCodes = {
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		BACKSPACE: 8,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		TAB: 9,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		ENTER: 13,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		SHIFT: 16,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		CONTROL: 17,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		ALT: 18,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		BREAK: 19,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		CAPS_LOCK: 20,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		ESCAPE: 27,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		SPACE: 32,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		PAGE_UP: 33,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		PAGE_DOWN: 34,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		END: 35,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		HOME: 36,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		ARROW_LEFT: 37,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		ARROW_UP: 38,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		ARROW_RIGHT: 39,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		ARROW_DOWN: 40,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		PRINT: 44,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		INSERT: 45,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		DELETE: 46,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		DIGIT_0: 48,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		DIGIT_1: 49,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		DIGIT_2: 50,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		DIGIT_3: 51,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		DIGIT_4: 52,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		DIGIT_5: 53,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		DIGIT_6: 54,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		DIGIT_7: 55,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		DIGIT_8: 56,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		DIGIT_9: 57,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		A: 65,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		B: 66,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		C: 67,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		D: 68,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		E: 69,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		F: 70,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		G: 71,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		H: 72,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		I: 73,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		J: 74,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		K: 75,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		L: 76,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		M: 77,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		N: 78,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		O: 79,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		P: 80,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		Q: 81,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		R: 82,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		S: 83,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		T: 84,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		U: 85,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		V: 86,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		W: 87,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		X: 88,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		Y: 89,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		Z: 90,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		WINDOWS: 91,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		CONTEXT_MENU: 93,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		TURN_OFF: 94,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		SLEEP: 95,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		NUMPAD_0: 96,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		NUMPAD_1: 97,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		NUMPAD_2: 98,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		NUMPAD_3: 99,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		NUMPAD_4: 100,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		NUMPAD_5: 101,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		NUMPAD_6: 102,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		NUMPAD_7: 103,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		NUMPAD_8: 104,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		NUMPAD_9: 105,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		NUMPAD_ASTERISK: 106,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		NUMPAD_PLUS: 107,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		NUMPAD_MINUS: 109,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		NUMPAD_COMMA: 110,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		NUMPAD_SLASH: 111,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		F1: 112,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		F2: 113,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		F3: 114,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		F4: 115,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		F5: 116,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		F6: 117,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		F7: 118,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		F8: 119,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		F9: 120,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		F10: 121,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		F11: 122,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		F12: 123,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		NUM_LOCK: 144,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		SCROLL_LOCK: 145,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		OPEN_BRACKET: 186,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		PLUS: 187,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		COMMA: 188,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		SLASH: 189,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		DOT: 190,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		PIPE: 191,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		SEMICOLON: 192,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		MINUS: 219,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		GREAT_ACCENT: 220,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		EQUALS: 221,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		SINGLE_QUOTE: 222,
 
 		/**
 		 * @type number
-		 * @private
+		 * @public
 		 */
 		BACKSLASH: 226
 	};

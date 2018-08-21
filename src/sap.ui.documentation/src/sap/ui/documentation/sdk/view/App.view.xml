@@ -117,6 +117,7 @@
 									</items>
 								</MenuItem>
 								<MenuItem text="License" visible="{versionData>/isOpenUI5}"/>
+								<MenuItem text="Terms of Use" visible="{versionData>/isOpenUI5}"/>
 							</items>
 						</Menu>
 					</menu>

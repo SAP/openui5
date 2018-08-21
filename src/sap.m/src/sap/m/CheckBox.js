@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/library',
-	'./CheckBoxRenderer'
+	'./CheckBoxRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		Label,
@@ -21,7 +22,8 @@ sap.ui.define([
 		IconPool,
 		EnabledPropagator,
 		coreLibrary,
-		CheckBoxRenderer
+		CheckBoxRenderer,
+		jQuery
 	) {
 	"use strict";
 
@@ -253,10 +255,10 @@ sap.ui.define([
 	// Public Methods
 
 	CheckBox.prototype.setSelected = function(bSelected) {
-		bSelected = !!bSelected;
-		if (bSelected == this.getSelected()) {
+		if (bSelected === this.getSelected()) {
 			return this;
 		}
+
 		this.$("CbBg").toggleClass("sapMCbMarkChecked", bSelected);
 		var oCheckBox = this.getDomRef("CB");
 		if (oCheckBox) {

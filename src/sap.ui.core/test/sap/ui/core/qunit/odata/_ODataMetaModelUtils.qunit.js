@@ -3,10 +3,10 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/model/odata/_AnnotationHelperBasics",
-	"sap/ui/model/odata/_ODataMetaModelUtils",
-	"sap/base/Log"
-], function (jQuery, _AnnotationHelperBasics, Utils, Log) {
+	"sap/ui/model/odata/_ODataMetaModelUtils"
+], function (jQuery, Log, _AnnotationHelperBasics, Utils) {
 	/*global QUnit, sinon */
 	"use strict";
 

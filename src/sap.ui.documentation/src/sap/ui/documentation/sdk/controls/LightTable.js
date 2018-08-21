@@ -9,6 +9,8 @@ sap.ui.define(['sap/ui/core/Control'],
 		 * @class
 		 * Provides a light table control used in the API Reference section.
 		 * @extends sap.ui.core.Control
+		 * @private
+		 * @ui5-restricted sdk
 		 */
 		return Control.extend("sap.ui.documentation.sdk.controls.LightTable", {
 			metadata : {

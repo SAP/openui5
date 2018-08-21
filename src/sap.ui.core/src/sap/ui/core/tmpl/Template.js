@@ -4,28 +4,25 @@
 
 // Provides base class sap.ui.core.tmpl.Template for all templates
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/base/BindingParser',
 	'sap/ui/core/Control',
 	'sap/ui/core/RenderManager',
 	'sap/base/util/ObjectPath',
-	"sap/ui/thirdparty/jquery",
-	"sap/base/Log",
-	"sap/base/assert",
-	'jquery.sap.sjax'
+	'sap/base/Log',
+	'sap/base/assert',
+	'sap/ui/thirdparty/jquery'
 ],
-	function(
-		jQuery,
-		ManagedObject,
-		BindingParser,
-		Control,
-		RenderManager,
-		ObjectPath,
-		jQueryDOM,
-		Log,
-		assert
-	) {
+function(
+	ManagedObject,
+	BindingParser,
+	Control,
+	RenderManager,
+	ObjectPath,
+	Log,
+	assert,
+	jQuery
+) {
 	"use strict";
 
 
@@ -321,7 +318,7 @@ sap.ui.define([
 		if (!(oRef instanceof Control) && bInline) {
 
 			// lookup the DOM element in which to place the template
-			var $this = typeof oRef === "string" ? jQueryDOM(document.getElementById(oRef)) : jQuery(oRef);
+			var $this = typeof oRef === "string" ? jQuery(document.getElementById(oRef)) : jQuery(oRef);
 
 			// the DOM element must exist
 			if ($this.length > 0) {
@@ -498,32 +495,33 @@ sap.ui.define([
 			if (bLoadTemplate) {
 
 				// load the template from the specified URL
-				var oResponse = jQuery.sap.sjax({
-					url : oTemplate.src,
-					dataType: "text"
-				});
+				jQuery.ajax({
+					url: oTemplate.src,
+					dataType: "text",
+					async: false,
+					success: function(data) {
+						// apply the content as template content
+						// set the id, type and control if defined in the object
+						sId = oTemplate.id;
+						sType = oTemplate.type;
+						sControl = oTemplate.control;
+						sContent = data;
 
-				// apply the content as template content
-				// set the id, type and control if defined in the object
-				if (oResponse.success) {
-					sId = oTemplate.id;
-					sType = oTemplate.type;
-					sControl = oTemplate.control;
-					sContent = oResponse.data;
-
-					//Check for inline template information
-					var rTmplInfo = /^<!--\sUI5:Template\stype=([a-z\/\-]*)\s(?:controller=([A-Za-z.]*)\s)?-->/,
-						aTmplInfo = sContent.match(rTmplInfo);
-					if (aTmplInfo) {
-						sType = aTmplInfo[1];
-						if (aTmplInfo.length == 3) {
-							sController = aTmplInfo[2];
+						//Check for inline template information
+						var rTmplInfo = /^<!--\sUI5:Template\stype=([a-z\/\-]*)\s(?:controller=([A-Za-z.]*)\s)?-->/,
+							aTmplInfo = sContent.match(rTmplInfo);
+						if (aTmplInfo) {
+							sType = aTmplInfo[1];
+							if (aTmplInfo.length == 3) {
+								sController = aTmplInfo[2];
+							}
+							sContent = sContent.substr(aTmplInfo[0].length);
 						}
-						sContent = sContent.substr(aTmplInfo[0].length);
+					},
+					error: function() {
+						throw new Error("The template could not be loaded from " + oTemplate.src + "!");
 					}
-				} else {
-					throw new Error("The template could not be loaded from " + oTemplate.src + "!");
-				}
+				});
 
 			} else {
 
@@ -581,12 +579,11 @@ sap.ui.define([
 			}
 
 			// require and instantiate the proper template
-			//TODO: global jquery call found
-			jQuery.sap.require(sClass);
-			var oClass = ObjectPath.get(sClass || "");
+			var fnClass = sap.ui.requireSync(sClass.replace(/\./g, "/"));
+			fnClass = fnClass || ObjectPath.get(sClass || "");
 
 			// create a new instance of the template
-			var oInstance = new oClass({
+			var oInstance = new fnClass({
 				id: sId,
 				content: sContent
 			});

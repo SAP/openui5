@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define([], function() {
 
 	"use strict";
@@ -44,8 +40,8 @@ sap.ui.define([], function() {
 	 * @param {string} sSuffix the suffix part of the version number
 	 * @return {sap.base.util.Version} the version object as determined from the parameters
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
-	 * @private
-	 * @alias sap.base.util.Version
+	 * @alias module:sap/base/util/Version
+	 * @public
 	 */
 	function Version(vMajor, iMinor, iPatch, sSuffix) {
 		if ( vMajor instanceof Version ) {
@@ -160,7 +156,7 @@ sap.ui.define([], function() {
 	 * @param {string|any[]|sap.base.util.Version} vMax the end of the range (exclusive)
 	 * @return {boolean} <code>true</code> if this version is greater or equal to <code>vMin</code> and smaller
 	 *                   than <code>vMax</code>, <code>false</code> otherwise.
-	 * @private
+	 * @public
 	 */
 	Version.prototype.inRange = function(vMin, vMax) {
 		return this.compareTo(vMin) >= 0 && this.compareTo(vMax) < 0;

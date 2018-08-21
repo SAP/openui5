@@ -197,9 +197,9 @@ function (jQuery, storage, constants) {
 	 * @param {object} oSettings Settings object with rule information
 	 * @returns {string} sRuleVerificationStatus Verification status
 	 */
-	RuleSet.prototype.addRule = function (oSettings) {
+	RuleSet.prototype.addRule = function (oSettings, oVersionInfo) {
 
-		var sCurrentVersion = RuleSet.versionInfo ? RuleSet.versionInfo.version : '';
+		var sCurrentVersion = RuleSet.versionInfo ? RuleSet.versionInfo.version : oVersionInfo.version;
 
 		var sRuleVersion = oSettings.minversion ? oSettings.minversion : '';
 
@@ -223,6 +223,21 @@ function (jQuery, storage, constants) {
 
 		return sRuleVerificationStatus;
 	};
+
+	/**
+	 * Remove rule from RuleSet.
+	 * @public
+	 * @method
+	 * @name sap.ui.support.RuleSet.removeRule
+	 * @memberof sap.ui.support.RuleSet
+	 * @param {object} oRule Rule object that will be removed
+	 */
+	RuleSet.prototype.removeRule = function (oRule) {
+		if (this._mRules[oRule.id]) {
+			delete this._mRules[oRule.id];
+		}
+	};
+
 
 	/**
 	 * Stores which rules are selected to be run by the analyzer on the next check

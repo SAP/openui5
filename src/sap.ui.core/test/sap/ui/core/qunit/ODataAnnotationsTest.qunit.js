@@ -5832,9 +5832,10 @@ function runODataAnnotationTests() {
 				"NorthwindModel.Product" : {}
 			},
 			aSegments = ["NorthwindModel.Product", "com.sap.vocabularies.UI.v1.LineItem",
-				"com.sap.vocabularies.UI.v1.Criticality"];
-
-		this.mock(jQuery.sap.log).expects("warning")
+				"com.sap.vocabularies.UI.v1.Criticality"],
+			Log = sap.ui.require("sap/base/Log");
+		assert.ok(Log, "Log module should be loaded");
+		this.mock(Log).expects("warning")
 			.withExactArgs("Wrong path to annotation at array", sinon.match.same(aSegments),
 				"sap.ui.model.odata.AnnotationParser");
 

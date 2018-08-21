@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([], function () {
+sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 	"use strict";
 
 	/**
@@ -91,7 +91,7 @@ sap.ui.define([], function () {
 				// (however this is not documented and therefore not supported).
 				oVersionInfoPromise = null;
 
-				// "jQuery.sap.loadResource" returns "null" in case of an error when
+				// "LoaderExtensions.loadResource" returns "null" in case of an error when
 				// "failOnError" is set to "false". In this case the won't be persisted
 				// and undefined will be returned.
 				if (oVersionInfo === null) {
@@ -115,8 +115,7 @@ sap.ui.define([], function () {
 				throw oError;
 			};
 
-			//TODO: global jquery call found
-			var vReturn = jQuery.sap.loadResource("sap-ui-version.json", {
+			var vReturn = LoaderExtensions.loadResource("sap-ui-version.json", {
 				async: mOptions.async,
 
 				// "failOnError" only applies for sync mode, async should always fail (reject)

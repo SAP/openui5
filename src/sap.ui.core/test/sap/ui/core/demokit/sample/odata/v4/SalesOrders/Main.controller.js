@@ -2,22 +2,21 @@
  * ${copyright}
  */
 sap.ui.define([
-		'sap/m/Dialog',
-		'sap/m/MessageBox',
-		'sap/m/MessageItem',
-		'sap/m/MessagePopover',
-		'sap/m/MessageToast',
-		'sap/ui/core/format/DateFormat',
-		'sap/ui/core/Item',
-		'sap/ui/core/MessageType',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/Filter',
-		'sap/ui/model/FilterOperator',
-		'sap/ui/model/FilterType',
-		'sap/ui/model/json/JSONModel',
-		'sap/ui/model/Sorter'
-], function (Dialog, MessageBox, MessageItem, MessagePopover, MessageToast, DateFormat, Item,
-		MessageType, Controller, Filter, FilterOperator, FilterType, JSONModel, Sorter) {
+	"sap/m/Dialog",
+	"sap/m/MessageBox",
+	"sap/m/MessageItem",
+	"sap/m/MessagePopover",
+	"sap/m/MessageToast",
+	"sap/ui/core/Item",
+	"sap/ui/core/MessageType",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/FilterType",
+	"sap/ui/model/Sorter"
+], function (Dialog, MessageBox, MessageItem, MessagePopover, MessageToast, Item, MessageType,
+		DateFormat, Controller, Filter, FilterOperator, FilterType, Sorter) {
 	"use strict";
 
 	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"}),
@@ -103,9 +102,7 @@ sap.ui.define([
 				return aMessageContexts.some(function (oContext) {
 					var oMessage = oContext.getObject();
 
-					return oMessage.type === MessageType.Error
-						|| oMessage.type === MessageType.Warning
-						|| oMessage.technical === true;
+					return oMessage.technical === true;
 				});
 			}
 
@@ -417,7 +414,14 @@ sap.ui.define([
 
 			this.messagePopover.getBinding("items").attachChange(this.handleMessagesChange, this);
 			this.messagePopover.attachAfterClose(function (oEvent) {
-				sap.ui.getCore().getMessageManager().removeAllMessages();
+				var oMessageManager = sap.ui.getCore().getMessageManager(),
+					aMessages;
+
+				// remove all bound messages which have to be handled by the application
+				aMessages = oMessageManager.getMessageModel().getData().filter(function (oMessage) {
+					return oMessage.persistent;
+				});
+				oMessageManager.removeMessages(aMessages);
 			});
 		},
 

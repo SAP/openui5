@@ -2,7 +2,7 @@
  * ${copyright}
  */
 // Provides class sap.ui.dt.test.LibraryTest.
-sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONModel', 'jquery.sap.global'
+sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONModel', 'sap/ui/thirdparty/jquery'
 ], function(ResourceModel, JSONModel, jQuery) {
 	"use strict";
 	var aDesigntimeElements = [],
@@ -10,7 +10,7 @@ sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONMod
 		mBundles = {},
 		sLibrary;
 	function hasText(sKey, oBundle) {
-		return oBundle.hasText(sKey) || oBundle.getText(sKey, [], true) !== null;
+		return oBundle.hasText(sKey) || oBundle.getText(sKey, [], true) !== undefined;
 	}
 	var LibraryTest = function(sTestLibrary, QUnit) {
 		//switching off autostart needs to be done in the individual test files before the LibraryTest.js is loaded.

@@ -138,7 +138,8 @@ function(
 
 	function _isInAggregationBinding(aElements) {
 		return aElements.some(function(oStableElement) {
-			return oStableElement && OverlayUtil.isInAggregationBinding(OverlayRegistry.getOverlay(oStableElement), oStableElement.sParentAggregationName);
+			var oStableElementOverlay = OverlayRegistry.getOverlay(oStableElement);
+			return oStableElementOverlay && OverlayUtil.isInAggregationBinding(oStableElementOverlay, oStableElement.sParentAggregationName);
 		});
 	}
 
@@ -244,13 +245,23 @@ function(
 			var bUnstable = aStableElements.length > 0 ? aStableElements.some(function(vStableElement) {
 				var oControl = vStableElement.id || vStableElement;
 				if (!FlexUtils.checkControlId(oControl, vStableElement.appComponent)) {
-					return true;
+					return _checkAggregationBindingTemplateID(oOverlay, vStableElement);
 				}
 			}) : true;
 			oOverlay.setElementHasStableId(!bUnstable);
 		}
 		return oOverlay.hasElementStableId();
 	};
+
+	//Check if related binding template has stable id
+	function _checkAggregationBindingTemplateID(oOverlay, vStableElement){
+		var mAggregationInfo = OverlayUtil.getAggregationInformation(oOverlay, oOverlay.getElement().sParentAggregationName);
+		if (!mAggregationInfo.templateId) {
+			return true;
+		} else {
+			return !FlexUtils.checkControlId(mAggregationInfo.templateId, vStableElement.appComponent);
+		}
+	}
 
 	BasePlugin.prototype.getVariantManagementReference = function (oOverlay, oAction, bForceRelevantContainer, oStashedElement) {
 		var oElement;
@@ -296,6 +307,10 @@ function(
 		var bChangeOnRelevantContainer = oAction && oAction.changeOnRelevantContainer;
 		if (bChangeOnRelevantContainer) {
 			oElement = oOverlay.getRelevantContainer();
+			var oRelevantOverlay = OverlayRegistry.getOverlay(oElement);
+			if (!this.hasStableId(oRelevantOverlay)){
+				return false;
+			}
 		}
 
 		if (sChangeType && this.hasChangeHandler(sChangeType, oElement)) {
@@ -336,6 +351,17 @@ function(
 
 	BasePlugin.prototype.isAvailable = function () {
 		return Plugin.prototype.isAvailable.apply(this, arguments);
+	};
+
+	BasePlugin.prototype._checkRelevantContainerStableID = function(oAction, oElementOverlay){
+		if (oAction.changeOnRelevantContainer) {
+			var oRelevantContainer = oElementOverlay.getRelevantContainer();
+			var oRelevantOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
+			if (!this.hasStableId(oRelevantOverlay)){
+				return false;
+			}
+		}
+		return true;
 	};
 
 	return BasePlugin;

@@ -1,3 +1,4 @@
+/*global QUnit, sinon */
 sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/mvc/View',
@@ -10,10 +11,11 @@ sap.ui.define([
 	'./AnyView.qunit',
 	'jquery.sap.sjax'
 ], function(coreLibrary, View, XMLView, RenderManager, JSONModel, VerticalLayout, Button, Panel, testsuite) {
+	"use strict";
 
 	// shortcut
 	function isPreserved(oDomRef) {
-		return RenderManager.isPreservedContent(oDomRef)
+		return RenderManager.isPreservedContent(oDomRef);
 	}
 
 	function isInPreservedArea(oDomRef) {
@@ -76,7 +78,7 @@ sap.ui.define([
 	QUnit.module("Apply settings");
 	// Settings can be provided at the constructor call or in the according view source. View source wins.
 
-	QUnit.test("sync loading", function() {
+	QUnit.test("sync loading", function(assert) {
 		// although settings are provided here, the resulting view should have the setting stated in the view source
 		var oView = sap.ui.xmlview({
 			viewName: 'example.mvc.test',
@@ -86,7 +88,7 @@ sap.ui.define([
 		oView.destroy();
 	});
 
-	QUnit.test("async loading", function() {
+	QUnit.test("async loading", function(assert) {
 		var oView = sap.ui.xmlview({
 			viewName: 'example.mvc.test',
 			async: true,
@@ -222,7 +224,7 @@ sap.ui.define([
 			var xmlviewPlaceholderNode = jQuery.sap.domById('sap-ui-invisible-xmlview');
 			var btnAfterNode = jQuery.sap.domById('btnAfter');
 
-			assert.ok(vLayout, "vLayout be rendered");
+			assert.ok(vLayoutNode, "vLayout be rendered");
 			assert.ok(btnBeforeNode, "btnBefore should be rendered");
 			assert.ok(btnAfterNode, "btnBefore should be rendered");
 			assert.ok(xmlviewNode, "xmlview should be rendered");
@@ -234,12 +236,12 @@ sap.ui.define([
 			}
 
 			if ( bVisible ) {
-				assert.ok(vLayout.compareDocumentPosition(xmlviewNode) & Node.DOCUMENT_POSITION_CONTAINED_BY, "xmlview should be a descendant of vLayout" + sMsgSuffix);
+				assert.ok(vLayoutNode.compareDocumentPosition(xmlviewNode) & Node.DOCUMENT_POSITION_CONTAINED_BY, "xmlview should be a descendant of vLayout" + sMsgSuffix);
 				assert.ok(btnBeforeNode.compareDocumentPosition(xmlviewNode) & Node.DOCUMENT_POSITION_FOLLOWING, "xmlview should follow the btnBeforeNode" + sMsgSuffix);
 				assert.ok(btnAfterNode.compareDocumentPosition(xmlviewNode) & Node.DOCUMENT_POSITION_PRECEDING, "xmlview should preced the btnAfterNode" + sMsgSuffix);
 			} else {
-				assert.ok(!(vLayout.compareDocumentPosition(xmlviewNode) & Node.DOCUMENT_POSITION_CONTAINED_BY), "xmlview should not be a descendant of vLayout" + sMsgSuffix);
-				assert.ok(vLayout.compareDocumentPosition(xmlviewPlaceholderNode) & Node.DOCUMENT_POSITION_CONTAINED_BY, "xmlview placeholder should be a descendant of vLayout" + sMsgSuffix);
+				assert.ok(!(vLayoutNode.compareDocumentPosition(xmlviewNode) & Node.DOCUMENT_POSITION_CONTAINED_BY), "xmlview should not be a descendant of vLayout" + sMsgSuffix);
+				assert.ok(vLayoutNode.compareDocumentPosition(xmlviewPlaceholderNode) & Node.DOCUMENT_POSITION_CONTAINED_BY, "xmlview placeholder should be a descendant of vLayout" + sMsgSuffix);
 				assert.ok(btnBeforeNode.compareDocumentPosition(xmlviewPlaceholderNode) & Node.DOCUMENT_POSITION_FOLLOWING, "xmlview placeholder should follow the btnBeforeNode" + sMsgSuffix);
 				assert.ok(btnAfterNode.compareDocumentPosition(xmlviewPlaceholderNode) & Node.DOCUMENT_POSITION_PRECEDING, "xmlview placeholder should preced the btnAfterNode" + sMsgSuffix);
 			}
@@ -385,7 +387,7 @@ sap.ui.define([
 		assert.ok(!RenderManager.getPreserveAreaRef().hasChildNodes(), "Nothing got preserved");
 
 		// Cleanup
-		var oDomRef = oView.getDomRef();
+		oDomRef = oView.getDomRef();
 		oDomRef.parentElement.removeChild(oDomRef);
 	});
 
@@ -400,8 +402,7 @@ sap.ui.define([
 				'	</test:TestButton>',
 				'</core:View>'
 			].join(''),
-			sError = "Cannot add direct child without default aggregation defined for control sap.ui.testlib.TestButton",
-			view;
+			sError = "Cannot add direct child without default aggregation defined for control sap.ui.testlib.TestButton";
 
 		assert.throws(function() {
 			sap.ui.xmlview("erroneous_view_1", {viewContent:sXml});
@@ -416,20 +417,19 @@ sap.ui.define([
 				'	</test:TestButton>',
 				'</core:View>'
 			].join(''),
-			sError = "Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed: Error",
-			view;
+			sError = "Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed: Error";
 
 		assert.throws(function() {
 			sap.ui.xmlview("erroneous_view_2", {viewContent:sXml});
 		}, Error(sError), "Must throw an error");
 	});
 
-	QUnit.test("Error in controller", function() {
+	QUnit.test("Error in controller", function(assert) {
 		var sXml = [
 				'<core:View controllerName="example.mvc.test.error" xmlns:core="sap.ui.core">',
 				'</core:View>'
-			].join(''),
-			view;
+			].join('');
+
 		// define erroneous controller
 		sap.ui.controller("example.mvc.test.error", {
 			onInit: function() {
@@ -473,9 +473,9 @@ sap.ui.define([
 			integerValue: 8015,
 			stringValue : 'Text1',
 			data: {
-				booleanValue : true,
-				integerValue: 8015,
-				stringValue : 'Text1'
+				booleanValue: false,
+				integerValue: 4242,
+				stringValue: 'Text2'
 			}
 		});
 		var oModel2 = new JSONModel({
@@ -498,7 +498,7 @@ sap.ui.define([
 
 		var xmlWithElementBinding = [
 			'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib">',
-			'  <test:TestButton id="btn" binding="{data}" enabled="{booleanValue}" text="{stringValue}" width="{integerValue}" />',
+			'  <test:TestButton id="btn" binding="{/data}" enabled="{booleanValue}" text="{stringValue}" width="{integerValue}" />',
 			'</core:View>'
 		].join('');
 
@@ -524,17 +524,18 @@ sap.ui.define([
 		assert.equal(oViewWithBindings2.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
 
 		var oViewWithNamedBindings = sap.ui.xmlview({viewContent:xmlWithNamedBindings});
+		oViewWithNamedBindings.setModel(oModel2);
 		oViewWithNamedBindings.setModel(oModel1, "model1");
 		oViewWithNamedBindings.setModel(oModel2, "model2");
 		assert.equal(oViewWithNamedBindings.byId("btn").getEnabled(), oModel2.getData().booleanValue, "Check 'enabled' property of button 'btn'");
 		assert.equal(oViewWithNamedBindings.byId("btn").getText(), oModel1.getData().stringValue, "Check 'text' property of button 'btn'");
-		assert.equal(oViewWithBindings2.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
+		assert.equal(oViewWithNamedBindings.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
 
 		var oViewWithElementBinding = sap.ui.xmlview({viewContent:xmlWithElementBinding});
-		oViewWithBindings1.setModel(oModel1);
-		assert.equal(oViewWithBindings1.byId("btn").getEnabled(), oModel1.getData().data.booleanValue, "Check 'enabled' property of button 'btn'");
-		assert.equal(oViewWithBindings1.byId("btn").getText(), oModel1.getData().data.stringValue, "Check 'text' property of button 'btn'");
-		assert.equal(oViewWithBindings1.byId("btn").getWidth(), oModel1.getData().data.integerValue, "Check 'width' property of button 'btn'");
+		oViewWithElementBinding.setModel(oModel1);
+		assert.equal(oViewWithElementBinding.byId("btn").getEnabled(), oModel1.getData().data.booleanValue, "Check 'enabled' property of button 'btn'");
+		assert.equal(oViewWithElementBinding.byId("btn").getText(), oModel1.getData().data.stringValue, "Check 'text' property of button 'btn'");
+		assert.equal(oViewWithElementBinding.byId("btn").getWidth(), oModel1.getData().data.integerValue, "Check 'width' property of button 'btn'");
 
 		var oViewWithoutBindings = sap.ui.xmlview({viewContent:xmlWithoutBindings});
 		oViewWithoutBindings.setModel(oModel1);
@@ -591,7 +592,7 @@ sap.ui.define([
 					preprocessors: {
 						xml:preprocessor,
 						viewxml: preprocessor
-					},
+					}
 				});
 			}.bind(this);
 		},
@@ -618,14 +619,13 @@ sap.ui.define([
 
 	QUnit.test("sync / no execution", function(assert) {
 		assert.expect(1);
-		var bCalled,
-			preprocessorSpy = sinon.spy();
+		var preprocessorSpy = sinon.spy();
 
 		sap.ui.xmlview({
 			viewContent: this.sViewContent,
 			preprocessors: {
 				xml: this.fnGetConfig(preprocessorSpy)
-			},
+			}
 		});
 
 		sinon.assert.notCalled(preprocessorSpy);
@@ -673,7 +673,7 @@ sap.ui.define([
 			oPreprocessors[sType] = this.fnGetConfig(preprocessorSpy, true);
 		} else {
 			oPreprocessors[sType] = [];
-			for(var i = 0; i < iCount; i++) {
+			for (var i = 0; i < iCount; i++) {
 				oPreprocessors[sType][i] = this.fnGetConfig(preprocessorSpy, true);
 			}
 		}
@@ -695,7 +695,7 @@ sap.ui.define([
 			}),
 			fnAssert = function(e) {
 				assert.strictEqual(e, oError, "error was processed");
-			}.bind(this);
+			};
 
 		assert.expect(1);
 

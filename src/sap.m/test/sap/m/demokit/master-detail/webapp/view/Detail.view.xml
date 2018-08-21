@@ -3,6 +3,7 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:semantic="sap.f.semantic">
+
 	<semantic:SemanticPage
 		id="detailPage"
 		busy="{detailView>/busy}"
@@ -13,11 +14,13 @@
 		<semantic:headerContent>
 			<ObjectAttribute title="{i18n>priceTitle}"/>
 			<ObjectNumber
-				numberUnit="{UnitOfMeasure}"
+				id="objectHeaderNumber"
 				number="{
 					path: 'UnitNumber',
 					formatter: '.formatter.currencyValue'
-				}"/>
+				}"
+				numberUnit="{UnitOfMeasure}"
+			/>
 		</semantic:headerContent>
 		<semantic:content>
 			<Table
@@ -65,24 +68,30 @@
 		</semantic:content>
 		<!--Semantic ShareMenu Buttons-->
 		<semantic:sendEmailAction>
-			<semantic:SendEmailAction press="onSendEmailPress"/>
+			<semantic:SendEmailAction
+				id="shareEmail"
+				press="onSendEmailPress"/>
 		</semantic:sendEmailAction>
+
 		<semantic:closeAction>
 			<semantic:CloseAction
-				id="closeColumn"
-				press="onCloseDetailPress"/>
+					id="closeColumn"
+					press="onCloseDetailPress"/>
 		</semantic:closeAction>
+
 		<semantic:fullScreenAction>
 			<semantic:FullScreenAction
-				id="enterFullScreen"
-				visible="{= !${device>/system/phone} &amp;&amp; !${appView>/actionButtonsInfo/midColumn/fullScreen}}"
-				press="toggleFullScreen"/>
+					id="enterFullScreen"
+					visible="{= !${device>/system/phone} &amp;&amp; !${appView>/actionButtonsInfo/midColumn/fullScreen}}"
+					press="toggleFullScreen"/>
 		</semantic:fullScreenAction>
 		<semantic:exitFullScreenAction>
 			<semantic:ExitFullScreenAction
-				id="exitFullScreen"
-				visible="{= !${device>/system/phone} &amp;&amp; ${appView>/actionButtonsInfo/midColumn/fullScreen}}"
-				press="toggleFullScreen"/>
+					id="exitFullScreen"
+					visible="{= !${device>/system/phone} &amp;&amp; ${appView>/actionButtonsInfo/midColumn/fullScreen}}"
+					press="toggleFullScreen"/>
 		</semantic:exitFullScreenAction>
+
 	</semantic:SemanticPage>
+
 </mvc:View>

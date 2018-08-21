@@ -95,7 +95,7 @@ sap.ui.define([
         _getMessagePopover : function () {
             // create popover lazily (singleton)
             if (!this._oMessagePopover) {
-                this._oMessagePopover = sap.ui.xmlfragment(this.getView().getId(),"sap.ui.core.sample.MessageManager.BasicODataMessages.MessagePopover", this);
+                this._oMessagePopover = sap.ui.xmlfragment(this.getView().getId(),"sap.ui.core.sample.MessageManager.BasicMessages.MessagePopover", this);
                 this.getView().addDependent(this._oMessagePopover);
             }
             return this._oMessagePopover;

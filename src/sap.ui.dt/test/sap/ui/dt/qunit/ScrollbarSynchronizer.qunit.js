@@ -1,8 +1,6 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/dt/ScrollbarSynchronizer"
 ],
 function(
@@ -10,12 +8,10 @@ function(
 ) {
 	"use strict";
 
-	QUnit.start();
-
 	QUnit.module("Given three elements with vertical and horizontal scrollbars...", {
 
-		beforeEach : function(assert) {
-			var $content = jQuery("#content");
+		beforeEach : function() {
+			var $content = jQuery("#qunit-fixture");
 
 			var fnCreatePanelWithBiggerSubPanel = function(sId, sColour){
 				var $Panel = jQuery('<div/>', {
@@ -183,5 +179,9 @@ function(
 
 			assert.equal(this.oScrollbarSynchronizer.getTargets().length, 0, "then the function getTargets returns an empty array");
 		});
+	});
+
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
 	});
 });

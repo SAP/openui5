@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/Utils",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/registry/ChangeRegistryItem",
 	"sap/ui/fl/registry/ChangeTypeMetadata",
 	"sap/ui/fl/registry/Settings",
@@ -315,7 +315,7 @@ sap.ui.define([
 	ChangeRegistry.prototype._createChangeRegistryItemForSimpleChange = function(sControlType, oSimpleChange) {
 		var mParam, oChangeTypeMetadata, oChangeRegistryItem, mLayerPermissions;
 
-		mLayerPermissions = jQuery.extend({}, this._oSettings.getDefaultLayerPermissions());
+		mLayerPermissions = Object.assign({}, this._oSettings.getDefaultLayerPermissions());
 		var oLayers = oSimpleChange.layers;
 
 		if (oLayers) {
@@ -488,9 +488,7 @@ sap.ui.define([
 				var oChangeHandlerImplementation = oChangeHandlerMetadata.getChangeHandler();
 				if (typeof oChangeHandlerImplementation === "string") {
 					// load the module synchronously
-					//TODO: global jquery call found
-					jQuery.sap.require(oChangeHandlerImplementation);
-					oChangeHandlerImplementation = sap.ui.require(oChangeHandlerImplementation);
+					oChangeHandlerImplementation = sap.ui.requireSync(oChangeHandlerImplementation.replace(/\./g,"/"));
 					oChangeHandlerMetadata._changeHandler = oChangeHandlerImplementation;
 				}
 

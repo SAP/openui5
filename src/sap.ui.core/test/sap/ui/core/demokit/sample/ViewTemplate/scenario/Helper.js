@@ -2,9 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/model/odata/AnnotationHelper'
-	], function (jQuery, AnnotationHelper) {
+	"jquery.sap.global",
+	"sap/ui/model/odata/AnnotationHelper"
+], function (jQuery, AnnotationHelper) {
 	"use strict";
 
 	// @see sap.ui.core.ID.type: [A-Za-z_][-A-Za-z0-9_.:]*

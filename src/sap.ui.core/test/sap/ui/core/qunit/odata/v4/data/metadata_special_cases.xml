@@ -10,7 +10,9 @@
 				<Property Name="ArtistID" Type="Edm.String" Nullable="false"/>
 				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false"/>
 				<Property Name="Name" Type="Edm.String" MaxLength="255"/>
+				<Property Name="Messages" Type="Collection(special.cases.Message)" />
 				<NavigationProperty Name="DraftAdministrativeData" Type="special.cases.DraftAdministrativeDataType"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.Messages" Path="Messages" />
 			</EntityType>
 			<EntityType Name="DraftAdministrativeDataType">
 				<Key>
@@ -30,6 +32,14 @@
 			<ComplexType Name="ComplexKey">
 				<Property Name="P1" Type="Edm.String"/>
 				<Property Name="P2" Type="Edm.Int32"/>
+			</ComplexType>
+			<ComplexType Name="Message">
+				<Property Name="code" Type="Edm.String" Nullable="false" />
+				<Property Name="message" Type="Edm.String" Nullable="false" />
+				<Property Name="target" Type="Edm.String" Nullable="true" />
+				<Property Name="transition" Type="Edm.Boolean" Nullable="false" />
+				<Property Name="numericSeverity" Type="Edm.Byte" Nullable="false" />
+				<Property Name="longtextUrl" Type="Edm.String" Nullable="true" />
 			</ComplexType>
 			<Action Name="ActivationAction" EntitySetPath="_it" IsBound="true">
 				<Parameter Name="_it" Type="special.cases.ArtistsType" Nullable="false"/>

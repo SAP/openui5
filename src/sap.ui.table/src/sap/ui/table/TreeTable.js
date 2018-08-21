@@ -49,20 +49,18 @@ sap.ui.define([
 
 			/**
 			 * Specifies whether the first level is expanded.
-			 * @deprecated As of version 1.46.3, replaced by the corresponding binding parameter <code>numberOfExpandedLevels</code>.
-			 *
-			 * Example:
-			 * <pre>
-			 *   oTable.bindRows({
-			 *      path: "...",
-			 *      parameters: {
-			 *         numberOfExpandedLevels: 1
-			 *      }
-			 *   });
-			 * </pre>
 			 *
 			 * The value of the property is only taken into account if no parameter <code>numberOfExpandedLevels</code> is given in the binding information.
 			 * Changes to this property after the table is bound do not have any effect unless an explicit (re-)bind of the <code>rows</code> aggregation is done.
+			 *
+			 * @example
+			 * oTable.bindRows({
+			 *    path: "...",
+			 *    parameters: {
+			 *       numberOfExpandedLevels: 1
+			 *    }
+			 * });
+			 * @deprecated As of version 1.46.3, replaced by the corresponding binding parameter <code>numberOfExpandedLevels</code>.
 			 */
 			expandFirstLevel : {type : "boolean", defaultValue : false, deprecated: true},
 
@@ -214,12 +212,12 @@ sap.ui.define([
 		var oBinding = Element.prototype.getBinding.call(this, sName);
 
 		if (oBinding && sName === "rows" && !oBinding.getLength) {
-			if (TableUtils.isInstanceOf(oBinding, "sap/ui/model/odata/ODataTreeBinding")) {
+			if (oBinding.isA("sap.ui.model.odata.ODataTreeBinding")) {
 				// use legacy tree binding adapter
 				TreeBindingCompatibilityAdapter(oBinding, this);
-			} else if (TableUtils.isInstanceOf(oBinding, "sap/ui/model/odata/v2/ODataTreeBinding")) {
+			} else if (oBinding.isA("sap.ui.model.odata.v2.ODataTreeBinding")) {
 				oBinding.applyAdapterInterface();
-			} else if (TableUtils.isInstanceOf(oBinding, "sap/ui/model/ClientTreeBinding")) {
+			} else if (oBinding.isA("sap.ui.model.ClientTreeBinding")) {
 				ClientTreeBindingAdapter.apply(oBinding);
 			} else {
 				Log.error("Binding not supported by sap.ui.table.TreeTable");

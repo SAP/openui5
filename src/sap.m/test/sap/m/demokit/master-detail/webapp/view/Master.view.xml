@@ -24,7 +24,7 @@
 					sorter: {
 						path: 'Name',
 						descending: false
-						},
+					},
 					groupHeaderFactory: '.createGroupHeader'
 				}"
 				busyIndicatorDelay="{masterView>/delay}"
@@ -92,6 +92,6 @@
 					</ObjectListItem>
 				</items>
 			</List>
-	</semantic:content>
+		</semantic:content>
 	</semantic:SemanticPage>
 </mvc:View>

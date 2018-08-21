@@ -16,6 +16,7 @@ sap.ui.define([
 	'sap/m/Label',
 	'sap/m/BusyIndicator',
 	'sap/m/Bar',
+	'sap/m/Title',
 	'sap/ui/core/theming/Parameters',
 	'./SelectDialogRenderer'
 ],
@@ -32,6 +33,7 @@ function(
 	Label,
 	BusyIndicator,
 	Bar,
+	Title,
 	Parameters,
 	SelectDialogRenderer
 	) {
@@ -162,7 +164,18 @@ function(
 			/**
 			 * Determines the content height of the inner dialog. For more information, see the dialog documentation.
 			 */
-			contentHeight : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null}
+			contentHeight : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+
+			/**
+			 * This flag controls whether the Clear button is shown. When set to <code>true</code>, it provides a way to clear selection mode in Select Dialog.
+			 * We recommended enabling of the Clear button in the following cases, where a mechanism to clear the value is needed:
+			 * In case of single selection mode(default mode) for Select Dialog and <code>rememberSelections</code> is set to <code>true</code>. Clear button needs to be enabled in order to allow users to clear the selection.
+			 * In case of using <code>sap.m.Input</code> with <code>valueHepOnly</code> set to <code>true</code>, Clear button could be used for clearing selection.
+			 * In case the application stores a value and uses only Select Dialog to edit/maintain it.
+			 * <b>Note:</b>When used with oData, only the loaded selections will be cleared.
+			 * @since 1.58
+			 */
+			showClearButton : {type : "boolean", group : "Behavior", defaultValue : false}
 		},
 		defaultAggregation : "items",
 		aggregations : {
@@ -280,6 +293,7 @@ function(
 			growing: that.getGrowing(),
 			growingScrollToLoad: that.getGrowing(),
 			mode: ListMode.SingleSelectMaster,
+			sticky: [library.Sticky.InfoToolbar],
 			infoToolbar: new Toolbar({
 				visible: false,
 				active: false,
@@ -348,9 +362,18 @@ function(
 			]
 		});
 
+		//store a reference to the dialog header
+		var oCustomHeader = new Bar(this.getId() + "-dialog-header", {
+			contentMiddle: [
+				new Title(this.getId()  + "-dialog-title", {
+					level: "H2"
+				})
+			]
+		});
+
 		// store a reference to the internal dialog
 		this._oDialog = new Dialog(this.getId() + "-dialog", {
-			title: this.getTitle(),
+			customHeader: oCustomHeader,
 			stretch: Device.system.phone,
 			contentHeight: "2000px",
 			subHeader: this._oSubHeader,
@@ -414,6 +437,20 @@ function(
 	};
 
 	/**
+	 * Sets the busyIndicatorDelay value to the internal list
+	 * @public
+	 * @param {int} iValue Value for the busyIndicatorDelay.
+	 * @returns {sap.m.SelectDialog} this pointer for chaining
+	 */
+	SelectDialog.prototype.setBusyIndicatorDelay = function (iValue) {
+		this._oList.setBusyIndicatorDelay(iValue);
+		this._oDialog.setBusyIndicatorDelay(iValue);
+		this.setProperty("busyIndicatorDelay", iValue, true);
+
+		return this;
+	};
+
+	/**
 	 * Destroys the control
 	 * @private
 	 */
@@ -422,6 +459,7 @@ function(
 		this._oList = null;
 		this._oSearchField = null;
 		this._oSubHeader = null;
+		this._oClearButton = null;
 		this._oBusyIndicator = null;
 		this._sSearchFieldValue = null;
 		this._iListUpdateRequested = 0;
@@ -576,8 +614,8 @@ function(
 	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.setTitle = function (sTitle) {
-		this._oDialog.setTitle(sTitle);
 		this.setProperty("title", sTitle, true);
+		this._oDialog.getCustomHeader().getAggregation("contentMiddle")[0].setText(sTitle);
 
 		return this;
 	};
@@ -636,6 +674,25 @@ function(
 	 */
 	SelectDialog.prototype.getContentHeight = function () {
 		return this._oDialog.getContentHeight();
+	};
+
+	/**
+	 * Sets the Clear button visible state
+	 * @public
+	 * @param {boolean} bVisible Value for the Clear button visible state.
+	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	 */
+	SelectDialog.prototype.setShowClearButton = function (bVisible) {
+		this.setProperty("showClearButton", bVisible, true);
+
+		if (bVisible) {
+			var oCustomHeader = this._oDialog.getCustomHeader();
+			oCustomHeader.addContentRight(this._getClearButton());
+		}
+		if (this._oClearButton) {
+			this._oClearButton.setVisible(bVisible);
+		}
+		return this;
 	};
 
 	/**
@@ -737,7 +794,7 @@ function(
 		this._oList.setModel(oModel, sModelName);
 		SelectDialog.prototype._setModel.apply(this, aArgs);
 
-		// reset the selection label when setting the model
+		// clear the selection label when setting the model
 		this._updateSelectionIndicator();
 
 		return this;
@@ -948,6 +1005,26 @@ function(
 	};
 
 	/**
+	 * Lazy load the clear button
+	 * @private
+	 * @returns {sap.m.Button} the button
+	 */
+	SelectDialog.prototype._getClearButton = function() {
+
+		if (!this._oClearButton) {
+			this._oClearButton = new Button(this.getId() + "-clear", {
+				text: this._oRb.getText("SELECTDIALOG_CLEARBUTTON"),
+				press: function() {
+					this._removeSelection();
+					this._updateSelectionIndicator();
+					this._oDialog.focus();
+				}.bind(this)
+			});
+		}
+		return this._oClearButton;
+	};
+
+	/**
 	 * Internal event handler for the cancel button and ESC key
 	 * @param {jQuery.Event} oEvent The event object
 	 * @private
@@ -986,6 +1063,9 @@ function(
 		var iSelectedContexts = this._oList.getSelectedContextPaths(true).length,
 			oInfoBar = this._oList.getInfoToolbar();
 
+		if (this.getShowClearButton() && this._oClearButton) {
+			this._oClearButton.setEnabled(iSelectedContexts > 0);
+		}
 		// update the selection label
 		oInfoBar.setVisible(!!iSelectedContexts && this.getMultiSelect());
 		oInfoBar.getContent()[0].setText(this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS", [iSelectedContexts]));
@@ -1019,10 +1099,18 @@ function(
 		// cleanup old selection on close to allow reuse of dialog
 		// due to the delayed call (dialog onAfterClose) the control could be already destroyed
 		if (!this.getRememberSelections() && !this.bIsDestroyed) {
+			this._removeSelection();
+		}
+	};
+
+	/**
+	 * Removes selection from <code> sap.m.SelectDialog</code>
+	 * @private
+	 */
+	SelectDialog.prototype._removeSelection = function () {
 			this._oList.removeSelections(true);
 			delete this._oSelectedItem;
 			delete this._aSelectedItems;
-		}
 	};
 
 	/**

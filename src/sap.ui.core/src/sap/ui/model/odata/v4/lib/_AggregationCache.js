@@ -4,12 +4,14 @@
 
 //Provides class sap.ui.model.odata.v4.lib._AggregationCache
 sap.ui.define([
-	"sap/ui/base/SyncPromise",
+	"./_AggregationHelper",
 	"./_Cache",
 	"./_Helper",
 	"./_Parser",
-	"sap/base/Log"
-], function (SyncPromise, _Cache, _Helper, _Parser, Log) {
+	"sap/base/Log",
+	"sap/ui/base/SyncPromise",
+	"sap/ui/thirdparty/jquery"
+], function (_AggregationHelper, _Cache, _Helper, _Parser, Log, SyncPromise, jQuery) {
 	"use strict";
 
 	var rComma = /,|%2C|%2c/,
@@ -39,40 +41,35 @@ sap.ui.define([
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 * @throws {Error}
-	 *   If the system query option "$filter" is used; if the system query option "$orderby" is
-	 *   used together with minimum or maximum values; if the system query option "$count" is used
-	 *   together with group levels
+	 *   If the system query options "$count" or "$filter" are used together with group levels, or
+	 *   if group levels are combined with min/max
 	 *
 	 * @private
 	 */
 	function _AggregationCache(oRequestor, sResourcePath, oAggregation, mQueryOptions,
 			bSortExpandSelect) {
 		var mAlias2MeasureAndMethod = {},
-			sApply,
 			oFirstLevelAggregation,
+			mFirstQueryOptions,
 			fnMeasureRangeResolve;
 
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect);
 
-		if (mQueryOptions.$filter) {
-			throw new Error("Unsupported system query option: $filter");
-		}
-
-		if (_Helper.hasMinOrMax(oAggregation.aggregate)) {
-			if (mQueryOptions.$orderby) {
-				throw new Error("Unsupported system query option: $orderby");
-			}
+		if (_AggregationHelper.hasMinOrMax(oAggregation.aggregate)) {
 			if (oAggregation.groupLevels.length) {
 				throw new Error("Unsupported group levels together with min/max");
 			}
 			this.oMeasureRangePromise = new Promise(function (resolve, reject) {
 				fnMeasureRangeResolve = resolve;
 			});
-			sApply = _Helper.buildApply(oAggregation, mAlias2MeasureAndMethod);
-			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath,
-				jQuery.extend({}, mQueryOptions, {$apply : sApply}), bSortExpandSelect);
-			this.oFirstLevel.getResourcePath = _AggregationCache.getResourcePath
-				.bind(this.oFirstLevel, oAggregation, this.oFirstLevel.getResourcePath);
+			mFirstQueryOptions = _AggregationHelper.buildApply(oAggregation, mQueryOptions,
+				mAlias2MeasureAndMethod); // 1st request only
+			mQueryOptions = jQuery.extend({}, mQueryOptions);
+			delete mQueryOptions.$count; // not needed in 2nd request etc.
+			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath, mFirstQueryOptions,
+				bSortExpandSelect);
+			this.oFirstLevel.getResourcePath = _AggregationCache.getResourcePath.bind(
+				this.oFirstLevel, oAggregation, mQueryOptions, this.oFirstLevel.getResourcePath);
 			this.oFirstLevel.handleResponse = _AggregationCache.handleResponse
 				.bind(this.oFirstLevel, mAlias2MeasureAndMethod, fnMeasureRangeResolve,
 					this.oFirstLevel.handleResponse);
@@ -80,14 +77,18 @@ sap.ui.define([
 			if (mQueryOptions.$count) {
 				throw new Error("Unsupported system query option: $count");
 			}
+			if (mQueryOptions.$filter) {
+				throw new Error("Unsupported system query option: $filter");
+			}
 			oFirstLevelAggregation = _AggregationCache.filterAggregationForFirstLevel(oAggregation);
-			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath,
-				jQuery.extend({}, mQueryOptions, {
-					$apply : _Helper.buildApply(oFirstLevelAggregation),
+			mFirstQueryOptions = jQuery.extend({}, mQueryOptions, {
 					$count : true,
 					$orderby : _AggregationCache.filterOrderby(mQueryOptions.$orderby,
 						oFirstLevelAggregation)
-				}), bSortExpandSelect);
+				}); // 1st level only
+			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath,
+				_AggregationHelper.buildApply(oFirstLevelAggregation, mFirstQueryOptions),
+				bSortExpandSelect);
 			this.oFirstLevel.calculateKeyPredicate = _AggregationCache.calculateKeyPredicate
 				.bind(null, oFirstLevelAggregation, this.oFirstLevel.sMetaPath,
 					this.oFirstLevel.aElements.$byPredicate);
@@ -368,6 +369,8 @@ sap.ui.define([
 	 *   An object holding the information needed for data aggregation; see also
 	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
 	 *   Extension for Data Aggregation Version 4.0</a>; must contain <code>aggregate</code>
+	 * @param {object} mQueryOptions
+	 *   A map of key-value pairs representing the aggregation cache's original query string
 	 * @param {function} fnGetResourcePath
 	 *   The original <code>getResourcePath</code> of the first level cache
 	 * @param {number} iStart
@@ -379,7 +382,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	_AggregationCache.getResourcePath = function (oAggregation, fnGetResourcePath, iStart, iEnd) {
+	_AggregationCache.getResourcePath = function (oAggregation, mQueryOptions, fnGetResourcePath,
+			iStart, iEnd) {
 		var oAggregationNoMinMax, sResourcePath;
 
 		if (iStart !== 0) {
@@ -395,7 +399,7 @@ sap.ui.define([
 			delete oDetails.min;
 			delete oDetails.max;
 		});
-		this.mQueryOptions.$apply = _Helper.buildApply(oAggregationNoMinMax);
+		this.mQueryOptions = _AggregationHelper.buildApply(oAggregationNoMinMax, mQueryOptions);
 		this.sQueryString = this.oRequestor.buildQueryString(this.sMetaPath,
 			this.mQueryOptions, false, this.bSortExpandSelect);
 

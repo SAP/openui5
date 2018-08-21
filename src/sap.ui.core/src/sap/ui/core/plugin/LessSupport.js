@@ -15,8 +15,13 @@
 	function defineLessSupport() {
 
 		// Provides class sap.ui.core.plugin.LessSupport
-		sap.ui.define('sap/ui/core/plugin/LessSupport', ['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/core/ThemeCheck'],
-			function(jQuery, Core, ThemeCheck) {
+		sap.ui.define('sap/ui/core/plugin/LessSupport', [
+			'sap/ui/thirdparty/jquery',
+			'sap/ui/core/Core',
+			'sap/ui/core/ThemeCheck',
+			'sap/base/Log',
+			'sap/base/util/UriParameters'],
+			function(jQuery, Core, ThemeCheck, Log, UriParameters) {
 
 			var LESS_FILENAME = "library.source";
 			var CSS_FILENAME = "library";
@@ -46,11 +51,11 @@
 			 */
 			LessSupport.prototype.startPlugin = function(oCore, bOnInit) {
 
-				jQuery.sap.log.info("Starting LessSupport plugin.");
-				jQuery.sap.log.warning("  NOT FOR PRODUCTIVE USAGE! LessSupport is an experimental feature which might change in future!");
+				Log.info("Starting LessSupport plugin.");
+				Log.warning("  NOT FOR PRODUCTIVE USAGE! LessSupport is an experimental feature which might change in future!");
 
 				// get the URI parameters
-				var oUriParams = jQuery.sap.getUriParameters();
+				var oUriParams = new UriParameters(window.location.href);
 				var sNoLess = oUriParams.get("sap-ui-xx-noless");
 				if (sNoLess) {
 					sNoLess = sNoLess.toLowerCase();
@@ -59,7 +64,7 @@
 				// LessSupport is disabled for the testrunner
 				try {
 					if (sNoLess !== "false" && (window.top.JsUnit || (window.sap.ui.test && window.sap.ui.test.qunit))) {
-						jQuery.sap.log.info("  LessSupport has been deactivated for JSUnit Testrunner or QUnit.");
+						Log.info("  LessSupport has been deactivated for JSUnit Testrunner or QUnit.");
 						return;
 					}
 				} catch (oExp) {
@@ -69,10 +74,10 @@
 
 				// check the URI parameters to disable LessSupport
 				if (sNoLess && sNoLess !== "false") {
-					jQuery.sap.log.info("  LessSupport has been deactivated by URL parameter.");
+					Log.info("  LessSupport has been deactivated by URL parameter.");
 					return;
 				} else {
-					jQuery.sap.log.info("  LessSupport can be deactivated by adding the following parameter to your URL: \"sap-ui-xx-noless=X\".");
+					Log.info("  LessSupport can be deactivated by adding the following parameter to your URL: \"sap-ui-xx-noless=X\".");
 				}
 
 				// configure LESS (development mode + error handling)
@@ -88,8 +93,8 @@
 					}
 				};
 
-				// include LESS (AMD fix is done in jQuery.sap.global)
-				jQuery.sap.require("sap.ui.thirdparty.less");
+				// include LESS
+				sap.ui.requireSync("sap/ui/thirdparty/less");
 
 				this.oCore = oCore;
 				this.bActive = true;
@@ -122,7 +127,7 @@
 					for (var i = 0; i < aLibs.length; i++) {
 						check = ThemeCheck.checkStyle("less:" + aLibs[i], true);
 						if (check) {
-							jQuery.sap.byId("sap-ui-theme-" + aLibs[i]).attr("data-sap-ui-ready", "true");
+							jQuery(document.getElementById("sap-ui-theme-" + aLibs[i])).attr("data-sap-ui-ready", "true");
 						}
 						ok = ok && check;
 					}
@@ -130,19 +135,21 @@
 					counter++;
 					if (counter > 100) {
 						ok = true;
-						jQuery.sap.log.warning("LessSupport: Max theme check cycles reached.");
+						Log.warning("LessSupport: Max theme check cycles reached.");
 					}
 
 					if (ok) {
 						ThemeCheck.themeLoaded = true;
-						jQuery.sap.delayedCall(0, oCore, "fireThemeChanged", [{theme: oCore.sTheme}]);
+						setTimeout(function () {
+							oCore.fireThemeChanged({theme: oCore.sTheme});
+						}, 0);
 					} else {
-						that.iCheckThemeAppliedTimeout = jQuery.sap.delayedCall(100, null, checkThemeApplied);
+						that.iCheckThemeAppliedTimeout = setTimeout(checkThemeApplied, 100);
 					}
 				}
 
 				if (bUseLess) {
-					this.iCheckThemeAppliedTimeout = jQuery.sap.delayedCall(100, null, checkThemeApplied);
+					this.iCheckThemeAppliedTimeout = setTimeout(checkThemeApplied, 100);
 				}
 
 			};
@@ -152,15 +159,15 @@
 			 * @public
 			 */
 			LessSupport.prototype.stopPlugin = function() {
-				jQuery.sap.log.info("Stopping LessSupport plugin.");
+				Log.info("Stopping LessSupport plugin.");
 				if (this.bActive) {
 					// clear delayed call for theme-check
-					jQuery.sap.delayedCall(this.iCheckThemeAppliedTimeout);
+					clearTimeout(this.iCheckThemeAppliedTimeout);
 					delete this.iCheckThemeAppliedTimeout;
 					// remove the content of the LESS style element
 					jQuery("link[id^=sap-ui-theme-]").each(function() {
 						var sLibName = this.id.substr(13); // length of "sap-ui-theme-"
-						jQuery.sap.byId("less:" + sLibName).remove();
+						jQuery(document.getElementById("less:" + sLibName)).remove();
 					});
 					// remove the hooks from the Core
 					delete this.oCore.includeLibraryTheme;
@@ -231,7 +238,7 @@
 				var sFileName = (bUseLess) ? LESS_FILENAME : CSS_FILENAME;
 
 				// info log
-				jQuery.sap.log.debug("LessSupport.updateLink: " + sBaseUrl + sFileName + ": " + (bUseLess ? "LESS" : "CSS"));
+				Log.debug("LessSupport.updateLink: " + sBaseUrl + sFileName + ": " + (bUseLess ? "LESS" : "CSS"));
 
 				// use the CSS file when the CSS file is newer or equal!
 				if (!bUseLess) {
@@ -288,7 +295,7 @@
 					}
 				});
 				// convert the string into a timestamp or return the -1 value
-				jQuery.sap.log.debug("CSS/LESS head-check: " + sUrl + "; last-modified: " + iLastModified);
+				Log.debug("CSS/LESS head-check: " + sUrl + "; last-modified: " + iLastModified);
 				return iLastModified;
 
 			};
@@ -356,7 +363,7 @@
 					if (iIndex >= 0) {
 						window.less.sheets.splice(iIndex, 1);
 						// clear the content of the LESS style element
-						jQuery.sap.byId("less:" + sLibName).html("");
+						jQuery(document.getElementById("less:" + sLibName)).html("");
 					}
 				}
 			};
@@ -461,7 +468,7 @@
 							// this.currentFileInfo.rootFilename is one of the stylesheets in less.sheets
 							var sLibName = mLessHrefToLib[this.currentFileInfo.rootFilename]; // get lib name from map
 							if (!sLibName) {
-								jQuery.sap.log.warning("LessSupport: could not find libary (" + this.currentFileInfo.rootFilename + ")");
+								Log.warning("LessSupport: could not find libary (" + this.currentFileInfo.rootFilename + ")");
 							}
 							var mVariables = mLibVariables[sLibName]; // get library-parameters map
 							if (!mVariables) {

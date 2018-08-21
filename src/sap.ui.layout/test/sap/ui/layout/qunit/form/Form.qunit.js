@@ -4,41 +4,41 @@ QUnit.config.autostart = false;
 
 sap.ui.require([
 	"jquery.sap.global",
-	"sap/ui/core/library",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/layout/library",
-	"sap/m/library",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormLayout",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
-	"sap/ui/core/VariantLayoutData",
 	"sap/ui/layout/GridData",
 	"sap/ui/layout/ResponsiveFlowLayoutData",
+	"sap/ui/core/library",
+	"sap/ui/core/VariantLayoutData",
 	"sap/ui/core/Title",
+	"sap/m/library",
 	"sap/m/Toolbar",
 	"sap/m/Label",
 	"sap/m/Input"
 	],
 	function(
 		jQuery,
-		CoreLib,
-		LayoutLib,
-		MLib,
+		KeyCodes,
+		library,
 		Form,
 		FormLayout,
 		FormContainer,
 		FormElement,
-		VariantLayoutData,
 		GridData,
 		ResponsiveFlowLayoutData,
+		coreLibrary,
+		VariantLayoutData,
 		Title,
+		mLibrary,
 		Toolbar,
 		Label,
 		Input
 	) {
 	"use strict";
-
-	QUnit.start();
 
 	var oForm;
 	var oFormLayout;
@@ -71,8 +71,8 @@ sap.ui.require([
 	});
 
 	QUnit.test("Rendering", function(assert) {
-		assert.ok(jQuery.sap.domById("F1"), "Form is rendered");
-		assert.ok(jQuery.sap.domById("FL1"), "Layout is rendered");
+		assert.ok(window.document.getElementById("F1"), "Form is rendered");
+		assert.ok(window.document.getElementById("FL1"), "Layout is rendered");
 		assert.equal(jQuery("#F1").attr("role"), "form", "role \"form\" set");
 	});
 
@@ -95,7 +95,7 @@ sap.ui.require([
 		oForm.setTitle("Test");
 		sap.ui.getCore().applyChanges();
 		assert.equal(oForm.getTitle(), "Test", "Title set");
-		assert.ok(jQuery.sap.domById("F1--title"), "Title rendered");
+		assert.ok(window.document.getElementById("F1--title"), "Title rendered");
 		assert.equal(jQuery("#F1--title").text(), "Test", "Title rendered");
 		assert.ok(jQuery("#F1--title").is("h4"), "Title is rendered as H4 as default");
 		assert.ok(!jQuery("#F1--title").hasClass("sapUiFormTitleEmph"), "Title rendered not emphasized");
@@ -105,7 +105,7 @@ sap.ui.require([
 		oForm.destroyTitle();
 		sap.ui.getCore().applyChanges();
 		assert.notOk(oForm.getTitle(), "no Title set");
-		assert.notOk(jQuery.sap.domById("F1--title"), "no Title rendered");
+		assert.notOk(window.document.getElementById("F1--title"), "no Title rendered");
 		assert.notOk(jQuery("#F1").attr("aria-labelledby"), "no aria-labelledby");
 	});
 
@@ -115,30 +115,30 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(oForm.getTitle(), oTitle, "Title set");
-		assert.ok(jQuery.sap.domById("T1"), "Title rendered");
+		assert.ok(window.document.getElementById("T1"), "Title rendered");
 		assert.equal(jQuery("#T1").text(), "Test", "Title rendered");
 		assert.ok(jQuery("#T1").is("h4"), "Title is rendered as H4 as default");
 		assert.notOk(jQuery("#T1").hasClass("sapUiFormTitleEmph"), "Title rendered not emphasized");
 		assert.notOk(jQuery("#T1").attr("title"), "Title: no tooltip rendered per default");
-		assert.notOk(jQuery.sap.domById("T1-ico"), "Title no image is rendered");
+		assert.notOk(window.document.getElementById("T1-ico"), "Title no image is rendered");
 		assert.equal(jQuery("#F1").attr("aria-labelledby"), "T1", "aria-labelledby points to Title");
 
 		oTitle.setIcon("../../images/controls/sap.ui.layout.form.Form.gif");
 		oTitle.setTooltip("Test");
 		oTitle.setEmphasized(true);
-		oTitle.setLevel(CoreLib.TitleLevel.H1);
+		oTitle.setLevel(coreLibrary.TitleLevel.H1);
 		sap.ui.getCore().applyChanges();
 		assert.equal(jQuery("#T1").attr("title"), "Test", "Title: tooltip rendered");
 		assert.ok(jQuery("#T1").is("h1"), "Title is rendered as H1");
 		assert.ok(jQuery("#T1").hasClass("sapUiFormTitleEmph"), "Title rendered as emphasized");
-		assert.ok(jQuery.sap.domById("T1-ico"), "Title image is rendered");
+		assert.ok(window.document.getElementById("T1-ico"), "Title image is rendered");
 		assert.ok(jQuery("#T1-ico").is("img"), "Icon is rendered as image");
 		assert.equal(jQuery("#T1-ico").attr("src"), "../../images/controls/sap.ui.layout.form.Form.gif", "Image URL");
 
 		oForm.destroyTitle();
 		sap.ui.getCore().applyChanges();
 		assert.notOk(oForm.getTitle(), "no Title set");
-		assert.notOk(jQuery.sap.domById("T1"), "no Title rendered");
+		assert.notOk(window.document.getElementById("T1"), "no Title rendered");
 		assert.notOk(jQuery("#F1").attr("aria-labelledby"), "no aria-labelledby");
 	});
 
@@ -148,14 +148,14 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(oForm.getToolbar(), oToolbar, "Toolbar set");
-		assert.equal(oToolbar.getActiveDesign(), MLib.ToolbarDesign.Transparent, "Toolbar Auto-design set");
-		assert.equal(oToolbar.getDesign(), MLib.ToolbarDesign.Auto, "Toolbar design not changed");
-		assert.ok(jQuery.sap.domById("TB1"), "Toolbar rendered");
+		assert.equal(oToolbar.getActiveDesign(), mLibrary.ToolbarDesign.Transparent, "Toolbar Auto-design set");
+		assert.equal(oToolbar.getDesign(), mLibrary.ToolbarDesign.Auto, "Toolbar design not changed");
+		assert.ok(window.document.getElementById("TB1"), "Toolbar rendered");
 
 		oForm.destroyToolbar();
 		sap.ui.getCore().applyChanges();
 		assert.notOk(oForm.getToolbar(), "no Toolbar set");
-		assert.notOk(jQuery.sap.domById("TB1"), "no Toolbar rendered");
+		assert.notOk(window.document.getElementById("TB1"), "no Toolbar rendered");
 	});
 
 	QUnit.test("Title and Toolbar", function(assert) {
@@ -164,8 +164,8 @@ sap.ui.require([
 		oForm.setToolbar(oToolbar);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(jQuery.sap.domById("TB1"), "Toolbar rendered");
-		assert.notOk(jQuery.sap.domById("F1--title"), "no Title rendered");
+		assert.ok(window.document.getElementById("TB1"), "Toolbar rendered");
+		assert.notOk(window.document.getElementById("F1--title"), "no Title rendered");
 	});
 
 	QUnit.test("ariaLabelledBy", function(assert) {
@@ -211,8 +211,8 @@ sap.ui.require([
 		assert.equal(aFormContainers[0].getId(), "FC1", "first FormContainer");
 		assert.equal(aFormContainers[1].getId(), "FC2", "second FormContainer");
 		assert.equal(oForm.indexOfFormContainer(oFormContainer2), 1, "Index of FormContainer");
-		assert.ok(jQuery.sap.domById("FC1"), "Container1 is rendered");
-		assert.ok(jQuery.sap.domById("FC2"), "Container2 is rendered");
+		assert.ok(window.document.getElementById("FC1"), "Container1 is rendered");
+		assert.ok(window.document.getElementById("FC2"), "Container2 is rendered");
 	});
 
 	QUnit.test("insertFormContainer", function(assert) {
@@ -227,8 +227,8 @@ sap.ui.require([
 		assert.equal(aFormContainers[0].getId(), "FC2", "first FormContainer");
 		assert.equal(aFormContainers[1].getId(), "FC1", "second FormContainer");
 		assert.equal(oForm.indexOfFormContainer(oFormContainer2), 0, "Index of FormContainer");
-		assert.ok(jQuery.sap.domById("FC1"), "Container1 is rendered");
-		assert.ok(jQuery.sap.domById("FC2"), "Container2 is rendered");
+		assert.ok(window.document.getElementById("FC1"), "Container1 is rendered");
+		assert.ok(window.document.getElementById("FC2"), "Container2 is rendered");
 	});
 
 	QUnit.test("removeFormContainer", function(assert) {
@@ -243,8 +243,8 @@ sap.ui.require([
 		assert.equal(oRemoved, oFormContainer1, "FormContainer1 removed");
 		assert.equal(aFormContainers.length, 1, "1 FormContainers assigned");
 		assert.equal(aFormContainers[0].getId(), "FC2", "first FormContainer");
-		assert.notOk(jQuery.sap.domById("FC1"), "Container1 is not rendered");
-		assert.ok(jQuery.sap.domById("FC2"), "Container2 is rendered");
+		assert.notOk(window.document.getElementById("FC1"), "Container1 is not rendered");
+		assert.ok(window.document.getElementById("FC2"), "Container2 is rendered");
 		oFormContainer1.destroy();
 	});
 
@@ -259,8 +259,8 @@ sap.ui.require([
 
 		assert.equal(aRemoved.length, 2, "2 FormContainers removed");
 		assert.equal(aFormContainers.length, 0, "no FormContainers assigned");
-		assert.notOk(jQuery.sap.domById("FC1"), "Container1 is not rendered");
-		assert.notOk(jQuery.sap.domById("FC2"), "Container2 is not rendered");
+		assert.notOk(window.document.getElementById("FC1"), "Container1 is not rendered");
+		assert.notOk(window.document.getElementById("FC2"), "Container2 is not rendered");
 		oFormContainer1.destroy();
 		oFormContainer2.destroy();
 	});
@@ -275,8 +275,8 @@ sap.ui.require([
 		var aFormContainers = oForm.getFormContainers();
 
 		assert.equal(aFormContainers.length, 0, "no FormContainers assigned");
-		assert.notOk(jQuery.sap.domById("FC1"), "Container1 is not rendered");
-		assert.notOk(jQuery.sap.domById("FC2"), "Container2 is not rendered");
+		assert.notOk(window.document.getElementById("FC1"), "Container1 is not rendered");
+		assert.notOk(window.document.getElementById("FC2"), "Container2 is not rendered");
 		assert.notOk(sap.ui.getCore().byId("FC1"), "FormContainer1 destroyed");
 		assert.notOk(sap.ui.getCore().byId("FC2"), "FormContainer2 destroyed");
 	});
@@ -289,13 +289,13 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(oForm.getVisibleFormContainers().length, 1, "getVisibleFormContainers returns only one container");
-		assert.notOk(jQuery.sap.domById("FC1"), "Container1 is not rendered");
-		assert.ok(jQuery.sap.domById("FC2"), "Container2 is rendered");
+		assert.notOk(window.document.getElementById("FC1"), "Container1 is not rendered");
+		assert.ok(window.document.getElementById("FC2"), "Container2 is rendered");
 
 		oFormContainer1.setVisible(true);
 		sap.ui.getCore().applyChanges();
 		assert.equal(oForm.getVisibleFormContainers().length, 2, "getVisibleFormContainers returns two containers");
-		assert.ok(jQuery.sap.domById("FC1"), "Container1 is rendered");
+		assert.ok(window.document.getElementById("FC1"), "Container1 is rendered");
 	});
 
 	// just check rendering, because API is tested in FormContainer qUnit test
@@ -315,7 +315,7 @@ sap.ui.require([
 		oFormContainer1.setTitle("Test");
 		oForm.addFormContainer(oFormContainer1);
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.domById("FC1--title"), "Title rendered");
+		assert.ok(window.document.getElementById("FC1--title"), "Title rendered");
 		assert.equal(jQuery("#FC1--title").text(), "Test", "Title rendered");
 		assert.ok(jQuery("#FC1--title").is("h4"), "Title is rendered as H4 as default");
 		assert.ok(!jQuery("#FC1--title").hasClass("sapUiFormTitleEmph"), "Title rendered not emphasized");
@@ -324,7 +324,7 @@ sap.ui.require([
 
 		oFormContainer1.destroyTitle();
 		sap.ui.getCore().applyChanges();
-		assert.notOk(jQuery.sap.domById("FC1--title"), "no Title rendered");
+		assert.notOk(window.document.getElementById("FC1--title"), "no Title rendered");
 		assert.notOk(jQuery("#FC1").attr("role"), "role \"form\" not set");
 		assert.notOk(jQuery("#F1").attr("aria-labelledby"), "no aria-labelledby");
 	});
@@ -336,29 +336,29 @@ sap.ui.require([
 		oForm.addFormContainer(oFormContainer1);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(jQuery.sap.domById("T1"), "Title rendered");
+		assert.ok(window.document.getElementById("T1"), "Title rendered");
 		assert.equal(jQuery("#T1").text(), "Test", "Title rendered");
 		assert.ok(jQuery("#T1").is("h4"), "Title is rendered as H4 as default");
 		assert.notOk(jQuery("#T1").hasClass("sapUiFormTitleEmph"), "Title rendered not emphasized");
 		assert.notOk(jQuery("#T1").attr("title"), "Title: no tooltip rendered per default");
-		assert.notOk(jQuery.sap.domById("T1-ico"), "Title no image is rendered");
+		assert.notOk(window.document.getElementById("T1-ico"), "Title no image is rendered");
 		assert.equal(jQuery("#FC1").attr("role"), "form", "role \"form\" set");
 		assert.equal(jQuery("#FC1").attr("aria-labelledby"), "T1", "aria-labelledby points to Title");
 
 		oTitle.setIcon("sap-icon://sap-ui5");
 		oTitle.setTooltip("Test");
 		oTitle.setEmphasized(true);
-		oTitle.setLevel(CoreLib.TitleLevel.H1);
+		oTitle.setLevel(coreLibrary.TitleLevel.H1);
 		sap.ui.getCore().applyChanges();
 		assert.equal(jQuery("#T1").attr("title"), "Test", "Title: tooltip rendered");
 		assert.ok(jQuery("#T1").is("h1"), "Title is rendered as H1");
 		assert.ok(jQuery("#T1").hasClass("sapUiFormTitleEmph"), "Title rendered as emphasized");
-		assert.ok(jQuery.sap.domById("T1-ico"), "Title image is rendered");
+		assert.ok(window.document.getElementById("T1-ico"), "Title image is rendered");
 		assert.ok(jQuery("#T1-ico").is("span"), "Icon is rendered as span");
 
 		oFormContainer1.destroyTitle();
 		sap.ui.getCore().applyChanges();
-		assert.notOk(jQuery.sap.domById("T1"), "no Title rendered");
+		assert.notOk(window.document.getElementById("T1"), "no Title rendered");
 		assert.notOk(jQuery("#FC1").attr("role"), "role \"form\" not set");
 		assert.notOk(jQuery("#F1").attr("aria-labelledby"), "no aria-labelledby");
 	});
@@ -370,13 +370,13 @@ sap.ui.require([
 		oForm.addFormContainer(oFormContainer1);
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oToolbar.getActiveDesign(), MLib.ToolbarDesign.Transparent, "Toolbar Auto-design set");
-		assert.equal(oToolbar.getDesign(), MLib.ToolbarDesign.Auto, "Toolbar design not changed");
-		assert.ok(jQuery.sap.domById("TB1"), "Toolbar rendered");
+		assert.equal(oToolbar.getActiveDesign(), mLibrary.ToolbarDesign.Transparent, "Toolbar Auto-design set");
+		assert.equal(oToolbar.getDesign(), mLibrary.ToolbarDesign.Auto, "Toolbar design not changed");
+		assert.ok(window.document.getElementById("TB1"), "Toolbar rendered");
 
 		oFormContainer1.destroyToolbar();
 		sap.ui.getCore().applyChanges();
-		assert.notOk(jQuery.sap.domById("TB1"), "no Toolbar rendered");
+		assert.notOk(window.document.getElementById("TB1"), "no Toolbar rendered");
 	});
 
 	QUnit.test("Title and Toolbar", function(assert) {
@@ -387,8 +387,8 @@ sap.ui.require([
 		oForm.addFormContainer(oFormContainer1);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(jQuery.sap.domById("TB1"), "Toolbar rendered");
-		assert.notOk(jQuery.sap.domById("F1--title"), "no Title rendered");
+		assert.ok(window.document.getElementById("TB1"), "Toolbar rendered");
+		assert.notOk(window.document.getElementById("F1--title"), "no Title rendered");
 	});
 
 	QUnit.test("ariaLabelledBy", function(assert) {
@@ -409,21 +409,21 @@ sap.ui.require([
 		oForm.addFormContainer(oFormContainer1);
 		sap.ui.getCore().applyChanges();
 
-		assert.notOk(jQuery.sap.domById("FC1--Exp"), "no Expander rendered");
+		assert.notOk(window.document.getElementById("FC1--Exp"), "no Expander rendered");
 
 		oFormContainer1.setExpandable(true);
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.domById("FC1--Exp"), "Expander rendered");
-		assert.ok(jQuery.sap.domById("FC1-content"), "Container content area is rendered");
-		assert.ok(jQuery.sap.byId("FC1-content").is(":visible"), "Container content area is visible");
+		assert.ok(window.document.getElementById("FC1--Exp"), "Expander rendered");
+		assert.ok(window.document.getElementById("FC1-content"), "Container content area is rendered");
+		assert.ok(jQuery("#FC1-content").is(":visible"), "Container content area is visible");
 
 		qutils.triggerEvent("tap", "FC1--Exp");
-		assert.notOk(jQuery.sap.byId("FC1-content").is(":visible"), "Container content area is not visible");
+		assert.notOk(jQuery("#FC1-content").is(":visible"), "Container content area is not visible");
 
 		// test not expanded in FormRenderer
 		oForm.invalidate();
 		sap.ui.getCore().applyChanges();
-		assert.notOk(jQuery.sap.byId("FC1-content").is(":visible"), "Container content area is not visible");
+		assert.notOk(jQuery("#FC1-content").is(":visible"), "Container content area is not visible");
 	});
 
 	QUnit.test("getRenderedDomRef", function(assert) {
@@ -471,18 +471,18 @@ sap.ui.require([
 		oForm.addFormContainer(oFormContainer1);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(jQuery.sap.domById("FE1"), "FormElement1 is rendered");
+		assert.ok(window.document.getElementById("FE1"), "FormElement1 is rendered");
 		assert.ok(oFormElement1.getLabelControl().getDomRef(), "FormElement1 label is rendered");
-		assert.ok(jQuery.sap.domById("I1"), "FormElement1 field is rendered");
+		assert.ok(window.document.getElementById("I1"), "FormElement1 field is rendered");
 		assert.equal(jQuery("#I1-inner").attr("aria-labelledby"), oFormElement1.getLabelControl().getId(), "Field1 aria-labelledby points to label");
-		assert.ok(jQuery.sap.domById("FE2"), "FormElement2 is rendered");
-		assert.ok(jQuery.sap.domById("I2"), "FormElement2 field is rendered");
+		assert.ok(window.document.getElementById("FE2"), "FormElement2 is rendered");
+		assert.ok(window.document.getElementById("I2"), "FormElement2 field is rendered");
 		assert.notOk(jQuery("#I2-inner").attr("aria-labelledby"), "Field2 no aria-labelledby");
-		assert.ok(jQuery.sap.domById("FE3"), "FormElement3 is rendered");
-		assert.ok(jQuery.sap.domById("L3"), "FormElement3 label is rendered");
-		assert.ok(jQuery.sap.domById("I3"), "FormElement3 field1 is rendered");
+		assert.ok(window.document.getElementById("FE3"), "FormElement3 is rendered");
+		assert.ok(window.document.getElementById("L3"), "FormElement3 label is rendered");
+		assert.ok(window.document.getElementById("I3"), "FormElement3 field1 is rendered");
 		assert.equal(jQuery("#I3-inner").attr("aria-labelledby"), "L3", "Field3 aria-labelledby points to label");
-		assert.ok(jQuery.sap.domById("I4"), "FormElement3 field2 is rendered");
+		assert.ok(window.document.getElementById("I4"), "FormElement3 field2 is rendered");
 		assert.equal(jQuery("#I4-inner").attr("aria-labelledby"), "L3", "Field4 aria-labelledby points to label");
 		assert.equal(oFormLayout.contentOnAfterRendering.callCount, 4, "contentOnAfterRendering called on Layout");
 	});
@@ -497,15 +497,15 @@ sap.ui.require([
 		oForm.addFormContainer(oFormContainer1);
 		sap.ui.getCore().applyChanges();
 
-		assert.notOk(jQuery.sap.domById("FE1"), "FormElement1 is not rendered");
+		assert.notOk(window.document.getElementById("FE1"), "FormElement1 is not rendered");
 		assert.notOk(oFormElement1.getLabelControl().getDomRef(), "FormElement1 label is not rendered");
-		assert.notOk(jQuery.sap.domById("I1"), "FormElement1 field is not rendered");
+		assert.notOk(window.document.getElementById("I1"), "FormElement1 field is not rendered");
 
 		oFormElement1.setVisible(true);
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.domById("FE1"), "FormElement1 is rendered");
+		assert.ok(window.document.getElementById("FE1"), "FormElement1 is rendered");
 		assert.ok(oFormElement1.getLabelControl().getDomRef(), "FormElement1 label is rendered");
-		assert.ok(jQuery.sap.domById("I1"), "FormElement1 field is rendered");
+		assert.ok(window.document.getElementById("I1"), "FormElement1 field is rendered");
 	});
 
 	QUnit.test("getRenderedDomRef", function(assert) {
@@ -588,14 +588,14 @@ sap.ui.require([
 	});
 
 	QUnit.test("backgroundDesign", function(assert) {
-		assert.equal(oFormLayout.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Translucent, "Background design default");
+		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Translucent, "Background design default");
 		assert.ok(jQuery("#FL1").hasClass("sapUiFormBackgrTranslucent"), "translucent design per default rendered");
 
-		oFormLayout.setBackgroundDesign(sap.ui.layout.BackgroundDesign.Solid);
+		oFormLayout.setBackgroundDesign(library.BackgroundDesign.Solid);
 		sap.ui.getCore().applyChanges();
 		assert.ok(jQuery("#FL1").hasClass("sapUiFormBackgrSolid"), "solid design rendered");
 
-		oFormLayout.setBackgroundDesign(sap.ui.layout.BackgroundDesign.Transparent);
+		oFormLayout.setBackgroundDesign(library.BackgroundDesign.Transparent);
 		sap.ui.getCore().applyChanges();
 		assert.notOk(jQuery("#FL1").hasClass("sapUiFormBackgrSolid"), "solid design not rendered");
 		assert.notOk(jQuery("#FL1").hasClass("sapUiFormBackgrTranslucent"), "translucent design not rendered");
@@ -629,11 +629,11 @@ sap.ui.require([
 		oFormContainer1.setExpandable(true);
 		sap.ui.getCore().applyChanges();
 
-		qutils.triggerKeydown(jQuery("#FC1--Exp").get(0), jQuery.sap.KeyCodes.NUMPAD_MINUS, false, false, false);
-		assert.notOk(jQuery.sap.byId("FC1-content").is(":visible"), "Container content area is not visible");
+		qutils.triggerKeydown(jQuery("#FC1--Exp").get(0), KeyCodes.NUMPAD_MINUS, false, false, false);
+		assert.notOk(jQuery("#FC1-content").is(":visible"), "Container content area is not visible");
 
-		qutils.triggerKeydown(jQuery("#FC1--Exp").get(0), jQuery.sap.KeyCodes.NUMPAD_PLUS, false, false, false);
-		assert.ok(jQuery.sap.byId("FC1-content").is(":visible"), "Container content area is visible");
+		qutils.triggerKeydown(jQuery("#FC1--Exp").get(0), KeyCodes.NUMPAD_PLUS, false, false, false);
+		assert.ok(jQuery("#FC1-content").is(":visible"), "Container content area is visible");
 	});
 
 	QUnit.test("Keyboard: F6", function(assert) {
@@ -667,27 +667,29 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 
 		jQuery("#I-B").focus();
-		qutils.triggerKeydown(jQuery("#I-B").get(0), jQuery.sap.KeyCodes.F6, false, false, false);
+		qutils.triggerKeydown(jQuery("#I-B").get(0), KeyCodes.F6, false, false, false);
 		assert.equal(document.activeElement.getAttribute("id"), "I1-inner", "Container1 focused after F6 on content before");
 
 		jQuery("#I1").focus();
-		qutils.triggerKeydown(jQuery("#I1").get(0), jQuery.sap.KeyCodes.F6, false, false, false);
+		qutils.triggerKeydown(jQuery("#I1").get(0), KeyCodes.F6, false, false, false);
 		assert.equal(document.activeElement.getAttribute("id"), "I3-inner", "Container2 focused after F6 on Container1");
 
 		jQuery("#I3").focus();
-		qutils.triggerKeydown(jQuery("#I3").get(0), jQuery.sap.KeyCodes.F6, false, false, false);
+		qutils.triggerKeydown(jQuery("#I3").get(0), KeyCodes.F6, false, false, false);
 		assert.equal(document.activeElement.getAttribute("id"), "I-A-inner", "Content after Form focused after Shift+F6 on Container2");
 
 		jQuery("#I-A").focus();
-		qutils.triggerKeydown(jQuery("#I-A").get(0), jQuery.sap.KeyCodes.F6, true, false, false);
+		qutils.triggerKeydown(jQuery("#I-A").get(0), KeyCodes.F6, true, false, false);
 		assert.equal(document.activeElement.getAttribute("id"), "I3-inner", "Container2 focused after Shift+F6 on content after Form");
 
 		jQuery("#I3").focus();
-		qutils.triggerKeydown(jQuery("#I3").get(0), jQuery.sap.KeyCodes.F6, true, false, false);
+		qutils.triggerKeydown(jQuery("#I3").get(0), KeyCodes.F6, true, false, false);
 		assert.equal(document.activeElement.getAttribute("id"), "I1-inner", "Container1 focused after Shift+F6 on Container2");
 
 		oFieldBefore.destroy();
 		oFieldAfter.destroy();
 	});
+
+	QUnit.start();
 
 });

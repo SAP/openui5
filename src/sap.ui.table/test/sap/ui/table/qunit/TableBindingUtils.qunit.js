@@ -56,14 +56,14 @@ sap.ui.define([
 		TableUtils.Binding
 				  .metadataLoaded(oTable)
 				  .catch(function() {
-					  assert.ok(true, "No binding, no model: MetadataLoaded promise should be rejected");
+					  assert.ok(true, "No binding, no model: MetadataLoaded promise was rejected");
 				  })
 				  .then(function() {
 					  oTable.bindRows({path: "test"});
 					  return TableUtils.Binding.metadataLoaded(oTable);
 				  })
 				  .catch(function() {
-					  assert.ok(true, "No model: MetadataLoaded promise should be rejected");
+					  assert.ok(true, "No model: MetadataLoaded promise was rejected");
 				  })
 				  .then(function() {
 					  oTable.setModel(createODataModel("/top/secret/service"));
@@ -84,7 +84,7 @@ sap.ui.define([
 					  return TableUtils.Binding.metadataLoaded(oTable);
 				  })
 				  .then(function() {
-					  assert.ok(true, "Binding, model and metadata available: MetadataLoaded promise should be resolved");
+					  assert.ok(true, "Binding, model and metadata available: MetadataLoaded promise was resolved");
 					  done();
 				  });
 	});

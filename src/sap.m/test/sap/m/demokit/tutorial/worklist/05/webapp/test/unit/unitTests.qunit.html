@@ -1,37 +1,38 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Unit tests for Manage Products</title>
-		<meta http-equiv='X-UA-Compatible' content='IE=edge'/>
-		<meta charset="UTF-8">
+<head>
+	<title>Unit tests for Worklist</title>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'/>
+	<meta charset="UTF-8">
 
-		<script id="sap-ui-bootstrap"
-			src="../../../../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-resourceroots='{
-				"mycompany.myapp.MyWorklistApp": "../../",
-				"test.unit": "./"
-			}'>
-		</script>
+	<script id="sap-ui-bootstrap"
+		src="../../../../../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-resourceroots='{
+			"mycompany.myapp.MyWorklistApp": "../../"
+		}'
+		data-sap-ui-preload="async">
+	</script>
 
-		<script>
-			jQuery.sap.require("sap.ui.qunit.qunit-css");
-			jQuery.sap.require("sap.ui.thirdparty.qunit");
-			jQuery.sap.require("sap.ui.qunit.qunit-junit");
-			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	<script src="../../../../../../../../../../resources/sap/ui/qunit/qunit-2-css.js"></script>
+	<script src="../../../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+	<script src="../../../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 
-			QUnit.config.autostart = false;
+	<script>
+		/* global QUnit */
+		QUnit.config.autostart = false;
 
-			sap.ui.require(
-				["test/unit/allTests"],
-					function () {
-						QUnit.start();
-					}
-			);
-		</script>
-
-	</head>
-	<body>
-		<div id="qunit"></div>
-		<div id="qunit-fixture"></div>
-	</body>
+		sap.ui.getCore().attachInit(function () {
+			sap.ui.require([
+				"mycompany/myapp/MyWorklistApp/test/unit/allTests"
+			], function () {
+				QUnit.start();
+			});
+		});
+	</script>
+</head>
+<body>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
 </html>

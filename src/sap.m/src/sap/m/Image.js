@@ -7,9 +7,10 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'./ImageRenderer',
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(library, Control, ImageRenderer, KeyCodes) {
+	function(library, Control, ImageRenderer, KeyCodes, jQuery) {
 	"use strict";
 
 
@@ -266,7 +267,8 @@ sap.ui.define([
 		$DomNode.addClass("sapMNoImg");
 
 		// if src is empty or there's no image existing, just stop
-		if (!sSrc || this._iLoadImageDensity === 1) {
+		// BCP: 1880526262
+		if ((!sSrc || this._iLoadImageDensity === 1) && this.getAlt() && !this.getDecorative()) {
 			// remove the "sapMNoImg" in order to show the alt text
 			$DomNode.removeClass("sapMNoImg");
 			this.fireError();

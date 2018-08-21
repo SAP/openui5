@@ -355,7 +355,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', "sap/ui/performance/trace/P
 						} else {
 							this.xstartTimestamp = Date.now();
 						}
-						//jQuery.sap.log.info(this.xstartTimestamp + ", " + idx + " " + arguments[0] + " " + arguments[1]);
+						// Log.info(this.xstartTimestamp + ", " + idx + " " + arguments[0] + " " + arguments[1]);
 						this.xmethod = arguments[0];
 						this.xurl = arguments[1];
 						this.xDsrGuid = Passport.getTransactionId(); //see jquery.sap.trace, former EbbLib.js

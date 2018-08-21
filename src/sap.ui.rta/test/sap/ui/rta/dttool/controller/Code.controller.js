@@ -245,7 +245,7 @@ sap.ui.define([
 						sLib = sName.replace("." + sDisplayName, "").replace(/\./g, "/");
 					}
 
-					var sFakeDTFile = "/*!\n ${copyright}\n*/\n\n// Provides the Design Time Metadata for the " + sName
+					var sFakeDTFile = "/*!\n DT Tool \n*/\n\n// Provides the Design Time Metadata for the " + sName
 						+ " control\nsap.ui.define([],\n\tfunction () {\n\t\t'use strict';\n\n\t\treturn {\n\t\t\t//palette: {\n\t\t\t//\tgroup: 'CUSTOM',\n\t\t\t//\ticons: {\n\t\t\t//\t\tsvg : '"
 						+ sLib + "/designtime/" + sDisplayName + ".icon.svg'\n\t\t\t//\t}\n\t\t\t//},\n\t\t\t//displayName: {\n\t\t\t//\tsingular: '" + sDisplayName + "'\n\t\t\t//}\n\t\t};\n}, /* bExport= */ false);";
 					this._replaceDTFileInEditor(sDTFileName, sFakeDTFile);
@@ -312,6 +312,9 @@ sap.ui.define([
 			var oCodeEditor = this._getCodeEditor(),
 				oAceInstance = oCodeEditor._getEditorInstance();
 
+
+
+			// TODO Find a new place for this set of commands
 			oAceInstance.setTheme("ace/theme/github");
 			oAceInstance.getSession().setMode("ace/mode/javascript");
 			oAceInstance.getSession().setUseWrapMode(true);
@@ -322,11 +325,6 @@ sap.ui.define([
 			oAceInstance.setShowPrintMargin(false);
 			oAceInstance.renderer.setShowGutter(true);
 			oAceInstance.$blockScrolling = Infinity;
-
-			// oAceInstance.session.on('change', function(delta) {
-			// //delta is change maybe use for updates
-			// });
-
 
 			var sType = sFileName.match(/.*\.(.*?)$/)[1];
 				sType = sType.replace("js", "javascript");
@@ -380,7 +378,6 @@ sap.ui.define([
 
 			try {
 				var sText = oEvent.getSource().getCurrentValue();
-
 				this.mEdited[sName] = sText;
 
 				this.getView().getModel().getData().files.some(function (oFile, iIndex) {
@@ -390,7 +387,7 @@ sap.ui.define([
 					}
 				}.bind(this));
 
-				// TODO: check if really nessecary
+				// TODO: check Compliance
 				/*eslint-disable no-new-func */
 				var fnDesigntime = new Function(sText);
 				/*eslint-enable no-new-func */
@@ -415,6 +412,7 @@ sap.ui.define([
 						}
 					});
 				}
+
 			} catch (ex) {
 				//jQuery.sap.log.error("Invalid effective DT data");
 			}
@@ -435,7 +433,6 @@ sap.ui.define([
 					return true;
 				}
 			});
-
 			return sCode;
 		},
 

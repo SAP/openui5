@@ -3,8 +3,15 @@
  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery", "sap/ui/thirdparty/URI", "sap/ui/fl/Utils"
-], function(jQuery, uri, FlexUtils) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/URI",
+	"sap/ui/fl/Utils",
+	"sap/base/util/merge"
+], function(jQuery,
+	uri,
+	FlexUtils,
+	fnBaseMerge
+) {
 	"use strict";
 
 	/**
@@ -169,7 +176,7 @@ sap.ui.define([
 			sContentType += "; charset=utf-8";
 		}
 
-		mOptions = jQuery.extend(true, this._getDefaultHeader(), {
+		mOptions = fnBaseMerge(this._getDefaultHeader(), {
 			type: sMethod,
 			async: true,
 			contentType: sContentType,
@@ -224,7 +231,7 @@ sap.ui.define([
 
 		var sContentType = mOptions.contentType || this.DEFAULT_CONTENT_TYPE;
 
-		mOptions = jQuery.extend(true, this._getDefaultOptions(sMethod, sContentType, oData), mOptions);
+		mOptions = fnBaseMerge(this._getDefaultOptions(sMethod, sContentType, oData), mOptions);
 
 		return this._sendAjaxRequest(sUri, mOptions);
 	};
@@ -388,7 +395,7 @@ sap.ui.define([
 		var sUrl = "/sap/bc/lrep/flex/data/";
 		mPropertyBag = mPropertyBag || {};
 
-		if (!sComponentName || sComponentName.match(new RegExp(/^\$*\{[a-zA-Z0-9\.]*\}/g))) {
+		if (!sComponentName) {
 			return Promise.reject(new Error("Component name not specified"));
 		}
 
@@ -434,9 +441,6 @@ sap.ui.define([
 		}
 
 		if (oComponent.appVersion && (oComponent.appVersion !== FlexUtils.DEFAULT_APP_VERSION)) {
-			if (oComponent.appVersion.match(new RegExp(/^\$*\{[a-zA-Z0-9\.]*\}/g))) {
-				return Promise.reject(new Error("Component appVersion is invalid"));
-			}
 			sUrl += "&appVersion=" + oComponent.appVersion;
 		}
 

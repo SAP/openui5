@@ -15,12 +15,12 @@
 				<Property Name="CATEGORY" Type="Edm.String" Nullable="false" MaxLength="40"/>
 			</EntityType>
 			<EntityContainer Name="Container">
-				<EntitySet Name="H_EPM_PD_CATS_SH_SET" EntityType="SAP__self.H_EPM_PD_CATS_SH"/>
+				<EntitySet Name="H_EPM_PD_CATS_SH_Set" EntityType="SAP__self.H_EPM_PD_CATS_SH"/>
 			</EntityContainer>
 			<Annotations Target="zui5_epm_sample.Product/Category">
 				<Annotation Term="SAP__common.ValueListMapping">
 					<Record>
-						<PropertyValue Property="CollectionPath" String="H_EPM_PD_CATS_SH_SET"/>
+						<PropertyValue Property="CollectionPath" String="H_EPM_PD_CATS_SH_Set"/>
 						<PropertyValue Property="Parameters">
 							<Collection>
 								<Record Type="SAP__common.ValueListParameterInOut">

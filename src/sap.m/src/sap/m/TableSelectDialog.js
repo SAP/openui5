@@ -17,6 +17,7 @@ sap.ui.define([
 	'sap/m/BusyIndicator',
 	'sap/m/Bar',
 	'sap/ui/core/theming/Parameters',
+	'sap/m/Title',
 	'./TableSelectDialogRenderer'
 ],
 	function(
@@ -33,6 +34,7 @@ sap.ui.define([
 		BusyIndicator,
 		Bar,
 		Parameters,
+		Title,
 		TableSelectDialogRenderer
 	) {
 	"use strict";
@@ -152,7 +154,24 @@ sap.ui.define([
 			/**
 			 * Specifies the content height of the inner dialog. For more information, see the Dialog documentation.
 			 */
-			contentHeight : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null}
+			contentHeight : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+
+			/**
+			 * This flag controls whether the Clear button is shown. When set to <code>true</code>, it provides a way to clear a selection made in Table Select Dialog.
+			 *
+			 * We recommend enabling of the Clear button in the following cases, where a mechanism to clear the value is needed:
+			 * In case the Table Select Dialog is in single-selection mode (default mode) and <code>rememberSelections</code> is set to <code>true</code>. The Clear button needs to be enabled in order to allow users to clear the selection.
+			 * In case of using <code>sap.m.Input</code> with <code>valueHelpOnly</code> set to <code>true</code>, the Clear button can be used for clearing the selection.
+			 * In case the application stores a value and uses only Table Select Dialog to edit/maintain it.
+			 *
+			 * Optional:
+			 * In case <code>multiSelect</code> is set to <code>true</code>, the selection can be easily cleared with one click.
+			 *
+			 * <b>Note:</b> When used with oData, only the loaded selections will be cleared.
+			 * @since 1.58
+			 */
+			showClearButton : {type : "boolean", group : "Behavior", defaultValue : false}
+
 		},
 		defaultAggregation : "items",
 		aggregations : {
@@ -344,12 +363,9 @@ sap.ui.define([
 
 		var oCustomHeader = new Bar(this.getId() + "-dialog-header", {
 			contentMiddle: [
-				new sap.m.Title(this.getId()  + "-dialog-title", {
+				new Title(this.getId()  + "-dialog-title", {
 					level: "H2"
 				})
-			],
-			contentRight: [
-				this._getResetButton()
 			]
 		});
 
@@ -406,6 +422,7 @@ sap.ui.define([
 		this._oTable = null;
 		this._oSearchField = null;
 		this._oSubHeader = null;
+		this._oClearButton = null;
 		this._oBusyIndicator = null;
 		this._sSearchFieldValue = null;
 		this._iTableUpdateRequested = null;
@@ -748,6 +765,26 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Sets the Clear button visible state
+	 * @public
+	 * @param {boolean} bVisible Value for the Clear button visible state.
+	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
+	 */
+	TableSelectDialog.prototype.setShowClearButton = function (bVisible) {
+		this.setProperty("showClearButton", bVisible, true);
+
+		if (bVisible) {
+			var oCustomHeader = this._oDialog.getCustomHeader();
+			oCustomHeader.addContentRight(this._getClearButton());
+			this._oClearButton.setVisible(bVisible);
+		} else if (this._oClearButton) {
+				this._oClearButton.setVisible(bVisible);
+		}
+
+		return this;
+	};
+
 	/* =========================================================== */
 	/*           begin: forward aggregation  methods to table      */
 	/* =========================================================== */
@@ -779,7 +816,7 @@ sap.ui.define([
 		this._oTable.setModel(oModel, sModelName);
 		TableSelectDialog.prototype._setModel.apply(this, aArgs);
 
-		// reset the selection label when setting the model
+		// clear the selection label when setting the model
 		this._updateSelectionIndicator();
 
 		return this;
@@ -834,13 +871,13 @@ sap.ui.define([
 		if (this._oDialog.isOpen() && ((bSearchValueDifferent && sEventType === "liveChange") || sEventType === "search")) {
 			// set the internal value to the passed value to check if the same value has already been filtered (happens when clear is called, it fires liveChange and change events)
 			this._sSearchFieldValue = sValue;
-
 			// only set when the binding has already been executed
 			// only set when the binding has already been executed
 			if (oBinding) {
 				// we made another request in this control, so we update the counter
 				this._iTableUpdateRequested += 1;
 				if (sEventType === "search") {
+
 					// fire the search so the data can be updated externally
 					this.fireSearch({value: sValue, itemsBinding: oBinding});
 				} else if (sEventType === "liveChange") {
@@ -989,24 +1026,25 @@ sap.ui.define([
 	};
 
 	/**
-	 * Lazy load the Reset button
-	 * @private
-	 * @return {sap.m.Button} The button
-	 */
-	TableSelectDialog.prototype._getResetButton = function () {
+	* Lazy load the Clear button
+	* @private
+	* @return {sap.m.Button} The button
+	*/
+	TableSelectDialog.prototype._getClearButton = function () {
 
-		if (!this._oResetButton) {
-			this._oResetButton = new Button(this.getId() + "-reset", {
-				text: this._oRb.getText("TABLESELECTDIALOG_RESETBUTTON"),
+		if (!this._oClearButton) {
+			this._oClearButton = new Button(this.getId() + "-clear", {
+				text: this._oRb.getText("TABLESELECTDIALOG_CLEARBUTTON"),
 				press: function() {
 					this._removeSelection();
 					this._updateSelectionIndicator();
-					//when reset is executed focus should stay in sap.mTableSelectDialog
+					//when clear is executed focus should stay in sap.mTableSelectDialog
 					this._oDialog.focus();
 				}.bind(this)
 			});
 		}
-		return this._oResetButton;
+
+		return this._oClearButton;
 	};
 
 	/**
@@ -1029,7 +1067,6 @@ sap.ui.define([
 			// fire cancel event
 			that.fireCancel();
 		};
-
 		// reset selection
 		// before was part of the fnAfterClose callback but apparently actions were executed on
 		// a table that does not exist so moving here as fix
@@ -1048,7 +1085,9 @@ sap.ui.define([
 		var iSelectedContexts = this._oTable.getSelectedContextPaths(true).length,
 			oInfoBar = this._oTable.getInfoToolbar();
 
-		this._getResetButton().setEnabled(iSelectedContexts > 0);
+		if (this.getShowClearButton() && this._oClearButton) {
+			this._oClearButton.setEnabled(iSelectedContexts > 0);
+		}
 		// update the selection label
 		oInfoBar.setVisible(!!iSelectedContexts);
 		oInfoBar.getContent()[0].setText(this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS", [iSelectedContexts]));
@@ -1105,7 +1144,10 @@ sap.ui.define([
 
 		// due to the delayed call (dialog onAfterClose) the control could be already destroyed
 		if (!this.bIsDestroyed) {
-			this._executeSearch("", "search");
+			var oBindings = this._oTable.getBinding("items");
+			if (oBindings) {
+				oBindings.filter([]);
+			}
 			this._oTable.removeSelections();
 			for (; i < this._aInitiallySelectedItems.length; i++) {
 				this._oTable.setSelectedItem(this._aInitiallySelectedItems[i]);

@@ -16,7 +16,8 @@ sap.ui.define([
 	'sap/ui/unified/MenuItem',
 	'./TableUtils',
 	"sap/base/Log",
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		AnalyticalColumn,
@@ -31,7 +32,8 @@ sap.ui.define([
 		MenuItem,
 		TableUtils,
 		Log,
-		assert
+		assert,
+		jQuery
 	) {
 	"use strict";
 
@@ -67,59 +69,53 @@ sap.ui.define([
 
 			/**
 			 * Specifies if the total values should be displayed in the group headers or on bottom of the row. Does not affect the total sum.
-			 * @deprecated As of version 1.44.0, please use the corresponding binding parameter <code>sumOnTop</code> instead.
-			 *
-			 * Example:
-			 * <pre>
-			 *   oTable.bindRows({
-			 *      path: "...",
-			 *      parameters: {
-			 *         sumOnTop: true
-			 *      }
-			 *   });
-			 * </pre>
 			 *
 			 * The value of the property is only taken into account if no parameter is given in the binding information. Changes to this property after
 			 * the table is bound do not have any effect unless an explicit (re-)bind of the <code>rows</code> aggregation is done.
+			 *
+			 * @example
+			 * oTable.bindRows({
+			 *    path: "...",
+			 *    parameters: {
+			 *       sumOnTop: true
+			 *    }
+			 * });
+			 * @deprecated As of version 1.44.0, please use the corresponding binding parameter <code>sumOnTop</code> instead.
 			 */
 			sumOnTop : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
 
 			/**
 			 * Number of levels, which should be opened initially (on first load of data).
-			 * @deprecated As of version 1.44.0, please use the corresponding binding parameter <code>numberOfExpandedLevels</code> instead.
-			 *
-			 * Example:
-			 * <pre>
-			 *   oTable.bindRows({
-			 *      path: "...",
-			 *      parameters: {
-			 *         numberOfExpandedLevels: 1
-			 *      }
-			 *   });
-			 * </pre>
 			 *
 			 * The value of the property is only taken into account if no parameter is given in the binding information. Changes to this property after
 			 * the table is bound do not have any effect unless an explicit (re-)bind of the <code>rows</code> aggregation is done.
+			 *
+			 * @example
+			 * oTable.bindRows({
+			 *    path: "...",
+			 *    parameters: {
+			 *       numberOfExpandedLevels: 1
+			 *    }
+			 * });
+			 * @deprecated As of version 1.44.0, please use the corresponding binding parameter <code>numberOfExpandedLevels</code> instead.
 			 */
 			numberOfExpandedLevels : {type : "int", group : "Misc", defaultValue : 0, deprecated: true},
 
 			/**
 			 * The kind of auto expansion algorithm, e.g. optimized filter conditions, per level requests, ...
 			 * Must be a value of <code>sap.ui.table.TreeAutoExpandMode</code>.
-			 * @deprecated As of version 1.44.0, please use the corresponding binding parameter <code>autoExpandMode</code> instead.
-			 *
-			 * Example:
-			 * <pre>
-			 *   oTable.bindRows({
-			 *      path: "...",
-			 *      parameters: {
-			 *         autoExpandMode: "Bundled"
-			 *      }
-			 *   });
-			 * </pre>
 			 *
 			 * The value of the property is only taken into account if no parameter is given in the binding information. Changes to this property after
 			 * the table is bound do not have any effect unless an explicit (re-)bind of the <code>rows</code> aggregation is done.
+			 *
+			 * @example
+			 * oTable.bindRows({
+			 *    path: "...",
+			 *    parameters: {
+			 *       autoExpandMode: "Bundled"
+			 *    }
+			 * });
+			 * @deprecated As of version 1.44.0, please use the corresponding binding parameter <code>autoExpandMode</code> instead.
 			 */
 			autoExpandMode: {type: "string", group: "Misc", defaultValue: "Bundled", deprecated: true},
 
@@ -387,7 +383,7 @@ sap.ui.define([
 		for (var i = 0; i < aTableColumns.length; i++) {
 			var oColumn = aTableColumns[i];
 
-			if (jQuery.inArray(oColumn.getId(), this._aGroupedColumns) > -1) {
+			if (this._aGroupedColumns.indexOf(oColumn.getId()) > -1) {
 				continue;
 			}
 			if (!oColumn instanceof AnalyticalColumn) {
@@ -449,7 +445,6 @@ sap.ui.define([
 				if (oContextInfo && !oContextInfo.context) {
 					$row.addClass("sapUiAnalyticalTableDummy");
 					$rowHdr.addClass("sapUiAnalyticalTableDummy");
-					//TBD: $rowHdr.html('<div class="sapUiAnalyticalTableLoading">' + TableUtils.getResourceText("TBL_CELL_LOADING") + '</div>');
 				}
 				continue;
 			}
@@ -573,7 +568,7 @@ sap.ui.define([
 
 					if (oGroupColumnInfo) {
 						var oColumn = oGroupColumnInfo.column;
-						var iIndex = jQuery.inArray(oColumn.getId(), that._aGroupedColumns);
+						var iIndex = that._aGroupedColumns.indexOf(oColumn.getId());
 						if (iIndex > 0) {
 							that._aGroupedColumns[iIndex] = that._aGroupedColumns.splice(iIndex - 1, 1, that._aGroupedColumns[iIndex])[0];
 							that.updateAnalyticalInfo();
@@ -591,7 +586,7 @@ sap.ui.define([
 
 					if (oGroupColumnInfo) {
 						var oColumn = oGroupColumnInfo.column;
-						var iIndex = jQuery.inArray(oColumn.getId(), that._aGroupedColumns);
+						var iIndex = that._aGroupedColumns.indexOf(oColumn.getId());
 						if (iIndex < that._aGroupedColumns.length) {
 							that._aGroupedColumns[iIndex] = that._aGroupedColumns.splice(iIndex + 1, 1, that._aGroupedColumns[iIndex])[0];
 							that.updateAnalyticalInfo();
@@ -886,18 +881,18 @@ sap.ui.define([
 
 					// if one column of a dimension is grouped, the dimension is considered as grouped.
 					// all columns which are not explicitly grouped will be flagged as dependendGrouped in the next step
-					if (oColumn.getGrouped() && jQuery.inArray(sDimensionName, aGroupedDimensions) == -1) {
+					if (oColumn.getGrouped() && aGroupedDimensions.indexOf(sDimensionName) == -1) {
 						aGroupedDimensions.push(sDimensionName);
 					}
 
-					if (jQuery.inArray(sDimensionName, aDimensions) == -1) {
+					if (aDimensions.indexOf(sDimensionName) == -1) {
 						aDimensions.push(sDimensionName);
 					}
 				}
 			}
 
 			aUngroupedDimensions = jQuery.grep(aDimensions, function (s) {
-				return (jQuery.inArray(s, aGroupedDimensions) == -1);
+				return aGroupedDimensions.indexOf(aGroupedDimensions, s) == -1;
 			});
 
 			// for all grouped dimensions

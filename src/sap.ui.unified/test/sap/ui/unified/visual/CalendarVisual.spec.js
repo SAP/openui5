@@ -49,7 +49,8 @@ describe("sap.ui.unified.CalendarVisual", function() {
 			_pressPrev(sCalId); // year changed to 2014
 			expect(takeScreenshot(oCal)).toLookAs("006_MonthPicker_Previous");
 			_pressMonth(sCalId, "1"); // month picker closed, February 2014 shown, 2 focused
-			if (browser.testrunner.runtime.platformName != "android") {
+
+			if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
 				browser.actions().mouseMove(element(by.css("#B1"))).perform();
 				expect(takeScreenshot(oCal)).toLookAs("007_MonthPicker_Select");
 			}
@@ -62,7 +63,8 @@ describe("sap.ui.unified.CalendarVisual", function() {
 			_pressPrev(sCalId); // years changed to 1985-2004, 1995 focused
 			expect(takeScreenshot(oCal)).toLookAs("009_YearPicker_Previous");
 			_pressYear(sCalId, "1990"); // year picker closed, January 1990 shown, 2 focused
-			if (browser.testrunner.runtime.platformName != "android") {
+
+			if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
 				browser.actions().mouseMove(element(by.css("#B1"))).perform();
 				expect(takeScreenshot(oCal)).toLookAs("010_YearPicker_Select");
 			}
@@ -209,9 +211,9 @@ describe("sap.ui.unified.CalendarVisual", function() {
 			expect(takeScreenshot(oCal)).toLookAs("071_select_interval_start");
 			_pressDate(sCalId, "20150122"); // 20-22 selected, 22 focused
 			expect(takeScreenshot(oCal)).toLookAs("072_select_interval_end");
+			_initCalendar("2");
 
-			if (browser.testrunner.runtime.platformName != "android") {
-				_initCalendar("2");
+			if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
 				var sStartDateId = sCalId + "--Month0-" + "20150120";
 				var sEndDateId = sCalId + "--Month0-" + "20150130";
 				browser.actions().dragAndDrop(element(by.id(sStartDateId)), element(by.id(sEndDateId))).perform(); // old interval unselected, 20-30 selected, 30 focused
@@ -236,30 +238,33 @@ describe("sap.ui.unified.CalendarVisual", function() {
 
 	function multiMonthSelection(){
 		it("should test multiple month display", function () {
-			_initCalendar("6");
-			expect(takeScreenshot(oCal)).toLookAs("090_multiple_month_initilal");
+			// we have multiple months displayed only on desktop, so skip the tests for mobile
+			if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
+				_initCalendar("6");
+				expect(takeScreenshot(oCal)).toLookAs("090_multiple_month_initilal");
 
-			_pressPrev(sCalId); // month switched to December 2014, 31 focused
-			expect(takeScreenshot(oCal)).toLookAs("091_multiple_month_press_previous");
+				_pressPrev(sCalId); // month switched to December 2014, 31 focused
+				expect(takeScreenshot(oCal)).toLookAs("091_multiple_month_press_previous");
 
-			_initCalendar("6");
-			_pressNext(sCalId); // month switched to May 2015, 1 focused
-			expect(takeScreenshot(oCal)).toLookAs("092_multiple_month_press_next");
+				_initCalendar("6");
+				_pressNext(sCalId); // month switched to May 2015, 1 focused
+				expect(takeScreenshot(oCal)).toLookAs("092_multiple_month_press_next");
 
-			_initCalendar("6");
-			_pressMonthPicker(sCalId);  // month picker opened, January selected and focused
-			expect(takeScreenshot(oCal)).toLookAs("093_multiple_month_MonthPicker");
-			_pressMonth(sCalId, "1"); // month picker closed, February 28 focused
-			if (browser.testrunner.runtime.platformName != "android") {
-				browser.actions().mouseMove(element(by.css("#B1"))).perform();
-				expect(takeScreenshot(oCal)).toLookAs("094_multiple_month_MonthPicker_Select");
-			}
+				_initCalendar("6");
+				_pressMonthPicker(sCalId);  // month picker opened, January selected and focused
+				expect(takeScreenshot(oCal)).toLookAs("093_multiple_month_MonthPicker");
+				_pressMonth(sCalId, "1"); // month picker closed, February 28 focused
 
-			_initCalendar("6");
-			_pressYearPicker(sCalId);   // year Picker shown, 2015 selected and focused
-			expect(takeScreenshot(oCal)).toLookAs("095_multiple_month_YearPicker");
-			_pressYear(sCalId, "2014"); // year picker closed, January-April 2014 shown, January 31 focused
-			if (browser.testrunner.runtime.platformName != "android") {
+				if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
+					browser.actions().mouseMove(element(by.css("#B1"))).perform();
+					expect(takeScreenshot(oCal)).toLookAs("094_multiple_month_MonthPicker_Select");
+				}
+
+				_initCalendar("6");
+				_pressYearPicker(sCalId);   // year Picker shown, 2015 selected and focused
+				expect(takeScreenshot(oCal)).toLookAs("095_multiple_month_YearPicker");
+				_pressYear(sCalId, "2014"); // year picker closed, January-April 2014 shown, January 31 focused
+
 				browser.actions().mouseMove(element(by.css("#B1"))).perform();
 				expect(takeScreenshot(oCal)).toLookAs("096_multiple_month_YearPicker_Select");
 			}

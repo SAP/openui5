@@ -1,42 +1,54 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
+	<title>RuntimeAuthoring - sap.ui.rta</title>
 
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-<title>RuntimeAuthoring - sap.ui.rta</title>
-
-
-<script>
-	document.write('\
+	<script>
+		document.write('\
 		<script \
 			id="sap-ui-bootstrap" \
+			data-sap-ui-async="true" \
 			data-sap-ui-theme="sap_belize" \
-			data-sap-ui-noConflict="true" \
 			data-sap-ui-resourceroots=\'{"sap.ui.rta.test": "testdata/rta/"}\'\
 			data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.comp, sap.ui.rta" \
-			src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js" \
+			src="' +
+			document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js" \
 		><' + '/script>'
-	);
-</script>
+		);
+	</script>
 
-<script type="text/javascript">
+	<script type="text/javascript">
+		sap.ui.getCore().attachInit(function () {
+			sap.ui.require([
+				"sap/ui/core/ComponentContainer"
+			], function (ComponentContainer) {
 
-	var oCompCont = new sap.ui.core.ComponentContainer("CompCont1", {
-		component : sap.ui.component({
-			name: "sap.ui.rta.test",
-			id : "Comp1",
-			componentData: {
-				"showAdaptButton" : true
-			}
-		})
-	});
+				return sap.ui.component({
+					name: "sap.ui.rta.test",
+					id: "Comp1",
+					componentData: {
+						"showAdaptButton": true
+					},
+					async: true
+				})
 
-	oCompCont.placeAt("content");
+				.then(function (oComponent) {
+					return new ComponentContainer("CompCont1", {
+						component: oComponent,
+						async: true
+					});
+				})
 
-</script>
+				.then(function (oComponentContainer) {
+					oComponentContainer.placeAt("content");
+				});
+			});
+		});
+	</script>
 </head>
-<body class="sapUiBody" role="application">
+
+<body class="sapUiBody sapUiSizeCompact" role="application">
 	<div id="content"></div>
 </body>
 

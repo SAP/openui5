@@ -253,17 +253,17 @@
 		},
 		{
 			"control": "sap.m.ObjectAttribute",
-			"url": "../ObjectHeader.html",
+			"url": "ObjectHeader.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.ObjectHeader",
-			"url": "../ObjectHeader.html",
+			"url": "ObjectHeader.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.ObjectIdentifier",
-			"url": "../ObjectIdentifier.html",
+			"url": "ObjectIdentifier.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
@@ -288,7 +288,7 @@
 		},
 		{
 			"control": "sap.m.ObjectStatus",
-			"url": "../ObjectHeader.html",
+			"url": "ObjectHeader.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
@@ -368,7 +368,7 @@
 		},
 		{
 			"control": "sap.m.SegmentedButton",
-			"url": "../SegmentedButton.html",
+			"url": "SegmentedButton.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
@@ -509,7 +509,7 @@
 		},
 		{
 			"control": "sap.m.ViewSettingsDialog",
-			"url": "../ViewSettingsDialog.html",
+			"url": "ViewSettingsDialog.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{

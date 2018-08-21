@@ -18,7 +18,7 @@ sap.ui.define([
 	RenderManager,
 	Device,
 	NavContainerRenderer,
-	jQueryDOM,
+	jQuery,
 	Log
 ) {
 	"use strict";
@@ -500,7 +500,7 @@ sap.ui.define([
 	};
 
 	NavContainer._applyAutoFocusTo = function (sId) {
-		var focusSubjectDomRef = jQueryDOM(document.getElementById(sId)).firstFocusableDomRef();
+		var focusSubjectDomRef = jQuery(document.getElementById(sId)).firstFocusableDomRef();
 		if (focusSubjectDomRef) {
 			focusSubjectDomRef.focus();
 		}
@@ -1723,7 +1723,7 @@ sap.ui.define([
 		var aPages = this.getPages();
 		// Routing often adds an already existing page. ManagedObject would remove and re-add it because the order is affected,
 		// but here the order does not matter, so just ignore the call in this case.
-		if (jQuery.inArray(oPage, aPages) > -1) {
+		if (aPages.indexOf(oPage) > -1) {
 			return this;
 		}
 

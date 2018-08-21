@@ -233,7 +233,7 @@ sap.ui.define([
 			}
 			// double string length for byte length as in js characters are stored as 16 bit ints
 			// sHeader + ": " + sValue + " "   --  means two blank and one colon === 3
-			this.requestHeaderLength += (sHeader.length + sValue.length + 3) * 2;
+			this.requestHeaderLength += ((sHeader + "").length + (sValue + "").length + 3) * 2;
 		});
 
 		// register the response handler for data collection
@@ -279,6 +279,11 @@ sap.ui.define([
 	}
 
 
+	/**
+	 * @namespace
+	 * @alias module:sap/ui/performance/trace/Interaction
+	 * @private
+	 */
 	var Interaction = {
 
 		/**

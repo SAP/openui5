@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', "sap/base/Log", "sap/base/util/ObjectPath"],
-	function(jQuery, Log, ObjectPath) {
+sap.ui.define(["sap/base/Log", "sap/base/util/ObjectPath", "sap/ui/core/mvc/View"],
+	function(Log, ObjectPath, View) {
 
 	"use strict";
 
@@ -76,15 +76,14 @@ sap.ui.define(['jquery.sap.global', "sap/base/Log", "sap/base/util/ObjectPath"],
 
 			if (extensionConfig) {
 				if (extensionConfig.className) {
-					//TODO: global jquery call found
-					jQuery.sap.require(extensionConfig.className); // make sure oClass.getMetadata() exists
-					var oClass = ObjectPath.get(extensionConfig.className),
-						sId = oView && extensionConfig.id ? oView.createId(extensionConfig.id) : extensionConfig.id;
+					var fnClass = sap.ui.requireSync(extensionConfig.className.replace(/\./g, "/")); // make sure fnClass.getMetadata() exists
+					fnClass = fnClass || ObjectPath.get(extensionConfig.className);
+					var sId = oView && extensionConfig.id ? oView.createId(extensionConfig.id) : extensionConfig.id;
 					Log.info("Customizing: View extension found for extension point '" + sExtName
 							+ "' in View '" + oView.sViewName + "': " + extensionConfig.className + ": " + (extensionConfig.viewName || extensionConfig.fragmentName));
 
 					if (extensionConfig.className === "sap.ui.core.Fragment") {
-						var oFragment = new oClass({
+						var oFragment = new fnClass({
 							id: sId,
 							type: extensionConfig.type,
 							fragmentName: extensionConfig.fragmentName,
@@ -93,7 +92,7 @@ sap.ui.define(['jquery.sap.global', "sap/base/Log", "sap/base/util/ObjectPath"],
 						vResult = (Array.isArray(oFragment) ? oFragment : [oFragment]); // vResult is now an array, even if empty - so if a Fragment is configured, the default content below is not added anymore
 
 					} else if (extensionConfig.className === "sap.ui.core.mvc.View") {
-						var oView = sap.ui.view({type: extensionConfig.type, viewName: extensionConfig.viewName, id: sId});
+						var oView = View._legacyCreate({type: extensionConfig.type, viewName: extensionConfig.viewName, id: sId});
 						vResult = [oView]; // vResult is now an array, even if empty - so if a Fragment is configured, the default content below is not added anymore
 
 					} else {

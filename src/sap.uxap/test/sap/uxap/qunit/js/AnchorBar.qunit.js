@@ -100,7 +100,12 @@
 		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
 			oCustomButton = this.oObjectPage.getSections()[0].getCustomAnchorBarButton(),
 			aAnchorBarContent = oAnchorBar.getContent(),
-			oFirstSectionButton = aAnchorBarContent[0];
+			oFirstSectionButton = aAnchorBarContent[0],
+			pressSpy = this.spy(oAnchorBar, "_requestScrollToSection");
+
+		oFirstSectionButton.firePress();
+
+		assert.ok(pressSpy.calledOnce, "firePress of custom AnchorBar button calls the scroll to section function");
 
 		oCustomButton.setEnabled(false);
 
@@ -109,6 +114,18 @@
 
 		assert.strictEqual(oFirstSectionButton.$().hasClass("sapUxAPAnchorBarButtonSelected"), true, "selection is preserved");
 		assert.strictEqual(oFirstSectionButton.getEnabled(), false, "property change is propagated");
+	});
+
+	QUnit.test("Custom button for sub-section", function (assert) {
+		//select button programatically
+		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
+			oCustomButton = this.oObjectPage.getSections()[1].getSubSections()[0].getCustomAnchorBarButton(),
+			oSecondSectionButton = oAnchorBar.getContent()[1],
+			oSubSectionButton = oSecondSectionButton.getMenu().getItems()[0];
+
+		//assert
+		assert.strictEqual(oSubSectionButton.getText(), oCustomButton.getText(), "custom button text is propagated to the menu item");
+		assert.strictEqual(oSubSectionButton.getIcon(), oCustomButton.getIcon(), "custom button icon is propagated to the menu item");
 	});
 
 	QUnit.test("Phone view", function (assert) {
@@ -128,7 +145,14 @@
 		var $arrowDownIcons;
 
 		$arrowDownIcons = this.oObjectPage.$().find(".sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnIcon");
-		assert.ok($arrowDownIcons.length === 1, "Anchorbar has 1 button with arrow-down icon");
+		assert.ok($arrowDownIcons.length === 2, "Anchorbar has 2 buttons with arrow-down icon");
+	});
+
+	QUnit.test("Menu Button with long text should be able to have width, bigger than 12rem", function (assert) {
+		var $menuButton = $("#UxAP-69_anchorBar--ObjectPageLayout-anchBar-UxAP-69_anchorBar--section16-anchor");
+
+		assert.ok(parseInt($menuButton.css("width"), 10) > (12 * parseInt($("body").css("font-size"), 10)),
+			"Max width style of MenuButton is overriden so that it is bigger than 12rem");
 	});
 
 	QUnit.test("Arrow left nad arrow right buttons should have correct tooltips", function (assert) {

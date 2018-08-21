@@ -1,6 +1,6 @@
 // Provides control sap.ui.dt.test.controls.SimpleScrollControl
 /*globals sap*/
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control'],
+sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/core/Control'],
 	function(jQuery, Control) {
 	"use strict";
 

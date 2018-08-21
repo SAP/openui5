@@ -1,13 +1,17 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	"jquery.sap.global",
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/dt/ElementUtil",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/OverlayUtil",
+	"sap/ui/dt/OverlayRegistry",
 	"sap/m/Button",
 	"sap/m/Input",
+	"sap/m/VBox",
 	"sap/m/Text",
+	"sap/m/List",
+	"sap/m/CustomListItem",
 	"sap/m/Label",
 	"sap/m/IconTabFilter",
 	"sap/m/IconTabBar",
@@ -21,18 +25,25 @@ sap.ui.require([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Element",
+	'sap/ui/model/json/JSONModel',
 	"sap/ui/dt/Util",
 	"sap/f/DynamicPage",
 	"sap/f/DynamicPageTitle",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/thirdparty/sinon-4"
 	],
 function(
 	jQuery,
 	ElementUtil,
+	DesignTime,
+	OverlayUtil,
+	OverlayRegistry,
 	Button,
 	Input,
+	VBox,
 	Text,
+	List,
+	CustomListItem,
 	Label,
 	IconTabFilter,
 	IconTabBar,
@@ -46,6 +57,7 @@ function(
 	Component,
 	ComponentContainer,
 	Element,
+	JSONModel,
 	DtUtil,
 	DynamicPage,
 	DynamicPageTitle,
@@ -53,8 +65,6 @@ function(
 	sinon
 ) {
 	"use strict";
-
-	QUnit.start();
 
 	var sandbox = sinon.sandbox.create();
 
@@ -788,10 +798,76 @@ function(
 				"then the correct error is thrown"
 			);
 		});
+	});
 
-		QUnit.done(function () {
-			jQuery("#qunit-fixture").hide();
+	QUnit.module("Given a bound list control", {
+		beforeEach : function(assert) {
+			var done = assert.async();
+
+			var aTexts = [{text: "Text 1"}, {text: "Text 2"}, {text: "Text 3"}];
+			var oModel = new JSONModel({
+				texts : aTexts
+			});
+
+			this.oItemTemplate = new CustomListItem("item", {
+				content : new VBox("vbox1", {
+					items : [
+						new VBox("vbox2", {
+							items : [
+								new VBox("vbox3", {
+									items : [
+										new Text("text", {text : "{text}"})
+									]
+								})
+							]
+						})
+					]
+				})
+			});
+			this.oList = new List("list", {
+				items : {
+					path : "/texts",
+					template : this.oItemTemplate
+				}
+			}).setModel(oModel);
+			this.oVBox1 = this.oList.getItems()[1].getContent()[0];
+			this.oListItem0 = this.oList.getItems()[0];
+			this.oText1 = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0].getItems()[0];
+			this.oDesignTime = new DesignTime({
+				rootElements : [this.oList]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oListOverlay = OverlayRegistry.getOverlay(this.oList);
+				this.oVbox1Overlay = OverlayRegistry.getOverlay(this.oVBox1);
+				this.oListItem0Overlay = OverlayRegistry.getOverlay(this.oListItem0);
+				this.oText1Overlay = OverlayRegistry.getOverlay(this.oText1);
+				done();
+			}.bind(this));
+		},
+		afterEach : function(assert) {
+			this.oList.destroy();
+			this.oItemTemplate.destroy();
+			this.oDesignTime.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when 'extractTemplateId' is called with the id of the rendered control", function(assert) {
+			var mAggregationInfo = OverlayUtil.getAggregationInformation(this.oVbox1Overlay);
+			assert.equal(ElementUtil.extractTemplateId(mAggregationInfo), "vbox1", "... then the id of the bound template control is returned");
+
+			mAggregationInfo = OverlayUtil.getAggregationInformation(this.oText1Overlay);
+			assert.equal(ElementUtil.extractTemplateId(mAggregationInfo), "text", "... then the id of the bound template control is returned");
+
+			mAggregationInfo = OverlayUtil.getAggregationInformation(this.oListItem0Overlay);
+			assert.equal(ElementUtil.extractTemplateId(mAggregationInfo), "item", "... then the id of the bound template control is returned");
+
+			assert.equal(ElementUtil.extractTemplateId({}), undefined, "... then undefined is returned");
 		});
+	});
+
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
 	});
 
 });

@@ -1,5 +1,5 @@
-sap.ui.define(['sap/m/Tokenizer','sap/ui/core/mvc/Controller', "sap/m/MessageToast", "sap/m/Token"],
-	function(Tokenizer, Controller, MessageToast, Token) {
+sap.ui.define(['sap/m/Tokenizer','sap/ui/core/mvc/Controller', "sap/m/MessageToast", "sap/m/Token", "sap/base/Log"],
+	function(Tokenizer, Controller, MessageToast, Token, Log) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.MultiInputTokenUpdate.Page", {
@@ -41,7 +41,7 @@ sap.ui.define(['sap/m/Tokenizer','sap/ui/core/mvc/Controller', "sap/m/MessageToa
 		},
 
 		_onTokenChange: function() {
-			jQuery.sap.log.debug("here");
+			Log.debug("here");
 		},
 
 		_onTokenUpdate: function(oEvent) {

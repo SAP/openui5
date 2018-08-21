@@ -11,8 +11,7 @@ sap.ui.define([
 	"sap/m/OverflowToolbarButton",
 	"sap/m/Title",
 	"sap/m/ToolbarSpacer",
-	"sap/m/OverflowToolbarLayoutData",
-	"sap/ui/thirdparty/jquery"
+	"sap/m/OverflowToolbarLayoutData"
 ], function(
 	library,
 	Dialog,
@@ -22,8 +21,7 @@ sap.ui.define([
 	OverflowToolbarButton,
 	Title,
 	ToolbarSpacer,
-	OverflowToolbarLayoutData,
-	jQuery
+	OverflowToolbarLayoutData
 ) {
 	"use strict";
 
@@ -95,7 +93,7 @@ sap.ui.define([
 			 * @private
 			 */
 			PDFViewer.prototype._preparePopup = function (oPopup) {
-				var aButtons = jQuery.merge([], this.getPopupButtons()),
+				var aButtons = this.getPopupButtons().slice(),
 					oCloseButton = this._objectsRegister.getPopupCloseButton(),
 					oDownloadButton = this._objectsRegister.getPopupDownloadButtonControl();
 				oCloseButton.setText(this._getLibraryResourceBundle().getText("PDF_VIEWER_POPUP_CLOSE_BUTTON"));
@@ -159,7 +157,7 @@ sap.ui.define([
 						oButton = that._objectsRegister.getToolbarDownloadButtonControl();
 
 					function setup() {
-						if (that.getShowDownloadButton()) {
+						if (that._isDisplayDownloadButton()) {
 							oOverflowToolbar.addContent(oButton);
 						} else {
 							oOverflowToolbar.removeContent(oButton);

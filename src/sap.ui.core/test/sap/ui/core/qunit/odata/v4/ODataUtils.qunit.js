@@ -2,12 +2,12 @@
  * ${copyright}
  */
 sap.ui.require([
-    "jquery.sap.global",
-    "sap/ui/model/odata/ODataUtils",
-    "sap/ui/model/odata/v4/lib/_Helper",
-    "sap/ui/model/odata/v4/ODataUtils",
-    "sap/base/Log"
-], function(jQuery, BaseODataUtils, _Helper, ODataUtils, Log) {
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/model/odata/v4/ODataUtils",
+	"sap/ui/model/odata/v4/lib/_Helper"
+], function (jQuery, Log, BaseODataUtils, ODataUtils, _Helper) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";

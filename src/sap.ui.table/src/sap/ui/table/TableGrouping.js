@@ -10,7 +10,7 @@ sap.ui.define([
 	'./library',
 	"sap/ui/thirdparty/jquery"
 ],
-	function(Element, Sorter, Device, library, jQueryDOM) {
+	function(Element, Sorter, Device, library, jQuery) {
 	"use strict";
 
 	/**
@@ -84,10 +84,14 @@ sap.ui.define([
 		 * @private
 		 */
 		getModeCssClass : function(oTable) {
-			if (oTable._mode) {
-				return "sapUiTable" + oTable._mode + "Mode";
+			switch (oTable._mode) {
+				case "Group":
+					return "sapUiTableGroupMode";
+				case "Tree":
+					return "sapUiTableTreeMode";
+				default:
+					return null;
 			}
-			return null;
 		},
 
 		/*
@@ -104,7 +108,7 @@ sap.ui.define([
 				return oTable._bShowGroupMenuButton;
 			}
 
-			if (!Device.system.desktop && TableGrouping.TableUtils.isInstanceOf(oTable, "sap/ui/table/AnalyticalTable")) {
+			if (!Device.system.desktop && oTable.isA("sap.ui.table.AnalyticalTable")) {
 				oTable._bShowGroupMenuButton = true;
 			} else {
 				oTable._bShowGroupMenuButton = false;
@@ -300,13 +304,13 @@ sap.ui.define([
 		 * @private
 		 */
 		_calcGroupIndent : function(oTable, iLevel, bChildren, bSum) {
-			if (TableGrouping.TableUtils.isInstanceOf(oTable, "sap/ui/table/TreeTable")) {
+			if (oTable.isA("sap.ui.table.TreeTable")) {
 				var iIndent = 0;
 				for (var i = 0; i < iLevel; i++) {
 					iIndent = iIndent + (i < 2 ? 12 : 8);
 				}
 				return iIndent;
-			} else if (TableGrouping.TableUtils.isInstanceOf(oTable, "sap/ui/table/AnalyticalTable")) {
+			} else if (oTable.isA("sap.ui.table.AnalyticalTable")) {
 				var iIndent = 0;
 				iLevel = iLevel - 1;
 				iLevel = !bChildren && !bSum ? iLevel - 1 : iLevel;
@@ -387,7 +391,7 @@ sap.ui.define([
 					.toggleClass("sapUiTableGroupHeader", bChildren)
 					.toggleClass("sapUiTableRowHidden", bChildren && bHidden || oRow._bHidden);
 
-				jQueryDOM(document.getElementById(oRow.getId() + "-groupHeader"))
+				jQuery(document.getElementById(oRow.getId() + "-groupHeader"))
 					.toggleClass("sapUiTableGroupIconOpen", bChildren && bExpanded)
 					.toggleClass("sapUiTableGroupIconClosed", bChildren && !bExpanded)
 					.attr("title", oTable._getShowStandardTooltips() && sGroupHeaderText ? sGroupHeaderText : null)
@@ -561,8 +565,7 @@ sap.ui.define([
 
 			// check for grouping being supported or not (only for client ListBindings!!)
 			var oGroupBy = sap.ui.getCore().byId(oTable.getGroupBy());
-			var bIsSupported = oGroupBy && oGroupBy.getGrouped() &&
-				oBinding && TableGrouping.TableUtils.isInstanceOf(oBinding, "sap/ui/model/ClientListBinding");
+			var bIsSupported = oGroupBy && oGroupBy.getGrouped() && TableGrouping.TableUtils.isA(oBinding, "sap.ui.model.ClientListBinding");
 
 			// only enhance the binding if it has not been done yet and supported!
 			if (!bIsSupported || oBinding._modified) {

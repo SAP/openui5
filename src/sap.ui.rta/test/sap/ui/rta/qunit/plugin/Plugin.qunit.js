@@ -1,8 +1,6 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	'sap/ui/dt/DesignTime',
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/rta/plugin/Remove',
@@ -27,7 +25,7 @@ sap.ui.require([
 	'sap/ui/fl/changeHandler/MoveControls',
 	'sap/ui/thirdparty/sinon-4'
 ],
-function(
+function (
 	DesignTime,
 	Plugin,
 	Remove,
@@ -53,7 +51,6 @@ function(
 	sinon
 ) {
 	"use strict";
-	QUnit.start();
 
 	var sandbox = sinon.sandbox.create();
 
@@ -159,6 +156,26 @@ function(
 			assert.strictEqual(this.oButtonOverlay.getElementHasStableId(), false, "then the 'getElementHasStableId' property of the Overlay is set to false");
 		});
 
+		QUnit.test("when the control has no stable id but is bound and binding template has stable id", function(assert) {
+			//stub list binding
+			var oBindingTemplateControl = new Button("stable");
+			sandbox.stub(OverlayUtil,"getAggregationInformation").returns({
+				templateId : oBindingTemplateControl.getId()
+			});
+			assert.strictEqual(this.oPlugin.hasStableId(this.oButtonOverlay), true, "then ID of the binding template is considered stable");
+			oBindingTemplateControl.destroy();
+		});
+
+		QUnit.test("when the control has no stable id but is bound and binding template has no stable id", function(assert) {
+			//stub list binding
+			var oBindingTemplateControl = new Button();
+			sandbox.stub(OverlayUtil,"getAggregationInformation").returns({
+				templateId : oBindingTemplateControl.getId()
+			});
+			assert.strictEqual(this.oPlugin.hasStableId(this.oButtonOverlay), false, "then ID of the binding template is considered unstable");
+			oBindingTemplateControl.destroy();
+		});
+
 		QUnit.test("when hasStableId method is called without an overlay", function(assert) {
 			assert.strictEqual(this.oPlugin.hasStableId(), false, "then it returns false");
 		});
@@ -181,6 +198,15 @@ function(
 			this.oPlugin.evaluateEditable([this.oLayoutOverlay]);
 			assert.equal(oAggrBindingCheck.callCount, 0, "the aggregation binding check is skipped");
 			assert.equal(oModifyPluginListSpy.lastCall.args[1], true, "the function returns the result of _isEditable");
+		});
+
+		QUnit.test("when evaluateEditable is called for an element whose stable element has no overlay", function(assert) {
+			var oAggrBindingCheck = sandbox.spy(OverlayUtil, "isInAggregationBinding");
+			var oButton = new Button("IHaveNoOverlay");
+			sandbox.stub(this.oLayoutOverlay.getDesignTimeMetadata(), "getStableElements").returns([oButton]);
+
+			this.oPlugin.evaluateEditable([this.oLayoutOverlay]);
+			assert.equal(oAggrBindingCheck.callCount, 0, "the aggregation binding check is skipped");
 		});
 	});
 
@@ -789,5 +815,9 @@ function(
 		QUnit.test("when '_getChangeHandler' is called with a control that has the default change handler registered for 'moveControls'", function(assert) {
 			assert.strictEqual(this.oPlugin._getChangeHandler("moveControls", this.oLayout), MoveControlsChangeHandler, "then the function returns the correct change handler");
 		});
+	});
+
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
 	});
 });

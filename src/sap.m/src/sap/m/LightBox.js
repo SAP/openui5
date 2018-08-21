@@ -15,7 +15,8 @@ sap.ui.define([
 	'./InstanceManager',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/library',
-	'./LightBoxRenderer'
+	'./LightBoxRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		library,
@@ -30,7 +31,8 @@ sap.ui.define([
 		InstanceManager,
 		InvisibleText,
 		coreLibrary,
-		LightBoxRenderer
+		LightBoxRenderer,
+		jQuery
 	) {
 
 		'use strict';

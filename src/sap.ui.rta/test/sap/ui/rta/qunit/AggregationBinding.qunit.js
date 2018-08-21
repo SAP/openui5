@@ -1,6 +1,6 @@
 /*global QUnit*/
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/rta/plugin/Remove",
@@ -10,10 +10,11 @@ sap.ui.require([
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/fl/registry/ChangeRegistry",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/fl/Utils",
+	"sap/ui/thirdparty/sinon-4"
 ],
-function(
+function (
 	DesignTime,
 	OverlayRegistry,
 	RemovePlugin,
@@ -23,46 +24,47 @@ function(
 	HorizontalLayout,
 	CommandFactory,
 	ChangeRegistry,
-	Sinon,
-	JSONModel
+	JSONModel,
+	FlUtils,
+	sinon
 ) {
 	"use strict";
 
 	var oMockedAppComponent = {
-			getLocalId: function () {
-				return undefined;
-			},
-			getManifestEntry: function () {
-				return {};
-			},
-			getMetadata: function () {
-				return {
-					getName: function () {
-						return "someName";
+		getLocalId: function () {
+			return undefined;
+		},
+		getManifestEntry: function () {
+			return {};
+		},
+		getMetadata: function () {
+			return {
+				getName: function () {
+					return "someName";
+				}
+			};
+		},
+		getManifest: function () {
+			return {
+				"sap.app" : {
+					applicationVersion : {
+						version : "1.2.3"
 					}
-				};
-			},
-			getManifest: function () {
-				return {
-					"sap.app" : {
-						applicationVersion : {
-							version : "1.2.3"
-						}
-					}
-				};
-			},
-			getModel: function () {}
-		};
+				}
+			};
+		},
+		getModel: function () {}
+	};
 
-	Sinon.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+	sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 
-	var sandbox = Sinon.sandbox.create();
+	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given a List with bound items and a List with unbound items", {
 		beforeEach : function(assert) {
 			var done = assert.async();
 
-			var oChangeRegistry = sap.ui.fl.registry.ChangeRegistry.getInstance();
+			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.registerControlsForChanges({
 				"sap.m.StandardListItem" : {
 					"hideControl" : "default"
@@ -79,7 +81,7 @@ function(
 				];
 			var oModel = new JSONModel(oData);
 			this.oBoundList = new List("boundlist").setModel(oModel);
-			this.oBoundList.bindAggregation("items", "/", function(sId, oContext) {
+			this.oBoundList.bindAggregation("items", "/", function(sId) {
 				return new CustomListItem(sId, {content: [new Button(sId + "-btn",{text:'{text}'})]});
 			});
 
@@ -92,7 +94,7 @@ function(
 			this.oHorizontalLayout = new HorizontalLayout("horLyout",{
 				content: [this.oBoundList, this.oUnBoundList]
 			});
-			this.oHorizontalLayout.placeAt("test-view");
+			this.oHorizontalLayout.placeAt("qunit-fixture");
 
 			this.oDesignTime = new DesignTime({
 				rootElements : [this.oHorizontalLayout]
@@ -107,7 +109,7 @@ function(
 			}.bind(this));
 
 		},
-		afterEach : function(assert) {
+		afterEach: function () {
 			sandbox.restore();
 			this.oHorizontalLayout.destroy();
 			this.oDesignTime.destroy();
@@ -126,4 +128,7 @@ function(
 		assert.strictEqual(this.oUnBoundedChildOverlay.isEditable(), true, "... then the unbound Item Content is editable");
 	});
 
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
+	});
 });

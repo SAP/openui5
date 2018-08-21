@@ -340,24 +340,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * When called starts listening to any designtime and element property changes.
-		 * When a change is detected the relevant response is published on the "update" event.
-		 */
-		oOutline._startUpdates = function () {
-			this.aUpdates = [];
-
-			// Initial status for setTimeout
-			this.sStatus = "initial";
-
-			oRta._oDesignTime.attachEvent("elementOverlayCreated", this._updatesHandler, this);
-			oRta._oDesignTime.attachEvent("elementOverlayAdded", this._updatesHandler, this);
-			oRta._oDesignTime.attachEvent("elementOverlayMoved", this._updatesHandler, this);
-			oRta._oDesignTime.attachEvent("elementOverlayDestroyed", this._updatesHandler, this);
-			oRta._oDesignTime.attachEvent("elementPropertyChanged", this._updatesHandler, this);
-			oRta._oDesignTime.attachEvent("elementOverlayEditableChanged", this._updatesHandler, this);
-		};
-
-		/**
 		 * Detaches all event listeners that were attached from the outline service and performs a clean up.
 		 */
 		oOutline.destroy = function () {
@@ -371,7 +353,23 @@ sap.ui.define([
 			delete this.sStatus;
 		};
 
-		var oServiceReturnObj = {
+		/**
+		 * Starts listening to any designtime and element property changes.
+		 * When a change is detected the relevant response is published on the "update" event.
+		 */
+		oOutline.aUpdates = [];
+
+		// Initial status for setTimeout
+		oOutline.sStatus = "initial";
+
+		oRta._oDesignTime.attachEvent("elementOverlayCreated", oOutline._updatesHandler, oOutline);
+		oRta._oDesignTime.attachEvent("elementOverlayAdded", oOutline._updatesHandler, oOutline);
+		oRta._oDesignTime.attachEvent("elementOverlayMoved", oOutline._updatesHandler, oOutline);
+		oRta._oDesignTime.attachEvent("elementOverlayDestroyed", oOutline._updatesHandler, oOutline);
+		oRta._oDesignTime.attachEvent("elementPropertyChanged", oOutline._updatesHandler, oOutline);
+		oRta._oDesignTime.attachEvent("elementOverlayEditableChanged", oOutline._updatesHandler, oOutline);
+
+		return {
 			/**
 			 * @desc Attached listeners are notified of any modifications to existing nodes in the outline.
 			 * These notifications are an array of objects (updates) whenever modifications are encountered.
@@ -437,27 +435,5 @@ sap.ui.define([
 			},
 			destroy: oOutline.destroy.bind(oOutline)
 		};
-
-		return new Promise(function (fnResolve, fnReject) {
-
-			var fnCheckRootElementOverlaysExist = function () {
-				return oRta._oDesignTime.getRootElements().some(function (oRootElement) {
-					return !OverlayRegistry.getOverlay(oRootElement);
-				});
-			};
-
-			if (!oRta._oDesignTime || fnCheckRootElementOverlaysExist()) {
-				oRta.attachEventOnce("start", function () {
-					oOutline._startUpdates();
-					fnResolve(oServiceReturnObj);
-				});
-				oRta.attachEventOnce("failed", function () {
-					fnReject(DtUtil.createError("services.Outline#get", "Designtime failed to load. This is needed to start the Outline service", "sap.ui.rta"));
-				});
-			} else {
-				oOutline._startUpdates();
-				fnResolve(oServiceReturnObj);
-			}
-		});
 	};
 });

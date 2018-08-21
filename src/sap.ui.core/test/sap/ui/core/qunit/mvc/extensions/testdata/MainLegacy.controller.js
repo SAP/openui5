@@ -1,7 +1,7 @@
 sap.ui.define(["sap/ui/core/mvc/Controller"], function(Controller) {
-    "use strict";
+	"use strict";
 
-    return Controller.extend("my.test.MainLegacy", {
+	return Controller.extend("my.test.MainLegacy", {
 		metadata: {
 			/*no methods defined: should lead to legacy private/public behavior*/
 			publicMethods: [
@@ -26,10 +26,10 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], function(Controller) {
 		publicMethod: function() {
 			return "publicMethodOnBase";
 		},
-        myFinalMethod: function() {
+		myFinalMethod: function() {
 
-        },
-        privateMethod1: function() {
+		},
+		privateMethod1: function() {
 			return "privateMethodOnBase";
 		},
 		_privateMethod2: function() {

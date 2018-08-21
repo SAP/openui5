@@ -6,13 +6,14 @@ sap.ui.require([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Properties"
-], function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactable,
-		Properties) {
+], function (MessageBox, Filter, FilterOperator, ODataUtils, QUnitUtils, Opa5, EnterText, Press,
+		Interactable, Properties) {
 	"use strict";
 	var COMPANY_NAME_COLUMN_INDEX = 1,
 		GROSS_AMOUNT_COLUMN_INDEX = 2,
@@ -405,6 +406,19 @@ sap.ui.require([
 						viewName : sViewName
 					});
 				},
+				pressBackToMessagesButton : function (sMessage) {
+					return this.waitFor({
+						controlType : "sap.m.Page",
+						id : /-messageView-detailsPage/,
+						success : function (aPages) {
+							var $page = aPages[0].getDomRef();
+
+							QUnitUtils.triggerEvent("tap",
+								$page.getElementsByClassName("sapMMsgViewBackBtn")[0]);
+							Opa5.assert.ok(true, "Back to Messages button pressed");
+						}
+					});
+				},
 				pressCancelSalesOrderChangesButton : function () {
 					return this.waitFor({
 						actions : new Press(),
@@ -469,6 +483,26 @@ sap.ui.require([
 							Opa5.assert.ok(true, "Delete Business Partner button pressed");
 						},
 						viewName : sViewName
+					});
+				},
+				pressMessagesButton : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "MessagesButton",
+						success : function () {
+							Opa5.assert.ok(true, "Messages button pressed");
+						},
+						viewName : sViewName
+					});
+				},
+				pressMessagePopoverCloseButton : function () {
+					return this.waitFor({
+						controlType : "sap.m.MessagePopover",
+						success : function (aMessagePopover) {
+							aMessagePopover[0].close();
+							Opa5.assert.ok(true, "MessagePopover closed");
+						}
 					});
 				},
 				pressRefreshAllButton : function () {
@@ -599,6 +633,20 @@ sap.ui.require([
 				selectFirstSalesOrder : function ( bRememberGrossAmount) {
 					return selectSalesOrder(this, 0, bRememberGrossAmount);
 				},
+				selectMessage : function (sMessage) {
+					return this.waitFor({
+						controlType : "sap.m.StandardListItem",
+						matchers : new Properties({title: sMessage}),
+						success : function (aItems) {
+							if (aItems.length === 1) {
+								QUnitUtils.triggerEvent("tap", aItems[0].getDomRef());
+								Opa5.assert.ok(true, "Message selected: " + sMessage);
+							} else {
+								Opa5.assert.ok(false, "Duplicate Message: " + sMessage);
+							}
+						}
+					});
+				},
 				selectSalesOrder : function (iIndex) {
 					return selectSalesOrder(this, iIndex);
 				},
@@ -685,6 +733,19 @@ sap.ui.require([
 						matchers : new Interactable(),
 						success : function (oButton) {
 							Opa5.assert.ok(oButton.getEnabled(), "Button is enabled: " + sButtonId);
+						},
+						viewName : sViewName
+					});
+				},
+				checkCompanyName : function (iRow, sExpectedCompanyName) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						success : function (oSalesOrderTable) {
+							Opa5.assert.strictEqual(oSalesOrderTable.getItems()[iRow].getCells()
+								[COMPANY_NAME_COLUMN_INDEX].getText(), sExpectedCompanyName,
+								"CompanyName of row " + iRow + " as expected "
+									+ sExpectedCompanyName);
 						},
 						viewName : sViewName
 					});
@@ -788,6 +849,17 @@ sap.ui.require([
 						viewName : sViewName
 					});
 				},
+				checkInputValueState : function (sID, sState) {
+					return this.waitFor({
+						controlType : "sap.m.Input",
+						id : sID,
+						success : function (oInput) {
+							Opa5.assert.strictEqual(oInput.getValueState(), sState,
+								"checkInputValueState('" + sID + "', '" + sState + "')");
+						},
+						viewName : sViewName
+					});
+				},
 				checkNewSalesOrderItemProductName : function (sExpectProductName) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
@@ -797,19 +869,6 @@ sap.ui.require([
 
 							Opa5.assert.strictEqual(oRow.getCells()[3].getText(),
 								sExpectProductName, "Product name of new created SOItem");
-						},
-						viewName : sViewName
-					});
-				},
-				checkCompanyName : function (iRow, sExpectedCompanyName) {
-					return this.waitFor({
-						controlType : "sap.m.Table",
-						id : "SalesOrders",
-						success : function (oSalesOrderTable) {
-							Opa5.assert.strictEqual(oSalesOrderTable.getItems()[iRow].getCells()
-								[COMPANY_NAME_COLUMN_INDEX].getText(), sExpectedCompanyName,
-								"CompanyName of row " + iRow + " as expected "
-									+ sExpectedCompanyName);
 						},
 						viewName : sViewName
 					});
@@ -828,6 +887,74 @@ sap.ui.require([
 								"Note of row " + iRow + " as expected " + sExpectedNote);
 						},
 						viewName : sViewName
+					});
+				},
+				checkNoteValueState : function (iRow, sExpectedValueState, sExpectedValueStateText) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						success : function (oSalesOrderTable) {
+							var oInput = oSalesOrderTable.getItems()[iRow]
+									.getCells()[NOTE_COLUMN_INDEX];
+
+							Opa5.assert.strictEqual(oInput.getValueState(), sExpectedValueState,
+								"ValueState of note in row " + iRow + " as expected: "
+									+ sExpectedValueState);
+							Opa5.assert.strictEqual(oInput.getValueStateText(),
+								sExpectedValueStateText,
+								"ValueStateText of note in row " + iRow + " as expected: "
+									+ sExpectedValueStateText);
+						},
+						viewName : sViewName
+					});
+				},
+				checkMessageCount : function (iExpectedCount) {
+					return this.waitFor({
+						controlType : "sap.m.Button",
+						id : "MessagesButton",
+						success : function (oButton) {
+							Opa5.assert.strictEqual(parseInt(oButton.getText(), 10), iExpectedCount,
+								"Message count is as expected: " + iExpectedCount);
+						},
+						viewName : sViewName
+					});
+				},
+				checkMessageDetails : function (sMessage, sExpectedDetails) {
+					return this.waitFor({
+						id : /-messageViewMarkupDescription/,
+						success : function (aDetailsHtml) {
+							Opa5.assert.strictEqual(aDetailsHtml.length, 1);
+							Opa5.assert.ok(aDetailsHtml[0].getContent().includes(sExpectedDetails),
+								"Check Message Details: Details for message '" + sMessage
+									+ " as expected: " + sExpectedDetails);
+						}
+					});
+				},
+				/*
+				 * Checks whether the given array of messages matches the displayed messages
+				 * {object[]} aExpectedMessages - Expected messages
+				 * {string} aExpectedMessages.message - Expected message text
+				 * {sap.ui.core.MessageType} aExpectedMessages.type - Expected message type
+				 */
+				checkMessages : function (aExpectedMessages) {
+					return this.waitFor({
+						controlType : "sap.m.MessagePopover",
+						success : function (aMessagePopover) {
+							var iExpectedCount = aExpectedMessages.length,
+								aItems = aMessagePopover[0].getItems();
+
+							Opa5.assert.strictEqual(aItems.length, iExpectedCount,
+								"Check Messages: message count is as expected: " + iExpectedCount);
+							aExpectedMessages.forEach(function (oExpectedMessage, i) {
+								var bFound = aItems.some(function(oItem) {
+									return oItem.getTitle() === oExpectedMessage.message &&
+										oItem.getType() === oExpectedMessage.type;
+								});
+								Opa5.assert.ok(bFound, "Check Messages: expected message[" + i
+									+ "]: " + oExpectedMessage.message + " type: "
+									+ oExpectedMessage.type);
+							});
+						}
 					});
 				},
 				checkSalesOrderIdInDetails : function (bChanged) {
@@ -892,6 +1019,26 @@ sap.ui.require([
 							Opa5.assert.strictEqual(
 								oRow.getCells()[SOITEM_NOTE_COLUMN_INDEX].getValue(), sNoteValue,
 								"SO Item Note of row " + iRow + " is " + sNoteValue);
+						},
+						viewName : sViewName
+					});
+				},
+				checkSalesOrderLineItemQuantityValueState : function (iRow, sExpectedValueState,
+						sExpectedValueStateText) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrderLineItems",
+						success : function (oTable) {
+							var oInput = oTable.getItems()[iRow]
+									.getCells()[SOITEM_QUANTITY_COLUMN_INDEX];
+
+							Opa5.assert.strictEqual(oInput.getValueState(), sExpectedValueState,
+								"ValueState of note in row " + iRow + " as expected: "
+									+ sExpectedValueState);
+							Opa5.assert.strictEqual(oInput.getValueStateText(),
+								sExpectedValueStateText,
+								"ValueStateText of note in row " + iRow + " as expected: "
+									+ sExpectedValueStateText);
 						},
 						viewName : sViewName
 					});

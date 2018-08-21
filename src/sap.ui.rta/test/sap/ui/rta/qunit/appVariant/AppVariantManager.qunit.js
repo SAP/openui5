@@ -1,31 +1,35 @@
 /* global QUnit  */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/appVariant/AppVariantManager",
 	"sap/ui/rta/appVariant/Feature",
+	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/command/LREPSerializer",
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Utils",
 	"sap/ui/core/Control",
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/core/Manifest",
+	"sap/ui/thirdparty/sinon-4"
 ],
-function(
+function (
+	jQuery,
 	AppVariantManager,
 	RtaAppVariantFeature,
+	AppVariantUtils,
 	Stack,
 	LREPSerializer,
 	DescriptorVariantFactory,
 	Settings,
+	FlUtils,
 	Control,
+	Manifest,
 	sinon
 ) {
-
 	"use strict";
 
-	QUnit.start();
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given an AppVariantManager is instantiated", {
@@ -35,7 +39,6 @@ function(
 			var oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: oRootControl});
 			this.oAppVariantManager = new AppVariantManager({rootControl: oRootControl, commandSerializer: oCommandSerializer});
 		},
-
 		afterEach: function () {
 			sandbox.restore();
 			this.oAppVariantManager.destroy();
@@ -99,7 +102,7 @@ function(
 				fSave(oResult);
 			};
 
-			var oOpenDialogStub = sandbox.stub(this.oAppVariantManager, "_openDialog", fnSimulateDialogSelectionAndSave);
+			var oOpenDialogStub = sandbox.stub(this.oAppVariantManager, "_openDialog").callsFake(fnSimulateDialogSelectionAndSave);
 
 			return this.oAppVariantManager.processSaveAsDialog(oDescriptor).then(function(oAppVariantData){
 				assert.ok(oOpenDialogStub.calledOnce, "the _openDialog is called only once");
@@ -124,7 +127,7 @@ function(
 
 			oServer = sinon.fakeServer.create();
 
-			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "getInboundInfo").returns({
+			sandbox.stub(AppVariantUtils, "getInboundInfo").returns({
 				currentRunningInbound: "customer.savedAsAppVariant",
 				addNewInboundRequired: true
 			});
@@ -133,7 +136,7 @@ function(
 				semanticObject: "testSemanticObject",
 				action: "testAction"
 			};
-			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "getURLParsedHash").returns(oParsedHashStub);
+			sandbox.stub(AppVariantUtils, "getURLParsedHash").returns(oParsedHashStub);
 
 			this.oAppVariantData = {
 				description: "App Variant Description",
@@ -281,7 +284,7 @@ function(
 
 			oServer.autoRespond = true;
 
-			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
+			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
 			return this.oAppVariantManager.createDescriptor(this.oAppVariantData).catch(
 				function(bSuccess) {
 					assert.equal(bSuccess, false, "Error: An unexpected exception occured" );
@@ -379,7 +382,7 @@ function(
 
 			oServer.autoRespond = true;
 
-			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
+			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
 
 			return DescriptorVariantFactory.createNew({
 				id: "customer.TestId",
@@ -404,7 +407,7 @@ function(
 				})
 			));
 
-			sandbox.stub(sap.ui.fl.Utils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
 
 			var oDescriptor = {
 				"sap.app" : {
@@ -415,7 +418,7 @@ function(
 				}
 			};
 
-			var oManifest = new sap.ui.core.Manifest(oDescriptor);
+			var oManifest = new Manifest(oDescriptor);
 			var oComponent = {
 				name: "testComponent",
 				getManifest : function() {
@@ -423,7 +426,7 @@ function(
 				}
 			};
 
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oComponent);
 
 			return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", false).then(function() {
 				assert.ok("then the promise is resolved");
@@ -433,7 +436,7 @@ function(
 		QUnit.test("When copyUnsavedChangesToLREP() method is called, taking over dirty changes failed", function (assert) {
 			var fnTakeOverDirtyChanges = sandbox.stub(this.oAppVariantManager, "_takeOverDirtyChangesByAppVariant").returns(Promise.reject("Saving error"));
 			var fnDeleteAppVariant = sandbox.stub(this.oAppVariantManager, "_deleteAppVariantFromLREP").returns(Promise.resolve());
-			var fnShowRelevantDialog = sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.reject());
+			var fnShowRelevantDialog = sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject());
 
 			return new Promise(function(resolve, reject) {
 				return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", true).then(reject, function () {
@@ -449,7 +452,7 @@ function(
 		QUnit.test("When copyUnsavedChangesToLREP() method is called, taking over dirty changes failed and then the deleting of app variants is also failed", function (assert) {
 			var fnTakeOverDirtyChanges = sandbox.stub(this.oAppVariantManager, "_takeOverDirtyChangesByAppVariant").returns(Promise.reject("Saving error"));
 			var fnDeleteAppVariant = sandbox.stub(this.oAppVariantManager, "_deleteAppVariantFromLREP").returns(Promise.reject("Delete Error"));
-			var fnShowRelevantDialog = sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.reject());
+			var fnShowRelevantDialog = sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject());
 
 			return new Promise(function(resolve, reject) {
 				return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", true).then(reject, function () {
@@ -558,7 +561,7 @@ function(
 
 			oServer.autoRespond = true;
 
-			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
+			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
 
 			return DescriptorVariantFactory.createNew({
 				id: "customer.TestId",
@@ -580,9 +583,9 @@ function(
 			window.bUShellNavigationTriggered = false;
 			var originalUShell = sap.ushell;
 
-			sap.ushell = jQuery.extend({}, sap.ushell, {
+			sap.ushell = Object.assign({}, sap.ushell, {
 				Container : {
-					getService : function(sServiceName) {
+					getService : function() {
 						return {
 							toExternal : function() {
 								window.bUShellNavigationTriggered = true;
@@ -592,7 +595,7 @@ function(
 				},
 				services : {
 					AppConfiguration: {
-						getCurrentApplication: function(oApplication) {
+						getCurrentApplication: function() {
 							return {
 								componentHandle: {
 									getInstance: function() {
@@ -614,7 +617,7 @@ function(
 				})
 			));
 
-			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
+			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
 
 			return DescriptorVariantFactory.createNew({
 				id: "customer.TestId",
@@ -635,9 +638,9 @@ function(
 			window.bUShellNavigationTriggered = false;
 			var originalUShell = sap.ushell;
 
-			sap.ushell = jQuery.extend({}, sap.ushell, {
+			sap.ushell = Object.assign({}, sap.ushell, {
 				Container : {
-					getService : function(sServiceName) {
+					getService : function() {
 						return {
 							toExternal : function() {
 								window.bUShellNavigationTriggered = true;
@@ -647,7 +650,7 @@ function(
 				},
 				services : {
 					AppConfiguration: {
-						getCurrentApplication: function(oApplication) {
+						getCurrentApplication: function() {
 							return {
 								componentHandle: {
 									getInstance: function() {
@@ -669,7 +672,7 @@ function(
 				})
 			));
 
-			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
+			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
 
 			return DescriptorVariantFactory.createNew({
 				id: "customer.TestId",
@@ -696,7 +699,7 @@ function(
 				})
 			));
 
-			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
+			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
 
 			var fnAppVariantFeatureSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").returns(Promise.resolve(true));
 
@@ -724,7 +727,7 @@ function(
 				})
 			));
 
-			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
+			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
 
 			var fnAppVariantFeatureSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").returns(Promise.resolve(true));
 
@@ -739,5 +742,9 @@ function(
 				});
 			}.bind(this));
 		});
+	});
+
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
 	});
 });

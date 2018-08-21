@@ -2203,6 +2203,19 @@
 			sap.ui.getCore().applyChanges();
 		});
 
+		QUnit.test("Focus info is cleared upon sapfocusleave", function (assert) {
+			// arrange
+			var oResetChildControlFocusInfoSpy = this.spy(this.oOTB, "_resetChildControlFocusInfo");
+
+			// act - trigger focus leave handler
+			this.oOTB.sFocusedChildControlId = this.oButtonUnderTest.getId();
+			this.oOTB.onsapfocusleave();
+
+			// assert
+			assert.ok(oResetChildControlFocusInfoSpy.calledOnce, "Method _resetChildControlFocusInfo called upon onsapfocusleave.");
+			assert.strictEqual(this.oOTB.sFocusedChildControlId, "", "Focus info cleared.");
+		});
+
 		QUnit.module("Control destroy");
 
 		QUnit.test("Popover is not re-created on layoutDataChange after Toolbar is destroyed", function (assert) {
@@ -2236,6 +2249,31 @@
 			// Assert
 			assert.strictEqual(oOTB._bIsBeingDestroyed, true, "Toolbar is destroyed");
 			assert.strictEqual(oPopover, null, "Popover is destroyed");
+		});
+
+		QUnit.module("Forcing rerender on resize");
+
+		QUnit.test("The OverflowToolbar is reset and rerendered on resize, if _bForceReRenderOnResize is true", function (assert) {
+
+			var oOTB = new sap.m.OverflowToolbar();
+
+			// Arrange
+			oOTB._bForceRerenderOnResize = true;
+			oOTB.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var oResetToolbarSpy = this.spy(sap.m.OverflowToolbar.prototype, "_resetToolbar"),
+				oRerenderSpy = this.spy(sap.m.OverflowToolbar.prototype, "rerender");
+
+			// Act
+			oOTB._handleResize();
+
+			// Assert
+			assert.ok(oResetToolbarSpy.calledOnce, "_resetToolbar is called once.");
+			assert.ok(oRerenderSpy.calledOnce, "rerender is called once.");
+
+			// Cleanup
+			oOTB.destroy();
 		});
 
 		QUnit.module("Private API: _markControlsWithShrinkableLayoutData", {

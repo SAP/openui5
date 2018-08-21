@@ -4,13 +4,13 @@
 
 // Provides class sap.ui.model.odata.ODataAnnotations
 sap.ui.define([
-	'./AnnotationParser',
-	'sap/ui/Device',
-	'sap/ui/base/EventProvider',
+	"./AnnotationParser",
 	"sap/base/assert",
-	"sap/base/Log"
-],
-	function(AnnotationParser, Device, EventProvider, assert, Log) {
+	"sap/base/Log",
+	"sap/ui/Device",
+	"sap/ui/base/EventProvider",
+	"sap/ui/thirdparty/jquery"
+], function (AnnotationParser, assert, Log, Device, EventProvider, jQuery) {
 	"use strict";
 
 	/*global ActiveXObject */

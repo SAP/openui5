@@ -1,12 +1,11 @@
 /*global QUnit*/
-QUnit.config.autostart = false;
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/dt/AggregationDesignTimeMetadata",
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/thirdparty/sinon-4"
 
-],function(
+], function(
 	AggregationDesignTimeMetadata,
 	DesignTimeMetadata,
 	sinon
@@ -35,5 +34,7 @@ sap.ui.require([
 		assert.strictEqual(sReturnValue, aMockArguments[1], "then the second argument (aggregation name) is returned as a fallback");
 	});
 
-	QUnit.start();
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
+	});
 });

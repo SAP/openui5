@@ -6,8 +6,7 @@ sap.ui.require([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/TestUtils",
 	"sap/ui/test/matchers/Properties"
-],
-function (Helper, Opa5, TestUtils, Properties) {
+], function (Helper, Opa5, TestUtils, Properties) {
 	"use strict";
 
 	/*
@@ -94,9 +93,10 @@ function (Helper, Opa5, TestUtils, Properties) {
 		onAnyPage: {
 			actions : {
 				applySupportAssistant : function () {
-					// we use support assistant only for the test run with mock data
+					// we use support assistant only on-demand and only with mock data
 					sap.ui.test.Opa.getContext().bSupportAssistant =
-						TestUtils.isRealOData() ? false : true;
+						jQuery.sap.getUriParameters().get("supportAssistant") === "true"
+						&& !TestUtils.isRealOData();
 					Opa5.extendConfig(getConfig(sap.ui.test.Opa.getContext().bSupportAssistant));
 				},
 				cleanUp : function(sControlId) {
@@ -158,8 +158,9 @@ function (Helper, Opa5, TestUtils, Properties) {
 
 								oIssues = oIssues.filter(function(oIssue) {
 									if (oIssue.severity !== "High" ||
-										// as long as BCP 1870071678 is not solved
-										oIssue.rule.id === "xmlViewUnusedNamespaces") {
+										// ignore rule as long as it is unclear how to solve
+										// ariaDescribedBy issues
+										oIssue.rule.id === "dialogAriaDescribedBy") {
 										return false;
 									}
 									return true;

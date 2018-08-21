@@ -338,6 +338,78 @@
 			assert.strictEqual(jQuery('.sapMMenu').length, 1, "Opened control is visible after click");
 		});
 
+		QUnit.test("The menu of the MenuButton is closed on second click", function(assert) {
+			var oMenuButton = this.sut,
+				oCloseSpy = this.spy(oMenuButton.getMenu(), "close");
+
+			// act
+			// simulate event handlers in the expected order
+			oMenuButton.ontouchstart();
+			oMenuButton._handleButtonPress();
+			oMenuButton.ontouchstart();
+			oMenuButton._handleButtonPress();
+
+			// assert
+			assert.strictEqual(oCloseSpy.callCount, 1, "the close method of Menu is called");
+			assert.strictEqual(this.sut.getMenu()._getMenu().getPopup().isOpen(), false, "the Popup is closed");
+		});
+
+		QUnit.test("The menu of the MenuButton is closed on second click after it has one lost its focus", function(assert) {
+			var oMenuButton = this.sut,
+				oMenuButton2 = new sap.m.MenuButton("menuButton2").placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+
+			// act
+            // simulate event handlers in the expected order
+			// open
+			oMenuButton.ontouchstart();
+			oMenuButton._handleButtonPress();
+
+			// focus leave
+			qutils.triggerEvent("mousedown", oMenuButton2.getId());
+			qutils.triggerEvent("mouseup", oMenuButton2.getId());
+			qutils.triggerEvent("click", oMenuButton2.getId());
+
+			// check again if opened
+			oMenuButton.ontouchstart();
+			oMenuButton._handleButtonPress();
+			oMenuButton.ontouchstart();
+			oMenuButton._handleButtonPress();
+
+			// assert
+			assert.strictEqual(this.sut.getMenu()._getMenu().getPopup().isOpen(), false, "the Popup is closed");
+
+			// clean
+			oMenuButton2.destroy();
+		});
+
+		QUnit.test("The menu of the MenuButton is closed on second click after an item is selected", function(assert) {
+			var oMenuButton = this.sut,
+					oCloseSpy = this.spy(oMenuButton.getMenu(), "close");
+
+            // act
+            // simulate event handlers in the expected order
+			// open
+			oMenuButton.ontouchstart();
+			oMenuButton._handleButtonPress();
+
+			// select an item
+			qutils.triggerEvent("mousedown", oMenuButton.getMenu().getItems()[0].getId() + "-unifiedmenu");
+			qutils.triggerEvent("mouseup", oMenuButton.getMenu().getItems()[0].getId() + "-unifiedmenu");
+			qutils.triggerEvent("click", oMenuButton.getMenu().getItems()[0].getId() + "-unifiedmenu");
+
+			// check again if opened
+			oMenuButton.ontouchstart();
+			oMenuButton._handleButtonPress();
+			oMenuButton.ontouchstart();
+			oMenuButton._handleButtonPress();
+
+			// assert
+			assert.strictEqual(oCloseSpy.callCount, 1, "the close method of Menu is called");
+			assert.strictEqual(this.sut.getMenu()._getMenu().getPopup().isOpen(), false, "the Popup is closed");
+		});
+
 
 		QUnit.test("Open with keyboard", function(assert) {
 			var fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress");
@@ -703,6 +775,52 @@
 			//clean
 			mb.destroy();
 			mb = null;
+		});
+
+		QUnit.test("onThemeChanged does not throw exception if it is called before the textButton is placed in the DOM", function (assert) {
+			// Arrange
+			var oMenuButton = new sap.m.MenuButton({
+				buttonMode: "Split"
+			}),
+			oNeedsWidthStub = this.stub(oMenuButton, "_needsWidth", function () { return true; }),
+			oGetDomRefStub = this.stub(oMenuButton, "getDomRef", function () { return document.createElement("DIV"); });
+
+			// Act
+			oMenuButton.onThemeChanged();
+
+			// Assert
+			assert.ok(true, "There is no exception thrown");
+
+			// Clenaup
+			oNeedsWidthStub.restore();
+			oGetDomRefStub.restore();
+			oMenuButton.destroy();
+		});
+
+		QUnit.test("onThemeChanged does set width to the content if its width is 0", function (assert) {
+			// Arrange
+			var oMenuButton = new sap.m.MenuButton({
+					buttonMode: "Split"
+				}),
+				oTextBtnContentDiv = document.createElement("DIV"),
+				oNeedsWidthStub = this.stub(oMenuButton, "_needsWidth", function () { return true; }),
+				oGetDomRefStub = this.stub(oMenuButton, "getDomRef", function () { return document.createElement("DIV"); }),
+				oGetTextBtnContentDomRefStub = this.stub(oMenuButton, "_getTextBtnContentDomRef", function () { return oTextBtnContentDiv });
+				oTextBtnContentDiv.style.display = "none";
+				document.body.appendChild(oTextBtnContentDiv);
+
+			// Act
+			oMenuButton.onThemeChanged();
+
+			// Assert
+			assert.equal(oTextBtnContentDiv.style.width, "", "Width of the text button content is not set if width is 0");
+
+			// Clenaup
+			oNeedsWidthStub.restore();
+			oGetDomRefStub.restore();
+			oGetTextBtnContentDomRefStub.restore();
+			oMenuButton.destroy();
+			document.body.removeChild(oTextBtnContentDiv);
 		});
 	</script>
 </head>

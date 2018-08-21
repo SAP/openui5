@@ -15,12 +15,22 @@ function (History, IssueManager, RuleSetLoader) {
 				selectors: ""
 			}
 		},
-		applicationInfo: [{
-			applicationVersion: {version: ""},
-			id: "",
-			title: "",
-			type: ""
-		}],
+		applicationInfo: [
+			{
+				applicationVersion: {version: ""},
+				id: "",
+				title: "",
+				type: "",
+				registrationIds: []
+			},
+			{
+				applicationVersion: {version: ""},
+				id: "",
+				title: "",
+				type: "",
+				registrationIds: []
+			}
+		],
 		loadedLibraries: {
 			"sap.m": {
 				rules: {
@@ -152,12 +162,22 @@ function (History, IssueManager, RuleSetLoader) {
 			this.oContext = {
 				_oDataCollector: {
 					getAppInfo: function () {
-						return [{
-							applicationVersion: {version: "1.0.0"},
-							id: "test",
-							title: "mock",
-							type: "application"
-						}];
+						return [
+							{
+								applicationVersion: {version: "1.0.0"},
+								id: "test",
+								title: "mock",
+								type: "application",
+								registrationIds: ["F1234", "F5678"]
+							},
+							{
+								applicationVersion: {version: "2.0.0"},
+								id: "othertest",
+								title: "second mock",
+								type: "application",
+								registrationIds: ["F8888"]
+							}
+						];
 					},
 					getTechInfoJSON: function () {
 						return {title: "Mock"};
@@ -240,6 +260,9 @@ function (History, IssueManager, RuleSetLoader) {
 		assert.ok(Array.isArray(oFormattedHistory[0].loadedLibraries), "Loaded libraries should be an array.");
 		assert.ok(Array.isArray(oFormattedHistory[0].loadedLibraries[0].rules), "Rules should be an array.");
 		assert.ok(Array.isArray(oFormattedHistory[0].loadedLibraries[0].rules[0].issues), "Issues should be an array.");
+
+		assert.ok(Array.isArray(oFormattedHistory[0].registrationIds), "Registration ids should be an array.");
+		assert.deepEqual(oFormattedHistory[0].registrationIds, ["F1234", "F5678", "F8888"], "Registration ids are correct.");
 	});
 
 	QUnit.test("History getFormattedHistory - String format passed", function (assert) {

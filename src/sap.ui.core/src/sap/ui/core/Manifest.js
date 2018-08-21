@@ -4,16 +4,29 @@
 
 // Provides base class sap.ui.core.Component for all components
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'sap/ui/base/Object',
 	'sap/ui/thirdparty/URI',
-	"sap/base/util/Version",
-	"sap/base/Log",
-	"sap/ui/dom/includeStylesheet",
-	"sap/base/i18n/ResourceBundle",
-	"sap/base/util/uid"
+	'sap/base/util/Version',
+	'sap/base/Log',
+	'sap/ui/dom/includeStylesheet',
+	'sap/base/i18n/ResourceBundle',
+	'sap/base/util/uid',
+	'sap/base/util/isPlainObject',
+	'sap/base/util/LoaderExtensions'
 ],
-	function(jQuery, BaseObject, URI, Version, Log, includeStylesheet, ResourceBundle, uid) {
+	function(
+		jQuery,
+		BaseObject,
+		URI,
+		Version,
+		Log,
+		includeStylesheet,
+		ResourceBundle,
+		uid,
+		isPlainObject,
+		LoaderExtensions
+	) {
 	"use strict";
 
 	/*global Promise */
@@ -181,7 +194,7 @@ sap.ui.define([
 			if (mOptions && typeof mOptions.url === "string") {
 				this._oManifestBaseUri = new URI(mOptions.url).absoluteTo(new URI(document.baseURI).search("")).search("");
 			} else {
-				this._oManifestBaseUri = this.oBaseUri;
+				this._oManifestBaseUri = this._oBaseUri;
 			}
 
 			// make sure to freeze the raw manifest (avoid manipulations)
@@ -301,7 +314,7 @@ sap.ui.define([
 			var oEntry = getObject(oManifest, sPath);
 
 			// top-level manifest section must be an object (e.g. sap.ui5)
-			if (sPath && sPath[0] !== "/" && !jQuery.isPlainObject(oEntry)) {
+			if (sPath && sPath[0] !== "/" && !isPlainObject(oEntry)) {
 				Log.warning("Manifest entry with key '" + sPath + "' must be an object. Component: " + this.getComponentName());
 				return null;
 			}
@@ -713,8 +726,7 @@ sap.ui.define([
 		sManifestUrl = oManifestUrl.toString();
 
 		Log.info("Loading manifest via URL: " + sManifestUrl);
-		//TODO: global jquery call found
-		var oManifestJSON = jQuery.sap.loadResource({
+		var oManifestJSON = LoaderExtensions.loadResource({
 			url: sManifestUrl,
 			dataType: "json",
 			async: typeof bAsync !== "undefined" ? bAsync : false,
@@ -727,7 +739,8 @@ sap.ui.define([
 			return oManifestJSON.then(function(oManifestJSON) {
 				return new Manifest(oManifestJSON, {
 					componentName: sComponentName,
-					process: false
+					process: false,
+					url: sManifestUrl
 				});
 			});
 		}

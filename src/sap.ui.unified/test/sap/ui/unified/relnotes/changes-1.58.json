@@ -55,6 +55,42 @@
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: CW selection behavior corrected",
         "references": []
+      },
+      {
+        "id": "9ea8dbf284294e88adbfb50853c4c04aec233273",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarDateInterval: Sample now displays correctly on mobile",
+        "references": []
+      },
+      {
+        "id": "581bc354b0f9ccc436f86cf21f9caef654f0407b",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarRow: Minimal width of appointments now corrected",
+        "references": []
+      },
+      {
+        "id": "1405add78ffbb6602cd42de8f058ee9c05973895",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: now has correct active state of semantic buttons",
+        "references": []
+      },
+      {
+        "id": "37a1676bc27144768461f4e46357535117fbd557",
+        "type": "FIX",
+        "text": " m.PlanningCalendar: Picker button shows both years when needed",
+        "references": []
+      },
+      {
+        "id": "1f25202fad3488d9ba801bb4da599337b95ec80f",
+        "type": "FIX",
+        "text": " ui.unified.FileUploader: Documentation improved",
+        "references": []
+      },
+      {
+        "id": "8fb3786b00353b0ef6ac8170fb68c397bde5e3fc",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: visual tests adapted for running on iOS",
+        "references": []
       }
     ]
   }

@@ -66,18 +66,20 @@ sap.ui.define([
 		switchToAdaptionMode: function () {
 
 			if (this.getView().getModel("app").getProperty("/showAdaptButton"))	{
-
-				jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
-				var oRta = new RuntimeAuthoring({
-					rootControl: this.getOwnerComponent().getAggregation("rootControl"),
-					flexSettings: {
-						developerMode: false
-					}
-				});
-				oRta.attachEvent('stop', function() {
-					oRta.destroy();
-				});
-				oRta.start();
+				sap.ui.require([
+					"sap/ui/rta/RuntimeAuthoring"
+				], function(RuntimeAuthoring) {
+					var oRta = new RuntimeAuthoring({
+						rootControl: this.getOwnerComponent().getAggregation("rootControl"),
+						flexSettings: {
+							developerMode: false
+						}
+					});
+					oRta.attachEvent('stop', function() {
+						oRta.destroy();
+					});
+					oRta.start();
+				}.bind(this));
 			}
 		},
 

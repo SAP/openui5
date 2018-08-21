@@ -1,0 +1,43 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "04a30baf94c43c1f7000a704a8ff6f450a5f64e1",
+        "type": "FIX",
+        "text": " GridTable: Add additional aria label to column visibility items",
+        "references": []
+      },
+      {
+        "id": "30c449c7d733816c065c219053776a902c566bd4",
+        "type": "FIX",
+        "text": " Table: Avoid horizontal scrolling of cell content on focus in rtl",
+        "references": []
+      },
+      {
+        "id": "ab9eeabf2bfc9f66aaf26246ef954fc27b1b3631",
+        "type": "FIX",
+        "text": " Table: Scrolling to last row with mouse wheel",
+        "references": []
+      },
+      {
+        "id": "a08675d8c87fb70c39f5e03e980b81aada06d737",
+        "type": "FIX",
+        "text": " ODataTreeBindingAdapter.expandNodeToLevel: Only expand nodes above given level",
+        "references": []
+      },
+      {
+        "id": "06a22469851c073ac0e947d998696c05f38703e2",
+        "type": "FIX",
+        "text": " Table: Clicking on the column resizer no longer causes scrolling",
+        "references": []
+      },
+      {
+        "id": "c465549f731286019bcc890895c1b106a7484a11",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Type conversion removed",
+        "references": []
+      }
+    ]
+  }
+}

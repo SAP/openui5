@@ -36,9 +36,15 @@
 								visible="{=!${versionData>/isOpenUI5}}"
 								target="_blank"/>
 						<Link
-								class="demokitInitialPagesBrightLink"
+								class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
 								text="License"
 								href="LICENSE.txt"
+								visible="{versionData>/isOpenUI5}"
+								target="_blank"/>
+						<Link
+								class="demokitInitialPagesBrightLink"
+								text="Terms of Use"
+								href="TermsOfUse.txt"
 								visible="{versionData>/isOpenUI5}"
 								target="_blank"/>
 					</items>

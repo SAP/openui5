@@ -11,7 +11,8 @@ sap.ui.define([
 	'./InvisibleText',
 	'./library',
 	"./IconRenderer",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		assert,
@@ -21,7 +22,8 @@ sap.ui.define([
 		InvisibleText,
 		library,
 		IconRenderer,
-		KeyCodes
+		KeyCodes,
+		jQuery
 	) {
 	"use strict";
 
@@ -217,7 +219,7 @@ sap.ui.define([
 		if (!oEvent.targetTouches || (oEvent.targetTouches && oEvent.targetTouches.length === 0)) {
 
 			this.$().removeClass("sapUiIconActive");
-			this._restoreColors();
+			this._restoreColors(Device.system.desktop ? "hover" : undefined);
 		}
 	};
 
@@ -316,9 +318,12 @@ sap.ui.define([
 	/* Private methods                                             */
 	/* =========================================================== */
 
-	Icon.prototype._restoreColors = function() {
-		this._addColorClass(this.getColor() || "", "color");
-		this._addColorClass(this.getBackgroundColor() || "", "background-color");
+	Icon.prototype._restoreColors = function(sMode) {
+		var sColor = sMode === "hover" ? this.getHoverColor() : this.getColor(),
+			sBackgroundColor = sMode === "hover" ? this.getHoverBackgroundColor() : this.getBackgroundColor();
+
+		this._addColorClass(sColor || "", "color");
+		this._addColorClass(sBackgroundColor || "", "background-color");
 	};
 
 	/* =========================================================== */

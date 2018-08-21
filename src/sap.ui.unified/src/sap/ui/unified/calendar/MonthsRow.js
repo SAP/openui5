@@ -14,7 +14,8 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/Locale',
 	"./MonthsRowRenderer",
-	"sap/ui/dom/containsOrEquals"
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Control,
 	LocaleData,
@@ -26,7 +27,8 @@ sap.ui.define([
 	coreLibrary,
 	Locale,
 	MonthsRowRenderer,
-	containsOrEquals
+	containsOrEquals,
+	jQuery
 ) {
 	"use strict";
 

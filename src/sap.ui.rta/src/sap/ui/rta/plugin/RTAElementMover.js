@@ -224,7 +224,7 @@ function(
 		if (
 			!oMovedRelevantContainer
 			|| !vTargetRelevantContainerAfterMove
-			|| !Plugin.prototype.hasStableId(oTargetOverlay)
+			|| !this.oBasePlugin.hasStableId(oTargetOverlay)
 			|| oMovedRelevantContainer !== vTargetRelevantContainerAfterMove
 		) {
 			return false;
@@ -265,6 +265,10 @@ function(
 		if (oMoveAction && oMoveAction.changeType) {
 			// moveChangeHandler information is always located on the relevant container
 			oChangeHandlerRelevantElement = oOverlay.getRelevantContainer();
+			var oRelevantOverlay = OverlayRegistry.getOverlay(oChangeHandlerRelevantElement);
+			if (!this.oBasePlugin.hasStableId(oRelevantOverlay)){
+				return false;
+			}
 			return this.oBasePlugin.hasChangeHandler(oMoveAction.changeType, oChangeHandlerRelevantElement);
 		}
 		return false;
@@ -272,7 +276,7 @@ function(
 
 	/**
 	 * Builds the Move command
-	 * @return {any} Move command object
+	 * @return {Promise} Move command object wrapped in a promise
 	 */
 	RTAElementMover.prototype.buildMoveCommand = function() {
 
@@ -288,7 +292,7 @@ function(
 		var bSourceAndTargetAreSame = this._compareSourceAndTarget(oSource, oTarget);
 
 		if (bSourceAndTargetAreSame) {
-			return undefined;
+			return Promise.resolve();
 		}
 		delete oSource.index;
 		delete oTarget.index;
@@ -296,7 +300,7 @@ function(
 		var oMoveAction = this._getMoveAction(oMovedOverlay);
 		var sVariantManagementReference = this.oBasePlugin.getVariantManagementReference(oMovedOverlay, oMoveAction, true);
 
-		var oMove = this.getCommandFactory().getCommandFor(oRelevantContainer, "Move", {
+		return this.getCommandFactory().getCommandFor(oRelevantContainer, "Move", {
 			movedElements : [{
 				element : oMovedElement,
 				sourceIndex : iSourceIndex,
@@ -305,9 +309,6 @@ function(
 			source : oSource,
 			target : oTarget
 		}, oParentAggregationOverlay.getDesignTimeMetadata(), sVariantManagementReference);
-
-		return oMove;
-
 	};
 
 	return RTAElementMover;

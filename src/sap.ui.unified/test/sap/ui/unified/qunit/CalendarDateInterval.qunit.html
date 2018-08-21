@@ -490,6 +490,29 @@
 				oCalendarDateInterval.destroy();
 			});
 
+			QUnit.test("_setHeaderText", function(assert) {
+				//arrange
+				var oCalendarDateInterval = new sap.ui.unified.CalendarWeekInterval();
+				var oHeader = oCalendarDateInterval.getAggregation("header");
+				var oSetHeaderTextSpy = this.spy(oHeader, "setTextButton1");
+				//simulate as if it is in a planning calendar
+				var oGetPickerPopupStub = this.stub(oCalendarDateInterval, "getPickerPopup", function() {return true});
+				var sDelimiter = sap.ui.core.LocaleData.getInstance(new sap.ui.core.Locale("en-US")).getIntervalPattern().replace("{0}", "").replace("{1}", "");
+
+				//act
+				oCalendarDateInterval._setHeaderText(new sap.ui.unified.calendar.CalendarDate(2017, 11, 31));				
+
+				//assert
+				assert.equal(oSetHeaderTextSpy.lastCall.args[0], "December 2017" + sDelimiter + "January 2018", "text of the header is ok");
+
+				//clean
+				oGetPickerPopupStub.restore();
+				oSetHeaderTextSpy.restore();
+				oCalendarDateInterval.destroy();
+				oCalendarDateInterval = null;
+				oHeader = null;
+			});
+
 			QUnit.module("Calendar Picker");
 			QUnit.test("Chosen date from the date picker is set as start date of the underying view", function(assert) {
 				// arrange

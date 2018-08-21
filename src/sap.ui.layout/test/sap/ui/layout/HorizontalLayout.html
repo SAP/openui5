@@ -1,49 +1,36 @@
 <!DOCTYPE html>
 <html>
 	<head>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>HorizontalLayout - sap.ui.layout</title>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<title>HorizontalLayout - sap.ui.layout</title>
 
-    <script src="shared-config.js"></script>
-    <script id='sap-ui-bootstrap'
-        src='../../../../resources/sap-ui-core.js'
-        data-sap-ui-theme='sap_belize'
-        data-sap-ui-libs='sap.ui.layout,sap.ui.commons, sap.m'></script>
+	<script src="shared-config.js"></script>
+	<script id='sap-ui-bootstrap'
+		src='../../../../resources/sap-ui-core.js'
+		data-sap-ui-theme='sap_belize'
+		data-sap-ui-libs='sap.ui.layout, sap.m'></script>
 
-
-	<style>
-
-	/* the application could add padding between the items like this
-
-	.sapUiHLayout > * {
-		margin-right: 3px;
-	}
-
-	*/
-
-	</style>
 
 	<script>
-		var c = sap.ui.commons;
 
 		// create a HorizontalLayout with some initial content
 	var oDefaultLayout = new sap.ui.layout.HorizontalLayout("myLayout", {content:[
-			new c.Button({text:"Hello World 1"}),
-			new c.Button({text:"Hello World 2"}),
-			new c.Panel({width:"200px", text:"A Panel",content:[
-				new c.Button({text:"Hello World a"}),
-				new c.Button({text:"Hello World b"}),
+			new sap.m.Button({text:"Hello World 1"}),
+			new sap.m.Button({text:"Hello World 2"}),
+			new sap.m.Panel({width:"200px", headerText:"A Panel", content:[
+				new sap.m.Button({text:"Hello World a"}),
+				new sap.m.Button({text:"Hello World b"}),
 				new sap.ui.core.HTML({content:"<div style='width:40px;'>as df rg eth et het h erj rzj rjz </div>"})
 			]})
 	]});
 
-	var btn3 = new c.Button({text:"Hello World 3"});
+	var btn3 = new sap.m.Button({text:"Hello World 3"});
 	oDefaultLayout.addContent(btn3);
 
 
 	var oSplitter = new sap.ui.layout.Splitter("splitter", {
 		contentAreas: new sap.m.Page({
-			scrollable: false,
+			title: "HorizontalLayout in Splitter",
 			content: new sap.ui.layout.HorizontalLayout({
 				allowWrapping: true,
 				content: [
@@ -61,52 +48,13 @@
 		})
 	});
 
-	new sap.m.SplitApp({
-		id: "horizontal-layout-demo",
-		masterPages: [new sap.m.Page({
-			title: "Navigation",
-			content: [
-				new sap.m.List({
-					items: [
-						new sap.m.StandardListItem({
-							id: "navigate-to-default",
-							title: "Default HorizontalLayout",
-							type: "Active",
-							press: function () {
-								sap.ui.getCore().byId("horizontal-layout-demo").toDetail("area-default");
-							}
-						}),
-						new sap.m.StandardListItem({
-							id: "navigate-to-layout-in-splitter",
-							title: "HorizontalLayout in sap.m.Splitter",
-							type: "Active",
-							press: function () {
-								sap.ui.getCore().byId("horizontal-layout-demo").toDetail("area-layout-in-splitter");
-							}
-						})
-					]
-				})
-			]
-		})],
-		detailPages: [
-			new sap.m.Page("area-default", {
-				title: "Default HorizontalLayout",
-				navButtonText: "Back",
-				navButtonPress: function () {
-					sap.ui.getCore().byId("horizontal-layout-demo").backDetail();
-				},
-				content: [oDefaultLayout]
-			}),
-			new sap.m.Page("area-layout-in-splitter", {
-				title: "HorizontalLayout in sap.m.Splitter",
-				navButtonText: "Back",
-				navButtonPress: function () {
-					sap.ui.getCore().byId("horizontal-layout-demo").backDetail();
-				},
-				content: [oSplitter]
-			})
-		]
-	}).placeAt("content");
+	var page1 = new sap.m.Page("area-default", {
+		title: "HorizontalLayout",
+		content: [oDefaultLayout, oSplitter]
+	});
+	var app = new sap.m.App("myApp", {initialPage:"page1"});
+	app.addPage(page1);
+	app.placeAt("content");
 
 	</script>
 

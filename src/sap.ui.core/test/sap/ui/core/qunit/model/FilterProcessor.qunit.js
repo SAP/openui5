@@ -247,4 +247,97 @@ sap.ui.require([
 		assert.ok(fnGetFilterFunction(sInput), "endswith '\u0073\u0323\u0307'");
 		assert.notOk(fnGetFilterFunction("dollars"), "does not endswith '\u0073\u0323\u0307'");
 	});
+
+	QUnit.module("Case-Sensitive & -Insensitive Filtering");
+
+	QUnit.test("Contains w/ caseSensitive = undefined", function(assert) {
+		var oFilter = new Filter({
+			path: 'to/glory',
+			operator: FilterOperator.Contains,
+			value1: "board"
+		});
+
+		var oNormalizeFilterValueSpy = sinon.spy(FilterProcessor, "normalizeFilterValue"),
+		 oToUpperCaseSpy = sinon.spy(String.prototype, "toUpperCase");
+
+		var a = ["Wakeboarding", "Skateboarding", "Tennis", "Marathon", "Cycling", "Snowboarding", "Surfing"];
+		var aFiltered = FilterProcessor.apply(a, oFilter, function (s) {
+			return s;
+		});
+
+		assert.deepEqual(aFiltered, ["Wakeboarding", "Skateboarding", "Snowboarding"], "Filter result for Contains is correct.");
+		assert.equal(oNormalizeFilterValueSpy.callCount, 8, "NormalizeFilterValue function should be called for each value.");
+		assert.equal(oToUpperCaseSpy.callCount, 8, "toUpperCase shouldn't be called");
+
+		oNormalizeFilterValueSpy.restore();
+		oToUpperCaseSpy.restore();
+	});
+
+	QUnit.test("Contains w/ caseSensitive = undefined & comparator", function(assert) {
+		var oFilter = new Filter({
+			path: 'to/glory',
+			operator: FilterOperator.Contains,
+			comparator: function() {},
+			value1: "board"
+		});
+
+		var oNormalizeFilterValueSpy = sinon.spy(FilterProcessor, "normalizeFilterValue");
+		var a = ["Wakeboarding", "Skateboarding", "Tennis", "Marathon", "Cycling", "Snowboarding", "Surfing"];
+		var aFiltered = FilterProcessor.apply(a, oFilter, function (s) {
+			return s;
+		});
+
+		assert.deepEqual(aFiltered, ["Wakeboarding", "Skateboarding", "Snowboarding"], "Filter result for Contains is correct.");
+		assert.equal(oNormalizeFilterValueSpy.callCount, 0, "NormalizeFilterValue function shouldn't be called.");
+
+		oNormalizeFilterValueSpy.restore();
+	});
+
+	QUnit.test("Contains w/ caseSensitive = true & comparator", function(assert) {
+		var oFilter = new Filter({
+			path: 'to/glory',
+			operator: FilterOperator.Contains,
+			comparator: function() {},
+			value1: "ing",
+			caseSensitive: true
+		});
+		var oNormalizeFilterValueSpy = sinon.spy(FilterProcessor, "normalizeFilterValue"),
+		 oToUpperCaseSpy = sinon.spy(String.prototype, "toUpperCase");
+
+		var a = ["Wakeboarding", "Skateboarding", "Tennis", "Marathon", "Cycling", "Snowboarding", "Surfing"];
+		var aFiltered = FilterProcessor.apply(a, oFilter, function (s) {
+			return s;
+		});
+
+		assert.deepEqual(aFiltered, ["Wakeboarding", "Skateboarding", "Cycling", "Snowboarding", "Surfing"], "Filter result for Contains is correct.");
+		assert.equal(oNormalizeFilterValueSpy.callCount, 8, "NormalizeFilterValue function should be called for each value.");
+		assert.equal(oToUpperCaseSpy.callCount, 0, "toUpperCase shouldn't be called");
+
+		oNormalizeFilterValueSpy.restore();
+		oToUpperCaseSpy.restore();
+	});
+
+	QUnit.test("Contains w/ caseSensitive = false & comparator", function(assert) {
+		var oFilter = new Filter({
+			path: 'to/glory',
+			operator: FilterOperator.Contains,
+			comparator: function() {},
+			value1: "ling",
+			caseSensitive: false
+		});
+		var oNormalizeFilterValueSpy = sinon.spy(FilterProcessor, "normalizeFilterValue"),
+		 oToUpperCaseSpy = sinon.spy(String.prototype, "toUpperCase");
+
+		var a = ["Wakeboarding", "Skateboarding", "Tennis", "Marathon", "Cycling", "Snowboarding", "Surfing"];
+		var aFiltered = FilterProcessor.apply(a, oFilter, function (s) {
+			return s;
+		});
+
+		assert.deepEqual(aFiltered, ["Cycling"], "Filter result for Contains is correct.");
+		assert.equal(oNormalizeFilterValueSpy.callCount, 8, "NormalizeFilterValue function should be called for each value.");
+		assert.equal(oToUpperCaseSpy.callCount, 8, "toUpperCase shouldn't be called");
+
+		oNormalizeFilterValueSpy.restore();
+		oToUpperCaseSpy.restore();
+	});
 });

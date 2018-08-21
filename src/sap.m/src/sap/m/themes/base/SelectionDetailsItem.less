@@ -85,6 +85,14 @@
 .sapMSDItem .sapMSDItemLineLabel {
 	margin-right: 1rem;
 	color: @sapUiContentLabelColor;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sapMSDWrapLabels .sapMSDItem .sapMSDItemLineLabel {
+  white-space: normal;
+  text-overflow: clip;
 }
 
 .sapMSDItem .sapMSDItemLineValue {

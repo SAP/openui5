@@ -12,7 +12,9 @@ sap.ui.define([
 	'sap/ui/Device',
 	'./SearchFieldRenderer',
 	"sap/ui/events/KeyCodes",
-	"sap/ui/dom/jquery/cursorPos" // jQuery Plugin "cursorPos"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "cursorPos"
+	"sap/ui/dom/jquery/cursorPos"
 ],
 	function(
 		library,
@@ -22,7 +24,8 @@ sap.ui.define([
 		Suggest,
 		Device,
 		SearchFieldRenderer,
-		KeyCodes
+		KeyCodes,
+		jQuery
 	) {
 	"use strict";
 
@@ -532,10 +535,16 @@ sap.ui.define([
 		if (value != this.getValue()) {
 			this.setValue(value);
 			this.fireLiveChange({newValue: value});
-
 			if (this.getEnableSuggestions()) {
-				this.fireSuggest({suggestValue: value});
-				updateSuggestions(this);
+				if (this._iSuggestDelay) {
+					clearTimeout(this._iSuggestDelay);
+				}
+
+				this._iSuggestDelay = setTimeout(function(){
+					this.fireSuggest({suggestValue: value});
+					updateSuggestions(this);
+					this._iSuggestDelay = null;
+				}.bind(this), 400);
 			}
 		}
 	};

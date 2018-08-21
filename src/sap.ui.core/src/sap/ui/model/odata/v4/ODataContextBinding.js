@@ -4,18 +4,18 @@
 
 //Provides class sap.ui.model.odata.v4.ODataContextBinding
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
+	"./Context",
+	"./ODataParentBinding",
+	"./lib/_Cache",
+	"./lib/_GroupLock",
+	"./lib/_Helper",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ContextBinding",
-	"./Context",
-	"./lib/_Cache",
-	"./lib/_GroupLock",
-	"./lib/_Helper",
-	"./ODataParentBinding"
-], function (jQuery, SyncPromise, Binding, ChangeReason, ContextBinding, Context, _Cache,
-		_GroupLock, _Helper, asODataParentBinding) {
+	"sap/ui/thirdparty/jquery"
+], function (Context, asODataParentBinding, _Cache, _GroupLock, _Helper, SyncPromise, Binding,
+		ChangeReason, ContextBinding, jQuery) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataContextBinding",
@@ -80,6 +80,7 @@ sap.ui.define([
 	 *   parent.
 	 *
 	 * @extends sap.ui.model.ContextBinding
+	 * @hideconstructor
 	 * @mixes sap.ui.model.odata.v4.ODataParentBinding
 	 * @public
 	 * @since 1.37.0
@@ -239,14 +240,22 @@ sap.ui.define([
 				return that.createCacheAndRequest(oGroupLock, sResolvedPath, oOperationMetadata,
 					fnGetEntity);
 			}).then(function (oResponseEntity) {
+				var sContextPredicate, sResponsePredicate;
+
 				fireChangeAndRefreshDependentBindings();
 				if (that.hasReturnValueContext(oOperationMetadata)) {
+					sContextPredicate = _Helper.getPrivateAnnotation(
+						that.oContext.fetchValue().getResult(), "predicate");
+					sResponsePredicate = _Helper.getPrivateAnnotation(oResponseEntity, "predicate");
+					if (sContextPredicate === sResponsePredicate) {
+						that.oContext.patch(oResponseEntity);
+					}
+
 					if (that.oReturnValueContext) {
 						that.oReturnValueContext.destroy();
 					}
 					that.oReturnValueContext = Context.create(that.oModel, that,
-						sResolvedPath.slice(0, sResolvedPath.indexOf("("))
-							+ _Helper.getPrivateAnnotation(oResponseEntity, "predicate"));
+						sResolvedPath.slice(0, sResolvedPath.indexOf("(")) + sResponsePredicate);
 					return that.oReturnValueContext;
 				}
 			}, function (oError) {
@@ -461,13 +470,22 @@ sap.ui.define([
 	ODataContextBinding.prototype.destroy = function () {
 		if (this.oElementContext) {
 			this.oElementContext.destroy();
+			this.oElementContext = undefined;
 		}
 		if (this.oReturnValueContext) {
 			this.oReturnValueContext.destroy();
+			this.oReturnValueContext = undefined;
 		}
 		this.oModel.bindingDestroyed(this);
-		this.oCachePromise = undefined;
+		this.removeReadGroupLock();
+		this.mCacheByContext = undefined;
+		this.oCachePromise = SyncPromise.resolve(); // be nice to #withCache
+		this.mCacheQueryOptions = undefined;
+		this.aChildCanUseCachePromises = SyncPromise.resolve();
 		this.oContext = undefined;
+		this.oOperation = undefined;
+		this.mParameters = undefined;
+		this.mQueryOptions = undefined;
 		ContextBinding.prototype.destroy.apply(this);
 	};
 
@@ -518,7 +536,7 @@ sap.ui.define([
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @returns {Promise}
-	 *   A promise that is resolved without data or a return value context when the operation
+	 *   A promise that is resolved without data or with a return value context when the operation
 	 *   call succeeded, or rejected with an instance of <code>Error</code> in case of failure,
 	 *   for instance if the operation metadata is not found, if overloading is not supported, or if
 	 *   a collection-valued function parameter is encountered.
@@ -742,7 +760,7 @@ sap.ui.define([
 			if (!that.oOperation) {
 				if (oCache) {
 					// remove all cached Caches before fetching a new one
-					that.mCacheByContext = undefined;
+					that.removeCachesAndMessages();
 					that.fetchCache(that.oContext);
 					// Do not fire a change event, or else ManagedObject destroys and recreates the
 					// binding hierarchy causing a flood of events
@@ -770,7 +788,7 @@ sap.ui.define([
 		if (!this.oOperation) {
 			this.mAggregatedQueryOptions = {};
 			this.bAggregatedQueryOptionsInitial = true;
-			this.mCacheByContext = undefined;
+			this.removeCachesAndMessages();
 			this.fetchCache(this.oContext);
 			this.getDependentBindings().forEach(function (oDependentBinding) {
 				oDependentBinding.resumeInternal(bCheckUpdate);

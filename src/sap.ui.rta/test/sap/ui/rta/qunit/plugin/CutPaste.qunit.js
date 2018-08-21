@@ -1,8 +1,6 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	'sap/ui/rta/plugin/CutPaste',
 	'sap/ui/rta/command/CommandFactory',
 	'sap/ui/layout/form/SimpleForm',
@@ -216,6 +214,4 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

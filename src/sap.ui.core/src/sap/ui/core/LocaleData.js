@@ -3,8 +3,8 @@
  */
 
 //Provides the locale object sap.ui.core.LocaleData
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', "sap/base/assert"],
-	function(jQuery, BaseObject, Locale, assert) {
+sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', './Locale', 'sap/base/assert', 'sap/base/util/LoaderExtensions'],
+	function(jQuery, BaseObject, Locale, assert, LoaderExtensions) {
 	"use strict";
 
 	/**
@@ -3159,8 +3159,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', "sap/base/
 
 		function getOrLoad(sId) {
 			if ( !mLocaleDatas[sId] && (!M_SUPPORTED_LOCALES || M_SUPPORTED_LOCALES[sId] === true) ) {
-				//TODO: global jquery call found
-				var data = mLocaleDatas[sId] = jQuery.sap.loadResource("sap/ui/core/cldr/" + sId + ".json", {
+				var data = mLocaleDatas[sId] = LoaderExtensions.loadResource("sap/ui/core/cldr/" + sId + ".json", {
 					dataType: "json",
 					failOnError : false
 				});

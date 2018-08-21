@@ -11,8 +11,11 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'./TileContainerRenderer',
 	"sap/base/Log",
-	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
-	"sap/ui/dom/jquery/Selectors" // jQuery custom selectors ':sapTabbable'
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "control"
+	"sap/ui/dom/jquery/control",
+	// jQuery custom selectors ':sapTabbable'
+	"sap/ui/dom/jquery/Selectors"
 ],
 function(
 	library,
@@ -21,8 +24,9 @@ function(
 	Device,
 	ResizeHandler,
 	TileContainerRenderer,
-	Log
-	) {
+	Log,
+	jQuery
+) {
 	"use strict";
 
 

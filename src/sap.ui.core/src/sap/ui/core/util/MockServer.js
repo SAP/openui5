@@ -17,8 +17,7 @@ sap.ui
 			"use strict";
 
 			if (Device.browser.msie) {
-				//TODO: global jquery call found
-				jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+				sap.ui.requireSync("sap/ui/thirdparty/sinon-ie");
 				// sinon internally checks the transported data to be an instance
 				// of FormData and this fails in case of IE9! - therefore we
 				// add a dummy function to enable instanceof check
@@ -944,7 +943,7 @@ sap.ui
                     };
 
 					// in case of $select=* return the data as is
-					if (jQuery.inArray("*", aProperties) !== -1) {
+					if (aProperties.indexOf("*") !== -1) {
 						return aDataSet;
 					}
 
@@ -1059,7 +1058,7 @@ sap.ui
 						var aNavEntry = oRecord[sNavProp].results || oRecord[sNavProp];
 						if (!aNavEntry || !!aNavEntry.__deferred) {
 							aNavEntry = jQuery.extend(true, [], that._resolveNavigation(sEntitySetName, oRecord, sNavProp, oRecord));
-						} else if (!jQuery.isArray(aNavEntry)) {
+						} else if (!Array.isArray(aNavEntry)) {
 							aNavEntry = [aNavEntry];
 						}
 
@@ -1378,7 +1377,7 @@ sap.ui
 								Log.error("The mock data format for entity set \"" + oEntitySet.name + "\" invalid");
 							}
 						} else {
-							if (jQuery.isArray(oResponse.data)) {
+							if (Array.isArray(oResponse.data)) {
 								mData[oEntitySet.name] = oResponse.data;
 							} else {
 								Log.error("The mock data for entity set \"" + oEntitySet.name + "\" could not be loaded due to wrong format!");
@@ -1990,7 +1989,7 @@ sap.ui
 							var aKeyVal = aRequestedKeys[i].split('=');
 							var sKey = that._trim(aKeyVal[0]);
 							//key doesn't match, continue to next entry
-							if (jQuery.inArray(sKey, aKeys) === -1) {
+							if (!aKeys || aKeys.indexOf(sKey) === -1) {
 								return true; // = continue
 							}
 
@@ -2158,8 +2157,7 @@ sap.ui
 					method: "GET",
 					path: new RegExp("\\$metadata([?#].*)?"),
 					response: function(oXhr) {
-						//TODO: global jquery call found
-						jQuery.sap.require("jquery.sap.xml");
+						sap.ui.requireSync("jquery.sap.xml");
 						Log.debug("MockServer: incoming request for url: " + oXhr.url);
 						var mHeaders = {
 							"Content-Type": "application/xml;charset=utf-8"
@@ -3249,37 +3247,39 @@ sap.ui
 			MockServer.prototype._orderQueryOptions = function(aUrlParams) {
 				var iFilterIndex, iInlinecountIndex, iSkipIndex, iTopIndex, iOrderbyIndex, iSelectindex, iExpandIndex, iFormatIndex, iSearchIndex, iSearchFocusIndex, aOrderedUrlParams = [];
 				var that = this;
+
 				jQuery.each(aUrlParams, function(iIndex, sQuery) {
+					var iQueryIndex = aUrlParams.indexOf(sQuery);
 					switch (sQuery.split('=')[0]) {
 						case "$top":
-							iTopIndex = jQuery.inArray(sQuery, aUrlParams);
+							iTopIndex = iQueryIndex;
 							break;
 						case "$skip":
-							iSkipIndex = jQuery.inArray(sQuery, aUrlParams);
+							iSkipIndex = iQueryIndex;
 							break;
 						case "$orderby":
-							iOrderbyIndex = jQuery.inArray(sQuery, aUrlParams);
+							iOrderbyIndex = iQueryIndex;
 							break;
 						case "$expand":
-							iExpandIndex = jQuery.inArray(sQuery, aUrlParams);
+							iExpandIndex = iQueryIndex;
 							break;
 						case "$filter":
-							iFilterIndex = jQuery.inArray(sQuery, aUrlParams);
+							iFilterIndex = iQueryIndex;
 							break;
 						case "$select":
-							iSelectindex = jQuery.inArray(sQuery, aUrlParams);
+							iSelectindex = iQueryIndex;
 							break;
 						case "$inlinecount":
-							iInlinecountIndex = jQuery.inArray(sQuery, aUrlParams);
+							iInlinecountIndex = iQueryIndex;
 							break;
 						case "$format":
-							iFormatIndex = jQuery.inArray(sQuery, aUrlParams);
+							iFormatIndex = iQueryIndex;
 							break;
 						case "search-focus":
-							iSearchFocusIndex = jQuery.inArray(sQuery, aUrlParams);
+							iSearchFocusIndex = iQueryIndex;
 							break;
 						case "search":
-							iSearchIndex = jQuery.inArray(sQuery, aUrlParams);
+							iSearchIndex = iQueryIndex;
 							break;
 						default:
 							if (sQuery.split('=')[0].indexOf('$') === 0) {
@@ -3564,7 +3564,7 @@ sap.ui
 				ManagedObject.prototype.destroy.apply(this, arguments);
 				this.stop();
 				var aServers = MockServer._aServers;
-				var iIndex = jQuery.inArray(this, aServers);
+				var iIndex = aServers.indexOf(this);
 				aServers.splice(iIndex, 1);
 			};
 
@@ -3678,15 +3678,10 @@ sap.ui
 			 * Removes a filter function.
 			 *
 			 * @param {function} fnFilter the filter function to remove
-			 * @return {boolean} whether the filter was removed or not
 			 * @private
 			 */
 			MockServer._removeFilter = function(fnFilter) {
-				var iIndex = jQuery.inArray(fnFilter, this._aFilters);
-				if (iIndex !== -1) {
-					this._aFilters.splice(iIndex, 1);
-				}
-				return iIndex !== -1;
+				this._aFilters.splice(this._aFilters.indexOf(fnFilter), 1);
 			};
 
 			/**

@@ -5,9 +5,14 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-sap.ui.define(['sap/ui/Device', 'sap/base/Log'], function(Device, Log) {
+sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], function(Device, Log, jQuery) {
 	"use strict";
 
+	/**
+	 * @namespace
+	 * @alias module:sap/ui/util/Mobile
+	 * @public
+	 */
 	var Mobile = {};
 
 	// Windows Phone specific handling
@@ -79,7 +84,7 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log'], function(Device, Log) {
 	 *     full screen mode when runs on iOS device.
 	 *
 	 * @function
-	 * @private
+	 * @public
 	 */
 	Mobile.init = function(options) {
 		var $head = jQuery("head");
@@ -233,7 +238,7 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log'], function(Device, Log) {
 	 *
 	 * @param {object} oIcons
 	 * @function
-	 * @private
+	 * @public
 	 */
 	Mobile.setIcons = function(oIcons) {
 
@@ -303,7 +308,7 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log'], function(Device, Log) {
 	 * @param {boolean} bValue whether the Application will be loaded in full screen mode after added to home
 	 *     screen from iOS Safari or mobile Chrome from version 31.
 	 * @function
-	 * @private
+	 * @public
 	 */
 	Mobile.setWebAppCapable = function(bValue) {
 		if (!Device.system.tablet && !Device.system.phone) {

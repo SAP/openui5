@@ -57,6 +57,10 @@ sap.ui.core.Element.extend("sap.ui.test.TestElement", {
 				type: "object",
 				group: "Misc",
 				defaultValue: null
+			},
+			_hiddenProperty: {
+				type: "string",
+				visibility: "hidden"
 			}
 		},
 		aggregations: {
@@ -205,8 +209,12 @@ QUnit.test("Create a ManagedObject Model - Property Access", function(assert) {
 	assert.equal(oModel.getProperty("/abc"), null, "Property does not exist");
 	assert.equal(oModel.setProperty("value", "hello"), false, "Property not set, because it is not resolvable");
 
+	// Access property of hidden property
+	assert.equal(oModel.setProperty("/_hiddenProperty", "hidden"), true, "The hidden property is set");
+	assert.equal(oModel.getProperty("/_hiddenProperty"), "hidden", "The hidden property is retrieved from the model");
 	// Access property of hidden aggregation
 	assert.equal(oModel.setProperty("/_hiddenObjects/0/value", "hidden1"), true, "Property of hidden element set");
+	assert.equal(oModel.getProperty("/_hiddenObjects/0/value"), "hidden1", "The value for the hidden object is retrieved");
 
 	// context not given
 	assert.equal(oModel.setProperty("value", "hello"), false, "Property not set, because it is not resolvable without a context");

@@ -1,16 +1,8 @@
-/* global QUnit, sinon, ES6Promise */
+/* global QUnit, sinon */
 (function() {
 	"use strict";
 
-	// Promise polyfill needs to be applied manually before
-	// the loader is executed, as the test itself uses promises
-	if (typeof Promise === "undefined") {
-		ES6Promise.polyfill();
-	}
-
 	QUnit.config.autostart = false;
-
-	var aScripts = [];
 
 	function appendScript(sSrc, fnOnload, sId) {
 		var oScript = document.createElement("script");
@@ -18,10 +10,9 @@
 		oScript.id = sId;
 		oScript.addEventListener("load", fnOnload);
 		document.head.appendChild(oScript);
-		aScripts.push(oScript);
 	}
 
-	function startup() {
+	function boot() {
 		return new Promise(function(resolve, reject) {
 
 			function includeLoaderScripts(callback) {
@@ -52,42 +43,53 @@
 
 			includeLoaderScripts(function() {
 
-				// Loading of jquery.sap.stubs needs to be delayed so that the define calls within
+				// Loading further modules needs to be delayed so that the define calls within
 				// ui5loader-autoconfig.js are executed first. This might happen in PhantomJS or
 				// Chrome when the tab is inactive.
 				// See @evo-todo in ui5loader-autoconfig.js
-				setTimeout(function() {
-
-					// Enable exporting stubbing config
-					window["jquery.sap.stubs-test"] = true;
-
-					// Load stubbing layer and resolve/reject promise
-					sap.ui.require(["jquery.sap.stubs"], function() {
-
-						// Read exported stubbing config and remove globals
-						var mStubs = window["jquery.sap.stubs-test"];
-						delete window["jquery.sap.stubs-test"];
-
-						resolve(mStubs);
-					}, reject);
-
-				});
+				setTimeout(resolve);
 
 			});
 
 		});
 	}
 
-	function shutdown() {
-		// Remove previously appended scripts
-		aScripts.forEach(function(oScript) {
-			document.head.removeChild(oScript);
+	function beforeEach() {
+		return new Promise(function(resolve, reject) {
+
+			// Enable exporting stubbing config
+			window["jquery.sap.stubs-test"] = true;
+
+			// Load stubbing layer and resolve/reject promise
+			sap.ui.require(["jquery.sap.stubs"], function() {
+
+				// Read exported stubbing config and remove globals
+				var mStubs = window["jquery.sap.stubs-test"];
+				delete window["jquery.sap.stubs-test"];
+
+				resolve(mStubs);
+			}, reject);
+
+		});
+	}
+
+	function afterEach(mStubs) {
+
+		// Unload stubbing module
+		sap.ui.loader._.unloadResources("jquery.sap.stubs.js", false, true, true);
+
+		// Unload all modules which will be loaded by triggering a stub
+		Object.keys(mStubs).forEach(function(sStubName) {
+			var oStub = mStubs[sStubName];
+			var oStubs = oStub.stubs;
+			Object.keys(oStubs).forEach(function(sModule) {
+				sap.ui.loader._.unloadResources(sModule + ".js", false, true, true);
+			});
 		});
 
-		// finally remove the global namespaces
-		delete window.sap;
+		// Unload jQuery and remove global variable
+		sap.ui.loader._.unloadResources("sap/ui/thirdparty/jquery.js", false, true, true);
 		delete window.jQuery;
-		aScripts = [];
 	}
 
 	function isStubbed(oTarget, sProperty) {
@@ -98,21 +100,29 @@
 	function defineModule(sName) {
 		QUnit.module(sName, {
 			startup: function() {
-				return startup().then(function(mStubs) {
+				return beforeEach().then(function(mStubs) {
+					this.mStubs = mStubs;
+
 					// Note: Log is used within jquery.sap.stubs, so it should be loaded already
 					var Log = sap.ui.require("sap/base/Log");
-					this.oDebugLogSpy = this.spy(Log, "debug");
+					this.oWarningLogSpy = this.spy(Log, "warning");
 
 					return mStubs;
 				}.bind(this));
 			},
-			afterEach: function() {
-				shutdown();
+			afterEach: function () {
+				afterEach(this.mStubs);
 			}
 		});
 	}
 
-	function defineLazyLoadingTest(sStubName, sProperty, sModule) {
+	var TEST_TYPE = {
+		"LAZY_LOADING": "lazy-loading",
+		"STUB_REPLACEMENT": "stub-replacement"
+	};
+	var defineTest = {};
+
+	defineTest[TEST_TYPE.LAZY_LOADING] = function (sStubName, sProperty, sModule) {
 		QUnit.test(sStubName + sProperty, function(assert) {
 			return this.startup().then(function(mStubs) {
 
@@ -125,8 +135,8 @@
 				var vValue = oTarget[sProperty];
 
 				// Stub should lazy load the module
-				sinon.assert.calledWith(this.oDebugLogSpy,
-					sinon.match("Lazy loading module"),
+				sinon.assert.calledWith(this.oWarningLogSpy,
+					sinon.match("Sync loading of module"),
 					"jquery.sap.stubs"
 				);
 
@@ -137,9 +147,8 @@
 
 			}.bind(this));
 		});
-	}
-
-	function defineStubReplacementTest(sStubName, sProperty, sModule) {
+	};
+	defineTest[TEST_TYPE.STUB_REPLACEMENT] = function (sStubName, sProperty, sModule) {
 		QUnit.test(sStubName + sProperty, function(assert) {
 			return this.startup().then(function(mStubs) {
 
@@ -154,8 +163,8 @@
 				}).then(function() {
 
 					// Stub should not lazy load the module
-					sinon.assert.neverCalledWith(this.oDebugLogSpy,
-						sinon.match("Lazy loading module"),
+					sinon.assert.neverCalledWith(this.oWarningLogSpy,
+						sinon.match("Sync loading of module"),
 						"jquery.sap.stubs"
 					);
 
@@ -169,51 +178,85 @@
 				}.bind(this));
 			}.bind(this));
 		});
+	};
+
+	function defineTestCategory(oContext, oConfig, sTestType) {
+		if (oConfig.mode === "all" || oConfig.mode === sTestType) {
+			defineModule(oContext.moduleName);
+			oContext.properties.forEach(function(sProperty) {
+				oConfig.i++;
+				if (!oConfig.runInChunks || (oConfig.i >= oConfig.start && oConfig.i <= oConfig.end)) {
+					oConfig.testsDefined++;
+					defineTest[sTestType](oContext.stubName, sProperty, oContext.module);
+				}
+			});
+		}
 	}
 
-	function getTestMode() {
+	function getTestConfig() {
 		return new Promise(function(resolve, reject) {
 			sap.ui.require(["sap/base/util/UriParameters"], resolve, reject);
 		}).then(function (UriParameters) {
-			return new UriParameters(document.location.href).get("test-mode") || "all";
+			var oParams = new UriParameters(document.location.href);
+			var oConfig = {};
+
+			oConfig.mode = oParams.get("test-mode") || "all";
+			if (oParams.get("chunk")) {
+				oConfig.chunk = parseInt(oParams.get("chunk"), 10);
+			}
+
+			// Chunk paging logic
+			oConfig.i = 0;
+			oConfig.testsDefined = 0;
+			oConfig.runInChunks = !!oConfig.chunk;
+			if (oConfig.chunk) {
+				oConfig.start = ((oConfig.chunk - 1) * 50) + 1;
+				oConfig.end = (oConfig.chunk) * 50;
+			}
+
+			return oConfig;
 		});
 	}
 
 	// Running startup once to define tests
-	startup().then(function(mStubs) {
-		return getTestMode().then(function(sTestMode) {
+	boot().then(beforeEach).then(function(mStubs) {
+		return getTestConfig().then(function(oConfig) {
 			Object.keys(mStubs).forEach(function(sStubName) {
 				var oStub = mStubs[sStubName];
 				var oStubs = oStub.stubs;
 
 				Object.keys(oStubs).forEach(function(sModule) {
-					var aProperties = oStubs[sModule].map(function(vProperty) {
-						return typeof vProperty === "object" ? vProperty : { name: vProperty };
-					});
+					var aProperties = oStubs[sModule];
 
-					if (sTestMode === "all" || sTestMode === "lazy-loading") {
-						defineModule(sModule + ": Lazy loading");
-						aProperties.forEach(function(oProperty) {
-							defineLazyLoadingTest(sStubName, oProperty.name, sModule);
-						});
-					}
+					defineTestCategory({
+						moduleName: sModule + ": Lazy loading",
+						module: sModule,
+						stubName: sStubName,
+						properties: aProperties
+						}, oConfig, TEST_TYPE.LAZY_LOADING);
 
-					if (sTestMode === "all" || sTestMode === "stub-replacement") {
-						defineModule(sModule + ": Stub replacement");
-						aProperties.forEach(function(oProperty) {
-							defineStubReplacementTest(sStubName, oProperty.name, sModule);
-						});
-					}
+					defineTestCategory({
+						moduleName: sModule + ": Stub replacement",
+						module: sModule,
+						stubName: sStubName,
+						properties: aProperties
+						}, oConfig, TEST_TYPE.STUB_REPLACEMENT);
 
 				});
-
 			});
+
+			if (oConfig.testsDefined === 0) {
+				QUnit.test("No tests defined!", function(assert) {
+					assert.ok(false, "No tests have been defined. Please check the URL parameters");
+				});
+			}
+
+		}).then(function() {
+			afterEach(mStubs);
 		});
 	}).then(function() {
-		shutdown();
 		QUnit.start();
 	}, function(err) {
-		// No shutdown here, to enable easier investiation into the error
 		QUnit.test("Error during test setup", function(assert) {
 			assert.ok(false, err + "\n" + err.stack);
 		});

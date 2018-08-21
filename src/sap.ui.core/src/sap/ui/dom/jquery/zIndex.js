@@ -8,6 +8,15 @@
 sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	"use strict";
 
+	/**
+	 * Applies the jQuery function extension:
+	 * @see jQuery#zIndex
+	 *
+	 * @namespace
+	 * @alias module:sap/ui/dom/jquery/zIndex
+	 * @public
+	 */
+
 	// Using "Object.getOwnPropertyDescriptor" to not trigger the "getter" - see jquery.sap.stubs
 	function getValue(oTarget, sProperty) {
 		var descriptor = Object.getOwnPropertyDescriptor(oTarget, sProperty);
@@ -15,14 +24,14 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	}
 
 	if (!getValue(jQuery.fn, "zIndex")) {
-		/*
+		/**
 		 * Get the z-index for an element.
 		 *
-		 * @function
 		 * @param {int} zIndex The z-index to set
 		 * @returns {number} The z-index
-		 * @exports sap/ui/dom/jquery/zIndex
-		 * @private
+		 * @public
+		 * @name jQuery#zIndex
+		 * @function
 		 */
 		var fnzIndex = function( zIndex ) {
 			if ( zIndex !== undefined ) {

@@ -17,7 +17,7 @@ sap.ui.define([
 		ValueStateSupport,
 		Popup,
 		coreLibrary,
-		jQueryDOM
+		jQuery
 	) {
 		"use strict";
 
@@ -177,7 +177,7 @@ sap.ui.define([
 
 			this._oPopup = new Popup(document.createElement("span"), false, false, false);
 			this._oPopup.attachClosed(function() {
-				jQueryDOM(document.getElementById(sID)).remove();
+				jQuery(document.getElementById(sID)).remove();
 			});
 
 			return this._oPopup;
@@ -238,7 +238,11 @@ sap.ui.define([
 
 			var oTextDomRef = document.createElement("span");
 			oTextDomRef.id = sID + "-text";
-			oTextDomRef.setAttribute("aria-hidden", "true");
+
+			if (!oControl.isA('sap.m.Select')) {
+				oTextDomRef.setAttribute("aria-hidden", "true");
+			}
+
 			oTextDomRef.appendChild(document.createTextNode(sText));
 
 			oMessageDomRef.appendChild(oAccDomRef);

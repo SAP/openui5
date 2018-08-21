@@ -247,8 +247,9 @@
 		 */
 		function initHits() {
 			if (iLine in aHits) {
-				jQuery.sap.log.warning("Duplicate line " + iLine, aFileNames[iFileIndex],
-					"sap.ui.test.BranchTracking");
+				jQuery.sap.log.warning("Multiple statements on same line detected"
+						+ " – minified code not supported! Line number " + iLine,
+					aFileNames[iFileIndex], "sap.ui.test.BranchTracking");
 			}
 			aHits[iLine] = 0;
 		}

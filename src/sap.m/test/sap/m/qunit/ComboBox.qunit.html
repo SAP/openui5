@@ -8383,7 +8383,7 @@
 			sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
 
 			// assert
-			assert.ok(oComboBox.getSelectedItem().getText() === "Denmark");
+			assert.strictEqual(oComboBox.getSelectedItem().getText(), "Denmark", "Selected value should be 'Denmark'");
 			assert.strictEqual(oComboBox.getSelectedKey(), "DK");
 			assert.strictEqual(oComboBox.isFiltered(), true);
 			assert.strictEqual(oComboBox.getValue(), "Denmark");
@@ -8629,7 +8629,7 @@
 						text: sExpectedValue
 					}),
 					new sap.ui.core.Item({
-						text: "ipsum lorem"
+						text: "ipsum alorem"
 					})
 				]
 			});
@@ -8814,6 +8814,65 @@
 			assert.ok(oComboBox.getSelectedItem() === null);
 
 			// cleanup
+			oComboBox.destroy();
+		});
+
+		QUnit.test("it should filter with empty value when input is deleted on mobile device", function (assert) {
+
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+
+			var oComboBox = new sap.m.ComboBox({
+				items: [
+					new sap.ui.core.Item({
+						text: "Test"
+					}),
+					new sap.ui.core.Item({
+						text: "aaa"
+					})
+				],
+				value: "t"
+			});
+
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oComboBox.focus();
+			oComboBox.open();
+			this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
+			var oPickerTextField = oComboBox.getPickerTextField();
+			oPickerTextField.focus();
+			var oPickerTextFieldDomRef = oPickerTextField.getFocusDomRef();
+			oPickerTextFieldDomRef.value = "t";
+
+			// act
+			sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oPickerTextFieldDomRef, {
+				which: jQuery.sap.KeyCodes.L,
+				srcControl: oPickerTextField
+			});
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oPickerTextFieldDomRef, {
+				srcControl: oPickerTextField
+			});
+			this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
+
+			assert.strictEqual(oComboBox.getVisibleItems().length, 1, "One item should be visible");
+			assert.strictEqual(oComboBox.getVisibleItems()[0].getText(), "Test", "Visible item text should be 'Test'");
+
+			// act (clear input value)
+			oPickerTextFieldDomRef.value = "";
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oPickerTextFieldDomRef, {
+				srcControl: oPickerTextField
+			});
+
+			// wait for the word completion feature
+			this.clock.tick(0);
+
+			assert.strictEqual(oComboBox.getVisibleItems().length, 2, "All items should be visible");
+
+			oComboBox.close();
 			oComboBox.destroy();
 		});
 
@@ -10386,13 +10445,13 @@
 			var oComboBox = new sap.m.ComboBox({
 				id: "apa"
 			});
-		
+
 			oLabel.placeAt("content");
 			oComboBox.placeAt("content");
 			sap.ui.getCore().applyChanges();
 			var sAriaLabelledBy = oComboBox.getDomRef("arrow").getAttribute("aria-labelledby").split(" ");
 			assert.ok(sAriaLabelledBy.indexOf(oLabel.getId()) > -1, "Combobox aria-labelledby attribute is set to label id");
-		
+
 			oLabel.destroy();
 			oComboBox.destroy();
 		});
@@ -10669,6 +10728,22 @@
 
 		});
 
+		QUnit.test("_boldItemRef bold starts with per term", function (assert) {
+			var oFunctionRef = sap.m.ComboBox.prototype._boldItemRef,
+				sItemText = "Hong Kong China",
+				sQuery1 = "Kong",
+				sQuery2 = "Hong",
+				sQuery3 = "ong",
+				sQuery4 = "Ch",
+				sQuery5 = "i";
+
+			assert.strictEqual(oFunctionRef(sItemText, /\bKong/gi, sQuery1.length), "Hong&#x20;<b>Kong</b>&#x20;China");
+			assert.strictEqual(oFunctionRef(sItemText, /\bHong/gi, sQuery2.length), "<b>Hong</b>&#x20;Kong&#x20;China");
+			assert.strictEqual(oFunctionRef(sItemText, /\bong/gi, sQuery3.length), "Hong&#x20;Kong&#x20;China");
+			assert.strictEqual(oFunctionRef(sItemText, /\bCh/gi, sQuery4.length), "Hong&#x20;Kong&#x20;<b>Ch</b>ina");
+			assert.strictEqual(oFunctionRef(sItemText, /\bi/gi, sQuery5.length), "Hong&#x20;Kong&#x20;China");
+		});
+
 		QUnit.test("_highlightList should call _boldItemRef on items", function(assert) {
 			// arrange
 			var oComboBox = new sap.m.ComboBox(),
@@ -10695,7 +10770,6 @@
 			oItem.destroy();
 			oFakeDom = null;
 		});
-
 
 		QUnit.test("_highlightList doesn't throw an error when showSecondaryValues=true and sap.ui.core.Item is set", function(assert) {
 
@@ -10755,6 +10829,97 @@
 
 			// cleanup
 			oComboBox.destroy();
+		});
+
+		QUnit.module("setFilter", {
+			beforeEach: function () {
+				this.oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.ListItem({
+							text: "Hong Kong",
+							additionalText: "China"
+						}),
+						new sap.ui.core.ListItem({
+							text: "Baragoi",
+							additionalText: "Kenya"
+						}),
+						new sap.ui.core.ListItem({
+							text: "Haskovo",
+							additionalText: "Bulgaria"
+						})
+					]
+				});
+			},
+			afterEach: function () {
+				this.oComboBox.destroy();
+			}
+		});
+
+		QUnit.test("Setting a filter function should update the internal variable", function (assert) {
+			this.oComboBox.setFilterFunction(function () { return true; });
+
+			assert.ok(this.oComboBox.fnFilter, "Filter should not be falsy value");
+		});
+
+		QUnit.test("Setting an invalid filter should fallback to default text filter", function (assert) {
+			var log = sap.ui.require('sap/base/Log'),
+				fnWarningSpy = this.spy(log, "warning"),
+				fnDefaultFilterSpy = this.stub(sap.m.ComboBoxBase, "DEFAULT_TEXT_FILTER");
+
+			// null is passed for a filter
+			this.oComboBox.setFilterFunction(null);
+			assert.notOk(fnWarningSpy.called, "Warning should not be logged in the console when filter is null");
+
+			this.oComboBox.filterItems({ value:  "", properties: this.oComboBox._getFilters() });
+			assert.ok(sap.m.ComboBoxBase.DEFAULT_TEXT_FILTER.called, "Default text filter should be applied");
+
+			// undefined is passed for a filter
+			this.oComboBox.setFilterFunction(undefined);
+			assert.notOk(fnWarningSpy.called, "Warning should not be logged in the console when filter is undefined");
+
+			this.oComboBox.filterItems({ value:  "", properties: this.oComboBox._getFilters() });
+			assert.ok(sap.m.ComboBoxBase.DEFAULT_TEXT_FILTER.called, "Default text filter should be applied");
+
+			// wrong filter type is passed
+			this.oComboBox.setFilterFunction({});
+			assert.ok(fnWarningSpy.called, "Warning should be logged in the console when filter is not a function");
+
+			this.oComboBox.filterItems({ value:  "", properties: this.oComboBox._getFilters() });
+			assert.ok(sap.m.ComboBoxBase.DEFAULT_TEXT_FILTER.called, "Default text filter should be applied");
+		});
+
+		QUnit.test("Setting a valid filter should apply on items", function (assert) {
+			var log = sap.ui.require('sap/base/Log'),
+			fnFilterSpy = this.spy();
+
+			// null is passed for a filter
+			this.oComboBox.setFilterFunction(fnFilterSpy);
+
+			// act
+			var aFilteredItems = this.oComboBox.filterItems({ value: "B", properties: this.oComboBox._getFilters() });
+
+			assert.ok(fnFilterSpy.called, "Filter should be called");
+			assert.strictEqual(aFilteredItems.length, 0, "Zero items should be filtered");
+		});
+
+		QUnit.test("Setting a valid filter should apply on items and their text", function (assert) {
+			this.oComboBox.setFilterSecondaryValues(true);
+			sap.ui.getCore().applyChanges();
+
+			// act
+			var aFilteredItems = this.oComboBox.filterItems({ value: "B", properties: this.oComboBox._getFilters() });
+
+			// assert
+			assert.strictEqual(aFilteredItems.length, 2, "Two items should be filtered");
+			assert.strictEqual(aFilteredItems[0].getText(), "Baragoi", "Text should start with B");
+			assert.strictEqual(aFilteredItems[1].getAdditionalText(), "Bulgaria", "Additional text should start with B");
+		});
+
+		QUnit.test("Default filtering should be per term", function (assert) {
+			var aFilteredItems = this.oComboBox.filterItems({ value: "K", properties: this.oComboBox._getFilters() });
+
+			assert.strictEqual(aFilteredItems.length, 1, "One item should be filtered");
+			assert.strictEqual(aFilteredItems[0].getText(), "Hong Kong", "Hong Kong item is matched by 'K'");
 		});
 
 		QUnit.module("Input Text Selecting without data binding", {

@@ -98,10 +98,8 @@ sap.ui.define([
 		JSON.stringify(oManifestAppdescr1)
 	]);
 
-	QUnit.module("Basic");
-
 	// declare components
-	sap.ui.define("test1/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
+	sap.ui.predefine("test1/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
 		return UIComponent.extend("test1.Component", {
 			metadata : {
 				includes : [ "style1.css" ]
@@ -109,7 +107,7 @@ sap.ui.define([
 		});
 	}, true);
 
-	sap.ui.define("test2/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
+	sap.ui.predefine("test2/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
 		return UIComponent.extend("test2.Component", {
 			metadata : {
 				includes : [ "style2.css" ]
@@ -117,7 +115,7 @@ sap.ui.define([
 		});
 	}, true);
 
-	sap.ui.define("test3/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
+	sap.ui.predefine("test3/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
 		return UIComponent.extend("test3.Component", {
 			metadata : {
 				includes : [ "style3.css" ]
@@ -125,7 +123,7 @@ sap.ui.define([
 		});
 	}, true);
 
-	sap.ui.define("test4/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
+	sap.ui.predefine("test4/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
 		return UIComponent.extend("test4.Component", {
 			metadata : {
 				includes : [ "style3.css" ]
@@ -133,7 +131,7 @@ sap.ui.define([
 		});
 	}, true);
 
-	sap.ui.define("test5/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
+	sap.ui.predefine("test5/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
 		return UIComponent.extend("test5.Component", {
 			metadata : {
 				includes : [ "style5.css" ]
@@ -156,6 +154,8 @@ sap.ui.define([
 			}
 		});
 	}, true);
+
+	QUnit.module("Basic");
 
 	// Start testing
 	QUnit.test("Test cleanup of CSS styles after adding and removing", function(assert) {

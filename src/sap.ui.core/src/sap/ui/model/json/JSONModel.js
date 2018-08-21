@@ -11,8 +11,26 @@
  */
 
 // Provides the JSON object based model implementation
-sap.ui.define(['sap/ui/model/ClientModel', 'sap/ui/model/Context', './JSONListBinding', './JSONPropertyBinding', './JSONTreeBinding', "sap/base/Log"],
-	function(ClientModel, Context, JSONListBinding, JSONPropertyBinding, JSONTreeBinding, Log) {
+sap.ui.define([
+	'sap/ui/model/ClientModel',
+	'sap/ui/model/Context',
+	'./JSONListBinding',
+	'./JSONPropertyBinding',
+	'./JSONTreeBinding',
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/isPlainObject"
+],
+	function(
+		ClientModel,
+		Context,
+		JSONListBinding,
+		JSONPropertyBinding,
+		JSONTreeBinding,
+		Log,
+		jQuery,
+		isPlainObject
+	) {
 	"use strict";
 
 
@@ -110,7 +128,7 @@ sap.ui.define(['sap/ui/model/ClientModel', 'sap/ui/model/Context', './JSONListBi
 				for (var i = 0; i < oObject.length; i++) {
 					observeRecursive(oObject[i], oObject, i);
 				}
-			} else if (jQuery.isPlainObject(oObject)) {
+			} else if (isPlainObject(oObject)) {
 				for (var i in oObject) {
 					observeRecursive(oObject[i], oObject, i);
 				}

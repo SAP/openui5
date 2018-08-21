@@ -6,9 +6,10 @@
 sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	"sap/ui/core/syncStyleClass",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(ManagedObject, syncStyleClass, Log) {
+	function(ManagedObject, syncStyleClass, Log, jQuery) {
 	"use strict";
 
 
@@ -234,7 +235,7 @@ sap.ui.define([
 		var oService = this.getPersoService();
 		if (oService) {
 			return oService.getPersData().done(function(oServiceData) {
-				var oData = (oServiceData && jQuery.isArray(oServiceData.aColumns))
+				var oData = (oServiceData && Array.isArray(oServiceData.aColumns))
 						? oServiceData
 						: that._oInitialPersoData; // use initial column definitions
 				that._adjustTable(oData);
@@ -278,7 +279,7 @@ sap.ui.define([
 
 	TablePersoController.prototype._adjustTable = function(oData) {
 		var oTable = this._getTable();
-		if (!oTable || !oData || !jQuery.isArray(oData.aColumns)) {
+		if (!oTable || !oData || !Array.isArray(oData.aColumns)) {
 			return;
 		}
 

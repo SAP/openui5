@@ -1,5 +1,5 @@
 sap.ui.define([
-	"sap/ui/Device",
+	"sap/ui/Device"
 ], function (Device) {
 	"use strict";
 
@@ -14,7 +14,7 @@ sap.ui.define([
 				return false;
 			}
 
-			if(Device.browser.safari) {
+			if (Device.browser.safari) {
 				return false;
 			}
 

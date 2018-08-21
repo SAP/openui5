@@ -298,13 +298,15 @@ sap.ui.define([
 	};
 
 	Panel.prototype.onAfterRendering = function () {
-		var $this = this.$(),
-			$icon;
+		var $this = this.$(), $icon,
+			oPanelContent = this.getDomRef("content");
 
 		this._setContentHeight();
 
 		if (this.getExpandable()) {
 			$icon = this.oIconCollapsed.$();
+			oPanelContent && $icon.attr("aria-controls", oPanelContent.id);
+
 			if (this.getExpanded()) {
 				//ARIA
 				$icon.attr("aria-expanded", "true");
@@ -379,10 +381,14 @@ sap.ui.define([
 	};
 
 	Panel.prototype._updateIconAriaLabelledBy = function () {
-		var sLabelId, aAriaLabels;
+		var sLabelId, aAriaLabels, bFormRole;
 
 		if (!this.oIconCollapsed) {
 			return;
+		}
+
+		if (this.getAccessibleRole() === PanelAccessibleRole.Form) {
+			bFormRole = true;
 		}
 
 		sLabelId = this._getLabellingElementId();
@@ -391,7 +397,7 @@ sap.ui.define([
 		// If the old label is different we should reinitialize the association, because we can have only one label
 		if (aAriaLabels.indexOf(sLabelId) === -1) {
 			this.oIconCollapsed.removeAllAssociation("ariaLabelledBy");
-			this.oIconCollapsed.addAriaLabelledBy(sLabelId);
+			!bFormRole && this.oIconCollapsed.addAriaLabelledBy(sLabelId);
 		}
 	};
 

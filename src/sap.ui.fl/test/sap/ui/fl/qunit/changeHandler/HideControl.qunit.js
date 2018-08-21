@@ -1,8 +1,7 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
 	"sap/ui/fl/changeHandler/HideControl",
@@ -11,6 +10,7 @@ sap.ui.require([
 	"sap/ui/core/util/reflection/XmlTreeModifier"
 ],
 function(
+	jQuery,
 	Control,
 	Element,
 	HideControlChangeHandler,
@@ -18,8 +18,7 @@ function(
 	JsControlTreeModifier,
 	XmlTreeModifier
 ) {
-	'use strict';
-	QUnit.start();
+	"use strict";
 
 	QUnit.module("sap.ui.fl.changeHandler.HideControl", {
 		beforeEach: function() {
@@ -43,59 +42,56 @@ function(
 		afterEach: function() {
 			this.oChange = null;
 		}
-	});
+	}, function() {
+		QUnit.test('applyChange on a js control tree', function(assert) {
+			var oControl = new Control();
+			oControl.setVisible(true);
+			this.oChangeHandler.applyChange(this.oChange, oControl, {modifier: JsControlTreeModifier});
 
-	QUnit.test('applyChange on a js control tree', function(assert) {
-		var oControl = new Control();
-		oControl.setVisible(true);
-
-		this.oChangeHandler.applyChange(this.oChange, oControl, {modifier: JsControlTreeModifier});
-
-		assert.equal(oControl.getVisible(), false);
-	});
-
-
-	QUnit.test('applyChange on a js control tree throws an exception if the change is not applicable', function(assert) {
-		assert.throws(
-			function () {
-				var oElement = new Element();
-				this.oChangeHandler.applyChange(this.oChange, oElement, {modifier: JsControlTreeModifier});
-			},
-			new Error('Provided control instance has no getVisible method'),
-			'change handler throws an error that the control has no getter/setter for visible'
-		);
-	});
-
-	QUnit.test('revertChange functionality', function(assert) {
-		var oControl = new Control();
-
-		oControl.setVisible(false);
-		this.oChangeHandler.applyChange(this.oChange, oControl, {modifier: JsControlTreeModifier});
-		this.oChangeHandler.revertChange(this.oChange, oControl, {modifier: JsControlTreeModifier});
-		assert.equal(oControl.getVisible(), false, 'should be invisible');
-	});
-
-	QUnit.test('applyChange on a xml tree', function(assert) {
-		this.oXmlButton = this.oXmlDocument.childNodes[0];
-
-		this.oChangeHandler.applyChange(this.oChange, this.oXmlButton, {
-			modifier: XmlTreeModifier,
-			view: this.oXmlDocument
+			assert.equal(oControl.getVisible(), false);
 		});
 
-		assert.equal(this.oXmlButton.getAttribute('visible'), 'false', 'xml button node has the visible attribute added and set to false');
+
+		QUnit.test('applyChange on a js control tree throws an exception if the change is not applicable', function(assert) {
+			assert.throws(
+				function () {
+					var oElement = new Element();
+					this.oChangeHandler.applyChange(this.oChange, oElement, {modifier: JsControlTreeModifier});
+				},
+				new Error('Provided control instance has no getVisible method'),
+				'change handler throws an error that the control has no getter/setter for visible'
+			);
+		});
+
+		QUnit.test('revertChange functionality', function(assert) {
+			var oControl = new Control();
+			oControl.setVisible(false);
+
+			this.oChangeHandler.applyChange(this.oChange, oControl, {modifier: JsControlTreeModifier});
+			this.oChangeHandler.revertChange(this.oChange, oControl, {modifier: JsControlTreeModifier});
+			assert.equal(oControl.getVisible(), false, 'should be invisible');
+		});
+
+		QUnit.test('applyChange on a xml tree', function(assert) {
+			this.oXmlButton = this.oXmlDocument.childNodes[0];
+			this.oChangeHandler.applyChange(this.oChange, this.oXmlButton, {
+				modifier: XmlTreeModifier,
+				view: this.oXmlDocument
+			});
+
+			assert.equal(this.oXmlButton.getAttribute('visible'), 'false', 'xml button node has the visible attribute added and set to false');
+		});
+
+		QUnit.test('completeChangeContent', function(assert) {
+			var oSpecificChangeInfo = {};
+			this.oChangeHandler.completeChangeContent(this.oChange, oSpecificChangeInfo);
+			var oChangeJson = this.oChange.getDefinition();
+
+			assert.equal(Object.keys(oChangeJson.content).length, 0);
+		});
 	});
 
-
-	QUnit.test('completeChangeContent', function(assert) {
-		var oSpecificChangeInfo = {};
-
-		this.oChangeHandler.completeChangeContent(this.oChange, oSpecificChangeInfo);
-
-		var oChangeJson = this.oChange.getDefinition();
-
-		assert.equal(Object.keys(oChangeJson.content).length, 0);
-
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
 	});
-
 });

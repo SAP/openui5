@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(["sap/base/assert"], function(assert) {
 	"use strict";
 
@@ -12,17 +8,11 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	var fnStorage = function() {
 
 		/**
-		 * Check whether the current environment supports JSON.parse and JSON stringify.
-		 * @private
-		 */
-		var bSupportJSON = !!(JSON && JSON.parse && JSON.stringify);
-
-		/**
 		 * Prefix added to all storage keys (typically IDs) passed by the applications
 		 * when they are calling state storage methods. The goal of such prefix is to
 		 * leave space for saving data (with the same key) and also for scenarios other than
 		 * state saving.
-		 * @private
+		 * @public
 		 */
 		var sStateStorageKeyPrefix = "state.key_";
 
@@ -51,16 +41,16 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 		 *
 		 * @author SAP SE
 		 * @version ${version}
-		 * @private
-		 * @name sap/ui/util/Storage.Storage
+		 * @public
+		 * @alias module:sap/ui/util/Storage
 		 */
 
 		/**
-		 * Constructor for an instance of sap/ui/util/Storage.Storage.
+		 * Constructor for an instance of {@link module:sap/ui/util/Storage}.
 		 *
-		 * @param {sap/ui/util/Storage.Type | Storage} [pStorage=sap/ui/util/Storage.Type.session] The type this storage should be of or an Object implementing the typical Storage API for direct usage.
+		 * @param {module:sap/ui/util/Storage.Type | Storage} [pStorage=sap/ui/util/Storage.Type.session] The type this storage should be of or an Object implementing the typical Storage API for direct usage.
 		 * @param {string} [sStorageKeyPrefix='state.key_'] The prefix to use in this storage.
-		 * @private
+		 * @public
 		 */
 		var fnCreateStorage = function(pStorage, sStorageKeyPrefix) {
 
@@ -96,8 +86,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			 * Returns whether the given storage is suppported.
 			 *
 			 * @return {boolean} true if storage is supported, false otherwise (e.g. due to browser security settings)
-			 * @private
-			 * @name sap/ui/util/Storage.Storage#isSupported
+			 * @public
 			 * @function
 			 */
 			this.isSupported = function() {
@@ -118,17 +107,15 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			 * @param {string} sId ID for the state to store
 			 * @param {string} sStateToStore Content to store
 			 * @return {boolean} true if the data were successfully stored, false otherwise
-			 * @private
-			 * @name sap/ui/util/Storage.Storage#put
+			 * @public
 			 * @function
 			 */
 			this.put = function(sId, sStateToStore) {
 				//precondition: non-empty sId and available storage feature
 				assert(typeof sId === "string" && sId, "sId must be a non-empty string");
-				assert(typeof sStateToStore === "string" || bSupportJSON, "sStateToStore must be string or JSON must be supported");
 				if (this.isSupported() && sId) {
 					try {
-						oStorage.setItem(sPrefix + sId, bSupportJSON ? JSON.stringify(sStateToStore) : sStateToStore);
+						oStorage.setItem(sPrefix + sId, JSON.stringify(sStateToStore));
 						return true;
 					} catch (e) {
 						return false;
@@ -145,8 +132,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			 *
 			 * @param {string} sId ID for the state to retrieve
 			 * @return {string} The string from the storage, if the retrieval was successful, and null otherwise
-			 * @private
-			 * @name sap/ui/util/Storage.Storage#get
+			 * @public
 			 * @function
 			 */
 			this.get = function(sId) {
@@ -155,7 +141,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 				if (this.isSupported() && sId ) {
 					try {
 						var sItem = oStorage.getItem(sPrefix + sId);
-						return bSupportJSON ? JSON.parse(sItem) : sItem;
+						return JSON.parse(sItem);
 					} catch (e) {
 						return null;
 					}
@@ -173,8 +159,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			 * @return {boolean} true if the deletion
 			 * was successful or the data doesn't exist under the specified key,
 			 * and false if the feature is unavailable or a problem occurred
-			 * @private
-			 * @name sap/ui/util/Storage.Storage#remove
+			 * @public
 			 * @function
 			 */
 			this.remove = function(sId) {
@@ -201,8 +186,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			 * @return {boolean} true if the deletion
 			 * was successful or the data doesn't exist under the specified key,
 			 * and false if the feature is unavailable or a problem occurred
-			 * @private
-			 * @name sap/ui/util/Storage.Storage#removeAll
+			 * @public
 			 * @function
 			 */
 			this.removeAll = function(sIdPrefix) {
@@ -244,8 +228,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			 * @return {boolean} true if execution of removal
 			 * was successful or the data to remove doesn't exist,
 			 * and false if the feature is unavailable or a problem occurred
-			 * @private
-			 * @name sap/ui/util/Storage.Storage#clear
+			 * @public
 			 * @function
 			 */
 			this.clear = function() {
@@ -266,8 +249,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			 * Returns the type of the storage.
 			 *
 			 * @returns {sap/ui/util/Storage.Type | string} The type of the storage or "unknown"
-			 * @private
-			 * @name sap/ui/util/Storage.Storage#getType
+			 * @public
 			 * @function
 			 */
 			this.getType = function(){
@@ -302,7 +284,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			 * @version ${version}
 			 * @namespace
 			 * @function
-			 * @private
+			 * @public
 			 *
 			 * @borrows sap/ui/util/Storage.Storage#get as get
 			 * @borrows sap/ui/util/Storage.Storage#put as put
@@ -346,26 +328,26 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	 * Enumeration of the storage types supported by {@link sap/ui/util/Storage.Storage}.
 	 *
 	 * @enum {string}
-	 * @private
+	 * @public
 	 * @version ${version}
 	 */
 	fnStorage.Type = {
 		/**
 		 * Indicates usage of the browser's localStorage feature
-		 * @private
+		 * @public
 		 */
 		local: "local",
 		/**
 		 * Indicates usage of the browser's sessionStorage feature
-		 * @private
+		 * @public
 		 */
 		session: "session"
 	};
 
 	/**
 	 * @static
-	 * @exports sap/ui/util/Storage
-	 * @private
+	 * @alias module:sap/ui/util/Storage
+	 * @public
 	 */
 	var oStorage = fnStorage();
 	oStorage.Type = fnStorage.Type;

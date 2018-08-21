@@ -1,15 +1,19 @@
 /*!
  * ${copyright}
  */
-
 // Provides a customized router class for the 'documentation' app.
 sap.ui.define([
 	'sap/m/routing/Router',
-	'sap/ui/core/routing/History'
-], function(Router, History) {
+	'sap/ui/core/routing/History',
+	'sap/ui/thirdparty/hasher'
+], function(Router, History, Hasher) {
 	"use strict";
 
-	var DocumentationRouter = Router.extend("sap.ui.documentation.sdk.util.DocumentationRouter", {
+	// We need to set the global hasher instance to not encode URL's. This is specific for the SDK
+	// and it enables the application to handle module URL's which need to be encoded.
+	Hasher.raw = true;
+
+	return Router.extend("sap.ui.documentation.sdk.util.DocumentationRouter", {
 
 		constructor : function() {
 			Router.prototype.constructor.apply(this, arguments);
@@ -91,7 +95,5 @@ sap.ui.define([
 			return this._oOwner; // Accessing owner component from reference on the instance object.
 		}
 	});
-
-	return DocumentationRouter;
 
 });

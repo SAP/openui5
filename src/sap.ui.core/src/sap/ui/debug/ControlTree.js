@@ -3,8 +3,16 @@
  */
 
 // Provides a tree of controls for the testsuite
-sap.ui.define('sap/ui/debug/ControlTree', ['sap/ui/base/EventProvider', 'sap/ui/core/Element', 'sap/ui/core/UIArea', './Highlighter', "sap/ui/dom/getOwnerWindow", "sap/base/Log"],
-	function(EventProvider, Element, UIArea, Highlighter, getOwnerWindow, Log) {
+sap.ui.define('sap/ui/debug/ControlTree', [
+	'sap/ui/base/EventProvider',
+	'sap/ui/core/Element',
+	'sap/ui/core/UIArea',
+	'./Highlighter',
+	"sap/ui/dom/getOwnerWindow",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+],
+	function(EventProvider, Element, UIArea, Highlighter, getOwnerWindow, Log, jQuery) {
 	"use strict";
 
 

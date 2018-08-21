@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/ResizeHandler',
-	'./ToolbarRenderer'
+	'./ToolbarRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	BarInPageEnabler,
@@ -21,7 +22,8 @@ function(
 	Control,
 	EnabledPropagator,
 	ResizeHandler,
-	ToolbarRenderer
+	ToolbarRenderer,
+	jQuery
 ) {
 	"use strict";
 

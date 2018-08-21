@@ -55,7 +55,6 @@ sap.ui.define([
 			if (aContexts && aContexts.length) {
 				MessageToast.show("You have chosen " + aContexts.map(function(oContext) { return oContext.getObject().Name; }).join(", "));
 			}
-			oEvent.getSource().getBinding("items").filter([]);
 		},
 
 		handleValueHelp : function() {

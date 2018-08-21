@@ -11,9 +11,9 @@ sap.ui.define([
 	return Controller.extend("sap.ui.demo.fiori2.controller.Master", {
 		onInit: function () {
 			this.oView = this.getView();
-			this.oProductsTable = this.getView().byId("productsTable");
-			this.oRouter = this.getOwnerComponent().getRouter();
 			this._bDescendingSort = false;
+			this.oProductsTable = this.oView.byId("productsTable");
+			this.oRouter = this.getOwnerComponent().getRouter();
 		},
 
 		onSearch: function (oEvent) {
@@ -45,9 +45,10 @@ sap.ui.define([
 
 		onListItemPress: function (oEvent) {
 			var productPath = oEvent.getSource().getBindingContext("products").getPath(),
-				product = productPath.split("/").slice(-1).pop();
+				product = productPath.split("/").slice(-1).pop(),
+				oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(1);
 
-			this.oRouter.navTo("detail", {layout: sap.f.LayoutType.TwoColumnsMidExpanded, product: product});
+			this.oRouter.navTo("detail", {layout: oNextUIState.layout, product: product});
 		}
 	});
 }, true);

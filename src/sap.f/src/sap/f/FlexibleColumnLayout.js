@@ -588,6 +588,7 @@ sap.ui.define([
 	});
 
 	FlexibleColumnLayout.COLUMN_RESIZING_ANIMATION_DURATION = 560; // ms
+	FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME = "sapFFCLPinnedColumn";
 
 	FlexibleColumnLayout.prototype.init = function () {
 
@@ -884,7 +885,10 @@ sap.ui.define([
 			aColumns = ["begin", "mid", "end"],
 			bRtl = sap.ui.getCore().getConfiguration().getRTL(),
 			aActiveColumns,
-			iVisibleColumnsCount;
+			iVisibleColumnsCount,
+			iDefaultVisibleColumnsCount,
+			sLayout,
+			sLastVisibleColumn;
 
 		// Stop here if the control isn't rendered yet
 		if (!this.isActive()) {
@@ -895,6 +899,12 @@ sap.ui.define([
 		if (iVisibleColumnsCount === 0) {
 			return;
 		}
+
+		sLayout = this.getLayout();
+		// the default number of columns is the number at maximum control width
+		iDefaultVisibleColumnsCount = this._getMaxColumnsCountForLayout(sLayout, FlexibleColumnLayout.DESKTOP_BREAKPOINT);
+
+		sLastVisibleColumn = aColumns[iDefaultVisibleColumnsCount - 1];
 
 		// Calculate the total margin between columns (f.e. for 3 columns - 2 * 8px)
 		iTotalMargin = (iVisibleColumnsCount - 1) * FlexibleColumnLayout.COLUMN_MARGIN;
@@ -931,6 +941,11 @@ sap.ui.define([
 
 				var oColumnDomRef = oColumn.get(0);
 
+				// If the column count increases (but not due to closing a fullscreen layout), then prevent
+				// the new column from being animated.
+				oColumn.toggleClass(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME,
+					this._shouldPinColumn(iDefaultVisibleColumnsCount, sColumn === sLastVisibleColumn));
+
 				// Suspending ResizeHandler temporarily
 				ResizeHandler.suspend(oColumnDomRef);
 
@@ -943,6 +958,9 @@ sap.ui.define([
 				oColumn._iResumeResizeHandlerTimeout = setTimeout(function() {
 					ResizeHandler.resume(oColumnDomRef);
 					oColumn._iResumeResizeHandlerTimeout = null;
+
+					// Clear pinning after transitions are finished
+					oColumn.toggleClass(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, false);
 				}, FlexibleColumnLayout.COLUMN_RESIZING_ANIMATION_DURATION);
 			}
 
@@ -977,6 +995,33 @@ sap.ui.define([
 			this._$columns[aActiveColumns[0]].addClass("sapFFCLColumnFirstActive");
 			this._$columns[aActiveColumns[aActiveColumns.length - 1]].addClass("sapFFCLColumnLastActive");
 		}
+
+		this._storePreviousResizingInfo(iDefaultVisibleColumnsCount);
+	};
+
+	/**
+	 * Stores information from the last columns' resizing.
+	 *
+	 * @param iVisibleColumnsCount
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._storePreviousResizingInfo = function (iVisibleColumnsCount) {
+		var oCurrentLayout = this.getLayout();
+
+		this._iPreviousVisibleColumnsCount = iVisibleColumnsCount;
+		this._bWasFullScreen = oCurrentLayout === LT.MidColumnFullScreen || oCurrentLayout === LT.EndColumnFullScreen;
+	};
+
+	/**
+	 * Decides whether or not a given column should be pinned (not animated).
+	 *
+	 * @param iVisibleColumnsCount
+	 * @param bIsLastColumn
+	 * @returns {boolean|*}
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._shouldPinColumn = function (iVisibleColumnsCount, bIsLastColumn) {
+		return (iVisibleColumnsCount > this._iPreviousVisibleColumnsCount) && !this._bWasFullScreen && bIsLastColumn;
 	};
 
 	/**
@@ -1072,6 +1117,37 @@ sap.ui.define([
 		}
 
 		return 0;
+	};
+
+	/**
+	 * Returns the maximum number of columns that can be displayed for given layout and control width.
+	 * @param {string} sLayout the layout
+	 * @param {int} iWidth
+	 * @returns {number}
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._getMaxColumnsCountForLayout = function (sLayout, iWidth) {
+		var iColumnCount = this._getMaxColumnsCountForWidth(iWidth),
+			sColumnWidthDistribution = this._getColumnWidthDistributionForLayout(sLayout, false, iColumnCount),
+			aSizes = sColumnWidthDistribution.split("/"),
+			aMap = {
+				begin: 0,
+				mid: 1,
+				end: 2
+			},
+			sSize,
+			iSize,
+			iCount = 0;
+
+		Object.keys(aMap).forEach(function(sColumn) {
+			sSize = aSizes[aMap[sColumn]];
+			iSize = parseInt(sSize, 10);
+			if (iSize) {
+				iCount++;
+			}
+		});
+
+		return iCount;
 	};
 
 	FlexibleColumnLayout.prototype._onResize = function (oEvent) {
@@ -1589,10 +1665,11 @@ sap.ui.define([
 	 * @sap-restricted sap.f.FlexibleColumnLayoutSemanticHelper
 	 * @private
 	 */
-	FlexibleColumnLayout.prototype._getColumnWidthDistributionForLayout = function (sLayout, bAsArray) {
-		var iMaxColumnsCount = this.getMaxColumnsCount(),
-			oMap = {},
+	FlexibleColumnLayout.prototype._getColumnWidthDistributionForLayout = function (sLayout, bAsArray, iMaxColumnsCount) {
+		var oMap = {},
 			vResult;
+
+		iMaxColumnsCount || (iMaxColumnsCount = this.getMaxColumnsCount());
 
 		if (iMaxColumnsCount === 0) {
 

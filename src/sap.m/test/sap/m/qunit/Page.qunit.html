@@ -348,6 +348,53 @@
 				oPage = null;
 			});
 
+			QUnit.test("contentOnlyBusy property", function (assert) {
+				// Setup
+				var oBusyIndicator, oBusyIndicatorInner,
+						clock = sinon.useFakeTimers(),
+						oPage = new sap.m.Page("myPage");
+
+				oPage.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// Act
+				oPage.setBusy(true);
+				sap.ui.getCore().applyChanges();
+				clock.tick(1000);
+
+				oBusyIndicator = [].filter.call(oPage.getDomRef().childNodes, function (oChild) {
+					return oChild.id.indexOf("busyIndicator") > -1;
+				})[0];
+
+				// Assert
+				assert.ok(oBusyIndicator, "Busy indicator is right inside Page's root.");
+
+				// Setup & Act
+				oPage.setBusy(false);
+				sap.ui.getCore().applyChanges();
+				clock.tick(1000);
+
+				oPage.setContentOnlyBusy(true);
+				oPage.setBusy(true);
+				sap.ui.getCore().applyChanges();
+				clock.tick(1000);
+
+				oBusyIndicator = [].filter.call(oPage.getDomRef().childNodes, function (oChild) {
+					return oChild.id.indexOf("busyIndicator") > -1;
+				})[0];
+
+				oBusyIndicatorInner = [].filter.call(oPage.getDomRef('cont').childNodes, function (oChild) {
+					return oChild.id.indexOf("busyIndicator") > -1;
+				})[0];
+
+				// Assert
+				assert.ok(!oBusyIndicator, "Busy indicator is removed from Page's root.");
+				assert.ok(oBusyIndicatorInner, "Busy indicator is inside Page's content.");
+
+				oPage.destroy();
+				clock.restore();
+			});
+
 			if (sap.ui.Device.browser.chrome) {
 				if (sap.ui.Device.os.ios) {
 
@@ -470,6 +517,28 @@
 					assert.ok(scrollAsExpected, "Page 2 should be scrolled to position 1200");
 
 					oPage4.destroy();
+				});
+
+				QUnit.test("ScrollToElement Parameters forwarding", function(assert) {
+					var oButton = new sap.m.Button();
+						oPage5 = new sap.m.Page("myPage",{
+							content:[
+								oButton
+							]
+						});
+
+					oPage5.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					var oScrollEnablement = oPage5.getScrollDelegate(),
+						oSpy = sinon.spy(oScrollEnablement, "scrollToElement");
+
+					oPage5.scrollToElement(oButton, 200, [0, -100]);
+
+					assert.ok(oSpy.calledWith(oButton.getDomRef(), 200, [0, -100]), "scrollToElement's params forwarded correctly to scroll delegate.");
+
+					oSpy.restore();
+					oPage5.destroy();
 				});
 
 				QUnit.test("Restoring scrolling state after rendering", function(assert) {

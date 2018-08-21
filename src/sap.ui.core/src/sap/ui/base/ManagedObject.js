@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/base/util/deepEqual",
-	"sap/base/util/uid"
+	"sap/base/util/uid",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	BindingParser,
 	DataType,
@@ -40,7 +41,8 @@ sap.ui.define([
 	Log,
 	assert,
 	deepEqual,
-	uid
+	uid,
+	jQuery
 ) {
 
 	"use strict";
@@ -1306,7 +1308,7 @@ sap.ui.define([
 	 */
 	ManagedObject.prototype.getProperty = function(sPropertyName) {
 		var oValue = this.mProperties[sPropertyName],
-			oProperty = this.getMetadata().getProperty(sPropertyName),
+			oProperty = this.getMetadata().getManagedProperty(sPropertyName),
 			oType;
 
 		if (!oProperty) {
@@ -1350,7 +1352,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	ManagedObject.prototype.validateProperty = function(sPropertyName, oValue) {
-		var oProperty = this.getMetadata().getProperty(sPropertyName),
+		var oProperty = this.getMetadata().getManagedProperty(sPropertyName),
 			oType;
 
 		if (!oProperty) {
@@ -1424,9 +1426,8 @@ sap.ui.define([
 	 */
 	ManagedObject.prototype.resetProperty = function(sPropertyName) {
 		if (this.mProperties.hasOwnProperty(sPropertyName)) {
-			var oPropertyInfo = this.getMetadata().getProperty(sPropertyName);
-			this[oPropertyInfo._sMutator](null); // let the control instance know the value is reset to default
-
+			var oPropertyInfo = this.getMetadata().getManagedProperty(sPropertyName);
+			oPropertyInfo.set(this, null); // let the control instance know the value is reset to default
 			// if control did no further effort to find and set an instance-specific default value, then go back to "initial" state (where the default value is served anyway)
 			if (this.mProperties[sPropertyName] === oPropertyInfo.getDefaultValue()) {
 				delete this.mProperties[sPropertyName];
@@ -3388,7 +3389,7 @@ sap.ui.define([
 		try {
 			var oValue = oBinding.getExternalValue();
 			oBindingInfo.skipModelUpdate = true;
-			this[oPropertyInfo._sMutator](oValue);
+			oPropertyInfo.set(this, oValue);
 			oBindingInfo.skipModelUpdate = false;
 		} catch (oException) {
 			oBindingInfo.skipModelUpdate = false;

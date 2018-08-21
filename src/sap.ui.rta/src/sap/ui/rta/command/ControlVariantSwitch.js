@@ -38,43 +38,48 @@ sap.ui.define([
 
 	ControlVariantSwitch.prototype.MODEL_NAME = "$FlexVariants";
 
-	ControlVariantSwitch.prototype._getAppComponent = function(oElement) {
+	ControlVariantSwitch.prototype._getAppComponent = function(oElement, bOuter) {
 		if (!this._oControlAppComponent) {
-			this._oControlAppComponent = oElement ? flUtils.getAppComponentForControl(oElement) : this.getSelector().appComponent;
+			this._oControlAppComponent = oElement ? flUtils.getAppComponentForControl(oElement, bOuter) : this.getSelector().appComponent;
 		}
 		return this._oControlAppComponent;
 	};
 
 	/**
-	 * @public Template Method to implement execute logic, with ensure precondition Element is available
+	 * Template Method to implement execute logic, with ensure precondition Element is available.
+	 * @public
 	 * @returns {Promise} Returns resolve after execution
 	 */
 	ControlVariantSwitch.prototype.execute = function() {
 		var oElement = this.getElement(),
 			oAppComponent = this._getAppComponent(oElement),
+			oOuterAppComponent = this._getAppComponent(oElement, true),
 			sNewVariantReference = this.getTargetVariantReference();
 
-		this.oModel = oAppComponent.getModel(this.MODEL_NAME);
+		this.oModel = oOuterAppComponent.getModel(this.MODEL_NAME);
 		this.sVariantManagementReference = BaseTreeModifier.getSelector(oElement, oAppComponent).id;
-		return this._updateModelVariant(sNewVariantReference);
+		return this._updateModelVariant(sNewVariantReference, oAppComponent);
 	};
 
 	/**
-	 * @public Template Method to implement undo logic
+	 * Template Method to implement undo logic.
+	 * @public
 	 * @returns {Promise} Returns resolve after undo
 	 */
 	ControlVariantSwitch.prototype.undo = function() {
 		var sOldVariantReference = this.getSourceVariantReference();
-		return this._updateModelVariant(sOldVariantReference);
+		var oAppComponent = this._getAppComponent(this.getElement());
+		return this._updateModelVariant(sOldVariantReference, oAppComponent);
 	};
 
 	/**
-	 * @private Update variant for the underlying model
+	 * Update variant for the underlying model.
+	 * @private
 	 * @returns {Promise} Returns promise resolve
 	 */
-	ControlVariantSwitch.prototype._updateModelVariant = function (sVariantReference) {
+	ControlVariantSwitch.prototype._updateModelVariant = function (sVariantReference, oAppComponent) {
 		if (this.getTargetVariantReference() !== this.getSourceVariantReference()) {
-			return Promise.resolve(this.oModel.updateCurrentVariant(this.sVariantManagementReference, sVariantReference));
+			return Promise.resolve(this.oModel.updateCurrentVariant(this.sVariantManagementReference, sVariantReference, oAppComponent));
 		}
 		return Promise.resolve();
 	};

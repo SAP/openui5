@@ -13,10 +13,10 @@
 	window.jsUnitTestSuite.prototype.addTestPage = function(sTestPage) {
 		this.aPages = this.aPages || [];
 		// in case of running in the root context the testsuites right now
-		// generate an invalid URL because it assumes that test-resources is
+		// generate an invalid URL because they assume that test-resources is
 		// the context path - this section makes sure to remove the duplicate
 		// test-resources segments in the path
-		if (sTestPage.indexOf("/test-resources/test-resources") === 0) {
+		if (sTestPage.indexOf("/test-resources/test-resources") === 0 || sTestPage.indexOf("/test-resources/resources") === 0) {
 			sTestPage = sTestPage.substr("/test-resources".length);
 		}
 		this.aPages.push(sTestPage);
@@ -74,21 +74,34 @@
 
 				// check for an existing test page and check for test suite or page
 				jQuery.get(sTestPage).done(function(sData) {
-					if (/(window\.suite\s*=|function\s*suite\s*\(\s*\)\s*{)/g.test(sData) || /(data-sap-ui-qunit-suite)/g.test(sData)) {
+					if (/(?:window\.suite\s*=|function\s*suite\s*\(\s*\)\s*{)/.test(sData)
+							|| (/data-sap-ui-testsuite/.test(sData) && !/sap\/ui\/test\/starter\/runTest/.test(sData)) ) {
 						var $frame = jQuery("<iframe>");
 						var that = this;
-						$frame.css("display", "none");
-						$frame.one("load", function() {
-							that.findTestPages(this, bSequential).then(function(aTestPages) {
-								jQuery(this).remove();
+
+						var onSuiteReady = function(oIFrame) {
+							that.findTestPages(oIFrame, bSequential).then(function(aTestPages) {
+								$frame.remove();
 								resolve(aTestPages);
-							}.bind(this), function(oError) {
+							}, function(oError) {
 								if (window.console && typeof window.console.error === "function") {
 									window.console.error("QUnit: failed to load page '" + sTestPage + "'");
 								}
-								jQuery(this).remove();
+								$frame.remove();
 								resolve([]);
-							}.bind(this));
+							});
+						};
+
+						$frame.css("display", "none");
+						$frame.one("load", function() {
+							if (typeof this.contentWindow.suite === "function") {
+								onSuiteReady(this);
+							} else {
+								// Wait for a CustomEvent in case window.suite isn't defined, yet
+								this.contentWindow.addEventListener("sap-ui-testsuite-ready", function() {
+									onSuiteReady(this);
+								}.bind(this));
+							}
 						});
 						$frame.attr("src", sTestPage);
 						$frame.appendTo(document.body);

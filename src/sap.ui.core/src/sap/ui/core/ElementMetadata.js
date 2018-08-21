@@ -5,7 +5,12 @@
 /*global Promise */
 
 // Provides class sap.ui.core.ElementMetadata
-sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui/core/Renderer'],
+sap.ui.define([
+	'sap/ui/thirdparty/jquery',
+	'sap/base/util/ObjectPath',
+	'sap/ui/base/ManagedObjectMetadata',
+	'sap/ui/core/Renderer'
+],
 	function(jQuery, ObjectPath, ManagedObjectMetadata, Renderer) {
 	"use strict";
 
@@ -68,16 +73,16 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath', 'sap/ui/base/Man
 			return;
 		}
 
-		// check if renderer class exists already
+		// check if renderer class exists already, in case it was passed inplace,
+		// and written to the global namespace during applySettings().
 		var fnRendererClass = ObjectPath.get(sRendererName);
 		if (fnRendererClass) {
 			return fnRendererClass;
 		}
 
 		// if not, try to load a module with the same name
-		//TODO: global jquery call found
-		jQuery.sap.require(sRendererName);
-		return ObjectPath.get(sRendererName);
+		var fnClass = sap.ui.requireSync(sRendererName.replace(/\./g, "/"));
+		return fnClass || ObjectPath.get(sRendererName);
 	};
 
 	ElementMetadata.prototype.applySettings = function(oClassInfo) {

@@ -3,8 +3,15 @@
  */
 
 // Provides class sap.m.Fiori20Adapter
-sap.ui.define(['sap/ui/base/Object', 'sap/ui/base/EventProvider', 'sap/ui/base/ManagedObjectObserver', 'sap/ui/Device', "sap/base/Log"],
-	function(Object, EventProvider, ManagedObjectObserver, Device, Log) {
+sap.ui.define([
+	'sap/ui/base/Object',
+	'sap/ui/base/EventProvider',
+	'sap/ui/base/ManagedObjectObserver',
+	'sap/ui/Device',
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+],
+	function(Object, EventProvider, ManagedObjectObserver, Device, Log, jQuery) {
 	"use strict";
 
 	var oEventProvider = new EventProvider(),

@@ -9,9 +9,10 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/m/ShellRenderer',
 	"sap/ui/util/Mobile",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(library, Control, coreLibrary, ShellRenderer, Mobile, Log) {
+	function(library, Control, coreLibrary, ShellRenderer, Mobile, Log, jQuery) {
 		"use strict";
 
 

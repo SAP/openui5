@@ -13,54 +13,37 @@
 
 //Provides class sap.ui.model.odata.v4.ODataModel
 sap.ui.define([
-	"sap/ui/base/SyncPromise",
-	"sap/ui/core/MessageType",
-	"sap/ui/core/message/Message",
-	"sap/ui/model/BindingMode",
-	"sap/ui/model/Context",
-	"sap/ui/model/Model",
-	"sap/ui/model/odata/OperationMode",
-	"sap/ui/thirdparty/URI",
-	"./lib/_GroupLock",
-	"./lib/_Helper",
-	"./lib/_MetadataRequestor",
-	"./lib/_Requestor",
-	"./lib/_Parser",
 	"./ODataContextBinding",
 	"./ODataListBinding",
 	"./ODataMetaModel",
 	"./ODataPropertyBinding",
 	"./SubmitMode",
+	"./lib/_GroupLock",
+	"./lib/_Helper",
+	"./lib/_MetadataRequestor",
+	"./lib/_Parser",
+	"./lib/_Requestor",
+	"sap/base/assert",
 	"sap/base/Log",
-	"sap/base/assert"
-], function(
-	SyncPromise,
-	MessageType,
-	Message,
-	BindingMode,
-	BaseContext,
-	Model,
-	OperationMode,
-	URI,
-	_GroupLock,
-	_Helper,
-	_MetadataRequestor,
-	_Requestor,
-	_Parser,
-	ODataContextBinding,
-	ODataListBinding,
-	ODataMetaModel,
-	ODataPropertyBinding,
-	SubmitMode,
-	Log,
-	assert
-) {
-
+	"sap/ui/base/SyncPromise",
+	"sap/ui/core/library",
+	"sap/ui/core/message/Message",
+	"sap/ui/model/BindingMode",
+	"sap/ui/model/Context",
+	"sap/ui/model/Model",
+	"sap/ui/model/odata/OperationMode",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/URI"
+], function (ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding,
+		SubmitMode, _GroupLock, _Helper, _MetadataRequestor, _Parser, _Requestor, assert, Log,
+		SyncPromise, coreLibrary, Message, BindingMode, BaseContext, Model, OperationMode, jQuery,
+		URI) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
 		rApplicationGroupID = /^\w+$/,
 		rGroupID = /^(\$auto(\.\w+)?|\$direct|\w+)$/,
+		MessageType = coreLibrary.MessageType,
 		aMessageTypes = [
 			undefined,
 			MessageType.Success,
@@ -1219,22 +1202,23 @@ sap.ui.define([
 	 *   Maps a resource path with key predicates to an array of messages. The messages have at
 	 *   least following properties:
 	 *   {string} code - The error code
+	 *   {string} longtextUrl - The absolute URL for the message's long text
 	 *   {string} message - The message text
 	 *   {number} numericSeverity
 	 *      The numeric message severity (1 for "success", 2 for "info", 3 for "warning" and 4 for
 	 *      "error")
 	 *   {string} target - The target for the message relative to the resource path with key
 	 *      predicates
-	 *   {boolean} transient - Messages marked as transient by the server need to be managed by the
-	 *      application and are reported as persistent
-	 * @param {string[]} [aKeyPredicates]
-	 *    An array of key predicates of the entities for which non-persistent messages have to be
-	 *    removed; if the array is not given, all entities are affected
+	 *   {boolean} transition - Whether the message is reported as <code>persistent=true</code> and
+	 *      therefore needs to be managed by the application
+	 * @param {string[]} [aCachePaths]
+	 *    An array of cache-relative paths of the entities for which non-persistent messages have to
+	 *    be removed; if the array is not given, all entities are affected
 	 *
 	 * @private
 	 */
 	ODataModel.prototype.reportBoundMessages = function (sResourcePath, mPathToODataMessages,
-			aKeyPredicates) {
+			aCachePaths) {
 		var sDataBindingPath = "/" + sResourcePath,
 			aNewMessages = [],
 			aOldMessages = [],
@@ -1248,8 +1232,9 @@ sap.ui.define([
 
 				aNewMessages.push(new Message({
 					code : oRawMessage.code,
+					descriptionUrl : oRawMessage.longtextUrl || undefined,
 					message : oRawMessage.message,
-					persistent : oRawMessage.transient,
+					persistent : oRawMessage.transition,
 					processor : that,
 					target : sTarget,
 					technical : false,
@@ -1257,10 +1242,10 @@ sap.ui.define([
 				}));
 			});
 		});
-		Object.keys(this.mMessages || {}).forEach(function (sMessageTarget) {
-			(aKeyPredicates || [""]).forEach(function (sPredicatePath) {
-				var sPath = sDataBindingPath + sPredicatePath;
+		(aCachePaths || [""]).forEach(function (sCachePath) {
+			var sPath = _Helper.buildPath(sDataBindingPath, sCachePath);
 
+			Object.keys(that.mMessages || {}).forEach(function (sMessageTarget) {
 				if (sMessageTarget === sPath
 						|| sMessageTarget.startsWith(sPath + "/")
 						|| sMessageTarget.startsWith(sPath + "(")) {
@@ -1335,7 +1320,7 @@ sap.ui.define([
 	 * @param {string} sResourcePath
 	 *   The resource path of the request whose response contained the messages
 	 * @param {object[]} [aMessages]
-	 *   The array of messages as contained in the <code>sap-message</code> response header
+	 *   The array of messages as contained in the <code>sap-messages</code> response header
 	 *
 	 * @private
 	 */

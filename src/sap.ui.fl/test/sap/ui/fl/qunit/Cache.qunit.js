@@ -1,11 +1,23 @@
-/*global QUnit, sinon*/
-jQuery.sap.require("sap.ui.fl.Cache");
-jQuery.sap.require("sap.ui.fl.LrepConnector");
-jQuery.sap.require("sap.ui.fl.Utils");
+/*global QUnit*/
 
-(function(QUnit, sinon, Cache, LrepConnector, Utils) {
+sap.ui.define([
+	"sap/ui/fl/Cache",
+	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/Utils",
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/LoaderExtensions"
+], function(
+	Cache,
+	LrepConnector,
+	Utils,
+	sinon,
+	jQuery,
+	LoaderExtensions
+) {
 	"use strict";
-	sinon.config.useFakeTimers = false;
+
+	var sandbox = sinon.sandbox.create();
 
 	function createLoadChangesResponse() {
 		return Promise.resolve({
@@ -33,321 +45,303 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		afterEach: function() {
 			Cache._entries = {};
 			Cache._switches = {};
+			sandbox.restore();
 		}
-	});
+	}, function() {
 
-	QUnit.test('getSwitches shall return the list of switched-on business functions', function(assert) {
-		var that = this;
-		var sComponentName = "test";
+		QUnit.test('getSwitches shall return the list of switched-on business functions', function(assert) {
+			var that = this;
+			var sComponentName = "test";
 
-		sinon.stub(this.oLrepConnector, 'loadChanges', createLoadChangesResponse);
+			sandbox.stub(this.oLrepConnector, 'loadChanges').callsFake(createLoadChangesResponse);
 
-		return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName}).then(function() {
-			var mSwitches = Cache.getSwitches();
-			var mSwitchesExp = {"bFunction1": true, "bFunction2": true};
-			assert.deepEqual(mSwitchesExp, mSwitches);
+			return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName}).then(function() {
+				var mSwitches = Cache.getSwitches();
+				var mSwitchesExp = {"bFunction1": true, "bFunction2": true};
+				assert.deepEqual(mSwitchesExp, mSwitches);
+			});
 		});
-	});
 
-	QUnit.test('isActive should ensure, that calls for same component are done only once and promise of last /flex/data call is cached', function(assert) {
-		var that = this;
-		var oChangesFromFirstCall;
-		var sComponentName = "test";
-		var oPromise1, oPromise2;
-
-		sinon.stub(this.oLrepConnector, 'loadChanges', createLoadChangesResponse);
-
-		return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName}).then(function(firstChanges) {
-			oChangesFromFirstCall = firstChanges;
-			oPromise1 = Cache.getFlexDataPromise();
-			assert.notEqual(oPromise1, undefined);
-			return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName});
-		}).then(function(secondChanges) {
-			oPromise2 = Cache.getFlexDataPromise();
-			assert.strictEqual(oPromise1, oPromise2);
-			assert.strictEqual(oChangesFromFirstCall, secondChanges);
-			sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
-		});
-	});
-
-	QUnit.test('if NOT isActive, all calls for same component have their own call and no promise of /flex/data call is cached', function(assert) {
-		var that = this;
-		var oChangesFromFirstCall;
-		var sComponentName = "test";
-
-		sinon.stub(this.oLrepConnector, 'loadChanges', createLoadChangesResponse);
-
-		Cache.setActive(false);
-
-		return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName}).then(function(firstChanges) {
-			oChangesFromFirstCall = firstChanges;
-			assert.equal(Cache.getFlexDataPromise(), undefined);
-			return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName});
-		}).then(function(secondChanges) {
-			assert.equal(Cache.getFlexDataPromise(), undefined);
-			assert.notStrictEqual(oChangesFromFirstCall, secondChanges);
-			sinon.assert.calledTwice(that.oLrepConnector.loadChanges);
-		});
-	});
-
-	QUnit.test('getEntry shall create an empty entry if it is not initiated', function(assert) {
-		var oInitEntry = {
-			file: {
-				changes: {
-					changes: [],
-					contexts: [],
-					ui2personalization: {},
-					variantSection: {}
+		QUnit.test('getEntry shall create an empty entry if it is not initiated', function(assert) {
+			var oInitEntry = {
+				file: {
+					changes: {
+						changes: [],
+						contexts: [],
+						ui2personalization: {},
+						variantSection: {}
+					}
 				}
-			}
-		};
-		assert.deepEqual(Cache.getEntries(), {});
-		var oEntry = Cache.getEntry("test", "1.2.3");
-		assert.deepEqual(oEntry, oInitEntry);
-		assert.deepEqual(Cache.getEntries(), {
-			"test" : {
-				"1.2.3": oInitEntry
-			}
-		});
-	});
-
-	QUnit.test('clearEntries replaces the whole cache content and clearEntry replace a single cache entry', function(assert) {
-		var oEntry1 = {
-			mockChanges1: {}
-		};
-		var oEntry2 = {
-			mockChanges1: {}
-		};
-		Cache._entries = {
-			"testComponent1": {
-				"1.2.3": oEntry1
-			},
-			"testComponent2": {
-				"1.2.3": oEntry2
-			}
-		};
-		Cache.clearEntry("testComponent1", "1.2.3");
-		assert.deepEqual(Cache.getEntry("testComponent1", "1.2.3"), {});
-		Cache.clearEntries({});
-		assert.deepEqual(Cache.getEntries(), {});
-	});
-
-	QUnit.test('deleteEntry deletes a single cache entry', function(assert) {
-		var oEntry1 = {
-			mockChanges1: {}
-		};
-		Cache._entries = {
-			"testComponent1": {
-				"1.2.3": oEntry1
-			}
-		};
-		Cache._deleteEntry("testComponent1", "4.5.6");
-		assert.deepEqual(Cache.getEntry("testComponent1", "1.2.3"), oEntry1);
-		Cache._deleteEntry("testComponent1", "1.2.3");
-		assert.equal(Cache._entries["testComponent1"], undefined);
-	});
-
-	QUnit.test('if error occurs, subsequent calls in their own execution path should not request the data anew', function(assert) {
-		var that = this;
-		var sComponentName = "test";
-
-		sinon.stub(this.oLrepConnector, 'loadChanges', createLoadChangesErrorResponse);
-
-		return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName}).then(function() {
-			return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName});
-		}).then(function() {
-			assert.equal(1, that.oLrepConnector.loadChanges.callCount, "only one call was done to the backend");
-		});
-	});
-
-	QUnit.test('setActive should enable and disable the cache globally', function(assert) {
-		assert.strictEqual(Cache.isActive(), true);
-		Cache.setActive(false);
-		assert.strictEqual(Cache.isActive(), false);
-		Cache.setActive(true);
-		assert.strictEqual(Cache.isActive(), true);
-	});
-
-	QUnit.test('addChange', function(assert) {
-		var that = this;
-		var sComponentName = "test";
-		var oEntry = {
-			changes: {
-				changes: [
-					{something: "1"}
-				]
-			}
-		};
-		var oAddedEntry = {something: "2"};
-		var oChangesFromFirstCall;
-
-		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
-
-		return Cache.getChangesFillingCache(this.oLrepConnector, {name: sComponentName}).then(function(firstChanges) {
-			oChangesFromFirstCall = firstChanges;
-			Cache.addChange({name: sComponentName}, oAddedEntry);
-		}).then(function() {
-			return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName});
-		}).then(function(changes) {
-			assert.strictEqual(oChangesFromFirstCall, changes);
-			assert.strictEqual(changes.changes.changes.length, 2);
-			sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
+			};
+			assert.deepEqual(Cache.getEntries(), {});
+			var oEntry = Cache.getEntry("test", "1.2.3");
+			assert.deepEqual(oEntry, oInitEntry);
+			assert.deepEqual(Cache.getEntries(), {
+				"test" : {
+					"1.2.3": oInitEntry
+				}
+			});
 		});
 
-	});
-
-	QUnit.test('addChange with a specific application version', function(assert) {
-		var that = this;
-		var oComponent = {
-			name : "testComponent",
-			appVersion : "1.2.3"
-		};
-		var oEntry = {
-			changes: {
-				changes: [
-					{something: "1"}
-				]
-			}
-		};
-		var oAddedEntry = {something: "2"};
-		var oChangesFromFirstCall;
-
-		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
-
-		return Cache.getChangesFillingCache(this.oLrepConnector, oComponent).then(function(firstChanges) {
-			oChangesFromFirstCall = firstChanges;
-			Cache.addChange(oComponent, oAddedEntry);
-		}).then(function() {
-			return Cache.getChangesFillingCache(that.oLrepConnector, oComponent);
-		}).then(function(changes) {
-			assert.strictEqual(oChangesFromFirstCall, changes);
-			assert.strictEqual(changes.changes.changes.length, 2);
-			sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
+		QUnit.test('clearEntries replaces the whole cache content and clearEntry replace a single cache entry', function(assert) {
+			var oEntry1 = {
+				mockChanges1: {}
+			};
+			var oEntry2 = {
+				mockChanges1: {}
+			};
+			Cache._entries = {
+				"testComponent1": {
+					"1.2.3": oEntry1
+				},
+				"testComponent2": {
+					"1.2.3": oEntry2
+				}
+			};
+			Cache.clearEntry("testComponent1", "1.2.3");
+			assert.deepEqual(Cache.getEntry("testComponent1", "1.2.3"), {});
+			Cache.clearEntries({});
+			assert.deepEqual(Cache.getEntries(), {});
 		});
 
-	});
-
-	QUnit.test('updateChange', function(assert) {
-		var that = this;
-		var sComponentName = "test";
-		var oEntry = {
-			changes: {
-				changes: [
-					{something: "1", fileName: "A"}
-				]
-			}
-		};
-		var oAddedEntry = {something: "2", fileName: "A"};
-
-		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
-
-		return Cache.getChangesFillingCache(this.oLrepConnector, {name: sComponentName}).then(function() {
-			Cache.updateChange({name: sComponentName}, oAddedEntry);
-		}).then(function() {
-			return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName});
-		}).then(function(changes) {
-			assert.strictEqual(changes.changes.changes.length, 1);
-			assert.strictEqual(changes.changes.changes[0].something, "2");
-			sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
-		});
-	});
-
-	QUnit.test('updateChange with a specific application version', function(assert) {
-		var that = this;
-		var oComponent = {
-			name : "testComponent",
-			appVersion : "1.2.3"
-		};
-		var oEntry = {
-			changes: {
-				changes: [
-					{something: "1", fileName: "A"}
-				]
-			}
-		};
-		var oAddedEntry = {something: "2", fileName: "A"};
-
-		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
-
-		return Cache.getChangesFillingCache(this.oLrepConnector, oComponent).then(function() {
-			Cache.updateChange(oComponent, oAddedEntry);
-		}).then(function() {
-			return Cache.getChangesFillingCache(that.oLrepConnector, oComponent);
-		}).then(function(changes) {
-			assert.strictEqual(changes.changes.changes.length, 1);
-			assert.strictEqual(changes.changes.changes[0].something, "2");
-			sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
-		});
-	});
-
-	QUnit.test('deleteChange', function(assert) {
-		var that = this;
-		var sComponentName = "test";
-		var oEntry = {
-			changes: {
-				changes: [
-					{something: "1", fileName: "A"}
-				]
-			}
-		};
-
-		var oAddedEntry = {something: "1", fileName: "A"};
-
-		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
-
-		return Cache.getChangesFillingCache(this.oLrepConnector, {name: sComponentName}).then(function() {
-			Cache.deleteChange({name: sComponentName}, oAddedEntry);
-		}).then(function() {
-			return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName});
-		}).then(function(changes) {
-			assert.strictEqual(changes.changes.changes.length, 0);
-			sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
+		QUnit.test('deleteEntry deletes a single cache entry', function(assert) {
+			var oEntry1 = {
+				mockChanges1: {}
+			};
+			Cache._entries = {
+				"testComponent1": {
+					"1.2.3": oEntry1
+				}
+			};
+			Cache._deleteEntry("testComponent1", "4.5.6");
+			assert.deepEqual(Cache.getEntry("testComponent1", "1.2.3"), oEntry1);
+			Cache._deleteEntry("testComponent1", "1.2.3");
+			assert.equal(Cache._entries["testComponent1"], undefined);
 		});
 
-	});
+		QUnit.test('if error occurs, subsequent calls in their own execution path should not request the data anew', function(assert) {
+			var that = this;
+			var sComponentName = "test";
 
-	QUnit.test('deleteChange with a specific version', function(assert) {
-		var that = this;
-		var oComponent = {
-			name : "testComponent",
-			appVersion : "1.2.3"
-		};
-		var oEntry = {
-			changes: {
-				changes: [
-					{something: "1", fileName: "A"}
-				]
-			}
-		};
+			sandbox.stub(this.oLrepConnector, 'loadChanges').callsFake(createLoadChangesErrorResponse);
 
-		var oAddedEntry = {something: "1", fileName: "A"};
-
-		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
-
-		return Cache.getChangesFillingCache(this.oLrepConnector, oComponent).then(function() {
-			Cache.deleteChange(oComponent, oAddedEntry);
-		}).then(function() {
-			return Cache.getChangesFillingCache(that.oLrepConnector, oComponent);
-		}).then(function(changes) {
-			assert.strictEqual(changes.changes.changes.length, 0);
-			sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
+			return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName}).then(function() {
+				return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName});
+			}).then(function() {
+				assert.equal(1, that.oLrepConnector.loadChanges.callCount, "only one call was done to the backend");
+			});
 		});
-	});
 
-	QUnit.test("getChangesFillingCache returns an empty list of changes without sending an request " +
-			"if the passed parameter contain already the information that there are no changes", function(assert) {
-		var sComponentName = "smartFilterBar.Component";
-		var mPropertyBag = {
-			cacheKey: "<NO CHANGES>"
-		};
-
-		return Cache.getChangesFillingCache(this.oLrepConnector, {name: sComponentName}, mPropertyBag).then(function(oResult) {
-			assert.ok(Array.isArray(oResult.changes.changes), "an array of changes was returned");
-			assert.ok(Array.isArray(oResult.changes.contexts), "an array of contexts was returned");
-			assert.equal(oResult.changes.changes.length, 0, "but no change is present");
-			assert.equal(oResult.changes.contexts.length, 0, "but no context is present");
-			assert.equal(oResult.componentClassName, sComponentName, "the component class name was returned correctly");
+		QUnit.test('setActive should enable and disable the cache globally', function(assert) {
+			assert.strictEqual(Cache.isActive(), true);
+			Cache.setActive(false);
+			assert.strictEqual(Cache.isActive(), false);
+			Cache.setActive(true);
+			assert.strictEqual(Cache.isActive(), true);
 		});
+
+		QUnit.test('addChange', function(assert) {
+			var that = this;
+			var sComponentName = "test";
+			var oEntry = {
+				changes: {
+					changes: [
+						{something: "1"}
+					]
+				}
+			};
+			var oAddedEntry = {something: "2"};
+			var oChangesFromFirstCall;
+
+			sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+
+			return Cache.getChangesFillingCache(this.oLrepConnector, {name: sComponentName}).then(function(firstChanges) {
+				oChangesFromFirstCall = firstChanges;
+				Cache.addChange({name: sComponentName}, oAddedEntry);
+			}).then(function() {
+				return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName});
+			}).then(function(changes) {
+				assert.strictEqual(oChangesFromFirstCall, changes);
+				assert.strictEqual(changes.changes.changes.length, 2);
+				sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
+			});
+
+		});
+
+		QUnit.test('addChange with a specific application version', function(assert) {
+			var that = this;
+			var oComponent = {
+				name : "testComponent",
+				appVersion : "1.2.3"
+			};
+			var oEntry = {
+				changes: {
+					changes: [
+						{something: "1"}
+					]
+				}
+			};
+			var oAddedEntry = {something: "2"};
+			var oChangesFromFirstCall;
+
+			sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+
+			return Cache.getChangesFillingCache(this.oLrepConnector, oComponent).then(function(firstChanges) {
+				oChangesFromFirstCall = firstChanges;
+				Cache.addChange(oComponent, oAddedEntry);
+			}).then(function() {
+				return Cache.getChangesFillingCache(that.oLrepConnector, oComponent);
+			}).then(function(changes) {
+				assert.strictEqual(oChangesFromFirstCall, changes);
+				assert.strictEqual(changes.changes.changes.length, 2);
+				sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
+			});
+
+		});
+
+		QUnit.test('updateChange', function(assert) {
+			var that = this;
+			var sComponentName = "test";
+			var oEntry = {
+				changes: {
+					changes: [
+						{something: "1", fileName: "A"}
+					]
+				}
+			};
+			var oAddedEntry = {something: "2", fileName: "A"};
+
+			sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+
+			return Cache.getChangesFillingCache(this.oLrepConnector, {name: sComponentName}).then(function() {
+				Cache.updateChange({name: sComponentName}, oAddedEntry);
+			}).then(function() {
+				return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName});
+			}).then(function(changes) {
+				assert.strictEqual(changes.changes.changes.length, 1);
+				assert.strictEqual(changes.changes.changes[0].something, "2");
+				sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
+			});
+		});
+
+		QUnit.test('updateChange with a specific application version', function(assert) {
+			var that = this;
+			var oComponent = {
+				name : "testComponent",
+				appVersion : "1.2.3"
+			};
+			var oEntry = {
+				changes: {
+					changes: [
+						{something: "1", fileName: "A"}
+					]
+				}
+			};
+			var oAddedEntry = {something: "2", fileName: "A"};
+
+			sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+
+			return Cache.getChangesFillingCache(this.oLrepConnector, oComponent).then(function() {
+				Cache.updateChange(oComponent, oAddedEntry);
+			}).then(function() {
+				return Cache.getChangesFillingCache(that.oLrepConnector, oComponent);
+			}).then(function(changes) {
+				assert.strictEqual(changes.changes.changes.length, 1);
+				assert.strictEqual(changes.changes.changes[0].something, "2");
+				sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
+			});
+		});
+
+		QUnit.test('deleteChange', function(assert) {
+			var that = this;
+			var sComponentName = "test";
+			var oEntry = {
+				changes: {
+					changes: [
+						{something: "1", fileName: "A"}
+					]
+				}
+			};
+
+			var oAddedEntry = {something: "1", fileName: "A"};
+
+			sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+
+			return Cache.getChangesFillingCache(this.oLrepConnector, {name: sComponentName}).then(function() {
+				Cache.deleteChange({name: sComponentName}, oAddedEntry);
+			}).then(function() {
+				return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName});
+			}).then(function(changes) {
+				assert.strictEqual(changes.changes.changes.length, 0);
+				sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
+			});
+
+		});
+
+		QUnit.test('deleteChange with a specific version', function(assert) {
+			var that = this;
+			var oComponent = {
+				name : "testComponent",
+				appVersion : "1.2.3"
+			};
+			var oEntry = {
+				changes: {
+					changes: [
+						{something: "1", fileName: "A"}
+					]
+				}
+			};
+
+			var oAddedEntry = {something: "1", fileName: "A"};
+
+			sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+
+			return Cache.getChangesFillingCache(this.oLrepConnector, oComponent).then(function() {
+				Cache.deleteChange(oComponent, oAddedEntry);
+			}).then(function() {
+				return Cache.getChangesFillingCache(that.oLrepConnector, oComponent);
+			}).then(function(changes) {
+				assert.strictEqual(changes.changes.changes.length, 0);
+				sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
+			});
+		});
+
+		QUnit.test("getChangesFillingCache returns an empty list of changes without sending an request " +
+				"if the passed parameter contain already the information that there are no changes", function(assert) {
+			var sComponentName = "smartFilterBar.Component";
+			var mPropertyBag = {
+				cacheKey: "<NO CHANGES>"
+			};
+
+			return Cache.getChangesFillingCache(this.oLrepConnector, {name: sComponentName}, mPropertyBag).then(function(oResult) {
+				assert.ok(Array.isArray(oResult.changes.changes), "an array of changes was returned");
+				assert.ok(Array.isArray(oResult.changes.contexts), "an array of contexts was returned");
+				assert.equal(oResult.changes.changes.length, 0, "but no change is present");
+				assert.equal(oResult.changes.contexts.length, 0, "but no context is present");
+				assert.equal(oResult.componentClassName, sComponentName, "the component class name was returned correctly");
+			});
+		});
+
+		QUnit.test("getChangesFillingCache should load changes even if cache entry with promise exist", function(assert) {
+			var sComponentName = "testComponent",
+				sAppVersion = Utils.DEFAULT_APP_VERSION,
+				mPropertyBag,
+				bInvalidateCache = true,
+				oCacheEntry = Cache.getEntry(sComponentName, sAppVersion),
+				oLoadChangesSpy = sandbox.spy(this.oLrepConnector, 'loadChanges');
+
+			oCacheEntry.promise = Promise.resolve();
+			sandbox.stub(Cache, "getEntry").returns(oCacheEntry);
+
+			return Cache.getChangesFillingCache(this.oLrepConnector, {name: sComponentName}, mPropertyBag, bInvalidateCache)
+
+			.then(function(oResult) {
+				assert.ok(Array.isArray(oResult.changes.changes), "an array of changes was returned");
+				assert.ok(Array.isArray(oResult.changes.contexts), "an array of contexts was returned");
+				assert.equal(oLoadChangesSpy.callCount, 1, "then LrepConnector loadChanges is called once");
+			});
+		});
+
 	});
 
 	QUnit.module("getChangesFillingCache and level0-changes", {
@@ -363,22 +357,23 @@ jQuery.sap.require("sap.ui.fl.Utils");
 
 		afterEach: function () {
 			Cache._entries = {};
+			sandbox.restore();
 		}
 	});
 
 	var fnStubDebug = function (bDebug) {
 		var oCore = sap.ui.getCore();
 		var oCoreConfiguration = oCore.getConfiguration();
-		this.stub(oCoreConfiguration, "getDebug").returns(bDebug);
+		sandbox.stub(oCoreConfiguration, "getDebug").returns(bDebug);
 	};
 
 	var fnStubBundle = function (bIsLoaded, aBundledChanges) {
-		this.stub(jQuery.sap, "isResourceLoaded").returns(bIsLoaded);
+		sandbox.stub(sap.ui.loader._, "getModuleState").returns(bIsLoaded);
 		if (aBundledChanges) {
-			return this.stub(jQuery.sap, "loadResource").returns(aBundledChanges);
+			return sandbox.stub(LoaderExtensions, "loadResource").returns(aBundledChanges);
 		} else {
 			// if no bundle is specified the default error is thrown
-			return this.spy(jQuery.sap, "loadResource");
+			return sandbox.spy(LoaderExtensions, "loadResource");
 		}
 	};
 
@@ -399,7 +394,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			});
 		}
 
-		return this.stub(this.oLrepConnector, "send").returns(oResult);
+		return sandbox.stub(this.oLrepConnector, "send").returns(oResult);
 	};
 
 	QUnit.test("can retrieve a preloaded changes-bundle in addition to the changes from the connector", function (assert) {
@@ -518,6 +513,9 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			Cache._switches = {};
 			Cache.setActive(true);
 			this.oLrepConnector = LrepConnector.createConnector();
+		},
+		afterEach: function() {
+			sandbox.restore();
 		}
 	});
 
@@ -541,7 +539,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		};
 		Cache._entries[sTestComponentName][sAppVersion].promise = Promise.resolve(oEntry);
 
-		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+		sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
 
 		return Cache.getChangesFillingCache(this.oLrepConnector, oComponent, mPropertyBag).then(function(oResult) {
 			sinon.assert.notCalled(that.oLrepConnector.loadChanges);
@@ -569,8 +567,8 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			componentClassName: sTestComponentName
 		};
 		var oAddedEntry = {something: "2"};
-		var oStubLoadBundle = this.stub(Cache, '_getChangesFromBundle').returns(Promise.resolve([]));
-		var oStubLoadChanges = this.stub(LrepConnector.prototype, 'loadChanges');
+		var oStubLoadBundle = sandbox.stub(Cache, '_getChangesFromBundle').returns(Promise.resolve([]));
+		var oStubLoadChanges = sandbox.stub(LrepConnector.prototype, 'loadChanges');
 
 		return Cache.getChangesFillingCache(this.oLrepConnector, oComponent, mPropertyBag).then(function(oResult) {
 			assert.ok(oStubLoadBundle, "then load changes from bundle");
@@ -608,7 +606,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		};
 		Cache._entries[sTestComponentName][sAppVersion].promise = Promise.resolve(oEntry);
 
-		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+		sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
 
 		return Cache.getChangesFillingCache(this.oLrepConnector, oComponent, mPropertyBag).then(function(oResult) {
 			sinon.assert.notCalled(that.oLrepConnector.loadChanges);
@@ -634,7 +632,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 					]
 				}
 			};
-		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oChange));
+		sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oChange));
 
 		return Cache.getChangesFillingCache(this.oLrepConnector, oComponent, mPropertyBag).then(function(oResult) {
 			sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
@@ -661,7 +659,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		var oAddedEntry = {something: "2"};
 		var oChangesFromFirstCall;
 
-		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+		sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
 
 		return Cache.getChangesFillingCache(this.oLrepConnector, oComponent).then(function(firstChanges) {
 			oChangesFromFirstCall = firstChanges;
@@ -695,7 +693,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		var oOldEntry = Cache._entries[sTestComponentName]["oldVersion"];
 		var oAddedEntry = {something: "2", fileName: "A"};
 
-		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+		sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
 
 		return Cache.getChangesFillingCache(this.oLrepConnector, oComponent).then(function() {
 			Cache.updateChange(oComponent, oAddedEntry);
@@ -728,7 +726,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		var oOldEntry = Cache._entries[sTestComponentName]["oldVersion"];
 		var oAddedEntry = {something: "1", fileName: "A"};
 
-		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+		sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
 
 		return Cache.getChangesFillingCache(this.oLrepConnector, oComponent).then(function() {
 			Cache.deleteChange(oComponent, oAddedEntry);
@@ -754,6 +752,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 
 		afterEach: function () {
 			Cache._entries = {};
+			sandbox.restore();
 		}
 	});
 
@@ -768,8 +767,8 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			}
 		};
 
-		this.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
-		this.stub(this.oLrepConnector, "loadChanges").returns(Promise.resolve(oEntry));
+		sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+		sandbox.stub(this.oLrepConnector, "loadChanges").returns(Promise.resolve(oEntry));
 
 		return Cache.getPersonalization(this.sComponentName, this.sAppVersion, this.sContainerKey, this.sItemName).then(
 			function(oResponse) {
@@ -789,8 +788,8 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			}
 		};
 
-		this.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
-		this.stub(this.oLrepConnector, "loadChanges").returns(Promise.resolve(oEntry));
+		sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+		sandbox.stub(this.oLrepConnector, "loadChanges").returns(Promise.resolve(oEntry));
 
 		return Cache.getPersonalization(this.sComponentName, this.sAppVersion, this.sContainerKey, this.sItemName).then(
 			function(oResponse) {
@@ -810,8 +809,8 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			}
 		};
 
-		this.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
-		this.stub(this.oLrepConnector, "loadChanges").returns(Promise.resolve(oEntry));
+		sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+		sandbox.stub(this.oLrepConnector, "loadChanges").returns(Promise.resolve(oEntry));
 
 		return Cache.getPersonalization(this.sComponentName, this.sAppVersion, this.sContainerKey, this.sItemName).then(
 			function(oResponse) {
@@ -833,8 +832,8 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			}
 		};
 
-		this.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
-		this.stub(this.oLrepConnector, "loadChanges").returns(Promise.resolve(oEntry));
+		sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+		sandbox.stub(this.oLrepConnector, "loadChanges").returns(Promise.resolve(oEntry));
 
 		return Cache.getPersonalization(this.sComponentName, this.sAppVersion, this.sContainerKey, this.sItemName).then(
 			function(oResponse) {
@@ -855,8 +854,8 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			}
 		};
 
-		this.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
-		this.stub(this.oLrepConnector, "loadChanges").returns(Promise.resolve(oEntry));
+		sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+		sandbox.stub(this.oLrepConnector, "loadChanges").returns(Promise.resolve(oEntry));
 
 		return Cache.getPersonalization(this.sComponentName, this.sAppVersion, this.sContainerKey).then(
 			function(oResponse) {
@@ -881,8 +880,8 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			}
 		};
 
-		this.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
-		this.stub(this.oLrepConnector, "loadChanges").returns(Promise.resolve(oEntry));
+		sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+		sandbox.stub(this.oLrepConnector, "loadChanges").returns(Promise.resolve(oEntry));
 
 		return Cache.getPersonalization(this.sComponentName, this.sAppVersion, this.sContainerKey, sItemName).then(
 			function(oResponse) {
@@ -904,8 +903,8 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			}
 		};
 
-		this.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
-		this.stub(this.oLrepConnector, "loadChanges").returns(Promise.resolve(oEntry));
+		sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+		sandbox.stub(this.oLrepConnector, "loadChanges").returns(Promise.resolve(oEntry));
 
 		return Cache.getPersonalization(this.sComponentName, this.sAppVersion, this.sContainerKey).then(
 			function(oResponse) {
@@ -1097,4 +1096,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		);
 	});
 
-}(QUnit, sinon, sap.ui.fl.Cache, sap.ui.fl.LrepConnector, sap.ui.fl.Utils));
+	QUnit.done(function () {
+		jQuery('#qunit-fixture').hide();
+	});
+});

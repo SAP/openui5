@@ -2,24 +2,15 @@
  * ${copyright}
  */
 sap.ui.require([
-    "jquery.sap.global",
-    "sap/ui/base/SyncPromise",
-    "sap/ui/model/odata/v4/lib/_Cache",
-    "sap/ui/model/odata/v4/lib/_GroupLock",
-    "sap/ui/model/odata/v4/lib/_Helper",
-    "sap/ui/model/odata/v4/lib/_Requestor",
-    "sap/ui/test/TestUtils",
-    "sap/base/Log"
-], function(
-    jQuery,
-	SyncPromise,
-	_Cache,
-	_GroupLock,
-	_Helper,
-	_Requestor,
-	TestUtils,
-	Log
-) {
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/ui/base/SyncPromise",
+	"sap/ui/model/odata/v4/lib/_Cache",
+	"sap/ui/model/odata/v4/lib/_GroupLock",
+	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/model/odata/v4/lib/_Requestor",
+	"sap/ui/test/TestUtils"
+], function (jQuery, Log, SyncPromise, _Cache, _GroupLock, _Helper, _Requestor, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -263,7 +254,8 @@ sap.ui.require([
 					fnCallback = this.spy(),
 					oError = new Error(""),
 					oGroupLock = new _GroupLock("groupId"),
-					oPromise;
+					oPromise,
+					that = this;
 
 				aCacheData.$count = bCount ? 3 : undefined;
 				aCacheData.$byPredicate = {"('42')" : aCacheData[1]};
@@ -282,7 +274,11 @@ sap.ui.require([
 				this.oRequestorMock.expects("request")
 					.withExactArgs("DELETE", "Equipments('1')?foo=bar",
 						sinon.match.same(oGroupLock), {"If-Match" : sEtag})
-					.returns(iStatus === 200 ? Promise.resolve({}) : Promise.reject(oError));
+					.returns(iStatus === 200 ? Promise.resolve().then(function () {
+						that.oRequestorMock.expects("reportBoundMessages")
+							.withExactArgs(oCache.sResourcePath, [],
+								["EMPLOYEE_2_EQUIPMENTS('42')"]);
+					}) : Promise.reject(oError));
 
 				// code under test
 				oPromise = oCache._delete(oGroupLock, "Equipments('1')", "EMPLOYEE_2_EQUIPMENTS/1",
@@ -374,35 +370,43 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#_delete: nested entity", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "EMPLOYEES('42')",
-				{$expand : {EMPLOYEE_2_TEAM : true}}),
+		var oCache = new _Cache(this.oRequestor, "Equipments(Category='foo',ID='0815')",
+				{$expand : {EQUIPMENT_2_EMPLOYEE : {EMPLOYEE_2_TEAM : true}}}),
 			sEtag = 'W/"19770724000000.0000000"',
 			oCacheData = {
 				"EMPLOYEE_2_TEAM" : {
+					"@$ui5._" : {
+						"predicate" : "('23')"
+					},
 					"@odata.etag" : sEtag
 				}
 			},
 			fnCallback = this.spy(),
 			oGroupLock = new _GroupLock("groupId"),
-			oUpdateData = {};
-
+			oUpdateData = {},
+			that = this;
 
 		oCache.fetchValue = function () {};
 		this.mock(oCache).expects("fetchValue")
-			.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "EQUIPMENT_2_EMPLOYEE")
 			.returns(SyncPromise.resolve(oCacheData));
 		this.oRequestorMock.expects("request")
 			.withExactArgs("DELETE", "TEAMS('23')", sinon.match.same(oGroupLock),
 				{"If-Match" : sEtag})
-			.returns(Promise.resolve({}));
+			.returns(Promise.resolve().then(function () {
+				that.oRequestorMock.expects("reportBoundMessages")
+					.withExactArgs(oCache.sResourcePath, [],
+						["EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM"]);
+			}));
 		this.mock(_Cache).expects("makeUpdateData").withExactArgs(["EMPLOYEE_2_TEAM"], null)
 			.returns(oUpdateData);
 		this.mock(_Helper).expects("updateCache")
-			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "EQUIPMENT_2_EMPLOYEE",
 				sinon.match.same(oCacheData), sinon.match.same(oUpdateData));
 
 		// code under test
-		return oCache._delete(oGroupLock, "TEAMS('23')", "EMPLOYEE_2_TEAM", fnCallback)
+		return oCache._delete(oGroupLock, "TEAMS('23')", "EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM",
+				fnCallback)
 			.then(function (oResult) {
 				assert.strictEqual(oResult, undefined);
 				sinon.assert.calledOnce(fnCallback);
@@ -735,19 +739,16 @@ sap.ui.require([
 		var oCache = new _Cache(this.oRequestor, "Products('42')"),
 			oData = {
 				productPicture : {
-					"picture@odata.mediaReadLink" : "my/Picture"
+					"picture@odata.mediaReadLink" : "/~/my/Picture"
 				}
 			};
 
 		this.oRequestorMock.expects("fetchTypeForPath")
 			.withExactArgs("/Products/productPicture/picture", true)
 			.returns(SyncPromise.resolve("Edm.Stream"));
-		this.mock(_Helper).expects("makeAbsolute")
-			.withExactArgs("my/Picture", this.oRequestor.getServiceUrl())
-			.returns("/~~~/");
 
 		// code under test
-		assert.strictEqual(oCache.drillDown(oData, "productPicture/picture"), "/~~~/");
+		assert.strictEqual(oCache.drillDown(oData, "productPicture/picture"), "/~/my/Picture");
 	});
 
 	//*********************************************************************************************
@@ -1150,7 +1151,7 @@ sap.ui.require([
 				that.oRequestorMock.expects("fetchTypeForPath").withExactArgs(sPath)
 					.returns(Promise.resolve(oFixture.types[sPath]));
 				that.oRequestorMock.expects("fetchMetadata")
-					.withExactArgs(sPath + "/@Org.OData.Core.V1.Messages")
+					.withExactArgs(sPath + "/@com.sap.vocabularies.Common.v1.Messages")
 					.returns(SyncPromise.resolve(
 						oFixture.messageAnnotations && oFixture.messageAnnotations[sPath] || null));
 			});
@@ -1172,7 +1173,7 @@ sap.ui.require([
 
 					if (oMessageAnnotation) {
 						assert.strictEqual(
-							mTypeForMetaPath[sMetaPath]["@Org.OData.Core.V1.Messages"],
+							mTypeForMetaPath[sMetaPath]["@com.sap.vocabularies.Common.v1.Messages"],
 							oMessageAnnotation,
 							"Message property for " + sMetaPath + ": " + oMessageAnnotation.$Path);
 						assert.ok(oFixture.types[sMetaPath]
@@ -1231,7 +1232,7 @@ sap.ui.require([
 		oCache.visitResponse("Business Suite", mTypeForMetaPath);
 
 		// code under test
-		oCache.visitResponse(["Business Suite"], mTypeForMetaPath);
+		oCache.visitResponse({value : ["Business Suite"]}, mTypeForMetaPath, true);
 
 		// code under test
 		oCache.visitResponse(undefined, mTypeForMetaPath);
@@ -1253,7 +1254,7 @@ sap.ui.require([
 		oCache.visitResponse(oInstance, mTypeForMetaPath);
 
 		// code under test
-		oCache.visitResponse([oInstance], mTypeForMetaPath);
+		oCache.visitResponse({value : [oInstance]}, mTypeForMetaPath, true);
 	});
 
 	//*********************************************************************************************
@@ -1288,7 +1289,7 @@ sap.ui.require([
 		this.oRequestorMock.expects("reportBoundMessages").never();
 
 		// code under test
-		oCache.visitResponse(oEntity, mTypeForMetaPath, "/~/$Type");
+		oCache.visitResponse(oEntity, mTypeForMetaPath, false, "/~/$Type");
 
 		assert.strictEqual(_Helper.getPrivateAnnotation(oEntity, "predicate"), sPredicate);
 	});
@@ -1394,6 +1395,7 @@ sap.ui.require([
 			aMessagesSalesOrder = [{/* any message object */}],
 			aMessagesSalesOrderSchedules0 = [{/* any message object */}],
 			aMessagesSalesOrderSchedules1 = [{/* any message object */}],
+			aMessagesEmpty = [],
 			oData = {
 				messagesInSalesOrder : aMessagesSalesOrder,
 				SO_2_BP : {
@@ -1403,25 +1405,35 @@ sap.ui.require([
 					messagesInSalesOrderSchedule : aMessagesSalesOrderSchedules0,
 					ScheduleKey : "42"
 				}, {
-					messagesInSalesOrderSchedule : aMessagesSalesOrderSchedules1,
 					ScheduleKey : "43"
+				}, {
+					messagesInSalesOrderSchedule : aMessagesSalesOrderSchedules1,
+					ScheduleKey : "44"
+				}, {
+					messagesInSalesOrderSchedule : null,
+					ScheduleKey : "45"
+				}, {
+					messagesInSalesOrderSchedule : aMessagesEmpty,
+					ScheduleKey : "46"
 				}]
 			},
 			mExpectedMessages = {
 				"" : aMessagesSalesOrder,
 				"/SO_2_BP" : aMessagesInBusinessPartner,
 				"/SO_2_SCHDL('42')" : aMessagesSalesOrderSchedules0,
-				"/SO_2_SCHDL('43')" : aMessagesSalesOrderSchedules1
+				"/SO_2_SCHDL('44')" : aMessagesSalesOrderSchedules1
 			},
 			mTypeForMetaPath = {
 				"/SalesOrderList" : {
-					"@Org.OData.Core.V1.Messages" : {$Path : "messagesInSalesOrder"}
+					"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "messagesInSalesOrder"}
 				},
 				"/SalesOrderList/SO_2_BP" : {
-					"@Org.OData.Core.V1.Messages" : {$Path : "messagesInBusinessPartner"}
+					"@com.sap.vocabularies.Common.v1.Messages" :
+						{$Path : "messagesInBusinessPartner"}
 				},
 				"/SalesOrderList/SO_2_SCHDL" : {
-					"@Org.OData.Core.V1.Messages" : {$Path : "messagesInSalesOrderSchedule"},
+					"@com.sap.vocabularies.Common.v1.Messages" :
+						{$Path : "messagesInSalesOrderSchedule"},
 					$Key : ["ScheduleKey"],
 					ScheduleKey : {
 						$Type : "Edm.String"
@@ -1437,23 +1449,66 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("Cache#visitResponse: no reportBoundMessages if message property is not selected",
+			function (assert) {
+		var oCache = new _Cache(this.oRequestor, "SalesOrderList('0500000001')");
+
+		this.oRequestorMock.expects("reportBoundMessages").never();
+
+		// code under test
+		oCache.visitResponse({}, {
+			"/SalesOrderList" : {
+				"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "messagesInSalesOrder"}
+			}
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Cache#visitResponse: no reportBoundMessages; message in complex type",
+			function (assert) {
+		var oCache = new _Cache(this.oRequestor, "SalesOrderList('0500000001')"),
+			oData = {};
+
+		this.mock(_Helper).expects("drillDown")
+			.withExactArgs(oData, ["foo", "bar", "messages"])
+			.returns();
+		this.oRequestorMock.expects("reportBoundMessages").never();
+
+		// code under test
+		oCache.visitResponse(oData, {
+			"/SalesOrderList" : {
+				"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "foo/bar/messages"}
+			}
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("Cache#visitResponse: reportBoundMessages; collection", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "SalesOrderList"),
-			aMessagesSalesOrder = [{/* any message object */}],
-			aData = [{
-				messagesInSalesOrder : aMessagesSalesOrder,
-				SalesOrderID : "42"
-			}, {
-				messagesInSalesOrder : [],
-				SalesOrderID : "43"
-			}],
+			oHelperMock = this.mock(_Helper),
+			aKeySegments = ["SalesOrderID"],
+			aMessagePathSegments = ["messagesInSalesOrder"],
+			aMessagesSalesOrder0 = [{/* any message object */}],
+			aMessagesSalesOrder1 = [{/* any message object */}],
+			oData = {
+				value : [{
+					messagesInSalesOrder : aMessagesSalesOrder0,
+					SalesOrderID : "42"
+				}, {
+					messagesInSalesOrder : aMessagesSalesOrder1,
+					SalesOrderID : "43"
+				}, {
+					messagesInSalesOrder : [],
+					SalesOrderID : "44"
+				}]
+			},
 			mExpectedMessages = {
-				"('42')" : aMessagesSalesOrder,
-				"('43')" : []
+				"('42')" : aMessagesSalesOrder0,
+				"('43')" : aMessagesSalesOrder1
 			},
 			mTypeForMetaPath = {
 				"/SalesOrderList" : {
-					"@Org.OData.Core.V1.Messages" : {$Path : "messagesInSalesOrder"},
+					"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "messagesInSalesOrder"},
 					$Key : ["SalesOrderID"],
 					SalesOrderID : {
 						$Type : "Edm.String"
@@ -1466,11 +1521,224 @@ sap.ui.require([
 		mExpectedMessages["('42')"].$byPredicate = {}; // no key predicates
 		mExpectedMessages["('43')"].$count = 0;
 		mExpectedMessages["('43')"].$byPredicate = {}; // no key predicates
+		oHelperMock.expects("drillDown")
+			.withExactArgs(oData.value[0], aKeySegments)
+			.returns("42");
+		oHelperMock.expects("drillDown")
+			.withExactArgs(oData.value[1], aKeySegments)
+			.returns("43");
+		oHelperMock.expects("drillDown")
+			.withExactArgs(oData.value[2], aKeySegments)
+			.returns("44");
+		oHelperMock.expects("drillDown")
+			.withExactArgs(oData.value[0], aMessagePathSegments)
+			.returns(aMessagesSalesOrder0);
+		oHelperMock.expects("drillDown")
+			.withExactArgs(oData.value[1], aMessagePathSegments)
+			.returns(aMessagesSalesOrder1);
+		oHelperMock.expects("drillDown")
+			.withExactArgs(oData.value[2], aMessagePathSegments)
+			.returns([]);
 		this.oRequestorMock.expects("reportBoundMessages")
-			.withExactArgs(oCache.sResourcePath, mExpectedMessages, ["('42')", "('43')"]);
+			.withExactArgs(oCache.sResourcePath, mExpectedMessages, ["('42')", "('43')", "('44')"]);
 
 		// code under test
-		oCache.visitResponse(aData, mTypeForMetaPath);
+		oCache.visitResponse(oData, mTypeForMetaPath, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#visitResponse: longtextUrl/media link, no context", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "EntitySet('42')/Navigation"),
+			oData = {
+				"id" : "1",
+				"picture@odata.mediaReadLink" : "img_42.jpg",
+				"messages" : [{
+					"longtextUrl" : "Longtext(1)"
+				}]
+			},
+			mExpectedMessages = {
+				"" : [{longtextUrl : "/~/EntitySet('42')/Longtext(1)"}]
+			},
+			oType = {
+				"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "messages"},
+				$Key : ["id"],
+				id : {
+					$Type : "Edm.Int32"
+				}
+			},
+			mTypeForMetaPath = {
+				"/EntitySet/Navigation" : oType
+			};
+
+		mExpectedMessages[""].$count = 1;
+		this.oRequestorMock.expects("reportBoundMessages")
+			.withExactArgs(oCache.sResourcePath, mExpectedMessages, undefined);
+
+		// code under test
+		oCache.visitResponse(oData, mTypeForMetaPath);
+
+		assert.strictEqual(oData["picture@odata.mediaReadLink"], "/~/EntitySet('42')/img_42.jpg");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#visitResponse: longtextUrl/media link, single response", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "EntitySet('42')/Navigation"),
+			oData = {
+				"@odata.context" : "../$metadata#foo",
+				"id" : "1",
+				"picture@odata.mediaReadLink" : "img_42.jpg",
+				"messages" : [{
+					"longtextUrl" : "Longtext(1)"
+				}],
+				foo : {
+					"@odata.context" : "/foo/context",
+					"id" : "2",
+					"picture@odata.mediaReadLink" : "img_43.jpg",
+					"messages" : [{
+						"longtextUrl" : "Longtext(2)"
+					}],
+					bar : {
+						id : "3",
+						"picture@odata.mediaReadLink" : "img_44.jpg",
+						"messages" : [{
+							"longtextUrl" : "Longtext(3)"
+						}]
+					},
+					baz : {
+						"@odata.context" : "baz/context",
+						id : "4",
+						"picture@odata.mediaReadLink" : "img_45.jpg",
+						"messages" : [{
+							"longtextUrl" : "Longtext(4)"
+						}]
+					}
+				}
+			},
+			mExpectedMessages = {
+				"" : [{longtextUrl : "/~/Longtext(1)"}],
+				"/foo" : [{longtextUrl : "/foo/Longtext(2)"}],
+				"/foo/bar" : [{longtextUrl : "/foo/Longtext(3)"}],
+				"/foo/baz" : [{longtextUrl : "/foo/baz/Longtext(4)"}]
+			},
+			oType = {
+				"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "messages"},
+				$Key : ["id"],
+				id : {
+					$Type : "Edm.Int32"
+				}
+			},
+			mTypeForMetaPath = {
+				"/EntitySet/Navigation" : oType,
+				"/EntitySet/Navigation/foo" : oType,
+				"/EntitySet/Navigation/foo/bar" : oType,
+				"/EntitySet/Navigation/foo/baz" : oType
+			};
+
+		mExpectedMessages[""].$count = 1;
+		mExpectedMessages["/foo"].$count = 1;
+		mExpectedMessages["/foo/bar"].$count = 1;
+		mExpectedMessages["/foo/baz"].$count = 1;
+		this.oRequestorMock.expects("reportBoundMessages")
+			.withExactArgs(oCache.sResourcePath, mExpectedMessages, undefined);
+
+		// code under test
+		oCache.visitResponse(oData, mTypeForMetaPath);
+
+		// check adjusted cache
+		assert.strictEqual(oData["picture@odata.mediaReadLink"], "/~/img_42.jpg");
+		assert.strictEqual(oData.messages[0].longtextUrl, "/~/Longtext(1)");
+		assert.strictEqual(oData.foo["picture@odata.mediaReadLink"], "/foo/img_43.jpg");
+		assert.strictEqual(oData.foo.messages[0].longtextUrl, "/foo/Longtext(2)");
+		assert.strictEqual(oData.foo.bar["picture@odata.mediaReadLink"], "/foo/img_44.jpg");
+		assert.strictEqual(oData.foo.bar.messages[0].longtextUrl, "/foo/Longtext(3)");
+		assert.strictEqual(oData.foo.baz["picture@odata.mediaReadLink"], "/foo/baz/img_45.jpg");
+		assert.strictEqual(oData.foo.baz.messages[0].longtextUrl, "/foo/baz/Longtext(4)");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#visitResponse: longtextUrl/media, collection response", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "EntitySet('42')/Navigation"),
+			oData = {
+				"@odata.context" : "../$metadata#foo",
+				value : [{
+					"id" : "1",
+					"picture@odata.mediaReadLink" : "img_1.jpg",
+					"messages" : [{
+						"longtextUrl" : "Longtext(1)"
+					}],
+					"foo@odata.context" : "/foo/context",
+					"foo" : [{
+						"id" : "2",
+						"picture@odata.mediaReadLink" : "img_2.jpg",
+						"messages" : [{
+							"longtextUrl" : "Longtext(2)"
+						}],
+						"bar@odata.context" : "bar/context",
+						"bar" : [{
+							"id" : "3",
+							"picture@odata.mediaReadLink" : "img_3.jpg",
+							"messages" : [{
+								"longtextUrl" : "Longtext(3)"
+							}]
+						}]
+					}]
+				}]
+			},
+			mExpectedMessages = {
+				"(1)" : [{longtextUrl : "/~/Longtext(1)"}],
+				"(1)/foo(2)" : [{longtextUrl : "/foo/Longtext(2)"}],
+				"(1)/foo(2)/bar(3)" : [{longtextUrl : "/foo/bar/Longtext(3)"}]
+			},
+			oType = {
+				"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "messages"},
+				$Key : ["id"],
+				id : {
+					$Type : "Edm.Int32"
+				}
+			},
+			mTypeForMetaPath = {
+				"/EntitySet/Navigation" : oType,
+				"/EntitySet/Navigation/foo" : oType,
+				"/EntitySet/Navigation/foo/bar" : oType
+			};
+
+		mExpectedMessages["(1)"].$count = 1;
+		mExpectedMessages["(1)/foo(2)"].$count = 1;
+		mExpectedMessages["(1)/foo(2)/bar(3)"].$count = 1;
+		this.oRequestorMock.expects("reportBoundMessages")
+			.withExactArgs(oCache.sResourcePath, mExpectedMessages, ["(1)"]);
+
+		// code under test
+		oCache.visitResponse(oData, mTypeForMetaPath, true);
+
+		// check adjusted cache
+		assert.strictEqual(oData.value[0]["picture@odata.mediaReadLink"], "/~/img_1.jpg");
+		assert.strictEqual(oData.value[0].messages[0].longtextUrl, "/~/Longtext(1)");
+		assert.strictEqual(oData.value[0].foo[0]["picture@odata.mediaReadLink"], "/foo/img_2.jpg");
+		assert.strictEqual(oData.value[0].foo[0].messages[0].longtextUrl, "/foo/Longtext(2)");
+		assert.strictEqual(oData.value[0].foo[0].bar[0]["picture@odata.mediaReadLink"],
+			"/foo/bar/img_3.jpg");
+		assert.strictEqual(oData.value[0].foo[0].bar[0].messages[0].longtextUrl,
+			"/foo/bar/Longtext(3)");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#patch", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "EntitySet('42')/Navigation"),
+			oCacheValue = {},
+			oData = {},
+			sPath = "path/to/Entity";
+
+		oCache.fetchValue = function () {};
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), sPath)
+			.returns(SyncPromise.resolve(oCacheValue));
+		this.mock(_Helper).expects("updateCache")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sPath,
+				sinon.match.same(oCacheValue), sinon.match.same(oData));
+
+		// code under test
+		oCache.patch(sPath, oData);
 	});
 
 	//*********************************************************************************************
@@ -1886,8 +2154,7 @@ sap.ui.require([
 					oCache.aElements.$count = iCount;
 				});
 			oCacheMock.expects("visitResponse")
-				.withExactArgs(sinon.match.same(oResult.value),
-					sinon.match.same(oFetchTypesResult))
+				.withExactArgs(sinon.match.same(oResult), sinon.match.same(oFetchTypesResult), true)
 				.callsFake(function () {
 					_Helper.setPrivateAnnotation(oElement0, "predicate", "foo");
 				});
@@ -1959,8 +2226,8 @@ sap.ui.require([
 						oCache.aElements.$count = oFixture.iExpectedCount;
 					});
 			}
-			oCacheMock.expects("visitResponse").withExactArgs(sinon.match.same(oResult.value),
-				sinon.match.same(oFetchTypesResult));
+			oCacheMock.expects("visitResponse").withExactArgs(sinon.match.same(oResult),
+				sinon.match.same(oFetchTypesResult), true);
 			oHelperMock.expects("updateCache")
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
 					sinon.match.same(oCache.aElements), {$count : oFixture.iExpectedCount});
@@ -3188,7 +3455,7 @@ sap.ui.require([
 			.returns(SyncPromise.resolve(mTypeForMetaPath));
 		this.mock(_Helper).expects("getKeyPredicate")
 			.withExactArgs(sinon.match.object, "/Employees", sinon.match.same(mTypeForMetaPath))
-			.returns("(~)");
+			.returns("('4711')");
 
 		oCreatedPromise = oCache.create(oGroupLock, "Employees", "", {}, function () {
 			throw new Error();
@@ -3201,7 +3468,10 @@ sap.ui.require([
 			that.mock(oRequestor).expects("request")
 				.withExactArgs("DELETE", "/~/Employees('4711')", new _GroupLock("$auto"),
 					{"If-Match" : "anyEtag"})
-				.returns(Promise.resolve());
+				.returns(Promise.resolve().then(function () {
+					that.mock(oRequestor).expects("reportBoundMessages")
+						.withExactArgs(oCache.sResourcePath, [], ["('4711')"]);
+				}));
 
 			// code under test
 			return oCache._delete(new _GroupLock("$auto"), "/~/Employees('4711')", "-1", fnCallback)
@@ -3249,7 +3519,7 @@ sap.ui.require([
 			.returns(Promise.resolve(oExpectedResult).then(function () {
 					oCacheMock.expects("visitResponse")
 						.withExactArgs(sinon.match.same(oExpectedResult),
-							sinon.match.same(mTypeForMetaPath), undefined);
+							sinon.match.same(mTypeForMetaPath), false, undefined);
 					oCacheMock.expects("checkActive").twice();
 					oCacheMock.expects("drillDown")
 						.withExactArgs(sinon.match.same(oExpectedResult), undefined)
@@ -3311,7 +3581,7 @@ sap.ui.require([
 			.returns(Promise.resolve(oExpectedResult).then(function () {
 				oCacheMock.expects("visitResponse")
 					.withExactArgs(sinon.match.same(oExpectedResult),
-						sinon.match.same(mTypeForMetaPath), "~/$Type");
+						sinon.match.same(mTypeForMetaPath), false, "~/$Type");
 				oCacheMock.expects("checkActive");
 				oCacheMock.expects("drillDown")
 					.withExactArgs(sinon.match.same(oExpectedResult), "foo")
@@ -3443,7 +3713,7 @@ sap.ui.require([
 				.resolves(mTypes);
 			this.mock(oCache).expects("visitResponse")
 				.exactly(bFetchOperationReturnType ? 1 : 0)
-				.withExactArgs(sinon.match.same(oReturnValue), sinon.match.same(mTypes),
+				.withExactArgs(sinon.match.same(oReturnValue), sinon.match.same(mTypes), false,
 					sMetaPath + "/$Type");
 
 			// code under test
@@ -3669,7 +3939,10 @@ sap.ui.require([
 			that.oRequestorMock.expects("request")
 				.withExactArgs("DELETE", "Employees('42')", sinon.match.same(oDeleteGroupLock),
 					{"If-Match" : sEtag})
-				.returns(Promise.resolve({}));
+				.returns(Promise.resolve().then(function () {
+					that.oRequestorMock.expects("reportBoundMessages")
+						.withExactArgs(oCache.sResourcePath, [], [""]);
+				}));
 
 			// code under test
 			return oCache._delete(oDeleteGroupLock, "Employees('42')", "", fnCallback)
@@ -4018,7 +4291,7 @@ sap.ui.require([
 		this.oRequestorMock.expects("reportBoundMessages").never();
 
 		// code under test
-		oCache.visitResponse(aResult, mTypeForMetaPath, "/FOO");
+		oCache.visitResponse({value : aResult}, mTypeForMetaPath, true, "/FOO");
 
 		assert.strictEqual(aResult[1].list.$count, 3);
 		assert.strictEqual(aResult[1].list2.$count, 12);
@@ -4045,8 +4318,8 @@ sap.ui.require([
 			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=3", new _GroupLock("group"),
 				undefined, undefined, undefined)
 			.returns(Promise.resolve(oData));
-		oCacheMock.expects("visitResponse").withExactArgs(sinon.match.same(oData.value),
-			sinon.match.object);
+		oCacheMock.expects("visitResponse").withExactArgs(sinon.match.same(oData),
+			sinon.match.object, true);
 
 		// code under test
 		return oCache.read(0, 3, 0, new _GroupLock("group")).then(function () {

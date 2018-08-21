@@ -4,11 +4,11 @@
 
 //Provides class sap.ui.model.odata.v4.Context
 sap.ui.define([
-	"sap/ui/base/SyncPromise",
-	"sap/ui/model/Context",
 	"./lib/_Helper",
-	"sap/base/Log"
-], function(SyncPromise, BaseContext, _Helper, Log) {
+	"sap/base/Log",
+	"sap/ui/base/SyncPromise",
+	"sap/ui/model/Context"
+], function (_Helper, Log, SyncPromise, BaseContext) {
 	"use strict";
 
 	/*
@@ -79,6 +79,7 @@ sap.ui.define([
 	 *
 	 *   Context instances are immutable except for their indexes.
 	 * @extends sap.ui.model.Context
+	 * @hideconstructor
 	 * @public
 	 * @since 1.39.0
 	 * @version ${version}
@@ -465,6 +466,22 @@ sap.ui.define([
 	 */
 	Context.prototype.isTransient = function () {
 		return this.oSyncCreatePromise && this.oSyncCreatePromise.isPending();
+	};
+
+	/**
+	 * Patches the context data with the given patch data.
+	 *
+	 * @param {object} oData
+	 *   The data to patch with
+	 * @returns {SyncPromise}
+	 *   A promise that is resolve without a result when the patch is done.
+	 *
+	 * @private
+	 */
+	Context.prototype.patch = function (oData) {
+		return this.withCache(function (oCache, sPath) {
+			oCache.patch(sPath, oData);
+		}, "");
 	};
 
 	/**

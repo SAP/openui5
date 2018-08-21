@@ -1863,6 +1863,15 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 	width: calc(100% - 10px);
 }
 
+/* 5 columns */
+.sapUiMedia-StdExt-Tablet .sapUiDocLightTable.columns-5 .cell {
+	flex: 2 0;
+}
+.sapUiMedia-StdExt-Tablet .sapUiDocLightTable.columns-5 .cell:nth-child(4),
+.sapUiMedia-StdExt-Tablet .sapUiDocLightTable.columns-5 .cell:nth-child(3) {
+	flex: 1.5 0;
+}
+
 /* 4 columns */
 .sapUiMedia-StdExt-Tablet .sapUiDocLightTable.columns-4 .cell {
 	flex: 2 0;
@@ -1950,7 +1959,7 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 }
 
 .sapUiDocLightTable .cell {
-	padding: 8px;
+	padding: 0.5rem;
 	vertical-align: top;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -2010,3 +2019,53 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 /*
  * End of DemokitLightTable CSS
  */
+
+/*
+* Start of DemokitTreeItem CSS
+*/
+
+.sapDemokitTreeItem > .sapMLIBContent {
+	display: block;
+	overflow: hidden;
+	word-break: break-word;
+}
+
+.sapDemokitTreeItemLabel,
+.sapDemokitTreeItemTitle {
+	display: inline-block;
+}
+
+.sapDemokitTreeItemLabel {
+	font-size: 0.75rem;
+	color: #d3d7d9;
+}
+
+.sapUiTheme-sap_belize_hcw .sapDemokitTreeItemLabel {
+	color: #000;
+}
+
+.sapUiTheme-sap_belize_hcb .sapDemokitTreeItemLabel {
+	color: #fff;
+}
+
+/*
+* End of DemokitTreeItem CSS
+*/
+
+/* Special list */
+.specialListsMessageStrip {
+	width: calc(100% - 2rem);
+}
+
+.sapUiMedia-Std-Desktop .specialListsMessageStrip,
+.sapUiMedia-StdExt-LargeDesktop .specialListsMessageStrip {
+	width: calc(100% - 3rem);
+}
+
+.specialListFeedItem p:first-child {
+	display: inline;
+}
+
+.specialListFeedItem p {
+	margin: 0.5rem 0;
+}

@@ -122,7 +122,7 @@ sap.ui.getCore().attachInit(function() {
 								function processBase(oBaseElement) {
 									var oMetadata = oBaseElement.getMetadata();
 									oBaseElement.getMetadata().loadDesignTime().then(function(oBaseDT){
-										var oDTElement = jQuery.extend({}, oBaseDT, oVDTElement);
+										var oDTElement = Object.assign({}, oBaseDT, oVDTElement);
 										oDTElement._members = oMetadata.getJSONKeys();
 										oDTElement._metadata = oMetadata;
 										oDTElement._name = oVDTElement.className;
@@ -195,7 +195,7 @@ function createUI() {
 			if (oBindingContext.getProperty("palette/icons/svg")) {
 				oControlIcon = new sap.m.Image({src: {path:"palette/icons/svg", formatter: function(sIcon) {
 					if (sIcon) {
-						return jQuery.sap.getResourcePath(sIcon,"");
+						return sap.ui.require.toUrl(sIcon,"");
 					}
 					return "";
 				}}});
@@ -221,7 +221,7 @@ function createUI() {
 		var sDesigntimeFile = oContext.getProperty("designtimeModule");
 		if (sDesigntimeFile) {
 			jQuery.ajax({
-				url: jQuery.sap.getResourcePath(sDesigntimeFile, ".js"),
+				url: sap.ui.require.toUrl(sDesigntimeFile, ".js"),
 				dataType: "text",
 				complete: function(oData) {
 					oCodeEditor.setValue(oData.responseText);
@@ -378,7 +378,7 @@ var mPathChecks = {
 			}
 			var sValid = "invalid";
 			jQuery.ajax({
-				url: jQuery.sap.getResourcePath(vValue, ".js"),
+				url: sap.ui.require.toUrl(vValue, ".js"),
 				async: false,
 				dataType: "text",
 				complete: function(oData) {
@@ -431,7 +431,8 @@ var mPathChecks = {
 	"is" : {
 		validate: function(vValue) {
 			try {
-				return jQuery.sap.getObject(vValue.replace(/\//gi,".")).getMetadata()._oDesignTime ? "valid" : "invalid";
+				sap.ui.requireSync("sap/base/util/ObjectPath");
+				return sap.base.util.ObjectPath.create(vValue.replace(/\//gi,".")).getMetadata()._oDesignTime ? "valid" : "invalid";
 			} catch (ex) {
 				return "invalid";
 			}
@@ -454,7 +455,7 @@ var mPathChecks = {
 		},
 		display: function(vValue) {
 			if (vValue) {
-				return new sap.m.Image({src: jQuery.sap.getResourcePath(vValue,"")});
+				return new sap.m.Image({src: sap.ui.require.toUrl(vValue,"")});
 			}
 			return null;
 		}
@@ -502,7 +503,7 @@ var mPathChecks = {
 		},
 		display: function(vValue) {
 			if (vValue) {
-				var oData = jQuery.sap.sjax({url: jQuery.sap.getResourcePath(vValue,"")});
+				var oData = jQuery.sap.sjax({url: sap.ui.require.toUrl(vValue,"")});
 				return sap.ui.xmlfragment({
 					fragmentContent: oData.data.documentElement,
 					oController: this
@@ -711,6 +712,6 @@ function validateChangeType(sType, vValue, oContext) {
 
 }
 function hasText(sKey, oBundle) {
-	return oBundle.hasText(sKey) || oBundle.getText(sKey, [], true) !== null;
+	return oBundle.hasText(sKey) || oBundle.getText(sKey, [], true) !== undefined;
 }
 })();

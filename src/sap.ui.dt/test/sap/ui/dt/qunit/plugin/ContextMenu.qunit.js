@@ -1,8 +1,6 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/dt/plugin/ContextMenu",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
@@ -17,7 +15,8 @@ sap.ui.require([
 	"sap/m/OverflowToolbarButton",
 	"sap/m/FlexBox",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/events/KeyCodes"
 ], function (
 	ContextMenuPlugin,
 	OverlayRegistry,
@@ -33,7 +32,8 @@ sap.ui.require([
 	OverflowToolbarButton,
 	FlexBox,
 	VerticalLayout,
-	sinon
+	sinon,
+	KeyCodes
 ) {
 	"use strict";
 	var oSandbox = sinon.sandbox.create();
@@ -149,7 +149,7 @@ sap.ui.require([
 			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be open");
-			QUnitUtils.triggerKeydown(oContextMenuControl.getPopover().getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+			QUnitUtils.triggerKeydown(oContextMenuControl.getPopover().getDomRef(), KeyCodes.ESCAPE);
 			this.clock.tick(400); //animation of the closing of the Popover
 			assert.ok(!oContextMenuControl.getPopover().isOpen(), "ContextMenu should be closed");
 			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
@@ -554,7 +554,7 @@ sap.ui.require([
 
 		QUnit.test("Testing onKeyDown function opening the expanded contextMenu", function (assert) {
 			var _tempListener = function (oEvent) {
-				oEvent.keyCode = jQuery.sap.KeyCodes.F10;
+				oEvent.keyCode = KeyCodes.F10;
 				oEvent.shiftKey = true;
 				oEvent.altKey = false;
 				oEvent.ctrlKey = false;
@@ -569,7 +569,7 @@ sap.ui.require([
 
 		QUnit.test("Testing onKeyDown function opening the compact contextMenu", function (assert) {
 			var _tempListener = function (oEvent) {
-				oEvent.keyCode = jQuery.sap.KeyCodes.ENTER;
+				oEvent.keyCode = KeyCodes.ENTER;
 				oEvent.shiftKey = false;
 				oEvent.altKey = false;
 				oEvent.ctrlKey = false;
@@ -1885,7 +1885,4 @@ sap.ui.require([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
-
 });

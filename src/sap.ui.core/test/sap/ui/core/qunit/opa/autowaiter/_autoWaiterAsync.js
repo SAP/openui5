@@ -1,6 +1,7 @@
+/*global QUnit, sinon */
 sap.ui.define([
 	"jquery.sap.global",
-	"unitTests/utils/loggerInterceptor",
+	"../utils/loggerInterceptor",
 	"sap/ui/test/autowaiter/_autoWaiter",
 	"sap/ui/test/autowaiter/_XHRWaiter",
 	"sap/ui/test/_opaCorePlugin",
@@ -9,7 +10,7 @@ sap.ui.define([
 	"use strict";
 
 	$.sap.unloadResources("sap/ui/test/autowaiter/_autoWaiterAsync.js", false, true, true);
-	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.autowaiter._autoWaiterAsync")[0];
+	loggerInterceptor.loadAndIntercept("sap.ui.test.autowaiter._autoWaiterAsync")[0];
 	var iPollInterval = 400;
 	var iPollTimeout = 15000;
 
@@ -123,7 +124,7 @@ sap.ui.define([
 		this.clock.tick(iTimeoutAttempts * iPollInterval);
 		assert.strictEqual(fnGetAndClearLogStub.callCount, this.fnHasToWaitStub.callCount, "Should clear the log before hasToWait call");
 
-		assert.ok(this.fnCallbackSpy.calledWithMatch(/there is still pending asynchronous work/), 
+		assert.ok(this.fnCallbackSpy.calledWithMatch(/there is still pending asynchronous work/),
 			"Should invoke the callback with the pending work log");
 		assert.ok(fnStopLogSpy.calledOnce, "Should stop listening for log entries on polling stop");
 

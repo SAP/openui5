@@ -82,21 +82,17 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 			}
 
 			//Set view for content
-			var sViewName = this._getEffectiveViewName(oOptions.viewName);
+			var sViewName = this._getEffectiveObjectName(oOptions.viewName);
 
 			var oViewOptions = {
-				viewName : sViewName,
+				name : sViewName,
 				type : oOptions.viewType,
 				id : oOptions.viewId
 			};
 
-			// Hook in the route for deprecated global view id, it has to be supported to stay compatible
-			if (this._bUseRawViewId) {
-				oView = this._oViews._getViewWithGlobalId(oViewOptions);
-			} else {
-				// Target way of getting the view
-				oView = this._oViews._getView(oViewOptions);
-			}
+			oView = this._oCache._get(oViewOptions, "View",
+				// Hook in the route for deprecated global view id, it has to be supported to stay compatible
+				this._bUseRawViewId);
 
 			// adapt the container before placing the view into it to make the rendering occur together with the next
 			// aggregation modification.
@@ -146,17 +142,17 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 				sLogMessage = "";
 
 			if (!bHasTargetControl) {
-				sLogMessage = "The target " + oOptions.name + " has no controlId set and no parent so the target cannot be displayed.";
+				sLogMessage = "The target " + oOptions._name + " has no controlId set and no parent so the target cannot be displayed.";
 				bIsValid = false;
 			}
 
 			if (!oOptions.controlAggregation) {
-				sLogMessage = "The target " + oOptions.name + " has a control id or a parent but no 'controlAggregation' was set, so the target could not be displayed.";
+				sLogMessage = "The target " + oOptions._name + " has a control id or a parent but no 'controlAggregation' was set, so the target could not be displayed.";
 				bIsValid = false;
 			}
 
 			if (!oOptions.viewName) {
-				sLogMessage = "The target " + oOptions.name + " no viewName defined.";
+				sLogMessage = "The target " + oOptions._name + " no viewName defined.";
 				bIsValid = false;
 			}
 

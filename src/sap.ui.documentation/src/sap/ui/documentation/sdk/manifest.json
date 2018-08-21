@@ -240,6 +240,11 @@
 			"target": [ "license" ]
 		  },
 		  {
+			"pattern": "TermsOfUse.txt",
+			"name": "termsOfUse",
+			"target": [ "termsOfUse" ]
+		  },
+		  {
 			"pattern": "docs/guide/{id}",
 			"name": "topicIdLegacyRoute"
 		  },
@@ -375,6 +380,12 @@
 				"viewName": "License",
 				"viewLevel": 2,
 				"viewId": "releaseNotes",
+				"controlAggregation": "detailPages"
+			},
+			"termsOfUse": {
+				"viewName": "TermsOfUse",
+				"viewLevel": 2,
+				"viewId": "termsOfUse",
 				"controlAggregation": "detailPages"
 			},
 			"versionInfo": {

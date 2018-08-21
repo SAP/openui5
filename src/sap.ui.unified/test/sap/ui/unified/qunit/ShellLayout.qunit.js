@@ -1,7 +1,6 @@
 /*global QUnit, window */
-QUnit.config.autostart = false;
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"jquery.sap.dom",
 	"sap/ui/core/Control",
@@ -26,7 +25,7 @@ sap.ui.require([
 		//curtainPaneContent: [new TestControl("_curt_pane_ctnt")],
 		header: new TestControl("_header")
 	});
-	oShell.placeAt("uiArea1");
+	oShell.placeAt("content");
 	oShell.addCurtainContent(new TestControl("_curt_ctnt"));
 	oShell.addCurtainPaneContent(new TestControl("_curt_pane_ctnt"));
 
@@ -220,8 +219,7 @@ sap.ui.require([
 
 	QUnit.test("Clear UI", function(assert) {
 		assert.expect(0);
-		jQuery("#uiArea1").remove();
+		jQuery("#content").remove();
 	});
 
-	QUnit.start();
 });

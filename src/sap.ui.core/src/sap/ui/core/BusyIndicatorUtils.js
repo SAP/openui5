@@ -3,8 +3,8 @@
  */
 
 // Provides utility class sap.ui.core.BusyIndicatorUtils
-sap.ui.define(['./BlockLayerUtils'], //require of sap/ui/core/library not possible due to cyclic dependencies
-	function(BlockLayerUtils) {
+sap.ui.define(['./BlockLayerUtils', "sap/ui/thirdparty/jquery"], //require of sap/ui/core/library not possible due to cyclic dependencies
+	function(BlockLayerUtils, jQuery) {
 	"use strict";
 
 	// Static class

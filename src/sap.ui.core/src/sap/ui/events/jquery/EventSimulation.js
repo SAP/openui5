@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define([
 	'sap/base/util/Version',
 	'sap/ui/events/PseudoEvents',
@@ -19,8 +15,9 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @exports sap/ui/events/jquery/EventSimulation
-	 * @private
+	 * @namespace
+	 * @alias module:sap/ui/events/jquery/EventSimulation
+	 * @public
 	 */
 	var oEventSimulation = {};
 

@@ -25,12 +25,12 @@ function() {
 		oRm.writeClasses();
 		oRm.write(">");
 
-		var oHeader = oCalendar.getAggregation("header");
+		var oHeader = oCalendar._getHeader();
 		if (oHeader) {
 			oRm.renderControl(oHeader);
 		}
 
-		var oGrid = oCalendar.getAggregation("grid");
+		var oGrid = oCalendar._getGrid();
 		if (oGrid) {
 			oRm.renderControl(oGrid);
 		}

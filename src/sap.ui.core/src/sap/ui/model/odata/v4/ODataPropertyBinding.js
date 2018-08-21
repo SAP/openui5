@@ -4,13 +4,13 @@
 
 //Provides class sap.ui.model.odata.v4.ODataPropertyBinding
 sap.ui.define([
+	"./ODataBinding",
+	"./lib/_Cache",
+	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/ChangeReason",
-	"sap/ui/model/PropertyBinding",
-	"./lib/_Cache",
-	"./ODataBinding",
-	"sap/base/Log"
-], function (SyncPromise, ChangeReason, PropertyBinding, _Cache, asODataBinding, Log) {
+	"sap/ui/model/PropertyBinding"
+], function (asODataBinding, _Cache, Log, SyncPromise, ChangeReason, PropertyBinding) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
@@ -45,6 +45,7 @@ sap.ui.define([
 	 *   'AggregatedDataStateChange', 'change', 'dataReceived', 'dataRequested' and
 	 *   'DataStateChange'. For unsupported events, an error is thrown.
 	 * @extends sap.ui.model.PropertyBinding
+	 * @hideconstructor
 	 * @mixes sap.ui.model.odata.v4.ODataBinding
 	 * @public
 	 * @since 1.37.0
@@ -305,6 +306,8 @@ sap.ui.define([
 		// resolving functions e.g. for oReadPromise in #checkUpdate may run after destroy of this
 		// binding and must not access the context
 		this.oContext = undefined;
+		this.mQueryOptions = undefined;
+		this.vValue = undefined;
 		PropertyBinding.prototype.destroy.apply(this, arguments);
 	};
 

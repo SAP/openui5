@@ -27,7 +27,9 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/assert",
 	"sap/base/security/encodeXML",
-	"sap/ui/dom/jquery/selectText" // jQuery Plugin "selectText"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "selectText"
+	"sap/ui/dom/jquery/selectText"
 ],
 function(
 	Bar,
@@ -52,7 +54,8 @@ function(
 	InputRenderer,
 	containsOrEquals,
 	assert,
-	encodeXML
+	encodeXML,
+	jQuery
 ) {
 	"use strict";
 
@@ -1443,6 +1446,11 @@ function(
 			return; // override InputBase.onsapescape()
 		}
 
+		if (this.getValueLiveUpdate()) {
+			// When valueLiveUpdate is true call setProperty to return back the last value.
+			this.setProperty("value", this._lastValue, true);
+		}
+
 		if (InputBase.prototype.onsapescape) {
 			InputBase.prototype.onsapescape.apply(this, arguments);
 		}
@@ -1785,7 +1793,7 @@ function(
 			var value = this.getDOMValue();
 
 			if (this.getValueLiveUpdate()) {
-				this.setProperty("value",value, true);
+				this.setProperty("value", value, true);
 				this._onValueUpdated(value);
 			}
 

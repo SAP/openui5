@@ -10,12 +10,15 @@ sap.ui.define([
 	"./rules/Button.support",
 	"./rules/CheckBox.support",
 	"./rules/Dialog.support",
+	"./rules/IconTabBar.support",
 	"./rules/Image.support",
 	"./rules/Input.support",
 	"./rules/Link.support",
 	"./rules/Panel.support",
 	"./rules/Select.support",
 	"./rules/SelectDialog.support",
+	"./rules/Table.support",
+	"./rules/Title.support",
 	"./rules/Tokenizer.support"
 ],
 	function(
@@ -24,12 +27,15 @@ sap.ui.define([
 		ButtonSupport,
 		CheckBoxSupport,
 		DialogSupport,
+		IconTabBarSupport,
 		ImageSupport,
 		InputSupport,
 		LinkSupport,
 		PanelSupport,
 		SelectSupport,
 		SelectDialogSupport,
+		TableSupport,
+		TitleSupport,
 		TokenizerSupport
 	) {
 	"use strict";
@@ -42,12 +48,15 @@ sap.ui.define([
 			ButtonSupport,
 			CheckBoxSupport,
 			DialogSupport,
+			IconTabBarSupport,
 			ImageSupport,
 			InputSupport,
 			LinkSupport,
 			PanelSupport,
 			SelectSupport,
 			SelectDialogSupport,
+			TableSupport,
+			TitleSupport,
 			TokenizerSupport
 		]
 	};

@@ -94,11 +94,11 @@ sap.ui.define([
 				var oBinding = this.oTable.getBinding("rows");
 
 				// test some defaults
-				assert.equal(oBinding.mParameters.numberOfExpandedLevels, 0, "Number of expanded levels should be 0");
-				assert.equal(oBinding.mParameters.rootLevel, 1, "RootLevel should be one");
-				assert.ok(oBinding.mParameters.collapseRecursive, "Collapse recursive should be false");
-				assert.ok(!this.oTable.getExpandFirstLevel(), "Expand first Level should be false");
-				assert.ok(!this.oTable.getUseGroupMode(), "useGroupMode should be false");
+				assert.equal(oBinding.mParameters.numberOfExpandedLevels, 0, "Number of expanded levels is 0");
+				assert.equal(oBinding.mParameters.rootLevel, 1, "RootLevel is 1");
+				assert.ok(oBinding.mParameters.collapseRecursive, "Collapse recursive is false");
+				assert.ok(!this.oTable.getExpandFirstLevel(), "Expand first Level is false");
+				assert.ok(!this.oTable.getUseGroupMode(), "useGroupMode is false");
 
 				var aRows = this.oTable.getRows();
 				assert.equal(aRows.length, 10, "10 Rows present");
@@ -110,7 +110,7 @@ sap.ui.define([
 					}
 				}
 
-				assert.equal(iCountContexts, 1, "Only one row should have a context");
+				assert.equal(iCountContexts, 1, "Only one row has a context");
 				done();
 			};
 
@@ -132,7 +132,7 @@ sap.ui.define([
 			// test expand root
 			var fnHandler1 = function() {
 				oBinding = this.oTable.getBinding("rows");
-				assert.ok(TableUtils.isInstanceOf(oBinding, "sap/ui/model/odata/v2/ODataTreeBinding"), "treeBinding class check");
+				assert.ok(oBinding.isA("sap.ui.model.odata.v2.ODataTreeBinding"), "treeBinding class check");
 
 				assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 1,
 					"Test that only one node is rendered, State: collapsed");
@@ -327,9 +327,9 @@ sap.ui.define([
 			var fnHandler1 = function() {
 				oBinding = this.oTable.getBinding("rows");
 				// test some defaults
-				assert.equal(oBinding.mParameters.numberOfExpandedLevels, 1, "Number of expanded levels should be 1");
-				assert.equal(oBinding.mParameters.rootLevel, 1, "RootLevel should be one");
-				assert.ok(this.oTable.getExpandFirstLevel(), "Expand first Level should be true");
+				assert.equal(oBinding.mParameters.numberOfExpandedLevels, 1, "Number of expanded levels is 1");
+				assert.equal(oBinding.mParameters.rootLevel, 1, "RootLevel is 1");
+				assert.ok(this.oTable.getExpandFirstLevel(), "Expand first Level is true");
 
 				var aRows = this.oTable.getRows();
 				assert.equal(aRows.length, 15, "15 Rows present");
@@ -341,7 +341,7 @@ sap.ui.define([
 					}
 				}
 
-				assert.equal(iCountContexts, 10, "10 rows should have a context");
+				assert.equal(iCountContexts, 10, "10 rows have a context");
 
 				assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 1, "ExpandToLevel(2): Test that 3 nodes are expanded");
 				assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 9, "ExpandToLevel(2): Test that 7 nodes are collapsed");
@@ -371,9 +371,9 @@ sap.ui.define([
 			var fnHandler1 = function() {
 				// test some defaults
 				oBinding = this.oTable.getBinding("rows");
-				assert.equal(oBinding.mParameters.numberOfExpandedLevels, 0, "Number of expanded levels should be 0");
-				assert.equal(oBinding.mParameters.rootLevel, 2, "RootLevel should be 2");
-				assert.ok(!this.oTable.getExpandFirstLevel(), "Expand first Level should be false");
+				assert.equal(oBinding.mParameters.numberOfExpandedLevels, 0, "Number of expanded levels is 0");
+				assert.equal(oBinding.mParameters.rootLevel, 2, "RootLevel is 2");
+				assert.ok(!this.oTable.getExpandFirstLevel(), "Expand first Level is false");
 				var aRows = this.oTable.getRows();
 				assert.equal(aRows.length, 10, "10 Rows present");
 
@@ -384,14 +384,14 @@ sap.ui.define([
 					}
 				}
 
-				assert.equal(iCountContexts, 9, "9 rows should have a context");
+				assert.equal(iCountContexts, 9, "9 rows have a context");
 
 				assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 0, "rootLevel 2: Test that 0 nodes are expanded");
 				assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 9, "rootLevel 2: Test that 9 nodes are collapsed");
 
 				assert.equal(this.oTable.getContextByIndex(0).getProperty("HierarchyNode"), "000002", "First Root Node is 000002");
 				assert.equal(this.oTable.getContextByIndex(8).getProperty("HierarchyNode"), "001180", "Last  Root Node is 001180");
-				assert.equal(this.oTable.getContextByIndex(9), undefined, "There should only be 9 Rows");
+				assert.equal(this.oTable.getContextByIndex(9), undefined, "There are only 9 Rows");
 
 				done();
 
@@ -415,7 +415,7 @@ sap.ui.define([
 				this.oTable.setSelectedIndex(1);
 				assert.equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "SelectedIndex OK");
 				assert.equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 1, "Only one row selected");
-				assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader should be selected");
+				assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader are selected");
 
 				this.oTable.setSelectionInterval(2, 4);
 				assert.equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "Selection Interval: SelectedIndex OK");
@@ -423,7 +423,7 @@ sap.ui.define([
 				assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Selection Interval: SelectedIndices OK");
 				assert.deepEqual(this.oTable.getSelectedIndices(), [2, 3, 4], "Selection Interval: SelectedIndices Values OK");
 				assert.equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 3, "Only one row selected");
-				assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 6, "Row and RowHeader should be selected");
+				assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 6, "Row and RowHeader are selected");
 
 				this.oTable.addSelectionInterval(5, 0);
 				assert.equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "Add Selection Interval: SelectedIndex OK");
@@ -431,7 +431,7 @@ sap.ui.define([
 				assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Add Selection Interval: SelectedIndices OK");
 				assert.deepEqual(this.oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5], "Add Selection Interval: SelectedIndices Values OK");
 				assert.equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 6, "Only one row selected");
-				assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 12, "Row and RowHeader should be selected");
+				assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 12, "Row and RowHeader are selected");
 
 				this.oTable.removeSelectionInterval(1, 1);
 				assert.equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "Remove Selection Interval: SelectedIndex OK");
@@ -439,7 +439,7 @@ sap.ui.define([
 				assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Remove Selection Interval: SelectedIndices OK");
 				assert.deepEqual(this.oTable.getSelectedIndices(), [0, 2, 3, 4, 5], "Remove Selection Interval: SelectedIndices Values OK");
 				assert.equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 5, "Only one row selected");
-				assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 10, "Row and RowHeader should be selected");
+				assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 10, "Row and RowHeader are selected");
 
 				assert.ok(this.oTable.isIndexSelected(0), "Index 0 selected");
 				assert.ok(!this.oTable.isIndexSelected(1), "Index 1 selected");
@@ -454,7 +454,7 @@ sap.ui.define([
 				assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Remove Selection Interval: SelectedIndices OK");
 				assert.deepEqual(this.oTable.getSelectedIndices(), [0, 2, 3, 4], "Remove Selection Interval: SelectedIndices Values OK");
 				assert.equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 4, "Only one row selected");
-				assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 8, "Row and RowHeader should be selected");
+				assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 8, "Row and RowHeader are selected");
 
 				attachRowsUpdatedOnce(this.oTable, fnHandler2, this);
 				this.oTable.addSelectionInterval(5, 5);
@@ -467,7 +467,7 @@ sap.ui.define([
 				assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Collapse(0): SelectedIndices OK");
 				assert.deepEqual(this.oTable.getSelectedIndices(), [0], "Collapse(0): SelectedIndices Values OK");
 				assert.equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 1, "Only one row selected");
-				assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader should be selected");
+				assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader are selected");
 				this.oTable.expand(0);
 			};
 
@@ -477,7 +477,7 @@ sap.ui.define([
 				assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Expand(0): SelectedIndices OK");
 				assert.deepEqual(this.oTable.getSelectedIndices(), [0], "Expand(0): SelectedIndices Values OK");
 				assert.equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 1, "Only one row selected");
-				assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader should be selected");
+				assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader are selected");
 
 				this.oTable.selectAll();
 				assert.equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "SelectAll: SelectedIndex OK");
@@ -497,7 +497,7 @@ sap.ui.define([
 					"Collapse(0), CollapseRecursive=false: SelectedIndices OK");
 				assert.deepEqual(this.oTable.getSelectedIndices(), [0], "Collapse(0), CollapseRecursive=false: SelectedIndices Values OK");
 				assert.equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 1, "Only one row selected");
-				assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader should be selected");
+				assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader are selected");
 
 				attachRowsUpdatedOnce(this.oTable, fnHandler5, this);
 				this.oTable.expand(0);
@@ -509,13 +509,13 @@ sap.ui.define([
 				assert.deepEqual(this.oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
 					"Expand(0), CollapseRecursive=false: SelectedIndices Values OK");
 				assert.equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 10, "10 rows selected");
-				assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 20, "Row and RowHeader should be selected");
+				assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 20, "Row and RowHeader are selected");
 
 				this.oTable.clearSelection();
 				assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "clearSelection: SelectedIndices OK");
 				assert.deepEqual(this.oTable.getSelectedIndices(), [], "clearSelection: SelectedIndices Values OK");
 				assert.equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 0, "No row selected");
-				assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 0, "No Row and RowHeader should be selected");
+				assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 0, "No Row and RowHeader are selected");
 
 				done();
 			};
@@ -533,7 +533,7 @@ sap.ui.define([
 			var fnHandler1 = function() {
 				this.oTable.selectAll();
 				assert.equal(this.oTable.getSelectedIndices().length, 55, "55 Nodes in Tree");
-				assert.equal(this.oTable._getTotalRowCount(), 55, "Binding length should be 55");
+				assert.equal(this.oTable._getTotalRowCount(), 55, "Binding length is 55");
 
 				var i = 1;
 				var fnVisibleRowHandler = function() {
@@ -616,7 +616,7 @@ sap.ui.define([
 
 			// check if binding is available
 			oBinding = this.oTable.getBinding();
-			assert.equal(TableUtils.isInstanceOf(oBinding, "sap/ui/model/odata/v2/ODataTreeBinding"), true, "Binding is created");
+			assert.equal(oBinding.isA("sap.ui.model.odata.v2.ODataTreeBinding"), true, "Binding is created");
 
 			// set the binding context for the table to make it absolute --> everything else should be handled by the tree binding
 			var sContextPath = "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')";

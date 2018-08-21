@@ -4,14 +4,14 @@
 
 sap.ui.define([
 	'sap/ui/dt/plugin/CutPaste',
-	'sap/ui/dt/OverlayUtil',
+	'sap/ui/dt/Util',
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/rta/plugin/RTAElementMover',
 	'sap/ui/rta/Utils'
 ],
 function(
 	ControlCutPaste,
-	OverlayUtil,
+	DtUtil,
 	Plugin,
 	RTAElementMover,
 	Utils
@@ -127,11 +127,19 @@ function(
 
 		this._executePaste(oTargetOverlay);
 
-		this.fireElementModified({
-			"command": this.getElementMover().buildMoveCommand()
+		this.getElementMover().buildMoveCommand()
+
+		.then(function(oMoveCommand) {
+			this.fireElementModified({
+				"command" : oMoveCommand
+			});
+			this.stopCutAndPaste();
+		}.bind(this))
+
+		.catch(function(oMessage) {
+			throw DtUtil.createError("CutPaste#paste", oMessage, "sap.ui.rta");
 		});
 
-		this.stopCutAndPaste();
 	};
 
 	/**

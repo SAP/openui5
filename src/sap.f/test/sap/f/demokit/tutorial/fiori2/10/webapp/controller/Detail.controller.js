@@ -34,6 +34,11 @@ sap.ui.define([
 				bCurrentShowFooterState = oObjectPage.getShowFooter();
 
 			oObjectPage.setShowFooter(!bCurrentShowFooterState);
+		},
+
+		onExit: function () {
+			this.oRouter.getRoute("master").detachPatternMatched(this._onProductMatched, this);
+			this.oRouter.getRoute("detail").detachPatternMatched(this._onProductMatched, this);
 		}
 	});
 }, true);

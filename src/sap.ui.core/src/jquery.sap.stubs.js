@@ -97,7 +97,6 @@ sap.ui.define(["sap/base/Log", "sap/base/util/defineLazyProperty", "sap/ui/third
 				"jquery.sap.history": ["history"],
 				"jquery.sap.keycodes": ["KeyCodes"],
 				"jquery.sap.mobile": [
-					"simulateMobileOnDesktop",
 					"initMobile",
 					"setIcons",
 					"setMobileWebAppCapable"
@@ -214,7 +213,12 @@ sap.ui.define(["sap/base/Log", "sap/base/util/defineLazyProperty", "sap/ui/third
 
 	function lazyLoad(sModule, oTarget, sProperty, sTargetName) {
 		return function() {
-			Log.debug("Lazy loading module \"" + sModule + "\" triggered by usage of " + sTargetName + sProperty, "jquery.sap.stubs");
+			Log.warning("Sync loading of module '" + sModule + "' due to usage of deprecated API '" + sTargetName + sProperty + "'", "jquery.sap.stubs", null, function() {
+				return {
+					type: "jquery.sap.stubs",
+					name: sTargetName + sProperty
+				};
+			});
 			sap.ui.requireSync(sModule);
 			return oTarget[sProperty];
 		};

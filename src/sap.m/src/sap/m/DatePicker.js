@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/ui/core/IconPool",
-	"sap/ui/dom/jquery/cursorPos" // jQuery Plugin "cursorPos"
+	// jQuery Plugin "cursorPos"
+	"sap/ui/dom/jquery/cursorPos"
 ],
 	function(
 		jQuery,

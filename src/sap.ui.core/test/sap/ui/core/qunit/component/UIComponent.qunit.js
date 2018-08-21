@@ -9,11 +9,16 @@ sap.ui.define([
 	"use strict";
 	/*global sinon, QUnit*/
 
+	// create content div
+	var oDIV = document.createElement("div");
+	oDIV.id = "content";
+	document.body.appendChild(oDIV);
+
 	QUnit.module("Basic UIComponent", {
 		beforeEach: function() {
 
 			// define the Component
-			sap.ui.define("my/test/Component", ["sap/ui/core/UIComponent", "sap/m/Button"], function(UIComponent, Button) {
+			sap.ui.predefine("my/test/Component", ["sap/ui/core/UIComponent", "sap/m/Button"], function(UIComponent, Button) {
 
 				return UIComponent.extend("my.test.Component", {
 
@@ -295,12 +300,12 @@ sap.ui.define([
 
 			// define the Components
 			sap.ui.loader.config({paths:{"my/own":"/anylocation"}});
-			sap.ui.define("my/own/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			sap.ui.predefine("my/own/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 
 				return UIComponent.extend("my.own.Component", {});
 
 			});
-			sap.ui.define("my/own/autoid/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			sap.ui.predefine("my/own/autoid/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 
 				return UIComponent.extend("my.own.autoid.Component", {
 					metadata: {
@@ -309,7 +314,7 @@ sap.ui.define([
 				});
 
 			});
-			sap.ui.define("my/own/prefixid/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			sap.ui.predefine("my/own/prefixid/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 
 				return UIComponent.extend("my.own.prefixid.Component", {
 					metadata: {
@@ -320,7 +325,7 @@ sap.ui.define([
 			});
 
 			// defined the controller
-			sap.ui.define("my/own/Controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
+			sap.ui.predefine("my/own/Controller.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
 
 				return Controller.extend("my.own.Controller", {
 					doSomething: function() {}
@@ -475,7 +480,7 @@ sap.ui.define([
 
 	QUnit.module("Async loading of manifest modules before component instantiation", {
 		before: function () {
-			sinon.config.useFakeTimers = false;
+			//sinon.config.useFakeTimers = false;
 			this.requireSpy = sinon.spy(sap.ui, "require");
 			this.logWarningSpy = sinon.spy(Log, "warning");
 		},
@@ -492,43 +497,35 @@ sap.ui.define([
 			oServer.xhr.filters = [];
 			oServer.xhr.addFilter(function(method, url) {
 				return (
-					url !== "/manifestModules/manifest.json?sap-language=EN"
-					&& url !== "../../../../../../resources/someRootView.view.xml"
-					&& url !== "../../../../../../resources/someRootView.view.json"
-					&& url !== "../../../../../../resources/someRootViewNotExists.view.xml"
-					&& url !== "../../../../../../resources/someCustomRouter.js"
+					!/^\/manifestModules\/scenario\d+\/manifest.json\?sap-language=EN$/.test(url)
+					&& url !== sap.ui.require.toUrl("someRootView.view.xml")
+					&& url !== sap.ui.require.toUrl("someRootView.view.json")
+					&& url !== sap.ui.require.toUrl("someRootViewNotExists.view.xml")
 				);
 			});
 			oServer.autoRespond = true;
 
 			// Respond data
-			oServer.respondWith("GET", "../../../../../../resources/someRootView.view.xml", [
+			oServer.respondWith("GET", sap.ui.require.toUrl("someRootView.view.xml"), [
 				200,
 				{ "Content-Type": "application/xml" },
 				sXMLView1
 			]);
-			oServer.respondWith("GET", "../../../../../../resources/someRootViewNotExists.view.xml", [
+			oServer.respondWith("GET", sap.ui.require.toUrl("someRootViewNotExists.view.xml"), [
 				404,
 				{ "Content-Type": "text/html" },
 				"not found"
 			]);
-			oServer.respondWith("GET", "../../../../../../resources/someRootView.view.json", [
+			oServer.respondWith("GET", sap.ui.require.toUrl("someRootView.view.json"), [
 				200,
 				{ "Content-Type": "application/javascript" },
 				"{}"
 			]);
-			oServer.respondWith("GET", "../../../../../../resources/someCustomRouter.js", [
-				200,
-				{ "Content-Type": "application/javascript" },
-				"sap.ui.define(['sap/ui/core/routing/Router'], function(Router) {\n" +
-				"\treturn Router.extend(\"someCustomRouter\", {});\n" +
-				"});\n"
-			]);
 		},
 
-		setRespondedManifest: function(manifest) {
+		setRespondedManifest: function(manifest, scenario) {
 			// Respond data
-			this.oServer.respondWith("GET", "/manifestModules/manifest.json?sap-language=EN", [
+			this.oServer.respondWith("GET", "/manifestModules/" + scenario + "/manifest.json?sap-language=EN", [
 				200,
 				{ "Content-Type": "application/json" },
 				JSON.stringify(manifest)
@@ -542,7 +539,7 @@ sap.ui.define([
 		},
 
 		after: function() {
-			sinon.config.useFakeTimers = true;
+			//sinon.config.useFakeTimers = true;
 			this.requireSpy.restore();
 			this.logWarningSpy.restore();
 		}
@@ -588,11 +585,11 @@ sap.ui.define([
 				}
 			}
 		};
-		this.setRespondedManifest(oManifest);
+		this.setRespondedManifest(oManifest, "scenario1");
 
 		var requireSpy = this.requireSpy;
-		sap.ui.define("manifestModules/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-			return UIComponent.extend("manifestModules.Component", {
+		sap.ui.predefine("manifestModules/scenario1/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("manifestModules.scenario1.Component", {
 				metadata: {
 					manifest: "json"
 				},
@@ -615,8 +612,10 @@ sap.ui.define([
 		});
 
 		return sap.ui.component({
-			name: "manifestModules",
+			name: "manifestModules.scenario1",
 			manifest: true
+		}).then(function(oInstance) {
+			console.error("instance here", oInstance);
 		});
 	});
 
@@ -642,11 +641,11 @@ sap.ui.define([
 				}
 			}
 		};
-		this.setRespondedManifest(oManifest);
+		this.setRespondedManifest(oManifest, "scenario2");
 
 		var requireSpy = this.requireSpy;
-		sap.ui.define("manifestModules/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-			return UIComponent.extend("manifestModules.Component", {
+		sap.ui.predefine("manifestModules/scenario2/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("manifestModules.scenario2.Component", {
 				metadata: {
 					manifest: "json"
 				},
@@ -657,9 +656,12 @@ sap.ui.define([
 				}
 			});
 		});
+		sap.ui.predefine("someCustomRouter", ['sap/ui/core/routing/Router'], function(Router) {
+			return Router.extend("someCustomRouter", {});
+		});
 
 		return sap.ui.component({
-			name: "manifestModules",
+			name: "manifestModules.scenario2",
 			manifest: true
 		});
 	});
@@ -673,11 +675,11 @@ sap.ui.define([
 				"rootView": "someRootView"
 			}
 		};
-		this.setRespondedManifest(oManifest);
+		this.setRespondedManifest(oManifest, "scenario3");
 
 		var requireSpy = this.requireSpy;
-		sap.ui.define("manifestModules/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-			return UIComponent.extend("manifestModules.Component", {
+		sap.ui.predefine("manifestModules/scenario3/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("manifestModules.scenario3.Component", {
 				metadata: {
 					manifest: "json"
 				},
@@ -690,7 +692,7 @@ sap.ui.define([
 		});
 
 		return sap.ui.component({
-			name: "manifestModules",
+			name: "manifestModules.scenario3",
 			manifest: true
 		});
 	});
@@ -724,11 +726,11 @@ sap.ui.define([
 				}
 			}
 		};
-		this.setRespondedManifest(oManifest);
+		this.setRespondedManifest(oManifest, "scenario4");
 
 		var logWarningSpy = this.logWarningSpy;
-		sap.ui.define("manifestModules/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-			return UIComponent.extend("manifestModules.Component", {
+		sap.ui.predefine("manifestModules/scenario4/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("manifestModules.scenario4.Component", {
 				metadata: {
 					manifest: "json"
 				},
@@ -741,7 +743,7 @@ sap.ui.define([
 		});
 
 		return sap.ui.component({
-			name: "manifestModules",
+			name: "manifestModules.scenario4",
 			manifest: true
 		}).catch(function() {
 			assert.ok(true, "Modules could not be loaded and an error occured.");

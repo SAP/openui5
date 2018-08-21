@@ -6,6 +6,7 @@
 sap.ui.define([
 	"sap/ui/core/Icon",
 	"./Input",
+	"./InputBase",
 	"./InputRenderer",
 	"sap/ui/core/Control",
 	"sap/ui/core/IconPool",
@@ -20,6 +21,7 @@ sap.ui.define([
 function(
 	Icon,
 	Input,
+	InputBase,
 	InputRenderer,
 	Control,
 	IconPool,
@@ -225,14 +227,6 @@ function(
 				},
 				aggregations: {
 					/**
-					 * Internal aggregation that contains the <code>Button</code> for incrementation.
-					 */
-					_incrementButton: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"},
-					/**
-					 * Internal aggregation that contains the <code>Button</code> for decrementation.
-					 */
-					_decrementButton: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"},
-					/**
 					 * Internal aggregation that contains the <code>Input</code>.
 					 */
 					_input: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
@@ -314,45 +308,6 @@ function(
 
 		var NumericInputRenderer = Renderer.extend(InputRenderer);
 
-		// use the InputBaseRenderer hook which opens the input tag to render before it decrement button
-		NumericInputRenderer.openInputTag = function (oRm, oNumericInput) {
-			var oStepInput = oNumericInput.getParent(),
-				oDecrementButton = oStepInput._getDecrementButton(),
-				bEditable = oStepInput.getEditable();
-
-			if (bEditable && oDecrementButton) {
-				this.renderButton(oRm, oNumericInput, oDecrementButton, ["sapMStepInputBtnDecrease"]);
-			}
-
-			InputRenderer.openInputTag.apply(this, arguments);
-		};
-
-		// use the InputBaseRenderer hook which opens the input tag to render after it increase button
-		NumericInputRenderer.closeInputTag = function(oRm, oNumericInput) {
-			var oStepInput = oNumericInput.getParent(),
-				oIncrementButton = oStepInput._getIncrementButton(),
-				bEditable = oStepInput.getEditable();
-
-			InputRenderer.closeInputTag.apply(this, arguments);
-
-			if (bEditable && oIncrementButton) {
-				this.renderButton(oRm, oNumericInput, oIncrementButton, ["sapMStepInputBtnIncrease"]);
-			}
-		};
-
-		NumericInputRenderer.renderButton = function (oRm, oNumericInput, oButton, aWrapperClasses) {
-			var bDisableButton = oNumericInput.getParent()._getIsDisabledButton(aWrapperClasses[0]);
-
-			oButton.addStyleClass("sapMStepInputBtn");
-
-			aWrapperClasses.forEach(function (sClass) {
-				oButton.addStyleClass(sClass);
-			});
-
-			bDisableButton ? oButton.addStyleClass("sapMStepInputIconDisabled") : oButton.removeStyleClass("sapMStepInputIconDisabled");
-			oRm.renderControl(oButton);
-		};
-
 		NumericInputRenderer.writeInnerAttributes = function(oRm, oControl) {
 			// inside the Input this function also sets explicitly textAlign to "End" if the type
 			// of the Input is Numeric (our case)
@@ -362,14 +317,13 @@ function(
 			if (sap.ui.getCore().getConfiguration().getRTL()) {
 				oRm.writeAttribute("dir", "ltr");
 			}
-
 		};
 
 		//Accessibility behavior of the Input needs to be extended
 		/**
 		 * Overwrites the accessibility state using the <code>getAccessibilityState</code> method of the <code>InputBaseRenderer</code>.
 		 *
-		 * @param {NumericInput} oNumericInput
+		 * @param {NumericInput} oNumericInput The numeric input instance
 		 * @returns {Array} mAccAttributes
 		 */
 		NumericInputRenderer.getAccessibilityState = function(oNumericInput) {
@@ -403,37 +357,18 @@ function(
 			return mAccAttributes;
 		};
 
-		/**
-		 * Writes the ID of the inner input.
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
-		 */
-		NumericInputRenderer.writeInnerId = function(oRm, oControl) {
-			oRm.writeAttribute("id", oControl.getId() + "-" + NumericInputRenderer.getInnerSuffix(oControl));
-		};
-
-		/**
-		 * Defines own inner ID suffix.
-		 * @returns {string} The own inner ID suffix
-		 */
-		NumericInputRenderer.getInnerSuffix = function() {
-			return "inner";
-		};
-
-		NumericInputRenderer._getDescriptionSuffix = function () {
-			// this is the suffix used inside the Input
-			// in case it is changed there it should be changed also here
-			// it's used currently only inside qunit tests to get the description dom elelemnt
-			return "-descr";
-		};
-
 		var NumericInput = Input.extend("sap.m.internal.NumericInput", {
 			constructor: function(sId, mSettings) {
 				return Input.apply(this, arguments);
 			},
 			renderer: NumericInputRenderer
 		});
+
+		NumericInput.prototype.onBeforeRendering = function() {
+			InputBase.prototype.onBeforeRendering.call(this);
+
+			this._deregisterEvents();
+		};
 
 		/**
 		 * Initializes the control.
@@ -463,7 +398,6 @@ function(
 				this.setValue(fMax);
 			}
 			this._disableButtons(vValue, fMax, fMin);
-
 		};
 
 		StepInput.prototype.setProperty = function (sPropertyName, oValue, bSuppressInvalidate) {
@@ -604,7 +538,8 @@ function(
 		 * @private
 		 */
 		StepInput.prototype._getIncrementButton = function () {
-			return this.getAggregation("_incrementButton");
+			var endIcons = this._getInput().getAggregation("_endIcon");
+			return endIcons ? endIcons[0] : null; //value state icon comes from sap.m.Input constructor and is at index 0
 		};
 
 		/**
@@ -613,7 +548,8 @@ function(
 		 * @private
 		 */
 		StepInput.prototype._getDecrementButton = function () {
-			return this.getAggregation("_decrementButton");
+			var beginIcons = this._getInput().getAggregation("_beginIcon");
+			return beginIcons ? beginIcons[0] : null;
 		};
 
 		/**
@@ -622,9 +558,8 @@ function(
 		 * @private
 		 */
 		StepInput.prototype._createIncrementButton = function () {
-			var oIcon,
-				that = this,
-				oIncrButton = new Icon({
+			var that = this;
+			var oIcon = this._getInput().addEndIcon({
 					src: IconPool.getIconURI("add"),
 					id: this.getId() + "-incrementBtn",
 					noTabStop: true,
@@ -632,15 +567,16 @@ function(
 					tooltip: StepInput.STEP_INPUT_INCREASE_BTN_TOOLTIP
 				});
 
-			this.setAggregation("_incrementButton", oIncrButton);
+			oIcon.getEnabled = function() {
+				return this.getEnabled() && (this.getValue() < this.getMax());
+			}.bind(this);
 
-			oIcon = this.getAggregation("_incrementButton");
 			oIcon.addEventDelegate({
 				onAfterRendering: function () {
 					// Set it to -1 so it still won't be part of the tabchain but can be document.activeElement
 					// see _change method, _isButtonFocused call
 					oIcon.$().attr("tabindex", "-1");
-					that._attachEvents(oIncrButton, true);
+					that._attachEvents(oIcon, true);
 				}
 			});
 
@@ -653,9 +589,8 @@ function(
 		 * @private
 		 */
 		StepInput.prototype._createDecrementButton = function() {
-			var oIcon,
-				that = this,
-				oDecrButton = new Icon({
+			var that = this;
+			var oIcon = this._getInput().addBeginIcon({
 					src: IconPool.getIconURI("less"),
 					id: this.getId() + "-decrementBtn",
 					noTabStop: true,
@@ -663,38 +598,20 @@ function(
 					tooltip: StepInput.STEP_INPUT_DECREASE_BTN_TOOLTIP
 				});
 
-			this.setAggregation("_decrementButton", oDecrButton);
+			oIcon.getEnabled = function() {
+				return this.getEnabled() && (this.getValue() > this.getMin());
+			}.bind(this);
 
-			oIcon = this.getAggregation("_decrementButton");
 			oIcon.addEventDelegate({
 				onAfterRendering: function () {
 					// Set it to -1 so it still won't be part of the tabchain but can be document.activeElement
 					// see _change method, _isButtonFocused call
 					oIcon.$().attr("tabindex", "-1");
-					that._attachEvents(oDecrButton, false);
+					that._attachEvents(oIcon, false);
 				}
 			});
 
 			return oIcon;
-		};
-
-
-		StepInput.prototype._getIsDisabledButton = function (sType) {
-			var bEnabled = this.getEnabled(),
-				fMin = this.getMin(),
-				fMax = this.getMax(),
-				fValue = this.getValue(),
-				bDisableButton = false;
-
-			switch (sType) {
-				case "sapMStepInputBtnIncrease":
-					bDisableButton = !bEnabled || (fValue >= fMax);
-					break;
-				case "sapMStepInputBtnDecrease":
-					bDisableButton = !bEnabled || (fValue <= fMin);
-					break;
-			}
-			return bDisableButton;
 		};
 
 		/**
@@ -759,27 +676,29 @@ function(
 		 */
 		StepInput.prototype._disableButtons = function (value, max, min) {
 
-			if (!this.getDomRef() || !this._isNumericLike(value)){
+			if (!this._isNumericLike(value)) {
 				return;
 			}
 
 			var bMaxIsNumber = this._isNumericLike(max),
-				bMinIsNumber = this._isNumericLike(min);
+				bMinIsNumber = this._isNumericLike(min),
+				oIncrementButton = this._getIncrementButton(),
+				oDecrementButton = this._getDecrementButton();
 
-			if (this._getDecrementButton()) {
+			if (oDecrementButton) {
 				if (bMinIsNumber && min < value && this.getEnabled()) {
-					this._getDecrementButton().$().removeClass("sapMStepInputIconDisabled");
+					oDecrementButton.toggleStyleClass("sapMStepInputIconDisabled", false);
 				}
-				if (bMinIsNumber && value <= min) {
-					this._getDecrementButton().$().addClass("sapMStepInputIconDisabled");
+				if (!this.getEnabled() || (bMinIsNumber && value <= min)) {
+					oDecrementButton.toggleStyleClass("sapMStepInputIconDisabled", true);
 				}
 			}
-			if (this._getIncrementButton()) {
+			if (oIncrementButton) {
 				if (bMaxIsNumber && value < max && this.getEnabled()) {
-					this._getIncrementButton().$().removeClass("sapMStepInputIconDisabled");
+					oIncrementButton.toggleStyleClass("sapMStepInputIconDisabled", false);
 				}
-				if (bMaxIsNumber && value >= max) {
-					this._getIncrementButton().$().addClass("sapMStepInputIconDisabled");
+				if (!this.getEnabled() || (bMaxIsNumber && value >= max)) {
+					oIncrementButton.toggleStyleClass("sapMStepInputIconDisabled", true);
 				}
 			}
 
@@ -1004,6 +923,26 @@ function(
 				this._applyValue(this._calculateNewValue(this.getLargerStep(), false).displayValue);
 				bVerifyValue = true;
 			}
+			if (oEvent.which === KeyCodes.ARROW_UP && (oEvent.ctrlKey || oEvent.metaKey)) { // ctrl + up
+				oEvent.preventDefault();
+				this._applyValue(this._calculateNewValue(1, true).displayValue);
+				bVerifyValue = true;
+			}
+			if (oEvent.which === KeyCodes.ARROW_DOWN && (oEvent.ctrlKey || oEvent.metaKey)) { // ctrl + down
+				oEvent.preventDefault();
+				this._applyValue(this._calculateNewValue(1, false).displayValue);
+				bVerifyValue = true;
+			}
+			if (oEvent.which === KeyCodes.ARROW_UP && oEvent.altKey) { // alt + up
+				oEvent.preventDefault();
+				this._applyValue(this._calculateNewValue(1, true).displayValue);
+				bVerifyValue = true;
+			}
+			if (oEvent.which === KeyCodes.ARROW_DOWN && oEvent.altKey) { // alt + down
+				oEvent.preventDefault();
+				this._applyValue(this._calculateNewValue(1, false).displayValue);
+				bVerifyValue = true;
+			}
 			if (bVerifyValue) {
 				this._verifyValue();
 			}
@@ -1190,37 +1129,31 @@ function(
 		 */
 		StepInput.prototype.setEditable = function (editable) {
 			var oResult = StepInput.prototype.setProperty.call(this, "editable", editable);
-			editable = this.getEditable();
 
-			if (this.getEditable()) {
-				this._getOrCreateDecrementButton().setVisible(true);
-				this._getOrCreateIncrementButton().setVisible(true);
-			} else {
-				this._getDecrementButton() && this._getDecrementButton().setVisible(false);
-				this._getIncrementButton() && this._getIncrementButton().setVisible(false);
-			}
+			this._getOrCreateDecrementButton().setVisible(editable);
+			this._getOrCreateIncrementButton().setVisible(editable);
 
 			return oResult;
 		};
 
 		/**
-		 * Checks whether there is an existing instance of a <code>_decrementButton</code> or it has to be created one.
+		 * Checks whether there is an existing instance of a decrement button or it has to be created.
 		 *
 		 * @returns {sap.ui.core.Icon} the icon that serves as (lightweight) button
 		 * @private
 		 */
 		StepInput.prototype._getOrCreateDecrementButton = function(){
-			return this.getAggregation("_decrementButton") ? this._getDecrementButton() : this._createDecrementButton();
+			return this._getDecrementButton() || this._createDecrementButton();
 		};
 
 		/**
-		 * Checks whether there is an existing instance of a <code>_incrementButton</code> or it has to be created one.
+		 * Checks whether there is an existing instance of an increment button or it has to be created.
 		 *
 		 * @returns {sap.ui.core.Icon} the icon that serves as (lightweight) button
 		 * @private
 		 */
 		StepInput.prototype._getOrCreateIncrementButton = function(){
-			return this.getAggregation("_incrementButton") ? this._getIncrementButton() : this._createIncrementButton();
+			return this._getIncrementButton() || this._createIncrementButton();
 		};
 
 		/**
@@ -1336,7 +1269,7 @@ function(
 		};
 
 		StepInput.prototype._writeAccessibilityState = function (sProp, sValue) {
-			var $input = this._getInput().getDomRef(NumericInputRenderer.getInnerSuffix());
+			var $input = this._getInput().getDomRef("inner");
 
 			if (!$input){
 				return;
@@ -1348,8 +1281,8 @@ function(
 		};
 
 		StepInput.prototype._isButtonFocused = function () {
-			return document.activeElement === this.getAggregation("_incrementButton").getDomRef() ||
-				document.activeElement === this.getAggregation("_decrementButton").getDomRef();
+			return document.activeElement === this._getIncrementButton().getDomRef() ||
+				document.activeElement === this._getDecrementButton().getDomRef();
 		};
 
 		/*
@@ -1444,7 +1377,7 @@ function(
 
 						that.setValue(oNewValue.value);
 
-						if (that._getIsDisabledButton("sapMStepInputBtnIncrease") || that._getIsDisabledButton("sapMStepInputBtnDecrease")) {
+						if (!that._getIncrementButton().getEnabled() || !that._getDecrementButton().getEnabled()) {
 							_resetSpinValues.call(that);
 							// fire change event when the buttons get disabled since then no mouseup event is fired
 							that.fireChange({value: that.getValue()});

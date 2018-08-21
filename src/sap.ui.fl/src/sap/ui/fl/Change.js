@@ -717,7 +717,7 @@ sap.ui.define([
 	 */
 	Change.prototype.getDependentControlIdList = function (oAppComponent) {
 		var sId;
-		var aDependentIds = this.getDependentIdList().concat();
+		var aDependentIds = this.getDependentIdList(oAppComponent).concat();
 
 		if (aDependentIds.length > 0) {
 			var oSelector = this.getSelector();

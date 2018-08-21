@@ -4,18 +4,20 @@
 
 // Provides base class sap.ui.core.Component for all components
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'./Manifest',
 	'./ComponentMetadata',
 	'./Core',
 	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/thirdparty/URI',
-	"sap/ui/performance/trace/Interaction",
-	"sap/base/assert",
-	"sap/base/Log",
-	"sap/base/util/ObjectPath",
-	'sap/base/util/UriParameters'
+	'sap/ui/performance/trace/Interaction',
+	'sap/base/assert',
+	'sap/base/Log',
+	'sap/base/util/ObjectPath',
+	'sap/base/util/UriParameters',
+	'sap/base/util/isPlainObject',
+	'sap/base/util/LoaderExtensions'
 ], function(
 	jQuery,
 	Manifest,
@@ -28,7 +30,9 @@ sap.ui.define([
 	assert,
 	Log,
 	ObjectPath,
-	UriParameters
+	UriParameters,
+	isPlainObject,
+	LoaderExtensions
 ) {
 	"use strict";
 
@@ -99,7 +103,7 @@ sap.ui.define([
 		var oData = oManifest.getEntry(sKey);
 
 		// merge / extend should only be done for objects or when entry wasn't found
-		if (oData !== undefined && !jQuery.isPlainObject(oData)) {
+		if (oData !== undefined && !isPlainObject(oData)) {
 			return oData;
 		}
 
@@ -834,7 +838,7 @@ sap.ui.define([
 	 * oComponent.getService("myLocalServiceAlias").then(function(oService) {
 	 *   oService.doSomething();
 	 * }).catch(function(oError) {
-	 *   jQuery.sap.log.error(oError);
+	 *   Log.error(oError);
 	 * });
 	 * </pre>
 	 *
@@ -945,7 +949,7 @@ sap.ui.define([
 	 * oComponent.createComponent("myUsage").then(function(oComponent) {
 	 *   oComponent.doSomething();
 	 * }).catch(function(oError) {
-	 *   jQuery.sap.log.error(oError);
+	 *   Log.error(oError);
 	 * });
 	 * </pre>
 	 *
@@ -1622,16 +1626,17 @@ sap.ui.define([
 			// load model class and log error message if it couldn't be loaded.
 			// error gets catched to continue creating the other models and not breaking the execution here
 			try {
-				//TODO: global jquery call found
-				jQuery.sap.require(oModelConfig.type);
+				sap.ui.requireSync(oModelConfig.type.replace(/\./g, "/"));
 			} catch (oError) {
 				Log.error("Component Manifest: Class \"" + oModelConfig.type + "\" for model \"" + sModelName + "\" could not be loaded. " + oError, "[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", sLogComponentName);
 				continue;
 			}
 
-			// get model class object
-			var ModelClass = ObjectPath.get(oModelConfig.type);
-			if (!ModelClass) {
+			// TODO: We don't use the return value of sap.ui.requireSync here yet.
+			// The tests for the Model creation make use of a constructor stub,
+			// and this only works from the global namespace export.
+			var fnModelClass = ObjectPath.get(oModelConfig.type);
+			if (!fnModelClass) {
 				// this could be the case if the required module doesn't register itself in the defined namespace
 				Log.error("Component Manifest: Class \"" + oModelConfig.type + "\" for model \"" + sModelName + "\" could not be found", "[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", sLogComponentName);
 				continue;
@@ -1641,10 +1646,10 @@ sap.ui.define([
 			var aArgs = [null].concat(oModelConfig.settings || []);
 
 			// create factory function by calling "Model.bind" with the provided arguments
-			var Factory = ModelClass.bind.apply(ModelClass, aArgs);
+			var fnFactory = fnModelClass.bind.apply(fnModelClass, aArgs);
 
 			// the factory will create the model with the arguments above
-			var oModel = new Factory();
+			var oModel = new fnFactory();
 
 			// add model instance to the result map
 			mModels[sModelName] = oModel;
@@ -1789,8 +1794,7 @@ sap.ui.define([
 					// We need to load the manifest.json for the metadata class as
 					// it might differ from the one already loaded
 					// If the manifest.json is part of the Component-preload it will be taken from there
-					//TODO: global jquery call found
-					pLoadManifest = jQuery.sap.loadResource({
+					pLoadManifest = LoaderExtensions.loadResource({
 						url: sDefaultManifestUrl,
 						dataType: "json",
 						async: true
@@ -2391,8 +2395,7 @@ sap.ui.define([
 		}
 
 		function getControllerModuleName() {
-			//TODO: global jquery call found
-			return jQuery.sap.getResourceName(sName + ".Component", ""); // use empty suffix to suppress ".js"
+			return (sName + ".Component").replace(/\./g, "/");
 		}
 
 		function prepareControllerClass(oClass) {
@@ -2492,16 +2495,13 @@ sap.ui.define([
 			if ( bComponentPreload && sComponentName != null && !sap.ui.loader._.getModuleState(sController.replace(/\./g, "/") + ".js") ) {
 
 				if ( bAsync ) {
-					//TODO: global jquery call found
-					sPreloadName = jQuery.sap.getResourceName(sController, http2 ? '-h2-preload.js' : '-preload.js'); // URN
-					//TODO: global jquery call found
-					return jQuery.sap._loadJSResourceAsync(sPreloadName, true);
+					sPreloadName = sController.replace(/\./g, "/") + (http2 ? '-h2-preload.js' : '-preload.js'); // URN
+					return sap.ui.loader._.loadJSResourceAsync(sPreloadName, true);
 				}
 
 				try {
 					sPreloadName = sController + '-preload'; // Module name
-					//TODO: global jquery call found
-					jQuery.sap.require(sPreloadName);
+					sap.ui.requireSync(sPreloadName.replace(/\./g, "/"));
 				} catch (e) {
 					Log.warning("couldn't preload component from " + sPreloadName + ": " + ((e && e.message) || e));
 				}
@@ -2515,7 +2515,7 @@ sap.ui.define([
 			var aPromises = [];
 			var fnCollect = bAsync ? function(oPromise) {
 				aPromises.push(oPromise);
-			} : jQuery.noop;
+			} : function() {};
 
 			// lookup the resource roots and call the register API
 			oManifest.defineResourceRoots();
@@ -2634,7 +2634,7 @@ sap.ui.define([
 				hints.preloadBundles.forEach(function(vBundle) {
 					//TODO: global jquery call found
 					phase1Preloads.push(
-						jQuery.sap._loadJSResourceAsync(processOptions(vBundle, /* ignoreLazy */ true), /* ignoreErrors */ true) );
+						sap.ui.loader._.loadJSResourceAsync(processOptions(vBundle, /* ignoreLazy */ true), /* ignoreErrors */ true) );
 				});
 			}
 
@@ -2862,8 +2862,7 @@ sap.ui.define([
 				var oRouting = oManifest.getEntry("/sap.ui5/routing");
 				if (oRouting && oRouting.routes) {
 					var sRouterClass = oManifest.getEntry("/sap.ui5/routing/config/routerClass") || "sap.ui.core.routing.Router";
-					//TODO: global jquery call found
-					var sRouterClassModule = jQuery.sap.getResourceName(sRouterClass, "");
+					var sRouterClassModule = sRouterClass.replace(/\./g, "/");
 					aModuleNames.push(sRouterClassModule);
 				}
 
@@ -2884,8 +2883,7 @@ sap.ui.define([
 					if (!oModelConfig.type) {
 						continue;
 					}
-					//TODO: global jquery call found
-					var sModuleName = jQuery.sap.getResourceName(oModelConfig.type, "");
+					var sModuleName = oModelConfig.type.replace(/\./g, "/");
 					if (aModuleNames.indexOf(sModuleName) === -1) {
 						aModuleNames.push(sModuleName);
 					}

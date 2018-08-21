@@ -31,7 +31,7 @@ sap.ui.define([
 		 *
 		 * @class
 		 * @param {object} oOptions all of the parameters defined in {@link sap.m.routing.Targets#constructor} are accepted here, except for children you need to specify the parent.
-		 * @param {sap.ui.core.routing.Views} oViews All views required by this target will get created by the views instance using {@link sap.ui.core.routing.Views#getView}
+		 * @param {sap.ui.core.routing.TargetCache} oCache All views required by this target will get created by the views instance using {@link sap.ui.core.routing.Views#getView}
 		 * @param {sap.ui.core.routing.Target} [oParent] the parent of this target. Will also get displayed, if you display this target. In the config you have the fill the children property {@link sap.m.routing.Targets#constructor}
 		 * @public
 		 * @since 1.28.1
@@ -40,7 +40,8 @@ sap.ui.define([
 		 */
 		var Target = EventProvider.extend("sap.ui.core.routing.Target", /** @lends sap.ui.core.routing.Target.prototype */ {
 
-			constructor : function(oOptions, oViews) {
+			constructor : function(oOptions, oCache) {
+				var sErrorMessage;
 				// temporarily: for checking the url param
 				function checkUrl() {
 					if (new UriParameters(window.location.href).get("sap-ui-xx-asyncRouting") === "true") {
@@ -55,8 +56,15 @@ sap.ui.define([
 					oOptions._async = checkUrl();
 				}
 
-				this._oOptions = oOptions;
-				this._oViews = oViews;
+				if (oOptions.type === "Component" && !oOptions._async) {
+					sErrorMessage = "sap.ui.core.routing.Target doesn't support loading component in synchronous mode, please switch routing to async";
+					Log.error(sErrorMessage);
+					throw new Error(sErrorMessage);
+				}
+
+				this._updateOptions(oOptions);
+
+				this._oCache = oCache;
 				EventProvider.apply(this, arguments);
 
 				if (this._oOptions.title) {
@@ -83,7 +91,7 @@ sap.ui.define([
 			destroy : function () {
 				this._oParent = null;
 				this._oOptions = null;
-				this._oViews = null;
+				this._oCache = null;
 				if (this._oTitleProvider) {
 					this._oTitleProvider.destroy();
 				}
@@ -160,7 +168,7 @@ sap.ui.define([
 				var sTitle = this._oTitleProvider && this._oTitleProvider.getTitle();
 				if (sTitle) {
 					this.fireTitleChanged({
-						name: this._oOptions.name,
+						name: this._oOptions._name,
 						title: sTitle
 					});
 				}
@@ -206,7 +214,7 @@ sap.ui.define([
 				// in case the title is changed before the first event listener is attached, we need to notify, too
 				if (!bHasListener && sTitle && this._bIsDisplayed) {
 					this.fireTitleChanged({
-						name: this._oOptions.name,
+						name: this._oOptions._name,
 						title: sTitle
 					});
 				}
@@ -232,14 +240,40 @@ sap.ui.define([
 				return this.fireEvent(this.M_EVENTS.TITLE_CHANGED, mArguments);
 			},
 
-			_getEffectiveViewName : function (sViewName) {
-				var sViewPath = this._oOptions.viewPath;
+			_getEffectiveObjectName : function (sName) {
+				var sPath = this._oOptions.path;
 
-				if (sViewPath) {
-					sViewName = sViewPath + "." + sViewName;
+				if (sPath) {
+					sName = sPath + "." + sName;
 				}
 
-				return sViewName;
+				return sName;
+			},
+
+			_updateOptions: function (oOptions) {
+				// convert the legacy syntax to the new one
+				// if "viewName" is set, it's converted to "type" and "name"
+				// meanwhile, the "viewPath" is also set to "path" and the
+				// "viewId" is also set to "id"
+				if (oOptions.viewName) {
+					// if the target's name is given under the "name" property,
+					// copy it to "_name" before overwritting it with the "viewName"
+					if (oOptions.name) {
+						oOptions._name = oOptions.name;
+					}
+					oOptions.type = "View";
+					oOptions.name = oOptions.viewName;
+
+					if (oOptions.viewPath) {
+						oOptions.path = oOptions.viewPath;
+					}
+
+					if (oOptions.viewId) {
+						oOptions.id = oOptions.viewId;
+					}
+				}
+
+				this._oOptions = oOptions;
 			},
 
 			_bindTitleInTitleProvider : function(oView) {
@@ -340,7 +374,7 @@ sap.ui.define([
 
 				if (this._oTarget._bIsDisplayed) {
 					this._oTarget.fireTitleChanged({
-						name: this._oTarget._oOptions.name,
+						name: this._oTarget._oOptions._name,
 						title: sTitle
 					});
 				}

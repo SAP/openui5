@@ -278,7 +278,7 @@ sap.ui.define([
 			},
 
 			handleIntervalSelect: function (oEvent) {
-				var oPC = oEvent.oSource;
+				var oPC = oEvent.getSource();
 				var oStartDate = oEvent.getParameter("startDate");
 				var oEndDate = oEvent.getParameter("endDate");
 				var oRow = oEvent.getParameter("row");

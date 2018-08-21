@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.AnalyticalColumnMenu.
-sap.ui.define(['./ColumnMenu', './library'],
-	function(ColumnMenu, library) {
+sap.ui.define(['./ColumnMenu', './library', "sap/ui/thirdparty/jquery"],
+	function(ColumnMenu, library, jQuery) {
 	"use strict";
 
 	// shortcut

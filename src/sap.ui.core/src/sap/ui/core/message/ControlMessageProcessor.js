@@ -3,8 +3,8 @@
  */
 
 // Provides the implementation for the ControlControlMessageProcessor implementations
-sap.ui.define(['sap/ui/core/message/MessageProcessor'],
-	function(MessageProcessor) {
+sap.ui.define(['sap/ui/core/message/MessageProcessor', "sap/ui/thirdparty/jquery"],
+	function(MessageProcessor, jQuery) {
 	"use strict";
 
 

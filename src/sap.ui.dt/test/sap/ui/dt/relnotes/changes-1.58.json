@@ -61,6 +61,12 @@
         "type": "FIX",
         "text": " Revise arrow key navigation",
         "references": []
+      },
+      {
+        "id": "7c76c9461fee6186d4d7f9fa05ed68a837aea389",
+        "type": "FIX",
+        "text": " Fix errors in stable id check",
+        "references": []
       }
     ]
   }

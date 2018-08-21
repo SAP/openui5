@@ -37,7 +37,9 @@ sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/base/util/deepEqual",
 	"sap/base/util/merge",
-	"sap/base/security/encodeURL"
+	"sap/base/security/encodeURL",
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/isPlainObject"
 ], function(
 	URI,
 	BindingMode,
@@ -64,7 +66,9 @@ sap.ui.define([
 	UriParameters,
 	deepEqual,
 	merge,
-	encodeURL
+	encodeURL,
+	jQuery,
+	isPlainObject
 ) {
 
 	"use strict";
@@ -2381,7 +2385,7 @@ sap.ui.define([
 			return oValue;
 		}
 		// if value is a plain value and not an object we return directly
-		if (!jQuery.isPlainObject(oValue)) {
+		if (!isPlainObject(oValue)) {
 			return oValue;
 		}
 
@@ -2425,7 +2429,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.getObject = function(sPath, oContext, mParameters) {
 		// Fallback for optional parameters
-		if (jQuery.isPlainObject(oContext)) {
+		if (isPlainObject(oContext)) {
 			mParameters = oContext;
 			oContext = undefined;
 		}
@@ -2437,7 +2441,7 @@ sap.ui.define([
 			aExpand = [], aSelect = [];
 
 		// If path does not point to an entity, just return the value
-		if (!oEntityType || !jQuery.isPlainObject(oValue) || !oValue.__metadata || !oValue.__metadata.uri) {
+		if (!oEntityType || !isPlainObject(oValue) || !oValue.__metadata || !oValue.__metadata.uri) {
 			return oValue;
 		}
 
@@ -2611,7 +2615,7 @@ sap.ui.define([
 			}
 		}
 		//if we have a changed Entity/complex type we need to extend it with the backend data
-		if (jQuery.isPlainObject(oChangedNode)) {
+		if (isPlainObject(oChangedNode)) {
 			oNode =  bOriginalValue ? oOrigNode : merge({}, oOrigNode, oChangedNode);
 		}
 		return oNode;
@@ -4896,7 +4900,7 @@ sap.ui.define([
 		function updateChangedEntities(oOriginalObject, oChangedObject) {
 			jQuery.each(oChangedObject,function(sKey) {
 				var sActPath = sRootPath + '/' + sKey;
-				if (jQuery.isPlainObject(oChangedObject[sKey]) && jQuery.isPlainObject(oOriginalObject[sKey])) {
+				if (isPlainObject(oChangedObject[sKey]) && isPlainObject(oOriginalObject[sKey])) {
 					updateChangedEntities(oOriginalObject[sKey], oChangedObject[sKey]);
 					if (jQuery.isEmptyObject(oChangedObject[sKey])) {
 						delete oChangedObject[sKey];
@@ -5012,7 +5016,7 @@ sap.ui.define([
 
 		function updateChangedEntities(oOriginalObject, oChangedObject) {
 			jQuery.each(oChangedObject,function(sKey) {
-				if (jQuery.isPlainObject(oChangedObject[sKey]) && jQuery.isPlainObject(oOriginalObject[sKey])) {
+				if (isPlainObject(oChangedObject[sKey]) && isPlainObject(oOriginalObject[sKey])) {
 					updateChangedEntities(oOriginalObject[sKey], oChangedObject[sKey]);
 					if (jQuery.isEmptyObject(oChangedObject[sKey])) {
 						delete oChangedObject[sKey];
@@ -5394,7 +5398,7 @@ sap.ui.define([
 				for (var i = 0; i < oEntityMetadata.property.length; i++) {
 					var oPropertyMetadata = oEntityMetadata.property[i];
 
-					var bPropertyInArray = jQuery.inArray(oPropertyMetadata.name,vProperties) > -1;
+					var bPropertyInArray = (vProperties ? vProperties.indexOf(oPropertyMetadata.name) : -1) > -1;
 					if (!vProperties || bPropertyInArray)  {
 						oEntity[oPropertyMetadata.name] = that._createPropertyValue(oPropertyMetadata.type);
 						if (bPropertyInArray) {
@@ -5610,9 +5614,11 @@ sap.ui.define([
 		function wrapHandler(fn) {
 			return function() {
 				// request finished, remove request handle from pending request array
-				var iIndex = jQuery.inArray(oRequestHandle, that.aPendingRequestHandles);
-				if (iIndex > -1) {
-					that.aPendingRequestHandles.splice(iIndex, 1);
+				if (that.aPendingRequestHandles){
+					var iIndex = that.aPendingRequestHandles.indexOf(oRequestHandle);
+					if (iIndex > -1) {
+						that.aPendingRequestHandles.splice(iIndex, 1);
+					}
 				}
 
 				// call original handler method
@@ -5937,7 +5943,7 @@ sap.ui.define([
 		while (aParts.length > 0)  {
 			var sEntryPath = aParts.join("/"),
 				oObject = this._getObject(sEntryPath);
-			if (jQuery.isPlainObject(oObject)) {
+			if (isPlainObject(oObject)) {
 				var sKey = this._getKey(oObject);
 				if (sKey) {
 					oEntity = oObject;
@@ -6013,7 +6019,7 @@ sap.ui.define([
 				continue;
 			}
 			var  oObject = oChangedEntity[n];
-			if (jQuery.isPlainObject(oObject)) {
+			if (isPlainObject(oObject)) {
 				this.increaseLaundering(sPath + "/" + n, oObject);
 			} else {
 				var sTargetPath = sPath + "/" + n;
@@ -6045,7 +6051,7 @@ sap.ui.define([
 			}
 			var oObject = oChangedEntity[n],
 				sTargetPath = sPath + "/" + n;
-			if (jQuery.isPlainObject(oObject)) {
+			if (isPlainObject(oObject)) {
 				this.decreaseLaundering(sTargetPath, oObject);
 			} else {
 				if (sTargetPath in this.mLaunderingState) {

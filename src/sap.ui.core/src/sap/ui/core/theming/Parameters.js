@@ -11,9 +11,9 @@
 sap.ui.define([
 	'sap/ui/thirdparty/URI',
 	'../Element',
-	"sap/base/util/UriParameters",
-	"sap/base/Log",
-	'jquery.sap.sjax'
+	'sap/base/util/UriParameters',
+	'sap/base/Log',
+	'sap/ui/thirdparty/jquery'
 ],
 	function(URI, Element, UriParameters, Log, jQuery) {
 	"use strict";
@@ -160,8 +160,6 @@ sap.ui.define([
 			}
 
 			// load library-parameters.json (as fallback solution)
-			var oResponse,
-					oResult;
 
 			// derive parameter file URL from CSS file URL
 			// $1: name of library (incl. variants)
@@ -178,23 +176,26 @@ sap.ui.define([
 			}
 
 			// load and evaluate parameter file
-			oResponse = jQuery.sap.sjax({url:sUrl,dataType:'json'});
-			if (oResponse.success) {
-				oResult = oResponse.data;
-
-				if ( Array.isArray(oResult) ) {
-					// in the sap-ui-merged use case, multiple JSON files are merged into and transfered as a single JSON array
-					for (var j = 0; j < oResult.length; j++) {
-						var oParams = oResult[j];
-						mergeParameters(oParams, sThemeBaseUrl);
+			jQuery.ajax({
+				url: sUrl,
+				dataType: 'json',
+				async: false,
+				success: function(data, textStatus, xhr) {
+					if (Array.isArray(data)) {
+						// in the sap-ui-merged use case, multiple JSON files are merged into and transfered as a single JSON array
+						for (var j = 0; j < data.length; j++) {
+							var oParams = data[j];
+							mergeParameters(oParams, sThemeBaseUrl);
+						}
+					} else {
+						mergeParameters(data, sThemeBaseUrl);
 					}
-				} else {
-					mergeParameters(oResult, sThemeBaseUrl);
+				},
+				error: function(xhr, textStatus, error) {
+					// ignore failure at least temporarily as long as there are libraries built using outdated tools which produce no json file
+					Log.error("Could not load theme parameters from: " + sUrl, error); // could be an error as well, but let's avoid more CSN messages...
 				}
-			} else {
-				// ignore failure at least temporarily as long as there are libraries built using outdated tools which produce no json file
-				Log.error("Could not load theme parameters from: " + sUrl, oResponse.error); // could be an error as well, but let's avoid more CSN messages...
-			}
+			});
 		}
 
 		function getParameters() {

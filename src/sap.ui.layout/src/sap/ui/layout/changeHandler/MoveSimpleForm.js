@@ -5,9 +5,10 @@
 sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/base/util/uid",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
-		function(JsControlTreeModifier, uid, Log) {
+		function(JsControlTreeModifier, uid, Log, jQuery) {
 			"use strict";
 
 			/**

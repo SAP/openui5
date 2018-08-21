@@ -49,6 +49,24 @@
         "type": "FIX",
         "text": " Table: Edit mode navigation with sap.m.Select repaired",
         "references": []
+      },
+      {
+        "id": "40a943f14426982cfcc5f9bf89d33cdea7bd8fd1",
+        "type": "FEATURE",
+        "text": " ODataTreeBinding: Add expand node to level API",
+        "references": []
+      },
+      {
+        "id": "2bbb20c42fc05c44bad3f723f891048a1a86dac0",
+        "type": "FEATURE",
+        "text": " thirdparty: update es6-promise polyfill to version 4.2.4",
+        "references": []
+      },
+      {
+        "id": "e6fea4d1017fc5b3e6c127cd9d35afd7c7cdad84",
+        "type": "FIX",
+        "text": " table.TableDragAndDropExtension: fix DropPosition dependency",
+        "references": []
       }
     ]
   }

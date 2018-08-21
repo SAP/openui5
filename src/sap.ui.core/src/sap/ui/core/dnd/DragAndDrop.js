@@ -4,9 +4,11 @@
 sap.ui.define([
 	"sap/ui/Device",
 	"../UIArea",
-	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "control"
+	"sap/ui/dom/jquery/control"
 ],
-function(Device, UIArea) {
+function(Device, UIArea, jQuery) {
 	"use strict";
 
 	var DnD = {},

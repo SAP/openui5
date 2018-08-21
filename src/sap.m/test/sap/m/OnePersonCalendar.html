@@ -17,30 +17,32 @@
 
 
 	<script>
+
+		var oView1 = new sap.m.OnePersonView('view1',{
+			key: "key1",
+			intervalType: sap.m.OnePersonCalendarView.Day,
+			title: "Day"
+		});
+		var oView2 = new sap.m.OnePersonView('view2',{
+			key: "key2",
+			intervalType: sap.m.OnePersonCalendarView.WorkWeek,
+			title: "Work Week"
+		});
+		var oView3 = new sap.m.OnePersonView('view3',{
+			key: "key3",
+			intervalType: sap.m.OnePersonCalendarView.Week,
+			title: "Week"
+		});
+
 		var oOPH = new sap.m.OnePersonCalendar("OnePersonCalendar", {
+			title: "OnePersonCalendar",
 			startDate: new Date(2018, 6, 8),
 			startHour: 8,
 			endHour: 20,
 			appointmentsVisualization: "Filled",
 			showFullDay: false,
+			views: [oView1],
 			actions: [
-				new sap.m.Title("title",{
-					text: "OnePersonHeader"
-				}),
-				new sap.m.ToolbarSpacer(),
-				new sap.m.SegmentedButton('ViewSwitch1', {
-					buttons: [
-						new sap.m.Button({
-							text: "Day"
-						}),
-						new sap.m.Button({
-							text: "Work Week"
-						}),
-						new sap.m.Button({
-							text: "Week"
-						})
-					]}
-				),
 				new sap.m.ToggleButton("showFullDayButton", {
 					text: "Full day",
 					press: function (oEvent) {
@@ -168,9 +170,8 @@
 					type: "Type12",
 					startDate: new Date(2018, 6, 8, 20, 0, 0),
 					endDate: new Date(2018, 6, 8, 21, 0, 0)
-				})
+				}),
 
-				,
 				new sap.ui.unified.CalendarAppointment({
 					title: "Appointment 13",
 					type: "Type13",
@@ -218,9 +219,8 @@
 					type: "Type20",
 					startDate: new Date(2018, 6, 9, 15, 0, 0),
 					endDate: new Date(2018, 6, 9, 16, 0, 0)
-				})
+				}),
 
-				,
 				new sap.ui.unified.CalendarAppointment({
 					title: "Appointment 21 - 5",
 					type: "Type20",
@@ -262,9 +262,8 @@
 					type: "Type20",
 					startDate: new Date(2018, 6, 10, 19, 0, 0),
 					endDate: new Date(2018, 6, 10, 19, 35, 0)
-				})
+				}),
 
-				,
 				new sap.ui.unified.CalendarAppointment({
 					title: "Appointment 28",
 					type: "Type01",
@@ -282,21 +281,20 @@
 					type: "Type03",
 					startDate: new Date(2018, 6, 11, 11, 30, 0),
 					endDate: new Date(2018, 6, 11, 15, 0, 0)
-				})
+				}),
 
-				,
-				// new sap.ui.unified.CalendarAppointment({
-				// 	title: "Appointment 31",
-				// 	type: "Type04",
-				// 	startDate: new Date(2018, 6, 12, 7, 0, 0),
-				// 	endDate: new Date(2018, 6, 12, 15, 30, 0)
-				// }),
-				// new sap.ui.unified.CalendarAppointment({
-				// 	title: "Appointment 32",
-				// 	type: "Type05",
-				// 	startDate: new Date(2018, 6, 12, 18, 0, 0),
-				// 	endDate: new Date(2018, 6, 12, 22, 30, 0)
-				// }),
+				new sap.ui.unified.CalendarAppointment({
+					title: "Appointment 31",
+					type: "Type04",
+					startDate: new Date(2018, 6, 12, 7, 0, 0),
+					endDate: new Date(2018, 6, 12, 15, 30, 0)
+				}),
+				new sap.ui.unified.CalendarAppointment({
+					title: "Appointment 32",
+					type: "Type05",
+					startDate: new Date(2018, 6, 12, 18, 0, 0),
+					endDate: new Date(2018, 6, 12, 22, 30, 0)
+				}),
 				new sap.ui.unified.CalendarAppointment({
 					title: "Appointment 33",
 					type: "Type06",
@@ -308,9 +306,53 @@
 					type: "Type07",
 					startDate: new Date(2018, 6, 11, 15, 0, 0),
 					endDate: new Date(2018, 6, 13, 17, 0, 0)
+				}),
+
+				new sap.m.CalendarAppointment({
+					title: "Full 1",
+					fullDay: true,
+					startDate: new Date(2018, 6, 12, 15, 30, 0),
+					endDate: new Date(2018, 6, 13, 16, 30, 0)
+				}),
+				new sap.m.CalendarAppointment({
+					title: "Full 2",
+					fullDay: true,
+					startDate: new Date(2018, 6, 7, 15, 30, 0),
+					endDate: new Date(2018, 6, 11, 16, 30, 0)
+				}),
+				new sap.m.CalendarAppointment({
+					title: "Full 3",
+					fullDay: true,
+					startDate: new Date(2018, 6, 6, 15, 30, 0),
+					endDate: new Date(2018, 6, 16, 16, 30, 0)
+				}),
+				new sap.m.CalendarAppointment({
+					title: "Full 4",
+					fullDay: true,
+					startDate: new Date(2018, 6, 14, 15, 30, 0),
+					endDate: new Date(2018, 6, 20, 16, 30, 0)
+				}),
+				new sap.m.CalendarAppointment({
+					title: "Full 5",
+					fullDay: true,
+					startDate: new Date(2018, 6, 15, 15, 30, 0),
+					endDate: new Date(2018, 6, 17, 16, 30, 0)
+				}),
+				new sap.m.CalendarAppointment({
+					title: "Full 6",
+					fullDay: true,
+					startDate: new Date(2018, 6, 7, 15, 30, 0),
+					endDate: new Date(2018, 6, 8, 16, 30, 0)
 				})
 			]
 		}).placeAt("body");
+		oOPH.addView(oView2);
+		oOPH.addView(oView3);
+		// oOPH.addView(oView3);
+		// oOPH.insertView(oView2, 0);
+		// oOPH.removeAllViews();
+		// oOPH.removeView(oView1);
+		// oOPH.destroyViews();
 	</script>
 	<style>
 		body {

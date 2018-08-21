@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/internal/Utils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/merge"
 ], function(
 	ChangePersistenceFactory,
 	ChangePersistence,
@@ -16,7 +17,8 @@ sap.ui.define([
 	Utils,
 	Settings,
 	FlexUtils,
-	jQuery
+	jQuery,
+	fnBaseMerge
 ) {
 	"use strict";
 
@@ -175,7 +177,7 @@ sap.ui.define([
 	 * @sap-restricted
 	 */
 	DescriptorChange.prototype.getJson = function() {
-		return jQuery.extend(true, {}, this._getMap());
+		return fnBaseMerge({}, this._getMap());
 	};
 
 //Descriptor LREP Change Factory

@@ -1,16 +1,13 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(["sap/base/assert"], function(assert) {
 
 	"use strict";
 
 	/**
-	 * @exports sap/base/security/URLWhitelist
+	 * @namespace
+	 * @alias module:sap/base/security/URLWhitelist
 	 */
 	var oURLWhitelist = {};
 
@@ -46,7 +43,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	/**
 	 * Clears the whitelist for URL validation
 	 *
-	 * @private
+	 * @public
 	 */
 	oURLWhitelist.clear = function() {
 		aWhitelist.splice(0,aWhitelist.length);
@@ -59,7 +56,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	 * @param {string} host The host of the URL
 	 * @param {string} port The port of the URL
 	 * @param {string} path the path of the URL
-	 * @private
+	 * @public
 	 */
 	oURLWhitelist.add = function(protocol, host, port, path) {
 		var oEntry = new URLWhitelistEntry(protocol, host, port, path);
@@ -71,7 +68,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	 * Deletes an entry from the whitelist entry
 	 *
 	 * @param {sap/base/security/URLWhitelistEntry} oEntry The entry to be deleted
-	 * @private
+	 * @public
 	 */
 	oURLWhitelist.delete = function(oEntry) {
 		aWhitelist.splice(aWhitelist.indexOf(oEntry), 1);
@@ -81,7 +78,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	 * Gets an array with the whitelist entries
 	 *
 	 * @returns {sap/base/security/URLWhitelistEntry[]} An array with whitelist entries
-	 * @private
+	 * @public
 	 */
 	oURLWhitelist.entries = function() {
 		return aWhitelist.slice();
@@ -196,10 +193,9 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	 * any URL that passes the syntactic checks above, additionally will be tested against
 	 * the content of the whitelist.
 	 *
-	 * @exports sap/base/util/validate
 	 * @param {string} sUrl URL to be validated
 	 * @return {boolean} true if valid, false if not valid
-	 * @private
+	 * @public
 	 */
 	oURLWhitelist.validate = function(sUrl) {
 

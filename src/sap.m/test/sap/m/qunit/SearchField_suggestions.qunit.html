@@ -90,6 +90,8 @@
 			var popup = sap.ui.getCore().byId(popupId);
 			assert.ok(!!popup, "popup exists");
 
+			assert.ok(popup.getDomRef().style.minWidth, 'popup min-width is set');
+
 			if (!popup) {
 				return;
 			}
@@ -301,6 +303,26 @@
 			// close
 			oSF.suggest(false);
 			this.clock.tick(1000);
+		});
+
+		QUnit.module("Delayed suggestions");
+		QUnit.test("Test suggestion to be fired after 400ms onInput", function(assert) {
+
+			var fnFireSuggest = this.spy(oSF, 'fireSuggest');
+			// set value and trigger onInput
+			oSF.getFocusDomRef().value = "D";
+			oSF.onInput();
+
+			oSF.getFocusDomRef().value = "D0";
+			oSF.onInput();
+
+			oSF.getFocusDomRef().value = "D00";
+			oSF.onInput();
+
+			this.clock.tick(400);
+			assert.strictEqual(fnFireSuggest.callCount, 1,  "Suggest should be fired ones");
+
+			fnFireSuggest.restore();
 		});
 
 		QUnit.module("Clean up");

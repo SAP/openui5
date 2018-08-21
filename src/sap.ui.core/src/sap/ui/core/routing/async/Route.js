@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/Device', "sap/base/Log"], function(Device, Log) {
+sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery"], function(Device, Log, jQuery) {
 	"use strict";
 
 	/**
@@ -41,7 +41,7 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log"], function(Device, Log) {
 				this._oNestingParent._routeMatched(oArguments, oSequencePromise, this);
 			}
 
-			oConfig =  jQuery.extend({}, oRouter._oConfig, this._oConfig);
+			oConfig = jQuery.extend({}, oRouter._oConfig, this._oConfig);
 
 			// make a copy of arguments and forward route config to target
 			oTargetData = jQuery.extend({}, oArguments);
@@ -66,7 +66,7 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log"], function(Device, Log) {
 			if (this._oTarget) {
 				oTarget = this._oTarget;
 				// update the targets config so defaults are taken into account - since targets cannot be added in runtime they don't merge configs like routes do
-				oTarget._oOptions = this._convertToTargetOptions(oConfig);
+				oTarget._updateOptions(this._convertToTargetOptions(oConfig));
 
 				oSequencePromise = oTarget._place(oSequencePromise);
 

@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/dt/ElementOverlay',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/OverlayUtil',
+	'sap/ui/dt/Util',
 	'sap/ui/fl/changeHandler/BaseTreeModifier',
 	'sap/ui/fl/Utils',
 	'sap/ui/fl/variants/VariantManagement',
@@ -23,6 +24,7 @@ sap.ui.define([
 	ElementOverlay,
 	OverlayRegistry,
 	OverlayUtil,
+	DtUtil,
 	BaseTreeModifier,
 	flUtils,
 	VariantManagement,
@@ -90,8 +92,7 @@ sap.ui.define([
 		}
 
 		if (oControl instanceof VariantManagement) {
-			var oControl = oOverlay.getElement(),
-				vAssociationElement = oControl.getFor(),
+			var vAssociationElement = oControl.getFor(),
 				aVariantManagementTargetElements;
 
 			sVariantManagementReference = BaseTreeModifier.getSelector(oControl, flUtils.getComponentForControl(oControl)).id;
@@ -187,7 +188,7 @@ sap.ui.define([
 	};
 
 	ControlVariant.prototype._getVariantModel = function(oElement) {
-		var oAppComponent = flUtils.getAppComponentForControl(oElement);
+		var oAppComponent = flUtils.getAppComponentForControl(oElement, true);
 		return oAppComponent ? oAppComponent.getModel(ControlVariant.MODEL_NAME) : undefined;
 	};
 
@@ -336,12 +337,19 @@ sap.ui.define([
 		var oDesignTimeMetadata = oTargetOverlay.getDesignTimeMetadata(),
 			oTargetElement = oTargetOverlay.getElement();
 
-		var oSwitchCommand = this.getCommandFactory().getCommandFor(oTargetElement, "switch", {
+		this.getCommandFactory().getCommandFor(oTargetElement, "switch", {
 			targetVariantReference: sNewVariantReference,
 			sourceVariantReference: sCurrentVariantReference
-		}, oDesignTimeMetadata);
-		this.fireElementModified({
-			"command" : oSwitchCommand
+		}, oDesignTimeMetadata)
+
+		.then(function(oSwitchCommand) {
+			this.fireElementModified({
+				"command" : oSwitchCommand
+			});
+		}.bind(this))
+
+		.catch(function(oMessage) {
+			throw DtUtil.createError("ControlVariant#switchVariant", oMessage, "sap.ui.rta");
 		});
 	};
 
@@ -356,27 +364,27 @@ sap.ui.define([
 		this.startEdit(oElementOverlay);
 	};
 
-	ControlVariant.prototype.startEdit = function(oOverlay) {
-		var oVariantManagementControl = oOverlay.getElement(),
-			vDomRef = oOverlay.getDesignTimeMetadata().getDomRef();
+	ControlVariant.prototype.startEdit = function(oVariantManagementOverlay) {
+		var oVariantManagementControl = oVariantManagementOverlay.getElement(),
+			vDomRef = oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
 		var oVariantTitleElement = oVariantManagementControl.getTitle();
 		var sPreviousText = oVariantTitleElement.getText();
 		var fnHandleStartEdit = RenameHandler.startEdit.bind( this, {
-			overlay: oOverlay,
+			overlay: oVariantManagementOverlay,
 			domRef: vDomRef,
 			pluginMethodName: "plugin.ControlVariant.startEdit"
 		});
 
-		if (oOverlay._triggerDuplicate) {
+		if (oVariantManagementOverlay._triggerDuplicate) {
 			var sCustomTextForDuplicate = this._getVariantTitleForCopy(
 				sPreviousText,
-				oOverlay.getVariantManagement(),
+				oVariantManagementOverlay.getVariantManagement(),
 				this._getVariantModel(oVariantManagementControl).getData()
 			);
 
 			oVariantManagementControl.getTitle().setText(sCustomTextForDuplicate);
 
-			oOverlay.attachEventOnce("geometryChanged", function() {
+			oVariantManagementOverlay.attachEventOnce("geometryChanged", function() {
 				fnHandleStartEdit();
 			}, this);
 		} else {
@@ -400,14 +408,14 @@ sap.ui.define([
 	};
 
 	ControlVariant.prototype._createDuplicateCommand = function (mPropertyBag) {
-		var oDuplicateCommand = this.getCommandFactory().getCommandFor(mPropertyBag.element, "duplicate", {
+		return this.getCommandFactory().getCommandFor(mPropertyBag.element, "duplicate", {
 			sourceVariantReference: mPropertyBag.currentVariantReference,
 			newVariantTitle: mPropertyBag.newVariantTitle
 		}, mPropertyBag.designTimeMetadata, mPropertyBag.variantManagementReference);
-		return oDuplicateCommand;
 	};
 
 	/**
+	 * @returns {Promise} empty promise
 	 * @private
 	 */
 	ControlVariant.prototype._emitLabelChangeEvent = function() {
@@ -417,7 +425,6 @@ sap.ui.define([
 			oRenamedElement = oOverlay.getElement(),
 			oModel = this._getVariantModel(oRenamedElement),
 			sErrorText,
-			oCommand,
 			sVariantManagementReference = oOverlay.getVariantManagement(),
 			bTextChanged = this.getOldValue() !== sText,
 			bNewEntry = bTextChanged || oOverlay._triggerDuplicate,
@@ -432,9 +439,11 @@ sap.ui.define([
 
 		//Close valueStateMessage
 		if (this._oValueStateMessage) {
-			this._oValueStateMessage.getPopup().attachClosed(function() {
+			this._oValueStateMessage.getPopup().attachEventOnce("closed", function() {
 				oRenamedElement.$().css("z-index", 1);
-			});
+				this._oValueStateMessage.destroy();
+				delete this._oValueStateMessage;
+			}, this);
 			this._oValueStateMessage.close();
 		}
 
@@ -445,60 +454,79 @@ sap.ui.define([
 			sErrorText = "DUPLICATE_ERROR_TEXT";
 		} else if (bNewEntry) {
 
-			var oSetTitleCommand = this._createSetTitleCommand({
+			return this._createSetTitleCommand({
 				text: sText,
 				element: oRenamedElement,
 				designTimeMetadata: oDesignTimeMetadata,
 				variantManagementReference: sVariantManagementReference
-			});
+			})
 
-			if (oOverlay._triggerDuplicate) {
-				oCommand = new CompositeCommand({
-					commands: [
-						this._createDuplicateCommand({
-							currentVariantReference: sCurrentVariantReference,
-							designTimeMetadata: oDesignTimeMetadata,
-							variantManagementReference: sVariantManagementReference,
-							element: oRenamedElement,
-							newVariantTitle: this.getOldValue()
-						})
-					]
-				});
-				if (bTextChanged) {
-					oCommand.addCommand(oSetTitleCommand);
+			.then(function(oSetTitleCommand) {
+				if (oOverlay._triggerDuplicate) {
+					return this._createDuplicateCommand({
+						currentVariantReference: sCurrentVariantReference,
+						designTimeMetadata: oDesignTimeMetadata,
+						variantManagementReference: sVariantManagementReference,
+						element: oRenamedElement,
+						newVariantTitle: this.getOldValue()})
+
+					.then(function(oDuplicateCommand) {
+						return new CompositeCommand({
+							commands: [oDuplicateCommand]
+						});
+					})
+
+					.then(function(oCompositeCommand) {
+						return bTextChanged ? oCompositeCommand.addCommand(oSetTitleCommand) : oCompositeCommand;
+					});
+				} else {
+					return oSetTitleCommand;
 				}
-			} else {
-				oCommand = oSetTitleCommand;
-			}
-			this.fireElementModified({
-				"command": oCommand
+			}.bind(this))
+
+			.then(function(oCommand) {
+				this.fireElementModified({
+					"command": oCommand
+				});
+			}.bind(this))
+
+			.catch(function(oMessage) {
+				throw DtUtil.createError("ControlVariant#_emitLabelChangeEvent", oMessage, "sap.ui.rta");
 			});
-			return oCommand;
 		} else {
 			Log.info("Control Variant title unchanged");
+			return Promise.resolve();
 		}
 
 
 		if (sErrorText) {
+			// Order of calling:
+			// -> Open message box
+			// 		-> Close message box
+			// 			-> Stop edit on overlay
+			// 				-> Show value state message
+			// 					-> Start edit on overlay
 			var sValueStateText = oResourceBundle.getText(sErrorText);
 			this._prepareOverlayForValueState(oOverlay, sValueStateText);
 
 			//Border
 			oOverlay.addStyleClass("sapUiRtaErrorBg");
 
-			Utils._showMessageBox("ERROR", "BLANK_DUPLICATE_TITLE_TEXT", sErrorText)
+			return Promise.resolve(Utils._showMessageBox("ERROR", "BLANK_DUPLICATE_TITLE_TEXT", sErrorText)
 				.then(function () {
-					//valueStateMessage
-					if (!this._oValueStateMessage) {
+					var fnErrorHandler = function() {
+						//valueStateMessage
 						this._oValueStateMessage = new ValueStateMessage(oOverlay);
-						this._oValueStateMessage.getPopup()._deactivateFocusHandle();
-					}
-					this._oValueStateMessage.open();
-
-					this.startEdit(oOverlay);
-				}.bind(this));
+						this._oValueStateMessage.getPopup().attachEventOnce("opened", function (oEvent) {
+							oEvent.getSource()._deactivateFocusHandle();
+						});
+						this._oValueStateMessage.open();
+						this.startEdit(oOverlay);
+					}.bind(this);
+					return fnErrorHandler;
+				}.bind(this))
+			);
 		}
-
 	};
 
 	/**
@@ -586,16 +614,15 @@ sap.ui.define([
 	 * @private
 	 */
 	ControlVariant.prototype._createSetTitleCommand = function (mPropertyBag) {
-		var oSetTitleCommand;
 		this._$oEditableControlDomRef.text(mPropertyBag.text);
-		try {
-			oSetTitleCommand = this.getCommandFactory().getCommandFor(mPropertyBag.element, "setTitle", {
-				newText: mPropertyBag.text
-			}, mPropertyBag.designTimeMetadata, mPropertyBag.variantManagementReference);
-		} catch (oError) {
-			Log.error("Error during rename : ", oError);
-		}
-		return oSetTitleCommand;
+
+		return this.getCommandFactory().getCommandFor(mPropertyBag.element, "setTitle", {
+			newText: mPropertyBag.text
+		}, mPropertyBag.designTimeMetadata, mPropertyBag.variantManagementReference)
+
+		.catch(function(oMessage) {
+			Log.error("Error during rename : ", oMessage);
+		});
 	};
 
 	/**
@@ -632,9 +659,10 @@ sap.ui.define([
 		oModel.manageVariants(
 			oVariantManagementControl,
 			sVariantManagementReference,
-			this.getCommandFactory().getFlexSettings().layer
-		).then(function (aConfiguredChanges) {
-			var oConfigureCommand = this.getCommandFactory().getCommandFor(
+			this.getCommandFactory().getFlexSettings().layer)
+
+		.then(function(aConfiguredChanges) {
+			return this.getCommandFactory().getCommandFor(
 				oVariantManagementControl,
 				"configure",
 				{
@@ -644,10 +672,17 @@ sap.ui.define([
 				oDesignTimeMetadata,
 				sVariantManagementReference
 			);
+		}.bind(this))
+
+		.then(function(oConfigureCommand) {
 			this.fireElementModified({
 				"command": oConfigureCommand
 			});
-		}.bind(this));
+		}.bind(this))
+
+		.catch(function(oMessage) {
+			throw DtUtil.createError("ControlVariant#configureVariants", oMessage, "sap.ui.rta");
+		});
 	};
 
 	/**

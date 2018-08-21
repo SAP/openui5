@@ -95,8 +95,8 @@
 	QUnit.test("format date with custom pattern for a specific locale", function (assert) {
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		assert.equal(sap.ui.core.format.DateFormat.getDateInstance({pattern: "dd MMM yyyy"}, oLocale).format(oDateTime), "11 Sep. 2001", "date with custom pattern for given locale");
-		assert.equal(sap.ui.core.format.DateFormat.getDateTimeInstance({pattern: "dd MMM yyyy hh:mm:ss a"}, oLocale).format(oDateTime), "11 Sep. 2001 08:46:13 AM", "datetime with custom pattern for given locale");
-		assert.equal(sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh:mm:ss a"}, oLocale).format(oDateTime), "08:46:13 AM", "datetime with custom pattern for given locale");
+		assert.equal(sap.ui.core.format.DateFormat.getDateTimeInstance({pattern: "dd MMM yyyy hh:mm:ss a"}, oLocale).format(oDateTime), "11 Sep. 2001 08:46:13 vorm.", "datetime with custom pattern for given locale");
+		assert.equal(sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh:mm:ss a"}, oLocale).format(oDateTime), "08:46:13 vorm.", "datetime with custom pattern for given locale");
 	});
 
 	QUnit.test("format custom date", function(assert){
@@ -767,7 +767,27 @@
 		assert.equal(oDateFormat.parse(sFormattedWrongWeek).getTime(), oDate.getTime(), "Week should be ignored and the date should be the input date");
 	});
 
-	QUnit.test("format and parse week and dayName", function (assert) {
+	QUnit.test("Parse and format different formats", function (assert) {
+		var oDate = new Date(1985, 9, 9), oDateFormat, sFormattedDate, oParsedDate; // 9th, October, 1985, Wednesday
+
+		["YYYY'-W'ww'-'u'", "YYYY'-W'ww', 'E", "YYYY'-W'ww'-'u', 'E"].forEach(function(sPattern) {
+
+			["en_US", "de_DE"].forEach(function(sLanguage) {
+				oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+					pattern: sPattern
+				}, new sap.ui.core.Locale(sLanguage));
+
+				sFormattedDate = oDateFormat.format(oDate).toString();
+				assert.ok(sFormattedDate, "Formatted: "+sFormattedDate+" using pattern "+sPattern);
+				oParsedDate = oDateFormat.parse(sFormattedDate);
+				assert.equal(oParsedDate.getTime(), oDate.getTime(), "Pattern "+sPattern+" Formatting and parsing of date in "+sLanguage+" differs: "+oParsedDate+" vs. "+oDate);
+
+			});
+		});
+	});
+
+
+	QUnit.test("format and parse week and dayName", function(assert) {
 		var oDate = new Date(2018, 2, 23); // 23th, March, 2018, Friday
 		var sPattern = "yyyy 'Week' ww EEEE";
 

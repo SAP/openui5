@@ -58,6 +58,9 @@ sap.ui.define([
 			},
 			debug: function (sMessage, sDetails, sComponent) {
 				Log.debug(sMessage, sDetails, sComponent);
+			},
+			info: function (sMessage, sDetails, sComponent) {
+				Log.info(sMessage, sDetails, sComponent);
 			}
 		},
 
@@ -109,18 +112,20 @@ sap.ui.define([
 		 * Returns the class name of the component the given control belongs to.
 		 *
 		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
+		 * @param {boolean} [bOuter] - if set to true the root app component will be returned for embedded component
+		 *
 		 * @returns {String} The component class name, ending with ".Component"
 		 * @see sap.ui.base.Component.getOwnerIdFor
 		 * @public
 		 * @function
 		 * @name sap.ui.fl.Utils.getComponentClassName
 		 */
-		getComponentClassName: function (oControl) {
+		getComponentClassName: function (oControl, bOuter) {
 			var oAppComponent;
 
 			// determine UI5 component out of given control
 			if (oControl) {
-				oAppComponent = this.getAppComponentForControl(oControl);
+				oAppComponent = this.getAppComponentForControl(oControl, bOuter);
 
 				// check if the component is an application variant and assigned an application descriptor then use this as reference
 				if (oAppComponent) {
@@ -180,7 +185,7 @@ sap.ui.define([
 
 			// determine UI5 component out of given control
 			if (oControl) {
-				oComponent = this.getAppComponentForControl(oControl);
+				oComponent = this.getAppComponentForControl(oControl, true);
 
 				// determine manifest out of found component
 				if (oComponent && oComponent.getMetadata) {
@@ -204,21 +209,21 @@ sap.ui.define([
 		 * @name sap.ui.fl.Utils.getSiteId
 		 */
 		getSiteId: function (oControl) {
-			var sSiteId = null, oComponent = null;
+			var sSiteId = null, oOuterAppComponent = null;
 
 			// determine UI5 component out of given control
 			if (oControl) {
-				oComponent = this.getAppComponentForControl(oControl);
+				oOuterAppComponent = this.getAppComponentForControl(oControl, true);
 
 				// determine siteId from ComponentData
-				if (oComponent) {
+				if (oOuterAppComponent) {
 
 					//Workaround for back-end check: isApplicationPermitted
 					//As long as FLP does not know about appDescriptorId we have to pass siteID and applicationID.
 					//With startUpParameter hcpApplicationId we will get a concatenation of “siteId:applicationId”
 
 					//sSiteId = this._getComponentStartUpParameter(oComponent, "scopeId");
-					sSiteId = this._getComponentStartUpParameter(oComponent, "hcpApplicationId");
+					sSiteId = this._getComponentStartUpParameter(oOuterAppComponent, "hcpApplicationId");
 
 				}
 			}
@@ -479,10 +484,11 @@ sap.ui.define([
 		 * control having one.
 		 *
 		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
+		 * @param {boolean} [bOuter] - if set to true the root app component will be returned for embedded component
 		 * @returns {sap.ui.base.Component} found component
 		 * @public
 		 */
-		getAppComponentForControl: function (oControl) {
+		getAppComponentForControl: function (oControl, bOuter) {
 			var oComponent;
 
 			if (oControl instanceof sap.ui.core.Component) {
@@ -490,7 +496,7 @@ sap.ui.define([
 			} else {
 				oComponent = this._getComponentForControl(oControl);
 			}
-			return this._getAppComponentForComponent(oComponent);
+			return this._getAppComponentForComponent(oComponent, bOuter);
 		},
 
 		/**
@@ -520,12 +526,13 @@ sap.ui.define([
 		 * Returns the Component that belongs to given component whose type is "application".
 		 *
 		 * @param {sap.ui.base.Component} oComponent - SAPUI5 component
+		 * @param {boolean} [bOuter] - if set to true the root app component will be returned for embedded component
+		 *
 		 * @returns {sap.ui.base.Component} found component
 		 * @private
 		 */
-		_getAppComponentForComponent: function (oComponent) {
+		_getAppComponentForComponent: function (oComponent, bOuter) {
 			var oSapApp = null;
-
 			// special case for Fiori Elements to reach the real appComponent
 			if (oComponent && oComponent.getAppComponent) {
 				return oComponent.getAppComponent();
@@ -539,13 +546,17 @@ sap.ui.define([
 			if (oComponent && oComponent.getManifestEntry) {
 				oSapApp = oComponent.getManifestEntry("sap.app");
 			} else {
+				// if no manifest entry
 				return oComponent;
 			}
 
 			if (oSapApp && oSapApp.type && oSapApp.type !== "application") {
-				//we need to call this method only when the component
-				//an instance of Component is in order to walk up the tree.
-				if (oComponent instanceof sap.ui.core.Component) {
+				if (oSapApp.type === "component" && !bOuter) {
+					// return inner app component
+					return oComponent;
+				} else if (oComponent instanceof Component) {
+					// we need to call this method only when the component is an instance of Component in order to walk up the tree
+					// returns owner app component
 					oComponent = this._getComponentForControl(oComponent);
 				}
 				return this.getAppComponentForControl(oComponent);
@@ -982,6 +993,10 @@ sap.ui.define([
 			return (oManifest && oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").type === "application");
 		},
 
+		isEmbeddedComponent: function (oManifest) {
+			return (oManifest && oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").type === "component");
+		},
+
 		/**
 		 * Returns the reference of a component, according to the following logic:
 		 * First appVariantId, if not, componentName + ".Component", if not appId + ".Component".
@@ -1126,7 +1141,11 @@ sap.ui.define([
 			}
 			var fnPromise = aPromiseQueue.shift();
 			if (typeof fnPromise === "function") {
-				var vResult = fnPromise();
+				try {
+					var vResult = fnPromise();
+				} catch (e) {
+					vResult = Promise.reject(e);
+				}
 
 				return vResult.then(function() {
 					if (!bAsync && vResult instanceof Promise) {

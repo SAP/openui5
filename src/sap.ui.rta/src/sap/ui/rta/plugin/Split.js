@@ -4,14 +4,12 @@
 
 sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/rta/Utils',
+	'sap/ui/dt/Util',
 	'sap/ui/fl/Utils',
 	"sap/base/util/uid"
 ], function(
 	Plugin,
-	OverlayRegistry,
-	Utils,
+	DtUtil,
 	FlexUtils,
 	uid
 ) {
@@ -51,7 +49,9 @@ sap.ui.define([
 	Split.prototype._isEditable = function (oOverlay) {
 		var oSplitAction = this.getAction(oOverlay);
 		if (oSplitAction && oSplitAction.changeType && oSplitAction.changeOnRelevantContainer) {
-			return this.hasStableId(oOverlay) && this.hasChangeHandler(oSplitAction.changeType, oOverlay.getRelevantContainer());
+			return this.hasChangeHandler(oSplitAction.changeType, oOverlay.getRelevantContainer()) &&
+					this.hasStableId(oOverlay) &&
+					this._checkRelevantContainerStableID(oSplitAction, oOverlay);
 		} else {
 			return false;
 		}
@@ -131,15 +131,26 @@ sap.ui.define([
 		var oSplitAction = this.getAction(oElementOverlay);
 		var sVariantManagementReference = this.getVariantManagementReference(oElementOverlay, oSplitAction);
 
-		var oSplitCommand = this.getCommandFactory().getCommandFor(oSplitElement, "split", {
+		return this.getCommandFactory().getCommandFor(oSplitElement, "split", {
 			newElementIds : aNewElementIds,
 			source : oSplitElement,
 			parentElement : oParent
-		}, oDesignTimeMetadata, sVariantManagementReference);
-		this.fireElementModified({
-			"command" : oSplitCommand
-		});
+		}, oDesignTimeMetadata, sVariantManagementReference)
 
+		.then(function(oSplitCommand) {
+			this.fireElementModified({
+				"command" : oSplitCommand
+			});
+		}.bind(this))
+
+		.catch(function(vError) {
+			throw DtUtil.propagateError(
+				vError,
+				"Split#handleSplit",
+				"Error occured during handleSplit execution",
+				"sap.ui.rta.plugin"
+			);
+		});
 	};
 
 	/**

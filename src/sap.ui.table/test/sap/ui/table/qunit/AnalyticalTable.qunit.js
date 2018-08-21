@@ -644,7 +644,7 @@ sap.ui.define([
 			var fnHandler1 = function () {
 				var oBinding = this.oTable.getBinding("rows");
 
-				assert.equal(oBinding.mParameters.numberOfExpandedLevels, 0, "Number of expanded levels should be disabled (=0)");
+				assert.equal(oBinding.mParameters.numberOfExpandedLevels, 0, "NumberOfExpandedLevels is 0");
 
 				var oContext = this.oTable.getContextByIndex(0);
 				assert.equal(oContext.getProperty("ActualCosts"), "1588416", "First row data is correct");
@@ -935,7 +935,7 @@ sap.ui.define([
 
 	QUnit.test("Menu Creation", function (assert) {
 		var oMenu = this._oColumn._createMenu();
-		assert.ok(TableUtils.isInstanceOf(oMenu, "sap/ui/table/AnalyticalColumnMenu"), "Menu available");
+		assert.ok(oMenu.isA("sap.ui.table.AnalyticalColumnMenu"), "Menu available");
 		assert.equal(oMenu.getId(), this._oColumn.getId() + "-menu", "Menu Id");
 	});
 });
