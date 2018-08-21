@@ -91,7 +91,7 @@ sap.ui.require([
 		assert.equal(jQuery("#F1").attr("title"), "Test", "tooltip rendered");
 	});
 
-	QUnit.test("Title  as string", function(assert) {
+	QUnit.test("Title as string", function(assert) {
 		oForm.setTitle("Test");
 		sap.ui.getCore().applyChanges();
 		assert.equal(oForm.getTitle(), "Test", "Title set");
@@ -99,7 +99,7 @@ sap.ui.require([
 		assert.equal(jQuery("#F1--title").text(), "Test", "Title rendered");
 		assert.ok(jQuery("#F1--title").is("h4"), "Title is rendered as H4 as default");
 		assert.ok(!jQuery("#F1--title").hasClass("sapUiFormTitleEmph"), "Title rendered not emphasized");
-		assert.equal(jQuery("#F1--title").width(), jQuery("#F1").children().first().innerWidth(), "Title rendered as large as the Layout");
+		assert.equal(jQuery("#F1--title").width(), parseInt(jQuery("#F1").children().first().innerWidth(), 10), "Title rendered as large as the Layout");
 		assert.equal(jQuery("#F1").attr("aria-labelledby"), "F1--title", "aria-labelledby points to Title");
 
 		oForm.destroyTitle();
@@ -109,7 +109,7 @@ sap.ui.require([
 		assert.notOk(jQuery("#F1").attr("aria-labelledby"), "no aria-labelledby");
 	});
 
-	QUnit.test("Title  as object", function(assert) {
+	QUnit.test("Title as object", function(assert) {
 		var oTitle = new Title("T1", {text: "Test"});
 		oForm.setTitle(oTitle);
 		sap.ui.getCore().applyChanges();
