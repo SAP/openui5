@@ -251,7 +251,6 @@ sap.ui.define([
 	});
 
   QUnit.test("rowSelectionChanged - 'selected' parameter validation", function(assert) {
-    var aRows = oTable.getRows();
     var oCell1;
     var oSelAll;
     var sTableId;
