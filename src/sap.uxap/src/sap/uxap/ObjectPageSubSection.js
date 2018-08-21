@@ -106,6 +106,22 @@ sap.ui.define([
 
 				/**
 				 * Controls to be displayed in the subsection
+				 *
+				 * <b>Note:</b> The SAP Fiori Design guidelines require that the
+				 * <code>ObjectPageHeader</code>'s content and the <code>ObjectPage</code>'s subsection content
+				 * are aligned vertically. When using {@link sap.ui.layout.form.Form},
+				 * {@link sap.m.Panel}, {@link sap.m.Table} and {@link sap.m.List} in the subsection content area of
+				 * <code>ObjectPage</code>, you need to adjust their left text offset to achieve the
+				 * vertical alignment. To do this, apply the <code>sapUxAPObjectPageSubSectionAlignContent</code>
+				 * CSS class to them and set their <code>width</code> property to <code>auto</code>
+				 * (if not set by default).
+				 *
+				 * Example:
+				 *
+				 * <pre>
+				 * <code> &lt;Panel class="sapUxAPObjectPageSubSectionAlignContent" width="auto"&gt;&lt;/Panel&gt; </code>
+				 * </pre>
+				 *
 				 */
 				blocks: {type: "sap.ui.core.Control", multiple: true, singularName: "block"},
 
