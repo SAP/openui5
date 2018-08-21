@@ -226,25 +226,14 @@ function(
 	// Attach listeners on after rendering and find iscroll
 	TextArea.prototype.onAfterRendering = function() {
 		InputBase.prototype.onAfterRendering.call(this);
-		var oTextAreaRef = this.getFocusDomRef(),
-			fMaxHeight,
-			oStyle;
 
 		if (this.getGrowing()) {
 			// Register resize event
 			this._sResizeListenerId = ResizeHandler.register(this, this._resizeHandler.bind(this));
+
 			// adjust textarea height
 			if (this.getGrowingMaxLines() > 0) {
-				oStyle = window.getComputedStyle(oTextAreaRef);
-				fMaxHeight = parseFloat(oStyle.lineHeight) * this.getGrowingMaxLines() +
-						parseFloat(oStyle.paddingTop) + parseFloat(oStyle.borderTopWidth) + parseFloat(oStyle.borderBottomWidth);
-
-				// bottom padding is out of scrolling content in firefox
-				if (Device.browser.firefox) {
-					fMaxHeight += parseFloat(oStyle.paddingBottom);
-				}
-
-				oTextAreaRef.style.maxHeight = fMaxHeight + "px";
+				this._setGrowingMaxHeight();
 			}
 
 			this._adjustHeight();
@@ -272,6 +261,49 @@ function(
 				}
 			});
 		}
+	};
+
+	/**
+	 * Sets the maximum height of the HTML textarea.
+	 * This is the actual implementation of growingMaxLines property.
+	 *
+	 * @private
+	 */
+	TextArea.prototype._setGrowingMaxHeight = function () {
+		var oTextAreaRef = this.getFocusDomRef(),
+			oCore = sap.ui.getCore(),
+			oLoadedLibraries = oCore.getLoadedLibraries(),
+			fLineHeight,
+			fMaxHeight,
+			oStyle;
+
+		// The CSS rules might not hve been applied yet and the getComputedStyle function might not return the proper values. So, wait for the theme to be applied properly
+		// The check for loaded libraries is to ensure that sap.m has been loaded. TextArea's CSS sources would be loaded along with the library
+		if (!oLoadedLibraries || !oLoadedLibraries['sap.m']) {
+			oCore.attachThemeChanged(this._setGrowingMaxHeight.bind(this));
+			return;
+		}
+
+		// After it's been executed, we need to release the resources
+		oCore.detachThemeChanged(this._setGrowingMaxHeight);
+
+		oStyle = window.getComputedStyle(oTextAreaRef);
+
+		fLineHeight = isNaN(parseFloat(oStyle.getPropertyValue("line-height"))) ?
+			1.4 * parseFloat(library.BaseFontSize) : // The baseFont size multiplied by 1.4 which is TextArea's default line-height
+			parseFloat(oStyle.getPropertyValue("line-height"));
+
+		fMaxHeight = (fLineHeight * this.getGrowingMaxLines()) +
+			parseFloat(oStyle.getPropertyValue("padding-top")) +
+			parseFloat(oStyle.getPropertyValue("border-top-width")) +
+			parseFloat(oStyle.getPropertyValue("border-bottom-width"));
+
+		// bottom padding is out of scrolling content in firefox
+		if (Device.browser.firefox) {
+			fMaxHeight += parseFloat(oStyle.getPropertyValue("padding-bottom"));
+		}
+
+		oTextAreaRef.style.maxHeight = fMaxHeight + "px";
 	};
 
 	/**
