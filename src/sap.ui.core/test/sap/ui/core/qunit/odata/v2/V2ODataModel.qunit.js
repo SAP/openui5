@@ -1,56 +1,53 @@
-<!DOCTYPE HTML>
+/*global QUnit, sinon */
+sap.ui.define([
+	"sap/ui/core/util/MockServer",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/Filter",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/odata/UpdateMethod",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/type/DateTime",
+	"sap/ui/core/message/Message",
+	"sap/ui/core/MessageType",
+	"sap/m/DateTimeInput",
+	"sap/m/Label",
+	"sap/m/Input",
+	"sap/ui/table/Table",
+	"sap/ui/table/Column"
+], function(
+		MockServer,
+		ODataModel,
+		Filter,
+		Sorter,
+		UpdateMethod,
+		ChangeReason,
+		DateTime,
+		Message,
+		MessageType,
+		DateTimeInput,
+		Label,
+		Input,
+		Table,
+		Column
+	) {
 
-<!--
-  Tested sap.ui.model.odata.ODataModel
--->
+	"use strict";
 
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>QUnit page for V2ODataModel - sap.ui.core</title>
-<!-- Initialization -->
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-language="en-US"
-	data-sap-ui-libs="sap.ui.commons,sap.ui.table,sap.m">
-	</script>
+	//add divs for control tests
+	var oContent = document.createElement("div");
+	oContent.id = "target1";
+	document.body.appendChild(oContent);
 
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
-	media="screen" />
-<script
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-<script>
-	// Enable code coverage
-	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	if (window.blanket) {
-		window.blanket.options("sap-ui-cover-only", "[sap/ui/model/odata/v2/ODataModel.js]");
-	}
-</script>
-
-
-<!-- Test functions -->
-<script>
-
-	jQuery.sap.require("sap.ui.core.util.MockServer");
-
-	var that = this;
 	var sServiceUri = "/SalesOrderSrv/";
-	var sDataRootPath =  "testdata/SalesOrder/";
+	var sDataRootPath =  "test-resources/sap/ui/core/qunit/testdata/SalesOrder/";
 	var oModel, spy;
 
-	var oMockServer = new sap.ui.core.util.MockServer({
+	var oMockServer = new MockServer({
 		rootUri: sServiceUri
 	});
 
 	function initServer() {
-		oMockServer.simulate("testdata/SalesOrder/metadata.xml", sDataRootPath);
+		oMockServer.simulate("test-resources/sap/ui/core/qunit/testdata/SalesOrder/metadata.xml", sDataRootPath);
 		oMockServer.start();
 	}
 
@@ -59,31 +56,26 @@
 	}
 
 	function initModel(mParameters) {
-		return new sap.ui.model.odata.v2.ODataModel(sServiceUri, mParameters);
+		return new ODataModel(sServiceUri, mParameters);
 	}
 
 	var bChanged = false, bDataRequested = false, bDataReceived = false;
 
-	var fnChange = function(oEvent) {
+	var fnChange = function(assert, oEvent) {
 		bChanged = true;
 		assert.ok(bDataRequested && !bDataReceived,"change fired");
 	};
 
-	var fnDataRequested = function(oEvent) {
+	var fnDataRequested = function(assert, oEvent) {
 		bDataRequested = true;
 		assert.ok(!bDataReceived && !bChanged,"dataRequested fired");
-	};
-
-	var fnDataReceived = function(oEvent) {
-		bDataReceived = true;
-		assert.ok(bChanged && bDataRequested,"dataRecieved fired");
 	};
 
 	/**
 	 * Removes all shared Metadata
 	 */
 	function cleanSharedData() {
-		sap.ui.model.odata.v2.ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
+		ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
 	}
 
 	QUnit.module("ODataModelV2 XML", {
@@ -161,7 +153,7 @@
 
 	QUnit.test("test $batch: check accept header", function(assert) {
 		var done = assert.async();
-		oSpy = sinon.spy(oModel, "_submitBatchRequest");
+		var oSpy = sinon.spy(oModel, "_submitBatchRequest");
 		oModel.read("/ProductSet", {
 			success : function() {
 				assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "Flyer", "absolute path without context");
@@ -422,7 +414,7 @@
 	QUnit.test("test oDataModel read filter test", function(assert) {
 		var done = assert.async();
 		oModel.read("/ProductSet", {
-			filters : [ new sap.ui.model.Filter("ProductID", "EQ",
+			filters : [ new Filter("ProductID", "EQ",
 					"HT-1000") ],
 			success : function(oData, oResponse) {
 				assert.ok(oData.results.length === 1, "length check");
@@ -440,7 +432,7 @@
 	QUnit.test("test oDataModel read count request with filter test", function(assert) {
 		var done = assert.async();
 		oModel.read("/ProductSet/$count", {
-			filters : [ new sap.ui.model.Filter("ProductID", "EQ",
+			filters : [ new Filter("ProductID", "EQ",
 					"HT-1000") ],
 			success : function(oData, oResponse) {
 				assert.ok(oData === "1", "length check");
@@ -455,10 +447,10 @@
 	QUnit.test("test oDataModel read sort test", function(assert) {
 		var done = assert.async();
 		oModel.read("/ProductSet", {
-			sorters : [ new sap.ui.model.Sorter("ProductID", true) ],
-			filters : [ new sap.ui.model.Filter("ProductID", "EQ", "HT-1000"),
-					new sap.ui.model.Filter("ProductID", "EQ", "AD-1000"),
-					new sap.ui.model.Filter("ProductID", "EQ", "HT-1041") ],
+			sorters : [ new Sorter("ProductID", true) ],
+			filters : [ new Filter("ProductID", "EQ", "HT-1000"),
+					new Filter("ProductID", "EQ", "AD-1000"),
+					new Filter("ProductID", "EQ", "HT-1041") ],
 			success : function(oData, oResponse) {
 				assert.ok(oData.results.length === 3, "length check");
 				assert.ok(oData.results[0].ProductID === "HT-1041", "sort check");
@@ -787,7 +779,7 @@
 	QUnit.test("test oDataModel bind Object", function(assert) {
 		var done = assert.async();
 		var iCount = 0;
-		var oTxt = new sap.ui.commons.TextField({
+		var oTxt = new Input({
 			value : "{Category}"
 		});
 		oTxt.placeAt("target1");
@@ -808,7 +800,7 @@
 	QUnit.test("test oDataModel read and bind Object", function(assert) {
 		var done = assert.async();
 		var iCount = 0;
-		var oTxt = new sap.ui.commons.TextField({
+		var oTxt = new Input({
 			value : "{Category}"
 		});
 		oTxt.placeAt("target1");
@@ -818,7 +810,6 @@
 			batchGroupId : "myId",
 			success : function(oData, oResponse) {
 				assert.ok(true, "request succeeded");
-				bSuccess = true;
 
 				assert.equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 				// should not fire a request as data is already loaded by read above
@@ -832,7 +823,7 @@
 					oTxt.destroy();
 					oModel.detachBatchRequestCompleted(fnCheck);
 					done();
-				}
+				};
 				oModel.attachBatchRequestCompleted(
 					fnCheck
 				);
@@ -844,13 +835,13 @@
 	});
 
 	var initTable = function(mEntities) {
-		var oTable = new sap.ui.table.Table();
+		var oTable = new Table();
 		for (var i = 0; i < mEntities.categories.properties.length; i++) {
-			oTable.addColumn(new sap.ui.table.Column().setLabel(
-					new sap.ui.commons.Label({
+			oTable.addColumn(new Column().setLabel(
+					new Label({
 						text : mEntities.categories.properties[i]
 					})).setTemplate(
-					new sap.ui.commons.TextField().bindProperty("value",
+					new Input().bindProperty("value",
 							mEntities.categories.properties[i]))
 					.setFilterProperty(mEntities.categories.properties[i]));
 		}
@@ -1245,8 +1236,8 @@
 	QUnit.test("test oDataModel setProperty - hasPendingChanges", function(assert) {
 		var done = assert.async();
 		oModel.setDefaultBindingMode("TwoWay");
-		var oDateType = new sap.ui.model.type.DateTime();
-		var oInput = new sap.m.DateTimeInput({type: "DateTime", value: {path:"/ProductSet('AD-1000')/CreatedAt", type: oDateType, formatOptions: { style: 'medium', strictParsing: true}}});
+		var oDateType = new DateTime();
+		var oInput = new DateTimeInput({type: "DateTime", value: {path:"/ProductSet('AD-1000')/CreatedAt", type: oDateType, formatOptions: { style: 'medium', strictParsing: true}}});
 		oInput.setModel(oModel);
 		oModel.read("/ProductSet('AD-1000')", {
 			success: function() {
@@ -1451,21 +1442,20 @@
 		var done = assert.async();
 		var iCount = 0;
 		var bMetadataLoaded = false;
-		var bsetProp = false;
+		var bSetProp = false;
 		oModel.setDefaultBindingMode("TwoWay");
 
 		// make request non deferred...
 		oModel.setChangeBatchGroups({
 			"*" : {batchgroupId : "myId"}
-
 		});
 
 		var mEntities = {
-				categories: {
-					collection: "/ProductSet",
-					properties: ["Name"]
-				}
+			categories: {
+				collection: "/ProductSet",
+				properties: ["Name"]
 			}
+		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
 
@@ -1493,21 +1483,22 @@
 		var done = assert.async();
 		var iCount = 0;
 		var bMetadataLoaded = false;
-		var bsetProp = false;
+		var bSetProp = false;
 		oModel.setDefaultBindingMode("TwoWay");
 		oModel.setDeferredBatchGroups(["myId"]);
 		oModel.setChangeBatchGroups({
-					"Product": {
-			 			batchGroupId: "myId",
-			  			changeSetId: "Test",
-			  			single: true
-			 		}});
-		var mEntities = {
-				categories: {
-					collection: "/ProductSet",
-					properties: ["Name"]
-				}
+			"Product": {
+				batchGroupId: "myId",
+				changeSetId: "Test",
+				single: true
 			}
+		});
+		var mEntities = {
+			categories: {
+				collection: "/ProductSet",
+				properties: ["Name"]
+			}
+		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
 
@@ -1537,23 +1528,23 @@
 		var done = assert.async();
 		var iCount = 0;
 		var bMetadataLoaded = false;
-		var bsetProp = false;
-		var bsetProp2 = false;
+		var bSetProp = false;
+		var bSetProp2 = false;
 		oModel.setDefaultBindingMode("TwoWay");
 		oModel.setDeferredBatchGroups(["myId"]);
 		oModel.setChangeBatchGroups({
 			"Product": {
-	 			batchGroupId: "myId",
-	  			changeSetId: "Test",
-	  			single: true
-	 		}
+				batchGroupId: "myId",
+				changeSetId: "Test",
+				single: true
+			}
 		});
 		var mEntities = {
 			categories: {
 				collection: "/ProductSet",
 				properties: ["Name"]
 			}
-		}
+		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
 
@@ -1593,22 +1584,23 @@
 		var done = assert.async();
 		var iCount = 0;
 		var bMetadataLoaded = false;
-		var bsetProp = false;
-		var bsetProp2 = false;
+		var bSetProp = false;
+		var bSetProp2 = false;
 		oModel.setDefaultBindingMode("TwoWay");
 		oModel.setDeferredBatchGroups(["myId"]);
 		oModel.setChangeBatchGroups({
-					"Product": {
-			 			batchGroupId: "myId",
-			  			changeSetId: "Test",
-			  			single: false
-			 		}});
-		var mEntities = {
-				categories: {
-					collection: "/ProductSet",
-					properties: ["Name"]
-				}
+			"Product": {
+				batchGroupId: "myId",
+				changeSetId: "Test",
+				single: false
 			}
+		});
+		var mEntities = {
+			categories: {
+				collection: "/ProductSet",
+				properties: ["Name"]
+			}
+		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
 
@@ -1646,13 +1638,6 @@
 	QUnit.test("test oDataModel read and setProperty deferred and setProperty again with same data", function(assert) {
 		var done = assert.async();
 		oModel.setDefaultBindingMode("TwoWay");
-		var spy;
-		var mEntities = {
-			categories: {
-				collection: "/ProductSet",
-				properties: ["Name"]
-			}
-		}
 		oModel.metadataLoaded().then(function(){
 			oModel.read("/ProductSet('HT-1000')", {
 				urlParameters: {"$select": "Name" },
@@ -1668,7 +1653,7 @@
 									assert.ok(!oModel.hasPendingChanges(), "model has not any pending changes");
 									assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "NewName", "new prop value");
 									assert.equal(oModel.getProperty("/ProductSet('HT-1000')/TypeCode"), "PR", "new prop value");
-									oSpy = sinon.spy(oModel, "_submitBatchRequest");
+									var oSpy = sinon.spy(oModel, "_submitBatchRequest");
 									oModel.submitChanges({
 										success : function(oData, oResponse) {
 											// no request should go out
@@ -1725,7 +1710,6 @@
 		var done = assert.async();
 		oModel.read("/ProductSet('AD-1000')", {
 			success: function() {
-				var sName = oModel.getProperty("/ProductSet('AD-1000')/Name");
 				oModel.setProperty("/ProductSet('AD-1000')/Name", undefined);
 				assert.ok(oModel.hasPendingChanges(), "model has pending changes");
 				assert.ok(oModel.getProperty("/ProductSet('AD-1000')/Name") === undefined, "property ok");
@@ -1806,7 +1790,7 @@
 				jQuery.sap.delayedCall(0,this, function() {
 					assert.ok(oSpy.callCount == 0, "No request sent");
 					oSpy.restore();
-					start()
+					done();
 				});
 			},
 			error: function() {
@@ -1843,7 +1827,7 @@
 				jQuery.sap.delayedCall(0,this, function() {
 					assert.ok(oSpy.callCount == 0, "No request sent");
 					oSpy.restore();
-					start()
+					done();
 				});
 			},
 			error: function() {
@@ -1869,7 +1853,7 @@
 				jQuery.sap.delayedCall(0,this, function() {
 					assert.ok(oSpy.callCount == 0, "No request sent");
 					oSpy.restore();
-					start()
+					done();
 				});
 			},
 			error: function() {
@@ -1881,16 +1865,16 @@
 
 	QUnit.test("test oDataModel setProperty : resetChanges twice - request should be aborted", function(assert) {
 		var done = assert.async();
-		var oSpy;
 		oModel.read("/ProductSet('AD-1000')", {
 			success: function() {
 				oModel.setDeferredBatchGroups(["myId"]);
 				oModel.setChangeBatchGroups({
-							"Product": {
-					 			batchGroupId: "myId",
-					  			changeSetId: "Test",
-					  			single: true
-					 		}});
+					"Product": {
+						batchGroupId: "myId",
+						changeSetId: "Test",
+						single: true
+					}
+				});
 
 				oModel.setProperty("/ProductSet('AD-1000')/Name", "NewName");
 				oModel.metadataLoaded().then(function(){
@@ -1929,24 +1913,24 @@
 	QUnit.test("test oDataModel setProperty: resetChanges - messages should be deleted", function(assert) {
 		var done = assert.async();
 		var oSpy;
-		var oMessage = new sap.ui.core.message.Message({
+		var oMessage = new Message({
 			message: "Message1",
 			description: "Message1 description",
-			type: sap.ui.core.MessageType.Error,
+			type: MessageType.Error,
 			target: "/ProductSet('AD-1000')/Name",
 			processor: oModel
 		});
-		var oMessage2 = new sap.ui.core.message.Message({
+		var oMessage2 = new Message({
 			message: "Message2",
 			description: "Message2 description",
-			type: sap.ui.core.MessageType.Error,
+			type: MessageType.Error,
 			target: "/ProductSet('AD-1000')/",
 			processor: oModel
 		});
-		var oMessage3 = new sap.ui.core.message.Message({
+		var oMessage3 = new Message({
 			message: "Message3",
 			description: "Message3 description",
-			type: sap.ui.core.MessageType.Error,
+			type: MessageType.Error,
 			target: "/ProductSet('HT-1000')",
 			processor: oModel
 		});
@@ -1970,7 +1954,7 @@
 				jQuery.sap.delayedCall(0,this, function() {
 					assert.ok(oSpy.callCount == 0, "No request sent");
 					oSpy.restore();
-					start()
+					done();
 				});
 			},
 			error: function() {
@@ -1982,22 +1966,21 @@
 
 	QUnit.test("test oDataModel deleteCreatedEntry - messages should be deleted", function(assert) {
 		var done = assert.async();
-		var oSpy;
 		oModel.metadataLoaded().then(function() {
 			var oContext = oModel.createEntry("/ProductSet");
 			var oContextPath = oContext.getPath();
 
-			var oMessage = new sap.ui.core.message.Message({
+			var oMessage = new Message({
 				message: "Message1",
 				description: "Message1 description",
-				type: sap.ui.core.MessageType.Error,
+				type: MessageType.Error,
 				target: oContextPath,
 				processor: oModel
 			});
-			var oMessage2 = new sap.ui.core.message.Message({
+			var oMessage2 = new Message({
 				message: "Message2",
 				description: "Message2 description",
-				type: sap.ui.core.MessageType.Error,
+				type: MessageType.Error,
 				target: oContextPath,
 				processor: oModel
 			});
@@ -2007,31 +1990,31 @@
 			assert.ok(oModel.getMessagesByEntity(oContextPath).length === 2, "2 Messages set");
 			oModel.deleteCreatedEntry(oContext);
 			assert.ok(oModel.getMessagesByEntity(oContextPath).length === 0, "Messages deleted");
-			start();
+			done();
 		});
 	});
 
 	QUnit.test("test oDataModel setProperty: resetChanges - messages should be deleted 2", function(assert) {
 		var done = assert.async();
 		var oSpy;
-		var oMessage = new sap.ui.core.message.Message({
+		var oMessage = new Message({
 			message: "Message1",
 			description: "Message1 description",
-			type: sap.ui.core.MessageType.Error,
+			type: MessageType.Error,
 			target: "/ProductSet('AD-1000')/Name",
 			processor: oModel
 		});
-		var oMessage2 = new sap.ui.core.message.Message({
+		var oMessage2 = new Message({
 			message: "Message2",
 			description: "Message2 description",
-			type: sap.ui.core.MessageType.Error,
+			type: MessageType.Error,
 			target: "/ProductSet('AD-1000')/",
 			processor: oModel
 		});
-		var oMessage3 = new sap.ui.core.message.Message({
+		var oMessage3 = new Message({
 			message: "Message3",
 			description: "Message3 description",
-			type: sap.ui.core.MessageType.Error,
+			type: MessageType.Error,
 			target: "/ProductSet('HT-1000')",
 			processor: oModel
 		});
@@ -2054,7 +2037,7 @@
 				jQuery.sap.delayedCall(0,this, function() {
 					assert.ok(oSpy.callCount == 1, "Change request sent");
 					oSpy.restore();
-					start()
+					done()
 				});
 			},
 			error: function() {
@@ -2067,24 +2050,24 @@
 	QUnit.test("test oDataModel setProperty: resetChanges - messages should be deleted 3", function(assert) {
 		var done = assert.async();
 		var oSpy;
-		var oMessage = new sap.ui.core.message.Message({
+		var oMessage = new Message({
 			message: "Message1",
 			description: "Message1 description",
-			type: sap.ui.core.MessageType.Error,
+			type: MessageType.Error,
 			target: "/ProductSet('AD-1000')/Name",
 			processor: oModel
 		});
-		var oMessage2 = new sap.ui.core.message.Message({
+		var oMessage2 = new Message({
 			message: "Message2",
 			description: "Message2 description",
-			type: sap.ui.core.MessageType.Error,
+			type: MessageType.Error,
 			target: "/ProductSet('AD-1000')/",
 			processor: oModel
 		});
-		var oMessage3 = new sap.ui.core.message.Message({
+		var oMessage3 = new Message({
 			message: "Message3",
 			description: "Message3 description",
-			type: sap.ui.core.MessageType.Error,
+			type: MessageType.Error,
 			target: "/ProductSet('HT-1000')",
 			processor: oModel
 		});
@@ -2108,7 +2091,7 @@
 				jQuery.sap.delayedCall(0,this, function() {
 					assert.ok(oSpy.callCount == 0, "No request sent");
 					oSpy.restore();
-					start()
+					done();
 				});
 			},
 			error: function() {
@@ -2125,11 +2108,11 @@
 		oModel.setDefaultBindingMode("TwoWay");
 
 		var mEntities = {
-				categories: {
-					collection: "/ProductSet",
-					properties: ["Name"]
-				}
+			categories: {
+				collection: "/ProductSet",
+				properties: ["Name"]
 			}
+		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
 
@@ -2233,11 +2216,12 @@
 				bRead = true;
 				oModel.setDeferredBatchGroups(["myId"]);
 				oModel.setChangeBatchGroups({
-							"Product": {
-					 			batchGroupId: "myId",
-					  			changeSetId: "Test",
-					  			single: true
-					 		}});
+					"Product": {
+						batchGroupId: "myId",
+						changeSetId: "Test",
+						single: true
+					}
+				});
 				bSetProp = oModel.setProperty("/ProductSet('HT-1000')/Name", "xy");
 				oModel.submitChanges({
 					success : function(oData, oResponse) {
@@ -2279,11 +2263,12 @@
 				bRead = true;
 				oModel.setDeferredBatchGroups(["myId"]);
 				oModel.setChangeBatchGroups({
-							"Product": {
-					 			batchGroupId: "myId",
-					  			changeSetId: "Test",
-					  			single: true
-					 		}});
+					"Product": {
+						batchGroupId: "myId",
+						changeSetId: "Test",
+						single: true
+					}
+				});
 				bSetProp = oModel.setProperty("/ProductSet('HT-1000')/Name", "xy");
 				oModel.read("/ProductSet('HT-1000')", {
 					batchGroupId : "myId",
@@ -2483,7 +2468,6 @@
 		var iCount = 0;
 		var bRead = false;
 		var bSetProp = false;
-		var bSuccess = false;
 		oModel.setUseBatch(false);
 
 		oModel.read("/ProductSet('HT-1000')", {
@@ -2626,7 +2610,7 @@
 		var bSetProp = false;
 		var bSuccess = false;
 
-		oModel = initModel({json: true, defaultUpdateMethod: sap.ui.model.odata.UpdateMethod.Put});
+		oModel = initModel({json: true, defaultUpdateMethod: UpdateMethod.Put});
 
 		oModel.read("/ProductSet('HT-1000')", {
 			success : function(oData, oResponse) {
@@ -2704,7 +2688,6 @@
 		var iCount = 0;
 		var bRead = false;
 		var bSetProp = false;
-		var bSuccess = false;
 		oModel = initModel();
 		oModel.setUseBatch(false);
 
@@ -2764,8 +2747,7 @@
 		var iCount = 0;
 		var bRead = false;
 		var bSetProp = false;
-		var bSuccess = false;
-		oModel = initModel({json: true, defaultUpdateMethod: sap.ui.model.odata.UpdateMethod.Put});
+		oModel = initModel({json: true, defaultUpdateMethod: UpdateMethod.Put});
 		oModel.setUseBatch(false);
 
 		oModel.read("/ProductSet('HT-1000')", {
@@ -2824,7 +2806,6 @@
 		var iCount = 0;
 		var bRead = false;
 		var bRead2 = false;
-		var bSetProp = false;
 		var bSuccess = false;
 
 		oModel = initModel(); // default should be merge
@@ -2913,7 +2894,7 @@
 		var bRead2 = false;
 		var bSuccess = false;
 
-		oModel = initModel({json: true, defaultUpdateMethod: sap.ui.model.odata.UpdateMethod.Put});
+		oModel = initModel({json: true, defaultUpdateMethod: UpdateMethod.Put});
 
 		oModel.read("/ProductSet('HT-1000')", {
 			success : function(oData, oResponse) {
@@ -2996,9 +2977,8 @@
 		var done = assert.async();
 		var iCount = 0;
 		var bRead = false;
-		var bSuccess = false;
 		var bUpdate = false;
-		oModel = initModel({json: true, defaultUpdateMethod: sap.ui.model.odata.UpdateMethod.Merge});
+		oModel = initModel({json: true, defaultUpdateMethod: UpdateMethod.Merge});
 		oModel.setUseBatch(false);
 
 		oModel.read("/ProductSet('HT-1000')", {
@@ -3054,9 +3034,8 @@
 		var done = assert.async();
 		var iCount = 0;
 		var bRead = false;
-		var bSetProp = false;
 		var bUpdate = false;
-		oModel = initModel({json: true, defaultUpdateMethod: sap.ui.model.odata.UpdateMethod.Put});
+		oModel = initModel({json: true, defaultUpdateMethod: UpdateMethod.Put});
 		oModel.setUseBatch(false);
 
 		oModel.read("/ProductSet('HT-1000')", {
@@ -3118,10 +3097,10 @@
 		oModel.setDeferredBatchGroups(["myId"]);
 		oModel.setChangeBatchGroups({
 			"Product": {
-	 			batchGroupId: "myId",
-	  			changeSetId: "Test",
-	  			single: true
-	 		}
+				batchGroupId: "myId",
+				changeSetId: "Test",
+				single: true
+			}
 		});
 		var fnTest = function(){
 			oContext = oModel.createEntry("/ProductSet", {properties: {
@@ -3294,7 +3273,7 @@
 
 	QUnit.test("test oDataModel 2 times createEntry and one deleteCreatedEntry", function(assert) {
 		var done = assert.async();
-		var oContext, oContext2;
+		var oContext;
 
 		oModel.setDeferredBatchGroups(["myId"]);
 		oModel.setChangeBatchGroups({
@@ -3330,7 +3309,7 @@
 
 			oModel.deleteCreatedEntry(oContext);
 
-			oContext2 = oModel.createEntry("/ProductSet", {properties: {
+			oModel.createEntry("/ProductSet", {properties: {
 				"ProductID":"AD-1235",
 				"TypeCode":"AD",
 				"Category":"Computer system accessories",
@@ -3389,7 +3368,7 @@
 		}
 	});
 
-	var changeOperation = function(bGlobalRefreshAfterChange, bLocalRefreshAfterChange, success) {
+	var changeOperation = function(bGlobalRefreshAfterChange, bLocalRefreshAfterChange, success, assert, done) {
 		oModel.setRefreshAfterChange(bGlobalRefreshAfterChange);
 
 		var bBatch = oModel.bUseBatch; // Convenience: fill correct group id param
@@ -3441,7 +3420,7 @@
 				assert.equal(oRefreshSpy.called, false, "Refresh should not have been called");
 				done();
 			});
-		});
+		}, assert, done);
 	});
 
 	QUnit.test("test oDataModel overrule bRefreshAfterChange not deferred - global off - local on", function(assert) {
@@ -3455,7 +3434,7 @@
 				assert.equal(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
 				done();
 			});
-		});
+		}, assert, done);
 	});
 
 	QUnit.test("test oDataModel overrule bRefreshAfterChange not deferred - global on - local undefined", function(assert) {
@@ -3469,7 +3448,7 @@
 				assert.equal(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
 				done();
 			});
-		});
+		}, assert, done);
 	});
 
 	QUnit.test("test oDataModel overrule bRefreshAfterChange not deferred - global off - local undefined", function(assert) {
@@ -3483,7 +3462,7 @@
 				assert.equal(oRefreshSpy.called, false, "Refresh should not have been called");
 				done();
 			});
-		});
+		}, assert, done);
 	});
 
 	/* === Deferred === */
@@ -3499,7 +3478,7 @@
 				assert.equal(oRefreshSpy.called, false, "Refresh should not have been called");
 				done();
 			});
-		});
+		}, assert, done);
 
 		oModel.submitChanges();
 	});
@@ -3516,7 +3495,7 @@
 				assert.equal(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
 				done();
 			});
-		});
+		}, assert, done);
 
 		oModel.submitChanges();
 	});
@@ -3533,7 +3512,7 @@
 				assert.equal(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
 				done();
 			});
-		});
+		}, assert, done);
 
 		oModel.submitChanges();
 	});
@@ -3550,7 +3529,7 @@
 				assert.equal(oRefreshSpy.called, false, "Refresh should not have been called");
 				done();
 			});
-		});
+		}, assert, done);
 
 		oModel.submitChanges();
 	});
@@ -3568,7 +3547,7 @@
 				assert.equal(oRefreshSpy.called, false, "Refresh should not have been called");
 				done();
 			});
-		});
+		}, assert, done);
 
 		oModel.submitChanges();
 	});
@@ -3585,7 +3564,7 @@
 				assert.equal(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
 				done();
 			});
-		});
+		}, assert, done);
 
 		oModel.submitChanges();
 	});
@@ -3602,7 +3581,7 @@
 				assert.equal(oRefreshSpy.callCount, 1, "Refresh should have been called exactly once");
 				done();
 			});
-		});
+		}, assert, done);
 
 		oModel.submitChanges();
 	});
@@ -3619,7 +3598,7 @@
 				assert.equal(oRefreshSpy.called, false, "Refresh should not have been called");
 				done();
 			});
-		});
+		}, assert, done);
 
 		oModel.submitChanges();
 	});
@@ -3961,7 +3940,7 @@
 		var done = assert.async();
 		assert.expect(5);
 		oModel.setUseBatch(false);
-		oLabel = new sap.ui.commons.Label();
+		var oLabel = new Label();
 		oLabel.setModel(oModel);
 		var handler = function(oEvent) {
 			assert.ok(true, "DataReceived fired");
@@ -3978,15 +3957,15 @@
 				done(); // resume normal testing
 			});
 			oLabel.getElementBinding().refresh();
-		}
-		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
+		};
+		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange.bind(null, assert), dataRequested:fnDataRequested.bind(null, assert), dataReceived: handler}});
 	});
 
 	QUnit.test("Event order (single request): bindElement fails", function(assert){
 		var done = assert.async();
 		assert.expect(3);
 		oModel.setUseBatch(false);
-		oLabel = new sap.ui.commons.Label();
+		var oLabel = new Label();
 		oLabel.setModel(oModel);
 		var handler = function(oEvent) {
 			assert.ok(true, "DataReceived fired");
@@ -3995,14 +3974,14 @@
 			bDataRequested = false;
 			bDataReceived = false;
 			done(); // resume normal testing
-		}
-		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
+		};
+		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange.bind(null, assert), dataRequested:fnDataRequested.bind(null, assert), dataReceived: handler}});
 	});
 
 	QUnit.test("Event order (batch request): bindElement fails --> refresh", function(assert){
 		var done = assert.async();
 		assert.expect(5);
-		oLabel = new sap.ui.commons.Label();
+		var oLabel = new Label();
 		oLabel.setModel(oModel);
 		var handler = function(oEvent) {
 			assert.ok(true, "DataReceived fired");
@@ -4019,14 +3998,14 @@
 				done(); // resume normal testing
 			});
 			oLabel.getElementBinding().refresh();
-		}
-		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
+		};
+		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange.bind(null, assert), dataRequested:fnDataRequested.bind(null, assert), dataReceived: handler}});
 	});
 
 	QUnit.test("Event order (batch request): bindElement fails", function(assert){
 		var done = assert.async();
 		assert.expect(3);
-		oLabel = new sap.ui.commons.Label();
+		var oLabel = new Label();
 		oLabel.setModel(oModel);
 		var handler = function(oEvent) {
 			assert.ok(true, "DataReceived fired");
@@ -4035,8 +4014,8 @@
 			bDataRequested = false;
 			bDataReceived = false;
 			done(); // resume normal testing
-		}
-		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
+		};
+		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange.bind(null, assert), dataRequested:fnDataRequested.bind(null, assert), dataReceived: handler}});
 	});
 
 	QUnit.test("test eventing when using read with batch on", function(assert) {
@@ -4068,7 +4047,7 @@
 			assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
 			assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
 
-			assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+			assert.equal(typeof (oEvent.getParameter('ID')), "string", "Param check: id");
 			sReqId = oEvent.getParameter('ID');
 			iReqSent++;
 		});
@@ -4146,7 +4125,7 @@
 			assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
 			assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
 			assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
-			assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+			assert.equal(typeof (oEvent.getParameter('ID')), "string", "Param check: id");
 			sReqId = oEvent.getParameter('ID');
 			iReqSent++;
 		});
@@ -4529,7 +4508,7 @@
 			assert.equal(oEvent.getParameter('async'), true , "Param check: async");
 			assert.equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
 
-			assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+			assert.equal(typeof (oEvent.getParameter('ID')), "string", "Param check: id");
 			sReqId = oEvent.getParameter('ID');
 			iReqSent++;
 		});
@@ -4590,7 +4569,7 @@
 			assert.equal(oEvent.getParameter('async'), true , "Param check: async");
 			assert.equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
 
-			assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+			assert.equal(typeof (oEvent.getParameter('ID')), "string", "Param check: id");
 			sReqId = oEvent.getParameter('ID');
 			iReqSent++;
 		});
@@ -4761,7 +4740,7 @@
 			assert.equal(aRequests[2].headers.Accept, "application/json", "internal request Param check: headers");
 
 
-			assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+			assert.equal(typeof (oEvent.getParameter('ID')), "string", "Param check: id");
 			sReqId = oEvent.getParameter('ID');
 			iReqSent++;
 		});
@@ -4826,7 +4805,6 @@
 		var sReqId = null;
 		oModel.read("/ProductSet('HT-1001')", {
 			success : function() {
-				bSuccess = true;
 				iSuccess++;
 			},
 			error : function(oError) {
@@ -4836,7 +4814,6 @@
 		});
 		oModel.read("/ProductSet('AD-1000')", {
 			success : function() {
-				bSuccess = true;
 				iSuccess++;
 			},
 			error : function(oError) {
@@ -4908,7 +4885,7 @@
 			assert.equal(aRequests[3].headers.Accept, "application/json", "internal request Param check: headers");
 
 
-			assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+			assert.equal(typeof (oEvent.getParameter('ID')), "string", "Param check: id");
 			sReqId = oEvent.getParameter('ID');
 			iReqSent++;
 		});
@@ -4974,7 +4951,6 @@
 
 	QUnit.test("test eventing when using multiple requests with batch off", function(assert) {
 		var done = assert.async();
-		var bSuccess = false;
 		var sReqId1 = null;
 		var sReqId2 = null;
 		var sReqId3 = null;
@@ -4985,7 +4961,6 @@
 		oModel.setTokenHandlingEnabled(false);
 		oModel.read("/ProductSet('HT-1001')", {
 			success : function() {
-				bSuccess = true;
 			},
 			error : function(oError) {
 				assert.ok(false, "request failed");
@@ -4994,7 +4969,6 @@
 		});
 		oModel.read("/ProductSet('AD-1000')", {
 			success : function() {
-				bSuccess = true;
 			},
 			error : function(oError) {
 				assert.ok(false, "request failed");
@@ -5023,7 +4997,7 @@
 				assert.equal(oRequest.method, "POST" , "request check: method");
 				assert.ok(oRequest.requestUri.indexOf("/ProductSet('HT-1000')") !== -1, "request URL - ok");
 				assert.equal(oEvent.getParameter('headers')['x-http-method'], "MERGE" , "Param check: method");
-				assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+				assert.equal(typeof (oEvent.getParameter('ID')), "string", "Param check: id");
 				sReqId3 = oEvent.getParameter('ID');
 			}
 
@@ -5032,7 +5006,7 @@
 				assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
 				assert.equal(oRequest.method, "GET" , "request check: method");
 				assert.ok(oRequest.requestUri.indexOf("/ProductSet('HT-1001')") !== -1, "request URL - ok");
-				assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+				assert.equal(typeof (oEvent.getParameter('ID')), "string", "Param check: id");
 				sReqId1 = oEvent.getParameter('ID');
 			}
 
@@ -5041,7 +5015,7 @@
 				assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
 				assert.equal(oRequest.method, "GET" , "request check: method");
 				assert.ok(oRequest.requestUri.indexOf("/ProductSet('AD-1000')") !== -1, "request URL - ok");
-				assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+				assert.equal(typeof (oEvent.getParameter('ID')), "string", "Param check: id");
 				sReqId2 = oEvent.getParameter('ID');
 			}
 		});
@@ -5060,7 +5034,7 @@
 				assert.equal(oResponse.statusCode, 200, "oResponse Param check: statusCode");
 				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId1, "Check Request ID");
-				iCount2 ++;
+				iCount2++;
 			}
 
 			if (oEvent.getParameter('url').indexOf("AD-1000") !== -1) {
@@ -5071,7 +5045,7 @@
 				assert.equal(oResponse.statusCode, 200, "oResponse Param check: statusCode");
 				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId2, "Check Request ID");
-				iCount2 ++;
+				iCount2++;
 			}
 
 			if (oEvent.getParameter('url').indexOf("HT-1000") !== -1) {
@@ -5082,7 +5056,7 @@
 				assert.equal(oResponse.statusCode, 204, "oResponse Param check: statusCode");
 				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId3, "Check Request ID");
-				iCount2 ++;
+				iCount2++;
 			}
 
 
@@ -5172,7 +5146,7 @@
 				assert.equal(oRequest.method, "POST" , "request check: method");
 				assert.ok(oRequest.requestUri.indexOf("/ProductSet('HT-1000')") !== -1, "request URL - ok");
 				assert.equal(oEvent.getParameter('headers')['x-http-method'], "MERGE" , "Param check: method");
-				assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+				assert.equal(typeof (oEvent.getParameter('ID')), "string", "Param check: id");
 				sReqId1 = oEvent.getParameter('ID');
 			}
 			if (iCount1 == 2) {
@@ -5181,7 +5155,7 @@
 				assert.equal(oRequest.method, "POST" , "request check: method");
 				assert.ok(oRequest.requestUri.indexOf("/ProductSet('HT-1000')") !== -1, "request URL - ok");
 				assert.equal(oEvent.getParameter('headers')['x-http-method'], "MERGE" , "Param check: method");
-				assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+				assert.equal(typeof (oEvent.getParameter('ID')), "string", "Param check: id");
 				sReqId2 = oEvent.getParameter('ID');
 			}
 			if (iCount1 == 3) {
@@ -5189,7 +5163,7 @@
 				assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
 				assert.equal(oRequest.method, "GET" , "request check: method");
 				assert.ok(oRequest.requestUri.indexOf("/ProductSet('HT-1001')") !== -1, "request URL - ok");
-				assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+				assert.equal(typeof (oEvent.getParameter('ID')), "string", "Param check: id");
 				sReqId3 = oEvent.getParameter('ID');
 			}
 			if (iCount1 == 4) {
@@ -5197,7 +5171,7 @@
 				assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
 				assert.equal(oRequest.method, "GET" , "request check: method");
 				assert.ok(oRequest.requestUri.indexOf("/ProductSet('AD-1000')") !== -1, "request URL - ok");
-				assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+				assert.equal(typeof (oEvent.getParameter('ID')), "string", "Param check: id");
 				sReqId4 = oEvent.getParameter('ID');
 			}
 		});
@@ -5216,7 +5190,7 @@
 				assert.equal(oResponse.statusCode, 200, "oResponse Param check: statusCode");
 				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId3, "Check Request ID");
-				iCount2 ++;
+				iCount2++;
 			}
 
 			if (oEvent.getParameter('url').indexOf("AD-1000") !== -1) {
@@ -5227,7 +5201,7 @@
 				assert.equal(oResponse.statusCode, 200, "oResponse Param check: statusCode");
 				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId4, "Check Request ID");
-				iCount2 ++;
+				iCount2++;
 			}
 
 			if (oEvent.getParameter('url').indexOf("HT-1000") !== -1 && oEvent.getParameter('ID') === sReqId1) {
@@ -5238,7 +5212,7 @@
 				assert.equal(oResponse.statusCode, 204, "oResponse Param check: statusCode");
 				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId1, "Check Request ID");
-				iCount2 ++;
+				iCount2++;
 			}
 			if (oEvent.getParameter('url').indexOf("HT-1000") !== -1 && oEvent.getParameter('ID') === sReqId2) {
 				assert.equal(oEvent.getParameter('method'), "POST" , "Param check: method");
@@ -5248,7 +5222,7 @@
 				assert.equal(oResponse.statusCode, 204, "oResponse Param check: statusCode");
 				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId2, "Check Request ID");
-				iCount2 ++;
+				iCount2++;
 			}
 
 			if (iCount2 == 4 && iSuccess === 5) {
@@ -5401,11 +5375,9 @@
 
 	QUnit.test("test abort of request in batch request", function(assert) {
 		var done = assert.async();
-		var bSuccess = false;
 		var oAbort = {};
 		oModel.read("/ProductSet('HT-1001')", {
 			success : function() {
-				bSuccess = true;
 			},
 			error : function(oError) {
 				assert.ok(false, "request failed");
@@ -5414,7 +5386,6 @@
 		});
 		oAbort = oModel.read("/ProductSet('AD-1000')", {
 			success : function() {
-				bSuccess = true;
 			},
 			error : function(oError) {
 				assert.ok(true, "error callback of aborted request is called");
@@ -5442,7 +5413,7 @@
 		oModel.attachBatchRequestSent(this, function(oEvent) {
 			setTimeout(function() {
 				oAbort1.abort();
-  				oAbort2.abort();
+				oAbort2.abort();
 			}, 0);
 		});
 
@@ -5473,7 +5444,7 @@
 		var iCounterBatch = 0;
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
 			iCounterBatch++;
-			if(iCounterBatch === 1){
+			if (iCounterBatch === 1){
 				assert.ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
 				assert.ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
 			} else {
@@ -5485,11 +5456,10 @@
 		var iCounter = 0;
 		oModel.attachBatchRequestSent(this, function(oEvent) {
 			iCounter++;
-			if(iCounter === 2){
-				bFirstTime = true;
+			if (iCounter === 2){
 				setTimeout(function() {
 					oAbort1.abort();
-	  			oAbort2.abort();
+				oAbort2.abort();
 				}, 0);
 			}
 		});
@@ -5514,7 +5484,7 @@
 			}
 		});
 
-		var oAbort3 = oModel.read("/ProductSet('HT-1001')", {
+		oModel.read("/ProductSet('HT-1001')", {
 			success: function() {
 				assert.ok(true, "Successhandler was called");
 			},
@@ -5524,7 +5494,7 @@
 			}
 		});
 
-		var oAbort4 = oModel.read("/ProductSet('AD-1000')", {
+		oModel.read("/ProductSet('AD-1000')", {
 			success: function() {
 				assert.ok(true, "Successhandler was called");
 			},
@@ -5543,19 +5513,18 @@
 			iCounterBatch++;
 			assert.ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
 			assert.ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
-			if(iCounterBatch === 3){
+			if (iCounterBatch === 3){
 				done();
 			}
 		});
 		var iCounter = 0;
 		oModel.attachBatchRequestSent(this, function(oEvent) {
 			iCounter++;
-			if(iCounter === 2){
-				bFirstTime = true;
+			if (iCounter === 2){
 				setTimeout(function() {
 					oAbort1.abort();
-	  			oAbort2.abort();
-	  			oAbort3.abort();
+					oAbort2.abort();
+					oAbort3.abort();
 					oAbort4.abort();
 				}, 0);
 			}
@@ -5674,7 +5643,7 @@
 			}
 		});
 
-		var oAbort5 = oModel.read("/ProductSet('HT-1001')", {
+		oModel.read("/ProductSet('HT-1001')", {
 			success: function() {
 				assert.ok(true, "Successhandler was called");
 			},
@@ -5833,7 +5802,7 @@
 			},
 			error : function(oError) {
 				assert.ok(false, "request failed");
-			},
+			}
 		});
 		oAbort = oModel.read("/ProductSet('AD-1000')", {
 			success : function() {
@@ -5841,7 +5810,7 @@
 			},
 			error : function(oError) {
 				assert.ok(true, "error callback of aborted request is called");
-			},
+			}
 		});
 		oAbort.abort();
 
@@ -5870,7 +5839,7 @@
 			error : function(oError) {
 				assert.ok(false, "request failed");
 				iAbort++;
-			},
+			}
 		});
 		oModel.read("/ProductSet('AD-1000')", {
 			success : function() {
@@ -5879,7 +5848,7 @@
 			error : function(oError) {
 				assert.ok(false, "request failed");
 				iAbort++;
-			},
+			}
 		});
 		oAbort = oModel.read("/ProductSet('HT-1001')", {
 			success : function() {
@@ -5888,7 +5857,7 @@
 			error : function(oError) {
 				assert.ok(true, "error callback of aborted request is called");
 				iAbort++;
-			},
+			}
 		});
 		oAbort.abort();
 		oModel.attachRequestCompleted(this, function(oEvent) {
@@ -5908,12 +5877,10 @@
 	QUnit.test("XMLHttpRequest abort of batch requests with ODataModel internal", function(assert) {
 		var done = assert.async();
 		assert.expect(3);
-		var that = this;
 		var iEventCounter = 0;
 		var bSuccess1 = false,
 			bSuccess2 = false,
 			bSuccess3 = false;
-		var oAbort = {};
 		var oModel = initModel({
 			"useBatch": true
 		});
@@ -5970,8 +5937,6 @@
 		var iCount = 0;
 		var iChange = 0;
 		var iReceived = 0;
-		var bRead1 = false;
-		var bRead2 = false;
 		var oInput1, oInput2;
 
 		oInput1 = new sap.m.Input();
@@ -5981,14 +5946,14 @@
 
 		var fnChange = function(oEvent) {
 			iChange++;
-		}
+		};
 		var fnDataReceived = function(oEvent) {
 			assert.ok(iChange == 2, "checkupdate done");
 			iReceived++;
 			if (iReceived == 2) {
 				assert.ok(true, "dataReceived after checkUpdate");
 			}
-		}
+		};
 
 		oInput1.bindElement({path:"/ProductSet('AD-1000')", batchGroupId:1, events:{change: fnChange, dataReceived: fnDataReceived}});
 		oInput2.bindElement({path:"/ProductSet('HT-1000')", batchGroupId:1, events:{change: fnChange, dataReceived: fnDataReceived}});
@@ -6009,9 +5974,7 @@
 		var iCount = 0;
 		var iChange = 0;
 		var iReceived = 0;
-		var bRead1 = false;
-		var bRead2 = false;
-		var oInput1, oInput2;
+		var oInput1, oInput2, oInput3;
 
 		oInput1 = new sap.m.Input();
 		oInput1.setModel(oModel);
@@ -6022,14 +5985,14 @@
 
 		var fnChange = function(oEvent) {
 			iChange++;
-		}
+		};
 		var fnDataReceived = function(oEvent) {
 			assert.ok(iChange == 3, "checkupdate done");
 			iReceived++;
 			if (iReceived == 3) {
 				assert.ok(true, "dataReceived after checkUpdate");
 			}
-		}
+		};
 
 		oInput1.bindElement({path:"/ProductSet('AD-1000')", batchGroupId:1, events:{change: fnChange, dataReceived: fnDataReceived}});
 		oInput2.bindElement({path:"/ProductSet('HT-1000')", batchGroupId:1, events:{change: fnChange, dataReceived: fnDataReceived}});
@@ -6051,7 +6014,6 @@
 		var done = assert.async();
 		var iCount = 0;
 		var iChange = 0;
-		var iReceived = 0;
 		var oInput1, oInput2;
 
 		oInput1 = new sap.m.Input();
@@ -6067,10 +6029,10 @@
 				oInput2.destroy();
 				done();
 			}
-		}
+		};
 		var fnDataReceived = function(oEvent) {
 			assert.ok(false, "no data retrieval necessary");
-		}
+		};
 
 		oModel.read("/ProductSet('AD-1000')", {
 			batchGroupId : "myId1",
@@ -6132,21 +6094,20 @@
 				}
 			},
 			value: "{Name}"
-		})
+		});
 	});
 
 	QUnit.test("test oDataModel listbinding with table - event order change/dataReceived", function(assert) {
 		var done = assert.async();
-		var iCount = 0,
-			iChange = 0,
+		var iChange = 0,
 			iReceived = 0;
 
 		var mEntities = {
-				categories: {
-					collection: "/VH_CategorySet",
-					properties: ["Category"]
-				}
+			categories: {
+				collection: "/VH_CategorySet",
+				properties: ["Category"]
 			}
+		};
 		var oTable = initTable(mEntities);
 
 		oTable.placeAt("target1");
@@ -6155,21 +6116,21 @@
 
 		var fnChange = function(oEvent) {
 			iChange++;
-		}
+		};
 		var fnDataReceived = function(oEvent) {
 			assert.ok(iChange == 1, "checkupdate done");
 			iReceived++;
 			if (iReceived == 1) {
 				assert.ok(true, "dataReceived after checkUpdate");
 			}
-		}
+		};
 
 		oTable.bindRows({path:mEntities.categories.collection, events:{change: fnChange, dataReceived: fnDataReceived}});
 		var fnCheck = function() {
 			assert.ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 			oTable.destroy();
 			done();
-		}
+		};
 		oModel.attachBatchRequestCompleted(this, fnCheck);
 	});
 
@@ -6180,11 +6141,11 @@
 			iReceived = 0;
 
 		var mEntities = {
-				categories: {
-					collection: "/VH_CategorySet",
-					properties: ["Category"]
-				}
+			categories: {
+				collection: "/VH_CategorySet",
+				properties: ["Category"]
 			}
+		};
 		var oTable = initTable(mEntities);
 
 		oTable.placeAt("target1");
@@ -6193,7 +6154,7 @@
 
 		var fnChange = function(oEvent) {
 			iChange++;
-		}
+		};
 		var fnDataReceived = function(oEvent) {
 			assert.ok(iChange == 1, "checkupdate done");
 			iReceived++;
@@ -6201,7 +6162,7 @@
 				assert.ok(true, "dataReceived after checkUpdate");
 				oTable.destroy();
 			}
-		}
+		};
 
 		oTable.bindRows({path:mEntities.categories.collection, events:{change: fnChange, dataReceived: fnDataReceived}});
 		var fnCheck = function() {
@@ -6212,33 +6173,22 @@
 			} else {
 				assert.ok(false, "too many requests");
 			}
-		}
-		oModel.attachBatchRequestCompleted(this, fnCheck);
-
-		var fnLoad = function() {
-			oModel.read("/VH_CategorySet", {
-				success : function(oData, oResponse) {
-					assert.ok(true, "request succeeded");
-					fnTest();
-				},
-				error : function(oError) {
-					assert.ok(false, "request failed");
-				}
-			});
 		};
+		oModel.attachBatchRequestCompleted(this, fnCheck);
 	});
+
 	QUnit.test("test oDataModel createEntry, submit fails, change again and submit", function(assert) {
 		var done = assert.async();
-		var iCount = 0;
 		var oContext;
 
 		oModel.setDeferredBatchGroups(["myId"]);
 		oModel.setChangeBatchGroups({
-					"Product": {
-			 			batchGroupId: "myId",
-			  			changeSetId: "Test",
-			  			single: false
-			 		}});
+			"Product": {
+				batchGroupId: "myId",
+				changeSetId: "Test",
+				single: false
+			}
+		});
 
 		var fnChange = function() {
 			oModel.setProperty("TypeCode","AD", oContext);
@@ -6390,8 +6340,6 @@
 
 	QUnit.test("test oDataModel binding function import parameters deferred", function(assert) {
 		var done = assert.async();
-		var iCount = 0;
-		var oContext;
 		oModel.setDefaultBindingMode("TwoWay");
 		var oHandle = oModel.callFunction("/SalesOrder_InvoiceCreated", {
 			groupId: "changes",
@@ -6399,7 +6347,7 @@
 			urlParameters: {"SalesOrderID": "test"}
 		});
 
-		oInput = new sap.m.Input();
+		var oInput = new sap.m.Input();
 		oInput.bindValue("SalesOrderID");
 		oInput.setModel(oModel);
 
@@ -6422,8 +6370,6 @@
 
 	QUnit.test("test oDataModel binding function import parameters not deferred", function(assert) {
 		var done = assert.async();
-		var iCount = 0;
-		var oContext;
 		var oHandle;
 		var oInput;
 		oModel.setDefaultBindingMode("TwoWay");
@@ -6462,8 +6408,6 @@
 
 	QUnit.test("test oDataModel binding function import parameters result check error", function(assert) {
 		var done = assert.async();
-		var iCount = 0;
-		var oContext;
 		oModel.setDefaultBindingMode("TwoWay");
 		var oHandle = oModel.callFunction("/SalesOrder_InvoiceCreated", {
 			groupId: "changes",
@@ -6471,7 +6415,7 @@
 			urlParameters: {"SalesOrderID": "test"}
 		});
 
-		oInput = new sap.m.Input();
+		var oInput = new sap.m.Input();
 		oInput.bindValue("SalesOrderID");
 		oInput.setModel(oModel);
 
@@ -6496,8 +6440,6 @@
 
 	QUnit.test("test oDataModel binding function import with empty parameter deferred", function(assert) {
 		var done = assert.async();
-		var iCount = 0;
-		var oContext;
 		oModel.setDefaultBindingMode("TwoWay");
 		var oHandle = oModel.callFunction("/SalesOrder_InvoiceCreated", {
 			groupId: "changes",
@@ -6505,7 +6447,7 @@
 			urlParameters: {"SalesOrderID": ""}
 		});
 
-		oInput = new sap.m.Input();
+		var oInput = new sap.m.Input();
 		oInput.bindValue("SalesOrderID");
 		oInput.setModel(oModel);
 
@@ -6523,7 +6465,7 @@
 	QUnit.test("test getETag", function(assert){
 		assert.expect(3);
 		var done = assert.async();
-		oInput = new sap.m.Input();
+		var oInput = new sap.m.Input();
 		oInput.setModel(oModel);
 		oInput.bindElement("/ProductSet('AD-1000')");
 		var fnHandler = function() {
@@ -6537,7 +6479,7 @@
 			oInput.unbindElement();
 			oInput.setBindingContext(null);
 			done();
-		}
+		};
 		oInput.getElementBinding().attachChange(fnHandler);
 	});
 
@@ -6796,7 +6738,7 @@
 	QUnit.test("test oDataModel Two Way", function(assert) {
 		var done = assert.async();
 		var iCount = 0;
-		var bsetProp = false;
+		var bSetProp = false;
 		oModel.setDefaultBindingMode("TwoWay");
 
 		// make request non deferred...
@@ -6806,11 +6748,11 @@
 		});
 
 		var mEntities = {
-				categories: {
-					collection: "/ProductSet",
-					properties: ["Name"]
-				}
+			categories: {
+				collection: "/ProductSet",
+				properties: ["Name"]
 			}
+		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
 
@@ -6838,21 +6780,22 @@
 	QUnit.test("test oDataModel Two Way deferred with using changeGroups", function(assert) {
 		var done = assert.async();
 		var iCount = 0;
-		var bsetProp = false;
+		var bSetProp = false;
 		oModel.setDefaultBindingMode("TwoWay");
 		oModel.setDeferredGroups(["myId"]);
 		oModel.setChangeGroups({
-					"Product": {
-			 			groupId: "myId",
-			  			changeSetId: "Test",
-			  			single: true
-			 		}});
-		var mEntities = {
-				categories: {
-					collection: "/ProductSet",
-					properties: ["Name"]
-				}
+			"Product": {
+				groupId: "myId",
+				changeSetId: "Test",
+				single: true
 			}
+		});
+		var mEntities = {
+			categories: {
+				collection: "/ProductSet",
+				properties: ["Name"]
+			}
+		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
 
@@ -6886,23 +6829,23 @@
 	QUnit.test("test oDataModel Two Way 2 changes deferred with using changeGroups", function(assert) {
 		var done = assert.async();
 		var iCount = 0;
-		var bsetProp = false;
-		var bsetProp2 = false;
+		var bSetProp = false;
+		var bSetProp2 = false;
 		oModel.setDefaultBindingMode("TwoWay");
 		oModel.setDeferredGroups(["myId"]);
 		oModel.setChangeGroups({
 			"Product": {
-	 			groupId: "myId",
-	  			changeSetId: "Test",
-	  			single: true
-	 		}
+				groupId: "myId",
+				changeSetId: "Test",
+				single: true
+			}
 		});
 		var mEntities = {
 			categories: {
 				collection: "/ProductSet",
 				properties: ["Name"]
 			}
-		}
+		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
 
@@ -6932,7 +6875,7 @@
 					oTable.destroy();
 					done();
 				}
-			}
+			};
 			oModel.attachRequestCompleted(this, fnHandler);
 		});
 	});
@@ -6940,22 +6883,23 @@
 	QUnit.test("test oDataModel Two Way 2 changes deferred with using changeGroups", function(assert) {
 		var done = assert.async();
 		var iCount = 0;
-		var bsetProp = false;
-		var bsetProp2 = false;
+		var bSetProp = false;
+		var bSetProp2 = false;
 		oModel.setDefaultBindingMode("TwoWay");
 		oModel.setDeferredGroups(["myId"]);
 		oModel.setChangeGroups({
-					"Product": {
-			 			groupId: "myId",
-			  			changeSetId: "Test",
-			  			single: false
-			 		}});
-		var mEntities = {
-				categories: {
-					collection: "/ProductSet",
-					properties: ["Name"]
-				}
+			"Product": {
+				groupId: "myId",
+				changeSetId: "Test",
+				single: false
 			}
+		});
+		var mEntities = {
+			categories: {
+				collection: "/ProductSet",
+				properties: ["Name"]
+			}
+		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
 
@@ -6972,7 +6916,7 @@
 					assert.ok(oModel.hasPendingChanges(), "Pending changes test");
 					oModel.submitChanges();
 				}
-				if (iCount ===3) {
+				if (iCount === 3) {
 					assert.ok(true, "request called");
 					assert.ok(bSetProp, "set property successful");
 					assert.ok(bSetProp2, "set property successful");
@@ -6984,7 +6928,7 @@
 					oTable.destroy();
 					done();
 				}
-			}
+			};
 			oModel.attachRequestCompleted(this, fnHandler);
 		});
 	});
@@ -6992,7 +6936,7 @@
 	QUnit.test("test oDataModel OneTime bindings with bindObject and resolve checks", function(assert) {
 		var done = assert.async();
 		var iCount = 0;
-		var oTxt = new sap.ui.commons.TextField();
+		var oTxt = new Input();
 		oTxt.bindValue({path: "Category", mode: 'OneTime'});
 		oTxt.placeAt("target1");
 		oModel.setUseBatch(true);
@@ -7013,10 +6957,11 @@
 			oTxt.destroy();
 			oModel.detachBatchRequestCompleted(fnCheck);
 			done();
-		}
+		};
 		oTxt.bindObject("/VH_CategorySet('Headsets')");
 		oModel.attachBatchRequestCompleted(this, fnCheck);
 	});
+
 	QUnit.test("test oDataModel setProperty after submitChanges(): request/order", function(assert) {
 		var done = assert.async();
 		oModel.setUseBatch(true);
@@ -7043,10 +6988,10 @@
 				assert.ok(oRequest.data.Name == "hugo", "data ok");
 			}
 		});
+
 		var fnSuc = function() {
 			oModel.read("/ProductSet('HT-1000')",{groupId:"changes"});
 			oModel.submitChanges();
-			var oN = oModel.getProperty("/ProductSet('AD-1000')/Name");
 			oModel.setProperty("/ProductSet('AD-1000')/Name", "emil");
 			//oModel.setProperty("/Products(1)/Name", oN);
 			setTimeout(function() {
@@ -7059,9 +7004,10 @@
 					}});
 				},300);
 			},300);
-		}
+		};
 		oModel.read("/ProductSet('AD-1000')",{success: fnSuc});
 	});
+
 	QUnit.test("test oDataModel setProperty after submitChanges(): request/order", function(assert) {
 		var done = assert.async();
 		oModel.setUseBatch(true);
@@ -7099,7 +7045,7 @@
 					}});
 				},300);
 			},300);
-		}
+		};
 		oModel.read("/ProductSet('AD-1000')",{success: fnSuc});
 	});
 
@@ -7132,7 +7078,7 @@
 				}
 				iElementBindingCounter[sReason]++;
 
-				switch (iElementBindingCounter[sap.ui.model.ChangeReason.Context]) {
+				switch (iElementBindingCounter[ChangeReason.Context]) {
 					case 1:
 						oList.bindElement({path:"/BusinessPartnerSet('0100000044')", events: {change: fnCount}, parameters: { expand:"ToProducts"}});
 						break;
@@ -7148,11 +7094,11 @@
 
 
 			var fnSecondTest = function() {
-				assert.equal(iElementBindingCounter[sap.ui.model.ChangeReason.Context], 3, "Correct number of context-changes");
+				assert.equal(iElementBindingCounter[ChangeReason.Context], 3, "Correct number of context-changes");
 				assert.equal(Object.keys(iElementBindingCounter).length, 1, "No other changes were fired");
 
 
-				oBinding = oList.getBinding("items");
+				var oBinding = oList.getBinding("items");
 				oBinding.attachChange(function(oEvent) {
 					var sReason = oEvent.getParameter("reason");
 					if (!iListBindingCounter[sReason]) {
@@ -7160,13 +7106,13 @@
 					}
 					iListBindingCounter[sReason]++;
 
-					switch (iListBindingCounter[sap.ui.model.ChangeReason.Context]) {
+					switch (iListBindingCounter[ChangeReason.Context]) {
 						case 1:
 							oBinding.setContext(oModel.createBindingContext("/BusinessPartnerSet('0100000000')"));
 							break;
 
 						case 2:
-							assert.equal(iListBindingCounter[sap.ui.model.ChangeReason.Context], 2, "Correct number of context-changes");
+							assert.equal(iListBindingCounter[ChangeReason.Context], 2, "Correct number of context-changes");
 							assert.equal(Object.keys(iListBindingCounter).length, 1, "No other changes were fired");
 							oList.destroy();
 							done();
@@ -7180,18 +7126,4 @@
 		});
 
 	});
-
-	</script>
-
-</head>
-<body>
-<h1 id="qunit-header">QUnit tests: Data binding OData Model (V2)</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-<br>
-<div id="target1"></div>
-<div id="target2"></div>
-</body>
-</html>
+});
