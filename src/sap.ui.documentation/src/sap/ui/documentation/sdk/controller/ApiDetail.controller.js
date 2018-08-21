@@ -207,35 +207,46 @@ sap.ui.define([
 			_processApiIndexAndLoadApiJson: function (aData) {
 				var oEntityData,
 					oMasterController,
-					bFound = false,
-					iLen,
-					i;
+					bVirtualNamespace,
+					sTopicId = this._sTopicid;
 
 				// Cache api-index data
 				this._aApiIndex = aData;
 
-				// Find entity in api-index
-				for (i = 0, iLen = aData.length; i < iLen; i++) {
-					if (aData[i].name === this._sTopicid || aData[i].name.indexOf(this._sTopicid) === 0) {
-						oEntityData = aData[i];
-						this._oEntityData = oEntityData;
-						bFound = true;
-						break;
+				aData.some(function (oEntry) {
+					if (oEntry.name === sTopicId) {
+						oEntityData = oEntry;
+						return true;
 					}
+				});
+
+				if (!oEntityData) {
+					// Search for possible virtual namespace
+					aData.some(function (oEntry) {
+						// This check is not perfect but will handle both modules and global namespace items
+						if (oEntry.name.indexOf(sTopicId) === 0) {
+							oEntityData = oEntry;
+							bVirtualNamespace = true;
+							return true;
+						}
+					});
 				}
 
-				if (bFound) {
+				if (oEntityData) {
+					// Cache entity data
+					this._oEntityData = oEntityData;
+
 					// If target symbol is deprecated - all deprecated records should be shown in the tree
-					if (this._oEntityData.deprecated) {
+					// Virtual namespace's can't be deprecated
+					if (!bVirtualNamespace && oEntityData.deprecated) {
 						oMasterController = this.getOwnerComponent().getConfigUtil().getMasterView("apiId").getController();
 						oMasterController.selectDeprecatedSymbol(this._sTopicid);
 					}
 
 					// Load API.json only for selected lib
 					return APIInfo.getLibraryElementsJSONPromise(oEntityData.lib).then(function (aData) {
-						this._aLibsData = aData; // Cache received data
 						return Promise.resolve(aData); // We have found the symbol and loaded the corresponding api.json
-					}.bind(this));
+					});
 				}
 
 				// If we are here - the object does not exist so we reject the promise.

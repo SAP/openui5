@@ -186,7 +186,12 @@ sap.ui.define([
 							});
 
 							if (!oHiddenNamespace) {
-								oNewNodeNamespace = this._createTreeNode(sNodeNamespace, sNodeNamespace, sNodeNamespace === this._topicId, oJSONElement.lib, !!oJSONElement.deprecated);
+								oNewNodeNamespace = this._createTreeNode(sNodeNamespace,
+									sNodeNamespace,
+									sNodeNamespace === this._topicId,
+									oJSONElement.lib,
+									false /* Virtual namespace can't be deprecated */);
+
 								oNewNodeNamespace.nodes = [];
 								oNewNodeNamespace.nodes.push(oTreeNode);
 
