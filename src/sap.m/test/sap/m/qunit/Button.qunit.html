@@ -696,6 +696,31 @@
 		oButton.destroy();
 	});
 
+	//BCP: 1880541323
+	QUnit.test("no exception is thrown when domRef is null", function(assert) {
+		this.stub(sap.ui.Device, "browser", {"firefox": true});
+
+		// System under Test
+		var oButton = new sap.m.Button ({
+			text: "Test",
+			dragDropConfig: new sap.ui.core.dnd.DragInfo()
+		});
+
+		// stub the getDomRef function to return null
+		var stubGetDomRef = this.stub(oButton, "getDomRef", function () { return null; });
+
+		// Action
+		oButton.onAfterRendering();
+
+		// Assert
+		assert.ok(true, "No exception is thrown");
+
+		// Cleanup
+		stubGetDomRef.restore();
+		oButton.destroy();
+	});
+
+
 </script>
 
 </head>
