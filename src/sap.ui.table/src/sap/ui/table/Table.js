@@ -407,6 +407,11 @@ sap.ui.define([
 			rowSelectionChange : {
 				parameters : {
 
+          /**
+           * indicates state of a row selection
+           */
+          selected : {type : "boolean"},
+
 					/**
 					 * row index which has been clicked so that the selection has been changed (either selected or deselected)
 					 */
@@ -2981,6 +2986,7 @@ sap.ui.define([
 		var aRowIndices = oEvent.getParameter("rowIndices");
 		var bSelectAll = oEvent.getParameter("selectAll");
 		var iRowIndex = this._iSourceRowIndex !== undefined ? this._iSourceRowIndex : this.getSelectedIndex();
+    var bSelected = aRowIndices.length > 0 ? this.isIndexSelected( aRowIndices[0] ) : false;
 		this._updateSelection();
 
 		this.fireRowSelectionChange({
@@ -2988,7 +2994,8 @@ sap.ui.define([
 			rowContext: this.getContextByIndex(iRowIndex),
 			rowIndices: aRowIndices,
 			selectAll: bSelectAll,
-			userInteraction: this._iSourceRowIndex !== undefined
+			userInteraction: this._iSourceRowIndex !== undefined,
+      selected: bSelected
 		});
 	};
 

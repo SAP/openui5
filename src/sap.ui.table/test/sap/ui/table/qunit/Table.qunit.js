@@ -250,6 +250,54 @@ sap.ui.define([
 		assert.ok(oTable.getContextMenu() instanceof MenuM, "Context menu created as specified by the application");
 	});
 
+  QUnit.test("rowSelectionChanged - 'selected' parameter validation", function(assert) {
+    var aRows = oTable.getRows();
+    var oCell1;
+    var oSelAll;
+    var sTableId;
+
+    sTableId = oTable.getId();
+
+    function handlerTrue(oEvent) {
+      assert.strictEqual(oEvent.getParameter('selected'), true, "When selected a rows this value must be equal 'true'");
+    }
+    function handlerFalse(oEvent) {
+      assert.strictEqual(oEvent.getParameter('selected'), false, "When deselected a rows this value must be equal 'false'");
+    }
+    function handlerSelAllTrue(oEvent) {
+      assert.strictEqual(oEvent.getParameter('selected'), true, "When selected all rows this value must be equal 'true'");
+    }
+    function handlerSelAllFalse(oEvent) {
+      assert.strictEqual(oEvent.getParameter('selected'), false, "When deselected all rows this value must be equal 'false'");
+    }
+
+    oCell1 = jQuery.sap.domById(sTableId + "-rowsel0");
+    oSelAll = jQuery.sap.domById(sTableId + "-selall");
+
+    // expect true when select a row
+    oTable.attachEvent("rowSelectionChange", handlerTrue);
+		qutils.triggerEvent("click", oCell1);
+    oTable.detachEvent("rowSelectionChange", handlerTrue);
+
+    // expect true when delect a row
+    oTable.attachEvent("rowSelectionChange", handlerFalse);
+		qutils.triggerEvent("click", oCell1);
+    oTable.detachEvent("rowSelectionChange", handlerFalse);
+
+		oTable.setSelectionMode(SelectionMode.Multi);
+		assert.equal(oTable.getSelectionMode(), "MultiToggle", "Selection mode is MultiToggle although Multi was set!");
+
+    // expect true when select all rows
+    oTable.attachEvent("rowSelectionChange", handlerSelAllTrue);
+		qutils.triggerEvent("click", oSelAll);
+    oTable.detachEvent("rowSelectionChange", handlerSelAllTrue);
+
+    // expect true when select all rows
+    oTable.attachEvent("rowSelectionChange", handlerSelAllFalse);
+		qutils.triggerEvent("click", oSelAll);
+    oTable.detachEvent("rowSelectionChange", handlerSelAllFalse);
+  });
+
 	QUnit.test("Filter", function(assert) {
 		var oColFirstName = oTable.getColumns()[1];
 		var oColMoney = oTable.getColumns()[7];
