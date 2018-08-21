@@ -6,11 +6,11 @@ sap.ui.define([
 	'sap/ui/core/Popup',
 	'sap/base/Log',
 	'jquery.sap.strings'
-], function(jQuery, DataType, BaseObject, Popup, Log) {
+], function (jQuery, DataType, BaseObject, Popup, Log) {
 
 	function random(values) {
-		if ( Array.isArray(values) ) {
-			return values[ Math.floor(values.length * Math.random()) ];
+		if (Array.isArray(values)) {
+			return values[Math.floor(values.length * Math.random())];
 		}
 		return Math.floor(values * Math.random());
 	}
@@ -20,10 +20,10 @@ sap.ui.define([
 	}
 
 	function makeLiteral(value) {
-		if ( Array.isArray(value) ) {
+		if (Array.isArray(value)) {
 			return "[" + value.map(makeLiteral).join(',') + "]";
 		}
-		if ( typeof value === 'string' || value instanceof String ) {
+		if (typeof value === 'string' || value instanceof String) {
 			return "'" + value.replace(/'/g, "\\'") + "'";
 		}
 		return String(value);
@@ -34,16 +34,16 @@ sap.ui.define([
 	 * the following helper makes fn.bind(...) a noop.
 	 */
 	function unbindable(fn) {
-		fn.bind = function() {
+		fn.bind = function () {
 			return this;
 		};
 		return fn;
 	}
 
 	var oController = {
-		handler: unbindable(function handler() {}),
+		handler: unbindable(function handler() { }),
 		nested: {
-			handler: unbindable(function nestedHandler() {})
+			handler: unbindable(function nestedHandler() { })
 		}
 	};
 
@@ -51,7 +51,7 @@ sap.ui.define([
 	var ERROR = {};
 	var PRIMITIVE_TYPES = {
 		"any": {
-			valid: [ 0, true, "abc", /xyz/, {}, [[0,true]] ],
+			valid: [0, true, "abc", /xyz/, {}, [[0, true]]],
 			parseValue: [
 				{ input: '0', value: '0' },
 				{ input: 'true', value: 'true' },
@@ -106,18 +106,18 @@ sap.ui.define([
 			]
 		},
 		"object": {
-			valid: [ {}, [], function(){}, String, document, null, new Object() ],
-			invalid: [ undefined, "abc", 123 ],
+			valid: [{}, [], function () { }, String, document, null, new Object()],
+			invalid: [undefined, "abc", 123],
 			parseValue: [
-				{ input: '{"x":2, "y":{"a":1,"b":2}}', value: {x:2, y:{a:1,b:2}} },
-				{ input: '{"x":2, "y":[1,2,3]}', value: {x:2, y:[1,2,3]} },
+				{ input: '{"x":2, "y":{"a":1,"b":2}}', value: { x: 2, y: { a: 1, b: 2 } } },
+				{ input: '{"x":2, "y":[1,2,3]}', value: { x: 2, y: [1, 2, 3] } },
 				{ input: '{x:2, y:{a:1,b:2}}', value: ERROR },
 				{ input: '12', value: 12 } // TODO should be rejected, it's not an object
 			]
 		},
 		"function": {
-			valid: [ function() {}, String, Object, null, undefined ],
-			invalid: [ {}, "abc", ".abc" ],
+			valid: [function () { }, String, Object, null, undefined],
+			invalid: [{}, "abc", ".abc"],
 			parseValue: [
 				{ input: '.handler', value: oController.handler, context: oController, compareMode: 'strict' },
 				{ input: '.nested.handler', value: oController.nested.handler, context: oController, compareMode: 'strict' },
@@ -137,14 +137,14 @@ sap.ui.define([
 
 	QUnit.module("Basic");
 
-	QUnit.test("constructor", function(assert) {
+	QUnit.test("constructor", function (assert) {
 		assert.equal(typeof DataType, 'function', "DataType must be a function to allow instanceof operator");
-		assert['throws'](function() {
+		assert['throws'](function () {
 			new DataType();
 		}, Error, "DataType constructor must not be called and throws exception");
 	});
 
-	QUnit.test("static methods", function(assert) {
+	QUnit.test("static methods", function (assert) {
 		assert.equal(typeof DataType.getType, 'function', "DataType must have a static function 'getType'");
 		assert.equal(typeof DataType.createType, 'function', "DataType must have a static function 'createType'");
 		assert.equal(DataType.getType("array"), undefined, "generic type 'array' should be hidden from 'getType' API");
@@ -154,14 +154,14 @@ sap.ui.define([
 
 	QUnit.module("Primitive Types");
 
-	Object.keys(PRIMITIVE_TYPES).forEach(function(type) {
+	Object.keys(PRIMITIVE_TYPES).forEach(function (type) {
 
 		var oTypeSetup = PRIMITIVE_TYPES[type];
 		var valid = nonEmptyArray(oTypeSetup.valid);
 		var invalid = nonEmptyArray(oTypeSetup.invalid);
 		var parseValue = nonEmptyArray(oTypeSetup.parseValue);
 
-		QUnit.test("'" + type + "'", function(assert) {
+		QUnit.test("'" + type + "'", function (assert) {
 
 			var typeObject = DataType.getType(type);
 			assert.ok(typeObject, "type should exist");
@@ -173,32 +173,32 @@ sap.ui.define([
 			assert.strictEqual(typeObject.isEnumType(), false, "... must not be marked as enum type");
 			assert.strictEqual(typeObject.getEnumValues(), undefined, "type should not have enum values");
 
-			if ( valid ) {
-				valid.forEach(function(value) {
+			if (valid) {
+				valid.forEach(function (value) {
 					assert.equal(typeObject.isValid(value), true, makeLiteral(value) + " should be accepted");
 				});
 			}
-			if ( invalid ) {
-				invalid.forEach(function(value) {
+			if (invalid) {
+				invalid.forEach(function (value) {
 					assert.equal(typeObject.isValid(value), false, makeLiteral(value) + " should not be accepted");
 				});
 			}
 
-			if ( parseValue ) {
-				parseValue.forEach(function(data) {
+			if (parseValue) {
+				parseValue.forEach(function (data) {
 					try {
-						var result = typeObject.parseValue(data.input, data.context ? { context: data.context} : undefined);
-						if ( data.value === ERROR ) {
+						var result = typeObject.parseValue(data.input, data.context ? { context: data.context } : undefined);
+						if (data.value === ERROR) {
 							assert.ok(false, "parsing '" + data.input + "' should have failed");
-						} else if ( data.value === NAN ) {
+						} else if (data.value === NAN) {
 							assert.ok(result !== result, "parsing '" + data.input + "' should result in a NaN value");
-						} else if ( data.compareMode === 'strict' ) {
+						} else if (data.compareMode === 'strict') {
 							assert.strictEqual(result, data.value, "parsing '" + data.input + "' should deliver the expected result");
 						} else {
 							assert.deepEqual(result, data.value, "parsing '" + data.input + "' should deliver the expected result");
 						}
-					} catch(e) {
-						if ( data.value === ERROR ) {
+					} catch (e) {
+						if (data.value === ERROR) {
 							assert.ok(true, "parsing '" + data.input + "' failed as expected");
 						} else {
 							assert.ok(false, "parsing '" + data.input + "' failed unexpectedly with " + (e && e.messge || e));
@@ -207,7 +207,7 @@ sap.ui.define([
 				});
 			}
 
-			assert['throws'](function() {
+			assert['throws'](function () {
 				DataType.createType(type, {});
 			}, Error, "primitive types can't be re-defined");
 
@@ -219,7 +219,7 @@ sap.ui.define([
 
 	QUnit.module("Array Types");
 
-	QUnit.test("hidden type 'array'", function(assert) {
+	QUnit.test("hidden type 'array'", function (assert) {
 		var orig = window.array;
 		delete window.array;
 		assert.strictEqual(DataType.getType('array'), undefined, "lookup must not return type 'array'");
@@ -227,18 +227,18 @@ sap.ui.define([
 		window.array = DataType.createType("dummy", {}, 'any');
 		assert.strictEqual(DataType.getType('array'), undefined, "lookup must not return type 'array' even if it exists as a global name");
 
-		assert['throws'](function() {
+		assert['throws'](function () {
 			DataType.createType('array', {});
 		}, Error, "hidden type 'array' can't be re-defined");
 	});
 
-	Object.keys(PRIMITIVE_TYPES).forEach(function(type) {
+	Object.keys(PRIMITIVE_TYPES).forEach(function (type) {
 
 		var oTypeSetup = PRIMITIVE_TYPES[type],
 			valid = nonEmptyArray(oTypeSetup.valid),
 			invalid = nonEmptyArray(oTypeSetup.invalid);
 
-		QUnit.test("'" + type + "[]'", function(assert) {
+		QUnit.test("'" + type + "[]'", function (assert) {
 
 			var typeObject = DataType.getType(type);
 			var arrayTypeObject = DataType.getType(type + '[]');
@@ -255,31 +255,31 @@ sap.ui.define([
 			// validity checks
 			assert.strictEqual(arrayTypeObject.isValid([]), true, "empty array should be valid");
 
-			if ( valid ) {
+			if (valid) {
 				var array;
 
 				// singleton array
-				array = [ random(valid) ];
+				array = [random(valid)];
 				assert.strictEqual(arrayTypeObject.isValid(array), true, "singleton array with a valid components should be valid");
 
 				// 5 valid components
 				array = [];
-				for ( var i = 0; i < 5; i++ ) {
+				for (var i = 0; i < 5; i++) {
 					array[i] = random(valid);
 				}
 				assert.strictEqual(arrayTypeObject.isValid(array), true, "array with only valid components should be valid");
 
-				if ( invalid ) {
+				if (invalid) {
 					// 1 invalid
-					array = [ random(invalid) ];
+					array = [random(invalid)];
 					assert.strictEqual(arrayTypeObject.isValid(array), false, "singleton array with an invalid component should be invalid" + makeLiteral(array));
 
 					// 4 valid, 1 invalid
 					array = [];
-					for ( var i = 0; i < 5; i++ ) {
+					for (var i = 0; i < 5; i++) {
 						array[i] = random(valid);
 					}
-					array[ random(5) ] = random(invalid);
+					array[random(5)] = random(invalid);
 					assert.strictEqual(arrayTypeObject.isValid(array), false, "array with one invalid component should be invalid");
 
 				}
@@ -288,17 +288,17 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("multi-dim array types", function(assert) {
+	QUnit.test("multi-dim array types", function (assert) {
 		var arrayType = DataType.getType('int[]');
 		var twoDimArrayType = DataType.getType('int[][]');
 		var multiDimArrayType = DataType.getType('int[][][][][]');
 
 		assert.ok(twoDimArrayType, "a 2-dim int array type can be retrieved");
 		assert.equal(twoDimArrayType.getComponentType(), arrayType, "component type should be the 1-dim int array");
-		assert.ok(twoDimArrayType.isValid([[1], [2,3], []]), "2-dim int array should be accepted");
+		assert.ok(twoDimArrayType.isValid([[1], [2, 3], []]), "2-dim int array should be accepted");
 
 		assert.ok(multiDimArrayType, "a 5-dim int array type can be retrieved");
-		assert.ok(multiDimArrayType.isValid([[[[[1], [2,3], []]]], [[[]]], []]), "5-dim int array should be accepted");
+		assert.ok(multiDimArrayType.isValid([[[[[1], [2, 3], []]]], [[[]]], []]), "5-dim int array should be accepted");
 
 	});
 
@@ -306,7 +306,7 @@ sap.ui.define([
 
 	QUnit.module("Type Lookup");
 
-	QUnit.test("non-existing type", function(assert) {
+	QUnit.test("non-existing type", function (assert) {
 		var oWarningSpy = this.spy(Log, "warning");
 		var oErrorSpy = this.spy(Log, "error");
 		Log.setLevel(Log.Level.DEBUG);
@@ -322,7 +322,7 @@ sap.ui.define([
 		assert.strictEqual(DataType.getType("hasOwnProperty"), DataType.getType("any"), "'hasOwnProperty' should not resolve to something");
 	});
 
-	QUnit.test("invalid type", function(assert) {
+	QUnit.test("invalid type", function (assert) {
 		var oWarningSpy = this.spy(Log, "warning");
 		var oErrorSpy = this.spy(Log, "error");
 		Log.setLevel(Log.Level.DEBUG);
@@ -341,13 +341,13 @@ sap.ui.define([
 
 	QUnit.module("Type Creation");
 
-	QUnit.test("type derived from string", function(assert) {
+	QUnit.test("type derived from string", function (assert) {
 		var oWarningSpy = this.spy(Log, "warning");
 		var oErrorSpy = this.spy(Log, "error");
 		Log.setLevel(Log.Level.DEBUG);
 
 		var oType = DataType.createType("myDerivedType", {
-			isValid: function(oValue) {
+			isValid: function (oValue) {
 				return /hello.*world/.test(oValue);
 			}
 		}, DataType.getType("string"));
@@ -361,13 +361,13 @@ sap.ui.define([
 		assert.strictEqual(DataType.getType("myDerivedType"), oType, "lookup must return the same type object");
 	});
 
-	QUnit.test("derive without base type", function(assert) {
+	QUnit.test("derive without base type", function (assert) {
 		var oWarningSpy = this.spy(Log, "warning");
 		var oErrorSpy = this.spy(Log, "error");
 		Log.setLevel(Log.Level.DEBUG);
 
 		var oType = DataType.createType("myTypeWithoutBase", {
-			isValid: function(oValue) {
+			isValid: function (oValue) {
 				return /hello.*world/.test(oValue);
 			}
 		});
@@ -380,13 +380,13 @@ sap.ui.define([
 		assert.ok(!oWarningSpy.called, "no warnings should be produced");
 	});
 
-	QUnit.test("logical AND of validity checks", function(assert) {
+	QUnit.test("logical AND of validity checks", function (assert) {
 		var oWarningSpy = this.spy(Log, "warning");
 		var oErrorSpy = this.spy(Log, "error");
 		Log.setLevel(Log.Level.DEBUG);
 
 		var oType = DataType.createType("myStrangeBoolean", {
-			isValid: function(oValue) {
+			isValid: function (oValue) {
 				return /tr/.test(oValue);
 			}
 		}, DataType.getType("boolean"));
@@ -399,19 +399,19 @@ sap.ui.define([
 		assert.equal(oType.isValid(false), false, "validity check of derived type must be applied");
 	});
 
-	QUnit.test("multiple levels of derivation", function(assert) {
+	QUnit.test("multiple levels of derivation", function (assert) {
 		var oWarningSpy = this.spy(Log, "warning");
 		var oErrorSpy = this.spy(Log, "error");
 		Log.setLevel(Log.Level.DEBUG);
 
 		var oHelloPrefixType = DataType.createType("myHelloPrefixType", {
-			isValid: function(oValue) {
+			isValid: function (oValue) {
 				return /^hello/.test(oValue);
 			}
 		}, DataType.getType("string"));
 
 		var oWorldSuffixType = DataType.createType("myWorldSuffixType", {
-			isValid: function(oValue) {
+			isValid: function (oValue) {
 				return /world$/.test(oValue);
 			}
 		}, oHelloPrefixType);
@@ -426,13 +426,13 @@ sap.ui.define([
 		assert.equal(oType.isValid('hello              world'), true, "both together are okay");
 	});
 
-	QUnit.test("re-defining a type", function(assert) {
+	QUnit.test("re-defining a type", function (assert) {
 		var oWarningSpy = this.spy(Log, "warning");
 		var oErrorSpy = this.spy(Log, "error");
 		Log.setLevel(Log.Level.DEBUG);
 
 		var oType1 = DataType.createType("myNewType", {
-			isValid: function(oValue) {
+			isValid: function (oValue) {
 				return /hello.*world/.test(oValue);
 			}
 		}, DataType.getType("string"));
@@ -442,7 +442,7 @@ sap.ui.define([
 		assert.ok(!oWarningSpy.called, "first creation must not log a warning");
 
 		var oType2 = DataType.createType("myNewType", {
-			isValid: function(oValue) {
+			isValid: function (oValue) {
 				return /hello.*world/.test(oValue);
 			}
 		}, DataType.getType("string"));
@@ -457,7 +457,7 @@ sap.ui.define([
 
 	QUnit.module("Specific Types");
 
-	QUnit.test("ID", function(assert) {
+	QUnit.test("ID", function (assert) {
 		var type = DataType.getType("sap.ui.core.ID");
 		assert.ok(!!type, "type 'sap.ui.core.ID' exists");
 		assert.ok(type instanceof DataType, "type is a DataType");
@@ -479,7 +479,7 @@ sap.ui.define([
 		assert.equal(type.isValid("id "), false, "a partial match should not be valid");
 	});
 
-	QUnit.test("AbsoluteCSSSize", function(assert) {
+	QUnit.test("AbsoluteCSSSize", function (assert) {
 		var type = DataType.getType("sap.ui.core.AbsoluteCSSSize");
 		assert.ok(!!type, "type 'sap.ui.core.AbsoluteCSSSize' exists");
 		assert.ok(type instanceof DataType, "type is a DataType");
@@ -533,7 +533,7 @@ sap.ui.define([
 		assert.equal(type.isValid("calc(* - 100px)"), false, "arguments need to have digits");
 	});
 
-	QUnit.test("AbsoluteCSSSize[]", function(assert) {
+	QUnit.test("AbsoluteCSSSize[]", function (assert) {
 		var type = DataType.getType("sap.ui.core.AbsoluteCSSSize[]");
 		assert.ok(!!type, "type 'sap.ui.core.AbsoluteCSSSize[]' exists");
 		assert.ok(type instanceof DataType, "type is a DataType");
@@ -544,16 +544,16 @@ sap.ui.define([
 		assert.equal(type.getComponentType().getName(), "sap.ui.core.AbsoluteCSSSize", "primitive type is AbsoluteCSSSize");
 
 		assert.equal(type.isValid(["0"]), true, "accepted value 0");
-		assert.equal(type.isValid(["10px","20px"]), true, "accepted value 10px,20px");
-		assert.equal(type.isValid(["-22pt","10em","50px"]), true, "accepted value with percentage: -22pt,10em,50px");
-		assert.equal(type.isValid(["-22pt","10%","50px"]), false, "not accepted value -22pt,10%,50px");
-		assert.equal(type.isValid(["-22pt","calc(10rem / 2)","50px"]), true, "calc() expressions are allowed as element values");
-		assert.equal(type.isValid(["-22pt","calc(10% / 2)","50px"]), false, "calc() expressions are not allowed when they contain percentage values");
+		assert.equal(type.isValid(["10px", "20px"]), true, "accepted value 10px,20px");
+		assert.equal(type.isValid(["-22pt", "10em", "50px"]), true, "accepted value with percentage: -22pt,10em,50px");
+		assert.equal(type.isValid(["-22pt", "10%", "50px"]), false, "not accepted value -22pt,10%,50px");
+		assert.equal(type.isValid(["-22pt", "calc(10rem / 2)", "50px"]), true, "calc() expressions are allowed as element values");
+		assert.equal(type.isValid(["-22pt", "calc(10% / 2)", "50px"]), false, "calc() expressions are not allowed when they contain percentage values");
 		assert.equal(type.isValid("1"), false, "isValid('1')");
 		assert.equal(type.isValid([42]), false, "isValid([42])");
 	});
 
-	QUnit.test("CSSSize", function(assert) {
+	QUnit.test("CSSSize", function (assert) {
 		var type = DataType.getType("sap.ui.core.CSSSize");
 		assert.ok(!!type, "type 'sap.ui.core.CSSSize' exists");
 		assert.ok(type instanceof DataType, "type is a DataType");
@@ -607,7 +607,7 @@ sap.ui.define([
 		assert.equal(type.isValid("calc(* - 100%)"), false, "arguments need to have digits");
 	});
 
-	QUnit.test("CSSSize Case-Insensitive", function(assert) {
+	QUnit.test("CSSSize Case-Insensitive", function (assert) {
 		var type = DataType.getType("sap.ui.core.CSSSize");
 
 		assert.equal(type.isValid("10pX"), true, "accepted value 10pX");
@@ -619,7 +619,7 @@ sap.ui.define([
 		assert.equal(type.isValid("100VmAx"), true, "100VmAx is valid");
 	});
 
-	QUnit.test("CSSSize[]", function(assert) {
+	QUnit.test("CSSSize[]", function (assert) {
 		var type = DataType.getType("sap.ui.core.CSSSize[]");
 		assert.ok(!!type, "type 'sap.ui.core.CSSSize[]' exists");
 		assert.ok(type instanceof DataType, "type is a DataType");
@@ -630,14 +630,14 @@ sap.ui.define([
 		assert.equal(type.getComponentType().getName(), "sap.ui.core.CSSSize", "primitive type is CSSSize");
 
 		assert.equal(type.isValid(["0"]), true, "accepted value 0");
-		assert.equal(type.isValid(["10px","20px"]), true, "accepted value 10px,20px");
-		assert.equal(type.isValid(["-22pt","10%","50px"]), true, "accepted value -22pt,10%,50px");
-		assert.equal(type.isValid(["-22pt","calc(10% / 2)","50px"]), true, "calc() expressions are allowed as element values");
+		assert.equal(type.isValid(["10px", "20px"]), true, "accepted value 10px,20px");
+		assert.equal(type.isValid(["-22pt", "10%", "50px"]), true, "accepted value -22pt,10%,50px");
+		assert.equal(type.isValid(["-22pt", "calc(10% / 2)", "50px"]), true, "calc() expressions are allowed as element values");
 		assert.equal(type.isValid("1"), false, "isValid('1')");
 		assert.equal(type.isValid([42]), false, "isValid([42])");
 	});
 
-	QUnit.test("CSSSizeShortHand", function(assert) {
+	QUnit.test("CSSSizeShortHand", function (assert) {
 		var type = DataType.getType("sap.ui.core.CSSSizeShortHand");
 		assert.ok(!!type, "type 'sap.ui.core.CSSSizeShortHand' exists");
 		assert.ok(type instanceof DataType, "type is a DataType");
@@ -668,7 +668,7 @@ sap.ui.define([
 		assert.equal(type.isValid("1px 1px inherit 1px"), false, "inherit NOT allowed with other valid values");
 	});
 
-	QUnit.test("enum sap.ui.core.TextAlign", function(assert) {
+	QUnit.test("enum sap.ui.core.TextAlign", function (assert) {
 		var oEnum = jQuery.sap.getObject("sap.ui.core.TextAlign");
 		// precondition
 		assert.ok(oEnum && jQuery.isPlainObject(oEnum), "[precondition] enum object should exist as global property")
@@ -683,7 +683,7 @@ sap.ui.define([
 		assert.ok(type.isEnumType(), "type should be marked as enum");
 		assert.strictEqual(type.getEnumValues(), oEnum, "type should return the globally defined object with keys and values");
 
-		jQuery.each(sap.ui.core.TextAlign, function(i,v) {
+		jQuery.each(sap.ui.core.TextAlign, function (i, v) {
 			assert.equal(type.isValid(v), true, "accepts value " + v);
 			assert.equal(type.parseValue(i), v, "'" + i + "' should be parsed as '" + v + "'");
 		});
@@ -691,7 +691,7 @@ sap.ui.define([
 		assert.ok(DataType.getType("sap.ui.core.TextAlign") === type, "multiple calls should return same type object");
 	});
 
-	QUnit.test("enum sap.ui.core.Popup.Dock", function(assert) {
+	QUnit.test("enum sap.ui.core.Popup.Dock", function (assert) {
 		var oEnum = jQuery.sap.getObject("sap.ui.core.Popup.Dock");
 		// precondition
 		assert.ok(oEnum && jQuery.isPlainObject(oEnum), "[precondition] enum object should exist as global property")
@@ -706,7 +706,7 @@ sap.ui.define([
 		assert.ok(type.isEnumType(), "type should be marked as enum");
 		assert.strictEqual(type.getEnumValues(), oEnum, "type should return the globally defined object with keys and values");
 
-		jQuery.each(Popup.Dock, function(i,v) {
+		jQuery.each(Popup.Dock, function (i, v) {
 			assert.equal(type.isValid(v), true, "'" + v + "' should be a valid value");
 			assert.equal(type.parseValue(i), v, "'" + i + "' should be parsed as '" + v + "'");
 		});
@@ -718,7 +718,7 @@ sap.ui.define([
 
 	QUnit.module("Normalizer");
 
-	QUnit.test("basics", function(assert) {
+	QUnit.test("basics", function (assert) {
 		var _uri = DataType.getType("sap.ui.core.URI");
 		var _string = DataType.getType("string");
 
@@ -728,7 +728,7 @@ sap.ui.define([
 		assert.ok(!_uri._fnNormalizer, "no normalizer should be set");
 		assert.equal(_uri.isValid("http://www.sap.com"), true, "the given url should be valid for the URI type");
 		assert.equal(_uri.normalize("http://www.sap.com"), "http://www.sap.com", "the url must not be normalized");
-		_uri.setNormalizer(function(sValue) {
+		_uri.setNormalizer(function (sValue) {
 			return "/proxy/http/" + sValue.substr(7);
 		});
 		assert.ok(!!_uri._fnNormalizer, "normalizer should be set");
