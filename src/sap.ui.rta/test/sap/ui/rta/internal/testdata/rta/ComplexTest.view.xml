@@ -167,6 +167,39 @@
 			</sap.ui.layout:VerticalLayout>
 
 			<sap.ui.layout:VerticalLayout width="100%">
+				<form:Form id="LayoutFormGeneralResponsiveGridLayout" width="100%" title="ResponsiveGridLayout Form">
+					<form:layout>
+						<form:ResponsiveGridLayout/>
+					</form:layout>
+
+					<form:formContainers>
+						<form:FormContainer id="LayoutFormGeneralFormContainer" title="General">
+							<form:formElements>
+								<form:FormElement id="LayoutFormGeneralLedgerDocumentLabel" label="Accounting Document">
+									<form:fields>
+										<Text id="LayoutFormGeneralLedgerDocumentText" text="{AccountingDocument}"/>
+									</form:fields>
+								</form:FormElement>
+
+								<form:FormElement id="LayoutFormGeneralLedgerCompanyCodeLabel" label="Company Code">
+									<form:fields>
+										<Text id="LayoutFormGeneralLedgerCompanyCodeText" text="{CompanyCode}"/>
+									</form:fields>
+								</form:FormElement>
+
+								<form:FormElement id="LayoutFormGeneralLedgerCreatedByLabel" label="Created by">
+									<form:fields>
+										<Text id="LayoutFormGeneralLedgerCreatedByText" text="{CreatedByUserName}"/>
+									</form:fields>
+								</form:FormElement>
+							</form:formElements>
+						</form:FormContainer>
+					</form:formContainers>
+
+				</form:Form>
+			</sap.ui.layout:VerticalLayout>
+
+			<sap.ui.layout:VerticalLayout width="100%">
 				<form:SimpleForm title="SimpleForm with toolbars" id="SimpleFormWithToolbars"
 								 maxContainerCols="3"
 								 editable="true"
@@ -433,6 +466,39 @@
 						</smartForm:GroupElement>
 					</smartForm:Group>
 				</smartForm:SmartForm>
+			</sap.ui.layout:VerticalLayout>
+
+			<sap.ui.layout:VerticalLayout width="100%">
+				<form:Form id="LayoutFormGeneralFormGridLayout" width="100%" title="GridLayout Form - all actions should be disabled">
+					<form:layout>
+						<form:GridLayout/>
+					</form:layout>
+
+					<form:formContainers>
+						<form:FormContainer id="LayoutFormGeneralFormContainerGrid" title="General">
+							<form:formElements>
+								<form:FormElement id="LayoutFormGeneralLedgerDocumentLabelGrid" label="Accounting Document">
+									<form:fields>
+										<Text id="LayoutFormGeneralLedgerDocumentTextGrid" text="{AccountingDocument}"/>
+									</form:fields>
+								</form:FormElement>
+
+								<form:FormElement id="LayoutFormGeneralLedgerCompanyCodeLabelGrid" label="Company Code">
+									<form:fields>
+										<Text id="LayoutFormGeneralLedgerCompanyCodeTextGrid" text="{CompanyCode}"/>
+									</form:fields>
+								</form:FormElement>
+
+								<form:FormElement id="LayoutFormGeneralLedgerCreatedByLabelGrid" label="Created by">
+									<form:fields>
+										<Text id="LayoutFormGeneralLedgerCreatedByTextGrid" text="{CreatedByUserName}"/>
+									</form:fields>
+								</form:FormElement>
+							</form:formElements>
+						</form:FormContainer>
+					</form:formContainers>
+
+				</form:Form>
 			</sap.ui.layout:VerticalLayout>
 
 		</content>
