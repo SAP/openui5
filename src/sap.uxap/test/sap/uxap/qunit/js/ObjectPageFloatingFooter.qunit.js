@@ -1,23 +1,32 @@
 /*global QUnit,sinon*/
-
-(function (QUnit, sinon, core, controller, xmlview) {
+sap.ui.require(['sap/ui/core/mvc/Controller', 'sap/ui/core/mvc/XMLView'],
+	function (controller, xmlview) {
 	"use strict";
 
-	sap.ui.require(["jquery.sap.global"], function (jQuery) {
+	var core = sap.ui.getCore();
 
-		jQuery.sap.registerModulePath("view", "./view");
+	sap.ui.require(["sap/ui/thirdparty/jquery"], function (jQuery) {
 
-		controller("viewController", {});
+		sap.ui.loader.config({
+			paths: {"view" : "view"}
+		  });
+
+		controller.create({ name: "viewController" });
 
 		QUnit.module("ObjectPage - Rendering - Footer Visibility", {
-			beforeEach: function () {
-				this.objectPageSampleView = xmlview("UxAP-162_ObjectPageSample", {
+			beforeEach: function (assert) {
+				var done = assert.async();
+				xmlview.create({
+					id: "UxAP-162_ObjectPageSample",
 					viewName: "view.UxAP-162_ObjectPageSample"
-				});
-				sinon.config.useFakeTimers = true;
-				this.objectPageSampleView.placeAt("qunit-fixture");
-				core.applyChanges();
-				this.oObjectPage = this.objectPageSampleView.byId("objectPage162");
+				}).then(function (oView) {
+					this.objectPageSampleView = oView;
+					sinon.config.useFakeTimers = true;
+					this.objectPageSampleView.placeAt("qunit-fixture");
+					core.applyChanges();
+					this.oObjectPage = this.objectPageSampleView.byId("objectPage162");
+					done();
+				}.bind(this));
 			},
 			afterEach: function () {
 				this.objectPageSampleView.destroy();
@@ -86,4 +95,4 @@
 		});
 	});
 
-}(QUnit, sinon, sap.ui.getCore(), sap.ui.controller, sap.ui.xmlview));
+});

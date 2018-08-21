@@ -1,10 +1,12 @@
-/*global QUnit*/
-/*global sinon*/
+/*global QUnit, sinon*/
 
-(function ($, QUnit, sinon) {
+sap.ui.require(["sap/ui/thirdparty/jquery"],
+	function ($) {
 	"use strict";
 
-	jQuery.sap.registerModulePath("view", "view");
+	sap.ui.loader.config({
+		paths: {"view" : "view"}
+	  });
 
 	sap.ui.controller("viewController", {});
 
@@ -552,4 +554,4 @@
 		this.assertAllButtonsAreDestroyed(assert);
 	});
 
-}(jQuery, QUnit, sinon));
+});

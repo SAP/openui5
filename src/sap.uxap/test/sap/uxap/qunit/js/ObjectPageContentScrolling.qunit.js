@@ -1,26 +1,29 @@
-/*global QUnit,sinon*/
-
-(function ($, QUnit, sinon) {
+/*global QUnit, sinon */
+sap.ui.require([
+	"sap/ui/thirdparty/jquery",
+	"sap/uxap/ObjectPageSubSection",
+	"sap/uxap/ObjectPageSection",
+	"sap/uxap/ObjectPageDynamicHeaderTitle"],
+function($, ObjectPageSubSection, ObjectPageSection, ObjectPageDynamicHeaderTitle) {
 	"use strict";
 
-	jQuery.sap.registerModulePath("view", "./view");
-	jQuery.sap.registerModulePath("sap.uxap.testblocks", "./blocks");
-	jQuery.sap.require("sap.uxap.ObjectPageSubSection");
-	jQuery.sap.require("sap.uxap.ObjectPageSection");
-	jQuery.sap.require("sap.uxap.ObjectPageSectionBase");
-	jQuery.sap.require("sap.uxap.ObjectPageDynamicHeaderTitle");
-
+	sap.ui.loader.config({
+		paths: {
+		   "sap/uxap/testblocks": "./blocks",
+		   "view": "./view"
+		 }
+	  });
 
 	var oFactory = {
 		getSection: function (iNumber, sTitleLevel, aSubSections) {
-			return new sap.uxap.ObjectPageSection({
+			return new ObjectPageSection({
 				title: "Section" + iNumber,
 				titleLevel: sTitleLevel,
 				subSections: aSubSections || []
 			});
 		},
 		getSubSection: function (iNumber, aBlocks, sTitleLevel) {
-			return new sap.uxap.ObjectPageSubSection({
+			return new ObjectPageSubSection({
 				title: "SubSection " + iNumber,
 				titleLevel: sTitleLevel,
 				blocks: aBlocks || []
@@ -35,7 +38,7 @@
 			return new sap.uxap.ObjectPageLayout();
 		},
 		getDynamicPageTitle: function () {
-			return new sap.uxap.ObjectPageDynamicHeaderTitle({
+			return new ObjectPageDynamicHeaderTitle({
 				heading:  this.getTitle()
 			});
 		},
@@ -513,11 +516,11 @@
 	});
 
 	function isObjectPageHeaderStickied(oObjectPage) {
-		var oHeaderTitle = jQuery.sap.byId(oObjectPage.getId() + "-headerTitle");
-		var oHeaderContent = jQuery.sap.byId(oObjectPage.getId() + "-headerContent");
-		return oHeaderTitle.hasClass("sapUxAPObjectPageHeaderStickied") &&
-				oHeaderContent.hasClass("sapUxAPObjectPageHeaderDetailsHidden") &&
-				oHeaderContent.css("overflow") == "hidden";
+		var oHeaderTitle = document.getElementById(oObjectPage.getId() + "-headerTitle");
+		var oHeaderContent = document.getElementById(oObjectPage.getId() + "-headerContent");
+		return oHeaderTitle.classList.contains("sapUxAPObjectPageHeaderStickied") &&
+				oHeaderContent.classList.contains("sapUxAPObjectPageHeaderDetailsHidden") &&
+				oHeaderContent.style["overflow"] == "hidden";
 	}
 
-}(jQuery, QUnit, sinon, sap.uxap.Importance));
+});

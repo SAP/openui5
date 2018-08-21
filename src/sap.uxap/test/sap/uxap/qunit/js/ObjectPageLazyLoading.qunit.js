@@ -1,10 +1,15 @@
 /*global QUnit, sinon*/
 
-(function ($, QUnit) {
+sap.ui.require(["sap/ui/thirdparty/jquery"],
+	function (jQuery) {
 	"use strict";
 
-	jQuery.sap.registerModulePath("view", "view");
-	jQuery.sap.registerModulePath("sap.uxap.testblocks", "./blocks");
+	sap.ui.loader.config({
+		paths: {
+		   "sap/uxap/testblocks": "./blocks",
+		   "view": "./view"
+		 }
+	  });
 
 	var oController = sap.ui.controller("viewController", {
 		onInit: function () {
@@ -303,4 +308,4 @@
 	});
 
 
-}(jQuery, QUnit));
+});

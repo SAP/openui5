@@ -1,11 +1,14 @@
-/* global QUnit,sinon*/
-
-(function ($, QUnit, sinon, DynamicPage, DynamicPageTitle, DynamicPageHeader, Device) {
+/*global QUnit, sinon */
+sap.ui.require([
+	"sap/ui/thirdparty/jquery",
+	"sap/f/DynamicPage",
+	"sap/f/DynamicPageTitle",
+	"sap/f/DynamicPageHeader",
+	"sap/ui/Device"],
+function($, DynamicPage, DynamicPageTitle, DynamicPageHeader, Device) {
 	"use strict";
 
 	sinon.config.useFakeTimers = false;
-	$.sap.require("sap.f.DynamicPage");
-	$.sap.require("sap.f.DynamicPageHeader");
 
 	var core = sap.ui.getCore(),
 		TESTS_DOM_CONTAINER = "qunit-fixture",
@@ -3394,4 +3397,4 @@
 		assert.equal(parseFloat(oContent.css("flex-shrink")).toFixed(1), 2, "Content shrink factor is correct");
 		assert.equal(parseFloat(oActions.css("flex-shrink")).toFixed(1), 4, "Actions shrink factor is correct");
 	});
-}(jQuery, QUnit, sinon, sap.f.DynamicPage, sap.f.DynamicPageTitle, sap.f.DynamicPageHeader, sap.ui.Device));
+});
