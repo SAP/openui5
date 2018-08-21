@@ -19,6 +19,7 @@
 		"webapp/test/unit/model/formatter.js",
 		"webapp/test/unit/allTests.js",
 		"webapp/test/unit/unitTests.qunit.html",
+		"webapp/test/testsuite.qunit.html",
 		"ui5.yaml",
 		"package.json"
 	]
