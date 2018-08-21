@@ -985,7 +985,19 @@ function(
 		valueHelpIcon.attachPress(function (evt) {
 			// if the property valueHelpOnly is set to true, the event is triggered in the ontap function
 			if (!that.getValueHelpOnly()) {
-				this.getParent().focus();
+				var oParent = this.getParent(),
+					$input;
+
+				if (Device.support.touch) {
+					// prevent opening the soft keyboard
+					$input = oParent.$('inner');
+					$input.attr('readonly', 'readonly');
+					oParent.focus();
+					$input.removeAttr('readonly');
+				} else {
+					oParent.focus();
+				}
+
 				that.bValueHelpRequested = true;
 				that.fireValueHelpRequest({fromSuggestions: false});
 			}
