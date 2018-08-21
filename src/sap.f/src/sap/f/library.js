@@ -70,6 +70,7 @@ sap.ui.define(["sap/ui/base/DataType",
 			},
 			//Configuration used for rule loading of Support Assistant
 			"sap.ui.support": {
+				publicRules: true,
 				internalRules:true
 			}
 		}
