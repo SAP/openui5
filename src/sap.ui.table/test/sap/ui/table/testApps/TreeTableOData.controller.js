@@ -444,6 +444,7 @@ sap.ui.define([
 
 						// add new entry to the binding
 						oBinding.addContexts(oTable.getContextByIndex(iSelectedIndex), [oContext]);
+						oViewModel.setProperty("/pendingChanges", true);
 
 						MessageToast.show("Node created. Beware: The node is currently only in a transient in the UI.");
 
@@ -476,6 +477,7 @@ sap.ui.define([
 
 			// keep track of the removed handle
 			var oTreeHandle = oBinding.removeContext(oTable.getContextByIndex(iSelectedIndex));
+			this.getView().getModel().setProperty("/pendingChanges", true);
 			this._oLastTreeHandle = oTreeHandle;
 
 			// only for demo: get the odata-key
@@ -549,6 +551,7 @@ sap.ui.define([
 					// re-setup and clear the clipboard
 					this.setupCutAndPaste();
 
+					this.getView().getModel().setProperty("/pendingChanges", false);
 				}.bind(this),
 				error: function (oEvent) {
 					oTable.setBusy(false);
@@ -574,9 +577,15 @@ sap.ui.define([
 				function () {
 					// remove busy state of table
 					oTable.setBusy(false);
-				},
+					// re-setup and clear the clipboard
+					this.setupCutAndPaste();
+
+					oBinding._fireChange();
+					this.getView().getModel().setProperty("/pendingChanges", false);
+				}.bind(this),
 				function (oEvent) {
 					oTable.setBusy(false);
+					oBinding._fireChange();
 				});
 		},
 
@@ -632,6 +641,7 @@ sap.ui.define([
 					var oNewParentContext = oTable.getContextByIndex(iSelectedIndex);
 					if (oNewParentContext) {
 						oBinding.addContexts(oNewParentContext, oTreeHandle);
+						this.getView().getModel().setProperty("/pendingChanges", true);
 					}
 
 					// remove the re-inserted node from the clipboard
@@ -699,6 +709,7 @@ sap.ui.define([
 						oBinding.removeContext(aDraggedRowContexts[i]);
 					}
 					oBinding.addContexts(oNewParentContext, aDraggedRowContexts);
+					this.getView().getModel().setProperty("/pendingChanges", true);
 				}
 			}
 		},

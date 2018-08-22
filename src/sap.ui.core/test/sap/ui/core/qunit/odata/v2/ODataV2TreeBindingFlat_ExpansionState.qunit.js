@@ -7,7 +7,7 @@ sap.ui.define([
 	ODataModel
 ) {
 	"use strict";
-	var oModel, oBinding, sServiceUrl;
+	var oModel, oBinding;
 
 	// create binding
 	function createTreeBinding(sPath, oContext, aFilters, mParameters, aSorters){
@@ -17,14 +17,12 @@ sap.ui.define([
 
 	QUnit.module("ODataTreeBindingFlat - Tree State: Expand", {
 		beforeEach: function() {
-			sServiceUrl = "ZTJ_SFIN_HIERARCHY_02_SRV";
 			ODataTreeBindingFakeService.setup();
-			oModel = new ODataModel(sServiceUrl);
+			oModel = new ODataModel("ZTJ_SFIN_HIERARCHY_02_SRV");
 			return oModel.metadataLoaded(); // Wait for metadata loaded promise
 		},
 		afterEach: function() {
 			ODataTreeBindingFakeService.teardown();
-			sServiceUrl = "/odataFake/";
 			oModel.destroy();
 		}
 	});
@@ -439,14 +437,12 @@ sap.ui.define([
 
 	QUnit.module("ODataTreeBindingFlat - Tree State: Collapse", {
 		beforeEach: function() {
-			sServiceUrl = "ZTJ_SFIN_HIERARCHY_02_SRV";
 			ODataTreeBindingFakeService.setup();
-			oModel = new ODataModel(sServiceUrl);
+			oModel = new ODataModel("ZTJ_SFIN_HIERARCHY_02_SRV");
 			return oModel.metadataLoaded(); // Wait for metadata loaded promise
 		},
 		afterEach: function() {
 			ODataTreeBindingFakeService.teardown();
-			sServiceUrl = "/odataFake/";
 			oModel.destroy();
 		}
 	});
@@ -615,14 +611,12 @@ sap.ui.define([
 
 	QUnit.module("ODataTreeBindingFlat - Tree State: Remove", {
 		beforeEach: function() {
-			sServiceUrl = "ZTJ_SFIN_HIERARCHY_02_SRV";
 			ODataTreeBindingFakeService.setup();
-			oModel = new ODataModel(sServiceUrl);
+			oModel = new ODataModel("ZTJ_SFIN_HIERARCHY_02_SRV");
 			return oModel.metadataLoaded(); // Wait for metadata loaded promise
 		},
 		afterEach: function() {
 			ODataTreeBindingFakeService.teardown();
-			sServiceUrl = "/odataFake/";
 			oModel.destroy();
 		}
 	});
@@ -818,14 +812,12 @@ sap.ui.define([
 
 	QUnit.module("ODataTreeBindingFlat - Tree State: Insert", {
 		beforeEach: function() {
-			sServiceUrl = "ZTJ_SFIN_HIERARCHY_02_SRV";
 			ODataTreeBindingFakeService.setup();
-			oModel = new ODataModel(sServiceUrl);
+			oModel = new ODataModel("ZTJ_SFIN_HIERARCHY_02_SRV");
 			return oModel.metadataLoaded(); // Wait for metadata loaded promise
 		},
 		afterEach: function() {
 			ODataTreeBindingFakeService.teardown();
-			sServiceUrl = "/odataFake/";
 			oModel.destroy();
 		}
 	});
@@ -1412,16 +1404,14 @@ sap.ui.define([
 
 	QUnit.module("ODataTreeBindingFlat - Tree State: Move", {
 		beforeEach: function() {
-			sServiceUrl = "ZTJ_SFIN_HIERARCHY_02_SRV";
 			ODataTreeBindingFakeService.setup();
-			oModel = new ODataModel(sServiceUrl, {
+			oModel = new ODataModel("ZTJ_SFIN_HIERARCHY_02_SRV", {
 				defaultUpdateMethod: sap.ui.model.odata.UpdateMethod.Put
 			});
 			return oModel.metadataLoaded(); // Wait for metadata loaded promise
 		},
 		afterEach: function() {
 			ODataTreeBindingFakeService.teardown();
-			sServiceUrl = "/odataFake/";
 			oModel.destroy();
 		}
 	});

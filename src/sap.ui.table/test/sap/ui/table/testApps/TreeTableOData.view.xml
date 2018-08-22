@@ -227,7 +227,7 @@
 								<Button text="Paste" icon="sap-icon://paste" press=".onPaste"></Button>
 								<Button text="Save" icon="sap-icon://save" press=".onSave"></Button>
 								<Button text="Refresh and restore Tree State" icon="sap-icon://refresh" press=".onRefreshAndRestore"></Button>
-								<Button text="Expand node to level 4" icon="sap-icon://expand-group" press=".onExpandNodeToLevel4"></Button>
+								<Button text="Expand node to level 4" icon="sap-icon://expand-group" enabled="{= !${/pendingChanges}}" press=".onExpandNodeToLevel4"></Button>
 								<ToolbarSpacer />
 								<!--<Label text="Tree State Tools" />
 								<Button text="Save" icon="sap-icon://loan" press=".onSaveTreeState"></Button>
