@@ -2,9 +2,9 @@
  * ${copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/model/odata/v4/lib/_AggregationHelper"
-], function (jQuery, _AggregationHelper) {
+], function (Log, _AggregationHelper) {
 	/*global QUnit*/
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -12,7 +12,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._AggregationHelper", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		}
