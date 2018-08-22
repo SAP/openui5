@@ -579,7 +579,8 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext) {
 		var bAggregate = this.oAggregation && (this.oAggregation.groupLevels.length
-				|| _AggregationHelper.hasMinOrMax(this.oAggregation.aggregate));
+				|| _AggregationHelper.hasMinOrMax(this.oAggregation.aggregate)
+				|| _AggregationHelper.hasGrandTotal(this.oAggregation.aggregate));
 
 		mQueryOptions = this.inheritQueryOptions(mQueryOptions, oContext);
 
@@ -1592,6 +1593,8 @@ sap.ui.define([
 	 *   A map from aggregatable property names or aliases to objects containing the following
 	 *   details:
 	 *   <ul>
+	 *   <li><code>grandTotal</code>: An optional boolean that tells whether a grand total for this
+	 *     aggregatable property is needed (since 1.59.0)
 	 *   <li><code>subtotals</code>: An optional boolean that tells whether subtotals for this
 	 *     aggregatable property are needed
 	 *   <li><code>with</code>: An optional string that provides the name of the method (for

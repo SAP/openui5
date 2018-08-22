@@ -67,9 +67,9 @@ sap.ui.define([
 			this.oFirstLevel.getResourcePath = _AggregationCache.getResourcePath.bind(
 				this.oFirstLevel, oAggregation, mQueryOptions);
 			this.oFirstLevel.handleResponse = _AggregationCache.handleResponse
-				.bind(this.oFirstLevel, mAlias2MeasureAndMethod, fnMeasureRangeResolve,
+				.bind(this.oFirstLevel, null, mAlias2MeasureAndMethod, fnMeasureRangeResolve,
 					this.oFirstLevel.handleResponse);
-		} else {
+		} else if (oAggregation.groupLevels.length) {
 			if (mQueryOptions.$count) {
 				throw new Error("Unsupported system query option: $count");
 			}
@@ -78,15 +78,23 @@ sap.ui.define([
 			}
 			oFirstLevelAggregation = _AggregationCache.filterAggregationForFirstLevel(oAggregation);
 			mFirstQueryOptions = jQuery.extend({}, mQueryOptions, {
-					$count : true,
 					$orderby : _AggregationCache.filterOrderby(mQueryOptions.$orderby,
 						oFirstLevelAggregation)
 				}); // 1st level only
-			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath,
-				_AggregationHelper.buildApply(oFirstLevelAggregation, mFirstQueryOptions), true);
+			delete mFirstQueryOptions.$count;
+			mFirstQueryOptions
+				= _AggregationHelper.buildApply(oFirstLevelAggregation, mFirstQueryOptions);
+			mFirstQueryOptions.$count = true;
+			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath, mFirstQueryOptions, true);
 			this.oFirstLevel.calculateKeyPredicate = _AggregationCache.calculateKeyPredicate
 				.bind(null, oFirstLevelAggregation, this.oFirstLevel.sMetaPath,
 					this.oFirstLevel.aElements.$byPredicate);
+		} else { // grand total w/o visual grouping
+			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath, mQueryOptions, true);
+			this.oFirstLevel.getResourcePath = _AggregationCache.getResourcePath.bind(
+				this.oFirstLevel, oAggregation, mQueryOptions);
+			this.oFirstLevel.handleResponse = _AggregationCache.handleResponse
+				.bind(this.oFirstLevel, oAggregation, null, null, this.oFirstLevel.handleResponse);
 		}
 	}
 
@@ -388,11 +396,16 @@ sap.ui.define([
 	 * remaining values of <code>aResult</code>. Restores the original <code>handleResponse</code>.
 	 * This function needs to be called on the first level cache.
 	 *
-	 * @param {object} mAlias2MeasureAndMethod
+	 * @param {object} oAggregation
+	 *   An object holding the information needed for data aggregation; see also
+	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
+	 *   Extension for Data Aggregation Version 4.0</a>; must be a clone that contains
+	 *   <code>aggregate</code>, <code>group</code>, <code>groupLevels</code>
+	 * @param {object} [mAlias2MeasureAndMethod]
 	 *   A map of the virtual property names to the corresponding measure property names and the
 	 *   aggregation functions, for example:
 	 *   <code> UI5min__Property : {measure : Property, method : min} </code>
-	 * @param {function} fnMeasureRangeResolve
+	 * @param {function} [fnMeasureRangeResolve]
 	 *   Function to resolve the measure range promise, see {@link #getMeasureRangePromise}
 	 * @param {function} fnHandleResponse
 	 *   The original <code>#handleResponse</code> of the first level cache
@@ -407,8 +420,8 @@ sap.ui.define([
 	 * @private
 	 */
 	// @override
-	_AggregationCache.handleResponse = function (mAlias2MeasureAndMethod, fnMeasureRangeResolve,
-			fnHandleResponse, iStart, iEnd, oResult, mTypeForMetaPath) {
+	_AggregationCache.handleResponse = function (oAggregation, mAlias2MeasureAndMethod,
+			fnMeasureRangeResolve, fnHandleResponse, iStart, iEnd, oResult, mTypeForMetaPath) {
 		var sAlias,
 			mMeasureRange = {},
 			oMinMaxElement;
@@ -418,13 +431,20 @@ sap.ui.define([
 			return mMeasureRange[sMeasure];
 		}
 
-		oMinMaxElement = oResult.value.splice(0, 1)[0];
-		oResult["@odata.count"] = oMinMaxElement.UI5__count;
-		for (sAlias in mAlias2MeasureAndMethod) {
-			getMeasureRange(mAlias2MeasureAndMethod[sAlias].measure)
-				[mAlias2MeasureAndMethod[sAlias].method] = oMinMaxElement[sAlias];
+		if (mAlias2MeasureAndMethod) {
+			oMinMaxElement = oResult.value.splice(0, 1)[0];
+			oResult["@odata.count"] = oMinMaxElement.UI5__count;
+			for (sAlias in mAlias2MeasureAndMethod) {
+				getMeasureRange(mAlias2MeasureAndMethod[sAlias].measure)
+					[mAlias2MeasureAndMethod[sAlias].method] = oMinMaxElement[sAlias];
+			}
+			fnMeasureRangeResolve(mMeasureRange);
+		} else {
+			oResult["@odata.count"] = parseInt(oResult.value[0].UI5__count, 10) + 1;
+			Object.keys(oAggregation.group).forEach(function (sGroup) {
+				oResult.value[0][sGroup] = null;
+			});
 		}
-		fnMeasureRangeResolve(mMeasureRange);
 
 		this.handleResponse = fnHandleResponse;
 		this.handleResponse(iStart, iEnd, oResult, mTypeForMetaPath);

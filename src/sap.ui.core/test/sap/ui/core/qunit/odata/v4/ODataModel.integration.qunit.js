@@ -34,6 +34,19 @@ sap.ui.require([
 		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
 
 	/**
+	 * Creates a V4 OData model for <code>serviceroot.svc</code>
+	 * (com.odata.v4.mathias.BusinessPartnerTest).
+	 *
+	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
+	 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
+	 *   synchronizationMode which are set by default
+	 * @returns {ODataModel} The model
+	 */
+	function createBusinessPartnerTestModel(mModelParameters) {
+		return createModel("/serviceroot.svc/", mModelParameters);
+	}
+
+	/**
 	 * Creates a V4 OData model.
 	 *
 	 * @param {string} sServiceUrl The service URL
@@ -146,6 +159,8 @@ sap.ui.require([
 					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
 				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata"
 					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"},
+				"/serviceroot.svc/$metadata"
+					: {source : "odata/v4/data/BusinessPartnerTest.metadata.xml"},
 				"/special/cases/$metadata"
 					: {source : "odata/v4/data/metadata_special_cases.xml"}
 			});
@@ -6021,7 +6036,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used (CPOUI5UISERVICESV3-1195)
 	//TODO support $filter : \'GrossAmount gt 0\',\
-	QUnit.test("Analytics by V4: $$aggregation", function (assert) {
+	QUnit.test("Analytics by V4: $$aggregation w/ groupLevels", function (assert) {
 		var sView = '\
 <t:Table id="table" rows="{path : \'/SalesOrderList\',\
 		parameters : {\
@@ -6145,6 +6160,72 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,
+	// but a grand total row  (CPOUI5UISERVICESV3-1418)
+	QUnit.test("Analytics by V4: $$aggregation grandTotal w/o groupLevels", function (assert) {
+		var sView = '\
+<t:Table id="table" rows="{path : \'/BusinessPartners\',\
+		parameters : {\
+			$$aggregation : {\
+				aggregate : {\
+					SalesNumber : {grandTotal : true}\
+				},\
+				group : {\
+					Country : {},\
+					Region : {}\
+				}\
+			},\
+			$count : true,\
+			$filter : \'SalesNumber gt 0\',\
+			$orderby : \'Region desc\'\
+		}}" threshold="0" visibleRowCount="4">\
+	<t:Column>\
+		<t:template>\
+			<Text id="country" text="{Country}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="region" text="{Region}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="salesNumber" text="{SalesNumber}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest(
+				"BusinessPartners?$apply=groupby((Country,Region),aggregate(SalesNumber))"
+				+ "/filter(SalesNumber%20gt%200)/orderby(Region%20desc)"
+				//TODO $count : false => do not aggregate $count!
+				+ "/concat(aggregate(SalesNumber,$count%20as%20UI5__count),top(3))", {
+				"value" : [{
+						"SalesNumber" : 351,
+						"SalesNumber@odata.type": "#Decimal",
+						"UI5__count": "26",
+						"UI5__count@odata.type": "#Decimal"
+					},
+					{"Country" : "a", "Region" : "Z", "SalesNumber" : 1},
+					{"Country" : "b", "Region" : "Y", "SalesNumber" : 2},
+					{"Country" : "c", "Region" : "X", "SalesNumber" : 3}
+				]
+			})
+			.expectChange("country", ["", "a", "b", "c"])
+			.expectChange("region", ["", "Z", "Y", "X"])
+			.expectChange("salesNumber", ["351", "1", "2", "3"]);
+
+		return this.createView(assert, sView, createBusinessPartnerTestModel()).then(function () {
+			var oListBinding = that.oView.byId("table").getBinding("rows");
+
+			assert.strictEqual(oListBinding.isLengthFinal(), true, "count is known");
+			assert.strictEqual(oListBinding.getLength(), 27, "count includes grand total row");
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used without group or groupLevels
 	// Note: usage of min/max simulates a Chart, which would actually call ODLB#updateAnalyticalInfo
 	QUnit.test("Analytics by V4: $$aggregation, aggregate but no group", function (assert) {
@@ -6176,7 +6257,8 @@ sap.ui.require([
 				"value" : [{
 					"UI5min__AGE": 42,
 					"UI5max__AGE": 77,
-					"UI5__count" : 1
+					"UI5__count" : "1",
+					"UI5__count@odata.type": "#Decimal"
 				}, {
 					"GrossAmount" : 1
 				}]
@@ -6492,8 +6574,8 @@ sap.ui.require([
 						"UI5min__AGE@odata.type": "#Int16",
 						"UI5min__AGE": 42,
 						"UI5max__AGE": 77,
-						"UI5__count@odata.type": "#Decimal",
-						"UI5__count": "4"
+						"UI5__count": "4",
+						"UI5__count@odata.type": "#Decimal"
 					},
 					{"ID" : "1", "Name" : "Jonathan Smith", "AGE" : 50},
 					{"ID" : "0", "Name" : "Frederic Fall", "AGE" : 70},

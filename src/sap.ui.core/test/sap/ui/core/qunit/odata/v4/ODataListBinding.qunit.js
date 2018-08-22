@@ -4188,6 +4188,11 @@ sap.ui.require([
 			Measure : {max : true}
 		},
 		group : {}
+	}, {
+		aggregate : {
+			Measure : {grandTotal : true}
+		},
+		group : {}
 	}].forEach(function (oAggregation, i) {
 		QUnit.test("doCreateCache: AggregationCache: " + i, function (assert) {
 			var oBinding = this.bindList("TEAM_2_EMPLOYEES", null, null, null, {
