@@ -8873,6 +8873,8 @@
 			assert.strictEqual(oComboBox.getVisibleItems().length, 2, "All items should be visible");
 
 			oComboBox.close();
+			this.clock.tick(300);
+
 			oComboBox.destroy();
 		});
 
@@ -10605,7 +10607,6 @@
 			oComboBox.destroy();
 		});
 
-
 		QUnit.test("Changing models reflects on bound selectedKey property", function (assert) {
 			//Setup
 			var oData = {
@@ -10643,6 +10644,34 @@
 			assert.strictEqual(oComboBox.getSelectedItem().getKey(), "3", "Item 3 is selected");
 
 			//Cleanup
+			oComboBox.destroy();
+		});
+
+		QUnit.test("Matching item should be selected when deleting input with backspace", function (assert) {
+			// setup
+			var oItem = new sap.ui.core.Item({
+				text: "Test",
+				key: "T"
+			});
+			var oComboBox = new sap.m.ComboBox({
+				value: "Testt",
+				items: [oItem]
+			}).placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			sap.ui.qunit.QUnitUtils.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.BACKSPACE);
+			oComboBox.getFocusDomRef().value = "Test";
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef(), {
+				value: "Test"
+			});
+
+			// assert
+			assert.ok(oComboBox.getSelectedItem(), "Selected Item should not be falsy");
+			assert.equal(oComboBox.getSelectedItem().getText(), oItem.getText(), "First item's text should be selected");
+			assert.equal(oComboBox.getSelectedKey(), oItem.getKey(), "First item's key should be selected");
+
+			// cleanup
 			oComboBox.destroy();
 		});
 
