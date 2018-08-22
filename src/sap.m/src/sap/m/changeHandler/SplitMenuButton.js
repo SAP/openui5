@@ -99,6 +99,7 @@ sap.ui.define(["sap/ui/fl/Utils"], function(FlexUtils) {
 
 					oModifier.setProperty(oButton, "text", oModifier.getProperty(oMenuItem, "text"));
 					oModifier.setProperty(oButton, "icon",  oModifier.getProperty(oMenuItem, "icon"));
+					oModifier.setProperty(oButton, "enabled",  oModifier.getProperty(oMenuItem, "enabled"));
 
 					oButton.attachPress(function(oEvent) {
 						return oMenuItem.firePress(oEvent);
