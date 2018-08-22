@@ -701,6 +701,66 @@
 			assert.strictEqual(oLink.getText(), "Link 1", "The link is bound correctly");
 		});
 
+		QUnit.module("Filtering");
+
+		QUnit.test("Filter message & model change integration", function (assert) {
+			//Setup
+			var oModel = new sap.ui.model.json.JSONModel([{
+				"message": "Enter a valid number",
+				"additionalText": "ZIP Code/City",
+				"type": "Error"
+			}, {
+				"message": "Enter a valid value",
+				"additionalText": "Email",
+				"type": "Error"
+			}, {
+				"message": "A mandatory field is required",
+				"additionalText": "Name",
+				"type": "Error"
+			}, {
+				"message": "The value should not exceed 40",
+				"additionalText": "Standard Weekly Hours",
+				"type": "Warning"
+			}]);
+
+			var oMessageView = new sap.m.MessageView({
+				items: {
+					path: "message>/",
+					template: new sap.m.MessageItem(
+							{
+								title: "{message>message}",
+								subtitle: "{message>additionalText}",
+								type: "{message>type}",
+								description: "{message>message}"
+							})
+				}
+			}).setModel(oModel, "message").placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//Assert
+			assert.ok(oMessageView._oLists['all'].getVisible(), "The list with all items is visible");
+			assert.strictEqual(oMessageView._oLists['warning'].getItems().length, 1, "There's 1 item in the warniing list.");
+
+			//Act
+			oMessageView._oSegmentedButton.getButtons()[2].firePress();
+			sap.ui.getCore().applyChanges();
+
+			//Assert
+			assert.ok(!oMessageView._oLists['all'].getVisible(), "The list with all items is NOT visible");
+			assert.ok(oMessageView._oLists['warning'].getVisible(), "The 'Warning' list/section is visible");
+
+			//Act
+			var aData = oMessageView.getModel("message").getData();
+			aData.pop(); //Throw out the "Warning" item
+			oMessageView.getModel("message").setData(aData);
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(oMessageView._oLists['all'].getVisible(), "The list with all items is visible");
+			assert.ok(!oMessageView._oLists['warning'].getVisible(), "The 'Warning' list/section is NOT visible");
+
+			oMessageView.destroy();
+		});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
