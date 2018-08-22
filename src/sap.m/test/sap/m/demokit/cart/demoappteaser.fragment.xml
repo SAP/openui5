@@ -7,7 +7,7 @@
 				<Title text="Products (23)" level="H2"/>
 				<ToolbarSpacer/>
 				<Button icon="sap-icon://settings"/>
-				<Button icon="sap-icon://person-placeholder"/>
+				<Button icon="sap-icon://customer"/>
 			</Toolbar>
 		</headerToolbar>
 		<infoToolbar>
