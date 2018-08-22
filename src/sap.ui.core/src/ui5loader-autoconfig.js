@@ -232,6 +232,10 @@
 		if ( Object.prototype.hasOwnProperty.call(oCfg, name) && (pattern == null || pattern.test(oCfg[name])) ) {
 			return oCfg[name];
 		}
+		// compat fallback
+		if ( name.slice(0,3) !== "xx-" ) {
+			return _getOption("xx-" + name, defaultValue, pattern);
+		}
 		// if no valid config value is found, fall back to a system default value
 		return defaultValue;
 	}
@@ -240,7 +244,7 @@
 		return /^(?:true|x|X)$/.test( _getOption(name, defaultValue, /^(?:true|x|X|false)$/) );
 	}
 
-	if ( _getBooleanOption("xx-async", false) ) {
+	if ( _getBooleanOption("async", false) ) {
 		ui5loader.config({
 			async: true
 		});
