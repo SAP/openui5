@@ -120,6 +120,17 @@ sap.ui.define([
 				 */
 				detailBox: {type: 'sap.m.LightBox', multiple: false, bindable: "bindable"}
 			},
+			associations : {
+				/**
+				 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+				 */
+				ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
+
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledBy).
+				 */
+				ariaLabelledBy: {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+			},
 			events : {
 				/**
 				 * Fired when the user selects the control.
@@ -382,23 +393,8 @@ sap.ui.define([
 		return sSrc.replace(/'/g, "\\'");
 	};
 
-	/**
-	 * @see sap.ui.core.Control#getAccessibilityInfo
-	 * @protected
-	 * @returns {Object} The <code>sap.f.Avatar</code> accessibility information
-	 */
-	Avatar.prototype.getAccessibilityInfo = function() {
-		var bHasPressListeners = this.hasListeners("press");
-
-		if (!bHasPressListeners) {
-			return null;
-		}
-
-		return {
-			role: bHasPressListeners ? "button" : "img",
-			type: sap.ui.getCore().getLibraryResourceBundle("sap.f").getText(bHasPressListeners ? "ACC_CTR_TYPE_BUTTON" : "ACC_CTR_TYPE_IMAGE"),
-			focusable: bHasPressListeners
-		};
+	Avatar.prototype._getDefaultTooltip = function() {
+		return sap.ui.getCore().getLibraryResourceBundle("sap.f").getText("AVATAR_TOOLTIP");
 	};
 
 	return Avatar;
