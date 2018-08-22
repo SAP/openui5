@@ -505,28 +505,31 @@ function(
 			}), "then VariantModel.updateHasherEntry() called with the correct object as parameter");
 		});
 
-		QUnit.test("when calling '_updateVariantInURL' with a valid 'sap-ui-fl-control-variant-id' URL parameter for the same variant management", function(assert) {
+		QUnit.test("when calling '_updateVariantInURL' with valid 'sap-ui-fl-control-variant-id' encoded URL parameter for the same variant management", function(assert) {
+			var aExistingParameters = ["Dummy::'123'/'456'", "variantMgmtId1"];
+			var sTargetVariantId = "variant0";
 			var oParameters = {
 				params: {
-					"sap-ui-fl-control-variant-id": ["Dummy", "variantMgmtId1"]
+					"sap-ui-fl-control-variant-id": aExistingParameters.map( function(sExistingParameter) {
+						return encodeURIComponent(sExistingParameter);
+					})
 				}
 			};
-
-			var aModifiedUrlTechnicalParameters = ["Dummy", "variant0"];
 
 			sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
 			var fnGetParsedURLHashStub = sandbox.stub(Utils, "getParsedURLHash").returns(oParameters);
 			var fnUpdateHasherEntryStub = sandbox.stub(this.oModel, "updateHasherEntry");
 			var fnGetVariantIndexInURLSpy = sandbox.spy(this.oModel, "getVariantIndexInURL");
 
-			this.oModel._updateVariantInURL("variantMgmtId1", "variant0");
+			this.oModel._updateVariantInURL("variantMgmtId1", sTargetVariantId);
 			assert.ok(fnGetParsedURLHashStub.calledOnce, "then url parameters requested once");
-			assert.deepEqual(fnGetVariantIndexInURLSpy.returnValues[0], {
-				parameters: oParameters.params,
-				index: 1
-			}, "then VariantModel.getVariantIndexInURL returns the correct parameters and index");
+			assert.deepEqual(fnGetVariantIndexInURLSpy.returnValues[0],
+				{
+					parameters: { "sap-ui-fl-control-variant-id": aExistingParameters },
+					index: 1
+				}, "then VariantModel.getVariantIndexInURL returns the correct parameters and index");
 			assert.ok(fnUpdateHasherEntryStub.calledWithExactly({
-				parameters: aModifiedUrlTechnicalParameters,
+				parameters: [aExistingParameters[0], sTargetVariantId],
 				updateURL: true
 			}), "then VariantModel.updateHasherEntry() called with the correct object as parameter");
 		});
