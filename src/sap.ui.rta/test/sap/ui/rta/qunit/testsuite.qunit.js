@@ -356,7 +356,7 @@ sap.ui.define([
 			"appVariant/ManageAppsUtils": {
 				group: "AppVariant",
 				coverage: {
-					only: ["sap/ui/rta/appVariant/AppVariantUtils"]
+					only: ["sap/ui/rta/appVariant/Utils"]
 				}
 			},
 			"appVariant/S4HanaCloudBackend": {
