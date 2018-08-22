@@ -41,6 +41,35 @@ sap.ui.define(["sap/ui/support/library", "../library"],
 			}
 		};
 
-		return [oAvatarWithCustomDisplaySize];
+		var oAvatarWithCustomFontSize = {
+			id : "avatarWithCustomFontSize",
+			title: "Avatar: Invalid combination of customFontSize and displaySize properties",
+			minversion: "1.46",
+			audiences: [Audiences.Application],
+			categories: [Categories.Usage],
+			description: "Avatar customFontSize property takes affect, only when displaySize property is set to Custom.",
+			resolution: "Set displaySize property to Custom",
+			check: function (oIssueManager, oCoreFacade, oScope) {
+				oScope.getElementsByClassName("sap.f.Avatar")
+					.forEach(function(oElement) {
+
+					var sElementId = oElement.getId(),
+					sElementName = oElement.getMetadata().getElementName(),
+					bIsDefaultCustomFontSize = oElement.getCustomFontSize() === oElement.getMetadata().getProperty("customFontSize").getDefaultValue();
+
+					if (!bIsDefaultCustomFontSize && oElement.getDisplaySize() !== library.AvatarSize.Custom) {
+						oIssueManager.addIssue({
+							severity: Severity.Medium,
+							details: "Avatar '" + sElementName + "' (" + sElementId + ") has customFontSize property, without setting displaySize to Custom",
+							context: {
+								id: sElementId
+							}
+						});
+					}
+				});
+			}
+		};
+
+		return [oAvatarWithCustomDisplaySize, oAvatarWithCustomFontSize];
 
 	}, true);
