@@ -1246,15 +1246,13 @@ sap.ui.define([
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		ComboBox.prototype.onsapfocusleave = function(oEvent) {
-
 			this.bIsFocused = false;
 			var bTablet, oPicker,
 				oRelatedControl, oFocusDomRef,
-				oControl = oEvent.srcControl,
-				oItem = oControl.getSelectedItem();
+				oItem = this.getSelectedItem();
 
 			if (oItem && this.getFilterSecondaryValues()) {
-				oControl.updateDomValue(oItem.getText());
+				this.updateDomValue(oItem.getText());
 			}
 
 			ComboBoxBase.prototype.onsapfocusleave.apply(this, arguments);
