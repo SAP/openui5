@@ -149,14 +149,8 @@ html.sap-desktop .sapMToken.sapMTokenSelected:hover {
 }
 
 html[data-sap-ui-browser*="sf"] {
-	.sapMTokenText {
-		max-width: calc(~"100% + 1px - " @_sap_m_Token_TokenSize);
-	}
-
-	.sapUiSizeCompact .sapMTokenText {
-		max-width: calc(~"100% + 1px - " @_sap_m_Token_TokenCompactSize);
-	}
-
+	.sapMTokenText,
+	.sapUiSizeCompact .sapMTokenText,
 	.sapMTokenReadOnly .sapMTokenText,
 	.sapUiSizeCompact .sapMTokenReadOnly .sapMTokenText {
 		max-width: 100%;
