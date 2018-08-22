@@ -38,6 +38,22 @@
 				text="Some very long text that will strat to truncate on smaller screen"
 				active="true"/>
 
+			<Label text="Object Attribute with customContent aggregation containing sap.m.Link" design="Bold" class="sapUiSmallMarginTop"/>
+			<ObjectAttribute
+				title="Custom content">
+				<customContent>
+					<Link text="this is sap.m.Link" />
+				</customContent>
+			</ObjectAttribute>
+
+			<Label text="Object Attribute with customContent aggregation containing sap.m.Text" design="Bold" class="sapUiSmallMarginTop"/>
+			<ObjectAttribute
+				title="Custom content">
+				<customContent>
+					<Text text="some text set inside sap.m.Text" />
+				</customContent>
+			</ObjectAttribute>
+
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>
