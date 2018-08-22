@@ -539,14 +539,10 @@ sap.ui.define([
 		QUnit.test("Testing onTouch function", function (assert) {
 			this.clock = sinon.useFakeTimers();
 			this.oContextMenuPlugin._ensureSelection(this.oButton2Overlay);
-			this.oContextMenuPlugin.iMenuTouchOpeningDelay = 150;
-			this.oContextMenuPlugin.touchTimeout = setTimeout(function() {
-				assert.notOk(true, "timeout should not be executed, it should be cleared onTouch!");
-			}, 100);
 			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "touchstart");
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			assert.ok(!oContextMenuControl.getPopover().isOpen(), "ContextMenu should not be opened");
-			this.clock.tick(this.oContextMenuPlugin.iMenuTouchOpeningDelay);
+			this.clock.tick(150);
 			assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be open");
 			assert.strictEqual(oContextMenuControl.getFlexbox().getDirection(), "Row", "Flexbox should be set to Row");
 			this.clock.restore();
@@ -655,17 +651,21 @@ sap.ui.define([
 		});
 
 		QUnit.test("calling _shouldContextMenuOpen", function (assert) {
-			this.oContextMenuPlugin._bTouched = false;
 			this.oContextMenuPlugin._bOpeningLocked = true;
 			assert.notOk(this.oContextMenuPlugin._shouldContextMenuOpen(), "then return false when menu opening locked");
 			this.oContextMenuPlugin._bOpeningLocked = false;
 			oSandbox.stub(this.oContextMenuPlugin, "_checkForPluginLock").returns(true);
 			assert.notOk(this.oContextMenuPlugin._shouldContextMenuOpen(), "then return false when busy plugin exists");
-			this.oContextMenuPlugin._bTouched = true;
-			assert.ok(this.oContextMenuPlugin._shouldContextMenuOpen({}, true), "then return true if touched");
+
+			oSandbox.restore();
+			oSandbox.stub(this.oContextMenuPlugin, "_checkForPluginLock").returns(false);
+
+			assert.ok(this.oContextMenuPlugin._shouldContextMenuOpen(oEvent, true), "then return true when no plugin is busy and it is on hover");
+			assert.notOk(this.oContextMenuPlugin._oCurrentOverlay, "and current overlay is not set when on hover");
+
 			var oEvent = { currentTarget: { id: "button1" } };
-			assert.ok(this.oContextMenuPlugin._shouldContextMenuOpen(oEvent, false), "then return true if touched");
-			assert.equal(this.oContextMenuPlugin._oCurrentOverlay.getId(), oEvent.currentTarget.id, "then current overlay is set when not locked and not on hover");
+			assert.ok(this.oContextMenuPlugin._shouldContextMenuOpen(oEvent), "then return true when no plugin is busy");
+			assert.equal(this.oContextMenuPlugin._oCurrentOverlay.getId(), oEvent.currentTarget.id, "and current overlay is set when not on hover");
 		});
 
 		QUnit.test("calling _clearHoverTimeout", function(assert) {
