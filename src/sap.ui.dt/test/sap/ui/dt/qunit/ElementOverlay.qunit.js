@@ -53,12 +53,7 @@ function (
 	"use strict";
 
 	DOMUtil.insertStyles('\
-		@keyframes example {\
-			0%		{ width: auto; }\
-			100%	{ width: 0px; }\
-		}\
 		.sapUiDtTestAnimate {\
-			animation-name: example;\
 			animation-duration: 0.1s;\
 			width: 0px;\
 			z-index: 2;\
@@ -730,9 +725,10 @@ function (
 			var sInitialOffsetTop = this.oContent1.$().offset().top;
 			var oInitialControlOffset = this.oContent1.$().offset();
 			var oInitialOverlayOffset = this.oContent1Overlay.$().offset();
+			var oApplyStylesSpy;
 
 			if (!Device.browser.msie) {
-				var oApplyStylesSpy = sandbox.spy(this.oContent1Overlay, "applyStyles");
+				oApplyStylesSpy = sandbox.spy(this.oContent1Overlay, "applyStyles");
 			}
 
 			this.oSimpleScrollControlOverlay.attachEventOnce('scrollSynced', function() {
@@ -748,14 +744,16 @@ function (
 			}, this);
 			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").scrollTop(100);
 		});
+
 		QUnit.test("when the overlay is scrolled", function(assert) {
 			var done = assert.async();
 			var sInitialOffsetTop = this.oContent1.$().offset().top;
 			var oInitialControlOffset = this.oContent1.$().offset();
 			var oInitialOverlayOffset = this.oContent1Overlay.$().offset();
+			var oApplyStylesSpy;
 
 			if (!Device.browser.msie) {
-				var oApplyStylesSpy = sandbox.spy(Overlay.prototype, "applyStyles");
+				oApplyStylesSpy = sandbox.spy(Overlay.prototype, "applyStyles");
 			}
 
 			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").scroll(function() {
