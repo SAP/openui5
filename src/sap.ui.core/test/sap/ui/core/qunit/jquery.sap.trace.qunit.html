@@ -329,6 +329,14 @@
 				assert.strictEqual(this.oInteraction.incompleteRequests, 1, "incomplete request counted");
 			});
 
+			QUnit.test("setRequestHeader parameters", function(assert) {
+				var xhr = new XMLHttpRequest();
+				xhr.open("www.sap.com", "GET");
+				xhr.setRequestHeader("header", "value");
+				xhr.setRequestHeader(null, null);
+				assert.ok(true, "no exception was raised on valid parammeters");
+			});
+
 			QUnit.module("Global busy duration measurement",{
 				beforeEach: function() {
 					jQuery.sap.fesr.setActive(true);
