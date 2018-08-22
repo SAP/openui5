@@ -228,7 +228,7 @@ sap.ui.define(["./Measurement", "./ResourceTimings", "./XHRInterceptor", "sap/ba
 			}
 			// double string length for byte length as in js characters are stored as 16 bit ints
 			// sHeader + ": " + sValue + " "   --  means two blank and one colon === 3
-			this.requestHeaderLength += (sHeader.length + sValue.length + 3) * 2;
+			this.requestHeaderLength += ((sHeader + "").length + (sValue + "").length + 3) * 2;
 		});
 
 		// register the response handler for data collection
