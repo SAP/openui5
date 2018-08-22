@@ -10,7 +10,7 @@ sap.ui.define([],
 		return {
 			aggregations: {
 				content: {
-					domRef: ":sap-domref > .sapMPopoverCont > .sapMPopoverScroll",
+					domRef: ":sap-domref > .sapMPopoverCont",
 					actions: {
 						move: "moveControls"
 					}
