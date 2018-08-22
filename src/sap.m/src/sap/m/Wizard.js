@@ -949,8 +949,18 @@ sap.ui.define([
 				progressNavigator.nextStep();
 			}
 
-			if (scrollTop + stepChangeThreshold <= stepOffset) {
+			// change the navigator current step
+			while (scrollTop + stepChangeThreshold <= stepOffset) {
 				progressNavigator.previousStep();
+
+				// update the currentStep reference
+				currentStepDOM = this._stepPath[progressNavigator.getCurrentStep() - 1].getDomRef();
+
+				if (!currentStepDOM) {
+					return;
+				}
+
+				stepOffset = currentStepDOM.offsetTop;
 			}
 		};
 
