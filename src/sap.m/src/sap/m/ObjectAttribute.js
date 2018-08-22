@@ -67,7 +67,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		aggregations : {
 
 			/**
-			 * When the aggregation is set, it replaces the text, active and textDirection properties. This also ignores the press event. The provided control is displayed as an active link.
+			 * When the aggregation is set, it replaces the text, active and textDirection properties. This also ignores the press event. The provided control is displayed as an active link in case it is a sap.m.Link.
 			 * <b>Note:</b> It will only allow sap.m.Text and sap.m.Link controls.
 			 */
 			customContent : {type : "sap.ui.core.Control", multiple : false},
@@ -132,8 +132,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 		sText = oppositeDirectionMarker + sText + oppositeDirectionMarker;
 		if (sTitle) {
-			sTitle = sTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // saniteze the sTitle in order to make it usable in regex
-			sText = sText.replace(new RegExp(sTitle + ":\\s+", "gi"), "");
 			sText = sTitle + ": " + sText;
 		}
 		oAttrAggregation.setProperty('text', sText, true);
@@ -238,6 +236,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	ObjectAttribute.prototype._isSimulatedLink = function () {
 		return (this.getActive() && this.getText() !== "") && !this.getAggregation('customContent');
+	};
+
+	ObjectAttribute.prototype.setCustomContent = function(oCustomContent) {
+		if (oCustomContent instanceof sap.m.Link) {
+			oCustomContent._getTabindex = function() {
+				return "-1";
+			};
+		}
+		return this.setAggregation('customContent', oCustomContent);
+	};
+
+	/**
+	 * Returns whether the control can be clicked so in the renderer appropriate attributes can be set (for example tabindex).
+	 * @private
+	 */
+	ObjectAttribute.prototype._isClickable = function() {
+		return (this.getActive() && this.getText() !== "") || ( this.getAggregation("customContent") && this.getAggregation("customContent") instanceof sap.m.Link);
 	};
 
 	return ObjectAttribute;

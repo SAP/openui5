@@ -439,6 +439,14 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/InvisibleText', 
 		return true;
 	};
 
+	/*
+	 * Provides hook for overriding the tabindex in case the link is used in a composite control
+	 * for example inside ObjectAttribute
+	 */
+	Link.prototype._getTabindex = function() {
+		return this.getText() ? "0" : "-1";
+	};
+
 	return Link;
 
 });

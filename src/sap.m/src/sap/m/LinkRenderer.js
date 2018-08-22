@@ -67,12 +67,10 @@
 		if (!oControl.getEnabled()) {
 			oRm.addClass("sapMLnkDsbl");
 			oRm.writeAttribute("disabled", "true");
-			oRm.writeAttribute("tabIndex", "-1"); // still focusable by mouse click, but not in the tab chain
-		} else if (oControl.getText()) {
-			oRm.writeAttribute("tabIndex", "0");
 		} else {
-			oRm.writeAttribute("tabIndex", "-1");
+			oRm.writeAttribute("tabIndex", oControl._getTabindex());
 		}
+
 		if (oControl.getWrapping()) {
 			oRm.addClass("sapMLnkWrapping");
 		}
@@ -128,7 +126,6 @@
 	LinkRenderer.renderText = function(oRm, oControl) {
 		oRm.writeEscaped(oControl.getText());
 	};
-
 
 	return LinkRenderer;
 
