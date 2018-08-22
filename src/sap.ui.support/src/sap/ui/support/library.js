@@ -203,7 +203,7 @@ sap.ui.define(["sap/ui/core/library"],
 			selections: [
 				// Grouped by library
 				// Public
-				{ruleId: "dialogAriaDescribedBy", libName: "sap.m"},
+				{ruleId: "dialogAriaLabelledBy", libName: "sap.m"},
 				{ruleId: "onlyIconButtonNeedsTooltip", libName: "sap.m"},
 				{ruleId: "inputNeedsLabel", libName: "sap.m"},
 				{ruleId: "titleLevelProperty", libName: "sap.m"},

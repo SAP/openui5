@@ -11,7 +11,7 @@ sap.ui.define([
 
 			var dialog1 = new sap.m.Dialog({
 				title: "Dialog 1",
-				ariaDescribedBy: "t1",
+				ariaLabelledBy: "t1",
 				buttons: [new sap.m.Button({
 					press: function () {
 						dialog1.close();
@@ -94,7 +94,7 @@ sap.ui.define([
 	testRule({
 		executionScopeType: "global",
 		libName: "sap.m",
-		ruleId: "dialogAriaDescribedBy",
+		ruleId: "dialogAriaLabelledBy",
 		expectedNumberOfIssues: 2
 	});
 });
