@@ -174,19 +174,23 @@ sap.ui.define([
 		var iParamIndex = -1;
 
 		if (mHashParameters) {
-			// in UI Adaptation the parameters are empty, so the current URL parameters are retrieved from
+			// in UI Adaptation the parameters are empty, so the current URL parameters are retrieved from hash register
 			if (this._bAdaptationMode) {
 				mHashParameters = {};
 				mHashParameters[this.sVariantTechnicalParameterName] = VariantUtil.getCurrentHashParamsFromRegister.call(this);
 			}
 
 			if (!jQuery.isEmptyObject(mHashParameters) && Array.isArray(mHashParameters[this.sVariantTechnicalParameterName])) {
-				mHashParameters[this.sVariantTechnicalParameterName].some(function (sParam, iIndex) {
-					if (!!this.oVariantController.getVariant(sVariantManagementReference, sParam)) {
+				mHashParameters[this.sVariantTechnicalParameterName] = mHashParameters[this.sVariantTechnicalParameterName].reduce(function (aVariantParameters, sParam, iIndex) {
+					var sParamDecoded = decodeURIComponent(sParam);
+					// if parameter index has not been found and a variant exists for the combination of variant reference and variant parameter
+					if (iParamIndex === -1
+						&& !!this.oVariantController.getVariant(sVariantManagementReference, sParamDecoded)) {
 						iParamIndex = iIndex;
-						return true;
 					}
-				}.bind(this));
+					// return decoded parameter values
+					return aVariantParameters.concat(sParamDecoded);
+				}.bind(this), []);
 			}
 		}
 

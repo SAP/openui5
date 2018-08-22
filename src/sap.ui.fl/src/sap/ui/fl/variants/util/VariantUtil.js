@@ -143,7 +143,9 @@ sap.ui.define([
 				if (sDirection === "NewEntry" || sDirection === "Unknown") {
 					// get URL hash parameters
 					var mHashParameters = flUtils.getParsedURLHash() && flUtils.getParsedURLHash().params;
-					aVariantParamValues = ( mHashParameters && mHashParameters[sVariantParameterName] ) || [];
+					aVariantParamValues = (
+						mHashParameters && mHashParameters[sVariantParameterName]
+					) || [];
 
 					// check if variant management control for previously existing register entry exists
 					// if yes, reset to default variant
@@ -156,7 +158,9 @@ sap.ui.define([
 
 					// do not update URL parameters if new entry/unknown
 					mPropertyBag = {
-						parameters: aVariantParamValues
+						parameters: aVariantParamValues.map( function(sParameterValue) {
+							return decodeURIComponent(sParameterValue);
+						} )
 					};
 				} else {
 					aVariantParamValues = this._oHashRegister.hashParams[this._oHashRegister.currentIndex];
