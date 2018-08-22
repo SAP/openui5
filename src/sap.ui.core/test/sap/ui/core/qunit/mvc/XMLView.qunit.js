@@ -101,6 +101,8 @@ sap.ui.define([
 		});
 	});
 
+
+
 	QUnit.module("Preserve DOM");
 
 	QUnit.test("sync loading", function(assert) {
@@ -390,6 +392,91 @@ sap.ui.define([
 		oDomRef = oView.getDomRef();
 		oDomRef.parentElement.removeChild(oDomRef);
 	});
+
+	QUnit.test("Directly Nested XMLViews", function(assert) {
+		sap.ui.require.preload({
+			"nested/views/outer.view.xml":
+				"<View xmlns=\"sap.ui.core.mvc\">" +
+					"<Text id=\"before\" text=\"another control before the nested view\" xmlns=\"sap.m\" />" +
+					"<XMLView viewName=\"nested.views.middle\" id=\"middle\" />" +
+					"<Text id=\"after\" text=\"another control after the nested view\" xmlns=\"sap.m\" />" +
+				"</View>",
+			"nested/views/middle.view.xml":
+				"<View xmlns=\"sap.ui.core.mvc\">" +
+					"<Text id=\"before\" text=\"another control before the nested view\" xmlns=\"sap.m\" />" +
+					"<VBox id=\"vbox\" xmlns=\"sap.m\">" +
+						"<XMLView viewName=\"nested.views.inner\" id=\"indirect-inner\" xmlns=\"sap.ui.core.mvc\" />" +
+					"</VBox>" +
+					"<XMLView viewName=\"nested.views.inner\" id=\"direct-inner\" xmlns=\"sap.ui.core.mvc\" />" +
+					"<Text id=\"after\" text=\"another control before the nested view\" xmlns=\"sap.m\" />" +
+				"</View>",
+			"nested/views/inner.view.xml":
+				"<View xmlns=\"sap.ui.core.mvc\">" +
+					"<Text id=\"inside\" text=\"another control inside the view\" xmlns=\"sap.m\" />" +
+				"</View>"
+		});
+		var expectedControls = [
+			"outer",
+				"outer--before",
+				"outer--middle",
+					"outer--middle--before",
+					"outer--middle--vbox",
+						"outer--middle--indirect-inner",
+							"outer--middle--indirect-inner--inside",
+					"outer--middle--direct-inner",
+						"outer--middle--direct-inner--inside",
+					"outer--middle--after",
+				"outer--after"
+		];
+
+		// load and place view, force rendering
+		var oView = sap.ui.xmlview("outer", { viewName: "nested.views.outer"}).placeAt('content');
+		sap.ui.getCore().applyChanges();
+
+		expectedControls.forEach(function(sId) {
+			var oControl = sap.ui.getCore().byId(sId);
+			assert.ok(oControl, "control with id '" + sId + "' should exist");
+			assert.ok(oControl.getDomRef(), "control with id '" + sId + "' should have DOM");
+		});
+
+		// install delegates on each control to assert later that all have been rendered
+		var count = 0;
+		expectedControls.forEach(function(sId) {
+			var oControl = sap.ui.getCore().byId(sId);
+			oControl.addDelegate({
+				onBeforeRendering: function() {
+					count += 100;
+				},
+				onAfterRendering: function() {
+					count += 1;
+				}
+			});
+		});
+
+		// Act: force a re-rerendering of the outer view
+		oView.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		// Assert: everythging has been rendered again
+		assert.equal(count, 101 * expectedControls.length, "all controls should have participated in the rendering");
+		expectedControls.forEach(function(sId) {
+			var oControl = sap.ui.getCore().byId(sId);
+			assert.ok(oControl, "control with id '" + sId + "' should exist");
+			assert.ok(oControl.getDomRef(), "control with id '" + sId + "' should have DOM");
+			assert.notOk(document.getElementById(RenderManager.RenderPrefixes.Dummy + sId), "there should be no more Dummy-Element for id '" + sId + "'");
+			assert.notOk(document.getElementById(RenderManager.RenderPrefixes.Temporary + sId), "there should be no more Temporary-Element for id '" + sId + "'");
+		});
+
+		oView.destroy();
+		expectedControls.forEach(function(sId) {
+			var oControl = sap.ui.getCore().byId(sId);
+			assert.notOk(oControl, "control with id '" + sId + "' should no longer exist");
+			assert.notOk(document.getElementById(sId), "there should be no more DOM with id '" + sId + "'");
+		});
+
+	});
+
+
 
 	QUnit.module("Additional tests:");
 
