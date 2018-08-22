@@ -91,7 +91,7 @@
 	function requireP(deps) {
 		return new Promise(function(resolve, reject) {
 			sap.ui.require(makeArray(deps), function() {
-				resolve(arguments);
+				resolve(Array.prototype.slice.call(arguments));
 			}, reject);
 		});
 	}
