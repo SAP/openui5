@@ -61,7 +61,7 @@ sap.ui.define([
 			"Artists(ArtistUUID=005056ab-6fd8-1ee8-a794-502aecd26758,IsActiveEntity=false)/com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ActivationAction?$select=ArtistUUID,BreakupYear,CountryOfOrigin,CountryOfOrigin_Text,FoundingYear,IsActiveEntity,Name,RegionOfOrigin,RegionOfOrigin_Text" : {
 				source : "Artist_elvis_draft_activation.json"
 			},
-			"Artists" : {
+			"POST Artists" : {
 				source : "Artist_create.json"
 			},
 			"Artists(ArtistUUID=005056ab-6fd8-1ee8-9ff2-ae6f1e73c007,IsActiveEntity=false)?$select=ArtistUUID,CountryOfOrigin_Text,FoundingYear,HasDraftEntity,IsActiveEntity,Name" : {
@@ -70,7 +70,7 @@ sap.ui.define([
 			"Artists(ArtistUUID=005056ab-6fd8-1ee8-9ff2-ae6f1e73c007,IsActiveEntity=false)?$select=ArtistUUID,BreakupYear,CountryOfOrigin,CountryOfOrigin_Text,FoundingYear,IsActiveEntity,Name,RegionOfOrigin,RegionOfOrigin_Text" : {
 				source : "Artist_create.json"
 			},
-			"Artists(ArtistUUID=005056ab-6fd8-1ee8-9ff2-ae6f1e73c007,IsActiveEntity=false)/com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ActivationAction?$select=ArtistUUID,BreakupYear,CountryOfOrigin,CountryOfOrigin_Text,FoundingYear,IsActiveEntity,Name,RegionOfOrigin,RegionOfOrigin_Text" : {
+			"POST Artists(ArtistUUID=005056ab-6fd8-1ee8-9ff2-ae6f1e73c007,IsActiveEntity=false)/com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ActivationAction?$select=ArtistUUID,BreakupYear,CountryOfOrigin,CountryOfOrigin_Text,FoundingYear,IsActiveEntity,Name,RegionOfOrigin,RegionOfOrigin_Text" : {
 				source : "Artist_create_activation.json"
 			}
 		}, "sap/ui/core/sample/odata/v4/MusicArtists/data",
