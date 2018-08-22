@@ -1,6 +1,4 @@
-/* global QUnit */
-
-QUnit.config.autostart = false;
+/* global QUnit, sinon */
 
 sap.ui.define([
 	'sap/m/Button',
@@ -8,8 +6,7 @@ sap.ui.define([
 	'sap/f/DynamicPageTitle',
 	'sap/ui/core/util/reflection/JsControlTreeModifier',
 	"sap/ui/core/StashedControlSupport",
-	"sap/ui/core/UIComponent",
-	'sap/ui/thirdparty/sinon-4'
+	"sap/ui/core/UIComponent"
 ],
 function(
 	Button,
@@ -25,13 +22,10 @@ function(
 
 	QUnit.module("Using the JsControlTreeModifier...", {
 		beforeEach: function () {
-
-			sap.ui.loader.config({paths:{"sap/ui/test":"../../component/testdata"}});
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "sap.ui.test.other",
 				id: "testComponent"
 			});
-
 		},
 
 		afterEach: function () {
@@ -154,7 +148,7 @@ function(
 	});
 
 	QUnit.test("applySettings", function(assert){
-		this.oControl= new Button();
+		this.oControl = new Button();
 
 		JsControlTreeModifier.applySettings(this.oControl, { text: "Test", enabled: false});
 
@@ -163,13 +157,13 @@ function(
 	});
 
 	QUnit.test("isPropertyInitial", function(assert){
-		this.oControl= new Button( { text: "Test"  });
+		this.oControl = new Button( { text: "Test"  });
 		assert.equal(JsControlTreeModifier.isPropertyInitial(this.oControl, "enabled"), true, "the enabled property of the button is initial");
 		assert.equal(JsControlTreeModifier.isPropertyInitial(this.oControl, "text"), false, "the text property of the button is not initial");
 	});
 
 	QUnit.test("when getStashed is called for non-stash control with visible property true", function(assert){
-		this.oControl= new Button({ text: "Test"  });
+		this.oControl = new Button({ text: "Test"  });
 		this.oControl.getStashed = function () { };
 		var fnGetVisibleSpy = sandbox.spy(this.oControl, "getVisible");
 		assert.strictEqual(JsControlTreeModifier.getStashed(this.oControl), false, "then false is returned");
@@ -177,7 +171,7 @@ function(
 	});
 
 	QUnit.test("when getStashed is called for a stashed control", function(assert){
-		this.oControl= new Button({ text: "Test"  });
+		this.oControl = new Button({ text: "Test"  });
 		this.oControl.getStashed = function () {
 			return true;
 		};
@@ -187,7 +181,7 @@ function(
 	});
 
 	QUnit.test("when setStashed is called for an already unstashed control", function(assert){
-		this.oControl= new Button({ text: "Test"  });
+		this.oControl = new Button({ text: "Test"  });
 		this.oControl.getStashed = function () { };
 		this.oControl.setStashed = function () {
 			assert.ok(false, "then setStashed() should not be called on a non-stash control");
@@ -234,5 +228,4 @@ function(
 		oUnstashedControl.destroy();
 	});
 
-	QUnit.start();
 });
