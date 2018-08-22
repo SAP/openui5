@@ -1268,7 +1268,6 @@ sap.ui.define([
 			function requireFor(oElement) {
 				var mAlias2URN = {},
 					oAttribute = oElement.getAttributeNodeNS(sNAMESPACE, "require"),
-					aModuleNames,
 					sModuleNames,
 					aURNs;
 
@@ -1299,16 +1298,14 @@ sap.ui.define([
 						});
 						return asyncRequire();
 					}
-					aModuleNames = sModuleNames.split(" ");
+					// map dot-separated module names to slash-separated Unified Resource Names
+					aURNs = sModuleNames.split(" ").map(function (sModuleName) {
+						return sModuleName.replace(/\./g, "/");
+					});
 					if (!oViewInfo.sync) {
-						// map dot-separated module names to slash-separated Unified Resource Names
-						aURNs = aModuleNames.map(function (sModuleName) {
-							return sModuleName.replace(/\./g, "/");
-						});
 						return asyncRequire();
 					}
-
-					jQuery.sap.require.apply(jQuery.sap, aModuleNames);
+					aURNs.forEach(sap.ui.requireSync);
 				}
 				return oSyncPromiseResolved;
 			}
