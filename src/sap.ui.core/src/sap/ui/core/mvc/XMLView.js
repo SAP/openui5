@@ -623,19 +623,23 @@ sap.ui.define([
 				if ( aChildren ) {
 					for (var i = 0; i < aChildren.length; i++) {
 
-						// get DOM or invisible placeholder for child
-						var oChildDOM = aChildren[i].getDomRef() ||
-										((RenderPrefixes.Invisible + aChildren[i].getId() ? window.document.getElementById(RenderPrefixes.Invisible + aChildren[i].getId()) : null));
+						// Get current DOM of the child or the invisible placeholder for it.
+						// For children that do DOM preservation on their own, use the temporary DOM,
+						// they'll move their old DOM themselves
+						var oNewChildDOM =
+								document.getElementById(RenderPrefixes.Temporary + aChildren[i].getId())
+								|| aChildren[i].getDomRef()
+								|| document.getElementById(RenderPrefixes.Invisible + aChildren[i].getId());
 
-						// if DOM exists, replace the preservation dummy with it
-						if ( oChildDOM ) {
-							jQuery(document.getElementById(RenderPrefixes.Dummy + aChildren[i].getId())).replaceWith(oChildDOM);
+						// if such DOM exists, replace the placeholder in the view's DOM with it
+						if ( oNewChildDOM ) {
+							jQuery(document.getElementById(RenderPrefixes.Dummy + aChildren[i].getId())).replaceWith(oNewChildDOM);
 						} // otherwise keep the dummy placeholder
 					}
 				}
 				// move preserved DOM into place
 				// Log.debug("moving preserved dom into place for " + this);
-				jQuery(document.getElementById(RenderPrefixes.Dummy + this.getId())).replaceWith(this._$oldContent);
+				jQuery(document.getElementById(RenderPrefixes.Temporary + this.getId())).replaceWith(this._$oldContent);
 			}
 			this._$oldContent = undefined;
 		};
