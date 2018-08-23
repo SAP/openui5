@@ -22,6 +22,9 @@ function(
 		afterEach : function(assert) {
 			oAppVariantOverviewDialog.destroy();
 			sandbox.restore();
+		},
+		after: function() {
+			jQuery("#sapUiBusyIndicator").hide();
 		}
 	}, function() {
 		QUnit.test("when AppVariantOverviewDialog gets opened from an original app and a key user has already created app variants based on an original app,", function(assert) {

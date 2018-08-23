@@ -28,6 +28,9 @@ sap.ui.require([
 	QUnit.module("Given that a RtaAppVariantFeature is instantiated", {
 		afterEach : function(assert) {
 			sandbox.restore();
+		},
+		after: function() {
+			jQuery("#sapUiBusyIndicator").hide();
 		}
 	}, function() {
 
@@ -289,6 +292,9 @@ sap.ui.require([
 			sandbox.restore();
 			sap.ushell = this.originalUShell;
 			delete window.bUShellNavigationTriggered;
+		},
+		after: function() {
+			jQuery("#sapUiBusyIndicator").hide();
 		}
 	}, function() {
 
