@@ -17,7 +17,9 @@
 			<ObjectPageSubSection>
 				<m:List updateFinished="._modifyLinks"
 						items="{ path: 'apis', templateShareable: 'false'}"
-						showSeparators="Inner">
+						showSeparators="Inner"
+						class="sapUxAPObjectPageSubSectionAlignContent"
+						width="auto">
 					<m:items>
 						<m:FeedListItem
 								showIcon="false"
