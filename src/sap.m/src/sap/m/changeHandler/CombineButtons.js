@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/fl/Utils", "sap/base/util/uid"],
-	function(FlexUtils, uid) {
+sap.ui.define(["sap/ui/fl/Utils", "sap/base/util/uid", 'sap/ui/base/ManagedObjectObserver'],
+	function(FlexUtils, uid, ManagedObjectObserver) {
 		"use strict";
 
 		/**
@@ -68,8 +68,16 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/base/util/uid"],
 				oMenuItem = oModifier.createControl("sap.m.MenuItem", mPropertyBag.appComponent, oView, oSelector);
 				oModifier.setProperty(oMenuItem, "text", oButton.mProperties.text);
 				oModifier.setProperty(oMenuItem, "icon", oButton.mProperties.icon);
+				oModifier.setProperty(oMenuItem, "enabled", oButton.mProperties.enabled);
 				oMenuItem.attachPress(function(oEvent) {
 					return oButton.firePress(oEvent);
+				});
+
+				// observe the Button enabled property so in case it is changed the new value should be applied to the MenuItem also
+				new ManagedObjectObserver(function (oChanges) {
+					oModifier.setProperty(oMenuItem, "enabled", oChanges.current);
+				}).observe(oButton, {
+					properties: ["enabled"]
 				});
 
 				if (sButtonText) {

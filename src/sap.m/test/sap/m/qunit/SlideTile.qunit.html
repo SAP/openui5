@@ -426,29 +426,17 @@
 				assert.ok(spy.notCalled, "Forwards scrolling by using key F is not executed in Actions Scope");
 			});
 
-			QUnit.test("SlideTile mouse down handler test", function(assert) {
-				//Arrange
-				var oDom = this.oSlideTile.$().find(".sapMSTIconClickTapArea")[0];
-				var oEvent = jQuery.Event("mousedown");
-				oEvent.target = oDom;
-				//Act
-				this.oSlideTile.$().trigger(oEvent);
-				//Assert
-				assert.ok(this.oSlideTile.$().hasClass("sapMSTIconPressed"), "Press class is added");
-			});
-
-			QUnit.test("SlideTile mouse up handler and click delegation on GenericTile test", function(assert) {
-				//Arrange
-				var oEvent = {preventDefault: function(){}};
-				this.oSlideTile.getTiles()[0].attachEvent("press", this.fnPressHandler);
-				this.oSlideTile.getTiles()[1].attachEvent("press", this.fnSecondPressHandler);
-				//Act
-				this.oSlideTile.onmouseup(oEvent);
-				//Assert
-				assert.ok(this.fnPressHandler.calledOnce, "Tap delegation on first GenericTile works");
-				assert.ok(this.fnSecondPressHandler.notCalled, "The second GenericTile press event is not triggered");
-			});
-		}
+		QUnit.test("SlideTile mouse down handler test", function(assert) {
+			//Arrange
+			var oDom = this.oSlideTile.$().find(".sapMSTIconClickTapArea")[0];
+			var oEvent = jQuery.Event("mousedown");
+			oEvent.target = oDom;
+			//Act
+			this.oSlideTile.$().trigger(oEvent);
+			//Assert
+			assert.ok(this.oSlideTile.$().hasClass("sapMSTIconPressed"), "Press class is added");
+		});
+	}
 
 		QUnit.test("SlideTile touch start handler test - touch on Pause/play icon", function(assert) {
 			//Arrange

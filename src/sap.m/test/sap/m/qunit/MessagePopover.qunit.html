@@ -1343,6 +1343,38 @@
 			assert.strictEqual(this.oMessagePopover._oMessageView.getItems()[0].getCustomData().length, 1, "The custom data was cloned into the message view's item.");
 			assert.ok(this.oMessagePopover._oMessageView.getItems()[0].getCustomData()[0].getValue(), "The data was passed correctly");
 		});
+
+		QUnit.test("On mobile the dialog should be closed after clicking on the active title", function (assert) {
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				tablet: false,
+				phone: true
+			});
+
+			var oMessagePopover = new sap.m.MessagePopover({
+				items: [
+					new sap.m.MessageItem({
+						activeTitle: true,
+						title: "Test",
+						description: "lorem"
+					})
+				]
+			});
+			var oCloseStub = this.stub(oMessagePopover, "close");
+			sap.ui.getCore().applyChanges();
+
+			oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+
+			//fire activeTitlePress on the first element
+			oMessagePopover._oMessageView._oLists['all'].getItems()[0].fireActiveTitlePress();
+
+			//Assert
+			assert.ok(oCloseStub.called, "MessagePopover should be closed when the active title is pressed");
+
+			//Clean
+			oMessagePopover.destroy();
+		});
 	</script>
 </head>
 <body id="body" class="sapUiBody">

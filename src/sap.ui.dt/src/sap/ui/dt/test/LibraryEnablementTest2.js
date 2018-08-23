@@ -63,6 +63,7 @@ function(ManagedObject, ElementEnablementTest2) {
 				if (oLib.name.indexOf("sap.ui.server") === -1 &&
 						oLib.name.indexOf("themelib_") === -1 &&
 						oLib.name.indexOf("sap.ui.dev") === -1 &&
+						oLib.name.indexOf("sap.ui.demoapps") === -1 &&
 						oLib.name !== "sap.ui.core" &&
 						oLib.name !== "sap.ui.fl") {
 					aLoadLibraryPromises.push( sap.ui.getCore().loadLibrary(oLib.name, { async:true }) );

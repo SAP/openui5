@@ -197,7 +197,11 @@
 		pressed: true,
 		press : function() {
 			oTable.setGrowing(oGrowing.getPressed());
-			oTable.bindItems("/modelData", oTemplate);
+			oTable.bindItems({
+				path: "/modelData",
+				template: oTemplate,
+				key: "id"
+			});
 		}
 	});
 
