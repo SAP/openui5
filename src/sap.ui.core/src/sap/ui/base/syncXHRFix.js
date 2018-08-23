@@ -7,14 +7,15 @@
  */
 /*global Proxy */
 sap.ui.define([], function() {
-
 	"use strict";
+
 	/**
 	 * @function
+	 * @since 1.58
 	 * @alias module:sap/ui/base/syncXHRFix
 	 * @private
 	 */
-	return function() {
+	var fnXHRFix = function() {
 		// Firefox has an issue with synchronous and asynchronous requests running in parallel,
 		// where callbacks of the asynchronous call are executed while waiting on the synchronous
 		// response, see https://bugzilla.mozilla.org/show_bug.cgi?id=697151
@@ -253,5 +254,5 @@ sap.ui.define([], function() {
 		})();
 
 	};
-
+	return fnXHRFix;
 });

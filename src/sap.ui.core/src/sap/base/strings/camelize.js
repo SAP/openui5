@@ -15,6 +15,7 @@ sap.ui.define([], function() {
 	 * });
 	 *
 	 * @function
+	 * @since 1.58
 	 * @alias module:sap/base/strings/camelize
 	 * @param {string} sString Hyphen separated string
 	 * @returns {string} The transformed string

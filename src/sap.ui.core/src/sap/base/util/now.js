@@ -15,6 +15,7 @@ sap.ui.define([], function() {
 	 * Converting to a <code>Date</code> is possible by using <code>require(["sap/base/util/now"], function(now){new Date(now());}</code>
 	 *
 	 * @function
+	 * @since 1.58
 	 * @public
 	 * @alias module:sap/base/util/now
 	 * @returns {float} timestamp in microseconds if supported by the environment otherwise in milliseconds

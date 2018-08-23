@@ -6,12 +6,12 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Global'],
 	"use strict";
 
 	/**
-	 * Applies the jQuery function extension:
-	 * @see jQuery#control
+	 * This module provides the {@link jQuery#control} API.
 	 *
 	 * @namespace
-	 * @alias module:sap/ui/dom/jquery/control
+	 * @name module:sap/ui/dom/jquery/control
 	 * @public
+	 * @since 1.58
 	 */
 
 	/**
@@ -23,6 +23,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Global'],
 	 * @name jQuery#control
 	 * @function
 	 * @public
+	 * @requires module:sap/ui/dom/jquery/control
 	 */
 	jQuery.fn.control = function(iIndex, bIncludeRelated) {
 		var aControls = this.map(function() {

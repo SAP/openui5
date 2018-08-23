@@ -1,21 +1,22 @@
 /*!
  * ${copyright}
  */
+/*
+ * IMPORTANT: This is a private module, its API must not be used and is subject to change.
+ * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
+ */
 sap.ui.define([], function() {
 	"use strict";
 
-	//TODO-evo: check if we should polyfill URL() and URLSearchParams insted....
+	//TODO-evo: check if we should polyfill URL() and URLSearchParams instead....
 
 	/**
-	 * @interface Encapsulates all URI parameters of a given URL.
+	 * @class Encapsulates all URI parameters of a given URL.
 	 *
-	 * Use {@link getUriParameters} to create an instance of sab.base.util.UriParameters.
-	 *
-	 * @author SAP SE
-	 * @version ${version}
+	 * @since 1.58
 	 * @alias module:sap/base/util/UriParameters
 	 * @param {string} sUri URL with parameters
-	 * @public
+	 * @private
 	 */
 	var UriParameters = function(sUri) {
 		this.mParams = {};
@@ -62,7 +63,6 @@ sap.ui.define([], function() {
 	 * occurrence of the URI parameter with the given name is returned. Might be <code>null</code>
 	 * if the URI parameter is not contained in the windows URL.
 	 *
-	 * @function
 	 * @param {string} sName The name of the URI parameter.
 	 * @param {boolean} [bAll=false] Optional, specifies whether all or only the first parameter value should be returned.
 	 * @return {string|array} The value(s) of the URI parameter with the given name

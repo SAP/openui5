@@ -4,7 +4,26 @@
 sap.ui.define([], function() {
 	"use strict";
 
+	/**
+	 * Manages an object path.
+	 *
+	 * The object path can be just created with {@link #.create}, then an empty nested object path will be created from
+	 * the provided string. If a value is set for an object path {@link #.set} it is also created if it not already
+	 * exists. Values can be retrieved from the objectpath with {@link #get}.
+	 *
+	 * @namespace
+	 * @since 1.58
+	 * @alias module:sap/base/util/ObjectPath
+	 * @public
+	 */
 	var ObjectPath = {};
+
+	/**
+	 * The default root context for the object path.
+	 *
+	 * @type {object}
+	 * @private
+	 */
 	var defaultRootContext = window;
 
 	/**
@@ -23,15 +42,17 @@ sap.ui.define([], function() {
 	 *
 	 * The provided path is used to navigate through the nested objects, starting with the root context.
 	 *
-	 * @public
-	 * @param {string|string[]} vObjectPath Path as string where each name is separated by '.'. Can also be an array of names.
-	 * @param {Object} [oRootContext=window] Root context where the path starts
-	 * @returns {Object} The newly created context object, e.g. base.my.test.module
-	 * @throws {Error} Will throw an error if a value already exists within the path and the object path cannot be set.
 	 * @example
 	 * var root = {};
 	 * ObjectPath.create("my.test.module", root) === root.my.test.module;
 	 * ObjectPath.set(["my", "test", "otherModule"], root) === root.my.test.otherModule;
+	 *
+	 * @public
+	 * @static
+	 * @param {string|string[]} vObjectPath Path as string where each name is separated by '.'. Can also be an array of names.
+	 * @param {Object} [oRootContext=window] Root context where the path starts
+	 * @returns {Object} The newly created context object, e.g. base.my.test.module
+	 * @throws {Error} Will throw an error if a value already exists within the path and the object path cannot be set.
 	 */
 	ObjectPath.create = function(vObjectPath, oRootContext) {
 		var oObject = oRootContext || defaultRootContext;
@@ -62,6 +83,7 @@ sap.ui.define([], function() {
 	 * The provided object path is used to navigate through the nested objects, starting with the root context.
 	 *
 	 * @public
+	 * @static
 	 * @param {string|string[]} vObjectPath Path as string where each name is separated by '.'. Can also be an array of names.
 	 * @param {Object} [oRootContext=window] Root context where the path starts
 	 * @returns {any} Returns the value located in the provided path, or <code>undefined</code> if the path does not exist completely.
@@ -89,6 +111,7 @@ sap.ui.define([], function() {
 	 * <b>Note:</b> Ensures that the object path exists.
 	 *
 	 * @public
+	 * @static
 	 * @param {string|string[]} vObjectPath vObjectPath Path as string where each name is separated by '.'. Can also be an array of names.
 	 * @param {Object} [oRootContext=window] Root context where the path starts
 	 * @param {any} vValue The value to be set in the root context's object path
@@ -108,10 +131,5 @@ sap.ui.define([], function() {
 		oObject[sPropertyName] = vValue;
 	};
 
-	/**
-	 * @namespace
-	 * @alias module:sap/base/util/ObjectPath
-	 * @public
-	 */
 	return ObjectPath;
 });

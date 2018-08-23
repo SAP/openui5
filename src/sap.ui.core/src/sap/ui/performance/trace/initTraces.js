@@ -7,17 +7,18 @@
  */
 sap.ui.define(["sap/ui/performance/trace/FESR"], function(FESR) {
 
-    "use strict";
+	"use strict";
 
-    /**
+	/**
 	 * Determine wether to activate SAP Passport or FESR
 	 *
 	 * @function
-	 * @alias module:sap/ui/performance/trace/initTraces
+	 * @since 1.58
+	 * @name module:sap/ui/performance/trace/initTraces
 	 * @private
 	 * @ui5-restricted sap.ui.core
 	 */
-    return function() {
+	return function() {
 		var bActive = !!document.querySelector("meta[name=sap-ui-fesr][content=true]"),
 			aParamMatches = window.location.search.match(/[\?|&]sap-ui-(?:xx-)?fesr=(true|x|X|false)&?/);
 		if (aParamMatches) {
@@ -31,5 +32,5 @@ sap.ui.define(["sap/ui/performance/trace/FESR"], function(FESR) {
 		if (/sap-ui-xx-e2e-trace=(true|x|X)/.test(location.search)) {
 			sap.ui.requireSync("sap/ui/core/support/trace/E2eTraceLib");
 		}
-    };
+	};
 });

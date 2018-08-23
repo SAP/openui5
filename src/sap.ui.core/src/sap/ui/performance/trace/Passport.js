@@ -8,7 +8,6 @@
 sap.ui.define(["sap/ui/performance/XHRInterceptor", "sap/ui/thirdparty/URI"], function(XHRInterceptor, URI) {
 	"use strict";
 
-
 	var iE2eTraceLevel;
 	var sTransactionId;
 	var ROOT_ID;
@@ -45,6 +44,7 @@ sap.ui.define(["sap/ui/performance/XHRInterceptor", "sap/ui/thirdparty/URI"], fu
 	 *
 	 * @name sap.ui.performance.E2ETrace.Passport
 	 * @namespace
+	 * @since 1.58
 	 * @alias module:sap/ui/performance/trace/Passport
 	 * @private
 	 */

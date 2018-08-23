@@ -96,11 +96,12 @@ sap.ui.define([
 
 	/**
 	 * @namespace
+	 * @since 1.58
 	 * @alias module:sap/ui/performance/XHRInterceptor
 	 * @private
 	 * @ui5-restricted sap.ui.core
 	 */
-	return {
+	var oXHRInterceptor = {
 		/**
 		 * Register a function callback which gets called as it would be an own method of XHR.
 		 *
@@ -159,4 +160,5 @@ sap.ui.define([
 
 	};
 
+	return oXHRInterceptor;
 });

@@ -15,11 +15,11 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	 * method also does not do so.
 	 *
 	 * @function
+	 * @since 1.58
 	 * @param {Element} oDomRefContainer The container element
 	 * @param {Element} oDomRefChild The child element (must not be a text node, must be an element)
 	 * @return {boolean} Whether <code>oDomRefChild</code> is contained in or equal to <code>oDomRefContainer</code>
 	 * @public
-	 * @author SAP SE
 	 * @alias module:sap/ui/dom/containsOrEquals
 	 */
 	var fnContainsOrEquals = function(oDomRefContainer, oDomRefChild) {

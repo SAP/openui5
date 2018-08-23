@@ -6,22 +6,24 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	"use strict";
 
 	/**
+	 * Registry to add whitelisted URLs and validate against them.
+	 *
 	 * @namespace
+	 * @since 1.58
 	 * @alias module:sap/base/security/URLWhitelist
+	 * @public
 	 */
 	var oURLWhitelist = {};
 
 	/**
 	 * Entry object of the URLWhitelist
-	 * @typedef {object} sap/base/security/URLWhitelistEntry
+	 *
+	 * @public
+	 * @typedef {object} module:sap/base/security/URLWhitelist.Entry
 	 * @property {string} protocol The protocol of the URL
 	 * @property {string} host The host of the URL
 	 * @property {string} port The port of the URL
 	 * @property {string} path the path of the URL
-	 */
-
-	/**
-	 * @private
 	 */
 	function URLWhitelistEntry(protocol, host, port, path){
 		if (protocol) {
@@ -67,7 +69,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	/**
 	 * Deletes an entry from the whitelist entry
 	 *
-	 * @param {sap/base/security/URLWhitelistEntry} oEntry The entry to be deleted
+	 * @param {module:sap/base/security/URLWhitelist.Entry} oEntry The entry to be deleted
 	 * @public
 	 */
 	oURLWhitelist.delete = function(oEntry) {
@@ -77,7 +79,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	/**
 	 * Gets an array with the whitelist entries
 	 *
-	 * @returns {sap/base/security/URLWhitelistEntry[]} An array with whitelist entries
+	 * @returns {module:sap/base/security/URLWhitelist.Entry[]} An array with whitelist entries
 	 * @public
 	 */
 	oURLWhitelist.entries = function() {

@@ -54,6 +54,7 @@ sap.ui.define([
 	*
 	*
 	* @function
+	* @since 1.58
 	* @alias module:sap/base/util/includes
 	* @param {Array|object|string} vCollection - Collection to be checked
 	* @param {*} vValue - The value to be checked

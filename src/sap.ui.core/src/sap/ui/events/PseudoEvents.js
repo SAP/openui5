@@ -6,6 +6,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 	/**
 	 * @namespace
+	 * @since 1.58
 	 * @alias module:sap/ui/events/PseudoEvents
 	 * @public
 	 */
@@ -48,7 +49,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 	 * delivered to any jQuery-style listeners registered for that browser event.
 	 *
 	 * Pure JavaScript listeners can evaluate the classification information using
-	 * the {@link sap/ui/events/jquery/EventExtension#isPseudoType} method.
+	 * the {@link module:sap/ui/events/jquery/EventExtension#isPseudoType} method.
 	 *
 	 * Instead of using the procedure as described above, the SAPUI5 controls and elements
 	 * should simply implement an <code>on<i>pseudo-event</i>(oEvent)</code> method. It will
@@ -809,7 +810,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 	};
 
 	/**
-	 * Ordered array of the {@link sap/ui/events/PseudoEvents}.
+	 * Ordered array of the {@link module:sap/ui/events/PseudoEvents}.
 	 *
 	 * Order is significant as some check methods rely on the fact that they are tested before other methods.
 	 * The array is processed during event analysis (when classifying browser events as pseudo events).

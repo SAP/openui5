@@ -5,12 +5,12 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	"use strict";
 
 	/**
-	 * Applies the jQuery function extension:
-	 * @see jQuery#cursorPos
+	 * This module provides the {@link jQuery#cursorPos} API.
 	 *
 	 * @namespace
-	 * @alias module:sap/ui/dom/jquery/cursorPos
+	 * @name module:sap/ui/dom/jquery/cursorPos
 	 * @public
+	 * @since 1.58
 	 */
 
 	/**
@@ -23,6 +23,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	 * @author SAP SE
 	 * @since 0.9.0
 	 * @function
+	 * @requires module:sap/ui/dom/jquery/cursorPos
 	 */
 	var fnCursorPos = function cursorPos(iPos) {
 		var len = arguments.length,

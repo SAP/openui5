@@ -9,6 +9,7 @@ sap.ui.define([], function() {
 	"use strict";
 	/**
 	 * @namespace
+	 * @since 1.58
 	 * @alias module:sap/ui/events/TouchToMouseMapping
 	 * @private
 	 * @ui5-restricted module:sap/ui/events/jquery/EventSimulation
