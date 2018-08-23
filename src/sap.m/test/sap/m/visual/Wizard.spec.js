@@ -47,4 +47,25 @@ describe("sap.m.Wizard", function() {
 		element(by.css("#branch-wiz .sapMWizardProgressNavStep:nth-child(5)")).click();
 		expect(takeScreenshot()).toLookAs("branching-scroll-from6-to3");
 	});
+
+	it("should scroll to the step containing the initial focus element in a dialog", function () {
+		var openBtn = element(by.id("open-dialog-btn")),
+			closeBtn = element(by.id("close-dialog-btn")),
+			navigateBtn = element(by.id("navigate-btn"));
+
+		// navigate to test app page and open dialog
+		element(by.id("dialog-integration-wiz-sel")).click();
+		openBtn.click();
+
+		// navigate to the last step
+		for (var i = 0; i < 3; i++) {
+			navigateBtn.click();
+		}
+
+		// close and reopen the dialog
+		closeBtn.click();
+		openBtn.click();
+
+		expect(takeScreenshot(element(by.id("wiz-dialog")))).toLookAs("wizard-in-dialog-initial-focus");
+	});
 });
