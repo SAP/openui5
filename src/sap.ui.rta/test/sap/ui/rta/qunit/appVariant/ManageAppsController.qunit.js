@@ -22,6 +22,9 @@ sap.ui.require([
 	QUnit.module("Given that a ManageApps controller is instantiated", {
 		afterEach : function(assert) {
 			sandbox.restore();
+		},
+		after: function() {
+			jQuery("#sapUiBusyIndicator").hide();
 		}
 	}, function() {
 		QUnit.test("when onInit is called in case app variants exist", function(assert) {
