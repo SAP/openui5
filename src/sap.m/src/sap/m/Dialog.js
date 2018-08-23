@@ -907,15 +907,24 @@ function(
 			}
 
 			// IE and EDGE have specific container behavior (e.g. div with 500px width is about 15px smaller when it has vertical scrollbar
-			if ((oBrowser.internet_explorer || oBrowser.edge) &&		// apply width only:
-				(!sContentWidth || sContentWidth == 'auto') &&			// - when the developer hasn't set it explicitly
-				!this.getStretch() && 									// - when the dialog is not stretched
-				dialogClientWidth <  $dialogContent[0].scrollWidth &&	// - if dialog width is smaller than scroll width
-				$dialogContent.width() < maxDialogWidth) {				// - if the dialog can't grow anymore
-				var iVerticalScrollBarWidth = $dialogContent.width() - dialogClientWidth;
-				$dialogContent.css({
-					width: Math.min($dialogContent.width() + iVerticalScrollBarWidth, maxDialogWidth) + "px"
-				});
+			if ((oBrowser.internet_explorer || oBrowser.edge)) {
+
+				var iVerticalScrollBarWidth = Math.ceil($dialogContent.outerWidth() - dialogClientWidth),
+					iCurrentWidthAndHeight = $dialogContent.width() + "x" + $dialogContent.height();
+
+				if (iCurrentWidthAndHeight !== this._iLastWidthAndHeightWithScroll) { // apply the fix only if width or height did actually change
+					if (iVerticalScrollBarWidth > 0 &&					// - there is a vertical scroll
+						(!sContentWidth || sContentWidth == 'auto') &&	// - when the developer hasn't set it explicitly
+						!this.getStretch() && 							// - when the dialog is not stretched
+						$dialogContent.width() < maxDialogWidth) {		// - if the dialog can't grow anymore
+
+						$dialogContent.css({"padding-right" : iVerticalScrollBarWidth});
+						this._iLastWidthAndHeightWithScroll = iCurrentWidthAndHeight;
+					} else {
+						$dialogContent.css({"padding-right" : ""});
+						this._iLastWidthAndHeightWithScroll = null;
+					}
+				}
 			}
 
 			if (!this.getStretch() && !this._oManuallySetSize && !this._bDisableRepositioning) {
