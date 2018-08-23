@@ -142,7 +142,8 @@ function(
 
 			if (this.isRendered()) {
 				var iPositionInDom = this._getChildIndex(oChild);
-				var $Child = oChild.isRendered() ? oChild.$() : oChild.render(true);
+				var bChildRendered = oChild.isRendered();
+				var $Child = bChildRendered ? oChild.$() : oChild.render(true);
 				var $Children = jQuery(this.getChildrenDomRef());
 				var iCurrentPosition = $Children.find('>').index($Child);
 				var iInsertIndex;
@@ -157,9 +158,11 @@ function(
 					}
 				}
 
-				oChild.fireAfterRendering({
-					domRef: $Child.get(0)
-				});
+				if (!bChildRendered) {
+					oChild.fireAfterRendering({
+						domRef: $Child.get(0)
+					});
+				}
 			}
 
 			this.fireChildAdded();
