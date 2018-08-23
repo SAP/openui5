@@ -269,6 +269,10 @@ sap.ui.define([
 							oBlockLayoutCell = sap.ui.xmlfragment(sId, "sap.ui.documentation.sdk.view.BlockLayoutTeaserCell", this);
 							oBlockLayoutCell.getContent()[0].addContent(oTeaser);
 							sap.ui.loader.config({paths:{"test-resources":null}});
+							//sets the teaser to aria-hidden => gets ignored by screen reader
+							oTeaser.addEventDelegate({"onAfterRendering": function() {
+									this.getParent().getDomRef().childNodes[1].setAttribute("aria-hidden", "true");
+								}.bind(oTeaser)});
 						} catch (oException) {
 							Log.warning("Teaser for demo app \"" + oBindingContext.getObject().name + "\" could not be loaded: " + oException);
 							oBlockLayoutCell = sap.ui.xmlfragment(sId, "sap.ui.documentation.sdk.view.BlockLayoutCell", this);
