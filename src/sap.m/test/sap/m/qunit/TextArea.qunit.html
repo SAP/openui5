@@ -472,6 +472,7 @@
 		sap.ui.getCore().applyChanges();
 
 		var oDOMRef = oTA.getDomRef();
+		var oTextAreaDOMRef = oTA.getDomRef('inner');
 		var initialHeight = oDOMRef.clientHeight;
 
 		//Act
@@ -480,6 +481,7 @@
 
 		//Assert
 		assert.ok(initialHeight > oDOMRef.clientHeight, "TextArea height should have been shrinked properly.");
+		assert.ok(oTextAreaDOMRef.clientHeight >= oTextAreaDOMRef.scrollHeight, "Textarea should not have a scroll");
 
 		//Act
 		oTA.setValue(sLongText);
@@ -487,6 +489,7 @@
 
 		//Assert
 		assert.ok(initialHeight === oDOMRef.clientHeight, "TextArea height should have been extended properly.");
+		assert.ok(oTextAreaDOMRef.clientHeight < oTextAreaDOMRef.scrollHeight, "TextArea should have a scroll.");
 
 		oTA.destroy();
 	});
