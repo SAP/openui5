@@ -50,10 +50,17 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/core/Control'],
 						}
 					}
 				},
-				scrollContainers : [{
-					domRef : "> .sapUiDtTestSSCScrollContainer",
-					aggregations : ["content1", "content2"]
-				}]
+				scrollContainers : [
+					{
+						domRef : "> .sapUiDtTestSSCScrollContainer",
+						aggregations : ["content1", "content2"]
+					}
+				],
+				actions: {
+					"move": {
+						changeType: "moveControls"
+					}
+				}
 			}
 		},
 

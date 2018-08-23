@@ -227,29 +227,64 @@ sap.ui.define(function () {
 			// Validator tests:
 			// -------------------------------------------------------------------------------
 			"test/Element": {
-				group: "Validator"
+				group: "Validator",
+				coverage: {
+					only: ['sap/ui/dt/test']
+				}
 			},
 			"test/ElementEnablement": {
-				group: "Validator"
+				group: "Validator",
+				coverage: {
+					only: ['sap/ui/dt/test']
+				}
 			},
 			"test/LibraryEnablementTest": {
-				group: "Validator"
+				group: "Validator",
+				ui5: {
+					resourceroots: {
+						"dt.control": "test-resources/sap/ui/dt/qunit/testdata/controls/",
+						"sap.ui.testLibrary": "test-resources/sap/ui/dt/qunit/testdata/"
+					}
+				},
+				coverage: {
+					only: ['sap/ui/dt/test']
+				}
 			},
 			"test/LibraryEnablementTest2": {
-				group: "Validator"
+				group: "Validator",
+				ui5: {
+					resourceroots: {
+						"dt.control": "test-resources/sap/ui/dt/qunit/testdata/controls/",
+						"sap.ui.testLibrary": "test-resources/sap/ui/dt/qunit/testdata/"
+					}
+				},
+				coverage: {
+					only: ['sap/ui/dt/test']
+				}
 			},
 			"test/report/QUnit": {
-				group: "Validator"
+				group: "Validator",
+				coverage: {
+					only: ['sap/ui/dt/test']
+				}
 			},
 			"test/report/Table": {
 				group: "Validator",
-				qunit: {
-					// use an increased timeout as the sap.m Library has so many controls
-					testTimeout: 120000
+				ui5: {
+					resourceroots: {
+						"dt.control": "test-resources/sap/ui/dt/qunit/testdata/controls/",
+						"sap.ui.testLibrary": "test-resources/sap/ui/dt/qunit/testdata/"
+					}
+				},
+				coverage: {
+					only: ['sap/ui/dt/test']
 				}
 			},
 			"test/report/Statistic": {
-				group: "Validator"
+				group: "Validator",
+				coverage: {
+					only: ['sap/ui/dt/test']
+				}
 			}
 		}
 	};
