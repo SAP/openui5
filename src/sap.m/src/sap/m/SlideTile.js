@@ -305,9 +305,6 @@ sap.ui.define([
 			if (this.hasStyleClass("sapMSTIconPressed")) {
 				this._toggleAnimation();
 				this.removeStyleClass("sapMSTIconPressed");
-			} else if (Device.system.desktop) {
-				oEvent.preventDefault();
-				this.getTiles()[this._iCurrentTile].firePress();
 			}
 		}
 	};
