@@ -260,7 +260,7 @@ sap.ui.define([
 				throw new Error("Controller name ('sName' parameter) is required");
 			}
 
-			var sControllerName = sName.replace(/\./g, "/"),
+			var sControllerName = sName.replace(/\./g, "/") + ".controller",
 				ControllerClass = resolveClass(sap.ui.require(sControllerName));
 
 			function resolveClass(ControllerClass) {
@@ -273,8 +273,6 @@ sap.ui.define([
 					return ObjectPath.get(sName);
 				}
 			}
-
-			sControllerName = sControllerName + ".controller";
 
 			if (bAsync) {
 				return new Promise(function(resolve, reject) {
