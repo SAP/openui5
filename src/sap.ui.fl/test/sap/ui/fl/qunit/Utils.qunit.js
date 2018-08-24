@@ -1029,13 +1029,13 @@ function(
 					}
 				}
 			});
-			sandbox.stub(Utils.log, "error");
+			sandbox.stub(Utils.log, "warning");
 			var oReplaceHashStub = sandbox.stub(hasher, "replaceHash");
 
 			Utils.setTechnicalURLParameterValues({}, "testParameter", ["testValue", "testValue2"]);
 
 			assert.equal(oReplaceHashStub.calledWith("hashValue"), true, "then the 'replaceHash' function of the hasher is called with the right parameter");
-			assert.ok(Utils.log.error.calledWith("Component instance not provided, so technical parameters in component data and browser history remain unchanged"), "then error produced as component is invalid");
+			assert.ok(Utils.log.warning.calledWith("Component instance not provided, so technical parameters in component data and browser history remain unchanged"), "then warning produced as component is invalid");
 			assert.equal(hasher.changed.active, true, "then the 'active' flag of the hasher is restored to true");
 		});
 
