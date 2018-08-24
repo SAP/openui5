@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/core/format/ListFormat', 'sap/ui/core/Locale', "sap/base/Log"], function(ListFormat, Locale, Log) {
+sap.ui.define(['sap/ui/core/format/ListFormat', 'sap/ui/core/Locale', "sap/base/Log"], function (ListFormat, Locale, Log) {
 
 	QUnit.module("ListFormat", {
 		beforeEach: function () {
@@ -51,7 +51,7 @@ sap.ui.define(['sap/ui/core/format/ListFormat', 'sap/ui/core/Locale', "sap/base/
 				"{0}, {1} und ;"
 			];
 
-			runTests(oLocale, this.aInput, aFormattedValues);
+		runTests(oLocale, this.aInput, aFormattedValues);
 	});
 
 	QUnit.test("check symmetry of formatting and parsing - (en_US)", function (assert) {
@@ -154,13 +154,13 @@ sap.ui.define(['sap/ui/core/format/ListFormat', 'sap/ui/core/Locale', "sap/base/
 
 	});
 
-	QUnit.test("Edge case where items include delimiters of the list patterns", function(assert) {
+	QUnit.test("Edge case where items include delimiters of the list patterns", function (assert) {
 		// more list elements after formatting + parsing
 		var aInput = ["1, 2", "3, 4", "5 und 6"],
-				aActualResult = ["1", "2", "3", "4 und 5", "6"],
-				aExpectedResult,
-				oListFormat = ListFormat.getInstance(this.oLocale),
-				sResult;
+			aActualResult = ["1", "2", "3", "4 und 5", "6"],
+			aExpectedResult,
+			oListFormat = ListFormat.getInstance(this.oLocale),
+			sResult;
 
 		sResult = oListFormat.format(aInput);
 		assert.ok(sResult, "A formatted string should be returned");
@@ -180,6 +180,6 @@ sap.ui.define(['sap/ui/core/format/ListFormat', 'sap/ui/core/Locale', "sap/base/
 
 		aExpectedResult = oListFormat.parse(sResult);
 		assert.deepEqual(aExpectedResult, aActualResult, "Values are correctly parsed but differs from the original input.");
-});
+	});
 
 });
