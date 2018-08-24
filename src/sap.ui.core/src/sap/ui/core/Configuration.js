@@ -316,10 +316,10 @@ sap.ui.define([
 			// 6. apply the settings from the url (only if not blocked by app configuration)
 			if ( !config.ignoreUrlParams ) {
 				var sUrlPrefix = "sap-ui-";
-				var oUriParams = new UriParameters(window.location.href);
+				var oUriParams = UriParameters.fromQuery(window.location.search);
 
 				// first map SAP parameters, can be overwritten by "sap-ui-*" parameters
-				if ( oUriParams.mParams['sap-language'] ) {
+				if ( oUriParams.has('sap-language') ) {
 					// always remember as SAP Logon language
 					var sValue = config.sapLogonLanguage = oUriParams.get('sap-language');
 					// try to interpret it as a BCP47 language tag, taking some well known  SAP language codes into account
@@ -333,11 +333,11 @@ sap.ui.define([
 				}
 
 				// Check sap-locale after sap-language to ensure compatibility if both parameters are provided (e.g. portal iView).
-				if ( oUriParams.mParams['sap-locale'] ) {
+				if ( oUriParams.has('sap-locale') ) {
 					setValue("language", oUriParams.get('sap-locale'));
 				}
 
-				if (oUriParams.mParams['sap-rtl']) {
+				if (oUriParams.has('sap-rtl')) {
 					// "" = false, "X", "x" = true
 					var sValue = oUriParams.get('sap-rtl');
 					if (sValue === "X" || sValue === "x") {
@@ -347,7 +347,7 @@ sap.ui.define([
 					}
 				}
 
-				if (oUriParams.mParams['sap-theme']) {
+				if (oUriParams.has('sap-theme')) {
 					var sValue = oUriParams.get('sap-theme');
 					if (sValue === "") {
 						// empty URL parameters set the parameter back to its system default
@@ -357,7 +357,7 @@ sap.ui.define([
 					}
 				}
 
-				if (oUriParams.mParams['sap-statistics']) {
+				if (oUriParams.has('sap-statistics')) {
 					var sValue = oUriParams.get('sap-statistics');
 					setValue('statistics', sValue);
 				}
@@ -380,13 +380,13 @@ sap.ui.define([
 					}
 				}
 				// handle legacy URL params through format settings
-				if (oUriParams.mParams['sap-ui-legacy-date-format']) {
+				if (oUriParams.has('sap-ui-legacy-date-format')) {
 					this.oFormatSettings.setLegacyDateFormat(oUriParams.get('sap-ui-legacy-date-format'));
 				}
-				if (oUriParams.mParams['sap-ui-legacy-time-format']) {
+				if (oUriParams.has('sap-ui-legacy-time-format')) {
 					this.oFormatSettings.setLegacyTimeFormat(oUriParams.get('sap-ui-legacy-time-format'));
 				}
-				if (oUriParams.mParams['sap-ui-legacy-number-format']) {
+				if (oUriParams.has('sap-ui-legacy-number-format')) {
 					this.oFormatSettings.setLegacyNumberFormat(oUriParams.get('sap-ui-legacy-number-format'));
 				}
 			}
