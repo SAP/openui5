@@ -466,7 +466,9 @@
 				{ "name" : "system-exit" },
 				{ "name" : "resize-vertical" },
 				{ "name" : "expand-all" },
-				{ "name" : "collapse-all" }
+				{ "name" : "collapse-all" },
+				{ "name" : "combine" },
+				{ "name" : "split" }
 			]
 		},
 		{
