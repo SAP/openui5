@@ -881,8 +881,9 @@ sap.ui.define([
 					hasher.changed.active = false; //disable changed signal
 
 					var mTechnicalParameters = Utils.getTechnicalParametersForComponent(oComponent);
+					// if mTechnicalParameters are not available we write a warning and continue updating the hash
 					if (!mTechnicalParameters) {
-						this.log.error("Component instance not provided, so technical parameters in component data and browser history remain unchanged");
+						this.log.warning("Component instance not provided, so technical parameters in component data and browser history remain unchanged");
 					}
 					if (aValues.length === 0) {
 						delete oParsedHash.params[sParameterName];
