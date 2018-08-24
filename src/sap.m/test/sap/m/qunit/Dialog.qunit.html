@@ -825,13 +825,13 @@
 				this.clock.tick(500);
 
 				// Assert
-				var dialogHeaderId = oDialog.$().find('header > .sapMBar').attr('id');
+				var dialogTitleId = oDialog.$().find('header > .sapMBar .sapMTitle').attr('id');
 				var subHeaderId = oDialog.$().find('.sapMDialogSubHeader > .sapMBar').attr('id');
 				var dialogAriaLabelledBy = oDialog.getAriaLabelledBy();
-				assert.strictEqual(oDialog.getDomRef().getAttribute('aria-labelledby'), dialogHeaderId + ' ' + subHeaderId +
+				assert.strictEqual(oDialog.getDomRef().getAttribute('aria-labelledby'), dialogTitleId + ' ' + subHeaderId +
 						' ' + TEXT_ID);
 				assert.strictEqual(dialogAriaLabelledBy.length, 3);
-				assert.strictEqual(dialogAriaLabelledBy.indexOf(dialogHeaderId), 0);
+				assert.strictEqual(dialogAriaLabelledBy.indexOf(dialogTitleId), 0);
 				assert.strictEqual(dialogAriaLabelledBy.indexOf(subHeaderId), 1);
 				assert.strictEqual(dialogAriaLabelledBy.indexOf(TEXT_ID), 2);
 
