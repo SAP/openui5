@@ -1,33 +1,41 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<!-- Initialization -->
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap" src="../../../../../resources/sap-ui-core.js"
-data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
+/*global QUnit, sinon */
+sap.ui.define([
+	"./data/ODataModelFakeService",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/odata/CountMode",
+	"sap/ui/model/odata/OperationMode",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterType",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/odata/Filter",
+	"sap/ui/Device",
+	"sap/m/Panel",
+	"sap/m/List",
+	"sap/m/DisplayListItem",
+	"sap/m/StandardListItem"
+], function(
+		fakeService,
+		ODataModel,
+		CountMode,
+		OperationMode,
+		Sorter,
+		Filter,
+		FilterType,
+		FilterOperator,
+		ODataFilter,
+		Device,
+		Panel,
+		List,
+		DisplayListItem,
+		StandardListItem
+	) {
 
-<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<!--[if IE]>
-	<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
-<![endif]-->
-<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-<!-- This test is not running against the real Northwind service, but a fake service based on
-     Sinon.SJ FakeXHR. To run on the real service instead please comment out the following line. -->
-<script src="ODataModelFakeService.js"></script>
+	"use strict";
 
-<!-- Test functions -->
-<script>
-
-	// time to wait for server responses
-	var timeout = 3000;
 	var oModel;
 	var sURI = "http://services.odata.org/V3/Northwind/Northwind.svc/";
-		sURI = "/proxy/http/" + sURI.replace("http://","");
+	sURI = "/proxy/http/" + sURI.replace("http://","");
 
 	var oLogChecker = {
 		init: function(){
@@ -39,20 +47,13 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		}
 	};
 
-	function removeSharedMetadata() {
-		var sServiceURI = sURI.replace(/\/$/, "");
-		if (sap.ui.model.odata.v2.ODataModel.mServiceData
-				&& sap.ui.model.odata.v2.ODataModel.mServiceData[sServiceURI]) {
-			delete sap.ui.model.odata.v2.ODataModel.mServiceData[sServiceURI].oMetadata;
-		}
-	}
-
 	function initModel(bJSON) {
-		return new sap.ui.model.odata.v2.ODataModel(sURI, {
+		return new ODataModel(sURI, {
 			json: bJSON,
 			useBatch: true
 		});
 	}
+
 	// Request security token to avoid later HEAD requests
 	initModel().refreshSecurityToken();
 
@@ -61,8 +62,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oModel = initModel(false);
 		},
 		afterEach : function() {
+			oModel.destroy();
 			oModel = undefined;
-			removeSharedMetadata();
 		}
 	});
 
@@ -98,7 +99,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 				});
 				oBinding.detachChange(handler);
 				done(); // resume normal testing
-			}
+			};
 			oBinding.attachRefresh(function() {
 				oBinding.getContexts();
 			});
@@ -111,7 +112,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 	QUnit.test("ListBinding: Length calculation no count", function(assert){
 		var done = assert.async();
 		oModel.metadataLoaded().then(function(){
-			var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: sap.ui.model.odata.CountMode.None} );
+			var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: CountMode.None} );
 			var handler = function() {
 				assert.equal(oBinding.getPath(), "/Categories", "ListBinding path");
 				assert.ok(oBinding.getModel() == oModel, "ListBinding model");
@@ -124,7 +125,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 					done(); // resume normal testing
 				});
 				oBinding.getContexts(8,8);
-			}
+			};
 			oBinding.attachRefresh(function() {
 				oBinding.getContexts(0,8);
 			});
@@ -167,7 +168,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			var handler = function() {
 				oBinding.detachChange(handler);
 
-				oBinding.sort([new sap.ui.model.Sorter("CategoryName", false)]);
+				oBinding.sort([new Sorter("CategoryName", false)]);
 
 
 				var aPaths = getContextPaths(oBinding);
@@ -216,7 +217,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			var handler = function() {
 				oBinding.detachChange(handler);
 
-				oBinding.filter([new sap.ui.model.Filter({
+				oBinding.filter([new Filter({
 					path: "CategoryName",
 					operator: "EQ",
 					value1: "Seafood"
@@ -247,7 +248,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			});
 			var handler = function() {
 				oBinding.detachChange(handler);
-				oBinding.filter([new sap.ui.model.Filter({
+				oBinding.filter([new Filter({
 					path: "CategoryName",
 					operator: "EQ",
 					value1: "Seafood"
@@ -287,7 +288,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 				var handler = function() {
 					oBinding.detachChange(handler);
 
-					oBinding.filter([new sap.ui.model.Filter({
+					oBinding.filter([new Filter({
 						path: "ProductName",
 						operator: "EQ",
 						value1: "Tofu"
@@ -329,7 +330,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 				});
 				var handler = function() {
 					oBinding.detachChange(handler);
-					oBinding.filter([new sap.ui.model.Filter({
+					oBinding.filter([new Filter({
 						path: "ProductName",
 						operator: "EQ",
 						value1: "Tofu"
@@ -339,7 +340,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 					oBinding.attachChange(filterChangeHandler);
 					oBinding.getModel().setProperty("/Products(7)/ProductName", "Tofu");
 					// Now Products(14) and Products(7) match
-				}
+				};
 
 				var filterChangeHandler = function() {
 					assert.equal(oBinding.getLength(), 2, "length of items");
@@ -348,7 +349,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 					oBinding.detachChange(filterChangeHandler);
 					done(); // resume normal testing
-				}
+				};
 
 				oBinding.attachRefresh(function() {
 					oBinding.getContexts();
@@ -361,22 +362,22 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 	});
 
 	// TODO: Find out why this fails in PhantomJS and rewrite test
-	if (!sap.ui.Device.browser.phantomJS) {
+	if (!Device.browser.phantomJS) {
 		QUnit.test("ListBinding getCurrentContexts", function(assert){
 			var done = assert.async();
 			var oBinding = oModel.bindList("/Categories");
 
 			var handler = function() {
-				var aContexts = oBinding.getContexts(0, 5),
-					aCurrentContexts = oBinding.getCurrentContexts();
+				oBinding.getContexts(0, 5);
+				var aCurrentContexts = oBinding.getCurrentContexts();
 
 				assert.equal(aCurrentContexts.length, 5, "amount of items in current contexts");
-				jQuery(aCurrentContexts).each(function(i, context){
+				aCurrentContexts.forEach(function(context, i) {
 					assert.equal(context.getPath(), "/Categories(" + (i + 1) + ")", "ListBinding context");
 				});
 				oBinding.detachChange(handler);
 				done(); // resume normal testing
-			}
+			};
 			oBinding.attachRefresh(function() {oBinding.getContexts();});
 			oBinding.attachChange(handler);
 			// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
@@ -403,7 +404,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 				oBinding.detachChange(changeHandler);
 				done(); // resume normal testing
 			}
-		}
+		};
 
 		oBinding.attachRefresh(function() {
 			this.getContexts();
@@ -423,12 +424,13 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 		var changeHandler = function() {
 			iCount++;
+			var oContext;
 			if (iCount == 1) {
 				// expanded entries will be filtered on the client
 				assert.equal(oBinding.getPath(), "Products", "ListBinding path");
 				assert.ok(oBinding.getModel() == oModel, "ListBinding model");
 				assert.equal(oBinding.getLength(), 1, "length of items after filtering");
-				var oContext = oBinding.getContexts(0, 1)[0];
+				oContext = oBinding.getContexts(0, 1)[0];
 				assert.equal(oContext.getProperty("ProductName"), "Uncle Bob's Organic Dried Pears");
 				assert.equal(oBinding.isLengthFinal(), true, "isLengthFinal");
 				oBinding.setContext(null);
@@ -436,10 +438,10 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 				assert.equal(oBinding.getLength(), 0, "length of items");
 				assert.equal(oBinding.isLengthFinal(), true, "isLengthFinal");
 				oContext = oModel.createBindingContext("/Categories(7)", undefined, {expand: "Products"});
-				oBinding.setContext(oContext)
+				oBinding.setContext(oContext);
 			} else if (iCount == 3) {
 				assert.equal(oBinding.getLength(), 1, "length of items after filtering");
-				var oContext = oBinding.getContexts(0, 1)[0];
+				oContext = oBinding.getContexts(0, 1)[0];
 				assert.equal(oContext.getProperty("ProductName"), "Uncle Bob's Organic Dried Pears");
 				assert.equal(oBinding.isLengthFinal(), true, "isLengthFinal");
 				// Modify binding so a change can be detected, although data returned by the server is the same
@@ -448,13 +450,13 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 				oModel.createBindingContext("/Categories(7)", undefined, {expand: "Products"}, function() {}, true);
 			} else {
 				assert.equal(oBinding.getLength(), 1, "length of items after filtering");
-				var oContext = oBinding.getContexts(0, 1)[0];
+				oContext = oBinding.getContexts(0, 1)[0];
 				assert.equal(oContext.getProperty("ProductName"), "Uncle Bob's Organic Dried Pears");
 				assert.equal(oBinding.isLengthFinal(), true, "isLengthFinal");
 				oBinding.detachChange(changeHandler);
 				done(); // resume normal testing
 			}
-		}
+		};
 
 		oBinding.attachRefresh(function() {
 			this.getContexts();
@@ -462,7 +464,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		oBinding.attachChange(changeHandler);
 		oModel.metadataLoaded().then(function() {
 			oBinding.initialize();
-			oBinding.filter(new sap.ui.model.Filter("ProductName", "Contains", "Uncle"));
+			oBinding.filter(new Filter("ProductName", "Contains", "Uncle"));
 			oModel.createBindingContext("/Categories(7)", undefined, {expand: "Products"}, function(oContext) {
 				oBinding.setContext(oContext);
 			});
@@ -482,7 +484,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 				assert.equal(aContexts[0].getProperty("ProductName"), "Uncle Bob's Organic Dried Pears", "Product name is available now");
 				done();
 			} else {
-				assert.ok(false, "Must not change a third time.")
+				assert.ok(false, "Must not change a third time.");
 			}
 			iCount++;
 		}
@@ -549,7 +551,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 			oBinding.detachChange(handler1);
 			// ascending again
-			oSorter = new sap.ui.model.Sorter("CategoryName", false);
+			var oSorter = new Sorter("CategoryName", false);
 			oBinding.sort(oSorter);
 			oBinding.attachChange(handler2);
 
@@ -570,7 +572,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 			oBinding.detachChange(handler0);
 			// descending
-			var oSorter = new sap.ui.model.Sorter("CategoryName", true);
+			var oSorter = new Sorter("CategoryName", true);
 			oBinding.sort(oSorter);
 			oBinding.attachChange(handler1);
 
@@ -584,7 +586,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 	QUnit.test("ListBinding clientside sort", function(assert){
 		var done = assert.async();
 		var oBinding = oModel.bindList("/Categories", null, null, null, {
-			operationMode: sap.ui.model.odata.OperationMode.Client
+			operationMode: OperationMode.Client
 		});
 
 		var handler = function(oEvent){
@@ -602,7 +604,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 			oBinding.detachChange(handler);
 			// descending
-			var oSorter = new sap.ui.model.Sorter("CategoryName", true);
+			var oSorter = new Sorter("CategoryName", true);
 			oBinding.sort(oSorter);
 
 			var aContexts = oBinding.getContexts();
@@ -617,7 +619,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("CategoryName", aContexts[0]), "Seafood", "ListBinding after sort");
 
 			// ascending again
-			oSorter = new sap.ui.model.Sorter("CategoryName", false);
+			oSorter = new Sorter("CategoryName", false);
 			oBinding.sort(oSorter);
 
 			var aContexts = oBinding.getContexts();
@@ -654,8 +656,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 	QUnit.test("ListBinding clientside sort on Edm.Decimal", function(assert){
 		var done = assert.async();
-		var oBinding = oModel.bindList("/Products", null, new sap.ui.model.Sorter("UnitPrice"), null, {
-			operationMode: sap.ui.model.odata.OperationMode.Client
+		var oBinding = oModel.bindList("/Products", null, new Sorter("UnitPrice"), null, {
+			operationMode: OperationMode.Client
 		});
 
 		var handler = function(oEvent){
@@ -670,7 +672,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 			oBinding.detachChange(handler);
 			// descending
-			var oSorter = new sap.ui.model.Sorter("UnitPrice", true);
+			var oSorter = new Sorter("UnitPrice", true);
 			oBinding.sort(oSorter);
 
 			var aContexts = oBinding.getContexts();
@@ -682,7 +684,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[4]), "39.0000", "ListBinding after sort");
 
 			// ascending again
-			oSorter = new sap.ui.model.Sorter("UnitPrice", false);
+			oSorter = new Sorter("UnitPrice", false);
 			oBinding.sort(oSorter);
 
 			var aContexts = oBinding.getContexts();
@@ -713,8 +715,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 	QUnit.test("ListBinding clientside sort with null values", function(assert){
 		var done = assert.async();
-		var oBinding = oModel.bindList("/Products", null, new sap.ui.model.Sorter("ReorderLevel"), null, {
-			operationMode: sap.ui.model.odata.OperationMode.Client
+		var oBinding = oModel.bindList("/Products", null, new Sorter("ReorderLevel"), null, {
+			operationMode: OperationMode.Client
 		});
 
 		var handler = function(oEvent){
@@ -729,7 +731,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 			oBinding.detachChange(handler);
 			// descending
-			var oSorter = new sap.ui.model.Sorter("ReorderLevel", true);
+			var oSorter = new Sorter("ReorderLevel", true);
 			oBinding.sort(oSorter);
 
 			var aContexts = oBinding.getContexts();
@@ -741,7 +743,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("ReorderLevel", aContexts[4]), 10, "ListBinding after sort");
 
 			// ascending again
-			oSorter = new sap.ui.model.Sorter("ReorderLevel", false);
+			oSorter = new Sorter("ReorderLevel", false);
 			oBinding.sort(oSorter);
 
 			var aContexts = oBinding.getContexts();
@@ -773,7 +775,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 	QUnit.test("ListBinding clientside sort before data is available", function(assert){
 		var done = assert.async();
 		var oBinding = oModel.bindList("/Categories", null, null, null, {
-			operationMode: sap.ui.model.odata.OperationMode.Client
+			operationMode: OperationMode.Client
 		});
 
 		var handler = function(oEvent){
@@ -790,9 +792,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("CategoryName", aContexts[2]), "Meat/Poultry", "ListBinding after sort");
 			assert.equal(oModel.getProperty("CategoryName", aContexts[1]), "Produce", "ListBinding after sort");
 			assert.equal(oModel.getProperty("CategoryName", aContexts[0]), "Seafood", "ListBinding after sort");
-
 			assert.equal(oEvent.getParameter("reason"), "sort", "Change reason is 'sort'.");
-
 			done();
 		};
 
@@ -800,7 +800,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oBinding.initialize();
 
 			// sort in client mode, before data is available
-			var oSorter = new sap.ui.model.Sorter("CategoryName", true);
+			var oSorter = new Sorter("CategoryName", true);
 			oBinding.sort(oSorter);
 
 			oBinding.attachChange(handler);
@@ -813,7 +813,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 	QUnit.test("ListBinding Client Mode - Error in Initial Request", function(assert){
 		var done = assert.async();
 		var oBinding = oModel.bindList("/CategoriesError", null, null, null, {
-			operationMode: sap.ui.model.odata.OperationMode.Client
+			operationMode: OperationMode.Client
 		});
 
 		var handler = function(oEvent){
@@ -841,7 +841,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 		//invalid Binding to empty path
 		var oListBinding = oModel.bindList("", null, null,  null, {
-			operationMode: sap.ui.model.odata.OperationMode.Client
+			operationMode: OperationMode.Client
 		});
 		var handler = function() {
 			assert.ok(oSpy.calledOnce, "Request sent for entity with expand");
@@ -874,13 +874,12 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 				var aFiltered = oLogChecker.getLogs().filter(function(oLogEntry){
 					return oLogEntry.message === "List Binding is not bound against a list for /Categories(1)";
 				});
-				assert.ok(aFiltered.length > 0, "there should be type errors since it's a single entity within the list")
+				assert.ok(aFiltered.length > 0, "there should be type errors since it's a single entity within the list");
 
 				done();
 			}
 		};
 		oBinding.attachChange(handler);
-
 	});
 
 	QUnit.test("ListBinding Client Mode - value list", function(assert){
@@ -894,7 +893,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.ok(!oModel.oMetadata.mEntitySets, "entity set cache should be invalidated");
 			//invalid Binding to empty path
 			var oListBinding = oModel.bindList("Products", null, null,  null, {
-				operationMode: sap.ui.model.odata.OperationMode.Client
+				operationMode: OperationMode.Client
 			});
 			var handler = function() {
 
@@ -911,7 +910,6 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 					}, 0);
 				});
 			};
-			var aExpandRefs;
 			var listhandler = function(oEvent) {
 				assert.ok(oModel.oMetadata.mEntitySets, "entity set cache should be filled");
 				assert.equal(Object.keys(oModel.oMetadata.mEntitySets).length, 26, "entity set should contain 5 entries");
@@ -920,7 +918,6 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 				var aContexts = oListBinding.getContexts();
 				assert.equal(aContexts.length, 12, "12 entries contained");
-				aExpandRefs = jQuery.extend({}, oListBinding.aExpandRefs);
 				oListBinding.detachChange(listhandler);
 				done();
 			};
@@ -944,6 +941,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 	QUnit.test("ListBinding filter", function(assert){
 		var done = assert.async();
+		var oFilter, oFilter2, oBinding;
 		var handler = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
@@ -952,8 +950,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 			oBinding.detachChange(handler);
 			// NE, contains
-			oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Condiments");
-			var oFilter2 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.Contains, "ons");
+			oFilter = new Filter("CategoryName", FilterOperator.EQ, "Condiments");
+			var oFilter2 = new Filter("CategoryName", FilterOperator.Contains, "ons");
 			oBinding.filter([oFilter, oFilter2]);
 			oBinding.attachChange(handler1);
 		};
@@ -966,7 +964,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 			oBinding.detachChange(handler1);
 			// between
-			oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.BT, "Beverages","D");
+			oFilter = new Filter("CategoryName", FilterOperator.BT, "Beverages","D");
 			oBinding.filter([oFilter]);
 			oBinding.attachChange(handler2);
 		};
@@ -980,8 +978,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 			oBinding.detachChange(handler2);
 			// startsWith, endsWith
-			oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.StartsWith, "C");
-			oFilter2 = new sap.ui.model.Filter("Description", sap.ui.model.FilterOperator.EndsWith, "ngs");
+			oFilter = new Filter("CategoryName", FilterOperator.StartsWith, "C");
+			oFilter2 = new Filter("Description", FilterOperator.EndsWith, "ngs");
 			oBinding.filter([oFilter, oFilter2]);
 			oBinding.attachChange(handler3);
 		};
@@ -992,70 +990,71 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "startsWith, endsWith filtered content");
 
 			oBinding.detachChange(handler3);
-			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.LE, value1: "Z"}, {operator:sap.ui.model.FilterOperator.GE, value1: "A"}, {operator:sap.ui.model.FilterOperator.NE, value1: "Beverages"}]);
+			oFilter = new ODataFilter("CategoryName", [{operator:FilterOperator.LE, value1: "Z"}, {operator:FilterOperator.GE, value1: "A"}, {operator:FilterOperator.NE, value1: "Beverages"}]);
 			oBinding.filter([oFilter]);
 			oBinding.attachChange(handler4);
 		};
 		var handler4 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			assert.equal(aFilteredContexts.length, 7, "sap.ui.model.odata.Filter, ANDed");
-			assert.ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "sap.ui.model.odata.Filter, ANDed");
+			assert.equal(aFilteredContexts.length, 7, "ODataFilter, ANDed");
+			assert.ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "ODataFilter, ANDed");
 
 			oBinding.detachChange(handler4);
-			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.EQ, value1: "Condiments"}, {operator:sap.ui.model.FilterOperator.EQ, value1: "Beverages"}], false);
+			oFilter = new ODataFilter("CategoryName", [{operator:FilterOperator.EQ, value1: "Condiments"}, {operator:FilterOperator.EQ, value1: "Beverages"}], false);
 			oBinding.filter([oFilter]);
 			oBinding.attachChange(handler5);
 		};
 		var handler5 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			assert.equal(aFilteredContexts.length, 2, "sap.ui.model.odata.Filter, ORed");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "sap.ui.model.odata.Filter, ORed");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "sap.ui.model.odata.Filter, ORed");
+			assert.equal(aFilteredContexts.length, 2, "ODataFilter, ORed");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "ODataFilter, ORed");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "ODataFilter, ORed");
 
 			oBinding.detachChange(handler5);
-			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.EQ, value1: "Condiments"}, {operator:sap.ui.model.FilterOperator.EQ, value1: "Beverages"}], false);
-			oFilter2 = new sap.ui.model.Filter("Description", sap.ui.model.FilterOperator.EndsWith, "ings");
+			oFilter = new ODataFilter("CategoryName", [{operator:FilterOperator.EQ, value1: "Condiments"}, {operator:FilterOperator.EQ, value1: "Beverages"}], false);
+			oFilter2 = new Filter("Description", FilterOperator.EndsWith, "ings");
 			oBinding.filter([oFilter, oFilter2]);
 			oBinding.attachChange(handler6);
 		};
 		var handler6 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			assert.equal(aFilteredContexts.length, 1, "sap.ui.model.odata.Filter + normal Filter");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
+			assert.equal(aFilteredContexts.length, 1, "ODataFilter + normal Filter");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "ODataFilter + normal Filter");
 
 			oBinding.detachChange(handler6);
 			//check (ProductID=male AND (SupplierID = Green OR (CategoryName = Peter OR CategoryName = Frank OR CategoryName = Gina)))
-			var oFilter1 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages");
-			var oFilter2 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Dairy Products");
-			var oFilter3 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Grains/Cereals");
-			var oMultiFilter1 = new sap.ui.model.Filter([oFilter1, oFilter2, oFilter3], false);
-			var oFilter4 = new sap.ui.model.Filter("CategoryID", sap.ui.model.FilterOperator.EQ, 3);
-			var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter4], false);
-			var oFilter5 = new sap.ui.model.Filter("Description", sap.ui.model.FilterOperator.EndsWith, "s");
-			var oMultiFilter3 = new sap.ui.model.Filter([oMultiFilter2, oFilter5], true);
+			var oFilter1 = new Filter("CategoryName", FilterOperator.EQ, "Beverages");
+			var oFilter2 = new Filter("CategoryName", FilterOperator.EQ, "Dairy Products");
+			var oFilter3 = new Filter("CategoryName", FilterOperator.EQ, "Grains/Cereals");
+			var oMultiFilter1 = new Filter([oFilter1, oFilter2, oFilter3], false);
+			var oFilter4 = new Filter("CategoryID", FilterOperator.EQ, 3);
+			var oMultiFilter2 = new Filter([oMultiFilter1, oFilter4], false);
+			var oFilter5 = new Filter("Description", FilterOperator.EndsWith, "s");
+			var oMultiFilter3 = new Filter([oMultiFilter2, oFilter5], true);
 			oBinding.filter(oMultiFilter3);
 			oBinding.attachChange(handler7);
 		};
 		var handler7 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			assert.equal(aFilteredContexts.length, 3, "sap.ui.model.odata.Filter + normal Filter");
-			//assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
+			assert.equal(aFilteredContexts.length, 3, "ODataFilter + normal Filter");
+			//assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "ODataFilter + normal Filter");
 			oBinding.detachChange(handler7);
 			done();
 		};
-		var oBinding = oModel.bindList("/Categories");
+
+		oBinding = oModel.bindList("/Categories");
 		//check EQ
-		var oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages");
+		var oFilter = new Filter("CategoryName", FilterOperator.EQ, "Beverages");
 
 		var fnFilter = function() {
 			oBinding.detachRefresh(fnFilter);
-			oBinding.attachRefresh(function() {oBinding.getContexts();})
+			oBinding.attachRefresh(function() {oBinding.getContexts();});
 			oBinding.filter([oFilter]);
-		}
+		};
 		oBinding.attachChange(handler);
 		oBinding.attachRefresh(fnFilter);
 	});
@@ -1077,14 +1076,16 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			// data requested and data received should only be called once
 			assert.ok(oRequestedSpy.calledOnce, "fireDataRequested has only be called once");
 			assert.ok(oReceivedSpy.calledOnce, "fireDataReceived has only be called once");
+			oRequestedSpy.restore();
+			oReceivedSpy.restore();
 			done();
-		}
+		};
 		var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "None"});
 		oRequestedSpy = sinon.spy(oBinding, "fireDataRequested");
 		oReceivedSpy = sinon.spy(oBinding, "fireDataReceived");
 		oBinding.initialize();
 		//check EQ
-		var oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages");
+		var oFilter = new Filter("CategoryName", FilterOperator.EQ, "Beverages");
 		oBinding.attachRefresh(function() {
 			oBinding.getContexts();
 		});
@@ -1097,25 +1098,27 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		oBinding.filter([oFilter]);
 	});
 
-	QUnit.test("ListBinding filter aborted due to sort", function(){
+	QUnit.test("ListBinding filter aborted due to sort", function(assert){
 		var done = assert.async();
 		var oRequestedSpy, oReceivedSpy;
 
 		var handler = function(oEvent){
 			// contexts should be now loaded
 			var aContexts = oEvent.oSource.getContexts();
-			equal(aContexts.length, 8, "EQ unfiltered content length");
-			equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "EQ unfiltered content");
-			equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "EQ unfiltered content");
+			assert.equal(aContexts.length, 8, "EQ unfiltered content length");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "EQ unfiltered content");
+			assert.equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "EQ unfiltered content");
 			oBinding.detachChange(handler);
 			setTimeout(handler2, 0);
 		};
 		var handler2 = function() {
 			// data requested and data received should only be called once
-			ok(oRequestedSpy.calledOnce, "fireDataRequested has only be called once");
-			ok(oReceivedSpy.calledOnce, "fireDataReceived has only be called once");
+			assert.ok(oRequestedSpy.calledOnce, "fireDataRequested has only be called once");
+			assert.ok(oReceivedSpy.calledOnce, "fireDataReceived has only be called once");
+			oRequestedSpy.restore();
+			oReceivedSpy.restore();
 			done();
-		}
+		};
 		var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "None"});
 		oRequestedSpy = sinon.spy(oBinding, "fireDataRequested");
 		oReceivedSpy = sinon.spy(oBinding, "fireDataReceived");
@@ -1145,8 +1148,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "Request"});
 		oBinding.initialize();
 		//check EQ
-		var oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages"),
-			oSorter = new sap.ui.model.Sorter("CategoryName");
+		var oFilter = new Filter("CategoryName", FilterOperator.EQ, "Beverages"),
+			oSorter = new Sorter("CategoryName");
 		oBinding.attachRefresh(function() {
 			oBinding.getContexts(0, 1);
 		});
@@ -1162,7 +1165,6 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 	QUnit.test("ListBinding filter multiple times", function(assert){
 		var done = assert.async();
-		var count = 0;
 		var handler = function(oEvent){
 			// contexts should be now loaded
 			var aContexts = oEvent.oSource.getContexts();
@@ -1170,20 +1172,21 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "EQ unfiltered content");
 			assert.equal(oBinding.getLength(), 1, "Binding length should be 1");
 			oBinding.detachChange(handler);
+			fakeService.setResponseDelay(10);
 			done();
 		};
 
 		var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "None"});
 		//check EQ
-		var oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages");
-		var oFilter2 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Condiments");
-		var oFilter3 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.Contains, "ons");
+		var oFilter = new Filter("CategoryName", FilterOperator.EQ, "Beverages");
+		var oFilter2 = new Filter("CategoryName", FilterOperator.EQ, "Condiments");
+		var oFilter3 = new Filter("CategoryName", FilterOperator.Contains, "ons");
 
 		oModel.metadataLoaded().then(function() {
 			oBinding.bUseExtendedChangeDetection = true;
 			oBinding.initialize();
 			oBinding.attachChange(handler);
-			responseDelay = 250;
+			fakeService.setResponseDelay(250);
 			setTimeout(function() {
 				oBinding.getContexts();
 				oBinding.filter([oFilter2,oFilter3]);
@@ -1206,18 +1209,19 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oModel = initModel(false);
 		},
 		afterEach : function() {
+			oModel.destroy();
 			oModel = undefined;
-			removeSharedMetadata();
 		}
 	});
 
 	QUnit.test("ListBinding clientside filter", function(assert){
 		var done = assert.async();
+
 		var oBinding = oModel.bindList("/Categories", null, null, null, {
-			operationMode: sap.ui.model.odata.OperationMode.Client
+			operationMode: OperationMode.Client
 		});
 
-		var handler = function(oEvent){
+		var handler = function(oEvent) {
 			// contexts should be now loaded
 			var aFilteredContexts = oBinding.getContexts();
 			assert.equal(aFilteredContexts.length, 1, "EQ filtered content length");
@@ -1225,8 +1229,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 			oBinding.detachChange(handler);
 			// NE, contains
-			oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Condiments");
-			var oFilter2 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.Contains, "ons");
+			var oFilter = new Filter("CategoryName", FilterOperator.EQ, "Condiments");
+			var oFilter2 = new Filter("CategoryName", FilterOperator.Contains, "ons");
 			oBinding.filter([oFilter, oFilter2]);
 
 			aFilteredContexts = oBinding.getContexts();
@@ -1235,7 +1239,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Confections", "EQ, Contains, filtered content");
 
 			// between
-			oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.BT, "Beverages","D");
+			oFilter = new Filter("CategoryName", FilterOperator.BT, "Beverages","D");
 			oBinding.filter([oFilter]);
 
 			aFilteredContexts = oBinding.getContexts();
@@ -1245,7 +1249,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[2]), "Confections", "between filtered content");
 
 			// not between
-			oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.NB, "Beverages","D");
+			oFilter = new Filter("CategoryName", FilterOperator.NB, "Beverages","D");
 			oBinding.filter([oFilter]);
 
 			aFilteredContexts = oBinding.getContexts();
@@ -1257,8 +1261,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[4]), "Seafood", "not between filtered content");
 
 			// startsWith, endsWith
-			oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.StartsWith, "C");
-			oFilter2 = new sap.ui.model.Filter("Description", sap.ui.model.FilterOperator.EndsWith, "ngs");
+			oFilter = new Filter("CategoryName", FilterOperator.StartsWith, "C");
+			oFilter2 = new Filter("Description", FilterOperator.EndsWith, "ngs");
 			oBinding.filter([oFilter, oFilter2]);
 
 			aFilteredContexts = oBinding.getContexts();
@@ -1267,8 +1271,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 
 			// not startsWith, endsWith
-			oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.NotStartsWith, "C");
-			oFilter2 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.NotEndsWith, "ts");
+			oFilter = new Filter("CategoryName", FilterOperator.NotStartsWith, "C");
+			oFilter2 = new Filter("CategoryName", FilterOperator.NotEndsWith, "ts");
 			oBinding.filter([oFilter, oFilter2]);
 
 			aFilteredContexts = oBinding.getContexts();
@@ -1283,7 +1287,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 
 			// not startsWith AND not endsWith
-			var oAndFilter1 = new sap.ui.model.Filter([oFilter, oFilter2], true);
+			var oAndFilter1 = new Filter([oFilter, oFilter2], true);
 			oBinding.filter(oAndFilter1);
 
 			aFilteredContexts = oBinding.getContexts();
@@ -1296,49 +1300,49 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 
 			// ANDed filters
-			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.LE, value1: "Z"}, {operator:sap.ui.model.FilterOperator.GE, value1: "A"}, {operator:sap.ui.model.FilterOperator.NE, value1: "Beverages"}]);
+			oFilter = new ODataFilter("CategoryName", [{operator:FilterOperator.LE, value1: "Z"}, {operator:FilterOperator.GE, value1: "A"}, {operator:FilterOperator.NE, value1: "Beverages"}]);
 			oBinding.filter([oFilter]);
 
 			aFilteredContexts = oBinding.getContexts();
-			assert.equal(aFilteredContexts.length, 7, "sap.ui.model.odata.Filter, ANDed");
-			assert.ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "sap.ui.model.odata.Filter, ANDed");
+			assert.equal(aFilteredContexts.length, 7, "ODataFilter, ANDed");
+			assert.ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "ODataFilter, ANDed");
 
 			// ORed filters
-			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.EQ, value1: "Condiments"}, {operator:sap.ui.model.FilterOperator.EQ, value1: "Beverages"}], false);
+			oFilter = new ODataFilter("CategoryName", [{operator:FilterOperator.EQ, value1: "Condiments"}, {operator:FilterOperator.EQ, value1: "Beverages"}], false);
 			oBinding.filter([oFilter]);
 
 			aFilteredContexts = oBinding.getContexts();
-			assert.equal(aFilteredContexts.length, 2, "sap.ui.model.odata.Filter, ORed");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "sap.ui.model.odata.Filter, ORed");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "sap.ui.model.odata.Filter, ORed");
+			assert.equal(aFilteredContexts.length, 2, "ODataFilter, ORed");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "ODataFilter, ORed");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "ODataFilter, ORed");
 
 			// ORed + ANDed filters
-			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.EQ, value1: "Condiments"}, {operator:sap.ui.model.FilterOperator.EQ, value1: "Beverages"}], false);
-			oFilter2 = new sap.ui.model.Filter("Description", sap.ui.model.FilterOperator.EndsWith, "ings");
+			oFilter = new ODataFilter("CategoryName", [{operator:FilterOperator.EQ, value1: "Condiments"}, {operator:FilterOperator.EQ, value1: "Beverages"}], false);
+			oFilter2 = new Filter("Description", FilterOperator.EndsWith, "ings");
 			oBinding.filter([oFilter, oFilter2]);
 
 			aFilteredContexts = oBinding.getContexts();
-			assert.equal(aFilteredContexts.length, 1, "sap.ui.model.odata.Filter + normal Filter");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
+			assert.equal(aFilteredContexts.length, 1, "ODataFilter + normal Filter");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "ODataFilter + normal Filter");
 
 			//check (ProductID=male AND (SupplierID = Green OR (CategoryName = Peter OR CategoryName = Frank OR CategoryName = Gina)))
-			var oFilter1 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages");
-			oFilter2 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Dairy Products");
-			var oFilter3 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Grains/Cereals");
-			var oMultiFilter1 = new sap.ui.model.Filter([oFilter1, oFilter2, oFilter3], false);
-			var oFilter4 = new sap.ui.model.Filter("CategoryID", sap.ui.model.FilterOperator.EQ, 3);
-			var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter4], false);
-			var oFilter5 = new sap.ui.model.Filter("Description", sap.ui.model.FilterOperator.EndsWith, "s");
-			var oMultiFilter3 = new sap.ui.model.Filter([oMultiFilter2, oFilter5], true);
+			var oFilter1 = new Filter("CategoryName", FilterOperator.EQ, "Beverages");
+			var oFilter2 = new Filter("CategoryName", FilterOperator.EQ, "Dairy Products");
+			var oFilter3 = new Filter("CategoryName", FilterOperator.EQ, "Grains/Cereals");
+			var oMultiFilter1 = new Filter([oFilter1, oFilter2, oFilter3], false);
+			var oFilter4 = new Filter("CategoryID", FilterOperator.EQ, 3);
+			var oMultiFilter2 = new Filter([oMultiFilter1, oFilter4], false);
+			var oFilter5 = new Filter("Description", FilterOperator.EndsWith, "s");
+			var oMultiFilter3 = new Filter([oMultiFilter2, oFilter5], true);
 			oBinding.filter(oMultiFilter3);
 
 			aFilteredContexts = oBinding.getContexts();
-			assert.equal(aFilteredContexts.length, 3, "sap.ui.model.odata.Filter + normal Filter");
+			assert.equal(aFilteredContexts.length, 3, "ODataFilter + normal Filter");
 
 			done();
 		};
 		//check EQ
-		var oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages");
+		var oFilter = new Filter("CategoryName", FilterOperator.EQ, "Beverages");
 		oBinding.filter([oFilter]);
 
 		oBinding.attachChange(handler);
@@ -1349,8 +1353,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 	QUnit.test("ListBinding clientside filter on Edm.Decimal", function(assert){
 		var done = assert.async();
-		var oBinding = oModel.bindList("/Products", null, new sap.ui.model.Sorter("UnitPrice"), [new sap.ui.model.Filter("UnitPrice", "EQ", "10.0000")], {
-			operationMode: sap.ui.model.odata.OperationMode.Client
+		var oBinding = oModel.bindList("/Products", null, new Sorter("UnitPrice"), [new Filter("UnitPrice", "EQ", "10.0000")], {
+			operationMode: OperationMode.Client
 		});
 
 		var handler = function(oEvent){
@@ -1361,8 +1365,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 			oBinding.detachChange(handler);
 			// LT
-			var oFilter = new sap.ui.model.Filter("UnitPrice", "LT", "17.4500");
-			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+			var oFilter = new Filter("UnitPrice", "LT", "17.4500");
+			oBinding.filter([oFilter], FilterType.Application);
 
 			var aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length,4);
@@ -1372,8 +1376,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[3]), "15.5000", "ListBinding after LT filter");
 
 			// GE
-			oFilter = new sap.ui.model.Filter("UnitPrice", "GE", "39.0000");
-			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+			oFilter = new Filter("UnitPrice", "GE", "39.0000");
+			oBinding.filter([oFilter], FilterType.Application);
 
 			var aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length, 5);
@@ -1383,7 +1387,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[3]), "81.0000", "ListBinding after GE filter");
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[4]), "97.0000", "ListBinding after GE filter");
 
-			oBinding.filter([], sap.ui.model.FilterType.Application);
+			oBinding.filter([], FilterType.Application);
 			var aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length, 20);
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[0]), "6.0000", "ListBinding unfiltered");
@@ -1393,8 +1397,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[4]), "17.4500", "ListBinding unfiltered");
 
 			// GT
-			oFilter = new sap.ui.model.Filter("UnitPrice", "BT", "35.0000", "82.000");
-			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+			oFilter = new Filter("UnitPrice", "BT", "35.0000", "82.000");
+			oBinding.filter([oFilter], FilterType.Application);
 
 			var aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length, 5);
@@ -1404,7 +1408,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[3]), "62.5000", "ListBinding after BT filter");
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[4]), "81.0000", "ListBinding after BT filter");
 
-			oBinding.filter([], sap.ui.model.FilterType.Application);
+			oBinding.filter([], FilterType.Application);
 			var aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length, 20);
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[0]), "6.0000", "ListBinding unfiltered");
@@ -1423,8 +1427,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 	QUnit.test("ListBinding clientside filter on Edm.Decimal with number value", function(assert){
 		var done = assert.async();
-		var oBinding = oModel.bindList("/Products", null, new sap.ui.model.Sorter("UnitPrice"), [new sap.ui.model.Filter("UnitPrice", "EQ", "10.0000")], {
-			operationMode: sap.ui.model.odata.OperationMode.Client
+		var oBinding = oModel.bindList("/Products", null, new Sorter("UnitPrice"), [new Filter("UnitPrice", "EQ", "10.0000")], {
+			operationMode: OperationMode.Client
 		});
 
 		var handler = function(oEvent){
@@ -1436,16 +1440,16 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oBinding.detachChange(handler);
 
 			// EQ
-			var oFilter = new sap.ui.model.Filter("UnitPrice", "EQ", 15.5);
-			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+			var oFilter = new Filter("UnitPrice", "EQ", 15.5);
+			oBinding.filter([oFilter], FilterType.Application);
 
-			var aContexts = oBinding.getContexts();
+			aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length,1);
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[0]), "15.5000", "ListBinding after EQ filter");
 
 			// LT
-			var oFilter = new sap.ui.model.Filter("UnitPrice", "LT", 17.45);
-			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+			oFilter = new Filter("UnitPrice", "LT", 17.45);
+			oBinding.filter([oFilter], FilterType.Application);
 
 			var aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length,4);
@@ -1455,10 +1459,10 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[3]), "15.5000", "ListBinding after LT filter");
 
 			// GE
-			oFilter = new sap.ui.model.Filter("UnitPrice", "GE", 39);
-			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+			oFilter = new Filter("UnitPrice", "GE", 39);
+			oBinding.filter([oFilter], FilterType.Application);
 
-			var aContexts = oBinding.getContexts();
+			aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length, 5);
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[0]), "39.0000", "ListBinding after GE filter");
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[1]), "40.0000", "ListBinding after GE filter");
@@ -1466,7 +1470,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[3]), "81.0000", "ListBinding after GE filter");
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[4]), "97.0000", "ListBinding after GE filter");
 
-			oBinding.filter([], sap.ui.model.FilterType.Application);
+			oBinding.filter([], FilterType.Application);
 			var aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length, 20);
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[0]), "6.0000", "ListBinding unfiltered");
@@ -1476,10 +1480,10 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[4]), "17.4500", "ListBinding unfiltered");
 
 			// GT
-			oFilter = new sap.ui.model.Filter("UnitPrice", "BT", 35, 82);
-			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+			oFilter = new Filter("UnitPrice", "BT", 35, 82);
+			oBinding.filter([oFilter], FilterType.Application);
 
-			var aContexts = oBinding.getContexts();
+			aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length, 5);
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[0]), "38.0000", "ListBinding after BT filter");
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[1]), "39.0000", "ListBinding after BT filter");
@@ -1487,8 +1491,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[3]), "62.5000", "ListBinding after BT filter");
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[4]), "81.0000", "ListBinding after BT filter");
 
-			oBinding.filter([], sap.ui.model.FilterType.Application);
-			var aContexts = oBinding.getContexts();
+			oBinding.filter([], FilterType.Application);
+			aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length, 20);
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[0]), "6.0000", "ListBinding unfiltered");
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[1]), "9.2000", "ListBinding unfiltered");
@@ -1506,8 +1510,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 	QUnit.test("ListBinding clientside filter on Edm.Int32", function(assert){
 		var done = assert.async();
-		var oBinding = oModel.bindList("/Products", null, new sap.ui.model.Sorter("ProductID"), [new sap.ui.model.Filter("ProductID", "EQ", 1)], {
-			operationMode: sap.ui.model.odata.OperationMode.Client
+		var oBinding = oModel.bindList("/Products", null, new Sorter("ProductID"), [new Filter("ProductID", "EQ", 1)], {
+			operationMode: OperationMode.Client
 		});
 
 		var handler = function(oEvent){
@@ -1519,16 +1523,16 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oBinding.detachChange(handler);
 
 			// EQ
-			var oFilter = new sap.ui.model.Filter("ProductID", "EQ", 3);
-			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+			var oFilter = new Filter("ProductID", "EQ", 3);
+			oBinding.filter([oFilter], FilterType.Application);
 
 			var aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length,1);
 			assert.equal(oModel.getProperty("ProductID", aContexts[0]), 3, "ListBinding after LT filter");
 
 			// LT
-			var oFilter = new sap.ui.model.Filter("ProductID", "LT", 5);
-			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+			var oFilter = new Filter("ProductID", "LT", 5);
+			oBinding.filter([oFilter], FilterType.Application);
 
 			var aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length,4);
@@ -1538,7 +1542,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("ProductID", aContexts[3]), 4, "ListBinding after LT filter");
 
 			// Reset
-			oBinding.filter([], sap.ui.model.FilterType.Application);
+			oBinding.filter([], FilterType.Application);
 			var aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length, 20);
 			assert.equal(oModel.getProperty("ProductID", aContexts[0]), 1, "ListBinding unfiltered");
@@ -1557,8 +1561,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 	QUnit.test("ListBinding clientside filter on Edm.Int32 with string value", function(assert){
 		var done = assert.async();
-		var oBinding = oModel.bindList("/Products", null, new sap.ui.model.Sorter("ProductID"), [new sap.ui.model.Filter("ProductID", "EQ", 1)], {
-			operationMode: sap.ui.model.odata.OperationMode.Client
+		var oBinding = oModel.bindList("/Products", null, new Sorter("ProductID"), [new Filter("ProductID", "EQ", 1)], {
+			operationMode: OperationMode.Client
 		});
 
 		var handler = function(oEvent){
@@ -1570,18 +1574,18 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oBinding.detachChange(handler);
 
 			// EQ
-			var oFilter = new sap.ui.model.Filter("ProductID", "EQ", "3");
-			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+			var oFilter = new Filter("ProductID", "EQ", "3");
+			oBinding.filter([oFilter], FilterType.Application);
 
-			var aContexts = oBinding.getContexts();
+			aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length,1);
 			assert.equal(oModel.getProperty("ProductID", aContexts[0]), 3, "ListBinding after LT filter");
 
 			// LT
-			var oFilter = new sap.ui.model.Filter("ProductID", "LT", "5");
-			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+			oFilter = new Filter("ProductID", "LT", "5");
+			oBinding.filter([oFilter], FilterType.Application);
 
-			var aContexts = oBinding.getContexts();
+			aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length,4);
 			assert.equal(oModel.getProperty("ProductID", aContexts[0]), 1, "ListBinding after LT filter");
 			assert.equal(oModel.getProperty("ProductID", aContexts[1]), 2, "ListBinding after LT filter");
@@ -1589,8 +1593,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("ProductID", aContexts[3]), 4, "ListBinding after LT filter");
 
 			// Reset
-			oBinding.filter([], sap.ui.model.FilterType.Application);
-			var aContexts = oBinding.getContexts();
+			oBinding.filter([], FilterType.Application);
+			aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length, 20);
 			assert.equal(oModel.getProperty("ProductID", aContexts[0]), 1, "ListBinding unfiltered");
 			assert.equal(oModel.getProperty("ProductID", aContexts[1]), 2, "ListBinding unfiltered");
@@ -1608,8 +1612,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 	QUnit.test("ListBinding clientside filter on Edm.Single", function(assert){
 		var done = assert.async();
-		var oBinding = oModel.bindList("/Invoices", null, new sap.ui.model.Sorter("Discount"), [new sap.ui.model.Filter("Discount", "EQ", 0.05)], {
-			operationMode: sap.ui.model.odata.OperationMode.Client
+		var oBinding = oModel.bindList("/Invoices", null, new Sorter("Discount"), [new Filter("Discount", "EQ", 0.05)], {
+			operationMode: OperationMode.Client
 		});
 
 		var handler = function(oEvent){
@@ -1622,10 +1626,10 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oBinding.detachChange(handler);
 
 			// EQ
-			var oFilter = new sap.ui.model.Filter("Discount", "EQ", 0);
-			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+			var oFilter = new Filter("Discount", "EQ", 0);
+			oBinding.filter([oFilter], FilterType.Application);
 
-			var aContexts = oBinding.getContexts();
+			aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length, 6);
 			assert.equal(oModel.getProperty("Discount", aContexts[0]), 0, "ListBinding after EQ filter");
 			assert.equal(oModel.getProperty("Discount", aContexts[1]), 0, "ListBinding after EQ filter");
@@ -1635,17 +1639,17 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("Discount", aContexts[5]), 0, "ListBinding after EQ filter");
 
 			// GT
-			var oFilter = new sap.ui.model.Filter("Discount", "GT", 0);
-			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+			oFilter = new Filter("Discount", "GT", 0);
+			oBinding.filter([oFilter], FilterType.Application);
 
-			var aContexts = oBinding.getContexts();
+			aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length, 2);
 			assert.equal(oModel.getProperty("Discount", aContexts[0]), 0.05, "ListBinding after GT filter");
 			assert.equal(oModel.getProperty("Discount", aContexts[1]), 0.05, "ListBinding after GT filter");
 
 			// Reset
-			oBinding.filter([], sap.ui.model.FilterType.Application);
-			var aContexts = oBinding.getContexts();
+			oBinding.filter([], FilterType.Application);
+			aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length, 8);
 			assert.equal(oModel.getProperty("Discount", aContexts[0]), 0, "ListBinding unfiltered");
 			assert.equal(oModel.getProperty("Discount", aContexts[1]), 0, "ListBinding unfiltered");
@@ -1663,8 +1667,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 	QUnit.test("ListBinding clientside filter on Edm.Single with string value", function(assert){
 		var done = assert.async();
-		var oBinding = oModel.bindList("/Invoices", null, new sap.ui.model.Sorter("Discount"), [new sap.ui.model.Filter("Discount", "EQ", 0.05)], {
-			operationMode: sap.ui.model.odata.OperationMode.Client
+		var oBinding = oModel.bindList("/Invoices", null, new Sorter("Discount"), [new Filter("Discount", "EQ", 0.05)], {
+			operationMode: OperationMode.Client
 		});
 
 		var handler = function(oEvent){
@@ -1677,10 +1681,10 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oBinding.detachChange(handler);
 
 			// EQ
-			var oFilter = new sap.ui.model.Filter("Discount", "EQ", "0");
-			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+			var oFilter = new Filter("Discount", "EQ", "0");
+			oBinding.filter([oFilter], FilterType.Application);
 
-			var aContexts = oBinding.getContexts();
+			aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length, 6);
 			assert.equal(oModel.getProperty("Discount", aContexts[0]), 0, "ListBinding after EQ filter");
 			assert.equal(oModel.getProperty("Discount", aContexts[1]), 0, "ListBinding after EQ filter");
@@ -1690,17 +1694,17 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("Discount", aContexts[5]), 0, "ListBinding after EQ filter");
 
 			// GT
-			var oFilter = new sap.ui.model.Filter("Discount", "GT", "0");
-			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+			oFilter = new Filter("Discount", "GT", "0");
+			oBinding.filter([oFilter], FilterType.Application);
 
-			var aContexts = oBinding.getContexts();
+			aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length, 2);
 			assert.equal(oModel.getProperty("Discount", aContexts[0]), 0.05, "ListBinding after GT filter");
 			assert.equal(oModel.getProperty("Discount", aContexts[1]), 0.05, "ListBinding after GT filter");
 
 			// Reset
-			oBinding.filter([], sap.ui.model.FilterType.Application);
-			var aContexts = oBinding.getContexts();
+			oBinding.filter([], FilterType.Application);
+			aContexts = oBinding.getContexts();
 			assert.equal(aContexts.length, 8);
 			assert.equal(oModel.getProperty("Discount", aContexts[0]), 0, "ListBinding unfiltered");
 			assert.equal(oModel.getProperty("Discount", aContexts[1]), 0, "ListBinding unfiltered");
@@ -1719,7 +1723,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 	QUnit.test("ListBinding clientside filter before data is available", function(assert){
 		var done = assert.async();
 		var oBinding = oModel.bindList("/Categories", null, null, null, {
-			operationMode: sap.ui.model.odata.OperationMode.Client
+			operationMode: OperationMode.Client
 		});
 
 		var handler = function (oEvent) {
@@ -1738,7 +1742,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		oModel.metadataLoaded().then(function () {
 			oBinding.initialize();
 			//check EQ
-			var oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages");
+			var oFilter = new Filter("CategoryName", FilterOperator.EQ, "Beverages");
 			oBinding.filter([oFilter]);
 
 			oBinding.attachChange(handler);
@@ -1752,14 +1756,14 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oModel = initModel(true);
 		},
 		afterEach : function() {
+			oModel.destroy();
 			oModel = undefined;
-			removeSharedMetadata();
 		}
 	});
 
 	QUnit.test("ListBinding serverside filter - NotStartsWith", function(assert){
 		var done = assert.async();
-		var oListBinding = oModel.bindList("/Categories", null, null, new sap.ui.model.Filter("CategoryName", "NotStartsWith", "C"), {
+		var oListBinding = oModel.bindList("/Categories", null, null, new Filter("CategoryName", "NotStartsWith", "C"), {
 			select: "CategoryName"
 		});
 		oListBinding.attachRefresh(function() {
@@ -1787,7 +1791,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 	QUnit.test("ListBinding serverside filter - NotEndsWith", function(assert){
 		var done = assert.async();
-		var oListBinding = oModel.bindList("/Categories", null, null, new sap.ui.model.Filter("CategoryName", "NotEndsWith", "s"), {
+		var oListBinding = oModel.bindList("/Categories", null, null, new Filter("CategoryName", "NotEndsWith", "s"), {
 			select: "CategoryName"
 		});
 		oListBinding.attachRefresh(function() {
@@ -1812,7 +1816,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 	QUnit.test("ListBinding serverside filter - NotContains", function(assert){
 		var done = assert.async();
-		var oListBinding = oModel.bindList("/Categories", null, null, new sap.ui.model.Filter("CategoryName", "NotContains", "ry"), {
+		var oListBinding = oModel.bindList("/Categories", null, null, new Filter("CategoryName", "NotContains", "ry"), {
 			select: "CategoryName"
 		});
 		oListBinding.attachRefresh(function() {
@@ -1839,7 +1843,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 	QUnit.test("ListBinding serverside filter - NotBetween", function(assert){
 		var done = assert.async();
-		var oListBinding = oModel.bindList("/Categories", null, null, new sap.ui.model.Filter("CategoryName", "NB", "C", "M"), {
+		var oListBinding = oModel.bindList("/Categories", null, null, new Filter("CategoryName", "NB", "C", "M"), {
 			select: "CategoryName"
 		});
 		oListBinding.attachRefresh(function() {
@@ -1867,8 +1871,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oModel = initModel(false);
 		},
 		afterEach : function() {
+			oModel.destroy();
 			oModel = undefined;
-			removeSharedMetadata();
 		}
 	});
 
@@ -1876,7 +1880,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var done = assert.async();
 		var oSpy = sinon.spy(oModel, "_request");
 		var oBinding = oModel.bindContext("/Categories(1)", null, {expand: "Products"});
-		var oListBinding = oModel.bindList("Products", null, null,  new sap.ui.model.Filter("ProductName", "EQ", "Chai"));
+		var oListBinding = oModel.bindList("Products", null, null,  new Filter("ProductName", "EQ", "Chai"));
 		var handler = function() {
 			assert.ok(oSpy.calledOnce, "Request sent for enttiy with expand");
 			oSpy.reset();
@@ -1901,7 +1905,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 	QUnit.test("ListBinding on expanded data, operationmode Default, late filter", function(assert){
 		var done = assert.async();
-		var oSpy = sinon.spy(oModel, "_request");;
+		var oSpy = sinon.spy(oModel, "_request");
 		var oBinding = oModel.bindContext("/Categories(1)", null, {expand: "Products"});
 		var oListBinding = oModel.bindList("Products");
 		var handler = function() {
@@ -1922,7 +1926,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.notOk(oSpy.called, "Binding expanded list must not send a request");
 			oListBinding.detachChange(listhandler1);
 			oListBinding.attachChange(listhandler2);
-			oListBinding.filter(new sap.ui.model.Filter("ProductName", "EQ", "Chai"));
+			oListBinding.filter(new Filter("ProductName", "EQ", "Chai"));
 		};
 		var listhandler2 = function() {
 			var aContexts = oListBinding.getContexts();
@@ -1936,9 +1940,9 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 	QUnit.test("ListBinding on expanded data, operationmode Server, initial filter", function(assert){
 		var done = assert.async();
-		var oSpy = sinon.spy(oModel, "_request");;
+		var oSpy = sinon.spy(oModel, "_request");
 		var oBinding = oModel.bindContext("/Categories(1)", null, {expand: "Products"});
-		var oListBinding = oModel.bindList("Products", null, null,  new sap.ui.model.Filter("ProductName", "EQ", "Chai"), {operationMode: "Server"});
+		var oListBinding = oModel.bindList("Products", null, null,  new Filter("ProductName", "EQ", "Chai"), {operationMode: "Server"});
 		var handler = function() {
 			assert.ok(oSpy.calledOnce, "Request sent for enttiy with expand");
 			oSpy.reset();
@@ -1984,7 +1988,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.notOk(oSpy.called, "Binding expanded list must not send a request");
 			oListBinding.detachChange(listhandler1);
 			oListBinding.attachChange(listhandler2);
-			oListBinding.filter(new sap.ui.model.Filter("ProductName", "EQ", "Chai"));
+			oListBinding.filter(new Filter("ProductName", "EQ", "Chai"));
 		};
 		var listhandler2 = function() {
 			var aContexts = oListBinding.getContexts();
@@ -2000,8 +2004,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var done = assert.async();
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function(oEvent) {
-			assert.ok(!oBinding.getContexts(0, 2).diff,"No diff if binding was initial")
-			assert.ok(oBinding.getContexts(0, 2).diff.length == 0,"Diff with length 0")
+			assert.ok(!oBinding.getContexts(0, 2).diff,"No diff if binding was initial");
+			assert.ok(oBinding.getContexts(0, 2).diff.length == 0,"Diff with length 0");
 			assert.deepEqual(oBinding.getContexts(0, 8).diff, [
 				{ index: 2, type: "insert" },
 				{ index: 3, type: "insert" },
@@ -2027,10 +2031,10 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.deepEqual(oBinding.getContexts(4, 4).diff, [
 				{ index: 0, type: "delete" },
 			    { index: 0, type: "insert" }
-			], "Property change causes delete and insert")
+			], "Property change causes delete and insert");
 			oBinding.detachChange(handler);
 			done(); // resume normal testing
-		}
+		};
 		oBinding.attachChange(handler);
 		oBinding.enableExtendedChangeDetection(true);
 		oBinding.attachRefresh(function() {
@@ -2042,8 +2046,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var done = assert.async();
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function(oEvent) {
-			assert.ok(!oBinding.getContexts(0, 2).diff,"No diff if binding was initial")
-			assert.ok(oBinding.getContexts(0, 2).diff.length == 0,"Diff with length 0")
+			assert.ok(!oBinding.getContexts(0, 2).diff,"No diff if binding was initial");
+			assert.ok(oBinding.getContexts(0, 2).diff.length == 0,"Diff with length 0");
 			assert.deepEqual(oBinding.getContexts(0, 8).diff, [
 				{ index: 2, type: "insert" },
 				{ index: 3, type: "insert" },
@@ -2066,10 +2070,10 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			], "2 deletes & 2 inserts");
 			var aContexts = oBinding.getCurrentContexts();
 			aContexts[0].getObject().CategoryName = "Other";
-			assert.ok(oBinding.getContexts(4, 4).diff.length == 0, "No diff for property change")
+			assert.ok(oBinding.getContexts(4, 4).diff.length == 0, "No diff for property change");
 			oBinding.detachChange(handler);
 			done(); // resume normal testing
-		}
+		};
 		oBinding.attachChange(handler);
 		oBinding.enableExtendedChangeDetection(false);
 		oBinding.attachRefresh(function() {
@@ -2080,8 +2084,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 	QUnit.test("Event order", function(assert){
 		var done = assert.async();
 		assert.expect(4);
-		var oList = new sap.ui.commons.ListBox();
-		var oItem = new sap.ui.core.ListItem();
+		var oList = new List();
+		var oItem = new DisplayListItem();
 
 		var bChanged = false, bDataRequested = false, bDataReceived = false;
 
@@ -2101,17 +2105,18 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			done();
 		};
 		var fnChangeHandler = function() {
-			assert.equal(oList.getItems().length, 8, "items created")
+			assert.equal(oList.getItems().length, 8, "items created");
 		};
 
-		oList.bindAggregation("items", {path:"/Categories", template: oItem, events:{change:fnChange, dataRequested:fnDataRequested, dataReceived:fnDataReceived}})
+		oList.bindAggregation("items", {path:"/Categories", template: oItem, events:{change:fnChange, dataRequested:fnDataRequested, dataReceived:fnDataReceived}});
 		oList.setModel(oModel);
 		oList.getBinding("items").attachChange(fnChangeHandler);
 	});
 
 
-	QUnit.test("ListBinding filter (sap.ui.model.odata.Filter.convert)", function(assert){
+	QUnit.test("ListBinding filter (ODataFilter.convert)", function(assert){
 		var done = assert.async();
+		var oFilter, oFilter2;
 		var handler = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
@@ -2120,11 +2125,11 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 			oBinding.detachChange(handler);
 			// NE, contains
-			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
-				operator: sap.ui.model.FilterOperator.EQ,
+			oFilter = new ODataFilter("CategoryName", [{
+				operator: FilterOperator.EQ,
 				value1: "Condiments"
 			}, {
-				operator: sap.ui.model.FilterOperator.Contains,
+				operator: FilterOperator.Contains,
 				value1: "ons"
 			}], false);
 			oBinding.filter(oFilter.convert());
@@ -2139,8 +2144,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 			oBinding.detachChange(handler1);
 			// between
-			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
-				operator: sap.ui.model.FilterOperator.BT,
+			oFilter = new ODataFilter("CategoryName", [{
+				operator: FilterOperator.BT,
 				value1: "Beverages",
 				value2: "D"
 			}]);
@@ -2157,8 +2162,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 			oBinding.detachChange(handler2);
 			// startsWith, endsWith
-			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator: sap.ui.model.FilterOperator.StartsWith, value1: "C"}]);
-			oFilter2 = new sap.ui.model.odata.Filter("Description", [{operator: sap.ui.model.FilterOperator.EndsWith, value1: "ngs"}]);
+			oFilter = new ODataFilter("CategoryName", [{operator: FilterOperator.StartsWith, value1: "C"}]);
+			oFilter2 = new ODataFilter("Description", [{operator: FilterOperator.EndsWith, value1: "ngs"}]);
 			oBinding.filter([oFilter.convert(), oFilter2.convert()]);
 			oBinding.attachChange(handler3);
 		};
@@ -2169,14 +2174,14 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "startsWith, endsWith filtered content");
 
 			oBinding.detachChange(handler3);
-			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
-				operator:sap.ui.model.FilterOperator.LE,
+			oFilter = new ODataFilter("CategoryName", [{
+				operator:FilterOperator.LE,
 				value1: "Z"
 			}, {
-				operator:sap.ui.model.FilterOperator.GE,
+				operator:FilterOperator.GE,
 				value1: "A"
 			}, {
-				operator:sap.ui.model.FilterOperator.NE,
+				operator:FilterOperator.NE,
 				value1: "Beverages"
 			}]);
 			oBinding.filter(oFilter.convert());
@@ -2185,15 +2190,15 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler4 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			assert.equal(aFilteredContexts.length, 7, "sap.ui.model.odata.Filter, ANDed");
-			assert.ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "sap.ui.model.odata.Filter, ANDed");
+			assert.equal(aFilteredContexts.length, 7, "ODataFilter, ANDed");
+			assert.ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "ODataFilter, ANDed");
 
 			oBinding.detachChange(handler4);
-			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
-				operator:sap.ui.model.FilterOperator.EQ,
+			oFilter = new ODataFilter("CategoryName", [{
+				operator:FilterOperator.EQ,
 				value1: "Condiments"
 			}, {
-				operator:sap.ui.model.FilterOperator.EQ,
+				operator:FilterOperator.EQ,
 				value1: "Beverages"
 			}], false);
 			oBinding.filter(oFilter.convert());
@@ -2202,18 +2207,18 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler5 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			assert.equal(aFilteredContexts.length, 2, "sap.ui.model.odata.Filter, ORed");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "sap.ui.model.odata.Filter, ORed");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "sap.ui.model.odata.Filter, ORed");
+			assert.equal(aFilteredContexts.length, 2, "ODataFilter, ORed");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "ODataFilter, ORed");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "ODataFilter, ORed");
 
 			oBinding.detachChange(handler5);
-			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
-				operator:sap.ui.model.FilterOperator.EQ, value1: "Condiments"
+			oFilter = new ODataFilter("CategoryName", [{
+				operator:FilterOperator.EQ, value1: "Condiments"
 			}, {
-				operator:sap.ui.model.FilterOperator.EQ, value1: "Beverages"
+				operator:FilterOperator.EQ, value1: "Beverages"
 			}], false);
-			oFilter2 = new sap.ui.model.odata.Filter("Description", [{
-				operator: sap.ui.model.FilterOperator.EndsWith,
+			oFilter2 = new ODataFilter("Description", [{
+				operator: FilterOperator.EndsWith,
 				value1: "ings"
 			}]);
 			oBinding.filter([oFilter.convert(), oFilter2.convert()]);
@@ -2222,23 +2227,23 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler6 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			assert.equal(aFilteredContexts.length, 1, "sap.ui.model.odata.Filter + normal Filter");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
+			assert.equal(aFilteredContexts.length, 1, "ODataFilter + normal Filter");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "ODataFilter + normal Filter");
 
 			oBinding.detachChange(handler6);
 			done();
 		};
 		var oBinding = oModel.bindList("/Categories");
 		//check EQ
-		var oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
-			operator: sap.ui.model.FilterOperator.EQ,
+		var oFilter = new ODataFilter("CategoryName", [{
+			operator: FilterOperator.EQ,
 			value1: "Beverages"
 		}]);
 		var fnFilter = function() {
 			oBinding.detachRefresh(fnFilter);
-			oBinding.attachRefresh(function() {oBinding.getContexts();})
+			oBinding.attachRefresh(function() {oBinding.getContexts();});
 			oBinding.filter(oFilter.convert());
-		}
+		};
 		oBinding.attachChange(handler);
 		oBinding.attachRefresh(fnFilter);
 	});
@@ -2251,7 +2256,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			// check necessary prerequisites
 			assert.equal(oBinding.getPath(), "/Orders", "ListBinding path");
 			assert.equal(oBinding.bFaultTolerant, true, "Binding should run in faultTolerant mode");
-			assert.equal(oBinding.sCountMode, sap.ui.model.odata.CountMode.InlineRepeat, "Binding should use CountMode.InlineRepeat");
+			assert.equal(oBinding.sCountMode, CountMode.InlineRepeat, "Binding should use CountMode.InlineRepeat");
 
 			// actual assertations against the behavior in the error case when the service could not collect all
 			// data from its data-sources
@@ -2277,11 +2282,11 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			"/Orders",
 			null,
 			null,
-			[new sap.ui.model.Filter("ShipCity", "EQ", "TEST_FAULT_TOLERANCE")],
+			[new Filter("ShipCity", "EQ", "TEST_FAULT_TOLERANCE")],
 			{
 				//parameters
 				faultTolerant: true,
-				countMode: sap.ui.model.odata.CountMode.InlineRepeat,
+				countMode: CountMode.InlineRepeat
 			}
 		);
 
@@ -2289,15 +2294,15 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 		oBinding.attachRefresh(function() {
 			oBinding.getContexts(0, 2, 0);
-		})
+		});
 	});
 	QUnit.test("Export to file URL", function(assert){
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
 		var sUrl = oBinding.getDownloadUrl("csv");
-		assert.equal(sUrl, "/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=csv", "Download URL for csv correctly constructed.")
+		assert.equal(sUrl, "/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=csv", "Download URL for csv correctly constructed.");
 		sUrl = oBinding.getDownloadUrl("xlsx");
-		assert.equal(sUrl, "/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=xlsx", "Download URL for excel correctly constructed.")
+		assert.equal(sUrl, "/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=xlsx", "Download URL for excel correctly constructed.");
 	});
 	QUnit.test("Suspend/Resume", function(assert) {
 		var done = assert.async();
@@ -2307,7 +2312,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler1 = function() {
 			oBinding.detachChange(handler1);
 			oBinding.attachChange(handler2);
-			assert.equal(oSpy.callCount, 1, "1 Request has been triggered to load data")
+			assert.equal(oSpy.callCount, 1, "1 Request has been triggered to load data");
 			oSpy.reset();
 			assert.equal(oBinding.getContexts().length, 8, "Current context length is 8");
 			oBinding.suspend();
@@ -2316,26 +2321,26 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler2 = function() {
 			oBinding.detachChange(handler2);
 			oBinding.attachChange(handler3);
-			assert.equal(oSpy.callCount, 1, "1 Request has been triggered for refresh(true)")
+			assert.equal(oSpy.callCount, 1, "1 Request has been triggered for refresh(true)");
 			oSpy.reset();
 			assert.equal(oBinding.getContexts().length, 8, "Current context length is 8");
 			oBinding.refresh();
 			setTimeout(handler4, 50);
 		};
 		var handler3 = function() {
-			assert.ok(false, "Must not be called")
+			assert.ok(false, "Must not be called");
 		};
 		var handler4 = function() {
 			oBinding.detachChange(handler3);
 			oBinding.attachChange(handler5);
-			assert.equal(oSpy.callCount, 0, "refresh() didn't trigger a request")
+			assert.equal(oSpy.callCount, 0, "refresh() didn't trigger a request");
 			oSpy.reset();
 			assert.equal(oBinding.getContexts().length, 8, "Current context length is 8");
 			oBinding.resume();
 		};
 		var handler5 = function() {
 			oBinding.detachChange(handler5);
-			assert.equal(oSpy.callCount, 1, "1 Request has been triggered after resume")
+			assert.equal(oSpy.callCount, 1, "1 Request has been triggered after resume");
 			oSpy.reset();
 			assert.equal(oBinding.getContexts().length, 8, "Current context length is 8");
 			done();
@@ -2355,15 +2360,15 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler1 = function() {
 			oBinding.detachChange(handler1);
 			oBinding.attachChange(handler2);
-			assert.equal(oSpy.callCount, 1, "1 Request has been triggered to load data")
+			assert.equal(oSpy.callCount, 1, "1 Request has been triggered to load data");
 			oSpy.reset();
 			assert.equal(oBinding.getContexts().length, 8, "Current context length is 8");
 			oBinding.suspend();
-			oBinding.sort(new sap.ui.model.Sorter("CategoryName"));
+			oBinding.sort(new Sorter("CategoryName"));
 		};
 		var handler2 = function() {
 			oBinding.detachChange(handler2);
-			assert.equal(oSpy.callCount, 1, "1 Request has been triggered for sorting")
+			assert.equal(oSpy.callCount, 1, "1 Request has been triggered for sorting");
 			oSpy.reset();
 			assert.equal(oBinding.getContexts().length, 8, "Current context length is 8");
 			assert.equal(oBinding.getContexts()[0].getProperty("CategoryName"), "Beverages", "Categories are sorted");
@@ -2371,7 +2376,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			setTimeout(handler3, 50);
 		};
 		var handler3 = function() {
-			assert.equal(oSpy.callCount, 0, "No request was sent after resume")
+			assert.equal(oSpy.callCount, 0, "No request was sent after resume");
 			oSpy.reset();
 			done();
 		};
@@ -2390,22 +2395,22 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler1 = function() {
 			oBinding.detachChange(handler1);
 			oBinding.attachChange(handler2);
-			assert.equal(oSpy.callCount, 1, "1 Request has been triggered to load data")
+			assert.equal(oSpy.callCount, 1, "1 Request has been triggered to load data");
 			oSpy.reset();
 			assert.equal(oBinding.getContexts().length, 8, "Current context length is 8");
 			oBinding.suspend();
-			oBinding.filter(new sap.ui.model.Filter("CategoryName", "EQ", "Beverages"));
+			oBinding.filter(new Filter("CategoryName", "EQ", "Beverages"));
 		};
 		var handler2 = function() {
 			oBinding.detachChange(handler2);
-			assert.equal(oSpy.callCount, 1, "1 Request has been triggered for filtering")
+			assert.equal(oSpy.callCount, 1, "1 Request has been triggered for filtering");
 			oSpy.reset();
 			assert.equal(oBinding.getContexts().length, 1, "Current context length is 1");
 			oBinding.resume();
 			setTimeout(handler3, 50);
 		};
 		var handler3 = function() {
-			assert.equal(oSpy.callCount, 0, "No request was sent after resume")
+			assert.equal(oSpy.callCount, 0, "No request was sent after resume");
 			oSpy.reset();
 			done();
 		};
@@ -2424,7 +2429,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler1 = function() {
 			oBinding.detachChange(handler1);
 			oBinding.attachChange(handler2);
-			assert.equal(oSpy.callCount, 1, "1 Request has been triggered to load data")
+			assert.equal(oSpy.callCount, 1, "1 Request has been triggered to load data");
 			oSpy.reset();
 			oBinding.getContexts();
 			assert.equal(oBinding.getCurrentContexts().length, 8, "Current context length is 8");
@@ -2438,14 +2443,14 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler3 = function() {
 			oBinding.detachChange(handler2);
 			oBinding.attachChange(handler4);
-			assert.equal(oSpy.callCount, 0, "No request was triggered for autorefresh")
+			assert.equal(oSpy.callCount, 0, "No request was triggered for autorefresh");
 			oSpy.reset();
 			assert.equal(oBinding.getCurrentContexts().length, 8, "Current context length is 8");
 			oBinding.resume();
 		};
 		var handler4 = function() {
 			oBinding.detachChange(handler4);
-			assert.equal(oSpy.callCount, 1, "Resume did refresh the binding")
+			assert.equal(oSpy.callCount, 1, "Resume did refresh the binding");
 			oSpy.reset();
 			done();
 		};
@@ -2458,6 +2463,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 	QUnit.test("ListBinding filter with empty data", function(assert){
 		var done = assert.async();
+		var oFilter, oFilter2;
 		oModel.metadataLoaded().then(function(){
 			var handler = function(oEvent){
 				// contexts should be now loaded
@@ -2469,7 +2475,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 				assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Confections", "EQ, Contains, filtered content");
 
 				oBinding.detachChange(handler);
-				oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "NONEXISTING");
+				oFilter = new Filter("CategoryName", FilterOperator.EQ, "NONEXISTING");
 				oBinding.filter([oFilter]);
 				oBinding.attachChange(handler1);
 			};
@@ -2486,9 +2492,9 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 			var fnFilter = function() {
 				oBinding.detachRefresh(fnFilter);
-				oBinding.attachRefresh(function() {oBinding.getContexts();})
-				var oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Condiments");
-				var oFilter2 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.Contains, "ons");
+				oBinding.attachRefresh(function() {oBinding.getContexts();});
+				oFilter = new Filter("CategoryName", FilterOperator.EQ, "Condiments");
+				oFilter2 = new Filter("CategoryName", FilterOperator.Contains, "ons");
 				oBinding.filter([oFilter, oFilter2]);
 			};
 			oBinding.attachChange(handler);
@@ -2515,14 +2521,14 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 	QUnit.test("constructor - Any/All are rejected", function(assert) {
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.NE, "Foo");
-				var oFilter2 = new sap.ui.model.Filter({path: "firstName", operator: sap.ui.model.FilterOperator.Any, variable: "id1", condition: new sap.ui.model.Filter()});
+				var oFilter = new Filter("lastName", FilterOperator.NE, "Foo");
+				var oFilter2 = new Filter({path: "firstName", operator: FilterOperator.Any, variable: "id1", condition: new Filter()});
 
-				var oMultiFilter = new sap.ui.model.Filter([oFilter, oFilter2], true);
+				var oMultiFilter = new Filter([oFilter, oFilter2], true);
 
 				this.oModel.bindList("/teamMembers", undefined, undefined, [oMultiFilter]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.Any),
+			this.getErrorWithMessage(FilterOperator.Any),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 	});
@@ -2533,52 +2539,52 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		// "Any" at last position fails
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.GT, "Wallace");
-				var oFilter2 = new sap.ui.model.Filter({path: "firstName", operator: sap.ui.model.FilterOperator.Any, variable: "id1", condition: new sap.ui.model.Filter()});
+				var oFilter = new Filter("lastName", FilterOperator.GT, "Wallace");
+				var oFilter2 = new Filter({path: "firstName", operator: FilterOperator.Any, variable: "id1", condition: new Filter()});
 				oListBinding.filter([oFilter, oFilter2]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.Any),
+			this.getErrorWithMessage(FilterOperator.Any),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 
 		// "All" at first position fails
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter({path: "lastName", operator: sap.ui.model.FilterOperator.All, variable: "id2", condition: new sap.ui.model.Filter()});
-				var oFilter2 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Rush");
+				var oFilter = new Filter({path: "lastName", operator: FilterOperator.All, variable: "id2", condition: new Filter()});
+				var oFilter2 = new Filter("firstName", FilterOperator.EQ, "Rush");
 				oListBinding.filter([oFilter, oFilter2]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			this.getErrorWithMessage(FilterOperator.All),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 
 		// Multifilter containing "All" or "Any" fails
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter({path: "lastName", operator: sap.ui.model.FilterOperator.All, variable: "id3", condition: new sap.ui.model.Filter()});
-				var oFilter2 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Bar");
+				var oFilter = new Filter({path: "lastName", operator: FilterOperator.All, variable: "id3", condition: new Filter()});
+				var oFilter2 = new Filter("firstName", FilterOperator.EQ, "Bar");
 
-				var oMultiFilter = new sap.ui.model.Filter({
+				var oMultiFilter = new Filter({
 					filters: [oFilter, oFilter2],
 					and: false
 				});
 				oListBinding.filter([oMultiFilter]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			this.getErrorWithMessage(FilterOperator.All),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 
 		// Multifilter containing "All" or "Any" fails
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.NE, "Foo");
-				var oFilter2 = new sap.ui.model.Filter({path: "firstName", operator: sap.ui.model.FilterOperator.Any,variable: "id4", condition: new sap.ui.model.Filter()});
+				var oFilter = new Filter("lastName", FilterOperator.NE, "Foo");
+				var oFilter2 = new Filter({path: "firstName", operator: FilterOperator.Any,variable: "id4", condition: new Filter()});
 
-				var oMultiFilter = new sap.ui.model.Filter([oFilter, oFilter2], true);
+				var oMultiFilter = new Filter([oFilter, oFilter2], true);
 
 				oListBinding.filter([oMultiFilter]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.Any),
+			this.getErrorWithMessage(FilterOperator.Any),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 	});
@@ -2586,18 +2592,18 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 	QUnit.test("Multi Filters (Complex) 1 - Unsupported are not OK", function(assert) {
 		var oListBinding = this.oModel.bindList("/teamMembers", undefined, undefined, []);
 
-		var oFilter1 = new sap.ui.model.Filter("x", sap.ui.model.FilterOperator.EQ, "Foo");
-		var oFilter2 = new sap.ui.model.Filter({path: "y", operator: sap.ui.model.FilterOperator.All, variable: "id1", condition: new sap.ui.model.Filter()});
-		var oFilter3 = new sap.ui.model.Filter("z", sap.ui.model.FilterOperator.NE, "Bla");
-		var oFilter4 = new sap.ui.model.Filter("t", sap.ui.model.FilterOperator.LE, "ZZZ");
+		var oFilter1 = new Filter("x", FilterOperator.EQ, "Foo");
+		var oFilter2 = new Filter({path: "y", operator: FilterOperator.All, variable: "id1", condition: new Filter()});
+		var oFilter3 = new Filter("z", FilterOperator.NE, "Bla");
+		var oFilter4 = new Filter("t", FilterOperator.LE, "ZZZ");
 
-		var oMultiFilter1 = new sap.ui.model.Filter({
+		var oMultiFilter1 = new Filter({
 			filters: [oFilter1, oFilter2],
 			and: true
 		});
-		var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter3], false);
+		var oMultiFilter2 = new Filter([oMultiFilter1, oFilter3], false);
 
-		var oMultiFilter3 = new sap.ui.model.Filter({
+		var oMultiFilter3 = new Filter({
 			filters: [oMultiFilter2, oFilter4],
 			and: true
 		});
@@ -2606,7 +2612,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			function() {
 				oListBinding.filter([oMultiFilter3]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			this.getErrorWithMessage(FilterOperator.All),
 			"Error thrown if  multi-filter instances contain an unsupported FilterOperator"
 		);
 	});
@@ -2614,26 +2620,26 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 	QUnit.test("Multi Filters (Complex) 2 - Unsupported are not OK", function(assert) {
 		var oListBinding = this.oModel.bindList("/teamMembers", undefined, undefined, []);
 
-		var oFilter1 = new sap.ui.model.Filter("x", sap.ui.model.FilterOperator.EQ, "Foo");
-		var oFilter2 = new sap.ui.model.Filter({
+		var oFilter1 = new Filter("x", FilterOperator.EQ, "Foo");
+		var oFilter2 = new Filter({
 			path: "y",
-			operator: sap.ui.model.FilterOperator.All,
+			operator: FilterOperator.All,
 			variable: "id1",
-			condition: new sap.ui.model.Filter([
-				new sap.ui.model.Filter("t", sap.ui.model.FilterOperator.GT, 66),
-				new sap.ui.model.Filter({path: "g", operator: sap.ui.model.FilterOperator.Any, variable: "id2", condition: new sap.ui.model.Filter("f", sap.ui.model.FilterOperator.NE, "hello")})
+			condition: new Filter([
+				new Filter("t", FilterOperator.GT, 66),
+				new Filter({path: "g", operator: FilterOperator.Any, variable: "id2", condition: new Filter("f", FilterOperator.NE, "hello")})
 			], true)
 		});
-		var oFilter3 = new sap.ui.model.Filter("z", sap.ui.model.FilterOperator.NE, "Bla");
-		var oFilter4 = new sap.ui.model.Filter("t", sap.ui.model.FilterOperator.LE, "ZZZ");
+		var oFilter3 = new Filter("z", FilterOperator.NE, "Bla");
+		var oFilter4 = new Filter("t", FilterOperator.LE, "ZZZ");
 
-		var oMultiFilter1 = new sap.ui.model.Filter({
+		var oMultiFilter1 = new Filter({
 			filters: [oFilter1, oFilter2],
 			and: true
 		});
-		var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter3], false);
+		var oMultiFilter2 = new Filter([oMultiFilter1, oFilter3], false);
 
-		var oMultiFilter3 = new sap.ui.model.Filter({
+		var oMultiFilter3 = new Filter({
 			filters: [oMultiFilter2, oFilter4],
 			and: true
 		});
@@ -2642,7 +2648,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			function() {
 				oListBinding.filter([oMultiFilter3]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			this.getErrorWithMessage(FilterOperator.All),
 			"Error thrown if  multi-filter instances contain an unsupported FilterOperator"
 		);
 	});
@@ -2671,617 +2677,607 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 
 
-	sap.ui.require(["sap/m/Panel", "sap/m/List", "sap/m/List", "sap/m/StandardListItem", 'sap/ui/model/odata/v2/ODataModel'],
-		function(Panel, List, ListRenderer, StandardListItem, ODataModel) {
 
-			/**
-			 * creates a panel with a list with the following bindings
-			 * <code>/Products(1)/Supplier/Products</code>
-			 * @param mParametersForBinding {object} parameters which get passed to the bindings
-			 * @param mParamatersForModel {object} parameters which get passed to the model
-			 * @param fnCompleted {function} gets called once the batch request is completed
-			 * @param oTestContext {object} test context
-			 * @param sFnRequestCompleted {string} request completed function name of the model
-			 */
-			function executeRequests(mParametersForBinding, mParamatersForModel, fnCompleted, oTestContext, sFnRequestCompleted) {
-
-				oModel = new ODataModel(sURI, mParamatersForModel);
-				oSpySubmitBatchRequest = sinon.spy(oModel, "_submitBatchRequest");
-
-				var oPanel = new Panel();
-				oTestContext.aRegisteredControls.push(oPanel);
-				var oList = new List();
-				oTestContext.aRegisteredControls.push(oList);
-				oPanel.setModel(oModel);
-				oPanel.addContent(oList);
-
-
-				if (!sFnRequestCompleted) {
-					sFnRequestCompleted = "attachBatchRequestCompleted";
-				}
-				oModel[sFnRequestCompleted](null, function() {
-					fnCompleted(oList, oTestContext, arguments);
-				});
-
-
-				oPanel.bindElement({path: "/Products(1)", parameters: mParametersForBinding});
-
-				oList.bindElement({path: "Supplier", parameters: mParametersForBinding});
-				oList.bindItems({path: "Products", template: new StandardListItem({title: "{ProductName}"}), parameters: mParametersForBinding});
-
-
-				return oPanel;
-			}
-
-			/**
-			 * Checks the content of the grouped batch request
-			 * @param oList
-			 * @param assert
-			 * @param iCallIndex
-			 * @param aExpectedRequests
-			 * @param sMessage
-			 */
-			var checkSingleBatchRequestContent = function(oList, assert, iCallIndex, aExpectedRequests, sMessage) {
-
-				iCallIndex = iCallIndex || 0;
-				sMessage = sMessage || ("" + (iCallIndex) + " batch requests are expected");
-
-				assert.equal(iCallIndex + 1, oSpySubmitBatchRequest.callCount, sMessage);
-
-				var aRequests = oSpySubmitBatchRequest.args[iCallIndex][1];
-				var aRequestUris = aRequests.map(function(oRequest){
-					return oRequest.request.requestUri;
-				});
-				assert.equal(aRequests.length, aExpectedRequests.length, "multiple requests within one batch should be performed." +
-					" Actual: " + JSON.stringify(aRequestUris) + " Expected: " + JSON.stringify(aExpectedRequests));
-
-
-				aExpectedRequests.forEach(function(sExpectedRequest, iIndex) {
-					assert.ok(aRequests[iIndex], "Expected: '" + sExpectedRequest + "'");
-					assert.equal(aRequests[iIndex].request.requestUri, sExpectedRequest, "request " + (iIndex + 1) + " retrieves '" + sExpectedRequest + "'");
-					assert.equal(aRequests[iIndex].response.statusCode, "200", "response should succeed");
-				});
-
-				assert.equal(oList.getItems().length, 3, "The list should contain 3 items");
-
-			};
-
-			/**
-			 * Checks the contents of each batch request
-			 * @param oList
-			 * @param assert
-			 * @param iCallIndex
-			 * @param aExpectedRequests
-			 * @param sMessage
-			 */
-			var checkMultipleBatchRequestsContent = function(oList, assert, iCallIndex, aExpectedRequests, sMessage) {
-				var iNumber = aExpectedRequests.length;
-				iCallIndex = iCallIndex || iNumber;
-				sMessage = sMessage || ("" + (iCallIndex) + " batch requests are expected");
-
-				assert.equal(iCallIndex, oSpySubmitBatchRequest.callCount, sMessage);
-
-				aExpectedRequests.forEach(function(aExpectedRequest, iIndex) {
-					if (!Array.isArray(aExpectedRequest)) {
-						aExpectedRequest = [aExpectedRequest];
-					}
-
-					var oBatchRequest1 = oSpySubmitBatchRequest.args[iCallIndex - (iNumber) + iIndex][1];
-					var aRequestUris = oBatchRequest1.map(function(oRequest){
-						return oRequest.request.requestUri;
-					});
-					assert.equal(oBatchRequest1.length, aExpectedRequest.length, "" + (iIndex + 1) + ". batch should contain " + aExpectedRequest.length + " request. " +
-						"Actual: " + JSON.stringify(aRequestUris) + " Expected: " + JSON.stringify(aExpectedRequest));
-					aExpectedRequest.forEach(function(sExpectedRequest, iIndex) {
-						assert.ok(oBatchRequest1[iIndex], "Expected: '" + sExpectedRequest + "'");
-						assert.equal(oBatchRequest1[iIndex].request.requestUri, sExpectedRequest, "request " + (iIndex + 1) + " retrieves '" + sExpectedRequest + "'");
-						assert.equal(oBatchRequest1[iIndex].response.statusCode, "200", "response should succeed");
-					});
-
-				});
-
-				assert.equal(oList.getItems().length, 3, "The list should contain 3 items");
-
-			};
-
-			/* Sync */
-
-			QUnit.test("Batch: ListBinding - create/use preliminary Context", function(assert) {
-				var done = assert.async();
-				var fnCompleted = function(oList) {
-					checkSingleBatchRequestContent(oList, assert, 0, [
-						"Products(1)",
-						"Products(1)/Supplier",
-						"Products(1)/Supplier/Products/$count",
-						"Products(1)/Supplier/Products?$skip=0&$top=100"
-					]);
-					done();
-				};
-				executeRequests({createPreliminaryContext: true, usePreliminaryContext: true}, {preliminaryContext: true}, fnCompleted, this);
-
-			});
-
-			QUnit.test("Batch: ListBinding - create/use preliminary context with existing element context", function(assert) {
-				var done = assert.async();
-				var oPanel = new Panel();
-				var oList = new List();
-
-				oModel = new sap.ui.model.odata.v2.ODataModel(sURI, {
-					useBatch: true
-				});
-
-				oPanel.setModel(oModel);
-				oPanel.addContent(oList);
-
-				oModel.read("/Products(1)", {
-					success: function() {
-						oPanel.bindElement({
-							path:"/Products(1)",
-							parameters: {
-								createPreliminaryContext: true
-							}
-						});
-
-						// check if element context exists and if it is not set to preliminary
-						if (oPanel.getElementBinding().getBoundContext()) {
-							var oContext = oPanel.getElementBinding().getBoundContext();
-							assert.notOk(oContext.isPreliminary(), "ElementContext should not be preliminary");
-						}
-
-						oModel.attachBatchRequestCompleted(function(oEvent) {
-							var aRequests = oEvent.getParameter("requests");
-							assert.equal(aRequests.length, 1, "Only one batch request should be completed.");
-							done();
-						});
-					}
-				});
-			});
-
-			QUnit.test("Batch: ListBinding - create/use preliminary context and propagate context to another Binding", function(assert) {
-				var done = assert.async();
-				var oPanel = new Panel();
-				var oList = new List();
-				var oList2 = new List();
-
-				oModel = new sap.ui.model.odata.v2.ODataModel(sURI, {
-					useBatch: true,
-					preliminaryContext: true
-				});
-
-				oPanel.setModel(oModel);
-
-				oPanel.addContent(oList2);
-				oPanel.addContent(oList);
-
-				oModel.read("/Categories(7)", {
-					expand: "Products",
-					select: "Products/ProductID",
-					success: function() {
-						oPanel.bindElement({
-							path:"/Categories(7)",
-						});
-
-						oList2.bindElement({
-							path:"/Products(1)"
-						});
-
-						oList.bindElement({
-							path:"Products",
-							parameters: {
-								select: "ProductID"
-							}
-						});
-
-						assert.equal(oPanel.getElementBinding().getBoundContext(), oList2.getElementBinding().oContext, "Context should be the same and was propagated.");
-						assert.ok(oList2.getElementBinding().getBoundContext().isPreliminary(), "ElementContext should be preliminary.");
-
-						oModel.attachBatchRequestCompleted(function(oEvent) {
-							var aRequests = oEvent.getParameter("requests");
-							assert.equal(aRequests.length, 1, "Only one batch request should be completed.")
-							done();
-						});
-					}
-				});
-			});
-
-			QUnit.test("Batch: ListBinding - create preliminary context for non existing entity", function(assert) {
-				var done = assert.async();
-
-				//the change event should be called exactly twice as the preliminary context is created for a non-existing entity
-				var i = 0;
-				var fnCompleted = function(event) {
-					assert.ok(event.oSource);
-					i++;
-					if(i === 2) {
-						done();
-					}
-				};
-
-				oModel = new ODataModel(sURI, {});
-
-				var oPanel = new Panel();
-				this.aRegisteredControls.push(oPanel);
-				oPanel.setModel(oModel);
-
-				oPanel.bindElement({path: "/Products(121231)", events: {change: fnCompleted}, parameters: {createPreliminaryContext: true}});
-			});
-
-			QUnit.test("Batch: ListBinding - create/use preliminary Context (parameter variant 1)", function(assert) {
-				var done = assert.async();
-				var fnCompleted = function(oList) {
-					checkSingleBatchRequestContent(oList, assert, 0, [
-						"Products(1)",
-						"Products(1)/Supplier",
-						"Products(1)/Supplier/Products/$count",
-						"Products(1)/Supplier/Products?$skip=0&$top=100"
-					]);
-					done();
-				};
-				executeRequests({}, {preliminaryContext: true}, fnCompleted, this);
-
-			});
-
-			QUnit.test("Batch: ListBinding - create/use preliminary Context with Refreshs", function(assert) {
-				var done = assert.async();
-				var oPanelBinding, oListBinding, oListItemsBinding;
-
-				var iCurrentRun = -1;
-				assert.expect(36);
-				var fnCompleted = function(oList) {
-
-					iCurrentRun++;
-					switch (iCurrentRun) {
-						case 0:
-							oPanelBinding.refresh();
-							//4 requests INITIAL
-							checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
-								"Products(1)",
-								"Products(1)/Supplier",
-								"Products(1)/Supplier/Products/$count",
-								"Products(1)/Supplier/Products?$skip=0&$top=100"
-							], "INITIAL");
-							break;
-						case 1:
-							oListBinding.refresh();
-							//1 request AFTER PANEL REFRESH
-							checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
-								"Products(1)"
-							], "AFTER PANEL REFRESH");
-							break;
-						case 2:
-							oListItemsBinding.refresh();
-							//1 request AFTER LIST REFRESH
-							checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
-								"Products(1)/Supplier",
-							], "AFTER LIST REFRESH");
-							break;
-						case 3:
-							//2 requests AFTER LIST ITEMS REFRESH
-							checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
-								"Suppliers(1)/Products/$count",
-								"Suppliers(1)/Products?$skip=0&$top=100"
-							], "AFTER LIST ITEMS REFRESH");
-							done();
-							break;
-						default:
-							break;
-					}
-				};
-				var oPanel = executeRequests({createPreliminaryContext: true, usePreliminaryContext: true}, {}, fnCompleted, this);
-
-				oPanelBinding = oPanel.getObjectBinding();
-				var oList = oPanel.getContent()[0];
-				oListBinding = oList.getObjectBinding();
-				oListItemsBinding = oList.getBinding("items");
-			});
-
-
-			QUnit.test("Batch: ListBinding - create/use preliminary Context with forced Refreshs", function(assert) {
-				var done = assert.async();
-				var oPanelBinding, oListBinding, oListItemsBinding;
-
-				var iCurrentRun = -1;
-				assert.expect(51);
-				var fnCompleted = function(oList) {
-
-					iCurrentRun++;
-					switch (iCurrentRun) {
-						case 0:
-							oPanelBinding.refresh(true);
-							//4 requests INITIAL
-							checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
-								"Products(1)",
-								"Products(1)/Supplier",
-								"Products(1)/Supplier/Products/$count",
-								"Products(1)/Supplier/Products?$skip=0&$top=100"
-							], "INITIAL 4 requests expected after load");
-							break;
-						case 1:
-							oListBinding.refresh(true);
-							//4 requests AFTER PANEL REFRESH
-							checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
-								"Products(1)",
-								"Products(1)/Supplier",
-								"Products(1)/Supplier/Products/$count",
-								"Products(1)/Supplier/Products?$skip=0&$top=100"
-							], "AFTER FORCED PANEL REFRESH 4 requests expected");
-							break;
-						case 2:
-							oListItemsBinding.refresh(true);
-							//3 requests AFTER LIST REFRESH
-							checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
-								"Products(1)/Supplier",
-								"Products(1)/Supplier/Products/$count",
-								"Products(1)/Supplier/Products?$skip=0&$top=100"
-							], "AFTER FORCED LIST REFRESH 3 requests expected");
-							break;
-						case 3:
-							//2 requests AFTER LIST ITEMS REFRESH
-							checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
-								"Suppliers(1)/Products/$count",
-								"Suppliers(1)/Products?$skip=0&$top=100"
-							], "AFTER FORCED LIST ITEMS REFRESH 2 requests expected");
-							done();
-							break;
-						default:
-							break;
-					}
-
-				};
-				var oPanel = executeRequests({createPreliminaryContext: true, usePreliminaryContext: true}, {}, fnCompleted, this);
-
-				oPanelBinding = oPanel.getObjectBinding();
-				oListBinding = oPanel.getContent()[0].getObjectBinding();
-				oListItemsBinding = oPanel.getContent()[0].getBinding("items");
-			});
-
-			/* Async */
-
-
-			QUnit.test("Batch: ListBinding - not create/use preliminary Context", function(assert) {
-				var iRequests = 0;
-				var done = assert.async();
-				var fnCompleted = function(oList) {
-					iRequests++;
-					if (iRequests === 3) {
-						checkMultipleBatchRequestsContent(oList, assert, 0, [
-							["Products(1)"],
-							["Products(1)/Supplier"],
-							["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
-						]);
-						done();
-					}
-				};
-				executeRequests({createPreliminaryContext: false, usePreliminaryContext: false}, {preliminaryContext: false}, fnCompleted, this);
-
-			});
-
-			QUnit.test("Batch: ListBinding - not create/use preliminary Context (parameter variant 1)", function(assert) {
-				var iRequests = 0;
-				var done = assert.async();
-				var fnCompleted = function(oList) {
-					iRequests++;
-					if (iRequests === 3) {
-						checkMultipleBatchRequestsContent(oList, assert, 0, [
-							["Products(1)"],
-							["Products(1)/Supplier"],
-							["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
-						]);
-						done();
-					}
-				};
-				executeRequests({usePreliminaryContext: true}, {preliminaryContext: false}, fnCompleted, this);
-
-			});
-
-
-			QUnit.test("Batch: ListBinding - not create/use preliminary Context with Refreshs", function(assert) {
-				var oObjectBinding, oListBinding, oListItemsBinding;
-				var done = assert.async();
-				var firstRun = 3;
-				var secondRun = firstRun + 1;
-				var thirdRun = secondRun + 1;
-				var fourthRun = thirdRun + 1;
-
-				assert.expect(38);
-
-				var iRequests = 0;
-				var fnCompleted = function(oList) {
-
-					iRequests++;
-
-					switch (iRequests) {
-						case firstRun:
-							oObjectBinding.refresh();
-							checkMultipleBatchRequestsContent(oList, assert, iRequests, [
-								["Products(1)"],
-								["Products(1)/Supplier"],
-								["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
-							]);
-							break;
-						case secondRun:
-							oListBinding.refresh();
-							checkMultipleBatchRequestsContent(oList, assert, iRequests, [
-								["Products(1)"]
-							]);
-							break;
-						case thirdRun:
-							oListItemsBinding.refresh();
-							checkMultipleBatchRequestsContent(oList, assert, iRequests, [
-								["Products(1)/Supplier"]
-							]);
-							break;
-						case fourthRun:
-							checkMultipleBatchRequestsContent(oList, assert, iRequests, [
-								["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
-							]);
-							done();
-							break;
-						default:
-							break;
-					}
-
-
-				};
-				var oPanel = executeRequests({createPreliminaryContext: false, usePreliminaryContext: true}, {}, fnCompleted, this);
-				oObjectBinding = oPanel.getObjectBinding();
-				oListBinding = oPanel.getContent()[0].getObjectBinding();
-				oListItemsBinding = oPanel.getContent()[0].getBinding("items");
-
-			});
-
-
-			QUnit.test("Batch: ListBinding - not create/use preliminary Context with forced Refreshs", function(assert) {
-				var oPanelBinding, oListBinding, oListItemsBinding;
-				var done = assert.async();
-
-				assert.expect(56);
-
-				var firstRun = 3;
-				var secondRun = firstRun + 3;
-				var thirdRun = secondRun + 2;
-				var fourthRun = thirdRun + 1;
-
-				var iRequests = 0;
-				var fnCompleted = function(oList) {
-
-					iRequests++;
-
-					switch (iRequests) {
-						case firstRun:
-							oPanelBinding.refresh(true);
-							checkMultipleBatchRequestsContent(oList, assert, iRequests, [
-								["Products(1)"],
-								["Products(1)/Supplier"],
-								["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
-							], "INITIAL 4 requests expected after load");
-							break;
-						case secondRun:
-							oListBinding.refresh(true);
-							checkMultipleBatchRequestsContent(oList, assert, iRequests, [
-								["Products(1)"],
-								["Products(1)/Supplier"],
-								["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
-							], "AFTER FORCED PANEL REFRESH 4 requests expected");
-							break;
-						case thirdRun:
-							oListItemsBinding.refresh(true);
-							checkMultipleBatchRequestsContent(oList, assert, iRequests, [
-								["Products(1)/Supplier"],
-								["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
-							], "AFTER FORCED LIST REFRESH 3 requests expected");
-							break;
-						case fourthRun:
-							checkMultipleBatchRequestsContent(oList, assert, iRequests, [
-								["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
-							], "AFTER FORCED LIST ITEMS REFRESH 2 requests expected");
-							done();
-							break;
-						default:
-							break;
-					}
-
-				};
-				var oPanel = executeRequests({createPreliminaryContext: false, usePreliminaryContext: true}, {}, fnCompleted, this);
-				oPanelBinding = oPanel.getObjectBinding();
-				oListBinding = oPanel.getContent()[0].getObjectBinding();
-				oListItemsBinding = oPanel.getContent()[0].getBinding("items");
-
-			});
-
-
-			QUnit.test("Batch: ListBinding default - not create/use preliminary Context", function(assert) {
-				var iRequests = 0;
-				var done = assert.async();
-				var fnCompleted = function(oList) {
-					iRequests++;
-					if (iRequests === 3) {
-						checkMultipleBatchRequestsContent(oList, assert, 0, [
-							["Products(1)"],
-							["Products(1)/Supplier"],
-							["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
-						]);
-						done();
-					}
-				};
-				executeRequests({}, {}, fnCompleted, this);
-
-			});
-
-			/* Non-Batch */
-
-			QUnit.test("Non-batch: ListBinding - create/use preliminary Context", function(assert) {
-				var iRequests = 0;
-				var done = assert.async();
-
-				var mExpectedRequests = [
-					"/Products(1)",
-					"/Products(1)/Supplier",
-					"/Products(1)/Supplier/Products/$count",
-					"/Products(1)/Supplier/Products?$skip=0&$top=100"
-				];
-
-
-				var fnCompleted = function(oList, oTestContext, oArguments) {
-
-					var mParams = oArguments["0"].mParameters;
-					var url = mParams.url;
-					assert.equal(mParams.response.statusCode, 200);
-					var expectedRequest = mExpectedRequests[iRequests];
-					assert.equal(url.indexOf(expectedRequest), url.length - expectedRequest.length);
-
-					iRequests++;
-					if (iRequests === mExpectedRequests.length) {
-						done();
-					}
-				};
-				executeRequests({createPreliminaryContext: true, usePreliminaryContext: true}, {
-					useBatch: false,
-					json: false
-				}, fnCompleted, this, "attachRequestCompleted");
-
-			});
-
-			QUnit.test("Non-batch: ListBinding - not create/use preliminary Context", function(assert) {
-				var iRequests = 0;
-				var done = assert.async();
-
-				var mExpectedRequests = [
-					"/Products(1)",
-					"/Products(1)/Supplier",
-					"/Suppliers(1)/Products/$count",
-					"/Suppliers(1)/Products?$skip=0&$top=100"
-				];
-
-
-				var fnCompleted = function(oList, oTestContext, oArguments) {
-
-					var mParams = oArguments["0"].mParameters;
-					var url = mParams.url;
-					assert.equal(mParams.response.statusCode, 200, "response code for " + url + " should be OK");
-					var expectedRequest = mExpectedRequests[iRequests];
-					assert.equal(url.substring(url.length - expectedRequest.length), expectedRequest);
-
-					iRequests++;
-					if (iRequests === mExpectedRequests.length) {
-						done();
-					}
-				};
-				executeRequests({createPreliminaryContext: false, usePreliminaryContext: true}, {
-					useBatch: false,
-					json: false
-				}, fnCompleted, this, "attachRequestCompleted");
-
-			});
+	/**
+	 * creates a panel with a list with the following bindings
+	 * <code>/Products(1)/Supplier/Products</code>
+	 * @param mParametersForBinding {object} parameters which get passed to the bindings
+	 * @param mParamatersForModel {object} parameters which get passed to the model
+	 * @param fnCompleted {function} gets called once the batch request is completed
+	 * @param oTestContext {object} test context
+	 * @param sFnRequestCompleted {string} request completed function name of the model
+	 */
+	function executeRequests(mParametersForBinding, mParamatersForModel, fnCompleted, oTestContext, sFnRequestCompleted) {
+
+		oModel = new ODataModel(sURI, mParamatersForModel);
+		oSpySubmitBatchRequest = sinon.spy(oModel, "_submitBatchRequest");
+
+		var oPanel = new Panel();
+		oTestContext.aRegisteredControls.push(oPanel);
+		var oList = new List();
+		oTestContext.aRegisteredControls.push(oList);
+		oPanel.setModel(oModel);
+		oPanel.addContent(oList);
+
+
+		if (!sFnRequestCompleted) {
+			sFnRequestCompleted = "attachBatchRequestCompleted";
+		}
+		oModel[sFnRequestCompleted](null, function() {
+			fnCompleted(oList, oTestContext, arguments);
 		});
 
-	</script>
-</head>
-<body>
-<h1 id="qunit-header">QUnit tests: OData List Binding (V2)</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-</body>
-</html>
+
+		oPanel.bindElement({path: "/Products(1)", parameters: mParametersForBinding});
+
+		oList.bindElement({path: "Supplier", parameters: mParametersForBinding});
+		oList.bindItems({path: "Products", template: new StandardListItem({title: "{ProductName}"}), parameters: mParametersForBinding});
+
+
+		return oPanel;
+	}
+
+	/**
+	 * Checks the content of the grouped batch request
+	 * @param oList
+	 * @param assert
+	 * @param iCallIndex
+	 * @param aExpectedRequests
+	 * @param sMessage
+	 */
+	var checkSingleBatchRequestContent = function(oList, assert, iCallIndex, aExpectedRequests, sMessage) {
+
+		iCallIndex = iCallIndex || 0;
+		sMessage = sMessage || ("" + (iCallIndex) + " batch requests are expected");
+
+		assert.equal(iCallIndex + 1, oSpySubmitBatchRequest.callCount, sMessage);
+
+		var aRequests = oSpySubmitBatchRequest.args[iCallIndex][1];
+		var aRequestUris = aRequests.map(function(oRequest){
+			return oRequest.request.requestUri;
+		});
+		assert.equal(aRequests.length, aExpectedRequests.length, "multiple requests within one batch should be performed." +
+			" Actual: " + JSON.stringify(aRequestUris) + " Expected: " + JSON.stringify(aExpectedRequests));
+
+
+		aExpectedRequests.forEach(function(sExpectedRequest, iIndex) {
+			assert.ok(aRequests[iIndex], "Expected: '" + sExpectedRequest + "'");
+			assert.equal(aRequests[iIndex].request.requestUri, sExpectedRequest, "request " + (iIndex + 1) + " retrieves '" + sExpectedRequest + "'");
+			assert.equal(aRequests[iIndex].response.statusCode, "200", "response should succeed");
+		});
+
+		assert.equal(oList.getItems().length, 3, "The list should contain 3 items");
+
+	};
+
+	/**
+	 * Checks the contents of each batch request
+	 * @param oList
+	 * @param assert
+	 * @param iCallIndex
+	 * @param aExpectedRequests
+	 * @param sMessage
+	 */
+	var checkMultipleBatchRequestsContent = function(oList, assert, iCallIndex, aExpectedRequests, sMessage) {
+		var iNumber = aExpectedRequests.length;
+		iCallIndex = iCallIndex || iNumber;
+		sMessage = sMessage || ("" + (iCallIndex) + " batch requests are expected");
+
+		assert.equal(iCallIndex, oSpySubmitBatchRequest.callCount, sMessage);
+
+		aExpectedRequests.forEach(function(aExpectedRequest, iIndex) {
+			if (!Array.isArray(aExpectedRequest)) {
+				aExpectedRequest = [aExpectedRequest];
+			}
+
+			var oBatchRequest1 = oSpySubmitBatchRequest.args[iCallIndex - (iNumber) + iIndex][1];
+			var aRequestUris = oBatchRequest1.map(function(oRequest){
+				return oRequest.request.requestUri;
+			});
+			assert.equal(oBatchRequest1.length, aExpectedRequest.length, "" + (iIndex + 1) + ". batch should contain " + aExpectedRequest.length + " request. " +
+				"Actual: " + JSON.stringify(aRequestUris) + " Expected: " + JSON.stringify(aExpectedRequest));
+			aExpectedRequest.forEach(function(sExpectedRequest, iIndex) {
+				assert.ok(oBatchRequest1[iIndex], "Expected: '" + sExpectedRequest + "'");
+				assert.equal(oBatchRequest1[iIndex].request.requestUri, sExpectedRequest, "request " + (iIndex + 1) + " retrieves '" + sExpectedRequest + "'");
+				assert.equal(oBatchRequest1[iIndex].response.statusCode, "200", "response should succeed");
+			});
+
+		});
+
+		assert.equal(oList.getItems().length, 3, "The list should contain 3 items");
+
+	};
+
+	/* Sync */
+
+	QUnit.test("Batch: ListBinding - create/use preliminary Context", function(assert) {
+		var done = assert.async();
+		var fnCompleted = function(oList) {
+			checkSingleBatchRequestContent(oList, assert, 0, [
+				"Products(1)",
+				"Products(1)/Supplier",
+				"Products(1)/Supplier/Products/$count",
+				"Products(1)/Supplier/Products?$skip=0&$top=100"
+			]);
+			done();
+		};
+		executeRequests({createPreliminaryContext: true, usePreliminaryContext: true}, {preliminaryContext: true}, fnCompleted, this);
+
+	});
+
+	QUnit.test("Batch: ListBinding - create/use preliminary context with existing element context", function(assert) {
+		var done = assert.async();
+		var oPanel = new Panel();
+		var oList = new List();
+
+		oModel = new ODataModel(sURI, {
+			useBatch: true
+		});
+
+		oPanel.setModel(oModel);
+		oPanel.addContent(oList);
+
+		oModel.read("/Products(1)", {
+			success: function() {
+				oPanel.bindElement({
+					path:"/Products(1)",
+					parameters: {
+						createPreliminaryContext: true
+					}
+				});
+
+				// check if element context exists and if it is not set to preliminary
+				if (oPanel.getElementBinding().getBoundContext()) {
+					var oContext = oPanel.getElementBinding().getBoundContext();
+					assert.notOk(oContext.isPreliminary(), "ElementContext should not be preliminary");
+				}
+
+				oModel.attachBatchRequestCompleted(function(oEvent) {
+					var aRequests = oEvent.getParameter("requests");
+					assert.equal(aRequests.length, 1, "Only one batch request should be completed.");
+					done();
+				});
+			}
+		});
+	});
+
+	QUnit.test("Batch: ListBinding - create/use preliminary context and propagate context to another Binding", function(assert) {
+		var done = assert.async();
+		var oPanel = new Panel();
+		var oList = new List();
+		var oList2 = new List();
+
+		oModel = new ODataModel(sURI, {
+			useBatch: true,
+			preliminaryContext: true
+		});
+
+		oPanel.setModel(oModel);
+
+		oPanel.addContent(oList2);
+		oPanel.addContent(oList);
+
+		oModel.read("/Categories(7)", {
+			urlParameters: {
+				$expand: "Products"
+			},
+			success: function() {
+				oPanel.bindElement({
+					path:"/Categories(7)"
+				});
+
+				oList2.bindElement({
+					path:"/Products(7)"
+				});
+
+				oList.bindElement({
+					path:"Products",
+					parameters: {
+						select: "ProductID"
+					}
+				});
+				//check async for preliminary flag as the event is fired async
+				oModel.metadataLoaded().then(function() {
+					assert.equal(oPanel.getBindingContext(), oList.getElementBinding().getContext(), "Context should be the same and was propagated.");
+					assert.ok(oList.getBindingContext().isPreliminary(), "ElementContext should be preliminary.");
+
+					oModel.attachBatchRequestCompleted(function(oEvent) {
+						var aRequests = oEvent.getParameter("requests");
+						assert.equal(aRequests.length, 1, "Only one batch request should be completed.");
+						done();
+					});
+				});
+			}
+		});
+	});
+
+	QUnit.test("Batch: ListBinding - create preliminary context for non existing entity", function(assert) {
+		var done = assert.async();
+
+		//the change event should be called exactly twice as the preliminary context is created for a non-existing entity
+		var i = 0;
+		var fnCompleted = function(event) {
+			assert.ok(event.oSource);
+			i++;
+			if (i === 2) {
+				done();
+			}
+		};
+
+		oModel = new ODataModel(sURI, {});
+
+		var oPanel = new Panel();
+		this.aRegisteredControls.push(oPanel);
+		oPanel.setModel(oModel);
+
+		oPanel.bindElement({path: "/Products(121231)", events: {change: fnCompleted}, parameters: {createPreliminaryContext: true}});
+	});
+
+	QUnit.test("Batch: ListBinding - create/use preliminary Context (parameter variant 1)", function(assert) {
+		var done = assert.async();
+		var fnCompleted = function(oList) {
+			checkSingleBatchRequestContent(oList, assert, 0, [
+				"Products(1)",
+				"Products(1)/Supplier",
+				"Products(1)/Supplier/Products/$count",
+				"Products(1)/Supplier/Products?$skip=0&$top=100"
+			]);
+			done();
+		};
+		executeRequests({}, {preliminaryContext: true}, fnCompleted, this);
+
+	});
+
+	QUnit.test("Batch: ListBinding - create/use preliminary Context with Refreshs", function(assert) {
+		var done = assert.async();
+		var oPanelBinding, oListBinding, oListItemsBinding;
+
+		var iCurrentRun = -1;
+		assert.expect(36);
+		var fnCompleted = function(oList) {
+
+			iCurrentRun++;
+			switch (iCurrentRun) {
+				case 0:
+					oPanelBinding.refresh();
+					//4 requests INITIAL
+					checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
+						"Products(1)",
+						"Products(1)/Supplier",
+						"Products(1)/Supplier/Products/$count",
+						"Products(1)/Supplier/Products?$skip=0&$top=100"
+					], "INITIAL");
+					break;
+				case 1:
+					oListBinding.refresh();
+					//1 request AFTER PANEL REFRESH
+					checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
+						"Products(1)"
+					], "AFTER PANEL REFRESH");
+					break;
+				case 2:
+					oListItemsBinding.refresh();
+					//1 request AFTER LIST REFRESH
+					checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
+						"Products(1)/Supplier"
+					], "AFTER LIST REFRESH");
+					break;
+				case 3:
+					//2 requests AFTER LIST ITEMS REFRESH
+					checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
+						"Suppliers(1)/Products/$count",
+						"Suppliers(1)/Products?$skip=0&$top=100"
+					], "AFTER LIST ITEMS REFRESH");
+					done();
+					break;
+				default:
+					break;
+			}
+		};
+		var oPanel = executeRequests({createPreliminaryContext: true, usePreliminaryContext: true}, {}, fnCompleted, this);
+
+		oPanelBinding = oPanel.getObjectBinding();
+		var oList = oPanel.getContent()[0];
+		oListBinding = oList.getObjectBinding();
+		oListItemsBinding = oList.getBinding("items");
+	});
+
+
+	QUnit.test("Batch: ListBinding - create/use preliminary Context with forced Refreshs", function(assert) {
+		var done = assert.async();
+		var oPanelBinding, oListBinding, oListItemsBinding;
+
+		var iCurrentRun = -1;
+		assert.expect(51);
+		var fnCompleted = function(oList) {
+
+			iCurrentRun++;
+			switch (iCurrentRun) {
+				case 0:
+					oPanelBinding.refresh(true);
+					//4 requests INITIAL
+					checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
+						"Products(1)",
+						"Products(1)/Supplier",
+						"Products(1)/Supplier/Products/$count",
+						"Products(1)/Supplier/Products?$skip=0&$top=100"
+					], "INITIAL 4 requests expected after load");
+					break;
+				case 1:
+					oListBinding.refresh(true);
+					//4 requests AFTER PANEL REFRESH
+					checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
+						"Products(1)",
+						"Products(1)/Supplier",
+						"Products(1)/Supplier/Products/$count",
+						"Products(1)/Supplier/Products?$skip=0&$top=100"
+					], "AFTER FORCED PANEL REFRESH 4 requests expected");
+					break;
+				case 2:
+					oListItemsBinding.refresh(true);
+					//3 requests AFTER LIST REFRESH
+					checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
+						"Products(1)/Supplier",
+						"Products(1)/Supplier/Products/$count",
+						"Products(1)/Supplier/Products?$skip=0&$top=100"
+					], "AFTER FORCED LIST REFRESH 3 requests expected");
+					break;
+				case 3:
+					//2 requests AFTER LIST ITEMS REFRESH
+					checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
+						"Suppliers(1)/Products/$count",
+						"Suppliers(1)/Products?$skip=0&$top=100"
+					], "AFTER FORCED LIST ITEMS REFRESH 2 requests expected");
+					done();
+					break;
+				default:
+					break;
+			}
+
+		};
+		var oPanel = executeRequests({createPreliminaryContext: true, usePreliminaryContext: true}, {}, fnCompleted, this);
+
+		oPanelBinding = oPanel.getObjectBinding();
+		oListBinding = oPanel.getContent()[0].getObjectBinding();
+		oListItemsBinding = oPanel.getContent()[0].getBinding("items");
+	});
+
+	/* Async */
+
+
+	QUnit.test("Batch: ListBinding - not create/use preliminary Context", function(assert) {
+		var iRequests = 0;
+		var done = assert.async();
+		var fnCompleted = function(oList) {
+			iRequests++;
+			if (iRequests === 3) {
+				checkMultipleBatchRequestsContent(oList, assert, 0, [
+					["Products(1)"],
+					["Products(1)/Supplier"],
+					["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
+				]);
+				done();
+			}
+		};
+		executeRequests({createPreliminaryContext: false, usePreliminaryContext: false}, {preliminaryContext: false}, fnCompleted, this);
+
+	});
+
+	QUnit.test("Batch: ListBinding - not create/use preliminary Context (parameter variant 1)", function(assert) {
+		var iRequests = 0;
+		var done = assert.async();
+		var fnCompleted = function(oList) {
+			iRequests++;
+			if (iRequests === 3) {
+				checkMultipleBatchRequestsContent(oList, assert, 0, [
+					["Products(1)"],
+					["Products(1)/Supplier"],
+					["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
+				]);
+				done();
+			}
+		};
+		executeRequests({usePreliminaryContext: true}, {preliminaryContext: false}, fnCompleted, this);
+
+	});
+
+
+	QUnit.test("Batch: ListBinding - not create/use preliminary Context with Refreshs", function(assert) {
+		var oObjectBinding, oListBinding, oListItemsBinding;
+		var done = assert.async();
+		var firstRun = 3;
+		var secondRun = firstRun + 1;
+		var thirdRun = secondRun + 1;
+		var fourthRun = thirdRun + 1;
+
+		assert.expect(38);
+
+		var iRequests = 0;
+		var fnCompleted = function(oList) {
+
+			iRequests++;
+
+			switch (iRequests) {
+				case firstRun:
+					oObjectBinding.refresh();
+					checkMultipleBatchRequestsContent(oList, assert, iRequests, [
+						["Products(1)"],
+						["Products(1)/Supplier"],
+						["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
+					]);
+					break;
+				case secondRun:
+					oListBinding.refresh();
+					checkMultipleBatchRequestsContent(oList, assert, iRequests, [
+						["Products(1)"]
+					]);
+					break;
+				case thirdRun:
+					oListItemsBinding.refresh();
+					checkMultipleBatchRequestsContent(oList, assert, iRequests, [
+						["Products(1)/Supplier"]
+					]);
+					break;
+				case fourthRun:
+					checkMultipleBatchRequestsContent(oList, assert, iRequests, [
+						["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
+					]);
+					done();
+					break;
+				default:
+					break;
+			}
+
+
+		};
+		var oPanel = executeRequests({createPreliminaryContext: false, usePreliminaryContext: true}, {}, fnCompleted, this);
+		oObjectBinding = oPanel.getObjectBinding();
+		oListBinding = oPanel.getContent()[0].getObjectBinding();
+		oListItemsBinding = oPanel.getContent()[0].getBinding("items");
+
+	});
+
+
+	QUnit.test("Batch: ListBinding - not create/use preliminary Context with forced Refreshs", function(assert) {
+		var oPanelBinding, oListBinding, oListItemsBinding;
+		var done = assert.async();
+
+		assert.expect(56);
+
+		var firstRun = 3;
+		var secondRun = firstRun + 3;
+		var thirdRun = secondRun + 2;
+		var fourthRun = thirdRun + 1;
+
+		var iRequests = 0;
+		var fnCompleted = function(oList) {
+
+			iRequests++;
+
+			switch (iRequests) {
+				case firstRun:
+					oPanelBinding.refresh(true);
+					checkMultipleBatchRequestsContent(oList, assert, iRequests, [
+						["Products(1)"],
+						["Products(1)/Supplier"],
+						["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
+					], "INITIAL 4 requests expected after load");
+					break;
+				case secondRun:
+					oListBinding.refresh(true);
+					checkMultipleBatchRequestsContent(oList, assert, iRequests, [
+						["Products(1)"],
+						["Products(1)/Supplier"],
+						["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
+					], "AFTER FORCED PANEL REFRESH 4 requests expected");
+					break;
+				case thirdRun:
+					oListItemsBinding.refresh(true);
+					checkMultipleBatchRequestsContent(oList, assert, iRequests, [
+						["Products(1)/Supplier"],
+						["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
+					], "AFTER FORCED LIST REFRESH 3 requests expected");
+					break;
+				case fourthRun:
+					checkMultipleBatchRequestsContent(oList, assert, iRequests, [
+						["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
+					], "AFTER FORCED LIST ITEMS REFRESH 2 requests expected");
+					done();
+					break;
+				default:
+					break;
+			}
+
+		};
+		var oPanel = executeRequests({createPreliminaryContext: false, usePreliminaryContext: true}, {}, fnCompleted, this);
+		oPanelBinding = oPanel.getObjectBinding();
+		oListBinding = oPanel.getContent()[0].getObjectBinding();
+		oListItemsBinding = oPanel.getContent()[0].getBinding("items");
+
+	});
+
+
+	QUnit.test("Batch: ListBinding default - not create/use preliminary Context", function(assert) {
+		var iRequests = 0;
+		var done = assert.async();
+		var fnCompleted = function(oList) {
+			iRequests++;
+			if (iRequests === 3) {
+				checkMultipleBatchRequestsContent(oList, assert, 0, [
+					["Products(1)"],
+					["Products(1)/Supplier"],
+					["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
+				]);
+				done();
+			}
+		};
+		executeRequests({}, {}, fnCompleted, this);
+
+	});
+
+	/* Non-Batch */
+
+	QUnit.test("Non-batch: ListBinding - create/use preliminary Context", function(assert) {
+		var iRequests = 0;
+		var done = assert.async();
+
+		var mExpectedRequests = [
+			"/Products(1)",
+			"/Products(1)/Supplier",
+			"/Products(1)/Supplier/Products/$count",
+			"/Products(1)/Supplier/Products?$skip=0&$top=100"
+		];
+
+
+		var fnCompleted = function(oList, oTestContext, oArguments) {
+
+			var mParams = oArguments["0"].mParameters;
+			var url = mParams.url;
+			assert.equal(mParams.response.statusCode, 200);
+			var expectedRequest = mExpectedRequests[iRequests];
+			assert.equal(url.indexOf(expectedRequest), url.length - expectedRequest.length);
+
+			iRequests++;
+			if (iRequests === mExpectedRequests.length) {
+				done();
+			}
+		};
+		executeRequests({createPreliminaryContext: true, usePreliminaryContext: true}, {
+			useBatch: false,
+			json: false
+		}, fnCompleted, this, "attachRequestCompleted");
+
+	});
+
+	QUnit.test("Non-batch: ListBinding - not create/use preliminary Context", function(assert) {
+		var iRequests = 0;
+		var done = assert.async();
+
+		var mExpectedRequests = [
+			"/Products(1)",
+			"/Products(1)/Supplier",
+			"/Suppliers(1)/Products/$count",
+			"/Suppliers(1)/Products?$skip=0&$top=100"
+		];
+
+
+		var fnCompleted = function(oList, oTestContext, oArguments) {
+
+			var mParams = oArguments["0"].mParameters;
+			var url = mParams.url;
+			assert.equal(mParams.response.statusCode, 200, "response code for " + url + " should be OK");
+			var expectedRequest = mExpectedRequests[iRequests];
+			assert.equal(url.substring(url.length - expectedRequest.length), expectedRequest);
+
+			iRequests++;
+			if (iRequests === mExpectedRequests.length) {
+				done();
+			}
+		};
+		executeRequests({createPreliminaryContext: false, usePreliminaryContext: true}, {
+			useBatch: false,
+			json: false
+		}, fnCompleted, this, "attachRequestCompleted");
+
+	});
+});

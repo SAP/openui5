@@ -1,46 +1,53 @@
-<!DOCTYPE HTML>
+/*global QUnit, sinon */
+sap.ui.define([
+	"sap/ui/core/util/MockServer",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/Filter",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/odata/UpdateMethod",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/type/DateTime",
+	"sap/ui/core/message/Message",
+	"sap/ui/core/MessageType",
+	"sap/m/DateTimeInput",
+	"sap/m/Label",
+	"sap/m/Input",
+	"sap/ui/table/Table",
+	"sap/ui/table/Column"
+], function(
+		MockServer,
+		ODataModel,
+		Filter,
+		Sorter,
+		UpdateMethod,
+		ChangeReason,
+		DateTime,
+		Message,
+		MessageType,
+		DateTimeInput,
+		Label,
+		Input,
+		Table,
+		Column
+	) {
 
-<!--
-  Tested sap.ui.model.odata.ODataModel
--->
+	"use strict";
 
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>QUnit page for V2ODataModelB - sap.ui.core</title>
-<!-- Initialization -->
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-language="en-US"
-	data-sap-ui-libs="sap.ui.commons,sap.ui.table,sap.m">
-	</script>
-
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
-	media="screen" />
-<script
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-<!-- Test functions -->
-<script>
-
-	jQuery.sap.require("sap.ui.core.util.MockServer");
+	//add divs for control tests
+	var oContent = document.createElement("div");
+	oContent.id = "target1";
+	document.body.appendChild(oContent);
 
 	var sServiceUri = "/SalesOrderSrv/";
-	var sDataRootPath =  "testdata/SalesOrder/";
+	var sDataRootPath =  "test-resources/sap/ui/core/qunit/testdata/SalesOrder/";
 	var oModel, spy;
 
-	var oMockServer = new sap.ui.core.util.MockServer({
+	var oMockServer = new MockServer({
 		rootUri: sServiceUri
 	});
 
 	function initServer() {
-		oMockServer.simulate("testdata/SalesOrder/metadata.xml", sDataRootPath);
+		oMockServer.simulate("test-resources/sap/ui/core/qunit/testdata/SalesOrder/metadata.xml", sDataRootPath);
 		oMockServer.start();
 	}
 
@@ -50,17 +57,16 @@
 
 	function initModel(bJSON, sUpdateMethod) {
 		bJSON = bJSON !== false;
-		return new sap.ui.model.odata.v2.ODataModel(sServiceUri, {json: bJSON, defaultUpdateMethod : sUpdateMethod});
+		return new ODataModel(sServiceUri, {json: bJSON, defaultUpdateMethod : sUpdateMethod});
 	}
 
 	function cleanSharedData() {
-		sap.ui.model.odata.v2.ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
+		ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
 	}
 
-	/*QUnit.module("ODataModelV2 XML", {
+	QUnit.module("ODataModelV2 XML", {
 		beforeEach : function() {
 			initServer();
-			oModel = initModel(false);
 		},
 		afterEach : function() {
 			cleanSharedData();
@@ -72,6 +78,7 @@
 
 	QUnit.test("read XML", function(assert) {
 		var done = assert.async();
+		oModel = initModel(false);
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
 				success : function() {
@@ -87,7 +94,7 @@
 			});
 		};
 		oModel.attachMetadataLoaded(this, fnTest);
-	});*/
+	});
 
 	QUnit.module("ODataModelV2 JSON", {
 		beforeEach : function() {
@@ -113,7 +120,7 @@
 		var fnTest = function() {
 			assert.ok(true, "metadataloaded");
 			done();
-		}
+		};
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
 
@@ -133,7 +140,7 @@
 					assert.ok(false, "request failed");
 				}
 			});
-		}
+		};
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
 
@@ -162,7 +169,7 @@
 					assert.ok(false, "request failed");
 				}
 			});
-		}
+		};
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
 
@@ -178,7 +185,7 @@
 			}, function(){
 				assert.ok(false, "Promise rejected");
 			});
-		}
+		};
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
 
@@ -211,7 +218,7 @@
 			}, function(){
 				assert.ok(false, "oNewP2 Promise rejected");
 			});
-		}
+		};
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
 
@@ -241,7 +248,7 @@
 				sServiceUri = sTempService;
 				done();
 			});
-		}
+		};
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
 
@@ -280,7 +287,7 @@
 			}, function(){
 				assert.ok(false, "oNewP2 Promise rejected");
 			});
-		}
+		};
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
 
@@ -289,7 +296,7 @@
 		oModel = initModel();
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
-				filters : [ new sap.ui.model.Filter("ProductID", "EQ",
+				filters : [ new Filter("ProductID", "EQ",
 						"HT-1000") ],
 				success : function(oData, oResponse) {
 					assert.ok(oData.results.length === 1, "length check");
@@ -302,7 +309,7 @@
 					assert.ok(false, "request failed");
 				}
 			});
-		}
+		};
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
 
@@ -311,7 +318,7 @@
 		oModel = initModel();
 		var fnTest = function() {
 			oModel.read("/ProductSet/$count", {
-				filters : [ new sap.ui.model.Filter("ProductID", "EQ",
+				filters : [ new Filter("ProductID", "EQ",
 						"HT-1000") ],
 				success : function(oData, oResponse) {
 					assert.ok(oData === "1", "length check");
@@ -321,7 +328,7 @@
 					assert.ok(false, "request failed");
 				}
 			});
-		}
+		};
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
 
@@ -330,10 +337,10 @@
 		oModel = initModel();
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
-				sorters : [ new sap.ui.model.Sorter("ProductID", true) ],
-				filters : [ new sap.ui.model.Filter("ProductID", "EQ", "HT-1000"),
-						new sap.ui.model.Filter("ProductID", "EQ", "AD-1000"),
-						new sap.ui.model.Filter("ProductID", "EQ", "HT-1041") ],
+				sorters : [ new Sorter("ProductID", true) ],
+				filters : [ new Filter("ProductID", "EQ", "HT-1000"),
+						new Filter("ProductID", "EQ", "AD-1000"),
+						new Filter("ProductID", "EQ", "HT-1041") ],
 				success : function(oData, oResponse) {
 					assert.ok(oData.results.length === 3, "length check");
 					assert.ok(oData.results[0].ProductID === "HT-1041", "sort check");
@@ -346,7 +353,7 @@
 					assert.ok(false, "request failed");
 				}
 			});
-		}
+		};
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
 
@@ -364,7 +371,7 @@
 					done();
 				}
 			});
-		}
+		};
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
 
@@ -381,7 +388,7 @@
 					done();
 				}
 			});
-		}
+		};
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
 
@@ -399,7 +406,7 @@
 					done();
 				}
 			});
-		}
+		};
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
 
@@ -467,7 +474,7 @@
 					assert.ok(false, "request failed");
 				}
 			});
-		}
+		};
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 2 && bRead1 && bRead2) {
@@ -506,7 +513,7 @@
 					assert.ok(false, "request failed");
 				}
 			});
-		}
+		};
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 1 && bRead1 && bRead2) {
@@ -534,7 +541,7 @@
 			});
 
 			oModel.submitChanges();
-		}
+		};
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
 
@@ -566,7 +573,7 @@
 				}
 			});
 			oModel.submitChanges();
-		}
+		};
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 1 && bRead1 && bRead2) {
@@ -607,7 +614,7 @@
 				}
 			});
 			oModel.submitChanges();
-		}
+		};
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 1 && bRead1 && bRead2) {
@@ -648,7 +655,7 @@
 				}
 			});
 			oModel.submitChanges();
-		}
+		};
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 			if (iCount === 2 && bRead1 && bRead2) {
@@ -686,7 +693,7 @@
 					assert.ok(false, "request failed");
 				}
 			});
-		}
+		};
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
 
@@ -694,14 +701,14 @@
 		var done = assert.async();
 		var iCount = 0;
 		oModel = initModel();
-		var oTxt = new sap.ui.commons.TextField({
+		var oTxt = new Input({
 			value : "{Category}"
 		});
 		oTxt.placeAt("target1");
 		oTxt.setModel(oModel);
 		var fnTest = function() {
 			oTxt.bindObject("/VH_CategorySet('Headsets')");
-		}
+		};
 		var fnCheck = function() {
 			iCount++;
 			assert.ok(iCount === 1, "request performed");
@@ -709,7 +716,7 @@
 			oTxt.destroy();
 			oModel.detachBatchRequestCompleted(fnCheck);
 			done();
-		}
+		};
 
 		oModel.attachBatchRequestCompleted(this, fnCheck);
 		oModel.attachMetadataLoaded(this, fnTest);
@@ -719,7 +726,7 @@
 		var done = assert.async();
 		var iCount = 0;
 		oModel = initModel();
-		var oTxt = new sap.ui.commons.TextField({
+		var oTxt = new Input({
 			value : "{Category}"
 		});
 		oTxt.placeAt("target1");
@@ -729,7 +736,6 @@
 				batchGroupId : "myId",
 				success : function(oData, oResponse) {
 					assert.ok(true, "request succeeded");
-					bSuccess = true;
 
 					assert.equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 					// should not fire a request as data is already loaded by read above
@@ -743,7 +749,7 @@
 						oTxt.destroy();
 						oModel.detachBatchRequestCompleted(fnCheck);
 						done();
-					}
+					};
 					oModel.attachBatchRequestCompleted(
 						this, fnCheck
 					);
@@ -757,20 +763,20 @@
 	});
 
 	var initTable = function(mEntities) {
-		var oTable = new sap.ui.table.Table();
+		var oTable = new Table();
 		jQuery.each(mEntities, function(sName, oData) {
 			for (var i = 0; i <  mEntities[sName].properties; i++) {
-				oTable.addColumn(new sap.ui.table.Column().setLabel(
-					new sap.ui.commons.Label({
+				oTable.addColumn(new Column().setLabel(
+					new Label({
 						text : mEntities[sName].properties[i]
 					})).setTemplate(
-					new sap.ui.commons.TextField().bindProperty("value",
+					new Input().bindProperty("value",
 							mEntities[sName].properties[i]))
 					.setFilterProperty(mEntities[sName].properties[i]));
 			}
 		});
 		return oTable;
-	}
+	};
 
 	QUnit.test("test oDataModel listbinding with table", function(assert) {
 		var done = assert.async();
@@ -781,7 +787,7 @@
 				collection : "/VH_CategorySet",
 				properties : [ "Category" ]
 			}
-		}
+		};
 		var oTable = initTable(mEntities);
 
 		oTable.placeAt("target1");
@@ -803,7 +809,7 @@
 			assert.ok(oTable.getBinding('rows').getLength() >= 2,
 					"Category size check");
 			oTable.destroy();
-			oTable= null;
+			oTable = null;
 			oModel.detachBatchRequestCompleted(fnCheck);
 			done();
 		};
@@ -822,7 +828,7 @@
 				collection : "/VH_CategorySet",
 				properties : [ "Category" ]
 			}
-		}
+		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
 		sap.ui.getCore().applyChanges();
@@ -856,7 +862,7 @@
 				oModel.detachBatchRequestCompleted(fnCheck);
 				done();
 			}
-		}
+		};
 		oModel.attachBatchRequestCompleted(this, fnCheck);
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
@@ -871,7 +877,7 @@
 				collection : "/VH_CategorySet",
 				properties : [ "Category" ]
 			}
-		}
+		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
 		oTable.setModel(oModel);
@@ -905,7 +911,7 @@
 				oModel.detachBatchRequestCompleted(fnCheck);
 				done();
 			}
-		}
+		};
 		oModel.attachBatchRequestCompleted(this, fnCheck);
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
@@ -942,7 +948,7 @@
 				}
 			});
 			oModel.submitChanges();
-		}
+		};
 		var fnCheck = function(mArguments) {
 			iCallCount++;
 			if (iCallCount === 3 && bRead1) {
@@ -955,7 +961,7 @@
 				oModel.detachBatchRequestCompleted(fnCheck);
 				done();
 			}
-		}
+		};
 		oModel.attachBatchRequestCompleted(this, fnCheck);
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
@@ -1223,7 +1229,7 @@
 					assert.ok(false, "request failed");
 				}
 			});
-		}
+		};
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
 
@@ -1318,7 +1324,7 @@
 		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bMetadataLoaded = false;
-		var bsetProp = false;
+		var bSetProp = false;
 		oModel.setDefaultBindingMode("TwoWay");
 
 		// make request non deferred...
@@ -1328,11 +1334,11 @@
 		});
 
 		var mEntities = {
-				categories: {
-					collection: "/ProductSet",
-					properties: ["Name"]
-				}
+			categories: {
+				collection: "/ProductSet",
+				properties: ["Name"]
 			}
+		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
 
@@ -1367,21 +1373,22 @@
 		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bMetadataLoaded = false;
-		var bsetProp = false;
+		var bSetProp = false;
 		oModel.setDefaultBindingMode("TwoWay");
 		oModel.setDeferredBatchGroups(["myId"]);
 		oModel.setChangeBatchGroups({
-					"Product": {
-			 			batchGroupId: "myId",
-			  			changeSetId: "Test",
-			  			single: true
-			 		}});
-		var mEntities = {
-				categories: {
-					collection: "/ProductSet",
-					properties: ["Name"]
-				}
+			"Product": {
+				batchGroupId: "myId",
+				changeSetId: "Test",
+				single: true
 			}
+		});
+		var mEntities = {
+			categories: {
+				collection: "/ProductSet",
+				properties: ["Name"]
+			}
+		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
 
@@ -1417,22 +1424,23 @@
 		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bMetadataLoaded = false;
-		var bsetProp = false;
-		var bsetProp2 = false;
+		var bSetProp = false;
+		var bSetProp2 = false;
 		oModel.setDefaultBindingMode("TwoWay");
 		oModel.setDeferredBatchGroups(["myId"]);
 		oModel.setChangeBatchGroups({
-					"Product": {
-			 			batchGroupId: "myId",
-			  			changeSetId: "Test",
-			  			single: true
-			 		}});
-		var mEntities = {
-				categories: {
-					collection: "/ProductSet",
-					properties: ["Name"]
-				}
+			"Product": {
+				batchGroupId: "myId",
+				changeSetId: "Test",
+				single: true
 			}
+		});
+		var mEntities = {
+			categories: {
+				collection: "/ProductSet",
+				properties: ["Name"]
+			}
+		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
 
@@ -1479,22 +1487,23 @@
 		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bMetadataLoaded = false;
-		var bsetProp = false;
-		var bsetProp2 = false;
+		var bSetProp = false;
+		var bSetProp2 = false;
 		oModel.setDefaultBindingMode("TwoWay");
 		oModel.setDeferredBatchGroups(["myId"]);
 		oModel.setChangeBatchGroups({
-					"Product": {
-			 			batchGroupId: "myId",
-			  			changeSetId: "Test",
-			  			single: false
-			 		}});
-		var mEntities = {
-				categories: {
-					collection: "/ProductSet",
-					properties: ["Name"]
-				}
+			"Product": {
+				batchGroupId: "myId",
+				changeSetId: "Test",
+				single: false
 			}
+		});
+		var mEntities = {
+			categories: {
+				collection: "/ProductSet",
+				properties: ["Name"]
+			}
+		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
 
@@ -1525,7 +1534,7 @@
 					assert.equal(oParams.__batchResponses[0].__changeResponses[1].statusCode,"204", "statuscode OK");
 
 					assert.ok(!oModel.hasPendingChanges(), "Pending changes test");
-					oTable.destroy()
+					oTable.destroy();
 					oTable = null;
 					done();
 				}});
@@ -1543,11 +1552,11 @@
 		oModel.setDefaultBindingMode("TwoWay");
 
 		var mEntities = {
-				categories: {
-					collection: "/ProductSet",
-					properties: ["Name"]
-				}
+			categories: {
+				collection: "/ProductSet",
+				properties: ["Name"]
 			}
+		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
 
@@ -1667,11 +1676,12 @@
 					bRead = true;
 					oModel.setDeferredBatchGroups(["myId"]);
 					oModel.setChangeBatchGroups({
-								"Product": {
-						 			batchGroupId: "myId",
-						  			changeSetId: "Test",
-						  			single: true
-						 		}});
+						"Product": {
+							batchGroupId: "myId",
+							changeSetId: "Test",
+							single: true
+						}
+					});
 					bSetProp = oModel.setProperty("/ProductSet('HT-1000')/Name", "xy");
 					oModel.submitChanges({
 						success : function(oData, oResponse) {
@@ -1718,11 +1728,12 @@
 					bRead = true;
 					oModel.setDeferredBatchGroups(["myId"]);
 					oModel.setChangeBatchGroups({
-								"Product": {
-						 			batchGroupId: "myId",
-						  			changeSetId: "Test",
-						  			single: true
-						 		}});
+						"Product": {
+							batchGroupId: "myId",
+							changeSetId: "Test",
+							single: true
+						}
+					});
 					bSetProp = oModel.setProperty("/ProductSet('HT-1000')/Name", "xy");
 					oModel.read("/ProductSet('HT-1000')", {
 						batchGroupId : "myId",
@@ -1781,11 +1792,12 @@
 					bRead = true;
 					oModel.setDeferredBatchGroups(["myId"]);
 					oModel.setChangeBatchGroups({
-								"Product": {
-						 			batchGroupId: "myId",
-						  			changeSetId: "Test",
-						  			single: true
-						 		}});
+						"Product": {
+							batchGroupId: "myId",
+							changeSetId: "Test",
+							single: true
+						}
+					});
 					bSetProp = oModel.setProperty("/ProductSet('HT-1000')/Name", "xy");
 					bSetProp = oModel.setProperty("/ProductSet('HT-1000')/Price", "4445.6");
 					oModel.read("/ProductSet('HT-1000')", {
@@ -1934,7 +1946,6 @@
 		var iCount = 0;
 		var bRead = false;
 		var bSetProp = false;
-		var bSuccess = false;
 		oModel.setUseBatch(false);
 
 		var fnTest = function(){
@@ -2013,11 +2024,12 @@
 					bRead = true;
 					oModel.setDeferredBatchGroups(["myId"]);
 					oModel.setChangeBatchGroups({
-								"Product": {
-						 			batchGroupId: "myId",
-						  			changeSetId: "Test",
-						  			single: true
-						 		}});
+						"Product": {
+							batchGroupId: "myId",
+							changeSetId: "Test",
+							single: true
+						}
+					});
 					bSetProp = oModel.setProperty("/ProductSet('HT-1000')/Name", "xy");
 					bSetProp = oModel.setProperty("/ProductSet('HT-1000')/Price", "4445.6");
 					oModel.read("/ProductSet('HT-1000')", {
@@ -2089,7 +2101,7 @@
 		var bSetProp = false;
 		var bSuccess = false;
 
-		oModel = initModel(true, sap.ui.model.odata.UpdateMethod.Put);
+		oModel = initModel(true, UpdateMethod.Put);
 		var fnTest = function(){
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
@@ -2174,7 +2186,6 @@
 		var iCount = 0;
 		var bRead = false;
 		var bSetProp = false;
-		var bSuccess = false;
 		oModel.setUseBatch(false);
 
 		var fnTest = function(){
@@ -2239,8 +2250,7 @@
 		var iCount = 0;
 		var bRead = false;
 		var bSetProp = false;
-		var bSuccess = false;
-		oModel = initModel(true, sap.ui.model.odata.UpdateMethod.PUT);
+		oModel = initModel(true, UpdateMethod.PUT);
 		oModel.setUseBatch(false);
 
 		var fnTest = function(){
@@ -2271,7 +2281,7 @@
 					assert.ok(false, "request failed");
 				}
 			});
-		}
+		};
 
 		oModel.attachRequestCompleted(this, function(test) {
 			iCount++;
@@ -2305,7 +2315,6 @@
 		var iCount = 0;
 		var bRead = false;
 		var bRead2 = false;
-		var bSetProp = false;
 		var bSuccess = false;
 
 		oModel = initModel(true); // default should be merge
@@ -2376,7 +2385,7 @@
 					assert.ok(false, "request failed");
 				}
 			});
-		}
+		};
 
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
@@ -2400,7 +2409,7 @@
 		var bRead2 = false;
 		var bSuccess = false;
 
-		oModel = initModel(true, sap.ui.model.odata.UpdateMethod.Put);
+		oModel = initModel(true, UpdateMethod.Put);
 
 		var fnTest = function(){
 			oModel.read("/ProductSet('HT-1000')", {
@@ -2468,7 +2477,7 @@
 					assert.ok(false, "request failed");
 				}
 			});
-		}
+		};
 
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
@@ -2489,9 +2498,8 @@
 		var done = assert.async();
 		var iCount = 0;
 		var bRead = false;
-		var bSuccess = false;
 		var bUpdate = false;
-		oModel = initModel(true, sap.ui.model.odata.UpdateMethod.Merge);
+		oModel = initModel(true, UpdateMethod.Merge);
 		oModel.setUseBatch(false);
 
 		var fnTest = function(){
@@ -2522,7 +2530,7 @@
 					assert.ok(false, "request failed");
 				}
 			});
-		}
+		};
 
 		oModel.attachRequestCompleted(this, function(test) {
 			iCount++;
@@ -2553,9 +2561,8 @@
 		var done = assert.async();
 		var iCount = 0;
 		var bRead = false;
-		var bSetProp = false;
 		var bUpdate = false;
-		oModel = initModel(true, sap.ui.model.odata.UpdateMethod.Put);
+		oModel = initModel(true, UpdateMethod.Put);
 		oModel.setUseBatch(false);
 
 		var fnTest = function(){
@@ -2586,7 +2593,7 @@
 					assert.ok(false, "request failed");
 				}
 			});
-		}
+		};
 
 		oModel.attachRequestCompleted(this, function(test) {
 			iCount++;
@@ -2625,10 +2632,10 @@
 		oModel.setDeferredBatchGroups(["myId"]);
 		oModel.setChangeBatchGroups({
 			"Product": {
-	 			batchGroupId: "myId",
-	  			changeSetId: "Test",
-	  			single: true
-	 		}
+				batchGroupId: "myId",
+				changeSetId: "Test",
+				single: true
+			}
 		});
 		var fnTest = function(){
 			oContext = oModel.createEntry("/ProductSet", {properties: {
@@ -2803,7 +2810,7 @@
 
 	QUnit.test("test oDataModel 2 times createEntry and one deleteCreatedEntry", function(assert) {
 		var done = assert.async();
-		var oContext, oContext2;
+		var oContext;
 		oModel = initModel();
 		oModel.setRefreshAfterChange(false);
 		oModel.setDeferredBatchGroups(["myId"]);
@@ -2840,7 +2847,7 @@
 
 			oModel.deleteCreatedEntry(oContext);
 
-			oContext2 = oModel.createEntry("/ProductSet", {properties: {
+			oModel.createEntry("/ProductSet", {properties: {
 				"ProductID":"AD-1235",
 				"TypeCode":"AD",
 				"Category":"Computer system accessories",
@@ -2929,7 +2936,7 @@
 			assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
 			assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
 
-			assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+			assert.equal(typeof (oEvent.getParameter('ID')), "string", "Param check: id");
 			sReqId = oEvent.getParameter('ID');
 			iReqSent++;
 		});
@@ -3157,7 +3164,7 @@
 			assert.equal(oEvent.getParameter('async'), true , "Param check: async");
 			assert.equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
 
-			assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+			assert.equal(typeof (oEvent.getParameter('ID')), "string", "Param check: id");
 			sReqId = oEvent.getParameter('ID');
 			iReqSent++;
 		});
@@ -3326,7 +3333,7 @@
 			assert.equal(aRequests[2].headers.Accept, "application/json", "internal request Param check: headers");
 
 
-			assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+			assert.equal(typeof (oEvent.getParameter('ID')), "string", "Param check: id");
 			sReqId = oEvent.getParameter('ID');
 			iReqSent++;
 		});
@@ -3386,7 +3393,6 @@
 
 	QUnit.test("test eventing when using multiple requests with batch off", function(assert) {
 		var done = assert.async();
-		var bSuccess = false;
 		var sReqId1 = null;
 		var sReqId2 = null;
 		var sReqId3 = null;
@@ -3396,18 +3402,12 @@
 		oModel.setUseBatch(false);
 		var fnTest = function() {
 			oModel.read("/ProductSet('HT-1001')", {
-				success : function() {
-					bSuccess = true;
-				},
 				error : function(oError) {
 					assert.ok(false, "request failed");
 				},
 				batchGroupId: "myId1"
 			});
 			oModel.read("/ProductSet('AD-1000')", {
-				success : function() {
-					bSuccess = true;
-				},
 				error : function(oError) {
 					assert.ok(false, "request failed");
 				},
@@ -3434,21 +3434,21 @@
 				assert.ok(oEvent.getParameter('url').indexOf("HT-1000") !== -1, "Param check: url should be non batch");
 				assert.equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 				assert.equal(oEvent.getParameter('headers')['x-http-method'], "MERGE" , "Param check: method");
-				assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+				assert.equal(typeof (oEvent.getParameter('ID')), "string", "Param check: id");
 				sReqId3 = oEvent.getParameter('ID');
 			}
 
 			if (iCount1 == 2) {
 				assert.ok(oEvent.getParameter('url').indexOf("HT-1001") !== -1, "Param check: url should be non batch");
 				assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
-				assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+				assert.equal(typeof (oEvent.getParameter('ID')), "string", "Param check: id");
 				sReqId1 = oEvent.getParameter('ID');
 			}
 
 			if (iCount1 == 3) {
 				assert.ok(oEvent.getParameter('url').indexOf("AD-1000") !== -1, "Param check: url should be non batch");
 				assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
-				assert.equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+				assert.equal(typeof (oEvent.getParameter('ID')), "string", "Param check: id");
 				sReqId2 = oEvent.getParameter('ID');
 			}
 
@@ -3469,7 +3469,7 @@
 				assert.equal(oResponse.statusCode, 200, "oResponse Param check: statusCode");
 				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId1, "Check Request ID");
-				iCount2 ++;
+				iCount2++;
 			}
 
 			if (oEvent.getParameter('url').indexOf("AD-1000") !== -1) {
@@ -3480,7 +3480,7 @@
 				assert.equal(oResponse.statusCode, 200, "oResponse Param check: statusCode");
 				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId2, "Check Request ID");
-				iCount2 ++;
+				iCount2++;
 			}
 
 			if (oEvent.getParameter('url').indexOf("HT-1000") !== -1) {
@@ -3491,7 +3491,7 @@
 				assert.equal(oResponse.statusCode, 204, "oResponse Param check: statusCode");
 				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId3, "Check Request ID");
-				iCount2 ++;
+				iCount2++;
 			}
 
 
@@ -3517,23 +3517,16 @@
 
 	QUnit.test("test abort of request in batch request", function(assert) {
 		var done = assert.async();
-		var bSuccess = false;
 		var oAbort = {};
 		oModel = initModel();
 		var fnTest = function() {
 			oModel.read("/ProductSet('HT-1001')", {
-				success : function() {
-					bSuccess = true;
-				},
 				error : function(oError) {
 					assert.ok(false, "request failed");
 				},
 				batchGroupId: "myId1"
 			});
 			oAbort = oModel.read("/ProductSet('AD-1000')", {
-				success : function() {
-					bSuccess = true;
-				},
 				error : function(oError) {
 					assert.ok(true, "error callback of aborted request is called");
 				},
@@ -3552,25 +3545,18 @@
 
 	QUnit.test("test abort of deferred batch request", function(assert) {
 		var done = assert.async();
-		var bSuccess = false;
 		var oAbort = {};
 		oModel = initModel();
 		oModel.setDeferredBatchGroups([ "myId1" ]);
 
 		var fnTest = function() {
 			oModel.read("/ProductSet('HT-1001')", {
-				success : function() {
-					bSuccess = true;
-				},
 				error : function(oError) {
 					assert.ok(true, "error callback of aborted request is called");
 				},
 				batchGroupId: "myId1"
 			});
 			oModel.read("/ProductSet('AD-1000')", {
-				success : function() {
-					bSuccess = true;
-				},
 				error : function(oError) {
 					assert.ok(true, "error callback of aborted request is called");
 				},
@@ -3606,7 +3592,7 @@
 				},
 				error : function(oError) {
 					assert.ok(false, "request failed");
-				},
+				}
 			});
 			oAbort = oModel.read("/ProductSet('AD-1000')", {
 				success : function() {
@@ -3614,7 +3600,7 @@
 				},
 				error : function(oError) {
 					assert.ok(true, "error callback of aborted request is called");
-				},
+				}
 			});
 			oAbort.abort();
 		};
@@ -3631,13 +3617,12 @@
 		});
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
+
 	QUnit.test("test oDataModel checkupdate/dataReceived event order", function(assert) {
 		var done = assert.async();
 		var iCount = 0;
 		var iChange = 0;
 		var iReceived = 0;
-		var bRead1 = false;
-		var bRead2 = false;
 		var oInput1, oInput2;
 		oModel = initModel();
 		oInput1 = new sap.m.Input();
@@ -3647,18 +3632,18 @@
 
 		var fnChange = function(oEvent) {
 			iChange++;
-		}
+		};
 		var fnDataReceived = function(oEvent) {
 			assert.ok(iChange == 2, "checkupdate done");
 			iReceived++;
 			if (iReceived == 2) {
 				assert.ok(true, "dataReceived after checkUpdate");
 			}
-		}
+		};
 		var fnTest = function() {
 			oInput1.bindElement({path:"/ProductSet('AD-1000')", batchGroupId:1, events:{change: fnChange, dataReceived: fnDataReceived}});
 			oInput2.bindElement({path:"/ProductSet('HT-1000')", batchGroupId:1, events:{change: fnChange, dataReceived: fnDataReceived}});
-		}
+		};
 
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
@@ -3676,7 +3661,6 @@
 		var done = assert.async();
 		var iCount = 0;
 		var iChange = 0;
-		var iReceived = 0;
 		var oInput1, oInput2;
 		oModel = initModel();
 		oInput1 = new sap.m.Input();
@@ -3692,10 +3676,10 @@
 				oInput2.destroy();
 				done();
 			}
-		}
+		};
 		var fnDataReceived = function(oEvent) {
 			assert.ok(false, "no data retrieval necessary");
-		}
+		};
 		var fnTest = function() {
 			oModel.read("/ProductSet('AD-1000')", {
 				batchGroupId : "myId1",
@@ -3734,18 +3718,18 @@
 		});
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
+
 	QUnit.test("test oDataModel listbinding with table - event order change/dataReceived", function(assert) {
 		var done = assert.async();
-		var iCount = 0,
-			iChange = 0,
+		var iChange = 0,
 			iReceived = 0;
 		oModel = initModel();
 		var mEntities = {
-				categories: {
-					collection: "/VH_CategorySet",
-					properties: ["Category"]
-				}
+			categories: {
+				collection: "/VH_CategorySet",
+				properties: ["Category"]
 			}
+		};
 		var oTable = initTable(mEntities);
 
 		oTable.placeAt("target1");
@@ -3754,14 +3738,14 @@
 
 		var fnChange = function(oEvent) {
 			iChange++;
-		}
+		};
 		var fnDataReceived = function(oEvent) {
 			assert.ok(iChange == 1, "checkupdate done");
 			iReceived++;
 			if (iReceived == 1) {
 				assert.ok(true, "dataReceived after checkUpdate");
 			}
-		}
+		};
 
 		var fnTest = function(){
 			oTable.bindRows({path:mEntities.categories.collection, events:{change: fnChange, dataReceived: fnDataReceived}});
@@ -3770,9 +3754,9 @@
 				oTable.destroy();
 				oTable = null;
 				done();
-			}
+			};
 			oModel.attachBatchRequestCompleted(this, fnCheck);
-		}
+		};
 		oModel.attachMetadataLoaded(this, fnTest);
 
 	});
@@ -3784,11 +3768,11 @@
 			iReceived = 0;
 		oModel = initModel();
 		var mEntities = {
-				categories: {
-					collection: "/VH_CategorySet",
-					properties: ["Category"]
-				}
+			categories: {
+				collection: "/VH_CategorySet",
+				properties: ["Category"]
 			}
+		};
 		var oTable = initTable(mEntities);
 
 		oTable.placeAt("target1");
@@ -3797,7 +3781,7 @@
 
 		var fnChange = function(oEvent) {
 			iChange++;
-		}
+		};
 		var fnDataReceived = function(oEvent) {
 			assert.ok(iChange == 1, "checkupdate done");
 			iReceived++;
@@ -3806,7 +3790,7 @@
 				oTable.destroy();
 				oTable = null;
 			}
-		}
+		};
 
 		var fnTest = function(){
 			oTable.bindRows({path:mEntities.categories.collection, events:{change: fnChange, dataReceived: fnDataReceived}});
@@ -3820,7 +3804,7 @@
 				} else {
 					assert.ok(false, "too many requests");
 				}
-			}
+			};
 			oModel.attachBatchRequestCompleted(this, fnCheck);
 		};
 
@@ -3840,16 +3824,16 @@
 	});
 	QUnit.test("test oDataModel createEntry, submit fails, change again and submit", function(assert) {
 		var done = assert.async();
-		var iCount = 0;
 		var oContext;
 		oModel = initModel();
 		oModel.setDeferredBatchGroups(["myId"]);
 		oModel.setChangeBatchGroups({
-					"Product": {
-			 			batchGroupId: "myId",
-			  			changeSetId: "Test",
-			  			single: false
-			 		}});
+			"Product": {
+				batchGroupId: "myId",
+				changeSetId: "Test",
+				single: false
+			}
+		});
 
 		var fnChange = function() {
 			oModel.setProperty("TypeCode","AD", oContext);
@@ -3962,7 +3946,7 @@
 			oModel.callFunction("/SalesOrder_Confirm",{
 				method: "POST",
 				urlParameters: mUrlParams
-			})
+			});
 		};
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
@@ -3982,14 +3966,14 @@
 			"SalesOrderID": "test",
 			"$expand": "ToBusinessPartner",
 			"sap-some": "sapTest"
-		}
+		};
 
 		oModel = initModel();
 		var fnTest = function() {
 			oModel.callFunction("/SalesOrder_Confirm",{
 				method: "POST",
 				urlParameters: mUrlParams
-			})
+			});
 		};
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
@@ -4004,8 +3988,6 @@
 
 	QUnit.test("test oDataModel binding function import parameters deferred", function(assert) {
 		var done = assert.async();
-		var iCount = 0;
-		var oContext;
 		oModel = initModel();
 
 		oModel.setDefaultBindingMode("TwoWay");
@@ -4017,7 +3999,7 @@
 				urlParameters: {"SalesOrderID": "test"}
 			});
 
-			oInput = new sap.m.Input();
+			var oInput = new sap.m.Input();
 			oInput.bindValue("SalesOrderID");
 			oInput.setModel(oModel);
 
@@ -4044,8 +4026,6 @@
 
 	QUnit.test("test oDataModel binding function import parameters not deferred", function(assert) {
 		var done = assert.async();
-		var iCount = 0;
-		var oContext;
 		var oHandle;
 		var oInput;
 		oModel = initModel();
@@ -4090,8 +4070,6 @@
 
 	QUnit.test("test oDataModel binding function import parameters result check error", function(assert) {
 		var done = assert.async();
-		var iCount = 0;
-		var oContext;
 		oModel.setDefaultBindingMode("TwoWay");
 
 		var fnTest = function(){
@@ -4101,7 +4079,7 @@
 				urlParameters: {"SalesOrderID": "test"}
 			});
 
-			oInput = new sap.m.Input();
+			var oInput = new sap.m.Input();
 			oInput.bindValue("SalesOrderID");
 			oInput.setModel(oModel);
 
@@ -4116,7 +4094,7 @@
 			}, function() {
 				assert.ok(false, "Test failed");
 			});
-		}
+		};
 
 		oModel.attachRequestCompleted(this, function(oEventInfo) {
 			assert.ok(!oEventInfo.getParameter("success"), "request should have failed!");
@@ -4145,7 +4123,6 @@
 	QUnit.test("test oDataModel refresh default batchGroup", function(assert) {
 		var done = assert.async();
 		var iCount = 0;
-		var oContext;
 		oModel = initModel();
 		var mEntities = [
 			{
@@ -4206,7 +4183,7 @@
 					}
 				});
 			}
-		}
+		};
 		oModel.attachBatchRequestCompleted(this, test1);
 
 		oModel.attachMetadataLoaded(this, function() {
@@ -4217,7 +4194,6 @@
 	QUnit.test("test oDataModel refresh in one batchGroup", function(assert) {
 		var done = assert.async();
 		var iCount = 0;
-		var oContext;
 		oModel = initModel();
 		var mEntities = [
 			{
@@ -4276,7 +4252,7 @@
 					}
 				});
 			}
-		}
+		};
 		oModel.attachBatchRequestCompleted(this, test1);
 
 		oModel.attachMetadataLoaded(this, function() {
@@ -4287,7 +4263,6 @@
 	QUnit.test("test ListBindingRefresh with batchGroup of binding info", function(assert) {
 		var done = assert.async();
 		var iCount = 0;
-		var oContext;
 		oModel = initModel();
 		var mEntities = [
 			{
@@ -4349,7 +4324,7 @@
 					}
 				});
 			}
-		}
+		};
 		oModel.attachBatchRequestCompleted(this, test1);
 
 		oModel.attachMetadataLoaded(this, function() {
@@ -4359,7 +4334,6 @@
 	QUnit.test("test ListBindingRefresh passing a batchGroup", function(assert) {
 		var done = assert.async();
 		var iCount = 0;
-		var oContext;
 		oModel = initModel();
 		var mEntities = [
 			{
@@ -4419,7 +4393,7 @@
 					}
 				});
 			}
-		}
+		};
 		oModel.attachBatchRequestCompleted(this, test1);
 
 		oModel.attachMetadataLoaded(this, function() {
@@ -4430,7 +4404,6 @@
 	QUnit.test("test refresh ContextBinding", function(assert) {
 		var done = assert.async();
 		var iCount = 0;
-		var oContext;
 		oModel = initModel();
 		var mEntities = [
 			{
@@ -4492,7 +4465,7 @@
 					}
 				});
 			}
-		}
+		};
 		oModel.attachBatchRequestCompleted(this, test1);
 
 		oModel.attachMetadataLoaded(this, function() {
@@ -4503,7 +4476,6 @@
 	QUnit.test("test refresh ContextBinding", function(assert) {
 		var done = assert.async();
 		var iCount = 0;
-		var oContext;
 		oModel = initModel();
 		var mEntities = [
 			{
@@ -4567,7 +4539,7 @@
 					}
 				});
 			}
-		}
+		};
 		oModel.attachBatchRequestCompleted(this, test1);
 
 		oModel.attachMetadataLoaded(this, function() {
@@ -4578,10 +4550,8 @@
 	QUnit.test("test oDataModel OneTime bindings with bindObject and resolve checks", function(assert) {
 		var done = assert.async();
 		var iCount = 0;
-		var oContext;
 		oModel = initModel();
-		var iCount = 0;
-		var oTxt = new sap.ui.commons.TextField();
+		var oTxt = new Input();
 		oTxt.bindValue({path: "Category", mode: 'OneTime'});
 		oTxt.placeAt("target1");
 		oModel.setUseBatch(true);
@@ -4602,7 +4572,7 @@
 			oTxt.destroy();
 			oModel.detachBatchRequestCompleted(fnCheck);
 			done();
-		}
+		};
 
 		var fnTest = function() {
 			oTxt.bindObject("/VH_CategorySet('Headsets')");
@@ -4613,18 +4583,4 @@
 			fnTest();
 		});
 	});
-
-	</script>
-
-</head>
-<body>
-<h1 id="qunit-header">QUnit tests: Data binding OData Model (V2)</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-<br>
-<div id="target1"></div>
-<div id="target2"></div>
-</body>
-</html>
+});
