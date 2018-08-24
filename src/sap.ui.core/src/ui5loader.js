@@ -1632,6 +1632,7 @@
 			if ( sResourceName != null ) {
 				var oModule = Module.get(sResourceName);
 				oModule.state = LOADING;
+				oModule.async = true;
 			}
 			return;
 		}
