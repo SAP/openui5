@@ -71,7 +71,7 @@
 					<ObjectIdentifier
 						title="{typeOfApp}"
 						text="{currentStatus}" />
-					<core:Icon src="{icon}" class="sapUiListTableIconSize" />
+					<core:Icon src="{icon}" tooltip="{iconText}" class="sapUiListTableIconSize" />
 					<ObjectIdentifier
 						title="{title}"
 						text="{subTitle}" />
