@@ -1521,7 +1521,18 @@ function(
 			}
 
 			if (header) {
-				labels.unshift(header.getId());
+				var aTitles = header.findAggregatedObjects(true, function(oObject) {
+					return oObject.isA("sap.m.Title");
+				});
+
+				// if there are titles in the header, add all of them to labels, else use the full header
+				if (aTitles.length) {
+					labels = aTitles.map(function (oTitle) {
+						return oTitle.getId();
+					}).concat(labels);
+				} else {
+					labels.unshift(header.getId());
+				}
 			}
 
 			return labels;
