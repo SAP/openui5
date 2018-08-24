@@ -2057,6 +2057,16 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 	width: calc(100% - 2rem);
 }
 
+/* Avoiding unwanted scroll bar of the sapMMsgStripMessage */
+.specialListsMessageStrip > .sapMMsgStripMessage {
+	max-height: none;
+}
+
+/* Avoiding unwanted lower layout of the sapMLnk */
+.specialListsMessageStrip > .sapMMsgStripMessage > .sapMFT > .sapMLnk {
+	vertical-align: inherit;
+}
+
 .sapUiMedia-Std-Desktop .specialListsMessageStrip,
 .sapUiMedia-StdExt-LargeDesktop .specialListsMessageStrip {
 	width: calc(100% - 3rem);
