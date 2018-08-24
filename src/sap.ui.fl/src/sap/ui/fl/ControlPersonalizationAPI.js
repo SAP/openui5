@@ -178,7 +178,7 @@ sap.ui.define([
 			return Promise.resolve()
 				.then( function () {
 						if (typeof vElement === 'string' || vElement instanceof String) {
-							oElement = sap.ui.getCore().getComponent(vElement);
+							oElement = Component.get(vElement);
 
 							if (!(oElement instanceof Component)) {
 								oElement = sap.ui.getCore().byId(vElement);

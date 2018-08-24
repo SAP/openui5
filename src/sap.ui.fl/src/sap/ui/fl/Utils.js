@@ -437,7 +437,7 @@ sap.ui.define([
 		_getComponent: function (sComponentId) {
 			var oComponent;
 			if (sComponentId) {
-				oComponent = sap.ui.getCore().getComponent(sComponentId);
+				oComponent = Component.get(sComponentId);
 			}
 			return oComponent;
 		},

@@ -6,11 +6,9 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/ChangePersistence",
-	"sap/base/Log"
-], function(Component, FlexControllerFactory, Utils, LrepConnector, ChangePersistenceFactory, ChangePersistence, Log) {
+	"sap/ui/fl/ChangePersistence"
+], function(Component, FlexControllerFactory, Utils, ChangePersistenceFactory, ChangePersistence) {
 	"use strict";
 
 	/**
@@ -49,7 +47,7 @@ sap.ui.define([
 			// align view id attribute with the js processing (getting the id passed in "viewId" instead of "id"
 			mProperties.viewId = mProperties.id;
 
-			var oComponent = sap.ui.getCore().getComponent(mProperties.componentId);
+			var oComponent = Component.get(mProperties.componentId);
 
 			if (!oComponent) {
 				Utils.log.warning("View is generated without a component. Flexibility features are not possible.");
@@ -94,7 +92,7 @@ sap.ui.define([
 	 * @public
 	 */
 	XmlPreprocessorImpl.getCacheKey = function(mProperties) {
-		var oComponent = sap.ui.getCore().getComponent(mProperties.componentId);
+		var oComponent = Component.get(mProperties.componentId);
 		var oOuterAppComponent = Utils.getAppComponentForControl(oComponent, true);
 
 		// no caching possible with startup parameter based variants
