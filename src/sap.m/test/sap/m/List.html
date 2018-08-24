@@ -121,8 +121,8 @@ html[dir=rtl] .SmallPaddingBegin {
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
