@@ -421,6 +421,66 @@ function(
 			assert.ok(fnUpdateChangesForVariantManagementInMap.calledOnce, "then '_updateChangesForVariantManagementInMap' of VariantController called");
 		});
 
+		QUnit.test("when calling '_setVariantProperties' for 'setDefault' with different current and default variants, in UI adaptation mode", function(assert) {
+			var mPropertyBag = {
+				"changeType" : "setDefault",
+				"defaultVariant" : "variant1",
+				"layer" : "CUSTOMER",
+				"variantManagementReference" : "variantMgmtId1",
+				"appComponent" : this.oComponent,
+				"change" : { getDefinition : function() {} }
+			};
+			sandbox.stub(this.oModel.oVariantController, "_updateChangesForVariantManagementInMap").returns(1);
+			sandbox.stub(VariantUtil, "getCurrentHashParamsFromRegister").returns([]);
+			sandbox.stub(this.oFlexController._oChangePersistence, "addDirtyChange");
+			sandbox.stub(this.oModel, "updateHasherEntry");
+
+			// set adaptation mode true
+			this.oModel._bAdaptationMode = true;
+
+			// mock current variant id to make it different
+			this.oModel.oData["variantMgmtId1"].currentVariant = "variantCurrent";
+
+			// mock variant controller data
+			this.oModel.oVariantController._mVariantManagement = {};
+			this.oModel.oVariantController._mVariantManagement["variantMgmtId1"] = {defaultVariant : this.oData["variantMgmtId1"].defaultVariant};
+
+			this.oModel._setVariantProperties("variantMgmtId1", mPropertyBag, true);
+			assert.ok( this.oModel.updateHasherEntry.calledWithExactly({
+				parameters: [this.oModel.oData["variantMgmtId1"].currentVariant],
+				updateURL: !this.oModel._bAdaptationMode
+			}), "then the 'updateHasherEntry' called with the current variant id as a parameter in UI adaptation mode");
+		});
+
+		QUnit.test("when calling '_setVariantProperties' for 'setDefault' with same current and default variants, in personalization mode", function(assert) {
+			var mPropertyBag = {
+				"changeType" : "setDefault",
+				"defaultVariant" : "variant1",
+				"layer" : "CUSTOMER",
+				"variantManagementReference" : "variantMgmtId1",
+				"appComponent" : this.oComponent,
+				"change" : { getDefinition : function() {} }
+			};
+			sandbox.stub(this.oModel.oVariantController, "_updateChangesForVariantManagementInMap").returns(1);
+			// current variant already exists in hash parameters
+			sandbox.stub(VariantUtil, "getCurrentHashParamsFromRegister").returns([this.oData["variantMgmtId1"].currentVariant]);
+			sandbox.stub(this.oFlexController._oChangePersistence, "addDirtyChange");
+			sandbox.stub(this.oModel, "updateHasherEntry");
+
+			// set adaptation mode false
+			this.oModel._bAdaptationMode = false;
+
+			// mock variant controller data
+			this.oModel.oVariantController._mVariantManagement = {};
+			this.oModel.oVariantController._mVariantManagement["variantMgmtId1"] = {defaultVariant : this.oData["variantMgmtId1"].defaultVariant};
+
+			this.oModel._setVariantProperties("variantMgmtId1", mPropertyBag, true);
+			assert.ok( this.oModel.updateHasherEntry.calledWithExactly({
+				parameters: [],
+				updateURL: !this.oModel._bAdaptationMode
+			}), "then the 'updateHasherEntry' called without the current variant id as a parameter in personalization mode");
+		});
+
 		QUnit.test("when calling 'updateCurrentVariant' with root app component", function(assert) {
 			var fnUpdateCurrentVariantInMapStub = sandbox.stub(this.oModel.oVariantController, "updateCurrentVariantInMap");
 
