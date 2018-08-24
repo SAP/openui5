@@ -294,15 +294,23 @@ function(
 	 * Checks the Aggregations on the Overlay for a specific Action
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay overlay to be checked for action
 	 * @param {string} sAction action to be checked
+	 * @param {string} [sParentAggregationName] the aggregation in the parent where the element is
 	 * @return {boolean} whether the Aggregation has a valid Action
 	 * @protected
 	 */
-	BasePlugin.prototype.checkAggregationsOnSelf = function (oOverlay, sAction) {
+	BasePlugin.prototype.checkAggregationsOnSelf = function (oOverlay, sAction, sParentAggregationName) {
 		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 		var oElement = oOverlay.getElement();
 		var bIsEditable = false;
 
-		var oAction = oDesignTimeMetadata.getActionDataFromAggregations(sAction, oOverlay.getElement())[0];
+		var aActionData = oDesignTimeMetadata.getActionDataFromAggregations(sAction, oOverlay.getElement());
+		var oAction = aActionData.filter(function(oActionData){
+			if (oActionData && sParentAggregationName){
+				return oActionData.aggregation === sParentAggregationName;
+			} else {
+				return true;
+			}
+		})[0];
 		var sChangeType = oAction ? oAction.changeType : null;
 		var bChangeOnRelevantContainer = oAction && oAction.changeOnRelevantContainer;
 		if (bChangeOnRelevantContainer) {

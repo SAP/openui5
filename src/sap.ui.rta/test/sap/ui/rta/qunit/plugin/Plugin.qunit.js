@@ -436,6 +436,21 @@ function (
 
 			assert.notOk(this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, undefined), "then it returns false");
 		});
+
+		QUnit.test("when DesignTimeMetadata has no actions but aggregations with actions and checkAggregationsOnSelf method is called with the aggregation name", function(assert) {
+			this.oFormOverlay.setDesignTimeMetadata({
+				aggregations : {
+					formContainers : {
+						actions : {
+							changeType: "addGroup"
+						}
+					}
+				}
+			});
+
+			assert.ok(this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, "changeType", "formContainers"), "then it returns true for the correct aggregation");
+			assert.notOk(this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, "changeType", "dummyAggregation"), "then it returns false for another aggregation");
+		});
 	});
 
 	QUnit.module("Given the Plugin is initialized.", {
