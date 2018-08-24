@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,expect,browser*/
+/*global describe,it,element,by,takeScreenshot,expect*/
 
 describe('sap.f.FlexibleColumnLayout', function() {
 	'use strict';
@@ -12,8 +12,5 @@ describe('sap.f.FlexibleColumnLayout', function() {
 
 		oButton.click();
 		expect(takeScreenshot(oButton)).toLookAs('fcl_busy');
-		browser.executeScript(function(){
-			sap.ui.getCore().byId('fcl').setBusy(false);
-		});
 	});
 });
