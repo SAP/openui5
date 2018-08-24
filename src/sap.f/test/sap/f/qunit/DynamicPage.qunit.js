@@ -342,6 +342,13 @@
 		}
 	});
 
+	// BCP: 1880276579 - tests if initially snapped header is excluded from tab chain
+	QUnit.test("DynamicPage headerExpanded=false header excluded from tab chain", function (assert) {
+		var $oDynamicPageHeader = this.oDynamicPage.getHeader().$();
+
+		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be excluded from the tab chain");
+	});
+
 	QUnit.test("DynamicPage headerExpanded=false pin button visibility", function (assert) {
 		var $oPinButton = this.oDynamicPage.getHeader()._getPinButton().$();
 
