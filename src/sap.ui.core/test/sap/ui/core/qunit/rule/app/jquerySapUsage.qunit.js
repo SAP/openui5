@@ -1,5 +1,5 @@
 /*global QUnit testRule*/
-sap.ui.define(function() {
+sap.ui.define(["test-resources/sap/ui/support/TestHelper"], function(TestHelper) {
 	"use strict";
 
 	QUnit.module("sap.ui.core jquerySapUsage rule tests", {
@@ -9,8 +9,6 @@ sap.ui.define(function() {
 					resolve();
 				});
 			});
-		},
-		afterEach: function() {
 		}
 	});
 
