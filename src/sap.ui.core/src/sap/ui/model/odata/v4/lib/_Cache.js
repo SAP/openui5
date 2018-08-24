@@ -1034,8 +1034,8 @@ sap.ui.define([
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
 	 * @param {function} [fnDataRequested]
-	 *   The function is called just before the back-end request is sent.
-	 *   If no back-end request is needed, the function is not called.
+	 *   The function is called just before the back-end request is sent; unused in CollectionCache
+	 *   since no request will be created
 	 * @param {object} [oListener]
 	 *   An optional change listener that is added for the given path. Its method
 	 *   <code>onChange</code> is called with the new value if the property at that path is modified

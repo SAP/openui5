@@ -95,7 +95,7 @@ sap.ui.define([], function () {
 		 * the resulting "$apply" is extended: ".../concat(aggregate(&lt;alias> with min as
 		 * UI5min__&lt;alias>,&lt;alias> with max as UI5max__&lt;alias>,...),identity)". Grand
 		 * total values are requested in the same way, but as a custom aggregate without alias or
-		 * method.
+		 * method; they are requested only if no <code>mQueryOptions.$skip</code> is given.
 		 * If <code>mQueryOptions.$skip</code> is given, it is inserted as a transformation:
 		 * ".../skip(&lt;mQueryOptions.$skip>))". Same for <code>mQueryOptions.$top</code>.
 		 * Unnecessary transformations like "identity/" or "skip(0)" are actually avoided.
@@ -112,6 +112,8 @@ sap.ui.define([], function () {
 		 *   A map from aggregatable property names or aliases to objects containing the following
 		 *   details:
 		 *   <ul>
+		 *   <li><code>grandTotal</code>: An optional boolean that tells whether a grand total for
+		 *     this aggregatable property is needed (since 1.59.0)
 		 *   <li><code>min</code>: An optional boolean that tells whether the minimum value
 		 *     (ignoring currencies or units of measure) for this aggregatable property is needed
 		 *   <li><code>max</code>: An optional boolean that tells whether the maximum value
