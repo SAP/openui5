@@ -138,7 +138,7 @@ sap.ui.define([
 			if (!oVariantModel) {
 				//technical parameters are not updated, only URL hash is updated
 				Utils.setTechnicalURLParameterValues(undefined, VARIANT_TECHNICAL_PARAMETER_NAME, aUrlParameters);
-				return Utils.log.error("Variant model could not be found on the provided control");
+				return Utils.log.warning("Variant model could not be found on the provided control");
 			}
 
 			//check if variant for the passed variant management control is present
