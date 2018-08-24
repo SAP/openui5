@@ -21,6 +21,17 @@
 				autoRespondAfter: iAutoRespond
 			});
 
+			var fnGetDataPromise = function(oView){
+				return new Promise(function (resolve, reject) {
+					oView.bindElement({
+						path: "/Headers(AccountingDocument='100015012',CompanyCode='0001',FiscalYear='2015')",
+						events: {
+							dataReceived: resolve
+						}
+					});
+				});
+			};
+
 			for (var property in oDataSources) {
 				if (oDataSources.hasOwnProperty(property)) {
 					dataSource = oDataSources[property];
@@ -69,8 +80,8 @@
 							var oStateModel = new sap.ui.model.json.JSONModel();
 							oStateModel.setData(data);
 							oView.setModel(oStateModel, "state");
-							oView.bindElement("/Headers(AccountingDocument='100015012',CompanyCode='0001',FiscalYear='2015')");
 
+							this._dataPromise = fnGetDataPromise(oView);
 						}
 					} else {
 						jQuery.sap.log.error("Running the app with mock data for " + property);
@@ -108,6 +119,10 @@
 				oRta.destroy();
 			});
 			oRta.start();
+		},
+
+		isDataReady: function () {
+			return this._dataPromise;
 		}
 
 	});
