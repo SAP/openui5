@@ -4875,6 +4875,36 @@
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("focusin triggers tokenizer scrolling only once", function(assert) {
+		// arrange
+		var done = assert.async(),
+			oMultiComboBox = new sap.m.MultiComboBox({
+				selectedKeys: ["Item1", "Item2"],
+				items: [
+					new sap.ui.core.Item({key: "Item1", text: "Item1"}),
+					new sap.ui.core.Item({key: "Item2", text: "Item2"})
+				]
+			}), oTokenizer = oMultiComboBox._oTokenizer,
+				oSpy;
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		oSpy = this.spy(oMultiComboBox._oTokenizer, "scrollToEnd");
+		oTokenizer.getTokens()[0].focus();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		setTimeout(function(){
+			assert.ok(oSpy.calledOnce, "Tokenizer's scrollToEnd should be called one onfocusin.");
+			done();
+			oMultiComboBox.destroy();
+		}, 0);
+
+		this.clock.tick();
+
+	});
+
 	QUnit.module("Accessibility");
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
