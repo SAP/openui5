@@ -752,8 +752,28 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bCanceled) {
-		QUnit.test("_Cache#update: " + (bCanceled ? "canceled" : "success"), function (assert) {
+	[{
+		bCanceled : false,
+		sEntityPath : "path/to/entity"
+	}, {
+		bCanceled : false,
+		sEntityPath : "('42')/path/to/entity"
+	}, {
+		bCanceled : false,
+		sEntityPath : ""
+	}, {
+		bCanceled : true,
+		sEntityPath : "path/to/entity"
+	}, {
+		bCanceled : true,
+		sEntityPath : ""
+	}].forEach(function (oFixture) {
+		var bCanceled = oFixture.bCanceled,
+			sEntityPath = oFixture.sEntityPath,
+			sTitle = "_Cache#update: " + (bCanceled ? "canceled" : "success")
+				+ ", entity path: " + sEntityPath;
+
+		QUnit.test(sTitle, function (assert) {
 			var mQueryOptions = {},
 				oCache = new _Cache(this.oRequestor, "BusinessPartnerList",
 					mQueryOptions, true),
@@ -776,15 +796,19 @@ sap.ui.require([
 				oPatchPromise = bCanceled ? Promise.reject(oError) : Promise.resolve(oPatchResult),
 				oRequestCall,
 				oStaticCacheMock = this.mock(_Cache),
+				mTypeForMetaPath = {},
 				oUpdateData = {};
 
 			oError.canceled = bCanceled;
 			oCache.fetchValue = function () {};
 			this.mock(oGroupLock).expects("getUnlockedCopy").returns(oGroupLockClone);
 			oCacheMock.expects("fetchValue")
-				.withExactArgs(sinon.match.same(oGroupLockClone), "path/to/entity")
+				.withExactArgs(sinon.match.same(oGroupLockClone), sEntityPath)
 				.returns(SyncPromise.resolve(oEntity));
-			oHelperMock.expects("buildPath").withExactArgs("path/to/entity", "Address/City")
+			oCacheMock.expects("fetchTypes")
+				.withExactArgs()
+				.returns(SyncPromise.resolve(mTypeForMetaPath));
+			oHelperMock.expects("buildPath").withExactArgs(sEntityPath, "Address/City")
 				.returns(sFullPath);
 			this.oRequestorMock.expects("buildQueryString")
 				.withExactArgs("/BusinessPartnerList", sinon.match.same(mQueryOptions), true)
@@ -793,7 +817,7 @@ sap.ui.require([
 				.withExactArgs(["Address", "City"], "Walldorf")
 				.returns(oUpdateData);
 			oHelperMock.expects("updateCache")
-				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path/to/entity",
+				.withExactArgs(sinon.match.same(oCache.mChangeListeners), sEntityPath,
 					sinon.match.same(oEntity), sinon.match.same(oUpdateData));
 			oRequestCall = this.oRequestorMock.expects("request")
 				.withExactArgs("PATCH", "/~/BusinessPartnerList('0')?foo=bar",
@@ -805,13 +829,27 @@ sap.ui.require([
 				.withExactArgs(sinon.match.same(oCache.mPatchRequests), sFullPath,
 					sinon.match.same(oPatchPromise));
 			oPatchPromise.then(function () {
+				var sMetaPath = {/* {string} result of _Helper.getMetaPath(...)*/},
+					sPath = {/* {string} result of _Helper.buildPath(...)*/};
+
 				oCacheMock.expects("removeByPath")
 					.withExactArgs(sinon.match.same(oCache.mPatchRequests), sFullPath,
 						sinon.match.same(oPatchPromise));
+				oHelperMock.expects("buildPath")
+					.withExactArgs("/BusinessPartnerList", sEntityPath)
+					.returns(sPath);
+				oHelperMock.expects("getMetaPath")
+					.withExactArgs(sinon.match.same(sPath))
+					.returns(sMetaPath);
+				oCacheMock.expects("visitResponse")
+					.withExactArgs(sinon.match.same(oPatchResult),
+						sinon.match.same(mTypeForMetaPath), false, sinon.match.same(sMetaPath),
+						sEntityPath);
 				oHelperMock.expects("updateCache")
-					.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path/to/entity",
+					.withExactArgs(sinon.match.same(oCache.mChangeListeners), sEntityPath,
 						sinon.match.same(oEntity), sinon.match.same(oPatchResult));
 			}, function () {
+				oCacheMock.expects("visitResponse").never();
 				oCacheMock.expects("removeByPath").twice()
 					.withExactArgs(sinon.match.same(oCache.mPatchRequests), sFullPath,
 						sinon.match.same(oPatchPromise));
@@ -819,14 +857,14 @@ sap.ui.require([
 					.withExactArgs(["Address", "City"], "Heidelberg")
 					.returns(oOldData);
 				oHelperMock.expects("updateCache")
-					.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path/to/entity",
+					.withExactArgs(sinon.match.same(oCache.mChangeListeners), sEntityPath,
 						sinon.match.same(oEntity), sinon.match.same(oOldData));
 				oRequestCall.args[0][6](); // call onCancel
 			});
 
 			// code under test
 			return oCache.update(oGroupLock, "Address/City", "Walldorf", fnError,
-					"/~/BusinessPartnerList('0')", "path/to/entity")
+					"/~/BusinessPartnerList('0')", sEntityPath)
 				.then(function (oResult) {
 					sinon.assert.notCalled(fnError);
 					assert.strictEqual(bCanceled, false);
@@ -926,6 +964,7 @@ sap.ui.require([
 						"City" : "Heidelberg"
 					}
 				},
+				sEntityPath = "path/to/entity",
 				fnError = this.spy(),
 				oError1 = new Error(),
 				oError2 = new Error(),
@@ -941,15 +980,19 @@ sap.ui.require([
 					: Promise.resolve(oPatchResult),
 				oRequestCall,
 				oStaticCacheMock = this.mock(_Cache),
+				mTypeForMetaPath = {},
 				oUpdateData = {},
 				that = this;
 
 			oError2.canceled = true;
 			oCache.fetchValue = function () {};
 			oCacheMock.expects("fetchValue")
-				.withExactArgs(new _GroupLock("group"), "path/to/entity")
+				.withExactArgs(new _GroupLock("group"), sEntityPath)
 				.returns(SyncPromise.resolve(oEntity));
-			oHelperMock.expects("buildPath").withExactArgs("path/to/entity", "Address/City")
+			oCacheMock.expects("fetchTypes")
+				.withExactArgs()
+				.returns(SyncPromise.resolve(mTypeForMetaPath));
+			oHelperMock.expects("buildPath").withExactArgs(sEntityPath, "Address/City")
 				.returns(sFullPath);
 			this.oRequestorMock.expects("buildQueryString")
 				.withExactArgs("/BusinessPartnerList", sinon.match.same(mQueryOptions), true)
@@ -958,7 +1001,7 @@ sap.ui.require([
 				.withExactArgs(["Address", "City"], "Walldorf")
 				.returns(oUpdateData);
 			oHelperMock.expects("updateCache")
-				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path/to/entity",
+				.withExactArgs(sinon.match.same(oCache.mChangeListeners), sEntityPath,
 					sinon.match.same(oEntity), sinon.match.same(oUpdateData));
 			this.oRequestorMock.expects("request")
 				.withExactArgs("PATCH", "/~/BusinessPartnerList('0')?foo=bar",
@@ -984,11 +1027,24 @@ sap.ui.require([
 					.withExactArgs(sinon.match.same(oCache.mPatchRequests), sFullPath,
 						sinon.match.same(oPatchPromise2));
 				oPatchPromise2.then(function () {
+					var sMetaPath = {/* {string} result of _Helper.getMetaPath(...)*/},
+						sPath = {/* {string} result of _Helper.buildPath(...)*/};
+
 					oCacheMock.expects("removeByPath")
 						.withExactArgs(sinon.match.same(oCache.mPatchRequests), sFullPath,
 							sinon.match.same(oPatchPromise2));
+					oHelperMock.expects("buildPath")
+						.withExactArgs("/BusinessPartnerList", sEntityPath)
+						.returns(sPath);
+					oHelperMock.expects("getMetaPath")
+						.withExactArgs(sinon.match.same(sPath))
+						.returns(sMetaPath);
+					oCacheMock.expects("visitResponse")
+						.withExactArgs(sinon.match.same(oPatchResult),
+							sinon.match.same(mTypeForMetaPath), false, sinon.match.same(sMetaPath),
+							sEntityPath);
 					oHelperMock.expects("updateCache")
-						.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path/to/entity",
+						.withExactArgs(sinon.match.same(oCache.mChangeListeners), sEntityPath,
 							sinon.match.same(oEntity), sinon.match.same(oPatchResult));
 				}, function () {
 					oCacheMock.expects("removeByPath").twice()
@@ -998,7 +1054,7 @@ sap.ui.require([
 						.withExactArgs(["Address", "City"], "Heidelberg")
 						.returns(oOldData);
 					oHelperMock.expects("updateCache")
-						.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path/to/entity",
+						.withExactArgs(sinon.match.same(oCache.mChangeListeners), sEntityPath,
 							sinon.match.same(oEntity), sinon.match.same(oOldData));
 					oRequestCall.args[0][6](); // call onCancel
 				});
@@ -1446,6 +1502,57 @@ sap.ui.require([
 
 		// code under test
 		oCache.visitResponse(oData, mTypeForMetaPath);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Cache#visitResponse: reportBoundMessages; nested; to 1 navigation property",
+			function (assert) {
+		var oCache = new _Cache(this.oRequestor, "SalesOrderList('0500000001')"),
+			aMessagesInBusinessPartner = [{/* any message object */}],
+			oData = {
+				messagesInBusinessPartner : aMessagesInBusinessPartner
+			},
+			mExpectedMessages = {
+				"/SO_2_BP" : aMessagesInBusinessPartner
+			},
+			mTypeForMetaPath = {
+				"/SalesOrderList/SO_2_BP" : {
+					"@com.sap.vocabularies.Common.v1.Messages" :
+						{$Path : "messagesInBusinessPartner"}
+				}
+			};
+
+		this.oRequestorMock.expects("reportBoundMessages")
+			.withExactArgs(oCache.sResourcePath, mExpectedMessages, undefined);
+
+		// code under test
+		oCache.visitResponse(oData, mTypeForMetaPath, false, "/SalesOrderList/SO_2_BP", "SO_2_BP");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Cache#visitResponse: reportBoundMessages; nested; collection entity",
+			function (assert) {
+		var oCache = new _Cache(this.oRequestor, "SalesOrderList"),
+			aMessagesInBusinessPartner = [{/* any message object */}],
+			oData = {
+				messagesInBusinessPartner : aMessagesInBusinessPartner
+			},
+			mExpectedMessages = {
+				"('0500000001')/SO_2_BP" : aMessagesInBusinessPartner
+			},
+			mTypeForMetaPath = {
+				"/SalesOrderList/SO_2_BP" : {
+					"@com.sap.vocabularies.Common.v1.Messages" :
+						{$Path : "messagesInBusinessPartner"}
+				}
+			};
+
+		this.oRequestorMock.expects("reportBoundMessages")
+			.withExactArgs(oCache.sResourcePath, mExpectedMessages, undefined);
+
+		// code under test
+		oCache.visitResponse(oData, mTypeForMetaPath, false, "/SalesOrderList/SO_2_BP",
+			"('0500000001')/SO_2_BP");
 	});
 
 	//*********************************************************************************************

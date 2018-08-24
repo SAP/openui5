@@ -7599,4 +7599,257 @@ sap.ui.require([
 			});
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Update property within an absolute binding and get bound messages in response
+	QUnit.test("Update property (in absolute binding), getting bound messages", function (assert) {
+		var oBinding,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{path : \'/EMPLOYEES(\\\'1\\\')\', \
+		parameters : {\
+			$select : \'__CT__FAKE__Message/__FAKE__Messages\',\
+			$$updateGroupId : \'foo\'\
+		}}" id="form">\
+	<Text id="id" text="{ID}" />\
+	<Text id="name" text="{Name}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('1')?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages", {
+				"ID" : "1",
+				"Name" : "Jonathan Smith",
+				"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
+			})
+			.expectChange("id", "1")
+			.expectChange("name", "Jonathan Smith");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("name").getBinding("text");
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "EMPLOYEES('1')",
+					payload : {"Name" : ""}
+				}, {
+					"ID" : "1",
+					"Name" : "",
+					// unrealistic scenario for OData V4.0 because a PATCH request does not contain
+					// selects and Gateway will not return message properties; OData 4.01 feature;
+					// if other server implementations send messages, process them anyway
+					"__CT__FAKE__Message" : {
+						"__FAKE__Messages" : [{
+							"code" : "1",
+							"message" : "Enter a name",
+							"transition" : false,
+							"target" : "Name",
+							"numericSeverity" : 3
+						}]
+					}
+				})
+				.expectChange("name", "") // triggered by setValue
+				.expectMessages([{
+					"code": "1",
+					"message": "Enter a name",
+					"persistent": false,
+					"target": "/EMPLOYEES('1')/Name",
+					"type": "Warning"
+				}]);
+
+			// code under test
+			oBinding.setValue("");
+
+			return Promise.all([
+				oModel.submitBatch("foo"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest({
+					method : "PATCH",
+					url : "EMPLOYEES('1')",
+					payload : {"Name" : "Hugo"}
+				}, {
+					"ID" : "1",
+					"Name" : "Hugo",
+					"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
+				})
+				.expectChange("name", "Hugo") // triggered by setValue
+				.expectMessages([]);
+
+			// code under test
+			oBinding.setValue("Hugo");
+
+			return Promise.all([
+				oModel.submitBatch("foo"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Update property within a relative binding and get bound messages in response
+	QUnit.test("Update property (in relative binding), getting bound messages", function (assert) {
+		var oBinding,
+			oContext,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sPathToMessages = "TEAM_2_EMPLOYEES('1')/__CT__FAKE__Message/__FAKE__Messages",
+			sView = '\
+<FlexBox binding="{path : \'/TEAMS(\\\'TEAM_01\\\')\', \
+		parameters : {\
+			$expand : {\
+				\'TEAM_2_EMPLOYEES\' : {\
+					$select : \'__CT__FAKE__Message/__FAKE__Messages\'\
+				}\
+			},\
+			$$updateGroupId : \'foo\'\
+		}}" id="form">\
+	<Text id="teamId" text="{Team_Id}" />\
+	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Text id="name" text="{Name}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest(
+			"TEAMS('TEAM_01')?"
+				+ "$expand=TEAM_2_EMPLOYEES($select=ID,Name,__CT__FAKE__Message/__FAKE__Messages)"
+				+ "&$select=Team_Id",
+			{
+				"Team_Id" : "TEAM_01",
+				"TEAM_2_EMPLOYEES" : [{
+					"ID" : "1",
+					"Name" : "Jonathan Smith",
+					"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
+				}]
+			})
+			.expectChange("teamId", "TEAM_01")
+			.expectChange("name", ["Jonathan Smith"])
+			.expectMessages([]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("table").getItems()[0].getCells()[0].getBinding("text");
+			oContext = that.oView.byId("form").getBindingContext();
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "EMPLOYEES('1')",
+					payload : {"Name" : ""}
+				}, {
+					"ID" : "1",
+					"Name" : "",
+					// unrealistic scenario for OData V4.0 because a PATCH request does not contain
+					// selects and Gateway will not return message properties; OData 4.01 feature;
+					// if other server implementations send messages, process them anyway
+					"__CT__FAKE__Message" : {
+						"__FAKE__Messages" : [{
+							"code" : "1",
+							"message" : "Enter a name",
+							"transition" : false,
+							"target" : "Name",
+							"numericSeverity" : 3
+						}]
+					}
+				})
+				.expectChange("name", "", 0) // triggered by setValue
+				.expectMessages([{
+					"code": "1",
+					"message": "Enter a name",
+					"persistent": false,
+					"target": "/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES('1')/Name",
+					"type": "Warning"
+				}]);
+
+			// there are no messages for employee 1
+			assert.strictEqual(oContext.getObject(sPathToMessages).length, 0);
+			assert.strictEqual(oContext.getObject(sPathToMessages + "/$count"), 0);
+
+			// code under test
+			oBinding.setValue("");
+
+			return Promise.all([
+				oModel.submitBatch("foo"),
+				that.waitForChanges(assert)
+			]).then(function () {
+				// after the patch there is one message for employee 1
+				assert.strictEqual(oContext.getObject(sPathToMessages).length, 1);
+				assert.strictEqual(oContext.getObject(sPathToMessages)[0].message, "Enter a name");
+				assert.strictEqual(oContext.getObject(sPathToMessages + "/$count"), 1);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Update property within an entity in a collection and get bound messages in response
+	QUnit.test("Update property (in collection), getting bound messages", function (assert) {
+		var oBinding,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/EMPLOYEES\', \
+		parameters : {\
+			$select : \'__CT__FAKE__Message/__FAKE__Messages\',\
+			$$updateGroupId : \'foo\'\
+		}}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="name" text="{Name}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest(
+			"EMPLOYEES?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100",
+			{
+				value : [{
+					"ID" : "1",
+					"Name" : "Jonathan Smith",
+					"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
+				}]
+			})
+			.expectChange("name", ["Jonathan Smith"])
+			.expectMessages([]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("table").getItems()[0].getCells()[0].getBinding("text");
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "EMPLOYEES('1')",
+					payload : {"Name" : ""}
+				}, {
+					"ID" : "1",
+					"Name" : "",
+					// unrealistic scenario for OData V4.0 because a PATCH request does not contain
+					// selects and Gateway will not return message properties; OData 4.01 feature;
+					// if other server implementations send messages, process them anyway
+					"__CT__FAKE__Message" : {
+						"__FAKE__Messages" : [{
+							"code" : "1",
+							"message" : "Enter a name",
+							"transition" : false,
+							"target" : "Name",
+							"numericSeverity" : 3
+						}]
+					}
+				})
+				.expectChange("name", "", 0) // triggered by setValue
+				.expectMessages([{
+					"code": "1",
+					"message": "Enter a name",
+					"persistent": false,
+					"target": "/EMPLOYEES('1')/Name",
+					"type": "Warning"
+				}]);
+
+			// code under test
+			oBinding.setValue("");
+
+			return Promise.all([
+				oModel.submitBatch("foo"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 });

@@ -735,7 +735,9 @@ sap.ui.define([
 		 * Updates the cache with the object sent to the PATCH request or the object returned by the
 		 * PATCH response. Fires change events for all changed properties. The function recursively
 		 * handles modified, added or removed structural properties and fires change events for all
-		 * modified/added/removed primitive properties therein.
+		 * modified/added/removed primitive properties therein. Collection-valued properties are
+		 * copied to the cache if the property was selected; there are no change events for
+		 * properities therein.
 		 *
 		 * @param {object} mChangeListeners A map of change listeners by path
 		 * @param {string} sPath The path of the cache value in the cache
@@ -758,7 +760,11 @@ sap.ui.define([
 					// the property was patched
 					vNewValue = oPatchValue[sProperty];
 					if (vNewValue && typeof vNewValue === "object") {
-						if (vOldValue) {
+						if (Array.isArray(vNewValue)) {
+							// copy complete collection; no change events as long as
+							// collection-valued properties are not supported
+							oCacheValue[sProperty] = vNewValue;
+						} else if (vOldValue) {
 							// a structural property in cache and patch -> recursion
 							Helper.updateCache(mChangeListeners, sPropertyPath, vOldValue,
 								vNewValue);
