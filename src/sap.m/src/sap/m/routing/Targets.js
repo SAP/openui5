@@ -316,7 +316,7 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 
 				// temporarily: for checking the url param
 				function checkUrl() {
-					if (new UriParameters(window.location.href).get("sap-ui-xx-asyncRouting") === "true") {
+					if (UriParameters.fromQuery(window.location.search).get("sap-ui-xx-asyncRouting") === "true") {
 						Log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "MobileTargets");
 						return true;
 					}

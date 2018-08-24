@@ -147,7 +147,7 @@
 		return new Promise(function (resolve, reject) {
 			sap.ui.require(["sap/base/util/UriParameters"], resolve, reject);
 		}).then(function (UriParameters) {
-			var oParams = new UriParameters(document.location.href);
+			var oParams = UriParameters.fromQuery(document.location.search);
 			var oConfig = {};
 
 			oConfig.mode = oParams.get("test-mode") || "all";

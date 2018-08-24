@@ -14,7 +14,7 @@ sap.ui.define([
 		 * @public
 		 */
 		init: function () {
-			var oUriParameters = new UriParameters(window.location.href);
+			var oUriParameters = UriParameters.fromQuery(window.location.search);
 			this._oMockModels = {
 
 			};

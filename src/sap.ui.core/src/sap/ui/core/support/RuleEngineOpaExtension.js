@@ -69,7 +69,7 @@ sap.ui.define(["jquery.sap.global",
 		getAssertions : function () {
 
 			var fnShouldSkipRulesIssues = function () {
-				return new UriParameters(window.location.href).get('sap-skip-rules-issues') == 'true';
+				return UriParameters.fromQuery(window.location.search).get('sap-skip-rules-issues') == 'true';
 			};
 			var getWindow = function () {
 				var opaWindow = window.parent;

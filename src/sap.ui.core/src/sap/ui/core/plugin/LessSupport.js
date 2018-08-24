@@ -55,7 +55,7 @@
 				Log.warning("  NOT FOR PRODUCTIVE USAGE! LessSupport is an experimental feature which might change in future!");
 
 				// get the URI parameters
-				var oUriParams = new UriParameters(window.location.href);
+				var oUriParams = UriParameters.fromQuery(window.location.search);
 				var sNoLess = oUriParams.get("sap-ui-xx-noless");
 				if (sNoLess) {
 					sNoLess = sNoLess.toLowerCase();

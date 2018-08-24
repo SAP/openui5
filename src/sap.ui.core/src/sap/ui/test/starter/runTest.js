@@ -412,7 +412,7 @@
 
 	}
 
-	var oParams = new UriParameters(window.location.href),
+	var oParams = UriParameters.fromQuery(window.location.search),
 		sSuiteName = utils.getAttribute('data-sap-ui-testsuite') || oParams.get("testsuite"),
 		sTestName = utils.getAttribute('data-sap-ui-test') || oParams.get("test");
 

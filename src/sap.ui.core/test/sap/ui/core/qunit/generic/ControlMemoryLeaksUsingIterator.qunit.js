@@ -82,12 +82,12 @@ sap.ui.define([
 			}
 		};
 
-		var sLib = new UriParameters(window.location.href).get("library");
+		var sLib = UriParameters.fromQuery(window.location.search).get("library");
 		if (sLib) {
 			mOptions.librariesToTest = [sLib];
 		}
 
-		var sControl = new UriParameters(window.location.href).get("control");
+		var sControl = UriParameters.fromQuery(window.location.search).get("control");
 		if (sControl) {
 			mOptions.controlsToTest = [sControl];
 		}
