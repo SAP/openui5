@@ -80,7 +80,7 @@ sap.ui.define([
 			if (this.getView().getModel("app").getProperty("/showOuterAdaptButton"))	{
 
 				var oRta = new RuntimeAuthoring({
-					rootControl: this.getOwnerComponent().getAggregation("rootControl"),
+					rootControl: this.getOwnerComponent(),
 					flexSettings: {
 						developerMode: false
 					}
