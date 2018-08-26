@@ -251,7 +251,8 @@ sap.ui.define([
 
 		getCurrentHashParamsFromRegister: function () {
 			if (jQuery.isNumeric(this._oHashRegister.currentIndex)) {
-				return this._oHashRegister.hashParams[this._oHashRegister.currentIndex];
+				// return clone
+				return Array.prototype.slice.call(this._oHashRegister.hashParams[this._oHashRegister.currentIndex]);
 			}
 		}
 
