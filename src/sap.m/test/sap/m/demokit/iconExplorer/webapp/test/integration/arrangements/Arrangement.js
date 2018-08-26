@@ -13,7 +13,7 @@ sap.ui.define([
 
 		iStartMyApp: function (oOptions) {
 			// reset local storage key to have stable testing environment
-			var oStorage = Storage.getInstance(Storage.Type.local);
+			var oStorage = new Storage(Storage.Type.local);
 			oStorage.put("ICON_EXPLORER_FAVORITES", undefined);
 
 			oOptions = oOptions || {};

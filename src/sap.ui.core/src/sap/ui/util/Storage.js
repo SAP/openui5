@@ -5,331 +5,243 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-sap.ui.define(["sap/base/assert"], function(assert) {
+sap.ui.define(["sap/base/assert"], function (assert) {
 	"use strict";
 
 
-	var fnStorage = function() {
+	/**
+	 * Prefix added to all storage keys. The prefix is used as namespace for data using the same key.
+	 *
+	 * @private
+	 */
+	var STATE_STORAGE_KEY_PREFIX = "state.key_";
 
-		/**
-		 * Prefix added to all storage keys (typically IDs) passed by the applications
-		 * when they are calling state storage methods. The goal of such prefix is to
-		 * leave space for saving data (with the same key) and also for scenarios other than
-		 * state saving.
-		 * @private
-		 */
-		var sStateStorageKeyPrefix = "state.key_";
+	/**
+	 * @class A Storage API for JavaScript.
+	 * <b>Note:</b> The Web Storage API stores the data on the client. Therefore, you must not use this API for confidential information.
+ 	 *
+	 * Provides a unified interface and methods to store data on the client using the Web Storage API or a custom implementation.
+	 * By default, data can be persisted inside localStorage or a sessionStorage.
+	 *
+	 * You can access the 'default' storage by using {@link module:sap/ui/util/Storage} methods
+	 * static on the module export or by creating an own instance of Storage via the constructor.
+	 *
+	 * A typical intended usage of this API is the storage of a string representing the state of
+	 * a control. In this case, the data is stored in the browser session, and the methods to be
+	 * used are {@link #put} and {@link #get}. The method {@link #remove} can be used to delete
+	 * the previously saved state.
+	 *
+	 * For the sake of completeness, the method {@link #clear} is available. However, it should be
+	 * called only in very particular situations, when a global erasing of data is required. If
+	 * only keys with certain prefix should be deleted, the method {@link #removeAll} should be
+	 * used.
+	 *
+	 * @example
+	 * <pre>
+	 * // Default Storage
+	 * sap.ui.require(["sap/ui/util/Storage"], function(Storage) {
+	 *  Storage.get("stored_data");
+	 * });
+	 * </pre>
+	 * @example
+	 * <pre>
+	 * // Storage Instance
+	 * sap.ui.require(["sap/ui/util/Storage"], function(Storage) {
+	 *  var oMyStorage = new Storage(Storage.Type.session, "my_prefix");
+	 *  oMyStorage.put("stored_data", "{ state: 'active' }");
+	 *  oMyStorage.get("stored_data");
+	 * });
+	 * </pre>
+	 * @since 1.58
+	 * @alias module:sap/ui/util/Storage
+	 * @param {module:sap/ui/util/Storage.Type | Storage} [pStorage=module:sap/ui/util/Storage.Type.session] The type this storage should be of or an Object implementing the typical Storage API for direct usage.
+	 * @param {string} [sStorageKeyPrefix='state.key_'] The prefix to use in this storage.
+	 * @public
+	 */
+	var Storage = function (pStorage, sStorageKeyPrefix) {
 
-		/**
-		 * @class A Storage API for JavaScript.
-		 *
-		 * Provides methods to store data on the client using Web Storage API support by the browser. The data
-		 * received by this API must be already serialized, in string format. Similarly, the API returns the retrieved
-		 * data in serialized string format, so it is the responsibility of the caller to de-serialize it, if applicable.
-		 *
-		 * <b>Note:</b> The Web Storage API stores the data on the client. Therefore do not use this API for confidential information.
-		 *
-		 * You can get access to the 'default' storage by using {@link module:sap/ui/util/Storage} directly
-		 * or alternatively via factory functionality available as <code>sap.ui.require(["sap/ui/util/Storage"],function(storage){storage(storage.Type.session);});</code>
-		 * returning an object implementing this interface.
-		 *
-		 * A typical intended usage of this API is the storage of a string representing the state of a control.
-		 * In such usage, the data is stored in the browser session, and
-		 * the methods to be used are {@link #put} and {@link #get}.
-		 * The method {@link #remove} can be used to delete the previously saved state.
-		 *
-		 * In sake of completeness, the method {@link #clear} is available.
-		 * However, it should be called only in very particular situations,
-		 * when a global erasing of data is required. If only keys with certain prefix
-		 * should be deleted the method {@link #removeAll} should be used.
-		 *
-		 * @since 1.58
-		 * @alias module:sap/ui/util/Storage
-		 * @param {module:sap/ui/util/Storage.Type | Storage} [pStorage=sap/ui/util/Storage.Type.session] The type this storage should be of or an Object implementing the typical Storage API for direct usage.
-		 * @param {string} [sStorageKeyPrefix='state.key_'] The prefix to use in this storage.
-		 * @private
-		 * @hideconstructor
-		 */
-		var fnCreateStorage = function(pStorage, sStorageKeyPrefix) {
+		var sType = "unknown",
+			sPrefix = (sStorageKeyPrefix || STATE_STORAGE_KEY_PREFIX) + "-",
+			oStorageImpl;
 
-			var sType = "unknown",
-				sPrefix = sStorageKeyPrefix || sStateStorageKeyPrefix;
-			sPrefix += "-";
-			var sTestKey = sPrefix + "___sapui5TEST___",
-				oStorage;
-
-			if (!pStorage || typeof (pStorage) === "string") {
-				sType = pStorage || "session";
-				try {
-					oStorage = window[sType + "Storage"];
-				} catch (e) {
-					oStorage = null;
+		if (!pStorage || typeof (pStorage) === "string") {
+			sType = pStorage || Storage.Type.session;
+			try {
+				oStorageImpl = window[sType + "Storage"];
+				// Test for QUOTA_EXCEEDED_ERR (Happens e.g. in mobile Safari when private browsing active)
+				if (oStorageImpl) {
+					var sTestKey = sPrefix + "___sapui5TEST___";
+					oStorageImpl.setItem(sTestKey, "1");
+					oStorageImpl.removeItem(sTestKey);
 				}
-				try { // Test for QUOTA_EXCEEDED_ERR (Happens e.g. in mobile Safari when private browsing active)
-					if (oStorage) {
-						oStorage.setItem(sTestKey, "1");
-						oStorage.removeItem(sTestKey);
-					}
-				} catch (e) {
-					oStorage = null;
-				}
-			} else if (typeof (pStorage) === "object") {
-				sType = pStorage.getType ? pStorage.getType() : "unknown";
-				oStorage = pStorage;
+			} catch (e) {
+				oStorageImpl = null;
 			}
+		} else if (typeof (pStorage) === "object") {
+			sType = pStorage.getType ? pStorage.getType() : "unknown";
+			oStorageImpl = pStorage;
+		}
 
-			var bStorageAvailable = !!oStorage;
-
-			/**
-			 * Returns whether the given storage is suppported.
-			 *
-			 * @return {boolean} true if storage is supported, false otherwise (e.g. due to browser security settings)
-			 * @public
-			 * @function
-			 */
-			this.isSupported = function() {
-				if (!bStorageAvailable) { //No storage available at all or not accessible
-					return false;
-				}
-				if (typeof (oStorage.isSupported) == "function") { //Possibility to define for custom storage
-					return oStorage.isSupported();
-				}
-				return true;
-			};
-
-			/**
-			 * Stores the passed state string in the session, under the key sStorageKeyPrefix + sId.
-			 *
-			 * sStorageKeyPrefix is the ID prefix defined for the storage instance (@see sap/ui/util/Storage)
-			 *
-			 * @param {string} sId ID for the state to store
-			 * @param {string} sStateToStore Content to store
-			 * @return {boolean} true if the data were successfully stored, false otherwise
-			 * @public
-			 * @function
-			 */
-			this.put = function(sId, sStateToStore) {
-				//precondition: non-empty sId and available storage feature
-				assert(typeof sId === "string" && sId, "sId must be a non-empty string");
-				if (this.isSupported() && sId) {
-					try {
-						oStorage.setItem(sPrefix + sId, JSON.stringify(sStateToStore));
-						return true;
-					} catch (e) {
-						return false;
-					}
-				} else {
-					return false;
-				}
-			};
-
-			/**
-			 * Retrieves the state string stored in the session under the key sStorageKeyPrefix + sId.
-			 *
-			 * sStorageKeyPrefix is the ID prefix defined for the storage instance (@see sap/ui/util/Storage)
-			 *
-			 * @param {string} sId ID for the state to retrieve
-			 * @return {string} The string from the storage, if the retrieval was successful, and null otherwise
-			 * @public
-			 * @function
-			 */
-			this.get = function(sId) {
-				//precondition: non-empty sId and available storage feature
-				assert(typeof sId === "string" && sId, "sId must be a non-empty string");
-				if (this.isSupported() && sId ) {
-					try {
-						var sItem = oStorage.getItem(sPrefix + sId);
-						return JSON.parse(sItem);
-					} catch (e) {
-						return null;
-					}
-				} else {
-					return null;
-				}
-			};
-
-			/**
-			 * Deletes the state string stored in the session under the key sStorageKeyPrefix + sId.s.
-			 *
-			 * sStorageKeyPrefix is the ID prefix defined for the storage instance (@see sap/ui/util/Storage)
-			 *
-			 * @param {string} sId ID for the state to delete
-			 * @return {boolean} true if the deletion
-			 * was successful or the data doesn't exist under the specified key,
-			 * and false if the feature is unavailable or a problem occurred
-			 * @public
-			 * @function
-			 */
-			this.remove = function(sId) {
-				//precondition: non-empty sId and available storage feature
-				assert(typeof sId === "string" && sId, "sId must be a non-empty string");
-				if (this.isSupported() && sId) {
-					try {
-						oStorage.removeItem(sPrefix + sId);
-						return true;
-					} catch (e) {
-						return false;
-					}
-				} else {
-					return false;
-				}
-			};
-
-			/**
-			 * Deletes all state strings stored in the session under the key prefix sStorageKeyPrefix + sIdPrefix.
-			 *
-			 * sStorageKeyPrefix is the ID prefix defined for the storage instance (@see sap/ui/util/Storage)
-			 *
-			 * @param {string} sIdPrefix ID prefix for the states to delete
-			 * @return {boolean} true if the deletion
-			 * was successful or the data doesn't exist under the specified key,
-			 * and false if the feature is unavailable or a problem occurred
-			 * @public
-			 * @function
-			 */
-			this.removeAll = function(sIdPrefix) {
-				//precondition: available storage feature
-				if (this.isSupported() && oStorage.length && typeof oStorage.key === "function") {
-					try {
-						var len = oStorage.length;
-						var aKeysToRemove = [];
-						var key, i;
-						var p = sPrefix + (sIdPrefix || "");
-						for (i = 0; i < len; i++) {
-							key = oStorage.key(i);
-							if (key && key.indexOf(p) == 0) {
-								aKeysToRemove.push(key);
-							}
-						}
-
-						for (i = 0; i < aKeysToRemove.length; i++) {
-							oStorage.removeItem(aKeysToRemove[i]);
-						}
-
-						return true;
-					} catch (e) {
-						return false;
-					}
-				} else {
-					return false;
-				}
-			};
-
-			/**
-			 * Deletes all the entries saved in the session (Independent of the current Storage instance!).
-			 *
-			 * <b>CAUTION</b> This method should be called only in very particular situations,
-			 * when a global erasing of data is required. Given that the method deletes
-			 * the data saved under any ID, it should not be called when managing data
-			 * for specific controls.
-			 *
-			 * @return {boolean} true if execution of removal
-			 * was successful or the data to remove doesn't exist,
-			 * and false if the feature is unavailable or a problem occurred
-			 * @public
-			 * @function
-			 */
-			this.clear = function() {
-				//precondition: available storage feature
+		/**
+		 * Helper function for function execution ignoring errors and checking for support.
+		 *
+		 * @param {function} fnToExecute
+		 * @returns {boolean}
+	 	*/
+		var hasExecuted = function (fnToExecute) {
+			try {
 				if (this.isSupported()) {
-					try {
-						oStorage.clear();
-						return true;
-					} catch (e) {
-						return false;
-					}
-				} else {
-					return false;
+					fnToExecute();
+					return true;
 				}
-			};
+			} catch (e) {
+				return false;
+			}
 
-			/**
-			 * Returns the type of the storage.
-			 *
-			 * @returns {module:sap/ui/util/Storage.Type | string} The type of the storage or "unknown"
-			 * @public
-			 * @function
-			 */
-			this.getType = function(){
-				return sType;
-			};
+			return false;
+
+		}.bind(this);
+
+		/**
+		 * Returns whether the given storage is suppported.
+		 *
+		 * @return {boolean} true if storage is supported, false otherwise (e.g. due to browser security settings)
+		 * @public
+		 * @function
+		 * @name module:sap/ui/util/Storage#isSupported
+		 */
+		this.isSupported = function () {
+			//Possibility to define for custom storage
+			return typeof (oStorageImpl.isSupported) == "function" ? oStorageImpl.isSupported() : true;
 		};
 
 		/**
-		 * A map holding instances of different 'standard' storages.
-		 * Used to limit number of created storage objects.
-		 * @private
+		 * Add key to the storage or updates value if the key already exists.
+		 *
+		 * @param {string} sKey key to create
+		 * @param {string} sValue value to create/update
+		 * @return {boolean} true if the data was successfully stored, otherwise false
+		 *
+		 * @public
+		 * @function
+		 * @name module:sap/ui/util/Storage#put
 		 */
-		var mStorages = {};
-
-		var oExportStorage = {
-
-			/**
-			 * Returns a {@link module:sap/ui/util/Storage} object for a given HTML5 storage (type) and,
-			 * as a convenience, provides static functions to access the default (session) storage.
-			 *
-			 * When called as a function, it returns an instance of {@link module:sap/ui/util/Storage.Storage}, providing access
-			 * to the storage of the given {@link module:sap/ui/util/Storage.Type} or to the given HTML5 Storage object.
-			 *
-			 * The default session storage can be easily accessed with methods {@link module:sap/ui/util/Storage.get},
-			 * {@link module:sap/ui/util/Storage.put}, {@link module:sap/ui/util/Storage.remove}, {@link module:sap/ui/util/Storage.clear},
-			 * {@link module:sap/ui/util/Storage.getType} and {@link module:sap/ui/util/Storage.removeAll}
-			 *
-			 * @param {module:sap/ui/util/Storage.Type | Storage} oStorage The type specifying the storage to use or
-			 * an object implementing the browser's Storage API.
-			 * @param {string} [sIdPrefix] Prefix used for the IDs. If not set a default prefix is used.
-			 * @returns {module:sap/ui/util/Storage.Storage} A storage instance
-			 * @version ${version}
-			 * @namespace
-			 * @function
-			 * @public
-			 *
-			 * @borrows sap/ui/util/Storage.Storage#get as get
-			 * @borrows sap/ui/util/Storage.Storage#put as put
-			 * @borrows sap/ui/util/Storage.Storage#remove as remove
-			 * @borrows sap/ui/util/Storage.Storage#clear as clear
-			 * @borrows sap/ui/util/Storage.Storage#getType as getType
-			 * @borrows sap/ui/util/Storage.Storage#removeAll as removeAll
-			 * @borrows sap/ui/util/Storage.Storage#isSupported as isSupported
-			 */
-			getInstance: function(oStorage, sIdPrefix) {
-				// if nothing or the default was passed in, simply return ourself
-				if (!oStorage) {
-					oStorage = fnStorage.Type.session;
-				}
-
-				if (typeof (oStorage) === "string" && fnStorage.Type[oStorage]) {
-					var sKey = oStorage;
-					if (sIdPrefix && sIdPrefix != sStateStorageKeyPrefix) {
-						sKey = oStorage + "_" + sIdPrefix;
-					}
-
-					return mStorages[sKey] || (mStorages[sKey] = new fnCreateStorage(oStorage, sIdPrefix));
-				}
-
-				// OK, tough but probably good for issue identification. As something was passed in, let's at least ensure our used API is fulfilled.
-				assert(oStorage instanceof Object && oStorage.clear && oStorage.setItem && oStorage.getItem && oStorage.removeItem, "storage: duck typing the storage");
-				return new fnCreateStorage(oStorage, sIdPrefix);
-			}
-
+		this.put = function (sKey, sStateToStore) {
+			//precondition: non-empty sKey and available storage feature
+			assert(typeof sKey === "string" && sKey.length > 0, "key must be a non-empty string");
+			return hasExecuted(function () {
+				oStorageImpl.setItem(sPrefix + sKey, JSON.stringify(sStateToStore));
+			});
 		};
 
-		// ensure the storage constructor applied to our storage object
-		fnCreateStorage.apply(oExportStorage.getInstance);
-		mStorages[fnStorage.Type.session] = oExportStorage.getInstance;
 
-		return oExportStorage;
+		/**
+		 * Retrieves data item for a specific key.
+		 *
+		 * @param {string} sKey key to retrieve
+		 * @return {object|null} keys value or null
+		 * @public
+		 * @function
+		 * @name module:sap/ui/util/Storage#get
+		 */
+		this.get = function (sKey) {
+			//precondition: non-empty sKey and available storage feature
+			assert(typeof sKey === "string" && sKey.length > 0, "key must be a non-empty string");
 
+			var oData;
+
+			hasExecuted(function () {
+				oData = JSON.parse(oStorageImpl.getItem(sPrefix + sKey));
+			});
+
+			return oData !== undefined ?  oData : null;
+		};
+
+		/**
+		 * Removes key from storage if it exists.
+		 *
+		 * @param {string} sKey key to remove
+		 * @return {boolean} true if the deletion
+		 * was successful or the data doesn't exist under the specified key,
+		 * and false if the feature is unavailable or a problem occurred
+		 * @public
+		 * @function
+		 * @name module:sap/ui/util/Storage#remove
+		 */
+		this.remove = function (sKey) {
+			//precondition: non-empty sKey and available storage feature
+			assert(typeof sKey === "string" && sKey.length > 0, "key must be a non-empty string");
+			return hasExecuted(function () {
+				oStorageImpl.removeItem(sPrefix + sKey);
+			});
+		};
+
+		/**
+		 * Removes all stored keys.
+		 *
+		 * @param {string} sIdPrefix prefix id for the states to delete
+		 * @return {boolean} true if the deletion
+		 * was successful or the data doesn't exist under the specified key,
+		 * and false if the feature is unavailable or a problem occurred
+		 * @public
+		 * @function
+		 * @name module:sap/ui/util/Storage#removeAll
+		 */
+		this.removeAll = function (sIdPrefix) {
+			return hasExecuted(function () {
+				var key, p = sPrefix + (sIdPrefix || "");
+
+				for (var i = 0, max = oStorageImpl.length; i < max; i++) {
+					key = oStorageImpl.key(i);
+					if (key && key.startsWith(p)) {
+						oStorageImpl.removeItem(key);
+					}
+				}
+			});
+		};
+
+		/**
+		 * Clears the whole storage (Independent of the current Storage instance!).
+		 *
+		 * <b>CAUTION</b> This method should be called only in very particular situations,
+		 * when a global erasing of data is required. Given that the method deletes
+		 * the data saved under any ID, it should not be called when managing data
+		 * for specific controls.
+		 *
+ 		 * @return {boolean} true if execution of removal
+		 * was successful or the data to remove doesn't exist,
+		 * and false if the feature is unavailable or a problem occurred
+		 * @public
+		 * @function
+		 * @name module:sap/ui/util/Storage#clear
+		 */
+		this.clear = function () {
+			return hasExecuted(function () {
+				oStorageImpl.clear();
+			});
+		};
+
+		/**
+		 * Returns the storage type.
+		 *
+		 * @returns {module:sap/ui/util/Storage.Type | string} storage type or "unknown"
+		 * @public
+		 * @function
+		 * @name module:sap/ui/util/Storage#getType
+		 */
+		this.getType = function () {
+			return sType;
+		};
 	};
 
 	/**
-	 * Enumeration of the storage types supported by {@link module:sap/ui/util/Storage.Storage}.
+	 * Enumeration of the storage types supported by {@link module:sap/ui/util/Storage}.
 	 *
 	 * @enum {string}
 	 * @public
 	 * @version ${version}
 	 */
-	fnStorage.Type = {
+	Storage.Type = {
 		/**
 		 * Indicates usage of the browser's localStorage feature
 		 * @public
@@ -342,7 +254,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 		session: "session"
 	};
 
-	var oStorage = fnStorage();
-	oStorage.Type = fnStorage.Type;
-	return oStorage;
+	Object.assign(Storage, new Storage());
+
+	return Storage;
 });

@@ -13,7 +13,7 @@ sap.ui.define(["sap/ui/util/Storage"], function(Storage) {
 		this.SUPPORTED_CHECK_EXPECT_NO_SUPPORT = -1;
 
 		this.testStorage = function(oStorage, sIdPrefix, iCheckSupported, assert) {
-			var store = Storage.getInstance(oStorage, sIdPrefix);
+			var store = new Storage(oStorage, sIdPrefix);
 
 			var type = storageType.session;
 			if (typeof (oStorage) == "string") {
@@ -92,7 +92,7 @@ sap.ui.define(["sap/ui/util/Storage"], function(Storage) {
 		this.testInvalidStorage = function(oStorage, sIdPrefix, assert){
 
 
-			var store = Storage.getInstance(oStorage, sIdPrefix);
+			var store = new Storage(oStorage, sIdPrefix);
 
 			var val = store.get("testkey");
 			assert.notOk(val, "Value initially not defined");
@@ -110,23 +110,9 @@ sap.ui.define(["sap/ui/util/Storage"], function(Storage) {
 			assert.notOk(res, "removeAll returns false when storage is not supported");
 		};
 
-		this.testCache = function(oStorage, sIdPrefix, bCachingExpected, assert) {
-			var store1 = Storage.getInstance(oStorage, sIdPrefix);
-			var store2 = Storage.getInstance(oStorage, sIdPrefix);
-			var store3 = Storage.getInstance(oStorage, sIdPrefix + "Something");
-
-			if (bCachingExpected) {
-				assert.ok(store1 === store2, "Storage cached: " + store1.getType());
-			} else {
-				assert.ok(store1 != store2, "Storage not cached " + store1.getType());
-			}
-
-			assert.ok(store1 != store3, "Cache is prefix aware " + store1.getType());
-		};
-
 		this.testPrefix = function(sIdPrefix, assert) {
 			var s = new SimpleStorage("custom3");
-			var store = Storage.getInstance(s, sIdPrefix);
+			var store = new Storage(s, sIdPrefix);
 			var txt = sIdPrefix ? sIdPrefix : "DEFAULT";
 
 			store.put("testkey0", "testvalue0");
@@ -256,16 +242,10 @@ sap.ui.define(["sap/ui/util/Storage"], function(Storage) {
 		assert.ok(s.isSupported(), "should be supported but throw errors");
 		setup.testInvalidStorage(s, "myprefix", assert);
 
-		var os = Storage.getInstance(s, "with errors");
+		var os = new Storage(s, "with errors");
 		assert.ok(os.isSupported(), "storage object should be supported but throw errors");
 
 		assert.notOk(os.clear(), "clear should throw an exception");
-	});
-
-	QUnit.test("Cache", function(assert) {
-		setup.testCache(storageType.session, "myprefix", true, assert);
-		setup.testCache(storageType.local, "myprefix", true, assert);
-		setup.testCache(setup.createSimpleStorage("custom2"), "myprefix", false, assert);
 	});
 
 	QUnit.test("Prefixes", function(assert) {

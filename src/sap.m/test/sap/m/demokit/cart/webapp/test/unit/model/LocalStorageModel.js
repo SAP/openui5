@@ -24,7 +24,7 @@ sap.ui.define([
 			// stub the _loadData method called in the constructor
 			this.fnLoadData = sinon.stub(LocalStorageModel.prototype, "_loadData");
 			// stub the storage api
-			this.oStorage = Storage.getInstance();
+			this.oStorage = new Storage();
 			this.fnPutStub = sinon.stub(this.oStorage, "put");
 			this.fnGetStub = sinon.stub(this.oStorage, "get");
 			// initialize the model with parameters and inject the stub
