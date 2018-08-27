@@ -1,5 +1,5 @@
 /*global QUnit testRule*/
-sap.ui.define(function() {
+sap.ui.define(["test-resources/sap/ui/support/TestHelper"], function() {
 	"use strict";
 
 	QUnit.module("sap.ui.core globalApiUsage rule tests", {
@@ -7,8 +7,6 @@ sap.ui.define(function() {
 			/* eslint-disable no-unused-expressions */
 			jQuery.sap.passport;
 			/* eslint-enable no-unused-expressions */
-		},
-		afterEach: function() {
 		}
 	});
 

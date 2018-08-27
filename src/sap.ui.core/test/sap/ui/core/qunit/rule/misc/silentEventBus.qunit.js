@@ -1,7 +1,8 @@
 /*global QUnit testRule*/
 
 sap.ui.define([
-	"jquery.sap.global"
+	"jquery.sap.global",
+	"test-resources/sap/ui/support/TestHelper"
 ], function(/*jQuery*/) {
 	"use strict";
 

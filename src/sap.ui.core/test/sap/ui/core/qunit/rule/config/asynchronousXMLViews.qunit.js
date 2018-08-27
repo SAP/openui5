@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/layout/VerticalLayout",
-	"sap/m/Button"
+	"sap/m/Button",
+	"test-resources/sap/ui/support/TestHelper"
 ], function(
 	jQuery,
 	Component,
@@ -36,8 +37,6 @@ sap.ui.define([
 					})
 				]
 			});
-
-			sap.ui.loader.config({paths:{"samples/components/routing":"../../../../../test-resources/sap/ui/core/samples/components/routing/"}});
 
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "samples.components.routing"
