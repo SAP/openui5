@@ -162,5 +162,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.7": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "4c711ff403476a91695ddbdb0233b735fdfe6def",
+        "type": "FIX",
+        "text": " Smartlink not selectable after combine",
+        "references": []
+      }
+    ]
   }
 }

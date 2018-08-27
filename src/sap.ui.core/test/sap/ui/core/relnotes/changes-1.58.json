@@ -564,6 +564,18 @@
         "type": "FIX",
         "text": " v2.ODataAnnotations: don\u0027t cache invalid annotations",
         "references": []
+      },
+      {
+        "id": "d179a6e18d67c04cc527f1924e16760eb9cbce2c",
+        "type": "FIX",
+        "text": " Controller: controllerFactory resolves wrong controller class",
+        "references": []
+      },
+      {
+        "id": "54b07814a4e5bef89d1d9ffd44fccdfa8789dc66",
+        "type": "FIX",
+        "text": " core/routing/Target: _updateOptions should not overwrite _name",
+        "references": []
       }
     ]
   }
