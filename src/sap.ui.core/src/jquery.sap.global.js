@@ -622,7 +622,7 @@ sap.ui.define([
 	 * @class A Logger class
 	 * @since 1.1.2
 	 * @public
-	 * @deprecated since 1.58 use {@link module:sap/base/Log.getLoggerÌ} instead
+	 * @deprecated since 1.58 use {@link module:sap/base/Log.getLogger} instead
 	 */
 
 	/**
