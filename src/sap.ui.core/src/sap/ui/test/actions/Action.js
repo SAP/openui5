@@ -128,10 +128,11 @@ function (ManagedObject, QUnitUtils, Opa5, Device, Log, jQueryDOM) {
 			var bFireArtificialEvents;
 			var oDomRef = $DomRef[0];
 
-			if (isAlreadyFocused || (Device.browser.msie && (Device.browser.version < 12))) {
+			if (isAlreadyFocused || (Device.browser.msie && Device.browser.version < 12) ||
+				(Device.browser.firefox && Device.browser.version > 60)) {
 				// If the event is already focused, make sure onfocusin event of the control will be properly fired when executing this action,
 				// otherwise the next blur will not be able to safely remove the focus.
-				// In IE11, if the focus action fails and focusin is dispatched, onfocusin will be called twice
+				// In IE11 (and often in Firefox v61.0), if the focus action fails and focusin is dispatched, onfocusin will be called twice
 				// to avoid this, directly dispatch the artificial events
 				bFireArtificialEvents = true;
 			} else {
