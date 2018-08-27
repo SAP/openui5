@@ -1086,6 +1086,18 @@
         "type": "FIX",
         "text": "sap.m - Table Designtime DomRef definition for items aggregation",
         "references": []
+      },
+      {
+        "id": "b46bc33aa8b9fb9b8fd38deed8b944bc4c846090",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: doesn\u0027t wrap in ObjectPageHeaderContent in IE",
+        "references": []
+      },
+      {
+        "id": "14c88d3bccdf69f89fe0e82cb4e740dc00955c65",
+        "type": "FIX",
+        "text": " sap.m.TextArea: growingMaxLies property fixed",
+        "references": []
       }
     ]
   }

@@ -255,5 +255,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.7": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "eaff2b266a4b156153f8cad04bd846615268ce2c",
+        "type": "FIX",
+        "text": ": RTA rename jumping",
+        "references": []
+      }
+    ]
   }
 }
