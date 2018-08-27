@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(["./isPlainObject"], function(isPlainObject) {
 	"use strict";
 
@@ -15,15 +11,16 @@ sap.ui.define(["./isPlainObject"], function(isPlainObject) {
 	 * Usage is the same as jQuery.extend(true, ...), but Arguments that are null or undefined are NOT ignored.
 	 *
 	 * For shallow copies, you may use <code>Object.assign</code> (polyfilled).
-	 *
-	 * @function
-	 * @private
-	 * @exports sap/base/util/merge
-	 * @param {Object} target The object that will receive new properties
-	 * @param {Object|Object[]} [source] One or more objects which get merged into the target object
-	 * @returns {Object} the target object which is the result of the merge
 	 * @example
 	 * var oMerged = merge({}, {prop1:1}, {prop2:2});
+	 *
+	 * @function
+	 * @since 1.58
+	 * @public
+	 * @alias module:sap/base/util/merge
+	 * @param {Object} target The object that will receive new properties
+	 * @param {...Object} [source] One or more objects which get merged into the target object
+	 * @returns {Object} the target object which is the result of the merge
 	 */
 	var fnMerge = function() {
 		/*

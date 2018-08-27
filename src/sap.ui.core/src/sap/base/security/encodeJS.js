@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(["sap/base/strings/toHex"], function(toHex) {
 	"use strict";
 
@@ -37,11 +33,12 @@ sap.ui.define(["sap/base/strings/toHex"], function(toHex) {
 	 * Encode the string for inclusion into a JS string literal.
 	 *
 	 * @function
-	 * @private
-	 * @exports sap/base/security/encodeJS
+	 * @since 1.58
+	 * @alias module:sap/base/security/encodeJS
 	 * @param {string} sString The string to be escaped
 	 * @returns {string} The encoded string
 	 * @SecValidate {0|return|XSS} validates the given string for a JavaScript contexts
+	 * @public
 	 */
 	var fnEncodeJS = function(sString) {
 		return sString.replace(rJS, fnJS);

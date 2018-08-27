@@ -1,6 +1,7 @@
 /*!
  * ${copyright}
  */
+
 /*
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
@@ -22,12 +23,16 @@ sap.ui.define([], function() {
 	 *		console.log(oTarget["sProp"]); // should be 7
 	 * });
 	 *
+	 * @function
+	 * @since 1.58
+	 * @alias module:sap/base/util/defineLazyProperty
 	 * @param {object} oTarget Target object of the property stub
 	 * @param {string} sProperty Name of the stubbed property
 	 * @param {function} fnCallback Function callback which returns the property value
 	 * @param {function} [sMarker] Marker to allow identification of the according property descriptor
-	 *	like <code>Object.getOwnPropertyDescriptor(oTarget, sProperty).get[sMarker]</code>
+	 *        like <code>Object.getOwnPropertyDescriptor(oTarget, sProperty).get[sMarker]</code>
 	 * @private
+	 * @ui5-restricted sap.ui.core
 	 */
 	var lazyProperty = function(oTarget, sProperty, fnCallback, sMarker) {
 

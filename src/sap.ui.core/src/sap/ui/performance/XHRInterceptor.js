@@ -94,15 +94,21 @@ sap.ui.define([
 		}
 	}
 
-
-	return {
+	/**
+	 * @namespace
+	 * @since 1.58
+	 * @alias module:sap/ui/performance/XHRInterceptor
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 */
+	var oXHRInterceptor = {
 		/**
 		 * Register a function callback which gets called as it would be an own method of XHR.
 		 *
 		 * @param {string} sName Name under which the function is registered
 		 * @param {string} sXHRMethod Name of the actual XHR method
 		 * @param {function} fnCallback The registered callback function
-		 * @private
+		 * @public
 		 */
 		register: function(sName, sXHRMethod, fnCallback) {
 			Log.debug("Register '" + sName + "' for XHR function '" + sXHRMethod + "'", XHRINTERCEPTOR);
@@ -120,7 +126,7 @@ sap.ui.define([
 	     * @param {string} sName Name under which the function is registered
 		 * @param {string} sXHRMethod Name of the actual XHR method
 		 * @return {boolean} True if unregister was successful
-		 * @private
+		 * @public
 		 */
 		unregister: function(sName, sXHRMethod) {
 			var bRemove = this.isRegistered(sName, sXHRMethod);
@@ -146,7 +152,7 @@ sap.ui.define([
 		 * Check if a function is registered
 	     * @param {string} sName Name under which the function is registered
 		 * @param {string} sXHRMethod Name of the actual XHR method
-		 * @private
+		 * @public
 		 */
 		isRegistered: function(sName, sXHRMethod) {
 			return mRegistry[sName] && mRegistry[sName][sXHRMethod];
@@ -154,4 +160,5 @@ sap.ui.define([
 
 	};
 
+	return oXHRInterceptor;
 });

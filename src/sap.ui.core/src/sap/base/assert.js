@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(["./Log"], function(Log) {
 	"use strict";
 
@@ -18,12 +14,13 @@ sap.ui.define(["./Log"], function(Log) {
 	 *              of this method.
 	 *
 	 * @function
-	 * @exports sap/base/assert
+	 * @since 1.58
+	 * @alias module:sap/base/assert
 	 * @param {boolean} bResult Result of the checked assertion
 	 * @param {string|function} vMessage Message that will be logged when the result is <code>false</code>.
 	 * In case this is a function, the return value of the function will be displayed. This can be used to execute
 	 * complex code only if the assertion fails.
-	 * @private
+	 * @public
 	 * @SecSink {1|SECRET} Could expose secret data in logs
 	 *
 	 */

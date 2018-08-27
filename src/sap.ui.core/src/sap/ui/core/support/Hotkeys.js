@@ -6,13 +6,26 @@
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
 sap.ui.define([], function() {
-
 	"use strict";
 
-	return {
+	/**
+	 * Provides hotkey functionality for the TechnicalInfo and Support Dialog.
+	 *
+	 * @namespace
+	 * @since 1.58
+	 * @alias module:sap/ui/core/support/Hotkeys
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 */
+	var oHotkeys = {
+
 		/**
-		 * Initializes the hotkeys for TechnicalInfo and Support Dialog
-		 * @sap-restricted sap.ui.core
+		 * Initializes hotkeys for TechnicalInfo and Support Dialog.
+		 *
+		 * @private
+		 * @static
+		 * @param {Object} getModuleSystemInfo Function, which should retrieve modules and prefixes.
+		 * @param {Object} oCfgData Configuration object of the project.
 		 */
 		init: function(getModuleSystemInfo, oCfgData) {
 			// Check whether the left 'alt' key is used
@@ -55,4 +68,5 @@ sap.ui.define([], function() {
 		}
 	};
 
+	return oHotkeys;
 });

@@ -1,22 +1,28 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(["sap/ui/thirdparty/jquery"], function(jQuery) {
 	"use strict";
 
 	/**
+	 * This module provides the {@link jQuery#hasTabIndex} API.
+	 *
+	 * @namespace
+	 * @name module:sap/ui/dom/jquery/hasTabIndex
+	 * @public
+	 * @since 1.58
+	 */
+
+	/**
 	 * Returns <code>true</code> if the first element has a set tabindex.
 	 *
-	 * @param {object} oElem The element to check
 	 * @return {boolean} If the first element has a set tabindex
-	 * @private
+	 * @public
+	 * @name jQuery#hasTabIndex
 	 * @author SAP SE
+	 * @since 0.9.0
 	 * @function
-	 * @exports sap/ui/dom/hasTabIndex
+	 * @requires module:sap/ui/dom/jquery/hasTabIndex
 	 */
 	var fnHasTabIndex = function(oElem) {
 

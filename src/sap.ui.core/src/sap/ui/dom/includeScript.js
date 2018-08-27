@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(["sap/base/assert"], function(assert) {
 	"use strict";
 
@@ -49,7 +45,28 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 		document.head.appendChild(oScript);
 	}
 
-	return function includeScript(vUrl, vId, fnLoadCallback, fnErrorCallback) {
+	/**
+	 * Includes the script (via &lt;script&gt;-tag) into the head for the
+	 * specified <code>sUrl</code> and optional <code>sId</code>.
+	 *
+	 * @param {string|object} vUrl the URL of the script to load or a configuration object
+	 * @param {string} vUrl.url the URL of the script to load
+	 * @param {string} [vUrl.id] id that should be used for the script tag
+	 * @param {object} [vUrl.attributes] map of attributes that should be used for the script tag
+	 * @param {string|object} [vId] id that should be used for the script tag or map of attributes
+	 * @param {function} [fnLoadCallback] callback function to get notified once the script has been loaded
+	 * @param {function} [fnErrorCallback] callback function to get notified once the script loading failed
+	 * @return {void|Promise} When using the configuration object a <code>Promise</code> will be returned. The
+	 *         documentation for the <code>fnLoadCallback</code> applies to the <code>resolve</code>
+	 *         handler of the <code>Promise</code> and the one for the <code>fnErrorCallback</code>
+	 *         applies to the <code>reject</code> handler of the <code>Promise</code>.
+	 * @function
+	 * @public
+	 * @since 1.58
+	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
+	 * @alias module:sap/ui/dom/includeScript
+	 */
+	var fnIncludeScript = function(vUrl, vId, fnLoadCallback, fnErrorCallback) {
 		var mAttributes;
 		if (typeof vUrl === "string") {
 			mAttributes = typeof vId === "string" ? {id: vId} : vId;
@@ -65,5 +82,5 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			});
 		}
 	};
-
+	return fnIncludeScript;
 });

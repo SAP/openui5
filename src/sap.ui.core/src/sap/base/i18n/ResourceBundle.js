@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define([
 		'sap/base/assert',
 		'sap/base/Log',
@@ -205,13 +201,13 @@ sap.ui.define([
 	}
 
 	/**
-	 * @interface Contains locale-specific texts.
+	 * @class Contains locale-specific texts.
 	 *
 	 * If you need a locale-specific text within your application, you can use the
 	 * resource bundle to load the locale-specific file from the server and access
 	 * the texts of it.
 	 *
-	 * Use {@link sap/base/i18n/ResourceBundle.create} to create an instance of sap/base/i18n/ResourceBundle
+	 * Use {@link module:sap/base/i18n/ResourceBundle.create} to create an instance of sap/base/i18n/ResourceBundle
 	 * (.properties without any locale information, e.g. "mybundle.properties"), and optionally
 	 * a locale. The locale is defined as a string of the language and an optional country code
 	 * separated by underscore (e.g. "en_GB" or "fr"). If no locale is passed, the default
@@ -234,10 +230,10 @@ sap.ui.define([
 	 *
 	 * Exception: Fallback for "zh_HK" is "zh_TW" before zh.
 	 *
-	 * @author SAP SE
-	 * @version ${version}
-	 * @name sap/base/i18n/ResourceBundle
-	 * @private
+	 * @since 1.58
+	 * @alias module:sap/base/i18n/ResourceBundle
+	 * @public
+	 * @hideconstructor
 	 */
 	function ResourceBundle(sUrl, sLocale, bIncludeInfo, bAsync){
 		this.sLocale = this._sNextLocale = normalize(sLocale) || defaultLocale();
@@ -262,11 +258,11 @@ sap.ui.define([
 	 * bundle wins against the previous ones and the original ones. This function
 	 * can be called several times.
 	 *
-	 * @param {sap/base/i18n/ResourceBundle} oBundle an instance of a <code>sap/base/i18n/ResourceBundle</code>
+	 * @param {module:sap/base/i18n/ResourceBundle} oCustomBundle an instance of a <code>sap/base/i18n/ResourceBundle</code>
 	 * @private
 	 *
 	 * @function
-	 * @name sap/base/i18n/ResourceBundle.prototype._enhance
+	 * @name module:sap/base/i18n/ResourceBundle.prototype._enhance
 	 */
 	ResourceBundle.prototype._enhance = function(oCustomBundle) {
 		if (oCustomBundle instanceof ResourceBundle) {
@@ -281,12 +277,12 @@ sap.ui.define([
 	 * Returns a locale-specific string value for the given key sKey.
 	 *
 	 * The text is searched in this resource bundle according to the fallback chain described in
-	 * {@link sap/base/i18n/ResourceBundle}. If no text could be found, the key itself is used as text.
+	 * {@link module:sap/base/i18n/ResourceBundle}. If no text could be found, the key itself is used as text.
 	 *
 	 * If the second parameter<code>aArgs</code> is given, then any placeholder of the form "{<i>n</i>}"
 	 * (with <i>n</i> being an integer) is replaced by the corresponding value from <code>aArgs</code>
 	 * with index <i>n</i>.  Note: This replacement is applied to the key if no text could be found.
-	 * For more details on the replacement mechanism refer to {@link sap/ui/formatMessage}.
+	 * For more details on the replacement mechanism refer to {@link module:sap/ui/formatMessage}.
 	 *
 	 * @param {string} sKey Key to retrieve the text for
 	 * @param {string[]} [aArgs] List of parameter values which should replace the placeholders "{<i>n</i>}"
@@ -297,8 +293,7 @@ sap.ui.define([
 	 * @returns {string} The value belonging to the key, if found; Otherwise the key itself or <code>undefined</code> depending on bIgnoreKeyFallback.
 	 *
 	 * @function
-	 * @name sap/base/i18n/ResourceBundle.prototype.getText
-	 * @private
+	 * @public
 	 */
 	ResourceBundle.prototype.getText = function(sKey, aArgs, bIgnoreKeyFallback){
 
@@ -439,8 +434,7 @@ sap.ui.define([
 	 * @returns {boolean} true if the text has been found in the concrete bundle
 	 *
 	 * @function
-	 * @name sap/base/i18n/ResourceBundle.prototype.hasText
-	 * @private
+	 * @public
 	 */
 	ResourceBundle.prototype.hasText = function(sKey) {
 		return this.aPropertyFiles.length > 0 && typeof this.aPropertyFiles[0].getProperty(sKey) === "string";
@@ -550,10 +544,10 @@ sap.ui.define([
 	}
 
 	/**
-	 * Creates and returns a new instance of {@link sap/base/i18n/ResourceBundle}
+	 * Creates and returns a new instance of {@link module:sap/base/i18n/ResourceBundle}
 	 * using the given URL and locale to determine what to load.
 	 *
-	 * @private
+	 * @public
 	 * @function
 	 * @param {object} [mParams] Parameters used to initialize the resource bundle
 	 * @param {string} [mParams.url=''] URL pointing to the base .properties file of a bundle (.properties file without any locale information, e.g. "mybundle.properties")
@@ -563,7 +557,7 @@ sap.ui.define([
 	 * @param {boolean} [mParams.includeInfo=false] Whether to include origin information into the returned property values
 	 * @param {boolean} [mParams.async=false] Whether the first bundle should be loaded asynchronously
 	 *     Note: Fallback bundles loaded by {@link #getText} are always loaded synchronously.
-	 * @returns {sap/base/i18n/ResourceBundle|Promise} A new resource bundle or a Promise on that bundle (in asynchronous case)
+	 * @returns {module:sap/base/i18n/ResourceBundle|Promise} A new resource bundle or a Promise on that bundle (in asynchronous case)
 	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
 	 */
 	ResourceBundle.create = function(mParams) {

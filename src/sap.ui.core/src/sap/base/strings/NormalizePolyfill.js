@@ -9,7 +9,6 @@
 sap.ui.define(["sap/ui/thirdparty/unorm", "sap/ui/thirdparty/unormdata"], function() {
 	"use strict";
 
-
 	function apply() {
 		/*eslint-disable no-extend-native */
 		String.prototype.normalize = function(str) {
@@ -124,6 +123,12 @@ sap.ui.define(["sap/ui/thirdparty/unorm", "sap/ui/thirdparty/unormdata"], functi
 		return true;
 	}
 
+	/**
+	 * @namespace
+	 * @since 1.58
+	 * @alias module:sap/base/strings/NormalizePolyfill
+	 * @private
+	 */
 	var NormalizePolyfill = Object.create(null);
 
 	/**
@@ -138,8 +143,6 @@ sap.ui.define(["sap/ui/thirdparty/unorm", "sap/ui/thirdparty/unormdata"], functi
 	 *
 	 * @param s The string to be checked
 	 * @returns {boolean} Indicating whether s could be NFC formatted or not
-	 * @private
-	 * @static
 	 */
 	NormalizePolyfill.isStringNFC = nfcQuickCheck;
 

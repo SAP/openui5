@@ -1,15 +1,16 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(['sap/ui/Device'], function(Device) {
 	"use strict";
 
 	/**
-	 * @exports sap/ui/util/XMLHelper
+	 * Provides functionality for parsing XML formatted strings and serializing XML documents.
+	 *
+	 * @namespace
+	 * @since 1.58
+	 * @alias module:sap/ui/util/XMLHelper
+	 * @public
 	 */
 	var Helper = {};
 
@@ -22,8 +23,9 @@ sap.ui.define(['sap/ui/Device'], function(Device) {
 	 *
 	 * @param {string} sXMLText the XML data as string
 	 * @returns {object} the parsed XML document with a parseError property as described in
-	 *                   getParseError. An error occurred if the errorCode property of the parseError is != 0.
-	 * @private
+	 *          getParseError. An error occurred if the errorCode property of the parseError is != 0.
+	 * @public
+	 * @static
 	 */
 	Helper.parse = function (sXMLText) {
 		var oXMLDocument;
@@ -59,7 +61,8 @@ sap.ui.define(['sap/ui/Device'], function(Device) {
 	 *
 	 * @param {string} oDocument the parsed XML document
 	 * @returns {object} oParseError if errors were found, or an object with an errorCode of 0 only
-	 * @private
+	 * @public
+	 * @static
 	 */
 	Helper.getParseError = function(oDocument) {
 		var oParseError = {
@@ -129,7 +132,8 @@ sap.ui.define(['sap/ui/Device'], function(Device) {
 	 *
 	 * @param {string} oXMLDocument the XML document object to be serialized as string
 	 * @returns {object} the serialized XML string
-	 * @private
+	 * @public
+	 * @static
 	 */
 	Helper.serialize = function(oXMLDocument) {
 		var oSerializer = new XMLSerializer();
