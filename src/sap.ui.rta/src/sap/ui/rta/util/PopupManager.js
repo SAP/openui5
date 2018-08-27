@@ -6,11 +6,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	'sap/ui/base/ManagedObject',
-	'sap/m/Dialog',
-	'sap/m/Popover',
 	'sap/m/InstanceManager',
-	'sap/ui/core/Popup',
-	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/Overlay',
 	'sap/ui/dt/Util',
 	'sap/ui/fl/Utils',
@@ -21,11 +17,7 @@ sap.ui.define([
 function (
 	jQuery,
 	ManagedObject,
-	Dialog,
-	Popover,
 	InstanceManager,
-	Popup,
-	OverlayRegistry,
 	Overlay,
 	dtUtils,
 	flUtils,
@@ -159,7 +151,7 @@ function (
 			? oPopup.getContent().some(
 				function(oContent) {
 					if (oContent instanceof ComponentContainer) {
-						return this.oRtaRootAppComponent === this._getAppComponentForControl(sap.ui.getCore().getComponent(oContent.getComponent()));
+						return this.oRtaRootAppComponent === this._getAppComponentForControl(Component.get(oContent.getComponent()));
 					}
 				}.bind(this))
 			: false;

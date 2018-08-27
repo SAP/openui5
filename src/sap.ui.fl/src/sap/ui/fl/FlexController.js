@@ -3,37 +3,29 @@
  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/fl/Persistence",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant",
-	"sap/ui/fl/Cache",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/core/mvc/View",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
+	"sap/ui/core/Component",
 	"sap/ui/fl/context/ContextManager",
 	"sap/ui/core/Element",
 	"sap/base/strings/formatMessage",
 	"sap/base/Log"
 ], function(
-	jQuery,
-	Persistence,
 	ChangeRegistry,
 	Utils,
-	LrepConnector,
 	Change,
 	Variant,
-	Cache,
 	FlexSettings,
 	ChangePersistenceFactory,
-	View,
 	JsControlTreeModifier,
 	XmlTreeModifier,
+	Component,
 	ContextManager,
 	Element,
 	formatMessage,
@@ -474,7 +466,7 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.processXmlView = function (oView, mPropertyBag) {
-		var oComponent = sap.ui.getCore().getComponent(mPropertyBag.componentId);
+		var oComponent = Component.get(mPropertyBag.componentId);
 		var oAppComponent = Utils.getAppComponentForControl(oComponent);
 		var oManifest = oComponent.getManifest();
 
