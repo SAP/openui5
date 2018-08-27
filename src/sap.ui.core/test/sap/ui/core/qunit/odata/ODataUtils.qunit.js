@@ -1,7 +1,9 @@
 /*global QUnit*/
 sap.ui.define([
-	'sap/ui/model/odata/ODataUtils'
-], function(ODataUtils) {
+	'sap/ui/model/odata/ODataUtils',
+	'sap/ui/model/Filter',
+	'sap/ui/model/FilterOperator'
+], function(ODataUtils, Filter, FilterOperator) {
 
 	"use strict";
 
@@ -374,5 +376,41 @@ sap.ui.define([
 			force: true
 		}), "/sap/opu;o=CANT_TOUCH_THIS/odata/IWFND/CATALOGSERVICE;x=123;o=Foo123;v=2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value");
 
+	});
+
+	QUnit.test("createFilterParams: Brackets should be correct", function(assert) {
+		var oFilter1 = new Filter({
+			path: 'Price',
+			operator: FilterOperator.EQ,
+			value1: "100"
+		});
+
+		var oMultiFilterWithSingleFilter = new Filter([oFilter1]),
+		 oMultiFilter = new Filter({
+		 	filters: [
+				new Filter({
+					path: 'Quantity',
+					operator: FilterOperator.LT,
+					value1: 20
+				}),
+				new Filter({
+					path: 'Price',
+					operator: FilterOperator.GT,
+					value1: 14.0
+				})
+			],
+			and: false
+		 });
+
+		var oMultiFilterWithSingleMultiFilter = new Filter([oMultiFilter]);
+
+		var aFilters = [];
+		aFilters.push(oMultiFilterWithSingleFilter);
+		aFilters.push(oMultiFilterWithSingleMultiFilter);
+
+		var sFilterString = ODataUtils.createFilterParams(aFilters);
+
+		assert.ok(sFilterString, "Filter string should be created");
+		assert.equal(sFilterString, "$filter=Price%20eq%20100%20and%20(Quantity%20lt%2020%20or%20Price%20gt%2014)", "Filter string (brackets available on multifilter group) should be correct.");
 	});
 });
