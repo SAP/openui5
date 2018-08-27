@@ -1231,15 +1231,25 @@ sap.ui.define([
 		 * The control has not been rendered because it is invisible, the element rendered with this
 		 * prefix can be found by the RenderManager to avoid rerendering the parents
 		 * @private
+		 * @ui5-restricted sap.ui.core
 		 */
-		Invisible : "sap-ui-invisible-",
+		Invisible: "sap-ui-invisible-",
 
 		/**
 		 * A dummy element is rendered with the intention of replacing it with the real content
 		 * @private
+		 * @ui5-restricted sap.ui.core
 		 */
-		Dummy : "sap-ui-dummy-"
+		Dummy: "sap-ui-dummy-",
 
+		/**
+		 * A temporary element for a control that participates in DOM preservation.
+		 * The temporary element is rendered during string rendering, flushed into DOM
+		 * and then replaced with the preserved DOM during onAfterRendering.
+		 * @private
+		 * @ui5-restricted sap.ui.core
+		 */
+		Temporary: "sap-ui-tmp-"
 	};
 
 
@@ -1387,6 +1397,19 @@ sap.ui.define([
 
 		var $preserve = getPreserveArea();
 
+		function needsPlaceholder(elem) {
+			while ( elem && elem != oRootNode && elem.parentNode ) {
+				elem = elem.parentNode;
+				if ( elem.hasAttribute(ATTR_PRESERVE_MARKER) ) {
+					return true;
+				}
+				if ( elem.hasAttribute("data-sap-ui") ) {
+					break;
+				}
+			}
+			// return false;
+		}
+
 		function check(candidate) {
 
 			// don't process the preserve area or the static area
@@ -1395,8 +1418,11 @@ sap.ui.define([
 			}
 
 			if ( candidate.hasAttribute(ATTR_PRESERVE_MARKER) )  { // node is marked with the preserve marker
-				// when the current node is the root node then we're doing a single control rerendering
-				if ( candidate === oRootNode ) {
+				// always create a placeholder
+				// - when the current node is the root node then we're doing a single control rerendering and need to know where to rerender
+				// - when the parent DOM belongs to the preserved DOM of another control, that control needs a placeholder as well
+				// - otherwise, the placeholder might be unnecessary but will be removed with the DOM removal following the current preserve
+				if ( candidate === oRootNode || needsPlaceholder(candidate) ) {
 					makePlaceholder(candidate);
 				}
 				$preserve.append(candidate);
@@ -1461,21 +1487,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks whether the given DOM node is part of the 'preserve' area.
+	 * Checks whether the given DOM element is part of the 'preserve' area.
 	 *
-	 * @param {Element} oDomNode
-	 * @return {boolean} whether node is part of 'preserve' area
+	 * @param {Element} oElement DOM element to check
+	 * @return {boolean} Whether element is part of 'preserve' area
 	 * @private
 	 * @static
 	 */
-	RenderManager.isPreservedContent = function(oDomNode) {
-		return ( oDomNode && oDomNode.getAttribute(ATTR_PRESERVE_MARKER) && oDomNode.parentNode && oDomNode.parentNode.id == ID_PRESERVE_AREA );
+	RenderManager.isPreservedContent = function(oElement) {
+		return ( oElement && oElement.getAttribute(ATTR_PRESERVE_MARKER) && oElement.parentNode && oElement.parentNode.id == ID_PRESERVE_AREA );
 	};
 
 	/**
-	 * Returns the hidden area reference belonging to this window instance.
+	 * Returns the hidden area reference belonging to the current window instance.
 	 *
-	 * @return {Element} the hidden area reference belonging to this core instance.
+	 * @return {Element} The hidden area reference belonging to the current window instance.
 	 * @public
 	 * @static
 	 */
