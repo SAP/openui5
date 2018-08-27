@@ -5,7 +5,7 @@
 // QUnit script for DataBinding Messages
 sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
-	"test-resources/sap/ui/core/qunit/ODataModelFakeService" // used only indirectly
+	"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService" // used only indirectly
 ], function(ODataModel) {
 	"use strict";
 

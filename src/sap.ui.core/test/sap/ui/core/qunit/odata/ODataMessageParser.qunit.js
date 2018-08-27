@@ -1,25 +1,51 @@
-QUnit.config.testTimeout = 6000;
+/*global QUnit*/
 
-/* eslint-disable no-unused-vars */
-function runODataMessagesTests() {
-/* eslint-enable no-unused-vars */
-"use strict";
-	QUnit.config.autostart = false;
+sap.ui.define([
+	"test-resources/sap/ui/core/qunit/odata/data/ODataMessagesFakeService",
+	"sap/base/Log",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/odata/ODataMetadata",
+	"sap/ui/model/odata/ODataMessageParser",
+	"sap/ui/model/BindingMode",
+	"sap/ui/model/type/String",
+	"sap/ui/core/message/MessageManager",
+	"sap/ui/core/MessageType",
+	"sap/m/Input",
+	"sap/m/Button",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/layout/HorizontalLayout"
+], function(
+	fakeService,
+	Log,
+	ODataModel,
+	ODataMetadata,
+	ODataMessageParser,
+	BindingMode,
+	String,
+	MessageManager,
+	MessageType,
+	Input,
+	Button,
+	VerticalLayout,
+	HorizontalLayout
+) {
+	"use strict";
 
-	jQuery.sap.require("sap.ui.model.odata.v2.ODataModel");
-	jQuery.sap.require("sap.ui.model.odata.ODataMessageParser");
-	jQuery.sap.require("sap.ui.core.message.MessageManager");
+	//add divs for control tests
+	var oContent = document.createElement("div");
+	oContent.id = "content";
+	document.body.appendChild(oContent);
 
-	var oInput = new sap.m.Input({value:"{json>/Products(1)/ProductName}"});
+	var oInput = new Input({value:"{json>/Products(1)/ProductName}"});
 	oInput.placeAt("content");
 
-	var oInput2 = new sap.m.Input({value:"{xml>/Products(1)/ProductName}"});
+	var oInput2 = new Input({value:"{xml>/Products(1)/ProductName}"});
 	oInput2.placeAt("content");
 
 	var sServiceURI = "fakeservice://testdata/odata/northwind/";
 	// var sServiceURI = "/testsuite/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/";
 	var mModelOptions = {
-		defaultBindingMode: sap.ui.model.BindingMode.TwoWay,
+		defaultBindingMode: BindingMode.TwoWay,
 		async: true,
 		useBatch: false
 	};
@@ -29,42 +55,35 @@ function runODataMessagesTests() {
 	// Create MessageManager instance and set Message Model in TimeOut...
 	sap.ui.getCore().getMessageManager();
 
-	// Start delayed so the message model is available
-	setTimeout(function() {
-		QUnit.start();
-	}, 100);
-
-
-
-
-	var oJsonLayout = new sap.ui.layout.VerticalLayout({
+	var oJsonLayout = new VerticalLayout({
 		content: {
 			path: "json>/Products",
-			template: new sap.ui.commons.Button({
+			template: new Button({
 				text: { path: "json>ProductName" }
 			})
 		}
 	});
 
-	var oXmlLayout = new sap.ui.layout.VerticalLayout({
+	var oXmlLayout = new VerticalLayout({
 		content: {
 			path: "xml>/Products",
-			template: new sap.ui.commons.Button({
+			template: new Button({
 				text: { path: "xml>ProductName" }
 			})
 		}
 	});
 
-	var oMainLayout = new sap.ui.layout.HorizontalLayout({
+	var oMainLayout = new HorizontalLayout({
 		content: [ oJsonLayout, oXmlLayout ]
 	});
 	oMainLayout.placeAt("content");
 
+	QUnit.module("MessageParser");
 
 	QUnit.test("JSON format", function(assert) {
 		var done = assert.async();
 		mModelOptions.json = true;
-		oModelJson = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		oModelJson = new ODataModel(sServiceURI, mModelOptions);
 		sap.ui.getCore().setModel(oModelJson, "json");
 
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
@@ -94,7 +113,7 @@ function runODataMessagesTests() {
 	QUnit.test("XML format", function(assert) {
 		var done = assert.async();
 		mModelOptions.json = false;
-		oModelXml = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		oModelXml = new ODataModel(sServiceURI, mModelOptions);
 		sap.ui.getCore().setModel(oModelXml, "xml");
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 
@@ -103,7 +122,6 @@ function runODataMessagesTests() {
 		var iRequests = 0;
 		oModelXml.attachRequestCompleted(function(oRequest) {
 			iRequests++;
-			var iMessages = oMessageModel.getProperty("/").length;
 			if (oRequest.getParameter("url").indexOf("$count") == -1) {
 				assert.ok(iRequests === 2, "Two Requests (with messages) has been processed");
 				setTimeout(function() {
@@ -122,22 +140,19 @@ function runODataMessagesTests() {
 
 	QUnit.test("Function Imports", function(assert) {
 		var done = assert.async();
-		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/function-imports/", {
+		var oModel = new ODataModel("fakeservice://testdata/odata/function-imports/", {
 			useBatch: false,
 			json: false
 		});
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 
-		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
 		oModel.attachMetadataLoaded(function() {
-			var mMessages = oMessageModel.getProperty("/");
-			var oMetadata = oModel.getServiceMetadata();
-
 			testFunctionTarget({
 				url: "/EditProduct",
 				parameters: {
-					"ProductUUID": "00000000-0000-0000-0000-000000000001",
+					"ProductUUID": "00000000-0000-0000-0000-000000000001"
 				},
 
 				numMessages: 1,
@@ -148,7 +163,7 @@ function runODataMessagesTests() {
 			testFunctionTarget({
 				url: "/EditProduct",
 				parameters: {
-					"ProductUUID": "00000000-0000-0000-0000-000000000002",
+					"ProductUUID": "00000000-0000-0000-0000-000000000002"
 				},
 
 				numMessages: 2,
@@ -159,7 +174,7 @@ function runODataMessagesTests() {
 			testFunctionTarget({
 				url: "/EditProduct",
 				parameters: {
-					"ProductUUID": "30000000-0000-0000-0000-000000000003",
+					"ProductUUID": "30000000-0000-0000-0000-000000000003"
 				},
 
 				numMessages: 3,
@@ -222,7 +237,7 @@ function runODataMessagesTests() {
 
 		assert.expect(20);
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/technical-errors/", {
+		var oModel = new ODataModel("fakeservice://testdata/odata/technical-errors/", {
 			useBatch: false,
 			json: bJson
 		});
@@ -240,11 +255,9 @@ function runODataMessagesTests() {
 
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 
-		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
 		oModel.attachMetadataLoaded(function() {
-			var mMessages = oMessageModel.getProperty("/");
-			var oMetadata = oModel.getServiceMetadata();
 
 			var fnCheckAddedMessages = function() {
 				iExpectedMessages += 2;
@@ -253,10 +266,10 @@ function runODataMessagesTests() {
 				assert.equal(aMessages.length, iExpectedMessages, "There should be more error messages");
 
 				assert.equal(aMessages[iExpectedMessages - 2].getMessage(), "Field \"SALESORDERID\" cannot be changed since it is read only", "Correct message text");
-				assert.equal(aMessages[iExpectedMessages - 2].getType(), sap.ui.core.MessageType.Error, "Correct message severity");
+				assert.equal(aMessages[iExpectedMessages - 2].getType(), MessageType.Error, "Correct message severity");
 
 				assert.equal(aMessages[iExpectedMessages - 1].getMessage(), "Some other error", "Correct message text");
-				assert.equal(aMessages[iExpectedMessages - 1].getType(), sap.ui.core.MessageType.Error, "Correct message severity");
+				assert.equal(aMessages[iExpectedMessages - 1].getType(), MessageType.Error, "Correct message severity");
 
 				fnStart();
 			};
@@ -278,7 +291,7 @@ function runODataMessagesTests() {
 				};
 
 				for (var i = aMessages.length - 6; i < aMessages.length; ++i) {
-					var oM = aMessages[i]
+					var oM = aMessages[i];
 					var sIdentifier = [oM.getType(), oM.getCode(), oM.getTarget(), oM.getMessage()].join("|");
 
 					assert.equal(mAddesMessages[sIdentifier], false, "Message is as expected");
@@ -337,7 +350,7 @@ function runODataMessagesTests() {
 
 		assert.expect(15);
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/technical-errors/", {
+		var oModel = new ODataModel("fakeservice://testdata/odata/technical-errors/", {
 			useBatch: false,
 			json: bJson
 		});
@@ -354,11 +367,9 @@ function runODataMessagesTests() {
 
 
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
-		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
 		oModel.attachMetadataLoaded(function() {
-			var mMessages = oMessageModel.getProperty("/");
-			var oMetadata = oModel.getServiceMetadata();
 
 			var fnCheckAddedMessages = function() {
 				iExpectedMessages += 2;
@@ -431,33 +442,27 @@ function runODataMessagesTests() {
 	QUnit.test("ODataMessageParser reads headers case-insensitive", function(assert) {
 		var done = assert.async();
 
-		var Log = sap.ui.require("sap/base/Log");
-		assert.ok(Log, "Log module should be available");
-
 		var sServiceURI = "fakeservice://testdata/odata/northwind";
 
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
-		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
-		var oMetadata = new sap.ui.model.odata.ODataMetadata(sServiceURI + "/$metadata", {});
+		var oMetadata = new ODataMetadata(sServiceURI + "/$metadata", {});
 		oMetadata.loaded().then(function() {
-
-			// Get Messages sent to console
-			var fnError = Log.error;
-			var fnWarn = Log.warning;
-			var fnDebug = Log.debug;
-			var fnInfo = Log.info;
 
 			var iCounter = 0;
 			var fnCount = function(sMessage) {
 				if (sMessage.indexOf("[OData Message] ") > -1) {
 					iCounter++;
 				}
-			}
+			};
 
-			Log.error = Log.warning = Log.debug = Log.info = fnCount;
+			this.stub(Log, "error").callsFake(fnCount);
+			this.stub(Log, "warning").callsFake(fnCount);
+			this.stub(Log, "debug").callsFake(fnCount);
+			this.stub(Log, "info").callsFake(fnCount);
 
-			var oParser = new sap.ui.model.odata.ODataMessageParser(sServiceURI, oMetadata);
+			var oParser = new ODataMessageParser(sServiceURI, oMetadata);
 
 			var oRequest = {
 				requestUri: "fakeservice://testdata/odata/northwind/Test"
@@ -515,7 +520,7 @@ function runODataMessagesTests() {
 			oParser.parse(oResponse, oRequest);
 			assert.equal(iCounter, 3, "Message from 'SAP-Message' header was added");
 			done();
-		});
+		}.bind(this));
 	});
 
 	QUnit.test("ODataMessageParser: target key for created entities", function(assert) {
@@ -523,11 +528,11 @@ function runODataMessagesTests() {
 
 		var sServiceURI = "fakeservice://testdata/odata/northwind";
 
-		var oMetadata = new sap.ui.model.odata.ODataMetadata(sServiceURI + "/$metadata", {});
+		var oMetadata = new ODataMetadata(sServiceURI + "/$metadata", {});
 		oMetadata.loaded().then(function() {
 
 
-			var oParser = new sap.ui.model.odata.ODataMessageParser(sServiceURI, oMetadata);
+			var oParser = new ODataMessageParser(sServiceURI, oMetadata);
 			// Use processor to get new messages
 			var aNewMessages = [];
 			var aOldMessages = [];
@@ -630,11 +635,11 @@ function runODataMessagesTests() {
 
 		var sServiceURI = "fakeservice://testdata/odata/northwind";
 
-		var oMetadata = new sap.ui.model.odata.ODataMetadata(sServiceURI + "/$metadata", {});
+		var oMetadata = new ODataMetadata(sServiceURI + "/$metadata", {});
 		oMetadata.loaded().then(function() {
 
 
-			var oParser = new sap.ui.model.odata.ODataMessageParser(sServiceURI, oMetadata);
+			var oParser = new ODataMessageParser(sServiceURI, oMetadata);
 			// Use processor to get new messages
 			var aNewMessages = [];
 			oParser.setProcessor({
@@ -703,22 +708,13 @@ function runODataMessagesTests() {
 	QUnit.test("ODataMessageParser without ODataModel", function(assert) {
 		var done = assert.async();
 
-		var Log = sap.ui.require("sap/base/Log");
-		assert.ok(Log, "Log module should be available");
-
 		var sServiceURI = "fakeservice://testdata/odata/northwind";
 
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
-		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
-		var oMetadata = new sap.ui.model.odata.ODataMetadata(sServiceURI + "/$metadata", {});
+		var oMetadata = new ODataMetadata(sServiceURI + "/$metadata", {});
 		oMetadata.loaded().then(function() {
-
-			// Get Messages sent to console
-			var fnError = Log.error;
-			var fnWarn = Log.warning;
-			var fnDebug = Log.debug;
-			var fnInfo = Log.info;
 
 			var iCounter = 0;
 			var fnCount = function(sMessage) {
@@ -727,9 +723,13 @@ function runODataMessagesTests() {
 				}
 			};
 
-			Log.error = Log.warning = Log.debug = Log.info = fnCount;
+			// intercept messages sent to console
+			this.stub(Log, "error").callsFake(fnCount);
+			this.stub(Log, "warning").callsFake(fnCount);
+			this.stub(Log, "debug").callsFake(fnCount);
+			this.stub(Log, "info").callsFake(fnCount);
 
-			var oParser = new sap.ui.model.odata.ODataMessageParser(sServiceURI, oMetadata);
+			var oParser = new ODataMessageParser(sServiceURI, oMetadata);
 
 			var oRequest = {
 				requestUri: "fakeservice://testdata/odata/northwind/Test"
@@ -750,7 +750,7 @@ function runODataMessagesTests() {
 				}
 			};
 			oParser.parse(oResponse, oRequest);
-			assert.equal(iCounter, 1, "Message from 'sap-message' header was added")
+			assert.equal(iCounter, 1, "Message from 'sap-message' header was added");
 
 			oResponse = {
 				statusCode: "200", // Parse Header...
@@ -765,7 +765,7 @@ function runODataMessagesTests() {
 						"details": [{
 							"code":		"999",
 							"message":	"This is a warning test message",
-							"severity":	"warning",
+							"severity":	"warning"
 						}, {
 							"code":		"999",
 							"message":	"This is a success test message",
@@ -780,7 +780,7 @@ function runODataMessagesTests() {
 			};
 			oParser.setHeaderField("message");
 			oParser.parse(oResponse, oRequest);
-			assert.equal(iCounter, 5, "Message from 'message' header was added")
+			assert.equal(iCounter, 5, "Message from 'message' header was added");
 
 			oResponse = {
 				statusCode: "200", // Parse Header...
@@ -793,25 +793,17 @@ function runODataMessagesTests() {
 			};
 			oParser.setHeaderField("invalid");
 			oParser.parse(oResponse, oRequest);
-			assert.equal(iCounter, 5, "No message from 'invalid' header was added")
+			assert.equal(iCounter, 5, "No message from 'invalid' header was added");
 
 			oParser.setHeaderField("none");
 			oParser.parse(oResponse, oRequest);
-			assert.equal(iCounter, 5, "No message from non-existent 'none' header was added")
-
-
-			// Clean up
-			Log.error = fnError;
-			Log.warning = fnWarn;
-			Log.debug = fnDebug;
-			Log.info = fnInfo;
+			assert.equal(iCounter, 5, "No message from non-existent 'none' header was added");
 
 			oMetadata.destroy();
 			oParser.destroy();
 			done();
-		});
 
-
+		}.bind(this));
 
 	});
 
@@ -821,22 +813,20 @@ function runODataMessagesTests() {
 
 	QUnit.test("Function Imports with action-for annotation", function(assert) {
 		var done = assert.async();
-		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/function-imports/", {
+		var oModel = new ODataModel("fakeservice://testdata/odata/function-imports/", {
 			useBatch: false,
 			json: false
 		});
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 
-		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
 		oModel.attachMetadataLoaded(function() {
-			var mMessages = oMessageModel.getProperty("/");
-			var oMetadata = oModel.getServiceMetadata();
 
 			testFunctionTarget({
 				url: "/ActionForFunction",
 				parameters: {
-					"SupplierUUID": "00000000-0000-0000-0000-000000000001",
+					"SupplierUUID": "00000000-0000-0000-0000-000000000001"
 				},
 
 				numMessages: 1,
@@ -847,7 +837,7 @@ function runODataMessagesTests() {
 			testFunctionTarget({
 				url: "/ActionForFunction",
 				parameters: {
-					"SupplierUUID": "00000000-0000-0000-0000-000000000002",
+					"SupplierUUID": "00000000-0000-0000-0000-000000000002"
 				},
 
 				numMessages: 2,
@@ -858,7 +848,7 @@ function runODataMessagesTests() {
 			testFunctionTarget({
 				url: "/ActionForFunction",
 				parameters: {
-					"SupplierUUID": "00000000-0000-0000-0000-000000000002",
+					"SupplierUUID": "00000000-0000-0000-0000-000000000002"
 				},
 
 				numMessages: 2,
@@ -922,18 +912,17 @@ function runODataMessagesTests() {
 		var done = assert.async();
 
 		assert.expect(bUseBatch ? 9 : 5);
-		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/northwind/", {
+		var oModel = new ODataModel("fakeservice://testdata/odata/northwind/", {
 			useBatch: bUseBatch,
 			json: bJSON
 		});
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 
-		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
 		oModel.attachMetadataLoaded(function() {
-			var aMessages = oMessageModel.getProperty("/");
 
-			assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set after metadata loaded")
+			assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set after metadata loaded");
 
 			oModel.setDeferredBatchGroups(["deferredId"]);
 			oModel.read("/Products(1)", { batchGroupId : "deferredId" });
@@ -971,7 +960,7 @@ function runODataMessagesTests() {
 			oModel.destroy();
 			done();
 		}
-	}
+	};
 
 	QUnit.test("Message with groups - Batch: off, JSON: true",  fnTestBatchGroups.bind(this, false, true));
 	QUnit.test("Message with groups - Batch: off, JSON: false", fnTestBatchGroups.bind(this, false, false));
@@ -984,18 +973,17 @@ function runODataMessagesTests() {
 		var done = assert.async();
 
 		assert.expect(bUseBatch ? 9 : 5);
-		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/northwind/", {
+		var oModel = new ODataModel("fakeservice://testdata/odata/northwind/", {
 			useBatch: bUseBatch,
 			json: bJSON
 		});
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 
-		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
 		oModel.attachMetadataLoaded(function() {
-			var aMessages = oMessageModel.getProperty("/");
 
-			assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set after metadata loaded")
+			assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set after metadata loaded");
 
 			oModel.setDeferredBatchGroups(["deferredId"]);
 			oModel.update("/Products(1)", { ProductName: "Updated 1" }, { batchGroupId : "deferredId" });
@@ -1033,7 +1021,7 @@ function runODataMessagesTests() {
 			oModel.destroy();
 			done();
 		}
-	}
+	};
 
 	QUnit.test("Message with groups (write) - Batch: off, JSON: true",  fnTestWriteBatchGroups.bind(this, false, true));
 	QUnit.test("Message with groups (write) - Batch: off, JSON: false", fnTestWriteBatchGroups.bind(this, false, false));
@@ -1046,31 +1034,30 @@ function runODataMessagesTests() {
 		var done = assert.async();
 
 		assert.expect(10);
-		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/northwind/", { tokenHandling: false, useBatch: false });
+		var oModel = new ODataModel("fakeservice://testdata/odata/northwind/", { tokenHandling: false, useBatch: false });
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 
-		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
 		oModel.attachMetadataLoaded(function() {
 			var aMessages = oMessageModel.getProperty("/");
 
-			assert.equal(aMessages.length, 0, "No messages are set at the after metadata was loaded")
+			assert.equal(aMessages.length, 0, "No messages are set at the after metadata was loaded");
 
 			oModel.read("/Products(1)", {
 				success: function() {
 					var aMessages = oMessageModel.getProperty("/");
 					var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
 
-					assert.equal(aMessages.length, 2, "Two messages are set at the beginning of the test")
+					assert.equal(aMessages.length, 2, "Two messages are set at the beginning of the test");
 					assert.ok(aMessageTagets.indexOf("/Products") > -1, "Message targetting '/Products' has been received.");
 					assert.ok(aMessageTagets.indexOf("/Products(1)/ProductName") > -1, "Message targetting '/Products(1)/ProductName' has been received.");
-
 					oModel.read("/Products(1)/Supplier", {
 						success: function() {
 							var aMessages = oMessageModel.getProperty("/");
 							var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
 
-							assert.equal(aMessages.length, 4, "Four messages are set at the beginning of the test")
+							assert.equal(aMessages.length, 4, "Four messages are set at the beginning of the test");
 
 							assert.ok(aMessageTagets.indexOf("/Products") > -1, "Message targetting '/Products' has been received.");
 							assert.ok(aMessageTagets.indexOf("/Products(1)/ProductName") > -1, "Message targetting '/Products(1)/ProductName' has been received.");
@@ -1100,16 +1087,16 @@ function runODataMessagesTests() {
 		var done = assert.async();
 
 		assert.expect(26);
-		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/northwind/", { tokenHandling: false, useBatch: false });
+		var oModel = new ODataModel("fakeservice://testdata/odata/northwind/", { tokenHandling: false, useBatch: false });
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 		var oMessage;
 
-		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
 		oModel.attachMetadataLoaded(function() {
 			var aMessages = oMessageModel.getProperty("/");
 
-			assert.equal(aMessages.length, 0, "No messages are set at the after metadata was loaded")
+			assert.equal(aMessages.length, 0, "No messages are set at the after metadata was loaded");
 
 			oModel.read("/Products(1)", {
 				success: function() {
@@ -1209,10 +1196,10 @@ function runODataMessagesTests() {
 
 		assert.expect(11);
 
-		var oInput3 = new sap.m.Input({
+		var oInput3 = new Input({
 			value: {
 				path: "/Products(1)/ProductName",
-				type: new sap.ui.model.type.String(null, {
+				type: new String(null, {
 					maxLength: 3
 				})
 			}
@@ -1228,9 +1215,9 @@ function runODataMessagesTests() {
 			return new Promise(function(resolve) {
 				oModel.read(sPath, { success: resolve });
 			});
-		}
+		};
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new ODataModel(sServiceURI, mModelOptions);
 		sap.ui.getCore().setModel(oModel);
 
 		oInput3.placeAt("content");
@@ -1257,7 +1244,7 @@ function runODataMessagesTests() {
 
 			oInput3.bindProperty("value",  {
 				path: "ProductName",
-				type: new sap.ui.model.type.String(null, {
+				type: new String(null, {
 					maxLength: 3
 				})
 			});
@@ -1273,7 +1260,7 @@ function runODataMessagesTests() {
 			assert.equal(oMessageModel.getProperty("/").length, 3, "Two messages from the OData service and one from validation");
 			assert.equal(oInput3.getBinding("value").getDataState().getControlMessages().length, 1, "One validation error");
 
-			oInput3.setBindingContext(oModel.createBindingContext("/Products(1)"))
+			oInput3.setBindingContext(oModel.createBindingContext("/Products(1)"));
 
 			return wait();
 		}).then(function() {
@@ -1294,7 +1281,7 @@ function runODataMessagesTests() {
 
 		assert.expect(19);
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, jQuery.extend({}, mModelOptions, { json: true }));
+		var oModel = new ODataModel(sServiceURI, Object.assign({}, mModelOptions, { json: true }));
 		sap.ui.getCore().setModel(oModel);
 
 		var read = function(sPath) {
@@ -1345,14 +1332,14 @@ function runODataMessagesTests() {
 
 		assert.expect(35);
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, jQuery.extend({}, mModelOptions, { json: true }));
+		var oModel = new ODataModel(sServiceURI, Object.assign({}, mModelOptions, { json: true }));
 		sap.ui.getCore().setModel(oModel);
 
 		var read = function(sPath) {
 			return new Promise(function(resolve) {
 				oModel.read(sPath, { success: resolve });
 			});
-		}
+		};
 
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
@@ -1438,7 +1425,7 @@ function runODataMessagesTests() {
 
 		assert.expect(7);
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, jQuery.extend({}, mModelOptions, { json: true }));
+		var oModel = new ODataModel(sServiceURI, Object.assign({}, mModelOptions, { json: true }));
 		sap.ui.getCore().setModel(oModel);
 
 		var oBinding = oModel.bindProperty("/Products(ContextId='CLF(12)SEMANTIC_OBJ(7)Product(10)OBJECT_KEY(11)ZTEST_GD_02(9)DRAFT_KEY(36)005056ba-1dcb-1ee7-8ec6-ae98ab359923')/ProductName");
@@ -1447,7 +1434,7 @@ function runODataMessagesTests() {
 			return new Promise(function(resolve) {
 				oModel.read(sPath, { success: resolve });
 			});
-		}
+		};
 
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
@@ -1477,7 +1464,7 @@ function runODataMessagesTests() {
 
 		assert.expect(8);
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, jQuery.extend({}, mModelOptions, { json: true }));
+		var oModel = new ODataModel(sServiceURI, Object.assign({}, mModelOptions, { json: true }));
 		sap.ui.getCore().setModel(oModel);
 		var oBinding = oModel.bindProperty("Supplier/Name");
 		oModel.addBinding(oBinding);
@@ -1490,7 +1477,7 @@ function runODataMessagesTests() {
 				mParameters.success = resolve;
 				oModel.read(sPath, mParameters);
 			});
-		}
+		};
 
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
@@ -1512,5 +1499,5 @@ function runODataMessagesTests() {
 		});
 	};
 
-	QUnit.test("Propagate Message: Binding to NavProp", fnTestNavProp);
-}
+		QUnit.test("Propagate Message: Binding to NavProp", fnTestNavProp);
+});

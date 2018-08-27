@@ -1,6 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"./data/ODataModelFakeService",
+	"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/OperationMode",

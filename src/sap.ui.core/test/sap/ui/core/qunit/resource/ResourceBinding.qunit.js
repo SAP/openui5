@@ -1,41 +1,18 @@
-<!DOCTYPE HTML>
-
-<!--
-  Tested sap.ui.model.resource.ResourceBinding
--->
-
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<!-- Initialization -->
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-language="en">
-	</script>
-
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
-	media="screen" />
-<script
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-<!-- Test functions -->
-<script>
-
+/*global QUnit*/
+sap.ui.define([
+	"sap/ui/model/resource/ResourceModel"
+], function(
+	ResourceModel
+) {
+	"use strict";
 	var oModel;
 	var oBinding;
 
 	function setup(){
 		// reset bindings
-		sap.ui.localResources("testdata");
-		oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages"});
+		oModel = new ResourceModel({bundleName:"testdata.messages"});
 		sap.ui.getCore().setModel(oModel);
-	};
+	}
 
 	QUnit.test("Binding getPath", function(assert) {
 		assert.expect(2);
@@ -62,7 +39,7 @@
 	    oBinding.attachChange(callBackOnChange);
 
 		// model stores the binding first when attach change was called
-		assert.equal(oModel.aBindings.length, 1, "model bindings")
+		assert.equal(oModel.aBindings.length, 1, "model bindings");
 
 		// fire change event
 		oBinding._fireChange();
@@ -79,7 +56,7 @@
 		attach = false;
 		detach = true;
 
-		assert.equal(oModel.aBindings.length, 0, "model bindings")
+		assert.equal(oModel.aBindings.length, 0, "model bindings");
 	});
 
 	var attach = false;
@@ -88,7 +65,7 @@
 	function callBackOnChange(){
 		attach = true;
 		detach = false;
-	};
+	}
 
 	QUnit.test("PropertyBinding getValue", function(assert) {
 		setup();
@@ -96,17 +73,4 @@
 
 		assert.equal(oBinding.getValue(), "A text en", "Property binding value");
 	});
-
-	</script>
-
-</head>
-<body>
-<h1 id="qunit-header">QUnit tests: Data binding Resource Bindings</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-<br>
-<div id="target1"></div>
-</body>
-</html>
+});

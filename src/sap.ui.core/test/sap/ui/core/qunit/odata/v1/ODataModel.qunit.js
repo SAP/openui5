@@ -1,63 +1,55 @@
-<!DOCTYPE HTML>
+/*global OData, QUnit, sinon*/
+sap.ui.define([
+	"sap/base/Log",
+	"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService",
+	"sap/ui/model/odata/ODataModel",
+	"sap/ui/model/odata/CountMode",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/Context",
+	"sap/m/Label",
+	"sap/m/Panel",
+	"sap/m/List",
+	"sap/m/DisplayListItem",
+	"sap/ui/thirdparty/datajs" // only used via window.OData
+], function(
+	Log,
+	fakeService,
+	ODataModel,
+	CountMode,
+	Filter,
+	FilterOperator,
+	Sorter,
+	Context,
+	Label,
+	Panel,
+	List,
+	ListItem
+) {
+	"use strict";
 
-<!--
-  Tested sap.ui.model.odata.ODataModel
--->
-
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<!-- Initialization -->
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons">
-	</script>
-
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
-	media="screen" />
-<script
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<!--[if IE]>
-	<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
-<![endif]-->
-<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
-<!-- This test is not running against the real Northwind service, but a fake service based on
-     Sinon.SJ FakeXHR. To run on the real service instead please comment out the following line. -->
-<script src="ODataModelFakeService.js"></script>
-
-<!-- Test functions -->
-<script>
-	sinon.config.useFakeTimers = false;
-	QUnit.config.testTimeout = 6000;
-
-	var Filter = sap.ui.model.Filter;
-	var FilterOperator = sap.ui.model.FilterOperator;
-
-	//TODO currently we rely on northwind odata service for tests...
-	//TODO tests depends on server response time and northwind content...so tests may be unstable
+	//add divs for control tests
+	var oTarget1 = document.createElement("div");
+	oTarget1.id = "target1";
+	document.body.appendChild(oTarget1);
+	var oTarget2 = document.createElement("div");
+	oTarget2.id = "target2";
+	document.body.appendChild(oTarget2);
 
 	// time to wait for server responses
-	var timeout = 3000;
 	var sURI = "http://services.odata.org/V3/Northwind/Northwind.svc/";
 	sURI = "/proxy/http/" + sURI.replace("http://","");
 
-	var oLabel = new sap.ui.commons.Label("myLabel");
-	var oPanel = new sap.ui.commons.Panel();
+	var oLabel = new Label("myLabel");
+	var oPanel = new Panel();
 	oPanel.addContent(oLabel);
 	oPanel.placeAt("target1");
 
 	function removeSharedServicedata(sURI){
 		var sServiceURI = sURI.replace(/\/$/, "");
-		if(sap.ui.model.odata.ODataModel.mServiceData && sap.ui.model.odata.ODataModel.mServiceData[sServiceURI]){
-			delete sap.ui.model.odata.ODataModel.mServiceData[sServiceURI];
+		if (ODataModel.mServiceData && ODataModel.mServiceData[sServiceURI]){
+			delete ODataModel.mServiceData[sServiceURI];
 		}
 	}
 
@@ -65,7 +57,7 @@
 	 * Removes all shared Metadata
 	 */
 	function cleanServiceDataCache() {
-		sap.ui.model.odata.ODataModel.mServiceData = {};
+		ODataModel.mServiceData = {};
 	}
 
 
@@ -83,7 +75,7 @@
 		var aArgs = [null].concat(Array.prototype.slice.call(arguments, 0));
 
 		// create factory function by calling "bind" with the provided arguments
-		var Factory = sap.ui.model.odata.ODataModel.bind.apply(sap.ui.model.odata.ODataModel, aArgs);
+		var Factory = ODataModel.bind.apply(ODataModel, aArgs);
 
 		// the factory will create the model with the arguments above
 		var oModel = new Factory();
@@ -93,23 +85,23 @@
 
 	var bChanged = false, bDataRequested = false, bDataReceived = false;
 
-	var fnChange = function(oEvent) {
+	var fnChange = function(assert, oEvent) {
 		bChanged = true;
 		assert.ok(bDataRequested && !bDataReceived,"change fired");
 	};
 
-	var fnDataRequested = function(oEvent) {
+	var fnDataRequested = function(assert, oEvent) {
 		bDataRequested = true;
 		assert.ok(!bDataReceived && !bChanged,"dataRequested fired");
 	};
 
-	var fnDataReceived = function(oEvent) {
+	var fnDataReceived = function(assert, oEvent) {
 		bDataReceived = true;
 		assert.ok(bChanged && bDataRequested,"dataRecieved fired");
 	};
 
 	// assertion methods for the next 3 constructor tests
-	function assertCommonArguments(oModel) {
+	function assertCommonArguments(assert, oModel) {
 		assert.equal(oModel.sServiceUrl, sURI.substr(0, sURI.length - 1), 'serviceUrl');
 		assert.equal(oModel.bJSON, true, 'json');
 		assert.equal(oModel.sUser, 'user', 'user');
@@ -119,7 +111,7 @@
 		assert.equal(oModel.bWithCredentials, true, 'withCredentials');
 		assert.equal(oModel.bLoadMetadataAsync, true, 'loadMetadataAsync');
 	}
-	function assertLegacyArguments(oModel) {
+	function assertLegacyArguments(assert, oModel) {
 		// expect default values as they can't be set with as legacy arguments
 		assert.equal(oModel.bLoadAnnotationsJoined, true, 'loadAnnotationsJoined');
 		assert.deepEqual(oModel.aUrlParams, [], 'serviceUrlParams');
@@ -131,7 +123,7 @@
 			"":"http://schemas.microsoft.com/ado/2007/06/edmx"
 		}, 'metadataNamespaces');
 	}
-	function assertObjectArguments(oModel) {
+	function assertObjectArguments(assert, oModel) {
 		// can only be set with parameters object => expect different values
 		assert.equal(oModel.bLoadAnnotationsJoined, false, 'loadAnnotationsJoined');
 		assert.deepEqual(oModel.aUrlParams, [ 'foo=bar' ], 'serviceUrlParams');
@@ -152,8 +144,8 @@
 			true            /* bLoadMetadataAsync */
 		);
 
-		assertCommonArguments(oModel);
-		assertLegacyArguments(oModel);
+		assertCommonArguments(assert, oModel);
+		assertLegacyArguments(assert, oModel);
 
 		oModel.destroy();
 	});
@@ -170,12 +162,12 @@
 			loadAnnotationsJoined: false,
 			serviceUrlParams: { 'foo': 'bar' },
 			metadataUrlParams: { 'bar': 'foo' },
-			defaultCountMode: sap.ui.model.odata.CountMode.None,
+			defaultCountMode: CountMode.None,
 			metadataNamespaces: { 'foo': 'bar' }
 		});
 
-		assertCommonArguments(oModel);
-		assertObjectArguments(oModel);
+		assertCommonArguments(assert, oModel);
+		assertObjectArguments(assert, oModel);
 
 		oModel.destroy();
 	});
@@ -193,12 +185,12 @@
 			loadAnnotationsJoined: false,
 			serviceUrlParams: { 'foo': 'bar' },
 			metadataUrlParams: { 'bar': 'foo' },
-			defaultCountMode: sap.ui.model.odata.CountMode.None,
+			defaultCountMode: CountMode.None,
 			metadataNamespaces: { 'foo': 'bar' }
 		});
 
-		assertCommonArguments(oModel);
-		assertObjectArguments(oModel);
+		assertCommonArguments(assert, oModel);
+		assertObjectArguments(assert, oModel);
 
 		oModel.destroy();
 	});
@@ -213,40 +205,41 @@
 		var oModel2 = {};
 
 		oModel.oMetadata.attachLoaded(function() {
-			jQuery.sap.log.debug("test 1 - metadata loaded is fired on metadata onload of model1");
+			Log.debug("test 1 - metadata loaded is fired on metadata onload of model1");
 		});
 
 		oModel.attachMetadataLoaded(function(){
 			assert.ok(oModel.getServiceMetadata() != null, "First model: Service metadata is available");
 			oModel.destroy();
-			oModel2 = new sap.ui.model.odata.ODataModel(sURI, mOptions);
+			oModel2 = new ODataModel(sURI, mOptions);
 
 			var bFiredAtMetadata = false;
 
-			var metadataDfd = jQuery.Deferred();
+			new Promise(function(fnResolve, fnReject) {
 
-			oModel2.oMetadata.attachLoaded(function() {
-				jQuery.sap.log.debug("test 2 - metadata loaded is fired on metadata");
-				bFiredAtMetadata = true;
-			});
-			// attach again and wait for the metadataloaded event at the model itself,
-			//fail if event is fired at the metadata object
-			oModel2.attachMetadataLoaded(function() {
-				jQuery.sap.log.debug("metadata loaded is fired");
-				assert.ok(oModel2.getServiceMetadata() != null, "Second model: Service metadata is available");
-				if (!bFiredAtMetadata) {
-					metadataDfd.resolve();
-				} else {
-					metadataDfd.reject();
-				}
-			});
-			jQuery.when(metadataDfd).done(function(e){
-					assert.ok(true, 'Metadata loaded fired at model only');
-					done();
-				}).fail(function(e){
-					jQuery.sap.log.debug("metadata promise failed");
-					assert.ok(false, 'Metadata loaded fired at metadata object')
+				oModel2.oMetadata.attachLoaded(function() {
+					Log.debug("test 2 - metadata loaded is fired on metadata");
+					bFiredAtMetadata = true;
 				});
+				// attach again and wait for the metadataloaded event at the model itself,
+				//fail if event is fired at the metadata object
+				oModel2.attachMetadataLoaded(function() {
+					Log.debug("metadata loaded is fired");
+					assert.ok(oModel2.getServiceMetadata() != null, "Second model: Service metadata is available");
+					if (!bFiredAtMetadata) {
+						fnResolve();
+					} else {
+						fnReject();
+					}
+				});
+
+			}).then(function(){
+				assert.ok(true, 'Metadata loaded fired at model only');
+			}, function(e){
+				Log.debug("metadata promise failed");
+				assert.ok(false, 'Metadata loaded fired at metadata object');
+			}).finally(done);
+
 		});
 	});
 
@@ -266,10 +259,10 @@
 			oModel.createBindingContext("/Employees(2)", null, {expand: "Employees1/Employees1/Employees1"}, function (oContext){
 				//reload should not be needed anymore --> false
 				bReloadNeeded = oModel._isReloadNeeded("/Employees(2)", oModel.getObject("/Employees(2)"), {expand: "Employees1/Employees1/Employees1"});
- 				assert.equal(bReloadNeeded, false, "Second reload should not be needed");
+				assert.equal(bReloadNeeded, false, "Second reload should not be needed");
 
- 				done(); //resume normal testing
- 			});
+				done(); //resume normal testing
+			});
 
 		});
 	});
@@ -281,19 +274,19 @@
 
 		//Test another case with internal __ref properties instead of __list
 		oModel._loadData("Products", null, function () {
-			assert.equal(oModel.getProperty("/Products(1)/ProductName"), "Chai", "fetching initial data from absolute path.")
+			assert.equal(oModel.getProperty("/Products(1)/ProductName"), "Chai", "fetching initial data from absolute path.");
 
 			//check if reload needed --> true
 			bReloadNeeded = oModel._isReloadNeeded("/Products(1)", oModel.getObject("/Products(1)"), {expand: "Category/Products/Supplier"});
 			assert.equal(bReloadNeeded, true, "First reload needed for 3 levels of expand");
 
-	 		oModel.createBindingContext("/Products(1)", null, {expand: "Category/Products/Supplier"}, function (oContext){
-	 			//reload should not be needed anymore --> false
+			oModel.createBindingContext("/Products(1)", null, {expand: "Category/Products/Supplier"}, function (oContext){
+				//reload should not be needed anymore --> false
 				bReloadNeeded = oModel._isReloadNeeded("/Products(1)", oModel.getObject("/Products(1)"), {expand: "Category/Products/Supplier"});
-	 			assert.equal(bReloadNeeded, false, "Second reload should not be needed");
+				assert.equal(bReloadNeeded, false, "Second reload should not be needed");
 
-	 			done(); //resume normal testing
-	 		});
+				done(); //resume normal testing
+			});
 
 		});
 
@@ -303,7 +296,7 @@
 		var done = assert.async();
 		var oModel = initModel(sURI, false);
 		oModel._loadData("Categories", null, function(){
-			performTest(oModel);
+			performTest(assert, oModel);
 			done();
 		});
 	});
@@ -312,24 +305,24 @@
 		var done = assert.async();
 		var oModel = initModel(sURI, true);
 		oModel._loadData("Categories", {horst:true}, function(){
-			performTest(oModel);
+			performTest(assert, oModel);
 			done();
 		});
 	});
 
-	function performTest(oModel){
+	function performTest(assert, oModel){
 		assert.equal(oModel.getProperty("/Categories(1)/CategoryName"), "Beverages", "absolute path without context");
 		oModel.createBindingContext("/Categories(1)", null, function(newContext){
 			assert.equal(newContext.getProperty("CategoryName"), "Beverages", "relative path with context");
 			var iLength = 0;
 			var categories = oModel.getProperty("/");
-			for (category in categories){
+			for (var category in categories){
 				iLength++;
 				assert.equal(categories[category].CategoryID, iLength);
-			};
+			}
 			assert.equal(iLength, 8);
 		});
-	};
+	}
 
 	QUnit.test("test bindList", function(assert){
 		var done = assert.async();
@@ -469,7 +462,7 @@
 		var oModel = initModel(sURI, true, "Products");
 		sap.ui.getCore().setModel(oModel);
 
-		var oFilter = new sap.ui.model.Filter("ProductName", "EQ", "Chai");
+		var oFilter = new Filter("ProductName", "EQ", "Chai");
 		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {expand : "Category" });
 		var handler1 = function() { // delay the following test
 			assert.equal(oModel.getProperty("/Products(1)").ProductName, "Chai", "test property");
@@ -488,7 +481,7 @@
 		var oModel = initModel(sURI, true, "Products");
 		sap.ui.getCore().setModel(oModel);
 
-		var oFilter = new sap.ui.model.Filter("ProductName", "EQ", "Chang");
+		var oFilter = new Filter("ProductName", "EQ", "Chang");
 		var oBinding = oModel.bindList("/Products", null, null, [oFilter]);
 		var handler1 = function() { // delay the following test
 			assert.equal(oModel.getProperty("/Products(2)").ProductName, "Chang", "test property");
@@ -514,7 +507,7 @@
 		var oModel = initModel(sURI, true, "Products");
 		sap.ui.getCore().setModel(oModel);
 
-		var oFilter = new sap.ui.model.Filter("ProductName", "EQ", "Chang");
+		var oFilter = new Filter("ProductName", "EQ", "Chang");
 		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {select : "Category,ProductName", expand : "Category" });
 		var handler1 = function() { // delay the following test
 			assert.equal(oModel.getProperty("/Products(2)").ProductName, "Chang", "test property");
@@ -623,7 +616,7 @@
 			oLabel.unbindElement();
 			oLabel.setBindingContext();
 			done();
-		}
+		};
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
@@ -642,7 +635,7 @@
 			oLabel.unbindElement();
 			oLabel.setBindingContext();
 			done();
-		}
+		};
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
@@ -660,7 +653,7 @@
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.getElementBinding().attachChange(fnHandler2);
 			oLabel.setBindingContext();
-		}
+		};
 		var fnHandler2 = function() {
 			assert.ok(!oLabel.getBindingContext(), "no bindingContext");
 			assert.ok(!oLabel.getElementBinding().getBoundContext(), "element context must be reset");
@@ -669,7 +662,7 @@
 			oLabel.setBindingContext();
 			oLabel.unbindElement();
 			done();
-		}
+		};
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
@@ -688,7 +681,7 @@
 			oLabel.unbindElement();
 			oLabel.setBindingContext();
 			done();
-		}
+		};
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
@@ -707,7 +700,7 @@
 			oLabel.unbindElement();
 			oLabel.setBindingContext();
 			done();
-		}
+		};
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
@@ -727,7 +720,7 @@
 			oModel.attachRequestSent(fnHandler2);
 			oTestContext = oModel.getContext("/Products(1)");
 			oLabel.setBindingContext(oTestContext);
-		}
+		};
 		var fnHandler2 = function(oEvent) {
 			var sUrl =  oEvent.getParameter("url");
 			assert.ok(sUrl.indexOf('Products(1)/Category') > -1, "Parent context should be Products(1)");
@@ -735,7 +728,7 @@
 			oLabel.unbindElement();
 			oLabel.setBindingContext();
 			done();
-		}
+		};
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
@@ -755,7 +748,7 @@
 			oModel.attachRequestSent(fnHandler2);
 			oTestContext = oModel.getContext("/Products(1)");
 			oPanel.setBindingContext(oTestContext);
-		}
+		};
 		var fnHandler2 = function(oEvent) {
 			var sUrl =  oEvent.getParameter("url");
 			assert.ok(sUrl.indexOf('Products(1)/Category') > -1, "Parent context should be Products(1)");
@@ -763,7 +756,7 @@
 			oLabel.unbindElement();
 			oLabel.setBindingContext();
 			done();
-		}
+		};
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
@@ -817,25 +810,25 @@
 		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 	});
 
-	var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
-	var oItemTemplate = new sap.ui.core.ListItem();
+	var oLB = new List("myLb");
+	var oItemTemplate = new ListItem();
 	oLB.placeAt("target2");
 
 	QUnit.test("test model bindAggregation on Listbox", function(assert){
 		var done = assert.async();
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
-		oItemTemplate.bindProperty("text", "CategoryName").bindProperty("additionalText", "Description");
+		oItemTemplate.bindProperty("label", "CategoryName").bindProperty("value", "Description");
 		var oBinding = oLB.bindAggregation("items", "/Categories", oItemTemplate).getBinding('items');
 
 		var handler = function() {
 			var listItems = oLB.getItems();
 			assert.equal(listItems.length, 8, "length of items");
-			assert.equal(listItems[0].getText(), "Beverages", "category 1 name");
-			assert.equal(listItems[7].getAdditionalText(), "Seaweed and fish", "category 8 description");
+			assert.equal(listItems[0].getLabel(), "Beverages", "category 1 name");
+			assert.equal(listItems[7].getValue(), "Seaweed and fish", "category 8 description");
 			oBinding.detachChange(handler);
 			done();          // resume normal testing
-		}
+		};
 		oBinding.attachChange(handler);
 	});
 
@@ -843,7 +836,7 @@
 		assert.expect(1);
 		var done = assert.async();
 
-		oItemTemplate.bindProperty("text", "CategoryName").bindProperty("additionalText", "Description");
+		oItemTemplate.bindProperty("label", "CategoryName").bindProperty("value", "Description");
 		var oBinding = oLB.bindAggregation("items", "/Categories", oItemTemplate).getBinding('items');
 
 		//Currently no event fired on bind element
@@ -897,7 +890,6 @@
 		oModel.createBindingContext("/Products(1)", null, {expand: "Category"}, function(oContext) { // delay the following test
 			assert.equal(oModel.getKey(oContext), "Products(1)", "Context key");
 			assert.equal(oModel.getKey(oContext.getObject("Category")), "Categories(1)", "Expanded entity key");
-			var oObject = oContext.getObject();
 			assert.equal(oModel.getKey(oContext), "Products(1)", "Context key");
 			done();          // resume normal testing
 		});
@@ -954,7 +946,7 @@
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
-			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories");
+			var oResult = oModel.oMetadata._getEntityTypeByPath("/Categories");
 			assert.equal(oResult.name, "Category", "entity type name check");
 			oResult = {};
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories(1)");
@@ -999,9 +991,9 @@
 		var done = assert.async();
 
 		var oModel = initModel(sURI, false, "Categories");
-		var oBinding = oModel.bindList("Products", new sap.ui.model.Context(oModel, "/Categories(7)"));
+		var oBinding = oModel.bindList("Products", new Context(oModel, "/Categories(7)"));
 		var handler = function() { // delay the following test
-			oResult = oBinding.oEntityType;
+			var oResult = oBinding.oEntityType;
 			assert.equal(oResult.name, "Product", "entity type name check");
 			oResult = {};
 			oBinding.detachChange(handler);
@@ -1017,8 +1009,8 @@
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
-			oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
-			oResult = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
+			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
+			var oResult = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
 			assert.equal(oResult.name, "CategoryName", "Property type name check");
 			assert.equal(oResult.type, "Edm.String", "Property type name check");
 
@@ -1070,7 +1062,7 @@
 	QUnit.test("async metadata request check", function(assert){
 		var done = assert.async();
 		removeSharedServicedata(sURI);
-		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
+		var oModel = new ODataModel(sURI, {
 			json: true,
 			loadMetadataAsync: true
 		});
@@ -1080,7 +1072,7 @@
 			oModel.detachMetadataLoaded(handler);
 			assert.ok(oModel.getServiceMetadata(), "get metadata check");
 			done();
-		}
+		};
 		oModel.attachMetadataLoaded(handler);
 	});
 
@@ -1088,7 +1080,7 @@
 	QUnit.test("async metadata request check with bindings", function(assert){
 		var done = assert.async();
 		cleanServiceDataCache();
-		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
+		var oModel = new ODataModel(sURI, {
 			json: true,
 			loadMetadataAsync: true
 		});
@@ -1115,7 +1107,7 @@
 			};
 			oBinding.attachChange(handler2);
 			oBinding.attachRefresh(handler2);
-		}
+		};
 		oModel.attachMetadataLoaded(handler);
 
 	});
@@ -1123,7 +1115,7 @@
 	QUnit.test("async metadata request check with bindings die zwote", function(assert){
 		var done = assert.async();
 		cleanServiceDataCache();
-		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
+		var oModel = new ODataModel(sURI, {
 			json: true,
 			loadMetadataAsync: true
 		});
@@ -1155,7 +1147,7 @@
 
 		cleanServiceDataCache();
 
-		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
+		var oModel = new ODataModel(sURI, {
 			json: true,
 			loadMetadataAsync: true
 		});
@@ -1201,17 +1193,17 @@
 		var done = assert.async();
 		assert.expect(4);
 		var oModel = initModel(sURI, true, "Categories");
-		oLabel = new sap.ui.commons.Label("myLabel2");
+		oLabel = new Label("myLabel2");
 		oLabel.setModel(oModel);
-		oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: fnDataReceived}});
+		oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange.bind(null, assert), dataRequested:fnDataRequested.bind(null, assert), dataReceived: fnDataReceived.bind(null, assert)}});
 		var handler = function(oEvent) {
-			assert.ok(oLabel.getElementBinding(), "ContextBinding created")
+			assert.ok(oLabel.getElementBinding(), "ContextBinding created");
 			oLabel.unbindElement();
 			bChanged = false;
 			bDataRequested = false;
 			bDataReceived = false;
 			done(); // resume normal testing
-		}
+		};
 		oLabel.getElementBinding().attachDataReceived(handler);
 	});
 
@@ -1219,15 +1211,15 @@
 		var done = assert.async();
 		assert.expect(4);
 		var oModel = initModel(sURI, true, "Categories");
-		oLabel = new sap.ui.commons.Label("myLabel3");
-		oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived:fnDataReceived}});
+		oLabel = new Label("myLabel3");
+		oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange.bind(null, assert), dataRequested:fnDataRequested.bind(null, assert), dataReceived:fnDataReceived.bind(null, assert)}});
 		var handler = function(oEvent) {
-			assert.ok(oLabel.getElementBinding(), "ContextBinding created")
+			assert.ok(oLabel.getElementBinding(), "ContextBinding created");
 			bChanged = false;
 			bDataRequested = false;
 			bDataReceived = false;
 			done(); // resume normal testing
-		}
+		};
 		oLabel.setModel(oModel);
 		oLabel.getElementBinding().attachDataReceived(handler);
 	});
@@ -1237,17 +1229,17 @@
 		assert.expect(6);
 		cleanServiceDataCache();
 		var oModel1 = initModel(sURI, true, "Categories");
-		oLabel = new sap.ui.commons.Label("myLabel4");
-		oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived:fnDataReceived}});
+		oLabel = new Label("myLabel4");
+		oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange.bind(null, assert), dataRequested:fnDataRequested.bind(null, assert), dataReceived:fnDataReceived.bind(null, assert)}});
 		var handler = function(oEvent) {
-			assert.ok(oLabel.getElementBinding(), "ContextBinding created")
+			assert.ok(oLabel.getElementBinding(), "ContextBinding created");
 			bChanged = false;
 			bDataRequested = false;
 			bDataReceived = false;
 			var fnChange2 = function(oEvent) {
 				bChanged = true;
 				assert.ok(!bDataRequested && !bDataReceived,"change fired");
-				assert.ok(oLabel.getElementBinding(), "ContextBinding created")
+				assert.ok(oLabel.getElementBinding(), "ContextBinding created");
 				oLabel.unbindElement();
 				bChanged = false;
 				bDataRequested = false;
@@ -1255,21 +1247,20 @@
 				done(); // resume normal testing
 			};
 			oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange2, dataRequested:fnDataRequested, dataReceived:fnDataReceived}});
-		}
+		};
 		oLabel.setModel(oModel1);
 		oLabel.getElementBinding().attachDataReceived(handler);
 	});
 
 	QUnit.test("test ODataModel destroy cancel async metadata", function(assert){
 		cleanServiceDataCache();
-		jQuery.sap.require("sap.ui.thirdparty.datajs");
 		// spy on odata request function
-		var spy = this.spy(OData, "request");
+		var spy = sinon.spy(OData, "request");
 		removeSharedServicedata(sURI);
-		var oModel = new sap.ui.model.odata.ODataModel(sURI, { json: true, loadMetadataAsync: true });
+		var oModel = new ODataModel(sURI, { json: true, loadMetadataAsync: true });
 		oModel.attachMetadataLoaded(this, function(oEvent) {
 			assert.ok(false, "Metadata should not be loaded");
-		})
+		});
 		sap.ui.getCore().setModel(oModel);
 
 		oModel.destroy();
@@ -1277,24 +1268,23 @@
 
 		assert.equal(spy.callCount, 1, "number of requests");
 		assert.ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
-
+		spy.restore();
 	});
 
 	QUnit.test("test ODataModel destroy cancel load data", function(assert){
 		var oModel = initModel(sURI, true, "Categories");
-		//var oModel = new sap.ui.model.odata.ODataModel(sURI, { json: true, loadMetadataAsync: false });
+		//var oModel = new ODataModel(sURI, { json: true, loadMetadataAsync: false });
 		sap.ui.getCore().setModel(oModel);
 
 		var oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" });
 		var handler1 = function() { // delay the following test
 			assert.ok(false, "Data should not be loaded");
 			oBinding.detachChange(handler1);
-			done();
 		};
 		oBinding.attachChange(handler1);
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 		// spy on odata request function
-		var spy = this.spy(OData, "request");
+		var spy = sinon.spy(OData, "request");
 		oBinding.getContexts();
 
 		oModel.destroy();
@@ -1308,9 +1298,8 @@
 		oBinding.getContexts();
 		assert.equal(spy.callCount, 1, "number of requests");
 		assert.ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
-
 		oBinding.detachChange(handler1);
-
+		spy.restore();
 	});
 
 	QUnit.module("ODataModel.read", {
@@ -1423,7 +1412,7 @@
 		var done = assert.async();
 		var aSorters = [
 			"should be ignored",
-			new sap.ui.model.Sorter("CategoryName", true),
+			new Sorter("CategoryName", true),
 			{ foo: "bar" },
 			false
 		];
@@ -1446,7 +1435,7 @@
 	QUnit.test("new syntax with filter and url parameters", function(assert) {
 		var done = assert.async();
 		var aFilters = [
-			new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages")
+			new Filter("CategoryName", FilterOperator.EQ, "Beverages")
 		];
 
 		this.oModel.read("/Categories", {
@@ -1472,7 +1461,7 @@
 			assert.ok(!oModel.getServiceAnnotations(), "annotations not loaded");
 			assert.ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
 			assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
-			oModel.addAnnotationUrl(sURI+"$metadata?sap-value-list=all").then(function(oParams) {
+			oModel.addAnnotationUrl(sURI + "$metadata?sap-value-list=all").then(function(oParams) {
 				assert.equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
 				assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 				assert.ok(oModel.getServiceAnnotations(), "annotations loaded");
@@ -1494,7 +1483,7 @@
 			assert.ok(!oModel.getServiceAnnotations(), "annotations not loaded");
 			assert.ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
 			assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
-			oModel.addAnnotationUrl([sURI+"$metadata?sap-value-list=Test", sURI+"$metadata?sap-value-list=Test2"]).then(function(oParams) {
+			oModel.addAnnotationUrl([sURI + "$metadata?sap-value-list=Test", sURI + "$metadata?sap-value-list=Test2"]).then(function(oParams) {
 				assert.equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
 				assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 				assert.ok(oModel.getServiceAnnotations(), "annotations loaded");
@@ -1532,13 +1521,12 @@
 	QUnit.module("CSRF Token handling", {
 		beforeEach: function() {
 			this.oModel = initModel(sURI, true);
-			updateCsrfToken();
+			fakeService.updateCsrfToken();
 		},
 		afterEach: function() {
 			this.oModel.destroy();
 			cleanServiceDataCache();
-			delete this.oModel;
-			deleteCsrfToken();
+			fakeService.deleteCsrfToken();
 		}
 	});
 
@@ -1548,7 +1536,7 @@
 			var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
 			this.oModel.read("/Categories(1)", {
 				success: function() {
-					assert.ok(!refreshSpy.called, "No security token needed for GET requests")
+					assert.ok(!refreshSpy.called, "No security token needed for GET requests");
 					done();
 				}
 			});
@@ -1562,7 +1550,7 @@
 			var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
 			this.oModel.read("/Categories(1)", {
 				success: function() {
-					assert.ok(refreshSpy.calledOnce, "Token requested for GET inside batch")
+					assert.ok(refreshSpy.calledOnce, "Token requested for GET inside batch");
 					done();
 				}
 			});
@@ -1575,10 +1563,10 @@
 			var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
 			this.oModel.create("/Categories(1)", {}, {
 				success: function() {
-					assert.ok(refreshSpy.calledOnce, "Token requested for POST request")
+					assert.ok(refreshSpy.calledOnce, "Token requested for POST request");
 					this.oModel.create("/Categories(1)", {}, {
 						success: function() {
-							assert.ok(refreshSpy.calledOnce, "No additional token request")
+							assert.ok(refreshSpy.calledOnce, "No additional token request");
 							done();
 						}
 					});
@@ -1594,8 +1582,8 @@
 				resetSpy = sinon.spy(this.oModel, "resetSecurityToken");
 			this.oModel.create("/Categories(1)", {}, {
 				success: function() {
-					assert.ok(refreshSpy.calledOnce, "Token requested for POST request")
-					updateCsrfToken();
+					assert.ok(refreshSpy.calledOnce, "Token requested for POST request");
+					fakeService.updateCsrfToken();
 					this.oModel.create("/Categories(1)", {}, {
 						success: function() {
 							assert.ok(resetSpy.calledOnce, "Token was reset, as it was invalid");
@@ -1627,7 +1615,7 @@
 			assert.equal(this.oModel.getProperty("/Categories(1)/Products(0)/##name"), "Product");
 			assert.equal(this.oModel.getProperty("/Categories(1)/Products(0)/ProductID/##type"), "Edm.Int32");
 			done();
-		}.bind(this))
+		}.bind(this));
 	});
 
 	QUnit.test("Entityset metadata w/ context", function(assert) {
@@ -1640,7 +1628,7 @@
 			assert.equal(this.oModel.getProperty("Products(0)/##name", oContext), "Product");
 			assert.equal(this.oModel.getProperty("Products(0)/ProductID/##type", oContext), "Edm.Int32");
 			done();
-		}.bind(this))
+		}.bind(this));
 	});
 
 	QUnit.test("Metamodel binding refresh after metamodel load", function(assert) {
@@ -1702,7 +1690,7 @@
 		new Promise(function(fnResolve, fnReject) {
 			var bAnnotationsFailed = false;
 
-			var oModel = new sap.ui.model.odata.ODataModel(sURI, {
+			var oModel = new ODataModel(sURI, {
 				skipMetadataAnnotationParsing: true,
 				annotationURI: "/invalid/annotation/url"
 			});
@@ -1732,9 +1720,9 @@
 		}).then(function() {
 			var bAnnotationsLoaded = false;
 
-			var oModel = new sap.ui.model.odata.ODataModel(sURI, {
+			var oModel = new ODataModel(sURI, {
 				skipMetadataAnnotationParsing: true,
-				annotationURI: "testdata/annotations/annotations01.xml"
+				annotationURI: "test-resources/sap/ui/core/qunit/odata/data/annotations01.xml"
 			});
 
 
@@ -2090,18 +2078,4 @@
 			"Invalid operators in multi-filter are unsupported"
 		);
 	});
-
-	</script>
-
-</head>
-<body>
-<h1 id="qunit-header">QUnit tests: Data binding OData Model</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-<br>
-<div id="target1"></div>
-<div id="target2"></div>
-</body>
-</html>
+});

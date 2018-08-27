@@ -67,7 +67,6 @@ sap.ui.define([
 	QUnit.module("ODataModelV2 XML", {
 		beforeEach : function() {
 			initServer();
-			oModel = initModel(false);
 		},
 		afterEach : function() {
 			cleanSharedData();
@@ -79,6 +78,7 @@ sap.ui.define([
 
 	QUnit.test("read XML", function(assert) {
 		var done = assert.async();
+		oModel = initModel(false);
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
 				success : function() {

@@ -1,35 +1,30 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<!-- Initialization -->
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap" src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
+/* global QUnit */
+sap.ui.define([
+	"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService",
+	"sap/ui/model/odata/ODataModel",
+	"sap/ui/model/odata/Filter",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/Sorter",
+	"sap/m/List",
+	"sap/m/DisplayListItem"
+], function(
+	fakeService,
+	ODataModel,
+	ODataFilter,
+	Filter,
+	FilterOperator,
+	Sorter,
+	List,
+	ListItem
+) {
+	"use strict";
 
-<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<!--[if IE]>
-	<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
-<![endif]-->
-<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-<!-- This test is not running against the real Northwind service, but a fake service based on
-     Sinon.SJ FakeXHR. To run on the real service instead please comment out the following line. -->
-<script src="ODataModelFakeService.js"></script>
-
-<!-- Test functions -->
-<script>
-
-	// time to wait for server responses
-	var timeout = 3000;
 	var sURI = "http://services.odata.org/V3/Northwind/Northwind.svc/";
 	sURI = "/proxy/http/" + sURI.replace("http://","");
 
 	function initModel(sURI, bJSON){
-		var oModel = new sap.ui.model.odata.ODataModel(sURI, bJSON);
+		var oModel = new ODataModel(sURI, bJSON);
 		return oModel;
 	}
 
@@ -43,14 +38,15 @@
 			assert.ok(oBinding.getModel() == oModel, "ListBinding model");
 			assert.equal(oBinding.getLength(), 8, "length of items");
 			assert.equal(oBinding.isLengthFinal(), true, "isLengthFinal");
-			jQuery(oBinding.getContexts()).each(function(i, context){
+			oBinding.getContexts().forEach(function(context, i){
 				assert.equal(context.getPath(), "/Categories(" + (i + 1) + ")", "ListBinding context");
 			});
 			assert.equal(oBinding.getDownloadUrl(), sURI + "Categories");
 			assert.equal(oBinding.getDownloadUrl("xlsx"), sURI + "Categories?$format=xlsx");
 			oBinding.detachChange(handler);
 			done(); // resume normal testing
-		}
+		};
+
 		oBinding.attachChange(handler);
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 		oBinding.getContexts();
@@ -62,16 +58,17 @@
 		var oBinding = oModel.bindList("/Categories");
 
 		var handler = function() {
-			var aContexts = oBinding.getContexts(0, 5),
-				aCurrentContexts = oBinding.getCurrentContexts();
+			var aCurrentContexts;
+			oBinding.getContexts(0, 5);
+			aCurrentContexts = oBinding.getCurrentContexts();
 
 			assert.equal(aCurrentContexts.length, 5, "amount of items in current contexts");
-			jQuery(aCurrentContexts).each(function(i, context){
+			aCurrentContexts.forEach(function(context, i){
 				assert.equal(context.getPath(), "/Categories(" + (i + 1) + ")", "ListBinding context");
 			});
 			oBinding.detachChange(handler);
 			done(); // resume normal testing
-		}
+		};
 		oBinding.attachChange(handler);
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 		oBinding.getContexts();
@@ -97,7 +94,7 @@
 				oBinding.detachChange(changeHandler);
 				done(); // resume normal testing
 			}
-		}
+		};
 
 		oBinding.attachRefresh(function() {
 			this.getContexts();
@@ -118,7 +115,7 @@
 			assert.equal(oBinding.getPath(), "/Regions", "ListBinding path");
 			assert.ok(oBinding.getModel() == oModel, "ListBinding model");
 
-			jQuery(oBinding.getContexts()).each(function(i, context){
+			oBinding.getContexts().forEach(function(context, i){
 				assert.equal(context.getPath(), "/Regions(" + (i + 1) + ")", "ListBinding context");
 			});
 
@@ -131,7 +128,7 @@
 				assert.ok(false, "should not land here");
 				oBinding2.detachChange(handler2);
 
-			}
+			};
 			oBinding2.attachChange(handler2);
 			oBinding2.getContexts();
 
@@ -144,14 +141,14 @@
 				assert.ok(false, "should not land here");
 				oBinding3.detachChange(handler3);
 
-			}
+			};
 			oBinding3.attachChange(handler3);
 			oBinding3.getContexts();
 
 			oBinding.detachChange(handler);
 			done(); // resume normal testing
 
-		}
+		};
 		oBinding.attachChange(handler);
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 		oBinding.getContexts();
@@ -213,7 +210,7 @@
 
 			oBinding.detachChange(handler1);
 			// ascending again
-			oSorter = new sap.ui.model.Sorter("CategoryName", false);
+			var oSorter = new Sorter("CategoryName", false);
 			oBinding.sort(oSorter);
 			oBinding.attachChange(handler2);
 			// fire first loading
@@ -235,7 +232,7 @@
 
 			oBinding.detachChange(handler0);
 			// descending
-			var oSorter = new sap.ui.model.Sorter("CategoryName", true);
+			var oSorter = new Sorter("CategoryName", true);
 			oBinding.sort(oSorter);
 			oBinding.attachChange(handler1);
 			// fire first loading
@@ -256,7 +253,7 @@
 			var aContexts = oBinding.getContexts(),
 				oContext = aContexts[0];
 			assert.equal(oContext.getPath(), "/Categories(1)", "Context path");
-			assert.ok(jQuery.isArray(oContext.getProperty("Products")), "Products loaded");
+			assert.ok(Array.isArray(oContext.getProperty("Products")), "Products loaded");
 			done(); // resume normal testing
 		};
 		oBinding.attachChange(handler);
@@ -276,8 +273,8 @@
 
 			oBinding.detachChange(handler);
 			// NE, contains
-			oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Condiments");
-			var oFilter2 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.Contains, "ons");
+			oFilter = new Filter("CategoryName", FilterOperator.EQ, "Condiments");
+			var oFilter2 = new Filter("CategoryName", FilterOperator.Contains, "ons");
 			oBinding.filter([oFilter, oFilter2]);
 			oBinding.attachChange(handler1);
 			oBinding.getContexts();
@@ -291,7 +288,7 @@
 
 			oBinding.detachChange(handler1);
 			// between
-			oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.BT, "Beverages","D");
+			oFilter = new Filter("CategoryName", FilterOperator.BT, "Beverages","D");
 			oBinding.filter([oFilter]);
 			oBinding.attachChange(handler2);
 			oBinding.getContexts();
@@ -306,8 +303,8 @@
 
 			oBinding.detachChange(handler2);
 			// startsWith, endsWith
-			oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.StartsWith, "C");
-			oFilter2 = new sap.ui.model.Filter("Description", sap.ui.model.FilterOperator.EndsWith, "ngs");
+			oFilter = new Filter("CategoryName", FilterOperator.StartsWith, "C");
+			var oFilter2 = new Filter("Description", FilterOperator.EndsWith, "ngs");
 			oBinding.filter([oFilter, oFilter2]);
 			oBinding.attachChange(handler3);
 			oBinding.getContexts();
@@ -319,7 +316,7 @@
 			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "startsWith, endsWith filtered content");
 
 			oBinding.detachChange(handler3);
-			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.LE, value1: "Z"}, {operator:sap.ui.model.FilterOperator.GE, value1: "A"}, {operator:sap.ui.model.FilterOperator.NE, value1: "Beverages"}]);
+			oFilter = new ODataFilter("CategoryName", [{operator:FilterOperator.LE, value1: "Z"}, {operator:FilterOperator.GE, value1: "A"}, {operator:FilterOperator.NE, value1: "Beverages"}]);
 			oBinding.filter([oFilter]);
 			oBinding.attachChange(handler4);
 			oBinding.getContexts();
@@ -331,7 +328,7 @@
 			assert.ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "sap.ui.model.odata.Filter, ANDed");
 
 			oBinding.detachChange(handler4);
-			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.EQ, value1: "Condiments"}, {operator:sap.ui.model.FilterOperator.EQ, value1: "Beverages"}], false);
+			oFilter = new ODataFilter("CategoryName", [{operator:FilterOperator.EQ, value1: "Condiments"}, {operator:FilterOperator.EQ, value1: "Beverages"}], false);
 			oBinding.filter([oFilter]);
 			oBinding.attachChange(handler5);
 			oBinding.getContexts();
@@ -344,8 +341,8 @@
 			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "sap.ui.model.odata.Filter, ORed");
 
 			oBinding.detachChange(handler5);
-			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.EQ, value1: "Condiments"}, {operator:sap.ui.model.FilterOperator.EQ, value1: "Beverages"}], false);
-			oFilter2 = new sap.ui.model.Filter("Description", sap.ui.model.FilterOperator.EndsWith, "ings");
+			oFilter = new ODataFilter("CategoryName", [{operator:FilterOperator.EQ, value1: "Condiments"}, {operator:FilterOperator.EQ, value1: "Beverages"}], false);
+			var oFilter2 = new Filter("Description", FilterOperator.EndsWith, "ings");
 			oBinding.filter([oFilter, oFilter2]);
 			oBinding.attachChange(handler6);
 			oBinding.getContexts();
@@ -358,14 +355,14 @@
 
 			oBinding.detachChange(handler6);
 			//check (ProductID=male AND (SupplierID = Green OR (CategoryName = Peter OR CategoryName = Frank OR CategoryName = Gina)))
-			var oFilter1 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages");
-			var oFilter2 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Dairy Products");
-			var oFilter3 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Grains/Cereals");
-			var oMultiFilter1 = new sap.ui.model.Filter([oFilter1, oFilter2, oFilter3], false);
-			var oFilter4 = new sap.ui.model.Filter("CategoryID", sap.ui.model.FilterOperator.EQ, 3);
-			var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter4], false);
-			var oFilter5 = new sap.ui.model.Filter("Description", sap.ui.model.FilterOperator.EndsWith, "s");
-			var oMultiFilter3 = new sap.ui.model.Filter([oMultiFilter2, oFilter5], true);
+			var oFilter1 = new Filter("CategoryName", FilterOperator.EQ, "Beverages");
+			var oFilter2 = new Filter("CategoryName", FilterOperator.EQ, "Dairy Products");
+			var oFilter3 = new Filter("CategoryName", FilterOperator.EQ, "Grains/Cereals");
+			var oMultiFilter1 = new Filter([oFilter1, oFilter2, oFilter3], false);
+			var oFilter4 = new Filter("CategoryID", FilterOperator.EQ, 3);
+			var oMultiFilter2 = new Filter([oMultiFilter1, oFilter4], false);
+			var oFilter5 = new Filter("Description", FilterOperator.EndsWith, "s");
+			var oMultiFilter3 = new Filter([oMultiFilter2, oFilter5], true);
 			oBinding.filter(oMultiFilter3);
 			oBinding.attachChange(handler7);
 			oBinding.getContexts();
@@ -382,7 +379,7 @@
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
 		//check EQ
-		var oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages");
+		var oFilter = new Filter("CategoryName", FilterOperator.EQ, "Beverages");
 		oBinding.filter([oFilter]);
 		oBinding.attachChange(handler);
 		oBinding.getContexts();
@@ -402,7 +399,7 @@
 			oBinding.detachChange(handler);
 
 			// Apply different Control filters
-			var oFirstControlFilter = new sap.ui.model.Filter("ProductName", sap.ui.model.FilterOperator.Contains, "o");
+			var oFirstControlFilter = new Filter("ProductName", FilterOperator.Contains, "o");
 			oBinding.filter([oFirstControlFilter]);
 
 			oBinding.attachChange(handler1);
@@ -422,7 +419,7 @@
 			oBinding.detachChange(handler1);
 
 			// Apply different Control filters
-			oFilter = new sap.ui.model.Filter("UnitPrice", sap.ui.model.FilterOperator.LE, "30.000");
+			var oFilter = new Filter("UnitPrice", FilterOperator.LE, "30.000");
 			oBinding.filter([oFilter]);
 
 			oBinding.attachChange(handler2);
@@ -447,7 +444,7 @@
 		};
 
 		//after removing the control filters, check if only App-Filters are applied
-		handler3 = function (oEvent) {
+		var handler3 = function (oEvent) {
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
 			assert.equal(aFilteredContexts.length, 9, "Reset to AppFilter, content length");
@@ -460,7 +457,7 @@
 
 		//Initialise the stuff
 		var oModel = initModel(sURI, false);
-		var oApplicationFilter = [new sap.ui.model.Filter("ProductName", "StartsWith", "C"), new sap.ui.model.Filter("UnitPrice", "GE", "10.000")];
+		var oApplicationFilter = [new Filter("ProductName", "StartsWith", "C"), new Filter("UnitPrice", "GE", "10.000")];
 		var oBinding = oModel.bindList("/Products", null, null, oApplicationFilter);
 
 		oBinding.attachChange(handler);
@@ -506,7 +503,7 @@
 			], "8 insertions");
 			oBinding.detachChange(handler);
 			done(); // resume normal testing
-		}
+		};
 		oBinding.attachChange(handler);
 
 		oBinding.getContexts(0, 8);
@@ -535,13 +532,13 @@
 		};
 
 		var oModel = initModel(sURI, false, "Categories");
-		var oList = new sap.ui.commons.ListBox();
-		var oItem = new sap.ui.core.ListItem();
-		oList.bindAggregation("items", {path:"/Categories", template: oItem, events:{change:fnChange, dataRequested:fnDataRequested, dataReceived:fnDataReceived}})
+		var oList = new List();
+		var oItem = new ListItem();
+		oList.bindAggregation("items", {path:"/Categories", template: oItem, events:{change:fnChange, dataRequested:fnDataRequested, dataReceived:fnDataReceived}});
 		oList.setModel(oModel);
 		var handler = function(oEvent) {
-			assert.equal(oList.getItems().length, 8, "items created")
-		}
+			assert.equal(oList.getItems().length, 8, "items created");
+		};
 		oList.getBinding("items").attachChange(handler);
 	});
 
@@ -556,11 +553,11 @@
 
 			oBinding.detachChange(handler);
 			// NE, contains
-			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
-				operator: sap.ui.model.FilterOperator.EQ,
+			oFilter = new ODataFilter("CategoryName", [{
+				operator: FilterOperator.EQ,
 				value1: "Condiments"
 			}, {
-				operator: sap.ui.model.FilterOperator.Contains,
+				operator: FilterOperator.Contains,
 				value1: "ons"
 			}], false);
 			oBinding.filter(oFilter.convert());
@@ -576,8 +573,8 @@
 
 			oBinding.detachChange(handler1);
 			// between
-			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
-				operator: sap.ui.model.FilterOperator.BT,
+			oFilter = new ODataFilter("CategoryName", [{
+				operator: FilterOperator.BT,
 				value1: "Beverages",
 				value2: "D"
 			}]);
@@ -595,8 +592,8 @@
 
 			oBinding.detachChange(handler2);
 			// startsWith, endsWith
-			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator: sap.ui.model.FilterOperator.StartsWith, value1: "C"}]);
-			oFilter2 = new sap.ui.model.odata.Filter("Description", [{operator: sap.ui.model.FilterOperator.EndsWith, value1: "ngs"}]);
+			oFilter = new ODataFilter("CategoryName", [{operator: FilterOperator.StartsWith, value1: "C"}]);
+			var oFilter2 = new ODataFilter("Description", [{operator: FilterOperator.EndsWith, value1: "ngs"}]);
 			oBinding.filter([oFilter.convert(), oFilter2.convert()]);
 			oBinding.attachChange(handler3);
 			oBinding.getContexts();
@@ -608,14 +605,14 @@
 			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "startsWith, endsWith filtered content");
 
 			oBinding.detachChange(handler3);
-			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
-				operator:sap.ui.model.FilterOperator.LE,
+			oFilter = new ODataFilter("CategoryName", [{
+				operator:FilterOperator.LE,
 				value1: "Z"
 			}, {
-				operator:sap.ui.model.FilterOperator.GE,
+				operator:FilterOperator.GE,
 				value1: "A"
 			}, {
-				operator:sap.ui.model.FilterOperator.NE,
+				operator:FilterOperator.NE,
 				value1: "Beverages"
 			}]);
 			oBinding.filter(oFilter.convert());
@@ -629,11 +626,11 @@
 			assert.ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "sap.ui.model.odata.Filter, ANDed");
 
 			oBinding.detachChange(handler4);
-			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
-				operator:sap.ui.model.FilterOperator.EQ,
+			oFilter = new ODataFilter("CategoryName", [{
+				operator:FilterOperator.EQ,
 				value1: "Condiments"
 			}, {
-				operator:sap.ui.model.FilterOperator.EQ,
+				operator:FilterOperator.EQ,
 				value1: "Beverages"
 			}], false);
 			oBinding.filter(oFilter.convert());
@@ -648,13 +645,13 @@
 			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "sap.ui.model.odata.Filter, ORed");
 
 			oBinding.detachChange(handler5);
-			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
-				operator:sap.ui.model.FilterOperator.EQ, value1: "Condiments"
+			oFilter = new ODataFilter("CategoryName", [{
+				operator:FilterOperator.EQ, value1: "Condiments"
 			}, {
-				operator:sap.ui.model.FilterOperator.EQ, value1: "Beverages"
+				operator:FilterOperator.EQ, value1: "Beverages"
 			}], false);
-			oFilter2 = new sap.ui.model.odata.Filter("Description", [{
-				operator: sap.ui.model.FilterOperator.EndsWith,
+			var oFilter2 = new ODataFilter("Description", [{
+				operator: FilterOperator.EndsWith,
 				value1: "ings"
 			}]);
 			oBinding.filter([oFilter.convert(), oFilter2.convert()]);
@@ -673,8 +670,8 @@
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
 		//check EQ
-		var oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
-			operator: sap.ui.model.FilterOperator.EQ,
+		var oFilter = new ODataFilter("CategoryName", [{
+			operator: FilterOperator.EQ,
 			value1: "Beverages"
 		}]);
 		oBinding.attachChange(handler);
@@ -686,9 +683,9 @@
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
 		var sUrl = oBinding.getDownloadUrl("csv");
-		assert.equal(sUrl, "/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=csv", "Download URL for csv correctly constructed.")
+		assert.equal(sUrl, "/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=csv", "Download URL for csv correctly constructed.");
 		sUrl = oBinding.getDownloadUrl("xlsx");
-		assert.equal(sUrl, "/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=xlsx", "Download URL for excel correctly constructed.")
+		assert.equal(sUrl, "/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=xlsx", "Download URL for excel correctly constructed.");
 	});
 
 	QUnit.module("Unsupported Filters", {
@@ -708,14 +705,14 @@
 	QUnit.test("constructor - Any/All are rejected", function (assert) {
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.NE, "Foo");
-				var oFilter2 = new sap.ui.model.Filter({path: "firstName", operator: sap.ui.model.FilterOperator.Any, variable: "id1", condition: new sap.ui.model.Filter()});
+				var oFilter = new Filter("lastName", FilterOperator.NE, "Foo");
+				var oFilter2 = new Filter({path: "firstName", operator: FilterOperator.Any, variable: "id1", condition: new Filter()});
 
-				var oMultiFilter = new sap.ui.model.Filter([oFilter, oFilter2], true);
+				var oMultiFilter = new Filter([oFilter, oFilter2], true);
 
 				this.oModel.bindList("/teamMembers", undefined, undefined, [oMultiFilter]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.Any),
+			this.getErrorWithMessage(FilterOperator.Any),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 	});
@@ -726,53 +723,53 @@
 		// "Any"" at last position fails
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.GT, "Wallace");
-				var oFilter2 = new sap.ui.model.Filter({path: "firstName", operator: sap.ui.model.FilterOperator.Any, variable: "id1", condition: new sap.ui.model.Filter()});
+				var oFilter = new Filter("lastName", FilterOperator.GT, "Wallace");
+				var oFilter2 = new Filter({path: "firstName", operator: FilterOperator.Any, variable: "id1", condition: new Filter()});
 				oListBinding.filter([oFilter, oFilter2]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.Any),
+			this.getErrorWithMessage(FilterOperator.Any),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 
 		// "All" at first position fails
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter({path: "lastName", operator: sap.ui.model.FilterOperator.All, variable: "id2", condition: new sap.ui.model.Filter()});
-				var oFilter2 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Rush");
+				var oFilter = new Filter({path: "lastName", operator: FilterOperator.All, variable: "id2", condition: new Filter()});
+				var oFilter2 = new Filter("firstName", FilterOperator.EQ, "Rush");
 				oListBinding.filter([oFilter, oFilter2]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			this.getErrorWithMessage(FilterOperator.All),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 
 		// Multifilter containing "All" or "Any" fails
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter({path: "lastName", operator: sap.ui.model.FilterOperator.All, variable: "id3", condition: new sap.ui.model.Filter()});
-				var oFilter2 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Bar");
+				var oFilter = new Filter({path: "lastName", operator: FilterOperator.All, variable: "id3", condition: new Filter()});
+				var oFilter2 = new Filter("firstName", FilterOperator.EQ, "Bar");
 
-				var oMultiFilter = new sap.ui.model.Filter({
+				var oMultiFilter = new Filter({
 					filters: [oFilter, oFilter2],
 					and: false
 				});
 
 				oListBinding.filter([oMultiFilter]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			this.getErrorWithMessage(FilterOperator.All),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 
 		// Multifilter containing "All" or "Any" fails
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.NE, "Foo");
-				var oFilter2 = new sap.ui.model.Filter({path: "firstName", operator: sap.ui.model.FilterOperator.Any, variable: "id1", condition: new sap.ui.model.Filter()});
+				var oFilter = new Filter("lastName", FilterOperator.NE, "Foo");
+				var oFilter2 = new Filter({path: "firstName", operator: FilterOperator.Any, variable: "id1", condition: new Filter()});
 
-				var oMultiFilter = new sap.ui.model.Filter([oFilter, oFilter2], true);
+				var oMultiFilter = new Filter([oFilter, oFilter2], true);
 
 				oListBinding.filter([oMultiFilter]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.Any),
+			this.getErrorWithMessage(FilterOperator.Any),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 	});
@@ -780,18 +777,18 @@
 	QUnit.test("Multi Filters (Complex) 1 - Unsupported are not OK", function(assert) {
 		var oListBinding = this.oModel.bindList("/teamMembers", undefined, undefined, []);
 
-		var oFilter1 = new sap.ui.model.Filter("x", sap.ui.model.FilterOperator.EQ, "Foo");
-		var oFilter2 = new sap.ui.model.Filter({path: "y", operator: sap.ui.model.FilterOperator.All, variable: "id1", condition: new sap.ui.model.Filter()});
-		var oFilter3 = new sap.ui.model.Filter("z", sap.ui.model.FilterOperator.NE, "Bla");
-		var oFilter4 = new sap.ui.model.Filter("t", sap.ui.model.FilterOperator.LE, "ZZZ");
+		var oFilter1 = new Filter("x", FilterOperator.EQ, "Foo");
+		var oFilter2 = new Filter({path: "y", operator: FilterOperator.All, variable: "id1", condition: new Filter()});
+		var oFilter3 = new Filter("z", FilterOperator.NE, "Bla");
+		var oFilter4 = new Filter("t", FilterOperator.LE, "ZZZ");
 
-		var oMultiFilter1 = new sap.ui.model.Filter({
+		var oMultiFilter1 = new Filter({
 			filters: [oFilter1, oFilter2],
 			and: true
 		});
-		var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter3], false);
+		var oMultiFilter2 = new Filter([oMultiFilter1, oFilter3], false);
 
-		var oMultiFilter3 = new sap.ui.model.Filter({
+		var oMultiFilter3 = new Filter({
 			filters: [oMultiFilter2, oFilter4],
 			and: true
 		});
@@ -800,7 +797,7 @@
 			function() {
 				oListBinding.filter([oMultiFilter3]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			this.getErrorWithMessage(FilterOperator.All),
 			"Error thrown if  multi-filter instances contain an unsupported FilterOperator"
 		);
 	});
@@ -808,26 +805,26 @@
 	QUnit.test("Multi Filters (Complex) 2 - Unsupported are not OK", function(assert) {
 		var oListBinding = this.oModel.bindList("/teamMembers", undefined, undefined, []);
 
-		var oFilter1 = new sap.ui.model.Filter("x", sap.ui.model.FilterOperator.EQ, "Foo");
-		var oFilter2 = new sap.ui.model.Filter({
+		var oFilter1 = new Filter("x", FilterOperator.EQ, "Foo");
+		var oFilter2 = new Filter({
 			path: "y",
-			operator: sap.ui.model.FilterOperator.All,
+			operator: FilterOperator.All,
 			variable: "id1",
-			condition: new sap.ui.model.Filter([
-				new sap.ui.model.Filter("t", sap.ui.model.FilterOperator.GT, 66),
-				new sap.ui.model.Filter({path: "g", operator: sap.ui.model.FilterOperator.Any, variable: "id2", condition: new sap.ui.model.Filter("f", sap.ui.model.FilterOperator.NE, "hello")})
+			condition: new Filter([
+				new Filter("t", FilterOperator.GT, 66),
+				new Filter({path: "g", operator: FilterOperator.Any, variable: "id2", condition: new Filter("f", FilterOperator.NE, "hello")})
 			], true)
 		});
-		var oFilter3 = new sap.ui.model.Filter("z", sap.ui.model.FilterOperator.NE, "Bla");
-		var oFilter4 = new sap.ui.model.Filter("t", sap.ui.model.FilterOperator.LE, "ZZZ");
+		var oFilter3 = new Filter("z", FilterOperator.NE, "Bla");
+		var oFilter4 = new Filter("t", FilterOperator.LE, "ZZZ");
 
-		var oMultiFilter1 = new sap.ui.model.Filter({
+		var oMultiFilter1 = new Filter({
 			filters: [oFilter1, oFilter2],
 			and: true
 		});
-		var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter3], false);
+		var oMultiFilter2 = new Filter([oMultiFilter1, oFilter3], false);
 
-		var oMultiFilter3 = new sap.ui.model.Filter({
+		var oMultiFilter3 = new Filter({
 			filters: [oMultiFilter2, oFilter4],
 			and: true
 		});
@@ -836,19 +833,8 @@
 			function() {
 				oListBinding.filter([oMultiFilter3]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			this.getErrorWithMessage(FilterOperator.All),
 			"Error thrown if  multi-filter instances contain an unsupported FilterOperator"
 		);
 	});
-
-	</script>
-
-</head>
-<body>
-<h1 id="qunit-header">QUnit tests: OData List Binding</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-</body>
-</html>
+});

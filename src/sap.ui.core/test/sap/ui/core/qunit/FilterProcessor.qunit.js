@@ -1,5 +1,5 @@
-/* global QUnit*/
-sap.ui.require([
+/* global QUnit, sinon*/
+sap.ui.define([
 	'sap/ui/model/FilterProcessor',
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator'
@@ -218,7 +218,7 @@ sap.ui.require([
 		assert.deepEqual(aFiltered, ["Soccer", "Hockey", "Tennis"], "Filter result for NotEndsWith is correct.");
 	});
 
-	QUnit.module("Special cases")
+	QUnit.module("Special cases");
 
 	QUnit.test("getFilterFunction - EndsWith", function(assert) {
 		var oFilter = new Filter({

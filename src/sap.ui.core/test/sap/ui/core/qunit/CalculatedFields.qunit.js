@@ -1,45 +1,38 @@
-<!DOCTYPE HTML>
+/*global QUnit, sinon */
+sap.ui.define([
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/type/Float",
+	"sap/ui/model/odata/type/TimeOfDay",
+	"sap/m/Label",
+	"sap/m/Input",
+	"sap/ui/table/Column",
+	"sap/ui/table/Table"
+], function(
+	JSONModel,
+	Float,
+	TimeOfDay,
+	Label,
+	Input,
+	Column,
+	Table
+) {
+	"use strict";
 
-<!--
-  Tested calculated fields
--->
-
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta charset="utf-8">
-
-<!-- Initialization -->
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-libs="sap.ui.commons, sap.ui.table"
-	data-sap-ui-theme="sap_bluecrystal"
-	data-sap-ui-language="en_US">
-	</script>
-
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
-	media="screen" />
-<script
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-<!-- Test functions -->
-<script charset="utf-8"> // IE needs this :-/
-
-jQuery.sap.require("sap.ui.thirdparty.sinon");
-jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+	//add divs for control tests
+	var oText = document.createElement("div");
+	oText.setAttribute("id", "txt");
+	document.body.appendChild(oText);
+	var oText2 = document.createElement("div");
+	oText2.setAttribute("id", "txt2");
+	document.body.appendChild(oText2);
+	var oTable = document.createElement("div");
+	oTable.setAttribute("id", "table");
+	document.body.appendChild(oTable);
 
 	var oModel;
 	var oModel2;
 	var testData;
 	var testData2;
-	var bindings;
 	var oTxt;
 
 	function setup(){
@@ -47,10 +40,8 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 			oTxt.destroy();
 		}
 
-		// reset bindings
-		bindings = [];
 		testData = {
-	  		"teamMembers":[
+			"teamMembers":[
 				{"firstName":"Andreas", "lastName":"Klark", "gender":"male"},
 				{"firstName":"Peter", "lastName":"Miller", "gender":"male"},
 				{"firstName":"Gina", "lastName":"Rush", "gender":"female"},
@@ -58,7 +49,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 				{"firstName":"Michael", "lastName":"Spring", "gender":"male"},
 				{"firstName":"Marc", "lastName":"Green", "gender":"male"},
 				{"firstName":"Frank", "lastName":"Wallace", "gender":"male"}
-	   		],
+			],
 			"values":
 				[
 				 {"value" : 3.55},
@@ -69,30 +60,23 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		};
 
 		testData2 = {
-				"values":
-					[
-						{"value" : 7.55},
-						{"value" : 555554.32241},
-						{"value" : 2.418}
-				]
-		}
-		oModel = new sap.ui.model.json.JSONModel();
+			"values": [
+				{"value" : 7.55},
+				{"value" : 555554.32241},
+				{"value" : 2.418}
+			]
+		};
+
+		oModel = new JSONModel();
 		oModel.setData(testData);
-		oModel2 = new sap.ui.model.json.JSONModel();
+		oModel2 = new JSONModel();
 		oModel2.setData(testData2);
 		sap.ui.getCore().setModel(oModel);
 		sap.ui.getCore().setModel(oModel2, "model2");
 
-		oTxt = new sap.ui.commons.TextField();
+		oTxt = new Input();
 		oTxt.placeAt("txt");
-	};
-
-	function createPropertyBindings(path, property, context) {
-		// create bindings
-		jQuery(testData[path.substr(1)]).each(function (i) {
-			bindings[i] = oModel.bindProperty(path + "/" + i + "/" + property, context);
-		});
-	};
+	}
 
 	QUnit.test("Binding syntax tests", function(assert) {
 		setup();
@@ -106,31 +90,33 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		oTxt.unbindProperty("value");
 
 		oTxt.bindValue({ path: "/teamMembers/4/firstName",
-				parts: [
-							{path: "/teamMembers/6/firstName"},
-							{path: "/teamMembers/6/lastName"}
-						]});
+			parts: [
+				{path: "/teamMembers/6/firstName"},
+				{path: "/teamMembers/6/lastName"}
+			]
+		});
 		assert.equal(oTxt.getValue(), "Frank Wallace", "calculated fields syntax 1");
 		oTxt.unbindProperty("value");
 
 		oTxt.bindValue({
 			parts: [
-						"/teamMembers/2/firstName",
-						"/teamMembers/0/firstName",
-						"/teamMembers/2/lastName"
-					]});
+				"/teamMembers/2/firstName",
+				"/teamMembers/0/firstName",
+				"/teamMembers/2/lastName"
+			]
+		});
 		assert.equal(oTxt.getValue(), "Gina Andreas Rush", "calculated fields syntax 2");
 	});
 
 	QUnit.test("Binding syntax constructor tests", function(assert) {
 		setup();
 
-		oTxt = new sap.ui.commons.TextField({
+		oTxt = new Input({
 			value: {
 				parts: [
-						{path: "/teamMembers/6/firstName"},
-						{path: "/teamMembers/6/lastName"}
-						]
+					{path: "/teamMembers/6/firstName"},
+					{path: "/teamMembers/6/lastName"}
+				]
 			}
 		});
 
@@ -138,13 +124,13 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		assert.equal(oTxt.getValue(), "Frank Wallace", "calculated fields constructor syntax 1");
 
 		oTxt.destroy();
-		oTxt = new sap.ui.commons.TextField({
+		oTxt = new Input({
 			value: {
 				parts: [
-						"/teamMembers/2/firstName",
-						"/teamMembers/0/firstName",
-						"/teamMembers/2/lastName"
-						]
+					"/teamMembers/2/firstName",
+					"/teamMembers/0/firstName",
+					"/teamMembers/2/lastName"
+				]
 			}
 		});
 		oTxt.placeAt("txt");
@@ -154,13 +140,15 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 	QUnit.test("Composite Binding tests", function(assert) {
 		setup();
 
-		oTxt.bindValue({ path: "/teamMembers/4/firstName",
-				parts: [
-							{path: "/teamMembers/6/firstName"},
-							{path: "/teamMembers/6/lastName",},
-							{path: "/teamMembers/3/lastName",},
-							{path: "/values/1/value", type: new sap.ui.model.type.Float()}
-						]});
+		oTxt.bindValue({
+			path: "/teamMembers/4/firstName",
+			parts: [
+				{path: "/teamMembers/6/firstName"},
+				{path: "/teamMembers/6/lastName"},
+				{path: "/teamMembers/3/lastName"},
+				{path: "/values/1/value", type: new Float()}
+			]
+		});
 
 		var oComp = oTxt.getBinding("value");
 		assert.ok(oComp);
@@ -181,9 +169,10 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		setup();
 		oTxt.bindValue({
 			parts: [
-						{path: "/teamMembers/6/firstName"},
-						{path: "/tea/5/xyz"}
-					]});
+				{path: "/teamMembers/6/firstName"},
+				{path: "/tea/5/xyz"}
+			]
+		});
 		assert.equal(oTxt.getValue(), "Frank ", "calculated fields wrong path");
 	});
 
@@ -191,10 +180,10 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		setup();
 		oTxt.bindValue({
 			parts: [
-						{path: "/teamMembers/6/firstName"},
-						{path: "/teamMembers/6/lastName"},
-						{path: "/teamMembers/5/lastName"}
-					],
+				{path: "/teamMembers/6/firstName"},
+				{path: "/teamMembers/6/lastName"},
+				{path: "/teamMembers/5/lastName"}
+			],
 			formatter: function(oV1, oV2, oV3){
 				assert.equal(oV3, "Green", "name check");
 				return "Dear " + oV1 + " " + oV2;
@@ -208,9 +197,10 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		setup();
 		oTxt.bindValue({
 			parts: [
-						{path: "/teamMembers/6/firstName"},
-						{path: "/teamMembers/6/lastName"}
-					]});
+				{path: "/teamMembers/6/firstName"},
+				{path: "/teamMembers/6/lastName"}
+			]
+		});
 		assert.equal(oTxt.getValue(), "Frank Wallace", "calculated fields syntax 1");
 	});
 
@@ -218,10 +208,10 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		setup();
 		oTxt.bindValue({
 			parts: [
-						{path: "/values/1/value"},
-						{path: "model2>/values/1/value"},
-						{path: "model2>/values/2/value"}
-					],
+				{path: "/values/1/value"},
+				{path: "model2>/values/1/value"},
+				{path: "model2>/values/2/value"}
+			],
 			formatter: function(oV1, oV2, oV3){
 				return oV1 + oV2 + oV3;
 			}
@@ -234,10 +224,10 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		setup();
 		oTxt.bindValue({
 			parts: [
-						{path: "/values/1/value"},
-						{path: "model2>/values/200/value"},
-						{path: "model2>/values/2/value"}
-					],
+				{path: "/values/1/value"},
+				{path: "model2>/values/200/value"},
+				{path: "model2>/values/2/value"}
+			],
 			formatter: function(oV1, oV2, oV3){
 				assert.ok(!oV2, "value should be undefined");
 				return oV1 + oV3;
@@ -251,10 +241,10 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		setup();
 		oTxt.bindValue({
 			parts: [
-						{path: "/values/1/value", type: new sap.ui.model.type.Float()},
-						{path: "model2>/values/1/value", type: new sap.ui.model.type.Float()},
-						{path: "model2>/values/2/value", type: new sap.ui.model.type.Float()}
-					],
+				{path: "/values/1/value", type: new Float()},
+				{path: "model2>/values/1/value", type: new Float()},
+				{path: "model2>/values/2/value", type: new Float()}
+			],
 			formatter: function(oV1, oV2, oV3){
 				return oV1 + oV2 + oV3; // strings are added
 			}
@@ -265,11 +255,11 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 
 		oTxt.bindValue({
 			parts: [
-						{path: "/values/1/value", type: new sap.ui.model.type.Float()},
-						{path: "model2>/values/1/value"},
-						{path: "model2>/values/2/value", type: new sap.ui.model.type.Float()},
-						{path: "/teamMembers/6/lastName"}
-					],
+				{path: "/values/1/value", type: new Float()},
+				{path: "model2>/values/1/value"},
+				{path: "model2>/values/2/value", type: new Float()},
+				{path: "/teamMembers/6/lastName"}
+			],
 			formatter: function(oV1, oV2, oV3){
 				return oV1 + oV2 + oV3; // raw values
 			},
@@ -285,9 +275,9 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 
 		oTxt.bindValue({
 			parts: [
-						{path: "/values/3/value", type: new sap.ui.model.odata.type.TimeOfDay()},
-						{path: "model2>/values/1/value", type: new sap.ui.model.type.Float()}
-					],
+				{path: "/values/3/value", type: new TimeOfDay()},
+				{path: "model2>/values/1/value", type: new Float()}
+			],
 			formatter: function(oV1, oV2){
 				assert.ok(oV1 instanceof Date, "The value is parsed with the model format");
 				assert.strictEqual(oV2, 555554.32241, "The raw value is returned");
@@ -308,21 +298,21 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 
 	QUnit.test("Calculated fields with table", function(assert) {
 		setup();
-		 var oTable = new sap.ui.table.Table({
+		 var oTable = new Table({
 			columns: [
-				new sap.ui.table.Column({
-					label: new sap.ui.commons.Label({ text: "name" }),
-						template: new sap.ui.commons.TextView({ text: {
+				new Column({
+					label: new Label({ text: "name" }),
+						template: new Input({ value: {
 							parts: [
-									{path: "firstName"},
-									{path: "lastName"}
-								],
-							formatter: function (firstName, lastName){
+								{path: "firstName"},
+								{path: "lastName"}
+							],
+							formatter: function (firstName, lastName) {
 								if (firstName && lastName) {
 									return "Dear " + firstName + " " + lastName;
 								}
 								return null;
-						}
+							}
 						}})
 					})
 				]
@@ -335,28 +325,12 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		this.clock.tick(1000);
 		var counter = 0;
 
-		jQuery.each(oTable.getRows(), function(i, oRow){
-			if (oRow.getCells()[0].getText()) {
-				assert.equal(oRow.getCells()[0].getText(), "Dear " + testData.teamMembers[i].firstName + " " + testData.teamMembers[i].lastName, "check names");
+		oTable.getRows().forEach(function(oRow, i){
+			if (oRow.getCells()[0].getValue()) {
+				assert.equal(oRow.getCells()[0].getValue(), "Dear " + testData.teamMembers[i].firstName + " " + testData.teamMembers[i].lastName, "check names");
 				counter++;
 			}
 		});
 		assert.equal(counter, 7, "table entries");
 	});
-
-
-	</script>
-
-</head>
-<body>
-<h1 id="qunit-header">QUnit tests: Data binding Calculated Fields</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-<br>
-<div id="txt"></div>
-<div id="txt2"></div>
-<div id="table"></div>
-</body>
-</html>
+});

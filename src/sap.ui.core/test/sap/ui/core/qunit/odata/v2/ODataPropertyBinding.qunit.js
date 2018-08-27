@@ -1,28 +1,15 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<!-- Initialization -->
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap" src="../../../../../resources/sap-ui-core.js"
-data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"></script>
+/*global QUnit, sinon*/
+sap.ui.define([
+	"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/m/Text"
+], function(
+		fakeService,
+		ODataModel,
+		Text
+	) {
 
-<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<!--[if IE]>
-	<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
-<![endif]-->
-<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-<!-- This test is not running against the real Northwind service, but a fake service based on
-     Sinon.SJ FakeXHR. To run on the real service instead please comment out the following line. -->
-<script src="ODataModelFakeService.js"></script>
-
-<!-- Test functions -->
-<script>
-
+	"use strict";
 	// time to wait for server responses
 	var oModel;
 	var sURI = "http://services.odata.org/V3/Northwind/Northwind.svc/";
@@ -30,14 +17,14 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"></script>
 
 	function removeSharedMetadata() {
 		var sServiceURI = sURI.replace(/\/$/, "");
-		if (sap.ui.model.odata.v2.ODataModel.mServiceData
-				&& sap.ui.model.odata.v2.ODataModel.mServiceData[sServiceURI]) {
-			delete sap.ui.model.odata.v2.ODataModel.mServiceData[sServiceURI].oMetadata;
+		if (ODataModel.mServiceData
+				&& ODataModel.mServiceData[sServiceURI]) {
+			delete ODataModel.mServiceData[sServiceURI].oMetadata;
 		}
 	}
 
 	function initModel(bJSON) {
-		return new sap.ui.model.odata.v2.ODataModel(sURI, {
+		return new ODataModel(sURI, {
 			json: bJSON,
 			useBatch: true
 		});
@@ -48,7 +35,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"></script>
 	QUnit.module("v2.ODataPropertyBinding", {
 		beforeEach : function() {
 			oModel = initModel(false);
-			this.oText = new sap.m.Text();
+			this.oText = new Text();
 		},
 		afterEach : function() {
 			oModel = undefined;
@@ -60,8 +47,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"></script>
 	QUnit.test("PropertyBinding refresh model with forced flag", function(assert){
 		var done = assert.async();
 		var that = this;
-		var handlerSpy = this.spy(function() {
-			if(handlerSpy.callCount === 4) {
+		var handlerSpy = sinon.spy(function() {
+			if (handlerSpy.callCount === 4) {
 				assert.equal(that.oText.getText(), "2");
 				done();
 			} else if (handlerSpy.callCount === 3) {
@@ -133,15 +120,4 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"></script>
 			});
 		});
 	});
-
-
-	</script>
-</head>
-<body>
-<h1 id="qunit-header">QUnit tests: OData Property Binding</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-</body>
-</html>
+});

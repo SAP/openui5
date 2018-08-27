@@ -6,81 +6,57 @@ sap.ui.define(function() {
 		defaults: {
 			qunit: {
 				version: 2
+			},
+			sinon: {
+				version: 4,
+				qunitBridge: true,
+				useFakeTimers: false
 			}
 		},
 		tests: {
 			datajs: {
-				title: "sap/ui/thirdparty/datajs"
+				title: "sap.ui.thirdparty.datajs - QUnit tests"
 			},
 			ODataAnnotationsV2: {
-				page: "test-resources/sap/ui/core/qunit/ODataAnnotationsV2.qunit.html",
-				title: "OData Annotations - sap.ui.core",
-				ui5: {
-					libs: "sap.ui.commons,sap.ui.table",
-					theme: "sap_bluecrystal",
-					language: "en-US"
-				},
-				qunit: {
-					version: 1
-				},
-				sinon: {
-					version: 1,
-					qunitBridge: true,
-					useFakeTimers: false
-				}
+				_page: "test-resources/sap/ui/core/qunit/ODataAnnotationsV2.qunit.html",
+				title: "sap.ui.model.odata.v2.ODataAnnotations - QUnit tests"
 			},
 			ODataV2ListBinding: {
-				ui5: {
-					libs: "sap.m"
-				},
-				sinon: {
-					version: 1,
-					qunitBridge: true
-				}
+				title: "sap.ui.model.odata.v2.ODataListBinding - QUnit tests"
+			},
+			ODataPropertyBinding: {
+				title: "sap.ui.model.odata.v2.ODataPropertyBinding - QUnit tests"
 			},
 			ODataV2Model: {
-				sinon: {
-					version: 1,
-					qunitBridge: true,
-					useFakeTimers: false
-				}
+				title: "sap.ui.model.odata.v2.ODataModel - Sinon QUnit tests"
 			},
 			ODataV2TreeBinding: {
+				title: "sap.ui.model.odata.v2.ODataTreeBinding - QUnit tests",
 				path: {
 					"mockdata": "test-resources/sap/ui/core/qunit/model"
-				},
-				sinon: {
-					useFakeTimers: false
 				}
 			},
 			ODataV2TreeBindingFlat: {
-				sinon: {
-					useFakeTimers: false
-				}
+				title: "sap.ui.model.odata.ODataTreeBindingFlat - QUnit tests"
 			},
 			ODataV2TreeBindingFlat_ExpansionState: {
-				sinon: {
-					version: 1,
-					qunitBridge: true,
-					useFakeTimers: false
-				}
+				title: "sap.ui.model.odata.ODataTreeBindingFlat - QUnit tests"
 			},
 			V2ODataModel: {
-				title: "QUnit page for V2ODataModel - sap.ui.core",
+				title: "sap.ui.model.odata.v2.ODataModel - Mockserver QUnit tests",
 				ui5: {
 					language: "en-US"
 				}
 			},
 			V2ODataModelB: {
-				title: "QUnit page for V2ODataModelB - sap.ui.core",
+				title: "sap.ui.model.odata.v2.ODataModel - Mockserver QUnit tests",
 				ui5: {
 					language: "en-US"
 				}
 			},
 			V2ODataModelDataState: {
-				title: "QUnit page for V2ODataModelDataState - sap.ui.core",
+				title: "sap.ui.model.DataState - v2.Model Datastate QUnit tests",
 				ui5: {
-					libs: "sap.ui.commons,sap.ui.table,sap.m, sap.ui.layout",
 					language: "en"
 				}
 			}
