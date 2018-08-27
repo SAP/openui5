@@ -332,6 +332,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			jQuery.sap.delayedCall(0, this, fnFocusCallback);
 		};
 
+		TabContainer.prototype._attachItemPropertyChanged = function (oTabContainerItem) {
+			oTabContainerItem.attachItemPropertyChanged(function (oEvent) {
+				var sPropertyKey = oEvent['mParameters'].propertyKey;
+
+				if (mTCItemToTSItemProperties[sPropertyKey]) {//forward only if such property exists in TabStripItem
+					sPropertyKey = mTCItemToTSItemProperties[sPropertyKey];
+					var oTabStripItem = this._toTabStripItem(oEvent.getSource());
+					oTabStripItem && oTabStripItem.setProperty(sPropertyKey, oEvent['mParameters'].propertyValue, false);
+				}
+			}.bind(this));
+		};
+
 		/**
 		 * Removes an item from the aggregation named <code>items</code>.
 		 *
@@ -366,21 +378,28 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @returns {object} This instance for chaining
 		 */
 		TabContainer.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
-			var oTabStripItem,
-				sPropertyKey;
-
 			if (sAggregationName === 'items') {
-				oObject.attachItemPropertyChanged(function (oEvent) {
-					sPropertyKey = oEvent['mParameters'].propertyKey;
-
-					if (mTCItemToTSItemProperties[sPropertyKey]) {//forward only if such property exists in TabStripItem
-						sPropertyKey = mTCItemToTSItemProperties[sPropertyKey];
-						oTabStripItem = this._toTabStripItem(oEvent.getSource());
-						oTabStripItem && oTabStripItem.setProperty(sPropertyKey, oEvent['mParameters'].propertyValue, false);
-					}
-				}.bind(this));
+				this._attachItemPropertyChanged(oObject);
 			}
+
 			return Control.prototype.addAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
+		};
+
+		/**
+		 * Overrides the method in order to handle propagation of item property changes to the <code>_tabStrip</code> instance copies.
+		 *
+		 * @param {string} sAggregationName Name of the added aggregation
+		 * @param {object} oObject Instance that is going to be added
+		 * @param {int} iIndex Index to insert the item
+		 * @param {boolean} bSuppressInvalidate Flag indicating whether invalidation should be suppressed
+		 * @returns {object} This instance for chaining
+		 */
+		TabContainer.prototype.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) {
+			if (sAggregationName === 'items') {
+				this._attachItemPropertyChanged(oObject);
+			}
+
+			return Control.prototype.insertAggregation.call(this, sAggregationName, oObject, iIndex, bSuppressInvalidate);
 		};
 
 		/*
