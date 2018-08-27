@@ -9,6 +9,11 @@
 		showHeader="false"
 		id="page"
 		class="IconExplorerHomeBackground">
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo
+				contentRole="Region"
+				contentLabel="{i18n>Home_contentLabel}"/>
+		</landmarkInfo>
 		<l:BlockLayout class="BlockLayoutFlex">
 			<l:BlockLayoutRow class="BlockLayoutFirstRow">
 				<l:BlockLayoutCell class="sapUiNoContentPadding sapUiResponsiveContentPadding">
