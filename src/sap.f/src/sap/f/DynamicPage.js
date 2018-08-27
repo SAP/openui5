@@ -643,8 +643,6 @@ sap.ui.define([
 			oDynamicPageHeader.$().toggleClass("sapFDynamicPageHeaderHidden", !bShow);
 			this._updateScrollBar();
 		}
-
-		this._toggleHeaderInTabChain(bShow);
 	};
 
 	/**
