@@ -84,13 +84,13 @@ sap.ui.require(["jquery.sap.global", "sap/ui/Device"], function(jQuery) {
 					return false;
 				}
 			}());
-			this.alert = alert;
-			alert = sinon.spy();
+			this.alert = window.alert;
+			window.alert = sinon.spy();
 			sinon.stub(console, 'warn');
 		},
 		afterEach: function () {
 			jQuery.sap.debug(false);
-			alert = this.alert;
+			window.alert = this.alert;
 			console.warn.restore();
 		}
 	});
