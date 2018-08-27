@@ -478,20 +478,25 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 
 	/**
 	 * Returns a dedicated logger for a component
+	 *
+	 * The logger comes with the same API as the Logger module:
+	 * <ul>
+	 * <li><code>#fatal</code> - see:  {@link sap/base/Log.fatal}
+	 * <li><code>#error</code> - see:  {@link sap/base/Log.error}
+	 * <li><code>#warning</code> - see:  {@link sap/base/Log.warning}
+	 * <li><code>#info</code> - see:  {@link sap/base/Log.info}
+	 * <li><code>#debug</code> - see:  {@link sap/base/Log.debug}
+	 * <li><code>#trace</code> - see:  {@link sap/base/Log.trace}
+	 * <li><code>#setLevel</code> - see:  {@link sap/base/Log.setLevel}
+	 * <li><code>#getLevel</code> - see:  {@link sap/base/Log.getLevel}
+	 * <li><code>#isLoggable</code> - see:  {@link sap/base/Log.isLoggable}
+	 * </ul>
+	 *
 	 * @param {string} sComponent Name of the component which should be logged
 	 * @param {module:sap/base/Log.Level} [iLogLevel] The default log level
+	 * @return {object} A logger with a specified component
 	 * @public
 	 * @static
-	 * @return {object} Logger A logger with a specified component
-	 * @return {function} {Logger.fatal} @see sap/base/Log.fatal
-	 * @return {function} {Logger.error} @see sap/base/Log.error
-	 * @return {function} {Logger.warning} @see sap/base/Log.warning
-	 * @return {function} {Logger.info} @see sap/base/Log.info
-	 * @return {function} {Logger.debug} @see sap/base/Log.debug
-	 * @return {function} {Logger.trace} @see sap/base/Log.trace
-	 * @return {function} {Logger.setLevel} @see sap/base/Log.setLevel
-	 * @return {function} {Logger.getLevel} @see sap/base/Log.getLevel
-	 * @return {function} {Logger.isLoggable} @see sap/base/Log.isLoggable
 	 */
 	Log.getLogger = function(sComponent, iDefaultLogLevel) {
 		if ( !isNaN(iDefaultLogLevel) && mMaxLevel[sComponent] == null ) {
