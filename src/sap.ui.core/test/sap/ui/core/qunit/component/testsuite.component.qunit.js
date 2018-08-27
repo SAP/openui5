@@ -10,7 +10,7 @@ sap.ui.define(function() {
 			},
 			sinon: {
 				version: 1,
-				qunitBridge: true,
+				qunitBridge: true
 			},
 			loader: {
 				paths: {
@@ -53,7 +53,7 @@ sap.ui.define(function() {
 				loader: {
 					paths: {
 					}
-				},
+				}
 			},
 			ComponentSupport: {
 				title: "Component Support - sap.ui.core",

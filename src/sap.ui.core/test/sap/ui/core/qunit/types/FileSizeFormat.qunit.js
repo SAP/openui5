@@ -1,4 +1,6 @@
+/*global QUnit */
 sap.ui.define(["sap/ui/core/format/FileSizeFormat", "sap/ui/core/Locale"], function (FileSizeFormat, Locale) {
+	"use strict";
 
 	var oFormatBinary = FileSizeFormat.getInstance({ binaryFilesize: true, maxFractionDigits: 2 }, new Locale("en"));
 	var oFormatDecimal = FileSizeFormat.getInstance({ binaryFilesize: false, maxFractionDigits: 2 }, new Locale("en"));
@@ -6,20 +8,21 @@ sap.ui.define(["sap/ui/core/format/FileSizeFormat", "sap/ui/core/Locale"], funct
 
 	var aBinaryUnitNames = ["Kibibyte", "Mebibyte", "Gibibyte", "Tebibyte", "Pebibyte", "Exbibyte", "Zebibyte", "Yobibyte"];
 	var aDecimalUnitNames = ["Kilobyte", "Megabyte", "Gigabyte", "Terabyte", "Petabyte", "Exabyte", "Zettabyte", "Yottabyte"];
-	var aBinaryUnits = [];
-	var aDecimalUnits = [];
+	var aBinaryUnits;
+	var aDecimalUnits;
 
-	function extractUnit(names, units) {
-		jQuery.each(names, function (index, name) {
+	function extractUnits(names) {
+		return names.map(function (name) {
 			var sPattern = oFormatDefault.oBundle.getText("FileSize." + name);
 			// trim the string
-			var sName = sPattern.split("{0}")[1].replace(/^\s+|\s+$/g, "");
-			units.push(sName);
+			var sName = sPattern.split("{0}")[1].trim();
+			return sName;
 		});
 	}
 
-	extractUnit(aBinaryUnitNames, aBinaryUnits);
-	extractUnit(aDecimalUnitNames, aDecimalUnits);
+	aBinaryUnits = extractUnits(aBinaryUnitNames);
+	aDecimalUnits = extractUnits(aDecimalUnitNames);
+
 
 	function checkFormat(format, value, expected) {
 		var oFormat, sPrefix;
@@ -38,7 +41,7 @@ sap.ui.define(["sap/ui/core/format/FileSizeFormat", "sap/ui/core/Locale"], funct
 				sPrefix = "Default";
 		}
 
-		assert.equal(oFormat.format(value), expected, sPrefix + " format of '" + value + "': " + expected);
+		QUnit.config.current.assert.equal(oFormat.format(value), expected, sPrefix + " format of '" + value + "': " + expected);
 	}
 
 	function checkParse(format, value, expected) {
@@ -58,7 +61,7 @@ sap.ui.define(["sap/ui/core/format/FileSizeFormat", "sap/ui/core/Locale"], funct
 				sPrefix = "Default";
 		}
 
-		assert.equal(oFormat.parse(value), expected, "Parse (" + sPrefix + " Formatter) of '" + value + "': " + expected);
+		QUnit.config.current.assert.equal(oFormat.parse(value), expected, "Parse (" + sPrefix + " Formatter) of '" + value + "': " + expected);
 	}
 
 	function getHex(i, binary) {

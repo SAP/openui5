@@ -17,10 +17,10 @@ sap.ui.define([
 
 	QUnit.test("Should fired beforeMatched before matched", function(assert) {
 		var oRoute = new Route(oRouterStub, { name : "testRoute" });
-		var fnBeforeMatchedSpy = this.spy(function() {
+		var fnMatchedSpy = this.spy(),
+			fnBeforeMatchedSpy = this.spy(function() {
 				assert.notOk(fnMatchedSpy.called, "the matched event shouldn't be fired yet");
-			}),
-			fnMatchedSpy = this.spy();
+			});
 
 		oRoute.attachBeforeMatched(fnBeforeMatchedSpy);
 		oRoute.attachMatched(fnMatchedSpy);
@@ -61,14 +61,14 @@ sap.ui.define([
 		QUnit.test(sTestName, function(assert) {
 			// Arrange
 			var sName = "testRoute",
+				oListener = {},
+				oData = {some: "data"},
 				oRoute = new Route(oRouterStub, { name : sName }),
 				fnEventSpy = this.spy(function(oEvent, oActualData) {
 					assert.strictEqual(oActualData, oData, "the data is correct");
 					assert.strictEqual(oEvent.getParameters().name, sName, "the name is correct");
 					assert.strictEqual(this, oListener, "the this pointer is correct");
 				}),
-				oListener = {},
-				oData = {some: "data"},
 				oAttachReturnValue = oRoute["attach" + sEventName](oData, fnEventSpy, oListener);
 
 			// Act
@@ -90,7 +90,6 @@ sap.ui.define([
 		QUnit.test(sTestName, function(assert) {
 			// Arrange
 			var sName = "testRoute",
-				fnRouteMatchedSpy = this.spy(),
 				oRoute = new Route(oRouterStub, { name : sName }),
 				fnEventSpy = this.spy(),
 				oListener = {};
@@ -153,7 +152,10 @@ sap.ui.define([
 				parent: ":parentRoute"
 			});
 
-			var ParentComponent = UIComponent.extend("parent.component", {
+			var ParentComponent,
+				ChildComponent;
+
+			ParentComponent = UIComponent.extend("parent.component", {
 				metadata : {
 					routing:  {
 						routes: [
@@ -172,7 +174,7 @@ sap.ui.define([
 				}
 			});
 
-			var ChildComponent = UIComponent.extend("child.component", {
+			ChildComponent = UIComponent.extend("child.component", {
 				metadata : {
 					routing:  {
 						routes: [

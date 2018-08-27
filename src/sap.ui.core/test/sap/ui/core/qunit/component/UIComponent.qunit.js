@@ -588,7 +588,7 @@ sap.ui.define([
 		this.setRespondedManifest(oManifest, "scenario1");
 
 		var requireSpy = this.requireSpy;
-		sap.ui.predefine("manifestModules/scenario1/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+		sap.ui.define("manifestModules/scenario1/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 			return UIComponent.extend("manifestModules.scenario1.Component", {
 				metadata: {
 					manifest: "json"
@@ -615,7 +615,7 @@ sap.ui.define([
 			name: "manifestModules.scenario1",
 			manifest: true
 		}).then(function(oInstance) {
-			console.error("instance here", oInstance);
+			// console.error("instance here", oInstance);
 		});
 	});
 

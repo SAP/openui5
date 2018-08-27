@@ -8,4 +8,4 @@ window["sap-ui-config"] = {
 			"sap.ui.core" : "http://core.preconfig.com/ui5-themes"
 		}
 	}
-}
+};

@@ -193,12 +193,11 @@ sap.ui.define([
 			bMethodHasArgs = aMethods[i].hasArgs;
 			oMockDate = {};
 			oMockDate.prototype = Date.prototype;
-			oMockDate[sMethodName] = function () {
-			};
+			oMockDate[sMethodName] = function () {};
 
 			oDateConstructorStub = this.sandbox.stub(window, 'Date').returns(oMockDate);
 			oMethodStub = this.sandbox.stub(oMockDate, sMethodName).returns(returnValue);
-			Date.prototype[sMethodName] = oMockDate[sMethodName];
+			Date.prototype[sMethodName] = oMockDate[sMethodName]; //eslint-disable-line no-extend-native
 
 			oUniversalDate = new UniversalDate();
 			if (bMethodHasArgs) {
@@ -228,7 +227,6 @@ sap.ui.define([
 				sMethodName,
 				oDateConstructorStub,
 				oMethodStub,
-				oUniversalDate,
 				bMethodHasArgs,
 				result,
 				aMethodCallArg = [10, 11];
@@ -247,7 +245,7 @@ sap.ui.define([
 			var d = new MockDateClass();
 			oDateConstructorStub = this.sandbox.stub(window, 'Date').returns(d);
 			oMethodStub = this.sandbox.stub(d, sMethodName).returns(returnValue);
-			Date[sMethodName] = d[sMethodName];
+			Date[sMethodName] = d[sMethodName]; //eslint-disable-line no-extend-native
 
 			if (bMethodHasArgs) {
 				result = UniversalDate[sMethodName](aMethodCallArg[0], aMethodCallArg[1]);
@@ -304,8 +302,12 @@ sap.ui.define([
 		this.dateSpy.restore();
 
 		var aExpected = [];
-		for (var i = 0; i < 12; i++) aExpected.push(0);
-		for (var i = 0; i < 12; i++) aExpected.push(1);
+		for (var i = 0; i < 12; i++) {
+			aExpected.push(0);
+		}
+		for (var i = 0; i < 12; i++) {
+			aExpected.push(1);
+		}
 
 		var ud;
 		for (var i = 0; i < 24; i++) {

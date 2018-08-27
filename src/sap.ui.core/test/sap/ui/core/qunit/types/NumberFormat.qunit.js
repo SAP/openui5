@@ -1,4 +1,8 @@
+/*global QUnit */
 sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], function (NumberFormat, Locale) {
+	"use strict";
+
+	/*eslint no-floating-decimal:0 */
 
 	var oDefaultInteger = NumberFormat.getIntegerInstance(),
 		oDefaultFloat = NumberFormat.getFloatInstance(),
@@ -434,8 +438,8 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 		assert.equal(oFormat.format(-999999), "-1 Million", "-999999 formatted");
 		assert.equal(oFormat.format(-1234567), "-1,23 Millionen", "-1234567 formatted");
 
-		var oLocale = new Locale("ar-SA");
-		var oFormat = NumberFormat.getIntegerInstance({ style: "long", shortRefNumber: 1000000 }, oLocale);
+		oLocale = new Locale("ar-SA");
+		oFormat = NumberFormat.getIntegerInstance({ style: "long", shortRefNumber: 1000000 }, oLocale);
 		assert.equal(oFormat.format(0), "0 مليون", "0 formatted");
 		assert.equal(oFormat.format(1000000), "1 مليون", "1000000 formatted");
 		assert.equal(oFormat.format(2000000), "2 مليون", "2000000 formatted");
@@ -860,7 +864,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 
 	QUnit.test("float format with default rounding mode: HALF_AWAY_FROM_ZERO", function (assert) {
 		var oFormat = NumberFormat.getFloatInstance({
-			maxFractionDigits: 3,
+			maxFractionDigits: 3
 		});
 
 		assert.equal(oFormat.format(.1230), "0.123", ".123");
@@ -1451,8 +1455,8 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 		assert.equal(oFormat.parse("1337 min"), null, "duration-minute is rejected");
 
 		// if ambiguous units are introduced by the application, we return undefined for the unit
-		var oLocale = new Locale("en");
-		var oFormat = NumberFormat.getUnitInstance({
+		oLocale = new Locale("en");
+		oFormat = NumberFormat.getUnitInstance({
 			allowedUnits: ["duration-century", "volume-cup"]
 		}, oLocale);
 
@@ -1539,7 +1543,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 
 	});
 
-	QUnit.test("Unit format with decimals", function () {
+	QUnit.test("Unit format with decimals", function (assert) {
 		var oLocale = new Locale("cs");
 		var oFormat = NumberFormat.getUnitInstance({
 			customUnits: {
@@ -1561,7 +1565,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 		assert.equal(oFormat.format(1.125, "steven"), "1,13 cgal", "1,13 cgal");
 	});
 
-	QUnit.test("Unit format with precision", function () {
+	QUnit.test("Unit format with precision", function (assert) {
 		var oLocale = new Locale("cs");
 		var oFormat = NumberFormat.getUnitInstance({
 			customUnits: {
@@ -1583,7 +1587,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 		assert.equal(oFormat.format(1.125, "steven"), "1,125 cgal", "1,125 cgal");
 	});
 
-	QUnit.test("Unit format with global configuration overwritten by format instance", function () {
+	QUnit.test("Unit format with global configuration overwritten by format instance", function (assert) {
 		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
 		var oConfigObject = {
 			"steven": {
@@ -1745,7 +1749,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 		var oLocale = new Locale("en");
 		var oFormat = NumberFormat.getUnitInstance(oLocale);
 
-		aResult = oFormat.parse("123 TER");
+		var aResult = oFormat.parse("123 TER");
 		assert.equal(aResult, null, "unit cannot be found");
 
 		aResult = oFormat.parse("TER 1234");
@@ -1766,10 +1770,10 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 		assert.equal(aResult, null, "Broken Number and Unit is recognized -> null result");
 
 		// parseAsString does not change anything
-		var oFormat = NumberFormat.getUnitInstance({
+		oFormat = NumberFormat.getUnitInstance({
 			parseAsString: true
 		}, oLocale);
-		var aResult = oFormat.parse("1r2 deg");
+		aResult = oFormat.parse("1r2 deg");
 
 		assert.equal(aResult, null, "broken Number is recognized -> null value");
 	});
@@ -1779,13 +1783,13 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 		var oLocale = new Locale("en");
 		var oFormat = NumberFormat.getUnitInstance({ "style": "long" }, oLocale);
 		var aResult = oFormat.parse("1 thousand hr");
-		assert.ok(jQuery.isArray(aResult), "Unit parser should return an array");
+		assert.ok(Array.isArray(aResult), "Unit parser should return an array");
 		assert.equal(aResult[0], 1000, "Number is parsed correctly");
 		assert.equal(aResult[1], "duration-hour", "hour expression from pattern \"{1} hr\"");
 
 
 		aResult = oFormat.parse("17 million hr");
-		assert.ok(jQuery.isArray(aResult), "Unit parser should return an array");
+		assert.ok(Array.isArray(aResult), "Unit parser should return an array");
 		assert.equal(aResult[0], 17000000, "Number is parsed correctly");
 		assert.equal(aResult[1], "duration-hour", "hour expression from pattern \"{1} hr\"");
 
@@ -1796,12 +1800,12 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 		var oLocale = new Locale("pl_PL");
 		var oFormat = NumberFormat.getUnitInstance(oLocale);
 		var aResult = oFormat.parse("1 234 567 mi/h");
-		assert.ok(jQuery.isArray(aResult), "Unit parser should return an array");
+		assert.ok(Array.isArray(aResult), "Unit parser should return an array");
 		assert.equal(aResult[0], 1234567, "Number is parsed correctly");
 		assert.equal(aResult[1], "speed-mile-per-hour", "hour expression from pattern \"{0}  mi/h\"");
 
 		aResult = oFormat.parse("0,5 mi/h");
-		assert.ok(jQuery.isArray(aResult), "Unit parser should return an array");
+		assert.ok(Array.isArray(aResult), "Unit parser should return an array");
 		assert.equal(aResult[0], 0.5, "Number is parsed correctly");
 		assert.equal(aResult[1], "speed-mile-per-hour", "hour expression from pattern \"{0}  mi/h	\"");
 
@@ -1813,12 +1817,12 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 		var oLocale = new Locale("pl_PL");
 		var oFormat = NumberFormat.getUnitInstance({ style: "long" }, oLocale);
 		var aResult = oFormat.parse("123 tysiące mi/h");
-		assert.ok(jQuery.isArray(aResult), "Unit parser should return an array");
+		assert.ok(Array.isArray(aResult), "Unit parser should return an array");
 		assert.equal(aResult[0], 123000, "Number is parsed correctly");
 		assert.equal(aResult[1], "speed-mile-per-hour", "hour expression from pattern \"{0}  mi/h\"");
 
 		aResult = oFormat.parse("500 mi/h");
-		assert.ok(jQuery.isArray(aResult), "Unit parser should return an array");
+		assert.ok(Array.isArray(aResult), "Unit parser should return an array");
 		assert.equal(aResult[0], 500, "Number is parsed correctly");
 		assert.equal(aResult[1], "speed-mile-per-hour", "hour expression from pattern \"{0}  mi/h	\"");
 
@@ -1957,7 +1961,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 		assert.equal(oCurrencySymbolFormatter.format(123456.789, "HKD"), "HK$123,456.79", "123456.789 HKD");
 		assert.equal(oCurrencySymbolFormatter.format(-123456.789, "HKD"), "HK$\ufeff-123,456.79", "-123456.789 HKD");
 
-		// in "de-DE" locale there's already space in the currency pattern: #,##0.00 ¤
+		// in "de-DE" locale there's already space in the currency pattern: #,##0.00 ¤
 		// there shouldn't be more space inserted
 		oCurrencyCodeFormatter = NumberFormat.getCurrencyInstance(new Locale("de-DE"));
 		oCurrencySymbolFormatter = NumberFormat.getCurrencyInstance({
@@ -2161,17 +2165,17 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 	QUnit.test("parse currency format", function (assert) {
 		var oFormat = NumberFormat.getCurrencyInstance();
 		var aResult = oFormat.parse("-12,345.67 EUR");
-		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], -12345.67, "Number is parsed correctly");
 		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("USD23.4567");
-		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], 23.4567, "Number is parsed correctly");
 		assert.equal(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("EUR-1234567.89");
-		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], -1234567.89, "Number is parsed correctly");
 		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
@@ -2179,17 +2183,17 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 		assert.equal(aResult, null, "String with currency code only can't be parsed");
 
 		aResult = oFormat.parse("1234567.89");
-		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], 1234567.89, "Number is parsed correctly");
 		assert.strictEqual(aResult[1], undefined, "Currency Code is parsed correctly: expected, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("\u20ac" + " 1,234,567.89");
-		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], 1234567.89, "Number is parsed correctly");
 		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("$ 1234567.89");
-		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], 1234567.89, "Number is parsed correctly");
 		assert.strictEqual(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
 
@@ -2210,7 +2214,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 		assert.equal(aResult, null, "String with currency code only can't be parsed");
 
 		aResult = oFormat.parse("1234567.89");
-		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], 1234567.89, "Number is parsed correctly");
 		assert.strictEqual(aResult[1], undefined, "Currency Code is parsed correctly: expected, parsed " + aResult[1]);
 
@@ -2219,22 +2223,22 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 		});
 
 		aResult = oFormat.parse("-12,345.67 EUR");
-		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], "-12345.67", "Number is parsed correctly");
 		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("-00012,345.67 EUR");
-		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], "-12345.67", "Number is parsed correctly");
 		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("-12,345,678,901,123,456.78 EUR");
-		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], "-12345678901123456.78", "Long number is parsed correctly");
 		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("-12,345,678,901,123,456,345,678,901,123,456.78 EUR");
-		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], "-12345678901123456345678901123456.78", "Ridiculously long number is parsed correctly");
 		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 	});
@@ -2242,27 +2246,27 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 	QUnit.test("parse currency short format", function (assert) {
 		var oFormat = NumberFormat.getCurrencyInstance();
 		var aResult = oFormat.parse("-12K EUR");
-		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], -12000, "Number is parsed correctly");
 		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("USD23M");
-		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], 23000000, "Number is parsed correctly");
 		assert.equal(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("EUR -12 million");
-		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], -12000000, "Number is parsed correctly");
 		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("EUR 0.00T");
-		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], 0, "Number is parsed correctly");
 		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("EUR 0.2M");
-		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], 200000, "Number is parsed correctly");
 		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 	});
@@ -2290,17 +2294,17 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 		assert.equal(oFormat.format(1000000000, "USD"), "USD\xa01B", "USD is formatted as M/B/T");
 
 		var aResult = oFormat.parse("INR 12 Lk");
-		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], 1200000, "Number is parsed correctly");
 		assert.equal(aResult[1], "INR", "Currency Code is parsed correctly: expected INR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("INR 12 Cr");
-		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], 120000000, "Number is parsed correctly");
 		assert.equal(aResult[1], "INR", "Currency Code is parsed correctly: expected INR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("EUR 12M");
-		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], 12000000, "Number is parsed correctly");
 		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 	});
@@ -2595,8 +2599,8 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 						nParsed = oFormat.parse("");
 					}
 
-					if (nParsed !== nParsed) {
-						assert.ok(nCompareValue !== nCompareValue, "empty string is parsed as NaN");
+					if (nParsed !== nParsed) { // eslint-disable-line no-self-compare
+						assert.ok(nCompareValue !== nCompareValue, "empty string is parsed as NaN"); // eslint-disable-line no-self-compare
 					} else {
 						assert.strictEqual(nParsed, nCompareValue, "empty string is parsed as " + aCompareValues[index2][index1]);
 					}
@@ -2663,4 +2667,4 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 		assert.deepEqual(oFormat.parse("52.3xsd"), NaN, "'xsd' cannot be parsed as number");
 	});
 
-})
+});

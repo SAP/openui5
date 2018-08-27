@@ -386,21 +386,21 @@ sap.ui.define([
 		});
 
 		var oMultiFilterWithSingleFilter = new Filter([oFilter1]),
-		 oMultiFilter = new Filter({
-		 	filters: [
-				new Filter({
-					path: 'Quantity',
-					operator: FilterOperator.LT,
-					value1: 20
-				}),
-				new Filter({
-					path: 'Price',
-					operator: FilterOperator.GT,
-					value1: 14.0
-				})
-			],
-			and: false
-		 });
+			oMultiFilter = new Filter({
+				filters: [
+					new Filter({
+						path: 'Quantity',
+						operator: FilterOperator.LT,
+						value1: 20
+					}),
+					new Filter({
+						path: 'Price',
+						operator: FilterOperator.GT,
+						value1: 14.0
+					})
+				],
+				and: false
+			});
 
 		var oMultiFilterWithSingleMultiFilter = new Filter([oMultiFilter]);
 

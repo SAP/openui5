@@ -24,14 +24,14 @@ sap.ui.define([
 		lastResizeTargetCtrl = null;
 		lastSize = null;
 		return sResizeListenerId;
-	};
+	}
 
 	function doOnResize(oEvent) {
 		lastResizeTarget = oEvent.target;
 		lastResizeTargetCtrl = oEvent.control;
 		lastSize = oEvent.size;
 		QUnit.config.current.assert.ok(true, "ResizeHandler called");
-	};
+	}
 
 	function setStyle(id, style) {
 		document.getElementById(id).setAttribute("style", style);
@@ -292,7 +292,7 @@ sap.ui.define([
 	QUnit.test("Check Control Resize - Destroy", function(assert) {
 		assert.expect(3);
 		assert.ok(oResizeHandler.aResizeListeners.length == 0, "Number of Handlers before registration");
-		var sResizeListenerId = _register(control);
+		_register(control);
 		assert.ok(oResizeHandler.aResizeListeners.length == 1, "Number of Handlers after registration");
 		control.destroy();
 		assert.ok(oResizeHandler.aResizeListeners.length == 0, "Number of Handlers after destroy");

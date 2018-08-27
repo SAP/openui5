@@ -6,7 +6,6 @@ sap.ui.define([
 ], function(BusyIndicator, Button, Dialog) {
 	"use strict";
 
-	var iPopupDelay = 10; // delay in ms when opening or closing the popup (meant for opening without delay)
 	var oDialog;
 
 	QUnit.module("Focus Issue");
@@ -34,7 +33,7 @@ sap.ui.define([
 
 			setTimeout(function() {
 				BusyIndicator.hide();
-				assert.ok(true, "when this checkpoint is reached, the test is passed")
+				assert.ok(true, "when this checkpoint is reached, the test is passed");
 				done();
 			}, 600);
 		}, 600);

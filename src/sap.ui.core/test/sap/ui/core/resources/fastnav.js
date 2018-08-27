@@ -71,11 +71,11 @@ sap.ui.define([
 
 		var sText = (!bModal ? "non-" : "") + "modal " + (bDock ? "docked " : "") + (bAutoClose ? "auto-close " : "") + "Popup (NavMode: " + sMode + ")";
 
-		var oPopup = window["oPopup"+i];
+		var oPopup = window["oPopup" + i];
 		if(!oPopup){
 			aAdditionalContent = aAdditionalContent ? aAdditionalContent : [];
 
-			if(bModal){
+			if (bModal){
 				var oClose = jQuery("<button>Close</button>");
 				oClose.click(function(){
 					oPopup.close(0);
@@ -85,9 +85,9 @@ sap.ui.define([
 			}
 
 			oPopup = new Popup(container(false, "background:yellow;", "", [
-     			    container(true, null, "", [], true), nl(),
-      			 	container(true, null, "", aAdditionalContent, true)
-      		]), bModal, true, bAutoClose);
+					container(true, null, "", [], true), nl(),
+					container(true, null, "", aAdditionalContent, true)
+			]), bModal, true, bAutoClose);
 			oPopup.setNavigationMode(sMode);
 
 			window["oPopup"+i] = oPopup;

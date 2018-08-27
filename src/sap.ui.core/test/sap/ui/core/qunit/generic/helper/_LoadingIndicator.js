@@ -11,11 +11,11 @@ sap.ui.define([], function() {
 
 		this.update = function(sText) {
 			loadingNow.innerText = sText;
-		}
+		};
 
 		this.hide = function() {
 			loading.style.display = "none";
 		};
 	};
 
-})
+});

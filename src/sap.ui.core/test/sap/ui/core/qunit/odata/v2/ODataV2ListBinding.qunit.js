@@ -819,7 +819,7 @@ sap.ui.define([
 		var handler = function(oEvent){
 			oBinding.detachChange(handler);
 			assert.ok(oBinding.bDataAvailable);
-			assert.ok(jQuery.isArray(oBinding.aAllKeys) && oBinding.aAllKeys.length === 0, "AllKeys Array was correctly set to an empty array after an error from the GET request.");
+			assert.ok(Array.isArray(oBinding.aAllKeys) && oBinding.aAllKeys.length === 0, "AllKeys Array was correctly set to an empty array after an error from the GET request.");
 			done();
 		};
 
@@ -932,7 +932,7 @@ sap.ui.define([
 			var aContexts = oBinding.getContexts(),
 				oContext = aContexts[0];
 			assert.equal(oContext.getPath(), "/Categories(1)", "Context path");
-			assert.ok(jQuery.isArray(oContext.getProperty("Products")), "Products loaded");
+			assert.ok(Array.isArray(oContext.getProperty("Products")), "Products loaded");
 			done(); // resume normal testing
 		};
 		oBinding.attachRefresh(function() {oBinding.getContexts();});

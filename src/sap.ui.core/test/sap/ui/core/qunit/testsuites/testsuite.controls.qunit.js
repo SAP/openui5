@@ -7,13 +7,13 @@ sap.ui.define(function() {
 			qunit: {
 				version: 2
 			},
-			module: "test-resources/sap/ui/core/qunit/{name}.qunit",
+			module: "test-resources/sap/ui/core/qunit/{name}.qunit"
 		},
 		tests: {
 			BlockLayerUtils: {
 				title: "QUnit Page for sap.ui.core.BlockLayerUtils",
 				ui5: {
-					libs: "sap.ui.commons, sap.m",
+					libs: "sap.ui.commons, sap.m"
 				},
 				sinon: {
 					version: 1,

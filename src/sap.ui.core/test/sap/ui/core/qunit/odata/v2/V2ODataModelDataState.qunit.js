@@ -1696,11 +1696,13 @@ sap.ui.define([
 		var iRepetitions = Math.round(5 + Math.random() * 15);
 		var pSet = Promise.resolve();
 		for (var i = 0; i < iRepetitions; ++i) {
+			/*eslint-disable no-loop-func */
 			pSet = pSet.then(function() {
 				return fnExecuteLater(function() {
 					oJsonModel.setProperty("/ProductSet('AD-1000')/Price", "rosinenbroetchen");
 				});
 			});
+			/*eslint-enable no-loop-func */
 		}
 
 		pSet.then(function() {
@@ -1725,11 +1727,13 @@ sap.ui.define([
 				var iRepetitions = Math.round(5 + Math.random() * 15);
 				var pSet = Promise.resolve();
 				for (var i = 0; i < iRepetitions; ++i) {
+					/*eslint-disable no-loop-func */
 					pSet = pSet.then(function() {
 						return fnExecuteLater(function() {
 							oModel2.setProperty("/ProductSet('AD-1000')/Price", "quarkstrudel");
 						});
 					});
+					/*eslint-enable no-loop-func */
 				}
 
 				pSet.then(function() {

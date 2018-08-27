@@ -1,5 +1,6 @@
+/*global QUnit */
 sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/core/util/DraftEnabledMockServer"], function (MockServer, DraftEnabledMockServer) {
-
+	"use strict";
 
 	QUnit.module("sap/ui/core/util/DraftEnabledMockServer");
 
@@ -224,7 +225,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/core/util/DraftEnabledMock
 		oEditDraft = oResponse.data.d.results[0];
 		oResponse = jQuery.sap.sjax({
 			url: "/myservice/SalesOrderValidation?ActiveSalesOrderID=" + oEditDraft.ActiveSalesOrderID + "&SalesOrderDraftUUID=" + oEditDraft.SalesOrderDraftUUID,
-			type: "GET",
+			type: "GET"
 		});
 		assert.ok(oResponse.success, "edit draft validation");
 
@@ -261,7 +262,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/core/util/DraftEnabledMock
 		assert.ok(oResponse.success);
 		assert.equal(oResponse.data.d.results.length, 100);
 
-		var oActiveEntity = oResponse.data.d.results[0];
+		//var oActiveEntity = oResponse.data.d.results[0];
 		oResponse = jQuery.sap.sjax({
 			url: "/myservice/SalesOrderEdit?ActiveSalesOrderID=%27ActiveSalesOrderID%201%27&SalesOrderDraftUUID=guid%2700000000-0000-0000-0000-000000000000%27",
 			type: "POST"

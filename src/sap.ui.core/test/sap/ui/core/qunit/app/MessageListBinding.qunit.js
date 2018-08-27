@@ -1,4 +1,6 @@
+/*global QUnit */
 sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/core/message/Message"], function(JSONModel, Message) {
+	"use strict";
 
 	QUnit.module("sap/ui/model/message/MessageListBinding", {
 		afterEach: function() {
@@ -90,7 +92,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/core/message/Message"], fu
 				setTimeout(function(){
 					listBinding.detachChange(fnNoChangeHandler);
 					done();
-				}, 0)
+				}, 0);
 			};
 			listBinding.attachChange(fnMessageDataChangedHandler);
 			listBinding.checkUpdate();

@@ -17,6 +17,15 @@ function(
 ) {
 	"use strict";
 
+	/* eslint no-extra-bind:0 */ // it seems more convenient to consistently bind 'this'
+
+	var DTManagedObject,
+		DTManagedObjectChild,
+		NoDTManagedObjectChild2,
+		DTManagedObjectChild3,
+		DTManagedObjectLocal,
+		DTManagedObjectModule;
+
 	QUnit.module("Design Time Metadata", {
 		beforeEach: function() {
 			var oMetadata = {
@@ -32,24 +41,24 @@ function(
 			};
 
 			// build the inheritance chain of DesignTimeManagedObjects, one without DesignTime in between
-			ManagedObject.extend("DTManagedObject", {
+			DTManagedObject = ManagedObject.extend("DTManagedObject", {
 				metadata: oMetadata
 			});
-			DTManagedObject.extend("DTManagedObjectChild", {
-				metadata: oMetadata
-			});
-
-			DTManagedObjectChild.extend("NoDTManagedObjectChild2");
-
-			NoDTManagedObjectChild2.extend("DTManagedObjectChild3", {
+			DTManagedObjectChild = DTManagedObject.extend("DTManagedObjectChild", {
 				metadata: oMetadata
 			});
 
-			DTManagedObjectChild.extend("DTManagedObjectLocal", {
+			NoDTManagedObjectChild2 = DTManagedObjectChild.extend("NoDTManagedObjectChild2");
+
+			DTManagedObjectChild3 = NoDTManagedObjectChild2.extend("DTManagedObjectChild3", {
+				metadata: oMetadata
+			});
+
+			DTManagedObjectLocal = DTManagedObjectChild.extend("DTManagedObjectLocal", {
 				metadata: oMetadataLocal
 			});
 
-			DTManagedObjectChild.extend("DTManagedObjectModule", {
+			DTManagedObjectModule = DTManagedObjectChild.extend("DTManagedObjectModule", {
 				metadata: oMetadataModule
 			});
 
@@ -169,6 +178,13 @@ function(
 
 			DTManagedObjectModule.getMetadata()._oDesignTime = null;
 			DTManagedObjectModule.getMetadata()._oDesignTimePromise = null;
+
+			DTManagedObject =
+			DTManagedObjectChild =
+			NoDTManagedObjectChild2 =
+			DTManagedObjectChild3 =
+			DTManagedObjectLocal =
+			DTManagedObjectModule = undefined;
 
 			this.oInstanceWithoutSpecificDTMetadata.destroy();
 			this.oInstanceWithSpecificDTMetadata.destroy();
@@ -407,15 +423,17 @@ function(
 					this.oRequireStub.reset();
 					return DTManagedObject.getMetadata().loadDesignTime().then(function(oTestInner) {
 						assert.strictEqual(oTestInner.designtimeModule, "DTManagedObject.designtime", "DesignTime module path defined DTManagedObjectChild");
-					}.bind(this));
-					assert.strictEqual(oTestOuter3.designtimeModule, "DTManagedObjectChild3.designtime", "DesignTime module path defined DTManagedObjectChild3");
+					}.bind(this)).then(function() {
+						assert.strictEqual(oTestOuter3.designtimeModule, "DTManagedObjectChild3.designtime", "DesignTime module path defined DTManagedObjectChild3");
+					});
 				}.bind(this));
 				//load derived metadata DTManagedObjectChild3 that inherits DTManagedObjectChild
 				DTManagedObjectChild.getMetadata().loadDesignTime().then(function(oTestInner) {
 					return DTManagedObject.getMetadata().loadDesignTime().then(function(oTestInner2) {
 						assert.strictEqual(oTestInner2.designtimeModule, "DTManagedObject.designtime", "DesignTime module path defined DTManagedObjectChild");
-					}.bind(this));
-					assert.strictEqual(oTestInner.designtimeModule, "DTManagedObjectChild.designtime", "DesignTime module path defined DTManagedObjectChild, parent still valid");
+					}.bind(this)).then(function() {
+						assert.strictEqual(oTestInner.designtimeModule, "DTManagedObjectChild.designtime", "DesignTime module path defined DTManagedObjectChild, parent still valid");
+					});
 				}.bind(this));
 			}.bind(this));
 		});
@@ -536,11 +554,11 @@ function(
 				designtime: true
 			};
 
-			ManagedObject.extend("DTManagedObject", {
+			DTManagedObject = ManagedObject.extend("DTManagedObject", {
 				metadata: oMetadata
 			});
 
-			DTManagedObject.extend("DTManagedObjectChild", {
+			DTManagedObjectChild = DTManagedObject.extend("DTManagedObjectChild", {
 				metadata: oMetadata
 			});
 
@@ -641,6 +659,9 @@ function(
 
 			DTManagedObjectChild.getMetadata()._oDesignTime = null;
 			DTManagedObjectChild.getMetadata()._oDesignTimePromise = null;
+
+			DTManagedObject =
+			DTManagedObjectChild = null;
 
 			this.oInstanceWithoutSpecificDTMetadata.destroy();
 			this.oInstanceWithSpecificDTMetadata.destroy();

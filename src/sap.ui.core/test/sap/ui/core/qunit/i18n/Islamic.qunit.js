@@ -182,7 +182,7 @@ sap.ui.define([
 		oIslamicDate = new Islamic("invalid islamic date timestamp");
 		assert.ok(isInvalid(oIslamicDate), "Constructor with invalid string as timestamp must return an invalid date");
 
-		oIslamicDate = new Islamic(new Object());
+		oIslamicDate = new Islamic({});
 		assert.ok(isInvalid(oIslamicDate), "Constructor with object as parameter must return an invalid date");
 
 		oIslamicDate = new Islamic(0); //1, January 1970 = 22 Shawwal 1389(22.10.1389)
@@ -210,25 +210,25 @@ sap.ui.define([
 		oIslamicDate = new Islamic(1430, 0, "alabala");
 		assert.ok(isInvalid(oIslamicDate), "Constructor with invalid string as day must return invalid date");
 
-		oIslamicDate = new Islamic(new Object(), 0)
+		oIslamicDate = new Islamic({}, 0);
 		assert.ok(isInvalid(oIslamicDate), "Constructor with object as year must return invalid date");
 
-		oIslamicDate = new Islamic(1430, new Object());
+		oIslamicDate = new Islamic(1430, {});
 		assert.ok(isInvalid(oIslamicDate), "Constructor with object as month must return invalid date");
 
-		oIslamicDate = new Islamic(1430, 0, new Object());
+		oIslamicDate = new Islamic(1430, 0, {});
 		assert.ok(isInvalid(oIslamicDate), "Constructor with object as day must return invalid date");
 
-		oIslamicDate = new Islamic(1430, 0, 1, new Object());
+		oIslamicDate = new Islamic(1430, 0, 1, {});
 		assert.ok(isInvalid(oIslamicDate), "Constructor with object as hours must return invalid date");
 
-		oIslamicDate = new Islamic(1430, 0, 1, 0, new Object());
+		oIslamicDate = new Islamic(1430, 0, 1, 0, {});
 		assert.ok(isInvalid(oIslamicDate), "Constructor with object as minutes must return invalid date");
 
-		oIslamicDate = new Islamic(1430, 0, 1, 0, 0, new Object());
+		oIslamicDate = new Islamic(1430, 0, 1, 0, 0, {});
 		assert.ok(isInvalid(oIslamicDate), "Constructor with object as seconds must return invalid date");
 
-		oIslamicDate = oIslamicDate = new Islamic(1430, 0, 1, 0, 0, 0, new Object());
+		oIslamicDate = oIslamicDate = new Islamic(1430, 0, 1, 0, 0, 0, {});
 		assert.ok(isInvalid(oIslamicDate), "Constructor with object as milliseconds must return invalid date");
 
 		// ------------- string -----------------------------
@@ -266,10 +266,10 @@ sap.ui.define([
 		verifyDate(assert, "new Islamic(1430, 10) must be equal to 01.11.1430 (tuesday) 00:00:00.00 AM", oIslamicDate, 1430, 10, 1, 2, 0, 0, 0, 0);
 
 		oIslamicDate = new Islamic(1430, 10, 2);
-		verifyDate(assert, "new Islamic(1430, 10, 2) msut be equal to 02.11.1430 (wednesday) 00:00:00.00 AM", oIslamicDate, 1430, 10, 2, 3, 0, 0, 0, 0)
+		verifyDate(assert, "new Islamic(1430, 10, 2) msut be equal to 02.11.1430 (wednesday) 00:00:00.00 AM", oIslamicDate, 1430, 10, 2, 3, 0, 0, 0, 0);
 
 		oIslamicDate = new Islamic(1430, 10, 2, 1);
-		verifyDate(assert, "new Islamic(1430, 10, 2, 1) must be equal to 02.11.1430 (wednesday), 01:00:00.00 AM", oIslamicDate, 1430, 10, 2, 3, 1, 0, 0, 0)
+		verifyDate(assert, "new Islamic(1430, 10, 2, 1) must be equal to 02.11.1430 (wednesday), 01:00:00.00 AM", oIslamicDate, 1430, 10, 2, 3, 1, 0, 0, 0);
 
 		oIslamicDate = new Islamic(1430, 10, 2, 1, 22);
 		verifyDate(assert, "new Islamic(1430, 10, 2, 1, 22) must be equal to 02.11.1430 (wednesday), 01:22:00.00 AM", oIslamicDate, 1430, 10, 2, 3, 1, 22, 0, 0);
@@ -533,7 +533,7 @@ sap.ui.define([
 				assert.equal(bUTC ? oIslamicDate.getUTCMonth() : oIslamicDate.getMonth(), iMonth, ": month");
 				assert.equal(bUTC ? oIslamicDate.getUTCDate() : oIslamicDate.getDate(), iDate, ": date");
 				assert.equal(bUTC ? oIslamicDate.getUTCHours() : oIslamicDate.getHours(), iOrigHours, ": hours must not be changed");
-			},
+			};
 
 			this.verifyMonth2Date = function (bUTC, iMonth, iDate, iMonthToStartFrom, iDateStartFrom) {
 				var oIslamicDate = null,
@@ -564,7 +564,7 @@ sap.ui.define([
 				assert.equal(bUTC ? oIslamicDate.getUTCMonth() : oIslamicDate.getMonth(), iMonth, ": month");
 				assert.equal(bUTC ? oIslamicDate.getUTCDate() : oIslamicDate.getDate(), iDate, ": date");
 				assert.equal(bUTC ? oIslamicDate.getUTCHours() : oIslamicDate.getHours(), iOrigHours, ": hours must not be changed");
-			},
+			};
 
 			this.verifyHours2Milliseconds = function (bUTC, iHours, iMinutes, iSeconds, iMilliseconds) {
 				var oIslamicDate = null;
@@ -793,7 +793,7 @@ sap.ui.define([
 
 	QUnit.module("Customization", {
 		beforeEach: function () {
-			prepare.call(this)
+			prepare.call(this);
 		},
 		afterEach: function () {
 			cleanup.call(this);
@@ -836,8 +836,9 @@ sap.ui.define([
 
 	function verifyDate(assert, sMessage, oDate, year, month, date, day, hours, minutes, seconds, milliseconds, bUTC) {
 		var sExpected = formatDateTime(year, month, date, day, hours, minutes, seconds, milliseconds);
-		var sReal = formatDateTime(String(bUTC ? oDate.getUTCFullYear() : oDate.getFullYear()),
-				String(bUTC ? (oDate.getUTCMonth()) : (oDate.getMonth())),
+		var sReal = formatDateTime(
+				String(bUTC ? oDate.getUTCFullYear() : oDate.getFullYear()),
+				String(bUTC ? oDate.getUTCMonth() : oDate.getMonth()),
 				String(bUTC ? oDate.getUTCDate() : oDate.getDate()),
 				String(bUTC ? oDate.getUTCDay() : oDate.getDay()),
 				String(bUTC ? oDate.getUTCHours() : oDate.getHours()),

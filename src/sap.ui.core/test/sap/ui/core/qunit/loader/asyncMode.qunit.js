@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 (function() {
 	"use strict";
 
@@ -30,7 +30,7 @@
 	});
 
 	function isEmpty(obj) {
-		for (var key in obj ) {
+		for (var key in obj ) { //eslint-disable-line no-unused-vars
 			return false;
 		}
 		return true;
@@ -585,7 +585,8 @@
 	QUnit.test("Warning Message", function(assert) {
 		var done = assert.async();
 		var logger = sap.ui.loader._.logger;
-		var fnLogSpy = sinon.spy(logger, "warning");
+
+		sinon.spy(logger, "warning");
 
 		// Act:
 		// first require async

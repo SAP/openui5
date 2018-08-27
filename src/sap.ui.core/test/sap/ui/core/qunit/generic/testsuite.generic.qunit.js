@@ -69,13 +69,13 @@ sap.ui.define(function() {
 			DuplicateIdCheck: {
 				title: "QUnit Page for duplicate ID issues detection in UI5 controls",
 				ui5: {
-					libs: "sap.m,sap.ui.commons,sap.ui.unified",
+					libs: "sap.m,sap.ui.commons,sap.ui.unified"
 				}
 			},
 			SettersContextReturn: {
 				title: "All control and element setter should return correct context (Reason: https://github.com/SAP/openui5/blob/master/docs/guidelines.md#creating-classes)",
 				ui5: {
-					libs: "sap.m,sap.ui.layout,sap.ui.unified,sap.ui.ux3,sap.ui.table,sap.ui.suite,sap.ui.dt,sap.uxap,sap.tnt,sap.ui.demokit,sap.ui.commons",
+					libs: "sap.m,sap.ui.layout,sap.ui.unified,sap.ui.ux3,sap.ui.table,sap.ui.suite,sap.ui.dt,sap.uxap,sap.tnt,sap.ui.demokit,sap.ui.commons"
 				},
 				qunit: {
 					reorder: true

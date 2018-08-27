@@ -24,7 +24,7 @@ sap.ui.define([
 		document.body.appendChild(oElem);
 		var sId = "oControl" + idx;
 		oControls[sId] = new Input(sId).placeAt("uiArea" + idx);
-	};
+	}
 
 	initControl(1);
 	initControl(2);

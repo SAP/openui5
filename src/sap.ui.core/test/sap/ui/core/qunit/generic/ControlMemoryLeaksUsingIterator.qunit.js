@@ -12,12 +12,14 @@
  *
  */
 
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/utils/ControlIterator",
 	"sap/ui/qunit/utils/MemoryLeakCheck",
 	"./helper/_LoadingIndicator",
 	"./helper/_cleanupStyles"
 ], function(ControlIterator, MemoryLeakCheck, LoadingIndicator) {
+	"use strict";
 
 	var loadingIndicator = new LoadingIndicator("Discovering and loading all libraries and controls... this will take a while... ");
 
@@ -31,7 +33,6 @@ sap.ui.define([
 	];
 
 	function createControlTests(aControls) {
-		var oControlClass, sControlName, bCanRender;
 
 		loadingIndicator.hide();
 

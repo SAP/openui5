@@ -134,13 +134,13 @@ sap.ui.define([
 			var sName = "testRoute",
 				aTargetNames = ["async1", "async2", "async3"],
 				oRoute = new Route(this.oRouterStub, { name : sName, target : aTargetNames }),
+				oListener = {},
+				oData = {some: "data"},
 				fnEventSpy = this.spy(function(oEvent, oActualData) {
 					assert.strictEqual(oActualData, oData, "the data is correct");
 					assert.strictEqual(oEvent.getParameters().name, sName, "the name is correct");
 					assert.strictEqual(this, oListener, "the this pointer is correct");
 				}),
-				oListener = {},
-				oData = {some: "data"},
 				oAttachReturnValue = oRoute["attach" + sEventName](oData, fnEventSpy, oListener);
 
 			// Act
@@ -230,7 +230,10 @@ sap.ui.define([
 				parent: ":parentRoute"
 			});
 
-			var ParentComponent = UIComponent.extend("parent.component", {
+			var ParentComponent,
+				ChildComponent;
+
+			ParentComponent = UIComponent.extend("parent.component", {
 				metadata : {
 					routing:  {
 						routes: [
@@ -249,7 +252,7 @@ sap.ui.define([
 				}
 			});
 
-			var ChildComponent = UIComponent.extend("child.component", {
+			ChildComponent = UIComponent.extend("child.component", {
 				metadata : {
 					routing:  {
 						routes: [
