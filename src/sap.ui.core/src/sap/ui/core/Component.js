@@ -2041,17 +2041,27 @@ sap.ui.define([
 			throw new Error("sap.ui.component cannot be called without parameter!");
 		}
 
+		var fnLogProperties = function(name) {
+			return {
+				type: "sap.ui.component",
+				name: name
+			};
+		};
+
 		if (typeof vConfig === 'string') {
-			Log.warning("Do not use deprecated function 'sap.ui.component' for Component instance lookup. Use 'Component.get' instead");
+			Log.warning("Do not use deprecated function 'sap.ui.component' for Component instance lookup. " +
+				"Use 'Component.get' instead", "sap.ui.component", null, fnLogProperties.bind(vConfig));
 			// when only a string is given then this function behaves like a
 			// getter and returns an existing component instance
 			return sap.ui.getCore().getComponent(vConfig);
 		}
 
 		if (vConfig.async) {
-			Log.info("Do not use deprecated factory function 'sap.ui.component'. Use 'Component.create' instead");
+			Log.info("Do not use deprecated factory function 'sap.ui.component'. " +
+				"Use 'Component.create' instead", "sap.ui.component", null, fnLogProperties.bind(vConfig["name"]));
 		} else {
-			Log.warning("Do not use synchronous component creation! Use the new asynchronous factory 'Component.create' instead");
+			Log.warning("Do not use synchronous component creation! " +
+				"Use the new asynchronous factory 'Component.create' instead", "sap.ui.component", null, fnLogProperties.bind(vConfig["name"]));
 		}
 		return componentFactory(vConfig);
 	};

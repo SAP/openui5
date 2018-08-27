@@ -546,9 +546,19 @@ sap.ui.define([
 		 */
 		sap.ui.controller = function (sName, oControllerImpl, bAsync) {
 			if (bAsync) {
-				Log.info("Do not use deprecated factory function 'sap.ui.controller(" + sName + ")'. Use 'sap.ui.core.mvc.Controller.create(...)' instead.");
+				Log.info("Do not use deprecated factory function 'sap.ui.controller(" + sName + ")'. Use 'sap.ui.core.mvc.Controller.create(...)' instead.", "sap.ui.controller", null, function () {
+					return {
+						type: "sap.ui.controller",
+						name: sName
+					};
+				});
 			} else {
-				Log.warning("Do not use synchronous controller creation for controller '" + sName + "'! Use the new asynchronous factory 'sap.ui.core.mvc.Controller.create(...)' instead.");
+				Log.warning("Do not use synchronous controller creation for controller '" + sName + "'! Use the new asynchronous factory 'sap.ui.core.mvc.Controller.create(...)' instead.", "sap.ui.controller", null, function () {
+					return {
+						type: "sap.ui.controller",
+						name: sName
+					};
+				});
 			}
 			return controllerFactory.apply(this, arguments);
 		};

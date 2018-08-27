@@ -16,7 +16,7 @@ sap.ui.define(function () {
 		},
 		tests: {
 			"config/asynchronousXMLViews": {
-				title: "QUnit Tests for async XML Views rules",
+				title: "QUnit Tests for 'async XML Views' rules",
 				loader: {
 					paths: {
 						"samples/components/routing": "test-resources/sap/ui/core/samples/components/routing/"
@@ -24,13 +24,16 @@ sap.ui.define(function () {
 				}
 			},
 			"app/globalApiUsage": {
-				title: "QUnit Tests for global api usage rules"
+				title: "QUnit Tests for 'global api usage' rules"
 			},
 			"app/jquerySapUsage": {
-				title: "QUnit Tests for jquery sap usage rules"
+				title: "QUnit Tests for 'jquery sap usage' rules"
+			},
+			"app/syncFactoryLoading": {
+				title: "QUnit Tests for 'sync fragment loading' rules"
 			},
 			"misc/silentEventBus": {
-				title: "QUnit Tests for silent event bus usage rules"
+				title: "QUnit Tests for 'silent event bus usage' rules"
 			}
 		}
 	};
