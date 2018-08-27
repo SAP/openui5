@@ -71,14 +71,19 @@ function(
 	 */
 	ElementUtil.hasAncestor = function(oElement, oAncestor) {
 		oAncestor = this.fixComponentContainerElement(oAncestor);
+		var oFixedParent;
 
-		var oParent = this.fixComponentParent(oElement);
-		while (oParent && oParent !== oAncestor) {
-			oParent = oParent.getParent();
-			oParent = this.fixComponentParent(oParent);
+		while (oElement && oElement !== oAncestor) {
+			oFixedParent = this.fixComponentParent(oElement);
+			// fixComponentParent already returns the parent
+			if (oElement === oFixedParent) {
+				oElement = oElement.getParent();
+			} else {
+				oElement = oFixedParent;
+			}
 		}
 
-		return !!oParent;
+		return !!oElement;
 	};
 
 	/**
