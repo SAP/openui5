@@ -415,6 +415,11 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 	height: 2rem;
 }
 
+/* overwrite padding if Navigation is present, to align header and cell content */
+.sapUiSizeCompact .sapMListTblHasNav .sapMListTblCell:nth-last-child(2) {
+	padding-right: 0;
+}
+
 /* reset height of cells when no header is defined */
 .sapMListTblHeaderNone > .sapMListTblCell {
 	height: 0;
