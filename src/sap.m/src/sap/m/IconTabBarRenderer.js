@@ -64,6 +64,11 @@ sap.ui.define([],
 		if (!oControl.getExpanded()) { // hide content when closed
 			oRm.write("style='display: none'");
 		}
+
+		if (oHeader.oSelectedItem) {
+			oRm.writeAttribute('aria-labelledby', oHeader.oSelectedItem.getId());
+		}
+
 		oRm.write(">");
 		if (oControl.getExpanded()) {
 			// content from selected item
