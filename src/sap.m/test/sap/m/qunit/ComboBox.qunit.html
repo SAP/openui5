@@ -10250,6 +10250,49 @@
 			oComboBox.destroy();
 		});
 
+		QUnit.test("onItemPress should fire change when the first filtered item is clicked - mobile", function(assert) {
+			// system under test
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+
+			var oComboBox = new sap.m.ComboBox({
+				items: [
+					new sap.ui.core.Item({
+						text: "Algeria"
+					}),
+
+					new sap.ui.core.Item({
+						text: "Argentina"
+					}),
+
+					new sap.ui.core.Item({
+						text: "Germany"
+					})
+				]
+			}), fnFireChangeSpy = this.spy(oComboBox, "fireChange");
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oComboBox.focus();
+			oComboBox.open();
+			this.clock.tick(1000);
+			oComboBox.getFocusDomRef().value = "A";
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+			oComboBox._oList.fireItemPress({item: oComboBox.getItems()[0]});
+
+			// assert
+			assert.strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired when the first filtered item is pressed');
+
+			// cleanup
+			oComboBox.destroy();
+			});
+
 		QUnit.module("onPropertyChange");
 
 		QUnit.test("it should propagate some property changes to the picker text field", function(assert) {
