@@ -19,6 +19,18 @@
         "type": "FIX",
         "text": "sap.ui.dt - ScrollContainer Z-Index calculation fix",
         "references": []
+      },
+      {
+        "id": "ff72e0fba42a304621196141e3dd8cab6b8ed34c",
+        "type": "FIX",
+        "text": " Control Enablement Report doesn\u0027t work",
+        "references": []
+      },
+      {
+        "id": "ba223d22673f3f3a89069924fb6f8849f043a45b",
+        "type": "FIX",
+        "text": " Revise test case for ManagedObjectObserver",
+        "references": []
       }
     ]
   }

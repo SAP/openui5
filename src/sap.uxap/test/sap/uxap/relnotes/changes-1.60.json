@@ -25,6 +25,18 @@
         "type": "FIX",
         "text": " uxap.AnchorBar: Custom button in sub-section behavior fixed",
         "references": []
+      },
+      {
+        "id": "7df352392078ea3867249f2031ea72f6d0a6ecf8",
+        "type": "FEATURE",
+        "text": " ObjectPageSubSection: Added CSS class for content alignment",
+        "references": []
+      },
+      {
+        "id": "4768b98ba0b97c76d4921c69db29657402a01626",
+        "type": "FIX",
+        "text": " AnchorBar: QUnit test failure is fixed",
+        "references": []
       }
     ]
   }

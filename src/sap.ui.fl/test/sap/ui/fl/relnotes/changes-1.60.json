@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " Case sensitive view name validation",
         "references": []
+      },
+      {
+        "id": "a1367b50239f872867878a2aac0d5803a1101033",
+        "type": "FIX",
+        "text": "sap.ui.fl - MoveControls change handler RevertData with id",
+        "references": []
       }
     ]
   }

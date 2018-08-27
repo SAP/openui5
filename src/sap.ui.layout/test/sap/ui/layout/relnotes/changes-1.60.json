@@ -13,6 +13,12 @@
         "type": "FIX",
         "text": " ResponsiveGridLayout: Form cells must have overflow hidden",
         "references": []
+      },
+      {
+        "id": "cea62422cec6680c6501c6c4211eff10054e2f21",
+        "type": "FIX",
+        "text": "sap.ui.layout - Flexibility: Check actions based on form layout",
+        "references": []
       }
     ]
   }

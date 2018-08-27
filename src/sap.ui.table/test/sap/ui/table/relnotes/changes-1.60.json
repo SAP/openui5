@@ -37,6 +37,18 @@
         "type": "FIX",
         "text": " sap.m.CheckBox: Type conversion removed",
         "references": []
+      },
+      {
+        "id": "d560b524ea504a222118820e3f7b960b287feba6",
+        "type": "FIX",
+        "text": " Table: Accessibility texts for row selection corrected",
+        "references": []
+      },
+      {
+        "id": "d5853a6e79d40899d48c34a5c6c74b8e92e73dc8",
+        "type": "FIX",
+        "text": " Table: Calculation of row count in \"Auto\" mode",
+        "references": []
       }
     ]
   }

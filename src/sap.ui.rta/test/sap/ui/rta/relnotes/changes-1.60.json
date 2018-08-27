@@ -31,6 +31,24 @@
         "type": "FIX",
         "text": "sap.ui.rta - Combine plugin not considering triggering element",
         "references": []
+      },
+      {
+        "id": "7d86af0a8e64ef5116a31796a82155e5646b651c",
+        "type": "FIX",
+        "text": " Setting the tooltip for every icon on App variant overview",
+        "references": []
+      },
+      {
+        "id": "cea62422cec6680c6501c6c4211eff10054e2f21",
+        "type": "FIX",
+        "text": "sap.ui.layout - Flexibility: Check actions based on form layout",
+        "references": []
+      },
+      {
+        "id": "e97a17d737235ed6a9f9c162a6df9bf41502a0c9",
+        "type": "FIX",
+        "text": "sap.ui.rta - Actions no longer available for wrong aggregations",
+        "references": []
       }
     ]
   }

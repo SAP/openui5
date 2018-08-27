@@ -31,6 +31,12 @@
         "type": "FIX",
         "text": " unified.ColorPicker: Hue value of 360 is the same as 0",
         "references": []
+      },
+      {
+        "id": "3a20f688956e350dfd83b74a00856d724a8842ab",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Now the dialog\u0027s style is not broken",
+        "references": []
       }
     ]
   }

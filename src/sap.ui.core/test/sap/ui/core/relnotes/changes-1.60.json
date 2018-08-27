@@ -49,6 +49,30 @@
         "type": "FIX",
         "text": " routing.HashChanager: reset the initialized flag after destroy",
         "references": []
+      },
+      {
+        "id": "a52cf4e9d217c128eaf807f40e367fe0bf32fb19",
+        "type": "FEATURE",
+        "text": " sap.ui.core: Rules to support jquery.sap deprecation",
+        "references": []
+      },
+      {
+        "id": "c92f0995694004a2a6e1ebd883b7841dc0a2e360",
+        "type": "FIX",
+        "text": " Controller: controllerFactory resolves wrong controller class",
+        "references": []
+      },
+      {
+        "id": "5bd2762c3a844c512f662ea02c89db0c25ba669a",
+        "type": "FIX",
+        "text": " core/routing/Target: make _updateOptions agnostic",
+        "references": []
+      },
+      {
+        "id": "5f5a64897cde3453c703633f289b7d9c8307fd7f",
+        "type": "FIX",
+        "text": " performance/trace/Interaction: accept valid setRequestHeader parameters",
+        "references": []
       }
     ]
   }
