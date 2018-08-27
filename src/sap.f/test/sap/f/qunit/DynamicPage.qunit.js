@@ -312,19 +312,9 @@ function($, DynamicPage, DynamicPageTitle, DynamicPageHeader, Device) {
 				sap.ui.Device.system.phone = false;
 			},
 			testExpandedCollapsedARIA: function (assert, oDynamicPage, bShouldBeExpanded, sMessage) {
-				var sTitleLabelledBy = oDynamicPage.getTitle().$().attr("aria-labelledby"),
-					sToggleHeaderTextId = sap.ui.core.InvisibleText.getStaticId("sap.f", "TOGGLE_HEADER"),
-					sExpandedHeaderTextId = sap.ui.core.InvisibleText.getStaticId("sap.f", "EXPANDED_HEADER"),
-					sCollapsedHeaderTextId = sap.ui.core.InvisibleText.getStaticId("sap.f", "SNAPPED_HEADER"),
-					bFoundExpandedHeaderARIAReferences =
-						sTitleLabelledBy.indexOf(sExpandedHeaderTextId + " " + sToggleHeaderTextId) > -1,
-					bFoundCollapsedHeaderARIAReferences =
-						sTitleLabelledBy.indexOf(sCollapsedHeaderTextId + " " + sToggleHeaderTextId) > -1;
+				var	bAriaExpanded = oDynamicPage.getTitle()._getFocusSpan().$().attr("aria-expanded");
 
-				assert.strictEqual(bFoundExpandedHeaderARIAReferences, bShouldBeExpanded,
-					sMessage + ": found expanded header texts=" + bFoundExpandedHeaderARIAReferences);
-				assert.strictEqual(bFoundCollapsedHeaderARIAReferences, !bShouldBeExpanded,
-					sMessage + ": found collapsed header texts=" + bFoundCollapsedHeaderARIAReferences);
+				assert.strictEqual(bAriaExpanded, bShouldBeExpanded, sMessage);
 			}
 		};
 
@@ -885,12 +875,12 @@ function($, DynamicPage, DynamicPageTitle, DynamicPageHeader, Device) {
 		this.oDynamicPage._bHeaderInTitleArea = true;
 
 		assert.ok(oDynamicPage.getHeaderExpanded(), "initial value for the headerExpanded prop is true");
-		oUtil.testExpandedCollapsedARIA(assert, oDynamicPage, true, "Initial aria-labelledby references");
+		oUtil.testExpandedCollapsedARIA(assert, oDynamicPage, "true", "Initial aria-labelledby references");
 		assert.ok(!oDynamicPage.$titleArea.hasClass(sSnappedClass));
 
 		oDynamicPage.setHeaderExpanded(false);
 		assert.equal(oDynamicPage.getHeaderExpanded(), false, "setting it to false under regular conditions works");
-		oUtil.testExpandedCollapsedARIA(assert, oDynamicPage, false, "Header is now snapped");
+		oUtil.testExpandedCollapsedARIA(assert, oDynamicPage, "false", "Header is now snapped");
 		assert.ok(oDynamicPage.$titleArea.hasClass(sSnappedClass));
 		assert.ok(oSetPropertySpy.calledWith("headerExpanded", false, true));
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be excluded from the tab chain");
@@ -898,7 +888,7 @@ function($, DynamicPage, DynamicPageTitle, DynamicPageHeader, Device) {
 
 		oDynamicPage.setHeaderExpanded(true);
 		assert.ok(oDynamicPage.getHeaderExpanded(), "header converted to expanded");
-		oUtil.testExpandedCollapsedARIA(assert, oDynamicPage, true, "Header is expanded again");
+		oUtil.testExpandedCollapsedARIA(assert, oDynamicPage, "true", "Header is expanded again");
 		assert.ok(!oDynamicPage.$titleArea.hasClass(sSnappedClass));
 		assert.ok(oSetPropertySpy.calledWith("headerExpanded", true, true));
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "visible", "Header should be included in the tab chain again");
@@ -916,7 +906,7 @@ function($, DynamicPage, DynamicPageTitle, DynamicPageHeader, Device) {
 		var oDynamicPage = this.oDynamicPage,
 			$oDynamicPageHeader = oDynamicPage.getHeader().$(),
 			oDynamicPageTitle = oDynamicPage.getTitle(),
-			$oDynamicPageTitle = oDynamicPageTitle.$(),
+			$oDynamicPageTitleSpan = oDynamicPageTitle._getFocusSpan().$(),
 			oPinButton = oDynamicPage.getHeader()._getPinButton(),
 			oFakeEvent = {
 				srcControl: oDynamicPageTitle
@@ -926,12 +916,12 @@ function($, DynamicPage, DynamicPageTitle, DynamicPageHeader, Device) {
 
 		assert.equal(oDynamicPage.getHeaderExpanded(), true, "Initially the header is expanded");
 		assert.equal(oDynamicPage.getToggleHeaderOnTitleClick(), true, "Initially toggleHeaderOnTitleClick = true");
-		assert.equal($oDynamicPageTitle.attr("tabindex"), 0, "Initially the header title is focusable");
+		assert.equal($oDynamicPageTitleSpan.attr("tabindex"), 0, "Initially the header title is focusable");
 
 		oDynamicPageTitle.ontap(oFakeEvent);
 
 		assert.equal(oDynamicPage.getHeaderExpanded(), false, "After one click, the header is collapsed");
-		oUtil.testExpandedCollapsedARIA(assert, oDynamicPage, false, "Header is collapsed after tap");
+		oUtil.testExpandedCollapsedARIA(assert, oDynamicPage, "false", "Header is collapsed after tap");
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be excluded from the tab chain");
 
 		oDynamicPage.setToggleHeaderOnTitleClick(false);
@@ -939,7 +929,7 @@ function($, DynamicPage, DynamicPageTitle, DynamicPageHeader, Device) {
 		oDynamicPageTitle.ontap(oFakeEvent);
 		assert.equal(oDynamicPage.getHeaderExpanded(), false, "The header is still collapsed, because toggleHeaderOnTitleClick = false");
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be still excluded from the tab chain");
-		assert.equal($oDynamicPageTitle.attr("tabindex"), undefined, "The header title is not focusable");
+		assert.equal($oDynamicPageTitleSpan.attr("tabindex"), undefined, "The header title is not focusable");
 		assert.notOk(oDynamicPage.getTitle().$().attr("aria-labelledby"),
 			"Since the header isn't toggleable, an aria-labelledby attribute shouldn't be rendered");
 
@@ -947,15 +937,15 @@ function($, DynamicPage, DynamicPageTitle, DynamicPageHeader, Device) {
 
 		oDynamicPageTitle.ontap(oFakeEvent);
 		assert.equal(oDynamicPage.getHeaderExpanded(), true, "After restoring toggleHeaderOnTitleClick to true, the header again expands on click");
-		oUtil.testExpandedCollapsedARIA(assert, oDynamicPage, true, "Header is back to expanded");
+		oUtil.testExpandedCollapsedARIA(assert, oDynamicPage, "true", "Header is back to expanded");
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "visible", "Header should be included in the tab chain again");
-		assert.equal($oDynamicPageTitle.attr("tabindex"), 0, "The header title is focusable again");
+		assert.equal($oDynamicPageTitleSpan.attr("tabindex"), 0, "The header title is focusable again");
 
 		oPinButton.firePress();
 		oDynamicPageTitle.ontap(oFakeEvent);
 
 		assert.equal(oDynamicPage.getHeaderExpanded(), false, "After one click, the header is collapsed even it's pinned");
-		oUtil.testExpandedCollapsedARIA(assert, oDynamicPage, false, "Header is collapsed after tap");
+		oUtil.testExpandedCollapsedARIA(assert, oDynamicPage, "false", "Header is collapsed after tap");
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be excluded from the tab chain");
 		assert.strictEqual(oPinButton.getPressed(), false, "Pin button pressed state should be reset.");
 		assert.strictEqual(oDynamicPage.$().hasClass("sapFDynamicPageHeaderPinned"), false, "DynamicPage header should be unpinned.");
@@ -3023,10 +3013,10 @@ function($, DynamicPage, DynamicPageTitle, DynamicPageHeader, Device) {
 
 	QUnit.test("DynamicPage toggleHeaderOnTitleClick initial behavior", function (assert) {
 		var oDynamicPage = this.oDynamicPage,
-			$oDynamicPageTitle = oDynamicPage.getTitle().$();
+			$oDynamicPageTitleSpan = oDynamicPage.getTitle()._getFocusSpan().$();
 
 		assert.equal(oDynamicPage.getToggleHeaderOnTitleClick(), false, "Initially toggleHeaderOnTitleClick = false");
-		assert.equal($oDynamicPageTitle.attr("tabindex"), undefined, "Initially the header title is not focusable");
+		assert.equal($oDynamicPageTitleSpan.attr("tabindex"), undefined, "Initially the header title is not focusable");
 	});
 
 	/* --------------------------- DynamicPage ARIA ---------------------------------- */

@@ -24,14 +24,10 @@ sap.ui.define([
 
 		// DynamicPageTitle Root DOM Element.
 		oRm.write("<div");
-		if (oDynamicPageTitleState.isFocusable) {
-			oRm.writeAttribute("tabindex", 0);
-		}
 		oRm.writeControlData(oDynamicPageTitle);
 		oRm.writeAccessibilityState({
 			role: "heading",
-			level: 2,
-			labelledBy: oDynamicPageTitleState.ariaLabelledByIDs
+			level: 2
 		});
 		oRm.addClass(sSapFDynamicPageTitle);
 
@@ -41,6 +37,8 @@ sap.ui.define([
 
 		oRm.writeClasses();
 		oRm.write(">");
+
+		oRm.renderControl(oDynamicPageTitleState.focusSpan);
 
 		this._renderTopArea(oRm, oDynamicPageTitleState);
 		this._renderMainArea(oRm, oDynamicPageTitleState);

@@ -750,6 +750,8 @@ sap.ui.define([
 			bAppendHeaderToContent = !this._shouldPreserveHeaderInTitleArea();
 			this._snapHeader(bAppendHeaderToContent);
 		}
+
+		this.getHeaderTitle()._getFocusSpan().$().focus();
 	};
 
 	/**

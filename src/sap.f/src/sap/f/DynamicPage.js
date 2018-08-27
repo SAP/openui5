@@ -563,6 +563,8 @@ sap.ui.define([
 			if (bAppendHeaderToContent && this._bHeaderInTitleArea) {
 				this._moveHeaderToContentArea(true);
 			}
+
+			oDynamicPageTitle._updateAriaExpandedState(false);
 		}
 
 		if (!exists(this.$titleArea)) {
@@ -599,6 +601,8 @@ sap.ui.define([
 			if (bAppendHeaderToTitle) {
 				this._moveHeaderToTitleArea(true);
 			}
+
+			oDynamicPageTitle._updateAriaExpandedState(true);
 		}
 
 		if (!exists(this.$titleArea)) {
@@ -1608,6 +1612,7 @@ sap.ui.define([
 		if (this.getToggleHeaderOnTitleClick()) {
 			this._titleExpandCollapseWhenAllowed(true /* user interaction */);
 		}
+		this.getTitle()._focus();
 	};
 
 	DynamicPage.prototype._onExpandHeaderVisualIndicatorPress = function () {
