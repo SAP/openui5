@@ -105,7 +105,7 @@
 
 					// Note: Log is used within jquery.sap.stubs, so it should be loaded already
 					var Log = sap.ui.require("sap/base/Log");
-					this.oDebugLogSpy = this.spy(Log, "debug");
+					this.oWarningLogSpy = this.spy(Log, "warning");
 
 					return mStubs;
 				}.bind(this));
@@ -135,8 +135,8 @@
 				var vValue = oTarget[sProperty];
 
 				// Stub should lazy load the module
-				sinon.assert.calledWith(this.oDebugLogSpy,
-					sinon.match("Lazy loading module"),
+				sinon.assert.calledWith(this.oWarningLogSpy,
+					sinon.match("Sync loading of module"),
 					"jquery.sap.stubs"
 				);
 
@@ -163,8 +163,8 @@
 				}).then(function() {
 
 					// Stub should not lazy load the module
-					sinon.assert.neverCalledWith(this.oDebugLogSpy,
-						sinon.match("Lazy loading module"),
+					sinon.assert.neverCalledWith(this.oWarningLogSpy,
+						sinon.match("Sync loading of module"),
 						"jquery.sap.stubs"
 					);
 

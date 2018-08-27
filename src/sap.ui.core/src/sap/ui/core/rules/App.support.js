@@ -14,7 +14,9 @@ sap.ui.define(["sap/ui/support/library"],
 	var Audiences = SupportLib.Audiences; // Control, Internal, Application
 
 	var aObsoleteFunctionNames = ["jQuery.sap.require", "$.sap.require", "sap.ui.requireSync", "jQuery.sap.sjax"];
-	if (jQuery && jQuery.sap && jQuery.sap.sjax) {
+
+	// avoid spoiling the globalAPIRule by using Object.getOwnPropertyDescriptor
+	if (jQuery && jQuery.sap && !!Object.getOwnPropertyDescriptor(jQuery.sap, "sjax").value) {
 		aObsoleteFunctionNames.push("jQuery.sap.syncHead",
 			"jQuery.sap.syncGet",
 			"jQuery.sap.syncPost",
@@ -123,7 +125,81 @@ sap.ui.define(["sap/ui/support/library"],
 			});
 
 		}
+
 	};
 
-	return oControllerSyncCodeCheckRule;
+	/**
+	 * Check for usage of stubbed global API, which leads to a sync request and should be avoided.
+	 *
+	 * e.g. <code>jQuery.sap.assert(bValue)</code>
+	 */
+	var oGlobalAPIRule = {
+		id: "globalApiUsage",
+		audiences: [Audiences.Internal],
+		categories: [Categories.Modularization],
+		enabled: true,
+		minversion: "1.58",
+		title: "Call of deprecated global API",
+		description: "Calls of deprecated global API without declaring the according dependency should be avoided.",
+		resolution: "Declare the dependency properly or even better: Migrate to the modern module API as documented.",
+		resolutionurls: [{
+			text: 'Documentation: Modularization',
+			// TODO: link to the modularization dev guide
+			href: 'https://openui5.hana.ondemand.com/#/api'
+		}],
+		check: function(oIssueManager, oCoreFacade, oScope) {
+			var oLoggedObjects = oScope.getLoggedObjects("jquery.sap.stubs");
+			oLoggedObjects.forEach(function(oLoggedObject) {
+				oIssueManager.addIssue({
+					severity: Severity.High,
+					details: oLoggedObject.message,
+					context: {
+						id: "WEBPAGE"
+					}
+				});
+			});
+		}
+	};
+
+	/**
+	 * Check for usage of jquery.sap modules and provide a hint on the alternatives.
+	 */
+	var oJquerySapRule = {
+		id: "jquerySapUsage",
+		audiences: [Audiences.Internal],
+		categories: [Categories.Modularization],
+		enabled: true,
+		minversion: "1.58",
+		async: true,
+		title: "Usage of deprecated jquery.sap module",
+		description: "Usage of deprecated jquery.sap API should be avoided and dependencies to jquery.sap are not needed any longer.",
+		resolution: "Migrate to the modern module API as documented.",
+		resolutionurls: [{
+			text: 'Documentation: Modularization',
+			// TODO: link to the modularization dev guide
+			href: 'https://openui5.hana.ondemand.com/#/api'
+		}],
+		check: function(oIssueManager, oCoreFacade, oScope, fnResolve) {
+			sap.ui.require(["sap/base/util/LoaderExtensions"], function(LoaderExtensions) {
+				var sDetails = "Usage of deprecated jquery.sap modules detected: \n" +
+					LoaderExtensions.getAllRequiredModules().filter(function(sModuleName) {
+						return sModuleName.startsWith("jquery.sap");
+					}).reduce(function(sModuleList, sModuleName) {
+						return sModuleList + "\t- " + sModuleName + "\n";
+					}, "");
+
+				oIssueManager.addIssue({
+					severity: Severity.Medium,
+					details: sDetails,
+					context: {
+						id: "WEBPAGE"
+					}
+				});
+
+				fnResolve();
+			});
+		}
+	};
+
+	return [oControllerSyncCodeCheckRule, oGlobalAPIRule, oJquerySapRule];
 }, true);
