@@ -39,6 +39,7 @@ sap.ui.define([
 	 * @return {boolean} indicating whether s is or maybe NFC
 	 * @private
 	 * @static
+	 * @deprecated since 1.58
 	 */
 	jQuery.sap.isStringNFC = fnIsStringNFC;
 

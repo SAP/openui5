@@ -37,6 +37,7 @@ sap.ui.define([
 	 *
 	 * @namespace
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/PseudoEvents.events} instead
 	 */
 	jQuery.sap.PseudoEvents = PseudoEvents.events;
 
@@ -365,132 +366,23 @@ sap.ui.define([
 	 * create both onmouse* and ontouch* functions to avoid one event being handled twice on the same control.
 	 * @namespace
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/ControlEvents.events} instead
 	 */
 	jQuery.sap.ControlEvents = ControlEvents.events;
-
-	/**
-	 * Constructor for a jQuery.Event object.<br/>
-	 * See "http://www.jquery.com" and "http://api.jquery.com/category/events/event-object/".
-	 *
-	 * @class Check the jQuery.Event class documentation available under "http://www.jquery.com"<br/>
-	 * and "http://api.jquery.com/category/events/event-object/" for details.
-	 *
-	 * @name jQuery.Event
-	 * @public
-	 */
-
-	/**
-	 * Returns an array of names (as strings) identifying {@link jQuery.sap.PseudoEvents} that are fulfilled by this very Event instance.
-	 *
-	 * @name jQuery.Event.prototype.getPseudoTypes
-	 * @function
-	 * @returns {String[]} Array of names identifying {@link jQuery.sap.PseudoEvents} that are fulfilled by this very Event instance.
-	 * @public
-	 */
-
-	/**
-	 * Checks whether this instance of {@link jQuery.Event} is of the given <code>sType</code> pseudo type.
-	 *
-	 * @name jQuery.Event.prototype.isPseudoType
-	 * @function
-	 * @param {string} sType The name of the pseudo type this event should be checked for.
-	 * @returns {boolean} <code>true</code> if this instance of jQuery.Event is of the given sType, <code>false</code> otherwise.
-	 * @public
-	 */
-
-	/**
-	 * Returns OffsetX of Event. In jQuery there is a bug. In IE the value is in offsetX, in FF in layerX
-	 *
-	 * @name jQuery.Event.prototype.getOffsetX
-	 * @function
-	 * @returns {int} offsetX
-	 * @public
-	 */
-
-	/**
-	 * Returns OffsetY of Event. In jQuery there is a bug. in IE the value is in offsetY, in FF in layerY.
-	 *
-	 * @name jQuery.Event.prototype.getOffsetY
-	 * @function
-	 * @returns {int} offsetY
-	 * @public
-	 */
-
-	/**
-	 * PRIVATE EXTENSION: allows to immediately stop the propagation of events in
-	 * the event handler execution - means that "before" delegates can stop the
-	 * propagation of the event to other delegates or the element and so on.
-	 *
-	 * @name jQuery.Event.prototype.stopImmediatePropagation
-	 * @function
-	 * @see sap.ui.core.Element.prototype._callEventHandles
-	 * @param {boolean} bStopHandlers
-	 */
-
-	/**
-	 * PRIVATE EXTENSION: check if the handler propagation has been stopped.
-	 *
-	 * @name jQuery.Event.prototype.isImmediateHandlerPropagationStopped
-	 * @function
-	 * @private
-	 * @see sap.ui.core.Element.prototype._callEventHandles
-	 */
-
-	/**
-	 * Mark the event object for components that needs to know if the event was handled by a child component.
-	 * PRIVATE EXTENSION
-	 *
-	 * @name jQuery.Event.prototype.setMark
-	 * @function
-	 * @private
-	 * @param {string} [sKey="handledByControl"]
-	 * @param {string} [vValue=true]
-	 */
-
-	/**
-	 * Mark the event object for components that needs to know if the event was handled by a child component.
-	 * PRIVATE EXTENSION
-	 *
-	 * @name jQuery.Event.prototype.setMarked
-	 * @function
-	 * @private
-	 * @see jQuery.Event.prototype.setMark
-	 * @param {string} [sKey="handledByControl"]
-	 */
-
-	/**
-	 * Check whether the event object is marked by the child component or not.
-	 * PRIVATE EXTENSION
-	 *
-	 * @name jQuery.Event.prototype.isMarked
-	 * @function
-	 * @private
-	 * @param {string} [sKey="handledByControl"]
-	 * @returns {boolean}
-	 */
-
-	/**
-	 * Return the marked value of a given key
-	 * PRIVATE EXTENSION
-	 *
-	 * @name jQuery.Event.prototype.getMark
-	 * @function
-	 * @private
-	 * @param {string} [sKey="handledByControl"]
-	 * @returns {any} the marked value or undefined
-	 */
 
 	/**
 	 * Disable touch to mouse handling
 	 *
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/jquery/jquery/EventSimulation.disableTouchToMouseHandling} instead
 	 */
 	jQuery.sap.disableTouchToMouseHandling = EventSimulation.disableTouchToMouseHandling;
 
 	/**
 	 * Defines touch event mode. Values used 'ON' and 'SIM'.
 	 * @private
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/jquery/jquery/EventSimulation.touchEventMode} instead
 	 */
 	defineCoupledProperty(jQuery.sap, "touchEventMode", EventSimulation, "touchEventMode");
 
@@ -500,6 +392,7 @@ sap.ui.define([
 	 * @param {function} fnCallback Callback function
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/ControlEvents.bindAnyEvent} instead
 	 */
 	jQuery.sap.bindAnyEvent = ControlEvents.bindAnyEvent;
 
@@ -509,6 +402,7 @@ sap.ui.define([
 	 * @param {function} fnCallback Callback function
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/ControlEvents.unbindAnyEvent} instead
 	 */
 	jQuery.sap.unbindAnyEvent = ControlEvents.unbindAnyEvent;
 
@@ -520,6 +414,7 @@ sap.ui.define([
 	 * @param {Element} oDomRef
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/checkMouseEnterOrLeave} instead
 	 */
 	jQuery.sap.checkMouseEnterOrLeave = fnCheckMouseEnterOrLeave;
 
@@ -537,6 +432,7 @@ sap.ui.define([
 	* @since 1.24.0
 	* @experimental Since 1.24.0 Implementation might change.
 	* @function
+	* @deprecated since 1.58 use {@link module:sap/ui/events/isSpecialKey} instead
 	*/
 	jQuery.sap.isSpecialKey = function(oEvent) {
 		if (oEvent.key) {
@@ -661,6 +557,7 @@ sap.ui.define([
 	 * @private
 	 * @since 1.25.0
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/F6Navigation.handleF6GroupNavigation} instead
 	 */
 	jQuery.sap.handleF6GroupNavigation = function (oEvent, oSettings) {
 		// map keyCode to key property of the event, e.g. if jQuery.Event was created manually
@@ -674,6 +571,7 @@ sap.ui.define([
 	/**
 	 * CustomData attribute name for fast navigation groups (in DOM additional prefix "data-" is needed)
 	 * @private
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/F6Navigation.fastNavigationKey} instead
 	 */
 	jQuery.sap._FASTNAVIGATIONKEY = F6Navigation.fastNavigationKey;
 
@@ -689,6 +587,7 @@ sap.ui.define([
 	 * @private
 	 * @name jQuery.sap.isMouseEventDelayed
 	 * @since 1.30.0
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/isMouseEventDelayed} instead
 	 */
 
 	jQuery.sap._refreshMouseEventDelayedFlag = function(oNavigator) {

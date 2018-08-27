@@ -101,7 +101,7 @@ sap.ui.define([
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.ResourceBundle
 	 * @public
-	 * @deprecated since 1.58. Use <code>sap/base/i18n/ResourceBundle</code> instead
+	 * @deprecated since 1.58 use {@link module:sap/base/i18n/ResourceBundle} instead
 	 */
 
 	/**
