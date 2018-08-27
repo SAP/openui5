@@ -488,6 +488,7 @@
 				oMessageViewPage
 			],
 			footer: new sap.m.OverflowToolbar({
+				id: "overflow-tb",
 				content: [
 					new sap.m.ToolbarSpacer(),
 					oMessagePopoverButton,
@@ -502,6 +503,7 @@
 		});
 
 		var oSplitApp = new sap.m.SplitApp({
+			id: "split-app",
 			masterPages: [page1],
 			initialMaster: "page1",
 
