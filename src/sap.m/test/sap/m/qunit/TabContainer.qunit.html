@@ -466,23 +466,36 @@
 		});
 
 		QUnit.test("TabContainerItem properties are in sync with TabStripItem properties", function (assert) {
-			var oTabContainerItem;
+			var oTabContainerAddedItem,
+				oTabContainerInsertedItem;
 
 			//arrange
-			oTabContainerItem = new sap.m.TabContainerItem({
+			oTabContainerAddedItem = new sap.m.TabContainerItem({
 				name: "Apple"
 			});
-			this.oTabContainer.addItem(oTabContainerItem);
+			oTabContainerInsertedItem = new sap.m.TabContainerItem({
+				name: "Apple"
+			});
+			this.oTabContainer.addItem(oTabContainerAddedItem);
+			this.oTabContainer.insertItem(oTabContainerInsertedItem, 0);
 
 			//act
-			oTabContainerItem.setKey(null);
-			oTabContainerItem.setModified(!oTabContainerItem.getModified());
-			oTabContainerItem.setName("Android");
+			oTabContainerAddedItem.setKey(null);
+			oTabContainerAddedItem.setModified(!oTabContainerAddedItem.getModified());
+			oTabContainerAddedItem.setName("Android");
+
+			oTabContainerInsertedItem.setKey(null);
+			oTabContainerInsertedItem.setModified(!oTabContainerInsertedItem.getModified());
+			oTabContainerInsertedItem.setName("Android");
 
 			//assert
-			assert.equal(this.oTabStrip.getItems()[0].getKey(), oTabContainerItem.getId(), "TabContainerItem.id should be propagated to TabStripItem.key");
-			assert.equal(this.oTabStrip.getItems()[0].getText(), oTabContainerItem.getName(), "TabContainerItem.name should be propagated to TabStripItem.text");
-			assert.equal(this.oTabStrip.getItems()[0].getModified(), oTabContainerItem.getModified(), "TabContainerItem.modified should be propagated to TabStripItem.modified");
+			assert.equal(this.oTabStrip.getItems()[1].getKey(), oTabContainerAddedItem.getId(), "Added TabContainerItem.id should be propagated to TabStripItem.key");
+			assert.equal(this.oTabStrip.getItems()[1].getText(), oTabContainerAddedItem.getName(), "Added TabContainerItem.name should be propagated to TabStripItem.text");
+			assert.equal(this.oTabStrip.getItems()[1].getModified(), oTabContainerAddedItem.getModified(), "Added TabContainerItem.modified should be propagated to TabStripItem.modified");
+
+			assert.equal(this.oTabStrip.getItems()[0].getKey(), oTabContainerInsertedItem.getId(), "Inserted TabContainerItem.id should be propagated to TabStripItem.key");
+			assert.equal(this.oTabStrip.getItems()[0].getText(), oTabContainerInsertedItem.getName(), "Inserted TabContainerItem.name should be propagated to TabStripItem.text");
+			assert.equal(this.oTabStrip.getItems()[0].getModified(), oTabContainerInsertedItem.getModified(), "Inserted TabContainerItem.modified should be propagated to TabStripItem.modified");
 		});
 
 		QUnit.module("Constructing with array of items", {
