@@ -460,6 +460,18 @@
 		assert.ok(!this.oActiveAttr.$().hasClass("sapMObjectAttributeActive"), "sapMObjectAttributeActive class is not presented.");
 		assert.ok(!this.oActiveAttr.$().is('[role]'), "Active ObjectAttribute with no text does not have link role.");
 	});
+
+	QUnit.module("Other");
+	QUnit.test("Empty ObjectAttribute will render a parent div", function (assert) {
+		// Arrange
+		var oAttr = new sap.m.ObjectAttribute();
+
+		// Act
+		oAttr.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oAttr.getDomRef(), "Object attribute should have its container element rendered");
+	});
 </script>
 </head>
 
