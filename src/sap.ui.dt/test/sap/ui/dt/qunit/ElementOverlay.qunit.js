@@ -980,6 +980,7 @@ function (
 			assert.ok(this.oScrollControlOverlay.getAggregationOverlay("footer").getDomRef(), "aggregation overlay outside scroll container has domRef");
 		});
 	});
+
 	QUnit.module("Given a control with control domRef defined in dt-metadata", {
 		beforeEach : function(assert) {
 			var AnyControl = SimpleScrollControl.extend('sap.ui.dt.test.controls.AnyControl', {
