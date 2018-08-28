@@ -193,5 +193,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.18": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "5758dda8e71833bf105a457b1b11894a4efdd665",
+        "type": "FIX",
+        "text": " uxap.ObjectPageLayout: APICreation qUnit fix",
+        "references": []
+      }
+    ]
   }
 }
