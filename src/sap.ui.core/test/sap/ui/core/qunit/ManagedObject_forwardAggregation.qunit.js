@@ -83,18 +83,6 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/core/Element', 'sap/ui/core/
 
 			init: function() {
 				this.setAggregation("_innerElement", new SimpleElement(this.getId() + "-innerElement"));
-			},
-
-			clone: function() {
-				var oMyClone = Element.prototype.clone.apply(this, arguments),
-					oInner = this.getAggregation("_innerElement");
-
-				if (!this.isBound("outerAggregation") && oInner) {
-					for (var i = 0, aItems = oInner.getInnerAggregation(); i < aItems.length; i++) {
-						oMyClone.addOuterAggregation(aItems[i].clone());
-					}
-				}
-				return oMyClone;
 			}
 		});
 

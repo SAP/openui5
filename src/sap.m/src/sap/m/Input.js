@@ -283,6 +283,11 @@ function(
 			suggestionRows : {type : "sap.m.ColumnListItem", multiple : true, singularName : "suggestionRow", bindable : "bindable", forwarding: {getter: "_getSuggestionsTable", aggregation: "items"}},
 
 			/**
+			 * The suggestion popup (can be a Dialog or Popover); aggregation needed to also propagate the model and bindings to the content of the popover
+			 */
+			_suggestionPopup : {type : "sap.ui.core.Control", multiple: false, visibility: "hidden"},
+
+			/**
 			 * The icon on the right side of the Input
 			 */
 			_valueHelpIcon : {type : "sap.ui.core.Icon", multiple: false, visibility: "hidden"}
@@ -2175,8 +2180,8 @@ function(
 			oInput._oSuggestionPopup.addStyleClass("sapMInputSuggestionPopup");
 			oInput._oSuggestionPopup.addAriaLabelledBy(InvisibleText.getStaticId("sap.m", "INPUT_AVALIABLE_VALUES"));
 
-			// add popup as dependent to also propagate the model and bindings to the content of the popover
-			oInput.addDependent(oInput._oSuggestionPopup);
+			// add popup to a hidden aggregation to also propagate the model and bindings to the content of the popover
+			oInput.setAggregation("_suggestionPopup", oInput._oSuggestionPopup);
 			if (!oInput._bUseDialog) {
 				overwritePopover(oInput._oSuggestionPopup, oInput);
 			}
@@ -2696,20 +2701,12 @@ function(
 		bindingInfo = this.getBindingInfo("suggestionColumns");
 		if (bindingInfo) {
 			oInputClone.bindAggregation("suggestionColumns", jQuery.extend({}, bindingInfo));
-		} else {
-			this.getSuggestionColumns().forEach(function(oColumn){
-				oInputClone.addSuggestionColumn(oColumn.clone(), true);
-			});
 		}
 
 		// add suggestion rows
 		bindingInfo = this.getBindingInfo("suggestionRows");
 		if (bindingInfo) {
 			oInputClone.bindAggregation("suggestionRows", jQuery.extend({}, bindingInfo));
-		} else {
-			this.getSuggestionRows().forEach(function(oRow){
-				oInputClone.addSuggestionRow(oRow.clone(), true);
-			});
 		}
 
 		oInputClone.setRowResultFunction(this._fnRowResultFilter);
