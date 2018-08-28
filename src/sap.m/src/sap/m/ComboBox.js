@@ -612,6 +612,8 @@ sap.ui.define([
 				return;
 			}
 
+			this.$().addClass("sapMFocus");
+
 			var bToggleOpenState = (this.getPickerType() === "Dropdown");
 
 			this.loadItems(function() {
@@ -1297,6 +1299,10 @@ sap.ui.define([
 			if (oList) {
 				oList.setSelection(vItem);
 			}
+
+			// if there is selected item, put the visual focus on it
+			// instead on the input field
+			this.$().toggleClass("sapMFocus", !vItem);
 
 			this.setAssociation("selectedItem", vItem, true);
 			this.setProperty("selectedItemId", (vItem instanceof Item) ? vItem.getId() : vItem, true);
