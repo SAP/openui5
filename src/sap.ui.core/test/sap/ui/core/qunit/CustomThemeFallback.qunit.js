@@ -2,7 +2,7 @@ sap.ui.define([
 	"sap/ui/core/theming/Parameters"
 ], function(Parameters) {
 	"use strict";
-	/* global QUnit, sinon */
+	/* global QUnit */
 
 	// Wait until the theme is changed
 	function themeChanged() {
@@ -24,10 +24,12 @@ sap.ui.define([
 		}
 	}
 
+	var sPath = sap.ui.require.toUrl("testdata/core");
+
 	QUnit.module("Custom Theme Fallback", {
 		beforeEach: function() {
-			sap.ui.loader.config({paths:{"sap/ui/customthemefallback/testlib":"./testdata/uilib-custom-theme-fallback/"}});
-			sap.ui.loader.config({paths:{"sap/ui/failingcssimport/testlib":"./testdata/uilib-failing-css-import/"}});
+			sap.ui.loader.config({paths:{"sap/ui/customthemefallback/testlib": sPath + "/testdata/uilib-custom-theme-fallback/"}});
+			sap.ui.loader.config({paths:{"sap/ui/failingcssimport/testlib": sPath + "/testdata/uilib-failing-css-import/"}});
 		},
 		afterEach: function() {
 			sap.ui.loader.config({paths:{"sap/ui/customthemefallback/testlib":null}});
@@ -69,22 +71,22 @@ sap.ui.define([
 
 			assert.equal(aLinks[0].id, "sap-ui-theme-sap.ui.core",
 				"sap.ui.core stylesheet should be first");
-			assert.equal(aLinks[0].getAttribute("href"), "./testdata/customcss/sap/ui/core/themes/customcss/library.css",
+			assert.equal(aLinks[0].getAttribute("href"), sPath + "/testdata/customcss/sap/ui/core/themes/customcss/library.css",
 				"sap.ui.core stylesheet href should be correct");
 
 			assert.equal(aLinks[1].id, "sap-ui-theme-sap.ui.customthemefallback.testlib",
 				"sap.ui.customthemefallback.testlib stylesheet should be second");
-			assert.equal(aLinks[1].getAttribute("href"), "./testdata/uilib-custom-theme-fallback/themes/sap_hcb/library.css",
+			assert.equal(aLinks[1].getAttribute("href"), sPath + "/testdata/uilib-custom-theme-fallback/themes/sap_hcb/library.css",
 				"sap.ui.customthemefallback.testlib stylesheet href should be correct");
 
 			assert.equal(aLinks[2].id, "sap-ui-theme-sap.ui.failingcssimport.testlib",
 				"sap.ui.failingcssimport.testlib stylesheet should be second");
-			assert.equal(aLinks[2].getAttribute("href"), "./testdata/uilib-failing-css-import/themes/customcss/library.css",
+			assert.equal(aLinks[2].getAttribute("href"), sPath + "/testdata/uilib-failing-css-import/themes/customcss/library.css",
 				"sap.ui.failingcssimport.testlib stylesheet href should be correct");
 
 			// Check for custom.css order (should be after last library theme)
 			var oCustomCssLink = document.getElementById("sap-ui-core-customcss");
-			assert.equal(oCustomCssLink.getAttribute("href"), "./testdata/customcss/sap/ui/core/themes/customcss/custom.css",
+			assert.equal(oCustomCssLink.getAttribute("href"), sPath + "/testdata/customcss/sap/ui/core/themes/customcss/custom.css",
 				"custom.css stylesheet href should be correct");
 			assert.equal(oCustomCssLink.previousSibling, aLinks[2], "custom.css should be inserted last");
 
@@ -107,22 +109,22 @@ sap.ui.define([
 
 			assert.equal(aLinks[0].id, "sap-ui-theme-sap.ui.core",
 				"sap.ui.core stylesheet should be first");
-			assert.equal(aLinks[0].getAttribute("href"), "./testdata/customcss/sap/ui/core/themes/legacy/library.css",
+			assert.equal(aLinks[0].getAttribute("href"), sPath + "/testdata/customcss/sap/ui/core/themes/legacy/library.css",
 				"sap.ui.core stylesheet href should be correct");
 
 			assert.equal(aLinks[1].id, "sap-ui-theme-sap.ui.customthemefallback.testlib",
 				"sap.ui.customthemefallback.testlib stylesheet should be second");
-			assert.equal(aLinks[1].getAttribute("href"), "./testdata/uilib-custom-theme-fallback/themes/sap_hcb/library.css",
+			assert.equal(aLinks[1].getAttribute("href"), sPath + "/testdata/uilib-custom-theme-fallback/themes/sap_hcb/library.css",
 				"sap.ui.customthemefallback.testlib stylesheet href should be correct");
 
 			assert.equal(aLinks[2].id, "sap-ui-theme-sap.ui.failingcssimport.testlib",
 				"sap.ui.failingcssimport.testlib stylesheet should be second");
-			assert.equal(aLinks[2].getAttribute("href"), "./testdata/uilib-failing-css-import/themes/sap_hcb/library.css",
+			assert.equal(aLinks[2].getAttribute("href"), sPath + "/testdata/uilib-failing-css-import/themes/sap_hcb/library.css",
 				"sap.ui.failingcssimport.testlib stylesheet href should be correct");
 
 			// Check for custom.css order (should be after last library theme)
 			var oCustomCssLink = document.getElementById("sap-ui-core-customcss");
-			assert.equal(oCustomCssLink.getAttribute("href"), "./testdata/customcss/sap/ui/core/themes/legacy/custom.css",
+			assert.equal(oCustomCssLink.getAttribute("href"), sPath + "/testdata/customcss/sap/ui/core/themes/legacy/custom.css",
 				"custom.css stylesheet href should be correct");
 			assert.equal(oCustomCssLink.previousSibling, aLinks[2], "custom.css should be inserted last");
 

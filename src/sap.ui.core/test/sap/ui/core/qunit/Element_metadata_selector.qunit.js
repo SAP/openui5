@@ -1,9 +1,12 @@
+/*global QUnit */
 sap.ui.define([
+	'sap/ui/qunit/utils/createAndAppendDiv',
 	'sap/ui/core/Control'
-], function(Control) {
-
+], function(createAndAppendDiv, Control) {
 	"use strict";
-	/*global QUnit*/
+
+	createAndAppendDiv("content");
+
 	var SelectorControl = Control.extend("selectorTestControl", {
 		metadata: {
 			properties: {
@@ -139,8 +142,9 @@ sap.ui.define([
 			oRm.write("></span>");
 			oRm.write("</div>");
 		}
-	})
-	QUnit.module("Element - Member.selector metadata", {
+	});
+
+	QUnit.module("Member.selector metadata", {
 		beforeEach: function() {
 			this.element = new SelectorControl("testId:that:_needs-escaping");
 			this.element.placeAt("content");
