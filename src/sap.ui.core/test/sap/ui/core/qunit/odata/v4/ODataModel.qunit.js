@@ -769,6 +769,7 @@ sap.ui.require([
 						&& aMessages[0].getMessage() === oError.message
 						&& aMessages[0].getMessageProcessor() === oModel
 						&& aMessages[0].getPersistent() === true
+						&& aMessages[0].getTarget() === ""
 						&& aMessages[0].getTechnical() === true
 						&& aMessages[0].getType() === "Error";
 				}));
@@ -1531,6 +1532,7 @@ sap.ui.require([
 								&& oMessage.getMessage() === aMessages[j].message
 								&& oMessage.getMessageProcessor() === oModel
 								&& oMessage.getPersistent() === true
+								&& oMessage.getTarget() === ""
 								&& oMessage.getTechnical() === false
 								&& oMessage.getType() === oFixture.type;
 						});
