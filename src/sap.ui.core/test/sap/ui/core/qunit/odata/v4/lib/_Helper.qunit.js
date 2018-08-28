@@ -982,12 +982,17 @@ sap.ui.require([
 		QUnit.test("updateCacheAfterPost: simple/complex and not wanted properties," +
 			" bUseProperties: " + bUseProperties, function (assert) {
 			var oCacheBefore = {
+					"@odata.etag" : "Old ETag",
 					Address : {
 						City : "Walldorf"
 					},
 					ComplexNullable : null
 				},
 				oCacheAfter = {
+					"@$ui5._" : {
+						predicate : "('4711')"
+					},
+					"@odata.etag" : "New ETag",
 					PartnerId : "4711",
 					Address : {
 						City : "Walldorf",
@@ -1034,9 +1039,17 @@ sap.ui.require([
 				.withExactArgs(oChangeListener, "SO_2_BP/ComplexNullable/foo", "foo");
 			oHelperMock.expects("fireChange")
 				.withExactArgs(oChangeListener, "SO_2_BP/PartnerId", "4711");
+			oHelperMock.expects("fireChange")
+				.withExactArgs(oChangeListener, "SO_2_BP/@$ui5._/predicate", "('4711')");
+			oHelperMock.expects("fireChange")
+				.withExactArgs(oChangeListener, "SO_2_BP/@odata.etag", "New ETag");
 
 			// code under test
 			_Helper.updateCacheAfterPost(oChangeListener, "SO_2_BP", oCacheBefore, {
+				"@$ui5._" : {
+					predicate : "('4711')"
+				},
+				"@odata.etag" : "New ETag",
 				PartnerId : "4711",
 				Address : {
 					City : "Walldorf",

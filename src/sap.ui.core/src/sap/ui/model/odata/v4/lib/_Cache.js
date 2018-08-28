@@ -302,35 +302,34 @@ sap.ui.define([
 			// mark as transient (again)
 			_Helper.setPrivateAnnotation(oEntityData, "transient", sPostGroupId);
 			that.addByPath(that.mPostRequests, sPath, oEntityData);
-			return that.oRequestor.request("POST", sPostPath, oPostGroupLock, null, oEntityData,
-					setCreatePending, cleanUp)
-				.then(function (oResult) {
-					_Helper.deletePrivateAnnotation(oEntityData, "transient");
-					// now the server has one more element
-					addToCount(that.mChangeListeners, sPath, aCollection, 1);
-					that.removeByPath(that.mPostRequests, sPath, oEntityData);
-					// update the cache with the POST response
-					_Helper.updateCacheAfterPost(that.mChangeListeners,
-						_Helper.buildPath(sPath, "-1"), oEntityData, oResult,
-						_Helper.getSelectForPath(that.mQueryOptions, sPath));
-					// determine and save the key predicate
-					that.fetchTypes().then(function (mTypeForMetaPath) {
-						_Helper.setPrivateAnnotation(oEntityData, "predicate",
-							_Helper.getKeyPredicate(oEntityData,
-								_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)),
-								mTypeForMetaPath));
-					});
-				}, function (oError) {
-					if (oError.canceled) {
-						// for cancellation no error is reported via fnErrorCallback
-						throw oError;
-					}
-					if (fnErrorCallback) {
-						fnErrorCallback(oError);
-					}
-					return request(sPostPath, new _GroupLock(
-						that.oRequestor.getGroupSubmitMode(sPostGroupId) === "API" ?
-							sPostGroupId : "$parked." + sPostGroupId));
+			return SyncPromise.all([
+				that.oRequestor.request("POST", sPostPath, oPostGroupLock, null, oEntityData,
+					setCreatePending, cleanUp),
+				that.fetchTypes()
+			]).then(function (aResult) {
+				var oResult = aResult[0];
+
+				_Helper.deletePrivateAnnotation(oEntityData, "transient");
+				// now the server has one more element
+				addToCount(that.mChangeListeners, sPath, aCollection, 1);
+				that.removeByPath(that.mPostRequests, sPath, oEntityData);
+				that.visitResponse(oResult, aResult[1], false,
+					_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)), sPath + "/-1");
+				// update the cache with the POST response
+				_Helper.updateCacheAfterPost(that.mChangeListeners,
+					_Helper.buildPath(sPath, "-1"), oEntityData, oResult,
+					_Helper.getSelectForPath(that.mQueryOptions, sPath));
+			}, function (oError) {
+				if (oError.canceled) {
+					// for cancellation no error is reported via fnErrorCallback
+					throw oError;
+				}
+				if (fnErrorCallback) {
+					fnErrorCallback(oError);
+				}
+				return request(sPostPath, new _GroupLock(
+					that.oRequestor.getGroupSubmitMode(sPostGroupId) === "API" ?
+						sPostGroupId : "$parked." + sPostGroupId));
 			});
 		}
 
