@@ -207,7 +207,7 @@ sap.ui.define([
 			{
 				pluginId: "CTX_GROUP_FIELDS",
 				rank: 90,
-				icon: "sap-icon://border"
+				icon: "sap-icon://combine"
 			}
 		);
 	};
