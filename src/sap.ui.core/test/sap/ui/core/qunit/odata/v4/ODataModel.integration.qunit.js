@@ -1290,7 +1290,7 @@ sap.ui.require([
 		this.expectRequest(
 			"EMPLOYEES?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100", {
 				"value" : [{
-					"ID": "1",
+					"ID" : "1",
 					"Name" : "Jonathan Smith",
 					"__CT__FAKE__Message" : {
 						"__FAKE__Messages" : [{
@@ -1302,18 +1302,18 @@ sap.ui.require([
 						}]
 					}
 				}, {
-					"ID": "2",
+					"ID" : "2",
 					"Name" : "Frederic Fall",
 					"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
 				}]
 			})
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
 			.expectMessages([{
-				"code": "1",
-				"message": "Text",
-				"persistent": false,
-				"target": "/EMPLOYEES('1')/Name",
-				"type": "Warning"
+				"code" : "1",
+				"message" : "Text",
+				"persistent" : false,
+				"target" : "/EMPLOYEES('1')/Name",
+				"type" : "Warning"
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -1363,11 +1363,11 @@ sap.ui.require([
 			})
 			.expectChange("text", "Jonathan Smith")
 			.expectMessages([{
-				"code": "1",
-				"message": "Text",
-				"persistent": false,
-				"target": "/EMPLOYEES('2')/Name",
-				"type": "Warning"
+				"code" : "1",
+				"message" : "Text",
+				"persistent" : false,
+				"target" : "/EMPLOYEES('2')/Name",
+				"type" : "Warning"
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -1381,11 +1381,11 @@ sap.ui.require([
 					"EMPLOYEES('2')?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages", oError)
 				.expectChange("text", null)
 				.expectMessages([{
-					"code": undefined,
-					"message": "Employee does not exist",
-					"persistent": true,
-					"target": undefined,
-					"type": "Error"
+					"code" : undefined,
+					"message" : "Employee does not exist",
+					"persistent" : true,
+					"target" : undefined,
+					"type" : "Error"
 				}]);
 
 			// code under test
@@ -1500,7 +1500,7 @@ sap.ui.require([
 
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest("EMPLOYEES?$select=ID,Name&$search=Fall&$skip=0&$top=100", {
-					"value" : [{"ID": "2", "Name" : "Frederic Fall"}]
+					"value" : [{"ID" : "2", "Name" : "Frederic Fall"}]
 				})
 				.expectChange("name", ["Frederic Fall"]);
 
@@ -2232,10 +2232,10 @@ sap.ui.require([
 		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id"
 				+ ";$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))&$select=AGE,ID",
 				{
-					"AGE": 32,
-					"EMPLOYEE_2_TEAM": {
-						"Name": "SAP NetWeaver Gateway Content",
-						"Team_Id": "TEAM_03",
+					"AGE" : 32,
+					"EMPLOYEE_2_TEAM" : {
+						"Name" : "SAP NetWeaver Gateway Content",
+						"Team_Id" : "TEAM_03",
 						"TEAM_2_MANAGER" : {
 							"TEAM_ID" : "TEAM_03"
 						}
@@ -2270,12 +2270,12 @@ sap.ui.require([
 		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_MANAGER"
 					+ "($select=ID),EMPLOYEE_2_TEAM($select=Name,Team_Id)&$select=AGE,ID",
 				{
-					"AGE": 32,
-					"EMPLOYEE_2_MANAGER": {
-						"ID": "2"
+					"AGE" : 32,
+					"EMPLOYEE_2_MANAGER" : {
+						"ID" : "2"
 					},
-					"EMPLOYEE_2_TEAM": {
-						"Name": "SAP NetWeaver Gateway Content"
+					"EMPLOYEE_2_TEAM" : {
+						"Name" : "SAP NetWeaver Gateway Content"
 					}
 				})
 			.expectChange("name", "SAP NetWeaver Gateway Content");
@@ -2735,23 +2735,23 @@ sap.ui.require([
 		this.expectRequest("EMPLOYEES('2')/EMPLOYEE_2_TEAM"
 					+ "?$expand=TEAM_2_EMPLOYEES($orderby=AGE%20desc)&$select=Name,Team_Id",
 				{
-					"Name": "SAP NetWeaver Gateway Content",
-					"TEAM_2_EMPLOYEES": [
-						{ "AGE" : 32},
-						{ "AGE" : 29}
+					"Name" : "SAP NetWeaver Gateway Content",
+					"TEAM_2_EMPLOYEES" : [
+						{"AGE" : 32},
+						{"AGE" : 29}
 					]
 				})
 			.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_MANAGER($select=ID),"
 					+ "EMPLOYEE_2_TEAM($expand=TEAM_2_EMPLOYEES($orderby=AGE))&$select=AGE,ID",
 				{
-					"AGE": 32,
-					"EMPLOYEE_2_MANAGER": {
-						"ID": "2"
+					"AGE" : 32,
+					"EMPLOYEE_2_MANAGER" : {
+						"ID" : "2"
 					},
-					"EMPLOYEE_2_TEAM": {
-						"TEAM_2_EMPLOYEES": [
-							{ "AGE" : 29},
-							{ "AGE" : 32}
+					"EMPLOYEE_2_TEAM" : {
+						"TEAM_2_EMPLOYEES" : [
+							{"AGE" : 29},
+							{"AGE" : 32}
 						]
 					}
 				})
@@ -3028,8 +3028,8 @@ sap.ui.require([
 				}
 			};
 
-		this.expectRequest("EMPLOYEES?$select=AGE,ID&$skip=0&$top=100",
-			{ "value" :
+		this.expectRequest("EMPLOYEES?$select=AGE,ID&$skip=0&$top=100", {
+			"value" :
 				[
 					{"AGE" : 29, "ID" : "R2D2"},
 					{"AGE" : 36, "ID" : "C3PO"}
@@ -3378,19 +3378,19 @@ sap.ui.require([
 				that = this;
 
 			this.expectRequest("SalesOrderList?$skip=0&$top=100", {
-				"value": [
-					{"SalesOrderID": "0"},
-					{"SalesOrderID": "1"},
-					{"SalesOrderID": "2"}
+				"value" : [
+					{"SalesOrderID" : "0"},
+					{"SalesOrderID" : "1"},
+					{"SalesOrderID" : "2"}
 				]
 			}).expectChange("text", ["0", "1", "2"]);
 
 			return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
 				that.expectRequest("SalesOrderList?$filter=" + oFixture.request.replace(/ /g, "%20")
 						+ "&$skip=0&$top=100", {
-					"value": [
-						{"SalesOrderID": "0"},
-						{"SalesOrderID": "2"}
+					"value" : [
+						{"SalesOrderID" : "0"},
+						{"SalesOrderID" : "2"}
 					]
 				}).expectChange("text", "2", 1);
 
@@ -3457,7 +3457,7 @@ sap.ui.require([
 
 		this.expectRequest("Equipments('1')/EQUIPMENT_2_PRODUCT?$select=ID,ProductPicture/Picture",
 			{
-				"@odata.context": "../$metadata#Equipments('1')/EQUIPMENT_2_PRODUCT",
+				"@odata.context" : "../$metadata#Equipments('1')/EQUIPMENT_2_PRODUCT",
 				"ID" : "42",
 				"ProductPicture" : {
 					"Picture@odata.mediaReadLink" : "ProductPicture('42')"
@@ -3590,18 +3590,18 @@ sap.ui.require([
 					"SalesOrderID" : "0500000001",
 					"ToLineItems" : {
 						"results" : [{
-							"__metadata":{
-								"type":"GWSAMPLE_BASIC.SalesOrderLineItem"
+							"__metadata" : {
+								"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 							},
 							"ItemPosition" : "0000000010"
 						}, {
-							"__metadata":{
-								"type":"GWSAMPLE_BASIC.SalesOrderLineItem"
+							"__metadata" : {
+								"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 							},
 							"ItemPosition" : "0000000020"
 						}, {
-							"__metadata":{
-								"type":"GWSAMPLE_BASIC.SalesOrderLineItem"
+							"__metadata" : {
+								"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 							},
 							"ItemPosition" : "0000000030"
 						}]
@@ -4045,14 +4045,14 @@ sap.ui.require([
 
 			oFunctionBinding.refresh(); // MUST NOT trigger a request!
 
-			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {"Name": "Jonathan Smith"})
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {"Name" : "Jonathan Smith"})
 				.expectChange("name", "Jonathan Smith");
 			return Promise.all([
 				oFunctionBinding.setParameter("EmployeeID", "1").execute(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {"Name": "Frederic Fall"})
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {"Name" : "Frederic Fall"})
 				.expectChange("name", "Frederic Fall");
 			oFunctionBinding.refresh();
 
@@ -4062,7 +4062,7 @@ sap.ui.require([
 
 			oFunctionBinding.refresh(); // MUST NOT trigger a request!
 
-			that.expectRequest("GetEmployeeByID(EmployeeID='2')", {"Name": "Peter Burke"})
+			that.expectRequest("GetEmployeeByID(EmployeeID='2')", {"Name" : "Peter Burke"})
 				.expectChange("name", "Peter Burke");
 			return Promise.all([
 				oFunctionBinding.execute(),
@@ -4095,7 +4095,7 @@ sap.ui.require([
 			oFunctionBinding.changeParameters({$select: "Name"}); // MUST NOT trigger a request!
 
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=Name", {
-					"Name": "Jonathan Smith"
+					"Name" : "Jonathan Smith"
 				})
 				.expectChange("name", "Jonathan Smith");
 			return Promise.all([
@@ -4104,7 +4104,7 @@ sap.ui.require([
 			]);
 		}).then(function () {
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=ID,Name", {
-					"Name": "Frederic Fall"
+					"Name" : "Frederic Fall"
 				})
 				.expectChange("name", "Frederic Fall");
 			oFunctionBinding.changeParameters({$select: "ID,Name"});
@@ -4117,7 +4117,7 @@ sap.ui.require([
 			oFunctionBinding.changeParameters({$select: "Name"});
 
 			that.expectRequest("GetEmployeeByID(EmployeeID='2')?$select=Name", {
-					"Name": "Peter Burke"
+					"Name" : "Peter Burke"
 				})
 				.expectChange("name", "Peter Burke");
 			return Promise.all([
@@ -4362,9 +4362,9 @@ sap.ui.require([
 			? \'set to available\' : \'\'}" />\
 </FlexBox>', {
 			"EMPLOYEES('2')?$select=AGE,ID,Name,com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable,com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsOccupied" : {
-				"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable": {},
-				"AGE": 32,
-				"Name": "Frederic Fall"
+				"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {},
+				"AGE" : 32,
+				"Name" : "Frederic Fall"
 			}
 		}, [{
 			"adAction1" : "",
@@ -4412,13 +4412,13 @@ sap.ui.require([
 
 			that.expectRequest("FlightCollection(carrid='AA',connid='0017',fldate="
 				+ "datetime'2017-08-10T00%3A00%3A00')?$select=carrid,connid,fldate,flightDetails", {
-					"d": {
-						"__metadata": {
-							"type": "RMTSAMPLEFLIGHT.Flight"
+					"d" : {
+						"__metadata" : {
+							"type" : "RMTSAMPLEFLIGHT.Flight"
 						},
-						"carrid": "AA",
-						"connid": "0017",
-						"fldate": "/Date(1502323200000)/",
+						"carrid" : "AA",
+						"connid" : "0017",
+						"fldate" : "/Date(1502323200000)/",
 						"flightDetails" : {
 							"__metadata" : {
 								"type" : "RMTSAMPLEFLIGHT.FlightDetails"
@@ -4454,21 +4454,21 @@ sap.ui.require([
 				"d" : {
 					"results" : [{
 						"__metadata" : {
-							"type":"RMTSAMPLEFLIGHT.Flight"
+							"type" : "RMTSAMPLEFLIGHT.Flight"
 						},
 						"carrid" : "AA",
 						"connid" : "0017",
 						"fldate" : "/Date(1502323200000)/"
 					}, {
 						"__metadata" : {
-							"type":"RMTSAMPLEFLIGHT.Flight"
+							"type" : "RMTSAMPLEFLIGHT.Flight"
 						},
 						"carrid" : "DL",
 						"connid" : "1699",
 						"fldate" : "/Date(1502323200000)/"
 					}, {
 						"__metadata" : {
-							"type":"RMTSAMPLEFLIGHT.Flight"
+							"type" : "RMTSAMPLEFLIGHT.Flight"
 						},
 						"carrid" : "UA",
 						"connid" : "3517",
@@ -4516,7 +4516,7 @@ sap.ui.require([
 		this.expectRequest("NotificationCollection('foo')", {
 				"d" : {
 					"__metadata" : {
-						"type":"RMTSAMPLEFLIGHT.Notification"
+						"type" : "RMTSAMPLEFLIGHT.Notification"
 					},
 					"ID" : "foo",
 					"updated" : "/Date(1502323200000)/"
@@ -4658,7 +4658,7 @@ sap.ui.require([
 			+ ",fldate=datetime'2017-08-10T00%3A00%3A00')", {
 				"d" : {
 					"__metadata" : {
-						"type":"RMTSAMPLEFLIGHT.Flight"
+						"type" : "RMTSAMPLEFLIGHT.Flight"
 					},
 					"carrid" : "AA",
 					"connid" : "0017",
@@ -5232,16 +5232,16 @@ sap.ui.require([
 
 		this.expectRequest("TEAMS('TEAM_01')?$select=MEMBER_COUNT,Team_Id"
 					+ "&$expand=TEAM_2_EMPLOYEES($select=AGE,ID,Name)", {
-				"Team_Id": "TEAM_01",
-				"MEMBER_COUNT": 2,
-				"TEAM_2_EMPLOYEES": [{
-					"ID": "1",
-					"Name": "Frederic Fall",
-					"AGE": 52
+				"Team_Id" : "TEAM_01",
+				"MEMBER_COUNT" : 2,
+				"TEAM_2_EMPLOYEES" : [{
+					"ID" : "1",
+					"Name" : "Frederic Fall",
+					"AGE" : 52
 				}, {
-					"ID": "3",
-					"Name": "Jonathan Smith",
-					"AGE": 56
+					"ID" : "3",
+					"Name" : "Jonathan Smith",
+					"AGE" : 56
 				}]
 			})
 			.expectChange("idMemberCount", "2")
@@ -5261,16 +5261,16 @@ sap.ui.require([
 			that.removeFromTable(oTable, "idAge");
 			that.expectRequest("TEAMS('TEAM_01')?$select=MANAGER_ID,Team_Id"
 						+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name,STATUS)", {
-					"Team_Id": "TEAM_01",
-					"MANAGER_ID": "3",
-					"TEAM_2_EMPLOYEES": [{
-						"ID": "1",
-						"Name": "Frederic Fall",
-						"STATUS": "Available"
+					"Team_Id" : "TEAM_01",
+					"MANAGER_ID" : "3",
+					"TEAM_2_EMPLOYEES" : [{
+						"ID" : "1",
+						"Name" : "Frederic Fall",
+						"STATUS" : "Available"
 					}, {
-						"ID": "3",
-						"Name": "Jonathan Smith",
-						"STATUS": "Occupied"
+						"ID" : "3",
+						"Name" : "Jonathan Smith",
+						"STATUS" : "Occupied"
 					}]
 				})
 				.expectChange(sIdManagerId, "3")
@@ -5303,13 +5303,13 @@ sap.ui.require([
 
 		this.expectRequest("Equipments?$select=Category,ID,Name&$skip=0&$top=100", {
 				value : [{
-					"Category": "Electronics",
-					"ID": 1,
-					"Name": "Office PC"
+					"Category" : "Electronics",
+					"ID" : 1,
+					"Name" : "Office PC"
 				}, {
-					"Category": "Electronics",
-					"ID": 2,
-					"Name": "Tablet X"
+					"Category" : "Electronics",
+					"ID" : 2,
+					"Name" : "Tablet X"
 				}]
 			})
 			.expectChange("idEquipmentName", ["Office PC", "Tablet X"]);
@@ -5320,13 +5320,13 @@ sap.ui.require([
 
 			that.expectRequest("Equipments?$select=Category,ID,Name&$skip=0&$top=100", {
 					value : [{
-						"Category": "Electronics",
-						"ID": 1,
-						"Name": "Office PC"
+						"Category" : "Electronics",
+						"ID" : 1,
+						"Name" : "Office PC"
 					}, {
-						"Category": "Electronics",
-						"ID": 2,
-						"Name": "Tablet X"
+						"Category" : "Electronics",
+						"ID" : 2,
+						"Name" : "Tablet X"
 					}]
 				})
 				.expectChange("idEquipmentName", ["Office PC", "Tablet X"]);
@@ -5355,16 +5355,16 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest("EMPLOYEES('2')", {
-				"SALARY": {
-					"YEARLY_BONUS_AMOUNT": 100
+				"SALARY" : {
+					"YEARLY_BONUS_AMOUNT" : 100
 				}
 			})
 			.expectChange("salary", "100")
 			.expectChange("forecastSalary", null);
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest("EMPLOYEES('2')", {
-					"SALARY": {
-						"YEARLY_BONUS_AMOUNT": 100
+					"SALARY" : {
+						"YEARLY_BONUS_AMOUNT" : 100
 					}
 				});
 
@@ -5375,8 +5375,8 @@ sap.ui.require([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("EMPLOYEES('2')/" + sFunctionName + "()", {
-					"SALARY": {
-						"YEARLY_BONUS_AMOUNT": 142
+					"SALARY" : {
+						"YEARLY_BONUS_AMOUNT" : 142
 					}
 				})
 				.expectChange("forecastSalary", "142");
@@ -5387,13 +5387,13 @@ sap.ui.require([
 			]);
 		}).then(function () {
 			that.expectRequest("EMPLOYEES('2')", {
-					"SALARY": {
-						"YEARLY_BONUS_AMOUNT": 110
+					"SALARY" : {
+						"YEARLY_BONUS_AMOUNT" : 110
 					}
 				})
 				.expectRequest("EMPLOYEES('2')/" + sFunctionName + "()", {
-					"SALARY": {
-						"YEARLY_BONUS_AMOUNT": 150
+					"SALARY" : {
+						"YEARLY_BONUS_AMOUNT" : 150
 					}
 				})
 				.expectChange("salary", "110")
@@ -5435,13 +5435,13 @@ sap.ui.require([
 
 		this.expectRequest("Equipments?$select=Category,ID,Name&$skip=0&$top=100", {
 				value : [{
-					"Category": "Electronics",
-					"ID": 1,
-					"Name": "Office PC"
+					"Category" : "Electronics",
+					"ID" : 1,
+					"Name" : "Office PC"
 				}, {
-					"Category": "Electronics",
-					"ID": 2,
-					"Name": "Tablet X"
+					"Category" : "Electronics",
+					"ID" : 2,
+					"Name" : "Tablet X"
 				}]
 			})
 			.expectChange("idEquipmentName", ["Office PC", "Tablet X"])
@@ -5472,13 +5472,13 @@ sap.ui.require([
 
 				that.expectRequest("Equipments?$select=Category,ID,Name&$skip=0&$top=100", {
 						value : [{
-							"Category": "Electronics",
-							"ID": 1,
-							"Name": "Office PC"
+							"Category" : "Electronics",
+							"ID" : 1,
+							"Name" : "Office PC"
 						}, {
-							"Category": "Electronics",
-							"ID": 2,
-							"Name": "Tablet X"
+							"Category" : "Electronics",
+							"ID" : 2,
+							"Name" : "Tablet X"
 						}]
 					})
 					.expectRequest("Equipments(Category='Electronics',ID=1)/EQUIPMENT_2_EMPLOYEE"
@@ -5520,11 +5520,11 @@ sap.ui.require([
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("GetSOContactList(SalesOrderID='0500000001')", {
 					value : [{
-						"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"
+						"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"
 					}, {
-						"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"
+						"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"
 					}, {
-						"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
+						"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
 					}]
 				})
 				.expectChange("id", [
@@ -5561,11 +5561,11 @@ sap.ui.require([
 		this.expectRequest("GetSOContactList(SalesOrderID='0500000001')?$select=ContactGUID"
 				+ "&$skip=0&$top=100", {
 			value : [{
-				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"
+				"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"
 			}, {
-				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"
+				"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"
 			}, {
-				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
+				"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
 			}]
 		})
 		.expectChange("id", [
@@ -5599,11 +5599,11 @@ sap.ui.require([
 
 		this.expectRequest("GetSOContactList(SalesOrderID='0500000001')?$select=ContactGUID", {
 			value : [{
-				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"
+				"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"
 			}, {
-				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"
+				"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"
 			}, {
-				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
+				"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
 			}]
 		})
 		.expectChange("id", [
@@ -5638,10 +5638,10 @@ sap.ui.require([
 		this.expectRequest("MANAGERS('1')/" + sFunctionName + "()?$select=ID,Name", {
 			value : [{
 				"ID" : "3",
-				"Name": "Jonathan Smith"
+				"Name" : "Jonathan Smith"
 			}, {
 				"ID" : "6",
-				"Name": "Susan Bay"
+				"Name" : "Susan Bay"
 			}]
 		})
 		.expectChange("id", ["3", "6"])
@@ -5690,7 +5690,7 @@ sap.ui.require([
 
 			that.expectRequest({
 					headers : {
-						"If-Match": "etag"
+						"If-Match" : "etag"
 					},
 					method : "DELETE",
 					url : "BusinessPartnerList('0100000000')"
@@ -6204,9 +6204,9 @@ sap.ui.require([
 				+ "/concat(aggregate(SalesNumber,$count%20as%20UI5__count),top(3))", {
 				"value" : [{
 						"SalesNumber" : 351,
-						"SalesNumber@odata.type": "#Decimal",
-						"UI5__count": "26",
-						"UI5__count@odata.type": "#Decimal"
+						"SalesNumber@odata.type" : "#Decimal",
+						"UI5__count" : "26",
+						"UI5__count@odata.type" : "#Decimal"
 					},
 					{"Country" : "a", "Region" : "Z", "SalesNumber" : 1},
 					{"Country" : "b", "Region" : "Y", "SalesNumber" : 2},
@@ -6255,10 +6255,10 @@ sap.ui.require([
 				+ "GrossAmount%20with%20max%20as%20UI5max__GrossAmount,$count%20as%20UI5__count)"
 				+ ",top(1))", {
 				"value" : [{
-					"UI5min__AGE": 42,
-					"UI5max__AGE": 77,
+					"UI5min__AGE" : 42,
+					"UI5max__AGE" : 77,
 					"UI5__count" : "1",
-					"UI5__count@odata.type": "#Decimal"
+					"UI5__count@odata.type" : "#Decimal"
 				}, {
 					"GrossAmount" : 1
 				}]
@@ -6569,13 +6569,13 @@ sap.ui.require([
 					+ ",skip(1)/top(3))", {
 				"value" : [{
 						// the server response may contain additional data for example @odata.id or
-						// type information "UI5min__AGE@odata.type": "#Int16"
-						"@odata.id": null,
-						"UI5min__AGE@odata.type": "#Int16",
-						"UI5min__AGE": 42,
-						"UI5max__AGE": 77,
-						"UI5__count": "4",
-						"UI5__count@odata.type": "#Decimal"
+						// type information "UI5min__AGE@odata.type" : "#Int16"
+						"@odata.id" : null,
+						"UI5min__AGE@odata.type" : "#Int16",
+						"UI5min__AGE" : 42,
+						"UI5max__AGE" : 77,
+						"UI5__count" : "4",
+						"UI5__count@odata.type" : "#Decimal"
 					},
 					{"ID" : "1", "Name" : "Jonathan Smith", "AGE" : 50},
 					{"ID" : "0", "Name" : "Frederic Fall", "AGE" : 70},
@@ -6647,10 +6647,10 @@ sap.ui.require([
 			oTable = that.oView.byId("table");
 			that.expectRequest("TEAMS('TEAM_01')?$select=Team_Id"
 				+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
-					"Team_Id": "TEAM_01",
+					"Team_Id" : "TEAM_01",
 					TEAM_2_EMPLOYEES : [{
-						"ID": "3",
-						"Name": "Jonathan Smith"
+						"ID" : "3",
+						"Name" : "Jonathan Smith"
 					}]
 				})
 				.expectChange("name", ["Jonathan Smith"]);
@@ -6662,10 +6662,10 @@ sap.ui.require([
 		}).then(function () {
 			that.expectRequest("TEAMS('TEAM_01')?$select=Team_Id"
 						+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
-					"Team_Id": "TEAM_01",
+					"Team_Id" : "TEAM_01",
 					TEAM_2_EMPLOYEES : [{
-						"ID": "3",
-						"Name": "Jonathan Smith"
+						"ID" : "3",
+						"Name" : "Jonathan Smith"
 					}]
 				})
 				.expectChange("name", ["Jonathan Smith"]);
@@ -7081,9 +7081,9 @@ sap.ui.require([
 					method: "POST",
 					url: "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction",
 					payload: {}
-				}, {"ArtistID": "42", "IsActiveEntity": false})
+				}, {"ArtistID" : "42", "IsActiveEntity" : false})
 				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)",
-					{"ArtistID": "42", "IsActiveEntity": true});
+					{"ArtistID" : "42", "IsActiveEntity" : true});
 
 			return Promise.all([
 				// code under test
@@ -7354,17 +7354,17 @@ sap.ui.require([
 					])
 				})
 				.expectMessages([{
-					"code": "foo-42",
-					"message": "text0",
-					"persistent": true,
-					"target": undefined,
-					"type": "Warning"
+					"code" : "foo-42",
+					"message" : "text0",
+					"persistent" : true,
+					"target" : undefined,
+					"type" : "Warning"
 				}, {
-					"code": "foo-77",
-					"message": "text1",
-					"persistent": true,
-					"target": undefined,
-					"type": "Information"
+					"code" : "foo-77",
+					"message" : "text1",
+					"persistent" : true,
+					"target" : undefined,
+					"type" : "Information"
 				}])
 				.expectChange("id", "23");
 
@@ -7490,11 +7490,11 @@ sap.ui.require([
 			})
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
 			.expectMessages([{
-				"code": "1",
-				"message": "Text",
-				"persistent": false,
-				"target": "/EMPLOYEES('1')/Name",
-				"type": "Warning"
+				"code" : "1",
+				"message" : "Text",
+				"persistent" : false,
+				"target" : "/EMPLOYEES('1')/Name",
+				"type" : "Warning"
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -7538,11 +7538,11 @@ sap.ui.require([
 			})
 			.expectChange("text", "Jonathan Smith")
 			.expectMessages([{
-				"code": "1",
-				"message": "Text",
-				"persistent": false,
-				"target": "/EMPLOYEES('2')/Name",
-				"type": "Warning"
+				"code" : "1",
+				"message" : "Text",
+				"persistent" : false,
+				"target" : "/EMPLOYEES('2')/Name",
+				"type" : "Warning"
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -7582,7 +7582,7 @@ sap.ui.require([
 					+ "__CT__FAKE__Message/__FAKE__Messages)", {
 				"Team_Id" : "TEAM_01",
 				"TEAM_2_EMPLOYEES" : [{
-					"ID": "1",
+					"ID" : "1",
 					"Name" : "Jonathan Smith",
 					"__CT__FAKE__Message" : {
 						"__FAKE__Messages" : [{
@@ -7594,7 +7594,7 @@ sap.ui.require([
 						}]
 					}
 				}, {
-					"ID": "2",
+					"ID" : "2",
 					"Name" : "Frederic Fall",
 					"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
 				}]
@@ -7602,11 +7602,11 @@ sap.ui.require([
 			.expectChange("Team_Id", "TEAM_01")
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
 			.expectMessages([{
-				"code": "1",
-				"message": "Text",
-				"persistent": false,
-				"target": "/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES('1')/Name",
-				"type": "Warning"
+				"code" : "1",
+				"message" : "Text",
+				"persistent" : false,
+				"target" : "/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES('1')/Name",
+				"type" : "Warning"
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -7659,11 +7659,11 @@ sap.ui.require([
 			})
 			.expectChange("text", "Jonathan Smith")
 			.expectMessages([{
-				"code": "1",
-				"message": "Text",
-				"persistent": false,
-				"target": "/Equipments(Category='foo',ID='0815')/EQUIPMENT_2_EMPLOYEE/Name",
-				"type": "Warning"
+				"code" : "1",
+				"message" : "Text",
+				"persistent" : false,
+				"target" : "/Equipments(Category='foo',ID='0815')/EQUIPMENT_2_EMPLOYEE/Name",
+				"type" : "Warning"
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -7731,11 +7731,11 @@ sap.ui.require([
 				})
 				.expectChange("name", "") // triggered by setValue
 				.expectMessages([{
-					"code": "1",
-					"message": "Enter a name",
-					"persistent": false,
-					"target": "/EMPLOYEES('1')/Name",
-					"type": "Warning"
+					"code" : "1",
+					"message" : "Enter a name",
+					"persistent" : false,
+					"target" : "/EMPLOYEES('1')/Name",
+					"type" : "Warning"
 				}]);
 
 			// code under test
@@ -7837,11 +7837,11 @@ sap.ui.require([
 				})
 				.expectChange("name", "", 0) // triggered by setValue
 				.expectMessages([{
-					"code": "1",
-					"message": "Enter a name",
-					"persistent": false,
-					"target": "/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES('1')/Name",
-					"type": "Warning"
+					"code" : "1",
+					"message" : "Enter a name",
+					"persistent" : false,
+					"target" : "/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES('1')/Name",
+					"type" : "Warning"
 				}]);
 
 			// there are no messages for employee 1
@@ -7918,11 +7918,11 @@ sap.ui.require([
 				})
 				.expectChange("name", "", 0) // triggered by setValue
 				.expectMessages([{
-					"code": "1",
-					"message": "Enter a name",
-					"persistent": false,
-					"target": "/EMPLOYEES('1')/Name",
-					"type": "Warning"
+					"code" : "1",
+					"message" : "Enter a name",
+					"persistent" : false,
+					"target" : "/EMPLOYEES('1')/Name",
+					"type" : "Warning"
 				}]);
 
 			// code under test
