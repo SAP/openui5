@@ -1,0 +1,30 @@
+{
+	"@odata.context" : "$metadata#BusinessPartners(Region,SalesNumber)",
+	"@odata.metadataEtag" : "W/\"87224d81d74264252c302f6ff13f1d69e04e6438dd9601f3daeb7f5719d32d16\"",
+	"value" : [{
+		"@odata.id" : null,
+		"Region" : "Greater Manchester",
+		"SalesNumber@odata.type" : "#Int32",
+		"SalesNumber" : 8261
+	}, {
+		"@odata.id" : null,
+		"Region" : "East",
+		"SalesNumber@odata.type" : "#Int32",
+		"SalesNumber" : 59535
+	}, {
+		"@odata.id" : null,
+		"Region" : "Berlin",
+		"SalesNumber@odata.type" : "#Int32",
+		"SalesNumber" : 5700
+	}, {
+		"@odata.id" : null,
+		"Region" : "Bavaria",
+		"SalesNumber@odata.type" : "#Int32",
+		"SalesNumber" : 19288
+	}, {
+		"@odata.id" : null,
+		"Region" : "Baden-Württemberg",
+		"SalesNumber@odata.type" : "#Int32",
+		"SalesNumber" : 14348
+	}]
+}

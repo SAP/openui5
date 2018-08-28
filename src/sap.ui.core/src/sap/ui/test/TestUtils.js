@@ -19,7 +19,9 @@ sap.ui.define([
 		mMessageForPath = {}, // a cache for files, see useFakeServer
 		sMimeHeaders = "\r\nContent-Type: application/http\r\n"
 			+ "Content-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 ",
-		sRealOData = new UriParameters(window.location.href).get("realOData"),
+		oUriParameters = new UriParameters(window.location.href),
+		sAutoRespondAfter = oUriParameters.get("autoRespondAfter"),
+		sRealOData = oUriParameters.get("realOData"),
 		rRequestLine = /^(GET|DELETE|PATCH|POST) (\S+) HTTP\/1\.1$/,
 		mData = {},
 		bProxy = sRealOData === "true" || sRealOData === "proxy",
@@ -462,6 +464,10 @@ sap.ui.define([
 					}
 
 				}
+				Log.info(oRequest.url,
+					// log what's mocked?
+					sRealOData === "logMock" ? aResponseData[2] : null,
+					"sap.ui.test.TestUtils");
 				oRequest.respond(aResponseData[0], oResponseHeaders, aResponseData[2]);
 			}
 
@@ -476,6 +482,9 @@ sap.ui.define([
 				oServer = sinon.fakeServer.create();
 				oSandbox.add(oServer);
 				oServer.autoRespond = true;
+				if (sAutoRespondAfter) {
+					oServer.autoRespondAfter = parseInt(sAutoRespondAfter, 10);
+				}
 
 				for (sUrl in mUrls) {
 					aParts = sUrl.split(" ");

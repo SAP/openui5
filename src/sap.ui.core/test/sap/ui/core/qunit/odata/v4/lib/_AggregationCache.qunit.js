@@ -239,13 +239,13 @@ sap.ui.require([
 				iEnd)
 			.on(oFirstLevelCache);
 		oAggregationCacheMock.expects("handleResponse")
-			.withExactArgs(sinon.match(function (mAlias2MeasureAndMethod0) {
+			.withExactArgs(null, sinon.match(function (mAlias2MeasureAndMethod0) {
 					assert.strictEqual(mAlias2MeasureAndMethod0, mAlias2MeasureAndMethod);
 					return mAlias2MeasureAndMethod0 === mAlias2MeasureAndMethod;
 				}), sinon.match.func, sinon.match.same(fnHandleResponse), iStart, iEnd,
 				sinon.match.same(aResult))
 			.on(oFirstLevelCache)
-			.callsArgWith(1, mMeasureRange);
+			.callsArgWith(2, mMeasureRange);
 
 		// code under test
 		oCache = _AggregationCache.create(this.oRequestor, sResourcePath, oAggregation,
@@ -296,8 +296,8 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("create: $filter not allowed without min/max", function (assert) {
-		var oAggregation = {/*no min/max*/},
+	QUnit.test("create: $filter not allowed with visual grouping", function (assert) {
+		var oAggregation = {groupLevels : ["BillToParty"]},
 			mQueryOptions = {$filter : "answer eq 42"};
 
 		assert.throws(function() {
@@ -322,6 +322,69 @@ sap.ui.require([
 			// code under test
 			_AggregationCache.create(this.oRequestor, "Foo", oAggregation, {/*mQueryOptions*/});
 		}, new Error("Unsupported group levels together with min/max"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("create: grandTotal", function (assert) {
+		var oAggregation = {
+				aggregate : {
+					SalesNumber : {grandTotal : true}
+				},
+				group : {
+					Region : {}
+				},
+				groupLevels : [] // Note: added by _AggregationHelper.buildApply before
+			},
+			sAggregation = JSON.stringify(oAggregation),
+			oAggregationCacheMock = this.mock(_AggregationCache),
+			oCache,
+			iEnd = 13,
+			fnGetResourcePath = function () {},
+			fnHandleResponse = function () {},
+			oFirstLevelCache = {
+				getResourcePath : fnGetResourcePath,
+				handleResponse : fnHandleResponse
+			},
+			mQueryOptions = {},
+			sQueryOptions = JSON.stringify(mQueryOptions),
+			sResourcePath = "BusinessPartner",
+			aResult = [],
+			iStart = 7;
+
+		this.mock(_AggregationHelper).expects("hasMinOrMax")
+			.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(false);
+		this.mock(_Cache).expects("create")
+			.withExactArgs(sinon.match.same(this.oRequestor), sResourcePath,
+				sinon.match.same(mQueryOptions), true)
+			.returns(oFirstLevelCache);
+		// getResourcePath and handleResponse need to be mocked before an _AggregationCache
+		// instance is created
+		oAggregationCacheMock.expects("getResourcePath")
+			.withExactArgs(sinon.match.same(oAggregation), sinon.match.same(mQueryOptions), iStart,
+				iEnd)
+			.on(oFirstLevelCache);
+		oAggregationCacheMock.expects("handleResponse")
+			.withExactArgs(sinon.match.same(oAggregation), null, null,
+				sinon.match.same(fnHandleResponse), iStart, iEnd, sinon.match.same(aResult))
+			.on(oFirstLevelCache);
+
+		// code under test
+		oCache = _AggregationCache.create(this.oRequestor, sResourcePath, oAggregation,
+			mQueryOptions);
+
+		assert.strictEqual(oCache.oMeasureRangePromise, undefined);
+		assert.strictEqual(oCache.getMeasureRangePromise(), undefined);
+		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptions, "not modified");
+		assert.strictEqual(JSON.stringify(oAggregation), sAggregation, "not modified");
+		assert.strictEqual(oCache.oFirstLevel, oFirstLevelCache);
+		assert.notEqual(oCache.oFirstLevel.getResourcePath, fnGetResourcePath, "replaced");
+		assert.notEqual(oCache.oFirstLevel.handleResponse, fnHandleResponse, "replaced");
+
+		// code under test
+		oCache.oFirstLevel.getResourcePath(iStart, iEnd);
+
+		// code under test
+		oCache.oFirstLevel.handleResponse(iStart, iEnd, aResult);
 	});
 
 	//*********************************************************************************************
@@ -382,7 +445,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("handleResponse", function (assert) {
+	QUnit.test("handleResponse: with min/max ", function (assert) {
 		var mAlias2MeasureAndMethod = {
 				"UI5min__MinAndMax" : {
 					measure : "MinAndMax",
@@ -428,7 +491,8 @@ sap.ui.require([
 						"UI5max__MinAndMax" : 99,
 						"UI5min__OnlyMin" : 7,
 						"UI5max__OnlyMax" : 10,
-						"UI5__count" : 42
+						"UI5__count" : "42",
+						"UI5__count@odata.type": "#Decimal"
 					},
 					oResponseRecord
 				]
@@ -439,19 +503,59 @@ sap.ui.require([
 
 		// code under test
 		_AggregationCache.handleResponse.call(
-			oFirstLevelCache, mAlias2MeasureAndMethod, fnMeasureRangeResolve,
+			oFirstLevelCache, null, mAlias2MeasureAndMethod, fnMeasureRangeResolve,
 			fnHandleResponse, iStart, iEnd, oResult, mTypeForMetaPath);
 
 		assert.strictEqual(oFirstLevelCache.handleResponse, fnHandleResponse, "restored");
 		assert.strictEqual(fnHandleResponse.callCount, 1);
 		assert.ok(fnHandleResponse.calledWith(iStart, iEnd, sinon.match.same(oResult),
 			sinon.match.same(mTypeForMetaPath)));
-		assert.strictEqual(oResult["@odata.count"], 42);
+		assert.strictEqual(oResult["@odata.count"], "42");
 		assert.strictEqual(fnMeasureRangeResolve.callCount, 1);
 		assert.deepEqual(fnMeasureRangeResolve.args[0][0], mMeasureRange, "mMeasureRange");
 		aGetDataRecords = fnHandleResponse.args[0][2]/*oResults*/.value;
 		assert.strictEqual(aGetDataRecords.length, 1);
 		assert.strictEqual(aGetDataRecords[0], oResponseRecord);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("handleResponse: without min/max ", function (assert) {
+		var oAggregation = {
+				aggregate : {
+					SalesNumber : {grandTotal : true}
+				},
+				group : {
+					Country : {},
+					Region : {},
+					Segment : {}
+				},
+				groupLevels : [] // Note: added by _AggregationHelper.buildApply before
+			},
+			oFirstLevelCache = {
+				handleResponse : function () {}
+			},
+			fnHandleResponse = sinon.stub(),
+			oResult = { /*GET response*/
+				value : [{"UI5__count": "26", "UI5__count@odata.type": "#Decimal"}, {}]
+			},
+			mTypeForMetaPath = {/*fetchTypes result*/},
+			iStart = 0,
+			iEnd = 10;
+
+		// code under test
+		_AggregationCache.handleResponse.call(oFirstLevelCache, oAggregation, null, null,
+			fnHandleResponse, iStart, iEnd, oResult, mTypeForMetaPath);
+
+		assert.strictEqual(oFirstLevelCache.handleResponse, fnHandleResponse, "restored");
+		assert.strictEqual(fnHandleResponse.callCount, 1);
+		assert.ok(fnHandleResponse.calledWith(iStart, iEnd, sinon.match.same(oResult),
+			sinon.match.same(mTypeForMetaPath)));
+		// Note: it is OK to transform string into number here
+		assert.strictEqual(oResult["@odata.count"], 27, "count includes grand total row");
+		assert.strictEqual(oResult.value.length, 2, "data still includes grand total row");
+		assert.strictEqual(oResult.value[0].Country, null, "avoid 'Failed to drill-down'");
+		assert.strictEqual(oResult.value[0].Region, null, "avoid 'Failed to drill-down'");
+		assert.strictEqual(oResult.value[0].Segment, null, "avoid 'Failed to drill-down'");
 	});
 
 	//*********************************************************************************************
@@ -527,7 +631,7 @@ sap.ui.require([
 			sOrderby = "~orderby~",
 			iPrefetchLength = 42,
 			mQueryOptions = {$count : false, $orderby : "FirstDimension", "sap-client" : "123"},
-			mQueryOptionsWithApply = {},
+			mQueryOptionsWithApply = {$apply : "A.P.P.L.E."},
 			sResourcePath = "Foo",
 			oResult = {
 				value : [{}, {}]
@@ -544,11 +648,11 @@ sap.ui.require([
 			.returns(sOrderby);
 		this.mock(_AggregationHelper).expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregationForFirstLevel),
-				{$count : true, $orderby : sOrderby, "sap-client" : "123"})
+				{$orderby : sOrderby, "sap-client" : "123"})
 			.returns(mQueryOptionsWithApply);
 		this.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(this.oRequestor), sResourcePath,
-				sinon.match.same(mQueryOptionsWithApply), true)
+				{$apply : "A.P.P.L.E.", $count : true}, true)
 			.returns(oFirstLevelCache);
 		this.mock(_AggregationCache).expects("calculateKeyPredicate").on(null)
 			.withExactArgs(sinon.match.same(oAggregationForFirstLevel),
@@ -606,11 +710,11 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchValue: no $count available", function (assert) {
+	QUnit.test("fetchValue: no $count available with visual grouping", function (assert) {
 		var oAggregation = {
 				aggregate : {},
 				group : {},
-				groupLevels : [] // Note: added by _AggregationHelper.buildApply before
+				groupLevels : ["BillToParty"]
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "Foo", oAggregation, {}),
 			fnDataRequested = this.spy(),

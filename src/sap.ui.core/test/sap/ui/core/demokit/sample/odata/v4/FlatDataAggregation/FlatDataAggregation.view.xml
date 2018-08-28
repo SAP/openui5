@@ -1,0 +1,44 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.FlatDataAggregation.FlatDataAggregation"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+
+	<Table growing="true" growingThreshold="5" id="table" items="{path : '/BusinessPartners',
+			parameters : {
+				$$aggregation : {
+					aggregate : {
+						SalesNumber : {grandTotal : true}
+					},
+					group : {
+						Region : {}
+					}
+				},
+				$count : false,
+				$filter : 'SalesNumber gt 0',
+				$orderby : 'Region desc'
+			}}">
+		<headerToolbar>
+			<Toolbar>
+				<Title text="Sales Number by Region" titleStyle="H2"><!-- TODO: ({headerContext>$count}) -->
+					<layoutData>
+						<ToolbarLayoutData shrinkable="false" />
+					</layoutData>
+				</Title>
+				<Button icon="sap-icon://refresh" press="onRefresh" tooltip="Refresh"/>
+			</Toolbar>
+		</headerToolbar>
+		<columns>
+			<Column>
+				<Text text="Region" />
+			</Column>
+			<Column>
+				<Text text="Sales Number" />
+			</Column>
+		</columns>
+		<ColumnListItem>
+			<Text text="{Region}" /><!-- TODO: avoid this binding for grand total row! -->
+			<Text text="{SalesNumber}" />
+		</ColumnListItem>
+	</Table>
+</mvc:View>
