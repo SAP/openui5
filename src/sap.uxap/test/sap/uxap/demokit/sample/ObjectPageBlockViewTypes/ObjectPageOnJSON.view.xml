@@ -44,8 +44,8 @@
 			</layout:VerticalLayout>
 
 			<layout:HorizontalLayout>
-				<m:Image src="./test-resources/sap/uxap/images/linkedin.png"></m:Image>
-				<m:Image src="./test-resources/sap/uxap/images/Twitter.png"></m:Image>
+				<m:Image src="./test-resources/sap/uxap/images/linkedin.png"/>
+				<m:Image src="./test-resources/sap/uxap/images/Twitter.png"/>
 			</layout:HorizontalLayout>
 
 			<layout:VerticalLayout>

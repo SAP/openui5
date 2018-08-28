@@ -22,8 +22,6 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 						"ObjectPageFormLayout.controller.js",
 						"block/personal/PersonalFormBlock.js",
 						"block/personal/PersonalFormBlock.view.xml",
-						"block/personal/PersonalSimpleFormBlock.js",
-						"block/personal/PersonalSimpleFormBlock.view.xml",
 						"block/blockscolor/BlockBlue.js",
 						"block/blockscolor/BlockBlue.view.xml",
 						"block/employment/BlockJobInfo.js",

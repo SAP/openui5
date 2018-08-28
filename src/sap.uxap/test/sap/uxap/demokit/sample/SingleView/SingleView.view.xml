@@ -1,6 +1,5 @@
-<core:View height="100%" xmlns:core="sap.ui.core" xmlns:m="sap.m"
-		   xmlns="sap.uxap" xmlns:sample="sap.uxap.sample.SingleView.blocks"
-		   xmlns:blockcolor="sap.uxap.sample.SharedBlocks">
+<core:View height="100%" xmlns:core="sap.ui.core"
+           xmlns="sap.uxap" xmlns:blockcolor="sap.uxap.sample.SharedBlocks">
 
 	<ObjectPageLayout id="ObjectPageLayout">
 		<headerTitle>

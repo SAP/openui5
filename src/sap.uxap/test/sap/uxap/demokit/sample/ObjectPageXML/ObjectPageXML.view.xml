@@ -17,8 +17,8 @@
 							  objectSubtitle="Senior UI Developer">
 
 				<actions>
-					<m:Button icon="sap-icon://pull-down" press="showCurrentSection" type="Emphasized"></m:Button>
-					<m:Button icon="sap-icon://show" press="showObjectPageState" type="Emphasized"></m:Button>
+					<m:Button icon="sap-icon://pull-down" press="showCurrentSection" type="Emphasized"/>
+					<m:Button icon="sap-icon://show" press="showObjectPageState" type="Emphasized"/>
 				</actions>
 			</ObjectPageHeader>
 		</headerTitle>

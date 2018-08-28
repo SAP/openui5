@@ -1,7 +1,6 @@
 <mvc:View
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:layout="sap.ui.layout"
-		xmlns:forms="sap.ui.layout.form"
 		xmlns="sap.m">
 
 
