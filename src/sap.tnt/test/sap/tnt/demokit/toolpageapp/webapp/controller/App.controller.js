@@ -86,34 +86,34 @@ sap.ui.define([
 					oMessagePopover.destroy();
 				}
 				var fnHandleUserMenuItemPress = function (oEvent) {
-					MessageToast.show(oEvent.getSource().getText() + " was pressed");
+					MessageToast.show(oBundle.getText("userActionWasPressed", oEvent.getSource().getText()));
 				};
 				var oActionSheet = new ActionSheet(this.getView().createId("userMessageActionSheet"), {
 					title: oBundle.getText("userHeaderTitle"),
 					showCancelButton: false,
 					buttons: [
 						new Button({
-							text: 'User Settings',
+							text: oBundle.getText("userActionUserSettings"),
 							type: sap.m.ButtonType.Transparent,
 							press: fnHandleUserMenuItemPress
 						}),
 						new Button({
-							text: "Online Guide",
+							text:  oBundle.getText("userActionOnlineGuide"),
 							type: sap.m.ButtonType.Transparent,
 							press: fnHandleUserMenuItemPress
 						}),
 						new Button({
-							text: 'Feedback',
+							text:  oBundle.getText("userActionFeedback"),
 							type: sap.m.ButtonType.Transparent,
 							press: fnHandleUserMenuItemPress
 						}),
 						new Button({
-							text: 'Help',
+							text:  oBundle.getText("userActionHelp"),
 							type: sap.m.ButtonType.Transparent,
 							press: fnHandleUserMenuItemPress
 						}),
 						new Button({
-							text: 'Logout',
+							text:  oBundle.getText("userActionLogout"),
 							type: sap.m.ButtonType.Transparent,
 							press: fnHandleUserMenuItemPress
 						})
@@ -135,11 +135,12 @@ sap.ui.define([
 			},
 
 			_setToggleButtonTooltip : function(bSideExpanded) {
+				var oBundle = this.getModel("i18n").getResourceBundle();
 				var oToggleButton = this.byId('sideNavigationToggleButton');
 				if (bSideExpanded) {
-					oToggleButton.setTooltip('Large Size Navigation');
+					oToggleButton.setTooltip(oBundle.getText("navigationToggleButtonLargeSizeNavigation"));
 				} else {
-					oToggleButton.setTooltip('Small Size Navigation');
+					oToggleButton.setTooltip(oBundle.getText("navigationToggleButtonSmallSizeNavigation"));
 				}
 			},
 
@@ -150,7 +151,7 @@ sap.ui.define([
 						placement: sap.m.VerticalPlacementType.Bottom,
 						items: {
 							path: 'alerts>/alerts/errors',
-							factory: this._createError
+							factory: this._createError.bind(this)
 						},
 						afterClose: function () {
 							oMessagePopover.destroy();
@@ -178,7 +179,7 @@ sap.ui.define([
 				var oButton = new Button({
 					text: oBundle.getText("notificationButtonText"),
 					press: function () {
-						MessageToast.show("Show all Notifications was pressed");
+						MessageToast.show(oBundle.getText("showAllNotificationsWasPressedMessage"));
 					}
 				});
 				var oNotificationPopover = new ResponsivePopover(this.getView().createId("notificationMessagePopover"), {
@@ -217,16 +218,17 @@ sap.ui.define([
 						var sBindingPath = oEvent.getSource().getCustomData()[0].getValue();
 						var sIndex = sBindingPath.split("/").pop();
 						var aItems = oEvent.getSource().getModel("alerts").getProperty("/alerts/notifications");
+						var oBundle = this.getModel("i18n").getResourceBundle();
 						aItems.splice(sIndex, 1);
 						oEvent.getSource().getModel("alerts").setProperty("/alerts/notifications", aItems);
 						oEvent.getSource().getModel("alerts").updateBindings("/alerts/notifications");
-						sap.m.MessageToast.show("Notification has been deleted.");
+						MessageToast.show(oBundle.getText("notificationDeleted"));
 					},
 					datetime: oBindingObject.date,
 					authorPicture: oBindingObject.icon,
 					press: function () {
 						var oBundle = this.getModel("i18n").getResourceBundle();
-						MessageToast.show(oBundle.getText("notificationItemClickedMessage", oBindingObject.title));
+						MessageToast.show(oBundle.getText("notificationItemPressedMessage", oBindingObject.title));
 					},
 					customData : [
 						new CustomData({
@@ -240,10 +242,11 @@ sap.ui.define([
 
 			_createError: function (sId, oBindingContext) {
 				var oBindingObject = oBindingContext.getObject();
+				var oBundle = this.getModel("i18n").getResourceBundle();
 				var oLink = new Link("moreDetailsLink", {
-					text: "More Details",
+					text: oBundle.getText("errorMoreDetailsText"),
 					press: function() {
-						MessageToast.show("More Details was pressed");
+						MessageToast.show(oBundle.getText("errorMoreDetailsWasPressed"));
 					}
 				});
 				var oMessageItem = new MessagePopoverItem({
