@@ -43,6 +43,7 @@ function(jQuery, URI, Device, Passport, Interaction, FESR, Log) {
 	 * @static
 	 * @public
 	 * @since 1.36
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/trace/Interaction} instead
 	 */
 	jQuery.sap.interaction = {};
 
@@ -142,6 +143,7 @@ function(jQuery, URI, Device, Passport, Interaction, FESR, Log) {
 	 * @name jQuery.sap.fesr
 	 * @static
 	 * @private
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/trace/FESR} instead
 	 */
 	jQuery.sap.fesr = {};
 
@@ -195,6 +197,7 @@ function(jQuery, URI, Device, Passport, Interaction, FESR, Log) {
 	 * @name jQuery.sap.passport
 	 * @static
 	 * @private
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/trace/Passport} instead
 	 */
 	jQuery.sap.passport = {};
 

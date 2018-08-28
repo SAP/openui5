@@ -15,6 +15,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/events/KeyCodes'],
 	 * @enum {int}
 	 * @public
 	 * @since 0.9.0
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/KeyCodes} instead
 	 */
 	jQuery.sap.KeyCodes = KeyCodes;
 

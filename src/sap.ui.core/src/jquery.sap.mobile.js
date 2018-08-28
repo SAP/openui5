@@ -258,6 +258,7 @@ sap.ui.define([
 	 *     full screen mode when runs on iOS device.
 	 *
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/util/Mobile.init} instead
 	 */
 	jQuery.sap.initMobile = Mobile.init;
 
@@ -308,6 +309,7 @@ sap.ui.define([
 	 * @function
 	 * @param {object} oIcons
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/util/Mobile.setIcons} instead
 	 */
 	jQuery.sap.setIcons = Mobile.setIcons;
 
@@ -329,6 +331,7 @@ sap.ui.define([
 	 * @param {boolean} bValue whether the Application will be loaded in full screen mode after added to home
 	 *     screen from iOS Safari or mobile Chrome from version 31.
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/util/setWebAppCapable} instead
 	 */
 	jQuery.sap.setMobileWebAppCapable = Mobile.setWebAppCapable;
 

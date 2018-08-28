@@ -40,6 +40,7 @@ sap.ui.define([
 	 * @return {Element} The DOMNode identified by the given sId
 	 * @public
 	 * @since 0.9.0
+	 * @deprecated since 1.58 use <code>document.getElementById</code> instead
 	 */
 	jQuery.sap.domById = function domById(sId, oWindow) {
 		return sId ? (oWindow || window).document.getElementById(sId) : null;
@@ -59,6 +60,7 @@ sap.ui.define([
 	 * @public
 	 * @since 0.9.1
 	 * @function
+	 * @deprecated since 1.58 use <code>jQuery(document.getElementById(sId))</code> instead
 	 */
 	jQuery.sap.byId = function byId(sId, oContext) {
 		var escapedId = "";
@@ -81,6 +83,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.1.2
 	 * @function
+	 * @deprecated since 1.58 use <code>oDomRef.focus()</code> instead
 	 */
 	jQuery.sap.focus = function focus(oDomRef) {
 		if (!oDomRef) {
@@ -97,6 +100,7 @@ sap.ui.define([
 	 * @returns {float} The converted value in <code>rem</code> units. E.g.: <code>1</code>
 	 * @protected
 	 * @since 1.48
+	 * @deprecated since 1.58 use {@link module:sap/ui/dom/units/Rem.fromPx} instead
 	 */
 	jQuery.sap.pxToRem = domUnitsRem.fromPx;
 
@@ -107,6 +111,7 @@ sap.ui.define([
 	 * @returns {float} The converted value in <code>px</code> units. E.g.: <code>16</code>
 	 * @protected
 	 * @since 1.48
+	 * @deprecated since 1.58 use {@link module:sap/ui/dom/units/Rem.toPx} instead
 	 */
 	jQuery.sap.remToPx = domUnitsRem.toPx;
 
@@ -119,6 +124,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @since 0.9.0
 	 * @function
+	 * @deprecated since 1.58 use native <code>Element#outerHTML</code> instead
 	 */
 	jQuery.fn.outerHTML = function() {
 		var oDomRef = this.get(0);
@@ -151,6 +157,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @since 0.9.0
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/ui/dom/containsOrEquals} instead
 	 */
 	jQuery.sap.containsOrEquals = domContainsOrEquals;
 
@@ -171,6 +178,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @since 0.20.0
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/ui/dom/denormalizeScrollLeftRTL} instead
 	 */
 	jQuery.sap.denormalizeScrollLeftRTL = domDenormalizeScrollLeftRTL;
 
@@ -195,6 +203,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @since 1.26.1
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/ui/dom/denormalizeScrollBeginRTL} instead
 	 */
 	jQuery.sap.denormalizeScrollBeginRTL = domDenormalizeScrollBeginRTL;
 
@@ -216,6 +225,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @type {boolean}
+	 * @deprecated since 1.58
 	 */
 	jQuery.support.selectstart = "onselectstart" in document.createElement("div");
 
@@ -227,6 +237,7 @@ sap.ui.define([
 	 * @public
 	 * @since 0.9.0
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/ui/dom/getOwnerWindow} instead
 	 */
 	jQuery.sap.ownerWindow = domGetOwnerWindow;
 
@@ -241,6 +252,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.4.0
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/ui/dom/getScrollbarSize} instead
 	 */
 	jQuery.sap.scrollbarSize = domGetScrollbarSize;
 
@@ -256,6 +268,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.22
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/ui/core/syncStyleClass} instead
 	 */
 	jQuery.sap.syncStyleClass = fnSyncStyleClass;
 
@@ -270,7 +283,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @since 1.30.0
 	 * @private
-	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/ui/dom/patch} instead
 	 */
 	jQuery.sap.replaceDOM = function(oOldDom, vNewDom, bCleanData) {
 		var oNewDom;

@@ -12,6 +12,7 @@ function(ActivityDetection, jQuery) {
 	 * @name jQuery.sap.act
 	 * @namespace
 	 * @static
+	 * @deprecated since 1.58 use {@link module:sap/ui/util/ActivityDetection} instead
 	 */
 	jQuery.sap.act = ActivityDetection;
 
