@@ -2,6 +2,7 @@
 <html style="height: 100%">
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>sap.f.DynamicPage test page</title>
 
 	<script src="shared-config.js"></script>
@@ -13,7 +14,9 @@
 
 	<script>
 
-		var aPages = [];
+		var aPages = [],
+		iBusyStateDuration = 3000; // ms
+
 		for (var i = 0; i <= 20; i++) {
 			aPages.push(new sap.m.Page("page" + i, {
 				title: "Page " + i,
@@ -21,6 +24,7 @@
 					text: "Press me",
 					press: function () {
 						oFCL.setBusy(true);
+						setTimeout(oFCL.setBusy.bind(oFCL), iBusyStateDuration, false);
 					}
 				})]
 			}));
