@@ -14,12 +14,23 @@ function (library, IssueManager, RuleSetLoader, StringHistoryFormatter, AbapHist
 	var _aRuns = [];
 
 	var _generateRootLevelKeys = function (oRun, sFormat) {
+		var oRulePreset = null;
+		if (oRun.rulePreset) {
+			oRulePreset = {
+				id: oRun.rulePreset.id,
+				title: oRun.rulePreset.title,
+				description: oRun.rulePreset.description,
+				dateExported: oRun.rulePreset.dateExported
+			};
+		}
+
 		return {
 			loadedLibraries: {},
 			analysisInfo: {
 				duration: oRun.analysisDuration,
 				date: oRun.date,
-				executionScope: oRun.scope.executionScope
+				executionScope: oRun.scope.executionScope,
+				rulePreset: oRulePreset
 			},
 			applicationInfo: oRun.application,
 			technicalInfo: oRun.technical,
@@ -120,7 +131,8 @@ function (library, IssueManager, RuleSetLoader, StringHistoryFormatter, AbapHist
 			var mIssues = IssueManager.groupIssues(IssueManager.getIssuesModel()),
 				aIssues = IssueManager.getIssues(),
 				mRules = RuleSetLoader.getRuleSets(),
-				mSelectedRules = oContext._oSelectedRulesIds;
+				mSelectedRules = oContext._oSelectedRulesIds,
+				oSelectedRulePreset = oContext._oSelectedRulePreset;
 
 			_aRuns.push({
 				date: new Date().toUTCString(),
@@ -129,6 +141,7 @@ function (library, IssueManager, RuleSetLoader, StringHistoryFormatter, AbapHist
 				application: oContext._oDataCollector.getAppInfo(),
 				technical: oContext._oDataCollector.getTechInfoJSON(),
 				rules: IssueManager.getRulesViewModel(mRules, mSelectedRules, mIssues),
+				rulePreset: oSelectedRulePreset,
 				scope: {
 					executionScope: {
 						type: oContext._oExecutionScope._getType(),
