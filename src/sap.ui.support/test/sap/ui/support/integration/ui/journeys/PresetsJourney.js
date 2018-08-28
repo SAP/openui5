@@ -387,6 +387,8 @@ sap.ui.define([
 
 	opaTest("Should see validation messages when required inputs are not filled", function(Given, When, Then) {
 
+		When.onThePresetsPage.iOpenPresetsPopover();
+
 		When.onThePresetsPage.iPressExport();
 
 		When.onThePresetsPage.iEnterExportData("title", "")
