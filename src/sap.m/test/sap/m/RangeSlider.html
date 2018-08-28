@@ -281,9 +281,16 @@
                 step: 0.05
             }).placeAt("content4");
 
-            new sap.m.RangeSlider({enableTickmarks: true}).placeAt("content5");
+            new sap.m.RangeSlider({
+                showAdvancedTooltip: true,
+                showHandleTooltip: false,
+                inputsAsTooltips: true,
+                enableTickmarks: true}).placeAt("content5");
 
             new sap.m.RangeSlider({
+                showAdvancedTooltip: true,
+                showHandleTooltip: false,
+                inputsAsTooltips: true,
 	            enableTickmarks: true,
 	            scale: new sap.m.ResponsiveScale({tickmarksBetweenLabels: 5})
             }).placeAt("content6");
