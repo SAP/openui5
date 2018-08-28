@@ -245,7 +245,7 @@ sap.ui.define([
 
 		if (!this.hasListeners("press")) {
 			this.$().removeAttr("tabindex");
-			this.$().removeAttr("role");
+			this.$().attr("role", "img");
 		}
 
 		return this;

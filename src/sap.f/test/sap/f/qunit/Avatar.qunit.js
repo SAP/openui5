@@ -359,6 +359,18 @@
 
 		//assert
 		assert.strictEqual($oAvatar.attr("aria-label"), sDefaultTooltip, "Aria-label should be the default one");
+
+		//act
+		this.oAvatar.attachPress();
+
+		//assert
+		assert.strictEqual($oAvatar.attr("role"), "button", "Aria role should be 'button'");
+
+		//act
+		this.oAvatar.detachPress();
+
+		//assert
+		assert.strictEqual($oAvatar.attr("role"), "img", "Aria role should be 'img'");
 	});
 
 })();
