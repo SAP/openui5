@@ -644,6 +644,12 @@ function(
 			.then(function () {
 				// Should be initialized after the Toolbar is rendered since it depends on it
 				this.getPopupManager().setRta(this);
+
+				if (Device.browser.name === "ff") {
+					// in FF shift+f10 also opens a browser context menu.
+					// It seems that the only way to get rid of it is to completely turn off context menu in ff..
+					jQuery(document).on('contextmenu', _ffContextMenuHandler);
+				}
 			}.bind(this))
 			.then(function() {
 				var oRootOverlay = OverlayRegistry.getOverlay(this.getRootControl());
@@ -671,6 +677,10 @@ function(
 			);
 		}
 	};
+
+	function _ffContextMenuHandler() {
+		return false;
+	}
 
 	/**
 	 * Checks the Publish button and app variant support (i.e. Save As and Overview of App Variants) availability
@@ -1046,6 +1056,10 @@ function(
 
 		if (this._oServiceEventBus) {
 			this._oServiceEventBus.destroy();
+		}
+
+		if (Device.browser.name === "ff") {
+			jQuery(document).off("contextmenu", _ffContextMenuHandler);
 		}
 
 		window.onbeforeunload = this._oldUnloadHandler;
