@@ -644,28 +644,6 @@
 			SyncPromise.listener = listener;
 		});
 
-		QUnit.config.autostart = false;
-		sap.ui.require(["sap/ui/core/Core"], function (Core) {
-			var oCore = sap.ui.getCore();
-
-			oCore.attachInit(function () {
-				function start() {
-					try {
-						oCore.detachThemeChanged(start);
-						QUnit.start();
-					} catch (ex) {
-						// no way to tell if QUnit.start() has already been called :-(
-					}
-				}
-
-				if (oCore.isThemeApplied()) {
-					start();
-				} else {
-					oCore.attachThemeChanged(start);
-				}
-			});
-		});
-
 		// allow easier module selection: larger list, one click selection
 		QUnit.begin(function () {
 			var sFileName, aHits;
