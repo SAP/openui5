@@ -36,7 +36,7 @@
 								visible="{=!${versionData>/isOpenUI5}}"
 								target="_blank"/>
 						<Link
-								class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
+								class="demokitInitialPagesBrightLink sapUiTinyMarginBottom sapUiLargeMarginEnd"
 								text="License"
 								href="LICENSE.txt"
 								visible="{versionData>/isOpenUI5}"
