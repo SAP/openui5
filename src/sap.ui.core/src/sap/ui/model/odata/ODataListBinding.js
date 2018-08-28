@@ -599,10 +599,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Refreshes the binding, check whether the model data has been changed and fire change event
+	 * Refreshes the binding, checks whether the model data has been changed and fires a change event
 	 * if this is the case. For server side models this should refetch the data from the server.
 	 * To update a control, even if no data has been changed, e.g. to reset a control after failed
-	 * validation, please use the parameter bForceUpdate.
+	 * validation, use the parameter <code>bForceUpdate</code>.
 	 *
 	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
 	 * @public

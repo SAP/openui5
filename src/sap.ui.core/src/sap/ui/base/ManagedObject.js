@@ -1201,9 +1201,19 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the object's Id.
+	 * Returns the object's ID.
 	 *
-	 * @return {string} the objects's Id.
+	 * There is no guarantee or check or requirement for the ID of a <code>ManagedObject</code> to be unique.
+	 * Only some subclasses of <code>ManagedObject</code> introduce this as a requirement, e.g. <code>Component</code>
+	 * or <code>Element</code>. All elements existing in the same window at the same time must have different IDs.
+	 * A new element will fail during construction when the given ID is already used by another element.
+	 * But there might be a component with the same ID as an element or another <code>ManagedObject</code>.
+	 *
+	 * For the same reason, there is no general lookup for <code>ManagedObject</code>s via their ID. Only for subclasses
+	 * that enforce unique IDs, there might be lookup mechanisms (e.g. {@link sap.ui.core.Core#byId sap.ui.getCore().byId()}
+	 * for elements).
+	 *
+	 * @return {string} The objects's ID.
 	 * @public
 	 */
 	ManagedObject.prototype.getId = function() {
@@ -1420,7 +1430,13 @@ sap.ui.define([
 	/**
 	 * Resets the given property to the default value and also restores the "initial" state (like it has never been set).
 	 *
-	 * @param {string} sPropertyName the name of the property
+	 * As subclasses might have implemented side effects in the named setter <code>setXYZ</code> for property 'xyz',
+	 * that setter is called with a value of <code>null</code>, which by convention restores the default value of
+	 * the property. This is only done to notify subclasses, the internal state is anyhow reset.
+	 *
+	 * When the property has not been modified so far, nothing will be done.
+	 *
+	 * @param {string} sPropertyName Name of the property
 	 * @returns {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
 	 * @protected
 	 */
@@ -2979,7 +2995,7 @@ sap.ui.define([
 	 * to resolve bound properties or aggregations of the object itself and all of its children
 	 * relatively to the given path.
 	 *
-	 * @deprecated Since 1.11.1, please use bindElement instead.
+	 * @deprecated Since 1.11.1, please use {@link #bindObject} instead.
 	 * @param {string} sPath the binding path
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
@@ -2992,7 +3008,7 @@ sap.ui.define([
 	 * Removes the defined binding context of this object, all bindings will now resolve
 	 * relative to the parent context again.
 	 *
-	 * @deprecated Since 1.11.1, please use unbindElement instead.
+	 * @deprecated Since 1.11.1, please use {@link #unbindObject} instead.
 	 * @param {string} [sModelName] name of the model to remove the context for.
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public

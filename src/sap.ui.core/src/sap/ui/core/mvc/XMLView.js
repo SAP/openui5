@@ -111,30 +111,37 @@ sap.ui.define([
 		/**
 		 * Instantiates an XMLView of the given name and with the given ID.
 		 *
-		 * The <code>viewName</code> must either correspond to an XML module that can be loaded
-		 * via the module system (viewName + suffix ".view.xml") and which defines the view, or it must
-		 * be a configuration object for a view.
-		 * The configuration object can have a <code>viewName</code>, <code>viewContent</code> and a <code>controller
-		 * </code> property. The <code>viewName</code> behaves as described above. <code>viewContent</code> is optional
-		 * and can hold a view description as XML string or as already parsed XML Document. If not given, the view content
-		 *  definition is loaded by the module system.
+		 * The <code>vView</code> can either be the name of the module that contains the view definition
+		 * or it can be a configuration object with properties <code>viewName</code>, <code>viewContent</code>
+		 * and a <code>controller</code> property (more properties are described in the parameters section below).
 		 *
-		 * <strong>Note</strong>: if a <code>Document</code> is given, it might be modified during view construction.
+		 * If a <code>viewName</code> is given, it behaves the same as when <code>vView</code> is a string:
+		 * the named resource will be loaded and parsed as XML. Alternatively, an already loaded view definition
+		 * can be provided as <code>viewContent</code>, either as XML string or as an already parsed XML document.
+		 * Exactly one of <code>viewName</code> and <code>viewContent</code> must be given, if none or both are given,
+		 * an error will be reported. The <code>controller</code> property is optional and can hold a controller instance.
+		 * When given, it overrides the controller class defined in the view definition.
 		 *
-		 * <strong>Note:</strong><br>
-		 * On root level, you can only define content for the default aggregation, e.g. without adding the <code>&lt;content&gt;</code> tag. If
-		 * you want to specify content for another aggregation of a view like <code>dependents</code>, place it in a child
-		 * control's dependents aggregation or add it by using {@link sap.ui.core.mvc.XMLView#addDependent}.
+		 * When property <code>async</code> is set to true, the view definition and the controller class (and its
+		 * dependencies) will be loaded asynchronously. Any controls used in the view might be loaded sync or
+		 * async, this depends on the experimental runtime configuration option "xx-xml-processing". Even when
+		 * the view definition is provided as string or XML Document, controller or controls might be loaded
+		 * asynchronously. In any case a view instance will be returned synchronously by this factory API, but its
+		 * content (control tree) might appear only later. Also see {@link sap.ui.core.mvc.View#loaded}.
 		 *
-		 * <strong>Note</strong>: if you enable caching, you need to take care of the invalidation via keys. Automatic
+		 * <strong>Note</strong>: If an XML document is given, it might be modified during view construction.
+		 *
+		 * <strong>Note</strong>: On root level, you can only define content for the default aggregation, e.g.
+		 * without adding the <code>&lt;content&gt;</code> tag. If you want to specify content for another aggregation
+		 * of a view like <code>dependents</code>, place it in a child control's dependents aggregation or add it by
+		 * using {@link sap.ui.core.mvc.XMLView#addDependent}.
+		 *
+		 * <strong>Note</strong>: If you enable caching, you need to take care of the invalidation via keys. Automatic
 		 * invalidation takes only place if the UI5 version or the component descriptor (manifest.json) change. This is
 		 * still an experimental feature and may experience slight changes of the invalidation parameters or the cache
 		 * key format.
 		 *
-		 * The controller property can hold a controller instance. If a controller instance is given,
-		 * it overrides the controller defined in the view.
-		 *
-		 * Like with any other control, ID is optional and one will be created automatically.
+		 * Like with any other control, <code>sId</code> is optional and an ID will be created automatically.
 		 *
 		 * @param {string} [sId] ID of the newly created view
 		 * @param {string | object} vView Name of the view or a view configuration object as described above
@@ -149,7 +156,7 @@ sap.ui.define([
 		 * @param {sap.ui.core.mvc.Controller} [vView.controller] Controller instance to be used for this view
 		 * @public
 		 * @static
-		 * @deprecated since 1.56: Use sap.ui.core.mvc.XMLView.create instead
+		 * @deprecated since 1.56: Use {@link sap.ui.core.mvc.XMLView.create XMLView.create} instead
 		 * @return {sap.ui.core.mvc.XMLView} the created XMLView instance
 		 */
 		sap.ui.xmlview = function(sId, vView) {
@@ -157,34 +164,46 @@ sap.ui.define([
 		};
 
 		/**
-		 * Instantiates an XMLView of the given configuration object.
+		 * Instantiates an XMLView from the given configuration options.
 		 *
-		 * <strong>Note:</strong><br>
-		 * On root level, you can only define content for the default aggregation, e.g. without adding the <code>&lt;content&gt;</code> tag. If
-		 * you want to specify content for another aggregation of a view like <code>dependents</code>, place it in a child
-		 * control's dependents aggregation or add it by using {@link sap.ui.core.mvc.XMLView#addDependent}.
+		 * If a <code>viewName</code> is given, it must be a dot-separated name of an XML view resource (without
+		 * the mandatory suffix ".view.xml"). The resource will be loaded asynchronously via the module system
+		 * (preload caches might apply) and will be parsed as XML. Alternatively, an already loaded view <code>definition</code>
+		 * can be provided, either as XML string or as an already parsed XML document. Exactly one of <code>viewName</code>
+		 * or <code>definition</code> must be given, if none or both are given, an error will be reported.
 		 *
-		 * <strong>Note</strong>: if you enable caching, you need to take care of the invalidation via keys. Automatic
+		 * The <code>controller</code> property is optional and can hold a controller instance. When given, it overrides
+		 * the controller class defined in the view definition.
+		 *
+		 * <strong>Note</strong>: On root level, you can only define content for the default aggregation, e.g. without
+		 * adding the <code>&lt;content&gt;</code> tag. If you want to specify content for another aggregation of a view
+		 * like <code>dependents</code>, place it in a child control's <code>dependents</code> aggregation or add it
+		 * by using {@link sap.ui.core.mvc.XMLView#addDependent}.
+		 *
+		 * <strong>Note</strong>: If you enable caching, you need to take care of the invalidation via keys. Automatic
 		 * invalidation takes only place if the UI5 version or the component descriptor (manifest.json) change. This is
 		 * still an experimental feature and may experience slight changes of the invalidation parameters or the cache
 		 * key format.
 		 *
-		 * @param {map} mOptions A map containing the view configuration options.
-		 * @param {string} [mOptions.id] Specifies an ID for the View instance. If no ID is given, an ID will be generated.
-		 * @param {string} [mOptions.viewName] corresponds to an XML module that can be loaded via the module system (mOptions.viewName + suffix ".view.xml")
-		 * @param {sap.ui.core.mvc.Controller} [mOptions.controller] Controller instance to be used for this view. The given controller instance overrides
-		 * the controller defined in the view definition. Sharing a controller instance between multiple views is not supported.
-		 * @param {string|Document} [mOptions.definition] XML string or XML document that defines the view. If not given, the view content
-		 * definition is loaded by the module system.
-		 * @param {object} [mOptions.cache] Cache configuration; caching gets active when this object is provided
-		 * with vView.cache.keys array; keys are used to store data in the cache and for invalidation of the cache.
-		 * @param {Array.<(string|Promise)>} [mOptions.cache.keys] Array with strings or Promises resolving with strings
+		 * @param {object} mOptions - An object containing the view configuration options.
+		 * @param {string} [mOptions.id] - Specifies an ID for the View instance. If no ID is given, an ID will be generated.
+		 * @param {string} [mOptions.viewName] - Corresponds to an XML module that can be loaded via the module system
+		 *                     (mOptions.viewName + suffix ".view.xml")
+		 * @param {string|Document} [mOptions.definition] - XML string or XML document that defines the view.
+		 *                     Exactly one of <code>viewName</code> or <code>definition</code> must be given.
+		 * @param {sap.ui.core.mvc.Controller} [mOptions.controller] - Controller instance to be used for this view.
+		 *                     The given controller instance overrides the controller defined in the view definition.
+		 *                     Sharing one controller instance between multiple views is not possible.
+		 * @param {object} [mOptions.cache] - Cache configuration; caching gets active when this object is provided
+		 *                     with vView.cache.keys array; keys are used to store data in the cache and for invalidation
+		 *                     of the cache.
+		 * @param {Array.<(string|Promise)>} [mOptions.cache.keys] - Array with strings or Promises resolving with strings
 		 * @param {object} [mOptions.preprocessors] Preprocessors configuration, see {@link sap.ui.core.mvc.View}
-		 * <strong>Note</strong>: These preprocessors are only available to this instance. For global or
-		 * on-demand availability use {@link sap.ui.core.mvc.XMLView.registerPreprocessor}.
+		 *                     <strong>Note</strong>: These preprocessors are only available to this instance.
+		 *                     For global or on-demand availability use {@link sap.ui.core.mvc.XMLView.registerPreprocessor}.
 		 * @public
 		 * @static
-		 * @return {Promise} a Promise that resolves with the view instance and rejects with any thrown error.
+		 * @return {Promise<sap.ui.core.mvc.XMLView>} A Promise that resolves with the view instance or rejects with any thrown error.
 		 */
 		XMLView.create = function (mOptions) {
 			var mParameters = merge({}, mOptions);

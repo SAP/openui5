@@ -4996,14 +4996,14 @@ sap.ui.define([
 	/**
 	 * Sets a new value for the given property <code>sPath</code> in the model.
 	 *
-	 * If the <code>changeBatchGroup</code> for the changed entity type is set to deferred changes could be submitted
-	 * with {@link #submitChanges}. Otherwise the change will be submitted directly.
+	 * If the <code>changeBatchGroup</code> for the changed entity type is set to {@link #setDeferredGroups deferred},
+	 * changes could be submitted with {@link #submitChanges}. Otherwise the change will be submitted directly.
 	 *
 	 * @param {string}  sPath Path of the property to set
 	 * @param {any}     oValue Value to set the property to
 	 * @param {sap.ui.model.Context} [oContext=null] The context which will be used to set the property
 	 * @param {boolean} [bAsyncUpdate] Whether to update other bindings dependent on this property asynchronously
-	 * @return {boolean} <code>true</code> if the value was set correctly and <code>false</code if errors occurred
+	 * @return {boolean} <code>true</code> if the value was set correctly and <code>false</code> if errors occurred
 	 *                   like the entry was not found or another entry was already updated.
 	 * @public
 	 */

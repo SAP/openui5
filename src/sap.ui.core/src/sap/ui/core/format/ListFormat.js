@@ -34,11 +34,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Get a instance of the ListFormat which can be used for formatting
+	 * Get an instance of the ListFormat which can be used for formatting.
 	 *
 	 * @param {object} [oFormatOptions] Object which defines the format options
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
 	 * @return {sap.ui.core.format.ListFormat} Instance of the ListFormat
+	 * @public
 	 *
 	 */
 	ListFormat.getInstance = function(oFormatOptions, oLocale) {
@@ -51,7 +52,6 @@ sap.ui.define([
 	 * @param {object} [oFormatOptions] Object which defines the format options
 	 * @param {{sap.ui.core.Locale}} [oLocale] Locale to get the formatter for
 	 * @return {sap.ui.core.format.ListFormat} Instance of the ListFormat
-	 * @static
 	 * @private
 	 */
 	ListFormat.createInstance = function(oFormatOptions, oLocale){
@@ -140,10 +140,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Parses a given list string into an array
+	 * Parses a given list string into an array.
 	 *
-	 * @param {string} sValue The string to be parsed
+	 * @param {string} sValue String value to be parsed
 	 * @return {array} The parsed output value
+	 * @public
 	 */
 	ListFormat.prototype.parse = function(sValue) {
 		if (typeof sValue !== 'string') {

@@ -96,7 +96,7 @@ sap.ui.define([
 	 * @param {boolean} [vView.async] defines how the view source is loaded and rendered later on
 	 * @public
 	 * @static
-	 * @deprecated since 1.56: Use HTMLView.create instead
+	 * @deprecated since 1.56: Use {@link sap.ui.core.mvc.HTMLView.create HTMLView.create} instead
 	 * @return {sap.ui.core.mvc.HTMLView | undefined} the created HTMLView instance in the creation case, otherwise undefined
 	 */
 	sap.ui.htmlview = function(sId, vView) {
