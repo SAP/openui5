@@ -57,11 +57,11 @@ sap.ui.define([
 			this.oComponentContainer.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			// TODO: SHOULD BE REFACTORED
-			Bootstrap.initSupportRules(["silent"]);
-			setTimeout(function() {
-				done();
-			}, 0);
+			Bootstrap.initSupportRules(["true", "silent"], {
+				onReady: function() {
+					done();
+				}
+			});
 		},
 		afterEach: function () {
 			this.oComponentContainer.destroy();

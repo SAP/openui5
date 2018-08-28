@@ -62,13 +62,15 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/base/Object', "sap/base/util/UriPara
 				*/
 				noRuleFailures: function(options) {
 					var ruleDeferred = jQueryDOM.Deferred(),
-						failOnAnyRuleIssues = options[0] && options[0]["failOnAnyIssues"],
-						failOnHighRuleIssues = options[0] && options[0]["failOnHighIssues"],
-						rules = options[0] && options[0].rules,
-						executionScope = options[0] && options[0].executionScope;
+						options = options[0] || {},
+						failOnAnyRuleIssues = options["failOnAnyIssues"],
+						failOnHighRuleIssues = options["failOnHighIssues"],
+						rules = options.rules,
+						preset = options.preset,
+						executionScope = options.executionScope;
 
 					// private API provided by jquery.sap.global
-					jQuery.sap.support.analyze(executionScope, rules).then(function () {
+					jQuery.sap.support.analyze(executionScope, rules || preset).then(function () {
 						var analysisHistory = jQuery.sap.support.getAnalysisHistory(),
 							lastAnalysis = { issues: [] };
 
