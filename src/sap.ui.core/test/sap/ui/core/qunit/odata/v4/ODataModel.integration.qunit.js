@@ -1384,7 +1384,7 @@ sap.ui.require([
 					"code" : undefined,
 					"message" : "Employee does not exist",
 					"persistent" : true,
-					"target" : undefined,
+					"target" : "",
 					"type" : "Error"
 				}]);
 
@@ -2477,7 +2477,7 @@ sap.ui.require([
 					"code" : undefined,
 					"message" : "Missing team ID",
 					"persistent" : true,
-					"target" : undefined,
+					"target" : "",
 					"type" : "Error"
 				}])
 				.expectChange("teamId", null); // reset to initial state
@@ -7357,13 +7357,13 @@ sap.ui.require([
 					"code" : "foo-42",
 					"message" : "text0",
 					"persistent" : true,
-					"target" : undefined,
+					"target" : "",
 					"type" : "Warning"
 				}, {
 					"code" : "foo-77",
 					"message" : "text1",
 					"persistent" : true,
-					"target" : undefined,
+					"target" : "",
 					"type" : "Information"
 				}])
 				.expectChange("id", "23");
