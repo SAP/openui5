@@ -528,7 +528,7 @@
 													<template:repeat list="{data>/methods}" var="method">
 														<custom:Row>
 															<custom:ParamText text="{method>name}"
-																		href="#/api/{data>/name}/methods/{method>name}"
+																		href="{method>href}"
 																		deprecated="{= ${method>deprecated} !== undefined }"
 																        experimental="{= ${method>experimental} !== undefined }"
 																		press="scrollToMethod"/>
@@ -633,7 +633,7 @@
 																<layout:VerticalLayout class="sapUiDocumentationOrList" width="100%">
 																	<template:repeat list="{method>returnValue/types}" var="rtype">
 																		<m:Link text="{rtype>value}"
-																				href="#/api/{= ${path: 'rtype>value'}.replace('[]', '') }"
+																				href="{rtype>href}"
 																				enabled="{= !!${rtype>linkEnabled} }"/>
 																	</template:repeat>
 																</layout:VerticalLayout>
