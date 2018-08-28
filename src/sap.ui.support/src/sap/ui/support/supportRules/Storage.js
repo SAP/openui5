@@ -217,6 +217,17 @@ function (RuleSerializer, constants) {
 		},
 
 		/**
+		 * Retrieves the list of custom presets
+		 * @private
+		 * @method
+		 * @name sap.ui.support.Storage.getCustomPresets
+		 * @returns {Object[]} The list of custom presets
+		 */
+		getCustomPresets: function() {
+			return JSON.parse(localStorage.getItem(constants.LOCAL_STORAGE_CUSTOM_PRESETS_KEY));
+		},
+
+		/**
 		 * Sets the list of selection presets
 		 * @private
 		 * @method
@@ -225,6 +236,17 @@ function (RuleSerializer, constants) {
 		 */
 		setSelectionPresets: function(selectionPresets)  {
 			localStorage.setItem(constants.LOCAL_STORAGE_SELECTION_PRESETS_KEY, JSON.stringify(selectionPresets));
+		},
+
+		/**
+		 * Sets the list of custom presets
+		 * @private
+		 * @method
+		 * @name sap.ui.support.Storage.setCustomPresets
+		 * @param {Object[]} customPresets The list of custom presets
+		 */
+		setCustomPresets: function(customPresets)  {
+			localStorage.setItem(constants.LOCAL_STORAGE_CUSTOM_PRESETS_KEY, JSON.stringify(customPresets));
 		},
 
 		/**
@@ -240,6 +262,7 @@ function (RuleSerializer, constants) {
 			localStorage.removeItem(constants.LOCAL_STORAGE_SELECTED_CONTEXT_COMPONENT_KEY);
 			localStorage.removeItem(constants.LOCAL_STORAGE_SELECTED_VISIBLE_COLUMN_KEY);
 			localStorage.removeItem(constants.LOCAL_STORAGE_SELECTION_PRESETS_KEY);
+			localStorage.removeItem(constants.LOCAL_STORAGE_CUSTOM_PRESETS_KEY);
 		},
 
 		/**

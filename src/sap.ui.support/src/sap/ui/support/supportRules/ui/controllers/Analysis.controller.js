@@ -302,6 +302,8 @@ sap.ui.define([
 					if (oUpdatedRules) {
 						oTreeViewModelRules = oUpdatedRules;
 					}
+
+					PresetsUtils.loadCustomPresets();
 				}
 
 				if (bPersistSettings || bLoadingAdditionalRuleSets) {

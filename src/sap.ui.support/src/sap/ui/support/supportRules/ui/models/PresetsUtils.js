@@ -84,7 +84,7 @@ sap.ui.define([
 
 			if (!(oPreset.isModified || oPreset.isMySelection)) {
 				oPreset.isModified = true;
-				oPreset.title = oPreset.title + " (*)";
+				oPreset.title = oPreset.title + " *";
 			}
 
 			this.model.setProperty("/selectionPresetsCurrent", oPreset);
@@ -153,11 +153,31 @@ sap.ui.define([
 		},
 
 		/**
+		 * Persists all custom imported presets in the local storage
+		 * @public
+		 */
+		persistCustomPresets: function () {
+			Storage.setCustomPresets(this.model.getProperty("/customPresets"));
+		},
+
+		/**
 		 * Checks if the user has allowed persistence.
 		 * @return {boolean} If the persistence cookie is set
 		 */
 		isPersistingAllowed: function () {
 			return !!Storage.readPersistenceCookie(constants.COOKIE_NAME);
+		},
+
+		/**
+		 * Loads custom presets from local storage
+		 * @public
+		 */
+		loadCustomPresets: function () {
+			var aPersistedPresets = Storage.getCustomPresets();
+
+			if (aPersistedPresets) {
+				this.model.setProperty("/customPresets", aPersistedPresets);
+			}
 		}
 	};
 
