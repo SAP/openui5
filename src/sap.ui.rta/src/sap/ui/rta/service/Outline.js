@@ -46,19 +46,6 @@ sap.ui.define([
 	/**
 	 * Object containing an outline of available nodes.
 	 *
-	 * <pre>
-	 * {
-	 *    id: &lt;string&gt; // id of the control,
-	 *    instanceName: &lt;string&gt; // text retrieved from node's designtime metadata getLabel(),
-	 *    name: &lt;string&gt; // singular name from node's designtime metadata,
-	 *    technicalName: &lt;string&gt; // class type for element nodes / aggregation name for aggregation nodes,
-	 *    editable: &lt;boolean&gt; // whether the node is editable,
-	 *    icon: &lt;string&gt; // icon path for the node,
-	 *    type: &lt;string&gt; // type of control node,
-	 *    elements: &lt;sap.ui.rta.service.Outline.OutlineObject[]&gt; // outline data for child nodes
-	 * }
-	 * </pre>
-	 *
 	 * @typedef {object} sap.ui.rta.service.Outline.OutlineObject
 	 * @since 1.56
 	 * @private

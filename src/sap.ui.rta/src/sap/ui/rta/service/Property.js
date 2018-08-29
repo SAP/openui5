@@ -34,16 +34,6 @@ sap.ui.define([
 	/**
 	 * Object containing the detailed information about design time properties of the passed control.
 	 *
-	 * <pre>
-	 * {
-	 *    name: &lt;object&gt;, // name object from dt-metadata
-	 *    properties: &lt;object&gt;, // properties object from dt-metadata and control metadata
-	 *    annotations: &lt;object&gt;, // annotations object from dt-metadata
-	 *    label: &lt;string&gt;, // label from getLabel property of dt-metadata
-	 * }
-	 * </pre>
-	 *
-	 *
 	 * @typedef {object} sap.ui.rta.service.Property.PropertyObject
 	 * @since 1.58
 	 * @private
@@ -52,6 +42,7 @@ sap.ui.define([
 	 * @property {object} properties - properties object from dt-metadata and control metadata
 	 * @property {object} annotations - annotations object from dt-metadata
 	 * @property {string} [label] - label from getLabel property of dt-metadata
+	 * @property {object} [links] - links from dt-metadata
 	 */
 
 	return function(oRta) {
@@ -95,7 +86,8 @@ sap.ui.define([
 					aPromiseResults[0] && !jQuery.isEmptyObject(aPromiseResults[0]) && {annotations: aPromiseResults[0]},
 					aPromiseResults[1] && {properties: aPromiseResults[1]},
 					aPromiseResults[2] && {label: aPromiseResults[2]},
-					oDesignTimeMetadataData.name && {name: oDesignTimeMetadata.getName(oElement)}
+					oDesignTimeMetadataData.name && {name: oDesignTimeMetadata.getName(oElement)},
+					oDesignTimeMetadataData.links && {links: oProperty._getEvaluatedLinks(oDesignTimeMetadataData.links, oElement)}
 				);
 			});
 		};
@@ -208,26 +200,11 @@ sap.ui.define([
 							// to ensure ignore function is replaced by a boolean value
 							mDtObj[sKey].ignore = bIgnore;
 							if (!bIgnore) {
-								// check if ignore property is set to true - remove from metadata object, if present
-								mFiltered[sKey] = Object.assign({}, mDtObj[sKey]);
-								if (!jQuery.isEmptyObject(mFiltered[sKey].links)) {
-
-									Object.keys(mFiltered[sKey].links).forEach(function (sLink) {
-
-										if (Array.isArray(mFiltered[sKey].links[sLink])) {
-
-											mFiltered[sKey].links[sLink].map(function (oLink) {
-												if (typeof oLink.text === "function") {
-													oLink.text = oLink.text(oElement);
-												}
-												return oLink;
-											});
-
-										}
-
-									});
-
-								}
+								mFiltered[sKey] = Object.assign(
+									{},
+									mDtObj[sKey],
+									mDtObj[sKey].links && {links: oProperty._getEvaluatedLinks(mDtObj[sKey].links, oElement)}
+									);
 							}
 							return mFiltered;
 						});
@@ -238,6 +215,48 @@ sap.ui.define([
 						return Object.assign(mConsolidatedObject, oFilteredResult);
 					}, {});
 				});
+		};
+
+		/**
+		 * Resolves the 'links' object containing the format:
+		 *    links: {
+		 *       "link1": [{
+		 *          href: "href-to-link1",
+		 *          text: function () {
+		 *             return "text to link 1";
+		 *          }
+		 *       }],
+		 *       "link2" : [{
+		 *          href: "href-to-link2",
+		 *          text: "text to link 2"
+		 *       }]
+		 *    }
+		 *
+		 * @param {map} mLinks - links map
+		 * @param {sap.ui.core.Element} oElement - element for which 'links' object is required to be evaluated
+		 *
+		 * @return {map} evaluated links map
+		 * @private
+		 */
+		oProperty._getEvaluatedLinks = function (mLinks, oElement){
+			var mEvaluatedLinks = {};
+			// clone links object
+			Object.assign(mEvaluatedLinks, mLinks);
+			if (!jQuery.isEmptyObject(mEvaluatedLinks)) {
+
+				Object.keys(mEvaluatedLinks).forEach(function (sLinkName) {
+					if (Array.isArray(mEvaluatedLinks[sLinkName])) {
+						mEvaluatedLinks[sLinkName].map(function (oLink) {
+							if (typeof oLink.text === "function") {
+								oLink.text = oLink.text(oElement);
+							}
+							return oLink;
+						});
+					}
+				});
+
+			}
+			return mEvaluatedLinks;
 		};
 
 		/**
@@ -380,7 +399,15 @@ sap.ui.define([
 				 *           "singular": "Singular Control Name",
 				 *           "plural": "Plural Control Name"
 				 *        },
-				 *        "label": "dt-metadata label"
+				 *        "label": "dt-metadata label",
+				 *        "links": {
+				 *                 "developer": [
+				 *                 {
+				 *                    "href": "Links.html",
+				 *                    "text": "Links Text 1"
+				 *                 }
+				 *                 ]
+				 *         }
 				 *     }
 				 * </pre>
 				 * @name sap.ui.rta.service.Property.get
