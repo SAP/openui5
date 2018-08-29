@@ -313,10 +313,6 @@ function (
 			assert.strictEqual(this.oCreateContainer._isEditableCheck(this.oFormOverlay, true), false, "then the overlay is not editable");
 		});
 
-		QUnit.test("when the designTimeMetadata has childNames for the container name", function(assert) {
-			assert.deepEqual(this.oCreateContainer.getCreateContainerText(false, this.oFormOverlay), "Create: Group", "then the correct message key is returned");
-		});
-
 		QUnit.test("when the designTimeMetadata has a getContainerIndex property and a function _determineIndex() is called", function(assert) {
 			var vAction = {
 				getIndex : function(oForm, oFormContainer) {
