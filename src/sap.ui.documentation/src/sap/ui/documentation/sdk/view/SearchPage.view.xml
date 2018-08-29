@@ -26,7 +26,6 @@
 							</OverflowToolbar>
 							<List
 								id="allList"
-								width="100%"
 								growing="true"
 								growingThreshold="25"
 								updateFinished="onAllLoadMore"
