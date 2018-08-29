@@ -476,24 +476,24 @@
 						var mAction = mRevealData.types[sType].action;
 						var bIncludeElement = true;
 
-						if (_getBindingPath(oElement, sAggregationName) === _getBindingPath(oInvisibleElement, sAggregationName)) {
-							//TODO fix with stashed type support
-							oInvisibleElement = _collectBindingPaths(oInvisibleElement, oModel);
-							oInvisibleElement.fieldLabel = ElementUtil.getLabelForElement(oInvisibleElement, mAction.getLabel);
-							oInvisibleElement.duplicateComplexName = _checkForDuplicateLabels(oInvisibleElement, aODataProperties);
+						// BCP: 1880498671
+						if (mAddODataProperty) {
+							if (_getBindingPath(oElement, sAggregationName) === _getBindingPath(oInvisibleElement, sAggregationName)) {
+								//TODO fix with stashed type support
+								oInvisibleElement = _collectBindingPaths(oInvisibleElement, oModel);
+								oInvisibleElement.fieldLabel = ElementUtil.getLabelForElement(oInvisibleElement, mAction.getLabel);
+								oInvisibleElement.duplicateComplexName = _checkForDuplicateLabels(oInvisibleElement, aODataProperties);
 
-							//Add information from the oDataProperty to the InvisibleProperty if available;
-							//if oData is available and the element is not present in it, do not include it
-							//Example use case: custom field which was hidden and then removed from system
-							//should not be available for adding after the removal
-							if (mAddODataProperty && aODataProperties.length > 0){
-								bIncludeElement = _checkAndEnhanceODataProperty(oInvisibleElement, aODataProperties, aODataNavigationProperties, aODataNavigationEntityNames);
+								//Add information from the oDataProperty to the InvisibleProperty if available;
+								//if oData is available and the element is not present in it, do not include it
+								//Example use case: custom field which was hidden and then removed from system
+								//should not be available for adding after the removal
+								if (aODataProperties.length > 0){
+									bIncludeElement = _checkAndEnhanceODataProperty(oInvisibleElement, aODataProperties, aODataNavigationProperties, aODataNavigationEntityNames);
+								}
+							} else if (BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0) {
+								bIncludeElement = false;
 							}
-						} else if (
-							oInvisibleElement.getParent()
-							&& BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0
-						) {
-							bIncludeElement = false;
 						}
 
 						if (bIncludeElement) {
