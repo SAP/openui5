@@ -492,8 +492,8 @@ sap.ui.define([
 				if (bTabChanged) {
 					var oContent = this.byId("resultContainer").getContent();
 
-					// destroy last content item (1 is the search bar and 2 is the tags bar)
-					if (oContent.length === 3) {
+					// destroy content item if available
+					if (oContent.length === 1) {
 						oContent.pop().destroy();
 					}
 					// uppercase first letter
@@ -814,7 +814,8 @@ sap.ui.define([
 				return new ToggleButton(sId, {
 					text: "{tags>name}",
 					pressed: "{tags>pressed}",
-					press: [this.onTagSelect, this]
+					press: [this.onTagSelect, this],
+					ariaLabelledBy: this.byId("labelTags")
 				});
 			}
 		}
