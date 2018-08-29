@@ -1,7 +1,19 @@
-sap.ui.require(["sap/ui/core/StashedControlSupport", "sap/ui/core/Component", "sap/m/Button", "sap/m/Panel", "sap/base/Log"],
-function(StashedControlSupport, Component, Button, Panel, Log) {
+sap.ui.define(["sap/ui/core/StashedControlSupport", "sap/ui/core/Component", "sap/m/Button", "sap/m/Panel", "sap/base/Log", "sap/ui/qunit/utils/createAndAppendDiv"],
+function(StashedControlSupport, Component, Button, Panel, Log, createAndAppendDiv) {
 	/* global QUnit */
 	"use strict";
+
+	createAndAppendDiv("content");
+
+	var sViewContent =
+		'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+			'<Panel id="Panel">' +
+				'<content>' +
+					'<Button id="StashedButton" stashed="true"/>' +
+					'<Button id="Button"/>' +
+				'</content>' +
+			'</Panel>' +
+		'</mvc:View>';
 
 	QUnit.module("Control mixin", {
 		beforeEach: function() {
@@ -122,7 +134,7 @@ function(StashedControlSupport, Component, Button, Panel, Log) {
 				StashedControlSupport.mixInto(Button);
 			}
 			this.oView = sap.ui.xmlview("view", {
-				viewContent: document.getElementById("viewsource").innerHTML
+				viewContent: sViewContent
 			}).placeAt("content");
 		},
 		afterEach: function() {
@@ -165,7 +177,7 @@ function(StashedControlSupport, Component, Button, Panel, Log) {
 		var oView;
 		function createView() {
 			oView = sap.ui.xmlview("view", {
-				viewContent: document.getElementById("viewsource").innerHTML
+				viewContent: sViewContent
 			}).placeAt("content");
 		}
 		new Component("comp").runAsOwner(createView.bind(this));

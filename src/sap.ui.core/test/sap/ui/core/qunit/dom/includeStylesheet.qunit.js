@@ -2,6 +2,8 @@
 sap.ui.define(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], function(includeStyleSheet, jQuery) {
 	"use strict";
 
+	var sPath = sap.ui.require.toUrl("testdata/core");
+
 	QUnit.module("sap.ui.dom.includeStylesheet", {
 		beforeEach: function() {
 			// create test area for stylsheets
@@ -9,7 +11,7 @@ sap.ui.define(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], func
 			jQuery("#qunit-fixture").append(this.oTestArea);
 
 			// pre-include a stylesheet
-			this.oLink = jQuery("<link rel='stylesheet' href='./dom/testdata/lib.css' data-marker='42' id='sap-ui-theme-sap.ui.layout'>");
+			this.oLink = jQuery("<link rel='stylesheet' href='" + sPath + "/dom/testdata/lib.css' data-marker='42' id='sap-ui-theme-sap.ui.layout'>");
 			jQuery("head").append(this.oLink);
 		},
 		afterEach: function() {
@@ -24,11 +26,11 @@ sap.ui.define(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], func
 			assert.notOk(true, "Error callback called");
 			done();
 		}
-		includeStyleSheet("./dom/testdata/testA.css", "jsunitIncludeStyleSheetTest", function (){
+		includeStyleSheet(sPath + "/dom/testdata/testA.css", "jsunitIncludeStyleSheetTest", function (){
 			var oTestArea = document.getElementById("includeStyleSheetTest");
 			var sBefore = jQuery(oTestArea).css("backgroundColor");
 			var iLinkCnt = document.getElementsByTagName("LINK").length;
-			includeStyleSheet("./dom/testdata/testB.css", "jsunitIncludeStyleSheetTest", function() {
+			includeStyleSheet(sPath + "/dom/testdata/testB.css", "jsunitIncludeStyleSheetTest", function() {
 				assert.notStrictEqual(jQuery(oTestArea).css("backgroundColor"), sBefore, "background-color should have changed");
 				assert.strictEqual(document.getElementsByTagName("LINK").length, iLinkCnt, "no new link element should have been created");
 				done();
@@ -39,14 +41,14 @@ sap.ui.define(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], func
 	QUnit.test("basic (Promise)", function(assert) {
 		var oTestArea, sBefore, iLinkCnt;
 		return includeStyleSheet({
-			url: "./dom/testdata/testA.css",
+			url: sPath + "/dom/testdata/testA.css",
 			id: "jsunitIncludeStyleSheetTest"
 		}).then(function() {
 			oTestArea = document.getElementById("includeStyleSheetTest");
 			sBefore = jQuery(oTestArea).css("backgroundColor");
 			iLinkCnt = document.getElementsByTagName("LINK").length;
 			return includeStyleSheet({
-				url: "./dom/testdata/testC.css",
+				url: sPath + "/dom/testdata/testC.css",
 				id: "jsunitIncludeStyleSheetTest"
 			});
 		}).then(function() {
@@ -57,7 +59,7 @@ sap.ui.define(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], func
 
 	QUnit.test("don't load twice", function(assert) {
 
-		var sStyleSheetUrl = "./dom/testdata/lib.css";
+		var sStyleSheetUrl = sPath + "/dom/testdata/lib.css";
 		var $link = jQuery(document.getElementById("sap-ui-theme-sap.ui.layout"));
 		assert.equal($link.length, 1, "initially, there should be exactly one matching link)");
 		assert.equal($link.attr("data-marker"), "42", "initially, the link object should be the declarative one");
@@ -118,7 +120,7 @@ sap.ui.define(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], func
 
 		// include 5 stylesheets
 		var iNewStylesheets = 5;
-		var sStyleBaseUrl = "./dom/testdata/stylesheets/";
+		var sStyleBaseUrl = sPath + "/dom/testdata/stylesheets/";
 		var aPromises = [];
 		var i;
 		for (i = 0; i < iNewStylesheets; i++) {
@@ -163,14 +165,14 @@ sap.ui.define(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], func
 		var done = assert.async();
 		var aPromises = [];
 
-		aPromises.push(includeStyleSheetWrapped("./dom/testdata/dummy.css", {
+		aPromises.push(includeStyleSheetWrapped(sPath + "/dom/testdata/dummy.css", {
 			"id": "mylink",
 			"data-sap-ui-attr": "attrval"
 		}).then(function() {
 			var oLink = document.getElementById("mylink");
 			assert.ok(oLink, "link should have been found");
 			assert.strictEqual("attrval", oLink.getAttribute("data-sap-ui-attr"), "link should have a custom attribute");
-			return includeStyleSheetWrapped("./dom/testdata/dummy.css", {
+			return includeStyleSheetWrapped(sPath + "/dom/testdata/dummy.css", {
 				"id": "mylink",
 				"data-sap-ui-attr": "otherval"
 			}).then(function() {
@@ -180,7 +182,7 @@ sap.ui.define(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], func
 			});
 		}));
 
-		aPromises.push(includeStyleSheetWrapped("./dom/testdata/dummy.css", {
+		aPromises.push(includeStyleSheetWrapped(sPath + "/dom/testdata/dummy.css", {
 			"data-sap-ui-id": "mylink",
 			"data-sap-ui-attr": "attrval"
 		}).then(function() {
@@ -190,7 +192,7 @@ sap.ui.define(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], func
 		}));
 
 		aPromises.push(includeStyleSheet({
-			"url": "./dom/testdata/dummy.css",
+			"url": sPath + "/dom/testdata/dummy.css",
 			"attributes": {
 				"id": "mylink-async-attrid",
 				"data-sap-ui-attr": "attrval"
@@ -200,7 +202,7 @@ sap.ui.define(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], func
 			assert.ok(oLink, "link should have been found");
 			assert.strictEqual("attrval", oLink.getAttribute("data-sap-ui-attr"), "link should have a custom attribute");
 			return includeStyleSheet({
-				"url": "./dom/testdata/dummy.css",
+				"url": sPath + "/dom/testdata/dummy.css",
 				"attributes": {
 					"id": "mylink-async-attrid",
 					"data-sap-ui-attr": "otherval"
@@ -213,7 +215,7 @@ sap.ui.define(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], func
 		}));
 
 		aPromises.push(includeStyleSheet({
-			"url": "./dom/testdata/dummy.css",
+			"url": sPath + "/dom/testdata/dummy.css",
 			"id": "mylink-async",
 			"attributes": {
 				"id": "mylink-async-override",
@@ -227,7 +229,7 @@ sap.ui.define(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], func
 		}));
 
 		aPromises.push(includeStyleSheet({
-			"url": "./dom/testdata/dummy.css",
+			"url": sPath + "/dom/testdata/dummy.css",
 			"attributes": {
 				"data-sap-ui-id": "mylink-async",
 				"data-sap-ui-attr": "attrval"
@@ -261,14 +263,14 @@ sap.ui.define(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], func
 		}
 
 		return includeStyleSheet({
-			url: "testdata/testA.css",
+			url: sPath + "/testdata/testA.css",
 			id: "mylink-fouc",
 			attributes: {
 				"data-sap-ui-foucmarker": "mylink-fouc"
 			}
 		}).then(function() {
 			return includeStyleSheet({
-				url: "testdata/testB.css",
+				url: sPath + "/testdata/testB.css",
 				id: "mylink-fouc"
 			});
 		}).then(function() {
@@ -277,21 +279,21 @@ sap.ui.define(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], func
 			var oLinkA = document.querySelectorAll("link[data-sap-ui-foucmarker='mylink-fouc']")[0];
 			assert.notOk(oLinkA.hasAttribute("id"), "The id attribute has been removed from the old link.");
 			assert.equal(oLinkA.parentNode, document.head, "Old link is still in the head.");
-			assert.equal(oLinkA.href, getHrefForUrl("testdata/testA.css"), "Href of old link is correct.");
+			assert.equal(oLinkA.href, getHrefForUrl(sPath + "/testdata/testA.css"), "Href of old link is correct.");
 			var oLinkB = document.getElementById("mylink-fouc");
 			assert.equal(oLinkB.parentNode, document.head, "New link has been added into the head.");
-			assert.equal(oLinkB.href, getHrefForUrl("testdata/testB.css"), "Href of new link is correct.");
+			assert.equal(oLinkB.href, getHrefForUrl(sPath + "/testdata/testB.css"), "Href of new link is correct.");
 			assert.equal(oLinkA.previousSibling, oLinkB, "New link has been added before the old link.");
 			oLinkA.parentNode.removeChild(oLinkA);
 			return includeStyleSheet({
-				url: "testdata/testA.css",
+				url: sPath + "/testdata/testA.css",
 				id: "mylink-fouc"
 			});
 		}).then(function() {
 			// Counter check to validate the proper removal of the old link without the marker
 			var oLinkA = document.getElementById("mylink-fouc");
 			assert.equal(oLinkA.parentNode, document.head, "New link has been added into the head.");
-			assert.equal(oLinkA.href, getHrefForUrl("testdata/testA.css"), "Href of new link is correct.");
+			assert.equal(oLinkA.href, getHrefForUrl(sPath + "/testdata/testA.css"), "Href of new link is correct.");
 			var oLinkB = document.querySelectorAll("link[data-sap-ui-foucmarker='mylink-fouc']")[0];
 			assert.notOk(oLinkB, "Old link has been removed.");
 			oLinkA.parentNode.removeChild(oLinkA);
@@ -305,7 +307,7 @@ sap.ui.define(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], func
 		};
 
 		return includeStyleSheet({
-			url: "testdata/testA.css",
+			url: sPath + "/testdata/testA.css",
 			id: "mylink-immutable",
 			attributes: mAttributes
 		}).then(function() {
