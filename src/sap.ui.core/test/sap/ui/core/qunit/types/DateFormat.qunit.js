@@ -1712,4 +1712,30 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.deepEqual(oIntervalFormat.parse("11042017 - 13042017"), aCompare, "Parse fallback with no delimiter and common connector");
 		});
 
+		QUnit.module("FallbackFormatOptions");
+
+		QUnit.test("Immutability of multiple DateFormat instances", function (assert) {
+			var oDate = new Date(2017, 3, 11);
+			var oDateFormat1 = DateFormat.getDateInstance({
+				style: "short",
+				interval: true
+			}),
+			oDateFormat2 = DateFormat.getDateInstance({
+				style: "long"
+			}),
+			oDateFormat3 = DateFormat.getDateInstance({
+				pattern: "M/d/yy"
+			});
+
+			var sString1 = oDateFormat1.format([oDate, oDate]);
+			var oDateParsed1 = oDateFormat1.parse(sString1);
+			assert.ok(Array.isArray(oDateParsed1), "Parsed result should be an array.");
+
+			var sString2 = oDateFormat2.format(oDate);
+			var oDateParsed2 = oDateFormat2.parse(sString2);
+			assert.notOk(Array.isArray(oDateParsed2), "Parsed result shouldn't be an array.");
+
+			var oDateParsed3 = oDateFormat3.parse("August 29, 2018");
+			assert.notOk(Array.isArray(oDateParsed3), "Parsed result shouldn't be an array.");
+		});
 	});
