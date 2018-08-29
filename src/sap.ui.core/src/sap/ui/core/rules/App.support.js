@@ -4,8 +4,7 @@
 /**
  * Defines Application related support rules.
  */
-sap.ui.define(["sap/ui/support/library"],
-	function(SupportLib) {
+sap.ui.define(["sap/ui/support/library"], function(SupportLib) {
 	"use strict";
 
 	// shortcuts
@@ -67,7 +66,7 @@ sap.ui.define(["sap/ui/support/library"],
 			var fnGatherInvalidControllerFunctions = function(oController, viewId, aInvalidContent, fnProcessInvalidFunction) {
 				var _aInvalidControllerFunctions = [];
 				Object.keys(oController).forEach(function(sProtoKey) {
-					var sFnContent = oController[sProtoKey].toString().replace(/(\r\n|\n|\r)/gm,"");
+					var sFnContent = oController[sProtoKey].toString().replace(/(\r\n|\n|\r)/gm, "");
 
 					aInvalidContent.forEach(function(sInvalidContent) {
 						if (sFnContent.indexOf(sInvalidContent) > 0) {
@@ -115,10 +114,10 @@ sap.ui.define(["sap/ui/support/library"],
 				oIssueManager.addIssue({
 					severity: Severity.Medium,
 					details: aControllerFunctions.map(function(oController) {
-							return "Synchronous call " + oController.invalidContent + " found in " + oController.controllerName + "#" + oController.functionName;
-						}).reduce(function(sFullText, sCurrentText) {
-							return sFullText + "\n" + sCurrentText;
-						}),
+						return "Synchronous call " + oController.invalidContent + " found in " + oController.controllerName + "#" + oController.functionName;
+					}).reduce(function(sFullText, sCurrentText) {
+						return sFullText + "\n" + sCurrentText;
+					}),
 					context: {
 						id: sViewId
 					}
@@ -203,5 +202,48 @@ sap.ui.define(["sap/ui/support/library"],
 		}
 	};
 
-	return [oControllerSyncCodeCheckRule, oGlobalAPIRule, oJquerySapRule];
+	/**
+	 * Check if factories are loaded sync
+	 */
+	var oSyncFactoryLoadingRule = {
+		id: "syncFactoryLoading",
+		audiences: [Audiences.Internal],
+		categories: [Categories.Modularization],
+		enabled: true,
+		minversion: "1.58",
+		title: "Usage of deprecated sync factory loading",
+		description: "Usage of deprecated sync factory loading",
+		resolution: "Avoid using sync factory loading and use load() function instead. Migrate to the modern module API as documented.",
+		resolutionurls: [{
+			text: 'Documentation: Modularization',
+			href: 'https://openui5.hana.ondemand.com/#/api/sap.ui'
+		}],
+		check: function(oIssueManager, oCoreFacade, oScope) {
+			var aFragmentTypes = [
+				"sap.ui.fragment",
+				"sap.ui.xmlfragment",
+				"sap.ui.jsfragment",
+				"sap.ui.htmlfragment",
+				"sap.ui.controller",
+				"sap.ui.extensionpoint",
+				"sap.ui.component"
+			];
+
+			aFragmentTypes.forEach(function(sType) {
+				var oLoggedObjects = oScope.getLoggedObjects(sType);
+				oLoggedObjects.forEach(function(oLoggedObject) {
+					oIssueManager.addIssue({
+						severity: Severity.High,
+						details: oLoggedObject.message,
+						context: {
+							id: "WEBPAGE"
+						}
+					});
+				});
+			});
+		}
+
+	};
+
+	return [oControllerSyncCodeCheckRule, oGlobalAPIRule, oJquerySapRule, oSyncFactoryLoadingRule];
 }, true);
