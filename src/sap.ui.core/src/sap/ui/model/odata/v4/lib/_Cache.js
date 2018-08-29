@@ -725,12 +725,8 @@ sap.ui.define([
 			aUnitOrCurrencyPath,
 			that = this;
 
-		return SyncPromise.all([
-			this.fetchValue(oGroupLock.getUnlockedCopy(), sEntityPath),
-			this.fetchTypes()
-		]).then(function (aResults) {
-			var oEntity = aResults[0],
-				sFullPath = _Helper.buildPath(sEntityPath, sPropertyPath),
+		return this.fetchValue(oGroupLock.getUnlockedCopy(), sEntityPath).then(function (oEntity) {
+			var sFullPath = _Helper.buildPath(sEntityPath, sPropertyPath),
 				sGroupId = oGroupLock.getGroupId(),
 				vOldValue,
 				oPatchPromise,
@@ -754,10 +750,15 @@ sap.ui.define([
 				oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, oPatchGroupLock,
 					{"If-Match" : oEntity["@odata.etag"]}, oUpdateData, undefined, onCancel);
 				that.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);
-				return oPatchPromise.then(function (oPatchResult) {
+				return SyncPromise.all([
+					oPatchPromise,
+					that.fetchTypes()
+				]).then(function (aResult) {
+					var oPatchResult = aResult[0];
+
 					that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 					// visit response to report the messages
-					that.visitResponse(oPatchResult, aResults[1], false,
+					that.visitResponse(oPatchResult, aResult[1], false,
 						_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sEntityPath)),
 						sEntityPath
 					);
