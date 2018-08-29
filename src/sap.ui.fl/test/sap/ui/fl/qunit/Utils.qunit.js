@@ -1538,16 +1538,214 @@ function(
 			assert.ok(oPromise instanceof Promise, "then the returned value of the 'catch' method is a Promise");
 		});
 
-		QUnit.test("when 'then' method throws an exception", function(assert) {
-			new Utils.FakePromise()
+		QUnit.test("when instanciated with Utils.FakePromise as parameter", function(assert) {
+			var oFakePromise = new Utils.FakePromise(new Utils.FakePromise());
+			assert.ok(oFakePromise instanceof Utils.FakePromise, "then the FakePromise returns Utils.FakePromise");
+		});
+
+		QUnit.test("when instanciated with successful Utils.FakePromise as parameter", function(assert) {
+			var sInitialValue = "42";
+			new Utils.FakePromise(new Utils.FakePromise(sInitialValue))
+			.then(function(sValue) {
+				assert.strictEqual(sValue, sInitialValue, "then the value is passed to the following then function");
+			});
+		});
+
+		QUnit.test("when instanciated with faulty Utils.FakePromise as parameter", function(assert) {
+			var sInitialErrorValue = "42";
+			new Utils.FakePromise(new Utils.FakePromise(undefined, sInitialErrorValue))
 			.then(function() {
-				throw new Error("Error");
-			})
-			.then(function(vValue) {
 				assert.notOk(true, "then the 'then' method shouldn't be called");
 			})
-			.catch(function(vError) {
-				assert.strictEqual(vError.name, "Error", "then the error parameter is passed to the 'catch' method");
+			.catch(function(sErrorValue) {
+				assert.strictEqual(sErrorValue, sInitialErrorValue, "then the value is passed to the following CATCH function");
+			});
+		});
+
+		QUnit.test("when 'then' method returns Utils.FakePromise", function(assert) {
+			var oPromise = new Utils.FakePromise()
+			.then(function() {
+				return new Utils.FakePromise();
+			});
+			assert.ok(oPromise instanceof Utils.FakePromise, "then the returned value of the 'then' method is a Utils.FakePromise");
+		});
+
+		QUnit.test("when 'then' method returns Utils.FakePromise with success value", function(assert) {
+			var sInitialValue = "42";
+			var oPromise = new Utils.FakePromise()
+			.then(function() {
+				return new Utils.FakePromise(sInitialValue);
+			})
+			.then(function(sValue) {
+				assert.strictEqual(sValue, sInitialValue, "then correct success value is passed to the following THEN function");
+			});
+			assert.ok(oPromise instanceof Utils.FakePromise, "then the returned value of the 'then' method is a Utils.FakePromise");
+		});
+
+		QUnit.test("when 'then' method returns Utils.FakePromise with rejected value", function(assert) {
+			var sInitialErrorValue = "42";
+			new Utils.FakePromise()
+			.then(function() {
+				return new Utils.FakePromise(undefined, sInitialErrorValue);
+			})
+			.then(function() {
+				assert.notOk(true, "then the 'then' method shouldn't be called");
+			})
+			.catch(function(sErrorMessage) {
+				assert.strictEqual(sErrorMessage, sInitialErrorValue, "then correct error value is passed to the following CATCH function");
+			});
+		});
+
+		QUnit.test("when 'catch' method returns Utils.FakePromise", function(assert) {
+			var oPromise = new Utils.FakePromise(undefined, true)
+			.catch(function() {
+				return new Utils.FakePromise();
+			});
+			assert.ok(oPromise instanceof Utils.FakePromise, "then the returned value of the 'catch' method is a Utils.FakePromise");
+		});
+
+		QUnit.test("when 'catch' method returns Utils.FakePromise with success value", function(assert) {
+			var sInitialValue = "42";
+			new Utils.FakePromise(undefined, true)
+			.catch(function() {
+				return new Utils.FakePromise(sInitialValue);
+			})
+			.then(function(sValue) {
+				assert.strictEqual(sValue, sInitialValue, "then correct success value is passed to the following THEN function");
+			})
+			.catch(function() {
+				assert.notOk(true, "then the 'catch' method shouldn't be called afterwards");
+			});
+		});
+
+		QUnit.test("when 'catch' method returns Utils.FakePromise with rejected value", function(assert) {
+			var sInitialErrorValue = "42";
+			new Utils.FakePromise(undefined, true)
+			.catch(function() {
+				return new Utils.FakePromise(undefined, sInitialErrorValue);
+			})
+			.then(function() {
+				assert.notOk(true, "then the 'then' method shouldn't be called");
+			})
+			.catch(function(sErrorValue) {
+				assert.strictEqual(sErrorValue, sInitialErrorValue, "then correct error value is passed to the following CATCH function");
+			});
+		});
+
+		QUnit.test("when 'then' method throws an exception", function(assert) {
+			var sInitialErrorValue1 = "Error";
+			var sInitialErrorValue2 = "Error";
+			new Utils.FakePromise()
+			.then(function() {
+				throw new Error(sInitialErrorValue1);
+			})
+			.then(function() {
+				assert.notOk(true, "then the 'then' method shouldn't be called");
+			})
+			.catch(function(oErrorValue) {
+				assert.strictEqual(oErrorValue.name, sInitialErrorValue1, "then the correct error parameter is passed to the 'catch' method");
+				throw new Error(sInitialErrorValue2);
+			})
+			.then(function() {
+				assert.notOk(true, "then the second 'then' method shouldn't be called");
+			})
+			.catch(function(oErrorValue) {
+				assert.strictEqual(oErrorValue.name, sInitialErrorValue2, "then the correct error parameter is passed to the second 'catch' method");
+			});
+		});
+
+		QUnit.test("when complex scenario with exception with chained FakePromises", function(assert) {
+			var sInitialErrorValue1 = "Error1";
+			var fnScenario = function() {
+				return new Utils.FakePromise(undefined, new Error(sInitialErrorValue1))
+				.catch(function(oErrorValue) {
+					var aWrongType = "should be an array";
+					assert.strictEqual(oErrorValue.message, sInitialErrorValue1, "then the correct error parameter is passed to the 'catch' method");
+					// provoke exception
+					aWrongType.some(function() {});
+				});
+			};
+
+			fnScenario()
+			.then(function() {
+				assert.notOk(true, "then the 'then' method shouldn't be called");
+			})
+			.catch(function(oErrorValue) {
+				assert.strictEqual(oErrorValue.message, 'aWrongType.some is not a function',
+					"then the correct error parameter is passed to the second 'catch' method");
+			});
+		});
+
+		QUnit.test("when complex scenario with nested FakePromises and an exception", function(assert) {
+			new Utils.FakePromise()
+			.then(function() {
+				return new Utils.FakePromise()
+				.then(function() {
+					// provoke exception
+					"should be an array".some(function() {});
+				})
+				.then(function() {
+					assert.notOk(true, "then the 'then' method shouldn't be called");
+				});
+			})
+			.then(function() {
+				assert.notOk(true, "then the 'then' method in the root chain also shouldn't be called");
+			})
+			.catch(function(oErrorValue) {
+				assert.strictEqual(oErrorValue.message, '"should be an array".some is not a function',
+					"then the correct error parameter is passed to the second 'catch' method");
+			});
+		});
+
+		QUnit.test("when FakePromise nested into a Promise and PromiseIdentifier is passed", function(assert) {
+			var oInitialValue = "42";
+			var oPromise = Promise.resolve(oInitialValue)
+			.then(function(oValue, sPromiseIdentifier) {
+				var oInnerPromise = new Utils.FakePromise(oValue, undefined, sPromiseIdentifier)
+				.then(function(oValue, oInnerPromiseIdentifier) {
+					assert.strictEqual(oValue, oInitialValue, "then the inner 'then' method gets the right value");
+					assert.strictEqual(oInnerPromiseIdentifier, undefined, "then the inner 'then' method do not get the FakePromiseIdentifier");
+				});
+				assert.ok(oInnerPromise instanceof Promise, "then the nested FakePromise returns a native Promise");
+			});
+			assert.ok(oPromise instanceof Promise, "then the returned value is a native Promise");
+			return oPromise;
+		});
+
+		QUnit.test("when FakePromise nested into a FakePromise and PromiseIdentifier is passed", function(assert) {
+			var oInitialValue = "42";
+			var oPromise = new Utils.FakePromise(oInitialValue)
+			.then(function(oValue, sPromiseIdentifier) {
+				var oInnerPromise = new Utils.FakePromise(oValue, undefined, sPromiseIdentifier)
+				.then(function(oValue, oInnerPromiseIdentifier) {
+					assert.strictEqual(oValue, oInitialValue, "then the inner 'then' method gets the right value");
+					assert.strictEqual(oInnerPromiseIdentifier, Utils.FakePromise.fakePromiseIdentifier,
+						"then the inner 'then' method gets the FakePromiseIdentifier");
+				});
+				assert.ok(oInnerPromise instanceof Utils.FakePromise, "then the nested FakePromise returns a FakePromise");
+			});
+			assert.ok(oPromise instanceof Utils.FakePromise, "then the returned value is a FakePromise");
+			return oPromise;
+		});
+
+		QUnit.test("when complex scenario with FakePromise into a Promise", function(assert) {
+			return Promise.resolve()
+			.then(function(oValue, sPromiseIdentifier) {
+				return new Utils.FakePromise(oValue, undefined, sPromiseIdentifier)
+				.then(function() {
+					// provoke exception
+					"should be an array".some(function() {});
+				})
+				.then(function() {
+					assert.notOk(true, "then the 'then' method shouldn't be called");
+				});
+			})
+			.then(function() {
+				assert.notOk(true, "then the 'then' method in the root chain also shouldn't be called");
+			})
+			.catch(function(oErrorValue) {
+				assert.strictEqual(oErrorValue.message, '"should be an array".some is not a function',
+					"then the correct error parameter is passed to the second 'catch' method");
 			});
 		});
 	});
