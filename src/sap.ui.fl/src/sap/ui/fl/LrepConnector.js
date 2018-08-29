@@ -8,9 +8,9 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/base/util/merge"
 ], function(jQuery,
-	uri,
-	FlexUtils,
-	fnBaseMerge
+			uri,
+			FlexUtils,
+			fnBaseMerge
 ) {
 	"use strict";
 
@@ -51,7 +51,7 @@ sap.ui.define([
 	/**
 	 * Gets the availability status of the flexibility service.
 	 *
-	 * @Returns {Promise} A Boolean value of the availability status
+	 * @returns {Promise} Promise resolved with a boolean value of the availability status
 	 * @public
 	 * @function
 	 * @name sap.ui.fl.Connector.isFlexServiceAvailable
@@ -152,12 +152,11 @@ sap.ui.define([
 	 * @private
 	 */
 	Connector.prototype._getDefaultHeader = function() {
-		var mHeaders = {
+		return {
 			headers: {
 				"X-CSRF-Token": this._sXsrfToken || "fetch"
 			}
 		};
-		return mHeaders;
 	};
 
 	/**
@@ -213,9 +212,9 @@ sap.ui.define([
 	 * Send a request to the back end
 	 *
 	 * @param {String} sUri Relative URL for this request
-	 * @param {String} sMethod HTTP-method to be used by this request (default GET)
-	 * @param {Object} oData Payload of the request
-	 * @param {Object} mOptions Additional options which should be used in the request
+	 * @param {String} [sMethod] HTTP-method to be used by this request (default GET)
+	 * @param {Object} [oData] Payload of the request
+	 * @param {Object} [mOptions] Additional options which should be used in the request
 	 * @returns {Promise} Returns a promise to the result of the request
 	 * @public
 	 */
@@ -320,10 +319,10 @@ sap.ui.define([
 				});
 			}
 
-			function refetchTokenAndRequestAgainOrHandleInvalidRequest(oXhr, sStatus, sErrorThrown) {
+			function refetchTokenAndRequestAgainOrHandleInvalidRequest(oXhr) {
 				if (oXhr.status === 403) {
 					// Token seems to be invalid, refetch and then resend
-					jQuery.ajax(sFetchXsrfTokenUrl, mFetchXsrfTokenOptions).done(fetchTokenAndHandleRequest).fail(function(oXhr, sStatus, sErrorThrown) {
+					jQuery.ajax(sFetchXsrfTokenUrl, mFetchXsrfTokenOptions).done(fetchTokenAndHandleRequest).fail(function() {
 						// Fetching XSRF Token failed
 						reject({
 							status: "error"
@@ -358,7 +357,7 @@ sap.ui.define([
 
 			if (bRequestCSRFToken) {
 				// Fetch XSRF Token
-				jQuery.ajax(sFetchXsrfTokenUrl, mFetchXsrfTokenOptions).done(fetchTokenAndHandleRequest).fail(function(oXhr, sStatus, sErrorThrown) {
+				jQuery.ajax(sFetchXsrfTokenUrl, mFetchXsrfTokenOptions).done(fetchTokenAndHandleRequest).fail(function(oXhr) {
 					// Fetching XSRF Token failed
 					reject({
 						status: "error",
@@ -386,83 +385,133 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.layer] - Layer up to which changes shall be read (excluding the specified layer)
 	 * @param {string} [mPropertyBag.appVersion] - Version of application whose changes shall be read
 	 * @param {string} [mPropertyBag.url] - address to which the request for change should be sent in case the data is not cached
+	 * @param {string} [mPropertyBag.flexModulesUrl] - address to which the request for modules should be sent in case modules are present
 	 *
-	 * @returns {Promise} Returns a Promise with the changes (changes, contexts, optional messagebundle), <code>componentClassName</code> and <code>etag</code> value
+	 * @returns {Promise} Returns a Promise with the changes (changes, contexts, optional messagebundle), <code>componentClassName</code> and <code>etag</code> value;
+	 * in case modules are present the Promise is resolved after the module request is finished
 	 * @public
 	 */
 	Connector.prototype.loadChanges = function(oComponent, mPropertyBag) {
-		var mOptions = {};
-		var sComponentName = oComponent.name;
-		var sUrl = "/sap/bc/lrep/flex/data/";
-		mPropertyBag = mPropertyBag || {};
 
-		if (!sComponentName) {
-			return Promise.reject(new Error("Component name not specified"));
-		}
+		function _createRequestOptions(oComponent, mPropertyBag) {
+			var mOptions = {};
 
-		if (mPropertyBag.url) {
-			sUrl = mPropertyBag.url;
-		} else {
 			if (mPropertyBag.cacheKey) {
 				mOptions.cache = true;
-				sUrl += "~" + mPropertyBag.cacheKey + "~/";
 			}
-
-			sUrl += sComponentName;
-		}
-
-		if (mPropertyBag.siteId) {
-			if (!mOptions.headers) {
-				mOptions.headers = {};
-			}
-
-			mOptions.headers = {
-				"X-LRep-Site-Id": mPropertyBag.siteId
-			};
-		}
-
-		if (mPropertyBag.layer) {
-			sUrl += "&upToLayerType=" + mPropertyBag.layer;
-		}
-
-		if (mPropertyBag.appDescriptor) {
-			if (mPropertyBag.appDescriptor["sap.app"]) {
+			if (mPropertyBag.siteId) {
 				if (!mOptions.headers) {
 					mOptions.headers = {};
 				}
 
 				mOptions.headers = {
-					"X-LRep-AppDescriptor-Id": mPropertyBag.appDescriptor["sap.app"].id
+					"X-LRep-Site-Id": mPropertyBag.siteId
 				};
 			}
+
+			if (mPropertyBag.appDescriptor) {
+				if (mPropertyBag.appDescriptor["sap.app"]) {
+					if (!mOptions.headers) {
+						mOptions.headers = {};
+					}
+
+					mOptions.headers = {
+						"X-LRep-AppDescriptor-Id": mPropertyBag.appDescriptor["sap.app"].id
+					};
+				}
+			}
+
+			return mOptions;
 		}
 
-		if (this._sClient) {
-			sUrl += "&sap-client=" + this._sClient;
+		function _createUrls(oComponent, mPropertyBag, sClient) {
+			var mUrls = {};
+			var sFlexDataPrefix = "/sap/bc/lrep/flex/data/";
+			var sFlexModulesPrefix = "/sap/bc/lrep/flex/modules/";
+			var sPostFix = "";
+
+			if (mPropertyBag.cacheKey) {
+				sPostFix += "~" + mPropertyBag.cacheKey + "~/";
+			}
+
+			sPostFix += oComponent.name;
+
+
+			if (mPropertyBag.layer) {
+				sPostFix += "&upToLayerType=" + mPropertyBag.layer;
+			}
+
+			if (sClient) {
+				sPostFix += "&sap-client=" + sClient;
+			}
+
+			if (oComponent.appVersion && (oComponent.appVersion !== FlexUtils.DEFAULT_APP_VERSION)) {
+				sPostFix += "&appVersion=" + oComponent.appVersion;
+			}
+
+			// Replace first & with ?
+			sPostFix = sPostFix.replace("&", "?");
+
+			mUrls.flexDataUrl = mUrls.flexDataUrl || sFlexDataPrefix + sPostFix;
+			mUrls.flexModulesUrl = mUrls.flexModulesUrl || sFlexModulesPrefix + sPostFix;
+
+			return mUrls;
 		}
 
-		if (oComponent.appVersion && (oComponent.appVersion !== FlexUtils.DEFAULT_APP_VERSION)) {
-			sUrl += "&appVersion=" + oComponent.appVersion;
+		if (!oComponent.name) {
+			return Promise.reject(new Error("Component name not specified"));
 		}
 
-		// Replace first & with ?
-		sUrl = sUrl.replace("&", "?");
+		var mOptions = _createRequestOptions(oComponent, mPropertyBag);
 
-		return this.send(sUrl, undefined, undefined, mOptions)
-			.then(function(oResponse) {
-				Connector._bServiceAvailability = true;
-				return {
-					changes: oResponse.response,
-					messagebundle: oResponse.response.messagebundle,
-					componentClassName: sComponentName,
-					etag: oResponse.etag
-				};
-			}, function(oError) {
+		var mUrls = {
+			flexDataUrl : undefined,
+			flexModulesUrl : undefined
+		};
+
+		if (mPropertyBag.url) {
+			mUrls.flexDataUrl = mPropertyBag.url;
+			mUrls.flexModulesUrl = mPropertyBag.flexModulesUrl;
+		} else {
+			mUrls = _createUrls(oComponent, mPropertyBag, this._sClient);
+		}
+
+		return this.send(mUrls.flexDataUrl, undefined, undefined, mOptions)
+			.then(this._onChangeResponseReceived.bind(this, oComponent.name, mUrls.flexModulesUrl), function (oError) {
 				if (oError.code === 404) {
 					Connector._bServiceAvailability = false;
 				}
 				throw (oError);
 			});
+	};
+
+	Connector.prototype._onChangeResponseReceived = function (sComponentName, sFlexModulesUri, oResponse) {
+		Connector._bServiceAvailability = true;
+		var mFlexData = {
+			changes : oResponse.response,
+			loadModules : oResponse.response.loadModules,
+			messagebundle : oResponse.response.messagebundle,
+			componentClassName : sComponentName,
+			etag : oResponse.etag
+		};
+
+		if (!mFlexData.loadModules) {
+			return mFlexData;
+		}
+
+		var mOptions = {
+			"async": true,
+			"contentType": "application/javascript",
+			"processData": true,
+			"type": "GET"
+		};
+
+
+		return this.send(sFlexModulesUri, undefined, undefined, mOptions).then(function () {
+			/* the modules within the server response are preloaded by the browser processing the request.
+			 * The promise chain only needs to return the response of the first server request. */
+			return mFlexData;
+		});
 	};
 
 	/**
@@ -653,8 +702,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Connector.prototype.getStaticResource = function(sNamespace, sName, sType, bIsRuntime) {
-		var sApiPath = "/sap/bc/lrep/content/";
-		var sRequestPath = sApiPath;
+		var sRequestPath = "/sap/bc/lrep/content/";
 		sRequestPath += sNamespace + "/" + sName + "." + sType;
 
 		var aParams = [];
@@ -681,8 +729,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Connector.prototype.getFileAttributes = function(sNamespace, sName, sType, sLayer) {
-		var sApiPath = "/sap/bc/lrep/content/";
-		var sRequestPath = sApiPath;
+		var sRequestPath = "/sap/bc/lrep/content/";
 		sRequestPath += sNamespace + "/" + sName + "." + sType;
 
 		var aParams = [];
@@ -737,8 +784,7 @@ sap.ui.define([
 	};
 
 	Connector.prototype._fileAction = function(sMethod, sNamespace, sName, sType, sLayer, sContent, sContentType, sChangelist) {
-		var sApiPath = "/sap/bc/lrep/content/";
-		var sRequestPath = sApiPath;
+		var sRequestPath = "/sap/bc/lrep/content/";
 		sRequestPath += sNamespace + "/" + sName + "." + sType;
 
 		var aParams = [];
@@ -775,8 +821,7 @@ sap.ui.define([
 	 * @private Private for now, as is not in use.
 	 */
 	Connector.prototype.publish = function(sOriginNamespace, sName, sType, sOriginLayer, sTargetLayer, sTargetNamespace, sChangelist) {
-		var sApiPath = "/sap/bc/lrep/actions/publish/";
-		var sRequestPath = sApiPath;
+		var sRequestPath = "/sap/bc/lrep/actions/publish/";
 		sRequestPath += sOriginNamespace + "/" + sName + "." + sType;
 
 		var aParams = [];
