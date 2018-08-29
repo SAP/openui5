@@ -12,11 +12,6 @@ sap.ui.define([
 	], function(jQuery, Device, ManagedObject, AppCacheBuster, Control, Log) {
 		"use strict";
 
-	// In case of <=IE9 UI5 enables the CORS support in jQuery to allow the usage
-	// of jQuery.ajax function / sinon also needs to be synchronized with this
-	// adoption by applying the CORS support flag from jQuery to sinon!
-	sinon.xhr.supportsCORS = jQuery.support.cors;
-
 	// create a control with an URI property to validate URI replacement
 	var UriControl = Control.extend("test.UriControl", {
 		metadata : {
