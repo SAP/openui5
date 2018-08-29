@@ -71,6 +71,8 @@ function(
 	* <b>Notes:</b>
 	* <ul>
 	* <li> New valid tokens are created, when the user presses Enter, selects a value from the suggestions drop-down, or when the focus leaves the field.</li>
+	* <li> When multiple values are copied and pasted in the field, separate tokens are created for each of them.</li>
+	* <li> When a single value is copied and pasted in the field, it is shown as a text value, as further editing might be required before it is converted into a token.</li>
 	* <li> Provide meaningful labels for all input fields. Do not use the placeholder as a replacement for the label.</li>
 	* </ul>
 	* <h3>Usage</h3>
