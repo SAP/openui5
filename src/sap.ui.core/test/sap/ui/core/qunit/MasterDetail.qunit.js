@@ -1,58 +1,51 @@
-<!DOCTYPE HTML>
-
-<!--
-  Tested sap.ui.core.Element
-  // further model tests for like createbindingcontext are in the specific model tests
--->
-
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<!-- Initialization -->
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons">
-	</script>
-
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
-	media="screen" />
-<script
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-<!-- Test functions -->
-<script>
-
+/*global QUnit*/
+sap.ui.define([
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/xml/XMLModel",
+	"sap/m/Label",
+	"sap/m/List",
+	"sap/m/StandardListItem"
+], function(
+	JSONModel,
+	XMLModel,
+	Label,
+	List,
+	ListItem
+) {
+	"use strict";
+	//add divs for control tests
+	var oTarget1 = document.createElement("div");
+	oTarget1.setAttribute("id", "target1");
+	document.body.appendChild(oTarget1);
+	var oTarget2 = document.createElement("div");
+	oTarget2.setAttribute("id", "target2");
+	document.body.appendChild(oTarget2);
 
 	var testdata = {
-  		teamMembers:[
-   		            {firstName:"Andreas", lastName:"Klark",
-   		            	items: [{name:"Snippix"}, {name:"Chili Plants"}]},
-   		            {firstName:"Peter", lastName:"Miller",
-   		         		items: [{name:"Android"}]},
-   		            {firstName:"Gina", lastName:"Rush",
-   		         		items: []},
-   		            {firstName:"Steave", lastName:"Ander",
-   		         		items: [{name:"Game1"}, {name:"Game2"}, {name:"Iron Maiden"}]},
-   		            {firstName:"Michael", lastName:"Spring",
-   		         		items: [{name:"QueenLP"}, {name:"QueenDoll"}]},
-   		            {firstName:"Marc", lastName:"Green",
-   		         		items: [{name:"Rioja Wine"}, {name:"Ribera del Duero Wine"}]},
-   		            {firstName:"Frank", lastName:"Wallace",
-   		         		items: [{name:"Hair Gel"}, {name:"Shampoo"}]},
-   	   		        {firstName:"Malte", lastName:"Wedel",
-   	   		         	items: [{name:"Ricola"}, {name:"flu shot"}]},
-   		         ],
-	   	buddies:[
-	   	            {firstName:"John", lastName:"Doe"},
-	   	            {firstName:"Max", lastName:"Mustermann"},
-	   	            {firstName:"Lucky", lastName:"Luke"},
-	   	            {firstName:"Luke", lastName:"Skywalker"}]
+		teamMembers:[
+			{firstName:"Andreas", lastName:"Klark",
+				items: [{name:"Snippix"}, {name:"Chili Plants"}]},
+			{firstName:"Peter", lastName:"Miller",
+				items: [{name:"Android"}]},
+			{firstName:"Gina", lastName:"Rush",
+				items: []},
+			{firstName:"Steave", lastName:"Ander",
+				items: [{name:"Game1"}, {name:"Game2"}, {name:"Iron Maiden"}]},
+			{firstName:"Michael", lastName:"Spring",
+				items: [{name:"QueenLP"}, {name:"QueenDoll"}]},
+			{firstName:"Marc", lastName:"Green",
+				items: [{name:"Rioja Wine"}, {name:"Ribera del Duero Wine"}]},
+			{firstName:"Frank", lastName:"Wallace",
+				items: [{name:"Hair Gel"}, {name:"Shampoo"}]},
+			{firstName:"Malte", lastName:"Wedel",
+				items: [{name:"Ricola"}, {name:"flu shot"}]}
+			],
+		buddies:[
+			{firstName:"John", lastName:"Doe"},
+			{firstName:"Max", lastName:"Mustermann"},
+			{firstName:"Lucky", lastName:"Luke"},
+			{firstName:"Luke", lastName:"Skywalker"}
+		]
 	};
 
 	var testdataXML = "<root><teamMembers>" +
@@ -70,10 +63,10 @@
 	"</teamMembers> </root>";
 
 	QUnit.test("test bind Context with JSON model and property binding", function(assert) {
-		var oLabel = new sap.ui.commons.Label();
+		var oLabel = new Label();
 		oLabel.setText("testText");
 		oLabel.placeAt("target1");
-		var oModel = new sap.ui.model.json.JSONModel();
+		var oModel = new JSONModel();
 		oModel.setData(testdata);
 		sap.ui.getCore().setModel(oModel);
 		assert.equal(oLabel.getText(),"testText", "old text value");
@@ -87,10 +80,10 @@
 	});
 
 	QUnit.test("test2 bind Context with JSON model and property binding", function(assert) {
-		var oLabel = new sap.ui.commons.Label();
+		var oLabel = new Label();
 		oLabel.setText("testText");
 		oLabel.placeAt("target1");
-		var oModel = new sap.ui.model.json.JSONModel();
+		var oModel = new JSONModel();
 		oModel.setData(testdata);
 		sap.ui.getCore().setModel(oModel);
 		assert.equal(oLabel.getText(),"testText", "old text value");
@@ -111,10 +104,10 @@
 	});
 
 	QUnit.test("test bind Context with XML model and property binding", function(assert) {
-		var oLabel = new sap.ui.commons.Label();
+		var oLabel = new Label();
 		oLabel.setText("testText");
 		oLabel.placeAt("target1");
-		var oModel = new sap.ui.model.xml.XMLModel();
+		var oModel = new XMLModel();
 		oModel.setXML(testdataXML);
 		sap.ui.getCore().setModel(oModel);
 		assert.equal(oLabel.getText(),"testText", "old text value");
@@ -128,10 +121,10 @@
 	});
 
 	QUnit.test("test2 bind Context with XML model and property binding", function(assert) {
-		var oLabel = new sap.ui.commons.Label();
+		var oLabel = new Label();
 		oLabel.setText("testText");
 		oLabel.placeAt("target1");
-		var oModel = new sap.ui.model.xml.XMLModel();
+		var oModel = new XMLModel();
 		oModel.setXML(testdataXML);
 		sap.ui.getCore().setModel(oModel);
 		assert.equal(oLabel.getText(),"testText", "old text value");
@@ -152,60 +145,60 @@
 	});
 
 	QUnit.test("test bind Context with JSON model and aggregation binding", function(assert) {
-		var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
-		var oItemTemplate = new sap.ui.core.ListItem();
+		var oLB = new List("myLb", {displaySecondaryValues:true, height:"200px"});
+		var oItemTemplate = new ListItem();
 		oLB.placeAt("target2");
-		var oModel = new sap.ui.model.json.JSONModel();
+		var oModel = new JSONModel();
 		oModel.setData(testdata);
 		sap.ui.getCore().setModel(oModel);
-		oItemTemplate.bindProperty("text", "name")
+		oItemTemplate.bindProperty("title", "name");
 		oLB.bindAggregation("items", "items", oItemTemplate);
 
 		oLB.bindContext("/teamMembers/0");
 		var listItems = oLB.getItems();
 		assert.equal(listItems.length, 2, "length of items");
-		jQuery(listItems).each( function(i, item){
-			assert.equal(item.getText(), testdata.teamMembers[0].items[i].name, "item name");
+		listItems.forEach( function(item, i){
+			assert.equal(item.getTitle(), testdata.teamMembers[0].items[i].name, "item name");
 		});
 		oLB.bindContext("/teamMembers/1");
-		var listItems = oLB.getItems();
+		listItems = oLB.getItems();
 		assert.equal(listItems.length, 1, "length of items");
-		jQuery(listItems).each( function(i, item){
-			assert.equal(item.getText(), testdata.teamMembers[1].items[i].name, "item name");
+		listItems.forEach( function(item, i){
+			assert.equal(item.getTitle(), testdata.teamMembers[1].items[i].name, "item name");
 		});
 		oLB.bindContext("/teamMembers/2");
-		var listItems = oLB.getItems();
+		listItems = oLB.getItems();
 		assert.equal(listItems.length, 0, "length of items");
 
 		oLB.bindContext("/teamMembers/3");
-		var listItems = oLB.getItems();
+		listItems = oLB.getItems();
 		assert.equal(listItems.length, 3, "length of items");
-		jQuery(listItems).each( function(i, item){
-			assert.equal(item.getText(), testdata.teamMembers[3].items[i].name, "item name");
+		listItems.forEach( function(item, i){
+			assert.equal(item.getTitle(), testdata.teamMembers[3].items[i].name, "item name");
 		});
 		oLB.bindContext("/teamMembers/4");
-		var listItems = oLB.getItems();
+		listItems = oLB.getItems();
 		assert.equal(listItems.length, 2, "length of items");
-		jQuery(listItems).each( function(i, item){
-			assert.equal(item.getText(), testdata.teamMembers[4].items[i].name, "item name");
+		listItems.forEach( function(item, i){
+			assert.equal(item.getTitle(), testdata.teamMembers[4].items[i].name, "item name");
 		});
 		oLB.bindContext("/teamMembers/5");
-		var listItems = oLB.getItems();
+		listItems = oLB.getItems();
 		assert.equal(listItems.length, 2, "length of items");
-		jQuery(listItems).each( function(i, item){
-			assert.equal(item.getText(), testdata.teamMembers[5].items[i].name, "item name");
+		listItems.forEach( function(item, i){
+			assert.equal(item.getTitle(), testdata.teamMembers[5].items[i].name, "item name");
 		});
 		oLB.bindContext("/teamMembers/6");
-		var listItems = oLB.getItems();
+		listItems = oLB.getItems();
 		assert.equal(listItems.length, 2, "length of items");
-		jQuery(listItems).each( function(i, item){
-			assert.equal(item.getText(), testdata.teamMembers[6].items[i].name, "item name");
+		listItems.forEach( function(item, i){
+			assert.equal(item.getTitle(), testdata.teamMembers[6].items[i].name, "item name");
 		});
 		oLB.bindContext("/teamMembers/7");
-		var listItems = oLB.getItems();
+		listItems = oLB.getItems();
 		assert.equal(listItems.length, 2, "length of items");
-		jQuery(listItems).each( function(i, item){
-			assert.equal(item.getText(), testdata.teamMembers[7].items[i].name, "item name");
+		listItems.forEach( function(item, i){
+			assert.equal(item.getTitle(), testdata.teamMembers[7].items[i].name, "item name");
 		});
 		oLB.unbindContext();
 		oLB.destroy();
@@ -213,13 +206,13 @@
 	});
 
 	QUnit.test("test bind Context with JSON model and aggregation binding with wrong path", function(assert) {
-		var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
-		var oItemTemplate = new sap.ui.core.ListItem();
+		var oLB = new List("myLb", {displaySecondaryValues:true, height:"200px"});
+		var oItemTemplate = new ListItem();
 		oLB.placeAt("target2");
-		var oModel = new sap.ui.model.json.JSONModel();
+		var oModel = new JSONModel();
 		oModel.setData(testdata);
 		sap.ui.getCore().setModel(oModel);
-		oItemTemplate.bindProperty("text", "name")
+		oItemTemplate.bindProperty("title", "name");
 		oLB.bindAggregation("items", "items", oItemTemplate);
 
 		oLB.bindContext("/teamMembers/yxz");
@@ -227,7 +220,7 @@
 		assert.equal(listItems.length, 0, "length of items");
 
 		oLB.bindContext("xyz");
-		var listItems = oLB.getItems();
+		listItems = oLB.getItems();
 		assert.equal(listItems.length, 0, "length of items");
 
 		oLB.unbindContext();
@@ -236,36 +229,36 @@
 	});
 
 	QUnit.test("test bind Context with XML model and aggregation binding", function(assert) {
-		var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
-		var oItemTemplate = new sap.ui.core.ListItem();
+		var oLB = new List("myLb", {displaySecondaryValues:true, height:"200px"});
+		var oItemTemplate = new ListItem();
 		oLB.placeAt("target2");
-		var oModel = new sap.ui.model.xml.XMLModel();
+		var oModel = new XMLModel();
 		oModel.setXML(testdataXML);
 		sap.ui.getCore().setModel(oModel);
-		oItemTemplate.bindProperty("text", "@name")
+		oItemTemplate.bindProperty("title", "@name");
 		oLB.bindAggregation("items", "items/item", oItemTemplate);
 
 		oLB.bindContext("/teamMembers/member/0");
 		var listItems = oLB.getItems();
 		assert.equal(listItems.length, 2, "length of items");
-		assert.equal(listItems[0].getText(), "Snippix", "item name");
-		assert.equal(listItems[1].getText(), "Chili Plants", "item name");
+		assert.equal(listItems[0].getTitle(), "Snippix", "item name");
+		assert.equal(listItems[1].getTitle(), "Chili Plants", "item name");
 
 		oLB.bindContext("/teamMembers/member/1");
-		var listItems = oLB.getItems();
+		listItems = oLB.getItems();
 		assert.equal(listItems.length, 1, "length of items");
-		assert.equal(listItems[0].getText(), "Android", "item name");
+		assert.equal(listItems[0].getTitle(), "Android", "item name");
 
 		oLB.bindContext("/teamMembers/member/2");
-		var listItems = oLB.getItems();
+		listItems = oLB.getItems();
 		assert.equal(listItems.length, 0, "length of items");
 
 		oLB.bindContext("/teamMembers/member/3");
-		var listItems = oLB.getItems();
+		listItems = oLB.getItems();
 		assert.equal(listItems.length, 3, "length of items");
-		assert.equal(listItems[0].getText(), "Game1", "item name");
-		assert.equal(listItems[1].getText(), "Game2", "item name");
-		assert.equal(listItems[2].getText(), "Iron Maiden", "item name");
+		assert.equal(listItems[0].getTitle(), "Game1", "item name");
+		assert.equal(listItems[1].getTitle(), "Game2", "item name");
+		assert.equal(listItems[2].getTitle(), "Iron Maiden", "item name");
 
 		oLB.unbindContext();
 		oLB.destroy();
@@ -273,13 +266,13 @@
 	});
 
 	QUnit.test("test bind Context with XML model and aggregation binding with wrong path", function(assert) {
-		var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
-		var oItemTemplate = new sap.ui.core.ListItem();
+		var oLB = new List("myLb", {displaySecondaryValues:true, height:"200px"});
+		var oItemTemplate = new ListItem();
 		oLB.placeAt("target2");
-		var oModel = new sap.ui.model.json.JSONModel();
+		var oModel = new JSONModel();
 		oModel.setData(testdata);
 		sap.ui.getCore().setModel(oModel);
-		oItemTemplate.bindProperty("text", "@name")
+		oItemTemplate.bindProperty("title", "@name");
 		oLB.bindAggregation("items", "items/item", oItemTemplate);
 
 		oLB.bindContext("/teamMembers/member/3/yxz");
@@ -287,26 +280,11 @@
 		assert.equal(listItems.length, 0, "length of items");
 
 		oLB.bindContext("/yxz");
-		var listItems = oLB.getItems();
+		listItems = oLB.getItems();
 		assert.equal(listItems.length, 0, "length of items");
 
 		oLB.unbindContext();
 		oLB.destroy();
 
 	});
-
-
-</script>
-
-</head>
-<body>
-<h1 id="qunit-header">QUnit tests: Data binding Master Detail</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-<br>
-<div id="target1"></div>
-<div id="target2"></div>
-</body>
-</html>
+});

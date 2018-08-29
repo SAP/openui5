@@ -1,56 +1,48 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<!-- Initialization -->
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap" src="../../../../../resources/sap-ui-core.js"></script>
-
-<script>
-	jQuery.sap.require("sap.ui.core.util.MockServer");
-</script>
-<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
-<!-- Test functions -->
-<script>
-
-	sinon.config.useFakeTimers = false;
-
-	jQuery.sap.require("sap.ui.model.odata.ODataModel");
+/*global QUnit*/
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/core/util/MockServer",
+	"sap/ui/model/odata/ODataModel",
+	"sap/ui/model/odata/ODataTreeBinding",
+	"sap/ui/model/Filter"
+], function(
+	Log,
+	MockServer,
+	ODataModel,
+	ODataTreeBinding,
+	Filter
+) {
+	"use strict";
 
 	//Initialize mock servers
 
 	//Mock server for use with navigation properties
-	var oNavPropMockServer = new sap.ui.core.util.MockServer({
+	var oNavPropMockServer = new MockServer({
 		rootUri: '/navprop/'
 	});
-	oNavPropMockServer.simulate("model/metadata_odtb.xml", "model/odtb/");
+	oNavPropMockServer.simulate("test-resources/sap/ui/core/qunit/model/metadata_odtb.xml", "test-resources/sap/ui/core/qunit/model/odtb/");
 
 	//MockServer for use with annotated tree
-	var oAnnotationMockServer = new sap.ui.core.util.MockServer({
+	var oAnnotationMockServer = new MockServer({
 		rootUri: '/metadata/'
 	});
-	oAnnotationMockServer.simulate("model/metadata_odtbmd.xml", "model/odtbmd/");
+	oAnnotationMockServer.simulate("test-resources/sap/ui/core/qunit/model/metadata_odtbmd.xml", "test-resources/sap/ui/core/qunit/model/odtbmd/");
 
 	var oModel, oBinding;
 
 	function createTreeBinding(sPath, oContext, aFilters, mParameters){
 		// create binding
 		oBinding = oModel.bindTree(sPath, oContext, aFilters, mParameters);
-	};
+	}
 
 	QUnit.module("ODataTreeBinding with navigation properties", {
 		beforeEach: function() {
 			oNavPropMockServer.start();
-			oModel = new sap.ui.model.odata.ODataModel('/navprop/', true);
+			oModel = new ODataModel('/navprop/', true);
 		},
 		afterEach: function() {
 			oNavPropMockServer.stop();
-			delete oModel;
+			oModel.destroy();
 		}
 	});
 
@@ -60,7 +52,7 @@
 		});
 		assert.equal(oBinding.getPath(), "/Employees(2)", "TreeBinding path");
 		assert.equal(oBinding.getModel(), oModel, "TreeBinding model");
-		assert.ok(oBinding instanceof sap.ui.model.odata.ODataTreeBinding, "treeBinding class check");
+		assert.ok(oBinding instanceof ODataTreeBinding, "treeBinding class check");
 	});
 
 	QUnit.test("getRootContexts getNodeContexts", function(assert){
@@ -129,7 +121,7 @@
 
 			oBinding.detachChange(handler2);
 			done();
-		}
+		};
 
 		oBinding.attachChange(handler1);
 		oBinding.getRootContexts();
@@ -183,7 +175,7 @@
 
 			oBinding.detachChange(handler1);
 			done();
-		}
+		};
 
 		oBinding.attachChange(handler1);
 		oBinding.getRootContexts();
@@ -261,13 +253,11 @@
 			numberOfExpandedLevels: 2
 		});
 
-		var oContext;
 		var handler1 = function(oEvent) {
 
 			oBinding.detachChange(handler1);
 			// contexts should be now loaded
 			var aContexts = oBinding.getRootContexts();
-			var aSubContexts;
 
 			assert.ok(oBinding.hasChildren(aContexts[0]), " root context should have children");
 
@@ -276,7 +266,7 @@
 			assert.ok(!oBinding.hasChildren(aContexts[0]), " node context should not have children");
 			assert.ok(oBinding.hasChildren(aContexts[3]), " node context should have children");
 
-			aSubContexts = oBinding.getNodeContexts(aContexts[3]);
+			oBinding.getNodeContexts(aContexts[3]);
 			assert.ok(oBinding.hasChildren(aContexts[3]), " node context should have children");
 
 			done();
@@ -367,7 +357,7 @@
 
 			oBinding.detachChange(handler1);
 			done();
-		}
+		};
 
 		oBinding.attachChange(handler1);
 		oBinding.getRootContexts();
@@ -417,13 +407,13 @@
 					"Employees(4)",
 					"Employees(5)",
 					"Employees(8)"
-				],
+				]
 			}, "Keys object has value for root");
 			assert.deepEqual(oBinding.oLengths, {
-				"/Employees(2)/Employees1": 5,
+				"/Employees(2)/Employees1": 5
 			}, "Lengths object has value for root");
 			assert.deepEqual(oBinding.oFinalLengths, {
-				"/Employees(2)/Employees1": true,
+				"/Employees(2)/Employees1": true
 			}, "FinalLengths object has value for root");
 
 			oBinding.detachChange(handler1);
@@ -444,7 +434,7 @@
 			oBinding.detachChange(handler2);
 
 			oBinding.attachChange(handler3);
-		}
+		};
 
 		var handler3 = function(oEvent) {
 			// contexts should be now loaded
@@ -479,27 +469,24 @@
 					"Employees(4)",
 					"Employees(5)",
 					"Employees(8)"
-				],
+				]
 			}, "Keys object has value for root");
 			assert.deepEqual(oBinding.oLengths, {
-				"/Employees(2)/Employees1": 5,
+				"/Employees(2)/Employees1": 5
 			}, "Lengths object has value for root");
 			assert.deepEqual(oBinding.oFinalLengths, {
-				"/Employees(2)/Employees1": true,
+				"/Employees(2)/Employees1": true
 			}, "FinalLengths object has value for root");
 
 			oBinding.detachChange(handler3);
 			done();
-		}
+		};
 
 		oBinding.attachChange(handler1);
 		oBinding.getRootContexts();
 	});
 
 	QUnit.test("No navigation object specified", function(assert) {
-
-		var Log = sap.ui.require("sap/base/Log");
-		assert.ok(Log, "Log module should be available");
 
 		var iErrorCount = 0,
 			sErrorMessage = "";
@@ -517,9 +504,6 @@
 
 	QUnit.test("Tried filtering", function(assert) {
 
-		var Log = sap.ui.require("sap/base/Log");
-		assert.ok(Log, "Log module should be available");
-
 		var iWarningCount = 0,
 			sMessage = "";
 
@@ -532,7 +516,7 @@
 			navigation: {}
 		});
 
-		oBinding.filter(new sap.ui.model.Filter("FirstName", "EQ", "Tom"));
+		oBinding.filter(new Filter("FirstName", "EQ", "Tom"));
 
 		assert.equal(iWarningCount, 1, "One warning (that filtering is not enabled) should have fired");
 		assert.equal(sMessage, "Filtering is currently not possible in the ODataTreeBinding", "Check warning message");
@@ -596,7 +580,7 @@
 
 			oBinding.detachChange(handler1);
 			done();
-		}
+		};
 
 		oBinding.attachChange(handler1);
 		oBinding.getRootContexts(1, 4);
@@ -605,11 +589,11 @@
 	QUnit.module("ODataTreeBinding with annotations", {
 		beforeEach: function() {
 			oAnnotationMockServer.start();
-			oModel = new sap.ui.model.odata.ODataModel('/metadata/', true);
+			oModel = new ODataModel('/metadata/', true);
 		},
 		afterEach: function() {
 			oAnnotationMockServer.stop();
-			delete oModel;
+			oModel.destroy();
 		}
 	});
 
@@ -617,7 +601,7 @@
 		createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
 			navigation: {}
 		});
-		assert.ok(oBinding instanceof sap.ui.model.odata.ODataTreeBinding, "treeBinding class check");
+		assert.ok(oBinding instanceof ODataTreeBinding, "treeBinding class check");
 		assert.equal(oBinding.getPath(), "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", "TreeBinding path");
 		assert.equal(oBinding.getModel(), oModel, "TreeBinding model");
 		assert.equal(oBinding.bHasTreeAnnotations, true, "TreeBinding Metadata should be available");
@@ -675,7 +659,6 @@
 		});
 
 		var oContext;
-		var iHandleCounter = 0;
 
 		var handler1 = function(oEvent) {
 			// contexts should be now loaded
@@ -723,7 +706,7 @@
 
 			oBinding.detachChange(handler2);
 			done();
-		}
+		};
 
 		oBinding.attachChange(handler1);
 		oBinding.getRootContexts();
@@ -872,16 +855,13 @@
 
 			oBinding.detachChange(handler2);
 			done();
-		}
+		};
 
 		oBinding.attachChange(handler1);
 		oBinding.getRootContexts(1, 4);
 	});
 
 	QUnit.test("Tried filtering", function(assert) {
-
-		var Log = sap.ui.require("sap/base/Log");
-		assert.ok(Log, "Log module should be available");
 
 		var iWarningCount = 0,
 			sMessage = "";
@@ -893,20 +873,9 @@
 
 		createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
 
-		oBinding.filter(new sap.ui.model.Filter("ParentNode", "EQ", "000000"));
+		oBinding.filter(new Filter("ParentNode", "EQ", "000000"));
 
 		assert.equal(iWarningCount, 2, "One warning (that filtering is not enabled) should have fired and one warning for hierarchy mode deprecation");
 		assert.equal(sMessage, "Filtering is currently not possible in the ODataTreeBinding", "Check warning message");
 	});
-
-	</script>
-
-</head>
-<body>
-<h1 id="qunit-header">QUnit tests: ODataTreeBinding</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-</body>
-</html>
+});

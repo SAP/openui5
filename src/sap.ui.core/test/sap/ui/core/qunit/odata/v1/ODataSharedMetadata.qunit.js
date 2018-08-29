@@ -1,101 +1,91 @@
-<!DOCTYPE HTML>
+/*global QUnit, sinon*/
+sap.ui.define([
+	"sap/base/Log",
+	"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService",
+	"sap/ui/model/odata/ODataModel",
+	"sap/ui/model/Context",
+	"sap/m/Label"
+], function(
+		Log,
+	fakeService,
+	ODataModel,
+	Context,
+	Label
+) {
+	"use strict";
+	//add divs for control tests
+	var oTarget1 = document.createElement("div");
+	oTarget1.id = "target1";
+	document.body.appendChild(oTarget1);
+	var oTarget2 = document.createElement("div");
+	oTarget2.id = "target2";
+	document.body.appendChild(oTarget2);
 
-<!--
-  Tested sap.ui.model.odata.ODataModel
--->
-
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<!-- Initialization -->
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons">
-	</script>
-
-<link rel="stylesheet" 	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" 	media="screen">
-<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<!--[if IE]>
-	<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
-<![endif]-->
-<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
-<!-- use the sinon faketimers for this test -->
-<script>
-	sinon.config.useFakeTimers = true;
-</script>
-
-<!-- This test is not running against the real Northwind service, but a fake service based on
-     Sinon.SJ FakeXHR. To run on the real service instead please comment out the following line. -->
-<script src="ODataModelFakeService.js"></script>
-
-<!-- Test functions -->
-<script>
 	var sURI = "http://services.odata.org/V3/Northwind/Northwind.svc/";
 	sURI = "/proxy/http/" + sURI.replace("http://","");
-	var oLabel = new sap.ui.commons.Label("myLabel");
+	var oLabel = new Label("myLabel");
 	oLabel.placeAt("target1");
 
 	function initModel(sURI, bJSON){
-		var oModel = new sap.ui.model.odata.ODataModel(sURI, bJSON);
+		var oModel = new ODataModel(sURI, bJSON);
 		return oModel;
 	}
 
 	QUnit.test("test oDataModel - oMetadata shared across models", function(assert){
 		var done = assert.async();
 		assert.expect(1);
-		var clock = this.clock;
+		var clock = sinon.clock.create();
 		var mOptions = {
 				json : true,
 				loadMetadataAsync: true
 			};
-		var oModel = new sap.ui.model.odata.ODataModel(sURI, mOptions);
+		var oModel = new ODataModel(sURI, mOptions);
 		var oModel2 = {};
 
 		oModel.oMetadata.attachLoaded(function() {
-			jQuery.sap.log.debug("test 1 - metadata loaded is fired on metadata onload of model1");
+			Log.debug("test 1 - metadata loaded is fired on metadata onload of model1");
 		});
 
 		oModel.attachMetadataLoaded(function(){
-			oModel2 = new sap.ui.model.odata.ODataModel(sURI, mOptions);
+			oModel2 = new ODataModel(sURI, mOptions);
 
 			var bFiredAtMetadata = false;
 
-			var metadataDfd = jQuery.Deferred();
+			var pMetadata = new Promise(function(fnResolve, fnReject) {
 
-			oModel2.oMetadata.attachLoaded(function() {
-				jQuery.sap.log.debug("test 2 - metadata loaded is fired on metadata");
-				bFiredAtMetadata = true;
-			});
-			// attach again and wait for the metadataloaded event at the model itself,
-			//fail if event is fired at the metadata object
-			oModel2.attachMetadataLoaded(function() {
-				jQuery.sap.log.debug("metadata loaded is fired");
-				if (!bFiredAtMetadata) {
-					metadataDfd.resolve();
-				} else {
-					metadataDfd.reject();
-				}
-			});
-			clock.tick(1);
-			jQuery.when(metadataDfd).done(function(e){
-					assert.ok(true, 'Metadata loaded fired at model only');
-					done();
-				}).fail(function(e){
-					jQuery.sap.log.debug("metadata promise failed");
-					assert.ok(false, 'Metadata loaded fired at metadata object')
-					done();
+				oModel2.oMetadata.attachLoaded(function() {
+					Log.debug("test 2 - metadata loaded is fired on metadata");
+					bFiredAtMetadata = true;
 				});
+				// attach again and wait for the metadataloaded event at the model itself,
+				//fail if event is fired at the metadata object
+				oModel2.attachMetadataLoaded(function() {
+					Log.debug("metadata loaded is fired");
+					if (!bFiredAtMetadata) {
+						fnResolve();
+					} else {
+						fnReject();
+					}
+				});
+
+			});
+
+			clock.tick(1);
+
+			pMetadata.then(function(e){
+				assert.ok(true, 'Metadata loaded fired at model only');
+			}, function(e){
+				Log.debug("metadata promise failed");
+				assert.ok(false, 'Metadata loaded fired at metadata object');
+			}).finally(done);
+
 		});
 		clock.tick(1);
 	});
 
 	QUnit.test("metadata check", function(assert){
 		var done = assert.async();
+		var clock = sinon.clock.create();
 		assert.expect(7);
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
@@ -116,16 +106,17 @@
 		oBinding.attachChange(handler);
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 		oBinding.getContexts();
-		this.clock.tick(1);
+		clock.tick(1);
 	});
 
 	QUnit.test("metadata get entity type check", function(assert){
 		var done = assert.async();
+		var clock = sinon.clock.create();
 		assert.expect(11);
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
-			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories");
+			var oResult = oModel.oMetadata._getEntityTypeByPath("/Categories");
 			assert.equal(oResult.name, "Category", "entity type name check");
 			oResult = {};
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories(1)");
@@ -164,16 +155,17 @@
 		oBinding.attachChange(handler);
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 		oBinding.getContexts();
-		this.clock.tick(1);
+		clock.tick(1);
 	});
 
 	QUnit.test("metadata get entity type check with context", function(assert){
 		var done = assert.async();
+		var clock = sinon.clock.create();
 		assert.expect(1);
 		var oModel = initModel(sURI, false, "Categories");
-		var oBinding = oModel.bindList("Products", new sap.ui.model.Context(oModel, "/Categories(7)"));
+		var oBinding = oModel.bindList("Products", new Context(oModel, "/Categories(7)"));
 		var handler = function() { // delay the following test
-			oResult = oBinding.oEntityType;
+			var oResult = oBinding.oEntityType;
 			assert.equal(oResult.name, "Product", "entity type name check");
 			oResult = {};
 			oBinding.detachChange(handler);
@@ -182,17 +174,18 @@
 		oBinding.attachChange(handler);
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 		oBinding.getContexts();
-		this.clock.tick(1);
+		clock.tick(1);
 	});
 
 	QUnit.test("metadata get property metadata", function(assert){
 		var done = assert.async();
+		var clock = sinon.clock.create();
 		assert.expect(6);
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
-			oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
-			oResult = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
+			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
+			var oResult = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
 			assert.equal(oResult.name, "CategoryName", "Property type name check");
 			assert.equal(oResult.type, "Edm.String", "Property type name check");
 
@@ -211,14 +204,15 @@
 		oBinding.attachChange(handler);
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 		oBinding.getContexts();
-		this.clock.tick(1);
+		clock.tick(1);
 	});
 
 
 	QUnit.test("async metadata request check", function(assert){
 		var done = assert.async();
+		var clock = sinon.clock.create();
 		assert.expect(2);
-		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
+		var oModel = new ODataModel(sURI, {
 			json: true,
 			loadMetadataAsync: true
 		});
@@ -228,16 +222,17 @@
 			oModel.detachMetadataLoaded(handler);
 			assert.ok(oModel.getServiceMetadata(), "get metadata check");
 			done();
-		}
+		};
 		oModel.attachMetadataLoaded(handler);
-		this.clock.tick(30);
+		clock.tick(30);
 	});
 
 
 	QUnit.test("async metadata request check with bindings", function(assert){
 		var done = assert.async();
+		var clock = sinon.clock.create();
 		assert.expect(9);
-		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
+		var oModel = new ODataModel(sURI, {
 			json: true,
 			loadMetadataAsync: true
 		});
@@ -264,15 +259,16 @@
 			oBinding.attachChange(handler2);
 			oBinding.attachRefresh(handler2);
 			oBinding.initialize();
-		}
+		};
 		oModel.attachMetadataLoaded(handler);
-		this.clock.tick(30);
+		clock.tick(30);
 	});
 
 	QUnit.test("async metadata request check with bindings die zwote", function(assert){
 		var done = assert.async();
+		var clock = sinon.clock.create();
 		assert.expect(7);
-		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
+		var oModel = new ODataModel(sURI, {
 			json: true,
 			loadMetadataAsync: true
 		});
@@ -296,20 +292,6 @@
 		oBinding.attachChange(handler);
 		oBinding.attachRefresh(handler);
 		oBinding.initialize();
-		this.clock.tick(30);
+		clock.tick(30);
 	});
-
-	</script>
-
-</head>
-<body>
-<h1 id="qunit-header">QUnit tests: Data binding OData SharedMetadata</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-<br>
-<div id="target1"></div>
-<div id="target2"></div>
-</body>
-</html>
+});

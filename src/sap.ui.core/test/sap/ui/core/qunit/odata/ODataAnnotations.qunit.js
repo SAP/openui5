@@ -1,82 +1,87 @@
-/*global QUnit, sinon */
-/*eslint max-nested-callbacks: 0 */
+sap.ui.define([
+	"test-resources/sap/ui/core/qunit/odata/data/ODataAnnotationsFakeService",
+	"sap/ui/model/odata/ODataModel",
+	"sap/ui/model/odata/v2/ODataModel",
+	'sap/ui/Device'
+], function(
+	fakeService,
+	V1ODataModel,
+	V2ODataModel,
+	Device
+) {
+	"use strict";
 
-/**
- * Test-Function to be used in place of deepEquals which only tests for the existence of the given
- * values, not the absence of others.
- *
- * @param {object} assert - The QUnit assert object
- * @param {object} oValue - The value to be tested
- * @param {object} oExpected - The value that is tested against, containing the structure expected inside oValue
- * @param {string} sMessage - Message prefix for every sub-test. The property names of the structure will be prepended to this string
- * @returns {void}
- */
-function deepContains(assert, oValue, oExpected, sMessage) {
-	for (var sKey in oExpected) {
+	/*global QUnit, sinon */
+	/*eslint max-nested-callbacks: 0 */
 
-		if (!(sKey in oValue)) {
-			assert.ok(false, "Expected property " + sMessage + "/" + sKey + " does not exist");
-			continue;
-		}
+	/**
+	 * Test-Function to be used in place of deepEquals which only tests for the existence of the given
+	 * values, not the absence of others.
+	 *
+	 * @param {object} assert - The QUnit assert object
+	 * @param {object} oValue - The value to be tested
+	 * @param {object} oExpected - The value that is tested against, containing the structure expected inside oValue
+	 * @param {string} sMessage - Message prefix for every sub-test. The property names of the structure will be prepended to this string
+	 * @returns {void}
+	 */
+	function deepContains(assert, oValue, oExpected, sMessage) {
+		for (var sKey in oExpected) {
 
-		if (Array.isArray(oExpected[sKey]) === Array.isArray(oValue[sKey])) {
-			assert.equal(typeof oValue[sKey], typeof oExpected[sKey], sMessage + "/" + sKey + " have same type");
-		} else {
-			assert.ok(false, sMessage + "/" + sKey + " - one is an array, the other is not");
-		}
-
-
-		if (Array.isArray(oExpected[sKey]) && Array.isArray(oValue[sKey])) {
-			assert.equal(oValue[sKey].length, oExpected[sKey].length, sMessage + "/" + sKey + " length matches (" + oExpected[sKey].length + ")");
-		}
-
-		if (oExpected[sKey] !== null && oExpected[sKey] !== undefined && typeof oExpected[sKey] === "object" && typeof oValue[sKey] === "object") {
-			// Go deeper
-			if (oValue[sKey] === null) {
-				assert.ok(false, "Property " + sMessage + "/" + sKey + " is null");
-			} else {
-				deepContains(assert, oValue[sKey], oExpected[sKey], sMessage + "/" + sKey);
+			if (!(sKey in oValue)) {
+				assert.ok(false, "Expected property " + sMessage + "/" + sKey + " does not exist");
+				continue;
 			}
-		} else {
-			// Compare directly
-			assert.equal(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey + " match (" + oExpected[sKey] + ")");
+
+			if (Array.isArray(oExpected[sKey]) === Array.isArray(oValue[sKey])) {
+				assert.equal(typeof oValue[sKey], typeof oExpected[sKey], sMessage + "/" + sKey + " have same type");
+			} else {
+				assert.ok(false, sMessage + "/" + sKey + " - one is an array, the other is not");
+			}
+
+
+			if (Array.isArray(oExpected[sKey]) && Array.isArray(oValue[sKey])) {
+				assert.equal(oValue[sKey].length, oExpected[sKey].length, sMessage + "/" + sKey + " length matches (" + oExpected[sKey].length + ")");
+			}
+
+			if (oExpected[sKey] !== null && oExpected[sKey] !== undefined && typeof oExpected[sKey] === "object" && typeof oValue[sKey] === "object") {
+				// Go deeper
+				if (oValue[sKey] === null) {
+					assert.ok(false, "Property " + sMessage + "/" + sKey + " is null");
+				} else {
+					deepContains(assert, oValue[sKey], oExpected[sKey], sMessage + "/" + sKey);
+				}
+			} else {
+				// Compare directly
+				assert.equal(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey + " match (" + oExpected[sKey] + ")");
+			}
 		}
 	}
-}
 
-function fnCreateModel(assert, iModelVersion, sServiceUrl, aAnnotationUrls, mMetadataUrlParams) {
-	var oModel;
-	if (iModelVersion == 1) {
-		oModel = new sap.ui.model.odata.ODataModel(sServiceUrl, {
-			annotationURI : aAnnotationUrls,
-			loadMetadataAsync: true,
-			metadataUrlParams: mMetadataUrlParams
-		});
-	} else if (iModelVersion == 2) {
-		oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, {
-			annotationURI : aAnnotationUrls,
-			metadataUrlParams: mMetadataUrlParams
-		});
-	} else {
-		assert.ok(false, "Unknown ODataModel version requested for test: " + iModelVersion);
+	function fnCreateModel(assert, iModelVersion, sServiceUrl, aAnnotationUrls, mMetadataUrlParams) {
+		var oModel;
+		if (iModelVersion == 1) {
+			oModel = new V1ODataModel(sServiceUrl, {
+				annotationURI : aAnnotationUrls,
+				loadMetadataAsync: true,
+				metadataUrlParams: mMetadataUrlParams
+			});
+		} else if (iModelVersion == 2) {
+			oModel = new V2ODataModel(sServiceUrl, {
+				annotationURI : aAnnotationUrls,
+				metadataUrlParams: mMetadataUrlParams
+			});
+		} else {
+			assert.ok(false, "Unknown ODataModel version requested for test: " + iModelVersion);
+		}
+		return oModel;
 	}
-	return oModel;
-}
 
+	function cleanOdataCache() {
+		V1ODataModel.mServiceData = {};
+		V2ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
+	}
 
-jQuery.sap.require("sap.ui.model.odata.ODataModel");
-jQuery.sap.require("jquery.sap.sjax");
-function cleanOdataCache() {
-	sap.ui.model.odata.ODataModel.mServiceData = {};
-	sap.ui.model.odata.v2.ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
-}
-
-QUnit.config.testTimeout = 6000;
-
-/* eslint-disable no-unused-vars */
-function runODataAnnotationTests() {
-/* eslint-enable no-unused-vars */
-"use strict";
+	QUnit.config.testTimeout = 6000;
 
 	var aServices = [{
 		name			 : "Northwind",
@@ -361,17 +366,15 @@ function runODataAnnotationTests() {
 
 	};
 
+	var	mTest, sTestName, sServiceURI, mModelOptions, bServiceValid, bAnnotationsValid, sAnnotationsValid, bSharedMetadata,
+		sTestType, fnTest, mService, oAnnotations, i;
 
 	// Add additional tests to stadard tests as well
 	for (var sName in mAdditionalTestsServices) {
-		var mTest = mAdditionalTestsServices[sName];
+		mTest = mAdditionalTestsServices[sName];
 		mTest.name = sName;
 		aServices.push(mTest);
 	}
-
-	var
-		sTestName, sServiceURI, mModelOptions, bServiceValid, bAnnotationsValid, sAnnotationsValid, bSharedMetadata,
-		sTestType, fnTest, mService, oAnnotations, i;
 
 	QUnit.module("Synchronous loading");
 
@@ -380,7 +383,7 @@ function runODataAnnotationTests() {
 			if (!bSharedMetadata){
 				cleanOdataCache();
 			}
-			var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+			var oModel = new V1ODataModel(sServiceURI, mModelOptions);
 			// Since this is synchronous, everything should be ready right now.
 
 			var oMetadata = oModel.getServiceMetadata();
@@ -430,7 +433,7 @@ function runODataAnnotationTests() {
 
 		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 		//  ==> PhantomJS doesn't fail when loading malformed XML!
-		if (!sap.ui.Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
+		if (!Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
 			QUnit.test(sTestType, fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid));
 		}
 	}
@@ -443,7 +446,7 @@ function runODataAnnotationTests() {
 			if (!bSharedMetadata){
 				cleanOdataCache();
 			}
-			var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+			var oModel = new V1ODataModel(sServiceURI, mModelOptions);
 
 			var bMetadataLoaded = false;
 			var bAnnotationsLoaded = false;
@@ -573,7 +576,7 @@ function runODataAnnotationTests() {
 
 		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 		//  ==> PhantomJS doesn't fail when loading malformed XML!
-		if (!sap.ui.Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
+		if (!Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
 			QUnit.test(
 				"Asynchronous loading - " + sTestType,
 				fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid)
@@ -587,9 +590,9 @@ function runODataAnnotationTests() {
 		return function(assert) {
 			var done = assert.async();
 			if (!bSharedMetadata){
-				sap.ui.model.odata.v2.ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
+				V2ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
 			}
-			var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+			var oModel = new V2ODataModel(sServiceURI, mModelOptions);
 
 			var bMetadataLoaded = false;
 			var bAnnotationsLoaded = false;
@@ -719,7 +722,7 @@ function runODataAnnotationTests() {
 
 		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 		//  ==> PhantomJS doesn't fail when loading malformed XML!
-		if (!sap.ui.Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
+		if (!Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
 			QUnit.test(
 				"Asynchronous loading - " + sTestType,
 				fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid)
@@ -736,7 +739,7 @@ function runODataAnnotationTests() {
 			if (!bSharedMetadata){
 				cleanOdataCache();
 			}
-			var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+			var oModel = new V1ODataModel(sServiceURI, mModelOptions);
 			var that = this;
 			var bMetadataLoaded = false;
 			var bAnnotationsLoaded = false;
@@ -873,7 +876,7 @@ function runODataAnnotationTests() {
 
 		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 		//  ==> PhantomJS doesn't fail when loading malformed XML!
-		if (!sap.ui.Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
+		if (!Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
 			QUnit.test(
 				"Asynchronous loading (joined events) - " + sTestType,
 				fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid)
@@ -888,9 +891,9 @@ function runODataAnnotationTests() {
 		return function(assert) {
 			var done = assert.async();
 			if (!bSharedMetadata){
-				sap.ui.model.odata.v2.ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
+				V2ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
 			}
-			var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+			var oModel = new V2ODataModel(sServiceURI, mModelOptions);
 			var that = this;
 			var bMetadataLoaded = false;
 			var bAnnotationsLoaded = false;
@@ -1030,7 +1033,7 @@ function runODataAnnotationTests() {
 
 		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 		//  ==> PhantomJS doesn't fail when loading malformed XML!
-		if (!sap.ui.Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
+		if (!Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
 			QUnit.test(
 				"Asynchronous loading (joined events) - " + sTestType,
 				fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid));
@@ -1042,7 +1045,7 @@ function runODataAnnotationTests() {
 
 	var fnTestSynchronousLoading = function(mTest, assert) {
 		assert.expect(5);
-		var oModel = new sap.ui.model.odata.ODataModel(mTest.service, {
+		var oModel = new V1ODataModel(mTest.service, {
 			annotationURI : mTest.annotations,
 			skipMetadataAnnotationParsing: false,
 			loadMetadataAsync: false
@@ -1097,7 +1100,7 @@ function runODataAnnotationTests() {
 
 		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 		//  ==> PhantomJS doesn't fail when loading malformed XML!
-		if (!sap.ui.Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
+		if (!Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
 			QUnit.test("V1 only: Synchronous Metadata loading and Metamodel - " + sTestType, fnTestSynchronousLoading.bind(this, aServices[i]));
 		}
 	}
@@ -1112,7 +1115,7 @@ function runODataAnnotationTests() {
 
 		// Don't use metadata/annotation cache
 		cleanOdataCache();
-		var oModel1 = new sap.ui.model.odata.ODataModel(
+		var oModel1 = new V1ODataModel(
 			"fakeService://testdata/odata/northwind-annotated/",
 			{
 				annotationURI : [
@@ -1133,7 +1136,7 @@ function runODataAnnotationTests() {
 
 		// Don't use metadata/annotation cache
 		cleanOdataCache();
-		var oModel2 = new sap.ui.model.odata.ODataModel(
+		var oModel2 = new V1ODataModel(
 			"fakeService://testdata/odata/northwind-annotated/",
 			{
 				annotationURI : [
@@ -1154,7 +1157,7 @@ function runODataAnnotationTests() {
 
 		// Don't use metadata/annotation cache
 		cleanOdataCache();
-		var oModel3 = new sap.ui.model.odata.ODataModel(
+		var oModel3 = new V1ODataModel(
 			"fakeService://testdata/odata/northwind-annotated/",
 			{
 				annotationURI : [
@@ -1177,7 +1180,7 @@ function runODataAnnotationTests() {
 		function startTest4() {
 			// Don't use metadata/annotation cache
 			cleanOdataCache();
-			var oModel4 = new sap.ui.model.odata.ODataModel(
+			var oModel4 = new V1ODataModel(
 				"fakeService://testdata/odata/northwind-annotated/",
 				{
 					annotationURI : [
@@ -1211,7 +1214,7 @@ function runODataAnnotationTests() {
 		assert.expect(6);
 		var asyncStartsExpected = 2; // The number of asynchronous starts expected before the real start is triggered
 
-		var oModel3 = new sap.ui.model.odata.v2.ODataModel(
+		var oModel3 = new V2ODataModel(
 			"fakeService://testdata/odata/northwind-annotated/",
 			{
 				annotationURI : [
@@ -1232,7 +1235,7 @@ function runODataAnnotationTests() {
 			asyncStart(done);
 		});
 
-		var oModel4 = new sap.ui.model.odata.v2.ODataModel(
+		var oModel4 = new V2ODataModel(
 			"fakeService://testdata/odata/northwind-annotated/",
 			{
 				annotationURI : [
@@ -1284,7 +1287,7 @@ function runODataAnnotationTests() {
 			loadMetadataAsync: false
 		};
 
-		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V1ODataModel(sServiceURI, mModelOptions);
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
@@ -1378,7 +1381,7 @@ function runODataAnnotationTests() {
 			skipMetadataAnnotationParsing: true
 		};
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V2ODataModel(sServiceURI, mModelOptions);
 
 		oModel.attachAnnotationsLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
@@ -1476,7 +1479,7 @@ function runODataAnnotationTests() {
 			loadMetadataAsync: false
 		};
 
-		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V1ODataModel(sServiceURI, mModelOptions);
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
@@ -1572,7 +1575,7 @@ function runODataAnnotationTests() {
 			skipMetadataAnnotationParsing: true
 		};
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V2ODataModel(sServiceURI, mModelOptions);
 		oModel.attachAnnotationsLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
@@ -1670,7 +1673,7 @@ function runODataAnnotationTests() {
 			loadMetadataAsync: false
 		};
 
-		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V1ODataModel(sServiceURI, mModelOptions);
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
@@ -1738,7 +1741,7 @@ function runODataAnnotationTests() {
 			skipMetadataAnnotationParsing: true
 		};
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V2ODataModel(sServiceURI, mModelOptions);
 		oModel.attachAnnotationsLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
@@ -1806,7 +1809,7 @@ function runODataAnnotationTests() {
 			loadMetadataAsync: false
 		};
 
-		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V1ODataModel(sServiceURI, mModelOptions);
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
@@ -1870,7 +1873,7 @@ function runODataAnnotationTests() {
 			skipMetadataAnnotationParsing: true
 		};
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V2ODataModel(sServiceURI, mModelOptions);
 		oModel.attachAnnotationsLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
@@ -1939,7 +1942,7 @@ function runODataAnnotationTests() {
 			skipMetadataAnnotationParsing: true
 		};
 
-		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V1ODataModel(sServiceURI, mModelOptions);
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
@@ -2005,7 +2008,7 @@ function runODataAnnotationTests() {
 			skipMetadataAnnotationParsing: true
 		};
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V2ODataModel(sServiceURI, mModelOptions);
 		oModel.attachAnnotationsLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
@@ -2072,7 +2075,7 @@ function runODataAnnotationTests() {
 			loadMetadataAsync: false
 		};
 
-		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V1ODataModel(sServiceURI, mModelOptions);
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
@@ -2276,7 +2279,7 @@ function runODataAnnotationTests() {
 			skipMetadataAnnotationParsing: true
 		};
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V2ODataModel(sServiceURI, mModelOptions);
 		oModel.attachAnnotationsLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
@@ -2482,7 +2485,7 @@ function runODataAnnotationTests() {
 			loadMetadataAsync: false
 		};
 
-		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V1ODataModel(sServiceURI, mModelOptions);
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
@@ -2559,7 +2562,7 @@ function runODataAnnotationTests() {
 			skipMetadataAnnotationParsing: true
 		};
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V2ODataModel(sServiceURI, mModelOptions);
 		oModel.attachAnnotationsLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
@@ -2638,7 +2641,7 @@ function runODataAnnotationTests() {
 			loadMetadataAsync: false
 		};
 
-		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V1ODataModel(sServiceURI, mModelOptions);
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
@@ -2856,7 +2859,7 @@ function runODataAnnotationTests() {
 			skipMetadataAnnotationParsing: true
 		};
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V2ODataModel(sServiceURI, mModelOptions);
 		oModel.attachMetadataLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
@@ -3076,7 +3079,7 @@ function runODataAnnotationTests() {
 			loadMetadataAsync: false
 		};
 
-		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V1ODataModel(sServiceURI, mModelOptions);
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
@@ -3106,7 +3109,7 @@ function runODataAnnotationTests() {
 			skipMetadataAnnotationParsing: true
 		};
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V2ODataModel(sServiceURI, mModelOptions);
 		oModel.attachMetadataLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
@@ -3138,7 +3141,7 @@ function runODataAnnotationTests() {
 			loadMetadataAsync: false
 		};
 
-		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V1ODataModel(sServiceURI, mModelOptions);
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
@@ -3172,7 +3175,7 @@ function runODataAnnotationTests() {
 			skipMetadataAnnotationParsing: true
 		};
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V2ODataModel(sServiceURI, mModelOptions);
 		oModel.attachMetadataLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
@@ -3208,7 +3211,7 @@ function runODataAnnotationTests() {
 			loadMetadataAsync: false
 		};
 
-		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V1ODataModel(sServiceURI, mModelOptions);
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
@@ -3305,7 +3308,7 @@ function runODataAnnotationTests() {
 			skipMetadataAnnotationParsing: true
 		};
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V2ODataModel(sServiceURI, mModelOptions);
 		oModel.attachMetadataLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
@@ -3406,7 +3409,7 @@ function runODataAnnotationTests() {
 			skipMetadataAnnotationParsing: true
 		};
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V2ODataModel(sServiceURI, mModelOptions);
 
 		var bFirstLoad = true;
 		oModel.attachAnnotationsLoaded(function() {
@@ -3481,7 +3484,7 @@ function runODataAnnotationTests() {
 
 		// Don't use metadata/annotations cache
 		cleanOdataCache();
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V2ODataModel(sServiceURI, mModelOptions);
 
 
 		var sFirstAnnotations  = jQuery.sap.syncGet(mTest.annotations[0]).data;
@@ -3578,7 +3581,7 @@ function runODataAnnotationTests() {
 			loadMetadataAsync: false
 		};
 
-		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V1ODataModel(sServiceURI, mModelOptions);
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
@@ -3617,7 +3620,7 @@ function runODataAnnotationTests() {
 			loadMetadataAsync: false
 		};
 
-		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V1ODataModel(sServiceURI, mModelOptions);
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
@@ -3651,7 +3654,7 @@ function runODataAnnotationTests() {
 			loadMetadataAsync: false
 		};
 
-		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V1ODataModel(sServiceURI, mModelOptions);
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
@@ -3718,7 +3721,7 @@ function runODataAnnotationTests() {
 			loadMetadataAsync: false
 		};
 
-		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V1ODataModel(sServiceURI, mModelOptions);
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
@@ -3750,7 +3753,7 @@ function runODataAnnotationTests() {
 			loadMetadataAsync: false
 		};
 
-		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V1ODataModel(sServiceURI, mModelOptions);
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
@@ -3782,7 +3785,7 @@ function runODataAnnotationTests() {
 			skipMetadataAnnotationParsing: true
 		};
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V2ODataModel(sServiceURI, mModelOptions);
 
 		oModel.attachAnnotationsLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
@@ -3853,7 +3856,7 @@ function runODataAnnotationTests() {
 			skipMetadataAnnotationParsing: true
 		};
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		var oModel = new V2ODataModel(sServiceURI, mModelOptions);
 
 		oModel.attachAnnotationsLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
@@ -4009,14 +4012,14 @@ function runODataAnnotationTests() {
 
 		// Don't use metadata/annotations cache
 		cleanOdataCache();
-		var oModel = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
+		var oModel = new V2ODataModel(mTest.service, {
 			skipMetadataAnnotationParsing: false,
 			loadAnnotationsJoined: true
 		});
 
 		// Don't use metadata/annotations cache
 		cleanOdataCache();
-		var oModel2 = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
+		var oModel2 = new V2ODataModel(mTest.service, {
 			annotationURI: "fakeService://testdata/odata/northwind-annotations-normal.xml",
 			skipMetadataAnnotationParsing: true,
 			loadAnnotationsJoined: true
@@ -4024,7 +4027,7 @@ function runODataAnnotationTests() {
 
 		// Don't use metadata/annotations cache
 		cleanOdataCache();
-		var oModel3 = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
+		var oModel3 = new V2ODataModel(mTest.service, {
 			annotationURI: null,
 			skipMetadataAnnotationParsing: true,
 			loadAnnotationsJoined: true
@@ -4032,7 +4035,7 @@ function runODataAnnotationTests() {
 
 		// Don't use metadata/annotations cache
 		cleanOdataCache();
-		var oModel4 = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
+		var oModel4 = new V2ODataModel(mTest.service, {
 			annotationURI: "fakeService://testdata/odata/northwind-annotations-normal.xml",
 			skipMetadataAnnotationParsing: false,
 			loadAnnotationsJoined: true
@@ -4070,7 +4073,7 @@ function runODataAnnotationTests() {
 
 		var mTest = mAdditionalTestsServices["Apply in If"];
 
-		var oModel = new sap.ui.model.odata.ODataModel(mTest.service, {
+		var oModel = new V1ODataModel(mTest.service, {
 			annotationURI : mTest.annotations
 		});
 
@@ -4152,7 +4155,7 @@ function runODataAnnotationTests() {
 
 		var mTest = mAdditionalTestsServices["Apply in If"];
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
+		var oModel = new V2ODataModel(mTest.service, {
 			annotationURI : mTest.annotations,
 			skipMetadataAnnotationParsing: true
 		});
@@ -4237,14 +4240,14 @@ function runODataAnnotationTests() {
 
 		var mTest = mAdditionalTestsServices["Joined Loading with automated $metadata parsing"];
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
+		var oModel = new V2ODataModel(mTest.service, {
 			annotationURI : mTest.annotations,
 			skipMetadataAnnotationParsing: false,
 			loadAnnotationsJoined: true
 		});
 
 
-		var oModel2 = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
+		var oModel2 = new V2ODataModel(mTest.service, {
 			annotationURI : mTest.annotations,
 			skipMetadataAnnotationParsing: false,
 			loadAnnotationsJoined: false
@@ -5087,48 +5090,48 @@ function runODataAnnotationTests() {
 				}, "Product EDM types are correctly set");
 
 				deepContains(assert, oAnnotations["NorthwindModel.Product"], {
-					 "com.sap.vocabularies.UI.v1.LineItem": [{
+					"com.sap.vocabularies.UI.v1.LineItem": [{
 							"Label": {
-								 "String": "Product ID"
+								"String": "Product ID"
 							},
 							"Value": {
-								 "Path": "ProductID"
+								"Path": "ProductID"
 							},
 							"RecordType": "com.sap.vocabularies.UI.v1.DataField",
 							"EdmType": "Edm.Int32"
 						}, {
 							"Label": {
-								 "String": "Product Name"
+								"String": "Product Name"
 							},
 							"Value": {
-								 "Path": "ProductName"
+								"Path": "ProductName"
 							},
 							"RecordType": "com.sap.vocabularies.UI.v1.DataField",
 							"EdmType": "Edm.String"
 						}, {
 							"Label": {
-								 "String": "Product Supplier ID"
+								"String": "Product Supplier ID"
 							},
 							"Value": {
-								 "Path": "Supplier/SupplierID"
+								"Path": "Supplier/SupplierID"
 							},
 							"RecordType": "com.sap.vocabularies.UI.v1.DataField",
 							"EdmType": "Edm.Int32"
 						}, {
 							"Label": {
-								 "String": "Product Supplier Name"
+								"String": "Product Supplier Name"
 							},
 							"Value": {
-								 "Path": "Supplier/CompanyName"
+								"Path": "Supplier/CompanyName"
 							},
 							"RecordType": "com.sap.vocabularies.UI.v1.DataField",
 							"EdmType": "Edm.String"
 						}, {
 							"Label": {
-								 "String": "Product Supplier ID"
+								"String": "Product Supplier ID"
 							},
 							"Value": {
-								 "Path": "Category/CategoryName"
+								"Path": "Category/CategoryName"
 							},
 							"RecordType": "com.sap.vocabularies.UI.v1.DataField",
 							"EdmType": "Edm.String"
@@ -5846,4 +5849,4 @@ function runODataAnnotationTests() {
 		AnnotationParser.syncAnnotationsAtArrays(mAnnotations, aSegments);
 
 	});
-}
+});
