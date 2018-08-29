@@ -10812,13 +10812,14 @@
 			assert.strictEqual(oList.$().find(".sapMSelectListItemBaseSelected").length, 1, "A list item should have visual focus.");
 
 			// act
-			oComboBox.getFocusDomRef().value = "";
+			oComboBox.getFocusDomRef().value = "AC";
 			sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
 			sap.ui.getCore().applyChanges();
 
 			assert.ok(oComboBox.$().hasClass("sapMFocus"), "The input field should have visual focus.");
 			assert.strictEqual(oList.$().find(".sapMSelectListItemBaseSelected").length, 0, "No list item should have visual focus.");
 
+			// clean up
 			oComboBox.destroy();
 		});
 
