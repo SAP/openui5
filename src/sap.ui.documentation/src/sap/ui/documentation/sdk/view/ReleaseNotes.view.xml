@@ -37,7 +37,7 @@
 					<ObjectPageSection title="{library}" titleUppercase="false">
 						<ObjectPageSubSection titleUppercase="false">
 							<layout:VerticalLayout content="{path: 'versions', templateShareable: false}" width="100%">
-								<m:Panel 
+								<m:Panel
 									headerText="{version}"
 									content="{path: 'notes', templateShareable: false}"
 									expandable="true"
