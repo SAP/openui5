@@ -634,6 +634,9 @@
 		oFileUploader.destroy();
 	});
 
+	testInputRerender("setEnabled", false);
+	testInputRerender("setPlaceholder", "placeholder");
+
 	QUnit.module("BlindLayer", {
 		beforeEach: function() {
 			this.oFileUploader = createFileUploader();
@@ -680,6 +683,28 @@
 
 		oFileUploader.destroy();
 	});
+
+	function testInputRerender(sMethodName, vValue) {
+		QUnit.test(sMethodName + " will call _resizeDomElements after input is re-rendered", function (assert) {
+			// setup
+			var oCore = sap.ui.getCore(),
+					oFileUploader = createFileUploader();
+			oFileUploader.placeAt("qunit-fixture");
+			oCore.applyChanges();
+
+			// act
+			var oResizeDomElementsSpy = this.spy(oFileUploader, "_resizeDomElements");
+			oFileUploader[sMethodName](vValue);
+			oCore.applyChanges();
+
+			// assert
+			assert.equal(oResizeDomElementsSpy.callCount, 1, "_resizeDomElements should be called once when input is re-rendered");
+
+			// cleanup
+			oResizeDomElementsSpy.restore();
+			oFileUploader.destroy();
+		});
+	}
 
 </script>
 </head>
