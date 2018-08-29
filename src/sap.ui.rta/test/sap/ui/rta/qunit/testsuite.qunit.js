@@ -367,10 +367,10 @@ sap.ui.define([
 			},
 
 			// DesignTime Tool
-			"dttool/ListItem": {
+			"dttool/controls/ListItem": {
 				group: 'DtTool',
 				coverage: {
-					only: ["sap/ui/rta/dttool/DTToolListItem"]
+					only: ["sap/ui/rta/dttool/controls/DTToolListItem"]
 				},
 				ui5: {
 					resourceroots: {
@@ -378,10 +378,10 @@ sap.ui.define([
 					}
 				}
 			},
-			"dttool/OutlineTree": {
+			"dttool/controls/OutlineTree": {
 				group: 'DtTool',
 				coverage: {
-					only: ["sap/ui/rta/dttool/OutlineTree"]
+					only: ["sap/ui/rta/dttool/controls/OutlineTree"]
 				},
 				ui5: {
 					resourceroots: {

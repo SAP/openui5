@@ -1,5 +1,5 @@
 sap.ui.define([
-	"sap/ui/rta/dttool/DragDropUtil",
+	"sap/ui/rta/dttool/util/DragDropUtil",
 	"sap/ui/core/postmessage/Bus",
 	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/fl/Utils",

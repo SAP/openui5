@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/StandardTreeItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/ListMode",
-	"sap/ui/rta/dttool/OutlineTree"
+	"sap/ui/rta/dttool/controls/OutlineTree"
 ], function (
 	StandardTreeItem,
 	JSONModel,

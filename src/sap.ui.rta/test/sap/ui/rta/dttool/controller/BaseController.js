@@ -1,15 +1,19 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller"
-], function (Controller) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/UIComponent"
+], function (Controller, UIComponent) {
 	"use strict";
+	var $iFrameWindow;
 	return Controller.extend("sap.ui.rta.dttool.controller.BaseController", {
-
-		getRouter : function () {
-			return sap.ui.core.UIComponent.getRouterFor(this);
+		getRouter: function () {
+			return UIComponent.getRouterFor(this);
 		},
 
-		getIFrameWindow : function () {
-			return document.getElementById("__component0---app--theIFrame").contentWindow;
+		getIFrameWindow: function (sIframeId) {
+			if (!$iFrameWindow) {
+				$iFrameWindow = sap.ui.getCore().byId(sIframeId).getDomRef().contentWindow;
+			}
+			return $iFrameWindow;
 		}
 	});
 });
