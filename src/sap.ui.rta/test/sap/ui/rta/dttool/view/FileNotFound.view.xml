@@ -4,6 +4,5 @@
 	<MessagePage
 		title="{i18n>FileNotFound}"
 		text="{i18n>FileNotFound.text}"
-		description="{i18n>FileNotFound.description}"
-		/>
+		description="{i18n>FileNotFound.description}"/>
 </mvc:View>

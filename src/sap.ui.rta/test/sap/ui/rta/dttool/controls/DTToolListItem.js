@@ -1,7 +1,7 @@
 /*
  * ! ${copyright}
  */
-// Provides control sap.ui.rta.dttool.DTToolListItem.
+// Provides control sap.ui.rta.dttool.controls.DTToolListItem.
 /* globals sap */
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
@@ -12,7 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new sap.ui.rta.dttool.DTToolListItem control.
+	 * Constructor for a new sap.ui.rta.dttool.controls.DTToolListItem control.
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
@@ -22,9 +22,9 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @alias sap.ui.rta.dttool.DTToolListItem
+	 * @alias sap.ui.rta.dttool.controls.DTToolListItem
 	 */
-	var DTToolListItem = InputListItem.extend('sap.ui.rta.dttool.DTToolListItem', {
+	var DTToolListItem = InputListItem.extend('sap.ui.rta.dttool.controls.DTToolListItem', {
 
 		metadata: {
 			properties: {

@@ -1,7 +1,7 @@
 /*
  * ! ${copyright}
  */
-// Provides control sap.ui.rta.dttool.OutlineTree.
+// Provides control sap.ui.rta.dttool.controls.OutlineTree.
 /* globals sap */
 sap.ui.define([
 	'sap/m/Tree',
@@ -13,7 +13,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new sap.ui.rta.dttool.OutlineTree control.
+	 * Constructor for a new sap.ui.rta.dttool.controls.OutlineTree control.
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
@@ -23,9 +23,9 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @alias sap.ui.rta.dttool.OutlineTree
+	 * @alias sap.ui.rta.dttool.controls.OutlineTree
 	 */
-	var OutlineTree = Tree.extend('sap.ui.rta.dttool.OutlineTree', {
+	var OutlineTree = Tree.extend('sap.ui.rta.dttool.controls.OutlineTree', {
 
 		metadata: {
 		},

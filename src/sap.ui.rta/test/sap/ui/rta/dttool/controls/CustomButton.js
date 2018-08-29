@@ -1,7 +1,7 @@
 /*
  * ! ${copyright}
  */
-// Provides control sap.ui.rta.dttool.CustomButton.
+// Provides control sap.ui.rta.dttool.controls.CustomButton.
 /* globals sap */
 sap.ui.define([
 	'jquery.sap.global', 'sap/m/Button', 'sap/m/ButtonRenderer'
@@ -9,7 +9,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new sap.ui.rta.dttool.CustomButton control.
+	 * Constructor for a new sap.ui.rta.dttool.controls.CustomButton control.
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
@@ -19,9 +19,9 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @alias sap.ui.rta.dttool.CustomButton
+	 * @alias sap.ui.rta.dttool.controls.CustomButton
 	 */
-	var CustomButton = Button.extend('sap.ui.rta.dttool.CustomButton', {
+	var CustomButton = Button.extend('sap.ui.rta.dttool.controls.CustomButton', {
 
 		metadata: {
 			properties: {
