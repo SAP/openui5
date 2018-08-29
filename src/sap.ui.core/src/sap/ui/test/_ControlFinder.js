@@ -3,12 +3,13 @@
  */
 
 sap.ui.define([
-	"sap/ui/base/Object",
-	"sap/ui/test/Opa5",
-	"sap/ui/test/OpaPlugin",
-	"sap/ui/test/actions/Press",
-    "sap/ui/thirdparty/jquery"
-], function(UI5Object, Opa5, OpaPlugin, Press, jQueryDOM) {
+    "sap/ui/base/Object",
+    "sap/ui/test/Opa5",
+    "sap/ui/test/OpaPlugin",
+    "sap/ui/test/actions/Press",
+    "sap/ui/thirdparty/jquery",
+    "sap/ui/base/ManagedObjectMetadata"
+], function(UI5Object, Opa5, OpaPlugin, Press, $, ManagedObjectMetadata) {
     "use strict";
 
     var oPlugin = new OpaPlugin();
@@ -18,21 +19,40 @@ sap.ui.define([
     /**
      * Retrieves the controls matching oOptions. Does not wait or poll for the controls to become available.
      * This can be useful in external tools since polling might be done beforehand as in UIVeri5
-     * @param {object} options An Object containing conditions for control search similar to {@link sap.ui.test.Opa5#waitFor}
+     * @param {object} oOptions An Object containing conditions for control search similar to {@link sap.ui.test.Opa5#waitFor}
+     * For details on the recognized object properties, see {@link sap.ui.test.matchers} and control selector types of {@link sap.ui.test.RecordReplay}
+     * If oOptions.ancestor is given, it should be a control selector object. The ancestor control is located and then used for {@link sap.ui.test.matchers.Ancestor}
      * @returns {Array} An array of the matching controls. If no controls match, the returned array is empty.
      * @private
      */
     _ControlFinder._findControls = function (oOptions) {
-        var vControls = oPlugin._getFilteredControlsByDeclaration(oOptions);
-        var aResult;
+        if (oOptions.ancestor) {
+            var oAncestor = _ControlFinder._findControls(oOptions.ancestor)[0];
+            if (!oAncestor) {
+                return [];
+            }
 
-        if (vControls === OpaPlugin.FILTER_FOUND_NO_CONTROLS) {
-            aResult = [];
+            var oOptionsWithAncestor = $.extend({}, oOptions, {
+                matchers: {
+                    ancestor: oAncestor
+                }
+            });
+
+            delete oOptionsWithAncestor.ancestor;
+
+            return  _ControlFinder._findControls(oOptionsWithAncestor);
         } else {
-            aResult = jQueryDOM.isArray(vControls) ? vControls : [vControls];
-        }
+            var vControls = oPlugin._getFilteredControlsByDeclaration(oOptions);
+            var aResult;
 
-        return aResult;
+            if (vControls === OpaPlugin.FILTER_FOUND_NO_CONTROLS) {
+                aResult = [];
+            } else {
+                aResult = $.isArray(vControls) ? vControls : [vControls];
+            }
+
+            return aResult;
+        }
     };
 
     /**
@@ -79,8 +99,19 @@ sap.ui.define([
      * @returns {sap.ui.core.Control} the control in the given context
      * @private
      */
-    _ControlFinder._getControlForElement = function (sElementId) {
-        var controls = jQuery("#" + sElementId).closest("[data-sap-ui]").control();
+    _ControlFinder._getControlForElementID = function (sElementId) {
+        var controls = _ControlFinder._getIdentifiedDOMElement("#" + sElementId).control();
+        return controls && controls[0];
+    };
+
+    /**
+     * Retrieves the control best corresponding to the DOM element
+     * @param {object} oElement DOM element
+     * @returns {sap.ui.core.Control} the control in the given context
+     * @private
+     */
+    _ControlFinder._getControlForElement = function (oElement) {
+        var controls = _ControlFinder._getIdentifiedDOMElement(oElement).control();
         return controls && controls[0];
     };
 
@@ -92,9 +123,35 @@ sap.ui.define([
      * @private
      */
     _ControlFinder._getControlProperty = function (oControl, sProperty) {
-        var properties = jQuery.extend({}, oControl.mProperties, {id: oControl.getId()});
+        var properties = $.extend({}, oControl.mProperties, {id: oControl.getId()});
 
         return Object.keys(properties).indexOf(sProperty) > -1 ? properties[sProperty] : null;
+    };
+
+     /**
+     * Retrieves the ID suffix of the DOM element, if it is stable
+     * @param {object} oElement DOM element
+     * @returns {string} ID suffix or undefined
+     * @private
+     */
+    _ControlFinder._getDomElementIDSuffix = function (oElement) {
+        // TODO: make safer match
+        if (!ManagedObjectMetadata.isGeneratedId(oElement.id) && oElement.id.indexOf("-") > -1) {
+            var sControlRelativeID = oElement.id.split("-").pop();
+            if (!sControlRelativeID.match(/[0-9]$/)) {
+                return sControlRelativeID;
+            }
+        }
+    };
+
+    /**
+     * Retrieves oElement or the nearest parent DOM element that is identified with an ID by UI5
+     * @param {object|string} vSelector DOM element or jQuery string selector
+     * @returns {object} DOM element
+     * @private
+     */
+    _ControlFinder._getIdentifiedDOMElement = function (vSelector) {
+        return $(vSelector).closest("[data-sap-ui]");
     };
 
     return _ControlFinder;
