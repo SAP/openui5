@@ -1005,6 +1005,37 @@
 			oPopover.destroy();
 		});
 
+		QUnit.test("Popover should set the focus to itself only when needed", function (assert){
+			var oNavContainer = new sap.m.NavContainer({
+					initialPage: "firstPage"
+				}),
+				oNavButton = new sap.m.Button({
+					press: function () {
+						oNavContainer.to("detailPage");
+					}
+				}),
+				oPage1 = new sap.m.Page("firstPage", {
+					content: oNavButton
+				}),
+				oPage2 = new sap.m.Page("detailPage", {
+					showNavButton: true,
+					showHeader: true,
+					navButtonPress: function(){ oNavContainer.back(); }
+				});
+
+			oNavContainer.addPage(oPage1).addPage(oPage2);
+
+			var oPopover = new sap.m.Popover({
+				content: oNavContainer
+			});
+
+			oPopover.openBy(oButton);
+			oNavButton.firePress();
+			assert.ok(document.activeElement, oPage2._navBtn.getDomRef(), "The focus should be on the back button");
+
+			oPopover.destroy();
+		});
+
 		QUnit.test("Scrolling is properly disabled", function (assert){
 			var oPopover = new sap.m.Popover({
 				content: [
