@@ -132,7 +132,7 @@
 		},
 		{
 			"control": "sap.m.Image",
-			"url": "../Image.html",
+			"url": "Image.html",
 			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
