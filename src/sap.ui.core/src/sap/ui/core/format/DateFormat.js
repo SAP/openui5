@@ -297,7 +297,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 				sKey = sKey + "-" + "interval";
 			}
 
-			if (!oInfo.oFallbackFormats[sKey]) {
+			var oFallbackFormats = oInfo.oFallbackFormats[sKey] ? Object.assign({}, oInfo.oFallbackFormats[sKey]) : undefined;
+
+			if (!oFallbackFormats) {
 				aFallbackFormatOptions = oInfo.aFallbackFormatOptions;
 				// Add two fallback patterns for locale-dependent short format without delimiters
 				if (oInfo.bShortFallbackFormatOptions) {
@@ -312,10 +314,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 					aFallbackFormatOptions = DateFormat._createFallbackOptionsWithoutDelimiter(oFormat.oFormatOptions.pattern).concat(aFallbackFormatOptions);
 				}
 
-				oInfo.oFallbackFormats[sKey] = DateFormat._createFallbackFormat(aFallbackFormatOptions, sCalendarType, oLocale, oInfo, oFormat.oFormatOptions.interval);
+				oFallbackFormats = DateFormat._createFallbackFormat(aFallbackFormatOptions, sCalendarType, oLocale, oInfo, oFormat.oFormatOptions.interval);
 			}
 
-			oFormat.aFallbackFormats = oInfo.oFallbackFormats[sKey];
+			oFormat.aFallbackFormats = oFallbackFormats;
 		}
 
 		oFormat.oRequiredParts = oInfo.oRequiredParts;
@@ -375,7 +377,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 	 * @return {sap.ui.core.DateFormat[]} an array of fallback DateFormat instances
 	 */
 	DateFormat._createFallbackFormat = function(aFallbackFormatOptions, sCalendarType, oLocale, oInfo, bInterval) {
-		return aFallbackFormatOptions.map(function(oFormatOptions) {
+		return aFallbackFormatOptions.map(function(oOptions) {
+			// The format options within the aFallbackFormatOptions array are static
+			// and shouldn't be manipulated. Hence, cloning each format option is required.
+			var oFormatOptions = Object.assign({}, oOptions);
 			if (bInterval) {
 				oFormatOptions.interval = true;
 			}
