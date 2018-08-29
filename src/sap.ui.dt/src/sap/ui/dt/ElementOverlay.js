@@ -281,7 +281,7 @@ function (
 	 * @protected
 	 */
 	ElementOverlay.prototype.exit = function () {
-		if (this.isInit() && this.isRoot()) {
+		if (this.isRoot()) {
 			this._unsubscribeFromMutationObserver();
 		}
 		this._destroyControlObserver();
