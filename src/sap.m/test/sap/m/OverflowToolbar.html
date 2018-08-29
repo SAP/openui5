@@ -718,6 +718,10 @@
 				minWidth: "100px"
 			})
 		}),
+		new sap.m.Label({
+			text : "Language:",
+			labelFor: "selectLanguage"
+		}),
 		new sap.m.Select("selectLanguage", {
 			name: "select-language",
 			items: [
@@ -757,7 +761,12 @@
 				minWidth: "100px"
 			})
 		}),
+		new sap.m.Label({
+			text : "Items:",
+			labelFor: "comboBox"
+		}),
 		new sap.m.ComboBox("comboBox", {
+			placeholder: "Choose item",
 			items: [
 						new sap.ui.core.Item({
 								key: "0",
