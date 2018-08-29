@@ -2282,18 +2282,33 @@ sap.ui
 
 							};
 
-							var fnCUDRequest = function(sUrl, sData, sType,aChangesetResponses) {
+							var fnCUDRequest = function(sUrl, mHeaders, sData, sType,aChangesetResponses) {
 								var oResponse;
 								var fnAjaxSuccess = function(data, textStatus, xhr){
-									oResponse = { success : true, data : data, status : textStatus, statusCode : xhr && xhr.status, responseHeaders : xhr && xhr.getAllResponseHeaders() };
+									oResponse = {
+										success: true,
+										data: data,
+										status: textStatus,
+										statusCode: xhr && xhr.status,
+										responseHeaders: xhr && xhr.getAllResponseHeaders()
+									};
 								};
 								var fnAjaxError = function(xhr, textStatus, error) {
-									oResponse = { success : false, data : undefined, status : textStatus, error : error, statusCode : xhr.status, errorResponse :  xhr.responseText, responseHeaders : xhr && xhr.getAllResponseHeaders()};
+									oResponse = {
+										success: false,
+										data: undefined,
+										status: textStatus,
+										error: error,
+										statusCode: xhr.status,
+										errorResponse:  xhr.responseText,
+										responseHeaders: xhr && xhr.getAllResponseHeaders()
+									};
 								};
 								jQuery.ajax({
 									type: sType,
 									async: false,
 									url: sUrl,
+									headers: mHeaders,
 									data: sData,
 									dataType: "json",
 									success: fnAjaxSuccess,
@@ -2312,10 +2327,24 @@ sap.ui
 								var oResponse;
 								var sResponseString;
 								var fnAjaxSuccess = function(data, textStatus, xhr){
-									oResponse = { success : true, data : data, status : textStatus, statusCode : xhr && xhr.status, responseHeaders : xhr && xhr.getAllResponseHeaders() };
+									oResponse = {
+										success: true,
+										data: data,
+										status: textStatus,
+										statusCode: xhr && xhr.status,
+										responseHeaders: xhr && xhr.getAllResponseHeaders()
+									};
 								};
 								var fnAjaxError = function(xhr, textStatus, error) {
-									oResponse = { success : false, data : undefined, status : textStatus, error : error, statusCode : xhr.status, errorResponse :  xhr.responseText, responseHeaders : xhr && xhr.getAllResponseHeaders()};
+									oResponse = {
+										success: false,
+										data: undefined,
+										status: textStatus,
+										error: error,
+										statusCode: xhr.status,
+										errorResponse:  xhr.responseText,
+										responseHeaders: xhr && xhr.getAllResponseHeaders()
+									};
 								};
 								jQuery.ajax({
 									async: false,
@@ -2386,24 +2415,37 @@ sap.ui
 															"The Data Services Request could not be understood due to malformed syntax");
 													Log.debug("MockServer: response sent with: 400");
 													return;
-												} else if (rPut.test(sChangesetRequest)) {
-													// PUT
-													sData = sChangesetRequest.substring(sChangesetRequest.indexOf("{"),
-														sChangesetRequest.lastIndexOf("}") + 1);
-													fnCUDRequest(sServiceURL + rPut.exec(sChangesetRequest)[1], sData, 'PUT', aChangesetResponses);
-												} else if (rMerge.test(sChangesetRequest)) {
-													// MERGE
-													sData = sChangesetRequest.substring(sChangesetRequest.indexOf("{"),
-														sChangesetRequest.lastIndexOf("}") + 1);
-													fnCUDRequest(sServiceURL + rMerge.exec(sChangesetRequest)[1], sData, 'MERGE', aChangesetResponses);
-												} else if (rPost.test(sChangesetRequest)) {
-													// POST
-													sData = sChangesetRequest.substring(sChangesetRequest.indexOf("{"),
-														sChangesetRequest.lastIndexOf("}") + 1);
-													fnCUDRequest(sServiceURL + rPost.exec(sChangesetRequest)[1], sData, 'POST', aChangesetResponses);
-												} else if (rDelete.test(sChangesetRequest)) {
-													// DELETE
-													fnCUDRequest(sServiceURL + rDelete.exec(sChangesetRequest)[1], sData, 'DELETE', aChangesetResponses);
+												} else {
+													var sData = sChangesetRequest.substring(sChangesetRequest.indexOf("{"),
+															sChangesetRequest.lastIndexOf("}") + 1),
+														mHeaders = {},
+														sRelativeUrl,
+														sVerb;
+													// Parse headers
+													sChangesetRequest.split("HTTP/1.1")[1].split("{")[0].split("\n").forEach(function (headerLine) {
+														if (headerLine.indexOf(":") !== -1) {
+															var headerPair = headerLine.split(":");
+															mHeaders[headerPair[0].trim()] = headerPair[1].trim();
+														}
+													});
+													delete mHeaders["Content-Length"];
+													if (rPut.test(sChangesetRequest)) {
+														sVerb = "PUT";
+														sRelativeUrl = rPut.exec(sChangesetRequest)[1];
+													} else if (rMerge.test(sChangesetRequest)) {
+														sVerb = "MERGE";
+														sRelativeUrl = rMerge.exec(sChangesetRequest)[1];
+													} else if (rPost.test(sChangesetRequest)) {
+														// POST
+														sVerb = "POST";
+														sRelativeUrl = rPost.exec(sChangesetRequest)[1];
+													} else if (rDelete.test(sChangesetRequest)) {
+														// DELETE
+														sVerb = "DELETE";
+														sData = undefined;
+														sRelativeUrl = rDelete.exec(sChangesetRequest)[1];
+													}
+													fnCUDRequest(sServiceURL + sRelativeUrl, mHeaders, sData, sVerb, aChangesetResponses);
 												}
 											} //END ChangeSets FOR
 											var sChangesetRespondData = "\r\nContent-Type: multipart/mixed; boundary=ejjeeffe1\r\n\r\n--ejjeeffe1";
