@@ -79,7 +79,23 @@ sap.ui.define([
 						},
 						getLabel: function (oControl) {
 							return oControl.getId() === "mockControl" ? "Vertical Layout Label" : "";
-							},
+						},
+						links: {
+							developer: [
+								{
+									href: "links1.html",
+									text: function (oControl) {
+										return oControl.getId() === "mockControl" ? "Links 1 Text" : "";
+									}
+								}
+							],
+							guidelines: [
+								{
+									href: "links2.html",
+									text: "Links 2 Text"
+								}
+							]
+						},
 						properties: {
 							"dtMetadataProperty1": {
 								// dt-metadata property ignored
