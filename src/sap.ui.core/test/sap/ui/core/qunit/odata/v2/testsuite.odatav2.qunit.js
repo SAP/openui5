@@ -18,7 +18,6 @@ sap.ui.define(function() {
 				title: "sap.ui.thirdparty.datajs - QUnit tests"
 			},
 			ODataAnnotationsV2: {
-				_page: "test-resources/sap/ui/core/qunit/ODataAnnotationsV2.qunit.html",
 				title: "sap.ui.model.odata.v2.ODataAnnotations - QUnit tests"
 			},
 			ODataV2ListBinding: {
