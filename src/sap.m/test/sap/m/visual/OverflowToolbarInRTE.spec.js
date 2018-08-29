@@ -6,14 +6,16 @@ describe("sap.m.OverflowToolbarInRTE", function () {
 	browser.testrunner.currentSuite.meta.controlName = 'sap.ui.richtexteditor.RichTextEditor';
 
 	function interactWithButtons(sButtonId, sScreenShotId) {
-		// Act
-		element(by.id(sButtonId)).click();
+		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
+			// Act
+			element(by.id(sButtonId)).click();
 
-		// Screenshot
-		expect(takeScreenshot()).toLookAs("OverflowToolbarRTE-" + sScreenShotId);
+			// Screenshot
+			expect(takeScreenshot()).toLookAs("OverflowToolbarRTE-" + sScreenShotId);
 
-		//Cleanup
-		element(by.id(sButtonId)).click();
+			//Cleanup
+			element(by.id(sButtonId)).click();
+		}
 	}
 
 	it("OverflowToolar initial rendering", function () {
