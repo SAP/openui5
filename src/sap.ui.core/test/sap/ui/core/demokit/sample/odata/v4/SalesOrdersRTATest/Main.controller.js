@@ -2,12 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	"sap/m/Button",
 	"sap/m/Column",
 	"sap/m/Label",
 	"sap/m/Text",
 	"sap/ui/test/TestUtils"
-], function (Button, Column, Label, Text, TestUtils) {
+], function (jQuery, Button, Column, Label, Text, TestUtils) {
 	"use strict";
 
 	return sap.ui.controller("sap.ui.core.sample.odata.v4.SalesOrdersRTATest.Main", {

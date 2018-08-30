@@ -2,12 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/m/Dialog",
 	"sap/m/MessageBox",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel"
-], function (Dialog, MessageBox, Controller, Sorter, JSONModel) {
+], function (Log, Dialog, MessageBox, Controller, Sorter, JSONModel) {
 	"use strict";
 
 //	function onRejected(oError) {
@@ -141,7 +142,7 @@ sap.ui.define([
 		onEquipmentsChanged : function (oEvent) {
 			var sReason = oEvent.getParameter('reason');
 
-			jQuery.sap.log.info("Change event on Equipment list binding received with reason: '"
+			Log.info("Change event on Equipment list binding received with reason: '"
 				+ sReason + "'", "sap.ui.core.sample.odata.v4.ListBinding.Main");
 		},
 

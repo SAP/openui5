@@ -10,6 +10,7 @@
 sap.ui.define([
 	"./SalesOrdersSandbox",
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/m/HBox",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/View",
@@ -18,7 +19,7 @@ sap.ui.define([
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (SalesOrdersSandbox, jQuery, HBox, UIComponent, View, ViewType, JSONModel,
+], function (SalesOrdersSandbox, jQuery, Log, HBox, UIComponent, View, ViewType, JSONModel,
 		OperationMode, ODataModel, TestUtils) {
 	"use strict";
 
@@ -41,14 +42,14 @@ sap.ui.define([
 			oModel.getMetaModel().requestObject("/SalesOrderList/").then(function () {
 				var oLastModified = oModel.getMetaModel().getLastModified();
 
-				jQuery.sap.log.debug("Last-Modified: " + oLastModified,
+				Log.debug("Last-Modified: " + oLastModified,
 					oLastModified && oLastModified.toISOString(),
 					"sap.ui.core.sample.odata.v4.SalesOrders.Component");
 
-				oLayout.addItem(sap.ui.view({
-					async : true,
+				View.create({
 					id : "sap.ui.core.sample.odata.v4.SalesOrders.Main",
-					models : { undefined : oModel,
+					models : {
+						undefined : oModel,
 						ui : new JSONModel({
 								bCreateItemPending : false,
 								filterProductID : "",
@@ -67,7 +68,9 @@ sap.ui.define([
 					)},
 					type : ViewType.XML,
 					viewName : "sap.ui.core.sample.odata.v4.SalesOrders.Main"
-				}));
+				}).then(function (oView) {
+					oLayout.addItem(oView);
+				});
 			});
 			return oLayout;
 			// TODO: enhance sample application after features are supported

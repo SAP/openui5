@@ -2,20 +2,20 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/TestUtils",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Properties"
-], function (jQuery, Opa5, TestUtils, Press, Interactable, Properties) {
+], function (Log, Opa5, TestUtils, Press, Interactable, Properties) {
 	"use strict";
 
 	return {
 		typeDeterminationAndDelete : function (Given, When, Then, sUIComponent) {
 			var oExpectedLogChangeSetID = {
 					component : "sap.ui.test.TestUtils",
-					level : jQuery.sap.log.Level.ERROR,
+					level : Log.Level.ERROR,
 					message : "--changeset_id-",
 					details : "No mock data found"
 				},

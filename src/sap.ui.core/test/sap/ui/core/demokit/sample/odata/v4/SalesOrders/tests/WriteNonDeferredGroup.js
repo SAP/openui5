@@ -2,21 +2,22 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/TestUtils"
-], function (Opa5, TestUtils) {
+], function (Log, Opa5, TestUtils) {
 	"use strict";
 
 	return {
 		writeNonDeferredGroup : function (Given, When, Then, sGroupId, sUIComponent) {
 			var aExpectedLogs = [{
 					component : "sap.ui.model.odata.v4.ODataParentBinding",
-					level : jQuery.sap.log.Level.ERROR,
+					level : Log.Level.ERROR,
 					message : "POST on 'SalesOrderList' failed; will be repeated automatically"
 				}],
 				oExpectedPatchLog = {
 					component : "sap.ui.model.odata.v4.ODataPropertyBinding",
-					level : jQuery.sap.log.Level.ERROR,
+					level : Log.Level.ERROR,
 					message: "Failed to update path /SalesOrderList/-1/Note",
 					details : "Property `Note` value `RAISE_ERROR` not allowed!"
 				};

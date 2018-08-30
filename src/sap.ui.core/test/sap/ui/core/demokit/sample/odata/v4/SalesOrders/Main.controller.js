@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/m/Dialog",
 	"sap/m/MessageBox",
 	"sap/m/MessageItem",
@@ -15,7 +16,7 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterType",
 	"sap/ui/model/Sorter"
-], function (Dialog, MessageBox, MessageItem, MessagePopover, MessageToast, Item, MessageType,
+], function (Log, Dialog, MessageBox, MessageItem, MessagePopover, MessageToast, Item, MessageType,
 		DateFormat, Controller, Filter, FilterOperator, FilterType, Sorter) {
 	"use strict";
 
@@ -229,7 +230,7 @@ sap.ui.define([
 			var aSalesOrderIDs = [],
 				oSource = oEvent.getSource();
 
-			jQuery.sap.log.info(oEvent.getId() + " event processed for path " + oSource.getPath(),
+			Log.info(oEvent.getId() + " event processed for path " + oSource.getPath(),
 				oSource, "sap.ui.core.sample.odata.v4.SalesOrders.Main.controller");
 
 			if (oEvent.getId() === "dataReceived") {
@@ -237,13 +238,13 @@ sap.ui.define([
 					oSource.getCurrentContexts().forEach(function (oContext) {
 						aSalesOrderIDs.push(oContext && oContext.getProperty("SalesOrderID"));
 					});
-					jQuery.sap.log.info("Current SalesOrderIDs: " + aSalesOrderIDs.join(", "),
+					Log.info("Current SalesOrderIDs: " + aSalesOrderIDs.join(", "),
 						null, "sap.ui.core.sample.odata.v4.SalesOrders.Main.controller");
 				} else if (oSource.getPath() === "/ProductList('HT-1000')/Name") {
-					jQuery.sap.log.info("Favorite Product ID: " + oSource.getValue(),
+					Log.info("Favorite Product ID: " + oSource.getValue(),
 						null, "sap.ui.core.sample.odata.v4.SalesOrders.Main.controller");
 				} else if (/^\/SalesOrderList\(.*\)/.test(oSource.getPath())) {
-					jQuery.sap.log.info("Current Sales Order: "
+					Log.info("Current Sales Order: "
 						+ oSource.getBoundContext().getProperty("SalesOrderID"),
 						null, "sap.ui.core.sample.odata.v4.SalesOrders.Main.controller");
 				}
