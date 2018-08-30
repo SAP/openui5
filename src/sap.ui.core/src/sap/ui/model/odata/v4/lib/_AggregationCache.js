@@ -52,6 +52,7 @@ sap.ui.define([
 			fnMeasureRangeResolve;
 
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, true);
+		this.oAggregation = oAggregation;
 
 		if (_AggregationHelper.hasMinOrMax(oAggregation.aggregate)) {
 			// Note: ignore existing mQueryOptions.$apply, e.g. from ODLB#updateAnalyticalInfo
@@ -87,8 +88,7 @@ sap.ui.define([
 			mFirstQueryOptions.$count = true;
 			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath, mFirstQueryOptions, true);
 			this.oFirstLevel.calculateKeyPredicate = _AggregationCache.calculateKeyPredicate
-				.bind(null, oFirstLevelAggregation, this.oFirstLevel.sMetaPath,
-					this.oFirstLevel.aElements.$byPredicate);
+				.bind(null, oFirstLevelAggregation, this.oFirstLevel.aElements.$byPredicate);
 		} else { // grand total w/o visual grouping
 			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath, mQueryOptions, true);
 			this.oFirstLevel.getResourcePath = _AggregationCache.getResourcePath.bind(
@@ -104,14 +104,14 @@ sap.ui.define([
 	/**
 	 * Returns a promise to be resolved with an OData object for the requested data.
 	 *
-	 * @param {string} [sGroupId]
-	 *   ID of the group to associate the request with;
-	 *   see {@link sap.ui.model.odata.v4.lib._Requestor#request} for details
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group to associate the request with; unused in CollectionCache since no
+	 *   request will be created
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
 	 * @param {function} [fnDataRequested]
-	 *   The function is called just before the back-end request is sent.
-	 *   If no back-end request is needed, the function is not called.
+	 *   The function is called just before the back-end request is sent; unused in CollectionCache
+	 *   since no request will be created
 	 * @param {object} [oListener]
 	 *   An optional change listener that is added for the given path. Its method
 	 *   <code>onChange</code> is called with the new value if the property at that path is modified
@@ -119,19 +119,28 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the requested data. The promise is rejected if the cache is
 	 *   inactive (see {@link #setActive}) when the response arrives. Fails to drill-down into
-	 *   "$count" because it does not reflect the leaf count.
+	 *   "$count" in cases where it does not reflect the leaf count.
 	 *
 	 * @public
 	 * @see sap.ui.model.odata.v4.lib._CollectionCache#fetchValue
 	 */
-	_AggregationCache.prototype.fetchValue = function (sGroupId, sPath, fnDataRequested,
+	_AggregationCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested,
 			oListener) {
-		if (!this.oMeasureRangePromise && sPath === "$count") {
-			Log.error("Failed to drill-down into $count, invalid segment: $count",
-				this.oFirstLevel.toString(), "sap.ui.model.odata.v4.lib._Cache");
-			return SyncPromise.resolve();
+		var that = this;
+
+		if (sPath === "$count") {
+			if (!this.mQueryOptions.$count) {
+				Log.error("Failed to drill-down into $count, invalid segment: $count",
+					this.toString(), "sap.ui.model.odata.v4.lib._Cache");
+				return SyncPromise.resolve();
+			}
+			if (!this.oMeasureRangePromise) {
+				return this.oFirstLevel.fetchValue(oGroupLock, sPath).then(function () {
+						return that.oFirstLevel.iLeafCount;
+					});
+			} // else: in case of min/max, no special handling is needed
 		}
-		return this.oFirstLevel.fetchValue(sGroupId, sPath, fnDataRequested, oListener);
+		return this.oFirstLevel.fetchValue(oGroupLock, sPath, fnDataRequested, oListener);
 	};
 
 	/**
@@ -163,8 +172,8 @@ sap.ui.define([
 	 *   is available left and right of the requested range without a further request. If data is
 	 *   missing on one side, the full prefetch length is added at this side.
 	 *   <code>Infinity</code> is supported
-	 * @param {string} [sGroupId]
-	 *   ID of the group to associate the requests with
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group to associate the requests with
 	 * @param {function} [fnDataRequested]
 	 *   The function is called just before a back-end request is sent.
 	 *   If no back-end request is needed, the function is not called.
@@ -183,10 +192,10 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.lib._CollectionCache#read
 	 * @see sap.ui.model.odata.v4.lib._Requestor#request
 	 */
-	_AggregationCache.prototype.read = function (iIndex, iLength, iPrefetchLength, sGroupId,
+	_AggregationCache.prototype.read = function (iIndex, iLength, iPrefetchLength, oGroupLock,
 			fnDataRequested) {
-		var oReadPromise =
-				this.oFirstLevel.read(iIndex, iLength, iPrefetchLength, sGroupId, fnDataRequested);
+		var oReadPromise = this.oFirstLevel.read(iIndex, iLength, iPrefetchLength, oGroupLock,
+				fnDataRequested);
 
 		if (!this.oMeasureRangePromise) {
 			return oReadPromise.then(function (oResult) {
@@ -202,6 +211,22 @@ sap.ui.define([
 		return oReadPromise;
 	};
 
+	/**
+	 * Returns the cache's URL (ignoring dynamic parameters $skip/$top).
+	 *
+	 * @returns {string} The URL
+	 *
+	 * @public
+	 * @see sap.ui.model.odata.v4.lib._AggregationCache.getResourcePath
+	 */
+	// @override
+	_AggregationCache.prototype.toString = function () {
+		return this.oRequestor.getServiceUrl() + this.sResourcePath
+			+ this.oRequestor.buildQueryString(this.sMetaPath,
+				_AggregationHelper.buildApply(this.oAggregation, this.mQueryOptions),
+				false, true);
+	};
+
 	//*********************************************************************************************
 	// "static" functions
 	//*********************************************************************************************
@@ -214,19 +239,19 @@ sap.ui.define([
 	 *   An object holding the information needed for data aggregation; see also
 	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
 	 *   Extension for Data Aggregation Version 4.0</a>; must contain <code>groupLevels</code>
-	 * @param {string} sMetaPath The meta path of the collection in mTypeForMetaPath
 	 * @param {object} mByPredicate A map of group nodes by key predicates, used to detect
 	 *   collisions
 	 * @param {object} oGroupNode A 1st level group node
 	 * @param {object} mTypeForMetaPath A map from meta path to the entity type (as delivered by
 	 *   {@link #fetchTypes})
+	 * @param {string} sMetaPath The meta path of the collection in mTypeForMetaPath
 	 * @throws {Error}
 	 *   In case a multi-unit situation is detected via a collision of key predicates
 	 *
 	 * @private
 	 */
-	_AggregationCache.calculateKeyPredicate = function (oAggregation, sMetaPath, mByPredicate,
-			oGroupNode, mTypeForMetaPath) {
+	_AggregationCache.calculateKeyPredicate = function (oAggregation, mByPredicate, oGroupNode,
+			mTypeForMetaPath, sMetaPath) {
 		var sFirstGroupLevel = oAggregation.groupLevels[0],
 			sLiteral = _Helper.formatLiteral(oGroupNode[sFirstGroupLevel],
 				mTypeForMetaPath[sMetaPath][sFirstGroupLevel].$Type),
@@ -355,9 +380,9 @@ sap.ui.define([
 
 	/**
 	 * Returns the resource path including the query string with "$apply" which includes the
-	 * aggregation functions for minimum/maximum values and "skip()/top()" as transformations.
-	 * Only the first request requests the count. Follow-up requests do not aggregate minimum or
-	 * maximum values again.
+	 * aggregation functions for count and grand total, minimum or maximum values and "skip()/top()"
+	 * as transformations. Follow-up requests do not aggregate the count and minimum or maximum
+	 * values again. Grand total values are requested only for <code>iStart === 0</code>.
 	 *
 	 * This function is used to replace <code>getResourcePath</code> of the first level cache and
 	 * needs to be called on the first level cache.
@@ -378,7 +403,6 @@ sap.ui.define([
 	 */
 	_AggregationCache.getResourcePath = function (oAggregation, mQueryOptions, iStart, iEnd) {
 		mQueryOptions = jQuery.extend({}, mQueryOptions, {
-			$count : true,
 			$skip : iStart,
 			$top : iEnd - iStart
 		});
@@ -386,8 +410,8 @@ sap.ui.define([
 			this.bFollowUp);
 		this.bFollowUp = true; // next request is a follow-up
 
-		return this.sResourcePath + this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions,
-			false, true);
+		return this.sResourcePath
+			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true);
 	};
 
 	/**
@@ -432,22 +456,31 @@ sap.ui.define([
 		}
 
 		if (mAlias2MeasureAndMethod) {
-			oMinMaxElement = oResult.value.splice(0, 1)[0];
+			oMinMaxElement = oResult.value.shift();
 			oResult["@odata.count"] = oMinMaxElement.UI5__count;
 			for (sAlias in mAlias2MeasureAndMethod) {
 				getMeasureRange(mAlias2MeasureAndMethod[sAlias].measure)
 					[mAlias2MeasureAndMethod[sAlias].method] = oMinMaxElement[sAlias];
 			}
 			fnMeasureRangeResolve(mMeasureRange);
+			this.handleResponse = fnHandleResponse;
 		} else {
-			oResult["@odata.count"] = parseInt(oResult.value[0].UI5__count, 10) + 1;
-			Object.keys(oAggregation.group).forEach(function (sGroup) {
-				oResult.value[0][sGroup] = null;
-			});
+			oMinMaxElement = oResult.value[0];
+			if ("UI5__count" in oMinMaxElement) {
+				this.iLeafCount = parseInt(oMinMaxElement.UI5__count, 10);
+				oResult["@odata.count"] = this.iLeafCount + 1;
+				if (iStart > 0) { // drop row with UI5__count only
+					oResult.value.shift();
+				}
+			}
+			if (iStart === 0) { // grand total row: add empty dimensions
+				Object.keys(oAggregation.group).forEach(function (sGroup) {
+					oMinMaxElement[sGroup] = null;
+				});
+			}
 		}
 
-		this.handleResponse = fnHandleResponse;
-		this.handleResponse(iStart, iEnd, oResult, mTypeForMetaPath);
+		fnHandleResponse.call(this, iStart, iEnd, oResult, mTypeForMetaPath);
 	};
 
 	return _AggregationCache;

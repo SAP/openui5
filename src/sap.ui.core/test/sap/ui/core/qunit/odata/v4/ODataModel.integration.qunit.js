@@ -6161,10 +6161,25 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,
-	// but a grand total row  (CPOUI5UISERVICESV3-1418)
-	QUnit.test("Analytics by V4: $$aggregation grandTotal w/o groupLevels", function (assert) {
-		var sView = '\
-<t:Table id="table" rows="{path : \'/BusinessPartners\',\
+	// but a grand total row (CPOUI5UISERVICESV3-1418) which is fixed at the top; first visible
+	// row starts at 1 and then we scroll up; headerContext>$count is also used
+	[false, true].forEach(function (bCount) {
+		var sTitle = "Analytics by V4: $$aggregation grandTotal w/o groupLevels; $count : "
+				+ bCount;
+
+		QUnit.test(sTitle, function (assert) {
+			var sBasicPath
+					= "BusinessPartners?$apply=groupby((Country,Region),aggregate(SalesNumber))"
+					+ "/filter(SalesNumber%20gt%200)/orderby(Region%20desc)",
+				oGrandTotalRow = {
+					"SalesNumber" : 351,
+					"SalesNumber@odata.type" : "#Decimal"
+				},
+				oListBinding,
+				oTable,
+				sView = '\
+<Text id="count" text="{$count}"/>\
+<t:Table fixedRowCount="1" firstVisibleRow="1" id="table" rows="{path : \'/BusinessPartners\',\
 		parameters : {\
 			$$aggregation : {\
 				aggregate : {\
@@ -6175,10 +6190,10 @@ sap.ui.require([
 					Region : {}\
 				}\
 			},\
-			$count : true,\
+			$count : ' + bCount + ',\
 			$filter : \'SalesNumber gt 0\',\
 			$orderby : \'Region desc\'\
-		}}" threshold="0" visibleRowCount="4">\
+		}}" threshold="0" visibleRowCount="5">\
 	<t:Column>\
 		<t:template>\
 			<Text id="country" text="{Country}" />\
@@ -6195,41 +6210,205 @@ sap.ui.require([
 		</t:template>\
 	</t:Column>\
 </t:Table>',
-			that = this;
+				that = this;
 
-		this.expectRequest(
-				"BusinessPartners?$apply=groupby((Country,Region),aggregate(SalesNumber))"
-				+ "/filter(SalesNumber%20gt%200)/orderby(Region%20desc)"
-				//TODO $count : false => do not aggregate $count!
-				+ "/concat(aggregate(SalesNumber,$count%20as%20UI5__count),top(3))", {
-				"value" : [{
-						"SalesNumber" : 351,
-						"SalesNumber@odata.type" : "#Decimal",
-						"UI5__count" : "26",
-						"UI5__count@odata.type" : "#Decimal"
-					},
+			if (bCount) {
+				oGrandTotalRow["UI5__count"] =  "26";
+				oGrandTotalRow["UI5__count@odata.type"] = "#Decimal";
+			}
+			this.expectRequest(sBasicPath + "/concat(aggregate(SalesNumber"
+					+ (bCount ? ",$count%20as%20UI5__count" : "") + "),top(0))", {
+					"value" : [oGrandTotalRow]
+				})
+				.expectRequest(sBasicPath + "/skip(1)/top(4)", {
+					"value" : [
+						{"Country" : "b", "Region" : "Y", "SalesNumber" : 2},
+						{"Country" : "c", "Region" : "X", "SalesNumber" : 3},
+						{"Country" : "d", "Region" : "W", "SalesNumber" : 4},
+						{"Country" : "e", "Region" : "V", "SalesNumber" : 5}
+					]
+				})
+				.expectChange("count")
+				.expectChange("country", ["",, "b", "c", "d", "e"])
+				.expectChange("region", ["",, "Y", "X", "W", "V"])
+				.expectChange("salesNumber", ["351",, "2", "3", "4", "5"]);
+
+			return this.createView(assert, sView, createBusinessPartnerTestModel())
+			.then(function () {
+				oTable = that.oView.byId("table");
+				oListBinding = oTable.getBinding("rows");
+
+				if (bCount) {
+					assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
+					assert.strictEqual(oListBinding.getLength(), 27,
+						"length includes grand total row");
+
+					// Note: header context gives count of leaves (w/o grand total)
+					that.expectChange("count", "26");
+				} else {
+					assert.strictEqual(oListBinding.isLengthFinal(), false, "length unknown");
+					assert.strictEqual(oListBinding.getLength(), 1 + 5 + 10, "estimated length");
+
+					that.oLogMock.expects("error").withExactArgs(
+						"Failed to drill-down into $count, invalid segment: $count",
+						// Note: toString() shows realistic (first) request w/o skip/top
+						"/serviceroot.svc/" + sBasicPath + "/concat(aggregate(SalesNumber"
+							+ (bCount ? ",$count%20as%20UI5__count" : "") + "),identity)",
+						"sap.ui.model.odata.v4.lib._Cache");
+				}
+
+				that.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				that.expectRequest(sBasicPath + "/top(1)", {
+						"value" : [
+							{"Country" : "a", "Region" : "Z", "SalesNumber" : 1}
+						]
+					})
+					.expectChange("country", null, null)
+					.expectChange("region", null, null)
+					.expectChange("salesNumber", null, null)
+					.expectChange("country", ["a", "b", "c", "d"], 1)
+					.expectChange("region", ["Z", "Y", "X", "W"], 1)
+					.expectChange("salesNumber", ["1", "2", "3", "4"], 1);
+
+				oTable.setFirstVisibleRow(0);
+
+				return that.waitForChanges(assert);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,
+	// but a grand total row (CPOUI5UISERVICESV3-1418) which is not fixed at the top; first visible
+	// row starts at 1 and then we scroll up; headerContext>$count is also used
+	[false, true].forEach(function (bCount) {
+		var sTitle = "Analytics by V4: $$aggregation grandTotal w/o groupLevels; $count : "
+				+ bCount + "; grandTotal row not fixed";
+
+		QUnit.test(sTitle, function (assert) {
+			var sBasicPath
+					= "BusinessPartners?$apply=groupby((Country,Region),aggregate(SalesNumber))"
+					+ "/filter(SalesNumber%20gt%200)/orderby(Region%20desc)",
+				oListBinding,
+				oTable,
+				aValues = [
 					{"Country" : "a", "Region" : "Z", "SalesNumber" : 1},
 					{"Country" : "b", "Region" : "Y", "SalesNumber" : 2},
-					{"Country" : "c", "Region" : "X", "SalesNumber" : 3}
-				]
-			})
-			.expectChange("country", ["", "a", "b", "c"])
-			.expectChange("region", ["", "Z", "Y", "X"])
-			.expectChange("salesNumber", ["351", "1", "2", "3"]);
+					{"Country" : "c", "Region" : "X", "SalesNumber" : 3},
+					{"Country" : "d", "Region" : "W", "SalesNumber" : 4},
+					{"Country" : "e", "Region" : "V", "SalesNumber" : 5}
+				],
+				sView = '\
+<Text id="count" text="{$count}"/>\
+<t:Table fixedRowCount="0" firstVisibleRow="1" id="table" rows="{path : \'/BusinessPartners\',\
+		parameters : {\
+			$$aggregation : {\
+				aggregate : {\
+					SalesNumber : {grandTotal : true}\
+				},\
+				group : {\
+					Country : {},\
+					Region : {}\
+				}\
+			},\
+			$count : ' + bCount + ',\
+			$filter : \'SalesNumber gt 0\',\
+			$orderby : \'Region desc\'\
+		}}" threshold="0" visibleRowCount="5">\
+	<t:Column>\
+		<t:template>\
+			<Text id="country" text="{Country}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="region" text="{Region}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="salesNumber" text="{SalesNumber}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+				that = this;
 
-		return this.createView(assert, sView, createBusinessPartnerTestModel()).then(function () {
-			var oListBinding = that.oView.byId("table").getBinding("rows");
+			if (bCount) {
+				aValues.unshift({"UI5__count" : "26", "UI5__count@odata.type" : "#Decimal"});
+			}
+			this.expectRequest(
+					sBasicPath + (bCount
+						? "/concat(aggregate($count%20as%20UI5__count),top(5))"
+						: "/top(5)"),
+					{"value" : aValues})
+				.expectChange("count")
+				.expectChange("country", ["a", "b", "c", "d", "e"], 1)
+				.expectChange("region", ["Z", "Y", "X", "W", "V"], 1)
+				.expectChange("salesNumber", ["1", "2", "3", "4", "5"], 1);
 
-			assert.strictEqual(oListBinding.isLengthFinal(), true, "count is known");
-			assert.strictEqual(oListBinding.getLength(), 27, "count includes grand total row");
+			return this.createView(assert, sView, createBusinessPartnerTestModel())
+			.then(function () {
+				oTable = that.oView.byId("table");
+				oListBinding = oTable.getBinding("rows");
+
+				if (bCount) {
+					assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
+					assert.strictEqual(oListBinding.getLength(), 27,
+						"length includes grand total row");
+
+					// Note: header context gives count of leaves (w/o grand total)
+					that.expectChange("count", "26");
+				} else {
+					assert.strictEqual(oListBinding.isLengthFinal(), false, "length unknown");
+					assert.strictEqual(oListBinding.getLength(), 1 + 5 + 10, "estimated length");
+
+					that.oLogMock.expects("error").withExactArgs(
+						"Failed to drill-down into $count, invalid segment: $count",
+						// Note: toString() shows realistic (first) request w/o skip/top
+						"/serviceroot.svc/" + sBasicPath + "/concat(aggregate(SalesNumber"
+							+ (bCount ? ",$count%20as%20UI5__count" : "") + "),identity)",
+						"sap.ui.model.odata.v4.lib._Cache");
+				}
+
+				that.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				that.expectRequest(sBasicPath + "/concat(aggregate(SalesNumber),top(0))", {
+						"value" : [{
+							"SalesNumber" : 351,
+							"SalesNumber@odata.type" : "#Decimal"
+						}]
+					})
+					.expectChange("country", null, null)
+					.expectChange("region", null, null)
+					.expectChange("salesNumber", null, null)
+					.expectChange("country", ["", "a", "b", "c", "d"])
+					.expectChange("region", ["", "Z", "Y", "X", "W"])
+					.expectChange("salesNumber", ["351", "1", "2", "3", "4"]);
+
+				oTable.setFirstVisibleRow(0);
+
+				return that.waitForChanges(assert);
+			});
 		});
 	});
 
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used without group or groupLevels
 	// Note: usage of min/max simulates a Chart, which would actually call ODLB#updateAnalyticalInfo
-	QUnit.test("Analytics by V4: $$aggregation, aggregate but no group", function (assert) {
-		var sView = '\
+	[false, true].forEach(function (bCount) {
+		var sTitle = "Analytics by V4: $$aggregation, aggregate but no group; $count : " + bCount;
+
+		QUnit.test(sTitle, function (assert) {
+			var oMinMaxElement = {
+					"UI5min__AGE" : 42,
+					"UI5max__AGE" : 77
+				},
+				sView = '\
 <t:Table id="table" rows="{path : \'/SalesOrderList\',\
 		parameters : {\
 			$$aggregation : {\
@@ -6239,7 +6418,8 @@ sap.ui.require([
 						max : true\
 					}\
 				}\
-			}\
+			},\
+			$count : ' + bCount + '\
 		}}" threshold="0" visibleRowCount="1">\
 	<t:Column>\
 		<t:template>\
@@ -6247,36 +6427,36 @@ sap.ui.require([
 		</t:template>\
 	</t:Column>\
 </t:Table>',
-			oModel = createSalesOrdersModel(),
-			that = this;
+				oModel = createSalesOrdersModel(),
+				that = this;
 
-		this.expectRequest("SalesOrderList?$apply=aggregate(GrossAmount)"
-				+ "/concat(aggregate(GrossAmount%20with%20min%20as%20UI5min__GrossAmount,"
-				+ "GrossAmount%20with%20max%20as%20UI5max__GrossAmount,$count%20as%20UI5__count)"
-				+ ",top(1))", {
-				"value" : [{
-					"UI5min__AGE" : 42,
-					"UI5max__AGE" : 77,
-					"UI5__count" : "1",
-					"UI5__count@odata.type" : "#Decimal"
-				}, {
-					"GrossAmount" : 1
-				}]
-			})
-			.expectChange("grossAmount", 1);
-
-		return this.createView(assert, sView, oModel).then(function () {
-			var oTable = that.oView.byId("table"),
-				oListBinding = oTable.getBinding("rows");
-
-			that.expectRequest("SalesOrderList?$apply=aggregate(GrossAmount)&$skip=0&$top=1", {
-					"@odata.count" : "1",
-					"value" : [{"GrossAmount" : 2}]
+			if (bCount) {
+				oMinMaxElement["UI5__count"] = "1";
+				oMinMaxElement["UI5__count@odata.type"] = "#Decimal";
+			}
+			this.expectRequest("SalesOrderList?$apply=aggregate(GrossAmount)"
+					+ "/concat(aggregate(GrossAmount%20with%20min%20as%20UI5min__GrossAmount,"
+					+ "GrossAmount%20with%20max%20as%20UI5max__GrossAmount"
+					+ (bCount ? ",$count%20as%20UI5__count" : "") + "),top(1))", {
+					"value" : [oMinMaxElement, {"GrossAmount" : 1}]
 				})
-				.expectChange("grossAmount", 2);
+				.expectChange("grossAmount", 1);
 
-			oListBinding.setAggregation({
-				aggregate : {GrossAmount : {}}
+			return this.createView(assert, sView, oModel).then(function () {
+				var oTable = that.oView.byId("table"),
+					oListBinding = oTable.getBinding("rows");
+
+				// w/o min/max: no _AggregationCache, system query options are used
+				that.expectRequest("SalesOrderList?" + (bCount ? "$count=true&" : "")
+					+ "$apply=aggregate(GrossAmount)&$skip=0&$top=1", {
+						"@odata.count" : "1",
+						"value" : [{"GrossAmount" : 2}]
+					})
+					.expectChange("grossAmount", 2);
+
+				oListBinding.setAggregation({
+					aggregate : {GrossAmount : {}}
+				});
 			});
 		});
 	});

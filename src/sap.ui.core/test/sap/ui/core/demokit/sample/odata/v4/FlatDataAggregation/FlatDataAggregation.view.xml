@@ -2,9 +2,12 @@
 	class="sapUiSizeCompact"
 	controllerName="sap.ui.core.sample.odata.v4.FlatDataAggregation.FlatDataAggregation"
 	xmlns="sap.m"
-	xmlns:mvc="sap.ui.core.mvc">
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:table="sap.ui.table">
 
-	<Table growing="true" growingThreshold="5" id="table" items="{path : '/BusinessPartners',
+	<Title text="Responsive Table" titleStyle="H1" />
+
+	<Table growing="true" growingThreshold="5" id="mTable" items="{path : '/BusinessPartners',
 			parameters : {
 				$$aggregation : {
 					aggregate : {
@@ -14,18 +17,20 @@
 						Region : {}
 					}
 				},
-				$count : false,
+				$count : true,
 				$filter : 'SalesNumber gt 0',
 				$orderby : 'Region desc'
 			}}">
 		<headerToolbar>
 			<Toolbar>
-				<Title text="Sales Number by Region" titleStyle="H2"><!-- TODO: ({headerContext>$count}) -->
-					<layoutData>
-						<ToolbarLayoutData shrinkable="false" />
-					</layoutData>
-				</Title>
-				<Button icon="sap-icon://refresh" press="onRefresh" tooltip="Refresh"/>
+				<Title id="title" text="Sales Number by Region ({headerContext>$count})"
+					titleStyle="H2" />
+				<Button icon="sap-icon://refresh" press="onRefreshResponsive" tooltip="Refresh"/>
+				<Button enabled="{ui>/bRealOData}" icon="sap-icon://sort-ascending"
+					press="onSortResponsive" tooltip="Sort Ascending"/>
+				<SearchField placeholder="Filter by sales number greater than..."
+					value="{path : 'ui>/sFilterResponsive'}"
+					visible="{ui>/bRealOData}" width="50%" search="onFilterResponsive" />
 			</Toolbar>
 		</headerToolbar>
 		<columns>
@@ -37,8 +42,44 @@
 			</Column>
 		</columns>
 		<ColumnListItem>
-			<Text text="{Region}" /><!-- TODO: avoid this binding for grand total row! -->
+			<Text text="{Region}" />
 			<Text text="{SalesNumber}" />
 		</ColumnListItem>
 	</Table>
+
+	<Title text="Grid Table" titleStyle="H1" />
+
+	<table:Table fixedRowCount="1" firstVisibleRow="1" id="tTable"
+		rows="{path : '/BusinessPartners',
+			parameters : {
+				$$aggregation : {
+					aggregate : {
+						SalesNumber : {grandTotal : true}
+					},
+					group : {
+						Region : {}
+					}
+				},
+				$count : true,
+				$filter : 'SalesNumber gt 0',
+				$orderby : 'Region desc'
+			}}" selectionMode="None" threshold="0" visibleRowCount="5">
+		<table:extension>
+			<Toolbar class="sapMTBHeader-CTX">
+				<Title text="Sales Number by Region ({headerContext>$count})" titleStyle="H2" />
+				<Button icon="sap-icon://refresh" press="onRefreshGrid" tooltip="Refresh"/>
+				<Button enabled="{ui>/bRealOData}" icon="sap-icon://sort-ascending"
+					press="onSortGrid" tooltip="Sort Ascending"/>
+				<SearchField placeholder="Filter by sales number greater than..."
+					value="{path : 'ui>/sFilterGrid'}"
+					visible="{ui>/bRealOData}" width="50%" search="onFilterGrid" />
+			</Toolbar>
+		</table:extension>
+		<table:Column template="Region">
+			<Label text="Region"/>
+		</table:Column>
+		<table:Column hAlign="End" template="SalesNumber">
+			<Label text="Sales Number"/>
+		</table:Column>
+	</table:Table>
 </mvc:View>

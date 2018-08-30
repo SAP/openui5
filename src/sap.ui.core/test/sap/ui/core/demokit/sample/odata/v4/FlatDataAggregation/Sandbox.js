@@ -26,6 +26,9 @@ sap.ui.define([
 			"$metadata" : {
 				source : "metadata.xml"
 			},
+			"BusinessPartners?$apply=groupby((Region),aggregate(SalesNumber))/filter(SalesNumber%20gt%200)/orderby(Region%20desc)/concat(aggregate(SalesNumber,$count%20as%20UI5__count),top(0))" : {
+				source : "BusinessPartners_0_1.json"
+			},
 			"BusinessPartners?$apply=groupby((Region),aggregate(SalesNumber))/filter(SalesNumber%20gt%200)/orderby(Region%20desc)/concat(aggregate(SalesNumber,$count%20as%20UI5__count),top(4))" : {
 				source : "BusinessPartners_0_5.json"
 			},
@@ -34,6 +37,9 @@ sap.ui.define([
 			},
 			"BusinessPartners?$apply=groupby((Region),aggregate(SalesNumber))/filter(SalesNumber%20gt%200)/orderby(Region%20desc)/concat(aggregate(SalesNumber,$count%20as%20UI5__count),top(14))" : {
 				source : "BusinessPartners_0_15.json"
+			},
+			"BusinessPartners?$apply=groupby((Region),aggregate(SalesNumber))/filter(SalesNumber%20gt%200)/orderby(Region%20desc)/skip(1)/top(4)" : {
+				source : "BusinessPartners_2_6.json"
 			},
 			"BusinessPartners?$apply=groupby((Region),aggregate(SalesNumber))/filter(SalesNumber%20gt%200)/orderby(Region%20desc)/skip(4)/top(5)" : {
 				source : "BusinessPartners_5_10.json"
