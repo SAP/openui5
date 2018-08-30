@@ -161,26 +161,9 @@ sap.ui.define([
 
 		onCreateSalesOrder : function (oEvent) {
 			var oBPListBinding = this.byId("NewBuyerID").getBinding("suggestionItems"),
-				oContext = this.byId("SalesOrders").getBinding("items")
-					.create({
-						// TODO where to get initial values from to avoid "failed to drill-down"
-						// and "Not all properties provided while creation or update was executed."
-						// $select?
-						// key
-						"SalesOrderID" : "",
-						// properties
-						"BuyerID" : "0100000000",
-						"ChangedAt" : "1970-01-01T00:00:00Z",
-						"CreatedAt" : "1970-01-01T00:00:00Z",
-						"CurrencyCode" : "EUR",
-						"GrossAmount" : "0.00",
-						"LifecycleStatus" : "N",
-						"LifecycleStatusDesc" : "New",
-						"Note" : "A new Sales Order: " + new Date().toLocaleString(),
-						"NoteLanguage" : "E",
-						// navigation property
-						"SO_2_BP" : null
-					}),
+				oContext = this.byId("SalesOrders").getBinding("items").create({
+					"BuyerID" : "0100000000"
+				}),
 				oCreateSalesOrderDialog = this.byId("CreateSalesOrderDialog"),
 				oUiModel = this.getView().getModel("ui"),
 				that = this;
@@ -219,20 +202,10 @@ sap.ui.define([
 			oDeliveryDate.setFullYear(oDeliveryDate.getFullYear() + 1);
 			oDeliveryDate.setMilliseconds(0);
 			oContext = this.byId("SalesOrderLineItems").getBinding("items").create({
-				// keys
-				"ItemPosition" : "",
-				"SalesOrderID" : "",
-				// properties
-				"CurrencyCode" : "EUR",
 				"DeliveryDate" : oDeliveryDate.toJSON(),
 				"GrossAmount" : "1137.64",
-				"Note" : "",
-				"NoteLanguage" : "E",
 				"ProductID" : "HT-1000",
-				"Quantity" : "1.000",
-				"QuantityUnit" : "EA",
-				// navigation properties
-				"SOITEM_2_PRODUCT" : null
+				"Quantity" : "1.000"
 			});
 
 			// select the newly created one

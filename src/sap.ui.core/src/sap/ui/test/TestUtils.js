@@ -19,7 +19,10 @@ sap.ui.define([
 		mMessageForPath = {}, // a cache for files, see useFakeServer
 		sMimeHeaders = "\r\nContent-Type: application/http\r\n"
 			+ "Content-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 ",
-		sRealOData = new UriParameters(window.location.href).get("realOData"),
+		oUriParameters = new UriParameters(window.location.href),
+		sAutoRespondAfter = oUriParameters.get("autoRespondAfter"),
+		sRealOData = oUriParameters.get("realOData"),
+		rRequestKey = /^(\S+) (\S+)$/,
 		rRequestLine = /^(GET|DELETE|PATCH|POST) (\S+) HTTP\/1\.1$/,
 		mData = {},
 		bProxy = sRealOData === "true" || sRealOData === "proxy",
@@ -176,7 +179,7 @@ sap.ui.define([
 
 		/**
 		 * Activates a sinon fake server in the given sandbox. The fake server responds to those
-		 * GET requests given in the fixture, and to all DELETE, PATCH and POST requests regardless
+		 * requests given in the fixture, and to all DELETE, PATCH and POST requests regardless
 		 * of the path. It is automatically restored when the sandbox is restored.
 		 *
 		 * The function uses <a href="http://sinonjs.org/docs/">Sinon.js</a> and expects that it
@@ -185,15 +188,17 @@ sap.ui.define([
 		 * POST requests ending on "/$batch" are handled automatically. They are expected to be
 		 * multipart-mime requests where each part is a DELETE, GET, PATCH or POST request.
 		 * The response has a multipart-mime message containing responses to these inner requests.
-		 * If an inner request is not a DELETE, PATCH or POST with any URL,
-		 * a GET and its URL is not found in the fixture, or its message is not JSON, it is
-		 * responded with an error code. The batch itself is always responded with code 200.
+		 * If an inner request is not a DELETE, a PATCH or a POST and it is not found in the
+		 * fixture, or its message is not JSON, it is responded with an error code.
+		 * The batch itself is always responded with code 200.
 		 *
-		 * All other POST requests are responded with code 200, the body is simply echoed.
+		 * All other POST requests with no response in the fixture are responded with code 200, the
+		 * body is simply echoed.
 		 *
-		 * DELETE requests are always responded with code 204 ("No Data").
+		 * DELETE requests with no response in the fixture are responded with code 204 ("No Data").
 		 *
-		 * PATCH requests are always responded with 200, the body is simply echoed.
+		 * PATCH requests with no response in the fixture are responded with code 200, the body is
+		 * simply echoed.
 		 *
 		 * Note: $batch with multiple changesets are not supported
 		 *
@@ -204,8 +209,9 @@ sap.ui.define([
 		 *   project's test folder, typically it should start with "sap".
 		 *   Example: <code>"sap/ui/core/qunit/model"</code>
 		 * @param {map} mFixture
-		 *   The fixture. Each key represents a URL to respond to. The value is an object that may
-		 *   have the following properties:
+		 *   The fixture. Each key represents a method and a URL to respond to, in the form
+		 *   "METHOD URL". The method "GET" may be omitted. The value is an object that may have the
+		 *   following properties:
 		 *   <ul>
 		 *   <li>{number} <code>code</code>: The response code (<code>200</code> if not given)
 		 *   <li>{map} <code>headers</code>: A list of headers to set in the response
@@ -224,8 +230,8 @@ sap.ui.define([
 			 * @param {string} sServiceBase
 			 *   the service base URL
 			 * @param {map} mUrls
-			 *   a map from path (incl. service URL) to response data (an array with response code,
-			 *   headers, message)
+			 *   a map from "method path" (incl. service URL) to response data (an array with
+			 *   response code, headers, message)
 			 * @param {object} oRequest
 			 *   the Sinon request object
 			 */
@@ -245,20 +251,8 @@ sap.ui.define([
 					sRequestPart = sRequestPart.slice(sRequestPart.indexOf("\r\n\r\n") + 4);
 					sRequestLine = firstLine(sRequestPart);
 					aMatches = rRequestLine.exec(sRequestLine);
-					if (!aMatches) {
-						sResponse = notFound(sRequestLine);
-					} else if (aMatches[1] === "DELETE") {
-						sResponse = "204\r\n"
-							+ "Content-Length: 0\r\n"
-							+ convertToString(getVersionHeader(oRequestHeaders))
-							+ "\r\n\r\n";
-					} else if (aMatches[1] === "POST" || aMatches[1] === "PATCH") {
-						sResponse = "200\r\nContent-Type: " + sJson + "\r\n"
-							+ convertToString(getVersionHeader(oRequestHeaders))
-							+ "\r\n"
-							+ message(sRequestPart);
-					} else {
-						aResponse = mUrls[sServiceBase + aMatches[2]];
+					if (aMatches) {
+						aResponse = mUrls[aMatches[1] + " " + sServiceBase + aMatches[2]];
 						if (aResponse) {
 							try {
 								sResponse = "200\r\nContent-Type: " + sJson + "\r\n";
@@ -273,7 +267,7 @@ sap.ui.define([
 										+ "\r\n";
 								});
 								// set headers for single request within $batch
-								sResponse +=  convertToString(getVersionHeader(oRequestHeaders,
+								sResponse += convertToString(getVersionHeader(oRequestHeaders,
 										aResponse[1]))
 									+ "\r\n"
 									+ JSON.stringify(JSON.parse(aResponse[2]))
@@ -285,11 +279,19 @@ sap.ui.define([
 							} catch (e) {
 								sResponse = error(sRequestLine, 500, "Invalid JSON");
 							}
-						} else {
-							sResponse = notFound(sRequestLine);
+						} else if (aMatches[1] === "PATCH" || aMatches[1] === "POST") {
+							sResponse = "200\r\nContent-Type: " + sJson + "\r\n"
+								+ convertToString(getVersionHeader(oRequestHeaders))
+								+ "\r\n"
+								+ message(sRequestPart);
+						} else if (aMatches[1] === "DELETE") {
+							sResponse = "204\r\n"
+								+ "Content-Length: 0\r\n"
+								+ convertToString(getVersionHeader(oRequestHeaders))
+								+ "\r\n\r\n";
 						}
 					}
-					aResponseParts.push(sMimeHeaders + sResponse);
+					aResponseParts.push(sMimeHeaders + (sResponse || notFound(sRequestLine)));
 				});
 				aResponseParts.push("--\r\n");
 				// take data service version also for complete batch from request headers
@@ -323,6 +325,9 @@ sap.ui.define([
 							|| contentType(oResponse.source);
 					} else {
 						sMessage = oResponse.message || "";
+					}
+					if (!sUrl.includes(" ")) {
+						sUrl = "GET " + sUrl;
 					}
 					mUrls[sUrl] = [oResponse.code || 200, oHeaders, sMessage, oResponseHeaders];
 				}
@@ -460,11 +465,16 @@ sap.ui.define([
 					}
 
 				}
+				Log.info(oRequest.url,
+					// log what's mocked?
+					sRealOData === "logMock" ? aResponseData[2] : null,
+					"sap.ui.test.TestUtils");
 				oRequest.respond(aResponseData[0], oResponseHeaders, aResponseData[2]);
 			}
 
 			function setupServer() {
-				var fnRestore,
+				var aParts,
+					fnRestore,
 					oServer,
 					mUrls = buildResponses(),
 					sUrl;
@@ -473,9 +483,13 @@ sap.ui.define([
 				oServer = sinon.fakeServer.create();
 				oSandbox.add(oServer);
 				oServer.autoRespond = true;
+				if (sAutoRespondAfter) {
+					oServer.autoRespondAfter = parseInt(sAutoRespondAfter, 10);
+				}
 
 				for (sUrl in mUrls) {
-					oServer.respondWith("GET", sUrl, respond.bind(null, mUrls[sUrl]));
+					aParts = sUrl.split(" ");
+					oServer.respondWith(aParts[0], aParts[1], respond.bind(null, mUrls[sUrl]));
 				}
 				oServer.respondWith("DELETE", /.*/, respond.bind(null, [204, {}, ""]));
 				// Empty response for HEAD request to retrieve security token
@@ -500,7 +514,7 @@ sap.ui.define([
 				sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl) {
 					// must return true if the request is NOT processed by the fake server
 					return sMethod !== "DELETE" && sMethod !== "HEAD" && sMethod !== "PATCH"
-						&& sMethod !== "POST" && !(sMethod === "GET" && sUrl in mUrls);
+						&& sMethod !== "POST" && !(sMethod + " " + sUrl in mUrls);
 				});
 			}
 
@@ -705,9 +719,22 @@ sap.ui.define([
 			} else if (sFilterBase.slice(-1) !== "/") {
 				sFilterBase += "/";
 			}
-			Object.keys(mFixture).forEach(function (sUrl) {
-				var sAbsoluteUrl = sUrl[0] === "/" ? sUrl : sFilterBase + sUrl;
-				mResultingFixture[sAbsoluteUrl] = mFixture[sUrl];
+			Object.keys(mFixture).forEach(function (sRequest) {
+				var aMatches = rRequestKey.exec(sRequest),
+					sMethod,
+					sUrl;
+
+				if (aMatches) {
+					sMethod = aMatches[1] || "GET";
+					sUrl = aMatches[2];
+				} else {
+					sMethod = "GET";
+					sUrl = sRequest;
+				}
+				if (!sUrl.startsWith("/")) {
+					sUrl = sFilterBase + sUrl;
+				}
+				mResultingFixture[sMethod + " " + sUrl] = mFixture[sRequest];
 			});
 			TestUtils.useFakeServer(oSandbox, sSourceBase || "sap/ui/core/qunit/odata/v4/data",
 				mResultingFixture);

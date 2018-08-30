@@ -6,8 +6,8 @@ sap.ui.require([
 	"sap/base/Log",
 	"sap/ui/model/odata/v4/lib/_V2MetadataConverter",
 	"sap/ui/test/TestUtils",
-	"jquery.sap.xml" // jQuery.sap.parseXML()
-], function (jQuery, Log, _V2MetadataConverter, TestUtils/*, jQuerySapXml*/) {
+	"sap/ui/util/XMLHelper"
+], function (jQuery, Log, _V2MetadataConverter, TestUtils, XMLHelper) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
@@ -98,7 +98,7 @@ sap.ui.require([
 	 * @returns {Document} the DOM document
 	 */
 	function xml(assert, sXml) {
-		var oDocument = jQuery.sap.parseXML(sXml);
+		var oDocument = XMLHelper.parse(sXml);
 		assert.strictEqual(oDocument.parseError.errorCode, 0, "XML parsed correctly");
 		return oDocument;
 	}

@@ -466,7 +466,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("updateCache: simple", function (assert) {
+	QUnit.test("updateExisting: simple", function (assert) {
 		var mChangeListeners = {
 				"SO_2_SOITEM/Note" : [{onChange : function () {}}, {onChange : function () {}}],
 				"SO_2_SOITEM/AnotherNote" : [{onChange : function () {}}]
@@ -484,7 +484,7 @@ sap.ui.require([
 			.withExactArgs("newAnotherNote");
 
 		// code under test
-		_Helper.updateCache(mChangeListeners, "SO_2_SOITEM", oCacheData, {
+		_Helper.updateExisting(mChangeListeners, "SO_2_SOITEM", oCacheData, {
 			DeliveryDate : null,
 			Note : "new",
 			Foo : "bar",
@@ -500,7 +500,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("updateCache: structured", function (assert) {
+	QUnit.test("updateExisting: structured", function (assert) {
 		var mChangeListeners = {
 				"SO_2_BP/Address/City" : [{onChange : function () {}}]
 			},
@@ -516,7 +516,7 @@ sap.ui.require([
 			.withExactArgs("Heidelberg");
 
 		// code under test: update cache with the value the user entered
-		_Helper.updateCache(mChangeListeners, "SO_2_BP", oCacheData, {
+		_Helper.updateExisting(mChangeListeners, "SO_2_BP", oCacheData, {
 			Address : {
 				City : "Heidelberg"
 			}
@@ -531,7 +531,7 @@ sap.ui.require([
 		});
 
 		// code under test: update cache with the patch result
-		_Helper.updateCache(mChangeListeners, "SO_2_BP", oCacheData, {
+		_Helper.updateExisting(mChangeListeners, "SO_2_BP", oCacheData, {
 			BusinessPartnerID : "42",
 			Address : {
 				City : "Heidelberg",
@@ -549,7 +549,61 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("updateCache: remove structured attribute", function (assert) {
+	QUnit.test("updateExisting: collection valued properties (messages)", function (assert) {
+		var aNoMessages = [],
+			aMessages = [{
+				"code" : "42",
+				"longtextUrl" : "any/URL",
+				"message" : "message 1",
+				"transition" : false,
+				"target" : "Foo",
+				"numericSeverity" : 3
+			}, {
+				"code" : "17",
+				"longtextUrl" : "any/URL/2",
+				"message" : "message 2",
+				"transition" : true,
+				"target" : "Bar",
+				"numericSeverity" : 4
+			}],
+			sMessages,
+			oCacheData = {
+				BusinessPartnerID : "42",
+				"__CT__FAKE__Message" : {
+					"__FAKE__Messages" : aNoMessages
+				}
+			};
+
+		aNoMessages.$count = aNoMessages.length;
+		aMessages.$count = aMessages.length;
+		sMessages = JSON.stringify(aMessages);
+
+		// code under test
+		_Helper.updateExisting(null, "SO_2_BP", oCacheData, {
+			"__CT__FAKE__Message" : {
+				"__FAKE__Messages" : aMessages
+			}
+		});
+
+		assert.strictEqual(JSON.stringify(oCacheData["__CT__FAKE__Message"]["__FAKE__Messages"]),
+			sMessages);
+		assert.strictEqual(oCacheData["__CT__FAKE__Message"]["__FAKE__Messages"].$count, 2);
+
+		// code under test
+		_Helper.updateExisting({}, "SO_2_BP", oCacheData, {
+			"__CT__FAKE__Message" : {
+				"__FAKE__Messages" : aNoMessages
+			}
+		});
+
+		assert.deepEqual(oCacheData["__CT__FAKE__Message"]["__FAKE__Messages"], []);
+		assert.strictEqual(oCacheData["__CT__FAKE__Message"]["__FAKE__Messages"].$count, 0);
+
+		//TODO change handling for collection valued properties (not supported yet)
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateExisting: remove structured attribute", function (assert) {
 		var mChangeListeners = {
 				"SO_2_BP/Address/City" : [{onChange : function () {}}],
 				"SO_2_BP/Address/Foo/Bar" : [{onChange : function () {}}]
@@ -570,7 +624,7 @@ sap.ui.require([
 		this.mock(mChangeListeners["SO_2_BP/Address/Foo/Bar"][0]).expects("onChange")
 			.withExactArgs(undefined);
 
-		_Helper.updateCache(mChangeListeners, "SO_2_BP", oCacheData, {
+		_Helper.updateExisting(mChangeListeners, "SO_2_BP", oCacheData, {
 			BusinessPartnerID : "42",
 			Address : null
 		});
@@ -582,7 +636,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("updateCache: add structured attribute", function (assert) {
+	QUnit.test("updateExisting: add structured attribute", function (assert) {
 		var mChangeListeners = {
 				"SO_2_BP/Address/City" : [{onChange : function () {}}],
 				"SO_2_BP/Address/Foo/Bar" : [{onChange : function () {}}]
@@ -597,7 +651,7 @@ sap.ui.require([
 		this.mock(mChangeListeners["SO_2_BP/Address/Foo/Bar"][0]).expects("onChange")
 			.withExactArgs("Baz");
 
-		_Helper.updateCache(mChangeListeners, "SO_2_BP", oCacheData, {
+		_Helper.updateExisting(mChangeListeners, "SO_2_BP", oCacheData, {
 			BusinessPartnerID : "42",
 			Address : {
 				City : "Walldorf",
@@ -621,7 +675,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("updateCache: check cache value in change handler", function (assert) {
+	QUnit.test("updateExisting: check cache value in change handler", function (assert) {
 		var oCacheData = {
 				BusinessPartnerID : "42",
 				Address : {
@@ -641,7 +695,7 @@ sap.ui.require([
 			};
 
 		// code under test
-		_Helper.updateCache(mChangeListeners, "SO_2_BP", oCacheData, {
+		_Helper.updateExisting(mChangeListeners, "SO_2_BP", oCacheData, {
 			BusinessPartnerID : "42",
 			Address : {
 				City : "St. Ingbert",
@@ -659,13 +713,13 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("updateCache: empty value from PATCH response", function (assert) {
+	QUnit.test("updateExisting: empty value from PATCH response", function (assert) {
 		var oCacheData = {
 				SalesOrderItemID : "000100"
 			};
 
 		// code under test
-		_Helper.updateCache({/*mChangeListeners*/}, "SO_2_SOITEM", oCacheData,
+		_Helper.updateExisting({/*mChangeListeners*/}, "SO_2_SOITEM", oCacheData,
 			/*empty PATCH response*/undefined);
 
 		assert.deepEqual(oCacheData, {
@@ -925,15 +979,20 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[true, false].forEach(function (bUseProperties) {
-		QUnit.test("updateCacheAfterPost: simple/complex and not wanted properties," +
+		QUnit.test("updateSelected: simple/complex and not wanted properties," +
 			" bUseProperties: " + bUseProperties, function (assert) {
 			var oCacheBefore = {
+					"@odata.etag" : "Old ETag",
 					Address : {
 						City : "Walldorf"
 					},
 					ComplexNullable : null
 				},
 				oCacheAfter = {
+					"@$ui5._" : {
+						predicate : "('4711')"
+					},
+					"@odata.etag" : "New ETag",
 					PartnerId : "4711",
 					Address : {
 						City : "Walldorf",
@@ -980,9 +1039,17 @@ sap.ui.require([
 				.withExactArgs(oChangeListener, "SO_2_BP/ComplexNullable/foo", "foo");
 			oHelperMock.expects("fireChange")
 				.withExactArgs(oChangeListener, "SO_2_BP/PartnerId", "4711");
+			oHelperMock.expects("fireChange")
+				.withExactArgs(oChangeListener, "SO_2_BP/@$ui5._/predicate", "('4711')");
+			oHelperMock.expects("fireChange")
+				.withExactArgs(oChangeListener, "SO_2_BP/@odata.etag", "New ETag");
 
 			// code under test
-			_Helper.updateCacheAfterPost(oChangeListener, "SO_2_BP", oCacheBefore, {
+			_Helper.updateSelected(oChangeListener, "SO_2_BP", oCacheBefore, {
+				"@$ui5._" : {
+					predicate : "('4711')"
+				},
+				"@odata.etag" : "New ETag",
 				PartnerId : "4711",
 				Address : {
 					City : "Walldorf",

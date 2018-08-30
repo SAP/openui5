@@ -2,9 +2,9 @@
  * ${copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/model/odata/v4/lib/_AggregationHelper"
-], function (jQuery, _AggregationHelper) {
+], function (Log, _AggregationHelper) {
 	/*global QUnit*/
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -12,7 +12,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._AggregationHelper", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		}
@@ -103,16 +103,153 @@ sap.ui.require([
 	}, {
 		oAggregation : {
 			aggregate : {
-				Amount : {
-					max : true
-				}
+				SalesNumber : {grandTotal : true, subtotals : true} // no unit involved here!
+			},
+			group : {
+				Region : {}
+			},
+			groupLevels : ["Region"]
+		},
+		mQueryOptions : {
+			$skip : 0, // special case,
+			$top : Infinity // special case
+		},
+		sApply : "groupby((Region),aggregate(SalesNumber))/concat(aggregate(SalesNumber),identity)",
+		sFollowUpApply // Note: follow-up request not needed in this case
+			: "groupby((Region),aggregate(SalesNumber))/concat(aggregate(SalesNumber),identity)"
+	}, {
+		oAggregation : {
+			aggregate : {
+				SalesNumber : {grandTotal : true, subtotals : true} // no unit involved here!
+			},
+			group : {
+				Region : {}
+			},
+			groupLevels : ["Region"]
+		},
+		mQueryOptions : {
+			$count : true,
+			$filter : "SalesNumber ge 100",
+			$orderby : "Region desc",
+			$skip : 0, // special case
+			$top : 42
+		},
+		sApply : "groupby((Region),aggregate(SalesNumber))"
+			+ "/filter(SalesNumber ge 100)/orderby(Region desc)"
+			+ "/concat(aggregate(SalesNumber,$count as UI5__count),top(41))",
+		sFollowUpApply : "groupby((Region),aggregate(SalesNumber))"
+			+ "/filter(SalesNumber ge 100)/orderby(Region desc)"
+			+ "/concat(aggregate(SalesNumber),top(41))"
+	}, {
+		oAggregation : {
+			aggregate : {
+				SalesNumber : {grandTotal : true, subtotals : true} // no unit involved here!
+			},
+			group : {
+				Region : {}
+			},
+			groupLevels : ["Region"]
+		},
+		mQueryOptions : {
+			$count : true,
+			$filter : "SalesNumber ge 100",
+			$orderby : "Region desc",
+			$skip : 42,
+			$top : 99
+		},
+		sApply : "groupby((Region),aggregate(SalesNumber))"
+			+ "/filter(SalesNumber ge 100)/orderby(Region desc)"
+			+ "/concat(aggregate($count as UI5__count),skip(41)/top(99))",
+		sFollowUpApply : "groupby((Region),aggregate(SalesNumber))"
+			+ "/filter(SalesNumber ge 100)/orderby(Region desc)/skip(41)/top(99)"
+	}, {
+		oAggregation : {
+			aggregate : {
+				Amount : {max : true}
 			},
 			group : {
 				BillToParty : {}
 			}
 		},
+		mQueryOptions : {
+			$skip : 0, // special case
+			$top : Infinity // special case
+		},
+		// Note: sap.chart.Chart would never do this, min/max is needed for paging only
 		sApply : "groupby((BillToParty),aggregate(Amount))"
 			+ "/concat(aggregate(Amount with max as UI5max__Amount),identity)",
+		sFollowUpApply : "groupby((BillToParty),aggregate(Amount))",
+		mExpectedAlias2MeasureAndMethod : {
+			"UI5max__Amount" : {measure : "Amount", method : "max"}
+		}
+	}, {
+		oAggregation : {
+			aggregate : {
+				Amount : {max : true, min : true}
+			},
+			group : {
+				BillToParty : {}
+			}
+		},
+		mQueryOptions : {
+			$count : true,
+			$filter : "Amount ge 100",
+			$orderby : "BillToParty desc",
+			$skip : 0, // special case
+			$top : 42
+		},
+		sApply : "groupby((BillToParty),aggregate(Amount))"
+			+ "/filter(Amount ge 100)/orderby(BillToParty desc)"
+			+ "/concat(aggregate(Amount with min as UI5min__Amount"
+			+ ",Amount with max as UI5max__Amount,$count as UI5__count),top(42))",
+		sFollowUpApply : "groupby((BillToParty),aggregate(Amount))"
+			+ "/filter(Amount ge 100)/orderby(BillToParty desc)/top(42)",
+		mExpectedAlias2MeasureAndMethod : {
+			"UI5max__Amount" : {measure : "Amount", method : "max"},
+			"UI5min__Amount" : {measure : "Amount", method : "min"}
+		}
+	}, {
+		oAggregation : {
+			aggregate : {
+				Amount : {max : true, min : true}
+			},
+			group : {
+				BillToParty : {}
+			}
+		},
+		mQueryOptions : {
+			$count : true,
+			$filter : "Amount ge 100",
+			$orderby : "BillToParty desc",
+			$skip : 42,
+			$top : 99
+		},
+		sApply : "groupby((BillToParty),aggregate(Amount))"
+			+ "/filter(Amount ge 100)/orderby(BillToParty desc)"
+			+ "/concat(aggregate(Amount with min as UI5min__Amount"
+			+ ",Amount with max as UI5max__Amount,$count as UI5__count),skip(42)/top(99))",
+		sFollowUpApply : "groupby((BillToParty),aggregate(Amount))"
+			+ "/filter(Amount ge 100)/orderby(BillToParty desc)/skip(42)/top(99)",
+		mExpectedAlias2MeasureAndMethod : {
+			"UI5max__Amount" : {measure : "Amount", method : "max"},
+			"UI5min__Amount" : {measure : "Amount", method : "min"}
+		}
+	}, {
+		oAggregation : {
+			aggregate : {
+				Amount : {max : true}
+			},
+			group : {
+				BillToParty : {}
+			}
+		},
+		mQueryOptions : {
+			$skip : 0, // special case
+			$top : 0 // not really a special case
+		},
+		sApply : "groupby((BillToParty),aggregate(Amount))"
+			+ "/concat(aggregate(Amount with max as UI5max__Amount),top(0))",
+		sFollowUpApply : "groupby((BillToParty),aggregate(Amount))/top(0)", // Note: not useful
 		mExpectedAlias2MeasureAndMethod : {
 			"UI5max__Amount" : {measure : "Amount", method : "max"}
 		}
@@ -167,16 +304,32 @@ sap.ui.require([
 	}].forEach(function (oFixture) {
 		QUnit.test("buildApply with " + oFixture.sApply, function (assert) {
 			var mAlias2MeasureAndMethod = {},
+				sQueryOptionsJSON = JSON.stringify(oFixture.mQueryOptions),
 				mResult;
 
 			// code under test
-			mResult = _AggregationHelper.buildApply(oFixture.oAggregation, null,
+			mResult = _AggregationHelper.buildApply(oFixture.oAggregation, oFixture.mQueryOptions,
 				mAlias2MeasureAndMethod);
 
-			assert.deepEqual(mResult, {$apply : oFixture.sApply});
+			assert.deepEqual(mResult, {$apply : oFixture.sApply}, "sApply");
 			if (oFixture.mExpectedAlias2MeasureAndMethod) {
-				assert.deepEqual(mAlias2MeasureAndMethod, oFixture.mExpectedAlias2MeasureAndMethod);
+				assert.deepEqual(mAlias2MeasureAndMethod, oFixture.mExpectedAlias2MeasureAndMethod,
+					"mAlias2MeasureAndMethod");
 			}
+
+			if (oFixture.sFollowUpApply) {
+				mAlias2MeasureAndMethod = {};
+
+				// code under test
+				mResult = _AggregationHelper.buildApply(oFixture.oAggregation,
+					oFixture.mQueryOptions, mAlias2MeasureAndMethod, true);
+
+				assert.deepEqual(mResult, {$apply : oFixture.sFollowUpApply}, "sFollowUpApply");
+				assert.deepEqual(mAlias2MeasureAndMethod, {}, "mAlias2MeasureAndMethod");
+			}
+
+			assert.strictEqual(JSON.stringify(oFixture.mQueryOptions), sQueryOptionsJSON,
+				"original mQueryOptions unchanged");
 		});
 	});
 
@@ -193,69 +346,6 @@ sap.ui.require([
 			}),
 			{$apply : "groupby((BillToParty),aggregate(Amount))"
 				+ "/concat(aggregate(Amount with max as UI5max__Amount),identity)"});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("buildApply with mQueryOptions, 1st request", function (assert) {
-		var oAggregation = {
-				aggregate : {
-					SalesNumber : {
-						max : true,
-						min : true
-					}
-				},
-				group : {
-					Name : {}
-				},
-				groupLevels : []
-			},
-			mQueryOptions = {
-				$count : true,
-				$filter : "SalesNumber ge 100",
-				$orderby : "Name desc"
-			};
-
-		assert.deepEqual(_AggregationHelper.buildApply(oAggregation, mQueryOptions), {
-			$apply : "groupby((Name),aggregate(SalesNumber))"
-				+ "/filter(SalesNumber ge 100)/orderby(Name desc)"
-				+ "/concat(aggregate(SalesNumber with min as UI5min__SalesNumber,"
-				+ "SalesNumber with max as UI5max__SalesNumber),identity)",
-			$count : true
-		});
-		assert.deepEqual(mQueryOptions, {
-			$count : true,
-			$filter : "SalesNumber ge 100",
-			$orderby : "Name desc"
-		}, "unmodified");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("buildApply with mQueryOptions, 2nd request", function (assert) {
-		var oAggregation = {
-				aggregate : {
-					SalesNumber : {/*no min/max*/}
-				},
-				group : {
-					Name : {}
-				},
-				groupLevels : []
-			},
-			mQueryOptions = {
-				$count : true,
-				$filter : "SalesNumber ge 100",
-				$orderby : "Name desc"
-			};
-
-		assert.deepEqual(_AggregationHelper.buildApply(oAggregation, mQueryOptions), {
-			$apply : "groupby((Name),aggregate(SalesNumber))"
-				+ "/filter(SalesNumber ge 100)/orderby(Name desc)",
-			$count : true
-		});
-		assert.deepEqual(mQueryOptions, {
-			$count : true,
-			$filter : "SalesNumber ge 100",
-			$orderby : "Name desc"
-		}, "unmodified");
 	});
 
 	//*********************************************************************************************
@@ -314,6 +404,25 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("hasGrandTotal", function (assert) {
+		// code under test
+		assert.strictEqual(_AggregationHelper.hasGrandTotal(), false);
+
+		// code under test
+		assert.strictEqual(_AggregationHelper.hasGrandTotal({}), false);
+
+		// code under test
+		assert.strictEqual(_AggregationHelper.hasGrandTotal({A : {}}), false);
+
+		// code under test
+		assert.strictEqual(_AggregationHelper.hasGrandTotal({B : {grandTotal : true}}), true);
+
+		// code under test
+		assert.strictEqual(_AggregationHelper.hasGrandTotal({A : {}, B : {grandTotal : true}}),
+			true);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("hasMinOrMax", function (assert) {
 		// code under test
 		assert.strictEqual(_AggregationHelper.hasMinOrMax(), false);
@@ -322,9 +431,15 @@ sap.ui.require([
 		assert.strictEqual(_AggregationHelper.hasMinOrMax({}), false);
 
 		// code under test
-		assert.strictEqual(_AggregationHelper.hasMinOrMax({Measure : {min : true}}), true);
+		assert.strictEqual(_AggregationHelper.hasMinOrMax({A : {}}), false);
 
 		// code under test
-		assert.strictEqual(_AggregationHelper.hasMinOrMax({Measure : {max : true}}), true);
+		assert.strictEqual(_AggregationHelper.hasMinOrMax({B : {min : true}}), true);
+
+		// code under test
+		assert.strictEqual(_AggregationHelper.hasMinOrMax({B : {max : true}}), true);
+
+		// code under test
+		assert.strictEqual(_AggregationHelper.hasMinOrMax({A : {}, B : {max : true}}), true);
 	});
 });

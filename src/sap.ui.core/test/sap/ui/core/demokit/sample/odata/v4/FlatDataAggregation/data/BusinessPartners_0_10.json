@@ -1,0 +1,56 @@
+{
+	"@odata.context" : "$metadata#BusinessPartners(Region,SalesNumber,UI5__count)",
+	"@odata.metadataEtag" : "W/\"87224d81d74264252c302f6ff13f1d69e04e6438dd9601f3daeb7f5719d32d16\"",
+	"value" : [{
+		"@odata.id" : null,
+		"SalesNumber@odata.type" : "#Int32",
+		"SalesNumber" : 272378,
+		"UI5__count@odata.type" : "#Decimal",
+		"UI5__count" : "14"
+	}, {
+		"@odata.id" : null,
+		"Region" : "West",
+		"SalesNumber@odata.type" : "#Int32",
+		"SalesNumber" : 76032
+	}, {
+		"@odata.id" : null,
+		"Region" : "Wales",
+		"SalesNumber@odata.type" : "#Int32",
+		"SalesNumber" : 2492
+	}, {
+		"@odata.id" : null,
+		"Region" : "Schottland",
+		"SalesNumber@odata.type" : "#Int32",
+		"SalesNumber" : 1841
+	}, {
+		"@odata.id" : null,
+		"Region" : "Saxony",
+		"SalesNumber@odata.type" : "#Int32",
+		"SalesNumber" : 3354
+	}, {
+		"@odata.id" : null,
+		"Region" : "Mid-West",
+		"SalesNumber@odata.type" : "#Int32",
+		"SalesNumber" : 32589
+	}, {
+		"@odata.id" : null,
+		"Region" : "Lower Saxony",
+		"SalesNumber@odata.type" : "#Int32",
+		"SalesNumber" : 10576
+	}, {
+		"@odata.id" : null,
+		"Region" : "London",
+		"SalesNumber@odata.type" : "#Int32",
+		"SalesNumber" : 12788
+	}, {
+		"@odata.id" : null,
+		"Region" : "Hessia",
+		"SalesNumber@odata.type" : "#Int32",
+		"SalesNumber" : 18456
+	}, {
+		"@odata.id" : null,
+		"Region" : "Hamburg",
+		"SalesNumber@odata.type" : "#Int32",
+		"SalesNumber" : 7118
+	}]
+}

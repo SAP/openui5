@@ -97,7 +97,7 @@
 					parameters : {
 						$count : true,
 						$filter : 'SO_2_BP/CompanyName ge \'M\'',
-						$select : 'BuyerID'
+						$select : ['BuyerID', 'Messages']
 					},
 					events : {
 						dataReceived : '.onDataEvents',
@@ -202,6 +202,7 @@
 					},
 					path : '',
 					parameters : {
+						$select : 'Messages',
 						$$updateGroupId : 'SalesOrderUpdateGroup'
 					}
 				}">
@@ -310,6 +311,7 @@
 									}
 								}
 							},
+							$select : 'Messages',
 							$$updateGroupId : 'SalesOrderUpdateGroup'
 						},
 						events : {
