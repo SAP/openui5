@@ -302,7 +302,7 @@ function(
 		}
 		Log.info("Do not use deprecated factory function 'sap.ui." + sFragmentType + "fragment'. Require 'sap/ui/core/Fragment' and use 'load()' instead", "sap.ui." + sFragmentType + "fragment", null, function () {
 			return {
-				type: sFragmentType,
+				type: "sap.ui." + sFragmentType + "fragment",
 				name: sFragmentType ? sName + ".fragment." + sFragmentType : sName
 			};
 		});
