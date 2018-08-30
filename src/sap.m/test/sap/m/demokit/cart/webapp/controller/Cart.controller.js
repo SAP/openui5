@@ -1,16 +1,14 @@
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/demo/cart/controller/BaseController',
-	'sap/ui/model/json/JSONModel',
-	'sap/ui/Device',
-	'sap/ui/demo/cart/model/formatter',
-	'sap/m/MessageBox',
-	'sap/m/Dialog',
-	'sap/m/Button',
-	'sap/ui/core/routing/History'
+    'sap/ui/demo/cart/controller/BaseController',
+    'sap/ui/model/json/JSONModel',
+    'sap/ui/Device',
+    'sap/ui/demo/cart/model/formatter',
+    'sap/m/MessageBox',
+    'sap/m/Dialog',
+    'sap/m/Button',
+    'sap/ui/core/routing/History'
 ], function (
-	$,
-	BaseController,
+    BaseController,
 	JSONModel,
 	Device,
 	formatter,
@@ -132,14 +130,14 @@ sap.ui.define([
 			// why are the items cloned? - the JSON model checks if the values in the object are changed.
 			// if we do our modifications on the same reference, there will be no change detected.
 			// so we modify after the clone.
-			var oListToAddItem = $.extend({}, oModelData[sListToAddItem]);
-			var oListToDeleteItem = $.extend({}, oModelData[sListToDeleteItem]);
+			var oListToAddItem = jQuery.extend({}, oModelData[sListToAddItem]);
+			var oListToDeleteItem = jQuery.extend({}, oModelData[sListToDeleteItem]);
 			var sProductId = oProduct.ProductId;
 
 			// find existing entry for product
 			if (oListToAddItem[sProductId] === undefined) {
 				// copy new entry
-				oListToAddItem[sProductId] = $.extend({}, oProduct);
+				oListToAddItem[sProductId] = jQuery.extend({}, oProduct);
 			}
 
 			//Delete the saved Product from cart
@@ -195,12 +193,12 @@ sap.ui.define([
 						return;
 					}
 					var oCartModel = oBindingContext.getModel();
-					var oCollectionEntries = $.extend({}, oCartModel.getData()[sCollection]);
+					var oCollectionEntries = jQuery.extend({}, oCartModel.getData()[sCollection]);
 
 					delete oCollectionEntries[sEntryId];
 
 					// update model
-					oCartModel.setProperty("/" + sCollection, $.extend({}, oCollectionEntries));
+					oCartModel.setProperty("/" + sCollection, jQuery.extend({}, oCollectionEntries));
 				}
 			});
 		},
