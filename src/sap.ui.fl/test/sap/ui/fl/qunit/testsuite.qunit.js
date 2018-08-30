@@ -60,6 +60,11 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/ChangePersistenceFactory"]
 				}
 			},
+			"ControlPersonalizationAPI": {
+				coverage: {
+					only: ["sap/ui/fl/ControlPersonalizationAPI"]
+				}
+			},
 			"FakeLrepConnector": {
 				coverage: {
 					only: ["sap/ui/fl/FakeLrepConnector"]
@@ -272,16 +277,6 @@ sap.ui.define(function () {
 			"Cache": {
 				coverage: {
 					only: ["sap/ui/fl/Cache"]
-				}
-			},
-			"ControlPersonalizationAPI": {
-				coverage: {
-					only: ["sap/ui/fl/ControlPersonalizationAPI"]
-				}
-			},
-			"ControlPersonalizationAPIEndToEnd": {
-				coverage: {
-					only: ["sap/ui/fl/ControlPersonalizationAPIEndToEnd"]
 				}
 			},
 			"EventHistory": {
