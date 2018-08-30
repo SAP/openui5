@@ -666,7 +666,6 @@ function(
 			this._btndown = undefined;
 			this._disableButtons(oNewValue.displayValue, fMax, fMin);
 			this.setValue(oNewValue.value);
-			this._verifyValue();
 
 			if (this._sOldValue !== this.getValue()) {
 				this.fireChange({value: this.getValue()});
@@ -769,6 +768,7 @@ function(
 			}
 
 			this._getInput().setValue(this._getFormatedValue(oValue));
+			this._verifyValue();
 
 			this._disableButtons(oValue, this.getMax(), this.getMin());
 
@@ -1011,7 +1011,6 @@ function(
 		StepInput.prototype._change = function (oEvent) {
 			this._sOldValue = this.getValue();
 
-			this._verifyValue();
 			this.setValue(this._getDefaultValue(this._getInput().getValue(), this.getMax(), this.getMin()));
 
 
