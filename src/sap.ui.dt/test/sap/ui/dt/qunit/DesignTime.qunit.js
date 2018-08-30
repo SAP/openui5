@@ -60,6 +60,10 @@ function(
 
 	var sandbox = sinon.sandbox.create();
 
+	function _isOverlayVisible(oElementOverlay) {
+		return oElementOverlay.$().width() > 0 && oElementOverlay.$().height() > 0;
+	}
+
 	QUnit.module("Given that the DesignTime is created", {
 		beforeEach : function () {
 			this.oDesignTime = new DesignTime();
@@ -937,7 +941,6 @@ function(
 			});
 
 			this.oDesignTime.attachEventOnce('synced', function () {
-				this.oOverlayLayoutOuter = OverlayRegistry.getOverlay(this.oLayout1);
 				fnDone();
 			}, this);
 		},
@@ -975,37 +978,44 @@ function(
 			this.oLayout2 = new VerticalLayout({
 				content : [this.oButton2]
 			});
+			this.oLayout1.addStyleClass('hidden');
 			this.oLayout2.addStyleClass('hidden');
 
 			this.oDesignTime.attachEventOnce('synced', function () {
 				this.oOverlayLayout2 = OverlayRegistry.getOverlay(this.oLayout2);
 				assert.ok(!!this.oOverlayLayout2, 'layout2 overlay is created');
-				this.oLayout2.removeStyleClass('hidden');
-
 				this.oOverlayButton2 = OverlayRegistry.getOverlay(this.oButton2);
 				assert.ok(!!this.oOverlayButton2, 'then button2 overlay is created');
+				assert.notOk(_isOverlayVisible(this.oOverlayLayout2), 'the layout2 overlay has no size when hidden');
+				this.oOverlayLayout2.attachEventOnce('geometryChanged', function () {
+					assert.ok(_isOverlayVisible(this.oOverlayLayout2), 'the layout2 overlay has non-zero width/height when made visible');
+					this.oDesignTime.attachEventOnce('synced', function () {
+						this.oOverlayLayout1 = OverlayRegistry.getOverlay(this.oLayout1);
+						assert.ok(!!this.oOverlayLayout1, 'then layout1 overlay is created');
+						this.oOverlayButton1 = OverlayRegistry.getOverlay(this.oButton1);
+						assert.ok(!!this.oOverlayButton1, 'then button1 overlay is created');
+						assert.notOk(_isOverlayVisible(this.oOverlayButton1), 'the layout1 overlay has no size when hidden');
 
-				this.oDesignTime.attachEventOnce('synced', function () {
-					this.oOverlayButton1 = OverlayRegistry.getOverlay(this.oButton1);
-					assert.ok(!!this.oOverlayButton1, 'then button1 overlay is created');
-					fnDone();
-				}, this);
+						this.oOverlayLayout1.attachEventOnce('geometryChanged', function () {
+							assert.ok(_isOverlayVisible(this.oOverlayLayout1), 'the layout1 overlay has non-zero width/height when made visible');
+							fnDone();
+						}, this);
+						this.oLayout1.removeStyleClass('hidden');
+					}, this);
 
-				setTimeout(function () {
+					this.oOverlayLayout2.attachEventOnce("destroyed", function(){
+						this.oLayoutOuter.addContent(this.oLayout1);
+					}, this);
 					this.oLayoutOuter.removeContent(this.oLayout2);
-					this.oLayoutOuter.addContent(this.oLayout1);
-					this.oOverlayLayout1 = OverlayRegistry.getOverlay(this.oLayout2);
-					assert.ok(!!this.oOverlayLayout1, 'then layout1 overlay is created');
-					this.oLayout1.removeStyleClass('hidden');
-					sap.ui.getCore().applyChanges();
-				}.bind(this), 0);
-
+				}, this);
+				this.oLayout2.removeStyleClass('hidden');
 			}, this);
 
-			this.oLayout1.addStyleClass('hidden');
+			this.oOverlayLayout1 = OverlayRegistry.getOverlay(this.oLayout1);
+			this.oOverlayLayout1.attachEventOnce("destroyed", function(){
+				this.oLayoutOuter.addContent(this.oLayout2);
+			}, this);
 			this.oLayoutOuter.removeContent(this.oLayout1);
-			this.oLayoutOuter.addContent(this.oLayout2);
-			sap.ui.getCore().applyChanges();
 		});
 	});
 
