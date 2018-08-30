@@ -3382,7 +3382,6 @@ sap.ui.require([
 		}
 
 		this.mock(oCache).expects("fetchTypes").withExactArgs()
-			.exactly(1/* create */ + 2/* update */)
 			.returns(SyncPromise.resolve(mTypeForMetaPath));
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs("/Employees", sinon.match.same(mQueryOptions), true)
@@ -3508,7 +3507,7 @@ sap.ui.require([
 				fnRejectPost = reject;
 			}));
 		this.mock(oCache).expects("fetchTypes")
-			.exactly(2 /*create*/ + 5 /*update*/)
+			.exactly(2 /*create*/ + 1 /*update*/)
 			.withExactArgs()
 			.returns(oFetchTypesPromise);
 
@@ -3578,7 +3577,7 @@ sap.ui.require([
 				that = this;
 
 			this.mock(oCache).expects("fetchTypes")
-				.exactly(2 /*create*/ + 3 /*update*/)
+				.exactly(2 /*create*/)
 				.returns(oFetchTypesPromise);
 			this.oRequestorMock.expects("getGroupSubmitMode")
 				.withExactArgs(sUpdateGroupId).returns(mGroups[sUpdateGroupId]);
