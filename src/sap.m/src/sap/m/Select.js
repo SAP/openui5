@@ -437,20 +437,37 @@ function(
 		 */
 		Select.prototype.getOverflowToolbarConfig = function() {
 
-			var noInvalidationProps = ["enabled", "selectedKey"];
-
-			// selectedItemId should be added to the noInvalidation properties list
-			// only if autoAdjustWidth property is 'false'
-			// JIRA: BGSOFUIPIRIN-2808
-			if (!this.getAutoAdjustWidth()) {
-				noInvalidationProps.push("selectedItemId");
-			}
+			var noInvalidationProps = ["enabled", "selectedKey", "selectedItemId"];
 
 			var oConfig = {
 				canOverflow: true,
 				autoCloseEvents: ["change"],
 				invalidationEvents: ["_itemTextChange"],
 				propsUnrelatedToSize: noInvalidationProps
+			};
+
+			oConfig.onBeforeEnterOverflow = function(oSelect) {
+				var oToolbar = oSelect.getParent();
+				if (!oToolbar.isA("sap.m.OverflowToolbar")) {
+					return;
+				}
+
+				oSelect._prevSelectType = oSelect.getType();
+
+				if (oSelect.getType() !== SelectType.Default) {
+					oSelect.setProperty("type", SelectType.Default, true);
+				}
+			};
+
+			oConfig.onAfterExitOverflow = function(oSelect) {
+				var oToolbar = oSelect.getParent();
+				if (!oToolbar.isA("sap.m.OverflowToolbar")) {
+					return;
+				}
+
+				if (oSelect.getType() !== oSelect._prevSelectType) {
+					oSelect.setProperty("type", oSelect._prevSelectType, true);
+				}
 			};
 
 			return oConfig;
