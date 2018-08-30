@@ -968,6 +968,8 @@ sap.ui.require([
 				fnError = this.spy(),
 				oError1 = new Error(),
 				oError2 = new Error(),
+				mTypeForMetaPath = {},
+				oFetchTypesPromise = SyncPromise.resolve(Promise.resolve(mTypeForMetaPath)),
 				sFullPath = "path/to/entity/Address/City",
 				oGroupLock = new _GroupLock("group"),
 				oGroupLock2 = new _GroupLock("group"),
@@ -980,7 +982,6 @@ sap.ui.require([
 					: Promise.resolve(oPatchResult),
 				oRequestCall,
 				oStaticCacheMock = this.mock(_Cache),
-				mTypeForMetaPath = {},
 				oUpdateData = {},
 				that = this;
 
@@ -990,8 +991,9 @@ sap.ui.require([
 				.withExactArgs(new _GroupLock("group"), sEntityPath)
 				.returns(SyncPromise.resolve(oEntity));
 			oCacheMock.expects("fetchTypes")
+				.exactly(2)
 				.withExactArgs()
-				.returns(SyncPromise.resolve(mTypeForMetaPath));
+				.returns(oFetchTypesPromise);
 			oHelperMock.expects("buildPath").withExactArgs(sEntityPath, "Address/City")
 				.returns(sFullPath);
 			this.oRequestorMock.expects("buildQueryString")
@@ -1012,7 +1014,10 @@ sap.ui.require([
 			oCacheMock.expects("addByPath")
 				.withExactArgs(sinon.match.same(oCache.mPatchRequests), sFullPath,
 					sinon.match.same(oPatchPromise));
-			oPatchPromise.catch(function () {
+			SyncPromise.all([
+				oPatchPromise,
+				oFetchTypesPromise
+			]).catch(function () {
 				oCacheMock.expects("removeByPath")
 					.withExactArgs(sinon.match.same(oCache.mPatchRequests), sFullPath,
 						sinon.match.same(oPatchPromise));
@@ -1026,7 +1031,10 @@ sap.ui.require([
 				oCacheMock.expects("addByPath")
 					.withExactArgs(sinon.match.same(oCache.mPatchRequests), sFullPath,
 						sinon.match.same(oPatchPromise2));
-				oPatchPromise2.then(function () {
+				SyncPromise.all([
+					oPatchPromise2,
+					oFetchTypesPromise
+				]).then(function () {
 					var sMetaPath = {/* {string} result of _Helper.getMetaPath(...)*/},
 						sPath = {/* {string} result of _Helper.buildPath(...)*/};
 
