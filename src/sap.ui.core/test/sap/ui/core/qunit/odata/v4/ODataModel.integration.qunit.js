@@ -1376,11 +1376,11 @@ sap.ui.require([
 					"EMPLOYEES('2')?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages", oError)
 				.expectChange("text", null)
 				.expectMessages([{
-					"code": undefined,
-					"message": "Employee does not exist",
-					"persistent": true,
-					"target": undefined,
-					"type": "Error"
+					"code" : undefined,
+					"message" : "Employee does not exist",
+					"persistent" : true,
+					"target" : "",
+					"type" : "Error"
 				}]);
 
 			// code under test
@@ -2473,7 +2473,7 @@ sap.ui.require([
 					"code" : undefined,
 					"message" : "Missing team ID",
 					"persistent" : true,
-					"target" : undefined,
+					"target" : "",
 					"type" : "Error"
 				}])
 				.expectChange("teamId", null); // reset to initial state
@@ -7144,17 +7144,17 @@ sap.ui.require([
 					])
 				})
 				.expectMessages([{
-					"code": "foo-42",
-					"message": "text0",
-					"persistent": true,
-					"target": undefined,
-					"type": "Warning"
+					"code" : "foo-42",
+					"message" : "text0",
+					"persistent" : true,
+					"target" : "",
+					"type" : "Warning"
 				}, {
-					"code": "foo-77",
-					"message": "text1",
-					"persistent": true,
-					"target": undefined,
-					"type": "Information"
+					"code" : "foo-77",
+					"message" : "text1",
+					"persistent" : true,
+					"target" : "",
+					"type" : "Information"
 				}])
 				.expectChange("id", "23");
 

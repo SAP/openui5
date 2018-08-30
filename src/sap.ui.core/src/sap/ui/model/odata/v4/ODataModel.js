@@ -1326,6 +1326,7 @@ sap.ui.define([
 				message : oError.message,
 				processor : this,
 				persistent : true,
+				target : "",
 				technical : true,
 				type : "Error"
 			})]
@@ -1360,6 +1361,7 @@ sap.ui.define([
 						message : oMessage.message,
 						persistent : true,
 						processor : that,
+						target : "",
 						technical : false,
 						type : aMessageTypes[oMessage.numericSeverity] || MessageType.None
 					});
