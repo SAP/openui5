@@ -5,7 +5,7 @@
 		"type": "application",
 		"resources": "resources.json",
 		"i18n": "i18n/i18n.properties",
-		"title": "Order Browser",
+		"title": "Browse Orders",
 		"description": "Demo app using the master-detail pattern, allowing to browse through a list of orders",
 		"applicationVersion": {
 			"version": "1.0.0"

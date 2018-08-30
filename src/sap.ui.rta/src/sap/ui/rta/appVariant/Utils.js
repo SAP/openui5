@@ -75,12 +75,19 @@ sap.ui.define([
 				}
 			};
 
+			// Adding the tooltip to every icon which is shown on the App Variant Overview Dialog
+			var sIconUrl = oAppVariantInfo.iconUrl;
+			if (sIconUrl && sap.ui.core.IconPool.isIconURI(sIconUrl)) {
+				oAppVariantInfo.iconText = sIconUrl.split('//')[1];
+			}
+
 			oAppVariantAttributes = {
 				appId : oAppVariantInfo.appId,
 				title : oAppVariantInfo.title || '',
 				subTitle : oAppVariantInfo.subTitle || '',
 				description : oAppVariantInfo.description || '',
 				icon : oAppVariantInfo.iconUrl || '',
+				iconText : oAppVariantInfo.iconText,
 				isOriginal : oAppVariantInfo.isOriginal,
 				typeOfApp : fnCheckAppType(),
 				descriptorUrl : oAppVariantInfo.descriptorUrl,

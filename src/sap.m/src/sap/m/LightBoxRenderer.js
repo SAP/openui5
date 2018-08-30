@@ -28,6 +28,7 @@ sap.ui.define(["sap/m/library"], function (library) {
 	var classNameFooterTitle = 'sapMLightBoxTitle';
 	var classNameFooterSubtitle = 'sapMLightBoxSubtitle';
 	var classNameFooterTwoLines = 'sapMLightBoxFooterTwoLines';
+	var classNameTopCornersRadius = 'sapMLightBoxTopCornersRadius';
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -49,6 +50,10 @@ sap.ui.define(["sap/m/library"], function (library) {
 
 		if (lightBoxItem.getSubtitle()) {
 			oRm.addClass(classNameTwoLines);
+		}
+
+		if (oControl._isLightBoxBiggerThanMinDimensions) {
+			oRm.addClass(classNameTopCornersRadius);
 		}
 
 		if (imageState !== LightBoxLoadingStates.Error) {

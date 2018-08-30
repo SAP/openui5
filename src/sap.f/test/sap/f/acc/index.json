@@ -12,7 +12,7 @@
 		},
 		{
 			"control": "sap.f.FlexibleColumnLayout",
-			"url": "../FlexibleColumnLayout.html",
+			"url": "FlexibleColumnLayout.html#/detailDetail/ThreeColumnsMidExpanded",
 			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{

@@ -11,15 +11,16 @@ sap.ui.define(["./isPlainObject"], function(isPlainObject) {
 	 * Usage is the same as jQuery.extend(true, ...), but Arguments that are null or undefined are NOT ignored.
 	 *
 	 * For shallow copies, you may use <code>Object.assign</code> (polyfilled).
+	 * @example
+	 * var oMerged = merge({}, {prop1:1}, {prop2:2});
 	 *
 	 * @function
+	 * @since 1.58
 	 * @public
 	 * @alias module:sap/base/util/merge
 	 * @param {Object} target The object that will receive new properties
-	 * @param {Object|Object[]} [source] One or more objects which get merged into the target object
+	 * @param {...Object} [source] One or more objects which get merged into the target object
 	 * @returns {Object} the target object which is the result of the merge
-	 * @example
-	 * var oMerged = merge({}, {prop1:1}, {prop2:2});
 	 */
 	var fnMerge = function() {
 		/*

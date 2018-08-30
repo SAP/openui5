@@ -7,14 +7,14 @@ sap.ui.define([], function() {
 	/**
 	 * Iterates over elements of the given object or array.
 	 *
-	 * Works similar to <code>jQuery.each</code>, but a numeric index is only used for
-	 * instances of <code>Array</code>. For all other objects, including those with a numeric
+	 * Numeric indexes are only used for instances of <code>Array</code>.
+	 * For all other objects, including those with a numeric
 	 * <code>length</code> property, the properties are iterated by name.
 	 *
-	 * The contract for the <code>fnCallback</code> is the same as for <code>jQuery.each</code>,
-	 * when it returns <code>false</code>, then the iteration stops (break).
+	 * When <code>fnCallback</code> returns <code>false</code>, then the iteration stops (break).
 	 *
 	 * @function
+	 * @since 1.58
 	 * @param {object|any[]} oObject object or array to enumerate the properties of
 	 * @param {function} fnCallback function to call for each property name
 	 * @alias module:sap/base/util/each

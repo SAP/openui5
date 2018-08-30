@@ -37,7 +37,7 @@ sap.ui.define([
 				 */
 				iClickTheSwitchForThePassedPropertyNameAndClickThePassedIndex : function(sProperty, iIndex) {
 					return this.waitFor({
-						controlType: "sap.ui.rta.dttool.DTToolListItem",
+						controlType: "sap.ui.rta.dttool.controls.DTToolListItem",
 						matchers: [
 							new Properties({
 								propertyName: sProperty
@@ -116,7 +116,7 @@ sap.ui.define([
 			assertions : {
 				thePassedPropertyShouldBeDisplayedInPropertyPanel: function(sProperty) {
 					return this.waitFor({
-						controlType: "sap.ui.rta.dttool.DTToolListItem",
+						controlType: "sap.ui.rta.dttool.controls.DTToolListItem",
 						matchers: [
 							new Properties({
 								label: sProperty
@@ -130,7 +130,7 @@ sap.ui.define([
 				},
 				thePassedPropertyInPropertyPanelItemHasContent: function(sProperty) {
 					return this.waitFor({
-						controlType: "sap.ui.rta.dttool.DTToolListItem",
+						controlType: "sap.ui.rta.dttool.controls.DTToolListItem",
 						matchers: [
 							new Properties({
 								label: sProperty

@@ -149,6 +149,11 @@ sap.ui.define(["sap/ui/core/library"],
 		 */
 		DataModel: "DataModel",
 		/**
+		 * Modularization issue category.
+		 * @public
+		 */
+		Modularization: "Modularization",
+		/**
 		 * Usage issue category.
 		 * @public
 		 */

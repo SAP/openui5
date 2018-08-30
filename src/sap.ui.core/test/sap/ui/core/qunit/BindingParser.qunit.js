@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
 	"jquery.sap.strings",
 	"sap/ui/base/BindingParser",

@@ -214,7 +214,7 @@ sap.ui.define([
 				'browse-folder': 0xe277, 'primary-key': 0xe278, 'two-keys': 0xe279,
 				'strikethrough': 0xe27a, 'text': 0xe27b, 'responsive': 0xe27c, 'desktop-mobile': 0xe27d,
 				'table-row': 0xe27e, 'table-column': 0xe27f, 'validate': 0x1e280, 'keyboard-and-mouse': 0xe281,
-				'touch': 0xe282, 'expand-all': 0xe283, 'collapse-all': 0xe284
+				'touch': 0xe282, 'expand-all': 0xe283, 'collapse-all': 0xe284, 'combine': 0xe285, 'split': 0xe286
 			}
 
 		};

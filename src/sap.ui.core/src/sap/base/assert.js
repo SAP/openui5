@@ -14,6 +14,7 @@ sap.ui.define(["./Log"], function(Log) {
 	 *              of this method.
 	 *
 	 * @function
+	 * @since 1.58
 	 * @alias module:sap/base/assert
 	 * @param {boolean} bResult Result of the checked assertion
 	 * @param {string|function} vMessage Message that will be logged when the result is <code>false</code>.

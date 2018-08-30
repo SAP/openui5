@@ -1,9 +1,16 @@
-/*global describe,it,element,by,takeScreenshot,expect*/
+/*global describe,it,element,by,takeScreenshot,expect,browser*/
 
 describe('sap.m.MessageView', function() {
 	"use strict";
 
+	var app, compactBtn, overflowBtn;
+
 	it('should load test page', function () {
+		browser.executeScript(function () {
+			app = sap.ui.getCore().byId("split-app");
+			compactBtn = sap.ui.getCore().byId("compactMode");
+			overflowBtn = sap.ui.getCore().byId("overflow-tb")._getOverflowButton();
+		});
 		expect(takeScreenshot()).toLookAs('initial');
 	});
 
@@ -22,24 +29,37 @@ describe('sap.m.MessageView', function() {
 	});
 
 	it("should open MessageView with one MessageViewItem in Popover", function () {
-		// open popover
+		// open overflow toolbar popover the buttons are overflowing
+		browser.executeScript(function () {
+			if (overflowBtn) {
+				overflowBtn.firePress();
+			}
+		});
+
 		element(by.id("mViewButton2")).click();
 		expect(takeScreenshot()).toLookAs("message-view-with-one-item");
 		element(by.id("closeBtn")).click();
 
-		// turn compact mode on
-		element(by.id("compactMode")).click();
+		// switch to compact mode without losing focus from the overflow popover
+		browser.executeScript(function () {
+			compactBtn.fireSelect();
+		});
+
 		element(by.id("mViewButton2")).click();
 		expect(takeScreenshot()).toLookAs("message-view-with-one-item-compact");
 		element(by.id("closeBtn")).click();
 
-		//turn compact mode off
+		// turn compact mode off
 		element(by.id("compactMode")).click();
 	});
 
 	it("should open MessageView in Dialog", function () {
-		element(by.id("mView-in-dialog-btn")).click();
-		expect(takeScreenshot()).toLookAs("message-view-in-dialog");
+		browser.executeScript(function () {
+			app.showMaster();
+		}).then(function () {
+			element(by.id("mView-in-dialog-btn")).click();
+			expect(takeScreenshot()).toLookAs("message-view-in-dialog");
+		});
 	});
 
 	["error", "warning", "success", "information", "all"].forEach(function (sMessageType, nIndex) {
@@ -53,9 +73,14 @@ describe('sap.m.MessageView', function() {
 	});
 
 	it("should open MessageView in compact mode in Dialog", function () {
-		element(by.id("compactMode")).click();
-		element(by.id("mView-in-dialog-btn")).click();
-		expect(takeScreenshot(element(by.id("mMView1")))).toLookAs("mMView1-compact");
+		browser.executeScript(function () {
+			app.hideMaster();
+			compactBtn.fireSelect();
+			app.showMaster();
+		}).then(function () {
+			element(by.id("mView-in-dialog-btn")).click();
+			expect(takeScreenshot(element(by.id("mMView1")))).toLookAs("mMView1-compact");
+		});
 	});
 
 	["error", "warning", "success", "information", "all"].forEach(function (sMessageType, nIndex) {
@@ -80,6 +105,12 @@ describe('sap.m.MessageView', function() {
 	});
 
 	it("should open MessageView with one type of message", function () {
+		browser.executeScript(function () {
+			app.hideMaster();
+			if (overflowBtn) {
+				overflowBtn.firePress();
+			}
+		});
 		element(by.id("mViewButton3")).click();
 		expect(takeScreenshot(element(by.id("pop3")))).toLookAs("message-view-with-one-type");
 		element(by.id("mViewButton4")).click();

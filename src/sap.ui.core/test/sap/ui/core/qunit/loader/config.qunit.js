@@ -180,6 +180,46 @@
 		});
 	});
 
+
+
+	QUnit.module("Config variants for async", {
+		afterEach: function() {
+			removeUi5Loader();
+		}
+	});
+
+	QUnit.test("xx-async=true", function(assert){
+		var done = assert.async();
+		startUi5Loader(function() {
+
+			assert.strictEqual(sap.ui.loader.config().async, true, "Async mode should have been activated by data-sap-ui-xx-async attribute");
+			done();
+
+		}, {"data-sap-ui-xx-async": "true"});
+	});
+
+	QUnit.test("async=true", function(assert){
+		var done = assert.async();
+		startUi5Loader(function() {
+
+			assert.strictEqual(sap.ui.loader.config().async, true, "Async mode should have been activated by data-sap-ui-async attribute");
+			done();
+
+		}, {"data-sap-ui-async": "true"});
+	});
+
+	QUnit.test("async=false", function(assert){
+		var done = assert.async();
+		startUi5Loader(function() {
+
+			assert.strictEqual(sap.ui.loader.config().async, false, "Async mode should have been activated by data-sap-ui-async attribute");
+			done();
+
+		}, {"data-sap-ui-async": "false"});
+	});
+
+
+
 	QUnit.module("Coexistence with AMD loaders", {
 		afterEach: function() {
 			removeUi5Loader();
@@ -268,6 +308,7 @@
 			done();
 		}, {"data-sap-ui-amd": "true"});
 	});
+
 
 	QUnit.start();
 

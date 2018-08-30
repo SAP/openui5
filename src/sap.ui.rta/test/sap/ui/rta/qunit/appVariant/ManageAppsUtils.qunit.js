@@ -176,6 +176,7 @@ sap.ui.define([
 			return AppVariantOverviewUtils.getAppVariantOverview("testId", true).then(function(aAppVariantOverviewAttributes){
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].icon, "sap-icon://history", "then the icon of an app variant is correct");
+				assert.equal(aAppVariantOverviewAttributes[0].iconText, "history", "then the icon tooltip text of an app variant is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].semanticObject, "SemObj", "then the semantic object is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].action, "Action", "then the action is correct");
 				assert.equal(aAppVariantOverviewAttributes[0].adaptUIButtonVisibility, true, "then the app is adaptable");
@@ -225,6 +226,7 @@ sap.ui.define([
 			return AppVariantOverviewUtils.getAppVariantOverview("testId", false).then(function(aAppVariantOverviewAttributes){
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].icon, "sap-icon://history", "then the icon of an app variant is correct");
+				assert.equal(aAppVariantOverviewAttributes[0].iconText, "history", "then the icon tooltip text of an app variant is correct");
 				assert.equal(aAppVariantOverviewAttributes[0].adaptUIButtonVisibility, false, "then the app is not adaptable");
 				assert.ok(AppVariantOverviewUtils.sendRequest.calledOnce, "then the sendRequest is called once");
 				assert.strictEqual(sendRequestStub.firstCall.args[0], "/sap/bc/lrep/app_variant_overview/?sap.app/id=testId&layer=VENDOR", "then the route is correct");
@@ -290,7 +292,9 @@ sap.ui.define([
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
 
 				assert.strictEqual(aAppVariantOverviewAttributes[0].icon, "sap-icon://history", "then the icon of first app(variant) is correct");
+				assert.equal(aAppVariantOverviewAttributes[0].iconText, "history", "then the icon tooltip text of a first app(variant) is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[1].icon, "sap-icon://account", "then the icon of second app is correct");
+				assert.equal(aAppVariantOverviewAttributes[1].iconText, "account", "then the icon tooltip text of a second app(variant) is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].semanticObject, undefined, "then the semantic object of first app(variant) is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[1].semanticObject, "SemObj", "then the semantic object of second app is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].action, undefined, "then the action of first app(variant) is correct");

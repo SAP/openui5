@@ -5,12 +5,12 @@ sap.ui.define(["sap/ui/thirdparty/jquery"], function(jQuery) {
 	"use strict";
 
 	/**
-	 * Applies the jQuery function extension:
-	 * @see jQuery#hasTabIndex
+	 * This module provides the {@link jQuery#hasTabIndex} API.
 	 *
 	 * @namespace
-	 * @alias module:sap/ui/dom/jquery/hasTabIndex
+	 * @name module:sap/ui/dom/jquery/hasTabIndex
 	 * @public
+	 * @since 1.58
 	 */
 
 	/**
@@ -22,6 +22,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery"], function(jQuery) {
 	 * @author SAP SE
 	 * @since 0.9.0
 	 * @function
+	 * @requires module:sap/ui/dom/jquery/hasTabIndex
 	 */
 	var fnHasTabIndex = function(oElem) {
 

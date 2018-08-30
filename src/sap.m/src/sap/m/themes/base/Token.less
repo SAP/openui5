@@ -97,6 +97,14 @@ html[data-sap-ui-browser^="ed"].sap-desktop .sapMTokenIcon {
 	line-height: 1.625rem;
 }
 
+html[data-sap-ui-browser^="ie"].sap-desktop .sapUiSizeCondensed .sapMTokenIcon {
+	line-height: 1.0625rem;
+}
+
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUiSizeCondensed .sapMTokenIcon {
+	line-height: 1rem;
+}
+
 .sapUiSizeCompact .sapMToken {
 	font-size: @sapMFontSmallSize;
 	padding-left: 0.25rem;
@@ -149,14 +157,8 @@ html.sap-desktop .sapMToken.sapMTokenSelected:hover {
 }
 
 html[data-sap-ui-browser*="sf"] {
-	.sapMTokenText {
-		max-width: calc(~"100% + 1px - " @_sap_m_Token_TokenSize);
-	}
-
-	.sapUiSizeCompact .sapMTokenText {
-		max-width: calc(~"100% + 1px - " @_sap_m_Token_TokenCompactSize);
-	}
-
+	.sapMTokenText,
+	.sapUiSizeCompact .sapMTokenText,
 	.sapMTokenReadOnly .sapMTokenText,
 	.sapUiSizeCompact .sapMTokenReadOnly .sapMTokenText {
 		max-width: 100%;

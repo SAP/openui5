@@ -212,7 +212,7 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						timeout: 3,
 						matchers: function(oListItem) {
-							return oListItem.$().find(".sapMText").html() == sTitle;
+							return oListItem.$().find(".sapMFT").html() == sTitle;
 						},
 						actions: new Press(),
 						success: function() {
@@ -228,7 +228,7 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						timeout: 3,
 						matchers: function(oButton) {
-							return oButton.$().parents("li").find(".sapMText").html() == sTitle;
+							return  oButton.getIcon() === "sap-icon://sys-cancel" && oButton.$().parents("li").find(".sapMFT").html() == sTitle;
 						},
 						actions: new Press(),
 						success: function() {
@@ -244,7 +244,7 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						timeout: 3,
 						matchers: function(oButton) {
-							return oButton.$().parents("li").find(".sapMText").html() == sTitle;
+							return oButton.getIcon() === "sap-icon://refresh" && oButton.$().parents("li").find(".sapMFT").html() == sTitle;
 						},
 						actions: new Press(),
 						success: function() {
@@ -429,8 +429,8 @@ sap.ui.define([
 					return this.waitFor({
 						viewName: sViewName,
 						viewNamespace: sViewNameSpace,
-						id: "presetVariantLnk",
-						matchers: new PropertyStrictEquals({name: "text", value: sTitle}),
+						id: "presetVariantTxt",
+						matchers: new PropertyStrictEquals({name: "htmlText", value: sTitle}),
 						success: function() {
 							Opa5.assert.ok(true, "I see correct preset title '" + sTitle + "' in variant select");
 						},
@@ -444,7 +444,7 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						timeout: 3,
 						matchers: function(oListItem) {
-							return oListItem.$().find(".sapMText").html() == sTitle;
+							return oListItem.$().find(".sapMFT").html() == sTitle;
 						},
 						success: function() {
 							Opa5.assert.ok(true, "I see preset '" + sTitle + "' in the popover");
@@ -478,7 +478,7 @@ sap.ui.define([
 							);
 
 							Opa5.assert.ok(
-								aListItems[0].$().find(".sapMText").html() == sTitle,
+								aListItems[0].$().find(".sapMFT").html() == sTitle,
 								"The selected preset is '" + sTitle + "'"
 							);
 						},
@@ -508,6 +508,18 @@ sap.ui.define([
 							Opa5.assert.strictEqual(oInput.getValueState(), sValueState, sId + " Input have correct ValueState");
 						},
 						errorMessage: "Was not able to locate input " + sId + " with ValueState " + sValueState
+					});
+				},
+
+				iShouldSeeGroupWithTitle: function(sTitle) {
+					return this.waitFor({
+						controlType: "sap.m.GroupHeaderListItem",
+						searchOpenDialogs: true,
+						matchers: new PropertyStrictEquals({name: "title", value: sTitle}),
+						success: function(oGroupHeader) {
+							Opa5.assert.ok(true, "Group header with title: '" + sTitle + "' was found.");
+						},
+						errorMessage: "Group header with title: '" + sTitle + "' was NOT found."
 					});
 				}
 			}

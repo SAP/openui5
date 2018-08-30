@@ -5,10 +5,7 @@ sap.ui.define([
 ], function (opaTest) {
 	"use strict";
 
-	var EXPECTED_RULES_COUNT = 45,
-		SAP_CORE_RULESET_CHECKBOX_ID = "__xmlview0--analysis--ruleList-rowsel1",
-		ERROR_LOGS_RULE_CHECKBOX_ID = "__xmlview0--analysis--ruleList-rowsel3",
-		SAP_CORE_COLLAPSE_EXPAND_BUTTON = "__xmlview0--analysis--ruleList-rows-row1-treeicon";
+	var EXPECTED_RULES_COUNT = 45;
 
 	QUnit.module("Support Assistant Selection");
 
@@ -36,7 +33,7 @@ sap.ui.define([
 
 	opaTest("Should deselect all rules in TreeTable", function (Given, When, Then) {
 
-		When.onTheRulesPage.iPressOnTreeTableCheckBox("__xmlview0--analysis--ruleList-selall", "The parent note button in tree table was pressed", "The parent note button in tree table is not there");
+		When.onTheRulesPage.iPressSelectAllCheckbox();
 
 		Then.onTheRulesPage.iShouldSeeRulesSelectionStateChanged(0, "All Rules are deselected", "Was not able to deselect rules");
 
@@ -44,16 +41,16 @@ sap.ui.define([
 
 	opaTest("Should select all rules in TreeTable", function (Given, When, Then) {
 
-		When.onTheRulesPage.iPressOnTreeTableCheckBox("__xmlview0--analysis--ruleList-selall", "The parent note button in tree table was pressed", "The parent note button in tree table is not there");
+		When.onTheRulesPage.iPressSelectAllCheckbox();
 
 		Then.onTheRulesPage.iShouldSeeRulesSelectionStateChanged(EXPECTED_RULES_COUNT, "All rules are selected", "Was not able to select all rules");
 
 	});
 
-	opaTest("Should deselect only sap.m ruleset in TreeTable", function (Given, When, Then) {
+	opaTest("Should deselect only sap.ui.core ruleset in TreeTable", function (Given, When, Then) {
 
 		//sap.ui.core ruleset
-		When.onTheRulesPage.iPressOnTreeTableCheckBox(SAP_CORE_RULESET_CHECKBOX_ID,  "RuleSet has been deselected", "Could not deselect RuleSet");
+		When.onTheRulesPage.iPressSelectCheckboxOf("sap.ui.core", "RuleSet has been deselected", "Could not deselect RuleSet");
 
 		Then.onTheRulesPage.iShouldSeeRulesSelectionStateChanged(24, "Was able to deselect sap.m ruleset", "Was not able to deselect sap.m ruleset");
 
@@ -62,7 +59,7 @@ sap.ui.define([
 	opaTest("All rules should be selected after ruleset is selected", function (Given, When, Then) {
 
 		//sap.ui.core ruleset
-		When.onTheRulesPage.iPressOnTreeTableCheckBox(SAP_CORE_RULESET_CHECKBOX_ID,  "RuleSet has been selected", "Could not select RuleSet");
+		When.onTheRulesPage.iPressSelectCheckboxOf("sap.ui.core", "RuleSet has been selected", "Could not select RuleSet");
 
 		Then.onTheRulesPage.iShouldSeeRulesSelectionStateChanged(EXPECTED_RULES_COUNT, "All Rules are selected", "Was not able to select all rules");
 
@@ -71,7 +68,7 @@ sap.ui.define([
 	opaTest("Should deselect one rule in model and view", function (Given, When, Then) {
 
 		//sap.ui.core - Error logs - rule
-		When.onTheRulesPage.iPressOnTreeTableCheckBox(ERROR_LOGS_RULE_CHECKBOX_ID,  "Rule has been deselected", "Could not deselect Rule");
+		When.onTheRulesPage.iPressSelectCheckboxOf("Error logs", "Rule has been deselected", "Could not deselect Rule");
 
 		//sap.ui.core - library
 		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInView(1);
@@ -90,7 +87,7 @@ sap.ui.define([
 	opaTest("Should select library node and child should be selected in model and view", function (Given, When, Then) {
 
 		//sap.ui.core ruleset
-		When.onTheRulesPage.iPressOnTreeTableCheckBox(SAP_CORE_RULESET_CHECKBOX_ID,  "RuleSet has been selected", "Could not select RuleSet");
+		When.onTheRulesPage.iPressSelectCheckboxOf("sap.ui.core", "RuleSet has been selected", "Could not select RuleSet");
 
 		//sap.ui.core - Error logs - rule
 		//library row index and rule row index
@@ -108,9 +105,8 @@ sap.ui.define([
 
 	opaTest("Should collapse library and selection to be preserved in model and view", function (Given, When, Then) {
 
-
 		//sap.ui.core collapse
-		When.onTheRulesPage.iPressOnTreeTableCheckBox(SAP_CORE_COLLAPSE_EXPAND_BUTTON,  "RuleSet was collapsed ", "Could not collapse RuleSet");
+		When.onTheRulesPage.iPressExpandCollapseButtonOfRuleSet("sap.ui.core", "RuleSet was collapsed ", "Could not collapse RuleSet");
 
 		//sap.ui.core - Error logs - rule
 		//library row index and rule row index
@@ -130,7 +126,7 @@ sap.ui.define([
 
 
 		//sap.ui.core deselect ruleset
-		When.onTheRulesPage.iPressOnTreeTableCheckBox(SAP_CORE_RULESET_CHECKBOX_ID,  "RuleSet has been deselected", "Could not deselect RuleSet");
+		When.onTheRulesPage.iPressSelectCheckboxOf("sap.ui.core", "RuleSet has been deselected", "Could not deselect RuleSet");
 
 		//sap.ui.core - library
 		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInView(1);
@@ -147,7 +143,7 @@ sap.ui.define([
 
 
 		//sap.ui.core ruleset expand
-		When.onTheRulesPage.iPressOnTreeTableCheckBox(SAP_CORE_COLLAPSE_EXPAND_BUTTON,  "RuleSet was expanded ", "Could not expand RuleSet");
+		When.onTheRulesPage.iPressExpandCollapseButtonOfRuleSet("sap.ui.core", "RuleSet was expanded ", "Could not expand RuleSet");
 
 		//sap.ui.core - library
 		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInView(1);
@@ -164,11 +160,10 @@ sap.ui.define([
 
 	opaTest("Should preserve ruleset when selection is applied and it is collapsed and expanded", function (Given, When, Then) {
 
-        //sap.ui.core - last rule - rule
-		When.onTheRulesPage.iPressOnTreeTableCheckBox("__xmlview0--analysis--ruleList-rowsel17",  "Rule has been selected", "Could not select Rule");
+		When.onTheRulesPage.iPressSelectCheckboxOf("Unused namespaces in XML view",  "Rule has been selected", "Could not select Rule");
 
 		//sap.ui.core ruleset collapse
-		When.onTheRulesPage.iPressOnTreeTableCheckBox(SAP_CORE_COLLAPSE_EXPAND_BUTTON,  "RuleSet was collapsed ", "Could not collapse RuleSet");
+		When.onTheRulesPage.iPressExpandCollapseButtonOfRuleSet("sap.ui.core", "RuleSet was collapsed ", "Could not collapse RuleSet");
 
 		//sap.ui.core - library
 		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInView(1);
@@ -184,7 +179,7 @@ sap.ui.define([
 	opaTest("Should preserve ruleset when selection is applied and it is collapsed and expanded", function (Given, When, Then) {
 
 		//sap.ui.core ruleset expand
-		When.onTheRulesPage.iPressOnTreeTableCheckBox(SAP_CORE_COLLAPSE_EXPAND_BUTTON,  "RuleSet was expanded ", "Could not expand RuleSet");
+		When.onTheRulesPage.iPressExpandCollapseButtonOfRuleSet("sap.ui.core", "RuleSet was expanded ", "Could not expand RuleSet");
 
 		//sap.ui.core - library
 		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInView(1);
@@ -213,7 +208,8 @@ sap.ui.define([
 	opaTest("Should deselect one rule from sap.ui.core library ", function (Given, When, Then) {
 
 		//sap.ui.core - Error logs - rule
-		When.onTheRulesPage.iPressOnTreeTableCheckBox(ERROR_LOGS_RULE_CHECKBOX_ID,  "Rule has been deselected", "Could not deselect Rule");
+		When.onTheRulesPage.iPressSelectCheckboxOf("Error logs", "Rule has been deselected", "Could not deselect Rule");
+
 		Then.onTheRulesPage.iShouldSeeRulesSelectionStateChanged(44, "Total selection count should be: 44", "Total selection count is not 44");
 	});
 

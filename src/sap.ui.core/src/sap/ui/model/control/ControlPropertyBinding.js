@@ -17,6 +17,7 @@ sap.ui.define(['sap/ui/model/PropertyBinding'],
 	 * @param {object} [oContext]
 	 * @alias sap.ui.model.control.ControlPropertyBinding
 	 * @extends sap.ui.model.PropertyBinding
+	 * @private
 	 */
 	var ControlPropertyBinding = PropertyBinding.extend("sap.ui.model.control.ControlPropertyBinding", /** @lends sap.ui.model.control.ControlPropertyBinding.prototype */ {
 

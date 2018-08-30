@@ -6367,5 +6367,38 @@
 			"tree",
 			"list"
 		]
+	},
+	"combine": {
+		"tags": [
+			"merge",
+			"arrow",
+			"combine",
+			"glue",
+			"together",
+			"join",
+			"meld",
+			"unite",
+			"aggregate",
+			"interflow",
+			"runtime authoring",
+			"runtime adaptation",
+			"ui adaptation",
+			"arrows-right"
+		]
+	},
+	"split": {
+		"tags": [
+			"split",
+			"arrow",
+			"separate",
+			"break",
+			"cleave",
+			"clove",
+			"cut up",
+			"runtime authoring",
+			"runtime adaptation",
+			"ui adaptation",
+			"arrows-right"
+		]
 	}
 }

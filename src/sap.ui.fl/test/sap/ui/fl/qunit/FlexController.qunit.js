@@ -2024,12 +2024,18 @@ function (
 
 		QUnit.test("when the control in refreshed with the same id as the previous control during change application", function (assert) {
 			sandbox.restore();
+			var sExistingCustomDataValue = "alreadyExistingCustomData";
 
 			sandbox.stub(this.oFlexController, "_getChangeHandler").returns({
 				applyChange: function() {
+					var oFlexCustomData = new CustomData({
+						key: FlexController.appliedChangesCustomDataKey,
+						value: sExistingCustomDataValue
+					});
 					var sId = this.oControl.getId();
 					this.oControl.destroy();
 					this.oControl = new Text(sId);
+					JsControlTreeModifier.insertAggregation(this.oControl, "customData", oFlexCustomData);
 					return this.oControl;
 				}.bind(this)
 			});
@@ -2038,11 +2044,11 @@ function (
 				modifier: JsControlTreeModifier,
 				appComponent: {}
 			})
-			.then(function () {
-				var aAppliedChanges = this.oFlexController._getAppliedCustomData({}, this.oControl, JsControlTreeModifier).customDataEntries;
-				assert.ok(this.oControl instanceof sap.m.Text, "then the refreshed control was initialized in changeHandler.applyChange()");
-				assert.ok(aAppliedChanges.indexOf(this.oChange.getId()) > -1, "then custom data is written on the refreshed control");
-			}.bind(this));
+				.then(function () {
+					var aAppliedChanges = this.oFlexController._getAppliedCustomData({}, this.oControl, JsControlTreeModifier).customDataEntries;
+					assert.ok(this.oControl instanceof Text, "then the refreshed control was initialized in changeHandler.applyChange()");
+					assert.deepEqual(aAppliedChanges, [sExistingCustomDataValue, this.oChange.getId()], "then custom data is appended to the previously existing custom data value on the refreshed control");
+				}.bind(this));
 		});
 
 		QUnit.test("does not directly return with undefined when 'jsOnly' is set to true", function (assert) {

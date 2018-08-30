@@ -43,6 +43,5 @@
 					change="onToggleFavorite"/>
 			</l:VerticalLayout>
 		</CustomListItem>
-
 	</List>
 </core:FragmentDefinition>

@@ -232,7 +232,7 @@ sap.ui.define([
 	 * (default: the document.body)</li>
 	 * <li>useFullScreenHeight: a boolean that defines whether the height of the html root element should be set to
 	 * 100%, which is required for other elements to cover the full height (default: true)</li>
-	 * <li>homeIcon: deprecated since 1.12, use jQuery.sap.setIcons instead.
+	 * <li>homeIcon: deprecated since 1.12, use {@link jQuery.sap.setIcons} instead.
 	 * </ul>
 	 *
 	 * @name jQuery.sap.initMobile
@@ -251,13 +251,14 @@ sap.ui.define([
 	 *     hideBrowser is set. If not set, the body is used
 	 * @param {boolean} [options.useFullScreenHeight=true] whether the height of the html root element should be
 	 *     set to 100%, which is required for other elements to cover the full height
-	 * @param {string}  [options.homeIcon=undefined] deprecated since 1.12, use jQuery.sap.setIcons instead.
-	 * @param {boolean} [options.homeIconPrecomposed=false] deprecated since 1.12, use jQuery.sap.setIcons instead.
+	 * @param {string}  [options.homeIcon=undefined] deprecated since 1.12, use {@link jQuery.sap.setIcons} instead.
+	 * @param {boolean} [options.homeIconPrecomposed=false] deprecated since 1.12, use {@link jQuery.sap.setIcons} instead.
 	 * @param {boolean} [options.mobileWebAppCapable=true] whether the Application will be loaded in full screen
 	 *     mode after added to home screen on mobile devices. The default value for this property only enables the
 	 *     full screen mode when runs on iOS device.
 	 *
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/util/Mobile.init} instead
 	 */
 	jQuery.sap.initMobile = Mobile.init;
 
@@ -308,6 +309,7 @@ sap.ui.define([
 	 * @function
 	 * @param {object} oIcons
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/util/Mobile.setIcons} instead
 	 */
 	jQuery.sap.setIcons = Mobile.setIcons;
 
@@ -329,6 +331,7 @@ sap.ui.define([
 	 * @param {boolean} bValue whether the Application will be loaded in full screen mode after added to home
 	 *     screen from iOS Safari or mobile Chrome from version 31.
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/util/setWebAppCapable} instead
 	 */
 	jQuery.sap.setMobileWebAppCapable = Mobile.setWebAppCapable;
 

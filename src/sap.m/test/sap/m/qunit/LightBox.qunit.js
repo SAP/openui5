@@ -8,8 +8,10 @@
 	jQuery.sap.require('sap.ui.thirdparty.qunit');
 	jQuery.sap.require('sap.ui.thirdparty.sinon');
 	jQuery.sap.require('sap.ui.thirdparty.sinon-qunit');
-	sinon.config.useFakeTimers = true;
 	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+	sinon.config.useFakeTimers = true;
+
 	//================================================================================
 	// LightBox Base API
 	//================================================================================
@@ -236,6 +238,7 @@
 			});
 		},
 		afterEach: function() {
+			this.LightBox.close();
 			this.LightBox.destroy();
 		}
 	});
@@ -257,4 +260,117 @@
 		assert.ok($popupContent.attr('aria-labelledby'), 'aria-labelledby attribute is set');
 		assert.strictEqual($popupContent.attr('role'), 'dialog', 'correct role is set');
 	});
+
+
+	//================================================================================
+	// LightBox sapMLightBoxTopCornersRadius class
+	//================================================================================
+
+	QUnit.module('HasClass', {
+		beforeEach: function() {
+			this.LightBox = new sap.m.LightBox({
+				imageContent : [
+					new sap.m.LightBoxItem()
+				]
+			});
+			sinon.config.useFakeTimers = false;
+		},
+		afterEach: function() {
+			this.LightBox.close();
+			this.LightBox.destroy();
+			sinon.config.useFakeTimers = true;
+		}
+	});
+
+
+	QUnit.test('sapMLightBoxTopCornersRadius class - big image', function(assert) {
+		var oImageContent = this.LightBox.getImageContent()[0],
+			sImageSource = '../images/demo/nature/elephant.jpg'; // big image
+
+		oImageContent.setImageSrc(sImageSource);
+		sap.ui.getCore().applyChanges();
+
+		var done = assert.async();
+
+		// Act
+		this.LightBox.open();
+
+		// Wait for CSS animation to complete
+		setTimeout(function () {
+			var $popupContent = this.LightBox._oPopup.getContent().$();
+
+			// Assert
+			assert.ok($popupContent.hasClass('sapMLightBox'), 'sapMLightBox class is there');
+			assert.ok($popupContent.hasClass('sapMLightBoxTopCornersRadius'), 'sapMLightBoxTopCornersRadius class is there');
+			done();
+		}.bind(this), 1008);
+	});
+
+	QUnit.test('sapMLightBoxTopCornersRadius class - small image', function (assert) {
+		var oImageContent = this.LightBox.getImageContent()[0],
+			sImageSource = '../images/demo/smallImgs/150x150.jpg'; // small image
+
+		oImageContent.setImageSrc(sImageSource);
+		sap.ui.getCore().applyChanges();
+
+		var done = assert.async();
+
+		// Act
+		this.LightBox.open();
+
+		// Wait for CSS animation to complete
+		setTimeout(function () {
+			var $popupContent = this.LightBox._oPopup.getContent().$();
+
+			// Assert
+			assert.notOk($popupContent.hasClass('sapMLightBoxTopCornersRadius'), 'sapMLightBoxTopCornersRadius class is not there');
+			done();
+		}.bind(this), 1008);
+	});
+
+	QUnit.test('sapMLightBoxTopCornersRadius class - horizontal image', function (assert) {
+		var oImageContent = this.LightBox.getImageContent()[0],
+			sImageSource = '../images/demo/smallImgs/320x150.jpg'; // horizontal image
+
+		oImageContent.setImageSrc(sImageSource);
+		sap.ui.getCore().applyChanges();
+
+		var done = assert.async();
+
+		// Act
+		this.LightBox.open();
+
+		// Wait for CSS animation to complete
+		setTimeout(function () {
+			var $popupContent = this.LightBox._oPopup.getContent().$();
+
+			// Assert
+			assert.notOk($popupContent.hasClass('sapMLightBoxTopCornersRadius'), 'sapMLightBoxTopCornersRadius class is not there');
+			done();
+		}.bind(this), 1008);
+	});
+
+	QUnit.test('sapMLightBoxTopCornersRadius class - vertical image', function (assert) {
+		var oImageContent = this.LightBox.getImageContent()[0],
+			sImageSource = '../images/demo/smallImgs/150x288.jpg'; // vertical image
+
+		oImageContent.setImageSrc(sImageSource);
+		sap.ui.getCore().applyChanges();
+
+		var done = assert.async();
+
+		// Act
+		this.LightBox.open();
+
+		// Wait for CSS animation to complete
+		setTimeout(function () {
+			var $popupContent = this.LightBox._oPopup.getContent().$();
+
+			// Assert
+			assert.notOk($popupContent.hasClass('sapMLightBoxTopCornersRadius'), 'sapMLightBoxTopCornersRadius class is not there');
+			done();
+		}.bind(this), 1008);
+	});
+
+
 })();

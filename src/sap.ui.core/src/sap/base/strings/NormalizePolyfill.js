@@ -9,7 +9,6 @@
 sap.ui.define(["sap/ui/thirdparty/unorm", "sap/ui/thirdparty/unormdata"], function() {
 	"use strict";
 
-
 	function apply() {
 		/*eslint-disable no-extend-native */
 		String.prototype.normalize = function(str) {
@@ -124,8 +123,9 @@ sap.ui.define(["sap/ui/thirdparty/unorm", "sap/ui/thirdparty/unormdata"], functi
 		return true;
 	}
 
-	/*
+	/**
 	 * @namespace
+	 * @since 1.58
 	 * @alias module:sap/base/strings/NormalizePolyfill
 	 * @private
 	 */

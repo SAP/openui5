@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/transport/TransportSelection",
 	"sap/ui/fl/variants/VariantController",
 	"sap/ui/core/BusyIndicator",
+	"sap/ui/core/Component",
 	"sap/m/MessageBox",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
@@ -28,6 +29,7 @@ sap.ui.define([
 	TransportSelection,
 	VariantController,
 	BusyIndicator,
+	Component,
 	MessageBox,
 	JSONModel,
 	jQuery,
@@ -1181,7 +1183,7 @@ sap.ui.define([
 				return Settings.getInstance(this.getComponentName())
 					.then(function(oSettings) {
 						if (!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured()) {
-							return this._oTransportSelection.setTransports(aChanges, sap.ui.getCore().getComponent(this.getComponentName()));
+							return this._oTransportSelection.setTransports(aChanges, Component.get(this.getComponentName()));
 						}
 					}.bind(this))
 						.then(function() {

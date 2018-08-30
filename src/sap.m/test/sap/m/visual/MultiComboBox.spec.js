@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,expect*/
+/*global describe,it,element,by,takeScreenshot,expect,browser*/
 
 describe('sap.m.MultiComboBox', function() {
 	"use strict";
@@ -76,19 +76,25 @@ describe('sap.m.MultiComboBox', function() {
 
 	//MultiComboBox - Warning state
 	it("should visualize a MultiComboBox - Warning State", function(){
-		var warningStateMultiComboBox = element(by.id("MultiComboBoxWarning"));
-		expect(takeScreenshot(warningStateMultiComboBox)).toLookAs("warning_state");
+		browser.executeScript('document.getElementById("MultiComboBoxWarning").scrollIntoView()').then(function() {
+			var warningStateMultiComboBox = element(by.id("MultiComboBoxWarning"));
+			expect(takeScreenshot(warningStateMultiComboBox)).toLookAs("warning_state");
+		});
 	});
 
 	//MultiComboBox - Success state
 	it("should visualize a MultiComboBox - Success state", function(){
-		var successStateMultiComboBox = element(by.id("MultiComboBoxSuccess"));
-		expect(takeScreenshot(successStateMultiComboBox)).toLookAs("success_state");
+		browser.executeScript('document.getElementById("MultiComboBoxSuccess").scrollIntoView()').then(function() {
+			var successStateMultiComboBox = element(by.id("MultiComboBoxSuccess"));
+			expect(takeScreenshot(successStateMultiComboBox)).toLookAs("success_state");
+		});
 	});
 
 	//MultiComboBox - Binding
 	it("should visualize a MultiComboBox with binding", function(){
-		var multiComboBoxBinding = element(by.id("MultiComboBoxBinding"));
-		expect(takeScreenshot(multiComboBoxBinding)).toLookAs("multiComboBox_binding");
+		browser.executeScript('document.getElementById("MultiComboBoxBinding").scrollIntoView()').then(function() {
+			var successStateMultiComboBox = element(by.id("MultiComboBoxBinding"));
+			expect(takeScreenshot(successStateMultiComboBox)).toLookAs("multiComboBox_binding");
+		});
 	});
 });

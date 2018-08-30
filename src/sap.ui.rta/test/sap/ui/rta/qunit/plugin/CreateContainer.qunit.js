@@ -294,8 +294,23 @@ function (
 			assert.strictEqual(this.oCreateContainer._isEditableCheck(this.oFormContainerOverlay, true), false, "then the overlay is not editable");
 		});
 
-		QUnit.test("when the designTimeMetadata has childNames for the container name", function(assert) {
-			assert.deepEqual(this.oCreateContainer.getCreateContainerText(false, this.oFormOverlay), "Create: Group", "then the correct message key is returned");
+		QUnit.test("when a sibling overlay has createContainer action designTime metadata, but for another aggregation", function(assert) {
+			this.oFormOverlay.setDesignTimeMetadata({
+				aggregations : {
+					toolBar : {
+						actions : {
+							createContainer : {
+								changeType : "addToolbarContainer"
+							}
+						}
+					}
+				}
+			});
+			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
+			this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
+
+			assert.strictEqual(this.oCreateContainer.isAvailable(true, [this.oFormOverlay]), false, "then isAvailable is called and it returns false");
+			assert.strictEqual(this.oCreateContainer._isEditableCheck(this.oFormOverlay, true), false, "then the overlay is not editable");
 		});
 
 		QUnit.test("when the designTimeMetadata has a getContainerIndex property and a function _determineIndex() is called", function(assert) {

@@ -3,7 +3,9 @@
 sap.ui.define([
 	"sap/ui/dt/test/LibraryEnablementTest",
 	"sap/ui/dt/test/report/Table",
-	"sap/ui/qunit/QUnitUtils"
+	"sap/ui/qunit/QUnitUtils",
+	// ensure the test library is loaded so it can be used in the library enablement test
+	"sap/ui/testLibrary/library"
 ],
 function (
 	LibraryEnablementTest,
@@ -15,7 +17,7 @@ function (
 	QUnit.module("Given that a sap.m Library is tested", {
 		beforeEach: function () {
 			this.oLibraryEnablementTest = new LibraryEnablementTest({
-				libraryName : "sap.m"
+				libraryName : "sap.ui.testLibrary"
 			});
 		},
 		afterEach: function () {
@@ -32,7 +34,7 @@ function (
 				sap.ui.getCore().applyChanges();
 				assert.ok(oTable, "then the table is rendered");
 				var iBeforeFiltered = oTable._getTable().getModel().getData().length;
-				oTable.filter("sap.m.Button");
+				oTable.filter("dt.control.SimpleScrollControl");
 				assert.equal(oTable._getTable().getModel().getData().length, 1, "and the table can be filtered");
 				oTable.filter("");
 				assert.equal(oTable._getTable().getModel().getData().length, iBeforeFiltered, "and the filter can be reset");
@@ -40,7 +42,6 @@ function (
 				sap.ui.getCore().applyChanges();
 				window.setTimeout(function() {
 					assert.ok(oTable._getTable().isExpanded(1), "and when the expand button is pressed then the table is expanded");
-
 
 					QUnitUtils.triggerTouchEvent("tap", oTable.$().find("#" + oTable.getId() + "--toolbar-collapse-button"));
 					sap.ui.getCore().applyChanges();
@@ -54,7 +55,6 @@ function (
 			});
 		});
 	});
-
 
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();

@@ -290,8 +290,23 @@ function(
 	 * @deprecated since 1.58, use {@link sap.ui.core.Fragment.load} instead
 	 * @return {sap.ui.core.Control|sap.ui.core.Control[]} the root Control(s) of the Fragment content
 	 */
-	sap.ui.fragment = function(sName, sType, oController) {
-		Log.info("Do not use deprecated factory function 'sap.ui.fragment'. Use 'sap.ui.core.Fragment.load' instead");
+	sap.ui.fragment = function (sName, sType, oController) {
+
+		var sFragmentType;
+		if (typeof (sType) === "string") {
+			sFragmentType = sType.toLowerCase();
+		} else if (typeof (sType) === "object" && typeof (sType.fragmentName) === "string") {
+			sFragmentType = sType.fragmentName.toLowerCase();
+		} else {
+			sFragmentType = "";
+		}
+		Log.info("Do not use deprecated factory function 'sap.ui." + sFragmentType + "fragment'. Require 'sap/ui/core/Fragment' and use 'load()' instead", "sap.ui." + sFragmentType + "fragment", null, function () {
+			return {
+				type: sFragmentType,
+				name: sFragmentType ? sName + ".fragment." + sFragmentType : sName
+			};
+		});
+
 		return fragmentFactory(sName, sType, oController);
 	};
 

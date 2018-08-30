@@ -14,9 +14,11 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Utilities extending the <code>sap.ui.loader</code> functionalities
+	 * Utilities extending the <code>sap.ui.loader</code> functionalities.
 	 *
-	 * @sap-restricted sap.ui.core
+	 * @namespace
+	 * @since 1.58
+	 * @ui5-restricted sap.ui.core
 	 */
 	var LoaderExtensions = {};
 
@@ -46,8 +48,10 @@ sap.ui.define([
 
 	/**
 	 * Returns all known subtypes.
+	 *
 	 * @return {object} known subtypes
 	 * @static
+	 * @private
 	 * @sap-restricted sap.ui.core
 	 */
 	LoaderExtensions.getKnownSubtypes = function() {
@@ -56,8 +60,10 @@ sap.ui.define([
 
 	/**
 	 * Returns the names of all required modules.
+	 *
 	 * @return {string[]} the names of all required modules
 	 * @static
+	 * @private
 	 * @sap-restricted sap.ui.core
 	 */
 	LoaderExtensions.getAllRequiredModules = function() {
@@ -113,8 +119,8 @@ sap.ui.define([
 	 * @param {string} [mOptions.async=false] whether the loading should be performed asynchronously.
 	 * @return {string|Document|object|Promise} content of the resource. A string for text or html, an Object for JSON, a Document for XML. For asynchronous calls an ECMA Script 6 Promise object will be returned.
 	 * @throws Error if loading the resource failed
-	 * @private
 	 * @static
+	 * @private
 	 * @sap-restricted sap.ui.core
 	 */
 	LoaderExtensions.loadResource = function(sResourceName, mOptions) {

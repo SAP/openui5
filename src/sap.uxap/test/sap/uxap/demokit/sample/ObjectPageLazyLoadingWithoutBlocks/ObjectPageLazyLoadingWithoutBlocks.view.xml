@@ -33,7 +33,9 @@
 											emptySpanL="4"
 											emptySpanM="4"
 											columnsL="1"
-											columnsM="1">
+											columnsM="1"
+											width="auto"
+											class="sapUxAPObjectPageSubSectionAlignContent">
 										<f:content>
 											<m:Label text="Name"/>
 											<m:Text text="{SupplierName}"/>
@@ -68,7 +70,9 @@
 											emptySpanL="4"
 											emptySpanM="4"
 											columnsL="1"
-											columnsM="1">
+											columnsM="1"
+											width="auto"
+											class="sapUxAPObjectPageSubSectionAlignContent">
 										<f:content>
 											<m:Label text="Name"/>
 											<m:Text text="{SupplierName}"/>
@@ -103,7 +107,9 @@
 											emptySpanL="4"
 											emptySpanM="4"
 											columnsL="1"
-											columnsM="1">
+											columnsM="1"
+											width="auto"
+											class="sapUxAPObjectPageSubSectionAlignContent">
 										<f:content>
 											<m:Label text="Name"/>
 											<m:Text text="{SupplierName}"/>
@@ -138,7 +144,9 @@
 											emptySpanL="4"
 											emptySpanM="4"
 											columnsL="1"
-											columnsM="1">
+											columnsM="1"
+											width="auto"
+											class="sapUxAPObjectPageSubSectionAlignContent">
 										<f:content>
 											<m:Label text="Name"/>
 											<m:Text text="{SupplierName}"/>
@@ -173,7 +181,9 @@
 											emptySpanL="4"
 											emptySpanM="4"
 											columnsL="1"
-											columnsM="1">
+											columnsM="1"
+											width="auto"
+											class="sapUxAPObjectPageSubSectionAlignContent">
 										<f:content>
 											<m:Label text="Name"/>
 											<m:Text text="{SupplierName}"/>
@@ -208,7 +218,9 @@
 											emptySpanL="4"
 											emptySpanM="4"
 											columnsL="1"
-											columnsM="1">
+											columnsM="1"
+											width="auto"
+											class="sapUxAPObjectPageSubSectionAlignContent">
 										<f:content>
 											<m:Label text="Name"/>
 											<m:Text text="{SupplierName}"/>
@@ -243,7 +255,9 @@
 											emptySpanL="4"
 											emptySpanM="4"
 											columnsL="1"
-											columnsM="1">
+											columnsM="1"
+											width="auto"
+											class="sapUxAPObjectPageSubSectionAlignContent">
 										<f:content>
 											<m:Label text="Name"/>
 											<m:Text text="{SupplierName}"/>
@@ -278,7 +292,9 @@
 											emptySpanL="4"
 											emptySpanM="4"
 											columnsL="1"
-											columnsM="1">
+											columnsM="1"
+											width="auto"
+											class="sapUxAPObjectPageSubSectionAlignContent">
 										<f:content>
 											<m:Label text="Name"/>
 											<m:Text text="{SupplierName}"/>
@@ -313,7 +329,9 @@
 											emptySpanL="4"
 											emptySpanM="4"
 											columnsL="1"
-											columnsM="1">
+											columnsM="1"
+											width="auto"
+											class="sapUxAPObjectPageSubSectionAlignContent">
 										<f:content>
 											<m:Label text="Name"/>
 											<m:Text text="{SupplierName}"/>
@@ -348,7 +366,9 @@
 											emptySpanL="4"
 											emptySpanM="4"
 											columnsL="1"
-											columnsM="1">
+											columnsM="1"
+											width="auto"
+											class="sapUxAPObjectPageSubSectionAlignContent">
 										<f:content>
 											<m:Label text="Name"/>
 											<m:Text text="{SupplierName}"/>
@@ -383,7 +403,9 @@
 											emptySpanL="4"
 											emptySpanM="4"
 											columnsL="1"
-											columnsM="1">
+											columnsM="1"
+											width="auto"
+											class="sapUxAPObjectPageSubSectionAlignContent">
 										<f:content>
 											<m:Label text="Name"/>
 											<m:Text text="{SupplierName}"/>
@@ -418,7 +440,9 @@
 											emptySpanL="4"
 											emptySpanM="4"
 											columnsL="1"
-											columnsM="1">
+											columnsM="1"
+											width="auto"
+											class="sapUxAPObjectPageSubSectionAlignContent">
 										<f:content>
 											<m:Label text="Name"/>
 											<m:Text text="{SupplierName}"/>
@@ -453,7 +477,9 @@
 											emptySpanL="4"
 											emptySpanM="4"
 											columnsL="1"
-											columnsM="1">
+											columnsM="1"
+											width="auto"
+											class="sapUxAPObjectPageSubSectionAlignContent">
 										<f:content>
 											<m:Label text="Name"/>
 											<m:Text text="{SupplierName}"/>
@@ -488,7 +514,9 @@
 											emptySpanL="4"
 											emptySpanM="4"
 											columnsL="1"
-											columnsM="1">
+											columnsM="1"
+											width="auto"
+											class="sapUxAPObjectPageSubSectionAlignContent">
 										<f:content>
 											<m:Label text="Name"/>
 											<m:Text text="{SupplierName}"/>
@@ -523,7 +551,9 @@
 											emptySpanL="4"
 											emptySpanM="4"
 											columnsL="1"
-											columnsM="1">
+											columnsM="1"
+											width="auto"
+											class="sapUxAPObjectPageSubSectionAlignContent">
 										<f:content>
 											<m:Label text="Name"/>
 											<m:Text text="{SupplierName}"/>
@@ -558,7 +588,9 @@
 											emptySpanL="4"
 											emptySpanM="4"
 											columnsL="1"
-											columnsM="1">
+											columnsM="1"
+											width="auto"
+											class="sapUxAPObjectPageSubSectionAlignContent">
 										<f:content>
 											<m:Label text="Name"/>
 											<m:Text text="{SupplierName}"/>
@@ -593,7 +625,9 @@
 											emptySpanL="4"
 											emptySpanM="4"
 											columnsL="1"
-											columnsM="1">
+											columnsM="1"
+											width="auto"
+											class="sapUxAPObjectPageSubSectionAlignContent">
 										<f:content>
 											<m:Label text="Name"/>
 											<m:Text text="{SupplierName}"/>
@@ -628,7 +662,9 @@
 											emptySpanL="4"
 											emptySpanM="4"
 											columnsL="1"
-											columnsM="1">
+											columnsM="1"
+											width="auto"
+											class="sapUxAPObjectPageSubSectionAlignContent">
 										<f:content>
 											<m:Label text="Name"/>
 											<m:Text text="{SupplierName}"/>
@@ -663,7 +699,9 @@
 											emptySpanL="4"
 											emptySpanM="4"
 											columnsL="1"
-											columnsM="1">
+											columnsM="1"
+											width="auto"
+											class="sapUxAPObjectPageSubSectionAlignContent">
 										<f:content>
 											<m:Label text="Name"/>
 											<m:Text text="{SupplierName}"/>
@@ -698,7 +736,9 @@
 											emptySpanL="4"
 											emptySpanM="4"
 											columnsL="1"
-											columnsM="1">
+											columnsM="1"
+											width="auto"
+											class="sapUxAPObjectPageSubSectionAlignContent">
 										<f:content>
 											<m:Label text="Name"/>
 											<m:Text text="{SupplierName}"/>
@@ -733,7 +773,9 @@
 											emptySpanL="4"
 											emptySpanM="4"
 											columnsL="1"
-											columnsM="1">
+											columnsM="1"
+											width="auto"
+											class="sapUxAPObjectPageSubSectionAlignContent">
 										<f:content>
 											<m:Label text="Name"/>
 											<m:Text text="{SupplierName}"/>

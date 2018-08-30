@@ -1,23 +1,22 @@
 sap.ui.define([
 	"jquery.sap.global",
-	"sap/ui/rta/dttool/controller/BaseController",
+	"sap/ui/rta/dttool/controller/App.controller",
 	"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/postmessage/Bus"
 ], function (
 	jQuery,
-	BaseController,
+	AppController,
 	ControlsInfo,
 	JSONModel,
 	PostMessageBus
 ) {
 	"use strict";
-	return BaseController.extend("sap.ui.rta.dttool.controller.Code", {
+	return AppController.extend("sap.ui.rta.dttool.controller.Code", {
 
 		_aMockFiles : ["products.json", "supplier.json", "img.json"],
 
 		onInit: function () {
-
 			this.oPostMessageBus = PostMessageBus.getInstance();
 
 			this.mEdited = {};

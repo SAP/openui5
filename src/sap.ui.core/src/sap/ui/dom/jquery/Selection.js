@@ -5,14 +5,16 @@ sap.ui.define([], function() {
 	"use strict";
 
 	/**
-	 * Applies the focus related jQuery function extensions:
-	 * @see jQuery#disableSelection
-	 * @see jQuery#enableSelection
-	 *
+	 * This module provides the following API:
+	 * <ul>
+	 * <li>{@link jQuery#disableSelection}</li>
+	 * <li>{@link jQuery#enableSelection}</li>
+	 * </ul>
 	 * @namespace
-	 * @alias module:sap/ui/dom/jquery/Selection
+	 * @name module:sap/ui/dom/jquery/Selection
 	 * @private
 	 * @sap-restricted sap.ui.core
+	 * @since 1.58
 	 */
 
 	/**
@@ -20,6 +22,7 @@ sap.ui.define([], function() {
 	 *
 	 * @return {jQuery} <code>this</code> to allow method chaining.
 	 * @protected
+	 * @requires module:sap/ui/dom/jquery/Selection
 	 * @since 1.24.0
 	 * @name jQuery#disableSelection
 	 * @function
@@ -34,6 +37,7 @@ sap.ui.define([], function() {
 	 * Enable HTML elements to get selected.
 	 *
 	 * @return {jQuery} <code>this</code> to allow method chaining.
+	 * @requires module:sap/ui/dom/jquery/Selection
 	 * @protected
 	 * @since 1.24.0
 	 * @name jQuery#enableSelection

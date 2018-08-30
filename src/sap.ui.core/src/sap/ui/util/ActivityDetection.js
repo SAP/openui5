@@ -13,6 +13,7 @@ sap.ui.define([], function() {
 	 * Provides functionality for activity detection.
 	 *
 	 * @namespace
+	 * @since 1.58
 	 * @alias module:sap/ui/util/ActivityDetection
 	 * @private
 	 * @ui5-restricted sap.ui.core
@@ -77,9 +78,10 @@ sap.ui.define([], function() {
 	 *
 	 * The Event is not fired for Internet Explorer 8.
 	 *
-	 * @param {Function} fnFunction The function to call, when an activity event occurs.
+	 * @param {function} fnFunction The function to call, when an activity event occurs.
 	 * @param {Object} [oListener] The 'this' context of the handler function.
-	 * @public
+	 * @private
+	 * @static
 	 */
 	oActivityDetection.attachActivate = function(fnFunction, oListener){
 		_aActivateListeners.push({oListener: oListener, fFunction:fnFunction});
@@ -88,9 +90,10 @@ sap.ui.define([], function() {
 	/**
 	 * Deregisters a previously registered handler from the activity event.
 	 *
-	 * @param {Function} fnFunction The function to call, when an activity event occurs.
+	 * @param {function} fnFunction The function to call, when an activity event occurs.
 	 * @param {Object} [oListener] The 'this' context of the handler function.
-	 * @public
+	 * @private
+	 * @static
 	 */
 	oActivityDetection.detachActivate = function(fnFunction, oListener){
 		for (var i = 0, iL = _aActivateListeners.length; i < iL; i++) {
@@ -106,6 +109,7 @@ sap.ui.define([], function() {
 	 *
 	 * @return {boolean} <code>true</code> if recently an activity was detected, <code>false</code> otherwise
 	 * @public
+	 * @static
 	 */
 	oActivityDetection.isActive = function(){ return _active; };
 
@@ -113,6 +117,7 @@ sap.ui.define([], function() {
 	 * Reports an activity.
 	 *
 	 * @public
+	 * @static
 	 */
 	oActivityDetection.refresh = _onActivate;
 

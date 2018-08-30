@@ -26,7 +26,7 @@ sap.ui.define([
 		},
 		"actions/Press": {
 			/* Hasher -> own page needed */
-			page: "test-resources/sap/ui/core/qunit/opa/actions/Press.qunit.html?test={name}",
+			page: "test-resources/sap/ui/core/qunit/opa/actions/Press.qunit{qunitVersion}.html?noglobals=true",
 			title: "QUnit Page for sap.ui.test.actions.Press",
 			loader: {
 				paths: {
@@ -43,6 +43,9 @@ sap.ui.define([
 				version: 1,
 				qunitBridge: true,
 				useFakeTimers: false
+			},
+			ui5: {
+				libs: "sap.m"
 			},
 			module: "./actions/Press.qunit"
 		},
@@ -387,9 +390,6 @@ sap.ui.define([
 		},
 		"_ControlFinder": {
 			title: "QUnit Page for sap.ui.test._ControlFinder",
-			ui5: {
-				logLevel: "ERROR"
-			},
 			sinon: {
 				version: 1,
 				qunitBridge: true
@@ -398,9 +398,6 @@ sap.ui.define([
 		},
 		"_LogCollector": {
 			title: "QUnit Page for sap.ui.test._LogCollector",
-			ui5: {
-				logLevel: "ERROR"
-			},
 			sinon: {
 				version: 1,
 				qunitBridge: true
@@ -409,9 +406,6 @@ sap.ui.define([
 		},
 		"_OpaLogger": {
 			title: "QUnit Page for sap.ui.test._OpaLogger",
-			ui5: {
-				logLevel: "ERROR"
-			},
 			sinon: {
 				version: 1,
 				qunitBridge: true
@@ -456,12 +450,18 @@ sap.ui.define([
 		}
 	};
 
-	Object.keys(oCommonTests).forEach(function(name) {
+	Object.keys(oCommonTests).forEach(function (name) {
 		oTestSuite.tests[name + "1"] = merge({}, oCommonTests[name], {qunit: { version: 1 }});
 		oTestSuite.tests[name + "2"] = merge({}, oCommonTests[name], {qunit: { version: 2 }});
-		if ( oTestSuite.tests[name + "2"].page ) {
-			oTestSuite.tests[name + "2"].page = oTestSuite.tests[name + "2"].page + "&sap-ui-qunitversion=2";
+
+		// temporary solution to run Press suite with both qunit 1 and 2: press.qunit.html should be part of opa testsuite but nested suites are not supported
+		if (oTestSuite.tests[name + "1"].page) {
+			oTestSuite.tests[name + "1"].page = oTestSuite.tests[name + "1"].page.replace("{qunitVersion}", "1");
 		}
+		if ( oTestSuite.tests[name + "2"].page ) {
+			oTestSuite.tests[name + "2"].page = oTestSuite.tests[name + "2"].page.replace("{qunitVersion}", "2") + "&sap-ui-qunitversion=2";
+		}
+
 		if ( oTestSuite.tests[name + "2"].title ) {
 			oTestSuite.tests[name + "2"].title = oTestSuite.tests[name + "2"].title + " (QUnit 2)";
 		}

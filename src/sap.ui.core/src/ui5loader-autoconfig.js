@@ -17,7 +17,7 @@
 	 *  - ui5loader-autoconfig.js
 	 */
 
-	/*global console, document, jQuery, sap, window */
+	/*global console, document, ES6Promise, jQuery, sap, window */
 	"use strict";
 
 	var ui5loader = window.sap && window.sap.ui && window.sap.ui.loader,
@@ -232,6 +232,10 @@
 		if ( Object.prototype.hasOwnProperty.call(oCfg, name) && (pattern == null || pattern.test(oCfg[name])) ) {
 			return oCfg[name];
 		}
+		// compat fallback
+		if ( name.slice(0,3) !== "xx-" ) {
+			return _getOption("xx-" + name, defaultValue, pattern);
+		}
 		// if no valid config value is found, fall back to a system default value
 		return defaultValue;
 	}
@@ -240,7 +244,7 @@
 		return /^(?:true|x|X)$/.test( _getOption(name, defaultValue, /^(?:true|x|X|false)$/) );
 	}
 
-	if ( _getBooleanOption("xx-async", false) ) {
+	if ( _getBooleanOption("async", false) ) {
 		ui5loader.config({
 			async: true
 		});
@@ -443,28 +447,23 @@
 		}
 	});
 
-	// hide sap.ui.define calls from dependency analyzers
-	var _define = sap['ui']['define'];
+	var defineModuleSync = ui5loader._.defineModuleSync;
+	defineModuleSync('sap/ui/thirdparty/baseuri.js', null);
+	if ( typeof ES6Promise !== 'undefined' ) {
+		defineModuleSync('sap/ui/thirdparty/es6-promise.js', ES6Promise);
+	}
+	defineModuleSync('sap/ui/thirdparty/es6-object-assign.js', null);
+	defineModuleSync('sap/ui/thirdparty/es6-string-methods.js', null);
 
-	// @evo-todo introduce an internal API for these registrations as the declarations should be synchronous
-	_define('ui5loader', function() {
-		return undefined;
-	});
-
-	_define('ui5loader-autoconfig', function() {
-		return undefined;
-	});
+	defineModuleSync('ui5loader.js', null);
+	defineModuleSync('ui5loader-autoconfig.js', null);
 
 	if (bNojQuery && typeof jQuery === 'function') {
 		// when we're executed in the context of the sap-ui-core-noJQuery file,
 		// we try to detect an existing jQuery / jQuery position plugin and register them as modules
-		_define('sap/ui/thirdparty/jquery', function() {
-			return jQuery;
-		});
+		defineModuleSync('sap/ui/thirdparty/jquery.js', jQuery);
 		if (jQuery.ui && jQuery.ui.position) {
-			_define('sap/ui/thirdparty/jqueryui/jquery-ui-position', function() {
-				return jQuery;
-			});
+			defineModuleSync('sap/ui/thirdparty/jqueryui/jquery-ui-position.js', jQuery);
 		}
 	}
 

@@ -8,8 +8,8 @@
 				expandable="false"
 				class="sapUiNoContentPadding">
 		<items>
-			<IconTabFilter icon="sap-icon://hint" text="Bike Rack" key="info"/>
-			<IconTabFilter icon="sap-icon://inspection" text="Statistics" key="statistics"/>
+			<IconTabFilter icon="sap-icon://hint" key="info"/>
+			<IconTabFilter icon="sap-icon://inspection" key="statistics"/>
 		</items>
 		<content>
 			<form:SimpleForm layout="ResponsiveGridLayout">

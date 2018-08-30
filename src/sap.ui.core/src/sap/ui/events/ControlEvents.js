@@ -8,6 +8,7 @@ sap.ui.define([
 
 	/**
 	 * @namespace
+	 * @since 1.58
 	 * @alias module:sap/ui/events/ControlEvents
 	 * @public
 	 */
@@ -61,6 +62,7 @@ sap.ui.define([
 	 * Binds all events for listening with the given callback function.
 	 *
 	 * @param {function} fnCallback Callback function
+	 * @static
 	 * @public
 	 */
 	oControlEvents.bindAnyEvent = function(fnCallback) {
@@ -73,6 +75,7 @@ sap.ui.define([
 	 * Unbinds all events for listening with the given callback function.
 	 *
 	 * @param {function} fnCallback Callback function
+	 * @static
 	 * @public
 	 */
 	oControlEvents.unbindAnyEvent = function unbindAnyEvent(fnCallback) {

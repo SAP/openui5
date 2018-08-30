@@ -80,20 +80,19 @@ function(
 	var oComp = oCompCont.getComponentInstance();
 
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl...", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			FakeLrepSessionStorage.deleteChanges();
-			this.oRootControl = oComp.getAggregation("rootControl");
 
 			this.oRta = new RuntimeAuthoring({
-				rootControl : this.oRootControl
+				rootControl : oComp
 			});
 
 			this.fnDestroy = sinon.spy(this.oRta, "_destroyDefaultPlugins");
 			return this.oRta.start().then(function(){
-				this.oRootControlOverlay = OverlayRegistry.getOverlay(this.oRootControl);
+				this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
 			}.bind(this));
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.oRta.destroy();
 			FakeLrepSessionStorage.deleteChanges();
 			sandbox.restore();
@@ -211,7 +210,7 @@ function(
 			});
 
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oComp.getAggregation("rootControl")
+				rootControl : oComp
 			});
 		},
 		afterEach : function(assert) {
@@ -299,17 +298,17 @@ function(
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is started without toolbar...", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			FakeLrepSessionStorage.deleteChanges();
 
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oComp.getAggregation("rootControl"),
+				rootControl : oComp,
 				showToolbars : false
 			});
 
 			return this.oRta.start();
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.oRta.destroy();
 			FakeLrepSessionStorage.deleteChanges();
 			sandbox.restore();
@@ -322,7 +321,7 @@ function(
 	});
 
 	QUnit.module("Undo/Redo functionality", {
-		beforeEach: function(assert) {
+		beforeEach: function() {
 			this.bMacintoshOriginal = Device.os.macintosh;
 			Device.os.macintosh = false;
 
@@ -365,7 +364,7 @@ function(
 			};
 		},
 
-		afterEach : function(assert) {
+		afterEach : function() {
 			sandbox.restore();
 			Device.os.macintosh = this.bMacintoshOriginal;
 		}

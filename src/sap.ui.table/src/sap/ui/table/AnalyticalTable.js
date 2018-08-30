@@ -445,7 +445,6 @@ sap.ui.define([
 				if (oContextInfo && !oContextInfo.context) {
 					$row.addClass("sapUiAnalyticalTableDummy");
 					$rowHdr.addClass("sapUiAnalyticalTableDummy");
-					//TBD: $rowHdr.html('<div class="sapUiAnalyticalTableLoading">' + TableUtils.getResourceText("TBL_CELL_LOADING") + '</div>');
 				}
 				continue;
 			}

@@ -329,9 +329,11 @@ function(
 	QUnit.module("hasAncestor()", {
 		beforeEach : function() {
 			fnCreateControls.call(this);
+			fnCreateComponent.call(this);
 		},
 		afterEach : function() {
 			fnDestroyControls.call(this);
+			fnDestroyComponent.call(this);
 		}
 	}, function(){
 		QUnit.test("when a control is a successor of another control", function(assert) {
@@ -341,6 +343,18 @@ function(
 		QUnit.test("when a control is not a successor of another control", function(assert) {
 			var oButton = new Button({text:"Button"});
 			assert.equal(ElementUtil.hasAncestor(oButton, this.oVerticalLayout), false, 'then static method "hasAncestor" returns false');
+		});
+
+		QUnit.test("when the reference control is a UIComponent", function(assert) {
+			var oButton = this.oComponent.getRootControl().getContent()[0];
+			assert.equal(ElementUtil.hasAncestor(oButton, this.oComponent), true, 'then static method "hasAncestor" returns true');
+		});
+
+		QUnit.test("when the reference control is a layout that includes a UIComponent", function(assert) {
+			this.oCompContainer.setComponent(this.oComponent);
+			this.oVerticalLayout.addContent(this.oCompContainer);
+			var oButton = this.oComponent.getRootControl().getContent()[0];
+			assert.equal(ElementUtil.hasAncestor(oButton, this.oVerticalLayout), true, 'then static method "hasAncestor" returns true');
 		});
 	});
 

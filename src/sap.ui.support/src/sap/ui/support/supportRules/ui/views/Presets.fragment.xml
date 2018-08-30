@@ -5,7 +5,7 @@
 		id="presetsPopover"
 		title="Selection Preset"
 		placement="Bottom"
-		contentWidth="300px"
+		contentWidth="400px"
 		contentHeight="300px">
 		<customHeader>
 			<Bar design="Header">
@@ -20,7 +20,14 @@
 		<Page showHeader="false">
 			<List
 				id="select"
-				items="{path: '/selectionPresets'}"
+				items="{
+					path: '/selectionPresets',
+					sorter: {
+						path: '',
+						group: '.grouper'
+					},
+					groupHeaderFactory: '.getGroupHeader'
+				}"
 				itemPress="onPresetItemPress"
 				selectionChange="onPresetChange"
 				mode="SingleSelectMaster">
@@ -28,22 +35,27 @@
 					<HBox
 						alignItems="Start"
 						justifyContent="SpaceBetween">
-						<Text class="sapUiTinyMargin" text="{title}" />
-						<Button
-							class="sapUiTinyMarginEnd"
-							tooltip="Delete Preset"
-							icon="sap-icon://sys-cancel"
-							type="Transparent"
-							press="onPresetItemDelete"
-							visible="{= ${disableDelete} ? false : true}" />
-						<Button
-							id = "undoButton"
-							class="sapUiTinyMarginEnd"
-							tooltip="Return to default selection"
-							icon="sap-icon://synchronize"
-							type="Transparent"
-							press="onPresetItemReset"
-							visible="{= ${isSystemPreset} &amp;&amp; ${isModified} ? true : false}" />
+						<FormattedText
+							class="sapUiTinyMargin sapUiSupportToolPresetTitle"
+							htmlText="{= ${isModified} ? '&lt;em&gt;' + ${title} + '&lt;/em&gt;' : ${title} }"/>
+						<HBox
+							alignItems="Start"
+							justifyContent="SpaceBetween"
+							class="sapUiTinyMarginEnd">
+							<Button
+								id="undoButton"
+								tooltip="Return to default selection"
+								icon="sap-icon://refresh"
+								type="Transparent"
+								press="onPresetItemReset"
+								visible="{= ${isModified} ? true : false}"/>
+							<Button
+								tooltip="Delete Preset"
+								icon="sap-icon://sys-cancel"
+								type="Transparent"
+								press="onPresetItemDelete"
+								visible="{= ${disableDelete} ? false : true}" />
+						</HBox>
 					</HBox>
 				</CustomListItem>
 			</List>

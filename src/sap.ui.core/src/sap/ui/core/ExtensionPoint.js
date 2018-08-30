@@ -33,7 +33,12 @@ sap.ui.define(["sap/base/Log", "sap/base/util/ObjectPath", "sap/ui/core/mvc/View
 	 * @static
 	 */
 	sap.ui.extensionpoint = function(oContainer, sExtName, fnCreateDefaultContent,  oTargetControl, sAggregationName) {
-		Log.warning("Do not use deprecated factory function 'sap.ui.extensionpoint'. Use 'sap.ui.core.ExtensionPoint.load' instead");
+		Log.warning("Do not use deprecated factory function 'sap.ui.extensionpoint'. Use 'sap.ui.core.ExtensionPoint.load' instead", "sap.ui.extensionpoint", null, function () {
+			return {
+				type: "sap.ui.extensionpoint",
+				name: sExtName
+			};
+		});
 		return ExtensionPoint._factory(oContainer, sExtName, fnCreateDefaultContent,  oTargetControl, sAggregationName);
 	};
 

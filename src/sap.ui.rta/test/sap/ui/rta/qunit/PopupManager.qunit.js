@@ -454,11 +454,69 @@ function(
 			var oEvent = new Event("testevent", this.oRta, { mode: "navigation" });
 			this.oRta.getPopupManager()._onModeChange(oEvent);
 			this.oDialog.attachAfterOpen(function () {
-				assert.strictEqual(this.fnApplyPopupMethods.callCount, 1, "then applyPopupMethods method called twice");
-				assert.strictEqual(this.fnAddPopupListeners.callCount, 1, "then applyPopupMethods method called twice");
+				assert.strictEqual(this.fnApplyPopupMethods.callCount, 1, "then applyPopupMethods method called once");
+				assert.strictEqual(this.fnAddPopupListeners.callCount, 1, "then fnAddPopupListeners method called once");
 				done();
 			}.bind(this));
 			this.oDialog.open();
+		});
+		//set PopOver to Modal (initial state = false)
+		QUnit.test("when _onModeChange is called on a not modal popover", function(assert) {
+			var done = assert.async();
+			sandbox.stub(this.oRta.getPopupManager(), "getRelevantPopups").returns(
+					{
+						aDialogs : false,
+						aPopovers: [this.oPopover]
+					});
+			this.oPopover.attachAfterOpen(function() {
+				fnSetRta(this.oRta);
+				this.oRta.getPopupManager()._applyPopupMethods.restore();
+				var oPopup = this.oPopover.oPopup;
+				// set the initial Modal state to "false"
+				oPopup.setModal(false);
+				assert.equal(oPopup.getModal(), false, "the Popover is not modal before Mode change");
+				// change mode to 'adaptation'
+				var oEvent = new Event("testevent", this.oRta, { mode: "adaptation" });
+				this.oRta.getPopupManager()._onModeChange(oEvent);
+				assert.equal(oPopup.getModal(), true, "then the Popover is modal after switch to adaptation mode");
+				// change mode to 'navigation'
+				oEvent = new Event("testevent", this.oRta, { mode: "navigation" });
+				this.oRta.getPopupManager()._onModeChange(oEvent);
+				assert.equal(oPopup.getModal(), false, "then the Popover is not modal after switch back to navigation mode");
+				this.fnApplyPopupMethods = sandbox.spy(this.oRta.getPopupManager(), "_applyPopupMethods");
+				this.oRta.getPopupManager().getRelevantPopups.restore();
+				done();
+			}.bind(this));
+			this.oPopover.openBy(oComp.byId("mockview"));
+		});
+		//set PopOver to Modal (initial state = true)
+		QUnit.test("when _onModeChange is called on a modal popover", function(assert) {
+			var done = assert.async();
+			sandbox.stub(this.oRta.getPopupManager(), "getRelevantPopups").returns(
+					{
+						aDialogs : false,
+						aPopovers: [this.oPopover]
+					});
+			this.oPopover.attachAfterOpen(function() {
+				var oPopup = this.oPopover.oPopup;
+				// set the initial Modal state to "true"
+				oPopup.setModal(true);
+				fnSetRta(this.oRta);
+				this.oRta.getPopupManager()._applyPopupMethods.restore();
+				assert.equal(oPopup.getModal(), true, "the Popover is modal before Mode change");
+				// change mode to 'adaptation'
+				var oEvent = new Event("testevent", this.oRta, { mode: "adaptation" });
+				this.oRta.getPopupManager()._onModeChange(oEvent);
+				assert.equal(oPopup.getModal(), true, "then the Popover is modal after switch to adaptation mode");
+				// change mode to 'navigation'
+				oEvent = new Event("testevent", this.oRta, { mode: "navigation" });
+				this.oRta.getPopupManager()._onModeChange(oEvent);
+				assert.equal(oPopup.getModal(), true, "then the Popover is stil modal after switch back to navigation mode");
+				this.fnApplyPopupMethods = sandbox.spy(this.oRta.getPopupManager(), "_applyPopupMethods");
+				this.oRta.getPopupManager().getRelevantPopups.restore();
+				done();
+			}.bind(this));
+			this.oPopover.openBy(oComp.byId("mockview"));
 		});
 	});
 

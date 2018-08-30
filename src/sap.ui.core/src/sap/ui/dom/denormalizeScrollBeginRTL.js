@@ -19,11 +19,11 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	 * Only use this method in RTL mode, as the behavior in LTR mode is undefined and may change!
 	 *
 	 * @function
+	 * @since 1.58
 	 * @param {int} iNormalizedScrollBegin The distance from the rightmost position to which the element should be scrolled
 	 * @param {Element} oDomRef The DOM Element to which scrollLeft will be applied
 	 * @return {int} The scroll position that must be set for the DOM element
 	 * @public
-	 * @author SAP SE
 	 * @alias module:sap/ui/dom/denormalizeScrollBeginRTL
 	 */
 	var fnDenormalizeScrollBeginRTL = function(iNormalizedScrollBegin, oDomRef) {

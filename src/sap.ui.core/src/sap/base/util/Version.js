@@ -33,13 +33,13 @@ sap.ui.define([], function() {
 	 * All other variants are only validated to some degree. It is the responsibility of the caller to
 	 * provide proper parts.
 	 *
-	 * @param {int|string|any[]|sap.base.util.Version} vMajor the major part of the version (int) or any of the single
+	 * @param {int|string|any[]|module:sap/base/util/Version} vMajor the major part of the version (int) or any of the single
 	 *        parameter variants explained above.
 	 * @param {int} iMinor the minor part of the version number
 	 * @param {int} iPatch the patch part of the version number
 	 * @param {string} sSuffix the suffix part of the version number
-	 * @return {sap.base.util.Version} the version object as determined from the parameters
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
+	 * @since 1.58
 	 * @alias module:sap/base/util/Version
 	 * @public
 	 */
@@ -76,7 +76,7 @@ sap.ui.define([], function() {
 		 * Returns a string representation of this version.
 		 *
 		 * @return {string} a string representation of this version.
-		 * @private
+		 * @public
 		 */
 		this.toString = function() {
 			return vMajor + "." + iMinor + "." + iPatch + sSuffix;
@@ -86,7 +86,7 @@ sap.ui.define([], function() {
 		 * Returns the major version part of this version.
 		 *
 		 * @return {int} the major version part of this version
-		 * @private
+		 * @public
 		 */
 		this.getMajor = function() {
 			return vMajor;
@@ -96,7 +96,7 @@ sap.ui.define([], function() {
 		 * Returns the minor version part of this version.
 		 *
 		 * @return {int} the minor version part of this version
-		 * @private
+		 * @public
 		 */
 		this.getMinor = function() {
 			return iMinor;
@@ -106,7 +106,7 @@ sap.ui.define([], function() {
 		 * Returns the patch (or micro) version part of this version.
 		 *
 		 * @return {int} the patch version part of this version
-		 * @private
+		 * @public
 		 */
 		this.getPatch = function() {
 			return iPatch;
@@ -116,7 +116,7 @@ sap.ui.define([], function() {
 		 * Returns the version suffix of this version.
 		 *
 		 * @return {string} the version suffix of this version
-		 * @private
+		 * @public
 		 */
 		this.getSuffix = function() {
 			return sSuffix;
@@ -131,7 +131,7 @@ sap.ui.define([], function() {
 		 *
 		 * @return {int} 0, if the given version is equal to this version, a negative value if the given other version is greater
 		 *               and a positive value otherwise
-		 * @private
+		 * @public
 		 */
 		this.compareTo = function() {
 			var vOther = Version.apply(window, arguments);

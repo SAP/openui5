@@ -13,6 +13,7 @@ sap.ui.define([], function() {
 	 * });
 	 *
 	 * @function
+	 * @since 1.58
 	 * @alias module:sap/base/strings/capitalize
 	 * @public
 	 * @param {string} sString String for which first character should be converted

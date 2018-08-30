@@ -174,19 +174,23 @@ sap.ui.define([
 		var iParamIndex = -1;
 
 		if (mHashParameters) {
-			// in UI Adaptation the parameters are empty, so the current URL parameters are retrieved from
+			// in UI Adaptation the parameters are empty, so the current URL parameters are retrieved from hash register
 			if (this._bAdaptationMode) {
 				mHashParameters = {};
 				mHashParameters[this.sVariantTechnicalParameterName] = VariantUtil.getCurrentHashParamsFromRegister.call(this);
 			}
 
 			if (!jQuery.isEmptyObject(mHashParameters) && Array.isArray(mHashParameters[this.sVariantTechnicalParameterName])) {
-				mHashParameters[this.sVariantTechnicalParameterName].some(function (sParam, iIndex) {
-					if (!!this.oVariantController.getVariant(sVariantManagementReference, sParam)) {
+				mHashParameters[this.sVariantTechnicalParameterName] = mHashParameters[this.sVariantTechnicalParameterName].reduce(function (aVariantParameters, sParam, iIndex) {
+					var sParamDecoded = decodeURIComponent(sParam);
+					// if parameter index has not been found and a variant exists for the combination of variant reference and variant parameter
+					if (iParamIndex === -1
+						&& !!this.oVariantController.getVariant(sVariantManagementReference, sParamDecoded)) {
 						iParamIndex = iIndex;
-						return true;
 					}
-				}.bind(this));
+					// return decoded parameter values
+					return aVariantParameters.concat(sParamDecoded);
+				}.bind(this), []);
 			}
 		}
 
@@ -493,19 +497,47 @@ sap.ui.define([
 				//Update Variant Model
 				oData[sVariantManagementReference].defaultVariant = mPropertyBag.defaultVariant;
 				oData[sVariantManagementReference].originalDefaultVariant = oData[sVariantManagementReference].defaultVariant;
+				//Update hash register
+				var aHashParameters = VariantUtil.getCurrentHashParamsFromRegister.call(this);
+				if (aHashParameters) {
+					if (
+						oData[sVariantManagementReference].defaultVariant !== oData[sVariantManagementReference].currentVariant
+						&& aHashParameters.indexOf(oData[sVariantManagementReference].currentVariant) === -1
+					) {
+						// if default variant is changed from the current variant, then add the current variant id as a variant URI parameter
+						this.updateHasherEntry({
+							parameters: aHashParameters.concat(oData[sVariantManagementReference].currentVariant),
+							updateURL: !this._bAdaptationMode
+						});
+					} else if (
+						oData[sVariantManagementReference].defaultVariant === oData[sVariantManagementReference].currentVariant
+						&& aHashParameters.indexOf(oData[sVariantManagementReference].currentVariant) > -1
+					) {
+						// if current variant is now the default variant, then remove the current variant id as a variant URI parameter
+						aHashParameters.splice(aHashParameters.indexOf(oData[sVariantManagementReference].currentVariant), 1);
+						this.updateHasherEntry({
+							parameters: aHashParameters,
+							updateURL: !this._bAdaptationMode
+						});
+					}
+				}
 				break;
 			default:
 				break;
 		}
 
 		if (iVariantIndex > -1) {
+			// set data in variant controller map - which returns the variant index
 			var iSortedIndex = this.oVariantController._setVariantData(mAdditionalChangeContent, sVariantManagementReference, iVariantIndex);
+			// modify data variable
 			oData[sVariantManagementReference].variants.splice(iVariantIndex, 1);
 			oData[sVariantManagementReference].variants.splice(iSortedIndex, 0, oVariant);
-		} else if (this.oVariantController._mVariantManagement[sVariantManagementReference]){
+		} else if (this.oVariantController._mVariantManagement[sVariantManagementReference]) {
+			// for 'setDefault'
 			this.oVariantController._mVariantManagement[sVariantManagementReference].defaultVariant = mPropertyBag.defaultVariant;
 		}
 
+		// add change
 		if (bAddChange) {
 			//create new change object
 			mNewChangeData.changeType = mPropertyBag.changeType;
@@ -530,13 +562,14 @@ sap.ui.define([
 			this.oVariantController._updateChangesForVariantManagementInMap(oChange.getDefinition(), sVariantManagementReference, true);
 			this.oFlexController._oChangePersistence.addDirtyChange(oChange);
 		} else {
+			// delete change
 			if (mPropertyBag.change) {
 				//update VariantController and write change to ChangePersistence
 				this.oVariantController._updateChangesForVariantManagementInMap(mPropertyBag.change.getDefinition(), sVariantManagementReference, false);
 				this.oFlexController._oChangePersistence.deleteChange(mPropertyBag.change);
 			}
 		}
-
+		// set data to variant model
 		this.setData(oData);
 		this.checkUpdate(true);
 

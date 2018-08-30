@@ -13,6 +13,7 @@ sap.ui.define([], function() {
 	 * time until one is deleted.
 	 *
 	 * @function
+	 * @since 1.58
 	 * @alias module:sap/base/util/defineCoupledProperty
 	 * @param {object} oTarget Target object of the property couple
 	 * @param {string} sTargetProperty Name of the target's property

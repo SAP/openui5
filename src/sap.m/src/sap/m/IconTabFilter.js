@@ -293,11 +293,11 @@ sap.ui.define(['./library', 'sap/ui/core/Item',
 			ariaParams += 'aria-labelledby="';
 			var ids = [];
 
-			if (text.length) {
-				ids.push(id + '-text');
-			}
 			if (count !== '') {
 				ids.push(id + '-count');
+			}
+			if (text.length) {
+				ids.push(id + '-text');
 			}
 			if (icon) {
 				ids.push(id + '-icon');

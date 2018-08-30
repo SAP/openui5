@@ -9,12 +9,12 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	"use strict";
 
 	/**
-	 * Applies the jQuery function extension:
-	 * @see jQuery#zIndex
+	 * This module provides the {@link jQuery#zIndex} API.
 	 *
 	 * @namespace
-	 * @alias module:sap/ui/dom/jquery/zIndex
+	 * @name module:sap/ui/dom/jquery/zIndex
 	 * @public
+	 * @since 1.58
 	 */
 
 	// Using "Object.getOwnPropertyDescriptor" to not trigger the "getter" - see jquery.sap.stubs
@@ -32,6 +32,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 		 * @public
 		 * @name jQuery#zIndex
 		 * @function
+	 	 * @requires module:sap/ui/dom/jquery/zIndex
 		 */
 		var fnzIndex = function( zIndex ) {
 			if ( zIndex !== undefined ) {
@@ -71,7 +72,6 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 		 * http://jquery.org/license
 		 *
 		 * http://api.jqueryui.com/category/ui-core/
-		 * @deprecated since 1.48 use {@link sap/ui/dom/jquery/zIndex} instead
 		 */
 		jQuery.fn.zIndex = fnzIndex;
 	}

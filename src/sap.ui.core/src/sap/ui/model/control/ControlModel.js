@@ -3,10 +3,16 @@
  */
 
 /**
- * Control-based DataBinding
+ * Control-based DataBinding.
+ *
+ * <strong>Note</strong>: Although this namespace was declared as 'public', the contained classes never
+ * have been declared 'public' and are not supported. We do not recommended to use them. As of 1.58, the
+ * {@link sap.ui.model.base.ManagedObjectModel} can be tested as an alternative. It is much more powerful,
+ * but still in an experimental state.
  *
  * @namespace
  * @name sap.ui.model.control
+ * @deprecated As of 1.58, test the still experimental {@link sap.ui.model.base.ManagedObjectModel} as an alternative.
  * @public
  */
 
@@ -27,6 +33,7 @@ sap.ui.define(['sap/ui/model/Model', './ControlPropertyBinding', "sap/ui/thirdpa
 	 * @version ${version}
 	 *
 	 * @alias sap.ui.model.control.ControlModel
+	 * @private
 	 */
 	var ControlModel = Model.extend("sap.ui.model.control.ControlModel", /** @lends sap.ui.model.control.ControlModel.prototype */ {
 

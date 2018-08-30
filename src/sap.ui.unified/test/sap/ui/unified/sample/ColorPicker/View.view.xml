@@ -3,21 +3,13 @@
 	height="100%"
 	xmlns="sap.ui.unified"
 	xmlns:m="sap.m"
-	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc">
 
 	<m:Page showHeader="false" class="sapUiContentPadding" showNavButton="false">
 		<m:content>
 			<m:VBox class="sapUiSmallMargin">
 				<ColorPicker id="cp" mode="HSL"/>
-				<m:Label text="Choose display mode"/>
-				<m:Select change="changeDisplayMode">
-					<m:items>
-						<core:Item id="default_mode" text='Default' key="Default"/>
-						<core:Item id="large_mode" text='Large' key="Large"/>
-						<core:Item id="simplified_mode" text='Simplified' key="Simplified"/>
-					</m:items>
-				</m:Select>
+				<m:Button text="Open ColorPicker in a ResponsivePopover" press="openPopover"/>
 			</m:VBox>
 		</m:content>
 	</m:Page>

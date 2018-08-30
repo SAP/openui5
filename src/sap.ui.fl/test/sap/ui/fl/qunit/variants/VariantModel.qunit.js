@@ -421,6 +421,66 @@ function(
 			assert.ok(fnUpdateChangesForVariantManagementInMap.calledOnce, "then '_updateChangesForVariantManagementInMap' of VariantController called");
 		});
 
+		QUnit.test("when calling '_setVariantProperties' for 'setDefault' with different current and default variants, in UI adaptation mode", function(assert) {
+			var mPropertyBag = {
+				"changeType" : "setDefault",
+				"defaultVariant" : "variant1",
+				"layer" : "CUSTOMER",
+				"variantManagementReference" : "variantMgmtId1",
+				"appComponent" : this.oComponent,
+				"change" : { getDefinition : function() {} }
+			};
+			sandbox.stub(this.oModel.oVariantController, "_updateChangesForVariantManagementInMap").returns(1);
+			sandbox.stub(VariantUtil, "getCurrentHashParamsFromRegister").returns([]);
+			sandbox.stub(this.oFlexController._oChangePersistence, "addDirtyChange");
+			sandbox.stub(this.oModel, "updateHasherEntry");
+
+			// set adaptation mode true
+			this.oModel._bAdaptationMode = true;
+
+			// mock current variant id to make it different
+			this.oModel.oData["variantMgmtId1"].currentVariant = "variantCurrent";
+
+			// mock variant controller data
+			this.oModel.oVariantController._mVariantManagement = {};
+			this.oModel.oVariantController._mVariantManagement["variantMgmtId1"] = {defaultVariant : this.oData["variantMgmtId1"].defaultVariant};
+
+			this.oModel._setVariantProperties("variantMgmtId1", mPropertyBag, true);
+			assert.ok( this.oModel.updateHasherEntry.calledWithExactly({
+				parameters: [this.oModel.oData["variantMgmtId1"].currentVariant],
+				updateURL: !this.oModel._bAdaptationMode
+			}), "then the 'updateHasherEntry' called with the current variant id as a parameter in UI adaptation mode");
+		});
+
+		QUnit.test("when calling '_setVariantProperties' for 'setDefault' with same current and default variants, in personalization mode", function(assert) {
+			var mPropertyBag = {
+				"changeType" : "setDefault",
+				"defaultVariant" : "variant1",
+				"layer" : "CUSTOMER",
+				"variantManagementReference" : "variantMgmtId1",
+				"appComponent" : this.oComponent,
+				"change" : { getDefinition : function() {} }
+			};
+			sandbox.stub(this.oModel.oVariantController, "_updateChangesForVariantManagementInMap").returns(1);
+			// current variant already exists in hash parameters
+			sandbox.stub(VariantUtil, "getCurrentHashParamsFromRegister").returns([this.oData["variantMgmtId1"].currentVariant]);
+			sandbox.stub(this.oFlexController._oChangePersistence, "addDirtyChange");
+			sandbox.stub(this.oModel, "updateHasherEntry");
+
+			// set adaptation mode false
+			this.oModel._bAdaptationMode = false;
+
+			// mock variant controller data
+			this.oModel.oVariantController._mVariantManagement = {};
+			this.oModel.oVariantController._mVariantManagement["variantMgmtId1"] = {defaultVariant : this.oData["variantMgmtId1"].defaultVariant};
+
+			this.oModel._setVariantProperties("variantMgmtId1", mPropertyBag, true);
+			assert.ok( this.oModel.updateHasherEntry.calledWithExactly({
+				parameters: [],
+				updateURL: !this.oModel._bAdaptationMode
+			}), "then the 'updateHasherEntry' called without the current variant id as a parameter in personalization mode");
+		});
+
 		QUnit.test("when calling 'updateCurrentVariant' with root app component", function(assert) {
 			var fnUpdateCurrentVariantInMapStub = sandbox.stub(this.oModel.oVariantController, "updateCurrentVariantInMap");
 
@@ -505,28 +565,31 @@ function(
 			}), "then VariantModel.updateHasherEntry() called with the correct object as parameter");
 		});
 
-		QUnit.test("when calling '_updateVariantInURL' with a valid 'sap-ui-fl-control-variant-id' URL parameter for the same variant management", function(assert) {
+		QUnit.test("when calling '_updateVariantInURL' with valid 'sap-ui-fl-control-variant-id' encoded URL parameter for the same variant management", function(assert) {
+			var aExistingParameters = ["Dummy::'123'/'456'", "variantMgmtId1"];
+			var sTargetVariantId = "variant0";
 			var oParameters = {
 				params: {
-					"sap-ui-fl-control-variant-id": ["Dummy", "variantMgmtId1"]
+					"sap-ui-fl-control-variant-id": aExistingParameters.map( function(sExistingParameter) {
+						return encodeURIComponent(sExistingParameter);
+					})
 				}
 			};
-
-			var aModifiedUrlTechnicalParameters = ["Dummy", "variant0"];
 
 			sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
 			var fnGetParsedURLHashStub = sandbox.stub(Utils, "getParsedURLHash").returns(oParameters);
 			var fnUpdateHasherEntryStub = sandbox.stub(this.oModel, "updateHasherEntry");
 			var fnGetVariantIndexInURLSpy = sandbox.spy(this.oModel, "getVariantIndexInURL");
 
-			this.oModel._updateVariantInURL("variantMgmtId1", "variant0");
+			this.oModel._updateVariantInURL("variantMgmtId1", sTargetVariantId);
 			assert.ok(fnGetParsedURLHashStub.calledOnce, "then url parameters requested once");
-			assert.deepEqual(fnGetVariantIndexInURLSpy.returnValues[0], {
-				parameters: oParameters.params,
-				index: 1
-			}, "then VariantModel.getVariantIndexInURL returns the correct parameters and index");
+			assert.deepEqual(fnGetVariantIndexInURLSpy.returnValues[0],
+				{
+					parameters: { "sap-ui-fl-control-variant-id": aExistingParameters },
+					index: 1
+				}, "then VariantModel.getVariantIndexInURL returns the correct parameters and index");
 			assert.ok(fnUpdateHasherEntryStub.calledWithExactly({
-				parameters: aModifiedUrlTechnicalParameters,
+				parameters: [aExistingParameters[0], sTargetVariantId],
 				updateURL: true
 			}), "then VariantModel.updateHasherEntry() called with the correct object as parameter");
 		});

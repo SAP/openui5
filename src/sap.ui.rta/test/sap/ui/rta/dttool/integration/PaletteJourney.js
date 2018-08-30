@@ -13,7 +13,7 @@ sap.ui.require(
 
 		opaTest("Adding a Custom Control should work", function (Given, When, Then) {
 			When.onTheAppView.iClickTheAddControlButton()
-				.and.iEnterAModulePathIntoTheInput("sap/ui/rta/dttool/CustomButton")
+				.and.iEnterAModulePathIntoTheInput("sap/ui/rta/dttool/controls/CustomButton")
 				.and.iPressTheAddButton();
 			Then.onTheAppView.theControlWasAddedToThePalette();
 		});

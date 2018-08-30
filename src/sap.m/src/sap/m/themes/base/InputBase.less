@@ -7,7 +7,7 @@
 	height: 2.5rem;
 	background: transparent;
 	position: relative;
-	display: inline-flex;
+	display: inline-block;
 	vertical-align: top;
 	outline: none;
 	box-sizing: border-box;
@@ -67,6 +67,10 @@
 	vertical-align: middle;
 	cursor: pointer;
 	background: transparent;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 .sapMInputDescriptionWrapper {
@@ -86,6 +90,7 @@
 			right: 1px;
 			bottom: 1px;
 			pointer-events: none;
+			z-index: 1;
 		}
 	}
 }
@@ -102,6 +107,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 			bottom: 1px;
 			border: 2px dashed @sapUiContentFocusColor;
 			pointer-events: none;
+			z-index: 1;
 		}
 	}
 }
@@ -171,7 +177,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	color: @sapUiFieldPlaceholderTextColor;
 }
 
-.sapMInputBaseInner:invalid {
+input.sapMInputBaseInner:invalid {
 	/* disable native browser input validation visualization e.g. for type email or number */
 	box-shadow: none;
 }

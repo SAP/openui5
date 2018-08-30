@@ -1,14 +1,13 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/rta/dttool/controller/BaseController",
-	"sap/ui/rta/dttool/DTMetadata",
+	"sap/ui/rta/dttool/util/DTMetadata",
 	'sap/ui/rta/Client',
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/Dialog",
 	"sap/m/Button",
-	"sap/m/Label",
 	"sap/m/Input",
 	"sap/m/MessageToast",
 	"sap/ui/core/postmessage/Bus",
@@ -24,7 +23,6 @@ sap.ui.define([
 	FilterOperator,
 	Dialog,
 	Button,
-	Label,
 	Input,
 	MessageToast,
 	PostMessageBus,
@@ -47,16 +45,8 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-
 			this.oPostMessageBus = PostMessageBus.getInstance();
-
-			if (window.location.pathname.endsWith("integration/opaTest.qunit.html")) {
-				jQuery(document).ready( function () {
-					setTimeout(function () {
-						jQuery("#__component0---app--theIFrame").attr("src", "./../preview.html?sap-ui-rta-minimenu=false");
-					}, 0);
-				});
-			}
+			var oView = this.getView();
 
 			jQuery(window).resize(this.onSplitterResize);
 
@@ -72,7 +62,6 @@ sap.ui.define([
 
 
 			var oModel = new JSONModel();
-			var oView = this.getView();
 			oView.byId("Tree").setBusy(true);
 			oView.byId("PropertyPanel").setBusy(true);
 			oView.byId("palette").setBusy(true);
@@ -127,19 +116,28 @@ sap.ui.define([
 				}
 				oSampleInput.setBusy(false);
 			});
+		},
 
+		resolveIframe: function () {
+			this.getView().byId("theIFrame").getDomRef().src = sap.ui.require.toUrl("sap/ui/rta/dttool") + "/preview.html?sap-ui-rta-minimenu=false";
+		},
+
+		onAfterRendering: function (oEvent) {
+			if (oEvent.getSource().getViewName() === "sap.ui.rta.dttool.view.App") {
+				this.resolveIframe();
+			}
 		},
 
 		/**
 		 * Called when the iFrame is ready to receive Messages
 		 */
-		onIFrameReady : function () {
+		onIFrameReady : function (oPayload) {
 			if (this.oRTAClient) {
 				this.oRTAClient.destroy();
 			}
 			this.oRTAClient = new RTAClient({
-				window: this.getIFrameWindow(),
-				origin: this.getIFrameWindow().location.origin
+				window: this.getIFrameWindow(oPayload.source.frameElement.id),
+				origin: this.getIFrameWindow(oPayload.source.frameElement.id).location.origin
 			});
 		},
 
@@ -665,7 +663,9 @@ sap.ui.define([
 
 			oPaletteModel.setProperty("/", oPaletteData);
 
-			!bDontAddListeners && this.setDraggable();
+			if (!bDontAddListeners) {
+				this.setDraggable();
+			}
 		},
 
 		/**

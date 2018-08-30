@@ -255,29 +255,29 @@ sap.ui.define([
 			 *
 			 * @param {string} sId the id for the current cell
 			 * @param {sap.ui.model.Context} oBindingContext the context for the current cell
-			 * @return {sap.ui.layout.BlockLayoutCell} either a header cell or a demo app cell based on the metadata in the model
+			 * @return {sap.ui.layout.BlockLayoutCell} either a teaser cell or a demo app cell based on the metadata in the model
 			 * @public
 			 */
-			createDemoAppRow: function (sId, oBindingContext) {
+			createDemoAppCell: function (sId, oBindingContext) {
 				var oBlockLayoutCell;
-				if (!oBindingContext.getObject().categoryId) { // demo app tile
-					if (oBindingContext.getObject().teaser) { // teaser cell (loads fragment from demo app)
-						try {
-							sap.ui.loader.config({paths:{"test-resources":"test-resources"}});
-							var sRelativePath = sap.ui.require.toUrl(oBindingContext.getObject().teaser);
-							var oTeaser = sap.ui.xmlfragment(sId, sRelativePath);
-							oBlockLayoutCell = sap.ui.xmlfragment(sId, "sap.ui.documentation.sdk.view.BlockLayoutTeaserCell", this);
-							oBlockLayoutCell.getContent()[0].addContent(oTeaser);
-							sap.ui.loader.config({paths:{"test-resources":null}});
-						} catch (oException) {
-							Log.warning("Teaser for demo app \"" + oBindingContext.getObject().name + "\" could not be loaded: " + oException);
-							oBlockLayoutCell = sap.ui.xmlfragment(sId, "sap.ui.documentation.sdk.view.BlockLayoutCell", this);
-						}
-					} else { // normal cell
+				if (oBindingContext.getObject().teaser) { // teaser cell (loads fragment from demo app)
+					try {
+						sap.ui.loader.config({paths:{"test-resources":"test-resources"}});
+						var sRelativePath = sap.ui.require.toUrl(oBindingContext.getObject().teaser);
+						var oTeaser = sap.ui.xmlfragment(sId, sRelativePath);
+						oBlockLayoutCell = sap.ui.xmlfragment(sId, "sap.ui.documentation.sdk.view.BlockLayoutTeaserCell", this);
+						oBlockLayoutCell.getContent()[0].addContent(oTeaser);
+						sap.ui.loader.config({paths:{"test-resources":null}});
+						//sets the teaser to aria-hidden => gets ignored by screen reader
+						oTeaser.addEventDelegate({"onAfterRendering": function() {
+							this.getParent().getDomRef().childNodes[1].setAttribute("aria-hidden", "true");
+							}.bind(oTeaser)});
+					} catch (oException) {
+						Log.warning("Teaser for demo app \"" + oBindingContext.getObject().name + "\" could not be loaded: " + oException);
 						oBlockLayoutCell = sap.ui.xmlfragment(sId, "sap.ui.documentation.sdk.view.BlockLayoutCell", this);
 					}
-				} else { // headline tile
-					oBlockLayoutCell = sap.ui.xmlfragment(sId, "sap.ui.documentation.sdk.view.BlockLayoutHeadlineCell", this);
+				} else { // normal cell
+					oBlockLayoutCell = sap.ui.xmlfragment(sId, "sap.ui.documentation.sdk.view.BlockLayoutCell", this);
 				}
 				oBlockLayoutCell.setBindingContext(oBindingContext);
 

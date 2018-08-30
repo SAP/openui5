@@ -95,6 +95,13 @@ sap.ui.define([
 	 * The controller property can hold a controller instance. If a controller instance is given,
 	 * it overrides the controller defined in the view.
 	 *
+	 * When property <code>async</code> is set to true, the view definition and the controller class (and its
+	 * dependencies) will be loaded asynchronously. Any controls used in the view might be loaded sync or
+	 * async, depending on the experimental runtime configuration option "xx-xml-processing". Even when
+	 * the view definition is provided as string or object tree, controller or controls might be loaded
+	 * asynchronously. In any case, a view instance will be returned synchronously by this factory API, but its
+	 * content (control tree) might appear only later. Also see {@link sap.ui.core.mvc.View#loaded}.
+	 *
 	 * Like with any other control, an id is optional and will be created when missing.
 	 *
 	 * @param {string} [sId] id of the newly created view
@@ -105,7 +112,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.mvc.Controller} [vView.controller] controller to be used for this view instance
 	 * @public
 	 * @static
-	 * @deprecated since 1.56: Use sap.ui.core.mvc.JSONView.create instead.
+	 * @deprecated since 1.56: Use {@link sap.ui.core.mvc.JSONView.create JSONView.create} instead.
 	 * @return {sap.ui.core.mvc.JSONView} the created JSONView instance
 	 */
 	sap.ui.jsonview = function(sId, vView) {

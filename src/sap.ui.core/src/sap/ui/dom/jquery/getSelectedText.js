@@ -5,12 +5,12 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	"use strict";
 
 	/**
-	 * Applies the jQuery function extension:
-	 * @see jQuery#getSelectedText
+	 * This module provides the {@link jQuery#getSelectedText} API.
 	 *
 	 * @namespace
-	 * @alias module:sap/ui/dom/jquery/getSelectedText
+	 * @name module:sap/ui/dom/jquery/getSelectedText
 	 * @public
+	 * @since 1.58
 	 */
 
 	/**
@@ -24,6 +24,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	 * @author SAP SE
 	 * @since 1.26.0
 	 * @function
+	 * @requires module:sap/ui/dom/jquery/getSelectedText
 	 */
 	var fnGetSelectedText = function() {
 		var oDomRef = this.get(0);

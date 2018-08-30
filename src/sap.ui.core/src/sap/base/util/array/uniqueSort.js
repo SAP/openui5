@@ -10,6 +10,7 @@ sap.ui.define(['sap/base/assert'], function(assert) {
 	 * Use <code>jQuery.unique()</code> for arrays of DOMElements.
 	 *
 	 * @function
+	 * @since 1.58
 	 * @param {any[]} aArray An Array of any type
 	 * @alias module:sap/base/util/array/uniqueSort
 	 * @return {any[]} Same array as given (for chaining)

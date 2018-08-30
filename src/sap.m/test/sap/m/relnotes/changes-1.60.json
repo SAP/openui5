@@ -103,6 +103,276 @@
         "type": "FIX",
         "text": "sap.m - Table Designtime DomRef definition for items aggregation",
         "references": []
+      },
+      {
+        "id": "6c68dc89ab4e92beba9f31a9e12a254df539bfa8",
+        "type": "FEATURE",
+        "text": " sap.m.SearchField: on input suggestion event is now fired after 400ms",
+        "references": []
+      },
+      {
+        "id": "de5420ca6554b48e1a2c2e52bac61f28939e6c1e",
+        "type": "FEATURE",
+        "text": " sap.ui.support: System Presets introduced and new System Accessibility Preset added",
+        "references": []
+      },
+      {
+        "id": "176955626306bb3fe08801671e1ddfc4c0bb311c",
+        "type": "FIX",
+        "text": " FacetFilter: Focus moves out of the reset button on second TAB",
+        "references": []
+      },
+      {
+        "id": "9c8351e7c6aa2112e050dc34f1f63f45c60cb4c9",
+        "type": "FIX",
+        "text": " OverflowToolbar: Cleared focus info upon focus leave",
+        "references": []
+      },
+      {
+        "id": "378e28fecd6b580cd11d443138c604104f538c5b",
+        "type": "FIX",
+        "text": " m.routing: call TargetHandler in Targets instead of Router",
+        "references": []
+      },
+      {
+        "id": "046c1dc5edf641150b8f84751f2094d2d22107b5",
+        "type": "FIX",
+        "text": " sap.m.BusyDialog: Busy information now read out",
+        "references": []
+      },
+      {
+        "id": "ec9aa89f20429194d66c6349850fd38b7514a40a",
+        "type": "FIX",
+        "text": " sap.m.BusyDialog: The dialog is now closing correctly",
+        "references": []
+      },
+      {
+        "id": "c465549f731286019bcc890895c1b106a7484a11",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Type conversion removed",
+        "references": []
+      },
+      {
+        "id": "f5bb1a33cf0678bc94c35ed9642190ffd30d76e2",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Popup is now correctly displayed",
+        "references": []
+      },
+      {
+        "id": "d0b25af570ff741395194cd17d6e93842e0675ee",
+        "type": "FIX",
+        "text": " sap.m.Dialog: ESC key sets \u0027origin\u0027 event parameter correctly",
+        "references": []
+      },
+      {
+        "id": "e7ec2a592f1aa5264fe26d07d1999543a6c40b8d",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: search with relative item binding works now.",
+        "references": []
+      },
+      {
+        "id": "91de7734e533cbe5142372fc99f5002ab9ffa412",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Padding corrected",
+        "references": []
+      },
+      {
+        "id": "154fb0e7cfd113088bcf88bb28489767d50c9bdd",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: doesn\u0027t wrap in ObjectPageHeaderContent in IE",
+        "references": []
+      },
+      {
+        "id": "46848fb5fe0c5239e0ab0c50f9f9673cae7d76d0",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: button is not cut when displaying two months and years in Bulgarian",
+        "references": []
+      },
+      {
+        "id": "fdb8e9bf8d5e0bbd8355b5263b12d61f9304ef38",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
+        "references": []
+      },
+      {
+        "id": "dbc6881b0cc013e72afb720e697d70f955e1f9de",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Suggestions width is now correct",
+        "references": []
+      },
+      {
+        "id": "6e772d8c336455be807f9d99d233c9afa81e44fc",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed sample to follow Fiori Guidelines",
+        "references": []
+      },
+      {
+        "id": "d436cc21ce29392eb8f0fb3e27775b37ff4c105c",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed sample to follow Fiori Guidelines",
+        "references": []
+      },
+      {
+        "id": "5454828a2227db0ec2e2081bcf4e558a30d3af3a",
+        "type": "FIX",
+        "text": " sap.m.Select: Rendering QUnits fixed for Edge",
+        "references": []
+      },
+      {
+        "id": "bbd433ebf781add103a6d9f9d0a4210e7429cd45",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: busyIndicatorDelay propagation fixed",
+        "references": []
+      },
+      {
+        "id": "c63a7101637e149c87c336b060759bb5ab2d2a8b",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : Uploaded files were showing incorrect size so set property binaryFilesize as true so that file size formating uses base 2.",
+        "references": []
+      },
+      {
+        "id": "3272ad7a01d0a9f7040beb9418623ba71a49f4ed",
+        "type": "FEATURE",
+        "text": " sap.m.Button: introduced propagation of the enabled property for RTA",
+        "references": []
+      },
+      {
+        "id": "38ea7f68795e1cb05b17cd85960de9d5a6f7018b",
+        "type": "FIX",
+        "text": " Breadcrumbs: Font-size of separators is set to @sapMFontMediumSize",
+        "references": []
+      },
+      {
+        "id": "66943a0c979f9d87e0e4819e22f55bc148ffdc32",
+        "type": "FIX",
+        "text": " ComboBox: Selection when deleting value fixed",
+        "references": []
+      },
+      {
+        "id": "158e8a377f03a63734cb428375044c48b146d998",
+        "type": "FIX",
+        "text": " Image: Fixed broken indicator in some browsers",
+        "references": []
+      },
+      {
+        "id": "662d725269652204b52ff0a06f2b507bff1d704e",
+        "type": "FIX",
+        "text": " Improve Accessibility and slightly adjust Teasers",
+        "references": []
+      },
+      {
+        "id": "19a9ef8b542a2cfd33cf0852f4d8a591159fd2c8",
+        "type": "FIX",
+        "text": " InputBase: NoTabStop icons now have tabindex -1",
+        "references": []
+      },
+      {
+        "id": "924357575debfbd65e430675747f9e8a9d0bd0e8",
+        "type": "FIX",
+        "text": " InputBase: inline-block display reverted",
+        "references": []
+      },
+      {
+        "id": "439b6583c676f5b40841db1bf73c7f14ba4d2b1b",
+        "type": "FIX",
+        "text": " MessagePopover: popover on mobile closes after activeTitle is pressed",
+        "references": []
+      },
+      {
+        "id": "f6c551f3c187df6df47c37756fc33cdd18b9bf46",
+        "type": "FIX",
+        "text": " MessageView: Useless rerender call removed",
+        "references": []
+      },
+      {
+        "id": "4170cbc8f1263f2457d5ffcd37689181acf2b25a",
+        "type": "FIX",
+        "text": " ResponsivePopover: Rectursive invalidation prevented",
+        "references": []
+      },
+      {
+        "id": "4839aa15156a3b23215e12aa8c8b51a999ed0072",
+        "type": "FIX",
+        "text": " sap.m - popover designtime fix",
+        "references": []
+      },
+      {
+        "id": "49ae8c08b9a53fd1e745379f1131e506af42b2eb",
+        "type": "FIX",
+        "text": " sap.m.Button: now checks if the domRef exists on onAfterRendering",
+        "references": []
+      },
+      {
+        "id": "f7c551fd3d864573cf39ce64fbc5eaa5d75e52cb",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Prevent infinite resize in IE and Edge",
+        "references": []
+      },
+      {
+        "id": "c1308c527950868062c53a955194639e7bd00ff4",
+        "type": "FIX",
+        "text": " sap.m.Input: Soft keyboard is not opened on value help",
+        "references": []
+      },
+      {
+        "id": "656a7f546d7ba7ec348d550508f13ecb863988ec",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Stuck on filtering fixed",
+        "references": []
+      },
+      {
+        "id": "0e68b086ab2802517dc7604e0e279971475ee6d1",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Focus outline corrected",
+        "references": []
+      },
+      {
+        "id": "1cf3fcfc03ce2d3724d2ebd9552d704f6cc47c68",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Token information is now announced",
+        "references": []
+      },
+      {
+        "id": "dc1318fc488343848000ce45a1733bd7ebd9328a",
+        "type": "FIX",
+        "text": " sap.m.SlideTile - Do not propagate press event to inner tiles",
+        "references": []
+      },
+      {
+        "id": "3ef731c2e7135cc3eac75cb9aa4affbf465154e1",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Stop textarea \"jumping\" on counter update",
+        "references": []
+      },
+      {
+        "id": "3158a7585c2466b86e8a29c9071de59834fb332a",
+        "type": "FIX",
+        "text": " sap.m.TextArea: growingMaxLies property fixed",
+        "references": []
+      },
+      {
+        "id": "17b52f12d7a109190feaabc83b4bcb2526dd8842",
+        "type": "FIX",
+        "text": " sap.m.TimePicker - when pattern contains single quotes, mask is correct now.",
+        "references": []
+      },
+      {
+        "id": "88618d79ffe2b540e0349a244b683eca9fc1da51",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: if binding format differs from input, \"change\" is fired",
+        "references": []
+      },
+      {
+        "id": "8f03ee38dd67aec4b42aaa2752c42b694af2d59e",
+        "type": "FIX",
+        "text": " sap.m.Token: Token text properly displayed",
+        "references": []
+      },
+      {
+        "id": "60b2031fb31005890952579fd0367629be4121b0",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Navigation in dialog improved",
+        "references": []
       }
     ]
   }

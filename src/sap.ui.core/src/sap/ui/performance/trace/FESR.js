@@ -148,22 +148,26 @@ sap.ui.define([
 	}
 
 	/**
-	 * @namespace FESR API, consumed by E2eTraceLib instead of former EppLib.js <br>
-	 * @alias module:sap/ui/performance/trace/FESR
-	 *<p>
+	 * FESR API, consumed by E2eTraceLib instead of former EppLib.js.
+
 	 * Provides functionality for creating the headers for the frontend-subrecords which will be sent with each
 	 * first request of an interaction. The headers have a specific format, you may have a look at the createFESR
 	 * methods.<br>
-	 *</p><p>
-	 * There is a special order in which things are happening: <br>
-	 * 1. Interaction starts<br>
-	 * 1.1. Request 1.1 sent<br>
-	 * 1.2. Request 1.2 sent<br>
-	 * 2. Interaction starts<br>
-	 * 2.1 Creation of FESR for 1. interaction<br>
-	 * 2.2 Request 2.1 sent with FESR header for 1. interaction<br>
-	 * ...<br>
-	 *</p>
+
+	 * There is a special order in which things are happening:
+	 * <pre>
+	 * 1. Interaction starts
+	 * 1.1. Request 1.1 sent
+	 * 1.2. Request 1.2 sent
+	 * 2. Interaction starts
+	 * 2.1 Creation of FESR for 1. interaction
+	 * 2.2 Request 2.1 sent with FESR header for 1. interaction
+	 * ...
+	 * </pre>
+	 *
+	 * @namespace
+	 * @since 1.58
+	 * @alias module:sap/ui/performance/trace/FESR
 	 * @static
 	 * @public
 	 */

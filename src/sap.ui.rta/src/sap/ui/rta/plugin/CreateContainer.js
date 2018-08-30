@@ -61,13 +61,18 @@ sap.ui.define([
 	CreateContainer.prototype._isEditableCheck = function (oOverlay, bOverlayIsSibling) {
 		var bEditable = false;
 		var	oParentOverlay = this._getParentOverlay(bOverlayIsSibling, oOverlay);
+		var sAggregationName;
 
 		if (!oParentOverlay || !oParentOverlay.getParentElementOverlay()){
 			//root element is not editable as parent and as sibling
 			return false;
 		}
 
-		bEditable = this.checkAggregationsOnSelf(oParentOverlay, "createContainer");
+		if (bOverlayIsSibling){
+			sAggregationName = oOverlay.getParentAggregationOverlay().getAggregationName();
+		}
+
+		bEditable = this.checkAggregationsOnSelf(oParentOverlay, "createContainer", sAggregationName);
 
 		if (bEditable) {
 			// If ids are created within fragments or controller code,

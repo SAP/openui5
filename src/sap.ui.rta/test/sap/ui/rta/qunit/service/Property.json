@@ -94,5 +94,19 @@
 	"name": {
 		"singular": "Singular Control Name",
 		"plural": "Plural Control Name"
+	},
+	"links": {
+		"developer": [
+			{
+				"href": "links1.html",
+				"text": "Links 1 Text"
+			}
+		],
+		"guidelines": [
+			{
+				"href": "links2.html",
+				"text": "Links 2 Text"
+			}
+		]
 	}
 }

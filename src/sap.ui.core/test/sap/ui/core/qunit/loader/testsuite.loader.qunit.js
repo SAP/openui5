@@ -93,6 +93,11 @@ sap.ui.define(function() {
 					version: 1,
 					qunitBridge: true
 				}
+			},
+
+			syncModuleDefinition: {
+				page: "test-resources/sap/ui/core/qunit/loader/syncModuleDefinition.qunit.html",
+				title: "Test Page for ui5loader synchronous module definition"
 			}
 		}
 	};

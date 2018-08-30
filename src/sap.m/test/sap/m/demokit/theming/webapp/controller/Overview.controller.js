@@ -30,16 +30,7 @@ sap.ui.define([
 			this._oTable = oTable;
 			this._oPreviousQueryContext = {};
 			this._oCurrentQueryContext = null;
-			//Chooses the right fragment depending on the device which is used
-			var sFragment;
-			if (sap.ui.Device.system.desktop){
-				sFragment = "sap.ui.demo.theming.view.Desktop";
-			} else if (sap.ui.Device.system.phone){
-				sFragment = "sap.ui.demo.theming.view.Phone";
-			} else {
-				sFragment = "sap.ui.demo.theming.view.Tablet";
-			}
-			this.byId("idPanel").addContent(sap.ui.xmlfragment(sFragment, this));
+
 
 			//Keeps the filter and search state
 			this._oTableFilterState = {
@@ -512,9 +503,9 @@ sap.ui.define([
 		//Sets a new filter (parameter)
 		onPressColor: function(evt){
 			if (evt.getSource().getPressed()) {
-				sap.ui.getCore().byId("tbDimension").setPressed();
-				sap.ui.getCore().byId("tbImage").setPressed();
-				sap.ui.getCore().byId("tbOpacity").setPressed();
+				this.byId("tbDimension").setPressed();
+				this.byId("tbImage").setPressed();
+				this.byId("tbOpacity").setPressed();
 				this._oTableFilterState.aCharacteristic = [new Filter("parameter", FilterOperator.EQ, "Color")];
 			} else {
 				this._oTableFilterState.aCharacteristic = [];
@@ -523,9 +514,9 @@ sap.ui.define([
 		},
 		onPressDimension: function(evt){
 			if (evt.getSource().getPressed()) {
-				sap.ui.getCore().byId("tbColor").setPressed();
-				sap.ui.getCore().byId("tbImage").setPressed();
-				sap.ui.getCore().byId("tbOpacity").setPressed();
+				this.byId("tbColor").setPressed();
+				this.byId("tbImage").setPressed();
+				this.byId("tbOpacity").setPressed();
 				this._oTableFilterState.aCharacteristic = [new Filter("parameter", FilterOperator.EQ, "Dimension")];
 			} else {
 				this._oTableFilterState.aCharacteristic = [];
@@ -535,9 +526,9 @@ sap.ui.define([
 
 		onPressImage: function(evt){
 			if (evt.getSource().getPressed()) {
-				sap.ui.getCore().byId("tbColor").setPressed();
-				sap.ui.getCore().byId("tbDimension").setPressed();
-				sap.ui.getCore().byId("tbOpacity").setPressed();
+				this.byId("tbColor").setPressed();
+				this.byId("tbDimension").setPressed();
+				this.byId("tbOpacity").setPressed();
 				this._oTableFilterState.aCharacteristic = [new Filter("parameter", FilterOperator.EQ, "Image")];
 			} else {
 				this._oTableFilterState.aCharacteristic = [];
@@ -547,9 +538,9 @@ sap.ui.define([
 
 		onPressOpacity: function(evt){
 			if (evt.getSource().getPressed()) {
-				sap.ui.getCore().byId("tbColor").setPressed();
-				sap.ui.getCore().byId("tbDimension").setPressed();
-				sap.ui.getCore().byId("tbImage").setPressed();
+				this.byId("tbColor").setPressed();
+				this.byId("tbDimension").setPressed();
+				this.byId("tbImage").setPressed();
 				this._oTableFilterState.aCharacteristic = [new Filter("parameter", FilterOperator.EQ, "Opacity")];
 			} else {
 				this._oTableFilterState.aCharacteristic = [];
@@ -561,7 +552,7 @@ sap.ui.define([
 		//Sets a new filter (theming)
 		onPressExpert: function(evt){
 			if (evt.getSource().getPressed()) {
-				sap.ui.getCore().byId("tbQuick").setPressed();
+				this.byId("tbQuick").setPressed();
 				this._oTableFilterState.aTheming = [new Filter("theming", FilterOperator.EQ, "Expert")];
 			} else {
 				this._oTableFilterState.aTheming = [];
@@ -571,7 +562,7 @@ sap.ui.define([
 
 		onPressQuick: function(evt){
 			if (evt.getSource().getPressed()) {
-				sap.ui.getCore().byId("tbExpert").setPressed();
+				this.byId("tbExpert").setPressed();
 				this._oTableFilterState.aTheming = [new Filter("theming", FilterOperator.EQ, "Quick")];
 			} else {
 				this._oTableFilterState.aTheming = [];

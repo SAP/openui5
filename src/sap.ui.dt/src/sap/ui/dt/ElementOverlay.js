@@ -7,9 +7,7 @@ sap.ui.define([
 	'sap/ui/dt/ControlObserver',
 	'sap/ui/dt/ManagedObjectObserver',
 	'sap/ui/dt/ElementDesignTimeMetadata',
-	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/ElementUtil',
-	'sap/ui/dt/OverlayUtil',
 	'sap/ui/dt/DOMUtil',
 	'sap/ui/dt/Util',
 	'sap/ui/core/Control',
@@ -23,9 +21,7 @@ function (
 	ControlObserver,
 	ManagedObjectObserver,
 	ElementDesignTimeMetadata,
-	OverlayRegistry,
 	ElementUtil,
-	OverlayUtil,
 	DOMUtil,
 	Util,
 	Control,
@@ -182,7 +178,6 @@ function (
 			this._initMutationObserver();
 			this._initControlObserver();
 		}.bind(this));
-
 	};
 
 	ElementOverlay.prototype._initMutationObserver = function () {
@@ -201,14 +196,24 @@ function (
 
 	ElementOverlay.prototype._subscribeToMutationObserver = function () {
 		var oMutationObserver = Overlay.getMutationObserver();
-		oMutationObserver.addToWhiteList(this.getElement().getId());
-		oMutationObserver.attachDomChanged(this._onDomChanged, this);
+		var $DomRef = this.getAssociatedDomRef();
+		this._sObservableNodeId = $DomRef && $DomRef.get(0).id;
+
+		if (this._sObservableNodeId) {
+			oMutationObserver.addToWhiteList(this._sObservableNodeId);
+			oMutationObserver.attachDomChanged(this._onDomChanged, this);
+		} else {
+			Log.error('sap.ui.dt.ElementOverlay#_subscribeToMutationObserver: please provide a root control with proper domRef and id to ensure that RTA is working properly');
+		}
 	};
 
 	ElementOverlay.prototype._unsubscribeFromMutationObserver = function () {
-		var oMutationObserver = Overlay.getMutationObserver();
-		oMutationObserver.removeFromWhiteList(this.getAssociation('element'));
-		oMutationObserver.detachDomChanged(this._onDomChanged, this);
+		if (this._sObservableNodeId) {
+			var oMutationObserver = Overlay.getMutationObserver();
+			oMutationObserver.removeFromWhiteList(this._sObservableNodeId);
+			oMutationObserver.detachDomChanged(this._onDomChanged, this);
+			delete this._sObservableNodeId;
+		}
 	};
 
 	/**
@@ -276,7 +281,9 @@ function (
 	 * @protected
 	 */
 	ElementOverlay.prototype.exit = function () {
-		this._unsubscribeFromMutationObserver();
+		if (this.isRoot()) {
+			this._unsubscribeFromMutationObserver();
+		}
 		this._destroyControlObserver();
 
 		if (this._iApplyStylesRequest) {

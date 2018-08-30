@@ -853,7 +853,7 @@
 
 			this.clock.tick(500);
 			var oMessageBox = sap.ui.getCore().byId("messagebox6");
-			var sExpectedAriaLabelledBy = oMessageBox.$("header").attr("id") + " " + oMessageBox.$().find(".sapMMsgBoxText").attr("id");
+			var sExpectedAriaLabelledBy = oMessageBox.$("header").find(".sapMTitle").attr("id") + " " + oMessageBox.$().find(".sapMMsgBoxText").attr("id");
 			var sActualAriaLabelledBy = oMessageBox.$().attr("aria-labelledby");
 			assert.equal(sActualAriaLabelledBy, sExpectedAriaLabelledBy, "should point to the header and to the text.");
 			oMessageBox.destroy();
@@ -867,7 +867,7 @@
 
 			this.clock.tick(500);
 			var oMessageBox = sap.ui.getCore().byId("messagebox7");
-			var sExpectedAriaLabelledBy = oMessageBox.$("header").attr("id");
+			var sExpectedAriaLabelledBy = oMessageBox.$("header").find(".sapMTitle").attr("id");
 			var sActualAriaLabelledBy = oMessageBox.$().attr("aria-labelledby");
 			assert.equal(sActualAriaLabelledBy, sExpectedAriaLabelledBy, "should point to the header.");
 			oMessageBox.destroy();
@@ -882,7 +882,7 @@
 
 			this.clock.tick(500);
 			var oMessageBox = sap.ui.getCore().byId("messagebox8");
-			var sExpectedAriaLabelledBy = oMessageBox.$("header").attr("id") + " " + oMessageBox.$().find(".sapMMsgBoxText").attr("id");
+			var sExpectedAriaLabelledBy = oMessageBox.$("header").find(".sapMTitle").attr("id") + " " + oMessageBox.$().find(".sapMMsgBoxText").attr("id");
 			var sActualAriaLabelledBy = oMessageBox.$().attr("aria-labelledby");
 			assert.equal(sActualAriaLabelledBy, sExpectedAriaLabelledBy, "should point to the header and to the text.");
 			oMessageBox.destroy();

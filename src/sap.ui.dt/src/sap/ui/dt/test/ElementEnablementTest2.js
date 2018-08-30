@@ -88,7 +88,10 @@ function(ManagedObject, ElementTest, ChangeRegistry, ObjectPath) {
 			}
 
 			return this._mResult;
-		}.bind(this));
+		}.bind(this))
+		.catch(function(error) {
+			// do nothing
+		});
 	};
 
 
@@ -101,9 +104,12 @@ function(ManagedObject, ElementTest, ChangeRegistry, ObjectPath) {
 		this._bError = false;
 
 		var oElement = ObjectPath.get(this.getType() || "");
-		return oElement.getMetadata().loadDesignTime().catch(function(oError){
+		try {
+			return oElement.getMetadata().loadDesignTime();
+		} catch (e) {
 			this._bError = true;
-		}.bind(this));
+			return Promise.reject(e);
+		}
 	};
 
 

@@ -1,22 +1,19 @@
 /*!
  * ${copyright}
  */
-/*global QUnit*/
+/*global QUnit, sinon*/
 // QUnit script for DesignTime support for ManagedObjectMetadata
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/base/ManagedObjectMetadata",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element",
-	"sap/ui/core/CustomData",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
+	"sap/ui/core/CustomData"
 ],
 function(
 	ManagedObjectMetadata,
 	ManagedObject,
 	Element,
-	CustomData,
-	sinon
+	CustomData
 ) {
 	"use strict";
 
@@ -412,7 +409,7 @@ function(
 						assert.strictEqual(oTestInner.designtimeModule, "DTManagedObject.designtime", "DesignTime module path defined DTManagedObjectChild");
 					}.bind(this));
 					assert.strictEqual(oTestOuter3.designtimeModule, "DTManagedObjectChild3.designtime", "DesignTime module path defined DTManagedObjectChild3");
-				}.bind(this))
+				}.bind(this));
 				//load derived metadata DTManagedObjectChild3 that inherits DTManagedObjectChild
 				DTManagedObjectChild.getMetadata().loadDesignTime().then(function(oTestInner) {
 					return DTManagedObject.getMetadata().loadDesignTime().then(function(oTestInner2) {
@@ -466,7 +463,7 @@ function(
 			//create a preload
 			var aString = [];
 			aString.push("sap.ui.predefine('sap/ui/core/designtime/library.designtime',[],function(){'use strict';return{};});");
-			aString.push("sap.ui.predefine('sap/ui/core/designtime/CustomData.designtime',[],function(){'use strict';return{aggregations:{customData:{ignored:true}}};},false);")
+			aString.push("sap.ui.predefine('sap/ui/core/designtime/CustomData.designtime',[],function(){'use strict';return{aggregations:{customData:{ignored:true}}};},false);");
 			this.sPreloadJs = aString.join("\n");
 		},
 		afterEach: function(assert) {
@@ -481,16 +478,14 @@ function(
 		QUnit.test("loadDesignTime - from core for custom data no preload", function(assert) {
 			this.oRealCore.oConfiguration.preload = "off";
 			this.spy(sap.ui, 'require');
-			this.spy(XMLHttpRequest.prototype, 'open');
 			this.spy(sap.ui.loader._, 'loadJSResourceAsync');
 			return this.oMetadata.loadDesignTime().then(function(oDesignTime) {
 				assert.ok(sap.ui.loader._.loadJSResourceAsync.neverCalledWith("sap/ui/core/designtime/library-preload.designtime.js"), "library-preload.designtime.js was required");
-				assert.ok(XMLHttpRequest.prototype.open.calledWith('GET', "../../../../../resources/sap/ui/core/designtime/library.designtime.js", false), "request send to sap/ui/core/designtime/library.designtime");
-				assert.ok(XMLHttpRequest.prototype.open.calledWith('GET', "../../../../../resources/sap/ui/core/designtime/library.designtime.js", false), "request send to sap/ui/core/designtime/CustomData.designtime");
+				assert.ok(document.querySelectorAll("script[src*='library\.designtime\.js']").length === 1, "request send to sap/ui/core/designtime/library.designtime");
+				assert.ok(document.querySelectorAll("script[src*='CustomData\.designtime\.js']").length === 1, "request send to sap/ui/core/designtime/CustomData.designtime");
 				assert.ok(sap.ui.require.calledWith(["sap/ui/core/designtime/library.designtime"]), "library.designtime.js was required");
 				assert.ok(sap.ui.require.calledWith(["sap/ui/core/designtime/CustomData.designtime"]), "CustomData.designtime.js was required");
 				assert.ok(oDesignTime._oLib !== undefined, "sap/ui/core/designtime/library.designtime.js is available in designtime object");
-				XMLHttpRequest.prototype.open.restore();
 			}.bind(this));
 		});
 
@@ -758,7 +753,7 @@ function(
 					assert.strictEqual(mDesignTime.metaPropDeep.metaPropDeep2, "deep2", "DesignTime data was inherited");
 					assert.strictEqual(mDesignTime.metaPropDeep.metaPropDeep3, "deep3-overwritten", "DesignTime data was overritten");
 					assert.strictEqual(mDesignTime.designtimeModule, "DTManagedObjectChild.designtime", "DesignTime module path defined");
-				})
+				});
 			}.bind(this));
 		});
 
@@ -787,10 +782,8 @@ function(
 					assert.strictEqual(mDesignTime.metaPropDeep.metaPropDeep3, null, "DesignTime data was overritten");
 					assert.strictEqual(mDesignTime.metaPropDeep2.metaPropDeep21, null, "DesignTime data was overritten");
 					assert.strictEqual(mDesignTime.designtimeModule, "DTManagedObjectChild.designtime", "DesignTime module path defined");
-				})
+				});
 			}.bind(this));
 		});
 	});
-
-
 });

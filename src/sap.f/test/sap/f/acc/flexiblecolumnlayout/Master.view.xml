@@ -1,0 +1,7 @@
+<View xmlns="sap.m" displayBlock="true" controllerName="flexiblecolumnlayout.Master" height="100%">
+	<Page id="masterPage" title="Master page">
+		<Button text="To Detail" press="handleMasterPress"/>
+	</Page>
+</View>
+
+

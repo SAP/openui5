@@ -1412,7 +1412,7 @@ sap.ui.define([
 	 * Refreshes the binding, check whether the model data has been changed and fire change event
 	 * if this is the case. For server side models this should refetch the data from the server.
 	 * To update a control, even if no data has been changed, e.g. to reset a control after failed
-	 * validation, please use the parameter bForceUpdate.
+	 * validation, use the parameter <code>bForceUpdate</code>.
 	 *
 	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
 	 * @param {string} [sGroupId] The  group Id for the refresh
@@ -1432,7 +1432,7 @@ sap.ui.define([
 	 * Refreshes the binding, check whether the model data has been changed and fire change event
 	 * if this is the case. For server side models this should refetch the data from the server.
 	 * To update a control, even if no data has been changed, e.g. to reset a control after failed
-	 * validation, please use the parameter bForceUpdate.
+	 * validation, use the parameter <code>bForceUpdate</code>.
 	 *
 	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
 	 * @param {object} [mChangedEntities]
@@ -1484,22 +1484,27 @@ sap.ui.define([
 
 	/**
 	 * Applies the given filters to the ODataTreeBinding.
-	 * Please note that "Control" filters are not supported for OperationMode.Server, here only "Application" filters are allowed.
-	 * Filters given via the constructor are always Application filters and will be send with every backend-request.
-	 * Please see the constructor documentation for more information.
 	 *
-	 * Since 1.34.0 complete clientside filtering is supported for OperationMode.Client and in OperationMode.Auto, in case the backend-count is lower than the threshold.
-	 * In this case all control and application filters will be applied on the client.
+	 * Please note that filters of type <code>FilterType.Control</code> are not supported for <code>OperationMode.Server</code>,
+	 * here only filters of type <code>FilterType.Application</code> are allowed. Filters given via the constructor are always
+	 * of type <code>Application</code> and will be sent with every backend request.
+	 * See the constructor documentation for more information.
+	 *
+	 * Since 1.34.0, complete client-side filtering is supported for <code>OperationMode.Client</code> and also in
+	 * <code>OperationMode.Auto</code> if the backend count is lower than the threshold.
+	 * In this case, all types of filters will be applied on the client.
 	 * See also: {@link sap.ui.model.odata.OperationMode.Auto}, {@link sap.ui.model.FilterType}.
 	 *
-	 * For the OperationMode.Client and OperationMode.Auto, you may also specify the "useServersideApplicationFilters" constructor binding parameter.
-	 * If this is set, the Application filters will always be applied on the backend, and thus trigger an OData request.
-	 * Please see the constructor documentation for more information.
+	 * For the <code>OperationMode.Client</code> and <code>OperationMode.Auto</code>, you may also specify the
+	 * binding parameter <code>useServersideApplicationFilters</code> in the constructor. If it is set, the filters of type
+	 * <code>Application</code> will always be applied on the backend and trigger an OData request.
+	 * See the constructor documentation for more information.
 	 *
-	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} aFilters
-	 * @param {sap.ui.model.FilterType} sFilterType Type of the filter which should be adjusted, if it is not given, the standard behaviour FilterType.Client applies
+	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} aFilters Filter or array of filters to apply
+	 * @param {sap.ui.model.FilterType} sFilterType Type of the filter which should be adjusted. If it is not given,
+	 *   the type <code>FilterType.Control</code> is assumed
+	 * @return {sap.ui.model.odata.v2.ODataTreeBinding} Returns <code>this</code> to facilitate method chaining
 	 * @see sap.ui.model.TreeBinding.prototype.filter
-	 * @return {sap.ui.model.odata.v2.ODataTreeBinding} returns <code>this</code> to facilitate method chaining
 	 * @public
 	 */
 	ODataTreeBinding.prototype.filter = function (aFilters, sFilterType, bReturnSuccess) {

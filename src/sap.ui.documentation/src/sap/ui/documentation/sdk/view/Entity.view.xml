@@ -58,7 +58,8 @@
 				<subSections>
 					<ObjectPageSubSection>
 						<m:Table
-								class="myTable"
+								class="myTable sapUxAPObjectPageSubSectionAlignContent"
+								width="auto"
 								id="table"
 								items="{/entity/samples}"
 								fixedLayout="false"

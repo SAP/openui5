@@ -269,10 +269,6 @@ function(
 		this._maxNumberOfNotificationsBody = this._resourceBundle.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_BODY');
 	};
 
-	NotificationListGroup.prototype.clone = function () {
-		return NotificationListBase.prototype.clone.apply(this, arguments);
-	};
-
 	//================================================================================
 	// Private and protected getters and setters
 	//================================================================================
