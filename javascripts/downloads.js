@@ -63,6 +63,7 @@ function onLoad() {
 		if (bBeta === true) {
 			var sUnstableRelease = sUnstableVersionTemplate
 				.replace(/{{versionFull}}/g, oUnstableVersion.version)
+				.replace(/{{id}}/g, oUnstableVersion.WhatsNewId)
 				.replace(/{{date}}/g, oUnstableVersion.date);
 			oUnstableVersionElement.append(sUnstableRelease);
 
