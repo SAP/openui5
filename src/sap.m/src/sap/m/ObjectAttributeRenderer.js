@@ -37,7 +37,7 @@ sap.ui.define(["sap/ui/core/library"],
 			oRm.addClass("sapMObjectAttributeDiv");
 			oRm.writeClasses();
 			oRm.write(">");
-			oRm.write("</div");
+			oRm.write("</div>");
 			return;
 		}
 
