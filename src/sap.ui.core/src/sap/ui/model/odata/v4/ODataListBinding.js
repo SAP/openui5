@@ -358,6 +358,12 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch}. Otherwise it is repeated with the next
 	 * update for the entity.
 	 *
+	 * The initial data for the created entity can be supplied via the parameter
+	 * <code>oInitialData</code> and modified via property bindings. Properties that are not part of
+	 * the initial data show the default value from the service metadata on the UI, but they are not
+	 * sent to the server. If there is no default value, <code>null</code> is used instead, even if
+	 * the property is not <code>Nullable</code>.
+	 *
 	 * @param {object} [oInitialData={}]
 	 *   The initial data for the created entity
 	 * @returns {sap.ui.model.odata.v4.Context}

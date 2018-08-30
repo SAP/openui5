@@ -369,6 +369,7 @@ sap.ui.require([
 						"p1" : {
 							"$kind" : "Property",
 							"$Type" : "Edm.String",
+							"$DefaultValue" : "<a>",
 							"$Unicode" : false
 						},
 						"p2" : {
@@ -413,7 +414,8 @@ sap.ui.require([
 							<' + sType + ' Name="Worker">\
 								<Property Name="Salary" Type="Edm.Decimal" Precision="8"\
 									Scale="2"/>\
-								<Property Name="p1" Type="Edm.String" Unicode="false" />\
+								<Property Name="p1" Type="Edm.String" DefaultValue="&lt;a&gt;"\
+									Unicode="false" />\
 								<Property Name="p2" Type="Edm.String" Unicode="true" />\
 								<Property Name="p3" Type="Edm.Geometry" SRID="42" />\
 								<Property Name="p4" Type="Edm.Int32" DefaultValue="42"/>\

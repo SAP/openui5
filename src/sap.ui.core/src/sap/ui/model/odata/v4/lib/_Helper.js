@@ -732,54 +732,52 @@ sap.ui.define([
 		},
 
 		/**
-		 * Updates the cache with the object sent to the PATCH request or the object returned by the
-		 * PATCH response. Fires change events for all changed properties. The function recursively
+		 * Updates the old object with the new object. Only existing properties of the old object
+		 * are updated. Fires change events for all changed properties. The function recursively
 		 * handles modified, added or removed structural properties and fires change events for all
 		 * modified/added/removed primitive properties therein. Collection-valued properties are
-		 * copied to the cache if the property was selected; there are no change events for
-		 * properities therein.
+		 * only updated in oOldValue; there are no change events for properties therein.
 		 *
 		 * @param {object} mChangeListeners A map of change listeners by path
-		 * @param {string} sPath The path of the cache value in the cache
-		 * @param {object} oCacheValue The object in the cache
-		 * @param {object} [oPatchValue] The value of the PATCH request/response
+		 * @param {string} sPath The path of oOldValue in mChangeListeners
+		 * @param {object} oOldValue The old value
+		 * @param {object} [oNewValue] The new value
 		 */
-		updateCache : function (mChangeListeners, sPath, oCacheValue, oPatchValue) {
-			// empty PATCH value from 204 response: Nothing to do
-			if (!oPatchValue) {
+		updateExisting : function (mChangeListeners, sPath, oOldValue, oNewValue) {
+			if (!oNewValue) {
 				return;
 			}
 
-			// iterate over all properties in the cache
-			Object.keys(oCacheValue).forEach(function (sProperty) {
+			// iterate over all properties in the old value
+			Object.keys(oOldValue).forEach(function (sProperty) {
 				var sPropertyPath = Helper.buildPath(sPath, sProperty),
-					vOldValue = oCacheValue[sProperty],
+					vOldValue = oOldValue[sProperty],
 					vNewValue;
 
-				if (sProperty in oPatchValue) {
+				if (sProperty in oNewValue) {
 					// the property was patched
-					vNewValue = oPatchValue[sProperty];
+					vNewValue = oNewValue[sProperty];
 					if (vNewValue && typeof vNewValue === "object") {
 						if (Array.isArray(vNewValue)) {
 							// copy complete collection; no change events as long as
 							// collection-valued properties are not supported
-							oCacheValue[sProperty] = vNewValue;
+							oOldValue[sProperty] = vNewValue;
 						} else if (vOldValue) {
 							// a structural property in cache and patch -> recursion
-							Helper.updateCache(mChangeListeners, sPropertyPath, vOldValue,
+							Helper.updateExisting(mChangeListeners, sPropertyPath, vOldValue,
 								vNewValue);
 						} else {
 							// a structural property was added
-							oCacheValue[sProperty] = vNewValue;
+							oOldValue[sProperty] = vNewValue;
 							Helper.fireChanges(mChangeListeners, sPropertyPath, vNewValue, false);
 						}
 					} else if (vOldValue && typeof vOldValue === "object") {
 						// a structural property was removed
-						oCacheValue[sProperty] = vNewValue;
+						oOldValue[sProperty] = vNewValue;
 						Helper.fireChanges(mChangeListeners, sPropertyPath, vOldValue, true);
 					} else {
 						// a primitive property
-						oCacheValue[sProperty] = vNewValue;
+						oOldValue[sProperty] = vNewValue;
 						if (vOldValue !== vNewValue) {
 							Helper.fireChange(mChangeListeners, sPropertyPath, vNewValue);
 						}
@@ -789,56 +787,55 @@ sap.ui.define([
 		},
 
 		/**
-		 * Updates the cache with the given values for the selected properties (see
-		 * {@link #updateCache}). If no selected properties are given or if "*" is contained in the
-		 * selected properties, then all properties are selected. <code>@odata.etag</code> is always
-		 * selected. Fires change events for all changed properties.
+		 * Updates the old value with the given new value for the selected properties (see
+		 * {@link #updateExisting}). If no selected properties are given or if "*" is contained in
+		 * the selected properties, then all properties are selected. <code>@odata.etag</code> is
+		 * always selected. Fires change events for all changed properties.
 		 *
 		 * @param {object} mChangeListeners
 		 *   A map of change listeners by path
 		 * @param {string} sPath
-		 *   The path of the cache value in the cache
-		 * @param {object} oCacheValue
-		 *   The object in the cache
-		 * @param {object} oPostValue
-		 *   The value of the POST response
+		 *   The path of oOldValue in mChangeListeners
+		 * @param {object} oOldValue
+		 *   The old value
+		 * @param {object} oNewValue
+		 *   The new value
 		 * @param {string[]} [aSelect]
-		 *   The properties to be updated in the cache; default is all properties from the response
+		 *   The properties to be updated in oOldValue; default is all properties from oNewValue
 		 */
-		updateCacheAfterPost : function (mChangeListeners, sPath, oCacheValue, oPostValue,
-			aSelect) {
+		updateSelected : function (mChangeListeners, sPath, oOldValue, oNewValue, aSelect) {
 
 			/*
 			 * Take over the property value from source to target and fires an event if the property
 			 * is changed
-			 * @param {string} sPath The path of the cache value in the cache
+			 * @param {string} sPath The path of oOldValue in mChangeListeners
 			 * @param {string} sProperty The property
-			 * @param {object} oCacheValue The object in the cache
-			 * @param {object} oPostValue The value of the response
+			 * @param {object} oOldValue The old value
+			 * @param {object} oNewValue The new value
 			 */
-			function copyPathValue(sPath, sProperty, oCacheValue , oPostValue) {
+			function copyPathValue(sPath, sProperty, oOldValue , oNewValue) {
 				var aSegments = sProperty.split("/");
 
 				aSegments.every(function(sSegment, iIndex) {
-					if (oPostValue[sSegment] === null) {
-						oCacheValue[sSegment] = null;
+					if (oNewValue[sSegment] === null) {
+						oOldValue[sSegment] = null;
 						if (iIndex < aSegments.length - 1) {
 							return false;
 						}
 						Helper.fireChange(mChangeListeners, Helper.buildPath(sPath, sProperty),
-							oCacheValue[sSegment]);
-					} else if (typeof oPostValue[sSegment] === "object") {
-						oCacheValue[sSegment] = oCacheValue[sSegment] || {};
+							oOldValue[sSegment]);
+					} else if (typeof oNewValue[sSegment] === "object") {
+						oOldValue[sSegment] = oOldValue[sSegment] || {};
 					} else {
-						if (oCacheValue[sSegment] !== oPostValue[sSegment]) {
-							oCacheValue[sSegment] = oPostValue[sSegment];
+						if (oOldValue[sSegment] !== oNewValue[sSegment]) {
+							oOldValue[sSegment] = oNewValue[sSegment];
 							Helper.fireChange(mChangeListeners, Helper.buildPath(sPath, sProperty),
-								oCacheValue[sSegment]);
+								oOldValue[sSegment]);
 						}
 						return false;
 					}
-					oCacheValue = oCacheValue[sSegment];
-					oPostValue = oPostValue[sSegment];
+					oOldValue = oOldValue[sSegment];
+					oNewValue = oNewValue[sSegment];
 					return true;
 				});
 			}
@@ -862,12 +859,12 @@ sap.ui.define([
 			}
 
 			if (!aSelect || aSelect.indexOf("*") >= 0) {
-				// no individual properties selected, fetch all properties of the result
+				// no individual properties selected, fetch all properties of the new value
 				aSelect = [];
-				buildPropertyPaths(oPostValue);
+				buildPropertyPaths(oNewValue);
 			} else {
 				// fetch the selected properties plus the ETag and the key predicate;
-				// _Cache#visitResponse is called with the response data before updateCacheAfterPost
+				// _Cache#visitResponse is called with the response data before updateSelected
 				// copies the selected values to the cache. visitResponse computes
 				// - $count values for collections, which are not relevant for POST (deep create is
 				//   not yet supported);
@@ -877,9 +874,9 @@ sap.ui.define([
 				aSelect = aSelect.concat("@odata.etag", "@$ui5._/predicate");
 			}
 
-			// take over properties from server response and fire change events
+			// take over properties from the new value and fire change events
 			aSelect.forEach(function (sProperty) {
-				copyPathValue(sPath, sProperty, oCacheValue, oPostValue);
+				copyPathValue(sPath, sProperty, oOldValue, oNewValue);
 			});
 		}
 	};

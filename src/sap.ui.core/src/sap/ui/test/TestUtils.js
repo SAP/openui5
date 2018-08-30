@@ -22,6 +22,7 @@ sap.ui.define([
 		oUriParameters = new UriParameters(window.location.href),
 		sAutoRespondAfter = oUriParameters.get("autoRespondAfter"),
 		sRealOData = oUriParameters.get("realOData"),
+		rRequestKey = /^(\S+) (\S+)$/,
 		rRequestLine = /^(GET|DELETE|PATCH|POST) (\S+) HTTP\/1\.1$/,
 		mData = {},
 		bProxy = sRealOData === "true" || sRealOData === "proxy",
@@ -718,9 +719,22 @@ sap.ui.define([
 			} else if (sFilterBase.slice(-1) !== "/") {
 				sFilterBase += "/";
 			}
-			Object.keys(mFixture).forEach(function (sUrl) {
-				var sAbsoluteUrl = sUrl[0] === "/" ? sUrl : sFilterBase + sUrl;
-				mResultingFixture[sAbsoluteUrl] = mFixture[sUrl];
+			Object.keys(mFixture).forEach(function (sRequest) {
+				var aMatches = rRequestKey.exec(sRequest),
+					sMethod,
+					sUrl;
+
+				if (aMatches) {
+					sMethod = aMatches[1] || "GET";
+					sUrl = aMatches[2];
+				} else {
+					sMethod = "GET";
+					sUrl = sRequest;
+				}
+				if (!sUrl.startsWith("/")) {
+					sUrl = sFilterBase + sUrl;
+				}
+				mResultingFixture[sMethod + " " + sUrl] = mFixture[sRequest];
 			});
 			TestUtils.useFakeServer(oSandbox, sSourceBase || "sap/ui/core/qunit/odata/v4/data",
 				mResultingFixture);
