@@ -92,7 +92,11 @@ sap.ui.define([
 							guidelines: [
 								{
 									href: "links2.html",
-									text: "Links 2 Text"
+									text: function(){
+										return new Promise( function(fnResolve) {
+											setTimeout(fnResolve.bind(null, "Links 2 Text"), 100);
+										});
+									}
 								}
 							]
 						},
