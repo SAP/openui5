@@ -138,7 +138,7 @@ sap.ui.define([
 			if (!oVariantModel) {
 				//technical parameters are not updated, only URL hash is updated
 				Utils.setTechnicalURLParameterValues(undefined, VARIANT_TECHNICAL_PARAMETER_NAME, aUrlParameters);
-				return Utils.log.error("Variant model could not be found on the provided control");
+				return Utils.log.warning("Variant model could not be found on the provided control");
 			}
 
 			//check if variant for the passed variant management control is present
@@ -178,7 +178,7 @@ sap.ui.define([
 			return Promise.resolve()
 				.then( function () {
 						if (typeof vElement === 'string' || vElement instanceof String) {
-							oElement = sap.ui.getCore().getComponent(vElement);
+							oElement = Component.get(vElement);
 
 							if (!(oElement instanceof Component)) {
 								oElement = sap.ui.getCore().byId(vElement);

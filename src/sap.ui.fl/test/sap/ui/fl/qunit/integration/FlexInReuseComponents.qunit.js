@@ -54,7 +54,7 @@ function (
 			var sFlexReference = this.oComponent.getManifest()["sap.app"].id + ".Component";
 			var oComponentContainer = this.oComponent.getRootControl();
 			var sEmbeddedComponentId = oComponentContainer.getAssociation("component");
-			var oEmbeddedComponent = sap.ui.getCore().getComponent(sEmbeddedComponentId);
+			var oEmbeddedComponent = Component.get(sEmbeddedComponentId);
 			var oView = oEmbeddedComponent.getRootControl();
 			var oForm = oView.byId("myForm");
 			var oInitialFieldInstance = oView.byId("myGroupField");
@@ -101,7 +101,7 @@ function (
 			var sFlexReference = this.oComponent.getManifest()["sap.app"].id + ".Component";
 			var oComponentContainer = this.oComponent.getRootControl();
 			var sEmbeddedComponentId = oComponentContainer.getAssociation("component");
-			var oEmbeddedComponent = sap.ui.getCore().getComponent(sEmbeddedComponentId);
+			var oEmbeddedComponent = Component.get(sEmbeddedComponentId);
 			var oView = oEmbeddedComponent.getRootControl();
 			var oForm = oView.byId("myForm");
 			var oInitialFieldInstance = oView.byId("myGroupField");

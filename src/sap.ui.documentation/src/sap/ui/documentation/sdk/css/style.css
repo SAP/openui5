@@ -1486,10 +1486,13 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDemoA
 	background-color: white !important;
 }
 
-/* override default padding for headline cells */
-.sapUiDemoApps .headlineCell .sapUiBlockCellContent {
-	padding-top: 1.25rem;
-	padding-bottom: 1.25rem;
+/* override default styles for panel headers */
+.sapUiDemoApps .headlineCell {
+	padding-top: 2rem;
+	padding-bottom: 2rem;
+    padding-left: 2.65rem;
+    border-bottom: none;
+    border-top: none;
 }
 
 /* fix to remove the 5px space below title images */
@@ -2055,6 +2058,16 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 /* Special list */
 .specialListsMessageStrip {
 	width: calc(100% - 2rem);
+}
+
+/* Avoiding unwanted scroll bar of the sapMMsgStripMessage */
+.specialListsMessageStrip > .sapMMsgStripMessage {
+	max-height: none;
+}
+
+/* Avoiding unwanted lower layout of the sapMLnk */
+.specialListsMessageStrip > .sapMMsgStripMessage > .sapMFT > .sapMLnk {
+	vertical-align: inherit;
 }
 
 .sapUiMedia-Std-Desktop .specialListsMessageStrip,

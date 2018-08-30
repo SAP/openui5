@@ -682,14 +682,6 @@ sap.ui.define([
 		var sTooltip = oRb.getText(sTooltipID),
 			oHL;
 
-		if (Device.browser.msie || Device.browser.edge) {
-			if (sTooltip === "Hexadecimal") {
-				oInput.setWidth("4.93rem");
-			} else {
-				oInput.setWidth("2.8125rem");
-			}
-
-		}
 		// Create horizontal layout
 		oHL = new HLayout({
 			content: [
@@ -1072,7 +1064,7 @@ sap.ui.define([
 		var aControls = [this.getAggregation("_grid"), this.oCPBox, this.oHLayoutDefault, this.oHLayoutLarge, this.oHLayoutSwatches, this.oHexField, this.oRedField, this.oGreenField, this.oBlueField, this.oHueField, this.oSatField,
 			this.oLitField, this.oAlphaField, this.oAlphaFieldHSL, this.oValField, this.oSlider, this.oAlphaSlider,
 			this.oRGBorHSLRBGroup, this.oRGBorHSLRBUnifiedGroup, this.oLabelRGB, this.oLabelRGBA, this.oLabelHSL, this.oLabelHSV, this.oLabelHSLA, this.oLabelHSVA,
-			this.oCPBoxGD, this.icOne, this.icTwo, this.rbg, this.swatches];
+			this.oCPBoxGD, this.icOne, this.icTwo, this.rbg, this.swatches, this.comparissonFields, this.slidersComparissonFields, this.oSliderPhone, this.oAlphaSliderPhone];
 
 		aControls.forEach(function (oControl) {
 			if (oControl) {
@@ -2264,7 +2256,8 @@ sap.ui.define([
 	 * @override
 	 */
 	ColorPicker.prototype.onAfterRendering = function() {
-		var sRGBString = this._getCSSColorString();
+		var sRGBString = this._getCSSColorString(),
+			oParent = this.getParent();
 
 		// get the jQuery-Object for oCPBox and cpCur
 		this.$CPBox = this.oCPBox.$();
@@ -2288,6 +2281,12 @@ sap.ui.define([
 		}
 		this.oSlider.iShiftGrip =  Math.round(jQuery(this.oSlider.oGrip).outerWidth() / 2);
 		this.oAlphaSlider.iShiftGrip =  Math.round(jQuery(this.oAlphaSlider.oGrip).outerWidth() / 2);
+
+		//TODO This is a temporary fix. It's in order to satisfy the control's VD until the refactoring of the control
+		if (oParent && oParent.getMetadata().getName() === "sap.m.Dialog") {
+			oParent.addStyleClass("colorPickerDialog");
+		}
+
 	};
 
 	/**
@@ -2384,14 +2383,15 @@ sap.ui.define([
 	 * @private
 	 */
 	ColorPicker.prototype._createUnifiedColorPicker = function(oGrid, sId) {
-		var sDisplayMode = this.getDisplayMode();
+		var sDisplayMode = this.getDisplayMode(),
+			oColorModeDefaultPicker;
 
-		this.oLabelRGB = oFactory.createLabel({ text: "R G B"});
-		this.oLabelRGBA = oFactory.createLabel({ text: "R G B A"});
-		this.oLabelHSL = oFactory.createLabel({ text: "H S L"});
-		this.oLabelHSV = oFactory.createLabel({ text: "H S V"});
-		this.oLabelHSLA = oFactory.createLabel({ text: "H S L A"});
-		this.oLabelHSVA = oFactory.createLabel({ text: "H S V A"});
+		this.oLabelRGB = oFactory.createLabel({text: "R G B"});
+		this.oLabelRGBA = oFactory.createLabel({text: "R G B A"});
+		this.oLabelHSL = oFactory.createLabel({text: "H S L"});
+		this.oLabelHSV = oFactory.createLabel({text: "H S V"});
+		this.oLabelHSLA = oFactory.createLabel({text: "H S L A"});
+		this.oLabelHSVA = oFactory.createLabel({text: "H S V A"});
 
 		this.oLabelRGB.addStyleClass("colorModeLabels");
 		this.oLabelRGBA.addStyleClass("colorModeLabels");
@@ -2400,154 +2400,268 @@ sap.ui.define([
 		this.oLabelHSLA.addStyleClass("colorModeLabels");
 		this.oLabelHSVA.addStyleClass("colorModeLabels");
 
-		oGrid = new Grid({
-			containerQuery: true,
+		oColorModeDefaultPicker = new VLayout({
 			content: [
-				// ColorPickerBox
-				this.oCPBox.setLayoutData(this.oCPBoxGD).addStyleClass("sapUiColorPickerCPBoxGrid"),
-				// Slider
-				this.oSlider.setLayoutData(new GridData({span: "L6 M6 S12", linebreak: true}))
-			]
-		}).addStyleClass(CONSTANTS.CPMatrixClass);
-
-		if (sDisplayMode !== ColorPickerDisplayMode.Simplified) {
-			// Alpha Slider
-			oGrid.addContent(
-				this.oAlphaSlider.setLayoutData(new GridData({span: "L6 M6 S12", linebreak: true}))
-			);
-
-		}
-
-		oGrid.addContent(
-			// Old and New color swatches
-			this.oHLayoutSwatches = new HLayout({
-				content: [
-					// HTML-Control containing the Old Color Box
-					new HTML({
-						content: ["<div id='", sId, "-ocBox' class='", CONSTANTS.OldColorClass, "'></div>"].join("")
-					}),
-					// HTML-Control containing the New Color Box
-					new HTML({
-						content: ["<div id='", sId, "-ncBox' class='", CONSTANTS.NewColorClass, "'></div>"].join("")
-					}),
-					this._createRowFromInput(this.oHexField, "COLORPICKER_HEX", "Hex")
-
-				],
-				layoutData: new GridData({span: "L6 M8 S12", linebreak: true})
-			}).addStyleClass(CONSTANTS.SwatchesClass)
-		);
-
-		if (sDisplayMode === ColorPickerDisplayMode.Default) {
-			var oColorModeDefaultPicker = new VLayout({
-				content: [
-					new HLayout({
-						content: [
-							this._createRowFromInput(this.oRedField, "COLORPICKER_RED").addStyleClass("noMargin"),
-							this._createRowFromInput(this.oGreenField, "COLORPICKER_GREEN"),
-							this._createRowFromInput(this.oBlueField, "COLORPICKER_BLUE"),
-							this._createRowFromInput(this.oAlphaField, "COLORPICKER_ALPHA", "").addStyleClass("hsvMargin")
-						]
-					}),
-					new HLayout({
-						content: [
-							this.oLabelRGBA
-						]
-					}),
-					new HLayout({
-						content: [
-							this._createRowFromInput(this.oHueField, "COLORPICKER_HUE", "", " ").addStyleClass("noMargin"),
-							this._createRowFromInput(this.oSatField, "COLORPICKER_SAT", "", "%"),
-							this._createRowFromInput(this.oLitField, "COLORPICKER_LIGHTNESS", "", "%").addStyleClass(CONSTANTS.HideForHSVClass),
-							this._createRowFromInput(this.oValField, "COLORPICKER_VALUE", "", " ").addStyleClass(CONSTANTS.HideForHSLClass),
-							this._createRowFromInput(this.oAlphaFieldHSL, "COLORPICKER_ALPHA", "").addStyleClass("hsvMargin")
-						]
-					}).addStyleClass("defaultPickerDisplayNone"),
-					new HLayout({
-						content: [
-							this.oLabelHSLA.addStyleClass(CONSTANTS.HideForHSVClass),
-							this.oLabelHSVA.addStyleClass(CONSTANTS.HideForHSLClass)
-						]
-					}).addStyleClass("defaultPickerDisplayNone")
-				]
-			});
-
-			this.oHLayoutDefault = new HLayout({
-				content: [
-					oColorModeDefaultPicker,
-					new VLayout({
-						content:
-							new sap.m.Button(sId + "-toggleMode", {
-								type: "Transparent",
-								tooltip: "Toggle color mode",
-								icon: "sap-icon://source-code",
-								press: function (oEvent) {
-									this.bPressed = !this.bPressed;
-									oColorModeDefaultPicker.getContent()[0].toggleStyleClass("defaultPickerDisplayNone", this.bPressed );
-									oColorModeDefaultPicker.getContent()[1].toggleStyleClass("defaultPickerDisplayNone", this.bPressed );
-									oColorModeDefaultPicker.getContent()[2].toggleStyleClass("defaultPickerDisplayNone", !this.bPressed );
-									oColorModeDefaultPicker.getContent()[3].toggleStyleClass("defaultPickerDisplayNone", !this.bPressed );
-								}
-							})
-					})
-				],
-				layoutData: new GridData({span: "L6 M8 S12", linebreak: true})
-			}).addStyleClass("colors");
-			oGrid.addContent(
-				this.oHLayoutDefault
-			);
-		}
-
-		if (sDisplayMode === ColorPickerDisplayMode.Large) {
-			oGrid.addContent(
-				this.oHLayoutLarge = new HLayout({
+				new HLayout({
 					content: [
-						new VLayout({
-							content: [
-								this.oRGBorHSLRBUnifiedGroup
-							]
-						}),
-						new VLayout({
-							content: [
-								new HLayout({
-									content: [
-										this._createRowFromInput(this.oRedField, "COLORPICKER_RED"),
-										this._createRowFromInput(this.oGreenField, "COLORPICKER_GREEN"),
-										this._createRowFromInput(this.oBlueField, "COLORPICKER_BLUE")
-									]
-								}),
-								new HLayout({
-									content: [
-										this.oLabelRGB
-									]
-								}),
-								new HLayout({
-									content: [
-										this._createRowFromInput(this.oHueField, "COLORPICKER_HUE", "", " "),
-										this._createRowFromInput(this.oSatField, "COLORPICKER_SAT", "", "%"),
-										this._createRowFromInput(this.oLitField, "COLORPICKER_LIGHTNESS", "", "%").addStyleClass(CONSTANTS.HideForHSVClass),
-										this._createRowFromInput(this.oValField, "COLORPICKER_VALUE").addStyleClass(CONSTANTS.HideForHSLClass)
-									]
-								}),
-								new HLayout({
-									content: [
-										this.oLabelHSL.addStyleClass(CONSTANTS.HideForHSVClass),
-										this.oLabelHSV.addStyleClass(CONSTANTS.HideForHSLClass)
-									]
-								})
-							]
-						}),
-						new VLayout({
-							content: [
-								this._createRowFromInput(this.oAlphaField, "COLORPICKER_ALPHA", "").addStyleClass("hsvMargin"),
-								oFactory.createLabel({text: "A"}).addStyleClass("labelA")
-							]
+						this._createRowFromInput(this.oRedField, "COLORPICKER_RED").addStyleClass("noMargin"),
+						this._createRowFromInput(this.oGreenField, "COLORPICKER_GREEN"),
+						this._createRowFromInput(this.oBlueField, "COLORPICKER_BLUE"),
+						this._createRowFromInput(this.oAlphaField, "COLORPICKER_ALPHA", "").addStyleClass("hsvMargin")
+					]
+				}),
+				new HLayout({
+					content: [
+						this.oLabelRGBA
+					]
+				}),
+				new HLayout({
+					content: [
+						this._createRowFromInput(this.oHueField, "COLORPICKER_HUE", "", " ").addStyleClass("noMargin"),
+						this._createRowFromInput(this.oSatField, "COLORPICKER_SAT", "", "%"),
+						this._createRowFromInput(this.oLitField, "COLORPICKER_LIGHTNESS", "", "%").addStyleClass(CONSTANTS.HideForHSVClass),
+						this._createRowFromInput(this.oValField, "COLORPICKER_VALUE", "", " ").addStyleClass(CONSTANTS.HideForHSLClass),
+						this._createRowFromInput(this.oAlphaFieldHSL, "COLORPICKER_ALPHA", "").addStyleClass("hsvMargin")
+					]
+				}).addStyleClass("defaultPickerDisplayNone"),
+				new HLayout({
+					content: [
+						this.oLabelHSLA.addStyleClass(CONSTANTS.HideForHSVClass),
+						this.oLabelHSVA.addStyleClass(CONSTANTS.HideForHSLClass)
+					]
+				}).addStyleClass("defaultPickerDisplayNone")
+			]
+		});
+
+		this.oHLayoutDefault = new HLayout({
+			content: [
+				oColorModeDefaultPicker,
+				new VLayout({
+					content:
+						new sap.m.Button(sId + "-toggleMode", {
+							type: Device.system.phone ? "Default" : "Transparent",
+							tooltip: "Toggle color mode",
+							icon: "sap-icon://source-code",
+							press: function (oEvent) {
+								this.bPressed = !this.bPressed;
+								oColorModeDefaultPicker.getContent()[0].toggleStyleClass("defaultPickerDisplayNone", this.bPressed);
+								oColorModeDefaultPicker.getContent()[1].toggleStyleClass("defaultPickerDisplayNone", this.bPressed);
+								oColorModeDefaultPicker.getContent()[2].toggleStyleClass("defaultPickerDisplayNone", !this.bPressed);
+								oColorModeDefaultPicker.getContent()[3].toggleStyleClass("defaultPickerDisplayNone", !this.bPressed);
+							}
 						})
+				})
+			],
+			layoutData: new GridData({span: "L6 M8 S12", linebreak: true})
+		}).addStyleClass("colors");
+
+		this.comparissonFields = new VLayout({
+			content: [
+				// HTML-Control containing the Old Color Box
+				new HTML({
+					content: ["<div id='", sId, "-ocBox' class='", CONSTANTS.OldColorClass, "'></div>"].join("")
+				}),
+				// HTML-Control containing the New Color Box
+				new HTML({
+					content: ["<div id='", sId, "-ncBox' class='", CONSTANTS.NewColorClass, "'></div>"].join("")
+				})
+			]
+		}).addStyleClass("comparisonFields");
+
+		this.slidersComparissonFields = new HLayout({
+			content: [
+				new VLayout({
+					content: [
+						// Slider
+						this.oSlider.setLayoutData(this.oSliderPhone = new GridData({span: "L6 M6 S12", linebreak: true})),
+						// Alpha Slider
+						sDisplayMode !== ColorPickerDisplayMode.Simplified ? this.oAlphaSlider.setLayoutData(this.oAlphaSliderPhone = new GridData({span: "L6 M6 S12", linebreak: true})) :
+							this._createRowFromInput(this.oHexField, "COLORPICKER_HEX", "").addStyleClass("simplifiedHex"),
+						sDisplayMode == ColorPickerDisplayMode.Simplified ? new HLayout({
+							content: [ oFactory.createLabel({text: "Hex"})]}) : null
+					]
+				}).addStyleClass("phoneSliders"),
+				this.comparissonFields
+			]
+		}).addStyleClass("phoneContent");
+
+		//only for phone and not tablet or desktop
+		if (Device.system.phone && !jQuery('html').hasClass("sapUiMedia-Std-Tablet")) {
+			oGrid = new Grid({
+				content: [
+					// ColorPickerBox
+					this.oCPBox.setLayoutData(this.oCPBoxGD).addStyleClass("sapUiColorPickerCPBoxGrid")
+				]
+			}).addStyleClass(CONSTANTS.CPMatrixClass).addStyleClass("phoneGrid");
+
+			if (sDisplayMode !== ColorPickerDisplayMode.Large) {
+				oGrid.addContent(this.slidersComparissonFields);
+			} else {
+				// Slider
+				oGrid.addContent(this.oSlider.setLayoutData(new GridData({span: "L6 M6 S12", linebreak: true})));
+				oGrid.addContent(this.oAlphaSlider.setLayoutData(new GridData({span: "L6 M6 S12", linebreak: true})));
+				oGrid.addContent(new HLayout({
+					content: [
+						// HTML-Control containing the Old Color Box
+						new HTML({
+							content: ["<div id='", sId, "-ocBox' class='", CONSTANTS.OldColorClass, "'></div>"].join("")
+						}),
+						// HTML-Control containing the New Color Box
+						new HTML({
+							content: ["<div id='", sId, "-ncBox' class='", CONSTANTS.NewColorClass, "'></div>"].join("")
+						}),
+						this._createRowFromInput(this.oHexField, "COLORPICKER_HEX", "Hex")
 					],
 					layoutData: new GridData({span: "L6 M8 S12", linebreak: true})
-				}).addStyleClass("colors")
+				}).addStyleClass(CONSTANTS.SwatchesClass));
+				oGrid.addContent(
+					this.oHLayoutLarge = new HLayout({
+						content: [
+							new VLayout({
+								content: [
+									this.oRGBorHSLRBUnifiedGroup
+								]
+							}),
+							new VLayout({
+								content: [
+									new HLayout({
+										content: [
+											this._createRowFromInput(this.oRedField, "COLORPICKER_RED"),
+											this._createRowFromInput(this.oGreenField, "COLORPICKER_GREEN"),
+											this._createRowFromInput(this.oBlueField, "COLORPICKER_BLUE")
+										]
+									}),
+									new HLayout({
+										content: [
+											this.oLabelRGB
+										]
+									}),
+									new HLayout({
+										content: [
+											this._createRowFromInput(this.oHueField, "COLORPICKER_HUE", "", " "),
+											this._createRowFromInput(this.oSatField, "COLORPICKER_SAT", "", "%"),
+											this._createRowFromInput(this.oLitField, "COLORPICKER_LIGHTNESS", "", "%").addStyleClass(CONSTANTS.HideForHSVClass),
+											this._createRowFromInput(this.oValField, "COLORPICKER_VALUE").addStyleClass(CONSTANTS.HideForHSLClass)
+										]
+									}),
+									new HLayout({
+										content: [
+											this.oLabelHSL.addStyleClass(CONSTANTS.HideForHSVClass),
+											this.oLabelHSV.addStyleClass(CONSTANTS.HideForHSLClass)
+										]
+									})
+								]
+							}),
+							new VLayout({
+								content: [
+									this._createRowFromInput(this.oAlphaField, "COLORPICKER_ALPHA", "").addStyleClass("hsvMargin"),
+									oFactory.createLabel({text: "A"}).addStyleClass("labelA")
+								]
+							})
+						],
+						layoutData: new GridData({span: "L6 M8 S12", linebreak: true})
+					}).addStyleClass("colors")
+				);
+			}
+
+			if (sDisplayMode !== ColorPickerDisplayMode.Simplified && sDisplayMode !== ColorPickerDisplayMode.Large) {
+				oGrid.addContent(this.oHLayoutDefault);
+			}
+		} else {
+			oGrid = new Grid({
+				containerQuery: true,
+				content: [
+					// ColorPickerBox
+					this.oCPBox.setLayoutData(this.oCPBoxGD).addStyleClass("sapUiColorPickerCPBoxGrid"),
+					// Slider
+					this.oSlider.setLayoutData(new GridData({span: "L6 M6 S12", linebreak: true}))
+				]
+			}).addStyleClass(CONSTANTS.CPMatrixClass);
+
+			if (sDisplayMode !== ColorPickerDisplayMode.Simplified) {
+				// Alpha Slider
+				oGrid.addContent(
+					this.oAlphaSlider.setLayoutData(new GridData({span: "L6 M6 S12", linebreak: true}))
+				);
+			}
+
+			oGrid.addContent(
+				// Old and New color swatches
+				this.oHLayoutSwatches = new HLayout({
+					content: [
+						// HTML-Control containing the Old Color Box
+						new HTML({
+							content: ["<div id='", sId, "-ocBox' class='", CONSTANTS.OldColorClass, "'></div>"].join("")
+						}),
+						// HTML-Control containing the New Color Box
+						new HTML({
+							content: ["<div id='", sId, "-ncBox' class='", CONSTANTS.NewColorClass, "'></div>"].join("")
+						}),
+						this._createRowFromInput(this.oHexField, "COLORPICKER_HEX", "Hex")
+					],
+					layoutData: new GridData({span: "L6 M8 S12", linebreak: true})
+				}).addStyleClass(CONSTANTS.SwatchesClass)
 			);
+
+			if (sDisplayMode === ColorPickerDisplayMode.Default) {
+				oGrid.addContent(
+					this.oHLayoutDefault
+				);
+			}
+
+			if (sDisplayMode === ColorPickerDisplayMode.Large) {
+				oGrid.addContent(
+					this.oHLayoutLarge = new HLayout({
+						content: [
+							new VLayout({
+								content: [
+									this.oRGBorHSLRBUnifiedGroup
+								]
+							}),
+							new VLayout({
+								content: [
+									new HLayout({
+										content: [
+											this._createRowFromInput(this.oRedField, "COLORPICKER_RED"),
+											this._createRowFromInput(this.oGreenField, "COLORPICKER_GREEN"),
+											this._createRowFromInput(this.oBlueField, "COLORPICKER_BLUE")
+										]
+									}),
+									new HLayout({
+										content: [
+											this.oLabelRGB
+										]
+									}),
+									new HLayout({
+										content: [
+											this._createRowFromInput(this.oHueField, "COLORPICKER_HUE", "", " "),
+											this._createRowFromInput(this.oSatField, "COLORPICKER_SAT", "", "%"),
+											this._createRowFromInput(this.oLitField, "COLORPICKER_LIGHTNESS", "", "%").addStyleClass(CONSTANTS.HideForHSVClass),
+											this._createRowFromInput(this.oValField, "COLORPICKER_VALUE").addStyleClass(CONSTANTS.HideForHSLClass)
+										]
+									}),
+									new HLayout({
+										content: [
+											this.oLabelHSL.addStyleClass(CONSTANTS.HideForHSVClass),
+											this.oLabelHSV.addStyleClass(CONSTANTS.HideForHSLClass)
+										]
+									})
+								]
+							}),
+							new VLayout({
+								content: [
+									this._createRowFromInput(this.oAlphaField, "COLORPICKER_ALPHA", "").addStyleClass("hsvMargin"),
+									oFactory.createLabel({text: "A"}).addStyleClass("labelA")
+								]
+							})
+						],
+						layoutData: new GridData({span: "L6 M8 S12", linebreak: true})
+					}).addStyleClass("colors")
+				);
+			}
 		}
-		return oGrid;
+			return oGrid;
+
 	};
 
 	return ColorPicker;

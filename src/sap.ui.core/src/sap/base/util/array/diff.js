@@ -60,6 +60,7 @@ sap.ui.define(['sap/base/util/deepEqual', 'sap/base/strings/hash'], function(dee
 	 *
 	 *
 	 * @function
+	 * @since 1.58
 	 * @param {Array} aOld Old Array
 	 * @param {Array} aNew New Array
 	 * @param {function} [fnSymbol] Function to calculate substitute symbols for array items

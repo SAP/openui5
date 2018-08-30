@@ -134,7 +134,7 @@ function(
 				assert.ok(true, "then dialog pops up,");
 				assert.equal(this.oShowAvailableElementsSpy.callCount, 1, "then showAvailableElements was called");
 				assert.ok(this.oShowAvailableElementsSpy.calledWith(false, [this.oLayoutOverlay], 0, "Sections"), "then showAvailableElements was called with the right parameters");
-				assert.equal(this.oEasyAddPlugin.getDialog().getTitle(), "Available content: Sections", "then the title is set");
+				assert.equal(this.oEasyAddPlugin.getDialog().getTitle(), "Available Content: Sections", "then the title is set");
 				this.oEasyAddPlugin.getDialog()._cancelDialog();
 				done();
 			}.bind(this));
@@ -150,7 +150,7 @@ function(
 				assert.ok(true, "then dialog pops up,");
 				assert.equal(this.oShowAvailableElementsSpy.callCount, 1, "then showAvailableElements was called");
 				assert.ok(this.oShowAvailableElementsSpy.calledWith(true, [this.oSectionOverlay], undefined, "Sections"), "then showAvailableElements was called with the right parameters");
-				assert.equal(this.oEasyAddPlugin.getDialog().getTitle(), "Available content: Sections", "then the title is set");
+				assert.equal(this.oEasyAddPlugin.getDialog().getTitle(), "Available Content: Sections", "then the title is set");
 				this.oEasyAddPlugin.getDialog()._cancelDialog();
 				done();
 			}.bind(this));

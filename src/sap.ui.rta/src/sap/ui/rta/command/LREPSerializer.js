@@ -3,27 +3,25 @@
  */
 sap.ui.define([
 	'sap/ui/base/ManagedObject',
-	'sap/ui/rta/command/Stack',
 	'sap/ui/rta/command/FlexCommand',
-	'sap/ui/rta/command/BaseCommand',
 	'sap/ui/rta/command/AppDescriptorCommand',
 	'sap/ui/fl/FlexControllerFactory',
 	'sap/ui/fl/Utils',
 	'sap/ui/fl/Change',
 	'sap/ui/rta/ControlTreeModifier',
 	'sap/ui/fl/registry/Settings',
+	'sap/ui/dt/ElementUtil',
 	"sap/base/Log"
 ], function(
 	ManagedObject,
-	CommandStack,
 	FlexCommand,
-	BaseCommand,
 	AppDescriptorCommand,
 	FlexControllerFactory,
 	FlexUtils,
 	Change,
 	RtaControlTreeModifier,
 	Settings,
+	ElementUtil,
 	Log
 ) {
 	"use strict";
@@ -58,6 +56,10 @@ sap.ui.define([
 			aggregations : {}
 		}
 	});
+
+	function getRootControlInstance(vRootControl) {
+		return ElementUtil.getElementInstance(vRootControl);
+	}
 
 	/**
 	 * Promise to ensure that the event triggered methods are executed sequentionally.
@@ -168,7 +170,7 @@ sap.ui.define([
 		this._lastPromise = this._lastPromise.catch(function() {
 			// _lastPromise chain must not be interrupted
 		}).then(function() {
-			var oRootControl = sap.ui.getCore().byId(this.getRootControl());
+			var oRootControl = getRootControlInstance(this.getRootControl());
 			if (!oRootControl) {
 				throw new Error("Can't save commands without root control instance!");
 			}
@@ -179,7 +181,7 @@ sap.ui.define([
 		// needed because the AppDescriptorChanges are stored with a different ComponentName (without ".Component" at the end)
 		// -> two different ChangePersistence
 		.then(function() {
-			var oRootControl = sap.ui.getCore().byId(this.getRootControl());
+			var oRootControl = getRootControlInstance(this.getRootControl());
 			var oFlexController = this._getAppDescriptorFlexController(oRootControl);
 			return oFlexController.saveAll();
 		}.bind(this))
@@ -285,7 +287,7 @@ sap.ui.define([
 			throw new Error("The id of the new app variant is required");
 		}
 
-		var oRootControl = sap.ui.getCore().byId(this.getRootControl());
+		var oRootControl = getRootControlInstance(this.getRootControl());
 
 		if (!oRootControl) {
 			throw new Error("Can't save commands without root control instance!");

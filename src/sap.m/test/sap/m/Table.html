@@ -197,7 +197,11 @@
 		pressed: true,
 		press : function() {
 			oTable.setGrowing(oGrowing.getPressed());
-			oTable.bindItems("/modelData", oTemplate);
+			oTable.bindItems({
+				path: "/modelData",
+				template: oTemplate,
+				key: "id"
+			});
 		}
 	});
 
@@ -255,8 +259,9 @@
 
 	var oTableInfo = new sap.m.Toolbar({
 		active : true,
+		ariaLabelledBy: "infoText",
 		content : [
-			new sap.m.Text({
+			new sap.m.Text("infoText", {
 				text : "The quick brown fox jumps over the lazy dog.",
 				wrapping : false
 			}),

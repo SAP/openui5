@@ -75,7 +75,7 @@ sap.ui.define([
 			/**
 			 * Default span for labels in large size.
 			 *
-			 * <b>Note:</b> If <code>adjustLabelSpanThis</code> is set, this property is only used if more than 1 <code>FormContainer</code> is in one line. If only 1 <code>FormContainer</code> is in the line, then the <code>labelSpanM</code> value is used.
+			 * <b>Note:</b> If <code>adjustLabelSpan</code> is set, this property is only used if more than 1 <code>FormContainer</code> is in one line. If only 1 <code>FormContainer</code> is in the line, then the <code>labelSpanM</code> value is used.
 			 * @since 1.16.3
 			 */
 			labelSpanL : {type : "int", group : "Misc", defaultValue : 4},
@@ -83,7 +83,7 @@ sap.ui.define([
 			/**
 			 * Default span for labels in medium size.
 			 *
-			 * <b>Note:</b> If <code>adjustLabelSpanThis</code> is set this property is used for full-size <code>FormContainers</code>. If more than one <code>FormContainer</code> is in one line, <code>labelSpanL</code> is used.
+			 * <b>Note:</b> If <code>adjustLabelSpan</code> is set this property is used for full-size <code>FormContainers</code>. If more than one <code>FormContainer</code> is in one line, <code>labelSpanL</code> is used.
 			 * @since 1.16.3
 			 */
 			labelSpanM : {type : "int", group : "Misc", defaultValue : 2},

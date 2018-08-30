@@ -237,9 +237,8 @@ function(
 		});
 
 		QUnit.test("when calling '_navigationHandler' with _oHashRegister.currentIndex set to null and 'Unknown' navigation direction", function (assert) {
+			var sExistingParameters = "newEntry1::'123'/'456',  newEntry2::'abc'/'xyz'";
 			this._oHashRegister.currentIndex = null;
-			this.updateHasherEntry = sandbox.stub();
-
 			sandbox.stub(History, "getInstance").callsFake(function () {
 				return {
 					getDirection: function () {
@@ -248,18 +247,20 @@ function(
 				};
 			});
 
+			this.updateHasherEntry = sandbox.stub();
+
 			var oMockParsedURL = {
 				params: { }
 			};
-			oMockParsedURL.params[sVariantParameterName] = ["newEntry"];
+			oMockParsedURL.params[sVariantParameterName] = [encodeURIComponent(sExistingParameters)];
 
 			sandbox.stub(Utils, "getParsedURLHash").returns(oMockParsedURL);
 
 			VariantUtil._navigationHandler.call(this);
 			assert.strictEqual(this._oHashRegister.currentIndex, 0, "then the oHashRegister.currentIndex is initialized to 0");
 			assert.ok(this.updateHasherEntry.calledWithExactly({
-				parameters: ["newEntry"]
-			}), "then VarintModel.updateHasherEntry() called with the required parameters");
+				parameters: [sExistingParameters]
+			}), "then VarintModel.updateHasherEntry() called with the required decoded URI parameters");
 		});
 
 		QUnit.test("when calling '_navigationHandler' with parsed URL hash returning undefined", function (assert) {
@@ -272,6 +273,7 @@ function(
 		});
 
 		QUnit.test("when calling '_navigationHandler' with _oHashRegister.currentIndex > 0 and 'Unknown' navigation direction", function (assert) {
+			var sExistingParameters = "newEntry1::'123'/'456',  newEntry2::'abc'/'xyz'";
 			this._oHashRegister = {
 				currentIndex: 5,
 				hashParams: [["Test0"], ["Test1"], ["Test2"]],
@@ -290,7 +292,7 @@ function(
 			var oMockParsedURL = {
 				params: { }
 			};
-			oMockParsedURL.params[sVariantParameterName] = ["newEntry"];
+			oMockParsedURL.params[sVariantParameterName] = [encodeURIComponent(sExistingParameters)];
 
 			sandbox.stub(Utils, "getParsedURLHash").returns(oMockParsedURL);
 
@@ -300,8 +302,8 @@ function(
 			assert.strictEqual(this.switchToDefaultForVariant.getCall(0).args.length, 0, "then  VariantModel.switchToDefaultForVariant() called with no parameters");
 			assert.strictEqual(this._oHashRegister.currentIndex, 0, "then the oHashRegister.currentIndex is reset to 0");
 			assert.ok(this.updateHasherEntry.calledWithExactly({
-				parameters: ["newEntry"]
-			}), "then VariantModel.updateHasherEntry() called with new variant hash parameters, URL update and _oHashRegister update");
+				parameters: [sExistingParameters]
+			}), "then VariantModel.updateHasherEntry() called with new decoded variant URI parameters, no URL update and _oHashRegister update");
 		});
 
 		QUnit.test("when calling '_navigationHandler' with _oHashRegister.currentIndex > 0 and 'Backwards' navigation direction", function (assert) {
@@ -381,6 +383,7 @@ function(
 		});
 
 		QUnit.test("when calling '_navigationHandler' with 'NewEntry' navigation direction, with no existing parameters for the new index", function (assert) {
+			var sExistingParameters = "newEntry1::'123'/'456',  newEntry2::'abc'/'xyz'";
 			this._oHashRegister = {
 				currentIndex: 0,
 				hashParams: [],
@@ -391,7 +394,7 @@ function(
 			var oMockParsedURL = {
 				params: { }
 			};
-			oMockParsedURL.params[sVariantParameterName] = ["newEntry"];
+			oMockParsedURL.params[sVariantParameterName] = [encodeURIComponent(sExistingParameters)];
 
 			sandbox.stub(Utils, "getParsedURLHash").returns(oMockParsedURL);
 
@@ -406,11 +409,12 @@ function(
 			VariantUtil._navigationHandler.call(this);
 			assert.strictEqual(this._oHashRegister.currentIndex, 1, "then the oHashRegister.currentIndex is increased by 1");
 			assert.ok(this.updateHasherEntry.calledWithExactly({
-				parameters: ["newEntry"]
-			}), "then VariantModel.updateHasherEntry() called with variant hash parameters from next index, URL update and no _oHashRegister update");
+				parameters: [sExistingParameters]
+			}), "then VariantModel.updateHasherEntry() called with the decoded variant URI parameters from next index, no URL update and no _oHashRegister update");
 		});
 
 		QUnit.test("when calling '_navigationHandler' with 'NewEntry' navigation direction, with existing parameters for the new index", function (assert) {
+			var sExistingParameters = "newEntry1::'123'/'456',  newEntry2::'abc'/'xyz'";
 			this._oHashRegister = {
 				currentIndex: 0,
 				hashParams: [
@@ -425,7 +429,7 @@ function(
 			var oMockParsedURL = {
 				params: { }
 			};
-			oMockParsedURL.params[sVariantParameterName] = ["newEntry"];
+			oMockParsedURL.params[sVariantParameterName] = [encodeURIComponent(sExistingParameters)];
 
 			sandbox.stub(Utils, "getParsedURLHash").returns(oMockParsedURL);
 
@@ -440,8 +444,8 @@ function(
 			VariantUtil._navigationHandler.call(this);
 			assert.strictEqual(this._oHashRegister.currentIndex, 1, "then the oHashRegister.currentIndex is increased by 1");
 			assert.ok(this.updateHasherEntry.calledWithExactly({
-				parameters: ["newEntry"]
-			}), "then VariantModel.updateHasherEntry() called with variant hash parameters from next index, URL update and no _oHashRegister update");
+				parameters: [sExistingParameters]
+			}), "then VariantModel.updateHasherEntry() called with the decoded variant URI parameters from next index, no URL update and no _oHashRegister update");
 			assert.ok(this.switchToDefaultForVariantManagement.getCall(0).calledWithExactly("variantManagement1"), "then VariantModel.switchToDefaultForVariant() called with existing hash parameters for the incremented index");
 			assert.ok(this.switchToDefaultForVariantManagement.getCall(1).calledWithExactly("variantManagement2"), "then VariantModel.switchToDefaultForVariant() called with existing hash parameters for the incremented index");
 		});
@@ -660,6 +664,45 @@ function(
 				params: { },
 				appSpecificRoute: "XXnewHashAppRoute"
 			};
+			var vStatus = VariantUtil._navigationFilter.call(this, oNewHash, oOldHash);
+			assert.strictEqual(vStatus, this.sDefaultStatus, "then the correct status object was returned");
+		});
+
+		QUnit.test("when '_navigationFilter' is called from ushell ShellNavigation service, with old hash having other parameters and new hash containing only variant parameter", function (assert) {
+			assert.expect(1);
+			var oOldHash = {
+				params: {
+					testParamName1: "testParamValue1",
+					testParamName2: "testParamValue2"
+				},
+				appSpecificRoute: "XXoldHashAppRoute"
+			};
+			var oNewHash = {
+				params: { },
+				appSpecificRoute: "XXnewHashAppRoute"
+			};
+			oNewHash.params[sVariantParameterName] = ["testParam1"];
+
+			var vStatus = VariantUtil._navigationFilter.call(this, oNewHash, oOldHash);
+			assert.strictEqual(vStatus, this.sDefaultStatus, "then the correct status object was returned");
+		});
+
+		QUnit.test("when '_navigationFilter' is called from ushell ShellNavigation service, with old hash containing only variant parameter and the new hash containing other parameters", function (assert) {
+			assert.expect(1);
+			var oOldHash = {
+				params: { },
+				appSpecificRoute: "XXoldHashAppRoute"
+			};
+			oOldHash.params[sVariantParameterName] = ["testParam1"];
+
+			var oNewHash = {
+				params: {
+					testParamName1: "testParamValue1",
+					testParamName2: "testParamValue2"
+				},
+				appSpecificRoute: "XXnewHashAppRoute"
+			};
+
 			var vStatus = VariantUtil._navigationFilter.call(this, oNewHash, oOldHash);
 			assert.strictEqual(vStatus, this.sDefaultStatus, "then the correct status object was returned");
 		});

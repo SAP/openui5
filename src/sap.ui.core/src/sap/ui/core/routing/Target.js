@@ -251,14 +251,15 @@ sap.ui.define([
 			},
 
 			_updateOptions: function (oOptions) {
-				// convert the legacy syntax to the new one
+				// convert the legacy syntax to the new one - once!
 				// if "viewName" is set, it's converted to "type" and "name"
 				// meanwhile, the "viewPath" is also set to "path" and the
 				// "viewId" is also set to "id"
-				if (oOptions.viewName) {
+				if (!oOptions.updated && oOptions.viewName) {
 					// if the target's name is given under the "name" property,
 					// copy it to "_name" before overwritting it with the "viewName"
 					if (oOptions.name) {
+						// the actual target's name used for lookup via getRoute
 						oOptions._name = oOptions.name;
 					}
 					oOptions.type = "View";
@@ -271,6 +272,8 @@ sap.ui.define([
 					if (oOptions.viewId) {
 						oOptions.id = oOptions.viewId;
 					}
+
+					oOptions.updated = true;
 				}
 
 				this._oOptions = oOptions;

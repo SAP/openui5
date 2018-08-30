@@ -7,6 +7,30 @@
         "type": "FIX",
         "text": " sap.ui.dt: ElementOverlay QUnit test failures on IE11 browser",
         "references": []
+      },
+      {
+        "id": "15e9df5bfaa4fbb4c3214436ce81eec0e69e26a1",
+        "type": "FIX",
+        "text": " Smartlink not selectable after combine",
+        "references": []
+      },
+      {
+        "id": "b7bf7d39f3562666bdc2d5c776287a86b816962a",
+        "type": "FIX",
+        "text": "sap.ui.dt - ScrollContainer Z-Index calculation fix",
+        "references": []
+      },
+      {
+        "id": "ff72e0fba42a304621196141e3dd8cab6b8ed34c",
+        "type": "FIX",
+        "text": " Control Enablement Report doesn\u0027t work",
+        "references": []
+      },
+      {
+        "id": "ba223d22673f3f3a89069924fb6f8849f043a45b",
+        "type": "FIX",
+        "text": " Revise test case for ManagedObjectObserver",
+        "references": []
       }
     ]
   }

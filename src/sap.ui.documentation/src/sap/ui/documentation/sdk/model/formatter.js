@@ -60,28 +60,28 @@ sap.ui.define([], function () {
 		},
 
 		/**
-		 * Formats a module name into a global namespace name.
+		 * Encodes a module name that can be included in URL.
 		 *
 		 * @public
-		 * @param {string} sModuleName the value to be formatted
-		 * @returns {string} the formatted text
+		 * @param {string} sModuleName the name of the module
+		 * @returns {string} the encoded module name
 		 */
-		moduleNameToGlobalName: function (sModuleName) {
+		encodeModuleName: function (sModuleName) {
 			if (sModuleName) {
-				return sModuleName.replace(/[/]/g, ".");
+				return encodeURIComponent(sModuleName);
 			}
 		},
 
 		/**
-		 * Formats a global namespace name into a module name.
+		 * Decodes a module name that is comming from URL parameter.
 		 *
 		 * @public
-		 * @param {string} sName the value to be formatted
-		 * @returns {string} the formatted text
+		 * @param {string} sModuleName the encoded module name
+		 * @returns {string} the decoded module name
 		 */
-		globalNameToModuleName: function (sName) {
-			if (sName) {
-				return sName.replace(/[.]/g, "/");
+		decodeModuleName: function (sModuleName) {
+			if (sModuleName) {
+				return decodeURIComponent(sModuleName);
 			}
 		},
 

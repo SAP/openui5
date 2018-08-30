@@ -13,6 +13,12 @@ function (History, IssueManager, RuleSetLoader) {
 			executionScope: {
 				type: "",
 				selectors: ""
+			},
+			rulePreset: {
+				id: "",
+				title: "",
+				description: "",
+				dateExported: ""
 			}
 		},
 		applicationInfo: [
@@ -61,10 +67,10 @@ function (History, IssueManager, RuleSetLoader) {
 		name: "",
 		severity: ""
 	},
-	sReferenceFormattedHistory = "Run1---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|ruleid:breadcrumbsInOverflowToolbar||name:BreadcrumbsinOverflowToolbar||library:sap.m||categories:Usability||audiences:Control||description:TheBreadcrumbsshouldnotbeplacedinsideanOverflowToolbar||resolution:Placebreadcrumbsinanothercontainer.|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|id|classname|status|details|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------";
+	sReferenceFormattedHistory = "Run1-executedonRulePreset/ID:TestPreset/TestPreset---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|ruleid:breadcrumbsInOverflowToolbar||name:BreadcrumbsinOverflowToolbar||library:sap.m||categories:Usability||audiences:Control||description:TheBreadcrumbsshouldnotbeplacedinsideanOverflowToolbar||resolution:Placebreadcrumbsinanothercontainer.|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|id|classname|status|details|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------";
 
 	var compareJSON = function (oTemplateObj, oComparedObj) {
-		var aKeys = typeof oTemplateObj === "string" ? [] : Object.keys(oTemplateObj);
+		var aKeys = (typeof oTemplateObj === "string" || !oTemplateObj) ? [] : Object.keys(oTemplateObj);
 		var sError = "";
 
 		// check all keys
@@ -139,6 +145,16 @@ function (History, IssueManager, RuleSetLoader) {
 		};
 	};
 
+	var prepareHistoryString = function (sHistoryString) {
+		// Remove white spaces for string comparison.
+		var result = sHistoryString.replace(/\s/g, "");
+
+		// We can not compare execution date, so we remove it
+		result = result.replace(/executedon(.*)RulePreset/, "executedonRulePreset");
+
+		return result;
+	};
+
 	QUnit.module("History API test", {
 		beforeEach: function () {
 			this.oGetIssues = sinon.stub(IssueManager, "getIssues", function () {
@@ -196,7 +212,13 @@ function (History, IssueManager, RuleSetLoader) {
 						return "00:00:00:50";
 					}
 				},
-				_oSelectedRulesIds: {}
+				_oSelectedRulesIds: {},
+				_oSelectedRulePreset: {
+					id: "TestPreset",
+					title: "Test Preset",
+					description: "Description of test preset",
+					dateExported: ""
+				}
 			};
 		},
 		afterEach: function () {
@@ -261,6 +283,12 @@ function (History, IssueManager, RuleSetLoader) {
 		assert.ok(Array.isArray(oFormattedHistory[0].loadedLibraries[0].rules), "Rules should be an array.");
 		assert.ok(Array.isArray(oFormattedHistory[0].loadedLibraries[0].rules[0].issues), "Issues should be an array.");
 
+		assert.ok(oFormattedHistory[0].hasOwnProperty("rulePreset"), "Should have rule preset");
+		assert.ok(oFormattedHistory[0].rulePreset.hasOwnProperty("id"), "Rule preset should have id");
+		assert.ok(oFormattedHistory[0].rulePreset.hasOwnProperty("title"), "Rule preset should have title");
+		assert.ok(oFormattedHistory[0].rulePreset.hasOwnProperty("description"), "Rule preset should have description");
+		assert.ok(oFormattedHistory[0].rulePreset.hasOwnProperty("dateExported"), "Rule preset should have dateExported");
+
 		assert.ok(Array.isArray(oFormattedHistory[0].registrationIds), "Registration ids should be an array.");
 		assert.deepEqual(oFormattedHistory[0].registrationIds, ["F1234", "F5678", "F8888"], "Registration ids are correct.");
 	});
@@ -268,7 +296,7 @@ function (History, IssueManager, RuleSetLoader) {
 	QUnit.test("History getFormattedHistory - String format passed", function (assert) {
 		// Act
 		History.saveAnalysis(this.oContext);
-		var sFormattedHistory = History.getFormattedHistory(sap.ui.support.HistoryFormats.String).replace(/\s/g, ""); // Remove white spaces for string comparison.
+		var sFormattedHistory = prepareHistoryString(History.getFormattedHistory(sap.ui.support.HistoryFormats.String));
 
 		// Assert
 		assert.ok(sFormattedHistory === sReferenceFormattedHistory, "History should be a correctly formatted string.");
@@ -277,7 +305,7 @@ function (History, IssueManager, RuleSetLoader) {
 	QUnit.test("History getFormattedHistory - NO format passed", function (assert) {
 		// Act
 		History.saveAnalysis(this.oContext);
-		var sFormattedHistory = History.getFormattedHistory().replace(/\s/g, ""); // Remove white spaces for string comparison.
+		var sFormattedHistory = prepareHistoryString(History.getFormattedHistory());
 
 		// Assert
 		assert.ok(sFormattedHistory === sReferenceFormattedHistory, "History should be a correctly formatted string.");

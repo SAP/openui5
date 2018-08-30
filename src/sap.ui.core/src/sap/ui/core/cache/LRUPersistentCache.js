@@ -21,7 +21,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
 		 *
 		 * This implementation relies on existing configuration @see sap.ui.core.Configuration.
 		 *
-		 * Do not use it directly, use sap.ui.core.cache.CacheManager instead
+		 * Do not use it directly, use {@link sap.ui.core.cache.CacheManager} instead
 		 * @private
 		 * @experimental
 		 * @since 1.40.0

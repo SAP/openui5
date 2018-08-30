@@ -18,7 +18,7 @@ sap.ui.define([], function() {
 	 */
 
 	/**
-	 * Tokenizer for JS values.
+	 * @class Tokenizer for JS values.
 	 *
 	 * Contains functions to consume tokens on an input string.
 	 *
@@ -28,6 +28,7 @@ sap.ui.define([], function() {
 	 * });
 	 *
 	 * @alias module:sap/base/util/JSTokenizer
+	 * @since 1.58
 	 * @private
 	 * @ui5-restricted sap.ui.core
 	 */
@@ -307,8 +308,10 @@ sap.ui.define([], function() {
 		}
 	};
 
-	/*
+	/**
 	 * Returns the index of the current character.
+	 *
+	 * @private
 	 * @returns {int} The current character's index.
 	 */
 	JSTokenizer.prototype.getIndex = function() {
@@ -325,10 +328,11 @@ sap.ui.define([], function() {
 		this.ch = ' ';
 	};
 
-	/*
+	/**
 	 * Advances the index in the text to <code>iIndex</code>. Fails if the new index
 	 * is smaller than the previous index.
 	 *
+	 * @private
 	 * @param {int} iIndex - the new index
 	 */
 	JSTokenizer.prototype.setIndex = function(iIndex) {
@@ -344,8 +348,12 @@ sap.ui.define([], function() {
 	 * Return the parse function. It will have access to all of the above
 	 * functions and variables.
 	 *
-	 * @param {string} sSource - The js source
-	 * @param {int} iStart - The start position
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 * @static
+	 * @param {string} sSource The js source
+	 * @param {int} iStart The start position
+	 * @returns {object} the JavaScript object
 	 */
 	JSTokenizer.parseJS = function(sSource, iStart) {
 

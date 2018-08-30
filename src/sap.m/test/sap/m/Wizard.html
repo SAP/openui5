@@ -12,7 +12,8 @@
 		jQuery.sap.require("sap.m.WizardProgressNavigator");
 		jQuery.sap.require("sap.m.WizardStep");
 
-		var app = new sap.m.SplitApp();
+		var app = new sap.m.SplitApp(),
+			dialogIntegrationTest;
 
 		(function () {
 			var checkStep4 = function() {
@@ -547,6 +548,121 @@
 			});
 		})();
 
+		(function () {
+			var step1 = new sap.m.WizardStep({
+				validated : true,
+				icon: "sap-icon://permission",
+				content: [new sap.m.VBox({
+					items: [
+						new sap.m.Input("input-in-wiz-dialog"),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"})
+					]
+				})]
+			});
+			var step2 = new sap.m.WizardStep({
+				validated : true,
+				icon: "sap-icon://person-placeholder",
+				content: [new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"})
+					]
+				})],
+			});
+			var step3 = new sap.m.WizardStep({
+				validated: true,
+				icon: "sap-icon://simple-payment",
+				content: [new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"})
+					]
+				})],
+			});
+			var step4 = new sap.m.WizardStep({
+				validated: true,
+				icon: "sap-icon://simple-payment",
+				content: [new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"}),
+						new sap.m.Text({text: "Sample text"})
+					]
+				})],
+			});
+
+			var wizard = new sap.m.Wizard({
+				width:"100%",
+				showNextButton: true,
+				currentStep: step1,
+				steps: [step1, step2, step3, step4]
+			});
+
+			var dialog = new sap.m.Dialog({
+				id: "wiz-dialog",
+				contentHeight: "50%",
+				verticalScrolling: false,
+				initialFocus: "input-in-wiz-dialog",
+				beginButton: new sap.m.Button({
+					id: "navigate-btn",
+					text: "Navigate",
+					press: function () {
+						wizard.nextStep();
+					}
+				}),
+				endButton: new sap.m.Button({
+					id: "close-dialog-btn",
+					text: "Close",
+					press: function () {
+						dialog.close();
+					}
+				}),
+				content: [wizard]
+			});
+
+			var button = new sap.m.Button({
+				id: "open-dialog-btn",
+				text: "Open Dialog",
+				press: function() {
+					dialog.open();
+				}
+			});
+
+			dialogIntegrationTest = new sap.m.Page({
+				content: [button]
+			})
+		})();
+
 		var masterPage = new sap.m.Page({
 			title: "Navigation",
 			content: [
@@ -585,6 +701,13 @@
 							type: "Active",
 							press : function () {
 								app.toDetail("currentStep-wiz-page");
+							}
+						}),
+						new sap.m.StandardListItem('dialog-integration-wiz-sel',{
+							title: "Dialog Integration Test",
+							type: "Active",
+							press : function () {
+								app.toDetail("dialog-integration-wiz-page");
 							}
 						})
 					]
@@ -637,6 +760,14 @@
 				app.backDetail();
 			},
 			content: [currentStepTest]
+		}));
+		app.addDetailPage(new sap.m.Page("dialog-integration-wiz-page", {
+			showNavButton: jQuery.device.is.phone,
+			navButtonText: "Back",
+			navButtonPress: function() {
+				app.backDetail();
+			},
+			content: [dialogIntegrationTest]
 		}));
 
 		app.placeAt("content");

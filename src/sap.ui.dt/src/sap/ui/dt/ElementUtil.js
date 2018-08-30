@@ -5,19 +5,19 @@
 // Provides object sap.ui.dt.ElementUtil.
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/base/Object',
-	'sap/ui/base/ManagedObject',
-	'sap/ui/core/Element',
-	'sap/ui/dt/Util',
-	"sap/base/Log"
+	"sap/ui/base/Object",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/dt/Util",
+	"sap/base/Log",
+	"sap/ui/core/Component"
 ],
 function(
 	jQuery,
 	BaseObject,
 	ManagedObject,
-	Element,
 	Util,
-	Log
+	Log,
+	Component
 ) {
 	"use strict";
 
@@ -60,7 +60,7 @@ function(
 	ElementUtil.getElementInstance = function(vElement) {
 		if (typeof vElement === "string") {
 			var oElement = sap.ui.getCore().byId(vElement);
-			return oElement || sap.ui.getCore().getComponent(vElement);
+			return oElement || Component.get(vElement);
 		} else {
 			return vElement;
 		}
@@ -71,14 +71,19 @@ function(
 	 */
 	ElementUtil.hasAncestor = function(oElement, oAncestor) {
 		oAncestor = this.fixComponentContainerElement(oAncestor);
+		var oFixedParent;
 
-		var oParent = this.fixComponentParent(oElement);
-		while (oParent && oParent !== oAncestor) {
-			oParent = oParent.getParent();
-			oParent = this.fixComponentParent(oParent);
+		while (oElement && oElement !== oAncestor) {
+			oFixedParent = this.fixComponentParent(oElement);
+			// fixComponentParent already returns the parent
+			if (oElement === oFixedParent) {
+				oElement = oElement.getParent();
+			} else {
+				oElement = oFixedParent;
+			}
 		}
 
-		return !!oParent;
+		return !!oElement;
 	};
 
 	/**

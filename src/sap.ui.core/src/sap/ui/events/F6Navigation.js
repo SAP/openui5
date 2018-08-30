@@ -11,7 +11,6 @@ sap.ui.define([
 ], function(jQuery/*, sapTabbable */) {
 	"use strict";
 
-
 	/**
 	 * Central handler for F6 key event. Based on the current target and the given event the next element in the F6 chain is focused.
 	 *
@@ -21,25 +20,35 @@ sap.ui.define([
 	 * the handling is explicitly skipped (<code>oSettings.skip</code>) or the target (<code>oSettings.target</code>) is not contained
 	 * in the used scopes (<code>oSettings.scope</code>), the event is skipped.
 	 *
-	 * @param {jQuery.Event} oEvent a <code>keydown</code> event object.
-	 * @param {object} [oSettings] further options in case the handler is called manually.
-	 * @param {boolean} [oSettings.skip=false] whether the event should be ignored by the central handler (see above)
-	 * @param {Element} [oSettings.target=document.activeElement] the DOMNode which should be used as starting point to find the next DOMNode in the F6 chain.
-	 * @param {Element[]} [oSettings.scope=[document]] the DOMNodes(s) which are used for the F6 chain search
-	 */
-
-
-	/**
 	 * @namespace
+	 * @since 1.58
 	 * @alias module:sap/ui/events/F6Navigation
 	 * @private
 	 * @ui5-restricted sap.ui.core, sap.m, sap.uxap
 	 */
 	var F6Navigation = {};
 
-	// CustomData attribute name for fast navigation groups (in DOM additional prefix "data-" is needed)
+	/**
+	 * CustomData attribute name for fast navigation groups (in DOM additional prefix "data-" is needed)
+	 *
+	 * @type string
+	 * @const
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.m, sap.uxap
+	 */
 	F6Navigation.fastNavigationKey = "sap-ui-fastnavgroup";
 
+	/**
+	 * Handles the F6 key event.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.m, sap.uxap
+	 * @param {jQuery.Event} oEvent a <code>keydown</code> event object.
+	 * @param {object} [oSettings] further options in case the handler is called manually.
+	 * @param {boolean} [oSettings.skip=false] whether the event should be ignored by the central handler (see above)
+	 * @param {Element} [oSettings.target=document.activeElement] the DOMNode which should be used as starting point to find the next DOMNode in the F6 chain.
+	 * @param {Element[]} [oSettings.scope=[document]] the DOMNodes(s) which are used for the F6 chain search
+	 */
 	F6Navigation.handleF6GroupNavigation = function(oEvent, oSettings) {
 
 		// Returns the nearest parent DomRef of the given DomRef with attribute data-sap-ui-customfastnavgroup="true".

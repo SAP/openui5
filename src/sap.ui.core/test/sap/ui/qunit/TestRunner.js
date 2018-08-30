@@ -13,10 +13,10 @@
 	window.jsUnitTestSuite.prototype.addTestPage = function(sTestPage) {
 		this.aPages = this.aPages || [];
 		// in case of running in the root context the testsuites right now
-		// generate an invalid URL because it assumes that test-resources is
+		// generate an invalid URL because they assume that test-resources is
 		// the context path - this section makes sure to remove the duplicate
 		// test-resources segments in the path
-		if (sTestPage.indexOf("/test-resources/test-resources") === 0) {
+		if (sTestPage.indexOf("/test-resources/test-resources") === 0 || sTestPage.indexOf("/test-resources/resources") === 0) {
 			sTestPage = sTestPage.substr("/test-resources".length);
 		}
 		this.aPages.push(sTestPage);

@@ -266,7 +266,7 @@ sap.ui.define([
 	 *
 	 * @return {object} the current value of the bound target
 	 *
-	 *@throws sap.ui.model.FormatException
+	 * @throws {sap.ui.model.FormatException}
 	 *
 	 * @public
 	 */
@@ -288,7 +288,7 @@ sap.ui.define([
 	 *
 	 * @param {any[]} aValues - An array of values that are formatted to one value
 	 * @returns {any} the current value of the bound target
-	 * @throws sap.ui.model.FormatException
+	 * @throws {sap.ui.model.FormatException}
 	 * @private
 	 */
 	CompositeBinding.prototype._toExternalValue = function(aValues) {

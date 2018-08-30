@@ -17,6 +17,9 @@ sap.ui.define([], function() {
 	 *
 	 * Instead of returning null a copy of document.body.style gets returned in order to provide all functions of CSS declaration.
 	 *
+	 * @function
+	 * @private
+	 * @since 1.58
 	 * @return {function} Copy of document.body.style
 	 */
 	var fnGetComputedStyleFix = function() {

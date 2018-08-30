@@ -1389,6 +1389,9 @@ sap.ui.define([
 	 * The given function will either be called as soon as the framework has been initialized
 	 * or, if it has been initialized already, it will be called immediately.
 	 *
+	 * More information about the initialization process and the steps it consists of can be found
+	 * in the documentation topic "{@link topic:91f2c9076f4d1014b6dd926db0e91070 Initialization Process}".
+	 *
 	 * @param {function} fnFunction Function to be after initialization of the framework
 	 * @public
 	 * @since 1.13.2
@@ -3098,9 +3101,16 @@ sap.ui.define([
 
 
 	/**
-	 * Returns the registered element for the given id, if any.
-	 * @param {string} sId
-	 * @return {sap.ui.core.Element} the element for the given id
+	 * Returns the registered element with the given ID, if any.
+	 *
+	 * The ID must be the globally unique ID of an element, the same as returned by <code>oElement.getId()</code>.
+	 * When the element has been created from a declarative source (e.g. XMLView), that source might have used
+	 * a shorter, non-unique local ID. A search for such a local ID cannot be executed with this method.
+	 * It can only be executed on the corresponding scope (e.g. on an XMLView instance), by using the
+	 * {@link sap.ui.core.mvc.View#byId View#byId} method of that scope.
+	 *
+	 * @param {string} sId ID of the element to search for
+	 * @return {sap.ui.core.Element} Element with the given ID or <code>undefined</code>
 	 * @public
 	 */
 	Core.prototype.byId = function(sId) {

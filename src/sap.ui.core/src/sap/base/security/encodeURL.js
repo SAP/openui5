@@ -40,6 +40,7 @@ sap.ui.define(["sap/base/strings/toHex"], function(toHex) {
 	 * Unescaped characters: alphabetic, decimal digits, -_. (dash, underscore, point)
 	 *
 	 * @function
+	 * @since 1.58
 	 * @alias module:sap/base/security/encodeURL
 	 * @param {string} sString The string to be escaped
 	 * @returns {string} The encoded string

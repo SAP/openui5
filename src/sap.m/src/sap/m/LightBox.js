@@ -588,14 +588,18 @@ sap.ui.define([
 		 */
 		LightBox.prototype._calculateAndSetLightBoxSize = function (image) {
 			var imageHeight,
+				imageWidth,
 				lightBoxMinWidth = (20 /*rem*/ * 16 /*px*/),
 				lightBoxMinHeight = (18 /*rem*/ * 16 /*px*/),
 				iFooterHeightPx = this._calculateFooterHeightInPx();
 
 			imageHeight = this._pxToNumber(image.getHeight());
+			imageWidth = this._pxToNumber(image.getWidth());
 
-			this._width = Math.max(lightBoxMinWidth, this._pxToNumber(image.getWidth()));
+			this._width = Math.max(lightBoxMinWidth, imageWidth);
 			this._height = Math.max(lightBoxMinHeight, imageHeight + iFooterHeightPx);
+
+			this._isLightBoxBiggerThanMinDimensions = (imageWidth >= lightBoxMinWidth) && (imageHeight >= (lightBoxMinHeight - iFooterHeightPx));
 		};
 
 		/**

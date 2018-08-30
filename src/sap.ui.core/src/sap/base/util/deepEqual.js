@@ -10,11 +10,11 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 	"use strict";
 
 	/**
-	 * Compares the two given values for equality, especially takes care not to compare
-	 * arrays and objects by reference, but compares their content.
+	 * Compares the two given values for equality, especially by comparing the content.
 	 * Note: function does not work with comparing XML objects
 	 *
 	 * @function
+	 * @since 1.58
 	 * @param {any} a A value of any type
 	 * @param {any} b A value of any type
 	 * @param {int} [maxDepth=10] Maximum recursion depth

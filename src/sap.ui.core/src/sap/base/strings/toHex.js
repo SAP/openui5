@@ -17,6 +17,7 @@ sap.ui.define([], function() {
 	 * });
 	 *
 	 * @function
+	 * @since 1.58
 	 * @private
 	 * @alias module:sap/strings/toHex
 	 * @param {int} iChar UTF-16 character code

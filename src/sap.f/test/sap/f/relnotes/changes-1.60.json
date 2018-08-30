@@ -1,0 +1,13 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "bed3d6d5d26b256c85bd3e476173616092f866e5",
+        "type": "FIX",
+        "text": " FlexibleColumnLayout: LocalBusyIndicator\u0027s z-index is fixed",
+        "references": []
+      }
+    ]
+  }
+}

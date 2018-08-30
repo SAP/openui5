@@ -54,6 +54,7 @@
 		assert.ok($oAvatar.hasClass("sapFAvatarIcon"), sPreAvatarType + "Icon");
 		assert.ok($oAvatar.hasClass("sapMPointer"), "The cursor becomes pointer when hovering over the avatar");
 		assert.ok(($oAvatar !== undefined) && ($oAvatar != null), "Avatar should not be null");
+		assert.strictEqual($oAvatar.attr("role"), "button", "Aria role should be 'button'");
 	});
 
 	QUnit.module("Rendering different sizes", {
@@ -342,6 +343,34 @@
 	QUnit.test("Check if tooltip is present", function (assert) {
 		var $oAvatar = this.oAvatar.$();
 		assert.strictEqual($oAvatar.prop("title"), "sampleTooltip", "Tooltip is present");
+	});
+
+	QUnit.test("Check ARIA specific roles", function (assert) {
+		var $oAvatar = this.oAvatar.$(),
+			sDefaultTooltip = oCore.getLibraryResourceBundle("sap.f").getText("AVATAR_TOOLTIP");
+
+		assert.strictEqual($oAvatar.attr("role"), "img", "Aria role should be 'img'");
+		assert.strictEqual($oAvatar.attr("aria-label"), "sampleTooltip", "Aria-label equals the defined tooltip");
+
+		//act
+		this.oAvatar.setTooltip("");
+		oCore.applyChanges();
+		$oAvatar = this.oAvatar.$();
+
+		//assert
+		assert.strictEqual($oAvatar.attr("aria-label"), sDefaultTooltip, "Aria-label should be the default one");
+
+		//act
+		this.oAvatar.attachPress();
+
+		//assert
+		assert.strictEqual($oAvatar.attr("role"), "button", "Aria role should be 'button'");
+
+		//act
+		this.oAvatar.detachPress();
+
+		//assert
+		assert.strictEqual($oAvatar.attr("role"), "img", "Aria role should be 'img'");
 	});
 
 })();

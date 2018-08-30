@@ -14,6 +14,7 @@ sap.ui.define([], function() {
 	 * Checks whether the object is a plain object (created using "{}" or "new Object").
 	 *
 	 * @function
+	 * @since 1.58
 	 * @public
 	 * @alias module:sap/base/util/isPlainObject
 	 * @param {Object} obj the object which is checked

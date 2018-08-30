@@ -27,17 +27,14 @@ sap.ui.define([
 			var oDialog = new Dialog({
 				title: "Provide feedback",
 				content: [
-					new VBox({
-						fitContainer: true,
-						items: [
-							new RatingIndicator({
-								maxValue: 5
-							}), new TextArea({
-								placeholder: "What do you think about this item?",
-								rows: 5,
-								cols: 30
-							})
-						]
+					new RatingIndicator({
+						maxValue: 5
+					}),
+					new TextArea({
+						placeholder: "What do you think about this item?",
+						rows: 5,
+						cols: 30,
+						width: "100%"
 					})
 				],
 				beginButton: new Button({
@@ -67,7 +64,7 @@ sap.ui.define([
 						oDialog.close();
 					}
 				})
-			});
+			}).addStyleClass("sapUiContentPadding");
 			oDialog.open();
 		}
 	});

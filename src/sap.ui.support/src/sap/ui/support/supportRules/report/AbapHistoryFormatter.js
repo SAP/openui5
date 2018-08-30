@@ -9,8 +9,16 @@ sap.ui.define([], function () {
 	"use strict";
 
 	function _generateRootLevelKeys(oRun) {
+		var oRulePreset = oRun.analysisInfo.rulePreset;
+
 		return {
-			loadedLibraries: []
+			loadedLibraries: [],
+			rulePreset: {
+				id: oRulePreset && oRulePreset.id || "",
+				title: oRulePreset && oRulePreset.title || "",
+				description: oRulePreset && oRulePreset.description || "",
+				dateExported: oRulePreset && oRulePreset.dateExported || ""
+			}
 		};
 	}
 

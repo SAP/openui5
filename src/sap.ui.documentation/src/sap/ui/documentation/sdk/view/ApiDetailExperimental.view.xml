@@ -11,7 +11,8 @@
 		</headerTitle>
 		<headerContent>
 			<m:MessageStrip
-					text="Experimental features are not part of the officially delivered scope that SAP is going to guarantee for future releases – means experimental Features may be changed by SAP at any time for any reason without notice. The Experimental features are NOT FOR PRODUCTION USE. You may not demonstrate, test, examine, evaluate or otherwise use the Experimental Features in a live operating environment or with data that has not been sufficiently backed up. The purpose of Experimental features is to get feedback at an early point of time allowing customers/partners to influence the future product accordingly. Please use the SDN Developer Center http://scn.sap.com/community/developer-center/front-end to provide feedback accepting that Intellectual Property rights of the contributions or derivative works shall remain the exclusive property of SAP. For general information about Experimental features, please check the Compatibility Rules"
+					enableFormattedText="true"
+					text="Experimental features are not part of the officially delivered scope that SAP is going to guarantee for future releases – means experimental Features may be changed by SAP at any time for any reason without notice. The Experimental features are NOT FOR PRODUCTION USE. You may not demonstrate, test, examine, evaluate or otherwise use the Experimental Features in a live operating environment or with data that has not been sufficiently backed up. The purpose of Experimental features is to get feedback at an early point of time allowing customers/partners to influence the future product accordingly. Please use the SDN Developer Center &lt;a target='_blank' href='https://www.sap.com/developer/topics/ui5.html'&gt;https://www.sap.com/developer/topics/ui5.html&lt;/a&gt; to provide feedback accepting that Intellectual Property rights of the contributions or derivative works shall remain the exclusive property of SAP. For general information about Experimental features, please check the Compatibility Rules"
 					type="Warning"
 					showIcon="true"
 					class="specialListsMessageStrip" />
@@ -23,7 +24,9 @@
 			<ObjectPageSubSection>
 				<m:List items="{path: 'apis', templateShareable: 'false'}"
 						updateFinished="._modifyLinks"
-						showSeparators="Inner">
+						showSeparators="Inner"
+						class="sapUxAPObjectPageSubSectionAlignContent"
+						width="auto">
 					<m:items>
 						<m:FeedListItem
 								showIcon="false"

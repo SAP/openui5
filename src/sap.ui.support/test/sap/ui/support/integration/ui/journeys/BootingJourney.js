@@ -11,7 +11,7 @@ sap.ui.define([
 
 	opaTest("Should see the toolbar of the Support Assistant", function (Given, When, Then) {
 
-		Given.iStartMyApp();
+		Given.iStartMyAppAndDeletePersistedData();
 
 		Then.onTheMainPage.iShouldSeeTheToolbar();
 	});

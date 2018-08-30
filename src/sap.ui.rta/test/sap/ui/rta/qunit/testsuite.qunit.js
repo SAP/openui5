@@ -356,7 +356,7 @@ sap.ui.define([
 			"appVariant/ManageAppsUtils": {
 				group: "AppVariant",
 				coverage: {
-					only: ["sap/ui/rta/appVariant/AppVariantUtils"]
+					only: ["sap/ui/rta/appVariant/Utils"]
 				}
 			},
 			"appVariant/S4HanaCloudBackend": {
@@ -367,10 +367,10 @@ sap.ui.define([
 			},
 
 			// DesignTime Tool
-			"dttool/ListItem": {
+			"dttool/controls/ListItem": {
 				group: 'DtTool',
 				coverage: {
-					only: ["sap/ui/rta/dttool/DTToolListItem"]
+					only: ["sap/ui/rta/dttool/controls/DTToolListItem"]
 				},
 				ui5: {
 					resourceroots: {
@@ -378,10 +378,10 @@ sap.ui.define([
 					}
 				}
 			},
-			"dttool/OutlineTree": {
+			"dttool/controls/OutlineTree": {
 				group: 'DtTool',
 				coverage: {
-					only: ["sap/ui/rta/dttool/OutlineTree"]
+					only: ["sap/ui/rta/dttool/controls/OutlineTree"]
 				},
 				ui5: {
 					resourceroots: {
@@ -476,7 +476,8 @@ sap.ui.define([
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
 						}
-					}
+					},
+					autostart: false // test calls QUnit.start after some async initialization
 				},
 				"integration/BasicFunctionality": {
 					group: "Integration",

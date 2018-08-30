@@ -80,7 +80,7 @@ function(
 		}
 	}, function () {
 		QUnit.test("Given extensibility disabled in the system when isServiceUpToDate is called", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").returns(Promise.resolve(false));
+			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(false);
 
 			var isServiceOutdatedStub = this.sandbox.stub(Access, "isServiceOutdated");
 			var oAnything = {};
@@ -92,7 +92,7 @@ function(
 		});
 
 		QUnit.test("Given extensibility enabled and an unbound control when isServiceUpToDate is called", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").returns(Promise.resolve(true));
+			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
 			var isServiceOutdatedStub = this.sandbox.stub(Access, "isServiceOutdated");
 			var oUnboundControl = new Button({text: "unbound"});
 
@@ -102,7 +102,7 @@ function(
 		});
 
 		QUnit.test("Given extensibility enabled and a bound control and a not outdated service when isServiceUpToDate is called", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").returns(Promise.resolve(true));
+			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
 			var isServiceOutdatedStub = this.sandbox.stub(Access, "isServiceOutdated").returns(false);
 			var setServiceValidStub = this.sandbox.stub(Access, "setServiceValid");
 
@@ -117,7 +117,7 @@ function(
 		});
 
 		QUnit.test("Given extensibility enabled and a bound control and an outdated service when isServiceUpToDate is called", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").returns(Promise.resolve(true));
+			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
 			this.sandbox.stub(Access, "isServiceOutdated").returns(true);
 			var setServiceValidStub = this.sandbox.stub(Access, "setServiceValid");
 
@@ -135,7 +135,7 @@ function(
 		});
 
 		QUnit.test("Given extensibility disabled when isCustomFieldAvailable is called", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").returns(Promise.resolve(false));
+			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(false);
 
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
@@ -145,7 +145,7 @@ function(
 		});
 
 		QUnit.test("Given extensibility enabled and a custom field enabled bound control when isCustomFieldAvailable is called", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").returns(Promise.resolve(true));
+			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
 			this.sandbox.stub(Access, "getBusinessContexts").returns(
 					Promise.resolve(JSON.parse(JSON.stringify(this.STUB_EXTENSIBILITY_BUSINESS_CTXT))));
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
@@ -158,8 +158,49 @@ function(
 			});
 		});
 
+		QUnit.test("Given extensibility enabled and a custom field enabled bound control with an empty business context array, when isCustomFieldAvailable is called", function(assert) {
+			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
+			this.sandbox.stub(Access, "getBusinessContexts").returns(
+				Promise.resolve({ BusinessContexts: [] })
+			);
+			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
+			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult){
+				assert.strictEqual(vResult, false, "then the custom field is disabled");
+			});
+		});
+
+		QUnit.test("Given extensibility enabled and a custom field enabled bound control, when isCustomFieldAvailable is called and 'sap.ui.fl.fieldExt.Access' cannot be loaded", function(assert) {
+			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
+			this.sandbox.stub(sap.ui, "require")
+				.callThrough()
+				.withArgs(["sap/ui/fl/fieldExt/Access"], sinon.match.any, sinon.match.any)
+				.callsFake(function(sModule, fnResolve, fnReject){
+					fnReject();
+				});
+
+			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
+			return Utils.isCustomFieldAvailable(oBoundControl).then(
+				function () {
+					assert.ok(false, "then the returned promise should not be resolved");
+				}, function () {
+					assert.ok(true, "then the returned promise is rejected");
+				}
+			);
+		});
+
+		QUnit.test("Given extensibility enabled and a custom field enabled bound control, when isCustomFieldAvailable is called", function(assert) {
+			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
+			this.sandbox.stub(Access, "getBusinessContexts").returns(
+				Promise.resolve()
+			);
+			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
+			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult){
+				assert.strictEqual(vResult, false, "then the custom field is disabled");
+			});
+		});
+
 		QUnit.test("Given extensibility enabled and unbound control when isCustomFieldAvailable is called", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").returns(Promise.resolve(true));
+			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
 
 			return Utils.isCustomFieldAvailable(new Button()).then(function(vResult){
 				assert.strictEqual(vResult, false, "then custom fields is disabled");
@@ -167,8 +208,8 @@ function(
 		});
 
 		QUnit.test("Given extensibility enabled and non custom field enabled bound control when isCustomFieldAvailable is called", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").returns(Promise.resolve(true));
-			this.sandbox.stub(Access, "getBusinessContexts").returns(Promise.resolve());
+			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
+			this.sandbox.stub(Access, "getBusinessContexts").resolves();
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
 			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult){
@@ -177,7 +218,7 @@ function(
 		});
 
 		QUnit.test("Given extensibility enabled and custom field logic rejects call when isCustomFieldAvailable is called", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").returns(Promise.resolve(true));
+			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
 			this.sandbox.stub(Access, "getBusinessContexts").returns(
 					Promise.reject(new Error("some simulated error"))
 			);
@@ -189,7 +230,7 @@ function(
 		});
 
 		QUnit.test("Given extensibility enabled and custom field logic throws error when isCustomFieldAvailable is called", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").returns(Promise.resolve(true));
+			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
 			this.sandbox.stub(Access, "getBusinessContexts").throws(new Error("some simulated error"));
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 

@@ -39,6 +39,7 @@ sap.ui.define(["sap/base/strings/toHex"], function(toHex) {
 	 * Encode the string for inclusion into XML content/attribute.
 	 *
 	 * @function
+	 * @since 1.58
 	 * @alias module:sap/base/security/encodeXML
 	 * @param {string} sString The string to be escaped
 	 * @returns {string} The encoded string

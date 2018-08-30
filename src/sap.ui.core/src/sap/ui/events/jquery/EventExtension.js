@@ -9,17 +9,18 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/events/PseudoEvents"
 ], function(jQuery, PseudoEvents) {
 	"use strict";
 
-	var EventExtension = Object.create(null);
-
-	var _bIsApplied = false;
-
-	/*
-	 * Applies the jQuery.Event extensions
+	/**
+	 * Provides the jQuery.Event extensions.
 	 *
+	 * @namespace
 	 * @alias module:sap/ui/events/jquery/EventExtension
 	 * @private
 	 * @ui5-restricted sap.ui.core
 	 */
+	var EventExtension = Object.create(null);
+
+	var _bIsApplied = false;
+
 	EventExtension.apply = function() {
 
 		if (_bIsApplied) {
@@ -27,10 +28,23 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/events/PseudoEvents"
 		}
 		_bIsApplied = true;
 
-		/*
+
+		/**
+		 * Constructor for a jQuery.Event object.
+		 *
+		 * See "http://www.jquery.com" and "http://api.jquery.com/category/events/event-object/".
+		 *
+		 * @class Check the jQuery.Event class documentation available under "http://www.jquery.com"
+		 * and "http://api.jquery.com/category/events/event-object/" for details.
+		 *
+		 * @name jQuery.Event
+		 * @public
+		 */
+
+		/**
 		 * Returns an array of names (as strings) identifying {@link sap/ui/events/PseudoEvents} that are fulfilled by this very Event instance.
 		 *
-		 * @returns {String[]} Array of names identifying {@link sap/ui/events/PseudoEvents} that are fulfilled by this very Event instance.
+		 * @returns {String[]} Array of names identifying {@link module:sap/ui/events/PseudoEvents} that are fulfilled by this very Event instance.
 		 * @public
 		 */
 		jQuery.Event.prototype.getPseudoTypes = function() {
@@ -58,7 +72,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/events/PseudoEvents"
 			return aPseudoTypes.slice();
 		};
 
-		/*
+		/**
 		 * Checks whether this instance of {@link jQuery.Event} is of the given <code>sType</code> pseudo type.
 		 *
 		 * @param {string} sType The name of the pseudo type this event should be checked for.
@@ -75,7 +89,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/events/PseudoEvents"
 			}
 		};
 
-		/*
+		/**
 		 * Returns OffsetX of Event. In jQuery there is a bug. In IE the value is in offsetX, in FF in layerX
 		 *
 		 * @returns {int} offsetX
@@ -98,7 +112,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/events/PseudoEvents"
 			return 0;
 		};
 
-		/*
+		/**
 		 * Returns OffsetY of Event. In jQuery there is a bug. in IE the value is in offsetY, in FF in layerY.
 		 *
 		 * @returns {int} offsetY
@@ -122,10 +136,6 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/events/PseudoEvents"
 		};
 
 		/**
-		 * PRIVATE EXTENSION: allows to immediately stop the propagation of events in
-		 * the event handler execution - means that "before" delegates can stop the
-		 * propagation of the event to other delegates or the element and so on.
-		 * @public
 		 * @returns {function} wrapped stopImmediatePropagation function
 		 * @param {function} fnStopImmediatePropagation original stopImmediatePropagation function
 		 */

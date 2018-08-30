@@ -13,6 +13,30 @@
         "type": "FIX",
         "text": " sap.ui.unified.FileUploader: returns empty string now when file has no extension",
         "references": []
+      },
+      {
+        "id": "46848fb5fe0c5239e0ab0c50f9f9673cae7d76d0",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: button is not cut when displaying two months and years in Bulgarian",
+        "references": []
+      },
+      {
+        "id": "fdb8e9bf8d5e0bbd8355b5263b12d61f9304ef38",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
+        "references": []
+      },
+      {
+        "id": "ba19e4a9bfdbae0621a09eec0f1121def4be359f",
+        "type": "FIX",
+        "text": " unified.ColorPicker: Hue value of 360 is the same as 0",
+        "references": []
+      },
+      {
+        "id": "3a20f688956e350dfd83b74a00856d724a8842ab",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Now the dialog\u0027s style is not broken",
+        "references": []
       }
     ]
   }

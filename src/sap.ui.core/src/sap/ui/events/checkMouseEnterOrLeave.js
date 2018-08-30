@@ -9,8 +9,9 @@ sap.ui.define([], function() {
 	 * equivalent to a mouseenter or mouseleave event regarding the given DOM reference.
 	 *
 	 * @function
+	 * @since 1.58
 	 * @public
-	 * @alias module:sap/base/events/checkMouseEnterOrLeave
+	 * @alias module:sap/ui/events/checkMouseEnterOrLeave
 	 * @param {jQuery.Event} oEvent The Mouse Event
 	 * @param {Element} oDomRef The domref of the element to check
 	 * @returns {boolean} True if the provided event is equivalent

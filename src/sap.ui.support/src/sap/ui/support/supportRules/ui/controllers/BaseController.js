@@ -29,6 +29,7 @@ sap.ui.define([
 				this.persistVisibleColumns();
 				SelectionUtils.persistSelection();
 				PresetsUtils.persistSelectionPresets();
+				PresetsUtils.persistCustomPresets();
 
 			} else {
 				storage.deletePersistenceCookie(constants.COOKIE_NAME);

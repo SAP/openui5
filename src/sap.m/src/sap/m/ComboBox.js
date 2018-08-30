@@ -612,6 +612,8 @@ sap.ui.define([
 				return;
 			}
 
+			this.$().addClass("sapMFocus");
+
 			var bToggleOpenState = (this.getPickerType() === "Dropdown");
 
 			this.loadItems(function() {
@@ -652,6 +654,8 @@ sap.ui.define([
 							oControl.updateDomValue(aCommonStartsWithItems[0].getText());
 							this.setSelection(aCommonStartsWithItems[0]);
 						}
+					} else {
+						this.setSelection(aCommonStartsWithItems[0]);
 					}
 
 					if (oSelectedItem !== this.getSelectedItem()) {
@@ -750,7 +754,7 @@ sap.ui.define([
 			this.updateDomValue(sText);
 
 			// if a highlighted item is pressed fire change event
-			if (this.getPickerType() === "Dropdown" && !bSelectedItemChanged) {
+			if (!bSelectedItemChanged) {
 				mParam.itemPressed = true;
 				this.onChange(null, mParam);
 			}
@@ -1246,15 +1250,13 @@ sap.ui.define([
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		ComboBox.prototype.onsapfocusleave = function(oEvent) {
-
 			this.bIsFocused = false;
 			var bTablet, oPicker,
 				oRelatedControl, oFocusDomRef,
-				oControl = oEvent.srcControl,
-				oItem = oControl.getSelectedItem();
+				oItem = this.getSelectedItem();
 
 			if (oItem && this.getFilterSecondaryValues()) {
-				oControl.updateDomValue(oItem.getText());
+				this.updateDomValue(oItem.getText());
 			}
 
 			ComboBoxBase.prototype.onsapfocusleave.apply(this, arguments);
@@ -1297,6 +1299,10 @@ sap.ui.define([
 			if (oList) {
 				oList.setSelection(vItem);
 			}
+
+			// if there is selected item, put the visual focus on it
+			// instead on the input field
+			this.$().toggleClass("sapMFocus", !vItem);
 
 			this.setAssociation("selectedItem", vItem, true);
 			this.setProperty("selectedItemId", (vItem instanceof Item) ? vItem.getId() : vItem, true);
@@ -1540,10 +1546,6 @@ sap.ui.define([
 				oList = this.getList();
 
 			if (!this.isBound("items") && oList) {
-				for (var i = 0, aItems = oList.getItems(); i < aItems.length; i++) {
-					oComboBoxClone.addItem(aItems[i].clone());
-				}
-
 				oComboBoxClone.setSelectedIndex(this.indexOfItem(this.getSelectedItem()));
 			}
 

@@ -201,13 +201,13 @@ sap.ui.define([
 	}
 
 	/**
-	 * @interface Contains locale-specific texts.
+	 * @class Contains locale-specific texts.
 	 *
 	 * If you need a locale-specific text within your application, you can use the
 	 * resource bundle to load the locale-specific file from the server and access
 	 * the texts of it.
 	 *
-	 * Use {@link sap/base/i18n/ResourceBundle.create} to create an instance of sap/base/i18n/ResourceBundle
+	 * Use {@link module:sap/base/i18n/ResourceBundle.create} to create an instance of sap/base/i18n/ResourceBundle
 	 * (.properties without any locale information, e.g. "mybundle.properties"), and optionally
 	 * a locale. The locale is defined as a string of the language and an optional country code
 	 * separated by underscore (e.g. "en_GB" or "fr"). If no locale is passed, the default
@@ -230,11 +230,10 @@ sap.ui.define([
 	 *
 	 * Exception: Fallback for "zh_HK" is "zh_TW" before zh.
 	 *
-	 * @author SAP SE
-	 * @version ${version}
-	 * @function
+	 * @since 1.58
 	 * @alias module:sap/base/i18n/ResourceBundle
 	 * @public
+	 * @hideconstructor
 	 */
 	function ResourceBundle(sUrl, sLocale, bIncludeInfo, bAsync){
 		this.sLocale = this._sNextLocale = normalize(sLocale) || defaultLocale();
@@ -259,11 +258,11 @@ sap.ui.define([
 	 * bundle wins against the previous ones and the original ones. This function
 	 * can be called several times.
 	 *
-	 * @param {sap/base/i18n/ResourceBundle} oBundle an instance of a <code>sap/base/i18n/ResourceBundle</code>
+	 * @param {module:sap/base/i18n/ResourceBundle} oCustomBundle an instance of a <code>sap/base/i18n/ResourceBundle</code>
 	 * @private
 	 *
 	 * @function
-	 * @name sap/base/i18n/ResourceBundle.prototype._enhance
+	 * @name module:sap/base/i18n/ResourceBundle.prototype._enhance
 	 */
 	ResourceBundle.prototype._enhance = function(oCustomBundle) {
 		if (oCustomBundle instanceof ResourceBundle) {
@@ -278,24 +277,25 @@ sap.ui.define([
 	 * Returns a locale-specific string value for the given key sKey.
 	 *
 	 * The text is searched in this resource bundle according to the fallback chain described in
-	 * {@link sap/base/i18n/ResourceBundle}. If no text could be found, the key itself is used as text.
+	 * {@link module:sap/base/i18n/ResourceBundle}. If no text could be found, the key itself is used as text.
 	 *
 	 * If the second parameter<code>aArgs</code> is given, then any placeholder of the form "{<i>n</i>}"
 	 * (with <i>n</i> being an integer) is replaced by the corresponding value from <code>aArgs</code>
 	 * with index <i>n</i>.  Note: This replacement is applied to the key if no text could be found.
-	 * For more details on the replacement mechanism refer to {@link sap/ui/formatMessage}.
+	 * For more details on the replacement mechanism refer to {@link module:sap/ui/formatMessage}.
 	 *
 	 * @param {string} sKey Key to retrieve the text for
 	 * @param {string[]} [aArgs] List of parameter values which should replace the placeholders "{<i>n</i>}"
 	 *     (<i>n</i> is the index) in the found locale-specific string value. Note that the replacement is done
 	 *     whenever <code>aArgs</code> is given, no matter whether the text contains placeholders or not
 	 *     and no matter whether <code>aArgs</code> contains a value for <i>n</i> or not.
-	 * @returns {string} The value belonging to the key, if found; otherwise the key itself.
+	 * @param {boolean} bIgnoreKeyFallback If set, <code>undefined</code> is returned when the key is not found in any bundle or fallback bundle, instead of the key string.
+	 * @returns {string} The value belonging to the key, if found; Otherwise the key itself or <code>undefined</code> depending on bIgnoreKeyFallback.
 	 *
 	 * @function
 	 * @public
 	 */
-	ResourceBundle.prototype.getText = function(sKey, aArgs){
+	ResourceBundle.prototype.getText = function(sKey, aArgs, bIgnoreKeyFallback){
 
 		// 1. try to retrieve text from properties (including custom properties)
 		var sValue = this._getTextFromProperties(sKey, aArgs);
@@ -310,8 +310,11 @@ sap.ui.define([
 		}
 
 		assert(false, "could not find any translatable text for key '" + sKey + "' in bundle '" + this.oUrlInfo.url + "'");
-
-		return this._formatValue(sKey, sKey, aArgs);
+		if (bIgnoreKeyFallback){
+			return undefined;
+		} else {
+			return this._formatValue(sKey, sKey, aArgs);
+		}
 	};
 
 	/**
@@ -541,7 +544,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Creates and returns a new instance of {@link sap/base/i18n/ResourceBundle}
+	 * Creates and returns a new instance of {@link module:sap/base/i18n/ResourceBundle}
 	 * using the given URL and locale to determine what to load.
 	 *
 	 * @public

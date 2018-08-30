@@ -192,9 +192,18 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns an array with the names of the public methods declared by the described class.
+	 * Returns an array with the names of the public methods declared by the described class, methods of
+	 * ancestors are not listed.
 	 *
 	 * @return {string[]} array with names of public methods declared by the described class
+	 * @deprecated As of 1.58, this method should not be used for productive code. The accuracy of the returned
+	 *       information highly depends on the concrete class and is not actively monitored. There might be
+	 *       more public methods or some of the returned methods might not really be intended for public use.
+	 *       In general, pure visibility information should not be exposed in runtime metadata but be part of the
+	 *       documentation.
+	 *       Subclasses of <code>sap.ui.base.Object</code> might decide to provide runtime metadata describing
+	 *       their public API, but this then should not be backed by this method.
+	 *       See {@link sap.ui.core.mvc.ControllerMetadata#getAllMethods} for an example.
 	 * @public
 	 */
 	Metadata.prototype.getPublicMethods = function() {
@@ -204,9 +213,17 @@ sap.ui.define([
 
 	/**
 	 * Returns an array with the names of all public methods declared by the described class
-	 * and its ancestors.
+	 * and all its ancestors classes.
 	 *
 	 * @return {string[]} array with names of all public methods provided by the described class and its ancestors
+	 * @deprecated As of 1.58, this method should not be used for productive code. The accuracy of the returned
+	 *       information highly depends on the concrete class and is not actively monitored. There might be
+	 *       more public methods or some of the returned methods might not really be intended for public use.
+	 *       In general, pure visibility information should not be exposed in runtime metadata but be part of the
+	 *       documentation.
+	 *       Subclasses of <code>sap.ui.base.Object</code> might decide to provide runtime metadata describing
+	 *       their public API, but this then should not be backed by this method.
+	 *       See {@link sap.ui.core.mvc.ControllerMetadata#getAllMethods} for an example.
 	 * @public
 	 */
 	Metadata.prototype.getAllPublicMethods = function() {

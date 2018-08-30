@@ -11,6 +11,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', 'sap/base/asser
 	 * If the class name is not found, it is also removed from the target DOM element.
 	 *
 	 * @function
+	 * @since 1.58
 	 * @param {string} sStyleClass CSS class name
 	 * @param {jQuery|sap.ui.core.Control|string} vSource jQuery object, control or an id of the source element.
 	 * @param {jQuery|sap.ui.core.Control} vDestination target jQuery object or a control.

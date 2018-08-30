@@ -28,6 +28,23 @@ sap.ui.define([
 	/**
 	 * Constructs and initializes a UI Element with the given <code>sId</code> and settings.
 	 *
+	 *
+	 * <h3>Uniqueness of IDs</h3>
+	 *
+	 * Each <code>Element</code> must have an ID. If no <code>sId</code> or <code>mSettings.id</code> is
+	 * given at construction time, a new ID will be created automatically. The IDs of all elements that exist
+	 * at the same time in the same window must be different. Providing an ID which is already used by another
+	 * element throws an error.
+	 *
+	 * When an element is created from a declarative source (e.g. XMLView), then an ID defined in that
+	 * declarative source needs to be unique only within the declarative source. Declarative views will
+	 * prefix that ID with their own ID (and some separator) before constructing the element.
+	 * Programmatically created views (JSViews) can do the same with the {@link sap.ui.core.mvc.View#createID} API.
+	 * Similarly, UIComponents can prefix the IDs of elements created in their context with their own ID.
+	 * Also see {@link sap.ui.core.UIComponent#getAutoPrefixId UIComponent#getAutoPrefixId}.
+	 *
+	 *
+	 * <h3>Settings</h3>
 	 * If the optional <code>mSettings</code> are given, they must be a JSON-like object (object literal)
 	 * that defines values for properties, aggregations, associations or events keyed by their name.
 	 *
@@ -493,14 +510,9 @@ sap.ui.define([
 	};
 
 
-	/**
-	 * Fires the given event and notifies all listeners. Listeners must not change
-	 * the content of the event.
-	 *
-	 * @param {string} sEventId the event id
-	 * @param {object} mParameters the parameter map
-	 * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
-	 * @protected
+	/*
+	 * Class <code>sap.ui.core.Element</code> intercepts fireEvent calls to enforce an 'id' property
+	 * and to notify others like interaction detection etc.
 	 */
 	Element.prototype.fireEvent = function(sEventId, mParameters, bAllowPreventDefault, bEnableEventBubbling) {
 		if (this.hasListeners(sEventId)) {

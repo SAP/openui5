@@ -33,6 +33,7 @@ sap.ui.define(["sap/base/strings/toHex"], function(toHex) {
 	 * Encode the string for inclusion into a JS string literal.
 	 *
 	 * @function
+	 * @since 1.58
 	 * @alias module:sap/base/security/encodeJS
 	 * @param {string} sString The string to be escaped
 	 * @returns {string} The encoded string

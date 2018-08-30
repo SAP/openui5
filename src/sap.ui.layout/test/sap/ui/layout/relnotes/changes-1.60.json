@@ -7,6 +7,18 @@
         "type": "FIX",
         "text": " sap.ui.layout.HorizontalLayout: visual tests fixed for mobile device",
         "references": []
+      },
+      {
+        "id": "45890356f8b98112aa79ec67fed796a100754507",
+        "type": "FIX",
+        "text": " ResponsiveGridLayout: Form cells must have overflow hidden",
+        "references": []
+      },
+      {
+        "id": "cea62422cec6680c6501c6c4211eff10054e2f21",
+        "type": "FIX",
+        "text": "sap.ui.layout - Flexibility: Check actions based on form layout",
+        "references": []
       }
     ]
   }

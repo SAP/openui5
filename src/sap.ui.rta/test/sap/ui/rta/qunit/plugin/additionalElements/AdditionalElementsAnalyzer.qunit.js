@@ -3,16 +3,28 @@
 sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
 	"sap/ui/dt/ElementUtil",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	'sap/ui/rta/util/BindingsExtractor',
+	'sap/ui/thirdparty/sinon-4'
 ],
 function(
 	AdditionalElementsAnalyzer,
 	ElementUtil,
-	JSONModel
+	JSONModel,
+	BindingsExtractor,
+	sinon
 ) {
 	"use strict";
 
-	QUnit.module("Given a test view", function () {
+	var sandbox = sinon.sandbox.create();
+
+	QUnit.module("Given a test view",
+	{
+		afterEach: function() {
+			sandbox.restore();
+		}
+	},
+	function () {
 
 		QUnit.test("checks if navigation and absolute binding works", function(assert) {
 			var oGroupElement1 = oView.byId("EntityType02.NavigationProperty"); // With correct navigation binding
@@ -86,7 +98,7 @@ function(
 					tooltip : "Invisible ObjectPage Section",
 					type : "invisible",
 					elementId : "idMain1--ObjectPageSectionInvisible",
-					bindingPaths: []
+					bindingPaths: undefined
 				}, "the invisible section is found", assert);
 				assertElementsEqual(aAdditionalElements[1], {
 					selected : false,
@@ -367,6 +379,41 @@ function(
 					}
 				}
 			};
+
+			function fnIsFieldPresent(oElement) {
+				return oElement.label === oGroupElement1.getLabelText();
+			}
+
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
+				assert.ok(aAdditionalElements.some(fnIsFieldPresent), "then the field is available on the dialog");
+			});
+		});
+
+		QUnit.test("when getting invisible elements of a bound group containing a removed field with other binding context without addODataProperty action", function(assert) {
+			var oGroup = oView.byId("OtherGroup");
+			var oGroupElement1 = oView.byId("NavForm.EntityType01.Prop1");
+			oGroupElement1.setVisible(false);
+			sap.ui.getCore().applyChanges();
+
+			var oActionsObject = {
+				aggregation: "formElements",
+				reveal : {
+					elements : [oGroupElement1],
+					types : {
+						"sap.ui.comp.smartform.GroupElement" : {
+							action : {
+								//nothing relevant for the analyzer
+							}
+						}
+					}
+				}
+			};
+
+			sandbox.stub(oGroup, "getBindingContext")
+				.returns({ getPath: function() { return "/fake/binding/path/group"; }});
+			sandbox.stub(oGroupElement1, "getBindingContext")
+				.returns({ getPath: function() { return "/fake/binding/path/groupElement1"; }});
+			sandbox.stub(BindingsExtractor, "getBindings").returns(["fakeBinding"]);
 
 			function fnIsFieldPresent(oElement) {
 				return oElement.label === oGroupElement1.getLabelText();

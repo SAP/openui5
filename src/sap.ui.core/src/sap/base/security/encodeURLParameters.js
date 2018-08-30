@@ -11,6 +11,7 @@ sap.ui.define(
 	 * Encode a map of parameters into a combined URL parameter string.
 	 *
 	 * @function
+	 * @since 1.58
 	 * @alias module:sap/base/security/encodeURLParameters
 	 * @param {Object} mParams The map of parameters to encode
 	 * @returns {string} The URL encoded parameter string

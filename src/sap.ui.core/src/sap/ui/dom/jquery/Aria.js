@@ -5,15 +5,18 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	"use strict";
 
 	/**
-	 * Applies the Aria related jQuery function extensions:
-	 * @see jQuery#addAriaLabelledBy
-	 * @see jQuery#removeAriaLabelledBy
-	 * @see jQuery#addAriaDescribedBy
-	 * @see jQuery#removeAriaDescribedBy
+	 * This module provides the following API:
+	 * <ul>
+	 * <li>{@link jQuery#addAriaLabelledBy}</li>
+	 * <li>{@link jQuery#removeAriaLabelledBy}</li>
+	 * <li>{@link jQuery#addAriaDescribedBy}</li>
+	 * <li>{@link jQuery#removeAriaDescribedBy}</li>
+	 * </ul>
 	 *
 	 * @namespace
-	 * @alias module:sap/ui/dom/jquery/Aria
+	 * @name module:sap/ui/dom/jquery/Aria
 	 * @public
+	 * @since 1.58
 	 */
 
 	/**
@@ -86,6 +89,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	 * @author SAP SE
 	 * @since 1.30.0
 	 * @function
+	 * @requires module:sap/ui/dom/jquery/Aria
 	 */
 	jQuery.fn.addAriaLabelledBy = function(sId, bPrepend) {
 		return addToAttributeList.call(this, "aria-labelledby", sId, bPrepend);
@@ -101,6 +105,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	 * @author SAP SE
 	 * @since 1.30.0
 	 * @function
+	 * @requires module:sap/ui/dom/jquery/Aria
 	 */
 	jQuery.fn.removeAriaLabelledBy = function(sId) {
 		return removeFromAttributeList.call(this, "aria-labelledby", sId);
@@ -117,6 +122,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	 * @author SAP SE
 	 * @since 1.30.0
 	 * @function
+	 * @requires module:sap/ui/dom/jquery/Aria
 	 */
 	jQuery.fn.addAriaDescribedBy = function(sId, bPrepend) {
 		return addToAttributeList.call(this, "aria-describedby", sId, bPrepend);
@@ -132,6 +138,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	 * @author SAP SE
 	 * @since 1.30.0
 	 * @function
+	 * @requires module:sap/ui/dom/jquery/Aria
 	 */
 	jQuery.fn.removeAriaDescribedBy = function(sId) {
 		return removeFromAttributeList.call(this, "aria-describedby", sId);

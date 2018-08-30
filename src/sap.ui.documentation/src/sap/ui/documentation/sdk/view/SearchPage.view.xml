@@ -26,7 +26,6 @@
 							</OverflowToolbar>
 							<List
 								id="allList"
-								width="100%"
 								growing="true"
 								growingThreshold="25"
 								updateFinished="onAllLoadMore"
@@ -38,7 +37,9 @@
 										group: true
 									},
 									groupHeaderFactory: '.getGroupHeader'
-								}">
+								}"
+								class="sapUxAPObjectPageSubSectionAlignContent"
+								width="auto">
 								<FeedListItem
 									sender="{title}"
 									text="{summary}"
@@ -69,7 +70,9 @@
 											path: 'title',
 											descending: false
 										}
-									}">
+									}"
+									class="sapUxAPObjectPageSubSectionAlignContent"
+									width="auto">
 									<FeedListItem
 										visible="{path:'category', formatter:'.categoryAPIFormatter'}"
 										sender="{title}"
@@ -101,7 +104,9 @@
 											path: 'title',
 											descending: false
 										}
-									}">
+									}"
+									class="sapUxAPObjectPageSubSectionAlignContent"
+									width="auto">
 									<FeedListItem
 										visible="{path:'category', formatter:'.categoryDocFormatter'}"
 										sender="{title}"
@@ -133,7 +138,9 @@
 											path: 'title',
 											descending: false
 										}
-									}">
+									}"
+									class="sapUxAPObjectPageSubSectionAlignContent"
+									width="auto">
 									<FeedListItem
 										visible="{path:'category', formatter:'.categoryExploredFormatter'}"
 										sender="{title}"

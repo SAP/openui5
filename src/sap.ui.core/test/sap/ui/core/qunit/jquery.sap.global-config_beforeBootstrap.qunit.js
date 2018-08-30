@@ -1,0 +1,1 @@
+window["sap-ui-config"] = sap.ui.require.toUrl("testdata/core/") + "sap-ui-config.json";

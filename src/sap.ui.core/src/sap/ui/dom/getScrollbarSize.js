@@ -12,9 +12,10 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	 * This function must only be used when the DOM is ready.
 	 *
 	 * @function
+	 * @since 1.58
 	 * @param {string} [sClasses=null] The CSS class that should be added to the test element.
 	 * @param {boolean} [bForce=false] Force recalculation of size (e.g. when CSS was changed). When no classes are passed all calculated sizes are reset.
-	 * @return {object} JSON object with properties <code>width</code> and <code>height</code> (the values are of type number and are pixels).
+	 * @return {object} Object with properties <code>width</code> and <code>height</code> (the values are of type number and are pixels).
 	 * @public
 	 * @alias module:sap/ui/dom/getScrollbarSize
 	 */

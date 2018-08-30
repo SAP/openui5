@@ -713,6 +713,8 @@
 				});
 
 			var oImage = createImage({
+				decorative: false,
+				alt: "invalid picture",
 				src: "invalid_src.png",
 				width: "48px",
 				height: "48px",
@@ -723,6 +725,28 @@
 			// System under test
 			oImage.placeAt("qunit-fixture");
 			oCore.applyChanges();
+		});
+
+		QUnit.test("Image with invalid src, no alt text and decorative mode - true", 2, function(assert) {
+			// Arrange
+			var fnDone = assert.async(),
+					oErrorSpy = sinon.spy(function() {
+						// Assert
+						assert.strictEqual(oErrorSpy.callCount, 1, "Error spy called once");
+						assert.ok(oImage.$().hasClass("sapMNoImg"),
+								"'sapMNoImg' class should not be removed from the control");
+
+						// Cleanup
+						oImage.destroy();
+						fnDone();
+					}),
+					oImage = createImage({
+						src: "invalid_src.png",
+						error: oErrorSpy
+					});
+
+			// Act
+			oImage.placeAt("qunit-fixture");
 		});
 
 	QUnit.module("Tabindex");
@@ -860,6 +884,8 @@
 				});
 
 			var oImage = new sap.m.Image({
+				decorative: false,
+				alt: "invalid picture",
 				src: "invalid_src.png",
 				densityAware: false,
 				width: "48px",

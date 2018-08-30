@@ -1,18 +1,25 @@
-/*global QUnit */
+/*global QUnit, sinon, testlibs */
+
 QUnit.config.autostart = false;
 
-sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/LoaderExtensions'], function(ResourceBundle, Log, LoaderExtensions) {
+//Note: this file is embedded via script tag. It therefore uses sap.ui.require, not sap.ui.define.
+sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/LoaderExtensions', 'sap/ui/Device'], function(ResourceBundle, Log, LoaderExtensions, Device) {
+	"use strict";
 
 	function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /** function */ fnClass, /**boolean*/ bFailEarly) {
-		var aMethodNames=fnClass.getMetadata().getAllPublicMethods(),
+		var aMethodNames = fnClass.getMetadata().getAllPublicMethods(),
 			result = true,
 			sMethod;
 
-		for(var i in aMethodNames) {
+		for (var i in aMethodNames) {
 			sMethod = aMethodNames[i];
 			result = result && oObject[sMethod] != undefined;
-			if(result) continue;
-			if(bFailEarly && !result) break;
+			if (result){
+				continue;
+			}
+			if (bFailEarly && !result){
+				break;
+			}
 		}
 		return result;
 	}
@@ -178,8 +185,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 
 	QUnit.test("Browser Version Test", function(assert) {
 		assert.expect(4);
-		var browser = sap.ui.Device.browser;
-		var ua = navigator.userAgent;
+		var browser = Device.browser;
 		var value = jQuery("html").attr("data-sap-ui-browser");
 		assert.ok(typeof value === "string" && value, "Data attribute is set and is not empty");
 
@@ -318,41 +324,43 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 	});
 
 	QUnit.test("sync: testGetLibraryResourceBundle with i18n set to false in manifest.json", function(assert) {
-		var oStubIsResourceLoaded = this.stub(sap.ui.loader._, 'getModuleState', function() {
-				return true;
-			}),
+		this.stub(sap.ui.loader._, 'getModuleState', function() {
+			return true;
+		});
 
-			oStubLoadResource = this.stub(LoaderExtensions, 'loadResource', function() {
-				return {
-					"_version": "1.9.0",
-					"sap.ui5": {
-						"library": {
-							"i18n": false
-						}
+		this.stub(LoaderExtensions, 'loadResource', function() {
+			return {
+				"_version": "1.9.0",
+				"sap.ui5": {
+					"library": {
+						"i18n": false
 					}
-				};
-			}),
+				}
+			};
+		});
 
-			oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test1", "de");
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test1", "de");
 
 		assert.notOk(oBundle, "No Bundle is returned");
 	});
 
 	QUnit.test("async: testGetLibraryResourceBundle with i18n set to false in manifest.json", function(assert) {
-		var oStubIsResourceLoaded = this.stub(sap.ui.loader._, 'getModuleState', function() {
-				return true;
-			}),
-			oStubLoadResource = this.stub(LoaderExtensions, 'loadResource', function() {
-				return {
-					"_version": "1.9.0",
-					"sap.ui5": {
-						"library": {
-							"i18n": false
-						}
+		this.stub(sap.ui.loader._, 'getModuleState', function() {
+			return true;
+		});
+
+		this.stub(LoaderExtensions, 'loadResource', function() {
+			return {
+				"_version": "1.9.0",
+				"sap.ui5": {
+					"library": {
+						"i18n": false
 					}
-				};
-			}),
-			pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test1", "de", true);
+				}
+			};
+		});
+
+		var pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test1", "de", true);
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
 
@@ -362,26 +370,27 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 	});
 
 	QUnit.test("async: testGetLibraryResourceBundle with i18n set to true in manifest.json", function(assert) {
-		var oStubIsResourceLoaded = this.stub(sap.ui.loader._, 'getModuleState', function() {
-				return true;
-			}),
-			fnOrigLoadResource = LoaderExtensions.loadResource,
-			oStubLoadResource = this.stub(LoaderExtensions, 'loadResource', function(sURL) {
-				if (typeof sURL === "string" && sURL.indexOf("manifest.json") !== -1) {
-					return {
-						"_version": "1.9.0",
-						"sap.ui5": {
-							"library": {
-								"i18n": true
-							}
+		this.stub(sap.ui.loader._, 'getModuleState', function() {
+			return true;
+		});
+		var fnOrigLoadResource = LoaderExtensions.loadResource;
+		this.stub(LoaderExtensions, 'loadResource', function(sURL) {
+			if (typeof sURL === "string" && sURL.indexOf("manifest.json") !== -1) {
+				return {
+					"_version": "1.9.0",
+					"sap.ui5": {
+						"library": {
+							"i18n": true
 						}
-					};
-				} else {
-					fnOrigLoadResource.apply(this, arguments);
-				}
+					}
+				};
+			} else {
+				fnOrigLoadResource.apply(this, arguments);
+			}
 
-			}),
-			oSpySapUiResource = this.spy(sap.ui, 'resource'),
+		});
+
+		var oSpySapUiResource = this.spy(sap.ui, 'resource'),
 			pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test1", "de", true),
 			oSpyCall;
 
@@ -398,14 +407,15 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 	});
 
 	QUnit.test("async: testGetLibraryResourceBundle with i18n missing in manifest.json", function(assert) {
-		var oStubIsResourceLoaded = this.stub(sap.ui.loader._, 'getModuleState', function() {
-				return true;
-			}),
-			// no i18n property in manifest
-			oStubLoadResource = this.stub(LoaderExtensions, 'loadResource', function() {
-				return undefined;
-			}),
-			oSpySapUiResource = this.spy(sap.ui, 'resource'),
+		this.stub(sap.ui.loader._, 'getModuleState', function() {
+			return true;
+		});
+		// no i18n property in manifest
+		this.stub(LoaderExtensions, 'loadResource', function() {
+			return undefined;
+		});
+
+		var oSpySapUiResource = this.spy(sap.ui, 'resource'),
 			pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test1", "fr", true),
 			oSpyCall;
 
@@ -420,26 +430,29 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 	});
 
 	QUnit.test("async: testGetLibraryResourceBundle with a given i18n in manifest.json", function(assert) {
-		var oStubIsResourceLoaded = this.stub(sap.ui.loader._, 'getModuleState', function() {
-				return true;
-			}),
-			fnOrigLoadResource = LoaderExtensions.loadResource,
-			oStubLoadResource = this.stub(LoaderExtensions, 'loadResource', function(sURL) {
-				if (typeof sURL === "string" && sURL.indexOf("manifest.json") !== -1) {
-					return {
-						"_version": "1.9.0",
-						"sap.ui5": {
-							"library": {
-								"i18n": "i18n.properties"
-							}
-						}
-					};
-				} else {
-					fnOrigLoadResource.apply(this, arguments);
-				}
+		this.stub(sap.ui.loader._, 'getModuleState', function() {
+			return true;
+		});
 
-			}),
-			oSpySapUiResource = this.spy(sap.ui, 'resource'),
+		var fnOrigLoadResource = LoaderExtensions.loadResource;
+
+		 this.stub(LoaderExtensions, 'loadResource', function(sURL) {
+			if (typeof sURL === "string" && sURL.indexOf("manifest.json") !== -1) {
+				return {
+					"_version": "1.9.0",
+					"sap.ui5": {
+						"library": {
+							"i18n": "i18n.properties"
+						}
+					}
+				};
+			} else {
+				fnOrigLoadResource.apply(this, arguments);
+			}
+
+		});
+
+		var oSpySapUiResource = this.spy(sap.ui, 'resource'),
 			pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test1", "en", true),
 			oSpyCall;
 
@@ -454,18 +467,19 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 	});
 
 	QUnit.test("testGetLibraryResourceBundle: Called with async first and then with sync before the async is resolved", function(assert) {
-		var fnResolve,
-			oStubJqueryResource = this.stub(ResourceBundle, 'create', function(options) {
-				if (options.async) {
-					return new Promise(function(resolve, reject) {
-						fnResolve = resolve;
-					});
-				} else {
-					return {};
-				}
-			}),
-			pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test2", "en", true),
-			oBundle;
+		var fnResolve, pBundle, oBundle;
+
+		this.stub(ResourceBundle, 'create', function(options) {
+			if (options.async) {
+				return new Promise(function(resolve, reject) {
+					fnResolve = resolve;
+				});
+			} else {
+				return {};
+			}
+		});
+
+		pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test2", "en", true);
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
 
@@ -481,16 +495,19 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 
 	QUnit.test("testGetLibraryResourceBundle: Called with sync first and then with async", function(assert) {
 		var iCounter = 0,
-			oStubJqueryResource = this.stub(ResourceBundle, 'create', function(options) {
-				iCounter++;
-				if (options.async) {
-					assert.ok(false, "no Promise should be returned");
-				} else {
-					return {};
-				}
-			}),
 			pBundle,
-			oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test3", "en", false);
+			oBundle;
+
+		this.stub(ResourceBundle, 'create', function(options) {
+			iCounter++;
+			if (options.async) {
+				assert.ok(false, "no Promise should be returned");
+			} else {
+				return {};
+			}
+		});
+
+		oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test3", "en", false);
 
 		assert.ok(oBundle, "a promise should be returned");
 		assert.notOk(oBundle instanceof Promise, "a Bundle object should be returned, not a promise");
@@ -708,7 +725,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 		var vResult = sap.ui.getCore().loadLibraries(['testlibs.scenario5.lib1', 'testlibs.scenario5.lib3']);
 		assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
 
-		var oLib2 = sap.ui.getCore().loadLibrary('testlibs.scenario5.lib2');
+		sap.ui.getCore().loadLibrary('testlibs.scenario5.lib2');
 		assert.isLibLoaded('testlibs.scenario5.lib2');
 		assert.isLibLoaded('testlibs.scenario5.lib3');
 		assert.isLibLoaded('testlibs.scenario5.lib5');
@@ -909,7 +926,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 			"version":"2.0",
 			"name": name + ".library-preload",
 			"modules": {}
-		}
+		};
 		preloadJSON.modules[name.replace(/\./g, "/") + "/library.js"] = makeLib(name);
 		preloadJSON.modules[name.replace(/\./g, "/") + "/manifest.json"] = makeManifest(name);
 		return JSON.stringify(preloadJSON);
@@ -1008,7 +1025,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 
 		oRealCore.oConfiguration.preload = 'off';
 		try {
-			var vResult = sap.ui.getCore().loadLibraries(['my.non.existing.lib3', 'my.lib11'], { async: false });
+			sap.ui.getCore().loadLibraries(['my.non.existing.lib3', 'my.lib11'], { async: false });
 			assert.ok(false, "sync loadLibraries for missing lib must not succeed");
 		} catch (e) {
 			assert.ok(true, "sync loadLibraries should throw an exception");

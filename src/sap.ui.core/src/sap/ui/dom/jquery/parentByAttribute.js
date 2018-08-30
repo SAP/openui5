@@ -5,12 +5,12 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	"use strict";
 
 	/**
-	 * Applies the jQuery function extension:
-	 * @see jQuery#parentByAttribute
+	 * This module provides the {@link jQuery#parentByAttribute} API.
 	 *
 	 * @namespace
-	 * @alias module:sap/ui/dom/jquery/parentByAttribute
+	 * @name module:sap/ui/dom/jquery/parentByAttribute
 	 * @public
+	 * @since 1.58
 	 */
 
 	/**
@@ -24,6 +24,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	 * @author SAP SE
 	 * @since 0.9.0
 	 * @function
+	 * @requires module:sap/ui/dom/jquery/parentByAttribute
 	 */
 	var fnParentByAttribute = function parentByAttribute(sAttribute, sValue) {
 		if (this.length > 0) {

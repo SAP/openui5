@@ -11,7 +11,7 @@
  * might break in future releases.
  */
 
-/*global sap:true, console, document, ES6Promise, Promise, XMLHttpRequest */
+/*global sap:true, console, document, Promise, XMLHttpRequest */
 
 (function(__global) {
 	"use strict";
@@ -946,6 +946,17 @@
 	}
 
 	/**
+	 * Define an already loaded module synchronously.
+	 * Finds or creates a module by its unified resource name and resolves it with the given value.
+	 *
+	 * @param {string} sResourceName Name of the module in URN syntax
+	 * @param {any} vValue Content of the module
+	 */
+	function defineModuleSync(sResourceName, vValue) {
+		Module.get(sResourceName).ready(vValue);
+	}
+
+	/**
 	 * Queue of modules for which sap.ui.define has been called but for which the name has not been determined yet
 	 * When loading modules via script tag, only the onload handler knows the relationship between executed sap.ui.define calls and
 	 * module name. It then resolves the pending modules in the queue. Only one entry can get the name of the module
@@ -1105,7 +1116,7 @@
 		});
 	}
 
-	function loadScript(oModule, bRetryOnFailure) {
+	function loadScript(oModule, sAlternativeURL) {
 
 		var oScript;
 
@@ -1121,12 +1132,13 @@
 		function onerror(e) {
 			oScript.removeEventListener('load', onload);
 			oScript.removeEventListener('error', onerror);
-			if (bRetryOnFailure) {
+			if (sAlternativeURL) {
 				log.warning("retry loading Javascript resource: " + oModule.name);
 				if (oScript && oScript.parentNode) {
 					oScript.parentNode.removeChild(oScript);
 				}
-				loadScript(oModule, /* bRetryOnFailure= */ false);
+				oModule.url = sAlternativeURL;
+				loadScript(oModule, /* sAlternativeURL= */ null);
 				return;
 			}
 
@@ -1138,7 +1150,7 @@
 		oScript = document.createElement('SCRIPT');
 		oScript.src = oModule.url;
 		oScript.setAttribute("data-sap-ui-module", oModule.name);
-		if ( bRetryOnFailure !== undefined ) {
+		if ( sAlternativeURL !== undefined ) {
 			oScript.addEventListener('load', onload);
 			oScript.addEventListener('error', onerror);
 		}
@@ -1321,11 +1333,12 @@
 
 		} else {
 
-			// @evo-todo support debug mode also in async mode
-			oModule.url = getResourcePath(oSplitName.baseID, oSplitName.subType);
-			// call notification hook
-			ui5Require.load({ completeLoad:noop, async: true }, oModule.url, oSplitName.baseID);
-			loadScript(oModule, /* bRetryOnFailure= */ true);
+			oModule.url = getResourcePath(oSplitName.baseID, aExtensions[0] + oSplitName.subType);
+			// in debug mode, fall back to the non-dbg source, otherwise try the same source again (for SSO re-connect)
+			var sAltUrl = bDebugSources ? getResourcePath(oSplitName.baseID, aExtensions[1] + oSplitName.subType) : oModule.url;
+			// call notification hook only once
+			ui5Require.load({ completeLoad:noop, async: true }, sAltUrl, oSplitName.baseID);
+			loadScript(oModule, /* sAlternativeURL= */ sAltUrl);
 
 			// process dep cache info
 			preloadDependencies(sModuleName);
@@ -1621,6 +1634,7 @@
 			if ( sResourceName != null ) {
 				var oModule = Module.get(sResourceName);
 				oModule.state = LOADING;
+				oModule.async = true;
 			}
 			return;
 		}
@@ -2112,6 +2126,7 @@
 		declareModule: function(sResourceName) {
 			/* void */ declareModule( normalize(sResourceName) );
 		},
+		defineModuleSync: defineModuleSync,
 		dump: dumpInternals,
 		getAllModules: getAllModules,
 		getModuleContent: getModuleContent,
@@ -2160,13 +2175,6 @@
 			}
 		}
 	});
-
-	Module.get('sap/ui/thirdparty/baseuri.js').ready(null); // no module value
-	if ( typeof ES6Promise !== 'undefined' ) {
-		Module.get('sap/ui/thirdparty/es6-promise.js').ready(ES6Promise);
-	}
-	Module.get('sap/ui/thirdparty/es6-object-assign.js').ready(null); // no module value
-	Module.get('sap/ui/thirdparty/es6-string-methods.js').ready(null); // no module value
 
 	// establish APIs in the sap.ui namespace
 

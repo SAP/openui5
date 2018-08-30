@@ -5,16 +5,26 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/assert"], function(jQuery, 
 	"use strict";
 
 	/**
-	 * Applies the jQuery function extension:
-	 * @see jQuery#rectContains
+	 * This module provides the {@link jQuery#rectContains} API.
 	 *
 	 * @namespace
-	 * @alias module:sap/ui/dom/jquery/rectContains
+	 * @name module:sap/ui/dom/jquery/rectContains
 	 * @public
+	 * @since 1.58
 	 */
 
-	/*
-	 * @private
+	/**
+	 * Returns whether a point described by X and Y is inside this Rectangle's boundaries.
+	 *
+	 * @param {int} iPosX The X coordinate
+	 * @param {int} iPosY The Y coordinate
+	 * @return {boolean} Whether X and Y are inside this Rectangle's boundaries
+	 * @public
+	 * @name jQuery#rectContains
+	 * @author SAP SE
+	 * @since 0.18.0
+	 * @function
+	 * @requires module:sap/ui/dom/jquery/rectContains
 	 */
 	var fnRectContains = function rectContains(iPosX, iPosY) {
 		assert(!isNaN(iPosX), "iPosX must be a number");
@@ -33,18 +43,6 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/assert"], function(jQuery, 
 		return false;
 	};
 
-	/**
-	 * Returns whether a point described by X and Y is inside this Rectangle's boundaries.
-	 *
-	 * @param {int} iPosX The X coordinate
-	 * @param {int} iPosY The Y coordinate
-	 * @return {boolean} Whether X and Y are inside this Rectangle's boundaries
-	 * @public
-	 * @name jQuery#rectContains
-	 * @author SAP SE
-	 * @since 0.18.0
-	 * @function
-	 */
 	jQuery.fn.rectContains = fnRectContains;
 
 	return jQuery;

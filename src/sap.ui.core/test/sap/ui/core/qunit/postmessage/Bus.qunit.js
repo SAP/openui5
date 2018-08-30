@@ -6,13 +6,15 @@ sap.ui.require([
 	"sap/ui/core/postmessage/Bus",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/base/Log",
-	"sap/base/util/includes"
+	"sap/base/util/includes",
+	"sap/ui/Device"
 ],
 function(
 	PostMessageBus,
 	sinon,
 	Log,
-	includes
+	includes,
+	Device
 ) {
 	"use strict";
 
@@ -201,13 +203,14 @@ function(
 				this.oIframeWindow = oIframe.contentWindow;
 			}.bind(this));
 		},
-		beforeEach: function (assert) {
+		beforeEach: function () {
 			this.oPostMessageBus = getPostMessageBus(window);
 			this.oPostMessageBusInFrame = getPostMessageBus(this.oIframeWindow);
 		},
 		afterEach: function () {
 			this.oPostMessageBus.destroy();
 			this.oPostMessageBusInFrame.destroy();
+			sandbox.restore();
 		},
 		after: function () {
 			QUnit.config.fixture = '';
@@ -253,12 +256,12 @@ function(
 				data: mData
 			});
 		});
-		QUnit.test("when READY message is sent, origin and target are optional (window.opener use case)", function (assert) {
+		QUnit[Device.browser.msie ? 'skip' : 'test']("when READY message is sent, origin and target are optional (window.opener use case)", function (assert) {
 			var fnDone = assert.async();
 			sandbox.stub(window, 'parent').value(window);
 			sandbox.stub(window, 'opener').value(this.oIframeWindow);
 
-			this.oPostMessageBusInFrame.subscribe('fakeChannel', PostMessageBus.event.READY, function (oEvent) {
+			this.oPostMessageBusInFrame.subscribe('fakeChannel', PostMessageBus.event.READY, function () {
 				assert.ok(true);
 				fnDone();
 			}, this);
@@ -268,12 +271,12 @@ function(
 				eventId: PostMessageBus.event.READY
 			});
 		});
-		QUnit.test("when READY message is sent, origin and target are optional (window.parent use case)", function (assert) {
+		QUnit[Device.browser.msie ? 'skip' : 'test']("when READY message is sent, origin and target are optional (window.parent use case)", function (assert) {
 			var fnDone = assert.async();
 			sandbox.stub(window, 'opener').value(null);
 			sandbox.stub(window, 'parent').value(this.oIframeWindow);
 
-			this.oPostMessageBusInFrame.subscribe('fakeChannel', PostMessageBus.event.READY, function (oEvent) {
+			this.oPostMessageBusInFrame.subscribe('fakeChannel', PostMessageBus.event.READY, function () {
 				assert.ok(true);
 				fnDone();
 			}, this);
@@ -292,7 +295,7 @@ function(
 				this.oIframeWindow = oIframe.contentWindow;
 			}.bind(this));
 		},
-		beforeEach: function (assert) {
+		beforeEach: function () {
 			this.oPostMessageBus = getPostMessageBus(window);
 			this.oPostMessageBusInFrame = getPostMessageBus(this.oIframeWindow);
 		},

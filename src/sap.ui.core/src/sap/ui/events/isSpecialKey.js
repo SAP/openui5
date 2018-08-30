@@ -18,12 +18,11 @@ sap.ui.define(function() {
 	 * BACKSPACE, TAB, ENTER, ESCAPE
 	 *
 	 * @function
+	 * @since 1.58
 	 * @alias module:sap/ui/events/isSpecialKey
 	 * @param {jQuery.Event} oEvent The event object of the <code>keydown</code>, <code>keyup</code> or <code>keypress</code> events.
-	 * @static
 	 * @returns {boolean} True if a special key was pressed
 	 * @private
-	 * @experimental Since 1.24.0 Implementation might change.
 	 * @ui5-restricted sap.ui.core
 	 */
 	var fnIsSpecialKey = function(oEvent) {

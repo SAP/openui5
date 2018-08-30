@@ -2,10 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/dt/ManagedObjectObserver",
-	"sap/ui/core/Element"
+	"sap/ui/core/Element",
+	"sap/ui/thirdparty/sinon-4"
 ], function (
 	ManagedObjectObserver,
-	Element
+	Element,
+	sinon
 ) {
 	'use strict';
 
@@ -112,8 +114,10 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.oManagedObjectObserver.destroy();
+			this.oSmartManagedObjectObserver.destroy();
 			this.oManagedObject.destroy();
 			this.oOtherObject.destroy();
+			this.oSmartManagedObject.destroy();
 		}
 	});
 
@@ -257,6 +261,18 @@ sap.ui.define([
 		this.oManagedObject.destroy();
 		assert.strictEqual(oOtherManagedObjectObserver._bIsObserved, false, "then _bIsObserved flag is unset on destroying the target");
 		assert.strictEqual(this.oManagedObject.destroy, Element.prototype.destroy, "then original base functions (like destroy) are set back on destroying the target");
+	});
+
+	QUnit.test("when the event from setParent action is suppressed", function (assert) {
+		assert.expect(3);
+		var oSpy = sinon.spy();
+		this.oManagedObjectObserver.attachModified(oSpy);
+		this.oManagedObject.__bSapUiDtSupressParentChangeEvent = true;
+		this.oManagedObject.setParent(this.oOtherObject);
+		assert.ok(oSpy.notCalled);
+		this.oManagedObject.__bSapUiDtSupressParentChangeEvent = false;
+		this.oManagedObject.setParent(null);
+		assert.ok(oSpy.calledOnce);
 	});
 
 	QUnit.done(function() {

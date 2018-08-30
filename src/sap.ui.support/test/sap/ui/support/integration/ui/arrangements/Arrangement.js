@@ -18,10 +18,12 @@ sap.ui.define([
 			this.iStartMyApp()
 				.done(function () {
 					var Storage = Opa5.getWindow().sap.ui.require("sap/ui/support/supportRules/Storage"),
-						Constants = Opa5.getWindow().sap.ui.require("sap/ui/support/supportRules/Constants");
+						Constants = Opa5.getWindow().sap.ui.require("sap/ui/support/supportRules/Constants"),
+						SharedModel = Opa5.getWindow().sap.ui.require("sap/ui/support/supportRules/ui/models/SharedModel");
 
 					Storage.deletePersistenceCookie(Constants.COOKIE_NAME);
 					Storage.removeAllData();
+					SharedModel.setProperty("/persistingSettings", false);
 				});
 		}
 

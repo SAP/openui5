@@ -1,0 +1,10 @@
+<View xmlns="sap.m" displayBlock="true" controllerName="flexiblecolumnlayout.DetailEmpty" height="100%">
+    <Page title="Empty page">
+        <headerContent>
+            <Button icon="sap-icon://decline" press="handleClose" tooltip="Close column" visible="{= ${/actionButtonsInfo/midColumn/closeColumn} !== null }"/>
+        </headerContent>
+        <content>
+            <Text text="Empty detail page"/>
+        </content>
+    </Page>
+</View>

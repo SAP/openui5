@@ -11,8 +11,9 @@ sap.ui.define([], function() {
 	 * Validates if the given object is empty
 	 *
 	 * @function
+	 * @since 1.58
 	 * @private
-	 * @exports sap/base/util/isEmptyObject
+	 * @name module:sap/base/util/isEmptyObject
 	 * @param {Object} oToValidate - object to validate
 	 * @returns {boolean} flag if given object is empty
 	 */

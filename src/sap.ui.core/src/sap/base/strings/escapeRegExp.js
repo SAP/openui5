@@ -24,6 +24,7 @@ sap.ui.define([], function() {
 	 * });
 	 *
 	 * @function
+	 * @since 1.58
 	 * @alias module:sap/base/strings/escapeRegExp
 	 * @param {string} sString String to escape
 	 * @returns {string} The escaped string

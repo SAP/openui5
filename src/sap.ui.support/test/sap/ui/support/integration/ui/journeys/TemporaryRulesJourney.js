@@ -53,14 +53,14 @@ sap.ui.define([
 
 	opaTest("Should deselect temporary rule without persistence enabled", function (Given, When, Then) {
 
-		When.onTheRulesPage.iPressOnTreeTableCheckBox("__xmlview0--analysis--ruleList-rowsel1", "The first temporary rule was pressed", "The first temporary rule was not pressed");
+		When.onTheRulesPage.iPressSelectCheckboxOf("Title of the temp rule", "The first temporary rule was pressed", "The first temporary rule was not pressed");
 
 		Then.onTheRulesPage.iShouldSeeRuleDeselectedInView(0);
 	});
 
 	opaTest("Should delete temporary rule without persistence enabled", function (Given, When, Then) {
 
-		When.onTheRulesPage.iPressDeleteTemporaryRuleIcon("__action0-__clone5-icon1");
+		When.onTheRulesPage.iPressDeleteIconOfTemporaryRule("Title of the temp rule");
 
 		Then.onTheRulesPage.iShouldSeeNumberOfRulesInLibrary(INDEX_OF_TEMPORARY_LIBRARY, 1);
 	});
@@ -68,7 +68,7 @@ sap.ui.define([
 	opaTest("Should edit temporary rule without persistence enabled", function (Given, When, Then) {
 
 		var sRuleTitle = "Title of the rule after update";
-		When.onTheRulesPage.iPressEditTemporaryRuleIcon("__action0-__clone5-icon0");
+		When.onTheRulesPage.iPressEditIconOfTemporaryRule("Title of the temp rule2");
 
 		Then.onTheUpdateTemporaryRulePage.iShouldSeeTheForm();
 
@@ -83,7 +83,7 @@ sap.ui.define([
 
 		var sRuleTitle = "Title from cloned rule";
 
-		When.onTheRulesPage.iPressCloneRuleIcon("__action0-__clone11-icon0");
+		When.onTheRulesPage.iPressCloneIconOfRule("EventBus publish");
 
 		Then.onTheCreateTemporaryRulePage.iShouldSeeTheForm();
 
@@ -111,7 +111,7 @@ sap.ui.define([
 	opaTest("Should deselect first temporary rule", function (Given, When, Then) {
 
 		//first temporary rule
-		When.onTheRulesPage.iPressOnTreeTableCheckBox("__xmlview0--analysis--ruleList-rowsel1",  "Rule has been deselected", "Could not deselect Rule");
+		When.onTheRulesPage.iPressSelectCheckboxOf("Title of the rule after update", "Rule has been deselected", "Could not deselect Rule");
 
 		//temporary- library
 		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInView(0);
@@ -129,7 +129,7 @@ sap.ui.define([
 	opaTest("Should deselect second rule from  sap.ui.core", function (Given, When, Then) {
 
 		//second rule from sap.ui.core
-		When.onTheRulesPage.iPressOnTreeTableCheckBox("__xmlview0--analysis--ruleList-rowsel5",  "Rule has been deselected", "Could not deselect Rule");
+		When.onTheRulesPage.iPressSelectCheckboxOf("Error logs", "Rule has been deselected", "Could not deselect Rule");
 
 		//sap.ui.core - library
 		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInView(3);
@@ -289,6 +289,32 @@ sap.ui.define([
 		Then.onTheRulesPage.iShouldSeeRuleDeselectedInModel(6, 0);
 
 		Then.onTheRulesPage.iShouldSeeRulesSelectionStateChanged(45, "45 Rules are selected", "Was not able to deselect rule");
+
+		Then.iTeardownSupportAssistantFrame();
+	});
+
+	opaTest("Should select duplicated rules together", function (Given, When, Then) {
+
+		Given.iStartMyAppAndDeletePersistedData();
+
+		When.onTheRulesPage.iPressButtonWithText(CREATE_RULE_BUTTON);
+
+		Then.onTheCreateTemporaryRulePage.iShouldSeeTheForm();
+
+		When.onTheCreateTemporaryRulePage.iFillIdWith("errorLogs")
+			.and.iFillTitleWith("Title of the duplicated Error Logs")
+			.and.iFillDescriptionWith("Description of the duplicated rule")
+			.and.iFillResolutionWith("Resolution of the duplicated rule")
+			.and.iFillVersionWith("1.1");
+		When.onTheRulesPage.iPressButtonWithText(ADD_RULE_BUTTON);
+		// deselect all
+		When.onTheRulesPage.iPressSelectAllCheckbox();
+
+		When.onTheRulesPage.iPressSelectCheckboxOf("Error logs", "Rule has been selected", "Could not select Rule");
+
+		Then.onTheRulesPage.iShouldSeeDuplicatedRuleSelectedInView("Title of the duplicated Error Logs");
+
+		Then.onTheRulesPage.iShouldSeeRuleSelectedInView(4); // error logs rule index
 
 		Then.iTeardownSupportAssistantFrame();
 	});

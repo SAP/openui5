@@ -13,6 +13,30 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectImageHelper: Setting image alt via property setter",
         "references": []
+      },
+      {
+        "id": "9b23babc9e99562d8edb6cc6c411a153a6189f47",
+        "type": "FIX",
+        "text": " AnchorBar: Overlapping MenuButton\u0027s text is fixed",
+        "references": []
+      },
+      {
+        "id": "0fca36349b6718e55e7756ddf93d034c6c92df3a",
+        "type": "FIX",
+        "text": " uxap.AnchorBar: Custom button in sub-section behavior fixed",
+        "references": []
+      },
+      {
+        "id": "7df352392078ea3867249f2031ea72f6d0a6ecf8",
+        "type": "FEATURE",
+        "text": " ObjectPageSubSection: Added CSS class for content alignment",
+        "references": []
+      },
+      {
+        "id": "4768b98ba0b97c76d4921c69db29657402a01626",
+        "type": "FIX",
+        "text": " AnchorBar: QUnit test failure is fixed",
+        "references": []
       }
     ]
   }

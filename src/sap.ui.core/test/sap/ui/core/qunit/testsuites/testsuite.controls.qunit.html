@@ -1,30 +1,12 @@
+<!DOCTYPE html>
 <html>
 	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<base href="../../../../../../">
 		<title>TestSuite for sap.ui.core: GTP testcase CORE/CONTROLS</title>
-		<script src="../../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
-		<script>
-
-		/**
-		 * Add test pages to this test suite function.
-		 * Please order alphabetically
-		 */
-		function suite() {
-			var suite = new parent.jsUnitTestSuite();
-			var contextPath = "/" + window.location.pathname.split("/")[1];
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/HTML.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/HTMLinGWT.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Icon.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/InvisibleText.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/FieldGroup.qunit.html");
-			//TODO: Test the issues with the following Unit test
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ScrollBar.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/LocalBusyIndicator.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/BlockLayerUtils.qunit.html");
-
-			return suite;
-		}
-
-		</script>
+		<script src="resources/sap/ui/test/starter/createSuite.js"
+				data-sap-ui-testsuite="test-resources/sap/ui/core/qunit/testsuites/testsuite.controls.qunit"></script>
 	</head>
 	<body>
 	</body>

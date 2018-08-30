@@ -91,6 +91,18 @@ sap.ui.define([], function() {
 		return text;
 	}
 
+	function formatRulePreset(oRulePreset) {
+		var text = "Rule Preset / ID : ";
+
+		if (oRulePreset) {
+			text += oRulePreset.title + " / " + oRulePreset.id;
+		} else {
+			text += "none";
+		}
+
+		return text;
+	}
+
 	function format(analysisHistory) {
 		var text = "";
 
@@ -100,7 +112,9 @@ sap.ui.define([], function() {
 
 		for (var i = 0; i < analysisHistory.length; i++) {
 			text += "\n";
-			text += "Run " + (i + 1) + "\n";
+			text += "Run " + (i + 1) + " - executed on " + analysisHistory[i].analysisInfo.date + "\n";
+			text += formatRulePreset(analysisHistory[i].analysisInfo.rulePreset);
+			text += "\n";
 			text += formatSingleRun(analysisHistory[i].loadedLibraries);
 			text += "\n";
 		}

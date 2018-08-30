@@ -13,12 +13,12 @@ sap.ui.define([], function() {
 	 * As a fallback it replaces DOM nodes.
 	 *
 	 * @function
+	 * @since 1.58
 	 * @param {HTMLElement} oOldDom Existing element to be patched
 	 * @param {HTMLElement} oNewDom The new node to patch old dom
 	 * @return {boolean} true when patch is applied correctly or false when nodes are replaced
-	 * @author SAP SE
-	 * @private
 	 * @alias module:sap/ui/dom/patch
+	 * @private
 	 * @ui5-restricted sap.ui.core
 	 */
 	function patch(oOldDom, oNewDom) {

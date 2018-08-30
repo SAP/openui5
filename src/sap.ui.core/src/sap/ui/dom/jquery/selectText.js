@@ -5,12 +5,12 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	"use strict";
 
 	/**
-	 * Applies the jQuery function extension:
-	 * @see jQuery#selectText
+	 * This module provides the {@link jQuery#selectText} API.
 	 *
 	 * @namespace
-	 * @alias module:sap/ui/dom/jquery/selectText
+	 * @name module:sap/ui/dom/jquery/selectText
 	 * @public
+	 * @since 1.58
 	 */
 
 	/**
@@ -26,6 +26,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	 * @author SAP SE
 	 * @since 0.9.0
 	 * @function
+	 * @requires module:sap/ui/dom/jquery/selectText
 	 */
 	var fnSelectText = function selectText(iStart, iEnd) {
 		var oDomRef = this.get(0);
