@@ -1,18 +1,20 @@
 sap.ui.define([
 	"jquery.sap.global",
-	"sap/ui/rta/dttool/controller/App.controller",
+	"sap/ui/core/mvc/Controller",
 	"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/postmessage/Bus"
+	"sap/ui/core/postmessage/Bus",
+	"sap/ui/rta/dttool/util/DTToolUtils"
 ], function (
 	jQuery,
-	AppController,
+	Controller,
 	ControlsInfo,
 	JSONModel,
-	PostMessageBus
+	PostMessageBus,
+	DTToolUtils
 ) {
 	"use strict";
-	return AppController.extend("sap.ui.rta.dttool.controller.Code", {
+	return Controller.extend("sap.ui.rta.dttool.controller.Code", {
 
 		_aMockFiles : ["products.json", "supplier.json", "img.json"],
 
@@ -23,14 +25,16 @@ sap.ui.define([
 
 			this.oPostMessageBus.subscribe("dtTool", "iFrameReady", this.onIFrameReady, this)
 				.subscribe("dtTool", "files", this.retrieveXMLFiles, this)
-				.subscribe("dtTool", "updateDesignTimeFile", this.onUpdateDTFile, this);
+				.subscribe("dtTool", "updateDesignTimeFile", this.onUpdateDTFile, this)
+				.subscribe("dtTool", "selectOverlayInOutline", this.loadPropertyData, this);
 
 			this.getView().setModel(new JSONModel());
 
-			this.oRouter = this.getRouter();
+			this.oRouter = DTToolUtils.getRouter(this);
 			this.oRouter.getRoute("sample").attachMatched(this._onRouteMatched, this);
 			this.oRouter.getRoute("home").attachMatched(this._onRouteMatched, this);
 			this._oCodeCache = {};
+			this._setEditorConfig();
 		},
 
 		/**
@@ -55,8 +59,8 @@ sap.ui.define([
 				} else {
 
 					this.oPostMessageBus.publish({
-						target : this.getIFrameWindow(),
-						origin : this.getIFrameWindow().origin,
+						target : DTToolUtils.getIframeWindow(),
+						origin : DTToolUtils.getIframeWindow().origin,
 						channelId : "dtTool",
 						eventId : "setComponent",
 						data : {
@@ -83,8 +87,8 @@ sap.ui.define([
 			if (this.sCompName) {
 
 				this.oPostMessageBus.publish({
-					target : this.getIFrameWindow(),
-					origin : this.getIFrameWindow().origin,
+					target : DTToolUtils.getIframeWindow(),
+					origin : DTToolUtils.getIframeWindow().origin,
 					channelId : "dtTool",
 					eventId : "setComponent",
 					data : {
@@ -103,7 +107,7 @@ sap.ui.define([
 			// retrieve sample object
 			var oSample = oData.samples[this._sId];
 			if (!oSample) {
-				this.getRouter().getTargets().display("notFound");
+				DTToolUtils.getRouter(this).getTargets().display("notFound");
 				return;
 			}
 
@@ -120,8 +124,8 @@ sap.ui.define([
 				} else {
 
 					this.oPostMessageBus.publish({
-						target : this.getIFrameWindow(),
-						origin : this.getIFrameWindow().origin,
+						target : DTToolUtils.getIframeWindow(),
+						origin : DTToolUtils.getIframeWindow().origin,
 						channelId : "dtTool",
 						eventId : "setComponent",
 						data : {
@@ -271,35 +275,12 @@ sap.ui.define([
 		},
 
 		/**
-		 * removes the dt file from the icon tab header and editor and adds a new one if sFileName and sDTFile are passed
+		 * Loads a DTF file inside the editor
 		 * @param {string} sFileName the name of the new dt file
 		 * @param {string} sDTFile the content of the new dt file
 		 */
 		_replaceDTFileInEditor : function (sFileName, sDTFile) {
-
-			var oModel = this.getView().getModel();
-
-			var aFiles = oModel.getProperty("/files");
-
-			aFiles.some(function (oFile, iIndex) {
-				if (oFile.name.match(/^.*?\.(.*)$/)[1] === "designtime.js") {
-					aFiles.splice(iIndex, 1);
-					return true;
-				}
-			});
-
-			if (sFileName && sDTFile) {
-				aFiles.push({
-					name : sFileName,
-					raw : sDTFile,
-					dt : true
-				});
-			} else {
-				sFileName = aFiles[0].name;
-			}
-
-			oModel.setProperty("/fileName", sFileName);
-			oModel.setProperty("/files", aFiles);
+			this._addFile(sFileName, sDTFile, true, "designtime.js");
 			this._updateCodeEditor(sFileName);
 		},
 
@@ -308,25 +289,12 @@ sap.ui.define([
 		 * @param {string} sFileName the filename
 		 */
 		_updateCodeEditor : function (sFileName) {
-			var oCodeEditor = this._getCodeEditor(),
-				oAceInstance = oCodeEditor._getEditorInstance();
-
-
-
-			// TODO Find a new place for this set of commands
-			oAceInstance.setTheme("ace/theme/github");
-			oAceInstance.getSession().setMode("ace/mode/javascript");
-			oAceInstance.getSession().setUseWrapMode(true);
-			oAceInstance.getSession().setNewLineMode("windows");
-			oAceInstance.setOption('minLines', 40);
-			oAceInstance.setAutoScrollEditorIntoView(false);
-			oAceInstance.setOption('maxLines', 40);
-			oAceInstance.setShowPrintMargin(false);
-			oAceInstance.renderer.setShowGutter(true);
-			oAceInstance.$blockScrolling = Infinity;
-
-			var sType = sFileName.match(/.*\.(.*?)$/)[1];
-				sType = sType.replace("js", "javascript");
+			if (!sFileName) {
+				return;
+			}
+			var oCodeEditor = this._getCodeEditor();
+			var oAceInstance = oCodeEditor._getEditorInstance();
+			var sType = sFileName.match(/.*\.(.*?)$/)[1].replace("js", "javascript");
 
 			// set the <code>CodeEditor</code> new code base and its type - xml, js, json or css.
 			oCodeEditor.setValue(this._getCode(sFileName));
@@ -402,8 +370,8 @@ sap.ui.define([
 				if (oResult) {
 
 					this.oPostMessageBus.publish({
-						target : this.getIFrameWindow(),
-						origin : this.getIFrameWindow().origin,
+						target : DTToolUtils.getIframeWindow(),
+						origin : DTToolUtils.getIframeWindow().origin,
 						channelId : "dtTool",
 						eventId : "editorDTData",
 						data : {
@@ -415,6 +383,76 @@ sap.ui.define([
 			} catch (ex) {
 				//jQuery.sap.log.error("Invalid effective DT data");
 			}
+		},
+
+		/**
+		 * Called when a control is selected for RTA inside the iframe, displays computed designtime metadata
+		 * @param {sap.ui.base.Event} oEvent Event
+		 */
+		loadPropertyData: function (oEvent) {
+			var sControlId = oEvent.data.id;
+			DTToolUtils.getRTAClient().getService("property").then(function (oPropertyService) {
+				oPropertyService.get(sControlId).then(function(oPropertyData){
+					var sProperties = JSON.stringify(oPropertyData, null, "\t");
+					var sFileName = sControlId + ".properties.json";
+					this._addFile(sFileName, sProperties, false, "properties.json");
+					this._updateCodeEditor(sFileName);
+				}.bind(this));
+			}.bind(this));
+		},
+
+		/**
+		 * removes a file with the same type from the icon tab header and editor and adds a new one if sFileName and sRawFile are passed
+		 * @param {string} sFileName the name of the new file
+		 * @param {string} sDTFile the content of the new file
+		 * @param {string} bIsDTFile Whether the file is a DTM file or not
+		 * @param {string} sFileType The type of the file which should be removed
+		 */
+		_addFile: function (sFileName, sRawFile, bIsDTFile, sFileType) {
+			var oModel = this.getView().getModel();
+			var aFiles = oModel.getProperty("/files");
+			if (!sFileType) {
+				sFileType = sFileName.match(/^.*?\.(.*)$/)[1];
+			}
+
+			aFiles.some(function (oFile, iIndex) {
+				if (oFile.name.match(/^.*?\.(.*)$/)[1] === sFileType) {
+					aFiles.splice(iIndex, 1);
+					return true;
+				}
+			});
+
+			if (sFileName && sRawFile) {
+				aFiles.push({
+					name: sFileName,
+					raw: sRawFile,
+					dt: bIsDTFile
+				});
+			} else {
+				sFileName = aFiles[0].name;
+			}
+
+			oModel.setProperty("/fileName", sFileName);
+			oModel.setProperty("/files", aFiles);
+		},
+
+		/**
+		 * Configure the ace code editor
+		 */
+		_setEditorConfig: function () {
+			var oCodeEditor = this._getCodeEditor();
+			var oAceInstance = oCodeEditor._getEditorInstance();
+
+			oAceInstance.setTheme("ace/theme/github");
+			oAceInstance.getSession().setMode("ace/mode/javascript");
+			oAceInstance.getSession().setUseWrapMode(true);
+			oAceInstance.getSession().setNewLineMode("windows");
+			oAceInstance.setOption('minLines', 40);
+			oAceInstance.setAutoScrollEditorIntoView(false);
+			oAceInstance.setOption('maxLines', 40);
+			oAceInstance.setShowPrintMargin(false);
+			oAceInstance.renderer.setShowGutter(true);
+			oAceInstance.$blockScrolling = Infinity;
 		},
 
 		/**

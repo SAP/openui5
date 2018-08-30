@@ -1,6 +1,6 @@
 sap.ui.define([
 	"jquery.sap.global",
-	"sap/ui/rta/dttool/controller/BaseController",
+	"sap/ui/core/mvc/Controller",
 	"sap/ui/rta/dttool/util/DTMetadata",
 	'sap/ui/rta/Client',
 	"sap/ui/model/json/JSONModel",
@@ -12,10 +12,11 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/core/postmessage/Bus",
 	"sap/ui/core/util/LibraryInfo",
-	"sap/ui/core/routing/HashChanger"
+	"sap/ui/core/routing/HashChanger",
+	"sap/ui/rta/dttool/util/DTToolUtils"
 ], function (
 	jQuery,
-	BaseController,
+	Controller,
 	DTMetadata,
 	RTAClient,
 	JSONModel,
@@ -27,10 +28,11 @@ sap.ui.define([
 	MessageToast,
 	PostMessageBus,
 	LibraryInfo,
-	HashChanger
+	HashChanger,
+	DTToolUtils
 ) {
 	"use strict";
-	return BaseController.extend("sap.ui.rta.dttool.controller.App", {
+	return Controller.extend("sap.ui.rta.dttool.controller.App", {
 
 		/**
 		 * formats a palette image source path
@@ -136,9 +138,11 @@ sap.ui.define([
 				this.oRTAClient.destroy();
 			}
 			this.oRTAClient = new RTAClient({
-				window: this.getIFrameWindow(oPayload.source.frameElement.id),
-				origin: this.getIFrameWindow(oPayload.source.frameElement.id).location.origin
+				window: DTToolUtils.getIframeWindow(oPayload.source.frameElement.id),
+				origin: DTToolUtils.getIframeWindow(oPayload.source.frameElement.id).location.origin
 			});
+
+			DTToolUtils.setRTAClient(this.oRTAClient);
 		},
 
 		/**
@@ -166,8 +170,8 @@ sap.ui.define([
 						});
 					}
 					this.oPostMessageBus.publish({
-						target : this.getIFrameWindow(),
-						origin : this.getIFrameWindow().origin,
+						target : DTToolUtils.getIframeWindow(),
+						origin : DTToolUtils.getIframeWindow().origin,
 						channelId : "dtTool",
 						eventId : "dragStart",
 						data : oData
@@ -203,8 +207,8 @@ sap.ui.define([
 		 */
 		onDragEnd : function () {
 			this.oPostMessageBus.publish({
-				target : this.getIFrameWindow(),
-				origin : this.getIFrameWindow().origin,
+				target : DTToolUtils.getIframeWindow(),
+				origin : DTToolUtils.getIframeWindow().origin,
 				channelId : "dtTool",
 				eventId : "dragEnd",
 				data : {}
@@ -332,8 +336,8 @@ sap.ui.define([
 			var sEventId = oEvent.getParameter("item").getId().replace(this.getView().getId() + "--", "");
 
 			this.oPostMessageBus.publish({
-				target : this.getIFrameWindow(),
-				origin : this.getIFrameWindow().origin,
+				target : DTToolUtils.getIframeWindow(),
+				origin : DTToolUtils.getIframeWindow().origin,
 				channelId : "dtTool",
 				eventId : sEventId,
 				data : {}
@@ -433,8 +437,8 @@ sap.ui.define([
 					if (bNotify) {
 
 						this.oPostMessageBus.publish({
-							target : this.getIFrameWindow(),
-							origin : this.getIFrameWindow().origin,
+							target : DTToolUtils.getIframeWindow(),
+							origin : DTToolUtils.getIframeWindow().origin,
 							channelId : "dtTool",
 							eventId : "outlineUpdated",
 							data : {}
@@ -706,8 +710,8 @@ sap.ui.define([
 			var vNewValue = oEvent.getParameter("newValue");
 
 			this.oPostMessageBus.publish({
-				target : this.getIFrameWindow(),
-				origin : this.getIFrameWindow().origin,
+				target : DTToolUtils.getIframeWindow(),
+				origin : DTToolUtils.getIframeWindow().origin,
 				channelId : "dtTool",
 				eventId : "propertyChange",
 				data : {
