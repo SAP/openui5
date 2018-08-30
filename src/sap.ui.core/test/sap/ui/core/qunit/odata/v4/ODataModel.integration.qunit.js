@@ -6307,6 +6307,14 @@ sap.ui.require([
 					assert.throws(function () {
 						oListBinding.changeParameters({$apply : "groupby((LifecycleStatus))"});
 					}, new Error("Cannot combine $$aggregation and $apply"));
+					assert.throws(function () {
+						oListBinding.setAggregation({
+							aggregate : {
+								GrossAmount : {grandTotal : true}
+							},
+							groupLevels : ["LifecycleStatus"]
+						});
+					}, new Error("Cannot combine visual grouping with grand total"));
 					// Note: oListBinding is now in an undefined state, do not use anymore!
 				});
 			});

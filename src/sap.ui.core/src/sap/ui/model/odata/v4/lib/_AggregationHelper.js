@@ -278,6 +278,9 @@ sap.ui.define([], function () {
 			oAggregation.aggregate = oAggregation.aggregate || {};
 			checkKeys4AllDetails(oAggregation.aggregate, mAllowedAggregateDetails2Type);
 			aAggregate = Object.keys(oAggregation.aggregate).sort().map(aggregate);
+			if (bHasGrandTotal && oAggregation.groupLevels.length) {
+				throw new Error("Cannot combine visual grouping with grand total");
+			}
 			if (aAggregate.length) {
 				sApply = "aggregate(" + aAggregate.join(",") + ")";
 			}
