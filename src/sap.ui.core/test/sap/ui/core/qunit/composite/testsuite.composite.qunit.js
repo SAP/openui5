@@ -42,10 +42,7 @@ sap.ui.define(function() {
 				},
 				bootCore: true,
 				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
+					version: 1
 				}
 			}
 		}

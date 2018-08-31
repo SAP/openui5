@@ -148,13 +148,13 @@ sap.ui.define(function() {
 			TreeBindingUtils: {
 				title: "sap.ui.model.TreeBindingUtils - QUnit Tests"
 			},
-			/*
-			 * the following tests have not been migrated
-			 */
 			ManagedObjectModel: {
 				title: "QUnit tests: sap.ui.model.base.ManagedObjectModel",
 				page: "test-resources/sap/ui/core/qunit/ManagedObjectModel.qunit.html"
 			},
+			/*
+			 * the following tests have not been migrated
+			 */
 			AnalyticalBinding: {
 				page: "test-resources/sap/ui/core/qunit/analytics/AnalyticalBinding.qunit.html",
 				title: "sap.ui.model.analytics.AnalyticalBinding - QUnit Tests",
