@@ -4,20 +4,21 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/qunit/QUnitUtils"
 ], function(Device, Control, qutils) {
+	"use strict";
 
 	// Initialization
 	var MobileEventTest = Control.extend("test.MobileEventTest", {
 		metadata: {
 			library: "test",
-			aggregations: {"child" : {name : "child", type : "sap.ui.core.Control", multiple : false}},
+			aggregations: {"child" : {name : "child", type : "sap.ui.core.Control", multiple : false}}
 		},
 		renderer: function(rm, ctrl){
 			rm.write("<div");
 			rm.writeControlData(ctrl);
 			rm.addClass("testCtrl");
 			rm.writeClasses();
-			rm.write("><div class=\"testCtrlInner\" id=\""+ctrl.getId()+"-Inner\">");
-			if(ctrl.getChild()){
+			rm.write("><div class=\"testCtrlInner\" id=\"" + ctrl.getId() + "-Inner\">");
+			if (ctrl.getChild()){
 				rm.renderControl(ctrl.getChild());
 			}
 			rm.write("</div></div>");
@@ -52,7 +53,20 @@ sap.ui.define([
 	}
 
 	function keyEvent(sName, sAddText, iTrigger, sKeyCode, oKey, bShift, bAlt, bCtrl){
-		return {sName: sName, sAddTxt: sAddText, iTrigger: iTrigger, oParams: {keyCode : jQuery.sap.KeyCodes[sKeyCode], key: oKey?oKey.key: undefined, location: oKey?oKey.location:undefined, shiftKey : bShift || false, altKey : bAlt || false, metaKey : bCtrl || false, ctrlKey : bCtrl || false}};
+		return {
+			sName: sName,
+			sAddTxt: sAddText,
+			iTrigger: iTrigger,
+			oParams: {
+				keyCode: jQuery.sap.KeyCodes[sKeyCode],
+				key: oKey ? oKey.key : undefined,
+				location: oKey ? oKey.location : undefined,
+				shiftKey : bShift || false,
+				altKey : bAlt || false,
+				metaKey : bCtrl || false,
+				ctrlKey : bCtrl || false
+			}
+		};
 	}
 
 	//see jQuery.sap.PseudoEvents
@@ -95,13 +109,13 @@ sap.ui.define([
 		keyEvent("saptabprevious", null, 1, "TAB", {key: "Tab"}, true, false, false),
 		keyEvent("sapskipforward", null, 1, "F6", {key: "F6"}),
 		keyEvent("sapskipback", null, 1, "F6", {key: "F6"}, true, false, false),
-		keyEvent("sapprevious", "- Option 1", 1, bRtl ? "ARROW_RIGHT": "ARROW_LEFT", bRtl ? {key: "ArrowRight"}: {key: "ArrowLeft"}),
+		keyEvent("sapprevious", "- Option 1", 1, bRtl ? "ARROW_RIGHT" : "ARROW_LEFT", bRtl ? {key: "ArrowRight"} : {key: "ArrowLeft"}),
 		keyEvent("sapprevious", "- Option 2", 1, "ARROW_UP", {key: "ArrowUp"}),
-		keyEvent("sappreviousmodifiers", "- Option 1", 1, bRtl ? "ARROW_RIGHT": "ARROW_LEFT", bRtl ? {key: "ArrowRight"}: {key: "ArrowLeft"}, true, false, false),
+		keyEvent("sappreviousmodifiers", "- Option 1", 1, bRtl ? "ARROW_RIGHT" : "ARROW_LEFT", bRtl ? {key: "ArrowRight"} : {key: "ArrowLeft"}, true, false, false),
 		keyEvent("sappreviousmodifiers", "- Option 2", 1, "ARROW_UP", {key: "ArrowUp"}, false, true, false),
-		keyEvent("sapnext", "- Option 1", 1, bRtl ? "ARROW_LEFT": "ARROW_RIGHT", bRtl ? {key: "ArrowLeft"} : {key: "ArrowRight"}),
+		keyEvent("sapnext", "- Option 1", 1, bRtl ? "ARROW_LEFT" : "ARROW_RIGHT", bRtl ? {key: "ArrowLeft"} : {key: "ArrowRight"}),
 		keyEvent("sapnext", "- Option 2", 1, "ARROW_DOWN", {key: "ArrowDown"}),
-		keyEvent("sapnextmodifiers", "- Option 1", 1, bRtl ? "ARROW_LEFT": "ARROW_RIGHT", bRtl ? {key: "ArrowLeft"} : {key: "ArrowRight"}, false, false, true),
+		keyEvent("sapnextmodifiers", "- Option 1", 1, bRtl ? "ARROW_LEFT" : "ARROW_RIGHT", bRtl ? {key: "ArrowLeft"} : {key: "ArrowRight"}, false, false, true),
 		keyEvent("sapnextmodifiers", "- Option 2", 1, "ARROW_DOWN", {key: "ArrowDown"}, false, false, true)
 	];
 
@@ -161,43 +175,43 @@ sap.ui.define([
 
 	function _testCtrlEvent(assert, sEventName, sOrigEventName, oEventParams, bStopPropagation, fnHandlerChecks, bExpectHandlersNotCalled) {
 		var fnCheck = function(oEvent, bTestOuter) {
-			if(bStopPropagation && !bTestOuter){
+			if (bStopPropagation && !bTestOuter){
 				oEvent.stopPropagation();
 			}
 			var oTestControl = bTestOuter ? oTestControl1 : oTestControl2;
 			oTestControl._bEventHandlerCalled = true;
 			assert.equal(oEvent.type, sEventName, "Event type correct");
 			assert.ok(oEvent.srcControl, "Event attribute 'srcControl' available");
-			if(oEvent.srcControl) {
+			if (oEvent.srcControl) {
 				assert.equal(oEvent.srcControl.getId(), "test2", "Event attribute 'srcControl' correct");
 			}
-			if(fnHandlerChecks){
+			if (fnHandlerChecks){
 				fnHandlerChecks(oEvent, oTestControl);
 			}
 		};
 
-		oTestControl1["on"+sEventName] = function(oEvent){fnCheck(oEvent, true);};
-		oTestControl2["on"+sEventName] = function(oEvent){fnCheck(oEvent, false);};
+		oTestControl1["on" + sEventName] = function(oEvent){fnCheck(oEvent, true);};
+		oTestControl2["on" + sEventName] = function(oEvent){fnCheck(oEvent, false);};
 
 		qutils.triggerEvent(sOrigEventName ? sOrigEventName : sEventName, "test2-Inner", oEventParams);
 
-		if(!bExpectHandlersNotCalled){
-			if(bStopPropagation){
+		if (!bExpectHandlersNotCalled){
+			if (bStopPropagation){
 				assert.ok(!oTestControl1._bEventHandlerCalled, "Event Handler not called on control 1");
-			}else{
+			} else {
 				assert.ok(oTestControl1._bEventHandlerCalled, "Event Handler called on control 1");
 			}
 			assert.ok(oTestControl2._bEventHandlerCalled, "Event Handler called on control 2");
-		}else{
+		} else {
 			assert.ok(!oTestControl1._bEventHandlerCalled, "Event Handler not called on control 1");
 			assert.ok(!oTestControl2._bEventHandlerCalled, "Event Handler not called on control 2");
 		}
 
 		oTestControl1._bEventHandlerCalled = undefined;
 		oTestControl2._bEventHandlerCalled = undefined;
-		oTestControl1["on"+sEventName] = undefined;
-		oTestControl2["on"+sEventName] = undefined;
-	};
+		oTestControl1["on" + sEventName] = undefined;
+		oTestControl2["on" + sEventName] = undefined;
+	}
 
 
 	function doTestCtrlEvent(sEventName, sOrigEventName, oEventParams, fnHandlerChecks, bExpectHandlersNotCalled){
@@ -208,7 +222,7 @@ sap.ui.define([
 		QUnit.test(sEventName + " Event (bubbling cancelled)", function(assert) {
 			_testCtrlEvent(assert, sEventName, sOrigEventName, oEventParams, true, fnHandlerChecks, bExpectHandlersNotCalled);
 		});
-	};
+	}
 
 
 	function doTestPseudoEvent(sOriginalEventName, sEventName, iTriggerCount, oEventParams) {
@@ -216,7 +230,7 @@ sap.ui.define([
 			var iCount = 0;
 			var fnCheck = function(oEvent) {
 				iCount++;
-				assert.ok(oEvent.isPseudoType(oEvent._sExpectedPseudoType), "Event has expected pseudo type "+oEvent._sExpectedPseudoType);
+				assert.ok(oEvent.isPseudoType(oEvent._sExpectedPseudoType), "Event has expected pseudo type " + oEvent._sExpectedPseudoType);
 			};
 
 			jQuery("#outer").bind(sOriginalEventName, fnCheck);
@@ -225,7 +239,7 @@ sap.ui.define([
 			oEvent._sExpectedPseudoType = sEventName;
 			jQuery.extend(oEvent, oEventParams);
 
-			for(var i = 0; i < iTriggerCount; i++){
+			for (var i = 0; i < iTriggerCount; i++){
 				jQuery("#inner").trigger(oEvent);
 			}
 
@@ -236,19 +250,19 @@ sap.ui.define([
 		});
 
 		doTestCtrlEvent(sEventName, sOriginalEventName, oEventParams);
-	};
+	}
 
 
 	function triggerDelayedDoubleClick(sTargetId, fnDoAfter) {
-		jQuery("#"+sTargetId).trigger("click");
+		jQuery("#" + sTargetId).trigger("click");
 		// at least 500 ms should have passed trigger again to simulate dblclick
 		setTimeout(function() {
-			jQuery("#"+sTargetId).trigger("click");
-			if(fnDoAfter){
+			jQuery("#" + sTargetId).trigger("click");
+			if (fnDoAfter){
 				fnDoAfter();
 			}
 		},500);
-	};
+	}
 
 
 	// Test functions
@@ -260,40 +274,40 @@ sap.ui.define([
 	QUnit.test("Control Events", function(assert) {
 		var aBrowserEvents = [].concat(aBasicBrowserEvents);
 
-		if(Device.support.touch){
+		if (Device.support.touch){
 			aBrowserEvents = aBrowserEvents.concat(aMobileBrowserEvents);
 		}
 
 		assert.equal(jQuery.sap.ControlEvents.length, aBrowserEvents.length, "Number of basic browser events correct");
-		for(var i = 0; i < aBrowserEvents.length; i++){
-			assert.ok(jQuery.inArray(aBrowserEvents[i], jQuery.sap.ControlEvents) >= 0, "Event "+aBrowserEvents[i]+" contained in jQuery.sap.ControlEvents");
+		for (var i = 0; i < aBrowserEvents.length; i++){
+			assert.ok(jQuery.sap.ControlEvents.indexOf(aBrowserEvents[i]) >= 0, "Event " + aBrowserEvents[i] + " contained in jQuery.sap.ControlEvents");
 		}
 	});
 
 	QUnit.test("Pseudo Events", function(assert) {
 		function fnCheck(sEventName, sOrigEventName){
 			var evt = jQuery.sap.PseudoEvents[sEventName];
-			assert.ok(!!evt, "Event "+sEventName+" contained in jQuery.sap.PseudoEvents");
-			if(evt){
-				assert.equal(evt.sName, sEventName, "Event "+sEventName+": name correct");
-				assert.ok(jQuery.inArray(sOrigEventName, evt.aTypes) >= 0, "Event "+sEventName+": base type correct");
-				for(var j=0; j<evt.aTypes.length; j++){
-					assert.ok(jQuery.inArray(evt.aTypes[j], jQuery.sap.ControlEvents) >= 0, "Event "+sEventName+": base type in jQuery.sap.ControlEvents");
+			assert.ok(!!evt, "Event " + sEventName + " contained in jQuery.sap.PseudoEvents");
+			if (evt){
+				assert.equal(evt.sName, sEventName, "Event " + sEventName + ": name correct");
+				assert.ok(evt.aTypes.indexOf(sOrigEventName) >= 0, "Event " + sEventName + ": base type correct");
+				for (var j = 0; j < evt.aTypes.length; j++){
+					assert.ok(jQuery.sap.ControlEvents.indexOf(evt.aTypes[j]) >= 0, "Event " + sEventName + ": base type in jQuery.sap.ControlEvents");
 				}
 			}
-		};
-
-		for(var i = 0; i < aPseudoKeyEvents.length; i++){
-			fnCheck(aPseudoKeyEvents[i].sName, "keydown");
 		}
 
-		for(var i = 0; i < aPseudoKeyJQueryEvents.length; i++){
-			fnCheck(aPseudoKeyJQueryEvents[i].sName, "keydown");
-		}
+		aPseudoKeyEvents.forEach(function(oPseudoKeyEvent) {
+			fnCheck(oPseudoKeyEvent.sName, "keydown");
+		});
+
+		aPseudoKeyJQueryEvents.forEach(function(oPseudoKeyJQueryEvent) {
+			fnCheck(oPseudoKeyJQueryEvent.sName, "keydown");
+		});
 
 		fnCheck("sapdelayeddoubleclick", "click");
 
-		if(Device.support.touch){
+		if (Device.support.touch){
 			//With mobile events
 			fnCheck("swipebegin", bRtl ? "swiperight" : "swipeleft");
 			fnCheck("swipeend", !bRtl ? "swiperight" : "swipeleft");
@@ -306,9 +320,9 @@ sap.ui.define([
 	//***************************************
 	QUnit.module("Basic Browser Events");
 
-	for(var i = 0; i < aBasicBrowserEvents.length; i++){
-		doTestCtrlEvent(aBasicBrowserEvents[i]);
-	}
+	aBasicBrowserEvents.forEach(function(oBasicBrowserEvent) {
+		doTestCtrlEvent(oBasicBrowserEvent);
+	});
 
 
 	//***************************************
@@ -320,13 +334,13 @@ sap.ui.define([
 	//***************************************
 	QUnit.module("Basic Pseudo Events");
 
-	for(var i = 0; i < aPseudoKeyEvents.length; i++){
-		doTestPseudoEvent("keydown", aPseudoKeyEvents[i].sName, aPseudoKeyEvents[i].iTrigger, aPseudoKeyEvents[i].oParams);
-	}
+	aPseudoKeyEvents.forEach(function(oPseudoKeyEvent) {
+		doTestPseudoEvent("keydown", oPseudoKeyEvent.sName, oPseudoKeyEvent.iTrigger, oPseudoKeyEvent.oParams);
+	});
 
-	for(var i = 0; i < aPseudoKeyJQueryEvents.length; i++){
-		doTestPseudoEvent("keydown", aPseudoKeyJQueryEvents[i].sName, aPseudoKeyJQueryEvents[i].iTrigger, aPseudoKeyJQueryEvents[i].oParams);
-	}
+	aPseudoKeyJQueryEvents.forEach(function(oPseudoKeyJQueryEvent) {
+		doTestPseudoEvent("keydown", oPseudoKeyJQueryEvent.sName, oPseudoKeyJQueryEvent.iTrigger, oPseudoKeyJQueryEvent.oParams);
+	});
 
 	QUnit.test("sapdelayeddoubleclick Event - Basic", function(assert){
 		var done = assert.async();
@@ -335,7 +349,7 @@ sap.ui.define([
 
 		var fnCheck = function(oEvent) {
 			iCount++;
-			if(!bFirst) {
+			if (!bFirst) {
 				assert.ok(oEvent.isPseudoType("sapdelayeddoubleclick"), "Event has expected pseudo type sapdelayeddoubleclick");
 			}
 			oEvent.getPseudoTypes(); //Ensure that pseudo types check functions run
@@ -360,7 +374,7 @@ sap.ui.define([
 			oTestControl._bEventHandlerCalled = true;
 			assert.equal(oEvent.type, "sapdelayeddoubleclick", "Event type correct");
 			assert.ok(oEvent.srcControl, "Event attribute 'srcControl' available");
-			if(oEvent.srcControl) {
+			if (oEvent.srcControl) {
 				assert.equal(oEvent.srcControl.getId(), "test2", "Event attribute 'srcControl' correct");
 			}
 		};
@@ -383,14 +397,14 @@ sap.ui.define([
 	QUnit.test("sapdelayeddoubleclick Event (bubbling cancelled)", function(assert){
 		var done = assert.async();
 		var fnCheck = function(oEvent, bTestOuter) {
-			if(!bTestOuter) {
+			if (!bTestOuter) {
 				oEvent.stopPropagation();
 			}
 			var oTestControl = bTestOuter ? oTestControl1 : oTestControl2;
 			oTestControl._bEventHandlerCalled = true;
 			assert.equal(oEvent.type, "sapdelayeddoubleclick", "Event type correct");
 			assert.ok(oEvent.srcControl, "Event attribute 'srcControl' available");
-			if(oEvent.srcControl) {
+			if (oEvent.srcControl) {
 				assert.equal(oEvent.srcControl.getId(), "test2", "Event attribute 'srcControl' correct");
 			}
 		};
@@ -413,11 +427,11 @@ sap.ui.define([
 
 	//***************************************
 
-	if(Device.support.touch){
+	if (Device.support.touch){
 		//***************************************
 		QUnit.module("Mobile Browser Events");
 
-		for(var i = 0; i < aMobileBrowserEvents.length; i++){
+		for (var i = 0; i < aMobileBrowserEvents.length; i++){
 			doTestCtrlEvent(aMobileBrowserEvents[i], null, /*Satisfy jQuery Mobile*/{touches:[{pageX:0, pageY:0}], targetTouches: [{pageX:0, pageY:0}], changedTouches: [{pageX:0, pageY:0}]});
 		}
 

@@ -23,7 +23,7 @@ sap.ui.define([
 	// This variable is used for creating custom component classes to avoid the
 	// error "introducing global variables" when this test file is executed with
 	// url-parameter noglobals=true
-	var namespace = {};
+	window.namespace = undefined;
 
 	// use sap.m.Panel as a lightweight drop-in replacement for the ux3.Shell
 	var ShellSubstitute = Panel;
@@ -1067,7 +1067,7 @@ sap.ui.define([
 		var that = this,
 			oReturnValue,
 			fnStub = this.stub(View, "_legacyCreate", function () {
-				return this.oView;
+				return that.oView;
 			});
 
 		//Act
@@ -1094,13 +1094,13 @@ sap.ui.define([
 	QUnit.test("should be able to fire/attach/detach the created event", function(assert) {
 		// Arrange
 		var oParameters = { foo : "bar" },
+			oListener = {},
+			oData = { some : "data" },
 			fnEventSpy = this.spy(function(oEvent, oActualData) {
 				assert.strictEqual(oActualData, oData, "the data is correct");
 				assert.strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
 				assert.strictEqual(this, oListener, "the this pointer is correct");
 			}),
-			oListener = {},
-			oData = { some : "data" },
 			oFireReturnValue,
 			oDetachReturnValue,
 			oAttachReturnValue = this.oRouter.attachViewCreated(oData, fnEventSpy, oListener);
@@ -1120,9 +1120,6 @@ sap.ui.define([
 	QUnit.test("Should fire the view created event if a view is created", function (assert) {
 		// Arrange
 		var oView = createXmlView(),
-			fnStub = this.stub(View, "_legacyCreate", function () {
-				return oView;
-			}),
 			sViewType = "XML",
 			sViewName = "foo",
 			oParameters,
@@ -1130,10 +1127,14 @@ sap.ui.define([
 				oParameters = oEvent.getParameters();
 			});
 
+		this.stub(View, "_legacyCreate", function () {
+			return oView;
+		});
+
 		this.oRouter.attachViewCreated(fnEventSpy);
 
 		// Act
-		var oReturnValue = this.oRouter.getView(sViewName, sViewType);
+		this.oRouter.getView(sViewName, sViewType);
 
 		// Assert
 		assert.strictEqual(fnEventSpy.callCount, 1, "The view created event was fired");
@@ -1171,13 +1172,13 @@ sap.ui.define([
 	QUnit.test("should be able to fire/attach/detach the titleChanged event", function(assert) {
 		// Arrange
 		var oParameters = { foo : "bar" },
+			oListener = {},
+			oData = { some : "data" },
 			fnEventSpy = this.spy(function(oEvent, oActualData) {
 				assert.strictEqual(oActualData, oData, "the data is correct");
 				assert.strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
 				assert.strictEqual(this, oListener, "the this pointer is correct");
 			}),
-			oListener = {},
-			oData = { some : "data" },
 			oFireReturnValue,
 			oDetachReturnValue,
 			oAttachReturnValue;
@@ -1648,7 +1649,6 @@ sap.ui.define([
 			oParameters,
 			sHomeTitle = "HOME",
 			sProductTitle = "PRODUCT",
-			sProductDetailTitle = "PRODUCT_DETAIL",
 			fnEventSpy = this.spy(function (oEvent) {
 				oParameters = oEvent.getParameters();
 			});
@@ -2001,7 +2001,7 @@ sap.ui.define([
 			});
 
 		// Act
-		var oReturnValue = oRouter.getView("XML", "foo");
+		oRouter.getView("XML", "foo");
 
 		// Assert
 		assert.strictEqual(fnOwnerSpy.callCount, 1, "Did run with owner");
@@ -2366,7 +2366,10 @@ sap.ui.define([
 				this._router.initialize();
 			};
 
-			var ParentComponent = UIComponent.extend("namespace.ParentComponent", {
+			var ParentComponent,
+				ChildComponent;
+
+			ParentComponent = UIComponent.extend("namespace.ParentComponent", {
 				metadata : {
 					routing:  {
 						routes: [
@@ -2386,7 +2389,7 @@ sap.ui.define([
 				init : that.fnInitRouter
 			});
 
-			var ChildComponent = UIComponent.extend("namespace.ChildComponent", {
+			ChildComponent = UIComponent.extend("namespace.ChildComponent", {
 				metadata : {
 					routing:  {
 						routes: [
@@ -2463,36 +2466,37 @@ sap.ui.define([
 			aRouteMatchedEventSpies = [],
 			aRoutePatternMatchedSpies = [],
 			// We declare components in a function to be able to cover any number
+			fnDeclareComponent = function(i, iDepth) {
+				var Component = UIComponent.extend("namespace.Component" + i, {
+					metadata : {
+						routing:  {
+							routes: [
+								{
+									pattern: "route" + i + "/{id}",
+									name: "route" + i,
+									// set no parent for the (root-) route
+									parent: (i != 0) ? "namespace.Component" + (( i - 1 ) + ":route" + ( i - 1 )) : undefined
+								}
+							]
+						}
+					},
+					createContent: function() {
+						// instantiate "child-"routes for all routes except the directly matched one
+						if (i < (iDepth - 1)) {
+							// store pointers to the instances for later usage
+							aComponentInstances[i + 1] = new aComponents[i + 1]("component" + (i + 1));
+							return sap.ui.jsview("view", {
+								content: aComponentInstances[i + 1]
+							});
+						}
+					},
+					init : that.fnInitRouter
+				});
+				aComponents.push(Component);
+			},
 			fnDeclareComponents = function(iDepth) {
 				for (var i = 0; i < iDepth; i++) {
-					(function(i) {
-						var Component = UIComponent.extend("namespace.Component" + i, {
-							metadata : {
-								routing:  {
-									routes: [
-										{
-											pattern: "route" + i + "/{id}",
-											name: "route" + i,
-											// set no parent for the (root-) route
-											parent: (i != 0) ? "namespace.Component" + (( i - 1 ) + ":route" + ( i - 1 )) : undefined
-										}
-									]
-								}
-							},
-							createContent: function() {
-								// instantiate "child-"routes for all routes except the directly matched one
-								if (i < (iDepth - 1)) {
-									// store pointers to the instances for later usage
-									aComponentInstances[i + 1] = new aComponents[i + 1]("component" + (i + 1));
-									return sap.ui.jsview("view", {
-										content: aComponentInstances[i + 1]
-									});
-								}
-							},
-							init : that.fnInitRouter
-						});
-						aComponents.push(Component);
-					}(i));
+					fnDeclareComponent(i, iDepth);
 				}
 				return aComponents[0];
 			};

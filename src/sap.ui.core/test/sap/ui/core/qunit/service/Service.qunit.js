@@ -1,6 +1,11 @@
-sap.ui.define([], function() {
+/*global QUnit, sinon, my */
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/core/service/ServiceFactoryRegistry"
+], function(Log, ServiceFactoryRegistry) {
+	"use strict";
 
-	sap.ui.predefine("my/Service", ["sap/ui/core/service/Service"], function(Service) {
+	sap.ui.define("my/Service", ["sap/ui/core/service/Service"], function(Service) {
 
 		return Service.extend("my.Service", {
 
@@ -24,7 +29,7 @@ sap.ui.define([], function() {
 
 	});
 
-	sap.ui.predefine("my/ServiceFactory", ["sap/ui/core/service/ServiceFactory", "my/Service"], function(ServiceFactory, MyService) {
+	sap.ui.define("my/ServiceFactory", ["sap/ui/core/service/ServiceFactory", "my/Service"], function(ServiceFactory, MyService) {
 
 		return ServiceFactory.extend("my.ServiceFactory", {
 
@@ -44,8 +49,6 @@ sap.ui.define([], function() {
 		beforeEach : function(assert) {
 
 			// log spy
-			var Log = sap.ui.require("sap/base/Log");
-			assert.ok(Log, "Log module should be available");
 			this.oLogSpy = sinon.spy(Log, "warning");
 
 		},
@@ -472,7 +475,7 @@ sap.ui.define([], function() {
 			oServer.xhr.useFilters = true;
 			oServer.xhr.filters = [];
 			oServer.xhr.addFilter(function(method, url) {
-				return "/anylocation/manifest.json?sap-language=EN" !== url;
+				return url !== "/anylocation/manifest.json?sap-language=EN";
 			});
 
 			oServer.autoRespond = true;
@@ -486,15 +489,13 @@ sap.ui.define([], function() {
 
 
 			// log spy
-			var Log = sap.ui.require("sap/base/Log");
-			assert.ok(Log, "Log module should be available");
 			this.oLogSpy = sinon.spy(Log, "error");
 
 			// register the Service Factories before component creation
-			sap.ui.core.service.ServiceFactoryRegistry.register("my.ServiceFactoryAlias", new my.ServiceFactory());
-			sap.ui.core.service.ServiceFactoryRegistry.register("invalid.ServiceFactoryAlias", new sap.ui.core.service.ServiceFactory());
-			sap.ui.core.service.ServiceFactoryRegistry.register("lazy.ServiceFactoryAlias", new my.ServiceFactory());
-			sap.ui.core.service.ServiceFactoryRegistry.register("settings.ServiceFactoryAlias", new my.ServiceFactory());
+			ServiceFactoryRegistry.register("my.ServiceFactoryAlias", new my.ServiceFactory());
+			ServiceFactoryRegistry.register("invalid.ServiceFactoryAlias", new sap.ui.core.service.ServiceFactory());
+			ServiceFactoryRegistry.register("lazy.ServiceFactoryAlias", new my.ServiceFactory());
+			ServiceFactoryRegistry.register("settings.ServiceFactoryAlias", new my.ServiceFactory());
 
 			// create the component
 			this.oComponent = sap.ui.component({
@@ -505,9 +506,9 @@ sap.ui.define([], function() {
 		afterEach : function() {
 
 			// unregister the Service Factory for: my.ServiceFactoryAlias
-			sap.ui.core.service.ServiceFactoryRegistry.unregister("my.ServiceFactoryAlias");
-			sap.ui.core.service.ServiceFactoryRegistry.unregister("lazy.ServiceFactoryAlias");
-			sap.ui.core.service.ServiceFactoryRegistry.unregister("settings.ServiceFactoryAlias");
+			ServiceFactoryRegistry.unregister("my.ServiceFactoryAlias");
+			ServiceFactoryRegistry.unregister("lazy.ServiceFactoryAlias");
+			ServiceFactoryRegistry.unregister("settings.ServiceFactoryAlias");
 
 			this.oComponent.destroy();
 			delete this.oComponent;
@@ -699,7 +700,7 @@ sap.ui.define([], function() {
 			assert.ok(false, "Service must not be created!");
 		}).catch(function(oError) {
 			assert.equal(oError.message, "Usage of sap.ui.core.service.ServiceFactory requires a service constructor function to create a new service instance or to override the createInstance function!", "Service Factory not found Error");
-		}.bind(this)).then(done);
+		}).then(done);
 
 	});
 
@@ -745,7 +746,7 @@ sap.ui.define([], function() {
 						"setHierarchy": "auto",
 						"setTitle": "auto"
 					}
-				}
+				};
 				assert.ok(oServiceInstance._bInitialized, "Service is initialized properly!");
 				assert.deepEqual(oServiceInstance.getContext(), oRefServiceContext, "Service context should be the same.");
 

@@ -3,7 +3,7 @@
  */
 
 sap.ui.require(["jquery.sap.global", "sap/ui/Device"], function(jQuery) {
-	/*global QUnit, sinon */
+	/*global QUnit, sinon, alert:true */
 	"use strict";
 
 	QUnit.module("misc");

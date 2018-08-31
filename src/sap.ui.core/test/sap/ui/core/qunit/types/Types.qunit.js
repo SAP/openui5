@@ -1,3 +1,4 @@
+/*global QUnit */
 sap.ui.define(["sap/ui/model/ValidateException",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/type/Boolean",
@@ -20,6 +21,9 @@ sap.ui.define(["sap/ui/model/ValidateException",
 		FloatType, CurrencyType, UnitType, DateType,
 		TimeType, TimeIntervalType, DateTimeType,
 		DateIntervalType, DateTimeIntervalType, FileSizeType, NumberFormat) {
+
+	"use strict";
+
 		function checkValidateException(oEx) {
 			// Exception fails, if translation text can not be found (message looks like the translation key)
 			return oEx instanceof ValidateException && !/^\w+\.\w+$/.test(oEx.message);
@@ -41,10 +45,10 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(boolType.formatValue(false, "boolean"), false, "format test");
 			assert.equal(boolType.formatValue(true, "string"), "true", "format test");
 			assert.equal(boolType.formatValue(false, "string"), "false", "format test");
-			raises(function () { boolType.formatValue(true, "int") }, "format test");
-			raises(function () { boolType.formatValue(false, "int") }, "format test");
-			raises(function () { boolType.formatValue(true, "float") }, "format test");
-			raises(function () { boolType.formatValue(false, "float") }, "format test");
+			assert.throws(function () { boolType.formatValue(true, "int"); }, "format test");
+			assert.throws(function () { boolType.formatValue(false, "int"); }, "format test");
+			assert.throws(function () { boolType.formatValue(true, "float"); }, "format test");
+			assert.throws(function () { boolType.formatValue(false, "float"); }, "format test");
 		});
 
 		QUnit.test("boolean parseValue", function (assert) {
@@ -57,11 +61,11 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(boolType.parseValue("", "string"), false, "parse test");
 			assert.equal(boolType.parseValue(" ", "string"), false, "parse test");
 
-			raises(function () { boolType.parseValue(true, "int") }, ParseException, "parse test");
-			raises(function () { boolType.parseValue(false, "int") }, ParseException, "parse test");
-			raises(function () { boolType.parseValue(true, "float") }, ParseException, "parse test");
-			raises(function () { boolType.parseValue(false, "float") }, ParseException, "parse test");
-			raises(function () { boolType.parseValue("xxx", "string") }, checkParseException, "parse test");
+			assert.throws(function () { boolType.parseValue(true, "int"); }, ParseException, "parse test");
+			assert.throws(function () { boolType.parseValue(false, "int"); }, ParseException, "parse test");
+			assert.throws(function () { boolType.parseValue(true, "float"); }, ParseException, "parse test");
+			assert.throws(function () { boolType.parseValue(false, "float"); }, ParseException, "parse test");
+			assert.throws(function () { boolType.parseValue("xxx", "string"); }, checkParseException, "parse test");
 		});
 
 		// string type tests
@@ -82,10 +86,10 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(stringType.formatValue("1.34", "float"), 1.34, "format test");
 			assert.equal(stringType.formatValue("33.456", "float"), 33.456, "format test");
 
-			raises(function () { stringType.formatValue("33.456", "untype") }, "format test");
-			raises(function () { stringType.formatValue("notfalse", "boolean") }, FormatException, "format test");
-			raises(function () { stringType.formatValue("NaN", "int") }, FormatException, "format test");
-			raises(function () { stringType.formatValue("d3f.442fs", "float") }, FormatException, "format test");
+			assert.throws(function () { stringType.formatValue("33.456", "untype"); }, "format test");
+			assert.throws(function () { stringType.formatValue("notfalse", "boolean"); }, FormatException, "format test");
+			assert.throws(function () { stringType.formatValue("NaN", "int"); }, FormatException, "format test");
+			assert.throws(function () { stringType.formatValue("d3f.442fs", "float"); }, FormatException, "format test");
 
 		});
 
@@ -100,7 +104,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(stringType.parseValue(-222, "int"), "-222", "parse test");
 			assert.equal(stringType.parseValue(-4.3657, "float"), "-4.3657", "parse test");
 
-			raises(function () { stringType.parseValue(true, "untype") }, ParseException, "parse test");
+			assert.throws(function () { stringType.parseValue(true, "untype"); }, ParseException, "parse test");
 		});
 
 		QUnit.test("string validateValue", function (assert) {
@@ -115,10 +119,10 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			} catch (e) {
 				assert.ok(false, "one of the validation tests failed please check");
 			}
-			raises(function () { stringType.validateValue("dd") }, checkValidateException, "validate test");
-			raises(function () { stringType.validateValue("ddggggggggggg") }, checkValidateException, "validate test");
+			assert.throws(function () { stringType.validateValue("dd"); }, checkValidateException, "validate test");
+			assert.throws(function () { stringType.validateValue("ddggggggggggg"); }, checkValidateException, "validate test");
 
-			var stringType = new StringType(null, {
+			stringType = new StringType(null, {
 				startsWith: "ab",
 				contains: "cd"
 			});
@@ -128,10 +132,10 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			} catch (e) {
 				assert.ok(false, "one of the validation tests failed please check");
 			}
-			raises(function () { stringType.validateValue("cdab") }, checkValidateException, "validate test");
-			raises(function () { stringType.validateValue("abdccsbaab") }, checkValidateException, "validate test");
+			assert.throws(function () { stringType.validateValue("cdab"); }, checkValidateException, "validate test");
+			assert.throws(function () { stringType.validateValue("abdccsbaab"); }, checkValidateException, "validate test");
 
-			var stringType = new StringType(null, {
+			stringType = new StringType(null, {
 				equals: "ab"
 			});
 			try {
@@ -139,10 +143,11 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			} catch (e) {
 				assert.ok(false, "one of the validation tests failed please check");
 			}
-			raises(function () { stringType.validateValue("cdab") }, checkValidateException, "validate test");
-			raises(function () { stringType.validateValue("abdaab") }, checkValidateException, "validate test");
-			var stringType = new StringType(null, {
-				search: "ab",
+			assert.throws(function () { stringType.validateValue("cdab"); }, checkValidateException, "validate test");
+			assert.throws(function () { stringType.validateValue("abdaab"); }, checkValidateException, "validate test");
+
+			stringType = new StringType(null, {
+				search: "ab"
 			});
 			try {
 				assert.equal(stringType.validateValue("ddabcccdfff"), undefined, "validate test");
@@ -150,8 +155,8 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			} catch (e) {
 				assert.ok(false, "one of the validation tests failed please check");
 			}
-			raises(function () { stringType.validateValue("cdb") }, checkValidateException, "validate test");
-			raises(function () { stringType.validateValue("adccsbba") }, checkValidateException, "validate test");
+			assert.throws(function () { stringType.validateValue("cdb"); }, checkValidateException, "validate test");
+			assert.throws(function () { stringType.validateValue("adccsbba"); }, checkValidateException, "validate test");
 
 		});
 
@@ -171,8 +176,8 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(intType.formatValue(134, "float"), 134, "format test");
 			assert.equal(intType.formatValue(344456, "float"), 344456, "format test");
 
-			raises(function () { intType.formatValue(33456, "boolean") }, "format test");
-			raises(function () { intType.formatValue(22, "untype") }, FormatException, "format test");
+			assert.throws(function () { intType.formatValue(33456, "boolean"); }, "format test");
+			assert.throws(function () { intType.formatValue(22, "untype"); }, FormatException, "format test");
 
 		});
 
@@ -183,14 +188,14 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(intType.parseValue("3,555", "string"), 3555, "parse test");
 			assert.equal(intType.parseValue("-3,555", "string"), -3555, "parse test");
 			assert.equal(intType.parseValue(-3, "float"), -3, "parse test");
-			raises(function () { intType.parseValue("-3.444", "float") }, ParseException, "parse test");
+			assert.throws(function () { intType.parseValue("-3.444", "float"); }, ParseException, "parse test");
 			assert.equal(intType.parseValue(-222, "int"), -222, "parse test");
 			assert.equal(intType.parseValue(4444, "float"), 4444, "parse test");
 
-			raises(function () { intType.parseValue("3333.555", "string") }, ParseException, "parse test");
-			raises(function () { intType.parseValue(true, "untype") }, ParseException, "parse test");
-			raises(function () { intType.parseValue(true, "boolean") }, ParseException, "parse test");
-			raises(function () { intType.parseValue("test", "string") }, checkParseException, "parse test");
+			assert.throws(function () { intType.parseValue("3333.555", "string"); }, ParseException, "parse test");
+			assert.throws(function () { intType.parseValue(true, "untype"); }, ParseException, "parse test");
+			assert.throws(function () { intType.parseValue(true, "boolean"); }, ParseException, "parse test");
+			assert.throws(function () { intType.parseValue("test", "string"); }, checkParseException, "parse test");
 		});
 
 		QUnit.test("integer validateValue", function (assert) {
@@ -204,8 +209,8 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			} catch (e) {
 				assert.ok(false, "one of the validation tests failed please check");
 			}
-			raises(function () { intType.validateValue(-1) }, checkValidateException, "validate test");
-			raises(function () { intType.validateValue(33) }, checkValidateException, "validate test");
+			assert.throws(function () { intType.validateValue(-1); }, checkValidateException, "validate test");
+			assert.throws(function () { intType.validateValue(33); }, checkValidateException, "validate test");
 
 		});
 
@@ -259,8 +264,8 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			} catch (e) {
 				assert.ok(false, "one of the validation tests failed please check");
 			}
-			raises(function () { intType.validateValue("-1") }, checkValidateException, "validate test");
-			raises(function () { intType.validateValue("3.300") }, checkValidateException, "validate test");
+			assert.throws(function () { intType.validateValue("-1"); }, checkValidateException, "validate test");
+			assert.throws(function () { intType.validateValue("3.300"); }, checkValidateException, "validate test");
 
 		});
 
@@ -288,7 +293,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(floatType.formatValue(134.00, "float"), 134, "format test");
 			assert.equal(floatType.formatValue(134.000, "float"), 134, "format test");
 
-			raises(function () { floatType.formatValue(22.0, "untype") }, FormatException, "format test");
+			assert.throws(function () { floatType.formatValue(22.0, "untype"); }, FormatException, "format test");
 
 		});
 
@@ -304,9 +309,9 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(floatType.parseValue(-4.3657, "float"), -4.3657, "parse test");
 			assert.equal(floatType.parseValue(4.657, "float"), 4.657, "parse test");
 
-			raises(function () { floatType.parseValue(true, "untype") }, ParseException, "parse test");
-			raises(function () { floatType.parseValue(true, "boolean") }, ParseException, "parse test");
-			raises(function () { floatType.parseValue("test", "string") }, ParseException, "parse test");
+			assert.throws(function () { floatType.parseValue(true, "untype"); }, ParseException, "parse test");
+			assert.throws(function () { floatType.parseValue(true, "boolean"); }, ParseException, "parse test");
+			assert.throws(function () { floatType.parseValue("test", "string"); }, ParseException, "parse test");
 		});
 
 		QUnit.test("float validateValue", function (assert) {
@@ -321,8 +326,8 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			} catch (e) {
 				assert.ok(false, "one of the validation tests failed please check");
 			}
-			raises(function () { floatType.validateValue(2.99999) }, checkValidateException, "validate test");
-			raises(function () { floatType.validateValue(10.0000001) }, checkValidateException, "validate test");
+			assert.throws(function () { floatType.validateValue(2.99999); }, checkValidateException, "validate test");
+			assert.throws(function () { floatType.validateValue(10.0000001); }, checkValidateException, "validate test");
 
 		});
 
@@ -386,8 +391,8 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			} catch (e) {
 				assert.ok(false, "one of the validation tests failed please check");
 			}
-			raises(function () { floatType.validateValue("2,99999") }, checkValidateException, "validate test");
-			raises(function () { floatType.validateValue("10,0000001") }, checkValidateException, "validate test");
+			assert.throws(function () { floatType.validateValue("2,99999"); }, checkValidateException, "validate test");
+			assert.throws(function () { floatType.validateValue("10,0000001"); }, checkValidateException, "validate test");
 
 		});
 
@@ -406,9 +411,9 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(currencyType.formatValue([null, "EUR"], "string"), null, "format test");
 			assert.equal(currencyType.formatValue([1, null], "string"), "1.00", "format test");
 
-			raises(function () { currencyType.formatValue(22.0, "int") }, FormatException, "format test");
-			raises(function () { currencyType.formatValue(22.0, "float") }, FormatException, "format test");
-			raises(function () { currencyType.formatValue(22.0, "untype") }, FormatException, "format test");
+			assert.throws(function () { currencyType.formatValue(22.0, "int"); }, FormatException, "format test");
+			assert.throws(function () { currencyType.formatValue(22.0, "float"); }, FormatException, "format test");
+			assert.throws(function () { currencyType.formatValue(22.0, "untype"); }, FormatException, "format test");
 		});
 
 		QUnit.test("currency parseValue", function (assert) {
@@ -419,9 +424,9 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.deepEqual(currencyType.parseValue("EUR3.555", "string"), [3.555, "EUR"], "parse test");
 			assert.deepEqual(currencyType.parseValue("¥-3.555", "string"), [-3.555, "JPY"], "parse test");
 
-			raises(function () { currencyType.parseValue(true, "untype") }, ParseException, "parse test");
-			raises(function () { currencyType.parseValue(true, "boolean") }, ParseException, "parse test");
-			raises(function () { currencyType.parseValue("test", "string") }, checkParseException, "parse test");
+			assert.throws(function () { currencyType.parseValue(true, "untype"); }, ParseException, "parse test");
+			assert.throws(function () { currencyType.parseValue(true, "boolean"); }, ParseException, "parse test");
+			assert.throws(function () { currencyType.parseValue("test", "string"); }, checkParseException, "parse test");
 		});
 
 		QUnit.test("currency validateValue", function (assert) {
@@ -436,8 +441,8 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			} catch (e) {
 				assert.ok(false, "one of the validation tests failed please check");
 			}
-			raises(function () { currencyType.validateValue([2.99999, "USD"]) }, checkValidateException, "validate test");
-			raises(function () { currencyType.validateValue([10.0000001, "EUR"]) }, checkValidateException, "validate test");
+			assert.throws(function () { currencyType.validateValue([2.99999, "USD"]); }, checkValidateException, "validate test");
+			assert.throws(function () { currencyType.validateValue([10.0000001, "EUR"]); }, checkValidateException, "validate test");
 
 		});
 
@@ -454,7 +459,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(currencyType.formatValue([1.009, "EUR"], "string"), "1.01", "format test");
 			assert.equal(currencyType.formatValue([1.00001, "USD"], "string"), "1.00", "format test");
 
-			var currencyType = new CurrencyType({
+			currencyType = new CurrencyType({
 				currencyCode: false
 			});
 
@@ -498,8 +503,8 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			} catch (e) {
 				assert.ok(false, "one of the validation tests failed please check");
 			}
-			raises(function () { currencyType.validateValue("USD2.99999") }, checkValidateException, "validate test");
-			raises(function () { currencyType.validateValue("EUR10.0000001") }, checkValidateException, "validate test");
+			assert.throws(function () { currencyType.validateValue("USD2.99999"); }, checkValidateException, "validate test");
+			assert.throws(function () { currencyType.validateValue("EUR10.0000001"); }, checkValidateException, "validate test");
 
 		});
 
@@ -520,9 +525,9 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(unitType.formatValue([null, "duration-hour"], "string"), null, "format test");
 			assert.equal(unitType.formatValue([1, null], "string"), "", "format test");
 
-			raises(function () { unitType.formatValue(22.0, "int") }, FormatException, "format test");
-			raises(function () { unitType.formatValue(22.0, "float") }, FormatException, "format test");
-			raises(function () { unitType.formatValue(22.0, "untype") }, FormatException, "format test");
+			assert.throws(function () { unitType.formatValue(22.0, "int"); }, FormatException, "format test");
+			assert.throws(function () { unitType.formatValue(22.0, "float"); }, FormatException, "format test");
+			assert.throws(function () { unitType.formatValue(22.0, "untype"); }, FormatException, "format test");
 		});
 
 		QUnit.test("unit parseValue", function (assert) {
@@ -532,10 +537,10 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.deepEqual(unitType.parseValue("3.555 hr", "string"), [3.555, "duration-hour"], "parse test");
 			assert.deepEqual(unitType.parseValue("-3.555 mph", "string"), [-3.555, "speed-mile-per-hour"], "parse test");
 
-			raises(function () { unitType.parseValue("3333", "string") }, ParseException, "parse test");
-			raises(function () { unitType.parseValue(true, "untype") }, ParseException, "parse test");
-			raises(function () { unitType.parseValue(true, "boolean") }, ParseException, "parse test");
-			raises(function () { unitType.parseValue("test", "string") }, ParseException, "parse test");
+			assert.throws(function () { unitType.parseValue("3333", "string"); }, ParseException, "parse test");
+			assert.throws(function () { unitType.parseValue(true, "untype"); }, ParseException, "parse test");
+			assert.throws(function () { unitType.parseValue(true, "boolean"); }, ParseException, "parse test");
+			assert.throws(function () { unitType.parseValue("test", "string"); }, ParseException, "parse test");
 		});
 
 		QUnit.test("unit validateValue - minimum and maximum value constraints", function (assert) {
@@ -554,8 +559,8 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			}
 
 			//values are out of range
-			raises(function () { unitType.validateValue([2.99999, "electric-ohm"]) }, ValidateException, "validate test");
-			raises(function () { unitType.validateValue([10.0000001, "duration-hour"]) }, ValidateException, "validate test");
+			assert.throws(function () { unitType.validateValue([2.99999, "electric-ohm"]); }, ValidateException, "validate test");
+			assert.throws(function () { unitType.validateValue([10.0000001, "duration-hour"]); }, ValidateException, "validate test");
 
 		});
 
@@ -577,7 +582,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 
 		QUnit.test("unit type - formatValue with maxFractionDigits 2", function (assert) {
 
-			unitType = new UnitType({
+			var unitType = new UnitType({
 				maxFractionDigits: 2
 			});
 
@@ -626,10 +631,10 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			} catch (e) {
 				assert.ok(!e, "one of the validation tests failed please check");
 			}
-			raises(function () { unitType.validateValue("2.99999 Ω") }, ValidateException, "smaller than min");
-			raises(function () { unitType.validateValue("10.0000001 hr") }, ValidateException, "bigger than max");
-			raises(function () { unitType.validateValue("3.00000000000001 hr") }, ValidateException, "more digits than decimals (14)");
-			raises(function () { unitType.validateValue("3.00000000001 hr") }, ValidateException, "more digits than decimals (11)");
+			assert.throws(function () { unitType.validateValue("2.99999 Ω"); }, ValidateException, "smaller than min");
+			assert.throws(function () { unitType.validateValue("10.0000001 hr"); }, ValidateException, "bigger than max");
+			assert.throws(function () { unitType.validateValue("3.00000000000001 hr"); }, ValidateException, "more digits than decimals (14)");
+			assert.throws(function () { unitType.validateValue("3.00000000001 hr"); }, ValidateException, "more digits than decimals (11)");
 
 		});
 
@@ -735,7 +740,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			var MeterType = UnitType.extend("sap.ui.core.test.MeterType", {
 				constructor: function (oFormatOptions, oConstraints) {
 					UnitType.apply(this, [oFormatOptions, oConstraints, ["decimals"]]);
-				},
+				}
 			});
 
 			var oMeterType = new MeterType();
@@ -796,7 +801,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			var MeterType = UnitType.extend("sap.ui.core.test.MeterType", {
 				constructor: function (oFormatOptions, oConstraints) {
 					UnitType.apply(this, [oFormatOptions, oConstraints, ["precision"]]);
-				},
+				}
 			});
 
 			var oMeterType = new MeterType();
@@ -867,7 +872,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(dateType.formatValue(dateValue.getTime(), "string"), "01.02.03", "format test with timestamp");
 			assert.equal(dateType.formatValue(null, "string"), "", "format test");
 			assert.equal(dateType.formatValue(undefined, "string"), "", "format test");
-			raises(function () { dateType.formatValue(1044068706007, "untype") }, FormatException, "format test");
+			assert.throws(function () { dateType.formatValue(1044068706007, "untype"); }, FormatException, "format test");
 
 		});
 
@@ -894,10 +899,10 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			dateType = new DateType({ source: { pattern: "timestamp" }, pattern: "dd.MM.yy" });
 			assert.equal(dateType.parseValue("01.02.03", "string"), dateValue.getTime(), "parse test with timestamp");
 
-			raises(function () { dateType.parseValue(true, "untype") }, ParseException, "parse test");
-			raises(function () { dateType.parseValue(true, "boolean") }, ParseException, "parse test");
+			assert.throws(function () { dateType.parseValue(true, "untype"); }, ParseException, "parse test");
+			assert.throws(function () { dateType.parseValue(true, "boolean"); }, ParseException, "parse test");
 			// TODO: This test does not throw an exception
-			//raises(function() { dateType.parseValue("test", "string") }, ParseException, "parse test");
+			//assert.throws(function() { dateType.parseValue("test", "string"); }, ParseException, "parse test");
 		});
 
 		QUnit.test("date validateValue", function (assert) {
@@ -919,10 +924,10 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			}
 
 			dateValue = new Date(1999, 1, 1);
-			raises(function () { dateType.validateValue(dateValue) }, checkValidateException, "validate test");
+			assert.throws(function () { dateType.validateValue(dateValue); }, checkValidateException, "validate test");
 
 			dateValue = new Date(2001, 1, 1);
-			raises(function () { dateType.validateValue(dateValue) }, checkValidateException, "validate test");
+			assert.throws(function () { dateType.validateValue(dateValue); }, checkValidateException, "validate test");
 
 			dateType = new DateType({
 				source: { pattern: "dd.MM.yyyy" },
@@ -938,8 +943,8 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			} catch (e) {
 				assert.ok(false, "one of the validation tests failed please check");
 			}
-			raises(function () { dateType.validateValue("10.10.1999") }, checkValidateException, "validate test");
-			raises(function () { dateType.validateValue("10.10.2001") }, checkValidateException, "validate test");
+			assert.throws(function () { dateType.validateValue("10.10.1999"); }, checkValidateException, "validate test");
+			assert.throws(function () { dateType.validateValue("10.10.2001"); }, checkValidateException, "validate test");
 
 		});
 
@@ -1001,7 +1006,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(timeType.formatValue(null, "string"), "", "format test");
 			assert.equal(timeType.formatValue(undefined, "string"), "", "format test");
 
-			raises(function () { timeType.formatValue(timeValue.getTime(), "untype") }, FormatException, "format test");
+			assert.throws(function () { timeType.formatValue(timeValue.getTime(), "untype"); }, FormatException, "format test");
 
 		});
 
@@ -1021,13 +1026,13 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			timeType = new TimeType({ source: { pattern: "timestamp" }, pattern: "HH:mm:ss" });
 			assert.equal(timeType.parseValue("16:58:49", "string"), timeValue.getTime(), "parse test with timestamp");
 
-			raises(function () { timeType.parseValue(true, "untype") }, ParseException, "parse test");
-			raises(function () { timeType.parseValue(true, "boolean") }, ParseException, "parse test");
-			raises(function () { timeType.parseValue("test", "string") }, checkParseException, "parse test");
+			assert.throws(function () { timeType.parseValue(true, "untype"); }, ParseException, "parse test");
+			assert.throws(function () { timeType.parseValue(true, "boolean"); }, ParseException, "parse test");
+			assert.throws(function () { timeType.parseValue("test", "string"); }, checkParseException, "parse test");
 		});
 
 		QUnit.test("time validateValue", function (assert) {
-			timeType = new TimeType({
+			var timeType = new TimeType({
 				source: { pattern: "HH:mm:ss" },
 				pattern: "hh-mm-ss"
 			}, {
@@ -1039,8 +1044,8 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			} catch (e) {
 				assert.ok(false, "one of the validation tests failed please check");
 			}
-			raises(function () { timeType.validateValue("09:30:00") }, checkValidateException, "validate test");
-			raises(function () { timeType.validateValue("11:30:00") }, checkValidateException, "validate test");
+			assert.throws(function () { timeType.validateValue("09:30:00"); }, checkValidateException, "validate test");
+			assert.throws(function () { timeType.validateValue("11:30:00"); }, checkValidateException, "validate test");
 
 		});
 
@@ -1067,7 +1072,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(dateType.formatValue(null, "string"), "", "format test");
 			assert.equal(dateType.formatValue(undefined, "string"), "", "format test");
 
-			raises(function () { dateType.formatValue(dateValue.getTime(), "untype") }, FormatException, "format test");
+			assert.throws(function () { dateType.formatValue(dateValue.getTime(), "untype"); }, FormatException, "format test");
 
 		});
 
@@ -1087,13 +1092,13 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			dateType = new DateTimeType({ source: { pattern: "timestamp" }, pattern: "dd.MM.yyyy HH:mm" });
 			assert.equal(dateType.parseValue("24.01.2012 14:33", "string"), dateValue.getTime(), "parse test with timestamp");
 
-			raises(function () { dateType.parseValue(true, "untype") }, ParseException, "parse test");
-			raises(function () { dateType.parseValue(true, "boolean") }, ParseException, "parse test");
-			raises(function () { dateType.parseValue("test", "string") }, checkParseException, "parse test");
+			assert.throws(function () { dateType.parseValue(true, "untype"); }, ParseException, "parse test");
+			assert.throws(function () { dateType.parseValue(true, "boolean"); }, ParseException, "parse test");
+			assert.throws(function () { dateType.parseValue("test", "string"); }, checkParseException, "parse test");
 		});
 
 		QUnit.test("dateTime validateValue", function (assert) {
-			dateType = new DateTimeType({
+			var dateType = new DateTimeType({
 				source: { pattern: "dd.MM.yyyy HH:mm:ss" },
 				pattern: "yyyy/mm/dd hh/mm/ss"
 			}, {
@@ -1105,8 +1110,8 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			} catch (e) {
 				assert.ok(false, "one of the validation tests failed please check");
 			}
-			raises(function () { dateType.validateValue("24.01.2012 09:30:00") }, checkValidateException, "validate test");
-			raises(function () { dateType.validateValue("25.01.2012 10:30:00") }, checkValidateException, "validate test");
+			assert.throws(function () { dateType.validateValue("24.01.2012 09:30:00"); }, checkValidateException, "validate test");
+			assert.throws(function () { dateType.validateValue("25.01.2012 10:30:00"); }, checkValidateException, "validate test");
 		});
 
 		// DateInterval type tests
@@ -1121,9 +1126,9 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			var oDate2 = new Date(2003, 11, 6);
 
 			assert.equal(oDateIntervalType.formatValue([oDate1, oDate2], "string"), "Nov 6 – Dec 6, 2003", "dates can be formatted as interval");
-			raises(function () { oDateIntervalType.formatValue(oDate1, "string") }, FormatException, "format type with invalid parameter");
+			assert.throws(function () { oDateIntervalType.formatValue(oDate1, "string"); }, FormatException, "format type with invalid parameter");
 			assert.equal(oDateIntervalType.formatValue([oDate1], "string"), "", "format type with invalid parameter");
-			raises(function () { oDateIntervalType.formatValue([oDate1, oDate2], "untype") }, FormatException, "format type with invalid target type");
+			assert.throws(function () { oDateIntervalType.formatValue([oDate1, oDate2], "untype"); }, FormatException, "format type with invalid target type");
 
 			oDateIntervalType = new DateIntervalType({
 				format: "yMMMd",
@@ -1134,7 +1139,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 
 			assert.equal(oDateIntervalType.formatValue([oDate1.getTime(), oDate2.getTime()], "string"), "Nov 6 – Dec 6, 2003", "timestamps can be formatted as interval");
 			assert.equal(oDateIntervalType.formatValue([String(oDate1.getTime()), oDate2.getTime()], "string"), "Nov 6 – Dec 6, 2003", "timestamps can be formatted as interval");
-			raises(function () { oDateIntervalType.formatValue(["a", "a"], "string") }, FormatException, "format type with invalid parameter");
+			assert.throws(function () { oDateIntervalType.formatValue(["a", "a"], "string"); }, FormatException, "format type with invalid parameter");
 
 			oDateIntervalType = new DateIntervalType({
 				format: "yMMMd",
@@ -1142,7 +1147,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 					pattern: "yyyy-MM-dd"
 				}
 			});
-			raises(function () { oDateIntervalType.formatValue(["2017", "2018"], "string") }, FormatException, "format type with invalid parameter");
+			assert.throws(function () { oDateIntervalType.formatValue(["2017", "2018"], "string"); }, FormatException, "format type with invalid parameter");
 		});
 
 		QUnit.test("DateInterval parseValue", function (assert) {
@@ -1154,8 +1159,8 @@ sap.ui.define(["sap/ui/model/ValidateException",
 
 			assert.deepEqual(oDateIntervalType.parseValue("", "string"), [null, null], "empty string can be parsed into an array of nulls");
 			assert.deepEqual(oDateIntervalType.parseValue("Nov 6 – Dec 6, 2003", "string"), [oDate1, oDate2], "Interval string can be parsed into an array of dates");
-			raises(function () { oDateIntervalType.parseValue("Nov 6", "string") }, checkParseException, "parse test");
-			raises(function () { oDateIntervalType.parseValue("Nov 6 – Dec 6, 2003", "untype") }, checkParseException, "parse test");
+			assert.throws(function () { oDateIntervalType.parseValue("Nov 6", "string"); }, checkParseException, "parse test");
+			assert.throws(function () { oDateIntervalType.parseValue("Nov 6 – Dec 6, 2003", "untype"); }, checkParseException, "parse test");
 
 			oDateIntervalType = new DateIntervalType({
 				format: "yMMMd",
@@ -1197,19 +1202,19 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			var oPreDate = new Date(2003, 10, 5);
 			var oSufDate = new Date(2003, 11, 7);
 
-			raises(function () {
+			assert.throws(function () {
 				oDateIntervalType.validateValue([oPreDate.getTime(), oDate2.getTime()]);
 			}, checkValidateException, "validate test");
 
-			raises(function () {
+			assert.throws(function () {
 				oDateIntervalType.validateValue([oDate1.getTime(), oSufDate.getTime()]);
 			}, checkValidateException, "validate test");
 
-			raises(function () {
+			assert.throws(function () {
 				oDateIntervalType.validateValue([oPreDate.getTime(), oDate1]);
 			}, checkValidateException, "validate test");
 
-			raises(function () {
+			assert.throws(function () {
 				oDateIntervalType.validateValue([oDate2, oSufDate]);
 			}, checkValidateException, "validate test");
 
@@ -1281,7 +1286,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			var oTimeIntervalType = new TimeIntervalType();
 
 			var oTime1 = new Date(2003, 1, 1, 16, 58, 49);
-			var oTime2 = new Date(2003, 1, 1, 17, 00, 00);
+			var oTime2 = new Date(2003, 1, 1, 17,  0,  0);
 
 			assert.equal(oTimeIntervalType.formatValue([oTime1, oTime2], "string"), "4:58:49 PM – 5:00:00 PM", "dates can be formatted as interval");
 
@@ -1295,7 +1300,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			var oTimeIntervalType = new TimeIntervalType();
 
 			var oTime1 = new Date(1970, 0, 1, 16, 58, 49);
-			var oTime2 = new Date(1970, 0, 1, 17, 00, 00);
+			var oTime2 = new Date(1970, 0, 1, 17,  0,  0);
 
 			var aTimeIntervalResult = oTimeIntervalType.parseValue("4:58:49 PM –  5:00:00 PM", "string");
 
@@ -1310,7 +1315,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 
 		QUnit.test("TimeInterval validateValue", function (assert) {
 			var oTime1 = new Date(1970, 0, 1, 16, 58, 49);
-			var oTime2 = new Date(1970, 0, 1, 17, 00, 00);
+			var oTime2 = new Date(1970, 0, 1, 17,  0,  0);
 
 			var oTimeIntervalType = new TimeIntervalType({}, {
 				minimum: oTime1,
@@ -1334,59 +1339,59 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(filesizeType.formatValue(null, "string"), null, "format test: null-string");
 			assert.equal(filesizeType.formatValue(1000, "string").toUpperCase(), "1 KB", "format test: 1000-string");
 			assert.equal(filesizeType.formatValue(1000.5, "string").toUpperCase(), "1.0005 KB", "format test: 1000.5-string");
-			raises(function () { filesizeType.formatValue("Hello", "string") }, FormatException, "format test: Hello-string");
-			raises(function () { filesizeType.formatValue("1 kB", "string") }, FormatException, "format test: 1 kB-string");
+			assert.throws(function () { filesizeType.formatValue("Hello", "string"); }, FormatException, "format test: Hello-string");
+			assert.throws(function () { filesizeType.formatValue("1 kB", "string"); }, FormatException, "format test: 1 kB-string");
 
 			assert.equal(filesizeType.formatValue(null, "int"), null, "format test: null-int");
 			assert.equal(filesizeType.formatValue(1000, "int"), 1000, "format test: 1000-int");
 			assert.equal(filesizeType.formatValue(1000.5, "int"), 1000, "format test: 1000.5-int");
-			raises(function () { filesizeType.formatValue("Hello", "int") }, FormatException, "format test: Hello-int");
-			raises(function () { filesizeType.formatValue("1 kB", "int") }, FormatException, "format test: 1 kB-int");
+			assert.throws(function () { filesizeType.formatValue("Hello", "int"); }, FormatException, "format test: Hello-int");
+			assert.throws(function () { filesizeType.formatValue("1 kB", "int"); }, FormatException, "format test: 1 kB-int");
 
 			assert.equal(filesizeType.formatValue(null, "float"), null, "format test: null-float");
 			assert.equal(filesizeType.formatValue(1000, "float"), 1000, "format test: 1000-float");
 			assert.equal(filesizeType.formatValue(1000.5, "float"), 1000.5, "format test: 1000.5-float");
-			raises(function () { filesizeType.formatValue("Hello", "float") }, FormatException, "format test: Hello-float");
-			raises(function () { filesizeType.formatValue("1 kB", "float") }, FormatException, "format test: 1 kB-float");
+			assert.throws(function () { filesizeType.formatValue("Hello", "float"); }, FormatException, "format test: Hello-float");
+			assert.throws(function () { filesizeType.formatValue("1 kB", "float"); }, FormatException, "format test: 1 kB-float");
 
 			assert.equal(filesizeType.formatValue(null, "untype"), null, "format test: null-untype");
-			raises(function () { filesizeType.formatValue(1000, "untype") }, FormatException, "format test: 1000-untype");
-			raises(function () { filesizeType.formatValue(1000.5, "untype") }, FormatException, "format test: 1000.5-untype");
-			raises(function () { filesizeType.formatValue("Hello", "untype") }, FormatException, "format test: Hello-untype");
-			raises(function () { filesizeType.formatValue("1 kB", "untype") }, FormatException, "format test: 1 kB-untype");
+			assert.throws(function () { filesizeType.formatValue(1000, "untype"); }, FormatException, "format test: 1000-untype");
+			assert.throws(function () { filesizeType.formatValue(1000.5, "untype"); }, FormatException, "format test: 1000.5-untype");
+			assert.throws(function () { filesizeType.formatValue("Hello", "untype"); }, FormatException, "format test: Hello-untype");
+			assert.throws(function () { filesizeType.formatValue("1 kB", "untype"); }, FormatException, "format test: 1 kB-untype");
 
 			filesizeType.setFormatOptions({ source: {} });
 
 			assert.equal(filesizeType.formatValue(null, "string"), null, "format test: null-string-inputformat");
 			assert.equal(filesizeType.formatValue(1000, "string").toUpperCase(), "1 KB", "format test: 1000-string-inputformat");
 			assert.equal(filesizeType.formatValue(1000.5, "string").toUpperCase(), "1.0005 KB", "format test: 1000.5-string-inputformat");
-			raises(function () { filesizeType.formatValue("Hello", "string") }, FormatException, "format test: Hello-string-inputformat");
+			assert.throws(function () { filesizeType.formatValue("Hello", "string"); }, FormatException, "format test: Hello-string-inputformat");
 			assert.equal(filesizeType.formatValue("1 kB", "string").toUpperCase(), "1 KB", "format test: 1kB-string-inputformat");
 
 			assert.equal(filesizeType.formatValue(null, "int"), null, "format test: null-int-inputformat");
 			assert.equal(filesizeType.formatValue(1000, "int"), 1000, "format test: 1000-int-inputformat");
 			assert.equal(filesizeType.formatValue(1000.5, "int"), 1000, "format test: 1000.5-int-inputformat");
-			raises(function () { filesizeType.formatValue("Hello", "int") }, FormatException, "format test: Hello-int-inputformat");
+			assert.throws(function () { filesizeType.formatValue("Hello", "int"); }, FormatException, "format test: Hello-int-inputformat");
 			assert.equal(filesizeType.formatValue("1 kB", "int"), 1000, "format test: 1kB-int-inputformat");
 
 			assert.equal(filesizeType.formatValue(null, "float"), null, "format test: null-float-inputformat");
 			assert.equal(filesizeType.formatValue(1000, "float"), 1000, "format test: 1000-float-inputformat");
 			assert.equal(filesizeType.formatValue(1000.5, "float"), 1000.5, "format test: 1000.5-float-inputformat");
-			raises(function () { filesizeType.formatValue("Hello", "float") }, FormatException, "format test: Hello-float-inputformat");
+			assert.throws(function () { filesizeType.formatValue("Hello", "float"); }, FormatException, "format test: Hello-float-inputformat");
 			assert.equal(filesizeType.formatValue("1 kB", "float"), 1000, "format test: 1kB-float-inputformat");
 
 			assert.equal(filesizeType.formatValue(null, "untype"), null, "format test: null-untype-inputformat");
-			raises(function () { filesizeType.formatValue(1000, "untype") }, FormatException, "format test: 1000-untype-inputformat");
-			raises(function () { filesizeType.formatValue(1000.5, "untype") }, FormatException, "format test: 1000.5-untype-inputformat");
-			raises(function () { filesizeType.formatValue("Hello", "untype") }, FormatException, "format test: Hello-untype-inputformat");
-			raises(function () { filesizeType.formatValue("1 kB", "untype") }, FormatException, "format test: 1kB-untype-inputformat");
+			assert.throws(function () { filesizeType.formatValue(1000, "untype"); }, FormatException, "format test: 1000-untype-inputformat");
+			assert.throws(function () { filesizeType.formatValue(1000.5, "untype"); }, FormatException, "format test: 1000.5-untype-inputformat");
+			assert.throws(function () { filesizeType.formatValue("Hello", "untype"); }, FormatException, "format test: Hello-untype-inputformat");
+			assert.throws(function () { filesizeType.formatValue("1 kB", "untype"); }, FormatException, "format test: 1kB-untype-inputformat");
 		});
 
 		QUnit.test("filesize parseValue", function (assert) {
 			var filesizeType = new FileSizeType();
 
 			assert.equal(filesizeType.parseValue(null, "string"), null, "parse test: null-string");
-			raises(function () { filesizeType.parseValue("Hello", "string") }, ParseException, "parse test: Hello-string");
+			assert.throws(function () { filesizeType.parseValue("Hello", "string"); }, ParseException, "parse test: Hello-string");
 			assert.equal(filesizeType.parseValue("1 kB", "string"), 1000, "parse test: 1 kB-string");
 			assert.equal(filesizeType.parseValue("1.0005 kB", "string"), 1000.5, "parse test: 1.0005 kB-string");
 
@@ -1399,16 +1404,16 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(filesizeType.parseValue(1000.5, "float"), 1000.5, "parse test: 1000.5 kB-float");
 
 			assert.equal(filesizeType.parseValue(null, "untype"), null, "parse test: null-untype");
-			raises(function () { filesizeType.parseValue("Hello", "untype") }, ParseException, "parse test: Hello-untype");
-			raises(function () { filesizeType.parseValue("1 kB", "untype") }, ParseException, "parse test: 1 kB-untype");
-			raises(function () { filesizeType.parseValue("1.0005 kB", "untype") }, ParseException, "parse test: 1.0005 kB-untype");
-			raises(function () { filesizeType.parseValue(1000, "untype") }, ParseException, "parse test: 1000-untype");
-			raises(function () { filesizeType.parseValue(1000.5, "untype") }, ParseException, "parse test: 1000.5 kB-untype");
+			assert.throws(function () { filesizeType.parseValue("Hello", "untype"); }, ParseException, "parse test: Hello-untype");
+			assert.throws(function () { filesizeType.parseValue("1 kB", "untype"); }, ParseException, "parse test: 1 kB-untype");
+			assert.throws(function () { filesizeType.parseValue("1.0005 kB", "untype"); }, ParseException, "parse test: 1.0005 kB-untype");
+			assert.throws(function () { filesizeType.parseValue(1000, "untype"); }, ParseException, "parse test: 1000-untype");
+			assert.throws(function () { filesizeType.parseValue(1000.5, "untype"); }, ParseException, "parse test: 1000.5 kB-untype");
 
 			filesizeType.setFormatOptions({ source: {} });
 
 			assert.equal(filesizeType.parseValue(null, "string"), null, "parse test: null-string-inputformat");
-			raises(function () { filesizeType.parseValue("Hello", "string") }, checkParseException, "parse test: Hello-string-inputformat");
+			assert.throws(function () { filesizeType.parseValue("Hello", "string"); }, checkParseException, "parse test: Hello-string-inputformat");
 			assert.equal(filesizeType.parseValue("1 kB", "string").toUpperCase(), "1 KB", "parse test: 1 kB-string-inputformat");
 			assert.equal(filesizeType.parseValue("1.0005 kB", "string").toUpperCase(), "1.0005 KB", "parse test: 1.0005 kB-string-inputformat");
 
@@ -1421,11 +1426,11 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(filesizeType.parseValue(1000.5, "float").toUpperCase(), "1.0005 KB", "parse test: 1000.5 kB-float-inputformat");
 
 			assert.equal(filesizeType.parseValue(null, "untype"), null, "parse test: null-untype");
-			raises(function () { filesizeType.parseValue("Hello", "untype") }, ParseException, "parse test: Hello-untype-inputformat");
-			raises(function () { filesizeType.parseValue("1 kB", "untype") }, ParseException, "parse test: 1 kB-untype-inputformat");
-			raises(function () { filesizeType.parseValue("1.0005 kB", "untype") }, ParseException, "parse test: 1.0005 kB-untype-inputformat");
-			raises(function () { filesizeType.parseValue(1000, "untype") }, ParseException, "parse test: 1000-untype-inputformat");
-			raises(function () { filesizeType.parseValue(1000.5, "untype") }, ParseException, "parse test: 1000.5 kB-untype-inputformat");
+			assert.throws(function () { filesizeType.parseValue("Hello", "untype"); }, ParseException, "parse test: Hello-untype-inputformat");
+			assert.throws(function () { filesizeType.parseValue("1 kB", "untype"); }, ParseException, "parse test: 1 kB-untype-inputformat");
+			assert.throws(function () { filesizeType.parseValue("1.0005 kB", "untype"); }, ParseException, "parse test: 1.0005 kB-untype-inputformat");
+			assert.throws(function () { filesizeType.parseValue(1000, "untype"); }, ParseException, "parse test: 1000-untype-inputformat");
+			assert.throws(function () { filesizeType.parseValue(1000.5, "untype"); }, ParseException, "parse test: 1000.5 kB-untype-inputformat");
 		});
 
 		QUnit.test("filesize validateValue", function (assert) {
@@ -1447,21 +1452,21 @@ sap.ui.define(["sap/ui/model/ValidateException",
 				assert.ok(false, "one of the validation tests failed please check");
 			}
 
-			raises(function () { filesizeType.validateValue(2000.1) }, checkValidateException, "validate test: 2000.1-floatcompare");
-			raises(function () { filesizeType.validateValue(3000) }, checkValidateException, "validate test: 3000-floatcompare");
-			raises(function () { filesizeType.validateValue(500) }, checkValidateException, "validate test: 500-floatcompare");
-			raises(function () { filesizeType.validateValue("5 kB") }, Error, "validate test: 5 kB-floatcompare");
-			raises(function () { filesizeType2.validateValue("1.5 kB") }, Error, "validate test: 1.5 kB-floatcompare");
+			assert.throws(function () { filesizeType.validateValue(2000.1); }, checkValidateException, "validate test: 2000.1-floatcompare");
+			assert.throws(function () { filesizeType.validateValue(3000); }, checkValidateException, "validate test: 3000-floatcompare");
+			assert.throws(function () { filesizeType.validateValue(500); }, checkValidateException, "validate test: 500-floatcompare");
+			assert.throws(function () { filesizeType.validateValue("5 kB"); }, Error, "validate test: 5 kB-floatcompare");
+			assert.throws(function () { filesizeType2.validateValue("1.5 kB"); }, Error, "validate test: 1.5 kB-floatcompare");
 
 
-			raises(function () { filesizeType2.validateValue(1000.0) }, Error, "validate test: 1000.0-stringcompare");
-			raises(function () { filesizeType2.validateValue(1000) }, Error, "validate test: 1000-stringcompare");
-			raises(function () { filesizeType2.validateValue(1500) }, Error, "validate test: 1500-stringcompare");
-			raises(function () { filesizeType2.validateValue(2000.1) }, Error, "validate test: 2000.1-stringcompare");
-			raises(function () { filesizeType2.validateValue(3000) }, Error, "validate test: 3000-stringcompare");
-			raises(function () { filesizeType2.validateValue(500) }, Error, "validate test: 500-stringcompare");
-			raises(function () { filesizeType2.validateValue("5 kB") }, Error, "validate test: 5 kB-stringcompare");
-			raises(function () { filesizeType2.validateValue("1.5 kB") }, Error, "validate test: 1.5 kB-stringcompare");
+			assert.throws(function () { filesizeType2.validateValue(1000.0); }, Error, "validate test: 1000.0-stringcompare");
+			assert.throws(function () { filesizeType2.validateValue(1000); }, Error, "validate test: 1000-stringcompare");
+			assert.throws(function () { filesizeType2.validateValue(1500); }, Error, "validate test: 1500-stringcompare");
+			assert.throws(function () { filesizeType2.validateValue(2000.1); }, Error, "validate test: 2000.1-stringcompare");
+			assert.throws(function () { filesizeType2.validateValue(3000); }, Error, "validate test: 3000-stringcompare");
+			assert.throws(function () { filesizeType2.validateValue(500); }, Error, "validate test: 500-stringcompare");
+			assert.throws(function () { filesizeType2.validateValue("5 kB"); }, Error, "validate test: 5 kB-stringcompare");
+			assert.throws(function () { filesizeType2.validateValue("1.5 kB"); }, Error, "validate test: 1.5 kB-stringcompare");
 
 
 			filesizeType.setFormatOptions({ source: {} });
@@ -1477,10 +1482,10 @@ sap.ui.define(["sap/ui/model/ValidateException",
 				assert.ok(false, "one of the validation tests failed please check");
 			}
 
-			raises(function () { filesizeType.validateValue(2000.1) }, checkValidateException, "validate test: 2000.1-floatcompare-inputformat");
-			raises(function () { filesizeType.validateValue(3000) }, checkValidateException, "validate test: 3000-floatcompare-inputformat");
-			raises(function () { filesizeType.validateValue(500) }, checkValidateException, "validate test: 500-floatcompare-inputformat");
-			raises(function () { filesizeType.validateValue("5 kB") }, checkValidateException, "validate test: 5 kB-floatcompare-inputformat");
+			assert.throws(function () { filesizeType.validateValue(2000.1); }, checkValidateException, "validate test: 2000.1-floatcompare-inputformat");
+			assert.throws(function () { filesizeType.validateValue(3000); }, checkValidateException, "validate test: 3000-floatcompare-inputformat");
+			assert.throws(function () { filesizeType.validateValue(500); }, checkValidateException, "validate test: 500-floatcompare-inputformat");
+			assert.throws(function () { filesizeType.validateValue("5 kB"); }, checkValidateException, "validate test: 5 kB-floatcompare-inputformat");
 
 
 			try {
@@ -1493,10 +1498,10 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			}
 
 
-			raises(function () { filesizeType2.validateValue(2000.1) }, checkValidateException, "validate test: 2000.1-stringcompare-inputformat");
-			raises(function () { filesizeType2.validateValue(3000) }, checkValidateException, "validate test: 3000-stringcompare-inputformat");
-			raises(function () { filesizeType2.validateValue(500) }, checkValidateException, "validate test: 500-stringcompare-inputformat");
-			raises(function () { filesizeType2.validateValue("5 kB") }, checkValidateException, "validate test: 5 kB-stringcompare-inputformat");
+			assert.throws(function () { filesizeType2.validateValue(2000.1); }, checkValidateException, "validate test: 2000.1-stringcompare-inputformat");
+			assert.throws(function () { filesizeType2.validateValue(3000); }, checkValidateException, "validate test: 3000-stringcompare-inputformat");
+			assert.throws(function () { filesizeType2.validateValue(500); }, checkValidateException, "validate test: 500-stringcompare-inputformat");
+			assert.throws(function () { filesizeType2.validateValue("5 kB"); }, checkValidateException, "validate test: 5 kB-stringcompare-inputformat");
 
 		});
 
@@ -1523,7 +1528,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 				sMessage1 = oBundle.getText("Integer.Minimum").replace("{0}", "2"),
 				sMessage2 = oBundle.getText("Integer.Maximum").replace("{0}", "0"),
 				sExpectedMessage = sMessage1 + ". " + sMessage2 + ".";
-			oType = new IntegerType(null, {
+			var oType = new IntegerType(null, {
 				minimum: 2,
 				maximum: 0
 			});
@@ -1535,4 +1540,4 @@ sap.ui.define(["sap/ui/model/ValidateException",
 				assert.equal(e.message, sExpectedMessage, "Combined validation message for both contraints is returned");
 			}
 		});
-	})
+	});

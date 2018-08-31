@@ -1,6 +1,7 @@
 /*global QUnit */
 sap.ui.define([
 ], function () {
+	"use strict";
 
 	QUnit.module("Setters");
 
@@ -73,7 +74,7 @@ sap.ui.define([
 	// Create tests for all loaded libraries
 	for (sLibName in oLibraries) {
 
-		if (jQuery.inArray(sLibName, aExcludedLibraries) === -1 && oLibraries.hasOwnProperty(sLibName)) {
+		if (aExcludedLibraries.indexOf(sLibName) === -1 && oLibraries.hasOwnProperty(sLibName)) {
 
 			oLibrary = oLibraries[sLibName];
 
@@ -188,12 +189,12 @@ sap.ui.define([
 		oInfo = sap.ui.getVersionInfo();
 		for (i = 0; i < oInfo.libraries.length; i++) {
 			sInfoLibName = oInfo.libraries[i].name;
-			if (jQuery.inArray(sInfoLibName, aExcludedLibraries) === -1 && !oLibraries[sInfoLibName]) {
+			if (aExcludedLibraries.indexOf(sInfoLibName) === -1 && !oLibraries[sInfoLibName]) {
 				jQuery.sap.log.info("Libary '" + sInfoLibName + "' is not loaded!");
 				try {
 					sap.ui.getCore().loadLibrary(sInfoLibName);
 					bNewLibrary = true;
-				} catch(e) {
+				} catch (e) {
 					// not a control lib? This happens for e.g. "themelib_sap_bluecrystal"...
 				}
 			}

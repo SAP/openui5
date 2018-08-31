@@ -65,7 +65,7 @@ sap.ui.define([
 					var oLibrary = sap.ui.getCore().loadLibrary(sInfoLibName);
 					mLoadedLibraries[sInfoLibName] = oLibrary.controls;
 					Log.info("Library '" + sInfoLibName + "...successfully.");
-				} catch(e) {
+				} catch (e) {
 					// not a control lib? This happens for e.g. "sap.ui.server.java"...
 				}
 			} else {
@@ -86,7 +86,7 @@ sap.ui.define([
 			var oProperty = mProperties[sPropertyName];
 			try {
 				if (!shouldIgnoreProperty(sControlName, sPropertyName)) {
-					var vValueToSet = "text" // just try a string as default, with some frequently happening exceptions
+					var vValueToSet = "text"; // just try a string as default, with some frequently happening exceptions
 
 					/*
 					 * This block increases the successfully set properties from 27% to 78%, but leads to no new memory leak detection
@@ -308,11 +308,10 @@ sap.ui.define([
 
 		// check whether this control can be rendered
 		if (oControl1.placeAt) {
-			var oRenderer;
 			try {
-				oRenderer = oControl1.getMetadata().getRenderer();
+				oControl1.getMetadata().getRenderer();
 				bCanRender = true;
-			} catch(e) {
+			} catch (e) {
 				// ignoring this control's rendering, message is written below
 			}
 		}
@@ -335,7 +334,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			iFullyTestedControls++;
-			assert.ok(true, sControlName + " can be instantiated multiple times without duplicate ID errors.")
+			assert.ok(true, sControlName + " can be instantiated multiple times without duplicate ID errors.");
 		} else {
 			iTestedWithoutRenderingControls++;
 			assert.ok(true, "WARNING: " + sControlName + " cannot be rendered");
@@ -384,7 +383,9 @@ sap.ui.define([
 	for (var sLibName in mAllLibraries) {
 
 		// only test libraries in the sapui5.runtime layer (avoid  issues with cross-layer tests)
-		if (shouldIgnoreLibrary(sLibName)) continue;
+		if (shouldIgnoreLibrary(sLibName)) {
+			continue;
+		}
 
 		(function(sLibName){
 
@@ -421,10 +422,10 @@ sap.ui.define([
 		assert.ok(iFullyTestedControls >= 200 /* magic number... just make sure we have tested lots of controls */, "Should have tested lots of controls, at least 200");
 
 		var fPropertyPercentage = Math.round(iSuccessfullyFilledProperties / (iSuccessfullyFilledProperties + aFailuresWhenFillingProperties.length) * 100);
-		assert.ok(iSuccessfullyFilledProperties> 2000, "There should be more than 2000 successfully filled properties. There are " + iSuccessfullyFilledProperties + " (" + fPropertyPercentage + "%)");
+		assert.ok(iSuccessfullyFilledProperties > 2000, "There should be more than 2000 successfully filled properties. There are " + iSuccessfullyFilledProperties + " (" + fPropertyPercentage + "%)");
 		// too many.... 6000...  assert.ok(aFailuresWhenFillingProperties.length < 20000, "Three should be less than 20000 failures when a property is filled. There are " + aFailuresWhenFillingProperties.length + ". Failing properties: " + aFailuresWhenFillingProperties.join(",\n"));
 
-		var fAggregationPercentage = Math.round(iSuccessfullyFilledAggregations/(iSuccessfullyFilledAggregations + aFailuresWhenFillingAggregations.length) * 100);
+		var fAggregationPercentage = Math.round(iSuccessfullyFilledAggregations / (iSuccessfullyFilledAggregations + aFailuresWhenFillingAggregations.length) * 100);
 		assert.ok(iSuccessfullyFilledAggregations > 1000, "There should be more than 1000 successfully filled aggregations. There are " + iSuccessfullyFilledAggregations + " (" + fAggregationPercentage + "%)");
 		assert.ok(aFailuresWhenFillingAggregations.length < 500, "There should be less than 500 failures when an aggregation is filled. There are " + aFailuresWhenFillingAggregations.length + ". Failing aggregation types: " + aFailuresWhenFillingAggregations.join(",\n"));
 	});

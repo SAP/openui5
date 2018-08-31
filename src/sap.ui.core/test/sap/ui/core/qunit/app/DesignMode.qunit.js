@@ -1,4 +1,6 @@
+/*global QUnit */
 sap.ui.define([], function () {
+	"use strict";
 
 	QUnit.module("sap/ui/core/Configuration: DesignMode enabled");
 

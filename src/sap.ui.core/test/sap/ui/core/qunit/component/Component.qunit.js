@@ -6,8 +6,9 @@ sap.ui.define([
 	'sap/ui/core/UIComponentMetadata',
 	'samples/components/loadfromfile/Component',
 	'samples/components/routing/Component',
-	'samples/components/routing/RouterExtension'
-], function(jQuery, Component, ComponentContainer, UIComponent, UIComponentMetadata, SamplesLoadFromFileComponent, SamplesRoutingComponent, SamplesRouterExtension) {
+	'samples/components/routing/RouterExtension',
+	'sap/ui/thirdparty/URI'
+], function(jQuery, Component, ComponentContainer, UIComponent, UIComponentMetadata, SamplesLoadFromFileComponent, SamplesRoutingComponent, SamplesRouterExtension, URI) {
 
 	"use strict";
 	/*global sinon, QUnit, foo*/
@@ -1187,7 +1188,7 @@ sap.ui.define([
 
 			oComponent = oPreloadComponent;
 
-			console.log(oSpy.calls);
+			//console.log(oSpy.calls);
 			assert.ok(oSpy.calledOnceWithExactly("nonLazyUsage/Component-preload.js", true), "Only the non-lazy component usage should be preloaded!");
 
 			done();
@@ -1277,8 +1278,6 @@ sap.ui.define([
 
 	QUnit.test("Relative URLs for ResourceModel (enhanceWith)", function(assert) {
 
-		var oServer = this.oServer, oManifest = this.oManifest;
-
 		var oModelConfigSpy = sinon.spy(Component, "_createManifestModelConfigurations");
 
 		// load the test component
@@ -1299,6 +1298,7 @@ sap.ui.define([
 		assert.strictEqual(aI18NMFEnhanceWith[1].bundleUrl, "test-resources/sap/ui/core/samples/components/button/other/i18n.properties", "Bundle URL of enhancing model must not be modified!");
 
 		oModelConfigSpy.restore();
+		oComponent.destroy();
 
 	});
 });

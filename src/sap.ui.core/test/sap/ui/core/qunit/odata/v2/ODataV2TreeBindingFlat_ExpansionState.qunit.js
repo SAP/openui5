@@ -59,7 +59,7 @@ sap.ui.define([
 
 			var oParent = oBinding.findNode(0),
 				oChild, i;
-			for (i = 1 ; i < 7 ; i++) {
+			for (i = 1; i < 7; i++) {
 				oChild = oBinding.findNode(i);
 				assert.ok(oBinding._isInSubtree(oParent, oChild), "Children are loaded");
 			}
@@ -84,7 +84,7 @@ sap.ui.define([
 
 			var oParent = oBinding.findNode(0),
 				oChild, i;
-			for (i = 1 ; i < 7 ; i++) {
+			for (i = 1; i < 7; i++) {
 				oChild = oBinding.findNode(i);
 				assert.ok(oBinding._isInSubtree(oParent, oChild), "Children are re-loaded after refresh");
 			}
@@ -189,7 +189,7 @@ sap.ui.define([
 
 			var oParent = oBinding.findNode(0),
 				oChild, i;
-			for (i = 1 ; i < 7 ; i++) {
+			for (i = 1; i < 7; i++) {
 				oChild = oBinding.findNode(i);
 				assert.ok(oBinding._isInSubtree(oParent, oChild), "Children are loaded");
 			}
@@ -199,7 +199,7 @@ sap.ui.define([
 			oBinding.attachRefresh(handler3);
 			ODataTreeBindingFakeService.setServiceStatus({ batch: 500 });
 			oBinding._restoreTreeState().catch(function(err) {
-				assert.ok(true, "Promise got rejected")
+				assert.ok(true, "Promise got rejected");
 				ODataTreeBindingFakeService.resetServiceStatus();
 				done();
 			});
@@ -239,7 +239,7 @@ sap.ui.define([
 				oChild, i;
 
 			var oChangeSpy = sinon.spy();
-			for (i = 1 ; i < 7 ; i++) {
+			for (i = 1; i < 7; i++) {
 				oChild = oBinding.findNode(i);
 				assert.ok(oBinding._isInSubtree(oParent, oChild), "Children are loaded");
 			}
@@ -285,7 +285,7 @@ sap.ui.define([
 
 			var oParent = oBinding.findNode(0),
 				oChild, i;
-			for (i = 1 ; i < 7 ; i++) {
+			for (i = 1; i < 7; i++) {
 				oChild = oBinding.findNode(i);
 				assert.ok(oBinding._isInSubtree(oParent, oChild), "Children are loaded");
 			}
@@ -304,7 +304,7 @@ sap.ui.define([
 			});
 
 			oBinding._restoreTreeState().catch(function(err) {
-				assert.ok(true, "Promise got rejected")
+				assert.ok(true, "Promise got rejected");
 				ODataTreeBindingFakeService.resetServiceStatus();
 				done();
 			});
@@ -344,7 +344,7 @@ sap.ui.define([
 
 			var oParent = oBinding.findNode(0),
 				oChild, i;
-			for (i = 1 ; i < 7 ; i++) {
+			for (i = 1; i < 7; i++) {
 				oChild = oBinding.findNode(i);
 				assert.ok(oBinding._isInSubtree(oParent, oChild), "Children are loaded");
 			}
@@ -363,7 +363,7 @@ sap.ui.define([
 			});
 
 			oBinding._restoreTreeState().catch(function(err) {
-				assert.ok(true, "Promise got rejected")
+				assert.ok(true, "Promise got rejected");
 				ODataTreeBindingFakeService.resetServiceStatus();
 				done();
 			});
@@ -401,7 +401,7 @@ sap.ui.define([
 
 			var oParent = oBinding.findNode(0),
 				oChild, i;
-			for (i = 1 ; i < 7 ; i++) {
+			for (i = 1; i < 7; i++) {
 				oChild = oBinding.findNode(i);
 				assert.ok(oBinding._isInSubtree(oParent, oChild), "Children are loaded");
 			}
@@ -421,7 +421,7 @@ sap.ui.define([
 			});
 
 			oBinding._restoreTreeState().catch(function(err) {
-				assert.ok(true, "Promise got rejected")
+				assert.ok(true, "Promise got rejected");
 				ODataTreeBindingFakeService.resetServiceStatus();
 				done();
 			});
@@ -556,7 +556,7 @@ sap.ui.define([
 
 			var oParent = oBinding.findNode(0),
 				oChild, i;
-			for (i = 1 ; i < 7 ; i++) {
+			for (i = 1; i < 7; i++) {
 				oChild = oBinding.findNode(i);
 				assert.ok(oBinding._isInSubtree(oParent, oChild), "Children are re-loaded after refresh");
 			}
@@ -580,16 +580,12 @@ sap.ui.define([
 			numberOfExpandedLevels: 1
 		});
 
-		var oFirstChild;
-
 		function handler1 (oEvent) {
 			oBinding.detachChange(handler1);
 
 			assert.ok(oBinding.isExpanded(0), "To be collapsed node is expanded");
 			oBinding.collapse(0, true); // Collapse
 			assert.ok(!oBinding.isExpanded(0), "Collapsed node is collapsed");
-
-			oFirstChild = oBinding._aNodes[1];
 
 			oBinding.attachRefresh(handler2);
 
@@ -603,7 +599,7 @@ sap.ui.define([
 			});
 
 			oBinding._restoreTreeState().catch(function(err) {
-				assert.ok(true, "Promise got rejected")
+				assert.ok(true, "Promise got rejected");
 				ODataTreeBindingFakeService.resetServiceStatus();
 				done();
 			});
@@ -694,7 +690,7 @@ sap.ui.define([
 			{ positionInParent: 85, magnitude: 15 },
 			{ positionInParent: 200, magnitude: 0 },
 			{ positionInParent: 205, magnitude: 0 },
-			{ positionInParent: 239, magnitude: 0 },
+			{ positionInParent: 239, magnitude: 0 }
 		];
 
 		oBinding._adaptSections(aSections, {
@@ -782,7 +778,6 @@ sap.ui.define([
 	QUnit.test("Restore tree state: Delete server index node w/ generated server index node (UCx2)", function(assert) {
 		var done = assert.async();
 		var iOldLength, sOldLastNodeKey;
-		var oContext1;
 		createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='0x2')/Results", null, [], {
 			threshold: 10,
 			countMode: "Inline",
@@ -875,7 +870,7 @@ sap.ui.define([
 			{preorderPosition: 1},
 			{preorderPosition: 40},
 			{preorderPosition: 41},
-			{preorderPosition: 300},
+			{preorderPosition: 300}
 		];
 
 		aAddedNodesConfig.forEach(function(oConfig) {
@@ -883,7 +878,7 @@ sap.ui.define([
 		});
 
 		oBinding._adaptSections(aSections, {
-			added: aAdded,
+			added: aAdded
 		});
 
 		var aExpectedSections = [
@@ -924,7 +919,7 @@ sap.ui.define([
 		});
 
 		oBinding._adaptSections(aSections, {
-			added: aAdded,
+			added: aAdded
 		});
 
 		var aExpectedSections = [
@@ -955,7 +950,7 @@ sap.ui.define([
 			{siblingsPosition: 1, isDeepOne: true}, // New node at actual position 1
 			{siblingsPosition: 40, isDeepOne: true}, // New node at actual position 40 (abap starts at 1)
 			{siblingsPosition: 41, isDeepOne: true},
-			{siblingsPosition: 300, isDeepOne: true},
+			{siblingsPosition: 300, isDeepOne: true}
 		];
 
 		var aAdded = [];
@@ -964,7 +959,7 @@ sap.ui.define([
 		});
 
 		oBinding._adaptSections(aSections, {
-			added: aAdded,
+			added: aAdded
 		}, {
 			indexName: "positionInParent",
 			ignoreMagnitude: true
@@ -1004,7 +999,7 @@ sap.ui.define([
 					"hierarchy_fake_node_id": "NODE111114"
 				}
 			});
-			oBinding.addContexts(oParent.context, [oContext])
+			oBinding.addContexts(oParent.context, [oContext]);
 			oBinding.attachRefresh(handler2);
 			oBinding.submitChanges();
 		}
@@ -1122,14 +1117,14 @@ sap.ui.define([
 					"hierarchy_fake_node_id": "NODE333444"
 				}
 			});
-			oBinding.addContexts(oParent.context, [oContext1])
+			oBinding.addContexts(oParent.context, [oContext1]);
 
 			var oContext2 = oBinding.createEntry({
 				urlParameters: {
 					"hierarchy_fake_node_id": "RANGE333444"
 				}
 			});
-			oBinding.addContexts(oContext1, [oContext2])
+			oBinding.addContexts(oContext1, [oContext2]);
 
 			oBinding.attachRefresh(handler3);
 			oBinding.submitChanges();
@@ -1157,7 +1152,7 @@ sap.ui.define([
 	QUnit.test("Restore tree state: insert server index- and deep nodes (UC4)", function(assert) {
 		var done = assert.async();
 		var iOldLength, sOldLastNodeKey, oParent;
-		var oContext1;
+
 		createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004')/Results", null, [], {
 			threshold: 10,
 			countMode: "Inline",
@@ -1320,7 +1315,7 @@ sap.ui.define([
 	QUnit.test("Restore tree state: insert server index node w/ generated deep node (UCx3)", function(assert) {
 		var done = assert.async();
 		var iOldLength, sOldLastNodeKey;
-		var oContext1;
+
 		createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='0x3')/Results", null, [], {
 			threshold: 10,
 			countMode: "Inline",
@@ -1340,7 +1335,7 @@ sap.ui.define([
 					"hierarchy_fake_node_id": "NODE123456"
 				}
 			});
-			oBinding.addContexts(oParent.context, [oContext1])
+			oBinding.addContexts(oParent.context, [oContext1]);
 
 			oBinding.attachRefresh(handler2);
 			oBinding.submitChanges();
@@ -1369,7 +1364,7 @@ sap.ui.define([
 	QUnit.test("Restore tree state: insert server index node w/ generated server index node (UCx4)", function(assert) {
 		var done = assert.async();
 		var iOldLength, sOldLastNodeKey;
-		var oContext1;
+
 		createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='0x4')/Results", null, [], {
 			threshold: 10,
 			countMode: "Inline",
@@ -1389,7 +1384,7 @@ sap.ui.define([
 					"hierarchy_fake_node_id": "NODE000001"
 				}
 			});
-			oBinding.addContexts(oParent.context, [oContext1])
+			oBinding.addContexts(oParent.context, [oContext1]);
 
 			oBinding.attachRefresh(handler2);
 			oBinding.submitChanges();
@@ -1454,7 +1449,7 @@ sap.ui.define([
 			{preorderPosition: 41},
 			{preorderPosition: 100},
 			{preorderPosition: 129},
-			{preorderPosition: 300},
+			{preorderPosition: 300}
 		];
 
 		var aAdded = [];
@@ -1508,7 +1503,7 @@ sap.ui.define([
 			{siblingsPosition: 1, isDeepOne: true}, // New node at actual position 1
 			{siblingsPosition: 40, isDeepOne: true}, // New node at actual position 40 (abap starts at 1)
 			{siblingsPosition: 41, isDeepOne: true},
-			{siblingsPosition: 300, isDeepOne: true},
+			{siblingsPosition: 300, isDeepOne: true}
 		];
 
 		var aAdded = [];
@@ -1547,7 +1542,7 @@ sap.ui.define([
 	QUnit.test("Restore tree state: move server index node to deep nodes (UC8)", function(assert) {
 		var done = assert.async();
 		var iOldLength, sOldLastNodeKey;
-		var oContext1;
+
 		createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='008')/Results", null, [], {
 			threshold: 10,
 			countMode: "Inline",
@@ -1598,7 +1593,6 @@ sap.ui.define([
 	QUnit.test("Restore tree state: Move one level down - server-index child nodes become deep nodes (UC10)", function(assert) {
 		var done = assert.async();
 		var iOldLength, sOldLastNodeKey;
-		var oContext1;
 
 		createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='010')/Results", null, [], {
 			threshold: 10,
@@ -1645,7 +1639,7 @@ sap.ui.define([
 	QUnit.test("Restore tree state: move deep nodes to server index (UC17)", function(assert) {
 		var done = assert.async();
 		var iOldLength, sOldLastNodeKey;
-		var oContext1;
+
 		createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='017')/Results", null, [], {
 			threshold: 10,
 			countMode: "Inline",

@@ -154,6 +154,7 @@ sap.ui.require([
 
 		sinon.assert.callCount(oRegisterObjectSpy, 0);
 
+		oComponent.destroy();
 	});
 
 	QUnit.test("Metadata: n/a, instance: false", function(assert) {
@@ -173,6 +174,7 @@ sap.ui.require([
 
 		sinon.assert.callCount(oRegisterObjectSpy, 0);
 
+		oComponent.destroy();
 	});
 
 	QUnit.test("Metadata: n/a, instance: true", function(assert) {

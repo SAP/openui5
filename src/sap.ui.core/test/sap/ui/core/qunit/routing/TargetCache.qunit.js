@@ -4,6 +4,8 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/routing/TargetCache"
 ], function (Log, Component, TargetCache) {
+	"use strict";
+
 	QUnit.module("Get and Set Component with TargetCache", {
 		beforeEach: function (assert) {
 			var that = this;
@@ -56,12 +58,6 @@ sap.ui.define([
 		});
 	});
 
-	function objectContained(assert, contained, containing) {
-		Object.keys(contained).forEach(function (sKey) {
-			assert.strictEqual(contained[sKey], containing[sKey], "Both object have " + sKey + " property set with the same value");
-		});
-	}
-
 	QUnit.test("Get component with empty cache should create a component", function (assert) {
 		var oOptions = {
 			name: "foo.bar",
@@ -107,13 +103,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Set component without a name should cause an error", function (assert) {
+		var oLogErrorSpy = sinon.spy(Log, "error");
 		try {
-			var oLogErrorSpy = sinon.spy(Log, "error");
 			this.oCache.set(undefined, "Component", this.oComponent);
 		} catch (err) {
 			assert.ok(err.message.indexOf("has to be defined") !== -1, "The promise should be rejected with correct error message");
 			assert.equal(oLogErrorSpy.callCount, 1, "error logged once");
 			assert.ok(oLogErrorSpy.getCall(0).args[0].indexOf("has to be defined") !== -1, "error logged with the correct message");
+		} finally {
 			oLogErrorSpy.restore();
 		}
 	});
@@ -148,10 +145,10 @@ sap.ui.define([
 				a: "b",
 				c: "d"
 			}
-		}, that = this;
+		};
 
 		// fill the cache
-		var oPromise = this.oCache.get(oOptions, "Component");
+		this.oCache.get(oOptions, "Component");
 		assert.equal(oFireEventSpy.callCount, 0, "Created event not fired yet");
 
 		var oNewPromise = this.oCache.get(oOptions, "Component");
@@ -180,7 +177,7 @@ sap.ui.define([
 			this.oComponent = {
 				destroy: oDestroySpy,
 				isA: function(sClass) {
-					sClass === "sap.ui.core.UIComponent"
+					return sClass === "sap.ui.core.UIComponent";
 				}
 			};
 

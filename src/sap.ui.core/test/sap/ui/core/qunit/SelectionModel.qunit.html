@@ -79,7 +79,7 @@
 					assert.ok(!!oEventParams, "a SelectionChanged event should have been fired");
 					assert.deepEqual(oEventParams.rowIndices, aDiff, "rowindices should match the difference between before and after");
 					assert.equal(oEventParams.selectAll, bAll, "selectAll indicator")
-				} else if ( jQuery.isArray(bEvent) && bEvent.length === 0 ) {
+				} else if ( Array.isArray(bEvent) && bEvent.length === 0 ) {
 					assert.ok(!!oEventParams, "a SelectionChanged event should have been fired");
 					assert.deepEqual(oEventParams.rowIndices, aDiff, "rowindices should match the difference between before and after");
 					assert.deepEqual(aDiff, [], "difference should be empty (lead selection change)");

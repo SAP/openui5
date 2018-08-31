@@ -60,8 +60,7 @@ sap.ui.define([
 
 	QUnit.test("Should set a view to the cache", function (assert) {
 		var done = assert.async();
-		var that = this,
-			oReturnValue,
+		var oReturnValue,
 			fnStub = this.stub(sap.ui, "view", function () {
 				return this.oView;
 			}.bind(this));
@@ -101,7 +100,7 @@ sap.ui.define([
 			}.bind(this));
 
 		// Act
-		var oReturnValue = this.oViews.getView({
+		this.oViews.getView({
 			viewType : "XML",
 			viewName : "foo"
 		});
@@ -117,10 +116,9 @@ sap.ui.define([
 	QUnit.test("Should prefix the id with the components id", function (assert) {
 		// Arrange
 		var sViewId = "ViewId",
-			fnOwnerSpy = this.spy(this.oUIComponent, "runAsOwner"),
 			fnViewStub = this.stub(sap.ui, "view", function () {
-				return oView;
-			}),
+				return this.oView;
+			}.bind(this)),
 			oOptions = {
 				id : sViewId,
 				viewType : "XML",
@@ -128,7 +126,7 @@ sap.ui.define([
 			};
 
 		// Act
-		var oReturnValue = this.oViews.getView(oOptions);
+		this.oViews.getView(oOptions);
 
 		// Assert
 		assert.strictEqual(fnViewStub.callCount, 1, "Did create the view");
@@ -141,13 +139,12 @@ sap.ui.define([
 	QUnit.test("Should not prefix the id with the components id if the private getView is invoked (by the router)", function (assert) {
 		// Arrange
 		var sViewId = "ViewId",
-			fnOwnerSpy = this.spy(this.oUIComponent, "runAsOwner"),
 			fnViewStub = this.stub(sap.ui, "view", function () {
 				return this.oView;
 			}.bind(this));
 
 		// Act
-		var oReturnValue = this.oViews._getViewWithGlobalId({
+		this.oViews._getViewWithGlobalId({
 			id : sViewId,
 			viewType : "XML",
 			viewName : "foo"
@@ -241,13 +238,13 @@ sap.ui.define([
 	QUnit.test("should be able to fire/attach/detach the created event", function(assert) {
 		// Arrange
 		var oParameters = { foo : "bar" },
+			oListener = {},
+			oData = { some : "data" },
 			fnEventSpy = this.spy(function(oEvent, oActualData) {
 				assert.strictEqual(oActualData, oData, "the data is correct");
 				assert.strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
 				assert.strictEqual(this, oListener, "the this pointer is correct");
 			}),
-			oListener = {},
-			oData = { some : "data" },
 			oFireReturnValue,
 			oDetachReturnValue,
 			oAttachReturnValue = this.oViews.attachCreated(oData, fnEventSpy, oListener);
@@ -305,11 +302,13 @@ sap.ui.define([
 
 	QUnit.test("Get view async", function(assert) {
 		var oViewOption = {
-			viewName: "qunit.view.Async1",
-			type: "XML"
-		}, fnEventSpy = this.spy(function (oEvent) {
-			oParameters = oEvent.getParameters();
-		}), oParameters;
+				viewName: "qunit.view.Async1",
+				type: "XML"
+			},
+			oParameters,
+			fnEventSpy = this.spy(function (oEvent) {
+				oParameters = oEvent.getParameters();
+			});
 
 		this.oViews.attachCreated(fnEventSpy);
 
@@ -333,12 +332,14 @@ sap.ui.define([
 
 	QUnit.test("Get view sync", function(assert) {
 		var oViewOption = {
-			viewName: "qunit.view.Async1",
-			type: "XML",
-			async: false
-		}, fnEventSpy = this.spy(function (oEvent) {
-			oParameters = oEvent.getParameters();
-		}), oParameters;
+				viewName: "qunit.view.Async1",
+				type: "XML",
+				async: false
+			},
+			oParameters,
+			fnEventSpy = this.spy(function (oEvent) {
+				oParameters = oEvent.getParameters();
+			});
 
 		this.oViews.attachCreated(fnEventSpy);
 

@@ -38,7 +38,7 @@ sap.ui.define([
 		oPersianDate = new Persian("invalid Persian date timestamp");
 		assert.ok(isInvalid(oPersianDate), "Constructor with invalid string as timestamp must return an invalid date");
 
-		oPersianDate = new Persian(new Object());
+		oPersianDate = new Persian({});
 		assert.ok(isInvalid(oPersianDate), "Constructor with object as parameter must return an invalid date");
 
 		oPersianDate = new Persian(0); //1, January 1970 = 11 Dey 1348 (11.10.1348)
@@ -66,25 +66,25 @@ sap.ui.define([
 		oPersianDate = new Persian(1430, 0, "alabala");
 		assert.ok(isInvalid(oPersianDate), "Constructor with invalid string as day must return invalid date");
 
-		oPersianDate = new Persian(new Object(), 0)
+		oPersianDate = new Persian({}, 0);
 		assert.ok(isInvalid(oPersianDate), "Constructor with object as year must return invalid date");
 
-		oPersianDate = new Persian(1430, new Object());
+		oPersianDate = new Persian(1430, {});
 		assert.ok(isInvalid(oPersianDate), "Constructor with object as month must return invalid date");
 
-		oPersianDate = new Persian(1430, 0, new Object());
+		oPersianDate = new Persian(1430, 0, {});
 		assert.ok(isInvalid(oPersianDate), "Constructor with object as day must return invalid date");
 
-		oPersianDate = new Persian(1430, 0, 1, new Object());
+		oPersianDate = new Persian(1430, 0, 1, {});
 		assert.ok(isInvalid(oPersianDate), "Constructor with object as hours must return invalid date");
 
-		oPersianDate = new Persian(1430, 0, 1, 0, new Object());
+		oPersianDate = new Persian(1430, 0, 1, 0, {});
 		assert.ok(isInvalid(oPersianDate), "Constructor with object as minutes must return invalid date");
 
-		oPersianDate = new Persian(1430, 0, 1, 0, 0, new Object());
+		oPersianDate = new Persian(1430, 0, 1, 0, 0, {});
 		assert.ok(isInvalid(oPersianDate), "Constructor with object as seconds must return invalid date");
 
-		oPersianDate = oPersianDate = new Persian(1430, 0, 1, 0, 0, 0, new Object());
+		oPersianDate = oPersianDate = new Persian(1430, 0, 1, 0, 0, 0, {});
 		assert.ok(isInvalid(oPersianDate), "Constructor with object as milliseconds must return invalid date");
 
 		// ------------- string -----------------------------
@@ -115,7 +115,7 @@ sap.ui.define([
 		aTestData.forEach(function(oTestDate) {
 			oPersianDate = createPersianDateFromTestEntry(oTestDate);
 			verifyDateWithTestDate(assert, "Constructor with valid values", oPersianDate, oTestDate.Persian);
-		})
+		});
 	});
 
 	QUnit.test("with optional parameters", function (assert) {
@@ -123,7 +123,7 @@ sap.ui.define([
 		verifyDate(assert, "new Persian(1430, 10) must be equal to 01.11.1430 (tuesday) 00:00:00.00 AM", oPersianDate, 1430, 10, 1);
 
 		oPersianDate = new Persian(1430, 10, 2);
-		verifyDate(assert, "new Persian(1430, 10, 2) msut be equal to 02.11.1430 (wednesday) 00:00:00.00 AM", oPersianDate, 1430, 10, 2)
+		verifyDate(assert, "new Persian(1430, 10, 2) msut be equal to 02.11.1430 (wednesday) 00:00:00.00 AM", oPersianDate, 1430, 10, 2);
 	});
 
 	QUnit.module("Overflow/underflow");
@@ -296,10 +296,6 @@ sap.ui.define([
 		} else {
 			return new type(oDateEntry.year, oDateEntry.month, oDateEntry.day);
 		}
-	}
-
-	function getTimezoneOffset(oDate) {
-		return -1 * oDate.getTimezoneOffset() * 60 * 1000;
 	}
 
 	function isInvalid(oDate) {

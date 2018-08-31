@@ -9,20 +9,20 @@ sap.ui.define([
 	function checkNumberOfListeners(assert, oEventProvider, sEventId, iExpected) {
 		if (oEventProvider) {
 			var aRegisteredListeners = EventProvider.getEventList(oEventProvider)[sEventId];
-			if(aRegisteredListeners && Array.isArray(aRegisteredListeners)){
-				assert.equal(aRegisteredListeners.length, iExpected, iExpected+" listener(s) subscribed for event "+sEventId);
-			}else{
-				assert.ok(!oEventProvider.hasListeners(sEventId) && iExpected == 0, "0 listener(s) subscribed for event "+sEventId);
+			if (aRegisteredListeners && Array.isArray(aRegisteredListeners)){
+				assert.equal(aRegisteredListeners.length, iExpected, iExpected + " listener(s) subscribed for event " + sEventId);
+			} else {
+				assert.ok(!oEventProvider.hasListeners(sEventId) && iExpected == 0, "0 listener(s) subscribed for event " + sEventId);
 			}
 		} else {
-			assert.ok(iExpected == 0, "0 listener(s) subscribed for event "+sEventId);
+			assert.ok(iExpected == 0, "0 listener(s) subscribed for event " + sEventId);
 		}
 	}
 
 	function checkHandler(assert, bWithListener, sChannelId, sEventId, oData, oThis, sExpectedChannel, sExpectedEventId, sExpectedData, oListener){
 		assert.equal(sChannelId, sExpectedChannel, "Expected Channel");
 		assert.equal(sEventId, sExpectedEventId, "Expected Event");
-		assert.ok(oThis === (bWithListener ? oListener : oBus), "'this' is set as expected - "+(bWithListener ? "Listener" : "EventBus"));
+		assert.ok(oThis === (bWithListener ? oListener : oBus), "'this' is set as expected - " + (bWithListener ? "Listener" : "EventBus"));
 		assert.ok(!!oData, "Data object provided");
 		if (sExpectedData) {
 			assert.equal(oData.data, sExpectedData, "Expected Data");

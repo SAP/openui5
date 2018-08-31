@@ -18,10 +18,9 @@ sap.ui.define([
 ], function(Log, UIComponent, Controller, JSView, View, HashChanger, Router, Views, JSONModel, App, Button, NavContainer, Panel, SplitContainer, ModuleHook) {
 	"use strict";
 
-	// This variable is used for creating custom component classes to avoid the
-	// error "introducing global variables" when this test file is executed with
-	// url-parameter noglobals=true
-	var namespace = {};
+	// This global namespace is used for creating custom component classes.
+	// It is set early here so that QUnit doesn't report it when using its 'noglobals' option
+	window.namespace = undefined;
 
 	// use sap.m.Panel as a lightweight drop-in replacement for the ux3.Shell
 	var ShellSubstitute = Panel;
@@ -1259,13 +1258,13 @@ sap.ui.define([
 	QUnit.test("should be able to fire/attach/detach the created event", function(assert) {
 		// Arrange
 		var oParameters = { foo : "bar" },
+			oListener = {},
+			oData = { some : "data" },
 			fnEventSpy = this.spy(function(oEvent, oActualData) {
 				assert.strictEqual(oActualData, oData, "the data is correct");
 				assert.strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
 				assert.strictEqual(this, oListener, "the this pointer is correct");
 			}),
-			oListener = {},
-			oData = { some : "data" },
 			oFireReturnValue,
 			oDetachReturnValue,
 			oAttachReturnValue = this.oRouter.attachViewCreated(oData, fnEventSpy, oListener);
@@ -1285,9 +1284,6 @@ sap.ui.define([
 	QUnit.test("Should fire the view created event if a view is created", function (assert) {
 		// Arrange
 		var oView = createXmlView(),
-			fnStub = this.stub(sap.ui, "view", function () {
-				return oView;
-			}),
 			sViewType = "XML",
 			sViewName = "foo",
 			oParameters,
@@ -1295,10 +1291,14 @@ sap.ui.define([
 				oParameters = oEvent.getParameters();
 			});
 
+		this.stub(sap.ui, "view", function () {
+			return oView;
+		});
+
 		this.oRouter.attachViewCreated(fnEventSpy);
 
 		// Act
-		var oReturnValue = this.oRouter.getView(sViewName, sViewType);
+		/*var oReturnValue = */ this.oRouter.getView(sViewName, sViewType);
 
 		// Assert
 		assert.strictEqual(fnEventSpy.callCount, 1, "The view created event was fired");
@@ -1337,13 +1337,13 @@ sap.ui.define([
 	QUnit.test("should be able to fire/attach/detach the titleChanged event", function(assert) {
 		// Arrange
 		var oParameters = { foo : "bar" },
+			oListener = {},
+			oData = { some : "data" },
 			fnEventSpy = this.spy(function(oEvent, oActualData) {
 				assert.strictEqual(oActualData, oData, "the data is correct");
 				assert.strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
 				assert.strictEqual(this, oListener, "the this pointer is correct");
 			}),
-			oListener = {},
-			oData = { some : "data" },
 			oFireReturnValue,
 			oDetachReturnValue,
 			oAttachReturnValue;
@@ -1504,7 +1504,7 @@ sap.ui.define([
 			// Assert
 			assert.strictEqual(fnEventSpy.callCount, 1, "The titleChanged event was fired");
 			assert.strictEqual(oParameters.title, sTitle, "Did pass title value to the event parameters");
-		}.bind(this));
+		});
 
 		return oSequencePromise.then(function() {
 			oRouteMatchedSpy = this.spy(this.oRouter.getRoute("route2"), "_routeMatched");
@@ -1906,7 +1906,6 @@ sap.ui.define([
 			oParameters,
 			sHomeTitle = "HOME",
 			sProductTitle = "PRODUCT",
-			sProductDetailTitle = "PRODUCT_DETAIL",
 			fnEventSpy = this.spy(function (oEvent) {
 				oParameters = oEvent.getParameters();
 			});
@@ -2687,7 +2686,10 @@ sap.ui.define([
 				this._router.initialize();
 			};
 
-			var ParentComponent = UIComponent.extend("namespace.ParentComponent", {
+			var ParentComponent,
+				ChildComponent;
+
+			ParentComponent = UIComponent.extend("namespace.ParentComponent", {
 				metadata : {
 					routing:  {
 						config: {
@@ -2710,7 +2712,7 @@ sap.ui.define([
 				init : that.fnInitRouter
 			});
 
-			var ChildComponent = UIComponent.extend("namespace.ChildComponent", {
+			ChildComponent = UIComponent.extend("namespace.ChildComponent", {
 				metadata : {
 					routing:  {
 						config: {
@@ -2727,6 +2729,7 @@ sap.ui.define([
 				},
 				init : that.fnInitRouter
 			});
+
 			this.oParentComponent = new ParentComponent("parent");
 		},
 		afterEach: function () {
@@ -2751,8 +2754,7 @@ sap.ui.define([
 			oParentRoute = this.oParentComponent.getRouter().getRoute("category"),
 			oChildRoute = this.oChildComponent.getRouter().getRoute("product"),
 			oParentRouteMatchedSpy = sinon.spy(oParentRoute, "_routeMatched"),
-			oChildRouteMatchedSpy = sinon.spy(oChildRoute, "_routeMatched"),
-			namespace = {};
+			oChildRouteMatchedSpy = sinon.spy(oChildRoute, "_routeMatched");
 
 		oParentRoute.attachMatched(oParentRouteMatchedEventSpy);
 		oParentRoute.attachPatternMatched(oParentRoutePatternMatchedEventSpy);
@@ -2777,12 +2779,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("nesting for multiple components", function(assert) {
-		// This is a pretty extensive test to cover any number of components beeing nested.
+		// This is a pretty extensive test to cover any number of components being nested.
 		// It covers also the scope of the previous test, but on a more generic level.
 
 		// Arrange
 		var that = this,
-			namespace = {},
 			iNumberOfComponents = 3,
 			aComponents = [],
 			aComponentInstances = [],
@@ -2792,39 +2793,40 @@ sap.ui.define([
 			aRouteMatchedEventSpies = [],
 			aRoutePatternMatchedSpies = [],
 			// We declare components in a function to be able to cover any number
+			fnDeclareComponent = function(i, iDepth) {
+				var Component = UIComponent.extend("namespace.Component" + i, {
+					metadata : {
+						routing:  {
+							config: {
+								async: true
+							},
+							routes: [
+								{
+									pattern: "route" + i + "/{id}",
+									name: "route" + i,
+									// set no parent for the (root-) route
+									parent: (i != 0) ? "namespace.Component" + (( i - 1 ) + ":route" + ( i - 1 )) : undefined
+								}
+							]
+						}
+					},
+					createContent: function() {
+						// instantiate "child-"routes for all routes except the directly matched one
+						if (i < (iDepth - 1)) {
+							// store pointers to the instances for later usage
+							aComponentInstances[i + 1] = new aComponents[i + 1]("component" + (i + 1));
+							return sap.ui.jsview("view", {
+								content: aComponentInstances[i + 1]
+							});
+						}
+					},
+					init : that.fnInitRouter
+				});
+				aComponents.push(Component);
+			},
 			fnDeclareComponents = function(iDepth) {
 				for (var i = 0; i < iDepth; i++) {
-					(function(i) {
-						var Component = UIComponent.extend("namespace.Component" + i, {
-							metadata : {
-								routing:  {
-									config: {
-										async: true
-									},
-									routes: [
-										{
-											pattern: "route" + i + "/{id}",
-											name: "route" + i,
-											// set no parent for the (root-) route
-											parent: (i != 0) ? "namespace.Component" + (( i - 1 ) + ":route" + ( i - 1 )) : undefined
-										}
-									]
-								}
-							},
-							createContent: function() {
-								// instantiate "child-"routes for all routes except the directly matched one
-								if (i < (iDepth - 1)) {
-									// store pointers to the instances for later usage
-									aComponentInstances[i + 1] = new aComponents[i + 1]("component" + (i + 1));
-									return sap.ui.jsview("view", {
-										content: aComponentInstances[i + 1]
-									});
-								}
-							},
-							init : that.fnInitRouter
-						});
-						aComponents.push(Component);
-					}(i));
+					fnDeclareComponent(i, iDepth);
 				}
 				return aComponents[0];
 			};

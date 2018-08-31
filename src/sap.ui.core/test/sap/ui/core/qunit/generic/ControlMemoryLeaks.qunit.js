@@ -44,7 +44,7 @@ sap.ui.define([
 					var oLibrary = sap.ui.getCore().loadLibrary(sInfoLibName);
 					mLoadedLibraries[sInfoLibName] = oLibrary.controls;
 					jQuery.sap.log.info("Library '" + sInfoLibName + "...successfully.");
-				} catch(e) {
+				} catch (e) {
 					// not a control lib? This happens for e.g. "sap.ui.server.java"...
 				}
 			} else {
@@ -211,11 +211,10 @@ sap.ui.define([
 		// check whether this control can be rendered
 		if (oControl1.placeAt) {
 
-			var oRenderer;
 			try {
-				oRenderer = oControl1.getMetadata().getRenderer();
+				oControl1.getMetadata().getRenderer();
 				bCanRender = true;
-			} catch(e) {
+			} catch (e) {
 				// ignoring this control's rendering, message is written below
 			}
 		}

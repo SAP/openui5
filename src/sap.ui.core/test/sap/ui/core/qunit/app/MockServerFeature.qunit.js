@@ -1,4 +1,6 @@
+/*global QUnit */
 sap.ui.define(["sap/ui/core/util/MockServer"], function (MockServer) {
+	"use strict";
 
 	QUnit.module("sap/ui/core/util/MockServer: given data and complex filter features in MockServer", {
 		beforeEach: function () {
@@ -249,7 +251,7 @@ sap.ui.define(["sap/ui/core/util/MockServer"], function (MockServer) {
 			this.simpleXML = 'test-resources/sap/ui/core/qunit/testdata/apfapp/tMockServerFeatureTestingMetadata.xml';
 			this.simpleJSON = 'test-resources/sap/ui/core/qunit/testdata/apfapp/';
 			this.localhost = "http://localhost:9999"; /* avoid running on the same host:port -> test will fail! */
-			this.path = "/mickeyMouse"
+			this.path = "/mickeyMouse";
 			this.absUri = this.simpleXML;
 			this.metaUri = "/$metadata";
 

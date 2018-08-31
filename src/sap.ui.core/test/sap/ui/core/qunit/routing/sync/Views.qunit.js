@@ -93,7 +93,7 @@ sap.ui.define([
 			});
 
 		// Act
-		var oReturnValue = this.oViews.getView({
+		this.oViews.getView({
 			viewType : "XML",
 			viewName : "foo"
 		});
@@ -107,7 +107,6 @@ sap.ui.define([
 	QUnit.test("Should prefix the id with the components id", function (assert) {
 		// Arrange
 		var sViewId = "ViewId",
-			fnOwnerSpy = this.spy(this.oUIComponent, "runAsOwner"),
 			oView = createXmlView(),
 			fnViewStub = this.stub(View, "_legacyCreate", function () {
 				return oView;
@@ -119,7 +118,7 @@ sap.ui.define([
 			};
 
 		// Act
-		var oReturnValue = this.oViews.getView(oOptions);
+		this.oViews.getView(oOptions);
 
 		// Assert
 		assert.strictEqual(fnViewStub.callCount, 1, "Did create the view");
@@ -130,14 +129,13 @@ sap.ui.define([
 	QUnit.test("Should not prefix the id with the components id if the private getView is invoked (by the router)", function (assert) {
 		// Arrange
 		var sViewId = "ViewId",
-			fnOwnerSpy = this.spy(this.oUIComponent, "runAsOwner"),
 			oView = createXmlView(),
 			fnViewStub = this.stub(View, "_legacyCreate", function () {
 				return oView;
 			});
 
 		// Act
-		var oReturnValue = this.oViews._getViewWithGlobalId({
+		this.oViews._getViewWithGlobalId({
 			id : sViewId,
 			viewType : "XML",
 			viewName : "foo"
@@ -214,13 +212,13 @@ sap.ui.define([
 	QUnit.test("should be able to fire/attach/detach the created event", function(assert) {
 		// Arrange
 		var oParameters = { foo : "bar" },
+			oListener = {},
+			oData = { some : "data" },
 			fnEventSpy = this.spy(function(oEvent, oActualData) {
 				assert.strictEqual(oActualData, oData, "the data is correct");
 				assert.strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
 				assert.strictEqual(this, oListener, "the this pointer is correct");
 			}),
-			oListener = {},
-			oData = { some : "data" },
 			oFireReturnValue,
 			oDetachReturnValue,
 			oAttachReturnValue = this.oViews.attachCreated(oData, fnEventSpy, oListener);
@@ -240,9 +238,6 @@ sap.ui.define([
 	QUnit.test("Should fire the view created event if a view is created", function (assert) {
 		// Arrange
 		var oView = createXmlView(),
-			fnStub = this.stub(View, "_legacyCreate", function () {
-				return oView;
-			}),
 			oViewOptions = {
 				viewType: "XML",
 				viewName: "foo"
@@ -251,6 +246,10 @@ sap.ui.define([
 			fnEventSpy = this.spy(function (oEvent) {
 				oParameters = oEvent.getParameters();
 			});
+
+		this.stub(View, "_legacyCreate", function () {
+			return oView;
+		});
 
 		this.oViews.attachCreated(fnEventSpy);
 
