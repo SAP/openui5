@@ -298,6 +298,32 @@ sap.ui.define([
 						},
 						errorMessage: sErrorMessage
 					});
+				},
+				iPressAnalyze: function () {
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						matchers: new PropertyStrictEquals({name: "text", value: "Analyze"}),
+						viewName: sViewName,
+						viewNamespace: sViewNameSpace,
+						actions: new Press(),
+						success: function () {
+							Opa5.assert.ok(true, "'Analyze' button was pressed.");
+						},
+						errorMessage: "Could NOT find 'Analyze' button."
+					});
+				},
+				iDeselectAllRules: function () {
+					return this.waitFor({
+						id: sTreeTableId,
+						matchers: new AggregationFilled({name: "columns"}),
+						viewName: sViewName,
+						viewNamespace: sViewNameSpace,
+						success: function (oTable) {
+							oTable.removeSelectionInterval(0, 100); // deselects up to 100 rules
+							Opa5.assert.ok(true, "All rules were deselected");
+						},
+						errorMessage: "Could NOT find rules table"
+					});
 				}
 			},
 			assertions: {

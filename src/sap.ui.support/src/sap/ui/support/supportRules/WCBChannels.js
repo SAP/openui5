@@ -89,6 +89,41 @@ function () {
 		POST_UI_INFORMATION:  "POST_UI_INFORMATION",
 
 		/**
+		 * Verifies rule creation.
+		 * @type {string}
+		 * @const
+		 */
+		VERIFY_CREATE_RULE:         "VERIFY_CREATE_RULE",
+
+		/**
+		 * Verifies rule creation after it's finished.
+		 * @type {string}
+		 * @const
+		 */
+		VERIFY_RULE_CREATE_RESULT:  "VERIFY_RULE_CREATE_RESULT",
+
+		/**
+		 * Verifies rule update.
+		 * @type {string}
+		 * @const
+		 */
+		VERIFY_UPDATE_RULE:         "VERIFY_UPDATE_RULE",
+
+		/**
+		 * Verifies rule update after it's finished.
+		 * @type {string}
+		 * @const
+		 */
+		VERIFY_RULE_UPDATE_RESULT:  "VERIFY_RULE_UPDATE_RESULT",
+
+		/**
+		 * Posts information about which rule to be deleted.
+		 * @type {string}
+		 * @const
+		 */
+		DELETE_RULE: 				"DELETE_RULE",
+
+		/**
 		 * Posts information about the application under test.
 		 * @type {string}
 		 * @const

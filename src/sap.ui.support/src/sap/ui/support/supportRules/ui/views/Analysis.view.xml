@@ -38,7 +38,7 @@
 						<m:subHeader>
 							<m:Bar>
 								<m:contentLeft>
-									<m:Toolbar>
+									<m:Toolbar width="100%">
 										<m:Label text="Rule Preset:" labelFor="presetVariant">
 											<m:layoutData>
 												<m:ToolbarLayoutData shrinkable="false" />
