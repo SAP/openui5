@@ -31,9 +31,9 @@ sap.ui.define([
 		},
 
 		init : function () {
-			var bMessageOpen = false,
-				oMessageManager = sap.ui.getCore().getMessageManager(),
-				oMessageModel = oMessageManager.getMessageModel();
+			var oMessageManager = sap.ui.getCore().getMessageManager(),
+				oMessageModel = oMessageManager.getMessageModel(),
+				bMessageOpen = false;
 
 			UIComponent.prototype.init.apply(this, arguments);
 

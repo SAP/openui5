@@ -543,7 +543,7 @@ sap.ui.define([
 				level : 0,
 				numberOfExpandedLevels : mParameters.numberOfExpandedLevels
 			});
-/*			jQuery.sap.log.fatal("not yet implemented: number of initially expanded levels may be 0 or 1, but not "
+/*			oLogger.fatal("not yet implemented: number of initially expanded levels may be 0 or 1, but not "
 					+ mParameters.numberOfExpandedLevels);
 */
 		}
@@ -3187,7 +3187,7 @@ sap.ui.define([
 						// Such errors will occur in case repeated calls for same groups with providers returned unstable entity keys
 						// E.g., HANA/XS does not provide stable keys. As s
 						// As soon as repetitive calls are avoided, such errors will vanish as well
-						jQuery.sap.log.debug("unstable keys detected: group ID " + sEntryGroupId + " does not have a unique entity key");
+						oLogger.debug("unstable keys detected: group ID " + sEntryGroupId + " does not have a unique entity key");
 				}
 */
 				this.mEntityKey[sEntryGroupId] = sLastEntryKey;
@@ -3428,7 +3428,7 @@ sap.ui.define([
 					var sPreviousGroupMemberKey = that._getKey(sParentGroupId, iPositionInParentGroup - 1);
 					var sPreviousGroupId = that._getGroupIdFromContext(that.oModel.getContext('/' + sPreviousGroupMemberKey),
 							that._getGroupIdLevel(oGroupMembersRequestDetails.sGroupId));
-					// only for development - if (that.mFinalLength[sPreviousGroupId]) jQuery.sap.log.fatal("assertion failed that final length of previous group id is false");
+					// only for development - if (that.mFinalLength[sPreviousGroupId]) oLogger.fatal("assertion failed that final length of previous group id is false");
 					// the final length of the previous must be set to true
 					that.mFinalLength[sPreviousGroupId] = true;
 					// and iStartIndex must be reset to 0, because a new group starts
@@ -3748,12 +3748,12 @@ sap.ui.define([
 					// determine position of sGroupId in members of group w/ ID sParentGroupId
 					var sGroupKey = this.mEntityKey[sGroupId];
 					if (!sGroupKey) {
-						//jQuery.sap.log.fatal("assertion failed: entitykey for group w/ ID " + sGroupId + " not available");
+						//oLogger.fatal("assertion failed: entitykey for group w/ ID " + sGroupId + " not available");
 						return oNO_MISSING_MEMBER;
 					}
 					var iGroupIndex = this._findKeyIndex(sParentGroupId,sGroupKey);
 					if (iGroupIndex == -1) {
-						//jQuery.sap.log.fatal("assertion failed: group w/ ID " + sGroupId + " not found in members of parent w/ ID " + sParentGroupId);
+						//oLogger.fatal("assertion failed: group w/ ID " + sGroupId + " not found in members of parent w/ ID " + sParentGroupId);
 						return oNO_MISSING_MEMBER;
 					}
 					if (iGroupIndex == this._getKeyCount(sParentGroupId) - 1) {

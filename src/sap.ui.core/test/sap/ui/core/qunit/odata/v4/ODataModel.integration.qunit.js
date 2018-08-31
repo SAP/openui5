@@ -4,6 +4,7 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/base/Log",
+	"sap/base/util/uid",
 	"sap/m/ColumnListItem",
 	"sap/m/CustomListItem",
 	"sap/m/Text",
@@ -20,7 +21,7 @@ sap.ui.require([
 	"sap/ui/test/TestUtils",
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function (jQuery, Log, ColumnListItem, CustomListItem, Text, Controller, View, ChangeReason,
+], function (jQuery, Log, uid, ColumnListItem, CustomListItem, Text, Controller, View, ChangeReason,
 		Filter, FilterOperator, Sorter, OperationMode, AnnotationHelper, ODataListBinding,
 		ODataModel, TestUtils) {
 	/*global QUnit, sinon */
@@ -31,6 +32,19 @@ sap.ui.require([
 		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 		sFlight = "/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/",
 		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
+
+	/**
+	 * Creates a V4 OData model for <code>serviceroot.svc</code>
+	 * (com.odata.v4.mathias.BusinessPartnerTest).
+	 *
+	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
+	 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
+	 *   synchronizationMode which are set by default
+	 * @returns {ODataModel} The model
+	 */
+	function createBusinessPartnerTestModel(mModelParameters) {
+		return createModel("/serviceroot.svc/", mModelParameters);
+	}
 
 	/**
 	 * Creates a V4 OData model.
@@ -145,6 +159,8 @@ sap.ui.require([
 					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
 				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata"
 					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"},
+				"/serviceroot.svc/$metadata"
+					: {source : "odata/v4/data/BusinessPartnerTest.metadata.xml"},
 				"/special/cases/$metadata"
 					: {source : "odata/v4/data/metadata_special_cases.xml"}
 			});
@@ -565,7 +581,7 @@ sap.ui.require([
 			return View.create({
 				type : "XML",
 				controller : oController
-					&& new (Controller.extend(jQuery.sap.uid(), oController))(),
+					&& new (Controller.extend(uid(), oController))(),
 				definition :
 					'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:t="sap.ui.table">'
 						+ sViewXML
@@ -642,8 +658,10 @@ sap.ui.require([
 				aExpectations = array(this.mListChanges, sControlId);
 				if (Array.isArray(vValue)) {
 					for (i = 0; i < vValue.length; i += 1) {
-						// This may create a sparse array this.mListChanges[sControlId]
-						array(aExpectations, vRow + i).push(vValue[i]);
+						if (i in vValue) {
+							// This may create a sparse array this.mListChanges[sControlId]
+							array(aExpectations, vRow + i).push(vValue[i]);
+						}
 					}
 				} else {
 					// This may create a sparse array this.mListChanges[sControlId]
@@ -652,7 +670,9 @@ sap.ui.require([
 			} else if (Array.isArray(vValue)) {
 				aExpectations = array(this.mListChanges, sControlId);
 				for (i = 0; i < vValue.length; i += 1) {
-					array(aExpectations, i).push(vValue[i]);
+					if (i in vValue) {
+						array(aExpectations, i).push(vValue[i]);
+					}
 				}
 			} else if (vValue === false) {
 				array(this.mListChanges, sControlId);
@@ -1270,7 +1290,7 @@ sap.ui.require([
 		this.expectRequest(
 			"EMPLOYEES?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100", {
 				"value" : [{
-					"ID": "1",
+					"ID" : "1",
 					"Name" : "Jonathan Smith",
 					"__CT__FAKE__Message" : {
 						"__FAKE__Messages" : [{
@@ -1282,18 +1302,18 @@ sap.ui.require([
 						}]
 					}
 				}, {
-					"ID": "2",
+					"ID" : "2",
 					"Name" : "Frederic Fall",
 					"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
 				}]
 			})
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
 			.expectMessages([{
-				"code": "1",
-				"message": "Text",
-				"persistent": false,
-				"target": "/EMPLOYEES('1')/Name",
-				"type": "Warning"
+				"code" : "1",
+				"message" : "Text",
+				"persistent" : false,
+				"target" : "/EMPLOYEES('1')/Name",
+				"type" : "Warning"
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -1343,11 +1363,11 @@ sap.ui.require([
 			})
 			.expectChange("text", "Jonathan Smith")
 			.expectMessages([{
-				"code": "1",
-				"message": "Text",
-				"persistent": false,
-				"target": "/EMPLOYEES('2')/Name",
-				"type": "Warning"
+				"code" : "1",
+				"message" : "Text",
+				"persistent" : false,
+				"target" : "/EMPLOYEES('2')/Name",
+				"type" : "Warning"
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -1361,11 +1381,11 @@ sap.ui.require([
 					"EMPLOYEES('2')?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages", oError)
 				.expectChange("text", null)
 				.expectMessages([{
-					"code": undefined,
-					"message": "Employee does not exist",
-					"persistent": true,
-					"target": undefined,
-					"type": "Error"
+					"code" : undefined,
+					"message" : "Employee does not exist",
+					"persistent" : true,
+					"target" : "",
+					"type" : "Error"
 				}]);
 
 			// code under test
@@ -1436,7 +1456,6 @@ sap.ui.require([
 </FlexBox>',
 			that = this;
 
-		//TODO Why is formatter called with null and not undefined?
 		this.expectChange("name", null);
 
 		return this.createView(assert, sView).then(function () {
@@ -1481,7 +1500,7 @@ sap.ui.require([
 
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest("EMPLOYEES?$select=ID,Name&$search=Fall&$skip=0&$top=100", {
-					"value" : [{"ID": "2", "Name" : "Frederic Fall"}]
+					"value" : [{"ID" : "2", "Name" : "Frederic Fall"}]
 				})
 				.expectChange("name", ["Frederic Fall"]);
 
@@ -1924,8 +1943,7 @@ sap.ui.require([
 		return this.createView(assert, sView, oModel).then(function () {
 			var oTable = that.oView.byId("table");
 
-			that.expectChange("note", "foo", 1)
-				.expectChange("note", "baz", 0);
+			that.expectChange("note", ["baz", "foo"]);
 
 			oTable.getBinding("items").create({Note : "bar"});
 			oTable.getItems()[0].getCells()[0].getBinding("text").setValue("baz");
@@ -1947,6 +1965,161 @@ sap.ui.require([
 					"SalesOrderID" : "42"
 				})
 				.expectChange("note", "from server", 0);
+
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create a business partner w/o key properties, enter an address (complex property),
+	// then submit the batch
+	QUnit.test("Create with default value in a complex property", function (assert) {
+		var sView = '\
+<Table id="table" items="{/BusinessPartnerList}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="city" text="{Address/City}" />\
+		<Text id="longitude" text="{Address/GeoLocation/Longitude}" />\
+	</ColumnListItem>\
+</Table>',
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			oTable,
+			that = this;
+
+		this.expectRequest("BusinessPartnerList?$select=Address/City,Address/GeoLocation/Longitude,"
+					+ "BusinessPartnerID&$skip=0&$top=100", {
+				"value" : [{
+					"Address" : {
+						"City" : "Walldorf",
+						"GeoLocation" : null
+					},
+					"BusinessPartnerID" : "42"
+				}]
+			})
+			.expectChange("city", ["Walldorf"])
+			.expectChange("longitude", [null]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("city", ["", "Walldorf"])
+				.expectChange("longitude", ["0.000000000000", null]);
+
+			oTable = that.oView.byId("table");
+			oTable.getBinding("items").create();
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("city", "Heidelberg", 0)
+				.expectChange("longitude", "8.700000000000", 0);
+
+			oTable.getItems()[0].getCells()[0].getBinding("text").setValue("Heidelberg");
+			oTable.getItems()[0].getCells()[1].getBinding("text").setValue("8.7");
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "BusinessPartnerList",
+					payload : {
+						"Address" : {
+							"City" : "Heidelberg",
+							"GeoLocation" : {"Longitude" : "8.7"}
+						}
+					}
+				}, {
+					"Address" : {
+						"City" : "Heidelberg",
+						"GeoLocation" : {"Longitude" : "8.69"}
+					},
+					"BusinessPartnerID" : "43"
+				})
+				// Note: This additional request will be eliminated by CPOUI5UISERVICESV3-1436
+				.expectRequest("BusinessPartnerList('43')?$select=Address/City,"
+						+ "Address/GeoLocation/Longitude,BusinessPartnerID", {
+					"Address" : {
+						"City" : "Heidelberg",
+						"GeoLocation" : {"Longitude" : "8.69"}
+					},
+					"BusinessPartnerID" : "43"
+				})
+				.expectChange("longitude", "8.690000000000", 0);
+
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create a sales order line item, enter a quantity, then submit the batch. Expect the
+	// quantity unit to be sent, too.
+	QUnit.test("Create with default value in a currency/unit", function (assert) {
+		var sView = '\
+<Table id="table" items="{/SalesOrderList(\'42\')/SO_2_SOITEM}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="quantity" text="{Quantity}" />\
+		<Text id="unit" text="{QuantityUnit}" />\
+	</ColumnListItem>\
+</Table>',
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			oTable,
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$select=ItemPosition,Quantity,"
+			+ "QuantityUnit,SalesOrderID&$skip=0&$top=100", {
+				"value" : [{
+					"SalesOrderID" : "42",
+					"ItemPosition" : "0010",
+					"Quantity" : "1.000",
+					"QuantityUnit" : "DZ"
+				}]
+			})
+			.expectChange("quantity", ["1.000"])
+			.expectChange("unit", ["DZ"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("quantity", [null, "1.000"])
+				.expectChange("unit", ["EA", "DZ"]);
+
+			oTable = that.oView.byId("table");
+			oTable.getBinding("items").create();
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("quantity", "2.000", 0);
+
+			oTable.getItems()[0].getCells()[0].getBinding("text").setValue("2.000");
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList('42')/SO_2_SOITEM",
+					payload : {
+						"Quantity" : "2.000",
+						"QuantityUnit" : "EA"
+					}
+				}, {
+					"SalesOrderID" : "42",
+					"ItemPosition" : "0020",
+					"Quantity" : "2.000",
+					"QuantityUnit" : "EA"
+				})
+				// Note: This additional request will be eliminated by CPOUI5UISERVICESV3-1436
+				.expectRequest("SalesOrderList('42')/SO_2_SOITEM(SalesOrderID='42',"
+						+ "ItemPosition='0020')?$select=ItemPosition,Quantity,QuantityUnit,"
+						+ "SalesOrderID", {
+					"SalesOrderID" : "42",
+					"ItemPosition" : "0020",
+					"Quantity" : "2.000",
+					"QuantityUnit" : "EA"
+				});
 
 			return Promise.all([
 				that.oModel.submitBatch("update"),
@@ -2213,10 +2386,10 @@ sap.ui.require([
 		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id"
 				+ ";$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))&$select=AGE,ID",
 				{
-					"AGE": 32,
-					"EMPLOYEE_2_TEAM": {
-						"Name": "SAP NetWeaver Gateway Content",
-						"Team_Id": "TEAM_03",
+					"AGE" : 32,
+					"EMPLOYEE_2_TEAM" : {
+						"Name" : "SAP NetWeaver Gateway Content",
+						"Team_Id" : "TEAM_03",
 						"TEAM_2_MANAGER" : {
 							"TEAM_ID" : "TEAM_03"
 						}
@@ -2251,12 +2424,12 @@ sap.ui.require([
 		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_MANAGER"
 					+ "($select=ID),EMPLOYEE_2_TEAM($select=Name,Team_Id)&$select=AGE,ID",
 				{
-					"AGE": 32,
-					"EMPLOYEE_2_MANAGER": {
-						"ID": "2"
+					"AGE" : 32,
+					"EMPLOYEE_2_MANAGER" : {
+						"ID" : "2"
 					},
-					"EMPLOYEE_2_TEAM": {
-						"Name": "SAP NetWeaver Gateway Content"
+					"EMPLOYEE_2_TEAM" : {
+						"Name" : "SAP NetWeaver Gateway Content"
 					}
 				})
 			.expectChange("name", "SAP NetWeaver Gateway Content");
@@ -2458,7 +2631,7 @@ sap.ui.require([
 					"code" : undefined,
 					"message" : "Missing team ID",
 					"persistent" : true,
-					"target" : undefined,
+					"target" : "",
 					"type" : "Error"
 				}])
 				.expectChange("teamId", null); // reset to initial state
@@ -2716,23 +2889,23 @@ sap.ui.require([
 		this.expectRequest("EMPLOYEES('2')/EMPLOYEE_2_TEAM"
 					+ "?$expand=TEAM_2_EMPLOYEES($orderby=AGE%20desc)&$select=Name,Team_Id",
 				{
-					"Name": "SAP NetWeaver Gateway Content",
-					"TEAM_2_EMPLOYEES": [
-						{ "AGE" : 32},
-						{ "AGE" : 29}
+					"Name" : "SAP NetWeaver Gateway Content",
+					"TEAM_2_EMPLOYEES" : [
+						{"AGE" : 32},
+						{"AGE" : 29}
 					]
 				})
 			.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_MANAGER($select=ID),"
 					+ "EMPLOYEE_2_TEAM($expand=TEAM_2_EMPLOYEES($orderby=AGE))&$select=AGE,ID",
 				{
-					"AGE": 32,
-					"EMPLOYEE_2_MANAGER": {
-						"ID": "2"
+					"AGE" : 32,
+					"EMPLOYEE_2_MANAGER" : {
+						"ID" : "2"
 					},
-					"EMPLOYEE_2_TEAM": {
-						"TEAM_2_EMPLOYEES": [
-							{ "AGE" : 29},
-							{ "AGE" : 32}
+					"EMPLOYEE_2_TEAM" : {
+						"TEAM_2_EMPLOYEES" : [
+							{"AGE" : 29},
+							{"AGE" : 32}
 						]
 					}
 				})
@@ -3009,8 +3182,8 @@ sap.ui.require([
 				}
 			};
 
-		this.expectRequest("EMPLOYEES?$select=AGE,ID&$skip=0&$top=100",
-			{ "value" :
+		this.expectRequest("EMPLOYEES?$select=AGE,ID&$skip=0&$top=100", {
+			"value" :
 				[
 					{"AGE" : 29, "ID" : "R2D2"},
 					{"AGE" : 36, "ID" : "C3PO"}
@@ -3359,19 +3532,19 @@ sap.ui.require([
 				that = this;
 
 			this.expectRequest("SalesOrderList?$skip=0&$top=100", {
-				"value": [
-					{"SalesOrderID": "0"},
-					{"SalesOrderID": "1"},
-					{"SalesOrderID": "2"}
+				"value" : [
+					{"SalesOrderID" : "0"},
+					{"SalesOrderID" : "1"},
+					{"SalesOrderID" : "2"}
 				]
 			}).expectChange("text", ["0", "1", "2"]);
 
 			return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
 				that.expectRequest("SalesOrderList?$filter=" + oFixture.request.replace(/ /g, "%20")
 						+ "&$skip=0&$top=100", {
-					"value": [
-						{"SalesOrderID": "0"},
-						{"SalesOrderID": "2"}
+					"value" : [
+						{"SalesOrderID" : "0"},
+						{"SalesOrderID" : "2"}
 					]
 				}).expectChange("text", "2", 1);
 
@@ -3438,7 +3611,7 @@ sap.ui.require([
 
 		this.expectRequest("Equipments('1')/EQUIPMENT_2_PRODUCT?$select=ID,ProductPicture/Picture",
 			{
-				"@odata.context": "../$metadata#Equipments('1')/EQUIPMENT_2_PRODUCT",
+				"@odata.context" : "../$metadata#Equipments('1')/EQUIPMENT_2_PRODUCT",
 				"ID" : "42",
 				"ProductPicture" : {
 					"Picture@odata.mediaReadLink" : "ProductPicture('42')"
@@ -3571,18 +3744,18 @@ sap.ui.require([
 					"SalesOrderID" : "0500000001",
 					"ToLineItems" : {
 						"results" : [{
-							"__metadata":{
-								"type":"GWSAMPLE_BASIC.SalesOrderLineItem"
+							"__metadata" : {
+								"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 							},
 							"ItemPosition" : "0000000010"
 						}, {
-							"__metadata":{
-								"type":"GWSAMPLE_BASIC.SalesOrderLineItem"
+							"__metadata" : {
+								"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 							},
 							"ItemPosition" : "0000000020"
 						}, {
-							"__metadata":{
-								"type":"GWSAMPLE_BASIC.SalesOrderLineItem"
+							"__metadata" : {
+								"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 							},
 							"ItemPosition" : "0000000030"
 						}]
@@ -4026,14 +4199,14 @@ sap.ui.require([
 
 			oFunctionBinding.refresh(); // MUST NOT trigger a request!
 
-			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {"Name": "Jonathan Smith"})
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {"Name" : "Jonathan Smith"})
 				.expectChange("name", "Jonathan Smith");
 			return Promise.all([
 				oFunctionBinding.setParameter("EmployeeID", "1").execute(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {"Name": "Frederic Fall"})
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {"Name" : "Frederic Fall"})
 				.expectChange("name", "Frederic Fall");
 			oFunctionBinding.refresh();
 
@@ -4043,7 +4216,7 @@ sap.ui.require([
 
 			oFunctionBinding.refresh(); // MUST NOT trigger a request!
 
-			that.expectRequest("GetEmployeeByID(EmployeeID='2')", {"Name": "Peter Burke"})
+			that.expectRequest("GetEmployeeByID(EmployeeID='2')", {"Name" : "Peter Burke"})
 				.expectChange("name", "Peter Burke");
 			return Promise.all([
 				oFunctionBinding.execute(),
@@ -4076,7 +4249,7 @@ sap.ui.require([
 			oFunctionBinding.changeParameters({$select: "Name"}); // MUST NOT trigger a request!
 
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=Name", {
-					"Name": "Jonathan Smith"
+					"Name" : "Jonathan Smith"
 				})
 				.expectChange("name", "Jonathan Smith");
 			return Promise.all([
@@ -4085,7 +4258,7 @@ sap.ui.require([
 			]);
 		}).then(function () {
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=ID,Name", {
-					"Name": "Frederic Fall"
+					"Name" : "Frederic Fall"
 				})
 				.expectChange("name", "Frederic Fall");
 			oFunctionBinding.changeParameters({$select: "ID,Name"});
@@ -4098,7 +4271,7 @@ sap.ui.require([
 			oFunctionBinding.changeParameters({$select: "Name"});
 
 			that.expectRequest("GetEmployeeByID(EmployeeID='2')?$select=Name", {
-					"Name": "Peter Burke"
+					"Name" : "Peter Burke"
 				})
 				.expectChange("name", "Peter Burke");
 			return Promise.all([
@@ -4343,9 +4516,9 @@ sap.ui.require([
 			? \'set to available\' : \'\'}" />\
 </FlexBox>', {
 			"EMPLOYEES('2')?$select=AGE,ID,Name,com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable,com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsOccupied" : {
-				"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable": {},
-				"AGE": 32,
-				"Name": "Frederic Fall"
+				"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {},
+				"AGE" : 32,
+				"Name" : "Frederic Fall"
 			}
 		}, [{
 			"adAction1" : "",
@@ -4393,13 +4566,13 @@ sap.ui.require([
 
 			that.expectRequest("FlightCollection(carrid='AA',connid='0017',fldate="
 				+ "datetime'2017-08-10T00%3A00%3A00')?$select=carrid,connid,fldate,flightDetails", {
-					"d": {
-						"__metadata": {
-							"type": "RMTSAMPLEFLIGHT.Flight"
+					"d" : {
+						"__metadata" : {
+							"type" : "RMTSAMPLEFLIGHT.Flight"
 						},
-						"carrid": "AA",
-						"connid": "0017",
-						"fldate": "/Date(1502323200000)/",
+						"carrid" : "AA",
+						"connid" : "0017",
+						"fldate" : "/Date(1502323200000)/",
 						"flightDetails" : {
 							"__metadata" : {
 								"type" : "RMTSAMPLEFLIGHT.FlightDetails"
@@ -4435,21 +4608,21 @@ sap.ui.require([
 				"d" : {
 					"results" : [{
 						"__metadata" : {
-							"type":"RMTSAMPLEFLIGHT.Flight"
+							"type" : "RMTSAMPLEFLIGHT.Flight"
 						},
 						"carrid" : "AA",
 						"connid" : "0017",
 						"fldate" : "/Date(1502323200000)/"
 					}, {
 						"__metadata" : {
-							"type":"RMTSAMPLEFLIGHT.Flight"
+							"type" : "RMTSAMPLEFLIGHT.Flight"
 						},
 						"carrid" : "DL",
 						"connid" : "1699",
 						"fldate" : "/Date(1502323200000)/"
 					}, {
 						"__metadata" : {
-							"type":"RMTSAMPLEFLIGHT.Flight"
+							"type" : "RMTSAMPLEFLIGHT.Flight"
 						},
 						"carrid" : "UA",
 						"connid" : "3517",
@@ -4497,7 +4670,7 @@ sap.ui.require([
 		this.expectRequest("NotificationCollection('foo')", {
 				"d" : {
 					"__metadata" : {
-						"type":"RMTSAMPLEFLIGHT.Notification"
+						"type" : "RMTSAMPLEFLIGHT.Notification"
 					},
 					"ID" : "foo",
 					"updated" : "/Date(1502323200000)/"
@@ -4639,7 +4812,7 @@ sap.ui.require([
 			+ ",fldate=datetime'2017-08-10T00%3A00%3A00')", {
 				"d" : {
 					"__metadata" : {
-						"type":"RMTSAMPLEFLIGHT.Flight"
+						"type" : "RMTSAMPLEFLIGHT.Flight"
 					},
 					"carrid" : "AA",
 					"connid" : "0017",
@@ -5213,16 +5386,16 @@ sap.ui.require([
 
 		this.expectRequest("TEAMS('TEAM_01')?$select=MEMBER_COUNT,Team_Id"
 					+ "&$expand=TEAM_2_EMPLOYEES($select=AGE,ID,Name)", {
-				"Team_Id": "TEAM_01",
-				"MEMBER_COUNT": 2,
-				"TEAM_2_EMPLOYEES": [{
-					"ID": "1",
-					"Name": "Frederic Fall",
-					"AGE": 52
+				"Team_Id" : "TEAM_01",
+				"MEMBER_COUNT" : 2,
+				"TEAM_2_EMPLOYEES" : [{
+					"ID" : "1",
+					"Name" : "Frederic Fall",
+					"AGE" : 52
 				}, {
-					"ID": "3",
-					"Name": "Jonathan Smith",
-					"AGE": 56
+					"ID" : "3",
+					"Name" : "Jonathan Smith",
+					"AGE" : 56
 				}]
 			})
 			.expectChange("idMemberCount", "2")
@@ -5242,16 +5415,16 @@ sap.ui.require([
 			that.removeFromTable(oTable, "idAge");
 			that.expectRequest("TEAMS('TEAM_01')?$select=MANAGER_ID,Team_Id"
 						+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name,STATUS)", {
-					"Team_Id": "TEAM_01",
-					"MANAGER_ID": "3",
-					"TEAM_2_EMPLOYEES": [{
-						"ID": "1",
-						"Name": "Frederic Fall",
-						"STATUS": "Available"
+					"Team_Id" : "TEAM_01",
+					"MANAGER_ID" : "3",
+					"TEAM_2_EMPLOYEES" : [{
+						"ID" : "1",
+						"Name" : "Frederic Fall",
+						"STATUS" : "Available"
 					}, {
-						"ID": "3",
-						"Name": "Jonathan Smith",
-						"STATUS": "Occupied"
+						"ID" : "3",
+						"Name" : "Jonathan Smith",
+						"STATUS" : "Occupied"
 					}]
 				})
 				.expectChange(sIdManagerId, "3")
@@ -5284,13 +5457,13 @@ sap.ui.require([
 
 		this.expectRequest("Equipments?$select=Category,ID,Name&$skip=0&$top=100", {
 				value : [{
-					"Category": "Electronics",
-					"ID": 1,
-					"Name": "Office PC"
+					"Category" : "Electronics",
+					"ID" : 1,
+					"Name" : "Office PC"
 				}, {
-					"Category": "Electronics",
-					"ID": 2,
-					"Name": "Tablet X"
+					"Category" : "Electronics",
+					"ID" : 2,
+					"Name" : "Tablet X"
 				}]
 			})
 			.expectChange("idEquipmentName", ["Office PC", "Tablet X"]);
@@ -5301,13 +5474,13 @@ sap.ui.require([
 
 			that.expectRequest("Equipments?$select=Category,ID,Name&$skip=0&$top=100", {
 					value : [{
-						"Category": "Electronics",
-						"ID": 1,
-						"Name": "Office PC"
+						"Category" : "Electronics",
+						"ID" : 1,
+						"Name" : "Office PC"
 					}, {
-						"Category": "Electronics",
-						"ID": 2,
-						"Name": "Tablet X"
+						"Category" : "Electronics",
+						"ID" : 2,
+						"Name" : "Tablet X"
 					}]
 				})
 				.expectChange("idEquipmentName", ["Office PC", "Tablet X"]);
@@ -5336,16 +5509,16 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest("EMPLOYEES('2')", {
-				"SALARY": {
-					"YEARLY_BONUS_AMOUNT": 100
+				"SALARY" : {
+					"YEARLY_BONUS_AMOUNT" : 100
 				}
 			})
 			.expectChange("salary", "100")
 			.expectChange("forecastSalary", null);
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest("EMPLOYEES('2')", {
-					"SALARY": {
-						"YEARLY_BONUS_AMOUNT": 100
+					"SALARY" : {
+						"YEARLY_BONUS_AMOUNT" : 100
 					}
 				});
 
@@ -5356,8 +5529,8 @@ sap.ui.require([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("EMPLOYEES('2')/" + sFunctionName + "()", {
-					"SALARY": {
-						"YEARLY_BONUS_AMOUNT": 142
+					"SALARY" : {
+						"YEARLY_BONUS_AMOUNT" : 142
 					}
 				})
 				.expectChange("forecastSalary", "142");
@@ -5368,13 +5541,13 @@ sap.ui.require([
 			]);
 		}).then(function () {
 			that.expectRequest("EMPLOYEES('2')", {
-					"SALARY": {
-						"YEARLY_BONUS_AMOUNT": 110
+					"SALARY" : {
+						"YEARLY_BONUS_AMOUNT" : 110
 					}
 				})
 				.expectRequest("EMPLOYEES('2')/" + sFunctionName + "()", {
-					"SALARY": {
-						"YEARLY_BONUS_AMOUNT": 150
+					"SALARY" : {
+						"YEARLY_BONUS_AMOUNT" : 150
 					}
 				})
 				.expectChange("salary", "110")
@@ -5416,13 +5589,13 @@ sap.ui.require([
 
 		this.expectRequest("Equipments?$select=Category,ID,Name&$skip=0&$top=100", {
 				value : [{
-					"Category": "Electronics",
-					"ID": 1,
-					"Name": "Office PC"
+					"Category" : "Electronics",
+					"ID" : 1,
+					"Name" : "Office PC"
 				}, {
-					"Category": "Electronics",
-					"ID": 2,
-					"Name": "Tablet X"
+					"Category" : "Electronics",
+					"ID" : 2,
+					"Name" : "Tablet X"
 				}]
 			})
 			.expectChange("idEquipmentName", ["Office PC", "Tablet X"])
@@ -5453,13 +5626,13 @@ sap.ui.require([
 
 				that.expectRequest("Equipments?$select=Category,ID,Name&$skip=0&$top=100", {
 						value : [{
-							"Category": "Electronics",
-							"ID": 1,
-							"Name": "Office PC"
+							"Category" : "Electronics",
+							"ID" : 1,
+							"Name" : "Office PC"
 						}, {
-							"Category": "Electronics",
-							"ID": 2,
-							"Name": "Tablet X"
+							"Category" : "Electronics",
+							"ID" : 2,
+							"Name" : "Tablet X"
 						}]
 					})
 					.expectRequest("Equipments(Category='Electronics',ID=1)/EQUIPMENT_2_EMPLOYEE"
@@ -5501,11 +5674,11 @@ sap.ui.require([
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("GetSOContactList(SalesOrderID='0500000001')", {
 					value : [{
-						"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"
+						"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"
 					}, {
-						"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"
+						"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"
 					}, {
-						"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
+						"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
 					}]
 				})
 				.expectChange("id", [
@@ -5542,11 +5715,11 @@ sap.ui.require([
 		this.expectRequest("GetSOContactList(SalesOrderID='0500000001')?$select=ContactGUID"
 				+ "&$skip=0&$top=100", {
 			value : [{
-				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"
+				"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"
 			}, {
-				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"
+				"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"
 			}, {
-				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
+				"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
 			}]
 		})
 		.expectChange("id", [
@@ -5580,11 +5753,11 @@ sap.ui.require([
 
 		this.expectRequest("GetSOContactList(SalesOrderID='0500000001')?$select=ContactGUID", {
 			value : [{
-				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"
+				"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"
 			}, {
-				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"
+				"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"
 			}, {
-				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
+				"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
 			}]
 		})
 		.expectChange("id", [
@@ -5619,10 +5792,10 @@ sap.ui.require([
 		this.expectRequest("MANAGERS('1')/" + sFunctionName + "()?$select=ID,Name", {
 			value : [{
 				"ID" : "3",
-				"Name": "Jonathan Smith"
+				"Name" : "Jonathan Smith"
 			}, {
 				"ID" : "6",
-				"Name": "Susan Bay"
+				"Name" : "Susan Bay"
 			}]
 		})
 		.expectChange("id", ["3", "6"])
@@ -5671,7 +5844,7 @@ sap.ui.require([
 
 			that.expectRequest({
 					headers : {
-						"If-Match": "etag"
+						"If-Match" : "etag"
 					},
 					method : "DELETE",
 					url : "BusinessPartnerList('0100000000')"
@@ -6017,7 +6190,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used (CPOUI5UISERVICESV3-1195)
 	//TODO support $filter : \'GrossAmount gt 0\',\
-	QUnit.test("Analytics by V4: $$aggregation", function (assert) {
+	QUnit.test("Analytics by V4: $$aggregation w/ groupLevels", function (assert) {
 		var sView = '\
 <t:Table id="table" rows="{path : \'/SalesOrderList\',\
 		parameters : {\
@@ -6141,9 +6314,255 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,
+	// but a grand total row (CPOUI5UISERVICESV3-1418) which is fixed at the top; first visible
+	// row starts at 1 and then we scroll up; headerContext>$count is also used
+	[false, true].forEach(function (bCount) {
+		var sTitle = "Analytics by V4: $$aggregation grandTotal w/o groupLevels; $count : "
+				+ bCount;
+
+		QUnit.test(sTitle, function (assert) {
+			var sBasicPath
+					= "BusinessPartners?$apply=groupby((Country,Region),aggregate(SalesNumber))"
+					+ "/filter(SalesNumber%20gt%200)/orderby(Region%20desc)",
+				oGrandTotalRow = {
+					"SalesNumber" : 351,
+					"SalesNumber@odata.type" : "#Decimal"
+				},
+				oListBinding,
+				oTable,
+				sView = '\
+<Text id="count" text="{$count}"/>\
+<t:Table fixedRowCount="1" firstVisibleRow="1" id="table" rows="{path : \'/BusinessPartners\',\
+		parameters : {\
+			$$aggregation : {\
+				aggregate : {\
+					SalesNumber : {grandTotal : true}\
+				},\
+				group : {\
+					Country : {},\
+					Region : {}\
+				}\
+			},\
+			$count : ' + bCount + ',\
+			$filter : \'SalesNumber gt 0\',\
+			$orderby : \'Region desc\'\
+		}}" threshold="0" visibleRowCount="5">\
+	<t:Column>\
+		<t:template>\
+			<Text id="country" text="{Country}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="region" text="{Region}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="salesNumber" text="{SalesNumber}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+				that = this;
+
+			if (bCount) {
+				oGrandTotalRow["UI5__count"] =  "26";
+				oGrandTotalRow["UI5__count@odata.type"] = "#Decimal";
+			}
+			this.expectRequest(sBasicPath + "/concat(aggregate(SalesNumber"
+					+ (bCount ? ",$count%20as%20UI5__count" : "") + "),top(0))", {
+					"value" : [oGrandTotalRow]
+				})
+				.expectRequest(sBasicPath + "/skip(1)/top(4)", {
+					"value" : [
+						{"Country" : "b", "Region" : "Y", "SalesNumber" : 2},
+						{"Country" : "c", "Region" : "X", "SalesNumber" : 3},
+						{"Country" : "d", "Region" : "W", "SalesNumber" : 4},
+						{"Country" : "e", "Region" : "V", "SalesNumber" : 5}
+					]
+				})
+				.expectChange("count")
+				.expectChange("country", ["",, "b", "c", "d", "e"])
+				.expectChange("region", ["",, "Y", "X", "W", "V"])
+				.expectChange("salesNumber", ["351",, "2", "3", "4", "5"]);
+
+			return this.createView(assert, sView, createBusinessPartnerTestModel())
+			.then(function () {
+				oTable = that.oView.byId("table");
+				oListBinding = oTable.getBinding("rows");
+
+				if (bCount) {
+					assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
+					assert.strictEqual(oListBinding.getLength(), 27,
+						"length includes grand total row");
+
+					// Note: header context gives count of leaves (w/o grand total)
+					that.expectChange("count", "26");
+				} else {
+					assert.strictEqual(oListBinding.isLengthFinal(), false, "length unknown");
+					assert.strictEqual(oListBinding.getLength(), 1 + 5 + 10, "estimated length");
+
+					that.oLogMock.expects("error").withExactArgs(
+						"Failed to drill-down into $count, invalid segment: $count",
+						// Note: toString() shows realistic (first) request w/o skip/top
+						"/serviceroot.svc/" + sBasicPath + "/concat(aggregate(SalesNumber"
+							+ (bCount ? ",$count%20as%20UI5__count" : "") + "),identity)",
+						"sap.ui.model.odata.v4.lib._Cache");
+				}
+
+				that.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				that.expectRequest(sBasicPath + "/top(1)", {
+						"value" : [
+							{"Country" : "a", "Region" : "Z", "SalesNumber" : 1}
+						]
+					})
+					.expectChange("country", null, null)
+					.expectChange("region", null, null)
+					.expectChange("salesNumber", null, null)
+					.expectChange("country", ["a", "b", "c", "d"], 1)
+					.expectChange("region", ["Z", "Y", "X", "W"], 1)
+					.expectChange("salesNumber", ["1", "2", "3", "4"], 1);
+
+				oTable.setFirstVisibleRow(0);
+
+				return that.waitForChanges(assert);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,
+	// but a grand total row (CPOUI5UISERVICESV3-1418) which is not fixed at the top; first visible
+	// row starts at 1 and then we scroll up; headerContext>$count is also used
+	[false, true].forEach(function (bCount) {
+		var sTitle = "Analytics by V4: $$aggregation grandTotal w/o groupLevels; $count : "
+				+ bCount + "; grandTotal row not fixed";
+
+		QUnit.test(sTitle, function (assert) {
+			var sBasicPath
+					= "BusinessPartners?$apply=groupby((Country,Region),aggregate(SalesNumber))"
+					+ "/filter(SalesNumber%20gt%200)/orderby(Region%20desc)",
+				oListBinding,
+				oTable,
+				aValues = [
+					{"Country" : "a", "Region" : "Z", "SalesNumber" : 1},
+					{"Country" : "b", "Region" : "Y", "SalesNumber" : 2},
+					{"Country" : "c", "Region" : "X", "SalesNumber" : 3},
+					{"Country" : "d", "Region" : "W", "SalesNumber" : 4},
+					{"Country" : "e", "Region" : "V", "SalesNumber" : 5}
+				],
+				sView = '\
+<Text id="count" text="{$count}"/>\
+<t:Table fixedRowCount="0" firstVisibleRow="1" id="table" rows="{path : \'/BusinessPartners\',\
+		parameters : {\
+			$$aggregation : {\
+				aggregate : {\
+					SalesNumber : {grandTotal : true}\
+				},\
+				group : {\
+					Country : {},\
+					Region : {}\
+				}\
+			},\
+			$count : ' + bCount + ',\
+			$filter : \'SalesNumber gt 0\',\
+			$orderby : \'Region desc\'\
+		}}" threshold="0" visibleRowCount="5">\
+	<t:Column>\
+		<t:template>\
+			<Text id="country" text="{Country}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="region" text="{Region}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="salesNumber" text="{SalesNumber}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+				that = this;
+
+			if (bCount) {
+				aValues.unshift({"UI5__count" : "26", "UI5__count@odata.type" : "#Decimal"});
+			}
+			this.expectRequest(
+					sBasicPath + (bCount
+						? "/concat(aggregate($count%20as%20UI5__count),top(5))"
+						: "/top(5)"),
+					{"value" : aValues})
+				.expectChange("count")
+				.expectChange("country", ["a", "b", "c", "d", "e"], 1)
+				.expectChange("region", ["Z", "Y", "X", "W", "V"], 1)
+				.expectChange("salesNumber", ["1", "2", "3", "4", "5"], 1);
+
+			return this.createView(assert, sView, createBusinessPartnerTestModel())
+			.then(function () {
+				oTable = that.oView.byId("table");
+				oListBinding = oTable.getBinding("rows");
+
+				if (bCount) {
+					assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
+					assert.strictEqual(oListBinding.getLength(), 27,
+						"length includes grand total row");
+
+					// Note: header context gives count of leaves (w/o grand total)
+					that.expectChange("count", "26");
+				} else {
+					assert.strictEqual(oListBinding.isLengthFinal(), false, "length unknown");
+					assert.strictEqual(oListBinding.getLength(), 1 + 5 + 10, "estimated length");
+
+					that.oLogMock.expects("error").withExactArgs(
+						"Failed to drill-down into $count, invalid segment: $count",
+						// Note: toString() shows realistic (first) request w/o skip/top
+						"/serviceroot.svc/" + sBasicPath + "/concat(aggregate(SalesNumber"
+							+ (bCount ? ",$count%20as%20UI5__count" : "") + "),identity)",
+						"sap.ui.model.odata.v4.lib._Cache");
+				}
+
+				that.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				that.expectRequest(sBasicPath + "/concat(aggregate(SalesNumber),top(0))", {
+						"value" : [{
+							"SalesNumber" : 351,
+							"SalesNumber@odata.type" : "#Decimal"
+						}]
+					})
+					.expectChange("country", null, null)
+					.expectChange("region", null, null)
+					.expectChange("salesNumber", null, null)
+					.expectChange("country", ["", "a", "b", "c", "d"])
+					.expectChange("region", ["", "Z", "Y", "X", "W"])
+					.expectChange("salesNumber", ["351", "1", "2", "3", "4"]);
+
+				oTable.setFirstVisibleRow(0);
+
+				return that.waitForChanges(assert);
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used without group or groupLevels
-	QUnit.test("Analytics by V4: $$aggregation, aggregate but no group", function (assert) {
-		var sView = '\
+	// Note: usage of min/max simulates a Chart, which would actually call ODLB#updateAnalyticalInfo
+	[false, true].forEach(function (bCount) {
+		var sTitle = "Analytics by V4: $$aggregation, aggregate but no group; $count : " + bCount;
+
+		QUnit.test(sTitle, function (assert) {
+			var oMinMaxElement = {
+					"UI5min__AGE" : 42,
+					"UI5max__AGE" : 77
+				},
+				sView = '\
 <t:Table id="table" rows="{path : \'/SalesOrderList\',\
 		parameters : {\
 			$$aggregation : {\
@@ -6153,7 +6572,8 @@ sap.ui.require([
 						max : true\
 					}\
 				}\
-			}\
+			},\
+			$count : ' + bCount + '\
 		}}" threshold="0" visibleRowCount="1">\
 	<t:Column>\
 		<t:template>\
@@ -6161,36 +6581,36 @@ sap.ui.require([
 		</t:template>\
 	</t:Column>\
 </t:Table>',
-			oModel = createSalesOrdersModel(),
-			that = this;
+				oModel = createSalesOrdersModel(),
+				that = this;
 
-		this.expectRequest("SalesOrderList?$apply=aggregate(GrossAmount)"
-				+ "/concat(aggregate(GrossAmount%20with%20min%20as%20UI5min__GrossAmount,"
-				+ "GrossAmount%20with%20max%20as%20UI5max__GrossAmount),identity)"
-				+ "&$skip=0&$top=2", {
-				"@odata.count" : "2",
-				"value" : [
-					{
-						"UI5min__AGE": 42,
-						"UI5max__AGE": 77
-					},
-					{"GrossAmount" : 1}
-				]
-			})
-			.expectChange("grossAmount", 1);
-
-		return this.createView(assert, sView, oModel).then(function () {
-			var oTable = that.oView.byId("table"),
-				oListBinding = oTable.getBinding("rows");
-
-			that.expectRequest("SalesOrderList?$apply=aggregate(GrossAmount)&$skip=0&$top=1", {
-					"@odata.count" : "1",
-					"value" : [{"GrossAmount" : 2}]
+			if (bCount) {
+				oMinMaxElement["UI5__count"] = "1";
+				oMinMaxElement["UI5__count@odata.type"] = "#Decimal";
+			}
+			this.expectRequest("SalesOrderList?$apply=aggregate(GrossAmount)"
+					+ "/concat(aggregate(GrossAmount%20with%20min%20as%20UI5min__GrossAmount,"
+					+ "GrossAmount%20with%20max%20as%20UI5max__GrossAmount"
+					+ (bCount ? ",$count%20as%20UI5__count" : "") + "),top(1))", {
+					"value" : [oMinMaxElement, {"GrossAmount" : 1}]
 				})
-				.expectChange("grossAmount", 2);
+				.expectChange("grossAmount", 1);
 
-			oListBinding.setAggregation({
-				aggregate : {GrossAmount : {}}
+			return this.createView(assert, sView, oModel).then(function () {
+				var oTable = that.oView.byId("table"),
+					oListBinding = oTable.getBinding("rows");
+
+				// w/o min/max: no _AggregationCache, system query options are used
+				that.expectRequest("SalesOrderList?" + (bCount ? "$count=true&" : "")
+					+ "$apply=aggregate(GrossAmount)&$skip=0&$top=1", {
+						"@odata.count" : "1",
+						"value" : [{"GrossAmount" : 2}]
+					})
+					.expectChange("grossAmount", 2);
+
+				oListBinding.setAggregation({
+					aggregate : {GrossAmount : {}}
+				});
 			});
 		});
 	});
@@ -6327,8 +6747,105 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	[
+		// Scenario: flat list with aggregated data via $apply, can be combined with $count,
+		// $filter, $orderby and system query options are still used (also for $skip, $top)
+		"Flat list with aggregated data",
+		// Scenario: same as before, but via ODLB#updateAnalyticalInfo; in other words:
+		// a hypothetical chart w/ paging, but w/o min/max; initial $skip > 0!
+		"ODLB#updateAnalyticalInfo without min/max"
+	].forEach(function (sTitle, i) {
+		QUnit.test(sTitle, function (assert) {
+			var aAggregation = [{ // dimension
+					grouped : false,
+					inResult : true,
+					name : "LifecycleStatus"
+				}, { // measure
+					name : "GrossAmount",
+					total : false
+				}],
+				sBasicPath = "SalesOrderList?$count=true&$filter=GrossAmount%20lt%2042"
+					+ "&$orderby=LifecycleStatus%20desc"
+					+ "&$apply=groupby((LifecycleStatus),aggregate(GrossAmount))",
+				sView = '\
+<Text id="count" text="{$count}"/>\
+<t:Table firstVisibleRow="1" id="table" rows="{path : \'/SalesOrderList\',\
+		parameters : {\
+			$count : true,\
+			$filter : \'GrossAmount lt 42\',\
+			$orderby : \'LifecycleStatus desc\'\
+' + (i === 0 ? ",$apply : 'groupby((LifecycleStatus),aggregate(GrossAmount))'" : "") + '\
+		}}" threshold="0" visibleRowCount="4">\
+	<t:Column>\
+		<t:template>\
+			<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="grossAmount" text="{GrossAmount}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+				that = this;
+
+			if (i > 0) {
+				// for simulating Chart, call #updateAnalyticalInfo _before_ #getContexts
+				this.mock(ODataListBinding.prototype)
+					.expects("getContexts")
+					.withExactArgs(1, 4, 0)
+					.callsFake(function () {
+						this.updateAnalyticalInfo(aAggregation);
+						ODataListBinding.prototype.getContexts.restore();
+						return this.getContexts.apply(this, arguments);
+					});
+			}
+			this.expectRequest(sBasicPath + "&$skip=1&$top=4", {
+					"@odata.count" : "26",
+					"value" : [
+						{"GrossAmount" : 2, "LifecycleStatus" : "Y"},
+						{"GrossAmount" : 3, "LifecycleStatus" : "X"},
+						{"GrossAmount" : 4, "LifecycleStatus" : "W"},
+						{"GrossAmount" : 5, "LifecycleStatus" : "V"}
+					]
+				})
+				.expectChange("count")
+				.expectChange("grossAmount", ["2.00", "3.00", "4.00", "5.00"], 1)
+				.expectChange("lifecycleStatus", ["Y", "X", "W", "V"], 1);
+
+			return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+				that.expectChange("count", "26");
+
+				that.oView.byId("count").setBindingContext(
+					that.oView.byId("table").getBinding("rows").getHeaderContext());
+				return that.waitForChanges(assert);
+			}).then(function () {
+				// no additional request for same aggregation data
+				that.oView.byId("table").getBinding("rows").updateAnalyticalInfo(aAggregation);
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				that.expectRequest(sBasicPath + "&$skip=0&$top=1", {
+						"@odata.count" : "26",
+						"value" : [
+							{"GrossAmount" : 1, "LifecycleStatus" : "Z"}
+						]
+					});
+				that.expectChange("grossAmount", null, null)
+					.expectChange("lifecycleStatus", null, null);
+				that.expectChange("grossAmount", ["1.00", "2.00", "3.00", "4.00"])
+					.expectChange("lifecycleStatus", ["Z", "Y", "X", "W"]);
+
+				that.oView.byId("table").setFirstVisibleRow(0);
+
+				return that.waitForChanges(assert);
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Simulate a chart that requests minimum and maximum values for a measure via
-	// #updateAnalyticalInfo
+	// #updateAnalyticalInfo; initial $skip > 0!
 	QUnit.test("ODLB#updateAnalyticalInfo with min/max", function (assert) {
 		var aAggregation = [{ // dimension
 				grouped : false,
@@ -6340,9 +6857,10 @@ sap.ui.require([
 				name : "AGE",
 				total : false
 			}],
+			oMeasureRangePromise,
 			sView = '\
 <Text id="count" text="{$count}"/>\
-<t:Table id="table" rows="{\
+<t:Table firstVisibleRow="1" id="table" rows="{\
 			path : \'/EMPLOYEES\',\
 			parameters : {$count : true},\
 			filters : {path : \'AGE\', operator : \'GE\', value1 : 30},\
@@ -6361,12 +6879,12 @@ sap.ui.require([
 </t:Table>',
 			that = this;
 
-		// for simulating Chart, #updateAnalyticalInfo needs to be called before #getContexts
+		// for simulating Chart, call #updateAnalyticalInfo _before_ #getContexts
 		this.mock(ODataListBinding.prototype)
 			.expects("getContexts")
-			.withExactArgs(0, 3, 0)
+			.withExactArgs(1, 3, 0)
 			.callsFake(function () {
-				this.updateAnalyticalInfo(aAggregation)
+				oMeasureRangePromise = this.updateAnalyticalInfo(aAggregation)
 					.measureRangePromise.then(function (mMeasureRange) {
 						assert.deepEqual(mMeasureRange, {
 							AGE : {
@@ -6374,26 +6892,24 @@ sap.ui.require([
 								min : 42
 							}
 						});
-					}, function (oError) {
-						assert.notOk(oError);
 					});
 				ODataListBinding.prototype.getContexts.restore();
 				return this.getContexts.apply(this, arguments);
 			});
-		this.expectRequest("EMPLOYEES?$count=true&$apply=groupby((Name),aggregate(AGE))"
-				+ "/filter(AGE%20ge%2030)/orderby(AGE)"
-				+ "/concat(aggregate(AGE%20with%20min%20as%20UI5min__AGE,"
-				+ "AGE%20with%20max%20as%20UI5max__AGE),identity)"
-				+ "&$skip=0&$top=4",
-			{
-				"@odata.count": 5,
+		this.expectRequest("EMPLOYEES?$apply=groupby((Name),aggregate(AGE))"
+					+ "/filter(AGE%20ge%2030)/orderby(AGE)"
+					+ "/concat(aggregate(AGE%20with%20min%20as%20UI5min__AGE,"
+					+ "AGE%20with%20max%20as%20UI5max__AGE,$count%20as%20UI5__count)"
+					+ ",skip(1)/top(3))", {
 				"value" : [{
 						// the server response may contain additional data for example @odata.id or
-						// type information "UI5min__AGE@odata.type": "#Int16"
-						"@odata.id": null,
-						"UI5min__AGE@odata.type": "#Int16",
-						"UI5min__AGE": 42,
-						"UI5max__AGE": 77
+						// type information "UI5min__AGE@odata.type" : "#Int16"
+						"@odata.id" : null,
+						"UI5min__AGE@odata.type" : "#Int16",
+						"UI5min__AGE" : 42,
+						"UI5max__AGE" : 77,
+						"UI5__count" : "4",
+						"UI5__count@odata.type" : "#Decimal"
 					},
 					{"ID" : "1", "Name" : "Jonathan Smith", "AGE" : 50},
 					{"ID" : "0", "Name" : "Frederic Fall", "AGE" : 70},
@@ -6401,8 +6917,8 @@ sap.ui.require([
 				]
 			})
 			.expectChange("count")
-			.expectChange("text", ["Jonathan Smith", "Frederic Fall", "Peter Burke"])
-			.expectChange("age", ["50", "70", "77"]);
+			.expectChange("text", ["Jonathan Smith", "Frederic Fall", "Peter Burke"], 1)
+			.expectChange("age", ["50", "70", "77"], 1);
 
 		return this.createView(assert, sView, createTeaBusiModel()).then(function () {
 			that.expectChange("count", "4");
@@ -6417,27 +6933,21 @@ sap.ui.require([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("EMPLOYEES?$apply=groupby((Name),aggregate(AGE))"
-					// Note: for consistency, we prefer filter() over $filter here
-					// (same for orderby() vs. $orderby)
-					+ "/filter(AGE%20ge%2030)/orderby(AGE)"
-					+ "&$skip=3&$top=1",
-				{
-					"value" : [
-						{"ID" : "3", "Name" : "John Field", "AGE" : 82}
-					]
+						// Note: for consistency, we prefer filter() over $filter here
+						// (same for orderby() vs. $orderby and skip/top)
+						+ "/filter(AGE%20ge%2030)/orderby(AGE)/top(1)", {
+					"value" : [{"ID" : "3", "Name" : "John Field", "AGE" : 42}]
 				})
 				.expectChange("text", null, null)
 				.expectChange("age", null, null)
-				.expectChange("text", "Frederic Fall", 1)
-				.expectChange("text", "Peter Burke", 2)
-				.expectChange("text", "John Field", 3)
-				.expectChange("age", "70", 1)
-				.expectChange("age", "77", 2)
-				.expectChange("age", "82", 3);
+				.expectChange("text", ["John Field", "Jonathan Smith", "Frederic Fall"])
+				.expectChange("age", ["42", "50", "70"]);
 
-			that.oView.byId("table").setFirstVisibleRow(1);
+			that.oView.byId("table").setFirstVisibleRow(0);
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			return oMeasureRangePromise; // no child left behind :-)
 		});
 	});
 
@@ -6471,10 +6981,10 @@ sap.ui.require([
 			oTable = that.oView.byId("table");
 			that.expectRequest("TEAMS('TEAM_01')?$select=Team_Id"
 				+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
-					"Team_Id": "TEAM_01",
+					"Team_Id" : "TEAM_01",
 					TEAM_2_EMPLOYEES : [{
-						"ID": "3",
-						"Name": "Jonathan Smith"
+						"ID" : "3",
+						"Name" : "Jonathan Smith"
 					}]
 				})
 				.expectChange("name", ["Jonathan Smith"]);
@@ -6486,10 +6996,10 @@ sap.ui.require([
 		}).then(function () {
 			that.expectRequest("TEAMS('TEAM_01')?$select=Team_Id"
 						+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
-					"Team_Id": "TEAM_01",
+					"Team_Id" : "TEAM_01",
 					TEAM_2_EMPLOYEES : [{
-						"ID": "3",
-						"Name": "Jonathan Smith"
+						"ID" : "3",
+						"Name" : "Jonathan Smith"
 					}]
 				})
 				.expectChange("name", ["Jonathan Smith"]);
@@ -6905,9 +7415,9 @@ sap.ui.require([
 					method: "POST",
 					url: "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction",
 					payload: {}
-				}, {"ArtistID": "42", "IsActiveEntity": false})
+				}, {"ArtistID" : "42", "IsActiveEntity" : false})
 				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)",
-					{"ArtistID": "42", "IsActiveEntity": true});
+					{"ArtistID" : "42", "IsActiveEntity" : true});
 
 			return Promise.all([
 				// code under test
@@ -7178,17 +7688,17 @@ sap.ui.require([
 					])
 				})
 				.expectMessages([{
-					"code": "foo-42",
-					"message": "text0",
-					"persistent": true,
-					"target": undefined,
-					"type": "Warning"
+					"code" : "foo-42",
+					"message" : "text0",
+					"persistent" : true,
+					"target" : "",
+					"type" : "Warning"
 				}, {
-					"code": "foo-77",
-					"message": "text1",
-					"persistent": true,
-					"target": undefined,
-					"type": "Information"
+					"code" : "foo-77",
+					"message" : "text1",
+					"persistent" : true,
+					"target" : "",
+					"type" : "Information"
 				}])
 				.expectChange("id", "23");
 
@@ -7314,11 +7824,11 @@ sap.ui.require([
 			})
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
 			.expectMessages([{
-				"code": "1",
-				"message": "Text",
-				"persistent": false,
-				"target": "/EMPLOYEES('1')/Name",
-				"type": "Warning"
+				"code" : "1",
+				"message" : "Text",
+				"persistent" : false,
+				"target" : "/EMPLOYEES('1')/Name",
+				"type" : "Warning"
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -7362,11 +7872,11 @@ sap.ui.require([
 			})
 			.expectChange("text", "Jonathan Smith")
 			.expectMessages([{
-				"code": "1",
-				"message": "Text",
-				"persistent": false,
-				"target": "/EMPLOYEES('2')/Name",
-				"type": "Warning"
+				"code" : "1",
+				"message" : "Text",
+				"persistent" : false,
+				"target" : "/EMPLOYEES('2')/Name",
+				"type" : "Warning"
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -7406,7 +7916,7 @@ sap.ui.require([
 					+ "__CT__FAKE__Message/__FAKE__Messages)", {
 				"Team_Id" : "TEAM_01",
 				"TEAM_2_EMPLOYEES" : [{
-					"ID": "1",
+					"ID" : "1",
 					"Name" : "Jonathan Smith",
 					"__CT__FAKE__Message" : {
 						"__FAKE__Messages" : [{
@@ -7418,7 +7928,7 @@ sap.ui.require([
 						}]
 					}
 				}, {
-					"ID": "2",
+					"ID" : "2",
 					"Name" : "Frederic Fall",
 					"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
 				}]
@@ -7426,11 +7936,11 @@ sap.ui.require([
 			.expectChange("Team_Id", "TEAM_01")
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
 			.expectMessages([{
-				"code": "1",
-				"message": "Text",
-				"persistent": false,
-				"target": "/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES('1')/Name",
-				"type": "Warning"
+				"code" : "1",
+				"message" : "Text",
+				"persistent" : false,
+				"target" : "/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES('1')/Name",
+				"type" : "Warning"
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -7483,11 +7993,11 @@ sap.ui.require([
 			})
 			.expectChange("text", "Jonathan Smith")
 			.expectMessages([{
-				"code": "1",
-				"message": "Text",
-				"persistent": false,
-				"target": "/Equipments(Category='foo',ID='0815')/EQUIPMENT_2_EMPLOYEE/Name",
-				"type": "Warning"
+				"code" : "1",
+				"message" : "Text",
+				"persistent" : false,
+				"target" : "/Equipments(Category='foo',ID='0815')/EQUIPMENT_2_EMPLOYEE/Name",
+				"type" : "Warning"
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -7503,6 +8013,342 @@ sap.ui.require([
 				// messages are checked before the response can remove.
 				that.waitForChanges(assert);
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Update property within an absolute binding and get bound messages in response
+	QUnit.test("Update property (in absolute binding), getting bound messages", function (assert) {
+		var oBinding,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{path : \'/EMPLOYEES(\\\'1\\\')\', \
+		parameters : {\
+			$select : \'__CT__FAKE__Message/__FAKE__Messages\',\
+			$$updateGroupId : \'foo\'\
+		}}" id="form">\
+	<Text id="id" text="{ID}" />\
+	<Text id="name" text="{Name}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('1')?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages", {
+				"ID" : "1",
+				"Name" : "Jonathan Smith",
+				"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
+			})
+			.expectChange("id", "1")
+			.expectChange("name", "Jonathan Smith");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("name").getBinding("text");
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "EMPLOYEES('1')",
+					payload : {"Name" : ""}
+				}, {
+					"ID" : "1",
+					"Name" : "",
+					// unrealistic scenario for OData V4.0 because a PATCH request does not contain
+					// selects and Gateway will not return message properties; OData 4.01 feature;
+					// if other server implementations send messages, process them anyway
+					"__CT__FAKE__Message" : {
+						"__FAKE__Messages" : [{
+							"code" : "1",
+							"message" : "Enter a name",
+							"transition" : false,
+							"target" : "Name",
+							"numericSeverity" : 3
+						}]
+					}
+				})
+				.expectChange("name", "") // triggered by setValue
+				.expectMessages([{
+					"code" : "1",
+					"message" : "Enter a name",
+					"persistent" : false,
+					"target" : "/EMPLOYEES('1')/Name",
+					"type" : "Warning"
+				}]);
+
+			// code under test
+			oBinding.setValue("");
+
+			return Promise.all([
+				oModel.submitBatch("foo"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest({
+					method : "PATCH",
+					url : "EMPLOYEES('1')",
+					payload : {"Name" : "Hugo"}
+				}, {
+					"ID" : "1",
+					"Name" : "Hugo",
+					"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
+				})
+				.expectChange("name", "Hugo") // triggered by setValue
+				.expectMessages([]);
+
+			// code under test
+			oBinding.setValue("Hugo");
+
+			return Promise.all([
+				oModel.submitBatch("foo"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Update property within a relative binding and get bound messages in response
+	QUnit.test("Update property (in relative binding), getting bound messages", function (assert) {
+		var oBinding,
+			oContext,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sPathToMessages = "TEAM_2_EMPLOYEES('1')/__CT__FAKE__Message/__FAKE__Messages",
+			sView = '\
+<FlexBox binding="{path : \'/TEAMS(\\\'TEAM_01\\\')\', \
+		parameters : {\
+			$expand : {\
+				\'TEAM_2_EMPLOYEES\' : {\
+					$select : \'__CT__FAKE__Message/__FAKE__Messages\'\
+				}\
+			},\
+			$$updateGroupId : \'foo\'\
+		}}" id="form">\
+	<Text id="teamId" text="{Team_Id}" />\
+	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Text id="name" text="{Name}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest(
+			"TEAMS('TEAM_01')?"
+				+ "$expand=TEAM_2_EMPLOYEES($select=ID,Name,__CT__FAKE__Message/__FAKE__Messages)"
+				+ "&$select=Team_Id",
+			{
+				"Team_Id" : "TEAM_01",
+				"TEAM_2_EMPLOYEES" : [{
+					"ID" : "1",
+					"Name" : "Jonathan Smith",
+					"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
+				}]
+			})
+			.expectChange("teamId", "TEAM_01")
+			.expectChange("name", ["Jonathan Smith"])
+			.expectMessages([]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("table").getItems()[0].getCells()[0].getBinding("text");
+			oContext = that.oView.byId("form").getBindingContext();
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "EMPLOYEES('1')",
+					payload : {"Name" : ""}
+				}, {
+					"ID" : "1",
+					"Name" : "",
+					// unrealistic scenario for OData V4.0 because a PATCH request does not contain
+					// selects and Gateway will not return message properties; OData 4.01 feature;
+					// if other server implementations send messages, process them anyway
+					"__CT__FAKE__Message" : {
+						"__FAKE__Messages" : [{
+							"code" : "1",
+							"message" : "Enter a name",
+							"transition" : false,
+							"target" : "Name",
+							"numericSeverity" : 3
+						}]
+					}
+				})
+				.expectChange("name", "", 0) // triggered by setValue
+				.expectMessages([{
+					"code" : "1",
+					"message" : "Enter a name",
+					"persistent" : false,
+					"target" : "/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES('1')/Name",
+					"type" : "Warning"
+				}]);
+
+			// there are no messages for employee 1
+			assert.strictEqual(oContext.getObject(sPathToMessages).length, 0);
+			assert.strictEqual(oContext.getObject(sPathToMessages + "/$count"), 0);
+
+			// code under test
+			oBinding.setValue("");
+
+			return Promise.all([
+				oModel.submitBatch("foo"),
+				that.waitForChanges(assert)
+			]).then(function () {
+				// after the patch there is one message for employee 1
+				assert.strictEqual(oContext.getObject(sPathToMessages).length, 1);
+				assert.strictEqual(oContext.getObject(sPathToMessages)[0].message, "Enter a name");
+				assert.strictEqual(oContext.getObject(sPathToMessages + "/$count"), 1);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Update property within an entity in a collection and get bound messages in response
+	QUnit.test("Update property (in collection), getting bound messages", function (assert) {
+		var oBinding,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/EMPLOYEES\', \
+		parameters : {\
+			$select : \'__CT__FAKE__Message/__FAKE__Messages\',\
+			$$updateGroupId : \'foo\'\
+		}}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="name" text="{Name}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest(
+			"EMPLOYEES?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100",
+			{
+				value : [{
+					"ID" : "1",
+					"Name" : "Jonathan Smith",
+					"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
+				}]
+			})
+			.expectChange("name", ["Jonathan Smith"])
+			.expectMessages([]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("table").getItems()[0].getCells()[0].getBinding("text");
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "EMPLOYEES('1')",
+					payload : {"Name" : ""}
+				}, {
+					"ID" : "1",
+					"Name" : "",
+					// unrealistic scenario for OData V4.0 because a PATCH request does not contain
+					// selects and Gateway will not return message properties; OData 4.01 feature;
+					// if other server implementations send messages, process them anyway
+					"__CT__FAKE__Message" : {
+						"__FAKE__Messages" : [{
+							"code" : "1",
+							"message" : "Enter a name",
+							"transition" : false,
+							"target" : "Name",
+							"numericSeverity" : 3
+						}]
+					}
+				})
+				.expectChange("name", "", 0) // triggered by setValue
+				.expectMessages([{
+					"code" : "1",
+					"message" : "Enter a name",
+					"persistent" : false,
+					"target" : "/EMPLOYEES('1')/Name",
+					"type" : "Warning"
+				}]);
+
+			// code under test
+			oBinding.setValue("");
+
+			return Promise.all([
+				oModel.submitBatch("foo"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create an employee and get messages for the newly created employee
+	QUnit.test("Create a new EMPLOYEE and get messages", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{path : \'/TEAMS(\\\'TEAM_01\\\')\', \
+		parameters : {\
+			$expand : {\
+				\'TEAM_2_EMPLOYEES\' : {\
+					$select : \'__CT__FAKE__Message/__FAKE__Messages\'\
+				}\
+			},\
+			$$updateGroupId : \'foo\'\
+		}}" id="form">\
+	<Text id="teamId" text="{Team_Id}" />\
+	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Text id="name" text="{Name}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest(
+			"TEAMS('TEAM_01')?"
+				+ "$expand=TEAM_2_EMPLOYEES($select=ID,Name,__CT__FAKE__Message/__FAKE__Messages)"
+				+ "&$select=Team_Id", {
+				"Team_Id" : "TEAM_01",
+				"TEAM_2_EMPLOYEES" : [{
+					"ID" : "1",
+					"Name" : "Jonathan Smith",
+					"__CT__FAKE__Message" : { "__FAKE__Messages" : [] }
+				}]
+			})
+			.expectChange("teamId", "TEAM_01")
+			.expectChange("name", ["Jonathan Smith"])
+			.expectMessages([]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oTable = that.oView.byId("table");
+
+			that.expectChange("name", "Jonathan Smith", 1)
+				.expectChange("name", "", 0);
+
+			oTable.getBinding("items").create({Name : ""});
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "TEAMS('TEAM_01')/TEAM_2_EMPLOYEES",
+					payload : {
+						"Name" : ""
+					}
+				}, {
+					"@odata.context" : "../$metadata#TEAMS('TEAM_01')/TEAM_2_EMPLOYEES/$entity",
+					"ID" : "42",
+					"Name" : "",
+					"__CT__FAKE__Message" : {
+						"__FAKE__Messages" : [{
+							"code" : "1",
+							"message" : "Enter a name",
+							"transition" : false,
+							"target" : "Name",
+							"numericSeverity" : 3
+						}]
+					}
+				})
+				.expectMessages([{
+					"code": "1",
+					"message": "Enter a name",
+					"persistent": false,
+					"target": "/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES/-1/Name",
+					"type": "Warning"
+				}]);
+
+			return Promise.all([
+				that.oModel.submitBatch("foo"),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 });

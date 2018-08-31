@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/base/util/ObjectPath",
 	"sap/ui/Device",
@@ -17,10 +16,10 @@ sap.ui.require([
 	"sap/ui/model/Context",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/performance/Measurement",
-	"jquery.sap.xml" // jQuery.sap.parseXML()
-], function (jQuery, Log, ObjectPath, Device, BindingParser, ManagedObject, SyncPromise,
+	"sap/ui/util/XMLHelper"
+], function (Log, ObjectPath, Device, BindingParser, ManagedObject, SyncPromise,
 		CustomizingConfiguration, XMLTemplateProcessor, XMLPreprocessor, BindingMode, ChangeReason,
-		Context, JSONModel, Measurement/*, jQuerySapXml*/) {
+		Context, JSONModel, Measurement, XMLHelper) {
 	/*global QUnit, sinon, window */
 	/*eslint consistent-this: 0, max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0*/
 	"use strict";
@@ -151,7 +150,7 @@ sap.ui.require([
 	 * Expects a warning with the given message for the given log mock.
 	 *
 	 * @param {object} oLogMock
-	 *   mock for <code>jQuery.sap.log</code>
+	 *   mock for <code>sap.base.log</code>
 	 * @param {string} sExpectedWarning
 	 *   expected warning message
 	 * @param {any} [vDetails]
@@ -173,7 +172,7 @@ sap.ui.require([
 	 * @returns {Element} the DOM document's root element
 	 */
 	function xml(assert, aContent) {
-		var oDocument = jQuery.sap.parseXML(aContent.join(""));
+		var oDocument = XMLHelper.parse(aContent.join(""));
 		assert.strictEqual(oDocument.parseError.errorCode, 0, "XML parsed correctly");
 		return oDocument.documentElement;
 	}
@@ -319,7 +318,6 @@ sap.ui.require([
 			// do not rely on ERROR vs. DEBUG due to minified sources
 			Log.setLevel(Log.Level.DEBUG, sComponent);
 
-			this.oJQuerySapMock = this.mock(jQuery.sap);
 			this.oObjectPathMock = this.mock(ObjectPath);
 
 			this.oLogMock = this.mock(Log);
@@ -400,7 +398,7 @@ sap.ui.require([
 			}).then(function (oResult) {
 				// assertions
 				assert.strictEqual(oResult, oViewContent);
-				sActual = _normalizeXml(jQuery.sap.serializeXML(oViewContent));
+				sActual = _normalizeXml(XMLHelper.serialize(oViewContent));
 				if (Array.isArray(vExpected)) {
 					sExpected = _normalizeXml(vExpected.join(""));
 					assert.strictEqual(sActual, sExpected, "XML looks as expected: " + sExpected);
@@ -550,31 +548,27 @@ sap.ui.require([
 		 * (a)synchronously to retrieve the module values.
 		 *
 		 * @param {boolean} bAsync - Whether the async API is expected to be used
-		 * @param {string[]} aModuleNames - The dot-separated module names or slash-separated URNs
+		 * @param {string[]} aURNS - The slash-separated unified resource names
 		 * @param {function} [fnCallback] - A callback function which returns the array of module
 		 *   values and adds modules to the global namespace as a side effect
 		 */
-		expectRequire : function (bAsync, aModuleNames, fnCallback) {
-			var oExpectation;
+		expectRequire : function (bAsync, aURNs, fnCallback) {
+			var that = this;
 
 			if (bAsync) {
 				this.oSapUiMock.expects("require").on(sap.ui)
-					.withExactArgs(aModuleNames, sinon.match.func)
+					.withExactArgs(aURNs, sinon.match.func)
 					.callsFake(function (aDependencies, fnFactory) {
 						setTimeout(function () {
 							fnFactory.apply(null, fnCallback && fnCallback());
 						}, 0); // simulate AMD
 					});
-				this.oJQuerySapMock.expects("require").never();
+				this.oSapUiMock.expects("requireSync").never();
 			} else {
-				oExpectation = this.oJQuerySapMock.expects("require");
-				// Note: jQuery.sap.require() supports "varargs" style
-				oExpectation.on(jQuery.sap).withExactArgs.apply(oExpectation, aModuleNames)
-					.callsFake(function () {
-						if (fnCallback) {
-							fnCallback();
-						}
-					});
+				aURNs.forEach(function (sURN, i) {
+					that.oSapUiMock.expects("requireSync").withArgs(sURN)
+						.callsFake(i === 0 ? fnCallback : undefined);
+				});
 			}
 		},
 
@@ -2187,7 +2181,7 @@ sap.ui.require([
 					aURNs = ["sap/ui/core/sample/ViewTemplate/scenario/Helper"];
 
 				this.expectLoad(bAsync, "myFragment", sFragmentXml);
-				this.expectRequire(bAsync, bAsync ? aURNs : [sModuleName], function () {
+				this.expectRequire(bAsync, aURNs, function () {
 					window.foo = {
 						Helper : {
 							bar : function (vValue) {
@@ -2247,7 +2241,7 @@ sap.ui.require([
 					];
 
 				this.expectLoad(bAsync, "myFragment", xml(assert, aFragmentContent));
-				this.expectRequire(bAsync, bAsync ? aURNs : aModuleNames, function () {
+				this.expectRequire(bAsync, aURNs, function () {
 					window.foo = {
 						Helper : {
 							bar : function (vValue) {
@@ -2577,7 +2571,7 @@ sap.ui.require([
 				this.expectLoad(false, "acme.OuterReplacement", xml(assert, aOuterReplacement));
 				// Note: mock result of loadTemplate() is not analyzed by check() method, of course
 				warn(this.oLogMock, '[ 2] Constant test condition', aOuterReplacement[0]);
-				this.expectRequire(false, ["foo.Helper", "bar.Helper"]);
+				this.expectRequire(false, ["foo/Helper", "bar/Helper"]);
 
 				// <ExtensionPoint name="outerReplacement">
 				// --> nothing configured, just check that it is processed
@@ -2631,13 +2625,13 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("template:require - single module", function (assert) {
-		var sModuleName = "sap.ui.core.sample.ViewTemplate.scenario.Helper",
-			oRootElement = xml(assert, [
-				mvcView().replace(">", ' template:require="' + sModuleName + '">'),
+		var oRootElement = xml(assert, [
+				mvcView().replace(">",
+					' template:require="sap.ui.core.sample.ViewTemplate.scenario.Helper">'),
 				'</mvc:View>'
 			]);
 
-		this.expectRequire(false, [sModuleName]);
+		this.expectRequire(false, ["sap/ui/core/sample/ViewTemplate/scenario/Helper"]);
 
 		process(oRootElement);
 	});
@@ -2654,7 +2648,11 @@ sap.ui.require([
 				'</mvc:View>'
 			]);
 
-		this.expectRequire(false, aModuleNames);
+		this.expectRequire(false, [
+			"foo/Helper",
+			"sap/ui/core/sample/ViewTemplate/scenario/Helper",
+			"sap/ui/model/odata/AnnotationHelper"
+		]);
 
 		process(oRootElement);
 	});
@@ -3718,9 +3716,7 @@ sap.ui.require([
 				'</mvc:View>'
 			];
 
-		this.oJQuerySapMock.expects("getResourceName").withExactArgs("foo.Helper", "")
-			.returns("~");
-		this.expectRequire(true, ["~"], function () {
+		this.expectRequire(true, ["foo/Helper"], function () {
 			window.foo = {
 				Helper : {
 					bar : function (vValue) {

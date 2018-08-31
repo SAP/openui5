@@ -358,6 +358,12 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch}. Otherwise it is repeated with the next
 	 * update for the entity.
 	 *
+	 * The initial data for the created entity can be supplied via the parameter
+	 * <code>oInitialData</code> and modified via property bindings. Properties that are not part of
+	 * the initial data show the default value from the service metadata on the UI, but they are not
+	 * sent to the server. If there is no default value, <code>null</code> is used instead, even if
+	 * the property is not <code>Nullable</code>.
+	 *
 	 * @param {object} [oInitialData={}]
 	 *   The initial data for the created entity
 	 * @returns {sap.ui.model.odata.v4.Context}
@@ -579,14 +585,15 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext) {
 		var bAggregate = this.oAggregation && (this.oAggregation.groupLevels.length
-				|| _AggregationHelper.hasMinOrMax(this.oAggregation.aggregate));
+				|| _AggregationHelper.hasMinOrMax(this.oAggregation.aggregate)
+				|| _AggregationHelper.hasGrandTotal(this.oAggregation.aggregate));
 
 		mQueryOptions = this.inheritQueryOptions(mQueryOptions, oContext);
 
 		// w/o grouping or min/max, $apply is sufficient; else _AggregationCache is needed
 		return bAggregate
 			? _AggregationCache.create(this.oModel.oRequestor, sResourcePath, this.oAggregation,
-				mQueryOptions, this.oModel.bAutoExpandSelect)
+				mQueryOptions)
 			: _Cache.create(this.oModel.oRequestor, sResourcePath, mQueryOptions,
 				this.oModel.bAutoExpandSelect);
 	};
@@ -1592,6 +1599,8 @@ sap.ui.define([
 	 *   A map from aggregatable property names or aliases to objects containing the following
 	 *   details:
 	 *   <ul>
+	 *   <li><code>grandTotal</code>: An optional boolean that tells whether a grand total for this
+	 *     aggregatable property is needed (since 1.59.0)
 	 *   <li><code>subtotals</code>: An optional boolean that tells whether subtotals for this
 	 *     aggregatable property are needed
 	 *   <li><code>with</code>: An optional string that provides the name of the method (for

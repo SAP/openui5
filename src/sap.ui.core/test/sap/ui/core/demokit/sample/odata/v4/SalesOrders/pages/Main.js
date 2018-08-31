@@ -578,13 +578,6 @@ sap.ui.require([
 						id : /-0-field/,
 						success : function (oValueHelp) {
 							Opa5.assert.ok(true, "ValueHelp on Product.Category pressed");
-							return this.waitFor({
-								controlType : "sap.m.Popover",
-								success : function (aControls) {
-									aControls[0].close();
-									Opa5.assert.ok(true, "ValueHelp Popover closed");
-								}
-							});
 						},
 						viewName : sViewName
 					});
@@ -670,6 +663,17 @@ sap.ui.require([
 						success : function (aControls) {
 							aControls[0].$().tap();
 							Opa5.assert.ok(true, "Sales Order selected: " + sSalesOrderId);
+						},
+						viewName : sViewName
+					});
+				},
+				setValueHelpQualifier : function (sQualifier) {
+					return this.waitFor({
+						controlType : "sap.m.Input",
+						// "0" is the index, "field" is the prefix for the control within ValueHelp
+						id : /-0-field/,
+						success : function (aValueHelps) {
+							aValueHelps[0].oParent.setQualifier(sQualifier);
 						},
 						viewName : sViewName
 					});
@@ -1115,7 +1119,18 @@ sap.ui.require([
 					});
 				}
 			},
-			assertions : {}
+			assertions : {
+				checkTitle : function (sTitle) {
+					return this.waitFor({
+						controlType : "sap.m.Title",
+						id : /-popover-title$/,
+						success : function (aTitles) {
+							Opa5.assert.strictEqual(aTitles[0].getText(), sTitle,
+								"Expected popover title '" + sTitle + "'");
+						}
+					});
+				}
+			}
 		},
 		/*
 		 * Actions and assertions for the "Sales Order Deletion" confirmation dialog

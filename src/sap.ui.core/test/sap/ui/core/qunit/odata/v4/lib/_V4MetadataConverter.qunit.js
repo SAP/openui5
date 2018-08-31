@@ -6,8 +6,8 @@ sap.ui.require([
 	"sap/base/Log",
 	"sap/ui/model/odata/v4/lib/_V4MetadataConverter",
 	"sap/ui/test/TestUtils",
-	"jquery.sap.xml" // jQuery.sap.parseXML()
-], function (jQuery, Log, _V4MetadataConverter, TestUtils/*, jQuerySapXml*/) {
+	"sap/ui/util/XMLHelper"
+], function (jQuery, Log, _V4MetadataConverter, TestUtils, XMLHelper) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
@@ -45,7 +45,7 @@ sap.ui.require([
 	 * @returns {Document} the DOM document
 	 */
 	function xml(assert, sXml) {
-		var oDocument = jQuery.sap.parseXML(sXml);
+		var oDocument = XMLHelper.parse(sXml);
 		assert.strictEqual(oDocument.parseError.errorCode, 0, "XML parsed correctly");
 		return oDocument;
 	}
@@ -369,6 +369,7 @@ sap.ui.require([
 						"p1" : {
 							"$kind" : "Property",
 							"$Type" : "Edm.String",
+							"$DefaultValue" : "<a>",
 							"$Unicode" : false
 						},
 						"p2" : {
@@ -413,7 +414,8 @@ sap.ui.require([
 							<' + sType + ' Name="Worker">\
 								<Property Name="Salary" Type="Edm.Decimal" Precision="8"\
 									Scale="2"/>\
-								<Property Name="p1" Type="Edm.String" Unicode="false" />\
+								<Property Name="p1" Type="Edm.String" DefaultValue="&lt;a&gt;"\
+									Unicode="false" />\
 								<Property Name="p2" Type="Edm.String" Unicode="true" />\
 								<Property Name="p3" Type="Edm.Geometry" SRID="42" />\
 								<Property Name="p4" Type="Edm.Int32" DefaultValue="42"/>\
