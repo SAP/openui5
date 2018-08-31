@@ -4678,7 +4678,8 @@ sap.ui.define([
 		oCacheMock.expects("fetchTypes").withExactArgs()
 			.returns(SyncPromise.resolve(mTypeForMetaPath));
 		oCacheMock.expects("visitResponse")
-			.withExactArgs(sinon.match.same(oResponse), sinon.match.same(mTypeForMetaPath));
+			.withExactArgs(sinon.match.same(oResponse), sinon.match.same(mTypeForMetaPath),
+				false, oCache.sMetapath, sKeyPredicate);
 
 		oCache.aElements = aElements;
 		oCache.aElements.$byPredicate = {};
@@ -4702,7 +4703,6 @@ sap.ui.define([
 	[{
 		mBindingQueryOptions : {$filter: "age gt 40"},
 		iIndex : 1,
-		sKeyPredicate : "('0')",
 		mKeyProperties : {"ID" : "'0'"},
 		sQueryString : "?$filter=(age%20gt%2040)%20and%20ID%20eq%20'0'",
 		mQueryOptionsForRequest : {$filter: "(age gt 40) and ID eq '0'"},
@@ -4710,7 +4710,6 @@ sap.ui.define([
 	}, {
 		mBindingQueryOptions : {$filter: "age gt 40"},
 		iIndex : 1,
-		sKeyPredicate : "('0')",
 		mKeyProperties : {"ID" : "'0'"},
 		sQueryString : "?$filter=%28age%20gt%2040%29%20and%20ID%20eq%20'0'",
 		mQueryOptionsForRequest : {$filter: "(age gt 40) and ID eq '0'"},
@@ -4718,7 +4717,6 @@ sap.ui.define([
 	}, {
 		mBindingQueryOptions : {$filter: "age gt 40 or age lt 20"},
 		iIndex : 1,
-		sKeyPredicate : "('0')",
 		mKeyProperties : {"ID" : "'0'", "Name" : "'Foo'"},
 		sQueryString : "?$filter=(age%20gt%2040%20or%20age%20lt%2020)%20and%20ID%20eq%20'0'%20"
 			+ "and%20Name%20eq%20'Foo'",
@@ -4728,7 +4726,6 @@ sap.ui.define([
 	}, {
 		mBindingQueryOptions : {$filter: "age gt 40"},
 		iIndex : 1,
-		sKeyPredicate : "('0')",
 		mKeyProperties : {"ID" : "'0'", "Name" : "'Foo'"},
 		sQueryString : "?$filter=age%20gt%2040%20and%20ID%20eq%20'0'%20"
 			+ "and%20Name%20eq%20'Foo'",
@@ -4737,7 +4734,6 @@ sap.ui.define([
 	}, {
 		mBindingQueryOptions : {},
 		iIndex : 1,
-		sKeyPredicate : "('0')",
 		mKeyProperties : {"ID" : "'0'", "Name" : "'Foo'"},
 		sQueryString : "?$filter=ID%20eq%20'0'%20and%20Name%20eq%20'Foo'",
 		mQueryOptionsForRequest : {$filter: "ID eq '0' and Name eq 'Foo'"},
@@ -4745,7 +4741,6 @@ sap.ui.define([
 	}, { // with transient
 		mBindingQueryOptions : {},
 		iIndex : -1,
-		sKeyPredicate : "('0')",
 		mKeyProperties : {"ID" : "'0'", "Name" : "'Foo'"},
 		sQueryString : "?$filter=ID%20eq%20'0'%20and%20Name%20eq%20'Foo'",
 		mQueryOptionsForRequest : {$filter: "ID eq '0' and Name eq 'Foo'"},
@@ -4758,7 +4753,8 @@ sap.ui.define([
 				oCache = this.createCache(sResourcePath, {$filter: "age gt 40"}),
 				oCacheMock = this.mock(oCache),
 				fnDataRequested = this.spy(),
-				oElement = {"@$ui5._" : {"predicate" : oFixture.sKeyPredicate}},
+				sKeyPredicate = "('0')",
+				oElement = {"@$ui5._" : {"predicate" : sKeyPredicate}},
 				aElements = [{}, {}, {}],
 				oGroupLock = new _GroupLock(),
 				mTypeForMetaPath = {},
@@ -4777,7 +4773,7 @@ sap.ui.define([
 			oCache.aElements = aElements;
 			oCache.aElements.$count = 2;
 			oCache.aElements.$byPredicate = {};
-			oCache.aElements.$byPredicate[oFixture.sKeyPredicate] =  oElement;
+			oCache.aElements.$byPredicate[sKeyPredicate] =  oElement;
 			this.spy(_Helper, "updateExisting");
 
 			this.mock(jQuery).expects("extend")
@@ -4803,7 +4799,7 @@ sap.ui.define([
 			oCacheMock.expects("visitResponse")
 				.exactly(oFixture.bRemoved ? 0 : 1)
 				.withExactArgs(sinon.match.same(oResponse.value[0]),
-					sinon.match.same(mTypeForMetaPath));
+					sinon.match.same(mTypeForMetaPath), false, oCache.sMetapath, sKeyPredicate);
 
 			// code under test
 			oPromise = oCache.refreshSingleWithRemove(oGroupLock, oFixture.iIndex, fnDataRequested,
@@ -4813,7 +4809,7 @@ sap.ui.define([
 			return oPromise.then(function () {
 				if (oFixture.bRemoved) {
 					assert.deepEqual(oCache.aElements[1], {});
-					assert.deepEqual(oCache.aElements.$byPredicate[oFixture.sKeyPredicate],
+					assert.deepEqual(oCache.aElements.$byPredicate[sKeyPredicate],
 						undefined);
 					assert.strictEqual(oCache.iLimit, 1);
 
@@ -4823,7 +4819,7 @@ sap.ui.define([
 					sinon.assert.calledOnce(fnOnRemove);
 				} else {
 					assert.strictEqual(oCache.aElements[1], oResponse.value[0]);
-					assert.strictEqual(oCache.aElements.$byPredicate[oFixture.sKeyPredicate],
+					assert.strictEqual(oCache.aElements.$byPredicate[sKeyPredicate],
 						oResponse.value[0]);
 					assert.strictEqual(oCache.iLimit, 2);
 				}
