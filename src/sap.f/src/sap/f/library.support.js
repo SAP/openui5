@@ -6,15 +6,16 @@
  */
 sap.ui.define([
 		"sap/ui/support/library",
-		"./rules/Avatar.support"
+		"./rules/Avatar.support",
+		"./rules/DynamicPage.support"
 	],
-	function (SupportLib, AvatarSupport) {
+	function (SupportLib, AvatarSupport, DynamicPageSupport) {
 		"use strict";
 
 		return {
 			name: "sap.f",
 			niceName: "UI5 Fiori Library",
-			ruleset: [AvatarSupport]
+			ruleset: [AvatarSupport, DynamicPageSupport]
 		};
 
 	}, true);
