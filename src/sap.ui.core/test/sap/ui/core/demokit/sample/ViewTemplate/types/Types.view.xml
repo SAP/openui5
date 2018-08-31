@@ -158,7 +158,7 @@
 			<Label text="sap.ui.model.odata.type.Int32, nullable=false" labelFor="I42"/>
 			<Input value="{path: 'Int32', type: 'sap.ui.model.odata.type.Int32', constraints: {nullable: false}}" id="I42"/>
 			<Label text="sap.ui.model.odata.type.Int32, style: &quot;short&quot;" labelFor="I43"/>
-			<Input value="{path: 'Int64', type: 'sap.ui.model.odata.type.Int32', constraints: {nullable: false}, formatOptions: {style: 'short'}}" id="I43"/>
+			<Input value="{path: 'Int64', type: 'sap.ui.model.odata.type.Int64', constraints: {nullable: false}, formatOptions: {style: 'short'}}" id="I43"/>
 			<Label text="sap.ui.model.odata.type.Int64" labelFor="I44"/>
 			<Input value="{path: 'Int64', type: 'sap.ui.model.odata.type.Int64'}" id="I44"/>
 			<Label text="sap.ui.model.odata.type.Int64, nullable=false" labelFor="I45"/>
