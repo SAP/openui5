@@ -124,7 +124,7 @@ sap.ui.define([
 						* </li>
 						* </ul>
 						*/
-						displayType: {type: "string", group: "Misc", defaultValue: PDFViewerDisplayTypes.Auto}
+						displayType: {type: "sap.m.PDFViewerDisplayTypes", group: "Misc", defaultValue: PDFViewerDisplayTypes.Auto}
 					},
 					aggregations: {
 						/**
