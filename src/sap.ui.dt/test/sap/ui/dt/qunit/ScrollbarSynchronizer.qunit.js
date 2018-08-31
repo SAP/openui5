@@ -9,7 +9,6 @@ function(
 	"use strict";
 
 	QUnit.module("Given three elements with vertical and horizontal scrollbars...", {
-
 		beforeEach : function() {
 			var $content = jQuery("#qunit-fixture");
 
@@ -48,7 +47,7 @@ function(
 
 			this.oScrollbarSynchronizer.destroy();
 		}
-	}, function(assert){
+	}, function () {
 		QUnit.test("when panel1 and panel2 are both added as targets to the ScrollbarSynchronizer", function(assert) {
 			var fnDone = assert.async();
 
