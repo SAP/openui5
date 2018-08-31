@@ -364,6 +364,10 @@ sap.ui.define([
 	 * sent to the server. If there is no default value, <code>null</code> is used instead, even if
 	 * the property is not <code>Nullable</code>.
 	 *
+	 * Note: If a server requires a property in the request, you must supply this property in the
+	 * initial data, for example if the server requires a unit for an amount. This also applies if
+	 * this property has a default value.
+	 *
 	 * @param {object} [oInitialData={}]
 	 *   The initial data for the created entity
 	 * @returns {sap.ui.model.odata.v4.Context}
