@@ -186,9 +186,9 @@ sap.ui.define([
 		}});
 
 		MessagePage.prototype.init = function() {
-			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
-				oTitle = new Title(this.getId() + "-title");
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
+			this._oTitle = null;
 			this._oNavButton = new Button(this.getId() + "-navButton", {
 				type: ButtonType.Back,
 				press: jQuery.proxy(function () {
@@ -197,8 +197,7 @@ sap.ui.define([
 			});
 
 			this.setAggregation("_internalHeader", new sap.m.Bar(this.getId() + "-intHeader", {
-				design: BarDesign.Header,
-				contentMiddle: [ oTitle ]
+				design: BarDesign.Header
 			}));
 
 			this.setProperty("text", oBundle.getText("MESSAGE_PAGE_TEXT"), true);
@@ -220,8 +219,12 @@ sap.ui.define([
 		MessagePage.prototype.setTitle = function(sTitle) {
 			this.setProperty("title", sTitle, true); // no re-rendering
 
-			var oTitle = this._getInternalHeader().getContentMiddle()[0];
-			oTitle.setText(sTitle);
+			if (!this._oTitle) {
+				this._oTitle = new Title(this.getId() + "-title");
+				this._getInternalHeader().addContentMiddle(this._oTitle);
+			}
+
+			this._oTitle.setText(sTitle);
 
 			return this;
 		};
