@@ -951,9 +951,8 @@ sap.ui.define([
 				oCache = new _Cache(this.oRequestor, "BusinessPartnerList",
 					mQueryOptions, true),
 				oCacheMock = this.mock(oCache),
-				sETag = 'W/"19700101000000.0000000"',
 				oEntity = {
-					"@odata.etag" : sETag,
+					"@odata.etag" : 'W/"19700101000000.0000000"',
 					"Address" : {
 						"City" : "Heidelberg"
 					}
@@ -994,9 +993,8 @@ sap.ui.define([
 					sinon.match.same(oEntity), sinon.match.same(oUpdateData));
 			oRequestCall = this.oRequestorMock.expects("request")
 				.withExactArgs("PATCH", "/~/BusinessPartnerList('0')?foo=bar",
-					sinon.match.same(oGroupLock), {
-						"If-Match" : sETag
-					}, sinon.match.same(oUpdateData), undefined, sinon.match.func)
+					sinon.match.same(oGroupLock), {"If-Match" : sinon.match.same(oEntity)},
+					sinon.match.same(oUpdateData), undefined, sinon.match.func)
 				.returns(oPatchPromise);
 			oCacheMock.expects("addByPath")
 				.withExactArgs(sinon.match.same(oCache.mPatchRequests), sFullPath,
@@ -1057,9 +1055,8 @@ sap.ui.define([
 				var mQueryOptions = {},
 					oCache = new _Cache(this.oRequestor, "ProductList", mQueryOptions, true),
 					oCacheMock = this.mock(oCache),
-					sETag = 'W/"19700101000000.0000000"',
 					oEntity = {
-						"@odata.etag" : sETag,
+						"@odata.etag" : 'W/"19700101000000.0000000"',
 						"ProductInfo" : {
 							"Amount" : "123"
 						}
@@ -1109,9 +1106,9 @@ sap.ui.define([
 						.withExactArgs("/ProductList", sinon.match.same(mQueryOptions), true)
 						.returns("");
 					this.oRequestorMock.expects("request")
-						.withExactArgs("PATCH", "ProductList('0')", sinon.match.same(oGroupLock), {
-							"If-Match" : sETag
-						}, sinon.match.same(oUpdateData), undefined, sinon.match.func)
+						.withExactArgs("PATCH", "ProductList('0')", sinon.match.same(oGroupLock),
+							{"If-Match" : sinon.match.same(oEntity)}, sinon.match.same(oUpdateData),
+							undefined, sinon.match.func)
 						.returns(oPatchPromise);
 					oPatchPromise.then(function () {
 						oHelperMock.expects("updateExisting")
@@ -1141,9 +1138,8 @@ sap.ui.define([
 			var mQueryOptions = {},
 				oCache = new _Cache(this.oRequestor, "BusinessPartnerList", mQueryOptions),
 				oCacheMock = this.mock(oCache),
-				sETag = 'W/"19700101000000.0000000"',
 				oEntity = {
-					"@odata.etag" : sETag,
+					"@odata.etag" : 'W/"19700101000000.0000000"',
 					"Address" : {
 						"City" : "Heidelberg"
 					}
@@ -1191,9 +1187,8 @@ sap.ui.define([
 					sinon.match.same(oEntity), sinon.match.same(oUpdateData));
 			this.oRequestorMock.expects("request")
 				.withExactArgs("PATCH", "/~/BusinessPartnerList('0')?foo=bar",
-					sinon.match.same(oGroupLock), {
-						"If-Match" : sETag
-					}, sinon.match.same(oUpdateData), undefined, sinon.match.func)
+					sinon.match.same(oGroupLock), {"If-Match" : sinon.match.same(oEntity)},
+					sinon.match.same(oUpdateData), undefined, sinon.match.func)
 				.returns(oPatchPromise);
 			oCacheMock.expects("addByPath")
 				.withExactArgs(sinon.match.same(oCache.mPatchRequests), sFullPath,
@@ -1208,9 +1203,8 @@ sap.ui.define([
 				that.mock(oGroupLock).expects("getUnlockedCopy").returns(oGroupLock2);
 				oRequestCall = that.oRequestorMock.expects("request")
 					.withExactArgs("PATCH", "/~/BusinessPartnerList('0')?foo=bar",
-						sinon.match.same(oGroupLock2), {
-							"If-Match" : sETag
-						}, sinon.match.same(oUpdateData), undefined, sinon.match.func)
+						sinon.match.same(oGroupLock2), {"If-Match" : sinon.match.same(oEntity)},
+						sinon.match.same(oUpdateData), undefined, sinon.match.func)
 					.returns(oPatchPromise2);
 				oCacheMock.expects("addByPath")
 					.withExactArgs(sinon.match.same(oCache.mPatchRequests), sFullPath,
@@ -1274,9 +1268,8 @@ sap.ui.define([
 		QUnit.test("_Cache#update: failure, group " + sGroupId, function (assert) {
 			var oCache = new _Cache(this.oRequestor, "BusinessPartnerList", {}),
 				oCacheMock = this.mock(oCache),
-				sETag = 'W/"19700101000000.0000000"',
 				oEntity = {
-					"@odata.etag" : sETag,
+					"@odata.etag" : 'W/"19700101000000.0000000"',
 					"Address" : {
 						"City" : "Heidelberg"
 					}
@@ -1303,9 +1296,8 @@ sap.ui.define([
 				.returns(SyncPromise.resolve(oEntity));
 			this.oRequestorMock.expects("request")
 				.withExactArgs("PATCH", "/~/BusinessPartnerList('0')",
-					sinon.match.same(oGroupLock), {
-						"If-Match" : sETag
-					}, oUpdateData, undefined, sinon.match.func)
+					sinon.match.same(oGroupLock), {"If-Match" : sinon.match.same(oEntity)},
+					oUpdateData, undefined, sinon.match.func)
 				.returns(oPatchPromise);
 			this.oRequestorMock.expects("getGroupSubmitMode")
 				.withExactArgs(sGroupId).returns(mGroups[sGroupId]);
@@ -3511,8 +3503,8 @@ sap.ui.define([
 			.withExactArgs()
 			.returns(oFetchTypesPromise);
 
-		oCreatePromise = oCache.create(oCreateGroupLock, "Employees", "", {},
-			undefined, fnErrorCallback);
+		oCreatePromise = oCache.create(oCreateGroupLock, "Employees", "", {}, undefined,
+			fnErrorCallback);
 
 		checkUpdateSuccess("before submitBatch").then(function () {
 			oRequestExpectation2 = that.oRequestorMock.expects("request");
@@ -3547,11 +3539,12 @@ sap.ui.define([
 		});
 
 		return oCreatePromise.then(function () {
-			var oGroupLock = new _GroupLock("updateGroup");
+			var oEntity = oCache.fetchValue(_GroupLock.$cached, "-1").getResult(),
+				oGroupLock = new _GroupLock("updateGroup");
 
 			that.oRequestorMock.expects("request")
 				.withExactArgs("PATCH", "Employees?sap-client=111", sinon.match.same(oGroupLock),
-					{"If-Match" : undefined}, {foo : "baz2"}, undefined,
+					{"If-Match" : sinon.match.same(oEntity)}, {foo : "baz2"}, undefined,
 					sinon.match.func)
 				.returns(Promise.resolve({}));
 
@@ -4092,14 +4085,13 @@ sap.ui.define([
 		var sResourcePath = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
 			oCache = this.createSingle(sResourcePath),
 			oError = new Error(),
-			sETag = 'W/"19700101000000.0000000"',
 			oPatchPromise1 = Promise.resolve({
 				"@odata.etag" : 'W/"19700101000000.9999999"',
 				Note : "Some Note"
 			}),
 			oPatchPromise2 = Promise.reject(oError),
 			oPromise = Promise.resolve({
-				"@odata.etag" : sETag,
+				"@odata.etag" : 'W/"19700101000000.0000000"',
 				Note : "Some Note"
 			}),
 			that = this;
@@ -4109,16 +4101,18 @@ sap.ui.define([
 				undefined, undefined, "/SOLineItemList")
 			.returns(oPromise);
 		// fill the cache
-		return oCache.fetchValue(new _GroupLock("groupId")).then(function () {
+		return oCache.fetchValue(new _GroupLock("groupId")).then(function (oEntity) {
 			var oUpdatePromise;
 
 			that.oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sResourcePath, new _GroupLock("updateGroupId"),
-					{"If-Match" : sETag}, {Note : "foo"}, undefined, sinon.match.func)
+					{"If-Match" : sinon.match.same(oEntity)}, {Note : "foo"}, undefined,
+					sinon.match.func)
 				.returns(oPatchPromise1);
 			that.oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sResourcePath, new _GroupLock("$direct"),
-					{"If-Match" : sETag}, {Note : "bar"}, undefined, sinon.match.func)
+					{"If-Match" : sinon.match.same(oEntity)}, {Note : "bar"}, undefined,
+					sinon.match.func)
 				.returns(oPatchPromise2);
 
 			// code under test
@@ -4147,15 +4141,15 @@ sap.ui.define([
 	QUnit.test("SingleCache: update, hasPendingChanges and resetChanges", function (assert) {
 		var sResourcePath = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
 			oCache = this.createSingle(sResourcePath),
-			oError = new Error(),
-			sETag = 'W/"19700101000000.0000000"',
-			oPatchPromise1 = Promise.reject(oError),
-			oPatchPromise2 = Promise.reject(oError),
-			oPromise = Promise.resolve({
-				"@odata.etag" : sETag,
+			oEntity = {
+				"@odata.etag" : 'W/"19700101000000.0000000"',
 				Note : "Some Note",
 				Foo : "Bar"
-			}),
+			},
+			oError = new Error(),
+			oPatchPromise1 = Promise.reject(oError),
+			oPatchPromise2 = Promise.reject(oError),
+			oPromise = Promise.resolve(oEntity),
 			that = this;
 
 		function unexpected () {
@@ -4178,11 +4172,13 @@ sap.ui.define([
 			assert.strictEqual(oCache.hasPendingChangesForPath(""), false);
 			that.oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sResourcePath, new _GroupLock("updateGroupId"),
-					{"If-Match" : sETag}, {Note : "foo"}, undefined, sinon.match.func)
+					{"If-Match" : sinon.match.same(oEntity)}, {Note : "foo"}, undefined,
+					sinon.match.func)
 				.returns(oPatchPromise1);
 			that.oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sResourcePath, new _GroupLock("updateGroupId"),
-					{"If-Match" : sETag}, {Foo : "baz"}, undefined, sinon.match.func)
+					{"If-Match" : sinon.match.same(oEntity)}, {Foo : "baz"}, undefined,
+					sinon.match.func)
 				.returns(oPatchPromise2);
 			that.oRequestorMock.expects("removePatch")
 				.withExactArgs(sinon.match.same(oPatchPromise1));

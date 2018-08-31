@@ -772,7 +772,7 @@ sap.ui.define([
 
 			function patch(oPatchGroupLock) {
 				oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, oPatchGroupLock,
-					{"If-Match" : oEntity["@odata.etag"]}, oUpdateData, undefined, onCancel);
+					{"If-Match" : oEntity}, oUpdateData, undefined, onCancel);
 				that.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 				return SyncPromise.all([
 					oPatchPromise,
