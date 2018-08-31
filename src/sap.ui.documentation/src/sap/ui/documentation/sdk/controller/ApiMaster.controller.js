@@ -84,7 +84,8 @@ sap.ui.define([
 					Log.error(e);
 				}
 
-				this._topicId = event.getParameter("arguments").id || event.getParameter("name");
+				this._topicId = formatter.decodeModuleName(event.getParameter("arguments").id) ||
+					event.getParameter("name");
 
 				this._expandTreeToNode(this._topicId, this.getOwnerComponent().getModel("treeData"));
 			},
@@ -147,7 +148,7 @@ sap.ui.define([
 					return;
 				}
 
-				this.getRouter().navTo("apiId", {id : formatter.moduleNameToGlobalName(apiId)}, false);
+				this.getRouter().navTo("apiId", {id : formatter.encodeModuleName(apiId)}, false);
 			},
 
 			/**
