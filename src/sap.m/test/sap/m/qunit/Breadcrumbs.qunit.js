@@ -272,7 +272,7 @@ function(DomUnitsRem, Parameters, Breadcrumbs) {
 		var $lastSeparator = this.oStandardBreadCrumbsControl.$().find("li.sapMBreadcrumbsItem:last-child > span.sapMBreadcrumbsSeparator");
 
 		assert.ok($lastSeparator.length, "There is a '/' separator after last link");
-		assert.strictEqual(parseInt($lastSeparator.css("fontSize"), 10),
+		assert.strictEqual(Math.ceil(parseFloat($lastSeparator.css("fontSize"))),
 			DomUnitsRem.toPx(Parameters.get("sapMFontMediumSize")),
 			"Font-size of the separator is 14px");
 	});
