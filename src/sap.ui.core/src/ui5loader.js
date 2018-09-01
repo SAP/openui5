@@ -153,6 +153,13 @@
 	 */
 	var translate;
 
+	/*
+	 * Activates strictest possible compliance with AMD spec
+	 * - no multiple executions of the same module
+	 * - at most one anonymous module definition per file, zero for adhoc definitions
+	 */
+	var strictModuleDefinitions = true;
+
 	/**
 	 * Whether asynchronous loading can be used at all.
 	 * When activated, require will load asynchronously, else synchronously.
@@ -731,6 +738,12 @@
 	function Module(name) {
 		this.name = name;
 		this.state = INITIAL;
+		/*
+		 * Whether processing of the module is complete.
+		 * This is very similar to, but not the same as state >= READY because declareModule() sets state=READY very early.
+		 * That state transition is 'legacy' from the library-all files; it needs to checked whether it can be removed.
+		 */
+		this.settled = false;
 		this.url =
 		this._deferred =
 		this.data =
@@ -772,7 +785,10 @@
 	 * @param {any} value Module value
 	 */
 	Module.prototype.ready = function(value) {
+		// should throw, but some tests and apps would fail
+		assert(!this.settled, "Module " + this.name + " is already settled");
 		this.state = READY;
+		this.settled = true;
 		if ( arguments.length > 0 ) {
 			// check arguments.length to allow a value of undefined
 			this.content = value;
@@ -787,6 +803,9 @@
 	};
 
 	Module.prototype.fail = function(err) {
+		// should throw, but some tests and apps would fail
+		assert(!this.settled, "Module " + this.name + " is already settled");
+		this.settled = true;
 		if ( this.state !== FAILED ) {
 			this.state = FAILED;
 			this.error = err;
@@ -799,8 +818,14 @@
 		}
 	};
 
+	Module.prototype.addPending = function(sDependency) {
+		(this.pending || (this.pending = [])).push(sDependency);
+	};
+
 	Module.prototype.addAlias = function(sAliasName) {
 		(this.aliases || (this.aliases = [])).push(sAliasName);
+		// add this module as pending dependency to the original
+		Module.get(sAliasName).addPending(this.name);
 	};
 
 	Module.prototype.preload = function(url, data, bundle) {
@@ -847,29 +872,30 @@
 	 * as 'pending' to the Module instance. This function checks if the oDependantModule is
 	 * reachable from this module when following the pending dependency information.
 	 *
+	 * Note: when module aliases are introduced (all module definitions in a file use an ID that differs
+	 * from the request module ID), then the alias module is also added as a "pending" dependency.
+	 *
 	 * @param {Module} oDependantModule Module which has a dependency to <code>oModule</code>
 	 * @returns {boolean} Whether this module depends on the given one.
 	 * @private
 	 */
 	Module.prototype.dependsOn = function(oDependantModule) {
-		var visited = Object.create(null);
+		var dependant = oDependantModule.name,
+			visited = Object.create(null);
+
+		// log.debug("checking for a cycle between", this.name, "and", dependant);
 		function visit(mod) {
-			if ( !visited[mod.name] ) {
-				visited[mod.name] = true;
-				if ( Array.isArray(mod.pending) ) {
-					if ( mod.pending.indexOf(oDependantModule.name) >= 0 ) {
-						return true;
-					}
-					for ( var i = 0; i < mod.pending.length; i++ ) {
-						if ( mModules[mod.pending[i]] && visit( mModules[mod.pending[i]] ) ) {
-							return true;
-						}
-					}
-				}
+			if ( !visited[mod] ) {
+				// log.debug("  ", mod);
+				visited[mod] = true;
+				var pending = mModules[mod] && mModules[mod].pending;
+				return Array.isArray(pending) &&
+					(pending.indexOf(dependant) >= 0 || pending.some(visit));
 			}
 			return false;
 		}
-		return this.name === oDependantModule.name || visit(this);
+
+		return this.name === dependant || visit(this.name);
 	};
 
 	/**
@@ -957,19 +983,20 @@
 	}
 
 	/**
-	 * Queue of modules for which sap.ui.define has been called but for which the name has not been determined yet
+	 * Queue of modules for which sap.ui.define has been called (in async mode), but which have not been executed yet.
 	 * When loading modules via script tag, only the onload handler knows the relationship between executed sap.ui.define calls and
 	 * module name. It then resolves the pending modules in the queue. Only one entry can get the name of the module
 	 * if there are more entries, then this is an error
 	 */
 	var queue = new function ModuleDefinitionQueue() {
 		var aQueue = [],
-			iUnnamedEntries = 0,
 			iRun = 0,
 			vTimer;
 
 		this.push = function(name, deps, factory, _export) {
-			log.debug("pushing define from " + (document.currentScript && document.currentScript.src) );
+			if ( log.isLoggable() ) {
+				log.debug("pushing define from " + (document.currentScript && document.currentScript.src) );
+			}
 			aQueue.push({
 				name: name,
 				deps: deps,
@@ -977,10 +1004,8 @@
 				_export: _export,
 				guess: document.currentScript && document.currentScript.getAttribute('data-sap-ui-module')
 			});
-			if ( name == null ) {
-				iUnnamedEntries++;
-			}
-			// trigger queue processing via a timer in case the currently executing script was not created by us
+
+			// trigger queue processing via a timer in case the currently executing script is not managed by the loader
 			if ( !vTimer ) {
 				vTimer = setTimeout(this.process.bind(this, null));
 			}
@@ -988,7 +1013,6 @@
 
 		this.clear = function() {
 			aQueue = [];
-			iUnnamedEntries = 0;
 			if ( vTimer ) {
 				clearTimeout(vTimer);
 				vTimer = null;
@@ -996,62 +1020,119 @@
 		};
 
 		/**
-		 * When called via timer, <code>oModule</code> will be undefined.
-		 * @param {Module} [oModule] Module for which the current script was loaded.
+		 * Process the queue of module definitions, assuming that the original request was for
+		 * <code>oRequestedModule</code>. If there is an unnamed module definition, it is assumed to be
+		 * the one for the requested module.
+		 *
+		 * When called via timer, <code>oRequestedModule</code> will be undefined.
+		 *
+		 * @param {Module} [oRequestedModule] Module for which the current script was loaded.
 		 */
-		this.process = function(oModule) {
-			var sModuleName, oEntry;
+		this.process = function(oRequestedModule) {
+			var bLoggable = log.isLoggable(),
+				iCurrentRun = iRun++,
+				aQueueCopy = aQueue,
+				sModuleName = null;
 
-			// if a module execution error was detected, stop processing the queue
-			if ( oModule && oModule.execError ) {
-				if ( log.isLoggable() ) {
-					log.debug("module execution error detected, ignoring queued define calls");
+			// clear the queue and timer early, we've already taken a copy of the queue
+			this.clear();
+
+
+			if ( oRequestedModule ) {
+
+				// if a module execution error was detected, stop processing the queue
+				if ( oRequestedModule.execError ) {
+					if ( bLoggable ) {
+						log.debug("module execution error detected, ignoring queued define calls (" + aQueueCopy.length + ")");
+					}
+					oRequestedModule.fail(oRequestedModule.execError);
+					return;
 				}
-				oModule.fail(oModule.execError);
-				this.clear();
-				return;
+
 			}
 
-			if ( aQueue.length === 0 ) {
-				log.debug("define queue empty");
-				if ( oModule ) {
-					// might be a module in 'global' format
-					oModule.data = undefined; // allow GC
-					oModule.ready();
-				}
-				return;
-			}
+			/*
+			 * Name of the requested module, null when unknown or already consumed.
+			 *
+			 *  - when no module request is known (e.g. script was embedded in the page as an unmanaged script tag),
+			 *    then no name is known and unnamed module definitions will be reported as an error
+			 *  - multiple unnamed module definitions also are reported as an error
+			 *  - when the name of a named module definition matches the name of requested module, the name is 'consumed'.
+			 *    Any later unnamed module definition will be reported as an error, too
+			 */
+			sModuleName = oRequestedModule && oRequestedModule.name;
 
-			iRun++;
-			log.debug("processing define queue " + iRun);
-			sModuleName = oModule && oModule.name;
-			while ( aQueue.length > 0 ) {
-				oEntry = aQueue.shift();
+			// check whether there's a module definition for the requested module
+			aQueueCopy.forEach(function(oEntry) {
 				if ( oEntry.name == null ) {
-					iUnnamedEntries--;
 					if ( sModuleName != null ) {
 						oEntry.name = sModuleName;
 						sModuleName = null;
 					} else {
 						// multiple modules have been queued, but only one module can inherit the name from the require call
-						throw new Error("module id missing in define call: " + oEntry.guess);
+						if ( strictModuleDefinitions ) {
+							var oError = new Error(
+								"Modules that use an anonymous define() call must be loaded with a require() call; " +
+								"they must not be executed via script tag or nested into other modules. ");
+							if ( oRequestedModule ) {
+								oRequestedModule.fail(oError);
+							} else {
+								throw oError;
+							}
+						}
+						// give anonymous modules a unique pseudo ID
+						oEntry.name = '~anonymous~' + (++iAnonymousModuleCount) + '.js';
+						log.error(
+							"Modules that use an anonymous define() call must be loaded with a require() call; " +
+							"they must not be executed via script tag or nested into other modules. " +
+							"All other usages will fail in future releases or when standard AMD loaders are used. " +
+							"Now using substitute name " + oEntry.name);
 					}
-				} else if ( sModuleName && oEntry.name !== sModuleName && iUnnamedEntries === 0 ) {
-					if ( log.isLoggable() ) {
-						log.debug("module names don't match: requested: " + sModuleName + ", defined: " + oEntry.name);
+				} else if ( oRequestedModule && oEntry.name === oRequestedModule.name ) {
+					if ( sModuleName == null && !strictModuleDefinitions ) {
+						// if 'strictModuleDefinitions' is active, double execution will be reported anyhow
+						log.error(
+							"Duplicate module definition: both, an unnamed module and a module with the expected name exist." +
+							"This use case will fail in future releases or when standard AMD loaders are used. ");
 					}
-					Module.get(oEntry.name).addAlias(sModuleName);
+					sModuleName = null;
 				}
-				// start to resolve the dependencies
-				executeModuleDefinition(oEntry.name, oEntry.deps, oEntry.factory, oEntry._export, /* bAsync = */ true);
-				log.debug("define called for " + oEntry.name);
+			});
+
+			// if not, assign an alias if there's at least one queued module definition
+			if ( sModuleName && aQueueCopy.length > 0 ) {
+				if ( bLoggable ) {
+					log.debug(
+						"No queued module definition matches the ID of the request. " +
+						"Now assuming that the first definition '" + aQueueCopy[0].name + "' is an alias of '" + sModuleName + "'");
+				}
+				Module.get(aQueueCopy[0].name).addAlias(sModuleName);
+				sModuleName = null;
 			}
 
-			if ( vTimer ) {
-				clearTimeout(vTimer);
-				vTimer = null;
+			if ( bLoggable ) {
+				log.debug("processing define queue " + iCurrentRun + (oRequestedModule ? " for " + oRequestedModule.name : "") + " with " + aQueueCopy.map(function(entry) { return entry.name; }));
 			}
-			log.debug("processing define queue done " + iRun);
+			aQueueCopy.forEach(function(oEntry) {
+				// start to resolve the dependencies
+				executeModuleDefinition(oEntry.name, oEntry.deps, oEntry.factory, oEntry._export, /* bAsync = */ true);
+				if ( bLoggable ) {
+					log.debug("define called for " + oEntry.name);
+				}
+			});
+
+			if ( sModuleName != null && !oRequestedModule.settled ) {
+				// module name still not consumed, might be a non-UI5 module (e.g. in 'global' format)
+				if ( bLoggable ) {
+					log.debug("no queued module definition for the requested module found, assume the module to be ready");
+				}
+				oRequestedModule.data = undefined; // allow GC
+				oRequestedModule.ready(); // no export known, has to be retrieved via global name
+			}
+
+			if ( bLoggable ) {
+				log.debug("processing define queue done " + iCurrentRun);
+			}
 		};
 	}();
 
@@ -1232,6 +1313,7 @@
 		if ( oModule.state !== INITIAL ) {
 			if ( oModule.state === PRELOADED ) {
 				oModule.state = LOADED;
+				oModule.async = bAsync;
 				bExecutedNow = true;
 				measure && measure.start(sModuleName, "Require module " + sModuleName + " (preloaded)", ["require"]);
 				execModule(sModuleName, bAsync);
@@ -1243,6 +1325,7 @@
 					log.debug(sLogPrefix + "module '" + sModuleName + "' has already been loaded (skipped).");
 				}
 				// Note: this intentionally does not return oModule.promise() as the export might be temporary in case of cycles
+				// or it might have changed after repeated module execution
 				return bAsync ? Promise.resolve(oModule.value()) : oModule.value();
 			} else if ( oModule.state === FAILED ) {
 				if ( bAsync ) {
@@ -1253,13 +1336,14 @@
 						: makeNestedError("found in negative cache: '" + sModuleName + "' from " + oModule.url, oModule.error));
 				}
 			} else {
-				// currently loading
+				// currently loading or executing
 				if ( bAsync ) {
 					// break up cyclic dependencies
 					if ( oRequestingModule && oModule.dependsOn(oRequestingModule) ) {
 						if ( log.isLoggable() ) {
 							log.debug("cycle detected between '" + oRequestingModule.name + "' and '" + sModuleName + "', returning undefined for '" + sModuleName + "'");
 						}
+						// Note: this must be a separate promise as the fulfillment is not the final one
 						return Promise.resolve(undefined);
 					}
 					return oModule.deferred().promise;
@@ -1267,7 +1351,7 @@
 				if ( !bAsync && !oModule.async ) {
 					// sync pending, return undefined
 					if ( log.isLoggable() ) {
-						log.debug("cycle detected, returning undefined for '" + sModuleName + "'");
+						log.debug("cycle detected between '" + (oRequestingModule ? oRequestingModule.name : "unknown") + "' and '" + sModuleName + "', returning undefined for '" + sModuleName + "'");
 					}
 					return undefined;
 				}
@@ -1474,8 +1558,11 @@
 				aDependencies[i] = getMappedName(aDependencies[i] + '.js', sBaseName);
 			}
 			if ( oRequestingModule ) {
-				oRequestingModule.pending = aDependencies.filter(function(dep) {
-					return !/^(require|exports|module)\.js$/.test(dep);
+				// remember outgoing dependencies to be able to detect cycles, but ignore pseudo-dependencies
+				aDependencies.forEach(function(dep) {
+					if ( !/^(require|exports|module)\.js$/.test(dep) ) {
+						oRequestingModule.addPending(dep);
+					}
 				});
 			}
 
@@ -1534,11 +1621,49 @@
 		}
 
 		var oModule = declareModule(sResourceName);
+
+		var repeatedExecutionReported = false;
+
+		function shouldSkipExecution() {
+			if ( oModule.settled ) {
+				// avoid double execution of the module, e.g. when async/sync conflict occurred before queue processing
+				if ( oModule.state >= READY && bAsync && oModule.async === false ) {
+					log.warning("Repeated module execution skipped after async/sync conflict for " + oModule.name);
+					return true;
+				}
+
+				// when an inline module definition is executed repeatedly, this is reported but not prevented
+				// Standard AMD loaders don't support this scenario, it needs to be fixed on caller side
+				if ( strictModuleDefinitions && bAsync ) {
+					log.warning("Module '" + oModule.name + "' has been defined more than once. " +
+							"All but the first definition will be ignored, don't try to define the same module again.");
+					return true;
+				}
+
+				if ( !repeatedExecutionReported ) {
+					log.error(
+						"Module '" + oModule.name + "' is executed more than once. " +
+						"This is an unsupported scenario and will fail in future versions of UI5 or " +
+						"when a standard AMD loader is used. Don't define the same module again.");
+					repeatedExecutionReported = true;
+				}
+			}
+		}
+
+		if ( shouldSkipExecution() ) {
+			return;
+		}
+
 		// avoid early evaluation of the module value
 		oModule.content = undefined;
 
 		// Note: dependencies will be resolved and converted from RJS to URN inside requireAll
 		requireAll(oModule, aDependencies, function(aModules) {
+
+			// avoid double execution of the module, e.g. when async/sync conflict occurred while waiting for dependencies
+			if ( shouldSkipExecution() ) {
+				return;
+			}
 
 			// factory
 			if ( bLoggable ) {
@@ -1579,7 +1704,7 @@
 			// HACK: global export
 			if ( bExport && syncCallBehavior !== 2 ) {
 				if ( oModule.content == null ) {
-					log.error("module '" + sResourceName + "' returned no content, but should be exported");
+					log.error("Module '" + sResourceName + "' returned no content, but should export to global?");
 				} else {
 					if ( bLoggable ) {
 						log.debug("exporting content of '" + sResourceName + "': as global object");
@@ -1633,8 +1758,10 @@
 			queue.push(sResourceName, aDependencies, vFactory, bExport);
 			if ( sResourceName != null ) {
 				var oModule = Module.get(sResourceName);
-				oModule.state = LOADING;
-				oModule.async = true;
+				if ( oModule.state === INITIAL ) {
+					oModule.state = EXECUTING;
+					oModule.async = true;
+				}
 			}
 			return;
 		}
