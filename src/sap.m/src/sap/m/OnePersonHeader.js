@@ -5,9 +5,9 @@
 // Provides control sap.m.OnePersonHeader.
 sap.ui.define([
 	'sap/ui/core/Control',
+	'./library',
 	'./Toolbar',
 	'./AssociativeOverflowToolbar',
-	'./ToolbarDesign',
 	'./Button',
 	'./Title',
 	'./ToolbarSpacer',
@@ -21,9 +21,9 @@ sap.ui.define([
 ],
 function(
 	Control,
+	library,
 	Toolbar,
 	AssociativeOverflowToolbar,
-	ToolbarDesign,
 	Button,
 	Title,
 	ToolbarSpacer,
@@ -36,6 +36,9 @@ function(
 	LocaleData
 ) {
 	"use strict";
+
+	// shortcut for sap.m.ToolbarDesign
+	var ToolbarDesign = library.ToolbarDesign;
 
 	/**
 	 * Constructor for a new <code>OnePersonHeader</code>.
