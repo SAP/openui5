@@ -5,9 +5,9 @@ function(createAndAppendDiv, TestButton, HTML) {
 	"use strict";
 
 	createAndAppendDiv("uiArea1");
-	var innerSpan = document.createElement("span");
-	innerSpan.append("Before");
 
+	var innerSpan = document.createElement("span");
+	innerSpan.textContent = "Before";
 	createAndAppendDiv("uiArea2").appendChild(innerSpan);
 
 	var oCore = sap.ui.getCore();
