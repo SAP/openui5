@@ -88,7 +88,7 @@ sap.ui.define([
 		 *
 		 * The control can be embedded in a form or can be opened as popover (by use of thin
 		 * wrapper control <code>sap.m.ColorPalettePopover<code>).
-		 * @see {sap.m.ColorPalettePopover}
+		 * @see {@link sap.m.ColorPalettePopover}
 		 *
 		 * <b>Note:</b> The {@link sap.ui.unified.ColorPicker} is used internally only if the <code>ColorPicker</code>
 		 * is opened (not used for the initial rendering). If the <code>sap.ui.unified</code> library is not loaded

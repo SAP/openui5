@@ -51,7 +51,7 @@ sap.ui.define([
 	 * a file has been selected), file uploads with explicit calls, adjustable control sizes,
 	 * text display after uploads, or tooltips containing complete file paths.
 	 *
-	 * @see {@link https://experience.sap.com/fiori-design-web/upload-collection/ Upload Collection}
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/upload-collection/ Upload Collection}
 	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IFormContent, sap.ui.unified.IProcessableBlobs
