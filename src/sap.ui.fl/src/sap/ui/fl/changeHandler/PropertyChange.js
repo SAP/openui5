@@ -25,7 +25,7 @@ sap.ui.define([
 	 */
 	var PropertyChange = {};
 
-	var sBindingError = "Please use 'PropertyBindingChange' to set a binding";
+	// var sBindingError = "Please use 'PropertyBindingChange' to set a binding";
 
 	function isBinding(vPropertyValue) {
 		return FlexUtils.isBinding(vPropertyValue) || jQuery.isPlainObject(vPropertyValue);
@@ -59,9 +59,10 @@ sap.ui.define([
 		var vPropertyValue = oDef.content.newValue;
 		var oModifier = mPropertyBag.modifier;
 
-		if (isBinding(vPropertyValue)) {
-			throw new Error(sBindingError);
-		}
+		// TODO: enable again when apps have adapted
+		// if (isBinding(vPropertyValue)) {
+		// 	throw new Error(sBindingError);
+		// }
 
 		oChange.setRevertData({
 			originalValue: oModifier.getPropertyBinding(oControl, sPropertyName) || oModifier.getProperty(oControl, sPropertyName)
@@ -114,9 +115,10 @@ sap.ui.define([
 		if (!oSpecificChangeInfo.content) {
 			throw new Error("oSpecificChangeInfo attribute required");
 		}
-		if (isBinding(oSpecificChangeInfo.content.newValue)) {
-			throw new Error(sBindingError);
-		}
+		// TODO: enable again when apps have adapted
+		// if (isBinding(oSpecificChangeInfo.content.newValue)) {
+		// 	throw new Error(sBindingError);
+		// }
 
 		oChangeJson.content = oSpecificChangeInfo.content;
 	};
