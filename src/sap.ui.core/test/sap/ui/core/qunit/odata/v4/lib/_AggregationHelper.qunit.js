@@ -107,8 +107,7 @@ sap.ui.require([
 			},
 			group : {
 				Region : {}
-			},
-			groupLevels : ["Region"]
+			}
 		},
 		mQueryOptions : {
 			$skip : 0, // special case,
@@ -124,8 +123,7 @@ sap.ui.require([
 			},
 			group : {
 				Region : {}
-			},
-			groupLevels : ["Region"]
+			}
 		},
 		mQueryOptions : {
 			$count : true,
@@ -148,7 +146,7 @@ sap.ui.require([
 			group : {
 				Region : {}
 			},
-			groupLevels : ["Region"]
+			groupLevels : []
 		},
 		mQueryOptions : {
 			$count : true,
@@ -394,6 +392,12 @@ sap.ui.require([
 			groupLevels : {}
 		},
 		sError : "Not a array value for 'groupLevels'"
+	}, {
+		oAggregation : {
+			aggregate : {A : {grandTotal : true}},
+			groupLevels : ["B"]
+		},
+		sError : "Cannot combine visual grouping with grand total"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("buildApply: " + oFixture.sError, function (assert) {
 			assert.throws(function () {

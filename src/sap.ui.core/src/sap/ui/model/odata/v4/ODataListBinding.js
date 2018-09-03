@@ -1619,8 +1619,8 @@ sap.ui.define([
 	 * @param {string[]} [oAggregation.groupLevels]
 	 *   A list of groupable property names used to determine group levels. They may, but don't need
 	 *   to, be repeated in <code>oAggregation.group</code>. Group levels cannot be combined with
-	 *   filtering or with the system query option <code>$count</code>; only a single group level
-	 *   is supported.
+	 *   filtering, with the system query option <code>$count</code> or with an aggregatable
+	 *   property for which a grand total is needed; only a single group level is supported.
 	 * @throws {Error}
 	 *   If the given data aggregation object is unsupported, if the system query option
 	 *   <code>$apply</code> has been specified explicitly before, if the binding's root binding
