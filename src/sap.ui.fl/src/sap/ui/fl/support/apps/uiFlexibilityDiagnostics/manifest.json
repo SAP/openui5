@@ -8,7 +8,7 @@
 		"title": "{{shellTitle}}",
 		"subTitle": "{{shellSubTitle}}",
 		"applicationVersion": {
-			"version": "${sap.ui5.dist.version}"
+			"version": "1.58.0"
 		},
 		"ach": "CA-UI5-FL-CLN"
 	},
@@ -29,11 +29,11 @@
 		"rootView": "sap.ui.fl.support.apps.uiFlexibilityDiagnostics.view.Root",
 		"handleValidation": true,
 		"dependencies": {
-			"minUI5Version": "${sap.ui5.dist.version}",
+			"minUI5Version": "1.58.0",
 			"libs": {
 				"sap.ui.core": {},
 				"sap.m": {},
-                "sap.suite.ui.commons": {}
+				"sap.suite.ui.commons": {}
 			}
 		},
 		"contentDensities": {
