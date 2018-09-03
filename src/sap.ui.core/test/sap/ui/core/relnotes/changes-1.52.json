@@ -1454,5 +1454,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.18": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "e0fa7b0bac4235cf6ea5a4f58728da9a54c71131",
+        "type": "FIX",
+        "text": " performance/trace/Interaction: accept valid setRequestHeader parameters",
+        "references": []
+      }
+    ]
   }
 }

@@ -1041,5 +1041,22 @@
         "references": []
       }
     ]
+  },
+  "1.56.8": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "535d71a3b8d144ae415d09d67bfdad394eba6c08",
+        "type": "FIX",
+        "text": " Controller: controllerFactory resolves wrong controller class",
+        "references": []
+      },
+      {
+        "id": "0dd1a776348bfe33ce700926f0687a57d7633d52",
+        "type": "FIX",
+        "text": " performance/trace/Interaction: accept valid setRequestHeader parameters",
+        "references": []
+      }
+    ]
   }
 }
