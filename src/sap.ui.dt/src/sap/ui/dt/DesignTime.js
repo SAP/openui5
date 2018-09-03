@@ -280,7 +280,7 @@ function (
 
 					// TODO: move to overlay
 					if (bValue) {
-						oRootElementOverlay.applyStyles();
+						oRootElementOverlay.applyStyles(/*bForceScrollbarSync = */true);
 					}
 				});
 			}, this);
