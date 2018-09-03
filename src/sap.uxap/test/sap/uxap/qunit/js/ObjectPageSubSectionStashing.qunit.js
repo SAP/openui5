@@ -1,26 +1,35 @@
 /*global QUnit,sinon*/
 
-(function (QUnit, sinon, core, controller, xmlview) {
+sap.ui.require(['sap/ui/core/mvc/Controller', 'sap/ui/core/mvc/XMLView'],
+	function (controller, xmlview) {
 	"use strict";
 
-	sap.ui.require(["jquery.sap.global",
+	sap.ui.require(["sap/ui/thirdparty/jquery",
 		"sap/ui/core/StashedControlSupport",
 		"sap/uxap/ObjectPageLazyLoader"
 	], function (jQuery, StashedSupport, ObjectPageLazyLoader) {
 
-		jQuery.sap.registerModulePath("view", "./view");
-		jQuery.sap.registerModulePath("sap.uxap.testblocks", "./blocks");
+		sap.ui.loader.config({
+			paths: {
+			   "sap/uxap/testblocks": "./blocks",
+			   "view": "./view"
+			 }
+		  });
 
-		controller("viewController", {});
+		controller.create({ name: "viewController" });
 
 		QUnit.module("Stashing Tests", {
-			beforeEach: function () {
-				this.objectPageSampleView = xmlview("UxAP-12-ObjectPageSubSectionStashing", {
+			beforeEach: function (assert) {
+				var done = assert.async();
+				xmlview.create({
+					id: "UxAP-12-ObjectPageSubSectionStashing",
 					viewName: "view.UxAP-12-ObjectPageSubSectionStashing"
-				});
-
-				this.objectPageSampleView.placeAt('qunit-fixture');
-				sap.ui.getCore().applyChanges();
+				}).then(function (oView) {
+					this.objectPageSampleView = oView;
+					this.objectPageSampleView.placeAt('qunit-fixture');
+					sap.ui.getCore().applyChanges();
+					done();
+				}.bind(this));
 			},
 			afterEach: function () {
 				this.objectPageSampleView.destroy();
@@ -53,4 +62,4 @@
 		});
 	});
 
-}(QUnit, sinon, sap.ui.getCore(), sap.ui.controller, sap.ui.xmlview));
+});

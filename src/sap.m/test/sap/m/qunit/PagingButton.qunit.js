@@ -1,9 +1,9 @@
-/*global QUnit,sinon*/
-
-(function ($, QUnit, sinon) {
+/*global QUnit, sinon */
+sap.ui.require([
+	"sap/ui/thirdparty/jquery",
+	"sap/m/PagingButton"],
+	function($, PagingButton) {
 	"use strict";
-
-	jQuery.sap.require("sap.m.PagingButton");
 
 	var core = sap.ui.getCore(),
 		helpers = {
@@ -17,7 +17,7 @@
 				return $object.length > 0;
 			},
 			getPagingButton: function (iCount) {
-				return new sap.m.PagingButton({
+				return new PagingButton({
 					count: iCount || 1
 				});
 			}
@@ -129,4 +129,4 @@
 		assert.ok(oPositionChangedEvent.calledTwice, "PositionChanged is not fired when the position doesn't change");
 	});
 
-}(jQuery, QUnit, sinon));
+});

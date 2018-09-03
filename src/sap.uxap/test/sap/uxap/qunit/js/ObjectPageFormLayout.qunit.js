@@ -1,13 +1,15 @@
-/*global QUnit,sinon*/
-
-(function ($, QUnit, sinon, Importance) {
+/*global QUnit, sinon */
+sap.ui.require([
+	"sap/ui/thirdparty/jquery"],
+function($) {
 	"use strict";
 
-	jQuery.sap.registerModulePath("view", "./view");
-	jQuery.sap.registerModulePath("sap.uxap.testblocks", "./blocks");
-	jQuery.sap.require("sap.uxap.ObjectPageSubSection");
-	jQuery.sap.require("sap.uxap.ObjectPageSection");
-	jQuery.sap.require("sap.uxap.ObjectPageSectionBase");
+	sap.ui.loader.config({
+		paths: {
+		   "sap/uxap/testblocks": "./blocks",
+		   "view": "./view"
+		 }
+	  });
 
 	sinon.config.useFakeTimers = true;
 	QUnit.module("form layout");
@@ -110,4 +112,4 @@
 		oObjectPageFormView.destroy();
 	});
 
-}(jQuery, QUnit, sinon));
+});

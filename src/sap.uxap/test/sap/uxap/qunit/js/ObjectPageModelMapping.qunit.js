@@ -1,10 +1,14 @@
 /*global QUnit,sinon*/
 
-(function ($, QUnit, sinon, Importance) {
+sap.ui.require([], function () {
 	"use strict";
 
-	jQuery.sap.registerModulePath("view", "./view");
-	jQuery.sap.registerModulePath("sap.uxap.testblocks", "./blocks");
+	sap.ui.loader.config({
+		paths: {
+		   "sap/uxap/testblocks": "./blocks",
+		   "view": "./view"
+		 }
+	  });
 
 	sinon.config.useFakeTimers = true;
 	QUnit.module("modelMapping", {
@@ -113,4 +117,4 @@
 		assert.strictEqual(oActualLastName, oExpectedLastName);
 	});
 
-}(jQuery, QUnit, sinon));
+});

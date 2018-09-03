@@ -1,11 +1,16 @@
 /*global QUnit*/
 
-sap.ui.require(["jquery.sap.global", "sap/ui/core/ComponentContainer", "sap/m/Shell"], function (jQuery, ComponentContainer, Shell) {
+sap.ui.require(["jquery.sap.global", "sap/ui/core/ComponentContainer", "sap/m/Shell"],
+	function (jQuery, ComponentContainer, Shell) {
 	"use strict";
 
-	jQuery.sap.registerModulePath("blockbasetest", "./blockbasetest");
-	jQuery.sap.registerModulePath("sap.uxap.testblocks", "./blocks");
-	jQuery.sap.registerModulePath("view", "./view");
+	sap.ui.loader.config({
+		paths: {
+		   "blockbasetest": "./blockbasetest",
+		   "sap/uxap/testblocks": "./blocks",
+		   "view": "./view"
+		 }
+	  });
 
 	QUnit.module("BlockBase");
 

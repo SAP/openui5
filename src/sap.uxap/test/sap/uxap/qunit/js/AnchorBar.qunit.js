@@ -1,9 +1,12 @@
 /*global QUnit,sinon*/
 
-(function ($, QUnit, sinon, Importance, library) {
+sap.ui.require(["sap/ui/thirdparty/jquery"],
+	function ($) {
 	"use strict";
 
-	jQuery.sap.registerModulePath("view", "view");
+	sap.ui.loader.config({
+		paths: {"view" : "view"}
+	  });
 
 	var iRenderingDelay = 2000;
 	var ANCHORBAR_CLASS_SELECTOR = ".sapUxAPAnchorBar";
@@ -482,4 +485,4 @@
 	});
 
 
-}(jQuery, QUnit, sinon, sap.uxap.Importance, sap.uxap));
+});

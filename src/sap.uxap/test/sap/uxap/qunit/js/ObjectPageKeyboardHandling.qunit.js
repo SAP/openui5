@@ -1,12 +1,16 @@
-/*global QUnit,sinon*/
-
-(function ($, QUnit, sinon) {
+/*global QUnit, sinon */
+sap.ui.require([
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/KeyCodes"],
+	function($, KeyCodes) {
 	"use strict";
 
 	var core = sap.ui.getCore(),
 		sAnchorSelector = ".sapUxAPAnchorBarScrollContainer .sapUxAPAnchorBarButton";
 
-	jQuery.sap.registerModulePath("view", "view");
+	sap.ui.loader.config({
+		paths: {"view" : "view"}
+	});
 
 	sap.ui.controller("viewController", {});
 
@@ -42,8 +46,8 @@
 		afterEach: function() {
 			// trigger 'escape' keypress event to potentially close the popover
 			var oActiveElement = document.activeElement;
-			sap.ui.test.qunit.triggerKeydown(oActiveElement, jQuery.sap.KeyCodes.ESCAPE);
-			sap.ui.test.qunit.triggerKeyup(oActiveElement, jQuery.sap.KeyCodes.ESCAPE);
+			sap.ui.test.qunit.triggerKeydown(oActiveElement, KeyCodes.ESCAPE);
+			sap.ui.test.qunit.triggerKeyup(oActiveElement, KeyCodes.ESCAPE);
 			this.clock.tick(500);
 
 			this.clock.restore();
@@ -71,11 +75,11 @@
 			iFirstAnchorId = aAnchors[0].id,
 			iSecondAnchorId = aAnchors[1].id;
 
-		jQuery.sap.byId(iFirstAnchorId).focus();
+		document.getElementById(iFirstAnchorId).focus();
 		this.clock.tick(500);
-		sap.ui.test.qunit.triggerKeydown(iFirstAnchorId, jQuery.sap.KeyCodes.ARROW_RIGHT);
-		sap.ui.test.qunit.triggerKeyup(iFirstAnchorId, jQuery.sap.KeyCodes.ARROW_RIGHT);
-		assert.ok(jQuery.sap.byId(iSecondAnchorId).is(":focus"), "Next button should be focused after arrow right");
+		sap.ui.test.qunit.triggerKeydown(iFirstAnchorId, KeyCodes.ARROW_RIGHT);
+		sap.ui.test.qunit.triggerKeyup(iFirstAnchorId, KeyCodes.ARROW_RIGHT);
+		assert.equal(document.getElementById(iSecondAnchorId), document.activeElement, "Next button should be focused after arrow right");
 	});
 
 	QUnit.test("LEFT", function (assert) {
@@ -83,11 +87,11 @@
 			iSecondAnchorId = aAnchors[1].id,
 			iThirdAnchorId = aAnchors[2].id;
 
-		jQuery.sap.byId(iThirdAnchorId).focus();
+		document.getElementById(iThirdAnchorId).focus();
 		this.clock.tick(500);
-		sap.ui.test.qunit.triggerKeydown(iThirdAnchorId, jQuery.sap.KeyCodes.ARROW_LEFT);
-		sap.ui.test.qunit.triggerKeyup(iThirdAnchorId, jQuery.sap.KeyCodes.ARROW_LEFT);
-		assert.ok(jQuery.sap.byId(iSecondAnchorId).is(":focus"), "Previous button should be focused after arrow left");
+		sap.ui.test.qunit.triggerKeydown(iThirdAnchorId, KeyCodes.ARROW_LEFT);
+		sap.ui.test.qunit.triggerKeyup(iThirdAnchorId, KeyCodes.ARROW_LEFT);
+		assert.equal(document.getElementById(iSecondAnchorId), document.activeElement, "Previous button should be focused after arrow left");
 	});
 
 	QUnit.test("HOME/END", function (assert) {
@@ -95,14 +99,14 @@
 			iFirstAnchorId = aAnchors[0].id,
 			iLastAnchorId = aAnchors[aAnchors.length - 1].id + "-internalSplitBtn";
 
-		jQuery.sap.byId(iFirstAnchorId).focus();
+		document.getElementById(iFirstAnchorId).focus();
 		this.clock.tick(500);
-		sap.ui.test.qunit.triggerKeydown(iFirstAnchorId, jQuery.sap.KeyCodes.END);
-		sap.ui.test.qunit.triggerKeyup(iFirstAnchorId, jQuery.sap.KeyCodes.END);
-		assert.ok(jQuery.sap.byId(iLastAnchorId).is(":focus"), "Last button should be focused after end key");
-		sap.ui.test.qunit.triggerKeydown(iLastAnchorId, jQuery.sap.KeyCodes.HOME);
-		sap.ui.test.qunit.triggerKeyup(iLastAnchorId, jQuery.sap.KeyCodes.HOME);
-		assert.ok(jQuery.sap.byId(iFirstAnchorId).is(":focus"), "First button should be focused after home key");
+		sap.ui.test.qunit.triggerKeydown(iFirstAnchorId, KeyCodes.END);
+		sap.ui.test.qunit.triggerKeyup(iFirstAnchorId, KeyCodes.END);
+		assert.equal(document.getElementById(iLastAnchorId), document.activeElement, "Last button should be focused after end key");
+		sap.ui.test.qunit.triggerKeydown(iLastAnchorId, KeyCodes.HOME);
+		sap.ui.test.qunit.triggerKeyup(iLastAnchorId, KeyCodes.HOME);
+		assert.equal(document.getElementById(iFirstAnchorId), document.activeElement, "First button should be focused after home key");
 	});
 
 	QUnit.test("PAGE UP: Anchor level", function (assert) {
@@ -114,19 +118,19 @@
 
 		// Focus the first anchor within the anchorbar and trigger PAGE UP
 		jQuery(oFirstAnchor).focus();
-		sap.ui.test.qunit.triggerKeydown(oFirstAnchor, jQuery.sap.KeyCodes.PAGE_UP);
+		sap.ui.test.qunit.triggerKeydown(oFirstAnchor, KeyCodes.PAGE_UP);
 		assert.strictEqual(jQuery(oFirstAnchor).is(":focus"),
 			true, "The first anchor should remain focused");
 
 		// Focus the second anchor within the anchorbar and trigger PAGE UP
 		jQuery(oSecondAnchor).focus();
-		sap.ui.test.qunit.triggerKeydown(oSecondAnchor, jQuery.sap.KeyCodes.PAGE_UP);
+		sap.ui.test.qunit.triggerKeydown(oSecondAnchor, KeyCodes.PAGE_UP);
 		assert.strictEqual(jQuery(oFirstAnchor).is(":focus"),
 			true, "The first anchor should be focused");
 
 		// Focus the seventh anchor within the anchorbar and trigger PAGE UP
 		jQuery(oSeventhAnchor).focus();
-		sap.ui.test.qunit.triggerKeydown(oSeventhAnchor, jQuery.sap.KeyCodes.PAGE_UP);
+		sap.ui.test.qunit.triggerKeydown(oSeventhAnchor, KeyCodes.PAGE_UP);
 		assert.strictEqual(jQuery(oFirstAnchor).is(":focus"),
 			true, "Five anchors should be skipped over and the first anchor should be focused"
 		);
@@ -141,17 +145,17 @@
 
 		// Focus the last anchor and trigger PAGE DOWN
 		jQuery(oLastAnchor).focus();
-		sap.ui.test.qunit.triggerKeydown(oLastAnchor, jQuery.sap.KeyCodes.PAGE_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oLastAnchor, KeyCodes.PAGE_DOWN);
 		assert.strictEqual(jQuery(oLastAnchor).is(":focus"), true, "The last anchor should remain focused");
 
 		// Focus the second last anchor and trigger PAGE DOWN
 		jQuery(oSecondLastAnchor).focus();
-		sap.ui.test.qunit.triggerKeydown(oSecondLastAnchor, jQuery.sap.KeyCodes.PAGE_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oSecondLastAnchor, KeyCodes.PAGE_DOWN);
 		assert.strictEqual(jQuery(oLastAnchor).is(":focus"), true, "The last anchor should be focused");
 
 		// Focus the seventh anchor from the end and trigger PAGE DOWN
 		jQuery(oSeventhLastAnchor).focus();
-		sap.ui.test.qunit.triggerKeydown(oSeventhLastAnchor, jQuery.sap.KeyCodes.PAGE_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oSeventhLastAnchor, KeyCodes.PAGE_DOWN);
 		assert.strictEqual(jQuery(oLastAnchor).is(":focus"), true,
 			"Five anchors should be skipped over and the last anchor should be focused");
 	});
@@ -162,7 +166,7 @@
 
 		// Focus the first anchor and trigger F6
 		jQuery(oFirstAnchor).focus();
-		sap.ui.test.qunit.triggerKeydown(oFirstAnchor, jQuery.sap.KeyCodes.F6);
+		sap.ui.test.qunit.triggerKeydown(oFirstAnchor, KeyCodes.F6);
 		assert.strictEqual(jQuery("#UxAP-70_KeyboardHandling--single-subsection-show-section").is(":focus"), true, "The single subsection button should be in focus");
 	});
 
@@ -176,7 +180,7 @@
 
 		// Focus the first anchor and trigger F6
 		jQuery(oFirstAnchor).focus();
-		sap.ui.test.qunit.triggerKeydown(oFirstAnchor, jQuery.sap.KeyCodes.F6);
+		sap.ui.test.qunit.triggerKeydown(oFirstAnchor, KeyCodes.F6);
 		assert.strictEqual(jQuery("#UxAP-70_KeyboardHandling--single-subsection-show-section").is(":focus"), true, "The single subsection button should be in focus");
 
 		// restore
@@ -222,77 +226,77 @@
 
 	QUnit.test("RIGHT/DOWN", function (assert) {
 		// Section
-		jQuery.sap.byId("__section1").focus();
-		sap.ui.test.qunit.triggerKeydown("__section1", jQuery.sap.KeyCodes.ARROW_RIGHT);
+		document.getElementById("__section1").focus();
+		sap.ui.test.qunit.triggerKeydown("__section1", KeyCodes.ARROW_RIGHT);
 		assert.equal(jQuery(document.activeElement).attr("id"), "__section3", "Next section should be focused after arrow right");
-		sap.ui.test.qunit.triggerKeydown("__section3", jQuery.sap.KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown("__section3", KeyCodes.ARROW_DOWN);
 		assert.equal(jQuery(document.activeElement).attr("id"), "__section5", "Next section should be focused after arrow down");
 
 		// Subsection
-		jQuery.sap.byId("__section17").focus();
-		sap.ui.test.qunit.triggerKeydown("__section17", jQuery.sap.KeyCodes.ARROW_RIGHT);
+		document.getElementById("__section17").focus();
+		sap.ui.test.qunit.triggerKeydown("__section17", KeyCodes.ARROW_RIGHT);
 		assert.equal(jQuery(document.activeElement).attr("id"), "__section18", "Next subsection should be focused after arrow right");
-		sap.ui.test.qunit.triggerKeydown("__section18", jQuery.sap.KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown("__section18", KeyCodes.ARROW_DOWN);
 		assert.equal(jQuery(document.activeElement).attr("id"), "__section19", "Next subsection should be focused after arrow down");
 	});
 
 	QUnit.test("LEFT/UP", function (assert) {
 		// Section
-		jQuery.sap.byId("__section5").focus();
-		sap.ui.test.qunit.triggerKeydown("__section5", jQuery.sap.KeyCodes.ARROW_LEFT);
+		document.getElementById("__section5").focus();
+		sap.ui.test.qunit.triggerKeydown("__section5", KeyCodes.ARROW_LEFT);
 		assert.equal(jQuery(document.activeElement).attr("id"), "__section3", "Previous section should be focused after arrow left");
-		sap.ui.test.qunit.triggerKeydown("__section3", jQuery.sap.KeyCodes.ARROW_UP);
+		sap.ui.test.qunit.triggerKeydown("__section3", KeyCodes.ARROW_UP);
 		assert.equal(jQuery(document.activeElement).attr("id"), "__section1", "Previous section should be focused after arrow up");
 
 		// Subsection
-		jQuery.sap.byId("__section19").focus();
-		sap.ui.test.qunit.triggerKeydown("__section19", jQuery.sap.KeyCodes.ARROW_LEFT);
+		document.getElementById("__section19").focus();
+		sap.ui.test.qunit.triggerKeydown("__section19", KeyCodes.ARROW_LEFT);
 		assert.equal(jQuery(document.activeElement).attr("id"), "__section18", "Previous subsection should be focused after arrow left");
-		sap.ui.test.qunit.triggerKeydown("__section18", jQuery.sap.KeyCodes.ARROW_UP);
+		sap.ui.test.qunit.triggerKeydown("__section18", KeyCodes.ARROW_UP);
 		assert.equal(jQuery(document.activeElement).attr("id"), "__section17", "Previous subsection should be focused after arrow up");
 	});
 
 	QUnit.test("HOME/END", function (assert) {
 		// Section
-		jQuery.sap.byId("__section1").focus();
-		sap.ui.test.qunit.triggerKeydown("__section1", jQuery.sap.KeyCodes.END);
+		document.getElementById("__section1").focus();
+		sap.ui.test.qunit.triggerKeydown("__section1", KeyCodes.END);
 		assert.equal(jQuery(document.activeElement).attr("id"), "UxAP-70_KeyboardHandling--section-with-multiple-sub-section", "Last section should be focused after END key");
-		sap.ui.test.qunit.triggerKeydown("UxAP-70_KeyboardHandling--section-with-multiple-sub-section", jQuery.sap.KeyCodes.HOME);
+		sap.ui.test.qunit.triggerKeydown("UxAP-70_KeyboardHandling--section-with-multiple-sub-section", KeyCodes.HOME);
 		assert.equal(jQuery(document.activeElement).attr("id"), "__section1", "First section should be focused after HOME key");
 
 		// Subsection
-		jQuery.sap.byId("__section17").focus();
-		sap.ui.test.qunit.triggerKeydown("__section17", jQuery.sap.KeyCodes.END);
+		document.getElementById("__section17").focus();
+		sap.ui.test.qunit.triggerKeydown("__section17", KeyCodes.END);
 		assert.equal(jQuery(document.activeElement).attr("id"), "__section26", "Last subsection should be focused after END key");
-		sap.ui.test.qunit.triggerKeydown("__section26", jQuery.sap.KeyCodes.HOME);
+		sap.ui.test.qunit.triggerKeydown("__section26", KeyCodes.HOME);
 		assert.equal(jQuery(document.activeElement).attr("id"), "__section17", "First subsection should be focused after HOME key");
 	});
 
 	QUnit.test("PAGE_DOWN/PAGE_UP", function (assert) {
 		// Section
-		jQuery.sap.byId("__section1").focus();
-		sap.ui.test.qunit.triggerKeydown("__section1", jQuery.sap.KeyCodes.PAGE_DOWN);
+		document.getElementById("__section1").focus();
+		sap.ui.test.qunit.triggerKeydown("__section1", KeyCodes.PAGE_DOWN);
 		assert.equal(jQuery(document.activeElement).attr("id"), "__section13", "6th section down should be focused after PAGE DOWN");
-		sap.ui.test.qunit.triggerKeydown("__section13", jQuery.sap.KeyCodes.PAGE_UP);
+		sap.ui.test.qunit.triggerKeydown("__section13", KeyCodes.PAGE_UP);
 		assert.equal(jQuery(document.activeElement).attr("id"), "__section1", "6th section up should be focused after PAGE UP");
-		jQuery.sap.byId("__section27").focus();
-		sap.ui.test.qunit.triggerKeydown("__section27", jQuery.sap.KeyCodes.PAGE_DOWN);
+		document.getElementById("__section27").focus();
+		sap.ui.test.qunit.triggerKeydown("__section27", KeyCodes.PAGE_DOWN);
 		assert.equal(jQuery(document.activeElement).attr("id"), "UxAP-70_KeyboardHandling--section-with-multiple-sub-section", "Last section down should be focused after PAGE DOWN");
-		jQuery.sap.byId("__section3").focus();
-		sap.ui.test.qunit.triggerKeydown("__section3", jQuery.sap.KeyCodes.PAGE_UP);
+		document.getElementById("__section3").focus();
+		sap.ui.test.qunit.triggerKeydown("__section3", KeyCodes.PAGE_UP);
 		assert.equal(jQuery(document.activeElement).attr("id"), "__section1", "First section up should be focused after PAGE UP");
 
 		// Subsection
-		jQuery.sap.byId("__section17").focus();
-		sap.ui.test.qunit.triggerKeydown("__section17", jQuery.sap.KeyCodes.PAGE_DOWN);
+		document.getElementById("__section17").focus();
+		sap.ui.test.qunit.triggerKeydown("__section17", KeyCodes.PAGE_DOWN);
 		assert.equal(jQuery(document.activeElement).attr("id"), "__section23", "6th subsection down should be focused after PAGE DOWN");
-		sap.ui.test.qunit.triggerKeydown("__section23", jQuery.sap.KeyCodes.PAGE_UP);
+		sap.ui.test.qunit.triggerKeydown("__section23", KeyCodes.PAGE_UP);
 		assert.equal(jQuery(document.activeElement).attr("id"), "__section17", "6th subsection up should be focused after PAGE UP");
-		jQuery.sap.byId("__section24").focus();
-		sap.ui.test.qunit.triggerKeydown("__section24", jQuery.sap.KeyCodes.PAGE_DOWN);
+		document.getElementById("__section24").focus();
+		sap.ui.test.qunit.triggerKeydown("__section24", KeyCodes.PAGE_DOWN);
 		assert.equal(jQuery(document.activeElement).attr("id"), "__section26", "Last subsection down should be focused after PAGE DOWN");
-		jQuery.sap.byId("__section19").focus();
-		sap.ui.test.qunit.triggerKeydown("__section19", jQuery.sap.KeyCodes.PAGE_UP);
+		document.getElementById("__section19").focus();
+		sap.ui.test.qunit.triggerKeydown("__section19", KeyCodes.PAGE_UP);
 		assert.equal(jQuery(document.activeElement).attr("id"), "__section17", "First subsection up should be focused after PAGE UP");
 	});
 
@@ -305,10 +309,10 @@
 			$section = core.byId("UxAP-70_KeyboardHandling--section-with-single-sub-section").$();
 
 		$section.attr("tabindex", 0);
-		sap.ui.test.qunit.triggerKeydown($btn, jQuery.sap.KeyCodes.F7);
+		sap.ui.test.qunit.triggerKeydown($btn, KeyCodes.F7);
 		assert.strictEqual($section.is(":focus"), true, "Section must be focused");
 
-		sap.ui.test.qunit.triggerKeydown($section, jQuery.sap.KeyCodes.F7);
+		sap.ui.test.qunit.triggerKeydown($section, KeyCodes.F7);
 		assert.strictEqual($btn.is(":focus"), true, "Interactiove element must be focused back again");
 	});
 
@@ -317,10 +321,10 @@
 			$subSection = core.byId("UxAP-70_KeyboardHandling--multiple-sub-section-2").$();
 
 		$subSection.attr("tabindex", 0);
-		sap.ui.test.qunit.triggerKeydown($btn, jQuery.sap.KeyCodes.F7);
+		sap.ui.test.qunit.triggerKeydown($btn, KeyCodes.F7);
 		assert.strictEqual($subSection.is(":focus"), true, "Section must be focused");
 
-		sap.ui.test.qunit.triggerKeydown($subSection, jQuery.sap.KeyCodes.F7);
+		sap.ui.test.qunit.triggerKeydown($subSection, KeyCodes.F7);
 		assert.strictEqual($btn.is(":focus"), true, "Interactiove element must be focused back again");
 	});
 
@@ -329,7 +333,7 @@
 			$subSection = core.byId("UxAP-70_KeyboardHandling--multiple-sub-section-1").$();
 
 		$subSection.attr("tabindex", 0);
-		sap.ui.test.qunit.triggerKeydown($btnToolbar, jQuery.sap.KeyCodes.F7);
+		sap.ui.test.qunit.triggerKeydown($btnToolbar, KeyCodes.F7);
 		assert.strictEqual($subSection.is(":focus"), true, "SubSection must be focused");
 	});
 
@@ -337,7 +341,7 @@
 		var $btnToolbar = core.byId("UxAP-70_KeyboardHandling--button-toolbar").$(),
 			$subSection = core.byId("UxAP-70_KeyboardHandling--multiple-sub-section-1").$();
 
-		sap.ui.test.qunit.triggerKeydown($subSection, jQuery.sap.KeyCodes.F7);
+		sap.ui.test.qunit.triggerKeydown($subSection, KeyCodes.F7);
 		assert.strictEqual($btnToolbar.is(":focus"), true, "Button must be focused");
 	});
 
@@ -360,7 +364,7 @@
 					sap.ui.test.qunit.triggerKeyup($anchorBarButton, sKeyPressed);
 					break;
 				default:
-				oAnchorBarButtonControl.firePress();
+					oAnchorBarButtonControl.firePress();
 					break;
 			}
 
@@ -392,4 +396,4 @@
 		"__section11"
 	);
 
-}(jQuery, QUnit, sinon));
+});

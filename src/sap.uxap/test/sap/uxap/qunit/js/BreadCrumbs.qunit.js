@@ -1,6 +1,8 @@
-/*global QUnit,sinon*/
-
-(function ($, QUnit, sinon) {
+/*global QUnit, sinon */
+sap.ui.require([
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/KeyCodes"],
+	function($, KeyCodes) {
 	"use strict";
 
 	sinon.config.useFakeTimers = true;
@@ -284,16 +286,16 @@
 
 		oBreadCrumbControl._toggleOverflowMode(false);
 
-		helpers.verifyFocusOnKeyDown(assert, jQuery.sap.KeyCodes.PAGE_DOWN, oItemsToNavigate[0],
+		helpers.verifyFocusOnKeyDown(assert, KeyCodes.PAGE_DOWN, oItemsToNavigate[0],
 			oItemsToNavigate[iItemSkipSize], "5th item down should be focused after PAGE DOWN");
 
-		helpers.verifyFocusOnKeyDown(assert, jQuery.sap.KeyCodes.PAGE_UP, oItemsToNavigate[10],
+		helpers.verifyFocusOnKeyDown(assert, KeyCodes.PAGE_UP, oItemsToNavigate[10],
 			oItemsToNavigate[10 - iItemSkipSize], "5th item up should be focused after PAGE UP");
 
-		helpers.verifyFocusOnKeyDown(assert, jQuery.sap.KeyCodes.PAGE_DOWN, oItemsToNavigate[iTotalItemCount - 3],
+		helpers.verifyFocusOnKeyDown(assert, KeyCodes.PAGE_DOWN, oItemsToNavigate[iTotalItemCount - 3],
 			oItemsToNavigate[iTotalItemCount - 1], "Last item down should be focused after PAGE DOWN");
 
-		helpers.verifyFocusOnKeyDown(assert, jQuery.sap.KeyCodes.PAGE_UP, oItemsToNavigate[3],
+		helpers.verifyFocusOnKeyDown(assert, KeyCodes.PAGE_UP, oItemsToNavigate[3],
 			oItemsToNavigate[0], "Last item down should be focused after PAGE DOWN");
 	});
-})(jQuery, QUnit, sinon);
+});
