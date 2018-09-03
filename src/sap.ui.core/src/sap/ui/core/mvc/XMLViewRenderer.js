@@ -7,13 +7,13 @@ sap.ui.define([
 	'./ViewRenderer',
 	'../RenderManager',
 	"sap/ui/thirdparty/jquery"
-],
-	function(ViewRenderer, RenderManager, jQuery) {
+], function(ViewRenderer, RenderManager, jQuery) {
 	"use strict";
 
 	// shortcut
 	var PREFIX_DUMMY = RenderManager.RenderPrefixes.Dummy,
-		PREFIX_INVISIBLE = RenderManager.RenderPrefixes.Invisible;
+		PREFIX_INVISIBLE = RenderManager.RenderPrefixes.Invisible,
+		PREFIX_TEMPORARY = RenderManager.RenderPrefixes.Temporary;
 
 	/**
 	 * Renderer for an XMLView.
@@ -123,8 +123,8 @@ sap.ui.define([
 			// render dummy control for early after rendering notification
 			rm.renderControl(oControl.oAfterRenderingNotifier);
 
-			// preserve mode: render a dummy root tag and all child controls
-			rm.write('<div id="' + PREFIX_DUMMY + oControl.getId() + '" class="sapUiHidden">');
+			// preserve mode: render a temporary element and all child controls
+			rm.write('<div id="' + PREFIX_TEMPORARY + oControl.getId() + '" class="sapUiHidden">');
 			for (var i = 0; i < oControl._aParsedContent.length; i++) {
 				var fragment = oControl._aParsedContent[i];
 				if ( typeof (fragment) !== "string") {
@@ -138,14 +138,15 @@ sap.ui.define([
 					if ($fragment.length == 0) {
 						$fragment = jQuery(document.getElementById(PREFIX_INVISIBLE + sFragmentId));
 					}
-					$fragment.replaceWith('<div id="' + PREFIX_DUMMY + sFragmentId + '" class="sapUiHidden"/>');
+					if ( !RenderManager.isPreservedContent($fragment[0]) ) {
+						$fragment.replaceWith('<div id="' + PREFIX_DUMMY + sFragmentId + '" class="sapUiHidden"/>');
+					}
 				}
 			}
 			rm.write('</div>');
 
 		}
 	};
-
 
 	return XMLViewRenderer;
 
