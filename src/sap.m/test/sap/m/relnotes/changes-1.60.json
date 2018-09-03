@@ -373,6 +373,120 @@
         "type": "FIX",
         "text": " sap.m.Wizard: Navigation in dialog improved",
         "references": []
+      },
+      {
+        "id": "1a7ff4f5659e4b22a0de6135e61aeeae7972d6c5",
+        "type": "FIX",
+        "text": " Aggregation Forwarding: also clone forwarded children",
+        "references": []
+      },
+      {
+        "id": "4feef23aea2970991d4855d4aa5f1cf725a16ae0",
+        "type": "FIX",
+        "text": " Image: Would not fire error if the source is invalid",
+        "references": []
+      },
+      {
+        "id": "6fbc3ac0945cfdc3e599a7aa8569d43a39612d7c",
+        "type": "FIX",
+        "text": " InputBase: User selection of the icon removed",
+        "references": []
+      },
+      {
+        "id": "7aadf24820fe953645ae0964c3f19e65e179431f",
+        "type": "FIX",
+        "text": " MultiInput: condensed mode icon position fixed",
+        "references": []
+      },
+      {
+        "id": "8cd128b810f3963c409a0893e37d7e3f341083cf",
+        "type": "FIX",
+        "text": " OverflowToolbar: CheckBox\u0027s label is aligned according guidelines",
+        "references": []
+      },
+      {
+        "id": "0fee8727a6d8b6b62d5209143f4a3c52c25b324b",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Change event is now fired on highlighting on phone",
+        "references": []
+      },
+      {
+        "id": "842071f3286e71caeacf1a4d873db5c86b633ee4",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Double visual focus removed",
+        "references": []
+      },
+      {
+        "id": "dd30551dc4390badd07de17c8177fcdd17ce76d0",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Dialog footer is no longer flickering",
+        "references": []
+      },
+      {
+        "id": "d4075ba56ce2258be117b67a633dd6d6bb6c2285",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Improve aria-labelledby",
+        "references": []
+      },
+      {
+        "id": "04a51a8ed282b2e0f63b9c53380b071312c2a1d8",
+        "type": "FIX",
+        "text": " sap.m.LightBox: top corners have radius when picture is bigger then min dimentions of the LightBox",
+        "references": []
+      },
+      {
+        "id": "2e364da4bd333efe1f49c2cc88b964fa69dde54f",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Copy/pasting behavior documented",
+        "references": []
+      },
+      {
+        "id": "54b73cb0dcef94d82e9c9fe650680170eda51863",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: render parent div when empty",
+        "references": []
+      },
+      {
+        "id": "fe13814b2bb602835f4f5c005004383a73dfb82a",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Correct arrangement of the items in case parent has white-space set to nowrap",
+        "references": []
+      },
+      {
+        "id": "997e78c1188f872b267fd3fd504d89b72d4507f6",
+        "type": "FIX",
+        "text": " sap.m.Popover: Popover sets the focus to itself only when needed",
+        "references": []
+      },
+      {
+        "id": "af1837ec46071d4c5d2c95d9d45d40d7cc6a94fb",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Test page improved",
+        "references": []
+      },
+      {
+        "id": "0f694c0247c8b6b419868f4a3b908063c8169ca6",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Navigation now can be opened several times",
+        "references": []
+      },
+      {
+        "id": "90b24c0d56b5ee64c79aeb7b7027e507445574a1",
+        "type": "FIX",
+        "text": " sap.m.StepInput: correct behavior when mousewheel is used",
+        "references": []
+      },
+      {
+        "id": "37fb9ac60d027fbc299197de02b19785a36ac25f",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: propagete properties to internal TabStripItem",
+        "references": []
+      },
+      {
+        "id": "cd8a67f4a148e9adc23d5ef3d446a7b20df2a323",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Style overwriting",
+        "references": []
       }
     ]
   }

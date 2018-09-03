@@ -73,6 +73,48 @@
         "type": "FIX",
         "text": " performance/trace/Interaction: accept valid setRequestHeader parameters",
         "references": []
+      },
+      {
+        "id": "bb1435f7c941d941c5dea0346c1df3be2217b658",
+        "type": "FEATURE",
+        "text": " Core: Added rule for sync factory loading",
+        "references": []
+      },
+      {
+        "id": "1a7ff4f5659e4b22a0de6135e61aeeae7972d6c5",
+        "type": "FIX",
+        "text": " Aggregation Forwarding: also clone forwarded children",
+        "references": []
+      },
+      {
+        "id": "99a95b6d471239ab0d27438aa341c96c54c127da",
+        "type": "FIX",
+        "text": " Core: Fixed message of sync factory loading rule",
+        "references": []
+      },
+      {
+        "id": "47f5d8dcacf7b5032730bbfa0e8128e34dfd2faf",
+        "type": "FIX",
+        "text": " Manifest: always process entries with placeholders",
+        "references": []
+      },
+      {
+        "id": "3446e2f211f3c004fdeac075ec2f336d46024f08",
+        "type": "FIX",
+        "text": " XMLView: fix re-rendering of directly nested XMLViews",
+        "references": []
+      },
+      {
+        "id": "cd553e45a0c0e08fd2a5a8d346ec399cca8c794e",
+        "type": "FIX",
+        "text": " format/DateFormat: Multiple instances shouldn\u0027t share fallback formats",
+        "references": []
+      },
+      {
+        "id": "11f40f9899aa237ad3b6af43acdfd1238ce91223",
+        "type": "FIX",
+        "text": " model/ODataUtils: Fix brackets for MultiFilter objects",
+        "references": []
       }
     ]
   }
