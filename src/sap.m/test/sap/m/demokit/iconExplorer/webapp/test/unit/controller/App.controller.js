@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
-], function(AppController, Control, Controller) {
+], function (AppController, Control, Controller) {
 	"use strict";
 
 	QUnit.module("App controller tests", {
@@ -15,7 +15,7 @@ sap.ui.define([
 			this.oViewStub = new Control();
 			this.oComponentStub = new Control();
 
-			this.fnMetadataThen = jQuery.noop;
+			this.fnMetadataThen = function() {};
 
 			this.oComponentStub.iconsLoaded = function () {
 				return {
