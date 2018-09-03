@@ -6552,6 +6552,59 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,
+	// but a grand total row using with/as (CPOUI5UISERVICESV3-1418)
+	QUnit.test("Analytics by V4: $$aggregation grandTotal w/o groupLevels using with/as",
+			function (assert) {
+		var sView = '\
+<t:Table rows="{path : \'/BusinessPartners\',\
+		parameters : {\
+			$$aggregation : {\
+				aggregate : {\
+					SalesNumberSum : {grandTotal : true, name : \'SalesNumber\', with : \'sum\'}\
+				},\
+				group : {\
+					Region : {}\
+				}\
+			},\
+			$filter : \'SalesNumberSum gt 0\',\
+			$orderby : \'SalesNumberSum asc\'\
+		}}" threshold="0" visibleRowCount="5">\
+	<t:Column>\
+		<t:template>\
+			<Text id="region" text="{Region}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="salesNumberSum" text="{= %{SalesNumberSum} }" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>';
+
+		this.expectRequest("BusinessPartners?$apply=groupby((Region)"
+				+ ",aggregate(SalesNumber%20with%20sum%20as%20SalesNumberSum))"
+				+ "/filter(SalesNumberSum%20gt%200)/orderby(SalesNumberSum%20asc)"
+				+ "/concat(aggregate(SalesNumberSum%20with%20sum%20as%20"
+				+ "UI5grand__SalesNumberSum),top(4))", {
+				"value" : [{
+						"UI5grand__SalesNumberSum" : 351,
+						//TODO this should be used by auto type detection
+						"UI5grand__SalesNumberSum@odata.type" : "#Decimal"
+					},
+					{"Region" : "Z", "SalesNumberSum" : 1},
+					{"Region" : "Y", "SalesNumberSum" : 2},
+					{"Region" : "X", "SalesNumberSum" : 3},
+					{"Region" : "W", "SalesNumberSum" : 4}
+				]
+			})
+			.expectChange("region", ["", "Z", "Y", "X", "W"])
+			.expectChange("salesNumberSum", [351, 1, 2, 3, 4]);
+
+		return this.createView(assert, sView, createBusinessPartnerTestModel());
+	});
+
+	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used without group or groupLevels
 	// Note: usage of min/max simulates a Chart, which would actually call ODLB#updateAnalyticalInfo
 	[false, true].forEach(function (bCount) {
