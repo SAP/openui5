@@ -13,12 +13,6 @@ sap.ui.define(['./BarInPageEnabler'],
 	 */
 	var ToolbarRenderer = {};
 
-	// determines whether toolbar has new flexbox (shrink) support
-	ToolbarRenderer.hasNewFlexBoxSupport = (function() {
-		var oStyle = document.documentElement.style;
-		return (oStyle.flex !== undefined || oStyle.webkitFlexShrink !== undefined);
-	}());
-
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * @protected
@@ -41,12 +35,7 @@ sap.ui.define(['./BarInPageEnabler'],
 			role: oToolbar._getAccessibilityRole()
 		});
 
-
-		if (!ToolbarRenderer.hasNewFlexBoxSupport) {
-			oRm.addClass("sapMTBOldFlex");
-		} else {
-			oRm.addClass("sapMTBNewFlex");
-		}
+		oRm.addClass("sapMTBNewFlex");
 
 		if (oToolbar.getActive()) {
 			oRm.addClass("sapMTBActive");

@@ -278,11 +278,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("OverflowToolbar expected to rerender on mobile", function (assert) {
+		// arrange
 		var oSystem = {
-			desktop: false,
-			tablet: false,
-			phone: true
-		};
+				desktop: false,
+				tablet: false,
+				phone: true
+			},
+			iCallsCount;
 
 		this.stub(Device, "system", oSystem);
 
@@ -303,21 +305,25 @@ sap.ui.define([
 			]
 		});
 
-		var oRerenderSpy = this.spy(OverflowToolbar.prototype, "rerender");
+		var oRerenderSpy = this.spy(OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
 
+		// act
 		this.oDialog.open();
-
+		iCallsCount = oRerenderSpy.callCount;
 		this.oDialog._oToolbar._handleResize();
 
-		assert.ok(oRerenderSpy.calledOnce, "OverflowToolbar is rerendered when on mobile in Dialog");
+		// assert
+		assert.equal(oRerenderSpy.callCount, iCallsCount + 1, "OverflowToolbar is reseted and invalidated when on mobile in Dialog");
 	});
 
 	QUnit.test("OverflowToolbar expected to not rerender on desktop", function (assert) {
+		// arrange
 		var oSystem = {
-			desktop: true,
-			tablet: false,
-			phone: false
-		};
+				desktop: true,
+				tablet: false,
+				phone: false
+			},
+			iCallsCount;
 
 		this.stub(Device, "system", oSystem);
 
@@ -338,13 +344,15 @@ sap.ui.define([
 			]
 		});
 
-		var oRerenderSpy = this.spy(OverflowToolbar.prototype, "rerender");
+		var oRerenderSpy = this.spy(OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
 
+		// act
 		this.oDialog.open();
-
+		iCallsCount = oRerenderSpy.callCount;
 		this.oDialog._oToolbar._handleResize();
 
-		assert.notOk(oRerenderSpy.called, "OverflowToolbar is not rerendered when on desktop in Dialog");
+		// assert
+		assert.equal(oRerenderSpy.callCount, iCallsCount, "OverflowToolbar is not reseted and invalidated when on desktop in Dialog");
 	});
 
 	QUnit.module("Open and Close");

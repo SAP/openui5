@@ -71,32 +71,6 @@
 	flex-shrink: 1;
 }
 
-/* OldFlex */
-.sapMTBOldFlex {
-	display: -webkit-box;
-}
-
-.sapMTBOldFlex > .sapMTBShrinkItem:not(.sapMFlexBox) {
-	/* old flex spec does not honour percentual width for non-block level elements */
-	/* @TODO: can we set the display of unknown item */
-	display: block;
-}
-
-.sapMTBOldFlex.sapMTBOverflow > .sapMTBShrinkItem {
-	/* shrinking hack for the old flex spec */
-	-webkit-box-flex: 1;
-}
-
-.sapMTB.sapMTBOldFlex > * {
-	/* old align-items: center does not respect margins and vertical align values */
-	vertical-align: middle;
-	margin-bottom: 0;
-	margin-top: 0;
-
-	/* float has no effect on a flexible item */
-	float: none;
-}
-
 /*** Toolbar inside of Form as Form- and Container- header ***/
 .sapUiFormContainerToolbar > .sapMTB{
 	border-bottom: none;
