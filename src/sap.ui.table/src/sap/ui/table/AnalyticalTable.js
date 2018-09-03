@@ -73,13 +73,16 @@ sap.ui.define([
 			 * The value of the property is only taken into account if no parameter is given in the binding information. Changes to this property after
 			 * the table is bound do not have any effect unless an explicit (re-)bind of the <code>rows</code> aggregation is done.
 			 *
-			 * @example
-			 * oTable.bindRows({
-			 *    path: "...",
-			 *    parameters: {
+			 * Example:
+			 * <pre>
+			 *   oTable.bindRows({
+			 *     path: "...",
+			 *     parameters: {
 			 *       sumOnTop: true
-			 *    }
-			 * });
+			 *     }
+			 *   });
+			 * </pre>
+			 *
 			 * @deprecated As of version 1.44.0, please use the corresponding binding parameter <code>sumOnTop</code> instead.
 			 */
 			sumOnTop : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
@@ -90,13 +93,16 @@ sap.ui.define([
 			 * The value of the property is only taken into account if no parameter is given in the binding information. Changes to this property after
 			 * the table is bound do not have any effect unless an explicit (re-)bind of the <code>rows</code> aggregation is done.
 			 *
-			 * @example
-			 * oTable.bindRows({
-			 *    path: "...",
-			 *    parameters: {
+			 * Example:
+			 * <pre>
+			 *   oTable.bindRows({
+			 *     path: "...",
+			 *     parameters: {
 			 *       numberOfExpandedLevels: 1
-			 *    }
-			 * });
+			 *     }
+			 *   });
+			 * </pre>
+			 *
 			 * @deprecated As of version 1.44.0, please use the corresponding binding parameter <code>numberOfExpandedLevels</code> instead.
 			 */
 			numberOfExpandedLevels : {type : "int", group : "Misc", defaultValue : 0, deprecated: true},
@@ -108,13 +114,16 @@ sap.ui.define([
 			 * The value of the property is only taken into account if no parameter is given in the binding information. Changes to this property after
 			 * the table is bound do not have any effect unless an explicit (re-)bind of the <code>rows</code> aggregation is done.
 			 *
-			 * @example
-			 * oTable.bindRows({
-			 *    path: "...",
-			 *    parameters: {
+			 * Example:
+			 * <pre>
+			 *   oTable.bindRows({
+			 *     path: "...",
+			 *     parameters: {
 			 *       autoExpandMode: "Bundled"
-			 *    }
-			 * });
+			 *     }
+			 *   });
+			 * </pre>
+			 *
 			 * @deprecated As of version 1.44.0, please use the corresponding binding parameter <code>autoExpandMode</code> instead.
 			 */
 			autoExpandMode: {type: "string", group: "Misc", defaultValue: "Bundled", deprecated: true},
