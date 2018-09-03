@@ -215,5 +215,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.7": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "e1e8bdf7f894a20f7d5d421f126f28559a937c96",
+        "type": "FIX",
+        "text": " Table: Clicking on the column resizer no longer causes scrolling",
+        "references": []
+      }
+    ]
   }
 }

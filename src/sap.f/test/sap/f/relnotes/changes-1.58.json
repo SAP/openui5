@@ -147,5 +147,16 @@
         "references": []
       }
     ]
+  },
+  "1.58.2": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "ace82a4088f6cb51678a20416e357f0a9a39b9c6",
+        "type": "FIX",
+        "text": " DynamicPage: Initially snapped header excluded from tab chain",
+        "references": []
+      }
+    ]
   }
 }

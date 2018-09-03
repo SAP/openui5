@@ -3310,5 +3310,94 @@
         "references": []
       }
     ]
+  },
+  "1.52.18": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "e64bc795c95a2d7d948e9f2c6d56d24620d97ded",
+        "type": "FIX",
+        "text": " Popover: RTA toolbar don\u0027t disappear anymore during UI Adaptation",
+        "references": []
+      },
+      {
+        "id": "dd7456cd18ebe851f7df97613b9f81d38875a79c",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Items\u0027 loading indicator returned back",
+        "references": []
+      },
+      {
+        "id": "ebc3f4590347f7b072402cec43c13b96cdc5d40d",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Popup is now correctly displayed",
+        "references": []
+      },
+      {
+        "id": "f101098a8c7c3cab8986585f2fa0141b8ec2a511",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: search with relative item binding works now.",
+        "references": []
+      },
+      {
+        "id": "41addc099d442c3143dd6b3431bac47c1d7e9ec3",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: update FacetPage on navigating",
+        "references": []
+      },
+      {
+        "id": "3c0d3bb3b5dcdf4d7c0e7e50e022f5b87b54f8bf",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Stuck on filtering fixed",
+        "references": []
+      },
+      {
+        "id": "3b00e05e22a07fff03a1b9408e5f1b71604cba3c",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: doesn\u0027t wrap in ObjectPageHeaderContent in IE",
+        "references": []
+      },
+      {
+        "id": "17f91e0d374cbf8c9f1fc7e42f48760b49e976f3",
+        "type": "FIX",
+        "text": " sap.m.Page: contentOnlyBusy proper behavior",
+        "references": []
+      },
+      {
+        "id": "89a98e0d1a6c05a6b3afe0f255c2730360692231",
+        "type": "FIX",
+        "text": " sap.m.Popover: Default sizes",
+        "references": []
+      },
+      {
+        "id": "80b86e8a47a7e5bbbe71a01928fc8ba53272bc5b",
+        "type": "FIX",
+        "text": " sap.m.Slider: Fix examples page under IE",
+        "references": []
+      },
+      {
+        "id": "feb3efa9d1c4da1410865278a07fdaf04b5db81b",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: initially selected item is now scrolled into view",
+        "references": []
+      },
+      {
+        "id": "588d05fcb03b5fd06dfc7b7db99bc83876949bb3",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Stop textarea \"jumping\" on counter update",
+        "references": []
+      },
+      {
+        "id": "c985a928ccfcfd23da0105c1f2cee23fd2ad1268",
+        "type": "FIX",
+        "text": " sap.m.TextArea: growingMaxLies property fixed",
+        "references": []
+      },
+      {
+        "id": "c06791b38cb17facb05ee802e387fa2b978c73da",
+        "type": "FIX",
+        "text": " sap.m.Token: Token text properly displayed",
+        "references": []
+      }
+    ]
   }
 }

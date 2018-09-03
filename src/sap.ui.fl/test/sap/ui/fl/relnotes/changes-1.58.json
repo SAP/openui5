@@ -98,5 +98,16 @@
         "references": []
       }
     ]
+  },
+  "1.58.2": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "eab5758690fc31219c10c6438e5b42dd15b34f6f",
+        "type": "FIX",
+        "text": "sap.ui.fl - MoveControls change handler RevertData with id",
+        "references": []
+      }
+    ]
   }
 }

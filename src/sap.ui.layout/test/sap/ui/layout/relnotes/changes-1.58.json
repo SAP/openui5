@@ -68,5 +68,16 @@
         "references": []
       }
     ]
+  },
+  "1.58.2": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "2a2797e56a366a8f87f94ddb6846cb497679d6a8",
+        "type": "FIX",
+        "text": "sap.ui.layout - Flexibility: Check actions based on form layout",
+        "references": []
+      }
+    ]
   }
 }

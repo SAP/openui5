@@ -375,5 +375,22 @@
         "references": []
       }
     ]
+  },
+  "1.52.18": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "8bb4f5c2f833a0c908e2171c0dcaec442e5524e0",
+        "type": "FIX",
+        "text": " Table: Avoid horizontal scrolling of cell content on focus in rtl",
+        "references": []
+      },
+      {
+        "id": "ddcea9a3b07ce1ea3a7d6ab1780421c0beff65f1",
+        "type": "FIX",
+        "text": " Table: Correctly set firstVisibleRow if zoomed in Chrome",
+        "references": []
+      }
+    ]
   }
 }

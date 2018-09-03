@@ -1088,5 +1088,130 @@
         "references": []
       }
     ]
+  },
+  "1.58.2": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "709a3bfeb5dbdde7f4696a1128b7d531916431c1",
+        "type": "FIX",
+        "text": " Image: Fixed broken indicator in some browsers",
+        "references": []
+      },
+      {
+        "id": "9d27c1e0a35fe022f0ea8261a894915c2cbacfb7",
+        "type": "FIX",
+        "text": " Image: Would not fire error if the source is invalid",
+        "references": []
+      },
+      {
+        "id": "1909386cb8f781849c95e0f8a933591a5708ede8",
+        "type": "FIX",
+        "text": " InputBase: NoTabStop icons now have tabindex -1",
+        "references": []
+      },
+      {
+        "id": "2e6263f5127a6d68fb0e49f039e984261704325c",
+        "type": "FIX",
+        "text": " InputBase: inline-block display reverted",
+        "references": []
+      },
+      {
+        "id": "9203e1204e9e37927690da52c9e3dc19c93e912c",
+        "type": "FIX",
+        "text": " Popover - RTA toolbar don\u0027t disappear anymore during UI Adaptation",
+        "references": []
+      },
+      {
+        "id": "3bc1b7350b2ee5d0ff1b0e736e094437ab5e58f4",
+        "type": "FIX",
+        "text": " sap.m.Button: now checks if the domRef exists on onAfterRendering",
+        "references": []
+      },
+      {
+        "id": "c23a36ef02f28c9da2a47bde8e5ef437c3398d36",
+        "type": "FIX",
+        "text": " sap.m.Input: Soft keyboard is not opened on value help",
+        "references": []
+      },
+      {
+        "id": "0706a222eac1c1f72cd3967ce6937ff35c34e5dc",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Padding corrected",
+        "references": []
+      },
+      {
+        "id": "f0308753ba32f54c6b3219ecb56caabcd478a45f",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Stuck on filtering fixed",
+        "references": []
+      },
+      {
+        "id": "b46bc33aa8b9fb9b8fd38deed8b944bc4c846090",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: doesn\u0027t wrap in ObjectPageHeaderContent in IE",
+        "references": []
+      },
+      {
+        "id": "3d9fac5dbae1b09de35e5b8781bd4031e637373f",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Correct arrangement of the items in case parent has white-space set to nowrap",
+        "references": []
+      },
+      {
+        "id": "a1014eaffc2820c10b3256282bbf1182472fe5d5",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: button is not cut when displaying two months and years in Bulgarian",
+        "references": []
+      },
+      {
+        "id": "8df161e39f2358bc23e983ebd063b841b4faea10",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
+        "references": []
+      },
+      {
+        "id": "6a51bcff6a5fb545d517a78b19e12fb9daf5cb74",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: busyIndicatorDelay propagation fixed",
+        "references": []
+      },
+      {
+        "id": "9acd3e7876dde4a98d2b42ab9ea79271ede354bd",
+        "type": "FIX",
+        "text": " sap.m.SlideTile - Do not propagate press event to inner tiles",
+        "references": []
+      },
+      {
+        "id": "d3400666fb289986aa6bd2cc48968c581ea06755",
+        "type": "FIX",
+        "text": " sap.m.StepInput: correct behavior when mousewheel is used",
+        "references": []
+      },
+      {
+        "id": "0fed9033f000f09181b2dda8700d59e3011660f7",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: propagete properties to internal TabStripItem",
+        "references": []
+      },
+      {
+        "id": "e5a55e803efbb645e0c1f536c941427b6b1a546b",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Stop textarea \"jumping\" on counter update",
+        "references": []
+      },
+      {
+        "id": "c6935596a80db71a0402778f2bd291ec9c0b764e",
+        "type": "FIX",
+        "text": " sap.m.TextArea: growingMaxLies property fixed",
+        "references": []
+      },
+      {
+        "id": "ca5a809346a556a390f3228bb752553abf202800",
+        "type": "FIX",
+        "text": " sap.m.Token: Token text properly displayed",
+        "references": []
+      }
+    ]
   }
 }

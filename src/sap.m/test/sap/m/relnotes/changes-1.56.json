@@ -1522,5 +1522,88 @@
         "references": []
       }
     ]
+  },
+  "1.56.7": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "f40abe907f35eceea9cf2191b20ea47610d046cb",
+        "type": "FIX",
+        "text": " OverflowToolbar: Cleared focus info upon focus leave",
+        "references": []
+      },
+      {
+        "id": "cf555193987474f5d8032859aa18770e2eaf9ef2",
+        "type": "FIX",
+        "text": " sap.m.BusyDialog: Busy information now read out",
+        "references": []
+      },
+      {
+        "id": "1db4f91b292bdef0eaea353349d7c41b5db5d323",
+        "type": "FIX",
+        "text": " sap.m.BusyDialog: The dialog is now closing correctly",
+        "references": []
+      },
+      {
+        "id": "d973b66f89397878bd4aba50d57e92ce636b4f67",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Popup is now correctly displayed",
+        "references": []
+      },
+      {
+        "id": "7e396ab092993813de6d1df6f9db117453df47e8",
+        "type": "FIX",
+        "text": " sap.m.Dialog: ESC key sets \u0027origin\u0027 event parameter correctly",
+        "references": []
+      },
+      {
+        "id": "b3e921bfa8fdb641244a271f5450c59a55960bd5",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: search with relative item binding works now.",
+        "references": []
+      },
+      {
+        "id": "b4a60e17f992a879e17c663ed0c30fe8fb87fa53",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: doesn\u0027t wrap in ObjectPageHeaderContent in IE",
+        "references": []
+      },
+      {
+        "id": "fbd7003ae8f1ac645e01f6aead7c309b81b96c68",
+        "type": "FIX",
+        "text": " sap.m.Page: contentOnlyBusy proper behavior",
+        "references": []
+      },
+      {
+        "id": "fe8d2122698444bef6af6aa8c6ed940b2f98e105",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
+        "references": []
+      },
+      {
+        "id": "23db7d00ddb6a77127bcfd921ab1ad39088db9c7",
+        "type": "FIX",
+        "text": " sap.m.Popover: Default sizes",
+        "references": []
+      },
+      {
+        "id": "c09728306e58e5ca3dac5847af398d8eb430e726",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Suggestions width is now correct",
+        "references": []
+      },
+      {
+        "id": "e9d563569bdb1f9186908fea81b6265be0a2c4d6",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : Uploaded files were showing incorrect size so set property binaryFilesize as true so that file size formating uses base 2.",
+        "references": []
+      },
+      {
+        "id": "1c439bf32762bdd3f942a243657f2fbefcffba20",
+        "type": "FIX",
+        "text": " sap.m: Manual downport of i18n properties",
+        "references": []
+      }
+    ]
   }
 }

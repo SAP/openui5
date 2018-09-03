@@ -566,5 +566,34 @@
         "references": []
       }
     ]
+  },
+  "1.58.2": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "7311df0405915e1177f9180f1ec6d61c7ccc5cd7",
+        "type": "FIX",
+        "text": " Controller: controllerFactory resolves wrong controller class",
+        "references": []
+      },
+      {
+        "id": "b875db6fa052ee68663e0e1c3608973e64a5deb0",
+        "type": "FIX",
+        "text": " core/routing/Target: _updateOptions should not overwrite _name",
+        "references": []
+      },
+      {
+        "id": "8953e7b919bec59e4317a32c7be6d7ce43f76c92",
+        "type": "FIX",
+        "text": " model/ODataUtils: Fix brackets for MultiFilter objects",
+        "references": []
+      },
+      {
+        "id": "998ffad82418cb6d35e4c317a770cc427c94030a",
+        "type": "FIX",
+        "text": " performance/trace/Interaction: accept valid setRequestHeader parameters",
+        "references": []
+      }
+    ]
   }
 }

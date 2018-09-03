@@ -92,5 +92,16 @@
         "references": []
       }
     ]
+  },
+  "1.58.2": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "11183e0a18176dceabb1b98d56de97ac5bf13e0c",
+        "type": "FIX",
+        "text": "sap.ui.dt - MiniMenu is now always placed correctly on touch screen",
+        "references": []
+      }
+    ]
   }
 }

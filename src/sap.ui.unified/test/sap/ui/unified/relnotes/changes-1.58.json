@@ -110,5 +110,28 @@
         "references": []
       }
     ]
+  },
+  "1.58.2": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "a1014eaffc2820c10b3256282bbf1182472fe5d5",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: button is not cut when displaying two months and years in Bulgarian",
+        "references": []
+      },
+      {
+        "id": "8df161e39f2358bc23e983ebd063b841b4faea10",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
+        "references": []
+      },
+      {
+        "id": "57008d240c667899928c7783b1b4852148b47a89",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Now the dialog\u0027s style is not broken",
+        "references": []
+      }
+    ]
   }
 }

@@ -200,5 +200,28 @@
         "references": []
       }
     ]
+  },
+  "1.58.2": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "1df2d82421874bf49d3526458db671b66903962b",
+        "type": "FIX",
+        "text": " Setting the tooltip for every icon on App variant overview",
+        "references": []
+      },
+      {
+        "id": "2a2797e56a366a8f87f94ddb6846cb497679d6a8",
+        "type": "FIX",
+        "text": "sap.ui.layout - Flexibility: Check actions based on form layout",
+        "references": []
+      },
+      {
+        "id": "fb31be5047e52f3dfb0ae9744b514241584fd267",
+        "type": "FIX",
+        "text": "sap.ui.rta - Actions no longer available for wrong aggregations",
+        "references": []
+      }
+    ]
   }
 }
