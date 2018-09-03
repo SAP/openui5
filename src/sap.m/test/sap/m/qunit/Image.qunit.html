@@ -254,11 +254,11 @@
 			oImage.destroy();
 		});
 
+        // BCP: 1880373683 - on zoom 150% img URL is appended with @2 for high density image
 		QUnit.test("Image with mode sap.m.ImageMode.Background", function(assert) {
 			var done = assert.async();
 			var oImage = createImage({
-				mode: sap.m.ImageMode.Background,
-				densityAware: false // BCP: 1880373683 - on zoom 150% img URL is appended with @2 for high density image
+				mode: sap.m.ImageMode.Background
 			});
 
 			// System under test
@@ -531,7 +531,7 @@
 	QUnit.module("Density Aware");
 
 		if (window.devicePixelRatio > 1) {
-			QUnit.test("Density Aware deafult value (true)", function(assert) {
+			QUnit.test("Density Aware default value (false)", function(assert) {
 				var done = assert.async();
 				var oImage = createImage({
 					width: "",
@@ -543,7 +543,7 @@
 				oCore.applyChanges();
 
 				setTimeout(function() {
-					assert.equal(jQuery.sap.byId(sControlId).attr("src"), sSrc2, "oImage is density aware, it loads the density perfect image.");
+					assert.equal(jQuery.sap.byId(sControlId).attr("src"), sSrc, "oImage is NOT density aware, it loads the default image.");
 
 					var oDomRef = jQuery.sap.domById(sControlId);
 
@@ -556,10 +556,10 @@
 				}, 1000);
 			});
 
-			QUnit.test("Density Aware set to false", function(assert) {
+			QUnit.test("Density Aware set to true", function(assert) {
 				var done = assert.async();
 				var oImage = createImage({
-					densityAware: false,
+                    densityAware: true,
 					width: "",
 					height: ""
 				});
@@ -569,7 +569,7 @@
 				oCore.applyChanges();
 
 				setTimeout(function() {
-					assert.equal(jQuery.sap.byId(sControlId).attr("src"), sSrc, "oImage is NOT density aware, so it loads the default image.");
+					assert.equal(jQuery.sap.byId(sControlId).attr("src"), sSrc2, "oImage is density aware, so it loads the density perfect image.");
 
 					var oDomRef = jQuery.sap.domById(sControlId);
 
@@ -585,6 +585,7 @@
 			QUnit.test("Loading default image when high resolution image not available", function(assert) {
 				var done = assert.async();
 				var oImage = createImage({
+                    densityAware: true,
 					src: sSrc3
 				});
 
@@ -609,7 +610,7 @@
 			var oSandbox = sinon.sandbox.create();
 			oSandbox.stub(sap.m.Image, "_currentDevicePixelRatio", 1.5);
 
-			var oImage = createImage();
+			var oImage = createImage({ densityAware: true });
 
 			// System under test
 			oImage.placeAt("qunit-fixture");
@@ -842,7 +843,7 @@
 			oImage.destroy();
 		});
 
-		QUnit.test("Image with valid src under densityAware turned off", function(assert) {
+		QUnit.test("Image with valid src and default densityAware", function(assert) {
 			var done = assert.async();
 			var oLoadSpy = sinon.spy(function() {
 					var $Image = oImage.$();
@@ -856,7 +857,6 @@
 
 			var oImage = new sap.m.Image({
 				src: sSrcAction,
-				densityAware: false,
 				load: oLoadSpy,
 				error: oErrorSpy
 			});
@@ -865,7 +865,7 @@
 			sap.ui.getCore().applyChanges();
 		});
 
-		QUnit.test("Image with Invalid src and src change under densityAware turned off", function(assert) {
+		QUnit.test("Image with Invalid src and src change under default densityAware", function(assert) {
 			var done = assert.async();
 			var oLoadSpy = sinon.spy(function() {
 					var $Image = oImage.$();
@@ -887,7 +887,6 @@
 				decorative: false,
 				alt: "invalid picture",
 				src: "invalid_src.png",
-				densityAware: false,
 				width: "48px",
 				height: "48px",
 				load: oLoadSpy,
@@ -910,7 +909,8 @@
 
 			var oImage = new sap.m.Image({
 				src: sSrc,
-				load: oLoadSpy
+				load: oLoadSpy,
+				densityAware: true
 			});
 
 			oImage.placeAt("qunit-fixture");

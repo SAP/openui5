@@ -91,13 +91,19 @@ sap.ui.define([
 			useMap : {type : "string", group : "Misc", defaultValue : null},
 
 			/**
-			 * If this is set to false, the src image will be loaded directly without attempting to fetch the density perfect image for high density device.
+			 * If this is set to <code>true</code>, one or more network requests will be made
+			 * that try to obtain the density perfect version of the image.
 			 *
-			 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image if this version of image doesn't exist on the server.
+			 * By default, this is set to <code>false</code>, so the src image is loaded directly
+			 * without attempting to fetch the density perfect image for high-density devices.
 			 *
-			 * If bandwidth is the key for the application, set this value to false.
+			 * <b>Note:</b> Before 1.60, the default value was set to <code>true</code>, which
+			 * brought redundant network requests for apps that used the default but did not
+			 * provide density perfect image versions on server-side.
+			 * You should set this property to <code>true</code> only if you also provide the
+			 * corresponding image versions for high-density devices.
 			 */
-			densityAware : {type : "boolean", group : "Misc", defaultValue : true},
+			densityAware : {type : "boolean", group : "Misc", defaultValue : false},
 
 			/**
 			 * The source property which is used when the image is pressed.
