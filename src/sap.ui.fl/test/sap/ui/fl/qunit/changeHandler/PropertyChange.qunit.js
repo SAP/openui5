@@ -79,7 +79,8 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("When calling completeChangeContent with a binding as newValue", function(assert) {
+		// TODO: enable again when apps have adapted
+		QUnit.skip("When calling completeChangeContent with a binding as newValue", function(assert) {
 			var mExpectedChangeContentWithBinding = {
 				content: {
 					newValue: "{model>path}"
@@ -128,7 +129,8 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test('When applying a property change which sets a binding on a js control tree, Then', function(assert) {
+		// TODO: enable again when apps have adapted
+		QUnit.skip('When applying a property change which sets a binding on a js control tree, Then', function(assert) {
 			this.NEW_VALUE = "{i18n>textKey}";
 
 			this.mExpectedChangeContent = {
@@ -191,7 +193,8 @@ sap.ui.define([
 			assert.equal(oBindingInfo.parts[0].model, "namedModel", "property value binding model has changed as expected");
 		});
 
-		QUnit.test('When applying a property change which sets a binding on a xml control tree, Then', function(assert) {
+		// TODO: enable again when apps have adapted
+		QUnit.skip('When applying a property change which sets a binding on a xml control tree, Then', function(assert) {
 			this.NEW_VALUE = "{i18n>textKey}";
 
 			this.mExpectedChangeContent = {

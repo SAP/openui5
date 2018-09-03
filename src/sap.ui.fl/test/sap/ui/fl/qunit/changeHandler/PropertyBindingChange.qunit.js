@@ -156,7 +156,8 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("When calling completeChangeContent without binding as newBinding", function(assert) {
+		// TODO: enable again when apps have adapted
+		QUnit.skip("When calling completeChangeContent without binding as newBinding", function(assert) {
 			var mExpectedChangeContentWithBinding = {
 				content: {
 					newBinding: "Foo"
@@ -211,7 +212,8 @@ sap.ui.define([
 			assert.equal(this.oInput.getBindingInfo("showValueHelp"), undefined, "property showValueHelpChange binding has changed as expected //this assert need the SAPUI5 data-sap-ui-xx-designMode");
 		});
 
-		QUnit.test("When applying a change without binding on js control tree", function(assert) {
+		// TODO: enable again when apps have adapted
+		QUnit.skip("When applying a change without binding on js control tree", function(assert) {
 			var oChange = new Change({
 				selector: this.mExpectedSelector,
 				changeType : "propertyBindingChange",
@@ -253,7 +255,8 @@ sap.ui.define([
 			assert.equal(this.oXmlInput.getAttribute("showValueHelp"), "false", "property showValueHelp has changed as expected");
 		});
 
-		QUnit.test("When applying a change without binding on xml control tree", function(assert) {
+		// TODO: enable again when apps have adapted
+		QUnit.skip("When applying a change without binding on xml control tree", function(assert) {
 			var oChange = new Change({
 				selector: this.mExpectedSelector,
 				changeType : "propertyBindingChange",

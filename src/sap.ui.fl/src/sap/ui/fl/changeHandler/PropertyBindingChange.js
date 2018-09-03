@@ -23,11 +23,11 @@ sap.ui.define([
 	 */
 	var PropertyBindingChange = {};
 
-	var sNoBindingError = "Please use 'PropertyChange' to set properties without binding";
+	// var sNoBindingError = "Please use 'PropertyChange' to set properties without binding";
 
-	function isBinding(vPropertyValue) {
-		return FlexUtils.isBinding(vPropertyValue) || jQuery.isPlainObject(vPropertyValue);
-	}
+	// function isBinding(vPropertyValue) {
+	// 	return FlexUtils.isBinding(vPropertyValue) || jQuery.isPlainObject(vPropertyValue);
+	// }
 
 	/**
 	 * @param {object} oChange - change object with instructions to be applied on the control
@@ -43,9 +43,10 @@ sap.ui.define([
 		var vPropertyValue = oDef.content.newBinding;
 		var oModifier = mPropertyBag.modifier;
 
-		if (!isBinding(vPropertyValue)) {
-			throw new Error(sNoBindingError);
-		}
+		// TODO: enable again when apps have adapted
+		// if (!isBinding(vPropertyValue)) {
+		// 	throw new Error(sNoBindingError);
+		// }
 
 		var vOriginalValue = oModifier.getPropertyBinding(oControl, sPropertyName) || oModifier.getProperty(oControl, sPropertyName);
 		oChange.setRevertData({
@@ -97,9 +98,10 @@ sap.ui.define([
 		if (!oSpecificChangeInfo.content) {
 			throw new Error("oSpecificChangeInfo attribute required");
 		}
-		if (!isBinding(oSpecificChangeInfo.content.newBinding)) {
-			throw new Error(sNoBindingError);
-		}
+		// TODO: enable again when apps have adapted
+		// if (!isBinding(oSpecificChangeInfo.content.newBinding)) {
+		// 	throw new Error(sNoBindingError);
+		// }
 
 		oChangeJson.content = oSpecificChangeInfo.content;
 	};
