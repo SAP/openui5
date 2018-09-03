@@ -86,6 +86,12 @@ sap.ui.define([
 
 	};
 
+	ProgressIndicator.prototype.onselectstart = function(oEvent) {
+
+		return false;
+	};
+
+
 	/**
 	 * Function is called when the value of the ProgressIndicator goes beyond 100 and
 	 * the outer bar needs to be shrinked.
