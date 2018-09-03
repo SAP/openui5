@@ -724,6 +724,63 @@
 		assert.ok(oButton2.bIsDestroyed, "SemanticPage item has been destroyed.");
 	});
 
+	QUnit.test("test adding of CSS SemanticPage class not mentioned in CONTENT_PADDING_CLASSES_TO_FORWARD," +
+			" to its _dynamicPage aggregation", function (assert) {
+
+		// Arrange
+		var oDynamicPage = this.oSemanticPage.getAggregation("_dynamicPage");
+
+		// Act
+		this.oSemanticPage.addStyleClass("NOT_EXISTING_CSS_CLASS");
+
+		// Assert
+		assert.strictEqual(oDynamicPage.aCustomStyleClasses.indexOf("NOT_EXISTING_CSS_CLASS"), -1,
+				"NOT_EXISTING_CSS_CLASS CSS class not added to _dynamicPage aggregation.");
+	});
+
+	QUnit.test("test adding of CSS SemanticPage classes mentioned in CONTENT_PADDING_CLASSES_TO_FORWARD," +
+			" to its _dynamicPage aggregation", function (assert) {
+
+		// Arrange
+		var oDynamicPage = this.oSemanticPage.getAggregation("_dynamicPage");
+
+		// Act
+		this.oSemanticPage.addStyleClass("sapUiNoContentPadding");
+		this.oSemanticPage.addStyleClass("sapUiContentPadding");
+		this.oSemanticPage.addStyleClass("sapUiResponsiveContentPadding");
+
+		// Assert
+		assert.ok(oDynamicPage.aCustomStyleClasses.indexOf("sapUiNoContentPadding"),
+				"sapUiNoContentPadding CSS class applied to _dynamicPage aggregation.");
+		assert.ok(oDynamicPage.aCustomStyleClasses.indexOf("sapUiContentPadding"),
+				"sapUiContentPadding CSS class applied to _dynamicPage aggregation.");
+		assert.ok(oDynamicPage.aCustomStyleClasses.indexOf("sapUiResponsiveContentPadding"),
+				"sapUiResponsiveContentPadding CSS class applied to _dynamicPage aggregation.");
+	});
+
+	QUnit.test("test removing of CSS SemanticPage classes mentioned in CONTENT_PADDING_CLASSES_TO_FORWARD," +
+			" to its _dynamicPage aggregation", function (assert) {
+
+		// Arrange
+		var oDynamicPage = this.oSemanticPage.getAggregation("_dynamicPage");
+
+		// Act
+		this.oSemanticPage.addStyleClass("sapUiNoContentPadding");
+		this.oSemanticPage.addStyleClass("sapUiContentPadding");
+		this.oSemanticPage.addStyleClass("sapUiResponsiveContentPadding");
+		this.oSemanticPage.removeStyleClass("sapUiNoContentPadding");
+		this.oSemanticPage.removeStyleClass("sapUiContentPadding");
+		this.oSemanticPage.removeStyleClass("sapUiResponsiveContentPadding");
+
+		// Assert
+		assert.strictEqual(oDynamicPage.aCustomStyleClasses.indexOf("sapUiNoContentPadding"), -1,
+				"sapUiNoContentPadding CSS class removed from _dynamicPage aggregation.");
+		assert.strictEqual(oDynamicPage.aCustomStyleClasses.indexOf("sapUiContentPadding"), -1,
+				"sapUiContentPadding CSS class removed from _dynamicPage aggregation.");
+		assert.strictEqual(oDynamicPage.aCustomStyleClasses.indexOf("sapUiResponsiveContentPadding"), -1,
+				"sapUiResponsiveContentPadding CSS class removed from _dynamicPage aggregation.");
+	});
+
 	QUnit.test("test SemanticPage destroy method", function (assert) {
 		var oPage = this.oSemanticPage._getPage(),
 			oTitle = this.oSemanticPage._getTitle(),
