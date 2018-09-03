@@ -1,13 +1,17 @@
 /*global QUnit testRule*/
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Component",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/ExtensionPoint",
 	"test-resources/sap/ui/support/TestHelper",
 	"sap/ui/thirdparty/sinon"
-], function(Fragment, Component, Controller, ExtensionPoint, TestHelper, sinon) {
+], function(Log, Fragment, Component, Controller, ExtensionPoint, TestHelper, sinon) {
 	"use strict";
+
+	// the rules rely on a certain log level for analyzing issues
+	Log.setLevel(4);
 
 	QUnit.module("sap.ui.fragment rule tests", {
 		beforeEach: function () {
