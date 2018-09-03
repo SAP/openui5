@@ -1,0 +1,27 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    controllerName="sap.ui.layout.cssgrid.gridplayground.controller.Main"
+    displayBlock="true">
+
+    <App>
+        <Page title="CSSGrid Demo">
+            <IconTabBar>
+                <items>
+                    <IconTabFilter text="CSSGrid" key="cssGrid">
+                        <mvc:XMLView viewName="sap.ui.layout.cssgrid.gridplayground.view.examples.cssgrid.General" />
+                    </IconTabFilter>
+                    <IconTabFilter text="CSSGrid Breakpoints" key="cssGrid2">
+                        <mvc:XMLView viewName="sap.ui.layout.cssgrid.gridplayground.view.examples.cssgrid.Breakpoint" />
+                    </IconTabFilter>
+                    <IconTabFilter text="CSSGrid BoxContainer" key="cssGrid3">
+                        <mvc:XMLView viewName="sap.ui.layout.cssgrid.gridplayground.view.examples.cssgrid.BoxContainer" />
+                    </IconTabFilter>
+                    <IconTabFilter text="CSSGrid with layoutData" key="cssGrid4">
+                        <mvc:XMLView viewName="sap.ui.layout.cssgrid.gridplayground.view.examples.cssgrid.GridItemLayoutData" />
+                    </IconTabFilter>
+                </items>
+            </IconTabBar>
+        </Page>
+    </App>
+</mvc:View>
