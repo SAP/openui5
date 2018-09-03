@@ -129,9 +129,12 @@ sap.ui.define(["sap/ui/fl/Change"], function(Change) {
 	 * Creates the JSON content of a new change file, specifying the new default variant
 	 *
 	 * @param {object} mParameters map of parameters, see below
-	 * @param {String} mParameters.defaultVariantName - id of the new default variant
-	 * @param {String} mParameters.component - name of the UI5 component
+	 * @param {String} mParameters.defaultVariantId - id of the new default variant
+	 * @param {String} mParameters.reference - name of the UI5 component
 	 * @param {object} mParameters.selector - stable propertyName:propertyValue
+	 * @param {Object} mParameters.validAppVersions - Application versions (format: major.minor.patch) where the context is active
+	 * @param {String} mParameters.validAppVersions.creation - Original application version
+	 * @param {String} mParameters.validAppVersions.from - Minimum application version
 	 *
 	 * @returns {Object} default variant change
 	 *
@@ -140,8 +143,6 @@ sap.ui.define(["sap/ui/fl/Change"], function(Change) {
 	DefaultVariant.prototype._createChangeFile = function(mParameters) {
 		var oFileData;
 
-		mParameters.namespace = mParameters.component + '/changes/default';
-		mParameters.componentName = mParameters.component;
 		mParameters.changeType = 'defaultVariant';
 
 		oFileData = Change.createInitialFileContent(mParameters);
@@ -156,9 +157,12 @@ sap.ui.define(["sap/ui/fl/Change"], function(Change) {
 	 * Creates an instance of {sap.ui.fl.Change}, specifying the new default variant
 	 *
 	 * @param {object} mParameters - map of parameters, see below
-	 * @param {String} mParameters.defaultVariantName - id of the new default variant
-	 * @param {String} mParameters.component - name of the UI5 component
+	 * @param {String} mParameters.defaultVariantId - id of the new default variant
+	 * @param {String} mParameters.reference - name of the UI5 component
 	 * @param {object} mParameters.selector - stable propertyName:propertyValue
+	 * @param {Object} mParameters.validAppVersions - Application versions (format: major.minor.patch) where the context is active
+	 * @param {String} mParameters.validAppVersions.creation - Original application version
+	 * @param {String} mParameters.validAppVersions.from - Minimum application version
 	 * @returns {sap.ui.fl.Change} Change
 	 *
 	 * @public
