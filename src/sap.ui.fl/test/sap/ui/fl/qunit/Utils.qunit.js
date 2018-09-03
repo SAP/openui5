@@ -850,6 +850,25 @@ function(
 
 			assert.equal(Utils.getComponentClassName(oControl, true), "", "Check that empty string is returned.");
 		});
+
+		QUnit.test("indexOfInArrayOfObjects with array containing object", function(assert) {
+			var oObject = {a: 1, b: 2, c: 3};
+			var aArray = [{a: 4, b: 5, c: 6}, {a: 1, b: 2, c: 3}, {a: 7, b: 8, c: 9}];
+			assert.equal(Utils.indexOfInArrayOfObjects(aArray, oObject), 1, "the function returns the correct index");
+
+			aArray = [{a: 4, b: 5, c: 6}, {a: 7, b: 8, c: 9}, {b: 2, c: 3, a: 1}];
+			assert.equal(Utils.indexOfInArrayOfObjects(aArray, oObject), 2, "the function returns the correct index");
+		});
+
+		QUnit.test("indexOfInArrayOfObjects with array not containing object", function(assert) {
+			var oObject = {a: 1, b: 2, c: 3};
+			var aArray = [{b: 2, c: 3}, {a: 4, b: 5, c: 6}, {a: 7, b: 8, c: 9}];
+			assert.equal(Utils.indexOfInArrayOfObjects(aArray, oObject), -1, "the function returns the correct index");
+
+			oObject = {1: 1, b: 2};
+			aArray = [{a: 1, b: 2, c: 3}, {a: 4, b: 5, c: 6}, {a: 7, b: 8, c: 9}];
+			assert.equal(Utils.indexOfInArrayOfObjects(aArray, oObject), -1, "the function returns the correct index");
+		});
 	});
 
 	QUnit.module("get/set URL Technical Parameter values", {
@@ -1488,7 +1507,6 @@ function(
 		});
 	});
 
-
 	QUnit.module("Utils.FakePromise", {
 		beforeEach: function () {},
 		afterEach: function () {}
@@ -1593,7 +1611,6 @@ function(
 			assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange1.getId() + "foo"), undefined, "then no change is returned");
 		});
 	});
-
 
 	QUnit.module("Utils.buildLrepRootNamespace", {
 		beforeEach: function() {

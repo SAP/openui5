@@ -7,13 +7,14 @@ sap.ui.define([
 		"sap/ui/thirdparty/jquery",
 		"sap/ui/core/support/Plugin",
 		"sap/ui/core/support/Support",
+		"sap/ui/core/util/reflection/JsControlTreeModifier",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/fl/FlexController",
 		"sap/ui/fl/ChangePersistenceFactory",
 		"sap/ui/fl/Utils",
 		"sap/ui/fl/support/apps/uiFlexibilityDiagnostics/helper/Extractor"
 	],
-	function (jQuery, Plugin, Support, JSONModel, FlexController, ChangePersistenceFactory, Utils, Extractor) {
+	function (jQuery, Plugin, Support, JsControlTreeModifier, JSONModel, FlexController, ChangePersistenceFactory, Utils, Extractor) {
 		"use strict";
 
 		/**
@@ -273,11 +274,12 @@ sap.ui.define([
 					oChangeDetails.indexOfFirstFailing = aAllFailedChanges.indexOf(oChange.getId());
 				}
 
-				if (oChange._aDependentIdList) {
-					oChangeDetails.dependentControls = oChange._aDependentIdList.map(function (sDependentId) {
+				if (oChange._aDependentSelectorList) {
+					var oAppComponent = Extractor.getAppComponentInstance(sAppName);
+					oChangeDetails.dependentControls = oChange._aDependentSelectorList.map(function (oDependentSelector) {
 						return {
-							id : sDependentId,
-							controlPresent : !!sap.ui.getCore().byId(sDependentId)
+							id : oDependentSelector.id,
+							controlPresent : !!JsControlTreeModifier.bySelector(oDependentSelector, oAppComponent)
 						};
 					});
 				}

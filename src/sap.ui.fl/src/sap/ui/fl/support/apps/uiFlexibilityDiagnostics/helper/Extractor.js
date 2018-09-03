@@ -3,12 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/core/util/File",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/m/MessageBox",
 	"sap/ui/thirdparty/jquery"
-], function(JSONModel, ChangePersistenceFactory, File, MessageBox, jQuery) {
+], function(File, JsControlTreeModifier, MessageBox, jQuery) {
 	"use strict";
 
 	var Extractor = {};
@@ -21,7 +20,7 @@ sap.ui.define([
 			aFailedChanges : [],
 			mChangesEntries: {},
 			mVariantsChanges: {},
-			sComponentName: oChangePersistence._sComponentName
+			sComponentName: oChangePersistence._mComponent.name
 		};
 
 		this._enhanceExportWithChangeData(oChangePersistence, oExport);
@@ -31,7 +30,35 @@ sap.ui.define([
 		return oExport;
 	};
 
+	/**
+	 * Searches for a component instance on the UI with the same name as given in the parameter
+	 * The instance is searched via a styleclass search on the UI and comparison of the component name
+	 * Currently there is no proper way to retrieve component instance by name
+	 * THIS IS ONLY A WORKAROUND! Should be changed as soon as there is an API for this
+	 *
+	 * @param {string} sComponentName name of the component
+	 * @returns {sap.ui.core.Component} Returns an instance of the component
+	 * @private
+	 * @restricted sap.ui.fl
+	 */
+	Extractor.getAppComponentInstance = function (sComponentName) {
+		var oCorrectAppComponent;
+		var aComponentContainers = jQuery.find(".sapUiComponentContainer");
+		aComponentContainers.some(function(oComponentContainerDomRef) {
+			var oComponentContainer = sap.ui.getCore().byId(oComponentContainerDomRef.id);
+			var oAppComponent = oComponentContainer && oComponentContainer.getComponentInstance();
+
+			if (oAppComponent && oAppComponent.getMetadata().getName() === sComponentName) {
+				oCorrectAppComponent = oAppComponent;
+				return true;
+			}
+		});
+
+		return oCorrectAppComponent;
+	};
+
 	Extractor._enhanceExportWithChangeData = function (oChangePersistence, oExport) {
+		var oAppComponent = Extractor.getAppComponentInstance(oExport.sComponentName);
 		jQuery.each(oChangePersistence._mChangesEntries, function (sChangeId, oChange) {
 			oExport.mChangesEntries[sChangeId] = {
 				mDefinition: oChange._oDefinition,
@@ -39,16 +66,16 @@ sap.ui.define([
 				aDependencies: []
 			};
 
-			if (oChange._aDependentIdList) {
-				oChange._aDependentIdList.forEach(function (sDependentControlId) {
+			if (oChange._aDependentSelectorList) {
+				oChange._aDependentSelectorList.forEach(function (oSelector) {
 					var mControlData = {
-						bPresent : !!sap.ui.getCore().byId(sDependentControlId),
+						bPresent : !!JsControlTreeModifier.bySelector(oSelector, oAppComponent),
 						aAppliedChanges : [],
 						aFailedChangesJs : [],
 						aFailedChangesXml : []
 					};
 
-					oExport.mControlData[sDependentControlId] = mControlData;
+					oExport.mControlData[oSelector.id] = mControlData;
 				});
 			}
 		});
