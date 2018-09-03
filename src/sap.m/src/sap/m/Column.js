@@ -624,6 +624,19 @@ sap.ui.define([
 		this.clearLastValue();
 	};
 
+	// when the popover opens and later closed, the focus is lost
+	// hence overwriting the getFocusDomRef to restore the focus on the active column header
+	Column.prototype.getFocusDomRef = function() {
+		var oParent = this.getParent();
+		if (oParent && oParent.bActiveHeaders) {
+			var oColumnDomRef = this.getDomRef();
+			if (oColumnDomRef) {
+				return oColumnDomRef.firstChild;
+			}
+		}
+		return Element.prototype.getFocusDomRef.apply(this, arguments);
+	};
+
 	return Column;
 
 });
