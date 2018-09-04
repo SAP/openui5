@@ -239,7 +239,7 @@ sap.ui.define([
 					oFixture.response.responseText, "sap.ui.model.odata.v4.lib._Helper");
 			}
 
-			oError = _Helper.createError(jqXHR);
+			oError = _Helper.createError(jqXHR, "/request/path", "original/path");
 
 			assert.ok(oError instanceof Error);
 			assert.deepEqual(oError.error, oFixture.body && oFixture.body.error);
@@ -247,6 +247,8 @@ sap.ui.define([
 			assert.strictEqual(oError.message, oFixture.message);
 			assert.strictEqual(oError.status, oFixture.response.status);
 			assert.strictEqual(oError.statusText, oFixture.response.statusText);
+			assert.strictEqual(oError.requestUrl, "/request/path");
+			assert.strictEqual(oError.resourcePath, "original/path");
 		});
 	});
 

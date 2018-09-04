@@ -563,7 +563,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Requestor.prototype.getModelInterface = function (sGroupId) {
+	Requestor.prototype.getModelInterface = function () {
 		return this.oModelInterface;
 	};
 
@@ -892,6 +892,10 @@ sap.ui.define([
 	 *   The meta path corresponding to the resource path; needed in case V2 response does not
 	 *   contain <code>__metadata.type</code>, for example "2.2.7.2.4 RetrievePrimitiveProperty
 	 *   Request"
+	 * @param {string} [sOriginalResourcePath=sResourcePath]
+	 *   The path by which this resource has originally been requested and thus can be identified on
+	 *   the client. Only required for non-GET requests where <code>sResourcePath</code> is a
+	 *   different (canonical) path.
 	 * @returns {Promise}
 	 *   A promise on the outcome of the HTTP request
 	 * @throws {Error}
@@ -900,7 +904,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Requestor.prototype.request = function (sMethod, sResourcePath, oGroupLock, mHeaders, oPayload,
-			fnSubmit, fnCancel, sMetaPath) {
+			fnSubmit, fnCancel, sMetaPath, sOriginalResourcePath) {
 		var oError,
 			sGroupId = oGroupLock && oGroupLock.getGroupId() || "$direct",
 			oPromise,
@@ -917,6 +921,7 @@ sap.ui.define([
 			oGroupLock.unlock();
 		}
 		sResourcePath = this.convertResourcePath(sResourcePath);
+		sOriginalResourcePath = sOriginalResourcePath || sResourcePath;
 		if (this.getGroupSubmitMode(sGroupId) !== "Direct") {
 			oPromise = new Promise(function (fnResolve, fnReject) {
 				var aRequests = that.mBatchQueue[sGroupId];
@@ -940,6 +945,7 @@ sap.ui.define([
 					$metaPath : sMetaPath,
 					$reject : fnReject,
 					$resolve : fnResolve,
+					$resourcePath : sOriginalResourcePath,
 					$submit : fnSubmit
 				};
 				if (sMethod === "GET") { // push behind change set
@@ -957,7 +963,7 @@ sap.ui.define([
 		}
 		return this.sendRequest(sMethod, sResourcePath,
 			jQuery.extend({}, mHeaders, this.mFinalHeaders),
-			JSON.stringify(_Requestor.cleanPayload(oPayload))
+			JSON.stringify(_Requestor.cleanPayload(oPayload)), sOriginalResourcePath
 		).then(function (oResponse) {
 			that.reportUnboundMessages(oResponse.resourcePath, oResponse.messages);
 			return that.doConvertResponse(oResponse.body, sMetaPath);
@@ -998,6 +1004,8 @@ sap.ui.define([
 	 *   default headers given to the factory.
 	 * @param {string} [sPayload]
 	 *   Data to be sent to the server
+	 * @param {string} [sOriginalResourcePath]
+	 *  The path by which the resource has originally been requested
 	 * @returns {Promise}
 	 *   A promise that is resolved with an object having the properties body and contentType. The
 	 *   body is already an object if the Content-Type is "application/json". The promise is
@@ -1005,7 +1013,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Requestor.prototype.sendRequest = function (sMethod, sResourcePath, mHeaders, sPayload) {
+	Requestor.prototype.sendRequest = function (sMethod, sResourcePath, mHeaders, sPayload,
+			sOriginalResourcePath) {
 		var sRequestUrl = this.sServiceUrl + sResourcePath,
 			that = this;
 
@@ -1048,7 +1057,7 @@ sap.ui.define([
 							send(true);
 						}, fnReject);
 					} else {
-						fnReject(_Helper.createError(jqXHR));
+						fnReject(_Helper.createError(jqXHR, sRequestUrl, sOriginalResourcePath));
 					}
 				});
 			}
@@ -1131,7 +1140,7 @@ sap.ui.define([
 					vRequest.$reject(oError);
 				} else if (vResponse.status >= 400) {
 					vResponse.getResponseHeader = getResponseHeader;
-					oCause = _Helper.createError(vResponse);
+					oCause = _Helper.createError(vResponse, vRequest.url, vRequest.$resourcePath);
 					reject(oCause, vRequest);
 				} else if (vResponse.responseText) {
 					oResponse = JSON.parse(vResponse.responseText);

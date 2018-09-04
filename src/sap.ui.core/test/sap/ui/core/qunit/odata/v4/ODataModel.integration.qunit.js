@@ -31,6 +31,7 @@ sap.ui.define([
 	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
 		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 		sFlight = "/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/",
+		sSalesOrderService = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
 
 	/**
@@ -87,9 +88,7 @@ sap.ui.define([
 	 * @returns {ODataModel} The model
 	 */
 	function createSalesOrdersModel(mModelParameters) {
-		return createModel(
-			"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
-			mModelParameters);
+		return createModel(sSalesOrderService, mModelParameters);
 	}
 
 	/**
@@ -315,23 +314,38 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks that exactly the expected messages have been reported.
+		 * Checks that exactly the expected messages have been reported, the order doesn't matter.
 		 *
 		 * @param {object} assert The QUnit assert object
 		 */
 		checkMessages : function (assert) {
-			assert.deepEqual(
-				sap.ui.getCore().getMessageManager().getMessageModel().getObject("/")
-					.map(function (oMessage) {
+			var aCurrentMessages = sap.ui.getCore().getMessageManager().getMessageModel()
+					.getObject("/").map(function (oMessage) {
 						return {
 							code : oMessage.getCode(),
+							descriptionUrl : oMessage.getDescriptionUrl(),
 							message : oMessage.getMessage(),
-							target : oMessage.getTarget(),
 							persistent : oMessage.getPersistent(),
+							target : oMessage.getTarget(),
+							technical : oMessage.getTechnical(),
 							type : oMessage.getType()
 						};
-					}),
-				this.aMessages,
+					});
+
+			function sortMessages(aMessages) {
+				aMessages.sort(function (oMessage1, oMessage2) {
+					var s1 = oMessage1.message,
+						s2 = oMessage2.message;
+
+					if (s1 < s2) {
+						return -1;
+					}
+					return s1 > s2 ? 1 : 0;
+				});
+				return aMessages;
+			}
+
+			assert.deepEqual(sortMessages(aCurrentMessages), sortMessages(this.aMessages),
 				this.aMessages.length + " messages in message manager");
 		},
 
@@ -522,9 +536,11 @@ sap.ui.define([
 			 * @param {object} mHeaders The headers (including various generic headers)
 			 * @param {object|string} [vPayload] The payload (string from the requestor, object from
 			 *   checkBatch)
+			 * @param {string} [sOriginalResourcePath]
+			 *  The path by which the resource has originally been requested
 			 * @returns {Promise} A promise on an object with the response in the property "body"
 			 */
-			function checkRequest(sMethod, sUrl, mHeaders, vPayload) {
+			function checkRequest(sMethod, sUrl, mHeaders, vPayload, sOriginalResourcePath) {
 				var oActualRequest = {
 						method : sMethod,
 						url : sUrl,
@@ -579,6 +595,8 @@ sap.ui.define([
 
 				return Promise.resolve(oResponse).then(function (oResponseBody) {
 					if (oResponseBody instanceof Error) {
+						oResponseBody.requestUrl = that.oModel.sServiceUrl + sUrl;
+						oResponseBody.resourcePath = sOriginalResourcePath;
 						throw oResponseBody;
 					}
 
@@ -731,14 +749,20 @@ sap.ui.define([
 
 		/**
 		 * The following code (either {@link #createView} or anything before
-		 * {@link #waitForChanges}) is expected to report exactly the given messages.
+		 * {@link #waitForChanges}) is expected to report exactly the given messages. All expected
+		 * messages should have a different message text.
 		 *
 		 * @param {object[]} aExpectedMessages The expected messages (with properties code, message,
-		 *   target, persistent and type corresponding the getters of sap.ui.core.message.Message)
+		 *   target, persistent, technical and type corresponding the getters of
+		 *   sap.ui.core.message.Message)
 		 * @returns {object} The test instance for chaining
 		 */
 		expectMessages : function (aExpectedMessages) {
-			this.aMessages = aExpectedMessages;
+			this.aMessages = aExpectedMessages.map(function (oMessage) {
+				oMessage.descriptionUrl = oMessage.descriptionUrl || undefined;
+				oMessage.technical = oMessage.technical || false;
+				return oMessage;
+			});
 
 			return this;
 		},
@@ -1081,6 +1105,100 @@ sap.ui.define([
 		{"GetEmployeeByID(EmployeeID='2')" : {"Name" : "Frederic Fall"}},
 		{"text" : "Frederic Fall"}
 	);
+
+	//*********************************************************************************************
+	// Scenario: Failure to read from an ODataListBinding returning a bound message
+	QUnit.test("ODLB: read failure & message", function (assert) {
+		var oError = new Error("Failure"),
+			sView = '\
+<Table items="{/EMPLOYEES}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="text" text="{Name}" />\
+	</ColumnListItem>\
+</Table>';
+
+		oError.error = {
+			"code": "CODE",
+			"message": "Could not read",
+			"target": "('42')/Name"
+		};
+		this.oLogMock.expects("error")
+			.withExactArgs("Failed to get contexts for " + sTeaBusi
+				+ "EMPLOYEES with start index 0 and length 100", sinon.match(oError.message),
+				"sap.ui.model.odata.v4.ODataListBinding");
+		this.expectRequest("EMPLOYEES?$skip=0&$top=100", oError)
+			.expectMessages([{
+				"code" : "CODE",
+				"message" : "Could not read",
+				"persistent" : true,
+				"target" : "/EMPLOYEES('42')/Name",
+				"technical" : true,
+				"type" : "Error"
+			}]);
+
+		return this.createView(assert, sView);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Failure to read from an ODataContextBinding returning a bound message
+	QUnit.test("ODCB: read failure & message", function (assert) {
+		var oError = new Error("Failure"),
+			sView = '\
+<FlexBox binding="{/EMPLOYEES(\'42\')}">\
+	<Text id="text" text="{Name}" />\
+</FlexBox>';
+
+		oError.error = {
+			"code": "CODE",
+			"message": "Could not read",
+			"target": "Name"
+		};
+		this.oLogMock.expects("error")
+			.withExactArgs("Failed to read path /EMPLOYEES('42')", sinon.match(oError.message),
+				"sap.ui.model.odata.v4.ODataContextBinding");
+		this.oLogMock.expects("error")
+			.withExactArgs("Failed to read path /EMPLOYEES('42')/Name", sinon.match(oError.message),
+				"sap.ui.model.odata.v4.ODataPropertyBinding");
+		this.expectRequest("EMPLOYEES('42')", oError)
+			.expectMessages([{
+				"code" : "CODE",
+				"message" : "Could not read",
+				"persistent" : true,
+				"target" : "/EMPLOYEES('42')/Name",
+				"technical" : true,
+				"type" : "Error"
+			}]);
+
+		return this.createView(assert, sView);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Failure to read from an ODataPropertyBinding returning a bound message
+	QUnit.test("ODPB: read failure & message", function (assert) {
+		var oError = new Error("Failure"),
+			sView = '<Text id="text" text="{/EMPLOYEES(\'42\')/Name}" />';
+
+		oError.error = {
+			"code": "CODE",
+			"message": "Could not read",
+			"target": ""
+		};
+		this.oLogMock.expects("error")
+			.withExactArgs("Failed to read path /EMPLOYEES('42')/Name", sinon.match(oError.message),
+				"sap.ui.model.odata.v4.ODataPropertyBinding");
+		this.expectRequest("EMPLOYEES('42')/Name", oError)
+			.expectMessages([{
+				"code" : "CODE",
+				"message" : "Could not read",
+				"persistent" : true,
+				"target" : "/EMPLOYEES('42')/Name",
+				"technical" : true,
+				"type" : "Error"
+			}]);
+
+		return this.createView(assert, sView);
+	});
 
 	//*********************************************************************************************
 	// Scenario: inherit query options (see ListBinding sample application)
@@ -1526,6 +1644,7 @@ sap.ui.define([
 					"message" : "Employee does not exist",
 					"persistent" : true,
 					"target" : "",
+					"technical" : true,
 					"type" : "Error"
 				}]);
 
@@ -2264,6 +2383,112 @@ sap.ui.define([
 				that.oModel.submitBatch("update"),
 				that.waitForChanges(assert)
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Read a sales order line item via a navigation property, enter an invalid quantity.
+	// Expect an error response with a bound and unbound error in the details, and that existing
+	// messages are not deleted.
+	// The navigation property is necessary so that read path and patch path are different.
+	QUnit.test("Read a sales order line item, enter an invalid quantity", function (assert) {
+		var sView = '\
+<FlexBox binding="{\
+		path : \'/BusinessPartnerList(\\\'1\\\')/BP_2_SO(\\\'42\\\')/SO_2_SOITEM(\\\'0010\\\')\',\
+		parameters : {$select : \'Messages\'}}">\
+	<Text id="quantity" text="{Quantity}"/>\
+	<Text id="unit" text="{QuantityUnit}"/>\
+</FlexBox>',
+			oError = new Error("Error occurred while processing the request"),
+			oExpectedMessage = {
+				"code" : "23",
+				"message" : "Enter a minimum quantity of 2",
+				"persistent" : false,
+				"target" : "/BusinessPartnerList('1')/BP_2_SO('42')/SO_2_SOITEM('0010')/Quantity",
+				"technical" : false,
+				"type" : "Warning"
+			},
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true
+			}),
+			that = this;
+
+		oError.error = {
+			"code" : "top",
+			"message" : "Error occurred while processing the request",
+			"details" : [{
+				"code" : "bound",
+				"message" : "Value must be greater than 0",
+				"@Common.longtextUrl" : "../Messages(1)/LongText",
+				"@Common.numericSeverity" : 4,
+				"target" : "Quantity"
+			}, {
+				"code" : "unbound",
+				"message" : "Some unbound warning",
+				"@Common.numericSeverity" : 3
+			}]
+		};
+
+		this.expectRequest("BusinessPartnerList('1')/BP_2_SO('42')/SO_2_SOITEM('0010')"
+			+ "?$select=ItemPosition,Messages,Quantity,QuantityUnit,SalesOrderID", {
+				"SalesOrderID" : "42",
+				"ItemPosition" : "0010",
+				"Quantity" : "1.000",
+				"QuantityUnit" : "DZ",
+				"Messages" : [{
+					"code" : "23",
+					"message" : "Enter a minimum quantity of 2",
+					"target" : "Quantity",
+					"numericSeverity" : 3
+				}]
+			})
+			.expectChange("quantity", "1.000")
+			.expectChange("unit", "DZ")
+			.expectMessages([oExpectedMessage]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+
+			that.oLogMock.expects("error").twice() // TODO twice?
+				.withExactArgs("Failed to update path /BusinessPartnerList('1')/BP_2_SO('42')"
+					+ "/SO_2_SOITEM('0010')/Quantity",
+					sinon.match(oError.message), "sap.ui.model.odata.v4.ODataPropertyBinding");
+			that.expectChange("quantity", "0.000")
+				.expectRequest({
+						method : "PATCH",
+						url : "SalesOrderList('42')/SO_2_SOITEM('0010')",
+						payload : {
+							"Quantity" : "0.000",
+							"QuantityUnit" : "DZ"
+						}
+					},
+					oError)
+				.expectMessages([
+					oExpectedMessage, {
+						"code" : "top",
+						"message" : "Error occurred while processing the request",
+						"persistent" : true,
+						"target" : "",
+						"technical" : true,
+						"type" : "Error"
+					}, {
+						"code" : "unbound",
+						"message" : "Some unbound warning",
+						"persistent" : true,
+						"target" : "",
+						"type" : "Warning"
+					}, {
+						"code" : "bound",
+						"descriptionUrl" : sSalesOrderService + "Messages(1)/LongText",
+						"message" : "Value must be greater than 0",
+						"persistent" : true,
+						"target" :
+							"/BusinessPartnerList('1')/BP_2_SO('42')/SO_2_SOITEM('0010')/Quantity",
+						"type" : "Error"
+					}]);
+
+			that.oView.byId("quantity").getBinding("text").setValue("0.000");
+
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -3109,6 +3334,7 @@ sap.ui.define([
 					"message" : "Missing team ID",
 					"persistent" : true,
 					"target" : "",
+					"technical" : true,
 					"type" : "Error"
 				}])
 				.expectChange("teamId", null); // reset to initial state
@@ -8367,12 +8593,13 @@ sap.ui.define([
 			this.expectRequest("TEAMS('42')/TEAM_2_MANAGER?custom=foo", {"ID" : "23"}, {
 					"sap-messages" : JSON.stringify([
 						{"code" : "foo-42", "message" : "text0", "numericSeverity" : 3,
-							"longtextUrl" : "Messages(1)/LongText/$value"},
+							"longtextUrl" : "../Messages(1)/LongText/$value"},
 						{"code" : "foo-77", "message" : "text1", "numericSeverity" : 2}
 					])
 				})
 				.expectMessages([{
 					"code" : "foo-42",
+					"descriptionUrl" : sTeaBusi + "Messages(1)/LongText/$value",
 					"message" : "text0",
 					"persistent" : true,
 					"target" : "",
@@ -8481,7 +8708,22 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Delete an entity with messages from an ODataListBinding
 	QUnit.test("Delete an entity with messages from an ODataListBinding", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oDeleteMessage = {
+				code : "top",
+				message : "Error occurred while processing the request",
+				persistent : true,
+				target : "/EMPLOYEES('1')",
+				technical : true,
+				type : "Error"
+			},
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oReadMessage = {
+				"code" : "1",
+				"message" : "Text",
+				"persistent" : false,
+				"target" : "/EMPLOYEES('1')/Name",
+				"type" : "Warning"
+			},
 			sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', \
 		parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
@@ -8513,15 +8755,29 @@ sap.ui.define([
 				}]
 			})
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
-			.expectMessages([{
-				"code" : "1",
-				"message" : "Text",
-				"persistent" : false,
-				"target" : "/EMPLOYEES('1')/Name",
-				"type" : "Warning"
-			}]);
+			.expectMessages([oReadMessage]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("table").getItems()[0].getBindingContext(),
+				oError = new Error("Deletion failed");
+
+			oError.error = {
+				"code" : "top",
+				"message" : "Error occurred while processing the request",
+				"target" : ""
+			};
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to delete /EMPLOYEES('1')[0]", sinon.match(oError.message),
+					"sap.ui.model.odata.v4.Context");
+			that.expectRequest({method : "DELETE", url : "EMPLOYEES('1')"}, oError)
+				.expectMessages([oReadMessage, oDeleteMessage]);
+
+			return Promise.all([
+				// code under test
+				oContext.delete().catch(function () {}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
 			var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
 
 			that.expectRequest({
@@ -8529,7 +8785,7 @@ sap.ui.define([
 					url : "EMPLOYEES('1')"
 				})
 				.expectChange("name", ["Frederic Fall"])
-				.expectMessages([]);
+				.expectMessages([oDeleteMessage]);
 
 			return Promise.all([
 				// code under test

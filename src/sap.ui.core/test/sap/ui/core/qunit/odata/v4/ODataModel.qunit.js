@@ -767,33 +767,175 @@ sap.ui.define([
 	}].forEach(function (oFixture) {
 		QUnit.test("reportError", function (assert) {
 			var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
-				oError = {
-					message : "Failure",
-					stack : oFixture.stack
-				},
+				oError = new Error("Failure"),
 				sLogMessage = "Failed to read path /Product('1')/Unknown",
 				oModel = createModel();
 
+			oError.stack = oFixture.stack;
 			this.oLogMock.expects("error").withExactArgs(sLogMessage, oFixture.message, sClassName)
 				.twice();
-			this.mock(oModel).expects("fireMessageChange")
+			this.mock(oModel).expects("reportBoundMessages")
+				.withExactArgs(undefined, {"" : []}, []);
+			this.mock(oModel).expects("reportUnboundMessages")
 				.once()// add each error only once to the MessageManager
-				.withExactArgs(sinon.match(function (mArguments) {
-					var aMessages = mArguments.newMessages;
-
-					return aMessages[0] instanceof Message
-						&& aMessages[0].getMessage() === oError.message
-						&& aMessages[0].getMessageProcessor() === oModel
-						&& aMessages[0].getPersistent() === true
-						&& aMessages[0].getTarget() === ""
-						&& aMessages[0].getTechnical() === true
-						&& aMessages[0].getType() === "Error";
-				}));
+				.withExactArgs(undefined, [{
+					code : undefined,
+					message : oError.message,
+					target : undefined,
+					technical : true,
+					numericSeverity : 4 // Error
+				}]);
 
 			// code under test
 			oModel.reportError(sLogMessage, sClassName, oError);
 			oModel.reportError(sLogMessage, sClassName, oError);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("reportError: JSON response, top-level unbound and details", function (assert) {
+		var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
+			sResourcePath = "/Product('1')",
+			oError = {
+				"error" : {
+					"@Common.longtextUrl" : "top/longtext",
+					"code" : "top",
+					"details" : [{
+						"@com.sap.vocabularies.Common.v1.longtextUrl" : "bound/longtext",
+						"@com.sap.vocabularies.Common.v1.numericSeverity" : 3,
+						"code" : "bound",
+						"message" : "Value must be greater than 0",
+						"target" : "Quantity"
+					}, {
+						"@Common.numericSeverity" : 3,
+						"code" : "unbound",
+						"message" : "some unbound message"
+					}, {
+						"@Common.numericSeverity" : 2,
+						"@foo" : "bar",
+						"code" : "bound",
+						"message" : "some other Quantity message",
+						"target" : "Quantity"
+					}],
+					"message" : "Error occurred while processing the request"
+				},
+				"message" : "Failure",
+				"requestUrl" : "/service/Product",
+				"resourcePath" : sResourcePath + "?foo=bar"
+			},
+			oHelperMock = this.mock(_Helper),
+			sLogMessage = "Failed to read path /Product('1')/Unknown",
+			oModel = createModel();
+
+		this.oLogMock.expects("error").withExactArgs(sLogMessage, oError.message, sClassName);
+		oHelperMock.expects("makeAbsolute")
+			.withExactArgs("top/longtext", oError.requestUrl)
+			.returns("/service/Product/top/longtext");
+		oHelperMock.expects("makeAbsolute")
+			.withExactArgs("bound/longtext", oError.requestUrl)
+			.returns("/service/Product/bound/longtext");
+		this.mock(oModel).expects("reportUnboundMessages")
+			.withExactArgs(sResourcePath, [{
+				code : oError.error.code,
+				longtextUrl : "/service/Product/top/longtext",
+				message : oError.error.message,
+				numericSeverity : 4, // Error
+				target : undefined,
+				technical : true
+			}, {
+				code : "unbound",
+				message : "some unbound message",
+				numericSeverity : 3,
+				target : undefined,
+				technical : undefined
+			}]);
+		this.mock(oModel).expects("reportBoundMessages")
+			.withExactArgs(sResourcePath, {
+				"" : [{
+					"code" : "bound",
+					"longtextUrl" : "/service/Product/bound/longtext",
+					"message" : "Value must be greater than 0",
+					"numericSeverity" : 3,
+					"target" : "Quantity",
+					"technical" : undefined,
+					"transition" : true
+				}, {
+					"code" : "bound",
+					"message" : "some other Quantity message",
+					"numericSeverity" : 2,
+					"target" : "Quantity",
+					"technical" : undefined,
+					"transition" : true
+				}]
+			}, []);
+
+		// code under test
+		oModel.reportError(sLogMessage, sClassName, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("reportError: JSON response, top-level bound, no details", function (assert) {
+		var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
+			oError = {
+				"error" : {
+					"code" : "top",
+					"message" : "Value must be greater than 0",
+					"target" : "Quantity"
+				},
+				"message" : "Failure",
+				"resourcePath" : "/Product('1')"
+			},
+			sLogMessage = "Failed to read path /Product('1')/Unknown",
+			oModel = createModel();
+
+		this.oLogMock.expects("error").withExactArgs(sLogMessage, oError.message, sClassName);
+		this.mock(oModel).expects("reportUnboundMessages")
+			.withExactArgs(oError.resourcePath, []);
+		this.mock(oModel).expects("reportBoundMessages")
+			.withExactArgs(oError.resourcePath, {"" : [{
+				code : "top",
+				message : "Value must be greater than 0",
+				numericSeverity : 4, // Error
+				target : "Quantity",
+				technical : true,
+				transition : true
+			}]}, []);
+
+		// code under test
+		oModel.reportError(sLogMessage, sClassName, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("reportError: JSON response, top-level bound to query option", function (assert) {
+		var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
+			oError = {
+				"error" : {
+					"@Common.longtextUrl" : "/long/text",
+					"code" : "top",
+					"message" : "Invalid token 'name' at position '1'",
+					"target" : "$filter"
+				},
+				"message" : "Failure",
+				"requestUrl" : "/service/SalesOrderList",
+				"resourcePath" : "/SalesOrderList"
+			},
+			sLogMessage = "Failed to read path /SalesOrderList?$filter=name eq 'Hugo'",
+			oModel = createModel();
+
+		this.oLogMock.expects("error").withExactArgs(sLogMessage, oError.message, sClassName);
+		this.mock(oModel).expects("reportBoundMessages")
+			.withExactArgs(oError.resourcePath, {"" : []}, []);
+		this.mock(oModel).expects("reportUnboundMessages")
+			.withExactArgs(oError.resourcePath, [{
+				code : "top",
+				message : "$filter: Invalid token 'name' at position '1'",
+				longtextUrl : "/long/text",
+				numericSeverity : 4, // Error
+				technical : true
+			}]);
+
+		// code under test
+		oModel.reportError(sLogMessage, sClassName, oError);
 	});
 
 	//*********************************************************************************************
@@ -1526,7 +1668,8 @@ sap.ui.define([
 				}, {
 					code : 79,
 					message : "foo3",
-					numericSeverity : oFixture.numericSeverity
+					numericSeverity : oFixture.numericSeverity,
+					technical : true
 				}],
 				oModel = createModel(),
 				sResourcePath = "Foo('42')/to_Bar";
@@ -1549,7 +1692,7 @@ sap.ui.define([
 								&& oMessage.getMessageProcessor() === oModel
 								&& oMessage.getPersistent() === true
 								&& oMessage.getTarget() === ""
-								&& oMessage.getTechnical() === false
+								&& oMessage.getTechnical() === (j === 2)
 								&& oMessage.getType() === oFixture.type;
 						});
 				}));
@@ -1586,6 +1729,7 @@ sap.ui.define([
 					"message" : "foo0",
 					"numericSeverity" : oFixture.numericSeverity,
 					"target" : "Name",
+					"technical" : true,
 					"transition" : false
 				}, {
 					"code" : "UF1",
@@ -1615,13 +1759,13 @@ sap.ui.define([
 						assert.strictEqual(oMessage.getPersistent(), aMessages[j].transition);
 						assert.strictEqual(oMessage.getTarget(), "/Team('42')/foo/bar"
 							+ (aMessages[j].target ? "/" + aMessages[j].target : ""));
-						assert.notOk(oMessage.getTechnical());
+						assert.strictEqual(oMessage.getTechnical(), j === 0);
 						assert.strictEqual(oMessage.getType(), oFixture.type);
 					});
 				});
 
 			// code under test
-			oModel.reportBoundMessages("Team('42')", {"/foo/bar" : aMessages});
+			oModel.reportBoundMessages("Team('42')", {"foo/bar" : aMessages});
 
 			oModelMock.expects("fireMessageChange").never();
 
@@ -1631,7 +1775,28 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("reportBoundMessages: longtextUrl special cases ", function (assert) {
+	QUnit.test("reportBoundMessages: special targets", function (assert) {
+		var oModel = createModel();
+
+		this.mock(oModel).expects("fireMessageChange").twice().withExactArgs(sinon.match.object)
+			.callsFake(function (mArguments) {
+				assert.strictEqual(mArguments.newMessages[0].getTarget(), "/Team('42')/Name");
+			});
+		// code under test
+		oModel.reportBoundMessages("Team", {
+			"" : [{
+				target : "('42')/Name"
+			}]
+		});
+		oModel.reportBoundMessages("Team", {
+			"('42')" : [{
+				target : "Name"
+			}]
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("reportBoundMessages: longtextUrl special cases", function (assert) {
 		var aMessages = [{"longtextUrl" : ""}, {}],
 			oModel = createModel();
 
