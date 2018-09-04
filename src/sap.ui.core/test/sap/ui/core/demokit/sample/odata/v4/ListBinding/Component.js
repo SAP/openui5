@@ -8,16 +8,15 @@
  * @version @version@
  */
 sap.ui.define([
-	"jquery.sap.global",
+	"jquery.sap.script", // jQuery.sap.getUriParameters()
 	"sap/ui/core/mvc/View", // sap.ui.view()
 	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils",
-	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/URI"
-], function (jQuery, View, ViewType, BaseComponent, JSONModel, ODataModel, TestUtils, sinon, URI) {
+], function (jQuery, View, ViewType, BaseComponent, JSONModel, ODataModel, TestUtils, URI) {
 	"use strict";
 
 	return BaseComponent.extend("sap.ui.core.sample.odata.v4.ListBinding.Component", {

@@ -12,7 +12,7 @@
 //   from the component's manifest. Add it as "js" resource to sap.ui5/resources in the
 //   manifest.json to achieve that.
 sap.ui.define([
-	"jquery.sap.global",
+	"jquery.sap.script", // jQuery.sap.getUriParameters()
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/sinon"

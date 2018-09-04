@@ -2,10 +2,10 @@
  * ${copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit"
-], function (jQuery, Opa5, opaTest) {
+], function (Log, Opa5, opaTest) {
 	/*global QUnit */
 	"use strict";
 
@@ -15,11 +15,11 @@ sap.ui.require([
 	opaTest("Start sales orders TP100 app and check log", function (Given, When, Then) {
 		var aExpectedLogs = [{
 				component : "sap.ui.model.odata.v4.lib._V2MetadataConverter",
-				level : jQuery.sap.log.Level.WARNING,
+				level : Log.Level.WARNING,
 				message: "Unsupported annotation 'sap:supported-formats'"
 			}, {
 				component : "sap.ui.model.odata.v4.lib._V2MetadataConverter",
-				level : jQuery.sap.log.Level.WARNING,
+				level : Log.Level.WARNING,
 				message: "Unsupported annotation 'sap:semantics'"
 			}],
 			i;
@@ -27,7 +27,7 @@ sap.ui.require([
 		for (i = 0; i < 16; i++) {
 			aExpectedLogs.push({
 				component : "sap.ui.model.odata.v4.lib._V2MetadataConverter",
-				level : jQuery.sap.log.Level.WARNING,
+				level : Log.Level.WARNING,
 				message: "Unsupported annotation 'sap:value-list'"
 			});
 		}

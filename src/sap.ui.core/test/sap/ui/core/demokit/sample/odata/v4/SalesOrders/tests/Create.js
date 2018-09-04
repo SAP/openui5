@@ -2,15 +2,16 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/test/TestUtils"
-], function (TestUtils) {
+], function (Log, TestUtils) {
 	"use strict";
 
 	return {
 		create : function (Given, When, Then, sUIComponent) {
 			var oExpectedLog = {
 					component : "sap.ui.model.odata.v4.ODataParentBinding",
-					level : jQuery.sap.log.Level.ERROR,
+					level : Log.Level.ERROR,
 					message : "POST on 'SalesOrderList' failed; will be repeated automatically"
 				},
 				sModifiedNote = "Modified by OPA",

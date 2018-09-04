@@ -8,7 +8,6 @@
  * @version @version@
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/m/MessageBox",
 	"sap/m/Title",
 	"sap/m/VBox",
@@ -17,7 +16,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/ViewType",
 	"sap/ui/model/odata/v2/ODataModel"
-], function (jQuery, MessageBox, Title, VBox, TitleLevel, UIComponent, View, ViewType, ODataModel) {
+], function (MessageBox, Title, VBox, TitleLevel, UIComponent, View, ViewType, ODataModel) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.core.sample.ViewTemplate.tiny.Component", {

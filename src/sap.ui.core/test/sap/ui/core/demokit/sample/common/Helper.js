@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define("sap/ui/core/sample/common/Helper", [], function() {
+sap.ui.define("sap/ui/core/sample/common/Helper", ["sap/base/Log"], function (Log) {
 	"use strict";
 	var Helper;
 
@@ -13,14 +13,14 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [], function() {
 		 * least WARNING
 		 *
 		 * @param {object} oLog
-		 *  A single log entry returned by {@link jQuery.sap.log.getLogEntries}
+		 *  A single log entry returned by {@link sap.ui.base.Log.getLogEntries}
 		 * @returns {boolean}
 		 *  Whether the log matches to the criterias above or not
 		 */
 		isRelevantLog : function (oLog) {
 			var sComponent = oLog.component || "";
 
-			return oLog.level <= jQuery.sap.log.Level.WARNING
+			return oLog.level <= Log.Level.WARNING
 				&& (sComponent.indexOf("sap.ui.base.BindingParser") === 0
 					|| sComponent.indexOf("sap.ui.base.ExpressionParser") === 0
 					|| sComponent.indexOf("sap.ui.core.sample.") === 0

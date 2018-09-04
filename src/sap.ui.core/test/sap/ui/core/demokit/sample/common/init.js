@@ -2,7 +2,9 @@
  * ${copyright}
  */
 
-(function () {
+sap.ui.require([
+	"sap/ui/core/Component"
+], function (Component) {
 	"use strict";
 	/* eslint-disable no-alert */
 
@@ -13,18 +15,15 @@
 			alert("Missing URL parameter 'component', e.g. '?component=ViewTemplate.scenario'");
 		} else {
 			sap.ui.loader.config({paths:{"sap/ui/core/sample": "test-resources/sap/ui/core/demokit/sample"}});
-			try {
-				new sap.ui.core.ComponentContainer({
-					component : sap.ui.component({
-						name : "sap.ui.core.sample." + sComponentName,
-						settings : {
-							id : sComponentName
-						}
-					})}
-				).placeAt('content');
-			} catch (e) {
+
+			Component.create({
+				name : "sap.ui.core.sample." + sComponentName,
+				settings : {id : sComponentName}
+			}).then(function (oComponent) {
+				new sap.ui.core.ComponentContainer({component : oComponent}).placeAt('content');
+			}, function (e) {
 				alert("Error while instantiating sap.ui.core.sample." + sComponentName + ":" + e);
-			}
+			});
 		}
 	});
-}());
+});

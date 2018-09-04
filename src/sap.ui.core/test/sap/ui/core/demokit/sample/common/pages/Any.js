@@ -157,10 +157,13 @@ sap.ui.require([
 										jQuery.sap.support.getLastAnalysisHistory().issues || [];
 
 								oIssues = oIssues.filter(function(oIssue) {
-									if (oIssue.severity !== "High" ||
+									if (oIssue.severity !== "High"
 										// ignore rule as long as it is unclear how to solve
 										// ariaDescribedBy issues
-										oIssue.rule.id === "dialogAriaDescribedBy") {
+										|| oIssue.rule.id === "dialogAriaDescribedBy"
+										// cannot easily avoid sap.ui.view inside
+										// sap.ui.core.UIComponent#createContent
+										|| oIssue.rule.id === "syncFactoryLoading") {
 										return false;
 									}
 									return true;

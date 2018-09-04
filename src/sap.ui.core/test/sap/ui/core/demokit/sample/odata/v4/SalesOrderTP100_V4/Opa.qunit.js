@@ -2,10 +2,8 @@
  * ${copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
-	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit"
-], function (jQuery, Opa5, opaTest) {
+], function (opaTest) {
 	/*global QUnit */
 	"use strict";
 
