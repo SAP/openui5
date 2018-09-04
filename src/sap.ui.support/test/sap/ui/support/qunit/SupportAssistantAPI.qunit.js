@@ -53,36 +53,6 @@ sap.ui.require([
 		}
 	});
 
-	QUnit.test("analyze method", function (assert) {
-
-		var done = assert.async();
-
-		bootstrap.initSupportRules(["true", "silent"], {
-			onReady: function () {
-				jQuery.sap.support.analyze(this.scope).then(function () {
-					var history = jQuery.sap.support.getLastAnalysisHistory();
-					assert.strictEqual(history.issues.length, 5, "issues are correct");
-					done();
-				});
-			}
-		});
-	});
-
-	QUnit.test("analyze method filtered by system preset", function (assert) {
-
-		var done = assert.async();
-
-		bootstrap.initSupportRules(["true", "silent"], {
-			onReady: function () {
-				jQuery.sap.support.analyze(this.scope, "Accessibility").then(function () {
-					var history = jQuery.sap.support.getLastAnalysisHistory();
-					assert.strictEqual(history.issues.length, 3, "ACC issues are correct");
-					done();
-				});
-			}
-		});
-	});
-
 	QUnit.test("analyze method filtered by custom preset", function (assert) {
 
 		var done = assert.async();
