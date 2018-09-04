@@ -2211,6 +2211,27 @@
 
 			oStepInput.destroy();
 		});
+
+		QUnit.test("setValue validates the StepInput", function (assert) {
+			// arrange
+			var oStepInput = new sap.m.StepInput({
+				value: 0,
+				min: 5,
+				max: 15
+			});
+
+			// assert
+			assert.equal(oStepInput.getValueState(), sap.ui.core.ValueState.Error, "valueState should be Error");
+
+			// act
+			oStepInput.setValue(6);
+
+			// assert
+			assert.equal(oStepInput.getValueState(), sap.ui.core.ValueState.None, "valueState should be reset to None, since the value is back in the range");
+
+			// cleanup
+			oStepInput.destroy();
+		})
 	</script>
 
 </head>
