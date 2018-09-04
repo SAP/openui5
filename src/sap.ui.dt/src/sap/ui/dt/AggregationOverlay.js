@@ -202,6 +202,18 @@ function(
 	};
 
 	/**
+	 * @override
+	 */
+	AggregationOverlay.prototype._setPosition = function ($Target, oGeometry, $Parent, bForceScrollbarSync) {
+		// Apply Overlay position first, then extra logic based on this new position
+		Overlay.prototype._setPosition.apply(this, arguments);
+
+		if (oGeometry.domRef) {
+			this._handleOverflowScroll(oGeometry, this.$(), this.getParent(), bForceScrollbarSync);
+		}
+	};
+
+	/**
 	 * Returns a DOM representation for an aggregation, associated with this AggregationOverlay, if it can be found or undefined
 	 * Representation is searched in DOM based on DesignTimeMetadata defined for the parent Overlay
 	 * @return {jQuery} Associated with this AggregationOverlay DOM Element or null, if it can't be found
