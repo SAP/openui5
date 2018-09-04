@@ -8991,4 +8991,15 @@ sap.ui.require([
 	QUnit.test("Hidden input referencing", function (assert) {
 		assert.strictEqual(this.oSelect.getIdForLabel(), this.$oHiddenInputRef.attr("id"), "getIdForLabel() returns the hidden input ID");
 	});
+
+	QUnit.module("OverflowToolbar configuration");
+
+	QUnit.test("OverflowToolbar configuration is set correctly", function (assert) {
+		var oSelect = new sap.m.Select(),
+			oConfig = oSelect.getOverflowToolbarConfig();
+
+		assert.equal(typeof oConfig.onBeforeEnterOverflow, "function", "onBeforeEnterOverflow function is set");
+		assert.equal(typeof oConfig.onAfterExitOverflow, "function", "onAfterExitOverflow function is set");
+		assert.ok(oConfig.propsUnrelatedToSize.indexOf("selectedItemId") > -1, "selectedItemId is in the propsUnrelatedToSize array");
+	});
 });

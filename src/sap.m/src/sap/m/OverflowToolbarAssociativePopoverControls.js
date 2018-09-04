@@ -15,9 +15,6 @@ sap.ui.define(['sap/ui/base/Metadata', './OverflowToolbarButton', './OverflowToo
 	function(Metadata, OverflowToolbarButton, OverflowToolbarToggleButton, ToggleButton, Button, library, Log) {
 		"use strict";
 
-		// shortcut for sap.m.SelectType
-		var SelectType = library.SelectType;
-
 		// shortcut for sap.m.ButtonType
 		var ButtonType = library.ButtonType;
 
@@ -123,25 +120,6 @@ sap.ui.define(['sap/ui/base/Metadata', './OverflowToolbarButton', './OverflowToo
 			oControl._toNormalMode();
 		};
 
-		// Select - turn off icon only mode while in the popover
-		OverflowToolbarAssociativePopoverControls.prototype._preProcessSapMSelect = function(oControl) {
-			this._mControlsCache[oControl.getId()] = {
-				selectType: oControl.getType()
-			};
-
-			if (oControl.getType() !== SelectType.Default) {
-				oControl.setProperty("type", SelectType.Default, true);
-			}
-		};
-
-		OverflowToolbarAssociativePopoverControls.prototype._postProcessSapMSelect = function(oControl) {
-			var oPrevState = this._mControlsCache[oControl.getId()];
-
-
-			if (oControl.getType() !== oPrevState.selectType) {
-				oControl.setProperty("type", oPrevState.selectType, true);
-			}
-		};
 
 		/******************************   STATIC properties and methods   ****************************/
 
