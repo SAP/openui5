@@ -1025,8 +1025,8 @@ function (
 		});
 	});
 
-	QUnit.module("Scrollbar classes removal", {
-		beforeEach: function(assert) {
+	QUnit.module("Scrollbar classes removal", function () {
+		QUnit.test("when one aggregation loses its scrolling, the scrollbar classes must persist on the parent overlay", function (assert) {
 			var ScrollControl = SimpleScrollControl.extend('sap.ui.dt.test.controls.ScrollControl', {
 				metadata: {
 					designtime: {
@@ -1074,31 +1074,84 @@ function (
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
-				fnDone();
-			}.bind(this));
-		},
-		afterEach: function() {
-			this.oDesignTime.destroy();
-			this.oScrollControl.destroy();
-		}
-	}, function () {
-		QUnit.test("when one aggregation loses its scrolling, the scrollbar classes must persist on the parent overlay", function (assert) {
-			var fnDone = assert.async();
-			assert.ok(
-				this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBar')
-				&& this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBarVertical')
-			);
-			this.oScrollControlOverlay.getAggregationOverlay('content2').attachEventOnce('geometryChanged', function (oEvent) {
-				var oAggregationOverlay = oEvent.getSource();
-				assert.strictEqual(oAggregationOverlay.$().find('>.sapUiDtDummyScrollContainer').length, 0, 'make sure dummy container has been removed');
 				assert.ok(
 					this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBar')
 					&& this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBarVertical')
 				);
-				fnDone();
-			}, this);
-			this.oScrollControl.getContent2()[0].$().height(250);
+				this.oScrollControlOverlay.getAggregationOverlay('content2').attachEventOnce('geometryChanged', function (oEvent) {
+					var oAggregationOverlay = oEvent.getSource();
+					assert.strictEqual(oAggregationOverlay.$().find('>.sapUiDtDummyScrollContainer').length, 0, 'make sure dummy container has been removed');
+					assert.ok(
+						this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBar')
+						&& this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBarVertical')
+					);
+					this.oScrollControlOverlay.attachEventOnce("geometryChanged",function (){
+						this.oDesignTime.destroy();
+						this.oScrollControl.destroy();
+						fnDone();
+					}, this);
+				}, this);
+				this.oScrollControl.getContent2()[0].$().height(250);
+			}.bind(this));
 		});
+
+		QUnit.test("when scrollcontainer loses scrolling, then scrollbar classes have to be removed", function (assert) {
+
+			var fnDone = assert.async();
+
+			var oVerticalLayout = new VerticalLayout('layout', {
+				content: [
+					this.oScrollControl = new SimpleScrollControl({
+						id: "scrollControl",
+						content1: [
+							this.oTextArea = new TextArea({
+								height: "500px",
+								width: "400px",
+								value: "foo"
+							})
+						],
+						content2: [
+							new TextArea({
+								height: "500px",
+								width: "400px",
+								value: "bar"
+							})
+						]
+					})
+				]
+			});
+
+
+			oVerticalLayout.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oDesignTime = new DesignTime({
+				rootElements: [oVerticalLayout]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				// setTimeout is needed, because synced event doesn't wait until all async processes are done
+				setTimeout(function () {
+					this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
+					assert.ok(
+						this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBar')
+						&& this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBarVertical')
+					);
+					this.oScrollControlOverlay.attachEventOnce("geometryChanged",function (){
+						assert.ok(
+							!this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBar')
+							&& !this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBarVertical')
+						);
+						this.oDesignTime.destroy();
+						oVerticalLayout.destroy();
+						fnDone();
+					}, this);
+					this.oTextArea.setHeight("50px");
+					sap.ui.getCore().applyChanges();
+				}.bind(this));
+			}.bind(this));
+		});
+
 	});
 
 	QUnit.module("Given that an Overlay is created when scrolling is present", {
