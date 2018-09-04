@@ -4984,6 +4984,26 @@
 		}
 	});
 
+	QUnit.test("_getNextTraversalItem should return the right traversal item", function (assert) {
+		var oNextItem = this.oMultiComboBox._getNextTraversalItem(),
+				oPreviousItem = this.oMultiComboBox._getPreviousTraversalItem(),
+				aItems = this.oMultiComboBox.getItems();
+
+		// Assert
+		assert.strictEqual(oNextItem.getText(), 'Item1', "Should return the first item");
+		assert.strictEqual(oPreviousItem.getText(), 'Item3', "Should return the last item");
+
+		// Act
+		this.oMultiComboBox.setSelectedItems([aItems[0], aItems[2]]); // The first and last item
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		oNextItem = this.oMultiComboBox._getNextTraversalItem();
+		oPreviousItem = this.oMultiComboBox._getPreviousTraversalItem();
+		assert.ok(oNextItem.getText() !== 'Item1', "Should not return the first item anymore as it's selected already");
+		assert.ok(oPreviousItem.getText() !== 'Item3', "Should not return the last item anymore as it's selected already");
+	});
+
 	QUnit.test("onsapend should trigger Tokenizer's onsapend", function (assert) {
 		var oSapEndSpy = sinon.spy(sap.m.Tokenizer.prototype, "onsapend");
 
