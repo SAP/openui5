@@ -2015,7 +2015,7 @@ sap.ui.define([
 
 		var iVisibleRowCount = this.getVisibleRowCount();
 		if (iFixedBottomRowCount > 0 && (iVisibleRowCount - iFixedBottomRowCount) < iBindingLength) {
-			aContexts = this._getContexts(iBindingLength - iFixedBottomRowCount, iFixedBottomRowCount, 1);
+			aContexts = this._getContexts(iBindingLength - iFixedBottomRowCount, iFixedBottomRowCount);
 		}
 
 		return aContexts;
