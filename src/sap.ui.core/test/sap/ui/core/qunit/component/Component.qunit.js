@@ -125,32 +125,6 @@ sap.ui.define([
 		assert.ok(!oSuccessUnMerged.property2, "Property 2 not merged (does not exist).");
 	});
 
-	QUnit.test("Components Metadata - Design Time", function(assert) {
-		var oRequireStub = sinon.stub(sap.ui, "require"),
-			oDesignTime = {
-				"foo": "bar"
-			};
-
-		// pass a deep copy to the stub
-		oRequireStub.withArgs(["test/dtcomp/Component.designtime"]).callsArgWithAsync(1, Object.create(oDesignTime));
-
-		var TestDtComp = TestComp1.extend("test.dtcomp.Component", {
-			metadata: {
-				"designTime": true
-			}
-		});
-
-		assert.expect(2);
-		return TestDtComp.getMetadata().loadDesignTime().then(function(_oDesignTime) {
-			//module was added
-			oDesignTime.designtimeModule = "test/dtcomp/Component.designtime";
-			oDesignTime._oLib = null;
-			assert.deepEqual(_oDesignTime, oDesignTime, "DesignTime was loaded properly");
-			sinon.assert.callCount(oRequireStub, 1);
-			oRequireStub.restore();
-		});
-	});
-
 	QUnit.test("Components Metadata - Load from file", function(assert){
 		var oMetadata = SamplesLoadFromFileComponent.getMetadata();
 

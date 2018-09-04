@@ -1850,6 +1850,24 @@ function(
 		return mResult;
 	}
 
+	function mergeDesignTime(mOwnDesignTime, mParentDesignTime, sScopeKey){
+		// we use "sap/base/util/merge" to be able to also overwrite properties with null or undefined
+		// using deep extend to inherit full parent designtime, unwanted inherited properties have to be overwritten with undefined
+		return merge(
+			{},
+			getScopeBasedDesignTime(mParentDesignTime, sScopeKey),
+			//non inherited DT properties
+			{
+				templates: {
+					create: null //create template will not be inherited, they are special to the current type.
+				}
+			},
+			getScopeBasedDesignTime(mOwnDesignTime, sScopeKey), {
+				designtimeModule: mOwnDesignTime.designtimeModule || undefined,
+				_oLib: mOwnDesignTime._oLib
+			}
+		);
+	}
 
 	/**
 	 * Load and returns the design time metadata asynchronously. It inherits/merges parent
@@ -1886,16 +1904,7 @@ function(
 			// only the merge is done in sequence by chaining promises
 			this._oDesignTimePromise = loadOwnDesignTime(this).then(function(mOwnDesignTime) {
 				return oWhenParentLoaded.then(function(mParentDesignTime) {
-					// we use "sap/base/util/merge" to be able to also overwrite properties with null or undefined
-					// using deep extend to inherit full parent designtime, unwanted inherited properties have to be overwritten with undefined
-					return merge(
-						{},
-						getScopeBasedDesignTime(mParentDesignTime, sScopeKey),
-						getScopeBasedDesignTime(mOwnDesignTime, sScopeKey), {
-							designtimeModule: mOwnDesignTime.designtimeModule || undefined,
-							_oLib: mOwnDesignTime._oLib
-						}
-					);
+					return mergeDesignTime(mOwnDesignTime, mParentDesignTime, sScopeKey);
 				});
 			});
 		}

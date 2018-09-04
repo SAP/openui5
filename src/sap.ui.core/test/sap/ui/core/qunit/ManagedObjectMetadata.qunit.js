@@ -81,6 +81,9 @@ function(
 					metaPropDeep2 : "deep2",
 					metaPropDeep3 : "deep3"
 				},
+				templates: {
+					create: "sap/lib/namespace/designtime/<Control>.create.fragment.xml"  //create template will not be inherited, they are special to the current type.
+				},
 				metaPropDeep2: {
 					metaPropDeep21 : "deep21-overwritten"
 				}
@@ -117,6 +120,9 @@ function(
 				instance : "instance",
 				metaPropDeep: {
 					metaPropDeep2 : "deep2-overwritten"
+				},
+				templates: {
+					create: "instance specific dt metadata can set create template"
 				}
 			};
 
@@ -200,6 +206,7 @@ function(
 				assert.strictEqual(oDesignTime.metaProp2, "2", "DesignTime data was passed");
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep1, "deep1", "DesignTime data was passed");
 				assert.strictEqual(oDesignTime.metaPropDeep2.metaPropDeep21, "deep21", "DesignTime data was passed");
+				assert.strictEqual(oDesignTime.templates.create, null, "create template is not defined, but key is available");
 			}.bind(this));
 		});
 
@@ -213,6 +220,7 @@ function(
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep2, "deep2", "DesignTime data was passed");
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep3, "deep3", "DesignTime data was passed");
 				assert.strictEqual(oDesignTime.metaPropDeep2.metaPropDeep21, "deep21-overwritten", "DesignTime data was overwritten");
+				assert.strictEqual(oDesignTime.templates.create, "sap/lib/namespace/designtime/<Control>.create.fragment.xml", "create template is available");
 				assert.strictEqual(oDesignTime.designtimeModule, "DTManagedObjectChild.designtime", "DesignTime module path defined");
 			}.bind(this));
 		});
@@ -227,6 +235,7 @@ function(
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep2, "deep2", "DesignTime data was passed");
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep3, "deep3", "DesignTime data was passed");
 				assert.strictEqual(oDesignTime.metaPropDeep2.metaPropDeep21, "deep21-overwritten", "DesignTime data was overwritten");
+				assert.strictEqual(oDesignTime.templates.create, null, "create template is not inherited");
 				assert.strictEqual(oDesignTime.designtimeModule, undefined, "DesignTime module path not defined");
 			}.bind(this));
 		});
@@ -241,6 +250,7 @@ function(
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep2, "deep2", "DesignTime data was passed");
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep3, undefined, "DesignTime data was removed");
 				assert.strictEqual(oDesignTime.metaPropDeep2, undefined, "DesignTime data was removed");
+				assert.strictEqual(oDesignTime.templates.create, null, "create template is not inherited");
 				assert.strictEqual(oDesignTime.designtimeModule, "DTManagedObjectChild3.designtime", "DesignTime module path defined");
 			}.bind(this));
 		});
@@ -255,6 +265,7 @@ function(
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep1, "deep1", "DesignTime data was passed");
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep2, "deep2", "DesignTime data was passed");
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep3, "deep3", "DesignTime data was passed");
+				assert.strictEqual(oDesignTime.templates.create, null, "create template is not inherited");
 				assert.strictEqual(oDesignTime.designtimeModule, undefined, "DesignTime module path not defined");
 			}.bind(this));
 		});
@@ -269,6 +280,7 @@ function(
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep1, "deep1", "DesignTime data was inherited");
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep2, "deep2", "DesignTime data was inherited");
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep3, "deep3", "DesignTime data was inherited");
+				assert.strictEqual(oDesignTime.templates.create, null, "create template is not inherited");
 				assert.strictEqual(oDesignTime.designtimeModule, "sap/test/DTManagedObjectChild4.designtime", "DesignTime module path defined");
 			}.bind(this));
 		});
@@ -283,6 +295,7 @@ function(
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep1, "deep1", "DesignTime data was inherited");
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep2, "deep2", "DesignTime data was inherited");
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep3, "deep3", "DesignTime data was inherited");
+				assert.strictEqual(oDesignTime.templates.create, null, "create template is not inherited");
 				assert.strictEqual(oDesignTime.designtimeModule, "sap/test/DTManagedObjectChild4.designtime", "DesignTime module path defined");
 			}.bind(this));
 		});
@@ -297,6 +310,7 @@ function(
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep1, "deep1", "DesignTime data was inherited");
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep2, "deep2", "DesignTime data was inherited");
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep3, "deep3", "DesignTime data was inherited");
+				assert.strictEqual(oDesignTime.templates.create, null, "create template is not inherited");
 				assert.strictEqual(oDesignTime.designtimeModule, "sap/test/DTManagedObjectChild4.designtime", "DesignTime module path defined");
 			}.bind(this));
 		});
@@ -311,6 +325,7 @@ function(
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep1, "deep1", "DesignTime data was inherited");
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep2, "deep2-overwritten", "DesignTime data was overritten");
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep3, "deep3", "DesignTime data was inherited");
+				assert.strictEqual(oDesignTime.templates.create, "instance specific dt metadata can set create template", "instance specific dt metadata can set create template");
 				assert.strictEqual(oDesignTime.designtimeModule, "sap/test/DTManagedObjectChild4.designtime", "DesignTime module path defined");
 			}).then(function(){
 				//should not cache metadata from other instance!
@@ -322,8 +337,9 @@ function(
 				assert.strictEqual(oDesignTime.metaProp3, "3", "DesignTime data was inherited");
 				assert.strictEqual(oDesignTime.metaProp4, "4", "DesignTime data was inherited");
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep1, "deep1", "DesignTime data was inherited");
-				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep2, "deep2-overwritten", "DesignTime data was overritten");
+				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep2, "deep2-overwritten", "DesignTime data was overwritten");
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep3, "deep3", "DesignTime data was inherited");
+				assert.strictEqual(oDesignTime.templates.create, null, "create template is not inherited");
 				assert.strictEqual(oDesignTime.designtimeModule, "sap/test/DTManagedObjectChild4.designtime", "DesignTime module path defined");
 
 			});
