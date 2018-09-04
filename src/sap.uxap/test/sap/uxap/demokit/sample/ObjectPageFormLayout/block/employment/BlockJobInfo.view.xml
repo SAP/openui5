@@ -3,7 +3,7 @@
 		  xmlns="sap.m"
 		  xmlns:core="sap.ui.core">
 
-	<forms:SimpleForm>
+	<forms:SimpleForm editable="true">
 
 		<core:Title text="General"/>
 		<Label text="Job classification"/>

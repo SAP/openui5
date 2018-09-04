@@ -51,7 +51,7 @@
 							showSeparatorAfter="false"/>
 				</layout:layoutData>
 				<m:Label text="PC, Not in Medium Size"/>
-				<m:ObjectNumber number="221" numberUnit="K"></m:ObjectNumber>
+				<m:ObjectNumber number="221" numberUnit="K"/>
 			</layout:VerticalLayout>
 			<layout:VerticalLayout>
 				<layout:layoutData>
@@ -60,7 +60,7 @@
 							showSeparatorAfter="true"/>
 				</layout:layoutData>
 				<m:Label text="PC, Not in Large Size"/>
-				<m:ObjectNumber number="219" numberUnit="K"></m:ObjectNumber>
+				<m:ObjectNumber number="219" numberUnit="K"/>
 			</layout:VerticalLayout>
 			<m:ObjectAttribute title="Label" text="In Stock"/>
 			<m:Button icon="sap-icon://nurse" tooltip="nurse"/>
