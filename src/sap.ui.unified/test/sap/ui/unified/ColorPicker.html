@@ -15,14 +15,9 @@
 		sap.ui.getCore().attachInit(function () {
 
 			var oCP,
-				oCPicker = new sap.ui.unified.ColorPicker({
-					mode: sap.ui.unified.ColorPickerMode.HSL
-				}),
-				oRP = new sap.m.ResponsivePopover({
-					title: "Color Picker",
-					content:[
-						oCPicker
-					]
+				oCPP = new sap.ui.unified.ColorPickerPopover({
+					mode: sap.ui.unified.ColorPickerMode.HSL,
+					change: handleChange
 				}),
 				oSelect = new sap.m.Select('select_mode', {
 					items: [
@@ -42,7 +37,7 @@
 					change: function(oEvent) {
 						var sColorPickerDisplay = oEvent.getParameter('selectedItem').getKey();
 						oCP.setDisplayMode(sColorPickerDisplay);
-						oCPicker.setDisplayMode(sColorPickerDisplay);
+						oCPP.setDisplayMode(sColorPickerDisplay);
 					}
 				}),
 				oButton = new sap.m.Button("toggle_mode", {
@@ -51,26 +46,6 @@
 						jQuery("body").toggleClass("sapUiSizeCompact");
 					}
 				});
-
-			if (sap.ui.Device.system.phone) {
-				oRP.setBeginButton(
-					new sap.m.Button({
-						text: "Submit",
-						press: function () {
-							oRP.close();
-						}
-					})
-				);
-				oRP.setEndButton(
-					new sap.m.Button({
-						text: "Cancel",
-						press: function () {
-							oRP.close();
-					}
-				}));
-			} else {
-				oRP.setShowHeader(false);
-			}
 
 			app: new sap.m.App({
 				pages: [
@@ -98,9 +73,9 @@
 										}
 									}),
 									new sap.m.Button("btnPopoverBottom", {
-										text : "Open responsive popover",
+										text : "Open ColorPicker popover",
 										press : function() {
-											oRP.openBy(this);
+											oCPP.openBy(this);
 										}
 									})
 								]
@@ -112,6 +87,9 @@
 
 		});
 
+		function handleChange(oEvent) {
+			sap.m.MessageToast.show("Chosen color string: " + oEvent.getParameters().colorString);
+		};
 	</script>
 
 </head>
