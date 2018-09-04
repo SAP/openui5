@@ -2271,6 +2271,24 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 	});
 
+	QUnit.test("currency for 'he' locale with big number. Contains the RTL character u+200F", function (assert) {
+		//setup
+		var oLocale = new Locale("he");
+		var oFormat = NumberFormat.getCurrencyInstance({
+			showMeasure: false
+		}, oLocale);
+
+		// input and output
+		var iExpectedNumber = 50000;
+
+		// execution
+		var sFormatted = oFormat.format(iExpectedNumber);
+		assert.equal(sFormatted.toString(), "‏50,000.00‎", "can be formatted '" + sFormatted + "' (contains RTL character)");
+
+		var aParsed = oFormat.parse(sFormatted);
+		assert.deepEqual(aParsed, [50000, undefined], "should match input number " + iExpectedNumber);
+	});
+
 	QUnit.test("format/parse indian lakhs/crores", function (assert) {
 		var oLocale = new Locale("en-IN");
 		var oFormat = NumberFormat.getCurrencyInstance({}, oLocale);
