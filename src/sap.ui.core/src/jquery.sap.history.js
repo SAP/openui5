@@ -82,7 +82,7 @@ sap.ui.define([
 		 * By providing the hash saved from the return value of calling jQuery.sap.history.addHistory, jQuery.sap.history.backToHash will navigate back directly to the
 		 * history state with the same hash. <br/><br/>
 		 *
-		 * Please use {@link jQuery.sap.history.back}() to go one step back in the history stack instead of using window.history.back(), because it handles the empty history stack
+		 * Please use {@link jQuery.sap.history#back}() to go one step back in the history stack instead of using window.history.back(), because it handles the empty history stack
 		 * situation and will call the defaultHandler for this case. <br/><br/>
 		 *
 		 *

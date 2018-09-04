@@ -125,7 +125,7 @@ sap.ui.define([], function() {
 		/**
 		 * Compares this version with a given one.
 		 *
-		 * The version with which this version should be compared can be given as a <code>sap.base.util.Version</code> instance,
+		 * The version with which this version should be compared can be given as a <code>sap/base/util/Version</code> instance,
 		 * as a string (e.g. <code>v.compareto("1.4.5")</code>). Or major, minor, patch and suffix values can be given as
 		 * separate parameters (e.g. <code>v.compareTo(1, 4, 5)</code>) or in an array (e.g. <code>v.compareTo([1, 4, 5])</code>).
 		 *
@@ -148,12 +148,12 @@ sap.ui.define([], function() {
 	/**
 	 * Checks whether this version is in the range of the given interval (start inclusive, end exclusive).
 	 *
-	 * The boundaries against which this version should be checked can be given as  <code>sap.base.util.Version</code>
+	 * The boundaries against which this version should be checked can be given as  <code>sap/base/util/Version</code>
 	 * instances (e.g. <code>v.inRange(v1, v2)</code>), as strings (e.g. <code>v.inRange("1.4", "2.7")</code>)
 	 * or as arrays (e.g. <code>v.inRange([1,4], [2,7])</code>).
 	 *
-	 * @param {string|any[]|sap.base.util.Version} vMin the start of the range (inclusive)
-	 * @param {string|any[]|sap.base.util.Version} vMax the end of the range (exclusive)
+	 * @param {string|any[]|module:sap/base/util/Version} vMin the start of the range (inclusive)
+	 * @param {string|any[]|module:sap/base/util/Version} vMax the end of the range (exclusive)
 	 * @return {boolean} <code>true</code> if this version is greater or equal to <code>vMin</code> and smaller
 	 *                   than <code>vMax</code>, <code>false</code> otherwise.
 	 * @public
