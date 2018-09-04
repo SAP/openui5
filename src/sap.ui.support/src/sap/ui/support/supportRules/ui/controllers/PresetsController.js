@@ -13,8 +13,20 @@ sap.ui.define([
 	"sap/ui/core/ValueState",
 	"sap/ui/support/supportRules/util/Utils",
 	"sap/m/GroupHeaderListItem",
-	"sap/ui/thirdparty/jquery"
-], function (BaseController, SelectionUtils, PresetsUtils, Fragment, MessageToast, MessageBox, Documentation, ValueState, Utils, GroupHeaderListItem, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/support/library"
+], function (BaseController,
+			 SelectionUtils,
+			 PresetsUtils,
+			 Fragment,
+			 MessageToast,
+			 MessageBox,
+			 Documentation,
+			 ValueState,
+			 Utils,
+			 GroupHeaderListItem,
+			 jQuery,
+			 library) {
 	"use strict";
 
 	/**
@@ -190,7 +202,7 @@ sap.ui.define([
 	PresetsController.prototype.onPresetItemReset = function (oEvent) {
 		var sPath = oEvent.getSource().getBindingContext().getPath(),
 			oPreset = this.oModel.getProperty(sPath),
-			aPresets = oPreset.isSystemPreset ?  this.oModel.getProperty("/systemPresets") : this.oModel.getProperty("/customPresets");
+			aPresets = oPreset.isSystemPreset ?  PresetsUtils.getSystemPresets() : this.oModel.getProperty("/customPresets");
 
 		aPresets.some(function (oInitialPreset) {
 			if (oInitialPreset.id === oPreset.id) {

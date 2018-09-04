@@ -81,6 +81,20 @@
 							}
 						});
 					},
+					iShouldSeeNoACCErrors: function (controlId) {
+						return this.waitFor({
+							success: function () {
+								Opa5.assert.noRuleFailures({
+									'failOnAnyRuleIssues': true,
+									preset: 'Accessibility',
+									executionScope: {
+										type: 'subtree', // This could also be 'global' or 'components'
+										selectors: controlId
+									}
+								});
+							}
+						});
+					},
 					iShouldGetSupportRuleReport: function () {
 						return this.waitFor({
 							success: function () {
@@ -156,6 +170,35 @@
 					}
 				});
 			});
+
+		opaTest('Should fail only on ACC issues, defined by a system preset, checked on specific scope', function (Given, When, Then) {
+			var dialogId = 'dialogWithRuleErrors';
+			var closeButtonId = 'dialogWithRuleErrorsCloseButton';
+
+			When.waitFor({
+				viewName: 'Main',
+				id: 'firstButton',
+				actions: new Press(),
+				errorMessage: 'Did not find button to open the first dialog'
+			});
+
+			Then.waitFor({
+				id: dialogId,
+				success: function () {
+					Opa5.assert.ok(true, 'Dialog opened');
+				}
+			});
+
+			Then.iShouldSeeNoACCErrors(dialogId);
+
+			Then.waitFor({
+				id: closeButtonId,
+				actions: new Press(),
+				success: function () {
+					Opa5.assert.ok(true, 'Dialog closed');
+				}
+			});
+		});
 
 			opaTest('Should pass without any issue, checked on specific scope with subset of rules', function (Given, When, Then) {
 				var dialogId = 'dialogWithNoRuleErrors';

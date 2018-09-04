@@ -9,14 +9,22 @@ sap.ui.define(["jquery.sap.global"],
 
 	var Bootstrap = {
 		initSupportRules: function (aSettings, oDelegates) {
-			sap.ui.require(["sap/ui/support/supportRules/Main"], function (Main) {
+			sap.ui.require(["sap/ui/support/supportRules/Main", "sap/ui/support/jQuery.sap.support"], function (Main) {
 				if (aSettings[0].toLowerCase() === "true" || aSettings[0].toLowerCase() === "silent") {
 
-					if (oDelegates && oDelegates.onReady && typeof oDelegates.onReady === "function") {
-						Main.attachEvent("ready", oDelegates.onReady);
-					}
+					var bHasReadyFunction = oDelegates && oDelegates.onReady && typeof oDelegates.onReady === "function";
 
-					Main.startPlugin(aSettings);
+					if (!Main._pluginStarted) {
+						if (bHasReadyFunction) {
+							Main.attachEvent("ready", oDelegates.onReady);
+						}
+
+						Main.startPlugin(aSettings);
+					} else {
+						if (bHasReadyFunction) {
+							oDelegates.onReady();
+						}
+					}
 
 					/**
 					 * Enables the additional logging capabilites of the logger,

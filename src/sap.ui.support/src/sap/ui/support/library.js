@@ -184,5 +184,44 @@ sap.ui.define(["sap/ui/core/library"],
 		String: "String"
 	};
 
+	/**
+	 * Contains the available system presets.
+	 *
+	 * @public
+	 */
+	sap.ui.support.SystemPresets = {
+		/**
+		 * The accessibility preset.
+		 *
+		 * @public
+		 */
+		Accessibility : {
+			id: "Accessibility",
+			title: "Accessibility",
+			description: "Accessibility related rules",
+			selections: [
+				// Grouped by library
+				// Public
+				{ruleId: "dialogAriaDescribedBy", libName: "sap.m"},
+				{ruleId: "onlyIconButtonNeedsTooltip", libName: "sap.m"},
+				{ruleId: "inputNeedsLabel", libName: "sap.m"},
+				{ruleId: "titleLevelProperty", libName: "sap.m"},
+				{ruleId: "formTitleOrAriaLabel", libName: "sap.ui.layout"},
+				{ruleId: "formTitleInToolbarAria", libName: "sap.ui.layout"},
+				{ruleId: "formMissingLabel", libName: "sap.ui.layout"},
+				{ruleId: "gridTableAccessibleLabel", libName: "sap.ui.table"},
+				{ruleId: "gridTableColumnTemplateIcon", libName: "sap.ui.table"},
+				{ruleId: "smartFormLabelOrAriaLabel", libName: "sap.ui.comp"},
+				// Internal
+				{ruleId: "icontabbarlabels", libName: "sap.m"},
+				{ruleId: "labeltooltip", libName: "sap.m"},
+				{ruleId: "labelfor", libName: "sap.m"},
+				{ruleId: "labelInDisplayMode", libName: "sap.m"},
+				{ruleId: "texttooltip", libName: "sap.m"},
+				{ruleId: "rbText", libName: "sap.m"}
+			]
+		}
+	};
+
 	return sap.ui.support;
 });
