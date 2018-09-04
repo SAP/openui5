@@ -80,6 +80,7 @@ function(
 				var oButtonDTMetadata = OverlayRegistry.getOverlay(this.oButton).getDesignTimeMetadata();
 				assert.ok(oButtonDTMetadata, "the DesignTimeMetadata is available");
 
+				this.oButton.destroy();
 				fnDone();
 			}.bind(this));
 		});
@@ -125,13 +126,13 @@ function(
 
 			this.oButton1 = new Button("button1");
 			this.oButton2 = new Button("button2");
-			this.oInnerLayout = new VerticalLayout({
+			this.oInnerLayout = new Panel({
 				content : [
 					this.oButton1,
 					this.oButton2
 				]
 			});
-			this.oOuterLayout = new VerticalLayout({
+			this.oOuterLayout = new Panel({
 				content : [this.oInnerLayout]
 			});
 
@@ -156,7 +157,7 @@ function(
 		QUnit.test("when the DesignTime is initialized ", function (assert) {
 			var aOverlays = OverlayRegistry.getOverlays();
 
-			assert.strictEqual(aOverlays.length, 6, "6 Overlays are created: 4 elements + 2 aggregations");
+			assert.strictEqual(aOverlays.length, 10, "10 Overlays are created: 4 elements + 6 aggregations");
 
 			assert.ok(OverlayRegistry.getOverlay(this.oOuterLayout), "overlay for outer layout exists");
 			assert.ok(OverlayRegistry.getOverlay(this.oInnerLayout), "overlay for inner layout exists");
@@ -503,6 +504,30 @@ function(
 				true,
 				'and the aggregation overlay of outer overlay is visible'
 			);
+		});
+
+		QUnit.test("when scrolling happens on the page while DesignTime is disabled, then scrollbar should be in sync after enabling", function (assert) {
+			var fnDone = assert.async();
+			var oOuterLayoutOverlay = OverlayRegistry.getOverlay(this.oOuterLayout);
+
+			oOuterLayoutOverlay.attachEventOnce("geometryChanged", function () {
+				var oContentAggregationOverlay = oOuterLayoutOverlay.getAggregationOverlay("content");
+				var oContentAggregationOverlayDomRef = oContentAggregationOverlay.getDomRef();
+				var oContentAggregationDomRef = this.oOuterLayout.$().find('>.sapMPanelContent').get(0);
+
+				assert.strictEqual(oContentAggregationDomRef.scrollTop, oContentAggregationOverlayDomRef.scrollTop);
+				this.oDesignTime.setEnabled(false);
+				oContentAggregationDomRef.scrollTop = 50;
+				oContentAggregationOverlay.attachEventOnce("scrollSynced", function () {
+					assert.strictEqual(oContentAggregationDomRef.scrollTop, oContentAggregationOverlayDomRef.scrollTop);
+					fnDone();
+				}, this);
+				this.oDesignTime.setEnabled(true);
+			}, this);
+
+			this.oOuterLayout.setWidth("110px");
+			this.oOuterLayout.setHeight("50px");
+			sap.ui.getCore().applyChanges();
 		});
 
 		QUnit.test("when inner layout is destroyed and then _createChildren is called for the outer layout", function(assert){
