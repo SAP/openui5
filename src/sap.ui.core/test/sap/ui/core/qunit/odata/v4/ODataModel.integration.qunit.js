@@ -183,6 +183,8 @@ sap.ui.define([
 			this.mListChanges = {};
 			// A list of expected messages
 			this.aMessages = [];
+			// The number of pending responses checkFinish has to wait for
+			this.iPendingResponses = 0;
 			// A list of expected requests with the properties method, url, headers, response
 			this.aRequests = [];
 		},
@@ -278,7 +280,7 @@ sap.ui.define([
 		checkFinish : function (assert) {
 			var sControlId, aExpectedValuesPerRow, i;
 
-			if (this.aRequests.length) {
+			if (this.aRequests.length || this.iPendingResponses) {
 				return;
 			}
 			for (sControlId in this.mChanges) {
@@ -523,6 +525,7 @@ sap.ui.define([
 						payload : typeof vPayload === "string" ? JSON.parse(vPayload) : vPayload
 					},
 					oExpectedRequest = that.aRequests.shift(),
+					oPromise,
 					oResponseBody,
 					mResponseHeaders;
 
@@ -543,17 +546,22 @@ sap.ui.define([
 					mResponseHeaders = {};
 				}
 
-				if (!that.aRequests.length) { // waiting may be over after promise has been handled
-					setTimeout(that.checkFinish.bind(that, assert), 0);
-				}
-
-				return oResponseBody instanceof Error
+				that.iPendingResponses += 1;
+				oPromise = oResponseBody instanceof Error
 					? Promise.reject(oResponseBody)
 					: Promise.resolve({
 						body : oResponseBody,
 						messages : mResponseHeaders["sap-messages"],
-						resourcePath : oExpectedRequest.url
+						resourcePath : sUrl
 					});
+				return oPromise.finally(function () {
+					that.iPendingResponses -= 1;
+					// Waiting may be over after the promise has been handled
+					if (!that.iPendingResponses) {
+						// give some time to process the response
+						setTimeout(that.checkFinish.bind(that, assert), 0);
+					}
+				});
 			}
 
 			// A wrapper for ODataModel#lockGroup that attaches a stack trace to the lock
@@ -822,11 +830,11 @@ sap.ui.define([
 		},
 
 		/**
-		 * Waits for the expected changes.
+		 * Waits for the expected requests and changes.
 		 *
 		 * @param {object} assert The QUnit assert object
-		 * @returns {Promise} A promise that is resolved when all expected values for controls have
-		 *   been set
+		 * @returns {Promise} A promise that is resolved when all requests have been responded and
+		 *   all expected values for controls have been set
 		 */
 		waitForChanges : function (assert) {
 			var that = this;
@@ -7178,7 +7186,13 @@ sap.ui.define([
 						"transition" : true,
 						"numericSeverity" : 1
 					}]
-				});
+				}).expectMessages([{
+					code : "23",
+					message : "Just A Message",
+					target : "/" + sRequestPath + "/Name",
+					persistent : true,
+					type : "Success"
+				}]);
 
 				// code under test
 				return Promise.all([
@@ -7188,14 +7202,7 @@ sap.ui.define([
 			}).then(function (aPromiseResults) {
 				var oInactiveArtistContext = aPromiseResults[0];
 
-				that.expectMessages([{
-						code : "23",
-						message : "Just A Message",
-						target : "/" + sRequestPath + "/Name",
-						persistent : true,
-						type : "Success"
-					}])
-					.expectChange("isActive", "No");
+				that.expectChange("isActive", "No");
 
 				that.oView.byId("objectPage").setBindingContext(oInactiveArtistContext);
 
@@ -7294,7 +7301,14 @@ sap.ui.define([
 					"DraftID" : "1",
 					"InProcessByUser" : "JOHNDOE"
 				}
-			});
+			}).expectMessages([{
+				code : "23",
+				message : "Just A Message",
+				target :
+					"/Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction/Name",
+				persistent : true,
+				type : "Success"
+			}]);
 
 			return Promise.all([
 				// code under test
@@ -7305,14 +7319,7 @@ sap.ui.define([
 			var oInactiveArtistContext = aPromiseResults[0];
 
 			that.expectChange("isActive", "No")
-				.expectChange("inProcessByUser", "JOHNDOE")
-				.expectMessages([{
-					code : "23",
-					message : "Just A Message",
-					target : "/Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction/Name",
-					persistent : true,
-					type : "Success"
-				}]);
+				.expectChange("inProcessByUser", "JOHNDOE");
 
 			that.oView.setBindingContext(oInactiveArtistContext);
 
@@ -7518,6 +7525,7 @@ sap.ui.define([
 					url : "TEAMS",
 					payload : {"Team_Id" : "new"}
 					}, {"Team_Id" : "newer"})
+				.expectChange("Team_Id", "new", 0)
 				.expectChange("Team_Id", ["newer", "42"])
 				.expectRequest("TEAMS('newer')?$select=Team_Id", {"Team_Id" : "newer"});
 
@@ -7582,6 +7590,7 @@ sap.ui.define([
 						"ID" : null
 					}
 				}, {"ID" : "7"})
+				.expectChange("id", "", 0) // from setValue(null)
 				.expectChange("id", ["7", "2"]);
 			oTeam2EmployeesBinding = that.oView.byId("table").getBinding("items");
 			oCreatedContext = oTeam2EmployeesBinding.create({"ID" : null});
@@ -7652,6 +7661,7 @@ sap.ui.define([
 				}, {
 					"SalesOrderID" : "43"
 				})
+				.expectChange("SalesOrderID", "newID", 0) // from create()
 				.expectChange("SalesOrderID", ["43", "42"])
 				.expectRequest("SalesOrderList('43')?$select=SalesOrderID",
 					{"SalesOrderID" : "43"});
@@ -7682,6 +7692,7 @@ sap.ui.define([
 					"SalesOrderID" : "43",
 					"ItemPosition" : "10"
 				})
+				.expectChange("ItemPosition", "newPos", 0)
 				.expectChange("ItemPosition", "10", 0);
 
 			oCreatedItemContext =  oItemBinding.create({
