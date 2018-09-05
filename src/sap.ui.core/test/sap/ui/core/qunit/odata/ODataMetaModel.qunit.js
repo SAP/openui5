@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/BindingParser",
 	"sap/ui/model/BindingMode",

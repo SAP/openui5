@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/ObjectPath",
 	"sap/ui/Device",

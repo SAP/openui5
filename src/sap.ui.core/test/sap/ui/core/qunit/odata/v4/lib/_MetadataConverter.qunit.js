@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/model/odata/v4/lib/_MetadataConverter",
 	"sap/ui/model/odata/v4/lib/_V2MetadataConverter",
