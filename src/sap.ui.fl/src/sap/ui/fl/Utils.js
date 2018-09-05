@@ -112,7 +112,6 @@ sap.ui.define([
 		 * Returns the class name of the component the given control belongs to.
 		 *
 		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
-		 * @param {boolean} [bOuter] - if set to true the root app component will be returned for embedded component
 		 *
 		 * @returns {String} The component class name, ending with ".Component"
 		 * @see sap.ui.base.Component.getOwnerIdFor
@@ -120,12 +119,13 @@ sap.ui.define([
 		 * @function
 		 * @name sap.ui.fl.Utils.getComponentClassName
 		 */
-		getComponentClassName: function (oControl, bOuter) {
+		getComponentClassName: function (oControl) {
 			var oAppComponent;
 
 			// determine UI5 component out of given control
 			if (oControl) {
-				oAppComponent = this.getAppComponentForControl(oControl, bOuter);
+				// always return the outer app component
+				oAppComponent = this.getAppComponentForControl(oControl, true);
 
 				// check if the component is an application variant and assigned an application descriptor then use this as reference
 				if (oAppComponent) {
