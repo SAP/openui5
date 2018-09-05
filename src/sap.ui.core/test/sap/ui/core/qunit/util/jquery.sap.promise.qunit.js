@@ -215,13 +215,14 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/Core"], function(Device, Core) {
 		QUnit.test("promise.finally on resolved promise", function(assert) {
 			var done = assert.async();
 			var p = asyncAction(false, "X", 10);
-			assert.expect(3);
+			assert.expect(4);
 			var r = p.finally(function(oVal){
 				assert.ok(true, "finally callback should be called on resolution");
 			});
-			assert.ok(r instanceof P, "finally should return a new promise");
+			assert.ok(r instanceof P, "finally should return a promise");
+			assert.notStrictEqual(r, p, "finally should return a new promise");
 			r.then(function(v) {
-				assert.equal(v, "X", "finally callback did not modify fulfillment");
+				assert.equal(v, "X", "finally callback should not modify fulfillment");
 				done();
 			}, function(v) {
 				assert.ok(false, "promise returned by finally on a resolved promise shouldn't fail");
@@ -229,19 +230,52 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/Core"], function(Device, Core) {
 			});
 		});
 
-		QUnit.test("promise.finally on resolved promise", function(assert) {
+		QUnit.test("promise.finally on rejected promise", function(assert) {
 			var done = assert.async();
-			assert.expect(3);
+			assert.expect(4);
 			var p = asyncAction(true, "Y", 10);
 			var r = p.finally(function(oVal){
 				assert.ok(true, "finally callback should be called on rejection");
 			});
-			assert.ok(r instanceof P, "finally should return a new promise");
+			assert.ok(r instanceof P, "finally should return a promise");
+			assert.notStrictEqual(r, p, "finally should return a new promise");
 			r.then(function(v) {
 				assert.ok(false, "promise returned by finally on a rejected promise shouldn't succeed");
 				done();
 			}, function(v) {
-				assert.equal(v, "Y", "finally callback did not modify rejection reason");
+				assert.equal(v, "Y", "finally callback should not modify rejection reason");
+				done();
+			});
+		});
+
+		QUnit.test("promise.finally on resolved promise w/o callback", function(assert) {
+			var done = assert.async();
+			var p = asyncAction(false, "X", 10);
+			assert.expect(3);
+			var r = p.finally();
+			assert.ok(r instanceof P, "finally should return a promise");
+			assert.notStrictEqual(r, p, "finally should return a new promise");
+			r.then(function(v) {
+				assert.equal(v, "X", "finally w/o callback should not modify fulfillment");
+				done();
+			}, function(v) {
+				assert.ok(false, "promise returned by finally on a resolved promise shouldn't fail");
+				done();
+			});
+		});
+
+		QUnit.test("promise.finally on rejected promise w/o callback", function(assert) {
+			var done = assert.async();
+			assert.expect(3);
+			var p = asyncAction(true, "Y", 10);
+			var r = p.finally();
+			assert.ok(r instanceof P, "finally should return a promise");
+			assert.notStrictEqual(r, p, "finally should return a new promise");
+			r.then(function(v) {
+				assert.ok(false, "promise returned by finally on a rejected promise shouldn't succeed");
+				done();
+			}, function(v) {
+				assert.equal(v, "Y", "finally w/o callback should not modify rejection reason");
 				done();
 			});
 		});
