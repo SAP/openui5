@@ -540,7 +540,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Filter
 		function fnSuccess(oData) {
 
 			// update iLength (only when the inline count was requested and is available)
-			if (bInlineCountRequested && oData.__count) {
+			if (bInlineCountRequested && oData.__count !== undefined) {
 				that.iLength = parseInt(oData.__count, 10);
 				that.bLengthFinal = true;
 
