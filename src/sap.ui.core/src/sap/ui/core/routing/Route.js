@@ -68,9 +68,7 @@ sap.ui.define([
 			constructor : function(oRouter, oConfig, oParent) {
 				EventProvider.apply(this, arguments);
 
-				if (!oConfig.name) {
-					Log.error("A name has to be specified for every route", this);
-				}
+				this._validateConfig(oConfig);
 
 				this._aPattern = [];
 				this._aRoutes = [];
@@ -121,9 +119,12 @@ sap.ui.define([
 
 
 				if (!oConfig.target) {
-					oConfig._async = async;
+					// make a copy of the config object because Target changes
+					// the object internally
+					var oTargetConfig = this._convertToTargetOptions(oConfig);
+					oTargetConfig._async = async;
 					// create a new target for this route
-					this._oTarget = new Target(oConfig, oRouter._oViews, oParent && oParent._oTarget);
+					this._oTarget = new Target(oTargetConfig, oRouter._oViews, oParent && oParent._oTarget);
 					this._oTarget._bUseRawViewId = true;
 				}
 
@@ -388,6 +389,16 @@ sap.ui.define([
 			 */
 			detachPatternMatched : function(fnFunction, oListener) {
 				return this.detachEvent("patternMatched", fnFunction, oListener);
+			},
+
+			_validateConfig: function(oConfig) {
+				if (!oConfig.name) {
+					Log.error("A name has to be specified for every route", this);
+				}
+
+				if (oConfig.viewName) {
+					Log.error("The 'viewName' option shouldn't be used in Route. please use 'view' instead", this);
+				}
 			},
 
 			_convertToTargetOptions: function (oOptions) {
