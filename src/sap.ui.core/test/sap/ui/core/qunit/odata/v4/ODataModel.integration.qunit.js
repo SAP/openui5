@@ -1158,6 +1158,67 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Refresh a single row with a bound message and check that the message is not duplicated.
+	QUnit.test("Context#refresh() with messages", function (assert) {
+		var sView = '\
+<Table id="table"\
+		items="{\
+			path : \'/EMPLOYEES\',\
+			parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}\
+		}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text text="{ID}" />\
+	</ColumnListItem>\
+</Table>',
+			oModelMessage = {
+				"code" : "1",
+				"message" : "Text",
+				"persistent" : false,
+				"target" : "/EMPLOYEES('0')/ID",
+				"type" : "Warning"
+			},
+			oResponseMessage = {
+				"code" : "1",
+				"message" : "Text",
+				"transition" : false,
+				"target" : "ID",
+				"numericSeverity" : 3
+			},
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$select=ID,__CT__FAKE__Message/__FAKE__Messages"
+					+ "&$skip=0&$top=100", {
+				"value" : [{
+					"ID" : "0",
+					"__CT__FAKE__Message" : {
+						"__FAKE__Messages" : [oResponseMessage]
+					}
+				}]
+			})
+			.expectMessages([oModelMessage]);
+
+		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
+			.then(function () {
+				var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+
+				that.expectRequest("EMPLOYEES('0')"
+							+ "?$select=ID,__CT__FAKE__Message/__FAKE__Messages", {
+						"ID" : "0",
+						"__CT__FAKE__Message" : {
+							"__FAKE__Messages" : [oResponseMessage]
+						}
+					})
+					.expectMessages([oModelMessage]);
+
+				// code under test
+				oContext.refresh();
+
+				return that.waitForChanges(assert);
+			});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Refreshing a single entry of a table must not cause "failed to drill-down" errors
 	// if data of a dependent binding has been deleted in between.
 	// This scenario is similar to the deletion of a sales order line item in the SalesOrders

@@ -1434,7 +1434,7 @@ sap.ui.define([
 			var oElement = aResult[0];
 			// _Helper.updateExisting cannot be used because navigation properties cannot be handled
 			that.aElements[iIndex] = that.aElements.$byPredicate[sPredicate] = oElement;
-			that.visitResponse(oElement, aResult[1]);
+			that.visitResponse(oElement, aResult[1], false, that.sMetapath, sPredicate);
 		});
 
 		this.bSentReadRequest = true;
@@ -1512,7 +1512,8 @@ sap.ui.define([
 						// _Helper.updateExisting cannot be used because navigation properties
 						// cannot be handled
 						that.aElements[iIndex] = that.aElements.$byPredicate[sPredicate] = oResult;
-						that.visitResponse(oResult, mTypeForMetaPath);
+						that.visitResponse(oResult, mTypeForMetaPath, false, that.sMetapath,
+							sPredicate);
 					}
 				});
 		});
