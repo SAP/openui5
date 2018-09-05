@@ -24,6 +24,24 @@
 	display: table-cell;
 }
 
+.sapUiForm:not(.sapUiFormEdit-CTX) .sapMCb.sapMCbDisplayOnly {
+	height: 1.125rem;
+	line-height: 1.125rem;
+
+	&:not(.sapMCbBgDis) {
+		padding-left: 1.625rem;
+	}
+
+	.sapMCbBg {
+		top: 0;
+		margin: 0;
+	}
+	&.sapMCbWrapped.sapMCbHasLabel > .sapMLabel.sapMLabelWrapped {
+		margin: 0;
+		line-height: 1.125rem;
+	}
+}
+
 .sapMCb.sapMCbWrapped.sapMCbHasLabel {
 	height: auto;
 	> .sapMLabel.sapMLabelWrapped {
@@ -189,6 +207,14 @@ html[data-sap-ui-browser^=ff] .sapMCbBg > input {
 
 	.sapMLIBSelectM > .sapMCb {
 		width: 2rem;
+	}
+
+	.sapUiForm:not(.sapUiFormEdit-CTX) .sapMCb.sapMCbDisplayOnly .sapMCbBg {
+		top: 0.1875rem;
+	}
+
+	.sapMCb.sapMCbDisplayOnly:not(.sapMCbBgDis) {
+		padding-left: 2rem;
 	}
 }
 
