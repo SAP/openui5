@@ -364,7 +364,7 @@ sap.ui.define([
 		var oFakeResponse = {
 			response: {}
 		};
-
+		LrepConnector._oLoadSettingsPromise = undefined;
 		var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
 
 		return this.oLrepConnector.loadSettings().then(function() {
@@ -380,7 +380,7 @@ sap.ui.define([
 		var oError = {
 			code: 404
 		};
-
+		LrepConnector._oLoadSettingsPromise = undefined;
 		var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.reject(oError));
 
 		return this.oLrepConnector.loadSettings().then(function() {
@@ -393,12 +393,31 @@ sap.ui.define([
 		var oError = {
 			code: 403
 		};
-
+		LrepConnector._oLoadSettingsPromise = undefined;
 		var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.reject(oError));
 
 		return this.oLrepConnector.loadSettings().then(function() {
 			assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
 			assert.equal(LrepConnector._bServiceAvailability, undefined, "service availability flag is undefined");
+		});
+	});
+
+	QUnit.test("loadSettings request is cached", function(assert) {
+		var oSetting = {
+			isKeyUser : "true"
+		};
+		var oResponse = {
+			response : oSetting
+		};
+		LrepConnector._oLoadSettingsPromise = undefined;
+		var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.resolve(oResponse));
+
+		return Promise.all([this.oLrepConnector.loadSettings(), this.oLrepConnector.loadSettings(), this.oLrepConnector.loadSettings()]).then(function(oSettings){
+			assert.equal(oSendStub.callCount, 1, "the backend request was triggered only one");
+			assert.notEqual(LrepConnector._oLoadSettingsPromise, undefined, "loadSettings promise was saved");
+			assert.deepEqual(oSettings[0], oSetting, "settings content is correct in the first request");
+			assert.deepEqual(oSettings[1], oSetting, "settings content is correct in the second request");
+			assert.deepEqual(oSettings[2], oSetting, "settings content is correct in the third request");
 		});
 	});
 
