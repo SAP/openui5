@@ -119,7 +119,7 @@ sap.ui.define([
 
 	WizardStep.prototype.init = function () {
 		this._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		this._oNextButton = new Button({
+		this._oNextButton = new Button(this.getId() + "-nextButton", {
 			text: this._resourceBundle.getText("WIZARD_STEP") + 2,
 			type: "Emphasized",
 			enabled: this.getValidated(),
