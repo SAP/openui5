@@ -169,7 +169,11 @@ function (
 							type: "boolean"
 						}
 					}
-				}
+				},
+				/**
+				 * Event fired before geometryChanged event is fired
+				 */
+				beforeGeometryChanged : {}
 			}
 		},
 		constructor: function () {
@@ -551,6 +555,8 @@ function (
 	 * @public
 	 */
 	Overlay.prototype.applyStyles = function (bForceScrollbarSync) {
+		this.fireBeforeGeometryChanged();
+
 		if (!this.isRendered()) {
 			return;
 		}

@@ -140,6 +140,7 @@ sap.ui.define([
 								if (bIgnore) {
 									// check if ignore property is set to true - remove from metadata object, if present
 									delete mFilteredMetadataObject[sKey];
+									return mFiltered;
 								} else if (!mFilteredMetadataObject[sKey]) {
 									//  if not available in control metadata
 									// virtual properties
@@ -156,6 +157,7 @@ sap.ui.define([
 										Object.assign(
 											mFiltered[sKey],
 											mBindingInfo && {binding: mBindingInfo},
+											// _getResolvedFunction
 											mDtObj[sKey].possibleValues && {possibleValues: mDtObj[sKey].possibleValues}
 										);
 									} else {
