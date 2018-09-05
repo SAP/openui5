@@ -428,7 +428,7 @@ sap.ui.define([
 	 * @param {object} [mAlias2MeasureAndMethod]
 	 *   A map of the virtual property names to the corresponding measure property names and the
 	 *   aggregation functions, for example:
-	 *   <code> UI5min__Property : {measure : Property, method : min} </code>
+	 *   <code> UI5min__Property : {measure : "Property", method : "min"} </code>
 	 * @param {function} [fnMeasureRangeResolve]
 	 *   Function to resolve the measure range promise, see {@link #getMeasureRangePromise}
 	 * @param {function} fnHandleResponse
@@ -473,7 +473,12 @@ sap.ui.define([
 					oResult.value.shift();
 				}
 			}
-			if (iStart === 0) { // grand total row: add empty dimensions
+			if (iStart === 0) { // grand total row: rename measures, add empty dimensions
+				Object.keys(oMinMaxElement).forEach(function (sKey) {
+					if (sKey.startsWith("UI5grand__")) {
+						oMinMaxElement[sKey.slice(10)] = oMinMaxElement[sKey];
+					}
+				});
 				Object.keys(oAggregation.group).forEach(function (sGroup) {
 					oMinMaxElement[sGroup] = null;
 				});

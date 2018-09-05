@@ -54,14 +54,14 @@
 			parameters : {
 				$$aggregation : {
 					aggregate : {
-						SalesNumber : {grandTotal : true}
+						SalesNumberSum : {grandTotal : true, name : 'SalesNumber', with : 'sum'}
 					},
 					group : {
 						Region : {}
 					}
 				},
 				$count : true,
-				$filter : 'SalesNumber gt 0',
+				$filter : 'SalesNumberSum gt 0',
 				$orderby : 'Region desc'
 			}}" selectionMode="None" threshold="0" visibleRowCount="5">
 		<table:extension>
@@ -78,8 +78,12 @@
 		<table:Column template="Region">
 			<Label text="Region"/>
 		</table:Column>
-		<table:Column hAlign="End" template="SalesNumber">
+		<table:Column hAlign="End">
 			<Label text="Sales Number"/>
+			<table:template>
+				<!-- TODO derive type from SalesNumberSum@odata.type : "#Decimal" -->
+				<Text text="{path : 'SalesNumberSum', type : 'sap.ui.model.odata.type.Decimal'}" />
+			</table:template>
 		</table:Column>
 	</table:Table>
 </mvc:View>

@@ -163,6 +163,18 @@ sap.ui.define([
 	}, {
 		oAggregation : {
 			aggregate : {
+				SalesNumberSum : {grandTotal : true, name : "SalesNumber", "with" : "sum"}
+			},
+			group : {
+				Region : {}
+			}
+		},
+		sApply : "groupby((Region),aggregate(SalesNumber with sum as SalesNumberSum))"
+			+ "/concat(aggregate(SalesNumberSum with sum as UI5grand__SalesNumberSum)"
+			+ ",identity)"
+	}, {
+		oAggregation : {
+			aggregate : {
 				Amount : {max : true}
 			},
 			group : {

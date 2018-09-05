@@ -526,7 +526,8 @@ sap.ui.define([
 		QUnit.test(sTitle, function (assert) {
 			var oAggregation = {
 					aggregate : {
-						SalesNumber : {grandTotal : true}
+						SalesNumber : {grandTotal : true},
+						SalesNumberSum : {grandTotal : true, name : "SalesNumber", "with" : "sum"}
 					},
 					group : {
 						Country : {},
@@ -535,19 +536,34 @@ sap.ui.define([
 					},
 					groupLevels : [] // Note: added by _AggregationHelper.buildApply before
 				},
+				oExpected = {},
 				oFirstLevelCache = {
 					handleResponse : _AggregationCache.handleResponse
 				},
 				fnHandleResponse = sinon.stub(),
 				oResult = { /*GET response*/
-					value : [
-						bCount ? {"UI5__count": "26", "UI5__count@odata.type": "#Decimal"} : {},
-						{}
-					]
+					value : [{
+						"@odata.id" : null,
+						"UI5grand__SalesNumberSum" : 351,
+						"UI5grand__SalesNumberSum@odata.type" : "#Decimal"
+					}, {
+					}]
 				},
 				mTypeForMetaPath = {/*fetchTypes result*/},
 				iStart = 0,
 				iEnd = 10;
+
+			if (bCount) {
+				oResult.value[0]["UI5__count"] = "26";
+				oResult.value[0]["UI5__count@odata.type"] = "#Decimal";
+			}
+			jQuery.extend(oExpected, oResult.value[0], {
+				Country : null, // avoid "Failed to drill-down"
+				Region : null, // avoid "Failed to drill-down"
+				SalesNumberSum : 351,
+				"SalesNumberSum@odata.type" : "#Decimal",
+				Segment : null // avoid "Failed to drill-down"
+			});
 
 			// code under test
 			_AggregationCache.handleResponse.call(oFirstLevelCache, oAggregation, null, null,
@@ -569,9 +585,7 @@ sap.ui.define([
 				assert.notOk("@odata.count" in oResult, "@odata.count");
 			}
 			assert.strictEqual(oResult.value.length, 2, "data still includes grand total row");
-			assert.strictEqual(oResult.value[0].Country, null, "avoid 'Failed to drill-down'");
-			assert.strictEqual(oResult.value[0].Region, null, "avoid 'Failed to drill-down'");
-			assert.strictEqual(oResult.value[0].Segment, null, "avoid 'Failed to drill-down'");
+			assert.deepEqual(oResult.value[0], oExpected);
 		});
 	});
 
