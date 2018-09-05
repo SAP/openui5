@@ -1,12 +1,12 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
-	"sap/ui/test/matchers/Properties",
+sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
-	"sap/ui/test/TestUtils"
-], function (Properties, Opa5, opaTest, TestUtils) {
+	"sap/ui/test/TestUtils",
+	"sap/ui/test/matchers/Properties"
+], function (Opa5, opaTest, TestUtils, Properties) {
 	/*global QUnit */
 	"use strict";
 

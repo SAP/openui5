@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<!--
+  Tested sap.ui.core.util.Popup
+-->
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+	<script src="../../../../../../resources/sap/ui/test/starter/runTest.js"
+			data-sap-ui-testsuite="test-resources/sap/ui/core/qunit/util/testsuite.util.qunit"
+			data-sap-ui-test="Popup"></script>
+
+	<!-- Test assumes that the baseURI is test-resources/sap/ui/core/qunit/util -->
+	<base href="./" >
+
+	<title>sap.ui.core.Popup</title>
+	<link href="static/popup.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+	<button id="focusableElement">Focusable Button</button>
+	<input id="focusableElement2">
+
+	<div id="popup" tabindex="0">
+		This is a plain-HTML popup with two focusable child elements
+		<div id="popupcontent" tabindex="0">Child 1</div>
+		<div id="secondpopupcontent" tabindex="0">Child 2</div>
+	</div>
+
+	<div id="popup1" tabindex="0">
+		<button id="popup1-btn">Open Popup</button>
+	</div>
+
+	<div id="popup2" tabindex="0">
+		<button id="popup2-btn">Button</button>
+	</div>
+
+	<div id="uiarea" />
+</body>
+</html>
