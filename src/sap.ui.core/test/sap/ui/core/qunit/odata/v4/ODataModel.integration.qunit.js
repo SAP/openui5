@@ -6577,6 +6577,7 @@ sap.ui.define([
 		parameters : {\
 			$$aggregation : {\
 				aggregate : {\
+					SalesNumber : {},\
 					SalesNumberSum : {grandTotal : true, name : \'SalesNumber\', with : \'sum\'}\
 				},\
 				group : {\
@@ -6593,13 +6594,18 @@ sap.ui.define([
 	</t:Column>\
 	<t:Column>\
 		<t:template>\
+			<Text id="salesNumber" text="{SalesNumber}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
 			<Text id="salesNumberSum" text="{= %{SalesNumberSum} }" />\
 		</t:template>\
 	</t:Column>\
 </t:Table>';
 
 		this.expectRequest("BusinessPartners?$apply=groupby((Region)"
-				+ ",aggregate(SalesNumber%20with%20sum%20as%20SalesNumberSum))"
+				+ ",aggregate(SalesNumber,SalesNumber%20with%20sum%20as%20SalesNumberSum))"
 				+ "/filter(SalesNumberSum%20gt%200)/orderby(SalesNumberSum%20asc)"
 				+ "/concat(aggregate(SalesNumberSum%20with%20sum%20as%20"
 				+ "UI5grand__SalesNumberSum),top(4))", {
@@ -6608,13 +6614,14 @@ sap.ui.define([
 						//TODO this should be used by auto type detection
 						"UI5grand__SalesNumberSum@odata.type" : "#Decimal"
 					},
-					{"Region" : "Z", "SalesNumberSum" : 1},
-					{"Region" : "Y", "SalesNumberSum" : 2},
-					{"Region" : "X", "SalesNumberSum" : 3},
-					{"Region" : "W", "SalesNumberSum" : 4}
+					{"Region" : "Z", "SalesNumber" : 1, "SalesNumberSum" : 1},
+					{"Region" : "Y", "SalesNumber" : 2, "SalesNumberSum" : 2},
+					{"Region" : "X", "SalesNumber" : 3, "SalesNumberSum" : 3},
+					{"Region" : "W", "SalesNumber" : 4, "SalesNumberSum" : 4}
 				]
 			})
 			.expectChange("region", ["", "Z", "Y", "X", "W"])
+			.expectChange("salesNumber", [null, "1", "2", "3", "4"])
 			.expectChange("salesNumberSum", [351, 1, 2, 3, 4]);
 
 		return this.createView(assert, sView, createBusinessPartnerTestModel());

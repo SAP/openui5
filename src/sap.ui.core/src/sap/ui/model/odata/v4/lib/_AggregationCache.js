@@ -479,6 +479,10 @@ sap.ui.define([
 						oMinMaxElement[sKey.slice(10)] = oMinMaxElement[sKey];
 					}
 				});
+				// avoid "Failed to drill-down" for missing properties
+				Object.keys(oAggregation.aggregate).forEach(function (sAggregate) {
+					oMinMaxElement[sAggregate] = oMinMaxElement[sAggregate] || null;
+				});
 				Object.keys(oAggregation.group).forEach(function (sGroup) {
 					oMinMaxElement[sGroup] = null;
 				});
