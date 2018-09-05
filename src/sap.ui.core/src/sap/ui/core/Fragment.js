@@ -369,10 +369,13 @@ function(
 
 		mParameters.type = mParameters.type || "XML";
 
-		// map new parameter names to classic API
+		// map new parameter names to classic API, delete new names to avoid assertion failures
 		mParameters.fragmentName = mParameters.name;
 		mParameters.fragmentContent = mParameters.definition;
 		mParameters.oController = mParameters.controller;
+		delete mParameters.name;
+		delete mParameters.definition;
+		delete mParameters.controller;
 
 		return Promise.resolve(fragmentFactory(mParameters));
 	};
