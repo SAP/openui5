@@ -1181,37 +1181,56 @@ sap.ui.define([
 		 *
 		 * @param {any} vInitialValue - value on resolve FakePromise
 		 * @param {any} vError - value on reject FakePromise
+		 * @param {string} sInitialPromiseIdentifier - value identifies previous promise in chain. If the identifier is passed to the function and don't match with the FakePromiseIdentifier then native Promise execution is used for further processing
 		 * @returns {sap.ui.fl.Utils.FakePromise|Promise} Returns instantiated FakePromise only if no Promise is passed by value parameter
 		 */
-		FakePromise : function(vInitialValue, vError) {
+		FakePromise : function(vInitialValue, vError, sInitialPromiseIdentifier) {
+			Utils.FakePromise.fakePromiseIdentifier = "sap.ui.fl.Utils.FakePromise";
 			this.vValue = vInitialValue;
 			this.vError = vError;
+			this.sInitialPromiseIdentifier = sInitialPromiseIdentifier;
+			this.bContinueWithFakePromise = arguments.length < 3 || (this.sInitialPromiseIdentifier === Utils.FakePromise.fakePromiseIdentifier);
 			Utils.FakePromise.prototype.then = function(fn) {
+				if (!this.bContinueWithFakePromise) {
+					return Promise.resolve(fn(this.vValue));
+				}
 				if (!this.vError) {
 					try {
-						this.vValue = fn(this.vValue, true);
+						this.vValue = fn(this.vValue, Utils.FakePromise.fakePromiseIdentifier);
 					} catch (oError) {
 						this.vError = oError;
 						this.vValue = null;
 						return this;
 					}
-					if (this.vValue instanceof Promise) {
+					if (this.vValue instanceof Promise ||
+						this.vValue instanceof Utils.FakePromise) {
 						return this.vValue;
 					}
 				}
 				return this;
 			};
 			Utils.FakePromise.prototype.catch = function(fn) {
+				if (!this.bContinueWithFakePromise) {
+					return Promise.reject(fn(this.vError));
+				}
 				if (this.vError) {
-					this.vValue = fn(this.vError, true);
+					try {
+						this.vValue = fn(this.vError, Utils.FakePromise.fakePromiseIdentifier);
+					} catch (oError) {
+						this.vError = oError;
+						this.vValue = null;
+						return this;
+					}
 					this.vError = null;
-					if (this.vValue instanceof Promise) {
+					if (this.vValue instanceof Promise ||
+						this.vValue instanceof Utils.FakePromise) {
 						return this.vValue;
 					}
 				}
 				return this;
 			};
-			if (this.vValue instanceof Promise) {
+			if (this.vValue instanceof Promise ||
+				this.vValue instanceof Utils.FakePromise) {
 				return this.vValue;
 			}
 		},
