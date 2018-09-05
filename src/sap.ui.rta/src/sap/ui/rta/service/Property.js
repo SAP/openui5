@@ -114,7 +114,11 @@ sap.ui.define([
 						virtual: false,
 						type: mMetadataObj[sKey].type,
 						name: mMetadataObj[sKey].name,
-						ignore: false
+						ignore: false,
+						group: mMetadataObj[sKey].group,
+						deprecated: mMetadataObj[sKey].deprecated,
+						defaultValue: mMetadataObj[sKey].defaultValue,
+						visibility: mMetadataObj[sKey].visibility
 					};
 					var mBindingInfo = oProperty._getBindingInfo(sKey, oElement);
 					Object.assign(
@@ -129,47 +133,35 @@ sap.ui.define([
 					.map(function (sKey) {
 						return oProperty._getResolvedFunction(mDtObj[sKey].ignore, oElement)
 							.then(function (bIgnore) {
-								var mFiltered = {};
+
 								if (typeof bIgnore !== "boolean" || typeof bIgnore === "undefined") {
 									throw DtUtil.createError(
 										"services.Property#get",
 										"Invalid ignore property value found in designtime for element with id " + oElement.getId() + " .", "sap.ui.rta"
 									);
 								}
+
 								// ensure ignore function is replaced by a boolean value
 								if (bIgnore) {
 									// check if ignore property is set to true - remove from metadata object, if present
 									delete mFilteredMetadataObject[sKey];
-									return mFiltered;
 								} else if (!mFilteredMetadataObject[sKey]) {
 									//  if not available in control metadata
-									// virtual properties
 									if (mDtObj[sKey].virtual === true) {
-										// evaluate if virtual - not found in metadata object
-										mFiltered[sKey] = {
-											value: mDtObj[sKey].get(oElement),
-											virtual: true,
-											type: mDtObj[sKey].type,
-											name: mDtObj[sKey].name,
-											ignore: bIgnore
-										};
-										var mBindingInfo = oProperty._getBindingInfo(sKey, oElement);
-										Object.assign(
-											mFiltered[sKey],
-											mBindingInfo && {binding: mBindingInfo},
-											// _getResolvedFunction
-											mDtObj[sKey].possibleValues && {possibleValues: mDtObj[sKey].possibleValues}
-										);
+										// virtual properties
+										return oProperty._getEvaluatedVirtualProperty(mDtObj, sKey, oElement);
 									} else {
 										// dt-metadata properties
-										mFiltered[sKey] = {
+										var mEvaluatedProperty = {};
+										mEvaluatedProperty[sKey] = {
 											value: mDtObj[sKey],
 											virtual: false,
 											ignore: bIgnore
 										};
+										return mEvaluatedProperty;
 									}
 								}
-								return mFiltered;
+								return {};
 							});
 					})
 			)
@@ -177,6 +169,43 @@ sap.ui.define([
 					return aFilteredResults.reduce(function (mConsolidatedObject, oFilteredResult) {
 						return Object.assign(mConsolidatedObject, oFilteredResult);
 					}, mFilteredMetadataObject);
+				});
+		};
+
+		/**
+		 * Returns evaluated virtual property for direct consumption by the service
+		 *
+		 * @param {object} mDtObj - dt-metadata properties object
+		 * @param {object} sPropertyName - virtual property name
+		 * @param {sap.ui.core.Element} oElement - element for which the virtual property needs to be evaluated
+		 *
+		 * @return {Promise} promise resolving to the evaluated virtual property object
+		 * @private
+		 */
+		oProperty._getEvaluatedVirtualProperty = function(mDtObj, sPropertyName, oElement) {
+			var mEvaluatedProperty = {};
+			// evaluate if virtual - not found in metadata object
+			mEvaluatedProperty[sPropertyName] = {
+				value: mDtObj[sPropertyName].get(oElement),
+				virtual: true,
+				type: mDtObj[sPropertyName].type,
+				name: mDtObj[sPropertyName].name,
+				group: mDtObj[sPropertyName].group,
+				ignore: false
+			};
+			var mBindingInfo = oProperty._getBindingInfo(sPropertyName, oElement);
+
+			// evaluate possibleValues
+			return oProperty._getResolvedFunction(mDtObj[sPropertyName].possibleValues, oElement)
+				.then(function(vPossibleValues) {
+
+					Object.assign(
+						mEvaluatedProperty[sPropertyName],
+						mBindingInfo && {binding: mBindingInfo},
+						vPossibleValues && {possibleValues: vPossibleValues}
+					);
+
+					return mEvaluatedProperty;
 				});
 		};
 
@@ -318,12 +347,9 @@ sap.ui.define([
 		 */
 		oProperty._getResolvedFunction = function (vProperty, oElement) {
 			return DtUtil.wrapIntoPromise(function () {
-				if (typeof vProperty === "function") {
-					return vProperty(oElement);
-				} else if (typeof vProperty === "boolean" || typeof vProperty === "string") {
-					return vProperty;
-				}
-				return false;
+				return typeof vProperty === "function"
+					? vProperty(oElement) // could return a promise
+					: (vProperty || false);
 			})(vProperty, oElement);
 		};
 
