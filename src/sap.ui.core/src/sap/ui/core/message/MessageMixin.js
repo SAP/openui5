@@ -22,6 +22,8 @@ sap.ui.define(["sap/ui/core/library", "sap/base/Log"], function(library, Log) {
 	 */
 	var MessageMixin = function () {
 		this.refreshDataState = refreshDataState;
+		this.fnDestroy = this.destroy;
+		this.destroy = destroy;
 	};
 
 	/**
@@ -54,7 +56,7 @@ sap.ui.define(["sap/ui/core/library", "sap/base/Log"], function(library, Log) {
 					}
 				}
 				if (oMessage.getControlId() !== this.getId()){
-					oMessage.setControlId(this.getId());
+					oMessage.addControlId(this.getId());
 					bForceUpdate = true;
 				}
 			}.bind(this));
@@ -75,6 +77,23 @@ sap.ui.define(["sap/ui/core/library", "sap/base/Log"], function(library, Log) {
 				this.setValueStateText('');
 			}
 		}
+	}
+
+	function destroy() {
+		//Remove control id from messages
+		var sControlId = this.getId();
+		function removeControlID(oMessage) {
+			oMessage.removeControlId(sControlId);
+		}
+		for (var sName in this.mBindingInfos) {
+			var oBindingInfo = this.mBindingInfos[sName];
+			if (oBindingInfo.binding) {
+				var oDataState = oBindingInfo.binding.getDataState();
+				var aMessages = oDataState.getMessages();
+				aMessages.forEach(removeControlID);
+			}
+		}
+		this.fnDestroy.apply(this, arguments);
 	}
 
 	return MessageMixin;

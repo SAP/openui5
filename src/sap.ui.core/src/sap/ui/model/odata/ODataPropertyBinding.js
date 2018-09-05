@@ -149,7 +149,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.checkDataState = function(mPaths) {
-		var sCanonicalPath = this.oModel.resolve(this.sPath, this.oContext, true);
+		var sCanonicalPath = this.oModel.resolve(this.sPath, this.oContext, true)
+								|| this.oModel.resolve(this.sPath, this.oContext);
 
 		if (!mPaths || sCanonicalPath && sCanonicalPath in mPaths) {
 			var oDataState = this.getDataState();
