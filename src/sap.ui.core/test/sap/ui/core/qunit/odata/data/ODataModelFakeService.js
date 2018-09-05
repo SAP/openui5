@@ -191,6 +191,8 @@ sap.ui.define([], function() {
           [200, oCountHeaders, "6"],
         "Categories?$skip=0&$top=100&$filter=not%20startswith(CategoryName,%27C%27)&$select=CategoryName":
           [200, oJSONHeaders, sCategoriesNotFilter1JSON],
+         "Categories?$skip=1&$top=5&search=foo&$inlinecount=allpages":
+          [200, oJSONHeaders, sCategoriesZeroCount],
         "Categories/$count?$filter=not%20endswith(CategoryName,%27s%27)":
           [200, oCountHeaders, "3"],
         "Categories?$skip=0&$top=100&$filter=not%20endswith(CategoryName,%27s%27)&$select=CategoryName":
@@ -9338,5 +9340,13 @@ sap.ui.define([], function() {
   ]\
   }\
 }';
+
+  var sCategoriesZeroCount = "{" +
+	"\"d\" : {" +
+		"\"results\": []," +
+		"\"__count\": 0" +
+	"}" +
+ "}";
+
   return ofakeService;
 });
