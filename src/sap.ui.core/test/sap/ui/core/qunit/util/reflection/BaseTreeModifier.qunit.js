@@ -1,29 +1,22 @@
-/*global QUnit*/
+/* global QUnit, sinon*/
 
-QUnit.config.autostart = false;
-sap.ui.require([
+sap.ui.define([
 	'sap/ui/core/util/reflection/BaseTreeModifier',
 	'sap/ui/core/util/reflection/JsControlTreeModifier',
 	'sap/ui/core/util/reflection/XmlTreeModifier',
 	'sap/ui/core/Control',
-	'sap/ui/core/UIComponent',
-	// should be last:
-	'sap/ui/thirdparty/sinon'
+	'sap/ui/core/UIComponent'
 ],
 function(
 	BaseTreeModifier,
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	Control,
-	UIComponent,
-	sinon
+	UIComponent
 ) {
-
 	"use strict";
-	QUnit.start();
-	var sandbox = sinon.sandbox.create();
 
-	sap.ui.loader.config({paths:{"sap/ui/test":"../../component/testdata"}});
+	var sandbox = sinon.sandbox.create();
 
 	var XML_VIEW =	'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:form="sap.ui.layout.form">' +
 	'<form:SimpleForm id="testComponent---myView--myForm">' +

@@ -1,12 +1,4 @@
 /* global QUnit */
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-
-// Restrict coverage to sap/ui/core/util/reflection/
-if (window.blanket){
-	window.blanket.options("sap-ui-cover-only", "[sap/ui/core/util/reflection/]");
-}
-QUnit.config.autostart = false;
-
 sap.ui.define([
 	'sap/ui/core/util/reflection/XmlTreeModifier'
 ],
@@ -22,7 +14,6 @@ function(
 			this.TEXT_ID = "textId";
 			this.CHANGE_HANDLER_PATH = "path/to/changehandler/definition";
 
-			sap.ui.loader.config({paths: {"sap/ui/test": "../../component/testdata"}});
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "sap.ui.test.other",
 				id: "testComponent"
@@ -406,5 +397,4 @@ function(
 		assert.ok(XmlTreeModifier.getBindingTemplate(oHBox, "items"), "then content inside item is returned");
 	});
 
-	QUnit.start();
 });
