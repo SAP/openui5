@@ -244,6 +244,8 @@ xhr.onCreate = function(request) {
 				[200, oJSONHeaders, sCategorySelectJSON],
 			"Categories?$skip=0&$top=100&$select=CategoryName":
 				[200, oJSONHeaders, sCategorySelectJSON],
+			"Categories?$skip=1&$top=5&search=foo&$inlinecount=allpages":
+				[200, oJSONHeaders, sCategoriesZeroCount],
 			"Categories(1)?$select=CategoryID":
 				[200, oJSONHeaders, sCategorySelect2JSON],
 			"Categories(1)?$expand=Products":
@@ -9150,3 +9152,10 @@ var sCategories1ProductsFilterChai = '{\
 ]\
 }\
 }';
+
+var sCategoriesZeroCount = "{" +
+"\"d\" : {" +
+	"\"results\": []," +
+	"\"__count\": 0" +
+"}" +
+"}";
