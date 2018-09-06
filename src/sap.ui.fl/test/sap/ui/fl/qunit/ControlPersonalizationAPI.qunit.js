@@ -50,7 +50,7 @@ sap.ui.define([
 	};
 
 	var fnCheckActivateVariantErrorResponse = function (assert, sExpectedError, sReceivedError) {
-		assert.equal(sExpectedError, sReceivedError, "then Promise.reject() with the appropriate error message returned");
+		assert.equal(sReceivedError, sExpectedError, "then Promise.reject() with the appropriate error message returned");
 		assert.equal(this.oModel.updateCurrentVariant.callCount, 0, "then variantModel.updateCurrentVariant not called");
 	};
 
@@ -178,7 +178,7 @@ sap.ui.define([
 			return ControlPersonalizationAPI.activateVariant(this.oComponent, "variantInvalid")
 			.then(function() {},
 				function (oError) {
-					fnCheckActivateVariantErrorResponse.call(this, assert, "A valid control or component, and variant id combination is required", oError.message);
+					fnCheckActivateVariantErrorResponse.call(this, assert, "A valid control or component, and a valid variant/ID combination are required", oError.message);
 				}.bind(this)
 			);
 		});
@@ -189,7 +189,7 @@ sap.ui.define([
 			return ControlPersonalizationAPI.activateVariant({}, "variant1")
 			.then(function() {},
 				function (oError) {
-					fnCheckActivateVariantErrorResponse.call(this, assert, "A valid variant management control or component (instance or id) should be passed as parameter", oError.message);
+					fnCheckActivateVariantErrorResponse.call(this, assert, "A valid variant management control or component (instance or ID) should be passed as parameter", oError.message);
 				}.bind(this)
 			);
 		});
@@ -200,7 +200,7 @@ sap.ui.define([
 			return ControlPersonalizationAPI.activateVariant("invalidId", "variant1")
 			.then(function() {},
 				function (oError) {
-					fnCheckActivateVariantErrorResponse.call(this, assert, "A valid component or control cannot be found for the provided Id", oError.message);
+					fnCheckActivateVariantErrorResponse.call(this, assert, "No valid component or control found for the provided ID", oError.message);
 				}.bind(this)
 			);
 		});

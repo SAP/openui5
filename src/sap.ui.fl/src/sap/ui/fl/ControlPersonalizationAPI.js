@@ -37,15 +37,15 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Object containing attributes of a change, along with the control on which this change should be applied.
+	 * Object containing attributes of a change, along with the control to which this change should be applied.
 	 *
 	 * @typedef {object} sap.ui.fl.ControlPersonalizationAPI.addPersonalizationChange
 	 * @since 1.56
 	 * @private
 	 * @ui5-restricted
-	 * @property {sap.ui.core.Control} selectorControl - The control object to be used as selector for the change
-	 * @property {object} changeSpecificData - The map of change-specific data to perform a flex change
-	 * @property {string} changeSpecificData.changeType - The change type for which a change handler is registered
+	 * @property {sap.ui.core.Control} selectorControl The control object to be used as selector for the change
+	 * @property {object} changeSpecificData The map of change-specific data to perform a flex change
+	 * @property {string} changeSpecificData.changeType The change type for which a change handler is registered
 	 */
 
 	var VARIANT_TECHNICAL_PARAMETER_NAME = "sap-ui-fl-control-variant-id";
@@ -55,7 +55,7 @@ sap.ui.define([
 		/**
 		 * Returns a map of parameters used in public functions.
 		 *
-		 * @param {sap.ui.core.Element} oControl - The control for which a variant management control has to be evaluated
+		 * @param {sap.ui.core.Element} oControl The control for which a variant management control has to be evaluated
 		 * @returns {object} Returns a map with needed parameters
 		 * @private
 		 */
@@ -93,9 +93,9 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the local id of the encompassing variant management control.
+		 * Returns the local ID of the encompassing variant management control.
 		 *
-		 * @param {sap.ui.core.Element} oControl - The control for which a variant management control has to be evaluated
+		 * @param {sap.ui.core.Element} oControl The control for which a variant management control has to be evaluated
 		 * @returns {object} Returns a map with needed parameters
 		 * @private
 		 */
@@ -117,7 +117,7 @@ sap.ui.define([
 		/**
 		 *
 		 * Clears URL technical parameter 'sap-ui-fl-control-variant-id' for control variants.
-		 * If a variant management control is given as parameter, only that control specific parameters are cleared.
+		 * If a variant management control is given as parameter, only parameters specific to that control are cleared.
 		 *
 		 * @param {sap.ui.base.ManagedObject} [oVariantManagementControl] The variant management control for which URL technical parameter has to be cleared
 		 *
@@ -156,9 +156,9 @@ sap.ui.define([
 
 		/**
 		 *
-		 * Activates the passed variant applicable on the passed control/component.
+		 * Activates the passed variant applicable to the passed control/component.
 		 *
-		 * @param {sap.ui.base.ManagedObject|string} vElement The component or control (instance or id) on which the variantModel is set
+		 * @param {sap.ui.base.ManagedObject|string} vElement The component or control (instance or ID) on which the variantModel is set
 		 * @param {string} sVariantReference The variant reference which needs to be activated
 		 *
 		 * @returns {Promise} Returns Promise that resolves after the variant is updated or rejects when an error occurs
@@ -177,7 +177,7 @@ sap.ui.define([
 							oElement = sap.ui.getCore().byId(vElement);
 
 							if (!(oElement instanceof Element)) {
-								throw new Error("A valid component or control cannot be found for the provided Id");
+								throw new Error("No valid component or control found for the provided ID");
 							}
 						}
 					} else if (vElement instanceof Component || vElement instanceof Element) {
@@ -187,7 +187,7 @@ sap.ui.define([
 					var oAppComponent = Utils.getAppComponentForControl(oElement);
 					var oOuterAppComponent = Utils.getAppComponentForControl(oElement, true);
 					if (!oOuterAppComponent) {
-						throw new Error("A valid variant management control or component (instance or id) should be passed as parameter");
+						throw new Error("A valid variant management control or component (instance or ID) should be passed as parameter");
 					}
 
 					var oVariantModel = oOuterAppComponent.getModel("$FlexVariants");
@@ -196,7 +196,7 @@ sap.ui.define([
 					}
 					var sVariantManagementReference = oVariantModel.getVariantManagementReference(sVariantReference).variantManagementReference;
 					if (!sVariantManagementReference) {
-						throw new Error("A valid control or component, and variant id combination is required");
+						throw new Error("A valid control or component, and a valid variant/ID combination are required");
 					}
 
 				return oVariantModel.updateCurrentVariant(sVariantManagementReference, sVariantReference, oAppComponent);
@@ -246,8 +246,8 @@ sap.ui.define([
 		/**
 		 * Creates personalization changes, adds them to the flex persistence (not yet saved) and applies them to the control.
 		 *
-		 * @param {array} aControlChanges - array of control changes of type {@link sap.ui.fl.ControlPersonalizationAPI.addPersonalizationChange}
-		 * @param {boolean} [bIgnoreVariantManagement] - if flag is set to true then variant management will be ignored
+		 * @param {array} aControlChanges Array of control changes of type {@link sap.ui.fl.ControlPersonalizationAPI.addPersonalizationChange}
+		 * @param {boolean} [bIgnoreVariantManagement] If flag is set to true then variant management will be ignored
 		 *
 		 * @returns {Promise} Returns Promise that resolves after the changes have been written to the map of dirty changes and applied to the control
 		 *
@@ -305,7 +305,7 @@ sap.ui.define([
 		/**
 		 * Determines the availability of an encompassing variant management control.
 		 *
-		 * @param {sap.ui.base.ManagedObject} oControl - The control which should be tested for an encompassing variant management control
+		 * @param {sap.ui.base.ManagedObject} oControl The control which should be tested for an encompassing variant management control
 		 *
 		 * @returns {boolean} Returns true if a variant management control is encompassing the given control, else false
 		 *
