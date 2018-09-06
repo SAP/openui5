@@ -2321,7 +2321,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Modify a property while an update request is not yet resolved. Determine the ETag
 	// as late as possible
-	QUnit.test("Lazy determination of ETag while PATCH ", function (assert) {
+	QUnit.test("Lazy determination of ETag while PATCH", function (assert) {
 		var oBinding,
 			oModel = createSalesOrdersModel({
 				autoExpandSelect : true,
@@ -2385,6 +2385,83 @@ sap.ui.define([
 				that.oModel.submitBatch("update"),
 				that.waitForChanges(assert),
 				oSubmitBatchPromise
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Execute a bound action while an update request for the entity is not yet
+	// resolved. Determine the ETag as late as possible.
+	QUnit.test("Lazy determination of ETag while ODataContextBinding#execute", function (assert) {
+		var sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
+			oBinding,
+			oExecutePromise,
+			oModel = createTeaBusiModel({updateGroupId : "update"}),
+			fnRespond,
+			oSubmitBatchPromise,
+			sView = '\
+<FlexBox binding="{/EMPLOYEES(\'1\')}">\
+	<Text id="name" text="{Name}" />\
+	<FlexBox id="action" \
+			binding="{' + sAction + '(...)}">\
+		<layoutData><FlexItemData/></layoutData>\
+		<Text id="teamId" text="{TEAM_ID}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('1')", {
+				"Name" : "Jonathan Smith",
+				"@odata.etag" : "ETag0"
+			})
+			.expectChange("name", "Jonathan Smith")
+			.expectChange("teamId", null);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("name").getBinding("text");
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "EMPLOYEES('1')",
+					headers : {"If-Match" : "ETag0"},
+					payload : {Name : "Jonathan Mueller"}
+				}, new Promise(function (resolve, reject) {
+					fnRespond = resolve.bind(null, {
+						"@odata.etag" : "ETag1",
+						Name : "Jonathan Mueller"
+					});
+				}))
+				.expectChange("name", "Jonathan Mueller"); // triggered by setValue
+
+			oBinding.setValue("Jonathan Mueller");
+
+			oSubmitBatchPromise = that.oModel.submitBatch("update");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oExecutePromise = that.oView.byId("action").getObjectBinding()
+				.setParameter("TeamID", "42").execute("update");
+
+			fnRespond();
+
+			return Promise.all([
+				oSubmitBatchPromise,
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					headers : {"If-Match" : "ETag1"},
+					url : "EMPLOYEES('1')/" + sAction,
+					payload : {"TeamID" : "42"}
+				}, {
+					"TEAM_ID" : "42"
+				}).expectChange("teamId", "42");
+
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				oExecutePromise,
+				that.waitForChanges(assert)
 			]);
 		});
 	});

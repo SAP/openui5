@@ -1726,8 +1726,8 @@ sap.ui.define([
 	 * @param {object} [oData]
 	 *   A copy of the data to be sent with the POST request; may be used to tunnel a different
 	 *   HTTP method via a property "X-HTTP-Method" (which is removed)
-	 * @param {string} [sETag]
-	 *   The ETag to be sent as "If-Match" header with the POST request.
+	 * @param {object} [oEntity]
+	 *   The entity which contains the ETag to be sent as "If-Match" header with the POST request.
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the result of the request.
 	 * @throws {Error}
@@ -1735,7 +1735,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	SingleCache.prototype.post = function (oGroupLock, oData, sETag) {
+	SingleCache.prototype.post = function (oGroupLock, oData, oEntity) {
 		var sHttpMethod = "POST",
 			aPromises,
 			that = this;
@@ -1758,7 +1758,7 @@ sap.ui.define([
 		}
 		aPromises = [
 			this.oRequestor.request(sHttpMethod, this.sResourcePath + this.sQueryString, oGroupLock,
-				{"If-Match" : sETag}, oData)
+				{"If-Match" : oEntity}, oData)
 		];
 		if (this.bFetchOperationReturnType) {
 			aPromises.push(this.fetchTypes());

@@ -258,33 +258,45 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getObject", function (assert) {
+		var oCacheData = {},
+			oContext = Context.create(null, {/*oBinding*/}, "/foo"),
+			oResult = {};
+
+		this.mock(oContext).expects("getValue").withExactArgs("bar")
+			.returns(oCacheData);
+		this.mock(_Helper).expects("publicClone").withExactArgs(sinon.match.same(oCacheData))
+			.returns(oResult);
+
+		// code under test
+		assert.strictEqual(oContext.getObject("bar"), oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getValue", function (assert) {
 		var oBinding = {
 				checkSuspended : function () {}
 			},
 			oContext = Context.create(null, oBinding, "/foo"),
-			oClone = {},
 			oData = {};
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar", null, true)
 			.returns(SyncPromise.resolve(oData));
-		this.mock(_Helper).expects("publicClone").withExactArgs(sinon.match.same(oData))
-			.returns(oClone);
 
 		// code under test
-		assert.strictEqual(oContext.getObject("bar"), oClone);
+		assert.strictEqual(oContext.getValue("bar"), oData);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getObject: unexpected error", function (assert) {
+	QUnit.test("getValue: unexpected error", function (assert) {
 		var oBinding = {
 				checkSuspended : function () {}
 			},
+			oError = {},
 			oModel = {
 				reportError : function () {}
 			},
-			oContext = Context.create(oModel, oBinding, "/foo"),
-			oError = {};
+			oContext = Context.create(oModel, oBinding, "/foo");
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar", null, true)
@@ -293,28 +305,32 @@ sap.ui.define([
 			"sap.ui.model.odata.v4.Context", sinon.match.same(oError));
 
 		// code under test
-		assert.strictEqual(oContext.getObject("bar"), undefined);
+		assert.strictEqual(oContext.getValue("bar"), undefined);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getObject: not found in cache", function (assert) {
+	QUnit.test("getValue: not found in cache", function (assert) {
 		var oBinding = {
 				checkSuspended : function () {}
 			},
 			oError = new Error("Unexpected request: GET /foo/bar"),
-			oContext = Context.create(null, oBinding, "/foo");
+			oModel = {
+				reportError : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/foo");
 
 		oError.$cached = true;
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar", null, true)
 			.returns(SyncPromise.reject(oError));
+		this.mock(oModel).expects("reportError").never();
 
 		// code under test
-		assert.strictEqual(oContext.getObject("bar"), undefined);
+		assert.strictEqual(oContext.getValue("bar"), undefined);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getObject: unresolved", function (assert) {
+	QUnit.test("getValue: unresolved", function (assert) {
 		var oBinding = {
 				checkSuspended : function () {}
 			},
@@ -325,7 +341,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(Promise.resolve(42)));
 
 		//code under test
-		assert.strictEqual(oContext.getObject("bar"), undefined);
+		assert.strictEqual(oContext.getValue("bar"), undefined);
 	});
 
 	//*********************************************************************************************
