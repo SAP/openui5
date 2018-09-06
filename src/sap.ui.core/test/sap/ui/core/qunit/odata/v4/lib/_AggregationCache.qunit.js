@@ -526,8 +526,12 @@ sap.ui.define([
 		QUnit.test(sTitle, function (assert) {
 			var oAggregation = {
 					aggregate : {
-						SalesNumber : {},
-						SalesNumberSum : {grandTotal : true, name : "SalesNumber", "with" : "sum"}
+						SalesAmountSum : {
+							grandTotal : true,
+							name : "SalesAmount",
+							"with" : "sap.unit_sum"
+						},
+						SalesNumber : {}
 					},
 					group : {
 						Country : {},
@@ -544,8 +548,9 @@ sap.ui.define([
 				oResult = { /*GET response*/
 					value : [{
 						"@odata.id" : null,
-						"UI5grand__SalesNumberSum" : 351,
-						"UI5grand__SalesNumberSum@odata.type" : "#Decimal"
+						"UI5grand__SalesAmountSum" : 351,
+						"UI5grand__SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR",
+						"UI5grand__SalesAmountSum@odata.type" : "#Decimal"
 					}, {
 					}]
 				},
@@ -561,8 +566,9 @@ sap.ui.define([
 				Country : null, // avoid "Failed to drill-down"
 				Region : null, // avoid "Failed to drill-down"
 				SalesNumber : null, // avoid "Failed to drill-down"
-				SalesNumberSum : 351,
-				"SalesNumberSum@odata.type" : "#Decimal",
+				SalesAmountSum : 351,
+				"SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR",
+				"SalesAmountSum@odata.type" : "#Decimal",
 				Segment : null // avoid "Failed to drill-down"
 			});
 
