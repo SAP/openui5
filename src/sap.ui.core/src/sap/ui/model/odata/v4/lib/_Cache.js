@@ -771,8 +771,20 @@ sap.ui.define([
 			}
 
 			function patch(oPatchGroupLock) {
+				var oRequestLock;
+
+				/*
+				 * Synchronous callback called when the request is put on the wire. Locks the group
+				 * so that further requests created via {@link ODataModel#submitBatch} wait until
+				 * this request has returned and its response is applied to the cache.
+				 */
+				function onSubmit() {
+					oRequestLock =  that.oRequestor.getModelInterface()
+						.lockGroup(sGroupId, true, that);
+				}
+
 				oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, oPatchGroupLock,
-					{"If-Match" : oEntity}, oUpdateData, undefined, onCancel);
+					{"If-Match" : oEntity}, oUpdateData, onSubmit, onCancel);
 				that.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 				return SyncPromise.all([
 					oPatchPromise,
@@ -795,10 +807,16 @@ sap.ui.define([
 					if (!oError.canceled) {
 						fnErrorCallback(oError);
 						if (that.oRequestor.getGroupSubmitMode(sGroupId) === "API") {
+							oRequestLock.unlock();
+							oRequestLock = undefined;
 							return patch(oPatchGroupLock.getUnlockedCopy());
 						}
 					}
 					throw oError;
+				}).finally(function () {
+					if (oRequestLock) {
+						oRequestLock.unlock();
+					}
 				});
 			}
 
