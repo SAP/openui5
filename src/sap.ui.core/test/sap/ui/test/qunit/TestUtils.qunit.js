@@ -1,7 +1,11 @@
 /*!
  * ${copyright}
  */
-sap.ui.require(["jquery.sap.global", "sap/ui/test/TestUtils", "sap/base/Log"], function(jQuery, TestUtils, Log) {
+sap.ui.define([
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/ui/test/TestUtils"
+], function(jQuery, Log, TestUtils) {
 	/*global QUnit */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";

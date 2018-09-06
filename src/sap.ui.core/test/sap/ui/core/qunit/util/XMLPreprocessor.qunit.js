@@ -1,18 +1,18 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
-    "jquery.sap.global",
-    "sap/base/Log",
-    "sap/base/util/ObjectPath",
-    "sap/ui/Device",
-    "sap/ui/base/BindingParser",
-    "sap/ui/base/ManagedObject",
-    "sap/ui/base/SyncPromise",
-    "sap/ui/core/CustomizingConfiguration",
-    "sap/ui/core/XMLTemplateProcessor",
-    "sap/ui/core/util/XMLPreprocessor",
-    "sap/ui/model/BindingMode",
+sap.ui.define([
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/base/util/ObjectPath",
+	"sap/ui/Device",
+	"sap/ui/base/BindingParser",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/base/SyncPromise",
+	"sap/ui/core/CustomizingConfiguration",
+	"sap/ui/core/XMLTemplateProcessor",
+	"sap/ui/core/util/XMLPreprocessor",
+	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
     "sap/ui/model/Context",
     "sap/ui/model/json/JSONModel",
