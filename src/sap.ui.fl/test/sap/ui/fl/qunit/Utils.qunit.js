@@ -816,15 +816,18 @@ function(
 					};
 				},
 				getManifestEntry: function (sEntryKey) {
-					return sEntryKey === "type" ? {
-						type: "application"
-					} : undefined;
+					return sEntryKey === "type"
+						? { type: "application" }
+						: undefined;
 				}
 			};
 
-			sandbox.stub(Utils, "_getComponentForControl").onFirstCall().returns(oComponentMockComp).onSecondCall().returns(oComponentMockApp);
+			// if inner component is requested second call is not made
+			sandbox.stub(Utils, "_getComponentForControl")
+				.onFirstCall().returns(oComponentMockComp)
+				.onSecondCall().returns(oComponentMockApp);
 
-			assert.equal(Utils.getComponentClassName(oControl, true), sComponentNameApp, "Check that the type of the component is 'application'");
+			assert.equal(Utils.getComponentClassName(oControl), sComponentNameApp, "Check that the type of the component is 'application'");
 		});
 
 		QUnit.test("getComponentClassName does not find component of type 'application' in the hierarchy", function (assert) {
@@ -846,9 +849,11 @@ function(
 				}
 			};
 
-			sandbox.stub(Utils, "_getComponentForControl").onFirstCall().returns(oComponentMockComp).onSecondCall().returns(null);
+			sandbox.stub(Utils, "_getComponentForControl")
+				.onFirstCall().returns(oComponentMockComp)
+				.onSecondCall().returns(null);
 
-			assert.equal(Utils.getComponentClassName(oControl, true), "", "Check that empty string is returned.");
+			assert.equal(Utils.getComponentClassName(oControl), "", "Check that empty string is returned.");
 		});
 	});
 
