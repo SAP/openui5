@@ -248,28 +248,38 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[{
-		sRequired : null, bRequestSucceeds : true, sTitle : "success"
+		iRequests : 1, sRequired : null, bRequestSucceeds : true, sTitle : "success"
 	}, {
 		// simulate a server which does not require a CSRF token, but fails with 403
-		sRequired : null, bRequestSucceeds : false, sTitle : "failure with 403"
+		iRequests : 1, sRequired : null, bRequestSucceeds : false, sTitle : "failure with 403"
 	}, {
 		// simulate a server which does not require a CSRF token, but fails otherwise
-		sRequired : "Required", bRequestSucceeds : false, iStatus : 500, sTitle : "failure with 500"
+		iRequests : 1,
+		sRequired : "Required",
+		bRequestSucceeds : false,
+		iStatus : 500,
+		sTitle : "failure with 500"
 	}, {
-		sRequired : "Required", sTitle : "CSRF token Required"
+		iRequests : 2, sRequired : "Required", sTitle : "CSRF token Required"
 	}, {
-		sRequired : "required", sTitle : "CSRF token required"
+		iRequests : 2, sRequired : "required", sTitle : "CSRF token required"
 	}, {
-		sRequired : "Required", bReadFails : true, sTitle : "fetch CSRF token fails"
+		iRequests : 1, sRequired : "Required", bReadFails : true, sTitle : "fetch CSRF token fails"
 	}, {
-		sRequired : "Required", bDoNotDeliverToken : true, sTitle : "no CSRF token can be fetched"
+		iRequests : 2,
+		sRequired : "Required",
+		bDoNotDeliverToken : true,
+		sTitle : "no CSRF token can be fetched"
 	}].forEach(function (o) {
 		QUnit.test("sendRequest: " + o.sTitle, function (assert) {
 			var oError = {},
 				oExpectation,
+				mHeaders = {},
+				oHelperMock = this.mock(_Helper),
 				oReadFailure = {},
 				oRequestor = _Requestor.create("/Service/", oModelInterface,
 					{"X-CSRF-Token" : "Fetch"}),
+				mResolvedHeaders = {"foo" : "bar"},
 				oResponsePayload = {},
 				bSuccess = o.bRequestSucceeds !== false && !o.bReadFails && !o.bDoNotDeliverToken,
 				oTokenRequiredResponse = {
@@ -281,19 +291,22 @@ sap.ui.define([
 					"status" : o.iStatus || 403
 				};
 
-			this.mock(_Helper).expects("createError")
+			oHelperMock.expects("createError")
 				.exactly(bSuccess || o.bReadFails ? 0 : 1)
 				.withExactArgs(sinon.match.same(oTokenRequiredResponse))
 				.returns(oError);
+			oHelperMock.expects("resolveIfMatchHeader").exactly(o.iRequests)
+				.withExactArgs(sinon.match.same(mHeaders))
+				.returns(mResolvedHeaders);
 
 			// With <code>bRequestSucceeds === false</code>, "request" always fails,
 			// with <code>bRequestSucceeds === true</code>, "request" always succeeds,
 			// else "request" first fails due to missing CSRF token which can be fetched via
 			// "ODataModel#refreshSecurityToken".
-			this.mock(jQuery).expects("ajax").atLeast(1)
+			this.mock(jQuery).expects("ajax").exactly(o.iRequests)
 				.withExactArgs("/Service/foo", sinon.match({
 					data : "payload",
-					headers : {"foo" : "bar"},
+					headers : mResolvedHeaders,
 					method : "FOO"
 				}))
 				.callsFake(function (sUrl, oSettings) {
@@ -338,7 +351,7 @@ sap.ui.define([
 				});
 			}
 
-			return oRequestor.sendRequest("FOO", "foo", {"foo" : "bar"}, "payload")
+			return oRequestor.sendRequest("FOO", "foo", mHeaders, "payload")
 				.then(function (oPayload) {
 					assert.ok(bSuccess, "success possible");
 					assert.strictEqual(oPayload.contentType, "application/json");

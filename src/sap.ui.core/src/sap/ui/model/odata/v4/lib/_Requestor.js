@@ -1008,7 +1008,7 @@ sap.ui.define([
 					headers : jQuery.extend({},
 						that.mPredefinedRequestHeaders,
 						that.mHeaders,
-						mHeaders),
+						_Helper.resolveIfMatchHeader(mHeaders)),
 					method : sMethod
 				}).then(function (oResponse, sTextStatus, jqXHR) {
 					try {

@@ -1256,4 +1256,51 @@ sap.ui.define([
 			}
 		});
 	});
+
+	//*********************************************************************************************
+	[{
+		mHeaders : {},
+		mResolvedHeader : {}
+	}, {
+		mHeaders : {"If-Match" : "foo"},
+		mResolvedHeader : {"If-Match" : "foo"}
+	}, {
+		mHeaders : undefined,
+		mResolvedHeader : undefined
+	}, {
+		mHeaders : {"If-Match" : null},
+		mResolvedHeader : {"If-Match" : null}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("resolveIfMatchHeader: no clone - " + i, function (assert) {
+			var mResolvedHeaders;
+
+			// code under test
+			mResolvedHeaders = _Helper.resolveIfMatchHeader(oFixture.mHeaders);
+
+			assert.strictEqual(mResolvedHeaders, oFixture.mHeaders);
+			assert.deepEqual(mResolvedHeaders, oFixture.mResolvedHeader);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		mHeaders : {"If-Match" : {}},
+		mResolvedHeader : {}
+	}, {
+		mHeaders : {"If-Match" : {"@odata.etag" : "foo"}},
+		mResolvedHeader : {"If-Match" : "foo"}
+	}, {
+		mHeaders : {"If-Match" : {"@odata.etag" : ""}},
+		mResolvedHeader : {"If-Match" : ""}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("resolveIfMatchHeader: copy on write - " + i, function (assert) {
+			var mResolvedHeaders;
+
+			// code under test
+			mResolvedHeaders = _Helper.resolveIfMatchHeader(oFixture.mHeaders);
+
+			assert.notStrictEqual(mResolvedHeaders, oFixture.mHeaders);
+			assert.deepEqual(mResolvedHeaders, oFixture.mResolvedHeader);
+		});
+	});
 });

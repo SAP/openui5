@@ -525,15 +525,33 @@ sap.ui.define([
 						payload : typeof vPayload === "string" ? JSON.parse(vPayload) : vPayload
 					},
 					oExpectedRequest = that.aRequests.shift(),
-					oPromise,
-					oResponseBody,
-					mResponseHeaders;
+					sIfMatchValue,
+					oResponse,
+					mResponseHeaders,
+					bWaitForResponse = true;
+
+				function checkFinish() {
+					if (!that.aRequests.length && !that.iPendingResponses) {
+						// give some time to process the response
+						setTimeout(that.checkFinish.bind(that, assert), 0);
+					}
+				}
 
 				delete mHeaders["Accept"];
 				delete mHeaders["Accept-Language"];
 				delete mHeaders["Content-Type"];
+				// if "If-Match" is an object the "@odata.etag" property contains the etag
+				if (mHeaders["If-Match"] && typeof mHeaders["If-Match"] === "object") {
+					sIfMatchValue = mHeaders["If-Match"]["@odata.etag"];
+					if (sIfMatchValue === undefined) {
+						delete mHeaders["If-Match"];
+					} else {
+						mHeaders["If-Match"] = sIfMatchValue;
+					}
+				}
 				if (oExpectedRequest) {
-					oResponseBody = oExpectedRequest.response;
+					oResponse = oExpectedRequest.response;
+					bWaitForResponse = !(oResponse && typeof oResponse.then === "function");
 					mResponseHeaders = oExpectedRequest.responseHeaders;
 					delete oExpectedRequest.response;
 					delete oExpectedRequest.responseHeaders;
@@ -546,21 +564,27 @@ sap.ui.define([
 					mResponseHeaders = {};
 				}
 
-				that.iPendingResponses += 1;
-				oPromise = oResponseBody instanceof Error
-					? Promise.reject(oResponseBody)
-					: Promise.resolve({
+				if (bWaitForResponse) {
+					that.iPendingResponses += 1;
+				} else {
+					checkFinish();
+				}
+
+				return Promise.resolve(oResponse).then(function (oResponseBody) {
+					if (oResponseBody instanceof Error) {
+						throw oResponseBody;
+					}
+					return {
 						body : oResponseBody,
 						messages : mResponseHeaders["sap-messages"],
 						resourcePath : sUrl
-					});
-				return oPromise.finally(function () {
-					that.iPendingResponses -= 1;
-					// Waiting may be over after the promise has been handled
-					if (!that.iPendingResponses) {
-						// give some time to process the response
-						setTimeout(that.checkFinish.bind(that, assert), 0);
+					};
+				}).finally(function () {
+					if (bWaitForResponse) {
+						that.iPendingResponses -= 1;
 					}
+					// Waiting may be over after the promise has been handled
+					checkFinish();
 				});
 			}
 
@@ -1108,7 +1132,7 @@ sap.ui.define([
 		this.expectRequest("EMPLOYEES?foo=bar&$orderby=AGE&$filter=AGE%20gt%2042"
 				+ "&$select=AGE,ID,Name&$skip=0&$top=100", {
 				"value" : [
-					{"ID" : "0", "Name" : "Frederic Fall", "AGE" : 70},
+					{"@odata.etag" : "ETag0", "ID" : "0", "Name" : "Frederic Fall", "AGE" : 70},
 					{"ID" : "1", "Name" : "Jonathan Smith", "AGE" : 50},
 					{"ID" : "2", "Name" : "Peter Burke", "AGE" : 77}]})
 			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"])
@@ -1118,12 +1142,10 @@ sap.ui.define([
 				that.expectRequest({
 						method : "PATCH",
 						url : "EMPLOYEES('0')?foo=bar",
-						headers : {},
-						payload : {
-							"AGE" : 10
-						}
+						headers : {"If-Match" : "ETag0"},
+						payload : {"AGE" : 10}
 					}, {"AGE" : 10})
-					.expectChange("age", "10", 0);
+					.expectChange("age", "10", 0); // caused by setValue
 
 				that.oView.byId("table").getItems()[0].getCells()[1].getBinding("text")
 					.setValue(10);
@@ -1881,7 +1903,7 @@ sap.ui.define([
 				"value" : [{
 					"SalesOrderID" : "0500000002",
 					"SO_2_BP" : {
-						"@odata.etag" : "etag",
+						"@odata.etag" : "ETag",
 						"BusinessPartnerID" : "42",
 						"CompanyName" : "Foo"
 					}
@@ -1893,12 +1915,8 @@ sap.ui.define([
 			that.expectRequest({
 					method : "PATCH",
 					url : "BusinessPartnerList('42')",
-					headers : {
-						"If-Match" : "etag"
-					},
-					payload : {
-						"CompanyName" : "Bar"
-					}
+					headers : {"If-Match" : "ETag"},
+					payload : {"CompanyName" : "Bar"}
 				}, {
 					"CompanyName" : "Bar"
 				})
@@ -1959,7 +1977,7 @@ sap.ui.define([
 						"P2" : 42
 					},
 					"Value" : "Old",
-					"@odata.etag" : "etag"
+					"@odata.etag" : "ETag"
 				}]
 			})
 			.expectChange("item", ["Old"]);
@@ -1968,12 +1986,8 @@ sap.ui.define([
 			that.expectRequest({
 					method : "PATCH",
 					url : "EntitiesWithComplexKey(Key1='foo',Key2=42)",
-					headers : {
-						"If-Match" : "etag"
-					},
-					payload : {
-						"Value" : "New"
-					}
+					headers : {"If-Match" : "ETag"},
+					payload : {"Value" : "New"}
 				}, {
 					"Value" : "New"
 				})
@@ -2200,7 +2214,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Modify two properties of a sales order, then submit the batch
 	QUnit.test("Merge PATCHes", function (assert) {
-		var oModel = createSalesOrdersModel({
+		var sEtag = "ETag",
+			oModel = createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -2212,7 +2227,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("SalesOrderList('42')?$select=GrossAmount,Note,SalesOrderID", {
-				"@odata.etag" : "ETag",
+				"@odata.etag" : sEtag,
 				"GrossAmount" : "1000.00",
 				"Note" : "Note",
 				"SalesOrderID" : "42"
@@ -2224,9 +2239,7 @@ sap.ui.define([
 			that.expectRequest({
 					method : "PATCH",
 					url : "SalesOrderList('42')",
-					headers : {
-						"If-Match" : "ETag"
-					},
+					headers : {"If-Match" : sEtag},
 					payload : {
 						GrossAmount : "1234.56",
 						Note : "Changed Note"
@@ -2245,6 +2258,78 @@ sap.ui.define([
 			return Promise.all([
 				that.oModel.submitBatch("update"),
 				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Modify a property while an update request is not yet resolved. Determine the ETag
+	// as late as possible
+	QUnit.test("Lazy determination of ETag while PATCH ", function (assert) {
+		var oBinding,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			fnRespond,
+			oSubmitBatchPromise,
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'42\')}">\
+	<Text id="note" text="{Note}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
+				"@odata.etag" : "ETag0",
+				"Note" : "Note",
+				"SalesOrderID" : "42"
+			})
+			.expectChange("note", "Note");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("note").getBinding("text");
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "ETag0"},
+					payload : {Note : "Changed Note"}
+				}, new Promise(function (resolve, reject) {
+					fnRespond = resolve.bind(null, {
+						"@odata.etag" : "ETag1",
+						Note : "Changed Note From Server"
+					});
+				}))
+				.expectChange("note", "Changed Note");
+
+			oBinding.setValue("Changed Note");
+
+			oSubmitBatchPromise = that.oModel.submitBatch("update");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "ETag1"},
+					payload : {Note : "Changed Note while $batch is running"}
+				}, {
+					"@odata.etag" : "ETag2",
+					Note : "Changed Note From Server - 2"
+				})
+				.expectChange("note", "Changed Note while $batch is running")
+				// TODO as long as there are PATCHes in the queue, don't overwrite user input
+				.expectChange("note", "Changed Note From Server")
+				.expectChange("note", "Changed Note From Server - 2");
+
+			oBinding.setValue("Changed Note while $batch is running");
+
+			fnRespond();
+
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert),
+				oSubmitBatchPromise
 			]);
 		});
 	});
@@ -2658,7 +2743,7 @@ sap.ui.define([
 
 		this.expectRequest("EMPLOYEES('1')", {
 				"Name" : "Jonathan Smith",
-				"@odata.etag" : "eTag"
+				"@odata.etag" : "ETag"
 			})
 			.expectChange("name", "Jonathan Smith")
 			.expectChange("teamId", null);
@@ -2666,11 +2751,9 @@ sap.ui.define([
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest({
 					method : "POST",
-					headers : {"If-Match" : "eTag"},
+					headers : {"If-Match" : "ETag"},
 					url : sUrl,
-					payload : {
-						"TeamID" : "42"
-					}
+					payload : {"TeamID" : "42"}
 				}, {
 					"TEAM_ID" : "42"
 				})
@@ -2690,11 +2773,9 @@ sap.ui.define([
 				"sap.ui.model.odata.v4.ODataPropertyBinding");
 			that.expectRequest({
 					method : "POST",
-					headers : {"If-Match" : "eTag"},
+					headers : {"If-Match" : "ETag"},
 					url : sUrl,
-					payload : {
-						"TeamID" : ""
-					}
+					payload : {"TeamID" : ""}
 				}, oError) // simulates failure
 				.expectMessages([{
 					"code" : undefined,
@@ -2842,7 +2923,7 @@ sap.ui.define([
 
 		this.expectRequest("EMPLOYEES('1')", {
 				"Name" : "Jonathan Smith",
-				"@odata.etag" : "eTag"
+				"@odata.etag" : "ETag"
 			})
 			.expectChange("name", "Jonathan Smith")
 			.expectChange("isManager", null);
@@ -2850,7 +2931,7 @@ sap.ui.define([
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest({
 					method : "POST",
-					headers : {"If-Match" : "eTag"},
+					headers : {"If-Match" : "ETag"},
 					url : "EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
 						+ ".__FAKE__AcOverload",
 					payload : {
@@ -3447,7 +3528,7 @@ sap.ui.define([
 			that.expectRequest("EMPLOYEES('01')?$select=ID,Name", {
 					ID : "01",
 					Name : "Frederic Fall",
-					"@odata.etag" : "eTag"
+					"@odata.etag" : "ETag"
 				})
 				.expectChange("employeeName", "Frederic Fall");
 
@@ -3480,7 +3561,7 @@ sap.ui.define([
 			that.expectRequest("EMPLOYEES('03')?$select=ID,Name", {
 					ID : "03",
 					Name : "Jonathan Smith",
-					"@odata.etag" : "eTag"
+					"@odata.etag" : "ETag"
 				})
 				.expectChange("employeeName", "Jonathan Smith");
 
@@ -3492,7 +3573,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
-					headers : {"If-Match" : "eTag"},
+					headers : {"If-Match" : "ETag"},
 					method : "PATCH",
 					payload : {"Name" : "foo"},
 					url : "EMPLOYEES('01')"
@@ -3704,7 +3785,7 @@ sap.ui.define([
 
 		this.expectRequest("SalesOrderList('42')/SO_2_SOITEM('10')?" +
 			"$select=ItemPosition,Quantity,QuantityUnit,SalesOrderID", {
-				"@odata.etag" : "etag",
+				"@odata.etag" : "ETag",
 				"Quantity" : "10.000",
 				"QuantityUnit" : "EA"
 			})
@@ -3715,9 +3796,7 @@ sap.ui.define([
 			that.expectRequest({
 					method : "PATCH",
 					url : "SalesOrderList('42')/SO_2_SOITEM('10')",
-					headers : {
-						"If-Match" : "etag"
-					},
+					headers : {"If-Match" : "ETag"},
 					payload : {
 						"Quantity" : "11.000",
 						"QuantityUnit" : "EA"
@@ -3757,7 +3836,7 @@ sap.ui.define([
 					"EmployeesInCity" : [{
 						"ID" : "1",
 						"ROOM_ID" : "1.01",
-						"@odata.etag" : "eTag"
+						"@odata.etag" : "ETag"
 					}]
 				}
 			}
@@ -3767,12 +3846,8 @@ sap.ui.define([
 			that.expectRequest({
 				method : "PATCH",
 				url : "EMPLOYEES('1')",
-				headers : {
-					"If-Match" : "eTag"
-				},
-				payload : {
-					"ROOM_ID" : "1.02"
-				}
+				headers : {"If-Match" : "ETag"},
+				payload : {"ROOM_ID" : "1.02"}
 			}).expectChange("room", "1.02", 0);
 
 			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("text")
@@ -4531,12 +4606,8 @@ sap.ui.define([
 			that.expectRequest({
 				method : "PATCH",
 				url : "BusinessPartnerList('1')",
-				headers : {
-					"If-Match" : "ETag"
-				},
-				payload : {
-					"CompanyName" : "Bar, Inc"
-				}
+				headers : {"If-Match" : "ETag"},
+				payload : {"CompanyName" : "Bar, Inc"}
 			}, {});
 
 			oText.getBinding("text").setValue("Bar, Inc");
@@ -5899,7 +5970,7 @@ sap.ui.define([
 					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)", {
 				"SalesOrderID" : "0500000000",
 				"SO_2_BP" : {
-					"@odata.etag" : "etag",
+					"@odata.etag" : "ETag",
 					"BusinessPartnerID" : "0100000000",
 					"CompanyName" : "SAP",
 					"PhoneNumber" : "06227747474"
@@ -5912,9 +5983,7 @@ sap.ui.define([
 			var oContext = that.oView.byId("businessPartner").getBindingContext();
 
 			that.expectRequest({
-					headers : {
-						"If-Match" : "etag"
-					},
+					headers : {"If-Match" : "ETag"},
 					method : "DELETE",
 					url : "BusinessPartnerList('0100000000')"
 				})
