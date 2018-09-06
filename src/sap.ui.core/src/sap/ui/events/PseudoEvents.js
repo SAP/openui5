@@ -10,7 +10,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 	 * @alias module:sap/ui/events/PseudoEvents
 	 * @public
 	 */
-	var oPseudoEvents = {};
+	var PseudoEvents = {};
 
 	/**
 	 * Convenience method to check an event for a certain combination of modifier keys
@@ -56,9 +56,10 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 	 * be invoked only when that specific pseudo event has been recognized. This simplifies event
 	 * dispatching even further.
 	 *
+	 * @enum {object}
 	 * @public
 	 */
-	oPseudoEvents.events = { // IMPORTANT: update the public documentation when extending this list
+	PseudoEvents.events = { // IMPORTANT: update the public documentation when extending this list
 
 		/* Pseudo keyboard events */
 
@@ -810,13 +811,13 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 	};
 
 	/**
-	 * Ordered array of the {@link module:sap/ui/events/PseudoEvents}.
+	 * Ordered array of the {@link module:sap/ui/events/PseudoEvents.events}.
 	 *
 	 * Order is significant as some check methods rely on the fact that they are tested before other methods.
 	 * The array is processed during event analysis (when classifying browser events as pseudo events).
 	 * @public
 	 */
-	oPseudoEvents.order = ["sapdown", "sapdownmodifiers", "sapshow", "sapup", "sapupmodifiers", "saphide", "sapleft", "sapleftmodifiers", "sapright", "saprightmodifiers", "saphome", "saphomemodifiers", "saptop", "sapend", "sapendmodifiers", "sapbottom", "sappageup", "sappageupmodifiers", "sappagedown", "sappagedownmodifiers", "sapselect", "sapselectmodifiers", "sapspace", "sapspacemodifiers", "sapenter", "sapentermodifiers", "sapexpand", "sapbackspace", "sapbackspacemodifiers", "sapdelete", "sapdeletemodifiers", "sapexpandmodifiers", "sapcollapse", "sapcollapsemodifiers", "sapcollapseall", "sapescape", "saptabnext", "saptabprevious", "sapskipforward", "sapskipback", "sapprevious", "sappreviousmodifiers", "sapnext", "sapnextmodifiers", "sapdecrease", "sapminus", "sapdecreasemodifiers", "sapincrease", "sapplus", "sapincreasemodifiers", "sapdelayeddoubleclick"];
+	PseudoEvents.order = ["sapdown", "sapdownmodifiers", "sapshow", "sapup", "sapupmodifiers", "saphide", "sapleft", "sapleftmodifiers", "sapright", "saprightmodifiers", "saphome", "saphomemodifiers", "saptop", "sapend", "sapendmodifiers", "sapbottom", "sappageup", "sappageupmodifiers", "sappagedown", "sappagedownmodifiers", "sapselect", "sapselectmodifiers", "sapspace", "sapspacemodifiers", "sapenter", "sapentermodifiers", "sapexpand", "sapbackspace", "sapbackspacemodifiers", "sapdelete", "sapdeletemodifiers", "sapexpandmodifiers", "sapcollapse", "sapcollapsemodifiers", "sapcollapseall", "sapescape", "saptabnext", "saptabprevious", "sapskipforward", "sapskipback", "sapprevious", "sappreviousmodifiers", "sapnext", "sapnextmodifiers", "sapdecrease", "sapminus", "sapdecreasemodifiers", "sapincrease", "sapplus", "sapincreasemodifiers", "sapdelayeddoubleclick"];
 
 
 	/**
@@ -824,8 +825,8 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 	 * @private
 	 * @ui5-restricted sap.ui.core
 	 */
-	oPseudoEvents.getBasicTypes = function() {
-		var mEvents = oPseudoEvents.events,
+	PseudoEvents.getBasicTypes = function() {
+		var mEvents = PseudoEvents.events,
 			aResult = [];
 
 		for (var sName in mEvents) {
@@ -850,10 +851,10 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 	 * @private
 	 * @ui5-restricted sap.ui.core
 	 */
-	oPseudoEvents.addEvent = function(oEvent) {
-		oPseudoEvents.events[oEvent.sName] = oEvent;
-		oPseudoEvents.order.push(oEvent.sName);
+	PseudoEvents.addEvent = function(oEvent) {
+		PseudoEvents.events[oEvent.sName] = oEvent;
+		PseudoEvents.order.push(oEvent.sName);
 	};
 
-	return oPseudoEvents;
+	return PseudoEvents;
 });
