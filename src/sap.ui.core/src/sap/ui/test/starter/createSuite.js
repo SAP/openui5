@@ -177,7 +177,7 @@
 
 	}
 
-	var sSuiteName = utils.getAttribute("data-sap-ui-testsuite");
+	var sSuiteName = utils.getAttribute("data-sap-ui-testsuite") || utils.getDefaultSuiteName();
 	var whenLoaded = utils.getSuiteConfig(sSuiteName);
 
 

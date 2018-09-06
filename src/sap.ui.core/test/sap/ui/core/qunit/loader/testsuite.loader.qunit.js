@@ -98,6 +98,12 @@ sap.ui.define(function() {
 				page: "test-resources/sap/ui/core/qunit/loader/exposeAsAMDLoader.qunit.html?sap-ui-debug=true",
 				title: "Test Page for ui5loader config option 'amd' with activated debug mode"
 			},
+			privateAPIs: {
+				qunit: {
+					seed: Math.random()
+				},
+				bootCore: false
+			},
 			/*
 			 * syncMode.qunit.html is still an HTML page of its own as it tests sync loading.
 			 * The generic starter Test.qunit.html only supports async loading.

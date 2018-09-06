@@ -547,7 +547,21 @@
 		return syncCallBehavior;
 	}
 
-	function guessResourceName(sURL) {
+	/**
+	 * Try to find a resource name that would be mapped to the given URL.
+	 *
+	 * If multiple path mappings would create a match, the returned name is not necessarily
+	 * the best (longest) match. The first match which is found, will be returned.
+	 *
+	 * When <code>bLoadedResourcesOnly</code> is set, only those resources will be taken
+	 * into account for which content has been loaded already.
+	 *
+	 * @param {string} sURL URL to guess the resource name for
+	 * @param {boolean} [bLoadedResourcesOnly=false] Whether the guess should be limited to already loaded resources
+	 * @returns {string} Resource name or undefined if no matching name could be found
+	 * @private
+	 */
+	function guessResourceName(sURL, bLoadedResourcesOnly) {
 		var sNamePrefix,
 			sUrlPrefix,
 			sResourceName;
@@ -563,7 +577,7 @@
 			// the prefix check here has to be done without the slash
 			sUrlPrefix = mUrlPrefixes[sNamePrefix].absoluteUrl.slice(0, -1);
 
-			if ( sURL.indexOf(sUrlPrefix) === 0 ) {
+			if ( sURL.lastIndexOf(sUrlPrefix, 0) === 0 ) {
 
 				// calc resource name
 				sResourceName = sNamePrefix + sURL.slice(sUrlPrefix.length);
@@ -572,7 +586,7 @@
 					sResourceName = sResourceName.slice(1);
 				}
 
-				if ( mModules[sResourceName] && mModules[sResourceName].data != undefined ) {
+				if ( !bLoadedResourcesOnly || mModules[sResourceName] && mModules[sResourceName].data != undefined ) {
 					return sResourceName;
 				}
 			}
@@ -2176,7 +2190,7 @@
 		if ( name ) {
 			name = getMappedName(name);
 		} else {
-			name = guessResourceName(url);
+			name = guessResourceName(url, true);
 		}
 		var oModule = name && mModules[name];
 		if ( oModule ) {
@@ -2395,6 +2409,7 @@
 		getUrlPrefixes: getUrlPrefixes,
 		loadJSResourceAsync: loadJSResourceAsync,
 		resolveURL: resolveURL,
+		guessResourceName: guessResourceName,
 		toUrl: toUrl,
 		unloadResources: unloadResources
 	};

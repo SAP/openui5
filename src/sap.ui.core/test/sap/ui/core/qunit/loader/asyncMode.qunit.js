@@ -217,60 +217,6 @@
 
 
 	// ========================================================================================
-	// Non-JS Resources
-	// ========================================================================================
-
-	QUnit.module("Resource Preload", {
-		beforeEach: function() {
-			this.EXPECTED_VIEW_CONTENT = '<mvc:View xmlns:mvc="sap.ui.core.mvc"></mvc:View>';
-			sap.ui.require.preload({
-				'fixture/resource-preload/Main.view.xml': this.EXPECTED_VIEW_CONTENT,
-				'fixture/resource-preload/i18n.properties': ""
-			});
-		}
-	});
-
-	QUnit.test("Simple access to a resource", function(assert) {
-		assert.strictEqual(
-			sap.ui.loader._.getModuleContent('fixture/resource-preload/Main.view.xml'),
-			this.EXPECTED_VIEW_CONTENT,
-			"reading a preloaded non-JS resource should return the expected text result");
-	});
-
-	QUnit.test("Access via a denormalized name", function(assert) {
-		assert.strictEqual(
-			sap.ui.loader._.getModuleContent('fixture/resource-preload/dummy/../Main.view.xml'),
-			this.EXPECTED_VIEW_CONTENT,
-			"reading a preloaded non-JS resource by a denormalized name should return the expected text result");
-	});
-
-	QUnit.test("Access via a mapped name", function(assert) {
-		sap.ui.loader.config({
-			map: {
-				'resource-preload-alias': 'fixture/resource-preload',
-				'resource-preload-alias-Main.view': 'fixture/resource-preload/Main.view'
-				// Note: mapping doesn't handle subtypes like '.view', to be compliant with the AMD spec!
-			}
-		});
-		assert.strictEqual(
-			sap.ui.loader._.getModuleContent('resource-preload-alias/Main.view.xml'),
-			this.EXPECTED_VIEW_CONTENT,
-			"reading a preloaded non-JS resource by a prefixed-mapped module ID should return the expected text result");
-		assert.strictEqual(
-			sap.ui.loader._.getModuleContent('resource-preload-alias-Main.view.xml'),
-			this.EXPECTED_VIEW_CONTENT,
-			"reading a preloaded non-JS resource by a name-mapped module ID should return the expected text result");
-	});
-
-	QUnit.test("Access empty resource via url", function(assert) {
-		assert.strictEqual(
-			sap.ui.loader._.getModuleContent(undefined, sap.ui.require.toUrl('fixture/resource-preload/i18n.properties')),
-			"",
-			"reading a preloaded empty resource via url should return the expected text result");
-	});
-
-
-	// ========================================================================================
 	// Error Handling for sync and async APIs
 	// ========================================================================================
 
