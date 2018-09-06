@@ -1,0 +1,171 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>DesignTime - Apply Styles for Drag&Drop Test</title>
+		<script src="../shared-config.js"></script>
+		<script
+			id="sap-ui-bootstrap"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+			data-sap-ui-resourceroots='{"dt.performance": "./"}'
+		></script>
+		<script>
+			window.wpp = {
+				customMetrics: {}
+			};
+			window.fnResolve;
+			window.onAppReady = new Promise(function (fnResolve) {
+				window.fnResolve = fnResolve;
+			});
+
+			sap.ui.getCore().attachInit(function() {
+				sap.ui.require([
+					"dt/performance/PerformanceTestUtil",
+					"sap/m/Panel",
+					"sap/ui/layout/VerticalLayout"
+				], function(
+					PerformanceTestUtil,
+					Panel,
+					VerticalLayout
+				){
+					var oSourcePanel = new Panel("SourcePanel");
+					var oTargetPanel = new Panel("TargetPanel");
+					var oLayout = new VerticalLayout("Layout", {
+						content: [oSourcePanel, oTargetPanel]
+					});
+					oLayout.placeAt("content");
+					PerformanceTestUtil.addButtons(oSourcePanel, "content", 51);
+					PerformanceTestUtil.addButtons(oTargetPanel, "content", 5);
+					sap.ui.getCore().applyChanges();
+					window.onAppReady = PerformanceTestUtil.startDesignTime(oLayout, "SourcePanel");
+				});
+			});
+
+			var fnDrag = function (oOverlay, oSource, oTarget) {
+				oOverlay.$().trigger("click");
+				oOverlay.setSelected(true);
+				oOverlay.$().trigger("dragstart");
+				oOverlay.$().trigger("drag");
+				oSource.$().trigger("dragenter");
+				oSource.$().trigger("dragover");
+				oSource.$().trigger("dragleave");
+				oTarget.$().trigger("dragenter");
+				oTarget.$().trigger("dragover");
+				oOverlay.$().trigger("dragend");
+			};
+
+			window.measureApplyStylesDragDropOneByOne = function () {
+				sap.ui.require([
+					"dt/performance/PerformanceTestUtil",
+					"sap/ui/dt/OverlayRegistry",
+					"sap/base/Log"
+				], function (
+					PerformanceTestUtil,
+					OverlayRegistry,
+					BaseLog
+				){
+					var oSourceElementOverlay = OverlayRegistry.getOverlay("SourcePanel");
+					var oSourceAggregationOverlay = oSourceElementOverlay.getAggregationOverlay("content");
+
+					var oTargetElementOverlay = OverlayRegistry.getOverlay("TargetPanel");
+					var oTargetAggregationOverlay = oTargetElementOverlay.getAggregationOverlay("content");
+
+					var aChildren = oSourceAggregationOverlay.getChildren().slice(1);
+
+					var aStack = [];
+					var iCountCall = 0;
+					var bMeasurementDone = false;
+
+					var fnDebouncedFn = PerformanceTestUtil.debounce(function () {
+						if (!bMeasurementDone) {
+							bMeasurementDone = true;
+							window.wpp.customMetrics.applyStylesDragDrop = aStack[aStack.length - 1] - aStack[0];
+							BaseLog.info("ApplyStylesDragDrop = " + window.wpp.customMetrics.applyStylesDragDrop + "ms");
+							BaseLog.info("Count call = " + iCountCall);
+						} else {
+							BaseLog.error("Some applyStyles() calculation exceeded timeout of 2000ms");
+							window.wpp.customMetrics.applyStylesDragDrop = 10000;
+						}
+					}, 2000);
+
+					OverlayRegistry.getOverlays().forEach(function (oElementOverlay) {
+						oElementOverlay.attachGeometryChanged(function () {
+							aStack.push(new Date().getTime());
+							iCountCall++;
+							setTimeout(fnDebouncedFn);
+						});
+					});
+
+					aStack.push(new Date().getTime());
+					// Drag button overlays one by one
+					(function fnWorker(aChildren) {
+						var oButtonOverlay = aChildren[0];
+						if (aChildren.length > 1) {
+							oButtonOverlay.attachEventOnce("geometryChanged", function () {
+								fnWorker(aChildren.slice(1));
+							});
+						}
+						fnDrag(oButtonOverlay, oSourceAggregationOverlay, oTargetAggregationOverlay);
+					})(aChildren);
+				});
+			}
+
+			window.measureApplyStylesDragDropAtOnce = function () {
+				sap.ui.require([
+					"dt/performance/PerformanceTestUtil",
+					"sap/ui/dt/OverlayRegistry",
+					"sap/base/Log",
+					"sap/ui/thirdparty/jquery"
+				], function (
+					PerformanceTestUtil,
+					OverlayRegistry,
+					BaseLog,
+					jQuery
+				){
+					var oSourceElementOverlay = OverlayRegistry.getOverlay("SourcePanel");
+					var oSourceAggregationOverlay = oSourceElementOverlay.getAggregationOverlay("content");
+
+					var oTargetElementOverlay = OverlayRegistry.getOverlay("TargetPanel");
+					var oTargetAggregationOverlay = oTargetElementOverlay.getAggregationOverlay("content");
+
+					var aChildren = oSourceAggregationOverlay.getChildren().slice(1);
+
+					var aStack = [];
+					var iCountCall = 0;
+					var bMeasurementDone = false;
+
+					var fnDebouncedFn = PerformanceTestUtil.debounce(function () {
+						if (!bMeasurementDone) {
+							bMeasurementDone = true;
+							window.wpp.customMetrics.applyStylesDragDrop = aStack[aStack.length - 1] - aStack[0];
+							BaseLog.info("ApplyStylesDragDrop = " + window.wpp.customMetrics.applyStylesDragDrop + "ms");
+							BaseLog.info("Count call = " + iCountCall);
+						} else {
+							BaseLog.error("Some applyStyles() calculation exceeded timeout of 2000ms");
+							window.wpp.customMetrics.applyStylesDragDrop = 10000;
+						}
+					}, 2000);
+
+					OverlayRegistry.getOverlays().forEach(function (oElementOverlay) {
+						oElementOverlay.attachGeometryChanged(function () {
+							aStack.push(new Date().getTime());
+							iCountCall++;
+							setTimeout(fnDebouncedFn);
+						});
+					});
+
+					aStack.push(new Date().getTime());
+					aChildren.forEach(function (oChild) {
+						fnDrag(oChild, oSourceAggregationOverlay, oTargetAggregationOverlay);
+						jQuery(window).trigger("resize");
+					});
+				});
+			}
+		</script>
+	</head>
+	<body>
+		<div id="content"></div>
+	</body>
+</html>
