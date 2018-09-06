@@ -11,9 +11,11 @@
 			parameters : {
 				$$aggregation : {
 					aggregate : {
+						SalesAmount : {},
 						SalesNumber : {grandTotal : true}
 					},
 					group : {
+						Currency : {},
 						Region : {}
 					}
 				},
@@ -38,11 +40,19 @@
 				<Text text="Region" />
 			</Column>
 			<Column>
+				<Text text="Sales Amount" />
+			</Column>
+			<Column>
+				<Text text="Currency" />
+			</Column>
+			<Column>
 				<Text text="Sales Number" />
 			</Column>
 		</columns>
 		<ColumnListItem>
 			<Text text="{Region}" />
+			<Text text="{SalesAmount}" />
+			<Text text="{Currency}" />
 			<Text text="{SalesNumber}" />
 		</ColumnListItem>
 	</Table>

@@ -526,7 +526,7 @@ sap.ui.define([
 		QUnit.test(sTitle, function (assert) {
 			var oAggregation = {
 					aggregate : {
-						SalesNumber : {grandTotal : true},
+						SalesNumber : {},
 						SalesNumberSum : {grandTotal : true, name : "SalesNumber", "with" : "sum"}
 					},
 					group : {
@@ -560,6 +560,7 @@ sap.ui.define([
 			jQuery.extend(oExpected, oResult.value[0], {
 				Country : null, // avoid "Failed to drill-down"
 				Region : null, // avoid "Failed to drill-down"
+				SalesNumber : null, // avoid "Failed to drill-down"
 				SalesNumberSum : 351,
 				"SalesNumberSum@odata.type" : "#Decimal",
 				Segment : null // avoid "Failed to drill-down"
