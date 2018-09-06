@@ -1204,7 +1204,7 @@ function(
 			this.getPlugins()["rename"].startEdit(oContainerElementOverlay);
 		};
 
-		var fnGeometryChangedCallback = function(oEvent) {
+		var fnGeometryChangedCallback = function (oEvent) {
 			var oElementOverlay = oEvent.getSource();
 			if (oElementOverlay.getGeometry() && oElementOverlay.getGeometry().visible) {
 				fnStartEdit.call(this, oElementOverlay);
@@ -1212,16 +1212,14 @@ function(
 			}
 		};
 
-		var fnOverlayRenderedCallback = function(oEvent){
-			var oNewOverlay = oEvent.getSource();
+		var fnGeometryCheck = function (oElementOverlay) {
 			// the control can be set to visible, but still have no size when we do the check
 			// that's why we also attach to 'geometryChanged' and check if the overlay has a size
-			if (!oNewOverlay.getGeometry() || !oNewOverlay.getGeometry().visible) {
-				oNewOverlay.attachEvent('geometryChanged', fnGeometryChangedCallback, this);
+			if (!oElementOverlay.getGeometry() || !oElementOverlay.getGeometry().visible) {
+				oElementOverlay.attachEvent('geometryChanged', fnGeometryChangedCallback, this);
 			} else {
-				fnStartEdit.call(this, oNewOverlay);
+				fnStartEdit.call(this, oElementOverlay);
 			}
-			oNewOverlay.detachEvent('afterRendering', fnOverlayRenderedCallback, this);
 		};
 
 		var fnElementOverlayCreatedCallback = function(oEvent){
@@ -1229,7 +1227,13 @@ function(
 			if (oNewOverlay.getElement().getId() === sNewControlID) {
 				this._oDesignTime.detachEvent("elementOverlayCreated", fnElementOverlayCreatedCallback, this);
 				// the overlay needs to be rendered before we can trigger the rename on it
-				oNewOverlay.attachEvent('afterRendering', fnOverlayRenderedCallback, this);
+				if (oNewOverlay.isRendered()) {
+					fnGeometryCheck.call(this, oNewOverlay);
+				} else {
+					oNewOverlay.attachEventOnce('afterRendering', function (oEvent) {
+						fnGeometryCheck.call(this, oEvent.getSource());
+					}, this);
+				}
 			}
 		};
 

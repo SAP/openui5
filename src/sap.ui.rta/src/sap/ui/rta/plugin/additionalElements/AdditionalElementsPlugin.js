@@ -266,9 +266,13 @@ sap.ui.define([
 
 			var aParents = [mParents.parentOverlay];
 			if (mParents.relevantContainer !== mParents.parent){
-				aParents = ElementUtil.findAllSiblingsInContainer(mParents.parent, mParents.relevantContainer).map(function(oParent){
-					return OverlayRegistry.getOverlay(oParent);
-				});
+				aParents = ElementUtil.findAllSiblingsInContainer(mParents.parent, mParents.relevantContainer)
+					.map(function(oParent){
+						return OverlayRegistry.getOverlay(oParent);
+					})
+					.filter(function (oOverlay) {
+						return oOverlay;
+					});
 			}
 			var aAggregationNames;
 			if (bSibling){

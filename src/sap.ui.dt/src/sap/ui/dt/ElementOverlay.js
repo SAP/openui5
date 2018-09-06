@@ -220,7 +220,7 @@ function (
 	};
 
 	/**
-	 * Starts monotoring element with ControlObserser
+	 * Starts monotoring element with ControlObserver
 	 * @private
 	 */
 	ElementOverlay.prototype._initControlObserver = function() {
