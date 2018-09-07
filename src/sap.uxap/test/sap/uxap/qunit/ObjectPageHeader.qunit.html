@@ -7,7 +7,8 @@
 	<script id="sap-ui-bootstrap"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-xx-bindingSyntax="complex"
-			data-sap-ui-libs="sap.m, sap.uxap">
+			data-sap-ui-libs="sap.m, sap.uxap"
+			data-sap-ui-resourceroots='{"test": "./"}'>
 	</script>
 
 	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
@@ -17,7 +18,19 @@
 	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 	<script src="./js/js-coverage-filter.js"></script>
-	<script src="./js/ObjectPageHeader.qunit.js"></script>
+
+	<script>
+		QUnit.config.autostart = false;
+
+		sap.ui.getCore().attachInit(function () {
+			"use strict";
+			sap.ui.require([
+				"test/js/ObjectPageHeader.qunit"
+			], function () {
+				QUnit.start();
+			});
+		});
+	</script>
 </head>
 <body id="body" class="sapUiBody">
 <h1 id="qunit-header">aat_UxAP_ObjectPageHeader</h1>
