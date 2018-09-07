@@ -1203,26 +1203,37 @@ sap.ui.define([
 		 * @param {function():T | T} vObject The object, or a function returning the object, on which methods will be called.
 		 * @param {function(this:U, T) | Object<string, Array.<*>>} vCall Called if <code>vObject</code> is, or returns an object.
 		 * @param {U} [oThis] Context in the function calls, or in the callback if <code>vCall</code>is a function. Default is <code>vObject</code>.
+		 * @returns {undefined | Array.<*>} If <code>vCall</code> is a map, the return values of the calls are returned. In case of multiple calls, an
+		 *                                  array of return values is returned.
 		 * @template T, U
 		 */
 		dynamicCall: function(vObject, vCall, oThis) {
 			var oObject = vObject instanceof Function ? vObject() : vObject;
 
 			if (!oObject || !vCall) {
-				return;
+				return undefined;
 			}
 
 			oThis = oThis || oObject;
 
 			if (vCall instanceof Function) {
 				vCall.call(oThis, oObject);
+				return undefined;
 			} else {
 				var aParameters;
+				var aReturnValues = [];
 				for (var sFunctionName in vCall) {
 					if (oObject[sFunctionName] instanceof Function) {
 						aParameters = vCall[sFunctionName];
-						oObject[sFunctionName].apply(oThis, aParameters);
+						aReturnValues.push(oObject[sFunctionName].apply(oThis, aParameters));
+					} else {
+						aReturnValues.push(undefined);
 					}
+				}
+				if (aReturnValues.length === 1) {
+					return aReturnValues[0];
+				} else {
+					return aReturnValues;
 				}
 			}
 		},

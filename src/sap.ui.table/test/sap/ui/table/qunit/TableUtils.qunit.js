@@ -975,6 +975,7 @@ sap.ui.define([
 	QUnit.test("dynamicCall", function(assert) {
 		var bCallbackCalled = false;
 		var oTestObject = {prop: "value", funcA: sinon.spy(), funcB: sinon.spy()};
+		var oTestObjectWithReturn = {returnString: function() {return "string";}, returnNumber: function() {return 1;}};
 		var oTestContext = {};
 
 		function reset() {
@@ -1029,6 +1030,12 @@ sap.ui.define([
 			funcA: undefined
 		}, oTestContext);
 		assert.strictEqual(oTestObject.funcA.thisValues[0], oTestContext, "The function was called with the specified context");
+
+		assert.strictEqual(TableUtils.dynamicCall(oTestObjectWithReturn, {returnString: []}), "string", "The return value was returned");
+		assert.deepEqual(TableUtils.dynamicCall(oTestObjectWithReturn, {
+			returnString: [],
+			returnNumber: []
+		}), ["string", 1], "The array of return values was returned");
 	});
 
 	QUnit.module("Cozy", {
