@@ -348,30 +348,32 @@ sap.ui.require([
 	function testKeyboardEvent(sTestName, sKeyPressed, sButtonId, sSectionId) {
 		QUnit.test(sTestName, function (assert) {
 			assert.expect(1);
-
-			var oAnchorBarButtonControl = core.byId(sButtonId),
-				$anchorBarButton = oAnchorBarButtonControl.$(),
-				$subSection = core.byId(sSectionId).$(),
-				fDone = assert.async();
-
-			$anchorBarButton.focus();
-
-			switch (sKeyPressed) {
-				case "ENTER":
-					sap.ui.test.qunit.triggerKeydown($anchorBarButton, sKeyPressed);
-					break;
-				case "SPACE":
-					sap.ui.test.qunit.triggerKeyup($anchorBarButton, sKeyPressed);
-					break;
-				default:
-					oAnchorBarButtonControl.firePress();
-					break;
-			}
+			var fDone = assert.async();
 
 			setTimeout(function () {
-				assert.strictEqual($subSection.is(":focus"), true, "SubSection must be focused");
-				fDone();
-			}, 1000);
+				var oAnchorBarButtonControl = core.byId(sButtonId),
+				$anchorBarButton = oAnchorBarButtonControl.$(),
+				$subSection = core.byId(sSectionId).$();
+
+				$anchorBarButton.focus();
+
+				switch (sKeyPressed) {
+					case "ENTER":
+						sap.ui.test.qunit.triggerKeydown($anchorBarButton, sKeyPressed);
+						break;
+					case "SPACE":
+						sap.ui.test.qunit.triggerKeyup($anchorBarButton, sKeyPressed);
+						break;
+					default:
+						oAnchorBarButtonControl.firePress();
+						break;
+				}
+
+				setTimeout(function () {
+					assert.strictEqual($subSection.is(":focus"), true, "SubSection must be focused");
+					fDone();
+				}, 1000);
+			}, 0);
 		});
 	}
 
