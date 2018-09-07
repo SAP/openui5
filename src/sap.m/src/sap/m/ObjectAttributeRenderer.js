@@ -35,6 +35,7 @@ sap.ui.define(["sap/ui/core/library"],
 			oRm.write("<div");
 			oRm.writeControlData(oOA);
 			oRm.addClass("sapMObjectAttributeDiv");
+			oRm.addClass("sapUiHidden");
 			oRm.writeClasses();
 			oRm.write(">");
 			oRm.write("</div>");
