@@ -882,9 +882,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 			sRegExpFloat = sRegExpFloat.slice(0, sRegExpFloat.length - 1) + "%?" + sRegExpFloat.slice(sRegExpFloat.length - 1);
 		}
 
-		// remove all white spaces because when grouping separator is a non-breaking space (russian and french for example)
-		// user will not input it this way. Also white spaces or grouping separator can be ignored by determining the value
-		sValue = sValue.replace(/\s/g, "");
+		if (typeof sValue === "string" || sValue instanceof String) {
+			// remove the RTL special characters before the string is matched with the regex
+			sValue = sValue.replace(/[\u202a\u200e\u202c\u202b\u200f]/g, "");
+
+			// remove all white spaces because when grouping separator is a non-breaking space (russian and french for example)
+			// user will not input it this way. Also white spaces or grouping separator can be ignored by determining the value
+			sValue = sValue.replace(/\s/g, "");
+		}
 
 		oShort = getNumberFromShortened(sValue, this.oFormatOptions.style, this.oLocaleData);
 
