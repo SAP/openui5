@@ -275,7 +275,7 @@ sap.ui.define([
 				}
 
 				if (oChange._aDependentSelectorList) {
-					var oAppComponent = Extractor._getAppComponentInstance(sAppName);
+					var oAppComponent = Extractor.getAppComponentInstance(sAppName);
 					oChangeDetails.dependentControls = oChange._aDependentSelectorList.map(function (oDependentSelector) {
 						return {
 							id : oDependentSelector.id,
