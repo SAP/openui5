@@ -6867,15 +6867,19 @@ sap.ui.define([
 		parameters : {\
 			$$aggregation : {\
 				aggregate : {\
-					SalesNumber : {},\
-					SalesNumberSum : {grandTotal : true, name : \'SalesNumber\', with : \'sum\'}\
+					SalesAmountSum : {\
+						grandTotal : true,\
+						name : \'SalesAmount\',\
+						with : \'sap.unit_sum\'\
+					},\
+					SalesNumber : {}\
 				},\
 				group : {\
 					Region : {}\
 				}\
 			},\
-			$filter : \'SalesNumberSum gt 0\',\
-			$orderby : \'SalesNumberSum asc\'\
+			$filter : \'SalesAmountSum gt 0\',\
+			$orderby : \'SalesAmountSum asc\'\
 		}}" threshold="0" visibleRowCount="5">\
 	<t:Column>\
 		<t:template>\
@@ -6889,30 +6893,54 @@ sap.ui.define([
 	</t:Column>\
 	<t:Column>\
 		<t:template>\
-			<Text id="salesNumberSum" text="{= %{SalesNumberSum} }" />\
+			<Text id="salesAmountSum" text="{= %{SalesAmountSum} }" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="salesAmountCurrency"\
+				text="{= %{SalesAmountSum@Analytics.AggregatedAmountCurrency} }" />\
 		</t:template>\
 	</t:Column>\
 </t:Table>';
 
 		this.expectRequest("BusinessPartners?$apply=groupby((Region)"
-				+ ",aggregate(SalesNumber,SalesNumber%20with%20sum%20as%20SalesNumberSum))"
-				+ "/filter(SalesNumberSum%20gt%200)/orderby(SalesNumberSum%20asc)"
-				+ "/concat(aggregate(SalesNumberSum%20with%20sum%20as%20"
-				+ "UI5grand__SalesNumberSum),top(4))", {
+				+ ",aggregate(SalesAmount%20with%20sap.unit_sum%20as%20SalesAmountSum,SalesNumber))"
+				+ "/filter(SalesAmountSum%20gt%200)/orderby(SalesAmountSum%20asc)"
+				+ "/concat(aggregate(SalesAmountSum%20with%20sap.unit_sum%20as%20"
+				+ "UI5grand__SalesAmountSum),top(4))", {
 				"value" : [{
-						"UI5grand__SalesNumberSum" : 351,
+						"UI5grand__SalesAmountSum" : 351,
+						"UI5grand__SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR",
 						//TODO this should be used by auto type detection
-						"UI5grand__SalesNumberSum@odata.type" : "#Decimal"
-					},
-					{"Region" : "Z", "SalesNumber" : 1, "SalesNumberSum" : 1},
-					{"Region" : "Y", "SalesNumber" : 2, "SalesNumberSum" : 2},
-					{"Region" : "X", "SalesNumber" : 3, "SalesNumberSum" : 3},
-					{"Region" : "W", "SalesNumber" : 4, "SalesNumberSum" : 4}
+						"UI5grand__SalesAmountSum@odata.type" : "#Decimal"
+					}, {
+						"Region" : "Z",
+						"SalesNumber" : 1,
+						"SalesAmountSum" : 1,
+						"SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR"
+					}, {
+						"Region" : "Y",
+						"SalesNumber" : 2,
+						"SalesAmountSum" : 2,
+						"SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR"
+					}, {
+						"Region" : "X",
+						"SalesNumber" : 3,
+						"SalesAmountSum" : 3,
+						"SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR"
+					}, {
+						"Region" : "W",
+						"SalesNumber" : 4,
+						"SalesAmountSum" : 4,
+						"SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR"
+					}
 				]
 			})
 			.expectChange("region", ["", "Z", "Y", "X", "W"])
 			.expectChange("salesNumber", [null, "1", "2", "3", "4"])
-			.expectChange("salesNumberSum", [351, 1, 2, 3, 4]);
+			.expectChange("salesAmountSum", [351, 1, 2, 3, 4])
+			.expectChange("salesAmountCurrency", ["EUR", "EUR", "EUR", "EUR", "EUR"]);
 
 		return this.createView(assert, sView, createBusinessPartnerTestModel());
 	});
