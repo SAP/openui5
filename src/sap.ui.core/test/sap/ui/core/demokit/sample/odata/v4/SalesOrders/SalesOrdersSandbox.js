@@ -220,6 +220,17 @@ sap.ui.define([
 				serviceUrl : TestUtils.proxy(mParameters.serviceUrl) + sQuery,
 				updateGroupId : sUpdateGroupId
 			});
+			if (sUpdateGroupId) {
+				if (sUpdateGroupId in mParameters.groupProperties) {
+					// "SalesOrderUpdateGroup" should have same submit mode as default update group
+					mParameters.groupProperties.SalesOrderUpdateGroup
+						= mParameters.groupProperties[sUpdateGroupId];
+				} else if (sUpdateGroupId.startsWith("$auto")) {
+					mParameters.groupProperties.SalesOrderUpdateGroup.submit = "Auto";
+				} else if (sUpdateGroupId === "$direct") {
+					mParameters.groupProperties.SalesOrderUpdateGroup.submit = "Direct";
+				}
+			}
 			return new Constructor(mParameters);
 		});
 	}

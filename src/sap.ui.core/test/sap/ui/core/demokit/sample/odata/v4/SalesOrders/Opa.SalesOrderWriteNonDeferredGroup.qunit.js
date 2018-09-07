@@ -3,8 +3,9 @@
  */
 sap.ui.require([
 	"sap/ui/core/sample/odata/v4/SalesOrders/tests/WriteNonDeferredGroup",
-	"sap/ui/test/opaQunit"
-], function (WriteNonDeferredGroupTest, opaTest) {
+	"sap/ui/test/opaQunit",
+	"sap/ui/test/TestUtils"
+], function (WriteNonDeferredGroupTest, opaTest, TestUtils) {
 	/*global QUnit */
 	"use strict";
 
@@ -12,11 +13,14 @@ sap.ui.require([
 		"Write via application groups with SubmitMode.Auto/.Direct");
 
 	//*****************************************************************************
-	["myAutoGroup", "$auto", "$auto.foo", "myDirectGroup", "$direct"].forEach(function (sGroupId) {
-		opaTest("POST/PATCH SalesOrder via group: " + sGroupId, function (Given, When, Then) {
-
-			WriteNonDeferredGroupTest.writeNonDeferredGroup(Given, When, Then, sGroupId);
-
+	if (TestUtils.isRealOData()) {
+		[
+			"myAutoGroup", "$auto", "$auto.foo", "myDirectGroup", "$direct"
+		].forEach(function (sGroupId) {
+			opaTest("POST/PATCH SalesOrder via group: " + sGroupId,
+				WriteNonDeferredGroupTest.writeNonDeferredGroup.bind(null, sGroupId, ""));
 		});
-	});
+	} else {
+		QUnit.skip("POST/PATCH SalesOrder via group: tests run only with realOData=true");
+	}
 });

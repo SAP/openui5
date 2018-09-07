@@ -20,21 +20,6 @@ sap.ui.define([
 		_Requestor;
 
 	/**
-	 * Deletes the queue for the given group ID if it contains only the empty change set, so that
-	 * no empty batch is sent.
-	 *
-	 * @param {Requestor} oRequestor The requestor
-	 * @param {string} sGroupId The group ID
-	 */
-	function deleteEmptyGroup(oRequestor, sGroupId) {
-		var aBatchQueue = oRequestor.mBatchQueue[sGroupId];
-
-		if (aBatchQueue[0].length === 0 && aBatchQueue.length === 1) {
-			delete oRequestor.mBatchQueue[sGroupId];
-		}
-	}
-
-	/**
 	 * The getResponseHeader() method imitates the jqXHR.getResponseHeader() method for a $batch
 	 * error response.
 	 *
@@ -274,7 +259,6 @@ sap.ui.define([
 					bCanceled = true;
 				}
 			}
-			deleteEmptyGroup(that, sGroupId0);
 		}
 
 		if (sGroupId) {
@@ -634,6 +618,30 @@ sap.ui.define([
 	};
 
 	/**
+	 * Tells whether there are pending changes for the given group ID.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {object} oEntity
+	 *   The entity used to identify a request based on its "If-Match" header
+	 * @returns {boolean}
+	 *   Whether there are pending changes for the given group ID
+	 *
+	 * @public
+	 */
+	Requestor.prototype.hasChanges = function (sGroupId, oEntity) {
+		var aRequests = this.mBatchQueue[sGroupId];
+
+		if (aRequests) {
+			return aRequests[0].some(function (oRequest) {
+				return oRequest.headers["If-Match"] === oEntity;
+			});
+		}
+
+		return false;
+	};
+
+	/**
 	 * Returns <code>true</code> if there are pending changes.
 	 *
 	 * @returns {boolean} <code>true</code> if there are pending changes
@@ -732,7 +740,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Searches the request identified by the given group and body, removes it from that group and
+	 * Finds the request identified by the given group and body, removes it from that group and
 	 * triggers a new request with the new group ID, based on the found request.
 	 * The result of the new request is delegated to the found request.
 	 *
@@ -756,13 +764,45 @@ sap.ui.define([
 							oChange.headers, oBody, oChange.$submit, oChange.$cancel)
 						.then(oChange.$resolve, oChange.$reject);
 					aRequests[0].splice(i, 1);
-					deleteEmptyGroup(that, sCurrentGroupId);
 					return true;
 				}
 			});
 
 		if (!bFound) {
 			throw new Error("Request not found in group '" + sCurrentGroupId + "'");
+		}
+	};
+
+	/**
+	 * Finds all requests identified by the given group and entity, removes them from that group
+	 * and triggers new requests with the new group ID, based on each found request.
+	 * The result of each new request is delegated to the corresponding found request.
+	 *
+	 * @param {string} sCurrentGroupId
+	 *   The ID of the group in which to search
+	 * @param {object} oEntity
+	 *   The entity used to identify a request based on its "If-Match" header
+	 * @param {string} sNewGroupId
+	 *   The ID of the group for the new requests
+	 *
+	 * @private
+	 */
+	Requestor.prototype.relocateAll = function (sCurrentGroupId, oEntity, sNewGroupId) {
+		var j = 0,
+			aRequests = this.mBatchQueue[sCurrentGroupId],
+			that = this;
+
+		if (aRequests) {
+			aRequests[0].slice().forEach(function (oChange) {
+				if (oChange.headers["If-Match"] === oEntity) {
+					aRequests[0].splice(j, 1);
+					that.request(oChange.method, oChange.url, new _GroupLock(sNewGroupId),
+							oChange.headers, oChange.body, oChange.$submit, oChange.$cancel)
+						.then(oChange.$resolve, oChange.$reject);
+				} else {
+					j += 1;
+				}
+			});
 		}
 	};
 
@@ -896,6 +936,8 @@ sap.ui.define([
 	 *   The path by which this resource has originally been requested and thus can be identified on
 	 *   the client. Only required for non-GET requests where <code>sResourcePath</code> is a
 	 *   different (canonical) path.
+	 * @param {boolean} [bAtFront=false]
+	 *   Whether the request is added at the front of the change set (ignored for method "GET")
 	 * @returns {Promise}
 	 *   A promise on the outcome of the HTTP request
 	 * @throws {Error}
@@ -904,7 +946,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Requestor.prototype.request = function (sMethod, sResourcePath, oGroupLock, mHeaders, oPayload,
-			fnSubmit, fnCancel, sMetaPath, sOriginalResourcePath) {
+			fnSubmit, fnCancel, sMetaPath, sOriginalResourcePath, bAtFront) {
 		var oError,
 			sGroupId = oGroupLock && oGroupLock.getGroupId() || "$direct",
 			oPromise,
@@ -950,6 +992,8 @@ sap.ui.define([
 				};
 				if (sMethod === "GET") { // push behind change set
 					aRequests.push(oRequest);
+				} else if (bAtFront) { // add at front of change set
+					aRequests[0].unshift(oRequest);
 				} else { // push into change set
 					aRequests[0].push(oRequest);
 				}
@@ -1175,7 +1219,7 @@ sap.ui.define([
 			}
 		}
 
-		if (!aRequests) {
+		if (!aRequests || aRequests[0].length === 0 && aRequests.length === 1) {
 			return Promise.resolve();
 		}
 		delete this.mBatchQueue[sGroupId];

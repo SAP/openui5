@@ -66,18 +66,15 @@
 					"groupProperties" : {
 						"FavoriteProductGroup" : {"submit" : "Auto"},
 						"myAutoGroup" : {"submit" : "Auto"},
-						"myDirectGroup" : {"submit" : "Direct"}
+						"myDirectGroup" : {"submit" : "Direct"},
+						"SalesOrderUpdateGroup" : {"submit" : "API"},
+						"UpdateGroup" : {"submit" : "API"}
 					},
 					"operationMode" : "Server",
 					"synchronizationMode" : "None",
 					"updateGroupId" : "UpdateGroup"
 				}
 			}
-		},
-		"rootView" : {
-			"async" : true,
-			"type" : "XML",
-			"viewName" : "Main.view.xml"
 		},
 		"resources": {
 			"js": [{

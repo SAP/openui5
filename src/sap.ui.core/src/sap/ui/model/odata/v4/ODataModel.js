@@ -278,7 +278,7 @@ sap.ui.define([
 							fnOnCreateGroup : function (sGroupId) {
 								if (that.isAutoGroup(sGroupId)) {
 									sap.ui.getCore().addPrerenderingTask(
-										that._submitBatch.bind(that, sGroupId));
+										that._submitBatch.bind(that, sGroupId, true));
 								}
 							},
 							fnReportBoundMessages : this.reportBoundMessages.bind(this),
@@ -305,13 +305,16 @@ sap.ui.define([
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
+	 * @param {boolean} [bCatch=false]
+	 *   Whether the returned promise always resolves and never rejects
 	 * @returns {Promise}
 	 *   A promise on the outcome of the HTTP request resolving with <code>undefined</code>; it is
-	 *   rejected with an error if the batch request itself fails
+	 *   rejected with an error if the batch request itself fails. Use <code>bCatch</code> to catch
+	 *   that error and make the promise resolve with <code>undefined</code> instead.
 	 *
 	 * @private
 	 */
-	ODataModel.prototype._submitBatch = function (sGroupId) {
+	ODataModel.prototype._submitBatch = function (sGroupId, bCatch) {
 		var bBlocked,
 			oPromise,
 			that = this;
@@ -334,7 +337,9 @@ sap.ui.define([
 			});
 			return that.oRequestor.submitBatch(sGroupId).catch(function (oError) {
 				that.reportError("$batch failed", sClassName, oError);
-				throw oError;
+				if (!bCatch) {
+					throw oError;
+				}
 			});
 		}));
 	};

@@ -51,20 +51,20 @@ sap.ui.define([
 					models : {
 						undefined : oModel,
 						ui : new JSONModel({
-								bCreateItemPending : false,
-								filterProductID : "",
-								filterValue : "",
-								bLineItemSelected : false,
-								iMessages : 0,
-								bRealOData : TestUtils.isRealOData(),
-								bSalesOrderSelected : false,
-								bScheduleSelected : false,
-								bSelectedSalesOrderTransient : false,
-								bSortGrossAmountDescending : undefined,
-								bSortSalesOrderIDDescending : undefined,
-								sSortGrossAmountIcon : "",
-								sSortSalesOrderIDIcon : ""
-							}
+							bCreateItemPending : false,
+							filterProductID : "",
+							filterValue : "",
+							bLineItemSelected : false,
+							iMessages : 0,
+							bRealOData : TestUtils.isRealOData(),
+							bSalesOrderSelected : false,
+							bScheduleSelected : false,
+							bSelectedSalesOrderTransient : false,
+							bSortGrossAmountDescending : undefined,
+							bSortSalesOrderIDDescending : undefined,
+							sSortGrossAmountIcon : "",
+							sSortSalesOrderIDIcon : ""
+						}
 					)},
 					type : ViewType.XML,
 					viewName : "sap.ui.core.sample.odata.v4.SalesOrders.Main"
