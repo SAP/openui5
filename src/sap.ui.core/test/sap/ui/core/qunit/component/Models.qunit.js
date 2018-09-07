@@ -1,16 +1,17 @@
 sap.ui.define([
-    "jquery.sap.global",
-    "sap/base/i18n/ResourceBundle",
-    "sap/base/Log",
-    "sap/ui/core/UIComponent",
-    "sap/ui/model/odata/ODataModel",
-    "sap/ui/model/odata/v2/ODataModel",
-    "sap/ui/model/odata/v4/ODataModel",
-    "sap/ui/model/json/JSONModel",
-    "sap/ui/model/xml/XMLModel",
-    "sap/ui/model/resource/ResourceModel",
-    "sap/ui/test/v2models/parent/CustomModel"
-], function(jQuery, ResourceBundle, Log) {
+	"jquery.sap.global",
+	"sap/base/i18n/ResourceBundle",
+	"sap/base/Log",
+	"sap/ui/core/Component",
+	"sap/ui/core/UIComponent",
+	"sap/ui/model/odata/ODataModel",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/xml/XMLModel",
+	"sap/ui/model/resource/ResourceModel",
+	"sap/ui/test/v2models/parent/CustomModel"
+], function(jQuery, ResourceBundle, Log, Component) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -107,7 +108,7 @@ sap.ui.define([
 			var oManifestDataSources = jQuery.extend(true, {}, oManifest.getEntry("/sap.app/dataSources"));
 			var oManifestModels = jQuery.extend(true, {}, oManifest.getEntry("/sap.ui5/models"));
 
-			var oModelConfigurations = sap.ui.core.Component._createManifestModelConfigurations({
+			var oModelConfigurations = Component._createManifestModelConfigurations({
 				dataSources: oManifestDataSources,
 				models: oManifestModels,
 				manifest: oManifest,
@@ -1411,45 +1412,39 @@ sap.ui.define([
 			this.oServer.restore();
 			this.restoreGetUriParameters();
 			oRealCore.oConfiguration.preload = this.oldCfgPreload;
+			Component._fnLoadComponentCallback = null;
 		}
 	});
 
 	QUnit.test("Early model instantiation", function(assert) {
+		Component._fnLoadComponentCallback = function() {
+			// OData / JSON / ResourceModels Models should be created before the Component instance
+
+			// sap.ui.model.odata.v2.ODataModel
+			sinon.assert.callCount(this.modelSpy.odataV2, 1);
+			// model: "odata1"
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+				serviceUrl: "/path/to/odata/service1",
+				annotationURI: ["/path/to/odata/annotations/1?sap-language=EN"],
+				metadataUrlParams: { "sap-language": "EN" }
+			});
+
+			// sap.ui.model.json.JSONModel
+			sinon.assert.callCount(this.modelSpy.json, 1);
+			// model: "json"
+			sinon.assert.calledWithExactly(this.modelSpy.json, {
+				data: {
+					foo: "bar"
+				}
+			});
+
+			// sap.ui.model.resource.ResourceModel
+			sinon.assert.callCount(this.modelSpy.resource, 2);
+		}.bind(this);
+
 		return sap.ui.component({
 			manifestUrl: "/anylocation/manifest.json",
-			async: true,
-			asyncHints: {
-				waitFor: new Promise(function(resolve, reject) {
-					setTimeout(function() {
-
-						// OData / JSON / ResourceModels Models should be created before the Component instance
-
-						// sap.ui.model.odata.v2.ODataModel
-						sinon.assert.callCount(this.modelSpy.odataV2, 1);
-						// model: "odata1"
-						sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
-							serviceUrl: "/path/to/odata/service1",
-							annotationURI: ["/path/to/odata/annotations/1?sap-language=EN"],
-							metadataUrlParams: { "sap-language": "EN" }
-						});
-
-						// sap.ui.model.json.JSONModel
-						sinon.assert.callCount(this.modelSpy.json, 1);
-						// model: "json"
-						sinon.assert.calledWithExactly(this.modelSpy.json, {
-							data: {
-								foo: "bar"
-							}
-						});
-
-						// sap.ui.model.resource.ResourceModel
-						sinon.assert.callCount(this.modelSpy.resource, 2);
-
-						resolve();
-
-					}.bind(this), 1000);
-				}.bind(this))
-			}
+			async: true
 		}).then(function(oComponent) {
 			this.oComponent = oComponent;
 
@@ -1496,7 +1491,6 @@ sap.ui.define([
 
 			// check if all models got destroyed (uses the models from #assertModelInstances)
 			this.assertModelsDestroyed();
-
 		}.bind(this));
 	});
 
@@ -1512,7 +1506,7 @@ sap.ui.define([
 				return fnJQuerySapResource.apply(this, arguments);
 			});
 
-		sap.ui.core.Component._fnLoadComponentCallback = function() {
+		Component._fnLoadComponentCallback = function() {
 			assert.equal(iLoadResourceBundleAsync, 2, "loadResourceBundle async should be called twice before component instantiation");
 			assert.equal(that.modelSpy.resource.callCount, 1, "One ResourceModel should be created (preload=true)");
 		};
@@ -1543,47 +1537,38 @@ sap.ui.define([
 			this.assertModelsDestroyed();
 
 			jQuerySapResourcesStub.restore();
-			sap.ui.core.Component._fnLoadComponentCallback = null;
-
 		}.bind(this));
 	});
 
 	QUnit.test("Early model instantiation (with startupParameters)", function(assert) {
+		Component._fnLoadComponentCallback = function() {
+			// OData / JSON / Resource Models should be created before the Component instance
+
+			// sap.ui.model.odata.v2.ODataModel
+			sinon.assert.callCount(this.modelSpy.odataV2, 1);
+			// model: "odata1"
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+				serviceUrl: "/path/to/odata/service1;o=XXX",
+				annotationURI: ["/path/to/odata/annotations/1?sap-language=EN"],
+				metadataUrlParams: { "sap-language": "EN" }
+			});
+
+			// sap.ui.model.json.JSONModel
+			sinon.assert.callCount(this.modelSpy.json, 1);
+			// model: "json"
+			sinon.assert.calledWithExactly(this.modelSpy.json, {
+				data: {
+					foo: "bar"
+				}
+			});
+
+			// sap.ui.model.resource.ResourceModel
+			sinon.assert.callCount(this.modelSpy.resource, 2);
+		};
+
 		return sap.ui.component({
 			manifestUrl: "/anylocation/manifest.json",
 			async: true,
-			asyncHints: {
-				waitFor: new Promise(function(resolve, reject) {
-					setTimeout(function() {
-
-						// OData / JSON / Resource Models should be created before the Component instance
-
-						// sap.ui.model.odata.v2.ODataModel
-						sinon.assert.callCount(this.modelSpy.odataV2, 1);
-						// model: "odata1"
-						sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
-							serviceUrl: "/path/to/odata/service1;o=XXX",
-							annotationURI: ["/path/to/odata/annotations/1?sap-language=EN"],
-							metadataUrlParams: { "sap-language": "EN" }
-						});
-
-						// sap.ui.model.json.JSONModel
-						sinon.assert.callCount(this.modelSpy.json, 1);
-						// model: "json"
-						sinon.assert.calledWithExactly(this.modelSpy.json, {
-							data: {
-								foo: "bar"
-							}
-						});
-
-						// sap.ui.model.resource.ResourceModel
-						sinon.assert.callCount(this.modelSpy.resource, 2);
-
-						resolve();
-
-					}.bind(this), 1000);
-				}.bind(this))
-			},
 			componentData: {
 				startupParameters: {
 					"sap-system": ["XXX"]
@@ -1628,6 +1613,8 @@ sap.ui.define([
 
 			// check if all models got destroyed (uses the models from #assertModelInstances)
 			this.assertModelsDestroyed();
+
+			Component._fnLoadComponentCallback = null;
 
 		}.bind(this));
 	});
@@ -1719,7 +1706,7 @@ sap.ui.define([
 		}).then(function(ComponentClass) {
 
 			assert.equal(ComponentClass.getMetadata().getComponentName(), "samples.components.button", "Component class should been loaded");
-			assert.notOk(ComponentClass instanceof sap.ui.core.Component, "sap.ui.component.load should not create an instance");
+			assert.notOk(ComponentClass instanceof Component, "sap.ui.component.load should not create an instance");
 
 			// No models should have been created!
 
@@ -1799,9 +1786,7 @@ sap.ui.define([
 			async: true,
 			asyncHints: {
 				waitFor: new Promise(function(resolve, reject) {
-					setTimeout(function() {
-						reject("waitFor: rejected");
-					}, 1000);
+					reject("waitFor: rejected");
 				})
 			}
 		}).then(function(oComponent) {
