@@ -682,7 +682,6 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 
 	/**
 	 * Gets last analysis history.
-	 * @memberof jQuery.sap.support
 	 * @public
 	 * @returns {Object} Last analysis history.
 	 */
