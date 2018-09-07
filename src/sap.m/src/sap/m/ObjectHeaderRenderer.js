@@ -237,7 +237,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 			var aStatuses = oOH.getStatuses();
 			for (var i = 0; i < aStatuses.length; i++) {
 				if (!aStatuses[i].getVisible || aStatuses[i].getVisible()) {
-					if (aStatuses[i] instanceof sap.m.ObjectStatus || aStatuses[i] instanceof sap.m.ProgressIndicator) {
+					if ((aStatuses[i] instanceof sap.m.ObjectStatus && !aStatuses[i]._isEmpty()) || aStatuses[i] instanceof sap.m.ProgressIndicator) {
 						aVisibleStatuses.push([aStatuses[i]]);
 					} else {
 						jQuery.sap.log.warning("Only sap.m.ObjectStatus or sap.m.ProgressIndicator are allowed in \"sap.m.ObjectHeader.statuses\" aggregation." + " Current object is "
@@ -263,7 +263,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 			aVisibleAttribs = [];
 
 		for (var j = 0; j < aAttribs.length; j++) {
-			if (aAttribs[j].getVisible()) {
+			if (aAttribs[j].getVisible() && !aAttribs[j]._isEmpty()) {
 				aVisibleAttribs.push(aAttribs[j]);
 			}
 		}
