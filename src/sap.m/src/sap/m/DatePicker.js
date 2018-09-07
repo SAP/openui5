@@ -361,10 +361,15 @@ sap.ui.define([
 
 	DatePicker.prototype.onBeforeRendering = function() {
 
-		InputBase.prototype.onBeforeRendering.apply(this, arguments);
+		DateTimeField.prototype.onBeforeRendering.apply(this, arguments);
 
 		this._checkMinMaxDate();
 
+		var oValueHelpIcon = this._getValueHelpIcon();
+
+		if (oValueHelpIcon) {
+			oValueHelpIcon.setProperty("visible", this.getEnabled(), true);
+		}
 	};
 
 	/**
@@ -508,6 +513,11 @@ sap.ui.define([
 	 * @function
 	 */
 
+	DatePicker.prototype._getValueHelpIcon = function () {
+		var oValueHelpIcon = this.getAggregation("_endIcon");
+
+		return oValueHelpIcon && oValueHelpIcon[0];
+	};
 
 	DatePicker.prototype._dateValidation = function (oDate) {
 		this._bValid = true;
