@@ -2295,9 +2295,7 @@ sap.ui.define([
 			that.expectRequest({
 					method : "PATCH",
 					url : "SalesOrderList('42')",
-					headers : {
-						"If-Match" : sEtag
-					},
+					headers : {"If-Match" : sEtag},
 					payload : {
 						GrossAmount : "1234.56",
 						Note : "Changed Note"
@@ -3206,14 +3204,14 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("TEAMS('2')?$select=Name,Team_Id"
-					+ "&$expand=TEAM_2_EMPLOYEES($orderby=Name;$select=ID,Name)", {
-					"Name" : "Team 2",
-					"Team_Id" : "2",
-					"TEAM_2_EMPLOYEES" : [
-						{"Name" : "Frederic Fall"},
-						{"Name" : "Jonathan Smith"},
-						{"Name" : "Peter Burke"}
-					]
+				+ "&$expand=TEAM_2_EMPLOYEES($orderby=Name;$select=ID,Name)", {
+				"Name" : "Team 2",
+				"Team_Id" : "2",
+				"TEAM_2_EMPLOYEES" : [
+					{"Name" : "Frederic Fall"},
+					{"Name" : "Jonathan Smith"},
+					{"Name" : "Peter Burke"}
+				]
 			})
 			.expectChange("name", "Team 2")
 			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
@@ -4751,8 +4749,7 @@ sap.ui.define([
 					url : "BusinessPartnerList('1')",
 					headers : {"If-Match" : "ETag"},
 					payload : {"CompanyName" : "Bar, Inc"}
-				},
-				{});
+				}, {});
 
 			oText.getBinding("text").setValue("Bar, Inc");
 
@@ -5941,10 +5938,10 @@ sap.ui.define([
 						}]
 					})
 					.expectRequest("Equipments(Category='Electronics',ID=1)/EQUIPMENT_2_EMPLOYEE"
-							+ "?$select=ID,MANAGER_ID,Name", {
-							"ID" : "2",
-							"Name" : "Frederic Fall",
-							"MANAGER_ID" : "1"
+						+ "?$select=ID,MANAGER_ID,Name", {
+						"ID" : "2",
+						"Name" : "Frederic Fall",
+						"MANAGER_ID" : "1"
 					})
 					.expectChange("idEquipmentName", ["Office PC", "Tablet X"])
 					.expectChange(sIdManagerId, "1");
@@ -6142,9 +6139,7 @@ sap.ui.define([
 			var oContext = that.oView.byId("businessPartner").getBindingContext();
 
 			that.expectRequest({
-					headers : {
-						"If-Match" : "ETag"
-					},
+					headers : {"If-Match" : "ETag"},
 					method : "DELETE",
 					url : "BusinessPartnerList('0100000000')"
 				})
@@ -7648,9 +7643,10 @@ sap.ui.define([
 
 			that.expectRequest({
 					method : "POST",
-					url : "Artists(ArtistID='42',IsActiveEntity=false)/special.cases.ActivationAction"
-					+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
-					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)",
+					url : "Artists(ArtistID='42',IsActiveEntity=false)"
+						+ "/special.cases.ActivationAction"
+						+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
+						+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)",
 					payload : {}
 				}, {
 					"ArtistID" : "42",
