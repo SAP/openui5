@@ -135,6 +135,7 @@ sap.ui.require([
 			this.oChangeWithGlobalIdsWrapper = new Change(oChangeWithGlobalIds);
 			this.oChangeHandler = HideSimpleForm;
 			this.oXmlTreeModifier = XmlTreeModifier;
+			this.JsControlTreeModifier = JsControlTreeModifier;
 		},
 
 		afterEach: function () {
@@ -177,6 +178,11 @@ sap.ui.require([
 		"</form:SimpleForm>" +
 		"</mvc:View>";
 
+		this.oMockedComponent = {
+			createId: function (sString) {return "component---" + sString;},
+			getLocalId: function (sString) {return sString;}
+		};
+
 		var oDOMParser = new DOMParser();
 		this.oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml").documentElement;
 
@@ -185,6 +191,7 @@ sap.ui.require([
 
 		assert.ok(this.oChangeHandler.applyChange(this.oChangeWithGlobalIdsWrapper, this.oXmlSimpleForm, {
 			modifier : this.oXmlTreeModifier,
+			appComponent: this.oMockedComponent,
 			view : this.oXmlDocument
 		}), "no errors occur");
 		assert.ok(this.oXmlLabel0.getAttribute("visible"), "the FormElement is hidden");
@@ -329,6 +336,11 @@ sap.ui.require([
 		"</form:SimpleForm>" +
 		"</mvc:View>";
 
+		this.oMockedComponent = {
+			createId: function (sString) {return "component---" + sString;},
+			getLocalId: function (sString) {return sString;}
+		};
+
 		var oDOMParser = new DOMParser();
 		this.oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml").documentElement;
 
@@ -337,6 +349,7 @@ sap.ui.require([
 
 		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oXmlSimpleForm, {
 			modifier : this.oXmlTreeModifier,
+			appComponent : this.oMockedComponent,
 			view : this.oXmlDocument
 		}), "no errors occur");
 		assert.ok(this.oXmlLabel0.getAttribute("visible"), "the FormElement is hidden");
