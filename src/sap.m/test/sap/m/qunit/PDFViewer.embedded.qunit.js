@@ -6,8 +6,8 @@ sap.ui.define("sap.m.qunit.PDFViewerEmbedded", [
 	"sap/m/PDFViewer",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/PDFViewerRenderer",
-	"sap/m/PDFViewerDisplayTypes"
-], function (jQuery, TestUtils, PDFViewer, JSONModel, PDFViewerRenderer, PDFViewerDisplayTypes) {
+	"sap/m/PDFViewerDisplayType"
+], function (jQuery, TestUtils, PDFViewer, JSONModel, PDFViewerRenderer, PDFViewerDisplayType) {
 	"use strict";
 
 	var oPdfViewer = null;
@@ -219,18 +219,18 @@ sap.ui.define("sap.m.qunit.PDFViewerEmbedded", [
 		};
 
 		var fnCheckControlStructure = function () {
-			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayTypes.Auto, "Default value of displayType is Auto");
+			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Auto, "Default value of displayType is Auto");
 			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Auto mode");
 			assert.ok(fnIsContentDisplayed(), "Content is displayed in Auto mode");
 
-			oPdfViewer.setDisplayType(PDFViewerDisplayTypes.Embedded);
+			oPdfViewer.setDisplayType(PDFViewerDisplayType.Embedded);
 			TestUtils.rerender();
-			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayTypes.Embedded, "Set displayType to Embedded mode");
+			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Embedded, "Set displayType to Embedded mode");
 			assert.ok(fnIsContentDisplayed(), "Content is displayed in Embedded mode");
 
-			oPdfViewer.setDisplayType(PDFViewerDisplayTypes.Link);
+			oPdfViewer.setDisplayType(PDFViewerDisplayType.Link);
 			TestUtils.rerender();
-			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayTypes.Link, "Set displayType to Link mode");
+			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Link, "Set displayType to Link mode");
 			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Link mode");
 			assert.notOk(fnIsContentDisplayed(), "Content is not displayed in Link mode");
 
@@ -238,7 +238,7 @@ sap.ui.define("sap.m.qunit.PDFViewerEmbedded", [
 			oPdfViewer.rerender();
 			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Link mode always");
 
-			oPdfViewer.setDisplayType(PDFViewerDisplayTypes.Auto);
+			oPdfViewer.setDisplayType(PDFViewerDisplayType.Auto);
 			oPdfViewer.rerender();
 			assert.notOk(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is not displayed in Auto mode");
 

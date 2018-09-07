@@ -29,7 +29,7 @@ sap.ui.define([
 	) {
 		"use strict";
 
-		var PDFViewerDisplayTypes = library.PDFViewerDisplayTypes;
+		var PDFViewerDisplayType = library.PDFViewerDisplayType;
 
 		/**
 		 * Definition of PDFViewer control
@@ -109,7 +109,7 @@ sap.ui.define([
 						* <ul>
 						* <li>If set to <code>Link</code>, the PDF viewer appears as a toolbar with a download
 						* button that can be used to download the PDF file.<br>
-						* When the {@link #open} method is called, the user can either open the PDF file in a
+						* When the {@link open} method is called, the user can either open the PDF file in a
 						* new tab or download it.</li>
 						* <li>If set to <code>Embedded</code>, the PDF viewer appears embedded in the parent
 						* container and displays either the PDF document or the message defined by the
@@ -124,7 +124,7 @@ sap.ui.define([
 						* </li>
 						* </ul>
 						*/
-						displayType: {type: "sap.m.PDFViewerDisplayTypes", group: "Misc", defaultValue: PDFViewerDisplayTypes.Auto}
+						displayType: {type: "sap.m.PDFViewerDisplayType", group: "Misc", defaultValue: PDFViewerDisplayType.Auto}
 					},
 					aggregations: {
 						/**
@@ -562,7 +562,7 @@ sap.ui.define([
 		 * @private
 		 */
 		PDFViewer.prototype._isDisplayTypeAuto = function () {
-			return this.getDisplayType() === PDFViewerDisplayTypes.Auto;
+			return this.getDisplayType() === PDFViewerDisplayType.Auto;
 		};
 
 		/**
@@ -570,7 +570,7 @@ sap.ui.define([
 		 * @private
 		 */
 		PDFViewer.prototype._isDisplayTypeEmbedded = function () {
-			return this.getDisplayType() === PDFViewerDisplayTypes.Embedded;
+			return this.getDisplayType() === PDFViewerDisplayType.Embedded;
 		};
 
 		/**
@@ -578,7 +578,7 @@ sap.ui.define([
 		 * @private
 		 */
 		PDFViewer.prototype._isDisplayTypeLink = function () {
-			return this.getDisplayType() === PDFViewerDisplayTypes.Link;
+			return this.getDisplayType() === PDFViewerDisplayType.Link;
 		};
 
 		/**
