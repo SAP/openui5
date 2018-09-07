@@ -1838,6 +1838,18 @@ sap.ui.require([
 			});
 		}
 
+		function changeRTL(bRTL) {
+			return new Promise(function(resolve) {
+				sap.ui.getCore().getConfiguration().setRTL(bRTL);
+				sap.ui.getCore().applyChanges();
+				// Give the text direction change enough time, otherwise the UI might not be ready when the tests start.
+				// BCP: 1870395335
+				window.setTimeout(function() {
+					resolve();
+				}, 500);
+			});
+		}
+
 		var DummyControl = sap.ui.core.Control.extend("sap.ui.table.test.DummyControl", {
 			renderer: function(oRm, oControl) {
 				oRm.write("<div style=\"display: flex; flex-direction: column\">");
@@ -1866,20 +1878,14 @@ sap.ui.require([
 		test(0, 0).then(function() {
 			return test(0, 1);
 		}).then(function() {
-			sap.ui.getCore().getConfiguration().setRTL(true);
-			sap.ui.getCore().applyChanges();
-			return new Promise(function(resolve) {
-				window.setTimeout(function() {
-					test(0, 0).then(resolve);
-				}, 50);
-			});
+			return changeRTL(true);
+		}).then(function() {
+			return test(0, 0);
 		}).then(function() {
 			return test(0, 1);
 		}).then(function() {
-			sap.ui.getCore().getConfiguration().setRTL(false);
-			sap.ui.getCore().applyChanges();
-			done();
-		});
+			return changeRTL(false);
+		}).then(done);
 	});
 
 	QUnit.module("Leave action mode on horizontal scrolling", {
@@ -1903,7 +1909,7 @@ sap.ui.require([
 		oEvent.initEvent("mousedown", true, true);
 		oTable.getDomRef("hsb").dispatchEvent(oEvent);
 		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode again");
-		assert.ok(getCell(0, 0, false, null, oTable).get(0) === document.activeElement, "Cell has focus now");
+		assert.strictEqual(document.activeElement, getCell(0, 0)[0], "Cell has focus now");
 	});
 
 	QUnit.test("MouseWheel", function(assert) {
@@ -1911,9 +1917,9 @@ sap.ui.require([
 		oTable.getRows()[0].getCells()[0].focus();
 		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
 		var oWheelEvent = createMouseWheelEvent(150, MouseWheelDeltaMode.PIXEL, true);
-		getCell(0, 0, false, null, oTable).get(0).dispatchEvent(oWheelEvent);
+		getCell(0, 0)[0].dispatchEvent(oWheelEvent);
 		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode again");
-		assert.ok(getCell(0, 0, false, null, oTable).get(0) === document.activeElement, "Cell has focus now");
+		assert.strictEqual(document.activeElement, getCell(0, 0)[0], "Cell has focus now");
 	});
 
 	QUnit.test("Touch", function(assert) {
@@ -1933,7 +1939,7 @@ sap.ui.require([
 		doTouchScrolling(oTargetElement, 150);
 
 		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode again");
-		assert.ok(getCell(0, 0, false, null, oTable).get(0) === document.activeElement, "Cell has focus now");
+		assert.strictEqual(document.activeElement, getCell(0, 0)[0], "Cell has focus now");
 
 		Device.support.pointer = bOriginalPointerSupport;
 		Device.support.touch = bOriginalTouchSupport;
