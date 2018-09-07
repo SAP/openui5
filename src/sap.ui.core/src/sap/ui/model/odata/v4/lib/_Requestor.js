@@ -563,7 +563,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Requestor.prototype.getModelInterface = function (sGroupId) {
+	Requestor.prototype.getModelInterface = function () {
 		return this.oModelInterface;
 	};
 
@@ -1074,39 +1074,28 @@ sap.ui.define([
 	Requestor.prototype.submitBatch = function (sGroupId) {
 		var aChangeSet = [],
 			bHasChanges,
-			oPreviousChange,
 			aRequests = this.mBatchQueue[sGroupId],
 			that = this;
 
 		/*
-		 * Merges a change from a change set into the previous one if possible.
+		 * Merges the given change into a "PATCH"-change contained in the change set if possible.
 		 *
-		 * @param {object} oPreviousChange The previous change, may be undefined
 		 * @param {object} oChange The current change
-		 * @returns {object} The merged body or undefined if no merge is possible
+		 * @returns {boolean} Whether the current change is merged into a change in the change set
 		 */
-		function mergePatch(oPreviousChange, oChange) {
-			var oBody, oPreviousBody, sProperty;
-
-			if (oPreviousChange
-					&& oPreviousChange.method === "PATCH"
-					&& oChange.method === "PATCH"
-					&& oPreviousChange.url === oChange.url
-					&& deepEqual(oPreviousChange.headers, oChange.headers)) {
-				oPreviousBody = oPreviousChange.body;
-				oBody = oChange.body;
-				for (sProperty in oPreviousBody) {
-					if (oPreviousBody[sProperty] === null
-							&& oBody[sProperty] && typeof oBody[sProperty] === "object") {
-						// previous PATCH sets complex property to null -> must not be merged
-						return undefined;
-					}
-				}
-				return jQuery.extend(true, oPreviousBody, oBody);
+		function mergePatch(oChange) {
+			if (oChange.method !== "PATCH") {
+				return false;
 			}
-			return undefined;
+			return aChangeSet.some(function (oCandidate) {
+				if (oCandidate.method === "PATCH"
+						&& oCandidate.headers["If-Match"] === oChange.headers["If-Match"]) {
+					jQuery.extend(true, oCandidate.body, oChange.body);
+					oChange.$resolve(oCandidate.$promise);
+					return true;
+				}
+			});
 		}
-
 		/*
 		 * Visits the given request/response pairs, rejecting or resolving the corresponding
 		 * promises accordingly.
@@ -1186,14 +1175,8 @@ sap.ui.define([
 
 		// iterate over the change set and merge related PATCH requests
 		aRequests[0].forEach(function (oChange) {
-			var oMergedBody = mergePatch(oPreviousChange, oChange);
-
-			if (oMergedBody) {
-				oPreviousChange.body = oMergedBody;
-				oChange.$resolve(oPreviousChange.$promise);
-			} else { // push into change set
+			if (!mergePatch(oChange)) {
 				aChangeSet.push(oChange);
-				oPreviousChange = oChange;
 			}
 		});
 

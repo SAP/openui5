@@ -1051,55 +1051,65 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("submitBatch(...): merge PATCH requests", function (assert) {
-		var aPromises = [],
+		var oBusinessPartners42 = {},
+			oEntityProduct0 = {},
+			oEntityProduct0OtherCache = {},
+			oEntityProduct1 = {},
+			aPromises = [],
 			oRequestor = _Requestor.create("/", oModelInterface),
 			fnSubmit0 = this.spy(),
 			fnSubmit1 = this.spy(),
 			fnSubmit2 = this.spy(),
-			fnSubmit3 = this.spy();
+			fnSubmit3 = this.spy(),
+			fnSubmit4 = this.spy();
 
-		aPromises.push(oRequestor
-			.request("PATCH", "Products('0')", new _GroupLock("groupId"), {}, {Name : null}));
-		oRequestor.request(
-			"PATCH", "Products('0')", new _GroupLock("anotherGroupId"), {}, {Name : "foo"});
-		aPromises.push(oRequestor
-			.request("PATCH", "Products('0')", new _GroupLock("groupId"), {}, {Name : "bar"}));
-		aPromises.push(oRequestor
-			.request("GET", "Products", new _GroupLock("groupId"), undefined, undefined,
-				fnSubmit0));
-		aPromises.push(oRequestor
-			.request("PATCH", "Products('0')", new _GroupLock("groupId"), {},
-				{Note : "hello, world"}));
-		// just different headers
-		aPromises.push(oRequestor
-			.request("PATCH", "Products('0')", new _GroupLock("groupId"), {"If-Match" : ""},
-				{Note : "no merge!"}));
-		// just a different verb
-		aPromises.push(oRequestor
-			.request("POST", "Products", new _GroupLock("groupId"), {"If-Match" : ""},
-				{Name : "baz"}, fnSubmit1));
+		aPromises.push(oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+			{"If-Match" : oEntityProduct0}, {Name : null}));
+		oRequestor.request("PATCH", "Products('0')", new _GroupLock("otherGroupId"),
+			{"If-Match" : oEntityProduct0OtherCache}, {Price : "5.0"});
+		aPromises.push(oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+			{"If-Match" : oEntityProduct0}, {Name : "bar"}));
+		aPromises.push(oRequestor.request("GET", "Products", new _GroupLock("groupId"), undefined,
+			undefined, fnSubmit0));
+		aPromises.push(oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+			{"If-Match" : oEntityProduct0}, {Note : "hello, world"}));
+		// different entity in between
+		aPromises.push(oRequestor.request("PATCH", "Products('1')", new _GroupLock("groupId"),
+			{"If-Match" : oEntityProduct1}, {Name : "p1"}));
+		aPromises.push(oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+			{"If-Match" : oEntityProduct0}, {Name : "bar2"}));
+		// same group but different cache
+		aPromises.push(oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+			{"If-Match" : oEntityProduct0OtherCache}, {Note : "no merge!"}));
+		// a create
+		aPromises.push(oRequestor.request("POST", "Products", new _GroupLock("groupId"), null,
+			{Name : "baz"}, fnSubmit1));
+		// a bound action
+		aPromises.push(oRequestor.request("POST", "Products('0')/GetCurrentStock",
+			new _GroupLock("groupId"), {"If-Match" : oEntityProduct0}, {}, fnSubmit2));
 		// structured property
 		// first set to null: may be merged with each other, but not with PATCHES to properties
-		aPromises.push(oRequestor
-			.request("PATCH", "BusinessPartners('42')", new _GroupLock("groupId"),
-				{"If-Match" : ""}, {Address : null}));
-		aPromises.push(oRequestor
-			.request("PATCH", "BusinessPartners('42')", new _GroupLock("groupId"),
-				{"If-Match" : ""}, {Address : null}));
+		aPromises.push(oRequestor.request("PATCH", "BusinessPartners('42')",
+			new _GroupLock("groupId"), {"If-Match" : oBusinessPartners42}, {Address : null}));
 		// then two different properties therein: must be merged
-		aPromises.push(oRequestor
-			.request("PATCH", "BusinessPartners('42')", new _GroupLock("groupId"),
-				{"If-Match" : ""}, {Address : {City : "Walldorf"}}, fnSubmit2));
-		aPromises.push(oRequestor
-			.request("PATCH", "BusinessPartners('42')", new _GroupLock("groupId"),
-				{"If-Match" : ""}, {Address : {PostalCode : "69190"}}, fnSubmit3));
+		aPromises.push(oRequestor.request("PATCH", "BusinessPartners('42')",
+			new _GroupLock("groupId"), {"If-Match" : oBusinessPartners42},
+			{Address : {City : "Walldorf"}}, fnSubmit3));
+		aPromises.push(oRequestor.request("PATCH", "BusinessPartners('42')",
+			new _GroupLock("groupId"), {"If-Match" : oBusinessPartners42},
+			{Address : {PostalCode : "69190"}}, fnSubmit4));
 		this.mock(oRequestor).expects("sendBatch")
 			.withExactArgs([
 				[
 					sinon.match({
-						body : {Name : "bar", Note : "hello, world"},
+						body : {Name : "bar2", Note : "hello, world"},
 						method : "PATCH",
 						url : "Products('0')"
+					}),
+					sinon.match({
+						body : {Name : "p1"},
+						method : "PATCH",
+						url : "Products('1')"
 					}),
 					sinon.match({
 						body : {Note : "no merge!"},
@@ -1112,9 +1122,9 @@ sap.ui.define([
 						url : "Products"
 					}),
 					sinon.match({
-						body : {Address : null},
-						method : "PATCH",
-						url : "BusinessPartners('42')"
+						body : {},
+						method : "POST",
+						url : "Products('0')/GetCurrentStock"
 					}),
 					sinon.match({
 						body : {Address : {City : "Walldorf", PostalCode : "69190"}},
@@ -1128,10 +1138,11 @@ sap.ui.define([
 				})
 			]).resolves([
 				[
-					createResponse({Name : "bar", Note : "hello, world"}),
+					createResponse({Name : "bar2", Note : "hello, world"}),
+					createResponse({Name : "p1"}),
 					createResponse({Note : "no merge!"}),
 					createResponse({Name : "baz"}),
-					createResponse({Address : null}),
+					createResponse({value : "123 EA"}),
 					createResponse({Address : {City : "Walldorf", PostalCode : "69190"}})
 				],
 				createResponse({Name : "Name", Note : "Note"})
@@ -1148,16 +1159,20 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(fnSubmit2);
 		sinon.assert.calledOnce(fnSubmit3);
 		sinon.assert.calledWithExactly(fnSubmit3);
+		sinon.assert.calledOnce(fnSubmit4);
+		sinon.assert.calledWithExactly(fnSubmit4);
 		return Promise.all(aPromises).then(function (aResults) {
 			assert.deepEqual(aResults, [
-				{Name : "bar", Note : "hello, world"}, // 1st PATCH
-				{Name : "bar", Note : "hello, world"}, // 2nd PATCH, merged with 1st
+				{Name : "bar2", Note : "hello, world"}, // 1st PATCH
+				{Name : "bar2", Note : "hello, world"}, // 2nd PATCH, merged with 1st
 				{Name : "Name", Note : "Note"}, // GET
-				{Name : "bar", Note : "hello, world"}, // 3rd PATCH, merged with 1st and 2nd
+				{Name : "bar2", Note : "hello, world"}, // 3rd PATCH, merged with 1st and 2nd
+				{Name : "p1"}, // 1st PATCH for another entity
+				{Name : "bar2", Note : "hello, world"}, // 4th PATCH, merged with previous PATCHes
 				{Note : "no merge!"}, // PATCH with different headers
-				{Name : "baz"}, // POST
-				{Address : null},
-				{Address : null},
+				{Name : "baz"}, // POST (create)
+				{value : "123 EA"}, // POST (bound action)
+				{Address : {City : "Walldorf", PostalCode : "69190"}},
 				{Address : {City : "Walldorf", PostalCode : "69190"}},
 				{Address : {City : "Walldorf", PostalCode : "69190"}},
 				undefined // submitBatch()
@@ -1285,11 +1300,11 @@ sap.ui.define([
 			assert.strictEqual(oError.cause, oBatchError);
 		}
 
-		aPromises.push(oRequestor.request("PATCH", "Products('0')", new _GroupLock("group"), {},
-				{Name : "foo"})
+		aPromises.push(oRequestor.request("PATCH", "Products('0')", new _GroupLock("group"),
+				{"If-Match" : {/* product 0*/}}, {Name : "foo"})
 			.then(unexpectedSuccess, assertError));
-		aPromises.push(oRequestor.request("PATCH", "Products('1')", new _GroupLock("group"), {},
-				{Name : "foo"})
+		aPromises.push(oRequestor.request("PATCH", "Products('1')", new _GroupLock("group"),
+				{"If-Match" : {/* product 1*/}},{Name : "foo"})
 			.then(unexpectedSuccess, assertError));
 		aPromises.push(oRequestor.request("GET", "Products", new _GroupLock("group"))
 			.then(unexpectedSuccess, assertError));
@@ -1375,6 +1390,7 @@ sap.ui.define([
 				status : 400,
 				statusText : "Bad Request"
 			}],
+			oProduct = {},
 			aPromises = [],
 			oRequestor = _Requestor.create("/", oModelInterface);
 
@@ -1386,14 +1402,14 @@ sap.ui.define([
 		}
 
 		aPromises.push(oRequestor.request("PATCH", "ProductList('HT-1001')",
-				new _GroupLock("group"), {"If-Match" : "*"}, {Name : "foo"})
+				new _GroupLock("group"), {"If-Match" : oProduct}, {Name : "foo"})
 			.then(undefined, assertError));
 
 		aPromises.push(oRequestor.request("POST", "Unknown", new _GroupLock("group"), undefined, {})
 			.then(undefined, assertError));
 
 		aPromises.push(oRequestor.request("PATCH", "ProductList('HT-1001')",
-				new _GroupLock("group"), {"If-Match" : "*"}, {Name : "bar"})
+				new _GroupLock("group"), {"If-Match" : oProduct}, {Name : "bar"})
 			.then(undefined, assertError));
 
 		aPromises.push(oRequestor.request("GET", "ok", new _GroupLock("group"))
@@ -1507,7 +1523,8 @@ sap.ui.define([
 			"a running GET request is not a pending change");
 
 		// add a PATCH request and submit the queue
-		oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"), {}, {Name : "foo"});
+		oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+			{"If-Match" : {/* product 0 */}}, {Name : "foo"});
 		oBatchRequest2 = expectBatch();
 		aPromises.push(oRequestor.submitBatch("groupId").then(function () {
 			// code under test
@@ -1525,7 +1542,8 @@ sap.ui.define([
 		oRequestor.cancelChanges("anotherGroupId"); // the other groups are not affected
 
 		// while the batch with the first PATCH is still running, add another PATCH and submit
-		oRequestor.request("PATCH", "Products('1')", new _GroupLock("groupId"), {}, {Name : "bar"});
+		oRequestor.request("PATCH", "Products('1')", new _GroupLock("groupId"),
+			{"If-Match" : {/* product 0 */}}, {Name : "bar"});
 		oBatchRequest3 = expectBatch();
 		aPromises.push(oRequestor.submitBatch("groupId").then(function () {
 			// code under test
@@ -1546,6 +1564,7 @@ sap.ui.define([
 			fnCancelPost = this.spy(),
 			iCount = 1,
 			oPostData = {},
+			oProduct0 = {},
 			oPromise,
 			oRequestor = _Requestor.create("/Service/", oModelInterface, undefined,
 				{"sap-client" : "123"});
@@ -1563,24 +1582,25 @@ sap.ui.define([
 		assert.strictEqual(oRequestor.hasPendingChanges(), false);
 
 		oPromise = Promise.all([
-			oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"), {},
-					{Name : "foo"}, undefined, fnCancel1)
+			oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+					{"If-Match" : oProduct0}, {Name : "foo"}, undefined, fnCancel1)
 				.then(unexpected, rejected.bind(null, 3)),
-			oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"), {},
-					{Name : "bar"}, undefined, fnCancel2)
+			oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+					{"If-Match" : oProduct0}, {Name : "bar"}, undefined, fnCancel2)
 				.then(unexpected, rejected.bind(null, 2)),
 			oRequestor.request("GET", "Employees", new _GroupLock("groupId")),
-			oRequestor.request("POST", "ActionImport('42')", new _GroupLock("groupId"), {},
+			oRequestor.request("POST", "ActionImport('42')", new _GroupLock("groupId"), undefined,
 					{foo : "bar"}),
 			oRequestor.request("POST", "LeaveRequests('42')/name.space.Submit",
-					new _GroupLock("groupId"), {}, oPostData, undefined, fnCancelPost)
+					new _GroupLock("groupId"), {"If-Match" : {/* leave requests 42 */}},
+					oPostData, undefined, fnCancelPost)
 				.then(unexpected, function (oError) {
 					assert.strictEqual(oError.canceled, true);
 					assert.strictEqual(oError.message, "Request canceled: " +
 						"POST LeaveRequests('42')/name.space.Submit; group: groupId");
 				}),
-			oRequestor.request("PATCH", "Products('1')", new _GroupLock("groupId"), {},
-					{Name : "baz"}, undefined, fnCancel3)
+			oRequestor.request("PATCH", "Products('1')", new _GroupLock("groupId"),
+					{"If-Match" : {/* product 0 */}}, {Name : "baz"}, undefined, fnCancel3)
 				.then(unexpected, rejected.bind(null, 1))
 		]);
 
@@ -1623,6 +1643,7 @@ sap.ui.define([
 	//*****************************************************************************************
 	QUnit.test("cancelChanges: only PATCH", function (assert) {
 		var fnCancel = function () {},
+			oProduct0 = {},
 			oPromise,
 			oRequestor = _Requestor.create("/Service/", oModelInterface, undefined,
 				{"sap-client" : "123"});
@@ -1636,14 +1657,14 @@ sap.ui.define([
 		}
 
 		oPromise = Promise.all([
-			oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"), {},
-					{Name : "foo"}, undefined, fnCancel)
+			oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+					{"If-Match" : oProduct0}, {Name : "foo"}, undefined, fnCancel)
 				.then(unexpected, rejected),
-			oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"), {},
-					{Name : "bar"}, undefined, fnCancel)
+			oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+					{"If-Match" : oProduct0}, {Name : "bar"}, undefined, fnCancel)
 				.then(unexpected, rejected),
-			oRequestor.request("PATCH", "Products('1')", new _GroupLock("groupId"), {},
-					{Name : "baz"}, undefined, fnCancel)
+			oRequestor.request("PATCH", "Products('1')", new _GroupLock("groupId"),
+					{"If-Match" : {/* product 1*/}}, {Name : "baz"}, undefined, fnCancel)
 				.then(unexpected, rejected)
 		]);
 
@@ -1668,8 +1689,8 @@ sap.ui.define([
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oTestPromise;
 
-		oPromise = oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"), {},
-			{Name : "foo"}, undefined, fnCancel);
+		oPromise = oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+			{"If-Match" : {/* product 0 */}}, {Name : "foo"}, undefined, fnCancel);
 		oTestPromise = oPromise.then(function () {
 				assert.ok(false);
 			}, function (oError) {
@@ -1688,6 +1709,7 @@ sap.ui.define([
 	//*****************************************************************************************
 	QUnit.test("removePatch: various requests", function (assert) {
 		var fnCancel = this.spy(),
+			oProduct0 = {},
 			oPromise,
 			aPromises,
 			oRequestor = _Requestor.create("/Service/", oModelInterface);
@@ -1702,13 +1724,13 @@ sap.ui.define([
 				"Request canceled: PATCH Products('0'); group: groupId");
 		}
 
-		oPromise = oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"), {},
-			{Name : "foo"}, undefined, fnCancel);
+		oPromise = oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+			{"If-Match" : oProduct0}, {Name : "foo"}, undefined, fnCancel);
 
 		aPromises = [
 			oPromise.then(unexpected, rejected),
-			oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"), {},
-				{Name : "bar"}),
+			oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+				{"If-Match" : oProduct0}, {Name : "bar"}),
 			oRequestor.request("GET", "Employees", new _GroupLock("groupId"))
 		];
 
@@ -1739,8 +1761,8 @@ sap.ui.define([
 		var oPromise,
 			oRequestor = _Requestor.create("/Service/", oModelInterface);
 
-		oPromise = oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"), {},
-			{Name : "bar"});
+		oPromise = oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+			{"If-Match" : {/* oEntity */}}, {Name : "bar"});
 
 		this.mock(oRequestor).expects("sendBatch") // arguments don't matter
 			.resolves([createResponse({})]);
@@ -2372,8 +2394,9 @@ sap.ui.define([
 				sResourcePath = "ProductList('HT-1001')";
 
 			return Promise.all([
-					oRequestor.request("PATCH", sResourcePath, new _GroupLock("group"),
-							{"If-Match" : "*"}, oBody)
+					oRequestor.request("PATCH", sResourcePath, new _GroupLock("group"), {
+								"If-Match" : {"@odata.etag" : "*"}
+							}, oBody)
 						.then(function (oResult) {
 							TestUtils.deepContains(oResult, oBody);
 						}),
@@ -2384,6 +2407,9 @@ sap.ui.define([
 		//*****************************************************************************************
 		QUnit.test("submitBatch (real OData): error in change set", function (assert) {
 			var oCommonError,
+				oEntity = {
+					"@odata.etag" : "*"
+				},
 				oRequestor = _Requestor.create(TestUtils.proxy(sSampleServiceUrl), oModelInterface);
 
 			function onError(oError) {
@@ -2396,12 +2422,12 @@ sap.ui.define([
 
 			return Promise.all([
 				oRequestor.request("PATCH", "ProductList('HT-1001')", new _GroupLock("group"),
-						{"If-Match" : "*"}, {Name : "foo"})
+						{"If-Match" : oEntity}, {Name : "foo"})
 					.then(undefined, onError),
 				oRequestor.request("POST", "Unknown", new _GroupLock("group"), undefined, {})
 					.then(undefined, onError),
 				oRequestor.request("PATCH", "ProductList('HT-1001')", new _GroupLock("group"),
-						{"If-Match" : "*"}, {Name : "bar"})
+						{"If-Match" : oEntity}, {Name : "bar"})
 					.then(undefined, onError),
 				oRequestor.request("GET", "SalesOrderList?$skip=0&$top=10", new _GroupLock("group"))
 					.then(undefined, function (oError) {

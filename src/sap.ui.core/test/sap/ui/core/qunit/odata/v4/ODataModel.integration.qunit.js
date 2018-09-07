@@ -2319,6 +2319,90 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Merge PATCHes for different entities even if there are other changes in between
+	QUnit.test("Merge PATCHes for different entities", function (assert) {
+		var oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<columns><Column/><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="amount" text="{GrossAmount}"/>\
+		<Text id="note" text="{Note}"/>\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest(
+			"SalesOrderList?$select=GrossAmount,Note,SalesOrderID&$skip=0&$top=100", {
+				value : [{
+					"@odata.etag" : "ETag0",
+					"GrossAmount" : "1000.00",
+					"Note" : "Note0",
+					"SalesOrderID" : "41"
+				},{
+					"@odata.etag" : "ETag1",
+					"GrossAmount" : "150.00",
+					"Note" : "Note1",
+					"SalesOrderID" : "42"
+				}]
+			})
+			.expectChange("amount", ["1,000.00", "150.00"])
+			.expectChange("note", ["Note0", "Note1"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var aTableItems = that.oView.byId("table").getItems(),
+				oBindingAmount0 = aTableItems[0].getCells()[0].getBinding("text"),
+				oBindingAmount1 = aTableItems[1].getCells()[0].getBinding("text"),
+				oBindingNote0 = aTableItems[0].getCells()[1].getBinding("text"),
+				oBindingNote1 = aTableItems[1].getCells()[1].getBinding("text");
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('41')",
+					headers : {"If-Match" : "ETag0"},
+					payload : {
+						GrossAmount : "123.45",
+						Note : "Note02"
+					}
+				}, {
+					GrossAmount : "123.45",
+					Note : "Note02"
+				})
+				.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "ETag1"},
+					payload : {
+						GrossAmount : "456.78",
+						Note : "Note12"
+					}
+				}, {
+					GrossAmount : "456.78",
+					Note : "Note12"
+				})
+				.expectChange("amount", ["123.45", "456.78"])
+				.expectChange("note", ["Note01", "Note11"])
+				.expectChange("note", ["Note02", "Note12"]);
+
+			// Code under test
+			oBindingAmount0.setValue("123.45");
+			oBindingAmount1.setValue("456.78");
+			oBindingNote0.setValue("Note01");
+			oBindingNote1.setValue("Note11");
+			oBindingNote1.setValue("Note12");
+			oBindingNote0.setValue("Note02");
+
+			return Promise.all([
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Modify a property while an update request is not yet resolved. Determine the ETag
 	// as late as possible
 	QUnit.test("Lazy determination of ETag while PATCH", function (assert) {
