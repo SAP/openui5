@@ -511,6 +511,24 @@
 					assert.ok(!attr.length, "Zero attributes are rendered.");
 				});
 
+				QUnit.test("Attribute shouldn't be rendered if it has empty title and text", function (assert){
+					// Arrange
+					var oObjectHeader = createObjectHeader();
+					var oAttr = new sap.m.ObjectAttribute({
+						title: "",
+						text: ""
+					});
+					oObjectHeader.insertAttribute(oAttr, 0);
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					var attr = oObjectHeader.$().find(".sapMOHRAttr");
+					assert.ok(!attr.length, "Zero attributes are rendered.");
+				});
+
 				QUnit.test("Attribute should be rendered after insertAttribute", function (assert){
 					// Arrange
 					var oObjectHeader = createObjectHeader();
@@ -638,6 +656,29 @@
 				QUnit.test("Status shouldn't be rendered", function (assert){
 					// Arrange
 					var oObjectHeader = createObjectHeader();
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					var status = oObjectHeader.$().find(".sapMOHRStatus");
+					assert.ok(!status.length, "Zero statuses are rendered.");
+				});
+
+				QUnit.test("Status shouldn't be rendered if the title and text are empty", function (assert){
+					// Arrange
+					var oObjectHeader = createObjectHeader();
+					var oStatus = new sap.m.ObjectStatus({
+						title: "",
+						text: ""
+					});
+					var oAttr = new sap.m.ObjectAttribute({
+						title: "",
+						text: ""
+					});
+					oObjectHeader.insertAttribute(oAttr, 0);
+					oObjectHeader.insertStatus(oStatus, 0);
 
 					// System under test
 					oObjectHeader.placeAt("qunit-fixture");
