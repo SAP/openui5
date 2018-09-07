@@ -35,6 +35,12 @@ describe("sap.m.ObjectHeaderVisualTest", function() {
 		expect(takeScreenshot()).toLookAs("intro-clicked");
 	});
 
+	it("OH with 1 status and 1 empty attribute",function() {
+		element(by.id("change_fullscreen")).click();
+		element(by.id("one_state_empty_attribute")).click();
+		expect(takeScreenshot()).toLookAs("1_status_1_empty_attribute");
+	});
+
 	it("Set none responsive",function() {
 		element(by.id("change_OH_type")).click();
 		expect(takeScreenshot()).toLookAs("old-OH");

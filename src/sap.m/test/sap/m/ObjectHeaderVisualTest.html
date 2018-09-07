@@ -73,6 +73,21 @@
 				}
 		});
 
+		var emptyAttribute = new sap.m.ObjectAttribute({
+			title: "",
+			text: ""
+		});
+
+		var oneStateButton = new sap.m.Button("one_state_empty_attribute", {
+			text: "Add one state and one empty attribute",
+			press: function() {
+				oh1.removeAllAttributes();
+				oh1.removeAllStatuses();
+					oh1.addAttribute(emptyAttribute);
+					oh1.addStatus(os1);
+				}
+		});
+
 		var typeBtn = new sap.m.Button("change_OH_type", {
 			text: "Toggle responsive",
 			press: function() {
@@ -89,6 +104,7 @@
 
 		fullScreenBtn.placeAt("body");
 		statesBtn.placeAt("body");
+		oneStateButton.placeAt("body");
 		typeBtn.placeAt("body");
 		condBtn.placeAt("body");
 		</script>
