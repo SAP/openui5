@@ -32,6 +32,13 @@ sap.ui.define(["sap/ui/core/library"],
 			sTooltip = oOA.getTooltip_AsString();
 
 		if (oOA._isEmpty()) {
+			oRm.write("<div");
+			oRm.writeControlData(oOA);
+			oRm.addClass("sapMObjectAttributeDiv");
+			oRm.addClass("sapUiHidden");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.write("</div>");
 			return;
 		}
 
