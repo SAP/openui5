@@ -159,6 +159,7 @@ function(StashedControlSupport, Component, Button, Panel, Log, createAndAppendDi
 			oButton.setStashed(false);
 			this.oView.invalidate();
 		}.bind(this);
+		this.oView.invalidate(); // ensure a rerendering
 	});
 
 	QUnit.test("getStashedControls", function(assert) {
@@ -228,6 +229,7 @@ function(StashedControlSupport, Component, Button, Panel, Log, createAndAppendDi
 				oButton.setStashed(false);
 				oView.invalidate();
 			};
+			oView.invalidate();
 		};
 
 		oView.loaded().then(fnTest);
