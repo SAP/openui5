@@ -11,7 +11,7 @@ sap.ui.define([],
 		css: "Button.designtime.css",
 		icon: "Button.png",
 		name: "{name}",
-		description: "{description}",
+		description: "{description}"
 	};
 
-}, /* bExport= */ false);
+});

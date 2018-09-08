@@ -8,7 +8,7 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.core.sample.XMLComposite.01.Component",
 		{
 			metadata : "json",
-		
+
 			init: function () {
 
 				// call the init function of the parent

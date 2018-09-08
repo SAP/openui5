@@ -17,7 +17,7 @@ sap.ui.define([
       id: "num-lemmings-saved",
       success: function(oLabel) {
         var sNumberOfLemmingsSaved = oLabel.getText().match(/Number of lemmings saved: (\d+)/)[1];
-        var iNumberOfLemmingsSaved = parseInt(sNumberOfLemmingsSaved);
+        var iNumberOfLemmingsSaved = parseInt(sNumberOfLemmingsSaved, 10);
         fnCallback(iNumberOfLemmingsSaved);
       }
     });
@@ -48,8 +48,8 @@ sap.ui.define([
 
       this.register(/^I click on the life saving button\s*(\d*)?(?:\s*times)?$/i,
       function(sNumTimes) {
-        var iNumTimes = (sNumTimes) ? parseInt(sNumTimes) : 1;
-        for (var i=0; i<iNumTimes; ++i) {
+        var iNumTimes = (sNumTimes) ? parseInt(sNumTimes, 10) : 1;
+        for (var i = 0; i < iNumTimes; ++i) {
           oOpa5.waitFor({
             id: "life-saving-button",
             actions: new Press()

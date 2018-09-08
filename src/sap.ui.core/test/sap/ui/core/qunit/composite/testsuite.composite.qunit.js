@@ -27,6 +27,9 @@ sap.ui.define(function() {
 				sinon: {
 					version: 4,
 					qunitBridge: true
+				},
+				coverage: {
+					only: "sap/ui/core/XMLComposite.js"
 				}
 			},
 			XMLCompositeMemoryLeak: {

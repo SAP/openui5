@@ -1259,8 +1259,6 @@ sap.ui.define([
 			manifestUrl : "/anylocation/manifest.json"
 		});
 
-		var oBaseUri = new URI("/anylocation/manifest.json").absoluteTo(new URI(document.baseURI).search(""));
-
 		var aI18NCmpEnhanceWith = oModelConfigSpy.returnValues[0]["i18n-component"].settings[0].enhanceWith;
 		assert.strictEqual(aI18NCmpEnhanceWith[0].bundleUrl, "test-resources/sap/ui/core/samples/components/button/custom/i18n.properties", "Bundle URL of enhancing model must not be modified!");
 		assert.strictEqual(aI18NCmpEnhanceWith[1].bundleUrlRelativeTo, "manifest", "Bundle URL should be relative to manifest!");

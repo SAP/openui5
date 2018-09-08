@@ -206,7 +206,7 @@ sap.ui.define([
 		assert.ok(fnDragEnterSpy.notCalled, "dragEnter event is not fired, dragSession does not exist");
 
 		oDropInfo.destroy();
-	})
+	});
 
 	QUnit.test("fireDragEnter - event parameters", function(assert) {
 		var fnDragEnterSpy = sinon.spy(function(oEvent) {
@@ -258,7 +258,7 @@ sap.ui.define([
 		assert.ok(fnDragOverSpy.notCalled, "dragOver event is not fired, dragSession does not exist");
 
 		oDropInfo.destroy();
-	})
+	});
 
 	QUnit.test("fireDragOver - event parameters", function(assert) {
 		var fnDragOverSpy = sinon.spy(function(oEvent) {
@@ -282,7 +282,7 @@ sap.ui.define([
 			},
 			getDropPosition: function() {
 				return "On";
-			},
+			}
 		};
 
 		var bEventValue = oDropInfo.fireDragOver(oDragOverEvent);
@@ -306,7 +306,7 @@ sap.ui.define([
 		assert.ok(fnDropSpy.notCalled, "drop event is not fired, dragSession does not exist");
 
 		oDropInfo.destroy();
-	})
+	});
 
 	QUnit.test("fireDrop - event parameters", function(assert) {
 		var fnDropSpy = sinon.spy(function(oEvent) {

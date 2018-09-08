@@ -1,3 +1,4 @@
+/*global jQuery, QUnit */
 sap.ui.require(
 	[
 		"sap/m/Panel",

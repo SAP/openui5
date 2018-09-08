@@ -41,16 +41,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should get function string representation", function (assert) {
+		/* eslint-disable no-console */
 		var sFunc = _utils.functionToString(function foo (bar) {
 			console.log("foo", bar);
 		});
+		/* eslint-enable no-console */
 		assert.ok(sFunc.match(/^function ?foo ?\(bar\) ?{\n\t\t\tconsole.log\('foo', bar\);\n\t\t}$/));
 	});
 
 	QUnit.test("Should get array-like object string representation", function (assert) {
+		/* eslint-disable no-console */
 		var fnTestFunc = function foo (bar) {
 			console.log("foo", bar);
 		};
+		/* eslint-enable no-console */
 		var Foo = function () {};
 		assert.strictEqual(argumentsToString(), "", "Should handle no args");
 		assert.strictEqual(argumentsToString("fooBar"), "'fooBar'", "Should handle string in args");

@@ -11,7 +11,6 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.test("Basics", function(assert) {
-		var oDragInfo = new DragInfo();
 		var oDragDropInfo = new DragDropInfo();
 
 		assert.strictEqual(oDragDropInfo.getSourceAggregation(), "", "Default value of sourceAggregation is correct");
@@ -77,7 +76,7 @@ sap.ui.define([
 		var oDragDropInfo = new DragDropInfo({
 			targetElement: "doesNotExist"
 		});
-		var oParent = new TestControl({
+		/*var oParent =*/ new TestControl({
 			children: oControl,
 			dragDropConfig: oDragDropInfo
 		});

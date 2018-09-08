@@ -73,7 +73,7 @@ sap.ui.require([
 		}
 		if ( !oSource.mEventRegistry[sEventId].length ) {
 			var c = 0;
-			for (var key in oSource.mEventRegistry[sEventId]) { //eslint-disable-line no-unised-vars
+			for (var key in oSource.mEventRegistry[sEventId]) { //eslint-disable-line no-unused-vars
 				c++;
 			}
 			return c;

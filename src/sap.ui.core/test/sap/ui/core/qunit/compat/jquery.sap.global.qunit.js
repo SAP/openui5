@@ -29,6 +29,7 @@ sap.ui.require(["jquery.sap.global", "sap/ui/Device"], function(jQuery) {
 
 
 		// the fallback console.log is tested as well
+		/* eslint-disable no-console */
 		if (console.assert) {
 			consoleAssert = console.assert;
 			console.assert = assertSpy;
@@ -37,6 +38,7 @@ sap.ui.require(["jquery.sap.global", "sap/ui/Device"], function(jQuery) {
 			console.log = assertSpy;
 			sMessage = "[Assertions] " + sMessage;
 		}
+		/* eslint-enable no-console */
 
 		jQuery.sap.assert(true, sMessage);
 		assert.notOk(assertSpy.called, "true, String");
@@ -62,11 +64,13 @@ sap.ui.require(["jquery.sap.global", "sap/ui/Device"], function(jQuery) {
 		assertSpy.reset();
 		messageSpy.reset();
 
+		/* eslint-disable no-console */
 		if (console.assert) {
 			console.assert = consoleAssert;
 		} else {
 			console.log = consoleAssert;
 		}
+		/* eslint-enable no-console */
 	});
 
 
@@ -86,12 +90,12 @@ sap.ui.require(["jquery.sap.global", "sap/ui/Device"], function(jQuery) {
 			}());
 			this.alert = window.alert;
 			window.alert = sinon.spy();
-			sinon.stub(console, 'warn');
+			sinon.stub(console, 'warn'); // eslint-disable-line no-console
 		},
 		afterEach: function () {
 			jQuery.sap.debug(false);
 			window.alert = this.alert;
-			console.warn.restore();
+			console.warn.restore(); // eslint-disable-line no-console
 		}
 	});
 
@@ -108,7 +112,7 @@ sap.ui.require(["jquery.sap.global", "sap/ui/Device"], function(jQuery) {
 		if (this.bLocalStorage) {
 			assert.equal(alert.callCount, 5, "alerts");
 		} else {
-			assert.equal(console.warn.callCount, 6, "console warnings");
+			assert.equal(console.warn.callCount, 6, "console warnings"); // eslint-disable-line no-console
 		}
 	});
 
@@ -122,7 +126,7 @@ sap.ui.require(["jquery.sap.global", "sap/ui/Device"], function(jQuery) {
 		if (this.bLocalStorage) {
 			assert.equal(alert.callCount, 1, "alerts");
 		} else {
-			assert.equal(console.warn.callCount, 3, "console warnings");
+			assert.equal(console.warn.callCount, 3, "console warnings"); // eslint-disable-line no-console
 		}
 	});
 
@@ -135,7 +139,7 @@ sap.ui.require(["jquery.sap.global", "sap/ui/Device"], function(jQuery) {
 		if (this.bLocalStorage) {
 			assert.equal(alert.callCount, 2, "alerts");
 		} else {
-			assert.equal(console.warn.callCount, 3, "console warnings");
+			assert.equal(console.warn.callCount, 3, "console warnings"); // eslint-disable-line no-console
 		}
 	});
 

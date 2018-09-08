@@ -155,36 +155,45 @@ sap.ui.define(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONModel
 			var i, keysO = Object.keys(o).sort(),
 				keysP = Object.keys(p).sort();
 
-			if (keysO.length !== keysP.length)
+			if (keysO.length !== keysP.length) {
 				return false; // not the same nr of keys
-			if (keysO.join('') !== keysP.join(''))
+			}
+			if (keysO.join('') !== keysP.join('')) {
 				return false; // different keys
+			}
 
 			for (i = 0; i < keysO.length; ++i) {
 				if (o[keysO[i]] instanceof Array) {
-					if (!(p[keysO[i]] instanceof Array))
+					if (!(p[keysO[i]] instanceof Array)) {
 						return false;
+					}
 					// if (compareObjects(o[keysO[i]], p[keysO[i]]
 					// === false) return false
 					// would work, too, and perhaps is a better fit,
 					// still, this is easy, too
-					if (p[keysO[i]].sort().join('') !== o[keysO[i]].sort().join(''))
+					if (p[keysO[i]].sort().join('') !== o[keysO[i]].sort().join('')) {
 						return false;
+					}
 				} else if (o[keysO[i]] instanceof Date) {
-					if (!(p[keysO[i]] instanceof Date))
+					if (!(p[keysO[i]] instanceof Date)) {
 						return false;
-					if (('' + o[keysO[i]]) !== ('' + p[keysO[i]]))
+					}
+					if (('' + o[keysO[i]]) !== ('' + p[keysO[i]])) {
 						return false;
+					}
 				} else if (o[keysO[i]] instanceof Function) {
-					if (!(p[keysO[i]] instanceof Function) && !(p[keysO[i]] === "__ignore"))
+					if (!(p[keysO[i]] instanceof Function) && !(p[keysO[i]] === "__ignore")) {
 						return false;
+					}
 					// ignore functions, or check them regardless?
 				} else if (o[keysO[i]] instanceof Object) {
-					if (!(p[keysO[i]] instanceof Object) && !(p[keysO[i]] === "__ignore"))
+					if (!(p[keysO[i]] instanceof Object) && !(p[keysO[i]] === "__ignore")) {
 						return false;
+					}
 					if (o[keysO[i]] === o) { // self reference?
-						if (p[keysO[i]] !== p)
+						if (p[keysO[i]] !== p) {
 							return false;
+						}
 					} else if (p[keysO[i]] === "__ignore" || compareObjects(o[keysO[i]], p[keysO[i]])) {
 						if (p[keysO[i]] === "__ignore") {
 							continue;
@@ -235,7 +244,7 @@ sap.ui.define(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONModel
 			}
 			vActualResult = undefined;
 			vExpectedResult = undefined;
-		};
+		}
 
 		QUnit.module("ManagedObject Model", {
 			beforeEach: function(assert) {
@@ -877,7 +886,6 @@ sap.ui.define(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONModel
 			assert.ok(true, "Observation of all associations started");
 
 			//adding empty string to the single association
-			var sAsso = this.obj.getAssociation("singleAsso");
 			var oChild = this.obj.getAggregation("multiAggr")[1];
 
 			setExpected({
@@ -939,7 +947,6 @@ sap.ui.define(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONModel
 
 
 			//adding empty string to the single association
-			var sAsso = this.obj.getAssociation("singleAsso");
 			var oChild = this.obj.getAggregation("multiAggr")[1];
 
 			setExpected({
@@ -1005,7 +1012,6 @@ sap.ui.define(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONModel
 			assert.ok(true, "Observation of multi association started");
 
 			//adding empty string to the multi association
-			var sAsso = this.obj.getAssociation("singleAsso");
 			var oChild = this.obj.getAggregation("multiAggr")[1];
 
 			setExpected({

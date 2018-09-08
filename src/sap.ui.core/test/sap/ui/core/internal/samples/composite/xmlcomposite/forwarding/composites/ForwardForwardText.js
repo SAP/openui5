@@ -1,8 +1,8 @@
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/XMLComposite'], 
-    function(jQuery, XMLComposite) {
+	'sap/ui/core/XMLComposite'],
+	function(XMLComposite) {
 	"use strict";
-	var ForwardForwardText = sap.ui.core.XMLComposite.extend("composites.ForwardForwardText", {
+	var ForwardForwardText = XMLComposite.extend("composites.ForwardForwardText", {
 		metadata: {
 			aggregations: {
 				items: {
@@ -19,6 +19,6 @@ sap.ui.define([
 			defaultAggregation: "items"
 		}
 	});
-	
+
 	return ForwardForwardText;
 }, /* bExport= */true);

@@ -1,3 +1,4 @@
+/*eslint quote-props: [2, "as-needed", { "keywords": false, "unnecessary": false}] */
 /*global QUnit*/
 
 sap.ui.define([

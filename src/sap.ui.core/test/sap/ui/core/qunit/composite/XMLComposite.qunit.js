@@ -10,18 +10,6 @@ sap.ui.define([
 	/*eslint no-warning-comments: 0 */
 	"use strict";
 
-	setBlanketFilters("sap/ui/core/XMLComposite.js");
-
-	/**
-	 * setBlanketFilters
-	 * @param {string} sFilters comma separated strings to filter the paths for blanket
-	 */
-	function setBlanketFilters(sFilters) {
-		if (top === window) { //only in local environment
-			top["blanket.filter.only"] = sFilters;
-		}
-	}
-
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.XMLComposite: Simple Text XMLComposite Control", {
 		beforeEach: function () {
@@ -570,7 +558,7 @@ sap.ui.define([
 			sId = oEvent.oSource.getId();
 		});
 
-		var fnVBoxCloneSpy = sinon.spy(oXMLComposite.getAggregation("_content"), "clone");
+		//TEMP-CLONE-ISSUE var fnVBoxCloneSpy = sinon.spy(oXMLComposite.getAggregation("_content"), "clone");
 
 		var oClone = oXMLComposite.clone("MyClone");
 		assert.equal(oClone.getId(), "Frag1-MyClone", "XMLComposite cloned");
@@ -881,7 +869,7 @@ sap.ui.define([
 	//*********************************************************************************************
 
 	QUnit.test("create from string", function (assert) {
-		XMLComposite.extend("control.SearchFieldFromString", {
+		var SearchFieldFromString = XMLComposite.extend("control.SearchFieldFromString", {
 			metadata: {
 				properties: {
 					placeholder: { type: "string", defaultValue: "Enter Search Term..." },
@@ -891,7 +879,7 @@ sap.ui.define([
 			fragmentContent: this.sFragmentContent
 		});
 
-		var oSearchField = new control.SearchFieldFromString({placeholder: "custom placeholder"});
+		var oSearchField = new SearchFieldFromString({placeholder: "custom placeholder"});
 
 		assert.ok(oSearchField, "Composite instance should be created");
 		assert.strictEqual(oSearchField.getPlaceholder(), "custom placeholder", "Property value should be applied");
@@ -901,7 +889,7 @@ sap.ui.define([
 	QUnit.test("create from XML tree", function (assert) {
 		var oXml = new DOMParser().parseFromString(this.sFragmentContent, "text/xml").documentElement;
 
-		XMLComposite.extend("control.SearchFieldFromXml", {
+		var SearchFieldFromXml = XMLComposite.extend("control.SearchFieldFromXml", {
 			metadata: {
 				properties: {
 					placeholder: { type: "string", defaultValue: "Enter Search Term..." },
@@ -911,7 +899,7 @@ sap.ui.define([
 			fragmentContent: oXml
 		});
 
-		var oSearchField = new control.SearchFieldFromXml({placeholder: "custom placeholder"});
+		var oSearchField = new SearchFieldFromXml({placeholder: "custom placeholder"});
 
 		assert.ok(oSearchField, "Composite instance should be created");
 		assert.strictEqual(oSearchField.getPlaceholder(), "custom placeholder", "Property value should be applied");

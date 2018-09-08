@@ -25,12 +25,12 @@ sap.ui.define([
 		var done = assert.async();
 
 		var bCoreIconTested = false,
-			bCoreElementTested = false,
+			//bCoreElementTested = false,
 			countOfTestedControlsInCore = 0;
 
 		ControlIterator.run(function(sControlName, oControlClass, oInfo) {
 			countOfTestedControlsInCore++;
-			console.log(sControlName);
+			console.log(sControlName); // eslint-disable-line no-console
 			assert.ok(true, "sap.ui.qunit.utils.ControlIterator should call the callback (" + sControlName + ")");
 
 			if (sControlName === "sap.ui.core.Icon") {
@@ -39,7 +39,7 @@ sap.ui.define([
 			}
 
 			if (sControlName === "sap.ui.core.Element") {
-				bCoreElementTested = true;
+				//bCoreElementTested = true;
 				assert.notOk(true, "sap.ui.core.Element should be tested");
 			}
 

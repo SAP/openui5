@@ -233,6 +233,6 @@ sap.ui.define(["jquery.sap.storage", "sap/ui/Device"], function(jQuery, Device) 
 		assert.equal(typeof jQuery.sap.storage.put, "function", "Storage has static method put");
 		assert.equal(typeof jQuery.sap.storage.remove, "function", "Storage has static method remove");
 		assert.equal(typeof jQuery.sap.storage.removeAll, "function", "Storage has static method removeAll");
-	})
+	});
 
 });

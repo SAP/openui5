@@ -83,7 +83,7 @@ sap.ui.define([
 				assert.ok(oResizeListener.oDomRef == oDomRef, "Registered DOM Ref correct");
 				assert.ok(oResizeListener.fHandler == doOnResize, "Registered Handler correct");
 				return false; //break the loop
-			};
+			}
 		});
 		assert.ok(bIsRegistered, "Listener registered correctly");
 		ResizeHandler.deregister(sResizeListenerId);

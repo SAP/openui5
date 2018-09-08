@@ -12,12 +12,12 @@ sap.ui.define( ["sap/ui/core/mvc/Controller","sap/ui/core/routing/History", "sap
 		onSelectionChange: function(oEvent) {
 			var sProductId = oEvent.getSource().getBindingContext().getProperty("productId");
 			this.getOwnerComponent().getRouter()
-				.navTo("productDetails", 
+				.navTo("productDetails",
 					{orderId:this._orderId, productId: sProductId});
 		},
 		onNavBack : function() {
 			var sPreviousHash = History.getInstance().getPreviousHash();
-			
+
 			//The history contains a previous entry
 			if (sPreviousHash !== undefined) {
 				history.go(-1);

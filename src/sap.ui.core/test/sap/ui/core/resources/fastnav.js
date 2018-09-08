@@ -5,29 +5,30 @@ sap.ui.define([
 	"sap/ui/events/F6Navigation",
 	"require"
 ], function(jQuery, Popup, includeStylesheet, F6Navigation, require) {
+	"use strict";
 
 	var counter = 0;
 
 	function uid(){
-		var id = "id"+counter;
+		var id = "id" + counter;
 		counter++;
 		return id;
 	}
 
 	function container(bGroup, sStyle, sTooltip, aContent, bDefaultContent, sDefaultStyle){
 		var res = jQuery("<div/>");
-		if(sStyle){
+		if (sStyle){
 			res.attr("style", sStyle);
 		}
-		if(sTooltip){
+		if (sTooltip){
 			res.attr("title", sTooltip);
 		}
-		if(bGroup){
+		if (bGroup){
 			res.attr("data-" + F6Navigation.fastNavigationKey, "true");
 		}
 		res.attr("id", uid());
 
-		if(bDefaultContent){
+		if (bDefaultContent){
 			res.append(tabbable(true, false, sDefaultStyle)).append(nl());
 			res.append(tabbable(true, true, sDefaultStyle)).append(nl());
 			res.append(tabbable(true, false, sDefaultStyle, -1)).append(nl());
@@ -35,7 +36,7 @@ sap.ui.define([
 			res.append(tabbable(false, false, sDefaultStyle, -1));
 		}
 
-		for(var i=0; i<aContent.length; i++){
+		for (var i = 0; i < aContent.length; i++){
 			res.append(aContent[i]);
 		}
 
@@ -44,17 +45,17 @@ sap.ui.define([
 
 	function tabbable(bInput, bDisabled, sStyle, iTabIndex){
 		var res = jQuery(bInput ? "<input/>" : "<div/>");
-		if(bDisabled === true && bInput){
+		if (bDisabled === true && bInput){
 			res.attr("disabled", "disabled");
 		}
-		if(sStyle){
+		if (sStyle){
 			res.attr("style", sStyle);
 		}
-		if(!bInput){
+		if (!bInput){
 			res.attr("class", "TabbableDiv");
 		}
-		if(typeof iTabIndex === "number"){
-			res.attr("tabindex", ""+iTabIndex);
+		if (typeof iTabIndex === "number"){
+			res.attr("tabindex", "" + iTabIndex);
 		}
 		res.attr("id", uid());
 		return res;
@@ -65,14 +66,14 @@ sap.ui.define([
 	}
 
 	function popup(i, bModal, bDock, bAutoClose, sMode, aAdditionalContent) {
-		var $Button = jQuery("<button id='openPopup"+i+"'></button>");
+		var $Button = jQuery("<button id='openPopup" + i + "'></button>");
 
 		bAutoClose = !bModal && bAutoClose;
 
 		var sText = (!bModal ? "non-" : "") + "modal " + (bDock ? "docked " : "") + (bAutoClose ? "auto-close " : "") + "Popup (NavMode: " + sMode + ")";
 
 		var oPopup = window["oPopup" + i];
-		if(!oPopup){
+		if (!oPopup){
 			aAdditionalContent = aAdditionalContent ? aAdditionalContent : [];
 
 			if (bModal){
@@ -90,25 +91,25 @@ sap.ui.define([
 			]), bModal, true, bAutoClose);
 			oPopup.setNavigationMode(sMode);
 
-			window["oPopup"+i] = oPopup;
+			window["oPopup" + i] = oPopup;
 		}
 
 		$Button.text(sText).click(function(){
-			var oPopup = window["oPopup"+i];
+			var oPopup = window["oPopup" + i];
 
 			if (bModal) {
-				if(bDock){
+				if (bDock) {
 					oPopup.open(0, Popup.Dock.LeftTop, Popup.Dock.LeftBottom, $Button);
-				}else{
+				} else {
 					oPopup.open(0);
 				}
-			}else{
-				if(oPopup.isOpen()){
+			} else {
+				if (oPopup.isOpen()) {
 					oPopup.close(0);
-				}else{
-					if(bDock){
+				} else {
+					if (bDock) {
 						oPopup.open(0, Popup.Dock.LeftTop, Popup.Dock.LeftBottom, $Button);
-					}else{
+					} else {
 						oPopup.open(0);
 					}
 				}

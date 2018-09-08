@@ -135,7 +135,7 @@ sap.ui.define([
 		assert.ok(fnDragStartSpy.notCalled, "dragStart event is not fired, dragSession does not exist");
 
 		oDragInfo.destroy();
-	})
+	});
 
 	QUnit.test("fireDragStart - event parameters", function(assert) {
 		var fnDragStartSpy = sinon.spy(function(oEvent) {
@@ -187,7 +187,7 @@ sap.ui.define([
 		assert.ok(fnDragEndSpy.notCalled, "dragEnd event is not fired, dragSession does not exist");
 
 		oDragInfo.destroy();
-	})
+	});
 
 	QUnit.test("fireDragEnd - event parameters", function(assert) {
 		var fnDragEndSpy = sinon.spy(function(oEvent) {

@@ -1,6 +1,8 @@
-(function(window, undefined) {
+(function(window) {
+	"use strict";
 
-	/*global CollectGarbage */
+	/*global CollectGarbage, Handlebars */
+	/* eslint radix: 0 */
 
 	/*
 	 * Simulate the JSUnit Testsuite to collect the available
@@ -184,7 +186,7 @@
 					}
 
 				}.bind(this));
-			}.bind(this))
+			}.bind(this));
 
 		},
 
@@ -211,7 +213,7 @@
 						if (parseInt(jQuery("div#reportingHeader span.failed").text()) > 0) {
 							jQuery("div#innerBar")[0].style.backgroundColor = '#ed866f';
 						}
-						jQuery("div#time").text(Math.round((new Date() - window.oStartTime)/1000) + " Seconds");
+						jQuery("div#time").text(Math.round((new Date() - window.oStartTime) / 1000) + " Seconds");
 						jQuery("#selectedTests").find("option").each(function() {
 							if (jQuery(this).text() === sTestPage) {
 								jQuery(this).remove();
@@ -317,7 +319,7 @@
 							var baseURI = doc.location.href;
 
 							if (sTestName == " ") {
-								sTestName = "QUnit page for " + baseURI.substring(baseURI.indexOf("test-resources") +15,baseURI.length);
+								sTestName = "QUnit page for " + baseURI.substring(baseURI.indexOf("test-resources") + 15, baseURI.length);
 							}
 							oContext = oInst.fnGetTestResults(sTestName, $results);
 							this.printTestResultAndRemoveFrame(oInst, $frame, $framediv, oContext);
@@ -540,4 +542,4 @@
 
 	};
 
-})(window);
+}(window));

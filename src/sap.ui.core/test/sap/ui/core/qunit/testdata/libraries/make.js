@@ -8,13 +8,17 @@
 
    ------------------------------------------------------------------------------------------- */
 
+/* eslint strict: [2, "global"] */
+/* global require */
+"use strict";
+
 var fs = require("fs");
 var pathModule = require("path");
 
 function mkdir(path) {
 	try {
 		fs.mkdirSync(path);
-	} catch(err) {
+	} catch (err) {
 		if ( err.code == "ENOENT" ) {
 			var slashIdx = path.lastIndexOf(pathModule.sep);
 			if ( slashIdx > 0 ) {
@@ -62,18 +66,19 @@ function makeLiteral(content) {
 function makeLib(lib, dependencies) {
 	var code = [
 		"sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/library'], function(Core, coreLib) {",
+		"	\"use strict\";",
 		"	sap.ui.getCore().initLibrary({",
 		"		name: '" + makeName(lib) + "',",
 		"		dependencies: [",
 		"		],",
 		"		noLibraryCSS: true",
 		"	});",
-		"	return " + makeName(lib) + ";",
+		"	return " + makeName(lib) + "; // eslint-disable-line no-undef",
 		"});"
 	];
 
 	if ( dependencies ) {
-		for ( var i = 0, j = 4; i < dependencies.length; i++) {
+		for ( var i = 0, j = 5; i < dependencies.length; i++) {
 			var dep = dependencies[i];
 			if ( typeof dep === 'object' ) {
 				if ( dep.lazy ) {
@@ -106,7 +111,7 @@ function makeManifest(lib, dependencies) {
 			manifest["sap.ui5"].dependencies.libs[makeName(dep.name)] = {
 				"minVersion": "1.0.0",
 				"lazy": dep.lazy || undefined
-			}
+			};
 		}
 	}
 	return JSON.stringify(manifest, null, "\t");
@@ -119,7 +124,7 @@ function makeLibPreloadJSON(lib, dependencies) {
 		"name": makeName(lib) + ".library-preload",
 		"dependencies": undefined,
 		"modules": {}
-	}
+	};
 
 	if ( dependencies ) {
 		preloadJSON.dependencies = [];

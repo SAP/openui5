@@ -51,19 +51,19 @@ sap.ui.define(function() {
 			 */
 			"GherkinWithOPA5": {
 				group: "Demokit Samples",
-				page: "test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithOPA5/GherkinTestRunner.html?sap-ui-animation=false",
+				page: "test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithOPA5/GherkinTestRunner.html?sap-ui-animation=false"
 			},
 			"GherkinWithPageObjects": {
 				group: "Demokit Samples",
-				page: "test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithPageObjects/GherkinTestRunner.html?sap-ui-animation=false",
+				page: "test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithPageObjects/GherkinTestRunner.html?sap-ui-animation=false"
 			},
 			"GherkinWithQUnit": {
 				group: "Demokit Samples",
-				page: "test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithQUnit/GherkinTestRunner.html?sap-ui-animation=false&noglobals=true",
+				page: "test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithQUnit/GherkinTestRunner.html?sap-ui-animation=false&noglobals=true"
 			},
 			"GherkinWithUIComponent": {
 				group: "Demokit Samples",
-				page: "test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithUIComponent/GherkinTestRunner.html?sap-ui-animation=false",
+				page: "test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithUIComponent/GherkinTestRunner.html?sap-ui-animation=false"
 			}
 		}
 	};

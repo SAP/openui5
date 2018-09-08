@@ -1,5 +1,6 @@
+/*global jQuery */
 jQuery(function() {
-	"use strict"
+	"use strict";
 
 	jQuery.sap.require("sap/m/Panel");
 	jQuery.sap.require("sap/m/Text");

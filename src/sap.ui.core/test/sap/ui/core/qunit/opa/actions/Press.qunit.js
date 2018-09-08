@@ -644,7 +644,7 @@ function(Press,
 			oOpa.waitFor({
 				success: function() {
 					oOverflowToolbar.setWidth("140px");
-					console.debug("Set smaller width to cause overflow");
+					console.debug("Set smaller width to cause overflow"); // eslint-disable-line no-console
 				}
 			});
 
@@ -762,7 +762,7 @@ function(Press,
 			oOpa.waitFor({
 				success: function() {
 					$("#toolbar-page").width("480px");
-					console.debug("Set smaller width to cause overflow");
+					console.debug("Set smaller width to cause overflow"); // eslint-disable-line no-console
 				}
 			});
 
@@ -772,7 +772,7 @@ function(Press,
 				errorMessage: "Did not find the popover area toggle button",
 				actions: new Press(),
 				success: function() {
-					console.debug("Clicked the overflow button");
+					console.debug("Clicked the overflow button"); // eslint-disable-line no-console
 				}
 			});
 
@@ -783,14 +783,14 @@ function(Press,
 				errorMessage: "Did not find the High 2 button",
 				actions: new Press(),
 				success: function() {
-					console.debug("Closed the overflow popup");
+					console.debug("Closed the overflow popup"); // eslint-disable-line no-console
 				}
 			});
 
 			// should destry the toolbar only after everything is settled
 			oOpa.waitFor({
 				success: function() {
-					console.debug("Destroy the app");
+					console.debug("Destroy the app"); // eslint-disable-line no-console
 					oApp.destroy();
 					done();
 				}

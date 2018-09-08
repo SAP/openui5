@@ -7,17 +7,17 @@ sap.ui.define( ["sap/ui/core/mvc/Controller", "sap/ui/core/routing/History", "sa
 		},
 		_onRouteMatched: function(oEvent) {
 			var orderId = oEvent.getParameter("arguments").orderId;
-			var productId = oEvent.getParameter("arguments").productId
-			this.getView().bindElement("/orders/" + orderId + "/products/"+productId);
+			var productId = oEvent.getParameter("arguments").productId;
+			this.getView().bindElement("/orders/" + orderId + "/products/" + productId);
 		},
 		onToProduct1C: function() {
 			this.getOwnerComponent().getRouter()
-				.navTo("productDetails", 
+				.navTo("productDetails",
 					{orderId:0, productId: 2});
 		},
 		onToProduct2D: function() {
 			this.getOwnerComponent().getRouter()
-				.navTo("productDetails", 
+				.navTo("productDetails",
 					{orderId:1, productId: 3});
 		},
 		onNavBack : function () {
@@ -30,7 +30,7 @@ sap.ui.define( ["sap/ui/core/mvc/Controller", "sap/ui/core/routing/History", "sa
 				// There is no history!
 				// replace the current hash with order id 0 (will not add an history entry)
 				this.getOwnerComponent().getRouter()
-					.navTo("orderDetails", 
+					.navTo("orderDetails",
 						{orderId:0}, !Device.system.phone);
 			}
 		}
