@@ -15,7 +15,10 @@ sap.ui.require(["sap/ui/model/json/JSONModel"],
 		 }
 	  });
 
-	var oController = controller("viewController", {});
+	// global vars
+	var oController = controller("viewController", {}),
+		oConfigModel = new JSONModel();
+		oConfigModel.loadData("model/OPLazyLoadingWithTabs.json", {}, false);
 
 	sinon.config.useFakeTimers = true;
 	var iLoadingDelay = 2500;
@@ -93,22 +96,25 @@ sap.ui.require(["sap/ui/model/json/JSONModel"],
 			fnAssertTabsAreLoaded(assert, aSections, aLoadedSections);
 		};
 
-	var oConfigModel = new JSONModel();
-	oConfigModel.loadData("model/OPLazyLoadingWithTabs.json", {}, false);
 
-	var oView = xmlview("UxAP-27_ObjectPageConfig", {
-		viewName: "view.UxAP-27_ObjectPageConfig",
-		controller: oController
+	QUnit.module("ObjectPage with tabs - lazy loading", {
+		beforeEach: function (assert) {
+			this.oView = xmlview("UxAP-27_ObjectPageConfig", {
+				viewName: "view.UxAP-27_ObjectPageConfig",
+				controller: oController
+			});
+
+			this.oView.setModel(oConfigModel, "objectPageLayoutMetadata");
+			this.oView.placeAt("qunit-fixture");
+			core.applyChanges();
+		},
+		afterEach: function () {
+			this.oView.destroy();
+		}
 	});
 
-	oView.setModel(oConfigModel, "objectPageLayoutMetadata");
-	oView.placeAt("qunit-fixture");
-	core.applyChanges();
-
-	QUnit.module("ObjectPage with tabs - lazy loading");
-
-	QUnit.test("laoding only the selected section/tab", function (assert) {
-		var oObjectPageLayout = oView.byId("objectPageContainer").getObjectPageLayoutInstance(),
+	QUnit.test("loading the selected section/tab", function (assert) {
+		var oObjectPageLayout = this.oView.byId("objectPageContainer").getObjectPageLayoutInstance(),
 			oData = oConfigModel.getData(),
 			aSections = oObjectPageLayout.getSections(),
 			aLoadedSections = [0];
@@ -126,5 +132,37 @@ sap.ui.require(["sap/ui/model/json/JSONModel"],
 		for (var i = 1; i < aSections.length; i++) {
 			fnTestSection(oObjectPageLayout, i, aLoadedSections, assert, this);
 		}
+
+		// cleanup
+		oObjectPageLayout.destroy();
+	});
+
+	QUnit.test("loading only the selected section/tab", function (assert) {
+		var oObjectPageLayout = this.oView.byId("objectPageContainer").getObjectPageLayoutInstance(),
+			oData = oConfigModel.getData(),
+			aSections = oObjectPageLayout.getSections();
+
+		fnLoadMoreBlocks(oData);
+		oConfigModel.setData(oData);
+
+		core.applyChanges();
+		this.clock.tick(iLoadingDelay);
+
+		// load some tab > bottom subSection
+		var targetSubSection = aSections[2].getSubSections()[1],
+			precedingSubSection = aSections[2].getSubSections()[0];
+		oObjectPageLayout.scrollToSection(targetSubSection.getId(), 0);
+		core.applyChanges();
+		this.clock.tick(iLoadingDelay);
+		assert.ok(fnSubSectionIsloaded(targetSubSection), "target subsection is loaded");
+		assert.ok(!fnSubSectionIsloaded(precedingSubSection), "preceding subsection is not loaded");
+
+		// load next tab > top subSection
+		targetSubSection = aSections[3].getSubSections()[0];
+		oObjectPageLayout.scrollToSection(targetSubSection.getId(), 0);
+		core.applyChanges();
+		this.clock.tick(iLoadingDelay);
+		assert.ok(fnSubSectionIsloaded(targetSubSection),"target subsection is loaded");
+		assert.ok(!fnSubSectionIsloaded(precedingSubSection), "preceding subsection is still not loaded");
 	});
 });
