@@ -68,15 +68,15 @@ sap.ui.define([
 		 * @private
 		 */
 		_determineParameters : function(oControl) {
-			var oOuterAppComponent = Utils.getAppComponentForControl(oControl, true);
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
+			var oComponent = Utils.getSelectorComponentForControl(oControl);
 			var oRootControl = oAppComponent.getRootControl();
 			var oView = Utils.getViewForControl(oControl);
 			var oVariantModel = oAppComponent.getModel("$FlexVariants");
 
 			var mParams = {
-				outerAppComponent : oOuterAppComponent,
-				appComponent: oAppComponent,
+				appComponent : oAppComponent,
+				component: oComponent,
 				rootControl : oRootControl,
 				view : oView,
 				variantModel : oVariantModel,
@@ -90,7 +90,7 @@ sap.ui.define([
 				if (oVMControl.getMetadata().getName() === "sap.ui.fl.variants.VariantManagement") {
 					aForControlTypes = oVMControl.getFor();
 					aForControlTypes.forEach(function(sControlType) {
-						mParams.variantManagement[sControlType] = mParams.variantModel._getLocalId(oVariantManagementNode.id, mParams.appComponent);
+						mParams.variantManagement[sControlType] = mParams.variantModel._getLocalId(oVariantManagementNode.id, mParams.component);
 					});
 				}
 			});
@@ -132,9 +132,9 @@ sap.ui.define([
 		 */
 		clearVariantParameterInURL : function (oControl) {
 			var aUrlParameters = [];
-			var oOuterAppComponent = Utils.getAppComponentForControl(oControl, true);
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
-			var oVariantModel = oOuterAppComponent instanceof Component ? oOuterAppComponent.getModel("$FlexVariants") : undefined;
+			var oComponent = Utils.getSelectorComponentForControl(oControl);
+			var oVariantModel = oAppComponent instanceof Component ? oAppComponent.getModel("$FlexVariants") : undefined;
 			if (!oVariantModel) {
 				//technical parameters are not updated, only URL hash is updated
 				Utils.setTechnicalURLParameterValues(undefined, VARIANT_TECHNICAL_PARAMETER_NAME, aUrlParameters);
@@ -143,7 +143,7 @@ sap.ui.define([
 
 			//check if variant for the passed variant management control is present
 			if (oControl instanceof VariantManagement) {
-				var sVariantManagementReference = oVariantModel._getLocalId(oControl.getId(), oAppComponent);
+				var sVariantManagementReference = oVariantModel._getLocalId(oControl.getId(), oComponent);
 				var mVariantParametersInURL = oVariantModel.getVariantIndexInURL(sVariantManagementReference);
 
 				if (mVariantParametersInURL.index > -1) {
@@ -156,7 +156,7 @@ sap.ui.define([
 			oVariantModel.updateHasherEntry({
 				parameters: aUrlParameters,
 				updateURL: true,
-				component: oOuterAppComponent
+				component: oAppComponent
 			});
 
 		},
@@ -191,22 +191,22 @@ sap.ui.define([
 							oElement = vElement;
 						}
 
+						var oComponent = Utils.getSelectorComponentForControl(oElement);
 						var oAppComponent = Utils.getAppComponentForControl(oElement);
-						var oOuterAppComponent = Utils.getAppComponentForControl(oElement, true);
-						if (!oOuterAppComponent) {
+						if (!oAppComponent) {
 							throw new Error("A valid variant management control or component (instance or id) should be passed as parameter");
 						}
 
-						var oVariantModel = oOuterAppComponent.getModel("$FlexVariants");
+						var oVariantModel = oAppComponent.getModel("$FlexVariants");
 						if (!oVariantModel) {
-							throw new Error("No variant management model found for the passed control or component");
+							throw new Error("No variant management model found for the passed control or application component");
 						}
 						var sVariantManagementReference = oVariantModel.getVariantManagementReference(sVariantReference).variantManagementReference;
 						if (!sVariantManagementReference) {
 							throw new Error("A valid control or component, and variant id combination is required");
 						}
 
-					return oVariantModel.updateCurrentVariant(sVariantManagementReference, sVariantReference, oAppComponent);
+					return oVariantModel.updateCurrentVariant(sVariantManagementReference, sVariantReference, oComponent);
 				})
 				["catch"](function (oError) {
 							Utils.log.error(oError);
@@ -325,9 +325,9 @@ sap.ui.define([
 						oChange.setVariantReference(sCurrentVariantReference);
 
 						mPropertyBag = {
-							appComponent : mParams.appComponent,
-							view : mParams.view,
-							modifier : JsControlTreeModifier
+							component: mParams.component, // set local component
+							view: mParams.view,
+							modifier: JsControlTreeModifier
 						};
 
 						aPromises.push(fnAddAndApplyChanges.bind(this, oChange, oSelectorControl, mPropertyBag));

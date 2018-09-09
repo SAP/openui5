@@ -50,7 +50,7 @@ sap.ui.define([
 			this.sandbox = sinon.sandbox.create();
 
 			this.oComponent = new UIComponent();
-			this.sandbox.stub(FlUtils, "getAppComponentForControl").returns(this.oComponent);
+			this.sandbox.stub(FlUtils, "_getAppComponentForComponent").returns(this.oComponent);
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.registerControlsForChanges({
 				"sap.m.VBox": [

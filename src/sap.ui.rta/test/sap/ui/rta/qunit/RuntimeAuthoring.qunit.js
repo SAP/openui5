@@ -645,7 +645,7 @@ function(
 		beforeEach : function(assert) {
 			FakeLrepSessionStorage.deleteChanges();
 			assert.equal(FakeLrepSessionStorage.getNumChanges(), 0, "Local storage based LREP is empty");
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComp);
+			sandbox.stub(Utils, "_getAppComponentForComponent").returns(oComp);
 
 			// Create the controls
 			this.oGroupElement1 = new GroupElement({id : oComp.createId("element1")});
@@ -743,7 +743,7 @@ function(
 			}.bind(this));
 		});
 
-		QUnit.test("when stopping rta with saving changes,", function(assert) {
+		QUnit.test("when stopping rta with saving changes", function(assert) {
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(2, assert);
 			return this.oRta.stop().then(function() {
 				assert.ok(true, "then the promise got resolved");

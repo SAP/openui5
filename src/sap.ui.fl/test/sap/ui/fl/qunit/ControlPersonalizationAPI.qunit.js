@@ -89,125 +89,132 @@ sap.ui.define([
 			this.oDummyControl = new VariantManagement("dummyControl");
 
 			this.oModel = new VariantModel(this.oData, oMockFlexController);
-			this.oOuterAppComponent = new Component("AppComponent");
-			this.oOuterAppComponent.setModel(this.oModel, "$FlexVariants");
+			this.oAppComponent = new Component("AppComponent");
+			this.oAppComponent.setModel(this.oModel, "$FlexVariants");
 			this.oComponent = new Component("EmbeddedComponent");
-			var fnGetAppComponentForControlStub = sandbox.stub(Utils, "getAppComponentForControl");
-			fnGetAppComponentForControlStub.withArgs(this.oDummyControl, true).returns(this.oOuterAppComponent);
-			fnGetAppComponentForControlStub.withArgs(this.oComponent, true).returns(this.oOuterAppComponent);
-			fnGetAppComponentForControlStub.withArgs(this.oDummyControl).returns(this.oComponent);
-			fnGetAppComponentForControlStub.withArgs(this.oComponent).returns(this.oComponent);
+			sandbox.stub(Utils, "getAppComponentForControl")
+				.callThrough()
+				.withArgs(this.oDummyControl).returns(this.oAppComponent)
+				.withArgs(this.oComponent).returns(this.oAppComponent);
+			sandbox.stub(Utils, "getSelectorComponentForControl")
+				.callThrough()
+				.withArgs(this.oDummyControl).returns(this.oComponent)
+				.withArgs(this.oComponent).returns(this.oComponent);
 		},
 		afterEach: function(assert) {
 			sandbox.restore();
 			this.oModel.destroy();
-			this.oOuterAppComponent.destroy();
+			this.oAppComponent.destroy();
 			this.oComponent.destroy();
 			this.oDummyControl.destroy();
 		}
-	});
+	}, function() {
+		QUnit.test("when calling 'clearVariantParameterInURL' with a control as parameter", function (assert) {
+			var aUrlTechnicalParameters = ["fakevariant", "variant1"];
+			fnStubTechnicalParameterValues.call(this, aUrlTechnicalParameters);
 
-	QUnit.test("when calling 'clearVariantParameterInURL' with a control as parameter", function(assert) {
-		var aUrlTechnicalParameters = ["fakevariant", "variant1"];
-		fnStubTechnicalParameterValues.call(this, aUrlTechnicalParameters);
+			ControlPersonalizationAPI.clearVariantParameterInURL(this.oDummyControl);
 
-		ControlPersonalizationAPI.clearVariantParameterInURL(this.oDummyControl);
+			assert.ok(Utils.getParsedURLHash.calledOnce, "then hash parameter values are requested");
+			assert.ok(Utils.setTechnicalURLParameterValues.calledWithExactly(this.oAppComponent, 'sap-ui-fl-control-variant-id', [aUrlTechnicalParameters[0]]), "then 'sap-ui-fl-control-variant-id' parameter value for the provided variant management control is cleared");
+			assert.deepEqual(this.oModel.updateHasherEntry.getCall(0).args[0], {
+				parameters: [aUrlTechnicalParameters[0]],
+				updateURL: true,
+				component: this.oAppComponent
+			}, "then VariantModel.updateHasherEntry called with the desired arguments");
+		});
 
-		assert.ok(Utils.getParsedURLHash.calledOnce, "then hash parameter values are requested");
-		assert.ok(Utils.setTechnicalURLParameterValues.calledWithExactly(this.oOuterAppComponent, 'sap-ui-fl-control-variant-id', [aUrlTechnicalParameters[0]]), "then 'sap-ui-fl-control-variant-id' parameter value for the provided variant management control is cleared");
-		assert.deepEqual(this.oModel.updateHasherEntry.getCall(0).args[0], {
-			parameters: [aUrlTechnicalParameters[0]],
-			updateURL: true,
-			component: this.oOuterAppComponent
-		}, "then VariantModel.updateHasherEntry called with the desired arguments");
-	});
+		QUnit.test("when calling 'clearVariantParameterInURL' without a parameter", function (assert) {
+			var aUrlTechnicalParameters = ["fakevariant", "variant1"];
+			fnStubTechnicalParameterValues.call(this, aUrlTechnicalParameters);
 
-	QUnit.test("when calling 'clearVariantParameterInURL' without a parameter", function(assert) {
-		var aUrlTechnicalParameters = ["fakevariant", "variant1"];
-		fnStubTechnicalParameterValues.call(this, aUrlTechnicalParameters);
+			ControlPersonalizationAPI.clearVariantParameterInURL();
 
-		ControlPersonalizationAPI.clearVariantParameterInURL();
+			assert.equal(Utils.getParsedURLHash.callCount, 0, "then 'sap-ui-fl-control-variant-id' parameter values are not requested");
+			assert.ok(Utils.setTechnicalURLParameterValues.calledWithExactly(undefined, 'sap-ui-fl-control-variant-id', []), "then all 'sap-ui-fl-control-variant-id' parameter values are cleared");
+			assert.strictEqual(this.oModel.updateHasherEntry.callCount, 0, "then VariantModel.updateHasherEntry not called");
+		});
 
-		assert.equal(Utils.getParsedURLHash.callCount, 0, "then 'sap-ui-fl-control-variant-id' parameter values are not requested");
-		assert.ok(Utils.setTechnicalURLParameterValues.calledWithExactly(undefined, 'sap-ui-fl-control-variant-id', []), "then all 'sap-ui-fl-control-variant-id' parameter values are cleared");
-		assert.strictEqual(this.oModel.updateHasherEntry.callCount, 0, "then VariantModel.updateHasherEntry not called");
-	});
+		QUnit.test("when calling 'activateVariant' with a control id", function (assert) {
+			fnStubUpdateCurrentVariant.call(this);
 
-	QUnit.test("when calling 'activateVariant' with a control id", function(assert) {
-		fnStubUpdateCurrentVariant.call(this);
+			return ControlPersonalizationAPI.activateVariant("dummyControl", "variant1")
+				.then(function () {
+					fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
+				}.bind(this));
+		});
 
-		return ControlPersonalizationAPI.activateVariant("dummyControl", "variant1")
-			.then( function () {
-				fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
-			}.bind(this));
-	});
+		QUnit.test("when calling 'activateVariant' with a control", function (assert) {
+			fnStubUpdateCurrentVariant.call(this);
 
-	QUnit.test("when calling 'activateVariant' with a control", function(assert) {
-		fnStubUpdateCurrentVariant.call(this);
+			return ControlPersonalizationAPI.activateVariant(this.oDummyControl, "variant1")
+				.then(function () {
+					fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
+				}.bind(this));
+		});
 
-		return ControlPersonalizationAPI.activateVariant(this.oDummyControl, "variant1")
-			.then( function () {
-				fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
-			}.bind(this));
-	});
+		QUnit.test("when calling 'activateVariant' with a component id", function (assert) {
+			fnStubUpdateCurrentVariant.call(this);
 
-	QUnit.test("when calling 'activateVariant' with a component id", function(assert) {
-		fnStubUpdateCurrentVariant.call(this);
+			return ControlPersonalizationAPI.activateVariant(this.oComponent.getId(), "variant1")
+				.then(function () {
+					fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
+				}.bind(this));
+		});
 
-		return ControlPersonalizationAPI.activateVariant(this.oComponent.getId(), "variant1")
-			.then( function () {
-				fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
-			}.bind(this));
-	});
+		QUnit.test("when calling 'activateVariant' with a component", function (assert) {
+			fnStubUpdateCurrentVariant.call(this);
 
-	QUnit.test("when calling 'activateVariant' with a component", function(assert) {
-		fnStubUpdateCurrentVariant.call(this);
+			return ControlPersonalizationAPI.activateVariant(this.oComponent, "variant1")
+				.then(function () {
+					fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
+				}.bind(this));
+		});
 
-		return ControlPersonalizationAPI.activateVariant(this.oComponent, "variant1")
-			.then( function () {
-				fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
-			}.bind(this));
-	});
+		QUnit.test("when calling 'activateVariant' with an invalid variant reference", function (assert) {
+			fnStubUpdateCurrentVariant.call(this);
 
-	QUnit.test("when calling 'activateVariant' with an invalid variant reference", function(assert) {
-		fnStubUpdateCurrentVariant.call(this);
-
-		return ControlPersonalizationAPI.activateVariant(this.oComponent, "variantInvalid")
-			.then( function() {},
-				function (oError) {
+			return ControlPersonalizationAPI.activateVariant(this.oComponent, "variantInvalid")
+				.then(function () {
+					},
+					function (oError) {
 						fnCheckActivateVariantErrorResponse.call(this, assert, "A valid control or component, and variant id combination is required", oError.message);
 					}.bind(this));
-	});
+		});
 
-	QUnit.test("when calling 'activateVariant' with a random object", function(assert) {
-		fnStubUpdateCurrentVariant.call(this);
+		QUnit.test("when calling 'activateVariant' with a random object", function (assert) {
+			fnStubUpdateCurrentVariant.call(this);
 
-		return ControlPersonalizationAPI.activateVariant({}, "variant1")
-			.then( function() {},
-				function (oError) {
-					fnCheckActivateVariantErrorResponse.call(this, assert, "A valid variant management control or component (instance or id) should be passed as parameter", oError.message);
-				}.bind(this));
-	});
+			return ControlPersonalizationAPI.activateVariant({}, "variant1")
+				.then(function () {
+					},
+					function (oError) {
+						fnCheckActivateVariantErrorResponse.call(this, assert, "A valid variant management control or component (instance or id) should be passed as parameter", oError.message);
+					}.bind(this));
+		});
 
-	QUnit.test("when calling 'activateVariant' with an invalid id", function(assert) {
-		fnStubUpdateCurrentVariant.call(this);
+		QUnit.test("when calling 'activateVariant' with an invalid id", function (assert) {
+			fnStubUpdateCurrentVariant.call(this);
 
-		return ControlPersonalizationAPI.activateVariant("invalidId", "variant1")
-			.then( function() {},
-				function (oError) {
-					fnCheckActivateVariantErrorResponse.call(this, assert, "A valid component or control cannot be found for the provided Id", oError.message);
-				}.bind(this));
-	});
+			return ControlPersonalizationAPI.activateVariant("invalidId", "variant1")
+				.then(function () {
+					},
+					function (oError) {
+						fnCheckActivateVariantErrorResponse.call(this, assert, "A valid component or control cannot be found for the provided Id", oError.message);
+					}.bind(this));
+		});
 
-	QUnit.test("when calling 'activateVariant' with a control with an invalid variantModel", function(assert) {
-		fnStubUpdateCurrentVariant.call(this);
-		this.oOuterAppComponent.setModel(null, "$FlexVariants");
+		QUnit.test("when calling 'activateVariant' with a control with an invalid variantModel", function (assert) {
+			fnStubUpdateCurrentVariant.call(this);
+			this.oAppComponent.setModel(null, "$FlexVariants");
 
-		return ControlPersonalizationAPI.activateVariant(this.oDummyControl, "variant1")
-			.then( function() {},
-				function (oError) {
-					fnCheckActivateVariantErrorResponse.call(this, assert, "No variant management model found for the passed control or component", oError.message);
-				}.bind(this));
+			return ControlPersonalizationAPI.activateVariant(this.oDummyControl, "variant1")
+				.then(function () {
+					},
+					function (oError) {
+						fnCheckActivateVariantErrorResponse.call(this, assert, "No variant management model found for the passed control or application component", oError.message);
+					}.bind(this));
+		});
 	});
 
 	QUnit.done(function () {

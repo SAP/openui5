@@ -67,7 +67,7 @@ function (
 		},
 		getModel: function () {}
 	};
-	sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+	sinon.stub(Utils, "_getAppComponentForComponent").returns(oMockedAppComponent);
 	sinon.stub(PropertyChange, "completeChangeContent");
 
 	var sandbox = sinon.sandbox.create();

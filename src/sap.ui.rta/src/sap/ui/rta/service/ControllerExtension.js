@@ -43,7 +43,8 @@ function (
 
 					var oFlexController = oRta._getFlexController();
 					var oView = sap.ui.getCore().byId(sView);
-					var oAppComponent = FlexUtils.getAppComponentForControl(oView);
+					var oComponent = FlexUtils.getSelectorComponentForControl(oView);
+					var oAppComponent = FlexUtils.getAppComponentForControl(oComponent);
 					var sControllerName = oView.getControllerName && oView.getControllerName() || oView.getController() && oView.getController().getMetadata().getName();
 
 					var oChangeSpecificData = {
@@ -58,7 +59,7 @@ function (
 					};
 
 					var oPreparedChange = oFlexController.createBaseChange(oChangeSpecificData, oAppComponent);
-					oFlexController.addPreparedChange(oPreparedChange, oAppComponent);
+					oFlexController.addPreparedChange(oPreparedChange, oComponent);
 					return oPreparedChange.getDefinition();
 				}
 			}

@@ -69,7 +69,7 @@ function (
 
 	QUnit.module("Given a designTime and createContainer plugin are instantiated for a Form", {
 		beforeEach : function(assert) {
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedComponent);
+			sandbox.stub(Utils, "_getAppComponentForComponent").returns(oMockedComponent);
 			sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
@@ -445,7 +445,7 @@ function (
 
 	QUnit.module("Given a designTime and createContainer plugin are instantiated for a SimpleForm", {
 		beforeEach : function(assert) {
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedComponent);
+			sandbox.stub(Utils, "_getAppComponentForComponent").returns(oMockedComponent);
 			sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
