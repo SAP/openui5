@@ -76,7 +76,7 @@ sap.ui.define([
 		},
 		getModel: function () {return oModel;} // eslint-disable-line no-use-before-define
 	};
-	sinon.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+	sinon.stub(sap.ui.fl.Utils, "_getAppComponentForComponent").returns(oMockedAppComponent);
 
 	FakeLrepConnectorSessionStorage.enableFakeConnector();
 

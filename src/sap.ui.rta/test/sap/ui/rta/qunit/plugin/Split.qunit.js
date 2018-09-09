@@ -64,7 +64,7 @@ function (
 		getModel: function () {}
 	};
 
-	sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+	sinon.stub(Utils, "_getAppComponentForComponent").returns(oMockedAppComponent);
 
 	var sandbox = sinon.sandbox.create();
 	var fnSetOverlayDesigntimeMetadata = function(oOverlay, oDesignTimeMetadata) {

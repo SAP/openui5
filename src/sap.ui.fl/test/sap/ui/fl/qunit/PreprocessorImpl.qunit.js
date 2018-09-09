@@ -93,7 +93,7 @@ function(
 				getManifestEntry: function () {}
 			};
 			sandbox.stub(Cache, "getChangesFillingCache").returns(oChangesFillingCachePromise);
-			sandbox.stub(Utils, "getAppComponentForControl").withArgs(sinon.match.any, true).returns(oAppComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
 			sandbox.stub(Utils, "getComponentName").returns("ui.s2p.mm.purchorder.approve.Component");
 
 			// decode

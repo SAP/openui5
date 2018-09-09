@@ -1108,6 +1108,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oComponent);
+			sandbox.stub(Utils, "getSelectorComponentForControl").returns(this.oComponent);
 
 			this.oFlexController = FlexControllerFactory.createForControl(this.oComponent, oManifest);
 

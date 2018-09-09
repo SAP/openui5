@@ -36,7 +36,7 @@ sap.ui.define([
 	QUnit.module("Given a Selection plugin and designtime in MultiSelection mode and controls with custom dt metadata to simulate different cases...", {
 		beforeEach: function () {
 			this.oComponent = new UIComponent();
-			sandbox.stub(FlUtils, "getAppComponentForControl").returns(this.oComponent);
+			sandbox.stub(FlUtils, "_getAppComponentForComponent").returns(this.oComponent);
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.registerControlsForChanges({

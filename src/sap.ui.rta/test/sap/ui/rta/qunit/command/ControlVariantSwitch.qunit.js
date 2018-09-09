@@ -56,7 +56,7 @@ sap.ui.define([
 			var oModel = new VariantModel({}, {});
 			this.oMockedAppComponent = this.fnGetMockedAppComponent(oModel);
 
-			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oMockedAppComponent);
+			sandbox.stub(Utils, "_getAppComponentForComponent").returns(this.oMockedAppComponent);
 			this.fnUpdateCurrentVariantStub = sandbox.stub(oModel, "updateCurrentVariant");
 
 		},

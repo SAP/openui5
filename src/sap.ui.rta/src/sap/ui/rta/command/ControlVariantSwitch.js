@@ -38,12 +38,15 @@ sap.ui.define([
 
 	ControlVariantSwitch.prototype.MODEL_NAME = "$FlexVariants";
 
-	ControlVariantSwitch.prototype._getAppComponent = function(oElement, bOuter) {
-		if (!this._oControlAppComponent) {
-			this._oControlAppComponent = oElement ? flUtils.getAppComponentForControl(oElement, bOuter) : this.getSelector().appComponent;
+	ControlVariantSwitch.prototype._getAppComponent = function (bEmbedded) {
+		var oElement = this.getElement();
+		if (oElement) {
+			return bEmbedded ? flUtils.getSelectorComponentForControl(oElement) : flUtils.getAppComponentForControl(oElement);
+		} else {
+			return this.getSelector().appComponent;
 		}
-		return this._oControlAppComponent;
 	};
+
 
 	/**
 	 * Template Method to implement execute logic, with ensure precondition Element is available.
@@ -52,13 +55,13 @@ sap.ui.define([
 	 */
 	ControlVariantSwitch.prototype.execute = function() {
 		var oElement = this.getElement(),
-			oAppComponent = this._getAppComponent(oElement),
-			oOuterAppComponent = this._getAppComponent(oElement, true),
+			oComponent = this._getAppComponent(true),
+			oAppComponent = this._getAppComponent(),
 			sNewVariantReference = this.getTargetVariantReference();
 
-		this.oModel = oOuterAppComponent.getModel(this.MODEL_NAME);
-		this.sVariantManagementReference = BaseTreeModifier.getSelector(oElement, oAppComponent).id;
-		return this._updateModelVariant(sNewVariantReference, oAppComponent);
+		this.oModel = oAppComponent.getModel(this.MODEL_NAME);
+		this.sVariantManagementReference = BaseTreeModifier.getSelector(oElement, oComponent).id;
+		return this._updateModelVariant(sNewVariantReference, oComponent);
 	};
 
 	/**
@@ -68,8 +71,8 @@ sap.ui.define([
 	 */
 	ControlVariantSwitch.prototype.undo = function() {
 		var sOldVariantReference = this.getSourceVariantReference();
-		var oAppComponent = this._getAppComponent(this.getElement());
-		return this._updateModelVariant(sOldVariantReference, oAppComponent);
+		var oComponent = this._getAppComponent(true);
+		return this._updateModelVariant(sOldVariantReference, oComponent);
 	};
 
 	/**
@@ -77,9 +80,9 @@ sap.ui.define([
 	 * @private
 	 * @returns {Promise} Returns promise resolve
 	 */
-	ControlVariantSwitch.prototype._updateModelVariant = function (sVariantReference, oAppComponent) {
+	ControlVariantSwitch.prototype._updateModelVariant = function (sVariantReference, oComponent) {
 		if (this.getTargetVariantReference() !== this.getSourceVariantReference()) {
-			return Promise.resolve(this.oModel.updateCurrentVariant(this.sVariantManagementReference, sVariantReference, oAppComponent));
+			return Promise.resolve(this.oModel.updateCurrentVariant(this.sVariantManagementReference, sVariantReference, oComponent));
 		}
 		return Promise.resolve();
 	};

@@ -99,17 +99,17 @@ sap.ui.define([
 							return;
 						}
 						var oChange = oCommand.getPreparedChange();
-						var oAppComponent = oCommand.getAppComponent();
-						if (oAppComponent) {
+						var oComponent = oCommand.getAppComponent(true);
+						if (oComponent) {
 							if (oCommand instanceof FlexCommand){
-								oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-								var oControl = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-								oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
+								oFlexController = FlexControllerFactory.createForControl(oComponent);
+								var oControl = RtaControlTreeModifier.bySelector(oChange.getSelector(), oComponent);
+								oFlexController.removeFromAppliedChangesOnControl(oChange, oComponent, oControl);
 							} else if (oCommand instanceof AppDescriptorCommand) {
 								//other flex controller!
-								oFlexController = this._getAppDescriptorFlexController(oAppComponent);
+								oFlexController = this._getAppDescriptorFlexController(oComponent);
 							}
-							oFlexController.deleteChange(oChange, oAppComponent);
+							oFlexController.deleteChange(oChange, oComponent);
 						}
 					}.bind(this));
 				} else {
@@ -120,15 +120,15 @@ sap.ui.define([
 							return;
 						}
 						if (oCommand instanceof FlexCommand){
-							var oAppComponent = oCommand.getAppComponent();
-							if (oAppComponent) {
-								var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
+							var oComponent = oCommand.getAppComponent(true);
+							if (oComponent) {
+								var oFlexController = FlexControllerFactory.createForControl(oComponent);
 								var oPreparedChange = oCommand.getPreparedChange();
 								if (oPreparedChange.getState() === Change.states.DELETED) {
 									oPreparedChange.setState(Change.states.NEW);
 								}
 								if (!this._isPersistedChange(oPreparedChange)) {
-									oFlexController.addPreparedChange(oCommand.getPreparedChange(), oAppComponent);
+									oFlexController.addPreparedChange(oCommand.getPreparedChange(), oComponent);
 								}
 							}
 						} else if (oCommand instanceof AppDescriptorCommand) {
@@ -201,9 +201,9 @@ sap.ui.define([
 	 * @returns {Promise} Returns AppDescriptorFlexController for given controls
 	 */
 	LREPSerializer.prototype._getAppDescriptorFlexController = function(oControl) {
-		var oOuterAppComponent = FlexUtils.getAppComponentForControl(oControl, true);
-		var sComponentName = FlexUtils.getComponentClassName(oOuterAppComponent).replace(".Component", "");
-		var sAppVersion = FlexUtils.getAppVersionFromManifest(oOuterAppComponent.getManifest());
+		var oAppComponent = FlexUtils.getAppComponentForControl(oControl);
+		var sComponentName = FlexUtils.getComponentClassName(oAppComponent).replace(".Component", "");
+		var sAppVersion = FlexUtils.getAppVersionFromManifest(oAppComponent.getManifest());
 		return FlexControllerFactory.create(sComponentName, sAppVersion);
 	};
 
@@ -261,9 +261,9 @@ sap.ui.define([
 		aCommands.forEach(function(oCommand) {
 			if (oCommand instanceof FlexCommand){
 				var oChange = oCommand.getPreparedChange();
-				var oAppComponent = oCommand.getAppComponent();
-				var oControl = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-				oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
+				var oComponent = oCommand.getAppComponent(true);
+				var oControl = RtaControlTreeModifier.bySelector(oChange.getSelector(), oComponent);
+				oFlexController.removeFromAppliedChangesOnControl(oChange, oComponent, oControl);
 			}
 		});
 

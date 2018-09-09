@@ -1,7 +1,7 @@
 {
 	"_version": "1.8.0",
 	"sap.app": {
-	"id": "sap.ui.fl.qunit.integration.testComponentComplex",
+		"id": "sap.ui.fl.qunit.integration.testComponentComplex",
 		"type": "application",
 		"title": "fl lib test component",
 		"description": "",
@@ -28,7 +28,7 @@
 			"minUI5Version": "1.46",
 			"libs": {
 				"sap.m": {},
-                "sap.ui.layout": {}
+				"sap.ui.layout": {}
 			}
 		},
 		"config": {
@@ -36,6 +36,11 @@
 		},
 		"models": {},
 		"routing": {},
-		"contentDensities": {}
+		"contentDensities": {},
+		"componentUsages": {
+			"myUsage": {
+				"name": "sap.ui.fl.qunit.integration.testComponentReuse"
+			}
+		}
 	}
 }

@@ -62,7 +62,7 @@ function(
 		getModel: function () {}
 	};
 
-	sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+	sinon.stub(FlUtils, "_getAppComponentForComponent").returns(oMockedAppComponent);
 
 	var sandbox = sinon.sandbox.create();
 

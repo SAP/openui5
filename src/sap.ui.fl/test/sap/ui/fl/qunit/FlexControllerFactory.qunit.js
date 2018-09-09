@@ -97,7 +97,7 @@ function (
 				addEmbeddedComponent: function () {}
 			};
 			var sVariantModelName = "$FlexVariants";
-			var oOuterAppComponent = {
+			var oAppComponent = {
 				getModel: function (sModelName) {
 					assert.strictEqual(sModelName, sVariantModelName, "then variant model called on the app component");
 					return oModel;
@@ -113,7 +113,7 @@ function (
 			};
 
 			sandbox.stub(Utils, "isEmbeddedComponent").returns(true);
-			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oComponent, true).returns(oOuterAppComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oComponent).returns(oAppComponent);
 			sandbox.stub(FlexControllerFactory, "createForControl");
 
 			FlexControllerFactory.getChangesAndPropagate(oComponent, {});
@@ -128,7 +128,7 @@ function (
 			var oMockControl = {
 				id: "MockControlId"
 			};
-			var oOuterAppComponent = {
+			var oAppComponent = {
 				getManifest: function () {
 					return oMockManifest;
 				}
@@ -136,9 +136,9 @@ function (
 			var sMockComponentName = "MockCompName";
 			var sMockComponentAppVersion = "1.23";
 
-			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oMockControl, true).returns(oOuterAppComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oMockControl).returns(oAppComponent);
 			sandbox.stub(Utils, "getComponentClassName")
-				.withArgs(oOuterAppComponent)
+				.withArgs(oAppComponent)
 				.returns(sMockComponentName);
 
 			sandbox.stub(Utils, "getAppVersionFromManifest")

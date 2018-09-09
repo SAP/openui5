@@ -93,19 +93,22 @@ sap.ui.define([
 			this.oDummyControl = new VariantManagement("dummyControl");
 
 			this.oModel = new VariantModel(this.oData, oMockFlexController);
-			this.oOuterAppComponent = new Component("AppComponent");
-			this.oOuterAppComponent.setModel(this.oModel, "$FlexVariants");
+			this.oAppComponent = new Component("AppComponent");
+			this.oAppComponent.setModel(this.oModel, "$FlexVariants");
 			this.oComponent = new Component("EmbeddedComponent");
-			var fnGetAppComponentForControlStub = sandbox.stub(Utils, "getAppComponentForControl");
-			fnGetAppComponentForControlStub.withArgs(this.oDummyControl, true).returns(this.oOuterAppComponent);
-			fnGetAppComponentForControlStub.withArgs(this.oComponent, true).returns(this.oOuterAppComponent);
-			fnGetAppComponentForControlStub.withArgs(this.oDummyControl).returns(this.oComponent);
-			fnGetAppComponentForControlStub.withArgs(this.oComponent).returns(this.oComponent);
+			sandbox.stub(Utils, "getAppComponentForControl")
+				.callThrough()
+				.withArgs(this.oDummyControl).returns(this.oAppComponent)
+				.withArgs(this.oComponent).returns(this.oAppComponent);
+			sandbox.stub(Utils, "getSelectorComponentForControl")
+				.callThrough()
+				.withArgs(this.oDummyControl).returns(this.oComponent)
+				.withArgs(this.oComponent).returns(this.oComponent);
 		},
 		afterEach: function() {
 			sandbox.restore();
 			this.oModel.destroy();
-			this.oOuterAppComponent.destroy();
+			this.oAppComponent.destroy();
 			this.oComponent.destroy();
 			this.oDummyControl.destroy();
 		}
@@ -117,11 +120,11 @@ sap.ui.define([
 			ControlPersonalizationAPI.clearVariantParameterInURL(this.oDummyControl);
 
 			assert.ok(Utils.getParsedURLHash.calledOnce, "then hash parameter values are requested");
-			assert.ok(Utils.setTechnicalURLParameterValues.calledWithExactly(this.oOuterAppComponent, 'sap-ui-fl-control-variant-id', [aUrlTechnicalParameters[0]]), "then 'sap-ui-fl-control-variant-id' parameter value for the provided variant management control is cleared");
+			assert.ok(Utils.setTechnicalURLParameterValues.calledWithExactly(this.oAppComponent, 'sap-ui-fl-control-variant-id', [aUrlTechnicalParameters[0]]), "then 'sap-ui-fl-control-variant-id' parameter value for the provided variant management control is cleared");
 			assert.deepEqual(this.oModel.updateHasherEntry.getCall(0).args[0], {
 				parameters: [aUrlTechnicalParameters[0]],
 				updateURL: true,
-				component: this.oOuterAppComponent
+				component: this.oAppComponent
 			}, "then VariantModel.updateHasherEntry called with the desired arguments");
 		});
 
@@ -207,12 +210,12 @@ sap.ui.define([
 
 		QUnit.test("when calling 'activateVariant' with a control with an invalid variantModel", function(assert) {
 			fnStubUpdateCurrentVariant.call(this);
-			this.oOuterAppComponent.setModel(null, "$FlexVariants");
+			this.oAppComponent.setModel(null, "$FlexVariants");
 
 			return ControlPersonalizationAPI.activateVariant(this.oDummyControl, "variant1")
 			.then(function() {},
 				function (oError) {
-					fnCheckActivateVariantErrorResponse.call(this, assert, "No variant management model found for the passed control or component", oError.message);
+					fnCheckActivateVariantErrorResponse.call(this, assert, "No variant management model found for the passed control or application component", oError.message);
 				}.bind(this)
 			);
 		});

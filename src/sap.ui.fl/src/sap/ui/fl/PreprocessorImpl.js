@@ -51,9 +51,9 @@ function(
 			}
 
 			var oComponent = Component.get(sComponentId);
-			var oOuterAppComponent = Utils.getAppComponentForControl(oComponent, true);
-			var sFlexReference = Utils.getComponentClassName(oOuterAppComponent);
-			var sAppVersion = Utils.getAppVersionFromManifest(oOuterAppComponent.getManifest());
+			var oAppComponent = Utils.getAppComponentForControl(oComponent);
+			var sFlexReference = Utils.getComponentClassName(oAppComponent);
+			var sAppVersion = Utils.getAppVersionFromManifest(oAppComponent.getManifest());
 
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference, sAppVersion);
 			return oChangePersistence.getChangesForComponent().then(function(aChanges) {

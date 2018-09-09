@@ -969,7 +969,7 @@ sap.ui.define([
 
 
 	function givenSomeBoundControls(assert){
-		sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+		sandbox.stub(sap.ui.fl.Utils, "_getAppComponentForComponent").returns(oMockedAppComponent);
 
 		oSibling = new Button({id: "Sibling", visible : true});
 		oUnsupportedInvisible = new Input({id: "UnsupportedInvisible", visible : false});

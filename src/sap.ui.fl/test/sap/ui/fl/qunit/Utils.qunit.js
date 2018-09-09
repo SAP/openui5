@@ -289,31 +289,6 @@ function(
 			assert.equal(fnGetOwnerIdForControl.callCount, 3);
 		});
 
-		QUnit.test("_getComponentIdForControl shall stop walking up the control tree after 100 iterations", function (assert) {
-			var sComponentId, aControls, i, fnGetOwnerIdForControl, previous;
-			aControls = [];
-			/*eslint-disable no-loop-func */
-			 for (i = 0; i < 200; i++) {
-				previous = (i >= 1) ? aControls[i - 1] : null;
-				(function (previous, i) {
-					aControls[i] = {
-						getParent: function () {
-							return previous;
-						}
-					};
-				})(previous, i);
-			}
-			/*eslint-enable no-loop-func */
-
-			fnGetOwnerIdForControl = sandbox.stub(Utils, "_getOwnerIdForControl").returns("");
-
-			// Call CUT
-			sComponentId = Utils._getComponentIdForControl(aControls[199]);
-
-			assert.strictEqual(sComponentId, '');
-			assert.equal(fnGetOwnerIdForControl.callCount, 100);
-		});
-
 		QUnit.test("getComponentName shall return the component name for a component", function (assert) {
 			var oMetadata = {
 				_sComponentName: 'testcomponent.Component',
@@ -724,13 +699,36 @@ function(
 			assert.equal(oStub.firstCall.args[0], oParentComponent, "the function was called with the parent component the first time");
 		});
 
-		QUnit.test("getAppComponentForControl will not search further for the app component if the passed component is of type component and parameter for outer component is not set", function (assert) {
-			var oOuterAppComponent = new Component("outerAppComponent");
+		QUnit.test("getSelectorComponentForControl will not search further for the app component if the passed component is of type component", function (assert) {
+			var oAppComponent = new Component("appComponent");
 			var oComponent;
 			var oSapAppEntry = {
 				type: "component"
 			};
-			oOuterAppComponent.runAsOwner(function() {
+			oAppComponent.runAsOwner(function() {
+				oComponent = new Component("innerComponent");
+				sandbox.stub(oComponent, "getManifestObject")
+					.returns({
+						getEntry: function (sParameter) {
+							return sParameter === "sap.app" ? oSapAppEntry : undefined;
+						}
+					});
+			});
+
+			var oReturnedComponent = Utils.getSelectorComponentForControl(oComponent);
+
+			assert.deepEqual(oReturnedComponent, oComponent, "then the app component is not returned");
+			oAppComponent.destroy();
+			oComponent.destroy();
+		});
+
+		QUnit.test("getSelectorComponentForControl will search further for the app component if the passed component is not of type application or component", function (assert) {
+			var oAppComponent = new Component("appComponent");
+			var oComponent;
+			var oSapAppEntry = {
+				type: "mockType"
+			};
+			oAppComponent.runAsOwner(function() {
 				oComponent = new Component("innerComponent");
 				sandbox.stub(oComponent, "getManifestEntry")
 					.callsFake(function (sParameter) {
@@ -738,47 +736,32 @@ function(
 					});
 			});
 
-			var oReturnedComponent = Utils.getAppComponentForControl(oComponent);
+			var oReturnedComponent = Utils.getSelectorComponentForControl(oComponent);
 
-			assert.deepEqual(oReturnedComponent, oComponent, "then the parent app component is not returned");
-			oOuterAppComponent.destroy();
+			assert.deepEqual(oReturnedComponent, oAppComponent, "then the app component is returned");
+			oAppComponent.destroy();
 			oComponent.destroy();
 		});
 
-		QUnit.test("getAppComponentForControl will search further for the app component if the passed component is of type component and parameter for outer component is set", function (assert) {
-			var oOuterAppComponent = new Component("outerAppComponent");
+		QUnit.test("getAppComponentForControl will not search further for the app component if the passed child component is of type application (mis-configured apps)", function (assert) {
+			var oAppComponent = new Component("appComponent");
 			var oComponent;
-			var oSapAppEntry = {
-				type: "component"
-			};
-			oOuterAppComponent.runAsOwner(function() {
-				oComponent = new Component("innerComponent");
-				sandbox.stub(oComponent, "getManifestEntry")
-					.callsFake(function (sParameter) {
-						return sParameter === "sap.app" ? oSapAppEntry : undefined;
-					});
-			});
-
-			var oReturnedComponent = Utils.getAppComponentForControl(oComponent, true);
-
-			assert.deepEqual(oReturnedComponent, oOuterAppComponent, "then the parent app component is not returned");
-			oOuterAppComponent.destroy();
-			oComponent.destroy();
-		});
-
-		QUnit.test("getAppComponentForControl returns the component if the passed component is of the type application", function (assert) {
-			var oComponent = new sap.ui.core.UIComponent();
 			var oSapAppEntry = {
 				type: "application"
 			};
+			oAppComponent.runAsOwner(function() {
+				oComponent = new Component("innerComponent");
+				sandbox.stub(oComponent, "getManifestEntry")
+					.callsFake(function (sParameter) {
+						return sParameter === "sap.app" ? oSapAppEntry : undefined;
+					});
+			});
 
-			oComponent.getManifestEntry = function (sParameter) {
-				return sParameter === "sap.app" ? oSapAppEntry : undefined;
-			};
+			var oReturnedComponent = Utils.getSelectorComponentForControl(oComponent);
 
-			var oDeterminedAppComponent = Utils._getAppComponentForComponent(oComponent);
-
-			assert.equal(oDeterminedAppComponent, oComponent);
+			assert.deepEqual(oReturnedComponent, oComponent, "then the child app component is not returned");
+			oAppComponent.destroy();
+			oComponent.destroy();
 		});
 
 		QUnit.test("getComponentClassName shall return the next component of type 'application' in the hierarchy", function (assert) {
@@ -1136,11 +1119,11 @@ function(
 			this.sComponentName = "componentName";
 			this.sAppVariantId = "variantId";
 
-			this.oComponent = new sap.ui.core.UIComponent();
+			this.oComponent = new Component();
 			this.oStubbedManifestEntryUi5 = {/*no appVariantId */};
 			sandbox.stub(this.oComponent, "getManifestEntry").returns(this.oStubbedManifestEntryUi5);
 
-			this.oComponentOfVariant = new sap.ui.core.UIComponent();
+			this.oComponentOfVariant = new Component();
 			this.oStubbedManifestEntryUi5WithVariantId = {
 				"appVariantId": this.sAppVariantId
 			};
