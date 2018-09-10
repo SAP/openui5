@@ -78,10 +78,6 @@ html.sapUiMedia-Std-Phone .sapUiCalendarRowWithHead > .sapUiCalendarRowApps{
 	border-radius: 0.125rem;
 }
 
-.sapUiCalendarIntervalHeaderCont {
-	padding-left: 0.375rem;
-}
-
 .sapUiCalendarRowApps > .sapUiCalendarRowAppsIntHead{
 	position: absolute;
 	top: 0;
@@ -97,14 +93,18 @@ html.sapUiMedia-Std-Phone .sapUiCalendarRowWithHead > .sapUiCalendarRowApps{
 	width: 1rem;
 	height: 1rem;
 	line-height: 1rem;
-	padding-right: 0.375rem;
+	padding-left: 0.375rem;
 	font-size: 1rem;
 	vertical-align: middle;
 	color: @sapUiElement;
+	padding-top: 0.15rem;
 }
 
 .sapUiCalendarRowAppsIntHeadTitle{
-	vertical-align: middle;
+	&:extend(.sapUiCalendarAppTitleWrapper);
+	white-space: nowrap;
+	padding-left: 0.375rem;
+	box-sizing: border-box;
 }
 
 .sapUiCalendarRowAppsIntHeadText{
@@ -191,19 +191,58 @@ html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active) > .sap
 	border-left: none;
 }
 
+.sapUiCalendarRow .sapUiCalendarAppCont,
+.sapUiCalendarRow .sapUiCalendarIntervalHeaderCont{
+	display: flex;
+}
+
 .sapUiCalendarAppIcon{
 	width: 1rem;
 	height: 1rem;
 	line-height: 1rem;
 	font-size: 1rem;
-	position: absolute;
-	left: 0.375rem;
+	position: relative;
 	top: 0.375rem;
-/*	vertical-align: middle;*/
+	left: 0.375rem;
+	margin-right: 0.375rem;
 	color: @sapUiContentIconColor;
 }
 
-.sapUiCalendarAppTitleOnly > .sapUiCalendarAppCont > .sapUiCalendarAppIcon{
+.sapUiCaledarAppArrowIcon {
+	top: ~'calc(50% - 0.5rem)';
+	color: @sapUiContentNonInteractiveIconColor;
+}
+
+.sapUiCalendarAppArrowIconLeft {
+	&:extend(.sapUiCaledarAppArrowIcon);
+	left: 0.375rem;
+	margin-right: 0.375rem;
+}
+
+.sapUiCalendarAppArrowIconRight {
+	&:extend(.sapUiCaledarAppArrowIcon);
+	right: 0.375rem;
+	margin-left: 0.375rem;
+}
+
+.sapUiCalendarAppArrowIconLeft + .sapUiCalendarAppTitleWrapper > .sapUiCalendarAppIcon {
+	left: 1.5rem;
+}
+
+.sapUiCalendarIntervalHeaderCont > .sapUiCalendarAppArrowIconLeft,
+.sapUiCalendarIntervalHeaderCont > .sapUiCalendarAppArrowIconRight {
+	top: 0.25rem;
+}
+
+.sapUiCalendarIntervalHeaderCont > .sapUiCalendarAppArrowIconLeft.sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon):not(.sapUiCalendarAppIcon),
+.sapUiCalendarIntervalHeaderCont > .sapUiCalendarAppArrowIconRight.sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon):not(.sapUiCalendarAppIcon),
+.sapUiCalendarAppCont .sapUiCalendarAppArrowIconLeft.sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon):not(.sapUiCalendarAppIcon),
+.sapUiCalendarAppCont .sapUiCalendarAppArrowIconRight.sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon):not(.sapUiCalendarAppIcon) {
+	font-size: 0.75rem;
+}
+
+.sapUiCalendarAppTitleOnly > .sapUiCalendarAppCont .sapUiCalendarAppIcon,
+.sapUiCalendarRowAppsIntHead .sapUiCalendarRowAppsIntHeadIcon {
 	top: ~'calc(50% - 0.5rem)';
 }
 
@@ -216,15 +255,18 @@ html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active) > .sap
 }
 
 .sapUiCalendarAppTitle,
-.sapUiCalendarAppText{
-	/* Here we leave 2px space at the end of the appointment so the truncation will look better */
-	width: calc(100% - 2px);
-	display: inline-block;
-	overflow: hidden;
+.sapUiCalendarAppText {
+	&:extend(.sapUiCalendarAppTitleWrapper);
 	white-space: nowrap;
 	padding-left: 0.375rem;
-	padding-right: 0.375rem;
 	box-sizing: border-box;
+}
+
+.sapUiCalendarAppTitleWrapper {
+	width: calc(100% - 2px);
+	margin-right: 0.375rem;
+	display: inline-block;
+	overflow: hidden;
 }
 
 .sapUiCalendarAppIcon + .sapUiCalendarAppTitle,
@@ -238,11 +280,13 @@ html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active) > .sap
 	padding-top: 0.375rem;
 }
 
-.sapUiCalendarApp.sapUiCalendarAppTitleOnly > .sapUiCalendarAppCont > .sapUiCalendarAppTitle{
+.sapUiCalendarApp.sapUiCalendarAppTitleOnly > .sapUiCalendarAppCont .sapUiCalendarAppTitle {
 	padding-bottom: 0.375rem;
 }
 
-.sapUiCalendarRowAppsRedHeight > .sapUiCalendarRowApps > .sapUiCalendarApp.sapUiCalendarAppTitleOnly > .sapUiCalendarAppCont > .sapUiCalendarAppTitle{
+.sapUiCalendarRowAppsRedHeight > .sapUiCalendarRowApps > .sapUiCalendarApp.sapUiCalendarAppTitleOnly > .sapUiCalendarAppCont .sapUiCalendarAppTitle,
+.sapUiCalendarAppCont .sapUiCalendarAppArrowIconLeft,
+.sapUiCalendarAppCont .sapUiCalendarAppArrowIconRight {
 	padding-top: 0.125rem;
 	padding-bottom: 0.125rem;
 }
