@@ -1605,5 +1605,82 @@
         "references": []
       }
     ]
+  },
+  "1.56.8": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "5ce4b920bfbfd37f36441743d78fb9eef58c89b0",
+        "type": "FIX",
+        "text": " Popover: RTA toolbar don\u0027t disappear anymore during UI Adaptation",
+        "references": []
+      },
+      {
+        "id": "cea3ca64640dfca8c72d0dde1ea4bb712b73d1e1",
+        "type": "FIX",
+        "text": " sap.m.Button: now checks if the domRef exists on onAfterRendering",
+        "references": []
+      },
+      {
+        "id": "3cd4ead8d984254a8beba74e35db7439ef014749",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Change event is now fired on highlighting on phone",
+        "references": []
+      },
+      {
+        "id": "747ce47ebf4df2d50caae4f40ac2902d81b81cab",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Prevent infinite resize in IE and Edge",
+        "references": []
+      },
+      {
+        "id": "9d1c75699710374a13219a02f54245598dc32c07",
+        "type": "FIX",
+        "text": " sap.m.Input: Soft keyboard is not opened on value help",
+        "references": []
+      },
+      {
+        "id": "9f0a01a81a1a540d469341840f2579ebbea51799",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Stuck on filtering fixed",
+        "references": []
+      },
+      {
+        "id": "eb90fbe201373dda50bd5ad16ddb4b0ce998848f",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Correct arrangement of the items in case parent has white-space set to nowrap",
+        "references": []
+      },
+      {
+        "id": "960e83771fc3b5ec4d25a10d78f3e2645315d503",
+        "type": "FIX",
+        "text": " sap.m.StepInput: correct behavior when mousewheel is used",
+        "references": []
+      },
+      {
+        "id": "2741b73321466e08073bfbbf3ad8b0bb1111b73b",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: propagete properties to internal TabStripItem",
+        "references": []
+      },
+      {
+        "id": "a6c2a09a53a388761bae0ebbaf1c3e43c70100a6",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Stop textarea \"jumping\" on counter update",
+        "references": []
+      },
+      {
+        "id": "eabc6e321e15cfbd3f181ac3aa57eb0a1ff3793b",
+        "type": "FIX",
+        "text": " sap.m.TextArea: growingMaxLies property fixed",
+        "references": []
+      },
+      {
+        "id": "9a7321fbe333fdfb6b1af0e0ed46d95a9ef82e7b",
+        "type": "FIX",
+        "text": " sap.m.Token: Token text properly displayed",
+        "references": []
+      }
+    ]
   }
 }

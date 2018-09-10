@@ -266,5 +266,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.8": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "abf962603879b2c2b17f432904e19c6eb4d09e4d",
+        "type": "FIX",
+        "text": " Setting the tooltip for every icon on App variant overview",
+        "references": []
+      }
+    ]
   }
 }
