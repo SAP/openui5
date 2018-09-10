@@ -19,6 +19,9 @@ sap.ui.define([
 				},
 				completeChangeContent : function(oChange, mSpecificChangeInfo, mPropertyBag){
 					return RenameField.completeChangeContent(oChange, mSpecificChangeInfo, mPropertyBag);
+				},
+				revertChange : function(oChange, oControl, mPropertyBag) {
+					return RenameField.revertChange(oChange, oControl, mPropertyBag);
 				}
 			}
 		}
