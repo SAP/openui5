@@ -10,11 +10,11 @@
             data-sap-ui-xx-waitForTheme="true"
 			data-sap-ui-theme="sap_belize"
             data-sap-ui-resourceroots='{"test.cardcontent": "./cardcontent"}'
-            
             >
 	</script>
 	<script>
-		function onAvatarPress (oEvent) {
+		'use strict';
+        function onAvatarPress (oEvent) {
 			sap.m.MessageToast.show(oEvent.getSource().getId() + " pressed");
 		}
 
@@ -98,8 +98,10 @@
 					verticalSize: 2,
                     horizontalSize: 2,
                     icon: "sap-icon://accept",
-                    style:"background-size:strech;background-image:url(./images/Lamp_avatar_01.jpg);color:white;",
-                    iconStyle:"background-color:rgba(255, 255, 255, 0.3);",
+                    backgroundImage:"./images/Lamp_avatar_01.jpg",
+                    backgroundImageSize:"strech",
+                    color: "white",
+                    iconBackgroundColor:"rgba(255, 255, 255, 0.3)",
                     title: "Card with background image",
                     subtitle: "Subtitle for the card",
                     status: "Count"

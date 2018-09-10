@@ -7,13 +7,15 @@ sap.ui.define([
     "./library",
     "sap/ui/core/Control",
     "sap/ui/core/ComponentContainer",
+    "sap/f/cards/CardComponent",
     "sap/base/Log"
 ], function (
     library,
     Control,
     ComponentContainer,
+    CardContentComponent,
     Log
-){
+) {
     "use strict";
 
     /**
@@ -104,13 +106,47 @@ sap.ui.define([
                     value: 2
                 },
                 /**
-                 * TODO: pass in a color and background-color
-                 * or a semantic color name where the framwork can handle the contrast ratio
+                 * Color of the Icon. If color is not defined here, the Icon inherits the color from its DOM parent.
+                 *
+                 * The property can be set with {@link sap.ui.core.CSSColor CSS Color} or {@link sap.ui.core.IconColor Semantic Icon Color}.
                  */
-                iconStyle: {
+                iconColor: {
                     type: "string"
                 },
-                style: {
+                /**
+                 * Background color of the Icon.
+                 *
+                 * The property can be set with {@link sap.ui.core.CSSColor CSS Color} or {@link sap.ui.core.IconColor Semantic Icon Color}.
+                 */
+                iconBackgroundColor: {
+                    type: "string"
+                },
+                /**
+                 * Color of the Cards texts and icons. The default color is derived by the theme.
+                 *
+                 * The property can be set with {@link sap.ui.core.CSSColor CSS Color} or {@link sap.ui.core.IconColor Semantic Icon Color}.
+                 */
+                color: {
+                    type: "string"
+                },
+                /**
+                 * Background color of the Card.
+                 *
+                 * The property can be set with {@link sap.ui.core.CSSColor CSS Color} or {@link sap.ui.core.IconColor Semantic Icon Color}.
+                 */
+                backgroundColor: {
+                    type: "string"
+                },
+                /**
+                 * Background image of the Card.
+                 */
+                backgroundImage: {
+                    type: "string"
+                },
+                /**
+                 * Background image size of the Card. Use stretch or cover from the corresponding CSS spec.
+                 */
+                backgroundImageSize: {
                     type: "string"
                 }
 
@@ -252,7 +288,14 @@ sap.ui.define([
         }
         this.setProperty("component", sValue, true);
         if (sValue) {
-            var oContent = new ComponentContainer({name:sValue, async:true});
+            var oContent = new ComponentContainer({
+                name: sValue,
+                async: true,
+                settings: {
+                    verticalSize: this.getVerticalSize(),
+                    horizontalSize: this.getHorizontalSize()
+                }
+            });
             this.setAggregation("_content", oContent);
         }
         return this;
