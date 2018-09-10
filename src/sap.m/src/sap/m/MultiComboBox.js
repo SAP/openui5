@@ -1794,7 +1794,6 @@ function(
 				// if a token is selected, the tokenizer should not scroll
 				if (this.getEditable() && jQuery(oEvent.target).hasClass("sapMToken")) {
 					oTokenizer._useCollapsedMode(false);
-					setTimeout(oTokenizer["scrollToEnd"].bind(oTokenizer), 0);
 				}
 			}
 		}, this);
