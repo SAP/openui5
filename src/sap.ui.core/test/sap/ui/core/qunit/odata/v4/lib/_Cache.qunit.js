@@ -3918,6 +3918,7 @@ sap.ui.define([
 		var sResourcePath = "LeaveRequest('1')/Submit",
 			oCache = this.createSingle(sResourcePath),
 			fnDataRequested = this.spy(),
+			oEntity = {},
 			oGroupLock1 = new _GroupLock("group"),
 			oGroupLock2 = new _GroupLock("group"),
 			oPostData = {},
@@ -3934,7 +3935,7 @@ sap.ui.define([
 
 		this.oRequestorMock.expects("request")
 			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock1),
-				{"If-Match" : "etag"}, sinon.match.same(oPostData))
+				{"If-Match" : sinon.match.same(oEntity)}, sinon.match.same(oPostData))
 			.returns(Promise.resolve(oResult1));
 		this.oRequestorMock.expects("request")
 			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock2),
@@ -3947,7 +3948,7 @@ sap.ui.define([
 		}, new Error("Cannot fetch a value before the POST request"));
 
 		assert.notOk(oCache.bSentReadRequest);
-		oPromise = oCache.post(oGroupLock1, oPostData, "etag").then(function (oPostResult1) {
+		oPromise = oCache.post(oGroupLock1, oPostData, oEntity).then(function (oPostResult1) {
 			assert.strictEqual(oPostResult1, oResult1);
 			return Promise.all([
 				oCache.fetchValue(new _GroupLock("foo"), "", fnDataRequested)
