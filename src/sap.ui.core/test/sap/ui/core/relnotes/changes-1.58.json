@@ -593,6 +593,12 @@
         "type": "FIX",
         "text": " performance/trace/Interaction: accept valid setRequestHeader parameters",
         "references": []
+      },
+      {
+        "id": "c6aa08a28f3fb8d80df5b7ce258bd8f7055457eb",
+        "type": "FIX",
+        "text": " core.routing: convert route config for internal target",
+        "references": []
       }
     ]
   }

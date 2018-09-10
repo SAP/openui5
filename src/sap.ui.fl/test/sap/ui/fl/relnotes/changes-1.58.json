@@ -107,6 +107,12 @@
         "type": "FIX",
         "text": "sap.ui.fl - MoveControls change handler RevertData with id",
         "references": []
+      },
+      {
+        "id": "f9b99e1967287a48ccf50a4561b46a7723d0d4bd",
+        "type": "FIX",
+        "text": " sap.ui.fl : Caching of flex/settings request",
+        "references": []
       }
     ]
   }
