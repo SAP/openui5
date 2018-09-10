@@ -1400,21 +1400,5 @@ sap.ui.define([
 			});
 		};
 
-		/**
-		 * Destroys all the items in the aggregation named <code>items</code>.
-		 *
-		 * @returns {sap.m.ComboBox} <code>this</code> to allow method chaining.
-		 * @public
-		 */
-		ComboBoxBase.prototype.destroyItems = function() {
-			var oList = this.getList();
-
-			if (oList) {
-				oList.destroyItems();
-			}
-
-			return this;
-		};
-
 		return ComboBoxBase;
 	});
