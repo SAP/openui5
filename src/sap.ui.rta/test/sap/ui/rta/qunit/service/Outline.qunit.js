@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/ui/core/UIComponent",
+	"testdata/StaticDesigntimeMetadata",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	oOutline,
@@ -29,6 +30,7 @@ sap.ui.define([
 	ObjectPageSection,
 	ObjectPageSubSection,
 	UIComponent,
+	StaticDesigntimeMetadata,
 	sinon
 ) {
 	"use strict";
@@ -109,14 +111,23 @@ sap.ui.define([
 			});
 
 			// check designtime metadata label property
-			sandbox.stub(DesignTime.prototype, "getDesignTimeMetadataFor").withArgs(this.oLayout)
-				.returns({
-					getLabel: function(oLayout) {
-						if (oLayout === this.oLayout) {
-							return "Vertical Layout Label";
-						}
-					}.bind(this)
-				});
+			var oExtendedDesigntimeMetadataForLayout = StaticDesigntimeMetadata.getVerticalLayoutDesigntimeMetadata();
+			oExtendedDesigntimeMetadataForLayout.getLabel = function(oLayout) {
+				if (oLayout === this.oLayout) {
+					return "Vertical Layout Label";
+				}
+			}.bind(this);
+
+			sandbox.stub(DesignTime.prototype, "getDesignTimeMetadataFor")
+
+			.withArgs(oPage).returns(StaticDesigntimeMetadata.getPageDesigntimeMetadata())
+			.withArgs(this.oButton1).returns(StaticDesigntimeMetadata.getButtonDesigntimeMetadata())
+			.withArgs(this.oLayout).returns(oExtendedDesigntimeMetadataForLayout)
+			.withArgs(this.oObjectPageSubSection).returns(StaticDesigntimeMetadata.getObjectPageSubSectionDesigntimeMetadata())
+			.withArgs(this.oObjectPageSection).returns(StaticDesigntimeMetadata.getObjectPageSectionDesigntimeMetadata())
+			.withArgs(this.oObjectPageLayout).returns(StaticDesigntimeMetadata.getObjectPageLayoutDesigntimeMetadata())
+			.withArgs(this.oButton2).returns(StaticDesigntimeMetadata.getButtonDesigntimeMetadata())
+			.withArgs(this.oOuterLayout).returns(StaticDesigntimeMetadata.getVerticalLayoutDesigntimeMetadata());
 
 			this.oRta.getService("outline").then(function (oService) {
 				var fnElementOverlayCreatedHandler = function(oEvt) {

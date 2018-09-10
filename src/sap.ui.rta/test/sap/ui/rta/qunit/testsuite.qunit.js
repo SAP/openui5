@@ -78,6 +78,11 @@ sap.ui.define([
 				group: 'Service',
 				coverage: {
 					only: ["sap/ui/rta/service/Outline"]
+				},
+				ui5: {
+					resourceroots: {
+						"testdata": "test-resources/sap/ui/rta/testdata/"
+					}
 				}
 			},
 			"service/Selection": {
