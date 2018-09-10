@@ -1,19 +1,17 @@
 /* global QUnit*/
 
 sap.ui.define([
-	"sap/ui/rta/service/ControllerExtension",
 	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/Utils",
-	"sap/ui/dt/Util",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/View",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
-	ControllerExtension,
 	RuntimeAuthoring,
+	OverlayRegistry,
 	FlexUtils,
-	DtUtil,
 	UIComponent,
 	View,
 	sinon
@@ -22,24 +20,32 @@ function(
 
 	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("Given that RuntimeAuthoring and ControllerExtension service are created and add function is called...", {
-		before: function () {
-			this.oView = new View({});
-			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
-				metadata: {
-					manifest: {
-						"sap.app": {
-							"id": "fixture.application"
-						}
+	function before () {
+		this.oView = new View({});
+		var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
+			metadata: {
+				manifest: {
+					"sap.app": {
+						"id": "fixture.application"
 					}
-				},
-				createContent: function() {
-					return this.oView;
-				}.bind(this)
-			});
+				}
+			},
+			createContent: function() {
+				return this.oView;
+			}.bind(this)
+		});
 
-			this.oComponent = new FixtureComponent();
-		},
+		this.oComponent = new FixtureComponent();
+	}
+
+	function after () {
+		this.oView.destroy();
+		this.oComponent.destroy();
+	}
+
+	QUnit.module("Given that RuntimeAuthoring and ControllerExtension service are created and 'add' is called", {
+		before: before,
+		after: after,
 		beforeEach: function () {
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
@@ -130,6 +136,61 @@ function(
 				assert.equal(this.iCreateBaseChangeCounter, 0, "and FlexController.createBaseChange was not called");
 				assert.equal(this.iAddPreparedChangeCounter, 0, "and FlexController.addPreparedChange was not called");
 			}.bind(this));
+		});
+	});
+
+	QUnit.module("Given that RuntimeAuthoring and ControllerExtension service are created and 'getTemplate' is called", {
+		before: before,
+		after: after,
+		beforeEach: function () {
+			this.oRta = new RuntimeAuthoring({
+				showToolbars: false,
+				rootControl: this.oView
+			});
+			return this.oRta.start().then(function () {
+				return this.oRta.getService("controllerExtension").then(function(oService) {
+					this.oControllerExtension = oService;
+					this.oViewOverlay = OverlayRegistry.getOverlay(this.oView);
+				}.bind(this));
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("with a template available", function(assert) {
+			var sPath = "sap/ui/rta/service/ControllerExtension";
+			sandbox.stub(this.oViewOverlay.getDesignTimeMetadata(), "getControllerExtensionTemplate").returns(sPath);
+			var oAjaxSpy = sandbox.spy(jQuery, "ajax");
+
+			return this.oControllerExtension.getTemplate(this.oView.getId()).then(function(sTemplate) {
+				assert.equal(oAjaxSpy.callCount, 1, "the resource was requested");
+				assert.ok(sTemplate, "the service returned the template");
+			});
+		});
+
+		QUnit.test("with no overlay for the given view ID", function(assert) {
+			return this.oControllerExtension.getTemplate("invalidID").then(function() {
+				assert.ok(false, "should never go here");
+			})
+			.catch(function(oError) {
+				assert.equal(oError.message, "no overlay found for the given view ID", "then ControllerExtension.getTemplate throws an error");
+			});
+		});
+
+		QUnit.test("with template available that can't be found", function(assert) {
+			sandbox.stub(this.oViewOverlay.getDesignTimeMetadata(), "getControllerExtensionTemplate").returns("undefined");
+			var oAjaxSpy = sandbox.spy(jQuery, "ajax");
+
+			return this.oControllerExtension.getTemplate(this.oView)
+			.then(function() {
+				assert.ok(false, "should not go in here");
+			})
+			.catch(function(oError) {
+				assert.equal(oAjaxSpy.callCount, 1, "the resource was requested");
+				assert.ok(oError, "an error was thrown");
+			});
 		});
 	});
 
