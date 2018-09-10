@@ -487,6 +487,66 @@
         "type": "FIX",
         "text": " sap.m.TextArea: Style overwriting",
         "references": []
+      },
+      {
+        "id": "84647229195ab574710ad3f7934b98bde2a07566",
+        "type": "FIX",
+        "text": " Breadcrumbs: QUnit test failure about font-size is fixed",
+        "references": []
+      },
+      {
+        "id": "3f92120d556fc4abac89472fbbe8e6eb336f2827",
+        "type": "FIX",
+        "text": " CheckBox: Appearance in non editable form fixed",
+        "references": []
+      },
+      {
+        "id": "898c724f1e6a06bc155ec0f4941d92f099c8dd52",
+        "type": "FIX",
+        "text": " Select: Issue with selecting items in OverflowToolbar menu fixed",
+        "references": []
+      },
+      {
+        "id": "76a04ca81c9005ca16d152b9fcc897f3fb2a712c",
+        "type": "FIX",
+        "text": " Toolbar: Icon padding in active mode fixed",
+        "references": []
+      },
+      {
+        "id": "052e4d93cac624d93119eb233e74e1c9d6ea94c0",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Navigate properly trough suggestion items",
+        "references": []
+      },
+      {
+        "id": "1e24bb70695e08db7e9078e002e1d79b066c78b5",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: do not set width to content button text when width is 0",
+        "references": []
+      },
+      {
+        "id": "a9feb0c025a38f6a9769389beda3f452f309f6bc",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Redundant scrolling in tokenizer removed",
+        "references": []
+      },
+      {
+        "id": "1822f77b8e8189a7792ccbff7727330e32fccf36",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: status rendered in correct column when the attribute is empty",
+        "references": []
+      },
+      {
+        "id": "8dc81475860c1d74e59862ac17637e8f776e8650",
+        "type": "FIX",
+        "text": " sap.m.StepInput: correct valueState when setValue is called",
+        "references": []
+      },
+      {
+        "id": "f3be128b525f09a8fae896953cca47f6d02d6407",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Stable ID restored",
+        "references": []
       }
     ]
   }

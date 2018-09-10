@@ -55,6 +55,18 @@
         "type": "FIX",
         "text": "sap.ui.dt - MiniMenu is now always placed correctly on touch screen",
         "references": []
+      },
+      {
+        "id": "4cdbc6b4237559e6bc093995082a0268f6906c59",
+        "type": "FIX",
+        "text": ": RTA - improve visibility of MiniMenu",
+        "references": []
+      },
+      {
+        "id": "6876176aa7dfe5a960fa89a3baa0bde1fc5596f1",
+        "type": "FIX",
+        "text": "sap.ui.dt - Context menu closes when selection changes",
+        "references": []
       }
     ]
   }

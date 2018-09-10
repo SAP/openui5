@@ -25,6 +25,18 @@
         "type": "FIX",
         "text": " FlexibleColumnLayout: Updated test page",
         "references": []
+      },
+      {
+        "id": "9e27e3efb4b38c34216e6babb798dcc341ce2903",
+        "type": "FEATURE",
+        "text": " Card",
+        "references": []
+      },
+      {
+        "id": "7f92b122f7b24493a8bdeccb73899ec335c82839",
+        "type": "FIX",
+        "text": " SemanticPage: Content padding CSS classes are now passed",
+        "references": []
       }
     ]
   }
