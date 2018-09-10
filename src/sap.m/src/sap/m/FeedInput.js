@@ -266,6 +266,8 @@ sap.ui.define([
 	 * @returns {sap.m.TextArea} The text area
 	 */
 	FeedInput.prototype._getTextArea = function () {
+		var that = this;
+
 		if (!this._oTextArea) {
 			this._oTextArea = new TextArea(this.getId() + "-textArea", {
 				value : this.getValue(),
@@ -282,6 +284,12 @@ sap.ui.define([
 				}, this)
 			});
 			this._oTextArea.setParent(this);
+			this._oTextArea.addEventDelegate({
+				onAfterRendering: function () {
+					that.$("counterContainer").empty();
+					that.$("counterContainer").html(that._oTextArea.getAggregation("_counter").$());
+				}
+			});
 		}
 		return this._oTextArea;
 	};

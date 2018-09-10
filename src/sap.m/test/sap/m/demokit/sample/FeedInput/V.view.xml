@@ -27,17 +27,17 @@
 
 	<Label text="Rows Set to 5" class="sapUiSmallMarginTop sapUiTinyMarginBottom" />
 	<FeedInput
-			post="onPost"
-			rows="5" />
+		post="onPost"
+		rows="5" />
 
 	<Label text="With Exceeded Text" class="sapUiSmallMarginTop sapUiTinyMarginBottom" />
 	<FeedInput
-			post="onPost"
-			maxLength="20"
-			showExceededText="true" />
+		post="onPost"
+		maxLength="20"
+		showExceededText="true" />
 
 	<Label text="With Growing" class="sapUiSmallMarginTop sapUiTinyMarginBottom" />
 	<FeedInput
-			post="onPost"
-			growing="true" />
+		post="onPost"
+		growing="true" />
 </mvc:View>

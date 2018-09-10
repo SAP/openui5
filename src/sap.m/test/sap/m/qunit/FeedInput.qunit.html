@@ -6,9 +6,9 @@
 
 	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
-	        data-sap-ui-noConflict="true"
-	        data-sap-ui-libs="sap.m"
-	        src="../../../../resources/sap-ui-core.js">
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m"
+			src="../../../../resources/sap-ui-core.js">
 	</script>
 
 	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
@@ -51,8 +51,8 @@
 				assert.strictEqual(this.oFeedInput.getAriaLabelForPicture(), "", "ariaLabelForPicture is ''");
 				assert.strictEqual(this.oFeedInput.getRows(), 2, "rows is '2'");
 				assert.strictEqual(this.oFeedInput.getGrowing(), false, "growing is 'false'");
-                assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 0, "growingMaxLines is '0'");
-                assert.strictEqual(this.oFeedInput.getShowExceededText(), false, "showExceededText is 'false'");
+				assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 0, "growingMaxLines is '0'");
+				assert.strictEqual(this.oFeedInput.getShowExceededText(), false, "showExceededText is 'false'");
 			});
 
 			QUnit.test("TextForPicture", function (assert) {
@@ -140,51 +140,51 @@
 				assert.strictEqual(this.oFeedInput._getTextArea().getMaxLength(), this.oFeedInput.getMaxLength(), "Property should be passed to TextArea control");
 			});
 
-            QUnit.test("Rows", function (assert) {
-                this.oFeedInput.setRows(5);
-                assert.strictEqual(this.oFeedInput.getRows(), 5, "Getter should return correct non-default value");
-                assert.strictEqual(this.oFeedInput._getTextArea().getRows(), this.oFeedInput.getRows(), "Property should be passed to TextArea control");
-                this.oFeedInput.setRows(1);
-                assert.strictEqual(this.oFeedInput.getRows(), 2, "Getter should return minimum value");
-                assert.strictEqual(this.oFeedInput._getTextArea().getRows(), this.oFeedInput.getRows(), "Property with minimum value should be passed to TextArea control");
-                this.oFeedInput.setRows(25);
-                assert.strictEqual(this.oFeedInput.getRows(), 15, "Getter should return maximum value");
-                assert.strictEqual(this.oFeedInput._getTextArea().getRows(), this.oFeedInput.getRows(), "Property with maximum value should be passed to TextArea control");
-            });
+			QUnit.test("Rows", function (assert) {
+				this.oFeedInput.setRows(5);
+				assert.strictEqual(this.oFeedInput.getRows(), 5, "Getter should return correct non-default value");
+				assert.strictEqual(this.oFeedInput._getTextArea().getRows(), this.oFeedInput.getRows(), "Property should be passed to TextArea control");
+				this.oFeedInput.setRows(1);
+				assert.strictEqual(this.oFeedInput.getRows(), 2, "Getter should return minimum value");
+				assert.strictEqual(this.oFeedInput._getTextArea().getRows(), this.oFeedInput.getRows(), "Property with minimum value should be passed to TextArea control");
+				this.oFeedInput.setRows(25);
+				assert.strictEqual(this.oFeedInput.getRows(), 15, "Getter should return maximum value");
+				assert.strictEqual(this.oFeedInput._getTextArea().getRows(), this.oFeedInput.getRows(), "Property with maximum value should be passed to TextArea control");
+			});
 
-            QUnit.test("Growing", function (assert) {
-                this.oFeedInput.setGrowing(true);
-                assert.strictEqual(this.oFeedInput.getGrowing(), true, "Getter should return correct non-default value");
-                assert.strictEqual(this.oFeedInput._getTextArea().getGrowing(), this.oFeedInput.getGrowing(), "Property should be passed to TextArea control");
-            });
+			QUnit.test("Growing", function (assert) {
+				this.oFeedInput.setGrowing(true);
+				assert.strictEqual(this.oFeedInput.getGrowing(), true, "Getter should return correct non-default value");
+				assert.strictEqual(this.oFeedInput._getTextArea().getGrowing(), this.oFeedInput.getGrowing(), "Property should be passed to TextArea control");
+			});
 
-            QUnit.test("GrowingMaxLines", function (assert) {
-                this.oFeedInput.setGrowingMaxLines(7);
-                assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 7, "Getter should return correct non-default value");
-                assert.strictEqual(this.oFeedInput._getTextArea().getGrowingMaxLines(), this.oFeedInput.getGrowingMaxLines(), "Property should be passed to TextArea control");
-                this.oFeedInput.setGrowingMaxLines(25);
-                assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 15, "Getter should return maximum value");
-                assert.strictEqual(this.oFeedInput._getTextArea().getGrowingMaxLines(), this.oFeedInput.getGrowingMaxLines(), "Property with maximum value should be passed to TextArea control");
-                this.oFeedInput.setGrowingMaxLines(0);
-                assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 0, "Getter should return unlimited value");
-                assert.strictEqual(this.oFeedInput._getTextArea().getGrowingMaxLines(), this.oFeedInput.getGrowingMaxLines(), "Property with maximum value should be passed to TextArea control");
-                this.oFeedInput.setGrowingMaxLines(1);
-                assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 2, "Rows=default value: getter should return minimum value of rows");
-                assert.strictEqual(this.oFeedInput._getTextArea().getGrowingMaxLines(), this.oFeedInput.getGrowingMaxLines(), "Property with minimum value of rows should be passed to TextArea control");
-                this.oFeedInput.setRows(5);
-                this.oFeedInput.setGrowingMaxLines(4);
-                assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 5, "Getter should return value equal to rows");
-                assert.strictEqual(this.oFeedInput._getTextArea().getGrowingMaxLines(), this.oFeedInput.getGrowingMaxLines(), "Property with equal value of rows should be passed to TextArea control");
-                this.oFeedInput.setRows(10);
-                assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 10, "Getter should change its value when property Rows exceed the getter");
-                assert.strictEqual(this.oFeedInput._getTextArea().getGrowingMaxLines(), this.oFeedInput.getGrowingMaxLines(), "Property changed when property Rows exceed should be passed to TextArea control");
-            });
+			QUnit.test("GrowingMaxLines", function (assert) {
+				this.oFeedInput.setGrowingMaxLines(7);
+				assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 7, "Getter should return correct non-default value");
+				assert.strictEqual(this.oFeedInput._getTextArea().getGrowingMaxLines(), this.oFeedInput.getGrowingMaxLines(), "Property should be passed to TextArea control");
+				this.oFeedInput.setGrowingMaxLines(25);
+				assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 15, "Getter should return maximum value");
+				assert.strictEqual(this.oFeedInput._getTextArea().getGrowingMaxLines(), this.oFeedInput.getGrowingMaxLines(), "Property with maximum value should be passed to TextArea control");
+				this.oFeedInput.setGrowingMaxLines(0);
+				assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 0, "Getter should return unlimited value");
+				assert.strictEqual(this.oFeedInput._getTextArea().getGrowingMaxLines(), this.oFeedInput.getGrowingMaxLines(), "Property with maximum value should be passed to TextArea control");
+				this.oFeedInput.setGrowingMaxLines(1);
+				assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 2, "Rows=default value: getter should return minimum value of rows");
+				assert.strictEqual(this.oFeedInput._getTextArea().getGrowingMaxLines(), this.oFeedInput.getGrowingMaxLines(), "Property with minimum value of rows should be passed to TextArea control");
+				this.oFeedInput.setRows(5);
+				this.oFeedInput.setGrowingMaxLines(4);
+				assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 5, "Getter should return value equal to rows");
+				assert.strictEqual(this.oFeedInput._getTextArea().getGrowingMaxLines(), this.oFeedInput.getGrowingMaxLines(), "Property with equal value of rows should be passed to TextArea control");
+				this.oFeedInput.setRows(10);
+				assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 10, "Getter should change its value when property Rows exceed the getter");
+				assert.strictEqual(this.oFeedInput._getTextArea().getGrowingMaxLines(), this.oFeedInput.getGrowingMaxLines(), "Property changed when property Rows exceed should be passed to TextArea control");
+			});
 
-            QUnit.test("ShowExceededText", function (assert) {
-                this.oFeedInput.setShowExceededText(true);
-                assert.strictEqual(this.oFeedInput.getShowExceededText(), true, "Getter should return correct non-default value");
-                assert.strictEqual(this.oFeedInput._getTextArea().getShowExceededText(), this.oFeedInput.getShowExceededText(), "Property should be passed to TextArea control");
-            });
+			QUnit.test("ShowExceededText", function (assert) {
+				this.oFeedInput.setShowExceededText(true);
+				assert.strictEqual(this.oFeedInput.getShowExceededText(), true, "Getter should return correct non-default value");
+				assert.strictEqual(this.oFeedInput._getTextArea().getShowExceededText(), this.oFeedInput.getShowExceededText(), "Property should be passed to TextArea control");
+			});
 
 			QUnit.test("Placeholder", function (assert) {
 				this.oFeedInput.setPlaceholder("asdf");
@@ -196,12 +196,12 @@
 				this.oFeedInput.setShowIcon(false);
 				sap.ui.getCore().applyChanges();
 				assert.strictEqual(this.oFeedInput.getShowIcon(), false, "Getter should return correct non-default value");
-				assert.ok(this.oFeedInput.$().hasClass("sapMFeedInNoIcon"), "ShowIcon=false: div input should have class 'sapMFeedInNoIcon'");
+				assert.ok(this.oFeedInput.$().find("#input-outerContainer").hasClass("sapMFeedInNoIcon"), "ShowIcon=false: div input should have class 'sapMFeedInNoIcon'");
 
 				this.oFeedInput.setShowIcon(true);
 				sap.ui.getCore().applyChanges();
-				assert.ok(!this.oFeedInput.$().hasClass("sapMFeedInNoIcon"), "ShowIcon=true: div input should not have class 'sapMFeedInNoIcon'");
-				assert.ok(jQuery.sap.byId("input-figure").hasClass("sapMFeedInFigure"), "ShowIcon=true: div figure should have class 'sapMFeedInFigure'");
+				assert.ok(!this.oFeedInput.$().find("#input-outerContainer").hasClass("sapMFeedInNoIcon"), "ShowIcon=true: div input should not have class 'sapMFeedInNoIcon'");
+				assert.ok(this.oFeedInput.$().find("#input-figure").hasClass("sapMFeedInFigure"), "ShowIcon=true: div figure should have class 'sapMFeedInFigure'");
 			});
 
 			QUnit.test("Value", function (assert) {
@@ -230,8 +230,52 @@
 			});
 
 			QUnit.test("General Stuff", function (assert) {
-				assert.ok(jQuery.sap.byId("input").hasClass("sapMFeedIn"), "FeedInput control should have class 'sapMFeedIn'");
-				assert.ok(jQuery.sap.byId("input-container").hasClass("sapMFeedInContainer"), "input container should have class 'sapMFeedInContainer'");
+				assert.ok(this.oFeedInput.$().hasClass("sapMFeedInBase"), "FeedInput control should have class 'sapMFeedInBase'");
+				assert.ok(this.oFeedInput.$().find("#input-outerContainer").hasClass("sapMFeedIn"), "Outer container should have class 'sapMFeedIn'");
+				assert.ok(this.oFeedInput.$().find("#input-counterContainer").hasClass("sapMFeedInCounter"), "Counter container should have class 'sapMFeedInCounter'");
+				assert.ok(this.oFeedInput.$().find("#input-container").hasClass("sapMFeedInContainer"), "Input container should have class 'sapMFeedInContainer'");
+				assert.ok(this.oFeedInput.$().has(this.oFeedInput.$().find("#input-counterContainer")).length, "FeedInput control contain Counter container");
+				assert.ok(!this.oFeedInput.$().find("#input-counterContainer").has(this.oFeedInput.$().find("#input-textArea-counter")).length, "Counter container does not contain Text Area counter");
+			});
+
+			QUnit.test("Character Counter", function (assert) {
+				assert.ok(!this.oFeedInput.$().find("#input-counterContainer").has(this.oFeedInput.$().find("#input-textArea-counter")).length, "Counter container does not contain Text Area counter");
+				assert.ok(!this.oFeedInput.$().find("#input-TextArea").has(this.oFeedInput.$().find("#input-textArea-counter")).length, "Text Area does not contain visible Text Area counter");
+				assert.ok(this.oFeedInput._getTextArea().getAggregation("_counter").isA("sap.m.Text"), "Counter aggregation is of type sap.m.Text");
+				assert.ok(this.oFeedInput.$().find("#input-counterContainer").is(":empty"), "Counter container is empty");
+				assert.ok(this.oFeedInput.$().find("#input-counterContainer").children().length === 0, "Counter container is empty");
+				assert.ok(this.oFeedInput.$().find("#input-textArea").children().length === 3, "Text Area has 3 children");
+				this.oFeedInput.setMaxLength(20);
+				this.oFeedInput.setShowExceededText(true);
+				sap.ui.getCore().applyChanges();
+				assert.ok(this.oFeedInput.$().find("#input-counterContainer").has(this.oFeedInput.$().find("#input-textArea-counter")).length, "Counter container contain Text Area counter");
+				assert.ok(!this.oFeedInput.$().find("#input-TextArea").has(this.oFeedInput.$().find("#input-textArea-counter")).length, "Text Area does not contain Text Area counter");
+				assert.ok(this.oFeedInput.$().find("#input-counterContainer").hasClass("sapMFeedInCounter"), "Counter container should have class 'sapMFeedInCounter'");
+				assert.ok(this.oFeedInput.$().find("#input-textArea-counter").hasClass("sapMTextAreaCounter"), "Text Area Counter should have class 'sapMTextAreaCounter'");
+				assert.ok(this.oFeedInput._getTextArea().getAggregation("_counter").isA("sap.m.Text"), "Counter aggregation is of type sap.m.Text");
+				assert.ok(!this.oFeedInput.$().find("#input-counterContainer").is(":empty"), "Counter container is not empty");
+				assert.ok(this.oFeedInput.$().find("#input-counterContainer").children().length === 1, "Counter container contains 1 child element");
+				assert.ok(this.oFeedInput.$().find("#input-textArea").children().length === 2, "Text Area has 2 children");
+				this.oFeedInput.setMaxLength(0);
+				this.oFeedInput.setShowExceededText(false);
+				sap.ui.getCore().applyChanges();
+				assert.ok(!this.oFeedInput.$().find("#input-counterContainer").has(this.oFeedInput.$().find("#input-textArea-counter")).length, "Counter container does not contain Text Area counter");
+				assert.ok(!this.oFeedInput.$().find("#input-TextArea").has(this.oFeedInput.$().find("#input-textArea-counter")).length, "Text Area does not contain visible Text Area counter");
+				assert.ok(this.oFeedInput._getTextArea().getAggregation("_counter").isA("sap.m.Text"), "Counter aggregation is of type sap.m.Text");
+				assert.ok(this.oFeedInput.$().find("#input-counterContainer").is(":empty"), "Counter container is empty");
+				assert.ok(this.oFeedInput.$().find("#input-counterContainer").children().length === 0, "Counter container is empty");
+				assert.ok(this.oFeedInput.$().find("#input-textArea").children().length === 3, "Text Area has 3 children");
+				this.oFeedInput.setMaxLength(20);
+				this.oFeedInput.setShowExceededText(true);
+				sap.ui.getCore().applyChanges();
+				assert.ok(this.oFeedInput.$().find("#input-counterContainer").has(this.oFeedInput.$().find("#input-textArea-counter")).length, "Counter container contain Text Area counter");
+				assert.ok(!this.oFeedInput.$().find("#input-TextArea").has(this.oFeedInput.$().find("#input-textArea-counter")).length, "Text Area does not contain Text Area counter");
+				assert.ok(this.oFeedInput.$().find("#input-counterContainer").hasClass("sapMFeedInCounter"), "Counter container should have class 'sapMFeedInCounter'");
+				assert.ok(this.oFeedInput.$().find("#input-textArea-counter").hasClass("sapMTextAreaCounter"), "Text Area Counter should have class 'sapMTextAreaCounter'");
+				assert.ok(this.oFeedInput._getTextArea().getAggregation("_counter").isA("sap.m.Text"), "Counter aggregation is of type sap.m.Text");
+				assert.ok(!this.oFeedInput.$().find("#input-counterContainer").is(":empty"), "Counter container is not empty");
+				assert.ok(this.oFeedInput.$().find("#input-counterContainer").children().length === 1, "Counter container contains 1 child element");
+				assert.ok(this.oFeedInput.$().find("#input-textArea").children().length === 2, "Text Area has 2 children");
 			});
 
 
