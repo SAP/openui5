@@ -41,3 +41,14 @@ html[data-sap-ui-browser^='ed'] {
 		}
 	}
 }
+
+html[data-sap-ui-browser^='ie'],
+html[data-sap-ui-browser^='ed'] {
+	.sapMStepInput:focus {
+		.sapMInputBaseContentWrapper:not(.sapMInputBaseReadonlyWrapper):not(.sapMInputBaseContentWrapperState):not(.sapMStepInputReadOnly) {
+			&::before {
+				border-style: dashed;
+			}
+		}
+	}
+}
