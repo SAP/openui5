@@ -117,8 +117,8 @@ html.sap-desktop .sapUiCalItemNow:focus > .sapUiCalItemText{
 	line-height: 2.5rem;
 }
 
-html.sap-desktop .sapUiCalMonthPicker .sapUiCalItemSel,
-html.sap-desktop .sapUiCalYearPicker .sapUiCalItemSel{
+html.sap-desktop .sapUiCalMonthPicker .sapUiCalItemSel:not(:focus),
+html.sap-desktop .sapUiCalYearPicker .sapUiCalItemSel:not(:focus) {
 	outline: 0.125rem solid @sapUiContentForegroundBorderColor;
 	outline-offset: -0.25rem;
 }
@@ -448,8 +448,8 @@ html.sap-tablet .sapUiCalItem{
 	outline: 0 none;
 }
 
-html.sap-tablet .sapUiCalMonthPicker .sapUiCalItemSel,
-html.sap-tablet .sapUiCalYearPicker .sapUiCalItemSel {
+html.sap-tablet .sapUiCalMonthPicker .sapUiCalItemSel:not(:focus),
+html.sap-tablet .sapUiCalYearPicker .sapUiCalItemSel:not(:focus) {
 	border: 0 none;
 	outline: 0.125rem solid @sapUiContentForegroundBorderColor;
 	outline-offset: -0.25rem;
