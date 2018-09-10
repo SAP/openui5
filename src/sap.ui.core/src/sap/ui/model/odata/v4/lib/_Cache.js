@@ -150,7 +150,7 @@ sap.ui.define([
 				throw new Error("Must not delete twice: " + sEditUrl);
 			}
 			oEntity["$ui5.deleting"] = true;
-			mHeaders = {"If-Match" : oEntity["@odata.etag"]};
+			mHeaders = {"If-Match" : oEntity};
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
 			return that.oRequestor.request("DELETE", sEditUrl, oGroupLock, mHeaders)
 				.catch(function (oError) {

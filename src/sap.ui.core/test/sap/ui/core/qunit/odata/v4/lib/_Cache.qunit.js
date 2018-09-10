@@ -274,7 +274,8 @@ sap.ui.define([
 					.returns("?foo=bar");
 				this.oRequestorMock.expects("request")
 					.withExactArgs("DELETE", "Equipments('1')?foo=bar",
-						sinon.match.same(oGroupLock), {"If-Match" : sEtag})
+						sinon.match.same(oGroupLock),
+						{"If-Match" : sinon.match.same(aCacheData[1])})
 					.returns(iStatus === 200 ? Promise.resolve().then(function () {
 						that.oRequestorMock.expects("reportBoundMessages")
 							.withExactArgs(oCache.sResourcePath, [],
@@ -392,8 +393,9 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "EQUIPMENT_2_EMPLOYEE")
 			.returns(SyncPromise.resolve(oCacheData));
 		this.oRequestorMock.expects("request")
-			.withExactArgs("DELETE", "TEAMS('23')", sinon.match.same(oGroupLock),
-				{"If-Match" : sEtag})
+			.withExactArgs("DELETE", "TEAMS('23')", sinon.match.same(oGroupLock), {
+				"If-Match" : sinon.match.same(oCacheData["EMPLOYEE_2_TEAM"])
+			})
 			.returns(Promise.resolve().then(function () {
 				that.oRequestorMock.expects("reportBoundMessages")
 					.withExactArgs(oCache.sResourcePath, [],
@@ -3777,16 +3779,19 @@ sap.ui.define([
 		oRequestor.mBatchQueue[sGroupId][0][0].$resolve(oEntity);
 
 		return oCreatedPromise.then(function () {
+			var sEditUrl = "/~/Employees('4711')",
+				oCacheData = oCache.fetchValue(_GroupLock.$cached, "-1").getResult();
+
 			that.mock(oRequestor).expects("request")
-				.withExactArgs("DELETE", "/~/Employees('4711')", new _GroupLock("$auto"),
-					{"If-Match" : "anyEtag"})
+				.withExactArgs("DELETE", sEditUrl, new _GroupLock("$auto"),
+					{"If-Match" : sinon.match.same(oCacheData)})
 				.returns(Promise.resolve().then(function () {
 					that.mock(oRequestor).expects("reportBoundMessages")
 						.withExactArgs(oCache.sResourcePath, [], ["('4711')"]);
 				}));
 
 			// code under test
-			return oCache._delete(new _GroupLock("$auto"), "/~/Employees('4711')", "-1", fnCallback)
+			return oCache._delete(new _GroupLock("$auto"), sEditUrl, "-1", fnCallback)
 				.then(function () {
 					sinon.assert.calledOnce(fnCallback);
 					assert.notOk(-1 in oCache.aElements, "ok");
@@ -4235,10 +4240,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("SingleCache#_delete, followed by _fetchValue: root entity", function (assert) {
 		var oCache = this.createSingle("Employees('42')"),
-			sEtag = 'W/"19770724000000.0000000"',
-			oData = {
-				"@odata.etag" : sEtag
-			},
+			oData = {"@odata.etag" : 'W/"19770724000000.0000000"'},
 			oDeleteGroupLock = new _GroupLock("groupId"),
 			oFetchGroupLock = new _GroupLock("groupId"),
 			that = this;
@@ -4248,12 +4250,12 @@ sap.ui.define([
 				undefined, undefined, undefined, "/Employees")
 			.returns(Promise.resolve(oData));
 
-		return oCache.fetchValue(oFetchGroupLock).then(function () {
+		return oCache.fetchValue(oFetchGroupLock).then(function (oEntity) {
 			var fnCallback = that.spy();
 
 			that.oRequestorMock.expects("request")
 				.withExactArgs("DELETE", "Employees('42')", sinon.match.same(oDeleteGroupLock),
-					{"If-Match" : sEtag})
+					{"If-Match" : sinon.match.same(oEntity)})
 				.returns(Promise.resolve().then(function () {
 					that.oRequestorMock.expects("reportBoundMessages")
 						.withExactArgs(oCache.sResourcePath, [], [""]);
