@@ -4,10 +4,11 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Title",
+	"sap/m/library",
 	"sap/ui/core/library",
 	"sap/m/Toolbar",
 	"sap/ui/core/Title"
-], function(QUnitUtils, createAndAppendDiv, Title, coreLibrary, Toolbar, coreTitle) {
+], function(QUnitUtils, createAndAppendDiv, Title, mobileLibrary, coreLibrary, Toolbar, coreTitle) {
 	// shortcut for sap.ui.core.TextAlign
 	var TextAlign = coreLibrary.TextAlign;
 
@@ -116,6 +117,21 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		assert.ok(this.title.$().hasClass("sapMTitleWrap"), "Title has class sapMTitleWrap.");
 		assert.ok(this.title.$().outerHeight() >= 3 * iHeight, "Title height increases when wrapping is active");
+	});
+
+	QUnit.test("Title wrappingType (Hyphenation)", function(assert){
+		var done = assert.async();
+		this.title.setText("pneumonoultramicroscopicsilicovolcanoconiosis");
+		var iHeight = this.title.$().outerHeight();
+		this.title.setWidth("200px");
+		this.title.setWrapping(true);
+		this.title.setWrappingType(mobileLibrary.WrappingType.Hyphenated);
+		sap.ui.getCore().applyChanges();
+
+		setTimeout(function() {
+			assert.ok(this.title.$().outerHeight() >= 2 * iHeight, "Tested title is hyphenated.");
+			done();
+		}.bind(this), 500);
 	});
 
 	QUnit.test("TitleStyle correct", function(assert){

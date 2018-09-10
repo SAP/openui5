@@ -482,6 +482,10 @@ sap.ui.define(function() {
 					}
 				}
 			},
+			Hyphenation: {
+				title: "sap.ui.core.hyphenation.Hyphenation",
+				page: "test-resources/sap/ui/core/qunit/Hyphenation.qunit.html"
+			},
 
 			"jquery.sap.global-config": {
 				title: "jquery.sap.global: External configuration",

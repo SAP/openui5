@@ -19,10 +19,11 @@
 
 		var idCounter = 0;
 		var oData = {
-		     text: "This is the text of the title.",
+		     text: "This is the text of the title, but in some specific cases it can be very long.",
 		     width: "",
 		     visible: true,
 		     wrapping: false,
+		     wrappingType: "Normal",
 		     align: "Initial",
 		     level: "Auto"
 		}
@@ -67,7 +68,7 @@
 				return;
 			}
 
-			jQuery.sap.byId("settings").append("<div style='margin-top:5px;'><div style='display:inline-block;width:100px;'>" + sLabel + ":</div>" + sDom + "</div>");
+			jQuery.sap.byId("settings").append("<div style='margin-top:5px;'><div style='display:inline-block;width:140px;'>" + sLabel + ":</div>" + sDom + "</div>");
 
 			jQuery.sap.byId(sId).change(fHandle);
 		}
@@ -85,6 +86,7 @@
 					width: "{/width}",
 					visible: "{/visible}",
 					wrapping: "{/wrapping}",
+					wrappingType: "{/wrappingType}",
 					textAlign: "{/align}",
 					level: "{/level}"
 				});
@@ -114,6 +116,10 @@
 			});
 			createSetting("Wrapping", oData.wrapping, null, function(oEvent, val){
 				oData.wrapping = val;
+				oModel.setData(oData);
+			});
+			createSetting("WrappingType", oData.wrappingType, null, function(oEvent, val){
+				oData.wrappingType = val;
 				oModel.setData(oData);
 			});
 			createSetting("Highlight", false, null, function(oEvent, val){

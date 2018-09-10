@@ -158,6 +158,7 @@ sap.ui.define([
 					"xx-waitForTheme"       : { type : "boolean",  defaultValue : false},
 					"xx-xml-processing"     : { type : "string",  defaultValue : "" },
 					"xx-avoidAriaApplicationRole" : { type : "boolean",  defaultValue : false}, // Avoid ACC role 'application'
+					"xx-hyphenation" : { type : "string",  defaultValue : ""}, // (empty string)|native|thirdparty
 					"statistics"            : { type : "boolean",  defaultValue : false }
 			};
 
@@ -1434,6 +1435,16 @@ sap.ui.define([
 		 */
 		getHandleValidation : function() {
 			return this["xx-handleValidation"];
+		},
+
+		/**
+		 * Gets if the hyphenation has to be forced to use only browser-native or only third-party.
+		 *
+		 * @returns {string} empty string, "native" or "thirdparty"
+		 * @private
+		 */
+		getHyphenation : function() {
+			return this["xx-hyphenation"];
 		},
 
 		/**
