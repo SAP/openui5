@@ -32,6 +32,8 @@ sap.ui.define([
 		"sap.m.PlanningCalendar", // can be rendered but fails when properties generically filled ("viewKey")
 		"sap.ui.comp.odata.FieldSelector", // has a known leak
 		"sap.ui.comp.valuehelpdialog.ValueHelpDialog",  // has a known leak
+		"sap.ui.core.util.Export", // cannot render
+		"sap.ui.demokit.CodeSampleContainer", // has a known leak
 		"sap.ui.mdc.base.FilterField" // has a known leak
 	];
 
