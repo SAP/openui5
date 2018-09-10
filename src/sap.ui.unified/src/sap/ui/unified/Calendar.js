@@ -2004,7 +2004,7 @@ sap.ui.define([
 		}
 
 		oHeader.setTextButton1(sText);
-		oHeader.setAriaLabelButton1(sAriaLabel);
+		oHeader.setAriaLabelButton1(sAriaLabel.replace(/ /g, ''));
 		oHeader._setTextButton3(sLastMonthName);
 		oHeader._setAriaLabelButton3(sLastMonthName);
 		oSecondMonthHeader.setTextButton1(sLastMonthName);
