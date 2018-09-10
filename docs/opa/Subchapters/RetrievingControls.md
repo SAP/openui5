@@ -46,8 +46,8 @@ return new Opa5().waitFor({
                                  value: "myTitle"
                            }),
     success : function (aObjectHeaders) {
-        Opa5.assert.StrictEqual(aObjectHeaders.length, 1, "was there was only one Object header with this title on the page");
-        Opa5.assert.StrictEqual(aObjectHeaders[0].getTitle(), "myTitle", "was on the correct Title");
+        Opa5.assert.strictEqual(aObjectHeaders.length, 1, "was there was only one Object header with this title on the page");
+        Opa5.assert.strictEqual(aObjectHeaders[0].getTitle(), "myTitle", "was on the correct Title");
     }
 });
 ```
