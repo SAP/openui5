@@ -193,6 +193,16 @@ sap.ui.define([
 			assert.ok(!oContextMenuControl.bOpen, "ContextMenu should be closed");
 		});
 
+		QUnit.test("When a context menu is open and selection changes", function (assert) {
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
+			var oContextMenuControlCloseSpy = oSandbox.spy(oContextMenuControl, "close");
+			this.oDesignTime.getSelectionManager().fireChange({
+				selection: [this.oButton1Overlay]
+			});
+			assert.ok(oContextMenuControlCloseSpy.called, "ContextMenu is closed");
+		});
+
 		QUnit.test("Calling _checkForPluginLock", function (assert) {
 			assert.ok(!this.oContextMenuPlugin._checkForPluginLock(this.oButton2Overlay), "Should return false");
 		});
