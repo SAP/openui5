@@ -1683,7 +1683,7 @@ sap.ui.define([
 		}
 		// new items are added automatically by opening listbox (no support to change property while
 		// listbox is open)
-
+		return this;
 	};
 
 

@@ -239,6 +239,7 @@ sap.ui.define([
 				$this.text(this.getProperty("text"));
 			}
 		}
+		return this;
 	};
 
 

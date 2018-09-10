@@ -1469,7 +1469,7 @@ sap.ui.define([
 			sSelectedSectionId = this.getSelectedSection();
 
 		if (bValue === bOldValue) {
-			return;
+			return this;
 		}
 
 		this._oABHelper._getAnchorBar().setShowPopover(bValue);

@@ -119,6 +119,7 @@ sap.ui.define([
 				this.setAggregation("individualStateText", oValueStateText);
 			}
 		}
+		return this;
 	};
 
 	/**
@@ -161,6 +162,7 @@ sap.ui.define([
 			this.setAggregation("formattedText", oText);
 			this.setProperty("text", sText, true);
 		}
+		return this;
 	};
 
 	/**

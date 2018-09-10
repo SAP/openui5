@@ -468,6 +468,8 @@ function(
 			//disable local object button, as package has been set from outside and therefore should not be changed.
 			this.getButtons()[0].setVisible(false);
 		}
+
+		return this;
 	};
 
 	/**
@@ -505,6 +507,8 @@ function(
 				this._oTransport.setEnabled(true);
 			}
 		}
+
+		return this;
 	};
 
 	/**
@@ -520,6 +524,8 @@ function(
 		if (oObject && !this.getProperty("lrepObject")) {
 			this.setProperty("lrepObject", oObject);
 		}
+
+		return this;
 	};
 
 	/**
@@ -545,6 +551,8 @@ function(
 			//correct the title.
 			this.setTitle(this._oResources.getText("TRANSPORT_DIALOG_TITLE_SIMPLE"));
 		}
+
+		return this;
 	};
 
 	return TransportDialog;
