@@ -218,9 +218,13 @@ sap.ui.define([
 		var oChangesLoadingPromise = oFlexDataPromise.then(function (oResult) {
 			return oResult;
 		}, function (oError) {
+			var sMessageText = "";
+			if (oError.messages && oError.messages.length != 0 && oError.messages[0].text) {
+				sMessageText = oError.messages[0].text;
+			}
+			var sErrorMessage = formatMessage("Loading changes for {0} failed!\nError code: {1}\nMessage: {2}", mComponent.name, oError.code, sMessageText);
 			// if the back end is not reachable we still cache the results in a valid way because the url request is
 			// cached by the browser in its negative cache anyway.
-			var sErrorMessage = formatMessage("flexibility service is not available:\nError message: {0}", oError.status);
 			Log.error(sErrorMessage);
 			return Promise.resolve({
 				changes: {
