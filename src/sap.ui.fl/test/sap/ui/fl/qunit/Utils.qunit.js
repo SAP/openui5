@@ -830,6 +830,25 @@ function(
 		oGetComponentForControlStub.stub.restore();
 	});
 
+	QUnit.test("indexOfInArrayOfObjects with array containing object", function(assert) {
+		var oObject = {a: 1, b: 2, c: 3};
+		var aArray = [{a: 4, b: 5, c: 6}, {a: 1, b: 2, c: 3}, {a: 7, b: 8, c: 9}];
+		assert.equal(Utils.indexOfInArrayOfObjects(aArray, oObject), 1, "the function returns the correct index");
+
+		aArray = [{a: 4, b: 5, c: 6}, {a: 7, b: 8, c: 9}, {b: 2, c: 3, a: 1}];
+		assert.equal(Utils.indexOfInArrayOfObjects(aArray, oObject), 2, "the function returns the correct index");
+	});
+
+	QUnit.test("indexOfInArrayOfObjects with array not containing object", function(assert) {
+		var oObject = {a: 1, b: 2, c: 3};
+		var aArray = [{b: 2, c: 3}, {a: 4, b: 5, c: 6}, {a: 7, b: 8, c: 9}];
+		assert.equal(Utils.indexOfInArrayOfObjects(aArray, oObject), -1, "the function returns the correct index");
+
+		oObject = {1: 1, b: 2};
+		aArray = [{a: 1, b: 2, c: 3}, {a: 4, b: 5, c: 6}, {a: 7, b: 8, c: 9}];
+		assert.equal(Utils.indexOfInArrayOfObjects(aArray, oObject), -1, "the function returns the correct index");
+	});
+
 	QUnit.module("get/set URL Technical Parameter values", {
 
 		beforeEach : function(){

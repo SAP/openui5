@@ -623,8 +623,8 @@ sap.ui.define([
 			this._oDefinition.dependentSelector[sAlias] = oModifier.getSelector(vControl, oAppComponent, mAdditionalSelectorInformation);
 		}
 
-		//remove dependency list so that it will be created again in method getDependentIdList
-		delete this._aDependentIdList;
+		//remove dependency list so that it will be created again in method getDependentSelectorList
+		delete this._aDependentSelectorList;
 	};
 
 	/**
@@ -669,69 +669,54 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns all dependent global IDs, including the ID from the selector of the change.
+	 * Returns all dependent selectors, including the selector from the selector of the change.
 	 *
-	 * @param {sap.ui.core.Component} oAppComponent - Application component, needed to translate the local ID into a global ID
-	 *
-	 * @returns {array} dependent global ID list
-	 *
+	 * @returns {array} dependent selector list
 	 * @public
 	 */
-	Change.prototype.getDependentIdList = function (oAppComponent) {
+	Change.prototype.getDependentSelectorList = function () {
 		var that = this;
-		var sId;
 		var aDependentSelectors = [this.getSelector()];
-		var aDependentIds = [];
 
-		if (!this._aDependentIdList) {
+		if (!this._aDependentSelectorList) {
 			if (this._oDefinition.dependentSelector){
-				aDependentSelectors = Object.keys(this._oDefinition.dependentSelector).reduce(function(aDependentSelectors, sAlias){
-					return aDependentSelectors.concat(that._oDefinition.dependentSelector[sAlias]);
-				}, aDependentSelectors);
+				Object.keys(this._oDefinition.dependentSelector).forEach(function(sAlias){
+					var aCurrentSelector = that._oDefinition.dependentSelector[sAlias];
+					if (!Array.isArray(aCurrentSelector)) {
+						aCurrentSelector = [aCurrentSelector];
+					}
+
+					aCurrentSelector.forEach(function(oCurrentSelector) {
+						if (oCurrentSelector && Utils.indexOfInArrayOfObjects(aDependentSelectors, oCurrentSelector) === -1) {
+							aDependentSelectors.push(oCurrentSelector);
+						}
+					});
+				});
 			}
-
-			aDependentSelectors.forEach(function (oDependentSelector) {
-				sId = oDependentSelector.id;
-				if (oDependentSelector.idIsLocal) {
-					sId = oAppComponent.createId(oDependentSelector.id);
-				}
-				if (sId && aDependentIds.indexOf(sId) === -1) {
-					aDependentIds.push(sId);
-				}
-			});
-
-			this._aDependentIdList = aDependentIds;
+			this._aDependentSelectorList = aDependentSelectors;
 		}
 
-		return this._aDependentIdList;
+		return this._aDependentSelectorList;
 	};
 
 	/**
-	 * Returns list of IDs of controls which the change depends on, excluding the ID from the selector of the change.
+	 * Returns list of selectors of controls which the change depends on, excluding the selector of the change.
 	 *
-	 * @param {sap.ui.core.Component} oAppComponent - Application component, needed to create a global ID from the local ID
-	 *
-	 * @returns {array} List of control IDs which the change depends on
-	 *
+	 * @returns {array} List of selectors which the change depends on
 	 * @public
 	 */
-	Change.prototype.getDependentControlIdList = function (oAppComponent) {
-		var sId;
-		var aDependentIds = this.getDependentIdList().concat();
+	Change.prototype.getDependentControlSelectorList = function () {
+		var aDependentSelectors = this.getDependentSelectorList().concat();
 
-		if (aDependentIds.length > 0) {
+		if (aDependentSelectors.length > 0) {
 			var oSelector = this.getSelector();
-			sId = oSelector.id;
-			if (oSelector.idIsLocal) {
-				sId = oAppComponent.createId(oSelector.id);
-			}
-			var iIndex = aDependentIds.indexOf(sId);
+			var iIndex = Utils.indexOfInArrayOfObjects(aDependentSelectors, oSelector);
 			if (iIndex > -1) {
-				aDependentIds.splice(iIndex, 1);
+				aDependentSelectors.splice(iIndex, 1);
 			}
 		}
 
-		return aDependentIds;
+		return aDependentSelectors;
 	};
 
 	/**

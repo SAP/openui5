@@ -25,7 +25,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.JsControlTreeModifier");
 				changeType: "filterVariant",
 				reference: "smartFilterBar",
 				componentName: "smartFilterBar",
-				selector: {"id": "control1"},
+				selector: {"id": "control1", idIsLocal: true},
 				conditions: {},
 				context: [],
 				content: {something: "createNewVariant"},
@@ -594,9 +594,9 @@ jQuery.sap.require("sap.ui.core.util.reflection.JsControlTreeModifier");
 		var oAppComponent = {
 			createId: function (sId) {return sId + "---local";}
 		};
-		var aDependentIdList = oInstance.getDependentIdList(oAppComponent);
+		var aDependentIdList = oInstance.getDependentSelectorList(oAppComponent);
 		assert.equal(aDependentIdList.length, 10);
-		var aDependentIdList = oInstance.getDependentControlIdList(oAppComponent);
+		var aDependentIdList = oInstance.getDependentControlSelectorList(oAppComponent);
 		assert.equal(aDependentIdList.length, 9);
 	});
 
@@ -661,9 +661,9 @@ jQuery.sap.require("sap.ui.core.util.reflection.JsControlTreeModifier");
 		var oDependentControl = oInstance.getDependentControl("source", {modifier: JsControlTreeModifier}, {});
 		assert.equal(oDependentControl, undefined);
 
-		var aDependentIdList = oInstance.getDependentIdList({});
+		var aDependentIdList = oInstance.getDependentSelectorList({});
 		assert.equal(aDependentIdList.length, 1);
-		var aDependentIdList = oInstance.getDependentControlIdList({});
+		var aDependentIdList = oInstance.getDependentControlSelectorList({});
 		assert.equal(aDependentIdList.length, 0);
 
 		oInstance.addDependentControl(sControlId, "element", {modifier: JsControlTreeModifier});
@@ -681,9 +681,9 @@ jQuery.sap.require("sap.ui.core.util.reflection.JsControlTreeModifier");
 		var oAppComponent = {
 			createId: function (sId) {return sId + "---local";}
 		};
-		aDependentIdList = oInstance.getDependentIdList(oAppComponent);
+		aDependentIdList = oInstance.getDependentSelectorList(oAppComponent);
 		assert.equal(aDependentIdList.length, 8);
-		aDependentIdList = oInstance.getDependentControlIdList(oAppComponent);
+		aDependentIdList = oInstance.getDependentControlSelectorList(oAppComponent);
 		assert.equal(aDependentIdList.length, 7);
 	});
 

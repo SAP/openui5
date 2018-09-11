@@ -7,12 +7,13 @@ sap.ui.define([
 		"jquery.sap.global",
 		"sap/ui/core/support/Plugin",
 		"sap/ui/core/support/Support",
+		"sap/ui/core/util/reflection/JsControlTreeModifier",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/fl/FlexController",
 		"sap/ui/fl/ChangePersistenceFactory",
 		"sap/ui/fl/Utils"
 	],
-	function (jQuery, Plugin, Support, JSONModel, FlexController, ChangePersistenceFactory, Utils) {
+	function (jQuery, Plugin, Support, JsControlTreeModifier, JSONModel, FlexController, ChangePersistenceFactory, Utils) {
 		"use strict";
 
 		/**
@@ -224,6 +225,33 @@ sap.ui.define([
 		};
 
 		/**
+		 * Searches for a component instance on the UI with the same name as given in the parameter
+		 * The instance is searched via a styleclass search on the UI and comparison of the component name
+		 * Currently there is no proper way to retrieve component instance by name
+		 * THIS IS ONLY A WORKAROUND! Should be changed as soon as there is an API for this
+		 *
+		 * @param {string} sComponentName name of the component
+		 * @returns {sap.ui.core.Component} Returns an instance of the component
+		 * @private
+		 * @restricted sap.ui.fl
+		 */
+		Flexibility.prototype.getAppComponentInstance = function (sComponentName) {
+			var oCorrectAppComponent;
+			var aComponentContainers = jQuery.find(".sapUiComponentContainer");
+			aComponentContainers.some(function(oComponentContainerDomRef) {
+				var oComponentContainer = sap.ui.getCore().byId(oComponentContainerDomRef.id);
+				var oAppComponent = oComponentContainer && oComponentContainer.getComponentInstance();
+
+				if (oAppComponent && oAppComponent.getMetadata().getName() === sComponentName) {
+					oCorrectAppComponent = oAppComponent;
+					return true;
+				}
+			});
+
+			return oCorrectAppComponent;
+		};
+
+		/**
 		 * Collect data of changes
 		 *
 		 * @param {string} sAppName Name of the application
@@ -283,11 +311,12 @@ sap.ui.define([
 					oChangeDetails.indexOfFirstFailing = aAllFailedChanges.indexOf(oChange.getId());
 				}
 
-				if (oChange._aDependentIdList) {
-					oChangeDetails.dependentControls = oChange._aDependentIdList.map(function (sDependentId) {
+				if (oChange._aDependentSelectorList) {
+					var oAppComponent = this.getAppComponentInstance(sAppName);
+					oChangeDetails.dependentControls = oChange._aDependentSelectorList.map(function (oDependentSelector) {
 						return {
-							id : sDependentId,
-							controlPresent : !!sap.ui.getCore().byId(sDependentId)
+							id : oDependentSelector.id,
+							controlPresent : !!JsControlTreeModifier.bySelector(oDependentSelector, oAppComponent)
 						};
 					});
 				}

@@ -1063,7 +1063,7 @@ sap.ui.define([
 		return Utils.execPromiseQueueSequentially(aPromiseStack)
 
 		.then(function () {
-			return this._processDependentQueue(mDependencies, mDependentChangesOnMe);
+			return this._processDependentQueue(mDependencies, mDependentChangesOnMe, oAppComponent);
 		}.bind(this));
 	};
 
@@ -1184,15 +1184,15 @@ sap.ui.define([
 		return this._removeFromAppliedChangesAndMaybeRevert(oChange, oControl, mPropertyBag, false);
 	};
 
-	FlexController.prototype._updateControlsDependencies = function (mDependencies) {
+	FlexController.prototype._updateControlsDependencies = function (mDependencies, oAppComponent) {
 		var oControl;
 		Object.keys(mDependencies).forEach(function(sChangeKey) {
 			var oDependency = mDependencies[sChangeKey];
 			if (oDependency.controlsDependencies && oDependency.controlsDependencies.length > 0) {
 				var iLength = oDependency.controlsDependencies.length;
 				while (iLength--) {
-					var sId = oDependency.controlsDependencies[iLength];
-					oControl = sap.ui.getCore().byId(sId);
+					var oSelector = oDependency.controlsDependencies[iLength];
+					oControl = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
 					if (oControl) {
 						oDependency.controlsDependencies.splice(iLength, 1);
 					}
@@ -1222,11 +1222,11 @@ sap.ui.define([
 	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns Promise for asyncronous or FakePromise for the synchronous processing scenario
 	 * @private
 	 */
-	FlexController.prototype._iterateDependentQueue = function(mDependencies, mDependentChangesOnMe) {
+	FlexController.prototype._iterateDependentQueue = function(mDependencies, mDependentChangesOnMe, oAppComponent) {
 		var aAppliedChanges = [],
 			aDependenciesToBeDeleted = [],
 			aPromises = [];
-		this._updateControlsDependencies(mDependencies);
+		this._updateControlsDependencies(mDependencies, oAppComponent);
 		Object.keys(mDependencies).forEach(function(sDependencyKey) {
 			var oDependency = mDependencies[sDependencyKey];
 			if (oDependency[FlexController.PENDING] && oDependency.dependencies.length === 0  &&
@@ -1272,12 +1272,12 @@ sap.ui.define([
 	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns Promise that is resolved after all dependencies were processed for asyncronous or FakePromise for the synchronous processing scenario
 	 * @private
 	 */
-	FlexController.prototype._processDependentQueue = function (mDependencies, mDependentChangesOnMe) {
-		 return this._iterateDependentQueue(mDependencies, mDependentChangesOnMe)
+	FlexController.prototype._processDependentQueue = function (mDependencies, mDependentChangesOnMe, oAppComponent) {
+		 return this._iterateDependentQueue(mDependencies, mDependentChangesOnMe, oAppComponent)
 
 		.then(function(aAppliedChanges) {
 			if (aAppliedChanges.length > 0) {
-				return this._processDependentQueue(mDependencies, mDependentChangesOnMe);
+				return this._processDependentQueue(mDependencies, mDependentChangesOnMe, oAppComponent);
 			}
 		}.bind(this));
 	};

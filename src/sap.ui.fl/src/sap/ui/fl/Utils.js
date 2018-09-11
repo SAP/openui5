@@ -1046,6 +1046,31 @@ sap.ui.define([
 		},
 
 		/**
+		 * Checks if an object is in an array or not and returns the index or -1
+		 *
+		 * @param {object[]} aArray Array of objects
+		 * @param {object} oObject object that should be part of the array
+		 * @returns {integer} Returns the index of the object in the array, -1 if it is not in the array
+		 * @public
+		 */
+		indexOfInArrayOfObjects: function(aArray, oObject) {
+			var iObjectIndex = -1;
+			aArray.some(function(oArrayObject, iIndex) {
+				var bSameNumberOfAttributes = Object.keys(oArrayObject).length === Object.keys(oObject).length;
+				var bContains = bSameNumberOfAttributes && !Object.keys(oArrayObject).some(function(sKey) {
+					return oArrayObject[sKey] !== oObject[sKey];
+				});
+
+				if (bContains) {
+					iObjectIndex = iIndex;
+				}
+
+				return bContains;
+			});
+			return iObjectIndex;
+		},
+
+		/**
 		 * Execute the passed asynchronous / synchronous (Utils.FakePromise) functions serialized - one after the other.
 		 * By default errors do not break the sequential execution of the queue, but this can be changed with the parameter bThrowError.
 		 * Error message will be written in any case.

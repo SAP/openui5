@@ -643,8 +643,8 @@ sap.ui.define([
 		this._mChanges.mDependentChangesOnMe[oChange.getId()].push(oDependentChange.getId());
 	};
 
-	ChangePersistence.prototype._addControlsDependencies = function (oDependentChange, aControlIdList) {
-		if (aControlIdList.length > 0) {
+	ChangePersistence.prototype._addControlsDependencies = function (oDependentChange, aControlSelectorList) {
+		if (aControlSelectorList.length > 0) {
 			if (!this._mChanges.mDependencies[oDependentChange.getId()]) {
 				this._mChanges.mDependencies[oDependentChange.getId()] = {
 					changeObject: oDependentChange,
@@ -652,7 +652,7 @@ sap.ui.define([
 					controlsDependencies: []
 				};
 			}
-			this._mChanges.mDependencies[oDependentChange.getId()].controlsDependencies = aControlIdList;
+			this._mChanges.mDependencies[oDependentChange.getId()].controlsDependencies = aControlSelectorList;
 		}
 	};
 
@@ -720,23 +720,21 @@ sap.ui.define([
 	ChangePersistence.prototype._addChangeAndUpdateDependencies = function(oComponent, oChange, iIndex, aChangesCopy) {
 		this._addChangeIntoMap(oComponent, oChange);
 
-		var oAppComponent = Utils.getAppComponentForControl(oComponent);
-
 		//create dependencies map
-		var aDependentIdList = oChange.getDependentIdList(oAppComponent);
-		var aDependentControlIdList = oChange.getDependentControlIdList(oAppComponent);
-		this._addControlsDependencies(oChange, aDependentControlIdList);
+		var aDependentSelectorList = oChange.getDependentSelectorList();
+		var aDependentControlSelectorList = oChange.getDependentControlSelectorList();
+		this._addControlsDependencies(oChange, aDependentControlSelectorList);
 		var oPreviousChange;
-		var aPreviousDependentIdList;
+		var aPreviousDependentSelectorList;
 		var iDependentIndex;
 		var bFound;
 
 		for (var i = iIndex - 1; i >= 0; i--) {//loop over the changes
 			oPreviousChange = aChangesCopy[i];
-			aPreviousDependentIdList = aChangesCopy[i].getDependentIdList(oAppComponent);
+			aPreviousDependentSelectorList = aChangesCopy[i].getDependentSelectorList();
 			bFound = false;
-			for (var j = 0; j < aDependentIdList.length && !bFound; j++) {
-				iDependentIndex = aPreviousDependentIdList.indexOf(aDependentIdList[j]);
+			for (var j = 0; j < aDependentSelectorList.length && !bFound; j++) {
+				iDependentIndex = Utils.indexOfInArrayOfObjects(aPreviousDependentSelectorList, aDependentSelectorList[j]);
 				if (iDependentIndex > -1) {
 					this._addDependency(oChange, oPreviousChange);
 					bFound = true;

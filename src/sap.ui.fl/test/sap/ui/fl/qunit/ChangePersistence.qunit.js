@@ -1491,12 +1491,12 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				"fileNameChange1": {
 					"changeObject": oChange1,
 					"dependencies": [],
-					"controlsDependencies": ["group3", "group2"]
+					"controlsDependencies": [{id: "group3"}, {id: "group2"}]
 				},
 				"fileNameChange2": {
 					"changeObject": oChange2,
 					"dependencies": ["fileNameChange1"],
-					"controlsDependencies": ["group2", "group1"]
+					"controlsDependencies": [{id: "group2"}, {id: "group1"}]
 				},
 				"fileNameChange3": {
 					"changeObject": oChange3,
@@ -1570,12 +1570,12 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				"fileNameChange1": {
 					"changeObject": oChange1,
 					"dependencies": [],
-					"controlsDependencies": ["group3", "group2"]
+					"controlsDependencies": [{id: "group3"}, {id: "group2"}]
 				},
 				"fileNameChange2": {
 					"changeObject": oChange2,
 					"dependencies": ["fileNameChange1", "fileNameChange0"],
-					"controlsDependencies": ["group2", "group1"]
+					"controlsDependencies": [{id: "group2"}, {id: "group1"}]
 				}
 			},
 			mDependentChangesOnMe: {
@@ -1630,7 +1630,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				"fileNameChange1": {
 					"changeObject": oChange1,
 					"dependencies": [],
-					"controlsDependencies": ["group3", "group2"]
+					"controlsDependencies": [{id: "group3"}, {id: "group2"}]
 				},
 				"fileNameChange2": {
 					"changeObject": oChange2,
@@ -1686,7 +1686,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				"fileNameChange2": {
 					"changeObject": oChange2,
 					"dependencies": ["fileNameChange1"],
-					"controlsDependencies": ["group3", "group2"]
+					"controlsDependencies": [{id: "group3"}, {id: "group2"}]
 				}
 			},
 			mDependentChangesOnMe: {
@@ -1866,12 +1866,12 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				"fileNameChange1": {
 					"changeObject": oChange1,
 					"dependencies": [],
-					"controlsDependencies": ["group3", "group2"]
+					"controlsDependencies": [{id: "group3"}, {id: "group2"}]
 				},
 				"fileNameChange2": {
 					"changeObject": oChange2,
 					"dependencies": ["fileNameChange1", "fileNameChange0"],
-					"controlsDependencies": ["group2", "group1"]
+					"controlsDependencies": [{id: "group2"}, {id: "group1"}]
 				}
 			},
 			mDependentChangesOnMe: {
@@ -1890,7 +1890,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				"fileNameChange1": {
 					"changeObject": oChange1,
 					"dependencies": [],
-					"controlsDependencies": ["group3", "group2"]
+					"controlsDependencies": [{id: "group3"}, {id: "group2"}]
 				}
 			},
 			mDependentChangesOnMe: {}
@@ -1902,12 +1902,12 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				"fileNameChange1": {
 					"changeObject": oChange1,
 					"dependencies": [],
-					"controlsDependencies": ["group3", "group2"]
+					"controlsDependencies": [{id: "group3"}, {id: "group2"}]
 				},
 				"fileNameChange2": {
 					"changeObject": oChange2,
 					"dependencies": [],
-					"controlsDependencies": ["group2", "group1"]
+					"controlsDependencies": [{id: "group2"}, {id: "group1"}]
 				}
 			},
 			mDependentChangesOnMe: {}

@@ -1284,7 +1284,7 @@ function (
 			getId: function () {
 				return "fileNameChange0";
 			},
-			getDependentIdList: function () {
+			getDependentSelectorList: function () {
 				return ["group1-1"];
 			}
 		};
