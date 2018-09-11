@@ -73,6 +73,12 @@ sap.ui.define([
 						"layers": {
 							"USER": true
 						}
+					},
+					"stashControl": {
+						"changeHandler": "default",
+						"layers": {
+							"USER": true
+						}
 					}
 				}
 			},
