@@ -17,7 +17,7 @@ sap.ui.define([
 	"./LazyLoading",
 	"./ObjectPageLayoutABHelper",
 	"./ThrottledTaskHelper",
-	"sap/ui/core/ScrollBar",
+	"sap/m/ScrollBar",
 	"sap/ui/core/library",
 	"./library",
 	"./ObjectPageLayoutRenderer",
@@ -356,7 +356,7 @@ sap.ui.define([
 				 */
 				_headerContent: {type: "sap.uxap.IHeaderContent", multiple: false, visibility: "hidden"},
 
-				_customScrollBar: {type: "sap.ui.core.ScrollBar", multiple: false, visibility: "hidden"}
+				_customScrollBar: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
 			},
 			events: {
 
@@ -1034,8 +1034,6 @@ sap.ui.define([
 
 		if (!this.getAggregation("_customScrollBar")) {
 			var oVSB = new ScrollBar(this.getId() + "-vertSB", {
-				vertical: true,
-				size: "100%",
 				scrollPosition: 0,
 				scroll: this.onCustomScrollerScroll.bind(this),
 				visible: false

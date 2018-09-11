@@ -6,7 +6,7 @@
 sap.ui.define([
 	"./library",
 	"sap/ui/core/Control",
-	"sap/ui/core/ScrollBar",
+	"sap/m/ScrollBar",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/delegate/ScrollEnablement",
 	"sap/ui/Device",
@@ -209,7 +209,7 @@ sap.ui.define([
 				/**
 				 * <code>DynamicPage</code> custom <code>ScrollBar</code>.
 				 */
-				_scrollBar: {type: "sap.ui.core.ScrollBar", multiple: false, visibility: "hidden"}
+				_scrollBar: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
 			},
 			designtime: "sap/f/designtime/DynamicPage.designtime"
 		}
@@ -1349,14 +1349,12 @@ sap.ui.define([
 
 	/**
 	 * Lazily retrieves the "fake" <code>ScrollBar</code>.
-	 * @returns {sap.ui.core.ScrollBar} the "fake" <code>ScrollBar</code>
+	 * @returns {sap.m.ScrollBar} the "fake" <code>ScrollBar</code>
 	 * @private
 	 */
 	DynamicPage.prototype._getScrollBar = function () {
 		if (!exists(this.getAggregation("_scrollBar"))) {
 			var oVerticalScrollBar = new ScrollBar(this.getId() + "-vertSB", {
-				vertical: true,
-				size: "100%",
 				scrollPosition: 0,
 				scroll: this._onScrollBarScroll.bind(this)
 			});
