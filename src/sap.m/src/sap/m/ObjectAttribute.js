@@ -73,7 +73,7 @@ function(library, Control, coreLibrary, Text, ObjectAttributeRenderer, Log) {
 		aggregations : {
 
 			/**
-			 * When the aggregation is set, it replaces the text, active and textDirection properties. This also ignores the press event. The provided control is displayed as an active link.
+			 * When the aggregation is set, it replaces the text, active and textDirection properties. This also ignores the press event. The provided control is displayed as an active link in case it is a sap.m.Link.
 			 * <b>Note:</b> It will only allow sap.m.Text and sap.m.Link controls.
 			 */
 			customContent : {type : "sap.ui.core.Control", multiple : false},
@@ -155,10 +155,10 @@ function(library, Control, coreLibrary, Text, ObjectAttributeRenderer, Log) {
 	 * @private
 	 */
 	ObjectAttribute.prototype._setControlWrapping = function(oAttrAggregation, bWrap, iMaxLines) {
-		if (oAttrAggregation instanceof sap.m.Link) {
+		if (oAttrAggregation.isA("sap.m.Link")) {
 			oAttrAggregation.setProperty('wrapping', bWrap, true);
 		}
-		if (oAttrAggregation instanceof Text) {
+		if (oAttrAggregation.isA("sap.m.Text")) {
 			oAttrAggregation.setProperty('maxLines', iMaxLines, true);
 		}
 	};
@@ -206,7 +206,7 @@ function(library, Control, coreLibrary, Text, ObjectAttributeRenderer, Log) {
 	 * @returns {boolean} true if ObjectAttribute's text is empty or only consists of whitespaces
 	 */
 	ObjectAttribute.prototype._isEmpty = function() {
-		if (this.getAggregation('customContent') && !(this.getAggregation('customContent') instanceof sap.m.Link || this.getAggregation('customContent') instanceof Text)) {
+		if (this.getAggregation('customContent') && !(this.getAggregation('customContent').isA("sap.m.Link") || this.getAggregation('customContent').isA("sap.m.Text"))) {
 			Log.warning("Only sap.m.Link or sap.m.Text are allowed in \"sap.m.ObjectAttribute.customContent\" aggregation");
 			return true;
 		}
@@ -238,6 +238,23 @@ function(library, Control, coreLibrary, Text, ObjectAttributeRenderer, Log) {
 
 	ObjectAttribute.prototype._isSimulatedLink = function () {
 		return (this.getActive() && this.getText() !== "") && !this.getAggregation('customContent');
+	};
+
+	ObjectAttribute.prototype.setCustomContent = function(oCustomContent) {
+		if (oCustomContent.isA('sap.m.Link')) {
+			oCustomContent._getTabindex = function() {
+				return "-1";
+			};
+		}
+		return this.setAggregation('customContent', oCustomContent);
+	};
+
+	/**
+	 * Returns whether the control can be clicked so in the renderer appropriate attributes can be set (for example tabindex).
+	 * @private
+	 */
+	ObjectAttribute.prototype._isClickable = function() {
+		return (this.getActive() && this.getText() !== "") || ( this.getAggregation('customContent') && this.getAggregation('customContent').isA('sap.m.Link'));
 	};
 
 	return ObjectAttribute;
