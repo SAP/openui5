@@ -479,6 +479,22 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("loadChanges can handle a undefined mPropertyBag", function(assert) {
+			this.server = sinon.fakeServer.create();
+			this.server.respondWith([200,
+				{"Content-Type": "application/json", "Content-Length": 13, "X-CSRF-Token": "0987654321"},
+				'{ "changes": [ ], "settings": {}, "messagebundle": {} }'
+			]);
+			this.server.autoRespond = true;
+
+			var sComponentClassName = "smartFilterBar.Component";
+
+			return this.oLrepConnector.loadChanges({name: sComponentClassName}).then(function() {
+				assert.equal(this.server.requests.length, 1, "Only one HTTP request shall be send for fetching changes via getChanges request)");
+				assert.ok(this.server.requests[0].requestHeaders, "Request for getChanges shall contain a request header");
+			}.bind(this));
+		});
+
 		QUnit.test("loadChanges shall enrich ajax call (header properties) with X-LRep-AppDescriptor-Id", function(assert) {
 			var sComponentClassName;
 			this.server = sinon.fakeServer.create();

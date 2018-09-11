@@ -458,6 +458,8 @@ sap.ui.define([
 			return mUrls;
 		}
 
+		mPropertyBag = mPropertyBag || {};
+
 		if (!oComponent.name) {
 			return Promise.reject(new Error("Component name not specified"));
 		}
