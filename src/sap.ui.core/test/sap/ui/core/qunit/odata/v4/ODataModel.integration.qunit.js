@@ -2467,6 +2467,190 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Modify a property while an update request is not yet resolved. The second PATCH
+	// request must wait for the first one to finish and use the eTag returned in its response.
+	QUnit.test("PATCH entity, two subsequent PATCHes on this entity wait", function (assert) {
+		var oBinding,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			aPromises = [],
+			fnRespond,
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'42\')}">\
+	<Text id="note" text="{Note}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
+				"@odata.etag" : "ETag0",
+				"Note" : "Note",
+				"SalesOrderID" : "42"
+			})
+			.expectChange("note", "Note");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("note").getBinding("text");
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "ETag0"},
+					payload : {Note : "Changed Note"}
+				}, new Promise(function (resolve, reject) {
+					fnRespond = resolve.bind(null, {
+						"@odata.etag" : "ETag1",
+						Note : "Changed Note From Server"
+					});
+				}))
+				.expectChange("note", "Changed Note");
+
+			oBinding.setValue("Changed Note");
+			aPromises.push(that.oModel.submitBatch("update"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("note", "(1) Changed Note while $batch is running");
+
+			oBinding.setValue("(1) Changed Note while $batch is running");
+			aPromises.push(that.oModel.submitBatch("update"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("note", "(2) Changed Note while $batch is running");
+
+			oBinding.setValue("(2) Changed Note while $batch is running");
+			aPromises.push(that.oModel.submitBatch("update"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// The two PATCH requests on Note are merged, only the second remains
+			that.expectChange("note", "Changed Note From Server")
+				.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "ETag1"},
+					payload : {Note : "(2) Changed Note while $batch is running"}
+				}, {
+					"@odata.etag" : "ETag2",
+					Note : "Changed Note From Server - 2"
+				})
+				.expectChange("note", "Changed Note From Server - 2");
+
+			fnRespond();
+			aPromises.push(that.waitForChanges(assert));
+
+			return Promise.all(aPromises);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: While update for entity1 is on the wire (request1), update both entity1 and entity2
+	// in one batch (request2). Then update entity2 (request3).
+	// request2 and request3 wait for request1 to return *and* apply the response to the cache;
+	// the PATCHes of request2 and request3 are merged and use the ETag from the response to
+	// request1.
+	QUnit.test("1=PATCH e1, 2=PATCH(e1,e2), 3=PATCH e2: request sequence 1,2,3", function (assert) {
+		var oBinding42,
+			oBinding77,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			aPromises = [],
+			fnRespond42,
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'42\')}">\
+	<Text id="note42" text="{Note}"/>\
+</FlexBox>\
+<FlexBox binding="{/SalesOrderList(\'77\')}">\
+	<Text id="note77" text="{Note}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
+				"@odata.etag" : "42ETag0",
+				"Note" : "Note42",
+				"SalesOrderID" : "42"
+			})
+			.expectChange("note42", "Note42")
+			.expectRequest("SalesOrderList('77')?$select=Note,SalesOrderID", {
+				"@odata.etag" : "77ETag0",
+				"Note" : "Note77",
+				"SalesOrderID" : "77"
+			})
+			.expectChange("note77", "Note77");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding42 = that.oView.byId("note42").getBinding("text");
+			oBinding77 = that.oView.byId("note77").getBinding("text");
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "42ETag0"},
+					payload : {Note : "42Changed Note"}
+				}, new Promise(function (resolve, reject) {
+					fnRespond42 = resolve.bind(null, {
+						"@odata.etag" : "42ETag1",
+						Note : "42Changed Note From Server"
+					});
+				}))
+				.expectChange("note42", "42Changed Note");
+
+			oBinding42.setValue("42Changed Note");
+			aPromises.push(that.oModel.submitBatch("update"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("note42", "(1) 42Changed Note while $batch is running")
+				.expectChange("note77", "(1) 77Changed Note while $batch is running");
+
+			oBinding42.setValue("(1) 42Changed Note while $batch is running");
+			oBinding77.setValue("(1) 77Changed Note while $batch is running");
+			aPromises.push(that.oModel.submitBatch("update"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("note77", "77Changed Note");
+
+			oBinding77.setValue("77Changed Note");
+			aPromises.push(that.oModel.submitBatch("update"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			//TODO suppress change event for outdated value "42Changed Note From Server"
+			that.expectChange("note42", "42Changed Note From Server")
+				.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "42ETag1"},
+					payload : {Note : "(1) 42Changed Note while $batch is running"}
+				}, {
+					"@odata.etag" : "42ETag2",
+					Note : "42Changed Note From Server - 1"
+				})
+				.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('77')",
+					headers : {"If-Match" : "77ETag0"},
+					payload : {Note : "77Changed Note"}
+				}, {
+					"@odata.etag" : "77ETag1",
+					Note : "77Changed Note From Server - 1"
+				})
+				.expectChange("note42", "42Changed Note From Server - 1")
+				.expectChange("note77", "77Changed Note From Server - 1");
+
+			fnRespond42();
+			aPromises.push(that.waitForChanges(assert));
+
+			return Promise.all(aPromises);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Enable autoExpandSelect mode for an ODataContextBinding with relative
 	// ODataPropertyBindings
 	// The SalesOrders application does not have such a scenario.

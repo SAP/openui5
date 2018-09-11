@@ -397,16 +397,30 @@ sap.ui.define([
 			oExpectedBind2,
 			oExpectedBind3,
 			oExpectedBind4,
+			oExpectedBind5,
 			oExpectedCreate = this.mock(_Requestor).expects("create"),
-			fnFetchEntityContainer = function () {},
-			fnFetchMetadata = function () {},
+			fnFetchEntityContainer = {},
+			fnFetchMetadata = {},
+			fnGetGroupProperty = {},
+			fnLockGroup = {},
 			oModel,
 			oModelInterface,
+			fnReportBoundMessages = {},
+			fnReportUnboundMessages = {},
 			oRequestor = {},
 			fnSubmitAuto = function () {};
 
 		oExpectedCreate
-			.withExactArgs(getServiceUrl(), sinon.match.object, {"Accept-Language" : "ab-CD"},
+			.withExactArgs(getServiceUrl(), {
+					fnFetchEntityContainer : sinon.match.same(fnFetchEntityContainer),
+					fnFetchMetadata : sinon.match.same(fnFetchMetadata),
+					fnGetGroupProperty : sinon.match.same(fnGetGroupProperty),
+					lockGroup : sinon.match.same(fnLockGroup),
+					fnOnCreateGroup : sinon.match.func,
+					fnReportBoundMessages : sinon.match.same(fnReportBoundMessages),
+					fnReportUnboundMessages : sinon.match.same(fnReportUnboundMessages)
+				},
+				{"Accept-Language" : "ab-CD"},
 				{"sap-client" : "123"}, "4.0")
 			.returns(oRequestor);
 		oExpectedBind0 = this.mock(ODataMetaModel.prototype.fetchEntityContainer).expects("bind")
@@ -414,11 +428,13 @@ sap.ui.define([
 		oExpectedBind1 = this.mock(ODataMetaModel.prototype.fetchObject).expects("bind")
 			.returns(fnFetchMetadata);
 		oExpectedBind2 = this.mock(ODataModel.prototype.getGroupProperty).expects("bind")
-			.returns(ODataModel.prototype.getGroupProperty);
+			.returns(fnGetGroupProperty);
 		oExpectedBind3 = this.mock(ODataModel.prototype.reportUnboundMessages).expects("bind")
-			.returns(ODataModel.prototype.reportUnboundMessages);
+			.returns(fnReportUnboundMessages);
 		oExpectedBind4 = this.mock(ODataModel.prototype.reportBoundMessages).expects("bind")
-			.returns(ODataModel.prototype.reportBoundMessages);
+			.returns(fnReportBoundMessages);
+		oExpectedBind5 = this.mock(ODataModel.prototype.lockGroup).expects("bind")
+			.returns(fnLockGroup);
 
 		// code under test
 		oModel = createModel("?sap-client=123");
@@ -430,6 +446,7 @@ sap.ui.define([
 		assert.strictEqual(oExpectedBind2.firstCall.args[0], oModel);
 		assert.strictEqual(oExpectedBind3.firstCall.args[0], oModel);
 		assert.strictEqual(oExpectedBind4.firstCall.args[0], oModel);
+		assert.strictEqual(oExpectedBind5.firstCall.args[0], oModel);
 
 		this.mock(oModel._submitBatch).expects("bind")
 			.withExactArgs(sinon.match.same(oModel), "$auto")

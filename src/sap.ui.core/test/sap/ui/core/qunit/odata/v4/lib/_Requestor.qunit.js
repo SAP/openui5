@@ -2564,6 +2564,15 @@ sap.ui.define([
 		// code under test
 		oRequestor.reportBoundMessages(sResourcePath, mPathToMessages, aKeyPredicates);
 	});
+
+	//*****************************************************************************************
+	QUnit.test("getModelInterface", function (assert) {
+		var	oModelInterface = {},
+			oRequestor = _Requestor.create("/", oModelInterface);
+
+		// code under test
+		assert.strictEqual(oRequestor.getModelInterface(), oModelInterface);
+	});
 });
 // TODO: continue-on-error? -> flag on model
 // TODO: cancelChanges: what about existing GET requests in deferred queue (delete or not)?

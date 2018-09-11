@@ -557,6 +557,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the model interface as passed as parameter to {@link #create}.
+	 *
+	 * @returns {object} The model interface
+	 *
+	 * @private
+	 */
+	Requestor.prototype.getModelInterface = function (sGroupId) {
+		return this.oModelInterface;
+	};
+
+	/**
 	 * Returns the resource path relative to the service URL, including function arguments.
 	 *
 	 * @param {string} sPath
@@ -801,7 +812,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Reports the given bound OData messages via the owning model's interface
+	 * Reports the given bound OData messages via the owning model's interface.
 	 *
 	 * @param {string} sResourcePath
 	 *   The resource path
@@ -1303,6 +1314,10 @@ sap.ui.define([
 		 * @param {function (string)} [oModelInterface.fnOnCreateGroup]
 		 *   A callback function that is called with the group name as parameter when the first
 		 *   request is added to a group
+		 * @param {function} oModelInterface.lockGroup
+		 *   A function to create or modify a lock for a group
+		 * @param {function} oModelInterface.fnReportBoundMessages
+		 *   A function to report bound OData messages
 		 * @param {function (object[])} oModelInterface.fnReportUnboundMessages
 		 *   A function to report unbound OData messages contained in the <code>sap-messages</code>
 		 *   response header
