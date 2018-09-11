@@ -125,6 +125,7 @@ sap.ui.define([
 		// Clean up onBeforRendering delegates
 		this._callFunctionForAllTables(jQuery.proxy(function(oTable){
 			oTable.removeDelegate(this._mDelegateMap[oTable]);
+			oTable._hasTablePersoController = function() { return false; };
 		}, this));
 
 		delete this._mDelegateMap;
@@ -253,6 +254,12 @@ sap.ui.define([
 			// Finally add delegate to map to enable proper housekeeping, i.e. cleaning
 			// up delegate when TablePersoController instance is destroyed
 			this._mDelegateMap[oTable] = oTableOnBeforeRenderingDel;
+
+			var that = this;
+			oTable._hasTablePersoController = function() {
+				// To disable RTA changes the table needs to know that an TablePersoController is attached
+				return !!that._mDelegateMap[this /*the table*/];
+			};
 		}
 	};
 
