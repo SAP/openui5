@@ -12,10 +12,39 @@
 			"virtual": true,
 			"type": "Virtual property type",
 			"name": "Virtual Property Name 1",
+			"group": "Virtual Property Group 1",
 			"ignore": false,
 			"possibleValues": [
-				"possibleValue1",
-				"possibleValue2"
+				{
+					"possibleKey1": {
+						"displayName": "Possible Value 1"
+					}
+				},
+				{
+					"possibleKey2": {
+						"displayName": "Possible Value 2"
+					}
+				}
+			]
+		},
+		"virtualProperty3": {
+			"value": "Virtual property value 3",
+			"virtual": true,
+			"type": "Virtual property type",
+			"name": "Virtual Property Name 3",
+			"group": "Virtual Property Group 3",
+			"ignore": false,
+			"possibleValues": [
+				{
+					"possibleKey4": {
+						"displayName": "Possible Value 4"
+					}
+				},
+				{
+					"possibleKey5": {
+						"displayName": "Possible Value 5"
+					}
+				}
 			]
 		},
 		"metadataProperty1": {
@@ -24,6 +53,10 @@
 			"type": "metadataPropertyType1",
 			"name": "metadataPropertyName1",
 			"ignore": false,
+			"defaultValue": "metadataPropertyDefaultValue1",
+			"deprecated": true,
+			"group": "metadataPropertyGroup1",
+			"visibility": "public",
 			"binding": {
 				"parts": [
 					{
@@ -48,6 +81,10 @@
 			"type": "metadataPropertyType3",
 			"name": "metadataPropertyName3",
 			"ignore": false,
+			"defaultValue": "metadataPropertyDefaultValue2",
+			"deprecated": false,
+			"group": "metadataPropertyGroup3",
+			"visibility": "private",
 			"binding": {
 				"parts": [
 					{
