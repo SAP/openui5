@@ -1165,7 +1165,7 @@ sap.ui.define([
 		var aRemoved = this.removeAllAggregation("tokens");
 
 		if (typeof (bFireEvent) === "boolean" && !bFireEvent) {
-			return;
+			return aRemoved;
 		}
 
 		this.fireTokenChange({
