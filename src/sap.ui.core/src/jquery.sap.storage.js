@@ -215,6 +215,8 @@ sap.ui.define([
 	 * @name jQuery.sap.storage.Type.session
 	 */
 
+	Object.assign(jQuery.sap.storage, Storage);
+
 	return jQuery;
 
 });
