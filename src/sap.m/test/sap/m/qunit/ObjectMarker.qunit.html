@@ -680,6 +680,22 @@
 			// assert
 			assert.ok(!this.marker.getAriaDescribedBy(), "there is no ariaDescribedBy");
 		});
+
+		QUnit.test("getAccessibilityInfo is propagated to the internal control", function(assert) {
+			var oResult,
+				oExpected;
+
+			// arrange
+			this.marker.setType(sap.m.ObjectMarkerType.Locked);
+			this.marker.attachPress(function(e) {});
+			oResult = this.marker.getAccessibilityInfo();
+			oExpected = this.marker._getInnerControl().getAccessibilityInfo();
+
+			// assert
+			assert.strictEqual(oResult.role, oExpected.role, "acc info.role is the same as in the internal control");
+			assert.strictEqual(oResult.focusable, oExpected.focusable, "acc info.focusable is the same as in the internal control");
+			assert.strictEqual(oResult.enabled, oExpected.enabled, "acc info.enabled is the same as in the internal control");
+		});
 	</script>
 </head>
 <body>
