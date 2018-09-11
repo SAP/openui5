@@ -1964,6 +1964,7 @@ sap.ui.define([
 			iMinAutoRowCount = 1;
 		}
 		this.setProperty("minAutoRowCount", iMinAutoRowCount);
+		return this;
 	};
 
 	Table.prototype.setRowHeight = function(iRowHeight) {
@@ -1995,6 +1996,7 @@ sap.ui.define([
 	Table.prototype.setNavigationMode = function() {
 		this.setProperty("navigationMode", NavigationMode.Scrollbar, true);
 		Log.error("The navigationMode property is deprecated and must not be used anymore. Your setting was defaulted to 'Scrollbar'", this);
+		return this;
 	};
 
 	/**
@@ -3335,6 +3337,7 @@ sap.ui.define([
 	 */
 	Table.prototype.setThreshold = function (iThreshold) {
 		this.setProperty("threshold", iThreshold, true);
+		return this;
 	};
 
 	/**
@@ -3859,6 +3862,7 @@ sap.ui.define([
 		if (!bValue) {
 			this.setBusy(false);
 		}
+		return this;
 	};
 
 	/**

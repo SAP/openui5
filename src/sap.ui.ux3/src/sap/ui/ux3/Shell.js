@@ -2466,12 +2466,14 @@ sap.ui.define([
 		this.setProperty("applyContentPadding", bApplyContentPadding, true); // no re-rendering
 		this.$().toggleClass("sapUiUx3ShellNoContentPadding", !bApplyContentPadding);
 		this._adaptContentHeight();
+		return this;
 	};
 
 	Shell.prototype.setFullHeightContent = function(bFullHeightContent) {
 		this.setProperty("fullHeightContent", bFullHeightContent, true); // no re-rendering
 		this.$().toggleClass("sapUiUx3ShellFullHeightContent", bFullHeightContent);
 		this._adaptContentHeight();
+		return this;
 	};
 
 	Shell.prototype._calcFacetBarHeight = function($FacetBar){

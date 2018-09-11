@@ -471,7 +471,7 @@ sap.ui.define([
 			} else {
 				this.setProperty("valueState", oValueState);
 			}
-
+			return this;
 		};
 
 		InPlaceEdit.prototype.getValueState = function(){
@@ -551,6 +551,7 @@ sap.ui.define([
 			this.setProperty("design", sDesign);
 			this._iHeight = undefined;
 
+			return this;
 		};
 
 		InPlaceEdit.prototype.clone = function(){

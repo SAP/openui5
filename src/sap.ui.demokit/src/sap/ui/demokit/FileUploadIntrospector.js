@@ -85,6 +85,7 @@ sap.ui.define([
 		if ( iInterval > 0 ) {
 			this.oTimer = jQuery.sap.delayedCall(iInterval, this, "_autoRefresh");
 		}
+		return this;
 	};
 
 	/**

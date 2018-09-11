@@ -555,6 +555,7 @@ sap.ui.define([
 
 		this._rebindControl();
 
+		return this;
 	};
 
 	VariantManagement.prototype._setBindingContext = function() {

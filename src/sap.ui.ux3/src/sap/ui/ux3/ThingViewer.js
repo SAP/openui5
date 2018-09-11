@@ -497,11 +497,13 @@ sap.ui.define([
 		ThingViewer.prototype.setTitle = function(sTitle) {
 			this.setProperty("title", sTitle, true);
 			this._rerenderHeader();
+			return this;
 		};
 		//Implementation of API method
 		ThingViewer.prototype.setSubtitle = function(sTitle) {
 			this.setProperty("subtitle", sTitle, true);
 			this._rerenderHeader();
+			return this;
 		};
 		// Implementation of API method
 		ThingViewer.prototype.setActionBar = function(oActionBar) {

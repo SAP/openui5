@@ -138,6 +138,7 @@ sap.ui.define([
 		if (oAriaLabelledBy) {
 			sap.ui.getCore().byId(oAriaLabelledBy.getId()).setText(sValue + " " + sSectionText);
 		}
+		return this;
 	};
 
 	ObjectPageSection.prototype._getImportanceLevelToHide = function (oCurrentMedia) {

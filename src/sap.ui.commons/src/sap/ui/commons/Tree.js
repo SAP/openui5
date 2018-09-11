@@ -735,6 +735,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', "./TreeR
 			// Clear current selection, whenever the selectionmode changes
 			this._delSelection();
 		}
+		return this;
 	};
 
 	/** Returns the selected node in the tree. If not selection, returns null.
