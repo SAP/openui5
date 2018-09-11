@@ -39,10 +39,12 @@ function (
 				 * As of now this only creates the change with a reference to a file. The consumer has to take care of creating that file
 				 * and adding it to the backend.
 				 *
+				 * @name sap.ui.rta.service.ControllerExtension.add
 				 * @param {object} sCodeRef Name of the file, without path, with the extension '.js'. Must comply to ui5 module naming convention.
 				 * 							Has to be unique and must not conflict with other already defined modules.
 				 * @param {string} sViewId ID of the view whose controller should be extended
 				 * @returns {object} Returns the definition of the newly created change
+				 * @public
 				 */
 				add: function(sCodeRef, sViewId) {
 					var oFlexSettings = oRta.getFlexSettings();
@@ -83,8 +85,10 @@ function (
 				 * Gets the Controller Extension template from the DesignTimeMetadata of the given view and returns it as a string wrapped in a promise.
 				 * If there is no template specified a default template will be returned.
 				 *
+				 * @name sap.ui.rta.service.ControllerExtension.getTemplate
 				 * @param {string} sViewId ID of the view whose template should be retrieved
 				 * @returns {Promise} Returns a promise that resolves with the template as string or rejects when the file was not found
+				 * @public
 				 */
 				getTemplate: function(sViewId) {
 					var sUrl, oError;
