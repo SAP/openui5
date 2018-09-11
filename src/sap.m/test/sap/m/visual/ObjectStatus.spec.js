@@ -31,4 +31,11 @@ describe('sap.m.ObjectStatus', function() {
 		expect(takeScreenshot(element(by.id('testPage')))).toLookAs('objectStatus_page4');
 	});
 
+	it('should render properly the focus', function () {
+		browser.executeScript(function() { // scroll page down
+			jQuery(document.getElementById("activeStatus")).control(0).focus();
+		});
+		expect(takeScreenshot(element(by.id('activeStatusListItem')))).toLookAs('objectStatusActive_focus');
+	});
+
 });
