@@ -118,26 +118,69 @@ sap.ui.define([
 								// virtual property not ignored
 								virtual: true,
 								name: "Virtual Property Name 1",
+								group: "Virtual Property Group 1",
 								get: function (oControl){
 									return oControl.getId() === "mockControl" ? "Virtual property value 1" : "";
 								},
 								ignore: function (oControl) {
 									return oControl.getId() !== "mockControl"; // false
 								},
-								possibleValues: ["possibleValue1", "possibleValue2"],
+								possibleValues: [
+									{
+										"possibleKey1": {
+											"displayName": "Possible Value 1"
+										}
+									},
+									{
+										"possibleKey2": {
+											"displayName": "Possible Value 2"
+										}
+									}
+								],
 								type: "Virtual property type"
 							},
 							"virtualProperty2": {
 								// virtual property ignored
 								virtual: true,
 								name: "Virtual Property Name 2",
+								group: "Virtual Property Group 2",
 								get: function (oControl){
 									return oControl.getId() === "mockControl" ? "Virtual property value 2" : "";
 								},
 								ignore: function (oControl) {
 									return oControl.getId() === "mockControl"; // true
 								},
-								possibleValues: ["possibleValue3"],
+								possibleValues: [{
+									possibleKey3: {
+										displayName: "Possible Value 3"
+									}
+								}],
+								type: "Virtual property type"
+							},
+							"virtualProperty3": {
+								// virtual property not ignored
+								virtual: true,
+								name: "Virtual Property Name 3",
+								group: "Virtual Property Group 3",
+								get: function (oControl){
+									return oControl.getId() === "mockControl" ? "Virtual property value 3" : "";
+								},
+								possibleValues: function(oControl) {
+									return oControl.getId() === "mockControl"
+										? [
+											{
+												"possibleKey4": {
+													"displayName": "Possible Value 4"
+												}
+											},
+											{
+												"possibleKey5": {
+													"displayName": "Possible Value 5"
+												}
+											}
+										]
+										: "";
+								},
 								type: "Virtual property type"
 							}
 						},
@@ -207,15 +250,27 @@ sap.ui.define([
 			sandbox.stub(mControlMetadata, "getAllProperties").returns({
 				"metadataProperty1" : {
 					type: "metadataPropertyType1",
-					name: "metadataPropertyName1"
+					name: "metadataPropertyName1",
+					defaultValue: "metadataPropertyDefaultValue1",
+					deprecated: true,
+					group: "metadataPropertyGroup1",
+					visibility: "public"
 				},
 				"metadataProperty2" : {
 					type: "metadataPropertyType2",
-					name: "metadataPropertyName2"
+					name: "metadataPropertyName2",
+					defaultValue: "metadataPropertyDefaultValue2",
+					deprecated: true,
+					group: "metadataPropertyGroup2",
+					visibility: "public"
 				},
 				"metadataProperty3" : {
 					type: "metadataPropertyType3",
-					name: "metadataPropertyName3"
+					name: "metadataPropertyName3",
+					defaultValue: "metadataPropertyDefaultValue2",
+					deprecated: false,
+					group: "metadataPropertyGroup3",
+					visibility: "private"
 				}
 			});
 
