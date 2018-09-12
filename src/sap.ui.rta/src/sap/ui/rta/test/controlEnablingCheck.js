@@ -115,6 +115,11 @@ function(
 					"sap.app": {
 						"id": UI_COMPONENT_NAME,
 						"type": "application"
+					},
+					"getEntry": function () {
+						return {
+							type: "application"
+						};
 					}
 				}
 			},
