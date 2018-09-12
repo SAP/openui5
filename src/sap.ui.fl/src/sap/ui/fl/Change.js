@@ -687,7 +687,7 @@ sap.ui.define([
 					}
 
 					aCurrentSelector.forEach(function(oCurrentSelector) {
-						if (oCurrentSelector && Utils.indexOfInArrayOfObjects(aDependentSelectors, oCurrentSelector) === -1) {
+						if (oCurrentSelector && Utils.indexOfObject(aDependentSelectors, oCurrentSelector) === -1) {
 							aDependentSelectors.push(oCurrentSelector);
 						}
 					});
@@ -710,7 +710,7 @@ sap.ui.define([
 
 		if (aDependentSelectors.length > 0) {
 			var oSelector = this.getSelector();
-			var iIndex = Utils.indexOfInArrayOfObjects(aDependentSelectors, oSelector);
+			var iIndex = Utils.indexOfObject(aDependentSelectors, oSelector);
 			if (iIndex > -1) {
 				aDependentSelectors.splice(iIndex, 1);
 			}

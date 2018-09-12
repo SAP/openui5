@@ -57,6 +57,10 @@ sap.ui.define([
 			}
 
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);
+			if (!Utils.isApplication(oAppComponent.getManifest())) {
+				//we only consider components whose type is application. Otherwise, we might send request for components that can never have changes.
+				return Promise.resolve(oView);
+			}
 			var sFlexReference = Utils.getComponentClassName(oAppComponent);
 			var sAppVersion = Utils.getAppVersionFromManifest(oAppComponent.getManifest());
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference, sAppVersion);

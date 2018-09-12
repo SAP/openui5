@@ -1003,11 +1003,11 @@ function(
 		},
 
 		isApplication: function (oManifest) {
-			return (oManifest && oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").type === "application");
+			return (oManifest && oManifest.getEntry && oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").type === "application");
 		},
 
 		isEmbeddedComponent: function (oManifest) {
-			return (oManifest && oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").type === "component");
+			return (oManifest && oManifest.getEntry && oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").type === "component");
 		},
 
 		/**
@@ -1143,11 +1143,23 @@ function(
 		 * @returns {integer} Returns the index of the object in the array, -1 if it is not in the array
 		 * @public
 		 */
-		indexOfInArrayOfObjects: function(aArray, oObject) {
+		indexOfObject: function(aArray, oObject) {
 			var iObjectIndex = -1;
 			aArray.some(function(oArrayObject, iIndex) {
-				var bSameNumberOfAttributes = Object.keys(oArrayObject).length === Object.keys(oObject).length;
-				var bContains = bSameNumberOfAttributes && !Object.keys(oArrayObject).some(function(sKey) {
+				var aKeysArray, aKeysObject;
+				if (!oArrayObject) {
+					aKeysArray = [];
+				} else {
+					aKeysArray = Object.keys(oArrayObject);
+				}
+
+				if (!oObject) {
+					aKeysObject = [];
+				} else {
+					aKeysObject = Object.keys(oObject);
+				}
+				var bSameNumberOfAttributes = aKeysArray.length === aKeysObject.length;
+				var bContains = bSameNumberOfAttributes && !aKeysArray.some(function(sKey) {
 					return oArrayObject[sKey] !== oObject[sKey];
 				});
 
