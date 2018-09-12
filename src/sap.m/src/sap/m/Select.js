@@ -437,7 +437,11 @@ function(
 		 */
 		Select.prototype.getOverflowToolbarConfig = function() {
 
-			var noInvalidationProps = ["enabled", "selectedKey", "selectedItemId"];
+			var noInvalidationProps = ["enabled", "selectedKey"];
+
+			if (!this.getAutoAdjustWidth() || this._bIsInOverflow) {
+				noInvalidationProps.push("selectedItemId");
+			}
 
 			var oConfig = {
 				canOverflow: true,
@@ -453,6 +457,7 @@ function(
 				}
 
 				oSelect._prevSelectType = oSelect.getType();
+				oSelect._bIsInOverflow = true;
 
 				if (oSelect.getType() !== SelectType.Default) {
 					oSelect.setProperty("type", SelectType.Default, true);
@@ -464,6 +469,8 @@ function(
 				if (!oToolbar.isA("sap.m.OverflowToolbar")) {
 					return;
 				}
+
+				oSelect._bIsInOverflow = false;
 
 				if (oSelect.getType() !== oSelect._prevSelectType) {
 					oSelect.setProperty("type", oSelect._prevSelectType, true);
