@@ -70,8 +70,8 @@ function (
 	 * @returns {boolean} true if it's in developer mode
 	 * @private
 	 */
-	Selection.prototype._checkDeveloperMode = function (oOverlay) {
-		if (oOverlay.getDesignTimeMetadata()) {
+	Selection.prototype._checkDeveloperMode = function (oOverlay, oDesignTimeMetadata) {
+		if (oDesignTimeMetadata) {
 			var bDeveloperMode = this.getCommandFactory().getFlexSettings().developerMode;
 			if (bDeveloperMode && this.hasStableId(oOverlay)) {
 				oOverlay.setEditable(true);
@@ -92,7 +92,9 @@ function (
 	 * @override
 	 */
 	Selection.prototype.registerElementOverlay = function (oOverlay) {
-		if (!this._checkDeveloperMode(oOverlay)) {
+		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
+		if (!oDesignTimeMetadata.markedAsNotAdaptable() &&
+			!this._checkDeveloperMode(oOverlay, oDesignTimeMetadata)) {
 			oOverlay.attachEditableChange(this._onEditableChange, this);
 			this._adaptSelectable(oOverlay);
 		}

@@ -91,6 +91,17 @@ function(
 	};
 
 	/**
+	 * Returns 'not-adaptable' flag as boolean
+	 * @param {Object} oElement Element instance
+	 * @return {boolean} Returns 'true' if not adaptable
+	 * @public
+	 */
+	DesignTimeMetadata.prototype.markedAsNotAdaptable = function() {
+		var vActions = this.getData().actions;
+		return vActions === "not-adaptable";
+	};
+
+	/**
 	 * Returns property "domRef" of the DT metadata
 	 * @return {string|Element} Returns reference to the relevant DOM element or its selector
 	 * @public
