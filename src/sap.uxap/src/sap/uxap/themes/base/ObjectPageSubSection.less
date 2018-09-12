@@ -204,10 +204,13 @@ html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
 	}
 }
 
-/* IE and Edge ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUxAPObjectPageSubSection:focus {
+	outline-style: dashed;
+}
+
+/* IE ignores outline-offset. Use an overlay: */
 /* TODO remove after 1.62 version */
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
+html[data-sap-ui-browser^="ie"].sap-desktop {
 	.sapUxAPObjectPageSubSection:focus {
 		outline: none;
 		position: relative;
