@@ -3,9 +3,9 @@
 QUnit.dump.maxDepth = 50;
 
 sap.ui.define([
-	"sap/ui/rta/service/Outline",
 	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/dt/Util",
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/layout/VerticalLayout",
@@ -18,9 +18,9 @@ sap.ui.define([
 	"testdata/StaticDesigntimeMetadata",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
-	oOutline,
 	RuntimeAuthoring,
-	DtUtil,
+	Plugin,
+	CommandFactory,
 	OverlayRegistry,
 	DesignTime,
 	VerticalLayout,
@@ -275,9 +275,13 @@ sap.ui.define([
 			oPage.addContent(this.oLayout);
 			oPage.addContent(this.oLayout1);
 
+			var oPlugin = new Plugin({});
+			oPlugin.isEditable = function() { return false; };
+
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oPage,
-				showToolbars: false
+				showToolbars: false,
+				plugins: { "testPlugin": oPlugin }
 			});
 
 			this.oRta.getService("outline").then(function (oService) {
@@ -321,7 +325,7 @@ sap.ui.define([
 
 		QUnit.test("when an element is inserted into an already existing aggregation", function (assert) {
 			var done = assert.async();
-			assert.expect(3);
+			assert.expect(2);
 			var oExpectedResponse1 = {
 				"type": "new",
 				"targetIndex": 1,
@@ -339,30 +343,27 @@ sap.ui.define([
 				"type": "editableChange",
 				"element": {
 					"id": "newButton",
-					"editable": false
+					"editable": true
 				}
 			};
 
-			this.oOutline.attachEventOnce("update", function(aUpdates) {
+			this.oOutline.attachEvent("update", function(aUpdates) {
 				aUpdates.some(function(oUpdate) {
 					switch (oUpdate.type) {
 						case "new":
 							assert.deepEqual(oUpdate, oExpectedResponse1, "then expected reponse for new update was received");
+							var oNewButton = this.oLayout.getContent().find(function(oContentItem) { return oContentItem.getId() === "newButton"; }),
+								oNewButtonOverlay = OverlayRegistry.getOverlay(oNewButton);
+								oNewButtonOverlay.setEditable(true);
 							break;
 						case "editableChange":
 							assert.deepEqual(oUpdate, oExpectedResponse2, "then expected response for editableChange update was received");
-							// two "editableChanges" updates expected, first for false, second for true
-							if (!oExpectedResponse2.element.editable) {
-								oExpectedResponse2.element.editable = true;
-							} else {
-								done();
-								return true;
-							}
+							done();
 							break;
 						default:
 							assert.notOk(true, "then ether 'new' or 'editableChange' type expected");
 					}
-				});
+				}.bind(this));
 
 			}, this);
 			this.oLayout.addContent(new Button("newButton")); //inserts new overlay
@@ -402,12 +403,14 @@ sap.ui.define([
 					"id": "button",
 					"instanceName": "Button 1",
 					"technicalName": "sap.m.Button",
-					"editable": true,
+					"editable": false,
 					"icon": "sap/m/designtime/Button.icon.svg",
 					"type": "element"
 				}
 			};
-			var oCommandFactory = this.oRta.getDefaultPlugins()["cutPaste"].getCommandFactory();
+			var oCommandFactory = new CommandFactory({
+				flexSettings: this.oRta.getFlexSettings()
+			});
 
 			return oCommandFactory.getCommandFor(oRelevantContainer, "move", {
 				movedElements : [{
@@ -444,7 +447,7 @@ sap.ui.define([
 
 			var oExpectedResponse = {
 				"element": {
-					"editable": true,
+					"editable": false,
 					"icon": "sap/m/designtime/Button.icon.svg",
 					"id": "button",
 					"instanceName": "newText",
@@ -468,7 +471,7 @@ sap.ui.define([
 						"id": "button",
 						"instanceName": "newText",
 						"technicalName": "sap.m.Button",
-						"editable": true,
+						"editable": false,
 						"icon": "sap/m/designtime/Button.icon.svg",
 						"type": "element"
 					}
