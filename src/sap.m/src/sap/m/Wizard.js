@@ -879,7 +879,7 @@ sap.ui.define([
 				allSteps = this.getSteps(),
 				stepTitles = [currentStep.getTitle()],
 				stepIcons = [currentStep.getIcon()],
-				stepOptionalIndication = [],
+				stepOptionalIndication = [currentStep.getOptional()],
 				stepCount = 1;
 
 			if (this.getEnableBranching()) {
