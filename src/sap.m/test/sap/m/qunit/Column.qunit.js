@@ -526,26 +526,6 @@
 			assert.ok(result.indexOf(media) !== -1, "media class was present in: " + result);
 		});
 
-		QUnit.test("ShouldApplyAlign", function(assert) {
-			//Arrange
-			var align = "Center",
-				label = new Label(),
-				//System under Test
-				sut = new Column();
-
-			//Act
-			label.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-			sut.applyAlignTo(label, align);
-			sap.ui.getCore().applyChanges();
-
-			//Assert
-			assert.strictEqual(label.getDomRef().style.textAlign, align.toLowerCase());
-
-			//Cleanup
-			label.destroy();
-		});
-
 		QUnit.test("Should convert units correctly", function(assert) {
 
 			var fnTestCase = function(width, px, screen) {
