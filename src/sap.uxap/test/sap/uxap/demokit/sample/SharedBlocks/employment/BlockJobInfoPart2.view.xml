@@ -1,8 +1,7 @@
-<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout"
-		  xmlns:forms="sap.ui.layout.form" xmlns="sap.m">
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:forms="sap.ui.layout.form" xmlns="sap.m">
 
 
-	<forms:SimpleForm labelSpanL="4" labelSpanM="4"
+	<forms:SimpleForm labelSpanL="4" labelSpanM="4" editable="false"
 					  labelSpanS="4" emptySpanL="0" emptySpanM="0" emptySpanS="0"
 					  maxContainerCols="2" layout="ResponsiveGridLayout" width="100%">
 

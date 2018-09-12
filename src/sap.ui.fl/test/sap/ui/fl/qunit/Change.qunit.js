@@ -39,7 +39,7 @@ function(
 				changeType: "filterVariant",
 				reference: "smartFilterBar",
 				componentName: "smartFilterBar",
-				selector: {"id": "control1"},
+				selector: {"id": "control1", idIsLocal: true},
 				conditions: {},
 				context: [],
 				content: {something: "createNewVariant"},
@@ -618,9 +618,9 @@ function(
 			var oAppComponent = {
 				createId: function (sId) {return sId + "---local";}
 			};
-			var aDependentIdList = oInstance.getDependentIdList(oAppComponent);
+			var aDependentIdList = oInstance.getDependentSelectorList(oAppComponent);
 			assert.equal(aDependentIdList.length, 10);
-			aDependentIdList = oInstance.getDependentControlIdList(oAppComponent);
+			aDependentIdList = oInstance.getDependentControlSelectorList(oAppComponent);
 			assert.equal(aDependentIdList.length, 9);
 		});
 
@@ -685,9 +685,9 @@ function(
 			var oDependentControl = oInstance.getDependentControl("source", {modifier: JsControlTreeModifier}, {});
 			assert.equal(oDependentControl, undefined);
 
-			var aDependentIdList = oInstance.getDependentIdList({});
+			var aDependentIdList = oInstance.getDependentSelectorList({});
 			assert.equal(aDependentIdList.length, 1);
-			aDependentIdList = oInstance.getDependentControlIdList({});
+			aDependentIdList = oInstance.getDependentControlSelectorList({});
 			assert.equal(aDependentIdList.length, 0);
 
 			oInstance.addDependentControl(sControlId, "element", {modifier: JsControlTreeModifier});
@@ -705,9 +705,9 @@ function(
 			var oAppComponent = {
 				createId: function (sId) {return sId + "---local";}
 			};
-			aDependentIdList = oInstance.getDependentIdList(oAppComponent);
+			aDependentIdList = oInstance.getDependentSelectorList(oAppComponent);
 			assert.equal(aDependentIdList.length, 8);
-			aDependentIdList = oInstance.getDependentControlIdList(oAppComponent);
+			aDependentIdList = oInstance.getDependentControlSelectorList(oAppComponent);
 			assert.equal(aDependentIdList.length, 7);
 		});
 	});

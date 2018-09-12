@@ -71,7 +71,7 @@ sap.ui.define([
 
 				var oParent = oBinding.findNode(3),
 					oChild, i;
-				for (i = 4 ; i < 10 ; i++) {
+				for (i = 4; i < 10; i++) {
 					oChild = oBinding.findNode(i);
 					assert.ok(oBinding._isInSubtree(oParent, oChild), "Children are loaded");
 				}
@@ -169,7 +169,7 @@ sap.ui.define([
 
 				var oParent = oBinding.findNode(4),
 					oChild, i;
-				for (i = 5 ; i < 10 ; i++) {
+				for (i = 5; i < 10; i++) {
 					oChild = oBinding.findNode(i);
 					assert.ok(oBinding._isInSubtree(oParent, oChild), "Children are loaded");
 				}
@@ -183,7 +183,7 @@ sap.ui.define([
 				var oParent = oBinding.findNode(5),
 					oChild, i;
 
-				for (i = 6 ; i < 9 ; i++) {
+				for (i = 6; i < 9; i++) {
 					oChild = oBinding.findNode(i);
 					assert.ok(oBinding._isInSubtree(oParent, oChild), "Children are loaded");
 				}

@@ -39,7 +39,7 @@ sap.ui.define([
 				bTooLate = true;
 				aPendingPromises.splice(aPendingPromises.indexOf(mPendingPromise), 1);
 				oLogger.trace("Long-running promise is ignored:" + sPendingPromiseLog);
-			}, config.maxDelay);
+			}, config.maxDelay,'TIMEOUT_WAITER_IGNORE');
 
 			var fnCountDownPromises = function () {
 				if (bTooLate) {

@@ -161,7 +161,7 @@ function(Press,
 			}
 
 			var fnOnSapFocusInSpy = sinon.spy(oControl, "onfocusin");
-			var fnOnSapFocusLeaveSpy = sinon.spy(oControl, "onsapfocusleave");
+			// var fnOnSapFocusLeaveSpy = sinon.spy(oControl, "onsapfocusleave");
 
 			// Act
 			oPressAction.executeOn(oControl);
@@ -663,7 +663,7 @@ function(Press,
 				actions: new Press()
 			});
 
-			// should destry the toolbar only after everything is settled
+			// should destroy the toolbar only after everything is settled
 			oOpa.waitFor({
 				success: function() {
 					oOverflowToolbar.destroy();

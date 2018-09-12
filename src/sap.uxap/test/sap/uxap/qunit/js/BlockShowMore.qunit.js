@@ -1,17 +1,18 @@
-/*global QUnit*/
-
-(function ($, QUnit) {
+/*global QUnit */
+sap.ui.require([
+	"sap/ui/thirdparty/jquery"],
+function($) {
 	"use strict";
 
-	jQuery.sap.registerModulePath("view", "view");
-	jQuery.sap.registerModulePath("sap.uxap.sample", "../demokit/sample");
-	jQuery.sap.registerModulePath("sap.uxap.testblocks", "./blocks");
-	QUnit.module("aat_UxAP-330");
+	sap.ui.loader.config({
+		paths: {
+		   "view": "view",
+		   "sap/uxap/sample": "../demokit/sample",
+		   "sap/uxap/testblocks": "./blocks"
+		 }
+	  });
 
-	jQuery.sap.registerModulePath("view", "view");
-	jQuery.sap.require("sap.uxap.ObjectPageLayout");
-	jQuery.sap.require("sap.uxap.ObjectPageSection");
-	jQuery.sap.require("sap.uxap.ObjectPageHeader");
+	QUnit.module("aat_UxAP-330");
 
 	QUnit.module("Show More", {
 		beforeEach: function () {
@@ -118,4 +119,4 @@
 		assert.strictEqual(objectPageSubSectionSeeMore4, false, "Object Page SubSection 4: all block set showSubSectionMore value to false, seeMore not visible");
 	});
 
-}(jQuery, QUnit));
+});

@@ -235,7 +235,7 @@ sap.ui.define([
 		};
 
 		MenuButton.prototype.onAfterRendering = function() {
-			if (this._needsWidth() && sap.ui.getCore().isThemeApplied() && this._getTextBtnContentDomRef()) {
+			if (this._needsWidth() && sap.ui.getCore().isThemeApplied() && this._getTextBtnContentDomRef() && this._getInitialTextBtnWidth() > 0) {
 				this._getTextBtnContentDomRef().style.width = this._getInitialTextBtnWidth() + 'px';
 			}
 

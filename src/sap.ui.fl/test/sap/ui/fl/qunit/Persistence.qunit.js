@@ -340,6 +340,8 @@ function(
 		assert.deepEqual(oChange.getSelector(), {
 			'id': 'someId'
 		});
+		assert.equal(oChange.getDefinition().validAppVersions.creation, "1.0.0");
+		assert.equal(oChange.getDefinition().validAppVersions.from, "1.0.0");
 
 		assert.strictEqual(oChange.getPendingAction(), 'NEW');
 	});

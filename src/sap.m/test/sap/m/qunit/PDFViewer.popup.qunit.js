@@ -2,12 +2,16 @@
 
 sap.ui.define("sap.m.qunit.PDFViewerPopup", [
 	"test/sap/m/qunit/PDFViewerTestUtils",
+	"sap/m/library",
 	"sap/m/PDFViewer",
 	'jquery.sap.global',
 	'sap/m/PDFViewerRenderer'
 	// QUnit dependency cannot be defined here because test requires the instance specified in *.html file
-], function (TestUtils, PDFViewer, $, PDFViewerRenderer) {
+], function (TestUtils, library, PDFViewer, $, PDFViewerRenderer) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
 
 	var oPdfViewer;
 	QUnit.module('Popup mode', {
@@ -179,6 +183,30 @@ sap.ui.define("sap.m.qunit.PDFViewerPopup", [
 			.then(function () {
 				var oHeaderNode = oPdfViewer.$('popup-header');
 				assert.ok(oHeaderNode.length === 1, 'Header has to be shown');
+				done();
+			});
+	});
+
+	QUnit.test("Download button is of type 'Emphasized'", function (assert) {
+		var done = assert.async();
+		assert.expect(2);
+
+		var oOptions = {
+			"source": "./pdfviewer/sample-file.pdf",
+			"loaded": function () {
+				assert.ok(true, "'Load' event fired but should not.");
+			},
+			"error": function () {
+				assert.ok(false, "'Error' event fired");
+			}
+		};
+		oPdfViewer = TestUtils.createPdfViewer(oOptions);
+
+		oPdfViewer.open();
+		TestUtils.wait(2000)()
+			.then(function () {
+				var oDownloadButton = sap.ui.getCore().byId(oPdfViewer.getId() + "-popupDownloadButton");
+				assert.ok(oDownloadButton.getType() === ButtonType.Emphasized, "Button is of type 'Emphasized'");
 				done();
 			});
 	});

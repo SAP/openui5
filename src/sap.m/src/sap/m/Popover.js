@@ -597,8 +597,9 @@ sap.ui.define([
 				if (oNavContent && !this.getModal() && !Device.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
 					//gain the focus back to popover in order to prevent the autoclose of the popover
 					oNavContent.attachEvent("afterNavigate", function (oEvent) {
-						if (this.getDomRef()){
-							this.getDomRef().focus();
+						var oDomRef = this.getDomRef();
+						if (oDomRef && !oDomRef.contains(document.activeElement)) {
+							oDomRef.focus();
 						}
 					}, this);
 				}

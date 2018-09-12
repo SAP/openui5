@@ -1540,12 +1540,12 @@ function (
 					"fileNameChange1": {
 						"changeObject": oChange1,
 						"dependencies": [],
-						"controlsDependencies": ["group3", "group2"]
+						"controlsDependencies": [{id: "group3"}, {id: "group2"}]
 					},
 					"fileNameChange2": {
 						"changeObject": oChange2,
 						"dependencies": ["fileNameChange1"],
-						"controlsDependencies": ["group2", "group1"]
+						"controlsDependencies": [{id: "group2"}, {id: "group1"}]
 					},
 					"fileNameChange3": {
 						"changeObject": oChange3,
@@ -1619,12 +1619,12 @@ function (
 					"fileNameChange1": {
 						"changeObject": oChange1,
 						"dependencies": [],
-						"controlsDependencies": ["group3", "group2"]
+						"controlsDependencies": [{id: "group3"}, {id: "group2"}]
 					},
 					"fileNameChange2": {
 						"changeObject": oChange2,
 						"dependencies": ["fileNameChange1", "fileNameChange0"],
-						"controlsDependencies": ["group2", "group1"]
+						"controlsDependencies": [{id: "group2"}, {id: "group1"}]
 					}
 				},
 				mDependentChangesOnMe: {
@@ -1679,7 +1679,7 @@ function (
 					"fileNameChange1": {
 						"changeObject": oChange1,
 						"dependencies": [],
-						"controlsDependencies": ["group3", "group2"]
+						"controlsDependencies": [{id: "group3"}, {id: "group2"}]
 					},
 					"fileNameChange2": {
 						"changeObject": oChange2,
@@ -1735,7 +1735,7 @@ function (
 					"fileNameChange2": {
 						"changeObject": oChange2,
 						"dependencies": ["fileNameChange1"],
-						"controlsDependencies": ["group3", "group2"]
+						"controlsDependencies": [{id: "group3"}, {id: "group2"}]
 					}
 				},
 				mDependentChangesOnMe: {
@@ -2216,10 +2216,10 @@ function (
 			};
 			this.oChangePersistence._mChanges.mDependencies = {
 					"fileNameChange1": {
-						"changeObject": {getDependentIdList: function() {return ["id"];}}
+						"changeObject": {getDependentSelectorList: function() {return ["id"];}}
 					},
 					"fileNameChange2": {
-						"changeObject": {getDependentIdList: function() {return ["id2"];}}
+						"changeObject": {getDependentSelectorList: function() {return ["id2"];}}
 					}
 				};
 

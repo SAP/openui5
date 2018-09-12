@@ -114,6 +114,26 @@
 			assert.strictEqual($buttonsWrapper.children().length, 2, "Message page has two buttons");
 		});
 
+		QUnit.test("Title is rendered only if set", function(assert) {
+			// Arrange
+			var $title = this.oMessagePage.$("title");
+
+			// Assert init state
+			assert.strictEqual(this.oMessagePage.getTitle(), "", "MessagePage is initialized with no title");
+
+			// Assert
+			assert.strictEqual($title.length, 0, "MessagePage title is not rendered");
+
+			// Act
+			this.oMessagePage.setTitle("Some string");
+			sap.ui.getCore().applyChanges();
+
+			$title = this.oMessagePage.$("title");
+
+			// Assert
+			assert.strictEqual($title.length, 1, "MessagePage title is rendered");
+		});
+
 		QUnit.module("Api tests", {
 			beforeEach: function() {
 				this.oMessagePage = createMessagePage();

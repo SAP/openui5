@@ -331,7 +331,7 @@ sap.ui.define([
 	 * @param {boolean} bValue whether the Application will be loaded in full screen mode after added to home
 	 *     screen from iOS Safari or mobile Chrome from version 31.
 	 * @public
-	 * @deprecated since 1.58 use {@link module:sap/ui/util/setWebAppCapable} instead
+	 * @deprecated since 1.58 use {@link module:sap/ui/util/Mobile.setWebAppCapable} instead
 	 */
 	jQuery.sap.setMobileWebAppCapable = Mobile.setWebAppCapable;
 

@@ -6,8 +6,9 @@ sap.ui.define([
 	'sap/ui/core/UIComponentMetadata',
 	'samples/components/loadfromfile/Component',
 	'samples/components/routing/Component',
-	'samples/components/routing/RouterExtension'
-], function(jQuery, Component, ComponentContainer, UIComponent, UIComponentMetadata, SamplesLoadFromFileComponent, SamplesRoutingComponent, SamplesRouterExtension) {
+	'samples/components/routing/RouterExtension',
+	'sap/ui/thirdparty/URI'
+], function(jQuery, Component, ComponentContainer, UIComponent, UIComponentMetadata, SamplesLoadFromFileComponent, SamplesRoutingComponent, SamplesRouterExtension, URI) {
 
 	"use strict";
 	/*global sinon, QUnit, foo*/
@@ -122,32 +123,6 @@ sap.ui.define([
 		assert.equal(oSuccessMerged.property2, "value2", "Property 2 merged and but not overridden.");
 		assert.equal(oSuccessUnMerged.property1, "value3", "Property 1 not merged.");
 		assert.ok(!oSuccessUnMerged.property2, "Property 2 not merged (does not exist).");
-	});
-
-	QUnit.test("Components Metadata - Design Time", function(assert) {
-		var oRequireStub = sinon.stub(sap.ui, "require"),
-			oDesignTime = {
-				"foo": "bar"
-			};
-
-		// pass a deep copy to the stub
-		oRequireStub.withArgs(["test/dtcomp/Component.designtime"]).callsArgWithAsync(1, Object.create(oDesignTime));
-
-		var TestDtComp = TestComp1.extend("test.dtcomp.Component", {
-			metadata: {
-				"designTime": true
-			}
-		});
-
-		assert.expect(2);
-		return TestDtComp.getMetadata().loadDesignTime().then(function(_oDesignTime) {
-			//module was added
-			oDesignTime.designtimeModule = "test/dtcomp/Component.designtime";
-			oDesignTime._oLib = null;
-			assert.deepEqual(_oDesignTime, oDesignTime, "DesignTime was loaded properly");
-			sinon.assert.callCount(oRequireStub, 1);
-			oRequireStub.restore();
-		});
 	});
 
 	QUnit.test("Components Metadata - Load from file", function(assert){
@@ -361,18 +336,22 @@ sap.ui.define([
 			//setup fake server
 			var oManifest = this.oManifest = {
 				"sap.app" : {
-					"id" : "samples.components.button"
+					"id" : "samples.components.button",
+					"title": "{{title}}"
 				}
 			};
 			var oAltManifest1 = this.oAltManifest1 = {
 				"sap.app" : {
-					"id" : "samples.components.config"
+					"id" : "samples.components.config",
+					"title": "{{title}}"
 				}
 			};
 
 			var oAltManifest2 = this.oAltManifest2 = {
 				"sap.app" : {
-					"id" : "samples.components.oneview"
+					"id" : "samples.components.oneview",
+					"i18n": "someFolder/messagebundle.properties",
+					"title": "{{title}}"
 				}
 			};
 
@@ -387,6 +366,9 @@ sap.ui.define([
 					url !== "/anylocation/manifest.json?sap-language=EN"
 					&& url !== "/anyotherlocation1/manifest.json?sap-language=EN"
 					&& url !== "/anyotherlocation2/manifest.json?sap-language=EN"
+
+					&& !/anylocation\/i18n\/i18n_en\.properties$/.test(url)
+					&& !/anyotherlocation2\/someFolder\/messagebundle_en\.properties$/.test(url)
 				);
 			});
 
@@ -411,6 +393,21 @@ sap.ui.define([
 					"Content-Type": "application/json"
 				},
 				JSON.stringify(oAltManifest2)
+			]);
+
+			oServer.respondWith("GET", /anylocation\/i18n\/i18n_en\.properties$/, [
+				200,
+				{
+					"Content-Type": "text/plain; charset=ISO-8859-1"
+				},
+				"title=Title anylocation"
+			]);
+			oServer.respondWith("GET", /anyotherlocation2\/someFolder\/messagebundle_en\.properties$/, [
+				200,
+				{
+					"Content-Type": "text/plain; charset=ISO-8859-1"
+				},
+				"title=Title anyotherlocation2"
 			]);
 
 		},
@@ -522,7 +519,15 @@ sap.ui.define([
 
 	QUnit.test("Manifest delegation to component instance (async)", function(assert) {
 
-		var oServer = this.oServer, oManifest = this.oManifest;
+		var oServer = this.oServer;
+		var oExpectedManifest = {
+			"sap.app" : {
+				"id" : "samples.components.button",
+				// Note: Placeholders (e.g. {{title}}) are only replaced in "manifest first" + async mode (not sync!)
+				// The corresponding i18n bundle is loaded relative to the manifest.json (manifestUrl)
+				"title": "Title anylocation"
+			}
+		};
 
 		//start test
 		var done = assert.async();
@@ -533,7 +538,7 @@ sap.ui.define([
 
 			assert.ok(oComponent.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
 			assert.ok(oComponent.getManifest(), "Manifest is available");
-			assert.deepEqual(oComponent.getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+			assert.deepEqual(oComponent.getManifest(), oExpectedManifest, "Manifest matches the manifest behind manifestUrl with processed placeholders");
 
 			var sAcceptLanguage = oServer.requests && oServer.requests[0] && oServer.requests[0].requestHeaders && oServer.requests[0].requestHeaders["Accept-Language"];
 			assert.equal(sAcceptLanguage, "en", "Manifest was requested with proper language");
@@ -546,7 +551,15 @@ sap.ui.define([
 
 	QUnit.test("Manifest delegation to component instance (async, delayed instantiation)", function(assert) {
 
-		var oServer = this.oServer, oManifest = this.oManifest;
+		var oServer = this.oServer;
+		var oExpectedManifest = {
+			"sap.app" : {
+				"id" : "samples.components.button",
+				// Note: Placeholders (e.g. {{title}}) are only replaced in "manifest first" + async mode (not sync!)
+				// The corresponding i18n bundle is loaded relative to the manifest.json (manifestUrl)
+				"title": "Title anylocation"
+			}
+		};
 
 		//start test
 		var done = assert.async();
@@ -557,7 +570,7 @@ sap.ui.define([
 
 			assert.ok(fnComponentClass.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
 			assert.ok(fnComponentClass.getMetadata().getManifest(), "Manifest is available");
-			assert.deepEqual(fnComponentClass.getMetadata().getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+			assert.deepEqual(fnComponentClass.getMetadata().getManifest(), oExpectedManifest, "Manifest matches the manifest behind manifestUrl");
 			assert.throws(function() {
 				fnComponentClass.extend("new.Component", {});
 			}, new Error("Extending Components created by Manifest is not supported!"), "Extend should raise an exception");
@@ -566,7 +579,7 @@ sap.ui.define([
 
 			assert.ok(oComponent.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
 			assert.ok(oComponent.getManifest(), "Manifest is available");
-			assert.deepEqual(oComponent.getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+			assert.deepEqual(oComponent.getManifest(), oExpectedManifest, "Manifest matches the manifest behind manifestUrl");
 
 			var sAcceptLanguage = oServer.requests && oServer.requests[0] && oServer.requests[0].requestHeaders && oServer.requests[0].requestHeaders["Accept-Language"];
 			assert.equal(sAcceptLanguage, "en", "Manifest was requested with proper language");
@@ -610,7 +623,16 @@ sap.ui.define([
 
 	QUnit.test("Alternate URL for component (async)", function(assert) {
 
-		var oServer = this.oServer, oManifest = this.oAltManifest2;
+		var oServer = this.oServer;
+		var oExpectedManifest = {
+			"sap.app" : {
+				"id" : "samples.components.oneview",
+				"i18n": "someFolder/messagebundle.properties",
+				// Note: Placeholders (e.g. {{title}}) are only replaced in "manifest first" + async mode (not sync!)
+				// The corresponding i18n bundle is loaded relative to the manifest.json (manifestUrl)
+				"title": "Title anyotherlocation2"
+			}
+		};
 
 		// create an invalid registration for samples.components.config to see that the "url" parameter works
 		sap.ui.loader.config({paths:{"samples/components/oneview":"test-resources/invalid/"}});
@@ -625,7 +647,7 @@ sap.ui.define([
 
 			assert.ok(fnComponentClass.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
 			assert.ok(fnComponentClass.getMetadata().getManifest(), "Manifest is available");
-			assert.deepEqual(fnComponentClass.getMetadata().getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+			assert.deepEqual(fnComponentClass.getMetadata().getManifest(), oExpectedManifest, "Manifest matches the manifest behind manifestUrl");
 			assert.throws(function() {
 				fnComponentClass.extend("new.Component", {});
 			}, new Error("Extending Components created by Manifest is not supported!"), "Extend should raise an exception");
@@ -634,7 +656,7 @@ sap.ui.define([
 
 			assert.ok(oComponent.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
 			assert.ok(oComponent.getManifest(), "Manifest is available");
-			assert.deepEqual(oComponent.getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+			assert.deepEqual(oComponent.getManifest(), oExpectedManifest, "Manifest matches the manifest behind manifestUrl");
 
 			var sAcceptLanguage = oServer.requests && oServer.requests[0] && oServer.requests[0].requestHeaders && oServer.requests[0].requestHeaders["Accept-Language"];
 			assert.equal(sAcceptLanguage, "en", "Manifest was requested with proper language");
@@ -1140,7 +1162,7 @@ sap.ui.define([
 
 			oComponent = oPreloadComponent;
 
-			console.log(oSpy.calls);
+			//console.log(oSpy.calls);
 			assert.ok(oSpy.calledOnceWithExactly("nonLazyUsage/Component-preload.js", true), "Only the non-lazy component usage should be preloaded!");
 
 			done();
@@ -1230,8 +1252,6 @@ sap.ui.define([
 
 	QUnit.test("Relative URLs for ResourceModel (enhanceWith)", function(assert) {
 
-		var oServer = this.oServer, oManifest = this.oManifest;
-
 		var oModelConfigSpy = sinon.spy(Component, "_createManifestModelConfigurations");
 
 		// load the test component
@@ -1252,6 +1272,7 @@ sap.ui.define([
 		assert.strictEqual(aI18NMFEnhanceWith[1].bundleUrl, "test-resources/sap/ui/core/samples/components/button/other/i18n.properties", "Bundle URL of enhancing model must not be modified!");
 
 		oModelConfigSpy.restore();
+		oComponent.destroy();
 
 	});
 });

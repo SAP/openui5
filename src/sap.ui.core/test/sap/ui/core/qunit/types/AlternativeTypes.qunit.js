@@ -1,4 +1,6 @@
+/*global QUnit */
 sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/testlib/TestButton"], function (JSONModel, TestButton) {
+	"use strict";
 
 	var oModel = new JSONModel({
 		teamMembers: [

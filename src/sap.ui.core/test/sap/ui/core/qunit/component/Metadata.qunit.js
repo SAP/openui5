@@ -719,8 +719,8 @@ sap.ui.define([
 				var sActual = Manifest._resolveUriRelativeTo(new URI(sInput), new URI(sBase)).toString();
 				oBaseTag.href = sOldHRef;
 				assert.equal(sActual, sExpected, "Resolved URI is correct!");
-			}
-		},
+			};
+		}
 	});
 
 	QUnit.test("relative", function(assert){

@@ -14,7 +14,9 @@ sap.ui.define([
 			var sName = "name";
 
 			var oChangePersistence = {
-				_sComponentName: sName,
+				_mComponent: {
+					name: sName
+				},
 				_mChanges: {
 					mChanges: {}
 				},
@@ -45,11 +47,11 @@ sap.ui.define([
 				_mChangesEntries: {
 					"id1": {
 						_oDefinition: oDefinition1,
-						_aDependentIdList: ["someControl"]
+						_aDependentSelectorList: [{id: "someControl"}]
 					},
 					"id2": {
 						_oDefinition: oDefinition2,
-						_aDependentIdList: []
+						_aDependentSelectorList: []
 					}
 				},
 				_mChangesInitial: {

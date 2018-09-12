@@ -381,17 +381,17 @@ sap.ui.define([
 				numberOfExpandedLevels: 2
 			});
 
-			var oN1004, oN1029, oN1051, oN1114;
+			var oN1004, oN1029, oN1051;
 			var oN1004Subtree, oNextAfter1029;
 
 			function handler1 (oEvent) {
 				oBinding.detachChange(handler1);
 
-				//collect some nodes, which are alreay loaded
+				//collect some nodes, which are already loaded
 				oN1004 = oBinding.findNode(3);
 				oN1029 = oBinding.findNode(28);
 				oN1051 = oBinding.findNode(50);
-				oN1114 = oBinding.findNode(113);
+				// oN1114 = */oBinding.findNode(113);
 
 				// remove(1004)
 				oN1004Subtree = oBinding.removeContext(oN1004.context);
@@ -446,7 +446,7 @@ sap.ui.define([
 			});
 
 			var oN1001, oN1002, oN1004, oN1029, oN1030;
-			var oN1001Subtree, oN1004Subtree, oNextAfter1029;
+			var oN1001Subtree, oN1004Subtree;
 
 			function handler1 (oEvent) {
 				oBinding.detachChange(handler1);
@@ -536,7 +536,6 @@ sap.ui.define([
 			});
 
 			var oN1004;
-			var oN1004Subtree;
 
 			function handler1 (oEvent) {
 				oBinding.detachChange(handler1);
@@ -562,7 +561,7 @@ sap.ui.define([
 				assert.equal(oBinding.getLength(), 689, "Length after expand(1004) is correct.");
 
 				// remove context
-				oN1004Subtree = oBinding.removeContext(oN1004.context);
+				/*oN1004Subtree = */oBinding.removeContext(oN1004.context);
 				assert.equal(oBinding.getLength(), 625);
 
 				done();
@@ -665,7 +664,6 @@ sap.ui.define([
 
 			var oN1001, oN1004, oN1005, oN1630;
 			var oN1004Subtree;
-			var oN1005Subtree;
 			var oN1630Subtree;
 
 			function handler1 (oEvent) {
@@ -1071,7 +1069,7 @@ sap.ui.define([
 				numberOfExpandedLevels: 2
 			});
 
-			var oN1001, oN1002, oN1004;
+			var oN1002, oN1004;
 
 			function handler1() {
 				oBinding.detachChange(handler1);

@@ -209,7 +209,7 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function(LoaderExtensions) {
 	}
 
 	/**
-	 * Creates and returns a new instance of {@link sap.base.util.Properties}.
+	 * Creates and returns a new instance of {@link module:sap/base/util/Properties}.
 	 *
 	 * If option 'url' is passed, immediately a load request for the given target is triggered.
 	 * A property file that is loaded can contain comments with a leading ! or #.

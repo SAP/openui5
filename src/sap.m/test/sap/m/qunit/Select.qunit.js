@@ -1,6 +1,10 @@
-/*global QUnit,sinon*/
-
-(function () {
+/*global QUnit, sinon */
+sap.ui.require([
+	"sap/ui/thirdparty/jquery",
+	"sap/base/strings/capitalize",
+	"sap/base/Log",
+	"sap/ui/events/KeyCodes"],
+	function($, Capitalize, Log, KeyCodes) {
 	"use strict";
 
 	sinon.config.useFakeTimers = true;
@@ -368,7 +372,7 @@
 
 	// helper functions
 	var fnTestControlProperty = function (mOptions) {
-		var sProperty = jQuery.sap.charToUpperCase(mOptions.property);
+		var sProperty = Capitalize(mOptions.property);
 
 		QUnit.test("get" + sProperty + "()", function (assert) {
 			assert.strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
@@ -2158,7 +2162,7 @@
 			},
 
 			change: function (oControlEvent) {
-				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+				Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
 			}
 		});
 
@@ -2172,7 +2176,7 @@
 		var oPickerDomRef = oSelect.getPicker().getDomRef("cont");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
 		sap.ui.test.qunit.triggerEvent("mousedown", oPickerDomRef, {
 			target: oPickerDomRef
 		});
@@ -5236,7 +5240,7 @@
 				})
 			},
 			change: function (oControlEvent) {
-				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+				Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
 			}
 		});
 
@@ -6435,7 +6439,7 @@
 
 		// act
 		// move to the second item with ARROW_DOWN (pre-select item) and execute tap.
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
 		sap.ui.test.qunit.triggerEvent("tap", oItem2.getDomRef());
 
 		// assert
@@ -6826,7 +6830,7 @@
 		var sOpenState = !jQuery.support.cssAnimations ? sap.ui.core.OpenState.OPEN : sap.ui.core.OpenState.OPENING;	// no animation on ie9
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.F4);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.F4);
 
 		// assert
 		assert.strictEqual(fnShowSpy.callCount, 1, "onsapshow() method was called exactly once");
@@ -6862,7 +6866,7 @@
 		var sOpenState = !jQuery.support.cssAnimations ? sap.ui.core.OpenState.OPEN : sap.ui.core.OpenState.OPENING;	// no animation on ie9
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN, false, true);
 
 		// assert
 		assert.strictEqual(fnShowSpy.callCount, 1, "onsapshow() method was called exactly once");
@@ -6898,8 +6902,8 @@
 		var sOpenState = !jQuery.support.cssAnimations ? sap.ui.core.OpenState.CLOSED : sap.ui.core.OpenState.CLOSING;	// no animation on ie9
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.F4);
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.F4);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.F4);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.F4);
 
 		// assert
 		assert.strictEqual(fnShowSpy.callCount, 2, "onsapshow() method was called twice");
@@ -6934,8 +6938,8 @@
 		var sOpenState = !jQuery.support.cssAnimations ? sap.ui.core.OpenState.CLOSED : sap.ui.core.OpenState.CLOSING;	// no animation on ie9
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN, false, true);
 
 		// assert
 		assert.strictEqual(fnShowSpy.callCount, 2, "onsapshow() method was called twice");
@@ -6972,7 +6976,7 @@
 		var sOpenState = !jQuery.support.cssAnimations ? sap.ui.core.OpenState.OPEN : sap.ui.core.OpenState.OPENING;	// no animation on ie9
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, false, true, false);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP, false, true, false);
 
 		// assert
 		assert.strictEqual(fnHideSpy.callCount, 1, "onsaphide() method was called exactly once");
@@ -7008,8 +7012,8 @@
 		var sOpenState = !jQuery.support.cssAnimations ? sap.ui.core.OpenState.CLOSED : sap.ui.core.OpenState.CLOSING;	// no animation on ie9
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, false, true, false);
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, false, true, false);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP, false, true, false);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP, false, true, false);
 
 		// assert
 		assert.strictEqual(fnHideSpy.callCount, 2, "onsaphide() method was called twice");
@@ -7045,7 +7049,7 @@
 		var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.SPACE);
 		this.clock.tick(1000);	// wait 1s after the open animation is completed
 
 		// assert
@@ -7081,7 +7085,7 @@
 		this.clock.tick(1000);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.SPACE);
 		this.clock.tick(1000);
 
 		// assert
@@ -7114,11 +7118,11 @@
 		oSelect.focus();
 		oSelect.open();
 		this.clock.tick(1000);	// wait 1s after the open animation is completed
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);	// change the selection
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);	// change the selection
 		var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.SPACE);
 
 		// assert
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired");
@@ -7154,7 +7158,7 @@
 		var fnCloseSpy = this.spy(oSelect, "close");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ESCAPE);
 
 		// assert
 		assert.strictEqual(fnEscapeSpy.callCount, 1, "onsapescape() method was called exactly once");
@@ -7192,7 +7196,7 @@
 		var fnCloseSpy = this.spy(oSelect, "close");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ESCAPE);
 
 		// assert
 		assert.strictEqual(fnEscapeSpy.callCount, 1, "onsapescape() method was called exactly once");
@@ -7226,10 +7230,10 @@
 		oSelect.open();
 		this.clock.tick(1000);	// wait 1s after the open animation is completed
 		var fnFireChangeSpy = this.spy(oSelect, "fireChange");
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);	// change the selection
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);	// change the selection
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ESCAPE);
 
 		// assert
 		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event is not fired as escape reverts any changes");
@@ -7265,7 +7269,7 @@
 		var fnCloseSpy = this.spy(oSelect, "close");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ENTER);
 
 		// assert
 		assert.strictEqual(fnEnterSpy.callCount, 1, "onsapenter() method was called exactly once");
@@ -7296,11 +7300,11 @@
 		oSelect.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		oSelect.focus();
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);	// change the selection
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);	// change the selection
 		var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ENTER);
 
 		// assert
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired");
@@ -7344,7 +7348,7 @@
 		var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
 
 		// assert
 		assert.strictEqual(fnKeyDownSpy.callCount, 1, "onsapdown() method was called exactly once");
@@ -7395,7 +7399,7 @@
 		var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
 
 		// assert
 		assert.strictEqual(fnKeyDownSpy.callCount, 1, "onsapdown() method was called exactly once");
@@ -7447,7 +7451,7 @@
 		var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
 
 		// assert
 		assert.strictEqual(fnKeyDownSpy.callCount, 1, "onsapdown() method was called exactly once");
@@ -7486,7 +7490,7 @@
 		this.clock.tick(1000);	// wait after the open animation is completed and the list is rendered
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 
 		// assert
 		assert.strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), oExpectedItem.getId(), 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
@@ -7544,7 +7548,7 @@
 		var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
 		oSelect.rerender();
 
 		// assert
@@ -7643,7 +7647,7 @@
 		sap.ui.getCore().applyChanges();
 		oSelect.focus();
 		var fnFireChangeSpy = this.spy(oSelect, "fireChange");
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
 		oSelect.rerender();
 		sap.ui.getCore().applyChanges();
 
@@ -7714,7 +7718,7 @@
 		var oItemDomRef = oItem.getDomRef();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN); // navigate to next selectable item
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN); // navigate to next selectable item
 
 		sap.ui.test.qunit.triggerEvent("mousedown", oItemDomRef, {
 			target: oItemDomRef
@@ -7773,7 +7777,7 @@
 		var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
 
 		// assert
 		assert.strictEqual(fnKeyUpSpy.callCount, 1, "onsapup() method was called exactly once");
@@ -7824,7 +7828,7 @@
 		var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
 
 		// assert
 		assert.strictEqual(fnKeyUpSpy.callCount, 1, "onsapup() method was called exactly once");
@@ -7878,7 +7882,7 @@
 		var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
 
 		// assert
 		assert.strictEqual(fnKeyUpSpy.callCount, 1, "onsapup() method was called exactly once");
@@ -7921,7 +7925,7 @@
 		this.clock.tick(1000);	// wait after the open animation is completed and the list is rendered
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getFocusDomRef(), KeyCodes.ARROW_UP);
 
 		// assert
 		assert.strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), oExpectedItem.getId(), 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
@@ -7979,7 +7983,7 @@
 		var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.HOME);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.HOME);
 
 		// assert
 		assert.strictEqual(fnKeyHomeSpy.callCount, 1, "onsaphome() method was called exactly once");
@@ -8043,7 +8047,7 @@
 		var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.HOME);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.HOME);
 
 		// assert
 		assert.strictEqual(fnKeyHomeSpy.callCount, 1, "onsaphome() method was called exactly once");
@@ -8107,8 +8111,8 @@
 		var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.HOME);
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.HOME);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.HOME);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.HOME);
 
 		// assert
 		assert.strictEqual(fnKeyHomeSpy.callCount, 2, "onsaphome() method was called exactly twice");
@@ -8158,7 +8162,7 @@
 		this.clock.tick(1000);	// wait after the open animation is completed
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getFocusDomRef(), jQuery.sap.KeyCodes.HOME);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getFocusDomRef(), KeyCodes.HOME);
 
 		// assert
 		assert.strictEqual(oSelect.getFocusDomRef().getAttribute("aria-activedescendant"), oExpectedItem.getId());
@@ -8212,7 +8216,7 @@
 		var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.END);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.END);
 
 		// assert
 		assert.strictEqual(fnKeyEndSpy.callCount, 1, "onsapend() method was called exactly once");
@@ -8273,8 +8277,8 @@
 		var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.END);
-		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.END);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.END);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), KeyCodes.END);
 
 		// assert
 		assert.strictEqual(fnKeyEndSpy.callCount, 2, "onsapend() method was called exactly twice");
@@ -8314,7 +8318,7 @@
 		this.clock.tick(1000);	// wait after the open animation is completed
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSelect.getFocusDomRef(), jQuery.sap.KeyCodes.END);
+		sap.ui.test.qunit.triggerKeydown(oSelect.getFocusDomRef(), KeyCodes.END);
 
 		// assert
 		assert.strictEqual(oSelect.getFocusDomRef().getAttribute("aria-activedescendant"), oExpectedItem.getId());
@@ -8987,4 +8991,15 @@
 	QUnit.test("Hidden input referencing", function (assert) {
 		assert.strictEqual(this.oSelect.getIdForLabel(), this.$oHiddenInputRef.attr("id"), "getIdForLabel() returns the hidden input ID");
 	});
-}());
+
+	QUnit.module("OverflowToolbar configuration");
+
+	QUnit.test("OverflowToolbar configuration is set correctly", function (assert) {
+		var oSelect = new sap.m.Select(),
+			oConfig = oSelect.getOverflowToolbarConfig();
+
+		assert.equal(typeof oConfig.onBeforeEnterOverflow, "function", "onBeforeEnterOverflow function is set");
+		assert.equal(typeof oConfig.onAfterExitOverflow, "function", "onAfterExitOverflow function is set");
+		assert.ok(oConfig.propsUnrelatedToSize.indexOf("selectedItemId") > -1, "selectedItemId is in the propsUnrelatedToSize array");
+	});
+});

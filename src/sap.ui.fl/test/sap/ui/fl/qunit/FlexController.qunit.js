@@ -174,7 +174,9 @@ function (
 		QUnit.test("_resolveGetChangesForView does not crash and logs an error if dependent selectors are missing", function (assert) {
 			var oAppComponent = new UIComponent();
 
-			sandbox.stub(JsControlTreeModifier, "bySelector").returns({});
+			sandbox.stub(JsControlTreeModifier, "bySelector")
+			.onCall(0).returns({})
+			.onCall(1).returns();
 			sandbox.stub(JsControlTreeModifier, "getControlType").returns("aType");
 
 			var oControl = new Control("testComponent---localeId");
@@ -193,8 +195,8 @@ function (
 			oSelector.id = "id";
 			oSelector.idIsLocal = true;
 
-			var sDependentSelectorId = "dependent-selector-id";
-			sandbox.stub(this.oChange, "getDependentControlIdList").returns([sDependentSelectorId]);
+			var sDependentSelectorSelector = {id: "dependent-selector-id", idIsLocal: true};
+			sandbox.stub(this.oChange, "getDependentControlSelectorList").returns([sDependentSelectorSelector]);
 
 			this.oChange.selector = oSelector;
 			this.oChange.getSelector = function(){return oSelector;};
@@ -1471,7 +1473,7 @@ function (
 				getId: function () {
 					return "fileNameChange0";
 				},
-				getDependentIdList: function () {
+				getDependentSelectorList: function () {
 					return ["group1-1"];
 				}
 			};

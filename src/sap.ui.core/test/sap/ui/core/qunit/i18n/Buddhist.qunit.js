@@ -33,7 +33,7 @@ sap.ui.define([
 		oBuddhistDate = new Buddhist("invalid Buddhist date timestamp");
 		assert.ok(isInvalid(oBuddhistDate), "Constructor with invalid string as timestamp must return an invalid date");
 
-		oBuddhistDate = new Buddhist(new Object());
+		oBuddhistDate = new Buddhist({});
 		assert.ok(isInvalid(oBuddhistDate), "Constructor with object as parameter must return an invalid date");
 
 		oBuddhistDate = new Buddhist(0); //1, January 1970 = 1, January 2513
@@ -67,25 +67,25 @@ sap.ui.define([
 		oBuddhistDate = new Buddhist(2513, 0, "alabala");
 		assert.ok(isInvalid(oBuddhistDate), "Constructor with invalid string as day must return invalid date");
 
-		oBuddhistDate = new Buddhist(new Object(), 0)
+		oBuddhistDate = new Buddhist({}, 0);
 		assert.ok(isInvalid(oBuddhistDate), "Constructor with object as year must return invalid date");
 
-		oBuddhistDate = new Buddhist(2513, new Object());
+		oBuddhistDate = new Buddhist(2513, {});
 		assert.ok(isInvalid(oBuddhistDate), "Constructor with object as month must return invalid date");
 
-		oBuddhistDate = new Buddhist(2513, 0, new Object());
+		oBuddhistDate = new Buddhist(2513, 0, {});
 		assert.ok(isInvalid(oBuddhistDate), "Constructor with object as day must return invalid date");
 
-		oBuddhistDate = new Buddhist(2513, 0, 1, new Object());
+		oBuddhistDate = new Buddhist(2513, 0, 1, {});
 		assert.ok(isInvalid(oBuddhistDate), "Constructor with object as hours must return invalid date");
 
-		oBuddhistDate = new Buddhist(2513, 0, 1, 0, new Object());
+		oBuddhistDate = new Buddhist(2513, 0, 1, 0, {});
 		assert.ok(isInvalid(oBuddhistDate), "Constructor with object as minutes must return invalid date");
 
-		oBuddhistDate = new Buddhist(2513, 0, 1, 0, 0, new Object());
+		oBuddhistDate = new Buddhist(2513, 0, 1, 0, 0, {});
 		assert.ok(isInvalid(oBuddhistDate), "Constructor with object as seconds must return invalid date");
 
-		oBuddhistDate = oBuddhistDate = new Buddhist(2513, 0, 1, 0, 0, 0, new Object());
+		oBuddhistDate = oBuddhistDate = new Buddhist(2513, 0, 1, 0, 0, 0, {});
 		assert.ok(isInvalid(oBuddhistDate), "Constructor with object as milliseconds must return invalid date");
 
 		// ------------- string -----------------------------
@@ -116,7 +116,7 @@ sap.ui.define([
 		aTestData.forEach(function(oTestDate) {
 			oBuddhistDate = createBuddhistDateFromTestEntry(oTestDate);
 			verifyDateWithTestDate(assert, "Constructor with valid values", oBuddhistDate, oTestDate.Buddhist);
-		})
+		});
 	});
 
 	QUnit.test("with optional parameters", function (assert) {
@@ -124,7 +124,7 @@ sap.ui.define([
 		verifyDate(assert, "new Buddhist(2513, 10) must be equal to 01.11.2513", oBuddhistDate, 2513, 10, 1);
 
 		oBuddhistDate = new Buddhist(2513, 10, 2);
-		verifyDate(assert, "new Buddhist(2513, 10, 2) msut be equal to 02.11.2513", oBuddhistDate, 2513, 10, 2)
+		verifyDate(assert, "new Buddhist(2513, 10, 2) msut be equal to 02.11.2513", oBuddhistDate, 2513, 10, 2);
 	});
 
 	QUnit.module("Overflow/underflow");
@@ -299,10 +299,6 @@ sap.ui.define([
 		} else {
 			return new clType(oDateEntry.year, oDateEntry.month, oDateEntry.day);
 		}
-	}
-
-	function getTimezoneOffset(oDate) {
-		return -1 * oDate.getTimezoneOffset() * 60 * 1000;
 	}
 
 	function isInvalid(oDate) {

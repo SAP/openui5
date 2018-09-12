@@ -1,4 +1,6 @@
+/*global QUnit */
 sap.ui.define([], function () {
+	"use strict";
 
 	QUnit.module("Tests for sap/ui/core/Configuration: DesignMode with supressed deactivation of controller code");
 

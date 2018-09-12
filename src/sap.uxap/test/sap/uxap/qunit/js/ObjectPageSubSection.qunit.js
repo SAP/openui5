@@ -1,13 +1,19 @@
-/*global QUnit,sinon*/
-
-(function ($, QUnit, sinon, testData) {
+/*global QUnit, sinon */
+sap.ui.require([
+	"sap/ui/thirdparty/jquery",
+	"sap/uxap/ObjectPageSubSection"],
+	function($, ObjectPageSubSectionClass) {
 	"use strict";
 
-	jQuery.sap.registerModulePath("view", "./view");
-	jQuery.sap.registerModulePath("sap.uxap.testblocks", "./blocks");
-	jQuery.sap.require("sap.uxap.ObjectPageSubSection");
+	sap.ui.loader.config({
+		paths: {
+		   "sap/uxap/testblocks": "./blocks",
+		   "view": "./view"
+		 }
+	  });
 
-	var ObjectPageSubSection = sap.uxap.ObjectPageSubSection.prototype,
+	var testData = window.testData,
+		ObjectPageSubSection = ObjectPageSubSectionClass.prototype,
 		sConfiguration = "BlockLayout Configuration - ",
 		aPropertyTypes = ["span", "linebreak"],
 		aScreenTypes = ["S", "M", "L", "XL"],
@@ -18,7 +24,7 @@
 				});
 			},
 			getSubSection: function () {
-				return new sap.uxap.ObjectPageSubSection();
+				return new ObjectPageSubSectionClass();
 			},
 			getLayoutProviderStub: function (bTwoColumnLayout) {
 				return {getUseTwoColumnsForLargeScreen: sinon.stub().returns(bTwoColumnLayout)};
@@ -253,11 +259,11 @@
 					new sap.uxap.ObjectPageSection({
 						title:"Personal",
 						subSections: [
-							new sap.uxap.ObjectPageSubSection({
+							new ObjectPageSubSectionClass({
 								title: "Connect",
 								blocks: new sap.m.Label({text: "Block1" })
 							}),
-							new sap.uxap.ObjectPageSubSection({
+							new ObjectPageSubSectionClass({
 								title: "Payment information",
 								blocks: new sap.m.Label({text: "Block1" })
 							})
@@ -283,11 +289,11 @@
 						new sap.uxap.ObjectPageSection({
 							title:"Personal",
 							subSections: [
-								new sap.uxap.ObjectPageSubSection({
+								new ObjectPageSubSectionClass({
 									title: "Connect",
 									blocks: new sap.m.Label({text: "Block1" })
 								}),
-								new sap.uxap.ObjectPageSubSection({
+								new ObjectPageSubSectionClass({
 									title: "Payment information",
 									blocks: new sap.m.Label({text: "Block1" })
 								})
@@ -315,11 +321,11 @@
 						new sap.uxap.ObjectPageSection({
 							title:"Personal",
 							subSections: [
-								new sap.uxap.ObjectPageSubSection({
+								new ObjectPageSubSectionClass({
 									actions: [oActionButton1],
 									blocks: new sap.m.Label({text: "Block1" })
 								}),
-								new sap.uxap.ObjectPageSubSection({
+								new ObjectPageSubSectionClass({
 									title: "Payment information",
 									actions: [oActionButton2],
 									blocks: new sap.m.Label({text: "Block1" })
@@ -358,7 +364,7 @@
 					new sap.uxap.ObjectPageSection("section1", {
 						title: "section 1",
 						subSections: [
-							new sap.uxap.ObjectPageSubSection({
+							new ObjectPageSubSectionClass({
 								title:"subsection 1",
 								blocks: [
 									new sap.m.Button({ text: 'notext' })
@@ -369,7 +375,7 @@
 					new sap.uxap.ObjectPageSection("section2", {
 						title: "section 2",
 						subSections: [
-							new sap.uxap.ObjectPageSubSection({
+							new ObjectPageSubSectionClass({
 								id: "subsection2",
 								title:"subsection 2",
 								blocks: [
@@ -432,7 +438,7 @@
                     new sap.uxap.ObjectPageSection("section1", {
                         title: "section 1",
                         subSections: [
-                            new sap.uxap.ObjectPageSubSection({
+                            new ObjectPageSubSectionClass({
                                 title:"subsection 1",
                                 blocks: [
                                     new sap.m.Button({ text: 'notext' })
@@ -479,7 +485,7 @@
 		var oSubSectionWithoutTitle = this.ObjectPageSectionView.byId("subsection6"),
 			oSubSectionWithTitle = this.ObjectPageSectionView.byId("subsection1"),
 			sSubSectionWithTitleAriaLabelledBy = oSubSectionWithTitle.$().attr("aria-labelledby"),
-			sSubSectionControlName = sap.uxap.ObjectPageSubSection._getLibraryResourceBundle().getText("SUBSECTION_CONTROL_NAME");
+			sSubSectionControlName = ObjectPageSubSectionClass._getLibraryResourceBundle().getText("SUBSECTION_CONTROL_NAME");
 
 		assert.strictEqual(oSubSectionWithoutTitle.$().attr("aria-label"), sSubSectionControlName, "Subsections without titles should have aria-label='Subsection'");
 		assert.strictEqual(oSubSectionWithTitle.getTitle(), document.getElementById(sSubSectionWithTitleAriaLabelledBy).innerText, "Subsection title is properly labelled");
@@ -489,11 +495,11 @@
 
 	QUnit.test("_initTitlePropagationSupport is called on init", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy(sap.uxap.ObjectPageSubSection.prototype, "_initTitlePropagationSupport"),
+		var oSpy = sinon.spy(ObjectPageSubSectionClass.prototype, "_initTitlePropagationSupport"),
 			oControl;
 
 		// Act
-		oControl = new sap.uxap.ObjectPageSubSection();
+		oControl = new ObjectPageSubSectionClass();
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "Method _initTitlePropagationSupport called on init of control");
@@ -506,7 +512,7 @@
 
 	QUnit.test("_getTitleDomId and _setBorrowedTitleDomId", function (assert) {
 		// Arrange
-		var oSubSection = new sap.uxap.ObjectPageSubSection("TestSubSection");
+		var oSubSection = new ObjectPageSubSectionClass("TestSubSection");
 
 		// Assert
 		assert.strictEqual(oSubSection._getTitleDomId(), false, "By default the method should return false");
@@ -533,4 +539,4 @@
 			"The previously set Borrowed Title DOM ID should be returned");
 	});
 
-}(jQuery, QUnit, sinon, window.testData));
+});

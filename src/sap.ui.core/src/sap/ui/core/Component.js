@@ -1946,7 +1946,7 @@ sap.ui.define([
 	 *     The framework will try to load these bundles asynchronously before requiring the Component, errors will be ignored.
 	 *     The named modules must only represent preload bundles. If they are normal modules, their dependencies
 	 *     will be loaded with the normal synchronous request mechanism and performance might degrade.
-	 *     Instead of specifying just the names of components, an object might be given that contains a
+	 *     Instead of specifying just the names of preload bundles, an object might be given that contains a
 	 *     mandatory <code>name</code> property and optionally, an <code>url</code> that will be used for a <code>registerModulePath</code>.
 	 * @param {Promise|Promise[]} [mOptions.asyncHints.waitFor] <code>Promise</code> or array of <code>Promise</code>s for which the Component instantiation should wait
 	 * @returns {Promise<sap.ui.core.Component>} A Promise that resolves with the newly created component instance
@@ -1954,7 +1954,7 @@ sap.ui.define([
 	 * @since 1.56.0
 	 * @static
 	 * @public
-	 * @experimental Since 1.56.0. Support for <code>asyncHints</code> is still experimental and might be modified or removed completely again.
+	 * @experimental Since 1.56.0. Support for <em>asyncHints</em> is still experimental and might be modified or removed completely again.
 	 *   It must not be used in productive code, except in code delivered by the UI5 teams.
 	 */
 	Component.create = function(mOptions) {
@@ -2026,12 +2026,12 @@ sap.ui.define([
 	 * @param {string} [vConfig.handleValidation=false] If set to <code>true</code> validation of the component is handled by the <code>MessageManager</code>
 	 * @returns {sap.ui.core.Component|Promise} the Component instance or a Promise in case of asynchronous loading
 	 *
-	 * @deprecated Since 1.56, use {@link #.get Component.get} or {@link #.create Component.create} instead.
-	 *   Note: {@link #.create Component.create} does not support synchronous loading or the deprecated options <code>manifestFirst</code> and <code>manifestUrl</code>.
+	 * @deprecated Since 1.56, use {@link sap.ui.core.Component.get Component.get} or {@link sap.ui.core.Component.create Component.create} instead.
+	 *   Note: {@link sap.ui.core.Component.create Component.create} does not support synchronous loading or the deprecated options <em>manifestFirst</em> and <em>manifestUrl</em>.
 	 * @public
 	 * @static
 	 * @since 1.15.0
-	 * @experimental Since 1.27.0. Support for <code>asyncHints</code> is still experimental and might be modified or removed completely again.
+	 * @experimental Since 1.27.0. Support for <em>asyncHints</em> is still experimental and might be modified or removed completely again.
 	 *   It must not be used in productive code, except in code delivered by the UI5 teams. The synchronous usage of the API is
 	 *   not experimental and can be used without restrictions.
 	 */
@@ -2197,7 +2197,7 @@ sap.ui.define([
 	 *     The framework will try to load these bundles asynchronously before requiring the component, errors will be ignored.
 	 *     The named modules must only represent preload bundles. If they are normal modules, their dependencies
 	 *     will be loaded with the standard module loading mechanism and performance might degrade.
-	 *     Instead of specifying just the names of components, an object might be given that contains a
+	 *     Instead of specifying just the names of preload bundles, an object might be given that contains a
 	 *     mandatory <code>name</code> property and, optionally, a <code>url</code> that will be used for a <code>registerModulePath</code>.
 	 * @param {boolean} [mOptions.asyncHints.preloadOnly=false] Whether only the preloads should be done, but not the loading of the Component controller class itself.
 	 * @returns {Promise<function>} A Promise that resolves with the loaded component class or <code>undefined</code> in case
@@ -2206,7 +2206,7 @@ sap.ui.define([
 	 * @since 1.56.0
 	 * @static
 	 * @public
-	 * @experimental Since 1.56.0. Support for <code>asyncHints</code> is still experimental and might be modified or removed completely again.
+	 * @experimental Since 1.56.0. Support for <em>asyncHints</em> is still experimental and might be modified or removed completely again.
 	 *   It must not be used in productive code, except in code delivered by the UI5 teams.
 	 */
 	Component.load = function (mOptions) {
@@ -2290,7 +2290,7 @@ sap.ui.define([
 	 * @since 1.16.3
 	 * @static
 	 * @public
-	 * @experimental Since 1.27.0. Support for <code>asyncHints</code> is still experimental and might be modified or removed completely again.
+	 * @experimental Since 1.27.0. Support for <em>asyncHints</em> is still experimental and might be modified or removed completely again.
 	 *   It must not be used in productive code, except in code delivered by the UI5 teams. The synchronous usage of the API is
 	 *   not experimental and can be used without restrictions.
 	 */

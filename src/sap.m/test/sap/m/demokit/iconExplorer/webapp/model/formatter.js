@@ -1,6 +1,6 @@
 sap.ui.define([
-	'jquery.sap.global'
-] , function ($) {
+	"sap/ui/thirdparty/jquery"
+] , function (jQuery) {
 	"use strict";
 
 	return {
@@ -12,7 +12,7 @@ sap.ui.define([
 		 * @returns {string} sValue 4rem in compact mode, 5rem on cozy mode
 		 */
 		previewPanelHeight : function (sDummy) {
-			if ($("body").hasClass("sapUiSizeCompact") || $("body").find(".sapUiSizeCompact").length) {
+			if (jQuery("body").hasClass("sapUiSizeCompact") || jQuery("body").find(".sapUiSizeCompact").length) {
 				return "6.0625rem";
 			} else {
 				return "8rem";

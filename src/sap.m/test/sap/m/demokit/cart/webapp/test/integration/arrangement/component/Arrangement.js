@@ -1,7 +1,11 @@
 sap.ui.define([
-	'sap/ui/test/Opa5',
-	"sap/ui/util/Storage"
-], function (Opa5, Storage) {
+	"sap/ui/test/Opa5",
+	"sap/ui/util/Storage",
+	"sap/base/util/UriParameters"],
+function(
+	Opa5,
+	Storage,
+	UriParameters) {
 	"use strict";
 
 	function addSaveForLater() {
@@ -35,11 +39,10 @@ sap.ui.define([
 
 		// feature toggle tests
 		iStartMyAppSafeForLaterActivated: function () {
-			if (!jQuery.sap.getUriParameters().get("safeForLater")) {
+			if (!new UriParameters(window.location.href).get("safeForLater")) {
 				addSaveForLater();
 			}
 			return this.iStartMyApp();
 		}
 	});
 });
-

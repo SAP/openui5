@@ -37,6 +37,18 @@
         "type": "FIX",
         "text": " AnchorBar: QUnit test failure is fixed",
         "references": []
+      },
+      {
+        "id": "5ebfd0d3f28a116d7d35b9e8ece8c56cbb9362e5",
+        "type": "FIX",
+        "text": " ObjectPage: QUnit test failure in ObjectPageKeyboardHandling is fixed",
+        "references": []
+      },
+      {
+        "id": "24760325e5f5d8f4ccdebdb8e2b081f3cafbe65f",
+        "type": "FIX",
+        "text": " SDK: ObjectPage with Forms examples updated",
+        "references": []
       }
     ]
   }

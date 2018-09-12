@@ -682,6 +682,64 @@
                 assert.equal(oTitleInfo.text, "New Title", "new title is returned");
             });
 
+            QUnit.test("Nested page with empty header is ignored", function(assert) {
+
+                var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
+                        oTitleInfo,
+                        oBackButton,
+                        sExpectedBackButtonId = this.oPage.getId() + "-navButton",
+                        fnViewListener = function(oEvent) {
+                            oTitleInfo = oEvent.getParameter("oTitleInfo");
+                            oBackButton = oEvent.getParameter("oBackButton");
+                        },
+                        oSpy = sinon.spy(fnViewListener);
+
+                // Arrange
+                this.oPage.setTitle("Test");
+                this.oPage.setShowNavButton(true);
+                this.oPage.addContent(new sap.m.Page());
+
+                Fiori20Adapter.attachViewChange(oSpy);
+
+                // Act
+                Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
+                sap.ui.getCore().applyChanges();
+
+                // Assert
+                assert.ok(this.oPage.hasStyleClass("sapF2CollapsedHeader"), "header is collapsed");
+                assert.equal(oTitleInfo.text, "Test", "header is collapsed");
+                assert.strictEqual(oBackButton.getId(), sExpectedBackButtonId, "back button is correct");
+            });
+
+            QUnit.test("Nested messagePage with empty header is ignored", function(assert) {
+
+                var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
+                    oTitleInfo,
+                    oBackButton,
+                    sExpectedBackButtonId = this.oPage.getId() + "-navButton",
+                    fnViewListener = function(oEvent) {
+                        oTitleInfo = oEvent.getParameter("oTitleInfo");
+                        oBackButton = oEvent.getParameter("oBackButton");
+                    },
+                    oSpy = sinon.spy(fnViewListener);
+
+                // Arrange
+                this.oPage.setTitle("Test");
+                this.oPage.setShowNavButton(true);
+                this.oPage.addContent(new sap.m.MessagePage());
+
+                Fiori20Adapter.attachViewChange(oSpy);
+
+                // Act
+                Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
+                sap.ui.getCore().applyChanges();
+
+                // Assert
+                assert.ok(this.oPage.hasStyleClass("sapF2CollapsedHeader"), "header is collapsed");
+                assert.strictEqual(oTitleInfo.text, "Test", "header is collapsed");
+                assert.strictEqual(oBackButton.getId(), sExpectedBackButtonId, "back button is correct");
+            });
+
             QUnit.module("Fiori2 post adaptation of application content");
 
             QUnit.test("Header is adapted if the root navigable control is added at a later time", function(assert) {

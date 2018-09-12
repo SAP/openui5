@@ -145,20 +145,13 @@ sap.ui.define([
 			oQuickViewCard.navigateBack();
 		},
 
-		onHideScrollClick : function() {
-			var oQuickViewCard = this.byId('quickViewCard');
-			oQuickViewCard.setShowVerticalScrollBar(false);
-		},
-
-		onShowScrollClick : function() {
-			var oQuickViewCard = this.byId('quickViewCard');
-			oQuickViewCard.setShowVerticalScrollBar(true);
-		},
-
 		onScrollSwitchChange : function(oEvent) {
 			var oQuickViewCard = this.byId('quickViewCard');
-
 			oQuickViewCard.setShowVerticalScrollBar(oEvent.getParameters().state);
+
+			// QuickViewCards gets rerendered (first page is opened) - there is no need of "Back" button
+			var oButton = this.byId('buttonBack');
+			oButton.setEnabled(false);
 		},
 
 		onHeaderSwitchChange : function(oEvent) {
@@ -173,6 +166,10 @@ sap.ui.define([
 			}
 
 			this._oModel.setData(this._mData);
+
+			// QuickViewCards gets rerendered (first page is opened) - there is no need of "Back" button
+			var oButton = this.byId('buttonBack');
+			oButton.setEnabled(false);
 		},
 
 		onNavigate : function(oEvent) {

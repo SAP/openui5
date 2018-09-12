@@ -1,8 +1,10 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/core/XMLTemplateProcessor",
+	"sap/ui/core/mvc/XMLView",
+	"sap/base/Log",
 	"jquery.sap.xml" // jQuery plugin, only used indirectly
-], function (XMLTemplateProcessor, jQuery) {
+], function (XMLTemplateProcessor, XMLView, Log, jQuery) {
 	"use strict";
 
 	var sRootView =
@@ -16,6 +18,7 @@ sap.ui.define([
 				'<content>' +
 					'<Button text="Button" id="button" dt:test="testvalue"></Button>' +
 					'<Button text="StashedButton" id="stashedButton" stashed="true"></Button>' +
+					'<Button text="Wrong Type value" id="brokenButton" type="somethingInvalid"></Button>' +
 					'<core:ExtensionPoint name="extension">' +
 						'<Button text="ExtensionButton" id="extensionButton"></Button>' +
 					'</core:ExtensionPoint>' +
@@ -33,6 +36,27 @@ sap.ui.define([
 		var mSettings = {};
 		XMLTemplateProcessor.parseViewAttributes(xmlNode, oView, mSettings);
 		assert.deepEqual(mSettings, {displayBlock: true, height: "100%"}, "displayBlock was parsed, unknown setting was ignored");
+	});
+
+	QUnit.module("parseScalarType", {
+		beforeEach: function() {
+			this.oLogSpy = sinon.spy(Log, "error");
+
+			return this.pViewLoaded = XMLView.create({
+				definition: sView
+			});
+		},
+		afterEach: function() {
+			return this.pViewLoaded.then(function (oView) {
+				this.oLogSpy.restore();
+				oView.destroy();
+			}.bind(this));
+		}
+	});
+
+	QUnit.test("Error Logging of invalid type values", function (assert) {
+		assert.ok(this.oLogSpy.calledOnce, "Log.error was only called once");
+		assert.ok(this.oLogSpy.alwaysCalledWithExactly("Value 'somethingInvalid' is not valid for type 'sap.m.ButtonType'."), "Log.error spy was called");
 	});
 
 	QUnit.module("enrichTemplateIds", {

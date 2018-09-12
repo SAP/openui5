@@ -243,7 +243,7 @@ sap.ui.define([
 			// Assert
 			assert.strictEqual(fnFirstDisplayStub.callCount, 1, "Did invoke display on the first target");
 			assert.strictEqual(fnSecondDisplayStub.callCount, 1, "Did invoke display on the second target");
-			assert.ok(jQuery.isArray(aViewInfos), "Did resolve with an array of the view infos");
+			assert.ok(Array.isArray(aViewInfos), "Did resolve with an array of the view infos");
 			assert.strictEqual(aViewInfos.length, 2, "Did resolve with two viewinfos");
 			assert.strictEqual(aViewInfos[0].name, "firstTarget", "Did resolve with first target as first");
 			assert.strictEqual(aViewInfos[1].name, "secondTarget", "Did resolve with second target as second");
@@ -278,7 +278,7 @@ sap.ui.define([
 			// Assert
 			assert.strictEqual(fnFirstDisplayStub.callCount, 1, "Did invoke display on the first target");
 			sinon.assert.calledWith(oErrorStub, sinon.match(/does not exist/), sinon.match(this.oTargets));
-			assert.ok(jQuery.isArray(aViewInfos), "Did resolve with an array of the view infos");
+			assert.ok(Array.isArray(aViewInfos), "Did resolve with an array of the view infos");
 			assert.strictEqual(aViewInfos.length, 2, "Did resolve with two viewinfos");
 			assert.strictEqual(aViewInfos[1].name, "firstTarget", "Did resolve with first target");
 			assert.strictEqual(aViewInfos[0].error, "The target with the name \"foo\" does not exist!", "Did resolve with the error message of the erroneous target");
@@ -342,13 +342,13 @@ sap.ui.define([
 	QUnit.test("should be able to fire/attach/detach the display event", function(assert) {
 		// Arrange
 		var oParameters = { foo : "bar" },
+			oListener = {},
+			oData = { some : "data" },
 			fnEventSpy = this.spy(function(oEvent, oActualData) {
 				assert.strictEqual(oActualData, oData, "the data is correct");
 				assert.strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
 				assert.strictEqual(this, oListener, "the this pointer is correct");
 			}),
-			oListener = {},
-			oData = { some : "data" },
 			oFireReturnValue,
 			oDetachReturnValue,
 			oAttachReturnValue = this.oTargets.attachDisplay(oData, fnEventSpy, oListener);
@@ -372,10 +372,9 @@ sap.ui.define([
 			fnEventSpy = this.spy(function (oEvent) {
 				oParameters = oEvent.getParameters();
 			}),
-			oData = {some : "data"},
-			aViewInfo;
+			oData = {some : "data"};
 
-		var oStub = this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView", function () {
 			return that.oView;
 		});
 
@@ -419,7 +418,7 @@ sap.ui.define([
 				assert.strictEqual(oParameters.data, oData, "data was passed");
 			});
 
-		var oStub = this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView", function () {
 			return that.oView;
 		});
 
@@ -434,7 +433,7 @@ sap.ui.define([
 			assert.strictEqual(aTargetNames.shift(), "myTarget", "the parent got fired first");
 			assert.strictEqual(aTargetNames.shift(), "myChild", "the child got fired after the parent");
 			assert.strictEqual(aTargetNames.shift(), "mySecondTarget", "the second target got fired last");
-		}.bind(this));
+		});
 	});
 
 	QUnit.module("titleChanged event", {
@@ -494,13 +493,13 @@ sap.ui.define([
 	QUnit.test("fire/attach/detach", function(assert) {
 		// Arrange
 		var oParameters = { foo : "bar" },
+			oListener = {},
+			oData = { some : "data" },
 			fnEventSpy = this.spy(function(oEvent, oActualData) {
 				assert.strictEqual(oActualData, oData, "the data is correct");
 				assert.strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
 				assert.strictEqual(this, oListener, "the this pointer is correct");
 			}),
-			oListener = {},
-			oData = { some : "data" },
 			oFireReturnValue,
 			oDetachReturnValue,
 			oAttachReturnValue = this.oTargets.attachTitleChanged(oData, fnEventSpy, oListener);
@@ -526,7 +525,7 @@ sap.ui.define([
 			}),
 			oData = {some : "data"};
 
-		var oStub = this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView", function () {
 			return that.oView;
 		});
 
@@ -545,8 +544,7 @@ sap.ui.define([
 
 	QUnit.test("multiple targets - default title", function (assert) {
 		// Arrange
-		var aTargetNames = [],
-			that = this,
+		var that = this,
 			oParameters = null,
 			oData = {some : "data"},
 			fnEventSpy = this.spy(function (oEvent) {
@@ -555,7 +553,7 @@ sap.ui.define([
 				assert.strictEqual(oParameters.title, "myTitle", "title got passed to the event");
 			});
 
-		var oStub = this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView", function () {
 			return that.oView;
 		});
 
@@ -572,8 +570,7 @@ sap.ui.define([
 
 	QUnit.test("multiple targets - provided TitleTarget", function (assert) {
 		// Arrange
-		var aTargetNames = [],
-			that = this,
+		var that = this,
 			oParameters = null,
 			oData = {some : "data"},
 			fnEventSpy = this.spy(function (oEvent) {
@@ -582,7 +579,7 @@ sap.ui.define([
 				assert.strictEqual(oParameters.title, "mySecondTitle", "title got passed to the event");
 			});
 
-		var oStub = this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView", function () {
 			return that.oView;
 		});
 
@@ -599,13 +596,11 @@ sap.ui.define([
 
 	QUnit.test("multiple targets - provided TitleTarget pointing to target without title", function (assert) {
 		// Arrange
-		var aTargetNames = [],
-			that = this,
-			oParameters = null,
+		var that = this,
 			oData = {some : "data"},
 			fnEventSpy = this.spy();
 
-		var oStub = this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView", function () {
 			return that.oView;
 		});
 
@@ -622,13 +617,11 @@ sap.ui.define([
 
 	QUnit.test("provided invalid TitleTarget", function (assert) {
 		// Arrange
-		var aTargetNames = [],
-			that = this,
-			oParameters = null,
+		var that = this,
 			oData = {some : "data"},
 			fnEventSpy = this.spy();
 
-		var oStub = this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView", function () {
 			return that.oView;
 		});
 		var oLogSpy = this.spy(Log, "error");
@@ -651,8 +644,7 @@ sap.ui.define([
 
 	QUnit.test("single target with parent", function (assert) {
 		// Arrange
-		var aTargetNames = [],
-			that = this,
+		var that = this,
 			oParameters = null,
 			oData = {some : "data"},
 			fnEventSpy = this.spy(function (oEvent) {
@@ -661,7 +653,7 @@ sap.ui.define([
 				assert.strictEqual(oParameters.title, "myTitle", "title from parent target is taken");
 			});
 
-		var oStub = this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView", function () {
 			return that.oView;
 		});
 
@@ -678,8 +670,7 @@ sap.ui.define([
 
 	QUnit.test("single target with multiple ancestors", function (assert) {
 		// Arrange
-		var aTargetNames = [],
-			that = this,
+		var that = this,
 			oParameters = null,
 			oData = {some : "data"},
 			fnEventSpy = this.spy(function (oEvent) {
@@ -688,7 +679,7 @@ sap.ui.define([
 				assert.strictEqual(oParameters.title, "myTitle", "title from parent target is taken");
 			});
 
-		var oStub = this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView", function () {
 			return that.oView;
 		});
 
@@ -718,7 +709,7 @@ sap.ui.define([
 				assert.strictEqual(oParameters.data, oData, "data was passed");
 			});
 
-		var oStub = this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView", function () {
 			return that.oView;
 		});
 

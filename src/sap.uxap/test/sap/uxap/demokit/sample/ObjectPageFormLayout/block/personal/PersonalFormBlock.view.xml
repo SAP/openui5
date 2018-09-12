@@ -1,6 +1,5 @@
 <mvc:View
 		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:layout="sap.ui.layout"
 		xmlns:forms="sap.ui.layout.form"
 		xmlns="sap.m">
 
@@ -30,22 +29,13 @@
 				<forms:formElements>
 					<forms:FormElement label="LinkedIn">
 						<forms:fields>
-							<layout:HorizontalLayout>
-								<Image
-										src="./test-resources/sap/uxap/images/linkedin.png"
-										width="21px"/>
-								<Text text="/DeniseSmith"/>
-							</layout:HorizontalLayout>
+							<Text text="/DeniseSmith"/>
 						</forms:fields>
 					</forms:FormElement>
 
 					<forms:FormElement label="Twitter">
 						<forms:fields>
-							<layout:HorizontalLayout>
-								<Image src="./test-resources/sap/uxap/images/Twitter.png"
-									   width="21px"/>
-								<Text text="@DeniseSmith"/>
-							</layout:HorizontalLayout>
+							<Text text="@DeniseSmith"/>
 						</forms:fields>
 					</forms:FormElement>
 
@@ -53,26 +43,18 @@
 			</forms:FormContainer>
 
 
-			<forms:FormContainer id="addressInfo" title="Adresses">
+			<forms:FormContainer id="addressInfo" title="Addresses">
 				<forms:formElements>
 
 					<forms:FormElement label="Home Address">
 						<forms:fields>
-							<layout:VerticalLayout>
-								<Text text="2096 Misssion Street"/>
-								<Text text="San Franscisco, CA 94001"/>
-								<Text text="United States"/>
-							</layout:VerticalLayout>
+							<Text text="2096 Mission Street"/>
 						</forms:fields>
 					</forms:FormElement>
 
 					<forms:FormElement label="Mailing Address">
 						<forms:fields>
-							<layout:VerticalLayout>
-								<Text text="PO Box 32114"/>
-								<Text text="San Franscisco, CA 94001"/>
-								<Text text="United States"/>
-							</layout:VerticalLayout>
+							<Text text="PO Box 32114"/>
 						</forms:fields>
 					</forms:FormElement>
 

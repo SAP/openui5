@@ -18,10 +18,6 @@ sap.ui.define([
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0*/
 	"use strict";
 
-	//TODO remove this workaround in IE9 for
-	// https://github.com/cjohansen/Sinon.JS/commit/e8de34b5ec92b622ef76267a6dce12674fee6a73
-	sinon.xhr.supportsCORS = true;
-
 	var AnnotationHelper = sap.ui.model.odata.AnnotationHelper, // Note: lazy require in place!
 		oCIRCULAR = {},
 		oBoolean = {

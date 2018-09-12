@@ -73,6 +73,96 @@
         "type": "FIX",
         "text": " performance/trace/Interaction: accept valid setRequestHeader parameters",
         "references": []
+      },
+      {
+        "id": "bb1435f7c941d941c5dea0346c1df3be2217b658",
+        "type": "FEATURE",
+        "text": " Core: Added rule for sync factory loading",
+        "references": []
+      },
+      {
+        "id": "1a7ff4f5659e4b22a0de6135e61aeeae7972d6c5",
+        "type": "FIX",
+        "text": " Aggregation Forwarding: also clone forwarded children",
+        "references": []
+      },
+      {
+        "id": "99a95b6d471239ab0d27438aa341c96c54c127da",
+        "type": "FIX",
+        "text": " Core: Fixed message of sync factory loading rule",
+        "references": []
+      },
+      {
+        "id": "47f5d8dcacf7b5032730bbfa0e8128e34dfd2faf",
+        "type": "FIX",
+        "text": " Manifest: always process entries with placeholders",
+        "references": []
+      },
+      {
+        "id": "3446e2f211f3c004fdeac075ec2f336d46024f08",
+        "type": "FIX",
+        "text": " XMLView: fix re-rendering of directly nested XMLViews",
+        "references": []
+      },
+      {
+        "id": "cd553e45a0c0e08fd2a5a8d346ec399cca8c794e",
+        "type": "FIX",
+        "text": " format/DateFormat: Multiple instances shouldn\u0027t share fallback formats",
+        "references": []
+      },
+      {
+        "id": "11f40f9899aa237ad3b6af43acdfd1238ce91223",
+        "type": "FIX",
+        "text": " model/ODataUtils: Fix brackets for MultiFilter objects",
+        "references": []
+      },
+      {
+        "id": "ddeb321f0e1746a92c9076c26ad6bf76578ea1fe",
+        "type": "FEATURE",
+        "text": " Message.js: array of control IDs",
+        "references": []
+      },
+      {
+        "id": "f07a5592fce0f599378f1e5ba24408e490569a0c",
+        "type": "FEATURE",
+        "text": " sap.ui.support: Use presets to filter rules",
+        "references": []
+      },
+      {
+        "id": "6b443e715f574f7e031c3fae9eba31b1a31b9bf0",
+        "type": "FIX",
+        "text": " Fragment: remove new property names before calling legacy API",
+        "references": []
+      },
+      {
+        "id": "e38a64583f5f311cc10aac7bb27cfda105bc8da4",
+        "type": "FIX",
+        "text": " Opa: do not track guarding timeouts",
+        "references": []
+      },
+      {
+        "id": "3bf796275009fc66ec629fa1de2383b487574d7f",
+        "type": "FIX",
+        "text": " Rules Tests: Set fixed Log Level",
+        "references": []
+      },
+      {
+        "id": "d0c37add7a484fc06f20254988e4bbfc5264d56f",
+        "type": "FIX",
+        "text": " search/SearchProvider: make class abstract",
+        "references": []
+      },
+      {
+        "id": "82b06705af364a958e7bebed76dee1c44e28197b",
+        "type": "FIX",
+        "text": " types/NumberFormat: Currency with RTL locale format/parse",
+        "references": []
+      },
+      {
+        "id": "34ddcd973d878c753c564dc16e708daf6aedaff1",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: 0 count in result now correctly processed",
+        "references": []
       }
     ]
   }

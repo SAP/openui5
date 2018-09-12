@@ -13,6 +13,30 @@
         "type": "FIX",
         "text": "sap.ui.fl - MoveControls change handler RevertData with id",
         "references": []
+      },
+      {
+        "id": "f07a5592fce0f599378f1e5ba24408e490569a0c",
+        "type": "FEATURE",
+        "text": " sap.ui.support: Use presets to filter rules",
+        "references": []
+      },
+      {
+        "id": "548316b5e05e1879999ae1a94c513dcbf987e94a",
+        "type": "FIX",
+        "text": " default variants have a correct namespace \u0026 version info",
+        "references": []
+      },
+      {
+        "id": "6429d24c809384062de470ed4fae18a2af8dc19c",
+        "type": "FIX",
+        "text": " sap.ui.fl : Caching of flex/settings request",
+        "references": []
+      },
+      {
+        "id": "18247f421f42dfb378db253fcada27c35077294b",
+        "type": "FIX",
+        "text": " sap.ui.fl.FakePromise - FakePromise in FakePromise handling added",
+        "references": []
       }
     ]
   }

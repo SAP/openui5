@@ -1,11 +1,14 @@
-/*global QUnit*/
-/*global sinon*/
-
-(function ($, QUnit, sinon) {
+/*global QUnit, sinon*/
+sap.ui.require(["sap/ui/thirdparty/jquery"],
+	function (jQuery) {
 	"use strict";
 
-	jQuery.sap.registerModulePath("sap.uxap.testblocks", "./blocks");
-	jQuery.sap.registerModulePath("view", "view");
+	sap.ui.loader.config({
+		paths: {
+		   "sap/uxap/testblocks": "./blocks",
+		   "view": "./view"
+		 }
+	  });
 
 	var lib = sap.ui.require("sap/uxap/library");
 
@@ -2443,4 +2446,4 @@
 		return oObject.length !== 0;
 	}
 
-}(jQuery, QUnit, sinon));
+});

@@ -1,9 +1,9 @@
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon",
-	"sap/base/Log"
-], function (jQuery, JSONModel, sinon, Log) {
+	"sap/base/Log",
+	"sap/base/util/UriParameters"
+], function (JSONModel, sinon, Log, UriParameters) {
 	"use strict";
 
 	var iAutoRespondAfterDefault = 10;
@@ -14,7 +14,7 @@ sap.ui.define([
 		 * @public
 		 */
 		init: function () {
-			var oUriParameters = jQuery.sap.getUriParameters();
+			var oUriParameters = new UriParameters(window.location.href);
 			this._oMockModels = {
 
 			};

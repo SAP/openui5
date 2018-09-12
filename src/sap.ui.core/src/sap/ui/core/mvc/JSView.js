@@ -132,8 +132,8 @@ sap.ui.define([
 	 *   (only relevant for instantiation, ignored for everything else)
 	 * @public
 	 * @static
-	 * @deprecated Since 1.56, use {@link #.create JSView.create} to create view instances;
-	 *   for defining JavaScript views, there's no substitute yet and <code>sap.ui.jsview</code> still has to be used
+	 * @deprecated Since 1.56, use {@link sap.ui.core.mvc.JSView.create JSView.create} to create view instances;
+	 *   for defining JavaScript views, there's no substitute yet and <em>sap.ui.jsview</em> still has to be used
 	 * @return {sap.ui.core.mvc.JSView | undefined} the created JSView instance in the creation case, otherwise undefined
 	 */
 	sap.ui.jsview = function(sId, vView, bAsync) {

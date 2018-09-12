@@ -248,7 +248,6 @@ sap.ui.define([
 		// Arrange
 		var oHistory = History.getInstance(),
 			oFirstHashCHanger = HashChanger.getInstance(),
-			fnHashChanged = this.spy(),
 			oHistoryChangeStub = this.stub(oHistory, "_hashChange");
 
 		// Check if the history gut the current hashchanger
@@ -276,6 +275,16 @@ sap.ui.define([
 		var done = assert.async();
 		//Arrange
 		var aCalls = [],
+			fnAssert = function (oEvt) {
+				var sNewHash = oEvt.getParameter("newHash");
+
+				assert.strictEqual(sNewHash, "firstChange", "The hash got set to the firstChange and did not get ommited by hasher");
+				assert.strictEqual(aCalls.length, 3, "initial , first second where executed");
+
+				//Cleanup
+				oHashChanger.destroy();
+				done();
+			},
 			fnHashChanged = function (oEvt) {
 				var sNewHash = oEvt.getParameter("newHash");
 				aCalls.push({ sNewHash: sNewHash });
@@ -293,17 +302,6 @@ sap.ui.define([
 					window.history.back();
 					oHashChanger.attachEvent("hashChanged", fnAssert);
 				}
-
-			},
-			fnAssert = function (oEvt) {
-				var sNewHash = oEvt.getParameter("newHash");
-
-				assert.strictEqual(sNewHash, "firstChange", "The hash got set to the firstChange and did not get ommited by hasher");
-				assert.strictEqual(aCalls.length, 3, "initial , first second where executed");
-
-				//Cleanup
-				oHashChanger.destroy();
-				done();
 			};
 
 		//System under Test

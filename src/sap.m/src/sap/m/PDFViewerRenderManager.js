@@ -220,7 +220,8 @@ sap.ui.define([
 
 				this._objectsRegister[sDownloadButtonFactoryFunctionName] = function () {
 					var oButton = new Button(sButtonId, {
-						text: that._getLibraryResourceBundle().getText("PDF_VIEWER_DOWNLOAD_TEXT")
+						text: that._getLibraryResourceBundle().getText("PDF_VIEWER_DOWNLOAD_TEXT"),
+						type: ButtonType.Emphasized
 					});
 					oButton.attachPress(that.downloadPDF.bind(that));
 					oButton.setEnabled(that._bRenderPdfContent);

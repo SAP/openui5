@@ -1,4 +1,6 @@
+/*global QUnit */
 sap.ui.define(["sap/ui/core/util/MockServer"], function (MockServer) {
+	"use strict";
 
 	QUnit.module("sap/ui/core/util/MockServer: given APF model and data in MockServer", {
 		beforeEach: function () {

@@ -1199,7 +1199,7 @@ sap.ui.define([
 	 * @namespace
 	 * @public
 	 * @static
-	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Measurement} or {@link module:sap/ui/performance/Interaction} instead
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Measurement} or {@link module:sap/ui/performance/trace/Interaction} instead
 	 */
 	jQuery.sap.measure = Measurement;
 
@@ -1417,7 +1417,7 @@ sap.ui.define([
 	 * @function
 	 * @public
 	 * @since 1.34.0
-	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Interaction.clear} instead
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/trace/Interaction.clear} instead
 	 */
 	jQuery.sap.measure.clearInteractionMeasurements = Interaction.clear;
 
@@ -1429,7 +1429,7 @@ sap.ui.define([
 	 * @param {object} oSrcElement the control on which the interaction was triggered
 	 * @public
 	 * @since 1.34.0
-	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Interaction.start} instead
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/trace/Interaction.start} instead
 	 */
 	jQuery.sap.measure.startInteraction = Interaction.start;
 
@@ -1440,7 +1440,7 @@ sap.ui.define([
 	 * @param {boolean} bForce forces end of interaction now and ignores further re-renderings
 	 * @public
 	 * @since 1.34.0
-	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Interaction.end} instead
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/trace/Interaction.end} instead
 	 */
 	jQuery.sap.measure.endInteraction = Interaction.end;
 
@@ -1450,7 +1450,7 @@ sap.ui.define([
 	 * @return {object} interaction measurement
 	 * @private
 	 * @since 1.34.0
-	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Interaction.getPending} instead
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/trace/Interaction.getPending} instead
 	 */
 	jQuery.sap.measure.getPendingInteractionMeasurement = Interaction.getPending;
 
@@ -1467,7 +1467,7 @@ sap.ui.define([
 	 * @return {object[]} all interaction measurements passing the filter function successfully
 	 * @public
 	 * @since 1.36.2
-	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Interaction.filter} instead
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/trace/Interaction.filter} instead
 	 */
 	jQuery.sap.measure.filterInteractionMeasurements = Interaction.filter;
 
@@ -1478,7 +1478,7 @@ sap.ui.define([
 	 * @return {object[]} all interaction measurements
 	 * @public
 	 * @since 1.34.0
-	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Interaction.getAll} instead
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/trace/Interaction.getAll} instead
 	 */
 	jQuery.sap.measure.getAllInteractionMeasurements = Interaction.getAll;
 

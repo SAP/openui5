@@ -52,6 +52,11 @@ function(
 		if (oType) {
 			if (oType instanceof DataType) {
 				vValue = oType.parseValue(sValue, {context: oController});
+
+				// if the parsed value is not valid, we don't fail but only log an error
+				if (!oType.isValid(vValue)) {
+					Log.error("Value '" + sValue + "' is not valid for type '" + oType.getName() + "'.");
+				}
 			}
 			// else keep original sValue (e.g. for enums)
 		} else {

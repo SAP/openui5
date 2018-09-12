@@ -60,7 +60,7 @@ sap.ui.define([
 		// Arrange
 		var oButton = new Button();
 
-		var oStub = this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView", function () {
 			return oButton;
 		});
 
@@ -120,7 +120,7 @@ sap.ui.define([
 		this.oTarget._oOptions.clearControlAggregation = true;
 		this.oShell.addContent(oExistingButton);
 
-		var oStub = this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView", function () {
 			return oButton;
 		});
 
@@ -305,13 +305,13 @@ sap.ui.define([
 	QUnit.test("should be able to fire/attach/detach the display event", function(assert) {
 		// Arrange
 		var oParameters = { foo : "bar" },
+			oListener = {},
+			oData = { some : "data" },
 			fnEventSpy = this.spy(function(oEvent, oActualData) {
 				assert.strictEqual(oActualData, oData, "the data is correct");
 				assert.strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
 				assert.strictEqual(this, oListener, "the this pointer is correct");
 			}),
-			oListener = {},
-			oData = { some : "data" },
 			oFireReturnValue,
 			oDetachReturnValue,
 			oAttachReturnValue = this.oTarget.attachDisplay(oData, fnEventSpy, oListener);
@@ -337,7 +337,7 @@ sap.ui.define([
 				oParameters = oEvent.getParameters();
 			});
 
-		var oStub = this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView", function () {
 			return that.oView;
 		});
 

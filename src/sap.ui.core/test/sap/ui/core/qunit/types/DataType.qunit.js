@@ -7,6 +7,7 @@ sap.ui.define([
 	'sap/base/Log',
 	'jquery.sap.strings'
 ], function (jQuery, DataType, BaseObject, Popup, Log) {
+	"use strict";
 
 	function random(values) {
 		if (Array.isArray(values)) {
@@ -29,7 +30,7 @@ sap.ui.define([
 		return String(value);
 	}
 
-	/**
+	/*
 	 * To facilitate actual/expected comparison even for bound functions,
 	 * the following helper makes fn.bind(...) a noop.
 	 */
@@ -106,7 +107,7 @@ sap.ui.define([
 			]
 		},
 		"object": {
-			valid: [{}, [], function () { }, String, document, null, new Object()],
+			valid: [{}, [], function () { }, String, document, null, {}],
 			invalid: [undefined, "abc", 123],
 			parseValue: [
 				{ input: '{"x":2, "y":{"a":1,"b":2}}', value: { x: 2, y: { a: 1, b: 2 } } },
@@ -191,7 +192,7 @@ sap.ui.define([
 						if (data.value === ERROR) {
 							assert.ok(false, "parsing '" + data.input + "' should have failed");
 						} else if (data.value === NAN) {
-							assert.ok(result !== result, "parsing '" + data.input + "' should result in a NaN value");
+							assert.ok(result !== result, "parsing '" + data.input + "' should result in a NaN value"); //eslint-disable-line no-self-compare
 						} else if (data.compareMode === 'strict') {
 							assert.strictEqual(result, data.value, "parsing '" + data.input + "' should deliver the expected result");
 						} else {
@@ -230,6 +231,8 @@ sap.ui.define([
 		assert['throws'](function () {
 			DataType.createType('array', {});
 		}, Error, "hidden type 'array' can't be re-defined");
+
+		window.array = orig;
 	});
 
 	Object.keys(PRIMITIVE_TYPES).forEach(function (type) {
@@ -256,7 +259,7 @@ sap.ui.define([
 			assert.strictEqual(arrayTypeObject.isValid([]), true, "empty array should be valid");
 
 			if (valid) {
-				var array;
+				var array, i;
 
 				// singleton array
 				array = [random(valid)];
@@ -264,7 +267,7 @@ sap.ui.define([
 
 				// 5 valid components
 				array = [];
-				for (var i = 0; i < 5; i++) {
+				for (i = 0; i < 5; i++) {
 					array[i] = random(valid);
 				}
 				assert.strictEqual(arrayTypeObject.isValid(array), true, "array with only valid components should be valid");
@@ -276,7 +279,7 @@ sap.ui.define([
 
 					// 4 valid, 1 invalid
 					array = [];
-					for (var i = 0; i < 5; i++) {
+					for (i = 0; i < 5; i++) {
 						array[i] = random(valid);
 					}
 					array[random(5)] = random(invalid);
@@ -381,9 +384,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("logical AND of validity checks", function (assert) {
-		var oWarningSpy = this.spy(Log, "warning");
-		var oErrorSpy = this.spy(Log, "error");
-		Log.setLevel(Log.Level.DEBUG);
 
 		var oType = DataType.createType("myStrangeBoolean", {
 			isValid: function (oValue) {
@@ -400,9 +400,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("multiple levels of derivation", function (assert) {
-		var oWarningSpy = this.spy(Log, "warning");
-		var oErrorSpy = this.spy(Log, "error");
-		Log.setLevel(Log.Level.DEBUG);
 
 		var oHelloPrefixType = DataType.createType("myHelloPrefixType", {
 			isValid: function (oValue) {
@@ -410,7 +407,7 @@ sap.ui.define([
 			}
 		}, DataType.getType("string"));
 
-		var oWorldSuffixType = DataType.createType("myWorldSuffixType", {
+		/* var oWorldSuffixType = */ DataType.createType("myWorldSuffixType", {
 			isValid: function (oValue) {
 				return /world$/.test(oValue);
 			}
@@ -671,7 +668,7 @@ sap.ui.define([
 	QUnit.test("enum sap.ui.core.TextAlign", function (assert) {
 		var oEnum = jQuery.sap.getObject("sap.ui.core.TextAlign");
 		// precondition
-		assert.ok(oEnum && jQuery.isPlainObject(oEnum), "[precondition] enum object should exist as global property")
+		assert.ok(oEnum && jQuery.isPlainObject(oEnum), "[precondition] enum object should exist as global property");
 
 		var type = DataType.getType("sap.ui.core.TextAlign");
 		assert.ok(!!type, "type 'sap.ui.core.TextAlign' exists");
@@ -694,7 +691,7 @@ sap.ui.define([
 	QUnit.test("enum sap.ui.core.Popup.Dock", function (assert) {
 		var oEnum = jQuery.sap.getObject("sap.ui.core.Popup.Dock");
 		// precondition
-		assert.ok(oEnum && jQuery.isPlainObject(oEnum), "[precondition] enum object should exist as global property")
+		assert.ok(oEnum && jQuery.isPlainObject(oEnum), "[precondition] enum object should exist as global property");
 
 		var type = DataType.getType("sap.ui.core.Popup.Dock");
 		assert.ok(!!type, "type 'sap.ui.core.Popup.Dock' exists");

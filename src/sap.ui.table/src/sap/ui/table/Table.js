@@ -334,8 +334,7 @@ sap.ui.define([
 			/**
 			 * Extension section of the Table.
 			 * If not set, no extension area will be rendered.
-			 * Note: In case a <code>sap.m.Toolbar</code> is used as header the CSS class sapMTBHeader-CTX should be applied on this toolbar via
-			 * <code>addStyleClass</code>.
+			 * Note: In case a <code>sap.m.Toolbar</code> is used as header the CSS class sapMTBHeader-CTX should be applied on this toolbar.
 			 */
 			extension : {type : "sap.ui.core.Control", multiple : true, singularName : "extension"},
 
@@ -2015,7 +2014,7 @@ sap.ui.define([
 
 		var iVisibleRowCount = this.getVisibleRowCount();
 		if (iFixedBottomRowCount > 0 && (iVisibleRowCount - iFixedBottomRowCount) < iBindingLength) {
-			aContexts = this._getContexts(iBindingLength - iFixedBottomRowCount, iFixedBottomRowCount, 1);
+			aContexts = this._getContexts(iBindingLength - iFixedBottomRowCount, iFixedBottomRowCount);
 		}
 
 		return aContexts;

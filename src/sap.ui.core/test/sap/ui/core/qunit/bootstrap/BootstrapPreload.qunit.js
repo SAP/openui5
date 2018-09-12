@@ -66,12 +66,14 @@ sap.ui.define([
 
 		// we must exclude the primitive types - no module for them
 		var aBuiltInTypes = "any boolean float int object string void".split(" ");
-		jQuery.each(oLib.types, function(idx,sType) {
-			if ( aBuiltInTypes.indexOf(sType) < 0 ) {
-				var oClass = jQuery.sap.getObject(sType);
-				assert.ok(typeof oClass === "object", "type " + sType + " must be an object");
-			}
-		});
+		if ( Array.isArray(oLib.types) ) {
+			oLib.types.forEach(function(sType) {
+				if ( aBuiltInTypes.indexOf(sType) < 0 ) {
+					var oClass = jQuery.sap.getObject(sType);
+					assert.ok(typeof oClass === "object", "type " + sType + " must be an object");
+				}
+			});
+		}
 
 		// check existence and lazy loader status
 		var sMessage = bExpectLazyStubs ? "class must be a lazy loader only" : "class must not be a lazy loader";

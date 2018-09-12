@@ -1,0 +1,222 @@
+/*!
+ * ${copyright}
+ */
+
+// Provides default renderer for control sap.f.Card
+sap.ui.define(["sap/f/library", "sap/base/security/encodeXML", "sap/ui/core/IconPool"],
+    function (library, encodeXML, IconPool) {
+        "use strict";
+        var oStyleHelper = document.createElement("span");
+        var mSizes = {
+            "1x1": {
+                icon: true
+            },
+            "2x1": {
+                icon: false,
+                title: true,
+                subtitle: true
+            },
+            "4x1": {
+                icon: true,
+                title: true,
+                subtitle: true,
+                status: true
+            },
+            "2x2": {
+                icon: true,
+                title: true,
+                subtitle: true,
+                status: false
+            },
+            "*x*": {
+                icon: true,
+                title: true,
+                subtitle: true,
+                status: true,
+                content: true
+            }
+        };
+        /**
+         * <code>Card</code> renderer.
+         * @author SAP SE
+         * @namespace
+         */
+        var CardRenderer = {};
+
+        /**
+         * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+         *
+         * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
+         * @param {sap.ui.core.Control} oCard an object representation of the control that should be rendered
+         */
+        CardRenderer.render = function (oRm, oCard) {
+            //start
+            var mSizeSettings = CardRenderer.getSizeSettings(oCard),
+                vRaster = oCard.getRaster(),
+                iHorizontalSize = oCard.getHorizontalSize(),
+                iVerticalSize = oCard.getVerticalSize(),
+                sStyles = oCard.getStyle();
+
+            oRm.write("<section");
+            oRm.writeElementData(oCard);
+            oRm.writeAttributeEscaped("aria-label", oCard.getTitle() + "-" + oCard.getSubtitle());
+            oRm.writeAttribute("tabindex", "0");
+            oRm.addClass("sapFCard");
+            oRm.addClass("sapFCard" + iHorizontalSize + "x" + iVerticalSize);
+            if (oCard.getBusy()) {
+                oRm.addClass("sapFCardLoading");
+            }
+            if (!mSizeSettings.content) {
+                oRm.addClass("sapFCardNoContent");
+            }
+            oRm.writeClasses();
+
+            if (vRaster === "CSSGrid") {
+                oRm.addStyle("grid-column", "span " + iHorizontalSize);
+                oRm.addStyle("grid-row", "span " + iVerticalSize);
+            } else {
+                oRm.addStyle("min-width", "calc(" + iHorizontalSize + " * " + vRaster.minWidth + ")");
+                oRm.addStyle("min-height", "calc(" + iVerticalSize + " * " + vRaster.minHeight + ")");
+                oRm.addStyle("max-width", "calc(" + iHorizontalSize + " * " + vRaster.maxWidth + ")");
+                oRm.addStyle("max-height", "calc(" + iVerticalSize + " * " + vRaster.maxHeight + ")");
+            }
+            if (sStyles) {
+                oStyleHelper.style.cssText = sStyles;
+                oRm.addStyle("background-color", oStyleHelper.style.backgroundColor);
+                oRm.addStyle("color", oStyleHelper.style.color);
+                oRm.addStyle("border-color", oStyleHelper.style.color + " !important");
+                oRm.addStyle("background-image", oStyleHelper.style.backgroundImage.replace(/"/g, "'"));
+                oRm.addStyle("background-size", oStyleHelper.style.backgroundSize);
+            }
+            oRm.writeStyles();
+            oRm.write(">");
+
+            //header
+            CardRenderer.renderHeaderSection(oRm, oCard, mSizeSettings);
+
+            //content
+            if (mSizeSettings.content) {
+                oRm.write("<div class=\"sapFCardSeparator\" />");
+                CardRenderer.renderContentSection(oRm, oCard);
+            }
+
+            //end
+            oRm.write("</section>");
+
+        };
+
+        /*
+         * renders the header of the card
+         */
+        CardRenderer.renderHeaderSection = function (oRm, oCard, mSizeSettings) {
+            oRm.write("<header");
+            oRm.addClass("sapFCardHeader");
+            oRm.writeClasses();
+            oRm.writeStyles();
+            oRm.write(">");
+            if (mSizeSettings.icon) {
+                CardRenderer.renderHeaderIcon(oRm, oCard);
+            }
+
+
+            if (mSizeSettings.title) {
+                oRm.write("<div>");
+                var sTitle = oCard.getTitle();
+                oRm.write("<h1");
+                oRm.addClass("sapFCardTitle");
+                oRm.writeClasses();
+                oRm.write(">");
+                oRm.writeEscaped(sTitle);
+                oRm.write("</h1>");
+                if (mSizeSettings.subtitle) {
+                    var sSubtitle = oCard.getSubtitle();
+                    oRm.write("<h2");
+                    oRm.addClass("sapFCardSubtitle");
+                    oRm.writeClasses();
+                    oRm.write(">");
+                    oRm.writeEscaped(sSubtitle);
+                    oRm.write("</h2>");
+                }
+                oRm.write("</div>");
+            }
+
+            if (mSizeSettings.status && oCard.getStatus()) {
+                var sStatus = oCard.getStatus();
+                if (sStatus) {
+                    oRm.write("<span");
+                    oRm.addClass("sapFCardStatus");
+                    oRm.writeClasses();
+                    oRm.write(">");
+                    oRm.writeEscaped(sStatus);
+                    oRm.write("</span>");
+                }
+            }
+            oRm.write("</header>");
+        };
+
+        /*
+         * renders the icon of the card
+         */
+        CardRenderer.renderHeaderIcon = function (oRm, oCard) {
+            var sIcon = oCard.getIcon(),
+                vIconInfo = IconPool.getIconInfo(oCard.getIcon(), undefined, "mixed"),
+                bIconInfo = false,
+                sStyles = oCard.getIconStyle();
+            if (sIcon) {
+                if (vIconInfo instanceof Promise) {
+                    // if the icon info is still being loaded,
+                    // an invalidation is triggered after the icon info is available
+                    vIconInfo.then(oCard.invalidate.bind(oCard));
+                } else if (vIconInfo) {
+                    // render icon info in renderer
+                    bIconInfo = true;
+                }
+
+                if (sStyles) {
+                    oStyleHelper.style.cssText = sStyles;
+                    oRm.addStyle("background-color", oStyleHelper.style.backgroundColor);
+                    oRm.addStyle("color", oStyleHelper.style.color);
+                    oRm.addStyle("background-size", oStyleHelper.style.backgroundSize);
+                }
+                oRm.write("<span");
+                oRm.addClass("sapFCardIcon");
+                if (!sIcon.startsWith("sap-icon://")) {
+                    oRm.addStyle("background-image", "url('" + encodeXML(sIcon) + "')");
+                } else if (bIconInfo) {
+                    oRm.writeAttributeEscaped("data-sap-ui-icon-content", vIconInfo.content);
+                    oRm.addStyle("font-family", "'" + encodeXML(vIconInfo.fontFamily) + "'");
+                    oRm.addClass("sapUiIcon");
+                }
+                oRm.writeClasses();
+                oRm.writeStyles();
+                oRm.write(">");
+
+                oRm.write("</span>");
+            }
+        };
+
+        /*
+         * renders the content of the card
+         */
+        CardRenderer.renderContentSection = function (oRm, oCard) {
+            oRm.write("<section");
+            oRm.addClass("sapFCardContent");
+            oRm.writeClasses();
+            oRm.write(">");
+            oRm.renderControl(oCard.getAggregation("_content"));
+            oRm.write("</section>");
+        };
+
+        /*
+         * renders the content of the card
+         */
+        CardRenderer.getSizeSettings = function (oCard) {
+            var iVertical = oCard.getVerticalSize(),
+                iHorizontal = oCard.getHorizontalSize(),
+                mSettings = mSizes[iHorizontal + "x" + iVertical] || mSizes["*x*"];
+            mSettings.vertical = iVertical;
+            mSettings.horizontal = iHorizontal;
+            return mSettings;
+        };
+        return CardRenderer;
+    }, /* bExport= */ true);

@@ -1,10 +1,12 @@
 /*global QUnit*/
 
-(function ($, QUnit) {
+sap.ui.require(["sap/ui/thirdparty/jquery"],
+	function (jQuery) {
 	"use strict";
 
-	jQuery.sap.registerModulePath("view", "view");
-
+	sap.ui.loader.config({
+		paths: {"view" : "view"}
+	  });
 
 
 	QUnit.module("API", {
@@ -184,4 +186,4 @@
 		contentView.placeAt('qunit-fixture');
 	});
 
-}(jQuery, QUnit));
+});

@@ -1,0 +1,1 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core"><Button id="button1" text="Press ME!" press=".extension.sap.ui.rta.test.$$flexModules.1.0.0.second-bundle.codeextensions.firstCodeExt.onPress" /></core:FragmentDefinition>

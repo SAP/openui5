@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
-sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"], function(MockServer, ODataModel){
+sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"], function(Log, MockServer, ODataModel){
+	"use strict";
 
 	//Initialize mock servers
 	var sMockBaseUrl = "test-resources/sap/ui/core/qunit/model/";
@@ -15,15 +16,15 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 	});
 	oAnnotationMockServer.simulate(sMockBaseUrl + "metadata_odtbmd.xml", sMockBaseUrl + "odtbmd/");
 
-	/**
+	/*
 	 * Clean-Up Hierarchy Annotation Mockdata/Metadata
 	 * This is necessary because, the V1 ODataTreeBinding implements routines not conform to the Hierarchy Annotation Spec.
 	 */
 	var aAnnotationsMockdata = oAnnotationMockServer._oMockdata.GLAccountHierarchyInChartOfAccountsLiSet;
-	for (var i = 0; i < aAnnotationsMockdata.length; i++) {
+	aAnnotationsMockdata.forEach(function(oMockdata) {
 		//convert string based level properties (NUMC fields) to real numbers
-		aAnnotationsMockdata[i].FinStatementHierarchyLevelVal = parseInt(aAnnotationsMockdata[i].FinStatementHierarchyLevelVal, 10);
-	}
+		oMockdata.FinStatementHierarchyLevelVal = parseInt(oMockdata.FinStatementHierarchyLevelVal, 10);
+	});
 
 	//MockServer for use with annotated tree -> guids instead of strings as IDs
 	var oAnnotationMockServerGUID = new MockServer({
@@ -31,21 +32,21 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 	});
 	oAnnotationMockServerGUID.simulate(sMockBaseUrl + "metadata_odtbmd_guid.xml", sMockBaseUrl + "odtbmd/");
 
-	/**
+	/*
 	 * Same as above, but for the GUID based mockdata
 	 */
 	var aAnnotationsMockdataGUID = oAnnotationMockServerGUID._oMockdata.GLAccountHierarchyInChartOfAccountsLiSet;
-	for (var i = 0; i < aAnnotationsMockdataGUID.length; i++) {
+	aAnnotationsMockdataGUID.forEach(function(oMockData) {
 		//convert string based level properties (NUMC fields) to real numbers
-		aAnnotationsMockdataGUID[i].FinStatementHierarchyLevelVal = parseInt(aAnnotationsMockdataGUID[i].FinStatementHierarchyLevelVal, 10);
-	}
+		oMockData.FinStatementHierarchyLevelVal = parseInt(oMockData.FinStatementHierarchyLevelVal, 10);
+	});
 
 	var oModel, oBinding;
 
 	function createTreeBinding(sPath, oContext, aFilters, mParameters, aSorters){
 		// create binding
 		oBinding = oModel.bindTree(sPath, oContext, aFilters, mParameters, aSorters).initialize();
-	};
+	}
 
 	QUnit.module("ODataTreeBinding with navigation properties", {
 		beforeEach: function() {
@@ -54,7 +55,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 		},
 		afterEach: function() {
 			oNavPropMockServer.stop();
-			delete oModel;
+			oModel = undefined;
 		}
 	});
 
@@ -154,7 +155,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 
 				oBinding.detachChange(handler2);
 				done();
-			}
+			};
 
 			oBinding.attachChange(handler1);
 			oBinding.getRootContexts();
@@ -422,7 +423,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 
 				assert.equal(aContexts.length, 0, "No contexts are available, data has been reset");
 
-			}
+			};
 
 			var handler3 = function(oEvent) {
 				oBinding.detachChange(handler3);
@@ -466,7 +467,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 				}, "FinalLengths object has value for root");
 
 				done();
-			}
+			};
 
 			oBinding.attachChange(handler1);
 			oBinding.getRootContexts();
@@ -569,8 +570,6 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 
 	QUnit.test("No navigation object specified", function(assert) {
 		var done = assert.async();
-		var Log = sap.ui.require("sap/base/Log");
-		assert.ok(Log, "Log module should be available");
 		oModel.attachMetadataLoaded(function() {
 			var iErrorCount = 0,
 				sErrorMessage = "";
@@ -607,7 +606,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 				assert.equal(oModel.getProperty("FirstName", oContext), "Nancy", "After refresh: TreeBinding root contexts[0] is correct (Tom)");
 
 				done();
-			}
+			};
 
 			oBinding.attachChange(handler1);
 			oBinding.getRootContexts();
@@ -616,15 +615,11 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 
 	QUnit.test("Control filtering prohibited in OperationMode.Server", function(assert) {
 		var done = assert.async();
-		var Log = sap.ui.require("sap/base/Log");
-		assert.ok(Log, "Log module should be available");
 		oModel.attachMetadataLoaded(function() {
-			var iWarningCount = 0,
-				sMessage = "";
+			var iWarningCount = 0;
 
 			sinon.stub(Log, "warning", function(sMsg) {
 				iWarningCount++;
-				sMessage = sMsg;
 			});
 			createTreeBinding("/Employees(2)", null, [], {
 				navigation: {}
@@ -960,7 +955,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 		},
 		afterEach: function() {
 			oAnnotationMockServer.stop();
-			delete oModel;
+			oModel = undefined;
 		}
 	});
 
@@ -1091,7 +1086,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 
 				oBinding.detachChange(handler2);
 				done();
-			}
+			};
 
 			oBinding.attachChange(handler1);
 			oBinding.getRootContexts();
@@ -1155,7 +1150,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 
 				oBinding.detachChange(handler2);
 				done();
-			}
+			};
 
 			oBinding.attachChange(handler1);
 			oBinding.getRootContexts();
@@ -1182,8 +1177,6 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 				numberOfExpandedLevels: 2
 			});
 
-			var oContext;
-
 			var fnHandler1 = function (oEvent) {
 				oBinding.detachChange(fnHandler1);
 				oBinding.attachChange(fnHandler2);
@@ -1198,7 +1191,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 
 				var aData = aContexts.map(function(oContext) {
 					return oContext.getProperty();
-				})
+				});
 
 				var mParentMap = oBinding._getParentMap(aData);
 
@@ -1226,16 +1219,16 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 						assert.ok(true, "Requests got aborted");
 						done();
 					}
-				}
+				};
 			};
 
 			var aParams = ["PONY", "PINKY PIE"];
 
 			oBinding._loadSubTree(null, aParams); // Adds request key to mRequestHandles
 			setTimeout(function() { // Wait for _loadSubTree promise executor function to start
-				assert.equal(Object.keys(oBinding.mRequestHandles).length, 1, "One request handle got added")
+				assert.equal(Object.keys(oBinding.mRequestHandles).length, 1, "One request handle got added");
 				oBinding._loadSubTree(null, aParams);
-			}, 0)
+			}, 0);
 		});
 	});
 
@@ -1416,8 +1409,6 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 				rootLevel: 1
 			});
 
-			var oContext;
-
 			var fnHandler = function (oEvent) {
 				oBinding.detachChange(fnHandler);
 				oBinding.getContexts(0, 1);
@@ -1457,8 +1448,6 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 				numberOfExpandedLevels: 3
 			});
 
-			var oContext;
-
 			var fnHandler1 = function (oEvent) {
 				oBinding.detachChange(fnHandler1);
 				oBinding.attachChange(fnHandler2);
@@ -1468,7 +1457,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 			var fnHandler2 = function (oEvent) {
 				oBinding.detachChange(fnHandler2);
 				oBinding.attachChange(fnHandler3);
-				var aContexts = oBinding.getContexts(0, 9);
+				oBinding.getContexts(0, 9);
 			};
 
 			var fnHandler3 = function (oEvent) {
@@ -1478,7 +1467,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 
 				var aData = aContexts.map(function(oContext) {
 					return oContext.getProperty();
-				})
+				});
 
 				var mKeyMap = oBinding._createKeyMap(aData, true);
 
@@ -1568,7 +1557,6 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			var oContext;
-			var iHandleCounter = 0;
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null,null, {
 				rootLevel: 2
 			});
@@ -1640,7 +1628,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 
 				oBinding.detachChange(handler2);
 				done();
-			}
+			};
 
 			oBinding.attachChange(handler1);
 			oBinding.getRootContexts(1, 4);
@@ -1653,7 +1641,6 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 
 		oModel.attachMetadataLoaded(function() {
 			var oContext;
-			var iHandleCounter = 0;
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null,null, {
 				rootLevel: 2
 			});
@@ -1725,7 +1712,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 
 				oBinding.detachChange(handler2);
 				done();
-			}
+			};
 
 			oBinding.attachChange(handler1);
 			oBinding.getRootContexts(1, 4);
@@ -1747,7 +1734,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 
 				//check if the root contexts are sorted correctly
 				assert.ok(true, "Sorted descending test:");
-				assert.equal(aRootContexts.length, 9, "Exactly 9 contexts returned")
+				assert.equal(aRootContexts.length, 9, "Exactly 9 contexts returned");
 				assert.equal(aRootContexts[0].getProperty("HierarchyNode"), "001180", "First Root Node is 001180");
 				assert.equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
 				assert.equal(aRootContexts[8].getProperty("HierarchyNode"), "000002", "Last Root Node is 000002");
@@ -1798,7 +1785,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 
 				//check if the root contexts are sorted correctly
 				assert.ok(true, "Sorted descending test:");
-				assert.equal(aRootContexts.length, 9, "Exactly 9 contexts returned")
+				assert.equal(aRootContexts.length, 9, "Exactly 9 contexts returned");
 				assert.equal(aRootContexts[0].getProperty("HierarchyNode"), "001180", "First Root Node is 001180");
 				assert.equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
 				assert.equal(aRootContexts[8].getProperty("HierarchyNode"), "000002", "Last Root Node is 000002");
@@ -1894,7 +1881,6 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 			 */
 			var handler1 = function (oEvent) {
 				oBinding.detachChange(handler1);
-				var oContext;
 
 				assert.equal(oEvent.getParameter("reason"), "change", "Change even should have the reason 'filter', since filter() was called before data was available.");
 
@@ -1951,8 +1937,6 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 	 */
 	QUnit.test("filter() API - OperationMode.Server - Control Filter - afterwards", function(assert) {
 		var done = assert.async();
-		var Log = sap.ui.require("sap/base/Log");
-		assert.ok(Log, "Log module should be available");
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
 					null,
@@ -1974,7 +1958,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 
 			assert.equal(iWarningCount, 1, "Exactly one warning logged.");
 			assert.equal(sMessage, "Filtering with ControlFilters is ONLY possible if the ODataTreeBinding is running in OperationMode.Client or " +
-					"OperationMode.Auto, in case the given threshold is lower than the total number of tree nodes.")
+					"OperationMode.Auto, in case the given threshold is lower than the total number of tree nodes.");
 
 			Log.warning.restore();
 			done();
@@ -2106,7 +2090,6 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 			 */
 			var handler1 = function (oEvent) {
 				oBinding.detachChange(handler1);
-				var oContext;
 
 				assert.equal(oEvent.getParameter("reason"), "change", "Change event should have the reason 'change'.");
 
@@ -2308,7 +2291,6 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 			 */
 			var handler1 = function (oEvent) {
 				oBinding.detachChange(handler1);
-				var oContext;
 
 				assert.equal(oEvent.getParameter("reason"), "change", "Change event should have the reason 'change'.");
 
@@ -2377,15 +2359,13 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 			oBinding.filter(aAppFilters, "Application");
 
 			var sFilterParams = oBinding.getFilterParams();
-			assert.equal(sFilterParams, sExpectedFilterParams, "Correct filter params returned")
+			assert.equal(sFilterParams, sExpectedFilterParams, "Correct filter params returned");
 			done();
 		});
 	});
 
 	QUnit.test("Tried filtering - incomplete Annotations/Navigation Property Definitions", function(assert) {
 		var done = assert.async();
-		var Log = sap.ui.require("sap/base/Log");
-		assert.ok(Log, "Log module should be available");
 		oModel.attachMetadataLoaded(function() {
 			//stub error
 			var iErrorCount = 0;
@@ -2394,11 +2374,9 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 			});
 
 			//warning stub
-			var iWarningCount = 0,
-				sMessage = "";
+			var iWarningCount = 0;
 			sinon.stub(Log, "warning", function(sMsg) {
 				iWarningCount++;
-				sMessage = sMsg;
 			});
 
 			//should throw error
@@ -2423,16 +2401,12 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 
 	QUnit.test("getDownload URL ", function(assert) {
 		var done = assert.async();
-		var that = this;
 		oModel.attachMetadataLoaded(function() {
-			var oContext;
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
 				displayRootNode: true,
 				numberOfExpandedLevels: 2,
 				rootLevel: 1
 			});
-
-			var oContext;
 
 			var handler1 = function(oEvent) {
 				oBinding.detachChange(handler1);
@@ -2449,14 +2423,11 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 	QUnit.test("OperationMode.Client: initial load + expanding nodes", function(assert){
 		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
-			var oContext;
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
 				displayRootNode: true,
 				rootLevel: 1,
 				operationMode: sap.ui.model.odata.OperationMode.Client
 			});
-
-			var oContext;
 
 			//trigger initial loading of the complete tree
 			oBinding.attachChange(fnChangeHandler);
@@ -2467,7 +2438,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 				assert.equal(aContexts.length, 1, "rootContexts length is correct = 1");
 
 				//Level 0
-				oContext = aContexts[0];
+				var oContext = aContexts[0];
 				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "01", "1st node sits on the correct level = '01'");
 				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000001", "1st node has correct ID");
 
@@ -2500,14 +2471,11 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 	QUnit.test("OperationMode.Client: initial load + sorter", function(assert){
 		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
-			var oContext;
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
 				rootLevel: 2,
 				operationMode: sap.ui.model.odata.OperationMode.Client
 			},
 			[new sap.ui.model.Sorter("HierarchyNode", true)]);
-
-			var oContext;
 
 			//trigger initial loading
 			oBinding.attachChange(fnChangeHandler);
@@ -2518,7 +2486,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 
 				//check if the root contexts are sorted correctly
 				assert.ok(true, "Sorted descending test:");
-				assert.equal(aRootContexts.length, 9, "Exactly 9 contexts returned")
+				assert.equal(aRootContexts.length, 9, "Exactly 9 contexts returned");
 				assert.equal(aRootContexts[0].getProperty("HierarchyNode"), "001180", "First Root Node is 001180");
 				assert.equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
 				assert.equal(aRootContexts[8].getProperty("HierarchyNode"), "000002", "Last Root Node is 000002");
@@ -2540,14 +2508,11 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 	QUnit.test("OperationMode.Auto: Backend has fewer entries than the threshold.", function (assert) {
 		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
-			var oContext;
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
 				rootLevel: 2,
 				operationMode: sap.ui.model.odata.OperationMode.Auto,
 				threshold: 20000
 			});
-
-			var oContext;
 
 			//trigger initial count request
 			oBinding.attachChange(fnChangeHandler);
@@ -2570,7 +2535,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 
 				//check if the root contexts are sorted correctly
 				assert.ok(true, "Sorted descending test:");
-				assert.equal(aRootContexts.length, 9, "Exactly 9 contexts returned")
+				assert.equal(aRootContexts.length, 9, "Exactly 9 contexts returned");
 				assert.equal(aRootContexts[0].getProperty("HierarchyNode"), "000002", "First Root Node is 000002");
 				assert.equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
 				assert.equal(aRootContexts[8].getProperty("HierarchyNode"), "001180", "Last Root Node is 001180");
@@ -2608,7 +2573,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 		},
 		afterEach: function() {
 			oAnnotationMockServerGUID.stop();
-			delete oModel;
+			oModel = undefined;
 		}
 	});
 
@@ -2616,7 +2581,6 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			var oContext;
-			var iHandleCounter = 0;
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null,null, {
 				rootLevel: 2
 			});
@@ -2688,7 +2652,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 
 				oBinding.detachChange(handler2);
 				done();
-			}
+			};
 
 			oBinding.attachChange(handler1);
 			oBinding.getRootContexts(1, 4);
@@ -2698,8 +2662,6 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 	QUnit.test("Data Received Parameters", function(assert) {
 		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
-			var oContext;
-			var iHandleCounter = 0;
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null,null, {
 				rootLevel: 2
 			});
@@ -2737,7 +2699,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 		},
 		afterEach: function() {
 			oAnnotationMockServer.stop();
-			delete oModel;
+			oModel = undefined;
 		}
 	});
 
@@ -2892,9 +2854,11 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"
 
 	QUnit.module("Unsupported Filter Operators", {
 		beforeEach: function() {
-			this.oModel = new sap.ui.model.ClientModel();
+			oModel = new ODataModel('/metadata/');
 		},
-
+		afterEach: function() {
+			oModel = undefined;
+		},
 		getErrorWithMessage: function(sFilter) {
 			return new Error("Filter instances contain an unsupported FilterOperator: " + sFilter);
 		}

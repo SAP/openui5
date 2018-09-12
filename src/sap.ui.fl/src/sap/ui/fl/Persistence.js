@@ -227,7 +227,11 @@ sap.ui.define([
 		mParameters = {
 			defaultVariantId: sDefaultVariantId,
 			reference: this._sComponentName,
-			selector: selector
+			selector: selector,
+			validAppVersions: {
+				creation: this._oChangePersistence._mComponent.appVersion,
+				from: this._oChangePersistence._mComponent.appVersion
+			}
 		};
 
 		oChange = defaultVariant.updateDefaultVariantId(this._oChanges, sDefaultVariantId);

@@ -22,7 +22,8 @@ sap.ui.define([
 		}
 		oDIV.setAttribute("id", sId);
 		return oDIV;
-	};
+	}
+
 	var oContentElement = createComponentDIV("content");
 	document.body.appendChild(oContentElement);
 
@@ -73,7 +74,7 @@ sap.ui.define([
 				if (iComponentCount == 2) {
 					resolve();
 				}
-			}
+			};
 
 			// execute the ComponentSupport
 			ComponentSupport.run();

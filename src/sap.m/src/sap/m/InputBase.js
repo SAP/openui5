@@ -1100,7 +1100,7 @@ function(
 	 * Adds an icon to be rendered
 	 * @param {string} sIconPosition a position for the icon to be rendered - begin or end
 	 * @param {object} oIconSettings settings for creating an icon
-	 * @see sap.ui.core.IconPool#createControlByURI
+	 * @see sap.ui.core.IconPool.createControlByURI
 	 * @private
 	 * @returns {null|sap.ui.core.Icon}
 	 */
@@ -1126,9 +1126,9 @@ function(
 	};
 
 	/**
-	 * Adds an icon to the begining of the input
+	 * Adds an icon to the beginning of the input
 	 * @param {object} oIconSettings settings for creating an icon
-	 * @see sap.ui.core.IconPool#createControlByURI
+	 * @see sap.ui.core.IconPool.createControlByURI
 	 * @protected
 	 * @returns {null|sap.ui.core.Icon}
 	 */
@@ -1139,7 +1139,7 @@ function(
 	/**
 	 * Adds an icon to the end of the input
 	 * @param {object} oIconSettings settings for creating an icon
-	 * @see sap.ui.core.IconPool#createControlByURI
+	 * @see sap.ui.core.IconPool.createControlByURI
 	 * @protected
 	 * @returns {null|sap.ui.core.Icon}
 	 */

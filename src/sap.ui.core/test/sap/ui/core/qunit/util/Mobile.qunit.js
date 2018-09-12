@@ -21,7 +21,7 @@ sap.ui.define(["sap/ui/util/Mobile"], function(Mobile) {
 		// check viewport:  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		var $v = jQuery("meta").filter("[name=viewport]");
 		assert.equal($v.length, 1, "There should be a viewport meta tag");
-		assert.ok($v.attr("content").length > 0, "viewport meta tag has content")
+		assert.ok($v.attr("content").length > 0, "viewport meta tag has content");
 
 		// check <meta name="apple-mobile-web-app-status-bar-style" content="default">
 		if (sap.ui.Device.os.ios) {
@@ -59,7 +59,7 @@ sap.ui.define(["sap/ui/util/Mobile"], function(Mobile) {
 		// touch icon  <link rel="apple-touch-icon...
 		var $ti = jQuery("link").filter("[rel=apple-touch-icon-precomposed]");
 		assert.equal($ti.length, 4, "There should be four apple-touch-icon-precomposed link tags");
-		assert.equal($ti.attr("href"), "home.png", "The apple-touch-icon-precomposed link tag href should be correct")
+		assert.equal($ti.attr("href"), "home.png", "The apple-touch-icon-precomposed link tag href should be correct");
 	});
 
 	QUnit.module("sap/ui/util/Mobile (tablet)", {

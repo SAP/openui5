@@ -39,7 +39,7 @@ sap.ui.define([
 	 * When an element is created from a declarative source (e.g. XMLView), then an ID defined in that
 	 * declarative source needs to be unique only within the declarative source. Declarative views will
 	 * prefix that ID with their own ID (and some separator) before constructing the element.
-	 * Programmatically created views (JSViews) can do the same with the {@link sap.ui.core.mvc.View#createID} API.
+	 * Programmatically created views (JSViews) can do the same with the {@link sap.ui.core.mvc.View#createId} API.
 	 * Similarly, UIComponents can prefix the IDs of elements created in their context with their own ID.
 	 * Also see {@link sap.ui.core.UIComponent#getAutoPrefixId UIComponent#getAutoPrefixId}.
 	 *

@@ -31,6 +31,42 @@
         "type": "FIX",
         "text": " Revise test case for ManagedObjectObserver",
         "references": []
+      },
+      {
+        "id": "b7eeeb75506baeb21e042552eac6463ff5e2cde4",
+        "type": "FIX",
+        "text": " sap.ui.dt: Consider real domRef for whiteList in MutationObserver",
+        "references": []
+      },
+      {
+        "id": "3483c99ca85b7fad209515c60925f2e0ab4fee5a",
+        "type": "FIX",
+        "text": " sap.ui.dt: DesignTime can now handle UIComponents as RootControl",
+        "references": []
+      },
+      {
+        "id": "38db6be4089735b2846053a9c2a2a954a3460c35",
+        "type": "FIX",
+        "text": ": DT - avoid flickering on drag and drop",
+        "references": []
+      },
+      {
+        "id": "dc76a1bd56b8b1a2cfb55d2a407e168d16d39607",
+        "type": "FIX",
+        "text": "sap.ui.dt - MiniMenu is now always placed correctly on touch screen",
+        "references": []
+      },
+      {
+        "id": "4cdbc6b4237559e6bc093995082a0268f6906c59",
+        "type": "FIX",
+        "text": ": RTA - improve visibility of MiniMenu",
+        "references": []
+      },
+      {
+        "id": "6876176aa7dfe5a960fa89a3baa0bde1fc5596f1",
+        "type": "FIX",
+        "text": "sap.ui.dt - Context menu closes when selection changes",
+        "references": []
       }
     ]
   }

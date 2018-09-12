@@ -75,7 +75,7 @@ sap.ui.define([
 		// Arrange
 		var oView = this.oView;
 
-		var oStub = this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView", function () {
 			return oView;
 		});
 
@@ -154,7 +154,7 @@ sap.ui.define([
 		var oExistingView = this.oView,
 			oView = createView(['<View xmlns="sap.ui.core.mvc">', '</View>']);
 
-		var oStub = this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView", function () {
 			return oView;
 		});
 
@@ -179,9 +179,7 @@ sap.ui.define([
 
 	QUnit.test("Should log an error if the target view can't be loaded", function (assert) {
 		// Arrange
-		var oView = this.oView;
-
-		var oGetViewStub = this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView", function () {
 			return {
 				loaded: function() {
 					return Promise.reject("View with name bar.foo could not be loaded");
@@ -197,7 +195,7 @@ sap.ui.define([
 		return oDisplayed.then(function(oViewInfo) {
 			assert.strictEqual(oViewInfo.name, "myTarget", "oViewInfo.name is correct");
 			assert.equal(oViewInfo.error, "View with name bar.foo could not be loaded", "oViewInfo.error error message is provided");
-		}.bind(this));
+		});
 	});
 
 	QUnit.test("Should log an error if the target parent is not found", function (assert) {
@@ -217,7 +215,7 @@ sap.ui.define([
 			this.oViews
 		);
 
-		var oGetViewStub = this.stub(this.oViews, "_getView", function (oOptions) {
+		this.stub(this.oViews, "_getView", function (oOptions) {
 			if (oOptions.name === "myTarget") {
 				return oView;
 			} else {
@@ -238,7 +236,7 @@ sap.ui.define([
 			// Assert
 			assert.strictEqual(oViewInfo.name, "myParent", "oViewInfo.name is correct");
 			assert.equal(oViewInfo.error, "View with name parent.foo could not be loaded", "oViewInfo.error error message is provided");
-		}.bind(this));
+		});
 	});
 
 	QUnit.test("Should log an error if the root view is not found", function (assert) {
@@ -247,7 +245,7 @@ sap.ui.define([
 		// sinon.spy instead of this.spy has to be used because the stubbed version is used async and this.spy is restored syncly.
 		var oSpy = sinon.spy(Log, "error");
 		var oView = this.oView;
-		var oGetViewStub = this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView", function () {
 			return oView;
 		});
 
@@ -270,7 +268,8 @@ sap.ui.define([
 		// sinon.spy instead of this.spy has to be used because the stubbed version is used async and this.spy is restored syncly.
 		var oSpy = sinon.spy(Log, "error");
 		var oView = this.oView;
-		var oGetViewStub = this.stub(this.oViews, "_getView", function () {
+
+		this.stub(this.oViews, "_getView", function () {
 			return oView;
 		});
 
@@ -294,7 +293,8 @@ sap.ui.define([
 		// sinon.spy instead of this.spy has to be used because the stubbed version is used async and this.spy is restored syncly.
 		var oSpy = sinon.spy(Log, "error");
 		var oView = this.oView;
-		var oGetViewStub = this.stub(this.oViews, "_getView", function () {
+
+		this.stub(this.oViews, "_getView", function () {
 			return oView;
 		});
 		this.oTarget._oOptions.controlAggregation = undefined;
@@ -317,7 +317,8 @@ sap.ui.define([
 		// sinon.spy instead of this.spy has to be used because the stubbed version is used async and this.spy is restored syncly.
 		var oSpy = sinon.spy(Log, "error");
 		var oView = this.oView;
-		var oGetViewStub = this.stub(this.oViews, "_getView", function () {
+
+		this.stub(this.oViews, "_getView", function () {
 			return oView;
 		});
 		this.oTarget._oOptions.controlId = "foo";
@@ -586,13 +587,13 @@ sap.ui.define([
 	QUnit.test("should be able to fire/attach/detach the display event", function(assert) {
 		// Arrange
 		var oParameters = { foo : "bar" },
+			oListener = {},
+			oData = { some : "data" },
 			fnEventSpy = this.spy(function(oEvent, oActualData) {
 				assert.strictEqual(oActualData, oData, "the data is correct");
 				assert.strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
 				assert.strictEqual(this, oListener, "the this pointer is correct");
 			}),
-			oListener = {},
-			oData = { some : "data" },
 			oFireReturnValue,
 			oDetachReturnValue,
 			oAttachReturnValue = this.oTarget.attachDisplay(oData, fnEventSpy, oListener);
@@ -618,7 +619,7 @@ sap.ui.define([
 				oParameters = oEvent.getParameters();
 			});
 
-		var oStub = this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView", function () {
 			return that.oView;
 		});
 

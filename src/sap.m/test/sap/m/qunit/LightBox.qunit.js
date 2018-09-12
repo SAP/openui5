@@ -1,4 +1,4 @@
-/*global QUnit,sinon*/
+/*global QUnit*/
 
 (function () {
 	'use strict';
@@ -9,8 +9,6 @@
 	jQuery.sap.require('sap.ui.thirdparty.sinon');
 	jQuery.sap.require('sap.ui.thirdparty.sinon-qunit');
 	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-
-	sinon.config.useFakeTimers = true;
 
 	//================================================================================
 	// LightBox Base API
@@ -51,6 +49,9 @@
 			});
 		},
 		afterEach: function() {
+			if (this.LightBox.isOpen()) {
+				this.LightBox.close();
+			}
 			this.LightBox.destroy();
 		}
 	});
@@ -109,7 +110,6 @@
 		assert.strictEqual(oImageContent.getImageSrc(), sSource, 'The source should be set correctly.');
 
 		this.LightBox.open();
-		this.clock.tick(500);
 
 		assert.strictEqual(oImageContent._oImage.src, image.src, 'The native js image source should be set after the LightBox is open.');
 	});
@@ -128,17 +128,16 @@
 			});
 		},
 		afterEach: function() {
-			this.LightBox.close();
+			if (this.LightBox.isOpen()) {
+				this.LightBox.close();
+			}
 			this.LightBox.destroy();
 		}
 	});
 
 	QUnit.test('Opening a lightbox without image source', function(assert) {
-		// arrange
-
 		//act
 		this.LightBox.open();
-		this.clock.tick(500);
 
 		// assert
 		assert.strictEqual(this.LightBox.isOpen(), false, 'The lightbox should not be open because no image source is set');
@@ -146,24 +145,25 @@
 	});
 
 	QUnit.test('Opening a lightbox with image source', function(assert) {
+
 		// arrange
-		assert.expect(2);
+		var done = assert.async();
 		var oImageContent = this.LightBox.getImageContent()[0],
 			sImageSource = '../images/demo/nature/elephant.jpg',
 			oLightBoxPopup = this.LightBox._oPopup;
 
 		oImageContent.setImageSrc(sImageSource);
-
-		oLightBoxPopup.attachOpened(function() {
-			// assert
-			assert.strictEqual(this.LightBox.isOpen(), true, 'The lightbox should be open');
-			assert.strictEqual(oLightBoxPopup.isOpen(), true, 'The lightbox should be open');
-		}, this);
 		sap.ui.getCore().applyChanges();
 
 		//act
 		this.LightBox.open();
-		this.clock.tick(500);
+
+		setTimeout(function () {
+			// Assert
+			assert.strictEqual(this.LightBox.isOpen(), true, 'The lightbox should be open');
+			assert.strictEqual(oLightBoxPopup.isOpen(), true, 'The lightbox should be open');
+			done();
+		}.bind(this), 100);
 	});
 
 	QUnit.test('Closing a lightbox', function(assert) {
@@ -181,14 +181,12 @@
 
 		// act
 		this.LightBox.open();
-		this.clock.tick(500);
 
 		//assert
 		assert.strictEqual(this.LightBox.isOpen(), true, 'The lightbox should be open.');
 
 		// act
 		this.LightBox.close();
-		this.clock.tick(1000);
 	});
 
 	//================================================================================
@@ -253,7 +251,6 @@
 		sap.ui.getCore().applyChanges();
 
 		this.LightBox.open();
-		this.clock.tick(500);
 
 		var $popupContent = this.LightBox._oPopup.getContent().$();
 
@@ -273,12 +270,10 @@
 					new sap.m.LightBoxItem()
 				]
 			});
-			sinon.config.useFakeTimers = false;
 		},
 		afterEach: function() {
 			this.LightBox.close();
 			this.LightBox.destroy();
-			sinon.config.useFakeTimers = true;
 		}
 	});
 
@@ -303,7 +298,7 @@
 			assert.ok($popupContent.hasClass('sapMLightBox'), 'sapMLightBox class is there');
 			assert.ok($popupContent.hasClass('sapMLightBoxTopCornersRadius'), 'sapMLightBoxTopCornersRadius class is there');
 			done();
-		}.bind(this), 1008);
+		}.bind(this), 100);
 	});
 
 	QUnit.test('sapMLightBoxTopCornersRadius class - small image', function (assert) {
@@ -325,7 +320,7 @@
 			// Assert
 			assert.notOk($popupContent.hasClass('sapMLightBoxTopCornersRadius'), 'sapMLightBoxTopCornersRadius class is not there');
 			done();
-		}.bind(this), 1008);
+		}.bind(this), 100);
 	});
 
 	QUnit.test('sapMLightBoxTopCornersRadius class - horizontal image', function (assert) {
@@ -347,7 +342,7 @@
 			// Assert
 			assert.notOk($popupContent.hasClass('sapMLightBoxTopCornersRadius'), 'sapMLightBoxTopCornersRadius class is not there');
 			done();
-		}.bind(this), 1008);
+		}.bind(this), 100);
 	});
 
 	QUnit.test('sapMLightBoxTopCornersRadius class - vertical image', function (assert) {
@@ -369,7 +364,7 @@
 			// Assert
 			assert.notOk($popupContent.hasClass('sapMLightBoxTopCornersRadius'), 'sapMLightBoxTopCornersRadius class is not there');
 			done();
-		}.bind(this), 1008);
+		}.bind(this), 100);
 	});
 
 

@@ -1,13 +1,20 @@
-/*global QUnit,sinon*/
-
-(function ($, QUnit, sinon, Importance) {
+/*global QUnit, sinon */
+sap.ui.require([
+	"sap/ui/thirdparty/jquery",
+	"sap/uxap/library",
+	"sap/uxap/ObjectPageSubSection",
+	"sap/uxap/ObjectPageSection",
+	"sap/uxap/ObjectPageSectionBase"],
+	function($, library, ObjectPageSubSection, ObjectPageSection, ObjectPageSectionBase) {
 	"use strict";
+	var Importance = library.Importance;
 
-	jQuery.sap.registerModulePath("view", "./view");
-	jQuery.sap.registerModulePath("sap.uxap.testblocks", "./blocks");
-	jQuery.sap.require("sap.uxap.ObjectPageSubSection");
-	jQuery.sap.require("sap.uxap.ObjectPageSection");
-	jQuery.sap.require("sap.uxap.ObjectPageSectionBase");
+	sap.ui.loader.config({
+		paths: {
+		   "sap/uxap/testblocks": "./blocks",
+		   "view": "./view"
+		 }
+	  });
 
 	sinon.config.useFakeTimers = true;
 	QUnit.module("aatTest");
@@ -54,17 +61,17 @@
 		ObjectPageSectionView.destroy();
 	});
 
-	var SectionBasePrototype = sap.uxap.ObjectPageSectionBase.prototype,
-		SectionPrototype = sap.uxap.ObjectPageSection.prototype;
+	var SectionBasePrototype = ObjectPageSectionBase.prototype,
+		SectionPrototype = ObjectPageSection.prototype;
 
 	QUnit.module("Section/SubSection Importance");
 
 	QUnit.test("Section with title has button placeholders", function (assert) {
 
 		var oObjectPageLayout = new sap.uxap.ObjectPageLayout("page02", {
-			sections: new sap.uxap.ObjectPageSection({
+			sections: new ObjectPageSection({
 				subSections: [
-					new sap.uxap.ObjectPageSubSection({
+					new ObjectPageSubSection({
 						title: "Title",
 						blocks: [new sap.m.Text({text: "test"})]
 					})
@@ -84,10 +91,10 @@
 	QUnit.test("Section without title has no button placeholders", function (assert) {
 
 		var oObjectPageLayout = new sap.uxap.ObjectPageLayout("page02", {
-			sections: new sap.uxap.ObjectPageSection({
+			sections: new ObjectPageSection({
 				showTitle: false,
 				subSections: [
-					new sap.uxap.ObjectPageSubSection({
+					new ObjectPageSubSection({
 						title: "Title",
 						blocks: [new sap.m.Text({text: "test"})]
 					})
@@ -107,10 +114,10 @@
 	QUnit.test("Section with dynamically added title has button placeholders", function (assert) {
 
 		var oObjectPageLayout = new sap.uxap.ObjectPageLayout("page02", {
-			sections: new sap.uxap.ObjectPageSection({
+			sections: new ObjectPageSection({
 				showTitle: false,
 				subSections: [
-					new sap.uxap.ObjectPageSubSection({
+					new ObjectPageSubSection({
 						title: "Title",
 						blocks: [new sap.m.Text({text: "test"})]
 					})
@@ -145,10 +152,10 @@
 
 	QUnit.test("Section title display/hide", function (assert) {
 		var oObjectPageLayout = new sap.uxap.ObjectPageLayout({
-			sections: new sap.uxap.ObjectPageSection({
+			sections: new ObjectPageSection({
 				title: "Title",
 				subSections: [
-					new sap.uxap.ObjectPageSubSection({
+					new ObjectPageSubSection({
 						blocks: [new sap.m.Text({text: "test"})]
 					})
 				]
@@ -332,7 +339,7 @@
 			}),
 			oSectionWithTwoSubSection = ObjectPageSectionView.byId("SectionWithSubSection"),
 			oFirstSubSection = oSectionWithTwoSubSection.getSubSections()[0],
-			fnGetClosestSection = sap.uxap.ObjectPageSection._getClosestSection;
+			fnGetClosestSection = ObjectPageSection._getClosestSection;
 
 		assert.equal(fnGetClosestSection(oFirstSubSection).getId(), oSectionWithTwoSubSection.getId());
 		assert.equal(fnGetClosestSection(oSectionWithTwoSubSection).getId(), oSectionWithTwoSubSection.getId());
@@ -361,7 +368,7 @@
 			sSectionWithoutTitleAriaLabel = oSectionWithoutTitle.$().attr("aria-labelledby"),
 			oLastSection = this.ObjectPageSectionView.byId("SectionWithNoTitleAndOneSubSection"),
 			sLastSectionAriaLabelledBy = oLastSection.$().attr("aria-labelledby"),
-			sSectionText = sap.uxap.ObjectPageSection._getLibraryResourceBundle().getText("SECTION_CONTROL_NAME");
+			sSectionText = ObjectPageSection._getLibraryResourceBundle().getText("SECTION_CONTROL_NAME");
 
 		// assert
 		assert.strictEqual(sap.ui.getCore().byId(sFirstSectionAriaLabelledBy).getText(),
@@ -379,4 +386,4 @@
 			oFirstSection._getTitle() + " " + sSectionText, "aria-labelledby is updated properly");
 	});
 
-}(jQuery, QUnit, sinon, sap.uxap.Importance));
+});

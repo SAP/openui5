@@ -49,6 +49,12 @@
         "type": "FIX",
         "text": "sap.ui.rta - Actions no longer available for wrong aggregations",
         "references": []
+      },
+      {
+        "id": "b8450b04f281d3e1aa70ee1ad70cdad98bd76a8f",
+        "type": "FIX",
+        "text": " AdditionalElementsAnalyzer - filter limitation for invisible elements",
+        "references": []
       }
     ]
   }

@@ -1121,15 +1121,28 @@ var Promise$2 = function () {
     var promise = this;
     var constructor = promise.constructor;
 
-    return promise.then(function (value) {
-      return constructor.resolve(callback()).then(function () {
-        return value;
+    // ##### BEGIN: MODIFIED BY SAP
+    // According to the spec, 'callback' is optional, it might not be callable
+    // see https://tc39.github.io/proposal-promise-finally/
+    if ( isFunction(callback) ) {
+    // ##### END: MODIFIED BY SAP
+
+      return promise.then(function (value) {
+        return constructor.resolve(callback()).then(function () {
+          return value;
+        });
+      }, function (reason) {
+        return constructor.resolve(callback()).then(function () {
+          throw reason;
+        });
       });
-    }, function (reason) {
-      return constructor.resolve(callback()).then(function () {
-        throw reason;
-      });
-    });
+
+    // ##### BEGIN: MODIFIED BY SAP
+    }
+
+	return promise.then(callback, callback);
+    // ##### END: MODIFIED BY SAP
+
   };
 
   return Promise;
