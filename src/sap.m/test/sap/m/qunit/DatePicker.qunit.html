@@ -203,6 +203,26 @@
 				assert.equal(jQuery("#DP7").children("div.sapMInputBaseContentWrapper").children("input").val(), "2/10/1437 AH", "DP7: defined islamic output format from binding used");
 			});
 
+			QUnit.test("ValueHelp icon is not visible when DatePicker is not enabled", function (assert) {
+				// arrange
+				var oDatePicker = new sap.m.DatePicker({ enabled: false }),
+					oValueHelpIconSetPropertySpy = this.spy(),
+					oValueHelpIconStub = this.stub(oDatePicker, "_getValueHelpIcon", function () {
+						return { setProperty: oValueHelpIconSetPropertySpy };
+					});
+
+				// act
+				oDatePicker.onBeforeRendering();
+
+				// assert
+				assert.equal(oValueHelpIconSetPropertySpy.getCall(0).args[0], "visible", "setProperty of the icon should be called for visible");
+				assert.equal(oValueHelpIconSetPropertySpy.getCall(0).args[1], false, "visible property should be set to false");
+
+				// cleanup
+				oValueHelpIconStub.restore();
+				oDatePicker.destroy();
+			});
+
 			QUnit.module("data binding");
 
 			QUnit.test("data binding with OData", function(assert) {
