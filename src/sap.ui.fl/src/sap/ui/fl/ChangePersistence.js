@@ -758,7 +758,7 @@ sap.ui.define([
 			aPreviousDependentSelectorList = aChangesCopy[i].getDependentSelectorList();
 			bFound = false;
 			for (var j = 0; j < aDependentSelectorList.length && !bFound; j++) {
-				iDependentIndex = Utils.indexOfInArrayOfObjects(aPreviousDependentSelectorList, aDependentSelectorList[j]);
+				iDependentIndex = Utils.indexOfObject(aPreviousDependentSelectorList, aDependentSelectorList[j]);
 				if (iDependentIndex > -1) {
 					this._addDependency(oChange, oPreviousChange);
 					bFound = true;

@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/fl/XmlPreprocessorImpl",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/layout/changeHandler/AddSimpleFormGroup",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/fl/Utils"
 ],
 function(
 	jQuery,
@@ -16,9 +17,12 @@ function(
 	XmlPreprocessorImpl,
 	CacheManager,
 	AddSimpleFormGroup,
-	sinon
+	sinon,
+	Utils
 ) {
 	"use strict";
+
+	var sandbox = sinon.sandbox.create();
 
 	sap.ui.getCore().loadLibrary("sap.ui.fl"); // preload lib for the spy
 
@@ -98,6 +102,7 @@ function(
 			var that = this;
 			var oXmlPrepossessSpy = sinon.spy(XmlPreprocessorImpl, "process");
 			var oAddGroupChangeHandlerSpy = sinon.spy(AddSimpleFormGroup, "applyChange");
+			sandbox.stub(Utils, "isApplication").returns(true);
 
 			return sap.ui.component({
 				name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
