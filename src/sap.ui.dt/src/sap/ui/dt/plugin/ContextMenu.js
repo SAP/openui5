@@ -501,7 +501,7 @@ sap.ui.define([
 	 * Called when the selection changes
 	 */
 	ContextMenu.prototype._onSelectionChanged = function() {
-		this.oContextMenuControl.close();
+		this.oContextMenuControl.close(true);
 		this.getDesignTime().getSelectionManager().detachChange(this._onSelectionChanged, this);
 	};
 
