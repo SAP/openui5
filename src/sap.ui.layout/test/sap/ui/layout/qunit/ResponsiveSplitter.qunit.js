@@ -504,4 +504,67 @@
 		oSplitter.destroy();
 		oSplitter = null;
 	});
+
+	QUnit.test("Resizing responsive splitter should respect panes minSize", function (assert) {
+		// Setup
+
+		var iMinSize = 280;
+
+		var oLeftPane = new sap.ui.layout.SplitPane({
+			content: [ new sap.m.Text({text: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."})],
+			layoutData: new sap.ui.layout.SplitterLayoutData({
+				size: "20%",
+				minSize: iMinSize
+			})
+		});
+
+		var oMiddlePane =	new sap.ui.layout.SplitPane({
+			content: [ new sap.m.Text({text: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."})],
+			layoutData: new sap.ui.layout.SplitterLayoutData({
+				size: "auto",
+				minSize: 300
+			})
+		});
+
+		var oRightPane = new sap.ui.layout.SplitPane({
+			content: [ new sap.m.Text({
+				id: "righText",
+				text: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."})],
+			layoutData: new sap.ui.layout.SplitterLayoutData({
+				size: "20%",
+				minSize: iMinSize
+			})
+		});
+
+
+		var oPaneContainer = new sap.ui.layout.PaneContainer({
+			panes: [
+				oLeftPane,
+				oMiddlePane,
+				oRightPane
+			]
+		});
+
+		var oResponsiveSplitter = new sap.ui.layout.ResponsiveSplitter({
+			rootPaneContainer: oPaneContainer,
+			defaultPane: oMiddlePane,
+			height: "100%"
+		});
+
+		oResponsiveSplitter.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oResponsiveSplitter.setWidth("1050px");
+		sap.ui.getCore().applyChanges();
+
+		var iActualWidth = jQuery("#righText").width();
+
+		// Assert
+		assert.ok(iActualWidth >= iMinSize, "'minSize' property should not let panes to get lower width");
+
+		//Cleanup
+		oResponsiveSplitter.destroy();
+		oResponsiveSplitter = null;
+	});
 })();
