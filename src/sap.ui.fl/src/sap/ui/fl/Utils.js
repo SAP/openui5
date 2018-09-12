@@ -1213,8 +1213,7 @@ sap.ui.define([
 			Utils.FakePromise.fakePromiseIdentifier = "sap.ui.fl.Utils.FakePromise";
 			this.vValue = vInitialValue;
 			this.vError = vError;
-			this.sInitialPromiseIdentifier = sInitialPromiseIdentifier;
-			this.bContinueWithFakePromise = arguments.length < 3 || (this.sInitialPromiseIdentifier === Utils.FakePromise.fakePromiseIdentifier);
+			this.bContinueWithFakePromise = arguments.length < 3 || (sInitialPromiseIdentifier === Utils.FakePromise.fakePromiseIdentifier);
 			Utils.FakePromise.prototype.then = function(fn) {
 				if (!this.bContinueWithFakePromise) {
 					return Promise.resolve(fn(this.vValue));
@@ -1259,7 +1258,6 @@ sap.ui.define([
 				return this.vValue;
 			}
 		},
-
 		/**
 		 * Function that gets a specific change from a map of changes.
 		 *
