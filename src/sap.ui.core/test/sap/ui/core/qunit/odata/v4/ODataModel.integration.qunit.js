@@ -1393,6 +1393,51 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Refresh a single row that has been removed in between. Check the bound message of the error
+	// response.
+	QUnit.test("Context#refresh() error messages", function (assert) {
+		var oError = new Error("404 Not Found"),
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{/EMPLOYEES}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text text="{ID}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		oError.error = {
+			code : "CODE",
+			message : "Not found",
+			target : "ID"
+		};
+		this.expectRequest("EMPLOYEES?$select=ID&$skip=0&$top=100", {
+				"value" : [{"ID" : "0"}]
+			});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to refresh entity: /EMPLOYEES('0')[0]",
+					sinon.match("404 Not Found"), "sap.ui.model.odata.v4.ODataListBinding");
+			that.expectRequest("EMPLOYEES('0')?$select=ID", oError)
+				.expectMessages([{
+					"code" : "CODE",
+					"message" : "Not found",
+					"persistent" : true,
+					"target" : "/EMPLOYEES('0')/ID",
+					"technical" : true,
+					"type" : "Error"
+				}]);
+
+			// code under test
+			that.oView.byId("table").getItems()[0].getBindingContext().refresh();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Refreshing a single entry of a table must not cause "failed to drill-down" errors
 	// if data of a dependent binding has been deleted in between.
 	// This scenario is similar to the deletion of a sales order line item in the SalesOrders
