@@ -346,9 +346,16 @@
 		return initTestModule(oTestConfig);
 	}).catch(function(oErr) {
 		console.error(oErr.stack || oErr); // eslint-disable-line no-console
-		utils.whenDOMReady().then(function() {
-			document.body.innerHTML = "<pre style='color:red;'>" + utils.encode(oErr.stack || oErr.message || String(oErr)) + "</pre>";
-		});
+		if ( typeof QUnit !== "undefined" ) {
+			QUnit.test("Test Starter", function() {
+				throw oErr;
+			});
+			QUnit.start();
+		} else {
+			utils.whenDOMReady().then(function() {
+				document.body.innerHTML = "<pre style='color:red;'>" + utils.encode(oErr.stack || oErr.message || String(oErr)) + "</pre>";
+			});
+		}
 	});
 
 
