@@ -1,0 +1,62 @@
+{
+	"@odata.context" : "$metadata#SalesOrderList(ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID,SO_2_SOITEM(SOITEM_2_PRODUCT(PRODUCT_2_BP(BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))),SO_2_BP(BusinessPartnerID,CompanyName,PhoneNumber),SO_2_SCHDL(ScheduleKey,DeliveryDate))/$entity",
+	"@odata.etag" : "W/\"20160619220000.0000000\"",
+	"ChangedAt" : "2016-06-26T22:00:00.000000Z",
+	"CreatedAt" : "2016-06-26T22:00:00.000000Z",
+	"LifecycleStatus" : "N",
+	"LifecycleStatusDesc" : "New",
+	"Note" : "Note with message",
+	"SalesOrderID" : "0500000001",
+	"SO_2_BP" : {
+		"@odata.etag" : "W/\"20160613065313.0000000\"",
+		"BusinessPartnerID" : "0100000005",
+		"BusinessPartnerRole" : "01",
+		"CompanyName" : "TECUM",
+		"PhoneNumber" : "2511415",
+		"Address" : {
+			"City" : "Münster",
+			"PostalCode" : "",
+			"Street" : "Albersloher Weg",
+			"Building" : "24",
+			"Country" : "DE",
+			"AddressType" : "02",
+			"GeoLocation" : {
+				"Longitude" : "7.651731300000",
+				"Latitude" : "51.940081800000"
+			}
+		}
+	},
+	"SO_2_SCHDL" : [{
+		"ScheduleKey" : "005056A71E3D1ED68DDA8C9967D08B27",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8C9967D0AB27",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8C9967D0CB27",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8C9967D0EB27",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8C9967D10B27",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8C9967D12B27",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA18CB46",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA18EB46",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}],
+	"Messages" : [{
+		"code" : "TRANSIENT/1234",
+		"longtextUrl" : "SalesOrderList('0500000001')/Messages(1)",
+		"message" : "Enter customer reference if available",
+		"numericSeverity" : 3,
+		"target" : "Note",
+		"transition" : true
+	}]
+}
