@@ -556,7 +556,8 @@ sap.ui.define([
 	};
 
 	["getAriaLabelledBy", "addAriaLabelledBy", "removeAriaLabelledBy", "removeAllAriaLabelledBy",
-		"getAriaDescribedBy", "addAriaDescribedBy", "removeAriaDescribedBy", "removeAllAriaDescribedBy"].map(function(sFn) {
+		"getAriaDescribedBy", "addAriaDescribedBy", "removeAriaDescribedBy", "removeAllAriaDescribedBy",
+		"getAccessibilityInfo"].map(function(sFn) {
 		ObjectMarker.prototype[sFn] = function() {
 			var oInnerControl = this._getInnerControl(),
 				oResult;
