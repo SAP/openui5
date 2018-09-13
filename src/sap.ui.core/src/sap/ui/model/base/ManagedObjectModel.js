@@ -669,6 +669,35 @@ sap.ui.define([
 		this.checkUpdate();
 	};
 
+	/**
+	 * Private method iterating the registered bindings of this model instance and initiating their check for update
+	 * @param {boolean} bForceUpdate
+	 * @param {boolean} bAsync
+	 * @param {function} fnFilter an optional test function to filter the binding
+	 * @protected
+	 */
+	ManagedObjectModel.prototype.checkUpdate = function(bForceUpdate, bAsync, fnFilter) {
+		if (bAsync) {
+			if (!this.sUpdateTimer) {
+				this.sUpdateTimer = setTimeout(function() {
+					this.checkUpdate(bForceUpdate, true, fnFilter);
+				}.bind(this), 0);
+			}
+			return;
+		}
+
+		if (this.sUpdateTimer) {
+			clearTimeout(this.sUpdateTimer);
+			this.sUpdateTimer = null;
+		}
+		var aBindings = this.aBindings.slice(0);
+		jQuery.each(aBindings, function(iIndex, oBinding) {
+			if (!fnFilter || fnFilter(oBinding)) {
+				oBinding.checkUpdate(bForceUpdate);
+			}
+		});
+	};
+
 	return ManagedObjectModel;
 
 });
