@@ -2,8 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/test/TestUtils"
-], function (TestUtils) {
+], function (Log, TestUtils) {
 	"use strict";
 
 	return {
@@ -144,17 +145,17 @@ sap.ui.define([
 			When.onAnyPage.cleanUp("SalesOrders");
 			Then.onAnyPage.checkLog(bRealOData ? [{
 				component : "sap.ui.model.odata.v4.ODataPropertyBinding",
-				level : jQuery.sap.log.Level.ERROR,
+				level : Log.Level.ERROR,
 				message : "Failed to update path /SalesOrderList/-1/SO_2_SOITEM"
 				//TODO: enable checkLog to deal with RegExp
 			}, {
 				component : "sap.ui.model.odata.v4.ODataPropertyBinding",
-				level : jQuery.sap.log.Level.ERROR,
+				level : Log.Level.ERROR,
 				message : "Failed to update path /SalesOrderList/-1/SO_2_SOITEM"
 				//TODO: enable checkLog to deal with RegExp
 			}, {
 				component : "sap.ui.model.odata.v4.ODataPropertyBinding",
-				level : jQuery.sap.log.Level.ERROR,
+				level : Log.Level.ERROR,
 				message : "Failed to update path /SalesOrderList/-1/Note"
 				//TODO: enable checkLog to deal with RegExp
 			}] : undefined);

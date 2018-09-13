@@ -150,7 +150,7 @@ sap.ui.define([
 				throw new Error("Must not delete twice: " + sEditUrl);
 			}
 			oEntity["$ui5.deleting"] = true;
-			mHeaders = {"If-Match" : oEntity["@odata.etag"]};
+			mHeaders = {"If-Match" : oEntity};
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
 			return that.oRequestor.request("DELETE", sEditUrl, oGroupLock, mHeaders)
 				.catch(function (oError) {
@@ -771,8 +771,20 @@ sap.ui.define([
 			}
 
 			function patch(oPatchGroupLock) {
+				var oRequestLock;
+
+				/*
+				 * Synchronous callback called when the request is put on the wire. Locks the group
+				 * so that further requests created via {@link ODataModel#submitBatch} wait until
+				 * this request has returned and its response is applied to the cache.
+				 */
+				function onSubmit() {
+					oRequestLock =  that.oRequestor.getModelInterface()
+						.lockGroup(sGroupId, true, that);
+				}
+
 				oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, oPatchGroupLock,
-					{"If-Match" : oEntity["@odata.etag"]}, oUpdateData, undefined, onCancel);
+					{"If-Match" : oEntity}, oUpdateData, onSubmit, onCancel);
 				that.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 				return SyncPromise.all([
 					oPatchPromise,
@@ -795,10 +807,16 @@ sap.ui.define([
 					if (!oError.canceled) {
 						fnErrorCallback(oError);
 						if (that.oRequestor.getGroupSubmitMode(sGroupId) === "API") {
+							oRequestLock.unlock();
+							oRequestLock = undefined;
 							return patch(oPatchGroupLock.getUnlockedCopy());
 						}
 					}
 					throw oError;
+				}).finally(function () {
+					if (oRequestLock) {
+						oRequestLock.unlock();
+					}
 				});
 			}
 
@@ -1434,7 +1452,7 @@ sap.ui.define([
 			var oElement = aResult[0];
 			// _Helper.updateExisting cannot be used because navigation properties cannot be handled
 			that.aElements[iIndex] = that.aElements.$byPredicate[sPredicate] = oElement;
-			that.visitResponse(oElement, aResult[1]);
+			that.visitResponse(oElement, aResult[1], false, that.sMetapath, sPredicate);
 		});
 
 		this.bSentReadRequest = true;
@@ -1512,7 +1530,8 @@ sap.ui.define([
 						// _Helper.updateExisting cannot be used because navigation properties
 						// cannot be handled
 						that.aElements[iIndex] = that.aElements.$byPredicate[sPredicate] = oResult;
-						that.visitResponse(oResult, mTypeForMetaPath);
+						that.visitResponse(oResult, mTypeForMetaPath, false, that.sMetapath,
+							sPredicate);
 					}
 				});
 		});
@@ -1725,8 +1744,8 @@ sap.ui.define([
 	 * @param {object} [oData]
 	 *   A copy of the data to be sent with the POST request; may be used to tunnel a different
 	 *   HTTP method via a property "X-HTTP-Method" (which is removed)
-	 * @param {string} [sETag]
-	 *   The ETag to be sent as "If-Match" header with the POST request.
+	 * @param {object} [oEntity]
+	 *   The entity which contains the ETag to be sent as "If-Match" header with the POST request.
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the result of the request.
 	 * @throws {Error}
@@ -1734,7 +1753,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	SingleCache.prototype.post = function (oGroupLock, oData, sETag) {
+	SingleCache.prototype.post = function (oGroupLock, oData, oEntity) {
 		var sHttpMethod = "POST",
 			aPromises,
 			that = this;
@@ -1757,7 +1776,7 @@ sap.ui.define([
 		}
 		aPromises = [
 			this.oRequestor.request(sHttpMethod, this.sResourcePath + this.sQueryString, oGroupLock,
-				{"If-Match" : sETag}, oData)
+				{"If-Match" : oEntity}, oData)
 		];
 		if (this.bFetchOperationReturnType) {
 			aPromises.push(this.fetchTypes());

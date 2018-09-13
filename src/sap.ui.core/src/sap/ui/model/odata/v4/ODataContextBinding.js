@@ -234,7 +234,7 @@ sap.ui.define([
 				if (that.bRelative && that.oContext.getBinding) {
 					iIndex = that.sPath.lastIndexOf("/");
 					sPath = iIndex >= 0 ? that.sPath.slice(0, iIndex) : "";
-					fnGetEntity = that.oContext.getObject.bind(that.oContext, sPath);
+					fnGetEntity = that.oContext.getValue.bind(that.oContext, sPath);
 				}
 				oOperationMetadata = aOperationMetadata[0];
 				return that.createCacheAndRequest(oGroupLock, sResolvedPath, oOperationMetadata,
@@ -415,7 +415,6 @@ sap.ui.define([
 		var bAction = oOperationMetadata.$kind === "Action",
 			oCache,
 			vEntity = fnGetEntity,
-			sETag,
 			bHasReturnValueContext = this.hasReturnValueContext(oOperationMetadata),
 			oModel = this.oModel,
 			sMetaPath = oModel.getMetaModel().getMetaPath(sPath) + "/@$ui5.overload/0/$ReturnType",
@@ -447,7 +446,6 @@ sap.ui.define([
 		this.oOperation.bAction = bAction;
 		if (bAction && fnGetEntity) {
 			vEntity = fnGetEntity();
-			sETag = vEntity && vEntity["@odata.etag"];
 		}
 		sPath = oRequestor.getPathAndAddQueryOptions(sPath, oOperationMetadata, mParameters,
 			mQueryOptions, vEntity);
@@ -456,7 +454,7 @@ sap.ui.define([
 			bAction, sMetaPath, bHasReturnValueContext);
 		this.oCachePromise = SyncPromise.resolve(oCache);
 		return bAction
-			? oCache.post(oGroupLock, mParameters, sETag)
+			? oCache.post(oGroupLock, mParameters, vEntity)
 			: oCache.fetchValue(oGroupLock);
 	};
 

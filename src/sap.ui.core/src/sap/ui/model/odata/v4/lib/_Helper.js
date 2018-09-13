@@ -691,6 +691,32 @@ sap.ui.define([
 		},
 
 		/**
+		 * Resolves the "If-Match" header in the given map of request-specific headers.
+		 * For lazy determination of the ETag, the "If-Match" header may contain an object
+		 * containing the current ETag. If needed create a copy of the given map and replace the
+		 * value of the "If-Match" header by the current ETag.
+		 *
+		 * @param {object} [mHeaders]
+		 *   Map of request-specific headers.
+		 * @returns {object}
+		 *   The map of request-specific headers with the resolved If-Match header.
+		 */
+		resolveIfMatchHeader : function (mHeaders) {
+			var vIfMatchValue = mHeaders && mHeaders["If-Match"];
+
+			if (vIfMatchValue && typeof vIfMatchValue === "object") {
+				vIfMatchValue = vIfMatchValue["@odata.etag"];
+				mHeaders = jQuery.extend({}, mHeaders);
+				if (vIfMatchValue === undefined) {
+					delete mHeaders["If-Match"];
+				} else {
+					mHeaders["If-Match"] = vIfMatchValue;
+				}
+			}
+			return mHeaders;
+		},
+
+		/**
 		 * Sets the new value of the private client-side instance annotation with the given
 		 * unqualified name at the given object.
 		 *

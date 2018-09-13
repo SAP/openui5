@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/model/odata/v4/lib/_AggregationHelper"
 ], function (Log, _AggregationHelper) {
@@ -107,8 +107,7 @@ sap.ui.require([
 			},
 			group : {
 				Region : {}
-			},
-			groupLevels : ["Region"]
+			}
 		},
 		mQueryOptions : {
 			$skip : 0, // special case,
@@ -124,8 +123,7 @@ sap.ui.require([
 			},
 			group : {
 				Region : {}
-			},
-			groupLevels : ["Region"]
+			}
 		},
 		mQueryOptions : {
 			$count : true,
@@ -148,7 +146,7 @@ sap.ui.require([
 			group : {
 				Region : {}
 			},
-			groupLevels : ["Region"]
+			groupLevels : []
 		},
 		mQueryOptions : {
 			$count : true,
@@ -162,6 +160,18 @@ sap.ui.require([
 			+ "/concat(aggregate($count as UI5__count),skip(41)/top(99))",
 		sFollowUpApply : "groupby((Region),aggregate(SalesNumber))"
 			+ "/filter(SalesNumber ge 100)/orderby(Region desc)/skip(41)/top(99)"
+	}, {
+		oAggregation : {
+			aggregate : {
+				SalesNumberSum : {grandTotal : true, name : "SalesNumber", "with" : "sum"}
+			},
+			group : {
+				Region : {}
+			}
+		},
+		sApply : "groupby((Region),aggregate(SalesNumber with sum as SalesNumberSum))"
+			+ "/concat(aggregate(SalesNumberSum with sum as UI5grand__SalesNumberSum)"
+			+ ",identity)"
 	}, {
 		oAggregation : {
 			aggregate : {
@@ -394,6 +404,12 @@ sap.ui.require([
 			groupLevels : {}
 		},
 		sError : "Not a array value for 'groupLevels'"
+	}, {
+		oAggregation : {
+			aggregate : {A : {grandTotal : true}},
+			groupLevels : ["B"]
+		},
+		sError : "Cannot combine visual grouping with grand total"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("buildApply: " + oFixture.sError, function (assert) {
 			assert.throws(function () {

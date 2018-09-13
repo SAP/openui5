@@ -32,7 +32,7 @@ sap.ui.define([
 
 		onFilterGrid : function (oEvent) {
 			this.byId("tTable").getBinding("rows").changeParameters({
-				$filter : 'SalesNumber gt '
+				$filter : 'SalesNumberSum gt '
 					+ (this.getView().getModel("ui").getProperty("/sFilterGrid") || 0)
 			});
 		},

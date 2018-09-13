@@ -8,14 +8,15 @@
  * @version @version@
  */
 sap.ui.define([
-	"jquery.sap.global",
+	"jquery.sap.script", // jQuery.sap.getUriParameters()
+	"sap/base/Log",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v2/ODataModel"
-], function (jQuery, View, ViewType, BaseComponent, MockServer, JSONModel, ODataModel) {
+], function (jQuery, Log, View, ViewType, BaseComponent, MockServer, JSONModel, ODataModel) {
 	"use strict";
 
 	var Component = BaseComponent.extend("sap.ui.core.sample.ViewTemplate.valuelist.Component", {
@@ -44,7 +45,7 @@ sap.ui.define([
 				});
 				// mock server only simulates $metadata request without query parameters
 				this.aMockServers[0].getRequests().some(function (oRequest) {
-					if (jQuery.sap.startsWith(oRequest.path.source, "\\$metadata")) {
+					if (oRequest.path.source.startsWith("\\$metadata")) {
 						oRequest.path = /\$metadata$/;
 						return true;
 					}
@@ -74,7 +75,7 @@ sap.ui.define([
 								._escapeStringForRegExp(sServiceUri + "$metadata?sap-value-list="
 									+ oMockData.valueList)),
 							response : function (oXHR) {
-								jQuery.sap.log.debug("Mocked response sent:" + oXHR.url, null,
+								Log.debug("Mocked response sent:" + oXHR.url, null,
 									"sap.ui.core.sample.ViewTemplate.valuelist.Component");
 								oXHR.respondFile(200, {}, sMockServerBaseUri + oMockData.response);
 							}
@@ -116,7 +117,7 @@ sap.ui.define([
 								path : new RegExp(MockServer.prototype
 									._escapeStringForRegExp(sServiceUri + oMockData.param)),
 								response : function (oXHR) {
-									jQuery.sap.log.debug("Mocked response sent:" + oXHR.url, null,
+									Log.debug("Mocked response sent:" + oXHR.url, null,
 										"sap.ui.core.sample.ViewTemplate.valuelist.Component");
 									if  (oMockData.response){
 										oXHR.respondFile(200, {}, sMockServerBaseUri +

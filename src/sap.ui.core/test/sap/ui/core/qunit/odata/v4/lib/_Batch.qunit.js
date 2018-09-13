@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/model/odata/v4/lib/_Batch",
@@ -11,7 +11,8 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var oEmployeesBody = {
+	var oEntity = {"@odata.etag" : "W/\"20180830000000.0000000\""},
+		oEmployeesBody = {
 			"@odata.context": "$metadata#EMPLOYEES",
 			"value" : [{
 				"@odata.etag" : "W/\"19770724000000.0000000\"",
@@ -597,6 +598,131 @@ sap.ui.require([
 		"--changeset_id-1450426018742-913--\r\n" +
 		"--batch_id-1450426018742-911--\r\n",
 		"Content-Type" : "multipart/mixed; boundary=batch_id-1450426018742-911",
+		"MIME-Version" : "1.0"
+	}, {
+		testTitle : "If-Match parameter is an object",
+		expectedBoundaryIDs : ["id-0123456789012-345", "id-9876543210987-654"],
+		requests : [[
+			{
+				method : "PATCH",
+				url : "Employees('1')",
+				headers : {
+					"Content-Type" : "application/json",
+					"If-Match" : oEntity
+				},
+				body : {"TEAM_ID" : "TEAM_03"}
+			}
+		]],
+		body : "--batch_id-0123456789012-345\r\n" +
+		"Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n" +
+		"\r\n" +
+		"--changeset_id-9876543210987-654\r\n" +
+		"Content-Type:application/http\r\n" +
+		"Content-Transfer-Encoding:binary\r\n" +
+		"Content-ID:0.0\r\n" +
+		"\r\n" +
+		"PATCH Employees('1') HTTP/1.1\r\n" +
+		"Content-Type:application/json\r\n" +
+		"If-Match:" + oEntity["@odata.etag"] + "\r\n" +
+		"\r\n" +
+		'{"TEAM_ID":"TEAM_03"}\r\n' +
+		"--changeset_id-9876543210987-654--\r\n" +
+		"--batch_id-0123456789012-345--\r\n",
+		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
+		"MIME-Version" : "1.0"
+	}, {
+		testTitle : "If-Match parameter is a string",
+		expectedBoundaryIDs : ["id-0123456789012-345", "id-9876543210987-654"],
+		requests : [[
+			{
+				method : "PATCH",
+				url : "Employees('1')",
+				headers : {
+					"Content-Type" : "application/json",
+					"If-Match" : "W/\"20151211144619.4328660\""
+				},
+				body : {"TEAM_ID" : "TEAM_03"}
+			}
+		]],
+		body : "--batch_id-0123456789012-345\r\n" +
+		"Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n" +
+		"\r\n" +
+		"--changeset_id-9876543210987-654\r\n" +
+		"Content-Type:application/http\r\n" +
+		"Content-Transfer-Encoding:binary\r\n" +
+		"Content-ID:0.0\r\n" +
+		"\r\n" +
+		"PATCH Employees('1') HTTP/1.1\r\n" +
+		"Content-Type:application/json\r\n" +
+		"If-Match:W/\"20151211144619.4328660\"\r\n" +
+		"\r\n" +
+		'{"TEAM_ID":"TEAM_03"}\r\n' +
+		"--changeset_id-9876543210987-654--\r\n" +
+		"--batch_id-0123456789012-345--\r\n",
+		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
+		"MIME-Version" : "1.0"
+	}, {
+		testTitle : "If-Match: @odata.etag is undefined",
+		expectedBoundaryIDs : ["id-0123456789012-345", "id-9876543210987-654"],
+		requests : [[
+			{
+				method : "PATCH",
+				url : "Employees('1')",
+				headers : {
+					"Content-Type" : "application/json",
+					"If-Match" : {
+						/*"@odata.etag" : undefined*/
+					}
+				},
+				body : {"TEAM_ID" : "TEAM_03"}
+			}
+		]],
+		body : "--batch_id-0123456789012-345\r\n" +
+		"Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n" +
+		"\r\n" +
+		"--changeset_id-9876543210987-654\r\n" +
+		"Content-Type:application/http\r\n" +
+		"Content-Transfer-Encoding:binary\r\n" +
+		"Content-ID:0.0\r\n" +
+		"\r\n" +
+		"PATCH Employees('1') HTTP/1.1\r\n" +
+		"Content-Type:application/json\r\n" +
+		"\r\n" +
+		'{"TEAM_ID":"TEAM_03"}\r\n' +
+		"--changeset_id-9876543210987-654--\r\n" +
+		"--batch_id-0123456789012-345--\r\n",
+		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
+		"MIME-Version" : "1.0"
+	}, {
+		testTitle : "Header with empty value",
+		expectedBoundaryIDs : ["id-0123456789012-345", "id-9876543210987-654"],
+		requests : [[
+			{
+				method : "PATCH",
+				url : "Employees('1')",
+				headers : {
+					"Content-Type" : "application/json",
+					"Foo" : ""
+				},
+				body : {"TEAM_ID" : "TEAM_03"}
+			}
+		]],
+		body : "--batch_id-0123456789012-345\r\n" +
+		"Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n" +
+		"\r\n" +
+		"--changeset_id-9876543210987-654\r\n" +
+		"Content-Type:application/http\r\n" +
+		"Content-Transfer-Encoding:binary\r\n" +
+		"Content-ID:0.0\r\n" +
+		"\r\n" +
+		"PATCH Employees('1') HTTP/1.1\r\n" +
+		"Content-Type:application/json\r\n" +
+		"Foo:\r\n" +
+		"\r\n" +
+		'{"TEAM_ID":"TEAM_03"}\r\n' +
+		"--changeset_id-9876543210987-654--\r\n" +
+		"--batch_id-0123456789012-345--\r\n",
+		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
 		"MIME-Version" : "1.0"
 	}].forEach(function (oFixture) {
 			QUnit.test("serializeBatchRequest: " + oFixture.testTitle, function (assert) {
