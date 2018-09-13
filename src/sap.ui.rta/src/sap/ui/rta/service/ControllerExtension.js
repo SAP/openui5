@@ -30,6 +30,26 @@ function (
 	*/
 
 	return function (oRta) {
+		function makeAjaxCall(sPath) {
+			return new Promise(function(resolve, reject) {
+				var sUrl;
+				jQuery.ajax({
+					url: sUrl = sap.ui.require.toUrl(sPath) + ".js",
+					async: true,
+					success: function(data) {
+						resolve(data);
+					},
+					error: function(xhr, textStatus, error) {
+						var oError = new Error("resource " + sPath + " could not be loaded from " + sUrl + ". Check for 'file not found' or parse errors. Reason: " + error);
+						oError.status = textStatus;
+						oError.error = error;
+						oError.statusCode = xhr.status;
+						reject(error);
+					},
+					dataType: "text"
+				});
+			});
+		}
 
 		return {
 			exports: {
@@ -92,30 +112,15 @@ function (
 				 * @public
 				 */
 				getTemplate: function(sViewId) {
-					var sUrl, oError;
 					var oViewOverlay = OverlayRegistry.getOverlay(sViewId);
-
 					if (!oViewOverlay) {
 						throw DtUtil.createError("service.ControllerExtension#getTemplate", "no overlay found for the given view ID", "sap.ui.rta");
 					}
 
 					var sControllerExtensionTemplatePath = oViewOverlay.getDesignTimeMetadata().getControllerExtensionTemplate();
-					return new Promise(function(resolve, reject) {
-						jQuery.ajax({
-							url: sUrl = sap.ui.require.toUrl(sControllerExtensionTemplatePath) + ".js",
-							async: true,
-							dataType: "text",
-							success: function(data) {
-								resolve(data);
-							},
-							error: function(xhr, textStatus, error) {
-								oError = new Error("resource " + sControllerExtensionTemplatePath + " could not be loaded from " + sUrl + ". Check for 'file not found' or parse errors. Reason: " + error);
-								oError.status = textStatus;
-								oError.error = error;
-								oError.statusCode = xhr.status;
-								reject(oError);
-							}
-						});
+					return makeAjaxCall(sControllerExtensionTemplatePath + "-dbg")
+					.catch(function() {
+						return makeAjaxCall(sControllerExtensionTemplatePath);
 					});
 				}
 			}
