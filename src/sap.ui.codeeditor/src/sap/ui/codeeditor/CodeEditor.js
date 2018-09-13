@@ -4,6 +4,27 @@
 
 /*global ace */
 
+sap.ui.loader.config({
+	shim: {
+		'sap/ui/codeeditor/js/ace/ace': {
+			exports: 'ace'
+		},
+		'sap/ui/codeeditor/js/ace/ext-language_tools': {
+			deps: ['sap/ui/codeeditor/js/ace/ace']
+		},
+		'sap/ui/codeeditor/js/ace/ext-beautify': {
+			deps: ['sap/ui/codeeditor/js/ace/ace']
+		},
+		'sap/ui/codeeditor/js/ace/mode-javascript': {
+			deps: ['sap/ui/codeeditor/js/ace/ace']
+		},
+		'sap/ui/codeeditor/js/ace/mode-json': {
+			deps: ['sap/ui/codeeditor/js/ace/ace']
+		}
+	}
+});
+
+
 sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/codeeditor/js/ace/ace',
