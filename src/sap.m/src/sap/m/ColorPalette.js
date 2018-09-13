@@ -232,7 +232,14 @@ sap.ui.define([
 			ColorPalette.prototype.ontap.apply(this, arguments);
 		};
 
-		ColorPalette.prototype.onsapspace = ColorPalette.prototype.onsapenter = ColorPalette.prototype.ontap;
+		ColorPalette.prototype.onsapenter = ColorPalette.prototype.ontap;
+
+		ColorPalette.prototype.onkeyup = function (oEvent) {
+			if (oEvent.which === KeyCodes.SPACE) {
+				oEvent.preventDefault();
+				ColorPalette.prototype.ontap.apply(this, arguments);
+			}
+		};
 
 		ColorPalette.prototype.onsaphome = ColorPalette.prototype.onsapend = function(oEvent) {
 			// Home and End keys on ColorPalette buttons should do nothing. If event occurs on the swatch, see ItemNavigationHomeEnd).
