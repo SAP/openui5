@@ -1482,6 +1482,31 @@
 		fnReadOnlyPopDestroySpy.restore();
 	});
 
+	QUnit.test("Read-only popover is opened after N-more is pressed", function(assert){
+		var oPicker;
+		this.multiInput.setWidth("200px");
+		this.multiInput.setEditable(false);
+		this.multiInput.setEnabled(true);
+		this.multiInput.setTokens([
+			new sap.m.Token({text: "XXXX"}),
+			new sap.m.Token({text: "XXXX"}),
+			new sap.m.Token({text: "XXXX"}),
+			new sap.m.Token({text: "XXXX"})
+		]);
+
+		sap.ui.getCore().applyChanges();
+
+		// act
+		if (sap.ui.Device.browser.internet_explorer) {
+			this.multiInput._tokenizer.$().click();
+		} else {
+			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
+		}
+
+		oPicker = this.multiInput._getReadOnlyPopover();
+
+		assert.equal(oPicker.isOpen(), true, "The readonly popover is opened on click on N-more");
+	});
 	QUnit.test("tokenizer's adjustTokensVisibility is called on initial rendering", function(assert) {
 		//arrange
 		var oMultiInput = new sap.m.MultiInput(),
