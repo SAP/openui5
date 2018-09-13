@@ -403,7 +403,9 @@ sap.ui.define([
 			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			this.clock.tick(this.oContextMenuPlugin.iMenuLeftclickOpeningDelay);
-			oContextMenuControl._onOverflowPress.bind(oContextMenuControl)();
+			var aContextMenuButtons = oContextMenuControl.getButtons();
+			var oOverflowButton = aContextMenuButtons[aContextMenuButtons.length - 1];
+			oContextMenuControl._onOverflowPress.bind(oContextMenuControl)({oSource : oOverflowButton});
 			assert.ok(true, "Should throw no error");
 			this.clock.restore();
 		});

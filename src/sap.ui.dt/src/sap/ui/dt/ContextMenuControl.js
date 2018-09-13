@@ -931,26 +931,11 @@ sap.ui.define([
 
 		/**
 		 * Expands the ContextMenu
-		 * @param {jQuery.Event} oEvt the press event
+		 * @param {jQuery.Event} oEvent the press event
 		 * @private
 		 */
-		_onOverflowPress: function (oEvt) {
-
-			this.fireOverflowButtonPressed();
-
-			var aButtons = this.getButtons();
-
-			this.getPopover().close();
-
-			this._bUseExpPop = true;
-
-			// makes the overflow Button invisible
-			this.getButtons()[aButtons.length - 1].setVisible(false);
-
-			// set the placement of the ContextMenu
-			var oFakeDiv = this._placeContextMenu(this._oTarget, false, true);
-
-			this.getPopover().openBy(oFakeDiv);
+		_onOverflowPress: function (oEvent) {
+			this.fireOverflowButtonPressed({oButton : oEvent.oSource});
 		},
 
 		/**
