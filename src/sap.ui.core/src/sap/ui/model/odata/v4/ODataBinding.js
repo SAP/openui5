@@ -715,7 +715,15 @@ sap.ui.define([
 	};
 
 	return function (oPrototype) {
-		jQuery.extend(oPrototype, ODataBinding.prototype);
+		if (oPrototype) {
+			jQuery.extend(oPrototype, ODataBinding.prototype);
+			return;
+		}
+		// initialize members introduced by ODataBinding
+
+		// maps a canonical path of a quasi-absolute or relative binding to a cache object that may
+		// be reused
+		this.mCacheByContext = undefined;
 	};
 
 }, /* bExport= */ false);

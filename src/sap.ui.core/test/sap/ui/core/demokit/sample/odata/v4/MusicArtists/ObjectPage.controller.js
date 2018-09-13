@@ -1,23 +1,38 @@
 sap.ui.define([
+	"sap/m/MessageBox",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/routing/History",
 	"sap/ui/model/json/JSONModel"
-], function (Controller, History, JSONModel) {
+], function (MessageBox, Controller, History, JSONModel) {
 	"use strict";
 
 	var sNamespace = "com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.MusicArtists.ObjectPage", {
+		_attachPatchEventHandlers : function (oBinding) {
+			oBinding.attachPatchSent(this.onPatchSent, this);
+			oBinding.attachPatchCompleted(this.onPatchCompleted, this);
+		},
+
+		_detachPatchEventHandlers : function (oBinding) {
+			oBinding.detachPatchSent(this.onPatchSent, this);
+			oBinding.detachPatchCompleted(this.onPatchCompleted, this);
+		},
+
 		_onObjectMatched : function (oEvent) {
 			var oView = this.getView(),
 				oArtistContext = oView.getModel()
 					.bindContext("/" + oEvent.getParameter("arguments").artistPath, null,
 						{$$patchWithoutSideEffects : true})
-					.getBoundContext();
+					.getBoundContext(),
+				that = this;
 
 			this.oActiveArtistContext = null;
 			this.byId("objectPageForm").setBindingContext(oArtistContext);
 			oArtistContext.requestObject("IsActiveEntity").then(function (bIsActiveEntity) {
+				if (!bIsActiveEntity) {
+					that._attachPatchEventHandlers(oArtistContext.getBinding());
+				}
 				oView.getModel("ui-op").setProperty("/bEditMode", !bIsActiveEntity);
 			});
 		},
@@ -38,6 +53,7 @@ sap.ui.define([
 				that = this;
 
 			oView.setBusy(true);
+			this.byId("draftIndicator").clearDraftState();
 			oView.getModel("ui-op").setProperty("/bEditMode", false);
 			this.byId("objectPageForm").getBindingContext().delete().then(function () {
 				if (that.oActiveArtistContext) {
@@ -64,6 +80,7 @@ sap.ui.define([
 				.execute()
 				.then(function (oInactiveArtistContext) {
 					that.byId("objectPageForm").setBindingContext(oInactiveArtistContext);
+					that._attachPatchEventHandlers(oInactiveArtistContext.getBinding());
 					oView.getModel("ui-op").setProperty("/bEditMode", true);
 					oView.setBusy(false);
 			});
@@ -76,16 +93,32 @@ sap.ui.define([
 			this.getView().setModel(new JSONModel({bEditMode : false}), "ui-op");
 		},
 
+		onPatchCompleted : function (oEvent) {
+			if (oEvent.getParameter("success")) {
+				this.byId("draftIndicator").showDraftSaved();
+			} else {
+				MessageBox.show("Error while saving changes", {
+					icon: MessageBox.Icon.ERROR
+				});
+			}
+		},
+
+		onPatchSent : function () {
+			this.byId("draftIndicator").showDraftSaving();
+		},
+
 		onSavePress : function () {
-			var oView = this.getView(),
+			var oOldBindingContext = this.byId("objectPageForm").getBindingContext(),
+				oView = this.getView(),
 				that = this;
 
 			oView.setBusy(true);
-			oView.getModel().bindContext(sNamespace + "ActivationAction(...)",
-					this.byId("objectPageForm").getBindingContext(),
+			this.byId("draftIndicator").clearDraftState();
+			oView.getModel().bindContext(sNamespace + "ActivationAction(...)", oOldBindingContext,
 					{$$inheritExpandSelect : true, $$patchWithoutSideEffects : true})
 				.execute()
 				.then(function (oActiveArtistContext) {
+					that._detachPatchEventHandlers(oOldBindingContext.getBinding());
 					that.byId("objectPageForm").setBindingContext(oActiveArtistContext);
 					oView.getModel("ui-op").setProperty("/bEditMode", false);
 					oView.setBusy(false);

@@ -234,12 +234,13 @@ sap.ui.define([
 			oMixin = {};
 
 		asODataParentBinding(oMixin);
+		asODataParentBinding.call(oMixin); // initialize members
 
 		Object.keys(oMixin).forEach(function (sKey) {
 			if (sKey === "getDependentBindings") {
-				assert.notStrictEqual(oBinding[sKey], oMixin[sKey]);
+				assert.notStrictEqual(oBinding[sKey], oMixin[sKey], sKey);
 			} else {
-				assert.strictEqual(oBinding[sKey], oMixin[sKey]);
+				assert.strictEqual(oBinding[sKey], oMixin[sKey], sKey);
 			}
 		});
 	});
@@ -1954,9 +1955,16 @@ sap.ui.define([
 
 		oBinding = this.bindList("/EMPLOYEES");
 
-		["AggregatedDataStateChange", "change", "dataReceived", "dataRequested", "DataStateChange",
-			"refresh"]
-		.forEach(function (sEvent) {
+		[
+			"AggregatedDataStateChange",
+			"change",
+			"dataReceived",
+			"dataRequested",
+			"DataStateChange",
+			"patchCompleted",
+			"patchSent",
+			"refresh"
+		].forEach(function (sEvent) {
 			oBindingMock.expects("attachEvent")
 				.withExactArgs(sEvent, sinon.match.same(mEventParameters)).returns(oReturn);
 

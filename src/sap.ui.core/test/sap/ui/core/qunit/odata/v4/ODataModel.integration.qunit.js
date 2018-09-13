@@ -3062,6 +3062,163 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Support of Draft: Test eventing for PATCH requests
+	["update", "$auto"].forEach(function (sUpdateGroupId) {
+		var sTitle = "Support of Draft: Test eventing for PATCH requests; updateGroupId = "
+				+ sUpdateGroupId;
+
+		QUnit.test(sTitle, function (assert) {
+			var fnAfterPatchCompleted,
+				oBatchPromise0,
+				oBatchPromise1,
+				oError = new Error("500 Service not available"),
+				oModel = createSalesOrdersModel({
+					autoExpandSelect : true,
+					updateGroupId : sUpdateGroupId
+				}),
+				oParentBinding,
+				iPatchCompleted = 0,
+				iPatchSent = 0,
+				fnReject,
+				fnRespond,
+				sView = '\
+<FlexBox binding="{/SalesOrderList(\'42\')}" id="parent">\
+	<Text id="lifecycleStatus" text="{LifecycleStatus}"/>\
+	<Text id="note" text="{Note}"/>\
+</FlexBox>',
+				that = this;
+
+			function getWaitForPatchCompletedPromise() {
+				return new Promise(function (resolve) {
+					fnAfterPatchCompleted = resolve;
+				});
+			}
+
+			this.expectRequest("SalesOrderList('42')?$select=LifecycleStatus,Note,SalesOrderID", {
+					"@odata.etag" : "ETag0",
+					"LifecycleStatus" : "N",
+					"Note" : "Note",
+					"SalesOrderID" : "42"
+				})
+				.expectChange("lifecycleStatus", "N")
+				.expectChange("note", "Note");
+
+			return this.createView(assert, sView, oModel).then(function () {
+				oParentBinding = that.oView.byId("parent").getElementBinding();
+
+				oParentBinding.attachPatchCompleted(function (oEvent) {
+					assert.strictEqual(oEvent.getSource(), oParentBinding);
+					iPatchCompleted++;
+					if (fnAfterPatchCompleted) {
+						fnAfterPatchCompleted();
+						fnAfterPatchCompleted = undefined;
+					}
+				});
+				oParentBinding.attachPatchSent(function (oEvent) {
+					assert.strictEqual(oEvent.getSource(), oParentBinding);
+					iPatchSent++;
+				});
+
+				that.expectRequest({
+						method : "PATCH",
+						url : "SalesOrderList('42')",
+						headers : {"If-Match" : "ETag0"},
+						payload : {Note : "Changed Note"}
+					}, new Promise(function (resolve, reject) {
+						fnReject = reject;
+					}))
+					.expectChange("note", "Changed Note");
+
+				that.oView.byId("note").getBinding("text").setValue("Changed Note");
+				if (sUpdateGroupId === "update") {
+					oBatchPromise0 = that.oModel.submitBatch(sUpdateGroupId).then(function () {
+						assert.ok(false, "unexpected success");
+					}, function () {
+						assert.ok(true, "first batch failed as expected");
+					});
+				}
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				var oPromise = getWaitForPatchCompletedPromise();
+
+				assert.strictEqual(iPatchSent, 1, "patchSent 1");
+				assert.strictEqual(iPatchCompleted, 0, "patchCompleted 0");
+
+				// don't care about other parameters
+				that.oLogMock.expects("error").withArgs("$batch failed");
+				that.oLogMock.expects("error")
+					.withArgs("Failed to update path /SalesOrderList('42')/Note");
+
+				fnReject(oError);
+
+				return oPromise;
+			}).then(function () {
+				assert.strictEqual(iPatchSent, 1, "patchSent 1");
+				assert.strictEqual(iPatchCompleted, 1, "patchCompleted 1");
+
+				that.expectMessages([{
+						"code": undefined,
+						"message": "500 Service not available",
+						"persistent": true,
+						"target": "",
+						"technical" : true,
+						"type": "Error"
+					}, {
+						"code": undefined,
+						"message": "HTTP request was not processed because $batch failed",
+						"persistent": true,
+						"target": "",
+						"technical" : true,
+						"type": "Error"
+					}])
+					.expectChange("lifecycleStatus", "P")
+					.expectRequest({
+						method : "PATCH",
+						url : "SalesOrderList('42')",
+						headers : {"If-Match" : "ETag0"},
+						payload : {
+							LifecycleStatus : "P",
+							Note : "Changed Note"
+						}
+					}, new Promise(function (resolve, reject) {
+						fnRespond = resolve.bind(null, {
+							"@odata.etag" : "ETag1",
+							LifecycleStatus : "P",
+							Note : "Changed Note From Server"
+						});
+					}));
+
+				that.oView.byId("lifecycleStatus").getBinding("text").setValue("P");
+
+				if (sUpdateGroupId === "update") {
+					oBatchPromise1 = that.oModel.submitBatch(sUpdateGroupId);
+				}
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				var oPromise = getWaitForPatchCompletedPromise();
+
+				assert.strictEqual(iPatchSent, 2, "patchSent 2");
+				assert.strictEqual(iPatchCompleted, 1, "patchCompleted 1");
+
+				that.expectChange("note", "Changed Note From Server");
+
+				fnRespond();
+				return Promise.all([
+					oBatchPromise0,
+					oBatchPromise1,
+					oPromise,
+					that.waitForChanges(assert)
+				]);
+			}).then(function () {
+				assert.strictEqual(iPatchSent, 2, "patchSent 2");
+				assert.strictEqual(iPatchCompleted, 2, "patchCompleted 2");
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Enable autoExpandSelect mode for an ODataContextBinding with relative
 	// ODataPropertyBindings
 	// The SalesOrders application does not have such a scenario.

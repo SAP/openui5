@@ -740,13 +740,16 @@ sap.ui.define([
 	 *   Path of the unit or currency for the property, relative to the entity
 	 * @param {boolean} [bPatchWithoutSideEffects=false]
 	 *   Whether the PATCH response is ignored, except for a new ETag
+	 * @param {function} [fnPatchSent]
+	 *   The function is called just before a back-end request is sent for the first time.
+	 *   If no back-end request is needed, the function is not called.
 	 * @returns {Promise}
 	 *   A promise for the PATCH request (resolves with <code>undefined</code>)
 	 *
 	 * @public
 	 */
 	Cache.prototype.update = function (oGroupLock, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
-			sEntityPath, sUnitOrCurrencyPath, bPatchWithoutSideEffects) {
+			sEntityPath, sUnitOrCurrencyPath, bPatchWithoutSideEffects, fnPatchSent) {
 		var aPropertyPath = sPropertyPath.split("/"),
 			aUnitOrCurrencyPath,
 			that = this;
@@ -781,8 +784,11 @@ sap.ui.define([
 				 * this request has returned and its response is applied to the cache.
 				 */
 				function onSubmit() {
-					oRequestLock =  that.oRequestor.getModelInterface()
+					oRequestLock = that.oRequestor.getModelInterface()
 						.lockGroup(sGroupId, true, that);
+					if (fnPatchSent) {
+						fnPatchSent();
+					}
 				}
 
 				oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, oPatchGroupLock,

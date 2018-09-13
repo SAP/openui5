@@ -28,6 +28,84 @@ sap.ui.define([
 	var sClassName = "sap.ui.model.odata.v4.ODataParentBinding";
 
 	/**
+	 * Attach event handler <code>fnFunction</code> to the 'patchCompleted' event of this binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @public
+	 * @since 1.59.0
+	 */
+	ODataParentBinding.prototype.attachPatchCompleted = function (fnFunction, oListener) {
+		this.attachEvent("patchCompleted", fnFunction, oListener);
+	};
+
+	/**
+	 * Detach event handler <code>fnFunction</code> from the 'patchCompleted' event of this binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @public
+	 * @since 1.59.0
+	 */
+	ODataParentBinding.prototype.detachPatchCompleted = function (fnFunction, oListener) {
+		this.detachEvent("patchCompleted", fnFunction, oListener);
+	};
+
+	/**
+	 * Fire event 'patchCompleted' to attached listeners, if the last PATCH request is completed.
+	 *
+	 * @param {boolean} bSuccess Whether the current PATCH request has been processed successfully
+	 * @private
+	 */
+	ODataParentBinding.prototype.firePatchCompleted = function (bSuccess) {
+		if (this.iPatchCounter === 0) {
+			throw new Error("Completed more PATCH requests than sent");
+		}
+		this.iPatchCounter -= 1;
+		this.bPatchSuccess = this.bPatchSuccess && bSuccess;
+		if (this.iPatchCounter === 0) {
+			this.fireEvent("patchCompleted", {success : this.bPatchSuccess});
+			this.bPatchSuccess = true;
+		}
+	};
+
+	/**
+	 * Attach event handler <code>fnFunction</code> to the 'patchSent' event of this binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @public
+	 * @since 1.59.0
+	 */
+	ODataParentBinding.prototype.attachPatchSent = function (fnFunction, oListener) {
+		this.attachEvent("patchSent", fnFunction, oListener);
+	};
+
+	/**
+	 * Detach event handler <code>fnFunction</code> from the 'patchSent' event of this binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @public
+	 * @since 1.59.0
+	 */
+	ODataParentBinding.prototype.detachPatchSent = function (fnFunction, oListener) {
+		this.detachEvent("patchSent", fnFunction, oListener);
+	};
+
+	/**
+	 * Fire event 'patchSent' to attached listeners, if the first PATCH request is sent.
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.firePatchSent = function () {
+		this.iPatchCounter += 1;
+		if (this.iPatchCounter === 1) {
+			this.fireEvent("patchSent");
+		}
+	};
+
+	/**
 	 * Adds the given paths to $select of the given query options.
 	 *
 	 * @param {object} mQueryOptions The query options
@@ -838,7 +916,15 @@ sap.ui.define([
 	};
 
 	return function (oPrototype) {
-		jQuery.extend(oPrototype, ODataParentBinding.prototype);
+		if (oPrototype) {
+			jQuery.extend(oPrototype, ODataParentBinding.prototype);
+			return;
+		}
+		// initialize members introduced by ODataBinding
+		asODataBinding.call(this);
+		// initialize members introduced by ODataParentBinding
+		this.iPatchCounter = 0; // counts the sent but not yet completed PATCHes
+		this.bPatchSuccess = true; // whether all sent PATCHes have been successfully processed
 	};
 
 }, /* bExport= */ false);

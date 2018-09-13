@@ -24,6 +24,8 @@ sap.ui.define([
 	 *   A template object to fill the binding, all properties are copied
 	 */
 	function ODataBinding(oTemplate) {
+		asODataBinding.call(this);
+
 		jQuery.extend(this, {
 			//Returns the metadata for the class that this object belongs to.
 			getMetadata : function () {
@@ -48,6 +50,15 @@ sap.ui.define([
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("initialize members for mixin", function (assert) {
+		var oBinding = new ODataBinding();
+
+		//TODO add missing properties introduced by oDataBinding
+		assert.ok(oBinding.hasOwnProperty("mCacheByContext"));
+		assert.strictEqual(oBinding.mCacheByContext, undefined);
 	});
 
 	//*********************************************************************************************
