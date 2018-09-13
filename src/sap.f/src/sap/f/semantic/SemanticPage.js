@@ -89,6 +89,8 @@ sap.ui.define([
 	* <h3>Responsive behavior</h3>
 	*
 	* The responsive behavior of the <code>SemanticPage</code> depends on the behavior of the content that is displayed.
+	* To adjust the <code>SemanticPage</code> content padding, the <code>sapUiContentPadding</code>,
+	* <code>sapUiNoContentPadding</code>, and <code>sapUiResponsiveContentPadding</code> CSS classes can be used.
 	*
 	* @extends sap.ui.core.Control
 	*
@@ -449,6 +451,12 @@ sap.ui.define([
 
 	SemanticPage._SAVE_AS_TILE_ACTION = "saveAsTileAction";
 
+	SemanticPage.CONTENT_PADDING_CLASSES_TO_FORWARD = {
+		"sapUiNoContentPadding": true,
+		"sapUiContentPadding": true,
+		"sapUiResponsiveContentPadding": true
+	};
+
 	/*
 	* LIFECYCLE METHODS
 	*/
@@ -522,6 +530,26 @@ sap.ui.define([
 
 		oDynamicPageTitle.setAreaShrinkRatio(sAreaShrinkRatio);
 		return this.setProperty("titleAreaShrinkRatio", oDynamicPageTitle.getAreaShrinkRatio(), true);
+	};
+
+	SemanticPage.prototype.addStyleClass = function (sClass, bSuppressRerendering) {
+		var oDynamicPage = this.getAggregation("_dynamicPage");
+
+		if (SemanticPage.CONTENT_PADDING_CLASSES_TO_FORWARD[sClass]) {
+			oDynamicPage.addStyleClass(sClass, true);
+		}
+
+		return Control.prototype.addStyleClass.call(this, sClass, bSuppressRerendering);
+	};
+
+	SemanticPage.prototype.removeStyleClass = function (sClass, bSuppressRerendering) {
+		var oDynamicPage = this.getAggregation("_dynamicPage");
+
+		if (SemanticPage.CONTENT_PADDING_CLASSES_TO_FORWARD[sClass]) {
+			oDynamicPage.removeStyleClass(sClass, true);
+		}
+
+		return Control.prototype.removeStyleClass.call(this, sClass, bSuppressRerendering);
 	};
 
 	/*

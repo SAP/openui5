@@ -6,7 +6,7 @@ sap.ui.define(function() {
 		defaults: {
 			qunit: {
 				version: 2
-			},
+			}
 		},
 		tests: {
 			DataBindingMessages: {

@@ -1794,7 +1794,6 @@ function(
 				// if a token is selected, the tokenizer should not scroll
 				if (this.getEditable() && jQuery(oEvent.target).hasClass("sapMToken")) {
 					oTokenizer._useCollapsedMode(false);
-					setTimeout(oTokenizer["scrollToEnd"].bind(oTokenizer), 0);
 				}
 			}
 		}, this);
@@ -2276,7 +2275,8 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._getNextTraversalItem = function() {
-		var aItems = this._getItemsStartingWithPerTerm(this.getValue());
+		var sValue = this.getValue();
+		var aItems = sValue ? this._getItemsStartingWithPerTerm(sValue) : [];
 		var aSelectableItems = this._getUnselectedItems();
 
 		if (aItems.indexOf(this._oTraversalItem) > -1 && this._oTraversalItem.getText() === this.getValue()) {
@@ -2296,7 +2296,8 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._getPreviousTraversalItem = function() {
-		var aItems = this._getItemsStartingWithPerTerm(this.getValue());
+		var sValue = this.getValue();
+		var aItems = sValue ? this._getItemsStartingWithPerTerm(sValue) : [];
 
 		if (aItems.indexOf(this._oTraversalItem) > -1 && this._oTraversalItem.getText() === this.getValue()) {
 			return this._getPreviousUnselectedItemOf(this._oTraversalItem);

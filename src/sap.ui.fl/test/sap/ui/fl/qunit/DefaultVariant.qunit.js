@@ -14,30 +14,6 @@ sap.ui.define([
 
 	"use strict";
 
-	/*eslint-disable no-unused-vars */
-	var defaultVariantChangeDefinitionSpecifics = {
-		"fileType": "change", //set by Change.createInitialFileContent if not variant
-		"layer": "USER", //enforced
-		"fileName": "<name>", //currently set by Change.createInitialFileContent, must not be set
-		"namespace": "<namespace>", //currently set by Change.createInitialFileContent, must not be set
-		"packageName": "<packageName>", //currently set by Change.createInitialFileContent, must not be set
-		"changeType": "defaultVariant",
-		"creation": "<timestamp>", //set by Change.createInitialFileContent
-		"reference": "<component>", //set by Change.createInitialFileContent
-		"selector": {
-			"persistenceKey": "control1"
-		}, //optional
-		"content": {
-			"something": "createNewVariant"
-		},
-		"support": {  //set by Change.createInitialFileContent
-			"generator": "<generator>",
-			"user": "<user>",
-			"service": "<service>"
-		}
-	};
-	/*eslint-enable no-unused-vars */
-
 	QUnit.module("sap.ui.fl.DefaultVariant", {
 		beforeEach: function() {
 			this.oDefaultVariant = new defaultVariant.constructor();
@@ -159,6 +135,10 @@ sap.ui.define([
 			defaultVariantId: "Grendalin",
 			selector: {
 				stableId: "Galustika"
+			},
+			validAppVersions: {
+				creation: "1.2.3",
+				from: "1.2.3"
 			}
 		};
 
@@ -172,6 +152,8 @@ sap.ui.define([
 		assert.equal(oChange.getChangeType(), 'defaultVariant');
 		assert.equal(oChange.getSelector(), mParameterBag.selector);
 		assert.equal(oChange.getLayer(), 'USER');
+		assert.equal(oChange.getDefinition().validAppVersions.creation, "1.2.3");
+		assert.equal(oChange.getDefinition().validAppVersions.from, "1.2.3");
 	});
 
 	QUnit.test('getDefaultVariantChanges should return all default variant changes', function(assert) {

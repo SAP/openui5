@@ -463,7 +463,7 @@ sap.ui.define([
 
 	QUnit.test("Manifest delegation to component instance (sync)", function(assert) {
 
-		var oServer = this.oServer, oManifest = this.oManifest;
+		var oManifest = this.oManifest;
 
 		// start test
 		var oComponentContainer = new ComponentContainer({
@@ -489,7 +489,7 @@ sap.ui.define([
 			done();
 		}, 2000);
 
-		var oServer = this.oServer, oManifest = this.oManifest;
+		var oManifest = this.oManifest;
 
 		// start test
 		var oComponentContainer = new ComponentContainer({

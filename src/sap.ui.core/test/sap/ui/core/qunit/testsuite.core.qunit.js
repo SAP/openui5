@@ -332,7 +332,7 @@ sap.ui.define(function() {
 					"testdata/core/base/util/array/uniqueSort.qunit",
 
 					// sap/ui/*
-					"testdata/core/Device.qunit",
+					"testdata/core/ui/Device.qunit",
 
 					// sap/ui/base/*
 					"testdata/core/ui/base/syncXHRFix.qunit",

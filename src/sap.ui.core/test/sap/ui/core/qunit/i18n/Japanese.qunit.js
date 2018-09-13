@@ -39,7 +39,7 @@ sap.ui.define([
 		oJapaneseDate = new Japanese("invalid Japanese date timestamp");
 		assert.ok(isInvalid(oJapaneseDate), "Constructor with invalid string as timestamp must return an invalid date");
 
-		oJapaneseDate = new Japanese(new Object());
+		oJapaneseDate = new Japanese({});
 		assert.ok(isInvalid(oJapaneseDate), "Constructor with object as parameter must return an invalid date");
 
 		oJapaneseDate = new Japanese(0); //1, January 1970 = 1, January 45 Showa
@@ -73,25 +73,25 @@ sap.ui.define([
 		oJapaneseDate = new Japanese([235, 23], 0, "alabala");
 		assert.ok(isInvalid(oJapaneseDate), "Constructor with invalid string as day must return invalid date");
 
-		oJapaneseDate = new Japanese([235, new Object()], 0)
+		oJapaneseDate = new Japanese([235, {}], 0);
 		assert.ok(isInvalid(oJapaneseDate), "Constructor with object as year must return invalid date");
 
-		oJapaneseDate = new Japanese([235, 23], new Object());
+		oJapaneseDate = new Japanese([235, 23], {});
 		assert.ok(isInvalid(oJapaneseDate), "Constructor with object as month must return invalid date");
 
-		oJapaneseDate = new Japanese([235, 23], 0, new Object());
+		oJapaneseDate = new Japanese([235, 23], 0, {});
 		assert.ok(isInvalid(oJapaneseDate), "Constructor with object as day must return invalid date");
 
-		oJapaneseDate = new Japanese([235, 23], 0, 1, new Object());
+		oJapaneseDate = new Japanese([235, 23], 0, 1, {});
 		assert.ok(isInvalid(oJapaneseDate), "Constructor with object as hours must return invalid date");
 
-		oJapaneseDate = new Japanese([235, 23], 0, 1, 0, new Object());
+		oJapaneseDate = new Japanese([235, 23], 0, 1, 0, {});
 		assert.ok(isInvalid(oJapaneseDate), "Constructor with object as minutes must return invalid date");
 
-		oJapaneseDate = new Japanese([235, 23], 0, 1, 0, 0, new Object());
+		oJapaneseDate = new Japanese([235, 23], 0, 1, 0, 0, {});
 		assert.ok(isInvalid(oJapaneseDate), "Constructor with object as seconds must return invalid date");
 
-		oJapaneseDate = oJapaneseDate = new Japanese([235, 23], 0, 1, 0, 0, 0, new Object());
+		oJapaneseDate = oJapaneseDate = new Japanese([235, 23], 0, 1, 0, 0, 0, {});
 		assert.ok(isInvalid(oJapaneseDate), "Constructor with object as milliseconds must return invalid date");
 
 		// ------------- string -----------------------------
@@ -122,7 +122,7 @@ sap.ui.define([
 		aTestData.forEach(function(oTestDate) {
 			oJapaneseDate = createJapaneseDateFromTestEntry(oTestDate);
 			verifyDateWithTestDate(assert, "Constructor with valid values", oJapaneseDate, oTestDate.Japanese);
-		})
+		});
 	});
 
 	QUnit.test("with gregorian year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: valid values)", function (assert) {
@@ -130,7 +130,7 @@ sap.ui.define([
 		aTestData.forEach(function(oTestDate) {
 			oJapaneseDate = createDateFromTestEntry(oTestDate, Japanese);
 			verifyDateWithTestDate(assert, "Constructor with valid values", oJapaneseDate, oTestDate.Japanese);
-		})
+		});
 	});
 
 	QUnit.test("with year without era, when year is in current era and less than 100", function (assert) {
@@ -145,7 +145,7 @@ sap.ui.define([
 				oJapaneseDate = createDateFromTestEntry(oTestDate, Japanese);
 				verifyDateWithTestDate(assert, "Constructor with valid values", oJapaneseDate, oTestDate.Japanese);
 			}
-		})
+		});
 	});
 
 	QUnit.test("with optional parameters", function (assert) {
@@ -153,7 +153,7 @@ sap.ui.define([
 		verifyDate(assert, "new Japanese([235, 23], 10) must be equal to 01.11.23H", oJapaneseDate, 235, 23, 10, 1);
 
 		oJapaneseDate = new Japanese([235, 23], 10, 2);
-		verifyDate(assert, "new Japanese([235, 23], 10, 2) msut be equal to 02.11.23H", oJapaneseDate, 235, 23, 10, 2)
+		verifyDate(assert, "new Japanese([235, 23], 10, 2) msut be equal to 02.11.23H", oJapaneseDate, 235, 23, 10, 2);
 	});
 
 	QUnit.module("Overflow/underflow");
@@ -404,10 +404,6 @@ sap.ui.define([
 		} else {
 			return new clType(oDateEntry.year, oDateEntry.month, oDateEntry.day);
 		}
-	}
-
-	function getTimezoneOffset(oDate) {
-		return -1 * oDate.getTimezoneOffset() * 60 * 1000;
 	}
 
 	function isInvalid(oDate) {

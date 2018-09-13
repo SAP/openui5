@@ -4,12 +4,10 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/fl/Utils",
 	"sap/base/Log"
 ], function(
 	jQuery,
-	Base,
 	FlexUtils,
 	Log
 ) {
@@ -27,9 +25,15 @@ sap.ui.define([
 	 */
 	var PropertyChange = {};
 
+	// var sBindingError = "Please use 'PropertyBindingChange' to set a binding";
+
+	function isBinding(vPropertyValue) {
+		return FlexUtils.isBinding(vPropertyValue) || jQuery.isPlainObject(vPropertyValue);
+	}
+
 	function changeProperty(oControl, sPropertyName, vPropertyValue, oModifier) {
 		try {
-			if (FlexUtils.isBinding(vPropertyValue) || jQuery.isPlainObject(vPropertyValue)) {
+			if (isBinding(vPropertyValue)) {
 				oModifier.setPropertyBinding(oControl, sPropertyName, vPropertyValue);
 			} else {
 				oModifier.setProperty(oControl, sPropertyName, vPropertyValue);
@@ -54,6 +58,11 @@ sap.ui.define([
 		var sPropertyName = oDef.content.property;
 		var vPropertyValue = oDef.content.newValue;
 		var oModifier = mPropertyBag.modifier;
+
+		// TODO: enable again when apps have adapted
+		// if (isBinding(vPropertyValue)) {
+		// 	throw new Error(sBindingError);
+		// }
 
 		oChange.setRevertData({
 			originalValue: oModifier.getPropertyBinding(oControl, sPropertyName) || oModifier.getProperty(oControl, sPropertyName)
@@ -102,11 +111,16 @@ sap.ui.define([
 	 */
 	PropertyChange.completeChangeContent = function(oChange, oSpecificChangeInfo) {
 		var oChangeJson = oChange.getDefinition();
-		if (oSpecificChangeInfo.content) {
-			oChangeJson.content = oSpecificChangeInfo.content;
-		} else {
+
+		if (!oSpecificChangeInfo.content) {
 			throw new Error("oSpecificChangeInfo attribute required");
 		}
+		// TODO: enable again when apps have adapted
+		// if (isBinding(oSpecificChangeInfo.content.newValue)) {
+		// 	throw new Error(sBindingError);
+		// }
+
+		oChangeJson.content = oSpecificChangeInfo.content;
 	};
 
 	return PropertyChange;

@@ -18,7 +18,7 @@ sap.ui.define(function() {
 			CoreEvents: {
 				title: "Test Page for the SAPUI5 Core Events [sap.ui.core.Core]",
 				ui5: {
-					libs: "sap.ui.testlib",
+					libs: "sap.ui.testlib"
 				},
 				qunit: {
 					reorder: false

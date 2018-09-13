@@ -9,9 +9,9 @@ sap.ui.require([
 		var oObject = new EventProvider();
 		var mEventRegistry = oObject.mEventRegistry;
 
-		for(var key in mEventRegistry) {
+		for (var key in mEventRegistry) {
 			assert.ok(typeof mEventRegistry[key] !== "object", "no data");
-		};
+		}
 	});
 
 	var globalEvents = [];
@@ -25,9 +25,9 @@ sap.ui.require([
 			oEventInfo.id = event.getId();
 			oEventInfo.source = event.getSource();
 			oEventInfo.params = event.getParameters();
-		};
+		}
 		globalEvents.push(oEventInfo);
-	};
+	}
 
 	function receivedWithData(event, theReceiver, theReceiverName, additionalData) {
 		var oEventInfo = { listener : theReceiver,  handler : theReceiverName};
@@ -39,25 +39,25 @@ sap.ui.require([
 			oEventInfo.source = event.getSource();
 			oEventInfo.params = event.getParameters();
 			oEventInfo.additionalData = additionalData;
-		};
+		}
 		globalEvents.push(oEventInfo);
-	};
+	}
 
 	function handler1(event) {
 		received(event, this,  'handler1');
-	};
+	}
 
 	function handler2(event) {
 		received(event, this,  'handler2');
-	};
+	}
 
 	function handler3(event) {
 		received(event, this,  'handler3');
-	};
+	}
 
 	function handler4(event, additionalData) {
 		receivedWithData(event, this,  'handler4', additionalData);
-	};
+	}
 
 	var listenerA = { handler : handler1 };
 	var listenerB = { handler : handler2 };
@@ -65,15 +65,17 @@ sap.ui.require([
 	var listenerD = { handler : handler4 };
 
 	function count(oSource, sEventId) {
-		if ( !oSource || !oSource.mEventRegistry )
+		if ( !oSource || !oSource.mEventRegistry ) {
 			return "no event provider given";
-		if ( !oSource.mEventRegistry[sEventId] )
+		}
+		if ( !oSource.mEventRegistry[sEventId] ) {
 			return undefined;
+		}
 		if ( !oSource.mEventRegistry[sEventId].length ) {
-			var c=0;
-			for(var key in oSource.mEventRegistry[sEventId]) {
+			var c = 0;
+			for (var key in oSource.mEventRegistry[sEventId]) { //eslint-disable-line no-unised-vars
 				c++;
-			};
+			}
 			return c;
 		}
 
@@ -81,20 +83,25 @@ sap.ui.require([
 	}
 
 	function hasNoListeners(oSource, sEventId) {
-		if ( !oSource || !oSource.mEventRegistry )
+		if ( !oSource || !oSource.mEventRegistry ) {
 			return true;
-		if ( !oSource.mEventRegistry[sEventId] )
+		}
+		if ( !oSource.mEventRegistry[sEventId] ) {
 			return true;
+		}
 		return isEmpty(oSource.mEventRegistry[sEventId]);
 	}
 
 	function isEmpty(o) {
-		if(!o)return true;
-		 for(var p in o) {
-		   if (o[p] != o.constructor.prototype[p])
-		     return false;
-		 }
-		 return true;
+		if (!o) {
+			return true;
+		}
+		for (var p in o) {
+			if (o[p] != o.constructor.prototype[p]) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	QUnit.test("FireEventSingleListener", function(assert) {
@@ -102,7 +109,7 @@ sap.ui.require([
 		// simple registration
 		oObject.attachEvent("Fire1", handler1);
 		globalEvents = [];
-		oObject.fireEvent("Fire1", {name:"testFireEventSingleListener"} );
+		oObject.fireEvent("Fire1", {name: "testFireEventSingleListener"} );
 		assert.strictEqual(globalEvents.length, 1, "number of received events");
 		var oEventInfo = globalEvents.pop();
 		assert.strictEqual(oEventInfo.id, "Fire1", "id of the received event");
@@ -162,7 +169,7 @@ sap.ui.require([
 
 	QUnit.test("AttachDetach", function(assert) {
 		var oObject = new EventProvider();
-		var mEventRegistry = oObject.mEventRegistry;
+		//var mEventRegistry = oObject.mEventRegistry;
 		oObject.attachEvent("Fire1", handler1, listenerA);
 		oObject.attachEvent("Fire1", handler2, listenerB);
 		oObject.attachEvent("Fire1", handler3, listenerC);
@@ -179,7 +186,7 @@ sap.ui.require([
 		assert.strictEqual(count(oObject, "Fire1"), 2, "no double remove");
 		oObject.detachEvent("Fire1", handler2, listenerA);
 		assert.strictEqual(count(oObject, "Fire1"), 2, "no detach with wrong combination");
-		oObject.detachEvent("Fire"+1, handler2, listenerB);
+		oObject.detachEvent("Fire" + 1, handler2, listenerB);
 		assert.strictEqual(count(oObject, "Fire1"), 1, "2nd registration removed");
 		oObject.detachEvent("Fire1", handler3, listenerC);
 		assert.strictEqual(count(oObject, "Fire1"), undefined, "last registration removed -> deleted");
@@ -201,7 +208,7 @@ sap.ui.require([
 		assert.strictEqual(count(oObject, "Fire_2"), undefined, "last remove");
 		//typeof mEventRegistry["Fire1"] === "undefined");
 
-	})
+	});
 
 	QUnit.test("FireEventWithAdditionalData", function(assert) {
 		var oObject = new EventProvider();
@@ -212,13 +219,13 @@ sap.ui.require([
 		assert.ok(globalEvents.length == 2, "2 events received");
 		var oEventInfo = globalEvents.shift();
 		assert.strictEqual(oEventInfo.id, "Fire4", "id of the received event");
-		assert.strictEqual(oEventInfo.listener, oObject, "listener object should be the EventProvider instance")
+		assert.strictEqual(oEventInfo.listener, oObject, "listener object should be the EventProvider instance");
 		assert.notStrictEqual(oEventInfo.additionalData, null, "additional (static) data should be present");
 		assert.notStrictEqual(oEventInfo.additionalData.info, null, "additional (static) data should be present");
 		assert.strictEqual(oEventInfo.additionalData.info, "Test data for event-handler function", "additional (static) data should be present");
 		oEventInfo = globalEvents.shift();
 		assert.strictEqual(oEventInfo.id, "Fire4", "id of the received event");
-		assert.strictEqual(oEventInfo.listener, listenerD, "listener object should be the event listener object")
+		assert.strictEqual(oEventInfo.listener, listenerD, "listener object should be the event listener object");
 		assert.notStrictEqual(oEventInfo.additionalData, null, "additional (static) data should be present");
 		assert.notStrictEqual(oEventInfo.additionalData.info, null, "additional (static) data should be present");
 		assert.strictEqual(oEventInfo.additionalData.info, "Test data for event-handler function on listener object", "additional (static) data should be present");
@@ -247,10 +254,11 @@ sap.ui.require([
 
 	oBubble2.getEventingParent = function() {
 		return oBubble1;
-	}
+	};
+
 	oBubble3.getEventingParent = function() {
 		return oBubble2;
-	}
+	};
 
 	QUnit.test("EventBubbling", function(assert) {
 		oBubble1.attachEvent("test", handler1);

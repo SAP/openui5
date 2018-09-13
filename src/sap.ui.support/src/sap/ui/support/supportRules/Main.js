@@ -17,12 +17,13 @@ sap.ui.define([
 	"sap/ui/support/supportRules/report/DataCollector",
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/Constants",
-	"sap/ui/support/supportRules/RuleSetLoader"
+	"sap/ui/support/supportRules/RuleSetLoader",
+	"sap/ui/support/library"
 ],
 function (jQuery, ManagedObject, Analyzer, CoreFacade,
 		  ExecutionScope, Highlighter, CommunicationBus,
 		  IssueManager, History, DataCollector, channelNames,
-		  constants, RuleSetLoader) {
+		  constants, RuleSetLoader, library) {
 	"use strict";
 
 	var IFrameController = null;
@@ -39,7 +40,6 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 		 */
 		constructor: function () {
 			if (!oMain) {
-				var that = this;
 				this._oCore = null;
 				this._oAnalyzer = new Analyzer();
 				this._oAnalyzer.onNotifyProgress = function (iCurrentProgress) {
@@ -49,81 +49,6 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 				};
 
 				ManagedObject.apply(this, arguments);
-
-				/**
-				 * @namespace
-				 * @alias jQuery.sap.support
-				 * @author SAP SE
-				 * @version ${version}
-				 * @public
-				 */
-				jQuery.sap.support = {
-
-					/**
-					 * Analyzes all rules in the given execution scope.
-					 *
-					 * @memberof jQuery.sap.support
-					 * @public
-					 * @param {Object} oExecutionScope The execution scope of the analysis with the type of the scope
-					 * @param {Object[]} aRuleDescriptors An array with rules against which the analysis will be run
-					 * @returns {Promise} Notifies the finished state by starting the Analyzer
-					 */
-					analyze: function (oExecutionScope, aRuleDescriptors) {
-						if (RuleSetLoader._rulesCreated) {
-							return oMain.analyze(oExecutionScope, aRuleDescriptors);
-						}
-
-						return RuleSetLoader._oMainPromise.then(function () {
-							return oMain.analyze(oExecutionScope, aRuleDescriptors);
-						});
-					},
-
-					/**
-					 * Gets last analysis history.
-					 * @memberof jQuery.sap.support
-					 * @public
-					 * @returns {Object} Last analysis history.
-					 */
-					getLastAnalysisHistory: function () {
-						var aHistory = this.getAnalysisHistory();
-
-						if (jQuery.isArray(aHistory) && aHistory.length > 0) {
-							return aHistory[aHistory.length - 1];
-						} else {
-							return null;
-						}
-					},
-
-					/**
-					 * Gets history.
-					 *
-					 * @memberof jQuery.sap.support
-					 * @public
-					 * @returns {Object[]} Current history.
-					 */
-					getAnalysisHistory: function () {
-						if (that._oAnalyzer.running()) {
-							return null;
-						}
-
-						return History.getHistory();
-					},
-
-					/**
-					 * Returns the history into formatted output depending on the passed format.
-					 *
-					 * @memberof jQuery.sap.support
-					 * @public
-					 * @param {sap.ui.support.HistoryFormats} [sFormat=sap.ui.support.HistoryFormats.String] The format into which the history object will be converted. Possible values are listed in sap.ui.support.HistoryFormats.
-					 * @returns {*} All analysis history objects in the correct format.
-					 */
-					getFormattedAnalysisHistory: function (sFormat) {
-						if (that._oAnalyzer.running()) {
-							return "";
-						}
-						return History.getFormattedHistory(sFormat);
-					}
-				};
 
 				var evt = document.createEvent("CustomEvent");
 				evt.initCustomEvent("supportToolLoaded", true, true, {});
@@ -362,7 +287,7 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 	 *
 	 * @private
 	 * @param {object} oExecutionScope The scope of the analysis
-	 * @param {object[]|object} [vPresetOrRules=All rules] The preset or rules against which the analysis will be run
+	  * @param {object|string|object[]} [vPresetOrRules=All rules] The preset or system preset ID or rules against which the analysis will be run
 	 * @returns {Promise} Notifies the finished state by starting the Analyzer
 	 */
 	Main.prototype.analyze = function (oExecutionScope, vPresetOrRules) {
@@ -372,6 +297,16 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 			return;
 		}
 
+		// get the correct system preset
+		if (typeof vPresetOrRules === "string") {
+			vPresetOrRules = library.SystemPresets[vPresetOrRules];
+
+			if (!vPresetOrRules) {
+				jQuery.sap.log.error("System preset ID is not valid");
+				return;
+			}
+		}
+
 		// Set default values
 		oExecutionScope = oExecutionScope || {type: "global"};
 
@@ -379,6 +314,12 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 		if (vPresetOrRules && vPresetOrRules.selections) {
 			this._oSelectedRulePreset = vPresetOrRules; // this is the selected preset
 			vRuleDescriptors = vPresetOrRules.selections;
+
+			if (!vPresetOrRules.id || !vPresetOrRules.title) {
+				jQuery.sap.log.error("The preset must have an ID and a title");
+				return;
+			}
+
 		} else {
 			this._oSelectedRulePreset = null; // there is no selected preset
 			vRuleDescriptors = vPresetOrRules;
@@ -387,6 +328,10 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 		vRuleDescriptors = vRuleDescriptors || RuleSetLoader.getAllRuleDescriptors();
 
 		if (!this._isExecutionScopeValid(oExecutionScope)) {
+			CommunicationBus.publish(channelNames.POST_MESSAGE, {
+				message: "Set a valid element ID."
+			});
+
 			return;
 		}
 
@@ -431,7 +376,7 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 			return false;
 		}
 
-		if (oExecutionScope.type == "subtree") {
+		if (oExecutionScope.type === "subtree") {
 
 			if (oExecutionScope.parentId) {
 				aSelectors.push(oExecutionScope.parentId);
@@ -449,10 +394,6 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 			}
 
 			if (!bHasValidSelector) {
-				CommunicationBus.publish(channelNames.POST_MESSAGE, {
-					message: "Set a valid element ID."
-				});
-
 				return false;
 			}
 		}
@@ -708,6 +649,51 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 			abap: History.getFormattedHistory(sap.ui.support.HistoryFormats.Abap),
 			name: constants.SUPPORT_ASSISTANT_NAME
 		};
+	};
+
+	/**
+	 * Gets history.
+	 *
+	 * @public
+	 * @returns {Object[]} Current history.
+	 */
+	Main.prototype.getAnalysisHistory = function () {
+		if (this._oAnalyzer.running()) {
+			return null;
+		}
+
+		return History.getHistory();
+	};
+
+	/**
+	 * Returns the history into formatted output depending on the passed format.
+	 *
+	 * @public
+	 * @param {sap.ui.support.HistoryFormats} [sFormat=sap.ui.support.HistoryFormats.String] The format into which the history object will be converted. Possible values are listed in sap.ui.support.HistoryFormats.
+	 * @returns {*} All analysis history objects in the correct format.
+	 */
+	Main.prototype.getFormattedAnalysisHistory = function (sFormat) {
+		if (this._oAnalyzer.running()) {
+			return "";
+		}
+
+		return History.getFormattedHistory(sFormat);
+	};
+
+	/**
+	 * Gets last analysis history.
+	 * @memberof jQuery.sap.support
+	 * @public
+	 * @returns {Object} Last analysis history.
+	 */
+	Main.prototype.getLastAnalysisHistory = function () {
+		var aHistory = this.getAnalysisHistory();
+
+		if (jQuery.isArray(aHistory) && aHistory.length > 0) {
+			return aHistory[aHistory.length - 1];
+		} else {
+			return null;
+		}
 	};
 
 	var oMain = new Main();

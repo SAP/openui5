@@ -686,7 +686,7 @@ sap.ui.define([
 			oModel.submitChanges({
 				success : function(oData, oResponse) {
 					assert.ok(true, "request succeeded");
-					assert.ok(bSuccess, "callback handler of internal request should have been called")
+					assert.ok(bSuccess, "callback handler of internal request should have been called");
 					done();
 				},
 				error : function(oError) {
@@ -926,7 +926,7 @@ sap.ui.define([
 				collection : "/VH_CategorySet",
 				properties : [ "Category" ]
 			}
-		}
+		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
 		oModel.setDeferredBatchGroups([ "myId1", "myId2" ]);
@@ -934,7 +934,7 @@ sap.ui.define([
 		var fnTest = function() {
 			oTable.bindRows({
 				path : mEntities.categories.collection,
-				batchGroupId : "myId1",
+				batchGroupId : "myId1"
 			});
 			oModel.read("/ProductSet", {
 				batchGroupId : "myId2",
@@ -1472,7 +1472,7 @@ sap.ui.define([
 					assert.equal(oParams.__batchResponses[1].__changeResponses[0].statusCode,"204", "statuscode OK");
 
 					assert.ok(!oModel.hasPendingChanges(), "Pending changes test");
-					oTable.destroy()
+					oTable.destroy();
 					oTable = null;
 					done();
 				}});
@@ -1576,7 +1576,7 @@ sap.ui.define([
 				assert.equal(oBinding.getLength(), 115, "length check");
 				assert.ok(oBinding.getContexts(), "context check");
 				assert.ok(oBinding.sCountMode, "Request", "count mode check");
-				oTable.destroy()
+				oTable.destroy();
 				oTable = null;
 				done();
 			}
@@ -2161,7 +2161,7 @@ sap.ui.define([
 					assert.ok(false, "request failed");
 				}
 			});
-		}
+		};
 
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
@@ -3871,7 +3871,7 @@ sap.ui.define([
 
 		var fnTest = function(){
 			oContext = oModel.createEntry("/ProductSet", {properties: {
-				"ProductID":"AD-12345",
+				"ProductID":"AD-12345"
 			}, batchGroupId: "myId"});
 
 			oModel.submitChanges({
@@ -3939,7 +3939,7 @@ sap.ui.define([
 		var done = assert.async();
 		var mUrlParams = {
 			"SalesOrderID": "test"
-		}
+		};
 
 		oModel = initModel();
 		var fnTest = function() {

@@ -8,11 +8,11 @@
 
 	<forms:SimpleForm
 			maxContainerCols="2"
-			editable="false"
-			layout="ResponsiveGridLayout">
-		<core:Title text="my Block"></core:Title>
-		<Label text="Content"></Label>
-		<Text text="some content goes here..."></Text>
+			layout="ResponsiveGridLayout"
+			editable="false">
+		<core:Title text="my Block"/>
+		<Label text="Content"/>
+		<Text text="some content goes here..."/>
 	</forms:SimpleForm>
 
 </mvc:View>

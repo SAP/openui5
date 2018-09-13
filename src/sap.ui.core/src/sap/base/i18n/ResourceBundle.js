@@ -282,7 +282,7 @@ sap.ui.define([
 	 * If the second parameter<code>aArgs</code> is given, then any placeholder of the form "{<i>n</i>}"
 	 * (with <i>n</i> being an integer) is replaced by the corresponding value from <code>aArgs</code>
 	 * with index <i>n</i>.  Note: This replacement is applied to the key if no text could be found.
-	 * For more details on the replacement mechanism refer to {@link module:sap/ui/formatMessage}.
+	 * For more details on the replacement mechanism refer to {@link module:sap/base/strings/formatMessage}.
 	 *
 	 * @param {string} sKey Key to retrieve the text for
 	 * @param {string[]} [aArgs] List of parameter values which should replace the placeholders "{<i>n</i>}"

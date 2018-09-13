@@ -4,10 +4,21 @@
 /*global QUnit*/
 // QUnit script for DataBinding Messages
 sap.ui.define([
+	"sap/ui/core/library",
 	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/core/message/Message",
+	"sap/m/Input",
 	"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService" // used only indirectly
-], function(ODataModel) {
+], function(
+	library,
+	ODataModel,
+	Message,
+	Input,
+	fakeService
+) {
 	"use strict";
+
+	var MessageType = library.MessageType;
 
 	var sServiceUri = "http://services.odata.org/V3/Northwind/Northwind.svc/";
 	sServiceUri = "/proxy/http/" + sServiceUri.replace("http://","");
@@ -90,6 +101,50 @@ sap.ui.define([
 			});
 			oTreeBinding.initialize();
 			oTreeBinding.getContexts();
+		});
+	});
+	QUnit.module("Message: control id", {
+		beforeEach: function() {
+			cleanSharedData();
+		},
+		afterEach: function() {
+		}
+	});
+
+	QUnit.test("getControlIds", function(assert) {
+		assert.expect(8);
+		var done = assert.async();
+		var oModel = new ODataModel(sServiceUri, {tokenHandling: false, useBatch:false, json:false, defaultCountMode:"None"});
+		oModel.metadataLoaded().then(function() {
+			var oInput1 = new Input({value:"{/Products(1)/ProductName}"});
+			var oInput2 = new Input({value:"{/Products(1)/ProductName}"});
+			oInput1.setModel(oModel);
+			oInput2.setModel(oModel);
+			var oMessage = new Message({
+				processor: oModel,
+				type: MessageType.Error,
+				message: "Some message text",
+				target: "/Products(1)/ProductName"
+			});
+			sap.ui.getCore().getMessageManager().addMessages(oMessage);
+			//timeout so the async datastate is already calculated
+			setTimeout(function() {
+				var oDataState = oInput2.getBinding("value").getDataState();
+				if (oDataState.getMessages().length > 0) {
+					var aMessages = oDataState.getMessages();
+					assert.ok(true, "Messages propagated");
+					assert.equal(aMessages.length, 1, "1 message propagated");
+					assert.equal(aMessages[0].getControlIds().length, 2, "2 control ids added");
+					assert.deepEqual(aMessages[0].getControlIds(), [oInput1.getId(), oInput2.getId()], "IDs set correctly");
+					assert.equal(aMessages[0].getControlId(), oInput2.getId(), "Legacy API: ID returned correctly");
+					oInput2.destroy();
+					assert.equal(aMessages[0].getControlIds().length, 1, "1 control id removed");
+					assert.deepEqual(aMessages[0].getControlIds(), [oInput1.getId()], "IDs set correctly");
+					assert.equal(aMessages[0].getControlId(), oInput1.getId(), "Legacy API: ID returned correctly");
+					oInput2.destroy();
+					done();
+				}
+			}, 0);
 		});
 	});
 });

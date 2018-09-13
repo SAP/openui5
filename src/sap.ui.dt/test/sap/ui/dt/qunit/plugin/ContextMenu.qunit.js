@@ -193,6 +193,16 @@ sap.ui.define([
 			assert.ok(!oContextMenuControl.bOpen, "ContextMenu should be closed");
 		});
 
+		QUnit.test("When a context menu is open and selection changes", function (assert) {
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
+			var oContextMenuControlCloseSpy = oSandbox.spy(oContextMenuControl, "close");
+			this.oDesignTime.getSelectionManager().fireChange({
+				selection: [this.oButton1Overlay]
+			});
+			assert.ok(oContextMenuControlCloseSpy.called, "ContextMenu is closed");
+		});
+
 		QUnit.test("Calling _checkForPluginLock", function (assert) {
 			assert.ok(!this.oContextMenuPlugin._checkForPluginLock(this.oButton2Overlay), "Should return false");
 		});
@@ -539,14 +549,10 @@ sap.ui.define([
 		QUnit.test("Testing onTouch function", function (assert) {
 			this.clock = sinon.useFakeTimers();
 			this.oContextMenuPlugin._ensureSelection(this.oButton2Overlay);
-			this.oContextMenuPlugin.iMenuTouchOpeningDelay = 150;
-			this.oContextMenuPlugin.touchTimeout = setTimeout(function() {
-				assert.notOk(true, "timeout should not be executed, it should be cleared onTouch!");
-			}, 100);
 			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "touchstart");
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			assert.ok(!oContextMenuControl.getPopover().isOpen(), "ContextMenu should not be opened");
-			this.clock.tick(this.oContextMenuPlugin.iMenuTouchOpeningDelay);
+			this.clock.tick(150);
 			assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be open");
 			assert.strictEqual(oContextMenuControl.getFlexbox().getDirection(), "Row", "Flexbox should be set to Row");
 			this.clock.restore();
@@ -622,7 +628,7 @@ sap.ui.define([
 			assert.strictEqual(oPopoverContext.height, 384, "the height of a context menu is correct");
 			assert.ok(!isNaN(oPopoverContext.height), "the height of a context menu shouldn't be NaN");
 			assert.strictEqual(typeof oPopoverContext.width, "number", "the width of a context menu should be a number");
-			assert.strictEqual(oPopoverContext.width, 176, "the width of a context menu is correct");
+			assert.strictEqual(oPopoverContext.width, 178, "the width of a context menu is correct");
 			assert.ok(!isNaN(oPopoverContext.width), "the width of a context menu shouldn't be NaN");
 			assert.strictEqual(typeof oPopover.height, "number", "the height of a non-expanded ContextMenu should be a number");
 			assert.strictEqual(oPopover.height, 66, "the height of a non-expanded ContextMenu is correct");
@@ -634,7 +640,7 @@ sap.ui.define([
 			assert.strictEqual(oPopoverExpanded.height, 402, "the height of an expanded ContextMenu is correct");
 			assert.ok(!isNaN(oPopoverExpanded.height), "the height of an expanded ContextMenu shouldn't be NaN");
 			assert.strictEqual(typeof oPopoverExpanded.width, "number", "the width of an expanded ContextMenu should be a number");
-			assert.strictEqual(oPopoverExpanded.width, 194, "the width of an expanded ContextMenu is correct");
+			assert.strictEqual(oPopoverExpanded.width, 196, "the width of an expanded ContextMenu is correct");
 			assert.ok(!isNaN(oPopoverExpanded.width), "the width of an expanded ContextMenu shouldn't be NaN");
 			assert.ok(oPopoverContext.height < oPopoverExpanded.height, "the height of a context menu should be less than the hight of an expanded ContextMenu (if they have the same amount of buttons)");
 			assert.ok(oPopoverContext.width < oPopoverExpanded.width, "the width of a context menu should be less than that of an expanded ContextMenu (if they have the same amount of buttons)");
@@ -655,17 +661,21 @@ sap.ui.define([
 		});
 
 		QUnit.test("calling _shouldContextMenuOpen", function (assert) {
-			this.oContextMenuPlugin._bTouched = false;
 			this.oContextMenuPlugin._bOpeningLocked = true;
 			assert.notOk(this.oContextMenuPlugin._shouldContextMenuOpen(), "then return false when menu opening locked");
 			this.oContextMenuPlugin._bOpeningLocked = false;
 			oSandbox.stub(this.oContextMenuPlugin, "_checkForPluginLock").returns(true);
 			assert.notOk(this.oContextMenuPlugin._shouldContextMenuOpen(), "then return false when busy plugin exists");
-			this.oContextMenuPlugin._bTouched = true;
-			assert.ok(this.oContextMenuPlugin._shouldContextMenuOpen({}, true), "then return true if touched");
+
+			oSandbox.restore();
+			oSandbox.stub(this.oContextMenuPlugin, "_checkForPluginLock").returns(false);
+
+			assert.ok(this.oContextMenuPlugin._shouldContextMenuOpen(oEvent, true), "then return true when no plugin is busy and it is on hover");
+			assert.notOk(this.oContextMenuPlugin._oCurrentOverlay, "and current overlay is not set when on hover");
+
 			var oEvent = { currentTarget: { id: "button1" } };
-			assert.ok(this.oContextMenuPlugin._shouldContextMenuOpen(oEvent, false), "then return true if touched");
-			assert.equal(this.oContextMenuPlugin._oCurrentOverlay.getId(), oEvent.currentTarget.id, "then current overlay is set when not locked and not on hover");
+			assert.ok(this.oContextMenuPlugin._shouldContextMenuOpen(oEvent), "then return true when no plugin is busy");
+			assert.equal(this.oContextMenuPlugin._oCurrentOverlay.getId(), oEvent.currentTarget.id, "and current overlay is set when not on hover");
 		});
 
 		QUnit.test("calling _clearHoverTimeout", function(assert) {

@@ -102,7 +102,7 @@ sap.ui.define([
 
 			var mFocusSpy = {};
 			for (var i = 0; i < aFields.length - 1; i++) {
-				if(!mFocusSpy[aFields[i]]) {
+				if (!mFocusSpy[aFields[i]]) {
 					var oElement = document.getElementById(aFields[i]);
 					var focusSpy = this.spy(oElement, "focus");
 					mFocusSpy[aFields[i]] = focusSpy;
@@ -121,7 +121,7 @@ sap.ui.define([
 
 			var mFocusSpy = {};
 			for (var i = 0; i < aFields.length - 1; i++) {
-				if(!mFocusSpy[aFields[i]]) {
+				if (!mFocusSpy[aFields[i]]) {
 					var oElement = document.getElementById(aFields[i]);
 					var focusSpy = this.spy(oElement, "focus");
 					mFocusSpy[aFields[i]] = focusSpy;

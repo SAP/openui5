@@ -64,7 +64,7 @@ sap.ui.define([
 			this.references = mParameters.references || {};
 			this.validation = !!mParameters.validation;
 			this.date = mParameters.date || Date.now();
-			this.controlId = undefined;
+			this.controlIds = [];
 		}
 	});
 
@@ -99,16 +99,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Set control id
-	 *
-	 * @param {string} sControlId The Message as text
-	 * @private
-	 */
-	Message.prototype.setControlId = function(sControlId) {
-		this.controlId = sControlId;
-	};
-
-	/**
 	 * Returns the control ID if set.
 	 *
 	 * NOTE: The control ID is only set for Controls based on <code>sap.m.InputBase</code>
@@ -123,7 +113,47 @@ sap.ui.define([
 	 * @public
 	 */
 	Message.prototype.getControlId = function() {
-		return this.controlId;
+		return this.controlIds[this.controlIds.length - 1];
+	};
+
+	/**
+	 * Add a control id
+	 *
+	 * @param {string} sControlId The control id to add; An id gets added only once
+	 * @private
+	 */
+	Message.prototype.addControlId = function(sControlId) {
+		if (this.controlIds.indexOf(sControlId) == -1) {
+			this.controlIds.push(sControlId);
+		}
+	};
+
+	/**
+	 * Remove a control id
+	 *
+	 * @param {string} sControlId The control id to remove
+	 * @private
+	 */
+	Message.prototype.removeControlId = function(sControlId) {
+		var iIndex = this.controlIds.indexOf(sControlId);
+		if (iIndex != -1) {
+			this.controlIds.splice(iIndex, 1);
+		}
+	};
+
+	/**
+	 * Returns an array of control IDs.
+	 *
+	 * NOTE: The control ID is only set for Controls based on <code>sap.m.InputBase</code>.
+	 * The Control must be bound to a Model so the Message could be propagated to this Control.
+	 * The propagation happens only if the Control is created and visible on the screen.
+	 * The ID is not set in all other cases and cannot be set manually.
+	 *
+	 * @returns {array} aControlIds
+	 * @public
+	 */
+	Message.prototype.getControlIds = function() {
+		return this.controlIds;
 	};
 
 	/**

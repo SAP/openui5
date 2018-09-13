@@ -1,4 +1,6 @@
+/*global QUnit */
 sap.ui.define(["sap/ui/core/theming/Parameters"], function (Parameters) {
+	"use strict";
 
 	/**
 	 * converts a textual font-size value to its px representation
@@ -7,10 +9,10 @@ sap.ui.define(["sap/ui/core/theming/Parameters"], function (Parameters) {
 	 */
 	function fontSizeToPx(sFontSize) {
 		switch (sFontSize) {
-			case "small": return "13px"; break;
-			case "medium": return "16px"; break;
-			case "large": return "18px"; break;
-			case "x-large": return "24px"; break;
+			case "small": return "13px";
+			case "medium": return "16px";
+			case "large": return "18px";
+			case "x-large": return "24px";
 			default: return sFontSize;
 		}
 	}

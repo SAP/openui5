@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/ControlIterator"
 ], function(ControlIterator) {
+	"use strict";
 
 	ControlIterator.run(function(sControlName, oControlClass, oInfo) { // loop over all controls
 

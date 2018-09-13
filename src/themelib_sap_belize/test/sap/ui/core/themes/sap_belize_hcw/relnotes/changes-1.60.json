@@ -13,6 +13,12 @@
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
         "references": []
+      },
+      {
+        "id": "5b85a4ba94a5a5a198d80b2116f66f9af18a889c",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Focus outline is now correct",
+        "references": []
       }
     ]
   }

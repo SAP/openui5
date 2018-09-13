@@ -1,9 +1,11 @@
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/demo/cart/controller/BaseController',
-	'sap/ui/demo/cart/model/formatter',
-	'sap/ui/demo/cart/model/cart'
-], function ($, BaseController, formatter, cart) {
+    'sap/ui/demo/cart/controller/BaseController',
+    'sap/ui/demo/cart/model/formatter',
+    'sap/ui/demo/cart/model/cart'
+], function(
+	BaseController,
+	formatter,
+	cart) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.cart.controller.Product", {

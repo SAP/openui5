@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/m/DatePicker",
 	"sap/m/Slider",
 	"sap/m/RatingIndicator",
+	"sap/m/Panel",
 	"sap/base/Log"
 ], function(
 	DesignTime,
@@ -25,11 +26,24 @@ sap.ui.define([
 	DatePicker,
 	Slider,
 	RatingIndicator,
+	Panel,
 	Log
 ) {
 	"use strict";
 
 	var Util = {
+		createNestedPanels: function(oParentControl, sAggregation, iNumberOfControls, oLastElement) {
+			//  add element to the inner most panel
+			if (iNumberOfControls === 0) {
+				oParentControl.addAggregation(sAggregation, oLastElement);
+				return;
+			}
+
+			var oPanel = new Panel("Panel" + iNumberOfControls);
+			oParentControl.addAggregation(sAggregation, oPanel);
+			Util.createNestedPanels(oPanel, sAggregation, iNumberOfControls - 1, oLastElement);
+		},
+
 		addMixedControlsTo : function(oLayout, iFrom, iTo, bVisible){
 			var aControlTypes = [Button, Label, DatePicker, Slider, RatingIndicator];
 
@@ -50,7 +64,7 @@ sap.ui.define([
 			}
 		},
 
-		startDesignTime: function(oHorizontalLayout){
+		startDesignTime: function(oRootControl, sSelectedOverlayId){
 			// Create DesignTime in other tick
 			return new Promise(function(resolve, reject){
 				//will result in custom timer in webPageTest
@@ -85,12 +99,12 @@ sap.ui.define([
 					sap.ui.dt.creationTime = window.performance.getEntriesByName("Create DesignTime and Overlays")[0].duration;
 					Log.info("Create DesignTime and Overlays", sap.ui.dt.creationTime + "ms");
 					//visual change at the end
-					var oOverlay = OverlayRegistry.getOverlay("Control2");
+					var oOverlay = OverlayRegistry.getOverlay(sSelectedOverlayId || "Control2");
 					oOverlay.setSelected(true);
 
 					resolve();
 				});
-				oDesignTime.addRootElement(oHorizontalLayout);
+				oDesignTime.addRootElement(oRootControl);
 			}).then(function(){
 				sap.ui.getCore().applyChanges();
 				document.getElementById("overlay-container").setAttribute("sap-ui-dt-loaded","true");

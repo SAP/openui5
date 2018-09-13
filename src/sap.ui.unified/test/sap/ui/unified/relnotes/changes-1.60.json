@@ -37,6 +37,12 @@
         "type": "FIX",
         "text": " sap.ui.unified.ColorPicker: Now the dialog\u0027s style is not broken",
         "references": []
+      },
+      {
+        "id": "596d509c546445bcd9c69d7a6ca6f587d236b2d1",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: correct width of the input when invalidated",
+        "references": []
       }
     ]
   }

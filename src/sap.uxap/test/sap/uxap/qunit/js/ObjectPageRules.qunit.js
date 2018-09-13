@@ -1,17 +1,16 @@
-/*global QUnit*/
-
-(function ($, QUnit) {
+/*global QUnit */
+sap.ui.require([
+	"sap/ui/thirdparty/jquery"],
+	function($) {
 	"use strict";
 
-	jQuery.sap.registerModulePath("view", "view");
-	jQuery.sap.registerModulePath("sap.uxap.sample", "../demokit/sample");
-	jQuery.sap.registerModulePath("sap.uxap.testblocks", "./blocks");
-
-	jQuery.sap.registerModulePath("view", "view");
-
-	jQuery.sap.require("sap.uxap.ObjectPageLayout");
-	jQuery.sap.require("sap.uxap.ObjectPageSection");
-	jQuery.sap.require("sap.uxap.ObjectPageHeader");
+	sap.ui.loader.config({
+		paths: {
+		   "sap/uxap/sample": "../demokit/sample",
+		   "sap/uxap/testblocks": "./blocks",
+		   "view": "./view"
+		 }
+	  });
 
 	var BREAK_POINTS = {
 		TABLET: 1024,
@@ -248,4 +247,4 @@
 			"UxAP-ObjectPageTitlePropagationSupport--op2_sub_section_1_1-headerTitle", "Own Title DOM ID is returned");
 	});
 
-}(jQuery, QUnit));
+});

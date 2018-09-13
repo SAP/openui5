@@ -1,9 +1,10 @@
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/model/json/JSONModel',
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/demo/iconexplorer/model/formatter",
 	"sap/ui/demo/iconexplorer/controller/BaseController",
-	"sap/ui/core/Icon"
+	"sap/ui/core/Icon",
+	"sap/ui/dom/jquery/control"
 ], function (jQuery, JSONModel, formatter, BaseController, Icon) {
 	"use strict";
 

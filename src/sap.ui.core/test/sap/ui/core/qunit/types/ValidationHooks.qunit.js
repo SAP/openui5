@@ -1,3 +1,4 @@
+/*global QUnit */
 sap.ui.define(["sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/String",
 	"sap/ui/model/type/Integer",
@@ -7,6 +8,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/ParseException"],
 	function (JSONModel, SAPString, Integer, RatingIndicator, FormatException, TextField, ValidateException, ParseException) {
+	"use strict";
 
 		var oModel;
 		var oTxt;
@@ -23,7 +25,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 			oTxt.bindValue(sPath, oType);
 
 			oTxt.placeAt("target1");
-		};
+		}
 
 		function teardown() {
 			oTxt.destroy();
@@ -48,7 +50,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 				assert.equal(oEvent.getParameter("exception").violatedConstraints.length, 1, " violated constraints size");
 				assert.equal(oEvent.getParameter("exception").violatedConstraints[0], "maxLength", "violated constraints check");
 				bSuccess = true;
-			};
+			}
 			oTxt.setValue("blubbbbb");
 			setTimeout(function () { // delay the following test
 				assert.ok(bSuccess, "error occurred sucessfully");
@@ -74,7 +76,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 				assert.ok(oEvent.getParameter("exception") instanceof ParseException, "exception instance");
 
 				bSuccess = true;
-			};
+			}
 			oTxt.setValue("blubbbbb");
 			setTimeout(function () { // delay the following test
 				assert.ok(bSuccess, "error occurred sucessfully");
@@ -103,7 +105,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 				assert.ok(oEvent.getParameter("exception") instanceof FormatException, "exception instance");
 
 				bSuccess = true;
-			};
+			}
 			oTxt.setValue("blubbbbb");
 			setTimeout(function () { // delay the following test
 				assert.ok(bSuccess, "error occurred sucessfully");
@@ -129,7 +131,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 				assert.equal(oEvent.getParameter("type"), oType, "type");
 
 				bSuccess = true;
-			};
+			}
 			oTxt.setValue("blubbbbb");
 			setTimeout(function () { // delay the following test
 				assert.ok(bSuccess, "validation was sucessful");
@@ -153,19 +155,19 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 			function handler(oEvent) {
 				bSuccess = true;
 				iEventCount++;
-			};
+			}
 			function handler2(oEvent) {
 				bSuccess = false;
 				iEventCount++;
-			};
+			}
 			function handler3(oEvent) {
 				bSuccess = false;
 				iEventCount++;
-			};
+			}
 			function handler4(oEvent) {
 				bSuccess = false;
 				iEventCount++;
-			};
+			}
 			oTxt.setValue("blubbbbb");
 			setTimeout(function () { // delay the following test
 				assert.ok(bSuccess, "parse error occurred sucessfully and no other events occurred");
@@ -196,19 +198,19 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 			function handler(oEvent) {
 				bSuccess = false;
 				iEventCount++;
-			};
+			}
 			function handler2(oEvent) {
 				bSuccess = true;
 				iEventCount++;
-			};
+			}
 			function handler3(oEvent) {
 				bSuccess = false;
 				iEventCount++;
-			};
+			}
 			function handler4(oEvent) {
 				bSuccess = false;
 				iEventCount++;
-			};
+			}
 			oTxt.setValue("blubbbbb");
 			setTimeout(function () { // delay the following test
 				assert.ok(bSuccess, "validation error occurred sucessfully and no other events occurred");
@@ -239,7 +241,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 				assert.equal(oEvent.getParameter("type"), oType, "type");
 				iCount++;
 				bSuccess = true;
-			};
+			}
 			oTxt.setValue("blubbbbb");
 			setTimeout(function () { // delay the following test
 				assert.ok(bSuccess, "validation was sucessful");
@@ -274,7 +276,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 				assert.equal(oEvent.getParameter("exception").violatedConstraints[0], "maxLength", "violated constraints check");
 				bSuccess = true;
 				iCount++;
-			};
+			}
 			oTxt.setValue("blubbbbb");
 			setTimeout(function () { // delay the following test
 				assert.ok(bSuccess, "error occurred sucessfully");
@@ -310,7 +312,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 				bSuccess = true;
 				iCount++;
 				oEvent.cancelBubble();
-			};
+			}
 			oTxt.setValue("blubbbbb");
 			setTimeout(function () { // delay the following test
 				assert.ok(bSuccess, "error occurred sucessfully");
@@ -339,7 +341,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 				assert.ok(oEvent.getParameter("exception") instanceof ParseException, "exception instance");
 				bSuccess = true;
 				iCount++;
-			};
+			}
 			oTxt.setValue("blubbbbb");
 			setTimeout(function () { // delay the following test
 				assert.ok(bSuccess, "error occurred sucessfully");
@@ -374,7 +376,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 				bSuccess = true;
 				iCount++;
 				oEvent.cancelBubble();
-			};
+			}
 			oTxt.setValue("blubbbbb");
 			setTimeout(function () { // delay the following test
 				assert.ok(bSuccess, "error occurred sucessfully");

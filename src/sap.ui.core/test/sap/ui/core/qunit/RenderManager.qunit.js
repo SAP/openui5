@@ -215,7 +215,7 @@ sap.ui.define([
 		var rm = sap.ui.getCore().createRenderManager();
 		var aAllFunctions = aCommonFunctions.concat(aNonRendererFunctions);
 		for (var s in rm) {
-			assert.ok(jQuery.inArray(s, aAllFunctions) >= 0, "Full Interface provides function '" + s + "'.");
+			assert.ok(aAllFunctions.indexOf(s) >= 0, "Full Interface provides function '" + s + "'.");
 		}
 	});
 
@@ -224,7 +224,7 @@ sap.ui.define([
 		var oControl0 = new TestControl("TestContr0");
 		fCheckRendererInterface = function(rmIf) {
 			for (var s in rmIf) {
-				assert.ok(jQuery.inArray(s, aCommonFunctions) >= 0, "Renderer Interface provides function '" + s + "'.");
+				assert.ok(aCommonFunctions.indexOf(s) >= 0, "Renderer Interface provides function '" + s + "'.");
 			}
 		};
 		rm.renderControl(oControl0);

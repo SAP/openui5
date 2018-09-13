@@ -1,11 +1,15 @@
-/* global QUnit,sinon*/
-
-jQuery.sap.require("sap.f.FlexibleColumnLayout");
-jQuery.sap.require("sap.f.FlexibleColumnLayoutSemanticHelper");
-(function ($, QUnit, sinon, FlexibleColumnLayout, FlexibleColumnLayoutSemanticHelper, Page, Button, NavContainer, LT, bDebugMode) {
+/*global QUnit, sinon */
+sap.ui.require([
+	"sap/ui/thirdparty/jquery",
+	"sap/f/FlexibleColumnLayout",
+	"sap/f/FlexibleColumnLayoutSemanticHelper",
+	"sap/m/Page",
+	"sap/m/Button",
+	"sap/f/LayoutType"],
+function($, FlexibleColumnLayout, FlexibleColumnLayoutSemanticHelper, Page, Button, LT) {
 	"use strict";
 	var oCore = sap.ui.getCore(),
-		sQUnitFixture = bDebugMode ? "qunit-fixture-visible" : "qunit-fixture",
+		sQUnitFixture = "qunit-fixture",
 		DESKTOP_SIZE = "1300px",
 		TABLET_SIZE = "1200px",
 		PHONE_SIZE = "900px",
@@ -942,4 +946,4 @@ jQuery.sap.require("sap.f.FlexibleColumnLayoutSemanticHelper");
 	});
 
 
-}(jQuery, QUnit, sinon, sap.f.FlexibleColumnLayout, sap.f.FlexibleColumnLayoutSemanticHelper, sap.m.Page, sap.m.Button, sap.m.NavContainer, sap.f.LayoutType, false));
+});

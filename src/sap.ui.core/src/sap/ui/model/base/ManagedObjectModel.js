@@ -617,7 +617,7 @@ sap.ui.define([
 			sPart = aParts[1];
 		}
 		if (oNode instanceof ManagedObject) {
-			var oNodeMetadata = oNode.getMetadata(), oProperty = oNodeMetadata.getProperty(sPart);
+			var oNodeMetadata = oNode.getMetadata(), oProperty = oNodeMetadata.getManagedProperty(sPart);
 			if (oProperty) {
 				if (bObserve === true) {
 					this._observePropertyChange(oNode, oProperty);

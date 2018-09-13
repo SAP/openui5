@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/ControlIterator"
 ], function(ControlIterator) {
+	"use strict";
 
 	QUnit.test("Testing all controls", function(assert) { // one single QUnit test for all controls
 		var testDone = assert.async();                    // this test is asynchronous, hence need to tell QUnit later when done

@@ -7,8 +7,19 @@ sap.ui.define([
 	"sap/ui/demo/iconexplorer/model/FavoriteModel",
 	"sap/ui/demo/iconexplorer/controller/ErrorHandler",
 	"sap/ui/core/IconPool",
-	"sap/ui/VersionInfo"
-], function (UIComponent, Device, JSONModel, models, IconModel, FavoriteModel, ErrorHandler, IconPool, VersionInfo) {
+	"sap/ui/VersionInfo",
+	"sap/ui/thirdparty/jquery"
+], function(
+	UIComponent,
+	Device,
+	JSONModel,
+	models,
+	IconModel,
+	FavoriteModel,
+	ErrorHandler,
+	IconPool,
+	VersionInfo,
+	jQuery) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.iconexplorer.Component", {

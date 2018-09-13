@@ -7,6 +7,36 @@
         "type": "FIX",
         "text": " FlexibleColumnLayout: LocalBusyIndicator\u0027s z-index is fixed",
         "references": []
+      },
+      {
+        "id": "7b0230f2240b84a2c7ea4918e2470d62d7929053",
+        "type": "FIX",
+        "text": " DynamicPage: Initially snapped header excluded from tab chain",
+        "references": []
+      },
+      {
+        "id": "2cadbbbd92e87b4625dfdb5372d7a4b0ae62f84d",
+        "type": "FIX",
+        "text": " FlexibleColumnLayout: Fixed disappearing of navigation actions",
+        "references": []
+      },
+      {
+        "id": "af6ce1472b964b642ada273beafd1fa68ae62d1b",
+        "type": "FIX",
+        "text": " FlexibleColumnLayout: Updated test page",
+        "references": []
+      },
+      {
+        "id": "9e27e3efb4b38c34216e6babb798dcc341ce2903",
+        "type": "FEATURE",
+        "text": " Card",
+        "references": []
+      },
+      {
+        "id": "7f92b122f7b24493a8bdeccb73899ec335c82839",
+        "type": "FIX",
+        "text": " SemanticPage: Content padding CSS classes are now passed",
+        "references": []
       }
     ]
   }

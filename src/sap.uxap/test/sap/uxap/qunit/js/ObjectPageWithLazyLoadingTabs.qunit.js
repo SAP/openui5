@@ -1,10 +1,19 @@
 /*global QUnit,sinon*/
 
-(function (jQuery, QUnit, sinon, core, controller, xmlview, JSONModel) {
+sap.ui.require(["sap/ui/model/json/JSONModel"],
+	function (JSONModel) {
 	"use strict";
 
-	jQuery.sap.registerModulePath("view", "view");
-	jQuery.sap.registerModulePath("sap.uxap.testblocks", "./blocks");
+	var core = sap.ui.getCore(),
+		controller = sap.ui.controller,
+		xmlview = sap.ui.xmlview;
+
+	sap.ui.loader.config({
+		paths: {
+		   "sap/uxap/testblocks": "./blocks",
+		   "view": "./view"
+		 }
+	  });
 
 	var oController = controller("viewController", {});
 
@@ -118,5 +127,4 @@
 			fnTestSection(oObjectPageLayout, i, aLoadedSections, assert, this);
 		}
 	});
-
-}(jQuery, QUnit, sinon, sap.ui.getCore(), sap.ui.controller, sap.ui.xmlview, sap.ui.model.json.JSONModel));
+});

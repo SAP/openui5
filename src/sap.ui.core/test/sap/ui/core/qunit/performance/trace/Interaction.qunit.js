@@ -1,10 +1,12 @@
 /*global QUnit */
-sap.ui.define(['sap/ui/performance/trace/Interaction'],
-	function(Interaction) {
+sap.ui.define([
+	'sap/ui/performance/trace/Interaction',
+	'sap/ui/Device'
+], function(Interaction, Device) {
 	"use strict";
 
 	// skip tests for phantomjs, which does not support window.performance.getEntriesByType
-	var sMethod = sap.ui.Device.browser.phantomJS ? "skip" : "test";
+	var sMethod = Device.browser.phantomJS ? "skip" : "test";
 
 	QUnit.module("Interaction API", {
 		before: function() {
@@ -127,8 +129,12 @@ sap.ui.define(['sap/ui/performance/trace/Interaction'],
 		var xhr = new XMLHttpRequest();
 		xhr.open("www.sap.com", "GET");
 		xhr.setRequestHeader("header", "value");
-		xhr.setRequestHeader(null, null);
-		assert.ok(true, "no exception was raised on valid parammeters");
+		try {
+			xhr.setRequestHeader(null, null); // IE11 throws on this call
+			assert.ok(true, "no exception was raised on valid parammeters");
+		} catch (e) {
+			assert.ok(Device.browser.msie, "exception was raised for IE 11");
+		}
 	});
 
 });

@@ -302,7 +302,7 @@ function(
 		}
 		Log.info("Do not use deprecated factory function 'sap.ui." + sFragmentType + "fragment'. Require 'sap/ui/core/Fragment' and use 'load()' instead", "sap.ui." + sFragmentType + "fragment", null, function () {
 			return {
-				type: sFragmentType,
+				type: "sap.ui." + sFragmentType + "fragment",
 				name: sFragmentType ? sName + ".fragment." + sFragmentType : sName
 			};
 		});
@@ -369,10 +369,13 @@ function(
 
 		mParameters.type = mParameters.type || "XML";
 
-		// map new parameter names to classic API
+		// map new parameter names to classic API, delete new names to avoid assertion failures
 		mParameters.fragmentName = mParameters.name;
 		mParameters.fragmentContent = mParameters.definition;
 		mParameters.oController = mParameters.controller;
+		delete mParameters.name;
+		delete mParameters.definition;
+		delete mParameters.controller;
 
 		return Promise.resolve(fragmentFactory(mParameters));
 	};

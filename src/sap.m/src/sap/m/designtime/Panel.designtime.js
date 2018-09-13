@@ -46,7 +46,7 @@ sap.ui.define([],
 				domRef: ":sap-domref > .sapMPanelInfoTB, :sap-domref > .sapUiDtEmptyInfoToolbar"
 			},
 			content: {
-				domRef: ".sapMPanelContent",
+				domRef: ":sap-domref > .sapMPanelContent",
 				show: function () {
 					this.setExpanded(true);
 				},

@@ -93,7 +93,7 @@ sap.ui.define([
 		}, {
 			excludedLibraries: ["sap.ui.core"],
 			done: function(oResult) {
-				assert.ok(oResult.testedLibraryCount, iTotalAvailableLibraries-1, "should report one library less than before (" + oResult.testedLibraryCount + ")");
+				assert.ok(oResult.testedLibraryCount, iTotalAvailableLibraries - 1, "should report one library less than before (" + oResult.testedLibraryCount + ")");
 				done();
 			}
 		});

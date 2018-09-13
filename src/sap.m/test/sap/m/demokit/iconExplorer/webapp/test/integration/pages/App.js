@@ -1,8 +1,8 @@
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/test/Opa5",
-	"sap/ui/test/matchers/PropertyStrictEquals"
-], function($, Opa5, PropertyStrictEquals) {
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/thirdparty/jquery"
+], function (Opa5, PropertyStrictEquals, jQuery) {
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -44,7 +44,7 @@ sap.ui.define([
 						//increase opa's polling because the message toast is only shown for a brief moment
 						pollingInterval: 100,
 						check: function() {
-							return !!$(".sapMMessageToast").length;
+							return !!jQuery(".sapMMessageToast").length;
 						},
 						success: function() {
 							Opa5.assert.ok(true, sMsg + ": The message toast was displayed");

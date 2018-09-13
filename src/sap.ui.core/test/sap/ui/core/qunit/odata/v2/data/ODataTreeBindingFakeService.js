@@ -1,3 +1,4 @@
+/*global sinon */
 sap.ui.define("ODataTreeBindingFakeService", [], function() {
 
 	"use strict";
@@ -16,13 +17,6 @@ sap.ui.define("ODataTreeBindingFakeService", [], function() {
 			sessionContextId;
 
 		xhr = sinon.useFakeXMLHttpRequest();
-		function updateCsrfToken() {
-			csrfToken = "" + Math.floor(Math.random() * 1000000000);
-		}
-
-		function deleteCsrfToken() {
-			csrfToken = undefined;
-		}
 
 		function updateSessionContextId() {
 				sessionContextId = "SID-" + Math.floor(Math.random() * 1000000000) + "-NEW";
@@ -329,7 +323,7 @@ sap.ui.define("ODataTreeBindingFakeService", [], function() {
 				if (bError) {
 					return [500, oHTMLHeaders, "Server Error"];
 				}
-				var vResponse = typeof(responses[method][url]) === "function"
+				var vResponse = typeof responses[method][url] === "function"
 					? responses[method][url](url, headers)
 					: responses[method][url];
 
@@ -355,19 +349,25 @@ sap.ui.define("ODataTreeBindingFakeService", [], function() {
 			};
 
 			request.onSend = function() {
-				if (window.fakeRequested) window.fakeRequested();
+				if (window.fakeRequested) {
+					window.fakeRequested();
+				}
 
 				function respond(code, headers, data) {
 					if (request.async) {
 						_setTimeout(function() {
 							if (!request.aborted) {
-								if (window.fakeResponded) window.fakeResponded();
+								if (window.fakeResponded) {
+									window.fakeResponded();
+								}
 								request.respond(code, headers, data);
 							}
 						}, responseDelay);
 					} else {
 						if (!request.aborted) {
-							if (window.fakeResponded) window.fakeResponded();
+							if (window.fakeResponded) {
+								window.fakeResponded();
+							}
 							request.respond(code, headers, data);
 						}
 					}
@@ -415,8 +415,7 @@ sap.ui.define("ODataTreeBindingFakeService", [], function() {
 				if (request.url == baseURL + "Categories" || request.url == baseURL + "Categories?horst=true") {
 					if (request.requestHeaders["Accept"] == "application/atom+xml,application/atomsvc+xml,application/xml") {
 						respond(200, oXMLHeaders, sCategoriesXML);
-					}
-					else {
+					} else {
 						// Simulate Soft State header handling
 						updateSessionContextId();
 						oJSONHeaders["sap-contextid"] = sessionContextId;
@@ -452,7 +451,9 @@ sap.ui.define("ODataTreeBindingFakeService", [], function() {
 							for (var j = 0; j < requests[i].length; j++) {
 								var response = getResponse(requests[i][j].method, requests[i][j].url, requests[i][j].requestHeaders);
 								nestedResponses.push(response);
-								if (response[0] >= 300) failed = true;
+								if (response[0] >= 300) {
+									failed = true;
+								}
 							}
 							if (failed) {
 								batchResponses.push([500, oJSONHeaders, "Changeset failed"]);
@@ -520,16 +521,14 @@ sap.ui.define("ODataTreeBindingFakeService", [], function() {
 		function createBatchResponse(responses, token) {
 			var responseText = "",
 				code, headers, body,
-				header,
 				innerText,
-				response,
 				innerToken;
 			for (var i = 0; i < responses.length; i++) {
 				if (typeof responses[i][0] != "number") {
 					innerToken = "changeset-" + Math.random() * 1000000000000000000;
 					innerText = "\r\n";
 					innerText += createBatchResponse(responses[i], innerToken);
-					responseText += "--" + token + "\r\n"
+					responseText += "--" + token + "\r\n";
 					responseText += "Content-Type: multipart/mixed; boundary=" + innerToken + "\r\n";
 					responseText += "Content-Length: " + innerText.length + "\r\n";
 					responseText += innerText + "\r\n";
@@ -567,7 +566,7 @@ sap.ui.define("ODataTreeBindingFakeService", [], function() {
 					if (body.length > 0) {
 						innerText += body + "\r\n";
 					}
-					responseText += "--" + token + "\r\n"
+					responseText += "--" + token + "\r\n";
 					responseText += "Content-Type: application/http\r\n";
 					responseText += "Content-Transfer-Encoding: binary\r\n";
 					responseText += "Content-Length: " + innerText.length + "\r\n";
@@ -575,7 +574,7 @@ sap.ui.define("ODataTreeBindingFakeService", [], function() {
 					responseText += innerText + "\r\n";
 				}
 			}
-			responseText += "--" + token + "--\r\n"
+			responseText += "--" + token + "--\r\n";
 			return responseText;
 		}
 
@@ -586,17 +585,18 @@ sap.ui.define("ODataTreeBindingFakeService", [], function() {
 			"DataServiceVersion": "1.0",
 			"last-modified": "Tue, 15 Nov 1994 12:45:26 GMT"
 		};
-	var oNodataHeaders = 	{
+	/* currently unused
+	var oNodataHeaders = {
 			"DataServiceVersion": "1.0"
-		};
-	var oXMLHeaders = 	{
+		}; */
+	var oXMLHeaders = {
 			"Content-Type": "application/atom+xml;charset=utf-8",
 			"DataServiceVersion": "2.0",
 			"Age": "oh so very old",
 			"Invalid": "invalid"
 		};
 
-	var oJSONHeaders = 	{
+	var oJSONHeaders = {
 			"Content-Type": "application/json;charset=utf-8",
 			"DataServiceVersion": "2.0"
 		};
@@ -604,38 +604,39 @@ sap.ui.define("ODataTreeBindingFakeService", [], function() {
 	var oNoContentHeaders = {
 			"DataServiceVersion": "2.0"
 		};
-
-	var oCountHeaders = 	{
+	/* currently unused
+	var oCountHeaders = {
 			"Content-Type": "text/plain;charset=utf-8",
 			"DataServiceVersion": "2.0"
-		};
-	var oBatchHeaders = 	{
+		}; */
+	var oBatchHeaders = {
 			"Content-Type": "multipart/mixed; boundary=batch-408D0D264EF1AB69CA1BF7",
 			"DataServiceVersion": "2.0"
 		};
-	var oHTMLHeaders = 	{
+	var oHTMLHeaders = {
 			"Content-Type": "text/html"
 		};
-	var oSAMLHeaders = 	{
+	var oSAMLHeaders = {
 			"Content-Type": "text/html",
 			"com.sap.cloud.security.login": "login-request"
 		};
-	var oCsrfRequireHeaders = 	{
+	var oCsrfRequireHeaders = {
 			"Content-Type": "text/plain;charset=utf-8",
 			"DataServiceVersion": "2.0",
 			"X-CSRF-Token": "required"
 		};
-	var oCsrfResponseHeaders = 	{
+	var oCsrfResponseHeaders = {
 			"Content-Type": "application/json;charset=utf-8",
 			"DataServiceVersion": "1.0",
 			"X-CSRF-Token": ""
 		};
+	/* unused?
 	var oSpecialHeaders = {
 		"Content-Type": "application/xml;charset=utf-8",
 		"DataServiceVersion": "1.0",
 		"lAsT-mOdIfIeD": "morgen frueh",
 		"X-CuStOm-HeAdEr": "case-sensitive"
-	};
+	};*/
 	var sSAMLLoginPage = '<html><body><h1>SAML Login Page</h1></body></html>';
 
 	var sServiceDocJSON = '{"d":{"EntitySets":["AdditionalMetadata","HierarchyNodeInfomationCollection","ZTJ_G4_C_GLHIERResults","ZTJG4GLHIERLabels","ZTJ_G4_C_GLHIER","P_CHARTOFACCOUNTS","I_ChartOfAccounts","I_DraftAdministrativeData","I_FinancialStatementVersionT","I_Language","ZTJ_C_FSVHierarchyTP","Ztj_G4_Chartofaccounts","Ztj_G4_Hierarchy","Ztj_G4_Hierarchyt"]}}';

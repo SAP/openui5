@@ -47,7 +47,7 @@
 	QUnit.test("Avatar with press event only", function (assert) {
 		var $oAvatar = this.oAvatar.$();
 
-		assert.ok(jQuery.sap.domById(sControlId), "Avatar is rendered in the DOM");
+		assert.ok(document.getElementById(sControlId), "Avatar is rendered in the DOM");
 		assert.ok($oAvatar.hasClass("sapFAvatar"), "Avatar is rendered with the Avatar class.");
 		assert.ok($oAvatar.hasClass("sapFAvatarS"), sPreAvatarSize + "S");
 		assert.ok($oAvatar.hasClass("sapFAvatarCircle"), sPreAvatarShape +  "Circle");

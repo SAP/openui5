@@ -24,7 +24,7 @@ sap.ui.require([
 		// base
 		"sap/ui/core/qunit/BindingParser.qunit",
 		"sap/ui/core/qunit/ExpressionParser.qunit",
-		"sap/ui/core/qunit/SyncPromise.qunit",
+		"sap/ui/core/qunit/util/SyncPromise.qunit",
 		// core
 		"sap/ui/core/qunit/util/XMLPreprocessor.qunit",
 		// OData types

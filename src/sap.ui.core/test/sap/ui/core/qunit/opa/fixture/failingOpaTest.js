@@ -1,3 +1,4 @@
+/*global QUnit, sinon */
 QUnit.config.testTimeout = 4000;
 QUnit.config.autostart = false;
 
@@ -88,7 +89,7 @@ sap.ui.require([
 	QUnit.module("Exceptions", {
 		beforeEach: function () {
 			this.fnOriginal = window.onerror;
-			window.onerror = $.noop();
+			window.onerror = function() {};
 		},
 		afterEach: function () {
 			window.onerror = this.fnOriginal;
@@ -116,7 +117,7 @@ sap.ui.require([
 			actions: function () {
 				throw new Error("Doh! An exception in 'actions'.");
 			}
-		})
+		});
 	});
 
 	opaTest("Should show an error thrown by a success", function (oOpa) {
@@ -124,7 +125,7 @@ sap.ui.require([
 			success: function () {
 				throw new Error("Doh! An exception in 'success'.");
 			}
-		})
+		});
 	});
 
 	opaTest("Should show an error thrown together with actions", function (oOpa) {
@@ -133,7 +134,7 @@ sap.ui.require([
 			success: function () {
 				throw new Error("Doh! An exception in 'success'.");
 			}
-		})
+		});
 	});
 
 	QUnit.module("IFrame");
@@ -175,7 +176,7 @@ sap.ui.require([
 				return bLoaded;
 			},
 			success: function () {
-				assert.ok(false, "Should not happen");
+				QUnit.assert.ok(false, "Should not happen");
 			},
 			error: function () {
 				Opa5.resetConfig();
@@ -213,12 +214,12 @@ sap.ui.require([
 			viewName: "myView",
 			id: "myButton",
 			success: function () {
-				assert.ok(false, "Should not happen");
+				QUnit.assert.ok(false, "Should not happen");
 			},
 			error: function () {
 				oTimeoutWaiterStub.restore();
 			}
-		})
+		});
 	});
 
 	QUnit.start();

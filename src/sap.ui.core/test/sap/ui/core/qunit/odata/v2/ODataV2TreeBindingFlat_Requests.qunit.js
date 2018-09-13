@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, OData */
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/odata/v2/ODataModel"
@@ -299,7 +299,7 @@ sap.ui.define([
 				numberOfExpandedLevels: 2
 			});
 
-			var oN1001, oN1005, oN1630, oN1636;
+			var oN1001, oN1005, oN1630/*, oN1636*/;
 
 			function handler1 (oEvent) {
 				oBinding.detachChange(handler1);
@@ -315,7 +315,7 @@ sap.ui.define([
 				oBinding.detachChange(handler2);
 
 				oN1630 = oBinding.findNode(5);
-				oN1636 = oBinding.findNode(11);
+				/*oN1636 = */oBinding.findNode(11);
 
 				oBinding.removeContext(oN1630.context);
 				oBinding.removeContext(oN1001.context);
@@ -350,7 +350,7 @@ sap.ui.define([
 				numberOfExpandedLevels: 2
 			});
 
-			var oN1001, oN1005, oN1630, oN1638;
+			var oN1005, oN1630, oN1638;
 
 			function handler1 (oEvent) {
 				oBinding.detachChange(handler1);
@@ -538,7 +538,7 @@ sap.ui.define([
 
 			ensureCorrectChangeGroup();
 
-			var oN1001, oN1005, oN1630, oN1638;
+			var oN1005, oN1630, oN1638;
 
 			function handler1 (oEvent) {
 				oBinding.detachChange(handler1);
@@ -629,7 +629,7 @@ sap.ui.define([
 
 			ensureCorrectChangeGroup();
 
-			var oN1001, oN1005, oN1630, oN1638;
+			var oN1005, oN1630, oN1638;
 
 			function handler1 (oEvent) {
 				oBinding.detachChange(handler1);

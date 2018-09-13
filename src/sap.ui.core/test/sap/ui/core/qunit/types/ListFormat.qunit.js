@@ -1,4 +1,6 @@
+/*global QUnit, sinon */
 sap.ui.define(['sap/ui/core/format/ListFormat', 'sap/ui/core/Locale', "sap/base/Log"], function (ListFormat, Locale, Log) {
+	"use strict";
 
 	QUnit.module("ListFormat", {
 		beforeEach: function () {
@@ -23,7 +25,7 @@ sap.ui.define(['sap/ui/core/format/ListFormat', 'sap/ui/core/Locale', "sap/base/
 		}
 	});
 
-	function runTests(oLocale, aInput, aFormattedValues) {
+	function runTests(assert, oLocale, aInput, aFormattedValues) {
 		var oListFormat = ListFormat.getInstance(oLocale),
 			sFormattedValue, aParsedValues;
 
@@ -51,7 +53,7 @@ sap.ui.define(['sap/ui/core/format/ListFormat', 'sap/ui/core/Locale', "sap/base/
 				"{0}, {1} und ;"
 			];
 
-		runTests(oLocale, this.aInput, aFormattedValues);
+		runTests(assert, oLocale, this.aInput, aFormattedValues);
 	});
 
 	QUnit.test("check symmetry of formatting and parsing - (en_US)", function (assert) {
@@ -69,7 +71,7 @@ sap.ui.define(['sap/ui/core/format/ListFormat', 'sap/ui/core/Locale', "sap/base/
 				"{0}, {1}, and ;"
 			];
 
-		runTests(oLocale, this.aInput, aFormattedValues);
+		runTests(assert, oLocale, this.aInput, aFormattedValues);
 	});
 
 	QUnit.test("check symmetry of formatting and parsing - (he)", function (assert) {
@@ -87,7 +89,7 @@ sap.ui.define(['sap/ui/core/format/ListFormat', 'sap/ui/core/Locale', "sap/base/
 				"{0}, {1} ו;"
 			];
 
-		runTests(oLocale, this.aInput, aFormattedValues);
+		runTests(assert, oLocale, this.aInput, aFormattedValues);
 	});
 
 	QUnit.test("with invalid input type - (de-DE)", function (assert) {

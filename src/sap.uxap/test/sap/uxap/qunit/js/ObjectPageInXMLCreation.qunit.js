@@ -1,16 +1,15 @@
-/*global QUnit*/
-
-(function ($, QUnit) {
+/*global QUnit */
+sap.ui.require([
+	"sap/ui/thirdparty/jquery"],
+function($) {
 	"use strict";
 
-	jQuery.sap.registerModulePath("view", "view");
-	jQuery.sap.registerModulePath("sap.uxap.sample", "../demokit/sample");
-
-	jQuery.sap.registerModulePath("view", "view");
-
-	jQuery.sap.require("sap.uxap.ObjectPageLayout");
-	jQuery.sap.require("sap.uxap.ObjectPageSection");
-	jQuery.sap.require("sap.uxap.ObjectPageHeader");
+	sap.ui.loader.config({
+		paths: {
+		   "sap/uxap/sample": "../demokit/sample",
+		   "view": "./view"
+		 }
+	  });
 
 	QUnit.module("aat_UxAP-162", {
 		beforeEach: function () {
@@ -67,4 +66,4 @@
 
 	});
 
-}(jQuery, QUnit));
+});

@@ -112,7 +112,6 @@ sap.ui.define([
 		 * Returns the class name of the component the given control belongs to.
 		 *
 		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
-		 * @param {boolean} [bOuter] - if set to true the root app component will be returned for embedded component
 		 *
 		 * @returns {String} The component class name, ending with ".Component"
 		 * @see sap.ui.base.Component.getOwnerIdFor
@@ -120,12 +119,13 @@ sap.ui.define([
 		 * @function
 		 * @name sap.ui.fl.Utils.getComponentClassName
 		 */
-		getComponentClassName: function (oControl, bOuter) {
+		getComponentClassName: function (oControl) {
 			var oAppComponent;
 
 			// determine UI5 component out of given control
 			if (oControl) {
-				oAppComponent = this.getAppComponentForControl(oControl, bOuter);
+				// always return the outer app component
+				oAppComponent = this.getAppComponentForControl(oControl, true);
 
 				// check if the component is an application variant and assigned an application descriptor then use this as reference
 				if (oAppComponent) {
@@ -1124,6 +1124,31 @@ sap.ui.define([
 		},
 
 		/**
+		 * Checks if an object is in an array or not and returns the index or -1
+		 *
+		 * @param {object[]} aArray Array of objects
+		 * @param {object} oObject object that should be part of the array
+		 * @returns {integer} Returns the index of the object in the array, -1 if it is not in the array
+		 * @public
+		 */
+		indexOfInArrayOfObjects: function(aArray, oObject) {
+			var iObjectIndex = -1;
+			aArray.some(function(oArrayObject, iIndex) {
+				var bSameNumberOfAttributes = Object.keys(oArrayObject).length === Object.keys(oObject).length;
+				var bContains = bSameNumberOfAttributes && !Object.keys(oArrayObject).some(function(sKey) {
+					return oArrayObject[sKey] !== oObject[sKey];
+				});
+
+				if (bContains) {
+					iObjectIndex = iIndex;
+				}
+
+				return bContains;
+			});
+			return iObjectIndex;
+		},
+
+		/**
 		 * Execute the passed asynchronous / synchronous (Utils.FakePromise) functions serialized - one after the other.
 		 * By default errors do not break the sequential execution of the queue, but this can be changed with the parameter bThrowError.
 		 * Error message will be written in any case.
@@ -1181,37 +1206,56 @@ sap.ui.define([
 		 *
 		 * @param {any} vInitialValue - value on resolve FakePromise
 		 * @param {any} vError - value on reject FakePromise
+		 * @param {string} sInitialPromiseIdentifier - value identifies previous promise in chain. If the identifier is passed to the function and don't match with the FakePromiseIdentifier then native Promise execution is used for further processing
 		 * @returns {sap.ui.fl.Utils.FakePromise|Promise} Returns instantiated FakePromise only if no Promise is passed by value parameter
 		 */
-		FakePromise : function(vInitialValue, vError) {
+		FakePromise : function(vInitialValue, vError, sInitialPromiseIdentifier) {
+			Utils.FakePromise.fakePromiseIdentifier = "sap.ui.fl.Utils.FakePromise";
 			this.vValue = vInitialValue;
 			this.vError = vError;
+			this.sInitialPromiseIdentifier = sInitialPromiseIdentifier;
+			this.bContinueWithFakePromise = arguments.length < 3 || (this.sInitialPromiseIdentifier === Utils.FakePromise.fakePromiseIdentifier);
 			Utils.FakePromise.prototype.then = function(fn) {
+				if (!this.bContinueWithFakePromise) {
+					return Promise.resolve(fn(this.vValue));
+				}
 				if (!this.vError) {
 					try {
-						this.vValue = fn(this.vValue, true);
+						this.vValue = fn(this.vValue, Utils.FakePromise.fakePromiseIdentifier);
 					} catch (oError) {
 						this.vError = oError;
 						this.vValue = null;
 						return this;
 					}
-					if (this.vValue instanceof Promise) {
+					if (this.vValue instanceof Promise ||
+						this.vValue instanceof Utils.FakePromise) {
 						return this.vValue;
 					}
 				}
 				return this;
 			};
 			Utils.FakePromise.prototype.catch = function(fn) {
+				if (!this.bContinueWithFakePromise) {
+					return Promise.reject(fn(this.vError));
+				}
 				if (this.vError) {
-					this.vValue = fn(this.vError, true);
+					try {
+						this.vValue = fn(this.vError, Utils.FakePromise.fakePromiseIdentifier);
+					} catch (oError) {
+						this.vError = oError;
+						this.vValue = null;
+						return this;
+					}
 					this.vError = null;
-					if (this.vValue instanceof Promise) {
+					if (this.vValue instanceof Promise ||
+						this.vValue instanceof Utils.FakePromise) {
 						return this.vValue;
 					}
 				}
 				return this;
 			};
-			if (this.vValue instanceof Promise) {
+			if (this.vValue instanceof Promise ||
+				this.vValue instanceof Utils.FakePromise) {
 				return this.vValue;
 			}
 		},

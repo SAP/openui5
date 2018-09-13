@@ -1,9 +1,12 @@
 /*global QUnit,sinon*/
 
-(function ($, QUnit, sinon, Importance) {
+sap.ui.require(["sap/ui/thirdparty/jquery"],
+	function () {
 	"use strict";
 
-	jQuery.sap.registerModulePath("view", "view");
+	sap.ui.loader.config({
+		paths: {"view" : "view"}
+	  });
 
 	function createPage(key) {
 
@@ -451,4 +454,4 @@
 	runParameterizedTests(bUseIconTabBar);
 	runParameterizedTests(!bUseIconTabBar);
 
-}(jQuery, QUnit, sinon, sap.uxap.Importance));
+});

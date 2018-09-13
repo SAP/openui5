@@ -1,9 +1,13 @@
 sap.ui.define([
 	'sap/ui/core/UIComponent',
 	'sap/ui/demo/cart/model/LocalStorageModel',
-	'jquery.sap.global',
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/demo/cart/model/models'
-], function (UIComponent, LocalStorageModel, jQuery, models) {
+], function (
+	UIComponent,
+	LocalStorageModel,
+	jQuery,
+	models) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.cart.Component", {

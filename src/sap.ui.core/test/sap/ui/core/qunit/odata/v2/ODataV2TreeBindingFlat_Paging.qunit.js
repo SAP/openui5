@@ -84,6 +84,8 @@ sap.ui.define([
 				numberOfExpandedLevels: 2
 			});
 
+			var oDataRequestedSpy = sinon.spy();
+
 			function handler1 (oEvent) {
 				oBinding.detachChange(handler1);
 				oBinding.detachDataRequested(oDataRequestedSpy);
@@ -106,11 +108,9 @@ sap.ui.define([
 				assert.equal(oContext.getProperty("LEVEL"), 1, "8th node on LEVEL = 1");
 				assert.equal(oContext.getProperty("HIERARCHY_NODE"), "1009", "8th Hierarchy Node is ok");
 
-				var aContexts = oBinding.getContexts(10, 10, 0);
+				aContexts = oBinding.getContexts(10, 10, 0);
 				assert.equal(aContexts.length, 10, "second page is loaded via thresholding");
 			}
-
-			var oDataRequestedSpy = sinon.spy();
 
 			function dataReceived() {
 				oBinding.detachDataReceived(dataReceived);
@@ -145,7 +145,7 @@ sap.ui.define([
 				assert.equal(aContexts.length, 10, "initially loaded context length is ok");
 
 				oBinding.attachChange(handler2);
-				var aContexts = oBinding.getContexts(60, 10, 0);
+				aContexts = oBinding.getContexts(60, 10, 0);
 			}
 
 			function handler2 (oEvent) {
@@ -325,7 +325,7 @@ sap.ui.define([
 				oBinding._loadData(10, 70, 0);
 				oBinding._loadData(10, 150, 0);
 				assert.equal(spy.callCount, 1, "Three _loadData() calls trigger only one request");
-			};
+			}
 
 			function handler2 (oEvent) {
 				oBinding.detachChange(handler2);
@@ -497,8 +497,8 @@ sap.ui.define([
 
 				// load second page (60 - 70)
 				oBinding.attachChange(handler2);
-				var aContexts = oBinding.getContexts(60, 10, 0);
-			};
+				aContexts = oBinding.getContexts(60, 10, 0);
+			}
 
 			function handler2 (oEvent) {
 				oBinding.detachChange(handler2);

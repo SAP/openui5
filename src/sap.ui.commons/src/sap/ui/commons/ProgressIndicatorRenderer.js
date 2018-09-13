@@ -81,7 +81,6 @@ sap.ui.define(['jquery.sap.global'],
 
 		oRm.write('<DIV');
 		oRm.writeAttribute('id', oProgressIndicator.getId() + '-bar');
-		oRm.writeAttribute('onselectstart', "return false");
 		oRm.writeAttribute('style', 'height: 14px; width:' + oProgressIndicator.getPercentValue() + '%;');
 
 		var sBarColor = oProgressIndicator.getBarColor();

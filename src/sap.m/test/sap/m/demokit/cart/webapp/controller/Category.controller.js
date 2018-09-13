@@ -1,21 +1,21 @@
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/demo/cart/controller/BaseController',
 	'sap/ui/demo/cart/model/formatter',
 	'sap/ui/Device',
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
 	'sap/m/MessageToast',
-	'sap/ui/model/json/JSONModel'
+	'sap/ui/model/json/JSONModel',
+	"sap/ui/thirdparty/jquery"
 ], function (
-	$,
 	BaseController,
 	formatter,
 	Device,
 	Filter,
 	FilterOperator,
 	MessageToast,
-	JSONModel) {
+	JSONModel,
+	jQuery) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.cart.controller.Category", {
@@ -226,7 +226,7 @@ sap.ui.define([
 				var sText = this.getResourceBundle().getText("filterByText") + " ";
 				var sSeparator = "";
 				var oFilterKey = oEvent.getParameter("filterCompoundKeys");
-				var oKeys = $.extend(oFilterKey, oCustomKeys);
+				var oKeys = jQuery.extend(oFilterKey, oCustomKeys);
 				for (var key in oKeys) {
 					if (oKeys.hasOwnProperty(key)) {
 						sText = sText + sSeparator  + this.getResourceBundle().getText(key, [this._iLowFilterPreviousValue, this._iHighFilterPreviousValue]);

@@ -819,7 +819,7 @@ sap.ui.define([
 		var handler = function(oEvent){
 			oBinding.detachChange(handler);
 			assert.ok(oBinding.bDataAvailable);
-			assert.ok(jQuery.isArray(oBinding.aAllKeys) && oBinding.aAllKeys.length === 0, "AllKeys Array was correctly set to an empty array after an error from the GET request.");
+			assert.ok(Array.isArray(oBinding.aAllKeys) && oBinding.aAllKeys.length === 0, "AllKeys Array was correctly set to an empty array after an error from the GET request.");
 			done();
 		};
 
@@ -932,7 +932,7 @@ sap.ui.define([
 			var aContexts = oBinding.getContexts(),
 				oContext = aContexts[0];
 			assert.equal(oContext.getPath(), "/Categories(1)", "Context path");
-			assert.ok(jQuery.isArray(oContext.getProperty("Products")), "Products loaded");
+			assert.ok(Array.isArray(oContext.getProperty("Products")), "Products loaded");
 			done(); // resume normal testing
 		};
 		oBinding.attachRefresh(function() {oBinding.getContexts();});
@@ -2296,6 +2296,28 @@ sap.ui.define([
 			oBinding.getContexts(0, 2, 0);
 		});
 	});
+
+	QUnit.test("Inline Count mode - service returns no data & 0 count: Count should be updated irrespective of startIndex", function(assert) {
+		var done = assert.async();
+		var oModel = initModel(true);
+		var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "Inline", custom:{search: "foo"}});
+		var oSpy = sinon.spy(oBinding, "loadData");
+		var handler = function() {
+			oBinding.detachChange(handler);
+			assert.equal(oSpy.callCount, 1, "1 Request has been triggered to load data");
+			oSpy.reset();
+			assert.equal(oBinding.getLength(), 0, "Current length is 0");
+			assert.equal(oBinding.isLengthFinal(), true, "Length is final");
+			done();
+		};
+
+		oBinding.attachChange(handler);
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts(1, 5); //Get rows starting from 1, top 5 (startIndex !=0)
+		});
+		oBinding.initialize();
+	});
+
 	QUnit.test("Export to file URL", function(assert){
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");

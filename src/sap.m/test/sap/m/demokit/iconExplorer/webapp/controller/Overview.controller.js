@@ -10,8 +10,20 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/ToggleButton",
 	"sap/m/library",
-	"jquery.sap.global"
-], function (BaseController, IconPool, JSONModel, formatter, Filter, FilterOperator, Device, MessageToast, Label, ToggleButton, mobileLibrary, $) {
+	"sap/ui/thirdparty/jquery"
+], function (
+	BaseController,
+	IconPool,
+	JSONModel,
+	formatter,
+	Filter,
+	FilterOperator,
+	Device,
+	MessageToast,
+	Label,
+	ToggleButton,
+	mobileLibrary,
+	jQuery) {
 	"use strict";
 
 	var TYPING_DELAY = 200; // ms
@@ -372,10 +384,10 @@ sap.ui.define([
 		 * @private
 		 */
 		_copyStringToClipboard: function (copyText, successText, exceptionText) {
-			var $temp = $("<input>");
+			var $temp = jQuery("<input>");
 
 			try {
-				$("body").append($temp);
+				jQuery("body").append($temp);
 				$temp.val(copyText).select();
 				document.execCommand("copy");
 				$temp.remove();

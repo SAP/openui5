@@ -1,7 +1,7 @@
-/*global QUnit*/
-
-jQuery.sap.require("sap.m.FormattedTextAnchorGenerator");
-(function (QUnit, AnchorGenerator) {
+/*global QUnit */
+sap.ui.require([
+	"sap/m/FormattedTextAnchorGenerator"],
+	function(AnchorGenerator) {
 	"use strict";
 
 	var oStandardSetup = {
@@ -168,4 +168,4 @@ jQuery.sap.require("sap.m.FormattedTextAnchorGenerator");
 		assert.strictEqual(AnchorGenerator.generateAnchors(sInputHtml, this.sStrategy, this.sTarget), sExpectedOutput);
 	});
 
-}(QUnit, sap.m.FormattedTextAnchorGenerator));
+});

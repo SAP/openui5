@@ -375,14 +375,14 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @function
-	 * @deprecated since 1.58 use {@link module:sap/ui/events/jquery/jquery/EventSimulation.disableTouchToMouseHandling} instead
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/jquery/EventSimulation.disableTouchToMouseHandling} instead
 	 */
 	jQuery.sap.disableTouchToMouseHandling = EventSimulation.disableTouchToMouseHandling;
 
 	/**
 	 * Defines touch event mode. Values used 'ON' and 'SIM'.
 	 * @private
-	 * @deprecated since 1.58 use {@link module:sap/ui/events/jquery/jquery/EventSimulation.touchEventMode} instead
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/jquery/EventSimulation.touchEventMode} instead
 	 */
 	defineCoupledProperty(jQuery.sap, "touchEventMode", EventSimulation, "touchEventMode");
 

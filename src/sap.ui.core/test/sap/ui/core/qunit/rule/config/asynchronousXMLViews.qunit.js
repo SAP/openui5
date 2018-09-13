@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/mvc/XMLView",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"test-resources/sap/ui/support/TestHelper"
 ], function(
 	jQuery,
+	Log,
 	Component,
 	ComponentContainer,
 	XMLView,
@@ -20,6 +22,8 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.core asynchronousXMLViews rule tests", {
 		beforeEach: function() {
+			Log.setLevel(4);
+
 			var sViewContent =
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">' +
 				'<m:Button text="Button 1" id="button1" />' +

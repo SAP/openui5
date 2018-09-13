@@ -1,9 +1,12 @@
 /*global QUnit*/
 
-(function ($, QUnit) {
+sap.ui.require([], function () {
 	"use strict";
 
-	jQuery.sap.registerModulePath("view", "view");
+	sap.ui.loader.config({
+		paths: {"view" : "view"}
+	  });
+
 	var sRoleAttribute = "role",
 		getResourceBundleText = function (sResourceBundleKey) {
 			return sap.uxap.ObjectPageLayout._getLibraryResourceBundle().getText(sResourceBundleKey);
@@ -97,4 +100,4 @@
 				"The 'aria-labelledby' attribute is correctly set to the section");
 	});
 
-}(jQuery, QUnit));
+});

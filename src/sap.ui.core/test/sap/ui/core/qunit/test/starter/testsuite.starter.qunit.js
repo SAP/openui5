@@ -14,7 +14,7 @@ sap.ui.define(function() {
 			},
 			ui5: {
 				language: "en-US",
-				libs: ["sap.ui.core"],		// Libraries to load upfront in addition to the library which is tested (sap.ui.table), if null no libs are loaded
+				libs: ["sap.ui.core"]		// Libraries to load upfront in addition to the library which is tested (sap.ui.table), if null no libs are loaded
 			},
 			coverage: {
 				only: "[sap/ui/core]",		// Which files to show in the coverage report, if null, no files are excluded from coverage

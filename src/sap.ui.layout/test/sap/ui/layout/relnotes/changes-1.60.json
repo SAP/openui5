@@ -19,6 +19,12 @@
         "type": "FIX",
         "text": "sap.ui.layout - Flexibility: Check actions based on form layout",
         "references": []
+      },
+      {
+        "id": "d4e6ac9540c723ddf158f017a8093ee6ecb4599f",
+        "type": "FIX",
+        "text": " HideSimpleForm change handler doesn\u0027t perform revert after restart",
+        "references": []
       }
     ]
   }

@@ -8,12 +8,24 @@ sap.ui.define([
 	"sap/ui/support/supportRules/ui/models/SelectionUtils",
 	"sap/ui/support/supportRules/ui/models/SharedModel",
 	"sap/ui/core/util/File",
-	"sap/ui/thirdparty/jquery"
-], function (Storage, constants, SelectionUtils, SharedModel, File, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/support/library"
+], function (Storage, constants, SelectionUtils, SharedModel, File, jQuery, library) {
 	"use strict";
 
 	var PresetsUtils = {
 		model: SharedModel,
+
+		getSystemPresets: function () {
+			var aSystemPresets = [],
+				sKey;
+
+			for (sKey in library.SystemPresets) {
+				aSystemPresets.push(library.SystemPresets[sKey]);
+			}
+
+			return aSystemPresets;
+		},
 
 		/**
 		 * Initializes the current selection preset
@@ -29,11 +41,10 @@ sap.ui.define([
 			}
 
 			var aPresets = this.model.getProperty("/selectionPresets"),
-				aSystemPresets = this.model.getProperty("/systemPresets"),
 				iLastSystemPresetPosition = 0;
 
 			// add System Presets to Rule Presets Popover
-			aSystemPresets.forEach(function (oSystemPreset) {
+			this.getSystemPresets().forEach(function (oSystemPreset) {
 				var isFound = aPresets.some(function (oPreset) {
 					if (oSystemPreset.id === oPreset.id) {
 						if (!oPreset.isModified) {
@@ -49,7 +60,11 @@ sap.ui.define([
 				});
 
 				if (!isFound) {
-					aPresets.splice(iLastSystemPresetPosition + 1, 0, jQuery.extend({}, oSystemPreset));
+					var mSystemPresetConfig = {
+						disableDelete: true,
+						isSystemPreset: true
+					};
+					aPresets.splice(iLastSystemPresetPosition + 1, 0, jQuery.extend(mSystemPresetConfig, oSystemPreset));
 				}
 
 				iLastSystemPresetPosition++;
