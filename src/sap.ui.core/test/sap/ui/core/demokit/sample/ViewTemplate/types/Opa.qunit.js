@@ -2,11 +2,11 @@
  * ${copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Opa5, opaTest, TestUtils) {
+], function (Log, Opa5, opaTest, TestUtils) {
 	/*global QUnit */
 	"use strict";
 
@@ -47,7 +47,7 @@ sap.ui.require([
 		Then.onTheMainPage.checkControlIsDirty("booleanInput", false);
 
 		Then.onAnyPage.checkLog([{ component : "sap.ui.model.odata.v4.ODataMetaModel",
-			level : jQuery.sap.log.Level.WARNING,
+			level : Log.Level.WARNING,
 			message : "'Edm.Duration', using sap.ui.model.odata.type.Raw"}]);
 		Then.onAnyPage.analyzeSupportAssistant();
 		Then.iTeardownMyUIComponent();

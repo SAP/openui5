@@ -1,7 +1,7 @@
 	/*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
@@ -1175,7 +1175,7 @@ sap.ui.require([
 						.withExactArgs(sinon.match.same(oGroupLock),
 							"/EntitySet(ID='1')/navigation1/" + sOperation + "(...)",
 							sinon.match.same(oOperationMetadata), sinon.match.func);
-					this.mock(oParentContext1).expects("getObject").on(oParentContext1)
+					this.mock(oParentContext1).expects("getValue").on(oParentContext1)
 						.withExactArgs(sPathPrefix).returns(oEntity);
 				}
 				expectChangeAndRefreshDependent();
@@ -1206,7 +1206,7 @@ sap.ui.require([
 							.withExactArgs(sinon.match.same(oGroupLock),
 								"/EntitySet(ID='2')/navigation1/" + sOperation + "(...)",
 								sinon.match.same(oOperationMetadata), sinon.match.func);
-						that.mock(oParentContext2).expects("getObject").on(oParentContext2)
+						that.mock(oParentContext2).expects("getValue").on(oParentContext2)
 							.withExactArgs(sPathPrefix).returns(oEntity);
 					}
 					expectChangeAndRefreshDependent();
@@ -1570,7 +1570,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[{"@odata.etag" : "ETag"}, undefined].forEach(function (oEntity, i) {
+	[{}, undefined].forEach(function (oEntity, i) {
 		QUnit.test("createCacheAndRequest: bound action " + i, function (assert) {
 			var bAutoExpandSelect = {/*false, true*/},
 				oBinding = this.bindContext("n/a(...)"),
@@ -1614,7 +1614,7 @@ sap.ui.require([
 				.returns(oSingleCache);
 			this.mock(oSingleCache).expects("post")
 				.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(mParameters),
-					oEntity && "ETag")
+					sinon.match.same(oEntity))
 				.returns(oPromise);
 
 			assert.strictEqual(

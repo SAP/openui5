@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
@@ -526,7 +526,12 @@ sap.ui.require([
 		QUnit.test(sTitle, function (assert) {
 			var oAggregation = {
 					aggregate : {
-						SalesNumber : {grandTotal : true}
+						SalesAmountSum : {
+							grandTotal : true,
+							name : "SalesAmount",
+							"with" : "sap.unit_sum"
+						},
+						SalesNumber : {}
 					},
 					group : {
 						Country : {},
@@ -535,19 +540,37 @@ sap.ui.require([
 					},
 					groupLevels : [] // Note: added by _AggregationHelper.buildApply before
 				},
+				oExpected = {},
 				oFirstLevelCache = {
 					handleResponse : _AggregationCache.handleResponse
 				},
 				fnHandleResponse = sinon.stub(),
 				oResult = { /*GET response*/
-					value : [
-						bCount ? {"UI5__count": "26", "UI5__count@odata.type": "#Decimal"} : {},
-						{}
-					]
+					value : [{
+						"@odata.id" : null,
+						"UI5grand__SalesAmountSum" : 351,
+						"UI5grand__SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR",
+						"UI5grand__SalesAmountSum@odata.type" : "#Decimal"
+					}, {
+					}]
 				},
 				mTypeForMetaPath = {/*fetchTypes result*/},
 				iStart = 0,
 				iEnd = 10;
+
+			if (bCount) {
+				oResult.value[0]["UI5__count"] = "26";
+				oResult.value[0]["UI5__count@odata.type"] = "#Decimal";
+			}
+			jQuery.extend(oExpected, oResult.value[0], {
+				Country : null, // avoid "Failed to drill-down"
+				Region : null, // avoid "Failed to drill-down"
+				SalesNumber : null, // avoid "Failed to drill-down"
+				SalesAmountSum : 351,
+				"SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR",
+				"SalesAmountSum@odata.type" : "#Decimal",
+				Segment : null // avoid "Failed to drill-down"
+			});
 
 			// code under test
 			_AggregationCache.handleResponse.call(oFirstLevelCache, oAggregation, null, null,
@@ -569,9 +592,7 @@ sap.ui.require([
 				assert.notOk("@odata.count" in oResult, "@odata.count");
 			}
 			assert.strictEqual(oResult.value.length, 2, "data still includes grand total row");
-			assert.strictEqual(oResult.value[0].Country, null, "avoid 'Failed to drill-down'");
-			assert.strictEqual(oResult.value[0].Region, null, "avoid 'Failed to drill-down'");
-			assert.strictEqual(oResult.value[0].Segment, null, "avoid 'Failed to drill-down'");
+			assert.deepEqual(oResult.value[0], oExpected);
 		});
 	});
 

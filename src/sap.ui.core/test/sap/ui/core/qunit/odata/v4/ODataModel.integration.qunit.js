@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/base/util/uid",
@@ -183,6 +183,8 @@ sap.ui.require([
 			this.mListChanges = {};
 			// A list of expected messages
 			this.aMessages = [];
+			// The number of pending responses checkFinish has to wait for
+			this.iPendingResponses = 0;
 			// A list of expected requests with the properties method, url, headers, response
 			this.aRequests = [];
 		},
@@ -199,6 +201,7 @@ sap.ui.require([
 					iLocks = this.oModel.aLockedGroupLocks.filter(function (oGroupLock) {
 						if (oGroupLock.isLocked()) {
 							assert.ok(false, "GroupLock remained: " + oGroupLock);
+
 							return true;
 						}
 					}).length;
@@ -230,8 +233,8 @@ sap.ui.require([
 
 			// attach formatter to check value for dynamically created control
 			this.setFormatter(assert, oText, sId);
-
 			oForm.addItem(oText);
+
 			return sId;
 		},
 
@@ -266,6 +269,7 @@ sap.ui.require([
 			// Hence, we have to re-create.
 			oTable.bindItems(jQuery.extend({}, oTable.getBindingInfo("items"),
 				{suspended : !bRelative, template : oTemplate}));
+
 			return sId;
 		},
 
@@ -278,7 +282,7 @@ sap.ui.require([
 		checkFinish : function (assert) {
 			var sControlId, aExpectedValuesPerRow, i;
 
-			if (this.aRequests.length) {
+			if (this.aRequests.length || this.iPendingResponses) {
 				return;
 			}
 			for (sControlId in this.mChanges) {
@@ -300,6 +304,7 @@ sap.ui.require([
 			}
 			if (sap.ui.getCore().getUIDirty()) {
 				setTimeout(this.checkFinish.bind(this, assert), 1);
+
 				return;
 			}
 			if (this.resolve) {
@@ -429,6 +434,7 @@ sap.ui.require([
 			});
 
 			mModelParameters = jQuery.extend({}, {odataVersion : "2.0"}, mModelParameters);
+
 			return createModel(sFlight, mModelParameters);
 		},
 
@@ -453,6 +459,7 @@ sap.ui.require([
 			});
 
 			mModelParameters = jQuery.extend({}, {odataVersion : "2.0"}, mModelParameters);
+
 			return createModel("/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/", mModelParameters);
 		},
 
@@ -484,6 +491,7 @@ sap.ui.require([
 			 */
 			function checkBatch(aRequests) {
 				that.iBatchNo += 1;
+
 				return Promise.all(aRequests.map(function (oRequest) {
 					return Array.isArray(oRequest)
 						? checkBatch(oRequest)
@@ -495,6 +503,7 @@ sap.ui.require([
 								if (oResponse.messages) {
 									mHeaders["sap-messages"] = oResponse.messages;
 								}
+
 								return {
 									headers : mHeaders,
 									status : 200,
@@ -523,14 +532,33 @@ sap.ui.require([
 						payload : typeof vPayload === "string" ? JSON.parse(vPayload) : vPayload
 					},
 					oExpectedRequest = that.aRequests.shift(),
-					oResponseBody,
-					mResponseHeaders;
+					sIfMatchValue,
+					oResponse,
+					mResponseHeaders,
+					bWaitForResponse = true;
+
+				function checkFinish() {
+					if (!that.aRequests.length && !that.iPendingResponses) {
+						// give some time to process the response
+						setTimeout(that.checkFinish.bind(that, assert), 0);
+					}
+				}
 
 				delete mHeaders["Accept"];
 				delete mHeaders["Accept-Language"];
 				delete mHeaders["Content-Type"];
+				// if "If-Match" is an object the "@odata.etag" property contains the etag
+				if (mHeaders["If-Match"] && typeof mHeaders["If-Match"] === "object") {
+					sIfMatchValue = mHeaders["If-Match"]["@odata.etag"];
+					if (sIfMatchValue === undefined) {
+						delete mHeaders["If-Match"];
+					} else {
+						mHeaders["If-Match"] = sIfMatchValue;
+					}
+				}
 				if (oExpectedRequest) {
-					oResponseBody = oExpectedRequest.response;
+					oResponse = oExpectedRequest.response;
+					bWaitForResponse = !(oResponse && typeof oResponse.then === "function");
 					mResponseHeaders = oExpectedRequest.responseHeaders;
 					delete oExpectedRequest.response;
 					delete oExpectedRequest.responseHeaders;
@@ -543,17 +571,29 @@ sap.ui.require([
 					mResponseHeaders = {};
 				}
 
-				if (!that.aRequests.length) { // waiting may be over after promise has been handled
-					setTimeout(that.checkFinish.bind(that, assert), 0);
+				if (bWaitForResponse) {
+					that.iPendingResponses += 1;
+				} else {
+					checkFinish();
 				}
 
-				return oResponseBody instanceof Error
-					? Promise.reject(oResponseBody)
-					: Promise.resolve({
+				return Promise.resolve(oResponse).then(function (oResponseBody) {
+					if (oResponseBody instanceof Error) {
+						throw oResponseBody;
+					}
+
+					return {
 						body : oResponseBody,
 						messages : mResponseHeaders["sap-messages"],
-						resourcePath : oExpectedRequest.url
-					});
+						resourcePath : sUrl
+					};
+				}).finally(function () {
+					if (bWaitForResponse) {
+						that.iPendingResponses -= 1;
+					}
+					// Waiting may be over after the promise has been handled
+					checkFinish();
+				});
 			}
 
 			// A wrapper for ODataModel#lockGroup that attaches a stack trace to the lock
@@ -567,6 +607,7 @@ sap.ui.require([
 						oLock.sStack = oError.stack.split("\n").slice(2).join("\n");
 					}
 				}
+
 				return oLock;
 			}
 
@@ -578,10 +619,10 @@ sap.ui.require([
 				this.oModel.lockGroup = lockGroup;
 			} // else: it's a meta model
 			//assert.ok(true, sViewXML); // uncomment to see XML in output, in case of parse issues
+
 			return View.create({
 				type : "XML",
-				controller : oController
-					&& new (Controller.extend(uid(), oController))(),
+				controller : oController && new (Controller.extend(uid(), oController))(),
 				definition :
 					'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:t="sap.ui.table">'
 						+ sViewXML
@@ -607,6 +648,7 @@ sap.ui.require([
 				// esp. for the table.Table this is essential.
 				oView.placeAt("qunit-fixture");
 				that.oView = oView;
+
 				return that.waitForChanges(assert);
 			});
 		},
@@ -651,6 +693,7 @@ sap.ui.require([
 			// Ensures that oObject[vProperty] is an array and returns it
 			function array(oObject, vProperty) {
 				oObject[vProperty] = oObject[vProperty] || [];
+
 				return oObject[vProperty];
 			}
 
@@ -682,6 +725,7 @@ sap.ui.require([
 					aExpectations.push(vValue);
 				}
 			}
+
 			return this;
 		},
 
@@ -695,6 +739,7 @@ sap.ui.require([
 		 */
 		expectMessages : function (aExpectedMessages) {
 			this.aMessages = aExpectedMessages;
+
 			return this;
 		},
 
@@ -722,6 +767,7 @@ sap.ui.require([
 			vRequest.responseHeaders = mResponseHeaders || {};
 			vRequest.response = oResponse;
 			this.aRequests.push(vRequest);
+
 			return this;
 		},
 
@@ -736,6 +782,7 @@ sap.ui.require([
 		 */
 		ignoreNullChanges : function (sControlId) {
 			this.mIgnoredChanges[sControlId] = true;
+
 			return this;
 		},
 
@@ -789,6 +836,7 @@ sap.ui.require([
 						: sValue;
 
 				that.checkValue(assert, sExpectedValue, sControlId);
+
 				return sValue;
 			};
 		},
@@ -817,16 +865,17 @@ sap.ui.require([
 					&& (this.getBindingContext().getIndex
 						? this.getBindingContext().getIndex()
 						: this.getBindingContext().getPath()));
+
 				return sValue;
 			};
 		},
 
 		/**
-		 * Waits for the expected changes.
+		 * Waits for the expected requests and changes.
 		 *
 		 * @param {object} assert The QUnit assert object
-		 * @returns {Promise} A promise that is resolved when all expected values for controls have
-		 *   been set
+		 * @returns {Promise} A promise that is resolved when all requests have been responded and
+		 *   all expected values for controls have been set
 		 */
 		waitForChanges : function (assert) {
 			var that = this;
@@ -902,6 +951,7 @@ sap.ui.require([
 			if (typeof vModel === "string") {
 				vModel = this[vModel]();
 			}
+
 			return this.createView(assert, sView, vModel);
 		});
 	}
@@ -1063,16 +1113,21 @@ sap.ui.require([
 				]
 			})
 			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
+
 		return this.createView(assert, sView).then(function () {
-			that.expectRequest(
-					"TEAMS('42')/TEAM_2_EMPLOYEES?$orderby=AGE&$select=Name&$filter=AGE%20gt%2042"
-						+ "&$skip=0&$top=100",
-					{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Peter Burke"}]})
+			that.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES?$orderby=AGE&$select=Name"
+					+ "&$filter=AGE%20gt%2042&$skip=0&$top=100", {
+					"value" : [
+						{"Name" : "Frederic Fall"},
+						{"Name" : "Peter Burke"}
+					]
+				})
 				.expectChange("text", "Peter Burke", 1);
 
 			// code under test
 			that.oView.byId("table").getBinding("items")
 				.filter(new Filter("AGE", FilterOperator.GT, 42));
+
 			return that.waitForChanges(assert);
 		});
 	});
@@ -1100,25 +1155,29 @@ sap.ui.require([
 		this.expectRequest("EMPLOYEES?foo=bar&$orderby=AGE&$filter=AGE%20gt%2042"
 				+ "&$select=AGE,ID,Name&$skip=0&$top=100", {
 				"value" : [
-					{"ID" : "0", "Name" : "Frederic Fall", "AGE" : 70},
+					{"@odata.etag" : "ETag0", "ID" : "0", "Name" : "Frederic Fall", "AGE" : 70},
 					{"ID" : "1", "Name" : "Jonathan Smith", "AGE" : 50},
-					{"ID" : "2", "Name" : "Peter Burke", "AGE" : 77}]})
+					{"ID" : "2", "Name" : "Peter Burke", "AGE" : 77}
+				]
+			})
 			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"])
 			.expectChange("age", ["70", "50", "77"]);
+
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
 			.then(function () {
 				that.expectRequest({
 						method : "PATCH",
 						url : "EMPLOYEES('0')?foo=bar",
-						headers : {},
-						payload : {
-							"AGE" : 10
-						}
-					}, {"AGE" : 10})
-					.expectChange("age", "10", 0);
+						headers : {"If-Match" : "ETag0"},
+						payload : {"AGE" : 10}
+					}, {
+						"AGE" : 10
+					})
+					.expectChange("age", "10", 0); // caused by setValue
 
 				that.oView.byId("table").getItems()[0].getCells()[1].getBinding("text")
 					.setValue(10);
+
 				return that.waitForChanges(assert);
 			}).then(function () {
 				var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
@@ -1139,11 +1198,77 @@ sap.ui.require([
 				that.expectRequest("EMPLOYEES?foo=bar&$orderby=AGE"
 						+ "&$filter=(AGE%20gt%2042)%20and%20ID%20eq%20'1'"
 						+ "&$select=AGE,ID,Name", {
-						"value" : [{"ID" : "1", "Name" : "Jonathan Smith", "AGE" : 51}]})
+						"value" : [{
+							"ID" : "1",
+							"Name" : "Jonathan Smith",
+							"AGE" : 51
+						}]
+					})
 					.expectChange("age", "51", 0);
 
 				// code under test
 				oContext.refresh(undefined, true);
+
+				return that.waitForChanges(assert);
+			});
+	});
+
+	//*********************************************************************************************
+	// Refresh a single row with a bound message and check that the message is not duplicated.
+	QUnit.test("Context#refresh() with messages", function (assert) {
+		var sView = '\
+<Table id="table"\
+		items="{\
+			path : \'/EMPLOYEES\',\
+			parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}\
+		}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text text="{ID}" />\
+	</ColumnListItem>\
+</Table>',
+			oModelMessage = {
+				"code" : "1",
+				"message" : "Text",
+				"persistent" : false,
+				"target" : "/EMPLOYEES('0')/ID",
+				"type" : "Warning"
+			},
+			oResponseMessage = {
+				"code" : "1",
+				"message" : "Text",
+				"transition" : false,
+				"target" : "ID",
+				"numericSeverity" : 3
+			},
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$select=ID,__CT__FAKE__Message/__FAKE__Messages"
+					+ "&$skip=0&$top=100", {
+				"value" : [{
+					"ID" : "0",
+					"__CT__FAKE__Message" : {
+						"__FAKE__Messages" : [oResponseMessage]
+					}
+				}]
+			})
+			.expectMessages([oModelMessage]);
+
+		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
+			.then(function () {
+				var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+
+				that.expectRequest("EMPLOYEES('0')"
+							+ "?$select=ID,__CT__FAKE__Message/__FAKE__Messages", {
+						"ID" : "0",
+						"__CT__FAKE__Message" : {
+							"__FAKE__Messages" : [oResponseMessage]
+						}
+					})
+					.expectMessages([oModelMessage]);
+
+				// code under test
+				oContext.refresh();
 
 				return that.waitForChanges(assert);
 			});
@@ -1174,24 +1299,36 @@ sap.ui.require([
 </Table>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES?$select=AGE,ID,Name&$skip=0&$top=100",
-				{"value" : [{"ID" : "0", "Name" : "Frederic Fall", "AGE" : 70}]})
+		this.expectRequest("EMPLOYEES?$select=AGE,ID,Name&$skip=0&$top=100", {
+				"value" : [{
+					"ID" : "0",
+					"Name" : "Frederic Fall",
+					"AGE" : 70
+				}]
+			})
 			.expectChange("text", ["Frederic Fall"])
 			.expectChange("age", ["70"])
 			.expectChange("equipmentName", []);
+
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
 			.then(function () {
 				oContext = that.oView.byId("table").getItems()[0].getBindingContext();
 
 				that.expectRequest("EMPLOYEES('0')/EMPLOYEE_2_EQUIPMENTS?"
-							+ "$select=Category,ID,Name&$skip=0&$top=100", {
+						+ "$select=Category,ID,Name&$skip=0&$top=100", {
 						"value" : [{
-							"Category" : "Electronics", "ID" : "1", "Name" : "Office PC"
+							"Category" : "Electronics",
+							"ID" : "1",
+							"Name" : "Office PC"
 						}, {
-							"Category" : "Electronics", "ID" : "2", "Name" : "Tablet X"
-						}]})
+							"Category" : "Electronics",
+							"ID" : "2",
+							"Name" : "Tablet X"
+						}]
+					})
 					.expectChange("equipmentName", ["Office PC", "Tablet X"]);
 				that.oView.byId("detailTable").setBindingContext(oContext);
+
 				return that.waitForChanges(assert);
 			}).then(function () {
 				that.expectRequest("EMPLOYEES('0')?$select=AGE,ID,Name",
@@ -1199,9 +1336,13 @@ sap.ui.require([
 					.expectRequest("EMPLOYEES('0')/EMPLOYEE_2_EQUIPMENTS?"
 							+ "$select=Category,ID,Name&$skip=0&$top=100", {
 						"value" : [{
-							"Category" : "Electronics", "ID" : "1", "Name" : "Office PC"
-						}]});
+							"Category" : "Electronics",
+							"ID" : "1",
+							"Name" : "Office PC"
+						}]
+					});
 				oContext.refresh();
+
 				return that.waitForChanges(assert);
 			});
 	});
@@ -1237,8 +1378,8 @@ sap.ui.require([
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"]);
 
 		return this.createView(assert, sView).then(function () {
-			that.expectRequest(
-				"EMPLOYEES?$expand=EMPLOYEE_2_MANAGER&$orderby=Name&$skip=0&$top=100", {
+			that.expectRequest("EMPLOYEES?$expand=EMPLOYEE_2_MANAGER&$orderby=Name&"
+					+ "$skip=0&$top=100", {
 					"value" : [
 						{"Name" : "Frederic Fall", "EMPLOYEE_2_MANAGER" : {"ID" : "1"}},
 						{"Name" : "Jonathan Smith", "EMPLOYEE_2_MANAGER" : {"ID" : "2"}}
@@ -1378,7 +1519,7 @@ sap.ui.require([
 			that.oLogMock.expects("error").withExactArgs("Failed to read path /EMPLOYEES('2')/Name",
 				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataPropertyBinding");
 			that.expectRequest(
-					"EMPLOYEES('2')?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages", oError)
+				"EMPLOYEES('2')?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages", oError)
 				.expectChange("text", null)
 				.expectMessages([{
 					"code" : undefined,
@@ -1462,8 +1603,13 @@ sap.ui.require([
 			that.expectRequest({
 					method : "POST",
 					url : "ChangeTeamBudgetByID",
-					payload : {"Budget" : "1234.1234", "TeamID" : "TEAM_01"}
-				}, {"Name" : "Business Suite"})
+					payload : {
+						"Budget" : "1234.1234",
+						"TeamID" : "TEAM_01"
+					}
+				}, {
+					"Name" : "Business Suite"
+				})
 				.expectChange("name", "Business Suite");
 
 			return Promise.all([
@@ -1648,9 +1794,8 @@ sap.ui.require([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest(
-				"SalesOrderList?$select=SalesOrderID&$orderby=SalesOrderID%20desc&$skip=0&$top=100",
-				{
+			that.expectRequest("SalesOrderList?$select=SalesOrderID&$orderby=SalesOrderID%20desc"
+					+ "&$skip=0&$top=100", {
 					"value" : [
 						{"SalesOrderID" : "0500000002"},
 						{"SalesOrderID" : "0500000001"}
@@ -1711,9 +1856,8 @@ sap.ui.require([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest(
-					"SalesOrderList?$select=SalesOrderID&$filter=SalesOrderID%20gt%20'0500000001'&"
-						+ "$skip=0&$top=100",
+			that.expectRequest("SalesOrderList?$select=SalesOrderID"
+					+ "&$filter=SalesOrderID%20gt%20'0500000001'&$skip=0&$top=100",
 					{"value" : [{"SalesOrderID" : "0500000002"}]}
 				)
 				.expectChange("count", "1")
@@ -1777,13 +1921,13 @@ sap.ui.require([
 			// the last row. Otherwise the property binding for that row will cause a "Failed to
 			// drill down".
 			that.expectRequest(
-					"SalesOrderList('0500000001')?$expand=SO_2_SOITEM($select=ItemPosition)", {
-						"SalesOrderID" : "0500000001",
-						"SO_2_SOITEM" : [
-							{"ItemPosition" : "0000000010"},
-							{"ItemPosition" : "0000000030"}
-						]
-					})
+				"SalesOrderList('0500000001')?$expand=SO_2_SOITEM($select=ItemPosition)", {
+					"SalesOrderID" : "0500000001",
+					"SO_2_SOITEM" : [
+						{"ItemPosition" : "0000000010"},
+						{"ItemPosition" : "0000000030"}
+					]
+				})
 				.expectChange("count", "2")
 				.expectChange("item", "0000000030", 1);
 
@@ -1807,12 +1951,12 @@ sap.ui.require([
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			that = this;
 
-		this.expectRequest("SalesOrderList?$select=SalesOrderID" +
-			"&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=100", {
+		this.expectRequest("SalesOrderList?$select=SalesOrderID"
+				+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=100", {
 				"value" : [{
 					"SalesOrderID" : "0500000002",
 					"SO_2_BP" : {
-						"@odata.etag" : "etag",
+						"@odata.etag" : "ETag",
 						"BusinessPartnerID" : "42",
 						"CompanyName" : "Foo"
 					}
@@ -1824,12 +1968,8 @@ sap.ui.require([
 			that.expectRequest({
 					method : "PATCH",
 					url : "BusinessPartnerList('42')",
-					headers : {
-						"If-Match" : "etag"
-					},
-					payload : {
-						"CompanyName" : "Bar"
-					}
+					headers : {"If-Match" : "ETag"},
+					payload : {"CompanyName" : "Bar"}
 				}, {
 					"CompanyName" : "Bar"
 				})
@@ -1837,6 +1977,7 @@ sap.ui.require([
 
 			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("text")
 				.setValue("Bar");
+
 			return that.waitForChanges(assert);
 		});
 	});
@@ -1857,9 +1998,7 @@ sap.ui.require([
 			that.expectRequest({
 					method : "PATCH",
 					url : "EMPLOYEES('2')",
-					payload : {
-						"Name" : "Jonathan Schmidt"
-					}
+					payload : {"Name" : "Jonathan Schmidt"}
 				}, /*empty 204 response*/ undefined)
 				.expectChange("text", "Jonathan Schmidt");
 
@@ -1890,7 +2029,7 @@ sap.ui.require([
 						"P2" : 42
 					},
 					"Value" : "Old",
-					"@odata.etag" : "etag"
+					"@odata.etag" : "ETag"
 				}]
 			})
 			.expectChange("item", ["Old"]);
@@ -1899,12 +2038,8 @@ sap.ui.require([
 			that.expectRequest({
 					method : "PATCH",
 					url : "EntitiesWithComplexKey(Key1='foo',Key2=42)",
-					headers : {
-						"If-Match" : "etag"
-					},
-					payload : {
-						"Value" : "New"
-					}
+					headers : {"If-Match" : "ETag"},
+					payload : {"Value" : "New"}
 				}, {
 					"Value" : "New"
 				})
@@ -1912,6 +2047,7 @@ sap.ui.require([
 
 			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("text")
 				.setValue("New");
+
 			return that.waitForChanges(assert);
 		});
 	});
@@ -1947,14 +2083,13 @@ sap.ui.require([
 
 			oTable.getBinding("items").create({Note : "bar"});
 			oTable.getItems()[0].getCells()[0].getBinding("text").setValue("baz");
+
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
 					method : "POST",
 					url : "SalesOrderList",
-					payload : {
-						"Note" : "baz"
-					}
+					payload : {"Note" : "baz"}
 				}, {
 					"CompanyName" : "Bar",
 					"Note" : "from server",
@@ -2011,6 +2146,7 @@ sap.ui.require([
 
 			oTable = that.oView.byId("table");
 			oTable.getBinding("items").create();
+
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("city", "Heidelberg", 0)
@@ -2018,6 +2154,7 @@ sap.ui.require([
 
 			oTable.getItems()[0].getCells()[0].getBinding("text").setValue("Heidelberg");
 			oTable.getItems()[0].getCells()[1].getBinding("text").setValue("8.7");
+
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
@@ -2091,11 +2228,13 @@ sap.ui.require([
 
 			oTable = that.oView.byId("table");
 			oTable.getBinding("items").create();
+
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("quantity", "2.000", 0);
 
 			oTable.getItems()[0].getCells()[0].getBinding("text").setValue("2.000");
+
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
@@ -2131,7 +2270,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	// Scenario: Modify two properties of a sales order, then submit the batch
 	QUnit.test("Merge PATCHes", function (assert) {
-		var oModel = createSalesOrdersModel({
+		var sEtag = "ETag",
+			oModel = createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -2143,7 +2283,7 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest("SalesOrderList('42')?$select=GrossAmount,Note,SalesOrderID", {
-				"@odata.etag" : "ETag",
+				"@odata.etag" : sEtag,
 				"GrossAmount" : "1000.00",
 				"Note" : "Note",
 				"SalesOrderID" : "42"
@@ -2155,9 +2295,7 @@ sap.ui.require([
 			that.expectRequest({
 					method : "PATCH",
 					url : "SalesOrderList('42')",
-					headers : {
-						"If-Match" : "ETag"
-					},
+					headers : {"If-Match" : sEtag},
 					payload : {
 						GrossAmount : "1234.56",
 						Note : "Changed Note"
@@ -2177,6 +2315,422 @@ sap.ui.require([
 				that.oModel.submitBatch("update"),
 				that.waitForChanges(assert)
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Merge PATCHes for different entities even if there are other changes in between
+	QUnit.test("Merge PATCHes for different entities", function (assert) {
+		var oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<columns><Column/><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="amount" text="{GrossAmount}"/>\
+		<Text id="note" text="{Note}"/>\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest(
+			"SalesOrderList?$select=GrossAmount,Note,SalesOrderID&$skip=0&$top=100", {
+				value : [{
+					"@odata.etag" : "ETag0",
+					"GrossAmount" : "1000.00",
+					"Note" : "Note0",
+					"SalesOrderID" : "41"
+				},{
+					"@odata.etag" : "ETag1",
+					"GrossAmount" : "150.00",
+					"Note" : "Note1",
+					"SalesOrderID" : "42"
+				}]
+			})
+			.expectChange("amount", ["1,000.00", "150.00"])
+			.expectChange("note", ["Note0", "Note1"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var aTableItems = that.oView.byId("table").getItems(),
+				oBindingAmount0 = aTableItems[0].getCells()[0].getBinding("text"),
+				oBindingAmount1 = aTableItems[1].getCells()[0].getBinding("text"),
+				oBindingNote0 = aTableItems[0].getCells()[1].getBinding("text"),
+				oBindingNote1 = aTableItems[1].getCells()[1].getBinding("text");
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('41')",
+					headers : {"If-Match" : "ETag0"},
+					payload : {
+						GrossAmount : "123.45",
+						Note : "Note02"
+					}
+				}, {
+					GrossAmount : "123.45",
+					Note : "Note02"
+				})
+				.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "ETag1"},
+					payload : {
+						GrossAmount : "456.78",
+						Note : "Note12"
+					}
+				}, {
+					GrossAmount : "456.78",
+					Note : "Note12"
+				})
+				.expectChange("amount", ["123.45", "456.78"])
+				.expectChange("note", ["Note01", "Note11"])
+				.expectChange("note", ["Note02", "Note12"]);
+
+			// Code under test
+			oBindingAmount0.setValue("123.45");
+			oBindingAmount1.setValue("456.78");
+			oBindingNote0.setValue("Note01");
+			oBindingNote1.setValue("Note11");
+			oBindingNote1.setValue("Note12");
+			oBindingNote0.setValue("Note02");
+
+			return Promise.all([
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Modify a property while an update request is not yet resolved. Determine the ETag
+	// as late as possible
+	QUnit.test("Lazy determination of ETag while PATCH", function (assert) {
+		var oBinding,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			fnRespond,
+			oSubmitBatchPromise,
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'42\')}">\
+	<Text id="note" text="{Note}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
+				"@odata.etag" : "ETag0",
+				"Note" : "Note",
+				"SalesOrderID" : "42"
+			})
+			.expectChange("note", "Note");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("note").getBinding("text");
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "ETag0"},
+					payload : {Note : "Changed Note"}
+				}, new Promise(function (resolve, reject) {
+					fnRespond = resolve.bind(null, {
+						"@odata.etag" : "ETag1",
+						Note : "Changed Note From Server"
+					});
+				}))
+				.expectChange("note", "Changed Note");
+
+			oBinding.setValue("Changed Note");
+			oSubmitBatchPromise = that.oModel.submitBatch("update");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "ETag1"},
+					payload : {Note : "Changed Note while $batch is running"}
+				}, {
+					"@odata.etag" : "ETag2",
+					Note : "Changed Note From Server - 2"
+				})
+				.expectChange("note", "Changed Note while $batch is running")
+				// TODO as long as there are PATCHes in the queue, don't overwrite user input
+				.expectChange("note", "Changed Note From Server")
+				.expectChange("note", "Changed Note From Server - 2");
+
+			oBinding.setValue("Changed Note while $batch is running");
+
+			fnRespond();
+
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert),
+				oSubmitBatchPromise
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Execute a bound action while an update request for the entity is not yet
+	// resolved. Determine the ETag as late as possible.
+	QUnit.test("Lazy determination of ETag while ODataContextBinding#execute", function (assert) {
+		var sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
+			oBinding,
+			oExecutePromise,
+			oModel = createTeaBusiModel({updateGroupId : "update"}),
+			fnRespond,
+			oSubmitBatchPromise,
+			sView = '\
+<FlexBox binding="{/EMPLOYEES(\'1\')}">\
+	<Text id="name" text="{Name}" />\
+	<FlexBox id="action" \
+			binding="{' + sAction + '(...)}">\
+		<layoutData><FlexItemData/></layoutData>\
+		<Text id="teamId" text="{TEAM_ID}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('1')", {
+				"Name" : "Jonathan Smith",
+				"@odata.etag" : "ETag0"
+			})
+			.expectChange("name", "Jonathan Smith")
+			.expectChange("teamId", null);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("name").getBinding("text");
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "EMPLOYEES('1')",
+					headers : {"If-Match" : "ETag0"},
+					payload : {Name : "Jonathan Mueller"}
+				}, new Promise(function (resolve, reject) {
+					fnRespond = resolve.bind(null, {
+						"@odata.etag" : "ETag1",
+						Name : "Jonathan Mueller"
+					});
+				}))
+				.expectChange("name", "Jonathan Mueller"); // triggered by setValue
+
+			oBinding.setValue("Jonathan Mueller");
+
+			oSubmitBatchPromise = that.oModel.submitBatch("update");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oExecutePromise = that.oView.byId("action").getObjectBinding()
+				.setParameter("TeamID", "42").execute("update");
+
+			fnRespond();
+
+			return Promise.all([
+				oSubmitBatchPromise,
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					headers : {"If-Match" : "ETag1"},
+					url : "EMPLOYEES('1')/" + sAction,
+					payload : {"TeamID" : "42"}
+				}, {
+					"TEAM_ID" : "42"
+				}).expectChange("teamId", "42");
+
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				oExecutePromise,
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Modify a property while an update request is not yet resolved. The second PATCH
+	// request must wait for the first one to finish and use the eTag returned in its response.
+	QUnit.test("PATCH entity, two subsequent PATCHes on this entity wait", function (assert) {
+		var oBinding,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			aPromises = [],
+			fnRespond,
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'42\')}">\
+	<Text id="note" text="{Note}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
+				"@odata.etag" : "ETag0",
+				"Note" : "Note",
+				"SalesOrderID" : "42"
+			})
+			.expectChange("note", "Note");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("note").getBinding("text");
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "ETag0"},
+					payload : {Note : "Changed Note"}
+				}, new Promise(function (resolve, reject) {
+					fnRespond = resolve.bind(null, {
+						"@odata.etag" : "ETag1",
+						Note : "Changed Note From Server"
+					});
+				}))
+				.expectChange("note", "Changed Note");
+
+			oBinding.setValue("Changed Note");
+			aPromises.push(that.oModel.submitBatch("update"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("note", "(1) Changed Note while $batch is running");
+
+			oBinding.setValue("(1) Changed Note while $batch is running");
+			aPromises.push(that.oModel.submitBatch("update"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("note", "(2) Changed Note while $batch is running");
+
+			oBinding.setValue("(2) Changed Note while $batch is running");
+			aPromises.push(that.oModel.submitBatch("update"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// The two PATCH requests on Note are merged, only the second remains
+			that.expectChange("note", "Changed Note From Server")
+				.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "ETag1"},
+					payload : {Note : "(2) Changed Note while $batch is running"}
+				}, {
+					"@odata.etag" : "ETag2",
+					Note : "Changed Note From Server - 2"
+				})
+				.expectChange("note", "Changed Note From Server - 2");
+
+			fnRespond();
+			aPromises.push(that.waitForChanges(assert));
+
+			return Promise.all(aPromises);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: While update for entity1 is on the wire (request1), update both entity1 and entity2
+	// in one batch (request2). Then update entity2 (request3).
+	// request2 and request3 wait for request1 to return *and* apply the response to the cache;
+	// the PATCHes of request2 and request3 are merged and use the ETag from the response to
+	// request1.
+	QUnit.test("1=PATCH e1, 2=PATCH(e1,e2), 3=PATCH e2: request sequence 1,2,3", function (assert) {
+		var oBinding42,
+			oBinding77,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			aPromises = [],
+			fnRespond42,
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'42\')}">\
+	<Text id="note42" text="{Note}"/>\
+</FlexBox>\
+<FlexBox binding="{/SalesOrderList(\'77\')}">\
+	<Text id="note77" text="{Note}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
+				"@odata.etag" : "42ETag0",
+				"Note" : "Note42",
+				"SalesOrderID" : "42"
+			})
+			.expectChange("note42", "Note42")
+			.expectRequest("SalesOrderList('77')?$select=Note,SalesOrderID", {
+				"@odata.etag" : "77ETag0",
+				"Note" : "Note77",
+				"SalesOrderID" : "77"
+			})
+			.expectChange("note77", "Note77");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding42 = that.oView.byId("note42").getBinding("text");
+			oBinding77 = that.oView.byId("note77").getBinding("text");
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "42ETag0"},
+					payload : {Note : "42Changed Note"}
+				}, new Promise(function (resolve, reject) {
+					fnRespond42 = resolve.bind(null, {
+						"@odata.etag" : "42ETag1",
+						Note : "42Changed Note From Server"
+					});
+				}))
+				.expectChange("note42", "42Changed Note");
+
+			oBinding42.setValue("42Changed Note");
+			aPromises.push(that.oModel.submitBatch("update"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("note42", "(1) 42Changed Note while $batch is running")
+				.expectChange("note77", "(1) 77Changed Note while $batch is running");
+
+			oBinding42.setValue("(1) 42Changed Note while $batch is running");
+			oBinding77.setValue("(1) 77Changed Note while $batch is running");
+			aPromises.push(that.oModel.submitBatch("update"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("note77", "77Changed Note");
+
+			oBinding77.setValue("77Changed Note");
+			aPromises.push(that.oModel.submitBatch("update"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			//TODO suppress change event for outdated value "42Changed Note From Server"
+			that.expectChange("note42", "42Changed Note From Server")
+				.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "42ETag1"},
+					payload : {Note : "(1) 42Changed Note while $batch is running"}
+				}, {
+					"@odata.etag" : "42ETag2",
+					Note : "42Changed Note From Server - 1"
+				})
+				.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('77')",
+					headers : {"If-Match" : "77ETag0"},
+					payload : {Note : "77Changed Note"}
+				}, {
+					"@odata.etag" : "77ETag1",
+					Note : "77Changed Note From Server - 1"
+				})
+				.expectChange("note42", "42Changed Note From Server - 1")
+				.expectChange("note77", "77Changed Note From Server - 1");
+
+			fnRespond42();
+			aPromises.push(that.waitForChanges(assert));
+
+			return Promise.all(aPromises);
 		});
 	});
 
@@ -2280,6 +2834,7 @@ sap.ui.require([
 		this.expectChange("item", "ID", "/MANAGERS/ID")
 			.expectChange("item", "TEAM_ID", "/MANAGERS/TEAM_ID")
 			.expectChange("item", "Manager_to_Team", "/MANAGERS/Manager_to_Team");
+
 		return this.createView(assert, sView, oModel);
 	});
 
@@ -2292,6 +2847,7 @@ sap.ui.require([
 
 		this.expectChange("product",
 			"com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product");
+
 		return this.createView(assert, sView, oModel);
 	});
 
@@ -2307,6 +2863,7 @@ sap.ui.require([
 
 		this.expectChange("product",
 			"com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product");
+
 		return this.createView(assert, sView, oModel);
 	});
 
@@ -2325,12 +2882,14 @@ sap.ui.require([
 			that = this;
 
 		this.expectChange("item", false);
+
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectChange("item", "ID", "/MANAGERS/ID")
 				.expectChange("item", "TEAM_ID", "/MANAGERS/TEAM_ID")
 				.expectChange("item", "Manager_to_Team", "/MANAGERS/Manager_to_Team");
 
 			that.oView.byId("table").setBindingContext(oModel.getContext("/MANAGERS"));
+
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("item", "ID", "/Equipments/EQUIPMENT_2_PRODUCT/ID")
@@ -2346,6 +2905,7 @@ sap.ui.require([
 
 			that.oView.byId("table")
 				.setBindingContext(oModel.getContext("/Equipments/EQUIPMENT_2_PRODUCT"));
+
 			return that.waitForChanges(assert);
 		});
 	});
@@ -2359,8 +2919,8 @@ sap.ui.require([
 	text="{/MANAGERS/TEAM_ID@@sap.ui.model.odata.v4.AnnotationHelper.getValueListType}"/>';
 
 		this.mock(AnnotationHelper).expects("getValueListType").returns("foo");
-
 		this.expectChange("text", "foo");
+
 		return this.createView(assert, sView, oModel);
 	});
 
@@ -2384,17 +2944,16 @@ sap.ui.require([
 </FlexBox>';
 
 		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id"
-				+ ";$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))&$select=AGE,ID",
-				{
-					"AGE" : 32,
-					"EMPLOYEE_2_TEAM" : {
-						"Name" : "SAP NetWeaver Gateway Content",
-						"Team_Id" : "TEAM_03",
-						"TEAM_2_MANAGER" : {
-							"TEAM_ID" : "TEAM_03"
-						}
+				+ ";$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))&$select=AGE,ID", {
+				"AGE" : 32,
+				"EMPLOYEE_2_TEAM" : {
+					"Name" : "SAP NetWeaver Gateway Content",
+					"Team_Id" : "TEAM_03",
+					"TEAM_2_MANAGER" : {
+						"TEAM_ID" : "TEAM_03"
 					}
-				})
+				}
+			})
 			.expectChange("name", "SAP NetWeaver Gateway Content")
 			.expectChange("TEAM_ID", "TEAM_03");
 
@@ -2422,16 +2981,15 @@ sap.ui.require([
 </FlexBox>';
 
 		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_MANAGER"
-					+ "($select=ID),EMPLOYEE_2_TEAM($select=Name,Team_Id)&$select=AGE,ID",
-				{
-					"AGE" : 32,
-					"EMPLOYEE_2_MANAGER" : {
-						"ID" : "2"
-					},
-					"EMPLOYEE_2_TEAM" : {
-						"Name" : "SAP NetWeaver Gateway Content"
-					}
-				})
+				+ "($select=ID),EMPLOYEE_2_TEAM($select=Name,Team_Id)&$select=AGE,ID", {
+				"AGE" : 32,
+				"EMPLOYEE_2_MANAGER" : {
+					"ID" : "2"
+				},
+				"EMPLOYEE_2_TEAM" : {
+					"Name" : "SAP NetWeaver Gateway Content"
+				}
+			})
 			.expectChange("name", "SAP NetWeaver Gateway Content");
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
@@ -2469,7 +3027,10 @@ sap.ui.require([
 						"ID" : null,
 						"Name" : "John Doe"
 					}
-				}, {"ID" : "7", "Name" : "John Doe"})
+				}, {
+					"ID" : "7",
+					"Name" : "John Doe"
+				})
 				.expectChange("id", "7", 0);
 
 			return Promise.all([
@@ -2480,6 +3041,7 @@ sap.ui.require([
 			// code under test
 			assert.notOk(oTeam2EmployeesBinding.hasPendingChanges(), "no more pending changes");
 			assert.notOk(oTeamBinding.hasPendingChanges(), "no more pending changes");
+
 			return that.waitForChanges(assert);
 		});
 	});
@@ -2518,8 +3080,9 @@ sap.ui.require([
 	// delete the newly created entity again
 	// None of our applications has such a scenario.
 	[true, false].forEach(function (bUseReset) {
-		QUnit.test("Create on a relative binding; " + (bUseReset ? "resetChanges()" : "delete"),
-				function (assert) {
+		var sTitle = "Create on a relative binding; " + (bUseReset ? "resetChanges()" : "delete");
+
+		QUnit.test(sTitle, function (assert) {
 			var oNewContext,
 				oTeam2EmployeesBinding,
 				oTeamBinding,
@@ -2541,6 +3104,7 @@ sap.ui.require([
 				assert.ok(oTeam2EmployeesBinding.hasPendingChanges(),
 					"binding has pending changes");
 				assert.ok(oTeamBinding.hasPendingChanges(), "parent has pending changes");
+
 				return that.waitForChanges(assert);
 			}).then(function () {
 				var oPromise;
@@ -2557,6 +3121,7 @@ sap.ui.require([
 
 				assert.notOk(oTeam2EmployeesBinding.hasPendingChanges(), "no pending changes");
 				assert.notOk(oTeamBinding.hasPendingChanges(), "parent has no pending changes");
+
 				return Promise.all([
 					oPromise,
 					that.waitForChanges(assert)
@@ -2589,7 +3154,7 @@ sap.ui.require([
 
 		this.expectRequest("EMPLOYEES('1')", {
 				"Name" : "Jonathan Smith",
-				"@odata.etag" : "eTag"
+				"@odata.etag" : "ETag"
 			})
 			.expectChange("name", "Jonathan Smith")
 			.expectChange("teamId", null);
@@ -2597,11 +3162,9 @@ sap.ui.require([
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest({
 					method : "POST",
-					headers : {"If-Match" : "eTag"},
+					headers : {"If-Match" : "ETag"},
 					url : sUrl,
-					payload : {
-						"TeamID" : "42"
-					}
+					payload : {"TeamID" : "42"}
 				}, {
 					"TEAM_ID" : "42"
 				})
@@ -2621,11 +3184,9 @@ sap.ui.require([
 				"sap.ui.model.odata.v4.ODataPropertyBinding");
 			that.expectRequest({
 					method : "POST",
-					headers : {"If-Match" : "eTag"},
+					headers : {"If-Match" : "ETag"},
 					url : sUrl,
-					payload : {
-						"TeamID" : ""
-					}
+					payload : {"TeamID" : ""}
 				}, oError) // simulates failure
 				.expectMessages([{
 					"code" : undefined,
@@ -2715,8 +3276,7 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest("EMPLOYEES?$filter=TEAM_ID%20eq%20'77'&$select=ID,Name,TEAM_ID"
-				+ "&$skip=0&$top=100",
-			{
+				+ "&$skip=0&$top=100", {
 				"value" : [
 					{"ID" : "0", "Name" : "Frederic Fall", "TEAM_ID" : "77"},
 					{"ID" : "1", "Name" : "Jonathan Smith","TEAM_ID" : "77"},
@@ -2731,9 +3291,7 @@ sap.ui.require([
 					method : "POST",
 					url : "EMPLOYEES('0')/com.sap.gateway.default.iwbep.tea_busi.v0001"
 						+ ".AcChangeTeamOfEmployee",
-					payload : {
-						"TeamID" : "42"
-					}
+					payload : {"TeamID" : "42"}
 				}, {
 					"TEAM_ID" : "42"
 				})
@@ -2773,7 +3331,7 @@ sap.ui.require([
 
 		this.expectRequest("EMPLOYEES('1')", {
 				"Name" : "Jonathan Smith",
-				"@odata.etag" : "eTag"
+				"@odata.etag" : "ETag"
 			})
 			.expectChange("name", "Jonathan Smith")
 			.expectChange("isManager", null);
@@ -2781,12 +3339,10 @@ sap.ui.require([
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest({
 					method : "POST",
-					headers : {"If-Match" : "eTag"},
+					headers : {"If-Match" : "ETag"},
 					url : "EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
 						+ ".__FAKE__AcOverload",
-					payload : {
-						"Message" : "The quick brown fox jumps over the lazy dog"
-					}
+					payload : {"Message" : "The quick brown fox jumps over the lazy dog"}
 				}, {
 					"Is_Manager" : true
 				})
@@ -2854,8 +3410,7 @@ sap.ui.require([
 	// Scenario: Enable autoExpandSelect mode for nested ODataContextBindings. The inner
 	// ODataContextBinding *cannot* use its parent binding's cache due to conflicting query options
 	// => it creates an own cache and request.
-	QUnit.test("Auto-$expand/$select: Nested ODCB with own request",
-			function (assert) {
+	QUnit.test("Auto-$expand/$select: Nested ODCB with own request", function (assert) {
 		var sView = '\
 <FlexBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\',\
 			parameters : {\
@@ -2887,28 +3442,26 @@ sap.ui.require([
 </FlexBox>';
 
 		this.expectRequest("EMPLOYEES('2')/EMPLOYEE_2_TEAM"
-					+ "?$expand=TEAM_2_EMPLOYEES($orderby=AGE%20desc)&$select=Name,Team_Id",
-				{
-					"Name" : "SAP NetWeaver Gateway Content",
-					"TEAM_2_EMPLOYEES" : [
-						{"AGE" : 32},
-						{"AGE" : 29}
-					]
-				})
+				+ "?$expand=TEAM_2_EMPLOYEES($orderby=AGE%20desc)&$select=Name,Team_Id", {
+				"Name" : "SAP NetWeaver Gateway Content",
+				"TEAM_2_EMPLOYEES" : [
+					{"AGE" : 32},
+					{"AGE" : 29}
+				]
+			})
 			.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_MANAGER($select=ID),"
-					+ "EMPLOYEE_2_TEAM($expand=TEAM_2_EMPLOYEES($orderby=AGE))&$select=AGE,ID",
-				{
-					"AGE" : 32,
-					"EMPLOYEE_2_MANAGER" : {
-						"ID" : "2"
-					},
-					"EMPLOYEE_2_TEAM" : {
-						"TEAM_2_EMPLOYEES" : [
-							{"AGE" : 29},
-							{"AGE" : 32}
-						]
-					}
-				})
+				+ "EMPLOYEE_2_TEAM($expand=TEAM_2_EMPLOYEES($orderby=AGE))&$select=AGE,ID", {
+				"AGE" : 32,
+				"EMPLOYEE_2_MANAGER" : {
+					"ID" : "2"
+				},
+				"EMPLOYEE_2_TEAM" : {
+					"TEAM_2_EMPLOYEES" : [
+						{"AGE" : 29},
+						{"AGE" : 32}
+					]
+				}
+			})
 			.expectChange("name", "SAP NetWeaver Gateway Content")
 			.expectChange("age", "32");
 
@@ -2935,26 +3488,30 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest("EMPLOYEES?$orderby=Name&$select=AGE,ID,Name&$filter=AGE%20lt%2077"
-					+ "&$skip=0&$top=100",
-				{
-					"value" : [
-						{"Name" : "Frederic Fall"},
-						{"Name" : "Jonathan Smith"},
-						{"Name" : "Peter Burke"}
-					]
-				}
-			)
+				+ "&$skip=0&$top=100", {
+				"value" : [
+					{"Name" : "Frederic Fall"},
+					{"Name" : "Jonathan Smith"},
+					{"Name" : "Peter Burke"}
+				]
+			})
 			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
+
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
 			.then(function () {
 				that.expectRequest("EMPLOYEES?$orderby=Name&$select=AGE,ID,Name"
-							+ "&$filter=AGE%20gt%2042&$skip=0&$top=100",
-						{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Peter Burke"}]})
+						+ "&$filter=AGE%20gt%2042&$skip=0&$top=100", {
+						"value" : [
+							{"Name" : "Frederic Fall"},
+							{"Name" : "Peter Burke"}
+						]
+					})
 					.expectChange("text", "Peter Burke", 1);
 
 				// code under test
 				that.oView.byId("table").getBinding("items")
 					.filter(new Filter("AGE", FilterOperator.GT, 42));
+
 				return that.waitForChanges(assert);
 			})
 			.then(function () {
@@ -2970,6 +3527,7 @@ sap.ui.require([
 
 				// code under test
 				that.oView.byId("table").getBinding("items").filter(/*no filter*/);
+
 				return that.waitForChanges(assert);
 			});
 	});
@@ -2991,28 +3549,33 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest("TEAMS('2')?$select=Name,Team_Id"
-					+ "&$expand=TEAM_2_EMPLOYEES($orderby=Name;$select=ID,Name)", {
-					"Name" : "Team 2",
-					"Team_Id" : "2",
-					"TEAM_2_EMPLOYEES" : [
-						{"Name" : "Frederic Fall"},
-						{"Name" : "Jonathan Smith"},
-						{"Name" : "Peter Burke"}
-					]
-				}
-			)
+				+ "&$expand=TEAM_2_EMPLOYEES($orderby=Name;$select=ID,Name)", {
+				"Name" : "Team 2",
+				"Team_Id" : "2",
+				"TEAM_2_EMPLOYEES" : [
+					{"Name" : "Frederic Fall"},
+					{"Name" : "Jonathan Smith"},
+					{"Name" : "Peter Burke"}
+				]
+			})
 			.expectChange("name", "Team 2")
 			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
+
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
 			.then(function () {
 				that.expectRequest("TEAMS('2')/TEAM_2_EMPLOYEES?$orderby=Name&$select=ID,Name"
-							+ "&$filter=AGE%20gt%2042&$skip=0&$top=100",
-						{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Peter Burke"}]})
+						+ "&$filter=AGE%20gt%2042&$skip=0&$top=100", {
+						"value" : [
+							{"Name" : "Frederic Fall"},
+							{"Name" : "Peter Burke"}
+						]
+					})
 					.expectChange("text", "Peter Burke", 1);
 
 				// code under test
 				that.oView.byId("table").getBinding("items")
 					.filter(new Filter("AGE", FilterOperator.GT, 42));
+
 				return that.waitForChanges(assert);
 			});
 	});
@@ -3056,18 +3619,19 @@ sap.ui.require([
 </Table>';
 
 		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
-					"value" : [
-						{"Team_Id" : "TEAM_01"}
-					]
-				})
+				"value" : [
+					{"Team_Id" : "TEAM_01"}
+				]
+			})
 			.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$apply=filter(AGE%20lt%2042)"
 				+ "&$select=ID,Name&$skip=0&$top=100", {
-					"value" : [
-						{"Name" : "Frederic Fall"},
-						{"Name" : "Peter Burke"}
-					]
-				})
+				"value" : [
+					{"Name" : "Frederic Fall"},
+					{"Name" : "Peter Burke"}
+				]
+			})
 			.expectChange("text", ["Frederic Fall", "Peter Burke"]);
+
 		return this.createView(assert, sView, oModel);
 	});
 
@@ -3089,10 +3653,10 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
-					"value" : [{
-						"Team_Id" : "TEAM_01"
-					}]
-				})
+				"value" : [{
+					"Team_Id" : "TEAM_01"
+				}]
+			})
 			.expectChange("text0", ["TEAM_01"])
 			.expectChange("text1"); // expect a later change
 
@@ -3149,8 +3713,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	// Scenario: Enable autoExpandSelect mode for use with factory function to create a listBinding
-	QUnit.test("Auto-$expand/$select: use factory function",
-			function (assert) {
+	QUnit.test("Auto-$expand/$select: use factory function", function (assert) {
 		var that = this,
 			sView = '\
 <Table id="table" items="{\
@@ -3178,13 +3741,13 @@ sap.ui.require([
 						});
 					}
 					that.setFormatterInList(assert, oListItem, "text");
+
 					return new ColumnListItem({cells : [oListItem]});
 				}
 			};
 
 		this.expectRequest("EMPLOYEES?$select=AGE,ID&$skip=0&$top=100", {
-			"value" :
-				[
+				"value" : [
 					{"AGE" : 29, "ID" : "R2D2"},
 					{"AGE" : 36, "ID" : "C3PO"}
 				]
@@ -3205,18 +3768,20 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest("TEAMS('42')", {
-			"Team_Id" : "TEAM_01",
-			"Name" : "Team #1"
-		}).expectChange("text", "Team #1");
+				"Team_Id" : "TEAM_01",
+				"Name" : "Team #1"
+			})
+			.expectChange("text", "Team #1");
 
 		return this.createView(assert, sView).then(function () {
 			var oContext = that.oView.byId("form").getBindingContext(),
 				oPromise;
 
 			that.expectRequest({
-				method : "DELETE",
-				url : "TEAMS('42')"
-			}).expectChange("text", null);
+					method : "DELETE",
+					url : "TEAMS('42')"
+				})
+				.expectChange("text", null);
 
 			// Note: "the resulting group ID must be '$auto' or '$direct'"
 			// --> no way to call submitBatch()!
@@ -3265,7 +3830,9 @@ sap.ui.require([
 				that.expectRequest({
 						method : "GET",
 						url : sUrlPrefix + "$skip=0&$top=100"
-					}, {"value" : [mFrederic, mJonathan]})
+					}, {
+						"value" : [mFrederic, mJonathan]
+					})
 					.expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
 
 				return Promise.all([
@@ -3276,9 +3843,11 @@ sap.ui.require([
 				var oListBinding = that.oView.byId("table").getBinding("items");
 
 				that.expectRequest({
-					method : "GET",
-					url : sUrlPrefix + "$orderby=Name%20desc&$skip=0&$top=100"
-				}, {"value" : [mJonathan, mFrederic]})
+						method : "GET",
+						url : sUrlPrefix + "$orderby=Name%20desc&$skip=0&$top=100"
+					}, {
+						"value" : [mJonathan, mFrederic]
+					})
 					.expectChange("text", ["Jonathan Smith", "Frederic Fall"]);
 
 				oListBinding.changeParameters({
@@ -3356,8 +3925,12 @@ sap.ui.require([
 </VBox>',
 			that = this;
 
-		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100",
-				{value : [{"Team_Id" : "1"}, {"Team_Id" : "2"}]})
+		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
+				value : [
+					{"Team_Id" : "1"},
+					{"Team_Id" : "2"}
+				]
+			})
 			.expectChange("teamId", ["1", "2"])
 			.expectChange("employeeId", false)
 			.expectChange("employeeName");
@@ -3366,25 +3939,31 @@ sap.ui.require([
 			oListBinding = that.oView.byId("teamSet").getBinding("items");
 
 			that.expectRequest(
-					"TEAMS('1')/TEAM_2_EMPLOYEES?$orderby=Name&$select=ID&$skip=0&$top=100",
-					{value : [{ID : "01"}, {ID : "02"}]})
+				"TEAMS('1')/TEAM_2_EMPLOYEES?$orderby=Name&$select=ID&$skip=0&$top=100", {
+					value : [
+						{ID : "01"},
+						{ID : "02"}
+					]
+				})
 				.expectChange("employeeId", ["01", "02"]);
 
 			// "select" the first row in the team table
 			that.oView.byId("employeeSet").setBindingContext(
 				that.oView.byId("teamSet").getItems()[0].getBindingContext());
+
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("EMPLOYEES('01')?$select=ID,Name", {
 					ID : "01",
 					Name : "Frederic Fall",
-					"@odata.etag" : "eTag"
+					"@odata.etag" : "ETag"
 				})
 				.expectChange("employeeName", "Frederic Fall");
 
 			// "select" the first row in the employee table
 			that.oView.byId("objectPage").setBindingContext(
 				that.oView.byId("employeeSet").getItems()[0].getBindingContext());
+
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("employeeName", "foo");
@@ -3396,8 +3975,12 @@ sap.ui.require([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest(
-					"TEAMS('2')/TEAM_2_EMPLOYEES?$orderby=Name&$select=ID&$skip=0&$top=100",
-					{value : [{ID : "03"}, {ID : "04"}]})
+				"TEAMS('2')/TEAM_2_EMPLOYEES?$orderby=Name&$select=ID&$skip=0&$top=100", {
+					value : [
+						{ID : "03"},
+						{ID : "04"}
+					]
+				})
 				.expectChange("employeeId", ["03", "04"])
 				.expectChange("employeeName", null);
 
@@ -3406,12 +3989,13 @@ sap.ui.require([
 				that.oView.byId("teamSet").getItems()[1].getBindingContext());
 			assert.notOk(oListBinding.hasPendingChanges(),
 				"Binding lost context -> no pending changes");
+
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("EMPLOYEES('03')?$select=ID,Name", {
 					ID : "03",
 					Name : "Jonathan Smith",
-					"@odata.etag" : "eTag"
+					"@odata.etag" : "ETag"
 				})
 				.expectChange("employeeName", "Jonathan Smith");
 
@@ -3420,10 +4004,11 @@ sap.ui.require([
 				that.oView.byId("employeeSet").getItems()[0].getBindingContext());
 			assert.ok(oListBinding.hasPendingChanges(),
 				"Binding hierarchy restored -> has pending changes");
+
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
-					headers : {"If-Match" : "eTag"},
+					headers : {"If-Match" : "ETag"},
 					method : "PATCH",
 					payload : {"Name" : "foo"},
 					url : "EMPLOYEES('01')"
@@ -3532,24 +4117,27 @@ sap.ui.require([
 				that = this;
 
 			this.expectRequest("SalesOrderList?$skip=0&$top=100", {
-				"value" : [
-					{"SalesOrderID" : "0"},
-					{"SalesOrderID" : "1"},
-					{"SalesOrderID" : "2"}
-				]
-			}).expectChange("text", ["0", "1", "2"]);
+					"value" : [
+						{"SalesOrderID" : "0"},
+						{"SalesOrderID" : "1"},
+						{"SalesOrderID" : "2"}
+					]
+				})
+				.expectChange("text", ["0", "1", "2"]);
 
 			return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
 				that.expectRequest("SalesOrderList?$filter=" + oFixture.request.replace(/ /g, "%20")
 						+ "&$skip=0&$top=100", {
-					"value" : [
-						{"SalesOrderID" : "0"},
-						{"SalesOrderID" : "2"}
-					]
-				}).expectChange("text", "2", 1);
+						"value" : [
+							{"SalesOrderID" : "0"},
+							{"SalesOrderID" : "2"}
+						]
+					})
+					.expectChange("text", "2", 1);
 
 				// code under test
 				that.oView.byId("table").getBinding("items").filter(oFixture.filter);
+
 				return that.waitForChanges(assert);
 			});
 		});
@@ -3570,15 +4158,17 @@ sap.ui.require([
 </Table>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES?$expand=LOCATION/City/EmployeesInCity($select=Name)" +
-					"&$select=ID,Name&$skip=0&$top=100", {
+		this.expectRequest("EMPLOYEES?$expand=LOCATION/City/EmployeesInCity($select=Name)"
+				+ "&$select=ID,Name&$skip=0&$top=100", {
 				"value" : [{
 					"ID" : "1",
 					"Name" : "Frederic Fall",
 					"LOCATION" : {
 						"City" : {
-							"EmployeesInCity" :
-								[{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]
+							"EmployeesInCity" : [
+								{"Name" : "Frederic Fall"},
+								{"Name" : "Jonathan Smith"}
+							]
 						}
 					}
 				}, {
@@ -3586,12 +4176,15 @@ sap.ui.require([
 					"Name" : "Jonathan Smith",
 					"LOCATION" : {
 						"City" : {
-							"EmployeesInCity" :
-								[{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]
+							"EmployeesInCity" : [
+								{"Name" : "Frederic Fall"},
+								{"Name" : "Jonathan Smith"}
+							]
 						}
 					}
 				}]
-			}).expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
+			})
+			.expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
 
 		return this.createView(assert, sView).then(function () {
 			assert.deepEqual(that.oView.byId("table").getItems().map(function (oItem) {
@@ -3609,8 +4202,8 @@ sap.ui.require([
 	<Text id="url" text="{ProductPicture/Picture}"/>\
 </FlexBox>';
 
-		this.expectRequest("Equipments('1')/EQUIPMENT_2_PRODUCT?$select=ID,ProductPicture/Picture",
-			{
+		this.expectRequest(
+			"Equipments('1')/EQUIPMENT_2_PRODUCT?$select=ID,ProductPicture/Picture", {
 				"@odata.context" : "../$metadata#Equipments('1')/EQUIPMENT_2_PRODUCT",
 				"ID" : "42",
 				"ProductPicture" : {
@@ -3619,6 +4212,7 @@ sap.ui.require([
 			})
 			.expectChange("url",
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/ProductPicture('42')");
+
 		return this.createView(assert, sView, oModel);
 	});
 
@@ -3633,9 +4227,9 @@ sap.ui.require([
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			that = this;
 
-		this.expectRequest("SalesOrderList('42')/SO_2_SOITEM('10')?" +
-			"$select=ItemPosition,Quantity,QuantityUnit,SalesOrderID", {
-				"@odata.etag" : "etag",
+		this.expectRequest("SalesOrderList('42')/SO_2_SOITEM('10')?"
+				+ "$select=ItemPosition,Quantity,QuantityUnit,SalesOrderID", {
+				"@odata.etag" : "ETag",
 				"Quantity" : "10.000",
 				"QuantityUnit" : "EA"
 			})
@@ -3646,9 +4240,7 @@ sap.ui.require([
 			that.expectRequest({
 					method : "PATCH",
 					url : "SalesOrderList('42')/SO_2_SOITEM('10')",
-					headers : {
-						"If-Match" : "etag"
-					},
+					headers : {"If-Match" : "ETag"},
 					payload : {
 						"Quantity" : "11.000",
 						"QuantityUnit" : "EA"
@@ -3661,6 +4253,7 @@ sap.ui.require([
 				.expectChange("quantity", "11.000");
 
 			that.oView.byId("quantity").getBinding("text").setValue("11.000");
+
 			return that.waitForChanges(assert);
 		});
 	});
@@ -3682,32 +4275,31 @@ sap.ui.require([
 
 		this.expectRequest("EMPLOYEES('1')?$select=ID"
 				+ "&$expand=LOCATION/City/EmployeesInCity($select=ID,ROOM_ID)", {
-			"ID" : "1",
-			"LOCATION" : {
-				"City" : {
-					"EmployeesInCity" : [{
-						"ID" : "1",
-						"ROOM_ID" : "1.01",
-						"@odata.etag" : "eTag"
-					}]
+				"ID" : "1",
+				"LOCATION" : {
+					"City" : {
+						"EmployeesInCity" : [{
+							"ID" : "1",
+							"ROOM_ID" : "1.01",
+							"@odata.etag" : "ETag"
+						}]
+					}
 				}
-			}
-		}).expectChange("room", ["1.01"]);
+			})
+			.expectChange("room", ["1.01"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
-				method : "PATCH",
-				url : "EMPLOYEES('1')",
-				headers : {
-					"If-Match" : "eTag"
-				},
-				payload : {
-					"ROOM_ID" : "1.02"
-				}
-			}).expectChange("room", "1.02", 0);
+					method : "PATCH",
+					url : "EMPLOYEES('1')",
+					headers : {"If-Match" : "ETag"},
+					payload : {"ROOM_ID" : "1.02"}
+				})
+				.expectChange("room", "1.02", 0);
 
 			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("text")
 				.setValue("1.02");
+
 			return that.waitForChanges(assert);
 		});
 	});
@@ -3736,7 +4328,7 @@ sap.ui.require([
 			});
 
 		this.expectRequest("SalesOrderSet('0500000001')?$expand=ToLineItems"
-			+ "&$select=ToLineItems/ItemPosition,SalesOrderID", {
+				+ "&$select=ToLineItems/ItemPosition,SalesOrderID", {
 				"d" : {
 					"__metadata" : {
 						"type" : "GWSAMPLE_BASIC.SalesOrder"
@@ -3794,7 +4386,7 @@ sap.ui.require([
 			});
 
 		this.expectRequest("SalesOrderSet?$orderby=SalesOrderID&$select=SalesOrderID"
-			+ "&$skip=0&$top=100", {
+				+ "&$skip=0&$top=100", {
 				"d" : {
 					"results" : [{
 						"__metadata" : {
@@ -3856,7 +4448,7 @@ sap.ui.require([
 </Table>';
 
 			this.expectRequest("SalesOrderSet?$filter=" + oFixture.request + "&$select=SalesOrderID"
-				+ "&$skip=0&$top=100", {
+					+ "&$skip=0&$top=100", {
 					"d" : {
 						"results" : [{
 							"__metadata" : {
@@ -3895,12 +4487,21 @@ sap.ui.require([
 	parameters : {$$groupId : \'group2\'}}"\
 />';
 
-		this.expectRequest({url : "EMPLOYEES('2')/Name", method : "GET"},
-				{value : "Frederic Fall"})
-			.expectRequest({url : "EMPLOYEES('3')/Name", method : "GET"},
-				{value : "Jonathan Smith"})
+		this.expectRequest({
+				url : "EMPLOYEES('2')/Name",
+				method : "GET"
+			}, {
+				value : "Frederic Fall"
+			})
+			.expectRequest({
+				url : "EMPLOYEES('3')/Name",
+				method : "GET"
+			}, {
+				value : "Jonathan Smith"
+			})
 			.expectChange("text1", "Frederic Fall")
 			.expectChange("text2", "Jonathan Smith");
+
 		return this.createView(assert, sView,
 			createTeaBusiModel({
 				groupProperties : {
@@ -3924,12 +4525,23 @@ sap.ui.require([
 	parameters : {$$groupId : \'$auto.2\'}}"\
 />';
 
-		this.expectRequest({url : "EMPLOYEES('2')/Name", method : "GET", batchNo : 1},
-				{value : "Frederic Fall"})
-			.expectRequest({url : "EMPLOYEES('3')/Name", method : "GET", batchNo : 2},
-				{value : "Jonathan Smith"})
+		this.expectRequest({
+				url : "EMPLOYEES('2')/Name",
+				method : "GET",
+				batchNo : 1
+			}, {
+				value : "Frederic Fall"
+			})
+			.expectRequest({
+				url : "EMPLOYEES('3')/Name",
+				method : "GET",
+				batchNo : 2
+			}, {
+				value : "Jonathan Smith"
+			})
 			.expectChange("text1", "Frederic Fall")
 			.expectChange("text2", "Jonathan Smith");
+
 		return this.createView(assert, sView, createTeaBusiModel({}));
 	});
 
@@ -3982,14 +4594,14 @@ sap.ui.require([
 </FlexBox>';
 
 		this.expectRequest("Equipments(Category='Electronics',ID=1)?$select=Category,ID"
-			+ "&$expand=EQUIPMENT_2_PRODUCT($select=ID,SupplierIdentifier)", {
-			"Category" : "Electronics",
-			"ID" : 1,
-			"EQUIPMENT_2_PRODUCT" : {
-				"ID" : 2, // Edm.Int32
-				"SupplierIdentifier" : 42 // Edm.Int32
-			}
-		})
+				+ "&$expand=EQUIPMENT_2_PRODUCT($select=ID,SupplierIdentifier)", {
+				"Category" : "Electronics",
+				"ID" : 1,
+				"EQUIPMENT_2_PRODUCT" : {
+					"ID" : 2, // Edm.Int32
+					"SupplierIdentifier" : 42 // Edm.Int32
+				}
+			})
 			// Note: sap.m.Text#text turns value into string!
 			.expectChange("text", oText.validateProperty("text", 42));
 
@@ -4006,15 +4618,15 @@ sap.ui.require([
 </FlexBox>';
 
 		this.expectRequest("Equipments(Category='Electronics',ID=1)?$select=Category,ID"
-			+ "&$expand=EQUIPMENT_2_PRODUCT($select=ID,SupplierIdentifier)", {
-			"Category" : "Electronics",
-			"ID" : 1,
-			"EQUIPMENT_2_PRODUCT" : {
-				"ID" : 2, // Edm.Int32
-				"SupplierIdentifier" : 42 // Edm.Int32
-			}
-		})
-		// Note: sap.m.Text#text turns value into string!
+				+ "&$expand=EQUIPMENT_2_PRODUCT($select=ID,SupplierIdentifier)", {
+				"Category" : "Electronics",
+				"ID" : 1,
+				"EQUIPMENT_2_PRODUCT" : {
+					"ID" : 2, // Edm.Int32
+					"SupplierIdentifier" : 42 // Edm.Int32
+				}
+			})
+			// Note: sap.m.Text#text turns value into string!
 			.expectChange("text", oText.validateProperty("text", 42));
 
 		return this.createView(assert, sView, oModel);
@@ -4037,15 +4649,17 @@ sap.ui.require([
 </Table>';
 
 		this.expectRequest("Equipments?$select=Category,ID&"
-			+ "$expand=EQUIPMENT_2_PRODUCT($select=ID,SupplierIdentifier)"
-			+ "&$skip=0&$top=100", {value : [{
-			"Category" : "Electronics",
-			"ID" : 1,
-			"EQUIPMENT_2_PRODUCT" : {
-				"ID" : 2, // Edm.Int32
-				"SupplierIdentifier" : 42 // Edm.Int32
-			}
-		}]})
+				+ "$expand=EQUIPMENT_2_PRODUCT($select=ID,SupplierIdentifier)"
+				+ "&$skip=0&$top=100", {
+				value : [{
+					"Category" : "Electronics",
+					"ID" : 1,
+					"EQUIPMENT_2_PRODUCT" : {
+						"ID" : 2, // Edm.Int32
+						"SupplierIdentifier" : 42 // Edm.Int32
+					}
+				}]
+			})
 			.expectChange("text", oText.validateProperty("text", 42));
 
 		return this.createView(assert, sView, oModel);
@@ -4068,16 +4682,18 @@ sap.ui.require([
 </Table>';
 
 		this.expectRequest("Equipments?$select=Category,ID&"
-			+ "$expand=EQUIPMENT_2_EMPLOYEE($select=AGE,ID)"
-			+ "&$skip=0&$top=100", {value : [{
-			"Category" : "Electronics",
-			"ID" : 1,
-			"EQUIPMENT_2_EMPLOYEE" : {
-				"ID" : "0815", // Edm.String
-				"AGE" : 42 // Edm.Int16
-			}
-		}]})
-		// Note: change does not appear inside a list binding, it's inside the context binding!
+				+ "$expand=EQUIPMENT_2_EMPLOYEE($select=AGE,ID)"
+				+ "&$skip=0&$top=100", {
+				value : [{
+					"Category" : "Electronics",
+					"ID" : 1,
+					"EQUIPMENT_2_EMPLOYEE" : {
+						"ID" : "0815", // Edm.String
+						"AGE" : 42 // Edm.Int16
+					}
+				}]
+			})
+			// Note: change does not appear inside a list binding, it's inside the context binding!
 			.expectChange("text", oText.validateProperty("text", 42));
 
 		return this.createView(assert, sView, oModel);
@@ -4097,15 +4713,17 @@ sap.ui.require([
 	</ColumnListItem>\
 </Table>';
 
-		this.expectRequest("Equipments?$skip=0&$top=100", {value : [{
-			"Category" : "Electronics",
-			"ID" : 1,
-			"EQUIPMENT_2_EMPLOYEE" : {
-				"ID" : "0815", // Edm.String
-				"AGE" : 42 // Edm.Int16
-			}
-		}]})
-		// Note: change does not appear inside a list binding, it's inside the context binding!
+		this.expectRequest("Equipments?$skip=0&$top=100", {
+				value : [{
+					"Category" : "Electronics",
+					"ID" : 1,
+					"EQUIPMENT_2_EMPLOYEE" : {
+						"ID" : "0815", // Edm.String
+						"AGE" : 42 // Edm.Int16
+					}
+				}]
+			})
+			// Note: change does not appear inside a list binding, it's inside the context binding!
 			.expectChange("text", oText.validateProperty("text", 42));
 
 		return this.createView(assert, sView);
@@ -4129,13 +4747,11 @@ sap.ui.require([
 
 		// Note: for simplicity, autoExpandSelect : false but still most properties are omitted
 		this.expectRequest("TEAMS('42')?$expand=TEAM_2_EMPLOYEES", {
-				"TEAM_2_EMPLOYEES" : [{
-					"ID" : "1"
-				}, {
-					"ID" : "2"
-				}, {
-					"ID" : "3"
-				}]
+				"TEAM_2_EMPLOYEES" : [
+					{"ID" : "1"},
+					{"ID" : "2"},
+					{"ID" : "3"}
+				]
 			})
 			.expectChange("id", ["1", "2", "3"]);
 
@@ -4166,10 +4782,10 @@ sap.ui.require([
 			that = this;
 
 		this.expectChange("status", null);
+
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest("EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
-					+ ".FuGetEmployeeSalaryForecast()",
-				{
+					+ ".FuGetEmployeeSalaryForecast()", {
 					"STATUS" : "42"
 				})
 				.expectChange("status", "42");
@@ -4194,19 +4810,25 @@ sap.ui.require([
 			that = this;
 
 		this.expectChange("name", null);
+
 		return this.createView(assert, sView).then(function () {
 			oFunctionBinding = that.oView.byId("function").getObjectBinding();
 
 			oFunctionBinding.refresh(); // MUST NOT trigger a request!
 
-			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {"Name" : "Jonathan Smith"})
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
+					"Name" : "Jonathan Smith"
+				})
 				.expectChange("name", "Jonathan Smith");
+
 			return Promise.all([
 				oFunctionBinding.setParameter("EmployeeID", "1").execute(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {"Name" : "Frederic Fall"})
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
+					"Name" : "Frederic Fall"
+				})
 				.expectChange("name", "Frederic Fall");
 			oFunctionBinding.refresh();
 
@@ -4216,14 +4838,19 @@ sap.ui.require([
 
 			oFunctionBinding.refresh(); // MUST NOT trigger a request!
 
-			that.expectRequest("GetEmployeeByID(EmployeeID='2')", {"Name" : "Peter Burke"})
+			that.expectRequest("GetEmployeeByID(EmployeeID='2')", {
+					"Name" : "Peter Burke"
+				})
 				.expectChange("name", "Peter Burke");
+
 			return Promise.all([
 				oFunctionBinding.execute(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectRequest("GetEmployeeByID(EmployeeID='2')", {"Name" : "Jonathan Smith"})
+			that.expectRequest("GetEmployeeByID(EmployeeID='2')", {
+					"Name" : "Jonathan Smith"
+				})
 				.expectChange("name", "Jonathan Smith");
 			oFunctionBinding.refresh();
 
@@ -4243,6 +4870,7 @@ sap.ui.require([
 			that = this;
 
 		this.expectChange("name", null);
+
 		return this.createView(assert, sView).then(function () {
 			oFunctionBinding = that.oView.byId("function").getObjectBinding();
 
@@ -4252,6 +4880,7 @@ sap.ui.require([
 					"Name" : "Jonathan Smith"
 				})
 				.expectChange("name", "Jonathan Smith");
+
 			return Promise.all([
 				oFunctionBinding.setParameter("EmployeeID", "1").execute(),
 				that.waitForChanges(assert)
@@ -4274,6 +4903,7 @@ sap.ui.require([
 					"Name" : "Peter Burke"
 				})
 				.expectChange("name", "Peter Burke");
+
 			return Promise.all([
 				oFunctionBinding.execute(),
 				that.waitForChanges(assert)
@@ -4446,29 +5076,25 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest(sUrl, {
-			value : [{
-				"SalesOrderID" : "42",
-				"SO_2_BP" : {
-					"BusinessPartnerID" : "1",
-					"CompanyName" : "Foo, Inc",
-					"@odata.etag" : "ETag"
-				}
-			}]
-		});
+				value : [{
+					"SalesOrderID" : "42",
+					"SO_2_BP" : {
+						"BusinessPartnerID" : "1",
+						"CompanyName" : "Foo, Inc",
+						"@odata.etag" : "ETag"
+					}
+				}]
+			});
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oText = that.oView.byId("table").getItems()[0].getCells()[0];
 
 			that.expectRequest({
-				method : "PATCH",
-				url : "BusinessPartnerList('1')",
-				headers : {
-					"If-Match" : "ETag"
-				},
-				payload : {
-					"CompanyName" : "Bar, Inc"
-				}
-			}, {});
+					method : "PATCH",
+					url : "BusinessPartnerList('1')",
+					headers : {"If-Match" : "ETag"},
+					payload : {"CompanyName" : "Bar, Inc"}
+				}, {});
 
 			oText.getBinding("text").setValue("Bar, Inc");
 
@@ -4564,8 +5190,8 @@ sap.ui.require([
 		return this.createView(assert, sView, oModel).then(function () {
 			var oContext = that.oView.byId("master").getItems()[0].getBindingContext();
 
-			that.expectRequest("FlightCollection(carrid='AA',connid='0017',fldate="
-				+ "datetime'2017-08-10T00%3A00%3A00')?$select=carrid,connid,fldate,flightDetails", {
+			that.expectRequest("FlightCollection(carrid='AA',connid='0017',fldate=datetime"
+					+ "'2017-08-10T00%3A00%3A00')?$select=carrid,connid,fldate,flightDetails", {
 					"d" : {
 						"__metadata" : {
 							"type" : "RMTSAMPLEFLIGHT.Flight"
@@ -4603,33 +5229,33 @@ sap.ui.require([
 			var oContextBinding = oModel.bindContext("/GetAvailableFlights(...)");
 
 			that.expectRequest("GetAvailableFlights?fromdate=datetime'2017-08-10T00:00:00'"
-				+ "&todate=datetime'2017-08-10T23:59:59'"
-				+ "&cityfrom='new%20york'&cityto='SAN%20FRANCISCO'", {
-				"d" : {
-					"results" : [{
-						"__metadata" : {
-							"type" : "RMTSAMPLEFLIGHT.Flight"
-						},
-						"carrid" : "AA",
-						"connid" : "0017",
-						"fldate" : "/Date(1502323200000)/"
-					}, {
-						"__metadata" : {
-							"type" : "RMTSAMPLEFLIGHT.Flight"
-						},
-						"carrid" : "DL",
-						"connid" : "1699",
-						"fldate" : "/Date(1502323200000)/"
-					}, {
-						"__metadata" : {
-							"type" : "RMTSAMPLEFLIGHT.Flight"
-						},
-						"carrid" : "UA",
-						"connid" : "3517",
-						"fldate" : "/Date(1502323200000)/"
-					}]
-				}
-			});
+					+ "&todate=datetime'2017-08-10T23:59:59'"
+					+ "&cityfrom='new%20york'&cityto='SAN%20FRANCISCO'", {
+					"d" : {
+						"results" : [{
+							"__metadata" : {
+								"type" : "RMTSAMPLEFLIGHT.Flight"
+							},
+							"carrid" : "AA",
+							"connid" : "0017",
+							"fldate" : "/Date(1502323200000)/"
+						}, {
+							"__metadata" : {
+								"type" : "RMTSAMPLEFLIGHT.Flight"
+							},
+							"carrid" : "DL",
+							"connid" : "1699",
+							"fldate" : "/Date(1502323200000)/"
+						}, {
+							"__metadata" : {
+								"type" : "RMTSAMPLEFLIGHT.Flight"
+							},
+							"carrid" : "UA",
+							"connid" : "3517",
+							"fldate" : "/Date(1502323200000)/"
+						}]
+					}
+				});
 
 			return Promise.all([
 				oContextBinding
@@ -4709,14 +5335,14 @@ sap.ui.require([
 			var oContextBinding = oModel.bindContext("/__FAKE__GetAllFlightDates(...)");
 
 			that.expectRequest("__FAKE__GetAllFlightDates", {
-				"d" : { // Note: DataServiceVersion : 2.0
-					"results" : [
-						"/Date(1502323200000)/",
-						"/Date(1502323201000)/",
-						"/Date(1502323202000)/"
-					]
-				}
-			});
+					"d" : { // Note: DataServiceVersion : 2.0
+						"results" : [
+							"/Date(1502323200000)/",
+							"/Date(1502323201000)/",
+							"/Date(1502323202000)/"
+						]
+					}
+				});
 
 			return Promise.all([
 				oContextBinding.execute(),
@@ -4749,28 +5375,28 @@ sap.ui.require([
 			var oContextBinding = oModel.bindContext("/__FAKE__GetFlightDetailsByCarrier(...)");
 
 			that.expectRequest("__FAKE__GetFlightDetailsByCarrier?carrid='AA'", {
-				"d" : { // Note: DataServiceVersion : 2.0
-					"results" : [{
-						"__metadata" : { // just like result of GetFlightDetails
-							"type" : "RMTSAMPLEFLIGHT.FlightDetails"
-						},
-						"arrivalTime" : "PT14H00M00S",
-						"departureTime" : "PT11H00M00S"
-					}, {
-						"__metadata" : {
-							"type" : "RMTSAMPLEFLIGHT.FlightDetails"
-						},
-						"arrivalTime" : "PT14H00M01S",
-						"departureTime" : "PT11H00M01S"
-					}, {
-						"__metadata" : {
-							"type" : "RMTSAMPLEFLIGHT.FlightDetails"
-						},
-						"arrivalTime" : "PT14H00M02S",
-						"departureTime" : "PT11H00M02S"
-					}]
-				}
-			});
+					"d" : { // Note: DataServiceVersion : 2.0
+						"results" : [{
+							"__metadata" : { // just like result of GetFlightDetails
+								"type" : "RMTSAMPLEFLIGHT.FlightDetails"
+							},
+							"arrivalTime" : "PT14H00M00S",
+							"departureTime" : "PT11H00M00S"
+						}, {
+							"__metadata" : {
+								"type" : "RMTSAMPLEFLIGHT.FlightDetails"
+							},
+							"arrivalTime" : "PT14H00M01S",
+							"departureTime" : "PT11H00M01S"
+						}, {
+							"__metadata" : {
+								"type" : "RMTSAMPLEFLIGHT.FlightDetails"
+							},
+							"arrivalTime" : "PT14H00M02S",
+							"departureTime" : "PT11H00M02S"
+						}]
+					}
+				});
 
 			return Promise.all([
 				oContextBinding.setParameter("carrid", "AA").execute(),
@@ -4809,7 +5435,7 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest("FlightCollection(carrid='AA',connid='0017'"
-			+ ",fldate=datetime'2017-08-10T00%3A00%3A00')", {
+				+ ",fldate=datetime'2017-08-10T00%3A00%3A00')", {
 				"d" : {
 					"__metadata" : {
 						"type" : "RMTSAMPLEFLIGHT.Flight"
@@ -4825,7 +5451,7 @@ sap.ui.require([
 		// code under test
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("GetFlightDetails?carrid='AA'&connid='0017'"
-				+ "&fldate=datetime'2017-08-10T00:00:00'", {
+					+ "&fldate=datetime'2017-08-10T00:00:00'", {
 					"d" : {
 						"GetFlightDetails" : {
 							"__metadata" : {
@@ -5079,6 +5705,7 @@ sap.ui.require([
 				that = this;
 
 			this.expectChange("text"); // expect no change initially
+
 			return this.createView(assert, sView, oModel).then(function () {
 				if (bResume) {
 					that.expectRequest("Equipments(Category='Electronics',ID=1)"
@@ -5089,6 +5716,7 @@ sap.ui.require([
 						.expectChange("text", "Electronics");
 					that.oView.byId("form").getObjectBinding().resume();
 				}
+
 				return that.waitForChanges(assert);
 			});
 		});
@@ -5109,6 +5737,7 @@ sap.ui.require([
 			that = this;
 
 		this.expectChange("idCategory"); // expect no change initially
+
 		return this.createView(assert, sView, oModel).then(function () {
 			var oForm = that.oView.byId("form"),
 				sId;
@@ -5124,6 +5753,7 @@ sap.ui.require([
 				.expectChange(sId, "Office PC");
 
 			oForm.getObjectBinding().resume();
+
 			return that.waitForChanges(assert);
 		});
 	});
@@ -5157,6 +5787,7 @@ sap.ui.require([
 
 		this.expectChange("idCategory", [])
 			.expectChange("idEmployeeId", []);
+
 		return this.createView(assert, sView, oModel).then(function () {
 			var sId0,
 				sId1,
@@ -5184,12 +5815,14 @@ sap.ui.require([
 							"ID" : "3",
 							"Name" : "Jonathan Smith"
 						}
-				}]})
+					}]
+				})
 				.expectChange("idCategory", ["Electronics", "Vehicle"])
 				.expectChange(sId0, ["Office PC", "VW Golf 2.0"])
 				.expectChange(sId1, ["Frederic Fall", "Jonathan Smith"]);
 
 			oTable.getBinding("items").resume();
+
 			return that.waitForChanges(assert);
 		});
 	});
@@ -5215,6 +5848,7 @@ sap.ui.require([
 			})
 			.expectChange("idCategory", "Electronics")
 			.expectChange("idEmployeeId", "0001");
+
 		return this.createView(assert, sView, oModel).then(function () {
 			var oForm = that.oView.byId("form"),
 				sId;
@@ -5230,6 +5864,7 @@ sap.ui.require([
 				.expectChange(sId, "Office PC");
 
 			oForm.getObjectBinding().resume();
+
 			return that.waitForChanges(assert);
 		});
 	});
@@ -5252,17 +5887,20 @@ sap.ui.require([
 </Table>',
 			that = this;
 
-		this.expectRequest("Equipments?$select=Category,EmployeeId,ID&$skip=0&$top=100", {value : [{
-				"Category" : "Electronics",
-				"EmployeeId" : "0001",
-				"ID" : 1
-			}, {
-				"Category" : "Vehicle",
-				"EmployeeId" : "0002",
-				"ID" : 2
-			}]})
+		this.expectRequest("Equipments?$select=Category,EmployeeId,ID&$skip=0&$top=100", {
+				value : [{
+					"Category" : "Electronics",
+					"EmployeeId" : "0001",
+					"ID" : 1
+				}, {
+					"Category" : "Vehicle",
+					"EmployeeId" : "0002",
+					"ID" : 2
+				}]
+			})
 			.expectChange("idCategory", ["Electronics", "Vehicle"])
 			.expectChange("idEmployeeId", ["0001", "0002"]);
+
 		return this.createView(assert, sView, oModel).then(function () {
 			var sId0,
 				sId1,
@@ -5273,7 +5911,7 @@ sap.ui.require([
 			that.removeFromTable(oTable, "idEmployeeId");
 
 			that.expectRequest("Equipments?$select=Category,ID,Name"
-						+ "&$expand=EQUIPMENT_2_EMPLOYEE($select=ID,Name)&$skip=0&$top=100", {
+					+ "&$expand=EQUIPMENT_2_EMPLOYEE($select=ID,Name)&$skip=0&$top=100", {
 					value : [{
 						"Category" : "Electronics",
 						"ID" : 1,
@@ -5290,12 +5928,14 @@ sap.ui.require([
 							"ID" : "3",
 							"Name" : "Jonathan Smith"
 						}
-				}]})
+					}]
+				})
 				.expectChange("idCategory", ["Electronics", "Vehicle"])
 				.expectChange(sId0, ["Office PC", "VW Golf 2.0"])
 				.expectChange(sId1, ["Frederic Fall", "Jonathan Smith"]);
 
 			oTable.getBinding("items").resume();
+
 			return that.waitForChanges(assert);
 		});
 	});
@@ -5319,7 +5959,7 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest("Equipments(Category='Electronics',ID=1)?$select=Category,ID,Name"
-					+ "&$expand=EQUIPMENT_2_EMPLOYEE($select=ID,MANAGER_ID,Name)", {
+				+ "&$expand=EQUIPMENT_2_EMPLOYEE($select=ID,MANAGER_ID,Name)", {
 				"Category" : "Electronics",
 				"ID" : 1,
 				"Name" : "Office PC",
@@ -5332,6 +5972,7 @@ sap.ui.require([
 			.expectChange("idEquipmentName", "Office PC")
 			.expectChange("idEmployeeName", "Frederic Fall")
 			.expectChange("idManagerId", "5");
+
 		return this.createView(assert, sView, oModel).then(function () {
 			var oOuterForm = that.oView.byId("outerForm"),
 				oInnerForm = that.oView.byId("innerForm"),
@@ -5344,8 +5985,8 @@ sap.ui.require([
 			sIdAge = that.addToForm(oInnerForm, "AGE", assert);
 			that.removeFromForm(oInnerForm, "idManagerId");
 			that.expectRequest("Equipments(Category='Electronics',ID=1)"
-						+ "?$select=Category,EmployeeId,ID"
-						+ "&$expand=EQUIPMENT_2_EMPLOYEE($select=AGE,ID,Name)", {
+					+ "?$select=Category,EmployeeId,ID"
+					+ "&$expand=EQUIPMENT_2_EMPLOYEE($select=AGE,ID,Name)", {
 					"Category" : "Electronics",
 					"EmployeeId" : "0002",
 					"ID" : "1",
@@ -5359,6 +6000,7 @@ sap.ui.require([
 				.expectChange(sIdAge, "32");
 
 			oOuterForm.getObjectBinding().resume();
+
 			return that.waitForChanges(assert);
 		});
 	});
@@ -5385,7 +6027,7 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest("TEAMS('TEAM_01')?$select=MEMBER_COUNT,Team_Id"
-					+ "&$expand=TEAM_2_EMPLOYEES($select=AGE,ID,Name)", {
+				+ "&$expand=TEAM_2_EMPLOYEES($select=AGE,ID,Name)", {
 				"Team_Id" : "TEAM_01",
 				"MEMBER_COUNT" : 2,
 				"TEAM_2_EMPLOYEES" : [{
@@ -5414,7 +6056,7 @@ sap.ui.require([
 			sIdStatus = that.addToTable(oTable, "STATUS", assert);
 			that.removeFromTable(oTable, "idAge");
 			that.expectRequest("TEAMS('TEAM_01')?$select=MANAGER_ID,Team_Id"
-						+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name,STATUS)", {
+					+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name,STATUS)", {
 					"Team_Id" : "TEAM_01",
 					"MANAGER_ID" : "3",
 					"TEAM_2_EMPLOYEES" : [{
@@ -5432,6 +6074,7 @@ sap.ui.require([
 				.expectChange(sIdStatus, ["Available", "Occupied"]);
 
 			oForm.getObjectBinding().resume();
+
 			return that.waitForChanges(assert);
 		});
 	});
@@ -5467,6 +6110,7 @@ sap.ui.require([
 				}]
 			})
 			.expectChange("idEquipmentName", ["Office PC", "Tablet X"]);
+
 		return this.createView(assert, sView, oModel).then(function () {
 			var oListBinding = that.oView.byId("table").getBinding("items");
 
@@ -5486,6 +6130,7 @@ sap.ui.require([
 				.expectChange("idEquipmentName", ["Office PC", "Tablet X"]);
 
 			oListBinding.resume();
+
 			return that.waitForChanges(assert);
 		});
 	});
@@ -5515,6 +6160,7 @@ sap.ui.require([
 			})
 			.expectChange("salary", "100")
 			.expectChange("forecastSalary", null);
+
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest("EMPLOYEES('2')", {
 					"SALARY" : {
@@ -5601,6 +6247,7 @@ sap.ui.require([
 			.expectChange("idEquipmentName", ["Office PC", "Tablet X"])
 			.expectChange("idName")
 			.expectChange("idAge");
+
 		return this.createView(assert, sView, oModel).then(function () {
 			var oForm = that.oView.byId("form");
 
@@ -5609,10 +6256,10 @@ sap.ui.require([
 
 			that.expectRequest("Equipments(Category='Electronics',ID=1)/EQUIPMENT_2_EMPLOYEE"
 					+ "?$select=AGE,ID,Name", {
-						"AGE" : 52,
-						"ID" : "2",
-						"Name" : "Frederic Fall"
-					})
+					"AGE" : 52,
+					"ID" : "2",
+					"Name" : "Frederic Fall"
+				})
 				.expectChange("idName", "Frederic Fall")
 				.expectChange("idAge", "52");
 
@@ -5637,10 +6284,10 @@ sap.ui.require([
 					})
 					.expectRequest("Equipments(Category='Electronics',ID=1)/EQUIPMENT_2_EMPLOYEE"
 						+ "?$select=ID,MANAGER_ID,Name", {
-							"ID" : "2",
-							"Name" : "Frederic Fall",
-							"MANAGER_ID" : "1"
-						})
+						"ID" : "2",
+						"Name" : "Frederic Fall",
+						"MANAGER_ID" : "1"
+					})
 					.expectChange("idEquipmentName", ["Office PC", "Tablet X"])
 					.expectChange(sIdManagerId, "1");
 
@@ -5673,13 +6320,11 @@ sap.ui.require([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("GetSOContactList(SalesOrderID='0500000001')", {
-					value : [{
-						"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"
-					}, {
-						"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"
-					}, {
-						"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
-					}]
+					value : [
+						{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"},
+						{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"},
+						{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"}
+					]
 				})
 				.expectChange("id", [
 					"fa163e7a-d4f1-1ee8-84ac-11f9c591d177",
@@ -5714,19 +6359,17 @@ sap.ui.require([
 
 		this.expectRequest("GetSOContactList(SalesOrderID='0500000001')?$select=ContactGUID"
 				+ "&$skip=0&$top=100", {
-			value : [{
-				"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"
-			}, {
-				"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"
-			}, {
-				"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
-			}]
-		})
-		.expectChange("id", [
-			"fa163e7a-d4f1-1ee8-84ac-11f9c591d177",
-			"fa163e7a-d4f1-1ee8-84ac-11f9c591f177",
-			"fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
-		]);
+				value : [
+					{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"},
+					{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"},
+					{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"}
+				]
+			})
+			.expectChange("id", [
+				"fa163e7a-d4f1-1ee8-84ac-11f9c591d177",
+				"fa163e7a-d4f1-1ee8-84ac-11f9c591f177",
+				"fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
+			]);
 
 		return this.createView(assert, sView, oModel);
 	});
@@ -5752,19 +6395,17 @@ sap.ui.require([
 		this.expectChange("id", false);
 
 		this.expectRequest("GetSOContactList(SalesOrderID='0500000001')?$select=ContactGUID", {
-			value : [{
-				"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"
-			}, {
-				"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"
-			}, {
-				"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
-			}]
-		})
-		.expectChange("id", [
-			"fa163e7a-d4f1-1ee8-84ac-11f9c591d177",
-			"fa163e7a-d4f1-1ee8-84ac-11f9c591f177",
-			"fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
-		]);
+				value : [
+					{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"},
+					{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"},
+					{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"}
+				]
+			})
+			.expectChange("id", [
+				"fa163e7a-d4f1-1ee8-84ac-11f9c591d177",
+				"fa163e7a-d4f1-1ee8-84ac-11f9c591f177",
+				"fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
+			]);
 
 		return this.createView(assert, sView, oModel);
 	});
@@ -5790,16 +6431,16 @@ sap.ui.require([
 </FlexBox>';
 
 		this.expectRequest("MANAGERS('1')/" + sFunctionName + "()?$select=ID,Name", {
-			value : [{
-				"ID" : "3",
-				"Name" : "Jonathan Smith"
-			}, {
-				"ID" : "6",
-				"Name" : "Susan Bay"
-			}]
-		})
-		.expectChange("id", ["3", "6"])
-		.expectChange("name", ["Jonathan Smith", "Susan Bay"]);
+				value : [{
+					"ID" : "3",
+					"Name" : "Jonathan Smith"
+				}, {
+					"ID" : "6",
+					"Name" : "Susan Bay"
+				}]
+			})
+			.expectChange("id", ["3", "6"])
+			.expectChange("name", ["Jonathan Smith", "Susan Bay"]);
 
 		return this.createView(assert, sView, oModel);
 	});
@@ -5827,10 +6468,10 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest("SalesOrderList('0500000000')?$select=SalesOrderID"
-					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)", {
+				+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)", {
 				"SalesOrderID" : "0500000000",
 				"SO_2_BP" : {
-					"@odata.etag" : "etag",
+					"@odata.etag" : "ETag",
 					"BusinessPartnerID" : "0100000000",
 					"CompanyName" : "SAP",
 					"PhoneNumber" : "06227747474"
@@ -5843,9 +6484,7 @@ sap.ui.require([
 			var oContext = that.oView.byId("businessPartner").getBindingContext();
 
 			that.expectRequest({
-					headers : {
-						"If-Match" : "etag"
-					},
+					headers : {"If-Match" : "ETag"},
 					method : "DELETE",
 					url : "BusinessPartnerList('0100000000')"
 				})
@@ -5894,6 +6533,7 @@ sap.ui.require([
 				.expectChange("position", ["10"]);
 
 			that.oView.byId("form").bindElement("/SalesOrderList('0500000000')");
+
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("SalesOrderList('0500000001')/SO_2_SOITEM?$skip=0&$top=110", {
@@ -5907,6 +6547,7 @@ sap.ui.require([
 				.expectChange("position", ["20"]);
 
 			that.oView.byId("form").bindElement("/SalesOrderList('0500000001')");
+
 			return that.waitForChanges(assert);
 		});
 	});
@@ -5923,13 +6564,13 @@ sap.ui.require([
 					undefined, undefined, {$$updateGroupId : "update"});
 
 			that.expectRequest({
-				method : "POST",
-				url : "SalesOrderList('0500000000')/SO_2_SOITEM",
-				payload : {}
-			}, {
-				"SalesOrderID" : "0500000000",
-				"ItemPosition" : "0010"
-			});
+					method : "POST",
+					url : "SalesOrderList('0500000000')/SO_2_SOITEM",
+					payload : {}
+				}, {
+					"SalesOrderID" : "0500000000",
+					"ItemPosition" : "0010"
+				});
 
 			oListBinding.create();
 
@@ -5950,12 +6591,12 @@ sap.ui.require([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
-				method : "POST",
-				url : sAction,
-				payload : {}
-			}, {
-				"SalesOrderID" : "0500000000"
-			});
+					method : "POST",
+					url : sAction,
+					payload : {}
+				}, {
+					"SalesOrderID" : "0500000000"
+				});
 
 			return Promise.all([
 				that.oView.byId("form").getElementBinding().execute("update"),
@@ -5978,7 +6619,7 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest("BusinessPartnerList('0100000000')"
-			+ "?$select=BusinessPartnerID,CompanyName", {
+				+ "?$select=BusinessPartnerID,CompanyName", {
 				"BusinessPartnerID" : "0100000000",
 				"CompanyName" : "SAP AG"
 			})
@@ -5987,7 +6628,7 @@ sap.ui.require([
 		return this.createView(assert, sView, oModel).then(function () {
 
 			that.expectRequest("BusinessPartnerList('0100000000')"
-				+ "?$select=BusinessPartnerID,CompanyName", {
+					+ "?$select=BusinessPartnerID,CompanyName", {
 					"BusinessPartnerID" : "0100000000",
 					"CompanyName" : "SAP SE"
 				})
@@ -6084,7 +6725,7 @@ sap.ui.require([
 			]);
 		}).then(function () {
 			that.expectRequest("Equipments?"
-				+ "$filter=EQUIPMENT_2_PRODUCT/ID%20eq%2042&$skip=0&$top=100", {
+					+ "$filter=EQUIPMENT_2_PRODUCT/ID%20eq%2042&$skip=0&$top=100", {
 					value : [{
 						"Name" : "Bar"
 					}]
@@ -6093,6 +6734,7 @@ sap.ui.require([
 
 			that.oView.byId("table").getBinding("items")
 				.filter(new Filter("EQUIPMENT_2_PRODUCT/ID", "EQ", 42));
+
 			return Promise.all([
 				that.oModel.submitBatch("api"),
 				that.waitForChanges(assert)
@@ -6161,6 +6803,7 @@ sap.ui.require([
 				.expectChange("name", ["Foo"]);
 
 			oListBinding.resume();
+
 			return Promise.all([
 				that.oModel.submitBatch("api"),
 				that.waitForChanges(assert)
@@ -6168,7 +6811,7 @@ sap.ui.require([
 		}).then(function () {
 
 			that.expectRequest("Equipments?$select=Category,ID,Name"
-				+ "&$filter=EQUIPMENT_2_PRODUCT/ID%20eq%2042&$skip=0&$top=105", {
+					+ "&$filter=EQUIPMENT_2_PRODUCT/ID%20eq%2042&$skip=0&$top=105", {
 					value : [{
 						"Category" : "1",
 						"ID" : "2",
@@ -6237,7 +6880,7 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
-					+ "/orderby(LifecycleStatus%20desc)&$count=true&$skip=0&$top=3", {
+				+ "/orderby(LifecycleStatus%20desc)&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "26",
 				"value" : [
 					{"GrossAmount" : 1, "LifecycleStatus" : "Z"},
@@ -6261,8 +6904,8 @@ sap.ui.require([
 			});
 
 			that.expectRequest("SalesOrderList?"
-						+ "$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
-						+ "/orderby(LifecycleStatus%20desc)&$count=true&$skip=7&$top=3", {
+					+ "$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
+					+ "/orderby(LifecycleStatus%20desc)&$count=true&$skip=7&$top=3", {
 					"@odata.count" : "26",
 					"value" : [
 						{"GrossAmount" : 7, "LifecycleStatus" : "T"},
@@ -6287,7 +6930,7 @@ sap.ui.require([
 
 			return that.waitForChanges(assert).then(function () {
 				that.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus))"
-							+ "/orderby(LifecycleStatus%20desc)&$count=true&$skip=7&$top=3", {
+						+ "/orderby(LifecycleStatus%20desc)&$count=true&$skip=7&$top=3", {
 						"@odata.count" : "26",
 						"value" : [
 							{"LifecycleStatus" : "T"},
@@ -6307,6 +6950,14 @@ sap.ui.require([
 					assert.throws(function () {
 						oListBinding.changeParameters({$apply : "groupby((LifecycleStatus))"});
 					}, new Error("Cannot combine $$aggregation and $apply"));
+					assert.throws(function () {
+						oListBinding.setAggregation({
+							aggregate : {
+								GrossAmount : {grandTotal : true}
+							},
+							groupLevels : ["LifecycleStatus"]
+						});
+					}, new Error("Cannot combine visual grouping with grand total"));
 					// Note: oListBinding is now in an undefined state, do not use anymore!
 				});
 			});
@@ -6549,6 +7200,94 @@ sap.ui.require([
 				return that.waitForChanges(assert);
 			});
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,
+	// but a grand total row using with/as (CPOUI5UISERVICESV3-1418)
+	QUnit.test("Analytics by V4: $$aggregation grandTotal w/o groupLevels using with/as",
+			function (assert) {
+		var sView = '\
+<t:Table rows="{path : \'/BusinessPartners\',\
+		parameters : {\
+			$$aggregation : {\
+				aggregate : {\
+					SalesAmountSum : {\
+						grandTotal : true,\
+						name : \'SalesAmount\',\
+						with : \'sap.unit_sum\'\
+					},\
+					SalesNumber : {}\
+				},\
+				group : {\
+					Region : {}\
+				}\
+			},\
+			$filter : \'SalesAmountSum gt 0\',\
+			$orderby : \'SalesAmountSum asc\'\
+		}}" threshold="0" visibleRowCount="5">\
+	<t:Column>\
+		<t:template>\
+			<Text id="region" text="{Region}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="salesNumber" text="{SalesNumber}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="salesAmountSum" text="{= %{SalesAmountSum} }" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="salesAmountCurrency"\
+				text="{= %{SalesAmountSum@Analytics.AggregatedAmountCurrency} }" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>';
+
+		this.expectRequest("BusinessPartners?$apply=groupby((Region)"
+				+ ",aggregate(SalesAmount%20with%20sap.unit_sum%20as%20SalesAmountSum,SalesNumber))"
+				+ "/filter(SalesAmountSum%20gt%200)/orderby(SalesAmountSum%20asc)"
+				+ "/concat(aggregate(SalesAmountSum%20with%20sap.unit_sum%20as%20"
+				+ "UI5grand__SalesAmountSum),top(4))", {
+				"value" : [{
+						"UI5grand__SalesAmountSum" : 351,
+						"UI5grand__SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR",
+						//TODO this should be used by auto type detection
+						"UI5grand__SalesAmountSum@odata.type" : "#Decimal"
+					}, {
+						"Region" : "Z",
+						"SalesNumber" : 1,
+						"SalesAmountSum" : 1,
+						"SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR"
+					}, {
+						"Region" : "Y",
+						"SalesNumber" : 2,
+						"SalesAmountSum" : 2,
+						"SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR"
+					}, {
+						"Region" : "X",
+						"SalesNumber" : 3,
+						"SalesAmountSum" : 3,
+						"SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR"
+					}, {
+						"Region" : "W",
+						"SalesNumber" : 4,
+						"SalesAmountSum" : 4,
+						"SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR"
+					}
+				]
+			})
+			.expectChange("region", ["", "Z", "Y", "X", "W"])
+			.expectChange("salesNumber", [null, "1", "2", "3", "4"])
+			.expectChange("salesAmountSum", [351, 1, 2, 3, 4])
+			.expectChange("salesAmountCurrency", ["EUR", "EUR", "EUR", "EUR", "EUR"]);
+
+		return this.createView(assert, sView, createBusinessPartnerTestModel());
 	});
 
 	//*********************************************************************************************
@@ -6797,6 +7536,7 @@ sap.ui.require([
 					.callsFake(function () {
 						this.updateAnalyticalInfo(aAggregation);
 						ODataListBinding.prototype.getContexts.restore();
+
 						return this.getContexts.apply(this, arguments);
 					});
 			}
@@ -6818,6 +7558,7 @@ sap.ui.require([
 
 				that.oView.byId("count").setBindingContext(
 					that.oView.byId("table").getBinding("rows").getHeaderContext());
+
 				return that.waitForChanges(assert);
 			}).then(function () {
 				// no additional request for same aggregation data
@@ -6827,9 +7568,10 @@ sap.ui.require([
 			}).then(function () {
 				that.expectRequest(sBasicPath + "&$skip=0&$top=1", {
 						"@odata.count" : "26",
-						"value" : [
-							{"GrossAmount" : 1, "LifecycleStatus" : "Z"}
-						]
+						"value" : [{
+							"GrossAmount" : 1,
+							"LifecycleStatus" : "Z"
+						}]
 					});
 				that.expectChange("grossAmount", null, null)
 					.expectChange("lifecycleStatus", null, null);
@@ -6894,13 +7636,14 @@ sap.ui.require([
 						});
 					});
 				ODataListBinding.prototype.getContexts.restore();
+
 				return this.getContexts.apply(this, arguments);
 			});
 		this.expectRequest("EMPLOYEES?$apply=groupby((Name),aggregate(AGE))"
-					+ "/filter(AGE%20ge%2030)/orderby(AGE)"
-					+ "/concat(aggregate(AGE%20with%20min%20as%20UI5min__AGE,"
-					+ "AGE%20with%20max%20as%20UI5max__AGE,$count%20as%20UI5__count)"
-					+ ",skip(1)/top(3))", {
+				+ "/filter(AGE%20ge%2030)/orderby(AGE)"
+				+ "/concat(aggregate(AGE%20with%20min%20as%20UI5min__AGE,"
+				+ "AGE%20with%20max%20as%20UI5max__AGE,$count%20as%20UI5__count)"
+				+ ",skip(1)/top(3))", {
 				"value" : [{
 						// the server response may contain additional data for example @odata.id or
 						// type information "UI5min__AGE@odata.type" : "#Int16"
@@ -6925,6 +7668,7 @@ sap.ui.require([
 
 			that.oView.byId("count").setBindingContext(
 				that.oView.byId("table").getBinding("rows").getHeaderContext());
+
 			return that.waitForChanges(assert);
 		}).then(function () {
 			// no additional request for same aggregation data
@@ -6933,10 +7677,14 @@ sap.ui.require([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("EMPLOYEES?$apply=groupby((Name),aggregate(AGE))"
-						// Note: for consistency, we prefer filter() over $filter here
-						// (same for orderby() vs. $orderby and skip/top)
-						+ "/filter(AGE%20ge%2030)/orderby(AGE)/top(1)", {
-					"value" : [{"ID" : "3", "Name" : "John Field", "AGE" : 42}]
+					// Note: for consistency, we prefer filter() over $filter here
+					// (same for orderby() vs. $orderby and skip/top)
+					+ "/filter(AGE%20ge%2030)/orderby(AGE)/top(1)", {
+					"value" : [{
+						"ID" : "3",
+						"Name" : "John Field",
+						"AGE" : 42
+					}]
 				})
 				.expectChange("text", null, null)
 				.expectChange("age", null, null)
@@ -6974,13 +7722,14 @@ sap.ui.require([
 			that = this;
 
 		this.expectChange("name", false);
+
 		return this.createView(assert, sView, oModel).then(function () {
 			// Here it is essential that createView renders the table, as
 			// GrowingEnablement#updateItems only performs ECD if the associated control's method
 			// getItemsContainerDomRef returns a truthy value
 			oTable = that.oView.byId("table");
 			that.expectRequest("TEAMS('TEAM_01')?$select=Team_Id"
-				+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
+					+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
 					"Team_Id" : "TEAM_01",
 					TEAM_2_EMPLOYEES : [{
 						"ID" : "3",
@@ -6995,7 +7744,7 @@ sap.ui.require([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("TEAMS('TEAM_01')?$select=Team_Id"
-						+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
+					+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
 					"Team_Id" : "TEAM_01",
 					TEAM_2_EMPLOYEES : [{
 						"ID" : "3",
@@ -7030,7 +7779,10 @@ sap.ui.require([
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("TEAMS('1')", {"Team_Id" : "1", "Name" : "Old Name"})
+		this.expectRequest("TEAMS('1')", {
+				"Team_Id" : "1",
+				"Name" : "Old Name"
+			})
 			.expectChange("Team_Id", "1");
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -7040,7 +7792,10 @@ sap.ui.require([
 					method : "PATCH",
 					url : "TEAMS('1')",
 					payload : {"Name" : "New Name"}
-				}, {"Team_Id" : "1", "Name" : "New Name"});
+				}, {
+					"Team_Id" : "1",
+					"Name" : "New Name"
+				});
 
 			oText.setText("New Name");
 			assert.strictEqual(oText.getText(), "New Name");
@@ -7082,7 +7837,7 @@ sap.ui.require([
 
 			return this.createView(assert, sView, oModel).then(function () {
 				that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?"
-					+ "$select=ArtistID,IsActiveEntity,Name", {
+						+ "$select=ArtistID,IsActiveEntity,Name", {
 						"ArtistID" : "42",
 						"IsActiveEntity" : true,
 						"Name" : "Hour Frustrated"
@@ -7117,7 +7872,13 @@ sap.ui.require([
 						"transition" : true,
 						"numericSeverity" : 1
 					}]
-				});
+				}).expectMessages([{
+					code : "23",
+					message : "Just A Message",
+					target : "/" + sRequestPath + "/Name",
+					persistent : true,
+					type : "Success"
+				}]);
 
 				// code under test
 				return Promise.all([
@@ -7127,14 +7888,7 @@ sap.ui.require([
 			}).then(function (aPromiseResults) {
 				var oInactiveArtistContext = aPromiseResults[0];
 
-				that.expectMessages([{
-						code : "23",
-						message : "Just A Message",
-						target : "/" + sRequestPath + "/Name",
-						persistent : true,
-						type : "Success"
-					}])
-					.expectChange("isActive", "No");
+				that.expectChange("isActive", "No");
 
 				that.oView.byId("objectPage").setBindingContext(oInactiveArtistContext);
 
@@ -7144,10 +7898,10 @@ sap.ui.require([
 						method : "PATCH",
 						url : "Artists(ArtistID='42',IsActiveEntity=false)",
 						headers : {},
-						payload : {
-							"Name" : "foo"
-						}
-					}, {"Name" : "foo"})
+						payload : {"Name" : "foo"}
+					}, {
+						"Name" : "foo"
+					})
 					.expectChange("name", "foo");
 
 				// code under test: editing values is possible on the returned entity
@@ -7191,8 +7945,8 @@ sap.ui.require([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?custom=foo"
-				+ "&$select=ArtistID,IsActiveEntity,Messages,Name"
-				+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
+					+ "&$select=ArtistID,IsActiveEntity,Messages,Name"
+					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
 					"ArtistID" : "42",
 					"IsActiveEntity" : true,
 					"Name" : "Hour Frustrated",
@@ -7213,27 +7967,34 @@ sap.ui.require([
 					that.oView.getBindingContext(), {$$inheritExpandSelect : true});
 
 			that.expectRequest({
-				method : "POST",
-				url : "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction"
-					+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
-					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)",
-				payload : {}
-			}, {
-				"ArtistID" : "42",
-				"IsActiveEntity" : false,
-				"Name" : "Hour Frustrated",
-				"Messages" : [{
-					"code" : "23",
-					"message" : "Just A Message",
-					"target" : "Name",
-					"transition" : true,
-					"numericSeverity" : 1
-				}],
-				"DraftAdministrativeData" : {
-					"DraftID" : "1",
-					"InProcessByUser" : "JOHNDOE"
-				}
-			});
+					method : "POST",
+					url : "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction"
+						+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
+						+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)",
+					payload : {}
+				}, {
+					"ArtistID" : "42",
+					"IsActiveEntity" : false,
+					"Name" : "Hour Frustrated",
+					"Messages" : [{
+						"code" : "23",
+						"message" : "Just A Message",
+						"target" : "Name",
+						"transition" : true,
+						"numericSeverity" : 1
+					}],
+					"DraftAdministrativeData" : {
+						"DraftID" : "1",
+						"InProcessByUser" : "JOHNDOE"
+					}
+				}).expectMessages([{
+					code : "23",
+					message : "Just A Message",
+					target :
+						"/Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction/Name",
+					persistent : true,
+					type : "Success"
+				}]);
 
 			return Promise.all([
 				// code under test
@@ -7244,14 +8005,7 @@ sap.ui.require([
 			var oInactiveArtistContext = aPromiseResults[0];
 
 			that.expectChange("isActive", "No")
-				.expectChange("inProcessByUser", "JOHNDOE")
-				.expectMessages([{
-					code : "23",
-					message : "Just A Message",
-					target : "/Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction/Name",
-					persistent : true,
-					type : "Success"
-				}]);
+				.expectChange("inProcessByUser", "JOHNDOE");
 
 			that.oView.setBindingContext(oInactiveArtistContext);
 
@@ -7261,20 +8015,21 @@ sap.ui.require([
 					that.oView.getBindingContext(), {$$inheritExpandSelect : true});
 
 			that.expectRequest({
-				method : "POST",
-				url : "Artists(ArtistID='42',IsActiveEntity=false)/special.cases.ActivationAction"
-				+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
-				+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)",
-				payload : {}
-			}, {
-				"ArtistID" : "42",
-				"IsActiveEntity" : true,
-				"Name" : "Hour Frustrated",
-				"DraftAdministrativeData" : {
-					"DraftID" : "1",
-					"InProcessByUser" : ""
-				}
-			});
+					method : "POST",
+					url : "Artists(ArtistID='42',IsActiveEntity=false)"
+						+ "/special.cases.ActivationAction"
+						+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
+						+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)",
+					payload : {}
+				}, {
+					"ArtistID" : "42",
+					"IsActiveEntity" : true,
+					"Name" : "Hour Frustrated",
+					"DraftAdministrativeData" : {
+						"DraftID" : "1",
+						"InProcessByUser" : ""
+					}
+				});
 
 			return Promise.all([
 				oOperation.execute(),
@@ -7310,15 +8065,15 @@ sap.ui.require([
 			var oOperation = that.oView.byId("action").getObjectBinding();
 
 			that.expectRequest({
-				method : "POST",
-				url : "SalesOrderList('42')/"
-						+ "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
-				payload : {}
-			}, {
-				"SalesOrderID" : "42",
-				"LifecycleStatusDesc" : "Confirmed"
-			})
-			.expectChange("LifecycleStatusDesc", "Confirmed");
+					method : "POST",
+					url : "SalesOrderList('42')/"
+							+ "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
+					payload : {}
+				}, {
+					"SalesOrderID" : "42",
+					"LifecycleStatusDesc" : "Confirmed"
+				})
+				.expectChange("LifecycleStatusDesc", "Confirmed");
 
 			return Promise.all([
 				// code under test
@@ -7346,7 +8101,7 @@ sap.ui.require([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
-				+ "?$select=ArtistID,IsActiveEntity,Name", {
+					+ "?$select=ArtistID,IsActiveEntity,Name", {
 					"ArtistID" : "42",
 					"IsActiveEntity" : true,
 					"Name" : "Hour Frustrated"
@@ -7362,14 +8117,14 @@ sap.ui.require([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
-				method : "POST",
-				url : "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction",
-				payload : {}
-			}, {
-				"ArtistID" : "42",
-				"IsActiveEntity" : false,
-				"Name" : "Hour Frustrated"
-			});
+					method : "POST",
+					url : "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction",
+					payload : {}
+				}, {
+					"ArtistID" : "42",
+					"IsActiveEntity" : false,
+					"Name" : "Hour Frustrated"
+				});
 
 			return Promise.all([
 				that.oModel
@@ -7415,7 +8170,10 @@ sap.ui.require([
 					method: "POST",
 					url: "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction",
 					payload: {}
-				}, {"ArtistID" : "42", "IsActiveEntity" : false})
+				}, {
+					"ArtistID" : "42",
+					"IsActiveEntity" : false
+				})
 				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)",
 					{"ArtistID" : "42", "IsActiveEntity" : true});
 
@@ -7456,9 +8214,14 @@ sap.ui.require([
 					method : "POST",
 					url : "TEAMS",
 					payload : {"Team_Id" : "new"}
-					}, {"Team_Id" : "newer"})
+				}, {
+					"Team_Id" : "newer"
+				})
+				.expectChange("Team_Id", "new", 0)
 				.expectChange("Team_Id", ["newer", "42"])
-				.expectRequest("TEAMS('newer')?$select=Team_Id", {"Team_Id" : "newer"});
+				.expectRequest("TEAMS('newer')?$select=Team_Id", {
+					"Team_Id" : "newer"
+				});
 
 			oCreatedContext =  that.oView.byId("table").getBinding("items").create({
 				"Team_Id" : "new"
@@ -7517,10 +8280,11 @@ sap.ui.require([
 			that.expectRequest({
 					method : "POST",
 					url : "TEAMS('42')/TEAM_2_EMPLOYEES",
-					payload : {
-						"ID" : null
-					}
-				}, {"ID" : "7"})
+					payload : {"ID" : null}
+				}, {
+					"ID" : "7"
+				})
+				.expectChange("id", "", 0) // from setValue(null)
 				.expectChange("id", ["7", "2"]);
 			oTeam2EmployeesBinding = that.oView.byId("table").getBinding("items");
 			oCreatedContext = oTeam2EmployeesBinding.create({"ID" : null});
@@ -7585,15 +8349,15 @@ sap.ui.require([
 			that.expectRequest({
 					method : "POST",
 					url : "SalesOrderList",
-					payload : {
-						"SalesOrderID" : "newID"
-					}
+					payload : {"SalesOrderID" : "newID"}
 				}, {
 					"SalesOrderID" : "43"
 				})
+				.expectChange("SalesOrderID", "newID", 0) // from create()
 				.expectChange("SalesOrderID", ["43", "42"])
-				.expectRequest("SalesOrderList('43')?$select=SalesOrderID",
-					{"SalesOrderID" : "43"});
+				.expectRequest("SalesOrderList('43')?$select=SalesOrderID", {
+					"SalesOrderID" : "43"
+				});
 
 			oCreatedSOContext = that.oView.byId("SalesOrders").getBinding("items").create({
 				"SalesOrderID" : "newID"
@@ -7603,7 +8367,9 @@ sap.ui.require([
 		}).then(function () {
 			// set context for line items after sales order is created
 			that.expectRequest("SalesOrderList('43')/SO_2_SOITEM?$select=ItemPosition,"
-				+ "SalesOrderID&$skip=0&$top=100", {"value" : []});
+					+ "SalesOrderID&$skip=0&$top=100", {
+					"value" : []
+				});
 			oItemBinding = that.oView.byId("LineItems").getBinding("items");
 			oItemBinding.setContext(oCreatedSOContext);
 
@@ -7621,6 +8387,7 @@ sap.ui.require([
 					"SalesOrderID" : "43",
 					"ItemPosition" : "10"
 				})
+				.expectChange("ItemPosition", "newPos", 0)
 				.expectChange("ItemPosition", "10", 0);
 
 			oCreatedItemContext =  oItemBinding.create({
@@ -7635,13 +8402,13 @@ sap.ui.require([
 					+ ".v0002.SalesOrder_Confirm(...)", oCreatedSOContext);
 
 			that.expectRequest({
-				method : "POST",
-				url : "SalesOrderList('43')/com.sap.gateway.default.zui5_epm_sample"
-					+ ".v0002.SalesOrder_Confirm",
-				payload : {}
-			}, {
-				"SalesOrderID" : "43"
-			});
+					method : "POST",
+					url : "SalesOrderList('43')/com.sap.gateway.default.zui5_epm_sample"
+						+ ".v0002.SalesOrder_Confirm",
+					payload : {}
+				}, {
+					"SalesOrderID" : "43"
+				});
 
 			return Promise.all([
 				// code under test
@@ -7655,12 +8422,13 @@ sap.ui.require([
 					oCreatedItemContext);
 
 			that.expectRequest({
-				method : "GET",
-				url : "SalesOrderList('43')/SO_2_SOITEM(SalesOrderID='43'"
-					+ ",ItemPosition='10')/com.sap.gateway.default.zui5_epm_"
-					+ "sample.v0002.SalesOrderLineItem_CheckAvailability()"
-				},
-				{value : "5.0"});
+					method : "GET",
+					url : "SalesOrderList('43')/SO_2_SOITEM(SalesOrderID='43'"
+						+ ",ItemPosition='10')/com.sap.gateway.default.zui5_epm_"
+						+ "sample.v0002.SalesOrderLineItem_CheckAvailability()"
+				}, {
+					value : "5.0"
+				});
 
 			return Promise.all([
 				// code under test
@@ -7766,24 +8534,30 @@ sap.ui.require([
 
 			that.oView.byId("detailTable").setBindingContext(
 				that.oView.byId("table").getItems()[0].getBindingContext());
+
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("TEAMS('Team_02')/TEAM_2_EMPLOYEES"
-					+ "?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100",
-					{value : []})
+					+ "?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100", {
+					value : []
+				})
 				.expectChange("Name", []);
 				// no change in messages
 
 			that.oView.byId("detailTable").setBindingContext(
 				that.oView.byId("table").getItems()[1].getBindingContext());
+
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("TEAMS('Team_02')/TEAM_2_EMPLOYEES"
 					+ "?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages"
-					+ "&$orderby=Name&$skip=0&$top=100", {value : []})
+					+ "&$orderby=Name&$skip=0&$top=100", {
+					value : []
+				})
 				.expectMessages([]); // message is gone
 
 			that.oView.byId("detailTable").getBinding("items").sort(new Sorter("Name"));
+
 			return that.waitForChanges(assert);
 		});
 	});
@@ -7834,7 +8608,10 @@ sap.ui.require([
 		return this.createView(assert, sView, oModel).then(function () {
 			var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
 
-			that.expectRequest({method : "DELETE", url : "EMPLOYEES('1')"})
+			that.expectRequest({
+					method : "DELETE",
+					url : "EMPLOYEES('1')"
+				})
 				.expectChange("name", ["Frederic Fall"])
 				.expectMessages([]);
 
@@ -7882,7 +8659,10 @@ sap.ui.require([
 		return this.createView(assert, sView, oModel).then(function () {
 			var oContext = that.oView.byId("form").getBindingContext();
 
-			that.expectRequest({method : "DELETE", url : "EMPLOYEES('2')"})
+			that.expectRequest({
+					method : "DELETE",
+					url : "EMPLOYEES('2')"
+				})
 				.expectChange("text", null)
 				.expectMessages([]);
 
@@ -7912,8 +8692,8 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest("TEAMS('TEAM_01')?$select=Team_Id"
-					+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name,"
-					+ "__CT__FAKE__Message/__FAKE__Messages)", {
+				+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name,"
+				+ "__CT__FAKE__Message/__FAKE__Messages)", {
 				"Team_Id" : "TEAM_01",
 				"TEAM_2_EMPLOYEES" : [{
 					"ID" : "1",
@@ -7946,7 +8726,10 @@ sap.ui.require([
 		return this.createView(assert, sView, oModel).then(function () {
 			var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
 
-			that.expectRequest({method : "DELETE", url : "EMPLOYEES('1')"})
+			that.expectRequest({
+					method : "DELETE",
+					url : "EMPLOYEES('1')"
+				})
 				.expectChange("name", ["Frederic Fall"])
 				.expectMessages([]);
 
@@ -7973,8 +8756,8 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest("Equipments(Category='foo',ID='0815')?$select=Category,ID&"
-					+ "$expand=EQUIPMENT_2_EMPLOYEE($select=ID,Name,"
-					+ "__CT__FAKE__Message/__FAKE__Messages)", {
+				+ "$expand=EQUIPMENT_2_EMPLOYEE($select=ID,Name,"
+				+ "__CT__FAKE__Message/__FAKE__Messages)", {
 				"Category" : "foo",
 				"ID" : "0815",
 				"EQUIPMENT_2_EMPLOYEE" : {
@@ -8003,7 +8786,10 @@ sap.ui.require([
 		return this.createView(assert, sView, oModel).then(function () {
 			var oContext = that.oView.byId("form").getBindingContext();
 
-			that.expectRequest({method : "DELETE", url : "EMPLOYEES('1')"})
+			that.expectRequest({
+					method : "DELETE",
+					url : "EMPLOYEES('1')"
+				})
 				.expectChange("text", null)
 				.expectMessages([]);
 
@@ -8132,8 +8918,7 @@ sap.ui.require([
 		this.expectRequest(
 			"TEAMS('TEAM_01')?"
 				+ "$expand=TEAM_2_EMPLOYEES($select=ID,Name,__CT__FAKE__Message/__FAKE__Messages)"
-				+ "&$select=Team_Id",
-			{
+				+ "&$select=Team_Id", {
 				"Team_Id" : "TEAM_01",
 				"TEAM_2_EMPLOYEES" : [{
 					"ID" : "1",
@@ -8216,8 +9001,7 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest(
-			"EMPLOYEES?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100",
-			{
+			"EMPLOYEES?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100", {
 				value : [{
 					"ID" : "1",
 					"Name" : "Jonathan Smith",
@@ -8315,14 +9099,13 @@ sap.ui.require([
 				.expectChange("name", "", 0);
 
 			oTable.getBinding("items").create({Name : ""});
+
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
 					method : "POST",
 					url : "TEAMS('TEAM_01')/TEAM_2_EMPLOYEES",
-					payload : {
-						"Name" : ""
-					}
+					payload : {"Name" : ""}
 				}, {
 					"@odata.context" : "../$metadata#TEAMS('TEAM_01')/TEAM_2_EMPLOYEES/$entity",
 					"ID" : "42",

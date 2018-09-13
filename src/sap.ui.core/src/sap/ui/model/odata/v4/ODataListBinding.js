@@ -364,6 +364,10 @@ sap.ui.define([
 	 * sent to the server. If there is no default value, <code>null</code> is used instead, even if
 	 * the property is not <code>Nullable</code>.
 	 *
+	 * Note: If a server requires a property in the request, you must supply this property in the
+	 * initial data, for example if the server requires a unit for an amount. This also applies if
+	 * this property has a default value.
+	 *
 	 * @param {object} [oInitialData={}]
 	 *   The initial data for the created entity
 	 * @returns {sap.ui.model.odata.v4.Context}
@@ -1615,8 +1619,8 @@ sap.ui.define([
 	 * @param {string[]} [oAggregation.groupLevels]
 	 *   A list of groupable property names used to determine group levels. They may, but don't need
 	 *   to, be repeated in <code>oAggregation.group</code>. Group levels cannot be combined with
-	 *   filtering or with the system query option <code>$count</code>; only a single group level
-	 *   is supported.
+	 *   filtering, with the system query option <code>$count</code>, or with an aggregatable
+	 *   property for which a grand total is needed; only a single group level is supported.
 	 * @throws {Error}
 	 *   If the given data aggregation object is unsupported, if the system query option
 	 *   <code>$apply</code> has been specified explicitly before, if the binding's root binding

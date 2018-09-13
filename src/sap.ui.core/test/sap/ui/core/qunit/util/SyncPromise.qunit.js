@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/test/TestUtils"
-], function(Log, SyncPromise, TestUtils) {
+], function (Log, SyncPromise, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks:[1,5], no-warning-comments: 0 */
 	"use strict";
@@ -134,8 +134,8 @@ sap.ui.define([
 			assert.strictEqual(sResult, oNewSyncPromise.getResult(), "*42*");
 		});
 	});
-	//TODO make sure SyncPromise#then returns new instance?
-	// https://promisesaplus.com/#notes 3.3. allows to return same instance
+	// Q: make sure SyncPromise#then returns new instance?
+	// A: https://promisesaplus.com/#notes 3.3. allows to return same instance
 
 	//*********************************************************************************************
 	[
@@ -875,9 +875,129 @@ sap.ui.define([
 			return oError0 === oError;
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("finally", function (assert) {
+		var oNewReason = new Error("new"),
+			oOldReason = new Error("old");
+
+		function returnFulfilled() {
+			assert.strictEqual(arguments.length, 0);
+			return SyncPromise.resolve(oNewReason);
+		}
+
+		function returnNewReason() {
+			assert.strictEqual(arguments.length, 0);
+			return oNewReason;
+		}
+
+		function returnRejected() {
+			assert.strictEqual(arguments.length, 0);
+			return SyncPromise.reject(oNewReason);
+		}
+
+		function throwNewReason() {
+			assert.strictEqual(arguments.length, 0);
+			throw oNewReason;
+		}
+
+		// no callback - result unchanged
+		assertFulfilled(assert, SyncPromise.resolve(42).finally(), 42);
+		assertRejected(assert, SyncPromise.reject(oOldReason).finally(), oOldReason);
+
+		// callback returns non-Promise - result unchanged
+		assertFulfilled(assert, SyncPromise.resolve(42).finally(returnNewReason), 42);
+		assertRejected(assert, SyncPromise.reject(oOldReason).finally(returnNewReason), oOldReason);
+
+		// callback returns fulfilled Promise - result unchanged
+		assertFulfilled(assert, SyncPromise.resolve(42).finally(returnFulfilled), 42);
+		assertRejected(assert, SyncPromise.reject(oOldReason).finally(returnFulfilled), oOldReason);
+
+		// callback throws - result is rejected accordingly
+		assertRejected(assert, SyncPromise.resolve(42).finally(throwNewReason), oNewReason);
+		assertRejected(assert, SyncPromise.reject(oOldReason).finally(throwNewReason), oNewReason);
+
+		// callback returns rejected Promise - result is rejected accordingly
+		assertRejected(assert, SyncPromise.resolve(42).finally(returnRejected), oNewReason);
+		assertRejected(assert, SyncPromise.reject(oOldReason).finally(returnRejected), oNewReason);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("finally: return Promise.resolve() after resolve", function (assert) {
+		// code under test
+		var oFinallyPromise = SyncPromise.resolve(42).finally(function () {
+				assert.strictEqual(arguments.length, 0);
+				return Promise.resolve(new Error("new"));
+			});
+
+		assertPending(assert, oFinallyPromise);
+
+		return oFinallyPromise.then(function (vResult) {
+			assert.strictEqual(vResult, 42);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("finally: return Promise.resolve() after reject", function (assert) {
+		var oFinallyPromise,
+			oOldReason = new Error("old");
+
+		// code under test
+		oFinallyPromise = SyncPromise.reject(oOldReason).finally(function () {
+			assert.strictEqual(arguments.length, 0);
+			return Promise.resolve(new Error("new"));
+		});
+
+		assertPending(assert, oFinallyPromise);
+
+		return oFinallyPromise.then(function () {
+			assert.ok(false);
+		}, function (vReason) {
+			assert.strictEqual(vReason, oOldReason);
+		});
+	});
+
+	//*********************************************************************************************
+	[
+		SyncPromise.resolve(42),
+		SyncPromise.reject(new Error("old"))
+	].forEach(function (oInitialPromise, i) {
+		QUnit.test("finally: return Promise.reject() after resolve, #" + i, function (assert) {
+			var oFinallyPromise,
+				oNewReason = new Error("new");
+
+			// code under test
+			oFinallyPromise = oInitialPromise.finally(function () {
+				assert.strictEqual(arguments.length, 0);
+				return Promise.reject(oNewReason);
+			});
+
+			assertPending(assert, oFinallyPromise);
+
+			return oFinallyPromise.then(function () {
+				assert.ok(false);
+			}, function (vReason) {
+				assert.strictEqual(vReason, oNewReason);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	[undefined, true, 1, "hello", {}].forEach(function (fnOnFinally) {
+		QUnit.test("finally: fnOnFinally is not callable: " + fnOnFinally, function (assert) {
+			var oResult = {},
+				oSyncPromise = SyncPromise.resolve();
+
+			this.mock(oSyncPromise).expects("then")
+				.withExactArgs(sinon.match.same(fnOnFinally), sinon.match.same(fnOnFinally))
+				.returns(oResult);
+
+			// code under test
+			assert.strictEqual(oSyncPromise.finally(fnOnFinally), oResult);
+		});
+	});
 });
 //TODO Promise.race
-//TODO Promise.prototype.finally
 //TODO treat rejection via RangeError, ReferenceError, SyntaxError(?), TypeError, URIError specially?!
 // --> vReason instanceof Error && vReason.constructor !== Error
 // Error itself is often used during testing!

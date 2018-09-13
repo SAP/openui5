@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/m/Button",
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
@@ -14,7 +15,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Item",
 	"sap/ui/model/odata/v4/ValueListType"
-], function (Button, Column, ColumnListItem, ComboBox, Input, PlacementType, ResponsivePopover,
+], function (Log, Button, Column, ColumnListItem, ComboBox, Input, PlacementType, ResponsivePopover,
 		Table, Text, Control, Item, ValueListType) {
 	"use strict";
 
@@ -162,8 +163,7 @@ sap.ui.define([
 				});
 				oComboBox.attachSelectionChange(onSelectionChange);
 			}).catch(function (oError) {
-				jQuery.sap.log.error(oError, undefined,
-					"sap.ui.core.sample.common.ValueHelp");
+				Log.error(oError, undefined, "sap.ui.core.sample.common.ValueHelp");
 			});
 		},
 
@@ -231,8 +231,7 @@ sap.ui.define([
 				oPopover.openBy(oInput);
 
 			}).catch(function (oError) {
-				jQuery.sap.log.error(oError, undefined,
-					"sap.ui.core.sample.common.ValueHelp");
+				Log.error(oError, undefined, "sap.ui.core.sample.common.ValueHelp");
 			});
 		},
 

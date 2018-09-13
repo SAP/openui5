@@ -354,19 +354,7 @@ sap.ui.define([
 	 */
 	// @override
 	Context.prototype.getObject = function (sPath) {
-		var oSyncPromise, that = this;
-
-		this.oBinding.checkSuspended();
-		oSyncPromise = this.fetchValue(sPath, null, true)
-			.catch(function (oError) {
-				if (!oError.$cached) {
-					that.oModel.reportError("Unexpected error", sClassName, oError);
-				}
-			});
-
-		if (oSyncPromise.isFulfilled()) {
-			return _Helper.publicClone(oSyncPromise.getResult());
-		}
+		return _Helper.publicClone(this.getValue(sPath));
 	};
 
 	/**
@@ -435,6 +423,43 @@ sap.ui.define([
 	 */
 	Context.prototype.getUpdateGroupId = function () {
 		return this.oBinding.getUpdateGroupId();
+	};
+
+	/**
+	 * Returns the value for the given path relative to this context. The function allows access to
+	 * the complete data the context points to (if <code>sPath</code> is "") or any part thereof.
+	 * The data is a JSON structure as described in
+	 * <a
+	 * href="http://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html">
+	 * "OData JSON Format Version 4.0"</a>.
+	 * Note that the function returns the cache instance. Do not modify the result, use
+	 * {@link sap.ui.model.odata.v4.ODataPropertyBinding#setValue} instead.
+	 *
+	 * Returns <code>undefined</code> if the data is not (yet) available; no request is triggered.
+	 *
+	 * @param {string} [sPath=""]
+	 *   A relative path within the JSON structure
+	 * @returns {any}
+	 *   The requested value
+	 * @throws {Error}
+	 *   If the context's root binding is suspended
+	 *
+	 * @private
+	 */
+	Context.prototype.getValue = function (sPath) {
+		var oSyncPromise, that = this;
+
+		this.oBinding.checkSuspended();
+		oSyncPromise = this.fetchValue(sPath, null, true)
+			.catch(function (oError) {
+				if (!oError.$cached) {
+					that.oModel.reportError("Unexpected error", sClassName, oError);
+				}
+			});
+
+		if (oSyncPromise.isFulfilled()) {
+			return oSyncPromise.getResult();
+		}
 	};
 
 	/**

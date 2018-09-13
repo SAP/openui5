@@ -94,9 +94,8 @@ sap.ui.define([], function () {
 		 * If at least one aggregatable property requesting minimum or maximum values is contained,
 		 * the resulting "$apply" is extended: ".../concat(aggregate(&lt;alias> with min as
 		 * UI5min__&lt;alias>,&lt;alias> with max as UI5max__&lt;alias>,...),identity)". Grand
-		 * total values are requested in the same way, but as a custom aggregate without alias or
-		 * method; they are requested only if no <code>mQueryOptions.$skip</code> is given.
-		 * If <code>mQueryOptions.$skip</code> is given, it is inserted as a transformation:
+		 * total values are requested in a similar way, unless <code>mQueryOptions.$skip</code> is
+		 * given. If <code>mQueryOptions.$skip</code> is given, it is inserted as a transformation:
 		 * ".../skip(&lt;mQueryOptions.$skip>))". Same for <code>mQueryOptions.$top</code>.
 		 * Unnecessary transformations like "identity/" or "skip(0)" are actually avoided.
 		 * In case of a "concat", if <code>mQueryOptions.$count</code> is given, it is inserted as
@@ -173,8 +172,8 @@ sap.ui.define([], function () {
 		buildApply : function (oAggregation, mQueryOptions, mAlias2MeasureAndMethod, bFollowUp) {
 			var aAggregate,
 				sApply = "",
-				// measures which require a grand total w/o unit or min/max
-				aGrandTotalNoUnit = [],
+				// concat(aggregate(???),.) content for grand totals (w/o unit) or min/max or count
+				aConcatAggregate = [],
 				aGroupBy,
 				bHasGrandTotal,
 				sSkipTop;
@@ -189,7 +188,8 @@ sap.ui.define([], function () {
 			 */
 			function aggregate(sAlias) {
 				var oDetails = oAggregation.aggregate[sAlias],
-					sAggregate = oDetails.name || sAlias;
+					sAggregate = oDetails.name || sAlias,
+					sGrandTotal = sAlias;
 
 				if (oDetails.with) {
 					sAggregate += " with " + oDetails.with + " as " + sAlias;
@@ -207,7 +207,10 @@ sap.ui.define([], function () {
 				if (oDetails.grandTotal) {
 					bHasGrandTotal = true;
 					if (!mQueryOptions.$skip) {
-						aGrandTotalNoUnit.push(sAlias);
+						if (oDetails.with) {
+							sGrandTotal += " with " + oDetails.with + " as UI5grand__" + sAlias;
+						}
+						aConcatAggregate.push(sGrandTotal);
 					}
 				}
 				return sAggregate;
@@ -234,7 +237,7 @@ sap.ui.define([], function () {
 			function processMinOrMax(sName, sMinOrMax) {
 				var sAlias = "UI5" + sMinOrMax + "__" + sName;
 
-				aGrandTotalNoUnit.push(sName + " with " + sMinOrMax + " as " + sAlias);
+				aConcatAggregate.push(sName + " with " + sMinOrMax + " as " + sAlias);
 				if (mAlias2MeasureAndMethod) {
 					mAlias2MeasureAndMethod[sAlias] = {
 						measure : sName,
@@ -278,6 +281,9 @@ sap.ui.define([], function () {
 			oAggregation.aggregate = oAggregation.aggregate || {};
 			checkKeys4AllDetails(oAggregation.aggregate, mAllowedAggregateDetails2Type);
 			aAggregate = Object.keys(oAggregation.aggregate).sort().map(aggregate);
+			if (bHasGrandTotal && oAggregation.groupLevels.length) {
+				throw new Error("Cannot combine visual grouping with grand total");
+			}
 			if (aAggregate.length) {
 				sApply = "aggregate(" + aAggregate.join(",") + ")";
 			}
@@ -293,7 +299,7 @@ sap.ui.define([], function () {
 			if (bFollowUp) {
 				delete mQueryOptions.$count;
 			} else if (mQueryOptions.$count) {
-				aGrandTotalNoUnit.push("$count as UI5__count");
+				aConcatAggregate.push("$count as UI5__count");
 				delete mQueryOptions.$count;
 			}
 			if (mQueryOptions.$filter) {
@@ -313,8 +319,8 @@ sap.ui.define([], function () {
 				}
 			}
 			sSkipTop = skipTop();
-			if (aGrandTotalNoUnit.length) {
-				sApply += "/concat(aggregate(" + aGrandTotalNoUnit.join(",") + "),"
+			if (aConcatAggregate.length) {
+				sApply += "/concat(aggregate(" + aConcatAggregate.join(",") + "),"
 					+ (sSkipTop || "identity") + ")";
 			} else if (sSkipTop) {
 				sApply += "/" + sSkipTop;

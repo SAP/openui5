@@ -2,22 +2,22 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
+	"jquery.sap.script", // jQuery.sap.getUriParameters()
+	"sap/base/Log",
 	"sap/m/MessageBox",
 	"sap/ui/core/Component",
 	"sap/ui/core/ListItem",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/core/mvc/View", // sap.ui.view()
+	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/ViewType",
 	"sap/ui/model/json/JSONModel",
-	"jquery.sap.script", // jQuery.sap.getUriParameters()
-	"jquery.sap.xml" // jQuery.sap.serializeXML()
-], function (jQuery, MessageBox, Component, ListItem, Controller, View, ViewType, JSONModel) {
+	"sap/ui/util/XMLHelper"
+], function (jQuery, Log, MessageBox, Component, ListItem, Controller, View, ViewType, JSONModel,
+		XMLHelper) {
 	"use strict";
 
 	function alertError(oError) {
-		jQuery.sap.log.error(oError, oError.stack,
-			"sap.ui.core.sample.ViewTemplate.scenario.Main");
+		Log.error(oError, oError.stack, "sap.ui.core.sample.ViewTemplate.scenario.Main");
 		MessageBox.alert(oError.message, {
 			icon : MessageBox.Icon.ERROR,
 			title : "Error"});
@@ -81,7 +81,7 @@ sap.ui.define([
 
 			oView.getModel("ui").setProperty("/codeVisible", bVisible);
 			if (bVisible) {
-				sSource = jQuery.sap.serializeXML(this._getDetailView()._xContent)
+				sSource = XMLHelper.serializeXML(this._getDetailView()._xContent)
 					.replace(/<!--.*-->/g, "") // remove comments
 					.replace(/\t/g, "  ") // indent by just 2 spaces
 					.replace(/\n\s*\n/g, "\n"); // remove empty lines
@@ -126,8 +126,7 @@ sap.ui.define([
 				var sMetadataPath = oMetaModel.getODataEntitySet(that._getSelectedSet(), true);
 
 				Component.getOwnerComponentFor(that.getView()).runAsOwner(function () {
-					sap.ui.view({
-						async: true,
+					View.create({
 						preprocessors : {
 							xml : {
 								bindingContexts : {
@@ -141,7 +140,7 @@ sap.ui.define([
 						},
 						type : ViewType.XML,
 						viewName : "sap.ui.core.sample.ViewTemplate.scenario.Detail"
-					}).loaded().then(function (oDetailView) {
+					}).then(function (oDetailView) {
 						var oDetailBox = that.byId("detailBox"),
 							iStart;
 
@@ -150,8 +149,8 @@ sap.ui.define([
 						oDetailBox.destroyContent();
 						iStart = Date.now();
 						oDetailBox.addContent(oDetailView);
-						jQuery.sap.log.info("addContent took " + (Date.now() - iStart) + " ms",
-							null, "sap.ui.core.sample.ViewTemplate.scenario.Main");
+						Log.info("addContent took " + (Date.now() - iStart) + " ms", null,
+							"sap.ui.core.sample.ViewTemplate.scenario.Main");
 
 						that.onSourceCode();
 					});

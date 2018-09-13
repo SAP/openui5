@@ -244,6 +244,34 @@ sap.ui.define([], function () {
 	};
 
 	/**
+	 * Returns a {@link sap.ui.base.SyncPromise} and calls the given handler, like
+	 * <code>Promise.prototype.finally</code>.
+	 *
+	 * @param {function} [fnOnFinally]
+	 *   Callback function if this {@link sap.ui.base.SyncPromise} is settled
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A new {@link sap.ui.base.SyncPromise}, or <code>this</code> in case it is settled and no
+	 *   callback function is given
+	 *
+	 * @see #then
+	 */
+	SyncPromise.prototype.finally = function (fnOnFinally) {
+		if (typeof fnOnFinally === "function") {
+			return this.then(function (vResult) {
+				return SyncPromise.resolve(fnOnFinally()).then(function () {
+					return vResult;
+				});
+			}, function (vReason) {
+				return SyncPromise.resolve(fnOnFinally()).then(function () {
+					throw vReason;
+				});
+			});
+		}
+
+		return this.then(fnOnFinally, fnOnFinally);
+	};
+
+	/**
 	 * Returns a {@link sap.ui.base.SyncPromise} and calls the given handler as applicable, like
 	 * <code>Promise.prototype.then</code>. This {@link sap.ui.base.SyncPromise} is marked as
 	 * {@link #caught} unless <code>this</code> is returned. Note that a new

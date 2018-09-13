@@ -274,6 +274,7 @@ sap.ui.define([
 								this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
 							fnFetchMetadata : this.oMetaModel.fetchObject.bind(this.oMetaModel),
 							fnGetGroupProperty : this.getGroupProperty.bind(this),
+							lockGroup : this.lockGroup.bind(this),
 							fnOnCreateGroup : function (sGroupId) {
 								if (that.isAutoGroup(sGroupId)) {
 									sap.ui.getCore().addPrerenderingTask(
@@ -1472,6 +1473,9 @@ sap.ui.define([
 
 	/**
 	 * Submits the requests associated with the given application group ID in one batch request.
+	 * Requests from subsequent calls to this method for the same group ID may be combined in one
+	 * batch request using a single change set. Use different group IDs to guarantee separate batch
+	 * requests and thus separate change sets.
 	 *
 	 * @param {string} sGroupId
 	 *   The application group ID as specified in {@link sap.ui.model.odata.v4.ODataModel}.
