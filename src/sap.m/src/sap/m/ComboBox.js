@@ -219,6 +219,7 @@ sap.ui.define([
 				}
 
 				oControl.selectText(iSelectionStart, oDomRef.value.length);
+				this.$().toggleClass("sapMFocus", !this.isOpen());
 			}
 
 			this.scrollToItem(oItem);
