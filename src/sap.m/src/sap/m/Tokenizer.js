@@ -216,6 +216,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Function determines if the N-more state is active
+	 *
+	 * @private
+	 */
+	Tokenizer.prototype._hasMoreIndicator = function () {
+		var domRef = this.$();
+
+		return !!domRef.length && this.$().find(".sapMHiddenToken").length > 0;
+	};
+
+	/**
 	 * Function determines which tokens should be displayed and adds N-more label
 	 *
 	 * @private
