@@ -1,10 +1,11 @@
 sap.ui.define([
 	'sap/m/MessagePopover',
 	'sap/m/MessageItem',
+	'sap/m/MessageToast',
 	'sap/m/Link',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel'
-], function(MessagePopover, MessageItem, Link, Controller, JSONModel) {
+], function(MessagePopover, MessageItem, MessageToast, Link, Controller, JSONModel) {
 	"use strict";
 
 	var oLink = new Link({
@@ -16,6 +17,7 @@ sap.ui.define([
 	var oMessageTemplate = new MessageItem({
 		type: '{type}',
 		title: '{title}',
+		activeTitle: "{active}",
 		description: '{description}',
 		subtitle: '{subtitle}',
 		counter: '{counter}',
@@ -26,6 +28,9 @@ sap.ui.define([
 		items: {
 			path: '/',
 			template: oMessageTemplate
+		},
+		activeTitlePress: function () {
+			MessageToast.show('Active title is pressed');
 		}
 	});
 
@@ -45,6 +50,7 @@ sap.ui.define([
 			var aMockMessages = [{
 				type: 'Error',
 				title: 'Error message',
+				active: true,
 				description: sErrorDescription,
 				subtitle: 'Example of subtitle',
 				counter: 1
