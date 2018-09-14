@@ -68,14 +68,17 @@ sap.ui.define([
 		//			"fileNameChange1USERnamespace": [oChange2],
 		//			"fileNameChange2USERnamespace": [oChange3]
 		//		}
+		// - aChanges: array of changes ordered by layer and creation time
+		//		aChanges: [oChange1, oChange2, oChange3]
 		this._mChanges = {
 			mChanges: {},
 			mDependencies: {},
-			mDependentChangesOnMe: {}
+			mDependentChangesOnMe: {},
+			aChanges: []
 		};
 
 		//_mChangesInitial contains a clone of _mChanges to recreated dependencies if changes need to be reapplied
-		this._mChangesInitial = {};
+		this._mChangesInitial = fnBaseUtilMerge({}, this._mChanges);
 
 		this._mVariantsChanges = {};
 
@@ -633,33 +636,39 @@ sap.ui.define([
 		if (this._mChanges.mChanges[sSelectorId].indexOf(oChange) === -1) {
 			this._mChanges.mChanges[sSelectorId].push(oChange);
 		}
+
+		if (this._mChanges.aChanges.indexOf(oChange) === -1) {
+			this._mChanges.aChanges.push(oChange);
+		}
 	};
 
-	ChangePersistence.prototype._addDependency = function (oDependentChange, oChange) {
-		if (!this._mChanges.mDependencies[oDependentChange.getId()]) {
-			this._mChanges.mDependencies[oDependentChange.getId()] = {
+	ChangePersistence.prototype._addDependency = function (oDependentChange, oChange, bRunTimeCreatedChange) {
+		var mChanges = bRunTimeCreatedChange ? this._mChangesInitial : this._mChanges;
+		if (!mChanges.mDependencies[oDependentChange.getId()]) {
+			mChanges.mDependencies[oDependentChange.getId()] = {
 				changeObject: oDependentChange,
 				dependencies: []
 			};
 		}
-		this._mChanges.mDependencies[oDependentChange.getId()].dependencies.push(oChange.getId());
+		mChanges.mDependencies[oDependentChange.getId()].dependencies.push(oChange.getId());
 
-		if (!this._mChanges.mDependentChangesOnMe[oChange.getId()]) {
-			this._mChanges.mDependentChangesOnMe[oChange.getId()] = [];
+		if (!mChanges.mDependentChangesOnMe[oChange.getId()]) {
+			mChanges.mDependentChangesOnMe[oChange.getId()] = [];
 		}
-		this._mChanges.mDependentChangesOnMe[oChange.getId()].push(oDependentChange.getId());
+		mChanges.mDependentChangesOnMe[oChange.getId()].push(oDependentChange.getId());
 	};
 
-	ChangePersistence.prototype._addControlsDependencies = function (oDependentChange, aControlSelectorList) {
+	ChangePersistence.prototype._addControlsDependencies = function (oDependentChange, aControlSelectorList, bRunTimeCreatedChange) {
+		var mChanges = bRunTimeCreatedChange ? this._mChangesInitial : this._mChanges;
 		if (aControlSelectorList.length > 0) {
-			if (!this._mChanges.mDependencies[oDependentChange.getId()]) {
-				this._mChanges.mDependencies[oDependentChange.getId()] = {
+			if (!mChanges.mDependencies[oDependentChange.getId()]) {
+				mChanges.mDependencies[oDependentChange.getId()] = {
 					changeObject: oDependentChange,
 					dependencies: [],
 					controlsDependencies: []
 				};
 			}
-			this._mChanges.mDependencies[oDependentChange.getId()].controlsDependencies = aControlSelectorList;
+			mChanges.mDependencies[oDependentChange.getId()].controlsDependencies = aControlSelectorList;
 		}
 	};
 
@@ -684,7 +693,8 @@ sap.ui.define([
 			this._mChanges = {
 				mChanges: {},
 				mDependencies: {},
-				mDependentChangesOnMe: {}
+				mDependentChangesOnMe: {},
+				aChanges: []
 			};
 			aChanges.forEach(this._addChangeAndUpdateDependencies.bind(this, oComponent));
 
@@ -741,31 +751,38 @@ sap.ui.define([
 		return this._mChanges;
 	};
 
-	ChangePersistence.prototype._addChangeAndUpdateDependencies = function(oComponent, oChange, iIndex, aChangesCopy) {
+	ChangePersistence.prototype._addChangeAndUpdateDependencies = function(oComponent, oChange, iIndex, aChanges) {
 		this._addChangeIntoMap(oComponent, oChange);
+		this._updateDependencies(oChange, iIndex, aChanges, false);
+	};
 
+	ChangePersistence.prototype._addRunTimeCreatedChangeAndUpdateDependencies = function(oComponent, oChange) {
+		this._addChangeIntoMap(oComponent, oChange);
+		this._updateDependencies(oChange, this._mChanges.aChanges.length - 1, this._mChanges.aChanges, true);
+	};
+
+	ChangePersistence.prototype._updateDependencies = function (oChange, iIndex, aChanges, bRunTimeCreatedChange) {
 		//create dependencies map
 		var aDependentSelectorList = oChange.getDependentSelectorList();
 		var aDependentControlSelectorList = oChange.getDependentControlSelectorList();
-		this._addControlsDependencies(oChange, aDependentControlSelectorList);
+		this._addControlsDependencies(oChange, aDependentControlSelectorList, bRunTimeCreatedChange);
 		var oPreviousChange;
 		var aPreviousDependentSelectorList;
 		var iDependentIndex;
 		var bFound;
 
 		for (var i = iIndex - 1; i >= 0; i--) {//loop over the changes
-			oPreviousChange = aChangesCopy[i];
-			aPreviousDependentSelectorList = aChangesCopy[i].getDependentSelectorList();
+			oPreviousChange = aChanges[i];
+			aPreviousDependentSelectorList = aChanges[i].getDependentSelectorList();
 			bFound = false;
 			for (var j = 0; j < aDependentSelectorList.length && !bFound; j++) {
 				iDependentIndex = Utils.indexOfObject(aPreviousDependentSelectorList, aDependentSelectorList[j]);
 				if (iDependentIndex > -1) {
-					this._addDependency(oChange, oPreviousChange);
+					this._addDependency(oChange, oPreviousChange, bRunTimeCreatedChange);
 					bFound = true;
 				}
 			}
 		}
-
 	};
 
 	/**
@@ -844,7 +861,7 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.addChange = function(vChange, oComponent) {
 		var oChange = this.addDirtyChange(vChange);
-		this._addChangeIntoMap(oComponent, oChange);
+		this._addRunTimeCreatedChangeAndUpdateDependencies(oComponent, oChange);
 		this._addPropagationListener(oComponent);
 		return oChange;
 	};
@@ -1121,6 +1138,12 @@ sap.ui.define([
 				}
 			}
 		});
+
+		//aChanges
+		var iIndex = this._mChanges.aChanges.indexOf(oChange);
+		if (iIndex !== -1) {
+			this._mChanges.aChanges.splice(iIndex, 1);
+		}
 	};
 
 	/**
