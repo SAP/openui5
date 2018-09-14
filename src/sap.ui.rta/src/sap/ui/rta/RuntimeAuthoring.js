@@ -611,11 +611,11 @@ function(
 				if (this.getShowToolbars()) {
 					// Create ToolsMenu
 					return this._getPublishAndAppVariantSupportVisibility()
-						.then(function (aButtonsSupport) {
-							var bShowPublish = aButtonsSupport[0];
-							var bIsAppVariantSupported = aButtonsSupport[1];
-							this._createToolsMenu(bShowPublish, bIsAppVariantSupported);
-						}.bind(this));
+					.then(function (aButtonsSupport) {
+						var bShowPublish = aButtonsSupport[0];
+						var bIsAppVariantSupported = aButtonsSupport[1];
+						this._createToolsMenu(bShowPublish, bIsAppVariantSupported);
+					}.bind(this));
 				}
 			}.bind(this))
 			.then(function () {
@@ -627,11 +627,11 @@ function(
 			.then(function () {
 				// non-blocking style loading
 				StylesLoader
-					.loadStyles('InPageStyles')
-					.then(function (sData) {
-						var sStyles = sData.replace(/%scrollWidth%/g, DOMUtil.getScrollbarWidth() + 'px');
-						DOMUtil.insertStyles(sStyles, Overlay.getOverlayContainer().get(0));
-					});
+				.loadStyles('InPageStyles')
+				.then(function (sData) {
+					var sStyles = sData.replace(/%scrollWidth%/g, DOMUtil.getScrollbarWidth() + 'px');
+					DOMUtil.insertStyles(sStyles, Overlay.getOverlayContainer().get(0));
+				});
 			})
 			.then(function () {
 				return oDesignTimePromise;
@@ -769,7 +769,6 @@ function(
 		var oCommandStack = this.getCommandStack();
 		var bCanUndo = oCommandStack.canUndo();
 		var bCanRedo = oCommandStack.canRedo();
-		var oUshellContainer = Utils.getUshellContainer();
 
 		if (this.getShowToolbars()) {
 			this.getToolbar().setUndoRedoEnabled(bCanUndo, bCanRedo);
@@ -777,14 +776,6 @@ function(
 			this.getToolbar().setRestoreEnabled(this._bChangesExist || bCanUndo);
 		}
 		this.fireUndoRedoStackModified();
-
-		if (oUshellContainer) {
-			if (bCanUndo) {
-				oUshellContainer.setDirtyFlag(true);
-			} else {
-				oUshellContainer.setDirtyFlag(false);
-			}
-		}
 	};
 
 	RuntimeAuthoring.prototype._closeToolbar = function() {
@@ -1048,11 +1039,6 @@ function(
 		}
 
 		this.setCommandStack(null);
-
-		var oUshellContainer = Utils.getUshellContainer();
-		if (oUshellContainer) {
-			oUshellContainer.setDirtyFlag(false);
-		}
 
 		if (this._oServiceEventBus) {
 			this._oServiceEventBus.destroy();
