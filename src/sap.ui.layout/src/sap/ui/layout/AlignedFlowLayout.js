@@ -164,8 +164,9 @@ sap.ui.define([
 			oSettings = oSettings || {};
 			var oDomRef = oSettings.domRef || this.getDomRef();
 
-			// skip unnecessary style recalculations if the control root DOM element has been removed from the DOM
-			if (!oDomRef) {
+			// skip unnecessary style recalculations if the control root DOM element has been removed from the DOM OR
+			// any ancestor is hidden (the "display" style property is set to "none")
+			if (!oDomRef || !oDomRef.offsetParent) {
 				return;
 			}
 
@@ -185,12 +186,6 @@ sap.ui.define([
 					iEndItemWidth = oEndItemDomRef.offsetWidth,
 					iLastItemOffsetLeft = oLastItemDomRef.offsetLeft,
 					iAvailableWidthForEndItem;
-
-				// skip unnecessary style recalculations if the control root DOM element or any ancestor is hidden
-				// (the "display" style property is set to "none")
-				if (!oDomRef.offsetParent) {
-					return;
-				}
 
 				if (sap.ui.getCore().getConfiguration().getRTL()) {
 					iAvailableWidthForEndItem = iLastItemOffsetLeft;
