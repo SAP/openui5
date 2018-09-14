@@ -40,6 +40,7 @@
 		  "samples": [
 			"sap.f.sample.FlexibleColumnLayoutWithOneColumnStart",
 			"sap.f.sample.FlexibleColumnLayoutWithTwoColumnStart",
+			"sap.f.sample.FlexibleColumnLayoutWithFullscreenPage",
 			"sap.f.sample.FlexibleColumnLayoutSimple"
 		  ]
 		},
@@ -90,6 +91,11 @@
 		  "id": "sap.f.sample.FlexibleColumnLayoutWithOneColumnStart",
 		  "name": "Flexible Column Layout with Routing and One Initial Column",
 		  "description": "Flexible Column Layout as an app with routing that starts with a single initial column."
+		},
+		{
+		 "id": "sap.f.sample.FlexibleColumnLayoutWithFullscreenPage",
+		  "name": "Flexible Column Layout with Routing and first page in fullscreen only",
+		  "description": "Flexible Column Layout as an app with routing that displays different pages in the initial column. The first page is only displayed in OneColumn layout type"
 		},
 		{
 		  "id": "sap.f.sample.FlexibleColumnLayoutWithTwoColumnStart",
