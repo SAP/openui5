@@ -259,6 +259,33 @@ sap.ui.define([
 					return that.oReturnValueContext;
 				}
 			}, function (oError) {
+				var sBindingParameter;
+
+				// Adjusts the target: Makes it relative to the binding parameter; deletes targets
+				// pointing to other parameters because this is not supported
+				function adjustTarget(oMessage) {
+					if (oMessage.target) {
+						var aSegments = oMessage.target.split("/");
+
+						if (aSegments.shift() === sBindingParameter) {
+							oMessage.target = aSegments.join("/");
+							return;
+						}
+					}
+					delete oMessage.target;
+				}
+
+				if (oOperationMetadata && oOperationMetadata.$IsBound) {
+					sBindingParameter = oOperationMetadata.$Parameter[0].$Name;
+					oError.resourcePath = that.oContext.getPath().slice(1);
+					adjustTarget(oError.error);
+					if (oError.error.details) {
+						oError.error.details.forEach(adjustTarget);
+					}
+				}
+
+				// Note: this must be done after the targets have been normalized, because otherwise
+				// a child reports the messages from the error response with wrong targets
 				fireChangeAndRefreshDependentBindings();
 				throw oError;
 			}).catch(function (oError) {

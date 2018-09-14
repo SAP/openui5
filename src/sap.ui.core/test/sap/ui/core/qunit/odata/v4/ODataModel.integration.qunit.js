@@ -3402,6 +3402,19 @@ sap.ui.define([
 		}).then(function () {
 			var oError = new Error("Missing team ID");
 
+			oError.error = {
+				message : "Missing team ID",
+				target : "TeamID",
+				details : [{
+					message : "Illegal Status",
+					"@Common.numericSeverity" : 4,
+					target : "EMPLOYEE/STATUS"
+				}, {
+					message : "Target resolved to ''",
+					"@Common.numericSeverity" : 4,
+					target : "EMPLOYEE"
+				}]
+			};
 			that.oLogMock.expects("error").withExactArgs("Failed to execute /" + sUrl + "(...)",
 				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataContextBinding");
 			that.oLogMock.expects("error").withExactArgs(
@@ -3419,6 +3432,18 @@ sap.ui.define([
 					"persistent" : true,
 					"target" : "",
 					"technical" : true,
+					"type" : "Error"
+				}, {
+					"code" : undefined,
+					"message" : "Illegal Status",
+					"persistent" : true,
+					"target" : "/EMPLOYEES('1')/STATUS",
+					"type" : "Error"
+				}, {
+					"code" : undefined,
+					"message" : "Target resolved to ''",
+					"persistent" : true,
+					"target" : "/EMPLOYEES('1')",
 					"type" : "Error"
 				}])
 				.expectChange("teamId", null); // reset to initial state
