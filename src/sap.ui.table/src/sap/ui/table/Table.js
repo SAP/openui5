@@ -811,7 +811,7 @@ sap.ui.define([
 			this._getScrollExtension().updateVerticalScrollbarVisibility();
 
 			this._fireRowsUpdated(sReason);
-		}, 50, {asyncLeading: true});
+		}, {wait: 50, asyncLeading: true});
 
 		// basic selection model (by default the table uses multi selection)
 		this._initSelectionModel(SelectionModel.MULTI_SELECTION);
