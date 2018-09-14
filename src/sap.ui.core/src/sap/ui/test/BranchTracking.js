@@ -465,6 +465,7 @@
 		mFileName2InitialHits = {},
 		fnModule,
 		iNo = 0,
+		sTestId,
 		mUncaughtById = {};
 
 	/**
@@ -582,7 +583,8 @@
 		fnBeforeEach = mHooks.beforeEach || function () {};
 
 		mHooks.after = function (assert) {
-			if (window.blanket && !this.__ignoreIsolatedCoverage__ && iThreshold >= 100) {
+			if (window.blanket && !sTestId && !this.__ignoreIsolatedCoverage__
+					&& iThreshold >= 100) {
 				checkIsolatedCoverage(this, assert);
 			}
 
@@ -639,8 +641,13 @@
 	if (QUnit.module !== module) {
 		fnModule = QUnit.module.bind(QUnit);
 		QUnit.module = module;
-		sap.ui.require(["sap/ui/base/SyncPromise", "jquery.sap.global"], function (SyncPromise) {
-			bInfo = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.INFO, sClassName);
+		sap.ui.require([
+			"sap/base/Log",
+			"sap/base/util/UriParameters",
+			"sap/ui/base/SyncPromise"
+		], function (Log, UriParameters, SyncPromise) {
+			bInfo = Log.isLoggable(Log.Level.INFO, sClassName);
+			sTestId = new UriParameters(window.location.href).get("testId");
 			SyncPromise.listener = listener;
 		});
 
