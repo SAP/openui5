@@ -1918,7 +1918,7 @@ sap.ui.define([
 		}
 
 		oHeader.setTextButton1(sText);
-		oHeader.setAriaLabelButton1(sAriaLabel);
+		oHeader.setAriaLabelButton1(sAriaLabel.replace(/ /g, ''));
 
 
 		var oFirstDate = new CalendarDate(oDate, sPrimaryCalendarType);
