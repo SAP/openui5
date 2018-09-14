@@ -661,7 +661,7 @@ function(
 	 * Sorts the current column ascending or descending.
 	 *
 	 * @param {boolean} bDescending Sort order of the column (if undefined the default will be ascending)
-	 * @returns {sap.ui.table.Column} Reference to this in order to allow method chaining
+	 * @returns {sap.ui.table.Column} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @deprecated Since version 1.5.1. Please use the function "sap.ui.Table.prototype.sort".
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
