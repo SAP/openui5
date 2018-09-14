@@ -790,7 +790,31 @@ sap.ui.define([
 		oPanel.addContent(oButton2);
 		assert.equal(iListChangeCount, 2, "content list binding change was fired");
 
+	});
 
+	QUnit.test("Check Update with binding test function", function(assert) {
+		var aTrueBindings = [];
+		var oModel = this.oManagedObjectModel;
+		var oBinding1 = oModel.bindProperty("/value");
+		var oBinding2 = oModel.bindProperty("/stringValue");
+		var oBinding3 = oModel.bindProperty("/floatValue");
+		oModel.addBinding(oBinding1);
+		oModel.addBinding(oBinding2);
+		oModel.addBinding(oBinding3);
+
+		assert.equal(oModel.aBindings.length,3, "There are three bindings");
+
+		var fnFilter = function(oBinding) {
+			if (oBinding == oBinding1) {
+				aTrueBindings.push(oBinding);
+				return true;
+			}
+			return false;
+		};
+
+		oModel.checkUpdate(true,false,fnFilter);
+		assert.equal(aTrueBindings.length, 1,"The test is called an delivers true for one binding");
+		assert.deepEqual(aTrueBindings[0],oBinding1,"And this is exactly the first binding");
 	});
 });
 
