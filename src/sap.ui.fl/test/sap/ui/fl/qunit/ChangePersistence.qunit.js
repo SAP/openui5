@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/base/util/merge"
 ],
 function (
 	ChangePersistence,
@@ -26,7 +27,8 @@ function (
 	Component,
 	Log,
 	jQuery,
-	sinon
+	sinon,
+	fnBaseUtilMerge
 ) {
 	"use strict";
 
@@ -1555,7 +1557,8 @@ function (
 				mDependentChangesOnMe: {
 					"fileNameChange1": ["fileNameChange2"],
 					"fileNameChange2": ["fileNameChange3"]
-				}
+				},
+				aChanges: [oChange1, oChange2, oChange3]
 			};
 
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
@@ -1630,7 +1633,8 @@ function (
 				mDependentChangesOnMe: {
 					"fileNameChange0": ["fileNameChange2"],
 					"fileNameChange1": ["fileNameChange2"]
-				}
+				},
+				aChanges: [oChange0, oChange1, oChange2]
 			};
 
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
@@ -1688,7 +1692,8 @@ function (
 				},
 				mDependentChangesOnMe: {
 					"fileNameChange1": ["fileNameChange2"]
-				}
+				},
+				aChanges: [oChange1, oChange2]
 			};
 
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
@@ -1740,7 +1745,8 @@ function (
 				},
 				mDependentChangesOnMe: {
 					"fileNameChange1": ["fileNameChange2"]
-				}
+				},
+				aChanges: [oChange1, oChange2]
 			};
 
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
@@ -1783,7 +1789,8 @@ function (
 				},
 				mDependentChangesOnMe: {
 					"fileNameChange1": ["fileNameChange2"]
-				}
+				},
+				aChanges: [oChange1, oChange2]
 			};
 
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
@@ -2248,11 +2255,31 @@ function (
 
 		}
 	}, function() {
-		QUnit.test("Shall add a new change and return it", function (assert) {
-			var oChangeContent, aChanges;
+		QUnit.test("When call addChange 3 times, 4 new changes are returned and the dependencies map also got updated", function (assert) {
+			var oChangeContent1, oChangeContent2, oChangeContent3, aChanges;
 
-			oChangeContent = {
-				fileName: "Gizorillus",
+			oChangeContent1 = {
+				fileName: "Gizorillus1",
+				layer: "VENDOR",
+				fileType: "change",
+				changeType: "addField",
+				selector: { "id": "control1" },
+				content: { },
+				originalLanguage: "DE"
+			};
+
+			oChangeContent2 = {
+				fileName: "Gizorillus2",
+				layer: "VENDOR",
+				fileType: "change",
+				changeType: "removeField",
+				selector: { "id": "control1" },
+				content: { },
+				originalLanguage: "DE"
+			};
+
+			oChangeContent3 = {
+				fileName: "Gizorillus3",
 				layer: "VENDOR",
 				fileType: "change",
 				changeType: "addField",
@@ -2262,23 +2289,46 @@ function (
 			};
 
 			var fnAddDirtyChangeSpy = sandbox.spy(this.oChangePersistence, "addDirtyChange");
+			var fnAddRunTimeCreatedChangeAndUpdateDependenciesSpy = sandbox.spy(this.oChangePersistence, "_addRunTimeCreatedChangeAndUpdateDependencies");
 
 			//Call CUT
-			var newChange = this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+			var newChange1 = this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
+			var newChange2 = this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
+			var newChange3 = this.oChangePersistence.addChange(oChangeContent3, this._oComponentInstance);
 
-			assert.ok(fnAddDirtyChangeSpy.calledWith(oChangeContent), "then addDirtyChange called with the change content");
+			assert.deepEqual(fnAddDirtyChangeSpy.getCall(0).args[0], oChangeContent1, "then addDirtyChange called with the change content 1");
+			assert.deepEqual(fnAddDirtyChangeSpy.getCall(1).args[0], oChangeContent2, "then addDirtyChange called with the change content 2");
+			assert.deepEqual(fnAddDirtyChangeSpy.getCall(2).args[0], oChangeContent3, "then addDirtyChange called with the change content 3");
+			assert.equal(fnAddRunTimeCreatedChangeAndUpdateDependenciesSpy.callCount, 3, "_addRunTimeCreatedChangeAndUpdateDependencies is called three times");
 			aChanges = this.oChangePersistence._aDirtyChanges;
 			assert.ok(aChanges);
-			assert.strictEqual(aChanges.length, 1);
-			assert.strictEqual(aChanges[0].getId(), oChangeContent.fileName);
-			assert.strictEqual(aChanges[0], newChange);
+			assert.strictEqual(aChanges.length, 3);
+			assert.strictEqual(aChanges[0].getId(), oChangeContent1.fileName);
+			assert.strictEqual(aChanges[0], newChange1);
+			assert.strictEqual(aChanges[1].getId(), oChangeContent2.fileName);
+			assert.strictEqual(aChanges[1], newChange2);
+			assert.strictEqual(aChanges[2].getId(), oChangeContent3.fileName);
+			assert.strictEqual(aChanges[2], newChange3);
+			//Test dependencies updated
+			assert.ok(this.oChangePersistence._mChangesInitial.mDependencies["Gizorillus2"]);
+			assert.strictEqual(this.oChangePersistence._mChangesInitial.mDependencies["Gizorillus2"].changeObject, newChange2);
+			assert.ok(this.oChangePersistence._mChangesInitial.mDependencies["Gizorillus2"].dependencies);
+			assert.strictEqual(this.oChangePersistence._mChangesInitial.mDependencies["Gizorillus2"].dependencies.length, 1);
+			assert.strictEqual(this.oChangePersistence._mChangesInitial.mDependencies["Gizorillus2"].dependencies[0], oChangeContent1.fileName);
+
+			assert.ok(this.oChangePersistence._mChangesInitial.mDependencies["Gizorillus3"]);
+			assert.strictEqual(this.oChangePersistence._mChangesInitial.mDependencies["Gizorillus3"].changeObject, newChange3);
+			assert.ok(this.oChangePersistence._mChangesInitial.mDependencies["Gizorillus3"].dependencies);
+			assert.strictEqual(this.oChangePersistence._mChangesInitial.mDependencies["Gizorillus3"].dependencies.length, 2);
+			assert.strictEqual(this.oChangePersistence._mChangesInitial.mDependencies["Gizorillus3"].dependencies[0], oChangeContent2.fileName);
+			assert.strictEqual(this.oChangePersistence._mChangesInitial.mDependencies["Gizorillus3"].dependencies[1], oChangeContent1.fileName);
 		});
 
 		QUnit.test("Shall add propagation listener on the app component if an embedded component is passed", function (assert) {
 			var oChangeContent = { };
 			var done = assert.async();
 			sandbox.stub(this.oChangePersistence, "addDirtyChange");
-			sandbox.stub(this.oChangePersistence, "_addChangeIntoMap");
+			sandbox.stub(this.oChangePersistence, "_addRunTimeCreatedChangeAndUpdateDependencies");
 			sandbox.stub(Utils, "getAppComponentForControl")
 				.callThrough()
 				.withArgs(this._oComponentInstance)
@@ -2289,32 +2339,6 @@ function (
 			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 			assert.ok(fnAddPropagationListenerStub.calledOnce, "then _addPropagationListener is called once");
 			assert.notOk(fnAddPropagationListenerStub.calledWith(this._oAppComponentInstance), "then _addPropagationListener not called with the embedded component");
-		});
-
-		QUnit.test("Shall add a new change and return it", function (assert) {
-			var oChangeContent, aChanges;
-
-			oChangeContent = {
-				fileName: "Gizorillus",
-				layer: "VENDOR",
-				fileType: "change",
-				changeType: "addField",
-				selector: { "id": "control1" },
-				content: { },
-				originalLanguage: "DE"
-			};
-
-			var fnAddDirtyChangeSpy = sandbox.spy(this.oChangePersistence, "addDirtyChange");
-
-			//Call CUT
-			var newChange = this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
-
-			assert.ok(fnAddDirtyChangeSpy.calledWith(oChangeContent), "then addDirtyChange called with the change content");
-			aChanges = this.oChangePersistence._aDirtyChanges;
-			assert.ok(aChanges);
-			assert.strictEqual(aChanges.length, 1);
-			assert.strictEqual(aChanges[0].getId(), oChangeContent.fileName);
-			assert.strictEqual(aChanges[0], newChange);
 		});
 
 		QUnit.test("Shall not add the same change twice", function (assert) {
@@ -2390,7 +2414,6 @@ function (
 				content: { },
 				originalLanguage: "DE"
 			};
-
 			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
@@ -2590,7 +2613,6 @@ function (
 				content: { },
 				originalLanguage: "DE"
 			};
-
 			this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
 			this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
 
@@ -2627,7 +2649,6 @@ function (
 				content: { },
 				originalLanguage: "DE"
 			};
-
 			this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
 			this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
 
@@ -2988,7 +3009,6 @@ function (
 				content: { },
 				originalLanguage: "DE"
 			};
-
 			this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
 			this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
 			this.oChangePersistence.addChange(oChangeContent3, this._oComponentInstance);
@@ -3172,6 +3192,7 @@ function (
 			};
 			this.mChanges["mDependencies"][this.oChange1Id] = {"dependencies": [this.oChange2Id]};
 			this.mChanges["mDependentChangesOnMe"][this.oChange2Id] = [this.oChange1Id, this.oChange3Id];
+			this.mChanges.aChanges = [this.oChange1, this.oChange2, this.oChange3];
 
 			this.oChangePersistence._mChanges = this.mChanges;
 		},
