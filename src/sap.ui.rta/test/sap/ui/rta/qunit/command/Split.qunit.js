@@ -52,7 +52,7 @@ function(
 				getModel: function () {}
 			};
 
-			this.oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+			this.oGetAppComponentForControlStub = sinon.stub(FlUtils, "_getAppComponentForComponent").returns(oMockedAppComponent);
 		},
 		after: function () {
 			this.oGetAppComponentForControlStub.restore();

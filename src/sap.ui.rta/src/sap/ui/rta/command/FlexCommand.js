@@ -78,12 +78,13 @@ sap.ui.define([
 	 * @returns {sap.ui.core.UIComponent} component
 	 * @private
 	 */
-	FlexCommand.prototype.getAppComponent = function() {
-		if (!this._oControlAppComponent) {
-			var oElement = this.getElement();
-			this._oControlAppComponent = oElement ? FlUtils.getAppComponentForControl(oElement) : this.getSelector().appComponent;
+	FlexCommand.prototype.getAppComponent = function(bEmbedded) {
+		var oElement = this.getElement();
+		if (oElement) {
+			return bEmbedded ? FlUtils.getSelectorComponentForControl(oElement) : FlUtils.getAppComponentForControl(oElement);
+		} else {
+			return this.getSelector().appComponent;
 		}
-		return this._oControlAppComponent;
 	};
 
 	/**
@@ -216,7 +217,7 @@ sap.ui.define([
 						Log.error("No revert change function available to handle revert data for " + oControl);
 						return;
 					}
-					return oFlexController.revertChangesOnControl([oChange], this.getAppComponent());
+					return oFlexController.revertChangesOnControl([oChange], this.getAppComponent(true));
 				} else if (this._aRecordedUndo) {
 					RtaControlTreeModifier.performUndo(this._aRecordedUndo);
 				} else {
@@ -236,16 +237,17 @@ sap.ui.define([
 		var oChange = vChange.change || vChange;
 
 		var oAppComponent = this.getAppComponent();
-		var oSelectorElement = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
+		var oComponent = this.getAppComponent(true);
+		var oSelectorElement = RtaControlTreeModifier.bySelector(oChange.getSelector(), oComponent);
 		var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 		var mControl = oFlexController._getControlIfTemplateAffected(oChange, oSelectorElement, oSelectorElement.getMetadata().getName(), {
 			modifier: JsControlTreeModifier,
-			appComponent: oAppComponent
+			component: oComponent
 		});
 		var bRevertible = oFlexController.isChangeHandlerRevertible(oChange, mControl.control);
 		var mPropertyBag = {
 			modifier: bRevertible ? JsControlTreeModifier : RtaControlTreeModifier,
-			appComponent: oAppComponent,
+			component: oComponent,
 			view: FlUtils.getViewForControl(oSelectorElement)
 		};
 
@@ -255,7 +257,7 @@ sap.ui.define([
 
 		return Promise.resolve()
 		.then(function() {
-			if (oFlexController.checkForOpenDependenciesForControl(oChange.getSelector(), mPropertyBag.modifier, oAppComponent)) {
+			if (oFlexController.checkForOpenDependenciesForControl(oChange.getSelector(), mPropertyBag.modifier, oComponent)) {
 				throw Error("The following Change cannot be applied because of a dependency: " + oChange.getId());
 			}
 		})
@@ -267,7 +269,7 @@ sap.ui.define([
 		.then(function(oResult) {
 			if (oResult.success) {
 				if (bNotMarkAsAppliedChange) {
-					oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oSelectorElement);
+					oFlexController.removeFromAppliedChangesOnControl(oChange, oComponent, oSelectorElement);
 				}
 			}
 			return oResult;

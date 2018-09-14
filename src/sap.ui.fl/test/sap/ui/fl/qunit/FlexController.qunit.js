@@ -513,7 +513,7 @@ function (
 		QUnit.test("addChange shall add a change", function(assert) {
 			var oControl = new Control("Id1");
 
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(Utils, "getSelectorComponentForControl").returns(oComponent);
 
 			var fChangeHandler = sinon.stub();
 			fChangeHandler.applyChange = sinon.stub();
@@ -608,7 +608,7 @@ function (
 					};
 				}
 			};
-			var oOuterAppComponent = {
+			var oAppComponent = {
 				getModel: function(sModel) {
 					assert.strictEqual(sModel, "$FlexVariants", "then variant model called on the app component");
 					return oModel;
@@ -616,7 +616,11 @@ function (
 			};
 			sandbox.stub(this.oFlexController._oChangePersistence, "_addPropagationListener");
 			sandbox.stub(Utils, "getAppComponentForControl")
-				.withArgs(oComponent, true).returns(oOuterAppComponent)
+				.callThrough()
+				.withArgs(oComponent).returns(oAppComponent);
+
+			sandbox.stub(Utils, "getSelectorComponentForControl")
+				.callThrough()
 				.withArgs(oComponent).returns(oComponent);
 
 			var oChange = new Change(labelChangeContent);
@@ -669,7 +673,7 @@ function (
 		QUnit.test("addChange shall add a change and contain the applicationVersion in the connector", function(assert) {
 			var oControl = new Control();
 
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(Utils, "getSelectorComponentForControl").returns(oComponent);
 
 			var fChangeHandler = sinon.stub();
 			fChangeHandler.applyChange = sinon.stub();
@@ -700,7 +704,7 @@ function (
 		QUnit.test("addChange shall add a change using the local id with respect to the root component as selector", function(assert) {
 			var oControl = new Control("testComponent---Id1");
 
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(Utils, "getSelectorComponentForControl").returns(oComponent);
 
 			var fChangeHandler = sinon.stub();
 			fChangeHandler.applyChange = sinon.stub();
@@ -747,7 +751,7 @@ function (
 					}
 				}
 			});
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(Utils, "getSelectorComponentForControl").returns(oComponent);
 			var oSetRequestSpy = sandbox.spy(Change.prototype,"setRequest");
 			//Call CUT
 			var oChange = this.oFlexController.addChange(oChangeParameters, oControl);
@@ -1007,7 +1011,7 @@ function (
 			var sProvidedContext = "ctx001";
 			var aProvidedContext = [sProvidedContext];
 			sandbox.stub(ContextManager, "_getContextIdsFromUrl").returns(aProvidedContext);
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(Utils, "getSelectorComponentForControl").returns(oComponent);
 
 			var oDummyChangeHandler = {
 					completeChangeContent: function () {}
@@ -1047,7 +1051,7 @@ function (
 
 		QUnit.test("creates a change for controls with a stable id which has not the app components id as a prefix", function (assert) {
 
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(Utils, "getSelectorComponentForControl").returns(oComponent);
 			var oDummyChangeHandler = {
 				completeChangeContent: function () {}
 			};
@@ -1115,7 +1119,7 @@ function (
 		});
 
 		QUnit.test("creates a change containing valid applicationVersions in developerMode", function (assert) {
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(Utils, "getSelectorComponentForControl").returns(oComponent);
 			var oDummyChangeHandler = {
 				completeChangeContent: function () {}
 			};
@@ -1130,7 +1134,7 @@ function (
 		});
 
 		QUnit.test("creates a change containing valid applicationVersions in developerMode and ADAPTATION_PROJECT scenario", function (assert) {
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(Utils, "getSelectorComponentForControl").returns(oComponent);
 			var oDummyChangeHandler = {
 				completeChangeContent: function () {}
 			};
@@ -1145,7 +1149,7 @@ function (
 		});
 
 		QUnit.test("creates a change containing valid applicationVersions in developerMode and AppVariant scenario", function (assert) {
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(Utils, "getSelectorComponentForControl").returns(oComponent);
 			var oDummyChangeHandler = {
 				completeChangeContent: function () {}
 			};

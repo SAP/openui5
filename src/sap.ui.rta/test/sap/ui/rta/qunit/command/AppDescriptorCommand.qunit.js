@@ -42,7 +42,7 @@ function (
 					};
 				}
 			};
-			this.oFlUtilsStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(this.oMockedAppComponent);
+			this.oFlUtilsStub = sinon.stub(FlUtils, "_getAppComponentForComponent").returns(this.oMockedAppComponent);
 		},
 		after: function () {
 			this.oFlUtilsStub.restore();
