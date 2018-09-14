@@ -2820,22 +2820,16 @@ sap.ui.define([
 	/**
 	 * Pushes the sorted column to array.
 	 *
-	 * @param {sap.ui.table.Column} oColumn
-	 *         column to be sorted
+	 * @param {sap.ui.table.Column} oColumn Column to be sorted
 	 * @param {Boolean} bAdd Set to true to add the new sort criterion to the existing sort criteria
-	 * @type sap.ui.table.Table
 	 * @private
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-
 	Table.prototype.pushSortedColumn = function(oColumn, bAdd) {
-
 		if (!bAdd) {
 			this._aSortedColumns = [];
 		}
-
 		this._aSortedColumns.push(oColumn);
-
 	};
 
 	/**
@@ -2981,7 +2975,7 @@ sap.ui.define([
 	 * the currently visible scroll area.
 	 *
 	 * @param {int} iIndex Index of the row to return the context from.
-	 * @type object
+	 * @returns {sap.ui.model.Context | null} The context at this index or null
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
