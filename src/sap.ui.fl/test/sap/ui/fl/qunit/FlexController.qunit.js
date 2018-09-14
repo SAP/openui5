@@ -964,7 +964,8 @@ function (
 			assert.expect(2);
 			var oControl = new Control();
 			var oChangeSpecificData = {
-				changeType: "hideControl"
+				changeType: "hideControl",
+				selector: { "id": "control1" }
 			};
 
 			sandbox.stub(this.oFlexController, "checkTargetAndApplyChange").returns(Promise.resolve({success: false, error: new Error("myError")}));
@@ -984,7 +985,8 @@ function (
 			assert.expect(2);
 			var oControl = new Control();
 			var oChangeSpecificData = {
-				changeType: "hideControl"
+				changeType: "hideControl",
+				selector: { "id": "control1" }
 			};
 
 			sandbox.stub(this.oFlexController, "checkTargetAndApplyChange").returns(Promise.resolve({success: false}));
@@ -1646,7 +1648,8 @@ function (
 			return {
 				"mChanges": mChanges,
 				"mDependencies": mDependencies,
-				"mDependentChangesOnMe": mDependentChangesOnMe
+				"mDependentChangesOnMe": mDependentChangesOnMe,
+				"aChanges": [oChange1, oChange2, oChange3, oChange4, oChange5]
 			};
 		}
 
@@ -1708,7 +1711,7 @@ function (
 			oControlField1.destroy();
 			oControlField2.destroy();
 			this.oFlexController._oChangePersistence._mChangesInitial = {mChanges: {}, mDependencies: {}, mDependentChangesOnMe: {}};
-			this.oFlexController._oChangePersistence._mChanges = {mChanges: {}, mDependencies: {}, mDependentChangesOnMe: {}};
+			this.oFlexController._oChangePersistence._mChanges = {mChanges: {}, mDependencies: {}, mDependentChangesOnMe: {}, aChanges: []};
 		});
 
 		QUnit.test("_applyChangesOnControl dependency test 3 - mixed changehandler (sync, async, sync, async, sync)", function (assert) {
