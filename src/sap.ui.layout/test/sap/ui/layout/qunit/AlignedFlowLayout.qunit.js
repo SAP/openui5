@@ -134,7 +134,6 @@ sap.ui.require([
 			assert.strictEqual(oStyles.flexWrap, "wrap", 'it should set the "flex-wrap" CSS property to "wrap"');
 		}
 
-		assert.strictEqual(oStyles.listStyleType, "none", 'it should set the "list-style-type" CSS property to "none"');
 		assert.strictEqual(parseInt(oStyles.margin || 0, 10), 0, "it should not have margin by default");
 		assert.strictEqual(parseInt(oStyles.padding || 0, 10), 0, "it should not have padding by default");
 		assert.strictEqual(oDomRef.childElementCount, 0, "it should not have child elements");
