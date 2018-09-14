@@ -4,26 +4,26 @@ QUnit.dump.maxDepth = 10;
 
 sap.ui.define([
 	"sap/ui/fl/ChangePersistence",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/registry/Settings",
 	"sap/m/MessageBox",
+	"sap/ui/core/Component",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	ChangePersistence,
-	FlexControllerFactory,
 	Utils,
 	Change,
 	LrepConnector,
 	Cache,
 	Settings,
 	MessageBox,
+	Component,
 	Log,
 	jQuery,
 	sinon
@@ -115,7 +115,7 @@ function (
 
 		QUnit.test("when getChangesForComponent is called with an embedded component as a parameter", function (assert) {
 			assert.expect(2);
-			var oOuterAppComponent = {
+			var oAppComponent = {
 				getModel: function(sModelName) {
 					if (sModelName === "i18nFlexVendor") {
 						assert.ok(true, "then getModel() was called on the app component");
@@ -141,12 +141,12 @@ function (
 			};
 
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oWrappedFileContent));
-			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oComponent, true).returns(oOuterAppComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oComponent).returns(oAppComponent);
 			var fnSetChangeFileContentStub = sandbox.stub(this.oChangePersistence._oVariantController, "_setChangeFileContent");
 
 			return this.oChangePersistence.getChangesForComponent({ component: oComponent })
 				.then(function (aChanges) {
-					assert.ok(fnSetChangeFileContentStub.calledWith(oWrappedFileContent, oOuterAppComponent.getComponentData().technicalParameters), "then the technical parameters from the app component were passed to the variant controller");
+					assert.ok(fnSetChangeFileContentStub.calledWith(oWrappedFileContent, oAppComponent.getComponentData().technicalParameters), "then the technical parameters from the app component were passed to the variant controller");
 				});
 		});
 
@@ -2229,21 +2229,23 @@ function (
 	});
 
 	QUnit.module("sap.ui.fl.ChangePersistence addChange", {
-		beforeEach: function () {
+		beforeEach: function (assert) {
 			this._mComponentProperties = {
 				name : "saveChangeScenario",
 				appVersion : "1.2.3"
 			};
-			this._oComponentInstance = sap.ui.component({
+			sandbox.stub(Utils, "isApplication").returns(false);
+			return Component.create({
 				name: "sap/ui/fl/qunit/integration/testComponentComplex"
-			});
-			this._oAppComponentInstance = sap.ui.component({
-				name: "sap/ui/fl/qunit/integration/testComponentReuse"
-			});
-			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
+			}).then(function(oComponent) {
+				this._oAppComponentInstance = oComponent;
+				this._oComponentInstance = Component.get(oComponent.createId("sap.ui.fl.qunit.integration.testComponentReuse"));
+				this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
+			}.bind(this));
 		},
 		afterEach: function () {
 			sandbox.restore();
+
 		}
 	}, function() {
 		QUnit.test("Shall add a new change and return it", function (assert) {
@@ -2272,15 +2274,21 @@ function (
 			assert.strictEqual(aChanges[0], newChange);
 		});
 
-		QUnit.test("Shall add propagation listener on the outer app component if passed", function (assert) {
+		QUnit.test("Shall add propagation listener on the app component if an embedded component is passed", function (assert) {
 			var oChangeContent = { };
-
+			var done = assert.async();
 			sandbox.stub(this.oChangePersistence, "addDirtyChange");
 			sandbox.stub(this.oChangePersistence, "_addChangeIntoMap");
+			sandbox.stub(Utils, "getAppComponentForControl")
+				.callThrough()
+				.withArgs(this._oComponentInstance)
+				.callsFake(done);
+
 			var fnAddPropagationListenerStub = sandbox.spy(this.oChangePersistence, "_addPropagationListener");
 
-			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance, this._oAppComponentInstance);
-			assert.ok(fnAddPropagationListenerStub.calledWith(this._oAppComponentInstance), "then _addPropagationListener called with outer app component");
+			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+			assert.ok(fnAddPropagationListenerStub.calledOnce, "then _addPropagationListener is called once");
+			assert.notOk(fnAddPropagationListenerStub.calledWith(this._oAppComponentInstance), "then _addPropagationListener not called with the embedded component");
 		});
 
 		QUnit.test("Shall add a new change and return it", function (assert) {
@@ -2344,7 +2352,7 @@ function (
 			});
 
 			// check in case the life cycle of flexibility processing changes (possibly incompatible)
-			assert.equal(aRegisteredFlexPropagationListeners.length, 0, "bo propagation listener is present at startup");
+			assert.equal(aRegisteredFlexPropagationListeners.length, 0, "no initial propagation listener is present at startup");
 
 			var oChangeContent = {
 				fileName: "Gizorillus",
@@ -2371,7 +2379,7 @@ function (
 			});
 
 			// check in case the life cycle of flexibility processing changes (possibly incompatible)
-			assert.equal(aRegisteredFlexPropagationListeners.length, 0, "to propagation listener is present at startup");
+			assert.equal(aRegisteredFlexPropagationListeners.length, 0, "no propagation listener is present at startup");
 
 			var oChangeContent = {
 				fileName: "Gizorillus",
@@ -2427,7 +2435,8 @@ function (
 			var fnGetChangesMap = function () {
 				return this.oChangePersistence._mChanges;
 			}.bind(this);
-			var oFlexController = FlexControllerFactory.create(this._mComponentProperties.name, this._mComponentProperties.appVersion);
+			var oFlexControllerFactory = sap.ui.require("sap/ui/fl/FlexControllerFactory");
+			var oFlexController = oFlexControllerFactory.create(this._mComponentProperties.name, this._mComponentProperties.appVersion);
 			var fnPropagationListener = oFlexController.getBoundApplyChangesOnControl(fnGetChangesMap, this._oComponentInstance);
 
 			this._oComponentInstance.addPropagationListener(fnPropagationListener);

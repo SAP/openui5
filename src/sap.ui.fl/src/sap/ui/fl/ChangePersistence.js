@@ -191,7 +191,7 @@ sap.ui.define([
 	 * @param {boolean} [mPropertyBag.includeVariants] Indicates that smart variants shall be included
 	 * @param {string} [mPropertyBag.cacheKey] Key to validate the cache entry stored on client side
 	 * @param {string} [mPropertyBag.url] Address to which the request for change should be sent in case the data is not cached
-	 * @param {sap.ui.core.Component} [mPropertyBag.oComponent] App component instance of component
+	 * @param {sap.ui.core.Component} [mPropertyBag.component] - Component instance
 	 * @param {boolean} bInvalidateCache - should the cache be invalidated
 	 * @see sap.ui.fl.Change
 	 * @returns {Promise} Promise resolving with an array of changes
@@ -199,7 +199,7 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.getChangesForComponent = function(mPropertyBag) {
 		return Cache.getChangesFillingCache(this._oConnector, this._mComponent, mPropertyBag).then(function(oWrappedChangeFileContent) {
-			var oComponent = mPropertyBag && mPropertyBag.component && Utils.getAppComponentForControl(mPropertyBag.component, true);
+			var oAppComponent = mPropertyBag && mPropertyBag.component && Utils.getAppComponentForControl(mPropertyBag.component);
 
 			if (oWrappedChangeFileContent.changes && oWrappedChangeFileContent.changes.settings){
 				Settings._storeInstance(oWrappedChangeFileContent.changes.settings);
@@ -222,14 +222,14 @@ sap.ui.define([
 			//Binds a json model of message bundle to the component the first time a change within the vendor layer was detected
 			//It enables the translation of changes
 
-			if (!this._oMessagebundle && oWrappedChangeFileContent.messagebundle && oComponent) {
-				if (!oComponent.getModel("i18nFlexVendor")) {
+			if (!this._oMessagebundle && oWrappedChangeFileContent.messagebundle && oAppComponent) {
+				if (!oAppComponent.getModel("i18nFlexVendor")) {
 					if (aChanges.some(function(oChange) {
 							return oChange.layer === "VENDOR";
 						})) {
 							this._oMessagebundle = oWrappedChangeFileContent.messagebundle;
 							var oModel = new JSONModel(this._oMessagebundle);
-							oComponent.setModel(oModel, "i18nFlexVendor");
+							oAppComponent.setModel(oModel, "i18nFlexVendor");
 					}
 				}
 			}
@@ -257,8 +257,8 @@ sap.ui.define([
 				aChanges = aChanges.concat(this._getAllCtrlVariantChanges(oWrappedChangeFileContent.changes.variantSection));
 			}
 
-			var oComponentData = oComponent
-				? oComponent.getComponentData()
+			var oComponentData = oAppComponent
+				? oAppComponent.getComponentData()
 				: (mPropertyBag && mPropertyBag.componentData || {});
 
 			if ( oWrappedChangeFileContent.changes.variantSection
@@ -666,10 +666,10 @@ sap.ui.define([
 	/**
 	 * Calls the back end asynchronously and fetches all changes for the component
 	 * New changes (dirty state) that are not yet saved to the back end won't be returned.
-	 * @param {object} oComponent Component instance used to prepare the IDs (e.g. local)
-	 * @param {map} mPropertyBag Contains additional data needed for reading changes
-	 * @param {object} mPropertyBag.appDescriptor Manifest belonging to actual component
-	 * @param {string} mPropertyBag.siteId ID of the site belonging to actual component
+	 * @param {object} oComponent - Component instance used to prepare the IDs (e.g. local)
+	 * @param {map} mPropertyBag - Contains additional data needed for reading changes
+	 * @param {object} mPropertyBag.appDescriptor - Manifest belonging to actual component
+	 * @param {string} mPropertyBag.siteId - ID of the site belonging to actual component
 	 * @see sap.ui.fl.Change
 	 * @returns {Promise} Promise resolving with a getter for the changes map
 	 * @public
@@ -700,13 +700,13 @@ sap.ui.define([
 	 *
 	 * @param {object} oSelector selector of the control
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier - polymorph reuse operations handling the changes on the given view type
-	 * @param {sap.ui.core.Component} oAppComponent - component instance that is currently loading
+	 * @param {sap.ui.core.Component} oComponent - component instance that is currently loading
 	 * @returns {boolean} Returns true if there are open dependencies
 	 */
-	ChangePersistence.prototype.checkForOpenDependenciesForControl = function(oSelector, oModifier, oAppComponent) {
+	ChangePersistence.prototype.checkForOpenDependenciesForControl = function(oSelector, oModifier, oComponent) {
 		return Object.keys(this._mChanges.mDependencies).some(function(sKey) {
 			return this._mChanges.mDependencies[sKey].changeObject.getDependentSelectorList().some(function(sDependencyId) {
-				return sDependencyId === oModifier.getControlIdBySelector(oSelector, oAppComponent);
+				return sDependencyId === oModifier.getControlIdBySelector(oSelector, oComponent);
 			});
 		}, this);
 	};
@@ -793,8 +793,13 @@ sap.ui.define([
 	 *
 	 * @param {string} sViewId the id of the view, changes should be retrieved for
 	 * @param {map} mPropertyBag contains additional data that are needed for reading of changes
-	 * @param {object} mPropertyBag.appDescriptor Manifest that belongs to actual component
-	 * @param {string} mPropertyBag.siteId id of the site that belongs to actual component
+	 * @param {object} mPropertyBag.appDescriptor - Manifest that belongs to actual component
+	 * @param {string} [mPropertyBag.siteId] - id of the site that belongs to actual component
+	 * @param {string} mPropertyBag.viewId - id of the view
+	 * @param {string} mPropertyBag.name - name of the view
+	 * @param {sap.ui.core.Component} mPropertyBag.component - responsible component for the view
+	 * @param {string} mPropertyBag.componentId - responsible component's id for the view
+	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - responsible modifier
 	 * @returns {Promise} resolving with an array of changes
 	 * @public
 	 */
@@ -817,9 +822,9 @@ sap.ui.define([
 			var sViewId;
 
 			if (oChange.getSelector().idIsLocal) {
-				var oAppComponent = mPropertyBag.appComponent;
-				if (oAppComponent) {
-					sViewId = oAppComponent.getLocalId(mPropertyBag.viewId);
+				var oComponent = mPropertyBag.component;
+				if (oComponent) {
+					sViewId = oComponent.getLocalId(mPropertyBag.viewId);
 				}
 			} else {
 				sViewId = mPropertyBag.viewId;
@@ -833,15 +838,14 @@ sap.ui.define([
 	 * Adds a new change (could be variant as well) and returns the id of the new change.
 	 *
 	 * @param {object} vChange - The complete and finalized JSON object representation the file content of the change or a Change instance
-	 * @param {sap.ui.core.Component} - oAppComponent Component instance
-	 * @param {sap.ui.core.Component} [oOuterAppComponent] - Root App Component instance
+	 * @param {sap.ui.core.Component} oComponent - Component instance
 	 * @returns {sap.ui.fl.Change|sap.ui.fl.variant} the newly created change or variant
 	 * @public
 	 */
-	ChangePersistence.prototype.addChange = function(vChange, oAppComponent, oOuterAppComponent) {
+	ChangePersistence.prototype.addChange = function(vChange, oComponent) {
 		var oChange = this.addDirtyChange(vChange);
-		this._addChangeIntoMap(oAppComponent, oChange);
-		this._addPropagationListener(oOuterAppComponent || oAppComponent);
+		this._addChangeIntoMap(oComponent, oChange);
+		this._addPropagationListener(oComponent);
 		return oChange;
 	};
 
@@ -871,22 +875,25 @@ sap.ui.define([
 	 * If the first changes were created, the <code>propagationListener</code> of <code>sap.ui.fl</code> might not yet
 	 * be attached to the application component and must be added then.
 	 *
-	 * @param {sap.ui.core.UiComponent} oComponent Application component that might not have a propagation listener yet
+	 * @param {sap.ui.core.UIComponent} oComponent Component having an app component that might not have a propagation listener yet
 	 * @private
 	 */
 	ChangePersistence.prototype._addPropagationListener = function (oComponent) {
-		if (oComponent) {
+		var oAppComponent = Utils.getAppComponentForControl(oComponent);
+		if (oAppComponent instanceof Component) {
 			var fnCheckIsNotFlPropagationListener = function (fnPropagationListener) {
 				return !fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl;
 			};
-			var bNoFlPropagationListenerAttached = oComponent.getPropagationListeners().every(fnCheckIsNotFlPropagationListener);
+
+			var bNoFlPropagationListenerAttached = oAppComponent.getPropagationListeners().every(fnCheckIsNotFlPropagationListener);
 
 			if (bNoFlPropagationListenerAttached) {
-				var oManifest = oComponent.getManifest();
+				var oManifest = oAppComponent.getManifestObject();
 				var sVersion = Utils.getAppVersionFromManifest(oManifest);
-				var oFlexController = sap.ui.fl.FlexControllerFactory.create(this.getComponentName(), sVersion);
-				var fnPropagationListener = oFlexController.getBoundApplyChangesOnControl(this.getChangesMapForComponent.bind(this), oComponent);
-				oComponent.addPropagationListener(fnPropagationListener);
+				var oFlexControllerFactory = sap.ui.require("sap/ui/fl/FlexControllerFactory");
+				var oFlexController = oFlexControllerFactory.create(this.getComponentName(), sVersion);
+				var fnPropagationListener = oFlexController.getBoundApplyChangesOnControl(this.getChangesMapForComponent.bind(this), oAppComponent);
+				oAppComponent.addPropagationListener(fnPropagationListener);
 			}
 		}
 	};
