@@ -191,7 +191,7 @@ sap.ui.define([
 	 *
 	 * Default value is <code>0</code>
 	 *
-	 * @param {int} iFixedRowCount  new value for property <code>fixedRowCount</code>
+	 * @param {int} iRowCount  new value for property <code>fixedRowCount</code>
 	 * @returns {sap.ui.table.TreeTable} <code>this</code> to allow method chaining
 	 * @public
 	 */
