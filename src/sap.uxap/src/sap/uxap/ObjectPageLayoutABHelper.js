@@ -185,7 +185,6 @@ sap.ui.define([
 		}
 	};
 
-
 	/**
 	 * Moves focus on the corresponding subsection when MenuItem is selected
 	 * @param {sap.ui.core.Control} oSourceControl: selected Item
@@ -194,10 +193,23 @@ sap.ui.define([
 	ABHelper.prototype._moveFocusOnSection = function (oSourceControl) {
 		var oSourceData = oSourceControl.data(),
 			oSection = sap.ui.getCore().byId(oSourceData.sectionId),
-			oObjectPage = this.getObjectPageLayout();
+			oObjectPage = this.getObjectPageLayout(),
+			bIsSubSection = oSection.isA("sap.uxap.ObjectPageSubSection"),
+			bAllowFocusMove = (oSection && !oObjectPage.getUseIconTabBar()) || (oObjectPage.getUseIconTabBar() && bIsSubSection),
+			iFocusMoveDelay = this._iFocusMoveDelay;
 
-		if (oSection && !oObjectPage.getUseIconTabBar()) {
-			setTimeout(oSection.$()["focus"].bind(oSection.$()), this._iFocusMoveDelay);
+		if (bAllowFocusMove) {
+			setTimeout(oSection.$()["focus"].bind(oSection.$()), iFocusMoveDelay);
+		}
+
+		// Handle the case of SubSection first rendering in IconTabBar mode
+		if (oObjectPage.getUseIconTabBar() && bIsSubSection) {
+			var oDelegate = {"onAfterRendering": function () {
+				this.removeEventDelegate(oDelegate);
+				setTimeout(this.$()["focus"].bind(this.$()), iFocusMoveDelay);
+			}.bind(oSection)};
+
+			oSection.addEventDelegate(oDelegate);
 		}
 	};
 
