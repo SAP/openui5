@@ -368,8 +368,14 @@ sap.ui.define([
 	 * initial data, for example if the server requires a unit for an amount. This also applies if
 	 * this property has a default value.
 	 *
+	 * Note: After creation, the created entity is refreshed to ensure that the data specified in
+	 * this list binding's $expand is available; to skip this refresh, set <code>bSkipRefresh</code>
+	 * to <code>true</code>.
+	 *
 	 * @param {object} [oInitialData={}]
 	 *   The initial data for the created entity
+	 * @param {boolean} [bSkipRefresh=false]
+	 *   Whether an automatic refresh of the created entity will be skipped
 	 * @returns {sap.ui.model.odata.v4.Context}
 	 *   The context object for the created entity; its method
 	 *   {@link sap.ui.model.odata.v4.Context#created} returns a promise that is resolved when the
@@ -381,7 +387,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.43.0
 	 */
-	ODataListBinding.prototype.create = function (oInitialData) {
+	ODataListBinding.prototype.create = function (oInitialData, bSkipRefresh) {
 		var oContext,
 			vCreatePath, // {string|SyncPromise}
 			oCreatePromise,
@@ -416,7 +422,7 @@ sap.ui.define([
 			var sGroupId;
 
 			that.iMaxLength += 1;
-			if (that.isRefreshable()) {
+			if (!bSkipRefresh && that.isRefreshable()) {
 				sGroupId = that.getGroupId();
 				if (!that.oModel.isDirectGroup(sGroupId) && !that.oModel.isAutoGroup(sGroupId)) {
 					sGroupId = "$auto";

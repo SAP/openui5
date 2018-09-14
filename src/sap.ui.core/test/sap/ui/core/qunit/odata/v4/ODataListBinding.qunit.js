@@ -3091,6 +3091,40 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	[false, true].forEach(function (bSkipRefresh) {
+		QUnit.test("create: bSkipRefresh " + bSkipRefresh, function (assert) {
+			var oBinding = this.bindList("/EMPLOYEES"),
+				oBindingMock = this.mock(oBinding),
+				oCacheMock = this.mock(oBinding.oCachePromise.getResult()),
+				oContext,
+				oCreatePromise = SyncPromise.resolve(Promise.resolve()),
+				oGroupLock0 = {},
+				oGroupLock1 = {},
+				oInitialData = {};
+
+			oBindingMock.expects("lockGroup").withExactArgs("$auto", true)
+				.returns(oGroupLock0);
+			oCacheMock.expects("create")
+				.withExactArgs(sinon.match.same(oGroupLock0), "EMPLOYEES", "",
+					sinon.match.same(oInitialData), sinon.match.func, sinon.match.func)
+				.returns(oCreatePromise);
+			oCreatePromise.then(function () {
+				oBindingMock.expects("lockGroup").withExactArgs("$auto")
+					.exactly(bSkipRefresh ? 0 : 1)
+					.returns(oGroupLock1);
+				oBindingMock.expects("refreshSingle")
+					.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock1))
+					.exactly(bSkipRefresh ? 0 : 1);
+			});
+
+			// code under test
+			oContext = oBinding.create(oInitialData, bSkipRefresh);
+
+			return oContext.created();
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("create: relative binding", function (assert) {
 		var aCacheResult = [{}, {}, {"@$ui5._" : {"predicate" : "('foo')"}}, {}],
 			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS/1", 1),
