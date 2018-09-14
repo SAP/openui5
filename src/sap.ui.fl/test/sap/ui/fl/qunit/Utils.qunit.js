@@ -1292,11 +1292,25 @@ function(
 			assert.ok(!Utils.isDebugEnabled(), "no debugging is detected");
 		});
 
+		QUnit.test("can determine debugging is set to a boolean and is false", function (assert) {
+			var oConfig = sap.ui.getCore().getConfiguration();
+			sandbox.stub(oConfig, "getDebug").returns(false);
+			window["sap-ui-debug"] = false;
+			assert.ok(!Utils.isDebugEnabled(), "no debugging is detected");
+		});
+
 		QUnit.test("can determine no library debugging is set", function (assert) {
 			var oConfig = sap.ui.getCore().getConfiguration();
 			sandbox.stub(oConfig, "getDebug").returns(false);
 			window["sap-ui-debug"] = "";
 			assert.ok(!Utils.isDebugEnabled(), "no debugging is detected");
+		});
+
+		QUnit.test("can determine debugging is set to a boolean and is true", function (assert) {
+			var oConfig = sap.ui.getCore().getConfiguration();
+			sandbox.stub(oConfig, "getDebug").returns(false);
+			window["sap-ui-debug"] = true;
+			assert.ok(Utils.isDebugEnabled(), "debugging is detected");
 		});
 	});
 

@@ -905,7 +905,7 @@ sap.ui.define([
 		 */
 		isDebugEnabled: function () {
 			// true if SAPUI5 is in complete debug mode
-			if (sap.ui.getCore().getConfiguration().getDebug()) {
+			if (sap.ui.getCore().getConfiguration().getDebug() || window["sap-ui-debug"] == true) {
 				return true;
 			}
 
