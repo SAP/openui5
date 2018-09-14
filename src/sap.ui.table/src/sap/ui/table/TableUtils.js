@@ -1238,6 +1238,8 @@ sap.ui.define([
 		 * @returns {Function} Returns the throttled method.
 		 */
 		throttle: function(fn, mOptions) {
+			// Functionality taken from lodash open source library and adapted as needed
+
 			mOptions = Object.assign({
 				wait: 0,
 				leading: true
@@ -1269,6 +1271,8 @@ sap.ui.define([
 		 * @returns {Function} Returns the debounced method.
 		 */
 		debounce: function(fn, mOptions) {
+			// Functionality taken from lodash open source library and adapted as needed
+
 			mOptions = Object.assign({
 				wait: 0,
 				maxWait: null,
