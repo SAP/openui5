@@ -1890,7 +1890,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		oHeader.setTextButton1(sText);
 		if (bShort) {
-			oHeader.setAriaLabelButton1(sAriaLabel);
+			oHeader.setAriaLabelButton1(sAriaLabel.replace(/ /g, ''));
 		}
 
 		var oFirstDate = new CalendarDate(oDate, sPrimaryCalendarType);
