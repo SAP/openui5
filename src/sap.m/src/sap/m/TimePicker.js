@@ -331,6 +331,16 @@ function(
 			}, this);
 		};
 
+		TimePicker.prototype.onBeforeRendering = function() {
+			DateTimeField.prototype.onBeforeRendering.apply(this, arguments);
+
+			var oValueHelpIcon = this._getValueHelpIcon();
+
+			if (oValueHelpIcon) {
+				oValueHelpIcon.setProperty("visible", this.getEnabled(), true);
+			}
+		};
+
 		/**
 		 * Called from parent if the control is destroyed.
 		 *
@@ -439,6 +449,12 @@ function(
 
 			//WAI-ARIA region
 			this._handleAriaOnExpandCollapse();
+		};
+
+		TimePicker.prototype._getValueHelpIcon = function () {
+			var oValueHelpIcon = this.getAggregation("_endIcon");
+
+			return oValueHelpIcon && oValueHelpIcon[0];
 		};
 
 		/**
