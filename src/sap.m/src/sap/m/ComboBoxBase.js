@@ -1353,9 +1353,7 @@ sap.ui.define([
 		 * @public
 		 */
 		ComboBoxBase.prototype.removeItem = function(vItem) {
-			var oList = this.getList();
-
-			vItem = oList ? oList.removeItem(vItem) : null;
+			vItem = this.removeAggregation("items", vItem);
 
 			if (vItem) {
 				vItem.detachEvent("_change", this.onItemChange, this);
@@ -1372,8 +1370,7 @@ sap.ui.define([
 		 * @public
 		 */
 		ComboBoxBase.prototype.removeAllItems = function() {
-			var oList = this.getList(),
-				aItems = oList ? oList.removeAllItems() : [];
+			var aItems = this.removeAllAggregation("items");
 
 			// clear the selection
 			this.clearSelection();
