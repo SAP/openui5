@@ -40,6 +40,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("generateAttributes collects all data required", function (assert) {
+			var sFilename = "file123";
 			var sLayer = "CUSTOMER";
 			var sCreatedAt = "01-02-03:04:05.67890Z";
 			var sUser = "Peter Porker";
@@ -47,17 +48,28 @@ sap.ui.define([
 			var sSelector = "controlId";
 			var sSomeDependentControlId = "s0m3";
 			var sSomeOtherDependentControlId = "s0m3 07h3r";
+			var sODataPropertyName = "SomeProp";
+			var sEntityType = "MyEntity";
+			var sODataURI = "/some/path";
 
 
 			var oDefinition = {
+				fileName : sFilename,
 				layer: sLayer,
 				creation: sCreatedAt,
 				selector: {
 					id: sSelector,
 					isLocalId: true
 				},
+				content: {a:1},
+				variantReference: "",
 				support: {
 					user: sUser
+				},
+				oDataInformation: {
+					propertyName: sODataPropertyName,
+					entityType: sEntityType,
+					oDataServiceUri: sODataURI
 				},
 				validAppVersions: {
 					creation: sVersion,
@@ -77,21 +89,33 @@ sap.ui.define([
 
 			var aAttributes = this.oController._generateAttributes(oDefinition);
 
-			assert.equal(aAttributes.length, 7, "the right number of attributes was generated");
-			assert.equal(aAttributes[0].label, "Layer", "the 'Layer' attribute label was set correct");
-			assert.equal(aAttributes[0].value, sLayer, "the 'Layer' attribute value was set correct");
-			assert.equal(aAttributes[1].label, "created at", "the 'created at' attribute label was set correct");
-			assert.equal(aAttributes[1].value, sCreatedAt, "the 'created at' attribute value was set correct");
-			assert.equal(aAttributes[2].label, "created with app version", "the 'created with app version' attribute label was set correct");
-			assert.equal(aAttributes[2].value, sVersion, "the 'created with app version' attribute value was set correct");
-			assert.equal(aAttributes[3].label, "created by", "the 'created by' attribute label was set correct");
-			assert.equal(aAttributes[3].value, sUser, "the 'created by' attribute value was set correct");
-			assert.equal(aAttributes[4].label, "selector", "the 'selector' attribute label was set correct");
-			assert.equal(aAttributes[4].value, sSelector, "the 'selector' attribute value was set correct");
-			assert.equal(aAttributes[5].label, "dependency (some)", "the 'dependency (some)' attribute label was set correct");
-			assert.equal(aAttributes[5].value, sSomeDependentControlId, "the 'dependency (some)' attribute value was set correct");
-			assert.equal(aAttributes[6].label, "dependency (some other)", "the 'dependency (some other)' attribute label was set correct");
-			assert.equal(aAttributes[6].value, sSomeOtherDependentControlId, "the 'dependency (some other)' attribute value was set correct");
+			assert.equal(aAttributes.length, 13, "the right number of attributes was generated");
+			assert.equal(aAttributes[0].label, "Filename", "the 'Filename' attribute label was set correct");
+			assert.equal(aAttributes[0].value, sFilename, "the 'Filename' attribute value was set correct");
+			assert.equal(aAttributes[1].label, "Layer", "the 'Layer' attribute label was set correct");
+			assert.equal(aAttributes[1].value, sLayer, "the 'Layer' attribute value was set correct");
+			assert.equal(aAttributes[2].label, "created at", "the 'created at' attribute label was set correct");
+			assert.equal(aAttributes[2].value, sCreatedAt, "the 'created at' attribute value was set correct");
+			assert.equal(aAttributes[3].label, "created with app version", "the 'created with app version' attribute label was set correct");
+			assert.equal(aAttributes[3].value, sVersion, "the 'created with app version' attribute value was set correct");
+			assert.equal(aAttributes[4].label, "created by", "the 'created by' attribute label was set correct");
+			assert.equal(aAttributes[4].value, sUser, "the 'created by' attribute value was set correct");
+			assert.equal(aAttributes[5].label, "Variant Reference", "the 'Variant Reference' attribute label was set correct" );
+			assert.equal(aAttributes[5].value, "", "the 'Variant Reference' attribute value was set correct");
+			assert.equal(aAttributes[6].label, "selector", "the 'selector' attribute label was set correct" );
+			assert.equal(aAttributes[6].value, sSelector, "the 'selector' attribute value was set correct");
+			assert.equal(aAttributes[7].label, "dependency (some)", "the 'dependency (some)' attribute label was set correct");
+			assert.equal(aAttributes[7].value, sSomeDependentControlId, "the 'dependency (some)' attribute value was set correct");
+			assert.equal(aAttributes[8].label, "dependency (some other)", "the 'dependency (some other)' attribute label was set correct");
+			assert.equal(aAttributes[8].value, sSomeOtherDependentControlId, "the 'dependency (some other)' attribute value was set correct");
+			assert.equal(aAttributes[9].label, "OData Property", "the 'OData Property' attribute label was set correct");
+			assert.equal(aAttributes[9].value, sODataPropertyName, "the 'OData Property' attribute value was set correct");
+			assert.equal(aAttributes[10].label, "OData EntityType", "the 'OData EntityType' attribute label was set correct");
+			assert.equal(aAttributes[10].value, sEntityType, "the 'OData EntityType' attribute value was set correct");
+			assert.equal(aAttributes[11].label, "OData URI", "the 'OData URI' attribute label was set correct");
+			assert.equal(aAttributes[11].value, sODataURI, "the 'OData URI' attribute value was set correct");
+			assert.equal(aAttributes[12].label, "Change content", "the 'Change content' attribute label was set correct");
+			assert.ok(aAttributes[12].value.length > 0, "the 'Change content' attribute value was set somehow");
 		});
 	});
 

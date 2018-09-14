@@ -37,11 +37,13 @@
 								<Node
 										key="{selectedData>key}"
 										title="{selectedData>title}"
+										statusIcon="{selectedData>variantIcon}"
 										icon="{selectedData>icon}"
 										group="{selectedData>group}"
 										attributes="{path:'selectedData>attributes', templateShareable:true}"
 										shape="{selectedData>shape}"
-										status="{parts:['selectedData>key','selectedData>/appliedChanges','selectedData>/failedChanges'], formatter: '.formatStatus'}">
+										status="{parts:['selectedData>key','selectedData>/appliedChanges','selectedData>/failedChanges'], formatter: '.formatStatus'}"
+										showActionLinksButton="false">
 									<attributes>
 										<ElementAttribute
 												label="{selectedData>label}"

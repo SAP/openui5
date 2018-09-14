@@ -60,8 +60,10 @@ sap.ui.define([
 					 value: oSelector.id ? oSelector.id : oSelector
 				 };
 			 }
-
 			var aAttributes = [{
+				label: "Filename",
+				value: oDefinition.fileName
+			},{
 				label: "Layer",
 				value: oDefinition.layer
 			},{
@@ -73,6 +75,9 @@ sap.ui.define([
 			},{
 				label: "created by",
 				value: oDefinition.support.user
+			},{
+				label: "Variant Reference",
+				value: oDefinition.variantReference
 			},{
 				label: "selector",
 				value: oDefinition.selector.id ? oDefinition.selector.id : oDefinition.selector
@@ -87,6 +92,22 @@ sap.ui.define([
 					}
 				});
 			}
+			if (oDefinition.oDataInformation && oDefinition.oDataInformation.propertyName){
+				aAttributes = aAttributes.concat([{
+					label: "OData Property",
+					value: oDefinition.oDataInformation.propertyName
+				},{
+					label: "OData EntityType",
+					value: oDefinition.oDataInformation.entityType
+				},{
+					label: "OData URI",
+					value: oDefinition.oDataInformation.oDataServiceUri
+				}]);
+			}
+			aAttributes = aAttributes.concat([{
+				label: "Change content",
+				value: "{= '" + JSON.stringify(oDefinition.content) + "'}" //prevent being interpreted as binding
+			}]);
 
 			return aAttributes;
 		},
@@ -105,9 +126,9 @@ sap.ui.define([
 			} else if (sChangeType.indexOf("stash") !== -1){
 				return "sap-icon://hide";
 			} else if (sChangeType.indexOf("split") !== -1){
-				return "sap-icon://scissors";
+				return "sap-icon://split";
 			} else if (sChangeType.indexOf("combine") !== -1){
-				return "sap-icon://mirrored-task-circle";
+				return "sap-icon://combine";
 			} else if (sChangeType.indexOf("rename") !== -1){
 				return "sap-icon://text";
 			}
@@ -178,6 +199,8 @@ sap.ui.define([
 					key: oDefinition.fileName,
 					icon: this._defineIcon(sChangeType),
 					group: oDefinition.layer,
+					descriptionLineSize: 0,
+					variantIcon: oDefinition.variantReference ? "sap-icon://tree" : undefined,
 					attributes: this._generateAttributes(oDefinition)
 				};
 
