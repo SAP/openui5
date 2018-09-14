@@ -976,7 +976,6 @@ function (
 		});
 
 		QUnit.test("createAndApplyChange shall remove the change from the persistence and rethrow the error, if applying the change raised an exception", function (assert) {
-			assert.expect(2);
 			var oControl = new Control();
 			var oChangeSpecificData = {
 				changeType: "hideControl",
@@ -994,6 +993,24 @@ function (
 				assert.equal(ex.message, "myError", "the error was passed correctly");
 				assert.strictEqual(this.oFlexController._oChangePersistence.getDirtyChanges().length, 0, 'Change persistence should have no dirty changes');
 			}.bind(this));
+		});
+
+		QUnit.test("createAndApplyChange shall add a change to dirty changes and return the change", function (assert) {
+			var oControl = new Control();
+			var oChangeSpecificData = {
+				changeType: "hideControl"
+			};
+			var oChange = new Change(oChangeSpecificData);
+			sandbox.stub(this.oFlexController, "checkTargetAndApplyChange").resolves({success: true});
+			sandbox.stub(this.oFlexController, "_getChangeHandler").returns(HideControl);
+			sandbox.stub(this.oFlexController, "createChange").returns(oChange);
+			sandbox.stub(this.oFlexController._oChangePersistence, "_addPropagationListener");
+
+			return this.oFlexController.createAndApplyChange(oChangeSpecificData, oControl)
+				.then(function(oAppliedChange) {
+					assert.strictEqual(this.oFlexController._oChangePersistence.getDirtyChanges().length, 1, 'then change was added to dirty changes');
+					assert.deepEqual(oAppliedChange, oChange, "then the applied change was received");
+				}.bind(this));
 		});
 
 		QUnit.test("createAndApplyChange shall remove the change from the persistence and throw a generic error, if applying the changefailed without exception", function (assert) {

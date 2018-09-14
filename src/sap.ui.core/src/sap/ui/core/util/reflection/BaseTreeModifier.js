@@ -180,7 +180,7 @@ sap.ui.define([
 		 * If this prefix exists the suffix after the component Id is called the local id.
 		 *
 		 * @param {sap.ui.core.Control | string} vControl ui5 control or id to be checked if it is wihtin the generic application
-		 * @param {sap.ui.core.Component} oAppComponent application component, needed only if vControl is string (id)
+		 * @param {sap.ui.core.UIComponent} oAppComponent application component, needed only if vControl is string (id)
 		 * @returns {boolean} control has a local id
 		 * @protected
 		 */
