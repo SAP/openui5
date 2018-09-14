@@ -331,12 +331,13 @@ function(
 	 * called when the column's parent is set
 	 */
 	Column.prototype.setParent = function(oParent, sAggregationName, bSuppressRerendering) {
-		Element.prototype.setParent.apply(this, arguments);
+		var vReturn = Element.prototype.setParent.apply(this, arguments);
 		var oMenu = this.getAggregation("menu");
 		if (oMenu && typeof oMenu._updateReferences === "function") {
 			//if menu is set update menus internal references
 			oMenu._updateReferences(this);
 		}
+		return vReturn;
 	};
 
 	/*
@@ -645,7 +646,6 @@ function(
 	/**
 	 * Toggles the sort order of the column.
 	 *
-	 * @type sap.ui.table.Column
 	 * @public
 	 * @deprecated Since version 1.5.1.
 	 * Please use the function "sap.ui.Table.prototype.sort".
@@ -658,14 +658,12 @@ function(
 
 
 	/**
-	 * sorts the current column ascending or descending
+	 * Sorts the current column ascending or descending.
 	 *
-	 * @param {boolean} bDescending
-	 *         sort order of the column (if undefined the default will be ascending)
-	 * @type sap.ui.table.Column
+	 * @param {boolean} bDescending Sort order of the column (if undefined the default will be ascending)
+	 * @returns {sap.ui.table.Column} Reference to this in order to allow method chaining
 	 * @public
-	 * @deprecated Since version 1.5.1.
-	 * Please use the function "sap.ui.Table.prototype.sort".
+	 * @deprecated Since version 1.5.1. Please use the function "sap.ui.Table.prototype.sort".
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Column.prototype.sort = function(bDescending, bAdd) {

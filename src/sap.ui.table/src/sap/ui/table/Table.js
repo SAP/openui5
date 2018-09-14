@@ -929,7 +929,7 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bRtlChanged Whether the text direction changed.
 	 * @param {boolean} bLangChanged Whether the language changed.
-	 * @return {Promise} A promise on the adaptation. If no adaptation is required, because text direction and language did not change, the
+	 * @returns {Promise} A promise on the adaptation. If no adaptation is required, because text direction and language did not change, the
 	 * promise will be rejected.
 	 * @private
 	 */
@@ -1676,9 +1676,10 @@ sap.ui.define([
 
 	/**
 	 * Sets the selection mode. The current selection is lost.
+	 *
 	 * @param {sap.ui.table.SelectionMode} sSelectionMode the selection mode, see sap.ui.table.SelectionMode
+	 * @returns {sap.ui.table.Table} Reference to this in order to allow method chaining
 	 * @public
-	 * @returns a reference on the table for chaining
 	 */
 	Table.prototype.setSelectionMode = function(sSelectionMode) {
 		this.clearSelection();
@@ -1983,8 +1984,8 @@ sap.ui.define([
 	 * Please note that tooltips are not rendered for the table. The tooltip property will be set
 	 * but it won't effect the DOM.
 	 *
-	 * @param {string|sap.ui.core.TooltipBase} vTooltip
-	 * @returns {sap.ui.table.Table} This-reference for chaining
+	 * @param {string|sap.ui.core.TooltipBase} vTooltip The tooltip
+	 * @returns {sap.ui.table.Table} Reference to this in order to allow method chaining
 	 * @public
 	 * @override
 	 */
@@ -2281,6 +2282,7 @@ sap.ui.define([
 	 */
 	Table.prototype.insertRow = function() {
 		Log.error("The control manages the rows aggregation. The method \"insertRow\" cannot be used programmatically!", this);
+		return this;
 	};
 
 	/*
@@ -2288,6 +2290,7 @@ sap.ui.define([
 	 */
 	Table.prototype.addRow = function() {
 		Log.error("The control manages the rows aggregation. The method \"addRow\" cannot be used programmatically!", this);
+		return this;
 	};
 
 	/*
@@ -2295,6 +2298,7 @@ sap.ui.define([
 	 */
 	Table.prototype.removeRow = function() {
 		Log.error("The control manages the rows aggregation. The method \"removeRow\" cannot be used programmatically!", this);
+		return null;
 	};
 
 	/*
@@ -2302,6 +2306,7 @@ sap.ui.define([
 	 */
 	Table.prototype.removeAllRows = function() {
 		Log.error("The control manages the rows aggregation. The method \"removeAllRows\" cannot be used programmatically!", this);
+		return [];
 	};
 
 	/*
@@ -2309,6 +2314,7 @@ sap.ui.define([
 	 */
 	Table.prototype.destroyRows = function() {
 		Log.error("The control manages the rows aggregation. The method \"destroyRows\" cannot be used programmatically!", this);
+		return this;
 	};
 
 	/**
@@ -2836,9 +2842,9 @@ sap.ui.define([
 	 * Gets sorted columns in the order of which the sort API at the table or column was called.
 	 * Sorting on binding level is not reflected here.
 	 *
-	 * @returns Array of sorted columns
 	 * @see sap.ui.table.Table#sort
 	 * @see sap.ui.table.Column#sort
+	 * @returns {sap.ui.table.Column[]} Array of sorted columns
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -2850,12 +2856,9 @@ sap.ui.define([
 	/**
 	 * Sorts the given column ascending or descending.
 	 *
-	 * @param {sap.ui.table.Column | undefined} oColumn
-	 *         column to be sorted or undefined to clear sorting
-	 * @param {sap.ui.table.SortOrder} oSortOrder
-	 *         sort order of the column (if undefined the default will be ascending)
+	 * @param {sap.ui.table.Column | undefined} oColumn Column to be sorted or undefined to clear sorting
+	 * @param {sap.ui.table.SortOrder} oSortOrder Sort order of the column (if undefined the default will be ascending)
 	 * @param {Boolean} bAdd Set to true to add the new sort criterion to the existing sort criteria
-	 * @type sap.ui.table.Table
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -2884,11 +2887,8 @@ sap.ui.define([
 	/**
 	 * Filter the given column by the given value.
 	 *
-	 * @param {sap.ui.table.Column} oColumn
-	 *         column to be filtered
-	 * @param {string} sValue
-	 *         filter value as string (will be converted)
-	 * @type sap.ui.table.Table
+	 * @param {sap.ui.table.Column} oColumn Column to be filtered
+	 * @param {string} sValue Filter value as string (will be converted)
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -3016,7 +3016,7 @@ sap.ui.define([
 	/**
 	 * Removes complete selection.
 	 *
-	 * @type sap.ui.table.Table
+	 * @returns {sap.ui.table.Table} Reference to this in order to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -3031,7 +3031,7 @@ sap.ui.define([
 	 * be available at the client yet. Calling getContextByIndex might not return a result but trigger a roundtrip
 	 * to request this single entity.
 	 *
-	 * @returns sap.ui.table.Table
+	 * @returns {sap.ui.table.Table} Reference to this in order to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -3051,7 +3051,7 @@ sap.ui.define([
 	/**
 	 * Zero-based indices of selected items, wrapped in an array. An empty array means "no selection".
 	 *
-	 * @returns int[]
+	 * @returns {int[]} Selected indices
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -3060,13 +3060,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds the given selection interval to the selection. In case of single selection the "indexTo" value will be used for as selected index.
+	 * Adds the given selection interval to the selection. In case of single selection, only <code>iIndexTo</code> is added to the selection.
 	 *
-	 * @param {int} iIndexFrom
-	 *         Index from which .
-	 * @param {int} iIndexTo
-	 *         Indices of the items that shall additionally be selected.
-	 * @type sap.ui.table.Table
+	 * @param {int} iIndexFrom Index from which the selection should start
+	 * @param {int} iIndexTo Index up to which to select
+	 * @returns {sap.ui.table.Table} Reference to this in order to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -3080,13 +3078,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the given selection interval as selection. In case of single selection the "indexTo" value will be used for as selected index.
+	 * Sets the given selection interval as selection. In case of single selection, only <code>iIndexTo</code> is selected.
 	 *
-	 * @param {int} iIndexFrom
-	 *         Index from which .
-	 * @param {int} iIndexTo
-	 *         Indices of the items that shall additionally be selected.
-	 * @type sap.ui.table.Table
+	 * @param {int} iIndexFrom Index from which the selection should start
+	 * @param {int} iIndexTo Index up to which to select
+	 * @returns {sap.ui.table.Table} Reference to this in order to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -3100,13 +3096,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes the given selection interval from the selection. In case of single selection this call removeSelectedIndex with the "indexTo" value.
+	 * Removes the given selection interval from the selection. In case of single selection, only <code>iIndexTo</code> is removed from the selection.
 	 *
-	 * @param {int} iIndexFrom
-	 *         Index from which .
-	 * @param {int} iIndexTo
-	 *         Indices of the items that shall additionally be selected.
-	 * @type sap.ui.table.Table
+	 * @param {int} iIndexFrom Index from which the deselection should start
+	 * @param {int} iIndexTo Index up to which to deselect
+	 * @returns {sap.ui.table.Table} Reference to this in order to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -3116,11 +3110,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns whether the given index is selected.
+	 * Checks whether an index is selected.
 	 *
-	 * @param {int} iIndex
-	 *         Index which is checked for selection state.
-	 * @type boolean
+	 * @param {int} iIndex Index to check for selection
+	 * @returns {boolean} Whether the index is selected
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -3331,8 +3324,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the threshold value, which will be added to all data requests in
-	 * case the Table is bound against an OData service.
+	 * Sets the threshold value, which will be added to all data requests in case the Table is bound against an OData service.
+	 *
+	 * @param {int} iThreshold The threshold
+	 * @returns {sap.ui.table.Table} Reference to this in order to allow method chaining
 	 * @public
 	 */
 	Table.prototype.setThreshold = function (iThreshold) {
@@ -3717,7 +3712,6 @@ sap.ui.define([
 	 *
 	 * @param {object} [mSettings] settings for the new Export, see {@link sap.ui.core.util.Export} <code>constructor</code>
 	 * @returns {sap.ui.core.util.Export} Export object
-	 *
 	 * @experimental Experimental because the property for the column/cell definitions (sortProperty) could change in future.
 	 * @deprecated As of 1.56, replaced by the <code>sap.ui.export</code> library.
 	 * @public
