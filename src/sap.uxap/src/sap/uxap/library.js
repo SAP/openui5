@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/base/DataType",
 	"sap/ui/Device",
-	"sap/m/library",
-	"sap/ui/layout/library"
+	"sap/ui/core/library", // library dependency
+	"sap/m/library", // library dependency
+	"sap/ui/layout/library" // library dependency
 ], function(Core, DataType, Device) {
 	"use strict";
 

@@ -9,7 +9,9 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/Global',
 	'sap/ui/core/Core',
-	'./js/highlight-query-terms'
+	'./js/highlight-query-terms',
+	'sap/ui/core/library', // library dependency
+	'sap/ui/commons/library' // library dependency
 ], function(jQuery, Global) {
 
 	"use strict";

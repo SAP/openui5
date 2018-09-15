@@ -5,7 +5,7 @@
 /**
  * Initialization Code and shared classes of library sap.ui.unified.
  */
-sap.ui.define(['sap/ui/core/Core', 'sap/ui/base/Object'], function(Core, BaseObject) {
+sap.ui.define(['sap/ui/core/Core', 'sap/ui/base/Object', 'sap/ui/core/library'], function(Core, BaseObject) {
 
 	"use strict";
 
