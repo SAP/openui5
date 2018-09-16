@@ -4613,6 +4613,27 @@
 			destroyFF(oFF);
 		});
 
+		QUnit.test("FacetFilter's dialog has an ariaLabelledBy set", function(assert) {
+			// arrange
+			var oFF = new sap.m.FacetFilter(),
+				oDialog,
+				aLabelledBy;
+
+			// act
+			oDialog = oFF._getFacetDialog();
+			aLabelledBy = oDialog.getAriaLabelledBy();
+
+			// assert
+			assert.ok(aLabelledBy, "there is an ariaLabelledBy set");
+			assert.strictEqual(aLabelledBy.length, 1, "it is one id");
+			assert.strictEqual(aLabelledBy[0],
+				sap.ui.core.InvisibleText.getStaticId("sap.m", "FACETFILTER_AVAILABLE_FILTER_NAMES"),
+				"it is the right id");
+
+			// clean
+			oFF.destroy();
+		});
+
 
 		// Helper functions
 
