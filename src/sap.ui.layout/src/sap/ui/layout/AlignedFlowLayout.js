@@ -20,6 +20,8 @@ sap.ui.define([
 	) {
 		"use strict";
 
+		/* global ResizeObserver */
+
 		/**
 		 * Constructor for a new AlignedFlowLayout.
 		 *
@@ -97,21 +99,34 @@ sap.ui.define([
 
 		AlignedFlowLayout.prototype.init = function() {
 
-			// registration ID used for deregistering the resize handler
-			this._sResizeListenerId = ResizeHandler.register(this, this.onResize.bind(this));
+			// resize observer feature detection
+			if (typeof ResizeObserver === "function") {
+
+				this.oResizeObserver = new ResizeObserver(this.onResize.bind(this));
+			} else {
+
+				// registration ID used for de-registering the resize handler
+				this._sResizeListenerId = ResizeHandler.register(this, this.onResizeHandler.bind(this));
+			}
 		};
 
 		AlignedFlowLayout.prototype.exit = function() {
+
 			if (this._sResizeListenerId) {
 				ResizeHandler.deregister(this._sResizeListenerId);
 				this._sResizeListenerId = "";
 			}
+
+			if (this.oResizeObserver) {
+				this.oResizeObserver.disconnect();
+				this.oResizeObserver = null;
+			}
 		};
 
-		AlignedFlowLayout.prototype._onRenderingOrThemeChanged = function() {
+		AlignedFlowLayout.prototype.onAfterRenderingOrThemeChanged = function() {
 			var oDomRef = this.getDomRef(),
 				oEndItemDomRef = this.getDomRef("endItem"),
-				bEndItemAndContent = this.getContent().length && oDomRef && oEndItemDomRef;
+				bEndItemAndContent = !!(this.getContent().length && oDomRef && oEndItemDomRef);
 
 			if (bEndItemAndContent) {
 				var oLayoutComputedStyle = window.getComputedStyle(oDomRef, null),
@@ -131,17 +146,40 @@ sap.ui.define([
 			this.reflow({ domRef: oDomRef, endItemDomRef: oEndItemDomRef });
 		};
 
-		AlignedFlowLayout.prototype.onAfterRendering = AlignedFlowLayout.prototype._onRenderingOrThemeChanged;
-		AlignedFlowLayout.prototype.onThemeChanged = AlignedFlowLayout.prototype._onRenderingOrThemeChanged;
+		AlignedFlowLayout.prototype.onBeforeRendering = function() {
+
+			if (this.oResizeObserver) {
+				this.oResizeObserver.disconnect();
+			}
+		};
+
+		AlignedFlowLayout.prototype.onAfterRendering = function() {
+
+			if (this.oResizeObserver) {
+				var oDomRef = this.getDomRef();
+
+				if (oDomRef) {
+					this.oResizeObserver.observe(oDomRef);
+				}
+			}
+
+			this.onAfterRenderingOrThemeChanged();
+		};
+
+		AlignedFlowLayout.prototype.onThemeChanged = AlignedFlowLayout.prototype.onAfterRenderingOrThemeChanged;
 
 		// this resize handler needs to be called on after rendering, theme change, and whenever the width of this
 		// control changes
-		AlignedFlowLayout.prototype.onResize = function(oEvent) {
+		AlignedFlowLayout.prototype.onResizeHandler = function(oEvent) {
 
 			// avoid cyclic dependencies and infinite resizing callback loops
-			if (oEvent && (oEvent.size.width !== oEvent.oldSize.width)) {
+			if (oEvent.size.width !== oEvent.oldSize.width) {
 				this.reflow();
 			}
+		};
+
+		AlignedFlowLayout.prototype.onResize = function(aEntries) {
+			window.requestAnimationFrame(this.reflow.bind(this));
 		};
 
 		/**
@@ -261,9 +299,9 @@ sap.ui.define([
 			}
 
 			// if the items fit into a single line, add a CSS class to turn off the display of the spacer elements
-			var oCheckItemsWrappingSettings = { excludeEndItem: true };
+			var bExcludeEndItem = true;
 
-			if (this.checkItemsWrapping(oDomRef, oCheckItemsWrappingSettings)) {
+			if (this.checkItemsWrapping(oDomRef, bExcludeEndItem)) {
 				oDomRef.classList.remove(CSS_CLASS_ONE_LINE);
 			} else {
 				oDomRef.classList.add(CSS_CLASS_ONE_LINE);
@@ -273,18 +311,12 @@ sap.ui.define([
 		/*
 		 * Checks whether the visible content fits into a single line or it wraps onto multiple lines.
 		 */
-		AlignedFlowLayout.prototype.checkItemsWrapping = function(oDomRef, oSettings) {
+		AlignedFlowLayout.prototype.checkItemsWrapping = function(oDomRef, bExcludeEndItem) {
 			oDomRef = oDomRef || this.getDomRef();
 
 			if (!oDomRef) {
 				return false;
 			}
-
-			var oDefaultSettings = {
-				excludeEndItem: false
-			};
-
-			oSettings = Object.assign(oDefaultSettings, oSettings);
 
 			var oFirstItemDomRef = oDomRef.firstElementChild,
 				oLastItemDomRef = this.getLastItemDomRef();
@@ -302,7 +334,7 @@ sap.ui.define([
 				return true;
 			}
 
-			if (oSettings.excludeEndItem) {
+			if (bExcludeEndItem) {
 				return false;
 			}
 

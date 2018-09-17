@@ -18,6 +18,8 @@ sap.ui.require([
 ) {
 	"use strict";
 
+	/* global ResizeObserver */
+
 	var CONTENT_ID = "content";
 
 	var Input = Control.extend("Input", {
@@ -444,6 +446,29 @@ sap.ui.require([
 		oButton.destroy();
 	});
 
+	QUnit.test("it should invoke the .disconnect() method of the resize observer object " +
+				"when the control is destroyed", function(assert) {
+
+		// system under test
+		var oAlignedFlowLayout = new AlignedFlowLayout();
+
+		// arrange
+		oAlignedFlowLayout.placeAt(CONTENT_ID);
+		Core.applyChanges();
+		var oDisconnectSpy = this.spy(oAlignedFlowLayout.oResizeObserver, "disconnect");
+
+		// act + cleanup
+		oAlignedFlowLayout.destroy();
+
+		// assert
+		if (typeof ResizeObserver === "function") {
+			assert.strictEqual(oDisconnectSpy.callCount, 1);
+			assert.ok(oAlignedFlowLayout.oResizeObserver === null, "the resize observer object should refer to null");
+		} else {
+			assert.ok(true);
+		}
+	});
+
 	QUnit.module("wrapping", {
 		beforeEach: function(assert) {
 
@@ -621,7 +646,9 @@ sap.ui.require([
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
 		Core.applyChanges();
 		this.oContentDomRef.style.width = "1024px";
-		Core.attachIntervalTimer(fnAfterResize, this);
+
+		// wait some time until the browser layout finished
+		setTimeout(fnAfterResize.bind(this), 200);
 
 		function fnAfterResize() {
 
@@ -636,7 +663,6 @@ sap.ui.require([
 			done();
 
 			// cleanup
-			Core.detachIntervalTimer(fnAfterResize, this);
 			oInput1.destroy();
 			oInput2.destroy();
 			oInput3.destroy();
@@ -1169,7 +1195,9 @@ sap.ui.require([
 		Core.applyChanges();
 		var iLayoutWidth = 300;
 		this.oContentDomRef.style.width = iLayoutWidth + "px";
-		Core.attachIntervalTimer(fnAfterResize, this);
+
+		// wait some time until the browser layout finished
+		setTimeout(fnAfterResize.bind(this), 200);
 
 		function fnAfterResize() {
 
@@ -1184,7 +1212,6 @@ sap.ui.require([
 			done();
 
 			// cleanup
-			Core.detachIntervalTimer(fnAfterResize, this);
 			oInput1.destroy();
 			oInput2.destroy();
 			oInput3.destroy();
