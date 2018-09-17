@@ -2378,10 +2378,9 @@ function(
 		 * @public
 		 */
 		Select.prototype.removeItem = function(vItem) {
-			var oList = this.getList(),
-				oItem;
+			var oItem;
 
-			vItem = oList ? oList.removeItem(vItem) : null;
+			vItem = this.removeAggregation("items", vItem);
 
 			if (this.getItems().length === 0) {
 				this.clearSelection();
@@ -2410,8 +2409,7 @@ function(
 		 * @public
 		 */
 		Select.prototype.removeAllItems = function() {
-			var oList = this.getList(),
-				aItems = oList ? oList.removeAllItems() : [];
+			var aItems = this.removeAllAggregation("items");
 
 			this.setValue("");
 
