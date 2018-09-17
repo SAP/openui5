@@ -52,6 +52,10 @@ function(
 
 			var oComponent = Component.get(sComponentId);
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);
+			if (!Utils.isApplication(oAppComponent.getManifest())) {
+				//we only consider components whose type is application. Otherwise, we might send request for components that can never have changes.
+				return Promise.resolve([]);
+			}
 			var sFlexReference = Utils.getComponentClassName(oAppComponent);
 			var sAppVersion = Utils.getAppVersionFromManifest(oAppComponent.getManifest());
 
