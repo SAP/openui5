@@ -345,7 +345,7 @@
 					endDate: new Date(2018, 6, 8, 16, 30, 0)
 				})
 			]
-		}).placeAt("body");
+		});
 		oOPH.addView(oView2);
 		oOPH.addView(oView3);
 		// oOPH.addView(oView3);
@@ -353,6 +353,13 @@
 		// oOPH.removeAllViews();
 		// oOPH.removeView(oView1);
 		// oOPH.destroyViews();
+
+		new sap.m.App({
+			pages: new sap.m.Page({
+				title: "SinglePlanningCalendar test page",
+				content: oOPH
+			})
+		}).placeAt("body")
 	</script>
 	<style>
 		body {
