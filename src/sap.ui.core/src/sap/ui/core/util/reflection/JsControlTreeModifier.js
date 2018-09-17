@@ -378,7 +378,7 @@ sap.ui.define([
 		 * Instantiates a fragment and turns the result into an array of controls. Also prefixes all the controls with a given namespace
 		 * Throws an Error if there is at least one control in the fragment without stable ID
 		 *
-		 * @param {string} sFragment path to the fragment
+		 * @param {string} sFragment xml fragment as string
 		 * @param {string} sNamespace namespace of the app
 		 * @param {sap.ui.core.mvc.View} oView view for the fragment
 		 * @returns {sap.ui.core.Control[]} Returns an array with the controls of the fragment

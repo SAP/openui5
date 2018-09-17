@@ -216,6 +216,7 @@ sap.ui.define([
 						id : sControllerName1
 					},
 					layer: sLayer,
+					moduleName: "",
 					texts: {},
 					namespace: sNamespace,
 					projectId : "component",
@@ -248,6 +249,7 @@ sap.ui.define([
 						id : sControllerName2
 					},
 					layer: sLayer,
+					moduleName: "",
 					texts: {},
 					namespace: sNamespace,
 					projectId : "component",
