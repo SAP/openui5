@@ -11,7 +11,6 @@ sap.ui.define([
     "sap/ui/core/Fragment",
     "sap/ui/documentation/library",
     "sap/ui/core/IconPool",
-    "sap/m/SplitAppMode",
     "sap/m/MessageBox",
     "sap/m/library",
     "sap/base/Log",
@@ -26,7 +25,6 @@ sap.ui.define([
 	Fragment,
 	library,
 	IconPool,
-	SplitAppMode,
 	MessageBox,
 	mobileLibrary,
 	Log,
@@ -34,6 +32,9 @@ sap.ui.define([
 	syncStyleClass
 ) {
 		"use strict";
+
+		// shortcut for sap.m.SplitAppMode
+		var SplitAppMode = mobileLibrary.SplitAppMode;
 
 		// shortcut for sap.m.URLHelper
 		var URLHelper = mobileLibrary.URLHelper,

@@ -4,7 +4,6 @@
 sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/m/Label',
-	'sap/m/LabelDesign',
 	'sap/m/Dialog',
 	'sap/ui/model/json/JSONModel',
 	'sap/m/SearchField',
@@ -17,16 +16,15 @@ sap.ui.define([
 	'sap/ui/rta/command/CompositeCommand',
 	'sap/m/List',
 	'sap/m/CustomListItem',
-	'sap/m/ListType',
 	'sap/m/ScrollContainer',
 	'sap/ui/model/Sorter',
 	'sap/ui/dt/ElementUtil',
 	'sap/m/VBox',
-	'sap/ui/rta/Utils'
+	'sap/ui/rta/Utils',
+	'sap/m/library'
 ], function(
 	ManagedObject,
 	Label,
-	LabelDesign,
 	Dialog,
 	JSONModel,
 	SearchField,
@@ -39,14 +37,20 @@ sap.ui.define([
 	CompositeCommand,
 	List,
 	ListItem,
-	ListType,
 	ScrollContainer,
 	Sorter,
 	ElementUtil,
 	VBox,
-	Utils
+	Utils,
+	mobileLibrary
 ) {
 	"use strict";
+
+	// shortcut for sap.m.ListType
+	var ListType = mobileLibrary.ListType;
+
+	// shortcut for sap.m.LabelDesign
+	var LabelDesign = mobileLibrary.LabelDesign;
 
 	/**
 	 * Constructor for a new sap.ui.rta.plugin.additionalElements.AddElementsDialog control.
