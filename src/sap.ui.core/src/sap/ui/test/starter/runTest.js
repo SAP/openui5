@@ -123,6 +123,22 @@
 		});
 	}
 
+	function onCSPViolation(e) {
+		var location = e.sourceFile + ":" + e.lineNumber + ":" + e.columnNumber,
+			msg = "Security policy violation: directive '" + e.violatedDirective + "'";
+		if ( e.blockedURI ) {
+			msg += " violated by '" + String(e.blockedURI).slice(0, 20) + "'";
+		}
+
+		if ( QUnit.config.current ) {
+			QUnit.pushFailure(msg, location);
+		} else {
+			// should be caught and reported by QUnit's global error handler
+			// if not, it will only fail the current task for the securityviolationevent
+			throw new Error(msg + " at " + location);
+		}
+	}
+
 	/*
 	 * @const
 	 */
@@ -181,6 +197,7 @@
 					throw new TypeError("unsupported qunit version " + oConfig.qunit.version);
 				}
 			}).then(function() {
+
 				// install a mock version of the qunit-reporter-junit API to collect jUnitDone callbacks
 				aJUnitDoneCallbacks = [];
 				QUnit.jUnitDone = function(cb) {
@@ -276,6 +293,22 @@
 				// otherwise load only the QUnit plugin
 				return requireP(["sap/ui/qunit/qunit-coverage"]);
 			}
+		}).then(function() {
+			if ( QUnit.urlParams["sap-ui-xx-csp-policy"] ) {
+				document.addEventListener("securitypolicyviolation", onCSPViolation);
+				QUnit.done(function() {
+					document.removeEventListener("securitypolicyviolation", onCSPViolation);
+				});
+			}
+			QUnit.config.urlConfig.push({
+				id: "sap-ui-xx-csp-policy",
+				label: "CSP",
+				value: {
+					"sap-target-level-1:report-only": "Level 1",
+					"sap-target-level-2:report-only": "Level 2"
+				},
+				tooltip: "What Content-Security-Policy should the server send"
+			});
 		});
 
 		pTestEnv = Promise.all([
