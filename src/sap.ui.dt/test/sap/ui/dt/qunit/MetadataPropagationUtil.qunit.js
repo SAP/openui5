@@ -336,6 +336,40 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Given aggregationMetadata map with actions 'not-adaptable' for metadata propagation", {
+		beforeEach: function(){
+			this.sNotAdaptable = "not-adaptable";
+			this.oButton = new Button("button");
+			this.oElement = new VerticalLayout("vertlay", {
+				content: [this.oButton]
+			});
+
+			this.mPropagateMetadata = MetadataTestUtil.createPropagateMetadataObject("sap.m.Button", undefined, this.sNotAdaptable);
+			this.mAggregationData = {
+				propagationInfos: [MetadataTestUtil.createPropagationInfoObject(null, this.oElement, this.mPropagateMetadata.propagateMetadata)]
+			};
+			this.mElementData = MetadataTestUtil.buildMetadataObject({ actions: { myAction : "testAction" }}).data;
+		},
+		afterEach: function(){
+			this.oElement.destroy();
+			this.oButton.destroy();
+		}
+	}, function() {
+
+		QUnit.test("when 'propagateMetadataToElementOverlay' is called", function(assert) {
+			var mExtendedDesigntime = MetadataPropagationUtil.propagateMetadataToElementOverlay(this.mElementData, this.mAggregationData, this.oButton);
+			assert.equal(mExtendedDesigntime.actions, this.sNotAdaptable, "then element actions in designtime were replaced with 'not-adaptable' value");
+			assert.equal(mExtendedDesigntime.aggregations.content.actions, this.sNotAdaptable, "then all element aggregation actions were replaced with 'not-adaptable' value");
+		});
+
+		QUnit.test("when 'propagateMetadataToElementOverlay' is called without aggregations defined", function(assert) {
+			delete this.mElementData.aggregations;
+			var mExtendedDesigntime = MetadataPropagationUtil.propagateMetadataToElementOverlay(this.mElementData, this.mAggregationData, this.oButton);
+			var mExpectedAggregationData = this.mPropagateMetadata.propagateMetadata(this.oButton);
+			assert.deepEqual(mExtendedDesigntime.aggregations, mExpectedAggregationData.aggregations, "then element designtime was extended empty aggregations object");
+		});
+	});
+
 	QUnit.module("Given complex test with only 'propagateRelevantContainer' as function in the designTimeMetadata", {
 		beforeEach : function(assert) {
 			var done = assert.async();
