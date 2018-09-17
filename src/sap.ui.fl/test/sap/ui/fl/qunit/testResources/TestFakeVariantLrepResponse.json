@@ -14,7 +14,7 @@
 			"layer":"CUSTOMER",
 			"texts":{},
 			"namespace":"sap.ui.rta.test.Demo.md.Component",
-			"creation":"",
+			"creation":"7",
 			"originalLanguage":"EN",
 			"conditions":{},
 			"support":{
@@ -37,7 +37,7 @@
 			"layer":"CUSTOMER",
 			"texts":{},
 			"namespace":"sap.ui.rta.test.Demo.md.Component",
-			"creation":"",
+			"creation":"2",
 			"originalLanguage":"EN",
 			"conditions":{},
 			"support":{
@@ -60,7 +60,7 @@
 			"layer":"CUSTOMER",
 			"texts":{},
 			"namespace":"sap.ui.rta.test.Demo.md.Component",
-			"creation":"",
+			"creation":"1",
 			"originalLanguage":"EN",
 			"conditions":{},
 			"support":{
@@ -116,7 +116,7 @@
 							"layer":"VENDOR",
 							"texts":{},
 							"namespace":"sap.ui.rta.test.Demo.md.Component",
-							"creation":"",
+							"creation":"2",
 							"originalLanguage":"EN",
 							"conditions":{},
 							"support":{
@@ -139,7 +139,30 @@
 							"layer":"CUSTOMER",
 							"texts":{},
 							"namespace":"sap.ui.rta.test.Demo.md.Component",
-							"creation":"",
+							"creation":"1",
+							"originalLanguage":"EN",
+							"conditions":{},
+							"support":{
+								"generator":"Change.createInitialFileContent",
+								"service":"",
+								"user":""
+							}
+						},
+						{
+							"variantReference":"variant0",
+							"fileName":"id_1445501120486_43",
+							"fileType":"change",
+							"changeType":"hideControl",
+							"reference":"sap.ui.rta.test.Demo.md.Component",
+							"packageName":"$TMP",
+							"content":{},
+							"selector":{
+								"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+							},
+							"layer":"VENDOR",
+							"texts":{},
+							"namespace":"sap.ui.rta.test.Demo.md.Component",
+							"creation":"4",
 							"originalLanguage":"EN",
 							"conditions":{},
 							"support":{
@@ -229,7 +252,7 @@
 						},
 						{
 							"variantReference":"idMain1--variantManagementOrdersTable",
-							"fileName":"id_1445501120486_43",
+							"fileName":"id_1445501120486_44",
 							"fileType":"change",
 							"changeType":"hideControl",
 							"reference":"sap.ui.rta.test.Demo.md.Component",
