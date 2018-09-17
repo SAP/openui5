@@ -19,6 +19,7 @@ function(
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
+	var server;
 
 	function before () {
 		this.oView = new View({});
@@ -143,9 +144,12 @@ function(
 		before: before,
 		after: after,
 		beforeEach: function () {
+			server = sinon.fakeServer.create();
+			server.respondImmediately = true;
+
 			this.oRta = new RuntimeAuthoring({
-				showToolbars: false,
-				rootControl: this.oView
+			showToolbars: false,
+			rootControl: this.oView
 			});
 			return this.oRta.start().then(function () {
 				return this.oRta.getService("controllerExtension").then(function(oService) {
@@ -157,16 +161,27 @@ function(
 		afterEach: function() {
 			this.oRta.destroy();
 			sandbox.restore();
+			server.restore();
 		}
 	}, function () {
-		QUnit.test("with a template available", function(assert) {
+		QUnit.test("with a template available in debug sources", function(assert) {
 			var sPath = "sap/ui/rta/service/ControllerExtension";
 			sandbox.stub(this.oViewOverlay.getDesignTimeMetadata(), "getControllerExtensionTemplate").returns(sPath);
-			var oAjaxSpy = sandbox.spy(jQuery, "ajax");
+
+			server.respondWith(sap.ui.require.toUrl(sPath) + "-dbg.js", [200, {"Content-Type": "html/text"}, "abc"]);
+			return this.oControllerExtension.getTemplate(this.oView.getId()).then(function(sTemplate) {
+				assert.equal(sTemplate, "abc", "the service returned the template");
+			});
+		});
+
+		QUnit.test("with a template available, but no debug sources", function(assert) {
+			var sPath = "sap/ui/rta/service/ControllerExtension";
+			sandbox.stub(this.oViewOverlay.getDesignTimeMetadata(), "getControllerExtensionTemplate").returns(sPath);
+			server.respondWith(sap.ui.require.toUrl(sPath) + "-dbg.js", [404, {}, ""]);
+			server.respondWith(sap.ui.require.toUrl(sPath) + ".js", [200, {"Content-Type": "html/text"}, "def"]);
 
 			return this.oControllerExtension.getTemplate(this.oView.getId()).then(function(sTemplate) {
-				assert.equal(oAjaxSpy.callCount, 1, "the resource was requested");
-				assert.ok(sTemplate, "the service returned the template");
+				assert.equal(sTemplate, "def", "the service returned the template");
 			});
 		});
 
@@ -181,14 +196,14 @@ function(
 
 		QUnit.test("with template available that can't be found", function(assert) {
 			sandbox.stub(this.oViewOverlay.getDesignTimeMetadata(), "getControllerExtensionTemplate").returns("undefined");
-			var oAjaxSpy = sandbox.spy(jQuery, "ajax");
+			server.respondWith(sap.ui.require.toUrl("undefined") + "-dbg.js", [404, {}, ""]);
+			server.respondWith(sap.ui.require.toUrl("undefined") + ".js", [404, {}, ""]);
 
-			return this.oControllerExtension.getTemplate(this.oView)
+			return this.oControllerExtension.getTemplate(this.oView.getId())
 			.then(function() {
 				assert.ok(false, "should not go in here");
 			})
 			.catch(function(oError) {
-				assert.equal(oAjaxSpy.callCount, 1, "the resource was requested");
 				assert.ok(oError, "an error was thrown");
 			});
 		});
