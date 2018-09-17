@@ -3399,5 +3399,58 @@
         "references": []
       }
     ]
+  },
+  "1.52.19": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "ec6cb6f6c6d013e4466e7499a60fa8b0cdfd80d7",
+        "type": "FIX",
+        "text": " MaskInput: Accessibility exampe is improved",
+        "references": []
+      },
+      {
+        "id": "5b83c56f34f7601898a483a712f0ab8a6329387b",
+        "type": "FIX",
+        "text": " ObjectMarker: Accessibility info appears when in a table cell",
+        "references": []
+      },
+      {
+        "id": "d1de27a52950de6c0ed08636d49f3036cbb071a6",
+        "type": "FIX",
+        "text": " ObjectMarker: New properties ariaLabelledBy \u0026 ariaDescribedBy",
+        "references": []
+      },
+      {
+        "id": "039f5fa59297009c38c600aae54e7c82bd978bc1",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Change event is now fired on highlighting on phone",
+        "references": []
+      },
+      {
+        "id": "89a26e88d4629c2b698b2136edcef70e3ca5ec70",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Prevent infinite resize in IE and Edge",
+        "references": []
+      },
+      {
+        "id": "1aaeef8549652a9456db1a3e003460f5740a64ec",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: render parent div when empty",
+        "references": []
+      },
+      {
+        "id": "472a08e566e2793021d65d84c166ca5cf766dfd5",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Correct arrangement of the items in case parent has white-space set to nowrap",
+        "references": []
+      },
+      {
+        "id": "b7688a5ed8ca3af28a39a0b2da7b349b1a22e121",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: propagete properties to internal TabStripItem",
+        "references": []
+      }
+    ]
   }
 }

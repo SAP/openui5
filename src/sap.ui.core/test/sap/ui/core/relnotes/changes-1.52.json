@@ -1465,5 +1465,22 @@
         "references": []
       }
     ]
+  },
+  "1.52.19": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "1c850278bb2c34e9e9411366991db78ef227ee8a",
+        "type": "FIX",
+        "text": " types/NumberFormat: Currency with RTL locale format/parse",
+        "references": []
+      },
+      {
+        "id": "a28e40b85c9130e046bb492a19a62c34aec411e2",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: 0 count in result now correctly processed",
+        "references": []
+      }
+    ]
   }
 }

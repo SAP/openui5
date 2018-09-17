@@ -175,5 +175,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.19": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "89b190c8e92ecfbfa10689f58dde1d9d25f814b5",
+        "type": "FIX",
+        "text": " ui.layout.Grid: Control visibility properties behavior fixed",
+        "references": []
+      }
+    ]
   }
 }
