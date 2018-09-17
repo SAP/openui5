@@ -4,9 +4,8 @@
 sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/test/_OpaLogger",
-	"sap/base/Log",
-	'jquery.sap.global'
-], function (UI5Object, _OpaLogger, Log, jQuery) {
+	"sap/base/Log"
+], function (UI5Object, _OpaLogger, Log) {
 	"use strict";
 	var oSingleton;
 	var sModuleName = "sap.ui.test._LogCollector";

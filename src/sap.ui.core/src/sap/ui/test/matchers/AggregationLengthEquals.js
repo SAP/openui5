@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	'./Matcher',
+	"sap/ui/test/matchers/Matcher",
 	"sap/base/strings/capitalize",
 	"sap/ui/thirdparty/jquery"
 ], function(Matcher, capitalize, jQueryDOM) {

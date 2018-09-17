@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/test/_OpaLogger",
-	"./Action",
+	"sap/ui/test/actions/Action",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
 ], function (_OpaLogger, Action, Log, jQueryDOM) {
