@@ -1678,7 +1678,7 @@ sap.ui.define([
 	 * Sets the selection mode. The current selection is lost.
 	 *
 	 * @param {sap.ui.table.SelectionMode} sSelectionMode the selection mode, see sap.ui.table.SelectionMode
-	 * @returns {sap.ui.table.Table} Reference to this in order to allow method chaining
+	 * @returns {sap.ui.table.Table} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Table.prototype.setSelectionMode = function(sSelectionMode) {
@@ -1985,7 +1985,7 @@ sap.ui.define([
 	 * but it won't effect the DOM.
 	 *
 	 * @param {string|sap.ui.core.TooltipBase} vTooltip The tooltip
-	 * @returns {sap.ui.table.Table} Reference to this in order to allow method chaining
+	 * @returns {sap.ui.table.Table} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @override
 	 */
@@ -3010,7 +3010,7 @@ sap.ui.define([
 	/**
 	 * Removes complete selection.
 	 *
-	 * @returns {sap.ui.table.Table} Reference to this in order to allow method chaining
+	 * @returns {sap.ui.table.Table} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -3025,7 +3025,7 @@ sap.ui.define([
 	 * be available at the client yet. Calling getContextByIndex might not return a result but trigger a roundtrip
 	 * to request this single entity.
 	 *
-	 * @returns {sap.ui.table.Table} Reference to this in order to allow method chaining
+	 * @returns {sap.ui.table.Table} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -3058,7 +3058,7 @@ sap.ui.define([
 	 *
 	 * @param {int} iIndexFrom Index from which the selection should start
 	 * @param {int} iIndexTo Index up to which to select
-	 * @returns {sap.ui.table.Table} Reference to this in order to allow method chaining
+	 * @returns {sap.ui.table.Table} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -3076,7 +3076,7 @@ sap.ui.define([
 	 *
 	 * @param {int} iIndexFrom Index from which the selection should start
 	 * @param {int} iIndexTo Index up to which to select
-	 * @returns {sap.ui.table.Table} Reference to this in order to allow method chaining
+	 * @returns {sap.ui.table.Table} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -3094,7 +3094,7 @@ sap.ui.define([
 	 *
 	 * @param {int} iIndexFrom Index from which the deselection should start
 	 * @param {int} iIndexTo Index up to which to deselect
-	 * @returns {sap.ui.table.Table} Reference to this in order to allow method chaining
+	 * @returns {sap.ui.table.Table} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -3321,7 +3321,7 @@ sap.ui.define([
 	 * Sets the threshold value, which will be added to all data requests in case the Table is bound against an OData service.
 	 *
 	 * @param {int} iThreshold The threshold
-	 * @returns {sap.ui.table.Table} Reference to this in order to allow method chaining
+	 * @returns {sap.ui.table.Table} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Table.prototype.setThreshold = function (iThreshold) {

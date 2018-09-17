@@ -191,7 +191,7 @@ sap.ui.define([
 	 *
 	 * Default value is <code>0</code>
 	 *
-	 * @param {int} iRowCount  new value for property <code>fixedRowCount</code>
+	 * @param {int} iRowCount New value for property <code>fixedRowCount</code>
 	 * @returns {sap.ui.table.TreeTable} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -656,7 +656,7 @@ sap.ui.define([
 	 *
 	 * @deprecated Since version 1.28.
 	 * To get a group-like visualization the <code>useGroupMode</code> property can be used.
-	 * @returns {sap.ui.table.TreeTable} Reference to this in order to allow method chaining
+	 * @returns {sap.ui.table.TreeTable} Reference to <code>this</code> in order to allow method chaining
 	 * @see sap.ui.table.TreeTable#setUseGroupMode
 	 * @public
 	 */
@@ -678,7 +678,7 @@ sap.ui.define([
 	 * The <code>groupBy</code> association is not supported by the <code>TreeTable</code> control.
 	 *
 	 * @deprecated Since version 1.28.
-	 * @returns {sap.ui.table.TreeTable} Reference to this in order to allow method chaining
+	 * @returns {sap.ui.table.TreeTable} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	TreeTable.prototype.setGroupBy = function() {
@@ -697,7 +697,7 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bFlat If set to <code>true</code>, the flat mode is enabled
 	 *
-	 * @returns {sap.ui.table.TreeTable} Reference to this in order to allow method chaining
+	 * @returns {sap.ui.table.TreeTable} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	TreeTable.prototype.setUseFlatMode = function(bFlat) {
