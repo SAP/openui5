@@ -8,8 +8,8 @@
  * @public
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element', 'jquery.sap.sjax'],
-	function(jQuery, URI, Element /*, jQuerySap1 */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element', 'jquery.sap.sjax', 'jquery.sap.script'],
+	function(jQuery, URI, Element /*, jQuerySap1, jQuerySap2 */) {
 	"use strict";
 
 	var oCfgData = window["sap-ui-config"] || {};
@@ -40,6 +40,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element', 'jque
 
 		// match a CSS url
 		var rCssUrl = /url[\s]*\('?"?([^\'")]*)'?"?\)/;
+
+		var bUseInlineParameters = jQuery.sap.getUriParameters().get("sap-ui-xx-no-inline-theming-parameters") !== "true";
 
 		function resetParameters() {
 			mParameters = null;
@@ -129,7 +131,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element', 'jque
 			// Remove CSS file name and query to create theme base url (to resolve relative urls)
 			var sThemeBaseUrl = new URI(sStyleSheetUrl).filename("").query("").toString();
 
-			if (jQuery.sap.getUriParameters().get("sap-ui-xx-no-inline-theming-parameters") !== "true") {
+			var bThemeApplied = sap.ui.getCore().isThemeApplied();
+
+			if (!bThemeApplied) {
+				jQuery.sap.log.warning("Parameters have been requested but theme is not applied, yet.", "sap.ui.core.theming.Parameters");
+			}
+
+			// In some browsers (Safari / Edge) it might happen that after switching the theme or adopting the <link>'s href,
+			// the parameters from the previous stylesheet are taken. This can be prevented by checking whether the theme is applied.
+			if (bThemeApplied && bUseInlineParameters) {
 				var $link = jQuery(oLink);
 				var sDataUri = $link.css("background-image");
 				var aParams = /\(["']?data:text\/plain;utf-8,(.*?)['"]?\)$/i.exec(sDataUri);
