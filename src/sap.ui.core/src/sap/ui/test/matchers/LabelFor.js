@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-  './Matcher',
-  './I18NText',
+  'sap/ui/test/matchers/Matcher',
+  'sap/ui/test/matchers/I18NText',
   'sap/ui/test/Opa5'
 ], function (Matcher, I18NText, Opa5) {
   "use strict";

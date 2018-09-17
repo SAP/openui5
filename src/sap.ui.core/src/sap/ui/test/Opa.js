@@ -5,13 +5,13 @@
 /*global Math */
 sap.ui.define([
 	'sap/ui/Device',
-	'./_LogCollector',
-	'./_OpaLogger',
-	'./_ParameterValidator',
 	'sap/ui/thirdparty/URI',
-	'sap/ui/test/_UsageReport',
-	"sap/ui/thirdparty/jquery"
-], function(Device, _LogCollector, _OpaLogger, _ParameterValidator, URI, _UsageReport, jQueryDOM) {
+	"sap/ui/thirdparty/jquery",
+	'sap/ui/test/_LogCollector',
+	'sap/ui/test/_OpaLogger',
+	'sap/ui/test/_ParameterValidator',
+	'sap/ui/test/_UsageReport'
+], function(Device, URI, jQueryDOM, _LogCollector, _OpaLogger, _ParameterValidator, _UsageReport) {
 	"use strict";
 
 	///////////////////////////////

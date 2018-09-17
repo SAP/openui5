@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['./Matcher'], function(Matcher) {
+sap.ui.define(['sap/ui/test/matchers/Matcher'], function(Matcher) {
 	"use strict";
 
 	/**

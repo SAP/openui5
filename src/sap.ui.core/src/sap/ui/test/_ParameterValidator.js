@@ -2,7 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/thirdparty/jquery"], function(jQueryDOM) {
+	"sap/ui/thirdparty/jquery"
+], function(jQueryDOM) {
 	"use strict";
 	var _ParameterValidator = function (options) {
 		this._errorPrefix = options.errorPrefix;

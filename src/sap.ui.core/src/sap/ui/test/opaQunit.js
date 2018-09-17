@@ -2,7 +2,12 @@
  * ${copyright}
  */
 /*global QUnit */
-sap.ui.define(['sap/ui/thirdparty/URI', './Opa', './Opa5', "sap/ui/thirdparty/jquery"], function(URI, Opa, Opa5, jQueryDOM) {
+sap.ui.define([
+	'sap/ui/thirdparty/URI',
+	'sap/ui/test/Opa',
+	'sap/ui/test/Opa5',
+	"sap/ui/thirdparty/jquery"
+], function(URI, Opa, Opa5, jQueryDOM) {
 	"use strict";
 
 	QUnit.begin(function (oDetails) {

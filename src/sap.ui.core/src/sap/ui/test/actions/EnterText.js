@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/test/_OpaLogger",
-	"./Action",
+	"sap/ui/test/actions/Action",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log"
 ], function(_OpaLogger, Action, KeyCodes, Log) {

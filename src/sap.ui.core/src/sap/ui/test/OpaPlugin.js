@@ -15,15 +15,16 @@
 
 	}
 
-sap.ui.define(['jquery.sap.global',
-				'sap/ui/base/Object',
-				'sap/ui/core/mvc/View',
-				'./matchers/Ancestor',
-				'./matchers/MatcherFactory',
-				'./pipelines/MatcherPipeline',
-				'sap/ui/test/_opaCorePlugin',
-				'sap/ui/test/_OpaLogger'],
-	function ($, UI5Object, View, Ancestor, MatcherFactory,
+sap.ui.define([
+	'sap/ui/thirdparty/jquery',
+	'sap/ui/base/Object',
+	'sap/ui/core/mvc/View',
+	'sap/ui/test/matchers/Ancestor',
+	'sap/ui/test/matchers/MatcherFactory',
+	'sap/ui/test/pipelines/MatcherPipeline',
+	'sap/ui/test/_opaCorePlugin',
+	'sap/ui/test/_OpaLogger'
+], function ($, UI5Object, View, Ancestor, MatcherFactory,
 			MatcherPipeline, _opaCorePlugin, _OpaLogger) {
 
 		var oMatcherFactory = new MatcherFactory();

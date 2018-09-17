@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['./Matcher', "sap/base/strings/capitalize"], function(Matcher, capitalize) {
+sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], function(Matcher, capitalize) {
 	"use strict";
 
 	/**
