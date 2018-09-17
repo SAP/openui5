@@ -1231,6 +1231,8 @@ sap.ui.define([
 		 * Invokes a function if a certain time has passed since the last call.
 		 */
 		throttle: function(fn, iWait, mOptions) {
+			// Functionality taken from lodash open source library and adapted as needed
+
 			mOptions = Object.assign({
 				leading: true,
 				trailing: true
@@ -1244,6 +1246,8 @@ sap.ui.define([
 		 * Invokes a function if it has not been called for a certain time.
 		 */
 		debounce: function(fn, iWait, mOptions) {
+			// Functionality taken from lodash open source library and adapted as needed
+
 			mOptions = Object.assign({
 				leading: false,
 				asyncLeading: false,
