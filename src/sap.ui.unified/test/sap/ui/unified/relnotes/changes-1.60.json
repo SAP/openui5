@@ -43,6 +43,12 @@
         "type": "FIX",
         "text": " sap.ui.unified.FileUploader: correct width of the input when invalidated",
         "references": []
+      },
+      {
+        "id": "10af631cd1533ea339172ed6fd44fbbc52e6e1fa",
+        "type": "FIX",
+        "text": " PlanningCalendar: Spaces in internal aria-label are removed",
+        "references": []
       }
     ]
   }

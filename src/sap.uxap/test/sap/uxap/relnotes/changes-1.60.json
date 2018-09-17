@@ -49,6 +49,18 @@
         "type": "FIX",
         "text": " SDK: ObjectPage with Forms examples updated",
         "references": []
+      },
+      {
+        "id": "dcd917c815710b4c99f218aec67e9e566146e79d",
+        "type": "FIX",
+        "text": " ObjectPage: QUnit tests failure on Firefox is fixed",
+        "references": []
+      },
+      {
+        "id": "c51f5f07b6261fadc799620075ff6ee0a090a67d",
+        "type": "FIX",
+        "text": "sap.uxap: sap.ui.core._StashedControl change handler registration",
+        "references": []
       }
     ]
   }

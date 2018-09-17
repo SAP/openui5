@@ -67,6 +67,12 @@
         "type": "FIX",
         "text": "sap.ui.dt - Context menu closes when selection changes",
         "references": []
+      },
+      {
+        "id": "dc8ad7ea861a67f3052b42b41853d660f54f3cb2",
+        "type": "FIX",
+        "text": "sap.ui.dt - Context menu closes when selection changes",
+        "references": []
       }
     ]
   }

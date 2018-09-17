@@ -25,6 +25,18 @@
         "type": "FIX",
         "text": " HideSimpleForm change handler doesn\u0027t perform revert after restart",
         "references": []
+      },
+      {
+        "id": "48b6b61f57a02d0c06249f662ebf80dc3cb7ee7c",
+        "type": "FIX",
+        "text": " AlignedFlowLayout: Accessiblity issue fixed",
+        "references": []
+      },
+      {
+        "id": "90f927dab31c501f883e6aaac3d31fba91d226ef",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter minSize property is now working correctly",
+        "references": []
       }
     ]
   }

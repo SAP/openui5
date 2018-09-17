@@ -547,6 +547,120 @@
         "type": "FIX",
         "text": " sap.m.Wizard: Stable ID restored",
         "references": []
+      },
+      {
+        "id": "99eb225d0edc6179fbc96995675f12dd920ecbfa",
+        "type": "FEATURE",
+        "text": "Image: densityAware default is changed to \"false\"",
+        "references": []
+      },
+      {
+        "id": "be25ae94f90212dfc11c8b2e113f1b15dd2a5f5d",
+        "type": "FIX",
+        "text": " FacetFilter: Filter dialog has an aria message",
+        "references": []
+      },
+      {
+        "id": "7f340a3d421455e529560491d59c0836d2b02157",
+        "type": "FIX",
+        "text": " MaskInput: Accessibility exampe is improved",
+        "references": []
+      },
+      {
+        "id": "2c54028d192258c2d53cde6e25b92dbe31e0c522",
+        "type": "FIX",
+        "text": " MessagePage: Fixed message page rule",
+        "references": []
+      },
+      {
+        "id": "c1d6d8da215df89a0d0059f03ae8a857b0e8988b",
+        "type": "FIX",
+        "text": " MessagePopover: Log error when openBy DOM no longer visible",
+        "references": []
+      },
+      {
+        "id": "0e467b3d3570fd31aa7291d0cbfb6546252f877d",
+        "type": "FIX",
+        "text": " ObjectMarker: Accessibility info appears when in a table cell",
+        "references": []
+      },
+      {
+        "id": "3f7dc24a3c538730a06f5e585169936a319a9104",
+        "type": "FIX",
+        "text": " ObjectMarker: New properties ariaLabelledBy \u0026 ariaDescribedBy",
+        "references": []
+      },
+      {
+        "id": "c45e9de871af627a2dbec6b2736d7bea1e2c4c6c",
+        "type": "FIX",
+        "text": " ResponsiveTable: Disable column designtime changes ...",
+        "references": []
+      },
+      {
+        "id": "8b2ce7803eab298d9f0de1bb09d1fe9e625065c6",
+        "type": "FIX",
+        "text": " Tokenizer: Indicator for one hidden token added",
+        "references": []
+      },
+      {
+        "id": "b0745b8d2e28e04a7aafd88d10b7b563391e73cc",
+        "type": "FIX",
+        "text": " Variant Management Popover fixed for sap_belize_plus",
+        "references": []
+      },
+      {
+        "id": "b4e7ca994315d94d4a18e12937a3c1bce12d5d3d",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Focus handling corrected",
+        "references": []
+      },
+      {
+        "id": "95d865db59d2df5ac6d1163cdb4cb2e6f5dc4d04",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Focus handling corrected",
+        "references": []
+      },
+      {
+        "id": "a815c189593f76e4cde0aa8d2777cc8b1ef996d8",
+        "type": "FIX",
+        "text": " sap.m.DatePicker/TimePicker: hide picker icon when disabled",
+        "references": []
+      },
+      {
+        "id": "b0e99456a46ed31bd303f2d7957c37fb6cd1e785",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: customContent aggregation with sap.m.Link is read correctly",
+        "references": []
+      },
+      {
+        "id": "8fb3d9fe814ef1957e96066375e1e506d7b53cf1",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Tooltips for icons provided in ACC page",
+        "references": []
+      },
+      {
+        "id": "616f1dda0b5a9ff4815e37f37dfa7e8dc0673a17",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: correct focus outline width",
+        "references": []
+      },
+      {
+        "id": "efe6cf332655c6abe22d9cb280f36d59ce74cc85",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: Cancel event documentation updated",
+        "references": []
+      },
+      {
+        "id": "74f1ed005017053e34c7af5f473f9afbebc40557",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Focus is fixed in HCB and HCW themes",
+        "references": []
+      },
+      {
+        "id": "0a05de1606e7eb7fe75698703b2faca7315df76c",
+        "type": "FIX",
+        "text": " sap.m.themes.base.HeaderContainer.less: Vertical Allignment set to Top.",
+        "references": []
       }
     ]
   }

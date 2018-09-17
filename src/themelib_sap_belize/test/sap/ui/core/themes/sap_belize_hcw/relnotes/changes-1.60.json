@@ -19,6 +19,24 @@
         "type": "FIX",
         "text": " sap.m.IconTabBar: Focus outline is now correct",
         "references": []
+      },
+      {
+        "id": "9420f87a91bc80aa2ccede39f175d5dd039e43a2",
+        "type": "FIX",
+        "text": " Calendar: Picker\u0027s selected month/year style overriding focus in HC fixed",
+        "references": []
+      },
+      {
+        "id": "b0745b8d2e28e04a7aafd88d10b7b563391e73cc",
+        "type": "FIX",
+        "text": " Variant Management Popover fixed for sap_belize_plus",
+        "references": []
+      },
+      {
+        "id": "74f1ed005017053e34c7af5f473f9afbebc40557",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Focus is fixed in HCB and HCW themes",
+        "references": []
       }
     ]
   }
