@@ -866,7 +866,7 @@ sap.ui.define([
 					break;
 				}
 			}
-			if (!bGroupChanged) {
+			if (!bGroupChanged && !oEvent.isMarked("enterKeyConsumedAsContent")) {
 				bGroupChanged = this._handleGroupChange(oEvent,oElement);
 			}
 
