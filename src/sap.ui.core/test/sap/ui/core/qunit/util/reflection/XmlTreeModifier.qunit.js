@@ -89,7 +89,7 @@ function(
 			this.oComponent.destroy();
 		}
 	}, function() {
-		QUnit.test("the createControl processes parameters and working with default namespaces", function (assert) {
+		QUnit.test("the createControl is processing parameters and is working with default namespaces", function (assert) {
 			var sButtonText = "ButtonText";
 			var oButtonElement = XmlTreeModifier.createControl('sap.m.Button', this.oComponent, this.oXmlView, "testComponent---myView--MyButton", {'text' : sButtonText});
 			assert.equal(oButtonElement.getAttribute("text"), sButtonText);
