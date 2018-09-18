@@ -83,10 +83,16 @@ div[class*="sapUiRespGrid"]:after {
 
 .sapUiRespGridBreak { clear: both; }
 
-.sapUiRespGridWriteSpanClass(@classFor, @hspace, @span, @screenSize) when (@classFor = Span) {
+.sapUiRespGridWriteSpanClass(@classFor, @hspace, @span, @screenSize, @useRounding) when (@classFor = Span) {
     @a:  @_sap_ui_layout_Grid_RespGridOneCol * @span;
-    width: @a - 100% * @_sap_ui_layout_Grid_RespGridPxInRem * @hspace / @screenSize;
-    .sapUiRespGrid-getCalcFuncSpan(@a, @hspace);
+    @width_percentage_value: @a - 100% * @_sap_ui_layout_Grid_RespGridPxInRem * @hspace / @screenSize;
+    & when (@useRounding) {
+        width: floor(@width_percentage_value);
+    }
+    & when not (@useRounding) {
+        width: @width_percentage_value;
+        .sapUiRespGrid-getCalcFuncSpan(@a, @hspace);
+    }
 }
 
 .sapUiRespGridWriteIndentClass(@classFor, @hspace, @span, @screenSize) when (@classFor = Indent) {
@@ -124,9 +130,17 @@ div[class*="sapUiRespGrid"]:after {
 //Write Span and Indent classes
 .sapUiRespGridWriteClasses(@counter, @media, @classFor, @name, @classHSpace, @hspace, @screenSize) when (@counter > 0) {
   .sapUiRespGridWriteClasses((@counter - 1), @media, @classFor, @name, @classHSpace, @hspace, @screenSize);
+
   .@{media}.sapUiRespGridHSpace@{classHSpace} > .sapUiRespGrid@{classFor}@{name}@{counter} {
-      .sapUiRespGridWriteSpanClass(@classFor, @hspace, @counter,  @screenSize);
+      .sapUiRespGridWriteSpanClass(@classFor, @hspace, @counter,  @screenSize, false);
       .sapUiRespGridWriteIndentClass(@classFor, @hspace, @counter,  @screenSize);
+    }
+
+    html[data-sap-ui-browser*='ie'],
+    html[data-sap-ui-browser*='ed'] {
+      .@{media}.sapUiRespGridHSpace@{classHSpace} > .sapUiRespGrid@{classFor}@{name}@{counter} {
+        .sapUiRespGridWriteSpanClass(@classFor, @hspace, @counter,  @screenSize, true);
+      }
     }
 }
 
