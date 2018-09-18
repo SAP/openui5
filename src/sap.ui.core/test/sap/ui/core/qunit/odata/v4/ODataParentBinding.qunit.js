@@ -2336,15 +2336,28 @@ sap.ui.define([
 		// code under test
 		oBinding.removeReadGroupLock();
 	});
-	//TODO Fix issue with ODataModel.integration.qunit
-	//  "suspend/resume: list binding with nested context binding, only context binding is adapted"
-	//TODO ODLB#resumeInternal: checkUpdate on dependent bindings of header context after change
-	//  event (see ODLB#reset)
-	//TODO check: resumeInternal has no effect for operations
-	//TODO check/update jsdoc change-event for ODParentBinding#resume
-	//TODO error handling for write APIs, refresh
-	//   (change only in resume is probably not sufficient)
-	//TODO Performance: Compare previous aggregated query options with current state and
-	// do not recreate cache if there is no diff (e.g no UI change applied, UI change
-	// does not affect current $expand/$select)
+
+	//*********************************************************************************************
+	[{}, {$$patchWithoutSideEffects : true}].forEach(function (mParameters, i) {
+		QUnit.test("isPatchWithoutSideEffects: " + i, function (assert) {
+			var oBinding = new ODataParentBinding({
+					mParameters : mParameters
+				});
+
+			// code under test
+			assert.strictEqual(oBinding.isPatchWithoutSideEffects(),
+				!!mParameters.$$patchWithoutSideEffects);
+		});
+	});
 });
+//TODO Fix issue with ODataModel.integration.qunit
+//  "suspend/resume: list binding with nested context binding, only context binding is adapted"
+//TODO ODLB#resumeInternal: checkUpdate on dependent bindings of header context after change
+//  event (see ODLB#reset)
+//TODO check: resumeInternal has no effect for operations
+//TODO check/update jsdoc change-event for ODParentBinding#resume
+//TODO error handling for write APIs, refresh
+//   (change only in resume is probably not sufficient)
+//TODO Performance: Compare previous aggregated query options with current state and
+// do not recreate cache if there is no diff (e.g no UI change applied, UI change
+// does not affect current $expand/$select)

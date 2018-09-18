@@ -9394,4 +9394,75 @@ sap.ui.define([
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Modify a property without side effects, i.e. the PATCH request's response is
+	// ignored.
+	QUnit.test("$$patchWithoutSideEffects", function (assert) {
+		var oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "$auto"
+			}),
+			sView = '\
+<FlexBox binding="{\
+			path : \'/SalesOrderList(\\\'42\\\')\',\
+			parameters : {$$patchWithoutSideEffects : true}\
+		}"\
+		id="objectPageForm">\
+	<Text id="netAmount" text="{NetAmount}"/>\
+	<Text id="grossAmount" text="{GrossAmount}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')?$select=GrossAmount,NetAmount,SalesOrderID", {
+				"@odata.etag" : "ETag0",
+				"GrossAmount" : "119.00",
+				"NetAmount" : "100.00"
+//				"SalesOrderID" : "42"
+			})
+			.expectChange("netAmount", "100.00")
+			.expectChange("grossAmount", "119.00");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("netAmount", "200.00")
+				.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "ETag0"},
+					payload : {"NetAmount" : "200"}
+				}, {
+					"@odata.etag" : "ETag1",
+					"GrossAmount" : "238.00", // side effect
+					"NetAmount" : "200.00" // "side effect": decimal places added
+//					"SalesOrderID" : "42"
+				});
+
+			that.oView.byId("netAmount").getBinding("text").setValue("200");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("netAmount", "0.00")
+				.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "ETag1"}, // new ETag is used!
+					payload : {"NetAmount" : "0"}
+				}, {
+//					"@odata.etag" : "ETag2",
+					"GrossAmount" : "0.00", // side effect
+					"NetAmount" : "0.00", // "side effect": decimal places added
+//					"SalesOrderID" : "42",
+					"Messages" : [{
+						"code" : "23",
+						"message" : "Enter a minimum amount of 1",
+						"target" : "NetAmount",
+						"numericSeverity" : 3
+					}]
+				});
+
+			that.oView.byId("netAmount").getBinding("text").setValue("0");
+
+			return that.waitForChanges(assert);
+		});
+	});
 });

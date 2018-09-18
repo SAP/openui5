@@ -739,13 +739,15 @@ sap.ui.define([
 	 *   Path of the entity, relative to the cache
 	 * @param {string} [sUnitOrCurrencyPath]
 	 *   Path of the unit or currency for the property, relative to the entity
+	 * @param {boolean} [bPatchWithoutSideEffects=false]
+	 *   Whether the PATCH response is ignored, except for a new ETag
 	 * @returns {Promise}
-	 *   A promise for the PATCH request
+	 *   A promise for the PATCH request (resolves with <code>undefined</code>)
 	 *
 	 * @public
 	 */
 	Cache.prototype.update = function (oGroupLock, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
-			sEntityPath, sUnitOrCurrencyPath) {
+			sEntityPath, sUnitOrCurrencyPath, bPatchWithoutSideEffects) {
 		var aPropertyPath = sPropertyPath.split("/"),
 			aUnitOrCurrencyPath,
 			that = this;
@@ -795,15 +797,18 @@ sap.ui.define([
 					var oPatchResult = aResult[0];
 
 					that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
-					// visit response to report the messages
-					that.visitResponse(oPatchResult, aResult[1], false,
-						_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sEntityPath)),
-						sEntityPath
-					);
+					if (!bPatchWithoutSideEffects) {
+						// visit response to report the messages
+						that.visitResponse(oPatchResult, aResult[1], false,
+							_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sEntityPath)),
+							sEntityPath
+						);
+					}
 					// update the cache with the PATCH response
 					_Helper.updateExisting(that.mChangeListeners, sEntityPath, oEntity,
-						oPatchResult);
-					return oPatchResult;
+						bPatchWithoutSideEffects
+						? {"@odata.etag" : oPatchResult["@odata.etag"]}
+						: oPatchResult);
 				}, function (oError) {
 					that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 					if (!oError.canceled) {
@@ -867,7 +872,7 @@ sap.ui.define([
 					that.oRequestor.relocate(sParkedGroup, oEntity, sTransientGroup);
 				}
 				oGroupLock.unlock();
-				return Promise.resolve({});
+				return Promise.resolve();
 			}
 			// send and register the PATCH request
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);

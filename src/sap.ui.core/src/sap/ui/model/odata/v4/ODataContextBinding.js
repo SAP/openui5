@@ -289,8 +289,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.applyParameters = function (mParameters, sChangeReason) {
-		this.checkBindingParameters(mParameters,
-			["$$groupId", "$$inheritExpandSelect", "$$ownRequest", "$$updateGroupId"]);
+		this.checkBindingParameters(mParameters, ["$$groupId", "$$inheritExpandSelect",
+				"$$ownRequest", "$$patchWithoutSideEffects", "$$updateGroupId"]);
 
 		this.sGroupId = mParameters.$$groupId;
 		this.sUpdateGroupId = mParameters.$$updateGroupId;

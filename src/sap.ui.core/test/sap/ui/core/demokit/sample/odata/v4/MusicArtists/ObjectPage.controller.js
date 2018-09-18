@@ -11,7 +11,8 @@ sap.ui.define([
 		_onObjectMatched : function (oEvent) {
 			var oView = this.getView(),
 				oArtistContext = oView.getModel()
-					.bindContext("/" + oEvent.getParameter("arguments").artistPath)
+					.bindContext("/" + oEvent.getParameter("arguments").artistPath, null,
+						{$$patchWithoutSideEffects : true})
 					.getBoundContext();
 
 			this.oActiveArtistContext = null;
@@ -58,7 +59,7 @@ sap.ui.define([
 			// remember the active version to restore it on discard
 			this.oActiveArtistContext = this.byId("objectPageForm").getBindingContext();
 			oView.getModel().bindContext(sNamespace + "EditAction(...)", this.oActiveArtistContext,
-					{$$inheritExpandSelect : true})
+					{$$inheritExpandSelect : true, $$patchWithoutSideEffects : true})
 				.setParameter("PreserveChanges", false)
 				.execute()
 				.then(function (oInactiveArtistContext) {
@@ -81,7 +82,8 @@ sap.ui.define([
 
 			oView.setBusy(true);
 			oView.getModel().bindContext(sNamespace + "ActivationAction(...)",
-					this.byId("objectPageForm").getBindingContext(), {$$inheritExpandSelect : true})
+					this.byId("objectPageForm").getBindingContext(),
+					{$$inheritExpandSelect : true, $$patchWithoutSideEffects : true})
 				.execute()
 				.then(function (oActiveArtistContext) {
 					that.byId("objectPageForm").setBindingContext(oActiveArtistContext);

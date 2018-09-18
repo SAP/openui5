@@ -632,7 +632,8 @@ sap.ui.define([
 								oGroupLock.setGroupId(oBinding.getUpdateGroupId());
 								return oCache.update(oGroupLock,
 									oResult.propertyPath, vValue, reportError, oResult.editUrl,
-									sCachePath, that.getUnitOrCurrencyPath());
+									sCachePath, that.getUnitOrCurrencyPath(),
+									oBinding.isPatchWithoutSideEffects());
 							}, oResult.entityPath);
 						});
 				}
