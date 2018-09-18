@@ -79,6 +79,9 @@ function(
 			}
 		};
 		var oMockedAppComponent = {
+			getManifestObject: function () {
+				return {};
+			},
 			getManifest: function () {
 				return {};
 			},
@@ -218,10 +221,12 @@ function(
 			}
 		};
 		var oMockedAppComponent = {
+			getManifestObject: function () {
+				return {};
+			},
 			getManifest: function () {
 				return {};
 			},
-
 			getManifestEntry: function () {
 				return undefined;
 			},
