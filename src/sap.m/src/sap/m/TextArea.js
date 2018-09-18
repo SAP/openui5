@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'./library',
 	'sap/ui/core/library',
+	'sap/ui/events/KeyCodes',
 	'sap/ui/Device',
 	'./TextAreaRenderer',
 	"sap/ui/thirdparty/jquery"
@@ -19,6 +20,7 @@ function(
 	ResizeHandler,
 	library,
 	coreLibrary,
+	KeyCodes,
 	Device,
 	TextAreaRenderer,
 	jQuery
@@ -650,6 +652,18 @@ function(
 					return;
 				}
 			}
+		}
+	};
+
+	/**
+	 * Special handling for Enter key which triggers the FieldGroupNavigation on Enter. This treatment is only relevant
+	 * for the Enter key itself, as this is used in TextArea to start a new line.
+	 * @param {jQuery.Event} oEvent The event object
+	 * @private
+	 */
+	TextArea.prototype.onkeyup = function(oEvent) {
+		if (oEvent.keyCode === KeyCodes.ENTER) {
+			oEvent.setMarked("enterKeyConsumedAsContent");
 		}
 	};
 
