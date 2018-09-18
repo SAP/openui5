@@ -2173,57 +2173,61 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Create a sales order w/o key properties, enter a note, then submit the batch
-	QUnit.test("Create with user input", function (assert) {
-		var sView = '\
+	[false, true].forEach(function (bSkipRefresh) {
+		QUnit.test("Create with user input - bSkipRefresh: " + bSkipRefresh, function (assert) {
+			var sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="note" text="{Note}" />\
 	</ColumnListItem>\
 </Table>',
-			oModel = createSalesOrdersModel({
-				autoExpandSelect : true,
-				updateGroupId : "update"
-			}),
-			that = this;
+				oModel = createSalesOrdersModel({
+					autoExpandSelect : true,
+					updateGroupId : "update"
+				}),
+				that = this;
 
-		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
-				"value" : [{
-					"Note" : "foo",
-					"SalesOrderID" : "42"
-				}]
-			})
-			.expectChange("note", ["foo"]);
-
-		return this.createView(assert, sView, oModel).then(function () {
-			var oTable = that.oView.byId("table");
-
-			that.expectChange("note", ["baz", "foo"]);
-
-			oTable.getBinding("items").create({Note : "bar"});
-			oTable.getItems()[0].getCells()[0].getBinding("text").setValue("baz");
-
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectRequest({
-					method : "POST",
-					url : "SalesOrderList",
-					payload : {"Note" : "baz"}
-				}, {
-					"CompanyName" : "Bar",
-					"Note" : "from server",
-					"SalesOrderID" : "42"
+			this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+					"value" : [{
+						"Note" : "foo",
+						"SalesOrderID" : "42"
+					}]
 				})
-				.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
-					"Note" : "from server",
-					"SalesOrderID" : "42"
-				})
-				.expectChange("note", "from server", 0);
+				.expectChange("note", ["foo"]);
 
-			return Promise.all([
-				that.oModel.submitBatch("update"),
-				that.waitForChanges(assert)
-			]);
+			return this.createView(assert, sView, oModel).then(function () {
+				var oTable = that.oView.byId("table");
+
+				that.expectChange("note", ["baz", "foo"]);
+
+				oTable.getBinding("items").create({Note : "bar"}, bSkipRefresh);
+				oTable.getItems()[0].getCells()[0].getBinding("text").setValue("baz");
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				that.expectRequest({
+						method : "POST",
+						url : "SalesOrderList",
+						payload : {"Note" : "baz"}
+					}, {
+						"CompanyName" : "Bar",
+						"Note" : "from server",
+						"SalesOrderID" : "42"
+					});
+				if (!bSkipRefresh){
+					that.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
+							"Note" : "from server",
+							"SalesOrderID" : "42"
+						});
+				}
+				that.expectChange("note", "from server", 0);
+
+				return Promise.all([
+					that.oModel.submitBatch("update"),
+					that.waitForChanges(assert)
+				]);
+			});
 		});
 	});
 
