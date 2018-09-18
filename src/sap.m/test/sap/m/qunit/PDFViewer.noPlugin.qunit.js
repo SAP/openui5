@@ -6,8 +6,9 @@ sap.ui.define("sap.m.qunit.PDFViewerNoPlugin", [
 	"sap/m/PDFViewer",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/PDFViewerRenderer",
-	"sap/m/PDFViewerDisplayTypes"
-], function (jQuery, TestUtils, PDFViewer, JSONModel, PDFViewerRenderer, PDFViewerDisplayTypes) {
+	"sap/m/PDFViewerDisplayType",
+	"sap/ui/Device"
+], function (jQuery, TestUtils, PDFViewer, JSONModel, PDFViewerRenderer, PDFViewerDisplayType, Device) {
 	"use strict";
 
 	var oPdfViewer = null;
@@ -50,17 +51,17 @@ sap.ui.define("sap.m.qunit.PDFViewerNoPlugin", [
 			assert.ok(oPdfViewer.$("overflowToolbar").length === 1, "Toolbar is displayed");
 			assert.ok(oPdfViewer.$("overflowToolbar-title").length === 1, "Title is displayed");
 
-			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayTypes.Auto, "Default value of displayType is Auto");
+			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Auto, "Default value of displayType is Auto");
 			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Auto mode");
 
-			oPdfViewer.setDisplayType(PDFViewerDisplayTypes.Embedded);
+			oPdfViewer.setDisplayType(PDFViewerDisplayType.Embedded);
 			TestUtils.rerender();
-			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayTypes.Embedded, "Set displayType to Embedded mode");
+			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Embedded, "Set displayType to Embedded mode");
 			assert.ok(fnIsContentDisplayed(), "Content is displayed in Embedded mode");
 
-			oPdfViewer.setDisplayType(PDFViewerDisplayTypes.Link);
+			oPdfViewer.setDisplayType(PDFViewerDisplayType.Link);
 			TestUtils.rerender();
-			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayTypes.Link, "Set displayType to Link mode");
+			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Link, "Set displayType to Link mode");
 			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Link mode");
 			assert.notOk(fnIsContentDisplayed(), "Content is not displayed in Link mode");
 
@@ -74,6 +75,11 @@ sap.ui.define("sap.m.qunit.PDFViewerNoPlugin", [
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
 		oPdfViewer.setModel(oModel);
 		TestUtils.renderPdfViewer(oPdfViewer);
+
+		if (!Device.system.desktop) {
+			// If a device is desktop and PDF plug-in is disable, assert from 'error' event is run
+			assert.ok(true, "Device isn't desktop: 'error' event should not be fired");
+		}
 
 		TestUtils.wait(1000)()
 			.then(checkSubstituteContent);
