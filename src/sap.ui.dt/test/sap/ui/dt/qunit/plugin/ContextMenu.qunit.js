@@ -630,7 +630,7 @@ sap.ui.define([
 			assert.strictEqual(oPopoverContext.height, 384, "the height of a context menu is correct");
 			assert.ok(!isNaN(oPopoverContext.height), "the height of a context menu shouldn't be NaN");
 			assert.strictEqual(typeof oPopoverContext.width, "number", "the width of a context menu should be a number");
-			assert.strictEqual(oPopoverContext.width, 178, "the width of a context menu is correct");
+			assert.strictEqual(oPopoverContext.width, 190, "the width of a context menu is correct");
 			assert.ok(!isNaN(oPopoverContext.width), "the width of a context menu shouldn't be NaN");
 			assert.strictEqual(typeof oPopover.height, "number", "the height of a non-expanded ContextMenu should be a number");
 			assert.strictEqual(oPopover.height, 66, "the height of a non-expanded ContextMenu is correct");
@@ -642,7 +642,7 @@ sap.ui.define([
 			assert.strictEqual(oPopoverExpanded.height, 402, "the height of an expanded ContextMenu is correct");
 			assert.ok(!isNaN(oPopoverExpanded.height), "the height of an expanded ContextMenu shouldn't be NaN");
 			assert.strictEqual(typeof oPopoverExpanded.width, "number", "the width of an expanded ContextMenu should be a number");
-			assert.strictEqual(oPopoverExpanded.width, 196, "the width of an expanded ContextMenu is correct");
+			assert.strictEqual(oPopoverExpanded.width, 208, "the width of an expanded ContextMenu is correct");
 			assert.ok(!isNaN(oPopoverExpanded.width), "the width of an expanded ContextMenu shouldn't be NaN");
 			assert.ok(oPopoverContext.height < oPopoverExpanded.height, "the height of a context menu should be less than the hight of an expanded ContextMenu (if they have the same amount of buttons)");
 			assert.ok(oPopoverContext.width < oPopoverExpanded.width, "the width of a context menu should be less than that of an expanded ContextMenu (if they have the same amount of buttons)");
@@ -740,6 +740,25 @@ sap.ui.define([
 			assert.equal(oAddSubMenuStub.args[0][0], oSubMenuItem, "then _addMenuItemToGroup is called with the sub menu item");
 			oSandbox.restore();
 		});
+
+		QUnit.test("When the popup height is too big", function (assert) {
+			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
+			oSandbox.stub(oContextMenuControl, "_getPopoverDimensions").returns({height : 250, width : 100});
+			oSandbox.stub(oContextMenuControl, "_getViewportDimensions").returns({width : 300, height : 300, top : 0, bottom : 300});
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+			assert.equal(oContextMenuControl.getPopover().getContentHeight(), "200px", "then vertical scrolling is added");
+			oSandbox.restore();
+		});
+
+		QUnit.test("When the popup width is more than 400px", function (assert) {
+			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
+			oSandbox.stub(oContextMenuControl, "_getPopoverDimensions").returns({height : 250, width : 500});
+			oSandbox.stub(oContextMenuControl, "_getViewportDimensions").returns({width : 800, height : 800, top : 0, bottom : 800});
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+			assert.equal(oContextMenuControl.getPopover().getContentWidth(), "400px", "then the width is limited to 400px");
+			oSandbox.restore();
+		});
+
 	});
 
 	QUnit.module("ContextMenuControl API", {
@@ -1259,23 +1278,6 @@ sap.ui.define([
 			assert.ok(oSpyTop.notCalled);
 			assert.ok(oSpyBottom.notCalled);
 			assert.ok(oSpySideways.calledOnce);
-			// unsupported screensize test
-			oOverlay = {};
-			oPopover = {
-				height: 270,
-				width: 40
-			};
-			oViewport = {
-				height: 200,
-				width: 200
-			};
-			oSpyTop.reset();
-			oSpyBottom.reset();
-			oSpySideways.reset();
-			assert.throws(this.oContextMenuControl._placeAsCompactContextMenu.bind(this.oContextMenuControl, oOverlay, oPopover, oViewport), Error("Your screen size is not supported!"), "Should throw an error");
-			assert.ok(oSpyTop.notCalled);
-			assert.ok(oSpyBottom.notCalled);
-			assert.ok(oSpySideways.notCalled);
 		});
 
 		QUnit.test("calling _placeAsExpandedContextMenu", function (assert) {
@@ -1310,7 +1312,7 @@ sap.ui.define([
 			};
 			oPos = this.oContextMenuControl._placeAsExpandedContextMenu(oContPos, oPopover, oViewport);
 			assert.strictEqual(oPos.top, 160, "should be the y coordinate of the context menu position");
-			assert.strictEqual(oPos.left, 140, "should be oContPos.x - oPopover.width");
+			assert.strictEqual(oPos.left, 160, "should be oContPos.x - oPopover.width / 2");
 			assert.strictEqual(this.oContextMenuControl.getPopover().getPlacement(), "Top", "placement should be Top");
 			oContPos = {
 				x: 50,
@@ -1328,32 +1330,6 @@ sap.ui.define([
 			assert.strictEqual(oPos.top, 20, "should be oViewport.height - oContPos.y");
 			assert.strictEqual(oPos.left, 40, "should be oViewport.width - oContPos.x");
 			assert.strictEqual(this.oContextMenuControl.getPopover().getPlacement(), "Bottom", "placement should be Bottom");
-			oContPos = {
-				x: 40,
-				y: 60
-			};
-			oPopover = {
-				width: 60,
-				height: 80
-			};
-			oViewport = {
-				width: 50,
-				height: 200
-			};
-			assert.throws(this.oContextMenuControl._placeAsExpandedContextMenu.bind(this.oContextMenuControl, oContPos, oPopover, oViewport), Error("Your screen size is not supported!"), "Should throw an error");
-			oContPos = {
-				x: 60,
-				y: 40
-			};
-			oPopover = {
-				width: 60,
-				height: 80
-			};
-			oViewport = {
-				width: 200,
-				height: 50
-			};
-			assert.throws(this.oContextMenuControl._placeAsExpandedContextMenu.bind(this.oContextMenuControl, oContPos, oPopover, oViewport), Error("Your screen size is not supported!"), "Should throw an error");
 		});
 
 		QUnit.test("calling _placeContextMenu", function (assert) {
@@ -1384,15 +1360,6 @@ sap.ui.define([
 			this.oContextMenuControl._placeContextMenu(this.oButton2Overlay, false, false);
 			assert.ok(oSpyMini.calledOnce);
 			assert.ok(oSpyContext.notCalled);
-		});
-
-		QUnit.test("calling _placeContextMenuWrapper", function (assert) {
-			var oBtn = new Button({}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-			this.oContextMenuControl.show(oBtn, false);
-			this.oContextMenuControl._placeContextMenuWrapper();
-			var oContextMenuWrapper = document.getElementById("ContextMenuWrapper");
-			assert.ok(oContextMenuWrapper instanceof Element, "The ContextMenu wrapper should be an Element in the DOM");
 		});
 
 		QUnit.test("comparing the height of an actual rendered sap.m.Button to the return value of _getButtonHeight", function (assert) {
