@@ -52,7 +52,7 @@ sap.ui.define(function () {
 			}
 
 			bUseTitleOnTheLeft = oControl._getUseTitleOnTheLeft();
-			if (bUseTitleOnTheLeft && oControl._onDesktopMediaRange()) {
+			if (bUseTitleOnTheLeft) {
 				oRm.addClass("titleOnLeftLayout");
 			}
 			oRm.writeAttributeEscaped("id", oControl.getId() + "-header");
@@ -93,7 +93,6 @@ sap.ui.define(function () {
 		oRm.write("<div");
 		oRm.addClass("ui-helper-clearfix");
 		oRm.addClass("sapUxAPBlockContainer");
-		oRm.addClass("sapUxAPBlockContainer" + oControl._getMediaString());
 		oRm.writeClasses();
 		if (oControl._isHidden){
 			oRm.addStyle("display", "none");

@@ -21,8 +21,7 @@ Common compact/cozy
 }
 
 /* L fullscreen paddings */
-html.sapUiMedia-Std-Desktop .sapUxAPAnchorBar.sapMTB,
-html.sapUiMedia-Std-Desktop .sapMSplitContainer.sapMSplitContainerHideMode .sapMSplitContainerDetail .sapUxAPAnchorBar.sapMTB /* overriding selector for desktop in split-container */
+html .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapMTB
 {
 	padding-left: 2rem;
 }
@@ -92,7 +91,7 @@ html.sapUiMedia-Std-Desktop .sapMSplitContainer.sapMSplitContainerHideMode .sapM
 
 // By design the arrows are not focusable
 .sapUxAPAnchorBar .anchorBarArrow .sapMBtn:focus > .sapMFocusable,
-html.sap-desktop .sapUxAPAnchorBarButton.sapMBtn:focus > .sapMBtnActive.sapMFocusable {
+html .sap-desktop .sapUxAPAnchorBarButton.sapMBtn:focus > .sapMBtnActive.sapMFocusable {
 	outline: none;
 }
 
@@ -121,14 +120,14 @@ html[dir=rtl] .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
 
 html[data-sap-ui-animation="on"] {
 	// Scroll buttons are invisible at first
-	&.sapUiMedia-Std-Desktop .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtn,
-	&.sapUiMedia-Std-Desktop .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtn {
+	&.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtn,
+	&.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtn {
 		opacity: 0;
 	}
 
 	// Fade-in animation on hover
-	&.sapUiMedia-Std-Desktop .sapUxAPAnchorBar:hover.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtn,
-	&.sapUiMedia-Std-Desktop .sapUxAPAnchorBar:hover.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtn {
+	&.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar:hover.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtn,
+	&.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar:hover.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtn {
 		opacity: 1;
 		-webkit-transition-property: opacity;
 		transition-property: opacity;
@@ -138,8 +137,8 @@ html[data-sap-ui-animation="on"] {
 }
 
 html[data-sap-ui-animation="off"] {
-	&.sapUiMedia-Std-Desktop .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtn,
-	&.sapUiMedia-Std-Desktop .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtn {
+	&.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtn,
+	&.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtn {
 		opacity: 1;
 	}
 }

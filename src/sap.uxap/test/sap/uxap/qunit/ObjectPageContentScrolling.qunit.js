@@ -217,23 +217,28 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			iScrollPositionAfterRemove,
 			iExpectedPositionAfterRemove;
 
-		oObjectPage.setSelectedSection(oThirdSection.getId());
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			setTimeout(function () {
+				oObjectPage.setSelectedSection(oThirdSection.getId());
+			}, 500);
+		});
 
 		ObjectPageContentScrollingView.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-
-		setTimeout(function() {
-			oObjectPage.removeSection(oFirstSection);
-			setTimeout(function() {
-				iScrollPositionAfterRemove = oObjectPage._$opWrapper[0].scrollTop;
-				iExpectedPositionAfterRemove = Math.ceil(jQuery("#" + oThirdSection.getId() + " .sapUxAPObjectPageSectionContainer").position().top); // top of third section content
-				assert.ok(isPositionsMatch(iScrollPositionAfterRemove, iExpectedPositionAfterRemove), "scrollPosition is correct");
-				ObjectPageContentScrollingView.destroy();
-				oFirstSection.destroy();
-				done();
-			}, 1000); // throttling delay
-		}, 1000); //dom calc delay
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			setTimeout(function () {
+				oObjectPage.removeSection(oFirstSection);
+				setTimeout(function () {
+					iScrollPositionAfterRemove = oObjectPage._$opWrapper[0].scrollTop;
+					iExpectedPositionAfterRemove = Math.ceil(jQuery("#" + oThirdSection.getId() + " .sapUxAPObjectPageSectionContainer").position().top); // top of third section content
+					assert.ok(isPositionsMatch(iScrollPositionAfterRemove, iExpectedPositionAfterRemove), "scrollPosition is correct");
+					ObjectPageContentScrollingView.destroy();
+					oFirstSection.destroy();
+					done();
+				}, 500); // throttling delay
+			}, 500); //dom calc delay
+		});
 	});
 
 	QUnit.test("Deleting the bellow section preserves the scroll position", function (assert) {
@@ -382,7 +387,12 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			oResizableControl = new HTML({ content: "<div style='height: 100px'></div>"}),
 			done = assert.async();
 
-		oObjectPageLayout.setSelectedSection(oLastSection);
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+			setTimeout(function () {
+				oObjectPageLayout.setSelectedSection(oLastSection);
+			}, 500);
+		});
+
 		oLastSubSection.addBlock(oResizableControl);
 
 		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
@@ -418,29 +428,30 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		oLastSection.getSubSections()[0].addBlock(oSmallHeightControl);
 
 		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
-
-			iFirstSectionSpacerHeight = oObjectPageLayout._$spacer.get(0).offsetHeight;
-
-			// show the bigger section
-			oObjectPageLayout.setSelectedSection(oLastSection.getId());
-
 			setTimeout(function() {
+				iFirstSectionSpacerHeight = oObjectPageLayout._$spacer.get(0).offsetHeight;
 
-				// assert context
-				iLastSectionSpacerHeight = oObjectPageLayout._$spacer.get(0).offsetHeight;
-				assert.notEqual(iLastSectionSpacerHeight, iFirstSectionSpacerHeight, "spacer for smaller section is different");
+				// show the bigger section
+				oObjectPageLayout.setSelectedSection(oLastSection.getId());
 
-				//Act: return to initial section
-				oObjectPageLayout.setSelectedSection(oFirstSection.getId());
+				setTimeout(function () {
 
-				setTimeout(function() {
+					// assert context
+					iLastSectionSpacerHeight = oObjectPageLayout._$spacer.get(0).offsetHeight;
+					assert.notEqual(iLastSectionSpacerHeight, iFirstSectionSpacerHeight, "spacer for smaller section is different");
 
-					// Check: spacer is correctly restored
-					assert.ok(oObjectPageLayout._$spacer.get(0).offsetHeight === iFirstSectionSpacerHeight, "spacer height is correct");
-					oObjectPageLayout.destroy();
-					done();
+					//Act: return to initial section
+					oObjectPageLayout.setSelectedSection(oFirstSection.getId());
+
+					setTimeout(function () {
+
+						// Check: spacer is correctly restored
+						assert.ok(oObjectPageLayout._$spacer.get(0).offsetHeight === iFirstSectionSpacerHeight, "spacer height is correct");
+						oObjectPageLayout.destroy();
+						done();
+					}, 10);
 				}, 10);
-			}, 10);
+			}, 500);
 		});
 
 		// arrange

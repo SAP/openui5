@@ -101,7 +101,7 @@ html.sap-desktop .sapUxAPHierarchicalSelect {
 }
 
 /* styling needed to achieve underline of the select label on phone */
-html.sapUiMedia-Std-Phone, html.sap-phone {
+html .sapUxAPObjectPageLayout-Std-Phone, html .sap-phone {
 	.sapMSltPressed > .sapMSltArrow {
 		background: @sapUiFieldActiveBackground;
 	}
@@ -126,7 +126,7 @@ html.sapUiMedia-Std-Phone, html.sap-phone {
 
 /* styling needed to achieve underline of the select label on phone on Android 4.4.2
 (this is specific for webview (Fiori client) and Chrome browser) */
-html[data-sap-ui-browser^="cr4"].sapUiMedia-Std-Phone,
+html[data-sap-ui-browser^="cr4"] .sapUxAPObjectPageLayout-Std-Phone,
 html[data-sap-ui-browser^="cr4"].sap-phone {
 	.sapUxAPHierarchicalSelect .sapMSltLabel {
 		box-shadow: inset 0 -0.125rem @sapUiSelected;

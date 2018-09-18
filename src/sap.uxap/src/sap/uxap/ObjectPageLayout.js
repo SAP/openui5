@@ -427,6 +427,12 @@ sap.ui.define([
 		PHONE: 600
 	};
 
+	ObjectPageLayout.MEDIA = {
+		PHONE: "sapUxAPObjectPageLayout-Std-Phone",
+		TABLET: "sapUxAPObjectPageLayout-Std-Tablet",
+		DESKTOP: "sapUxAPObjectPageLayout-Std-Desktop"
+	};
+
 	ObjectPageLayout.DYNAMIC_HEADERS_MEDIA = {
 		PHONE: "sapFDynamicPage-Std-Phone",
 		TABLET: "sapFDynamicPage-Std-Tablet",
@@ -949,8 +955,10 @@ sap.ui.define([
 		this.oCore.getEventBus().publish("sap.ui", "ControlForPersonalizationRendered", this);
 
 		if (this._hasDynamicTitle()) {
-			this._updateMedia(this._getWidth(this));
+			this._updateMedia(this._getWidth(this), ObjectPageLayout.DYNAMIC_HEADERS_MEDIA);
 		}
+
+		this._updateMedia(this._getWidth(this), ObjectPageLayout.MEDIA);
 
 		this._updateToggleHeaderVisualIndicators();
 		this._updateTitleVisualState();
@@ -1913,29 +1921,29 @@ sap.ui.define([
 	* <b>Note:</b>
 	* The method is called, when the <code>ObjectPageDynamicPageHeaderTitle</code> is being used.
 	* @param {Number} iWidth - the actual width of the control
+	* @param {Object} oMedia - object containing CSS classes for the respective media (Phone, Tablet, etc.)
 	* @private
 	*/
-	ObjectPageLayout.prototype._updateMedia = function (iWidth) {
-		// Applies the provided CSS Media (DYNAMIC_HEADERS_MEDIA) class and removes the rest.
+	ObjectPageLayout.prototype._updateMedia = function (iWidth, oMedia) {
+		// Applies the provided CSS Media (oMedia) class and removes the rest.
 		// Example: If the <code>sapFDynamicPage-Std-Phone</code> class should be applied,
 		// the <code>sapFDynamicPage-Std-Tablet</code> and <code>sapFDynamicPage-Std-Desktop</code> classes will be removed.
 		var fnUpdateMediaStyleClass = function (sMediaClass) {
-			Object.keys(ObjectPageLayout.DYNAMIC_HEADERS_MEDIA).forEach(function (sMedia) {
-				var sCurrentMediaClass = ObjectPageLayout.DYNAMIC_HEADERS_MEDIA[sMedia],
+			Object.keys(oMedia).forEach(function (sMedia) {
+				var sCurrentMediaClass = oMedia[sMedia],
 					bEnable = sMediaClass === sCurrentMediaClass;
 
 				this.toggleStyleClass(sCurrentMediaClass, bEnable);
 			}, this);
 		}.bind(this),
-		mMedia = ObjectPageLayout.DYNAMIC_HEADERS_MEDIA,
 		mBreakpoints = ObjectPageLayout.BREAK_POINTS;
 
 		if (iWidth <= mBreakpoints.PHONE) {
-			fnUpdateMediaStyleClass(mMedia.PHONE);
+			fnUpdateMediaStyleClass(oMedia.PHONE);
 		} else if (iWidth <= mBreakpoints.TABLET) {
-			fnUpdateMediaStyleClass(mMedia.TABLET);
+			fnUpdateMediaStyleClass(oMedia.TABLET);
 		} else {
-			fnUpdateMediaStyleClass(mMedia.DESKTOP);
+			fnUpdateMediaStyleClass(oMedia.DESKTOP);
 		}
 	};
 
@@ -2444,8 +2452,10 @@ sap.ui.define([
 			// Let the dynamic header know size changed first, because this might lead to header dimensions changes
 			if (oTitle && oTitle.isDynamic()) {
 				oTitle._onResize(iCurrentWidth);
-				this._updateMedia(iCurrentWidth); // Update media classes when ObjectPageDynamicHeaderTitle is used.
+				this._updateMedia(iCurrentWidth, ObjectPageLayout.DYNAMIC_HEADERS_MEDIA); // Update media classes when ObjectPageDynamicHeaderTitle is used.
 			}
+
+			this._updateMedia(iCurrentWidth, ObjectPageLayout.MEDIA);
 
 			this._adjustHeaderHeights();
 

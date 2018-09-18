@@ -19,16 +19,13 @@ Common Compact/Cozy
 }
 
 /* M, L or splitview paddings */
-.sapUiMedia-Std-Tablet .sapUxAPAnchorBar.sapMTB,
-.sapUiMedia-Std-Desktop .sapMSplitContainerDetail .sapUxAPAnchorBar.sapMTB,
-html .sapUiContainer-Medium .sapUxAPAnchorBar.sapMTB,
-html.sapUiMedia-Std-Desktop .sapUiContainer-Medium .sapUxAPAnchorBar.sapMTB,
-html .sapUiContainer-Wide .sapMSplitContainerDetail .sapUxAPAnchorBar.sapMTB {
-	padding-left: 1rem;
+.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapMTB {
+	padding-left: 2rem;
 }
 
-html.sapUiMedia-Std-Desktop .sapUiContainer-Narrow .sapUxAPAnchorBar.sapMTB {
-	padding-left: 0;
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPAnchorBar.sapMTB,
+html .sapUiContainer-Medium .sapUxAPAnchorBar.sapMTB {
+	padding-left: 1rem;
 }
 
 .sapUxAPAnchorBar {
@@ -40,8 +37,8 @@ html.sapUiMedia-Std-Desktop .sapUiContainer-Narrow .sapUxAPAnchorBar.sapMTB {
 }
 
 /* navigation arrows for desktop and tablet only */
-.sapUiMedia-Std-Desktop .sapUxAPAnchorBar,
-.sapUiMedia-Std-Tablet .sapUxAPAnchorBar,
+.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar,
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPAnchorBar,
 html .sapUiContainer-Wide .sapUxAPAnchorBar,
 html .sapUiContainer-Medium .sapUxAPAnchorBar {
 	position: relative;
@@ -50,16 +47,16 @@ html .sapUiContainer-Medium .sapUxAPAnchorBar {
 }
 
 /* leave space for the overflow button to the right */
-.sapUiMedia-Std-Tablet .sapUxAPAnchorBarOverflow,
-.sapUiMedia-Std-Desktop .sapUxAPAnchorBarOverflow,
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPAnchorBarOverflow,
+.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBarOverflow,
 html .sapUiContainer-Medium .sapUxAPAnchorBarOverflow,
 html .sapUiContainer-Wide .sapUxAPAnchorBarOverflow {
 	padding-right: 4rem;
 }
 
 /* not display the select if the bar does not overflow */
-.sapUiMedia-Std-Tablet .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect,
-.sapUiMedia-Std-Desktop .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect,
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect,
+.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect,
 html .sapUiContainer-Medium .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect,
 html .sapUiContainer-Wide .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect {
 	display: none;
@@ -180,9 +177,9 @@ html .sapUiContainer-Wide .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollR
 /***********************/
 
 // Not displayed on phone
-.sapUiMedia-Std-Phone .sapUxAPAnchorBar .anchorBarArrowLeft,
-.sapUiMedia-Std-Phone .sapUxAPAnchorBar .anchorBarArrowRight,
-.sapUiMedia-Std-Phone .sapUxAPAnchorBar .sapUxAPAnchorBarScrollContainer,
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPAnchorBar .anchorBarArrowLeft,
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPAnchorBar .anchorBarArrowRight,
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPAnchorBar .sapUxAPAnchorBarScrollContainer,
 html .sapUiContainer-Narrow .sapUxAPAnchorBar .anchorBarArrowLeft,
 html .sapUiContainer-Narrow .sapUxAPAnchorBar .anchorBarArrowRight,
 html .sapUiContainer-Narrow .sapUxAPAnchorBar .sapUxAPAnchorBarScrollContainer {
@@ -203,26 +200,8 @@ html .sapUiContainer-Narrow .sapUxAPAnchorBar .sapUxAPAnchorBarScrollContainer {
 	right: 2.5rem;
 }
 
-// Full-screen alignment (L + XL)
-.sapMSplitContainerHideMode .sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
-	left: 1rem;
-}
-
-.sapMSplitContainerHideMode .sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight {
-	right: 3rem;
-}
-
-// Split-screen alignment in Detail (M)
-.sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
-	left: 0.5rem;
-}
-
-.sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight {
-	right: 2.5rem;
-}
-
 // Tablet alignment
-.sapUiMedia-Std-Tablet .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft,
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft,
 html .sapUiContainer-Medium .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
 	left: 0;
 }
@@ -339,8 +318,8 @@ Compact
 
 .sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtnIcon,
 .sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtnIcon {
-	margin-left: 0rem;
-	margin-right: 0rem;
+	margin-left: 0;
+	margin-right: 0;
 }
 
 .sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner .sapMBtnContent,
