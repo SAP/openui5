@@ -2,24 +2,30 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/rta/util/UrlParser"
-], function (UIComponent, FakeLrepConnectorLocalStorage, UrlParser) {
+], function(
+	UIComponent,
+	FakeLrepConnectorLocalStorage,
+	UrlParser
+) {
+
 	"use strict";
-	return UIComponent.extend("sap.ui.rta.dttool.Component", {
-		metadata : {
-			manifest: "json"
+
+	return UIComponent.extend("sap.ui.rta.dttool.sample.Component", {
+
+		metadata: {
+			manifest: "json",
+			config : {
+				sample : {
+					files : [
+						"Main.view.xml"
+					]
+				}
+			}
 		},
 
-		constructor: function() {
+		constructor: function () {
 			UIComponent.prototype.constructor.apply(this, arguments);
 			this._createFakeLrep();
-		},
-
-		init : function () {
-			// call the init function of the parent
-			UIComponent.prototype.init.apply(this, arguments);
-
-			// create the views based on the url/hash
-			this.getRouter().initialize();
 		},
 
 		_createFakeLrep: function () {
@@ -32,5 +38,6 @@ sap.ui.define([
 					mAppManifest.applicationVersion.version);
 			}
 		}
+
 	});
 });

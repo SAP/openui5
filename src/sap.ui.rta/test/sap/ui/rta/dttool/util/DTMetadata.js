@@ -2,8 +2,11 @@
  * ${copyright}
  */
 // Provides the Design Time Metadata for the sap.m.Button control
-sap.ui.define([],
-	function () {
+sap.ui.define([
+	"sap/base/Log"
+], function (
+	Log
+) {
 		"use strict";
 		var DTMetadata = function() {
 		};
@@ -42,13 +45,11 @@ sap.ui.define([],
 		 */
 		DTMetadata.loadLibrary = function(sLibraryName) {
 			var that = this,
-				oLibraryPromise = new Promise(function(resolve) {
+				oLibraryPromise = new Promise(function(fnResolve) {
 					var sURL = sap.ui.resource(sLibraryName + ".designtime", 'messagebundle.properties'),
 						oLib = oCore.getLoadedLibraries()[sLibraryName];
 					if (mLibraryData[sLibraryName]) {
-						return new Promise(function(resolve) {
-							resolve(mLibraryData[sLibraryName]);
-						});
+						return fnResolve(mLibraryData[sLibraryName]);
 					}
 
 					jQuery.sap.resources({url : sURL, async: true})
@@ -110,11 +111,14 @@ sap.ui.define([],
 										});
 									}
 									that.enrichAPIDoc(mLibraryData[sLibraryName]);
-									resolve(mLibraryData[sLibraryName]);
+									fnResolve(mLibraryData[sLibraryName]);
+								}, function(ex) {
+									Log.error("Designtime data for cannot be loaded", ex);
+									fnResolve(null);
 								});
 							} else {
 								that.enrichAPIDoc(mLibraryData[sLibraryName]);
-								resolve(mLibraryData[sLibraryName]);
+								fnResolve(mLibraryData[sLibraryName]);
 							}
 						});
 					});
@@ -164,35 +168,33 @@ sap.ui.define([],
 		 */
 		DTMetadata.loadElement = function(sName) {
 			var that = this,
-				oPromise = new Promise(function(resolve) {
-					try {
-						sap.ui.require([sName.replace(/\./g,"/")], function(oControlClass) {
-							//module path from name
-							if (oControlClass && oControlClass.getMetadata() && (oControlClass.getMetadata().getStereotype() === "control" || oControlClass.getMetadata().getStereotype() === "element")) {
-								var oMetadata = oControlClass.getMetadata();
-								if (oMetadata.isAbstract()) {
-									jQuery.sap.log.debug("Abstract class not available in design time " + oMetadata.getName());
-									resolve(null);
-								}
-								// load the library designtime.json
-								oMetadata.loadDesignTime().then(function(oDTData) {
-									var oData = that.exportDTRuntimeData(oMetadata);
-									mLibraryRuntimeData[oData.library] = mLibraryRuntimeData[oData.library] || {};
-									mLibraryRuntimeData[oData.library][sName] = jQuery.extend(true, {}, oData);
-									//do not extent the class name and displayName for derived classes
-									if (oDTData.className !== oData.className) {
-										oDTData.className = oData.className;
-										oDTData.displayName = oData.displayName;
-									}
-									resolve(jQuery.extend(true, oData, oDTData));
-								});
+			oPromise = new Promise(function(resolve) {
+				sap.ui.require([sName.replace(/\./g,"/")], function(oControlClass) {
+					//module path from name
+					if (oControlClass && oControlClass.getMetadata() && (oControlClass.getMetadata().getStereotype() === "control" || oControlClass.getMetadata().getStereotype() === "element")) {
+						var oMetadata = oControlClass.getMetadata();
+						if (oMetadata.isAbstract()) {
+							jQuery.sap.log.debug("Abstract class not available in design time " + oMetadata.getName());
+							resolve(null);
+						}
+						// load the library designtime.json
+						oMetadata.loadDesignTime().then(function(oDTData) {
+							var oData = that.exportDTRuntimeData(oMetadata);
+							mLibraryRuntimeData[oData.library] = mLibraryRuntimeData[oData.library] || {};
+							mLibraryRuntimeData[oData.library][sName] = jQuery.extend(true, {}, oData);
+							//do not extent the class name and displayName for derived classes
+							if (oDTData.className !== oData.className) {
+								oDTData.className = oData.className;
+								oDTData.displayName = oData.displayName;
 							}
+							resolve(jQuery.extend(true, oData, oDTData));
 						});
-					} catch (ex) {
-						jQuery.sap.log.debug("Designtime data for " + sName + " cannot be loaded");
-						resolve(null);
 					}
+				}, function(ex) {
+					jQuery.sap.log.debug("Designtime data for " + sName + " cannot be loaded");
+					resolve(null);
 				});
+			});
 			return oPromise;
 		};
 		DTMetadata.exportDTRuntimeData = function(oMetadata) {

@@ -16,7 +16,7 @@ function(
 	};
 
 	Utils.getIframeWindow = function (sIframeId) {
-		if (!Utils._oIframeWindow) {
+		if (!Utils._oIframeWindow || Utils._oIframeWindow.frameWindow !== sIframeId) {
 			Utils.setIframeWindow(sIframeId);
 		}
 		return Utils._oIframeWindow;
