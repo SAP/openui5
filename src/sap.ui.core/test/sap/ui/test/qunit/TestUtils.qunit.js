@@ -10,6 +10,69 @@ sap.ui.define([
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
+	var mServerFixture = {
+			"/Foo/bar" : {source : "bar.json"},
+			"DELETE /Foo/bar" : {
+				code : 500,
+				headers : {"Content-Type" : "text/plain;charset=utf-8"},
+				message : "Guru meditation"
+			},
+			"PATCH /Foo/bar" : {
+				code: 200,
+				headers : {"Content-Type" : "application/json;charset=utf-8"},
+				message: '{"@odata.etag":"abc123"}'
+			},
+			"POST /Foo/bar" : {code: 200, source: "bar.json"},
+			"POST /Foo/baz" : [{
+				code : 400,
+				headers : {"Content-Type" : "application/json;charset=utf-8"},
+				ifMatch : /{"foo":0}/,
+				message : '{"message":"Failure"}'
+			}, {
+				code : 200,
+				source : "bar.json"
+			}]
+		};
+
+	/**
+	 * Formats the headers to a string similar to XMLHttpRequest#getAllResponseHeaders
+	 *
+	 * @param {map} mHeaders The headers
+	 * @returns {string} The resulting string
+	 */
+	function headerString(mHeaders) {
+		return Object.keys(mHeaders || {}).map(function (sKey) {
+			return sKey + ": " + mHeaders[sKey];
+		}).join("\r\n") + "\r\n";
+	}
+
+	/**
+	 * Runs a request and returns a promise on the finished XMLHttpRequest object.
+	 *
+	 * @param {string} sMethod The request method
+	 * @param {string} sUrl The request URL
+	 * @param {map} [mRequestHeaders] The request headers
+	 * @param {string} [sRequestBody=""] The request body
+	 * @returns {Promise} A promise that is resolved with the XMLHttprequest object when the
+	 *   response has arrived
+	 */
+	function request(sMethod, sUrl, mRequestHeaders, sRequestBody) {
+		return new Promise(function (resolve) {
+			var oXHR = new XMLHttpRequest();
+
+			oXHR.open(sMethod, sUrl);
+			oXHR.setRequestHeader("Accept-Foo", "bar");
+			oXHR.setRequestHeader("X-CSRF-Token", "Refresh");
+			Object.keys(mRequestHeaders || {}).forEach(function (sHeader) {
+				oXHR.setRequestHeader(sHeader, mRequestHeaders[sHeader]);
+			});
+			oXHR.addEventListener("load", function () {
+				resolve(oXHR);
+			});
+			oXHR.send(sRequestBody);
+		});
+	}
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.test.TestUtils", {
 		beforeEach : function () {
@@ -25,6 +88,183 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[{
+		method : "GET",
+		url : "/Foo/bar",
+		status : 200,
+		responseBody : '{"foo":"bar","@odata.etag":"abc123"}',
+		responseHeaders : {
+			"OData-Version" : "4.0",
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+		}
+	}, {
+		method : "DELETE",
+		url : "/Foo/any",
+		status : 204,
+		responseHeaders : {
+			"OData-Version" : "4.0",
+			"Content-Type" : "text/plain;charset=utf-8"
+		}
+	}, {
+		method : "DELETE",
+		url : "/Foo/bar",
+		status : 500,
+		responseHeaders : {
+			"OData-Version" : "4.0",
+			"Content-Type" : "text/plain;charset=utf-8"
+		},
+		responseBody : "Guru meditation"
+	}, {
+		method : "PATCH",
+		url : "/Foo/any",
+		requestHeaders : {
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+		},
+		requestBody : '{"foo":"bar"}',
+		status : 200,
+		responseHeaders : {
+			"OData-Version" : "4.0",
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+		},
+		responseBody : '{"foo":"bar"}'
+	}, {
+		method : "PATCH",
+		url : "/Foo/bar",
+		requestHeaders : {
+			"Content-Type" : "application/json;charset=utf-8"
+		},
+		requestBody : '{"@odata.etag":"abc123"}',
+		status : 200,
+		responseHeaders : {
+			"OData-Version" : "4.0",
+			"Content-Type" : "application/json;charset=utf-8"
+		},
+		responseBody : '{"@odata.etag":"abc123"}'
+	}, {
+		method : "POST",
+		url : "/Foo/any",
+		requestHeaders : {
+			"OData-Version" : "4.01",
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+		},
+		requestBody : '{"foo":"bar"}',
+		status : 200,
+		responseHeaders : {
+			"OData-Version" : "4.01",
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+		},
+		responseBody : '{"foo":"bar"}'
+	}, {
+		method : "POST",
+		url : "/Foo/bar",
+		requestHeaders : {
+			"OData-Version" : "4.01",
+			"Content-Type" : "application/json;charset=utf-8"
+		},
+		requestBody : '{"foo":"bar"}',
+		status : 200,
+		responseHeaders : {
+			"OData-Version" : "4.01",
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+		},
+		responseBody : '{"foo":"bar","@odata.etag":"abc123"}'
+	}, {
+		method : "POST",
+		url : "/Foo/baz",
+		requestHeaders : {
+			"Content-Type" : "application/json;charset=utf-8"
+		},
+		requestBody : '{"foo":0}',
+		status : 400,
+		responseHeaders : {
+			"OData-Version" : "4.0",
+			"Content-Type" : "application/json;charset=utf-8"
+		},
+		responseBody : '{"message":"Failure"}'
+	}, {
+		method : "POST",
+		url : "/Foo/baz",
+		requestHeaders : {
+			"Content-Type" : "application/json;charset=utf-8"
+		},
+		requestBody : '{"foo":1}',
+		status : 200,
+		responseHeaders : {
+			"OData-Version" : "4.0",
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+		},
+		responseBody : '{"foo":"bar","@odata.etag":"abc123"}'
+	}].forEach(function (oFixture) {
+		var sRequest = oFixture.method + " " + oFixture.url;
+
+		QUnit.test("useFakeServer: " + sRequest + " (direct)", function (assert) {
+			var mHeaders = {"OData-Version" : "4.0"};
+
+			Object.keys(oFixture.requestHeaders || {}).forEach(function (sKey) {
+				mHeaders[sKey] = oFixture.requestHeaders[sKey];
+			});
+			TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mServerFixture);
+
+			return request(oFixture.method, oFixture.url, mHeaders, oFixture.requestBody
+			).then(function (oXHR) {
+				assert.strictEqual(oXHR.status, oFixture.status, "status");
+				assert.strictEqual(oXHR.responseText, oFixture.responseBody || "", "body");
+				assert.strictEqual(oXHR.getAllResponseHeaders(),
+					headerString(oFixture.responseHeaders), "headers");
+			});
+		});
+
+		QUnit.test("useFakeServer: " + sRequest + " (batch)", function (assert) {
+			var sUrl = oFixture.url.replace("/Foo/", "");
+
+			TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mServerFixture);
+
+			return request("POST", "/Foo/$batch", {"OData-Version" : "4.0"},
+				"--batch_id-0123456789012-345\r\n"
+				+ "Content-Type: application/http\r\n"
+				+ "Content-Transfer-Encoding: binary\r\n"
+				+ "\r\n"
+				+ oFixture.method + " " + sUrl + " HTTP/1.1\r\n"
+				+ headerString(oFixture.requestHeaders)
+				+ "\r\n"
+				+ (oFixture.requestBody || "")
+				+ "\r\n"
+				+ "--batch_id-0123456789012-345--\r\n"
+			).then(function (oXHR) {
+				assert.strictEqual(oXHR.status, 200, "status");
+				assert.strictEqual(oXHR.responseText,
+					"--batch_id-0123456789012-345\r\n"
+					+ "Content-Type: application/http\r\n"
+					+ "Content-Transfer-Encoding: binary\r\n"
+					+ "\r\n"
+					+ "HTTP/1.1 " + oFixture.status + "\r\n"
+					+ headerString(oFixture.responseHeaders)
+					+ "\r\n"
+					+ (oFixture.responseBody || "")
+					+ "\r\n"
+					+ "--batch_id-0123456789012-345--\r\n",
+					"body"
+				);
+				assert.strictEqual(oXHR.getAllResponseHeaders(), headerString({
+					"OData-Version": "4.0",
+					"Content-Type": "multipart/mixed;boundary=batch_id-0123456789012-345"
+				}), "batch headers");
+			});
+		});
+	});
+
+	QUnit.test("useFakeServer: HEAD /Foo/any (direct)", function (assert) {
+		TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mServerFixture);
+
+		return request("HEAD", "/Foo/any", {"OData-Version": "4.0"}).then(function (oXHR) {
+			assert.strictEqual(oXHR.status, 200, "status");
+			assert.strictEqual(oXHR.responseText, "", "body");
+			assert.strictEqual(oXHR.getAllResponseHeaders(), headerString({"OData-Version": "4.0"}),
+				"headers");
+		});
+	});
+
+	//*********************************************************************************************
+	[{
 		requestHeaders : { "oDaTa-VeRsIoN" : "Foo" }, // handle headers case-insensitive
 		responseHeaders : {},
 		expectedODataVersion : "Foo",
@@ -36,8 +276,8 @@ sap.ui.define([
 		expectedDataServiceVersion : null
 	}, {
 		requestHeaders : { "OData-Version" : "4.0" },
-		responseHeaders : { "ODaTa-VeRsIoN" : "4.1" }, // handle headers case-insensitive
-		expectedODataVersion : "4.1",
+		responseHeaders : { "ODaTa-VeRsIoN" : "4.01" }, // handle headers case-insensitive
+		expectedODataVersion : "4.01",
 		expectedDataServiceVersion : null
 	}, {
 		requestHeaders : { "dataserviceversion" : "Foo" }, // handle headers case-insensitive
@@ -54,21 +294,6 @@ sap.ui.define([
 		responseHeaders : { "daTaserViceverSion" : "Bar" }, // handle headers case-insensitive
 		expectedODataVersion : null,
 		expectedDataServiceVersion : "Bar"
-	}, {
-		requestHeaders : { "OData-Version" : "4.0" },
-		responseHeaders : { "DataServiceVersion" : "2.0" },
-		expectedODataVersion : null,
-		expectedDataServiceVersion : "2.0"
-	}, {
-		requestHeaders : { "DataServiceVersion" : "2.0" },
-		responseHeaders : { "OData-Version" : "4.0" },
-		expectedODataVersion : "4.0",
-		expectedDataServiceVersion : null
-	}, {
-		requestHeaders : { "DataServiceVersion" : "2.0" },
-		responseHeaders : { "OData-VerSion" : "4.0" },	// handle headers case sensitive
-		expectedODataVersion : "4.0",
-		expectedDataServiceVersion : null
 	}, {
 		requestHeaders : {},
 		responseHeaders : {},
@@ -163,8 +388,7 @@ sap.ui.define([
 	["DELETE", "PATCH", "POST"].forEach(function (sMethod) {
 		[{
 			requestHeaders : {
-				"oDaTa-VeRsIoN" : "Foo", // handle headers case-insensitive
-				"OData-MaxVersion" : "Bar" // only OData-Version header is put into the response
+				"oDaTa-VeRsIoN" : "Foo" // handle headers case-insensitive
 			},
 			expectedODataVersion : "Foo",
 			expectedDataServiceVersion : null

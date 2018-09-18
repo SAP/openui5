@@ -186,17 +186,18 @@ sap.ui.require([
 						viewName : sViewName
 					});
 				},
-				changeNoteInNewSalesOrder : function (sValue) {
+				changeNoteInSalesOrders : function (iRow, sValue) {
 					return this.waitFor({
 						actions : new EnterText({clearTextFirst : true, text : sValue}),
 						controlType : "sap.m.Input",
 						matchers : function (oControl) {
-							return oControl.getBindingContext().getIndex() === 0;
+							return oControl.getBindingContext().getIndex() === iRow;
 						},
 						id : /--Note_ID-__clone/,
 						success : function (oControls) {
 							Opa5.assert.ok(true,
-								"Note of new created Sales Order set to " + sValue);
+								"Note of Sales Order " + oControls[0].getBindingContext().getPath()
+									+ " set to " + sValue);
 						},
 						viewName : sViewName
 					});
@@ -1033,11 +1034,11 @@ sap.ui.require([
 									.getCells()[SOITEM_QUANTITY_COLUMN_INDEX];
 
 							Opa5.assert.strictEqual(oInput.getValueState(), sExpectedValueState,
-								"ValueState of note in row " + iRow + " as expected: "
+								"ValueState of quantity in row " + iRow + " as expected: "
 									+ sExpectedValueState);
 							Opa5.assert.strictEqual(oInput.getValueStateText(),
 								sExpectedValueStateText,
-								"ValueStateText of note in row " + iRow + " as expected: "
+								"ValueStateText of quantity in row " + iRow + " as expected: "
 									+ sExpectedValueStateText);
 						},
 						viewName : sViewName
