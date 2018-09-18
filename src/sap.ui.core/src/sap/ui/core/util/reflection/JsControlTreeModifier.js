@@ -49,6 +49,7 @@ sap.ui.define([
 		},
 
 		setStashed: function (oControl, bStashed, oAppComponent) {
+			bStashed = !!bStashed;
 			if (oControl.setStashed) {
 				var oUnstashedControl;
 
