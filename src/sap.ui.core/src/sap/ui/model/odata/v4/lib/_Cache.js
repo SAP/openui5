@@ -136,6 +136,8 @@ sap.ui.define([
 					: vCacheData, // deleting at root level
 				mHeaders,
 				sKeyPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate"),
+				sEntityPath = _Helper.buildPath(sParentPath,
+					Array.isArray(vCacheData) ? sKeyPredicate : vDeleteProperty),
 				sTransientGroup = _Helper.getPrivateAnnotation(oEntity, "transient");
 
 			if (sTransientGroup === true) {
@@ -152,7 +154,9 @@ sap.ui.define([
 			oEntity["$ui5.deleting"] = true;
 			mHeaders = {"If-Match" : oEntity};
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
-			return that.oRequestor.request("DELETE", sEditUrl, oGroupLock, mHeaders)
+			return that.oRequestor.request("DELETE", sEditUrl, oGroupLock, mHeaders, undefined,
+					undefined, undefined, undefined,
+					_Helper.buildPath(that.sResourcePath, sEntityPath))
 				.catch(function (oError) {
 					if (oError.status !== 404) {
 						delete oEntity["$ui5.deleting"];
@@ -160,8 +164,7 @@ sap.ui.define([
 					} // else: map 404 to 200
 				})
 				.then(function () {
-					var sMessagePath,
-						sPredicate;
+					var sPredicate;
 
 					if (Array.isArray(vCacheData)) {
 						if (vCacheData[vDeleteProperty] !== oEntity) {
@@ -180,7 +183,6 @@ sap.ui.define([
 						addToCount(that.mChangeListeners, sParentPath, vCacheData, -1);
 						that.iLimit -= 1;
 						fnCallback(Number(vDeleteProperty), vCacheData);
-						sMessagePath = _Helper.buildPath(sParentPath, sKeyPredicate);
 					} else {
 						if (vDeleteProperty) {
 							// set to null and notify listeners
@@ -190,9 +192,8 @@ sap.ui.define([
 							oEntity["$ui5.deleted"] = true;
 						}
 						fnCallback();
-						sMessagePath = _Helper.buildPath(sParentPath, vDeleteProperty);
 					}
-					that.oRequestor.reportBoundMessages(that.sResourcePath, [], [sMessagePath]);
+					that.oRequestor.reportBoundMessages(that.sResourcePath, [], [sEntityPath]);
 				});
 		});
 	};
@@ -784,7 +785,8 @@ sap.ui.define([
 				}
 
 				oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, oPatchGroupLock,
-					{"If-Match" : oEntity}, oUpdateData, onSubmit, onCancel);
+					{"If-Match" : oEntity}, oUpdateData, onSubmit, onCancel, undefined,
+					_Helper.buildPath(that.sResourcePath, sEntityPath));
 				that.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 				return SyncPromise.all([
 					oPatchPromise,
@@ -994,7 +996,7 @@ sap.ui.define([
 				var sCount,
 					sPropertyMetaPath = sMetaPath + "/" + sProperty,
 					vPropertyValue = oInstance[sProperty],
-					sPropertyPath = sInstancePath + "/" + sProperty;
+					sPropertyPath = _Helper.buildPath(sInstancePath, sProperty);
 
 				if (sProperty.endsWith("@odata.mediaReadLink")) {
 					oInstance[sProperty] = _Helper.makeAbsolute(vPropertyValue, sContextUrl);
@@ -1027,9 +1029,6 @@ sap.ui.define([
 			visitArray(oRoot.value, sRootMetaPath || this.sMetaPath, "",
 				buildContextUrl(sRequestUrl, oRoot["@odata.context"]));
 		} else if (oRoot && typeof oRoot === "object") {
-			if (sRootPath && sRootPath[0] !== "(") {
-				sRootPath = "/" + sRootPath;
-			}
 			visitInstance(oRoot, sRootMetaPath || this.sMetaPath, sRootPath || "", sRequestUrl);
 		}
 		if (bHasMessages) {
@@ -1610,13 +1609,13 @@ sap.ui.define([
 		var that = this;
 
 		that.registerChange("", oListener);
-		if (!this.oPromise) {
+		if (this.oPromise) {
+			oGroupLock.unlock();
+		} else {
 			this.oPromise = SyncPromise.resolve(this.oRequestor.request("GET",
 				this.sResourcePath + this.sQueryString, oGroupLock, undefined, undefined,
 				fnDataRequested, undefined, this.sMetaPath));
 			this.bSentReadRequest = true;
-		} else {
-			oGroupLock.unlock();
 		}
 		return this.oPromise.then(function (oResult) {
 			that.checkActive();
@@ -1708,7 +1707,9 @@ sap.ui.define([
 			that = this;
 
 		this.registerChange(sPath, oListener);
-		if (!this.oPromise) {
+		if (this.oPromise) {
+			oGroupLock.unlock();
+		} else {
 			if (this.bPost) {
 				throw new Error("Cannot fetch a value before the POST request");
 			}
@@ -1722,8 +1723,6 @@ sap.ui.define([
 				return aResult[0];
 			});
 			this.bSentReadRequest = true;
-		} else {
-			oGroupLock.unlock();
 		}
 		return this.oPromise.then(function (oResult) {
 			that.checkActive();

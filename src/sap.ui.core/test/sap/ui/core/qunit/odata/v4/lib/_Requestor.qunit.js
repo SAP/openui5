@@ -293,7 +293,8 @@ sap.ui.define([
 
 			oHelperMock.expects("createError")
 				.exactly(bSuccess || o.bReadFails ? 0 : 1)
-				.withExactArgs(sinon.match.same(oTokenRequiredResponse))
+				.withExactArgs(sinon.match.same(oTokenRequiredResponse), "/Service/foo",
+					"original/path")
 				.returns(oError);
 			oHelperMock.expects("resolveIfMatchHeader").exactly(o.iRequests)
 				.withExactArgs(sinon.match.same(mHeaders))
@@ -351,7 +352,7 @@ sap.ui.define([
 				});
 			}
 
-			return oRequestor.sendRequest("FOO", "foo", mHeaders, "payload")
+			return oRequestor.sendRequest("FOO", "foo", mHeaders, "payload", "original/path")
 				.then(function (oPayload) {
 					assert.ok(bSuccess, "success possible");
 					assert.strictEqual(oPayload.contentType, "application/json");
@@ -548,7 +549,7 @@ sap.ui.define([
 				.withExactArgs("METHOD", "~Employees~?custom=value", {
 						"header" : "value",
 						"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
-					}, JSON.stringify(oChangedPayload))
+					}, JSON.stringify(oChangedPayload), "~Employees~?custom=value")
 				.resolves(oResponse);
 			this.mock(oRequestor).expects("reportUnboundMessages")
 				.withExactArgs(oResponse.resourcePath, sinon.match.same(oResponse.messages));
@@ -759,6 +760,44 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("request: sOriginalPath, $direct", function (assert) {
+		var sOriginalPath = "TEAM('0')/TEAM_2_EMPLOYEES",
+			oRequestor = _Requestor.create("/", oModelInterface);
+
+		this.mock(oRequestor).expects("sendRequest")
+			.withExactArgs("POST", "EMPLOYEES", sinon.match.object, sinon.match.string,
+				sOriginalPath)
+			.returns(Promise.resolve({}));
+
+		// code under test
+		return oRequestor.request("POST", "EMPLOYEES", new _GroupLock("$direct"), {}, {}, undefined,
+			undefined, undefined, sOriginalPath);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("request: sOriginalPath, $batch", function (assert) {
+		var sOriginalPath = "TEAM('0')/TEAM_2_EMPLOYEES",
+			oRequestor = _Requestor.create("/", oModelInterface),
+			oResponse = {
+				status : 500
+			};
+
+		this.mock(oRequestor).expects("sendBatch")
+			// do not check parameters
+			.returns(Promise.resolve([oResponse]));
+		this.mock(_Helper).expects("createError")
+			.withExactArgs(sinon.match.same(oResponse), "EMPLOYEES", sOriginalPath)
+			.returns(new Error());
+
+		// code under test
+		return Promise.all([
+			oRequestor.request("POST", "EMPLOYEES", new _GroupLock("group"), {}, {}, undefined,
+				undefined, undefined, sOriginalPath).catch(function () {}),
+			oRequestor.submitBatch("group")
+		]);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("request(...): batch group id", function (assert) {
 		var oGroupLock = new _GroupLock("group"),
 			oRequestor = _Requestor.create("/", oModelInterface);
@@ -937,6 +976,7 @@ sap.ui.define([
 				$promise : sinon.match.defined,
 				$reject : sinon.match.func,
 				$resolve : sinon.match.func,
+				$resourcePath : "~Customers",
 				$submit : undefined
 			}, {
 				method : "DELETE",
@@ -952,6 +992,7 @@ sap.ui.define([
 				$promise : sinon.match.defined,
 				$reject : sinon.match.func,
 				$resolve : sinon.match.func,
+				$resourcePath : "~SalesOrders('42')",
 				$submit : undefined
 			}], {
 				method : "GET",
@@ -968,6 +1009,7 @@ sap.ui.define([
 				$promise : sinon.match.defined,
 				$reject : sinon.match.func,
 				$resolve : sinon.match.func,
+				$resourcePath : "~Products",
 				$submit : undefined
 			}],
 			aPromises = [],
@@ -1212,6 +1254,7 @@ sap.ui.define([
 					$promise : sinon.match.defined,
 					$reject : sinon.match.func,
 					$resolve : sinon.match.func,
+					$resourcePath : "Products",
 					$submit : undefined
 				}],
 				oGetProductsPromise,
