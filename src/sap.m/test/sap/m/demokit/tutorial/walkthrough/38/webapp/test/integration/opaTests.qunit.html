@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Integration tests for SAPUI5 Walkthrough</title>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<meta charset="utf-8">
+
+	<script
+		id="sap-ui-bootstrap"
+		src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"
+		data-sap-ui-resourceroots='{
+			"sap.ui.demo.walkthrough": "../../"
+		}'
+		data-sap-ui-preload="async">
+	</script>
+
+
+	<script src="https://openui5.hana.ondemand.com/resources/sap/ui/qunit/qunit-2-css.js"></script>
+	<script src="https://openui5.hana.ondemand.com/resources/sap/ui/thirdparty/qunit-2.js"></script>
+	<script src="https://openui5.hana.ondemand.com/resources/sap/ui/qunit/qunit-junit.js"></script>
+
+	<script>
+		/* global QUnit */
+
+		QUnit.config.autostart = false;
+
+		sap.ui.getCore().attachInit(function() {
+			sap.ui.require([
+				"sap/ui/demo/walkthrough/test/integration/NavigationJourney"
+			], function() {
+				QUnit.start();
+			});
+		});
+	</script>
+
+</head>
+<body>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>
