@@ -1118,9 +1118,7 @@ sap.ui.define([
 				aPromiseStack.push(function() {
 					return this.checkTargetAndApplyChange(oChange, oControl, mPropertyBag)
 					.then(function(oResult) {
-						if (oResult.success) {
-							this._updateDependencies(mDependencies, mDependentChangesOnMe, oChange.getId());
-						}
+						this._updateDependencies(mDependencies, mDependentChangesOnMe, oChange.getId());
 						delete oChange.QUEUED;
 					}.bind(this));
 				}.bind(this));
@@ -1294,7 +1292,7 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexController.prototype._iterateDependentQueue = function(mDependencies, mDependentChangesOnMe, oAppComponent) {
-		var aAppliedChanges = [],
+		var aCoveredChanges = [],
 			aDependenciesToBeDeleted = [],
 			aPromises = [];
 		this._updateControlsDependencies(mDependencies, oAppComponent);
@@ -1309,10 +1307,8 @@ sap.ui.define([
 						return oDependency[FlexController.PENDING]()
 
 						.then(function (oReturn) {
-							if (oReturn.success) {
-								aDependenciesToBeDeleted.push(sDependencyKey);
-								aAppliedChanges.push(oDependency.changeObject.getId());
-							}
+							aDependenciesToBeDeleted.push(sDependencyKey);
+							aCoveredChanges.push(oDependency.changeObject.getId());
 						});
 					}
 				);
@@ -1327,11 +1323,11 @@ sap.ui.define([
 			}
 
 			// dependencies should be updated after all processing functions are executed and dependencies are deleted
-			for (var k = 0; k < aAppliedChanges.length; k++) {
-				this._updateDependencies(mDependencies, mDependentChangesOnMe, aAppliedChanges[k]);
+			for (var k = 0; k < aCoveredChanges.length; k++) {
+				this._updateDependencies(mDependencies, mDependentChangesOnMe, aCoveredChanges[k]);
 			}
 
-			return aAppliedChanges;
+			return aCoveredChanges;
 		}.bind(this));
 	};
 
@@ -1347,8 +1343,8 @@ sap.ui.define([
 	FlexController.prototype._processDependentQueue = function (mDependencies, mDependentChangesOnMe, oComponent) {
 		 return this._iterateDependentQueue(mDependencies, mDependentChangesOnMe, oComponent)
 
-		.then(function(aAppliedChanges) {
-			if (aAppliedChanges.length > 0) {
+		.then(function(aCoveredChanges) {
+			if (aCoveredChanges.length > 0) {
 				return this._processDependentQueue(mDependencies, mDependentChangesOnMe, oComponent);
 			}
 		}.bind(this));
