@@ -57,7 +57,7 @@ sap.ui.define([
 			}
 
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);
-			if (!Utils.isApplication(oAppComponent.getManifest())) {
+			if (!Utils.isApplication(oAppComponent.getManifestObject())) {
 				//we only consider components whose type is application. Otherwise, we might send request for components that can never have changes.
 				return Promise.resolve(oView);
 			}

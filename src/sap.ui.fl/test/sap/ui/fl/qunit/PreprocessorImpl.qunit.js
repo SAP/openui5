@@ -95,6 +95,20 @@ function(
 						}
 					};
 				},
+				getManifestObject: function () {
+					return {
+						"sap.app" : {
+							applicationVersion : {
+								version : "1.2.3"
+							}
+						},
+						"getEntry": function () {
+							return {
+								"type": "application"
+							};
+						}
+					};
+				},
 				getManifestEntry: function () {}
 			};
 			sandbox.stub(Cache, "getChangesFillingCache").returns(oChangesFillingCachePromise);
@@ -256,6 +270,16 @@ function(
 			var oExtensionProvider = new PreprocessorImpl();
 
 			var oComponent = {
+				getManifestObject: function () {
+					return {
+						"sap.app" : {
+							applicationVersion : {
+								version : "1.2.3"
+							},
+							type: "component"
+						}
+					};
+				},
 				getManifest: function () {
 					return {
 						"sap.app" : {
@@ -286,6 +310,9 @@ function(
 
 			var oComponent = {
 				getManifest: function () {
+					return undefined;
+				},
+				getManifestObject: function () {
 					return undefined;
 				},
 				getManifestEntry: function () {}
