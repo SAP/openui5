@@ -4,7 +4,8 @@
 		  xmlns:mvc="sap.ui.core.mvc"
 		  xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
 
-	<ObjectPageLayout upperCaseAnchorBar="false"
+	<ObjectPageLayout id="objectPage"
+					  upperCaseAnchorBar="false"
 					  sections="{/}">
 		<headerTitle>
 			<ObjectPageHeader objectTitle="Index of Deprecated APIs"/>
@@ -17,7 +18,7 @@
 		</headerContent>
 		<ObjectPageSection
 				titleUppercase="false"
-				title="{parts: [{ path : 'name'}], formatter : '.formatTitle' }">
+				title="{parts: [{ path : 'name'}], formatter : '.formatter.formatVersionTitle' }">
 			<ObjectPageSubSection>
 				<m:List items="{path: 'apis', templateShareable: 'false'}"
 						updateFinished="._modifyLinks"
@@ -28,8 +29,8 @@
 						<m:FeedListItem
 								showIcon="false"
 								sender="{parts : [{path : 'control'}, {path : 'entityName'}, {path: 'type'}],
-										  formatter : '.formatSenderLink'}"
-								text="{path : 'text', formatter: '.formatLinks'}"
+										  formatter : '.formatter.formatSenderLink'}"
+								text="{path : 'text', formatter: '.formatter.formatLinks'}"
 								class="specialListFeedItem"
 								app:control="{control}"
 								app:entity="{entityName}"

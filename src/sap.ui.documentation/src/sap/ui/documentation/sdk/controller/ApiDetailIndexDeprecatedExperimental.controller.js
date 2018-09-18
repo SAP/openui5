@@ -8,8 +8,9 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/controller/util/JSDocUtil",
-		"sap/ui/documentation/sdk/controller/util/APIInfo"
-	], function (jQuery, BaseController, JSONModel, JSDocUtil, APIInfo) {
+		"sap/ui/documentation/sdk/controller/util/APIInfo",
+		"sap/ui/documentation/sdk/model/formatter"
+	], function (jQuery, BaseController, JSONModel, JSDocUtil, APIInfo, globalFormatter) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ApiDetailIndexDeprecatedExperimental", {
@@ -17,6 +18,8 @@ sap.ui.define([
 			/* =========================================================== */
 			/* lifecycle methods										   */
 			/* =========================================================== */
+
+			formatter: globalFormatter,
 
 			onInit: function () {
 				var oRouter = this.getRouter();
@@ -30,14 +33,17 @@ sap.ui.define([
 				oRouter.getRoute("since").attachPatternMatched(this._onTopicMatched, this);
 
 				this._hasMatched = false;
+				this._aVisitedTabs = [];
 			},
 
 			_onTopicMatched: function (oEvent) {
-				var fnDataGetterRef = {
-						experimental: APIInfo.getExperimentalPromise,
-						deprecated: APIInfo.getDeprecatedPromise,
-						since: APIInfo.getSincePromise
-					}[oEvent.getParameter("name")];
+				var sRouteName = oEvent.getParameter("name"),
+				fnDataGetterRef = {
+					experimental: APIInfo.getExperimentalPromise,
+					deprecated: APIInfo.getDeprecatedPromise,
+					since: APIInfo.getSincePromise
+				}[sRouteName],
+				oPage;
 
 				if (this._hasMatched) {
 					return;
@@ -46,12 +52,40 @@ sap.ui.define([
 
 				// Cache allowed members for the filtering
 				this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
+				oPage = this.getView().byId("objectPage");
 
 				fnDataGetterRef().then(function (oData) {
 					this._filterVisibleElements(oData);
 					this._oModel.setData(oData);
-					setTimeout(this._prettify.bind(this), 1000);
+
+					oPage.addEventDelegate({"onAfterRendering": this._prettify.bind(this)});
+					if (oPage.getUseIconTabBar()) {
+						// add support to prettify tab content lazily (i.e. only for *opened* tabs) to avoid traversing *all* tabs in advance
+						oPage.attachNavigate(this._attachPrettifyTab.bind(this));
+					}
 				}.bind(this));
+			},
+
+			/**
+			 * Attach listeners that prettify the tab content upon its rendering
+			 * @param {oEvent} tab navigate event
+			 * @private
+			 */
+			_attachPrettifyTab: function(oEvent) {
+				// in our use-case each tab contains a single subSection => only this subSection needs to be processed
+				var oSubSection = oEvent.getParameter("subSection"),
+					sId = oSubSection.getId(),
+					aBlocks;
+
+				//attach listeners that prettify the tab content upon its rendering
+				if (this._aVisitedTabs.indexOf(sId) < 0) { // avoid adding listeners to the same tab twice
+					aBlocks = oSubSection.getBlocks();
+					aBlocks.forEach(function(oBlock) {
+						oBlock.addEventDelegate({"onAfterRendering": this._prettify.bind(this)});
+					}.bind(this));
+
+					this._aVisitedTabs.push(sId);
+				}
 			},
 
 			/**
@@ -73,78 +107,6 @@ sap.ui.define([
 				jQuery('pre').addClass('prettyprint');
 
 				window.prettyPrint();
-			},
-
-			formatTitle: function (sTitle) {
-				return sTitle ? "As of " + sTitle : "Version N/A";
-			},
-
-			formatSenderLink: function (sControlName, sEntityName, sEntityType) {
-				if (sEntityType === "methods") {
-					return sControlName + "#" + sEntityName;
-				}
-
-				if (sEntityType === "events") {
-					return sControlName + "#events:" + sEntityName;
-				}
-
-				if (sEntityType === "class") {
-					return sControlName;
-				}
-
-				return "";
-			},
-
-			/**
-			 * This function wraps a text in a span tag so that it can be represented in an HTML control.
-			 * @param {string} sText
-			 * @returns {string}
-			 * @private
-			 */
-			formatLinks: function (sText) {
-				return JSDocUtil.formatTextBlock(sText, {
-					linkFormatter: function (target, text) {
-
-						var iHashIndex;
-
-						// If the link has a protocol, do not modify, but open in a new window
-						if (target.match("://")) {
-							return '<a target="_blank" href="' + target + '">' + (text || target) + '</a>';
-						}
-
-						target = target.trim().replace(/\.prototype\./g, "#");
-						iHashIndex = target.indexOf("#");
-
-						text = text || target; // keep the full target in the fallback text
-
-						if (iHashIndex < 0) {
-							var iLastDotIndex = target.lastIndexOf("."),
-								sClassName = target.substring(0, iLastDotIndex),
-								sMethodName = target.substring(iLastDotIndex + 1),
-								targetMethod = sMethodName;
-
-							if (targetMethod) {
-								if (targetMethod.static === true) {
-									target = sClassName + '/methods/' + sClassName + '.' + sMethodName;
-								} else {
-									target = sClassName + '/methods/' + sMethodName;
-								}
-							}
-						}
-
-						if (iHashIndex === 0) {
-							// a relative reference - we can't support that
-							return "<code>" + target.slice(1) + "</code>";
-						}
-
-						if (iHashIndex > 0) {
-							target = target.slice(0, iHashIndex) + '/methods/' + target.slice(iHashIndex + 1);
-						}
-
-						return "<a class=\"jsdoclink\" href=\"#/api/" + target + "\" target=\"_self\">" + text + "</a>";
-
-					}
-				});
 			},
 
 			/**
