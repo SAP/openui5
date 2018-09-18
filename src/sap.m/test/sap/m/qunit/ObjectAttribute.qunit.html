@@ -207,48 +207,47 @@
 
 		// arrange
 		var oAttr = new sap.m.ObjectAttribute("attr", {
-			text: "Joe Smith",
-			active: true,
-			customContent: new sap.m.Link("alink", {text: "this is sap.m.Link"})
-		});
+				text: "Joe Smith",
+				customContent: new sap.m.Link("alink", {text: "this is sap.m.Link"})
+			}),
+			oLink;
 
 		oAttr.placeAt("objectAttributesWrap");
 
 		sap.ui.getCore().applyChanges();
 
+		oLink = oAttr.$().children().children();
+
 		// assertions
-		assert.ok(oAttr.$("attr").find(".sapMLnk"), "The active attribute is rendered as sap.m.Link when the aggregation attributeLink is set.");
+		assert.ok(oLink.hasClass("sapMLnk"), "The active attribute is rendered as sap.m.Link when the aggregation attributeLink is set.");
+		assert.equal(oLink.attr("tabindex"), -1, "The tabindex of the Link is set ot -1.");
+		assert.equal(oLink[0].textContent, "this is sap.m.Link", "Text is the link test not the given from the text property.");
 
 		//Cleanup
 		oAttr.destroy();
 	});
 
-	QUnit.test("Title of the active ObjectAttribute with customContent should be rendered along with the custom link omitting the active property", function(assert) {
+	QUnit.test("ObjectAttribute with CustomContent sap.m.Link should be rendered as active and with role link omitting the active property", function(assert) {
 		// arrange
 		var oAttr = new sap.m.ObjectAttribute("attr", {
 			title: "Test",
 			active: true,
 			customContent: new sap.m.Link("alink", {text: "LinkText"})
-		}),
-		sExpected = "Test: LinkText";
+		});
 
 		oAttr.placeAt("objectAttributesWrap");
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		assert.equal(oAttr.$().text(), sExpected, "Title and text of the ObjectAttribute are rendered as one element");
-		assert.ok(!oAttr.$("title").length, "No title span is rendered.");
-		assert.ok(!oAttr.$("colon").length, "No colon span is rendered.");
-		assert.ok(!oAttr.$("text").length, "No text span is rendered.");
+		assert.equal(oAttr.$().attr("role"), "link", "ObjectAttribute with active=true has link role.");
+		assert.ok(oAttr.$().hasClass("sapMObjectAttributeActive"), "sapMObjectAttributeActive class is presented.");
 
 		// arrange
 		oAttr.setActive(false);
 
 		// assertions
-		assert.equal(oAttr.$().text(), sExpected, "Title and text of the ObjectAttribute are rendered as one element");
-		assert.ok(!oAttr.$("title").length, "No title span is rendered.");
-		assert.ok(!oAttr.$("colon").length, "No colon span is rendered.");
-		assert.ok(!oAttr.$("text").length, "No text span is rendered.");
+		assert.equal(oAttr.$().attr("role"), "link", "ObjectAttribute with active=false has link role.");
+		assert.ok(oAttr.$().hasClass("sapMObjectAttributeActive"), "sapMObjectAttributeActive class is presented.");
 
 		//Cleanup
 		oAttr.destroy();
@@ -261,7 +260,7 @@
 			title: "AttributeTitle",
 			customContent: new sap.m.Link({ text: "LinkText" })
 		}),
-			sExpected = "AttributeTitle: LinkText";
+			sExpected = "LinkText";
 		oAttr.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
@@ -275,6 +274,21 @@
 		// cleanup
 		oAttr.destroy();
 	});
+
+	QUnit.test("When customContent is sap.m.Link it overrides its function _getTabindex", function (assert) {
+		// arrange
+		var oAttr = new sap.m.ObjectAttribute({
+			title: "AttributeTitle",
+			customContent: new sap.m.Link({ text: "LinkText" })
+		});
+
+		// assertions
+		assert.equal(oAttr.getAggregation('customContent')._getTabindex(), "-1", "Tabindex of the Link should be -1");
+
+		// cleanup
+		oAttr.destroy();
+	});
+
 	/******************************************************************/
 
 	QUnit.module("Internal API");

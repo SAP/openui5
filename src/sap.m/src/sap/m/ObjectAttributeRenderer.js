@@ -45,8 +45,9 @@ sap.ui.define(["sap/ui/core/library"],
 		oRm.write("<div");
 		oRm.writeControlData(oOA);
 		oRm.addClass("sapMObjectAttributeDiv");
-		// add tabindex, "active" class and ARIA only on a simulated link
-		if (oOA._isSimulatedLink()) {
+		// add tabindex, "active" class and ARIA only when the ObjectAttribute is clickable
+		// e.g. when is active ot the CustomContent is sap.m.Link
+		if (oOA._isClickable()) {
 			oRm.addClass("sapMObjectAttributeActive");
 			oRm.writeAttribute("tabindex", "0");
 			oRm.writeAccessibilityState(oOA, {
@@ -61,9 +62,10 @@ sap.ui.define(["sap/ui/core/library"],
 
 		oRm.write(">");
 
-		// If the attribute is active and there is no CustomContent only the "text" should be clickable, so render title, colon and text in different spans
-		// For the ObjectHeader the rendering of the parts of the ObjectAttribute is always in separate spans
-		if (oOA.getActive() && !oOA.getCustomContent() || (oParent instanceof sap.m.ObjectHeader)) {
+		// If the attribute is link (active or customContent is Link) only the "text" should be clickable,
+		// so render title, colon and text in different spans.
+		// For the ObjectHeader the rendering of the parts of the ObjectAttribute is always in separate spans, even when it is not active.
+		if (oOA._isClickable() || oParent instanceof sap.m.ObjectHeader) {
 			this.renderActiveTitle(oRm, oOA);
 			this.renderActiveText(oRm, oOA, oParent);
 		} else {

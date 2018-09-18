@@ -31,6 +31,12 @@
 			oAttrs[0].setText("Ñagçyfox Contract #D1234567890");
 		}
 	}), new sap.m.ObjectAttribute({
+		title: "Custom content",
+		customContent: new sap.m.Link ({
+			text:"test",
+			press: function() {alert("you press me")}
+		})
+	}), new sap.m.ObjectAttribute({
 		text : "John Doe Ñagçyfox"
 	}), new sap.m.ObjectAttribute({
 		title: "Created by",
@@ -50,6 +56,12 @@
 		press : function() {
 			oAttrs2[0].setText("Ñagçyfox Contract #D1234567890");
 		}
+	}), new sap.m.ObjectAttribute({
+		title: "Custom content",
+		customContent: new sap.m.Link ({
+			text:"test",
+			press: function() {alert("you press me")}
+		})
 	}), new sap.m.ObjectAttribute({
 		text : "John Doe Ñagçyfox"
 	}), new sap.m.ObjectAttribute({
@@ -86,6 +98,12 @@
 		press : function() {
 			oAttrs3[0].setText("Ñagçyfox Contract #D1234567890");
 		}
+	}), new sap.m.ObjectAttribute({
+		title: "Custom content",
+		customContent: new sap.m.Link ({
+			text:"test",
+			press: function() {alert("you press me")}
+		})
 	}), new sap.m.ObjectAttribute({
 		text : "John Doe Ñagçyfox"
 	}), new sap.m.ObjectAttribute({
@@ -137,6 +155,12 @@
 					new sap.m.MessageToast.show("you click me");
 				}
 			}), new sap.m.ObjectAttribute({
+				title: "Custom content",
+				customContent: new sap.m.Link ({
+					text:"test",
+					press: function() {alert("you press me")}
+				})
+			}), new sap.m.ObjectAttribute({
 				text : "John Doe Ñagçyfox"
 			}), new sap.m.ObjectAttribute({
 				title: "Created by",
@@ -155,6 +179,12 @@
 								press : function() {
 									new sap.m.MessageToast.show("you click me");
 								}
+							}), new sap.m.ObjectAttribute({
+								title: "Custom content",
+								customContent: new sap.m.Link ({
+									text:"test",
+									press: function() {alert("you press me")}
+								})
 							}), new sap.m.ObjectAttribute({
 								text : "John Doe Ñagçyfox",
 								active : true,
@@ -226,6 +256,12 @@
 							new sap.m.MessageToast.show("you click me");
 						}
 					}), new sap.m.ObjectAttribute({
+						title: "Custom content",
+						customContent: new sap.m.Link ({
+							text:"test",
+							press: function() {alert("you press me")}
+						})
+					}), new sap.m.ObjectAttribute({
 						text : "John Doe Ñagçyfox",
 						active : true,
 						press : function() {
@@ -264,7 +300,15 @@
 	}), oPage);
 
 	addToPage(new sap.m.ObjectAttribute({
-		text : "Very long not active attribute containing only text Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John DoeÑagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe"
+		title: "Custom content",
+		customContent: new sap.m.Link ({
+			text:"test",
+			press: function() {alert("you press me")}
+		})
+	}), oPage);
+
+	addToPage(new sap.m.ObjectAttribute({
+		text : "Very long not active attribute containing only text Ñagçyfox Created by John Doe Ñagçyfox Created by John Doe Ñagçyfox Created by John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by John Doe Ñagçyfox Created by John Doe Ñagçyfox Created by John Doe Ñagçyfox Created by John Doe Ñagçyfox Created by John Doe Ñagçyfox Created by John Doe Ñagçyfox Created by John Doe Ñagçyfox Created by John DoeÑagçyfox Created by John Doe Ñagçyfox Created by John Doe Ñagçyfox Created by John Doe Ñagçyfox Created by John Doe"
 	}), oPage);
 
 	addToPage(new sap.m.ObjectAttribute({

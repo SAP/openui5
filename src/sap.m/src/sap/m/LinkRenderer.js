@@ -70,11 +70,10 @@
 		if (!bEnabled) {
 			oRm.addClass("sapMLnkDsbl");
 			oRm.writeAttribute("disabled", "true");
-		} else if (oControl.getText()) {
-			oRm.writeAttribute("tabIndex", "0");
 		} else {
-			oRm.writeAttribute("tabIndex", "-1");
+			oRm.writeAttribute("tabIndex", oControl._getTabindex());
 		}
+
 		if (oControl.getWrapping()) {
 			oRm.addClass("sapMLnkWrapping");
 		}
@@ -130,7 +129,6 @@
 	LinkRenderer.renderText = function(oRm, oControl) {
 		oRm.writeEscaped(oControl.getText());
 	};
-
 
 	return LinkRenderer;
 
