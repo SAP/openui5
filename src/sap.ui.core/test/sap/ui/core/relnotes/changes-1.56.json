@@ -1081,5 +1081,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.10": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "362b4640c54b6d5d83f1527284b04f1d89e94fb2",
+        "type": "FIX",
+        "text": " Theming Parameters: Prevent timing issues in Safari/Edge",
+        "references": []
+      }
+    ]
   }
 }
