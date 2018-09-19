@@ -200,7 +200,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * @classdesc A string type that represents Grid's indent values for large, medium and small screens. Allowed values are separated by space Letters L, M or S followed by number of columns from 1 to 11 that the container has to take, for example: "L2 M4 S6", "M11", "s10" or "l4 m4". Note that the parameters have to be provided in the order large  medium  small.
+	 * @classdesc
+	 * A string type that represents the indent values of the <code>Grid</code> for large, medium and small screens.
+	 *
+	 * Allowed values are separated by space Letters L, M or S followed by number of columns from 1 to 11
+	 * that the container has to take, for example: <code>L2 M4 S6</code>, <code>M11</code>, <code>s10</code>
+	 * or <code>l4 m4</code>.
+	 *
+	 * <b>Note:</b> The parameters must be provided in the order <large medium small>.
 	 *
 	 * @final
 	 * @namespace
@@ -217,7 +224,8 @@ sap.ui.define([
 	);
 
 	/**
-	 * The position of the Grid. Can be "Left", "Center" or "Right". "Left" is default.
+	 * The position of the {@link sap.ui.layout.Grid}. Can be <code>Left</code> (default), <code>Center</code>
+	 * or <code>Right</code>.
 	 *
 	 * @enum {string}
 	 * @public
@@ -226,19 +234,19 @@ sap.ui.define([
 	sap.ui.layout.GridPosition = {
 
 		/**
-		 * Grid is aligned left.
+		 * <code>Grid</code> is aligned left.
 		 * @public
 		 */
 		Left : "Left",
 
 		/**
-		 * Grid is aligned to the right.
+		 * <code>Grid</code> is aligned to the right.
 		 * @public
 		 */
 		Right : "Right",
 
 		/**
-		 * Grid is centered on the screen.
+		 * <code>Grid</code> is centered on the screen.
 		 * @public
 		 */
 		Center : "Center"
@@ -247,7 +255,14 @@ sap.ui.define([
 
 
 	/**
-	 * @classdesc A string type that represents Grid's span values for large, medium and small screens. Allowed values are separated by space Letters L, M or S followed by number of columns from 1 to 12 that the container has to take, for example: "L2 M4 S6", "M12", "s10" or "l4 m4". Note that the parameters have to be provided in the order large  medium  small.
+	 * @classdesc
+	 * A string type that represents the span values of the <code>Grid</code> for large, medium and small screens.
+	 *
+	 * Allowed values are separated by space Letters L, M or S followed by number of columns from 1 to 12
+	 * that the container has to take, for example: <code>L2 M4 S6</code>, <code>M12</code>,
+	 * <code>s10</code> or <code>l4 m4</code>.
+	 *
+	 * <b>Note:</b> The parameters must be provided in the order <large medium small>.
 	 *
 	 * @final
 	 * @namespace
