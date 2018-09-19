@@ -58,12 +58,15 @@ sap.ui.define([
 		};
 
 		/**
-		 * Adds a smart form group.
+		 * Adds a smart form group
 		 *
-		 * @param {sap.ui.fl.Change} oChangeWrapper change wrapper object with instructions to be applied on the control map
-		 * @param {sap.ui.layout.SimpleForm} oForm smart form control that matches the change selector for applying the change
-		 * @param {object} mPropertyBag
-		 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent component in which the change should be applied
+		 * @param {sap.ui.fl.Change} oChangeWrapper Change wrapper object with instructions to be applied to the control map
+		 * @param {sap.ui.layout.SimpleForm} oForm Smart form control that matches the change selector for applying the change
+		 * @param {object} mPropertyBag Property bag containing the modifier, the appComponent and the view
+		 * @param {object} mPropertyBag.modifier Modifier for the controls
+		 * @param {object} mPropertyBag.appComponent Component in which the change should be applied
+		 * @param {object} mPropertyBag.view Application view
+		 * @return {boolean} True if successful
 		 * @public
 		 */
 		AddSimpleFormGroup.applyChange = function (oChangeWrapper, oForm, mPropertyBag) {
@@ -86,6 +89,7 @@ sap.ui.define([
 				} else {
 					sGroupId = oChange.content.group.id;
 				}
+				oChangeWrapper.setRevertData({groupId: sGroupId});
 				var sLabelText = oChange.texts.groupLabel.value;
 
 				var aContent = oModifier.getAggregation(oForm, AddSimpleFormGroup.CONTENT_AGGREGATION);
@@ -119,10 +123,12 @@ sap.ui.define([
 		/**
 		 * Completes the change by adding change handler specific content
 		 *
-		 * @param {sap.ui.fl.Change} oChangeWrapper change wrapper object to be completed
+		 * @param {sap.ui.fl.Change} oChangeWrapper Change wrapper object to be completed
 		 * @param {object} oSpecificChangeInfo with attributes "groupLabel", the group label to be included in the change and "newControlId", the control ID for the control to be added
-		 * @param {object} mPropertyBag
-		 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent component in which the change should be applied
+		 * @param {object} mPropertyBag Property bag containing the modifier, the appComponent and the view
+		 * @param {object} mPropertyBag.modifier Modifier for the controls
+		 * @param {object} mPropertyBag.appComponent Component in which the change should be applied
+		 * @param {object} mPropertyBag.view Application view
 		 * @public
 		 */
 		AddSimpleFormGroup.completeChangeContent = function (oChangeWrapper, oSpecificChangeInfo, mPropertyBag) {
@@ -168,6 +174,33 @@ sap.ui.define([
 			}
 
 			return sControlId;
+		};
+
+		/**
+		 * Reverts the applied change
+		 *
+		 * @param {sap.ui.fl.Change} oChangeWrapper Change wrapper object with instructions to be applied to the control map
+		 * @param {sap.ui.layout.SimpleForm} oForm Smart form control that matches the change selector for applying the change
+		 * @param {object} mPropertyBag Property bag containing the modifier, the appComponent and the view
+		 * @param {object} mPropertyBag.modifier Modifier for the controls
+		 * @param {object} mPropertyBag.appComponent Component in which the change should be applied
+		 * @param {object} mPropertyBag.view Application view
+		 * @return {boolean} True if successful
+		 * @public
+		 */
+		AddSimpleFormGroup.revertChange = function (oChangeWrapper, oForm, mPropertyBag) {
+			var oAppComponent = mPropertyBag.appComponent;
+			var oView = mPropertyBag.view;
+			var oModifier = mPropertyBag.modifier;
+			var sGroupId = oChangeWrapper.getRevertData().groupId;
+
+			var oGroupSelector = oModifier.getSelector(sGroupId, oAppComponent);
+			var oGroup = oModifier.bySelector(oGroupSelector, oAppComponent, oView);
+			oModifier.removeAggregation(oForm, AddSimpleFormGroup.CONTENT_AGGREGATION, oGroup);
+			oModifier.destroy(oGroup);
+			oChangeWrapper.resetRevertData();
+
+			return true;
 		};
 
 		return AddSimpleFormGroup;

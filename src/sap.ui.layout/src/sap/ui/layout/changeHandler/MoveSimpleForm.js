@@ -206,15 +206,15 @@ sap.ui.define([
 			};
 
 			/**
-			 * Moves an element from one aggregation to another.
+			 * Moves an element from one aggregation to another
 			 *
 			 * @param {sap.ui.fl.Change} oChangeWrapper
-			 *          change object with instructions to be applied on the control map
+			 *          Change object with instructions to be applied to the control map
 			 * @param {sap.ui.core.Control} oSimpleForm
 			 *          oSourceParent control that matches the change selector for applying the change, which is the source of
 			 *          the move
 			 * @param {object} mPropertyBag
-			 *          map containing the control modifier object (either sap.ui.core.util.reflection.JsControlTreeModifier or
+			 *          Map containing the control modifier object (either sap.ui.core.util.reflection.JsControlTreeModifier or
 			 *          sap.ui.core.util.reflection.XmlTreeModifier), the view object where the controls are embedded and the application component
 			 * @returns {boolean} true - if change could be applied
 			 * @public
@@ -228,6 +228,12 @@ sap.ui.define([
 				var oContent = oChangeWrapper.getContent();
 				var mMovedElement = oContent.movedElements[0];
 				var aContent = oModifier.getAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION);
+
+				var aContentSelectors = aContent.map(function(oContentControl) {
+					return oModifier.getSelector(oContentControl, oAppComponent);
+				});
+				var mState = {content: aContentSelectors};
+				oChangeWrapper.setRevertData(mState);
 
 				if (oChangeWrapper.getChangeType() === MoveSimpleForm.CHANGE_TYPE_MOVE_FIELD) {
 					// !important : element was used in 1.40, do not remove for compatibility!
@@ -364,6 +370,36 @@ sap.ui.define([
 					oChangeWrapper.addDependentControl(mStableChangeInfo.target, "targetParent", mPropertyBag);
 				}
 				oChangeWrapper.addDependentControl([mStableChangeInfo.movedControl], "movedElements", mPropertyBag);
+			};
+
+			/**
+			 * Reverts the applied change
+			 *
+			 * @param {sap.ui.fl.Change} oChangeWrapper
+			 *          Change object with instructions to be applied to the control map
+			 * @param {sap.ui.core.Control} oSimpleForm
+			 *          oSourceParent control that matches the change selector for applying the change, which is the source of
+			 *          the move
+			 * @param {object} mPropertyBag
+			 *          Map containing the control modifier object (either sap.ui.core.util.reflection.JsControlTreeModifier or
+			 *          sap.ui.core.util.reflection.XmlTreeModifier), the view object where the controls are embedded and the application component
+			 * @returns {boolean} true - if change could be reverted
+			 * @public
+			 */
+			MoveSimpleForm.revertChange = function(oChangeWrapper, oSimpleForm, mPropertyBag) {
+				var oModifier = mPropertyBag.modifier;
+				var oAppComponent = mPropertyBag.appComponent;
+				var oView = mPropertyBag.view;
+				var aContentSelectors = oChangeWrapper.getRevertData().content;
+
+				var aContent = aContentSelectors.map(function(oSelector) {
+					return oModifier.bySelector(oSelector, oAppComponent, oView);
+				});
+				fnRemoveAndInsertAggregation(oModifier, oSimpleForm, MoveSimpleForm, aContent, oView);
+				oChangeWrapper.resetRevertData();
+
+				return true;
+
 			};
 
 			return MoveSimpleForm;
