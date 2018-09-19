@@ -140,6 +140,9 @@ sap.ui.define([
 	 * As long as the promise is not yet resolved or rejected, the entity represented by this
 	 * context is transient.
 	 *
+	 * Once the promise is resolved, {@link #getPath} returns a path including the key predicate
+	 * of the new entity. This requires that all key properties are available.
+	 *
 	 * @returns {Promise}
 	 *   A promise that is resolved without data when the entity represented by this context has
 	 *   been created in the backend. It is rejected with an <code>Error</code> instance where

@@ -25,7 +25,7 @@
 				</Toolbar>
 			</headerToolbar>
 			<items>
-				<ObjectListItem number="{FoundingYear}" press="onPress" title="{Name}"
+				<ObjectListItem number="{FoundingYear}" press="onSelect" title="{Name}"
 					type="Active">
 				<firstStatus>
 					<ObjectStatus state="None"

@@ -221,9 +221,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Calculates the key predicate for the given entity and stores it as private annotation at the
-	 * given entity. If at least one key property is <code>undefined</code>, no private annotation
-	 * for the key predicate is created.
+	 * Calculates and returns the key predicate for the given entity and stores it as private
+	 * annotation at the given entity. If at least one key property is <code>undefined</code>, no
+	 * private annotation for the key predicate is created.
 	 *
 	 * @param {object} oInstance
 	 *   The instance for which to calculate the key predicate
@@ -231,7 +231,8 @@ sap.ui.define([
 	 *   A map from meta path to the entity type (as delivered by {@link #fetchTypes})
 	 * @param {string} sMetaPath
 	 *   The meta path for the entity
-	 *
+	 * @returns {string}
+	 *   The key predicate or <code>undefined</code>, if key predicate cannot be determined
 	 * @private
 	 */
 	Cache.prototype.calculateKeyPredicate = function (oInstance, mTypeForMetaPath, sMetaPath) {
@@ -244,6 +245,7 @@ sap.ui.define([
 				_Helper.setPrivateAnnotation(oInstance, "predicate", sPredicate);
 			}
 		}
+		return sPredicate;
 	};
 
 	/**
@@ -281,14 +283,16 @@ sap.ui.define([
 	 * @param {function} fnErrorCallback
 	 *   A function which is called with an Error object each time a POST request fails
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise which is resolved without data when the POST request has been successfully sent
-	 *   and the entity has been marked as non-transient
+	 *   A promise which is resolved with the created entity when the POST request has been
+	 *   successfully sent and the entity has been marked as non-transient
 	 *
 	 * @public
 	 */
 	Cache.prototype.create = function (oGroupLock, vPostPath, sPath, oEntityData,
 			fnCancelCallback, fnErrorCallback) {
-		var aCollection, that = this;
+		var aCollection,
+			bKeepTransientPath = oEntityData && oEntityData["@$ui5.keepTransientPath"],
+			that = this;
 
 		// Clean-up when the create has been canceled.
 		function cleanUp() {
@@ -314,18 +318,29 @@ sap.ui.define([
 					_Helper.buildPath(that.sResourcePath, sPath, "-1")),
 				that.fetchTypes()
 			]).then(function (aResult) {
-				var oResult = aResult[0];
+				var oCreatedEntity = aResult[0],
+					sPredicate;
 
 				_Helper.deletePrivateAnnotation(oEntityData, "transient");
 				// now the server has one more element
 				addToCount(that.mChangeListeners, sPath, aCollection, 1);
 				that.removeByPath(that.mPostRequests, sPath, oEntityData);
-				that.visitResponse(oResult, aResult[1], false,
-					_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)), sPath + "/-1");
+				that.visitResponse(oCreatedEntity, aResult[1], false,
+					_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)), sPath + "/-1",
+					bKeepTransientPath);
+				if (!bKeepTransientPath) {
+					sPredicate = _Helper.getPrivateAnnotation(oCreatedEntity, "predicate");
+					if (sPredicate) {
+						aCollection.$byPredicate[sPredicate] = oEntityData;
+						_Helper.updateTransientPaths(that.mChangeListeners, sPath, sPredicate);
+					}
+				}
 				// update the cache with the POST response
 				_Helper.updateSelected(that.mChangeListeners,
-					_Helper.buildPath(sPath, "-1"), oEntityData, oResult,
+					_Helper.buildPath(sPath, sPredicate || "-1"), oEntityData, oCreatedEntity,
 					_Helper.getSelectForPath(that.mQueryOptions, sPath));
+
+				return oEntityData;
 			}, function (oError) {
 				if (oError.canceled) {
 					// for cancellation no error is reported via fnErrorCallback
@@ -926,11 +941,13 @@ sap.ui.define([
 	 * @param {string} [sRootPath=""] Path to <code>oRoot</code>, relative to the cache; used to
 	 *   compute the target property of messages; for operations with return context the
 	 *   <code>sRootMetaPath</code> cannot be derived automatically via <code>sRootPath</code>
+	 * @param {boolean} [bKeepTransientPath] Whether the transient path shall be used to report
+	 *   messages
 	 *
 	 * @private
 	 */
 	Cache.prototype.visitResponse = function (oRoot, mTypeForMetaPath, bWrapped, sRootMetaPath,
-			sRootPath) {
+			sRootPath, bKeepTransientPath) {
 		var bHasMessages = false,
 			aKeyPredicates,
 			mPathToODataMessages = {},
@@ -1011,15 +1028,18 @@ sap.ui.define([
 		 *    instance path
 		 */
 		function visitInstance(oInstance, sMetaPath, sInstancePath, sContextUrl, bCollection) {
-			var oType = mTypeForMetaPath[sMetaPath],
+			var sPredicate,
+				oType = mTypeForMetaPath[sMetaPath],
 				sMessageProperty = oType && oType[sMessagesAnnotation]
 					&& oType[sMessagesAnnotation].$Path,
 				aMessages;
 
 			sContextUrl = buildContextUrl(sContextUrl, oInstance["@odata.context"]);
-			that.calculateKeyPredicate(oInstance, mTypeForMetaPath, sMetaPath);
+			sPredicate = that.calculateKeyPredicate(oInstance, mTypeForMetaPath, sMetaPath);
 			if (bCollection) {
-				sInstancePath += _Helper.getPrivateAnnotation(oInstance, "predicate");
+				sInstancePath += sPredicate;
+			} else if (!bKeepTransientPath && sPredicate && sInstancePath.endsWith("/-1")) {
+				sInstancePath = sInstancePath.slice(0, -3) + sPredicate;
 			}
 			if (sMessageProperty) {
 				aMessages = _Helper.drillDown(oInstance, sMessageProperty.split("/"));
@@ -1488,6 +1508,7 @@ sap.ui.define([
 			// _Helper.updateExisting cannot be used because navigation properties cannot be handled
 			that.aElements[iIndex] = that.aElements.$byPredicate[sPredicate] = oElement;
 			that.visitResponse(oElement, aResult[1], false, that.sMetapath, sPredicate);
+			return oElement;
 		});
 
 		this.bSentReadRequest = true;

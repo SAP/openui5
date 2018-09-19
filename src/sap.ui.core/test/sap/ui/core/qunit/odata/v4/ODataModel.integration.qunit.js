@@ -2318,15 +2318,16 @@ sap.ui.define([
 					}, {
 						"CompanyName" : "Bar",
 						"Note" : "from server",
-						"SalesOrderID" : "42"
-					});
+						"SalesOrderID" : "43"
+					})
+					.expectChange("note", "from server", 0);
 				if (!bSkipRefresh){
-					that.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
-							"Note" : "from server",
-							"SalesOrderID" : "42"
-						});
+					that.expectRequest("SalesOrderList('43')?$select=Note,SalesOrderID", {
+							"Note" : "fresh from server",
+							"SalesOrderID" : "43"
+						})
+						.expectChange("note", "fresh from server", 0);
 				}
-				that.expectChange("note", "from server", 0);
 
 				return Promise.all([
 					that.oModel.submitBatch("update"),
@@ -8897,6 +8898,8 @@ sap.ui.define([
 			var oAction = oModel.bindContext("com.sap.gateway.default.iwbep.tea_busi.v0001."
 					+ "AcChangeManagerOfTeam(...)", oCreatedContext);
 
+			assert.strictEqual(oCreatedContext.getPath(), "/TEAMS('newer')");
+
 			that.expectRequest({
 					method : "POST",
 					url : "TEAMS('newer')/com.sap.gateway.default.iwbep.tea_busi.v0001."
@@ -8959,6 +8962,8 @@ sap.ui.define([
 			var oAction = that.oModel.bindContext(
 					"com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee(...)",
 					oCreatedContext);
+
+			assert.strictEqual(oCreatedContext.getPath(), "/TEAMS('42')/TEAM_2_EMPLOYEES('7')");
 
 			that.expectRequest({
 					method : "POST",
@@ -9749,88 +9754,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Create an employee and get messages for the newly created employee
-	QUnit.test("Create a new EMPLOYEE and get messages", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
-			sView = '\
-<FlexBox binding="{path : \'/TEAMS(\\\'TEAM_01\\\')\', \
-		parameters : {\
-			$expand : {\
-				\'TEAM_2_EMPLOYEES\' : {\
-					$select : \'__CT__FAKE__Message/__FAKE__Messages\'\
-				}\
-			},\
-			$$updateGroupId : \'foo\'\
-		}}" id="form">\
-	<Text id="teamId" text="{Team_Id}" />\
-	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<columns><Column/></columns>\
-		<ColumnListItem>\
-			<Text id="name" text="{Name}" />\
-		</ColumnListItem>\
-	</Table>\
-</FlexBox>',
-			that = this;
-
-		this.expectRequest(
-			"TEAMS('TEAM_01')?"
-				+ "$expand=TEAM_2_EMPLOYEES($select=ID,Name,__CT__FAKE__Message/__FAKE__Messages)"
-				+ "&$select=Team_Id", {
-				"Team_Id" : "TEAM_01",
-				"TEAM_2_EMPLOYEES" : [{
-					"ID" : "1",
-					"Name" : "Jonathan Smith",
-					"__CT__FAKE__Message" : { "__FAKE__Messages" : [] }
-				}]
-			})
-			.expectChange("teamId", "TEAM_01")
-			.expectChange("name", ["Jonathan Smith"])
-			.expectMessages([]);
-
-		return this.createView(assert, sView, oModel).then(function () {
-			var oTable = that.oView.byId("table");
-
-			that.expectChange("name", "Jonathan Smith", 1)
-				.expectChange("name", "", 0);
-
-			oTable.getBinding("items").create({Name : ""});
-
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectRequest({
-					method : "POST",
-					url : "TEAMS('TEAM_01')/TEAM_2_EMPLOYEES",
-					payload : {"Name" : ""}
-				}, {
-					"@odata.context" : "../$metadata#TEAMS('TEAM_01')/TEAM_2_EMPLOYEES/$entity",
-					"ID" : "42",
-					"Name" : "",
-					"__CT__FAKE__Message" : {
-						"__FAKE__Messages" : [{
-							"code" : "1",
-							"message" : "Enter a name",
-							"transition" : false,
-							"target" : "Name",
-							"numericSeverity" : 3
-						}]
-					}
-				})
-				.expectMessages([{
-					"code" : "1",
-					"message" : "Enter a name",
-					"persistent" : false,
-					"target" : "/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES/-1/Name",
-					"type" : "Warning"
-				}]);
-
-			return Promise.all([
-				that.oModel.submitBatch("foo"),
-				that.waitForChanges(assert)
-			]);
-		});
-	});
-
-	//*********************************************************************************************
 	// Scenario: Modify a property without side effects, i.e. the PATCH request's response is
 	// ignored.
 	QUnit.test("$$patchWithoutSideEffects", function (assert) {
@@ -10249,6 +10172,124 @@ sap.ui.define([
 				resolveLater(reject),
 				that.waitForChanges(assert)
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create entity for a ListBinding relative to a newly created entity
+	[false, true].forEach(function (bKeepTransientPath) {
+		var sTitle = "Create relative, on newly created entity, keep transient path: "
+				+ bKeepTransientPath;
+
+		QUnit.test(sTitle, function (assert) {
+			var oEmployeeCreatedContext,
+				oModel = createTeaBusiModel(),
+				oTeamCreatedContext,
+				sView = '\
+<FlexBox binding="{path : \'\',\
+		parameters : {\
+			$expand : {\
+				\'TEAM_2_EMPLOYEES\' : {\
+					$select : \'__CT__FAKE__Message/__FAKE__Messages,ID\'\
+				}\
+			}\
+		}}" id="form">\
+	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Text id="id" text="{ID}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+				that = this;
+
+			this.expectChange("id", []);
+
+			return this.createView(assert, sView, oModel).then(function () {
+				// create a new team
+				that.expectRequest({
+						method : "POST",
+						url : "TEAMS",
+						payload : {}
+					}, {
+						"Team_Id" : "23"
+					});
+
+				oTeamCreatedContext = oModel.bindList("/TEAMS").create({
+						// private annotation, not to be used unless explicitly adviced to do so
+						"@$ui5.keepTransientPath" : bKeepTransientPath
+					}, true);
+
+				return Promise.all([
+					oTeamCreatedContext.created(),
+					that.waitForChanges(assert)
+				]);
+			}).then(function () {
+				assert.strictEqual(oTeamCreatedContext.getPath(),
+					bKeepTransientPath ? "/TEAMS/-1" : "/TEAMS('23')");
+
+				that.expectRequest("TEAMS('23')?$expand=TEAM_2_EMPLOYEES("
+						+ "$select=__CT__FAKE__Message/__FAKE__Messages,ID)", {
+						"Team_Id" : "23",
+						"TEAM_2_EMPLOYEES" : [{
+							"ID" : "3",
+							"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
+						}]
+					})
+					.expectChange("id", ["3"])
+					.expectMessages([]);
+
+				that.oView.byId("form").setBindingContext(oTeamCreatedContext);
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				// create new relative entity
+				that.expectRequest({
+						method : "POST",
+						url : "TEAMS('23')/TEAM_2_EMPLOYEES",
+						payload : {"ID" : null}
+					}, {
+						"ID" : "7",
+						"__CT__FAKE__Message" : {
+							"__FAKE__Messages" : [{
+								"code" : "1",
+								"message" : "Enter a name",
+								"transition" : false,
+								"target" : "Name",
+								"numericSeverity" : 3
+							}]
+						}
+					})
+					.expectChange("id", "", 0) // from setValue(null)
+					.expectChange("id", ["7", "3"])
+					.expectMessages([{
+						"code" : "1",
+						"message" : "Enter a name",
+						"persistent" : false,
+						"target" : bKeepTransientPath
+						//TODO why does ODataBinding.fetchCache compute a canonical path and how
+						// does this fit to message targets?
+							? "/TEAMS('23')/TEAM_2_EMPLOYEES/-1/Name"
+							: "/TEAMS('23')/TEAM_2_EMPLOYEES('7')/Name",
+						"type" : "Warning"
+					}]);
+
+				oEmployeeCreatedContext = that.oView.byId("table").getBinding("items").create({
+						// private annotation, not to be used unless explicitly adviced to do so
+						"@$ui5.keepTransientPath" : bKeepTransientPath,
+						"ID" : null
+					}, true);
+
+				return Promise.all([
+					oEmployeeCreatedContext.created(),
+					that.waitForChanges(assert)
+				]);
+			}).then(function () {
+				assert.strictEqual(oEmployeeCreatedContext.getPath(),
+					bKeepTransientPath
+					? "/TEAMS/-1/TEAM_2_EMPLOYEES/-1"
+					: "/TEAMS('23')/TEAM_2_EMPLOYEES('7')");
+			});
 		});
 	});
 });
