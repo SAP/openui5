@@ -1616,7 +1616,7 @@
 			oOverflowTB.destroy();
 		});
 
-		QUnit.test("[_resetAndInvalidateToolbar] resets also values in _aControlSizes object", function (assert) {
+		QUnit.test("[onThemeChanged] resets also values in _aControlSizes object", function (assert) {
 			// Create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
 			var aDefaultContent = [
 				new sap.m.Button({text: "1", width: "100px"}),
@@ -1633,7 +1633,7 @@
 
 			sap.ui.getCore().applyChanges();
 
-			oOverflowTB._resetAndInvalidateToolbar();
+			oOverflowTB.onThemeChanged();
 
 			for (var iControlSize in oOverflowTB._aControlSizes) {
 				if (oOverflowTB._aControlSizes.hasOwnProperty(iControlSize)) {
