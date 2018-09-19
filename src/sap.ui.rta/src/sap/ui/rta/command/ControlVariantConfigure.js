@@ -3,9 +3,9 @@
  */
 sap.ui.define([
 	'sap/ui/rta/command/BaseCommand',
-	'sap/ui/fl/changeHandler/BaseTreeModifier',
+	'sap/ui/core/util/reflection/JsControlTreeModifier',
 	'sap/ui/fl/Utils'
-], function(BaseCommand, BaseTreeModifier, flUtils) {
+], function(BaseCommand, JsControlTreeModifier, flUtils) {
 	"use strict";
 
 	/**
@@ -61,7 +61,7 @@ sap.ui.define([
 		var oVariantManagementControl = this.getControl();
 		this.oAppComponent = flUtils.getAppComponentForControl(oVariantManagementControl);
 		this.oModel = this.oAppComponent.getModel(this.MODEL_NAME);
-		this.sVariantManagementReference = BaseTreeModifier.getSelector(oVariantManagementControl, this.oAppComponent).id;
+		this.sVariantManagementReference = JsControlTreeModifier.getSelector(oVariantManagementControl, this.oAppComponent).id;
 
 		this._aPreparedChanges = [];
 		this.getChanges().forEach(function(mChangeProperties) {

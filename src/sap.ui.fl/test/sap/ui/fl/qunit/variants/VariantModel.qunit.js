@@ -8,7 +8,7 @@ sap.ui.require([
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/FlexControllerFactory",
-	"sap/ui/core/util/reflection/BaseTreeModifier",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/variants/util/VariantUtil",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -18,7 +18,7 @@ function(
 	VariantManagement,
 	Utils,
 	FlexControllerFactory,
-	BaseTreeModifier,
+	JsControlTreeModifier,
 	VariantUtil,
 	sinon
 ) {
@@ -875,7 +875,7 @@ function(
 			"variantChanges": {}
 		};
 		sandbox.stub(this.oModel, "_duplicateVariant").returns(oVariantData);
-		sandbox.stub(BaseTreeModifier, "getSelector").returns({id: "variantMgmtId1"});
+		sandbox.stub(JsControlTreeModifier, "getSelector").returns({id: "variantMgmtId1"});
 		sandbox.stub(this.oModel.oFlexController._oChangePersistence, "addDirtyChange").returnsArg(0);
 
 		var mPropertyBag = {
