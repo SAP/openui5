@@ -234,5 +234,9 @@ function(
 			: undefined;
 	};
 
+	DesignTimeMetadata.prototype.getControllerExtensionTemplate = function() {
+		return this.getData().controllerExtensionTemplate;
+	};
+
 	return DesignTimeMetadata;
 }, /* bExport= */ true);
