@@ -725,6 +725,7 @@ sap.ui.define([
 		var mControl = this._getControlIfTemplateAffected(oChange, oControl, sControlType, mPropertyBag);
 		var oChangeHandler = this._getChangeHandler(oChange, mControl.controlType, mControl.control, oModifier);
 		var vResult;
+		var bStashed;
 
 		// TODO: Change Handlers expect mPropertyBag.appComponent for selector's component. API change required to rename property to mPropertyBag.component
 		mPropertyBag.appComponent = mPropertyBag.component || mPropertyBag.appComponent;
@@ -733,6 +734,12 @@ sap.ui.define([
 		if (bRevert && !oChangeHandler) {
 			Utils.log.warning("Change handler implementation for change not found or change type not enabled for current layer - Change ignored");
 			return new Utils.FakePromise();
+		}
+
+		// The stashed control does not have custom data in Runtime,
+		// so we have to consider that it is stashed so we can perform the revert
+		if (oChange.getChangeType() === "stashControl" && oControl.getMetadata().getName() === "sap.ui.core._StashedControl"){
+			bStashed = true;
 		}
 
 		var sChangeId = oChange.getId();
@@ -757,7 +764,10 @@ sap.ui.define([
 		}
 
 		return vResult.then(function(bPending) {
-			if (bRevert && (bPending || (!bPending && iIndex > -1))) {
+			if (
+				bRevert && (bPending || (!bPending && iIndex > -1)) ||
+				bRevert && bStashed
+			) {
 				var oResponse = oChangeHandler.revertChange(oChange, mControl.control, mPropertyBag);
 				if (mControl.bTemplateAffected) {
 					oModifier.updateAggregation(oControl, oChange.getContent().boundAggregation);
@@ -767,6 +777,9 @@ sap.ui.define([
 		})
 
 		.then(function() {
+			// After being unstashed the relevant control for the change is no longer sap.ui.core._StashedControl,
+			// therefore it must be retrieved again
+			oControl = mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent, mPropertyBag.view);
 			mCustomData = this._getAppliedCustomData(oControl, oModifier);
 			aAppliedChanges = mCustomData.customDataEntries;
 			oAppliedChangeCustomData = mCustomData.customData;
