@@ -1,0 +1,42 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    controllerName="sap.f.gridlist.controller.Main"
+    displayBlock="true">
+
+    <App>
+        <Page title="GridList Demo">
+            <IconTabBar>
+                <items>
+                    <IconTabFilter text="GridList" key="GridList1">
+                        <mvc:XMLView viewName="sap.f.gridlist.view.examples.General" />
+                    </IconTabFilter>
+                    <IconTabFilter text="GridList Breakpoints" key="GridList2">
+                        <mvc:XMLView viewName="sap.f.gridlist.view.examples.Breakpoint" />
+                    </IconTabFilter>
+                    <IconTabFilter text="GridList BoxContainer" key="GridList3">
+                        <mvc:XMLView viewName="sap.f.gridlist.view.examples.BoxContainer" />
+                    </IconTabFilter>
+                    <IconTabFilter text="GridList Growing" key="GridList4">
+                        <mvc:XMLView viewName="sap.f.gridlist.view.examples.Growing" />
+                    </IconTabFilter>
+                    <IconTabFilter text="GridList Grouping 1" key="GridList5">
+                        <mvc:XMLView viewName="sap.f.gridlist.view.examples.Grouping1" />
+                    </IconTabFilter>
+                    <IconTabFilter text="GridList Grouping 2" key="GridList6">
+                        <mvc:XMLView viewName="sap.f.gridlist.view.examples.Grouping2" />
+                    </IconTabFilter>
+                    <IconTabFilter text="GridList Grouping 3" key="GridList7">
+                        <mvc:XMLView viewName="sap.f.gridlist.view.examples.Grouping3" />
+                    </IconTabFilter>
+                    <IconTabFilter text="GridList Grouping 4" key="GridList8">
+                        <mvc:XMLView viewName="sap.f.gridlist.view.examples.Grouping4" />
+                    </IconTabFilter>
+                    <IconTabFilter text="GridList Grouping 5" key="GridList9">
+                        <mvc:XMLView viewName="sap.f.gridlist.view.examples.Grouping5" />
+                    </IconTabFilter>
+                </items>
+            </IconTabBar>
+        </Page>
+    </App>
+</mvc:View>

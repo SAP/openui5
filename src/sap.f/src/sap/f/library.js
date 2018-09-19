@@ -17,7 +17,7 @@ sap.ui.define(["sap/ui/base/DataType",
 	sap.ui.getCore().initLibrary({
 		name : "sap.f",
 		version: "${version}",
-		dependencies : ["sap.ui.core", "sap.m"],
+		dependencies : ["sap.ui.core", "sap.m", "sap.ui.layout"],
 		designtime: "sap/f/designtime/library.designtime",
 		types: [
 			"sap.f.LayoutType",
@@ -31,7 +31,8 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.DynamicPageHeader",
 			"sap.f.DynamicPageTitle",
 			"sap.f.FlexibleColumnLayout",
-			"sap.f.semantic.SemanticPage"
+			"sap.f.semantic.SemanticPage",
+			"sap.f.GridList"
 		],
 		elements: [
 			"sap.f.semantic.AddAction",
