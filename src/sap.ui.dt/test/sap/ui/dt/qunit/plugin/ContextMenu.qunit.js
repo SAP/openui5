@@ -630,7 +630,7 @@ sap.ui.define([
 			assert.strictEqual(oPopoverContext.height, 384, "the height of a context menu is correct");
 			assert.ok(!isNaN(oPopoverContext.height), "the height of a context menu shouldn't be NaN");
 			assert.strictEqual(typeof oPopoverContext.width, "number", "the width of a context menu should be a number");
-			assert.strictEqual(oPopoverContext.width, 190, "the width of a context menu is correct");
+			assert.strictEqual(oPopoverContext.width, 172, "the width of a context menu is correct");
 			assert.ok(!isNaN(oPopoverContext.width), "the width of a context menu shouldn't be NaN");
 			assert.strictEqual(typeof oPopover.height, "number", "the height of a non-expanded ContextMenu should be a number");
 			assert.strictEqual(oPopover.height, 66, "the height of a non-expanded ContextMenu is correct");
@@ -642,7 +642,7 @@ sap.ui.define([
 			assert.strictEqual(oPopoverExpanded.height, 402, "the height of an expanded ContextMenu is correct");
 			assert.ok(!isNaN(oPopoverExpanded.height), "the height of an expanded ContextMenu shouldn't be NaN");
 			assert.strictEqual(typeof oPopoverExpanded.width, "number", "the width of an expanded ContextMenu should be a number");
-			assert.strictEqual(oPopoverExpanded.width, 208, "the width of an expanded ContextMenu is correct");
+			assert.strictEqual(oPopoverExpanded.width, 190, "the width of an expanded ContextMenu is correct");
 			assert.ok(!isNaN(oPopoverExpanded.width), "the width of an expanded ContextMenu shouldn't be NaN");
 			assert.ok(oPopoverContext.height < oPopoverExpanded.height, "the height of a context menu should be less than the hight of an expanded ContextMenu (if they have the same amount of buttons)");
 			assert.ok(oPopoverContext.width < oPopoverExpanded.width, "the width of a context menu should be less than that of an expanded ContextMenu (if they have the same amount of buttons)");
