@@ -1438,15 +1438,41 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Refreshing a single entry of a table must not cause "failed to drill-down" errors
+	// Scenario: Refreshing (a single entry of) a table must not cause "failed to drill-down" errors
 	// if data of a dependent binding has been deleted in between.
 	// This scenario is similar to the deletion of a sales order line item in the SalesOrders
 	// application. Deleting a sales order line item also deletes the corresponding schedule. After
 	// the deletion the application automatically refreshes the sales order which the item has
 	// belonged to.
-	QUnit.test("Context#refresh: No drill-down error for deleted data", function (assert) {
-		var oContext,
-			sView = '\
+	[function (oTable) {
+		this.expectRequest("EMPLOYEES('0')?$select=AGE,ID,Name",
+				{"ID" : "0", "Name" : "Frederic Fall", "AGE" : 70})
+			.expectRequest("EMPLOYEES('0')/EMPLOYEE_2_EQUIPMENTS?"
+				+ "$select=Category,ID,Name&$skip=0&$top=100", {
+				"value" : [{
+					"Category" : "Electronics",
+					"ID" : "1",
+					"Name" : "Office PC"
+				}]
+			});
+
+		oTable.getItems()[0].getBindingContext().refresh();
+	}, function (oTable) {
+		this.expectRequest("EMPLOYEES?$select=AGE,ID,Name&$skip=0&$top=100", {
+				"value" : [{"ID" : "0", "Name" : "Frederic Fall", "AGE" : 70}]
+			})
+			.expectRequest("EMPLOYEES('0')/EMPLOYEE_2_EQUIPMENTS?"
+				+ "$select=Category,ID,Name&$skip=0&$top=100", {
+				"value" : [{
+					"Category" : "Electronics",
+					"ID" : "1",
+					"Name" : "Office PC"
+				}]
+			});
+		oTable.getBinding("items").refresh();
+	}].forEach(function (fnRefresh, i) {
+		QUnit.test("refresh: No drill-down error for deleted data #" + i, function (assert) {
+			var sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', templateShareable : false}">\
 	<columns><Column/><Column/></columns>\
 	<ColumnListItem>\
@@ -1454,60 +1480,51 @@ sap.ui.define([
 		<Text id="age" text="{AGE}" />\
 	</ColumnListItem>\
 </Table>\
-<Table id="detailTable" items="{EMPLOYEE_2_EQUIPMENTS}">\
+<Table id="detailTable" items="{path : \'EMPLOYEE_2_EQUIPMENTS\',\
+		parameters : {$$ownRequest : true}}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="equipmentName" text="{Name}" />\
 	</ColumnListItem>\
 </Table>',
-			that = this;
+				that = this;
 
-		this.expectRequest("EMPLOYEES?$select=AGE,ID,Name&$skip=0&$top=100", {
-				"value" : [{
-					"ID" : "0",
-					"Name" : "Frederic Fall",
-					"AGE" : 70
-				}]
-			})
-			.expectChange("text", ["Frederic Fall"])
-			.expectChange("age", ["70"])
-			.expectChange("equipmentName", []);
+			this.expectRequest("EMPLOYEES?$select=AGE,ID,Name&$skip=0&$top=100", {
+					"value" : [{
+						"ID" : "0",
+						"Name" : "Frederic Fall",
+						"AGE" : 70
+					}]
+				})
+				.expectChange("text", ["Frederic Fall"])
+				.expectChange("age", ["70"])
+				.expectChange("equipmentName", []);
 
-		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
-			.then(function () {
-				oContext = that.oView.byId("table").getItems()[0].getBindingContext();
-
-				that.expectRequest("EMPLOYEES('0')/EMPLOYEE_2_EQUIPMENTS?"
-						+ "$select=Category,ID,Name&$skip=0&$top=100", {
-						"value" : [{
-							"Category" : "Electronics",
-							"ID" : "1",
-							"Name" : "Office PC"
-						}, {
-							"Category" : "Electronics",
-							"ID" : "2",
-							"Name" : "Tablet X"
-						}]
-					})
-					.expectChange("equipmentName", ["Office PC", "Tablet X"]);
-				that.oView.byId("detailTable").setBindingContext(oContext);
-
-				return that.waitForChanges(assert);
-			}).then(function () {
-				that.expectRequest("EMPLOYEES('0')?$select=AGE,ID,Name",
-						{"ID" : "0", "Name" : "Frederic Fall", "AGE" : 70})
-					.expectRequest("EMPLOYEES('0')/EMPLOYEE_2_EQUIPMENTS?"
+			return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
+				.then(function () {
+					that.expectRequest("EMPLOYEES('0')/EMPLOYEE_2_EQUIPMENTS?"
 							+ "$select=Category,ID,Name&$skip=0&$top=100", {
-						"value" : [{
-							"Category" : "Electronics",
-							"ID" : "1",
-							"Name" : "Office PC"
-						}]
-					});
-				oContext.refresh();
+							"value" : [{
+								"Category" : "Electronics",
+								"ID" : "1",
+								"Name" : "Office PC"
+							}, {
+								"Category" : "Electronics",
+								"ID" : "2",
+								"Name" : "Tablet X"
+							}]
+						})
+						.expectChange("equipmentName", ["Office PC", "Tablet X"]);
+					that.oView.byId("detailTable").setBindingContext(
+						that.oView.byId("table").getItems()[0].getBindingContext());
 
-				return that.waitForChanges(assert);
-			});
+					return that.waitForChanges(assert);
+				}).then(function () {
+					fnRefresh.call(that, that.oView.byId("table"));
+
+					return that.waitForChanges(assert);
+				});
+		});
 	});
 
 	//*********************************************************************************************
