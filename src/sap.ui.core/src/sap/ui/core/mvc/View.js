@@ -172,7 +172,8 @@ sap.ui.define([
 				type : "boolean",
 				defaultValue : false
 			}
-		}
+		},
+		designtime: "sap/ui/core/designtime/mvc/View.designtime"
 	}});
 
 	/**
