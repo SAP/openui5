@@ -268,7 +268,7 @@ sap.ui.define([
 	 * @param {string|sap.ui.base.SyncPromise} vPostPath
 	 *   The path for the POST request or a SyncPromise that resolves with that path
 	 * @param {string} sPath
-	 *   The entity's path within the cache
+	 *   The collection's path within the cache
 	 * @param {string} [oEntityData={}]
 	 *   The initial entity data
 	 * @param {function} fnCancelCallback
@@ -305,7 +305,8 @@ sap.ui.define([
 			that.addByPath(that.mPostRequests, sPath, oEntityData);
 			return SyncPromise.all([
 				that.oRequestor.request("POST", sPostPath, oPostGroupLock, null, oEntityData,
-					setCreatePending, cleanUp),
+					setCreatePending, cleanUp, undefined,
+					_Helper.buildPath(that.sResourcePath, sPath, "-1")),
 				that.fetchTypes()
 			]).then(function (aResult) {
 				var oResult = aResult[0];

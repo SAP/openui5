@@ -3129,7 +3129,8 @@ sap.ui.define([
 
 			that.oRequestorMock.expects("request")
 				.withExactArgs("POST", "Employees", sinon.match.same(oGroupLock), null,
-					sinon.match.object, sinon.match.func, sinon.match.func)
+					sinon.match.object, sinon.match.func, sinon.match.func, undefined,
+					sResourcePath + "/-1")
 				.returns(Promise.resolve({}));
 			return oCache.create(oGroupLock, "Employees", "").then(function () {
 				assert.strictEqual(
@@ -3236,7 +3237,7 @@ sap.ui.define([
 		this.oRequestorMock.expects("request")
 			.withExactArgs("POST", "TEAMS", sinon.match.same(oGroupLock), null,
 				/*oPayload*/sinon.match.object, /*fnSubmit*/sinon.match.func,
-				/*fnCancel*/sinon.match.func)
+				/*fnCancel*/sinon.match.func, undefined, "TEAMS/-1")
 			.returns(SyncPromise.resolve({}));
 		this.mock(oCache).expects("fetchTypes").withExactArgs()
 			.returns(SyncPromise.resolve(mTypeForMetaPath));
@@ -3257,7 +3258,7 @@ sap.ui.define([
 			oInitialData = {ID : "", Name : "John Doe", "@$ui5.foo" : "bar"},
 			oEntityData = jQuery.extend({}, oInitialData),
 			oEntityDataCleaned = {ID : "", Name : "John Doe"},
-			sPathInCache = "0/TEAM_2_EMPLOYEES",
+			sPathInCache = "('0')/TEAM_2_EMPLOYEES",
 			sPostPath = "TEAMS('0')/TEAM_2_EMPLOYEES",
 			oPostResult = {
 				ID : "7",
@@ -3268,7 +3269,7 @@ sap.ui.define([
 		oCache.fetchValue = function () {};
 		aCollection.$count = 0;
 		oCacheMock.expects("fetchValue")
-			.withExactArgs(sinon.match.same(_GroupLock.$cached), "0/TEAM_2_EMPLOYEES")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), sPathInCache)
 			.returns(SyncPromise.resolve(aCollection));
 		this.mock(jQuery).expects("extend").withExactArgs(true, {}, sinon.match.same(oInitialData))
 			.returns(oEntityData);
@@ -3280,13 +3281,13 @@ sap.ui.define([
 		this.oRequestorMock.expects("request")
 			.withExactArgs("POST", "TEAMS('0')/TEAM_2_EMPLOYEES", sinon.match.same(oGroupLock),
 				null, sinon.match.same(oEntityDataCleaned), /*fnSubmit*/sinon.match.func,
-				/*fnCancel*/sinon.match.func)
+				/*fnCancel*/sinon.match.func, undefined, sPostPath + "/-1")
 			.returns(SyncPromise.resolve(Promise.resolve(oPostResult)));
 		this.mock(oCountChangeListener).expects("onChange");
 		this.mock(oIdChangeListener).expects("onChange");
 		this.mock(oCache).expects("visitResponse")
 			.withExactArgs(sinon.match.same(oPostResult), sinon.match.same(mTypeForMetaPath),
-				false, "/TEAMS/TEAM_2_EMPLOYEES", "0/TEAM_2_EMPLOYEES/-1");
+				false, "/TEAMS/TEAM_2_EMPLOYEES", "('0')/TEAM_2_EMPLOYEES/-1");
 
 		// code under test
 		oCreatePromise = oCache.create(oGroupLock, sPostPath, sPathInCache, oInitialData);
@@ -3326,12 +3327,12 @@ sap.ui.define([
 			oCreatePromise,
 			fnDeleteCallback = this.spy(),
 			oGroupLock = new _GroupLock("updateGroup"),
-			sPathInCache = "0/TEAM_2_EMPLOYEES",
+			sPathInCache = "('0')/TEAM_2_EMPLOYEES",
 			oPostPathPromise = SyncPromise.resolve("TEAMS('0')/TEAM_2_EMPLOYEES");
 
 		oCache.fetchValue = function () {};
 		oCacheMock.expects("fetchValue")
-			.withExactArgs(sinon.match.same(_GroupLock.$cached), "0/TEAM_2_EMPLOYEES")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), sPathInCache)
 			.returns(SyncPromise.resolve(aCollection));
 		oCacheMock.expects("fetchTypes").withExactArgs().returns(SyncPromise.resolve({}));
 		this.spy(oCache, "addByPath");
@@ -3343,7 +3344,8 @@ sap.ui.define([
 
 		sinon.assert.calledWithExactly(oRequestor.request, "POST", "TEAMS('0')/TEAM_2_EMPLOYEES",
 			sinon.match.same(oGroupLock), null, /*oPayload*/sinon.match.object,
-			/*fnSubmit*/sinon.match.func, /*fnCancel*/sinon.match.func);
+			/*fnSubmit*/sinon.match.func, /*fnCancel*/sinon.match.func, undefined,
+			"TEAMS('0')/TEAM_2_EMPLOYEES/-1");
 		oBody = oRequestor.request.args[0][4];
 		// request is added to mPostRequests
 		sinon.assert.calledWithExactly(oCache.addByPath, sinon.match.same(oCache.mPostRequests),
@@ -3469,7 +3471,8 @@ sap.ui.define([
 			.returns("?foo=bar");
 		this.oRequestorMock.expects("request")
 			.withExactArgs("POST", "Employees?foo=bar", oGroupLock, null,
-				sinon.match(transientCacheData), sinon.match.func, sinon.match.func)
+				sinon.match(transientCacheData), sinon.match.func, sinon.match.func, undefined,
+				"Employees/-1")
 			.returns(Promise.resolve(oPostResult));
 		// called from update
 		oHelperMock.expects("updateSelected")
@@ -3583,7 +3586,7 @@ sap.ui.define([
 		oRequestExpectation1 = this.oRequestorMock.expects("request");
 		oRequestExpectation1.withExactArgs("POST", "Employees?sap-client=111",
 				sinon.match.same(oCreateGroupLock), null, sinon.match.object,
-				sinon.match.func, sinon.match.func)
+				sinon.match.func, sinon.match.func, undefined, "Employees/-1")
 			.returns(oFailedPostPromise = new Promise(function (resolve, reject) {
 				fnRejectPost = reject;
 			}));
@@ -3600,7 +3603,7 @@ sap.ui.define([
 			// immediately add the POST request again into queue
 			oRequestExpectation2.withExactArgs("POST", "Employees?sap-client=111",
 					new _GroupLock("updateGroup"), null, sinon.match.object, sinon.match.func,
-					sinon.match.func)
+					sinon.match.func, undefined, "Employees/-1")
 				.returns(new Promise(function (resolve) {
 						fnResolvePost = resolve;
 					}));
@@ -3666,12 +3669,14 @@ sap.ui.define([
 
 			this.oRequestorMock.expects("request")
 				.withExactArgs("POST", "Employees", sinon.match.same(oGroupLock), null,
-					sinon.match.object, sinon.match.func, sinon.match.func)
+					sinon.match.object, sinon.match.func, sinon.match.func, undefined,
+					"Employees/-1")
 				.returns(oFailedPostPromise);
 
 			this.oRequestorMock.expects("request")
 				.withExactArgs("POST", "Employees", new _GroupLock("$parked." + sUpdateGroupId),
-					null, sinon.match.object, sinon.match.func, sinon.match.func)
+					null, sinon.match.object, sinon.match.func, sinon.match.func, undefined,
+					"Employees/-1")
 				.returns(Promise.resolve({Name: "John Doe", Age: 47}));
 
 			// code under test
@@ -3739,7 +3744,7 @@ sap.ui.define([
 
 		this.oRequestorMock.expects("request")
 			.withExactArgs("POST", "Employees", sinon.match.same(oGroupLock), null,
-				sinon.match.object, sinon.match.func, sinon.match.func)
+				sinon.match.object, sinon.match.func, sinon.match.func, undefined, "Employees/-1")
 			.callsArg(6)
 			.returns(Promise.reject(oCanceledError));
 
@@ -3764,7 +3769,7 @@ sap.ui.define([
 
 		this.oRequestorMock.expects("request")
 			.withExactArgs("POST", "Employees", sinon.match.same(oGroupLock), null,
-				sinon.match.object, sinon.match.func, sinon.match.func)
+				sinon.match.object, sinon.match.func, sinon.match.func, undefined, "Employees/-1")
 			.returns(new Promise(function () {})); // never resolve
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", "Employees?$skip=0&$top=2", new _GroupLock("group"), undefined,
@@ -3815,7 +3820,7 @@ sap.ui.define([
 
 		sinon.assert.calledWithExactly(oRequestor.request, "POST", "Employees",
 			sinon.match.same(oGroupLock), null, sinon.match.object, sinon.match.func,
-			sinon.match.func);
+			sinon.match.func, undefined, "Employees/-1");
 		this.spy(oRequestor, "removePost");
 		this.spy(_Helper, "updateExisting");
 

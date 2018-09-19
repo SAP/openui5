@@ -2320,7 +2320,7 @@ sap.ui.define([
 	QUnit.test("Create with default value in a currency/unit", function (assert) {
 		var sView = '\
 <Table id="table" items="{/SalesOrderList(\'42\')/SO_2_SOITEM}">\
-	<columns><Column/></columns>\
+	<columns><Column/><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="quantity" text="{Quantity}" />\
 		<Text id="unit" text="{QuantityUnit}" />\
@@ -2385,6 +2385,59 @@ sap.ui.define([
 
 			return Promise.all([
 				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Failure when creating a sales order line item. Observe the message.
+	QUnit.test("Create error", function (assert) {
+		var oError = new Error("Failure"),
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'42\')}">\
+	<Table id="table" items="{SO_2_SOITEM}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Text id="pos" text="{ItemPosition}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')?$select=SalesOrderID"
+			+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)", {
+				"SalesOrderID" : "42",
+				"SO_2_SOITEM" : []
+			});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.oLogMock.expects("error")
+				.withExactArgs("POST on 'SalesOrderList('42')/SO_2_SOITEM' failed; "
+					+ "will be repeated automatically", sinon.match("Failure"),
+					"sap.ui.model.odata.v4.ODataParentBinding");
+			oError.error = {
+				code : "CODE",
+				message : "Enter a product ID",
+				target : "ProductID"
+			};
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList('42')/SO_2_SOITEM",
+					payload : {}
+				}, oError)
+				.expectMessages([{
+					code : "CODE",
+					message : "Enter a product ID",
+					persistent : true,
+					target : "/SalesOrderList('42')/SO_2_SOITEM/-1/ProductID",
+					technical : true,
+					type : "Error"
+				}]);
+
+			return Promise.all([
+				that.oView.byId("table").getBinding("items").create(),
 				that.waitForChanges(assert)
 			]);
 		});
