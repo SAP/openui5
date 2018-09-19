@@ -1164,6 +1164,7 @@ sap.ui.define([
 	 * @returns {sap.ui.table.AnalyticalTable} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @function
 	 */
 	AnalyticalTable.prototype.expand = TreeTable.prototype.expand;
 
@@ -1174,6 +1175,7 @@ sap.ui.define([
 	 * @returns {sap.ui.table.AnalyticalTable} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @function
 	 */
 	AnalyticalTable.prototype.collapse = TreeTable.prototype.collapse;
 
@@ -1183,6 +1185,7 @@ sap.ui.define([
 	 * @returns {sap.ui.table.AnalyticalTable} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @function
 	 */
 	AnalyticalTable.prototype.collapseAll = TreeTable.prototype.collapseAll;
 
@@ -1193,6 +1196,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if the row is expanded, <code>false</code> if it is collapsed
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @function
 	 */
 	AnalyticalTable.prototype.isExpanded = TreeTable.prototype.isExpanded;
 
