@@ -6,6 +6,9 @@
 	xmlns:vm="sap.ui.fl.variants"
 	xmlns:l="sap.ui.layout"
 	xmlns:form="sap.ui.layout.form"
+	xmlns:smartForm="sap.ui.comp.smartform"
+	xmlns:smartField="sap.ui.comp.smartfield"
+	xmlns:smartLink="sap.ui.comp.navpopover"
 	xmlns:html="http://www.w3.org/1999/xhtml"
 	controllerName="sap.ui.rta.test.variantManagement.controller.Main">
 	<!--The view is is bound to EntityType01 in the controller -->
@@ -103,6 +106,86 @@
 									<Text id="NavProperty.Text4" text="{Property02}" />
 								</form:content>
 							</form:SimpleForm>
+						</uxap:ObjectPageSubSection>
+						<uxap:ObjectPageSubSection>
+							<form:Form id="FormDisplay480_12120-2"
+								editable="true">
+								<form:title>
+									<core:Title text="Form" />
+								</form:title>
+								<form:layout>
+									<form:ResponsiveGridLayout
+										labelSpanXL="4"
+										labelSpanL="4"
+										labelSpanM="12"
+										labelSpanS="12"
+										adjustLabelSpan="false"
+										emptySpanXL="0"
+										emptySpanL="0"
+										emptySpanM="0"
+										emptySpanS="0"
+										columnsXL="2"
+										columnsL="2"
+										columnsM="1"
+										singleContainerFullSize="false" />
+								</form:layout>
+								<form:formContainers>
+									<form:FormContainer id="FormContainer1" title="Contact data">
+										<form:formElements>
+											<form:FormElement id ="FormElement1" label="Email">
+												<form:fields>
+													<Text id ="FormElement1.Text" text="john.doe@company.com" />
+												</form:fields>
+											</form:FormElement>
+											<form:FormElement id ="FormElement2" label="Tel.">
+												<form:fields>
+													<Text id ="FormElement2.Text" text="0815/123456" />
+												</form:fields>
+											</form:FormElement>
+											<form:FormElement id ="FormElement3" label="SMS">
+												<form:fields>
+													<Text id ="FormElement3.Text" text="Sms" />
+												</form:fields>
+											</form:FormElement>
+										</form:formElements>
+									</form:FormContainer>
+								</form:formContainers>
+							</form:Form>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
+
+					<uxap:ObjectPageSection id="ObjectPageSectionWithSmartForm" title="{SectionTitle4}" class="sapUiNoMargin">
+						<uxap:ObjectPageSubSection>
+							<smartForm:SmartForm id="MainFormExpandable" title="Expandable SmartForm" editable="true" entityType="Header" ignoredFields="TransactionCode" expandable="true" expanded="true">
+								<smartForm:Group id="MainFormExpandable.FirstGroup" label="1. Group">
+									<smartForm:GroupElement label="One Field" id="MainFormExpandable.GeneralLedgerDocument.BoundButton" >
+										<TextArea id="textarea1" value="CreatedByUser"></TextArea>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement label="No-Bound-Field" id="MainFormExpandable.GeneralLedgerDocument.BoundButton34" >
+										<Button id="button1" text="buttonText 1"></Button>
+										<TextArea id="textarea2" value="Some Text"></TextArea>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement id="MainFormExpandable.GeneralLedgerDocument.UnboundButton" >
+										<Button id="button2" text="No Binding"></Button>
+									</smartForm:GroupElement>
+								</smartForm:Group>
+								<smartForm:Group label="2. Group" id="MainFormExpandable.SecondGroup">
+									<smartForm:GroupElement label="Two Fields" id="MainFormExpandable.GeneralLedgerDocument.BoundButton35" >
+										<Button id="button3" text="buttontext 2"></Button>
+										<TextArea id="textarea3" value="Some Text"></TextArea>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement label="With/without stable ID" id="Dates.StableIDField">
+										<Input value="I have an ID" id="InputFieldWithID" />
+										<Input value="I have no ID" />
+									</smartForm:GroupElement>
+									<smartForm:GroupElement label="With horizontal layout inside" id="Dates.HorizontalLayoutInside">
+										<l:HorizontalLayout id="GroupElementHorizontalLayout">
+											<smartLink:SmartLink id="SmartlinkInHorizontalLayout" text="Supplier" fieldName="SupplierId" semanticObject="semanticObjectSupplierId" contactAnnotationPath="to_Supplier" />
+											<Input value="I am near the smartlink" id="FieldInGroupWithHorizontalLayout" />
+										</l:HorizontalLayout>
+									</smartForm:GroupElement>
+								</smartForm:Group>
+							</smartForm:SmartForm>
 						</uxap:ObjectPageSubSection>
 					</uxap:ObjectPageSection>
 

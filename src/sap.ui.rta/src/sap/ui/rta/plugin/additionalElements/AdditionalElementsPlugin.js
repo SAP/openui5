@@ -244,7 +244,7 @@ sap.ui.define([
 			var oModel = oOverlay.getElement().getModel();
 			if (oModel){
 				var oMetaModel = oModel.getMetaModel();
-				if (oMetaModel){
+				if (oMetaModel && oMetaModel.loaded){
 					oMetaModel.loaded().then(function(){
 						this.evaluateEditable([oOverlay], {onRegistration: true});
 					}.bind(this));
@@ -606,7 +606,7 @@ sap.ui.define([
 				oRefControlForId = mParents.relevantContainer; //e.g. SimpleForm
 			}
 			var iAddTargetIndex = Utils.getIndex(mParents.parent, oSiblingElement, mActions.aggregation, oParentAggregationDTMetadata.getData().getIndex);
-			var oChangeHandler = this._getChangeHandler(mODataPropertyActionDTMetadata.changeType, mParents.parent);
+			var oChangeHandler = this._getChangeHandler(mODataPropertyActionDTMetadata.changeType, oRefControlForId);
 			var sVariantManagementReference;
 			if (mParents.parentOverlay.getVariantManagement && oChangeHandler && oChangeHandler.revertChange) {
 				sVariantManagementReference = mParents.parentOverlay.getVariantManagement();
@@ -652,8 +652,12 @@ sap.ui.define([
 			}
 
 			var sVariantManagementReference;
+			var oStashedElement;
+			if (sType === "sap.ui.core._StashedControl") {
+				oStashedElement = oRevealedElement;
+			}
 			if (oElementOverlay) {
-				sVariantManagementReference = this.getVariantManagementReference(oElementOverlay, oRevealAction, false, oRevealedElement);
+				sVariantManagementReference = this.getVariantManagementReference(oElementOverlay, oRevealAction, false, oStashedElement);
 			}
 
 			if (oRevealAction.changeOnRelevantContainer) {

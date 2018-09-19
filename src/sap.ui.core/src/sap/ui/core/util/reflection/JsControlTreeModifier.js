@@ -367,6 +367,15 @@ sap.ui.define([
 			return aNewControls;
 		},
 
+		/**
+		 * Destroys a given control
+		 *
+		 * @param {sap.ui.core.Control} oControl Control which will be destroyed
+		 */
+		destroy: function(oControl) {
+			oControl.destroy();
+		},
+
 		getChangeHandlerModulePath: function(oControl) {
 			if (typeof oControl === "object" && typeof oControl.data === "function"
 					&& oControl.data("sap-ui-custom-settings") && oControl.data("sap-ui-custom-settings")["sap.ui.fl"]){
