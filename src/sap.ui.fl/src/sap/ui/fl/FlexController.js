@@ -595,14 +595,14 @@ sap.ui.define([
 	/**
 	 * Applying a specific change on the passed control.
 	 *
-	 * @param {sap.ui.fl.Change} oChange - change object which should be applied on the passed control
-	 * @param {sap.ui.core.Control} oControl - control which is the target of the passed change
-	 * @param {object} mPropertyBag propertyBag passed by the view processing
-	 * @param {object} mPropertyBag.view - the view to process
-	 * @param {object} mPropertyBag.modifier - polymorph reuse operations handling the changes on the given view type
-	 * @param {object} mPropertyBag.appDescriptor - app descriptor containing the metadata of the current application
-	 * @param {object} mPropertyBag.appComponent - component instance that is currently loading
-	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns Promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario
+	 * @param {sap.ui.fl.Change} oChange - Change object which should be applied on the passed control
+	 * @param {sap.ui.core.Control} oControl - Control which is the target of the passed change
+	 * @param {object} mPropertyBag propertyBag - Passed by the view processing
+	 * @param {object} mPropertyBag.view - The view to process
+	 * @param {object} mPropertyBag.modifier - Polymorph reuse operations handling the changes on the given view type
+	 * @param {object} mPropertyBag.appDescriptor - App descriptor containing the metadata of the current application
+	 * @param {object} mPropertyBag.appComponent - Component instance that is currently loading
+	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario
 	 * @public
 	 */
 	FlexController.prototype.checkTargetAndApplyChange = function (oChange, oControl, mPropertyBag) {
@@ -624,7 +624,7 @@ sap.ui.define([
 		}
 		if (bXmlModifier && oChange.getDefinition().jsOnly) {
 			//change is not capable of xml modifier
-			return new Utils.FakePromise({success: false, error: new Error("Change can not be applied in XML. Retrying in JS.")});
+			return new Utils.FakePromise({success: false, error: new Error("Change cannot be applied in XML. Retrying in JS.")});
 		}
 		var mAppliedChangesCustomData = this._getAppliedCustomData(oControl, oModifier);
 		if (!this._isChangeCurrentlyApplied(oControl, oChange, oModifier, mAppliedChangesCustomData)) {

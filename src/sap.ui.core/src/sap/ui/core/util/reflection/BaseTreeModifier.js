@@ -454,15 +454,15 @@ sap.ui.define([
 		/**
 		 * Creates the control in the corresponding representation
 		 *
-		 * @param {string} sClassName Class name for the control (for example, <code>sap.m.Button</code>), ensure the class is loaded (no synchronous requests are called)
-		 * @param {sap.ui.core.UIComponent} [oAppComponent] - Needed to calculate the correct ID in case you provide an id
-		 * @param {Element} [oView] XML node of the view, required for XML case to create nodes and to find elements
-		 * @param {object} [oSelector] - Selector to calculate the ID for the control that is being created
+		 * @param {string} sClassName - Class name for the control (for example, <code>sap.m.Button</code>), ensure the class is loaded (no synchronous requests are called)
+		 * @param {sap.ui.core.UIComponent} [oAppComponent] - Needed to calculate the correct ID in case you provide an ID
+		 * @param {Element} [oView] - XML node of the view, required for XML case to create nodes and to find elements
+		 * @param {object} [oSelector] - Selector to calculate the ID for the control that is created
 		 * @param {string} [oSelector.id] - Control ID targeted by the change
 		 * @param {boolean} [oSelector.isLocalId] - True if the ID within the selector is a local ID or a global ID
-		 * @param {object} [mSettings] Further settings or properties for the control that is being created
+		 * @param {object} [mSettings] - Further settings or properties for the control that is created
 		 * @param {boolean} bAsync - Determines whether a synchronous (promise) or an asynchronous value should be returned
-		 * @returns {Element|Promise} Element or promise with element of the control being created
+		 * @returns {Element|Promise} Element or promise with element of the control that is created
 		 * @public
 		 */
 		createControl: function (sClassName, oAppComponent, oView, oSelector, mSettings, bAsync) {},
