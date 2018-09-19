@@ -933,7 +933,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	[{
 		bCanceled : false,
-		sEntityPath : "path/to/entity"
+		sEntityPath : "patch/without/side/effects",
+		$$patchWithoutSideEffects : true
 	}, {
 		bCanceled : false,
 		sEntityPath : "('42')/path/to/entity"
@@ -966,6 +967,7 @@ sap.ui.define([
 				},
 				fnError = this.spy(),
 				oError = new Error(),
+				iExpectedCalls = oFixture.$$patchWithoutSideEffects ? 0 : 1,
 				sFullPath = "path/to/entity/Address/City",
 				sGroupId = "group",
 				oGroupLock = new _GroupLock(sGroupId),
@@ -974,7 +976,12 @@ sap.ui.define([
 				oHelperMock = this.mock(_Helper),
 				oModelInterface = {lockGroup : function () {}},
 				oOldData = {},
-				oPatchResult = {},
+				oPatchResult = {
+					"@odata.etag" : 'W/"20010101000000.0000000"',
+					"foo" : "bar",
+					"ignore" : "me",
+					"me" : "too"
+				},
 				oPatchPromise = bCanceled ? Promise.reject(oError) : Promise.resolve(oPatchResult),
 				oRequestCall,
 				oRequestLock = {unlock : function () {}},
@@ -1024,19 +1031,22 @@ sap.ui.define([
 				oCacheMock.expects("removeByPath")
 					.withExactArgs(sinon.match.same(oCache.mPatchRequests), sFullPath,
 						sinon.match.same(oPatchPromise));
-				oHelperMock.expects("buildPath")
+				oHelperMock.expects("buildPath").exactly(iExpectedCalls)
 					.withExactArgs("/BusinessPartnerList", sEntityPath)
 					.returns(sPath);
-				oHelperMock.expects("getMetaPath")
+				oHelperMock.expects("getMetaPath").exactly(iExpectedCalls)
 					.withExactArgs(sinon.match.same(sPath))
 					.returns(sMetaPath);
-				oCacheMock.expects("visitResponse")
+				oCacheMock.expects("visitResponse").exactly(iExpectedCalls)
 					.withExactArgs(sinon.match.same(oPatchResult),
 						sinon.match.same(mTypeForMetaPath), false, sinon.match.same(sMetaPath),
 						sEntityPath);
 				oUpdateExistingCall = oHelperMock.expects("updateExisting")
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), sEntityPath,
-						sinon.match.same(oEntity), sinon.match.same(oPatchResult));
+						sinon.match.same(oEntity),
+						oFixture.$$patchWithoutSideEffects
+						? {"@odata.etag" : oPatchResult["@odata.etag"]}
+						: sinon.match.same(oPatchResult));
 				oUnlockCall = that.mock(oRequestLock).expects("unlock").withExactArgs();
 			}, function () {
 				oCacheMock.expects("visitResponse").never();
@@ -1054,13 +1064,16 @@ sap.ui.define([
 
 			// code under test
 			oCacheUpdatePromise = oCache.update(oGroupLock, "Address/City", "Walldorf", fnError,
-					"/~/BusinessPartnerList('0')", sEntityPath)
+					"/~/BusinessPartnerList('0')", sEntityPath, undefined,
+					oFixture.$$patchWithoutSideEffects)
 				.then(function (oResult) {
 					sinon.assert.notCalled(fnError);
 					assert.strictEqual(bCanceled, false);
-					assert.strictEqual(oResult, oPatchResult);
-					assert.ok(oUpdateExistingCall.calledBefore(oUnlockCall),
-						"cache update happens before unlock");
+					assert.strictEqual(oResult, undefined, "no result");
+					if (oUpdateExistingCall.called) {
+						assert.ok(oUpdateExistingCall.calledBefore(oUnlockCall),
+							"cache update happens before unlock");
+					}
 				}, function (oResult) {
 					sinon.assert.notCalled(fnError);
 					assert.strictEqual(bCanceled, true);
@@ -1156,9 +1169,7 @@ sap.ui.define([
 						"ProductList('0')", "path/to/entity", "Pricing/Currency")
 					.then(function (oResult) {
 						sinon.assert.notCalled(fnError);
-						if (!bTransient) {
-							assert.strictEqual(oResult, oPatchResult);
-						}
+						assert.strictEqual(oResult, undefined, "no result");
 					});
 			});
 		});
@@ -1297,7 +1308,7 @@ sap.ui.define([
 					assert.notOk(bCanceled);
 					sinon.assert.calledOnce(fnError);
 					sinon.assert.calledWithExactly(fnError, oError1);
-					assert.strictEqual(oResult, oPatchResult);
+					assert.strictEqual(oResult, undefined, "no result");
 					assert.ok(oUnlockCall.calledBefore(oRequestCall),
 						"unlock called before second PATCH request");
 				}, function (oResult) {

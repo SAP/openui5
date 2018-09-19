@@ -271,6 +271,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Tells whether implicit loading of side effects via PATCH requests is switched off for this
+	 * binding.
+	 *
+	 * @returns {boolean}
+	 *   Whether implicit loading of side effects is off
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.isPatchWithoutSideEffects = function () {
+		return !!this.mParameters.$$patchWithoutSideEffects;
+	};
+
+	/**
 	 * Creates the query options for a child binding with the meta path given by its base
 	 * meta path and relative meta path. Adds the key properties to $select of all expanded
 	 * navigation properties. Requires that meta data for the meta path is already loaded so that

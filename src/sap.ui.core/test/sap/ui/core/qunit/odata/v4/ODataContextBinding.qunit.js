@@ -25,7 +25,7 @@ sap.ui.define([
 	"use strict";
 
 	var aAllowedBindingParameters = ["$$groupId", "$$inheritExpandSelect", "$$ownRequest",
-			"$$updateGroupId"],
+			"$$patchWithoutSideEffects", "$$updateGroupId"],
 		sClassName = "sap.ui.model.odata.v4.ODataContextBinding";
 
 	//*********************************************************************************************
@@ -459,7 +459,7 @@ sap.ui.define([
 				this.oCachePromise = SyncPromise.resolve(oContext ? oCache : undefined);
 			});
 
-		//code under test
+		// code under test
 		oBinding.setContext(oContext);
 
 		assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
@@ -499,7 +499,7 @@ sap.ui.define([
 				"TEAMS('TEAM_01')/TEAM_2_MANAGER", {"sap-client": "111"}, false)
 			.returns({});
 
-		//code under test
+		// code under test
 		oBinding = this.bindContext("TEAM_2_MANAGER", oContext);
 
 		assert.deepEqual(oBinding.mQueryOptions, {});
@@ -1947,7 +1947,7 @@ sap.ui.define([
 		this.mock(oChild1).expects("refreshInternal")
 			.withExactArgs("myGroup", sinon.match.same(bCheckUpdate));
 
-		//code under test
+		// code under test
 		oBinding.refreshInternal("myGroup", bCheckUpdate);
 	});
 
@@ -1973,7 +1973,7 @@ sap.ui.define([
 				});
 			this.mock(_Cache).expects("createSingle").returns(oCache);
 
-			//code under test
+			// code under test
 			oBinding.refreshInternal("myGroup");
 
 			this.mock(oBinding).expects("lockGroup")
@@ -1983,7 +1983,7 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(oReadGroupLock), "", sinon.match.func, undefined)
 				.returns(SyncPromise.resolve({}));
 
-			//code under test
+			// code under test
 			oBinding.fetchValue("");
 
 			assert.deepEqual(oBinding.oReadGroupLock, undefined);
@@ -2008,7 +2008,7 @@ sap.ui.define([
 			this.mock(oBinding).expects("_execute").exactly(bAction === false ? 1 : 0)
 				.withExactArgs(sinon.match.same(oGroupLock));
 
-			//code under test
+			// code under test
 			oBinding.refreshInternal("myGroup");
 
 			assert.strictEqual(oBinding.oReadGroupLock, undefined);
@@ -2035,7 +2035,7 @@ sap.ui.define([
 		this.mock(oChild1).expects("refreshInternal")
 			.withExactArgs("myGroup", sinon.match.same(bCheckUpdate));
 
-		//code under test
+		// code under test
 		oBinding.refreshInternal("myGroup", bCheckUpdate);
 
 	});
@@ -2329,7 +2329,7 @@ sap.ui.define([
 				});
 			}
 
-			//code under test
+			// code under test
 			assert.strictEqual(oBinding.getResolvedPath(), oFixture.sResult);
 		});
 	});
@@ -2349,7 +2349,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oEntity), "predicate")
 			.returns(undefined);
 
-		//code under test
+		// code under test
 		assert.throws(function () {
 			oBinding.getResolvedPath();
 		}, new Error("No key predicate known at " + sPath));
