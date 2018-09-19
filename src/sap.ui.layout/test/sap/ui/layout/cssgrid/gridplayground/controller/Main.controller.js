@@ -40,7 +40,11 @@ sap.ui.define([
         },
         onLayoutChange: function (oEvent) {
             Log.warning("[TEST] Layout Changed to " + oEvent.getParameter("layout"));
-        }
+        },
+		onSliderMoved: function (oEvent) {
+			var value = oEvent.getParameter("value");
+			this.byId(oEvent.getSource().data("mydata")).setWidth(value + "%");
+		}
     });
 
 });
