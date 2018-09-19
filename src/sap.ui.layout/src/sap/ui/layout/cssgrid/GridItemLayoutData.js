@@ -33,37 +33,37 @@ sap.ui.define([
 			 * Sets the value for the CSS display:grid item property grid-column-start
 			 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column-start}
 			 */
-			gridColumnStart: { type: "sap.ui.layout.cssgrid.CSSGridLine" },
+			gridColumnStart: { type: "sap.ui.layout.cssgrid.CSSGridLine", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid item property grid-column-end
 			 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column-end}
 			 */
-			gridColumnEnd: { type: "sap.ui.layout.cssgrid.CSSGridLine" },
+			gridColumnEnd: { type: "sap.ui.layout.cssgrid.CSSGridLine", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid item property grid-row-start
 			 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row-start}
 			 */
-			gridRowStart: { type: "sap.ui.layout.cssgrid.CSSGridLine" },
+			gridRowStart: { type: "sap.ui.layout.cssgrid.CSSGridLine", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid item property grid-row-end
 			 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row-end}
 			 */
-			gridRowEnd: { type: "sap.ui.layout.cssgrid.CSSGridLine" },
+			gridRowEnd: { type: "sap.ui.layout.cssgrid.CSSGridLine", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid item property grid-column
 			 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column}
 			 */
-			gridColumn: { type: "sap.ui.layout.cssgrid.CSSGridLine" },
+			gridColumn: { type: "sap.ui.layout.cssgrid.CSSGridLine", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid item property grid-row
 			 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row}
 			 */
-			gridRow: { type: "sap.ui.layout.cssgrid.CSSGridLine" }
+			gridRow: { type: "sap.ui.layout.cssgrid.CSSGridLine", defaultValue: ""}
 		}
 	}});
 

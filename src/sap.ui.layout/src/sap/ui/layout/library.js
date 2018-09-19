@@ -836,7 +836,6 @@ sap.ui.define([
 	 * inherit
 	 * 1
 	 * span 2
-	 * span
 	 * span 2 / 5
 	 * span 2 / -5
 	 * 5 / 7
@@ -850,7 +849,7 @@ sap.ui.define([
 	 */
 	sap.ui.layout.cssgrid.CSSGridLine = DataType.createType("sap.ui.layout.cssgrid.CSSGridLine", {
 			isValid: function (sValue) {
-				return /^(auto|inherit|((span)?( )?-?[0-9]+( \/ (span)?( )?-?[0-9]*)?))$/.test(sValue);
+				return /^(auto|inherit|((span)?(\s)?-?[0-9]+(\s\/\s(span)?(\s)?-?[0-9]*)?)?)$/.test(sValue);
 			}
 		},
 		DataType.getType("string")

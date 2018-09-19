@@ -56,49 +56,49 @@ sap.ui.define([
 			 * Sets the value for the CSS display:grid property grid-template-columns
 			 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-columns}
 			 */
-			gridTemplateColumns: { type: "sap.ui.layout.cssgrid.CSSGridTrack" },
+			gridTemplateColumns: { type: "sap.ui.layout.cssgrid.CSSGridTrack", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid property grid-template-rows
 			 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-rows}
 			 */
-			gridTemplateRows: { type: "sap.ui.layout.cssgrid.CSSGridTrack" },
+			gridTemplateRows: { type: "sap.ui.layout.cssgrid.CSSGridTrack", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid property grid-row-gap
 			 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row-gap}
 			 */
-			gridRowGap: { type: "sap.ui.core.CSSSize" },
+			gridRowGap: { type: "sap.ui.core.CSSSize", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid property grid-column-gap
 			 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column-gap}
 			 */
-			gridColumnGap: { type: "sap.ui.core.CSSSize" },
+			gridColumnGap: { type: "sap.ui.core.CSSSize", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid property grid-gap
 			 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-gap}
 			 */
-			gridGap: { type: "sap.ui.layout.cssgrid.CSSGridGapShortHand" },
+			gridGap: { type: "sap.ui.layout.cssgrid.CSSGridGapShortHand", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid property grid-auto-rows
 			 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-rows}
 			 */
-			gridAutoRows: { type: "sap.ui.layout.cssgrid.CSSGridTrack" },
+			gridAutoRows: { type: "sap.ui.layout.cssgrid.CSSGridTrack", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid property grid-auto-columns
 			 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-columns}
 			 */
-			gridAutoColumns: { type: "sap.ui.layout.cssgrid.CSSGridTrack" },
+			gridAutoColumns: { type: "sap.ui.layout.cssgrid.CSSGridTrack", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid property grid-auto-flow
 			 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-flow}
 			 */
-			gridAutoFlow: { type: "sap.ui.layout.cssgrid.CSSGridAutoFlow" }
+			gridAutoFlow: { type: "sap.ui.layout.cssgrid.CSSGridAutoFlow", defaultValue: "Row" }
 		},
 		aggregations: {
 
@@ -248,27 +248,44 @@ sap.ui.define([
 	 */
 	CSSGrid._setItemStyles = function (oItem) {
 
+		if (!oItem) {
+			return;
+		}
+
 		var oLayoutData = CSSGrid._getLayoutDataForControl(oItem),
+			oItemDom = oItem.getDomRef(),
 			oProperties,
-			$ItemDom,
 			sProp,
 			sPropValue;
 
 		if (!oLayoutData) {
+			CSSGrid._removeItemStyles(oItemDom);
 			return;
 		}
 
 		oProperties = oLayoutData.getMetadata().getProperties();
-		$ItemDom = oItem.$();
 
 		for (sProp in mGridItemProperties) {
 			if (oProperties[sProp]) {
 				sPropValue = oLayoutData.getProperty(sProp);
 
 				if (typeof sPropValue !== "undefined") {
-					CSSGrid._setItemStyle($ItemDom, mGridItemProperties[sProp], sPropValue);
+					CSSGrid._setItemStyle(oItemDom, mGridItemProperties[sProp], sPropValue);
 				}
 			}
+		}
+	};
+
+	/**
+	 * Remove all grid properties from the item
+	 *
+	 * @private
+	 * @static
+	 * @param {HTMLElement} oItemDom The Item DOM reference
+	 */
+	CSSGrid._removeItemStyles = function (oItemDom) {
+		for (var sProp in mGridItemProperties) {
+			oItemDom.style.removeProperty(mGridItemProperties[sProp]);
 		}
 	};
 
@@ -277,15 +294,15 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @static
-	 * @param {jQuery} $ItemDom The item's jQuery object
+	 * @param {HTMLElement} oItemDom The item DOM reference
 	 * @param {string} sProperty The name of the property to set
 	 * @param {string} sValue The value of the property to set
 	 */
-	CSSGrid._setItemStyle = function ($ItemDom, sProperty, sValue) {
+	CSSGrid._setItemStyle = function (oItemDom, sProperty, sValue) {
 		if (sValue !== "0" && !sValue) {
-			$ItemDom.css(sProperty, null);
+			oItemDom.style.removeProperty(sProperty);
 		} else {
-			$ItemDom.css(sProperty, sValue);
+			oItemDom.style.setProperty(sProperty, sValue);
 		}
 	};
 
@@ -296,9 +313,15 @@ sap.ui.define([
 	 * @returns {sap.ui.layout.cssgrid.GridItemLayoutData|undefined} The layoutData used by the grid item
 	 */
 	CSSGrid._getLayoutDataForControl = function (oControl) {
-		var oLayoutData = oControl.getLayoutData(),
+		var oLayoutData,
 			aLayoutData,
 			oInnerLayoutData;
+
+		if (!oControl) {
+			return undefined;
+		}
+
+		oLayoutData = oControl.getLayoutData();
 
 		if (!oLayoutData) {
 			return undefined;
