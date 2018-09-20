@@ -16,6 +16,7 @@ sap.ui.define([
 					stretch: true,
 					files: [
 						"Opa.html",
+						"Opa.js",
 						"webapp/view/Main.view.xml",
 						"webapp/controller/Main.controller.js",
 						"webapp/index.html"

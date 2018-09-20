@@ -15,6 +15,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 					stretch : true,
 					files : [
 						"GherkinTestRunner.html",
+						"GherkinTestRunner.js",
 						"Requirements1.feature",
 						"Requirements2.feature",
 						"Steps.js",
