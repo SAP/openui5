@@ -26,7 +26,7 @@
 		<h2>REALIZE and CHECK</h2>
 		<h3>Create a new invalid Sales Order and correct</h3>
 			<b>Note: </b>An invalid Sales Order for SubmitMode.Auto or .Direct can only be created
-			via API, hence we have to create/change it via API within developer tools F12 -> console
+			via API, hence we have to create it via API within developer tools F12 -> console
 		<ol>
 			<li>Create an invalid Sales Order via console: <code>sap.ui.getCore().byId("sap.ui.core.sample.odata.v4.SalesOrders.Main--SalesOrders").getBinding("items").create({"Note" : "RAISE_ERROR", "BuyerID" : "0100000000", "LifecycleStatus" : "N"})</code></li>
 			<li><b>Observe</b> that an error message is sent; close the error popup</li>
