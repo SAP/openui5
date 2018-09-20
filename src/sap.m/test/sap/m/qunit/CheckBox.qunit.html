@@ -266,6 +266,29 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		// cleanup
 		oCheckBox.destroy();
 	});
+	
+	/* ----------------------------------------------- */
+	/* Test: 'selected=false'						   */
+	/* ----------------------------------------------- */
+
+	QUnit.test("'selected=null'", function(assert) {
+
+		// system under test
+		var oCheckBox = new sap.m.CheckBox({selected: false});
+
+		// arrange
+		oCheckBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		//act
+		oCheckBox.setSelected(null);
+
+		// assert
+		assert.ok(!oCheckBox.$("CbBg").hasClass("sapMCbMarkChecked"), "selected=null: CheckBox should not have class sapMCbMarkChecked");
+
+		// cleanup
+		oCheckBox.destroy();
+	});
 
 	/* ----------------------------------------------- */
 	/* Test: 'partiallySelected'				   */
