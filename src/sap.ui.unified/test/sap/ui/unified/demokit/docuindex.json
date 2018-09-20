@@ -153,12 +153,12 @@
 			{
 				"id": "sap.ui.unified.sample.CalendarSingleIntervalSelection",
 				"name": "Single Interval Selection",
-				"description": "Calendar where the user can select an interval"
+				"description": "Calendar where the user can select an interval or entire week (either by selecting its week number or by using SHIFT + Space)."
 			},
 			{
 				"id": "sap.ui.unified.sample.CalendarMultipleDaySelection",
 				"name": "Multiple Day Selection",
-				"description": "Calendar where the user can select multiple days"
+				"description": "Calendar where the user can select multiple days, entire weeks (either by selecting its week number or by using SHIFT + Space) and ranges (using SHIFT + ENTER/Left mouse click)."
 			},
 			{
 				"id": "sap.ui.unified.sample.CalendarSpecialDaysLegend",

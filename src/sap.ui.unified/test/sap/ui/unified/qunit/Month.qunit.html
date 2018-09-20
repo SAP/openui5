@@ -364,7 +364,7 @@
 					oTarget.classList.add("sapUiCalWeekNum");
 					var oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
 						isSelectedDaySpy = this.spy(this.oM, "_selectDay"),
-						oBrowserStub = this.stub(sap.ui.Device, "browser", {msie: true});
+						oBrowserStub = this.stub(sap.ui.Device, "browser", { msie: true });
 
 					//act
 					this.oM._handleMousedown(oMouseEvent, CalendarDate.fromLocalJSDate(new Date(2017, 6, 20), this.oM.getPrimaryCalendarType()));
@@ -690,6 +690,402 @@
 					// Assert
 					assert.equal(aDayTypes.length, 1, "Only one type is returned");
 					assert.equal(aDayTypes[0].type, "NonWorking", "NonWorking is returned");
+				});
+
+
+				QUnit.module("Week selection allowance", {
+					beforeEach: function () {
+						this.oM = new Month({
+							primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+						});
+					},
+					afterEach: function () {
+						this.oM.destroy();
+						this.oM = null;
+					}
+				});
+
+				QUnit.test("Single day selection (by default)", function (assert) {
+					assert.notOk(this.oM._isWeekSelectionAllowed(), "Week selection isn't allowed for single days selection");
+				});
+
+				QUnit.test("Multiple day seleciton", function (assert) {
+					this.oM.setSingleSelection(false);
+					assert.ok(this.oM._isWeekSelectionAllowed(), "Week selection is allowed for multiple days selection");
+				});
+
+				QUnit.test("Single interval selection", function (assert) {
+					this.oM.setIntervalSelection(true);
+					assert.ok(this.oM._isWeekSelectionAllowed(), "Week selection is allowed for single interval selection");
+				});
+
+				QUnit.test("Multiple interval selection", function (assert) {
+					this.oM.setIntervalSelection(true);
+					this.oM.setSingleSelection(false);
+					assert.notOk(this.oM._isWeekSelectionAllowed(), "Week selection isn't allowed for multiple interval selection");
+				});
+
+				QUnit.test("Calendar type other than Gregorian", function (assert) {
+					var oCalendarType = sap.ui.core.CalendarType;
+
+					// Islamic
+					this.oM.setPrimaryCalendarType(oCalendarType.Islamic);
+					assert.notOk(this.oM._isWeekSelectionAllowed(), "Week selection isn't allowed for Islamic calendars");
+
+					// Japanese
+					this.oM.setPrimaryCalendarType(oCalendarType.Japanese);
+					assert.notOk(this.oM._isWeekSelectionAllowed(), "Week selection isn't allowed for Japanese calendars");
+
+					// Persian
+					this.oM.setPrimaryCalendarType(oCalendarType.Persian);
+					assert.notOk(this.oM._isWeekSelectionAllowed(), "Week selection isn't allowed for Persian calendars");
+
+					// Buddhist
+					this.oM.setPrimaryCalendarType(oCalendarType.Buddhist);
+					assert.notOk(this.oM._isWeekSelectionAllowed(), "Week selection isn't allowed for Buddhist calendars");
+				});
+
+				QUnit.test("Custom firstDayOfWeek", function (assert) {
+					this.oM.setFirstDayOfWeek(4);
+					assert.notOk(this.oM._isWeekSelectionAllowed(), "Week selection isn't allowed when there is custom firstDayOfWeek");
+				});
+
+
+				QUnit.module("Week selection/deselection - Multiple day selection", {
+					beforeEach: function () {
+						this.oM = new Month({
+							primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+						}).placeAt("qunit-fixture");
+
+						this.oTarget = document.createElement("span");
+						this.oTargetParent = document.createElement("div");
+
+						this.oTarget.classList.add("sapUiCalWeekNum");
+						this.oTargetParent.setAttribute('data-sap-day', "20170101");
+						this.oTargetParent.appendChild(this.oTarget);
+
+						sap.ui.getCore().applyChanges();
+					},
+					afterEach: function () {
+						this.oM.destroy();
+						this.oM = null;
+					},
+					assertMultipleDaySelectionWeekSelected: function (oWeekNumberSelectSpy) {
+						var aSelectedDates = this.oM.getSelectedDates(),
+							bIntervalIsSelected;
+
+						// Check if any of the DateRanges in selectedDates has endDate
+						bIntervalIsSelected = aSelectedDates.some(function (oDate) {
+							return !!oDate.getEndDate();
+						});
+
+						assert.ok(oWeekNumberSelectSpy.called, "weekNumberSelect event was fired");
+						assert.strictEqual(aSelectedDates.length, 7, "All 7 days from the week were selected");
+						assert.notOk(bIntervalIsSelected, "Each selected date is a singular date and not an interval")
+					},
+					assertSingleIntervalSelectionWeekSelected: function (oWeekNumberSelectSpy) {
+						var aSelectedDates = this.oM.getSelectedDates(),
+							oWeekInterval = aSelectedDates[0],
+							oIntervalStartDate = oWeekInterval && oWeekInterval.getStartDate(),
+							oIntervalEndDate = oWeekInterval && oWeekInterval.getEndDate();
+
+						assert.ok(oWeekNumberSelectSpy.called, "weekNumberSelect event was fired");
+						assert.strictEqual(aSelectedDates.length, 1, "Only the week interval is in selectedDates");
+						assert.ok(!!oWeekInterval, "Week interval is selected");
+						assert.ok(!!oIntervalStartDate && !!oIntervalEndDate, "Week interval has both startDate and endDate");
+						// TODO: 6 days apart
+					},
+					assertWeekDeselected: function (oWeekNumberSelectSpy) {
+						assert.ok(oWeekNumberSelectSpy.called, "weekNumberSelect event was fired");
+						assert.strictEqual(this.oM.getSelectedDates().length, 0, "Selected week days are removed");
+					}
+				});
+
+				QUnit.test("[Multiple day selection] Shift + Space shortcut", function () {
+					// Prepare
+					var oWeekNumberSelectSpy = this.spy(this.oM, "fireWeekNumberSelect"),
+						oMockEvent = {
+							target: this.oTarget,
+							shiftKey: true,
+							keyCode: jQuery.sap.KeyCodes.SPACE,
+							stopPropagation: function () {},
+							preventDefault: function () {}
+						};
+
+					this.stub(sap.ui.Device.support, "touch", true);
+
+					this.oM.setSingleSelection(false);
+
+					// Act
+					this.oM.onsapselectmodifiers(oMockEvent); // Select the week
+					// Assert
+					this.assertMultipleDaySelectionWeekSelected(oWeekNumberSelectSpy);
+
+					// Act
+					this.oM.onsapselectmodifiers(oMockEvent); // Deselect it
+					// Assert
+					this.assertWeekDeselected(oWeekNumberSelectSpy);
+				});
+
+				QUnit.test("[Multiple day selection] Week number click on touch devices", function () {
+					// Prepare
+					var oWeekNumberSelectSpy = this.spy(this.oM, "fireWeekNumberSelect"),
+						oMockEvent = { target: this.oTarget };
+
+					this.stub(sap.ui.Device.support, "touch", true);
+					this.stub(this.oM, "_areMouseEventCoordinatesInThreshold", function () { return true; });
+
+					this.oM.setSingleSelection(false);
+
+					// Act
+					this.oM.onmouseup(oMockEvent); // Select the week
+					// Assert
+					this.assertMultipleDaySelectionWeekSelected(oWeekNumberSelectSpy);
+
+					// Act
+					this.oM.onmouseup(oMockEvent); // Deselect it
+					// Assert
+					this.assertWeekDeselected(oWeekNumberSelectSpy);
+				});
+
+				QUnit.test("[Multiple day selection] Week number click on non-touch devices", function () {
+					// Prepare
+					var oWeekNumberSelectSpy = this.spy(this.oM, "fireWeekNumberSelect"),
+						oMockEvent = { target: this.oTarget };
+
+					this.stub(sap.ui.Device.support, "touch", false);
+					this.stub(this.oM, "_areMouseEventCoordinatesInThreshold", function () { return true; });
+
+					this.oM.setSingleSelection(false);
+
+					// Act
+					this.oM._handleMousedown(oMockEvent); // Select the week
+					// Assert
+					this.assertMultipleDaySelectionWeekSelected(oWeekNumberSelectSpy);
+
+					// Act
+					this.oM._handleMousedown(oMockEvent); // Deselect it
+					// Assert
+					this.assertWeekDeselected(oWeekNumberSelectSpy);
+				});
+
+				QUnit.test("[Single interval selection] Shift + Space shortcut", function () {
+					// Prepare
+					var oWeekNumberSelectSpy = this.spy(this.oM, "fireWeekNumberSelect"),
+						oMockEvent = {
+							target: this.oTarget,
+							shiftKey: true,
+							keyCode: jQuery.sap.KeyCodes.SPACE,
+							stopPropagation: function () {},
+							preventDefault: function () {}
+						};
+
+					this.stub(sap.ui.Device.support, "touch", true);
+					this.oM.setIntervalSelection(true);
+
+					// Act
+					this.oM.onsapselectmodifiers(oMockEvent); // Select the week
+					// Assert
+					this.assertSingleIntervalSelectionWeekSelected(oWeekNumberSelectSpy);
+
+					// Act
+					this.oM.onsapselectmodifiers(oMockEvent); // Deselect it
+					// Assert
+					this.assertWeekDeselected(oWeekNumberSelectSpy);
+				});
+
+				QUnit.test("[Single interval selection] Week number click on touch devices", function () {
+					// Prepare
+					var oWeekNumberSelectSpy = this.spy(this.oM, "fireWeekNumberSelect"),
+						oMockEvent = { target: this.oTarget };
+
+					this.stub(sap.ui.Device.support, "touch", true);
+					this.stub(this.oM, "_areMouseEventCoordinatesInThreshold", function () { return true; });
+					this.oM.setIntervalSelection(true);
+
+					// Act
+					this.oM.onmouseup(oMockEvent); // Select the week
+					// Assert
+					this.assertSingleIntervalSelectionWeekSelected(oWeekNumberSelectSpy);
+
+					// Act
+					this.oM.onmouseup(oMockEvent); // Deselect it
+					// Assert
+					this.assertWeekDeselected(oWeekNumberSelectSpy);
+				});
+
+				QUnit.test("[Single interval selection] Week number click on non-touch devices", function () {
+					// Prepare
+					var oWeekNumberSelectSpy = this.spy(this.oM, "fireWeekNumberSelect"),
+						oMockEvent = { target: this.oTarget };
+
+					this.stub(sap.ui.Device.support, "touch", false);
+					this.stub(this.oM, "_areMouseEventCoordinatesInThreshold", function () { return true; });
+
+					this.oM.setIntervalSelection(true);
+
+					// Act
+					this.oM._handleMousedown(oMockEvent); // Select the week
+					// Assert
+					this.assertSingleIntervalSelectionWeekSelected(oWeekNumberSelectSpy);
+
+					// Act
+					this.oM._handleMousedown(oMockEvent); // Deselect it
+					// Assert
+					this.assertWeekDeselected(oWeekNumberSelectSpy);
+				});
+
+
+				QUnit.module("Multiselect mode (SHIFT + Click/ENTER)", {
+					beforeEach: function () {
+						this.oM = new Month({
+							singleSelection: false,
+							primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+						}).placeAt("qunit-fixture");
+
+						this.oRangeStart = document.createElement("span");
+						this.oRangeEnd = document.createElement("span");
+						this.oRangeStartParent = document.createElement("div");
+						this.oRangeEndParent = document.createElement("div");
+
+						this.oRangeStart.classList.add("sapUiCalItemText");
+						this.oRangeEnd.classList.add("sapUiCalItemText");
+
+						this.oRangeStartParent.setAttribute('data-sap-day', "20180911");
+						this.oRangeEndParent.setAttribute('data-sap-day', "20180914");
+
+						this.oRangeStartParent.appendChild(this.oRangeStart);
+						this.oRangeEndParent.appendChild(this.oRangeEnd);
+
+						sap.ui.getCore().applyChanges();
+					},
+					afterEach: function () {
+						this.oM.destroy();
+						this.oM = null;
+					}
+				});
+
+				QUnit.test("Allowance", function (assert) {
+					assert.ok(this.oM._isConsecutiveDaysSelectionAllowed(),
+							"Multiselect is allowed on multiple day selection");
+
+					this.oM.setSingleSelection(true);
+					assert.notOk(this.oM._isConsecutiveDaysSelectionAllowed(),
+							"Multiselect isn't allowed on single day selection");
+
+					this.oM.setIntervalSelection(true);
+					assert.notOk(this.oM._isConsecutiveDaysSelectionAllowed(),
+							"Multiselect isn't allowed on multiple interval selection");
+
+					this.oM.setSingleSelection(false);
+					assert.notOk(this.oM._isConsecutiveDaysSelectionAllowed(),
+							"Multiselect isn't allowed on single interval selection");
+				});
+
+				QUnit.test("Selecting/Deselecting a range using SHIFT+ENTER", function (assert) {
+					// Prepare
+					var oRangeStartEvent = {
+							target: this.oRangeStart,
+							stopPropagation: function () {},
+							preventDefault: function () {}
+						},
+						oRangeEndEvent = {
+							target: this.oRangeEnd,
+							shiftKey: true,
+							keyCode: jQuery.sap.KeyCodes.ENTER,
+							stopPropagation: function () {},
+							preventDefault: function () {}
+						},
+						oDeselectionEvent = {
+							target: this.oRangeStart,
+							shiftKey: true,
+							keyCode: jQuery.sap.KeyCodes.ENTER,
+							stopPropagation: function () {},
+							preventDefault: function () {}
+						};
+
+					this.stub(sap.ui.Device.support, "touch", true);
+
+					// Act
+					this.oM.onsapselect(oRangeStartEvent); // Selecting the interval's starting day
+					this.oM.onsapselectmodifiers(oRangeEndEvent); // SHIFT + ENTER on interval's ending day
+					// Assert
+					assert.strictEqual(this.oM.getSelectedDates().length, 4, "All 4 days between have been selected");
+
+					// Act
+					this.oM.onsapselectmodifiers(oDeselectionEvent); // SHIFT + ENTER back on interval's starting day
+					// Assert
+					assert.strictEqual(this.oM.getSelectedDates().length, 0, "All 4 days between have been deselected");
+				});
+
+				QUnit.test("Selecting/Deselecting a range using SHIFT+Click on touch device", function (assert) {
+					// Prepare
+					var oRangeStartEvent = {
+							target: this.oRangeStart
+						},
+						oRangeEndEvent = {
+							target: this.oRangeEnd,
+							shiftKey: true
+						},
+						oDeselectionEvent = {
+							target: this.oRangeStart,
+							shiftKey: true
+						};
+
+					this.stub(sap.ui.Device.support, "touch", true);
+					this.stub(this.oM, "_areMouseEventCoordinatesInThreshold", function () { return true; });
+
+					// Act
+					this.oM.onmouseup(oRangeStartEvent); // Click on interval's starting day
+					this.oM.onmouseup(oRangeEndEvent); // SHIFT + click on interval's ending day
+					// Assert
+					assert.strictEqual(this.oM.getSelectedDates().length, 4, "All 4 days between have been selected");
+
+					// Act
+					this.oM.onmouseup(oDeselectionEvent); // Shift + click back on interval's starting day
+					// Assert
+					assert.strictEqual(this.oM.getSelectedDates().length, 0, "All 4 days between have been deselected");
+				});
+
+				QUnit.test("Selecting/Deselecting a range using SHIFT+Click on non-touch device", function (assert) {
+					// Prepare
+					var oRangeStartEvent = {
+							target: this.oRangeStart,
+							button: 0,
+							preventDefault: function () {},
+							setMark: function () {}
+						},
+						oRangeEndEvent = {
+							target: this.oRangeEnd,
+							shiftKey: true,
+							button: 0,
+							preventDefault: function () {},
+							setMark: function () {}
+						},
+						oDeselectionEvent = {
+							target: this.oRangeStart,
+							shiftKey: true,
+							button: 0,
+							preventDefault: function () {},
+							setMark: function () {}
+						};
+
+					this.stub(sap.ui.Device.support, "touch", false);
+					this.stub(this.oM, "_areMouseEventCoordinatesInThreshold", function () { return true; });
+
+					// Act
+					// Pass a second parameter, because for selecting single day, _handleMousedown will call
+					// _selectDay with that parameter. Normally it would be set on "afterFocus", but since we mock
+					// the selection, than there will be no focused date.
+					this.oM._handleMousedown(oRangeStartEvent, this.oM._getSelectedDateFromEvent(oRangeStartEvent)); // Click on interval's starting day
+					this.oM._handleMousedown(oRangeEndEvent); // SHIFT + click back on interval's starting day
+					// Assert
+					assert.strictEqual(this.oM.getSelectedDates().length, 4, "All 4 days between have been selected");
+
+					// Act
+					this.oM._handleMousedown(oDeselectionEvent);
+					// Assert
+					assert.strictEqual(this.oM.getSelectedDates().length, 0, "All 4 days between have been deselected");
 				});
 
 			})();

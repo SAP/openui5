@@ -1444,23 +1444,15 @@
 			});
 
 			QUnit.test("weekNumberSelect event", function (assert) {
-				//arrange
-				var oMockEvent = {
-					innerText: 3,
-					parentElement: {
-						"data-sap-day": "2015-01-11"
-					}
-				},
-					oEventSpy = this.spy(sap.ui.base.EventProvider.prototype, "fireEvent");
+				// Prepare
+				var oEventSpy = this.spy(oCal3, "fireWeekNumberSelect");
 
-				//act
-				oCal3._handleWeekSelection(oMockEvent);
+				// Act
+				// Get one of the internal months and just fire it's weekNumberSelect directly
+				oCal3.getAggregation("month")[0].fireWeekNumberSelect();
 
-				//assert
-				assert.equal(oEventSpy.args[0][0], "weekNumberSelect", "weekNumberSelect is fired");
-
-				//cleanup
-				oEventSpy.reset();
+				// Assert
+				assert.ok(oEventSpy.called, "Detected internal Months firing weekNumberSelect, so Calendar did the same");
 			});
 
 		</script>
