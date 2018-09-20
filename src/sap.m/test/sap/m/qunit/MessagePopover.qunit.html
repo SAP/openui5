@@ -1343,6 +1343,28 @@
 			assert.strictEqual(this.oMessagePopover._oMessageView.getItems()[0].getCustomData().length, 1, "The custom data was cloned into the message view's item.");
 			assert.ok(this.oMessagePopover._oMessageView.getItems()[0].getCustomData()[0].getValue(), "The data was passed correctly");
 		});
+
+		QUnit.test("MessagePopover opened by a button, should be auto closed in case the DOM of this button is removed", function(assert){
+			var oLogSpy = this.spy(jQuery.sap.log.error);
+
+			// arrange
+			this.oButton.addDependent(this.oMessagePopover);
+			sap.ui.getCore().applyChanges();
+
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+
+			assert.ok(this.oMessagePopover.isOpen(), "MessagePopover is open");
+
+			// act
+			this.oButton.setVisible(false);
+			this.oMessagePopover.invalidate();
+			this.clock.tick(500);
+
+			// assert
+			assert.ok(!this.oMessagePopover.isOpen(), "Popover is now closed");
+			assert.strictEqual(oLogSpy.callCount, 0, "No error was logged in the console");
+		});
 	</script>
 </head>
 <body id="body" class="sapUiBody">
