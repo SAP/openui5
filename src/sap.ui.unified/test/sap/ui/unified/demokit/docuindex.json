@@ -36,7 +36,8 @@
 				"samples": [
 					"sap.ui.unified.sample.ColorPicker",
 					"sap.ui.unified.sample.ColorPickerLarge",
-					"sap.ui.unified.sample.ColorPickerSimplified"
+					"sap.ui.unified.sample.ColorPickerSimplified",
+					"sap.ui.unified.sample.ColorPickerPopover"
 				]
 			},
 			{
@@ -120,14 +121,19 @@
 				"description": "Basic example of Color Picker. Note that you have to set the Color Picker mode to HSL to take advantage of the responsiveness of the control on a mobile device."
 			},
 			{
-			"id": "sap.ui.unified.sample.ColorPickerLarge",
-			"name": "Color Picker - displayMode: Large",
-			"description": "Basic example of Color Picker. Note that you have to set the Color Picker mode to HSL to take advantage of the responsiveness of the control on a mobile device."
+				"id": "sap.ui.unified.sample.ColorPickerLarge",
+				"name": "Color Picker - displayMode: Large",
+				"description": "Basic example of Color Picker. Note that you have to set the Color Picker mode to HSL to take advantage of the responsiveness of the control on a mobile device."
 			},
 			{
-			"id": "sap.ui.unified.sample.ColorPickerSimplified",
-			"name": "Color Picker - displayMode: Simplified",
-			"description": "Basic example of Color Picker. Note that you have to set the Color Picker mode to HSL to take advantage of the responsiveness of the control on a mobile device."
+				"id": "sap.ui.unified.sample.ColorPickerSimplified",
+				"name": "Color Picker - displayMode: Simplified",
+				"description": "Basic example of Color Picker. Note that you have to set the Color Picker mode to HSL to take advantage of the responsiveness of the control on a mobile device."
+			},
+			{
+				"id": "sap.ui.unified.sample.ColorPickerPopover",
+				"name": "Color Picker Popover",
+				"description": "Example of ColorPicker in a popover using the thin wrapper control <code>sap.ui.unified.ColorPickerPopover</code>."
 			},
 			{
 				"id": "sap.ui.unified.sample.FileUploaderBasic",
