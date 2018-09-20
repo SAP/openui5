@@ -446,6 +446,34 @@ function($, ObjectPageSubSection, ObjectPageSection, ObjectPageDynamicHeaderTitl
 		sap.ui.getCore().applyChanges();
 	});
 
+	// ensure that appending the anchorBar does not change the scrollTop,
+	// as it may happen in certain cases (if another part of content freshly rerendered (BCP: 1870365138)
+	QUnit.test("_moveAnchorBarToContentArea preserves the page scrollTop", function (assert) {
+		var oObjectPageLayout = helpers.generateObjectPageWithContent(oFactory, 2 /* two sections */),
+			oFirstSection = oObjectPageLayout.getSections()[0],
+			oLastSection = oObjectPageLayout.getSections()[1],
+			done = assert.async();
+
+		oObjectPageLayout.setSelectedSection(oLastSection);
+
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			var iScrollTopBefore = oObjectPageLayout.getDomRef().scrollTop;
+
+			// act
+			oFirstSection.rerender();
+			oObjectPageLayout._moveAnchorBarToContentArea();
+
+			assert.strictEqual(oObjectPageLayout.getDomRef().scrollTop, iScrollTopBefore, "scrollTop is preserved");
+			oObjectPageLayout.destroy();
+			done();
+		});
+
+		// arrange
+		oObjectPageLayout.placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
+	});
+
 	QUnit.module("ObjectPage On Title Press when Header height bigger than page height", {
 		beforeEach: function () {
 			this.oObjectPage = helpers.generateObjectPageWithDynamicBigHeaderContent();
