@@ -97,7 +97,9 @@
 
 	QUnit.test("Submenu button accessibility", function (assert) {
 		var	oButton = this.oObjectPage.getAggregation("_anchorBar").getContent()[1],
-			sSubSectionId = this.oObjectPage.getSections()[1].getSubSections()[0].getId();
+			aSubSections = this.oObjectPage.getSections()[1].getSubSections(),
+			sSubSectionId = aSubSections[0].getId(),
+			iSubSectionsLength = aSubSections.length + "";
 
 		oButton.firePress();
 
@@ -106,6 +108,12 @@
 
 		assert.strictEqual(jQuery(".sapUxAPAnchorBarPopover").find(".sapUxAPAnchorBarButton").first().attr("aria-controls"), sSubSectionId,
 				"ARIA controls attribute should match the corresponding SubSection ID");
+		assert.strictEqual(jQuery(".sapUxAPAnchorBarPopover").find(".sapUxAPAnchorBarButton").first().attr("aria-setsize"), iSubSectionsLength,
+				"ARIA setsize attribute should match the SubSections length");
+		assert.strictEqual(jQuery(".sapUxAPAnchorBarPopover").find(".sapUxAPAnchorBarButton").first().attr("aria-posinset"), "1",
+				"ARIA posinset attribute of the first button should be 1");
+		assert.strictEqual(jQuery(".sapUxAPAnchorBarPopover").find(".sapUxAPAnchorBarButton").last().attr("aria-posinset"), iSubSectionsLength,
+				"ARIA posinset attribute of the last button should equal the SubSections length");
 	});
 
 	QUnit.test("Phone view", function (assert) {

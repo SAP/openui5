@@ -368,10 +368,13 @@ sap.ui.define([
 	};
 
 	AnchorBar.prototype._decorateSubMenuButtons = function (oEvent) {
-		var aContent = oEvent.getSource().getContent();
+		var aContent = oEvent.getSource().getContent(),
+			iLength = aContent.length;
 
-		aContent.forEach(function (oButton) {
+		aContent.forEach(function (oButton, i) {
 			oButton.$().attr("aria-controls", oButton.data("sectionId"));
+			oButton.$().attr("aria-posinset", i + 1);
+			oButton.$().attr("aria-setsize", iLength);
 		});
 	};
 
