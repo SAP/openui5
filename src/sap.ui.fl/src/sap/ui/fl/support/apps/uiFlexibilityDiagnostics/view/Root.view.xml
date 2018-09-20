@@ -20,6 +20,7 @@
 								nodes="{selectedData>/nodes}"
 								lines="{selectedData>/lines}"
 								groups="{selectedData>/groups}"
+								renderType="Svg"
 								id="graph">
 							<layoutData>
 								<m:FlexItemData
@@ -34,7 +35,7 @@
 										nodeSpacing="40" />
 							</layoutAlgorithm>
 							<nodes>
-								<Node
+								<Node	
 										key="{selectedData>key}"
 										title="{selectedData>title}"
 										statusIcon="{selectedData>variantIcon}"
