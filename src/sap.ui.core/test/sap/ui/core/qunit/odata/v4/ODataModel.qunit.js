@@ -449,7 +449,7 @@ sap.ui.define([
 		assert.strictEqual(oExpectedBind5.firstCall.args[0], oModel);
 
 		this.mock(oModel._submitBatch).expects("bind")
-			.withExactArgs(sinon.match.same(oModel), "$auto")
+			.withExactArgs(sinon.match.same(oModel), "$auto", true)
 			.returns(fnSubmitAuto);
 		this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
 			.withExactArgs(fnSubmitAuto);
@@ -594,21 +594,25 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_submitBatch, failure", function (assert) {
-		var oExpectedError = new Error("deliberate failure"),
-			oModel = createModel();
+	[undefined, false, true].forEach(function (bCatch) {
+		QUnit.test("_submitBatch, failure, bCatch: " + bCatch, function (assert) {
+			var oExpectedError = new Error("deliberate failure"),
+				oModel = createModel();
 
-		this.mock(oModel.oRequestor).expects("submitBatch")
-			.withExactArgs("groupId")
-			.returns(Promise.reject(oExpectedError));
-		this.mock(oModel).expects("reportError")
-			.withExactArgs("$batch failed", sClassName, oExpectedError);
+			this.mock(oModel.oRequestor).expects("submitBatch")
+				.withExactArgs("groupId")
+				.returns(Promise.reject(oExpectedError));
+			this.mock(oModel).expects("reportError")
+				.withExactArgs("$batch failed", sClassName, oExpectedError);
 
-		// code under test
-		return oModel._submitBatch("groupId").then(function () {
-			assert.ok(false);
-		}, function (oError) {
-			assert.strictEqual(oError, oExpectedError);
+			// code under test
+			return oModel._submitBatch("groupId", bCatch).then(function (vResult) {
+				assert.ok(bCatch);
+				assert.strictEqual(vResult, undefined);
+			}, function (oError) {
+				assert.notOk(bCatch);
+				assert.strictEqual(oError, oExpectedError);
+			});
 		});
 	});
 

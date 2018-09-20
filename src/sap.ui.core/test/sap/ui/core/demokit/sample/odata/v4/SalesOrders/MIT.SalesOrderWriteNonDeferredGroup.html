@@ -12,30 +12,53 @@
 		<h1>Manual Integration Test: Create and Change Sales Orders via Auto/Direct application
 		groups</h1>
 		<h2>DESCRIPTION</h2>
-		Test whether POST and PATCH request for application groups with SubmitMode.Auto/.Direct are
-		parked and restarted automatically
+		Test whether POST and PATCH requests for groups with SubmitMode.Auto/.Direct are <b>parked
+		</b> in error case and <b>restarted</b> automatically once the user input is corrected.
 		<h2>PREPARATION</h2>
 		To check console errors open the developer tools before starting the application and check
 		with each step, that there are only expected errors and warnings.
 		<h3>Testing only possible with realOData=true</h3>
 		Start the Sales Orders application with following URL (adjust host and port if necessary):
 		<ul>
-			<li>SubmitMode.Auto <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&realOData=true&updateGroupId=myAutoGroup">http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&realOData=true&updateGroupId=myAutoGroup</a></li>
-			<li>SubmitMode.Direct <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&realOData=true&updateGroupId=myDirectGroup">http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&realOData=true&updateGroupId=myDirectGroup</a></li>
+			<li>SubmitMode.Auto <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&amp;realOData=true&amp;updateGroupId=myAutoGroup">http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&amp;realOData=true&amp;updateGroupId=myAutoGroup</a></li>
+			<li>SubmitMode.Direct <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&amp;realOData=true&amp;updateGroupId=myDirectGroup">http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&amp;realOData=true&amp;updateGroupId=myDirectGroup</a></li>
 		</ul>
 		<h2>REALIZE and CHECK</h2>
+		<h3>Create a new invalid Sales Order and correct</h3>
+			<b>Note: </b>An invalid Sales Order for SubmitMode.Auto or .Direct can only be created
+			via API, hence we have to create/change it via API within developer tools F12 -> console
 		<ol>
-			<h3>Create a new Sales Order</h3>
-			<li>Press the <code>Create</code> button for the Sales Order List</li>
-			<li>In the developer tools observe that the POST ($batch with POST inside) request
-			fails because 'Note' property is initial</li>
-			<li>Type in some value for the 'Note' property and <b>observe</b> that the POST request
-			is restarted successfully with the current value</li>
-			<h3>Change the new created or an already existing Sales Order</h3>
+			<li>Create an invalid Sales Order via console: <code>sap.ui.getCore().byId("sap.ui.core.sample.odata.v4.SalesOrders.Main--SalesOrders").getBinding("items").create({"Note" : "RAISE_ERROR", "BuyerID" : "0100000000", "LifecycleStatus" : "N"})</code></li>
+			<li><b>Observe</b> that an error message is sent; close the error popup</li>
+			<li>Change the Sales Order 'Note' to some other value</li>
+			<li><b>Observe</b> that no error message is sent and the order is created</li>
+		</ol>
+
+		<h3>Change the newly created or an already existing Sales Order</h3>
+		<ol>
 			<li>In the 'Note' field type in the value RAISE_ERROR</li>
 			<li>You should get an error that this value is not allowed</li>
 			<li>Correct the value and <b>observe</b> that a new PATCH request is automatically send
 			when leaving the field.</li>
+		</ol>
+
+		<h3>Only for SubmitMode.Auto</h3>
+		<ol>
+			<li>Press the <code>Create</code> button for the Sales Order Line <b>Items</b> list</li>
+			<li>Close the <code>Success</code> dialog; ignore any warnings and errors at this point
+			</li>
+			<li>Enter a 0 value for the 'Quantity' field and press ENTER</li>
+			<li><b>Observe</b> the error message "Value must be greater than 0"; close the error
+			popup</li>
+			<li>Enter any value for the 'Note' field and press ENTER</li>
+			<li><b>Observe</b> that the error message "Value must be greater than 0" is sent again;
+			close the error popup</li>
+			<li>Enter the value 2 for the 'Quantity' field and press ENTER</li>
+			<li><b>Observe</b> that no error message is sent</li>
+			<li>Press the <code>Refresh selected sales order</code> button for the Sales Orders
+			list</li>
+			<li><b>Observe</b> that no error message is sent and that both the 'Note' and 'Quantity'
+			fields have the right value</li>
 		</ol>
 	</body>
 </html>

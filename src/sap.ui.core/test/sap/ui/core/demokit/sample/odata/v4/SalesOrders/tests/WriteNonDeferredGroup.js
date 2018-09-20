@@ -9,58 +9,85 @@ sap.ui.define([
 	"use strict";
 
 	return {
-		writeNonDeferredGroup : function (Given, When, Then, sGroupId, sUIComponent) {
+		writeNonDeferredGroup : function (sGroupId, sUIComponent, Given, When, Then) {
 			var aExpectedLogs = [{
 					component : "sap.ui.model.odata.v4.ODataParentBinding",
 					level : Log.Level.ERROR,
 					message : "POST on 'SalesOrderList' failed; will be repeated automatically"
 				}],
-				oExpectedPatchLog = {
+				oExpectedPatchLog0 = {
 					component : "sap.ui.model.odata.v4.ODataPropertyBinding",
 					level : Log.Level.ERROR,
 					message: "Failed to update path /SalesOrderList/-1/Note",
 					details : "Property `Note` value `RAISE_ERROR` not allowed!"
+				},
+				oExpectedPatchLog1 = {
+					component : "sap.ui.model.odata.v4.ODataPropertyBinding",
+					level : Log.Level.ERROR,
+					message: "Failed to update path /SalesOrderList/-1/SO_2_SOITEM/-1/Quantity",
+					details : "Error occurred while processing the request"
+				},
+				oExpectedPatchLog2 = {
+					component : "sap.ui.model.odata.v4.ODataPropertyBinding",
+					level : Log.Level.ERROR,
+					message: "Failed to update path /SalesOrderList/-1/SO_2_SOITEM/-1/Note",
+					details : "Error occurred while processing the request"
 				};
 
-		if (!TestUtils.isRealOData()) {
-			Opa5.assert.ok(true, "Test runs only with realOData=true");
-			return;
-		}
+			Given.iStartMyUIComponent({
+				componentConfig : {
+					name : sUIComponent || "sap.ui.core.sample.odata.v4.SalesOrders"
+				}
+			});
 
-		Given.iStartMyUIComponent({
-			componentConfig : {
-				name : sUIComponent || "sap.ui.core.sample.odata.v4.SalesOrders"
+			TestUtils.setData("sap.ui.core.sample.odata.v4.SalesOrders.updateGroupId", sGroupId);
+
+			When.onTheMainPage.firstSalesOrderIsVisible();
+
+			// Test: create a new SalesOrder with erroneous Note property,
+			// POST restarted automatically after note corrected
+			When.onTheMainPage.createInvalidSalesOrderViaAPI();
+			When.onTheMessagePopover.close();
+			When.onTheMainPage.changeNote(0, "My Note");
+			When.onTheSuccessInfo.confirm();
+			Then.onTheMainPage.checkNote(0, "My Note");
+
+			// Test: update of SalesOrder note -> error, restart after note corrected
+			When.onTheMainPage.changeNote(0, "RAISE_ERROR");
+			When.onTheMessagePopover.close();
+			When.onTheMainPage.changeNote(0, "My patched Note");
+			Then.onTheMainPage.checkNote(0, "My patched Note");
+			aExpectedLogs.push(oExpectedPatchLog0);
+			if (sGroupId.includes("irect")) { // Note: better check group submit mode, but how?
+				//TODO avoid duplicate reporting in case PATCH is not retried
+				aExpectedLogs.push(oExpectedPatchLog0);
 			}
-		});
 
-		TestUtils.setData("sap.ui.core.sample.odata.v4.SalesOrders.updateGroupId", sGroupId);
+			When.onTheMainPage.selectFirstSalesOrder();
+			if (sGroupId.includes("auto")) {
+				When.onTheMainPage.pressCreateSalesOrderItemButton();
+				When.onTheSuccessInfo.confirm();
+				When.onTheMainPage.changeSalesOrderLineItemQuantity(0, 0);
+				When.onTheMessagePopover.close(); // error because invalid quantity
+				When.onTheMainPage.changeSalesOrderLineItemNote(0, "patched line item Note");
+				When.onTheMessagePopover.close(); // still got error because invalid quantity
+				When.onTheMainPage.changeSalesOrderLineItemQuantity(0, 1);
+				Then.onTheMainPage.checkSalesOrderLineItemNote(0, "patched line item Note");
+				aExpectedLogs.push(oExpectedPatchLog1);
+				aExpectedLogs.push(oExpectedPatchLog1);
+				aExpectedLogs.push(oExpectedPatchLog2);
+				// get ETag before deletion
+				When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
+				Then.onTheMainPage.checkSalesOrderLineItemNote(0, "patched line item Note");
+			}
 
-		When.onTheMainPage.firstSalesOrderIsVisible();
+			// CleanUp: delete created SalesOrder again via given group ID
+			When.onTheMainPage.deleteSelectedSalesOrderViaGroupId(sGroupId);
+			Then.onTheMainPage.checkID(0);
 
-		// Test: create a new SalesOrder with erroneous Note property,
-		// POST restarted automatically after note corrected
-		When.onTheMainPage.createInvalidSalesOrderViaAPI();
-		When.onTheMessagePopover.close();
-		When.onTheMainPage.changeNote(0, "My Note");
-		When.onTheSuccessInfo.confirm();
-		Then.onTheMainPage.checkNote(0, "My Note");
+			Then.onAnyPage.checkLog(aExpectedLogs);
 
-		// Test: update of SalesOrder note -> error, restart after note corrected
-		When.onTheMainPage.changeNote(0, "RAISE_ERROR");
-		When.onTheMessagePopover.close();
-		When.onTheMainPage.changeNote(0, "My patched Note");
-		Then.onTheMainPage.checkNote(0, "My patched Note");
-		aExpectedLogs.push(oExpectedPatchLog);
-		//TODO: analyse why we got the same log for PATCH 2 times for SubmitMode.Auto
-		aExpectedLogs.push(oExpectedPatchLog);
-
-		// CleanUp: delete created SalesOrder again via given group ID
-		When.onTheMainPage.selectFirstSalesOrder();
-		When.onTheMainPage.deleteSelectedSalesOrderViaGroupId(sGroupId);
-		Then.onTheMainPage.checkID(0);
-
-		Then.onAnyPage.checkLog(aExpectedLogs);
-
-		Then.iTeardownMyUIComponent();
-	}};
+			Then.iTeardownMyUIComponent();
+		}
+	};
 });

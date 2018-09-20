@@ -326,9 +326,7 @@ sap.ui.define([
 					// for cancellation no error is reported via fnErrorCallback
 					throw oError;
 				}
-				if (fnErrorCallback) {
-					fnErrorCallback(oError);
-				}
+				fnErrorCallback(oError);
 				return request(sPostPath, new _GroupLock(
 					that.oRequestor.getGroupSubmitMode(sPostGroupId) === "API" ?
 						sPostGroupId : "$parked." + sPostGroupId));
@@ -774,7 +772,7 @@ sap.ui.define([
 					Cache.makeUpdateData(aPropertyPath, vOldValue));
 			}
 
-			function patch(oPatchGroupLock) {
+			function patch(oPatchGroupLock, bAtFront) {
 				var oRequestLock;
 
 				/*
@@ -788,8 +786,8 @@ sap.ui.define([
 				}
 
 				oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, oPatchGroupLock,
-					{"If-Match" : oEntity}, oUpdateData, onSubmit, onCancel, undefined,
-					_Helper.buildPath(that.sResourcePath, sEntityPath));
+					{"If-Match" : oEntity}, oUpdateData, onSubmit, onCancel, /*sMetaPath*/undefined,
+					_Helper.buildPath(that.sResourcePath, sEntityPath), bAtFront);
 				that.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 				return SyncPromise.all([
 					oPatchPromise,
@@ -811,16 +809,35 @@ sap.ui.define([
 						? {"@odata.etag" : oPatchResult["@odata.etag"]}
 						: oPatchResult);
 				}, function (oError) {
+					var sRetryGroupId = sGroupId;
+
 					that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
-					if (!oError.canceled) {
-						fnErrorCallback(oError);
-						if (that.oRequestor.getGroupSubmitMode(sGroupId) === "API") {
-							oRequestLock.unlock();
-							oRequestLock = undefined;
-							return patch(oPatchGroupLock.getUnlockedCopy());
-						}
+					if (oError.canceled) {
+						throw oError;
 					}
-					throw oError;
+
+					// Note: We arrive here only for the PATCH which was really sent to the server.
+					// The other ones which have been merged are still pending on this one!
+					// In the end, they will either succeed or be canceled.
+					fnErrorCallback(oError);
+					switch (that.oRequestor.getGroupSubmitMode(sGroupId)) {
+						case "API":
+							break;
+						case "Auto":
+							if (!that.oRequestor.hasChanges(sGroupId, oEntity)) {
+								// park PATCH until another change to this entity happens
+								// Note: At most one change per entity is parked (see above), thus
+								// order does not matter and bAtFront = true is OK!
+								sRetryGroupId = "$parked." + sGroupId;
+							}
+							break;
+						default:
+							throw oError; // no retry, just give up
+					}
+					oRequestLock.unlock();
+					oRequestLock = undefined;
+
+					return patch(new _GroupLock(sRetryGroupId), true);
 				}).finally(function () {
 					if (oRequestLock) {
 						oRequestLock.unlock();
@@ -875,6 +892,8 @@ sap.ui.define([
 				oGroupLock.unlock();
 				return Promise.resolve();
 			}
+			// Note: there should be only *one* parked PATCH per entity, but we don't rely on that
+			that.oRequestor.relocateAll("$parked." + sGroupId, oEntity, sGroupId);
 			// send and register the PATCH request
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
 			return patch(oGroupLock);
@@ -1759,7 +1778,8 @@ sap.ui.define([
 	 * @public
 	 */
 	SingleCache.prototype.post = function (oGroupLock, oData, oEntity) {
-		var sHttpMethod = "POST",
+		var sGroupId = oGroupLock.getGroupId(),
+			sHttpMethod = "POST",
 			aPromises,
 			that = this;
 
@@ -1772,6 +1792,10 @@ sap.ui.define([
 		if (this.bPosting) {
 			throw new Error("Parallel POST requests not allowed");
 		}
+
+		// Note: there should be only *one* parked PATCH per entity, but we don't rely on that
+		this.oRequestor.relocateAll("$parked." + sGroupId, oEntity, sGroupId);
+
 		if (oData) {
 			sHttpMethod = oData["X-HTTP-Method"] || sHttpMethod;
 			delete oData["X-HTTP-Method"];
@@ -1797,6 +1821,7 @@ sap.ui.define([
 			throw oError;
 		});
 		this.bPosting = true;
+
 		return this.oPromise;
 	};
 

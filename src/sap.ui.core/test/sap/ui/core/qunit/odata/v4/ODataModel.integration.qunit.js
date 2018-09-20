@@ -9563,4 +9563,257 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Automatic retry of failed PATCHes, along the lines of
+	// MIT.SalesOrderCreateRelative.html, but with $auto group
+	[function () {
+		var oStatusBinding = this.oView.byId("status").getBinding("text");
+
+		this.expectChange("status", "Busy")
+			.expectRequest({
+				method : "PATCH",
+				url : "EMPLOYEES('3')",
+				headers : {"If-Match" : "ETag0"},
+				payload : {
+					"ROOM_ID" : "42", // <-- retry
+					"STATUS" : "Busy"
+				}
+			}, {/* don't care */});
+
+		oStatusBinding.setValue("Busy"); // a different field is changed
+	}, function () {
+		var oRoomIdBinding = this.oView.byId("roomId").getBinding("text");
+
+		this.expectChange("roomId", "23")
+			.expectRequest({
+				method : "PATCH",
+				url : "EMPLOYEES('3')",
+				headers : {"If-Match" : "ETag0"},
+				payload : {
+					"ROOM_ID" : "23" // <-- new change wins over retry
+				}
+			}, {/* don't care */});
+
+		oRoomIdBinding.setValue("23"); // the same field is changed again
+	}, function () {
+		var sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
+			oRoomIdBinding = this.oView.byId("roomId").getBinding("text");
+
+		this.expectRequest({
+				method : "PATCH",
+				url : "EMPLOYEES('3')",
+				headers : {"If-Match" : "ETag0"},
+				payload : {
+					"ROOM_ID" : "42" // <-- retry
+				}
+			}, {/* don't care */})
+			.expectRequest({
+				method : "POST",
+				headers : {"If-Match" : "ETag0"},
+				url : "EMPLOYEES('3')/" + sAction,
+				payload : {"TeamID" : "23"}
+			}, {/* don't care */});
+
+		// bound action also triggers retry
+		return this.oModel.bindContext(sAction + "(...)", oRoomIdBinding.getContext())
+			.setParameter("TeamID", "23")
+			.execute("$auto");
+//
+// Note: "Cannot delete due to pending changes" --> this scenario is currently impossible
+//
+//	}, function () {
+//		var oRoomIdBinding = this.oView.byId("roomId").getBinding("text");
+//
+//		this.expectRequest({
+//				method : "PATCH",
+//				url : "EMPLOYEES('3')",
+//				headers : {"If-Match" : "ETag0"},
+//				payload : {
+//					"ROOM_ID" : "42" // <-- retry
+//				}
+//			}, {/* don't care */})
+//			.expectRequest({
+//				method : "DELETE",
+//				url : "EMPLOYEES('3')",
+//				headers : {"If-Match" : "ETag0"}
+//			});
+//
+//		return oRoomIdBinding.getContext().delete(); // DELETE also triggers retry
+	}].forEach(function (fnCodeUnderTest, i) {
+		QUnit.test("Later retry failed PATCHes for $auto, " + i, function (assert) {
+			var oModel = createTeaBusiModel({updateGroupId : "$auto"}),
+				sView = '\
+<FlexBox binding="{/EMPLOYEES(\'3\')}">\
+	<Text id="roomId" text="{ROOM_ID}" />\
+	<Text id="status" text="{STATUS}" />\
+</FlexBox>',
+				that = this;
+
+			this.expectRequest("EMPLOYEES('3')", {
+					"@odata.etag" : "ETag0",
+					"ID" : "3",
+					"ROOM_ID" : "2",
+					"STATUS" : "Occupied"
+				})
+				.expectChange("roomId", "2")
+				.expectChange("status", "Occupied");
+
+			return this.createView(assert, sView, oModel).then(function () {
+				var oRoomIdBinding = that.oView.byId("roomId").getBinding("text");
+
+				that.expectChange("roomId", "42")
+					.expectRequest({
+						method : "PATCH",
+						url : "EMPLOYEES('3')",
+						headers : {"If-Match" : "ETag0"},
+						payload : {
+							"ROOM_ID" : "42"
+						}
+					}, new Error("500 Internal Server Error"))
+					.expectMessages([{
+						"code": undefined,
+						"message": "500 Internal Server Error",
+						"persistent": true,
+						"target": "",
+						"technical": true,
+						"type": "Error"
+					}, {
+						"code": undefined,
+						"message": "HTTP request was not processed because $batch failed",
+						"persistent": true,
+						"target": "",
+						"technical": true,
+						"type": "Error"
+					}]);
+				that.oLogMock.expects("error").twice(); // don't care about console here
+
+				oRoomIdBinding.setValue("42");
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				return Promise.all([
+					fnCodeUnderTest.call(that),
+					that.waitForChanges(assert)
+				]);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Immediate retry of failed PATCHes; make sure that order is preserved
+	["$auto", "group"].forEach(function (sUpdateGroupId) {
+		QUnit.test("Immediately retry failed PATCHes for " + sUpdateGroupId, function (assert) {
+			var oAgeBinding,
+				oModel = createTeaBusiModel({updateGroupId : sUpdateGroupId}),
+				oPromise,
+				fnReject,
+				oRoomIdBinding,
+				sView = '\
+<FlexBox binding="{/EMPLOYEES(\'3\')}">\
+	<Text id="age" text="{AGE}" />\
+	<Text id="roomId" text="{ROOM_ID}" />\
+	<Text id="status" text="{STATUS}" />\
+</FlexBox>',
+				that = this;
+
+			this.expectRequest("EMPLOYEES('3')", {
+					"@odata.etag" : "ETag0",
+					"ID" : "3",
+					"AGE" : 66,
+					"ROOM_ID" : "2",
+					"STATUS" : "Occupied"
+				})
+				.expectChange("age", "66")
+				.expectChange("roomId", "2")
+				.expectChange("status", "Occupied");
+
+			return this.createView(assert, sView, oModel).then(function () {
+				oAgeBinding = that.oView.byId("age").getBinding("text");
+				oRoomIdBinding = that.oView.byId("roomId").getBinding("text");
+
+				that.expectChange("age", "67")
+					.expectChange("roomId", "42")
+					.expectRequest({
+						method : "PATCH",
+						url : "EMPLOYEES('3')",
+						headers : {"If-Match" : "ETag0"},
+						payload : {
+							"AGE" : 67,
+							"ROOM_ID" : "42"
+						}
+					}, new Promise(function (resolve, reject) {
+						fnReject = reject;
+					}));
+
+				oAgeBinding.setValue(67); // Happy Birthday!
+				oRoomIdBinding.setValue("42");
+				oPromise = oModel.submitBatch("group");
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				var oError = new Error("500 Internal Server Error");
+
+				that.expectChange("roomId", "23")
+					.expectRequest({
+						method : "PATCH",
+						url : "EMPLOYEES('3')",
+						headers : {"If-Match" : "ETag0"},
+						payload : {
+							"AGE" : 67,
+							"ROOM_ID" : "23"
+						}
+					}, {
+						"@odata.etag" : "ETag1",
+						"AGE" : 67,
+						"ROOM_ID" : "23"
+					}).expectMessages([{
+						"code": undefined,
+						"message": "500 Internal Server Error",
+						"persistent": true,
+						"target": "",
+						"technical": true,
+						"type": "Error"
+					}, {
+						"code": undefined,
+						"message": "HTTP request was not processed because $batch failed",
+						"persistent": true,
+						"target": "",
+						"technical": true,
+						"type": "Error"
+					}]);
+				that.oLogMock.expects("error").thrice(); // don't care about console here
+
+				oRoomIdBinding.setValue("23");
+				fnReject(oError);
+
+				return Promise.all([
+					oPromise.catch(function (oError0) {
+						assert.strictEqual(oError0, oError);
+					}),
+					oModel.submitBatch("group"),
+					that.waitForChanges(assert)
+				]);
+			}).then(function () {
+				var oStatusBinding = that.oView.byId("status").getBinding("text");
+
+				that.expectChange("status", "Busy")
+					.expectRequest({
+						method : "PATCH",
+						url : "EMPLOYEES('3')",
+						headers : {"If-Match" : "ETag1"},
+						payload : {
+							"STATUS" : "Busy"
+						}
+					}, {/* don't care */});
+
+				oStatusBinding.setValue("Busy"); // a different field is changed
+
+				return Promise.all([
+					oModel.submitBatch("group"),
+					that.waitForChanges(assert)
+				]);
+			});
+		});
+	});
 });
