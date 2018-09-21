@@ -158,5 +158,22 @@
         "references": []
       }
     ]
+  },
+  "1.58.3": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "b2570821b4fba5a814ea568dfe6d8ceab3470e35",
+        "type": "FIX",
+        "text": " FlexibleColumnLayout: Fixed disappearing of navigation actions",
+        "references": []
+      },
+      {
+        "id": "7d4dc0960992fc2925852029dafd083b133c3ccf",
+        "type": "FIX",
+        "text": " FlexibleColumnLayout: LocalBusyIndicator\u0027s z-index is fixed",
+        "references": []
+      }
+    ]
   }
 }

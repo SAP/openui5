@@ -133,5 +133,22 @@
         "references": []
       }
     ]
+  },
+  "1.58.3": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "0185262652f208d2faa47ea0117804f5a83fa9f0",
+        "type": "FIX",
+        "text": " PlanningCalendar: Spaces in internal aria-label are removed",
+        "references": []
+      },
+      {
+        "id": "94347d186859480390989f2748d44efad15d9b37",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: correct width of the input when invalidated",
+        "references": []
+      }
+    ]
   }
 }

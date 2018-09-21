@@ -1058,5 +1058,39 @@
         "references": []
       }
     ]
+  },
+  "1.56.9": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "e314af9b8bfb1a795ac3cf0f9fbb7169f30fb2e0",
+        "type": "FIX",
+        "text": " Manifest: always process entries with placeholders",
+        "references": []
+      },
+      {
+        "id": "cebb94960acb325edab4156d6361b8ec01ba58e7",
+        "type": "FIX",
+        "text": " types/NumberFormat: Currency with RTL locale format/parse",
+        "references": []
+      },
+      {
+        "id": "17841db154546d873e2918f97e8fa5c75994dc40",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: 0 count in result now correctly processed",
+        "references": []
+      }
+    ]
+  },
+  "1.56.10": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "362b4640c54b6d5d83f1527284b04f1d89e94fb2",
+        "type": "FIX",
+        "text": " Theming Parameters: Prevent timing issues in Safari/Edge",
+        "references": []
+      }
+    ]
   }
 }

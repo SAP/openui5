@@ -410,5 +410,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.19": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "956f71b77cad5128fe3117b0a2e5edebec9ed8b9",
+        "type": "FIX",
+        "text": " PlanningCalendar: Spaces in internal aria-label are removed",
+        "references": []
+      }
+    ]
   }
 }

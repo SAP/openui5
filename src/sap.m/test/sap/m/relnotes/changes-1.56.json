@@ -1682,5 +1682,52 @@
         "references": []
       }
     ]
+  },
+  "1.56.9": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "4c8dfa71b379cc7d739ddf6335c76f87d5085e4d",
+        "type": "FIX",
+        "text": " FacetFilter: Filter dialog has an aria message",
+        "references": []
+      },
+      {
+        "id": "2c44e5176120c3897c4297a88a5a58eaf0c57569",
+        "type": "FIX",
+        "text": " MaskInput: Accessibility exampe is improved",
+        "references": []
+      },
+      {
+        "id": "4e9e0e9d7653514ce400a971d6b84c317f5e1600",
+        "type": "FIX",
+        "text": " ObjectMarker: Accessibility info appears when in a table cell",
+        "references": []
+      },
+      {
+        "id": "a3ff32082f50db30d16af11b91dbaf24e20229a2",
+        "type": "FIX",
+        "text": " ObjectMarker: New properties ariaLabelledBy \u0026 ariaDescribedBy",
+        "references": []
+      },
+      {
+        "id": "d1d4eec1b2bde7fa318600c633d485788f4725a5",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: render parent div when empty",
+        "references": []
+      },
+      {
+        "id": "e9ae146c715722beff2d4dcd12c1a7bb12517ba3",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: if binding format differs from input, \"change\" is fired",
+        "references": []
+      },
+      {
+        "id": "dd564a90eb2d0f684106f0335ca073a03eb94566",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Stable ID restored",
+        "references": []
+      }
+    ]
   }
 }

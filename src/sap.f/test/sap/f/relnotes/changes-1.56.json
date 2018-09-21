@@ -178,5 +178,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.9": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "8760c4d03f3a6aaad4604121a3dc7a18f30cf327",
+        "type": "FIX",
+        "text": " FlexibleColumnLayout: Fixed disappearing of navigation actions",
+        "references": []
+      }
+    ]
   }
 }

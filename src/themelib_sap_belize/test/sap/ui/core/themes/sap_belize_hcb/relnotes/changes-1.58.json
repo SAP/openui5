@@ -145,5 +145,22 @@
         "references": []
       }
     ]
+  },
+  "1.58.3": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "d54056f36ed4919ac7c67ba92815fad60bcd27f9",
+        "type": "FIX",
+        "text": " Calendar: Picker\u0027s selected month/year style overriding focus in HC fixed",
+        "references": []
+      },
+      {
+        "id": "e9876542412b3e26d195e81713b6637d58147396",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Focus is fixed in HCB and HCW themes",
+        "references": []
+      }
+    ]
   }
 }

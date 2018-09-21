@@ -103,5 +103,16 @@
         "references": []
       }
     ]
+  },
+  "1.58.3": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "fb0704ddaa8b825278c2f2048b136da2291b6305",
+        "type": "FIX",
+        "text": "sap.ui.dt - Context menu closes when selection changes",
+        "references": []
+      }
+    ]
   }
 }

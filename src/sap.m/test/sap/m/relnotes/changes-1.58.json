@@ -1213,5 +1213,118 @@
         "references": []
       }
     ]
+  },
+  "1.58.3": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "82aa1b0c026bff6779692bbbd8ee1fd18b733a50",
+        "type": "FIX",
+        "text": " FacetFilter: Filter dialog has an aria message",
+        "references": []
+      },
+      {
+        "id": "c6e0b13b03c13a695fc57860f5baedaf685457c6",
+        "type": "FIX",
+        "text": " MaskInput: Accessibility exampe is improved",
+        "references": []
+      },
+      {
+        "id": "2dd744ffe8a9ca7daad568b6976f4736134bcbfe",
+        "type": "FIX",
+        "text": " MessagePopover: Log error when openBy DOM no longer visible",
+        "references": []
+      },
+      {
+        "id": "e0601b0058802f5ad90cc1b4a470c6cfe4290e0f",
+        "type": "FIX",
+        "text": " ObjectMarker: Accessibility info appears when in a table cell",
+        "references": []
+      },
+      {
+        "id": "ab62a2905e0485b833dd5df37bed576066824469",
+        "type": "FIX",
+        "text": " ObjectMarker: New properties ariaLabelledBy \u0026 ariaDescribedBy",
+        "references": []
+      },
+      {
+        "id": "a87f9e28beb005bcbad375e238a761d15812b2e6",
+        "type": "FIX",
+        "text": " OverflowToolbar: Fixed resetting of child size cache",
+        "references": []
+      },
+      {
+        "id": "6e7357818399c0cfc4e38b59974e725ae2633968",
+        "type": "FIX",
+        "text": " Tokenizer: Indicator for one hidden token added",
+        "references": []
+      },
+      {
+        "id": "4ed700226eb7ced886cd2e45c383d5e31500c59f",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Navigate properly trough suggestion items",
+        "references": []
+      },
+      {
+        "id": "e27943bd04e655669c6389e60d9dc0f3a1aba170",
+        "type": "FIX",
+        "text": " sap.m.DatePicker/TimePicker: hide picker icon when disabled",
+        "references": []
+      },
+      {
+        "id": "bc6a0f76fa81d7dade470aa97fe92c88bb8962ae",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Prevent infinite resize in IE and Edge",
+        "references": []
+      },
+      {
+        "id": "e60bce225afe34bdc356dc7ce6a93684c0aa0042",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Redundant scrolling in tokenizer removed",
+        "references": []
+      },
+      {
+        "id": "067c6662b15da7c2218a7904436aa9b787a62d55",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Token information is now announced",
+        "references": []
+      },
+      {
+        "id": "3cfd16542a07774d51e78da330b0a8be97616239",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: customContent aggregation with sap.m.Link is read correctly",
+        "references": []
+      },
+      {
+        "id": "dc3a34e7ccee08b3668e52fde226757d01e1917a",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: render parent div when empty",
+        "references": []
+      },
+      {
+        "id": "d8834321a4b13d57748b7b119f97f9a968e075e7",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: status rendered in correct column when the attribute is empty",
+        "references": []
+      },
+      {
+        "id": "e9876542412b3e26d195e81713b6637d58147396",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Focus is fixed in HCB and HCW themes",
+        "references": []
+      },
+      {
+        "id": "5bfcb6ccf5adcd3b26a72c626b3b756b9b8a8e19",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: if binding format differs from input, \"change\" is fired",
+        "references": []
+      },
+      {
+        "id": "db04bad6b9ad7a66f047171f2bf6cb9a079314a5",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Stable ID restored",
+        "references": []
+      }
+    ]
   }
 }
