@@ -87,7 +87,6 @@ sap.ui.define([
 				}.bind(this));
 
 				this.FEEDBACK_SERVICE_URL = "https://feedback-sapuisofiaprod.hana.ondemand.com:443/api/v2/apps/5bb7d7ff-bab9-477a-a4c7-309fa84dc652/posts";
-				this.OLD_DOC_LINK_SUFFIX = ".html";
 
 				// Cache view reference
 				this._oView = this.getView();
@@ -131,50 +130,6 @@ sap.ui.define([
 
 			onExit: function() {
 				Device.orientation.detachHandler(this._onOrientationChange, this);
-			},
-
-			_onTopicOldRouteMatched: function(sId) {
-				if (sId) {
-					sId = this._trimOldDocSuffix(sId);
-				}
-				this.getRouter().navTo("topicId", {id: sId});
-			},
-
-			_onApiOldRouteMatched: function(sId) {
-
-				var sEntityType,
-					sEntityId,
-					aSplit;
-
-				if (sId) {
-
-					aSplit = sId.split("#");
-					if (aSplit.length === 2) {
-						sId = aSplit[0];
-						sEntityType = aSplit[1];
-
-						aSplit = sEntityType.split(":");
-						if (aSplit.length === 2) {
-							sEntityType = aSplit[0];
-							sEntityId = aSplit[1];
-						}
-					}
-
-					sId = this._trimOldDocSuffix(sId);
-
-					if (sEntityType === 'event') { // legacy keyword is singular
-						sEntityType = "events";
-					}
-				}
-
-				this.getRouter().navTo("apiId", {id: sId, entityType: sEntityType, entityId: sEntityId});
-			},
-
-			_trimOldDocSuffix: function(sLink) {
-				if (sLink && sLink.endsWith(this.OLD_DOC_LINK_SUFFIX)) {
-					sLink = sLink.slice(0, -this.OLD_DOC_LINK_SUFFIX.length);
-				}
-				return sLink;
 			},
 
 			onRouteChange: function (oEvent) {

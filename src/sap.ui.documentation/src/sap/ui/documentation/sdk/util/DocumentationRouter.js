@@ -26,8 +26,8 @@ sap.ui.define([
 			this.getRoute("entityEventsLegacyRoute").attachPatternMatched({entityType: "events"}, this._forwardToAPIRef, this);
 			this.getRoute("entityMethodsLegacyRoute").attachPatternMatched({entityType: "methods"}, this._forwardToAPIRef, this);
 
-			this.getRoute("topicIdLegacyRoute").attachPatternMatched(this._onTopicOldRouteMatched, this);
-			this.getRoute("apiIdLegacyRoute").attachPatternMatched(this._onApiOldRouteMatched, this);
+			this.getRoute("topicIdLegacyRoute").attachPatternMatched(this._onOldTopicRouteMatched, this);
+			this.getRoute("apiIdLegacyRoute").attachPatternMatched(this._onOldApiRouteMatched, this);
 		},
 
 		_onEntityOldRouteMatched: function(oEvent) {
@@ -42,18 +42,47 @@ sap.ui.define([
 			this.navTo("apiId", oData);
 		},
 
-		_onTopicOldRouteMatched: function(oEvent) {
-			var sId = oEvent.getParameter("arguments").id;
-			this.getView("sap.ui.documentation.sdk.view.App", "XML", "app").loaded().then(function(oView) {
-				oView.getController()._onTopicOldRouteMatched(sId);
-			});
+		/**
+		 * Handling old Demo Kit topic routes which should be navigated to new routes
+		 * @param {object} oEvent event object
+		 * @private
+		 */
+		_onOldTopicRouteMatched: function(oEvent) {
+			this.navTo("topicId", {id: oEvent.getParameter("arguments").id.replace(/.html$/, "")});
 		},
 
-		_onApiOldRouteMatched: function(oEvent) {
-			var sId = oEvent.getParameter("arguments").id;
-			this.getView("sap.ui.documentation.sdk.view.App", "XML", "app").loaded().then(function(oView) {
-				oView.getController()._onApiOldRouteMatched(sId);
-			});
+		/**
+		 * Handling old Demo Kit API routes which should be navigated to new routes
+		 * @param {object} oEvent event object
+		 * @private
+		 */
+		_onOldApiRouteMatched: function(oEvent) {
+			var sEntityType,
+				sEntityId,
+				aSplit,
+				sId = oEvent.getParameter("arguments").id;
+
+			if (sId) {
+				aSplit = sId.split("#");
+				if (aSplit.length === 2) {
+					sId = aSplit[0];
+					sEntityType = aSplit[1];
+
+					aSplit = sEntityType.split(":");
+					if (aSplit.length === 2) {
+						sEntityType = aSplit[0];
+						sEntityId = aSplit[1];
+					}
+				}
+
+				sId = sId.replace(/.html$/, "");
+
+				if (sEntityType === 'event') { // legacy keyword is singular
+					sEntityType = "events";
+				}
+			}
+
+			this.navTo("apiId", {id: sId, entityType: sEntityType, entityId: sEntityId});
 		},
 
 		/**
