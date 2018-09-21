@@ -317,12 +317,12 @@ sap.ui.define([
 	 * @param {sap.ui.core.Component|sap.ui.core.Component[]} mPropertyBag.component - control component or array of potential components
 	 * @param {object} mPropertyBag.changesMap - The changes inside the current changes map
 	 *
-	 * @typedef {object} SwitchChanges
+	 * @typedef {object} sap.ui.fl.variants.SwitchChanges
 	 * @property {array} aRevert - an array of changes to be reverted
 	 * @property {array} aNew - an array of changes to be applied
 	 * @property {sap.ui.core.Component} component - the component responsible
 	 *
-	 * @returns {SwitchChanges} The map containing all changes to be reverted and all new changes
+	 * @returns {sap.ui.fl.variants.SwitchChanges} The map containing all changes to be reverted and all new changes
 	 * @public
 	 */
 	VariantController.prototype.getChangesForVariantSwitch = function(mPropertyBag) {

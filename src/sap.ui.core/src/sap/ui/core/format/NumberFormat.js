@@ -359,7 +359,7 @@ sap.ui.define([
 	 *  back to the standard notation. For example ".5e-3" is parsed to "0.0005".
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
 	 * 'short' or 'long'. When this option is set, the default value of option 'precision' is set to 2. This can be changed by setting either min/maxFractionDigits, decimals, shortDecimals or precision option.
-	 * @param {sap.ui.core.format.NumberFormat.RoundingMode=TOWARDS_ZERO} [oFormatOptions.roundingMode] specifies a rounding behavior for discarding the digits after the maximum fraction digits
+	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=TOWARDS_ZERO] specifies a rounding behavior for discarding the digits after the maximum fraction digits
 	 *  defined by maxFractionDigits. Rounding will only be applied, if the passed value if of type number. This can be assigned by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode}
 	 *  or a function which will be used for rounding the number. The function is called with two parameters: the number and how many decimal digits should be reserved.
 	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what empty string is parsed as and what is formatted as empty string. The allowed values are only NaN, null or 0.
@@ -414,7 +414,7 @@ sap.ui.define([
 	 *  back to the standard notation. For example ".5e-3" is parsed to "0.0005".
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
 	 * 'short' or 'long'. When this option is set, the default value of option 'precision' is set to 2. This can be changed by setting either min/maxFractionDigits, decimals, shortDecimals or precision option.
-	 * @param {sap.ui.core.format.NumberFormat.RoundingMode=HALF_AWAY_FROM_ZERO} [oFormatOptions.roundingMode] specifies a rounding behavior for discarding the digits after the maximum fraction digits
+	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO] specifies a rounding behavior for discarding the digits after the maximum fraction digits
 	 *  defined by maxFractionDigits. Rounding will only be applied, if the passed value if of type number. This can be assigned by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode}
 	 *  or a function which will be used for rounding the number. The function is called with two parameters: the number and how many decimal digits should be reserved.
 	 * @param {boolean} [oFormatOptions.showMeasure=true] defines whether the measure according to the format is shown in the formatted string
@@ -483,7 +483,7 @@ sap.ui.define([
 	 *  back to the standard notation. For example ".5e-3" is parsed to "0.0005".
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
 	 * 'short' or 'long'. When this option is set, the default value of option 'precision' is set to 2. This can be changed by setting either min/maxFractionDigits, decimals, shortDecimals or precision option.
-	 * @param {sap.ui.core.format.NumberFormat.RoundingMode=HALF_AWAY_FROM_ZERO} [oFormatOptions.roundingMode] specifies a rounding behavior for discarding the digits after the maximum fraction digits
+	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO] specifies a rounding behavior for discarding the digits after the maximum fraction digits
 	 *  defined by maxFractionDigits. Rounding will only be applied, if the passed value if of type number. This can be assigned by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode}
 	 *  or a function which will be used for rounding the number. The function is called with two parameters: the number and how many decimal digits should be reserved.
 	 * @param {boolean} [oFormatOptions.showMeasure=true] defines whether the measure according to the format is shown in the formatted string

@@ -146,7 +146,7 @@ sap.ui.define([
 	 * @since 1.60.0
 	 * @public
 	 * @interface
-	 * @name sap.ui.layout.cssgrid..IGridConfigurable
+	 * @name sap.ui.layout.cssgrid.IGridConfigurable
 	 */
 
 	/**
