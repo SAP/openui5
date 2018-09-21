@@ -208,7 +208,7 @@ sap.ui.define([
 			this.getPopover().attachAfterOpen(this._handleAfterOpen, this);
 
 			//place the Popover and get the target DIV
-			this._oTarget = this._placeContextMenu(this._oTarget, this._bOpenAsContextMenu, this._bUseExpPop);
+			this._oTarget = this._placeContextMenu(this._oTarget, this._bOpenAsContextMenu);
 
 			// set the PopOver visible
 			this.getPopover().setVisible(true);
@@ -345,11 +345,10 @@ sap.ui.define([
 		 * Places a "fakeDiv" in the DOM which the popover can be opened by
 		 * @param {sap.m.Control} oSource the overlay
 		 * @param {boolean} bContextMenu whether the ContextMenu should be opened as a context menu
-		 * @param {boolean} bExpanded whether the ContextMenu is expanded
 		 * @return {div} the "fakeDiv"
 		 * @private
 		 */
-		_placeContextMenu: function (oSource, bContextMenu, bExpanded) {
+		_placeContextMenu: function (oSource, bContextMenu) {
 			this.getPopover().setShowArrow(true);
 
 			var sOverlayId = (oSource.getId && oSource.getId()) || oSource.getAttribute("overlay");
@@ -366,7 +365,7 @@ sap.ui.define([
 			this.getPopover().openBy(oFakeDiv);
 
 			//get Dimensions
-			var oPopoverDimensions = this._getPopoverDimensions(bExpanded, !bContextMenu);
+			var oPopoverDimensions = this._getPopoverDimensions(!bContextMenu);
 			var oOverlayDimensions = this._getOverlayDimensions(sOverlayId);
 			var oViewportDimensions = this._getViewportDimensions();
 
@@ -422,7 +421,7 @@ sap.ui.define([
 
 			var oPos = {};
 
-			if (oViewport.height - oContPos.y >= oPopover.height) {
+			if (oViewport.height - 10 - oContPos.y >= oPopover.height) {
 				oPos.top = oContPos.y;
 				this.getPopover().setPlacement("Bottom");
 			} else if (oContPos.y >= oPopover.height) {
@@ -598,61 +597,30 @@ sap.ui.define([
 
 		/**
 		 * Gets the dimensions of the ContextMenu's popover
-		 * @param {boolean} bExpanded whether the ContextMenu is expanded
 		 * @param {boolean} bWithArrow whether the arrow width should be added
 		 * @return {object} the dimensions of the ContextMenu's popover
 		 */
-		_getPopoverDimensions: function (bExpanded, bWithArrow) {
+		_getPopoverDimensions: function (bWithArrow) {
 
 			var oPopover = {};
 
 			var bCompact = this._bCompactMode;
-
-			var fButtonHeight = this._getButtonHeight(bCompact);
-
-			var fButtonWidth = this._getButtonWidth(bCompact);
-
 			var fArrowHeight = this._getArrowHeight(bCompact);
-
 			var iBaseFontsize = this._getBaseFontSize();
-
-			oPopover.height = iBaseFontsize * fButtonHeight;
 			this._iFirstVisibleButtonIndex = null;
 
-			if (bExpanded) {
-				oPopover.height *= this.getButtons().length;
-				oPopover.width = parseInt(jQuery("#" + this.getPopover().getId()).css("width"), 10) || 80;
-			} else {
-				oPopover.width = iBaseFontsize * fButtonWidth * this._iButtonsVisible;
-			}
+			oPopover.height = parseInt(jQuery("#" + this.getPopover().getId()).css("height"), 10) || 40;
+			oPopover.width = parseInt(jQuery("#" + this.getPopover().getId()).css("width"), 10) || 80;
 
 			if (bWithArrow) {
 				var iArr = iBaseFontsize * fArrowHeight;
 				if (iArr) {
-					oPopover.height += 2 * iArr;
-					oPopover.width += 2 * iArr;
+					oPopover.height += iArr;
+					oPopover.width += iArr;
 				}
 			}
 
 			return oPopover;
-		},
-
-		/**
-		 * Returns the height of a button in rem
-		 * @param {boolean} bCompact wheter ContextMenu is compact
-		 * @return {float} the height of a button in rem
-		 */
-		_getButtonHeight: function (bCompact) {
-			return bCompact ? 2 : 3;
-		},
-
-		/**
-		 * Returns the width of a button with only an icon in rem
-		 * @param {boolean} bCompact wheter ContextMenu is compact
-		 * @return {float} the width of a button in rem
-		 */
-		_getButtonWidth: function (bCompact) {
-			return bCompact ? 2 : 2.5;
 		},
 
 		/**
