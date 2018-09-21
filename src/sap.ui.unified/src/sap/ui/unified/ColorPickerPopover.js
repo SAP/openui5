@@ -30,7 +30,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', 'sap/m/Button', 'sap/m/Re
 		 * @constructor
 		 * @public
 		 * @since 1.60
-		 * @alias sap.m.ColorPickerPopover
+		 * @alias sap.ui.unified.ColorPickerPopover
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var ColorPickerPopover = Control.extend("sap.ui.unified.ColorPickerPopover", /** @lends sap.ui.unified.ColorPickerPopover.prototype */ {
@@ -168,7 +168,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', 'sap/m/Button', 'sap/m/Re
 		 * The popover is positioned relative to the control parameter on tablet or desktop and is full screen on phone.
 		 * Therefore the openBy parameter is only used on tablet or desktop and is ignored on phone.
 		 *
-		 * @param {Object} openBy When this control is displayed on tablet or desktop, the <code>ColorPalettePopover</code>
+		 * @param {Object} openBy When this control is displayed on tablet or desktop, the <code>ColorPickerPopover</code>
 		 * is positioned relative to this control
 		 * @returns {Object} Reference to the opening control
 		 * @public
