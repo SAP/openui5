@@ -56,7 +56,10 @@ function(
 	 */
 	var SegmentedButton = Control.extend("sap.m.SegmentedButton", /** @lends sap.m.SegmentedButton.prototype */ { metadata : {
 
-		interfaces : ["sap.ui.core.IFormContent"],
+		interfaces : [
+			"sap.ui.core.IFormContent",
+			"sap.m.IOverflowToolbarContent"
+		],
 		library : "sap.m",
 		designtime: "sap/m/designtime/SegmentedButton.designtime",
 		publicMethods : ["createButton"],
@@ -361,6 +364,7 @@ function(
 			iButtonWidthPercent = (100 / iButtonsCount),
 			iParentWidth = this.$().parent().innerWidth(),
 			sWidth = this._getButtonWidth(aButtons),
+			iCurrentWidth,
 			oButton,
 			i;
 
@@ -387,6 +391,14 @@ function(
 				i++;
 			}
 		}
+
+		iCurrentWidth = this.$().width();
+
+		if (this._previousWidth !== undefined && iCurrentWidth !== this._previousWidth) {
+			this.fireEvent("_containerWidthChanged");
+		}
+
+		this._previousWidth = iCurrentWidth;
 	};
 
 	SegmentedButton.prototype.exit = function () {
@@ -416,6 +428,35 @@ function(
 			this._oItemNavigation.setItemDomRefs(aButtons);
 			this._focusSelectedButton();
 		}
+	};
+
+	/**
+	 * Required by the {@link sap.m.IOverflowToolbarContent} interface.
+	 * Registers invalidations event which is fired when width of the control is changed.
+	 *
+	 * @protected
+	 * @returns {object} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
+	 */
+	SegmentedButton.prototype.getOverflowToolbarConfig = function() {
+		var oConfig = {
+			canOverflow: true,
+			listenForEvents: ["select"],
+			noInvalidationProps: ["enabled", "selectedKey"],
+			invalidationEvents: ["_containerWidthChanged"],
+			onBeforeEnterOverflow: this._onBeforeEnterOverflow,
+			onAfterExitOverflow: this.onAfterExitOverflow
+		};
+
+		return oConfig;
+	};
+
+	// SegmentedButton - switch to/from select mode
+	SegmentedButton.prototype._onBeforeEnterOverflow = function(oControl) {
+		oControl._toSelectMode();
+	};
+
+	SegmentedButton.prototype._onAfterExitOverflow = function(oControl) {
+		oControl._toNormalMode();
 	};
 
 	/**

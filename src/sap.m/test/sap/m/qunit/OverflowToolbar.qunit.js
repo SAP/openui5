@@ -1476,6 +1476,41 @@ sap.ui.define([
 		oOverflowTB.destroy();
 	});
 
+	QUnit.test("Changing width of sap.m.SegmentedButton triggers _resetAndInvalidateToolbar", function (assert) {
+		var aContent = getDefaultContent(),
+			oOverflowTB,
+			oSpyInvalidationEvent,
+			iInvalidationCountBefore;
+
+		// arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			selectedKey: "Item1",
+			items: [
+				new sap.m.SegmentedButtonItem({id: "idSBItem1", key: "Item1", text: "Item 1"}),
+				new sap.m.SegmentedButtonItem({id: "idSBItem2", key: "Item2", text: "Item 2"})
+			]
+		});
+
+		aContent.push(oSegmentedButton);
+		oSpyInvalidationEvent = this.spy(sap.m.OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
+		oOverflowTB = createOverflowToolbar({}, aContent);
+
+		this.clock.tick(1000);
+
+		iInvalidationCountBefore = oSpyInvalidationEvent.callCount;
+
+		// act - simulating width of the SegmentedButton is changed and event is fired
+		oSegmentedButton.fireEvent("_containerWidthChanged");
+
+		this.clock.tick(1000);
+
+		// assert
+		assert.strictEqual(oSpyInvalidationEvent.callCount, iInvalidationCountBefore + 1,
+			"Layout recalculation triggered (when SegmentedButton's width is changed, _resetAndInvalidateToolbar is called)");
+
+		oOverflowTB.destroy();
+	});
+
 	QUnit.test("Changing selected item's data model of sap.m.Select, which has autoAdjustWidth: true (affects control size), forces recalculation of the layout", function (assert) {
 		var aContent = getDefaultContent(),
 				oModel,
