@@ -1407,7 +1407,8 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
 	ODataListBinding.prototype.refreshInternal = function (sGroupId) {
-		var that = this;
+		var aContexts = this.aContexts, // keep it, because reset sets a new, empty array
+			that = this;
 
 		this.createReadGroupLock(sGroupId, this.isRefreshable());
 		this.oCachePromise.then(function (oCache) {
@@ -1416,12 +1417,18 @@ sap.ui.define([
 				that.fetchCache(that.oContext);
 			}
 			that.reset(ChangeReason.Refresh);
-			that.getDependentBindings().forEach(function (oDependentBinding) {
-				// Call refreshInternal with bCheckUpdate = false because property bindings should
-				// not check for updates yet, otherwise they will cause a "Failed to drill down..."
-				// when the row is no longer part of the collection. They get another update request
-				// in createContexts, when the context for the row is reused.
-				oDependentBinding.refreshInternal(sGroupId, false);
+			// Do not use this.getDependentBindings() because this still contains the children of
+			// the -1 context which will not survive.
+			// The array may be sparse, but forEach skips the gaps and the -1
+			aContexts.forEach(function (oContext) {
+				that.oModel.getDependentBindings(oContext).forEach(function (oDependentBinding) {
+					// Call refreshInternal with bCheckUpdate = false because property bindings
+					// should not check for updates yet, otherwise they will cause a "Failed to
+					// drill down..." when the row is no longer part of the collection. They get
+					// another update request in createContexts, when the context for the row is
+					// reused.
+					oDependentBinding.refreshInternal(sGroupId, false);
+				});
 			});
 		});
 	};
