@@ -48,14 +48,14 @@ sap.ui.define([
 			// POST restarted automatically after note corrected
 			When.onTheMainPage.createInvalidSalesOrderViaAPI();
 			When.onTheMessagePopover.close();
-			When.onTheMainPage.changeNote(0, "My Note");
+			When.onTheMainPage.changeNoteInNewSalesOrder("My Note");
 			When.onTheSuccessInfo.confirm();
 			Then.onTheMainPage.checkNote(0, "My Note");
 
 			// Test: update of SalesOrder note -> error, restart after note corrected
-			When.onTheMainPage.changeNote(0, "RAISE_ERROR");
+			When.onTheMainPage.changeNoteInNewSalesOrder("RAISE_ERROR");
 			When.onTheMessagePopover.close();
-			When.onTheMainPage.changeNote(0, "My patched Note");
+			When.onTheMainPage.changeNoteInNewSalesOrder("My patched Note");
 			Then.onTheMainPage.checkNote(0, "My patched Note");
 			aExpectedLogs.push(oExpectedPatchLog0);
 			if (sGroupId.includes("irect")) { // Note: better check group submit mode, but how?
@@ -67,11 +67,11 @@ sap.ui.define([
 			if (sGroupId.includes("auto")) {
 				When.onTheMainPage.pressCreateSalesOrderItemButton();
 				When.onTheSuccessInfo.confirm();
-				When.onTheMainPage.changeSalesOrderLineItemQuantity(0, 0);
+				When.onTheMainPage.changeQuantityInFirstLineItem(0);
 				When.onTheMessagePopover.close(); // error because invalid quantity
-				When.onTheMainPage.changeSalesOrderLineItemNote(0, "patched line item Note");
+				When.onTheMainPage.changeNoteInFirstLineItem("patched line item Note");
 				When.onTheMessagePopover.close(); // still got error because invalid quantity
-				When.onTheMainPage.changeSalesOrderLineItemQuantity(0, 1);
+				When.onTheMainPage.changeQuantityInFirstLineItem(1);
 				Then.onTheMainPage.checkSalesOrderLineItemNote(0, "patched line item Note");
 				aExpectedLogs.push(oExpectedPatchLog1);
 				aExpectedLogs.push(oExpectedPatchLog1);

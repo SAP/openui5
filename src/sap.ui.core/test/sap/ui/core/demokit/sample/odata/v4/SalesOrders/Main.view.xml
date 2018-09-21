@@ -158,7 +158,7 @@
 			</headerToolbar>
 			<columns>
 				<Column hAlign="Right" width="9em">
-					<Button enabled="{ui>/bRealOData}" id ="sortBySalesOrderID"
+					<Button enabled="{ui>/bRealOData}" id="sortBySalesOrderID"
 						icon="{ui>/sSortSalesOrderIDIcon}" iconFirst="false"
 						press="onSortBySalesOrderID" text="Sales Order ID" />
 				</Column>
@@ -166,7 +166,7 @@
 					<Text text="Buyer Name"/>
 				</Column>
 				<Column hAlign="Right" width="8em">
-					<Button enabled="{ui>/bRealOData}" id ="sortByGrossAmount"
+					<Button enabled="{ui>/bRealOData}" id="sortByGrossAmount"
 						icon="{ui>/sSortGrossAmountIcon}" iconFirst="false"
 						press="onSortByGrossAmount" text="Gross Amount" />
 				</Column>
@@ -188,7 +188,7 @@
 				<Text binding="{SO_2_BP}" text="{CompanyName}"/>
 				<Text text="{GrossAmount}"/>
 				<Text text="{CurrencyCode}"/>
-				<Input enabled="{= %{LifecycleStatus} === 'N' }" value="{Note}"/>
+				<Input id="Note_ID" enabled="{= %{LifecycleStatus} === 'N' }" value="{Note}"/>
 				<Text text="{LifecycleStatusDesc}"/>
 				<Text text="{ChangedAt}"/>
 			</ColumnListItem>
@@ -290,7 +290,10 @@
 			</form:SimpleForm>
 			<Table id="SalesOrderLineItems"
 				items="{
-						path : 'SO_2_SOITEM',
+						events : {
+							dataReceived : '.onDataEvents',
+							dataRequested : '.onDataEvents'
+						},
 						filters : {path: 'ItemPosition', operator: 'GT', value1: '0000000000'},
 						parameters : {
 							$count : true,
@@ -314,12 +317,13 @@
 							$select : 'Messages',
 							$$updateGroupId : 'SalesOrderUpdateGroup'
 						},
-						events : {
-							dataReceived : '.onDataEvents',
-							dataRequested : '.onDataEvents'
-						}
+						path : 'SO_2_SOITEM',
+						templateShareable : false
 					}" mode="SingleSelectMaster"
 				selectionChange="onSalesOrderLineItemSelect">
+				<!--Note: templateShareable has to be false in order to ensure that the
+					template is destroyed by the framework, otherwise the reuse of the template
+					(e.g. within OPA test sequence) leads to duplicate ID errors-->
 				<headerToolbar>
 					<Toolbar id="SalesOrderLineItemsTitleToolbar">
 						<Title id="SalesOrderLineItemsTitle"
@@ -389,11 +393,11 @@
 					<demo:ValueHelp value="{SOITEM_2_PRODUCT/TypeCode}"
 						enabled="{= %{ItemPosition} !== ''}"/>
 					<Text text="{SOITEM_2_PRODUCT/SupplierName}"/>
-					<Input value="{Quantity}" textAlign="Right"/>
+					<Input id="lineItemQuantity" value="{Quantity}" textAlign="Right"/>
 					<Input value="{QuantityUnit}"/>
 					<Text text="{GrossAmount}"/>
 					<Text text="{DeliveryDate}"/>
-					<Input value="{Note}"/>
+					<Input id="lineItemNote" value="{Note}"/>
 				</ColumnListItem>
 			</Table>
 		</VBox>
