@@ -73,13 +73,19 @@ sap.ui.define([
 				this.MENU_LINKS_MAP = {
 					"Legal": "https://www.sap.com/corporate/en/legal/impressum.html",
 					"Privacy": "https://www.sap.com/corporate/en/legal/privacy.html",
-					"Terms of Use": this.getModel("versionData").getProperty("/isOpenUI5") ?
-					"TermsOfUse.txt" : "https://www.sap.com/corporate/en/legal/terms-of-use.html",
+					"Terms of Use": "https://www.sap.com/corporate/en/legal/terms-of-use.html",
 					"Copyright": "https://www.sap.com/corporate/en/legal/copyright.html",
 					"Trademark": "https://www.sap.com/corporate/en/legal/trademark.html",
 					"Disclaimer": "https://help.sap.com/viewer/disclaimer",
 					"License": "LICENSE.txt"
 				};
+
+				this.getOwnerComponent().loadVersionInfo().then(function () {
+					if (this.getModel("versionData").getProperty("/isOpenUI5")) {
+						this.MENU_LINKS_MAP["Terms of Use"] = "TermsOfUse.txt";
+					}
+				}.bind(this));
+
 				this.FEEDBACK_SERVICE_URL = "https://feedback-sapuisofiaprod.hana.ondemand.com:443/api/v2/apps/5bb7d7ff-bab9-477a-a4c7-309fa84dc652/posts";
 				this.OLD_DOC_LINK_SUFFIX = ".html";
 
