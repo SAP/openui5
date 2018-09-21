@@ -1122,8 +1122,7 @@ sap.ui.define([
 					}
 
 					if (typeof vResult === "string"
-						&& !(bSplitSegment && sSegment[0] === "@"
-							&& (sSegment === "@sapui.name" || sSegment[1] === "@"))
+						&& !(bSplitSegment && (sSegment === "@sapui.name" || sSegment[1] === "@"))
 						// indirection: treat string content as a meta model path unless followed by
 						// a computed annotation
 						&& !steps(vResult, aSegments.slice(0, i))) {
