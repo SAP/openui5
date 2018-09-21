@@ -1421,6 +1421,77 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	[{
+		error : {
+			details : [
+				{target : "_it"},
+				{target : "_it/Name"},
+				{target : "bar"},
+				{target : null},
+				{}
+			],
+			target : "foo"
+		},
+		reported : {
+			details : [
+				{target : ""},
+				{target : "Name"},
+				{},
+				{},
+				{}
+			]
+		}
+	}, {
+		error : {target : "_it"},
+		reported : {target : ""}
+	}, {
+		error : {target : "_it/Name"},
+		reported : {target : "Name"}
+	}, {
+		error : {},
+		reported : {}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("_execute: bound operation failure with messages #" + i, function (assert) {
+			var oParentContext = Context.create(this.oModel, {/*binding*/}, "/TEAMS('42')"),
+				oBinding = this.bindContext("name.space.Operation(...)", oParentContext,
+					{$$groupId : "groupId"}),
+				oBindingMock = this.mock(oBinding),
+				oError = new Error("Operation failed"),
+				oGroupLock = new _GroupLock("groupId"),
+				oOperationMetadata = {
+					$IsBound : true,
+					$Parameter : [{
+						$Name : "_it"
+					}]
+				};
+
+			oError.error = oFixture.error;
+			this.mock(this.oModel.getMetaModel()).expects("fetchObject")
+				.withExactArgs("/TEAMS/name.space.Operation/@$ui5.overload")
+				.returns(SyncPromise.resolve([oOperationMetadata]));
+			oBindingMock.expects("createCacheAndRequest")
+				.withExactArgs(sinon.match.same(oGroupLock),
+					"/TEAMS('42')/name.space.Operation(...)",
+					sinon.match.same(oOperationMetadata), sinon.match.func)
+				.rejects(oError);
+			this.mock(this.oModel).expects("reportError")
+				.withExactArgs("Failed to execute /TEAMS('42')/name.space.Operation(...)",
+					sClassName, sinon.match.same(oError))
+				.callsFake(function (sLogMessage, sReportingClassName, oError) {
+					assert.strictEqual(oError.resourcePath, "TEAMS('42')");
+					assert.deepEqual(oError.error, oFixture.reported);
+				});
+
+			// code under test
+			return oBinding._execute(oGroupLock).then(function () {
+				assert.ok(false);
+			}, function (oError0) {
+				assert.strictEqual(oError0, oError);
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("createCacheAndRequest: FunctionImport", function (assert) {
 		var bAutoExpandSelect = {/*false, true*/},
 			oBinding = this.bindContext("n/a(...)"),
