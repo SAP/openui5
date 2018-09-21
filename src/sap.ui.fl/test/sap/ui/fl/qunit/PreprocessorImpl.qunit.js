@@ -29,6 +29,8 @@ function(
 
 	QUnit.module("sap.ui.fl.PreprocessorImpl", {
 		beforeEach: function() {
+			this.sControllerName = "ui.s2p.mm.purchorder.approve.view.S2";
+			this.oExtensionProvider = new PreprocessorImpl();
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -38,15 +40,42 @@ function(
 			controls = [];
 		}
 	}, function() {
-		QUnit.test("convert coding extensions back and forth", function(assert) {
-			var done = assert.async();
-
-			var sControllerName = "ui.s2p.mm.purchorder.approve.view.S2";
+		QUnit.test("When an sync view is processed", function(assert) {
 			sandbox.stub(Utils, "getAppComponentClassNameForComponent").returns("<sap-app-id> or <component name>");
 
-			// encode
-			var sCodeContent = "sap.ui.define(['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) { \n'use strict'; \nreturn ControllerExtension.extend('ui.s2p.mm.purchorder.approve.Extension1', {extHookOnInit:function(){ \n// Place your hook implementation code here \nalert(\"S2controllerhookextension-oninit\"); \n}, \nonInit: function() {}});});";
-			var sAsciiCodeContent = sap.ui.fl.Utils.stringToAscii(sCodeContent);
+			//check sync case
+			var spy = sandbox.spy(Log, "warning");
+			var aEmptyCodeExtensionSync = this.oExtensionProvider.getControllerExtensions(this.sControllerName, "<component ID>", false);
+			//should return empty array and log warning
+			assert.ok(Array.isArray(aEmptyCodeExtensionSync), "Then an array is returned");
+			assert.equal(aEmptyCodeExtensionSync.length, 0, "which is empty");
+			assert.equal(spy.callCount, 1, "and a warning log is written");
+			assert.equal(spy.getCall(0).args[0], "Synchronous extensions are not supported by sap.ui.fl.PreprocessorImpl",
+				"with the correct message.");
+		});
+
+		QUnit.test("When no component id is provided", function(assert) {
+			var spy = sandbox.spy(Log, "warning");
+
+			var oEmptyCodeExtensionPromise = this.oExtensionProvider.getControllerExtensions(this.sControllerName, "", true);
+
+			return oEmptyCodeExtensionPromise.then(function(aEmpty) {
+				assert.ok(Array.isArray(aEmpty), "Then an array is returned");
+				assert.equal(aEmpty.length, 0, "which is empty");
+				assert.equal(spy.callCount, 1, "and a warning log is written");
+				assert.equal(spy.getCall(0).args[0], "No component ID for determining the anchor of the code extensions was passed.",
+					"with the correct message.");
+			});
+		});
+
+		QUnit.test("When a component id is provided and one code extension with two methods is present", function(assert) {
+			var sModuleName = "sap/ui/fl/qunit/PreprocessorImpl/1.0.0/codeExtensions/firstCodeExt";
+			sap.ui.predefine(sModuleName,['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) {
+				return ControllerExtension.extend('ui.s2p.mm.purchorder.approve.Extension1', {
+					extHookOnInit:function(){},
+					onInit: function() {}
+				});
+			});
 			var oChange = {
 				fileName: "id_1436877480596_108",
 				namespace: "ui.s2p.mm.purchorder.approve.Component",
@@ -54,13 +83,13 @@ function(
 				layer: "CUSTOMER",
 				creation: "20150720131919",
 				changeType: "codeExt",
+				moduleName: sModuleName,
 				reference: "<sap-app-id> or <component name>",
 				content: {
-					code: sAsciiCodeContent,
 					codeRef: "myCodeRef.js"
 				},
 				selector: {
-					controllerName: sControllerName
+					controllerName: this.sControllerName
 				},
 				conditions: {},
 				support: {
@@ -76,7 +105,7 @@ function(
 			};
 
 			var oChangesFillingCachePromise = new Promise(
-				function (resolve, reject) {
+				function (resolve) {
 					resolve(oFileContent);
 				}
 			);
@@ -113,34 +142,16 @@ function(
 			};
 			sandbox.stub(Cache, "getChangesFillingCache").returns(oChangesFillingCachePromise);
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
-			sandbox.stub(Utils, "getComponentName").returns("ui.s2p.mm.purchorder.approve.Component");
+			sandbox.stub(Utils, "getComponentName").returns(this.sControllerName);
 
-			// decode
-			var oExtensionProvider = new PreprocessorImpl();
+			var oCodeExtensionsPromise = this.oExtensionProvider.getControllerExtensions(this.sControllerName, "<component ID>", true);
 
-			//check sync case
-			var spy = sandbox.spy(Log, "warning");
-			var aEmptyCodeExtensionSync = oExtensionProvider.getControllerExtensions(sControllerName, "<component ID>", false);
-			//should return empty array and log warning
-			assert.ok(Array.isArray(aEmptyCodeExtensionSync), "Calling PreprocessorImpl in sync mode should return an array");
-			assert.equal(aEmptyCodeExtensionSync.length, 0, "Calling PreprocessorImpl in sync mode should return an empty array");
-			assert.equal(spy.callCount, 1, "Warning should be logged in sync case");
-
-			//check for error case, no component id
-			var oEmptyCodeExtensionPromise = oExtensionProvider.getControllerExtensions(sControllerName, "", true);
-			var oCodeExtensionsPromise = oExtensionProvider.getControllerExtensions(sControllerName, "<component ID>", true);
-
-			oEmptyCodeExtensionPromise.then(function(aEmpty) {
-				assert.equal(aEmpty.length, 0, "empty code extension returned empty array in promise");
-				assert.equal(spy.callCount, 2, "Warning should be logged in case no componentId was passed");
-				spy.restore();
-				oCodeExtensionsPromise.then(function (aCodeExtensions) {
-					assert.equal(aCodeExtensions.length, 1, "one code extension should be returned");
-					assert.equal(aCodeExtensions[0].getMetadata().getPublicMethods()[0], "extHookOnInit", "extHookOnInit is in the code extension");
-					done();
-				});
+			return oCodeExtensionsPromise.then(function (aCodeExtensions) {
+				assert.equal(aCodeExtensions.length, 1, "one code extension should be returned");
+				assert.equal(aCodeExtensions[0].getMetadata().getPublicMethods().length, 2, "then two methods were extended");
+				assert.equal(aCodeExtensions[0].getMetadata().getPublicMethods()[0], "extHookOnInit", "of which one is extHookOnInit");
+				assert.equal(aCodeExtensions[0].getMetadata().getPublicMethods()[1], "onInit", "and the other is onInit");
 			});
-
 		});
 
 		QUnit.test("apply multiple changes on different controllers", function (assert) {
@@ -148,13 +159,13 @@ function(
 			assert.expect( 2 );
 			var done1 = assert.async();
 			var done2 = assert.async();
+
 			sandbox.stub(Utils, "getAppComponentClassNameForComponent").returns("<sap-app-id> or <component name>");
 			sandbox.stub(Utils, "isApplication").returns(true);
 			ManagedObject._sOwnerId = "<component name>";
 
 			// perparation of the changes
-			var sCodeContent1 = "sap.ui.define(['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) { \n'use strict'; \nreturn ControllerExtension.extend('ui.s2p.mm.purchorder.approve.Extension1', {\noverride:{\nonInit: function() {\nthis.base.getView().callDone();\n}\n}\n});\n});";
-			var sAsciiCodeContent1 = sap.ui.fl.Utils.stringToAscii(sCodeContent1);
+			var sModuleName1 = "sap/ui/fl/qunit/PreprocessorImpl/1.0.0/codeExtensions/secondCodeExt";
 			var oCodingChange1 = {
 				fileName: "id_1436877480596_108",
 				namespace: "ui.s2p.mm.purchorder.approve.Component",
@@ -163,8 +174,8 @@ function(
 				creation: "20150720131919",
 				changeType: "codeExt",
 				reference: "<sap-app-id> or <component name>",
+				moduleName: sModuleName1,
 				content: {
-					code: sAsciiCodeContent1,
 					codeRef: "myCodeRef1.js"
 				},
 				selector: {
@@ -176,9 +187,26 @@ function(
 					user: "VIOL"
 				}
 			};
+			sap.ui.predefine(sModuleName1,['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) {
+				return ControllerExtension.extend('ui.s2p.mm.purchorder.approve.Extension2', {
+					override: {
+						onInit: function () {
+							this.base.getView().callDone();
+						}
+					}
+				});
+			});
 
-			var sCodeContent2 = "sap.ui.define(['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) { \n'use strict'; \nreturn ControllerExtension.extend('ui.s2p.mm.purchorder.approve.Extension2', {\noverride:{\nonInit: function() {\nthis.base.getView().callDone();\n}\n}\n});\n});";
-			var sAsciiCodeContent2 = sap.ui.fl.Utils.stringToAscii(sCodeContent2);
+			var sModuleName2 = "sap/ui/fl/qunit/PreprocessorImpl/1.0.0/codeExtensions/thirdCodeExt";
+			sap.ui.predefine(sModuleName2,['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) {
+				return ControllerExtension.extend('ui.s2p.mm.purchorder.approve.Extension3', {
+					override: {
+						onInit: function () {
+							this.base.getView().callDone();
+						}
+					}
+				});
+			});
 			var oCodingChange2 = {
 				fileName: "id_1436877480596_109",
 				namespace: "ui.s2p.mm.purchorder.approve.Component",
@@ -187,8 +215,8 @@ function(
 				creation: "20150720131919",
 				changeType: "codeExt",
 				reference: "<sap-app-id> or <component name>",
+				moduleName: sModuleName2,
 				content: {
-					code: sAsciiCodeContent2,
 					codeRef: "myCodeRef2.js"
 				},
 				selector: {
@@ -218,7 +246,7 @@ function(
 			};
 
 			var oChangesFillingCachePromise = new Promise(
-				function (resolve, reject) {
+				function (resolve) {
 					resolve(oFileContent);
 				}
 			);
@@ -226,18 +254,18 @@ function(
 
 			// view, controller and component definition
 
-			var oComp = sap.ui.component({
+			var oComponent = sap.ui.component({
 				name: "sap.ui.fl.PreprocessorImpl.testResources"
 			});
-			sandbox.stub(sap.ui, "component").returns(oComp);
-			sandbox.stub(Component, "get").returns(oComp);
+			sandbox.stub(sap.ui, "component").returns(oComponent);
+			sandbox.stub(Component, "get").returns(oComponent);
 
 			var view1 = sap.ui.view({
 				viewName: "sap.ui.fl.PreprocessorImpl.testResources.view1",
 				type: sap.ui.core.mvc.ViewType.XML,
 				async: true,
 				viewData: {
-					component: oComp
+					component: oComponent
 				}
 			});
 			view1.callDone = function () {
@@ -250,7 +278,7 @@ function(
 				type: sap.ui.core.mvc.ViewType.XML,
 				async: true,
 				viewData: {
-					component: oComp
+					component: oComponent
 				}
 			});
 			view2.callDone = function () {
@@ -259,7 +287,7 @@ function(
 			};
 
 			var oCompCont = new ComponentContainer({
-				component: oComp
+				component: oComponent
 			});
 			oCompCont.placeAt("qunit-fixture");
 		});
