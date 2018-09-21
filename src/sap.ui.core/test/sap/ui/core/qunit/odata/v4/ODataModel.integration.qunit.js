@@ -136,6 +136,22 @@ sap.ui.define([
 		return oTest.createView(assert, sView, oModel);
 	}
 
+	/**
+	 * @param {function} fnCallback
+	 *   A callback function
+	 * @param {number} [iDelay=5]
+	 *   A delay in milliseconds
+	 * @returns {Promise}
+	 *   A promise which resolves with the result of the given callback after the given delay
+	 */
+	function resolveLater(fnCallback, iDelay) {
+		return new Promise(function (resolve) {
+			setTimeout(function () {
+				resolve(fnCallback());
+			}, iDelay || 5);
+		});
+	}
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataModel.integration", {
 		beforeEach : function () {
@@ -1119,9 +1135,9 @@ sap.ui.define([
 </Table>';
 
 		oError.error = {
-			"code": "CODE",
-			"message": "Could not read",
-			"target": "('42')/Name"
+			"code" : "CODE",
+			"message" : "Could not read",
+			"target" : "('42')/Name"
 		};
 		this.oLogMock.expects("error")
 			.withExactArgs("Failed to get contexts for " + sTeaBusi
@@ -1150,9 +1166,9 @@ sap.ui.define([
 </FlexBox>';
 
 		oError.error = {
-			"code": "CODE",
-			"message": "Could not read",
-			"target": "Name"
+			"code" : "CODE",
+			"message" : "Could not read",
+			"target" : "Name"
 		};
 		this.oLogMock.expects("error")
 			.withExactArgs("Failed to read path /EMPLOYEES('42')", sinon.match(oError.message),
@@ -1180,9 +1196,9 @@ sap.ui.define([
 			sView = '<Text id="text" text="{/EMPLOYEES(\'42\')/Name}" />';
 
 		oError.error = {
-			"code": "CODE",
-			"message": "Could not read",
-			"target": ""
+			"code" : "CODE",
+			"message" : "Could not read",
+			"target" : ""
 		};
 		this.oLogMock.expects("error")
 			.withExactArgs("Failed to read path /EMPLOYEES('42')/Name", sinon.match(oError.message),
@@ -7609,29 +7625,29 @@ sap.ui.define([
 				+ "UI5grand__SalesAmountSum),top(4))", {
 				"value" : [{
 						"UI5grand__SalesAmountSum" : 351,
-						"UI5grand__SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR",
+						"UI5grand__SalesAmountSum@Analytics.AggregatedAmountCurrency" : "EUR",
 						//TODO this should be used by auto type detection
 						"UI5grand__SalesAmountSum@odata.type" : "#Decimal"
 					}, {
 						"Region" : "Z",
 						"SalesNumber" : 1,
 						"SalesAmountSum" : 1,
-						"SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR"
+						"SalesAmountSum@Analytics.AggregatedAmountCurrency" : "EUR"
 					}, {
 						"Region" : "Y",
 						"SalesNumber" : 2,
 						"SalesAmountSum" : 2,
-						"SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR"
+						"SalesAmountSum@Analytics.AggregatedAmountCurrency" : "EUR"
 					}, {
 						"Region" : "X",
 						"SalesNumber" : 3,
 						"SalesAmountSum" : 3,
-						"SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR"
+						"SalesAmountSum@Analytics.AggregatedAmountCurrency" : "EUR"
 					}, {
 						"Region" : "W",
 						"SalesNumber" : 4,
 						"SalesAmountSum" : 4,
-						"SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR"
+						"SalesAmountSum@Analytics.AggregatedAmountCurrency" : "EUR"
 					}
 				]
 			})
@@ -9504,11 +9520,11 @@ sap.ui.define([
 					}
 				})
 				.expectMessages([{
-					"code": "1",
-					"message": "Enter a name",
-					"persistent": false,
-					"target": "/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES/-1/Name",
-					"type": "Warning"
+					"code" : "1",
+					"message" : "Enter a name",
+					"persistent" : false,
+					"target" : "/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES/-1/Name",
+					"type" : "Warning"
 				}]);
 
 			return Promise.all([
@@ -9793,19 +9809,19 @@ sap.ui.define([
 						"AGE" : 67,
 						"ROOM_ID" : "23"
 					}).expectMessages([{
-						"code": undefined,
-						"message": "500 Internal Server Error",
-						"persistent": true,
-						"target": "",
-						"technical": true,
-						"type": "Error"
+						"code" : undefined,
+						"message" : "500 Internal Server Error",
+						"persistent" : true,
+						"target" : "",
+						"technical" : true,
+						"type" : "Error"
 					}, {
-						"code": undefined,
-						"message": "HTTP request was not processed because $batch failed",
-						"persistent": true,
-						"target": "",
-						"technical": true,
-						"type": "Error"
+						"code" : undefined,
+						"message" : "HTTP request was not processed because $batch failed",
+						"persistent" : true,
+						"target" : "",
+						"technical" : true,
+						"type" : "Error"
 					}]);
 				that.oLogMock.expects("error").thrice(); // don't care about console here
 
@@ -9839,6 +9855,104 @@ sap.ui.define([
 					that.waitForChanges(assert)
 				]);
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: ODCB#execute waits until PATCHes are back and happens inside same $batch as retry
+	// (CPOUI5UISERVICESV3-1451)
+	QUnit.test("CPOUI5UISERVICESV3-1451: ODCB#execute after all PATCHes", function (assert) {
+		var oModel = createTeaBusiModel({updateGroupId : "$auto"}),
+			fnReject,
+			oRoomIdBinding,
+			sView = '\
+<FlexBox binding="{/EMPLOYEES(\'3\')}">\
+	<Text id="age" text="{AGE}" />\
+	<Text id="roomId" text="{ROOM_ID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('3')", {
+				"@odata.etag" : "ETag0",
+				"ID" : "3",
+				"AGE" : 66,
+				"ROOM_ID" : "2"
+			})
+			.expectChange("age", "66")
+			.expectChange("roomId", "2");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oRoomIdBinding = that.oView.byId("roomId").getBinding("text");
+
+			that.expectChange("age", "67")
+				.expectChange("roomId", "42")
+				.expectRequest({
+					method : "PATCH",
+					url : "EMPLOYEES('3')",
+					headers : {"If-Match" : "ETag0"},
+					payload : {
+						"AGE" : 67,
+						"ROOM_ID" : "42"
+					}
+				}, new Promise(function (resolve, reject) {
+					fnReject = reject;
+				}));
+
+			that.oView.byId("age").getBinding("text").setValue(67); // Happy Birthday!
+			oRoomIdBinding.setValue("42");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
+				oPromise;
+
+			function reject() {
+				that.expectMessages([
+					"500 Internal Server Error",
+					"HTTP request was not processed because $batch failed"
+				].map(function (sMessage) {
+					return {
+						"code" : undefined,
+						"message" : sMessage,
+						"persistent" : true,
+						"target" : "",
+						"technical" : true,
+						"type" : "Error"
+					};
+				}));
+				that.oLogMock.expects("error").thrice(); // don't care about console here
+
+				fnReject(new Error("500 Internal Server Error"));
+			}
+
+			that.expectRequest({
+					batchNo : 3,
+					method : "PATCH",
+					url : "EMPLOYEES('3')",
+					headers : {"If-Match" : "ETag0"},
+					payload : {
+						"AGE" : 67,
+						"ROOM_ID" : "42"
+					}
+				}, {/* don't care */})
+				.expectRequest({
+					batchNo : 3,
+					method : "POST",
+					headers : {"If-Match" : "ETag0"},
+					url : "EMPLOYEES('3')/" + sAction,
+					payload : {"TeamID" : "23"}
+				}, {/* don't care */});
+
+			// bound action waits for PATCHes and triggers retry
+			oPromise = that.oModel.bindContext(sAction + "(...)", oRoomIdBinding.getContext())
+				.setParameter("TeamID", "23")
+				.execute("$auto");
+
+			return Promise.all([
+				oPromise,
+				resolveLater(reject),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 });
