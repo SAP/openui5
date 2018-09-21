@@ -178,4 +178,11 @@ sap.ui.define([
 
 		bActive = false;
 	});
+
+	QUnit.test("isEnrichedWith", function(assert) {
+		assert.strictEqual(TableExtension.isEnrichedWith(), false, "Returned false: No table passed");
+		assert.strictEqual(TableExtension.isEnrichedWith(oStandardTable), false, "Returned false: No extension name passed");
+		assert.strictEqual(TableExtension.isEnrichedWith(oStandardTable, "wrong name"), false, "Returned false: No Extension with this name exists");
+		assert.strictEqual(TableExtension.isEnrichedWith(oStandardTable, "sap.ui.table.TableScrollExtension"), true, "Enriched with ScrollExtension");
+	});
 });

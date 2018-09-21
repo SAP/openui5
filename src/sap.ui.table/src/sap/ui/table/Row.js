@@ -80,14 +80,14 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', "s
 	 * @private
 	 */
 	Row.prototype.addStyleClass = function(sStyleClass) {
-		jQuery(this.getDomRefs(false, true)).addClass(sStyleClass);
+		this.getDomRefs(true).row.addClass(sStyleClass);
 	};
 
 	/**
 	 * @private
 	 */
 	Row.prototype.removeStyleClass = function(sStyleClass) {
-		jQuery(this.getDomRefs(false, true)).removeClass(sStyleClass);
+		this.getDomRefs(true).row.removeClass(sStyleClass);
 	};
 
 	/**
@@ -261,8 +261,7 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', "s
 		}
 
 		if ($DomRefs.row) {
-			// update visual selection state
-			$DomRefs.row.toggleClass("sapUiTableRowSel", bIsSelected);
+			this._setSelected(bIsSelected);
 			oTable._getAccExtension().updateAriaStateOfRow(this, $DomRefs, bIsSelected);
 		}
 	};
@@ -473,6 +472,50 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', "s
 		removeForbiddenAttributes(oGhostElement);
 
 		return oGhostElement;
+	};
+
+	/**
+	 * Sets the visual selected state of the row.
+	 *
+	 * @param {boolean} bSelected Whether the row should be selected.
+	 * @private
+	 */
+	Row.prototype._setSelected = function(bSelected) {
+		var oTable = this.getParent();
+
+		if (bSelected) {
+			this.addStyleClass("sapUiTableRowSel");
+		} else {
+			this.removeStyleClass("sapUiTableRowSel");
+		}
+
+		if (oTable) {
+			TableUtils.dynamicCall(oTable._getSyncExtension, function(oSyncExtension) {
+				oSyncExtension.syncRowSelection(oTable.indexOfRow(this), bSelected);
+			}, this);
+		}
+	};
+
+	/**
+	 * Sets the visual hovered state of the row.
+	 *
+	 * @param {boolean} bHovered Whether the row should be hovered.
+	 * @private
+	 */
+	Row.prototype._setHovered = function(bHovered) {
+		var oTable = this.getParent();
+
+		if (bHovered) {
+			this.addStyleClass("sapUiTableRowHvr");
+		} else {
+			this.removeStyleClass("sapUiTableRowHvr");
+		}
+
+		if (oTable) {
+			TableUtils.dynamicCall(oTable._getSyncExtension, function(oSyncExtension) {
+				oSyncExtension.syncRowHover(oTable.indexOfRow(this), bHovered);
+			}, this);
+		}
 	};
 
 	return Row;

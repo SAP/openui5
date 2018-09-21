@@ -75,6 +75,8 @@ sap.ui.define(function() {
 					libs: ["sap.ui.table", "sap.m"]
 				}
 			},
+			"Row": {
+			},
 			"RowAction": {
 			},
 			"RowSettings": {
@@ -162,6 +164,9 @@ sap.ui.define(function() {
 				group: "Extensions"
 			},
 			"TableDragAndDropExtension": {
+				group: "Extensions"
+			},
+			"TableSyncExtension": {
 				group: "Extensions"
 			},
 

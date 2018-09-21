@@ -1006,6 +1006,15 @@ sap.ui.define([
 			aRowHeights.push(Math.max(nRowHeight, iDefaultRowHeight));
 		}
 
+		if (aRowHeights.length > 0 && !bHeader) {
+			TableUtils.dynamicCall(this._getSyncExtension, function(oSyncExtension) {
+				var aModifiedHeights = oSyncExtension.syncRowHeights(aRowHeights.slice());
+				if (aModifiedHeights && aModifiedHeights.length === aRowHeights.length) {
+					aRowHeights = aModifiedHeights.slice();
+				}
+			});
+		}
+
 		return aRowHeights;
 	};
 
@@ -1183,11 +1192,12 @@ sap.ui.define([
 		}
 
 		if (iFixedHeaderWidthSum > 0) {
+			var oScrollExtension = this._getScrollExtension();
 			var iUsedHorizontalTableSpace = oSizes.tableRowHdrScrWidth;
 
-			var oVsb = this.getDomRef("vsb");
-			if (oVsb) {
-				iUsedHorizontalTableSpace += oVsb.offsetWidth;
+			var oVSb = oScrollExtension.getVerticalScrollbar();
+			if (oVSb && !oScrollExtension.isVerticalScrollbarExternal()) {
+				iUsedHorizontalTableSpace += oVSb.offsetWidth;
 			}
 
 			if (TableUtils.hasRowActions(this)) {
@@ -1244,13 +1254,10 @@ sap.ui.define([
 		var aFixedRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlFixed > tbody > tr" + cssClass);
 		var aScrollRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlScroll > tbody > tr" + cssClass);
 
-		var a = [];
-
-		a.forEach.call(aRowHeaderItems, updateRow);
-		a.forEach.call(aRowActionItems, updateRow);
-		a.forEach.call(aFixedRowItems, updateRow);
-		a.forEach.call(aScrollRowItems, updateRow);
-
+		Array.prototype.forEach.call(aRowHeaderItems, updateRow);
+		Array.prototype.forEach.call(aRowActionItems, updateRow);
+		Array.prototype.forEach.call(aFixedRowItems, updateRow);
+		Array.prototype.forEach.call(aScrollRowItems, updateRow);
 	};
 
 	/**
@@ -1526,6 +1533,14 @@ sap.ui.define([
 				this.$().height("0px");
 			}
 		}
+
+		TableUtils.dynamicCall(this._getSyncExtension, function(oSyncExtension) {
+			oSyncExtension.syncLayout({
+				top: this.getDomRef("sapUiTableCnt").offsetTop,
+				headerHeight: this.getDomRef().querySelector(".sapUiTableColHdrCnt").getBoundingClientRect().height,
+				contentHeight: this.getDomRef("tableCCnt").getBoundingClientRect().height
+			});
+		}, this);
 
 		var oTableSizes = this._collectTableSizes();
 		var oScrollExtension = this._getScrollExtension();
@@ -1956,6 +1971,11 @@ sap.ui.define([
 		}
 		this.setProperty("visibleRowCount", iVisibleRowCount);
 		this._setRowContentHeight(iVisibleRowCount * this._getDefaultRowHeight());
+
+		TableUtils.dynamicCall(this._getSyncExtension, function(oSyncExtension) {
+			oSyncExtension.syncRowCount(iVisibleRowCount);
+		});
+
 		return this;
 	};
 
@@ -3434,6 +3454,10 @@ sap.ui.define([
 			iNumberOfRows = iNumberOfRows + 1; // Create one additional row for partial row scrolling.
 		}
 
+		TableUtils.dynamicCall(this._getSyncExtension, function(oSyncExtension) {
+			oSyncExtension.syncRowCount(iNumberOfRows);
+		}, this);
+
 		if (this._bRowAggregationInvalid && aRows.length > 0) {
 			this.destroyAggregation("rows", true);
 			aRows = [];
@@ -4059,6 +4083,26 @@ sap.ui.define([
 		 */
 		this.fireEvent("_rowsUpdated", {
 			reason: sReason
+		});
+	};
+
+	/**
+	 * Enriches the table with synchronization capabilities exposed through an interface of the SyncExtension applied to the table.
+	 * <b>Do not call this method more than once on the same table!</b>
+	 *
+	 * @see sap.ui.table.TableSyncExtension#getInterface
+	 * @returns {Promise} Returns a promise that resolves with the synchronization interface, and rejects with an error object.
+	 * @private
+	 * @sap-restricted sap.gantt
+	 */
+	Table.prototype._enableSynchronization = function() {
+		var that = this;
+		return new Promise(function(resolve, reject) {
+			sap.ui.require(["sap/ui/table/TableSyncExtension"], function(TableSyncExtension) {
+				resolve(TableExtension.enrich(that, TableSyncExtension).getInterface());
+			}, function(oError) {
+				reject(oError);
+			});
 		});
 	};
 
