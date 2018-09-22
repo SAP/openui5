@@ -1,16 +1,16 @@
-/*global jQuery */
-jQuery(function() {
+sap.ui.require(
+	[
+		"sap/m/Panel",
+		"sap/m/Text"
+	], function(Panel, Text) {
 	"use strict";
 
-	jQuery.sap.require("sap/m/Panel");
-	jQuery.sap.require("sap/m/Text");
-
-	var oPanel = new sap.m.Panel({
+	var oPanel = new Panel({
 		headerText: "README",
 		expandable: true,
 		expanded: true
 	});
-	var oText = new sap.m.Text();
+	var oText = new Text();
 
 	oText.setText("******Definition******\n" +
 		"	The function iStartMyAppInAFrame allows starting an app by using a (index).html\n" +

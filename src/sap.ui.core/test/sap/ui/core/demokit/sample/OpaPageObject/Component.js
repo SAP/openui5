@@ -16,6 +16,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					stretch : true,
 					files : [
 						"OpaPageObject.html",
+						"OpaPageObject.js",
 						"pageObjects/Intro.js",
 						"pageObjects/Overview.js",
 						"pageObjects/Common.js",

@@ -17,6 +17,7 @@ sap.ui.define([
 					stretch: true,
 					files: [
 						"iStartMyUIComponent.html",
+						"iStartMyUIComponent.js",
 						"applicationUnderTest/Component.js",
 						"applicationUnderTest/view/Main.view.xml",
 						"applicationUnderTest/controller/Main.controller.js"

@@ -16,6 +16,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					stretch : true,
 					files : [
 						"OpaAutoWaitParams.html",
+						"OpaAutoWaitParams.js",
 						"applicationUnderTest/index.html",
 						"applicationUnderTest/Component.js",
 						"applicationUnderTest/view/Main.view.xml",

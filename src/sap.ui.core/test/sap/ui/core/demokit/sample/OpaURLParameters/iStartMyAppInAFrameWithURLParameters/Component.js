@@ -17,6 +17,7 @@ sap.ui.define([
 					stretch: true,
 					files: [
 						"iStartMyAppInAFrameWithURLParameters.html",
+						"iStartMyAppInAFrameWithURLParameters.js",
 						"applicationUnderTest/index.html",
 						"applicationUnderTest/view/Main.view.xml",
 						"applicationUnderTest/controller/Main.controller.js"
