@@ -7,6 +7,22 @@ sap.ui.define([
 ], function (Opa5, opaTest, PropertyStrictEquals) {
 	"use strict";
 
+	var sSampleName = document.querySelector("[data-sample-component]").dataset.sampleComponent;
+
+	Opa5.extendConfig({
+		viewNamespace : sSampleName + ".",
+		arrangements : new Opa5({
+			iStartTheFormSample : function () {
+				return this.iStartMyUIComponent({
+					componentConfig: {
+						name: sSampleName
+					},
+					autoWait: true
+				});
+			}
+		})
+	});
+
 	QUnit.module("EditSave");
 
 	opaTest("Should go to the edit page", function(Given, When, Then) {
@@ -29,7 +45,7 @@ sap.ui.define([
 
 		// Assert
 		Then.theValuesShouldBePersisted().
-			and.iTeardownMyAppFrame();
+			and.iTeardownMyUIComponent();
 	});
 
 	QUnit.module("EditCancel");
@@ -54,7 +70,7 @@ sap.ui.define([
 
 		// Assert
 		Then.theValuesShouldNotBePersisted().
-			and.iTeardownMyAppFrame();
+			and.iTeardownMyUIComponent();
 	});
 
 	Opa5.extendConfig({
@@ -166,4 +182,4 @@ sap.ui.define([
 	});
 
 
-}, /* bExport= */ true);
+});
