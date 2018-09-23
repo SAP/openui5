@@ -2879,7 +2879,7 @@
 	 *   starts with a relative segment or if resolving relative segments would cross the root
 	 *   namespace
 	 * @public
-	 * @name sap.ui.require_toUrl
+	 * @name sap.ui.require.toUrl
 	 * @function
 	 */
 

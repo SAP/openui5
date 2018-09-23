@@ -1578,7 +1578,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @static
-		 * @deprecated since 1.58 use {@link sap.ui.require_toUrl} instead
+		 * @deprecated since 1.58 use {@link sap.ui.require.toUrl} instead
 		 */
 		jQuery.sap.getModulePath = function(sModuleName, sSuffix) {
 			return jQuery.sap.getResourcePath(ui5ToRJS(sModuleName), sSuffix);
@@ -1630,7 +1630,7 @@ sap.ui.define([
 		 * @param {string} sResourceName unified resource name of the resource
 		 * @returns {string} URL to load the resource from
 		 * @public
-		 * @deprecated since 1.58 use {@link sap.ui.require_toUrl} instead
+		 * @deprecated since 1.58 use {@link sap.ui.require.toUrl} instead
 		 */
 		jQuery.sap.getResourcePath = function(sResourceName, sSuffix) {
 			// if no suffix was given and if the name is not empty, try to guess the suffix from the last segment
