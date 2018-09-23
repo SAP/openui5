@@ -99,8 +99,6 @@ sap.ui.define([
 	 * Sets up the BusyIndicator HTML and the Popup instance.
 	 *
 	 * @private
-	 * @name sap.ui.core.BusyIndicator._init
-	 * @function
 	 */
 	BusyIndicator._init = function() {
 		// Create the graphics element
@@ -173,19 +171,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Displays the BusyIndicator and starts blocking all user input.
-	 * This only happens after some delay and if after that delay the
-	 * BusyIndicator.hide() has not yet been called in the meantime.
-	 * There is a certain default value for the delay, but that one can be
-	 * overridden.
+	 * Displays the <code>BusyIndicator</code> and starts blocking all user input.
+	 * This only happens after some delay, and if, after that delay, the <code>BusyIndicator.hide()</code>
+	 * has not yet been called in the meantime.
+	 *
+	 * There is a certain default value for the delay, which can be overridden.
 	 *
 	 * @public
-	 * @param {int} [iDelay] The delay in milliseconds before opening the
-	 *                       BusyIndicator. It is not opened if hide() is called
-	 *                       before end of the delay. If no delay (or no valid
-	 *                       delay) is given, the default value is used.
-	 * @name sap.ui.core.BusyIndicator.show
-	 * @function
+	 * @param {int} [iDelay=1000] The delay in milliseconds before opening the <code>BusyIndicator</code>;
+	 *                       It is not opened if <code>hide()</code> is called before the delay ends.
+	 *                       If no delay (or no valid delay) is given, a delay of 1000 milliseconds is used.
 	 */
 	BusyIndicator.show = function(iDelay) {
 		Log.debug("sap.ui.core.BusyIndicator.show (delay: " + iDelay + ") at " + new Date().getTime());
@@ -241,8 +236,6 @@ sap.ui.define([
 	 * hide() yet.
 	 *
 	 * @private
-	 * @name sap.ui.core.BusyIndicator._showNowIfRequested
-	 * @function
 	 */
 	BusyIndicator._showNowIfRequested = function() {
 		Log.debug("sap.ui.core.BusyIndicator._showNowIfRequested (bOpenRequested: " + this.bOpenRequested + ") at " + new Date().getTime());
@@ -268,11 +261,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes the BusyIndicator from the screen
+	 * Removes the BusyIndicator from the screen.
 	 *
 	 * @public
-	 * @name sap.ui.core.BusyIndicator.hide
-	 * @function
 	 */
 	BusyIndicator.hide = function() {
 		Log.debug("sap.ui.core.BusyIndicator.hide at " + new Date().getTime());
@@ -326,8 +317,6 @@ sap.ui.define([
 	 *            [oListener] Object on which to call the given function.
 	 * @return {sap.ui.core.BusyIndicator} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.BusyIndicator.attachOpen
-	 * @function
 	 */
 	BusyIndicator.attachOpen = function(fnFunction, oListener) {
 		this.attachEvent(BusyIndicator.M_EVENTS.Open, fnFunction, oListener);
@@ -342,8 +331,6 @@ sap.ui.define([
 	 *            oListener Object on which the given function had to be called.
 	 * @return {sap.ui.core.BusyIndicator} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.BusyIndicator.detachOpen
-	 * @function
 	 */
 	BusyIndicator.detachOpen = function(fnFunction, oListener) {
 		this.detachEvent(BusyIndicator.M_EVENTS.Open, fnFunction, oListener);
@@ -361,8 +348,6 @@ sap.ui.define([
 	 *            [oListener] Object on which to call the given function.
 	 * @return {sap.ui.core.BusyIndicator} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.BusyIndicator.attachClose
-	 * @function
 	 */
 	BusyIndicator.attachClose = function(fnFunction, oListener) {
 		this.attachEvent(BusyIndicator.M_EVENTS.Close, fnFunction, oListener);
@@ -378,8 +363,6 @@ sap.ui.define([
 	 *            oListener Object on which the given function had to be called.
 	 * @return {sap.ui.core.BusyIndicator} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.BusyIndicator.detachClose
-	 * @function
 	 */
 	BusyIndicator.detachClose = function(fnFunction, oListener) {
 		this.detachEvent(BusyIndicator.M_EVENTS.Close, fnFunction, oListener);

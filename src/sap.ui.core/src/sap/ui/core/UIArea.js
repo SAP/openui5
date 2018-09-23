@@ -149,20 +149,39 @@ sap.ui.define([
 	/**
 	 * @class An area in a page that hosts a tree of UI elements.
 	 *
-	 * Provides means for event-handling, rerendering, etc.
+	 * <code>UIArea</code>s are fully managed by the UI5 {@link sap.ui.core.Core Core}. They cannot be created
+	 * by the application but are implicitly created by the Core when controls are placed via
+	 * {@link sap.ui.core.Control#placeAt Control#placeAt} at a new DOM element for which no <code>UIArea</code>
+	 * exists yet.
 	 *
-	 * Special aggregation "dependents" is connected to the lifecycle management and databinding,
-	 * but not rendered automatically and can be used for popups or other dependent controls. This allows
-	 * definition of popup controls in declarative views and enables propagation of model and context
-	 * information to them.
+	 * <code>UIArea</code>s are essential for the rendering of controls. Controls get rendered only when they are
+	 * directly or indirectly contained in the <code>content</code> aggregation of a <code>UIArea</code>.
+	 * <code>Control#placeAt</code> ensures that there is a <code>UIArea</code> with the given ID and adds
+	 * the control to the <code>content</code> aggregation of this <code>UIArea</code>. Whenever controls become
+	 * invalidated, the corresponding <code>UIArea</code> remembers this and takes care of the re-rendering of
+	 * the control.
+	 *
+	 * Additionally, <code>UIArea</code>s play an important role in the event handling of controls. They register for
+	 * a standard set of browser events. For each incoming event, they identify the control to which the target of
+	 * the event belongs to and dispatch the event to that control. This dispatching reduces the number of event
+	 * handlers in a page.
+	 *
+	 * <code>UIArea</code>s also act as a data binding root for their contained controls. Whenever a model is attached
+	 * to or detached from the Core, this change is propagated to all <code>UIAreas</code> which in turn propagate
+	 * it further down to their aggregated children, etc.
+	 *
+	 * The special aggregation named <code>dependents</code> also participates in the databinding, but its content
+	 * is not rendered by the <code>UIArea</code>. It can be used for popups or similar controls that are not contained
+	 * in the normal control tree, but nevertheless should receive model or binding context updates.
 	 *
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
 	 * @version ${version}
 	 * @param {sap.ui.core.Core} oCore internal API of the <core>Core</code> that manages this UIArea
-	 * @param {object} [oRootNode] reference to the Dom Node that should be 'hosting' the UI Area.
+	 * @param {object} [oRootNode] reference to the DOM element that should be 'hosting' the UI Area.
 	 * @public
 	 * @alias sap.ui.core.UIArea
+	 * @hideconstructor
 	 */
 	var UIArea = ManagedObject.extend("sap.ui.core.UIArea", {
 
@@ -205,8 +224,9 @@ sap.ui.define([
 				 * Content that is displayed in the UIArea.
 				 */
 				content : {name : "content", type : "sap.ui.core.Control", multiple : true, singularName : "content"},
+
 				/**
-				 * Dependent objects whose lifecycle is bound to the UIarea but which are not automatically rendered by the UIArea.
+				 * Dependent objects whose lifecycle is bound to the UIArea but which are not automatically rendered by the UIArea.
 				 */
 				dependents : {name : "dependents", type : "sap.ui.core.Control", multiple : true}
 			}
@@ -441,7 +461,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the Core's event provider as new eventing parent to enable control event bubbling to the core to ensure compatibility with the core validation events.
+	 * Returns the Core's event provider as new eventing parent to enable control event bubbling to the core
+	 * to ensure compatibility with the core validation events.
 	 *
 	 * @return {sap.ui.base.EventProvider} the parent event provider
 	 * @protected

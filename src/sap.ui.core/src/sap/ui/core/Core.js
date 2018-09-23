@@ -2498,7 +2498,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a new sap.ui.core.UIArea.
+	 * Creates a new {@link sap.ui.core.UIArea UIArea}.
 	 *
 	 * @param {string|Element} oDomRef a DOM Element or ID string of the UIArea
 	 * @return {sap.ui.core.UIArea} a new UIArea
@@ -2553,11 +2553,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a UIArea if the given ID/Element belongs to one.
+	 * Returns the {@link sap.ui.core.UIArea UIArea} with the given ID or that belongs to the given DOM element.
 	 *
 	 * @public
-	 * @param {string|Element} o a DOM Element or ID string of the UIArea
-	 * @return {sap.ui.core.UIArea} a UIArea with a given ID or DOM Element.
+	 * @param {string|Element} o DOM element or ID of the UIArea
+	 * @return {sap.ui.core.UIArea} UIArea with the given ID or DOM element or <code>null</code> or <code>undefined</code>.
 	 */
 	Core.prototype.getUIArea = function(o) {
 		assert(typeof o === "string" || typeof o === "object", "o must be a string or object");

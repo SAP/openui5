@@ -807,8 +807,9 @@ sap.ui.define([
 	/**
 	 * Set the maximum number of entries which are used for list bindings.
 	 *
-	 * Default is 100.
-	 * @param {int} iSizeLimit collection size limit
+	 * The default size limit for models is 100.
+	 *
+	 * @param {int} iSizeLimit Collection size limit
 	 * @public
 	 */
 	Model.prototype.setSizeLimit = function(iSizeLimit) {
