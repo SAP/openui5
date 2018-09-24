@@ -5,9 +5,13 @@ sap.ui.define([
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/Column",
 	"sap/ui/table/TableUtils",
-	"sap/ui/model/json/JSONModel"
-], function(qutils, TreeTable, Column, TableUtils, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/table/library"
+], function(qutils, TreeTable, Column, TableUtils, JSONModel, library) {
 	"use strict";
+
+	// Shortcuts
+	var SelectionMode = library.SelectionMode;
 
 	function getData() {
 		return {
@@ -598,5 +602,27 @@ sap.ui.define([
 				done();
 			});
 		}, 0);
+	});
+
+	QUnit.module("Selection", {
+		beforeEach: function() {
+			this.table = createTable();
+		},
+		afterEach: function() {
+			destroyTable(this.table);
+		}
+	});
+
+	QUnit.test("SelectionMode = None", function(assert) {
+		this.table.setSelectionMode(SelectionMode.None);
+
+		this.table.setSelectedIndex(1);
+		assert.deepEqual(this.table.getSelectedIndices(), [], "setSelectedIndex does not select in SelectionMode=\"None\"");
+
+		this.table.setSelectionInterval(1, 1);
+		assert.deepEqual(this.table.getSelectedIndices(), [], "setSelectionInterval does not select in SelectionMode=\"None\"");
+
+		this.table.addSelectionInterval(1, 1);
+		assert.deepEqual(this.table.getSelectedIndices(), [], "addSelectionInterval does not select in SelectionMode=\"None\"");
 	});
 });
