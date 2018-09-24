@@ -4,35 +4,9 @@
 
 // Provides control sap.m.P13nDialog.
 sap.ui.define([
-    './Dialog',
-    './library',
-    'sap/ui/core/EnabledPropagator',
-    './DialogRenderer',
-    'sap/ui/core/library',
-    'sap/ui/Device',
-    './Bar',
-    './Button',
-    './Title',
-    'sap/m/OverflowToolbarLayoutData',
-    'sap/ui/base/ManagedObjectObserver',
-    "sap/ui/thirdparty/jquery",
-    "sap/base/Log"
-], function(
-    Dialog,
-    library,
-    EnabledPropagator,
-    DialogRenderer,
-    coreLibrary,
-    Device,
-    Bar,
-    Button,
-    Title,
-    OverflowToolbarLayoutData,
-    ManagedObjectObserver,
-    jQuery,
-    Log
-) {
-    "use strict";
+	'./Dialog', './library', 'sap/ui/core/EnabledPropagator', './DialogRenderer', 'sap/ui/core/library', 'sap/ui/Device', './Bar', './Button', './Title', 'sap/m/OverflowToolbarLayoutData', 'sap/ui/base/ManagedObjectObserver', "sap/ui/thirdparty/jquery", "sap/base/Log"
+], function(Dialog, library, EnabledPropagator, DialogRenderer, coreLibrary, Device, Bar, Button, Title, OverflowToolbarLayoutData, ManagedObjectObserver, jQuery, Log) {
+	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
 	var OverflowToolbarPriority = library.OverflowToolbarPriority;
@@ -574,6 +548,7 @@ sap.ui.define([
 	P13nDialog.prototype._createOKButton = function() {
 		var that = this;
 		return new Button(this.getId() + "-ok", {
+			type: ButtonType.Emphasized,
 			text: this._oResourceBundle.getText("P13NDIALOG_OK"),
 			layoutData: new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.NeverOverflow
