@@ -193,6 +193,24 @@
         "type": "FIX",
         "text": " v2/ODataListBinding: Set oCombinedFilters before applyFilter() is called",
         "references": []
+      },
+      {
+        "id": "be6feb5196869fff54a00353a4c19f5644f67f76",
+        "type": "FIX",
+        "text": " Theming Parameters: Prevent timing issues in Safari/Edge",
+        "references": []
+      },
+      {
+        "id": "5b19125732a96d461422148f9e51f8d4cebc6f78",
+        "type": "FIX",
+        "text": " sap.ui.core.util.reflection - UA cleanup",
+        "references": []
+      },
+      {
+        "id": "16553b086737025c9cd0c8d327b796b97e68f234",
+        "type": "FIX",
+        "text": "sap.ui.fl - Fixed switching variants with stashed controls",
+        "references": []
       }
     ]
   }

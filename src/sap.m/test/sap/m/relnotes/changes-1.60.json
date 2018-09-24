@@ -661,6 +661,24 @@
         "type": "FIX",
         "text": " sap.m.themes.base.HeaderContainer.less: Vertical Allignment set to Top.",
         "references": []
+      },
+      {
+        "id": "55805305a36c28947b6200e2554bb42f9ec40747",
+        "type": "FIX",
+        "text": " OverflowToolbar: Fixed resetting of child size cache",
+        "references": []
+      },
+      {
+        "id": "292e4439f2ec5474acbbb712316f110750bfbfc8",
+        "type": "FIX",
+        "text": " sap.m.ColorPalette: add keyup event for space key",
+        "references": []
+      },
+      {
+        "id": "c7e39e4f5793b4ce6a44bf38354bd3980761ed95",
+        "type": "FIX",
+        "text": " sap.m.PDFViewerDisplayTypes: change the enum according to the OpenUI5\u0027s code style",
+        "references": []
       }
     ]
   }

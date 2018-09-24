@@ -61,6 +61,12 @@
         "type": "FIX",
         "text": "sap.uxap: sap.ui.core._StashedControl change handler registration",
         "references": []
+      },
+      {
+        "id": "013679f4c20bd8ac9ef6f8897f12cec2ce8388cd",
+        "type": "FIX",
+        "text": " ObjectPageSubSection: Aligned SimpleForm Toolbar",
+        "references": []
       }
     ]
   }

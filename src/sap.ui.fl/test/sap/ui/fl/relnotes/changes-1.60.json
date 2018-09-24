@@ -37,6 +37,18 @@
         "type": "FIX",
         "text": " sap.ui.fl.FakePromise - FakePromise in FakePromise handling added",
         "references": []
+      },
+      {
+        "id": "5b19125732a96d461422148f9e51f8d4cebc6f78",
+        "type": "FIX",
+        "text": " sap.ui.core.util.reflection - UA cleanup",
+        "references": []
+      },
+      {
+        "id": "16553b086737025c9cd0c8d327b796b97e68f234",
+        "type": "FIX",
+        "text": "sap.ui.fl - Fixed switching variants with stashed controls",
+        "references": []
       }
     ]
   }

@@ -37,6 +37,12 @@
         "type": "FIX",
         "text": " sap.ui.layout.ResponsiveSplitter minSize property is now working correctly",
         "references": []
+      },
+      {
+        "id": "318026eb4982f11bda3add5fcfdef998ea124519",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.cssgrid.CSSGrid: New Grid control implemented",
+        "references": []
       }
     ]
   }
