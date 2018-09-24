@@ -381,17 +381,18 @@ function(
 		 * -1: Lower layer, 0: Same layer, 1: Layer above
 		 *
 		 * @param {String} sLayer - Layer name to be evaluated
-		 * @returns {boolean} <code>true</code> if input layer is higher than current layer
+		 * @param {String} [sCurrentLayer] - Current layer name to be evaluated, if not provided the layer is taken from URL parameter
+		 * @returns {int} -1: Lower layer, 0: Same layer, 1: Layer above
 		 * @public
 		 * @function
 		 * @name sap.ui.fl.Utils.isLayerOverCurrentLayer
 		 */
-		isLayerAboveCurrentLayer: function(sLayer) {
-			var sCurrentLayer = Utils.getCurrentLayer(false);
+		compareAgainstCurrentLayer: function(sLayer, sCurrentLayer) {
+			var sCurrent = sCurrentLayer || Utils.getCurrentLayer(false);
 			// If sLayer is undefined, it is assumed it be on the lowest layer
-			if ((this.getLayerIndex(sCurrentLayer) > this.getLayerIndex(sLayer)) || !sLayer) {
+			if ((this.getLayerIndex(sCurrent) > this.getLayerIndex(sLayer)) || !sLayer) {
 				return -1;
-			} else if (this.getLayerIndex(sCurrentLayer) === this.getLayerIndex(sLayer)) {
+			} else if (this.getLayerIndex(sCurrent) === this.getLayerIndex(sLayer)) {
 				return 0;
 			} else {
 				return 1;

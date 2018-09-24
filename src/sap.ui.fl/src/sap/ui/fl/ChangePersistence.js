@@ -93,6 +93,8 @@ sap.ui.define([
 		this._aDirtyChanges = [];
 		this._oMessagebundle = undefined;
 		this._mChangesEntries = {};
+		this._bHasChangesOverMaxLayer = false;
+		this.HIGHER_LAYER_CHANGES_EXIST = "higher_layer_changes_exist";
 	};
 
 	/**
@@ -239,21 +241,26 @@ sap.ui.define([
 			var bIncludeControlVariants = mPropertyBag && mPropertyBag.includeCtrlVariants && bVariantChangesExist;
 
 			var sCurrentLayer = mPropertyBag && mPropertyBag.currentLayer;
+			var bFilterMaxLayer = !(mPropertyBag && mPropertyBag.ignoreMaxLayerParameter);
 			if (sCurrentLayer) {
 				aChanges = aChanges.filter(this._filterChangeForCurrentLayer.bind(null, sCurrentLayer));
 				if (!bIncludeControlVariants && bVariantChangesExist) {
+					//although ctrl variant changes are not requested, still filtering on variant section data is necessary
 					this._getAllCtrlVariantChanges(oWrappedChangeFileContent.changes.variantSection, false, sCurrentLayer);
 				}
-			} else if (Utils.isLayerFilteringRequired() && !(mPropertyBag && mPropertyBag.ignoreMaxLayerParameter)) {
+			} else if (Utils.isLayerFilteringRequired() && bFilterMaxLayer) {
 				//If layer filtering required, excludes changes in higher layer than the max layer
 				aChanges = aChanges.filter(this._filterChangeForMaxLayer.bind(this));
 				if (!bIncludeControlVariants && bVariantChangesExist) {
+					//although ctrl variant changes are not requested, still filtering on variant section data is necessary
 					this._getAllCtrlVariantChanges(oWrappedChangeFileContent.changes.variantSection, true);
 				}
-			} else if (this._bUserLayerChangesExist && mPropertyBag && mPropertyBag.ignoreMaxLayerParameter) {
-				// ignoreMaxLayerParameter = true is set from rta.stop(), to check if reload neeeds to be performed
-				delete this._bUserLayerChangesExist;
-				return "userLevelVariantChangesExist";
+			} else if (this._bHasChangesOverMaxLayer && !bFilterMaxLayer) {
+				// ignoreMaxLayerParameter = true is set from flexController.hasHigherLayerChanges(),
+				// triggered by rta.stop(), to check if reload needs to be performed
+				// as ctrl variant changes are already gone and to improve performance, just return the constant
+				this._bHasChangesOverMaxLayer = false;
+				return this.HIGHER_LAYER_CHANGES_EXIST;
 			}
 
 			if (bIncludeControlVariants) {
@@ -299,8 +306,8 @@ sap.ui.define([
 
 	ChangePersistence.prototype._filterChangeForMaxLayer = function(oChangeContent) {
 		if (Utils.isOverMaxLayer(oChangeContent.layer)) {
-			if (oChangeContent.layer === "USER" && !this._bUserLayerChangesExist) {
-				this._bUserLayerChangesExist = true;
+			if (!this._bHasChangesOverMaxLayer) {
+				this._bHasChangesOverMaxLayer = true;
 			}
 			return false;
 		}

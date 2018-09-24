@@ -943,23 +943,28 @@ sap.ui.define([
 	 * Determines if an active personalization - user specific changes or variants - for the flexibility reference
 	 * of the controller instance (<code>this._sComponentName</code>) is in place.
 	 *
-	 * @param {map} [mPropertyBag] - Contains additional data needed for checking personalization
+	 * @param {map} [mPropertyBag] - Contains additional data needed for checking personalization, will be passed to FlexController.getComponentChanges
+	 * @param {string} [mPropertyBag.upToLayer=currentLayer] - layer to compare to which it is checked if changes exist
 	 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] - Indicates that personalization shall be checked without layer filtering
 	 * @returns {Promise} Resolves with a boolean; true if a personalization change made using SAPUI5 flexibility services is active in the application
 	 * @public
 	 */
-	FlexController.prototype.isPersonalized = function (mPropertyBag) {
+	FlexController.prototype.hasHigherLayerChanges = function (mPropertyBag) {
 		mPropertyBag = mPropertyBag || {};
+		var sCurrentLayer = mPropertyBag.upToLayer || Utils.getCurrentLayer(false);
 		//Always include smart variants when checking personalization
 		mPropertyBag.includeVariants = true;
+		//Also control variant changes are important
+		mPropertyBag.includeCtrlVariants = true;
 		return this.getComponentChanges(mPropertyBag).then(function (vChanges) {
-			var bIsPersonalized = vChanges === "userLevelVariantChangesExist"
+			var bHasHigherLayerChanges = vChanges === this._oChangePersistence.HIGHER_LAYER_CHANGES_EXIST
 				|| vChanges.some(function (oChange) {
-					return oChange.isUserDependent();
+					//check layer (needs inverse layer filtering compared to max-layer)
+					return Utils.compareAgainstCurrentLayer(oChange.getLayer(), sCurrentLayer) > 0;
 				});
 
-			return !!bIsPersonalized;
-		});
+			return !!bHasHigherLayerChanges;
+		}.bind(this));
 	};
 
 	/**

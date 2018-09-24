@@ -730,7 +730,7 @@ function(
 			var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
 			oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
 			oSourceVariantCopy.content.fileName = "newVariant";
-			sandbox.stub(Utils, "isLayerAboveCurrentLayer").returns(0);
+			sandbox.stub(Utils, "compareAgainstCurrentLayer").returns(0);
 			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
 			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
 			assert.deepEqual(oDuplicateVariant, oSourceVariantCopy);

@@ -98,8 +98,8 @@ function (
 		});
 
 
-		QUnit.test("when getChangesForComponent is called with _bUserLayerChangesExist set and ignoreMaxLayerParameter is passed as true", function (assert) {
-			this.oChangePersistence._bUserLayerChangesExist = true;
+		QUnit.test("when getChangesForComponent is called with _bHasChangesOverMaxLayer set and ignoreMaxLayerParameter is passed as true", function (assert) {
+			this.oChangePersistence._bHasChangesOverMaxLayer = true;
 
 			var oMockedWrappedContent = {
 				changes: {
@@ -110,8 +110,8 @@ function (
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 
 			return this.oChangePersistence.getChangesForComponent({ignoreMaxLayerParameter: true}).then(function (sResponse) {
-				assert.strictEqual(sResponse, "userLevelVariantChangesExist", "then the correct response is returned");
-				assert.notOk(this.oChangePersistence._bUserLayerChangesExist, "then _bUserLayerChangesExist is unset");
+				assert.strictEqual(sResponse, this.oChangePersistence.HIGHER_LAYER_CHANGES_EXIST, "then the correct response is returned");
+				assert.notOk(this.oChangePersistence._bHasChangesOverMaxLayer, "then _bHasChangesOverMaxLayer is unset");
 			}.bind(this));
 		});
 
@@ -711,7 +711,7 @@ function (
 			sandbox.spy(this.oChangePersistence, "_filterChangeForMaxLayer");
 			this.oChangePersistence._getAllCtrlVariantChanges(mVariantSection, true);
 			assert.strictEqual(this.oChangePersistence._filterChangeForMaxLayer.callCount, 3, "then _filterChangeForMaxLayer() called thrice for three changes");
-			assert.strictEqual(this.oChangePersistence._bUserLayerChangesExist, true, "then the flag _bUserLayerChangesExist is set");
+			assert.strictEqual(this.oChangePersistence._bHasChangesOverMaxLayer, true, "then the flag _bHasChangesOverMaxLayer is set");
 
 		});
 
@@ -1224,7 +1224,7 @@ function (
 				assert.ok(oChanges[1].getId() === "change4", "with correct id");
 				assert.ok(oChanges[2].getId() === "change5", "with correct id");
 				assert.ok(fnGetCtrlVariantChangesStub.calledOnce, "then _getCtrlVariantChanges called when max layer parameter is set");
-				assert.strictEqual(this.oChangePersistence._bUserLayerChangesExist, true, "then the flag _bUserLayerChangesExist is set");
+				assert.strictEqual(this.oChangePersistence._bHasChangesOverMaxLayer, true, "then the flag _bHasChangesOverMaxLayer is set");
 			}.bind(this));
 		});
 

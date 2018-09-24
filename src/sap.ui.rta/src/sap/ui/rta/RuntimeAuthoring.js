@@ -546,7 +546,7 @@ function(
 			}
 
 			//Check if the application has personalized changes and reload without them
-			return this._handlePersonalizationChangesOnStart()
+			return this._handleHigherLayerChangesOnStart()
 			.then(function(bReloadTriggered){
 				if (bReloadTriggered) {
 					// FLP Plugin reacts on this error string and doesn't the error on the UI
@@ -1325,14 +1325,17 @@ function(
 	};
 
 	/**
-	 * Returns true if the ui layer parameter is set to customer (skips personalization changes)
+	 * Returns true if the max layer parameter is set to current layer
+	 * (skips personalization and other higher level changes)
+	 *
 	 * @param  {map} mParsedHash The parsed URL hash
 	 * @return {boolean} True if the parameter is in the hash
 	 */
-	RuntimeAuthoring.prototype._hasCustomerLayerParameter = function(mParsedHash){
+	RuntimeAuthoring.prototype._hasMaxLayerParameter = function(mParsedHash){
+		var sCurrentLayer = this.getLayer();
 		return mParsedHash.params &&
 			mParsedHash.params[FL_MAX_LAYER_PARAM] &&
-			mParsedHash.params[FL_MAX_LAYER_PARAM][0] === "CUSTOMER";
+			mParsedHash.params[FL_MAX_LAYER_PARAM][0] === sCurrentLayer;
 	};
 
 	/**
@@ -1341,13 +1344,14 @@ function(
 	 * @param  {sap.ushell.services.CrossApplicationNavigation} oCrossAppNav ushell service
 	 * @return {Promise} resolving to true if reload was triggered
 	 */
-	RuntimeAuthoring.prototype._reloadWithoutPersonalizationChanges = function(mParsedHash, oCrossAppNav){
-		if (!this._hasCustomerLayerParameter(mParsedHash)){
+	RuntimeAuthoring.prototype._reloadWithoutHigherLayerChangesOnStart = function(mParsedHash, oCrossAppNav){
+		var sCurrentLayer = this.getLayer();
+		if (!this._hasMaxLayerParameter(mParsedHash)){
 			if (!mParsedHash.params) {
 				mParsedHash.params = {};
 			}
-			mParsedHash.params[FL_MAX_LAYER_PARAM] = ["CUSTOMER"];
-			RuntimeAuthoring.enableRestart("CUSTOMER");
+			mParsedHash.params[FL_MAX_LAYER_PARAM] = [sCurrentLayer];
+			RuntimeAuthoring.enableRestart(sCurrentLayer);
 			// triggers the navigation without leaving FLP
 			oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
 			return Promise.resolve(true);
@@ -1362,8 +1366,8 @@ function(
 		if (Utils.getUshellContainer() && this.getLayer() !== "USER") {
 			var oCrossAppNav = Utils.getUshellContainer().getService("CrossApplicationNavigation");
 			var mParsedHash = FlexUtils.getParsedURLHash();
-			if (oCrossAppNav.toExternal && !jQuery.isEmptyObject(mParsedHash)){
-				if (this._hasCustomerLayerParameter(mParsedHash)) {
+			if (oCrossAppNav.toExternal && mParsedHash){
+				if (this._hasMaxLayerParameter(mParsedHash)) {
 					delete mParsedHash.params[FL_MAX_LAYER_PARAM];
 					// triggers the navigation without leaving FLP
 					oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
@@ -1377,11 +1381,14 @@ function(
 	 * and the app will be reloaded
 	 * @return {Promise} Resolving when the user clicks on OK
 	 */
-	RuntimeAuthoring.prototype._handlePersonalizationMessageBoxOnStart = function() {
+	RuntimeAuthoring.prototype._handleReloadWithoutHigherLayerChangesMessageBoxOnStart = function() {
+		var sLayer = this.getLayer();
+		//Non key user get more technical message
+		var sReason = sLayer === "CUSTOMER" ? "MSG_PERSONALIZATION_EXISTS" : "MSG_HIGHER_LAYER_CHANGES_EXIST";
 		return Utils._showMessageBox(
 			MessageBox.Icon.INFORMATION,
 			"HEADER_PERSONALIZATION_EXISTS",
-			"MSG_PERSONALIZATION_EXISTS");
+			sReason);
 	};
 
 	/**
@@ -1400,22 +1407,22 @@ function(
 	};
 
 	/**
-	 * Check if there are personalization changes and restart the application without them
+	 * Check if there are e.g. personalization changes and restart the application without them
 	 * Warn the user that the application will be restarted without personalization
 	 * This is only valid when a UShell is present
 	 * @return {Promise} Resolving to false means that reload is not necessary
 	 */
-	RuntimeAuthoring.prototype._handlePersonalizationChangesOnStart = function() {
+	RuntimeAuthoring.prototype._handleHigherLayerChangesOnStart = function() {
 		var oUshellContainer = Utils.getUshellContainer();
 		if (oUshellContainer && this.getLayer() !== "USER") {
 			var mParsedHash = FlexUtils.getParsedURLHash();
-			return this._getFlexController().isPersonalized({ignoreMaxLayerParameter : false})
-			.then(function(bIsPersonalized){
-				if (bIsPersonalized) {
-					return this._handlePersonalizationMessageBoxOnStart().then(function() {
+			return this._getFlexController().hasHigherLayerChanges({ignoreMaxLayerParameter : false})
+			.then(function(bHasHigherLayerChanges){
+				if (bHasHigherLayerChanges) {
+					return this._handleReloadWithoutHigherLayerChangesMessageBoxOnStart().then(function() {
 						var oCrossAppNav = sap.ushell.Container.getService("CrossApplicationNavigation");
-						if (oCrossAppNav.toExternal && !jQuery.isEmptyObject(mParsedHash)){
-							return this._reloadWithoutPersonalizationChanges(mParsedHash, oCrossAppNav);
+						if (oCrossAppNav.toExternal && mParsedHash){
+							return this._reloadWithoutHigherLayerChangesOnStart(mParsedHash, oCrossAppNav);
 						}
 					}.bind(this));
 				}
@@ -1435,17 +1442,18 @@ function(
 			this._oSerializer.needsReload(),
 			// When working with RTA, the MaxLayer parameter will be present in the URL and must
 			// be ignored in the decision to bring up the pop-up (ignoreMaxLayerParameter = true)
-			this._getFlexController().isPersonalized({ignoreMaxLayerParameter : true})
+			this._getFlexController().hasHigherLayerChanges({ignoreMaxLayerParameter : true})
 		]).then(function(aArgs){
 			var bChangesNeedRestart = aArgs[0],
-				bIsPersonalized = aArgs[1];
-			if (bChangesNeedRestart || bIsPersonalized){
+				bHasHigherLayerChanges = aArgs[1];
+			if (bChangesNeedRestart || bHasHigherLayerChanges){
 				var sRestart = this._RESTART.RELOAD_PAGE;
 				var sRestartReason, oUshellContainer;
-				if (bIsPersonalized) {
+				if (bHasHigherLayerChanges) {
 					//Loading the app with personalization means the visualization might change,
 					//therefore this message takes precedence
-					sRestartReason = "MSG_RELOAD_WITH_PERSONALIZATION";
+					var sLayer = this.getLayer();
+					sRestartReason = sLayer === "CUSTOMER" ? "MSG_RELOAD_WITH_PERSONALIZATION" : "MSG_RELOAD_WITH_ALL_CHANGES";
 					oUshellContainer = Utils.getUshellContainer();
 					if (!bChangesNeedRestart && oUshellContainer){
 						//if changes need restart this method has precedence, but in this case

@@ -302,7 +302,7 @@ sap.ui.define([
 			var aReferencedChanges = [];
 			withVariant(mResult, oCurrentVariant.content.variantManagementReference, oCurrentVariant.content.variantReference, function (oVariant) {
 				aReferencedChanges = oVariant.controlChanges.filter( function (oReferencedChange) {
-					return Utils.isLayerAboveCurrentLayer(oReferencedChange.layer) === -1;
+					return Utils.compareAgainstCurrentLayer(oReferencedChange.layer) === -1;
 				});
 				if (oVariant.content.variantReference) {
 					aReferencedChanges = aReferencedChanges.concat(this._getReferencedChanges(mResult, oVariant));

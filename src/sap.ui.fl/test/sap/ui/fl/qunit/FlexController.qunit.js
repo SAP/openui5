@@ -3266,7 +3266,7 @@ function (
 		});
 	});
 
-	QUnit.module("isPersonalized", {
+	QUnit.module("hasHigherLayerChanges", {
 		beforeEach: function () {
 			this.oUserChange = new Change({
 				"fileType": "change",
@@ -3318,6 +3318,23 @@ function (
 					"something": "createNewVariant"
 				}
 			});
+
+			this.oCustomerChange = new Change({
+				"fileType": "change",
+				"layer": "CUSTOMER",
+				"fileName": "a",
+				"namespace": "b",
+				"packageName": "c",
+				"changeType": "labelChange",
+				"creation": "",
+				"reference": "",
+				"selector": {
+					"id": "abc123"
+				},
+				"content": {
+					"something": "createNewVariant"
+				}
+			});
 			this.oFlexController = new FlexController("someReference");
 		},
 		afterEach: function () {
@@ -3329,26 +3346,57 @@ function (
 			var aChanges = [this.oVendorChange1, this.oUserChange, oVendorChange2Spy];
 			sandbox.stub(this.oFlexController, "getComponentChanges").returns(Promise.resolve(aChanges));
 
-			return this.oFlexController.isPersonalized().then(function (bIsPersonalized) {
-				assert.ok(bIsPersonalized, "personalization was determined");
+			return this.oFlexController.hasHigherLayerChanges().then(function (bHasHigherLayerChanges) {
+				assert.ok(bHasHigherLayerChanges, "personalization was determined");
 				assert.notOk(oVendorChange2Spy.called, "after a personalization was detected no further checks were made");
 			});
 		});
 
 		QUnit.test("detects application free of personalization", function (assert) {
+			var aChanges = [this.oVendorChange1, this.oVendorChange2, this.oCustomerChange];
+			sandbox.stub(this.oFlexController, "getComponentChanges").returns(Promise.resolve(aChanges));
+
+			return this.oFlexController.hasHigherLayerChanges().then(function (bHasHigherLayerChanges) {
+				assert.notOk(bHasHigherLayerChanges, "personalization was determined");
+			});
+		});
+
+		QUnit.test("detects application has customer changes and personalization", function (assert) {
+			var aChanges = [this.oVendorChange1, this.oVendorChange2, this.oCustomerChange];
+			sandbox.stub(this.oFlexController, "getComponentChanges").returns(Promise.resolve(aChanges));
+
+			return this.oFlexController.hasHigherLayerChanges({
+				upToLayer : "CUSTOMER_BASE"
+			}).then(function (bHasHigherLayerChanges) {
+				assert.ok(bHasHigherLayerChanges, "customer change was determined");
+			});
+		});
+		QUnit.test("detects application free of customer changes and personalization", function (assert) {
 			var aChanges = [this.oVendorChange1, this.oVendorChange2];
 			sandbox.stub(this.oFlexController, "getComponentChanges").returns(Promise.resolve(aChanges));
 
-			return this.oFlexController.isPersonalized().then(function (bIsPersonalized) {
-				assert.notOk(bIsPersonalized, "personalization was determined");
+			return this.oFlexController.hasHigherLayerChanges().then(function (bHasHigherLayerChanges) {
+				assert.notOk(bHasHigherLayerChanges, "free of customer changes and personalization");
+			});
+		});
+		QUnit.test("detects application free of customer changes and personalization", function (assert) {
+			var aChanges = [this.oVendorChange1, this.oVendorChange2];
+			sandbox.stub(this.oFlexController, "getComponentChanges").returns(Promise.resolve(aChanges));
+
+			return this.oFlexController.hasHigherLayerChanges({
+				upToLayer : "VENDOR"
+			}).then(function (bHasHigherLayerChanges) {
+				assert.notOk(bHasHigherLayerChanges, "free of customer changes and personalization");
 			});
 		});
 
 		QUnit.test("when called to check for USER level filtered changes", function (assert) {
-			sandbox.stub(this.oFlexController, "getComponentChanges").returns(Promise.resolve("userLevelVariantChangesExist"));
+			sandbox.stub(this.oFlexController, "getComponentChanges").returns(
+				Promise.resolve(this.oFlexController._oChangePersistence.HIGHER_LAYER_CHANGES_EXIST
+			));
 
-			return this.oFlexController.isPersonalized().then(function (bIsPersonalized) {
-				assert.ok(bIsPersonalized, "personalization was determined");
+			return this.oFlexController.hasHigherLayerChanges().then(function (bHasHigherLayerChanges) {
+				assert.ok(bHasHigherLayerChanges, "personalization was determined");
 			});
 		});
 	});
