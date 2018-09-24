@@ -782,6 +782,8 @@ sap.ui.define([
 
 		this._bLazyRowCreationEnabled = jQuery.sap.getUriParameters().get('sap-ui-xx-table-lazyrowcreation') !== "false"; // default true
 		this._bRowsBeingBound = false;
+		this._bContextsRequested = false;
+		this._bContextsAvailable = false;
 		this._aRowClones = [];
 		this._bRowAggregationInvalid = true;
 		this._mTimeouts = {};
@@ -1792,14 +1794,14 @@ sap.ui.define([
 	 */
 	Table.prototype.bindRows = function(oBindingInfo) {
 		this._bRowsBeingBound = true;
+		this._bContextsRequested = false;
+		this._bContextsAvailable = false;
 		if (this.getEnableBusyIndicator()) {
 			this.setBusy(false);
 		}
 		this._iPendingRequests = 0;
 		this._bPendingRequest = false;
-		var vReturn = Control.prototype.bindAggregation.call(this, "rows", Table._getSanitizedBindingInfo(arguments));
-		this._bRowsBeingBound = false;
-		return vReturn;
+		return Control.prototype.bindAggregation.call(this, "rows", Table._getSanitizedBindingInfo(arguments));
 	};
 
 	/**
@@ -1809,28 +1811,34 @@ sap.ui.define([
 	 */
 	Table.prototype._bindAggregation = function(sName, oBindingInfo) {
 		if (sName === "rows") {
+			// If only the model has been changed, the ManagedObject only calls _bindAggregation while bindAggregation / bindRows is not called.
+			this._bRowsBeingBound = true;
+			this._bContextsRequested = false;
+			this._bContextsAvailable = false;
+
 			Table._addBindingListener(oBindingInfo, "change", this._onBindingChange.bind(this));
 			Table._addBindingListener(oBindingInfo, "dataRequested", this._onBindingDataRequested.bind(this));
 			Table._addBindingListener(oBindingInfo, "dataReceived", this._onBindingDataReceived.bind(this));
-			this._bContextsRequested = false;
+
+			// Re-initialize the selection model. Might be necessary in case the rows are rebound.
+			this._initSelectionModel(SelectionModel.MULTI_SELECTION);
 		}
 
 		// Create the binding.
 		Element.prototype._bindAggregation.call(this, sName, oBindingInfo);
 
-		var oBinding = this.getBinding("rows");
+		if (sName === "rows") {
+			var oBinding = this.getBinding("rows");
+			var oModel = oBinding ? oBinding.getModel() : null;
 
-		if (sName === "rows" && oBinding) {
-			var oModel = oBinding.getModel();
 			if (oModel && oModel.getDefaultBindingMode() === BindingMode.OneTime) {
 				Log.error("The binding mode of the model is set to \"OneTime\"."
-									 + " This binding mode is not supported for the \"rows\" aggregation!"
-									 + " Scrolling can not be performed.", this);
+						  + " This binding mode is not supported for the \"rows\" aggregation!"
+						  + " Scrolling can not be performed.", this);
 			}
-		}
 
-		// Re-initialize the selection model. Might be necessary in case the table gets "rebound".
-		this._initSelectionModel(SelectionModel.MULTI_SELECTION);
+			this._bRowsBeingBound = false;
+		}
 	};
 
 	/**
@@ -2109,7 +2117,6 @@ sap.ui.define([
 		var iFirstVisibleRow = this._getFirstRenderedRowIndex();
 		var iFixedRowCount = this.getFixedRowCount();
 		var iFixedBottomRowCount = this.getFixedBottomRowCount();
-		var bReceivedLessThanRequested;
 		var aContexts = [];
 		var aTmpContexts;
 
@@ -2155,10 +2162,6 @@ sap.ui.define([
 
 		this._bContextsRequested = true;
 
-		// iLength is the number of rows which shall get filled. It might be more than the binding actually has data.
-		// Therefore Math.min is required to make sure to not request data again from the binding.
-		bReceivedLessThanRequested = aTmpContexts.length < Math.min(iLength, iBindingLength - iFixedBottomRowCount);
-
 		// get the binding length after getContext call to make sure that for TreeBindings the client tree was correctly rebuilt
 		// this step can be moved to an earlier point when the TreeBindingAdapters all implement tree invalidation in case of getLength calls
 		fnMergeArrays(aContexts, aTmpContexts, iMergeOffsetScrollRows);
@@ -2176,16 +2179,9 @@ sap.ui.define([
 		}
 
 		var iMaxRowIndex = this._getMaxFirstRenderedRowIndex();
-
-		if (bReceivedLessThanRequested
-			&& iBindingLength > 0
-			&& iMaxRowIndex < iFirstVisibleRow
-			&& !bSecondCall) {
-
-			iFirstVisibleRow = iMaxRowIndex;
-			this.setProperty("firstVisibleRow", iFirstVisibleRow, true);
-
+		if (iMaxRowIndex < iFirstVisibleRow && this._bContextsAvailable && !bSecondCall) {
 			// Get the contexts again, this time with the maximum possible value for the first visible row.
+			this.setProperty("firstVisibleRow", iMaxRowIndex, true);
 			aContexts = this._getRowContexts(iVisibleRowCount, bSuppressUpdate, true);
 		}
 
@@ -2247,6 +2243,8 @@ sap.ui.define([
 			return;
 		}
 
+		this._bContextsAvailable = false;
+
 		var that = this;
 		var sReason = typeof (vEvent) === "object" ? vEvent.getParameter("reason") : vEvent;
 
@@ -2286,6 +2284,11 @@ sap.ui.define([
 		if (this.bIsDestroyed || this._bIsBeingDestroyed) {
 			// During destruction, updateRows is called with reason "Unbind". In general, rows of a destroyed table should not be updated.
 			return;
+		}
+
+		// The row count (binding length) is checked because in client bindings contexts are immediately available.
+		if (!this._bRowsBeingBound || this._getTotalRowCount(true) > 0) {
+			this._bContextsAvailable = true;
 		}
 
 		// Rows should only be created/cloned when the number of rows can be determined. For the VisibleRowCountMode: Auto
