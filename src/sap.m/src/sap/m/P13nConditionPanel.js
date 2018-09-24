@@ -2359,28 +2359,46 @@ sap.ui.define([
 		}
 
 		// update Value1 field control
-		var sValue1 = this._getValueTextFromField(oConditionGrid.value1);
-		var oValue1 = sValue1;
-		if (oConditionGrid.oType && sValue1) {
-			try {
-				oValue1 = oConditionGrid.oType.parseValue(sValue1, "string");
-				oConditionGrid.oType.validateValue(oValue1);
-			} catch (err) {
-				sValue1 = "";
-				Log.error("sap.m.P13nConditionPanel", "not able to parse value1 " + sValue1 + " with type " + oConditionGrid.oType.getName());
+		var sValue1;
+		var oValue1;
+		if (oConditionGrid.value1.getDateValue) {
+			oValue1 = oConditionGrid.value1.getDateValue();
+			if (oConditionGrid.oType && oValue1) {
+				sValue1 = oConditionGrid.oType.formatValue(oValue1, "string");
+			}
+		} else {
+			sValue1 = this._getValueTextFromField(oConditionGrid.value1);
+			oValue1 = sValue1;
+			if (oConditionGrid.oType && sValue1) {
+				try {
+					oValue1 = oConditionGrid.oType.parseValue(sValue1, "string");
+					oConditionGrid.oType.validateValue(oValue1);
+				} catch (err) {
+					sValue1 = "";
+					Log.error("sap.m.P13nConditionPanel", "not able to parse value1 " + sValue1 + " with type " + oConditionGrid.oType.getName());
+				}
 			}
 		}
 
 		// update Value2 field control
-		var sValue2 = this._getValueTextFromField(oConditionGrid.value2);
-		var oValue2 = sValue2;
-		if (oConditionGrid.oType && sValue2) {
-			try {
-				oValue2 = oConditionGrid.oType.parseValue(sValue2, "string");
-				oConditionGrid.oType.validateValue(oValue2);
-			} catch (err) {
-				sValue2 = "";
-				Log.error("sap.m.P13nConditionPanel", "not able to parse value2 " + sValue2 + " with type " + oConditionGrid.oType.getName());
+		var sValue2;
+		var oValue2;
+		if (oConditionGrid.value2.getDateValue) {
+			oValue2 = oConditionGrid.value2.getDateValue();
+			if (oConditionGrid.oType && oValue2) {
+				sValue2 = oConditionGrid.oType.formatValue(oValue2, "string");
+			}
+		} else {
+			sValue2 = this._getValueTextFromField(oConditionGrid.value2);
+			oValue2 = sValue2;
+			if (oConditionGrid.oType && sValue2) {
+				try {
+					oValue2 = oConditionGrid.oType.parseValue(sValue2, "string");
+					oConditionGrid.oType.validateValue(oValue2);
+				} catch (err) {
+					sValue2 = "";
+					Log.error("sap.m.P13nConditionPanel", "not able to parse value2 " + sValue2 + " with type " + oConditionGrid.oType.getName());
+				}
 			}
 		}
 
