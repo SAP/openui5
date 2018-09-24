@@ -215,12 +215,23 @@ sap.ui.define([
 			showNoData : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * This defines how the table handles the visible rows in the table. The default behavior is,
-			 * that a fixed row count is defined. If you change it to auto the visibleRowCount property is
-			 * changed by the table automatically. It will then adjust its maximum row count to the space it is
-			 * allowed to cover (limited by the surrounding container) and its minimum row count to the value of
-			 * the property minAutoRowCount (default value : 5) In manual mode the user can change
-			 * the visibleRowCount interactively.
+			 * Defines how the table handles the visible rows in the table.
+			 *
+			 * In the <code>"Fixed"</code> mode, the table always has as many rows as defined in the <code>visibleRowCount</code> property.
+			 *
+			 * In the <code>"Auto"</code> mode, the <code>visibleRowCount</code> property is changed by the table automatically. It will then
+			 * adjust its row count to the space it is allowed to cover (limited by the surrounding container), but it cannot have less than
+			 * defined in the <code>minAutoRowCount</code> property. The <code>visibleRowCount</code> property cannot be set manually.
+			 * <h3>Limitations</h3>
+			 * <ul>
+			 *   <li>All rows need to have the same height.</li>
+			 *   <li>The table must be rendered without siblings in its parent DOM element. The only exception is if the parent element is a CSS flex
+			 *       container, and the table is a CSS flex item allowed to grow and shrink.</li>
+			 * </ul>
+			 *
+			 * In the <code>"Interactive"</code> mode, the table has as many rows as defined in the <code>visibleRowCount</code> property after
+			 * rendering. The user can change the <code>visibleRowCount</code> by dragging a resizer.
+			 *
 			 * @since 1.9.2
 			 */
 			visibleRowCountMode : {type : "sap.ui.table.VisibleRowCountMode", group : "Appearance", defaultValue : VisibleRowCountMode.Fixed},
