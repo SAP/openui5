@@ -312,6 +312,19 @@ sap.ui.define([
 		assert.equal(oTable.getSelectionMode(), "None", "Selection mode is None!");
 	});
 
+	QUnit.test("SelectionMode = None", function(assert) {
+		oTable.setSelectionMode(SelectionMode.None);
+
+		oTable.setSelectedIndex(1);
+		assert.deepEqual(oTable.getSelectedIndices(), [], "setSelectedIndex does not select in SelectionMode=\"None\"");
+
+		oTable.setSelectionInterval(1, 1);
+		assert.deepEqual(oTable.getSelectedIndices(), [], "setSelectionInterval does not select in SelectionMode=\"None\"");
+
+		oTable.addSelectionInterval(1, 1);
+		assert.deepEqual(oTable.getSelectedIndices(), [], "addSelectionInterval does not select in SelectionMode=\"None\"");
+	});
+
 	QUnit.test("Multi Selection", function(assert) {
 		var iFirstRow = oTable.getFirstVisibleRow();
 

@@ -25,6 +25,9 @@ sap.ui.define([
 	) {
 	"use strict";
 
+	// shortcuts
+	var SelectionMode = library.SelectionMode;
+
 	/**
 	 * Constructor for a new TreeTable.
 	 *
@@ -362,6 +365,10 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TreeTable.prototype.setSelectedIndex = function (iRowIndex) {
+		if (this.getSelectionMode() === SelectionMode.None) {
+			return this;
+		}
+
 		if (iRowIndex === -1) {
 			//If Index eq -1 no item is selected, therefore clear selection is called
 			//SelectionModel doesn't know that -1 means no selection
@@ -420,7 +427,7 @@ sap.ui.define([
 	TreeTable.prototype.setSelectionInterval = function (iFromIndex, iToIndex) {
 		var sSelectionMode = this.getSelectionMode();
 
-		if (sSelectionMode === library.SelectionMode.None) {
+		if (sSelectionMode === SelectionMode.None) {
 			return this;
 		}
 
@@ -428,7 +435,7 @@ sap.ui.define([
 		var oBinding = this.getBinding("rows");
 
 		if (oBinding && oBinding.findNode && oBinding.setSelectionInterval) {
-			if (sSelectionMode === library.SelectionMode.Single) {
+			if (sSelectionMode === SelectionMode.Single) {
 				oBinding.setSelectionInterval(iFromIndex, iFromIndex);
 			} else {
 				oBinding.setSelectionInterval(iFromIndex, iToIndex);
@@ -458,14 +465,14 @@ sap.ui.define([
 	TreeTable.prototype.addSelectionInterval = function (iFromIndex, iToIndex) {
 		var sSelectionMode = this.getSelectionMode();
 
-		if (sSelectionMode === library.SelectionMode.None) {
+		if (sSelectionMode === SelectionMode.None) {
 			return this;
 		}
 
 		var oBinding = this.getBinding("rows");
 		//TBA check
 		if (oBinding && oBinding.findNode && oBinding.addSelectionInterval) {
-			if (sSelectionMode === library.SelectionMode.Single) {
+			if (sSelectionMode === SelectionMode.Single) {
 				oBinding.setSelectionInterval(iFromIndex, iFromIndex);
 			} else {
 				oBinding.addSelectionInterval(iFromIndex, iToIndex);
