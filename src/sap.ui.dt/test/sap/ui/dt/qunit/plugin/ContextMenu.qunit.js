@@ -613,40 +613,37 @@ sap.ui.define([
 			assert.ok(true, "Should throw no error");
 		});
 
-		QUnit.test("calling _getPopoverDimensions for different kinds of menus", function (assert) {
+		QUnit.test("calling _getPopoverDimensions for non MiniMenu", function (assert) {
 			this.clock = sinon.useFakeTimers();
 			this.oButton2Overlay.setSelected(true);
 			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
-			oSandbox.stub(oContextMenuControl, "_getButtonHeight").returns(3);
 			oSandbox.stub(oContextMenuControl, "_getBaseFontSize").returns(16);
 			oSandbox.stub(oContextMenuControl, "_getArrowHeight").returns(0.5625);
-			oSandbox.stub(oContextMenuControl, "_getButtonWidth").returns(2.5);
 			this.clock.tick(this.oContextMenuPlugin.iMenuLeftclickOpeningDelay);
-			var oPopoverContext = oContextMenuControl._getPopoverDimensions(true, false);
-			var oPopover = oContextMenuControl._getPopoverDimensions(false, true);
-			var oPopoverExpanded = oContextMenuControl._getPopoverDimensions(true, true);
-			assert.strictEqual(typeof oPopoverContext.height, "number", "the height of a context menu should be a number");
-			assert.strictEqual(oPopoverContext.height, 384, "the height of a context menu is correct");
-			assert.ok(!isNaN(oPopoverContext.height), "the height of a context menu shouldn't be NaN");
-			assert.strictEqual(typeof oPopoverContext.width, "number", "the width of a context menu should be a number");
-			assert.strictEqual(oPopoverContext.width, 172, "the width of a context menu is correct");
-			assert.ok(!isNaN(oPopoverContext.width), "the width of a context menu shouldn't be NaN");
+			var oPopover = oContextMenuControl._getPopoverDimensions(true);
 			assert.strictEqual(typeof oPopover.height, "number", "the height of a non-expanded ContextMenu should be a number");
-			assert.strictEqual(oPopover.height, 66, "the height of a non-expanded ContextMenu is correct");
+			assert.strictEqual(oPopover.height, 41, "the height of a non-expanded ContextMenu is correct");
 			assert.ok(!isNaN(oPopover.height), "the height of a non-expanded ContextMenu shouldn't be NaN");
 			assert.strictEqual(typeof oPopover.width, "number", "the width of a non-expanded ContextMenu should be a number");
-			assert.strictEqual(oPopover.width, 178, "the width of a non-expanded ContextMenu is correct");
+			assert.strictEqual(oPopover.width, 181, "the width of a non-expanded ContextMenu is correct");
 			assert.ok(!isNaN(oPopover.width), "the width of a non-expanded ContextMenu shouldn't be NaN");
-			assert.strictEqual(typeof oPopoverExpanded.height, "number", "the height of an expanded ContextMenu should be a number");
-			assert.strictEqual(oPopoverExpanded.height, 402, "the height of an expanded ContextMenu is correct");
-			assert.ok(!isNaN(oPopoverExpanded.height), "the height of an expanded ContextMenu shouldn't be NaN");
-			assert.strictEqual(typeof oPopoverExpanded.width, "number", "the width of an expanded ContextMenu should be a number");
-			assert.strictEqual(oPopoverExpanded.width, 190, "the width of an expanded ContextMenu is correct");
-			assert.ok(!isNaN(oPopoverExpanded.width), "the width of an expanded ContextMenu shouldn't be NaN");
-			assert.ok(oPopoverContext.height < oPopoverExpanded.height, "the height of a context menu should be less than the hight of an expanded ContextMenu (if they have the same amount of buttons)");
-			assert.ok(oPopoverContext.width < oPopoverExpanded.width, "the width of a context menu should be less than that of an expanded ContextMenu (if they have the same amount of buttons)");
-			assert.ok(oPopover.height < oPopoverExpanded.width, "an expanded ContextMenu should be higher than a non-expanded ContextMenu (if the expanded one has more than one buttons");
+			this.clock.restore();
+		});
+
+		QUnit.test("calling _getPopoverDimensions for ContextMenu", function (assert) {
+			this.clock = sinon.useFakeTimers();
+			this.oButton2Overlay.setSelected(true);
+			jQuery(this.oButton2Overlay.getDomRef()).contextmenu();
+			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
+			this.clock.tick(this.oContextMenuPlugin.iMenuLeftclickOpeningDelay);
+			var oPopoverContext = oContextMenuControl._getPopoverDimensions(false);
+			assert.strictEqual(typeof oPopoverContext.height, "number", "the height of a context menu should be a number");
+			assert.strictEqual(oPopoverContext.height, 317, "the height of a context menu is correct");
+			assert.ok(!isNaN(oPopoverContext.height), "the height of a context menu shouldn't be NaN");
+			assert.strictEqual(typeof oPopoverContext.width, "number", "the width of a context menu should be a number");
+			assert.strictEqual(oPopoverContext.width, 247, "the width of a context menu is correct");
+			assert.ok(!isNaN(oPopoverContext.width), "the width of a context menu shouldn't be NaN");
 			this.clock.restore();
 		});
 
@@ -1360,46 +1357,6 @@ sap.ui.define([
 			this.oContextMenuControl._placeContextMenu(this.oButton2Overlay, false, false);
 			assert.ok(oSpyMini.calledOnce);
 			assert.ok(oSpyContext.notCalled);
-		});
-
-		QUnit.test("comparing the height of an actual rendered sap.m.Button to the return value of _getButtonHeight", function (assert) {
-			var oCozyBtn = new Button({
-				icon: "sap-icon://fridge",
-				text: "Cozy Button"
-			}).placeAt("qunit-fixture");
-			var $Compact = jQuery("<div/>", {
-				"class": "sapUiSizeCompact"
-			}).appendTo("#qunit-fixture");
-			var oCompactBtn = new Button({
-				icon: "sap-icon://dishwasher",
-				text: "Compact Button"
-			}).placeAt($Compact);
-			sap.ui.getCore().applyChanges();
-			var fCalculatedCozyHeight = this.oContextMenuControl._getButtonHeight(false);
-			var fMeasuredCozyHeight = parseInt(jQuery(oCozyBtn.getDomRef()).css("height"), 10) / 16;
-			var fCalculatedCompactHeight = this.oContextMenuControl._getButtonHeight(true);
-			var fMeasuredCompactHeight = parseInt(jQuery(oCompactBtn.getDomRef()).css("height"), 10) / 16;
-			assert.strictEqual(fCalculatedCozyHeight, fMeasuredCozyHeight, "To prevent rendering the ContextMenu a bunch of times its height is calculated based on the css values of sap.m.Button. If this test fails the css values of sap.m.Buttons may have changed. Please run this test again to make sure it didn't fail randomly. If it fails again the return value of _getButtonHeight (for bCompact = false) has to be adjusted to whatever the expected value was in this test.");
-			assert.strictEqual(fCalculatedCompactHeight, fMeasuredCompactHeight, "To prevent rendering the ContextMenu a bunch of times height size is calculated based on the css values of sap.m.Button. If this test fails the css values of sap.m.Buttons may have changed. Please run this test again to make sure it didn't fail randomly. If it fails again the return value of _getButtonHeight (for bCompact = true) has to be adjusted to whatever the expected value was in this test.");
-		});
-
-		QUnit.test("comparing the width of an actual rendered sap.m.Button (icon only) to the return value of _getButtonWidth", function (assert) {
-			var oCozyBtn = new Button({
-				icon: "sap-icon://fridge"
-			}).placeAt("qunit-fixture");
-			var $Compact = jQuery("<div/>", {
-				"class": "sapUiSizeCompact"
-			}).appendTo("#qunit-fixture");
-			var oCompactBtn = new Button({
-				icon: "sap-icon://dishwasher"
-			}).placeAt($Compact);
-			sap.ui.getCore().applyChanges();
-			var fCalculatedCozyWidth = this.oContextMenuControl._getButtonWidth(false);
-			var fMeasuredCozyWidth = parseInt(jQuery(oCozyBtn.getDomRef()).css("width"), 10) / 16;
-			var fCalculatedCompactWidth = this.oContextMenuControl._getButtonWidth(true);
-			var fMeasuredCompactWidth = parseInt(jQuery(oCompactBtn.getDomRef()).css("width"), 10) / 16;
-			assert.strictEqual(fCalculatedCozyWidth, fMeasuredCozyWidth, "To prevent rendering the ContextMenu a bunch of times its width is calculated based on the css values of sap.m.Button. If this test fails the css values of sap.m.Buttons may have changed. Please run this test again to make sure it didn't fail randomly. If it fails again the return value of _getButtonWidth (for bCompact = false) has to be adjusted to whatever the expected value was in this test.");
-			assert.strictEqual(fCalculatedCompactWidth, fMeasuredCompactWidth, "To prevent rendering the ContextMenu a bunch of times its width is calculated based on the css values of sap.m.Button. If this test fails the css values of sap.m.Buttons may have changed. Please run this test again to make sure it didn't fail randomly. If it fails again the return value of _getButtonWidth (for bCompact = true) has to be adjusted to whatever the expected value was in this test.");
 		});
 
 		QUnit.test("comparing the height of the arrow of an actual rendered sap.m.Popover to the return value of _getArrowHeight", function (assert) {
