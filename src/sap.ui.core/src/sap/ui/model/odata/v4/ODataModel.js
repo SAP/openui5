@@ -40,8 +40,11 @@ sap.ui.define([
 		URI) {
 	"use strict";
 
-	var sClassName = "sap.ui.model.odata.v4.ODataModel",
-		rApplicationGroupID = /^\w+$/,
+	var rApplicationGroupID = /^\w+$/,
+		sClassName = "sap.ui.model.odata.v4.ODataModel",
+		// system query options allowed within a $expand query option
+		aExpandQueryOptions = ["$count", "$expand", "$filter", "$levels", "$orderby", "$search",
+			"$select"],
 		rGroupID = /^(\$auto(\.\w+)?|\$direct|\w+)$/,
 		MessageType = coreLibrary.MessageType,
 		aMessageTypes = [
@@ -69,9 +72,6 @@ sap.ui.define([
 		},
 		// system query options allowed in mParameters
 		aSystemQueryOptions = ["$apply", "$count", "$expand", "$filter", "$orderby", "$search",
-			"$select"],
-		// system query options allowed within a $expand query option
-		aExpandQueryOptions = ["$count", "$expand", "$filter", "$levels", "$orderby", "$search",
 			"$select"];
 
 	/**
@@ -1083,18 +1083,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Method not supported
-	 *
-	 * @throws {Error}
-	 *
-	 * @private
-	 * @see sap.ui.model.Model#isList
-	 */
-	ODataModel.prototype.isList = function () {
-		throw new Error("Unsupported operation: v4.ODataModel#isList");
-	};
-
-	/**
 	 * Determines whether the given group ID uses mode {@link sap.ui.model.odata.v4.SubmitMode.Auto}
 	 *
 	 * @param {string} sGroupId
@@ -1119,6 +1107,18 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.isDirectGroup = function (sGroupId) {
 		return this.getGroupProperty(sGroupId, "submit") === SubmitMode.Direct;
+	};
+
+	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 *
+	 * @private
+	 * @see sap.ui.model.Model#isList
+	 */
+	ODataModel.prototype.isList = function () {
+		throw new Error("Unsupported operation: v4.ODataModel#isList");
 	};
 
 	/**
