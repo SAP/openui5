@@ -722,9 +722,6 @@ sap.ui.define([
 		if (this.getMode() === library.GenericTileMode.LineMode) {
 			this.addStyleClass("sapMGTLineModePress");
 		}
-		if (Device.browser.internet_explorer && this.getState() !== library.LoadState.Disabled) {
-			this.$().focus();
-		}
 	};
 
 	GenericTile.prototype.ontouchcancel = function () {
@@ -739,9 +736,6 @@ sap.ui.define([
 		}
 		if (this.getMode() === library.GenericTileMode.LineMode) {
 			this.removeStyleClass("sapMGTLineModePress");
-		}
-		if (Device.browser.internet_explorer && this.getState() !== library.LoadState.Disabled) {
-			this.$().focus();
 		}
 	};
 
