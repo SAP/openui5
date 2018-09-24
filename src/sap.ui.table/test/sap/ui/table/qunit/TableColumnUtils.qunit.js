@@ -14,7 +14,6 @@ sap.ui.define([
 	// mapping of global function calls
 	var createTables = window.createTables;
 	var destroyTables = window.destroyTables;
-	var iNumberOfCols = window.iNumberOfCols;
 
 	// Shortcuts
 	var ColumnUtils = TableUtils.Column;
@@ -777,10 +776,10 @@ sap.ui.define([
 		aVisibleColumns[1].setResizable(true);
 
 		// Invalid span values default to 1
-		ColumnUtils.resizeColumn(oTable, iNumberOfCols - 1, 150, false, 2);
-		assertColumnWidth(iNumberOfCols - 1, 150);
-		assertUnchanged([iNumberOfCols - 1]);
-		ColumnUtils.resizeColumn(oTable, iNumberOfCols - 1, aOriginalColumnWidths[iNumberOfCols - 1], false, 0);
+		ColumnUtils.resizeColumn(oTable, oTable.columnCount - 1, 150, false, 2);
+		assertColumnWidth(oTable.columnCount - 1, 150);
+		assertUnchanged([oTable.columnCount - 1]);
+		ColumnUtils.resizeColumn(oTable, oTable.columnCount - 1, aOriginalColumnWidths[oTable.columnCount - 1], false, 0);
 		assertUnchanged();
 
 		// Do not decrease column width below the minimum column width value.

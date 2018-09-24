@@ -59,7 +59,6 @@ sap.ui.define([
 			oInfo.role = oInfo.role || "";
 			oInfo.type = oInfo.type || "";
 			oInfo.description = oInfo.description || "";
-			oInfo.focusable = !!oInfo.focusable;
 			oInfo.enabled = (oInfo.enabled === true || oInfo.enabled === false) ? oInfo.enabled : null;
 			oInfo.editable = (oInfo.editable === true || oInfo.editable === false) ? oInfo.editable : null;
 			oInfo.children = oInfo.children || [];
@@ -80,7 +79,6 @@ sap.ui.define([
 				oTargetInfo._descriptions = [];
 			}
 
-			oTargetInfo.focusable = oTargetInfo.focusable || oSourceInfo.focusable;
 			oTargetInfo._descriptions.push(ACCInfoHelper._getFullDescription(oSourceInfo));
 
 			oSourceInfo.children.forEach(function(oChild) {
@@ -392,8 +390,7 @@ sap.ui.define([
 				// if (oInfo && oInfo.labelled) { aLabels.push(oInfo.labelled); }
 				// if (oInfo && oInfo.described) { aDescriptions.push(oInfo.described); }
 
-				if (((!oInfo || oInfo.focusable) && !this._readonly) || (bIsTreeColumnCell && oTableInstances.row
-																		 && oTableInstances.row._bHasChildren)) {
+				if (TableUtils.getInteractiveElements($Cell) !== null) {
 					aDescriptions.push(sTableId + "-toggleedit");
 				}
 
@@ -569,7 +566,7 @@ sap.ui.define([
 					if (oInfo) {
 						aLabels.push(sTableId + "-cellacc");
 						sText = oInfo.description;
-						if (oInfo.focusable) {
+						if (TableUtils.getInteractiveElements($Cell) !== null) {
 							aDescriptions.push(sTableId + "-toggleedit");
 						}
 					}
@@ -880,7 +877,6 @@ sap.ui.define([
 		 */
 		_init: function(oTable, sTableType, mSettings) {
 			this._accMode = sap.ui.getCore().getConfiguration().getAccessibility();
-			this._readonly = sTableType === TableExtension.TABLETYPES.ANALYTICAL;
 			this._busyCells = [];
 
 			oTable.addEventDelegate(this);
@@ -907,8 +903,6 @@ sap.ui.define([
 		 */
 		destroy: function() {
 			this.getTable().removeEventDelegate(this);
-
-			this._readonly = false;
 			this._busyCells = [];
 
 			TableExtension.prototype.destroy.apply(this, arguments);
