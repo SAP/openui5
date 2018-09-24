@@ -3064,6 +3064,64 @@ function (
 		});
 	});
 
+	QUnit.module("Revert for stashed control", {
+		beforeEach: function (assert) {
+			var oChangeContent = {
+				"fileType": "change",
+				"layer": "USER",
+				"fileName": "a",
+				"namespace": "b",
+				"packageName": "c",
+				"changeType": "stashControl",
+				"creation": "",
+				"reference": "",
+				"selector": {
+					"id": "stashedSection"
+				},
+				"content": {
+					"something": "createNewVariant"
+				}
+			};
+			this.oDOMParser = new DOMParser();
+			this.oChange = new Change(oChangeContent);
+			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
+
+			this.oChangeHandlerApplyChangeStub = sandbox.stub();
+			this.oChangeHandlerRevertChangeStub = sandbox.stub();
+			sandbox.stub(this.oFlexController, "_getChangeHandler").returns({
+				applyChange: this.oChangeHandlerApplyChangeStub,
+				revertChange: this.oChangeHandlerRevertChangeStub
+			});
+		},
+		afterEach: function (assert) {
+			this.oView.destroy();
+			this.oChange.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("Reverts the 'stashControl' change for an initially stashed control", function(assert) {
+			this.sXmlString =
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' + 'xmlns:uxap="sap.uxap" >' +
+					'<uxap:ObjectPageLayout id="layout">' +
+						'<uxap:sections>' +
+							'<uxap:ObjectPageSection id="stashedSection" stashed="true">' +
+							'</uxap:ObjectPageSection>' +
+						'</uxap:sections>' +
+					'</uxap:ObjectPageLayout>' +
+				'</mvc:View>';
+			this.oView = sap.ui.xmlview("view", {
+				viewContent: this.sXmlString
+			});
+			this.oControl = this.oView.byId("stashedSection");
+
+			return this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {modifier: JsControlTreeModifier, view: this.oView}, true)
+
+			.then(function(vReturn) {
+				assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 1, "revert was called");
+			}.bind(this));
+		});
+	});
+
 	QUnit.module("isPersonalized", {
 		beforeEach: function () {
 			this.oUserChange = new Change({

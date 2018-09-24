@@ -737,8 +737,8 @@ sap.ui.define([
 		}
 
 		// The stashed control does not have custom data in Runtime,
-		// so we have to consider that it is stashed so we can perform the revert
-		if (oChange.getChangeType() === "stashControl" && oControl.getMetadata().getName() === "sap.ui.core._StashedControl"){
+		// so we have to assume that it is stashed so we can perform the revert
+		if (oChange.getChangeType() === "stashControl" && sControlType === "sap.ui.core._StashedControl"){
 			bStashed = true;
 		}
 
