@@ -6,14 +6,16 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/util/LoaderExtensions"
+	"sap/base/util/LoaderExtensions",
+	"sap/base/Log"
 ], function(
 	Cache,
 	LrepConnector,
 	Utils,
 	sinon,
 	jQuery,
-	LoaderExtensions
+	LoaderExtensions,
+	Log
 ) {
 	"use strict";
 
@@ -30,7 +32,10 @@ sap.ui.define([
 
 	function createLoadChangesErrorResponse() {
 		return Promise.reject({
-			status: 'error'
+			code: 500,
+			messages: [{
+				text : "Invalid App Version"
+			}]
 		});
 	}
 
@@ -120,16 +125,18 @@ sap.ui.define([
 		});
 
 		QUnit.test('if error occurs, subsequent calls in their own execution path should not request the data anew', function(assert) {
-			var that = this;
 			var sComponentName = "test";
 
-			sandbox.stub(this.oLrepConnector, 'loadChanges').callsFake(createLoadChangesErrorResponse);
+			sandbox.stub(this.oLrepConnector, "loadChanges").callsFake(createLoadChangesErrorResponse);
+			sandbox.stub(Log, "error");
 
-			return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName}).then(function() {
-				return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName});
-			}).then(function() {
-				assert.equal(1, that.oLrepConnector.loadChanges.callCount, "only one call was done to the backend");
-			});
+			return Cache.getChangesFillingCache(this.oLrepConnector, {name: sComponentName}).then(function() {
+				return Cache.getChangesFillingCache(this.oLrepConnector, {name: sComponentName});
+			}.bind(this)).then(function() {
+				assert.equal(1, this.oLrepConnector.loadChanges.callCount, "only one call was done to the backend");
+				sinon.assert.calledOnce(Log.error);
+				assert.equal(Log.error.getCall(0).args[0], "Loading changes for test failed!\nError code: 500\nMessage: Invalid App Version", "Error message is logged with a proper error message");
+			}.bind(this));
 		});
 
 		QUnit.test('setActive should enable and disable the cache globally', function(assert) {
