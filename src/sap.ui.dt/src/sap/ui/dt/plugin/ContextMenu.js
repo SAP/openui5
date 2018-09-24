@@ -551,7 +551,6 @@ sap.ui.define([
 			this.lockMenuOpening(true);
 		}
 		this._bAsyncLock = false;
-		this.resetFocus();
 	};
 
 	/**
@@ -567,17 +566,6 @@ sap.ui.define([
 	 */
 	ContextMenu.prototype.setFocusLock = function (bIsLocked) {
 		this._bFocusLocked = bIsLocked;
-	};
-
-	/**
-	 * resets the focus to the Overlay
-	 */
-	ContextMenu.prototype.resetFocus = function () {
-		if (!this._bFocusLocked && this._oCurrentOverlay && document.activeElement) { //IE sometimes doesn't get an active element and throws an error when trying to set focus
-			if (!Device.os.ios) {
-				this._oCurrentOverlay.focus();
-			}
-		}
 	};
 
 	/**
