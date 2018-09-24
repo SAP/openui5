@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/changeHandler/HideControl",
+	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
@@ -33,6 +34,7 @@ function (
 	Control,
 	Utils,
 	HideControl,
+	ChangeHandlerBase,
 	ChangePersistenceFactory,
 	JsControlTreeModifier,
 	XmlTreeModifier,
@@ -139,7 +141,7 @@ function (
 				}
 			});
 
-			sandbox.stub(this.oFlexController, "_writeAppliedChangesCustomData");
+			sandbox.stub(this.oFlexController, "_writeCustomData");
 			sandbox.stub(this.oFlexController, "_getChangeHandler").returns({
 				completeChangeContent: completeChangeContentStub,
 				applyChange: changeHandlerApplyChangeStub
@@ -228,7 +230,7 @@ function (
 				}
 			});
 
-			sandbox.stub(this.oFlexController, "_writeAppliedChangesCustomData");
+			sandbox.stub(this.oFlexController, "_writeCustomData");
 			sandbox.stub(this.oFlexController, "_getChangeHandler").returns({
 				completeChangeContent: completeChangeContentStub,
 				applyChange: changeHandlerApplyChangeStub
@@ -2326,6 +2328,58 @@ function (
 				assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.failedChangesCustomDataKeyJs, "failed custom data was written");
 				assert.equal(mergeErrorStub.callCount, 1, "set merge error was called");
 			}.bind(this));
+		});
+
+		QUnit.test("when checkTargetAndApplyChange is called and applyChanges throws a not-Applicable exception", function (assert) {
+			sandbox.restore();
+			var sNotApplicableMessage1 = "myNotApplicableMessage1",
+				sNotApplicableMessage2 = "myNotApplicableMessage2";
+			var mergeErrorStub = sandbox.stub(this.oFlexController, "_setMergeError");
+			this.oChangeHandlerApplyChangeStub = sandbox.stub()
+			.onFirstCall().callsFake(function() {
+				return ChangeHandlerBase.markAsNotApplicable(sNotApplicableMessage1, true /* asyncronous return */);
+			})
+			.callsFake(function() {
+				return ChangeHandlerBase.markAsNotApplicable(sNotApplicableMessage2, false /* synchronous return */);
+			});
+			sandbox.stub(this.oFlexController, "_getChangeHandler").returns({
+				applyChange: this.oChangeHandlerApplyChangeStub
+			});
+
+			return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {
+				modifier: JsControlTreeModifier,
+				appComponent: {}
+			})
+
+			.then(function(oResult) {
+				var oControlCustomData = this.oControl.getCustomData()[0];
+				assert.notOk(oResult.success, "success in the return object is set to false");
+				assert.equal(oResult.error.message, sNotApplicableMessage1);
+				assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "apply change functionality was called");
+				assert.equal(oControlCustomData.getKey(), FlexController.notApplicableChangesCustomDataKey, "first not applicable custom data was written");
+				assert.equal(oControlCustomData.getValue(), this.oChange.getId(), "the correct value is passed to the custom data");
+				assert.equal(mergeErrorStub.callCount, 0, "set merge error was not called");
+			}.bind(this))
+
+			.then(function() {
+				return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {
+					modifier: JsControlTreeModifier,
+					appComponent: {}
+				});
+			}.bind(this))
+
+			.then(function(oResult) {
+				var oControlCustomData = this.oControl.getCustomData()[0];
+				var sChangeId = this.oChange.getId(),
+					sExpectedCustomDataValue = sChangeId + "," + sChangeId;
+				assert.notOk(oResult.success, "success in the return object is set to false");
+				assert.equal(oResult.error.message, sNotApplicableMessage2);
+				assert.ok(this.oChangeHandlerApplyChangeStub.calledTwice, "apply change functionality was called");
+				assert.equal(oControlCustomData.getKey(), FlexController.notApplicableChangesCustomDataKey, "second not applicable custom data was written");
+				assert.equal(oControlCustomData.getValue(), sExpectedCustomDataValue, "the correct value is passed to the custom data");
+				assert.equal(mergeErrorStub.callCount, 0, "set merge error was not called");
+			}.bind(this))
+			;
 		});
 
 		QUnit.test("concatenate custom data on the later changes applied on a control", function (assert) {

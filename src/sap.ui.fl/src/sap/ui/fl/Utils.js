@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/UriParameters",
 	"sap/base/util/uid",
+	"sap/base/strings/formatMessage",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/mvc/View"
 ],
@@ -21,6 +22,7 @@ function(
 	Log,
 	UriParameters,
 	uid,
+	formatMessage,
 	ManagedObject,
 	View
 ) {
@@ -75,6 +77,20 @@ function(
 			info: function (sMessage, sDetails, sComponent) {
 				Log.info(sMessage, sDetails, sComponent);
 			}
+		},
+
+		/**
+		 * Formats the log message by replacing placeholders with values and logging the message.
+		 *
+		 * @param {string} sLogType - Logging type to be used. Possible values: info | warning | debug | error
+		 * @param {array.<string>} aMessageComponents - Individual parts of the message text
+		 * @param {array.<any>} aValuesToInsert - The values to be used instead of the placeholders in the message
+		 * @param {string} [sCallStack] - Passes the callstack to the logging function
+		 */
+		formatAndLogMessage: function(sLogType, aMessageComponents, aValuesToInsert, sCallStack) {
+			var sLogMessage = aMessageComponents.join(' ');
+			sLogMessage = formatMessage(sLogMessage, aValuesToInsert);
+			this.log[sLogType](sLogMessage, sCallStack || "");
 		},
 
 		/**
