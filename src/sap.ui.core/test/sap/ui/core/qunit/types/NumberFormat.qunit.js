@@ -2585,6 +2585,12 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 		assert.equal(f("0", -2), "0.00", "0 <- (2) = 0.00");
 		assert.equal(f("1e79", -71), "100000000", "1e79 <- (71) = 100000000");
 		assert.equal(f("1e-79", 71), "0.00000001", "1e-79 -> (71) = 0.00000001");
+		assert.equal(f("-4e-1", 0), "-0.4", "-4e-1 -> = -0.4");
+		assert.equal(f("-4e-2", 0), "-0.04", "-4e-2 -> = -0.04");
+		assert.equal(f("-4e-3", 0), "-0.004", "-4e-3 -> = -0.004");
+		assert.equal(f("-4e+1", 0), "-40", "-4e+1 -> = -40");
+		assert.equal(f("-4e+2", 0), "-400", "-4e+2 -> = -400");
+		assert.equal(f("-4e+3", 0), "-4000", "-4e+3 -> = -4000");
 	});
 
 	QUnit.test("Format option 'emptyString'", function (assert) {

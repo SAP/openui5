@@ -1360,7 +1360,7 @@ sap.ui.define([
 		if (typeof iStep !== "number") {
 			return NaN;
 		}
-
+		var sMinus = "";
 		var aExpParts = vValue.toString().toLowerCase().split("e");
 
 		if (typeof vValue === "number") {
@@ -1374,6 +1374,15 @@ sap.ui.define([
 		} else if (typeof vValue === "string") {
 			if (parseFloat(vValue) === 0 && iStep >= 0) {
 				return vValue;
+			}
+			// In case of a negative value the leading minus needs to be cut off before shifting the decimal point.
+			// Otherwise the minus will affect the positioning by index 1.
+			// The minus sign will be added to the final result again.
+			var sFirstChar = aExpParts[0].charAt(0);
+			sMinus = sFirstChar === "-" ? sFirstChar : "";
+
+			if (sMinus) {
+				aExpParts[0] = aExpParts[0].slice(1);
 			}
 
 			vValue = aExpParts[0];
@@ -1415,7 +1424,7 @@ sap.ui.define([
 			// remove unnecessary leading zeros
 			sInt = sInt.replace(/^(-?)0+(\d)/, "$1$2");
 
-			return sInt + (sDecimal ? ("." + sDecimal) : "");
+			return sMinus + sInt + (sDecimal ? ("." + sDecimal) : "");
 		} else {
 			// can't shift decimal point in this case
 			return null;
