@@ -336,5 +336,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.38": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "323e2e51e3c12f89988a971ada2a284dab42e875",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: Resize tooltips are now correct",
+        "references": []
+      }
+    ]
   }
 }

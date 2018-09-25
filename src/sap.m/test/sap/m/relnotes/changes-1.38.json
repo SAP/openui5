@@ -6038,5 +6038,28 @@
         "references": []
       }
     ]
+  },
+  "1.38.38": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "3181e07c9efae308fd08d0b2730e23d91457f58d",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: search with relative item binding works now.",
+        "references": []
+      },
+      {
+        "id": "44b15a0021e25e19e5a095820fa8a432e48ae19e",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: has padding now, when IconTabBar has no data",
+        "references": []
+      },
+      {
+        "id": "61d14d106d71359f997fbad009d64a420813a6db",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Selection now visible in print",
+        "references": []
+      }
+    ]
   }
 }
