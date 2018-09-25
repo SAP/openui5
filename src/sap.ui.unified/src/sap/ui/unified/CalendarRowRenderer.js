@@ -629,12 +629,14 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 			iMonth = oRowStartDate.getMonth(),
 			iDaysLength = new Date(oRowStartDate.getFullYear(), iMonth + 1, 0).getDate(),
 			sNoAppointments,
+			// gets a concatenated array with appointments + interval headers, which intersect the visible interval
+			// then sorts the array using our custom comparer
 			aSortedAppInfos = aAppointments.concat(oRow.getIntervalHeaders().filter(function(oIntHeadApp) {
 				var iAppStart = oIntHeadApp.getStartDate().getTime(),
-					iAppEnd = oIntHeadApp.getStartDate().getTime(),
+					iAppEnd = oIntHeadApp.getEndDate().getTime(),
 					iRowStart = oRowStartDate.getTime(),
 					iRowEnd = iRowStart + 1000 * 60 * 60 * 24;
-				return (iAppStart >= iRowStart && iAppStart < iRowEnd) || (iAppEnd >= iRowStart && iAppEnd < iRowEnd);
+				return !(iAppStart >= iRowEnd || iAppEnd <= iRowStart);
 			}).map(function(oIntHeadApp) {
 				return {appointment: oIntHeadApp, isHeader: true};
 			})).sort(CalendarAppointment._getComparer(oRowStartDate)),
