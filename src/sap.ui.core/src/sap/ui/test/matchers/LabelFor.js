@@ -4,8 +4,9 @@
 sap.ui.define([
   'sap/ui/test/matchers/Matcher',
   'sap/ui/test/matchers/I18NText',
-  'sap/ui/test/Opa5'
-], function (Matcher, I18NText, Opa5) {
+  'sap/ui/test/_opaCorePlugin',
+  "sap/m/Label"
+], function (Matcher, I18NText, _opaCorePlugin, Label) {
   "use strict";
 
   var oI18nMatcher = new I18NText();
@@ -84,7 +85,6 @@ sap.ui.define([
      */
     isMatching : function (oControl) {
       var bIsMatching;
-      var oPlugin = Opa5.getPlugin();
       var sModelName = this.getModelName();
       var sLabelText = this.getText();
       var aParameters = this.getParameters();
@@ -100,7 +100,7 @@ sap.ui.define([
         return false;
       }
 
-      var aLabelsInPage = oPlugin.getMatchingControls({controlType: "sap.m.Label", visible: false});
+      var aLabelsInPage = _opaCorePlugin.getAllControls(Label);
 
       oI18nMatcher.applySettings({
         key: sKey,
