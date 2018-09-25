@@ -2238,5 +2238,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.36": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "0b027ff292d46ae6174b0fae390d2d49139d54e0",
+        "type": "FIX",
+        "text": " performance/trace/Interaction: accept valid setRequestHeader parameters",
+        "references": []
+      }
+    ]
   }
 }
