@@ -22,6 +22,11 @@
 								groups="{selectedData>/groups}"
 								renderType="Svg"
 								id="graph">
+							<statuses>
+								<Status key="CustomNotApplicable" title="notApplicable"
+										backgroundColor="sapUiChartSequence1"
+										legendColor="sapUiChartSequence1"/>
+							</statuses>
 							<layoutData>
 								<m:FlexItemData
 										growFactor="1"
@@ -35,7 +40,7 @@
 										nodeSpacing="40" />
 							</layoutAlgorithm>
 							<nodes>
-								<Node	
+								<Node
 										key="{selectedData>key}"
 										title="{selectedData>title}"
 										statusIcon="{selectedData>variantIcon}"
@@ -43,7 +48,7 @@
 										group="{selectedData>group}"
 										attributes="{path:'selectedData>attributes', templateShareable:true}"
 										shape="{selectedData>shape}"
-										status="{parts:['selectedData>key','selectedData>/appliedChanges','selectedData>/failedChanges'], formatter: '.formatStatus'}"
+										status="{parts:['selectedData>key','selectedData>/appliedChanges','selectedData>/failedChanges','selectedData>/notApplicableChanges'], formatter: '.formatStatus'}"
 										showActionLinksButton="false">
 									<attributes>
 										<ElementAttribute

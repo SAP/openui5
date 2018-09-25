@@ -17,8 +17,9 @@ sap.ui.define([
 			var sKey = "id_123_moveControl";
 			var aAppliedChanges = ["id_456_hideControl", "id_123_moveControl"];
 			var aFailedChanges = [];
+			var aNotApplicableChanges = [];
 
-			var sStatus = this.oController.formatStatus(sKey, aAppliedChanges, aFailedChanges);
+			var sStatus = this.oController.formatStatus(sKey, aAppliedChanges, aFailedChanges, aNotApplicableChanges);
 
 			assert.equal(sStatus, "Success", "the applied change was correct formatted");
 		});
@@ -27,10 +28,22 @@ sap.ui.define([
 			var sKey = "id_123_moveControl";
 			var aAppliedChanges = ["id_456_hideControl"];
 			var aFailedChanges = [ "id_123_moveControl"];
+			var aNotApplicableChanges = [];
 
-			var sStatus = this.oController.formatStatus(sKey, aAppliedChanges, aFailedChanges);
+			var sStatus = this.oController.formatStatus(sKey, aAppliedChanges, aFailedChanges, aNotApplicableChanges);
 
 			assert.equal(sStatus, "Error", "the applied change was correct formatted");
+		});
+
+		QUnit.test("displays correct a not applicable change", function (assert) {
+			var sKey = "id_123_moveControl";
+			var aAppliedChanges = [];
+			var aFailedChanges = [];
+			var aNotApplicableChanges = ["id_123_moveControl"];
+
+			var sStatus = this.oController.formatStatus(sKey, aAppliedChanges, aFailedChanges, aNotApplicableChanges);
+
+			assert.equal(sStatus, "CustomNotApplicable", "the not-applicable change was correct formatted");
 		});
 	});
 
@@ -164,6 +177,7 @@ sap.ui.define([
 				mControlData: {},
 				aAppliedChanges: [],
 				aFailedChanges: [],
+				aNotApplicableChanges: [],
 				mChangesEntries: {
 					"id1": {
 						mDefinition: {

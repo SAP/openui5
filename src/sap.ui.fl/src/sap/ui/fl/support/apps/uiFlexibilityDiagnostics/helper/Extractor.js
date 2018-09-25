@@ -12,12 +12,16 @@ sap.ui.define([
 
 	var Extractor = {};
 
+	Extractor.VERSION = 'v1.0';
+
 	Extractor.extractData = function (oChangePersistence) {
 		var oExport = {
+			sVersion: Extractor.VERSION,
 			bIsInvestigationExport: true,
 			mControlData : {},
 			aAppliedChanges : [],
 			aFailedChanges : [],
+			aNotApplicableChanges : [],
 			mChangesEntries: {},
 			mVariantsChanges: {},
 			sComponentName: oChangePersistence._mComponent.name
@@ -72,7 +76,8 @@ sap.ui.define([
 						bPresent : !!JsControlTreeModifier.bySelector(oSelector, oAppComponent),
 						aAppliedChanges : [],
 						aFailedChangesJs : [],
-						aFailedChangesXml : []
+						aFailedChangesXml : [],
+						aNotApplicableChanges : []
 					};
 
 					oExport.mControlData[oSelector.id] = mControlData;
@@ -97,51 +102,39 @@ sap.ui.define([
 		});
 	};
 
+	Extractor._enhanceWithChangetypeSpecificData = function(oExport, sExportParameterName, mControlData, sControlDataParameterName, sCustomDataChanges) {
+		if (sCustomDataChanges) {
+			mControlData[sControlDataParameterName] = sCustomDataChanges.split(",");
+			mControlData[sControlDataParameterName].map(function (sChangeId) {
+				if (!(sChangeId in oExport[sExportParameterName])) {
+					oExport[sExportParameterName].push(sChangeId);
+				}
+			});
+		}
+	};
 
 	Extractor._enhanceExportWithControlData = function (oChangePersistence, oExport) {
 		// collect applied changes
-		jQuery.each(oChangePersistence._mChanges.mChanges, function (sControlId, aChangesOnControl) {
+		jQuery.each(oChangePersistence._mChanges.mChanges, function (sControlId) {
 			var mControlData = {
 				bPresent : false,
 				aAppliedChanges : [],
 				aFailedChangesJs : [],
-				aFailedChangesXml : []
+				aFailedChangesXml : [],
+				aNotApplicableChanges : []
 			};
 
 			var oControl = sap.ui.getCore().byId(sControlId);
 
 			if (oControl) {
 				mControlData.bPresent = true;
-
-				if (oControl.data("sap.ui.fl.appliedChanges")) {
-					mControlData.aAppliedChanges = oControl.data("sap.ui.fl.appliedChanges").split(",");
-					mControlData.aAppliedChanges.map(function (sChangeId) {
-						if (!(sChangeId in oExport.aAppliedChanges)) {
-							oExport.aAppliedChanges.push(sChangeId);
-						}
-					});
-				}
-				if (oControl.data("sap.ui.fl.failedChanges.js")) {
-					var aFailedJsChanges = oControl.data("sap.ui.fl.failedChanges.js").split(",");
-					mControlData.aFailedChangesJs = aFailedJsChanges;
-					mControlData.aFailedChangesJs.map(function (sChangeId) {
-						if (!(sChangeId in oExport.aFailedChanges)) {
-							oExport.aFailedChanges.push(sChangeId);
-						}
-					});
-				}
-				if (oControl.data("sap.ui.fl.failedChanges.xml")) {
-					var aFailedXmlChanges = oControl.data("sap.ui.fl.failedChanges.xml").split(",");
-					mControlData.aFailedChangesXml = aFailedXmlChanges;
-					mControlData.aFailedChangesXml.map(function (sChangeId) {
-						if (!(sChangeId in oExport.aFailedChanges)) {
-							oExport.aFailedChanges.push(sChangeId);
-						}
-					});
-				}
+				this._enhanceWithChangetypeSpecificData(oExport, "aAppliedChanges", mControlData, "aAppliedChanges", oControl.data("sap.ui.fl.appliedChanges"));
+				this._enhanceWithChangetypeSpecificData(oExport, "aFailedChanges", mControlData, "aFailedChangesJs", oControl.data("sap.ui.fl.failedChanges.js"));
+				this._enhanceWithChangetypeSpecificData(oExport, "aFailedChanges", mControlData, "aFailedChangesXml", oControl.data("sap.ui.fl.failedChanges.xml"));
+				this._enhanceWithChangetypeSpecificData(oExport, "aNotApplicableChanges", mControlData, "aNotApplicableChanges", oControl.data("sap.ui.fl.notApplicableChanges"));
 			}
 			oExport.mControlData[sControlId] = mControlData;
-		});
+		}.bind(this));
 	};
 
 	Extractor.createDownloadFile = function (oExport) {
