@@ -179,18 +179,8 @@ sap.ui.define([
 			throw new Error("No Component found - to offer flexibility the control with the id '" + sControlId + "' has to have a valid relation to its owning application component.");
 		}
 		// differentiate between controls containing the component id as a prefix and others
-		if (Utils.hasLocalIdSuffix(sControlId, oComponent)) {
-			// get local Id for control at root component and use it as selector id
-			var sLocalId = oComponent.getLocalId(sControlId);
-			if (!sLocalId) {
-				throw new Error("Generated ID attribute found ('" + sControlId + "'); provide a stable ID for the control as required by flexibility for assigning the changes.");
-			}
-			oChangeSpecificData.selector.id = sLocalId;
-			oChangeSpecificData.selector.idIsLocal = true;
-		} else {
-			oChangeSpecificData.selector.id = sControlId;
-			oChangeSpecificData.selector.idIsLocal = false;
-		}
+		// get local Id for control at root component and use it as selector id
+		Object.assign(oChangeSpecificData.selector, Utils.getLocalIdForSelectors(sControlId, oComponent));
 
 		oChange = this.createBaseChange(oChangeSpecificData, oComponent);
 
@@ -341,6 +331,7 @@ sap.ui.define([
 				this._oChangePersistence.deleteChange(oChange);
 				throw oException;
 			}
+			return oChange;
 		}.bind(this));
 	};
 

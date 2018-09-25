@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Element",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/core/Component",
 	"sap/ui/thirdparty/jquery"
@@ -17,6 +18,7 @@ sap.ui.define([
 	FlexControllerFactory,
 	JsControlTreeModifier,
 	Element,
+	ManagedObject,
 	VariantManagement,
 	Component,
 	jQuery
@@ -68,8 +70,6 @@ sap.ui.define([
 			var oVariantModel = oAppComponent.getModel("$FlexVariants");
 
 			var mParams = {
-				appComponent : oAppComponent,
-				component: oComponent,
 				rootControl : oRootControl,
 				view : oView,
 				variantModel : oVariantModel,
@@ -84,7 +84,7 @@ sap.ui.define([
 				if (oVMControl.getMetadata().getName() === "sap.ui.fl.variants.VariantManagement") {
 					aForControlTypes = oVMControl.getFor();
 					aForControlTypes.forEach(function(sControlType) {
-						mParams.variantManagement[sControlType] = mParams.variantModel._getLocalId(oVariantManagementNode.id, mParams.component);
+						mParams.variantManagement[sControlType] = mParams.variantModel._getLocalId(oVariantManagementNode.id, oComponent);
 					});
 				}
 			});
@@ -208,98 +208,105 @@ sap.ui.define([
 		},
 
 		_checkChangeSpecificData: function(oChange, sLayer) {
-			if (!oChange.selectorControl || !oChange.selectorControl.getMetadata) {
-				return {
-					change : oChange,
-					message : "No valid selectorControl"
-				};
-			}
 			if (!oChange.changeSpecificData) {
-				return {
-					change : oChange,
-					message : "No changeSpecificData available"
-				};
+				return "No changeSpecificData available";
 			}
 			if (!oChange.changeSpecificData.changeType) {
-				return {
-					change : oChange,
-					message : "No valid changeType"
-				};
+				return "No valid changeType";
+			}
+
+			if (!(oChange.selectorControl instanceof Element)) {
+				return "No valid selectorControl";
 			}
 
 			var sControlType = oChange.selectorControl.getMetadata().getName();
 			var oChangeHandler = ChangeRegistry.getInstance().getChangeHandler(oChange.changeSpecificData.changeType, sControlType, oChange.selectorControl, JsControlTreeModifier, sLayer);
 			if (!oChangeHandler) {
-				return {
-					change : oChange,
-					message : "No valid ChangeHandler"
-				};
+				return "No valid ChangeHandler";
 			}
 			if (!oChangeHandler.revertChange) {
-				return {
-					change : oChange,
-					message : "ChangeHandler has no revertChange function"
-				};
+				return "ChangeHandler has no revertChange function";
 			}
 		},
 
 		/**
 		 * Creates personalization changes, adds them to the flex persistence (not yet saved) and applies them to the control.
 		 *
-		 * @param {array} aControlChanges Array of control changes of type {@link sap.ui.fl.ControlPersonalizationAPI.addPersonalizationChange}
-		 * @param {boolean} [bIgnoreVariantManagement] If flag is set to true then variant management will be ignored
+		 * @param {object} mPropertyBag Changes along with other settings that need to be added
+		 * @param {array} mPropertyBag.controlChanges Array of control changes of type {@link sap.ui.fl.ControlPersonalizationAPI.addPersonalizationChange}
+		 * @param {boolean} [mPropertyBag.ignoreVariantManagement] If flag is set to true then variant management will be ignored
 		 *
-		 * @returns {Promise} Returns Promise that resolves after the changes have been written to the map of dirty changes and applied to the control
+		 * @returns {Promise} Returns Promise resolving to an array of successfully applied changes,
+		 * after the changes have been written to the map of dirty changes and applied to the control
 		 *
 		 * @method sap.ui.fl.ControlPersonalizationAPI.addPersonalizationChanges
 		 * @public
 		 */
-		addPersonalizationChanges : function(aControlChanges, bIgnoreVariantManagement) {
-			function fnAddAndApplyChanges(mVariantParams, oChange, oSelectorControl, mPropertyBag) {
-				mVariantParams.flexController.addPreparedChange(oChange, mVariantParams.appComponent);
-				return mVariantParams.flexController.checkTargetAndApplyChange(oChange, oSelectorControl, mPropertyBag);
-			}
-
+		addPersonalizationChanges: function(mPropertyBag) {
+			var aSuccessfulChanges = [];
 			var sLayer = Utils.getCurrentLayer(true);
 			var aPromises = [];
-			aControlChanges.forEach(function(oChange) {
+
+			mPropertyBag.controlChanges.forEach(function(oChange) {
 				var mChangeSpecificData = {};
 				Object.assign(mChangeSpecificData, {
 					developerMode: false,
 					layer: sLayer
 				});
 
-				var oError = this._checkChangeSpecificData(oChange, sLayer);
-				if (oError) {
-					aPromises.push(function() { return Promise.reject(oError); });
+				var sCheckResult = this._checkChangeSpecificData(oChange, sLayer);
+				if (sCheckResult) {
+					aPromises.push(function() {
+						return Promise.reject({
+							change: oChange,
+							message: sCheckResult
+						});
+					});
 					return;
 				}
 
-				var mControlChangeSpecificData = oChange.changeSpecificData;
-				var oSelectorControl = oChange.selectorControl;
-				var mParams = this._determineParameters(oSelectorControl);
-
-				oChange = mParams.variantModel.oFlexController.createChange(
-					Object.assign(mChangeSpecificData, mControlChangeSpecificData),
-					oSelectorControl
-				);
-
-				var sVariantManagementReference = this._getVariantManagement(oSelectorControl, mParams);
-				if (!bIgnoreVariantManagement && sVariantManagementReference) {
-					var sCurrentVariantReference = mParams.variantModel.oData[sVariantManagementReference].currentVariant;
-					oChange.setVariantReference(sCurrentVariantReference);
+				var mParams = this._determineParameters(oChange.selectorControl);
+				if (!mPropertyBag.ignoreVariantManagement) {
+					var sVariantManagementReference = this._getVariantManagement(oChange.selectorControl, mParams);
+					if (sVariantManagementReference) {
+						var sCurrentVariantReference = mParams.variantModel.oData[sVariantManagementReference].currentVariant;
+						oChange.changeSpecificData.variantReference = sCurrentVariantReference;
+					}
 				}
-
-				var mPropertyBag = {
-					component: mParams.component, // set local component
-					view: mParams.view,
-					modifier: JsControlTreeModifier
-				};
-
-				aPromises.push(fnAddAndApplyChanges.bind(this, mParams, oChange, oSelectorControl, mPropertyBag));
+				aPromises.push(
+					function() {
+						return mParams.flexController.createAndApplyChange(Object.assign(mChangeSpecificData, oChange.changeSpecificData), oChange.selectorControl)
+							.then(function (oAppliedChange) {
+								// FlexController.createAndApplyChanges will only resolve for successfully applied changes
+								aSuccessfulChanges.push(oAppliedChange);
+							});
+					}
+				);
 			}.bind(this));
 
-			return Utils.execPromiseQueueSequentially(aPromises);
+			return Utils.execPromiseQueueSequentially(aPromises)
+				.then(function() {
+					return aSuccessfulChanges;
+				});
+		},
+
+		/**
+		 * Saves unsaved changes added to {@link sap.ui.fl.ChangePersistence}
+		 *
+		 * @param {array} aChanges - array of changes to be saved
+		 * @param {sap.ui.base.ManagedObject} oManagedObject - A managed object instance which has an application component responsible, on which changes need to be saved
+		 *
+		 * @returns {Promise} Returns Promise which is resolved when the passed array of changes have been saved
+		 *
+		 * @method sap.ui.fl.ControlPersonalizationAPI.saveChanges
+		 * @public
+		 */
+		saveChanges: function(aChanges, oManagedObject) {
+			if (!(oManagedObject instanceof ManagedObject)) {
+				Utils.log.error("A valid sap.ui.base.ManagedObject instance is required as a parameter");
+				return;
+			}
+			return FlexControllerFactory.createForControl(oManagedObject)._oChangePersistence.saveSequenceOfDirtyChanges(aChanges);
 		},
 
 		/**
@@ -315,7 +322,6 @@ sap.ui.define([
 		hasVariantManagement : function(oControl) {
 			return !!this._getVariantManagement(oControl);
 		}
-
 	};
 	return ControlPersonalizationAPI;
 }, true);

@@ -1226,8 +1226,8 @@ function(
 
 		/**
 		 * Function that behaves like Promise (es6) but is synchronous. Implements 'then' and 'catch' functions.
-		 * After instantiating can be used simillar to standard Promises but synchronously.
-		 * As soon as one of the callback functions returns a Promise the asynchronus Promise replaces the FakePromise in further processing.
+		 * After instantiating can be used similar to standard Promises but synchronously.
+		 * As soon as one of the callback functions returns a Promise the asynchronous Promise replaces the FakePromise in further processing.
 		 *
 		 * @param {any} vInitialValue - value on resolve FakePromise
 		 * @param {any} vError - value on reject FakePromise
@@ -1301,6 +1301,29 @@ function(
 				});
 			});
 			return oResult;
+		},
+
+		/**
+		 * Returns an object containing local id along with the applicable idIsLocal property,
+		 * for the passed app component and control id
+		 *
+		 * @param {string} sControlId - Control id
+		 * @param {sap.ui.core.UIComponent} oAppComponent - Application component responsible for the control id
+		 * @returns {object} Returns object containing local id and isIsLocal property
+		 */
+		getLocalIdForSelectors: function (sControlId, oAppComponent) {
+			if (Utils.hasLocalIdSuffix(sControlId, oAppComponent)) {
+				var sLocalId = oAppComponent.getLocalId(sControlId);
+				return {
+					id: sLocalId,
+					idIsLocal: true
+				};
+			} else {
+				return {
+					id: sControlId,
+					idIsLocal: false
+				};
+			}
 		}
 
 	};

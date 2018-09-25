@@ -6,6 +6,7 @@ sap.ui.define([
 	'sap/ui/layout/HorizontalLayout',
 	'sap/m/Button',
 	'sap/ui/core/Component',
+	'sap/ui/core/UIComponent',
 	'sap/ui/thirdparty/hasher',
 	"sap/base/Log",
 	'sap/ui/thirdparty/sinon-4',
@@ -17,6 +18,7 @@ function(
 	HorizontalLayout,
 	Button,
 	Component,
+	UIComponent,
 	hasher,
 	Log,
 	sinon,
@@ -866,6 +868,20 @@ function(
 			oObject = undefined;
 			aArray = [{a: 1, b: 2, c: 3}, undefined, {a: 7, b: 8, c: 9}];
 			assert.equal(Utils.indexOfObject(aArray, oObject), 1, "the function returns the correct index");
+		});
+
+		QUnit.test("getLocalIdForSelector will return the local id with a 'idIsLocal' property set, when a local id exists", function(assert) {
+			var oComponent = new UIComponent("mockComponent");
+			var sControlId = "mockComponent---controlId";
+			assert.deepEqual(Utils.getLocalIdForSelectors(sControlId, oComponent), {idIsLocal: true, id: "controlId"}, "then the local id with 'idIsLocal' property set is returned");
+			oComponent.destroy();
+		});
+
+		QUnit.test("getLocalIdForSelector will return the control id with a 'idIsLocal' property unset, when a local id doesn't exist", function(assert) {
+			var oComponent = new UIComponent("mockComponent");
+			var sControlId = "controlIdWithNoPrefix";
+			assert.deepEqual(Utils.getLocalIdForSelectors(sControlId, oComponent), {idIsLocal: false, id: sControlId}, "then the original id with 'idIsLocal' property unset is returned");
+			oComponent.destroy();
 		});
 	});
 
