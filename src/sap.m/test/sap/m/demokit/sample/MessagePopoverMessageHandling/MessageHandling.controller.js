@@ -38,7 +38,7 @@ sap.ui.define([
 						oMessage = oItem.getBindingContext("message").getObject(),
 						oControl = sap.ui.getCore().byId(oMessage.getControlId());
 
-					if (oControl && oControl.getDomRef()) {
+					if (oControl) {
 						oPage.scrollToElement(oControl.getDomRef(), 200, [0, -100]);
 						setTimeout(function(){
 							oControl.focus();
