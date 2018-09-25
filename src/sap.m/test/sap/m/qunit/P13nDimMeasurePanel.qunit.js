@@ -911,9 +911,9 @@ sap.ui.define([
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[1].checked, true);
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[2].checked, false);
 
-		assert.equal(this.oPanel.$().find("tr").find("span").length, 9); // 3 header cells + 3 cells * 2 items
+		assert.equal(this.oPanel.$().find("tr").find("span").length, 11); // 3 header cells + 3 cells * 2 items (each item in sap.m.Select has 1 span more for text)
 		assert.equal(this.oPanel.$().find("tr").find("span")[3].textContent, "B");
-		assert.equal(this.oPanel.$().find("tr").find("span")[6].textContent, "A");
+		assert.equal(this.oPanel.$().find("tr").find("span")[7].textContent, "A");
 
 		// act: Reset
 		this.oPanel.getModel().setProperty("/", this.oDataInitial);
@@ -932,9 +932,9 @@ sap.ui.define([
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[1].checked, true);
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[2].checked, true);
 
-		assert.equal(this.oPanel.$().find("tr").find("span").length, 9); // 3 header cells + 3 cells * 2 items
+		assert.equal(this.oPanel.$().find("tr").find("span").length, 11); // 3 header cells + 3 cells * 2 items (each item in sap.m.Select has 1 span more for text)
 		assert.equal(this.oPanel.$().find("tr").find("span")[3].textContent, "A");
-		assert.equal(this.oPanel.$().find("tr").find("span")[6].textContent, "B");
+		assert.equal(this.oPanel.$().find("tr").find("span")[7].textContent, "B");
 	});
 
 	QUnit.test("Reset after 'Show Selected' clicked", function (assert) {
@@ -961,7 +961,7 @@ sap.ui.define([
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[0].checked, false); // header
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[1].checked, true);
 
-		assert.equal(this.oPanel.$().find("tr").find("span").length, 6); // 3 header cells + 3 cells * 1 item
+		assert.equal(this.oPanel.$().find("tr").find("span").length, 7); // 3 header cells + 3 cells * 1 item (each item in sap.m.Select has 1 span more for text)
 		assert.equal(this.oPanel.$().find("tr").find("span")[3].textContent, "B");
 
 		// act: Reset
@@ -981,8 +981,8 @@ sap.ui.define([
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[1].checked, true);
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[2].checked, true);
 
-		assert.equal(this.oPanel.$().find("tr").find("span").length, 9); // 3 header cells + 3 cells * 2 items
+		assert.equal(this.oPanel.$().find("tr").find("span").length, 11); // 3 header cells + 3 cells * 2 items (each item in sap.m.Select has 1 span more for text)
 		assert.equal(this.oPanel.$().find("tr").find("span")[3].textContent, "A");
-		assert.equal(this.oPanel.$().find("tr").find("span")[6].textContent, "B");
+		assert.equal(this.oPanel.$().find("tr").find("span")[7].textContent, "B");
 	});
 });

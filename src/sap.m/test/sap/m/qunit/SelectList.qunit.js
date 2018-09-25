@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/SelectList",
+	"sap/ui/core/ListItem",
 	"sap/ui/core/Item",
 	"sap/ui/core/SeparatorItem",
 	"sap/m/SelectListRenderer",
@@ -16,6 +17,7 @@ sap.ui.define([
 	qutils,
 	createAndAppendDiv,
 	SelectList,
+	ListItem,
 	Item,
 	SeparatorItem,
 	SelectListRenderer,
@@ -91,6 +93,28 @@ sap.ui.define([
 		assert.strictEqual(oSelectList.getDomRef().getAttribute("aria-labelledby"), "hiddenTextId");
 
 		// cleanup
+		oSelectList.destroy();
+	});
+
+	QUnit.module("SelectList item with icon");
+
+	QUnit.test("icon property", function(assert) {
+
+		var oSelectList = new SelectList({
+			items: [
+				new ListItem({
+					key: "1",
+					text: "Competitor",
+					icon: "sap-icon://competitor"
+				})
+			]
+		});
+
+		oSelectList.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oSelectList.$().find("li>span.sapMSelectListItemIcon").length > 0, true, "Icon was rendered on the right place");
+
 		oSelectList.destroy();
 	});
 
