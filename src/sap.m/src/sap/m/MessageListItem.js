@@ -72,6 +72,17 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * Handles the ALT + Enter event
+	 	 * @param {jQuery.Event} oEvent - the keyboard event.
+		 * @private
+		 */
+		MessageListItem.prototype.onkeydown = function(oEvent) {
+			if (this.getActiveTitle() && oEvent.altKey && oEvent.key === 'Enter') {
+				this.fireActiveTitlePress(this);
+			}
+		};
+
 		return MessageListItem;
 
 	});
