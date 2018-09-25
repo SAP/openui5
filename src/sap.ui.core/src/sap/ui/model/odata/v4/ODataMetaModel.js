@@ -30,11 +30,11 @@ sap.ui.define([
 
 	var oCountType,
 		DEBUG = Log.Level.DEBUG,
+		rNumber = /^-?\d+$/,
 		ODataMetaContextBinding,
 		ODataMetaListBinding,
 		sODataMetaModel = "sap.ui.model.odata.v4.ODataMetaModel",
 		ODataMetaPropertyBinding,
-		rNumber = /^-?\d+$/,
 		oRawType = new Raw(),
 		mSupportedEvents = {
 			messageChange : true
@@ -1414,17 +1414,17 @@ sap.ui.define([
 				bTransient = false, // Whether there is a transient entity -> no edit URL available
 				oType;           // The type of the data at sInstancePath
 
+			// Determines the predicate from a segment (empty string if there is none)
+			function predicate(sSegment) {
+				var i = sSegment.indexOf("(");
+				return i >= 0 ? sSegment.slice(i) : "";
+			}
+
 			// Replaces the last segment in aEditUrl with a a request to append the key predicate
 			// for oType and the instance at sInstancePath. Does not calculate it yet, because it
 			// might be replaced again later.
 			function prepareKeyPredicate() {
 				aEditUrl.push({path : sInstancePath, prefix : aEditUrl.pop(), type : oType});
-			}
-
-			// Determines the predicate from a segment (empty string if there is none)
-			function predicate(sSegment) {
-				var i = sSegment.indexOf("(");
-				return i >= 0 ? sSegment.slice(i) : "";
 			}
 
 			// Strips off the predicate from a segment
@@ -1747,6 +1747,31 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the metadata object for the given path relative to the given context. Returns
+	 * <code>undefined</code> in case the metadata is not (yet) available. Use
+	 * {@link #requestObject} for asynchronous access.
+	 *
+	 * @param {string} sPath
+	 *   A relative or absolute path within the metadata model
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context to be used as a starting point in case of a relative path
+	 * @param {object} [mParameters]
+	 *   Optional (binding) parameters; if they are given, <code>oContext</code> cannot be omitted
+	 * @param {object} [mParameters.scope]
+	 *   Optional scope for lookup of aliases for computed annotations (since 1.43.0)
+	 * @returns {any}
+	 *   The requested metadata object if it is already available, or <code>undefined</code>
+	 *
+	 * @function
+	 * @public
+	 * @see #requestObject
+	 * @see sap.ui.model.Model#getObject
+	 * @since 1.37.0
+	 */
+	// @override
+	ODataMetaModel.prototype.getObject = _Helper.createGetMethod("fetchObject");
+
+	/**
 	 * Creates a value list model for the given mapping URL. Normalizes the path. Caches it and
 	 * retrieves it from the cache upon further requests.
 	 *
@@ -1795,31 +1820,6 @@ sap.ui.define([
 	ODataMetaModel.prototype.getOriginalProperty = function () {
 		throw new Error("Unsupported operation: v4.ODataMetaModel#getOriginalProperty");
 	};
-
-	/**
-	 * Returns the metadata object for the given path relative to the given context. Returns
-	 * <code>undefined</code> in case the metadata is not (yet) available. Use
-	 * {@link #requestObject} for asynchronous access.
-	 *
-	 * @param {string} sPath
-	 *   A relative or absolute path within the metadata model
-	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context to be used as a starting point in case of a relative path
-	 * @param {object} [mParameters]
-	 *   Optional (binding) parameters; if they are given, <code>oContext</code> cannot be omitted
-	 * @param {object} [mParameters.scope]
-	 *   Optional scope for lookup of aliases for computed annotations (since 1.43.0)
-	 * @returns {any}
-	 *   The requested metadata object if it is already available, or <code>undefined</code>
-	 *
-	 * @function
-	 * @public
-	 * @see #requestObject
-	 * @see sap.ui.model.Model#getObject
-	 * @since 1.37.0
-	 */
-	// @override
-	ODataMetaModel.prototype.getObject = _Helper.createGetMethod("fetchObject");
 
 	/**
 	 * @deprecated As of 1.37.0, use {@link #getObject}.
@@ -2129,24 +2129,6 @@ sap.ui.define([
 		= _Helper.createRequestMethod("fetchUI5Type");
 
 	/**
-	 * Determines which type of value list exists for the given property.
-	 *
-	 * @param {string} sPropertyPath
-	 *   An absolute path to an OData property within the OData data model
-	 * @returns {Promise}
-	 *   A promise that is resolved with the type of the value list, a constant of the enumeration
-	 *   {@link sap.ui.model.odata.v4.ValueListType}. The promise is rejected if the property cannot
-	 *   be found in the metadata.
-	 *
-	 * @function
-	 * @public
-	 * @see #getValueListType
-	 * @since 1.47.0
-	 */
-	ODataMetaModel.prototype.requestValueListType
-		= _Helper.createRequestMethod("fetchValueListType");
-
-	/**
 	 * Requests information to retrieve a value list for the property given by
 	 * <code>sPropertyPath</code>.
 	 *
@@ -2301,6 +2283,24 @@ sap.ui.define([
 			});
 		});
 	};
+
+	/**
+	 * Determines which type of value list exists for the given property.
+	 *
+	 * @param {string} sPropertyPath
+	 *   An absolute path to an OData property within the OData data model
+	 * @returns {Promise}
+	 *   A promise that is resolved with the type of the value list, a constant of the enumeration
+	 *   {@link sap.ui.model.odata.v4.ValueListType}. The promise is rejected if the property cannot
+	 *   be found in the metadata.
+	 *
+	 * @function
+	 * @public
+	 * @see #getValueListType
+	 * @since 1.47.0
+	 */
+	ODataMetaModel.prototype.requestValueListType
+		= _Helper.createRequestMethod("fetchValueListType");
 
 	/**
 	 * Resolves the given path relative to the given context. Without a context, a relative path

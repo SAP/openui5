@@ -45,6 +45,112 @@ sap.ui.define([
 	};
 
 	/**
+	 * Merges the given query options into this binding's aggregated query options. The merge does
+	 * not take place in the following cases
+	 * <ol>
+	 *   <li> the binding's cache is immutable and the merge would change the existing aggregated
+	 *     query options.
+	 *   <li> there are conflicts. A conflict is an option other than $expand, $select and $count
+	 *     which has different values in the aggregate and the options to be merged.
+	 *     This is checked recursively.
+	 * </ol>
+	 *
+	 * Note: * is an item in $select and $expand just as others, that is it must be part of the
+	 * array of items and one must not ignore the other items if * is provided. See
+	 * "5.1.2 System Query Option $expand" and "5.1.3 System Query Option $select" in specification
+	 * "OData Version 4.0 Part 2: URL Conventions".
+	 *
+	 * @param {object} mQueryOptions The query options to be merged
+	 * @param {boolean} bCacheImmutable Whether the cache of this binding is immutable
+	 * @returns {boolean} Whether the query options could be merged without conflicts
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.aggregateQueryOptions = function (mQueryOptions, bCacheImmutable) {
+		var mAggregatedQueryOptionsClone = jQuery.extend(true, {}, this.mAggregatedQueryOptions);
+
+		/*
+		 * Recursively merges the given query options into the given aggregated query options.
+		 *
+		 * @param {object} mAggregatedQueryOptions The aggregated query options
+		 * @param {object} mQueryOptions The query options to merge into the aggregated query
+		 *   options
+		 * @param {boolean} bInsideExpand Whether the given query options are inside a $expand
+		 * @returns {boolean} Whether the query options could be merged
+		 */
+		function merge(mAggregatedQueryOptions, mQueryOptions, bInsideExpand) {
+			var mExpandValue,
+				aSelectValue;
+
+			/*
+			 * Recursively merges the expand path into the aggregated query options.
+			 *
+			 * @param {string} sExpandPath The expand path
+			 * @returns {boolean} Whether the query options could be merged
+			 */
+			function mergeExpandPath(sExpandPath) {
+				if (mAggregatedQueryOptions.$expand[sExpandPath]) {
+					return merge(mAggregatedQueryOptions.$expand[sExpandPath],
+						mQueryOptions.$expand[sExpandPath], true);
+				}
+				if (bCacheImmutable) {
+					return false;
+				}
+				mAggregatedQueryOptions.$expand[sExpandPath] = mExpandValue[sExpandPath];
+				return true;
+			}
+
+			/*
+			 * Merges the select path into the aggregated query options.
+			 *
+			 * @param {string} sSelectPath The select path
+			 * @returns {boolean} Whether the query options could be merged
+			 */
+			function mergeSelectPath(sSelectPath) {
+				if (mAggregatedQueryOptions.$select.indexOf(sSelectPath) < 0) {
+					if (bCacheImmutable) {
+						return false;
+					}
+					mAggregatedQueryOptions.$select.push(sSelectPath);
+				}
+				return true;
+			}
+
+			mExpandValue = mQueryOptions.$expand;
+			if (mExpandValue) {
+				mAggregatedQueryOptions.$expand = mAggregatedQueryOptions.$expand || {};
+				if (!Object.keys(mExpandValue).every(mergeExpandPath)) {
+					return false;
+				}
+			}
+			aSelectValue = mQueryOptions.$select;
+			if (aSelectValue) {
+				mAggregatedQueryOptions.$select = mAggregatedQueryOptions.$select || [];
+				if (!aSelectValue.every(mergeSelectPath)) {
+					return false;
+				}
+			}
+			if (mQueryOptions.$count) {
+				mAggregatedQueryOptions.$count = true;
+			}
+			return Object.keys(mQueryOptions).concat(Object.keys(mAggregatedQueryOptions))
+				.every(function (sName) {
+					if (sName === "$count" || sName === "$expand" || sName === "$select"
+						|| !bInsideExpand && !(sName in mQueryOptions)) {
+						return true;
+					}
+					return mQueryOptions[sName] === mAggregatedQueryOptions[sName];
+				});
+		}
+
+		if (merge(mAggregatedQueryOptionsClone, mQueryOptions)) {
+			this.mAggregatedQueryOptions = mAggregatedQueryOptionsClone;
+			return true;
+		}
+		return false;
+	};
+
+	/**
 	 * Changes this binding's parameters and refreshes the binding.
 	 *
 	 * If there are pending changes an error is thrown. Use {@link #hasPendingChanges} to check if
@@ -271,89 +377,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Tells whether implicit loading of side effects via PATCH requests is switched off for this
-	 * binding.
-	 *
-	 * @returns {boolean}
-	 *   Whether implicit loading of side effects is off
-	 *
-	 * @private
-	 */
-	ODataParentBinding.prototype.isPatchWithoutSideEffects = function () {
-		return !!this.mParameters.$$patchWithoutSideEffects;
-	};
-
-	/**
-	 * Creates the query options for a child binding with the meta path given by its base
-	 * meta path and relative meta path. Adds the key properties to $select of all expanded
-	 * navigation properties. Requires that meta data for the meta path is already loaded so that
-	 * synchronous access to all prefixes of the relative meta path is possible.
-	 * If the relative meta path contains segments which are not a structural property or a
-	 * navigation property, the child query options cannot be created and the method returns
-	 * undefined.
-	 *
-	 * @param {string} sBaseMetaPath The meta path which is the starting point for the relative
-	 *   meta path
-	 * @param {string} sChildMetaPath The relative meta path
-	 * @param {object} mChildQueryOptions The child binding's query options
-	 *
-	 * @returns {object} The query options for the child binding or <code>undefined</code> in case
-	 *   the query options cannot be created, e.g. because $apply cannot be wrapped into $expand
-	 *
-	 * @private
-	 */
-	ODataParentBinding.prototype.wrapChildQueryOptions = function (sBaseMetaPath,
-			sChildMetaPath, mChildQueryOptions) {
-		var sExpandSelectPath = "",
-			i,
-			aMetaPathSegments = sChildMetaPath.split("/"),
-			oProperty,
-			sPropertyMetaPath = sBaseMetaPath,
-			mQueryOptions = {},
-			mQueryOptionsForPathPrefix = mQueryOptions;
-
-		if (sChildMetaPath === "") {
-			return mChildQueryOptions;
-		}
-
-		for (i = 0; i < aMetaPathSegments.length; i += 1) {
-			sPropertyMetaPath = _Helper.buildPath(sPropertyMetaPath, aMetaPathSegments[i]);
-			sExpandSelectPath = _Helper.buildPath(sExpandSelectPath, aMetaPathSegments[i]);
-			oProperty = this.oModel.getMetaModel().getObject(sPropertyMetaPath);
-			if (oProperty.$kind === "NavigationProperty") {
-				mQueryOptionsForPathPrefix.$expand = {};
-				mQueryOptionsForPathPrefix = mQueryOptionsForPathPrefix.$expand[sExpandSelectPath]
-					= (i === aMetaPathSegments.length - 1) // last segment in path
-						? mChildQueryOptions
-						: {};
-				this.selectKeyProperties(mQueryOptionsForPathPrefix, sPropertyMetaPath);
-				sExpandSelectPath = "";
-			} else if (oProperty.$kind !== "Property") {
-				return undefined;
-			}
-		}
-		if (oProperty.$kind === "Property") {
-			if (Object.keys(mChildQueryOptions).length > 0) {
-				Log.error("Failed to enhance query options for "
-						+ "auto-$expand/$select as the child binding has query options, "
-						+ "but its path '" + sChildMetaPath + "' points to a structural "
-						+ "property",
-					JSON.stringify(mChildQueryOptions),
-					"sap.ui.model.odata.v4.ODataParentBinding");
-				return undefined;
-			}
-			this.addToSelect(mQueryOptionsForPathPrefix, [sExpandSelectPath]);
-		}
-		if ("$apply" in mChildQueryOptions) {
-			Log.debug("Cannot wrap $apply into $expand: " + sChildMetaPath,
-				JSON.stringify(mChildQueryOptions),
-				"sap.ui.model.odata.v4.ODataParentBinding");
-			return undefined;
-		}
-		return mQueryOptions;
-	};
-
-	/**
 	 * Deletes the entity in the cache. If the binding doesn't have a cache, it forwards to the
 	 * parent binding adjusting the path.
 	 *
@@ -395,18 +418,6 @@ sap.ui.define([
 		}
 		return this.oContext.getBinding().deleteFromCache(oGroupLock, sEditUrl,
 			_Helper.buildPath(this.oContext.iIndex, this.sPath, sPath), fnCallback);
-	};
-
-	/**
-	 * Unlocks a ReadGroupLock and removes it from the binding.
-	 *
-	 * @private
-	 */
-	ODataParentBinding.prototype.removeReadGroupLock = function () {
-		if (this.oReadGroupLock) {
-			this.oReadGroupLock.unlock(true);
-			this.oReadGroupLock = undefined;
-		}
 	};
 
 	/**
@@ -602,109 +613,28 @@ sap.ui.define([
 	};
 
 	/**
-	 * Merges the given query options into this binding's aggregated query options. The merge does
-	 * not take place in the following cases
-	 * <ol>
-	 *   <li> the binding's cache is immutable and the merge would change the existing aggregated
-	 *     query options.
-	 *   <li> there are conflicts. A conflict is an option other than $expand, $select and $count
-	 *     which has different values in the aggregate and the options to be merged.
-	 *     This is checked recursively.
-	 * </ol>
+	 * Tells whether implicit loading of side effects via PATCH requests is switched off for this
+	 * binding.
 	 *
-	 * Note: * is an item in $select and $expand just as others, that is it must be part of the
-	 * array of items and one must not ignore the other items if * is provided. See
-	 * "5.1.2 System Query Option $expand" and "5.1.3 System Query Option $select" in specification
-	 * "OData Version 4.0 Part 2: URL Conventions".
-	 *
-	 * @param {object} mQueryOptions The query options to be merged
-	 * @param {boolean} bCacheImmutable Whether the cache of this binding is immutable
-	 * @returns {boolean} Whether the query options could be merged without conflicts
+	 * @returns {boolean}
+	 *   Whether implicit loading of side effects is off
 	 *
 	 * @private
 	 */
-	ODataParentBinding.prototype.aggregateQueryOptions = function (mQueryOptions, bCacheImmutable) {
-		var mAggregatedQueryOptionsClone = jQuery.extend(true, {}, this.mAggregatedQueryOptions);
+	ODataParentBinding.prototype.isPatchWithoutSideEffects = function () {
+		return !!this.mParameters.$$patchWithoutSideEffects;
+	};
 
-		/*
-		 * Recursively merges the given query options into the given aggregated query options.
-		 *
-		 * @param {object} mAggregatedQueryOptions The aggregated query options
-		 * @param {object} mQueryOptions The query options to merge into the aggregated query
-		 *   options
-		 * @param {boolean} bInsideExpand Whether the given query options are inside a $expand
-		 * @returns {boolean} Whether the query options could be merged
-		 */
-		function merge(mAggregatedQueryOptions, mQueryOptions, bInsideExpand) {
-			var mExpandValue,
-				aSelectValue;
-
-			/*
-			 * Recursively merges the expand path into the aggregated query options.
-			 *
-			 * @param {string} sExpandPath The expand path
-			 * @returns {boolean} Whether the query options could be merged
-			 */
-			function mergeExpandPath(sExpandPath) {
-				if (mAggregatedQueryOptions.$expand[sExpandPath]) {
-					return merge(mAggregatedQueryOptions.$expand[sExpandPath],
-						mQueryOptions.$expand[sExpandPath], true);
-				}
-				if (bCacheImmutable) {
-					return false;
-				}
-				mAggregatedQueryOptions.$expand[sExpandPath] = mExpandValue[sExpandPath];
-				return true;
-			}
-
-			/*
-			 * Merges the select path into the aggregated query options.
-			 *
-			 * @param {string} sSelectPath The select path
-			 * @returns {boolean} Whether the query options could be merged
-			 */
-			function mergeSelectPath(sSelectPath) {
-				if (mAggregatedQueryOptions.$select.indexOf(sSelectPath) < 0) {
-					if (bCacheImmutable) {
-						return false;
-					}
-					mAggregatedQueryOptions.$select.push(sSelectPath);
-				}
-				return true;
-			}
-
-			mExpandValue = mQueryOptions.$expand;
-			if (mExpandValue) {
-				mAggregatedQueryOptions.$expand = mAggregatedQueryOptions.$expand || {};
-				if (!Object.keys(mExpandValue).every(mergeExpandPath)) {
-					return false;
-				}
-			}
-			aSelectValue = mQueryOptions.$select;
-			if (aSelectValue) {
-				mAggregatedQueryOptions.$select = mAggregatedQueryOptions.$select || [];
-				if (!aSelectValue.every(mergeSelectPath)) {
-					return false;
-				}
-			}
-			if (mQueryOptions.$count) {
-				mAggregatedQueryOptions.$count = true;
-			}
-			return Object.keys(mQueryOptions).concat(Object.keys(mAggregatedQueryOptions))
-				.every(function (sName) {
-					if (sName === "$count" || sName === "$expand" || sName === "$select"
-						|| !bInsideExpand && !(sName in mQueryOptions)) {
-						return true;
-					}
-					return mQueryOptions[sName] === mAggregatedQueryOptions[sName];
-				});
+	/**
+	 * Unlocks a ReadGroupLock and removes it from the binding.
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.removeReadGroupLock = function () {
+		if (this.oReadGroupLock) {
+			this.oReadGroupLock.unlock(true);
+			this.oReadGroupLock = undefined;
 		}
-
-		if (merge(mAggregatedQueryOptionsClone, mQueryOptions)) {
-			this.mAggregatedQueryOptions = mAggregatedQueryOptionsClone;
-			return true;
-		}
-		return false;
 	};
 
 	/**
@@ -835,6 +765,76 @@ sap.ui.define([
 				}
 			});
 		}
+	};
+
+	/**
+	 * Creates the query options for a child binding with the meta path given by its base
+	 * meta path and relative meta path. Adds the key properties to $select of all expanded
+	 * navigation properties. Requires that meta data for the meta path is already loaded so that
+	 * synchronous access to all prefixes of the relative meta path is possible.
+	 * If the relative meta path contains segments which are not a structural property or a
+	 * navigation property, the child query options cannot be created and the method returns
+	 * undefined.
+	 *
+	 * @param {string} sBaseMetaPath The meta path which is the starting point for the relative
+	 *   meta path
+	 * @param {string} sChildMetaPath The relative meta path
+	 * @param {object} mChildQueryOptions The child binding's query options
+	 *
+	 * @returns {object} The query options for the child binding or <code>undefined</code> in case
+	 *   the query options cannot be created, e.g. because $apply cannot be wrapped into $expand
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.wrapChildQueryOptions = function (sBaseMetaPath,
+			sChildMetaPath, mChildQueryOptions) {
+		var sExpandSelectPath = "",
+			i,
+			aMetaPathSegments = sChildMetaPath.split("/"),
+			oProperty,
+			sPropertyMetaPath = sBaseMetaPath,
+			mQueryOptions = {},
+			mQueryOptionsForPathPrefix = mQueryOptions;
+
+		if (sChildMetaPath === "") {
+			return mChildQueryOptions;
+		}
+
+		for (i = 0; i < aMetaPathSegments.length; i += 1) {
+			sPropertyMetaPath = _Helper.buildPath(sPropertyMetaPath, aMetaPathSegments[i]);
+			sExpandSelectPath = _Helper.buildPath(sExpandSelectPath, aMetaPathSegments[i]);
+			oProperty = this.oModel.getMetaModel().getObject(sPropertyMetaPath);
+			if (oProperty.$kind === "NavigationProperty") {
+				mQueryOptionsForPathPrefix.$expand = {};
+				mQueryOptionsForPathPrefix = mQueryOptionsForPathPrefix.$expand[sExpandSelectPath]
+					= (i === aMetaPathSegments.length - 1) // last segment in path
+						? mChildQueryOptions
+						: {};
+				this.selectKeyProperties(mQueryOptionsForPathPrefix, sPropertyMetaPath);
+				sExpandSelectPath = "";
+			} else if (oProperty.$kind !== "Property") {
+				return undefined;
+			}
+		}
+		if (oProperty.$kind === "Property") {
+			if (Object.keys(mChildQueryOptions).length > 0) {
+				Log.error("Failed to enhance query options for "
+						+ "auto-$expand/$select as the child binding has query options, "
+						+ "but its path '" + sChildMetaPath + "' points to a structural "
+						+ "property",
+					JSON.stringify(mChildQueryOptions),
+					"sap.ui.model.odata.v4.ODataParentBinding");
+				return undefined;
+			}
+			this.addToSelect(mQueryOptionsForPathPrefix, [sExpandSelectPath]);
+		}
+		if ("$apply" in mChildQueryOptions) {
+			Log.debug("Cannot wrap $apply into $expand: " + sChildMetaPath,
+				JSON.stringify(mChildQueryOptions),
+				"sap.ui.model.odata.v4.ODataParentBinding");
+			return undefined;
+		}
+		return mQueryOptions;
 	};
 
 	return function (oPrototype) {
