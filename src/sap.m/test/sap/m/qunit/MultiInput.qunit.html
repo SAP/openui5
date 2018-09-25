@@ -26,6 +26,10 @@
 <script>
 
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+	var KeyCodes = sap.ui.requireSync("sap/ui/events/KeyCodes");
+	var JSONModel = sap.ui.requireSync("sap/ui/model/json/JSONModel"); 
+
 	QUnit.module("Basic", {
 		beforeEach : function() {
 			this.multiInput1 = new sap.m.MultiInput();
@@ -170,8 +174,6 @@
 	});
 
 	QUnit.test("token data binding", function(assert) {
-		jQuery.sap.require("sap.ui.model.json.JSONModel");
-
 		// JSON sample data
 		var data = {
 			modelData:[
@@ -180,7 +182,7 @@
 			]};
 
 		// create JSON model instance
-		var oModel = new sap.ui.model.json.JSONModel();
+		var oModel = new JSONModel();
 
 		// set the data for the model
 		oModel.setData(data);
@@ -235,8 +237,6 @@
 	});
 
 	QUnit.test("data binding when tokens have changed", function(assert) {
-		jQuery.sap.require("sap.ui.model.json.JSONModel");
-
 		// arrange
 		var oldData = {
 			names: [
@@ -257,7 +257,7 @@
 		}
 
 		// create a Model with the data above
-		var model = new sap.ui.model.json.JSONModel();
+		var model = new JSONModel();
 		model.setData(oldData);
 
 		var oTokenTemplate = new sap.m.Token({text : "{firstName}"});
@@ -271,7 +271,7 @@
 		firstToken.setSelected(true);
 
 		// act
-		qutils.triggerKeydown(firstToken.$(), jQuery.sap.KeyCodes.BACKSPACE);
+		qutils.triggerKeydown(firstToken.$(), KeyCodes.BACKSPACE);
 
 		// assert
 		assert.equal(this.multiInput1.getTokens().length, 3, "MultiInput has only 3 tokens");
@@ -586,7 +586,7 @@
 
 		this.multiInput1.focus();
 
-		qutils.triggerKeydown(this.multiInput1.$(), jQuery.sap.KeyCodes.A, false, false, true); // trigger Control key + A
+		qutils.triggerKeydown(this.multiInput1.$(), KeyCodes.A, false, false, true); // trigger Control key + A
 		assert.equal(token1.getSelected(), true, "Token1 got selected using ctrl+a");
 		assert.equal(token2.getSelected(), true, "Token2 got selected using ctrl+a");
 		assert.equal(token3.getSelected(), true, "Token3 got selected using ctrl+a");
@@ -605,7 +605,7 @@
 		this.multiInput1.selectText(0, this.multiInput1.getValue().length);
 		assert.equal(this.multiInput1._$input.getSelectedText(), "123", "only texts are selected");
 
-		sap.ui.test.qunit.triggerKeydown(this.multiInput1.getDomRef(), jQuery.sap.KeyCodes.A, false, false, true); // trigger Control key + A
+		sap.ui.test.qunit.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.A, false, false, true); // trigger Control key + A
 		assert.equal(token1.getSelected(), true, "Token1 is selected");
 		assert.equal(token2.getSelected(), true, "Token2 is selected");
 		assert.equal(token3.getSelected(), true, "Token3 is selected");
@@ -627,7 +627,7 @@
 		var token3 = new sap.m.Token({selected:true});
 		this.multiInput1.setTokens([token1, token2, token3]);
 
-		sap.ui.test.qunit.triggerKeydown(this.multiInput1.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		sap.ui.test.qunit.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.ESCAPE);
 		assert.equal(token1.getSelected(), false, "Token1 is unselected");
 		assert.equal(token2.getSelected(), false, "Token2 is unselected");
 		assert.equal(token3.getSelected(), false, "Token3 is unselected");
@@ -643,7 +643,7 @@
 		sap.ui.getCore().applyChanges();
 
 		this.multiInput1.getTokens()[0].focus();
-		sap.ui.test.qunit.triggerKeydown(this.multiInput1.getDomRef(), jQuery.sap.KeyCodes.HOME);
+		sap.ui.test.qunit.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.HOME);
 
 		// assert
 		assert.ok(oSpy.called, "Tokenizer's onsaphome is called when a token is focused");
@@ -660,7 +660,7 @@
 		this.multiInput1.addToken(token1);
 		sap.ui.getCore().applyChanges();
 
-		sap.ui.test.qunit.triggerKeydown(this.multiInput1.getDomRef(), jQuery.sap.KeyCodes.HOME);
+		sap.ui.test.qunit.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.HOME);
 
 		// assert
 		assert.notOk(oSpy.called, "Tokenizer's onsaphome is not called when no token is focused");
@@ -678,7 +678,7 @@
 		sap.ui.getCore().applyChanges();
 
 		this.multiInput1.getTokens()[0].focus();
-		sap.ui.test.qunit.triggerKeydown(this.multiInput1.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT);
+		sap.ui.test.qunit.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.ARROW_LEFT);
 
 		// assert
 		assert.ok(oSpy.called, "Tokenizer's onsapprevious is called");
@@ -699,7 +699,7 @@
 
 		sap.ui.getCore().applyChanges();
 
-		sap.ui.test.qunit.triggerKeydown(this.multiInput1.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT);
+		sap.ui.test.qunit.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.ARROW_LEFT);
 
 		// assert
 		assert.notOk(oSpy.called, "Tokenizer's onsapprevious is not called");
@@ -713,7 +713,7 @@
 		var oSpy = sinon.spy(sap.m.Tokenizer.prototype, "onsapdelete");
 
 		sap.ui.getCore().applyChanges();
-		sap.ui.test.qunit.triggerKeydown(this.multiInput1.getDomRef(), jQuery.sap.KeyCodes.DELETE);
+		sap.ui.test.qunit.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.DELETE);
 
 		// assert
 		assert.ok(oSpy.called, "Tokenizer's onsapdelete is called");
@@ -728,7 +728,7 @@
 		this.multiInput1.setValue("value");
 
 		sap.ui.getCore().applyChanges();
-		sap.ui.test.qunit.triggerKeydown(this.multiInput1.getDomRef(), jQuery.sap.KeyCodes.DELETE);
+		sap.ui.test.qunit.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.DELETE);
 
 		// assert
 		assert.notOk(oSpy.called, "Tokenizer's onsapdelete is not called");
@@ -749,7 +749,7 @@
 
 		this.multiInput1.getTokens()[0].focus();
 
-		sap.ui.test.qunit.triggerKeydown(this.multiInput1.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
+		sap.ui.test.qunit.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.ARROW_RIGHT, false, false, false);
 
 		// assert
 		assert.ok(oMISpy.called, "MultiInputs's _scrollAndFocus is called");
@@ -765,7 +765,7 @@
 		var oSpy = sinon.spy(sap.m.Tokenizer.prototype, "onsapdelete");
 		this.multiInput1.setEditable(false);
 		sap.ui.getCore().applyChanges();
-		sap.ui.test.qunit.triggerKeydown(this.multiInput1.getDomRef(), jQuery.sap.KeyCodes.DELETE);
+		sap.ui.test.qunit.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.DELETE);
 
 		// assert
 		assert.notOk(oSpy.called, "Tokenizer's onsapdelete is not called");
@@ -1135,7 +1135,7 @@
 		sap.ui.getCore().applyChanges();
 
 		sap.ui.test.qunit.triggerEvent("keydown", this.multiInput1.getFocusDomRef(), {
-			which: jQuery.sap.KeyCodes.X,
+			which: KeyCodes.X,
 			ctrlKey: true
 		});
 
@@ -1157,7 +1157,7 @@
 		sap.ui.getCore().applyChanges();
 
 		sap.ui.test.qunit.triggerEvent("keydown", this.multiInput1.getFocusDomRef(), {
-			which: jQuery.sap.KeyCodes.C,
+			which: KeyCodes.C,
 			ctrlKey: true
 		});
 

@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+j<!DOCTYPE HTML>
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -19,6 +19,8 @@
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script>
+	var KeyCodes = sap.ui.requireSync("sap/ui/events/KeyCodes");
+
 	QUnit.module("Basic", {
 		beforeEach : function() {
 			this.token1 = new sap.m.Token("t1");
@@ -122,13 +124,13 @@
 
 	QUnit.test("Ctrl + Space", function(assert) {
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t1", jQuery.sap.KeyCodes.SPACE, false, false, true);
+		sap.ui.test.qunit.triggerKeyboardEvent("t1", KeyCodes.SPACE, false, false, true);
 
 		// assert
 		assert.equal(this.token1.getSelected(), true, "Token is selected");
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t1", jQuery.sap.KeyCodes.SPACE, false, false, true);
+		sap.ui.test.qunit.triggerKeyboardEvent("t1", KeyCodes.SPACE, false, false, true);
 
 		// assert
 		assert.equal(this.token1.getSelected(), false, "Token is deselected");
@@ -139,7 +141,7 @@
 		var fnFireDeleteSpy = this.spy(this.token1, "fireDelete");
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t1", jQuery.sap.KeyCodes.BACKSPACE);
+		sap.ui.test.qunit.triggerKeyboardEvent("t1", KeyCodes.BACKSPACE);
 
 		// assert
 		assert.equal(fnFireDeleteSpy.callCount, 1, "delete event was fired");
@@ -150,7 +152,7 @@
 		var fnFireDeleteSpy = this.spy(this.token1, "fireDelete");
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t1", jQuery.sap.KeyCodes.DELETE);
+		sap.ui.test.qunit.triggerKeyboardEvent("t1", KeyCodes.DELETE);
 
 		// assert
 		assert.equal(fnFireDeleteSpy.callCount, 1, "delete event was fired");
@@ -184,7 +186,7 @@
 		// act
 		sap.ui.test.qunit.triggerEvent("tap", this.token1.getDomRef());
 
-		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.ARROW_RIGHT);
+		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.ARROW_RIGHT);
 
 		// assert
 		assert.equal(fnFireDeselectSpy.callCount, 1, "Token1 deselect event was fired");

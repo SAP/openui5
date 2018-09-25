@@ -1,11 +1,20 @@
-/*global QUnit*/
+/* global QUnit */
 
-(function () {
+sap.ui.define([
+	"sap/m/BusyIndicator",
+	"sap/ui/qunit/qunit-css",
+	"sap/ui/thirdparty/qunit",
+	"sap/ui/qunit/qunit-junit",
+	"sap/ui/qunit/qunit-coverage",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/thirdparty/sinon",
+	"sap/ui/thirdparty/sinon-qunit"
+], function (BusyIndicator) {
 	"use strict";
 
 	QUnit.module("sap.m.BusyIndicator API", {
 		beforeEach: function () {
-			this.oBusyInd = new sap.m.BusyIndicator();
+			this.oBusyInd = new BusyIndicator();
 
 			this.oBusyInd.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -114,7 +123,7 @@
 
 	QUnit.module("sap.m.BusyIndicator Rendering", {
 		beforeEach: function () {
-			this.oBusyInd = new sap.m.BusyIndicator();
+			this.oBusyInd = new BusyIndicator();
 
 			this.oBusyInd.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -154,4 +163,4 @@
 		assert.strictEqual($label.length, 1, "sap.m.Label shoud be rendered");
 		assert.strictEqual($label.text(), text, "rendered text should be " + text);
 	});
-}());
+});

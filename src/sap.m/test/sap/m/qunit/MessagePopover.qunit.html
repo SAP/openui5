@@ -795,8 +795,6 @@
 					that.resolveURL = resolve;
 				});
 
-				jQuery.sap.require("sap.m.MessagePopover");
-
 				sap.m.MessagePopover.setDefaultHandlers({
 					asyncDescriptionHandler: function(config) {
 						config.item.setDescription(that.mockMarkupDescription);
@@ -1377,8 +1375,6 @@
 		});
 
 		QUnit.test("MessagePopover opened by a button, should be auto closed in case the DOM of this button is removed", function(assert){
-			var oLogSpy = this.spy(jQuery.sap.log.error);
-
 			// arrange
 			this.oButton.addDependent(this.oMessagePopover);
 			sap.ui.getCore().applyChanges();
@@ -1395,7 +1391,7 @@
 
 			// assert
 			assert.ok(!this.oMessagePopover.isOpen(), "Popover is now closed");
-			assert.strictEqual(oLogSpy.callCount, 0, "No error was logged in the console");
+			assert.ok(true, "No exception has been thrown");
 		});
 	</script>
 </head>

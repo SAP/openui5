@@ -27,7 +27,8 @@ sap.ui.define([
 	"./MessageViewRenderer",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
-	"sap/base/security/URLWhitelist"
+	"sap/base/security/URLWhitelist",
+	"sap/ui/thirdparty/caja-html-sanitizer"
 ], function(
 	jQuery,
 	Control,
@@ -1105,10 +1106,6 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageView.prototype._sanitizeDescription = function (oMessageItem) {
-		//TODO: global jquery call found
-		jQuery.sap.require("jquery.sap.encoder");
-		//TODO: global jquery call found
-		jQuery.sap.require("sap.ui.thirdparty.caja-html-sanitizer");
 		var sDescription = oMessageItem.getDescription();
 
 		if (oMessageItem.getMarkupDescription()) {
