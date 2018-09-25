@@ -104,6 +104,20 @@
 		}
 	});
 
+	QUnit.test("Advanced tooltips", function (assert) {
+		// Setup
+		var oRangeSlider = new sap.m.RangeSlider({
+			inputsAsTooltips: true,
+			showAdvancedTooltip: true
+		}).placeAt(DOM_RENDER_LOCATION);
+
+		// Assert
+		assert.ok(true, "No exception thrown. So, everything is fine.");
+
+		// Cleanup
+		oRangeSlider.destroy();
+	});
+
 	QUnit.test("it should not throw an error when the .destroy() method is called twice", function (assert) {
 		this.rangeSlider.destroy();
 		assert.ok(true);
