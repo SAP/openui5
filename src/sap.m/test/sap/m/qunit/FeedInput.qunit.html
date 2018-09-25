@@ -49,6 +49,10 @@
 				assert.strictEqual(this.oFeedInput.getValue(), "", "value is ''");
 				assert.strictEqual(this.oFeedInput.getVisible(), true, "visible is 'true'");
 				assert.strictEqual(this.oFeedInput.getAriaLabelForPicture(), "", "ariaLabelForPicture is ''");
+				assert.strictEqual(this.oFeedInput.getRows(), 2, "rows is '2'");
+				assert.strictEqual(this.oFeedInput.getGrowing(), false, "growing is 'false'");
+                assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 0, "growingMaxLines is '0'");
+                assert.strictEqual(this.oFeedInput.getShowExceededText(), false, "showExceededText is 'false'");
 			});
 
 			QUnit.test("TextForPicture", function (assert) {
@@ -135,6 +139,52 @@
 				assert.strictEqual(this.oFeedInput.getMaxLength(), 1001, "Getter should return correct non-default value");
 				assert.strictEqual(this.oFeedInput._getTextArea().getMaxLength(), this.oFeedInput.getMaxLength(), "Property should be passed to TextArea control");
 			});
+
+            QUnit.test("Rows", function (assert) {
+                this.oFeedInput.setRows(5);
+                assert.strictEqual(this.oFeedInput.getRows(), 5, "Getter should return correct non-default value");
+                assert.strictEqual(this.oFeedInput._getTextArea().getRows(), this.oFeedInput.getRows(), "Property should be passed to TextArea control");
+                this.oFeedInput.setRows(1);
+                assert.strictEqual(this.oFeedInput.getRows(), 2, "Getter should return minimum value");
+                assert.strictEqual(this.oFeedInput._getTextArea().getRows(), this.oFeedInput.getRows(), "Property with minimum value should be passed to TextArea control");
+                this.oFeedInput.setRows(25);
+                assert.strictEqual(this.oFeedInput.getRows(), 15, "Getter should return maximum value");
+                assert.strictEqual(this.oFeedInput._getTextArea().getRows(), this.oFeedInput.getRows(), "Property with maximum value should be passed to TextArea control");
+            });
+
+            QUnit.test("Growing", function (assert) {
+                this.oFeedInput.setGrowing(true);
+                assert.strictEqual(this.oFeedInput.getGrowing(), true, "Getter should return correct non-default value");
+                assert.strictEqual(this.oFeedInput._getTextArea().getGrowing(), this.oFeedInput.getGrowing(), "Property should be passed to TextArea control");
+            });
+
+            QUnit.test("GrowingMaxLines", function (assert) {
+                this.oFeedInput.setGrowingMaxLines(7);
+                assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 7, "Getter should return correct non-default value");
+                assert.strictEqual(this.oFeedInput._getTextArea().getGrowingMaxLines(), this.oFeedInput.getGrowingMaxLines(), "Property should be passed to TextArea control");
+                this.oFeedInput.setGrowingMaxLines(25);
+                assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 15, "Getter should return maximum value");
+                assert.strictEqual(this.oFeedInput._getTextArea().getGrowingMaxLines(), this.oFeedInput.getGrowingMaxLines(), "Property with maximum value should be passed to TextArea control");
+                this.oFeedInput.setGrowingMaxLines(0);
+                assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 0, "Getter should return unlimited value");
+                assert.strictEqual(this.oFeedInput._getTextArea().getGrowingMaxLines(), this.oFeedInput.getGrowingMaxLines(), "Property with maximum value should be passed to TextArea control");
+                this.oFeedInput.setGrowingMaxLines(1);
+                assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 2, "Rows=default value: getter should return minimum value of rows");
+                assert.strictEqual(this.oFeedInput._getTextArea().getGrowingMaxLines(), this.oFeedInput.getGrowingMaxLines(), "Property with minimum value of rows should be passed to TextArea control");
+                this.oFeedInput.setRows(5);
+                this.oFeedInput.setGrowingMaxLines(4);
+                assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 5, "Getter should return value equal to rows");
+                assert.strictEqual(this.oFeedInput._getTextArea().getGrowingMaxLines(), this.oFeedInput.getGrowingMaxLines(), "Property with equal value of rows should be passed to TextArea control");
+                this.oFeedInput.setRows(10);
+                assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 10, "Getter should change its value when property Rows exceed the getter");
+                assert.strictEqual(this.oFeedInput._getTextArea().getGrowingMaxLines(), this.oFeedInput.getGrowingMaxLines(), "Property changed when property Rows exceed should be passed to TextArea control");
+            });
+
+            QUnit.test("ShowExceededText", function (assert) {
+                this.oFeedInput.setShowExceededText(true);
+                assert.strictEqual(this.oFeedInput.getShowExceededText(), true, "Getter should return correct non-default value");
+                assert.strictEqual(this.oFeedInput._getTextArea().getShowExceededText(), this.oFeedInput.getShowExceededText(), "Property should be passed to TextArea control");
+            });
 
 			QUnit.test("Placeholder", function (assert) {
 				this.oFeedInput.setPlaceholder("asdf");
