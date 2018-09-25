@@ -3,6 +3,14 @@
 /* Base theme                       */
 /* ================================ */
 
+.sapMFeedInBase {
+	display: block;
+	position: relative;
+	height: auto;
+	width: 100%;
+	box-sizing: border-box;
+}
+
 .sapMFeedIn {
 	display: block;
 	position: relative;
@@ -56,6 +64,19 @@
 	color: @sapUiContentImagePlaceholderForegroundColor;
 }
 
+.sapMFeedInBase .sapMFeedInCounter {
+	display: block;
+	width: 100%;
+	text-align: end;
+}
+
+.sapMFeedInBase .sapMFeedInCounter .sapMTextAreaCounter{
+	overflow: hidden;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontSmallSize;
+	padding: 0.125rem;
+}
+
 .sapMFeedIn:not(.sapMFeedInDisabled) .sapMFeedInContainer {
 	background-color: @sapUiFieldBackground;
 }
@@ -71,6 +92,14 @@
 	padding: 0 4.0rem 0 0;
 	margin: 0;
 	min-height: 4rem;
+}
+
+.sapMFeedIn >.sapMFeedInContainer >.sapMInputBase >.sapMInputBaseContentWrapper{
+	border: 0;
+}
+
+.sapMFeedIn >.sapMFeedInContainer >.sapMInputBase >.sapMInputBaseContentWrapper::before{
+	display: none;
 }
 
 .sapMFeedIn >.sapMFeedInContainer > .sapMTextArea> .sapMInputBaseInner {
@@ -129,8 +158,8 @@ html[data-sap-ui-browser*='ie'] .sapMFeedIn .sapMBtnInner {
 
 .sapMFeedIn .sapMInputBase.sapMTextArea .sapMTextAreaInner {
 	height: auto;
-    min-height: 4rem;
-    padding: 0.375rem 0.5rem;
+	min-height: 4rem;
+	padding: 0.375rem 0.5rem;
 }
 
 /* Compact size */
