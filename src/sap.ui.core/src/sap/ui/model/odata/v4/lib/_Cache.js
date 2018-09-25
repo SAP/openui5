@@ -221,7 +221,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Calculates the key predicate for the given entity.
+	 * Calculates the key predicate for the given entity and stores it as private annotation at the
+	 * given entity. If at least one key property is <code>undefined</code>, no private annotation
+	 * for the key predicate is created.
 	 *
 	 * @param {object} oInstance
 	 *   The instance for which to calculate the key predicate
@@ -233,11 +235,14 @@ sap.ui.define([
 	 * @private
 	 */
 	Cache.prototype.calculateKeyPredicate = function (oInstance, mTypeForMetaPath, sMetaPath) {
-		var oType = mTypeForMetaPath[sMetaPath];
+		var sPredicate,
+			oType = mTypeForMetaPath[sMetaPath];
 
 		if (oType && oType.$Key) {
-			_Helper.setPrivateAnnotation(oInstance, "predicate",
-				_Helper.getKeyPredicate(oInstance, sMetaPath, mTypeForMetaPath));
+			sPredicate = _Helper.getKeyPredicate(oInstance, sMetaPath, mTypeForMetaPath);
+			if (sPredicate) {
+				_Helper.setPrivateAnnotation(oInstance, "predicate", sPredicate);
+			}
 		}
 	};
 

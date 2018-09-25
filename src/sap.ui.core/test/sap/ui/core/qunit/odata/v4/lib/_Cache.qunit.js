@@ -4535,7 +4535,7 @@ sap.ui.define([
 		var oCache = new _Cache(this.oRequestor, "Foo"),
 			oHelperMock = this.mock(_Helper),
 			vInstance = {},
-			sKeyPredicate = {/* string */},
+			sKeyPredicate = "(42)",
 			sMetaPath = "Bar/Baz",
 			mTypeForMetaPath = {"Bar/Baz" : {"$Key" : ["key"]}};
 
@@ -4546,6 +4546,24 @@ sap.ui.define([
 		oHelperMock.expects("setPrivateAnnotation")
 			.withExactArgs(sinon.match.same(vInstance), "predicate",
 				sinon.match.same(sKeyPredicate));
+
+		// code under test
+		oCache.calculateKeyPredicate(vInstance, mTypeForMetaPath, sMetaPath);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#calculateKeyPredicate: with key but no data for key", function(assert) {
+		var oCache = new _Cache(this.oRequestor, "Foo"),
+			oHelperMock = this.mock(_Helper),
+			vInstance = {},
+			sMetaPath = "Bar/Baz",
+			mTypeForMetaPath = {"Bar/Baz" : {"$Key" : ["key"]}};
+
+		oHelperMock.expects("getKeyPredicate")
+			.withExactArgs(sinon.match.same(vInstance), sMetaPath,
+				sinon.match.same(mTypeForMetaPath))
+			.returns(undefined);
+		oHelperMock.expects("setPrivateAnnotation").never();
 
 		// code under test
 		oCache.calculateKeyPredicate(vInstance, mTypeForMetaPath, sMetaPath);
