@@ -81,9 +81,9 @@ sap.ui.define(['sap/m/library'],
 		oRM.renderControl(oControl._getScrollingArrow("left"));
 
 		// render scroll container on touch devices
-		oRM.write("<div id='" + oControl.getId() + "-scrollContainer' aria-hidden='true' class='sapMITBScrollContainer'>");
+		oRM.write("<div id='" + oControl.getId() + "-scrollContainer' class='sapMITBScrollContainer'>");
 
-		oRM.write("<div id='" + oControl.getId() + "-head' aria-hidden='true' ");
+		oRM.write("<div id='" + oControl.getId() + "-head'");
 		oRM.addClass("sapMITBHead");
 
 		if (bTextOnly) {
