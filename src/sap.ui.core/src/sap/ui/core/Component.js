@@ -901,7 +901,7 @@ sap.ui.define([
 						fnReject(new Error(sErrorMessage));
 
 					}
-				}.bind(this));
+				}.bind(this), fnReject);
 			}.bind(this));
 		}
 		return this._mServices[sLocalServiceAlias].promise;
@@ -2701,12 +2701,12 @@ sap.ui.define([
 
 						// if there are resource models to be loaded, load the resource bundle async first.
 						// a promise is returned which resolves after all resource models are loaded
-						return new Promise(function(resolve /*, reject*/) {
+						return new Promise(function(resolve, reject) {
 							// load the sap.ui.model/resource/ResourceModel class async if it's not loaded yet
 							sap.ui.require(["sap/ui/model/resource/ResourceModel"], function(ResourceModel) {
 								// Directly resolve as otherwise uncaught exceptions can't be handled
 								resolve(ResourceModel);
-							});
+							}, reject);
 						}).then(function(ResourceModel) {
 							function loadResourceBundle(sModelName) {
 								var mModelConfig = mModelConfigs.afterPreload[sModelName];
@@ -2827,7 +2827,7 @@ sap.ui.define([
 					sap.ui.require( [ getControllerModuleName() ], function(oClass) {
 						// Directly resolve as otherwise uncaught exceptions can't be handled
 						resolve(oClass);
-					});
+					}, reject);
 				}).then(function(oClass) {
 					var oMetadata = oClass.getMetadata();
 					var sName = oMetadata.getComponentName();
