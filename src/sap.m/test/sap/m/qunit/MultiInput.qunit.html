@@ -774,6 +774,37 @@
 		oSpy.restore();
 	});
 
+	QUnit.test("onsapenter on mobile device", function(assert) {
+		// Setup
+		var oMI;
+
+		this.stub(sap.ui.Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+		oMI = new sap.m.MultiInput().placeAt("qunit-fixture");
+
+		// Act
+		oMI._oSuggestionPopup.open();
+		oMI._oPopupInput.focus();
+		this.clock.tick(1000);
+
+		// Assert
+		ok(oMI._oSuggestionPopup.isOpen(), "The dialog is opened");
+
+		// Act
+		sap.ui.test.qunit.triggerKeydown(oMI._oPopupInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(1000);
+
+		// Assert
+		ok(!oMI._oSuggestionPopup.isOpen(), "The dialog is closed after enter key");
+
+		// Cleanup
+		oMI.destroy();
+	});
+
 	QUnit.module("Events", {
 		beforeEach: function() {
 			this.multiInput1 = new sap.m.MultiInput();

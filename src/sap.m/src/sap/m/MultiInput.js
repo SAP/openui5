@@ -1424,6 +1424,7 @@ function(
 		this._oPopupInput.onsapenter = function (oEvent) {
 			that._validateCurrentText();
 			that._setValueInvisible();
+			that._closeSuggestionPopup();
 		};
 
 		this._oPopupInput.attachLiveChange(function(){
