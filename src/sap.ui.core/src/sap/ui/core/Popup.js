@@ -287,7 +287,7 @@ sap.ui.define([
 	 * @type {boolean}
 	 * @private
 	 */
-	Popup.prototype.touchEnabled = Device.support.touch || jQuery.sap.simulateMobileOnDesktop;
+	Popup.prototype.touchEnabled = (Device.support.touch && !Device.system.combi) || jQuery.sap.simulateMobileOnDesktop;
 
 	/**
 	 * On mobile device, the browser may set the focus to somewhere else after
