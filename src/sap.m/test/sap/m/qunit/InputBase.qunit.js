@@ -2043,6 +2043,29 @@ sap.ui.define([
 		delete window.CustomInput;
 	});
 
+	if (sap.ui.Device.browser.msie) {
+		QUnit.test("iE11 should mark event invalid when it is rendered with a non ASCII symbol", function (assert) {// TODO remove after 1.62 version
+
+			var done = assert.async();
+			var oninputOverride = function (event) {
+				InputBase.prototype.oninput.call(this, event);
+
+				assert.ok(event.isMarked("invalid"), "input event is marked as invalid");
+
+				this.destroy();
+
+				done();
+			};
+
+			var oInput = new InputBase({
+				value: 'ä'
+			}).placeAt("content");
+
+			oInput.oninput = oninputOverride;
+			sap.ui.getCore().applyChanges();
+		});
+	}
+
 	QUnit.test("Renderer Hooks", function(assert) {
 		InputBase.extend("my.TextField", {
 			metadata: {
