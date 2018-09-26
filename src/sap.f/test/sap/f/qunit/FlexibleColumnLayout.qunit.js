@@ -217,18 +217,20 @@ function($, FlexibleColumnLayout, FlexibleColumnLayoutSemanticHelper, Page, Butt
 
 	QUnit.test("Navigation arrows - 2 columns", function (assert) {
 		this.oFCL = oFactory.createFCL({
-			layout: LT.TwoColumnsBeginExpanded
+			layout: LT.TwoColumnsBeginExpanded,
+			beginColumnPages: [new sap.m.Page()]
 		});
-		this.oFCL._onFirstPageRendered();
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
 		assertArrowsVisibility(assert, this.oFCL, 1, 0, 0, 0);
 	});
 
 	QUnit.test("Navigation arrows - 2 columns operations", function (assert) {
 		this.oFCL = oFactory.createFCL({
-			layout: LT.TwoColumnsBeginExpanded
+			layout: LT.TwoColumnsBeginExpanded,
+			beginColumnPages: [new sap.m.Page()]
 		});
-		this.oFCL._onFirstPageRendered();
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
 		this.getBeginColumnBackArrow().firePress();
 		assertArrowsVisibility(assert, this.oFCL, 0, 0, 1, 0);
@@ -239,18 +241,20 @@ function($, FlexibleColumnLayout, FlexibleColumnLayoutSemanticHelper, Page, Butt
 
 	QUnit.test("Navigation arrows - 3 columns (mid column Expanded, not-fixed 3-column layout)", function (assert) {
 		this.oFCL = oFactory.createFCL({
-			layout: LT.ThreeColumnsMidExpanded
+			layout: LT.ThreeColumnsMidExpanded,
+			beginColumnPages: [new sap.m.Page()]
 		});
-		this.oFCL._onFirstPageRendered();
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
 		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
 	});
 
 	QUnit.test("Navigation arrows - 3 columns operation (not-fixed 3-column layout)", function (assert) {
 		this.oFCL = oFactory.createFCL({
-			layout: LT.ThreeColumnsMidExpanded
+			layout: LT.ThreeColumnsMidExpanded,
+			beginColumnPages: [new sap.m.Page()]
 		});
-		this.oFCL._onFirstPageRendered();
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
 		this.getMidColumnForwardArrow().firePress();
 		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
@@ -487,18 +491,20 @@ function($, FlexibleColumnLayout, FlexibleColumnLayoutSemanticHelper, Page, Butt
 
 	QUnit.test("Navigation arrows - 2 columns", function (assert) {
 		this.oFCL = oFactory.createFCL({
-			layout: LT.TwoColumnsBeginExpanded
+			layout: LT.TwoColumnsBeginExpanded,
+			beginColumnPages: [new sap.m.Page()]
 		});
-		this.oFCL._onFirstPageRendered();
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
 		assertArrowsVisibility(assert, this.oFCL, 1, 0, 0, 0);
 	});
 
 	QUnit.test("Navigation arrows - 2 columns operations", function (assert) {
 		this.oFCL = oFactory.createFCL({
-			layout: LT.TwoColumnsBeginExpanded
+			layout: LT.TwoColumnsBeginExpanded,
+			beginColumnPages: [new sap.m.Page()]
 		});
-		this.oFCL._onFirstPageRendered();
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
 		this.getBeginColumnBackArrow().firePress();
 		assertArrowsVisibility(assert, this.oFCL, 0, 0, 1, 0);
@@ -509,18 +515,20 @@ function($, FlexibleColumnLayout, FlexibleColumnLayoutSemanticHelper, Page, Butt
 
 	QUnit.test("Navigation arrows - 3 columns", function (assert) {
 		this.oFCL = oFactory.createFCL({
-			layout: LT.ThreeColumnsMidExpanded
+			layout: LT.ThreeColumnsMidExpanded,
+			beginColumnPages: [new sap.m.Page()]
 		});
-		this.oFCL._onFirstPageRendered();
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
 		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
 	});
 
 	QUnit.test("Navigation arrows - 3 columns operation", function (assert) {
 		this.oFCL = oFactory.createFCL({
-			layout: LT.ThreeColumnsMidExpanded
+			layout: LT.ThreeColumnsMidExpanded,
+			beginColumnPages: [new sap.m.Page()]
 		});
-		this.oFCL._onFirstPageRendered();
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
 		this.getMidColumnForwardArrow().firePress();
 		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
@@ -916,33 +924,28 @@ function($, FlexibleColumnLayout, FlexibleColumnLayoutSemanticHelper, Page, Butt
 		}
 	});
 
-	QUnit.test("_onFirstPageRendered", function (assert) {
+	QUnit.test("_onNavContainerRendered", function (assert) {
 		// setup
 		this.oFCL = new FlexibleColumnLayout();
 		var oEventSpy = this.spy(this.oFCL, "_hideShowArrows");
 
 		// assert
-		assert.equal(this.oFCL._bIsNavContainersContentRendered, false, "_bIsNavContainersContentRendered is false before first invokation");
+		assert.equal(this.oFCL._hasAnyColumnPagesRendered(), false, "_isAnyColumnContentRendered is false before first invocation");
 
 		// act
-		this.oFCL._onFirstPageRendered();
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
 		// assert
-		assert.equal(this.oFCL._bIsNavContainersContentRendered, true, "_bIsNavContainersContentRendered is true after first invokation");
-		assert.ok(oEventSpy.calledOnce, "_hideShowArrows is called");
+		assert.equal(this.oFCL._hasAnyColumnPagesRendered(), false, "_hasAnyColumnPagesRendered is false when container empty");
+		assert.strictEqual(oEventSpy.callCount, 0, "_hideShowArrows is not called");
 
 		// act
-		this.oFCL._onFirstPageRendered();
+		this.oFCL.addBeginColumnPage(new sap.m.Page());
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
 		// assert
-		assert.equal(this.oFCL._bIsNavContainersContentRendered, true, "_bIsNavContainersContentRendered is still true after second invokation");
-		assert.ok(oEventSpy.calledOnce, "_hideShowArrows is not called again");
-
-		// act
-		this.oFCL.rerender();
-
-		// assert
-		assert.equal(this.oFCL._bIsNavContainersContentRendered, true, "_bIsNavContainersContentRendered is still true after rerender");
+		assert.equal(this.oFCL._hasAnyColumnPagesRendered(), true, "_hasAnyColumnPagesRendered is true");
+		assert.strictEqual(oEventSpy.callCount, 1, "_hideShowArrows is called");
 	});
 
 

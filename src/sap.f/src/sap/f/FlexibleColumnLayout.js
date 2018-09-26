@@ -601,22 +601,25 @@ sap.ui.define([
 		// Holds an object, responsible for saving and searching the layout history
 		this._oLayoutHistory = new LayoutHistory();
 
-		// Indicates when there are rendered pages and we can show the arrows
-		this._bIsNavContainersContentRendered = false;
+		// Indicates if there are rendered pages inside columns
+		this._oRenderedColumnPagesBoolMap = {};
 	};
 
 	/**
-	 * Sets <code>_bIsNavContainersContentRendered</code> to <code>true</code> upon first page of <code>NavContainers</code> added.
-	 * Show all needed arrows.
+	 * Called on after rendering of the internal <code>NavContainer</code> instances to check their rendered pages
 	 * @private
 	 */
-	FlexibleColumnLayout.prototype._onFirstPageRendered = function () {
-		if (this._bIsNavContainersContentRendered) {
-			return;
-		}
+	FlexibleColumnLayout.prototype._onNavContainerRendered = function (oEvent) {
 
-		this._bIsNavContainersContentRendered = true;
-		this._hideShowArrows();
+		var oColumnNavContainer = oEvent.srcControl,
+			bHasPages = oColumnNavContainer.getPages().length > 0,
+			bHadAnyColumnPagesRendered = this._hasAnyColumnPagesRendered();
+
+		this._setColumnPagesRendered(oColumnNavContainer.getId(), bHasPages);
+
+		if (this._hasAnyColumnPagesRendered() !== bHadAnyColumnPagesRendered) {
+			this._hideShowArrows();
+		}
 	};
 
 	/**
@@ -637,7 +640,7 @@ sap.ui.define([
 			defaultTransitionName: this["getDefaultTransitionName" + sColumnCap + "Column"]()
 		});
 
-		sColumn === "begin" && oNavContainer.attachEvent("_onNavContainerRendered", this._onFirstPageRendered, this);
+		oNavContainer.addDelegate({"onAfterRendering": this._onNavContainerRendered}, this);
 
 		return oNavContainer;
 	};
@@ -770,7 +773,7 @@ sap.ui.define([
 	};
 
 	FlexibleColumnLayout.prototype.exit = function () {
-		this._bIsNavContainersContentRendered = false;
+		this._oRenderedColumnPagesBoolMap = null;
 		this._deregisterResizeHandler();
 		this._handleEvent(jQuery.Event("Destroy"));
 	};
@@ -1175,6 +1178,27 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets a flag if the given <code>NavContainers</code> has pages rendered in DOM
+	 * @param sId the container Id
+	 * @param {boolean} bHasPages flag
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._setColumnPagesRendered = function (sId, bHasPages) {
+		this._oRenderedColumnPagesBoolMap[sId] = bHasPages;
+	};
+
+	/**
+	 * Checks if any of the internal <code>NavContainer</code> instances has pages rendered in DOM
+	 * @returns {boolean}
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._hasAnyColumnPagesRendered = function () {
+		return Object.keys(this._oRenderedColumnPagesBoolMap).some(function(sKey) {
+			return this._oRenderedColumnPagesBoolMap[sKey];
+		}, this);
+	};
+
+	/**
 	 * Called when the layout arrows were clicked.
 	 * @param {string} sShiftDirection - left/right (direction of the arrow)
 	 * @private
@@ -1206,7 +1230,8 @@ sap.ui.define([
 		var sLayout = this.getLayout(),
 			oMap = {},
 			aNeededArrows = [],
-			iMaxColumnsCount;
+			iMaxColumnsCount,
+			bIsNavContainersContentRendered;
 
 		// Stop here if the control isn't rendered yet or in phone mode, where arrows aren't necessary
 		if (!this.isActive() || Device.system.phone) {
@@ -1229,8 +1254,10 @@ sap.ui.define([
 			}
 		}
 
+		bIsNavContainersContentRendered = this._hasAnyColumnPagesRendered();
+
 		Object.keys(this._$columnButtons).forEach(function (key) {
-			this._toggleButton(key, this._bIsNavContainersContentRendered && aNeededArrows.indexOf(key) !== -1);
+			this._toggleButton(key, bIsNavContainersContentRendered && aNeededArrows.indexOf(key) !== -1);
 		}, this);
 	};
 
