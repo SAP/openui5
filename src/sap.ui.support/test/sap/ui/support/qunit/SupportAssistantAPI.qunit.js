@@ -97,4 +97,49 @@ sap.ui.require([
 			}
 		});
 	});
+
+	QUnit.test("Temporary rule execution", function (assert) {
+
+		var done = assert.async();
+
+		bootstrap.initSupportRules(["true", "silent"], {
+			onReady: function () {
+
+				var tempRule = {
+					id: "TEMP RULE ID",
+					title: "TEMP RULE TITLE",
+					audiences: ["Internal"],
+					categories: ["Functionality"],
+					check : function (oIssueManager, oCoreFacade, oScope, fnResolve) {
+							oIssueManager.addIssue({
+								severity: sap.ui.support.Severity.High,
+								details: "Medium test issue details",
+								context: {
+									id: "Fake element id"
+								}
+							});
+						},
+					description: "Checks the EventBus publications for missing listeners",
+					minversion: "1",
+					resolution: "Calls to EventBus#publish should be removed or adapted such that associated listeners are found",
+					resolutionurls: []
+				};
+
+				var rules = [
+					{ruleId: "TEMP RULE ID", libName: "temporary"}
+				];
+
+				var sResult = jQuery.sap.support.addRule(tempRule);
+
+				assert.strictEqual(sResult, "success", "Rule successfully added");
+
+				jQuery.sap.support.analyze(this.scope, rules).then(function () {
+					var history = jQuery.sap.support.getLastAnalysisHistory();
+					assert.strictEqual(history.issues.length, 1, "List of temporary rules issues is correct");
+					done();
+				});
+			}
+		});
+	});
+
 });

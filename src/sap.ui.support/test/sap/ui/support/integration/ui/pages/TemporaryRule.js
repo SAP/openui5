@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	'sap/ui/test/actions/Press',
-	'sap/ui/test/actions/EnterText'
-], function (Opa5, Press, EnterText) {
+	'sap/ui/test/actions/EnterText',
+	"sap/ui/test/matchers/PropertyStrictEquals"
+], function (Opa5, Press, EnterText, PropertyStrictEquals) {
 	"use strict";
 
 	var sFormForCreatinNewRuleId = "__form3",
@@ -85,6 +86,28 @@ sap.ui.define([
 							Opa5.assert.ok(true, "The Version field of the rule was filled with " + sText);
 						},
 						errorMessage: "The Version field of the rule was not filled with " + sText
+					});
+				},
+				iGoToCheckFunctionPanel: function () {
+					return this.waitFor({
+						controlType: "sap.m.IconTabFilter",
+						matchers: new PropertyStrictEquals({name: "key", value: "checkFunction"}),
+						actions: new Press(),
+						success: function () {
+							Opa5.assert.ok(true, "'Check function panel' was clicked");
+						},
+						errorMessage: "Could NOT find 'check function' panel"
+					});
+				},
+				iFillCheckFunctionWith: function (sText) {
+					return this.waitFor({
+						id: "codeEditorCreate",
+						controlType: "sap.ui.codeeditor.CodeEditor",
+						success: function (oCodeEditor) {
+							oCodeEditor.setValue(sText);
+							Opa5.assert.ok(true, "Check function was filled with " + sText);
+						},
+						errorMessage: "Could NOT fill check function with " + sText
 					});
 				}
 			},
