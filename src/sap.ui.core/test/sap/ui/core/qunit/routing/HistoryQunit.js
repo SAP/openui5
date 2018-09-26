@@ -3,13 +3,14 @@
 // this is currently done by the unified shell in order to handle cross-application navigation.
 // Factoring out the unit tests into this module allows to execute the same test suite in the shell context
 
-/*global QUnit, hasher */
+/*global QUnit, hasher, sinon */
 sap.ui.define([
 	"sap/base/util/uid",
 	"sap/ui/core/routing/HashChanger",
 	"sap/ui/core/routing/History",
-	"sap/ui/core/library"
-], function(createUID, HashChanger, History, coreLibrary) {
+	"sap/ui/core/library",
+	"sap/base/Log"
+], function(createUID, HashChanger, History, coreLibrary, Log) {
 	"use strict";
 
 	var HistoryDirection = coreLibrary.routing.HistoryDirection;
@@ -437,5 +438,105 @@ sap.ui.define([
 		var sDirection = oHistory.getDirection("bar");
 
 		assert.strictEqual(sDirection, "Forwards", "After going back to foo, bar should be forwards");
+	});
+
+	QUnit.module("history.state enhancement", {
+		beforeEach: function(assert) {
+
+			// Extended a hashchange to deliver the additional fullHash parameter HashChanger
+			this.oExtendedHashChanger = new HashChanger();
+			this.oExtendedHashChanger.fireHashChanged = function(newHash, oldHash) {
+				// Simulate the fullHash parameter which is necessary for extended direction determination
+				var fullHash = window.location.hash;
+				this.fireEvent("hashChanged",{ newHash : newHash, oldHash : oldHash, fullHash: fullHash});
+			};
+
+			this.setup = function() {
+				this.checkDirection = function(fnAction, fnAssertion) {
+					return new Promise(function(resolve, reject) {
+						var handler = function(oEvent) {
+							// Assert
+							fnAssertion(oEvent.getParameter("newHash"));
+							// Only need the event once
+							this.oExtendedHashChanger.detachEvent("hashChanged", handler);
+							resolve();
+						}.bind(this);
+
+						// Setup the assertion
+						this.oExtendedHashChanger.attachEvent("hashChanged", handler);
+
+						// Trigger the history usage
+						fnAction();
+					}.bind(this));
+				}.bind(this);
+
+				// System under test
+				this.oExtendedHashChanger.init();
+				this.oHistory = new History(this.oExtendedHashChanger);
+
+				assert.strictEqual(this.oHistory.getDirection(), undefined, "state is initial");
+
+				// Arrange - setup a history
+				this.oExtendedHashChanger.setHash("foo");
+				assert.strictEqual(this.oHistory.getDirection(), "NewEntry");
+
+				this.oExtendedHashChanger.setHash("bar");
+				assert.strictEqual(this.oHistory.getDirection(), "NewEntry");
+
+				this.oExtendedHashChanger.setHash("foo");
+				assert.strictEqual(this.oHistory.getDirection(), "NewEntry");
+
+				return this.checkDirection(function() {
+					window.history.go(-1);
+				}, function(sHash) {
+					if (sHash === "bar") {
+						assert.strictEqual(this.oHistory.getDirection(), "Backwards");
+					}
+				}.bind(this));
+			}.bind(this);
+
+		},
+		afterEach: function() {
+			this.oExtendedHashChanger.setHash("");
+			this.oExtendedHashChanger.destroy();
+			this.oHistory.destroy();
+		}
+	});
+
+	QUnit.test("Consume fullHash parameter of hashChange event", function(assert) {
+		assert.expect(6);
+		return this.setup().then(function() {
+			return this.checkDirection(function() {
+				window.history.go(1);
+			}, function(sHash) {
+				if (sHash === "foo") {
+					assert.strictEqual(this.oHistory.getDirection(), "Forwards");
+				}
+			}.bind(this));
+		}.bind(this));
+	});
+
+	QUnit.test("Log a warning if window.history.state is already in use", function (assert) {
+		var oSpy = sinon.spy(Log, "debug");
+
+		var fnExtendedFireHashChange = this.oExtendedHashChanger.fireHashChanged;
+		this.oExtendedHashChanger.fireHashChanged = function(newHash, oldHash) {
+			window.history.replaceState("invalid_state", window.document.title);
+			fnExtendedFireHashChange.call(this.oExtendedHashChanger, newHash, oldHash);
+		}.bind(this);
+
+		assert.expect(7);
+		return this.setup().then(function() {
+			return this.checkDirection(function() {
+				window.history.go(1);
+				window.history.replaceState("foo", window.document.title);
+			}, function(sHash) {
+				if (sHash === "foo") {
+					assert.strictEqual(this.oHistory.getDirection(), "Unknown");
+				}
+			}.bind(this)).then(function() {
+				sinon.assert.alwaysCalledWith(oSpy, "Unable to determine HistoryDirection as history.state is already set: invalid_state", "sap.ui.core.routing.History");
+			});
+		}.bind(this));
 	});
 });

@@ -1,13 +1,14 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log"],
-	function(library, HashChanger, Log) {
+sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log", "sap/ui/thirdparty/URI"],
+	function(library, HashChanger, Log, URI) {
 	"use strict";
 
 
 	// shortcut for enum(s)
 	var HistoryDirection = library.routing.HistoryDirection;
+
 
 
 	/**
@@ -27,6 +28,17 @@ sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log"],
 		this.aHistory = [];
 		this._bIsInitial = true;
 
+		var oState = window.history.state === null ? {} : window.history.state;
+
+		if (typeof oState === "object") {
+			History._aStateHistory.push(window.location.hash);
+			oState.sap = {};
+			oState.sap.history = History._aStateHistory;
+			window.history.replaceState(oState, window.document.title);
+		} else {
+			Log.debug("Unable to determine HistoryDirection as history.state is already set: " + window.history.state, "sap.ui.core.routing.History");
+		}
+
 		if (!oHashChanger) {
 			Log.error("sap.ui.core.routing.History constructor was called and it did not get a hashChanger as parameter");
 		}
@@ -35,6 +47,12 @@ sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log"],
 
 		this._reset();
 	};
+
+	/**
+	 * Stores the history of full hashes to compare with window.history.state
+	 * @private
+	 */
+	History._aStateHistory = [];
 
 	/**
 	 * Detaches all events and cleans up this instance
@@ -157,15 +175,50 @@ sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log"],
 		return HistoryDirection.Unknown;
 	};
 
+	/**
+	 * Determine HistoryDirection leveraging the full hash as in window.location.hash
+	 * and window.history.state.
+	 *
+	 * @param {string} sHash the complete hash, same as window.location.hash
+	 * @return {sap.ui.core.routing.HistoryDirection} The determined HistoryDirection
+	 * @private
+	 */
+	History.prototype._getDirectionWithState = function(sHash) {
+		var oState = window.history.state === null ? {} : window.history.state,
+			bBackward,
+			sDirection;
+
+		if (typeof oState === "object") {
+			if (oState.sap === undefined) {
+				History._aStateHistory.push(sHash);
+				oState.sap = {};
+				oState.sap.history = History._aStateHistory;
+				history.replaceState(oState, document.title);
+				sDirection = HistoryDirection.NewEntry;
+			} else {
+				bBackward = oState.sap.history.every(function(sURL, index) {
+					return sURL === History._aStateHistory[index];
+				});
+				sDirection = bBackward ? HistoryDirection.Backwards : HistoryDirection.Forwards;
+				History._aStateHistory = oState.sap.history;
+			}
+		} else {
+			Log.debug("Unable to determine HistoryDirection as history.state is already set: " + window.history.state, "sap.ui.core.routing.History");
+		}
+
+		return sDirection;
+	};
+
 	History.prototype._onHashChange = function(oEvent) {
-		this._hashChange(oEvent.getParameter("newHash"));
+		// Leverage the fullHash parameter if available
+		this._hashChange(oEvent.getParameter("newHash"), oEvent.getParameter("oldHash"), oEvent.getParameter("fullHash"));
 	};
 
 	/**
 	 * Handles a hash change and cleans up the History
 	 * @private
 	 */
-	History.prototype._hashChange = function(sNewHash) {
+	History.prototype._hashChange = function(sNewHash, sOldHash, sFullHash) {
 		var actualHistoryLength = window.history.length,
 			sDirection;
 
@@ -184,7 +237,17 @@ sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log"],
 		//a navigation has taken place so the history is not initial anymore.
 		this._bIsInitial = false;
 
-		sDirection = this._sCurrentDirection = this._getDirection(sNewHash, this._iHistoryLength < window.history.length, true);
+		// Extended direction determination with window.history.state
+		if (sFullHash) {
+			sDirection = this._getDirectionWithState(sFullHash);
+		}
+
+		// if the direction can't be decided by using the state method, the fallback to the legacy method is taken
+		if (!sDirection) {
+			sDirection = this._getDirection(sNewHash, this._iHistoryLength < window.history.length, true);
+		}
+
+		this._sCurrentDirection = sDirection;
 
 		// Remember the new history length, after it has been taken into account by getDirection
 		this._iHistoryLength = actualHistoryLength;
