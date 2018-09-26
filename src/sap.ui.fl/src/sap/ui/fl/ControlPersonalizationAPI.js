@@ -26,7 +26,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Provides an API to handle specific functionality of the {@link sap.ui.fl.variants.VariantManagement variant management control}.
+	 * Provides an API to handle specific functionality for personalized changes.
 	 *
 	 * @namespace
 	 * @name sap.ui.fl.ControlPersonalizationAPI
@@ -41,11 +41,11 @@ sap.ui.define([
 	/**
 	 * Object containing attributes of a change, along with the control to which this change should be applied.
 	 *
-	 * @typedef {object} sap.ui.fl.ControlPersonalizationAPI.addPersonalizationChange
+	 * @typedef {object} sap.ui.fl.ControlPersonalizationAPI.PersonalizationChange
 	 * @since 1.56
 	 * @private
 	 * @ui5-restricted
-	 * @property {sap.ui.core.Control} selectorControl The control object to be used as selector for the change
+	 * @property {sap.ui.core.Element} selectorControl The control object to be used as selector for the change
 	 * @property {object} changeSpecificData The map of change-specific data to perform a flex change
 	 * @property {string} changeSpecificData.changeType The change type for which a change handler is registered
 	 */
@@ -57,7 +57,7 @@ sap.ui.define([
 		/**
 		 * Returns a map of parameters used in public functions.
 		 *
-		 * @param {sap.ui.core.Element} oControl The control for which a variant management control has to be evaluated
+		 * @param {sap.ui.core.Element} oControl - The control for which a variant management control has to be evaluated
 		 * @returns {object} Returns a map with needed parameters
 		 * @private
 		 */
@@ -95,7 +95,7 @@ sap.ui.define([
 		/**
 		 * Returns the local ID of the encompassing variant management control.
 		 *
-		 * @param {sap.ui.core.Element} oControl The control for which a variant management control has to be evaluated
+		 * @param {sap.ui.core.Element} oControl - The control for which a variant management control has to be evaluated
 		 * @returns {object} Returns a map with needed parameters
 		 * @private
 		 */
@@ -119,7 +119,7 @@ sap.ui.define([
 		 * Clears URL technical parameter 'sap-ui-fl-control-variant-id' for control variants.
 		 * If a variant management control is given as parameter, only parameters specific to that control are cleared.
 		 *
-		 * @param {sap.ui.base.ManagedObject} [oVariantManagementControl] The variant management control for which URL technical parameter has to be cleared
+		 * @param {sap.ui.base.ManagedObject} [oVariantManagementControl] - The variant management control for which the URL technical parameter has to be cleared
 		 *
 		 * @method sap.ui.fl.ControlPersonalizationAPI.clearVariantParameterInURL
 		 * @public
@@ -158,8 +158,8 @@ sap.ui.define([
 		 *
 		 * Activates the passed variant applicable to the passed control/component.
 		 *
-		 * @param {sap.ui.base.ManagedObject|string} vElement The component or control (instance or ID) on which the variantModel is set
-		 * @param {string} sVariantReference The variant reference which needs to be activated
+		 * @param {sap.ui.base.ManagedObject|string} vElement - The component or control (instance or ID) on which the variantModel is set
+		 * @param {string} sVariantReference - The variant reference which needs to be activated
 		 *
 		 * @returns {Promise} Returns Promise that resolves after the variant is updated or rejects when an error occurs
 		 *
@@ -232,9 +232,9 @@ sap.ui.define([
 		/**
 		 * Creates personalization changes, adds them to the flex persistence (not yet saved) and applies them to the control.
 		 *
-		 * @param {object} mPropertyBag Changes along with other settings that need to be added
-		 * @param {array} mPropertyBag.controlChanges Array of control changes of type {@link sap.ui.fl.ControlPersonalizationAPI.addPersonalizationChange}
-		 * @param {boolean} [mPropertyBag.ignoreVariantManagement] If flag is set to true then variant management will be ignored
+		 * @param {object} mPropertyBag - Changes along with other settings that need to be added
+		 * @param {array} mPropertyBag.controlChanges - Array of control changes of type {@link sap.ui.fl.ControlPersonalizationAPI.PersonalizationChange}
+		 * @param {boolean} [mPropertyBag.ignoreVariantManagement] - If flag is set to true then variant management will be ignored
 		 *
 		 * @returns {Promise} Returns Promise resolving to an array of successfully applied changes,
 		 * after the changes have been written to the map of dirty changes and applied to the control
@@ -291,9 +291,9 @@ sap.ui.define([
 		},
 
 		/**
-		 * Saves unsaved changes added to {@link sap.ui.fl.ChangePersistence}
+		 * Saves unsaved changes added to {@link sap.ui.fl.ChangePersistence}.
 		 *
-		 * @param {array} aChanges - array of changes to be saved
+		 * @param {array} aChanges - Array of changes to be saved
 		 * @param {sap.ui.base.ManagedObject} oManagedObject - A managed object instance which has an application component responsible, on which changes need to be saved
 		 *
 		 * @returns {Promise} Returns Promise which is resolved when the passed array of changes have been saved
@@ -312,7 +312,7 @@ sap.ui.define([
 		/**
 		 * Determines the availability of an encompassing variant management control.
 		 *
-		 * @param {sap.ui.base.ManagedObject} oControl The control which should be tested for an encompassing variant management control
+		 * @param {sap.ui.base.ManagedObject} oControl - The control which should be tested for an encompassing variant management control
 		 *
 		 * @returns {boolean} Returns true if a variant management control is encompassing the given control, else false
 		 *
