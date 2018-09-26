@@ -21,6 +21,7 @@ sap.ui.define([
 	"./CalendarTimeIntervalRenderer",
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/util/deepEqual",
+	"sap/ui/core/Popup",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
 ], function(
@@ -41,6 +42,7 @@ sap.ui.define([
 	CalendarTimeIntervalRenderer,
 	containsOrEquals,
 	deepEqual,
+	Popup,
 	Log,
 	jQuery
 ) {
@@ -2054,9 +2056,7 @@ sap.ui.define([
 	function _openPickerPopup(oPicker){
 
 		if (!this._oPopup) {
-			//TODO: global jquery call found
-			jQuery.sap.require("sap.ui.core.Popup");
-			this._oPopup = new sap.ui.core.Popup();
+			this._oPopup = new Popup();
 			this._oPopup.setAutoClose(true);
 			this._oPopup.setAutoCloseAreas([this.getDomRef()]);
 			this._oPopup.setDurations(0, 0); // no animations
@@ -2070,7 +2070,7 @@ sap.ui.define([
 		this._oPopup.setContent(oPicker);
 
 		var oHeader = this.getAggregation("header");
-		var eDock = sap.ui.core.Popup.Dock;
+		var eDock = Popup.Dock;
 		this._oPopup.open(0, eDock.CenterTop, eDock.CenterTop, oHeader, null, "flipfit", true);
 
 	}
