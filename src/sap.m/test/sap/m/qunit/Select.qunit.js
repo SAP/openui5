@@ -1,4 +1,4 @@
-/*global QUnit, sinon */
+/*global QUnit */
 sap.ui.require([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/strings/capitalize",
@@ -6,10 +6,6 @@ sap.ui.require([
 	"sap/ui/events/KeyCodes"],
 	function($, Capitalize, Log, KeyCodes) {
 	"use strict";
-
-	sinon.config.useFakeTimers = true;
-	QUnit.config.autostart = false;
-	sap.ui.test.qunit.delayTestStart();
 
 	var mTestModelData = {
 		"items": [
@@ -408,6 +404,8 @@ sap.ui.require([
 		sap.ui.Device.system.tablet = false;
 		sap.ui.Device.system.phone = true;
 	};
+
+	QUnit.module("default values");
 
 	QUnit.test("default values", function (assert) {
 
