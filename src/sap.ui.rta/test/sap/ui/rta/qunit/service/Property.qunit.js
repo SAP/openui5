@@ -69,121 +69,121 @@ sap.ui.define([
 			sandbox.stub(DesignTime.prototype, "getDesignTimeMetadataFor")
 				.callThrough()
 				.withArgs(this.oControl).returns({
-						name: {
-							singular: function() {
-								return "Singular Control Name";
-							},
-							plural: function() {
-								return "Plural Control Name";
+					name: {
+						singular: function () {
+							return "Singular Control Name";
+						},
+						plural: function () {
+							return "Plural Control Name";
+						}
+					},
+					getLabel: function (oControl) {
+						return oControl.getId() === "mockControl" ? "Vertical Layout Label" : "";
+					},
+					links: {
+						developer: [
+							{
+								href: "links1.html",
+								text: function (oControl) {
+									return oControl.getId() === "mockControl" ? "Links 1 Text" : "";
+								}
 							}
+						],
+						guidelines: [
+							{
+								href: "links2.html",
+								text: function () {
+									return new Promise(function (fnResolve) {
+										setTimeout(fnResolve.bind(null, "Links 2 Text"), 100);
+									});
+								}
+							}
+						]
+					},
+					properties: {
+						"dtMetadataProperty1": {
+							// dt-metadata property ignored
+							mockKey1: "dtMetadataProperty1",
+							ignore: true
 						},
-						getLabel: function (oControl) {
-							return oControl.getId() === "mockControl" ? "Vertical Layout Label" : "";
+						"dtMetadataProperty2": {
+							// dt-metadata property not ignored
+							mockKey2: "dtMetadataProperty2"
 						},
-						links: {
-							developer: [
+						"metadataProperty2": {
+							// metadata property ignored
+							ignore: true
+						},
+						"virtualProperty1": {
+							// virtual property not ignored
+							virtual: true,
+							name: "Virtual Property Name 1",
+							group: "Virtual Property Group 1",
+							get: function (oControl) {
+								return oControl.getId() === "mockControl" ? "Virtual property value 1" : "";
+							},
+							ignore: function (oControl) {
+								return oControl.getId() !== "mockControl"; // false
+							},
+							possibleValues: [
 								{
-									href: "links1.html",
-									text: function (oControl) {
-										return oControl.getId() === "mockControl" ? "Links 1 Text" : "";
+									"possibleKey1": {
+										"displayName": "Possible Value 1"
+									}
+								},
+								{
+									"possibleKey2": {
+										"displayName": "Possible Value 2"
 									}
 								}
 							],
-							guidelines: [
-								{
-									href: "links2.html",
-									text: function(){
-										return new Promise( function(fnResolve) {
-											setTimeout(fnResolve.bind(null, "Links 2 Text"), 100);
-										});
-									}
+							type: "Virtual property type"
+						},
+						"virtualProperty2": {
+							// virtual property ignored
+							virtual: true,
+							name: "Virtual Property Name 2",
+							group: "Virtual Property Group 2",
+							get: function (oControl) {
+								return oControl.getId() === "mockControl" ? "Virtual property value 2" : "";
+							},
+							ignore: function (oControl) {
+								return oControl.getId() === "mockControl"; // true
+							},
+							possibleValues: [{
+								possibleKey3: {
+									displayName: "Possible Value 3"
 								}
-							]
+							}],
+							type: "Virtual property type"
 						},
-						properties: {
-							"dtMetadataProperty1": {
-								// dt-metadata property ignored
-								mockKey1: "dtMetadataProperty1",
-								ignore: true
+						"virtualProperty3": {
+							// virtual property not ignored
+							virtual: true,
+							name: "Virtual Property Name 3",
+							group: "Virtual Property Group 3",
+							get: function (oControl) {
+								return oControl.getId() === "mockControl" ? "Virtual property value 3" : "";
 							},
-							"dtMetadataProperty2": {
-								// dt-metadata property not ignored
-								mockKey2: "dtMetadataProperty2"
-							},
-							"metadataProperty2": {
-								// metadata property ignored
-								ignore: true
-							},
-							"virtualProperty1": {
-								// virtual property not ignored
-								virtual: true,
-								name: "Virtual Property Name 1",
-								group: "Virtual Property Group 1",
-								get: function (oControl){
-									return oControl.getId() === "mockControl" ? "Virtual property value 1" : "";
-								},
-								ignore: function (oControl) {
-									return oControl.getId() !== "mockControl"; // false
-								},
-								possibleValues: [
-									{
-										"possibleKey1": {
-											"displayName": "Possible Value 1"
-										}
-									},
-									{
-										"possibleKey2": {
-											"displayName": "Possible Value 2"
-										}
-									}
-								],
-								type: "Virtual property type"
-							},
-							"virtualProperty2": {
-								// virtual property ignored
-								virtual: true,
-								name: "Virtual Property Name 2",
-								group: "Virtual Property Group 2",
-								get: function (oControl){
-									return oControl.getId() === "mockControl" ? "Virtual property value 2" : "";
-								},
-								ignore: function (oControl) {
-									return oControl.getId() === "mockControl"; // true
-								},
-								possibleValues: [{
-									possibleKey3: {
-										displayName: "Possible Value 3"
-									}
-								}],
-								type: "Virtual property type"
-							},
-							"virtualProperty3": {
-								// virtual property not ignored
-								virtual: true,
-								name: "Virtual Property Name 3",
-								group: "Virtual Property Group 3",
-								get: function (oControl){
-									return oControl.getId() === "mockControl" ? "Virtual property value 3" : "";
-								},
-								possibleValues: function(oControl) {
-									return oControl.getId() === "mockControl"
-										? [
-											{
-												"possibleKey4": {
-													"displayName": "Possible Value 4"
-												}
-											},
-											{
-												"possibleKey5": {
-													"displayName": "Possible Value 5"
-												}
+							possibleValues: function (oControl) {
+								return oControl.getId() === "mockControl"
+									? [
+										{
+											"possibleKey4": {
+												"displayName": "Possible Value 4"
 											}
-										]
-										: "";
-								},
-								type: "Virtual property type"
-							}
-						},
+										},
+										{
+											"possibleKey5": {
+												"displayName": "Possible Value 5"
+											}
+										}
+									]
+									: "";
+							},
+							type: "Virtual property type"
+						}
+					},
 					annotations: {
 						"annotation1": {
 							// annotation not ignored
@@ -194,7 +194,7 @@ sap.ui.define([
 									"Property1", "Property2", "Property3"
 								]
 							},
-							ignore: function(oControl) {
+							ignore: function (oControl) {
 								return oControl.getId() !== "mockControl"; // false
 							},
 							appliesTo: ["Page/Button"],
@@ -222,7 +222,7 @@ sap.ui.define([
 									"Property1", "Property2", "Property3"
 								]
 							},
-							ignore: function(oControl) {
+							ignore: function (oControl) {
 								return oControl.getId() === "mockControl"; // true
 							},
 							appliesTo: ["Page/Button"],
@@ -236,7 +236,6 @@ sap.ui.define([
 							}
 						}
 					}
-
 				});
 
 			var mControlMetadata = this.oControl.getMetadata();
