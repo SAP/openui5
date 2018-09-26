@@ -1641,7 +1641,7 @@ if (typeof window.sap.ui !== "object") {
 		var oSystem = {};
 		oSystem.tablet = !!(((Device.support.touch && !isWin7) || isWin8Upwards || !!simMobileOnDesktop) && bTabletDetected);
 		oSystem.phone = !!(Device.os.windows_phone || ((Device.support.touch && !isWin7) || !!simMobileOnDesktop) && !bTabletDetected);
-		oSystem.desktop = !!((!oSystem.tablet && !oSystem.phone) || isWin8Upwards || isWin7);
+		oSystem.desktop = !!((!oSystem.tablet && !oSystem.phone) || isWin8Upwards || isWin7 || Device.os.linux);
 		oSystem.combi = oSystem.desktop && oSystem.tablet;
 		oSystem.SYSTEMTYPE = SYSTEMTYPE;
 
