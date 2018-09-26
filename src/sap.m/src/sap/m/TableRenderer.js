@@ -167,7 +167,6 @@ sap.ui.define([
 					control.addStyleClass("sapMColumnHeaderContent");
 				}
 
-				oColumn.applyAlignTo(control);
 				rm.renderControl(control);
 
 				if (bActiveHeaders) {
