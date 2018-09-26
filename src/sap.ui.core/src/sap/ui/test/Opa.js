@@ -11,7 +11,7 @@ sap.ui.define([
 	'sap/ui/test/_OpaLogger',
 	'sap/ui/test/_ParameterValidator',
 	'sap/ui/test/_UsageReport'
-], function(Device, URI, jQueryDOM, _LogCollector, _OpaLogger, _ParameterValidator, _UsageReport) {
+], function(Device, URI, $, _LogCollector, _OpaLogger, _ParameterValidator, _UsageReport) {
 	"use strict";
 
 	///////////////////////////////
@@ -203,7 +203,7 @@ sap.ui.define([
 	 */
 	var Opa = function(extensionObject) {
 		this.and = this;
-		jQueryDOM.extend(this, extensionObject);
+		$.extend(this, extensionObject);
 	};
 
 	/**
@@ -304,7 +304,7 @@ sap.ui.define([
 
 		// URI params overwrite default
 		// deep extend is necessary so appParams object is not overwritten but merged
-		Opa.config = jQueryDOM.extend(true, Opa.config, options, opaUriParams);
+		Opa.config = $.extend(true, Opa.config, options, opaUriParams);
 		_OpaLogger.setLevel(Opa.config.logLevel);
 	};
 
@@ -379,7 +379,7 @@ sap.ui.define([
 	 * @since 1.25
 	 */
 	Opa.resetConfig = function () {
-		Opa.config = jQueryDOM.extend({
+		Opa.config = $.extend({
 			arrangements : new Opa(),
 			actions : new Opa(),
 			assertions : new Opa(),
@@ -418,7 +418,7 @@ sap.ui.define([
 		isEmptyQueueStarted = true;
 		oStopQueueOptions = null;
 
-		oQueueDeferred = jQueryDOM.Deferred();
+		oQueueDeferred = $.Deferred();
 		internalEmpty();
 
 		return oQueueDeferred.promise().fail(function (oOptions) {
@@ -522,10 +522,10 @@ sap.ui.define([
 		 * If an error occurs, the promise is rejected with the options object. A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
 		 */
 		waitFor : function (options) {
-			var deferred = jQueryDOM.Deferred(),
+			var deferred = $.Deferred(),
 				oFilteredConfig = Opa._createFilteredConfig(Opa._aConfigValuesForWaitFor);
 
-			options = jQueryDOM.extend({},
+			options = $.extend({},
 				oFilteredConfig,
 				options);
 
@@ -536,7 +536,7 @@ sap.ui.define([
 
 			// create a new deferred for each new queue element and decorate a copy of this which will be returned in the end
 			// this way a promise result handler can be attached to any waitFor statement at any time
-			var _this = jQueryDOM.extend({}, this);
+			var _this = $.extend({}, this);
 			deferred.promise(_this);
 
 			queue.push({
@@ -602,40 +602,49 @@ sap.ui.define([
 		 */
 		emptyQueue : Opa.emptyQueue,
 
+		/**
+		 * Schedule a promise on the OPA queue.The promise will be executed in order with all waitFors -
+		 * any subsequent waitFor will be executed after the promise is done.
+		 * The promise is not directly chained, but instead its result is awaited in a new waitFor statement.
+		 * This means that any "thenable" should be acceptable.
+		 * @public
+		 * @param {jQuery.promise|oPromise} oPromise promise to schedule on the OPA queue
+		 * @returns {jQuery.promise} promise which is the result of a {@link sap.ui.test.Opa.waitFor}
+		 */
+		iWaitForPromise: function (oPromise) {
+			return this._schedulePromiseOnFlow(oPromise);
+		},
+
+		_schedulePromiseOnFlow: function (oPromise, oOptions) {
+			// as the waitFor flow is driven by the polling, the only way to schedule
+			// a promise on it is to insert a waitFor that polls the result.
+			// an promised-based way will require a full rework of the flow management
+			oOptions = oOptions || {};
+			var mPromiseState = {};
+			oOptions.check = function() {
+				if (!mPromiseState.started) {
+					mPromiseState.started = true;
+					oPromise.then(function () {
+						mPromiseState.done = true;
+					}, function (error) {
+						mPromiseState.errorMessage = "Error while waiting for promise scheduled on flow" +
+							(error ? ", details: " + error : "");
+					});
+				}
+				if (mPromiseState.errorMessage) {
+					throw new Error(mPromiseState.errorMessage);
+				} else {
+					return !!mPromiseState.done;
+				}
+			};
+			return this.waitFor(oOptions);
+		},
+
 		_validateWaitFor: function (oParameters) {
 			oValidator.validate({
 				validationInfo: Opa._validationInfo,
 				inputToValidate: oParameters
 			});
-		},
-
-		_schedulePromiseOnFlow: function (oPromise) {
-			// as the waitFor flow is driven by the polling, the only way to schedule
-			// a promise on it is to insert a waitFor that polls the result.
-			// an promised-based way will require a full rework of the flow management
-			var bPromiseDone = false;
-			var oPromiseErrorMessage;
-			oPromise.done(function() {
-				bPromiseDone = true;
-			}).fail(function(error) {
-				oPromiseErrorMessage = "Error while waiting for promise scheduled on flow" +
-					(error ? ", details: " + error : "");
-			});
-			var oOptions = {
-					// make sure no controls are searched by the defaults
-					viewName: null,
-					controlType: null,
-					id: null,
-					searchOpenDialogs: false,
-					autoWait: false
-			};
-			oOptions.check = function() {
-				if (oPromiseErrorMessage) {
-					throw new Error(oPromiseErrorMessage);
-				}
-				return bPromiseDone;
-			};
-			return this.waitFor(oOptions);
 		}
 	};
 

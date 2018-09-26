@@ -240,8 +240,7 @@ sap.ui.define([
 			},
 			sinon: {
 				version: 1,
-				qunitBridge: true,
-				useFakeTimers: true
+				qunitBridge: true
 			},
 			module: "./Opa.qunit"
 		},
