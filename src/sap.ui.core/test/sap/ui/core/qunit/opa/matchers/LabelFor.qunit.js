@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/test/Opa5",
 	"sap/ui/test/matchers/LabelFor",
 	"sap/m/Input",
 	"sap/m/Label",
@@ -8,7 +9,7 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/ui/layout/form/SimpleForm"
-], function (LabelFor, Input, Label, Button, ResourceModel, App, Page, SimpleForm) {
+], function (Opa5, LabelFor, Input, Label, Button, ResourceModel, App, Page, SimpleForm) {
 	"use strict";
 
 	var BUNDLE_URL = "test-resources/sap/ui/core/qunit/opa/matchers/I18NText.properties";
