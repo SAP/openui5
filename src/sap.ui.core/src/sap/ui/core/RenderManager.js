@@ -1148,7 +1148,7 @@ sap.ui.define([
 				"title": oIconInfo.text || null
 			};
 
-			this.write("style=\"font-family: " + oIconInfo.fontFamily + ";\" ");
+			this.write("style=\"font-family: '" + encodeXML(oIconInfo.fontFamily) + "';\" ");
 		} else {
 			mDefaultAttributes = {
 				role: "presentation",
@@ -1190,7 +1190,7 @@ sap.ui.define([
 			this.write(">");
 			if (bAriaLabelledBy) {
 				// output the invisible text for aria-labelledby
-				this.write("<span style=\"display:none;\" id=\"" + sInvTextId + "\">" + sLabel + "</span>");
+				this.write("<span style=\"display:none;\" id=\"" + sInvTextId + "\">" + encodeXML(sLabel) + "</span>");
 			}
 			this.write("</span>");
 		} else {

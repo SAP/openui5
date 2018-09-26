@@ -635,7 +635,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager writeIcon with Icon URL", function(assert) {
-		jQuery.sap.require("sap.ui.core.IconPool");
 		var rm = sap.ui.getCore().createRenderManager();
 		var oIconInfo = IconPool.getIconInfo("wrench");
 		rm.writeIcon(oIconInfo.uri, ["classA", "classB"], {
@@ -688,7 +687,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager writeIcon with Icon URL. aria-label and aria-labelledby are set to null", function(assert) {
-		jQuery.sap.require("sap.ui.core.IconPool");
 		var rm = sap.ui.getCore().createRenderManager();
 		var oIconInfo = IconPool.getIconInfo("wrench");
 		rm.writeIcon(oIconInfo.uri, [], {
@@ -711,7 +709,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager writeIcon with Icon URL and aria-labelledby", function(assert) {
-		jQuery.sap.require("sap.ui.core.IconPool");
 		var rm = sap.ui.getCore().createRenderManager();
 		var oIconInfo = IconPool.getIconInfo("wrench");
 		rm.writeIcon(oIconInfo.uri, [], {
@@ -732,6 +729,36 @@ sap.ui.define([
 		assert.equal(sText, "abc", "The content of invisible text should be set");
 
 		jQuery.sap.byId("area6").empty();
+	});
+
+	QUnit.test("RenderManager writeIcon with font-family which has space inside", function(assert) {
+		var fnOrigGetIconInfo = IconPool.getIconInfo,
+			sFontFamily = "fontfamily which has space inside";
+		var oStub = sinon.stub(IconPool, "getIconInfo").callsFake(function (sIconName) {
+			var oRes = fnOrigGetIconInfo(sIconName);
+			oRes.fontFamily = sFontFamily;
+			return oRes;
+		});
+
+		var rm = sap.ui.getCore().createRenderManager();
+		var oIconInfo = IconPool.getIconInfo("wrench");
+		rm.writeIcon(oIconInfo.uri, [], {
+			id: "icon1"
+		});
+		rm.flush(jQuery.sap.domById("area6"));
+		rm.destroy();
+
+		var $icon1 = jQuery.sap.byId("icon1");
+		assert.ok($icon1[0], "icon should be rendered");
+		assert.ok($icon1.is("span"), "Icon URI should be rendered as a span");
+		assert.equal($icon1.css("font-family"), "\"" + sFontFamily + "\"", "Icon's font family is rendered");
+		assert.equal($icon1.attr("data-sap-ui-icon-content"), oIconInfo.content, "Icon content is rendered as attribute");
+		assert.ok($icon1.hasClass("sapUiIcon"), "icon has sapUiIcon as a CSS class");
+		assert.ok($icon1.hasClass("sapUiIconMirrorInRTL"), "icon has sapUiIconMirrorInRTL as a CSS class");
+		assert.notEqual($icon1.attr("aria-label"), undefined, "Attribute aria-label should be set");
+
+		jQuery.sap.byId("area6").empty();
+		oStub.restore();
 	});
 
 	QUnit.test("RenderManager writeIcon with Image URL", function(assert) {
