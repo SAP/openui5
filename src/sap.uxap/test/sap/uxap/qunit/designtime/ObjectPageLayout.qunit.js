@@ -295,6 +295,21 @@
 				done();
 			}, 0);
 		});
+
+		QUnit.module("Framework API overrides");
+
+		QUnit.test("clone()", function (assert) {
+			var bNoException = true;
+
+			try {
+				var o = new sap.uxap.ObjectPageLayout();
+				o.clone();
+			} catch (e) {
+				bNoException = false;
+			}
+
+			assert.ok(bNoException, "should throw no exceptions when called on a freshly instantiated ObjectPageLayout");
+		});
 	});
 
 })();
