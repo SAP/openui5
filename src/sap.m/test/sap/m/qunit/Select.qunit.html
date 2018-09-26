@@ -20,6 +20,11 @@
 		<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script>
+			sinon.config.useFakeTimers = true;
+			QUnit.config.autostart = false;
+			sap.ui.test.qunit.delayTestStart();
+		</script>
 		<script src="Select.qunit.js"></script>
 	</head>
 	<body id="body" class="sapUiBody">
@@ -31,3 +36,4 @@
 		<div id="content" class="content"></div>
 	</body>
 </html>
+
