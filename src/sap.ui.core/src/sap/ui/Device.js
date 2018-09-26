@@ -1563,7 +1563,7 @@ if (typeof window.sap.ui !== "object") {
 		var s = {};
 		s.tablet = !!(((device.support.touch && !isWin7) || isWin8Upwards || !!_simMobileOnDesktop) && t);
 		s.phone = !!(device.os.windows_phone || ((device.support.touch && !isWin7) || !!_simMobileOnDesktop) && !t);
-		s.desktop = !!((!s.tablet && !s.phone) || isWin8Upwards || isWin7);
+		s.desktop = !!((!s.tablet && !s.phone) || isWin8Upwards || isWin7 || device.os.linux);
 		s.combi = !!(s.desktop && s.tablet);
 		s.SYSTEMTYPE = SYSTEMTYPE;
 
