@@ -27,8 +27,9 @@ function(Device, getScrollbarSize) {
 		var bRTL = sap.ui.getCore().getConfiguration().getRTL(),
 			sScrollBarTouchClass = "sapMScrollBarTouch",
 			sContentSize = oControl.getContentSize(),
-		    oBSS = getScrollbarSize(sScrollBarTouchClass),
 			sControlId = oControl.getId(),
+			bDeviceSupportsTouch = Device.support.touch,
+			oBSS = getScrollbarSize(bDeviceSupportsTouch ? sScrollBarTouchClass : undefined),
 			// Fix for Fiori Client and Edge in Mobile Mode on Win8 and Win10
 			iWidth = (Device.browser.edge && !oBSS.width) ? 15 : oBSS.width;
 
@@ -36,7 +37,7 @@ function(Device, getScrollbarSize) {
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMScrollBarOuterDiv");
-		if (Device.support.touch) {
+		if (bDeviceSupportsTouch) {
 			oRm.addClass(sScrollBarTouchClass);
 		}
 		oRm.addStyle("width", iWidth + "px");
