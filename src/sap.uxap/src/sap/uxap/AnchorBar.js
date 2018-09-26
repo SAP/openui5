@@ -335,9 +335,10 @@ sap.ui.define([
 	AnchorBar.prototype._toggleSelectionStyleClass = function(oButton, bAdd) {
 		if (oButton) {
 			oButton.toggleStyleClass("sapUxAPAnchorBarButtonSelected", bAdd);
-			oButton.$().attr("aria-checked", bAdd);
 			if (oButton instanceof MenuButton) {
 				oButton._getButtonControl().$().attr("aria-checked", bAdd);
+			} else {
+				oButton.$().attr("aria-checked", bAdd);
 			}
 		}
 	};
@@ -968,16 +969,14 @@ sap.ui.define([
 	};
 
 	AnchorBar.prototype._computeNextSectionInfo = function (oContent) {
+		var oButton = oContent.isA("sap.m.MenuButton") ? oContent._getButtonControl() : oContent;
+
 		// set ARIA has-popup if button opens submenu
 		if (oContent.data("bHasSubMenu")) {
-			oContent.$().attr("aria-haspopup", "true");
+			oButton.$().attr("aria-haspopup", "true");
 		}
 		// set ARIA attributes of main buttons
-		oContent.$().attr("aria-controls", oContent.data("sectionId")).attr("aria-checked", false);
-
-		if (oContent instanceof MenuButton) {
-			oContent._getButtonControl().$().attr("aria-controls", oContent.data("sectionId")).attr("aria-checked", false);
-		}
+		oButton.$().attr("aria-controls", oContent.data("sectionId")).attr("aria-checked", false);
 
 		var iWidth = oContent.$().outerWidth(true);
 
