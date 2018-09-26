@@ -1634,6 +1634,25 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDemoA
 	}
 }
 
+.sapUiDemokit .sapMText.demokitInitialPagesBlueText {
+	color: #0070b1;
+}
+
+.sapUiDemokit .toolsPageVbox {
+	width: 95%;
+}
+
+@media (min-width: 1600px) {
+	.sapUiDemokit .toolsPageVbox {
+		width: 50%;
+	}
+}
+
+.sapUiDemokit .toolsPageImage {
+	width: 350px;
+	max-width: 100%;
+}
+
 /* FireFox does not handle aspect ratio optimization so this must be disabled for it only by resetting the element position */
 html[data-sap-ui-browser^="ff"] .sapUiDemokit .landingImage {
 	position: relative;
@@ -2116,6 +2135,7 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 	display: inline;
 }
 .sapUiDisclaimerCommunityLink {
+
 	margin-top: 1.5rem;
 	margin-left: -0.125rem;
 }
