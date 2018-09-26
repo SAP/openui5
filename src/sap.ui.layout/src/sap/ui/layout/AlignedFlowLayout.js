@@ -146,7 +146,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Re-calculate the positions and geometries of items in the <code>AlignFlowLayout</code> control to re-arrange
+		 * Re-calculates the positions and geometries of items in the <code>AlignFlowLayout</code> control to re-arrange
 		 * items evenly across the horizontal space available (if necessary).
 		 *
 		 * @param {object} [oSettings] Settings to reflow the <code>AlignedFlowLayout</code> control
