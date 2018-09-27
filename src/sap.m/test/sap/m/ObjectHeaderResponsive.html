@@ -1373,6 +1373,25 @@
 				responsive:true
 			}).addStyleClass("sapUiContainer-Narrow");
 
+			var ohEmptyAttribute = new sap.m.ObjectHeader("ohEA", {
+				responsive: true,
+				title: "ObjectHeader with empty attribute",
+				intro: "The only Status should be shift to the left",
+				attributes: [
+					new sap.m.ObjectAttribute({
+						title: "",
+						text: ""
+					 })
+				],
+				statuses: [
+					new sap.m.ObjectStatus({
+						title: "Approval",
+						text: "Pending",
+						icon: "sap-icon://inbox",
+						state: sap.ui.core.ValueState.Warning
+				 	})
+				]
+			});
 			var page1 = new sap.m.Page("page1", {
 				title:"ObjectHeader (Responsive)",
 				content : [
@@ -1415,6 +1434,7 @@
 					oh9,
 					label10,
 					oh10,
+					ohEmptyAttribute,
 					new sap.m.Label({text: "THE END!"}) // placeholder to see content below
 				]
 			});
