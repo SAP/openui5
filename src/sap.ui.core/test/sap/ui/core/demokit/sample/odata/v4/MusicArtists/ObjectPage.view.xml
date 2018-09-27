@@ -73,6 +73,9 @@
 		</content>
 		<footer>
 			<Bar>
+				<contentLeft>
+					<DraftIndicator id="draftIndicator"/>
+				</contentLeft>
 				<contentRight>
 					<Button enabled="{= !${ui-op>/bEditMode}}" id="edit" press="onEditPress"
 						text="Edit" />

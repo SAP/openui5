@@ -985,6 +985,7 @@ sap.ui.define([
 					"me" : "too"
 				},
 				oPatchPromise = bCanceled ? Promise.reject(oError) : Promise.resolve(oPatchResult),
+				fnPatchSent = this.spy(),
 				oRequestCall,
 				oRequestLock = {unlock : function () {}},
 				oStaticCacheMock = this.mock(_Cache),
@@ -1069,7 +1070,7 @@ sap.ui.define([
 			// code under test
 			oCacheUpdatePromise = oCache.update(oGroupLock, "Address/City", "Walldorf", fnError,
 					"/~/BusinessPartnerList('0')", sEntityPath, undefined,
-					oFixture.$$patchWithoutSideEffects)
+					oFixture.$$patchWithoutSideEffects, fnPatchSent)
 				.then(function (oResult) {
 					sinon.assert.notCalled(fnError);
 					assert.strictEqual(bCanceled, false);
@@ -1090,8 +1091,12 @@ sap.ui.define([
 				.withExactArgs(sGroupId, true, sinon.match.same(oCache))
 				.returns(oRequestLock);
 
+			assert.ok(fnPatchSent.notCalled, "patchSent handler not yet called");
+
 			// code under test
 			oRequestCall.args[0][5](); // call onSubmit
+
+			assert.ok(fnPatchSent.calledOnceWithExactly(), "patchSent handler called once");
 
 			return oCacheUpdatePromise;
 		});

@@ -24,7 +24,9 @@ sap.ui.define([
 			change : true,
 			dataReceived : true,
 			dataRequested : true,
-			DataStateChange : true
+			DataStateChange : true,
+			patchCompleted : true,
+			patchSent : true
 		};
 
 	/**
@@ -91,7 +93,13 @@ sap.ui.define([
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#resetChanges as #resetChanges
+	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#attachPatchCompleted as
+	 *   #attachPatchCompleted
+	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#attachPatchSent as #attachPatchSent
 	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#changeParameters as #changeParameters
+	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#detachPatchCompleted as
+	 *   #detachPatchCompleted
+	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#detachPatchSent as #detachPatchSent
 	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#initialize as #initialize
 	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#resume as #resume
 	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#suspend as #suspend
@@ -101,6 +109,8 @@ sap.ui.define([
 				var iPos = sPath.indexOf("(...)");
 
 				ContextBinding.call(this, oModel, sPath);
+				// initialize mixin members
+				asODataParentBinding.call(this);
 
 				if (sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
@@ -109,7 +119,6 @@ sap.ui.define([
 				this.mAggregatedQueryOptions = {};
 				this.bAggregatedQueryOptionsInitial = true;
 				this.oCachePromise = SyncPromise.resolve();
-				this.mCacheByContext = undefined;
 				this.sGroupId = undefined;
 				this.bInheritExpandSelect = false;
 				this.oOperation = undefined;
@@ -401,6 +410,39 @@ sap.ui.define([
 	 * @name sap.ui.model.odata.v4.ODataContextBinding#dataRequested
 	 * @public
 	 * @since 1.37.0
+	 */
+
+	/**
+	 * The 'patchCompleted' event is fired when the backend has responded to the last PATCH request
+	 * for this binding. If there is more than one PATCH request in a $batch, the event is fired
+	 * only once. Only bindings using an own data service request fire a 'patchCompleted' event.
+	 * For each 'patchSent' event, a 'patchCompleted' event is fired.
+	 *
+	 * @param {sap.ui.base.Event} oEvent The event object
+	 * @param {sap.ui.model.odata.v4.ODataContextBinding} oEvent.getSource() This binding
+	 * @param {object} oEvent.getParameters() Object containing all event parameters
+	 * @param {boolean} oEvent.getParameters().success
+	 *   Whether all PATCHes are successfully processed
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataContextBinding#patchCompleted
+	 * @public
+	 * @since 1.59.0
+	 */
+
+	/**
+	 * The 'patchSent' event is fired when the first PATCH request for this binding is sent to the
+	 * backend. If there is more than one PATCH request in a $batch, the event is fired only once.
+	 * Only bindings using an own data service request fire a 'patchSent' event. For each
+	 * 'patchSent' event, a 'patchCompleted' event is fired.
+	 *
+	 * @param {sap.ui.base.Event} oEvent The event object
+	 * @param {sap.ui.model.odata.v4.ODataContextBinding} oEvent.getSource() This binding
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataContextBinding#patchSent
+	 * @public
+	 * @since 1.59.0
 	 */
 
 	// See class documentation

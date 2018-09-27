@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/model/PropertyBinding"
 ], function (asODataBinding, _Cache, Log, SyncPromise, ChangeReason, PropertyBinding) {
 	"use strict";
+	/*eslint max-nested-callbacks: 0 */
 
 	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
 		oDoFetchQueryOptionsPromise = SyncPromise.resolve({}),
@@ -61,6 +62,8 @@ sap.ui.define([
 			constructor : function (oModel, sPath, oContext, mParameters) {
 
 				PropertyBinding.call(this, oModel, sPath);
+				// initialize mixin members
+				asODataBinding.call(this);
 
 				if (sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
@@ -607,6 +610,7 @@ sap.ui.define([
 			that.oModel.reportError("Failed to update path "
 				+ that.oModel.resolve(that.sPath, that.oContext),
 				sClassName, oError);
+
 			return oError;
 		}
 
@@ -629,11 +633,35 @@ sap.ui.define([
 					return that.oModel.getMetaModel().fetchUpdateData(that.sPath, that.oContext)
 						.then(function (oResult) {
 							return that.withCache(function (oCache, sCachePath, oBinding) {
+								// If a PATCH is merged into a POST request, firePatchSent is not
+								// called so don't call firePatchCompleted
+								var bFirePatchCompleted = false;
+
+								function errorCallback(oError) {
+									reportError(oError);
+									if (bFirePatchCompleted) {
+										oBinding.firePatchCompleted(false);
+										bFirePatchCompleted = false;
+									}
+								}
+
+								function patchSent() {
+									bFirePatchCompleted = true;
+									oBinding.firePatchSent();
+								}
+
 								oGroupLock.setGroupId(oBinding.getUpdateGroupId());
-								return oCache.update(oGroupLock,
-									oResult.propertyPath, vValue, reportError, oResult.editUrl,
-									sCachePath, that.getUnitOrCurrencyPath(),
-									oBinding.isPatchWithoutSideEffects());
+								// if request is canceled fnPatchSent and fnErrorCallback are not
+								// called and update Promise is rejected -> no patch events
+								return oCache.update(oGroupLock, oResult.propertyPath, vValue,
+									errorCallback, oResult.editUrl, sCachePath,
+									that.getUnitOrCurrencyPath(),
+									oBinding.isPatchWithoutSideEffects(), patchSent
+								).then(function () {
+									if (bFirePatchCompleted) {
+										oBinding.firePatchCompleted(true);
+									}
+								});
 							}, oResult.entityPath);
 						});
 				}
