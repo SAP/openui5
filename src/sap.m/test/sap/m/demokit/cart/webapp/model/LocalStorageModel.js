@@ -7,7 +7,7 @@ sap.ui.define([
 	return JSONModel.extend("sap.ui.demo.cart.model.CartModel", {
 
 		_STORAGE_KEY : "LOCALSTORAGE_MODEL",
-		_storage : Storage.getInstance(Storage.Type.local),
+		_storage : new Storage(Storage.Type.local),
 
 		/**
 		 * Fetches the favorites from local storage and sets up the JSON model

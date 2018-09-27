@@ -1131,7 +1131,9 @@
 			"sap.m.sample.TableOutdated",
 			"sap.m.sample.TableEditable",
 			"sap.m.sample.TableAlternateRowColors",
-			"sap.m.sample.TableDnD"
+			"sap.m.sample.TableDnD",
+			"sap.m.sample.TableContextualWidthDynamic",
+			"sap.m.sample.TableContextualWidthStatic"
 		  ]
 		},
 		{
@@ -2425,12 +2427,22 @@
 		{
 		  "id": "sap.m.sample.TableExport",
 		  "name": "Table - Export",
-		  "description": "The table control provides export capabilities for downloading your data as a  csv file. However, for huge tables, it is recommended that you provide an export mechanism on the server side."
+		  "description": "The table control provides export capabilities for downloading your data as a csv file. However, for huge tables, it is recommended that you provide an export mechanism on the server side."
 		},
 		{
 		  "id": "sap.m.sample.TableEditable",
 		  "name": "Table - Editable",
 		  "description": "Table with edit/display togglable scenario."
+		},
+		{
+		  "id": "sap.m.sample.TableContextualWidthDynamic",
+		  "name": "Table - ContextualWidth (Dynamic)",
+		  "description": "This example shows the container-based pop-in behavior. The container has dynamic width."
+		},
+		{
+		  "id": "sap.m.sample.TableContextualWidthStatic",
+		  "name": "Table - ContextualWidth (Static)",
+		  "description": "This example shows the container-based pop-in behavior. The container has static width."
 		},
 		{
 		  "id": "sap.m.sample.ActionListItem",

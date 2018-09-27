@@ -175,7 +175,13 @@ function(
 				// when a control gets destroyed it gets deregistered before it gets removed from the parent aggregation.
 				// this means that getElementInstance is undefined when we get here via removeAggregation mutation
 				// when an overlay is not registered yet, we should not evaluate editable. In this case getDesignTimeMetadata returns null.
-				vEditable = oOverlay.getElement() && oOverlay.getDesignTimeMetadata() && this._isEditable(oOverlay, mPropertyBag);
+				// in case a control is marked as not adaptable by designTimeMetadata, it should not be possible to evaluate editable
+				// for this control due to parent aggregation action definitions
+				vEditable =
+					oOverlay.getElement() &&
+					oOverlay.getDesignTimeMetadata() &&
+					!oOverlay.getDesignTimeMetadata().markedAsNotAdaptable() &&
+					this._isEditable(oOverlay, mPropertyBag);
 			}
 			// for the createContainer and additionalElements plugin the isEditable function returns an object with 2 properties, asChild and asSibling.
 			// for every other plugin isEditable should be a boolean.

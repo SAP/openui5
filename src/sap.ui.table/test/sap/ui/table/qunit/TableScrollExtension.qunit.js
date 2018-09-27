@@ -1127,6 +1127,20 @@ sap.ui.define([
 		oGetDefaultRowHeightStub.restore();
 	});
 
+	QUnit.test("registerForMouseWheel", function(assert) {
+		var Div = document.createElement("div");
+		var vReturn = this.oScrollExtension.registerForMouseWheel([Div], this.oScrollExtension.constructor.ScrollDirection.BOTH);
+
+		assert.strictEqual(vReturn, null, "The method should return null without synchronization enabled");
+	});
+
+	QUnit.test("registerForTouch", function(assert) {
+		var Div = document.createElement("div");
+		var vReturn = this.oScrollExtension.registerForMouseWheel([Div], this.oScrollExtension.constructor.ScrollDirection.BOTH);
+
+		assert.strictEqual(vReturn, null, "The method should return null without synchronization enabled");
+	});
+
 	QUnit.module("Horizontal scrolling", {
 		beforeEach: function() {
 			createTables();

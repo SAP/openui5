@@ -307,14 +307,25 @@ sap.ui.define([
 			.and.iFillResolutionWith("Resolution of the duplicated rule")
 			.and.iFillVersionWith("1.1");
 		When.onTheRulesPage.iPressButtonWithText(ADD_RULE_BUTTON);
-		// deselect all
-		When.onTheRulesPage.iPressSelectAllCheckbox();
+
+		When.onTheRulesPage.iDeselectAllRules();
 
 		When.onTheRulesPage.iPressSelectCheckboxOf("Error logs", "Rule has been selected", "Could not select Rule");
 
 		Then.onTheRulesPage.iShouldSeeDuplicatedRuleSelectedInView("Title of the duplicated Error Logs");
 
 		Then.onTheRulesPage.iShouldSeeRuleSelectedInView(4); // error logs rule index
+
+		Then.iTeardownSupportAssistantFrame();
+	});
+
+	opaTest("Should run analyze and see issues", function (Given, When, Then) {
+
+		Given.iStartMyAppAndDeletePersistedData();
+
+		When.onTheRulesPage.iPressAnalyze();
+
+		Then.onTheIssuesPage.iShouldSeeHighIssueInTemporaryLib();
 
 		Then.iTeardownSupportAssistantFrame();
 	});

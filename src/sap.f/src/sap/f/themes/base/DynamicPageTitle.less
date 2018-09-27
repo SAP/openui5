@@ -31,9 +31,13 @@
 	box-sizing: border-box;
 	background: @sapUiObjectHeaderBackground;
 
-	&:focus {
+	&.sapFDynamicPageTitleFocus {
 		outline: 0.0625rem dotted @sapUiContentFocusColor;
 		outline-offset: -0.0625rem;
+	}
+
+	.sapFDynamicPageTitleFocusSpan {
+		outline: none;
 	}
 
 	.sapFDynamicPageTitleTop {
@@ -110,11 +114,11 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 /* TODO remove after 1.62 version */
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapFDynamicPageTitle:focus {
+	.sapFDynamicPageTitle.sapFDynamicPageTitleFocus {
 		outline: none;
 		position: relative;
 	}
-	.sapFDynamicPageTitle:focus:before {
+	.sapFDynamicPageTitle.sapFDynamicPageTitleFocus:before {
 		content: " ";
 		box-sizing: border-box;
 		width: 100%;
@@ -129,11 +133,11 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 
 /* Firefox fix due to focus cut out from top and left */
 html[data-sap-ui-browser^="ff"].sap-desktop {
-	.sapFDynamicPageTitle:focus {
+	.sapFDynamicPageTitle.sapFDynamicPageTitleFocus {
 		outline: none;
 		position: relative;
 	}
-	.sapFDynamicPageTitle:focus:before {
+	.sapFDynamicPageTitle.sapFDynamicPageTitleFocus:before {
 		content: " ";
 		box-sizing: border-box;
 		width: 100%;

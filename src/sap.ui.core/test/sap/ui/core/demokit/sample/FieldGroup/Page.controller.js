@@ -18,7 +18,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/
 		onValidateFieldGroup : function (oEvt) {
 			//currently there is no actual validation triggered
 			var aFieldGroup = oEvt.getParameters().fieldGroupIds,
-				sMessage = "Group '"+ aFieldGroup[0] + "' Validation:",
+				sMessage = "Group '" + aFieldGroup[0] + "' Validation:",
 				sType = this.mMessageMapping[aFieldGroup[0]].type,
 				sMessageId = this.mMessageMapping[aFieldGroup[0]].id;
 

@@ -1,50 +1,55 @@
-sap.ui.jsview("sap.ui.core.sample.View.async.Root", {
+sap.ui.define([], function() {
+	"use strict";
 
-	getControllerName: function() {
-		return "sap.ui.core.sample.View.async.Sample";
-	},
+	sap.ui.jsview("sap.ui.core.sample.View.async.Root", {
 
-	createContent: function(oController) {
+		getControllerName: function() {
+			return "sap.ui.core.sample.View.async.Sample";
+		},
 
-		var oButton, oLabel, oSwitch, oView;
+		createContent: function(oController) {
 
-		oButton = new sap.m.Button({
-			text: "RELOAD",
-			icon: "sap-icon://refresh",
-			press: function() {
-				var oView = this.getParent();
-				var sId = oView.createId("sampleView");
-				var oSampleView = oView.byId(sId);
-				var bSync = oView.byId("switch").getState();
+			var oButton, oLabel, oSwitch, oView;
 
-				// remove the old view for refresh
-				oView.removeContent(oSampleView);
-				oSampleView.destroy();
-				// delete the html view from cache to achieve a real refresh
-				delete sap.ui.core.mvc.HTMLView._mTemplates["test-resources/sap/ui/core/demokit/sample/View/async/Async.view.html"];
-				// add the newly loaded view
-				oView.addContent(sap.ui.xmlview({
-					id: sId,
-					viewName: (bSync ? "sap.ui.core.sample.View.async.SyncSample" : "sap.ui.core.sample.View.async.Sample")
-				}));
-			}
-		});
+			oButton = new sap.m.Button({
+				text: "RELOAD",
+				icon: "sap-icon://refresh",
+				press: function() {
+					var oView = this.getParent();
+					var sId = oView.createId("sampleView");
+					var oSampleView = oView.byId(sId);
+					var bSync = oView.byId("switch").getState();
 
-		oSwitch = new sap.m.Switch({
-			id: this.createId("switch")
-		});
+					// remove the old view for refresh
+					oView.removeContent(oSampleView);
+					oSampleView.destroy();
+					// delete the html view from cache to achieve a real refresh
+					delete sap.ui.core.mvc.HTMLView._mTemplates["test-resources/sap/ui/core/demokit/sample/View/async/Async.view.html"];
+					// add the newly loaded view
+					oView.addContent(sap.ui.xmlview({
+						id: sId,
+						viewName: (bSync ? "sap.ui.core.sample.View.async.SyncSample" : "sap.ui.core.sample.View.async.Sample")
+					}));
+				}
+			});
 
-		oLabel = new sap.m.Label({
-			text: "SYNC:"
-		});
-		oLabel.addStyleClass("sapUiSmallMargin");
+			oSwitch = new sap.m.Switch({
+				id: this.createId("switch")
+			});
 
-		oView = sap.ui.xmlview({
-			id: this.createId("sampleView"),
-			viewName: "sap.ui.core.sample.View.async.Sample"
-		});
+			oLabel = new sap.m.Label({
+				text: "SYNC:"
+			});
+			oLabel.addStyleClass("sapUiSmallMargin");
 
-		return [oButton, oLabel, oSwitch, oView];
-	}
+			oView = sap.ui.xmlview({
+				id: this.createId("sampleView"),
+				viewName: "sap.ui.core.sample.View.async.Sample"
+			});
+
+			return [oButton, oLabel, oSwitch, oView];
+		}
+
+	});
 
 });

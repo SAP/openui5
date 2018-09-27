@@ -1,7 +1,8 @@
 sap.ui.define([
-	"sap/ui/core/util/MockServer",
-	"sap/base/Log"
-], function (MockServer, Log) {
+    "sap/ui/core/util/MockServer",
+    "sap/base/Log",
+    "sap/base/util/UriParameters"
+], function (MockServer, Log, UriParameters) {
 	"use strict";
 
 	var oMockServer,
@@ -17,7 +18,7 @@ sap.ui.define([
 		 */
 
 		init : function () {
-			var oUriParameters = jQuery.sap.getUriParameters(),
+			var oUriParameters = new UriParameters(window.location.href),
 				sJsonFilesUrl = sap.ui.require.toUrl(_sJsonFilesModulePath),
 				sManifestUrl = sap.ui.require.toUrl(_sAppModulePath + "manifest.json"),
 				sEntity = "Orders",

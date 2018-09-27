@@ -19,6 +19,7 @@ sap.ui.define([
 			this.oView.setModel(this._MessageManager.getMessageModel(),"message");
 
 			MessageToast.show('Press "Save" to trigger validation.');
+			this.createMessagePopover();
 		},
 
 		handleMessagePopoverPress: function (oEvent) {
@@ -37,7 +38,7 @@ sap.ui.define([
 						oMessage = oItem.getBindingContext("message").getObject(),
 						oControl = sap.ui.getCore().byId(oMessage.getControlId());
 
-					if (oControl && oControl.getDomRef()) {
+					if (oControl) {
 						oPage.scrollToElement(oControl.getDomRef(), 200, [0, -100]);
 						setTimeout(function(){
 							oControl.focus();
@@ -145,11 +146,13 @@ sap.ui.define([
 		},
 
 		_generateInvalidUserInput: function () {
-			var oRequiredNameInput = this.oView.byId("formContainer").getItems()[4].getContent()[2],
+			var oButton = this.getView().byId("messagePopoverBtn"),
+				oRequiredNameInput = this.oView.byId("formContainer").getItems()[4].getContent()[2],
 				oNumericZipInput = this.oView.byId("formContainer").getItems()[5].getContent()[7],
 				oEmailInput = this.oView.byId("formContainer").getItems()[6].getContent()[13],
 				iWeeklyHours = this.oView.byId("formContainerEmployment").getItems()[0].getContent()[13];
 
+			oButton.setVisible(true);
 			oRequiredNameInput.setValue(undefined);
 			oNumericZipInput.setValue("AAA");
 			oEmailInput.setValue("MariaFontes.com");
@@ -157,6 +160,14 @@ sap.ui.define([
 
 			this.handleRequiredField(oRequiredNameInput);
 			this.checkInputConstraints(iWeeklyHours);
+
+			this.oMP.getBinding("items").attachChange(function(oEvent){
+				this.oMP._oMessageView.navigateBack();
+			}.bind(this));
+
+			setTimeout(function(){
+				this.oMP.openBy(oButton);
+			}.bind(this), 100);
 		}
 	});
 

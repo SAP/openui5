@@ -67,6 +67,24 @@
         "type": "FIX",
         "text": "sap.ui.dt - Context menu closes when selection changes",
         "references": []
+      },
+      {
+        "id": "dc8ad7ea861a67f3052b42b41853d660f54f3cb2",
+        "type": "FIX",
+        "text": "sap.ui.dt - Context menu closes when selection changes",
+        "references": []
+      },
+      {
+        "id": "f7b7d2b52bdb90dcb8ce0c6be2403d35c07aaaee",
+        "type": "FIX",
+        "text": ": DT - Context menu border correction",
+        "references": []
+      },
+      {
+        "id": "fe3468799aabf1ed39dde3b63f8bf3a85ed06183",
+        "type": "FIX",
+        "text": "sap.ui.dt - Expanded compact menu is now equal to context menu",
+        "references": []
       }
     ]
   }

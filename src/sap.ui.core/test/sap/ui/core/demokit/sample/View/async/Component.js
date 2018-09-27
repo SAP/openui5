@@ -34,11 +34,10 @@ sap.ui.define([
 				return sap.ui.jsview("sap.ui.core.sample.View.async.Root", true);
 			},
 			init: function() {
-				var aTypes, xhr, mResponses, fnDelay, iNow;
+				var aTypes, xhr, mResponses, fnDelay;
 				fnDelay = function() {
 					return Math.floor(Math.random() * 2500);
 				};
-				iNow = Date.now();
 				aTypes = ["xml", "js", "json", "html"];
 				mResponses = {};
 

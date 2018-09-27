@@ -122,6 +122,8 @@ sap.ui.define([
 
 		LazyLoading.prototype.doLazyLoading = function () {
 			var oHeightParams = this._oObjectPageLayout._getHeightRelatedParameters(),
+				bIconTabBar = this._oObjectPageLayout.getUseIconTabBar(),
+				oSelectedSection = sap.ui.getCore().byId(this._oObjectPageLayout.getSelectedSection()),
 				oSectionInfo = this._oObjectPageLayout._oSectionInfo,
 				iScrollTop,
 				iScrollPageBottom,
@@ -174,6 +176,10 @@ sap.ui.define([
 			jQuery.each(oSectionInfo, jQuery.proxy(function (sId, oInfo) {
 				// on desktop/tablet, find a section, not a subsection
 				if (!oInfo.isSection && oInfo.sectionReference.getParent() && oInfo.sectionReference.getParent().getVisible()) {
+
+					if (bIconTabBar && oSelectedSection && oSelectedSection.indexOfSubSection(oInfo.sectionReference) < 0) {
+						return; // ignore hidden tabs content
+					}
 					// 1D segment intersection between visible page and current sub section
 					// C <= B and A <= D -> intersection
 					//    A-----B

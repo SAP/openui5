@@ -54,9 +54,9 @@ sap.ui.define([
 			assert.ok(jQuery.isArray(this.oFlexController._oChangePersistence._mChanges.mDependencies[aChanges[i].getId()].dependencies), "dependency map present for change in current map");
 		}
 
-		assert.strictEqual(this.oFlexController._oChangePersistence._mChanges.mChanges["RTADemoAppMD---detail--GroupElementDatesShippingStatus"].length, 7, "7 changes in map");
-		assert.strictEqual(Object.keys(this.oFlexController._oChangePersistence._mChanges.mDependencies).length, 6, "6 Dependency maps present");
-		assert.strictEqual(Object.keys(this.oFlexController._oChangePersistence._mChanges.mDependentChangesOnMe).length, 6, "6 DependentChangesOnMe maps present");
+		assert.strictEqual(this.oFlexController._oChangePersistence._mChanges.mChanges["RTADemoAppMD---detail--GroupElementDatesShippingStatus"].length, iLength, "changes in map");
+		assert.strictEqual(Object.keys(this.oFlexController._oChangePersistence._mChanges.mDependencies).length, iLength - 1, "Dependency maps present");
+		assert.strictEqual(Object.keys(this.oFlexController._oChangePersistence._mChanges.mDependentChangesOnMe).length, iLength - 1, "DependentChangesOnMe maps present");
 	};
 
 	QUnit.module("Given an instance of FakeLrepConnector", {
@@ -381,6 +381,7 @@ sap.ui.define([
 			getId : function() {return "RTADemoAppMD";}
 		};
 
+		//not in "right" order here, realistically the changes would be sorted by layer and creation, but doesn't really matter for the calculation logic that is tested here!
 		var aMapChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges.map(function (oChangeContent) {
 			return new Change(oChangeContent);
 		});
@@ -399,9 +400,10 @@ sap.ui.define([
 			}
 		});
 
-		assert.strictEqual(mSwitches.aRevert.length, 1, "then one change needs to be reverted");
+		assert.strictEqual(mSwitches.aRevert.length, 2, "then 2 changes needs to be reverted");
 		assert.strictEqual(mSwitches.aNew.length, 1, "then one change needs to be applied");
-		assert.strictEqual(mSwitches.aRevert[0].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges[1].fileName, "then to be reverted change is correct");
+		assert.strictEqual(mSwitches.aRevert[0].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges[2].fileName, "then to be reverted change is correct");
+		assert.strictEqual(mSwitches.aRevert[1].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges[1].fileName, "then to be reverted change is correct");
 		assert.strictEqual(mSwitches.aNew[0].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[1].controlChanges[1].fileName, "then to be applied change is correct");
 		assert.deepEqual(mSwitches.component, oControlComponent, "then the passed component is received");
 		oControlComponent.destroy();
@@ -436,9 +438,10 @@ sap.ui.define([
 			}
 		});
 
-		assert.strictEqual(mSwitches.aRevert.length, 1, "then one change needs to be reverted");
+		assert.strictEqual(mSwitches.aRevert.length, 2, "then 2 changes needs to be reverted");
 		assert.strictEqual(mSwitches.aNew.length, 1, "then one change needs to be applied");
-		assert.strictEqual(mSwitches.aRevert[0].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges[1].fileName, "then to be reverted change is correct");
+		assert.strictEqual(mSwitches.aRevert[0].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges[2].fileName, "then to be reverted change is correct");
+		assert.strictEqual(mSwitches.aRevert[1].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges[1].fileName, "then to be reverted change is correct");
 		assert.strictEqual(mSwitches.aNew[0].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[1].controlChanges[1].fileName, "then to be applied change is correct");
 		assert.deepEqual(mSwitches.component, {id: "applicableComponentId"}, "then the correct embedded component is received");
 	});
@@ -482,7 +485,7 @@ sap.ui.define([
 		var oNewChange = new Change(this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[1].controlChanges[1]);
 
 		var aExpectedNew = [oNewChange];
-		var aExpectedRevert = [aExistingChanges[1]];
+		var aExpectedRevert = [aExistingChanges[2], aExistingChanges[1]];
 
 		var oComponent = {
 			name: "MyComponent",
@@ -500,6 +503,7 @@ sap.ui.define([
 			newVariantReference: "idMain1--variantManagementOrdersTable",
 			component: oComponent
 		});
+
 		mSwitches.aNew.forEach(function (oChange, i) {
 			assert.deepEqual(oChange._oDefinition, aExpectedNew[i]._oDefinition, "the change content returns correctly");
 		});
@@ -962,7 +966,7 @@ sap.ui.define([
 		assert.equal(iSortedIndex, 1, "then 1 received as sorted index (excluding standard variant) which was initially 0");
 	});
 
-	QUnit.test("when calling 'addVariantToVariantManagement' on CUSTOMER layer and a variant reference from the VENDOR layer with one VENDOR and one CUSTOMER change", function(assert) {
+	QUnit.test("when calling 'addVariantToVariantManagement' on CUSTOMER layer and a variant reference from the VENDOR layer with 2 VENDOR and one CUSTOMER change", function(assert) {
 		var oChangeContent0 = {"fileName":"change0"};
 
 		var oFakeVariantData1 = {
@@ -986,31 +990,11 @@ sap.ui.define([
 
 		assert.equal(iIndex1, 1, "then index 1 received on adding variant AA");
 		assert.equal(aVariants[1].content.fileName, "newVariant1", "then the new variant with title AA added to the second position after Standard Variant (ascending sort)");
-		assert.equal(aVariants[1].controlChanges.length, 2, "then one own change and one referenced change exists");
+		assert.equal(aVariants[1].controlChanges.length, 3, "then one own change and 2 referenced changes exists");
 		assert.equal(aChangeFileNames[0], aVariants[2].controlChanges[0].fileName, "then referenced change exists and placed to the array start");
+		assert.equal(aChangeFileNames[1], aVariants[2].controlChanges[2].fileName, "then referenced change exists and placed to the array start");
+		assert.equal(aChangeFileNames[2], oChangeContent0.fileName, "then own change exists and placed to the array end");
 		assert.equal(aChangeFileNames.indexOf(aVariants[2].controlChanges[1].fileName), "-1", "then CUSTOMER layer change not referenced");
-	});
-
-	QUnit.test("when calling '_getReferencedChanges' on CUSTOMER layer with variant reference to a VENDOR layer variant with one VENDOR and one CUSTOMER change", function(assert) {
-		var oChangeContent0 = {"fileName":"change0"};
-
-		var oFakeVariantData1 = {
-			"content" : {
-				"fileName": "newVariant1",
-				"variantReference": "variant0",
-				"content": {
-					"title": "AA"
-				}
-			},
-			"controlChanges" : [oChangeContent0]
-		};
-
-		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
-		var aReferencedChanges = oVariantController._getReferencedChanges("idMain1--variantManagementOrdersTable", oFakeVariantData1);
-		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
-
-		assert.equal(aReferencedChanges.length, 1, "then only one change returned");
-		assert.equal(aReferencedChanges[0].fileName, aVariants[2].controlChanges[0].fileName, "then only one VENDOR level change returned");
 	});
 
 	QUnit.test("when calling 'removeVariantFromVariantManagement' with a variant", function(assert) {
@@ -1108,6 +1092,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oComponent);
+			sandbox.stub(Utils, "getSelectorComponentForControl").returns(this.oComponent);
 
 			this.oFlexController = FlexControllerFactory.createForControl(this.oComponent, oManifest);
 
@@ -1173,9 +1158,9 @@ sap.ui.define([
 	QUnit.test("when '_updateCurrentVariant' is triggered from a variant model to carry switch and revert of changes, with an embedded component", function(assert) {
 		sandbox.stub(this.oFlexController._oChangePersistence._oVariantController, "_getComponentForChange").returns(this.oComponent);
 
-		assert.expect(19);
+		assert.expect(21);
 		assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[this.aRevertedChanges[1].getId()] instanceof Object);
-		fnGetChanges.call(this, this.aRevertedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
+		fnGetChanges.call(this, this.aRevertedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 8, assert);
 
 		var sCurrentVariant = this.oModel.getCurrentVariantReference("idMain1--variantManagementOrdersTable");
 		assert.equal(sCurrentVariant, "variant0", "the current variant key before switch is correct");

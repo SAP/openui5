@@ -6,6 +6,7 @@ sap.ui.define([
 	'sap/ui/layout/HorizontalLayout',
 	'sap/m/Button',
 	'sap/ui/core/Component',
+	'sap/ui/core/UIComponent',
 	'sap/ui/thirdparty/hasher',
 	"sap/base/Log",
 	'sap/ui/thirdparty/sinon-4',
@@ -17,6 +18,7 @@ function(
 	HorizontalLayout,
 	Button,
 	Component,
+	UIComponent,
 	hasher,
 	Log,
 	sinon,
@@ -287,31 +289,6 @@ function(
 
 			assert.equal(sComponentId, 'sodimunk');
 			assert.equal(fnGetOwnerIdForControl.callCount, 3);
-		});
-
-		QUnit.test("_getComponentIdForControl shall stop walking up the control tree after 100 iterations", function (assert) {
-			var sComponentId, aControls, i, fnGetOwnerIdForControl, previous;
-			aControls = [];
-			/*eslint-disable no-loop-func */
-			 for (i = 0; i < 200; i++) {
-				previous = (i >= 1) ? aControls[i - 1] : null;
-				(function (previous, i) {
-					aControls[i] = {
-						getParent: function () {
-							return previous;
-						}
-					};
-				})(previous, i);
-			}
-			/*eslint-enable no-loop-func */
-
-			fnGetOwnerIdForControl = sandbox.stub(Utils, "_getOwnerIdForControl").returns("");
-
-			// Call CUT
-			sComponentId = Utils._getComponentIdForControl(aControls[199]);
-
-			assert.strictEqual(sComponentId, '');
-			assert.equal(fnGetOwnerIdForControl.callCount, 100);
 		});
 
 		QUnit.test("getComponentName shall return the component name for a component", function (assert) {
@@ -724,13 +701,36 @@ function(
 			assert.equal(oStub.firstCall.args[0], oParentComponent, "the function was called with the parent component the first time");
 		});
 
-		QUnit.test("getAppComponentForControl will not search further for the app component if the passed component is of type component and parameter for outer component is not set", function (assert) {
-			var oOuterAppComponent = new Component("outerAppComponent");
+		QUnit.test("getSelectorComponentForControl will not search further for the app component if the passed component is of type component", function (assert) {
+			var oAppComponent = new Component("appComponent");
 			var oComponent;
 			var oSapAppEntry = {
 				type: "component"
 			};
-			oOuterAppComponent.runAsOwner(function() {
+			oAppComponent.runAsOwner(function() {
+				oComponent = new Component("innerComponent");
+				sandbox.stub(oComponent, "getManifestObject")
+					.returns({
+						getEntry: function (sParameter) {
+							return sParameter === "sap.app" ? oSapAppEntry : undefined;
+						}
+					});
+			});
+
+			var oReturnedComponent = Utils.getSelectorComponentForControl(oComponent);
+
+			assert.deepEqual(oReturnedComponent, oComponent, "then the app component is not returned");
+			oAppComponent.destroy();
+			oComponent.destroy();
+		});
+
+		QUnit.test("getSelectorComponentForControl will search further for the app component if the passed component is not of type application or component", function (assert) {
+			var oAppComponent = new Component("appComponent");
+			var oComponent;
+			var oSapAppEntry = {
+				type: "mockType"
+			};
+			oAppComponent.runAsOwner(function() {
 				oComponent = new Component("innerComponent");
 				sandbox.stub(oComponent, "getManifestEntry")
 					.callsFake(function (sParameter) {
@@ -738,47 +738,32 @@ function(
 					});
 			});
 
-			var oReturnedComponent = Utils.getAppComponentForControl(oComponent);
+			var oReturnedComponent = Utils.getSelectorComponentForControl(oComponent);
 
-			assert.deepEqual(oReturnedComponent, oComponent, "then the parent app component is not returned");
-			oOuterAppComponent.destroy();
+			assert.deepEqual(oReturnedComponent, oAppComponent, "then the app component is returned");
+			oAppComponent.destroy();
 			oComponent.destroy();
 		});
 
-		QUnit.test("getAppComponentForControl will search further for the app component if the passed component is of type component and parameter for outer component is set", function (assert) {
-			var oOuterAppComponent = new Component("outerAppComponent");
+		QUnit.test("getAppComponentForControl will not search further for the app component if the passed child component is of type application (mis-configured apps)", function (assert) {
+			var oAppComponent = new Component("appComponent");
 			var oComponent;
-			var oSapAppEntry = {
-				type: "component"
-			};
-			oOuterAppComponent.runAsOwner(function() {
-				oComponent = new Component("innerComponent");
-				sandbox.stub(oComponent, "getManifestEntry")
-					.callsFake(function (sParameter) {
-						return sParameter === "sap.app" ? oSapAppEntry : undefined;
-					});
-			});
-
-			var oReturnedComponent = Utils.getAppComponentForControl(oComponent, true);
-
-			assert.deepEqual(oReturnedComponent, oOuterAppComponent, "then the parent app component is not returned");
-			oOuterAppComponent.destroy();
-			oComponent.destroy();
-		});
-
-		QUnit.test("getAppComponentForControl returns the component if the passed component is of the type application", function (assert) {
-			var oComponent = new sap.ui.core.UIComponent();
 			var oSapAppEntry = {
 				type: "application"
 			};
+			oAppComponent.runAsOwner(function() {
+				oComponent = new Component("innerComponent");
+				sandbox.stub(oComponent, "getManifestEntry")
+					.callsFake(function (sParameter) {
+						return sParameter === "sap.app" ? oSapAppEntry : undefined;
+					});
+			});
 
-			oComponent.getManifestEntry = function (sParameter) {
-				return sParameter === "sap.app" ? oSapAppEntry : undefined;
-			};
+			var oReturnedComponent = Utils.getSelectorComponentForControl(oComponent);
 
-			var oDeterminedAppComponent = Utils._getAppComponentForComponent(oComponent);
-
-			assert.equal(oDeterminedAppComponent, oComponent);
+			assert.deepEqual(oReturnedComponent, oComponent, "then the child app component is not returned");
+			oAppComponent.destroy();
+			oComponent.destroy();
 		});
 
 		QUnit.test("getComponentClassName shall return the next component of type 'application' in the hierarchy", function (assert) {
@@ -856,23 +841,47 @@ function(
 			assert.equal(Utils.getComponentClassName(oControl), "", "Check that empty string is returned.");
 		});
 
-		QUnit.test("indexOfInArrayOfObjects with array containing object", function(assert) {
+		QUnit.test("indexOfObject with array containing object", function(assert) {
 			var oObject = {a: 1, b: 2, c: 3};
 			var aArray = [{a: 4, b: 5, c: 6}, {a: 1, b: 2, c: 3}, {a: 7, b: 8, c: 9}];
-			assert.equal(Utils.indexOfInArrayOfObjects(aArray, oObject), 1, "the function returns the correct index");
+			assert.equal(Utils.indexOfObject(aArray, oObject), 1, "the function returns the correct index");
 
 			aArray = [{a: 4, b: 5, c: 6}, {a: 7, b: 8, c: 9}, {b: 2, c: 3, a: 1}];
-			assert.equal(Utils.indexOfInArrayOfObjects(aArray, oObject), 2, "the function returns the correct index");
+			assert.equal(Utils.indexOfObject(aArray, oObject), 2, "the function returns the correct index");
 		});
 
-		QUnit.test("indexOfInArrayOfObjects with array not containing object", function(assert) {
+		QUnit.test("indexOfObject with array not containing object", function(assert) {
 			var oObject = {a: 1, b: 2, c: 3};
 			var aArray = [{b: 2, c: 3}, {a: 4, b: 5, c: 6}, {a: 7, b: 8, c: 9}];
-			assert.equal(Utils.indexOfInArrayOfObjects(aArray, oObject), -1, "the function returns the correct index");
+			assert.equal(Utils.indexOfObject(aArray, oObject), -1, "the function returns the correct index");
 
 			oObject = {1: 1, b: 2};
 			aArray = [{a: 1, b: 2, c: 3}, {a: 4, b: 5, c: 6}, {a: 7, b: 8, c: 9}];
-			assert.equal(Utils.indexOfInArrayOfObjects(aArray, oObject), -1, "the function returns the correct index");
+			assert.equal(Utils.indexOfObject(aArray, oObject), -1, "the function returns the correct index");
+		});
+
+		QUnit.test("indexOfObject with array containing null or undefined objects", function(assert) {
+			var oObject = {a: undefined, b: 2, c: 3};
+			var aArray = [undefined, {a: 4, b: 5, c: 6}, {a: 7, b: 8, c: 9}];
+			assert.equal(Utils.indexOfObject(aArray, oObject), -1, "the function returns the correct index (not found)");
+
+			oObject = undefined;
+			aArray = [{a: 1, b: 2, c: 3}, undefined, {a: 7, b: 8, c: 9}];
+			assert.equal(Utils.indexOfObject(aArray, oObject), 1, "the function returns the correct index");
+		});
+
+		QUnit.test("getLocalIdForSelector will return the local id with a 'idIsLocal' property set, when a local id exists", function(assert) {
+			var oComponent = new UIComponent("mockComponent");
+			var sControlId = "mockComponent---controlId";
+			assert.deepEqual(Utils.getLocalIdForSelectors(sControlId, oComponent), {idIsLocal: true, id: "controlId"}, "then the local id with 'idIsLocal' property set is returned");
+			oComponent.destroy();
+		});
+
+		QUnit.test("getLocalIdForSelector will return the control id with a 'idIsLocal' property unset, when a local id doesn't exist", function(assert) {
+			var oComponent = new UIComponent("mockComponent");
+			var sControlId = "controlIdWithNoPrefix";
+			assert.deepEqual(Utils.getLocalIdForSelectors(sControlId, oComponent), {idIsLocal: false, id: sControlId}, "then the original id with 'idIsLocal' property unset is returned");
+			oComponent.destroy();
 		});
 	});
 
@@ -985,6 +994,7 @@ function(
 				},
 				constructShellHash : function(oParsedHash){
 					assert.equal(hasher.changed.active, false, "then the 'active' flag of the hasher is first set to false (to avoid navigation)");
+					assert.equal(hasher.raw, true, "then the 'raw' flag of the hasher is set to true (to avoid encoding)");
 					assert.deepEqual(oParsedHash.params["sap-ui-fl-max-layer"][0], "CUSTOMER", "then the previous parameters are still present for the hash");
 					assert.deepEqual(oParsedHash.params["testParameter"][0], "testValue", "then the new parameter is properly added to the hash");
 					assert.deepEqual(oParsedHash.params["testParameter"][1], "testValue2", "then the new parameter is properly added to the hash");
@@ -1018,6 +1028,7 @@ function(
 			assert.ok(fnGetParsedURLHash.calledOnce, "then getParsedURLHash called once");
 			assert.equal(oReplaceHashStub.calledWith("hashValue"), true, "then the 'replaceHash' function of the hasher is called with the right parameter");
 			assert.equal(hasher.changed.active, true, "then the 'active' flag of the hasher is restored to true");
+			assert.equal(hasher.raw, false, "then the 'raw' flag of the hasher is restored to false");
 			assert.equal(oMockComponent.getComponentData().technicalParameters["testParameter"][0], "testValue", "then the new parameter is properly added to the technical parameter");
 			assert.equal(oMockComponent.getComponentData().technicalParameters["testParameter"][1], "testValue2", "then the new parameter is properly added to the technical parameter");
 		});
@@ -1136,11 +1147,11 @@ function(
 			this.sComponentName = "componentName";
 			this.sAppVariantId = "variantId";
 
-			this.oComponent = new sap.ui.core.UIComponent();
+			this.oComponent = new Component();
 			this.oStubbedManifestEntryUi5 = {/*no appVariantId */};
 			sandbox.stub(this.oComponent, "getManifestEntry").returns(this.oStubbedManifestEntryUi5);
 
-			this.oComponentOfVariant = new sap.ui.core.UIComponent();
+			this.oComponentOfVariant = new Component();
 			this.oStubbedManifestEntryUi5WithVariantId = {
 				"appVariantId": this.sAppVariantId
 			};
@@ -1176,6 +1187,10 @@ function(
 
 		QUnit.test("isApplication returns false if there is no manifest", function (assert) {
 			assert.notOk(Utils.isApplication());
+		});
+
+		QUnit.test("isApplication returns false if the manifest has no getEntry method", function (assert) {
+			assert.notOk(Utils.isApplication({}));
 		});
 
 		QUnit.test("isApplication returns false if there is no manifest['sap.app']", function (assert) {
@@ -1292,11 +1307,25 @@ function(
 			assert.ok(!Utils.isDebugEnabled(), "no debugging is detected");
 		});
 
+		QUnit.test("can determine debugging is set to a boolean and is false", function (assert) {
+			var oConfig = sap.ui.getCore().getConfiguration();
+			sandbox.stub(oConfig, "getDebug").returns(false);
+			window["sap-ui-debug"] = false;
+			assert.ok(!Utils.isDebugEnabled(), "no debugging is detected");
+		});
+
 		QUnit.test("can determine no library debugging is set", function (assert) {
 			var oConfig = sap.ui.getCore().getConfiguration();
 			sandbox.stub(oConfig, "getDebug").returns(false);
 			window["sap-ui-debug"] = "";
 			assert.ok(!Utils.isDebugEnabled(), "no debugging is detected");
+		});
+
+		QUnit.test("can determine debugging is set to a boolean and is true", function (assert) {
+			var oConfig = sap.ui.getCore().getConfiguration();
+			sandbox.stub(oConfig, "getDebug").returns(false);
+			window["sap-ui-debug"] = true;
+			assert.ok(Utils.isDebugEnabled(), "debugging is detected");
 		});
 	});
 

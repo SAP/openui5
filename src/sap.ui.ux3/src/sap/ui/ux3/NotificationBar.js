@@ -1307,6 +1307,7 @@ sap.ui.define([
 					status : toStatus
 				});
 			}
+			return this;
 		};
 
 		/**
@@ -1330,6 +1331,7 @@ sap.ui.define([
 			} else {
 				$toggler.css("display", "none");
 			}
+			return this;
 		};
 	}());
 

@@ -378,6 +378,24 @@ sap.ui.define([
 	});
 
 
+	function makeTest(sLibName) {
+		QUnit.test("test " + sLibName + " controls", function (assert) {
+			if (!mAllLibraries[sLibName].length) { // there are libraries with no controls
+				assert.expect(0);
+			}
+
+			mAllLibraries[sLibName].forEach(function(sControlName) {
+				if (sControlName) {
+					iAllControls++;
+
+					if (!shouldIgnoreControl(sControlName, assert)) {
+						checkControl(sControlName, assert);
+					}
+				}
+			});
+
+		});
+	}
 
 	// loop over all libs and controls and create a test for each
 	for (var sLibName in mAllLibraries) {
@@ -387,28 +405,7 @@ sap.ui.define([
 			continue;
 		}
 
-		(function(sLibName){
-
-			QUnit.test("test " + sLibName + " controls", function (assert) {
-				if (!mAllLibraries[sLibName].length) { // there are libraries with no controls
-					assert.expect(0);
-				}
-
-				for (var i = 0; i < mAllLibraries[sLibName].length; i++) {
-					var sControlName = mAllLibraries[sLibName][i];
-
-					if (sControlName) {
-						iAllControls++;
-
-						if (!shouldIgnoreControl(sControlName, assert)) {
-							checkControl(sControlName, assert);
-						}
-					}
-				}
-
-			});
-
-		})(sLibName);
+		makeTest(sLibName);
 
 	}
 

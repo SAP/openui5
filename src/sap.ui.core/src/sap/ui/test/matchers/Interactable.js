@@ -2,7 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(['./Matcher', './Visible', "sap/ui/thirdparty/jquery"], function(Matcher, Visible, jQueryDOM) {
+sap.ui.define([
+	'sap/ui/test/matchers/Matcher',
+	'sap/ui/test/matchers/Visible',
+	"sap/ui/thirdparty/jquery"
+], function(Matcher, Visible, jQueryDOM) {
 	"use strict";
 	var oVisibleMatcher = new Visible();
 

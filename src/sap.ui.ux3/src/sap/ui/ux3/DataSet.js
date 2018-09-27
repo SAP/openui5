@@ -663,16 +663,19 @@ sap.ui.define([
 	DataSet.prototype.setShowToolbar = function(bShow) {
 		this.setProperty("showToolbar",bShow, true);
 		this._rerenderToolbar();
+		return this;
 	};
 
 	DataSet.prototype.setShowFilter = function(bShow) {
 		this.setProperty("showFilter",bShow, true);
 		this._rerenderFilter();
+		return this;
 	};
 
 	DataSet.prototype.setShowSearchField = function(bShow) {
 		this.setProperty("showSearchField",bShow, true);
 		this._rerenderToolbar();
+		return this;
 	};
 	/**
 	* @private

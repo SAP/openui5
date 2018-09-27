@@ -3,7 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/RegistrationDelegator"
+	"sap/ui/fl/RegistrationDelegator",
+	"sap/ui/core/library", // library dependency
+	"sap/m/library" // library dependency
 ], function(RegistrationDelegator) {
 	"use strict";
 

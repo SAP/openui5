@@ -91,7 +91,7 @@ sap.ui.define([
 			this._iEndItemWidth = -1;
 
 			// registration ID used for deregistering the resize handler
-			this._sResizeListenerId = ResizeHandler.register(this, this._onResize.bind(this));
+			this._sResizeListenerId = ResizeHandler.register(this, this.onResize.bind(this));
 		};
 
 		AlignedFlowLayout.prototype.exit = function() {
@@ -121,7 +121,7 @@ sap.ui.define([
 				mEndItemStyle.bottom = iLayoutPaddingTop;
 			}
 
-			this._onResize(null, oDomRef, oEndItemDomRef);
+			this.reflow({ domRef: oDomRef, endItemDomRef: oEndItemDomRef });
 
 			// update last spacer width
 			if (bEndItemAndContent) {
@@ -134,26 +134,47 @@ sap.ui.define([
 
 		// this resize handler needs to be called on after rendering, theme change, and whenever the width of this
 		// control changes
-		AlignedFlowLayout.prototype._onResize = function(oEvent, oDomRef, oEndItemDomRef) {
+		AlignedFlowLayout.prototype.onResize = function(oEvent, oDomRef, oEndItemDomRef) {
 
 			// called by resize handler, but only the height changed, so there is nothing to do;
 			// this is required to avoid a resizing loop
-			if ((oEvent && (oEvent.size.width === oEvent.oldSize.width)) || (this.getContent().length === 0)) {
+			if (oEvent && (oEvent.size.width === oEvent.oldSize.width)) {
 				return;
 			}
 
-			oDomRef = oDomRef || this.getDomRef();
+			this.reflow({ domRef: oDomRef, endItemDomRef: oEndItemDomRef });
+		};
 
-			// skip unnecessary style recalculations if the control root DOM element has been removed from the DOM
-			if (!oDomRef) {
+		/**
+		 * Re-calculates the positions and geometries of items in the <code>AlignFlowLayout</code> control to re-arrange
+		 * items evenly across the horizontal space available (if necessary).
+		 *
+		 * @param {object} [oSettings] Settings to reflow the <code>AlignedFlowLayout</code> control
+		 * @param {HTMLDivElement} [oSettings.domRef] The root control's DOM reference
+		 * @param {HTMLDivElement} [oSettings.endItemDomRef] The end item's DOM reference
+		 * @protected
+		 * @since 1.60
+		 */
+		AlignedFlowLayout.prototype.reflow = function(oSettings) {
+
+			if (this.getContent().length === 0) {
+				return;
+			}
+
+			oSettings = oSettings || {};
+			var oDomRef = oSettings.domRef || this.getDomRef();
+
+			// skip unnecessary style recalculations if the control root DOM element has been removed from the DOM OR
+			// any ancestor is hidden (the "display" style property is set to "none")
+			if (!oDomRef || !oDomRef.offsetParent) {
 				return;
 			}
 
 			var CSS_CLASS_ONE_LINE = this.getRenderer().CSS_CLASS + "OneLine",
 				bEnoughSpaceForEndItem = true;
 
-			oEndItemDomRef = oEndItemDomRef || this.getDomRef("endItem");
-			var oLastItemDomRef = this.getLastItemDomRef();
+			var oEndItemDomRef = oSettings.endItemDomRef || this.getDomRef("endItem"),
+				oLastItemDomRef = this.getLastItemDomRef();
 
 			if (oEndItemDomRef && oLastItemDomRef) {
 				var mLastSpacerStyle = oDomRef.lastElementChild.style;
@@ -165,12 +186,6 @@ sap.ui.define([
 					iEndItemWidth = oEndItemDomRef.offsetWidth,
 					iLastItemOffsetLeft = oLastItemDomRef.offsetLeft,
 					iAvailableWidthForEndItem;
-
-				// skip unnecessary style recalculations if the control root DOM element or any ancestor is hidden
-				// (the "display" style property is set to "none")
-				if (!oDomRef.offsetParent) {
-					return;
-				}
 
 				if (sap.ui.getCore().getConfiguration().getRTL()) {
 					iAvailableWidthForEndItem = iLastItemOffsetLeft;

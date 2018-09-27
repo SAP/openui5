@@ -686,13 +686,11 @@ sap.ui.define([
 						aCurrentSelector = [aCurrentSelector];
 					}
 
-					var i = 0, j = aCurrentSelector.length, oCurrentSelector;
-					for (i; i < j; i++) {
-						oCurrentSelector = aCurrentSelector[i];
-						if (oCurrentSelector && Utils.indexOfInArrayOfObjects(aDependentSelectors, oCurrentSelector) === -1) {
+					aCurrentSelector.forEach(function(oCurrentSelector) {
+						if (oCurrentSelector && Utils.indexOfObject(aDependentSelectors, oCurrentSelector) === -1) {
 							aDependentSelectors.push(oCurrentSelector);
 						}
-					}
+					});
 				});
 			}
 			this._aDependentSelectorList = aDependentSelectors;
@@ -702,7 +700,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns list of selectors of controls which the change depends on, excluding the selector from the selector of the change.
+	 * Returns list of selectors of controls which the change depends on, excluding the selector of the change.
 	 *
 	 * @returns {array} List of selectors which the change depends on
 	 * @public
@@ -712,7 +710,7 @@ sap.ui.define([
 
 		if (aDependentSelectors.length > 0) {
 			var oSelector = this.getSelector();
-			var iIndex = Utils.indexOfInArrayOfObjects(aDependentSelectors, oSelector);
+			var iIndex = Utils.indexOfObject(aDependentSelectors, oSelector);
 			if (iIndex > -1) {
 				aDependentSelectors.splice(iIndex, 1);
 			}

@@ -552,6 +552,7 @@ sap.ui.define([
 		ObjectPageHeader.prototype[sConvertedSetterName] = function () {
 			var aArgumentsPassedToTheProperty = Array.prototype.slice.call(arguments);
 			this._applyActionProperty.call(this, sPropertyName, aArgumentsPassedToTheProperty);
+			return this;
 		};
 	};
 
@@ -561,6 +562,7 @@ sap.ui.define([
 		ObjectPageHeader.prototype[sConvertedSetterName] = function () {
 			var aArgumentsPassedToTheProperty = Array.prototype.slice.call(arguments);
 			this._applyObjectImageProperty.call(this, sPropertyName, aArgumentsPassedToTheProperty);
+			return this;
 		};
 	};
 

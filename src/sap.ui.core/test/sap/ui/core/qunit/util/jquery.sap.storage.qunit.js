@@ -225,4 +225,14 @@ sap.ui.define(["jquery.sap.storage", "sap/ui/Device"], function(jQuery, Device) 
 		testPrefix(assert, "myprefix");
 	});
 
+	QUnit.test("Storage API using static methods", function (assert) {
+		assert.equal(typeof jQuery.sap.storage.isSupported, "function", "Storage has static method isSupported");
+		assert.equal(typeof jQuery.sap.storage.clear, "function", "Storage has static method clear");
+		assert.equal(typeof jQuery.sap.storage.get, "function","Storage has static method get");
+		assert.equal(typeof jQuery.sap.storage.getType, "function", "Storage has static method getType");
+		assert.equal(typeof jQuery.sap.storage.put, "function", "Storage has static method put");
+		assert.equal(typeof jQuery.sap.storage.remove, "function", "Storage has static method remove");
+		assert.equal(typeof jQuery.sap.storage.removeAll, "function", "Storage has static method removeAll");
+	});
+
 });

@@ -48,6 +48,27 @@ sap.ui.define([
 	var VERTICAL_OVERFLOW_BUFFER_LENGTH = 2; // Must be >= 1!
 
 	/**
+	 * Scroll directions.
+	 *
+	 * @enum {string}
+	 * @memberOf sap.ui.table.TableScrollExtension
+	 */
+	var ScrollDirection = {
+		HORIZONAL: "HORIZONTAL",
+		VERTICAL: "VERTICAL",
+		/** Both horizontal and vertical scroll direction. */
+		BOTH: "BOTH"
+	};
+
+	/**
+	 * The configuration options for event listeners.
+	 *
+	 * @typedef {Object} TableScrollExtension.EventListenerOptions
+	 * @property {ScrollDirection} scrollDirection The scroll direction.
+	 * @private
+	 */
+
+	/**
 	 * Provides almost the full functionality which is required for the horizontal scrolling within the table.
 	 * Find the remaining functionality in the <code>ScrollingHelper</code> and the <code>ExtensionDelegate</code>.
 	 *
@@ -437,9 +458,10 @@ sap.ui.define([
 		/**
 		 * Handles mouse wheel events.
 		 *
+		 * @param {TableScrollExtension.EventListenerOptions} mOptions The options.
 		 * @param {WheelEvent} oEvent The wheel event object.
 		 */
-		onMouseWheelScrolling: function(oEvent) {
+		onMouseWheelScrolling: function(mOptions, oEvent) {
 			var oScrollExtension = this._getScrollExtension();
 			var bVerticalDelta = Math.abs(oEvent.deltaY) > Math.abs(oEvent.deltaX);
 			var iScrollDelta = bVerticalDelta ? oEvent.deltaY : oEvent.deltaX;
@@ -451,7 +473,8 @@ sap.ui.define([
 				return;
 			}
 
-			if (bHorizontalScrolling) {
+			if (bHorizontalScrolling && (mOptions.scrollDirection === ScrollDirection.HORIZONAL
+										 || mOptions.scrollDirection === ScrollDirection.BOTH)) {
 				var oHSb = oScrollExtension.getHorizontalScrollbar();
 
 				if (oEvent.deltaMode > 0 /* Not DOM_DELTA_PIXEL */) {
@@ -476,7 +499,8 @@ sap.ui.define([
 				oEvent.preventDefault();
 				oEvent.stopPropagation();
 
-			} else { // Vertical scrolling
+			} else if (!bHorizontalScrolling && (mOptions.scrollDirection === ScrollDirection.VERTICAL
+												 || mOptions.scrollDirection === ScrollDirection.BOTH)) {
 				var oVSb = oScrollExtension.getVerticalScrollbar();
 
 				if (oEvent.deltaMode === 1 /* DOM_DELTA_LINE */) {
@@ -532,9 +556,10 @@ sap.ui.define([
 		/**
 		 * Handles touch start events.
 		 *
+		 * @param {TableScrollExtension.EventListenerOptions} mOptions The options.
 		 * @param {jQuery.Event} oEvent The touch or pointer event object.
 		 */
-		onTouchStart: function(oEvent) {
+		onTouchStart: function(mOptions, oEvent) {
 			if (oEvent.type === "touchstart" || oEvent.pointerType === "touch") {
 				var oScrollExtension = this._getScrollExtension();
 				var oHSb = oScrollExtension.getHorizontalScrollbar();
@@ -555,9 +580,10 @@ sap.ui.define([
 		/**
 		 * Handles touch move events.
 		 *
+		 * @param {TableScrollExtension.EventListenerOptions} mOptions The options.
 		 * @param {jQuery.Event} oEvent The touch or pointer event object.
 		 */
-		onTouchMoveScrolling: function(oEvent) {
+		onTouchMoveScrolling: function(mOptions, oEvent) {
 			if (oEvent.type === "touchmove" || oEvent.pointerType === "touch") {
 				var oScrollExtension = this._getScrollExtension();
 				var mTouchSessionData = oScrollExtension._mTouchSessionData;
@@ -583,7 +609,8 @@ sap.ui.define([
 					case "horizontal":
 						var oHSb = oScrollExtension.getHorizontalScrollbar();
 
-						if (oHSb) {
+						if (oHSb && (mOptions.scrollDirection === ScrollDirection.HORIZONAL
+									 || mOptions.scrollDirection === ScrollDirection.BOTH)) {
 							this._getKeyboardExtension().setActionMode(false);
 
 							if (iTouchDistanceX < 0) { // Scrolling to the right.
@@ -606,7 +633,8 @@ sap.ui.define([
 					case "vertical":
 						var oVSb = oScrollExtension.getVerticalScrollbar();
 
-						if (oVSb) {
+						if (oVSb && (mOptions.scrollDirection === ScrollDirection.VERTICAL
+									 || mOptions.scrollDirection === ScrollDirection.BOTH)) {
 							if (iTouchDistanceY < 0) { // Scrolling down.
 								bScrolledToEnd = oVSb.scrollTop === oVSb.scrollHeight - oVSb.offsetHeight;
 							} else { // Scrolling up.
@@ -641,31 +669,69 @@ sap.ui.define([
 			var oScrollExtension = oTable._getScrollExtension();
 			var aEventListenerTargets = ScrollingHelper.getEventListenerTargets(oTable);
 
-			if (!oScrollExtension._onMouseWheelEventHandler) {
-				oScrollExtension._onMouseWheelEventHandler = ScrollingHelper.onMouseWheelScrolling.bind(oTable);
-			}
-			if (!oScrollExtension._onTouchStartEventHandler) {
-				oScrollExtension._onTouchStartEventHandler = ScrollingHelper.onTouchStart.bind(oTable);
-			}
-			if (!oScrollExtension._onTouchMoveEventHandler) {
-				oScrollExtension._onTouchMoveEventHandler = ScrollingHelper.onTouchMoveScrolling.bind(oTable);
-			}
+			oScrollExtension._mMouseWheelEventListener = this.addMouseWheelEventListener(aEventListenerTargets, oTable, {
+				scrollDirection: ScrollDirection.BOTH
+			});
+			oScrollExtension._mTouchEventListener = this.addTouchEventListener(aEventListenerTargets, oTable, {
+				scrollDirection: ScrollDirection.BOTH
+			});
+		},
+
+		/**
+		 * Adds mouse wheel event listeners to HTMLElements.
+		 *
+		 * @param {HTMLElement[]} aEventListenerTargets The elements to add listeners to.
+		 * @param {sap.ui.table.Table} oTable The table instance to be set as the context of the listeners.
+		 * @param {TableScrollExtension.EventListenerOptions} mOptions The options.
+		 * @return {{wheel: Function}} A key value map containing the event names as keys and listener functions as values.
+		 */
+		addMouseWheelEventListener: function(aEventListenerTargets, oTable, mOptions) {
+			var fnOnMouseWheelEventHandler = ScrollingHelper.onMouseWheelScrolling.bind(oTable, mOptions);
 
 			for (var i = 0; i < aEventListenerTargets.length; i++) {
-				aEventListenerTargets[i].addEventListener("wheel", oScrollExtension._onMouseWheelEventHandler);
+				aEventListenerTargets[i].addEventListener("wheel", fnOnMouseWheelEventHandler);
+			}
 
+			return {wheel: fnOnMouseWheelEventHandler};
+		},
+
+		/**
+		 * Adds touch event listeners to HTMLElements.
+		 *
+		 * @param {HTMLElement[]} aEventListenerTargets The elements to add listeners to.
+		 * @param {sap.ui.table.Table} oTable The table instance to be set as the context of the listeners.
+		 * @param {TableScrollExtension.EventListenerOptions} mOptions The options.
+		 * @return {{pointerdown: Function,
+		 *           pointermove: Function,
+		 *           touchstart: Function,
+		 *           touchmove: Function}} A key value map containing the event names as keys and listener functions as values.
+		 */
+		addTouchEventListener: function(aEventListenerTargets, oTable, mOptions) {
+			var fnOnTouchStartEventHandler = ScrollingHelper.onTouchStart.bind(oTable, mOptions);
+			var fnOnTouchMoveEventHandler = ScrollingHelper.onTouchMoveScrolling.bind(oTable, mOptions);
+			var mListeners = {};
+
+			for (var i = 0; i < aEventListenerTargets.length; i++) {
 				/* Touch events */
 				// IE/Edge and Chrome on desktops and windows tablets - pointer events;
 				// other browsers and tablets - touch events.
 				if (Device.support.pointer && Device.system.desktop) {
-					aEventListenerTargets[i].addEventListener("pointerdown", oScrollExtension._onTouchStartEventHandler);
-					aEventListenerTargets[i].addEventListener("pointermove", oScrollExtension._onTouchMoveEventHandler,
+					aEventListenerTargets[i].addEventListener("pointerdown", fnOnTouchStartEventHandler);
+					aEventListenerTargets[i].addEventListener("pointermove", fnOnTouchMoveEventHandler,
 						Device.browser.chrome ? {passive: true} : false);
 				} else if (Device.support.touch) {
-					aEventListenerTargets[i].addEventListener("touchstart", oScrollExtension._onTouchStartEventHandler);
-					aEventListenerTargets[i].addEventListener("touchmove", oScrollExtension._onTouchMoveEventHandler);
+					aEventListenerTargets[i].addEventListener("touchstart", fnOnTouchStartEventHandler);
+					aEventListenerTargets[i].addEventListener("touchmove", fnOnTouchMoveEventHandler);
 				}
 			}
+
+			if (Device.support.pointer && Device.system.desktop) {
+				mListeners = {pointerdown: fnOnTouchStartEventHandler, pointermove: fnOnTouchMoveEventHandler};
+			} else if (Device.support.touch) {
+				mListeners = {touchstart: fnOnTouchStartEventHandler, touchmove: fnOnTouchMoveEventHandler};
+			}
+
+			return mListeners;
 		},
 
 		/**
@@ -677,27 +743,22 @@ sap.ui.define([
 			var oScrollExtension = oTable._getScrollExtension();
 			var aEventTargets = ScrollingHelper.getEventListenerTargets(oTable);
 
-			for (var i = 0; i < aEventTargets.length; i++) {
-				if (oScrollExtension._onMouseWheelEventHandler) {
-					aEventTargets[i].removeEventListener("wheel", oScrollExtension._onMouseWheelEventHandler);
-				}
-
-				if (oScrollExtension._onTouchStartEventHandler && oScrollExtension._onTouchMoveEventHandler) {
-					/* Touch events */
-					if (Device.support.pointer && Device.system.desktop) {
-						aEventTargets[i].removeEventListener("pointerdown", oScrollExtension._onTouchStartEventHandler);
-						aEventTargets[i].removeEventListener("pointermove", oScrollExtension._onTouchMoveEventHandler,
-							Device.browser.chrome ? {passive: true} : false);
-					} else if (Device.support.touch) {
-						aEventTargets[i].removeEventListener("touchstart", oScrollExtension._onTouchStartEventHandler);
-						aEventTargets[i].removeEventListener("touchmove", oScrollExtension._onTouchMoveEventHandler);
+			function removeEventListener(oTarget, mEventListenerMap) {
+				for (var sEventName in mEventListenerMap) {
+					var fnListener = mEventListenerMap[sEventName];
+					if (fnListener) {
+						oTarget.removeEventListener(sEventName, fnListener);
 					}
 				}
 			}
 
-			delete oScrollExtension._onMouseWheelEventHandler;
-			delete oScrollExtension._onTouchStartEventHandler;
-			delete oScrollExtension._onTouchMoveEventHandler;
+			for (var i = 0; i < aEventTargets.length; i++) {
+				removeEventListener(aEventTargets[i], oScrollExtension._mMouseWheelEventListener);
+				removeEventListener(aEventTargets[i], oScrollExtension._mTouchEventListener);
+			}
+
+			delete oScrollExtension._mMouseWheelEventListener;
+			delete oScrollExtension._mTouchEventListener;
 		},
 
 		/**
@@ -721,7 +782,7 @@ sap.ui.define([
 	};
 
 	var ExtensionDelegate = {
-		onBeforeRendering: function(oEvent) {
+		onBeforeRendering: function() {
 			this._getScrollExtension()._clearCache();
 		},
 
@@ -881,6 +942,7 @@ sap.ui.define([
 			this._iHorizontalScrollPosition = null;
 
 			this._oVerticalScrollbar = null;
+			this._oExternalVerticalScrollbar = null;
 			this._nVerticalScrollPosition = null;
 			this._iVerticalScrollHeight = null;
 			this._iVerticalScrollbarHeight = null;
@@ -889,6 +951,8 @@ sap.ui.define([
 			this._bIsScrolledVerticallyByWheel = false;
 			this._bIsScrolledVerticallyByKeyboard = false;
 			this._mTouchSessionData = null;
+
+			this._bIsVerticalScrollbarExternal = false;
 
 			oTable.addEventDelegate(this._delegate, oTable);
 
@@ -943,6 +1007,7 @@ sap.ui.define([
 			}
 			this._delegate = null;
 			this._clearCache();
+			this._oExternalVerticalScrollbar = null;
 
 			TableExtension.prototype.destroy.apply(this, arguments);
 		}
@@ -1048,7 +1113,9 @@ sap.ui.define([
 	TableScrollExtension.prototype.getHorizontalScrollbar = function() {
 		var oTable = this.getTable();
 
-		if (oTable && !this._oHorizontalScrollbar) {
+		if (oTable && !oTable._bInvalid && !this._oHorizontalScrollbar) {
+			// If the table is invalid and about to be (re-)rendered, the scrollbar element will be removed from DOM. The reference to the new
+			// scrollbar element can be obtained only after rendering.
 			// Table#getDomRef (document#getElementById) returns null if the element does not exist in the DOM.
 			this._oHorizontalScrollbar = oTable.getDomRef(SharedDomRef.HorizontalScrollBar);
 		}
@@ -1064,9 +1131,15 @@ sap.ui.define([
 	TableScrollExtension.prototype.getVerticalScrollbar = function() {
 		var oTable = this.getTable();
 
-		if (oTable && !this._oVerticalScrollbar) {
+		if (oTable && !oTable._bInvalid && !this._oVerticalScrollbar) {
+			// If the table is invalid and about to be (re-)rendered, the scrollbar element will be removed from DOM. The reference to the new
+			// scrollbar element can be obtained only after rendering.
 			// Table#getDomRef (document#getElementById) returns null if the element does not exist in the DOM.
 			this._oVerticalScrollbar = oTable.getDomRef(SharedDomRef.VerticalScrollBar);
+
+			if (!this._oVerticalScrollbar && this.isVerticalScrollbarExternal()) {
+				this._oVerticalScrollbar = this._oExternalVerticalScrollbar;
+			}
 		}
 
 		return this._oVerticalScrollbar;
@@ -1078,14 +1151,8 @@ sap.ui.define([
 	 * @returns {boolean} Returns <code>true</code>, if the horizontal scrollbar is visible.
 	 */
 	TableScrollExtension.prototype.isHorizontalScrollbarVisible = function() {
-		var oTable = this.getTable();
-		var oTableElement = oTable ? oTable.getDomRef() : null;
-
-		if (!oTableElement) {
-			return false;
-		}
-
-		return oTableElement.classList.contains("sapUiTableHScr");
+		var oHSb = this.getHorizontalScrollbar();
+		return oHSb != null && !oHSb.classList.contains("sapUiTableHidden");
 	};
 
 	/**
@@ -1094,14 +1161,30 @@ sap.ui.define([
 	 * @returns {boolean} Returns <code>true</code>, if the vertical scrollbar is visible.
 	 */
 	TableScrollExtension.prototype.isVerticalScrollbarVisible = function() {
-		var oTable = this.getTable();
-		var oTableElement = oTable ? oTable.getDomRef() : null;
+		var oVSb = this.getVerticalScrollbar();
+		return oVSb != null && !oVSb.classList.contains("sapUiTableHidden");
+	};
 
-		if (!oTableElement) {
-			return false;
+	/**
+	 *	Checks whether the vertical scrollbar is external.
+	 *
+	 * @return {boolean} Whether the vertical scrollbar is external.
+	 */
+	TableScrollExtension.prototype.isVerticalScrollbarExternal = function() {
+		return this._bIsVerticalScrollbarExternal;
+	};
+
+	/**
+	 * Marks the vertical scrollbar as external. The reference to the external scrollbar is stored in the extension to be returned by
+	 * <code>TableScrollExtension#getVerticalScrollbar</code>
+	 *
+	 * @param {HTMLElement} oScrollbarElement The reference to the external scrollbar element.
+	 */
+	TableScrollExtension.prototype.markVerticalScrollbarAsExternal = function(oScrollbarElement) {
+		if (oScrollbarElement) {
+			this._bIsVerticalScrollbarExternal = true;
+			this._oExternalVerticalScrollbar = oScrollbarElement;
 		}
-
-		return oTableElement.classList.contains("sapUiTableVScr");
 	};
 
 	/**
@@ -1130,6 +1213,7 @@ sap.ui.define([
 			// Show the horizontal scrollbar, if it is not already visible.
 			if (!this.isHorizontalScrollbarVisible()) {
 				$Table.addClass("sapUiTableHScr");
+				oHSb.classList.remove("sapUiTableHidden");
 
 				if (Device.browser.safari) {
 					var $sapUiTableColHdr = $Table.find(".sapUiTableCtrlScroll, .sapUiTableColHdrScr > .sapUiTableColHdr");
@@ -1160,6 +1244,7 @@ sap.ui.define([
 		if (!bHorizontalScrollbarRequired && this.isHorizontalScrollbarVisible()) {
 			// Hide the horizontal scrollbar, if it is visible.
 			$Table.removeClass("sapUiTableHScr");
+			oHSb.classList.add("sapUiTableHidden");
 			if (Device.browser.safari) {
 				// min-width on table elements does not work for safari
 				$Table.find(".sapUiTableCtrlScroll, .sapUiTableColHdr").css("width", "");
@@ -1222,15 +1307,20 @@ sap.ui.define([
 		}
 
 		var oTableCCnt = oTable.getDomRef("tableCCnt");
+
 		if (oTableCCnt) {
 			var iTop = oTableCCnt.offsetTop;
+
 			var oVSbBg = oTable.getDomRef("vsb-bg");
-			oVSbBg.style.top = iTop + "px";
+			if (oVSbBg) {
+				oVSbBg.style.top = iTop + "px";
+			}
 
 			var iFixedRows = oTable.getFixedRowCount();
 			if (iFixedRows > 0) {
 				iTop += oTable._iVsbTop;
 			}
+
 			oVSb.style.top = iTop + "px";
 		}
 	};
@@ -1342,8 +1432,8 @@ sap.ui.define([
 	 * @see TableScrollExtension#getVerticalScrollHeight
 	 */
 	TableScrollExtension.prototype.updateVerticalScrollHeight = function() {
-		var oTable = this.getTable();
-		var oVSbContent = oTable ? oTable.getDomRef("vsb-content") : null;
+		var oVSb = this.getVerticalScrollbar();
+		var oVSbContent = oVSb ? oVSb.firstChild : null;
 
 		if (!oVSbContent) {
 			return;
@@ -1411,13 +1501,18 @@ sap.ui.define([
 
 		var bVerticalScrollbarRequired = this.isVerticalScrollbarRequired();
 
+		// Show the currently invisible scrollbar.
 		if (bVerticalScrollbarRequired && !this.isVerticalScrollbarVisible()) {
-			oTableElement.classList.add("sapUiTableVScr");
-			this.updateVerticalScrollPosition(0);
+			if (!this.isVerticalScrollbarExternal()) {
+				oTableElement.classList.add("sapUiTableVScr");
+			}
+			oVSb.classList.remove("sapUiTableHidden");
 		}
 
+		// Hide the currently visible scrollbar.
 		if (!bVerticalScrollbarRequired && this.isVerticalScrollbarVisible()) {
 			oTableElement.classList.remove("sapUiTableVScr");
+			oVSb.classList.add("sapUiTableHidden");
 		}
 	};
 
@@ -1517,7 +1612,7 @@ sap.ui.define([
 		if (this._nVerticalScrollPosition != null) {
 			return this._nVerticalScrollPosition;
 		} else if (this.isVerticalScrollbarVisible()) {
-			return this._oVerticalScrollbar.scrollTop;
+			return this.getVerticalScrollbar().scrollTop;
 		} else {
 			return 0;
 		}
@@ -1658,6 +1753,14 @@ sap.ui.define([
 			+ " (in buffer: " + bScrollPositionInBuffer + ")", oTable);
 
 		oContentDomRef.scrollTop = iInnerScrollPosition;
+
+		// Temporarily disabled. A change of the inner vertical scroll position by focus change is currently not handled.
+		// As soon as this works, synchronization of the inner vertical scroll position should be triggered by the scroll extension, not by the
+		// sync extension.
+		// BLI: CPOUIFTEAMB-667
+		//TableUtils.dynamicCall(oTable._getSyncExtension, function(oSyncExtension) {
+		//	oSyncExtension.syncInnerVerticalScrollPosition(iInnerScrollPosition);
+		//});
 	};
 
 	/**
@@ -1704,6 +1807,45 @@ sap.ui.define([
 	};
 
 	/**
+	 * Adds mouse wheel event listeners to HTMLElements. Can only be used if synchronization is enabled.
+	 *
+	 * @param {HTMLElement[]} aEventListenerTargets The elements to add listeners to.
+	 * @param {TableScrollExtension.EventListenerOptions} mOptions The options.
+	 * @return {{wheel: Function}|null} A key value map containing the event names as keys and listener functions as values.
+	 */
+	TableScrollExtension.prototype.registerForMouseWheel = function(aEventListenerTargets, mOptions) {
+		var oTable = this.getTable();
+
+		if (TableExtension.isEnrichedWith(oTable, "sap.ui.table.TableSyncExtension")) {
+			return ScrollingHelper.addMouseWheelEventListener(aEventListenerTargets, oTable, mOptions);
+		} else {
+			Log.error("This method can only be used with synchronization enabled.", oTable, "TableScrollExtension#registerForMouseWheel");
+			return null;
+		}
+	};
+
+	/**
+	 * Adds touch event listeners to HTMLElements. Can only be used if synchronization is enabled.
+	 *
+	 * @param {HTMLElement[]} aEventListenerTargets The elements to add listeners to.
+	 * @param {TableScrollExtension.EventListenerOptions} mOptions The options.
+	 * @return {{pointerdown: Function,
+	 *           pointermove: Function,
+	 *           touchstart: Function,
+	 *           touchmove: Function}|null} A key value map containing the event names as keys and listener functions as values.
+	 */
+	TableScrollExtension.prototype.registerForTouch = function(aEventListenerTargets, mOptions) {
+		var oTable = this.getTable();
+
+		if (TableExtension.isEnrichedWith(oTable, "sap.ui.table.TableSyncExtension")) {
+			return ScrollingHelper.addTouchEventListener(aEventListenerTargets, oTable, mOptions);
+		} else {
+			Log.error("This method can only be used with synchronization enabled.", oTable, "TableScrollExtension#registerForTouch");
+			return null;
+		}
+	};
+
+	/**
 	 * Clears the cache of this extension (e.g. DOM references).
 	 *
 	 * @private
@@ -1713,6 +1855,8 @@ sap.ui.define([
 		this._oVerticalScrollbar = null;
 		this._oHorizontalScrollbar = null;
 	};
+
+	TableScrollExtension.ScrollDirection = ScrollDirection;
 
 	return TableScrollExtension;
 });

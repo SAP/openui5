@@ -1,12 +1,17 @@
+/*global QUnit */
+sap.ui.define([], function() {
+	"use strict";
 
-sap.ui.controller("testdata.fragments.XMLViewController", {
+	sap.ui.controller("testdata.fragments.XMLViewController", {
 
-	onInit: function(oEvent) {
+		onInit: function(oEvent) {
 
-	},
+		},
 
-	doSomething: function() {
-		assert.ok(true, "method 'doSomething' in controller called");
-	}
+		doSomething: function() {
+			QUnit.config.current.assert.ok(true, "method 'doSomething' in controller called");
+		}
+
+	});
 
 });

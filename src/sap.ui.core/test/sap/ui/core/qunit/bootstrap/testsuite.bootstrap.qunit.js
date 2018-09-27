@@ -7,6 +7,11 @@ sap.ui.define(function() {
 			ui5: {
 				theme: "sap_belize"
 			},
+			loader:{
+				paths:{
+					"polyfill": "test-resources/sap/ui/core/qunit/polyfill"
+				}
+			},
 			qunit: {
 				version: 2
 			}
@@ -379,16 +384,16 @@ sap.ui.define(function() {
 			},
 			"polyfill/ComputedStyle": {
 				group: "Polyfills",
-				page: "test-resources/sap/ui/core/qunit/polyfill/ComputedStyle.qunit.html",
 				title: "Test Page for the getComputedStyle polyfill functionality",
+				module: "polyfill/ComputedStyle.qunit",
 				qunit: {
 					version: 1
 				}
 			},
 			"polyfill/es6-object-assign": {
 				group: "Polyfills",
-				page: "test-resources/sap/ui/core/qunit/polyfill/es6-object-assign.qunit.html",
 				title: "Test Page for shallow object extension using Object.assign (polyfill)",
+				module: "polyfill/es6-object-assign.qunit",
 				qunit: {
 					version: 1
 				}

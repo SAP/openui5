@@ -6,7 +6,6 @@ sap.ui.define([
 	"./BaseTreeModifier",
 	"sap/base/util/ObjectPath",
 	"sap/ui/util/XMLHelper",
-	"jquery.sap.global",
 	"sap/ui/core/Component",
 	"sap/base/util/merge",
 	"sap/ui/core/Fragment" // needed to have sap.ui.xmlfragment
@@ -14,7 +13,6 @@ sap.ui.define([
 	BaseTreeModifier,
 	ObjectPath,
 	XMLHelper,
-	jQuery,
 	Component,
 	merge
 ) {
@@ -51,6 +49,7 @@ sap.ui.define([
 		},
 
 		setStashed: function (oControl, bStashed, oAppComponent) {
+			bStashed = !!bStashed;
 			if (oControl.setStashed) {
 				var oUnstashedControl;
 
@@ -141,14 +140,49 @@ sap.ui.define([
 
 		},
 
-		createControl: function (sClassName, oAppComponent, oView, oSelector, mSettings) {
+		/**
+		 * Creates the control.
+		 *
+		 * @param {string} sClassName - Class name for the control (for example, <code>sap.m.Button</code>), ensure that the class is loaded (no synchronous requests are called)
+		 * @param {sap.ui.core.UIComponent} [oAppComponent] - Needed to calculate the correct ID in case you provide an ID
+		 * @param {Element} [oView] - Empty in this case (XML node of the view, required for XML case to create nodes and to find elements)
+		 * @param {object} [oSelector] - Selector to calculate the ID for the control that is created
+		 * @param {string} [oSelector.id] - Control ID targeted by the change
+		 * @param {boolean} [oSelector.isLocalId] - True if the ID within the selector is a local ID or a global ID
+		 * @param {object} [mSettings] - Further settings or properties for the control that is created
+		 * @param {boolean} bAsync - Determines whether a synchronous (promise) or an asynchronous value should be returned
+		 * @returns {Element|Promise} Element or promise with element of the control that is created
+		 * @public
+		 */
+		createControl: function (sClassName, oAppComponent, oView, oSelector, mSettings, bAsync) {
+			var sErrorMessage;
 			if (this.bySelector(oSelector, oAppComponent)) {
-				throw new Error("Can't create a control with duplicated id " + oSelector);
+				sErrorMessage = "Can't create a control with duplicated id " + oSelector;
+				if (bAsync) {
+					return Promise.reject(sErrorMessage);
+				}
+				throw new Error(sErrorMessage);
 			}
 
-			//TODO: global jquery call found
-			jQuery.sap.require(sClassName); //ensure class is there
+			if (bAsync) {
+				return new Promise(function(fnResolve, fnReject) {
+					sap.ui.require([sClassName.replace(/\./g,"/")],
+						function(ClassObject) {
+							var sId = this.getControlIdBySelector(oSelector, oAppComponent);
+							fnResolve(new ClassObject(sId, mSettings));
+						}.bind(this),
+						function() {
+							fnReject(new Error("Required control '" + sClassName + "' couldn't be created asynchronously"));
+						}
+					);
+				}.bind(this));
+			}
+
+			// in the synchronous case, object should already be preloaded
 			var ClassObject = ObjectPath.get(sClassName);
+			if (!ClassObject) {
+				throw new Error("Can't create a control because the matching class object has not yet been loaded. Please preload the '" + sClassName + "' module");
+			}
 			var sId = this.getControlIdBySelector(oSelector, oAppComponent);
 			return new ClassObject(sId, mSettings);
 		},

@@ -18,9 +18,9 @@ sap.ui.define([
 						var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 						that.getView().setModel(oModel);
 					} else {
-						delay(count-1);
+						delay(count - 1);
 					}
-				},100+count);
+				},100 + count);
 			}
 			delay(40);
 		}

@@ -139,7 +139,7 @@ sap.ui.define([
 					// always need to be updated. The only exception is when all rows are empty. In this case a "drop in aggregation" will be
 					// performed, for which no indicator adjustment is necessary.
 					if (oDragSession.getDropControl() !== this) {
-						var bVerticalScrollbarVisible = this._getScrollExtension().isVerticalScrollbarVisible();
+						var bVerticalScrollbarVisible = this.getDomRef().classList.contains("sapUiTableVScr");
 						var mTableCntRect = this.getDomRef("sapUiTableCnt").getBoundingClientRect();
 						oDragSession.setIndicatorConfig({
 							width: mTableCntRect.width - (bVerticalScrollbarVisible ? 16 : 0),

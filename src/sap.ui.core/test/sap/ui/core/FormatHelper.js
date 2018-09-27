@@ -1,3 +1,8 @@
+/* eslint strict: [2, "global"] */
+/* exported aLocales, aRTLLocales, LocaleListItem, indent, formatValue, formatObject, validateFormatOptions, Options, bindHash, showError */
+
+"use strict";
+
 var aLocales = [
 	"ar_SA",
 	"de_DE",
@@ -31,7 +36,7 @@ var aRTLLocales = [
 	"he_IL"
 ];
 
-sap.m.ListItemBase.extend("LocaleListItem", {
+var LocaleListItem = sap.m.ListItemBase.extend("LocaleListItem", {
 	metadata: {
 		properties: {
 			locale: {type: "string"},
@@ -41,9 +46,9 @@ sap.m.ListItemBase.extend("LocaleListItem", {
 	renderer: function(oRM, oControl) {
 		var sLocale = oControl.getLocale(),
 			sText = oControl.getText();
-		oRM.write("<div ")
+		oRM.write("<div ");
 		oRM.writeControlData(oControl);
-		oRM.write("style=\"display:flex;align-items:center;height:40px;\">")
+		oRM.write("style=\"display:flex;align-items:center;height:40px;\">");
 		oRM.write("<img title=\"" + sLocale + "\" src=\"flags/" + sLocale.substr(3) + ".png\" style=\"width:30px;margin:10px\" />");
 		oRM.write("<span " );
 		if (aRTLLocales.indexOf(sLocale) >= 0) {
@@ -51,7 +56,7 @@ sap.m.ListItemBase.extend("LocaleListItem", {
 		}
 		oRM.write(">");
 		oRM.writeEscaped(sText);
-		oRM.write("</span>")
+		oRM.write("</span>");
 		oRM.write("</div>");
 	}
 });
@@ -64,7 +69,7 @@ function indent(iDepth) {
 	return sResult;
 }
 function formatValue(oValue) {
-	switch(typeof oValue) {
+	switch (typeof oValue) {
 		case "string":
 			return "\"" + oValue + "\"";
 		default:
@@ -73,8 +78,12 @@ function formatValue(oValue) {
 }
 function formatObject(oObject, bFormatted, iDepth, sResult) {
 	var sName, oValue, bFirst = true;
-	if (!iDepth) iDepth = 0;
-	if (!sResult) sResult = "";
+	if (!iDepth) {
+		iDepth = 0;
+	}
+	if (!sResult) {
+		sResult = "";
+	}
 	if (Array.isArray(oObject)) {
 		sResult += "[";
 		for (var i = 0; i < oObject.length; i++) {
@@ -96,7 +105,9 @@ function formatObject(oObject, bFormatted, iDepth, sResult) {
 			} else {
 				sResult += "," + (bFormatted ? "\n" : "");
 			}
-			if (bFormatted) sResult += indent(iDepth + 1);
+			if (bFormatted) {
+				sResult += indent(iDepth + 1);
+			}
 
 			//ensure keys which contain non-word characters [A-Za-z0-9_] are double quoted
 			if (!/^\w+$/.test(sName)) {
@@ -111,7 +122,9 @@ function formatObject(oObject, bFormatted, iDepth, sResult) {
 			}
 		}
 		sResult += (bFormatted ? "\n" : "");
-		if (bFormatted) sResult += indent(iDepth - 1);
+		if (bFormatted) {
+			sResult += indent(iDepth - 1);
+		}
 		sResult += "}";
 	}
 	return sResult;
@@ -128,7 +141,7 @@ function validateFormatOptions(oOptions, oSupportedOptions) {
 		bError = false;
 		switch (oOption.type) {
 			case "enum":
-				bError = (typeof vValue !== "string") || oOption.values.indexOf(vValue) === -1
+				bError = (typeof vValue !== "string") || oOption.values.indexOf(vValue) === -1;
 				break;
 			case "int":
 				bError = (typeof vValue !== "number") || Math.floor(vValue) !== vValue || (oOption.min !== undefined && vValue < oOption.min);
@@ -149,7 +162,7 @@ function validateFormatOptions(oOptions, oSupportedOptions) {
 	}
 }
 
-sap.ui.model.SimpleType.extend("Options", {
+var Options = sap.ui.model.SimpleType.extend("Options", {
 	constructor: function(oSupportedOptions) {
 		sap.ui.model.SimpleType.apply(this, arguments);
 		this.sName = "Options";
@@ -159,7 +172,7 @@ sap.ui.model.SimpleType.extend("Options", {
 		var oFormatOptions;
 		try {
 			oFormatOptions = jQuery.sap.parseJS(sValue);
-		} catch(e) {
+		} catch (e) {
 			throw new sap.ui.model.ParseException("Could not parse format options: " + e.message);
 		}
 		return oFormatOptions;
@@ -174,9 +187,9 @@ sap.ui.model.SimpleType.extend("Options", {
 		}
 		return true;
 	}
-})
+});
 
-sap.ui.model.CompositeType.extend("HashParams", {
+var HashParams = sap.ui.model.CompositeType.extend("HashParams", {
 	constructor: function(aParams, oSupportedOptions) {
 		sap.ui.model.CompositeType.apply(this, arguments);
 		this.sName = "HashParams";
@@ -201,11 +214,11 @@ sap.ui.model.CompositeType.extend("HashParams", {
 				vValue = parseFloat(vValue);
 			}
 			oParams[sName] = vValue;
-		})
+		});
 		aParams = this.aParams.map(function(oParam) {
 			vValue = oParams[oParam.name];
 			return vValue === undefined ? oParam.default : vValue;
-		})
+		});
 		return aParams;
 	},
 	formatValue: function(aValue) {
@@ -218,8 +231,10 @@ sap.ui.model.CompositeType.extend("HashParams", {
 			if (oParam.name === "date" || oParam.name === "todate") {
 				vValue = vValue.valueOf();
 			}
-			if (!jQuery.sap.equal(vValue, oParam.default)) aParams.push(oParam.name + "=" + encodeURIComponent(vValue));
-		})
+			if (!jQuery.sap.equal(vValue, oParam.default)) {
+				aParams.push(oParam.name + "=" + encodeURIComponent(vValue));
+			}
+		});
 		return "#" + aParams.join("&");
 	},
 	validateValue: function(aValue) {
@@ -235,13 +250,13 @@ sap.ui.model.CompositeType.extend("HashParams", {
 		}
 		return true;
 	}
-})
+});
 
-function bindHash(oModel, aHashParam, oSupportedOptions) {
-	aHashBindings = aHashParams.map(function(sParam) {
+function bindHash(oModel, aHashParams, oSupportedOptions) {
+	var aHashBindings = aHashParams.map(function(sParam) {
 		return oModel.bindProperty("/" + sParam.name);
-	})
-	oHashBinding = new sap.ui.model.CompositeBinding(aHashBindings, true);
+	});
+	var oHashBinding = new sap.ui.model.CompositeBinding(aHashBindings, true);
 	oHashBinding.setType(new HashParams(aHashParams, oSupportedOptions));
 	oHashBinding.attachChange(function() {
 		location.hash = oHashBinding.getExternalValue();
@@ -249,7 +264,7 @@ function bindHash(oModel, aHashParam, oSupportedOptions) {
 	window.addEventListener("hashchange", function() {
 		try {
 			oHashBinding.setExternalValue(location.hash);
-		} catch(e) {
+		} catch (e) {
 			showError("Parse Error", "Could not parse hash: " + e.message);
 		}
 	});

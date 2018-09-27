@@ -52,7 +52,7 @@ function(
 				}.bind(this)
 			};
 
-			this.oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(this.oMockedAppComponent);
+			this.oGetAppComponentForControlStub = sinon.stub(FlUtils, "_getAppComponentForComponent").returns(this.oMockedAppComponent);
 			this.oGetComponentClassNameStub = sinon.stub(FlUtils, "getComponentClassName").returns("Dummy.Component");
 
 			var oFlexController = FlexControllerFactory.createForControl(this.oMockedAppComponent, this.oManifest);

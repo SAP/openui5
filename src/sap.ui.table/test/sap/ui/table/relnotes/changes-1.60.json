@@ -49,6 +49,12 @@
         "type": "FIX",
         "text": " Table: Calculation of row count in \"Auto\" mode",
         "references": []
+      },
+      {
+        "id": "6ef708e55291ce5f49126c2cf35c049d2c551104",
+        "type": "FIX",
+        "text": " TableUtils: Update OpenSource usage documentation",
+        "references": []
       }
     ]
   }

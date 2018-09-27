@@ -1203,76 +1203,118 @@ sap.ui.define([
 		 * @param {function():T | T} vObject The object, or a function returning the object, on which methods will be called.
 		 * @param {function(this:U, T) | Object<string, Array.<*>>} vCall Called if <code>vObject</code> is, or returns an object.
 		 * @param {U} [oThis] Context in the function calls, or in the callback if <code>vCall</code>is a function. Default is <code>vObject</code>.
+		 * @returns {undefined | Array.<*>} If <code>vCall</code> is a map, the return values of the calls are returned. In case of multiple calls, an
+		 *                                  array of return values is returned.
 		 * @template T, U
 		 */
 		dynamicCall: function(vObject, vCall, oThis) {
 			var oObject = vObject instanceof Function ? vObject() : vObject;
 
 			if (!oObject || !vCall) {
-				return;
+				return undefined;
 			}
 
 			oThis = oThis || oObject;
 
 			if (vCall instanceof Function) {
 				vCall.call(oThis, oObject);
+				return undefined;
 			} else {
 				var aParameters;
+				var aReturnValues = [];
 				for (var sFunctionName in vCall) {
 					if (oObject[sFunctionName] instanceof Function) {
 						aParameters = vCall[sFunctionName];
-						oObject[sFunctionName].apply(oThis, aParameters);
+						aReturnValues.push(oObject[sFunctionName].apply(oThis, aParameters));
+					} else {
+						aReturnValues.push(undefined);
 					}
+				}
+				if (aReturnValues.length === 1) {
+					return aReturnValues[0];
+				} else {
+					return aReturnValues;
 				}
 			}
 		},
 
 		/**
-		 * Invokes a function if a certain time has passed since the last call.
+		 * Invokes a method in a certain interval, regardless of how many times it was called.
+		 *
+		 * @param {Function} fn The method to throttle.
+		 * @param {Object} [mOptions] The options that influence when the throttled method will be invoked.
+		 * @param {int} [mOptions.wait=0] The amount of milliseconds to wait until actually invoking the method.
+		 * @param {boolean} [mOptions.leading=true] Whether the method should be invoked on the first call.
+		 * @param {boolean} [mOptions.asyncLeading=false] Whether the leading invocation should be asynchronous.
+		 * @returns {Function} Returns the throttled method.
 		 */
-		throttle: function(fn, iWait, mOptions) {
-			mOptions = Object.assign({
-				leading: true,
-				trailing: true
-			}, mOptions);
-			mOptions.maxWait = iWait;
+		throttle: function(fn, mOptions) {
+			// Functionality taken from lodash open source library and adapted as needed
 
-			return TableUtils.debounce(fn, iWait, mOptions);
+			mOptions = Object.assign({
+				wait: 0,
+				leading: true
+			}, mOptions);
+			mOptions.maxWait = mOptions.wait;
+			mOptions.trailing = true;
+			mOptions.requestAnimationFrame = false;
+
+			return TableUtils.debounce(fn, mOptions);
 		},
 
 		/**
-		 * Invokes a function if it has not been called for a certain time.
+		 * Invokes a method if a certain time has passed since the last call, regardless of how many times it was called.
+		 *
+		 * @param {Function} fn The method to debounce.
+		 * @param {Object} [mOptions] The options that influence when the debounced method will be invoked.
+		 * @param {int} [mOptions.wait=0] The amount of milliseconds since the last call to wait before actually invoking the method. Has no
+		 *                                effect, if <code>mOptions.requestAnimationFrame</code> is set to <code>true</code>.
+		 * @param {int|null} [mOptions.maxWait=null] The maximum amount of milliseconds to wait for an invocation. Has no effect, if
+		 *                                           <code>mOptions.requestAnimationFrame</code> is set to <code>true</code>.
+		 * @param {boolean} [mOptions.leading=false] Whether the method should be invoked on the first call.
+		 * @param {boolean} [mOptions.asyncLeading=false] Whether the leading invocation should be asynchronous.
+		 * @param {boolean} [mOptions.trailing=true] Whether the method should be invoked after a certain time has passed. If
+		 *                                           <code>mOptions.leading</code> is set to <code>true</code>, the method needs to be called more
+		 *                                           than once for an invocation at the end of the waiting time.
+		 * @param {boolean} [mOptions.requestAnimationFrame=false] Whether <code>requestAnimationFrame</code> should be used to debounce the
+		 *                                                         method. If set to <code>true</code>, <code>mOptions.wait</code> and
+		 *                                                         <code>mOptions.maxWait</code> have no effect.
+		 * @returns {Function} Returns the debounced method.
 		 */
-		debounce: function(fn, iWait, mOptions) {
+		debounce: function(fn, mOptions) {
+			// Functionality taken from lodash open source library and adapted as needed
+
 			mOptions = Object.assign({
+				wait: 0,
+				maxWait: null,
 				leading: false,
 				asyncLeading: false,
 				trailing: true,
-				maxWait: null
+				requestAnimationFrame: false
 			}, mOptions);
 
-			var iLastCallTime = 0;
-			var iLastInvocationTime = 0;
+			var iLastInvocationTime = null;
 			var iTimerId = null;
-			var bRequestAnimationFrame = iWait == null;
-			var bMaxWait = mOptions.maxWait != null;
-			var vContext;
-			var vArguments;
 			var oCancelablePromise = null;
+			var bMaxWait = mOptions.maxWait != null;
 
-			iWait = iWait != null ? Math.max(0, iWait) : 0;
-			mOptions.maxWait = bMaxWait ? Math.max(mOptions.maxWait, iWait) : mOptions.maxWait;
+			mOptions.wait = Math.max(0, mOptions.wait);
+			mOptions.maxWait = bMaxWait ? Math.max(mOptions.maxWait, mOptions.wait) : mOptions.maxWait;
 
-			function invoke(iTime, bAsync) {
-				var _vContext = vContext;
-				var _vArguments = vArguments;
+			/**
+			 * Calls the method. Only calls the method if an arguments object is provided.
+			 *
+			 * @param {any} [vContext] The context of the call.
+			 * @param {Object} [vArguments] The arguments object.
+			 * @param {boolean} [bAsync=false] Whether the method should be called in a promise.
+			 */
+			function invoke(vContext, vArguments, bAsync) {
+				bAsync = bAsync === true;
+				iLastInvocationTime = Date.now();
 
-				if (vArguments === undefined) {
+				if (vArguments == null) {
 					return;
 				}
-
-				resetInvocationParams();
-				iLastInvocationTime = iTime;
 
 				if (bAsync) {
 					var oPromise = Promise.resolve().then(function() {
@@ -1280,33 +1322,70 @@ sap.ui.define([
 							return;
 						}
 						oCancelablePromise = null;
-						fn.apply(_vContext, _vArguments);
+						fn.apply(vContext, vArguments);
 					});
 					oPromise.cancel = function() {
 						oPromise.canceled = true;
 					};
 					oCancelablePromise = oPromise;
 				} else {
-					fn.apply(_vContext, _vArguments);
+					fn.apply(vContext, vArguments);
 				}
 			}
 
-			function resetInvocationParams(_vContext, _vArguments) {
-				vContext = _vContext;
-				vArguments = _vArguments;
-			}
-
-			function startTimer(iWait) {
+			/**
+			 * Calls the method debounced. Multiple calls within a certain time will be reduced to one call.
+			 *
+			 * @param {any} [vContext] The context of the call.
+			 * @param {Object} [vArguments] The arguments object.
+			 */
+			function invokeDebounced(vContext, vArguments) {
 				cancelTimer();
-				if (bRequestAnimationFrame) {
-					iTimerId = window.requestAnimationFrame(timerExpired);
+
+				function _invoke(bCancel) {
+					bCancel = bCancel !== false;
+					if (mOptions.trailing) {
+						invoke(vContext, vArguments);
+					}
+					if (bCancel) {
+						cancel();
+					}
+				}
+
+				if (mOptions.requestAnimationFrame) {
+					iTimerId = window.requestAnimationFrame(function() {
+						_invoke();
+					});
 				} else {
-					iTimerId = setTimeout(timerExpired, iWait);
+					var iNow = Date.now();
+					var iTimeSinceLastInvocation = iLastInvocationTime == null ? 0 : iNow - iLastInvocationTime;
+					var iRemainingWaitTime = Math.max(0, bMaxWait ?
+														 Math.min(mOptions.maxWait - iTimeSinceLastInvocation, mOptions.wait) :
+														 mOptions.wait);
+					var bMaxWaitInvocation = iRemainingWaitTime < mOptions.wait;
+
+					iTimerId = setTimeout(function() {
+						if (bMaxWaitInvocation) {
+							var iTimerOvertime = Math.max(0, (Date.now() - iNow) - iRemainingWaitTime);
+							var iCancelWaitTime = mOptions.wait - iRemainingWaitTime;
+							if (iTimerOvertime > iCancelWaitTime) {
+								// The timer took longer, maybe because of a long-running synchronous execution. No need to wait more.
+								_invoke();
+							} else {
+								// Because there is some time left, the timer is restarted for cleanup. This is necessary for correct scheduling if
+								// the debounced method is called again during this time.
+								iTimerId = setTimeout(cancel, iCancelWaitTime - iTimerOvertime);
+								_invoke(false);
+							}
+						} else {
+							_invoke();
+						}
+					}, iRemainingWaitTime);
 				}
 			}
 
 			function cancelTimer() {
-				if (bRequestAnimationFrame) {
+				if (mOptions.requestAnimationFrame) {
 					window.cancelAnimationFrame(iTimerId);
 				} else {
 					clearTimeout(iTimerId);
@@ -1314,52 +1393,17 @@ sap.ui.define([
 				iTimerId = null;
 			}
 
-			function timerExpired() {
-				var iTime = Date.now();
-				var bShouldInvoke = shouldInvoke(iTime);
-
-				iTimerId = null;
-
-				if (bShouldInvoke) {
-					if (mOptions.trailing) {
-						invoke(iTime);
-					} else {
-						resetInvocationParams();
-					}
-				} else {
-					// Function was called while the timer was running, and the maxWait time did not expire.
-					// Timer needs to be reset with the remaining time (considering maxWait).
-					startTimer(calculateRemainingWaitTime(iTime));
-				}
-			}
-
-			function calculateRemainingWaitTime(iTime) {
-				var iTimeSinceLastCall = iTime - iLastCallTime;
-				var iTimeSinceLastInvocation = iTime - iLastInvocationTime;
-				var iRemainingWaitTime = Math.max(0, iWait - iTimeSinceLastCall);
-				var iRemainingMaxWaitTime = Math.max(0, Math.min(iRemainingWaitTime, mOptions.maxWait - iTimeSinceLastInvocation));
-
-				return bMaxWait ? iRemainingMaxWaitTime : iRemainingWaitTime;
-			}
-
-			function shouldInvoke(iTime) {
-				var iTimeSinceLastCall = iTime - iLastCallTime;
-				var iTimeSinceLastInvoke = iTime - iLastInvocationTime;
-
-				return (iLastCallTime === 0 // first call
-						|| iTimeSinceLastCall >= iWait // Wait time expired.
-						|| iTimeSinceLastCall < 0 // Wait time expired (system time gone backwards).
-						|| (bMaxWait && iTimeSinceLastInvoke >= mOptions.maxWait)); // Maximum wait time expired.
-			}
-
-			function cancel() {
-				cancelTimer();
-				iLastInvocationTime = 0;
-				resetInvocationParams();
+			function cancelPromise() {
 				if (oCancelablePromise) {
 					oCancelablePromise.cancel();
 					oCancelablePromise = null;
 				}
+			}
+
+			function cancel() {
+				cancelTimer();
+				cancelPromise();
+				iLastInvocationTime = null;
 			}
 
 			function pending() {
@@ -1367,32 +1411,18 @@ sap.ui.define([
 			}
 
 			var debounced = function() {
-				var iTime = Date.now();
-				var bShouldInvoke = shouldInvoke(iTime);
-
-				resetInvocationParams(this, arguments);
-				iLastCallTime = iTime;
-
-				if (iTimerId != null) {
-					return;
+				if (!pending() && !mOptions.leading) {
+					invoke(); // Fake a leading invocation. Required for maxWait invocations.
 				}
-
-				if (bShouldInvoke) {
-					iLastInvocationTime = iTime; // Reset any maxWait timer.
-
-					if (mOptions.leading) {
-						if (mOptions.asyncLeading) {
-							invoke(iTime, true);
-							startTimer(iWait);
-						} else {
-							startTimer(iWait); // Start trailing timer before leading invocation. Function execution might take some time.
-							invoke(iTime);
-						}
-						return; // Timer was already started.
-					}
+				if (pending() || !mOptions.leading) {
+					invokeDebounced(this, arguments);
+				} else if (mOptions.asyncLeading) {
+					invoke(this, arguments, true);
+					invokeDebounced();
+				} else { // mOptions.leading
+					invokeDebounced(); // Schedule delayed invocation before leading invocation. Function execution might take some time.
+					invoke(this, arguments);
 				}
-
-				startTimer(iWait); // Start trailing timer.
 			};
 			debounced.cancel = cancel;
 			debounced.pending = pending;

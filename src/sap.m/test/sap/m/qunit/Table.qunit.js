@@ -1156,6 +1156,51 @@
 			oTable.destroy();
 		});
 
+		QUnit.test("Test for ContextualWidth", function(assert) {
+			var sut = createSUT("idPopinLayoutGrid", true);
+			sut.setPopinLayout(library.PopinLayout.GridSmall);
+
+			var oColumn = sut.getColumns()[2];
+			oColumn.setDemandPopin(true);
+			oColumn.setMinScreenWidth("phone");
+			var oTableResizeSpy = sinon.spy(sut, "_onResize");
+
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(sut.getContextualWidth(), "Inherit", "ContextualWidth with initial size has been applied.");
+			assert.equal(jQuery(".sapMListTblSubCntGridSmall").length, 0, "by default no popin for table");
+
+			// CSS size
+			sut.setContextualWidth("200px");
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(sut.getContextualWidth(), "200px", "ContextualWidth with css size has been applied.");
+			assert.ok(jQuery(".sapMListTblSubCntGridSmall").length > 0, "popin is correct when contextualWidth is set to fixed pixel value.");
+
+			// auto, resizeHandler
+			sut.setContextualWidth("auto");
+
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(sut.getContextualWidth(), "auto", "ContextualWidth with auto has been applied.");
+
+			sut._onResize({size: {width: 500}});
+			assert.ok(oTableResizeSpy.called, "onresize is called");
+			// inherit
+			sut.setContextualWidth("Inherit");
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(sut.getContextualWidth(), "Inherit", "ContextualWidth with inherit has been applied.");
+			assert.equal(jQuery(".sapMListTblSubCntGridSmall").length, 0, "no popin for table when contextualWidth is set to inherit");
+
+			sut.destroy();
+
+		});
+
 		QUnit.start();
 	});
 

@@ -10718,69 +10718,6 @@
 			oComboBox.destroy();
 		});
 
-		QUnit.test("one visual focus should be shown in the control", function(assert) {
-			var oList,
-				oComboBox = new sap.m.ComboBox({
-					items: [
-						new sap.ui.core.Item({text: "AAA", key: "AAA"}),
-						new sap.ui.core.Item({text: "ABB", key: "ABB"}),
-						new sap.ui.core.Item({text: "CCC", key: "CCC"})
-					]
-				});
-
-			oComboBox.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			// act
-			oComboBox.getFocusDomRef().value = "A";
-			sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
-			sap.ui.getCore().applyChanges();
-
-			// assert
-			oList = oComboBox.getList();
-			assert.notOk(oComboBox.$().hasClass("sapMFocus"), "The input field shouldn't have visual focus.");
-			assert.strictEqual(oList.$().find(".sapMSelectListItemBaseSelected").length, 1, "A list item should have visual focus.");
-
-			// act
-			oComboBox.getFocusDomRef().value = "";
-			sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
-			sap.ui.getCore().applyChanges();
-
-			// assert
-			assert.ok(oComboBox.$().hasClass("sapMFocus"), "The input field should have visual focus.");
-			assert.strictEqual(oList.$().find(".sapMSelectListItemBaseSelected").length, 0, "No list item should have visual focus.");
-
-			oComboBox.destroy();
-		});
-
-
-		QUnit.test("tapping on list item should return the visual focus to the input", function(assert) {
-			var oComboBox = new sap.m.ComboBox({
-					items: [
-						new sap.ui.core.Item({text: "AAA", key: "AAA"}),
-						new sap.ui.core.Item({text: "ABB", key: "ABB"}),
-						new sap.ui.core.Item({text: "CCC", key: "CCC"})
-					]
-				});
-
-			oComboBox.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			// act
-			oComboBox.focus();
-			oComboBox.getIcon().firePress();
-			this.clock.tick(500);
-
-			sap.ui.test.qunit.triggerEvent("tap", oComboBox.getFirstItem().getDomRef());
-			this.clock.tick(500);
-
-			// assert
-			assert.ok(oComboBox.$().hasClass("sapMFocus"), "The input field should have visual focus.");
-
-			// clean-up
-			oComboBox.destroy();
-		});
-
 		QUnit.module("Tablet focus handling");
 
 		QUnit.test("it should not set the focus to the input", function(assert) {
@@ -10848,6 +10785,41 @@
 
 			assert.strictEqual(oComboBox.getPicker().getInitialFocus(), oComboBox.getId());
 
+			oComboBox.destroy();
+		});
+
+		QUnit.test("one visual focus should be shown in the control", function(assert) {
+			var oList,
+				oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({text: "AAA", key: "AAA"}),
+						new sap.ui.core.Item({text: "ABB", key: "ABB"}),
+						new sap.ui.core.Item({text: "CCC", key: "CCC"})
+					]
+				});
+
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oComboBox.getFocusDomRef().value = "A";
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			oList = oComboBox.getList();
+			assert.notOk(oComboBox.$().hasClass("sapMFocus"), "The input field shouldn't have visual focus.");
+			assert.strictEqual(oList.$().find(".sapMSelectListItemBaseSelected").length, 1, "A list item should have visual focus.");
+
+			// act
+			oComboBox.getFocusDomRef().value = "AC";
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(oComboBox.$().hasClass("sapMFocus"), "The input field should have visual focus.");
+			assert.strictEqual(oList.$().find(".sapMSelectListItemBaseSelected").length, 0, "No list item should have visual focus.");
+
+			// clean up
 			oComboBox.destroy();
 		});
 

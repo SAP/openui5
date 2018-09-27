@@ -9,9 +9,9 @@
 			'</App>' +
 		'</mvc:View>';
 
-	//eslint-disable no-console
+	/* eslint-disable no-console */
 	var fnLog = console.debug || console.log;
-	//eslint-enable no-console
+	/* eslint-enable no-console */
 
 	sap.ui.controller("myController", {
 		onInit: function () {

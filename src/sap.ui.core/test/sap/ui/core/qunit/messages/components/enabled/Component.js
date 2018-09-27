@@ -39,7 +39,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 				nr: 1,
 				zip: "12345"
 			}
-		}
+		};
 		oModel.setData(oData);
 		var oLayout = new ResponsiveGridLayout();
 		var oForm = new Form({

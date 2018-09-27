@@ -33,7 +33,7 @@ sap.ui.define([
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ControlsMaster", {
 
-			_oStorage: Storage.getInstance(Storage.Type.local),
+			_oStorage: new Storage(Storage.Type.local),
 			_sStorageKey: "UI5_EXPLORED_LIST_SETTINGS_FROM_1_48",
 			_oViewSettings: {
 				compactOn: false,

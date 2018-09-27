@@ -329,8 +329,6 @@ sap.ui.define([
 				 *
 				 *<b>Note:</b> The <code>stickyHeader</code> of the <code>PlanningCalendar</code> uses the <code>sticky</code> property of <code>sap.m.Table</code>.
 				 * Therefore, all features and limitations of the property in <code>sap.m.Table</code> apply to the <code>PlanningCalendar</code> as well.
-				 *
-				 * @experimental As of 1.54
 				 * @since 1.54
 				 */
 				stickyHeader : {type : "boolean", group : "Appearance", defaultValue : false}
@@ -812,7 +810,7 @@ sap.ui.define([
 			oStartDate.setTime(CalendarUtils._createLocalDate(oFirstDateOfWeek, true).getTime());
 		}
 
-		if (this.getViewKey() === PlanningCalendarBuiltInView.OneMonth) {
+		if (this.getViewKey() === PlanningCalendarBuiltInView.OneMonth || this.getViewKey() === PlanningCalendarBuiltInView.Month) {
 			/*
 			 * Have in mind that the oStartDate is the date that the user sees in the UI, thus - local one. As
 			 * CalendarUtils.getFirstDateOfMonth works with UTC dates (this is because the dates are timezone irrelevant),
@@ -1017,7 +1015,7 @@ sap.ui.define([
 			this._oInfoToolbar.removeContent(1);
 		}
 
-		if (sKey === PlanningCalendarBuiltInView.Week || sKey === PlanningCalendarBuiltInView.OneMonth) {
+		if (sKey === PlanningCalendarBuiltInView.Week || sKey === PlanningCalendarBuiltInView.OneMonth || sKey === PlanningCalendarBuiltInView.Month) {
 			oOldStartDate = this.getStartDate();
 			this.setStartDate(new Date(oOldStartDate.getTime())); //make sure the start date is aligned according to the week/month rules
 			if (oOldStartDate.getTime() !== this.getStartDate().getTime()) {

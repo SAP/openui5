@@ -9,11 +9,12 @@ sap.ui.define([
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/context/ContextManager",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Component",
-	"sap/ui/fl/context/ContextManager",
 	"sap/ui/core/Element",
+	"sap/ui/core/CustomData",
 	"sap/base/strings/formatMessage",
 	"sap/base/Log"
 ], function(
@@ -23,11 +24,12 @@ sap.ui.define([
 	Variant,
 	FlexSettings,
 	ChangePersistenceFactory,
+	ContextManager,
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	Component,
-	ContextManager,
 	Element,
+	CustomData, // is required to be preloaded
 	formatMessage,
 	Log
 ) {
@@ -112,13 +114,13 @@ sap.ui.define([
 	/**
 	 * Base function for creation of a change
 	 *
-	 * @param {object} oChangeSpecificData property bag (nvp) holding the change information (see sap.ui.fl.Change#createInitialFileContent
-	 *        oPropertyBag). The property "packageName" is set to $TMP and internally since flex changes are always local when they are created.
-	 * @param {sap.ui.base.Component} oAppComponent application component of the control at runtime in case a map has been used
+	 * @param {object} oChangeSpecificData property bag (nvp) holding the change information (see sap.ui.fl.Change#createInitialFileContent)
+	 * The property "oPropertyBag.packageName" is set to $TMP and internally since flex changes are always local when they are created.
+	 * @param {sap.ui.core.Component} oComponent component of the control at runtime in case a map has been used
 	 * @returns {sap.ui.fl.Change} the created change
 	 * @public
 	 */
-	FlexController.prototype.createBaseChange = function (oChangeSpecificData, oAppComponent) {
+	FlexController.prototype.createBaseChange = function (oChangeSpecificData, oComponent) {
 		var oChangeFileContent, oChange;
 
 		var aCurrentDesignTimeContext = ContextManager._getContextIdsFromUrl();
@@ -127,8 +129,8 @@ sap.ui.define([
 			throw new Error("More than one DesignTime Context is currently active.");
 		}
 
-		if (!oAppComponent) {
-			throw new Error("No Application Component found - to offer flexibility. Valid relation to its owning application component must be present.");
+		if (!oComponent) {
+			throw new Error("No Component found - to offer flexibility. Valid relation to its owning component must be present.");
 		}
 
 		oChangeSpecificData.reference = this.getComponentName(); //in this case the component name can also be the value of sap-app-id
@@ -151,8 +153,8 @@ sap.ui.define([
 	/**
 	 * Create a change
 	 *
-	 * @param {object} oChangeSpecificData property bag (nvp) holding the change information (see sap.ui.fl.Change#createInitialFileContent
-	 *        oPropertyBag). The property "packageName" is set to $TMP and internally since flex changes are always local when they are created.
+	 * @param {object} oChangeSpecificData property bag (nvp) holding the change information (see sap.ui.fl.Change#createInitialFileContent)
+	 * The property "oPropertyBag.packageName" is set to $TMP and internally since flex changes are always local when they are created.
 	 * @param {sap.ui.core.Control | map} oControl - control for which the change will be added
 	 * @param {string} oControl.id id of the control in case a map has been used to specify the control
 	 * @param {sap.ui.core.Component} oControl.appComponent application component of the control at runtime in case a map has been used
@@ -172,25 +174,15 @@ sap.ui.define([
 		if (!oChangeSpecificData.selector) {
 			oChangeSpecificData.selector = {};
 		}
-		var oAppComponent = oControl.appComponent || Utils.getAppComponentForControl(oControl);
-		if (!oAppComponent) {
-			throw new Error("No Application Component found - to offer flexibility the control with the id '" + sControlId + "' has to have a valid relation to its owning application component.");
+		var oComponent = oControl.appComponent || Utils.getSelectorComponentForControl(oControl);
+		if (!oComponent) {
+			throw new Error("No Component found - to offer flexibility the control with the id '" + sControlId + "' has to have a valid relation to its owning application component.");
 		}
-		// differentiate between controls containing the app component id as a prefix and others
-		if (Utils.hasLocalIdSuffix(sControlId, oAppComponent)) {
-			// get local Id for control at root component and use it as selector id
-			var sLocalId = oAppComponent.getLocalId(sControlId);
-			if (!sLocalId) {
-				throw new Error("Generated ID attribute found ('" + sControlId + "'); provide a stable ID for the control as required by flexibility for assigning the changes.");
-			}
-			oChangeSpecificData.selector.id = sLocalId;
-			oChangeSpecificData.selector.idIsLocal = true;
-		} else {
-			oChangeSpecificData.selector.id = sControlId;
-			oChangeSpecificData.selector.idIsLocal = false;
-		}
+		// differentiate between controls containing the component id as a prefix and others
+		// get local Id for control at root component and use it as selector id
+		Object.assign(oChangeSpecificData.selector, Utils.getLocalIdForSelectors(sControlId, oComponent));
 
-		oChange = this.createBaseChange(oChangeSpecificData, oAppComponent);
+		oChange = this.createBaseChange(oChangeSpecificData, oComponent);
 
 		// for getting the change handler the control type and the change type are needed
 		var sControlType = oControl.controlType || Utils.getControlType(oControl);
@@ -202,7 +194,7 @@ sap.ui.define([
 		if (ChangeHandler) {
 			ChangeHandler.completeChangeContent(oChange, oChangeSpecificData, {
 				modifier: JsControlTreeModifier,
-				appComponent: oAppComponent
+				appComponent: oComponent
 			});
 		} else {
 			throw new Error("Change handler could not be retrieved for change " + JSON.stringify(oChangeSpecificData) + ".");
@@ -266,8 +258,8 @@ sap.ui.define([
 	 */
 	FlexController.prototype.addChange = function (oChangeSpecificData, oControl) {
 		var oChange = this.createChange(oChangeSpecificData, oControl);
-		var oAppComponent = Utils.getAppComponentForControl(oControl);
-		this.addPreparedChange(oChange, oAppComponent);
+		var oComponent = Utils.getSelectorComponentForControl(oControl);
+		this.addPreparedChange(oChange, oComponent);
 		return oChange;
 	};
 
@@ -278,20 +270,19 @@ sap.ui.define([
 	 *
 	 * @param {object} oChange property bag (nvp) holding the change information (see sap.ui.fl.Change#createInitialFileContent
 	 *        oPropertyBag). The property "packageName" is set to $TMP and internally since flex changes are always local when they are created
-	 * @param {object} oAppComponent component object
+	 * @param {object} oComponent component object
 	 * @returns {sap.ui.fl.Change} the created change
 	 * @public
 	 */
-	FlexController.prototype.addPreparedChange = function (oChange, oAppComponent) {
+	FlexController.prototype.addPreparedChange = function (oChange, oComponent) {
 		if (oChange.getVariantReference()) {
-			var oOuterAppComponent = Utils.getAppComponentForControl(oAppComponent, true);
-			// variant model is always associated with the outer component
-			// app component can be null if no parent is found
-			var oModel = oOuterAppComponent && oOuterAppComponent.getModel("$FlexVariants");
+			var oAppComponent = Utils.getAppComponentForControl(oComponent);
+			// variant model is always associated with the app component
+			var oModel = oAppComponent.getModel("$FlexVariants");
 			oModel._addChange(oChange);
 		}
 
-		this._oChangePersistence.addChange(oChange, oAppComponent, oOuterAppComponent);
+		this._oChangePersistence.addChange(oChange, oComponent);
 
 		return oChange;
 	};
@@ -307,13 +298,13 @@ sap.ui.define([
 	 * Otherwise it will be marked for deletion.
 	 *
 	 * @param {sap.ui.fl.Change} oChange - the change to be deleted
-	 * @param {object} oAppComponent component object
+	 * @param {object} oComponent component object
 	 */
-	FlexController.prototype.deleteChange = function (oChange, oAppComponent) {
-		var oOuterAppComponent = Utils.getAppComponentForControl(oAppComponent, true);
+	FlexController.prototype.deleteChange = function (oChange, oComponent) {
+		var oAppComponent = Utils.getAppComponentForControl(oComponent);
 		this._oChangePersistence.deleteChange(oChange);
 		if (oChange.getVariantReference()) {
-			oOuterAppComponent.getModel("$FlexVariants")._removeChange(oChange);
+			oAppComponent.getModel("$FlexVariants")._removeChange(oChange);
 		}
 	};
 
@@ -329,7 +320,7 @@ sap.ui.define([
 		var oChange = this.addChange(oChangeSpecificData, oControl);
 		var mPropertyBag = {
 			modifier: JsControlTreeModifier,
-			appComponent: Utils.getAppComponentForControl(oControl),
+			component: Utils.getSelectorComponentForControl(oControl),
 			view: Utils.getViewForControl(oControl)
 		};
 		return this.checkTargetAndApplyChange(oChange, oControl, mPropertyBag)
@@ -340,11 +331,12 @@ sap.ui.define([
 				this._oChangePersistence.deleteChange(oChange);
 				throw oException;
 			}
+			return oChange;
 		}.bind(this));
 	};
 
-	FlexController.prototype._checkDependencies = function(oChange, mDependencies, mChanges, oAppComponent, aRelevantChanges) {
-		var bResult = this._checkChange(oChange, oAppComponent);
+	FlexController.prototype._checkDependencies = function(oChange, mDependencies, mChanges, oComponent, aRelevantChanges) {
+		var bResult = this._checkChange(oChange, oComponent);
 		if (!bResult) {
 			return [];
 		}
@@ -353,7 +345,7 @@ sap.ui.define([
 		var aDependentChanges = mDependencies[sDependencyKey] && mDependencies[sDependencyKey].dependencies || [];
 		for (var i = 0, n = aDependentChanges.length; i < n; i++) {
 			var oDependentChange = Utils.getChangeFromChangesMap(mChanges, aDependentChanges[i]);
-			bResult = this._checkDependencies(oDependentChange, mDependencies, mChanges, oAppComponent, aRelevantChanges);
+			bResult = this._checkDependencies(oDependentChange, mDependencies, mChanges, oComponent, aRelevantChanges);
 			if (bResult.length === 0) {
 				aRelevantChanges = [];
 				break;
@@ -379,7 +371,7 @@ sap.ui.define([
 
 		// check if the change has already failed. Here only changes that failed on JS-modifier are relevant,
 		// because if a change failed on XML, it will try to apply it again on JS.
-		var aFailedCustomDataEntries = this._getFailedCustomDataJs(oChange, oControl, JsControlTreeModifier).customDataEntries;
+		var aFailedCustomDataEntries = this._getFailedCustomDataJs(oControl, JsControlTreeModifier).customDataEntries;
 		if (aFailedCustomDataEntries.indexOf(oChange.getId()) > -1) {
 			return false;
 		}
@@ -398,14 +390,14 @@ sap.ui.define([
 		var mDependencies = Object.assign({}, mChangesMap.mDependencies);
 		var mChanges = mChangesMap.mChanges;
 		var aChangesForControl = mChanges[oControl.getId()] || [];
-		var aAppliedChanges = this._getAppliedCustomData(undefined, oControl, JsControlTreeModifier).customDataEntries;
-		var oAppComponent = Utils.getAppComponentForControl(oControl);
+		var aAppliedChanges = this._getAppliedCustomData(oControl, JsControlTreeModifier).customDataEntries;
+		var oComponent = Utils.getSelectorComponentForControl(oControl);
 		var aNotAppliedChanges = aChangesForControl.filter(function(oChange) {
 			return aAppliedChanges.indexOf(oChange.getId()) === -1;
 		});
 		var aRelevantChanges = [];
 		aNotAppliedChanges.forEach(function(oChange) {
-			var aChanges = this._checkDependencies(oChange, mDependencies, mChangesMap.mChanges, oAppComponent, []);
+			var aChanges = this._checkDependencies(oChange, mDependencies, mChangesMap.mChanges, oComponent, []);
 			aRelevantChanges = aRelevantChanges.concat(aChanges);
 		}, this);
 
@@ -467,10 +459,9 @@ sap.ui.define([
 	 */
 	FlexController.prototype.processXmlView = function (oView, mPropertyBag) {
 		var oComponent = Component.get(mPropertyBag.componentId);
-		var oAppComponent = Utils.getAppComponentForControl(oComponent);
-		var oManifest = oComponent.getManifest();
+		var oManifest = Utils.getAppComponentForControl(oComponent).getManifest();
 
-		mPropertyBag.appComponent = oAppComponent;
+		mPropertyBag.component = oComponent;
 		mPropertyBag.appDescriptor = oManifest;
 		mPropertyBag.modifier = XmlTreeModifier;
 		mPropertyBag.view = oView;
@@ -485,12 +476,12 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.view - the view to process as XML tree
 	 * @param {string} mPropertyBag.viewId - id of the processed view
 	 * @param {object} mPropertyBag.modifier - polymorph reuse operations handling the changes on the given view type
-	 * @param {string} mPropertyBag.appComponent - app component
+	 * @param {sap.ui.core.Component} mPropertyBag.component - component instance responsible for the view's id
 	 * @returns {Promise} without parameters. Promise resolves once all changes of the view have been applied
 	 * @public
 	 */
 	FlexController.prototype.processViewByModifier = function (mPropertyBag) {
-		mPropertyBag.siteId = Utils.getSiteId(mPropertyBag.appComponent);
+		mPropertyBag.siteId = Utils.getSiteId(mPropertyBag.component);
 
 		return this._oChangePersistence.getChangesForView(mPropertyBag.viewId, mPropertyBag)
 
@@ -499,10 +490,10 @@ sap.ui.define([
 	};
 
 	FlexController.prototype._checkForDependentSelectorControls = function (oChange, mPropertyBag) {
-		var aDependentControlSelectorList = oChange.getDependentControlSelectorList(mPropertyBag.appComponent);
+		var aDependentControlSelectorList = oChange.getDependentControlSelectorList(mPropertyBag.component);
 
 		aDependentControlSelectorList.forEach(function(sDependentControlSelector) {
-			var oDependentControl = mPropertyBag.modifier.bySelector(sDependentControlSelector, mPropertyBag.appComponent, mPropertyBag.view);
+			var oDependentControl = mPropertyBag.modifier.bySelector(sDependentControlSelector, mPropertyBag.component, mPropertyBag.view);
 			if (!oDependentControl) {
 				throw new Error("A dependent selector control of the flexibility change is not available.");
 			}
@@ -515,7 +506,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - collection of cross-functional attributes
 	 * @param {object} mPropertyBag.view - the view to process
 	 * @param {string} mPropertyBag.viewId - id of the processed view
-	 * @param {string} mPropertyBag.appComponent - app component
+	 * @param {string} mPropertyBag.component - component instance responsible for the view's id
 	 * @param {object} mPropertyBag.modifier - polymorph reuse operations handling the changes on the given view type
 	 * @param {object} mPropertyBag.appDescriptor - app descriptor containing the metadata of the current application
 	 * @param {string} mPropertyBag.siteId - id of the flp site containing this application
@@ -540,7 +531,7 @@ sap.ui.define([
 					throw new Error("No selector in change found or no selector ID.");
 				}
 
-				var oControl = mPropertyBag.modifier.bySelector(oSelector, mPropertyBag.appComponent, mPropertyBag.view);
+				var oControl = mPropertyBag.modifier.bySelector(oSelector, mPropertyBag.component, mPropertyBag.view);
 
 				if (!oControl) {
 					throw new Error("A flexibility change tries to change a nonexistent control.");
@@ -588,27 +579,34 @@ sap.ui.define([
 		Utils.log.warning(sWarningMessage, undefined, "sap.ui.fl.FlexController");
 	};
 
+	FlexController.prototype._isXmlModifier = function(mPropertyBag) {
+		return mPropertyBag.modifier.targets === "xmlTree";
+	};
+
 	/**
 	 * Applying a specific change on the passed control.
 	 *
-	 * @param {sap.ui.fl.Change} oChange - change object which should be applied on the passed control
-	 * @param {sap.ui.core.Control} oControl - control which is the target of the passed change
-	 * @param {object} mPropertyBag propertyBag passed by the view processing
-	 * @param {object} mPropertyBag.view - the view to process
-	 * @param {object} mPropertyBag.modifier - polymorph reuse operations handling the changes on the given view type
-	 * @param {object} mPropertyBag.appDescriptor - app descriptor containing the metadata of the current application
-	 * @param {object} mPropertyBag.appComponent - component instance that is currently loading
-	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns Promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario
+	 * @param {sap.ui.fl.Change} oChange - Change object which should be applied on the passed control
+	 * @param {sap.ui.core.Control} oControl - Control which is the target of the passed change
+	 * @param {object} mPropertyBag propertyBag - Passed by the view processing
+	 * @param {object} mPropertyBag.view - The view to process
+	 * @param {object} mPropertyBag.modifier - Polymorph reuse operations handling the changes on the given view type
+	 * @param {object} mPropertyBag.appDescriptor - App descriptor containing the metadata of the current application
+	 * @param {object} mPropertyBag.appComponent - Component instance that is currently loading
+	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario
 	 * @public
 	 */
 	FlexController.prototype.checkTargetAndApplyChange = function (oChange, oControl, mPropertyBag) {
-		var bXmlModifier = mPropertyBag.modifier.targets === "xmlTree";
+		var bXmlModifier = this._isXmlModifier(mPropertyBag);
 		var oModifier = mPropertyBag.modifier;
 		var sControlType = oModifier.getControlType(oControl);
 		var mControl = this._getControlIfTemplateAffected(oChange, oControl, sControlType, mPropertyBag);
 		var oChangeHandler = this._getChangeHandler(oChange, mControl.controlType, mControl.control, oModifier);
-		var oSettings;
-		var oRtaControlTreeModifier;
+		var oSettings, oRtaControlTreeModifier;
+
+		// TODO: Change Handlers expect mPropertyBag.appComponent for selector's component. API change required to rename property to mPropertyBag.component
+		mPropertyBag.appComponent = mPropertyBag.component || mPropertyBag.appComponent;
+		delete mPropertyBag.component;
 
 		if (!oChangeHandler) {
 			var sErrorMessage = "Change handler implementation for change not found or change type not enabled for current layer - Change ignored";
@@ -617,16 +615,11 @@ sap.ui.define([
 		}
 		if (bXmlModifier && oChange.getDefinition().jsOnly) {
 			//change is not capable of xml modifier
-			return new Utils.FakePromise({success: false, error: new Error("Change can not be applied in XML. Retrying in JS.")});
+			return new Utils.FakePromise({success: false, error: new Error("Change cannot be applied in XML. Retrying in JS.")});
 		}
-
-		var mAppliedChangesCustomData = this._getAppliedCustomData(oChange, oControl, oModifier);
-		var sAppliedChanges = mAppliedChangesCustomData.customDataValue;
-		var oAppliedChangeCustomData = mAppliedChangesCustomData.customData;
-
+		var mAppliedChangesCustomData = this._getAppliedCustomData(oControl, oModifier);
 		if (!this._isChangeCurrentlyApplied(oControl, oChange, oModifier, mAppliedChangesCustomData)) {
 			var bRevertible = this.isChangeHandlerRevertible(oChange, mControl.control, oChangeHandler);
-
 			return new Utils.FakePromise()
 			.then(function() {
 				// only temporary until a revert function is mandatory for all change handlers
@@ -636,7 +629,6 @@ sap.ui.define([
 					if (bXmlModifier) {
 						throw new Error();
 					}
-
 					return new Promise(function(resolve) {
 						sap.ui.require(["sap/ui/rta/ControlTreeModifier"], function(RtaControlTreeModifier) {
 							if (!RtaControlTreeModifier) {
@@ -662,12 +654,12 @@ sap.ui.define([
 			.then(function(oInitializedControl) {
 				// changeHandler can return a different control, e.g. case where a visible UI control replaces the stashed control
 				if (oInitializedControl instanceof Element) {
-					oControl = oInitializedControl;
 					// the newly rendered control could have custom data set from the XML modifier
-					mAppliedChangesCustomData = this._getAppliedCustomData(oChange, oControl, oModifier);
-					sAppliedChanges = mAppliedChangesCustomData.customDataValue;
-					oAppliedChangeCustomData = mAppliedChangesCustomData.customData;
+					oControl = oInitializedControl;
 				}
+				var mAppliedChangesCustomData = this._getAppliedCustomData(oControl, oModifier);
+				var sAppliedChanges = mAppliedChangesCustomData.customDataValue;
+				var oAppliedChangeCustomData = mAppliedChangesCustomData.customData;
 				if (!bRevertible && oSettings && oSettings._oSettings.recordUndo && oRtaControlTreeModifier){
 					oChange.setUndoOperations(oRtaControlTreeModifier.stopRecordingUndo());
 				}
@@ -683,34 +675,28 @@ sap.ui.define([
 				oChange.APPLIED = true;
 				return {success: true};
 			}.bind(this))
-
 			.catch(function(ex) {
 				var mFailedChangesCustomData;
 				this._setMergeError(true);
-
 				var sLogMessage = "Change ''{0}'' could not be applied. Merge error detected while " +
 				"processing the {1}.";
-
 				if (bXmlModifier) {
-					mFailedChangesCustomData = this._getFailedCustomDataXml(oChange, oControl, oModifier);
+					mFailedChangesCustomData = this._getFailedCustomDataXml(oControl, oModifier);
 					sLogMessage = formatMessage(sLogMessage, [oChange.getId(), "XML tree"]);
 					Log.warning(sLogMessage, ex.stack || "");
 				} else {
-					mFailedChangesCustomData = this._getFailedCustomDataJs(oChange, oControl, oModifier);
+					mFailedChangesCustomData = this._getFailedCustomDataJs(oControl, oModifier);
 					sLogMessage = formatMessage(sLogMessage, [oChange.getId(), "JS control tree"]);
 					Log.error(sLogMessage, ex.stack || "");
 				}
-
 				var oFailedChangeCustomData = mFailedChangesCustomData.customData;
 				mFailedChangesCustomData.customDataEntries.push(oChange.getId());
 				var sValue = mFailedChangesCustomData.customDataEntries.join(",");
-
 				if (bXmlModifier) {
 					this._writeFailedChangesCustomDataXml(oFailedChangeCustomData, sValue, mPropertyBag, oControl);
 				} else {
 					this._writeFailedChangesCustomDataJs(oFailedChangeCustomData, sValue, mPropertyBag, oControl);
 				}
-
 				if (oChange.aPromiseFn) {
 					oChange.aPromiseFn.forEach(function(oPromiseFn) {
 						oPromiseFn.reject(oChange);
@@ -730,14 +716,25 @@ sap.ui.define([
 		var mControl = this._getControlIfTemplateAffected(oChange, oControl, sControlType, mPropertyBag);
 		var oChangeHandler = this._getChangeHandler(oChange, mControl.controlType, mControl.control, oModifier);
 		var vResult;
+		var bStashed;
+
+		// TODO: Change Handlers expect mPropertyBag.appComponent for selector's component. API change required to rename property to mPropertyBag.component
+		mPropertyBag.appComponent = mPropertyBag.component || mPropertyBag.appComponent;
+		delete mPropertyBag.component;
 
 		if (bRevert && !oChangeHandler) {
 			Utils.log.warning("Change handler implementation for change not found or change type not enabled for current layer - Change ignored");
 			return new Utils.FakePromise();
 		}
 
+		// The stashed control does not have custom data in Runtime,
+		// so we have to assume that it is stashed so we can perform the revert
+		if (oChange.getChangeType() === "stashControl" && sControlType === "sap.ui.core._StashedControl"){
+			bStashed = true;
+		}
+
 		var sChangeId = oChange.getId();
-		var mCustomData = this._getAppliedCustomData(oChange, oControl, oModifier);
+		var mCustomData = this._getAppliedCustomData(oControl, oModifier);
 		aAppliedChanges = mCustomData.customDataEntries;
 		oAppliedChangeCustomData = mCustomData.customData;
 		iIndex = aAppliedChanges.indexOf(sChangeId);
@@ -758,7 +755,10 @@ sap.ui.define([
 		}
 
 		return vResult.then(function(bPending) {
-			if (bRevert && (bPending || (!bPending && iIndex > -1))) {
+			if (
+				bRevert && (bPending || (!bPending && iIndex > -1)) ||
+				bRevert && bStashed
+			) {
 				var oResponse = oChangeHandler.revertChange(oChange, mControl.control, mPropertyBag);
 				if (mControl.bTemplateAffected) {
 					oModifier.updateAggregation(oControl, oChange.getContent().boundAggregation);
@@ -768,7 +768,10 @@ sap.ui.define([
 		})
 
 		.then(function() {
-			mCustomData = this._getAppliedCustomData(oChange, oControl, oModifier);
+			// After being unstashed the relevant control for the change is no longer sap.ui.core._StashedControl,
+			// therefore it must be retrieved again
+			oControl = mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent, mPropertyBag.view);
+			mCustomData = this._getAppliedCustomData(oControl, oModifier);
 			aAppliedChanges = mCustomData.customDataEntries;
 			oAppliedChangeCustomData = mCustomData.customData;
 			iIndex = aAppliedChanges.indexOf(sChangeId);
@@ -781,6 +784,17 @@ sap.ui.define([
 		.catch(function(oError) {
 			Utils.log.error("Change could not be reverted:", oError);
 		});
+	};
+
+	FlexController.prototype._createCustomDataControl = function(oControl, mPropertyBag, sCustomDataKey) {
+		var oModifier = mPropertyBag.modifier,
+			oView = mPropertyBag.view,
+			oComponent = mPropertyBag.appComponent;
+
+		var oCustomData = oModifier.createControl("sap.ui.core.CustomData", oComponent, oView, undefined, undefined, false);
+		oModifier.setProperty(oCustomData, "key", sCustomDataKey);
+		oModifier.insertAggregation(oControl, "customData", oCustomData, 0, oView);
+		return oCustomData;
 	};
 
 	FlexController.prototype._writeAppliedChangesCustomData = function(oCustomData, sValue, mPropertyBag, oControl) {
@@ -797,32 +811,25 @@ sap.ui.define([
 
 	FlexController.prototype._writeCustomData = function(oCustomData, sValue, mPropertyBag, oControl, sCustomDataKey) {
 		var oModifier = mPropertyBag.modifier;
-
-		if (oCustomData) {
-			oModifier.setProperty(oCustomData, "value", sValue);
-		} else {
-			var oOuterAppComponent = mPropertyBag.appComponent;
-			var oView = mPropertyBag.view;
-			oCustomData = oModifier.createControl("sap.ui.core.CustomData", oOuterAppComponent, oView);
-			oModifier.setProperty(oCustomData, "key", sCustomDataKey);
-			oModifier.setProperty(oCustomData, "value", sValue);
-			oModifier.insertAggregation(oControl, "customData", oCustomData, 0, oView);
+		if (!oCustomData) {
+			oCustomData = this._createCustomDataControl(oControl, mPropertyBag, sCustomDataKey);
 		}
+		oModifier.setProperty(oCustomData, "value", sValue);
 	};
 
-	FlexController.prototype._getAppliedCustomData = function(oChange, oControl, oModifier) {
-		return this._getCustomData(oChange, oControl, oModifier, FlexController.appliedChangesCustomDataKey);
+	FlexController.prototype._getAppliedCustomData = function(oControl, oModifier) {
+		return this._getCustomData(oControl, oModifier, FlexController.appliedChangesCustomDataKey);
 	};
 
-	FlexController.prototype._getFailedCustomDataXml = function(oChange, oControl, oModifier) {
-		return this._getCustomData(oChange, oControl, oModifier, FlexController.failedChangesCustomDataKeyXml);
+	FlexController.prototype._getFailedCustomDataXml = function(oControl, oModifier) {
+		return this._getCustomData(oControl, oModifier, FlexController.failedChangesCustomDataKeyXml);
 	};
 
-	FlexController.prototype._getFailedCustomDataJs = function(oChange, oControl, oModifier) {
-		return this._getCustomData(oChange, oControl, oModifier, FlexController.failedChangesCustomDataKeyJs);
+	FlexController.prototype._getFailedCustomDataJs = function(oControl, oModifier) {
+		return this._getCustomData(oControl, oModifier, FlexController.failedChangesCustomDataKeyJs);
 	};
 
-	FlexController.prototype._getCustomData = function(oChange, oControl, oModifier, sCustomDataKey) {
+	FlexController.prototype._getCustomData = function(oControl, oModifier, sCustomDataKey) {
 		var aCustomData = oModifier.getAggregation(oControl, "customData") || [];
 		var oReturn = {
 			customDataEntries: []
@@ -832,11 +839,10 @@ sap.ui.define([
 			if (sKey === sCustomDataKey) {
 				oReturn.customData = oCustomData;
 				oReturn.customDataValue = oModifier.getProperty(oCustomData, "value");
-				oReturn.customDataEntries = oReturn.customDataValue.split(",");
+				oReturn.customDataEntries = oReturn.customDataValue ? oReturn.customDataValue.split(",") : [];
 				return true; // break loop
 			}
 		});
-
 		return oReturn;
 	};
 
@@ -900,7 +906,7 @@ sap.ui.define([
 		var mControl = {};
 		if (oChange.getContent().boundAggregation && oChangeDefinition.dependentSelector.originalSelector) {
 			var oModifier = mPropertyBag.modifier;
-			mControl.control = oModifier.bySelector(oChangeDefinition.dependentSelector.originalSelector, mPropertyBag.appComponent, mPropertyBag.view);
+			mControl.control = oModifier.bySelector(oChangeDefinition.dependentSelector.originalSelector, mPropertyBag.component, mPropertyBag.view);
 			mControl.controlType = oModifier.getControlType(mControl.control);
 			mControl.bTemplateAffected = true;
 		} else {
@@ -929,11 +935,11 @@ sap.ui.define([
 	 *
 	 * @param {object} oSelector selector of the control
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier - polymorph reuse operations handling the changes on the given view type
-	 * @param {sap.ui.core.Component} oAppComponent - component instance that is currently loading
+	 * @param {sap.ui.core.Component} oComponent - component instance that is currently loading
 	 * @returns {boolean} Returns true if there are open dependencies
 	 */
-	FlexController.prototype.checkForOpenDependenciesForControl = function(oSelector, oModifier, oAppComponent) {
-		return this._oChangePersistence.checkForOpenDependenciesForControl(oSelector, oModifier, oAppComponent);
+	FlexController.prototype.checkForOpenDependenciesForControl = function(oSelector, oModifier, oComponent) {
+		return this._oChangePersistence.checkForOpenDependenciesForControl(oSelector, oModifier, oComponent);
 	};
 
 	/**
@@ -1054,7 +1060,7 @@ sap.ui.define([
 
 	FlexController.prototype._isChangeCurrentlyApplied = function(oControl, oChange, oModifier, mCustomData) {
 		if (!mCustomData) {
-			mCustomData = this._getAppliedCustomData(oChange, oControl, JsControlTreeModifier);
+			mCustomData = this._getAppliedCustomData(oControl, JsControlTreeModifier);
 		}
 		var aAppliedChanges = mCustomData.customDataEntries;
 		var sChangeId = oChange.getId();
@@ -1079,12 +1085,12 @@ sap.ui.define([
 	 * creation process, changes are applied synchronously.
 	 *
 	 * @param {function} fnGetChangesMap Getter to retrieve the mapped changes belonging to the app component
-	 * @param {object} oAppComponent Component instance that is currently loading
+	 * @param {object} oComponent Component instance that is currently loading
 	 * @param {object} oControl Control instance that is being created
 	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns Promise that is resolved after all changes were applied in asynchronous or FakePromise for the synchronous processing scenario
 	 * @private
 	 */
-	FlexController.prototype._applyChangesOnControl = function (fnGetChangesMap, oAppComponent, oControl) {
+	FlexController.prototype._applyChangesOnControl = function (fnGetChangesMap, oComponent, oControl) {
 		var aPromiseStack = [];
 		var mChangesMap = fnGetChangesMap();
 		var mChanges = mChangesMap.mChanges;
@@ -1093,7 +1099,7 @@ sap.ui.define([
 		var aChangesForControl = mChanges[oControl.getId()] || [];
 		var mPropertyBag = {
 			modifier: JsControlTreeModifier,
-			appComponent: oAppComponent,
+			component: oComponent,
 			view: Utils.getViewForControl(oControl)
 		};
 		aChangesForControl.forEach(function (oChange) {
@@ -1101,7 +1107,7 @@ sap.ui.define([
 			// if a change was already processed and is not applied anymore,
 			// then the control was destroyed and recreated. In this case we need to recreate/copy the dependencies.
 			if (oChange.APPLIED && !this._isChangeCurrentlyApplied(oControl, oChange, mPropertyBag.modifier)) {
-				mChangesMap = this._oChangePersistence.copyDependenciesFromInitialChangesMap(oChange, this._checkIfDependencyIsStillValid.bind(this, oAppComponent, mPropertyBag.modifier));
+				mChangesMap = this._oChangePersistence.copyDependenciesFromInitialChangesMap(oChange, this._checkIfDependencyIsStillValid.bind(this, oComponent, mPropertyBag.modifier));
 				mDependencies = mChangesMap.mDependencies;
 				mDependentChangesOnMe = mChangesMap.mDependentChangesOnMe;
 				delete oChange.APPLIED;
@@ -1128,7 +1134,7 @@ sap.ui.define([
 		return Utils.execPromiseQueueSequentially(aPromiseStack)
 
 		.then(function () {
-			return this._processDependentQueue(mDependencies, mDependentChangesOnMe, oAppComponent);
+			return this._processDependentQueue(mDependencies, mDependentChangesOnMe, oComponent);
 		}.bind(this));
 	};
 
@@ -1138,7 +1144,7 @@ sap.ui.define([
 	 * function (identity check is not possible due to the wrapping of the <code>.bind</code>).
 	 *
 	 * @param {function} fnGetChangesMap Getter to retrieve the mapped changes belonging to the app component
-	 * @param {object} oComponent Component instance that is currently loading
+	 * @param {object} oComponent - Component instance that is currently loading
 	 * @returns {function} Returns the bound function <code>_applyChangesOnControl</code>
 	 * @public
 	 */
@@ -1152,20 +1158,20 @@ sap.ui.define([
 	 * Revert changes for a control and removes the change from the applied Changes stored in the Controls Custom Data.
 	 *
 	 * @param {array} aChanges Array of to be reverted changes
-	 * @param {object} oAppComponent Component instance
+	 * @param {object} oComponent Component instance
 	 * @param {object} oControl Control instance
 	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns Promise that is resolved after all changes were reverted in asynchronous or FakePromise for the synchronous processing scenario
 	 * @public
 	 */
-	FlexController.prototype.revertChangesOnControl = function(aChanges, oAppComponent) {
+	FlexController.prototype.revertChangesOnControl = function(aChanges, oComponent) {
 		var aPromiseStack = [];
 		aChanges.forEach(function(oChange) {
 			aPromiseStack.push(function() {
 				var oSelector = this._getSelectorOfChange(oChange);
-				var oControl = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
+				var oControl = JsControlTreeModifier.bySelector(oSelector, oComponent);
 				var mPropertyBag = {
 					modifier: JsControlTreeModifier,
-					appComponent: oAppComponent,
+					component: oComponent,
 					view: Utils.getViewForControl(oControl)
 				};
 				return this._removeFromAppliedChangesAndMaybeRevert(oChange, oControl, mPropertyBag, true)
@@ -1204,7 +1210,7 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.applyVariantChanges = function(aChanges, oComponent) {
-		var oAppComponent = Utils.getAppComponentForControl(oComponent);
+		var oComponent = Utils.getSelectorComponentForControl(oComponent);
 		var aPromiseStack = [];
 		aChanges.forEach(function(oChange) {
 
@@ -1217,14 +1223,14 @@ sap.ui.define([
 			aPromiseStack.push(function() {
 				var oModifier = JsControlTreeModifier;
 				var oSelector = this._getSelectorOfChange(oChange);
-				var oControl = oModifier.bySelector(oSelector, oAppComponent);
+				var oControl = oModifier.bySelector(oSelector, oComponent);
 				if (!oControl) {
 					Utils.log.error("A flexibility change tries to change a nonexistent control.");
 					return new Utils.FakePromise();
 				}
 
 				//Previous changes added as dependencies
-				return this._applyChangesOnControl(this._oChangePersistence.getChangesMapForComponent.bind(this._oChangePersistence), oAppComponent, oControl);
+				return this._applyChangesOnControl(this._oChangePersistence.getChangesMapForComponent.bind(this._oChangePersistence), oComponent, oControl);
 			}.bind(this));
 		}.bind(this));
 
@@ -1235,15 +1241,15 @@ sap.ui.define([
 	 * Remove the change from the applied Changes stored in the Controls Custom Data without reverting the change.
 	 *
 	 * @param {object} oChange Change
-	 * @param {object} oAppComponent Component instance
+	 * @param {object} oComponent Component instance
 	 * @param {object} oControl Control instance
 	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns Promise for asyncronous or FakePromise for the synchronous processing scenario
 	 * @public
 	 */
-	FlexController.prototype.removeFromAppliedChangesOnControl = function(oChange, oAppComponent, oControl) {
+	FlexController.prototype.removeFromAppliedChangesOnControl = function(oChange, oComponent, oControl) {
 		var mPropertyBag = {
 			modifier: JsControlTreeModifier,
-			appComponent: oAppComponent,
+			component: oComponent,
 			view: Utils.getViewForControl(oControl)
 		};
 		return this._removeFromAppliedChangesAndMaybeRevert(oChange, oControl, mPropertyBag, false);
@@ -1334,15 +1340,16 @@ sap.ui.define([
 	 *
 	 * @param {object} mDependencies - Dependencies map
 	 * @param {object} mDependentChangesOnMe - map of changes that cannot be applied with higher priority
+	 * @param {osap.ui.core.Component} oComponent - component instance
 	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns Promise that is resolved after all dependencies were processed for asyncronous or FakePromise for the synchronous processing scenario
 	 * @private
 	 */
-	FlexController.prototype._processDependentQueue = function (mDependencies, mDependentChangesOnMe, oAppComponent) {
-		 return this._iterateDependentQueue(mDependencies, mDependentChangesOnMe, oAppComponent)
+	FlexController.prototype._processDependentQueue = function (mDependencies, mDependentChangesOnMe, oComponent) {
+		 return this._iterateDependentQueue(mDependencies, mDependentChangesOnMe, oComponent)
 
 		.then(function(aAppliedChanges) {
 			if (aAppliedChanges.length > 0) {
-				return this._processDependentQueue(mDependencies, mDependentChangesOnMe, oAppComponent);
+				return this._processDependentQueue(mDependencies, mDependentChangesOnMe, oComponent);
 			}
 		}.bind(this));
 	};

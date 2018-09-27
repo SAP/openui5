@@ -79,6 +79,9 @@ function(
 			}
 		};
 		var oMockedAppComponent = {
+			getManifestObject: function () {
+				return {};
+			},
 			getManifest: function () {
 				return {};
 			},
@@ -94,6 +97,7 @@ function(
 		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 		sandbox.stub(Utils, "getComponentName").returns(sFlexReference);
 		sandbox.stub(Utils, "getAppVersionFromManifest").returns(sAppVersion);
+		sandbox.stub(Utils, "isApplication").returns(true);
 		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 		sandbox.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve("abc123"));
 
@@ -132,8 +136,8 @@ function(
 		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 		sandbox.stub(Utils, "getComponentName").returns(sFlexReference);
 		sandbox.stub(Utils, "getAppVersionFromManifest").returns(sAppVersion);
+		sandbox.stub(Utils, "isApplication").returns(true);
 		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
-		sandbox.stub(oChangePersistence, "getCacheKey").returns(Promise.reject());
 
 		return XmlPreprocessorImpl.process(oView, mProperties).then(function (oProcessedView) {
 			assert.equal(oFlexControllerCreationStub.callCount, 0, "no flex controller creation was created for processing");
@@ -217,10 +221,12 @@ function(
 			}
 		};
 		var oMockedAppComponent = {
+			getManifestObject: function () {
+				return {};
+			},
 			getManifest: function () {
 				return {};
 			},
-
 			getManifestEntry: function () {
 				return undefined;
 			},
@@ -237,6 +243,7 @@ function(
 		sandbox.stub(sap.ui.getCore(), "getComponent").returns(oMockedComponent);
 		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 		sandbox.stub(Utils, "getAppVersionFromManifest").returns(sAppVersion);
+		sandbox.stub(Utils, "isApplication").returns(true);
 		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 		sandbox.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve(sValidCacheKey));
 
@@ -264,6 +271,47 @@ function(
 		assert.equal(oLoggerSpy.getCall(0).args[0], "Flexibility feature for applying changes on an XML view is only available for " +
 			"asynchronous views; merge is be done later on the JS controls.");
 		assert.deepEqual(oProcessedView, oView, "the original view is returned");
+	});
+
+	QUnit.test("skips the processing in case of a component whose type is not application", function (assert) {
+		var oView = {
+			sId: "testView"
+		};
+		var mProperties = {
+			sync: false
+		};
+		var sComponentName = "someComponentName";
+		var sAppVersion = "1.0.0";
+
+		var oComponentData = {
+			startupParameters: {
+				"sap-app-id": ["someId"]
+			}
+		};
+
+		var oMockedAppComponent = {
+			getManifest: function () {
+				return {};
+			},
+			getManifestEntry: function () {
+				return undefined;
+			},
+			getComponentData: function () {
+				return oComponentData;
+			},
+			getComponentClassName: function () {
+				return sComponentName;
+			}
+		};
+
+		sandbox.stub(sap.ui.getCore(), "getComponent").returns(oMockedAppComponent);
+		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+		sandbox.stub(Utils, "getAppVersionFromManifest").returns(sAppVersion);
+		sandbox.stub(Utils, "isApplication").returns(true);
+
+		return XmlPreprocessorImpl.process(oView, mProperties).then(function (oProcessedView) {
+			assert.deepEqual(oProcessedView, oView, "the original view is returned");
+		});
 	});
 
 	QUnit.done(function () {

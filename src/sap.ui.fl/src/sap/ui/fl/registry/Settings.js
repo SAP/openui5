@@ -296,17 +296,28 @@ sap.ui.define([
 	};
 
 	/**
+	 * Reads boolean property of settings.
+	 *
+	 * @param {string} sPropertyName name of property
+	 * @returns {boolean} true if the property exists and is true.
+	 * @public
+	 */
+	Settings.prototype._getBooleanProperty = function(sPropertyName) {
+		var bValue = false;
+		if (this._oSettings[sPropertyName]) {
+			bValue = this._oSettings[sPropertyName];
+		}
+		return bValue;
+	};
+
+	/**
 	 * Returns the key user status of the current user.
 	 *
 	 * @returns {boolean} true if the user is a flexibility key user, false if not supported.
 	 * @public
 	 */
 	Settings.prototype.isKeyUser = function() {
-		var bIsKeyUser = false;
-		if (this._oSettings.isKeyUser) {
-			bIsKeyUser = this._oSettings.isKeyUser;
-		}
-		return bIsKeyUser;
+		return  this._getBooleanProperty("isKeyUser");
 	};
 
 	/**
@@ -316,11 +327,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Settings.prototype.isModelS = function() {
-		var bIsModelS = false;
-		if (this._oSettings.isAtoAvailable) {
-			bIsModelS = this._oSettings.isAtoAvailable;
-		}
-		return bIsModelS;
+		return  this._getBooleanProperty("isAtoAvailable");
 	};
 
 	/**
@@ -330,11 +337,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Settings.prototype.isAtoEnabled = function() {
-		var bIsAtoEnabled = false;
-		if (this._oSettings.isAtoEnabled) {
-			bIsAtoEnabled = this._oSettings.isAtoEnabled;
-		}
-		return bIsAtoEnabled;
+		return  this._getBooleanProperty("isAtoEnabled");
 	};
 
 	/**
@@ -344,11 +347,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Settings.prototype.isAtoAvailable = function() {
-		var bIsAtoAvailable = false;
-		if (this._oSettings.isAtoAvailable) {
-			bIsAtoAvailable = this._oSettings.isAtoAvailable;
-		}
-		return bIsAtoAvailable;
+		return this._getBooleanProperty("isAtoAvailable");
 	};
 
 	/**
@@ -358,11 +357,17 @@ sap.ui.define([
 	 * @returns {boolean} true if system is productive system
 	 */
 	Settings.prototype.isProductiveSystem = function() {
-		var bIsProductiveSystem = false;
-		if (this._oSettings.isProductiveSystem) {
-			bIsProductiveSystem = this._oSettings.isProductiveSystem;
-		}
-		return bIsProductiveSystem;
+		return  this._getBooleanProperty("isProductiveSystem");
+	};
+
+	/**
+	 * Checks whether the current tenant is a trial tenant.
+	 *
+	 * @public
+	 * @returns {boolean} true if tenant is a trial tenant
+	 */
+	Settings.prototype.isTrial = function() {
+		return this._getBooleanProperty("isTrial");
 	};
 
 	/**
@@ -379,7 +384,7 @@ sap.ui.define([
 		this._hasMergeErrorOccoured = bErrorOccured;
 	};
 	/**
-	 * Checks if a merge error occured during merging changes into the view on startup
+	 * Checks if a merge error occurred during merging changes into the view on startup
 	 */
 	Settings.prototype.hasMergeErrorOccured = function() {
 		return this._hasMergeErrorOccured;

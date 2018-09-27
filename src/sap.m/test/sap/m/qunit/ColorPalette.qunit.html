@@ -52,7 +52,6 @@
 					assert.strictEqual(oCP._bShowDefaultColorButton, false, "should lead to default value of _bShowDefaultColorButton");
 					assert.strictEqual(oCP._bShowMoreColorsButton, false, "should lead to default value of _bShowMoreColorsButton");
 
-					assert.deepEqual(oCP.onsapspace, oCP.ontap, "Keyboard handler for <sapspace> shuld be the same as for <tap>");
 					assert.deepEqual(oCP.onsapenter, oCP.ontap, "Keyboard handler for <sapenter> shuld be the same as for <tap>");
 
 					// Cleanup
@@ -513,6 +512,55 @@
 					}
 				);
 
+				QUnit.module("Keyboard color select", function (hooks) {
+					hooks.beforeEach(function () {
+						var sSelectedColor = "red",
+							oTarget = document.createElement("DIV");
+						oTarget.classList.add("sapMColorPaletteSquare");
+						oTarget.setAttribute("data-sap-ui-color", sSelectedColor);
+
+						this.oCP = new ColorPalette();
+						this.sSelectedColor = sSelectedColor;
+						this.oTarget = oTarget;
+					});
+
+					QUnit.test("'space' key should select color on key up", function (assert) {
+						// Prepare
+						var fnFireColorSelectSpy = this.spy(ColorPalette.prototype, "_fireColorSelect");
+
+						// Act
+						this.oCP.onkeyup({
+							which: KeyCodes.SPACE,
+							preventDefault: function () {} ,
+							target: this.oTarget
+						});
+
+						// Assert
+						assert.equal(fnFireColorSelectSpy.callCount, 1, "_fireColorSelect should be called onkeyup when 'space' key is used");
+						assert.equal(fnFireColorSelectSpy.getCall(0).args[0], this.sSelectedColor, "The selected color should be the same on the target element");
+
+						// Cleanup
+						fnFireColorSelectSpy.restore();
+					});
+
+					QUnit.test("'enter' key should select color on key down", function (assert) {
+						// Prepare
+						var fnFireColorSelectSpy = this.spy(ColorPalette.prototype, "_fireColorSelect");
+
+						// Act
+						this.oCP.onsapenter({
+							target: this.oTarget
+						});
+
+						// Assert
+						assert.equal(fnFireColorSelectSpy.callCount, 1, "_fireColorSelect should be called onkeydown when 'enter' key is used");
+						assert.equal(fnFireColorSelectSpy.getCall(0).args[0], this.sSelectedColor, "The selected color should be the same on the target element");
+
+						// Cleanup
+						fnFireColorSelectSpy.restore();
+					});
+				});
+
 				QUnit.module("_onSwatchContainerBorderReached", {
 						mockEhancedKeybEvent: function (sKeybEventType, sDirection) {
 							return {
@@ -736,7 +784,7 @@
 							var oCP = new ColorPalette(),
 								oSpyFireEvent,
 								oSpyPreventDefault = this.spy();
-								
+
 							this.stub(ColorPalette.prototype._ItemNavigation.prototype, "setItemDomRefs", function () {});
 							oCP._ensureItemNavigation();
 							oCP._oItemNavigation.oDomRef = document.getElementsByClassName("sapUiBody")[0];
@@ -747,7 +795,7 @@
 							this.stub(oCP._oItemNavigation, "getItemDomRefs").returns(new Array(oCP.getColors().length));
 
 							// Act
-							
+
 							oCP._oItemNavigation.onsapprevious(oMockEvent);
 
 							// Assert

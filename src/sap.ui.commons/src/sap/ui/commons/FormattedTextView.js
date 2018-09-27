@@ -216,6 +216,7 @@ sap.ui.define([
 			});
 
 			this.setProperty("htmlText", sSanitizedText);
+			return this;
 		};
 
 		/**

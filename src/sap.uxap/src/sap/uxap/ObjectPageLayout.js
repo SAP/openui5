@@ -17,7 +17,7 @@ sap.ui.define([
 	"./LazyLoading",
 	"./ObjectPageLayoutABHelper",
 	"./ThrottledTaskHelper",
-	"sap/ui/core/ScrollBar",
+	"sap/m/ScrollBar",
 	"sap/ui/core/library",
 	"./library",
 	"./ObjectPageLayoutRenderer",
@@ -356,7 +356,7 @@ sap.ui.define([
 				 */
 				_headerContent: {type: "sap.uxap.IHeaderContent", multiple: false, visibility: "hidden"},
 
-				_customScrollBar: {type: "sap.ui.core.ScrollBar", multiple: false, visibility: "hidden"}
+				_customScrollBar: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
 			},
 			events: {
 
@@ -750,6 +750,8 @@ sap.ui.define([
 			bAppendHeaderToContent = !this._shouldPreserveHeaderInTitleArea();
 			this._snapHeader(bAppendHeaderToContent);
 		}
+
+		this.getHeaderTitle()._getFocusSpan().$().focus();
 	};
 
 	/**
@@ -1034,8 +1036,6 @@ sap.ui.define([
 
 		if (!this.getAggregation("_customScrollBar")) {
 			var oVSB = new ScrollBar(this.getId() + "-vertSB", {
-				vertical: true,
-				size: "100%",
 				scrollPosition: 0,
 				scroll: this.onCustomScrollerScroll.bind(this),
 				visible: false
@@ -1469,7 +1469,7 @@ sap.ui.define([
 			sSelectedSectionId = this.getSelectedSection();
 
 		if (bValue === bOldValue) {
-			return;
+			return this;
 		}
 
 		this._oABHelper._getAnchorBar().setShowPopover(bValue);
@@ -2833,7 +2833,10 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._moveAnchorBarToContentArea = function () {
 		if (!this._shouldPreserveHeaderInTitleArea()) {
+			var iScrollTopBeforeAppend = this._$opWrapper.scrollTop();
 			this._$anchorBar.css("height", "auto").append(this._$stickyAnchorBar.children()); //TODO: css auto redundant?
+			// ensure that appending the anchorBar does not change the scrollTop, as it may happen in certain cases (if another part of content freshly rerendered (BCP: 1870365138)
+			this._$opWrapper.scrollTop(iScrollTopBeforeAppend);
 
 			this._toggleHeaderStyleRules(false);
 		}

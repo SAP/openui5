@@ -1,15 +1,16 @@
+/*global assert */
 sap.ui.define([
-  "jquery.sap.global",
+  "sap/base/Log",
   "sap/ui/test/gherkin/StepDefinitions",
   "sap/ui/test/gherkin/dataTableUtils",
   "GherkinWithQUnit/codeUnderTest"
-], function($, StepDefinitions, DataTableUtils, oCodeUnderTest) {
+], function(Log, StepDefinitions, DataTableUtils, oCodeUnderTest) {
   "use strict";
 
   var Steps = StepDefinitions.extend("GherkinWithQUnit.Steps", {
     init: function() {
       this.register(/^I expect (\d+?) assertions?$/i, function(sNumAssertions) {
-        assert.expect(parseInt(sNumAssertions));
+        assert.expect(parseInt(sNumAssertions, 10));
       });
       this.register(/^that quantum phenomena exist at the macroscopic level$/i, function() {
         this.bMacroQuanta = true;
@@ -48,7 +49,7 @@ sap.ui.define([
       });
     },
     closeApplication: function() {
-      $.sap.log.info("Closing application");
+      Log.info("Closing application");
     }
   });
 

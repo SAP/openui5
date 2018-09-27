@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/InvisibleText",
 	"./DynamicPageTitleRenderer",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/HTML"
 ], function(
 	library,
 	Control,
@@ -26,7 +27,8 @@ sap.ui.define([
 	Button,
 	InvisibleText,
 	DynamicPageTitleRenderer,
-	Log
+	Log,
+	HTML
 ) {
 	"use strict";
 
@@ -241,7 +243,14 @@ sap.ui.define([
 				 * Visual indication for expanding.
 				 * @since 1.52
 				 */
-				_expandButton: {type: "sap.m.Button", multiple: false,  visibility: "hidden"}
+				_expandButton: {type: "sap.m.Button", multiple: false,  visibility: "hidden"},
+
+				/**
+				 * Internal span tag for correct representation of the accessibility requirements.
+				 * Upon focus, the <code>DynamicPageTitle</code> control has the focus outline, but the <code>_focusSpan</code> is the real focused DOM element.
+				 * @since 1.60
+				 */
+				_focusSpan: {type: "sap.ui.core.HTML", multiple: false,  visibility: "hidden"}
 			},
 			events: {
 				/**
@@ -291,8 +300,7 @@ sap.ui.define([
 	};
 
 	DynamicPageTitle.TOGGLE_HEADER_TEXT_ID = InvisibleText.getStaticId("sap.f", "TOGGLE_HEADER");
-	DynamicPageTitle.EXPANDED_HEADER_TEXT_ID = InvisibleText.getStaticId("sap.f", "EXPANDED_HEADER");
-	DynamicPageTitle.COLLAPSED_HEADER_TEXT_ID = InvisibleText.getStaticId("sap.f", "SNAPPED_HEADER");
+	DynamicPageTitle.DEFAULT_HEADER_TEXT_ID = InvisibleText.getStaticId("sap.f", "DEFAULT_HEADER_TEXT");
 
 	/**
 	 * Flushes the given control into the given container.
@@ -679,10 +687,13 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPageTitle.prototype._toggleFocusableState = function (bFocusable) {
-		var $oTitle = this.$();
+		var $oTitleFocusSpan;
 
 		this._bIsFocusable = bFocusable;
-		bFocusable ? $oTitle.attr("tabindex", 0) : $oTitle.removeAttr("tabindex");
+
+		$oTitleFocusSpan = this._getFocusSpan().$();
+
+		bFocusable ? $oTitleFocusSpan.attr("tabindex", 0) : $oTitleFocusSpan.removeAttr("tabindex");
 	};
 
 	/* ========== DynamicPageTitle actions and navigationActions processing ========== */
@@ -1090,13 +1101,12 @@ sap.ui.define([
 			bHasSnappedContent = aSnapContent.length > 0,
 			oShrinkFactorsInfo = this._getShrinkFactorsObject(),
 			oExpandButton = this._getExpandButton(),
+			oFocusSpan = this._getFocusSpan(),
 			oBreadcrumbs = this.getBreadcrumbs(),
 			bHasTopContent = oBreadcrumbs || bHasNavigationActions,
 			bHasOnlyBreadcrumbs = !!(oBreadcrumbs && !bHasNavigationActions),
 			bHasOnlyNavigationActions = bHasNavigationActions && !oBreadcrumbs,
-			sAreaShrinkRatioDefaultValue = this.getMetadata().getProperty("areaShrinkRatio").getDefaultValue(),
-			oParent = this.getParent(),
-			bIsToggleable = isFunction(oParent.getToggleHeaderOnTitleClick) ? oParent.getToggleHeaderOnTitleClick() : false;
+			sAreaShrinkRatioDefaultValue = this.getMetadata().getProperty("areaShrinkRatio").getDefaultValue();
 
 		// if areaShrinkRatio is set to default value (or not set at all) and primaryArea is set,
 		// use shrink factors defined for primaryArea
@@ -1120,6 +1130,7 @@ sap.ui.define([
 			snappedHeading: this.getSnappedHeading(),
 			expandedHeading: this.getExpandedHeading(),
 			expandButton: oExpandButton,
+			focusSpan: oFocusSpan,
 			snappedContent: aSnapContent,
 			expandedContent: aExpandContent,
 			hasSnappedContent:bHasSnappedContent,
@@ -1129,7 +1140,6 @@ sap.ui.define([
 			headingAreaShrinkFactor: oShrinkFactorsInfo.headingAreaShrinkFactor,
 			contentAreaShrinkFactor: oShrinkFactorsInfo.contentAreaShrinkFactor,
 			actionsAreaShrinkFactor: oShrinkFactorsInfo.actionsAreaShrinkFactor,
-			ariaLabelledByIDs: bIsToggleable ? this._getARIALabelReferences(this._bExpandedState) : "",
 			breadcrumbs: this.getBreadcrumbs(),
 			separator: this._getToolbarSeparator(),
 			hasTopContent: bHasTopContent,
@@ -1236,14 +1246,14 @@ sap.ui.define([
 		}
 	};
 
-	DynamicPageTitle.prototype._updateARIAState = function (bHeaderExpanded, bToggleHeaderOnTitleClick) {
-		var sARIAText = bToggleHeaderOnTitleClick ? this._getARIALabelReferences(bHeaderExpanded) : "";
+	DynamicPageTitle.prototype._updateARIAState = function () {
+		var sARIAText = this._getARIALabelReferences();
 
-		this.$().attr("aria-labelledby", sARIAText);
+		this._getFocusSpan().$().attr("aria-labelledby", sARIAText);
 		return this;
 	};
 
-	DynamicPageTitle.prototype._getARIALabelReferences = function (bHeaderExpanded) {
+	DynamicPageTitle.prototype._getARIALabelReferences = function () {
 		var sReferences = "",
 			oHeading = this.getHeading();
 
@@ -1251,10 +1261,49 @@ sap.ui.define([
 			sReferences += oHeading.getId();
 		}
 
-		sReferences += " " + (bHeaderExpanded ? DynamicPageTitle.EXPANDED_HEADER_TEXT_ID : DynamicPageTitle.COLLAPSED_HEADER_TEXT_ID);
-		sReferences += " " + DynamicPageTitle.TOGGLE_HEADER_TEXT_ID;
-
 		return sReferences;
+	};
+
+	DynamicPageTitle.prototype._updateAriaExpandedState = function (bExpanded) {
+		this._getFocusSpan().$().attr("aria-expanded", bExpanded);
+	};
+
+	DynamicPageTitle.prototype._focus = function () {
+		this._getFocusSpan().$().focus();
+	};
+
+	DynamicPageTitle.prototype._getFocusSpan = function () {
+		if (!this.getAggregation("_focusSpan")) {
+			var sTabIndex = this._bIsFocusable ? 'tabindex="0"' : '',
+				sLabelledBy = this._getARIALabelReferences() || DynamicPageTitle.DEFAULT_HEADER_TEXT_ID,
+				oFocusSpan = new HTML({
+					id: this.getId() + "-focusSpan",
+					preferDOM: false,
+					content: '<span class="sapFDynamicPageTitleFocusSpan" role="button" ' + sTabIndex +
+							'data-sap-ui="' + this.getId() + '-focusSpan"' +
+							' aria-expanded="' + this._bExpandedState +
+							'" aria-labelledby="' + sLabelledBy +
+							'" aria-describedby="' + DynamicPageTitle.TOGGLE_HEADER_TEXT_ID + '"></span>'
+				});
+
+			oFocusSpan.onfocusin = this._addFocusClass.bind(this);
+			oFocusSpan.onfocusout = this._removeFocusClass.bind(this);
+			oFocusSpan.onsapselect = function () {
+				this.fireEvent("_titlePress");
+			}.bind(this);
+
+			this.setAggregation("_focusSpan", oFocusSpan, true);
+		}
+
+		return this.getAggregation("_focusSpan");
+	};
+
+	DynamicPageTitle.prototype._addFocusClass = function () {
+		this.$().addClass("sapFDynamicPageTitleFocus");
+	};
+
+	DynamicPageTitle.prototype._removeFocusClass = function () {
+		this.$().removeClass("sapFDynamicPageTitleFocus");
 	};
 
 	return DynamicPageTitle;

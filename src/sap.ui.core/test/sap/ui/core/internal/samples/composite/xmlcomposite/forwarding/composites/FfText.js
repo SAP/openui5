@@ -1,7 +1,7 @@
-sap.ui.define(['sap/ui/core/XMLComposite'], 
-    function(XMLComposite) {
+sap.ui.define(['sap/ui/core/XMLComposite'],
+	function(XMLComposite) {
 	"use strict";
-	var FfText = sap.ui.core.XMLComposite.extend("composites.FfText", {
+	var FfText = XMLComposite.extend("composites.FfText", {
 		metadata: {
 			aggregations: {
 				items: {
@@ -13,6 +13,6 @@ sap.ui.define(['sap/ui/core/XMLComposite'],
 			defaultAggregation: "items"
 		}
 	});
-	
+
 	return FfText;
 }, /* bExport= */true);

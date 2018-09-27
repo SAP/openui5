@@ -9,8 +9,21 @@ sap.ui.define([
 	"sap/ui/thirdparty/hasher",
 	"sap/base/Log",
 	"sap/base/util/UriParameters",
-	"sap/base/util/uid"
-], function(jQuery, Component, BaseTreeModifier, hasher, Log, UriParameters, uid) {
+	"sap/base/util/uid",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/mvc/View"
+],
+function(
+	jQuery,
+	Component,
+	BaseTreeModifier,
+	hasher,
+	Log,
+	UriParameters,
+	uid,
+	ManagedObject,
+	View
+) {
 	"use strict";
 	//Stack of layers in the layered repository
 	var aLayers = [
@@ -114,7 +127,7 @@ sap.ui.define([
 		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
 		 *
 		 * @returns {String} The component class name, ending with ".Component"
-		 * @see sap.ui.base.Component.getOwnerIdFor
+		 * @see sap.ui.core.Component.getOwnerIdFor
 		 * @public
 		 * @function
 		 * @name sap.ui.fl.Utils.getComponentClassName
@@ -124,8 +137,8 @@ sap.ui.define([
 
 			// determine UI5 component out of given control
 			if (oControl) {
-				// always return the outer app component
-				oAppComponent = this.getAppComponentForControl(oControl, true);
+				// always return the app component
+				oAppComponent = this.getAppComponentForControl(oControl);
 
 				// check if the component is an application variant and assigned an application descriptor then use this as reference
 				if (oAppComponent) {
@@ -159,9 +172,9 @@ sap.ui.define([
 		 * Returns the class name of the application component owning the passed component or the component name itself if
 		 * this is already an application component.
 		 *
-		 * @param {sap.ui.base.Component} oComponent - SAPUI5 component
+		 * @param {sap.ui.core.Component} oComponent - SAPUI5 component
 		 * @returns {String} The component class name, ending with ".Component"
-		 * @see sap.ui.base.Component.getOwnerIdFor
+		 * @see sap.ui.core.Component.getOwnerIdFor
 		 * @public
 		 * @since 1.40
 		 * @function
@@ -185,7 +198,7 @@ sap.ui.define([
 
 			// determine UI5 component out of given control
 			if (oControl) {
-				oComponent = this.getAppComponentForControl(oControl, true);
+				oComponent = this.getAppComponentForControl(oControl);
 
 				// determine manifest out of found component
 				if (oComponent && oComponent.getMetadata) {
@@ -209,21 +222,21 @@ sap.ui.define([
 		 * @name sap.ui.fl.Utils.getSiteId
 		 */
 		getSiteId: function (oControl) {
-			var sSiteId = null, oOuterAppComponent = null;
+			var sSiteId = null, oAppComponent = null;
 
 			// determine UI5 component out of given control
 			if (oControl) {
-				oOuterAppComponent = this.getAppComponentForControl(oControl, true);
+				oAppComponent = this.getAppComponentForControl(oControl);
 
 				// determine siteId from ComponentData
-				if (oOuterAppComponent) {
+				if (oAppComponent) {
 
 					//Workaround for back-end check: isApplicationPermitted
 					//As long as FLP does not know about appDescriptorId we have to pass siteID and applicationID.
 					//With startUpParameter hcpApplicationId we will get a concatenation of “siteId:applicationId”
 
 					//sSiteId = this._getComponentStartUpParameter(oComponent, "scopeId");
-					sSiteId = this._getComponentStartUpParameter(oOuterAppComponent, "hcpApplicationId");
+					sSiteId = this._getComponentStartUpParameter(oAppComponent, "hcpApplicationId");
 
 				}
 			}
@@ -446,25 +459,18 @@ sap.ui.define([
 		 * Returns ComponentId of the control. If the control has no component, it walks up the control tree in order to find a control having one
 		 *
 		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
-		 * @returns {String} The component id
-		 * @see sap.ui.base.Component.getOwnerIdFor
+		 * @returns {String} The component id or empty string if component id couldn't be found
+		 * @see sap.ui.core.Component.getOwnerIdFor
 		 * @private
 		 */
 		_getComponentIdForControl: function (oControl) {
-			var sComponentId = "", i = 0;
-			do {
-				i++;
-				sComponentId = Utils._getOwnerIdForControl(oControl);
-				if (sComponentId) {
-					return sComponentId;
+			var sComponentId = Utils._getOwnerIdForControl(oControl);
+			if (!sComponentId) {
+				if (oControl && typeof oControl.getParent === "function") {
+					return Utils._getComponentIdForControl(oControl.getParent());
 				}
-				if (oControl && typeof oControl.getParent === "function") { // Walk up control tree
-					oControl = oControl.getParent();
-				} else {
-					return "";
-				}
-			} while (oControl && i < 100);
-			return "";
+			}
+			return sComponentId || "";
 		},
 
 		/**
@@ -472,7 +478,7 @@ sap.ui.define([
 		 * control having one.
 		 *
 		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
-		 * @returns {sap.ui.base.Component} found component
+		 * @returns {sap.ui.core.Component} found component
 		 * @public
 		 */
 		getComponentForControl: function (oControl) {
@@ -480,31 +486,41 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the Component that belongs to given control whose type is "application". If the control has no component, it walks up the control tree in order to find a
-		 * control having one.
+		 * Returns the component that belongs to the passed control whose type is "application".
+		 * If the control has no component, it walks up the control tree in order to find a control having one.
 		 *
-		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
-		 * @param {boolean} [bOuter] - if set to true the root app component will be returned for embedded component
-		 * @returns {sap.ui.base.Component} found component
+		 * @param {sap.ui.base.ManagedObject} oControl - Managed object instance
+		 * @returns {sap.ui.core.Component} component instance if found or null
 		 * @public
 		 */
-		getAppComponentForControl: function (oControl, bOuter) {
-			var oComponent;
+		getAppComponentForControl: function (oControl) {
+			var oComponent = oControl instanceof Component ? oControl : this._getComponentForControl(oControl);
+			return this._getAppComponentForComponent(oComponent);
+		},
 
-			if (oControl instanceof sap.ui.core.Component) {
-				oComponent = oControl;
+		/**
+		 * Returns the embedded component if the passed control belongs to a component of type "component" or the application component if of type "application".
+		 * If the control has no component, it walks up the control tree in order to find a control having one.
+		 *
+		 * @param {sap.ui.base.ManagedObject} oControl - Managed object instance
+		 * @returns {sap.ui.core.Component|null} component instance if found or null
+		 * @public
+		 */
+		getSelectorComponentForControl: function (oControl) {
+			var oComponent = oControl instanceof Component ? oControl : this._getComponentForControl(oControl);
+			if (oComponent && this.isEmbeddedComponent(oComponent.getManifestObject())) {
+				return oComponent;
 			} else {
-				oComponent = this._getComponentForControl(oControl);
+				return this._getAppComponentForComponent(oComponent);
 			}
-			return this._getAppComponentForComponent(oComponent, bOuter);
 		},
 
 		/**
 		 * Returns the Component that belongs to given control. If the control has no component, it walks up the control tree in order to find a
 		 * control having one.
 		 *
-		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
-		 * @returns {sap.ui.base.Component} found component
+		 * @param {sap.ui.base.ManagedObject} oControl - Managed object instance
+		 * @returns {sap.ui.core.Component|null} found component
 		 * @private
 		 */
 		_getComponentForControl: function (oControl) {
@@ -525,13 +541,11 @@ sap.ui.define([
 		/**
 		 * Returns the Component that belongs to given component whose type is "application".
 		 *
-		 * @param {sap.ui.base.Component} oComponent - SAPUI5 component
-		 * @param {boolean} [bOuter] - if set to true the root app component will be returned for embedded component
-		 *
-		 * @returns {sap.ui.base.Component} found component
+		 * @param {sap.ui.core.Component} oComponent - SAPUI5 component
+		 * @returns {sap.ui.core.Component|null} component instance if found or null
 		 * @private
 		 */
-		_getAppComponentForComponent: function (oComponent, bOuter) {
+		_getAppComponentForComponent: function (oComponent) {
 			var oSapApp = null;
 			// special case for Fiori Elements to reach the real appComponent
 			if (oComponent && oComponent.getAppComponent) {
@@ -551,10 +565,7 @@ sap.ui.define([
 			}
 
 			if (oSapApp && oSapApp.type && oSapApp.type !== "application") {
-				if (oSapApp.type === "component" && !bOuter) {
-					// return inner app component
-					return oComponent;
-				} else if (oComponent instanceof Component) {
+				if (oComponent instanceof Component) {
 					// we need to call this method only when the component is an instance of Component in order to walk up the tree
 					// returns owner app component
 					oComponent = this._getComponentForControl(oComponent);
@@ -571,7 +582,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
 		 * @returns {sap.ui.core.mvc.View} The view
-		 * @see sap.ui.base.Component.getOwnerIdFor
+		 * @see sap.ui.core.Component.getOwnerIdFor
 		 * @public
 		 */
 		getViewForControl: function (oControl) {
@@ -619,11 +630,11 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
 		 * @returns {Boolean} Flag
-		 * @see sap.ui.base.Component.getOwnerIdFor
+		 * @see sap.ui.core.Component.getOwnerIdFor
 		 * @private
 		 */
 		_isView: function (oControl) {
-			return oControl instanceof sap.ui.core.mvc.View;
+			return oControl instanceof View;
 		},
 
 		/**
@@ -631,7 +642,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
 		 * @returns {String} The owner id
-		 * @see sap.ui.base.Component.getOwnerIdFor
+		 * @see sap.ui.core.Component.getOwnerIdFor
 		 * @private
 		 */
 		_getOwnerIdForControl: function (oControl) {
@@ -816,8 +827,8 @@ sap.ui.define([
 		 */
 		checkControlId: function (vControl, oAppComponent, bSuppressLogging) {
 			if (!oAppComponent) {
-				vControl = vControl instanceof sap.ui.base.ManagedObject ? vControl : sap.ui.getCore().byId(vControl);
-				oAppComponent = Utils.getAppComponentForControl(vControl);
+				vControl = vControl instanceof ManagedObject ? vControl : sap.ui.getCore().byId(vControl);
+				oAppComponent = Utils.getSelectorComponentForControl(vControl);
 			}
 			return BaseTreeModifier.checkControlId(vControl, oAppComponent, bSuppressLogging);
 		},
@@ -879,6 +890,7 @@ sap.ui.define([
 
 				if (oParsedHash.params) {
 					hasher.changed.active = false; //disable changed signal
+					hasher.raw = true; // disable encoding
 
 					var mTechnicalParameters = Utils.getTechnicalParametersForComponent(oComponent);
 					// if mTechnicalParameters are not available we write a warning and continue updating the hash
@@ -893,6 +905,7 @@ sap.ui.define([
 						mTechnicalParameters && (mTechnicalParameters[sParameterName] = aValues); // Technical parameters need to be in sync with the URL hash
 					}
 					hasher.replaceHash(Utils.getUshellContainer().getService("URLParsing").constructShellHash(oParsedHash)); // Set hash without dispatching changed signal nor writing history
+					hasher.raw = false; // Re-enable encoding
 					hasher.changed.active = true; // Re-enable signal
 				}
 		},
@@ -905,7 +918,7 @@ sap.ui.define([
 		 */
 		isDebugEnabled: function () {
 			// true if SAPUI5 is in complete debug mode
-			if (sap.ui.getCore().getConfiguration().getDebug()) {
+			if (sap.ui.getCore().getConfiguration().getDebug() || window["sap-ui-debug"] == true) {
 				return true;
 			}
 
@@ -991,11 +1004,11 @@ sap.ui.define([
 		},
 
 		isApplication: function (oManifest) {
-			return (oManifest && oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").type === "application");
+			return (oManifest && oManifest.getEntry && oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").type === "application");
 		},
 
 		isEmbeddedComponent: function (oManifest) {
-			return (oManifest && oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").type === "component");
+			return (oManifest && oManifest.getEntry && oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").type === "component");
 		},
 
 		/**
@@ -1131,11 +1144,23 @@ sap.ui.define([
 		 * @returns {integer} Returns the index of the object in the array, -1 if it is not in the array
 		 * @public
 		 */
-		indexOfInArrayOfObjects: function(aArray, oObject) {
+		indexOfObject: function(aArray, oObject) {
 			var iObjectIndex = -1;
 			aArray.some(function(oArrayObject, iIndex) {
-				var bSameNumberOfAttributes = Object.keys(oArrayObject).length === Object.keys(oObject).length;
-				var bContains = bSameNumberOfAttributes && !Object.keys(oArrayObject).some(function(sKey) {
+				var aKeysArray, aKeysObject;
+				if (!oArrayObject) {
+					aKeysArray = [];
+				} else {
+					aKeysArray = Object.keys(oArrayObject);
+				}
+
+				if (!oObject) {
+					aKeysObject = [];
+				} else {
+					aKeysObject = Object.keys(oObject);
+				}
+				var bSameNumberOfAttributes = aKeysArray.length === aKeysObject.length;
+				var bContains = bSameNumberOfAttributes && !aKeysArray.some(function(sKey) {
 					return oArrayObject[sKey] !== oObject[sKey];
 				});
 
@@ -1201,8 +1226,8 @@ sap.ui.define([
 
 		/**
 		 * Function that behaves like Promise (es6) but is synchronous. Implements 'then' and 'catch' functions.
-		 * After instantiating can be used simillar to standard Promises but synchronously.
-		 * As soon as one of the callback functions returns a Promise the asynchronus Promise replaces the FakePromise in further processing.
+		 * After instantiating can be used similar to standard Promises but synchronously.
+		 * As soon as one of the callback functions returns a Promise the asynchronous Promise replaces the FakePromise in further processing.
 		 *
 		 * @param {any} vInitialValue - value on resolve FakePromise
 		 * @param {any} vError - value on reject FakePromise
@@ -1213,8 +1238,7 @@ sap.ui.define([
 			Utils.FakePromise.fakePromiseIdentifier = "sap.ui.fl.Utils.FakePromise";
 			this.vValue = vInitialValue;
 			this.vError = vError;
-			this.sInitialPromiseIdentifier = sInitialPromiseIdentifier;
-			this.bContinueWithFakePromise = arguments.length < 3 || (this.sInitialPromiseIdentifier === Utils.FakePromise.fakePromiseIdentifier);
+			this.bContinueWithFakePromise = arguments.length < 3 || (sInitialPromiseIdentifier === Utils.FakePromise.fakePromiseIdentifier);
 			Utils.FakePromise.prototype.then = function(fn) {
 				if (!this.bContinueWithFakePromise) {
 					return Promise.resolve(fn(this.vValue));
@@ -1259,7 +1283,6 @@ sap.ui.define([
 				return this.vValue;
 			}
 		},
-
 		/**
 		 * Function that gets a specific change from a map of changes.
 		 *
@@ -1278,6 +1301,29 @@ sap.ui.define([
 				});
 			});
 			return oResult;
+		},
+
+		/**
+		 * Returns an object containing local id along with the applicable idIsLocal property,
+		 * for the passed app component and control id
+		 *
+		 * @param {string} sControlId - Control id
+		 * @param {sap.ui.core.UIComponent} oAppComponent - Application component responsible for the control id
+		 * @returns {object} Returns object containing local id and isIsLocal property
+		 */
+		getLocalIdForSelectors: function (sControlId, oAppComponent) {
+			if (Utils.hasLocalIdSuffix(sControlId, oAppComponent)) {
+				var sLocalId = oAppComponent.getLocalId(sControlId);
+				return {
+					id: sLocalId,
+					idIsLocal: true
+				};
+			} else {
+				return {
+					id: sControlId,
+					idIsLocal: false
+				};
+			}
 		}
 
 	};

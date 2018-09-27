@@ -25,6 +25,9 @@ sap.ui.define([
 	) {
 	"use strict";
 
+	// shortcuts
+	var SelectionMode = library.SelectionMode;
+
 	/**
 	 * Constructor for a new TreeTable.
 	 *
@@ -39,7 +42,10 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.table.TreeTable
+	 * @see {@link topic:08197fa68e4f479cbe30f639cc1cd22c sap.ui.table}
+	 * @see {@link topic:a05fe0659b9c49729168a48697ce0000 sap.ui.table.TreeTable}
 	 * @see {@link topic:148892ff9aea4a18b912829791e38f3e Tables: Which One Should I Choose?}
+	 * @see {@link fiori:/tree-table/ Tree Table}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TreeTable = Table.extend("sap.ui.table.TreeTable", /** @lends sap.ui.table.TreeTable.prototype */ { metadata : {
@@ -191,7 +197,7 @@ sap.ui.define([
 	 *
 	 * Default value is <code>0</code>
 	 *
-	 * @param {int} iFixedRowCount  new value for property <code>fixedRowCount</code>
+	 * @param {int} iRowCount New value for property <code>fixedRowCount</code>
 	 * @returns {sap.ui.table.TreeTable} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -362,6 +368,10 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TreeTable.prototype.setSelectedIndex = function (iRowIndex) {
+		if (this.getSelectionMode() === SelectionMode.None) {
+			return this;
+		}
+
 		if (iRowIndex === -1) {
 			//If Index eq -1 no item is selected, therefore clear selection is called
 			//SelectionModel doesn't know that -1 means no selection
@@ -420,7 +430,7 @@ sap.ui.define([
 	TreeTable.prototype.setSelectionInterval = function (iFromIndex, iToIndex) {
 		var sSelectionMode = this.getSelectionMode();
 
-		if (sSelectionMode === library.SelectionMode.None) {
+		if (sSelectionMode === SelectionMode.None) {
 			return this;
 		}
 
@@ -428,7 +438,7 @@ sap.ui.define([
 		var oBinding = this.getBinding("rows");
 
 		if (oBinding && oBinding.findNode && oBinding.setSelectionInterval) {
-			if (sSelectionMode === library.SelectionMode.Single) {
+			if (sSelectionMode === SelectionMode.Single) {
 				oBinding.setSelectionInterval(iFromIndex, iFromIndex);
 			} else {
 				oBinding.setSelectionInterval(iFromIndex, iToIndex);
@@ -458,14 +468,14 @@ sap.ui.define([
 	TreeTable.prototype.addSelectionInterval = function (iFromIndex, iToIndex) {
 		var sSelectionMode = this.getSelectionMode();
 
-		if (sSelectionMode === library.SelectionMode.None) {
+		if (sSelectionMode === SelectionMode.None) {
 			return this;
 		}
 
 		var oBinding = this.getBinding("rows");
 		//TBA check
 		if (oBinding && oBinding.findNode && oBinding.addSelectionInterval) {
-			if (sSelectionMode === library.SelectionMode.Single) {
+			if (sSelectionMode === SelectionMode.Single) {
 				oBinding.setSelectionInterval(iFromIndex, iFromIndex);
 			} else {
 				oBinding.addSelectionInterval(iFromIndex, iToIndex);
@@ -656,7 +666,7 @@ sap.ui.define([
 	 *
 	 * @deprecated Since version 1.28.
 	 * To get a group-like visualization the <code>useGroupMode</code> property can be used.
-	 * @returns {sap.ui.table.TreeTable} Reference to this in order to allow method chaining
+	 * @returns {sap.ui.table.TreeTable} Reference to <code>this</code> in order to allow method chaining
 	 * @see sap.ui.table.TreeTable#setUseGroupMode
 	 * @public
 	 */
@@ -678,7 +688,7 @@ sap.ui.define([
 	 * The <code>groupBy</code> association is not supported by the <code>TreeTable</code> control.
 	 *
 	 * @deprecated Since version 1.28.
-	 * @returns {sap.ui.table.TreeTable} Reference to this in order to allow method chaining
+	 * @returns {sap.ui.table.TreeTable} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	TreeTable.prototype.setGroupBy = function() {
@@ -697,7 +707,7 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bFlat If set to <code>true</code>, the flat mode is enabled
 	 *
-	 * @returns {sap.ui.table.TreeTable} Reference to this in order to allow method chaining
+	 * @returns {sap.ui.table.TreeTable} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	TreeTable.prototype.setUseFlatMode = function(bFlat) {

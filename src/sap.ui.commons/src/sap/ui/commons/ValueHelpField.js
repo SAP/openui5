@@ -118,6 +118,7 @@ sap.ui.define([
 				oIcon.addClass('sapUiTfValueHelpDsblIcon');
 			}
 		}
+		return this;
 	};
 
 	ValueHelpField.prototype.setEditable = function(bEditable) {
@@ -134,6 +135,7 @@ sap.ui.define([
 				oIcon.addClass('sapUiTfValueHelpDsblIcon');
 			}
 		}
+		return this;
 	};
 
 	/**

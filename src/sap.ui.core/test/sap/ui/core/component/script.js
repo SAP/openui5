@@ -1,5 +1,7 @@
+/* exported main */
 function main() {
 	"use strict";
+
 	sap.ui.loader.config({paths: {
 		"test1/Component": "./Component1",
 		"test1":  "./",

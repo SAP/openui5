@@ -36,7 +36,7 @@ sap.ui.define([
 						},
 						actions: new Press(),
 						errorMessage: "There are no rows with " + sColumnName + " value " + sItemName
-	 				});
+					});
 				}
 			},
 			assertions: {

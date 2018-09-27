@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8">
+
+		<title>CSSGrid Playground</title>
+
+        <style>
+            .demoBox {
+                border: 1px dashed blue;
+            }
+        </style>
+
+		<link rel="stylesheet" type="text/css" href="styles/main.css">
+		<script
+			id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_belize"
+			data-sap-ui-libs="sap.ui.layout, sap.m"
+			data-sap-ui-preload="async"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-xx-bindingSyntax="complex"
+			data-sap-ui-resourceroots='{
+				"sap.ui.layout.cssgrid.gridplayground": "./"
+			}'>
+		</script>
+		<script>
+			sap.ui.getCore().attachInit(function () {
+				sap.ui.require([
+					"sap/ui/core/ComponentContainer"
+				], function (ComponentContainer) {
+					new ComponentContainer({
+						name: "sap.ui.layout.cssgrid.gridplayground",
+						settings: {
+							id: "gridplayground"
+						}
+					}).placeAt("content");
+				});
+			});
+		</script>
+	</head>
+
+	<body class="sapUiBody sapUiSizeCompact" id="content">
+	</body>
+</html>

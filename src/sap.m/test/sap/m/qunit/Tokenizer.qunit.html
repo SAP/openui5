@@ -928,8 +928,8 @@
 		});
 	});
 
-	QUnit.test("Last token's visibility", function(assert) {
-		var aTokens;
+	QUnit.test("Small containers usage (N Items):", function(assert) {
+		var aTokens, oIndicator;
 		this.tokenizer = new sap.m.Tokenizer({
 			maxWidth: "100px",
 			tokens: [
@@ -954,6 +954,32 @@
 
 		assert.ok(oIndicator, true, "An indicator label is added.");
 		assert.strictEqual(oIndicator.innerHTML, oRb.getText("TOKENIZER_SHOW_ALL_ITEMS", 2), "N-items label's text is correct.");
+	});
+
+	QUnit.test("Small containers usage (1 Item):", function(assert) {
+		var aTokens, oIndicator;
+		this.tokenizer = new sap.m.Tokenizer({
+			maxWidth: "100px",
+			tokens: [
+				new sap.m.Token({text: "XXXXXXXXXXXX"})
+			]
+		});
+
+		this.tokenizer.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		this.tokenizer._useCollapsedMode(true);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		aTokens = this.tokenizer.getTokens();
+		oIndicator = this.tokenizer.$().find(".sapMTokenizerIndicator")[0];
+
+		assert.ok(aTokens[0].$().hasClass("sapMHiddenToken"), "The first token should be hidden.");
+
+		assert.ok(oIndicator, true, "An indicator label is added.");
+		assert.strictEqual(oIndicator.innerHTML, oRb.getText("TOKENIZER_SHOW_ALL_ITEM", 1), "N-items label's text is correct.");
 	});
 
 	QUnit.test("_handleNMoreIndicator", function(assert) {

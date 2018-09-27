@@ -128,20 +128,20 @@ sap.ui.define([
 			model: true
 		},
 		list: [
-		       {
-		    	   value: "testvalue1",
-		    	   intValue: 1,
-		    	   groupValue: "group1"
-		       }, {
-		    	   value: "testvalue2",
-		    	   intValue: 2,
-		    	   groupValue: "group2"
-		       }, {
-		    	   value: "testvalue3",
-		    	   intValue: 3,
-		    	   groupValue: null
-		       }
-		       ]
+			{
+				value: "testvalue1",
+				intValue: 1,
+				groupValue: "group1"
+			}, {
+				value: "testvalue2",
+				intValue: 2,
+				groupValue: "group2"
+			}, {
+				value: "testvalue3",
+				intValue: 3,
+				groupValue: null
+			}
+		]
 	});
 
 
@@ -177,19 +177,19 @@ sap.ui.define([
 
 		// access non existing
 		var aNonExistingPropertyPaths = [
-		                                 "/abc",
-		                                 "/abc/def",
-		                                 "/@id/def",
-		                                 "/value/def",
-		                                 "/stringValue/def",
-		                                 "/floatValue/def",
-		                                 "/intValue/def",
-		                                 "/stringArray/def",
-		                                 "/floatArray/def",
-		                                 "/intArray/def",
-		                                 "/booleanArray/def",
-		                                 "/objectValue/def"
-		                                 ];
+			"/abc",
+			"/abc/def",
+			"/@id/def",
+			"/value/def",
+			"/stringValue/def",
+			"/floatValue/def",
+			"/intValue/def",
+			"/stringArray/def",
+			"/floatArray/def",
+			"/intArray/def",
+			"/booleanArray/def",
+			"/objectValue/def"
+		];
 		for (var i = 0; i < aNonExistingPropertyPaths.length; i++) {
 			assert.equal(oModel.getProperty(aNonExistingPropertyPaths[i]), null, "Property " + aNonExistingPropertyPaths[i] + " does not exist");
 		}
@@ -474,7 +474,6 @@ sap.ui.define([
 		iCount = 1,
 		iCalls = 0,
 		iLength,
-		iIndex,
 		fHandler = function() {
 			iCalls++;
 		},
@@ -504,7 +503,6 @@ sap.ui.define([
 		assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[1]) === that.subObj2, true, "Contexts are correctly applied");
 
 		iCount = 4;
-		iIndex = 1;
 		iLength = 1;
 
 		var aSubObjects = this.oManagedObjectModel.getProperty("/subObjects/");
@@ -742,7 +740,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ManagedObjectModel - Marker interface sap.ui.core.IDScope handling", function(assert) {
-		var sView = jQuery('#view').html(), sContent = sView;
+		var sView = jQuery('#view').html();
 
 		var oView = sap.ui.xmlview({
 			viewContent: sView
@@ -790,7 +788,31 @@ sap.ui.define([
 		oPanel.addContent(oButton2);
 		assert.equal(iListChangeCount, 2, "content list binding change was fired");
 
+	});
 
+	QUnit.test("Check Update with binding test function", function(assert) {
+		var aTrueBindings = [];
+		var oModel = this.oManagedObjectModel;
+		var oBinding1 = oModel.bindProperty("/value");
+		var oBinding2 = oModel.bindProperty("/stringValue");
+		var oBinding3 = oModel.bindProperty("/floatValue");
+		oModel.addBinding(oBinding1);
+		oModel.addBinding(oBinding2);
+		oModel.addBinding(oBinding3);
+
+		assert.equal(oModel.aBindings.length,3, "There are three bindings");
+
+		var fnFilter = function(oBinding) {
+			if (oBinding == oBinding1) {
+				aTrueBindings.push(oBinding);
+				return true;
+			}
+			return false;
+		};
+
+		oModel.checkUpdate(true,false,fnFilter);
+		assert.equal(aTrueBindings.length, 1,"The test is called an delivers true for one binding");
+		assert.deepEqual(aTrueBindings[0],oBinding1,"And this is exactly the first binding");
 	});
 });
 

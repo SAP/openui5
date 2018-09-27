@@ -14,7 +14,7 @@ sap.ui.define(['sap/ui/core/XMLComposite'], function(XMLComposite) {
 				}
 			}
 		},
-		
+
 		handleSearch: function() { // button was pressed, retrieve Input value + fire event
 			var sSearchString = this.byId("innerInput").getValue();
 			this.fireEvent("search", {value: sSearchString});

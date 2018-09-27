@@ -7,7 +7,8 @@
  */
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	'sap/ui/core/library', // library dependency
-	'sap/ui/layout/library'], // library dependency
+	'sap/ui/layout/library', // library dependency
+	'sap/ui/unified/library'], // library dependency
 	function(jQuery, DataType) {
 
 	"use strict";

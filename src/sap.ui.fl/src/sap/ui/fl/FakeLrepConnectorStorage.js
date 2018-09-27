@@ -181,7 +181,9 @@ sap.ui.define([
 				});
 
 				mResult = this._createChangesMap(mResult, aVariants);
-				mResult = this._sortChanges(mResult, aFilteredChanges, aControlVariantChanges, aControlVariantManagementChanges);
+				mResult = this._addChangesToMap(mResult, aFilteredChanges, aControlVariantChanges, aControlVariantManagementChanges);
+				//now all changes are combined and in the right section => sort them all
+				mResult = this._sortChanges(mResult);
 				mResult = this._assignVariantReferenceChanges(mResult);
 
 				mResult.changes.contexts = [];
@@ -244,58 +246,85 @@ sap.ui.define([
 			};
 		};
 
-		FakeLrepConnectorStorage.prototype._assignVariantReferenceChanges = function(mResult) {
+		function sortByLayerThenCreation(aArray){
+			aArray.sort(byLayerThenCreation);
+		}
+
+		function byLayerThenCreation(oChangeA, oChangeB) {
+			var iLayerA = Utils.getLayerIndex(oChangeA.layer);
+			var iLayerB = Utils.getLayerIndex(oChangeB.layer);
+			if (iLayerA !== iLayerB){
+				return iLayerA - iLayerB;
+			}
+			return oChangeA.creation - oChangeB.creation;
+		}
+
+		FakeLrepConnectorStorage.prototype._sortChanges = function(mResult) {
+			if (mResult.changes.changes){
+				sortByLayerThenCreation(mResult.changes.changes);
+			}
+			forEachVariant(mResult, function (oVariant) {
+				sortByLayerThenCreation(oVariant.controlChanges);
+			});
+			return mResult;
+		};
+
+		function forEachVariant(mResult, fnCallback){
 			Object.keys(mResult.changes.variantSection).forEach( function (sVariantManagementReference) {
 				var aVariants = mResult.changes.variantSection[sVariantManagementReference].variants;
-				aVariants.forEach(function (oVariant) {
-					var sVariantReference = oVariant.content.variantReference;
-					var aExistingChanges = oVariant.controlChanges;
-					if (sVariantReference) {
-						//Referenced changes should be applied first
-						aExistingChanges = this._getReferencedChanges(mResult, oVariant).concat(aExistingChanges);
-					}
-					oVariant.controlChanges = aExistingChanges;
-				}.bind(this));
+				aVariants.forEach(fnCallback);
+			});
+		}
+
+		FakeLrepConnectorStorage.prototype._assignVariantReferenceChanges = function(mResult) {
+			forEachVariant(mResult, function (oVariant) {
+				var sVariantReference = oVariant.content.variantReference;
+				var aExistingChanges = oVariant.controlChanges;
+				if (sVariantReference) {
+					//Referenced changes should be applied first
+					aExistingChanges = this._getReferencedChanges(mResult, oVariant).concat(aExistingChanges);
+				}
+				oVariant.controlChanges = aExistingChanges;
 			}.bind(this));
 			return mResult;
 		};
 
+		function withVariant(mResult, sVariantManagementReference, sVariantReference, fnCallback) {
+			mResult.changes.variantSection[sVariantManagementReference].variants.some(function(oVariant) {
+				if (oVariant.content.fileName === sVariantReference) {
+					fnCallback(oVariant);
+					return true;
+				}
+			});
+		}
+
 		FakeLrepConnectorStorage.prototype._getReferencedChanges = function(mResult, oCurrentVariant) {
 			var aReferencedChanges = [];
-			mResult.changes.variantSection[oCurrentVariant.content.variantManagementReference].variants.some( function (oVariant) {
-				if (oCurrentVariant.content.variantReference === oVariant.content.fileName) {
-					aReferencedChanges = oVariant.controlChanges.filter( function (oReferencedChange) {
-						return Utils.isLayerAboveCurrentLayer(oReferencedChange.layer) === -1;
-					});
-					if (oVariant.content.variantReference) {
-						aReferencedChanges = aReferencedChanges.concat(this._getReferencedChanges(mResult, oVariant));
-					}
-					return true;
+			withVariant(mResult, oCurrentVariant.content.variantManagementReference, oCurrentVariant.content.variantReference, function (oVariant) {
+				aReferencedChanges = oVariant.controlChanges.filter( function (oReferencedChange) {
+					return Utils.isLayerAboveCurrentLayer(oReferencedChange.layer) === -1;
+				});
+				if (oVariant.content.variantReference) {
+					aReferencedChanges = aReferencedChanges.concat(this._getReferencedChanges(mResult, oVariant));
 				}
 			}.bind(this));
 			return aReferencedChanges;
 		};
 
-		FakeLrepConnectorStorage.prototype._sortChanges = function(mResult, aChanges, aControlVariantChanges, aControlVariantManagementChanges) {
+		FakeLrepConnectorStorage.prototype._addChangesToMap = function(mResult, aChanges, aControlVariantChanges, aControlVariantManagementChanges) {
 
 			var fnAddChangeToVariant = function(mResult, sVariantManagementReference, oChange) {
-				mResult.changes.variantSection[sVariantManagementReference].variants.some(function(oVariant) {
-					if (oVariant.content.fileName === oChange.variantReference) {
-						oVariant.controlChanges.push(oChange);
-						return true;
-					}
+				withVariant(mResult, sVariantManagementReference, oChange.variantReference, function (oVariant) {
+					oVariant.controlChanges.push(oChange);
 				});
 			};
 
 			var fnAddVariantChangeToVariant = function(mResult, sVariantManagementReference, oVariantChange) {
-				mResult.changes.variantSection[sVariantManagementReference].variants.some(function(oVariant) {
-					if (oVariant.content.fileName === oVariantChange.selector.id) {
-						if (!oVariant.variantChanges[oVariantChange.changeType]) {
-							oVariant.variantChanges[oVariantChange.changeType] = [];
-						}
-						oVariant.variantChanges[oVariantChange.changeType].push(oVariantChange);
-						return true;
+				withVariant(mResult, sVariantManagementReference, oVariantChange.selector.id, function (oVariant) {
+					if (!oVariant.variantChanges[oVariantChange.changeType]) {
+						oVariant.variantChanges[oVariantChange.changeType] = [];
 					}
+					oVariant.variantChanges[oVariantChange.changeType].push(oVariantChange);
 				});
 			};
 
@@ -345,8 +374,6 @@ sap.ui.define([
 				}
 			}.bind(this));
 
-			mResult.changes.changes = this._sortNonVariantChangesByLayer(mResult.changes.changes);
-
 			return mResult;
 		};
 
@@ -360,23 +387,6 @@ sap.ui.define([
 						title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl").getText("STANDARD_VARIANT_TITLE")
 					}
 				};
-		};
-
-		FakeLrepConnectorStorage.prototype._sortNonVariantChangesByLayer = function(aChanges) {
-			if (!aChanges || aChanges.length === 0) {
-				return aChanges;
-			}
-			// temporary array holds changes grouped by layer
-			var aGroupedByLayer = aChanges.reduce(function(aGroupedChanges, oChange) {
-				var oChangeIndex = Utils.getLayerIndex(oChange.layer) || 0;
-				aGroupedChanges[oChangeIndex] = aGroupedChanges[oChangeIndex] || [];
-				aGroupedChanges[oChangeIndex].push(oChange);
-				return aGroupedChanges;
-			}, []);
-			// concat grouped changes
-			return aGroupedByLayer.reduce(function(aChanges, oChange) {
-				return aChanges.concat(oChange);
-			});
 		};
 
 		/**

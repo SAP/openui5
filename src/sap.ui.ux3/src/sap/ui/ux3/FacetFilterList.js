@@ -149,11 +149,13 @@ sap.ui.define([
 	FacetFilterList.prototype.setMultiSelect = function(bMultiSelect) {
 		this._oListBox.setAllowMultiSelect(bMultiSelect);
 		this.setProperty("multiSelect", bMultiSelect, true);
+		return this;
 	};
 
 	FacetFilterList.prototype.setDisplaySecondaryValues = function(bDisplaySecondaryValues) {
 		this._oListBox.setDisplaySecondaryValues(bDisplaySecondaryValues);
 		this.setProperty("displaySecondaryValues", bDisplaySecondaryValues, true);
+		return this;
 	};
 
 	FacetFilterList.prototype.addItem = function(oItem) {
@@ -210,11 +212,13 @@ sap.ui.define([
 	FacetFilterList.prototype.setSelectedKeys = function(aSelectedKeys) {
 		this.setProperty("selectedKeys", aSelectedKeys);
 		this.invalidate();
+		return this;
 	};
 
 	FacetFilterList.prototype.setShowCounter = function(bShowCounter) {
 		this.setProperty("showCounter", bShowCounter);
 		this.updateText4All();
+		return this;
 	};
 
 	/**

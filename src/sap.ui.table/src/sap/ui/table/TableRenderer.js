@@ -3,8 +3,9 @@
  */
 
 //Provides default renderer for control sap.ui.table.Table
-sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/Device', './library', './TableUtils', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool'],
-	function(Control, Parameters, Device, library, TableUtils, Renderer, IconPool) {
+sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/Device', './library', './TableUtils', "./TableExtension",
+			   'sap/ui/core/Renderer', 'sap/ui/core/IconPool', "sap/base/Log"],
+	function(Control, Parameters, Device, library, TableUtils, TableExtension, Renderer, IconPool, Log) {
 	"use strict";
 
 
@@ -59,7 +60,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			rm.addClass(sSapMTableClass);
 		}
 
-		if (oTable._getScrollExtension().isVerticalScrollbarRequired()) {
+		var oScrollExtension = oTable._getScrollExtension();
+		if (oScrollExtension.isVerticalScrollbarRequired() && !oScrollExtension.isVerticalScrollbarExternal()) {
 			rm.addClass("sapUiTableVScr"); // show vertical scrollbar
 		}
 		if (oTable.getEditable()) {
@@ -225,7 +227,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		this.renderTableCCnt(rm, oTable);
 		rm.write("</div>");
 		this.renderTabElement(rm, "sapUiTableCtrlAfter");
-		this.renderVSb(rm, oTable);
+
+		if (!oTable._getScrollExtension().isVerticalScrollbarExternal()) {
+			this.renderVSbBackground(rm, oTable);
+			this.renderVSb(rm, oTable);
+		}
+		this.renderHSbBackground(rm, oTable);
 		this.renderHSb(rm, oTable);
 	};
 
@@ -1099,20 +1106,26 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.renderControl(oCell);
 	};
 
-	TableRenderer.renderVSb = function(rm, oTable) {
+	TableRenderer.renderVSb = function(rm, oTable, mConfig) {
+		mConfig = Object.assign({
+			cssClass: "sapUiTableVSb",
+			tabIndex: true,
+			hidden: true
+		}, mConfig);
+		mConfig.id = oTable.getId() + "-vsb";
+
 		var oScrollExtension = oTable._getScrollExtension();
 
 		rm.write("<div");
-		rm.addClass("sapUiTableVSbBg");
-		rm.writeAttribute("id", oTable.getId() + "-vsb-bg");
+		rm.addClass(mConfig.cssClass);
+		if (mConfig.hidden) {
+			rm.addClass("sapUiTableHidden");
+		}
 		rm.writeClasses();
-		rm.write("></div>");
-
-		rm.write("<div");
-		rm.addClass("sapUiTableVSb");
-		rm.writeClasses();
-		rm.writeAttribute("id", oTable.getId() + "-vsb");
-		rm.writeAttribute("tabindex", "-1"); // Avoid focusing in Firefox
+		rm.writeAttribute("id", mConfig.id);
+		if (mConfig.tabIndex) {
+			rm.writeAttribute("tabindex", "-1"); // Avoid focusing of the scrollbar in Firefox with tab.
+		}
 		rm.addStyle("max-height", oScrollExtension.getVerticalScrollbarHeight() + "px");
 
 		if (oTable.getFixedRowCount() > 0) {
@@ -1124,7 +1137,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.write(">");
 
 		rm.write("<div");
-		rm.writeAttribute("id", oTable.getId() + "-vsb-content");
+		rm.writeAttribute("id", mConfig.id + "-content");
 		rm.addClass("sapUiTableVSbContent");
 		rm.writeClasses();
 		rm.addStyle("height", oScrollExtension.getVerticalScrollHeight() + "px");
@@ -1134,26 +1147,79 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.write("</div>");
 	};
 
-	TableRenderer.renderHSb = function(rm, oTable) {
+	TableRenderer.renderVSbExternal = function(rm, oTable) {
+		if (TableExtension.isEnrichedWith(oTable, "sap.ui.table.TableSyncExtension")) {
+			this.renderVSb(rm, oTable, {
+				cssClass: "sapUiTableVSbExternal",
+				tabIndex: false
+			});
+		} else {
+			Log.error("This method can only be used with synchronization enabled.", oTable, "TableRenderer.renderVSbExternal");
+		}
+	};
+
+	TableRenderer.renderVSbBackground = function(rm, oTable) {
+		rm.write("<div");
+		rm.addClass("sapUiTableVSbBg");
+		rm.writeAttribute("id", oTable.getId() + "-vsb-bg");
+		rm.writeClasses();
+		rm.write("></div>");
+	};
+
+	TableRenderer.renderHSb = function(rm, oTable, mConfig) {
+		mConfig = Object.assign({
+			id: oTable.getId() + "-hsb",
+			cssClass: "sapUiTableHSb",
+			tabIndex: true,
+			hidden: true,
+			scrollWidth: 0
+		}, mConfig);
+
+		rm.write("<div");
+		rm.addClass(mConfig.cssClass);
+		if (mConfig.hidden) {
+			rm.addClass("sapUiTableHidden");
+		}
+		rm.writeClasses();
+		rm.writeAttribute("id", mConfig.id);
+		if (mConfig.tabIndex) {
+			rm.writeAttribute("tabindex", "-1"); // Avoid focusing of the scrollbar in Firefox with tab.
+		}
+		rm.write(">");
+		rm.write("<div");
+		rm.writeAttribute("id", mConfig.id + "-content");
+		rm.addClass("sapUiTableHSbContent");
+		rm.writeClasses();
+		if (mConfig.scrollWidth > 0) {
+			rm.addStyle("width", mConfig.scrollWidth + "px");
+		}
+		rm.writeStyles();
+		rm.write(">");
+		rm.write("</div>");
+		rm.write("</div>");
+	};
+
+	TableRenderer.renderHSbExternal = function(rm, oTable, sId, iScrollWidth) {
+		if (TableExtension.isEnrichedWith(oTable, "sap.ui.table.TableSyncExtension")) {
+			this.renderHSb(rm, oTable, {
+				id: sId,
+				cssClass: "sapUiTableHSbExternal",
+				tabIndex: false,
+				hidden: false,
+				scrollWidth: iScrollWidth
+			});
+		} else {
+			Log.error("This method can only be used with synchronization enabled.", oTable, "TableRenderer.renderVSbExternal");
+		}
+	};
+
+
+	TableRenderer.renderHSbBackground = function(rm, oTable) {
 		rm.write("<div");
 		rm.addClass("sapUiTableHSbBg");
 		rm.writeAttribute("id", oTable.getId() + "-hsb-bg");
 		rm.writeClasses();
 		rm.write("></div>");
-
-		rm.write("<div");
-		rm.addClass("sapUiTableHSb");
-		rm.writeClasses();
-		rm.writeAttribute("id", oTable.getId() + "-hsb");
-		rm.writeAttribute("tabindex", "-1"); // Avoid focusing in Firefox
-		rm.write(">");
-		rm.write("<div");
-		rm.writeAttribute("id", oTable.getId() + "-hsb-content");
-		rm.addClass("sapUiTableHSbContent");
-		rm.writeClasses();
-		rm.write(">");
-		rm.write("</div>");
-		rm.write("</div>");
 	};
 
 

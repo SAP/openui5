@@ -5,7 +5,7 @@
 /**
  * Initialization Code and shared classes of library sap.ui.codeeditor.
  */
-sap.ui.define(['sap/ui/core/Core'],
+sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/library'],
 	function(Core) {
 	"use strict";
 

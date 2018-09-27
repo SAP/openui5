@@ -312,6 +312,19 @@ sap.ui.define([
 		assert.equal(oTable.getSelectionMode(), "None", "Selection mode is None!");
 	});
 
+	QUnit.test("SelectionMode = None", function(assert) {
+		oTable.setSelectionMode(SelectionMode.None);
+
+		oTable.setSelectedIndex(1);
+		assert.deepEqual(oTable.getSelectedIndices(), [], "setSelectedIndex does not select in SelectionMode=\"None\"");
+
+		oTable.setSelectionInterval(1, 1);
+		assert.deepEqual(oTable.getSelectedIndices(), [], "setSelectionInterval does not select in SelectionMode=\"None\"");
+
+		oTable.addSelectionInterval(1, 1);
+		assert.deepEqual(oTable.getSelectedIndices(), [], "addSelectionInterval does not select in SelectionMode=\"None\"");
+	});
+
 	QUnit.test("Multi Selection", function(assert) {
 		var iFirstRow = oTable.getFirstVisibleRow();
 
@@ -1190,22 +1203,19 @@ sap.ui.define([
 
 	QUnit.test("Scrollbars can be accessed by inheriting controls", function(assert) {
 		var sScrollBarSuffix = "ScrollBar";
-		var oHsb = oTable.getDomRef(SharedDomRef["Horizontal" + sScrollBarSuffix]);
-		var oVsb = oTable.getDomRef(SharedDomRef["Vertical" + sScrollBarSuffix]);
-
-		assert.ok(oHsb, "The horizontal scrollbar can be accessed with the help of SharedDomRef");
-		assert.ok(oVsb, "The vertical scrollbar can be accessed with the help of SharedDomRef");
-
-		sap.ui.getCore().applyChanges();
-
-		oHsb.scrollLeft = 5;
-
-		assert.equal(oTable.getFirstVisibleRow(), 1, "getFirstVisibleRow() returns 1");
-
+		var oHSb = oTable.getDomRef(SharedDomRef["Horizontal" + sScrollBarSuffix]);
+		var oVSb = oTable.getDomRef(SharedDomRef["Vertical" + sScrollBarSuffix]);
 		var done = assert.async();
+
+		assert.ok(oHSb, "The horizontal scrollbar can be accessed with the help of SharedDomRef");
+		assert.ok(oVSb, "The vertical scrollbar can be accessed with the help of SharedDomRef");
+		assert.strictEqual(oTable.getFirstVisibleRow(), 1, "getFirstVisibleRow() returns 1");
+
+		oHSb.scrollLeft = 5;
+
 		window.setTimeout(function() {
-			assert.equal(oVsb.scrollTop, oTable._getDefaultRowHeight(), "ScrollTop can be set and read.");
-			assert.equal(oHsb.scrollLeft, 5, "ScrollLeft can be set and read.");
+			assert.equal(oVSb.scrollTop, oTable._getDefaultRowHeight(), "ScrollTop can be set and read.");
+			assert.equal(oHSb.scrollLeft, 5, "ScrollLeft can be set and read.");
 			done();
 		}, 100);
 	});
@@ -3667,5 +3677,53 @@ sap.ui.define([
 		assert.ok(typeof oTable._getKeyboardExtension === "function", "Getter for the KeyboardExtension exists");
 		assert.ok(typeof oTable._getAccRenderExtension === "function", "Getter for the AccRenderExtension exists");
 		assert.ok(typeof oTable._getAccExtension === "function", "Getter for the AccExtension exists");
+	});
+
+	QUnit.test("Add SyncExtension", function(assert) {
+		var done = assert.async();
+
+		oTable._enableSynchronization().then(function(oSyncInterface) {
+			var bSyncExtensionIsAdded = false;
+			oTable._aExtensions.forEach(function(oExtension) {
+				if (oExtension.getMetadata().getName() === "sap.ui.table.TableSyncExtension") {
+					bSyncExtensionIsAdded = true;
+				}
+			});
+
+			assert.ok(bSyncExtensionIsAdded, "The SyncExtension is added");
+			assert.ok(typeof oTable._getSyncExtension === "function", "Getter for the SyncExtension exists");
+			if (oTable._getSyncExtension) {
+				assert.equal(oSyncInterface, oTable._getSyncExtension().getInterface(), "The Promise resolved with the synchronization interface");
+			}
+		}).then(done);
+	});
+
+	QUnit.module("Renderer Methods", {
+		beforeEach: function() {
+			createTable();
+		},
+		afterEach: function() {
+			destroyTable();
+		}
+	});
+
+	QUnit.test("renderVSbExternal", function(assert) {
+		var Div = document.createElement("div");
+		var oRM = sap.ui.getCore().createRenderManager();
+
+		oTable.getRenderer().renderVSbExternal(oRM, oTable);
+		oRM.flush(Div);
+
+		assert.strictEqual(Div.childElementCount, 0, "Nothing should be rendered without synchronization enabled");
+	});
+
+	QUnit.test("renderHSbExternal", function(assert) {
+		var Div = document.createElement("div");
+		var oRM = sap.ui.getCore().createRenderManager();
+
+		oTable.getRenderer().renderHSbExternal(oRM, oTable, "id", 100);
+		oRM.flush(Div);
+
+		assert.strictEqual(Div.childElementCount, 0, "Nothing should be rendered without synchronization enabled");
 	});
 });

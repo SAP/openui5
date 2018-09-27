@@ -41,10 +41,10 @@ sap.ui.define([
 	QUnit.module("parseScalarType", {
 		beforeEach: function() {
 			this.oLogSpy = sinon.spy(Log, "error");
-
-			return this.pViewLoaded = XMLView.create({
+			this.pViewLoaded = XMLView.create({
 				definition: sView
 			});
+			return this.pViewLoaded;
 		},
 		afterEach: function() {
 			return this.pViewLoaded.then(function (oView) {

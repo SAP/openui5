@@ -39,7 +39,6 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller', 'sap/ui/core/
 			this.byId("Name").bindProperty("value",{path:"Name",type:oNameType});
 			sap.ui.getCore().getMessageManager().registerObject(this.getView(), true);
 			this.byId("Name").getBinding("value").attachDataStateChange(function(oEvent) {
-				var sName = oEvent.mParameters['name'];
 				var oDataState = oEvent.mParameters['dataState'];
 				that.applyDataStateChanged(oDataState); //visualize the data state changes on value
 			});
@@ -47,25 +46,26 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller', 'sap/ui/core/
 		applyPropertyHighlight : function(aDataStates) {
 			var that = this;
 			setTimeout(function(){
-				for (var i=0;i<aDataStates.length;i++) {
+				for (var i = 0; i < aDataStates.length; i++) {
 					var oPropText = that.byId("property_" + aDataStates[i] + "_new");
 					if (oPropText) {
 						oPropText.addStyleClass("highlight").removeStyleClass("diminished");
 					}
-				}
-			},1)
+				 }
+			},1);
 		},
 		removePropertyHighlight: function() {
 			var aDataStates = ["invalidValue", "value","originalValue","laundering","dirty"];
-			for (var i=0;i<aDataStates.length;i++) {
+			for (var i = 0; i < aDataStates.length; i++) {
 				this.byId("property_" + aDataStates[i] + "_new").removeStyleClass("highlight").addStyleClass("diminished");
 			}
 		},
 		applyDataStateChanged: function(oDataState) {
 			this.removePropertyHighlight();
 			var aChangedProperties = [],
-				that = this,
+				//that = this,
 				oChanges = oDataState.getChanges();
+			/*
 			function applyMessages(sProperty) {
 				if (sProperty === "messages" || sProperty == "controlMessages" || sProperty == "modelMessages") {
 					var oMessageChange = oChanges[sProperty];
@@ -87,7 +87,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller', 'sap/ui/core/
 					}
 					return true;
 				}
-			};
+			}*/
 			for (var n in oDataState.mProperties) {
 					if (n in oChanges) {
 						aChangedProperties.push(n);
@@ -111,7 +111,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller', 'sap/ui/core/
 		}
 	});
 
-return PageController;
+	return PageController;
 
 });
 

@@ -172,8 +172,10 @@ sap.ui.define([
 		oSuiteConfig.sortedTests =
 			Object.keys(oSuiteConfig.tests)
 			.sort(function(a, b) {
-				if ( oSuiteConfig.tests[a].group !== oSuiteConfig.tests[b].group ) {
-					return oSuiteConfig.tests[a].group < oSuiteConfig.tests[b].group ? -1 : 1;
+				var groupA = oSuiteConfig.tests[a].group || "";
+				var groupB = oSuiteConfig.tests[b].group || "";
+				if ( groupA !== groupB ) {
+					return groupA  < groupB ? -1 : 1;
 				}
 				a = a.toUpperCase();
 				b = b.toUpperCase();
@@ -222,12 +224,6 @@ sap.ui.define([
 				throw new TypeError("Invalid test suite name");
 			}
 
-			sap.ui.loader.config({
-				paths: {
-					'test-resources': sap.ui.require.toUrl("") + "/../test-resources/"
-				}
-			});
-
 			sap.ui.require([sTestSuite], function(oSuiteConfig) {
 				resolve( mergeWithDefaults(oSuiteConfig, sTestSuite) );
 			}, function(oErr) {
@@ -236,6 +232,12 @@ sap.ui.define([
 		});
 
 	}
+
+	sap.ui.loader.config({
+		paths: {
+			'test-resources': sap.ui.require.toUrl("") + "/../test-resources/"
+		}
+	});
 
 	return {
 		addStylesheet: addStylesheet,

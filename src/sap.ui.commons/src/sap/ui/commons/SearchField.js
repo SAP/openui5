@@ -371,7 +371,7 @@ sap.ui.define([
 
 	SearchField.prototype.setEnableListSuggest = function(bEnableListSuggest) {
 		if ((this.getEnableListSuggest() && bEnableListSuggest) || (!this.getEnableListSuggest() && !bEnableListSuggest)) {
-			return;
+			return this;
 		}
 		_initChildControls(this, bEnableListSuggest);
 		this.setProperty("enableListSuggest", bEnableListSuggest);

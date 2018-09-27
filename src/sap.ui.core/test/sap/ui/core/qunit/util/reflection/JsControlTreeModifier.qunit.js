@@ -1,4 +1,4 @@
-/* global QUnit, sinon */
+/* global QUnit */
 
 sap.ui.define([
 	'sap/m/Button',
@@ -6,7 +6,8 @@ sap.ui.define([
 	'sap/f/DynamicPageTitle',
 	'sap/ui/core/util/reflection/JsControlTreeModifier',
 	"sap/ui/core/StashedControlSupport",
-	"sap/ui/core/UIComponent"
+	"sap/ui/core/UIComponent",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	Button,
@@ -14,7 +15,8 @@ function(
 	DynamicPageTitle,
 	JsControlTreeModifier,
 	StashedControlSupport,
-	UIComponent
+	UIComponent,
+	sinon
 ) {
 	"use strict";
 
@@ -42,6 +44,39 @@ function(
 		// clean
 		this.oButton.destroy();
 		this.oButton = null;
+	});
+
+	QUnit.test("the createControl is called asynchronous", function (assert) {
+		var sButtonText = "ButtonText";
+		return JsControlTreeModifier.createControl('sap.m.Button', this.oComponent, undefined, "myButton", {'text' : sButtonText}, true)
+
+		.then(function(oButton) {
+			assert.equal(oButton.getText(), sButtonText);
+
+			// clean
+			oButton.destroy();
+			oButton = null;
+		});
+	});
+
+	QUnit.test("the createControl is called asynchronous expecting error after loding", function (assert) {
+		var sButtonText = "ButtonText";
+		sandbox.stub(sap.ui, "require").callThrough().withArgs(["sap/m/Button"]).callsArgWithAsync(2);
+		return JsControlTreeModifier.createControl('sap.m.Button', this.oComponent, undefined, "myButton", {'text' : sButtonText}, true)
+
+		.then(function(oButton) {
+			assert.notOk(true, "then the promise shouldn't be resolved");
+
+			// clean
+			oButton.destroy();
+			oButton = null;
+		})
+
+		.catch(function(oError) {
+			assert.equal(oError.message,
+				"Required control 'sap.m.Button' couldn't be created asynchronously",
+				"then the promise is rejected with the expected message");
+		});
 	});
 
 	QUnit.test("the modifier finds the index of the control in its parent aggregation correctly, case 1 - no overwritten methods in parent control", function (assert) {

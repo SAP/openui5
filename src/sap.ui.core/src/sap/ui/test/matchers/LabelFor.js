@@ -2,10 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-  './Matcher',
-  './I18NText',
-  'sap/ui/test/Opa5'
-], function (Matcher, I18NText, Opa5) {
+  'sap/ui/test/matchers/Matcher',
+  'sap/ui/test/matchers/I18NText'
+], function (Matcher, I18NText) {
   "use strict";
 
   var oI18nMatcher = new I18NText();
@@ -84,7 +83,8 @@ sap.ui.define([
      */
     isMatching : function (oControl) {
       var bIsMatching;
-      var oPlugin = Opa5.getPlugin();
+      // depend on globally defined Opa5, to avoid circular dependency: opa5 > plugin > matcherfactory > labelfor > opa5
+      var oPlugin = sap.ui.test.Opa5.getPlugin();
       var sModelName = this.getModelName();
       var sLabelText = this.getText();
       var aParameters = this.getParameters();

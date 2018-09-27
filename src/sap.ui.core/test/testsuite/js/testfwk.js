@@ -2,36 +2,42 @@
  * ${copyright}
  */
 
+/* eslint strict: [2, "global"] */
+/* exported readCookie, eraseCookie */
+/* global jQuery */
+
+"use strict";
+
 // Provides helper functions for the testsuite
 jQuery.sap.declare("testsuite.js.testfwk", false);
 
-function setCookie(name,value,days) {
+function setCookie(name, value, days) {
 	var expires = "";
 	if (days) {
 		var date = new Date();
-		date.setTime(date.getTime()+(days*24*60*60*1000));
-		expires = "; expires="+date.toGMTString();
+		date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+		expires = "; expires=" + date.toGMTString();
 	}
-	document.cookie = name+"="+value+expires+"; path=/";
+	document.cookie = name + "=" + value + expires + "; path=/";
 }
 
 function readCookie(name) {
 	var nameEQ = name + "=";
 	var ca = document.cookie.split(';');
-	for(var i=0;i < ca.length;i++) {
+	for (var i = 0; i < ca.length; i++) {
 		var c = ca[i];
-		while (c.charAt(0)==' ') {
-			c = c.substring(1,c.length);
+		while (c.charAt(0) == ' ') {
+			c = c.substring(1, c.length);
 		}
 		if (c.indexOf(nameEQ) == 0) {
-			return c.substring(nameEQ.length,c.length);
+			return c.substring(nameEQ.length, c.length);
 		}
 	}
 	return null;
 }
 
 function eraseCookie(name) {
-	setCookie(name,"",-1);
+	setCookie(name, "", -1);
 }
 
 if ( !window.sap ) {
@@ -45,32 +51,32 @@ if ( !sap.ui.testfwk ) {
 }
 
 sap.ui.testfwk.TestFWK = {
-	sLanguage : (navigator.languages && navigator.languages[0]) || navigator.language || navigator.userLanguage,
-	sTheme : "sap_belize",
+	sLanguage: (navigator.languages && navigator.languages[0]) || navigator.language || navigator.userLanguage,
+	sTheme: "sap_belize",
 	bContrastMode: false,
-	bRTL : false,
+	bRTL: false,
 	bAccessibilityMode: true,
 	bSimulateTouch: false
 
 };
 
 sap.ui.testfwk.TestFWK.LANGUAGES = {
-	"en_US" : "English (US)",
-	"de" : "Deutsch"
+	"en_US": "English (US)",
+	"de": "Deutsch"
 };
 
 sap.ui.testfwk.TestFWK.THEMES = {
-	"base" : "Base",
-	"sap_belize" : "Belize",
-	"sap_belize_plus" : "Belize Plus",
-	"sap_belize_hcb" : "Belize High Contrast Black",
-	"sap_belize_hcw" : "Belize High Contrast White",
-	"sap_bluecrystal" : "Blue Crystal",
-	"sap_goldreflection" : "Gold Reflection",
-	"sap_hcb" : "High Contrast Black",
-	"sap_platinum" : "Platinum",
-	"sap_ux" : "Ux Target Design",
-	"edding" : "Edding (EXPERIMENTAL!)"
+	"base": "Base",
+	"sap_belize": "Belize",
+	"sap_belize_plus": "Belize Plus",
+	"sap_belize_hcb": "Belize High Contrast Black",
+	"sap_belize_hcw": "Belize High Contrast White",
+	"sap_bluecrystal": "Blue Crystal",
+	"sap_goldreflection": "Gold Reflection",
+	"sap_hcb": "High Contrast Black",
+	"sap_platinum": "Platinum",
+	"sap_ux": "Ux Target Design",
+	"edding": "Edding (EXPERIMENTAL!)"
 };
 
 // the themes supported by each library
@@ -230,7 +236,7 @@ sap.ui.testfwk.TestFWK.getContrastMode = function() {
 
 sap.ui.testfwk.TestFWK.setContrastMode = function(bContrastMode) {
 	if ( this.bContrastMode !== bContrastMode ) {
-		var frameDocument = $('frame[name="sap-ui-ContentWindow"]');
+		var frameDocument = jQuery('frame[name="sap-ui-ContentWindow"]');
 		var frameDocumentBody = frameDocument.contents().find("body");
 		frameDocumentBody.removeClass("sapContrast");
 		frameDocumentBody.removeClass("sapContrastPlus");
@@ -285,7 +291,7 @@ sap.ui.testfwk.TestFWK.addSettingsToURL = function(sURL, oThemeConstraints) {
 	}
 
 	function add(sParam, vValue) {
-		if (sURL.indexOf("?")!=-1) {
+		if (sURL.indexOf("?") != -1) {
 			sURL += "&";
 		} else {
 			sURL += "?";
@@ -358,17 +364,17 @@ sap.ui.testfwk.TestFWK.attachSettingsChanged = function(fnCallback) {
 };
 
 sap.ui.testfwk.TestFWK.detachSettingsChanged = function(fnCallback) {
-	for(var i=0; i<this.mSettingsListeners.length; ) {
+	for (var i = 0; i < this.mSettingsListeners.length; ) {
 		if ( this.mSettingsListeners[i] === fnCallback ) {
 			this.mSettingsListeners.splice(i,1);
 		} else {
 			i++;
-		};
+		}
 	}
 };
 
 sap.ui.testfwk.TestFWK.fireSettingsChanged = function() {
-	for(var i=0; i<this.mSettingsListeners.length; i++) {
+	for (var i = 0; i < this.mSettingsListeners.length; i++) {
 		this.mSettingsListeners[i]();
 	}
 };
@@ -382,17 +388,17 @@ sap.ui.testfwk.TestFWK.attachThemeConfigurationChanged = function(fnCallback) {
 };
 
 sap.ui.testfwk.TestFWK.detachThemeConfigurationChanged = function(fnCallback) {
-	for(var i=0; i<this.mThemeConfigListeners.length; ) {
+	for (var i = 0; i < this.mThemeConfigListeners.length; ) {
 		if ( this.mThemeConfigListeners[i] === fnCallback ) {
 			this.mThemeConfigListeners.splice(i,1);
 		} else {
 			i++;
-		};
+		}
 	}
 };
 
 sap.ui.testfwk.TestFWK.fireThemeConfigurationChanged = function() { // this is also called by testframe.html!
-	for(var i=0; i<this.mThemeConfigListeners.length; i++) {
+	for (var i = 0; i < this.mThemeConfigListeners.length; i++) {
 		this.mThemeConfigListeners[i]();
 	}
 };
@@ -406,16 +412,16 @@ sap.ui.testfwk.TestFWK.attachContentWillChange = function(fnCallback) {
 };
 
 sap.ui.testfwk.TestFWK.detachContentWillChange = function(fnCallback) {
-	for(var i=0; i<this.mContentListeners.length; ) {
+	for (var i = 0; i < this.mContentListeners.length; ) {
 		if ( this.mContentListeners[i] === fnCallback ) {
 			this.mContentListeners.splice(i,1);
 		} else {
 			i++;
-		};
+		}
 	}};
 
 sap.ui.testfwk.TestFWK.fireContentWillChange = function(sLibName) {
-	for(var i=0; i<this.mContentListeners.length; i++) {
+	for (var i = 0; i < this.mContentListeners.length; i++) {
 		try {
 			this.mContentListeners[i](this.getContentURL(), this.getTheme(), sLibName); // sLibName may be null if library is not known
 		} catch (ex) {

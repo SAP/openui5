@@ -1,35 +1,47 @@
-sap.ui.jsview("sap.ui.core.sample.View.async.Async", {
+sap.ui.define([
+	"sap/m/ObjectHeader",
+	"sap/m/ObjectStatus",
+	"sap/m/ObjectAttribute",
+	"sap/ui/core/library"
+], function(ObjectHeader, ObjectStatus, ObjectAttribute, coreLibrary) {
+	"use strict";
 
-	getControllerName: function() {
-		return "sap.ui.core.sample.View.async.Sample";
-	},
+	var ValueState = coreLibrary.ValueState;
 
-	createContent: function() {
+	sap.ui.jsview("sap.ui.core.sample.View.async.Async", {
 
-		var oObjectHeader = new sap.m.ObjectHeader({
-			title: "Deluxe Screw",
-			statuses: [new sap.m.ObjectStatus({
-				text: "In Stock",
-				state: sap.ui.core.ValueState.Success
-			})],
-			attributes: [
-				new sap.m.ObjectAttribute({
-					text: "Weight: 10 gr"
-				}),
-				new sap.m.ObjectAttribute({
-					text: "Size: 1,4 x 1,8 x 0,8 inch"
-				}),
-				new sap.m.ObjectAttribute({
-					text: "Material: Vibranium"
-				}),
-				new sap.m.ObjectAttribute({
-					text: "Description: A really nice javascript screw."
-				})
-			],
-			iconDensityAware: false
-		});
-		oObjectHeader.bindProperty("icon", "img>/products/screw");
+		getControllerName: function() {
+			return "sap.ui.core.sample.View.async.Sample";
+		},
 
-		return oObjectHeader;
-	}
+		createContent: function() {
+
+			var oObjectHeader = new ObjectHeader({
+				title: "Deluxe Screw",
+				statuses: [new ObjectStatus({
+					text: "In Stock",
+					state: ValueState.Success
+				})],
+				attributes: [
+					new ObjectAttribute({
+						text: "Weight: 10 gr"
+					}),
+					new ObjectAttribute({
+						text: "Size: 1,4 x 1,8 x 0,8 inch"
+					}),
+					new ObjectAttribute({
+						text: "Material: Vibranium"
+					}),
+					new ObjectAttribute({
+						text: "Description: A really nice javascript screw."
+					})
+				],
+				iconDensityAware: false
+			});
+			oObjectHeader.bindProperty("icon", "img>/products/screw");
+
+			return oObjectHeader;
+		}
+	});
+
 });

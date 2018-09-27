@@ -43,6 +43,18 @@
         "type": "FIX",
         "text": " sap.ui.unified.FileUploader: correct width of the input when invalidated",
         "references": []
+      },
+      {
+        "id": "10af631cd1533ea339172ed6fd44fbbc52e6e1fa",
+        "type": "FIX",
+        "text": " PlanningCalendar: Spaces in internal aria-label are removed",
+        "references": []
+      },
+      {
+        "id": "618f67fd40ccaaa8e3ea3ff49fac604c91ee7f28",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.ColorPickerPopover: enabling popover/dialog mode of ColorPicker",
+        "references": []
       }
     ]
   }

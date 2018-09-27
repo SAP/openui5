@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/fl/XmlPreprocessorImpl",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/layout/changeHandler/AddSimpleFormGroup",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/fl/Utils"
 ],
 function(
 	jQuery,
@@ -16,9 +17,12 @@ function(
 	XmlPreprocessorImpl,
 	CacheManager,
 	AddSimpleFormGroup,
-	sinon
+	sinon,
+	Utils
 ) {
 	"use strict";
+
+	var sandbox = sinon.sandbox.create();
 
 	sap.ui.getCore().loadLibrary("sap.ui.fl"); // preload lib for the spy
 
@@ -98,6 +102,7 @@ function(
 			var that = this;
 			var oXmlPrepossessSpy = sinon.spy(XmlPreprocessorImpl, "process");
 			var oAddGroupChangeHandlerSpy = sinon.spy(AddSimpleFormGroup, "applyChange");
+			sandbox.stub(Utils, "isApplication").returns(true);
 
 			return sap.ui.component({
 				name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
@@ -263,14 +268,14 @@ function(
 					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].localName, "SimpleForm", "the simple form is included in the cache");
 					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes.length, 5, "the simple form content includes the new nodes from the change");
 					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes[3].getAttribute("id"),
-						"sap.ui.fl.qunit.integration.async.testComponentWithView---rootView--id-1504610195259-77",
-						"the new title with the right id is cached");
+					"sap.ui.fl.qunit.integration.async.testComponentWithView---rootView--id-1504610195259-77",
+					"the new title with the right id is cached");
 					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes[4].childNodes[0].localName, "CustomData",
-						"the custom data marker that the change is applied is cached");
+					"the custom data marker that the change is applied is cached");
 					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes[4].childNodes[0].getAttribute("key"), "sap.ui.fl.appliedChanges",
-						"the custom data marker that the change is applied is cached");
+					"the custom data marker that the change is applied is cached");
 					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes[4].childNodes[0].getAttribute("value"), "id_1504610195273_78_addSimpleFormGroup",
-						"the custom data marker that the change is applied is cached");
+					"the custom data marker that the change is applied is cached");
 					assert.ok(oAddGroupChangeHandlerSpy.calledOnce, "the change handler was called only once");
 					var oPassedModifier = oAddGroupChangeHandlerSpy.getCall(0).args[2].modifier;
 					assert.equal(XmlTreeModifier, oPassedModifier, "the call was done with the xml tree modifier");

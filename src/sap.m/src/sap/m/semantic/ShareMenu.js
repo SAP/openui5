@@ -14,21 +14,24 @@
 sap.ui.define([
 	'sap/ui/base/Metadata',
 	'sap/ui/base/ManagedObjectObserver',
+	'sap/m/library',
 	'sap/m/Button',
 	'sap/m/OverflowToolbarLayoutData',
 	'sap/ui/core/IconPool',
 	'sap/m/OverflowToolbarButton',
-	'sap/m/OverflowToolbarPriority',
 	"sap/base/Log"],
 	function(Metadata,
 			 ManagedObjectObserver,
+			 library,
 			 Button,
 			 OverflowToolbarLayoutData,
 			 IconPool,
 			 OverflowToolbarButton,
-			 OverflowToolbarPriority,
 			 Log) {
 	"use strict";
+
+	// shortcut for sap.m.OverflowToolbarPriority
+	var OverflowToolbarPriority = library.OverflowToolbarPriority;
 
 	/**
 	 * Constructor for an sap.m.semantic.ShareMenu.

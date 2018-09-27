@@ -1,3 +1,7 @@
+/*global module */
+/*eslint strict: [2, "global"] */
+"use strict";
+
 module.exports = function (config) {
 
     config.set({

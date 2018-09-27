@@ -579,6 +579,8 @@ sap.ui.define([
 				this.aRBs[i].setEditable(bEditable);
 			}
 		}
+
+		return this;
 	};
 
 	/*
@@ -595,6 +597,7 @@ sap.ui.define([
 			}
 		}
 
+		return this;
 	};
 
 	/*
@@ -610,6 +613,8 @@ sap.ui.define([
 				this.aRBs[i].setValueState(sValueState);
 			}
 		}
+
+		return this;
 	};
 
 	/*

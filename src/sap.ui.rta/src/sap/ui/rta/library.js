@@ -5,7 +5,8 @@
 /**
  * Initialization Code and shared classes of library sap.ui.rta.
  */
-sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/library'],
+sap.ui.define(['sap/ui/core/Core',
+	'sap/ui/core/library', 'sap/m/library', 'sap/ui/fl/library', 'sap/ui/dt/library'],
 	function(Core, coreLibrary) {
 	"use strict";
 

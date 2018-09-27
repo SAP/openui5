@@ -1,19 +1,19 @@
 /*global QUnit */
 sap.ui.define([
-], function () {
+	"sap/base/Log",
+	"sap/ui/core/Core"
+], function (Log, oCore) {
 	"use strict";
 
 	QUnit.module("Setters");
 
 	var oLibraries,
-		aClasses,
-		sLibName,
-		oLibrary,
 		aExcludedLibraries;
 
 	// Exclude libraries - we need this to exclude libraries that will not be tested at this point in time
 	aExcludedLibraries = [
 		"sap.ui.core",
+		"sap.ui.codeeditor", // can't be loaded async
 		"sap.ui.export",
 		"sap.ui.ux3",
 		"sap.ui.table",
@@ -72,105 +72,109 @@ sap.ui.define([
 	oLibraries = getLibraries(aExcludedLibraries);
 
 	// Create tests for all loaded libraries
-	for (sLibName in oLibraries) {
+	Object.keys(oLibraries).forEach(function(sLibName) {
 
-		if (aExcludedLibraries.indexOf(sLibName) === -1 && oLibraries.hasOwnProperty(sLibName)) {
+		if (aExcludedLibraries.indexOf(sLibName) === -1) {
 
-			oLibrary = oLibraries[sLibName];
+			var oLibrary = oLibraries[sLibName];
 
 			// Mind here we need a concatenated copy of the original array`s!!!
-			aClasses = oLibrary.controls.concat(oLibrary.elements.slice());
+			var aClasses = oLibrary.controls.concat(oLibrary.elements.slice());
 
-			(function (aClasses) {
-				QUnit.test("All control and element setters should return correct context in library " + sLibName, function (fnAssert) {
-					// Test all classes from list
-					assertAllSettersFromList(aClasses, fnAssert);
-				});
-			})(aClasses);
+			QUnit.test("All control and element setters should return correct context in library " + sLibName, function (fnAssert) {
+				// Test all classes from list
+				return Promise.all(
+					aClasses.map(function(sClassName) {
+						return loadClass(sClassName).then(function(FNClass) {
+							assertAllSettersForClass(FNClass, fnAssert);
+						});
+					})
+				);
+			});
 
 		}
 
+	});
+
+	/**
+	 * Asynchronously loads the module for the class with the given name and returns the export of that module
+	 * @param {string} sClassName name of the class to load
+	 */
+	function loadClass(sClassName) {
+		var sModuleName = sClassName.replace(/\./g, "/");
+		return new Promise(function(resolve, reject) {
+			sap.ui.require([sModuleName], function(FNClass) {
+				resolve(FNClass);
+			}, reject);
+		});
 	}
 
 	/**
-	 * Creates assertions for all setters from classes provided with the <code>aClasses</code> array
-	 * @param {array} aClasses list of classes to be tested
+	 * Creates assertions for all setters of the given class
+	 * @param {string} sClassName class to be tested
 	 * @param {function} fnAssert QUnit assert
 	 */
-	function assertAllSettersFromList (aClasses, fnAssert) {
-		var iLength = aClasses.length,
-			oClass,
-			sClassName,
+	function assertAllSettersForClass(oClass, fnAssert) {
+		var oMetadata = oClass.getMetadata(),
+			sClassName = oMetadata.getName(),
 			oControl,
 			oProperties,
 			oProperty,
 			sPropertyName,
 			sSetterName,
 			oValue,
-			oMetadata,
 			sName,
-			bDateInName,
-			i;
+			bDateInName;
 
-		for (i = 0; i < iLength; i++) {
-			sClassName = aClasses[i];
+		// Abstract classes should not be tested on their own
+		if (oMetadata.isAbstract()) {
+			return;
+		}
 
-			// make sure class is loaded
-			jQuery.sap.require(sClassName);
-			oClass = jQuery.sap.getObject(sClassName);
+		try {
+			oControl = new oClass();
+		} catch (e) {
+			fnAssert.ok(false, "Failed to init class " + sClassName + " without parameters with exception: " + e);
+			return;
+		}
 
-			oMetadata = oClass.getMetadata();
+		oProperties = oMetadata.getAllProperties();
 
-			// Abstract classes should not be tested on their own
-			if (oMetadata.isAbstract()) {
-				continue;
-			}
+		for (sPropertyName in oProperties) {
+			if (oProperties.hasOwnProperty(sPropertyName)) {
+				oProperty = oProperties[sPropertyName];
 
-			try {
-				oControl = new oClass();
-			} catch (e) {
-				fnAssert.ok(false, "Failed to init class " + sClassName + " without parameters with exception: " + e);
-				continue;
-			}
+				// Get the name of the setter.
+				// We access this private property only to be able to display more meaningful
+				// info in the test message
+				sSetterName = oProperty._sMutator;
 
-			oProperties = oMetadata.getAllProperties();
+				// Get the value of the property
+				oValue = oProperty.get(oControl);
 
-			for (sPropertyName in oProperties) {
-				if (oProperties.hasOwnProperty(sPropertyName)) {
-					oProperty = oProperties[sPropertyName];
-
-					// Get the name of the setter.
-					// We access this private property only to be able to display more meaningful
-					// info in the test message
-					sSetterName = oProperty._sMutator;
-
-					// Get the value of the property
-					oValue = oProperty.get(oControl);
-
-					// Assert
-					try {
-						fnAssert.ok(oControl === oProperty.set(oControl, oValue),
-								sClassName + "." + sSetterName + "() should always return <this>");
-					} catch (e) {
-						// If the setter fails we have a special scenario where date may be required
-						// but as there is no type "date" in our metadata API we need to identify it here
-						// and provide a javascript Date so we can test the setter
-						sName = oProperty.name;
-						bDateInName = sName.indexOf("Date", sName.length - 4) !== -1 || sName.substring(0, 4) === "date";
-						if ((sName === "date" || bDateInName) && oProperty.type === "object") {
-							fnAssert.ok(oControl === oProperty.set(oControl, new Date()),
-									sClassName + "." + sSetterName + "({js date}) should always return <this>");
-						} else {
-							// If the setter fails for some reason called with the value from get collected before that
-							// we need to fail with a meaningful error.
-							fnAssert.ok(false, "Setter " + sClassName + "." + sSetterName + "(" + oValue + ") fails when called " +
-									"with value received from get with exception: " + e);
-						}
+				// Assert
+				try {
+					fnAssert.ok(oControl === oProperty.set(oControl, oValue),
+							sClassName + "." + sSetterName + "() should always return <this>");
+				} catch (e) {
+					// If the setter fails we have a special scenario where date may be required
+					// but as there is no type "date" in our metadata API we need to identify it here
+					// and provide a JavaScript Date so we can test the setter
+					sName = oProperty.name;
+					bDateInName = sName.indexOf("Date", sName.length - 4) !== -1 || sName.substring(0, 4) === "date";
+					if ((sName === "date" || bDateInName) && oProperty.type === "object") {
+						fnAssert.ok(oControl === oProperty.set(oControl, new Date()),
+								sClassName + "." + sSetterName + "({js date}) should always return <this>");
+					} else {
+						// If the setter fails for some reason called with the value from get collected before that
+						// we need to fail with a meaningful error.
+						fnAssert.ok(false, "Setter " + sClassName + "." + sSetterName + "(" + oValue + ") fails when called " +
+								"with value received from get with exception: " + e);
 					}
 				}
 			}
-
 		}
+
 	}
 
 	/**
@@ -179,7 +183,7 @@ sap.ui.define([
 	 * @returns {object} libraries object
 	 */
 	function getLibraries (aExcludedLibraries) {
-		var oLibraries = sap.ui.getCore().getLoadedLibraries(),
+		var oLibraries = oCore.getLoadedLibraries(),
 			sInfoLibName,
 			bNewLibrary,
 			oInfo,
@@ -190,9 +194,9 @@ sap.ui.define([
 		for (i = 0; i < oInfo.libraries.length; i++) {
 			sInfoLibName = oInfo.libraries[i].name;
 			if (aExcludedLibraries.indexOf(sInfoLibName) === -1 && !oLibraries[sInfoLibName]) {
-				jQuery.sap.log.info("Libary '" + sInfoLibName + "' is not loaded!");
+				Log.info("Libary '" + sInfoLibName + "' is not loaded!");
 				try {
-					sap.ui.getCore().loadLibrary(sInfoLibName);
+					oCore.loadLibrary(sInfoLibName);
 					bNewLibrary = true;
 				} catch (e) {
 					// not a control lib? This happens for e.g. "themelib_sap_bluecrystal"...
@@ -202,7 +206,7 @@ sap.ui.define([
 
 		// Renew the libraries object if new libraries are added
 		if (bNewLibrary) {
-			oLibraries = sap.ui.getCore().getLoadedLibraries();
+			oLibraries = oCore.getLoadedLibraries();
 		}
 
 		return oLibraries;

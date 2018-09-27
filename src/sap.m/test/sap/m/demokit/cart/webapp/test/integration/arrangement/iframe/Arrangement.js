@@ -8,7 +8,7 @@ sap.ui.define([
 		iStartMyApp : function (bKeepStorage, oAdditionalUrlParameters) {
 			// The cart local storage should be deleted when the app starts except when testing it.
 			if (!bKeepStorage) {
-				var oLocalStorage = Storage.getInstance(Storage.Type.local);
+				var oLocalStorage = new Storage(Storage.Type.local);
 				oLocalStorage.remove("SHOPPING_CART");
 			}
 			oAdditionalUrlParameters = oAdditionalUrlParameters || {};

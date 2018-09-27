@@ -587,6 +587,115 @@
 			// Assert
 			assert.strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be 'Unsaved by another user' taken from messagebundle");
 		});
+
+		QUnit.module("Accessibility", {
+			beforeEach: function() {
+				this.marker = new sap.m.ObjectMarker();
+				this.marker.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.marker.destroy();
+			}
+		});
+
+		QUnit.test("ariaLabelledBy, ariaDescribedBy are propagated to the internal control that has them defined", function(assert) {
+			var sLabelId,
+				aLabels;
+
+			// arrange
+			this.marker.setType(sap.m.ObjectMarkerType.Locked);
+			this.marker.attachPress(function(e) {});
+
+			// act
+			this.marker.addAriaLabelledBy("id1");
+
+			// assert
+			assert.strictEqual(this.marker.getAriaLabelledBy().length, 1, "ariaLabelledBy has one id");
+			assert.strictEqual(this.marker.getAriaLabelledBy()[0], "id1", "ariaLabelledBy has the right id");
+			assert.strictEqual(this.marker._getInnerControl().getAriaLabelledBy().length, 1, "internal control's ariaLabelledBy has one id");
+			assert.strictEqual(this.marker._getInnerControl().getAriaLabelledBy()[0], "id1", "internal control's ariaLabelledBy has the right id");
+
+			// act
+			this.marker.addAriaDescribedBy("id2");
+
+			// assert
+			assert.strictEqual(this.marker.getAriaDescribedBy().length, 1, "ariaDescribedBy has one id");
+			assert.strictEqual(this.marker.getAriaDescribedBy()[0], "id2", "ariaDescribedBy has the right id");
+			assert.strictEqual(this.marker._getInnerControl().getAriaDescribedBy().length, 1, "internal control's ariaDescribedBy has one id");
+			assert.strictEqual(this.marker._getInnerControl().getAriaDescribedBy()[0], "id2", "internal control's ariaDescribedBy has the right id");
+
+			// act
+			sLabelId = this.marker.removeAriaLabelledBy("id1");
+
+			// assert
+			assert.strictEqual(sLabelId, "id1", "removeAriaLabelledBy returns the right id");
+			assert.strictEqual(this.marker.getAriaLabelledBy().length, 0, "ariaLabelledBy has no ids");
+			assert.strictEqual(this.marker._getInnerControl().getAriaLabelledBy().length, 0, "internal control's ariaLabelledBy has no ids");
+
+			// act
+			this.marker.addAriaLabelledBy("id3");
+			this.marker.addAriaLabelledBy("id4");
+			aLabels = this.marker.removeAllAriaLabelledBy();
+
+			// assert
+			assert.strictEqual(aLabels.length, 2, "removeAllAriaLabelledBy returns a list of ids");
+			assert.strictEqual(aLabels[1], "id4", "removeAllAriaLabelledBy returns the right ids");
+			assert.strictEqual(this.marker.getAriaLabelledBy().length, 0, "ariaLabelledBy has no ids");
+			assert.strictEqual(this.marker._getInnerControl().getAriaLabelledBy().length, 0, "internal control's ariaLabelledBy has no ids");
+		});
+
+		QUnit.test("ariaLabelledBy, ariaDescribedBy are not set when the control has no 'type' set", function(assert) {
+			// arrange
+			this.marker.attachPress(function(e) {});
+
+			// act
+			this.marker.addAriaLabelledBy("id1");
+
+			// assert
+			assert.ok(!this.marker.getAriaLabelledBy(), "there is no ariaLabelledBy");
+			assert.ok(!this.marker._getInnerControl(), "there is no innerControl");
+
+			// act
+			this.marker.addAriaDescribedBy("id2");
+
+			// assert
+			assert.ok(!this.marker.getAriaDescribedBy(), "there is no ariaDescribedBy");
+		});
+
+		QUnit.test("ariaLabelledBy, ariaDescribedBy are not set when the internal control has not defined them", function(assert) {
+			// arrange
+			this.marker.setType(sap.m.ObjectMarkerType.Locked);
+
+			// act
+			this.marker.addAriaLabelledBy("id1");
+
+			// assert
+			assert.ok(!this.marker.getAriaLabelledBy(), "there is no ariaLabelledBy");
+			assert.ok(!this.marker._getInnerControl().getAriaLabelledBy, "there is no getAriaLabelledBy in the internal Control");
+
+			// act
+			this.marker.addAriaDescribedBy("id2");
+
+			// assert
+			assert.ok(!this.marker.getAriaDescribedBy(), "there is no ariaDescribedBy");
+		});
+
+		QUnit.test("getAccessibilityInfo is propagated to the internal control", function(assert) {
+			var oResult,
+				oExpected;
+
+			// arrange
+			this.marker.setType(sap.m.ObjectMarkerType.Locked);
+			this.marker.attachPress(function(e) {});
+			oResult = this.marker.getAccessibilityInfo();
+			oExpected = this.marker._getInnerControl().getAccessibilityInfo();
+
+			// assert
+			assert.strictEqual(oResult.role, oExpected.role, "acc info.role is the same as in the internal control");
+			assert.strictEqual(oResult.focusable, oExpected.focusable, "acc info.focusable is the same as in the internal control");
+			assert.strictEqual(oResult.enabled, oExpected.enabled, "acc info.enabled is the same as in the internal control");
+		});
 	</script>
 </head>
 <body>

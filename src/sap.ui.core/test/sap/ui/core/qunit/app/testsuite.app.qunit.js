@@ -11,7 +11,7 @@ sap.ui.define(function () {
 		},
 		tests: {
 			Application: {
-				page: "/test-resources/sap/ui/core/qunit/Application.qunit.html",
+				page: "test-resources/sap/ui/core/qunit/Application.qunit.html",
 				title: "Tests for Application.js"
 			},
 			MessageListBinding: {

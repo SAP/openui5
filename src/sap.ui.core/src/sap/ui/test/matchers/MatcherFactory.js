@@ -2,19 +2,23 @@
  * ${copyright}
  */
 
+// private
 sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Visible",
 	"sap/base/strings/capitalize",
-	"sap/ui/thirdparty/jquery"
-], function(UI5Object, Interactable, Visible, capitalize, jQueryDOM) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/test/matchers/matchers"
+], function (UI5Object, Interactable, Visible, capitalize, jQueryDOM) {
 	"use strict";
 
-	var MatcherFactory = {
+	var MatcherFactory = UI5Object.extend("sap.ui.test.matchers.MatcherFactory", {
+
 		getInteractabilityMatchers: function (bInteractable) {
 		  return [bInteractable ?  new Interactable() : new Visible()];
 		},
+
 		getFilteringMatchers: function (oOptions) {
 			var aMatchers = _getPlainObjectMatchers(oOptions);
 
@@ -37,7 +41,7 @@ sap.ui.define([
 
 		  return aMatchers;
 		}
-	};
+	});
 
 	function _getPlainObjectMatchers(mMatchers) {
 		if (mMatchers["isMatching"]) {
@@ -51,8 +55,6 @@ sap.ui.define([
 				return aSupportedMatchers.indexOf(sMatcher) > -1;
 			}).map(function (sMatcher) {
 				var sMatcherCapitalized = capitalize(sMatcher);
-
-				sap.ui.require(["sap/ui/test/matchers/" + sMatcherCapitalized]);
 
 				var MatcherConstructor = sap.ui.test.matchers[sMatcherCapitalized];
 				var aMatcherOptions = jQueryDOM.isArray(mMatchers[sMatcher]) ? mMatchers[sMatcher] : [mMatchers[sMatcher]];
@@ -71,6 +73,6 @@ sap.ui.define([
 			}, []);
 	}
 
-	return UI5Object.extend("sap.ui.test.matchers.MatcherFactory", MatcherFactory);
+	return MatcherFactory;
 
 });

@@ -121,11 +121,11 @@ sap.ui.define([
 									}
 								};
 								var mRenameChangeData1  = {
-									selectorControl : sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageSectionWithForm")),
+									selectorControl : sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageSubSectionWithForm")),
 									changeSpecificData: {
 										changeType: "rename",
 										renamedElement: {
-											id: oAppComponent.createId("idMain1--ObjectPageSectionWithForm")
+											id: oAppComponent.createId("idMain1--ObjectPageSubSectionWithForm")
 										},
 										value : "Personalization Test"
 									}

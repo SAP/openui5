@@ -186,7 +186,8 @@ sap.ui.define(["sap/ui/core/library"],
 
 	/**
 	 * Contains the available system presets.
-	 *
+	 * @enum {object}
+	 * @since ${version}
 	 * @public
 	 */
 	sap.ui.support.SystemPresets = {

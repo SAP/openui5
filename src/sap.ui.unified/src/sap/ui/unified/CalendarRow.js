@@ -884,6 +884,68 @@ sap.ui.define([
 		this.invalidate();
 	};
 
+	/*
+	* Returns a javascript object with two floating point numbers,
+	* which represent the difference in time units, depending on the view type,
+	* between calendar appointment start date and calendar row start date and
+	* calendar appointment end date and calendar row end date
+	* @private
+	*/
+	CalendarRow.prototype._calculateAppoitnmentVisualCue = function(oAppointment) {
+
+		if (_isGroupAppoitment(this, oAppointment)) {
+			return {
+				appTimeUnitsDifRowStart: 0,
+				appTimeUnitsDifRowEnd: 0
+			};
+		}
+
+		var oAppStartDate = oAppointment.getStartDate(),
+			oAppEndDate = oAppointment.getEndDate(),
+			oUniversalAppStartDate = new UniversalDate(oAppStartDate.getFullYear(), oAppStartDate.getMonth(), oAppStartDate.getDate(), oAppStartDate.getHours(), oAppStartDate.getMinutes()),
+			oUniversalAppEndDate = new UniversalDate(oAppEndDate.getFullYear(), oAppEndDate.getMonth(), oAppEndDate.getDate(), oAppEndDate.getHours(), oAppEndDate.getMinutes()),
+			sIntervalType = this.getIntervalType(),
+			oTableStartDate = this.getStartDate(),
+			oUniversalTableStart = sIntervalType === "Hour" ?
+				new UniversalDate(oTableStartDate.getFullYear(), oTableStartDate.getMonth(), oTableStartDate.getDate(), oTableStartDate.getHours()) :
+				new UniversalDate(oTableStartDate.getFullYear(), oTableStartDate.getMonth(), oTableStartDate.getDate()),
+			iColumns = this.getIntervals(),
+			oUniversalTableEnd;
+
+		switch (sIntervalType) {
+			case "Hour":
+				oUniversalTableEnd = new UniversalDate(oTableStartDate.getFullYear(), oTableStartDate.getMonth(), oTableStartDate.getDate(), oTableStartDate.getHours() + iColumns);
+				break;
+			case "Day":
+			case "Week":
+			case "One Month":
+				oUniversalTableEnd = new UniversalDate(oTableStartDate.getFullYear(), oTableStartDate.getMonth(), oTableStartDate.getDate() + iColumns);
+				break;
+			case "Month":
+				oUniversalTableEnd = new UniversalDate(oTableStartDate.getFullYear(), oTableStartDate.getMonth() + iColumns, oTableStartDate.getDate());
+				break;
+			default:
+				break;
+		}
+
+		return {
+			appTimeUnitsDifRowStart: oUniversalTableStart.getTime() - oUniversalAppStartDate.getTime(),
+			appTimeUnitsDifRowEnd: oUniversalAppEndDate.getTime() - oUniversalTableEnd.getTime()
+		};
+	};
+
+	function _isGroupAppoitment(oRow, oAppointment) {
+		var oGroupAppointments = oRow.getAggregation("groupAppointments", []);
+
+		var i;
+		for (i = 0; i < oGroupAppointments.length; ++i) {
+			if (oAppointment === oGroupAppointments[i]) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	function _getLocale(){
 
 		if (!this._sLocale) {

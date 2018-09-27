@@ -69,7 +69,7 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/core/Icon'],
 
 				this._toggleNodeArrow(bExpanded);
 			}
-
+			return this;
 		};
 
 		//***********************************************************************************

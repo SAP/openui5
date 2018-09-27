@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/Filter",
+	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/FilterType",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/Filter",
@@ -21,6 +22,7 @@ sap.ui.define([
 		OperationMode,
 		Sorter,
 		Filter,
+		FilterProcessor,
 		FilterType,
 		FilterOperator,
 		ODataFilter,
@@ -83,6 +85,28 @@ sap.ui.define([
 			oBinding.attachChange(handler);
 			oBinding.initialize();
 			// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
+		});
+	});
+
+	QUnit.test("ListBinding applyFilter creates combinedFilters", function(assert){
+		var done = assert.async();
+		var oCombineFilterSpy = sinon.spy(FilterProcessor, "combineFilters");
+
+
+		oModel.metadataLoaded().then(function(){
+			var oBinding = oModel.bindList("/Categories");
+			var handler = function() {
+				oBinding.applyFilter();
+				assert.ok(true, "Filter does not cause an exception");
+				// combineFilters is called the first time when the binding gets initialized
+				assert.equal(oCombineFilterSpy.callCount, 2, "FilterProcessor.combineFilters should be called a second time after applyFilter.");
+				done();
+			};
+			oBinding.attachRefresh(function() {
+				oBinding.getContexts();
+			});
+			oBinding.attachChange(handler);
+			oBinding.initialize();
 		});
 	});
 

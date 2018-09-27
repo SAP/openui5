@@ -259,7 +259,7 @@ sap.ui.define([
 			return this;
 		}
 
-		this.$("CbBg").toggleClass("sapMCbMarkChecked", bSelected);
+		this.$("CbBg").toggleClass("sapMCbMarkChecked", !!bSelected);
 		var oCheckBox = this.getDomRef("CB");
 		if (oCheckBox) {
 			bSelected ? oCheckBox.setAttribute('checked', 'checked') : oCheckBox.removeAttribute('checked');

@@ -167,7 +167,7 @@ sap.ui.define([
 		},
 
 		onItemPressed : function (oEvent) {
-			var oItem, oCtx, oRouter;
+			var oItem, oCtx;
 			oItem = oEvent.getParameter("listItem");
 			oCtx = oItem.getBindingContext();
 

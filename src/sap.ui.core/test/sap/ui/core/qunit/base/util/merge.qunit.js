@@ -1,7 +1,7 @@
 /*global QUnit */
 sap.ui.define(["sap/base/util/merge"], function(merge) {
 	"use strict";
- 
+
 	QUnit.module("merge objects (aka deep extend)");
 
 	QUnit.test("tests for deep extend object", function(assert) {

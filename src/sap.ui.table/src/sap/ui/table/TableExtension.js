@@ -217,5 +217,27 @@ sap.ui.define([
 		delete oTable._bExtensionsInitialized;
 	};
 
+	/**
+	 * Checks whether a table is enriched with a certain extension.
+	 *
+	 * @param {sap.ui.table.Table} oTable The table instance.
+	 * @param {string} sExtensionFullName The fully qualified name of the extension.
+	 * @returns {boolean} Whether the table is enriched with the specified extension.
+	 * @static
+	 */
+	TableExtension.isEnrichedWith = function(oTable, sExtensionFullName) {
+		if (!oTable || !oTable._aExtensions) {
+			return false;
+		}
+
+		for (var i = 0; i < oTable._aExtensions.length; i++) {
+			if (oTable._aExtensions[i].getMetadata().getName() === sExtensionFullName) {
+				return true;
+			}
+		}
+
+		return false;
+	};
+
 	return TableExtension;
 });

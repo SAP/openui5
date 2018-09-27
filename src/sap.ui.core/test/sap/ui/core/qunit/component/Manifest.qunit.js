@@ -64,11 +64,11 @@ sap.ui.define([
 				"title": "Foo"
 			},
 			"unit.test1": {
-				boolean: false,
-				string: "buz",
-				null: null,
-				object: {
-					value: true
+				"boolean": false,
+				"string": "buz",
+				"null": null,
+				"object": {
+					"value": true
 				}
 			},
 			"unit.test2": "invalid"

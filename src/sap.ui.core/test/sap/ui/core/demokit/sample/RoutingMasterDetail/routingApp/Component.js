@@ -40,7 +40,7 @@ sap.ui.define( ["sap/ui/core/UIComponent", "sap/ui/model/json/JSONModel", "sap/u
 						*    product details with productId=1 in order with orderId=0
 						*/
 						pattern: "orders/:orderId:/products/:productId:",
-						target: ["master", "productDetails"],
+						target: ["master", "productDetails"]
 					}
 				],
 				targets: {

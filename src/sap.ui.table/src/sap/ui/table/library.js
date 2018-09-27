@@ -238,23 +238,19 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 	thisLib.VisibleRowCountMode = {
 
 		/**
-		 * The table always has as many rows as defined in the visibleRowCount property.
+		 * The table always has as many rows as defined in the <code>visibleRowCount</code> property.
 		 * @public
 		 */
 		Fixed : "Fixed",
 
 		/**
-		 * After rendering the table has as many rows as defined in visibleRowCount property. The user is able to change the visible rows by moving a grip with the mouse. The visibleRowCount property is changed accordingly.
+		 * The user can change the <code>visibleRowCount</code> by dragging a resizer.
 		 * @public
 		 */
 		Interactive : "Interactive",
 
 		/**
 		 * The table automatically fills the height of the surrounding container.
-		 * The visibleRowCount property is automatically changed accordingly.
-		 * All rows need the same height, otherwise the auto mode doesn't always work as expected.
-		 * The height of all siblings within the same layout container of the table will be subtracted from the available height.
-		 * For performance reasons, it is recommended to add no siblings in the table's parent container.
 		 * @public
 		 */
 		Auto : "Auto"

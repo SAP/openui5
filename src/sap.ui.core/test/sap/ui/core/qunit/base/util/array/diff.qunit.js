@@ -14,7 +14,7 @@ sap.ui.define(['sap/base/util/array/diff'], function(diff) {
 		var aData4 = [1,6,7,2,3];
 		var aData5 = [3,4,5,6,7];
 		var aData6 = [4,5,7];
-		var aData7 = [9,8,4,4,3,2,9];
+		//var aData7 = [9,8,4,4,3,2,9];
 		var aData8 = [1,4,5,2,3];
 		var aData9 = [1,7,8,9,2,3,4,5];
 		var aData10 = [5,4,3,2,1];

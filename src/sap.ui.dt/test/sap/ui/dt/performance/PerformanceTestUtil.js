@@ -32,6 +32,16 @@ sap.ui.define([
 	"use strict";
 
 	var Util = {
+		addButtons: function(oParentControl, sAggregation, iNumberOfButtons) {
+			if (iNumberOfButtons > 0) {
+				oParentControl.addAggregation(sAggregation, new Button({
+					id: oParentControl.getId() + "button" + iNumberOfButtons,
+					text: oParentControl.getId() + "button" + iNumberOfButtons
+				}));
+				Util.addButtons(oParentControl, sAggregation, iNumberOfButtons - 1);
+			}
+		},
+
 		createNestedPanels: function(oParentControl, sAggregation, iNumberOfControls, oLastElement) {
 			//  add element to the inner most panel
 			if (iNumberOfControls === 0) {
@@ -109,6 +119,29 @@ sap.ui.define([
 				sap.ui.getCore().applyChanges();
 				document.getElementById("overlay-container").setAttribute("sap-ui-dt-loaded","true");
 			});
+		},
+
+		debounce: function(fn, iWait) {
+			iWait = iWait || 0;
+
+			var bInvoked = false;
+			var vResult;
+			var iTimerId;
+
+			function invoke() {
+				bInvoked = true;
+				vResult = fn();
+			}
+
+			return function () {
+				if (bInvoked) {
+					return vResult;
+				}
+				if (iTimerId) {
+					clearTimeout(iTimerId);
+				}
+				iTimerId = setTimeout(invoke, iWait);
+			};
 		}
 	};
 

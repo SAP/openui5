@@ -9,7 +9,10 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/core/Component",
 	"sap/ui/core/UIComponent",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Element",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	VariantModel,
@@ -20,7 +23,10 @@ sap.ui.define([
 	ChangeRegistry,
 	Component,
 	UIComponent,
+	ManagedObject,
 	ComponentContainer,
+	Element,
+	JsControlTreeModifier,
 	sinon
 ) {
 	"use strict";
@@ -93,19 +99,22 @@ sap.ui.define([
 			this.oDummyControl = new VariantManagement("dummyControl");
 
 			this.oModel = new VariantModel(this.oData, oMockFlexController);
-			this.oOuterAppComponent = new Component("AppComponent");
-			this.oOuterAppComponent.setModel(this.oModel, "$FlexVariants");
+			this.oAppComponent = new Component("AppComponent");
+			this.oAppComponent.setModel(this.oModel, "$FlexVariants");
 			this.oComponent = new Component("EmbeddedComponent");
-			var fnGetAppComponentForControlStub = sandbox.stub(Utils, "getAppComponentForControl");
-			fnGetAppComponentForControlStub.withArgs(this.oDummyControl, true).returns(this.oOuterAppComponent);
-			fnGetAppComponentForControlStub.withArgs(this.oComponent, true).returns(this.oOuterAppComponent);
-			fnGetAppComponentForControlStub.withArgs(this.oDummyControl).returns(this.oComponent);
-			fnGetAppComponentForControlStub.withArgs(this.oComponent).returns(this.oComponent);
+			sandbox.stub(Utils, "getAppComponentForControl")
+				.callThrough()
+				.withArgs(this.oDummyControl).returns(this.oAppComponent)
+				.withArgs(this.oComponent).returns(this.oAppComponent);
+			sandbox.stub(Utils, "getSelectorComponentForControl")
+				.callThrough()
+				.withArgs(this.oDummyControl).returns(this.oComponent)
+				.withArgs(this.oComponent).returns(this.oComponent);
 		},
 		afterEach: function() {
 			sandbox.restore();
 			this.oModel.destroy();
-			this.oOuterAppComponent.destroy();
+			this.oAppComponent.destroy();
 			this.oComponent.destroy();
 			this.oDummyControl.destroy();
 		}
@@ -117,11 +126,11 @@ sap.ui.define([
 			ControlPersonalizationAPI.clearVariantParameterInURL(this.oDummyControl);
 
 			assert.ok(Utils.getParsedURLHash.calledOnce, "then hash parameter values are requested");
-			assert.ok(Utils.setTechnicalURLParameterValues.calledWithExactly(this.oOuterAppComponent, 'sap-ui-fl-control-variant-id', [aUrlTechnicalParameters[0]]), "then 'sap-ui-fl-control-variant-id' parameter value for the provided variant management control is cleared");
+			assert.ok(Utils.setTechnicalURLParameterValues.calledWithExactly(this.oAppComponent, 'sap-ui-fl-control-variant-id', [aUrlTechnicalParameters[0]]), "then 'sap-ui-fl-control-variant-id' parameter value for the provided variant management control is cleared");
 			assert.deepEqual(this.oModel.updateHasherEntry.getCall(0).args[0], {
 				parameters: [aUrlTechnicalParameters[0]],
 				updateURL: true,
-				component: this.oOuterAppComponent
+				component: this.oAppComponent
 			}, "then VariantModel.updateHasherEntry called with the desired arguments");
 		});
 
@@ -207,18 +216,27 @@ sap.ui.define([
 
 		QUnit.test("when calling 'activateVariant' with a control with an invalid variantModel", function(assert) {
 			fnStubUpdateCurrentVariant.call(this);
-			this.oOuterAppComponent.setModel(null, "$FlexVariants");
+			this.oAppComponent.setModel(null, "$FlexVariants");
 
 			return ControlPersonalizationAPI.activateVariant(this.oDummyControl, "variant1")
 			.then(function() {},
 				function (oError) {
-					fnCheckActivateVariantErrorResponse.call(this, assert, "No variant management model found for the passed control or component", oError.message);
+					fnCheckActivateVariantErrorResponse.call(this, assert, "No variant management model found for the passed control or application component", oError.message);
 				}.bind(this)
 			);
 		});
 	});
 
 	QUnit.module("_checkChangeSpecificData", {
+		before: function() {
+			this.oElement = new Element();
+		},
+		afterEach: function() {
+			sandbox.restore();
+		},
+		after: function() {
+			this.oElement.destroy();
+		}
 	}, function() {
 		QUnit.test("when _checkChangeSpecificData is called without selector control", function(assert) {
 			var oChange = {
@@ -226,56 +244,51 @@ sap.ui.define([
 					changeType: "foo"
 				}
 			};
-			var oError = ControlPersonalizationAPI._checkChangeSpecificData(oChange);
-			assert.deepEqual(oError.change, oChange, "the function returns the given change");
-			assert.equal(oError.message, "No valid selectorControl", "the function returns an error");
+			var vCheckResult = ControlPersonalizationAPI._checkChangeSpecificData(oChange);
+			assert.equal(vCheckResult, "No valid selectorControl", "the function returns an error");
 		});
 
-		QUnit.test("when _checkChangeSpecificData is called without selector control getMetadata function", function(assert) {
+		QUnit.test("when _checkChangeSpecificData is called with an invalid selector control", function(assert) {
 			var oChange = {
 				changeSpecificData: {
 					changeType: "foo"
 				},
 				selectorControl: {}
 			};
-			var oError = ControlPersonalizationAPI._checkChangeSpecificData(oChange);
-			assert.deepEqual(oError.change, oChange, "the function returns the given change");
-			assert.equal(oError.message, "No valid selectorControl", "the function returns an error");
+			var vCheckResult = ControlPersonalizationAPI._checkChangeSpecificData(oChange);
+			assert.equal(vCheckResult, "No valid selectorControl", "the function returns an error");
+		});
+
+		QUnit.test("when _checkChangeSpecificData is called with a valid selector for selector control", function(assert) {
+			var oChange = {
+				changeSpecificData: {
+					changeType: "foo"
+				},
+				selectorControl : {
+					id: "testComponent---mockview--ObjectPageLayout",
+					controlType: "sap.uxap.ObjectPageLayout",
+					appComponent: this.oComp
+				}
+			};
+			var vCheckResult = ControlPersonalizationAPI._checkChangeSpecificData(oChange);
+			assert.equal(vCheckResult, "No valid selectorControl", "the function returns an error");
 		});
 
 		QUnit.test("when _checkChangeSpecificData is called without changeSpecificData", function(assert) {
 			var oChange = {
-				selectorControl: {
-					getMetadata: function() {
-						return {
-							getName: function() {
-								return "sap.ui.fl.test.Foo";
-							}
-						};
-					}
-				}
+				selectorControl: {}
 			};
-			var oError = ControlPersonalizationAPI._checkChangeSpecificData(oChange);
-			assert.deepEqual(oError.change, oChange, "the function returns the given change");
-			assert.equal(oError.message, "No changeSpecificData available", "the function returns an error");
+			var vCheckResult = ControlPersonalizationAPI._checkChangeSpecificData(oChange);
+			assert.equal(vCheckResult, "No changeSpecificData available", "the function returns an error");
 		});
 
 		QUnit.test("when _checkChangeSpecificData is called without changeType", function(assert) {
 			var oChange = {
 				changeSpecificData: {},
-				selectorControl: {
-					getMetadata: function() {
-						return {
-							getName: function() {
-								return "sap.ui.fl.test.Foo";
-							}
-						};
-					}
-				}
+				selectorControl: {}
 			};
-			var oError = ControlPersonalizationAPI._checkChangeSpecificData(oChange);
-			assert.deepEqual(oError.change, oChange, "the function returns the given change");
-			assert.equal(oError.message, "No valid changeType", "the function returns an error");
+			var vCheckResult = ControlPersonalizationAPI._checkChangeSpecificData(oChange);
+			assert.equal(vCheckResult, "No valid changeType", "the function returns an error");
 		});
 
 		QUnit.test("when _checkChangeSpecificData is called without valid changeHandler", function(assert) {
@@ -283,19 +296,10 @@ sap.ui.define([
 				changeSpecificData: {
 					changeType: "foo"
 				},
-				selectorControl: {
-					getMetadata: function() {
-						return {
-							getName: function() {
-								return "sap.ui.fl.test.Foo";
-							}
-						};
-					}
-				}
+				selectorControl: this.oElement
 			};
-			var oError = ControlPersonalizationAPI._checkChangeSpecificData(oChange);
-			assert.deepEqual(oError.change, oChange, "the function returns the given change");
-			assert.equal(oError.message, "No valid ChangeHandler", "the function returns an error");
+			var vCheckResult = ControlPersonalizationAPI._checkChangeSpecificData(oChange);
+			assert.equal(vCheckResult, "No valid ChangeHandler", "the function returns an error");
 		});
 
 		QUnit.test("when _checkChangeSpecificData is called without valid revertChange function in changeHandler", function(assert) {
@@ -303,19 +307,11 @@ sap.ui.define([
 				changeSpecificData: {
 					changeType: "foo"
 				},
-				selectorControl: {
-					getMetadata: function() {
-						return {
-							getName: function() {
-								return "sap.ui.fl.test.Foo";
-							}
-						};
-					}
-				}
+				selectorControl: this.oElement
 			};
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.registerControlsForChanges({
-				"sap.ui.fl.test.Foo" : {
+				"sap.ui.core.Element" : {
 					"foo" : function() {
 						return {
 							applyChange: function() {},
@@ -324,9 +320,48 @@ sap.ui.define([
 					}
 				}
 			});
-			var oError = ControlPersonalizationAPI._checkChangeSpecificData(oChange);
-			assert.deepEqual(oError.change, oChange, "the function returns the given change");
-			assert.equal(oError.message, "ChangeHandler has no revertChange function", "the function returns an error");
+			var vCheckResult = ControlPersonalizationAPI._checkChangeSpecificData(oChange);
+			assert.equal(vCheckResult, "ChangeHandler has no revertChange function", "the function returns an error");
+			// remove registry item after test is complete
+			oChangeRegistry.removeRegistryItem({
+				changeTypeName: "foo",
+				controlType: "sap.ui.core.Element"
+			});
+		});
+	});
+
+	QUnit.module("Given dirty changes in change persistence are required to be saved", {
+		beforeEach : function() {
+			sandbox.stub(Utils.log, "error");
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("When saveChanges() is called with an array of changes and a valid component", function(assert) {
+			var fnSaveSequenceOfDirtyChangesStub = sandbox.stub();
+			var oManagedObject = new ManagedObject("mockManagedObject");
+			var aSuccessfulChanges = ["mockChange1", "mockChange2"];
+			sandbox.stub(FlexControllerFactory, "createForControl")
+				.callThrough()
+				.withArgs(oManagedObject)
+				.returns({
+					_oChangePersistence: {
+						saveSequenceOfDirtyChanges: fnSaveSequenceOfDirtyChangesStub.resolves()
+					}
+				});
+
+			return ControlPersonalizationAPI.saveChanges(aSuccessfulChanges, oManagedObject)
+				.then(function () {
+					assert.ok(fnSaveSequenceOfDirtyChangesStub.calledWith(aSuccessfulChanges), "then ChangePersistence.saveSequenceOfDirtyChanges called with the passed changes");
+					assert.strictEqual(Utils.log.error.callCount, 0, "then Utils.log.error() not called");
+					oManagedObject.destroy();
+				});
+		});
+
+		QUnit.test("When saveChanges() is called with an invalid element", function(assert) {
+			ControlPersonalizationAPI.saveChanges([], {});
+			assert.ok(Utils.log.error.calledWith("A valid sap.ui.base.ManagedObject instance is required as a parameter"),  "then Utils.log.error() called with an error");
 		});
 	});
 
@@ -423,7 +458,7 @@ sap.ui.define([
 				};
 
 				this.fnUtilsLogErrorSpy = sandbox.spy(Utils.log, "error");
-				this.fnAddPreparedChangeSpy = sandbox.spy(this.oFlexController, "addPreparedChange");
+				this.fnCreateAndApplyChangeSpy = sandbox.spy(this.oFlexController, "createAndApplyChange");
 
 				done();
 			}.bind(this));
@@ -435,7 +470,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when calling 'hasVariantManagement' with a control that belong to a variant management control", function(assert) {
-			var bVariantManagementReference1 = ControlPersonalizationAPI.hasVariantManagement(this.mMoveChangeData1.selectorControl);
+			var bVariantManagementReference1 = ControlPersonalizationAPI.hasVariantManagement(this.mMoveChangeData2.selectorControl);
 			var bVariantManagementReference2 = ControlPersonalizationAPI.hasVariantManagement(this.mRenameChangeData2.selectorControl);
 			assert.ok(bVariantManagementReference1, "true is returned for the first variant management control");
 			assert.ok(bVariantManagementReference2, "true is returned for the second variant management control");
@@ -447,49 +482,69 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'addPersonalizationChanges' with two valid variant changes", function(assert) {
-			return ControlPersonalizationAPI.addPersonalizationChanges([this.mMoveChangeData1, this.mMoveChangeData2])
-			.then(function() {
-				assert.equal(this.fnUtilsLogErrorSpy.callCount, 0, "no errors ocurred");
-				assert.equal(this.fnAddPreparedChangeSpy.callCount, 2, "addDirtyChange has been called twice");
+			return ControlPersonalizationAPI.addPersonalizationChanges({
+				controlChanges: [this.mMoveChangeData1, this.mMoveChangeData2]
+			})
+			.then(function (aSuccessfulChanges) {
+				assert.equal(this.fnUtilsLogErrorSpy.callCount, 0, "no errors occurred");
+				assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 2, "FlexController.createAndApplyChange has been called twice");
+				assert.deepEqual(aSuccessfulChanges[0].getSelector(), {
+					id: "mockview--ObjectPageLayout",
+					idIsLocal: true
+				}, "then first successfully applied change was returned");
+				assert.deepEqual(aSuccessfulChanges[1].getSelector(), {
+					id: "mockview--ObjectPageLayout",
+					idIsLocal: true
+				}, "then second successfully applied change was returned");
 			}.bind(this));
 		});
 
-		QUnit.test("when calling 'addPersonalizationChanges' with a change with invalid changeSpecificData", function(assert) {
-			sandbox.stub(ControlPersonalizationAPI, "_checkChangeSpecificData").returns({message: "myError"});
-			return ControlPersonalizationAPI.addPersonalizationChanges([this.mMoveChangeData1])
-			.then(function() {
-				assert.equal(this.fnUtilsLogErrorSpy.callCount, 1, "one error ocurred");
+		QUnit.test("when calling 'addPersonalizationChanges' with two change, one with an invalid and the other with a valid changeSpecificData", function(assert) {
+			sandbox.stub(ControlPersonalizationAPI, "_checkChangeSpecificData")
+				.callThrough()
+				.withArgs(this.mMoveChangeData1)
+				.returns("myError");
+			return ControlPersonalizationAPI.addPersonalizationChanges({
+				controlChanges: [this.mMoveChangeData1, this.mMoveChangeData2]
+			})
+			.then(function(aSuccessfulChanges) {
+				assert.equal(this.fnUtilsLogErrorSpy.callCount, 1, "one error occurred");
 				assert.equal(this.fnUtilsLogErrorSpy.args[0][0], "Error during execPromiseQueueSequentially processing occured: myError", "error message: myError");
-				assert.equal(this.fnAddPreparedChangeSpy.callCount, 0, "addDirtyChange has not been called");
+				assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 1, "FlexController.createAndApplyChange was called once");
+				assert.deepEqual(aSuccessfulChanges[0].getSelector(), {id: "mockview--ObjectPageLayout", idIsLocal: true}, "then only the successfully applied change was returned");
 			}.bind(this));
 		});
 
 		QUnit.test("when calling 'addPersonalizationChanges' with two valid variant changes and an invalid change", function(assert) {
 			this.mRenameChangeData1.selectorControl = undefined;
-			return ControlPersonalizationAPI.addPersonalizationChanges([this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2])
+			return ControlPersonalizationAPI.addPersonalizationChanges({
+				controlChanges: [this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2]
+			})
 			.then(function() {
-				assert.equal(this.fnUtilsLogErrorSpy.callCount, 1, "one error ocurred");
-				assert.equal(this.fnAddPreparedChangeSpy.callCount, 2, "addDirtyChange has been called twice");
+				assert.equal(this.fnUtilsLogErrorSpy.callCount, 1, "one error occurred");
+				assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 2, "FlexController.createAndApplyChange has been called twice");
 			}.bind(this));
 		});
 
 		QUnit.test("when calling 'addPersonalizationChanges' with variant changes for different variant management controls", function(assert) {
 			sandbox.stub(Utils, "getCurrentLayer").returns("CUSTOMER"); //needed as some ChangeHandlers are not available for USER layer
-			return ControlPersonalizationAPI.addPersonalizationChanges([this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2, this.mRenameChangeData2])
+			return ControlPersonalizationAPI.addPersonalizationChanges({
+				controlChanges: [this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2, this.mRenameChangeData2]
+			})
 			.then(function() {
-				assert.equal(this.fnUtilsLogErrorSpy.callCount, 0, "no error ocurred");
-				assert.equal(this.fnAddPreparedChangeSpy.callCount, 4, "addDirtyChange has been called four times");
-				assert.equal(this.fnAddPreparedChangeSpy.args[0][0].getVariantReference(), "mockview--VariantManagement1", "first change is for VariantManagement1");
-				assert.equal(this.fnAddPreparedChangeSpy.args[1][0].getVariantReference(), "mockview--VariantManagement1", "second change is for VariantManagement1");
-				assert.equal(this.fnAddPreparedChangeSpy.args[2][0].getVariantReference(), "mockview--VariantManagement1", "third change is for VariantManagement1");
-				assert.equal(this.fnAddPreparedChangeSpy.args[3][0].getVariantReference(), "mockview--VariantManagement2", "fourth change is for VariantManagement2");
+				assert.equal(this.fnUtilsLogErrorSpy.callCount, 0, "no error ocurred");assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 4, "FlexController.createAndApplyChange has been called four times");
+				assert.equal(this.fnCreateAndApplyChangeSpy.getCall(0).args[0].variantReference, "mockview--VariantManagement1", "first change is for VariantManagement1");
+				assert.equal(this.fnCreateAndApplyChangeSpy.getCall(1).args[0].variantReference, "mockview--VariantManagement1", "second change is for VariantManagement1");
+				assert.equal(this.fnCreateAndApplyChangeSpy.getCall(2).args[0].variantReference, "mockview--VariantManagement1", "third change is for VariantManagement1");
+				assert.equal(this.fnCreateAndApplyChangeSpy.getCall(3).args[0].variantReference, "mockview--VariantManagement2", "fourth change is for VariantManagement2");
 			}.bind(this));
 		});
 
 		QUnit.test("when calling 'addPersonalizationChanges' with a change outside of a variant management control", function(assert) {
 			sandbox.stub(Utils, "getCurrentLayer").returns("CUSTOMER"); //needed as some ChangeHandlers are not available for USER layer
+			var oButton = sap.ui.getCore().byId("testComponent---mockview--Button");
 			var oChangeData = {
-				selectorControl: sap.ui.getCore().byId("testComponent---mockview--Button"),
+				selectorControl: oButton,
 				changeSpecificData: {
 					changeType: "rename",
 					renamedElement: {
@@ -498,27 +553,34 @@ sap.ui.define([
 					value : "Personalized Text"
 				}
 			};
-			return ControlPersonalizationAPI.addPersonalizationChanges([oChangeData])
+			return ControlPersonalizationAPI.addPersonalizationChanges({
+				controlChanges: [oChangeData]
+			})
 			.then(function() {
 				assert.equal(this.fnUtilsLogErrorSpy.callCount, 0, "no error occurred");
-				assert.equal(this.fnAddPreparedChangeSpy.callCount, 1, "addDirtyChange has been called once");
-				assert.deepEqual(this.fnAddPreparedChangeSpy.firstCall.args[0].getSelector(), {id: "mockview--Button", idIsLocal: true} , "addDirtyChange was called with the correct change");
-				assert.deepEqual(this.fnAddPreparedChangeSpy.firstCall.args[1], this.oComp, "addDirtyChange was called with the correct component");
-				assert.notOk(this.fnAddPreparedChangeSpy.firstCall.args[0].getVariantReference(), "addDirtyChange was called for a change without variant management");
+				assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 1, "FlexController.createAndApplyChange has been called once");
+				assert.deepEqual(this.fnCreateAndApplyChangeSpy.getCall(0).args[0].renamedElement, oChangeData.changeSpecificData.renamedElement, "FlexController.createAndApplyChange was called with the correct renamed element");
+				assert.deepEqual(this.fnCreateAndApplyChangeSpy.getCall(0).args[0].changeType, oChangeData.changeSpecificData.changeType, "FlexController.createAndApplyChange was called with the correct change type");
+				assert.deepEqual(this.fnCreateAndApplyChangeSpy.getCall(0).args[0].value, oChangeData.changeSpecificData.value, "FlexController.createAndApplyChange was called with the correct value");
+				assert.notOk(this.fnCreateAndApplyChangeSpy.getCall(0).args[0].variantReference, "FlexController.createAndApplyChange was called for a change without variant management");
+				assert.deepEqual(this.fnCreateAndApplyChangeSpy.getCall(0).args[1], oButton, "FlexController.createAndApplyChange was called with the correct control");
 			}.bind(this));
 		});
 
-		QUnit.test("when calling 'addPersonalizationChanges' with variant changes for different variant management controls, with 'bIgnoreVariantManagement' set to true", function(assert) {
+		QUnit.test("when calling 'addPersonalizationChanges' with variant changes for different variant management controls and 'ignoreVariantManagement' argument property set", function(assert) {
 			sandbox.stub(Utils, "getCurrentLayer").returns("CUSTOMER"); //needed as some ChangeHandlers are not available for USER layer
-			return ControlPersonalizationAPI.addPersonalizationChanges([this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2, this.mRenameChangeData2], true)
-				.then(function() {
-					assert.equal(this.fnUtilsLogErrorSpy.callCount, 0, "no error ocurred");
-					assert.equal(this.fnAddPreparedChangeSpy.callCount, 4, "addDirtyChange has been called four times");
-					assert.notOk(this.fnAddPreparedChangeSpy.args[0][0].getVariantReference(), "first change is without VariantManagement1");
-					assert.notOk(this.fnAddPreparedChangeSpy.args[1][0].getVariantReference(), "second change is without VariantManagement1");
-					assert.notOk(this.fnAddPreparedChangeSpy.args[2][0].getVariantReference(), "third change is without VariantManagement1");
-					assert.notOk(this.fnAddPreparedChangeSpy.args[3][0].getVariantReference(), "fourth change is without VariantManagement2");
-				}.bind(this));
+			return ControlPersonalizationAPI.addPersonalizationChanges({
+				controlChanges: [this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2, this.mRenameChangeData2],
+				ignoreVariantManagement: true
+			})
+			.then(function () {
+				assert.equal(this.fnUtilsLogErrorSpy.callCount, 0, "no error ocurred");
+				assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 4, "FlexController.createAndApplyChange has been called four times");
+				assert.notOk(this.fnCreateAndApplyChangeSpy.getCall(0).args[0].variantReference, "first change is without VariantManagement1");
+				assert.notOk(this.fnCreateAndApplyChangeSpy.getCall(1).args[0].variantReference, "second change is without VariantManagement1");
+				assert.notOk(this.fnCreateAndApplyChangeSpy.getCall(2).args[0].variantReference, "third change is without VariantManagement1");
+				assert.notOk(this.fnCreateAndApplyChangeSpy.getCall(3).args[0].variantReference, "fourth change is without VariantManagement2");
+			}.bind(this));
 		});
 	});
 

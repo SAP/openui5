@@ -13,7 +13,7 @@ sap.ui.define([
 				},
 				value: {
 					type: "string",
-					defaultValue: "Default Value Input",
+					defaultValue: "Default Value Input"
 				}
 			}
 		},

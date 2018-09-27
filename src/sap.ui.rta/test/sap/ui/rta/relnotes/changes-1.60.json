@@ -55,6 +55,18 @@
         "type": "FIX",
         "text": " AdditionalElementsAnalyzer - filter limitation for invisible elements",
         "references": []
+      },
+      {
+        "id": "b822ff17f819e675015a054eb145bb4282195cb7",
+        "type": "FIX",
+        "text": " sap.ui.rta - outline test cleanup",
+        "references": []
+      },
+      {
+        "id": "fe3effe44fa6244e2d2f1e29d7c708a5733533fc",
+        "type": "FIX",
+        "text": " sap.ui.rta - outline.qunit extended with static designtime metadata",
+        "references": []
       }
     ]
   }

@@ -9,7 +9,7 @@ sap.ui.define([
 	var fnSetTimeout = window["setTimeout"];
 	var fnClearTimeout = window["clearTimeout"];
 
-	["Timeout", "Immediate"].forEach(function (sFunctionUnderTest) {	
+	["Timeout", "Immediate"].forEach(function (sFunctionUnderTest) {
 		var fnSetFunction = window["set" + sFunctionUnderTest];
 		var fnClearFunction = window["clear" + sFunctionUnderTest];
 

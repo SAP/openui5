@@ -9,7 +9,7 @@ sap.ui.define([
 	return JSONModel.extend("sap.ui.demo.iconexplorer.model.FavoriteModel", {
 
 		_STORAGE_KEY : "ICON_EXPLORER_FAVORITES",
-		_storage : Storage.getInstance(Storage.Type.local),
+		_storage : new Storage(Storage.Type.local),
 
 		/**
 		 * Fetches the favorites from local storage and sets up the JSON model

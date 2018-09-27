@@ -35,30 +35,30 @@ sap.ui.define([
 					elem.style.borderWidth = "1xp";
 					elem.style.borderStyle = "solid";
 				}
-			})
+			});
 		},
 
 		_fetchClasses : function(){
 			var sheets = document.styleSheets;
 			var themeClasses = {"Styles" : []};
-			for(var i in sheets){
+			for (var i in sheets){
 				if (sheets[i].cssRules){
 					var x = sheets[i].cssRules;
-					for(var j in x){
-						if(x[j].selectorText && x[j].selectorText.indexOf("sapTheme")>0){
+					for (var j in x){
+						if (x[j].selectorText && x[j].selectorText.indexOf("sapTheme") > 0){
 							var sCssRule = x[j].cssText.split('{')[1].split('}')[0];
 							var bBorder = ( x[j].cssText.indexOf('border') > 0 ) ? true : false;
 							var sStyles = "";
-							if (x[j].selectorText.indexOf(',')>0){
+							if (x[j].selectorText.indexOf(',') > 0){
 								var aStyles = x[j].selectorText.split(',');
-								for(var k in aStyles){
+								for (var k in aStyles){
 									sStyles = aStyles[k].split('.')[1];
 									if (sStyles.trim() === "sapContrast" || sStyles.trim() === "sapContrastPlus") { continue; }
 									themeClasses.Styles.push({"stylingString" : sCssRule, "styleClass" : sStyles, "style" : x[j].style, 'border' : bBorder });
 								}
 							} else if (x[j].selectorText.split('.').length > 2){
 								var aStyles = x[j].selectorText.split('.');
-								for(var k in aStyles){
+								for (var k in aStyles){
 									sStyles += aStyles[k];
 									sStyles += " ";
 								}

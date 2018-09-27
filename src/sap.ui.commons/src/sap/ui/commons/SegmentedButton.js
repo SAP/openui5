@@ -272,6 +272,7 @@ sap.ui.define([
 			this.addDelegate(this._oItemNavigation);
 		}
 		this.setProperty("enabled", bEnabled);
+		return this;
 	};
 
 	/*

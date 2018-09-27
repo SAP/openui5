@@ -3,7 +3,11 @@
  */
 
 // private
-sap.ui.define(["sap/ui/base/Object", "./_OpaLogger", "sap/ui/thirdparty/jquery"], function(Ui5Object, _OpaLogger, jQueryDOM) {
+sap.ui.define([
+    "sap/ui/base/Object",
+    "sap/ui/test/_OpaLogger",
+    "sap/ui/thirdparty/jquery"
+], function(Ui5Object, _OpaLogger, jQueryDOM) {
     "use strict";
 
     var DEFAULT_URL = "http://localhost:8090";

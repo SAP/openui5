@@ -87,13 +87,32 @@ function(
 							applicationVersion : {
 								version : "1.2.3"
 							}
+						},
+						"getEntry": function () {
+							return {
+								"type": "application"
+							};
+						}
+					};
+				},
+				getManifestObject: function () {
+					return {
+						"sap.app" : {
+							applicationVersion : {
+								version : "1.2.3"
+							}
+						},
+						"getEntry": function () {
+							return {
+								"type": "application"
+							};
 						}
 					};
 				},
 				getManifestEntry: function () {}
 			};
 			sandbox.stub(Cache, "getChangesFillingCache").returns(oChangesFillingCachePromise);
-			sandbox.stub(Utils, "getAppComponentForControl").withArgs(sinon.match.any, true).returns(oAppComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
 			sandbox.stub(Utils, "getComponentName").returns("ui.s2p.mm.purchorder.approve.Component");
 
 			// decode
@@ -130,6 +149,7 @@ function(
 			var done1 = assert.async();
 			var done2 = assert.async();
 			sandbox.stub(Utils, "getAppComponentClassNameForComponent").returns("<sap-app-id> or <component name>");
+			sandbox.stub(Utils, "isApplication").returns(true);
 			ManagedObject._sOwnerId = "<component name>";
 
 			// perparation of the changes
@@ -242,6 +262,70 @@ function(
 				component: oComp
 			});
 			oCompCont.placeAt("qunit-fixture");
+		});
+
+		QUnit.test("make sure requests are only sent for app components", function (assert) {
+			var done = assert.async();
+			var sControllerName = "ui.s2p.mm.purchorder.approve.view.S2";
+			var oExtensionProvider = new PreprocessorImpl();
+
+			var oComponent = {
+				getManifestObject: function () {
+					return {
+						"sap.app" : {
+							applicationVersion : {
+								version : "1.2.3"
+							},
+							type: "component"
+						}
+					};
+				},
+				getManifest: function () {
+					return {
+						"sap.app" : {
+							applicationVersion : {
+								version : "1.2.3"
+							},
+							type: "component"
+						}
+					};
+				},
+				getManifestEntry: function () {}
+			};
+
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+
+			oExtensionProvider.getControllerExtensions(sControllerName, "<component ID>", true).then(
+				function (aCodeExtensions) {
+					assert.equal(aCodeExtensions.length, 0, "No extensions were returned.");
+					done();
+				}
+			);
+		});
+
+		QUnit.test("make sure requests are only sent for app components (even without manifest)", function (assert) {
+			var done = assert.async();
+			var sControllerName = "ui.s2p.mm.purchorder.approve.view.S2";
+			var oExtensionProvider = new PreprocessorImpl();
+
+			var oComponent = {
+				getManifest: function () {
+					return undefined;
+				},
+				getManifestObject: function () {
+					return undefined;
+				},
+				getManifestEntry: function () {}
+			};
+
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+
+			oExtensionProvider.getControllerExtensions(sControllerName, "<component ID>", true).then(
+				function (aCodeExtensions) {
+					assert.equal(aCodeExtensions.length, 0, "No extensions were returned.");
+					done();
+				}
+			);
 		});
 	});
 

@@ -163,6 +163,54 @@
         "type": "FIX",
         "text": " v2.ODataListBinding: 0 count in result now correctly processed",
         "references": []
+      },
+      {
+        "id": "11153e368d5dc5ca52aa6195a3f88ad9e21adf07",
+        "type": "FIX",
+        "text": " Element: Experimental note added to drag-and-drop metadata",
+        "references": []
+      },
+      {
+        "id": "6ef708e55291ce5f49126c2cf35c049d2c551104",
+        "type": "FIX",
+        "text": " TableUtils: Update OpenSource usage documentation",
+        "references": []
+      },
+      {
+        "id": "d22d3f315e6880a8bcd2ecead42083bb4f00efa4",
+        "type": "FIX",
+        "text": " core.routing: convert route config for internal target",
+        "references": []
+      },
+      {
+        "id": "1c078cf28f65adebc2e17f1f4ad89d02d7ccc2d2",
+        "type": "FIX",
+        "text": " query.sap.storage: fixed missing static methods",
+        "references": []
+      },
+      {
+        "id": "ec82c6d4b8de91d886e01e89bd114fbd6a735c5d",
+        "type": "FIX",
+        "text": " v2/ODataListBinding: Set oCombinedFilters before applyFilter() is called",
+        "references": []
+      },
+      {
+        "id": "be6feb5196869fff54a00353a4c19f5644f67f76",
+        "type": "FIX",
+        "text": " Theming Parameters: Prevent timing issues in Safari/Edge",
+        "references": []
+      },
+      {
+        "id": "5b19125732a96d461422148f9e51f8d4cebc6f78",
+        "type": "FIX",
+        "text": " sap.ui.core.util.reflection - UA cleanup",
+        "references": []
+      },
+      {
+        "id": "16553b086737025c9cd0c8d327b796b97e68f234",
+        "type": "FIX",
+        "text": "sap.ui.fl - Fixed switching variants with stashed controls",
+        "references": []
       }
     ]
   }

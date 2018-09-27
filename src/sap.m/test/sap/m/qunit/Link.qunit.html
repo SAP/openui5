@@ -216,6 +216,26 @@
 			oLink1.destroy();
 		});
 
+		QUnit.test("_getTabindex should return -1 if the link has no text", function(assert) {
+			var oLink1 = new sap.m.Link({
+				text : ""
+			});
+
+			assert.equal(oLink1._getTabindex(), "-1", "Tabindex of the Link should be -1");
+
+			oLink1.destroy();
+		});
+
+		QUnit.test("_getTabindex should return 0 if the link has text", function(assert) {
+			var oLink1 = new sap.m.Link({
+				text : "Some link"
+			});
+
+			assert.equal(oLink1._getTabindex(), "0", "Tabindex of the Link should be 0");
+
+			oLink1.destroy();
+		});
+
 		QUnit.test("Normal link should be in the tab chain", function(assert) {
 			var oLink1 = new sap.m.Link("l1", {
 				text : sText,

@@ -110,6 +110,7 @@ sap.ui.define([
 		if (this.getDomRef()) {
 			sap.ui.commons.PaginatorRenderer.updateBackAndForward(this);
 		}
+		return this;
 	};
 
 	/**

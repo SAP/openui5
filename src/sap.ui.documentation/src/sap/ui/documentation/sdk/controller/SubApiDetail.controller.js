@@ -17,10 +17,13 @@ sap.ui.define([
 		"sap/m/HBox",
 		"sap/m/ObjectAttribute",
 		"sap/m/Popover",
-		"sap/m/FlexWrap"
+		"sap/m/library"
 	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, APIInfo,
-			formatter, Label, Link, Text, HBox, ObjectAttribute, Popover, FlexWrap) {
+			formatter, Label, Link, Text, HBox, ObjectAttribute, Popover, library) {
 		"use strict";
+
+		// shortcut for sap.m.FlexWrap
+		var FlexWrap = library.FlexWrap;
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.SubApiDetail", {
 
@@ -519,6 +522,5 @@ sap.ui.define([
 				this.onNavBack();
 			}
 		});
-
 	}
 );

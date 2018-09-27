@@ -110,9 +110,11 @@ sap.ui.define(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], func
 			return "style" + (i + 1);
 		}
 
-		function includeStyleSheetWrapped(i, fnResolve, fnReject) {
-			var sStyleId = getStyleId(i);
-			includeStyleSheet(sStyleBaseUrl + sStyleId + '.css', sStyleId, fnResolve, fnReject);
+		function includeStyleSheetPromise(i) {
+			return new Promise(function(fnResolve, fnReject) {
+				var sStyleId = getStyleId(i);
+				includeStyleSheet(sStyleBaseUrl + sStyleId + '.css', sStyleId, fnResolve, fnReject);
+			});
 		}
 
 		// remember initial stylesheet count
@@ -127,10 +129,7 @@ sap.ui.define(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], func
 
 			// success / error callback will only be called for real link tags
 			// create promise to keep track of loading state
-			var oPromise = new Promise(function(fnResolve, fnReject) {
-				includeStyleSheetWrapped(i, fnResolve, fnReject);
-			});
-			aPromises.push(oPromise);
+			aPromises.push( includeStyleSheetPromise(i) );
 
 		}
 

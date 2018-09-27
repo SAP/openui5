@@ -416,6 +416,27 @@
 			assert.strictEqual(parseInt(aList[aList.length-1].getKey()), iEnd, "the key property of the last element of the array is correct");
 			assert.strictEqual(parseInt(aList[aList.length-1].getText()), iEnd, "the text property of the last element of the array is correct");
 		});
+
+		QUnit.test("ValueHelp icon is not visible when timepicker is not enabled", function (assert) {
+			// arrange
+			var oTimePicker = new sap.m.DatePicker({ enabled: false }),
+				oValueHelpIconSetPropertySpy = this.spy(),
+				oValueHelpIconStub = this.stub(oTimePicker, "_getValueHelpIcon", function () {
+					return { setProperty: oValueHelpIconSetPropertySpy };
+				});
+
+			// act
+			oTimePicker.onBeforeRendering();
+
+			// assert
+			assert.equal(oValueHelpIconSetPropertySpy.getCall(0).args[0], "visible", "setProperty of the icon should be called for visible");
+			assert.equal(oValueHelpIconSetPropertySpy.getCall(0).args[1], false, "visible property should be set to false");
+
+			// cleanup
+			oValueHelpIconStub.restore();
+			oTimePicker.destroy();
+		});
+
 		QUnit.module("Placeholder", {
 			beforeEach: function () {
 				// SUT

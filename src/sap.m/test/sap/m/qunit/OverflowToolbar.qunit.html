@@ -1402,6 +1402,52 @@
 			oOverflowTB.destroy();
 		});
 
+		QUnit.test("Changing selected item of sap.m.Select, which has autoAdjustWidth: true (affects control size), forces recalculation of the layout", function (assert) {
+			var aContent = getDefaultContent(),
+					oOverflowTB,
+					spy;
+
+			var oSelect = new sap.m.Select({
+				autoAdjustWidth: true,
+				items: [
+					new sap.ui.core.Item({id: "idItem1", text: "Item 1"}),
+					new sap.ui.core.Item({id: "idItem2", text: "This is an extremely long Item 2"}),
+				]
+			});
+
+			aContent.push(oSelect);
+
+			spy = this.spy(sap.m.OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
+
+			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
+			this.clock.tick(1000);
+
+			var iInvalidationCountBefore = spy.callCount;
+
+			oSelect.setSelectedItemId("idItem2");
+
+			this.clock.tick(1000);
+
+			var iInvalidationCountAfter = spy.callCount;
+
+			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 1, "Layout recalculation triggered (_resetAndInvalidateToolbar called)");
+
+			//simulate select control is in the overflow
+			oSelect._bIsInOverflow = true;
+
+			iInvalidationCountBefore = spy.callCount;
+
+			oSelect.setSelectedItemId("idItem1");
+
+			this.clock.tick(1000);
+
+			iInvalidationCountAfter = spy.callCount;
+
+			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 0, "Layout recalculation not triggered when select is in the overflow");
+
+			oOverflowTB.destroy();
+		});
+
 		QUnit.test("Changing selected item's data model of sap.m.Select, which has autoAdjustWidth: true (affects control size), forces recalculation of the layout", function (assert) {
 			var aContent = getDefaultContent(),
 					oModel,
@@ -1570,7 +1616,7 @@
 			oOverflowTB.destroy();
 		});
 
-		QUnit.test("[_resetAndInvalidateToolbar] resets also values in _aControlSizes object", function (assert) {
+		QUnit.test("[onThemeChanged] resets also values in _aControlSizes object", function (assert) {
 			// Create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
 			var aDefaultContent = [
 				new sap.m.Button({text: "1", width: "100px"}),
@@ -1587,7 +1633,7 @@
 
 			sap.ui.getCore().applyChanges();
 
-			oOverflowTB._resetAndInvalidateToolbar();
+			oOverflowTB.onThemeChanged();
 
 			for (var iControlSize in oOverflowTB._aControlSizes) {
 				if (oOverflowTB._aControlSizes.hasOwnProperty(iControlSize)) {

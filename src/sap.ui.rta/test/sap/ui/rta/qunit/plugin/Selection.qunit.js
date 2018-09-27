@@ -50,7 +50,7 @@ sap.ui.define([
 			this.sandbox = sinon.sandbox.create();
 
 			this.oComponent = new UIComponent();
-			this.sandbox.stub(FlUtils, "getAppComponentForControl").returns(this.oComponent);
+			this.sandbox.stub(FlUtils, "_getAppComponentForComponent").returns(this.oComponent);
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.registerControlsForChanges({
 				"sap.m.VBox": [
@@ -308,15 +308,39 @@ sap.ui.define([
 		});
 
 		QUnit.test("When setSelected() is called on an Overlay with Developer Mode = false ", function(assert){
-			var oElement = new Button("testbutton");
+			var oElement = new Button("testbutton1");
 			var oOverlay = new ElementOverlay({
 				element: oElement,
 				isRoot: false
 			});
+			this.sandbox.stub(oOverlay, "getDesignTimeMetadata").returns({
+				markedAsNotAdaptable: function() { return false; }
+			});
+			var oAttachEditableChangeStub = this.sandbox.stub(oOverlay, "attachEditableChange");
 			this.oSelectionPlugin.registerElementOverlay(oOverlay);
 			this.oSelectionManager.add(oOverlay);
 			assert.notOk(oOverlay.isSelected(), "then this overlay is not selected");
+			assert.strictEqual(oAttachEditableChangeStub.callCount, 1, "then 'attachEditableChange' function called once");
 			this.oSelectionPlugin.deregisterElementOverlay(oOverlay);
+			oElement.destroy();
+		});
+
+		QUnit.test("When setSelected() is called on an Overlay and markedAsNotAdaptable function returns true ", function(assert){
+			var oElement = new Button("testbutton2");
+			var oOverlay = new ElementOverlay({
+				element: oElement,
+				isRoot: false
+			});
+			this.sandbox.stub(oOverlay, "getDesignTimeMetadata").returns({
+				markedAsNotAdaptable: function() { return true; }
+			});
+			var oAttachEditableChangeStub = this.sandbox.stub(oOverlay, "attachEditableChange");
+			this.oSelectionPlugin.registerElementOverlay(oOverlay);
+			this.oSelectionManager.add(oOverlay);
+			assert.notOk(oOverlay.isSelected(), "then this overlay is not selected");
+			assert.strictEqual(oAttachEditableChangeStub.callCount, 0, "then 'attachEditableChange' function never called");
+			this.oSelectionPlugin.deregisterElementOverlay(oOverlay);
+			oElement.destroy();
 		});
 
 		QUnit.test("Deregistering an Overlay", function (assert) {
@@ -446,14 +470,14 @@ sap.ui.define([
 				assert.ok(true, 'elementEditableChange event was called');
 				fnDone();
 			});
-			assert.ok(this.oSelectionPlugin._checkDeveloperMode(oOverlay), "_checkDeveloperMode returns true");
+			assert.ok(this.oSelectionPlugin._checkDeveloperMode(oOverlay, {}), "_checkDeveloperMode returns true");
 			assert.ok(oOverlay.getEditable() === true, "Overlay is set to 'editable = true'");
 			assert.ok(oOverlay.getSelectable() === true, "Overlay is set to 'selectable = true'");
 		});
 
 		QUnit.test("When the method _checkDeveloperMode is called and Developermode is false", function (assert) {
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
-			assert.notOk(this.oSelectionPlugin._checkDeveloperMode(oOverlay), "_checkDeveloperMode returns false");
+			assert.notOk(this.oSelectionPlugin._checkDeveloperMode(oOverlay, {}), "_checkDeveloperMode returns false");
 		});
 	});
 

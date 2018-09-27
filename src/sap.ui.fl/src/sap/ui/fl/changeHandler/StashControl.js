@@ -51,7 +51,7 @@ sap.ui.define([
 		var mRevertData = oChange.getRevertData();
 
 		if (mRevertData) {
-			mPropertyBag.modifier.setStashed(oControl, mRevertData.originalValue);
+			mPropertyBag.modifier.setStashed(oControl, mRevertData.originalValue, mPropertyBag.appComponent);
 			oChange.resetRevertData();
 		} else {
 			Log.error("Attempt to revert an unapplied change.");

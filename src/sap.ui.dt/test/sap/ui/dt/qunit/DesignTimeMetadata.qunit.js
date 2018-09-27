@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/dt/AggregationDesignTimeMetadata",
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/core/Title",
@@ -14,7 +13,6 @@ sap.ui.define([
 function(
 	jQuery,
 	sinon,
-	AggregationDesignTimeMetadata,
 	DesignTimeMetadata,
 	SimpleForm,
 	Title,
@@ -127,6 +125,53 @@ function(
 				}
 			});
 			assert.strictEqual(this.oDesignTimeMetadata.isIgnored(), true, "then ignore property is returned right");
+		});
+
+		QUnit.test("when 'getControllerExtensionTemplate' is called with a path specified", function(assert) {
+			this.oDesignTimeMetadata = new DesignTimeMetadata({
+				data : {
+					controllerExtensionTemplate: "foo"
+				}
+			});
+
+			assert.equal(this.oDesignTimeMetadata.getControllerExtensionTemplate(), "foo", "the correct path is retrieved");
+		});
+
+		QUnit.test("when 'getControllerExtensionTemplate' is called without a path specified", function(assert) {
+			assert.equal(this.oDesignTimeMetadata.getControllerExtensionTemplate(), undefined, "the correct path is retrieved");
+		});
+
+		QUnit.test("when markedAsNotAdaptable function is called on an action with 'not-adaptable' value", function(assert) {
+			this.oDesignTimeMetadata = new DesignTimeMetadata({
+				data : {
+					actions: "not-adaptable"
+				}
+			});
+			assert.strictEqual(this.oDesignTimeMetadata.markedAsNotAdaptable(), true, "then the function returns 'true'");
+		});
+
+		QUnit.test("when markedAsNotAdaptable function is called on an action with 'null' value", function(assert) {
+			this.oDesignTimeMetadata = new DesignTimeMetadata({
+				data : {
+					actions: null
+				}
+			});
+			assert.strictEqual(this.oDesignTimeMetadata.markedAsNotAdaptable(), false, "then the function returns 'false'");
+		});
+
+		QUnit.test("when markedAsNotAdaptable function is called on an action with with an action-object value", function(assert) {
+			this.oDesignTimeMetadata = new DesignTimeMetadata({
+				data : {
+					actions: {
+						rename : {
+							domRef : function (oElement){
+								return oElement.getDomRef();
+							}
+						}
+					}
+				}
+			});
+			assert.strictEqual(this.oDesignTimeMetadata.markedAsNotAdaptable(), false, "then the function returns 'false'");
 		});
 	});
 

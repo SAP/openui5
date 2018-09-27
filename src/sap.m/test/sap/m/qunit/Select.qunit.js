@@ -8595,6 +8595,10 @@ sap.ui.require([
 			new sap.ui.core.Item({key: "Item1", text: "Item1"}),
 			new sap.ui.core.Item({key: "Item2", text: "Item2"})
 		];
+		var aItems2 = [
+			new sap.ui.core.Item({key: "Item1", text: "Item1"}),
+			new sap.ui.core.Item({key: "Item2", text: "Item2"})
+		];
 
 		var oIconOnlySelect = new sap.m.Select("iconOnlySelect", {
 			icon: "sap-icon//search",
@@ -8603,7 +8607,7 @@ sap.ui.require([
 		});
 
 		var oStandardSelect = new sap.m.Select("standardSelect", {
-			items: aItems
+			items: aItems2
 		});
 
 		oIconOnlySelect.placeAt("content");

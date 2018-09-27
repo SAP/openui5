@@ -16,6 +16,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					stretch : true,
 					files : [
 						"OpaTestLibrary.html",
+						"OpaTestLibrary.js",
 						"applicationUnderTest/index.html",
 						"applicationUnderTest/Component.js",
 						"applicationUnderTest/view/Main.view.xml",

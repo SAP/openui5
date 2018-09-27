@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/base/DataType",
 	"sap/ui/Device",
-	"sap/m/library",
-	"sap/ui/layout/library"
+	"sap/ui/core/library", // library dependency
+	"sap/m/library", // library dependency
+	"sap/ui/layout/library" // library dependency
 ], function(Core, DataType, Device) {
 	"use strict";
 
@@ -69,6 +70,12 @@ sap.ui.define([
 				"sap.uxap.ObjectPageHeaderActionButton": "sap/uxap/flexibility/ObjectPageHeaderActionButton",
 				"sap.ui.core._StashedControl": {
 					"unstashControl": {
+						"changeHandler": "default",
+						"layers": {
+							"USER": true
+						}
+					},
+					"stashControl": {
 						"changeHandler": "default",
 						"layers": {
 							"USER": true

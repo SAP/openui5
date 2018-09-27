@@ -1353,9 +1353,7 @@ sap.ui.define([
 		 * @public
 		 */
 		ComboBoxBase.prototype.removeItem = function(vItem) {
-			var oList = this.getList();
-
-			vItem = oList ? oList.removeItem(vItem) : null;
+			vItem = this.removeAggregation("items", vItem);
 
 			if (vItem) {
 				vItem.detachEvent("_change", this.onItemChange, this);
@@ -1372,8 +1370,7 @@ sap.ui.define([
 		 * @public
 		 */
 		ComboBoxBase.prototype.removeAllItems = function() {
-			var oList = this.getList(),
-				aItems = oList ? oList.removeAllItems() : [];
+			var aItems = this.removeAllAggregation("items");
 
 			// clear the selection
 			this.clearSelection();
@@ -1398,22 +1395,6 @@ sap.ui.define([
 					return oOtherItem.getId();
 				}).indexOf(oItem.getId()) !== -1;
 			});
-		};
-
-		/**
-		 * Destroys all the items in the aggregation named <code>items</code>.
-		 *
-		 * @returns {sap.m.ComboBox} <code>this</code> to allow method chaining.
-		 * @public
-		 */
-		ComboBoxBase.prototype.destroyItems = function() {
-			var oList = this.getList();
-
-			if (oList) {
-				oList.destroyItems();
-			}
-
-			return this;
 		};
 
 		return ComboBoxBase;

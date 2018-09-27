@@ -712,29 +712,26 @@ sap.ui.define([
 		initRowHovering: function(oTable) {
 			var $Table = oTable.$();
 			for (var i = 0; i < RowHoverHandler.ROWAREAS.length; i++) {
-				RowHoverHandler._initRowHoveringForArea($Table, RowHoverHandler.ROWAREAS[i]);
+				RowHoverHandler._initRowHoveringForArea(oTable, $Table, RowHoverHandler.ROWAREAS[i]);
 			}
 		},
 
-		_initRowHoveringForArea: function($Table, sArea) {
+		_initRowHoveringForArea: function(oTable, $Table, sArea) {
 			$Table.find(sArea).hover(function() {
-				RowHoverHandler._onHover(this, $Table, sArea);
+				RowHoverHandler._onHover(oTable, $Table, sArea, this);
 			}, function() {
-				RowHoverHandler._onUnhover(this, $Table);
+				RowHoverHandler._onUnhover(oTable, $Table, sArea, this);
 			});
 		},
 
-		_onHover: function(oElem, $Table, sArea) {
+		_onHover: function(oTable, $Table, sArea, oElem) {
 			var iIndex = $Table.find(sArea).index(oElem);
-			for (var i = 0; i < RowHoverHandler.ROWAREAS.length; i++) {
-				$Table.find(RowHoverHandler.ROWAREAS[i]).filter(":eq(" + (iIndex) + ")").addClass("sapUiTableRowHvr");
-			}
+			oTable.getRows()[iIndex]._setHovered(true);
 		},
 
-		_onUnhover: function(oElem, $Table) {
-			for (var i = 0; i < RowHoverHandler.ROWAREAS.length; i++) {
-				$Table.find(RowHoverHandler.ROWAREAS[i]).removeClass("sapUiTableRowHvr");
-			}
+		_onUnhover: function(oTable, $Table, sArea, oElem) {
+			var iIndex = $Table.find(sArea).index(oElem);
+			oTable.getRows()[iIndex]._setHovered(false);
 		}
 
 	};

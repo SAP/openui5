@@ -18,12 +18,13 @@ sap.ui.define([
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/RuleSetLoader",
+	"sap/ui/support/supportRules/RuleSerializer",
 	"sap/ui/support/library"
 ],
 function (jQuery, ManagedObject, Analyzer, CoreFacade,
 		  ExecutionScope, Highlighter, CommunicationBus,
 		  IssueManager, History, DataCollector, channelNames,
-		  constants, RuleSetLoader, library) {
+		  constants, RuleSetLoader, RuleSerializer, library) {
 	"use strict";
 
 	var IFrameController = null;
@@ -195,6 +196,36 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 		// If configuration contains 'silent' there must be no subscription
 		// for temporary rules
 		if (this._supportModeConfig.indexOf("silent") < 0) {
+
+			CommunicationBus.subscribe(channelNames.VERIFY_CREATE_RULE, function (tempRuleSerialized) {
+				var oTempRule = RuleSerializer.deserialize(tempRuleSerialized),
+					oTempRuleSet = RuleSetLoader.getRuleSet(constants.TEMP_RULESETS_NAME).ruleset,
+					sResult = oTempRuleSet.addRule(oTempRule);
+
+				CommunicationBus.publish(channelNames.VERIFY_RULE_CREATE_RESULT, {
+					result: sResult,
+					newRule: RuleSerializer.serialize(oTempRule)
+				});
+
+			}, this);
+
+			CommunicationBus.subscribe(channelNames.VERIFY_UPDATE_RULE, function (data) {
+				var oTempRule = RuleSerializer.deserialize(data.updateObj),
+					oTempRuleSet = RuleSetLoader.getRuleSet(constants.TEMP_RULESETS_NAME).ruleset,
+					sResult = oTempRuleSet.updateRule(data.oldId, oTempRule);
+
+				CommunicationBus.publish(channelNames.VERIFY_RULE_UPDATE_RESULT, {
+					result: sResult,
+					updateRule: RuleSerializer.serialize(oTempRule)
+				});
+			}, this);
+
+			CommunicationBus.subscribe(channelNames.DELETE_RULE,function (data) {
+				var oTempRule = RuleSerializer.deserialize(data),
+					oTempRuleSet = RuleSetLoader.getRuleSet(constants.TEMP_RULESETS_NAME).ruleset;
+
+				oTempRuleSet.removeRule(oTempRule);
+			}, this);
 
 			CommunicationBus.subscribe(channelNames.OPEN_URL, function (url) {
 				var win = window.open(url, "_blank");
@@ -682,7 +713,6 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 
 	/**
 	 * Gets last analysis history.
-	 * @memberof jQuery.sap.support
 	 * @public
 	 * @returns {Object} Last analysis history.
 	 */
@@ -694,6 +724,31 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 		} else {
 			return null;
 		}
+	};
+
+	 /**
+	 * Adds new temporary rule when in silent mode
+	 *
+	 * @public
+	 * @param {Object} oRule Object with rule information
+	 * @returns {string} Rule creation status
+	 */
+	Main.prototype.addRule = function (oRule) {
+		if (!oRule) {
+			return "No rule provided.";
+		}
+
+		oRule.selected = oRule.selected !== undefined ? oRule.selected : true;
+		oRule.async = oRule.async || false;
+
+		var sResult = RuleSetLoader.getRuleSet(constants.TEMP_RULESETS_NAME).ruleset.addRule(oRule);
+
+		CommunicationBus.publish(channelNames.VERIFY_RULE_CREATE_RESULT, {
+			result: sResult,
+			newRule: RuleSerializer.serialize(oRule)
+		});
+
+		return sResult;
 	};
 
 	var oMain = new Main();

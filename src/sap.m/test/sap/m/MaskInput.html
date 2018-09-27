@@ -55,13 +55,8 @@
 									items: [
 										new sap.ui.layout.form.SimpleForm({
 											editable: true,
+											title: "Generic Mask Input",
 											content: [
-												new sap.m.Title({
-													text: "Generic Mask Input",
-													textAlign: sap.ui.core.TextAlign.Center,
-													level: sap.ui.core.TitleLevel.H2,
-													titleStyle: sap.ui.core.TitleLevel.H2
-												}),
 												addMask("Any character", "~~~~~~~~~~", "Enter text", "_", [ruleCollection[0].rule]),
 												addMask("Latin characters (case insensitive)", "aaaaaaaa", "Enter text", "_"),
 												addMask("Latin characters (case sensitive, only capital letters allowed) and numbers", "CCCCCCCC", "Enter text", "_", [ruleCollection[4].rule]),
@@ -74,13 +69,8 @@
 									items: [
 										new sap.ui.layout.form.SimpleForm({
 											editable: true,
+											title: "Possible usages (may require additional coding)",
 											content: [
-												new sap.m.Title({
-													text: "Possible usages (may require additional coding)",
-													textAlign: sap.ui.core.TextAlign.Center,
-													level: sap.ui.core.TitleLevel.H2,
-													titleStyle: sap.ui.core.TitleLevel.H2
-												}),
 												addMask("Serial number (case sensitive, only capital letters allowed)", "CCCC-CCCC-CCCC-CCCC-CCCC", "Enter serial number", "_", [ruleCollection[4].rule]),
 												addMask("Product activation key (case sensitive, only capital letters allowed)", "SAP-CCCCC-CCCCC", "Enter activation key", "_", [ruleCollection[4].rule]),
 												addMask("ISBN", "999-99-999-9999-9", "Enter ISBN", "_")
@@ -92,13 +82,8 @@
 									items: [
 										new sap.ui.layout.form.SimpleForm({
 											editable: true,
+											title: "Data binding",
 											content: [
-												new sap.m.Title({
-													text: "Data binding",
-													textAlign: sap.ui.core.TextAlign.Center,
-													level: sap.ui.core.TitleLevel.H2,
-													titleStyle: sap.ui.core.TitleLevel.H2
-												}),
 												new sap.m.Label({
 													text: "Data bound mask input (numeric)"
 												}),

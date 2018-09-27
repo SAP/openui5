@@ -23,7 +23,7 @@ sap.ui.define([
 					{
 						product: "R32",
 						supplier: "VW"
-					},
+					}
 				]
 			};
 			var oModel = new JSONModel(oData);

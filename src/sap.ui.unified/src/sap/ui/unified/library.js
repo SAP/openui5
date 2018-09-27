@@ -5,7 +5,7 @@
 /**
  * Initialization Code and shared classes of library sap.ui.unified.
  */
-sap.ui.define(['sap/ui/core/Core', 'sap/ui/base/Object'], function(Core, BaseObject) {
+sap.ui.define(['sap/ui/core/Core', 'sap/ui/base/Object', 'sap/ui/core/library'], function(Core, BaseObject) {
 
 	"use strict";
 
@@ -42,6 +42,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/base/Object'], function(Core, BaseObj
 			"sap.ui.unified.CalendarRow",
 			"sap.ui.unified.ContentSwitcher",
 			"sap.ui.unified.ColorPicker",
+			"sap.ui.unified.ColorPickerPopover",
 			"sap.ui.unified.Currency",
 			"sap.ui.unified.FileUploader",
 			"sap.ui.unified.Menu",

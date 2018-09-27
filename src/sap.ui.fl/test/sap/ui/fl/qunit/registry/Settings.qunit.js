@@ -68,6 +68,31 @@ sap.ui.define([
 			assert.equal(bIsAtoEnabled, false);
 		});
 
+		QUnit.test("isTrial returns false when settings file has no isTrial flag", function(assert) {
+		    var oSettings = {};
+		    this.cut = new Settings(oSettings);
+		    var bIsTrial = this.cut.isTrial();
+		    assert.equal(bIsTrial, false);
+		});
+
+		QUnit.test("isTrial returns false when settings file has isTrial flag that is set to false", function(assert) {
+		    var oSettings = {
+			    "isTrial": false
+		    };
+		    this.cut = new Settings(oSettings);
+		    var bIsTrial = this.cut.isTrial();
+		    assert.equal(bIsTrial, false);
+		});
+
+		QUnit.test("isTrial returns false when settings file has isTrial flag that is set to false", function(assert) {
+		    var oSettings = {
+			    "isTrial": true
+		    };
+		    this.cut = new Settings(oSettings);
+		    var bIsTrial = this.cut.isTrial();
+		    assert.equal(bIsTrial, true);
+		});
+
 		QUnit.test("variants sharing is enabled by default", function(assert) {
 			assert.equal(this.cut._oSettings.isVariantSharingEnabled, true);
 			var bIsVariantSharingEnabled = this.cut.isVariantSharingEnabled();

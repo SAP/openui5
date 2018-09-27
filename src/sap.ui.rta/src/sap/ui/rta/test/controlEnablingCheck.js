@@ -115,6 +115,11 @@ function(
 					"sap.app": {
 						"id": UI_COMPONENT_NAME,
 						"type": "application"
+					},
+					"getEntry": function () {
+						return {
+							type: "application"
+						};
 					}
 				}
 			},
@@ -300,10 +305,10 @@ function(
 			.then(function() {
 				var oChange = this.oCommand.getPreparedChange();
 				if (this.oCommand.getAppComponent) {
-					var oAppComponent = this.oCommand.getAppComponent();
-					var oControl = ControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-					var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-					oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
+					var oComponent = this.oCommand.getAppComponent(true);
+					var oControl = ControlTreeModifier.bySelector(oChange.getSelector(), oComponent);
+					var oFlexController = FlexControllerFactory.createForControl(oComponent);
+					oFlexController.removeFromAppliedChangesOnControl(oChange, oComponent, oControl);
 				}
 			}.bind(this))
 
@@ -326,10 +331,10 @@ function(
 			.then(function() {
 				var oChange = this.oCommand.getPreparedChange();
 				if (this.oCommand.getAppComponent) {
-					var oAppComponent = this.oCommand.getAppComponent();
-					var oControl = ControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-					var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-					return oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
+					var oComponent = this.oCommand.getAppComponent(true);
+					var oControl = ControlTreeModifier.bySelector(oChange.getSelector(), oComponent);
+					var oFlexController = FlexControllerFactory.createForControl(oComponent);
+					return oFlexController.removeFromAppliedChangesOnControl(oChange, oComponent, oControl);
 				}
 			}.bind(this))
 

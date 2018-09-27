@@ -51,7 +51,6 @@ sap.ui.define([
 		},
 
 		_initViewSettingsDialog : function () {
-			var oRouter = this.getRouter();
 			this._oVSD = new sap.m.ViewSettingsDialog("vsd", {
 				confirm: function (oEvent) {
 					var oSortItem = oEvent.getParameter("sortItem");

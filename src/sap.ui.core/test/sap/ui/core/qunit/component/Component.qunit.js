@@ -163,6 +163,52 @@ sap.ui.define([
 		assert.equal(oComponent.getComponentData().foo, "bar", "Component data is correct");
 	});
 
+	QUnit.module("Factory Error Handling");
+
+	QUnit.test("Component.js error handling (manifestFirst)", function(assert) {
+
+		// Register manifest.json
+		sap.ui.require.preload({
+			"test/inline/errorHandling1/manifest.json": JSON.stringify({
+				"sap.app": {
+					"id": "test.inline.errorHandling1"
+				}
+			})
+		});
+
+		// Define failing component
+		sap.ui.define("test/inline/errorHandling1/Component", ["sap/ui/core/Component"], function(Component) {
+			throw new Error("Error from test/inline/errorHandling1/Component");
+		});
+
+		return Component.load({
+			name: "test.inline.errorHandling1"
+		}).then(function(oComponent) {
+			assert.notOk(true, "Component should not be created");
+		}, function(oError) {
+			assert.equal(oError.message, "Error from test/inline/errorHandling1/Component", "Error from Component.js should be propagated");
+		});
+
+	});
+
+	QUnit.test("Component.js error handling (no manifestFirst)", function(assert) {
+
+		// Define failing component
+		sap.ui.define("test/inline/errorHandling2/Component", ["sap/ui/core/Component"], function(Component) {
+			throw new Error("Error from test/inline/errorHandling2/Component");
+		});
+
+		return Component.load({
+			name: "test.inline.errorHandling2",
+			manifest: false
+		}).then(function(oComponent) {
+			assert.notOk(true, "Component should not be created");
+		}, function(oError) {
+			assert.equal(oError.message, "Error from test/inline/errorHandling2/Component", "Error from Component.js should be propagated");
+		});
+
+	});
+
 	QUnit.module("Creation Context", {
 		beforeEach: function() {
 			return sap.ui.getCore().createComponent({
@@ -1258,8 +1304,6 @@ sap.ui.define([
 		var oComponent = sap.ui.component({
 			manifestUrl : "/anylocation/manifest.json"
 		});
-
-		var oBaseUri = new URI("/anylocation/manifest.json").absoluteTo(new URI(document.baseURI).search(""));
 
 		var aI18NCmpEnhanceWith = oModelConfigSpy.returnValues[0]["i18n-component"].settings[0].enhanceWith;
 		assert.strictEqual(aI18NCmpEnhanceWith[0].bundleUrl, "test-resources/sap/ui/core/samples/components/button/custom/i18n.properties", "Bundle URL of enhancing model must not be modified!");

@@ -201,7 +201,7 @@ function(
 
 		if (vPropagatedMetadata){
 
-			if (vPropagatedMetadata.actions === null) {
+			if (vPropagatedMetadata.actions === null || vPropagatedMetadata.actions === "not-adaptable") {
 				var mAggregations = oElement.getMetadata().getAllAggregations();
 				var aAggregationNames = Object.keys(mAggregations);
 
@@ -217,7 +217,7 @@ function(
 
 				aAggregationNames.forEach(function(sAggregationName) {
 					if (mResultMetadata.aggregations[sAggregationName] && mResultMetadata.aggregations[sAggregationName].actions) {
-						mResultMetadata.aggregations[sAggregationName].actions = null;
+						mResultMetadata.aggregations[sAggregationName].actions = vPropagatedMetadata.actions;
 					}
 				});
 			}

@@ -121,6 +121,7 @@ sap.ui.define([
 		this._oCodeViewer && this._oCodeViewer.setVisible(this.getSourceVisible());
 		this._oShowCodeLink && this._oShowCodeLink.setText(this.getSourceVisible() ? "Hide Source" : "Show Source");
 		this._oApplyCodeLink && this._oApplyCodeLink.setVisible(this.getSourceVisible());
+		return this;
 	};
 
 	CodeSampleContainer.prototype.setUiAreaId = function(sId) {
@@ -137,6 +138,7 @@ sap.ui.define([
 				this._oUIArea.addContent(aContent[i]);
 			}
 		}
+		return this;
 	};
 
 	CodeSampleContainer.prototype.setScriptElementId = function(sId) {
@@ -146,6 +148,7 @@ sap.ui.define([
 			var that = this;
 			sap.ui.getCore().attachInitEvent(function() { that._oCodeViewer.setSource(that._getSource()); });
 		}
+		return this;
 	};
 
 	CodeSampleContainer.prototype._getSource = function() {

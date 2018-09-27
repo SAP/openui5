@@ -245,6 +245,46 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Handle setting invalid option 'viewName' in route", function(assert) {
+		var oLogSpy = sinon.spy(Log, "error");
+
+		//Arrange System under Test
+		var router = new Router({
+			name: {
+				// This is a wrong usage, the option "view" should be set
+				// instead of "viewName"
+				// We should still support the usage but log an error to
+				// let the app be aware of the wrong usage
+				viewName: "myView",
+				viewType: "JS",
+				pattern : "view1"
+			}
+		});
+
+		var oViewCreateStub = sinon.stub(sap.ui, "view", function() {
+			var oView = {
+				loaded: function() {
+					return Promise.resolve(oView);
+				},
+				isA: function(sClassName) {
+					return sClassName === "sap.ui.core.mvc.View";
+				}
+			};
+
+			return oView;
+		});
+
+		var oRoute = router.getRoute("name");
+
+		router.parse("view1");
+
+		assert.strictEqual(oRoute._oConfig.name, "name", "Route has correct name");
+		assert.ok(oLogSpy.withArgs("The 'viewName' option shouldn't be used in Route. please use 'view' instead").calledOnce, "The error log is done and the log message is correct");
+
+		oViewCreateStub.restore();
+		oLogSpy.restore();
+	});
+
 	QUnit.test("subroute handling", function(assert) {
 
 		//Arrange System under Test
@@ -1858,6 +1898,7 @@ sap.ui.define([
 			}, "Product route is added to history.");
 			assert.strictEqual(fnEventSpy.callCount, 1, "titleChanged event is fired.");
 			assert.strictEqual(oParameters.title, sProductTitle, "Did pass product title value to the event parameters");
+			this.spy.restore();
 			done();
 		}.bind(this));
 

@@ -246,6 +246,7 @@ sap.ui.define([
 		} else {
 			this.setProperty("splitterPosition", sPos);
 		}
+		return this;
 	};
 
 	Splitter.prototype.setSplitterBarVisible = function(bVisible){
@@ -260,6 +261,7 @@ sap.ui.define([
 		} else {
 			this.setProperty("splitterBarVisible", bVisible);
 		}
+		return this;
 	};
 
 

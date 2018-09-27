@@ -231,10 +231,6 @@ sap.ui.define([
 			iLabelWidth, iFreeSpace,
 			iCounter, iFirstTokenToHide = -1;
 
-		if (iTokensCount < 2) {
-			return;
-		}
-
 		// find the index of the first overflowing token
 		aTokens.some(function (oToken, iIndex) {
 			iTokenizerWidth = iTokenizerWidth - this._oTokensWidthMap[oToken.getId()];
@@ -290,7 +286,11 @@ sap.ui.define([
 			var sLabelKey = "MULTIINPUT_SHOW_MORE_TOKENS";
 
 			if (iHiddenTokensCount === this.getTokens().length) {
-				sLabelKey = "TOKENIZER_SHOW_ALL_ITEMS";
+				if (iHiddenTokensCount === 1) {
+					sLabelKey = "TOKENIZER_SHOW_ALL_ITEM";
+				} else {
+					sLabelKey = "TOKENIZER_SHOW_ALL_ITEMS";
+				}
 			}
 
 			this._oIndicator.removeClass("sapUiHidden");
@@ -1165,7 +1165,7 @@ sap.ui.define([
 		var aRemoved = this.removeAllAggregation("tokens");
 
 		if (typeof (bFireEvent) === "boolean" && !bFireEvent) {
-			return;
+			return aRemoved;
 		}
 
 		this.fireTokenChange({
@@ -1450,12 +1450,7 @@ sap.ui.define([
 	Tokenizer.prototype.onclick = function(oEvent) {
 		var bFireIndicatorHandler;
 
-		if (Device.browser.msie) {
-			// on IE the indicator span doesn't capture the press event
-			bFireIndicatorHandler = (oEvent.target === this.getFocusDomRef());
-		} else {
-			bFireIndicatorHandler = jQuery(oEvent.target).hasClass("sapMTokenizerIndicator");
-		}
+			bFireIndicatorHandler = jQuery(oEvent.target).hasClass("sapMTokenizerIndicator") || (oEvent.target === this.getFocusDomRef());
 
 		if (bFireIndicatorHandler) {
 			this._fnOnNMorePress && this._fnOnNMorePress(oEvent);

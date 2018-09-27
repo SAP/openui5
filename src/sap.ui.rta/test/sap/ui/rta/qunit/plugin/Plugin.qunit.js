@@ -190,6 +190,17 @@ function (
 			assert.equal(oModifyPluginListSpy.lastCall.args[1], false, "inside aggregation binding editable is always false");
 		});
 
+		QUnit.test("when evaluateEditable is called for elements not in an aggregation binding that is editable but not adaptable", function(assert) {
+			sandbox.stub(OverlayUtil, "isInAggregationBinding").returns(false);
+			sandbox.stub(this.oLayoutOverlay.getDesignTimeMetadata(), "markedAsNotAdaptable").returns(true);
+			var oModifyPluginListSpy = sandbox.spy(this.oPlugin, "_modifyPluginList");
+
+			this.oPlugin.evaluateEditable([this.oLayoutOverlay]);
+			assert.equal(oModifyPluginListSpy.callCount, 1, "_modifyPluginList was called once");
+			assert.equal(oModifyPluginListSpy.lastCall.args[0], this.oLayoutOverlay, "first parameter is the overlay");
+			assert.equal(oModifyPluginListSpy.lastCall.args[1], false, "then editable is false");
+		});
+
 		QUnit.test("when evaluateEditable is called with getStableElements in DTMD returning a selector", function(assert) {
 			var oAggrBindingCheck = sandbox.spy(OverlayUtil, "isInAggregationBinding");
 			var oModifyPluginListSpy = sandbox.spy(this.oPlugin, "_modifyPluginList");

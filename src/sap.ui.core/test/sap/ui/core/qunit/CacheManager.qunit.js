@@ -1,7 +1,7 @@
 /*global QUnit */
 sap.ui.define([
-"sap/ui/Device",
-"sap/ui/core/cache/CacheManager"
+	"sap/ui/Device",
+	"sap/ui/core/cache/CacheManager"
 ], function(Device, CacheManager) {
 	"use strict";
 
@@ -66,21 +66,24 @@ sap.ui.define([
 			var that = this,
 				aNonSupportedEnv = [];
 
+			function doesEnvMatch(oEnv, oSupportedEnv) {
+				return (
+					oSupportedEnv.system === oEnv.system
+					&& oSupportedEnv.browserName === oEnv.browserName
+					&& oEnv.browserVersion >= oSupportedEnv.browserVersion
+				);
+			}
+
 			// Iterate over all environments and collect those which does not match the supported ones (aSupportedEnv)
 			for (var syst in Device.system.SYSTEMTYPE) {
 				for (var browser in Device.browser.BROWSER) {
-					var oEnv = {};
-					oEnv.system = Device.system.SYSTEMTYPE[syst];
-					oEnv.browserName = Device.browser.BROWSER[browser];
-					oEnv.browserVersion = Device.browser.version;
+					var oEnv = {
+						system: Device.system.SYSTEMTYPE[syst],
+						browserName: Device.browser.BROWSER[browser],
+						browserVersion: Device.browser.version
+					};
 
-					if (!aSupportedEnv.some(function(oSuppportedEnv) {
-							var bSupportedSystem = oSuppportedEnv.system === oEnv.system,
-								bSupportedBrowserName = oSuppportedEnv.browserName === oEnv.browserName,
-								bSupportedBrowserVersion = oEnv.browserVersion >= oSuppportedEnv.browserVersion;
-
-							return bSupportedSystem && bSupportedBrowserName && bSupportedBrowserVersion;
-						})) {
+					if (!aSupportedEnv.some(doesEnvMatch.bind(null, oEnv)) ) {
 						aNonSupportedEnv.push(oEnv);
 					}
 				}
@@ -245,17 +248,17 @@ sap.ui.define([
 			});
 		});
 
+	}
 
-		function deleteDatabaseEntries() {
-			if (CacheManager) {
-				return Promise.resolve(function() {
-					jQuery.sap.log.debug(new Date() + ". Deleting all entries");
-				}).then(function() {
-					return CacheManager.reset();
-				}).then(function() {
-					jQuery.sap.log.debug(new Date() + ". Entries deleted ");
-				});
-			}
+	function deleteDatabaseEntries() {
+		if (CacheManager) {
+			return Promise.resolve(function() {
+				jQuery.sap.log.debug(new Date() + ". Deleting all entries");
+			}).then(function() {
+				return CacheManager.reset();
+			}).then(function() {
+				jQuery.sap.log.debug(new Date() + ". Entries deleted ");
+			});
 		}
 	}
 });

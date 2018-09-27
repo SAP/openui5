@@ -592,8 +592,12 @@ function(
 		}
 	};
 
-	ListBase.prototype.setBindingContext = function() {
-		this._resetItemsBinding();
+	ListBase.prototype.setBindingContext = function(oContext, sModelName) {
+		var sItemsModelName = (this.getBindingInfo("items") || {}).model;
+		if (sItemsModelName === sModelName) {
+			this._resetItemsBinding();
+		}
+
 		return Control.prototype.setBindingContext.apply(this, arguments);
 	};
 

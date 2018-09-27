@@ -25,7 +25,7 @@ sap.ui.define([], function() {
         "Sweet Dark Mixola": 12.00,
         "Demonic Jolt": 6.66,
         "Heavenly Blend": 333.77
-      }
+      };
     }
   };
 }, true);

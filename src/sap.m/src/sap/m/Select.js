@@ -437,7 +437,11 @@ function(
 		 */
 		Select.prototype.getOverflowToolbarConfig = function() {
 
-			var noInvalidationProps = ["enabled", "selectedKey", "selectedItemId"];
+			var noInvalidationProps = ["enabled", "selectedKey"];
+
+			if (!this.getAutoAdjustWidth() || this._bIsInOverflow) {
+				noInvalidationProps.push("selectedItemId");
+			}
 
 			var oConfig = {
 				canOverflow: true,
@@ -453,6 +457,7 @@ function(
 				}
 
 				oSelect._prevSelectType = oSelect.getType();
+				oSelect._bIsInOverflow = true;
 
 				if (oSelect.getType() !== SelectType.Default) {
 					oSelect.setProperty("type", SelectType.Default, true);
@@ -464,6 +469,8 @@ function(
 				if (!oToolbar.isA("sap.m.OverflowToolbar")) {
 					return;
 				}
+
+				oSelect._bIsInOverflow = false;
 
 				if (oSelect.getType() !== oSelect._prevSelectType) {
 					oSelect.setProperty("type", oSelect._prevSelectType, true);
@@ -2371,10 +2378,9 @@ function(
 		 * @public
 		 */
 		Select.prototype.removeItem = function(vItem) {
-			var oList = this.getList(),
-				oItem;
+			var oItem;
 
-			vItem = oList ? oList.removeItem(vItem) : null;
+			vItem = this.removeAggregation("items", vItem);
 
 			if (this.getItems().length === 0) {
 				this.clearSelection();
@@ -2403,8 +2409,7 @@ function(
 		 * @public
 		 */
 		Select.prototype.removeAllItems = function() {
-			var oList = this.getList(),
-				aItems = oList ? oList.removeAllItems() : [];
+			var aItems = this.removeAllAggregation("items");
 
 			this.setValue("");
 

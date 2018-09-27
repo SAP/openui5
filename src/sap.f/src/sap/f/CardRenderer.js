@@ -6,7 +6,6 @@
 sap.ui.define(["sap/f/library", "sap/base/security/encodeXML", "sap/ui/core/IconPool"],
     function (library, encodeXML, IconPool) {
         "use strict";
-        var oStyleHelper = document.createElement("span");
         var mSizes = {
             "1x1": {
                 icon: true
@@ -54,8 +53,7 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeXML", "sap/ui/core/Icon
             var mSizeSettings = CardRenderer.getSizeSettings(oCard),
                 vRaster = oCard.getRaster(),
                 iHorizontalSize = oCard.getHorizontalSize(),
-                iVerticalSize = oCard.getVerticalSize(),
-                sStyles = oCard.getStyle();
+                iVerticalSize = oCard.getVerticalSize();
 
             oRm.write("<section");
             oRm.writeElementData(oCard);
@@ -80,14 +78,26 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeXML", "sap/ui/core/Icon
                 oRm.addStyle("max-width", "calc(" + iHorizontalSize + " * " + vRaster.maxWidth + ")");
                 oRm.addStyle("max-height", "calc(" + iVerticalSize + " * " + vRaster.maxHeight + ")");
             }
-            if (sStyles) {
-                oStyleHelper.style.cssText = sStyles;
-                oRm.addStyle("background-color", oStyleHelper.style.backgroundColor);
-                oRm.addStyle("color", oStyleHelper.style.color);
-                oRm.addStyle("border-color", oStyleHelper.style.color + " !important");
-                oRm.addStyle("background-image", oStyleHelper.style.backgroundImage.replace(/"/g, "'"));
-                oRm.addStyle("background-size", oStyleHelper.style.backgroundSize);
+            //styles
+            var sColor = oCard.getColor(),
+                sBackgroundColor = oCard.getBackgroundColor(),
+                sBackgroundImage = oCard.getBackgroundImage(),
+                sBackgroundImageSize = oCard.getBackgroundImageSize();
+            if (sColor) {
+                oRm.addStyle("color", sColor);
+                //TODO: Use this only in focus case
+                oRm.addStyle("border-color", sColor + " !important");
             }
+            if (sBackgroundColor) {
+                oRm.addStyle("background-color", sBackgroundColor);
+            }
+            if (sBackgroundImage) {
+                oRm.addStyle("background-image", "url('" + sBackgroundImage + "')");
+                if (sBackgroundImageSize) {
+                    oRm.addStyle("background-size", sBackgroundImageSize);
+                }
+            }
+
             oRm.writeStyles();
             oRm.write(">");
 
@@ -114,7 +124,7 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeXML", "sap/ui/core/Icon
             oRm.writeClasses();
             oRm.writeStyles();
             oRm.write(">");
-            if (mSizeSettings.icon) {
+            if (mSizeSettings.icon && oCard.getIcon()) {
                 CardRenderer.renderHeaderIcon(oRm, oCard);
             }
 
@@ -161,38 +171,36 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeXML", "sap/ui/core/Icon
             var sIcon = oCard.getIcon(),
                 vIconInfo = IconPool.getIconInfo(oCard.getIcon(), undefined, "mixed"),
                 bIconInfo = false,
-                sStyles = oCard.getIconStyle();
-            if (sIcon) {
-                if (vIconInfo instanceof Promise) {
-                    // if the icon info is still being loaded,
-                    // an invalidation is triggered after the icon info is available
-                    vIconInfo.then(oCard.invalidate.bind(oCard));
-                } else if (vIconInfo) {
-                    // render icon info in renderer
-                    bIconInfo = true;
-                }
-
-                if (sStyles) {
-                    oStyleHelper.style.cssText = sStyles;
-                    oRm.addStyle("background-color", oStyleHelper.style.backgroundColor);
-                    oRm.addStyle("color", oStyleHelper.style.color);
-                    oRm.addStyle("background-size", oStyleHelper.style.backgroundSize);
-                }
-                oRm.write("<span");
-                oRm.addClass("sapFCardIcon");
-                if (!sIcon.startsWith("sap-icon://")) {
-                    oRm.addStyle("background-image", "url('" + encodeXML(sIcon) + "')");
-                } else if (bIconInfo) {
-                    oRm.writeAttributeEscaped("data-sap-ui-icon-content", vIconInfo.content);
-                    oRm.addStyle("font-family", "'" + encodeXML(vIconInfo.fontFamily) + "'");
-                    oRm.addClass("sapUiIcon");
-                }
-                oRm.writeClasses();
-                oRm.writeStyles();
-                oRm.write(">");
-
-                oRm.write("</span>");
+                sColor = oCard.getIconColor() || oCard.getColor(),
+                sIconBackgroundColor = oCard.getIconBackgroundColor();
+            if (vIconInfo instanceof Promise) {
+                // if the icon info is still being loaded,
+                // an invalidation is triggered after the icon info is available
+                vIconInfo.then(oCard.invalidate.bind(oCard));
+            } else if (vIconInfo) {
+                // render icon info in renderer
+                bIconInfo = true;
             }
+            if (sColor) {
+                oRm.addStyle("color", sColor);
+
+            }
+            if (sIconBackgroundColor) {
+                oRm.addStyle("background-color", sIconBackgroundColor);
+            }
+            oRm.write("<span");
+            oRm.addClass("sapFCardIcon");
+            if (!sIcon.startsWith("sap-icon://")) {
+                oRm.addStyle("background-image", "url('" + encodeXML(sIcon) + "')");
+            } else if (bIconInfo) {
+                oRm.writeAttributeEscaped("data-sap-ui-icon-content", vIconInfo.content);
+                oRm.addStyle("font-family", "'" + encodeXML(vIconInfo.fontFamily) + "'");
+                oRm.addClass("sapUiIcon");
+            }
+            oRm.writeClasses();
+            oRm.writeStyles();
+            oRm.write(">");
+            oRm.write("</span>");
         };
 
         /*

@@ -1416,6 +1416,7 @@ sap.ui.define([
             } else {
                 jQuery.sap.log.error("Only values in pixels are possible", "", "sap.ui.ux3.ToolPopup");
             }
+            return this;
         };
 
         return ToolPopup;

@@ -254,7 +254,7 @@ function(
 			},
 
 			/**
-			 * This event will be fired when the cancel button is clicked
+			 * This event will be fired when the cancel button is clicked or ESC key is pressed
 			 */
 			cancel : {}
 		}

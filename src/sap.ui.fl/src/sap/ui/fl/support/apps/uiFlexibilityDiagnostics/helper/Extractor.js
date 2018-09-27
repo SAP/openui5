@@ -38,8 +38,10 @@ sap.ui.define([
 	 *
 	 * @param {string} sComponentName name of the component
 	 * @returns {sap.ui.core.Component} Returns an instance of the component
+	 * @private
+	 * @restricted sap.ui.fl
 	 */
-	Extractor._getAppComponentInstance = function (sComponentName) {
+	Extractor.getAppComponentInstance = function (sComponentName) {
 		var oCorrectAppComponent;
 		var aComponentContainers = jQuery.find(".sapUiComponentContainer");
 		aComponentContainers.some(function(oComponentContainerDomRef) {
@@ -56,7 +58,7 @@ sap.ui.define([
 	};
 
 	Extractor._enhanceExportWithChangeData = function (oChangePersistence, oExport) {
-		var oAppComponent = Extractor._getAppComponentInstance(oExport.sComponentName);
+		var oAppComponent = Extractor.getAppComponentInstance(oExport.sComponentName);
 		jQuery.each(oChangePersistence._mChangesEntries, function (sChangeId, oChange) {
 			oExport.mChangesEntries[sChangeId] = {
 				mDefinition: oChange._oDefinition,

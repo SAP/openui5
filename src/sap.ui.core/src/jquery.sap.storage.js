@@ -7,9 +7,17 @@
  */
 sap.ui.define([
 	'jquery.sap.global',
+	'sap/base/assert',
 	'sap/ui/util/Storage'
-], function(jQuery, Storage) {
+], function(jQuery, assert, Storage) {
 	"use strict";
+
+	/**
+	 * Map containing instances of different 'standard' storages.
+	 * The map is used to limit the number of created storage objects.
+	 * @private
+	 */
+	var mStorages = {};
 
 	/**
 	 * Returns a {@link jQuery.sap.storage.Storage Storage} object for a given HTML5 storage (type) and,
@@ -40,7 +48,25 @@ sap.ui.define([
 	 * @borrows jQuery.sap.storage.Storage#removeAll as removeAll
 	 * @borrows jQuery.sap.storage.Storage#isSupported as isSupported
 	 */
-	jQuery.sap.storage = Storage.getInstance;
+	jQuery.sap.storage = function(oStorage, sIdPrefix) {
+		// if nothing or the default was passed in, simply return ourself
+		if (!oStorage) {
+			oStorage = Storage.Type.session;
+		}
+
+		if (typeof (oStorage) === "string" && Storage.Type[oStorage]) {
+			var sKey = oStorage;
+			if (sIdPrefix && sIdPrefix != "state.key_") {
+				sKey = oStorage + "_" + sIdPrefix;
+			}
+
+			return mStorages[sKey] || (mStorages[sKey] = new Storage(oStorage, sIdPrefix));
+		}
+
+		// OK, tough but probably good for issue identification. As something was passed in, let's at least ensure our used API is fulfilled.
+		assert(oStorage instanceof Object && oStorage.clear && oStorage.setItem && oStorage.getItem && oStorage.removeItem, "storage: duck typing the storage");
+		return new Storage(oStorage, sIdPrefix);
+	};
 
 	/**
 	 * @interface A Storage API for JavaScript.
@@ -71,6 +97,7 @@ sap.ui.define([
 	 * @public
 	 * @name jQuery.sap.storage.Storage
 	 */
+	jQuery.sap.storage.Storage = Storage;
 
 	/**
 	 * Returns whether the given storage is suppported.
@@ -187,6 +214,8 @@ sap.ui.define([
 	 * @public
 	 * @name jQuery.sap.storage.Type.session
 	 */
+
+	Object.assign(jQuery.sap.storage, Storage);
 
 	return jQuery;
 

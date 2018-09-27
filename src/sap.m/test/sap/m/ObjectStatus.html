@@ -144,12 +144,12 @@
 		showMarkers: true,
 		markFavorite: true
 	});
-	var oOli2 = new sap.m.ObjectListItem({
+	var oOli2 = new sap.m.ObjectListItem("activeStatusListItem", {
 		type: "Navigation",
 		title: "ObjectListItem with statuses: navigation",
 		number: "Ñ99999",
 		numberUnit: "Euro",
-		firstStatus: new sap.m.ObjectStatus({text: "Positive Ñagçyfox", state: "Success", tooltip: "Status tip", active:true}),
+		firstStatus: new sap.m.ObjectStatus("activeStatus", {text: "Positive Ñagçyfox", state: "Success", tooltip: "Status tip", active:true}),
 		secondStatus: new sap.m.ObjectStatus({text: "Negative Ñagçyfox", state: "Error", tooltip: "Status tip", icon: "sap-icon://alert", active:true}),
 		showMarkers: true,
 		markFavorite: true

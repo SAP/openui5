@@ -203,7 +203,7 @@ sap.ui.define([
 	// Creates and renders two instances of the given control and asserts that the second instance does not leak any controls after destruction.
 	// Has some special logic to ignore or work around problems where certain controls do not work standalone.
 	var checkControl = function(sControlName, assert) {
-		var mPrePreElements = CoreInternals.snapshotOfElements(),
+		var //mPrePreElements = CoreInternals.snapshotOfElements(),
 			oControlClass = jQuery.sap.getObject(sControlName),
 			oControl1 = new oControlClass(),
 			bCanRender = false;
@@ -299,6 +299,24 @@ sap.ui.define([
 	});
 
 
+	function makeTest(sLibName) {
+		QUnit.test("test " + sLibName + " controls", function (assert) {
+			if (!mAllLibraries[sLibName].length) { // there are libraries with no controls
+				assert.expect(0);
+			}
+
+			mAllLibraries[sLibName].forEach(function(sControlName) {
+				if (sControlName) {
+					iAllControls++;
+
+					if (!shouldIgnoreControl(sControlName, assert)) {
+						checkControl(sControlName, assert);
+					}
+				}
+			});
+
+		});
+	}
 
 	// loop over all libs and controls and create a test for each
 	for (var sLibName in mAllLibraries) {
@@ -308,28 +326,7 @@ sap.ui.define([
 			continue;
 		}
 
-		(function(sLibName) {
-
-			QUnit.test("test " + sLibName + " controls", function (assert) {
-				if (!mAllLibraries[sLibName].length) { // there are libraries with no controls
-					assert.expect(0);
-				}
-
-				for (var i = 0; i < mAllLibraries[sLibName].length; i++) {
-					var sControlName = mAllLibraries[sLibName][i];
-
-					if (sControlName) {
-						iAllControls++;
-
-						if (!shouldIgnoreControl(sControlName, assert)) {
-							checkControl(sControlName, assert);
-						}
-					}
-				}
-
-			});
-
-		})(sLibName);
+		makeTest(sLibName);
 
 	}
 

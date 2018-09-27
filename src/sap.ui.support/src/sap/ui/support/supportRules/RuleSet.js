@@ -238,7 +238,6 @@ function (jQuery, storage, constants) {
 		}
 	};
 
-
 	/**
 	 * Stores which rules are selected to be run by the analyzer on the next check
 	 * @public

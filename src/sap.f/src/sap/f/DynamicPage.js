@@ -6,7 +6,7 @@
 sap.ui.define([
 	"./library",
 	"sap/ui/core/Control",
-	"sap/ui/core/ScrollBar",
+	"sap/m/ScrollBar",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/delegate/ScrollEnablement",
 	"sap/ui/Device",
@@ -209,7 +209,7 @@ sap.ui.define([
 				/**
 				 * <code>DynamicPage</code> custom <code>ScrollBar</code>.
 				 */
-				_scrollBar: {type: "sap.ui.core.ScrollBar", multiple: false, visibility: "hidden"}
+				_scrollBar: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
 			},
 			designtime: "sap/f/designtime/DynamicPage.designtime"
 		}
@@ -563,6 +563,8 @@ sap.ui.define([
 			if (bAppendHeaderToContent && this._bHeaderInTitleArea) {
 				this._moveHeaderToContentArea(true);
 			}
+
+			oDynamicPageTitle._updateAriaExpandedState(false);
 		}
 
 		if (!exists(this.$titleArea)) {
@@ -599,6 +601,8 @@ sap.ui.define([
 			if (bAppendHeaderToTitle) {
 				this._moveHeaderToTitleArea(true);
 			}
+
+			oDynamicPageTitle._updateAriaExpandedState(true);
 		}
 
 		if (!exists(this.$titleArea)) {
@@ -1349,14 +1353,12 @@ sap.ui.define([
 
 	/**
 	 * Lazily retrieves the "fake" <code>ScrollBar</code>.
-	 * @returns {sap.ui.core.ScrollBar} the "fake" <code>ScrollBar</code>
+	 * @returns {sap.m.ScrollBar} the "fake" <code>ScrollBar</code>
 	 * @private
 	 */
 	DynamicPage.prototype._getScrollBar = function () {
 		if (!exists(this.getAggregation("_scrollBar"))) {
 			var oVerticalScrollBar = new ScrollBar(this.getId() + "-vertSB", {
-				vertical: true,
-				size: "100%",
 				scrollPosition: 0,
 				scroll: this._onScrollBarScroll.bind(this)
 			});
@@ -1610,6 +1612,7 @@ sap.ui.define([
 		if (this.getToggleHeaderOnTitleClick()) {
 			this._titleExpandCollapseWhenAllowed(true /* user interaction */);
 		}
+		this.getTitle()._focus();
 	};
 
 	DynamicPage.prototype._onExpandHeaderVisualIndicatorPress = function () {

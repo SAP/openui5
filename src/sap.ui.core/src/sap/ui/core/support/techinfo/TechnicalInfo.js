@@ -53,7 +53,7 @@ sap.ui.define([
 			OPEN_IN_NEW_WINDOW: "sap-ui-open-sa-in-new-window"
 		},
 
-		_storage : Storage.getInstance(Storage.Type.local),
+		_storage : new Storage(Storage.Type.local),
 
 		_treeHelper: moduleTreeHelper,
 

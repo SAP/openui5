@@ -3,7 +3,7 @@ var sView = jQuery('#view').html();
 sap.ui.require([
 	"jquery.sap.global", "sap/ui/model/base/XMLNodeAttributesModel", "sap/ui/model/json/JSONModel", "sap/ui/base/ManagedObject"
 ], function(jQuery, XMLNodeAttributesModel, JSONModel, ManagedObject) {
-	/* global QUnit, sinon */
+	/* global QUnit */
 	/* eslint no-warning-comments: 0 */
 	"use strict";
 

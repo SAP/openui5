@@ -10,10 +10,10 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
 	"sap/ui/support/supportRules/ui/models/Documentation",
-	"sap/ui/core/ValueState",
 	"sap/ui/support/supportRules/util/Utils",
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/library",
 	"sap/ui/support/library"
 ], function (BaseController,
 			 SelectionUtils,
@@ -22,12 +22,15 @@ sap.ui.define([
 			 MessageToast,
 			 MessageBox,
 			 Documentation,
-			 ValueState,
 			 Utils,
 			 GroupHeaderListItem,
 			 jQuery,
+			 coreLibrary,
 			 library) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 	/**
 	 * Constants used internally

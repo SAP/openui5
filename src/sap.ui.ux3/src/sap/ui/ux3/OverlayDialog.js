@@ -97,7 +97,7 @@ sap.ui.define([
 	 */
 	OverlayDialog.prototype.setOpenButtonVisible = function(bVisible) {
 		jQuery.sap.log.warning("OverlayDialog does not support an openButton.");
-		return undefined;
+		return this;
 	};
 
 	/**

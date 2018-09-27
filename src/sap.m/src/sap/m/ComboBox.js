@@ -219,6 +219,7 @@ sap.ui.define([
 				}
 
 				oControl.selectText(iSelectionStart, oDomRef.value.length);
+				this.$().toggleClass("sapMFocus", !this.isOpen());
 			}
 
 			this.scrollToItem(oItem);
@@ -804,10 +805,7 @@ sap.ui.define([
 		 * This event handler is called before the picker popup is opened.
 		 *
 		 */
-		ComboBox.prototype.onBeforeOpenDropdown = function() {
-			// if there is a selected item, don't show visual focus on the input
-			this.$().toggleClass("sapMFocus", !this.getSelectedItem());
-		};
+		ComboBox.prototype.onBeforeOpenDropdown = function() {};
 
 		ComboBox.prototype.onBeforeOpenDialog = function() {
 			var oPickerTextField = this.getPickerTextField();
@@ -871,8 +869,7 @@ sap.ui.define([
 		 *
 		 */
 		ComboBox.prototype.onAfterClose = function() {
-			var oDomRef = this.getFocusDomRef(),
-				bControlFocused = (document.activeElement === oDomRef);
+			var oDomRef = this.getFocusDomRef();
 
 			if (oDomRef) {
 				oDomRef.setAttribute("aria-expanded", "false");
@@ -887,11 +884,9 @@ sap.ui.define([
 
 			// if the focus is back to the input after closing the picker,
 			// the value state message should be reopen
-			if (this.shouldValueStateMessageBeOpened() && bControlFocused) {
+			if (this.shouldValueStateMessageBeOpened() && (document.activeElement === oDomRef)) {
 				this.openValueStateMessage();
 			}
-
-			this.$().toggleClass("sapMFocus", bControlFocused);
 		};
 
 		/**

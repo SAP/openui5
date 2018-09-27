@@ -103,17 +103,18 @@ sap.ui.define([
 		/**
 		 * Creates the control (as XML element or node)
 		 *
-		 * @param {string} sClassName Class name for the control (for example, <code>sap.m.Button</code>)
-		 * @param {sap.ui.core.UIComponent} [oAppComponent] - Needed to calculate the correct ID in case you provide an id
-		 * @param {Element} oView XML node of the view, required to create nodes and to find elements
-		 * @param {object} [oSelector] - Selector to calculate the ID for the control that is being created
+		 * @param {string} sClassName - Class name for the control (for example, <code>sap.m.Button</code>)
+		 * @param {sap.ui.core.UIComponent} [oAppComponent] - Needed to calculate the correct ID in case you provide an ID
+		 * @param {Element} oView - XML node of the view, required to create nodes and to find elements
+		 * @param {object} [oSelector] - Selector to calculate the ID for the control that is created
 		 * @param {string} [oSelector.id] - Control ID targeted by the change
 		 * @param {boolean} [oSelector.isLocalId] - True if the ID within the selector is a local ID or a global ID
-		 * @param {object} [mSettings] Further settings or properties for the control that is being created
-		 * @returns {Element} XML node of the control being created
+		 * @param {object} [mSettings] - Further settings or properties for the control that is created
+		 * @param {boolean} bAsync - Determines whether a synchronous (promise) or an asynchronous value should be returned - is not valid for XmlTreeModifier
+		 * @returns {Promise | Element} - XML node of the control that is created. May be wrapped into a promise (if bAsync === true)
 		 */
-		createControl: function (sClassName, oAppComponent, oView, oSelector, mSettings) {
-			var sId, sLocalName;
+		createControl: function (sClassName, oAppComponent, oView, oSelector, mSettings, bAsync) {
+			var sId, sLocalName, oError;
 			if (!this.bySelector(oSelector, oAppComponent, oView)) {
 				var aClassNameParts = sClassName.split('.');
 				var sNamespaceURI = "";
@@ -131,9 +132,13 @@ sap.ui.define([
 				if (mSettings) {
 					this.applySettings(oNewElementNode, mSettings);
 				}
-				return oNewElementNode;
+				return bAsync ? Promise.resolve(oNewElementNode) : oNewElementNode;
 			} else {
-				throw new Error("Can't create a control with duplicated id " + sId);
+				oError = new Error("Can't create a control with duplicated id " + sId);
+				if (bAsync) {
+					return Promise.reject(oError);
+				}
+				throw oError;
 			}
 		},
 

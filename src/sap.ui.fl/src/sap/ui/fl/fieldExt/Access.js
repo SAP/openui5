@@ -488,7 +488,7 @@ sap.ui.define([
 	 * @return {object} SapUI local storage object
 	 */
 	Access._getLocalStorage = function() {
-		return Storage.getInstance(Storage.Type.local);
+		return new Storage(Storage.Type.local);
 	};
 
 	/**
