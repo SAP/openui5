@@ -447,7 +447,8 @@ sap.ui.define([
 	 *   <code>true</code> is allowed.
 	 * @param {boolean} [mParameters.$$patchWithoutSideEffects]
 	 *   Whether implicit loading of side effects via PATCH requests is switched off; only the value
-	 *   <code>true</code> is allowed.
+	 *   <code>true</code> is allowed. This requires the service to return an ETag header even for
+	 *   "204 No Content" responses (for example, if the "return=minimal" preference is used).
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
 	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
