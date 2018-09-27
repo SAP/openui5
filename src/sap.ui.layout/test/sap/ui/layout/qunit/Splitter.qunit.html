@@ -128,6 +128,45 @@
 			oSplitter.rerender();
 		});
 
+		QUnit.test("Sizing with rems", function (assert) {
+
+			// Arrange - Start with px size values
+			var oBtn1 = new sap.ui.commons.Button({
+				text: "Content 2",
+				width: "100%",
+				height: "100%",
+				layoutData: new sap.ui.layout.SplitterLayoutData({ size: "300px" })
+			});
+			var oBtn2 = new sap.ui.commons.Button({
+				text: "Content 2",
+				width: "100%",
+				height: "100%",
+				layoutData: new sap.ui.layout.SplitterLayoutData({ size: "200px" })
+			});
+			var oSplitter = new sap.ui.layout.Splitter({
+				contentAreas: [
+					oBtn1,
+					oBtn2
+				]
+			});
+			oSplitter.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Act
+			oBtn1.getLayoutData().setSize("30rem");
+			oSplitter.triggerResize(true);
+			var aSizes = oSplitter.getCalculatedSizes();
+
+			// Assert
+			assert.equal(aSizes.length, 2, "Should have two sizes");
+			// 30rem will be internally calculated to pixels => 30 * 16 = 480
+			assert.equal(aSizes[0], "480", "Should change to 480");
+			assert.equal(aSizes[1], "200", "Should remain unchanged");
+
+			// cleanup
+			oSplitter.destroy();
+		})
+
 		QUnit.test("Should calculate properly percentage containers", function (assert) {
 			// Arrange
 			var i, oCurContainer,
@@ -508,11 +547,11 @@
 															+ '</mvc:View>'
 				var oXMLView = new XMLView({viewContent: sXMLViewContent});
 				var oResizeSplitter = oXMLView.byId("myResizeSplitter");
-				
+
 				oXMLView.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 				var oSpy = sinon.spy(oResizeSplitter, "getCalculatedSizes");
-				
+
 				oXMLView.onBeforeRendering = function(){
 					// check
 					assert.ok(RenderManager.isPreservedContent(oXMLView.getDomRef()), "Splitter control is preserved as part of XMLView.");
