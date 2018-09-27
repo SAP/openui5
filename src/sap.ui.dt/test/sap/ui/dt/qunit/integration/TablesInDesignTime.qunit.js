@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/table/AnalyticalTable",
 	"sap/ui/table/AnalyticalColumn",
-	"sap/m/Label"
+	"sap/m/Label",
+	"sap/ui/Device"
 ],
 function (
 	DesignTime,
@@ -16,7 +17,8 @@ function (
 	Column,
 	AnalyticalTable,
 	AnalyticalColumn,
-	Label
+	Label,
+	Device
 ) {
 	"use strict";
 
@@ -68,7 +70,12 @@ function (
 			this.oDesignTime.attachEventOnce("synced", function() {
 				sap.ui.getCore().applyChanges();
 
-				done();
+				// TODO: Temporal solution. Remove when synced in DesignTime event wait for all async processes to be done.
+				if (Device.browser.internet_explorer) {
+					setTimeout(done, 16);
+				} else {
+					done();
+				}
 			});
 		},
 		afterEach : function() {
@@ -149,7 +156,12 @@ function (
 			this.oDesignTime.attachEventOnce("synced", function () {
 				sap.ui.getCore().applyChanges();
 
-				done();
+				// TODO: Temporal solution. Remove when synced in DesignTime event wait for all async processes to be done.
+				if (Device.browser.internet_explorer) {
+					setTimeout(done, 16);
+				} else {
+					done();
+				}
 			});
 		},
 		afterEach : function() {
