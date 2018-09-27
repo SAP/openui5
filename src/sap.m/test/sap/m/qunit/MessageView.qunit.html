@@ -449,6 +449,21 @@
 				assert.ok(oActiveTitlePressStub.calledWithExactly({ item: oFirstItem }), "event should be called with the message item");
 			});
 
+			QUnit.test("ActiveTitlePress should be fired on ALT + Enter", function(assert)  {
+				assert.expect(1);
+				var oFirstItem = this.oMessageView.getItems()[0];
+				var oActiveTitlePressStub = this.stub(this.oMessageView, 'fireActiveTitlePress');
+
+				oFirstItem.setActiveTitle(true);
+				sap.ui.getCore().applyChanges();
+
+				oFirstItem.focus();
+				qutils.triggerKeydown(this.oMessageView._oLists.all.getItems()[0], "Enter", false, true, false);
+				this.clock.tick(500);
+
+				assert.ok(oActiveTitlePressStub.called, "Event should be fired");
+			});
+
 			QUnit.test("Active Items: Inactive item should not have a link", function (assert) {
 				assert.notOk(this.oMessageView._oLists.all.getItems()[0].getLink(), "Inactive Item should not have a link");
 			});
