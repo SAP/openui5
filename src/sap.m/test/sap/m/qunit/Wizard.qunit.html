@@ -431,7 +431,9 @@
 					content: []
 				});
 				this.step1 = new sap.m.WizardStep({
+					title: "Step1",
 					subsequentSteps: [this.step2, this.step3],
+					optional: true,
 					content: []
 				});
 
@@ -451,6 +453,14 @@
 				sap.ui.base.ObjectPool.prototype.returnObject.restore();
 				this.oWizard = null;
 			}
+		});
+
+		QUnit.test("Optional label in branching wizard", function (assert) {
+			var oNavigator = this.oWizard._getProgressNavigator(),
+				oFirstStepRef = jQuery(oNavigator.$().find("li")[0]);
+
+			assert.strictEqual(oFirstStepRef.find(".sapMWizardProgressNavAnchorLabelOptional").length, 1,
+					"An optional label is added to the correct step.");
 		});
 
 		QUnit.test("Progress navigator steps count", function (assert) {
