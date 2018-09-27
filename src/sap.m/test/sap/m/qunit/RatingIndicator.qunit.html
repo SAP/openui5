@@ -31,8 +31,9 @@
 		'sap/m/RatingIndicator',
 		'sap/ui/core/IconPool',
 		'sap/m/library',
-		'sap/ui/qunit/QUnitUtils'
-	], function (App, Page, RatingIndicator, IconPool, mobileLibrary, qutils) {
+		'sap/ui/qunit/QUnitUtils',
+		'sap/ui/events/KeyCodes'
+	], function (App, Page, RatingIndicator, IconPool, mobileLibrary, qutils, KeyCodes) {
 
 		// shortcut
 		var RatingIndicatorVisualMode = mobileLibrary.RatingIndicatorVisualMode;
@@ -610,19 +611,19 @@
 
 			oRating.$().focus(); // set focus on RatingIndicator
 
-			qutils.triggerKeyup(oRating.$(), jQuery.sap.KeyCodes.DIGIT_1); // trigger number 1 on RatingIndicator
+			qutils.triggerKeyup(oRating.$(), KeyCodes.DIGIT_1); // trigger number 1 on RatingIndicator
 			assert.strictEqual(oRating.getValue(), 1, "Number 1 is pressed, RatingIndicator has value 1");
 
-			qutils.triggerKeyup(oRating.$(), jQuery.sap.KeyCodes.NUMPAD_3); // trigger number 3 on RatingIndicator
+			qutils.triggerKeyup(oRating.$(), KeyCodes.NUMPAD_3); // trigger number 3 on RatingIndicator
 			assert.strictEqual(oRating.getValue(), 3, "Number 3 from the numpad is pressed, RatingIndicator has value 3");
 
-			qutils.triggerKeyup(oRating.$(), jQuery.sap.KeyCodes.DIGIT_5); // trigger number 5 on RatingIndicator
+			qutils.triggerKeyup(oRating.$(), KeyCodes.DIGIT_5); // trigger number 5 on RatingIndicator
 			assert.strictEqual(oRating.getValue(), 5, "Number 5 is pressed, RatingIndicator has value 5");
 
-			qutils.triggerKeyup(oRating.$(), jQuery.sap.KeyCodes.DIGIT_0); // trigger number 0 on RatingIndicator
+			qutils.triggerKeyup(oRating.$(), KeyCodes.DIGIT_0); // trigger number 0 on RatingIndicator
 			assert.strictEqual(oRating.getValue(), 0, "Number 0 is pressed, RatingIndicator has value 0");
 
-			qutils.triggerKeyup(oRating.$(), jQuery.sap.KeyCodes.NUMPAD_7); // trigger number 7 on RatingIndicator
+			qutils.triggerKeyup(oRating.$(), KeyCodes.NUMPAD_7); // trigger number 7 on RatingIndicator
 			assert.strictEqual(oRating.getValue(), 6, "Number 7 from the numpad is pressed, RatingIndicator has value 6 (default maxValue is 6)");
 
 			// Clean up

@@ -21,6 +21,8 @@
 <script>
 
 	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var KeyCodes = sap.ui.requireSync("sap/ui/events/KeyCodes");
+
 
 	QUnit.module("Init", {
 		beforeEach : function() {
@@ -310,7 +312,7 @@
 		this.tokenizer.setTokens([token1, token2, token3]);
 
 		// act
-		this.tokenizer.onkeydown({ctrlKey: true, which: jQuery.sap.KeyCodes.A, preventDefault: function(){}});
+		this.tokenizer.onkeydown({ctrlKey: true, which: KeyCodes.A, preventDefault: function(){}});
 
 		// assert
 		assert.equal(token1.getSelected(), true, "Token1 got selected using ctrl+a");
@@ -322,7 +324,7 @@
 		token2.setSelected(false);
 		token3.setSelected(false);
 
-		this.tokenizer.onkeydown({metaKey: true, which: jQuery.sap.KeyCodes.A, preventDefault: function(){}});
+		this.tokenizer.onkeydown({metaKey: true, which: KeyCodes.A, preventDefault: function(){}});
 
 		// assert
 		assert.equal(token1.getSelected(), true, "Token1 got selected using metaKey+a");
@@ -365,10 +367,10 @@
 
         var oTokenizerDomRef = oMultiInput.$().find('.sapMTokenizer')[0];
 
-        sap.ui.test.qunit.triggerKeydown(oTokenizerDomRef, jQuery.sap.KeyCodes.ARROW_LEFT);
+        sap.ui.test.qunit.triggerKeydown(oTokenizerDomRef, KeyCodes.ARROW_LEFT);
 		assert.equal(sap.ui.getCore().byId("t6").getSelected(), true, "Token6 is selected");
 
-        sap.ui.test.qunit.triggerKeydown(oTokenizerDomRef, jQuery.sap.KeyCodes.ARROW_LEFT);
+        sap.ui.test.qunit.triggerKeydown(oTokenizerDomRef, KeyCodes.ARROW_LEFT);
 
         assert.equal(oSpecialToken.getSelected(), true, "Token5 is selected");
         assert.ok(oSpecialToken.$().offset().left >= jQuery(oTokenizerDomRef).offset().left, "token 5 left side is visible.");
@@ -526,7 +528,7 @@
 		this.tokenizer.setEditable(false);
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.DELETE);
+		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.DELETE);
 
 		// assert
 		assert.equal(this.tokenizer.getTokens().length, 3, "No tokens were removed");
@@ -534,7 +536,7 @@
 
 	QUnit.test("delete with editable=true", function(assert) {
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.DELETE);
+		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.DELETE);
 
 		// assert
 		assert.equal(this.tokenizer.getTokens().length, 1, "Two tokens were removed");
@@ -546,7 +548,7 @@
 		this.tokenizer.setEditable(false);
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.BACKSPACE);
+		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.BACKSPACE);
 
 		// assert
 		assert.equal(this.tokenizer.getTokens().length, 3, "No tokens were removed");
@@ -554,7 +556,7 @@
 
 	QUnit.test("backspace with editable=true", function(assert) {
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.BACKSPACE);
+		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.BACKSPACE);
 
 		// assert
 		assert.equal(this.tokenizer.getTokens().length, 1, "Two tokens were removed");
@@ -565,7 +567,7 @@
 		this.tokenizer._changeAllTokensSelection(false);
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.BACKSPACE);
+		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.BACKSPACE);
 
 		// assert
 		assert.equal(this.tokenizer.getSelectedTokens().length, 1, "There is one selected token");
@@ -574,7 +576,7 @@
 
 	QUnit.test("tab", function(assert) {
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.TAB);
+		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.TAB);
 
 		// assert
 		assert.equal(this.tokenizer.getSelectedTokens().length, 0, "There are no selected tokens");
@@ -585,13 +587,13 @@
 		var fnCopySpy = this.spy(this.tokenizer, "_copy");
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.C, false, false, true);
+		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.C, false, false, true);
 
 		// assert
 		assert.equal(fnCopySpy.callCount, 1, "Copy was triggered");
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.INSERT, false, false, true);
+		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.INSERT, false, false, true);
 
 		// assert
 		assert.equal(fnCopySpy.callCount, 2, "Copy was triggered");
@@ -601,7 +603,7 @@
 		var fnCutSpy = this.spy(this.tokenizer, "_cut");
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.X, false, false, true);
+		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.X, false, false, true);
 
 		// assert
 		assert.equal(fnCutSpy.callCount, 1, "Cut was triggered");
@@ -614,7 +616,7 @@
 		this.tokenizer.setEditable(false);
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.X, false, false, true);
+		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.X, false, false, true);
 
 		// assert
 		assert.equal(fnCopySpy.callCount, 1, "Copy was triggered");
@@ -624,7 +626,7 @@
 		var fnCutSpy = this.spy(this.tokenizer, "_cut");
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.DELETE, true);
+		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.DELETE, true);
 
 		// assert
 		assert.equal(fnCutSpy.callCount, 1, "Cut was triggered");
@@ -637,7 +639,7 @@
 		this.tokenizer.setEditable(false);
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.DELETE, true);
+		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.DELETE, true);
 
 		// assert
 		assert.equal(fnCopySpy.callCount, 1, "Copy was triggered");
@@ -648,7 +650,7 @@
 		sap.ui.getCore().byId("t1").focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t1", jQuery.sap.KeyCodes.ARROW_RIGHT);
+		sap.ui.test.qunit.triggerKeyboardEvent("t1", KeyCodes.ARROW_RIGHT);
 
 		// assert
 		assert.equal(this.tokenizer.getSelectedTokens().length, 1, "There is one selected token");
@@ -660,7 +662,7 @@
 		this.tokenizer.focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(this.tokenizer.getId(), jQuery.sap.KeyCodes.ARROW_RIGHT);
+		sap.ui.test.qunit.triggerKeydown(this.tokenizer.getId(), KeyCodes.ARROW_RIGHT);
 
 		// assert
 		assert.equal(this.tokenizer.getSelectedTokens().length, 1, "There is one selected token");
@@ -676,7 +678,7 @@
 		sap.ui.getCore().byId("t3").focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown("t", jQuery.sap.KeyCodes.ARROW_RIGHT);
+		sap.ui.test.qunit.triggerKeydown("t", KeyCodes.ARROW_RIGHT);
 		oEventArg = oSpy.getCall(0).args[0];
 
 		// assert
@@ -695,7 +697,7 @@
 		sap.ui.getCore().byId("t1").focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t1", jQuery.sap.KeyCodes.ARROW_UP);
+		sap.ui.test.qunit.triggerKeyboardEvent("t1", KeyCodes.ARROW_UP);
 
 		// assert
 		assert.equal(this.tokenizer.getSelectedTokens().length, 2, "Token selection is not changed");

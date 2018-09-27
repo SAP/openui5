@@ -100,9 +100,9 @@
 		});
 
 		QUnit.test("ScrollContainer rendered", function(assert) {
-			assert.ok(jQuery.sap.domById("sc1"), "ScrollContainer 1 should be rendered");
-			assert.ok(jQuery.sap.domById("sc2"), "ScrollContainer 2 should be rendered");
-			assert.ok(!jQuery.sap.domById("sc3"), "ScrollContainer 3 should not be rendered");
+			assert.ok(document.getElementById("sc1"), "ScrollContainer 1 should be rendered");
+			assert.ok(document.getElementById("sc2"), "ScrollContainer 2 should be rendered");
+			assert.ok(!document.getElementById("sc3"), "ScrollContainer 3 should not be rendered");
 		});
 
 		// Gets the scroll position of ScrolLContainer with id: sScrollContainerId in sDirection(left/top)
@@ -113,14 +113,14 @@
 
 			if (scrollEnablement._scroller) { // iScroll
 				if (sap.ui.Device.browser.mozilla) {
-					aScrollPosition = jQuery.sap.byId(sScrollContainerId).css("-moz-transform").split(" ");
+					aScrollPosition = sap.ui.getCore().byId(sScrollContainerId).$().css("-moz-transform").split(" ");
 					// "matrix(1, 0, 0, -99.9999, 0px, 0px)" => "99.9999,"
 					s = sDirection == "left" ?  aScrollPosition[4] : aScrollPosition[5];
 				} else if (sap.ui.Device.browser.safari || sap.ui.Device.browser.chrome) {
-					aScrollPosition = jQuery.sap.byId(sScrollContainerId).css("-webkit-transform").split(" ");
+					aScrollPosition = sap.ui.getCore().byId(sScrollContainerId).$().css("-webkit-transform").split(" ");
 					s = sDirection == "left" ?  aScrollPosition[4] : aScrollPosition[5];
 				} else if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version >= 9) { /* TODO remove after 1.62 version */
-					s = jQuery.sap.byId(sScrollContainerId).css(sDirection);
+					s = sap.ui.getCore().byId(sScrollContainerId).$().css(sDirection);
 				}
 				return Math.round(parseFloat(s));
 
@@ -203,7 +203,7 @@
 				var done = assert.async();
 				assert.expect(3);
 
-				jQuery.sap.byId("sc2-scroll").width("1100px"); // resize the content
+				jQuery("#sc2-scroll").width("1100px"); // resize the content
 
 				window.setTimeout(function(){ // allow some time for the ResizeHandler to notice and for iscroll to be notified and to adapt
 					oSC2.scrollTo(9999,0,0);  // again try to scroll way beyond the end of the content - but this time the content is a bit larger, iscroll should have noticed

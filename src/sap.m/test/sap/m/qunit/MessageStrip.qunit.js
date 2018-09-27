@@ -1,15 +1,16 @@
-/*global QUnit,sinon*/
-
-(function() {
+/* global sinon, QUnit */
+sap.ui.require([
+	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/qunit-css",
+	"sap/ui/thirdparty/qunit",
+	"sap/ui/qunit/qunit-junit",
+	"sap/ui/qunit/qunit-coverage",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/thirdparty/sinon",
+	"sap/ui/thirdparty/sinon-qunit"
+], function(KeyCodes) {
 	"use strict";
 
-	jQuery.sap.require("sap.ui.qunit.qunit-css");
-	jQuery.sap.require("sap.ui.thirdparty.qunit");
-	jQuery.sap.require("sap.ui.qunit.qunit-junit");
-	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	jQuery.sap.require("sap.ui.qunit.QUnitUtils");
-	jQuery.sap.require("sap.ui.thirdparty.sinon");
-	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 	sinon.config.useFakeTimers = false;
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 	var CLASS_CLOSE_BUTTON = ".sapMMsgStripCloseButton";
@@ -316,7 +317,7 @@
 
 		setTimeout(function() {
 			jQuery(CLASS_CLOSE_BUTTON)[0].focus();
-			sap.ui.test.qunit.triggerKeydown(jQuery(CLASS_CLOSE_BUTTON)[0], jQuery.sap.KeyCodes.ENTER);
+			sap.ui.test.qunit.triggerKeydown(jQuery(CLASS_CLOSE_BUTTON)[0], KeyCodes.ENTER);
 		}, 300);
 	});
 
@@ -331,7 +332,7 @@
 
 		setTimeout(function() {
 			jQuery(CLASS_CLOSE_BUTTON)[0].focus();
-			sap.ui.test.qunit.triggerKeydown(jQuery(CLASS_CLOSE_BUTTON)[0], jQuery.sap.KeyCodes.SPACE);
+			sap.ui.test.qunit.triggerKeydown(jQuery(CLASS_CLOSE_BUTTON)[0], KeyCodes.SPACE);
 		}, 300);
 	});
 
@@ -400,4 +401,4 @@
 			"the title of the close button should indicate what it closes");
 	});
 
-})();
+});

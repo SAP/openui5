@@ -11,18 +11,24 @@
 			data-sap-ui-libs="sap.m">
 		</script>
 		<script>
-			(function(){
+		sap.ui.define([
+			"sap/m/SelectDialog",
+			"sap/ui/model/Filter",
+			"sap/ui/model/FilterOperator",
+			"sap/m/StandardListItem",
+			"sap/ui/model/json/JSONModel",
+			"sap/ui/qunit/QUnitUtils",
+			"sap/ui/events/KeyCodes",
+			"sap/ui/qunit/qunit-css",
+			"sap/ui/thirdparty/qunit",
+			"sap/ui/qunit/qunit-junit",
+			"sap/ui/qunit/qunit-coverage",
+			"sap/ui/thirdparty/sinon",
+			"sap/ui/thirdparty/sinon-qunit"
+		],
+			function(SelectDialog, Filter, FilterOperator, StandardListItem, JSONModel, QUnitUtils, KeyCodes){
 				"use strict";
-				jQuery.sap.require("sap.ui.qunit.qunit-css");
-				jQuery.sap.require("sap.ui.model.FilterOperator");
-				jQuery.sap.require("sap.ui.thirdparty.qunit");
-				jQuery.sap.require("sap.ui.qunit.qunit-junit");
-				jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-				jQuery.sap.require("sap.ui.thirdparty.sinon");
-				jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 				sinon.config.useFakeTimers = true;
-				jQuery.sap.require("sap.ui.qunit.QUnitUtils");
-
 
 				function generateData() {
 					return {
@@ -74,7 +80,7 @@
 
 				// create a bindable list item
 				function createTemplateListItem() {
-					return new sap.m.StandardListItem({
+					return new StandardListItem({
 						title: "{Title}",
 						description: "{Description}",
 						selected: "{Selected}"
@@ -82,7 +88,7 @@
 				}
 
 				function bindItems(oSelectDialog, oConfiguration) {
-					var oModel = new sap.ui.model.json.JSONModel();
+					var oModel = new JSONModel();
 					oModel.setData(oConfiguration.oData);
 
 					// growing list does not support two way binding
@@ -94,7 +100,7 @@
 
 				QUnit.module("API", {
 					beforeEach: function() {
-						this.oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+						this.oSelectDialog = new SelectDialog("selectDialog", {
 							title: "my SelectDialog",
 							noDataText: "Sorry, no data is available",
 							growingThreshold: 50,
@@ -109,7 +115,7 @@
 
 				QUnit.test("Initialization", function (assert) {
 					// assert
-					assert.ok(!jQuery.sap.domById("selectDialog"), "Dialog is not rendered before it's ever opened.");
+					assert.ok(!document.getElementById("selectDialog"), "Dialog is not rendered before it's ever opened.");
 					assert.strictEqual(this.oSelectDialog.getTitle(), "my SelectDialog", 'The title should be "my SelectDialog"');
 					assert.strictEqual(this.oSelectDialog.getNoDataText(), "Sorry, no data is available", '"Sorry, no data is available" should be displayed when no data is there');
 					assert.strictEqual(this.oSelectDialog.getGrowingThreshold(), 50, 'The growing threshold should be "50"');
@@ -149,7 +155,7 @@
 
 				QUnit.module("Growing Behavior", {
 					beforeEach: function() {
-						this.oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+						this.oSelectDialog = new SelectDialog("selectDialog", {
 							title: "my SelectDialog",
 							growingThreshold: 5,
 							multiSelect: true
@@ -190,7 +196,7 @@
 
 				QUnit.module("Rendering", {
 					beforeEach: function() {
-						this.oSelectDialog = new sap.m.SelectDialog("selectDialog");
+						this.oSelectDialog = new SelectDialog("selectDialog");
 						this.mockupData = generateData();
 					},
 					afterEach: function() {
@@ -206,7 +212,7 @@
 					assert.strictEqual(this.oSelectDialog.getUIArea(), null, "Dialog has no ui area before opening");
 
 					jQuery.when(this.oSelectDialog.open()).then(function (oEvent) {
-						assert.ok(jQuery.sap.domById("selectDialog-dialog"), "Dialog is opened");
+						assert.ok(document.getElementById("selectDialog-dialog"), "Dialog is opened");
 						assert.ok(that.oSelectDialog.getParent() instanceof sap.ui.core.UIArea, "Dialog is now a direct child of the UI Area");
 						assert.strictEqual(that.oSelectDialog.getParent().getRootNode().attributes.getNamedItem("id").value, "sap-ui-static", "Dialog's UI area is the static UI Area");
 					});
@@ -274,7 +280,7 @@
 					assert.strictEqual(this.oSelectDialog.getUIArea(), null, "Dialog has no ui area before opening");
 
 					jQuery.when(this.oSelectDialog.open()).then(function (oEvent) {
-						assert.ok(jQuery.sap.domById(that.oXmlViewOrFragment.createId("xmlSelectDialog-dialog")), "Dialog is opened");
+						assert.ok(document.getElementById(that.oXmlViewOrFragment.createId("xmlSelectDialog-dialog")), "Dialog is opened");
 						assert.ok(that.oSelectDialog.getParent() instanceof sap.ui.core.UIArea, "Dialog is now a direct child of the UI Area");
 						assert.strictEqual(that.oSelectDialog.getParent().getRootNode().attributes.getNamedItem("id").value, "sap-ui-static", "Dialog's UI area is the static UI Area");
 					});
@@ -293,7 +299,7 @@
 					assert.strictEqual(this.oSelectDialog.getUIArea(), null, "Dialog has no ui area before opening");
 
 					jQuery.when(this.oSelectDialog.open()).then(function (oEvent) {
-						assert.ok(jQuery.sap.domById("fragmentSelectDialog-dialog"), "Dialog is opened");
+						assert.ok(document.getElementById("fragmentSelectDialog-dialog"), "Dialog is opened");
 						assert.ok(that.oSelectDialog.getParent() instanceof sap.ui.core.UIArea, "Dialog is now a direct child of the UI Area");
 						assert.strictEqual(that.oSelectDialog.getParent().getRootNode().attributes.getNamedItem("id").value, "sap-ui-static", "Dialog's UI area is the static UI Area");
 					});
@@ -302,7 +308,7 @@
 				QUnit.module("Multiselection", {
 					beforeEach: function() {
 						// arrange
-						this.oSelectDialog = new sap.m.SelectDialog('selectDialog', {
+						this.oSelectDialog = new SelectDialog('selectDialog', {
 							multiSelect: true,
 							title: "my SelectDialog",
 							noDataText: "Sorry, no data is available",
@@ -398,7 +404,7 @@
 				QUnit.module("Open and Close", {
 					beforeEach: function() {
 						// arrange
-						this.oSelectDialog = new sap.m.SelectDialog('selectDialog', {
+						this.oSelectDialog = new SelectDialog('selectDialog', {
 							title: "my SelectDialog",
 							noDataText: "Sorry, no data is available"
 						});
@@ -414,17 +420,17 @@
 				QUnit.test("Open Dialog", function (assert) {
 					jQuery.when(this.oSelectDialog.open()).then(function (oEvent) {
 						// assert
-						assert.ok(jQuery.sap.domById("selectDialog-dialog"), "Dialog is opened");
-						assert.ok(jQuery.sap.domById("selectDialog-dialog-title"), "Dialog title should be rendered");
-						assert.ok(jQuery.sap.domById("selectDialog-searchField"), "Dialog should have a searchfield");
-						assert.ok(jQuery.sap.domById("selectDialog-list"), "Dialog should have a list");
-						assert.ok(!jQuery.sap.domById("selectDialog-ok"), "Dialog should not have an ok button");
+						assert.ok(document.getElementById("selectDialog-dialog"), "Dialog is opened");
+						assert.ok(document.getElementById("selectDialog-dialog-title"), "Dialog title should be rendered");
+						assert.ok(document.getElementById("selectDialog-searchField"), "Dialog should have a searchfield");
+						assert.ok(document.getElementById("selectDialog-list"), "Dialog should have a list");
+						assert.ok(!document.getElementById("selectDialog-ok"), "Dialog should not have an ok button");
 					});
 				});
 
 				QUnit.test("Open with string and filter", function (assert) {
 					var that = this,
-						oFilter = new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains , "Title1");
+						oFilter = new Filter("Title", FilterOperator.Contains , "Title1");
 
 					this.oSelectDialog.bindAggregation("items", {
 						path: "/items",
@@ -445,7 +451,7 @@
 				QUnit.module("Event testing", {
 					beforeEach: function() {
 						// arrange
-						this.oSelectDialog = new sap.m.SelectDialog('selectDialog', {
+						this.oSelectDialog = new SelectDialog('selectDialog', {
 							title: "my SelectDialog"
 						});
 						this.mockupData = generateData();
@@ -552,7 +558,7 @@
 				QUnit.test("Cancel Event with pre-filtered selection", function (assert) {
 					var done = assert.async(),
 						that = this,
-						oFilter = new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains , "Title4");
+						oFilter = new Filter("Title", FilterOperator.Contains , "Title4");
 
 					this.oSelectDialog.setMultiSelect(true);
 
@@ -586,7 +592,7 @@
 				QUnit.test("Cancel Event with user-filtered selection", function (assert) {
 					var done = assert.async(),
 						that = this,
-						oFilter = new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains , "Title4");
+						oFilter = new Filter("Title", FilterOperator.Contains , "Title4");
 
 					this.oSelectDialog.setMultiSelect(true);
 					bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
@@ -637,7 +643,7 @@
 						that.oSelectDialog._oList.getItems()[3].setSelected(false);
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedItems().length, 2, 'Before cancelling there should be 2 items selected');
 
-						qutils.triggerKeydown(that.oSelectDialog._oDialog.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+						QUnitUtils.triggerKeydown(that.oSelectDialog._oDialog.getDomRef(), KeyCodes.ESCAPE);
 						that.clock.tick(350);
 					});
 
@@ -649,7 +655,7 @@
 					beforeEach: function() {
 
 						// arrange
-						this.oSelectDialog = new sap.m.SelectDialog('selectDialog');
+						this.oSelectDialog = new SelectDialog('selectDialog');
 						this.mockupData = generateData();
 					}, afterEach: function() {
 
@@ -782,7 +788,7 @@
 					beforeEach: function() {
 
 						// arrange
-						this.oSelectDialog = new sap.m.SelectDialog('selectDialog');
+						this.oSelectDialog = new SelectDialog('selectDialog');
 						this.mockupData = generateData();
 					}, afterEach: function() {
 
@@ -804,7 +810,7 @@
 					this.stub(sap.ui.Device, "system", oSystem);
 
 					jQuery.when(that.oSelectDialog.open(), that.oSelectDialog._updateFinished() ).then(function(){
-						assert.ok(jQuery.sap.byId('selectDialog-searchField-I').is(":focus"), 'SearchField should be focused if there are no items in the list');
+						assert.ok(jQuery('#selectDialog-searchField-I').is(":focus"), 'SearchField should be focused if there are no items in the list');
 					});
 
 					this.oSelectDialog.open();
@@ -836,12 +842,12 @@
 					// Arrange
 					var fnFireLiveChangeSpy = sinon.spy(function(oEvent) {
 						var sValue = oEvent.getParameter("value");
-						var oFilter = new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains, sValue);
+						var oFilter = new Filter("Title", FilterOperator.Contains, sValue);
 
 						oEvent.getSource().getBinding("items").filter([oFilter]);
 						sap.ui.getCore().applyChanges();
 
-						assert.strictEqual(jQuery.sap.byId('selectDialog-searchField-I')[0], document.activeElement, 'Focus should stay on the searchfield after liveChange');
+						assert.strictEqual(jQuery('#selectDialog-searchField-I')[0], document.activeElement, 'Focus should stay on the searchfield after liveChange');
 						done();
 
 					}),
@@ -865,7 +871,7 @@
 
 						//arrange
 						sinon.config.useFakeTimers = true;
-						this.oSelectDialog = new sap.m.SelectDialog("clearButtonSelectDialog", {
+						this.oSelectDialog = new SelectDialog("clearButtonSelectDialog", {
 						title: "Very very very very very very very very long title",
 						multiSelect : true,
 						rememberSelections: true,
@@ -877,7 +883,7 @@
 						this.mockupData = generateData();
 						bindItems(this.oSelectDialog, { oData: this.mockupData, path: "/items", template: createTemplateListItem() });
 
-						this.oSelectDialog1 = new sap.m.SelectDialog("clearButtonSelectDialog1", {
+						this.oSelectDialog1 = new SelectDialog("clearButtonSelectDialog1", {
 						title: "Very very very very very very very very long title",
 						multiSelect : true,
 						rememberSelections: true,
@@ -904,7 +910,7 @@
 							]
 						}, path: "/items", template: createTemplateListItem() });
 
-						this.oSelectDialog2 = new sap.m.SelectDialog("clearButtonSelectDialog2", {
+						this.oSelectDialog2 = new SelectDialog("clearButtonSelectDialog2", {
 							title: "Select Dialog without Clear button",
 							multiSelect : true,
 							rememberSelections: true,
@@ -1065,7 +1071,7 @@
 				assert.equal(document.activeElement.getAttribute("id"), this.oSelectDialog._oDialog.getId(), 'After selection is reset the focus should be returned to the dialog"');
 			});
 
-			})();
+		});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

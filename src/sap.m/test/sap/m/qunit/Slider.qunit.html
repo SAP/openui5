@@ -35,6 +35,9 @@
 				title: "Mobile Slider Control"
 			});
 
+			var KeyCodes = sap.ui.requireSync("sap/ui/events/KeyCodes");
+			var SliderTooltipBase = sap.ui.requireSync("sap/m/SliderTooltipBase");
+
 			oApp.addPage(oPage);
 			oApp.placeAt("content");
 
@@ -1512,8 +1515,8 @@
 				sap.ui.getCore().applyChanges();
 
 				// act
-				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
-				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
+				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), KeyCodes.ARROW_RIGHT);
+				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), KeyCodes.ARROW_RIGHT);
 
 				// assert
 				assert.strictEqual(oSlider.getValue(), 100, "The slider value must be increased to 100");
@@ -1544,7 +1547,7 @@
 					sap.ui.getCore().applyChanges();
 
 					// act
-					sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, /* Ctrl key */ true);
+					sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), KeyCodes.ARROW_RIGHT, false, false, /* Ctrl key */ true);
 
 					// assert
 					assert.strictEqual(oSlider.getValue(), mOptions.expectedValue, "The slider value must be increased to " + mOptions.expectedValue);
@@ -1609,8 +1612,8 @@
 				sap.ui.getCore().applyChanges();
 
 				// act
-				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT);
-				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT);
+				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), KeyCodes.ARROW_LEFT);
+				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), KeyCodes.ARROW_LEFT);
 
 				// assert
 				assert.strictEqual(oSlider.getValue(), 0, "The slider value must be decreased to 0");
@@ -1641,7 +1644,7 @@
 					sap.ui.getCore().applyChanges();
 
 					// act
-					sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT, false, false, /* Ctrl key */ true);
+					sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), KeyCodes.ARROW_LEFT, false, false, /* Ctrl key */ true);
 
 					// assert
 					assert.strictEqual(oSlider.getValue(), mOptions.expectedValue, "The slider value must be decreased to " + mOptions.expectedValue);
@@ -1707,7 +1710,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// act
-				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
+				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), KeyCodes.PAGE_UP);
 
 				// assert
 				assert.strictEqual(oSlider.getValue(), 100, "The slider value must be increased to 100");
@@ -1739,7 +1742,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// act
-				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
+				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), KeyCodes.PAGE_DOWN);
 
 				// assert
 				assert.strictEqual(oSlider.getValue(), 0, "The slider value must be increased to 0");
@@ -1771,8 +1774,8 @@
 				sap.ui.getCore().applyChanges();
 
 				// act
-				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.HOME);
-				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.HOME);
+				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), KeyCodes.HOME);
+				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), KeyCodes.HOME);
 
 				// assert
 				assert.strictEqual(oSlider.getValue(), 0);
@@ -1802,8 +1805,8 @@
 				sap.ui.getCore().applyChanges();
 
 				// act
-				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.END);
-				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.END);
+				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), KeyCodes.END);
+				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), KeyCodes.END);
 
 				// assert
 				assert.strictEqual(oSlider.getValue(), 100);
@@ -2053,7 +2056,6 @@
 
 			QUnit.module("Tooltips", function (hooks) {
 				hooks.before(function () {
-					jQuery.sap.require("sap/m/SliderTooltipBase");
 					// dummy class
 					sap.m.SliderTooltipBase.extend("sap.xx.SliderTooltipCustom", {});
 				});

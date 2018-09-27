@@ -25,9 +25,12 @@
 		</script>
 
 		<script>
+			
+			
+		var KeyCodes = sap.ui.requireSync("sap/ui/events/KeyCodes");
+		var Mobile = sap.ui.requireSync("sap/ui/util/Mobile");
 
-		jQuery.sap.require("sap.ui.thirdparty.jquery-mobile-custom");
-		jQuery.sap.initMobile();
+		Mobile.init();
 
 		QUnit.module("Rendering");
 
@@ -458,9 +461,9 @@
 			oRadioButton1.setGroupName("test");
 
 			// act
-			sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), jQuery.sap.KeyCodes.ENTER);
-			sap.ui.test.qunit.triggerKeydown(oRadioButton2.getDomRef(), jQuery.sap.KeyCodes.ENTER);
-			sap.ui.test.qunit.triggerKeydown(oRadioButton3.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+			sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), KeyCodes.ENTER);
+			sap.ui.test.qunit.triggerKeydown(oRadioButton2.getDomRef(), KeyCodes.ENTER);
+			sap.ui.test.qunit.triggerKeydown(oRadioButton3.getDomRef(), KeyCodes.ENTER);
 
 			// assert
 			assert.strictEqual(oRadioButton1.getSelected(), true, "RadioButton1 should be selected");
@@ -690,11 +693,11 @@
 		}
 
 		checkKeyboardEventhandling("Firing ENTER event", {
-			keyCode : jQuery.sap.KeyCodes.ENTER
+			keyCode : KeyCodes.ENTER
 		});
 
 		checkKeyboardEventhandling("Firing SPACE event", {
-			keyCode : jQuery.sap.KeyCodes.SPACE
+			keyCode : KeyCodes.SPACE
 		});
 
 		QUnit.module("Event testing", {
@@ -719,11 +722,11 @@
 		});
 
 		QUnit.test("Event should not be fired when buttons are not editable", function(assert) {
-			this.testArrowNavigation({ editable: false }, jQuery.sap.KeyCodes.ARROW_RIGHT, assert);
+			this.testArrowNavigation({ editable: false }, KeyCodes.ARROW_RIGHT, assert);
 		});
 
 		QUnit.test("Event should not be fired when buttons are not enabled", function(assert) {
-			this.testArrowNavigation({ editable: false }, jQuery.sap.KeyCodes.ARROW_RIGHT, assert);
+			this.testArrowNavigation({ editable: false }, KeyCodes.ARROW_RIGHT, assert);
 		});
 
 		QUnit.test("Radio Button Select Event", function(assert) {
@@ -739,8 +742,8 @@
 			// act
 			var fnFireSelectSpy1 = this.spy(oRadioButton1, "fireSelect");
 			var fnFireSelectSpy2 = this.spy(oRadioButton2, "fireSelect");
-			sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), jQuery.sap.KeyCodes.ENTER);
-			sap.ui.test.qunit.triggerKeydown(oRadioButton2.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+			sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), KeyCodes.ENTER);
+			sap.ui.test.qunit.triggerKeydown(oRadioButton2.getDomRef(), KeyCodes.ENTER);
 			this.clock.tick(1);
 
 			// assertions
@@ -765,7 +768,7 @@
 			sap.ui.getCore().applyChanges();
 
 			oRadioButton1.applyFocusInfo();
-			sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), KeyCodes.ARROW_RIGHT);
 			this.clock.tick(100);
 
 			assert.strictEqual(oRadioButton3.$().is(":focus"), true, "3rd RadioButton should be focussed");
@@ -792,7 +795,7 @@
 
 
 			oRadioButton3.applyFocusInfo();
-			sap.ui.test.qunit.triggerKeydown(oRadioButton3.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT);
+			sap.ui.test.qunit.triggerKeydown(oRadioButton3.getDomRef(), KeyCodes.ARROW_LEFT);
 
 			assert.strictEqual(oRadioButton1.$().is(":focus"), true, "3rd RadioButton should be focussed");
 

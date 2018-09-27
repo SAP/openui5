@@ -26,8 +26,6 @@
 		</script>
 
 		<script>
-			// this is needed because the loading the input invalidates the static UI area which make the test case fail
-			jQuery.sap.require("sap.m.Input");
 
 			// mockup data
 			var data = {
@@ -203,12 +201,12 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			assert.ok(jQuery.sap.byId(this.oResponsivePopover.getId() + "-closeButton").length === 0, "CloseButton should not be rendered");
+			assert.ok(jQuery("#" + this.oResponsivePopover.getId() + "-closeButton").length === 0, "CloseButton should not be rendered");
 
 			this.oResponsivePopover.setShowCloseButton(true);
 			sap.ui.getCore().applyChanges();
 
-			assert.ok(jQuery.sap.byId(this.oResponsivePopover.getId() + "-closeButton").length === 1, "CloseButton should be rendered");
+			assert.ok(jQuery("#" + this.oResponsivePopover.getId() + "-closeButton").length === 1, "CloseButton should be rendered");
 		});
 
 		QUnit.test("Close button should not be forwarded to an internal aggregation Toolbar", function (assert) {
@@ -285,10 +283,10 @@
 			this.clock.tick(500);
 
 			// Assert
-			assert.ok(jQuery.sap.byId(this.oResponsivePopover.getId() + "-closeButton").closest("#page1-intHeader")[0], "CloseButton should be rendered in page1");
+			assert.ok(jQuery("#" + this.oResponsivePopover.getId() + "-closeButton").closest("#page1-intHeader")[0], "CloseButton should be rendered in page1");
 			oNavContainer.to("page2");
 			this.clock.tick(500);
-			assert.ok(jQuery.sap.byId(this.oResponsivePopover.getId() + "-closeButton").closest("#page2-intHeader")[0], "CloseButton should be rendered in page2");
+			assert.ok(jQuery("#" + this.oResponsivePopover.getId() + "-closeButton").closest("#page2-intHeader")[0], "CloseButton should be rendered in page2");
 		});
 
 		QUnit.test("ResponsivepPopover should return the same domref as the internal popup control", function(assert) {
