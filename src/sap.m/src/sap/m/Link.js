@@ -130,7 +130,7 @@ function(
 			 * If validation fails, the value of the <code>href</code> property will still be set, but will not be applied to the DOM.
 			 *
 			 * <b>Note:</b> Additional whitelisting of URLs is allowed through
-			 * {@link jQuery.sap.addUrlWhitelist}.
+			 * {@link sap.base.security.URLWhiteList}.
 			 *
 			 * @since 1.54.0
 			 */

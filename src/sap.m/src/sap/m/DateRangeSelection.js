@@ -773,8 +773,7 @@ sap.ui.define([
 
 					sValue = this.getValue();
 					_fireChange.call(this, true);
-					//TODO: global jquery call found
-					if ((Device.system.desktop || !Device.support.touch) && !jQuery.sap.simulateMobileOnDesktop) {
+					if (Device.system.desktop || !Device.support.touch) {
 						this._curpos = sValue.length;
 						this._$input.cursorPos(this._curpos);
 					}

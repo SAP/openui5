@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/ui/core/IconPool",
+	"sap/ui/core/Popup",
 	// jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/cursorPos"
 ],
@@ -33,7 +34,8 @@ sap.ui.define([
 		deepEqual,
 		assert,
 		Log,
-		IconPool
+		IconPool,
+		Popup
 	) {
 	"use strict";
 
@@ -975,9 +977,7 @@ sap.ui.define([
 	DatePicker.prototype._createPopup = function(){
 
 		if (!this._oPopup) {
-			//TODO: global jquery call found
-			jQuery.sap.require("sap.ui.core.Popup");
-			this._oPopup = new sap.ui.core.Popup();
+			this._oPopup = new Popup();
 			this._oPopup.setAutoClose(true);
 			this._oPopup.setDurations(0, 0); // no animations
 			this._oPopup.attachOpened(_handleOpened, this);
@@ -997,7 +997,7 @@ sap.ui.define([
 
 		this._oPopup.setAutoCloseAreas([this.getDomRef()]);
 
-		var eDock = sap.ui.core.Popup.Dock;
+		var eDock = Popup.Dock;
 		var sAt;
 		if (this.getTextAlign() == TextAlign.End) {
 			sAt = eDock.EndBottom + "-4"; // as m.Input has some padding around
@@ -1125,8 +1125,7 @@ sap.ui.define([
 			// compare Dates because value can be the same if only 2 digits for year
 			sValue = this.getValue();
 			this.fireChangeEvent(sValue, {valid: true});
-			//TODO: global jquery call found
-			if (this.getDomRef() && (Device.system.desktop || !Device.support.touch) && !jQuery.sap.simulateMobileOnDesktop) { // as control could be destroyed during update binding
+			if (this.getDomRef() && (Device.system.desktop || !Device.support.touch)) { // as control could be destroyed during update binding
 				this._curpos = this._$input.val().length;
 				this._$input.cursorPos(this._curpos);
 			}
@@ -1145,8 +1144,7 @@ sap.ui.define([
 				this.setProperty("value", sValue, true); // no rerendering
 				this.fireChangeEvent(sValue, {valid: true});
 			}
-		} else //TODO: global jquery call found
-		if ((Device.system.desktop || !Device.support.touch) && !jQuery.sap.simulateMobileOnDesktop) {
+		} else if (Device.system.desktop || !Device.support.touch) {
 			this.focus();
 		}
 
@@ -1173,8 +1171,7 @@ sap.ui.define([
 
 		if (this.isOpen()) {
 			this._oPopup.close();
-			//TODO: global jquery call found
-			if ((Device.system.desktop || !Device.support.touch) && !jQuery.sap.simulateMobileOnDesktop) {
+			if ((Device.system.desktop || !Device.support.touch)) {
 				this.focus();
 			}
 		}
