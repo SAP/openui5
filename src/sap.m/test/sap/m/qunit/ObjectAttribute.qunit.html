@@ -203,6 +203,23 @@
 
 	QUnit.module("Aggregation customContent");
 
+	QUnit.test('customContent null', function (assert) {
+		// arrange
+		var oAttr = new sap.m.ObjectAttribute("attr", {
+				text: "Joe Smith",
+			});
+
+		try {
+			oAttr.setCustomContent(null);
+			assert.equal(1, 1, "The control doesn't throw error when the added customContent is null");
+		} catch (e) {
+			assert.equal(1, 0, "Throws an error " + e.stack);
+		}
+
+		// destroy
+		oAttr.destroy();
+	});
+
 	QUnit.test("Aggregation sap.m.Link", function(assert) {
 
 		// arrange
