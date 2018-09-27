@@ -598,7 +598,7 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 
 	/**
 	 * Defines the accessible landmark roles for ARIA support. This enumeration is used with the AccessibleRole control property.
-	 * For more information, goto "Roles for Accessible Rich Internet Applications (WAI-ARIA Roles)" at the www.w3.org homepage.
+	 * For more information, go to "Roles for Accessible Rich Internet Applications (WAI-ARIA Roles)" at the www.w3.org homepage.
 	 *
 	 * @enum {string}
 	 * @public
@@ -668,7 +668,25 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 		 *
 		 * @public
 		 */
-		Complementary : "Complementary"
+		Complementary : "Complementary",
+
+		/**
+		 * Represents the ARIA role <code>form</code>.
+		 *
+		 * A region that contains a collection of items and objects that, as a whole, combine to create a form.
+		 *
+		 * @public
+		 */
+		Form : "Form",
+
+		/**
+		 * Represents the ARIA role <code>contentinfo</code>.
+		 *
+		 * A region that contains information about the content on the page.
+		 *
+		 * @public
+		 */
+		ContentInfo : "ContentInfo"
 
 	};
 
