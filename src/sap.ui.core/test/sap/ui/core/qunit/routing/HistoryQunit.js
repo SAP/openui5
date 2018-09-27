@@ -3,7 +3,7 @@
 // this is currently done by the unified shell in order to handle cross-application navigation.
 // Factoring out the unit tests into this module allows to execute the same test suite in the shell context
 
-/*global QUnit, hasher, sinon */
+/*global QUnit, hasher*/
 sap.ui.define([
 	"sap/base/util/uid",
 	"sap/ui/core/routing/HashChanger",
@@ -517,7 +517,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Log a warning if window.history.state is already in use", function (assert) {
-		var oSpy = sinon.spy(Log, "debug");
+		var oSpy = this.spy(Log, "debug");
 
 		var fnExtendedFireHashChange = this.oExtendedHashChanger.fireHashChanged;
 		this.oExtendedHashChanger.fireHashChanged = function(newHash, oldHash) {
@@ -529,13 +529,12 @@ sap.ui.define([
 		return this.setup().then(function() {
 			return this.checkDirection(function() {
 				window.history.go(1);
-				window.history.replaceState("foo", window.document.title);
 			}, function(sHash) {
 				if (sHash === "foo") {
 					assert.strictEqual(this.oHistory.getDirection(), "Unknown");
 				}
 			}.bind(this)).then(function() {
-				sinon.assert.alwaysCalledWith(oSpy, "Unable to determine HistoryDirection as history.state is already set: invalid_state", "sap.ui.core.routing.History");
+				assert.ok(oSpy.alwaysCalledWith("Unable to determine HistoryDirection as history.state is already set: invalid_state", "sap.ui.core.routing.History"), "The debug log is done correctly");
 			});
 		}.bind(this));
 	});
