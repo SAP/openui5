@@ -352,9 +352,11 @@ sap.ui.define([
 					switch (oUpdate.type) {
 						case "new":
 							assert.deepEqual(oUpdate, oExpectedResponse1, "then expected reponse for new update was received");
-							var oNewButton = this.oLayout.getContent().find(function(oContentItem) { return oContentItem.getId() === "newButton"; }),
-								oNewButtonOverlay = OverlayRegistry.getOverlay(oNewButton);
-								oNewButtonOverlay.setEditable(true);
+							var oNewButton = this.oLayout.getContent().filter(function(oControl) {
+								return oControl.getId() === "newButton";
+							})[0];
+							var oNewButtonOverlay = OverlayRegistry.getOverlay(oNewButton);
+							oNewButtonOverlay.setEditable(true);
 							break;
 						case "editableChange":
 							assert.deepEqual(oUpdate, oExpectedResponse2, "then expected response for editableChange update was received");
