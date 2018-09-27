@@ -676,14 +676,69 @@ sap.ui.define([
 		return this.getDomRef() || null;
 	};
 
+	function getAncestorScrollPositions(oDomRef) {
+		var oParentDomRef,
+			aScrollHierarchy = [];
+
+		oParentDomRef = oDomRef.parentNode;
+		while (oParentDomRef) {
+			aScrollHierarchy.push({
+				node: oParentDomRef,
+				scrollLeft: oParentDomRef.scrollLeft,
+				scrollTop: oParentDomRef.scrollTop
+			});
+			oParentDomRef = oParentDomRef.parentNode;
+		}
+
+		return aScrollHierarchy;
+	}
+
+	function restoreScrollPositions(aScrollHierarchy) {
+		aScrollHierarchy.forEach(function(oScrollInfo) {
+			var oDomRef = oScrollInfo.node;
+
+			if (oDomRef.scrollLeft !== oScrollInfo.scrollLeft) {
+				oDomRef.scrollLeft = oScrollInfo.scrollLeft;
+			}
+
+			if (oDomRef.scrollTop !== oScrollInfo.scrollTop) {
+				oDomRef.scrollTop = oScrollInfo.scrollTop;
+			}
+		});
+	}
+
 	/**
 	 * Sets the focus to the stored focus DOM reference
+	 *
+	 * @param {object} oFocusInfo
+	 * @param {boolean} [oFocusInfo.preventScroll=false] @since 1.60 if it's set to true, the focused
+	 *   element won't be shifted into the viewport if it's not completely visible before the focus is set
 	 * @public
 	 */
-	Element.prototype.focus = function () {
-		var oFocusDomRef = this.getFocusDomRef();
+	Element.prototype.focus = function (oFocusInfo) {
+		var oFocusDomRef = this.getFocusDomRef(),
+			aScrollHierarchy;
+
+		oFocusInfo = oFocusInfo || {};
+
 		if (oFocusDomRef) {
+			// save the scroll position of all ancestor DOM elements
+			// before the focus is set
+			if (oFocusInfo.preventScroll === true) {
+				aScrollHierarchy = getAncestorScrollPositions(oFocusDomRef);
+			}
+
 			oFocusDomRef.focus();
+
+			if (aScrollHierarchy && aScrollHierarchy.length > 0) {
+				// restore the scroll position if it's changed after setting focus
+				if (Device.browser.safari || Device.browser.msie) {
+					// Safari and IE11 need a little delay to get the scroll position updated
+					setTimeout(restoreScrollPositions.bind(null, aScrollHierarchy), 0);
+				} else {
+					restoreScrollPositions(aScrollHierarchy);
+				}
+			}
 		}
 	};
 
@@ -704,10 +759,12 @@ sap.ui.define([
 	 * To be overwritten by the specific control method.
 	 *
 	 * @param {object} oFocusInfo
+	 * @param {boolean} [oFocusInfo.preventScroll=false] @since 1.60 if it's set to true, the focused
+	 *   element won't be shifted into the viewport if it's not completely visible before the focus is set
 	 * @protected
 	 */
 	Element.prototype.applyFocusInfo = function (oFocusInfo) {
-		this.focus();
+		this.focus(oFocusInfo);
 		return this;
 	};
 

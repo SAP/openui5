@@ -173,7 +173,7 @@ sap.ui.define(function() {
 					'testdata/core/Element_data.qunit',
 					'testdata/core/Element_delegates.qunit',
 					'testdata/core/Element_dependents.qunit',
-					'testdata/core/Element_focusWhenMissing.qunit',
+					'testdata/core/Element_focus.qunit',
 					'testdata/core/Element_layoutData.qunit',
 					'testdata/core/Element_metadata_selector.qunit',
 					'testdata/core/Element_metadata_dnd.qunit',
