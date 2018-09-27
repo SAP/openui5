@@ -338,7 +338,7 @@ sap.ui.define([
 	 * @private
 	 */
 	//TODO: global jquery call found
-	Popup.prototype.touchEnabled = Device.support.touch;
+	Popup.prototype.touchEnabled = Device.support.touch && !Device.system.combi;
 
 	/**
 	 * On mobile device, the browser may set the focus to somewhere else after
