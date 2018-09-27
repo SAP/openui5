@@ -639,7 +639,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("request(), fnOnCreateGroup", function (assert) {
+	QUnit.test("request, fnOnCreateGroup", function (assert) {
 		var oRequestor = _Requestor.create("/", oModelInterface);
 
 		this.mock(oModelInterface).expects("fnOnCreateGroup").withExactArgs("groupId");
@@ -650,7 +650,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("request(), fnGetGroupProperty", function (assert) {
+	QUnit.test("request, fnGetGroupProperty", function (assert) {
 		var oGroupLock = new _GroupLock("groupId"),
 			oModelInterface = {
 				fnGetGroupProperty : defaultGetGroupProperty,
@@ -664,6 +664,22 @@ sap.ui.define([
 
 		// code under test
 		oRequestor.request("GET", "SalesOrders", oGroupLock);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("request, getOrCreateBatchQueue", function (assert) {
+		var oRequestor = _Requestor.create("/", oModelInterface),
+			aRequests = [];
+
+		this.mock(oRequestor).expects("getOrCreateBatchQueue")
+			.withExactArgs("groupId")
+			.returns(aRequests);
+
+		// code under test
+		oRequestor.request("GET", "SalesOrders", new _GroupLock("groupId"));
+
+		assert.strictEqual(aRequests.length, 1);
+		assert.strictEqual(aRequests[0].method, "GET");
 	});
 
 	//*********************************************************************************************
@@ -798,8 +814,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("request(...): batch group id", function (assert) {
+	QUnit.test("request(...): batch group id and change sets", function (assert) {
 		var oGroupLock = new _GroupLock("group"),
+			oGroupLock2,
 			oRequestor = _Requestor.create("/", oModelInterface);
 
 		this.mock(oGroupLock).expects("unlock").withExactArgs();
@@ -814,10 +831,19 @@ sap.ui.define([
 		oRequestor.request("GET", "EntitySet5", new _GroupLock("$auto"));
 		oRequestor.request("GET", "EntitySet6", new _GroupLock("$auto"), undefined, undefined,
 			undefined, undefined, undefined, undefined, /*bAtFront*/true);
+		oGroupLock2 = new _GroupLock("group", true, "owner", oRequestor.getSerialNumber());
+		oRequestor.addChangeSet("group");
+		oRequestor.request("PATCH", "EntitySet7",
+			new _GroupLock("group", true, "owner", oRequestor.getSerialNumber()),
+			{"serialNumber" : "after change set 1"}, {"i" : "j"});
+		oRequestor.request("PATCH", "EntitySet8", oGroupLock2,
+			{"serialNumber" : "before change set 1"}, {"k" : "l"});
+		oRequestor.request("PATCH", "EntitySet9", new _GroupLock("group"),
+			{"serialNumber" : "not set -> last change set"}, {"m" : "n"});
 
 		TestUtils.deepContains(oRequestor.mBatchQueue, {
 			"group" : [
-				[/*change set!*/{
+				[/*change set 0*/{
 					method : "PATCH",
 					url : "EntitySet1",
 					headers : {
@@ -831,6 +857,28 @@ sap.ui.define([
 						"bar" : "baz"
 					},
 					body : {"c" : "d"}
+				}, {
+					method : "PATCH",
+					url : "EntitySet8",
+					headers : {
+						"serialNumber" : "before change set 1"
+					},
+					body : {"k" : "l"}
+				}],
+				[/*change set 1*/{
+					method : "PATCH",
+					url : "EntitySet7",
+					headers : {
+						"serialNumber" : "after change set 1"
+					},
+					body : {"i" : "j"}
+				}, {
+					method : "PATCH",
+					url : "EntitySet9",
+					headers : {
+						"serialNumber" : "not set -> last change set"
+					},
+					body : {"m" : "n"}
 				}]
 			],
 			"$auto" : [
@@ -972,6 +1020,7 @@ sap.ui.define([
 
 		this.mock(oRequestor).expects("sendBatch").never();
 
+		// code under test
 		return oRequestor.submitBatch("testGroupId").then(function (oResult) {
 			var oPromise;
 
@@ -980,13 +1029,17 @@ sap.ui.define([
 			oPromise = oRequestor.request("POST", "Customers", new _GroupLock("testGroupId"), {},
 				oBody, undefined, function () {});
 			oRequestor.removePost("testGroupId", oBody);
+			oRequestor.addChangeSet("testGroupId");
 
 			return Promise.all([
 				oPromise.catch(function (oError) {
 					assert.ok(oError.canceled);
 				}),
+				// code under test
 				oRequestor.submitBatch("testGroupId")
-			]);
+			]).then(function () {
+				assert.strictEqual(oRequestor.mBatchQueue["testGroupId"], undefined);
+			});
 		});
 	});
 
@@ -1083,6 +1136,7 @@ sap.ui.define([
 		oRequestorMock.expects("convertResourcePath").withExactArgs("SalesOrders")
 			.returns("~SalesOrders");
 		oRequestor.request("GET", "SalesOrders", new _GroupLock("group2"));
+		aExpectedRequests.iChangeSet = 0;
 		this.mock(_Requestor).expects("cleanBatch")
 			.withExactArgs(aExpectedRequests)
 			.returns(aCleanedRequests);
@@ -1108,14 +1162,16 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("submitBatch(...): single GET", function (assert) {
-		var oRequestor = _Requestor.create("/", oModelInterface);
-
-		oRequestor.request("GET", "Products", new _GroupLock("groupId"));
-		this.mock(oRequestor).expects("sendBatch")
-			.withExactArgs([
+		var aExpectedRequests = [
 				// Note: no empty change set!
 				sinon.match({method : "GET", url : "Products"})
-			]).resolves([
+			],
+			oRequestor = _Requestor.create("/", oModelInterface);
+
+		oRequestor.request("GET", "Products", new _GroupLock("groupId"));
+		aExpectedRequests.iChangeSet = 0;
+		this.mock(oRequestor).expects("sendBatch")
+			.withExactArgs(aExpectedRequests).resolves([
 				createResponse({})
 			]);
 
@@ -1129,6 +1185,43 @@ sap.ui.define([
 			oEntityProduct0 = {},
 			oEntityProduct0OtherCache = {},
 			oEntityProduct1 = {},
+			aExpectedRequests = [[
+					sinon.match({
+						body : {Name : "bar2", Note : "hello, world"},
+						method : "PATCH",
+						url : "Products('0')"
+					}),
+					sinon.match({
+						body : {Name : "p1"},
+						method : "PATCH",
+						url : "Products('1')"
+					}),
+					sinon.match({
+						body : {Note : "no merge!"},
+						method : "PATCH",
+						url : "Products('0')"
+					}),
+					sinon.match({
+						body : {Name : "baz"},
+						method : "POST",
+						url : "Products"
+					}),
+					sinon.match({
+						body : {},
+						method : "POST",
+						url : "Products('0')/GetCurrentStock"
+					}),
+					sinon.match({
+						body : {Address : {City : "Walldorf", PostalCode : "69190"}},
+						method : "PATCH",
+						url : "BusinessPartners('42')"
+					})
+				],
+				sinon.match({
+					method : "GET",
+					url : "Products"
+				})
+			],
 			aPromises = [],
 			oRequestor = _Requestor.create("/", oModelInterface),
 			fnSubmit0 = this.spy(),
@@ -1172,45 +1265,9 @@ sap.ui.define([
 		aPromises.push(oRequestor.request("PATCH", "BusinessPartners('42')",
 			new _GroupLock("groupId"), {"If-Match" : oBusinessPartners42},
 			{Address : {PostalCode : "69190"}}, fnSubmit4));
+		aExpectedRequests.iChangeSet = 0;
 		this.mock(oRequestor).expects("sendBatch")
-			.withExactArgs([
-				[
-					sinon.match({
-						body : {Name : "bar2", Note : "hello, world"},
-						method : "PATCH",
-						url : "Products('0')"
-					}),
-					sinon.match({
-						body : {Name : "p1"},
-						method : "PATCH",
-						url : "Products('1')"
-					}),
-					sinon.match({
-						body : {Note : "no merge!"},
-						method : "PATCH",
-						url : "Products('0')"
-					}),
-					sinon.match({
-						body : {Name : "baz"},
-						method : "POST",
-						url : "Products"
-					}),
-					sinon.match({
-						body : {},
-						method : "POST",
-						url : "Products('0')/GetCurrentStock"
-					}),
-					sinon.match({
-						body : {Address : {City : "Walldorf", PostalCode : "69190"}},
-						method : "PATCH",
-						url : "BusinessPartners('42')"
-					})
-				],
-				sinon.match({
-					method : "GET",
-					url : "Products"
-				})
-			]).resolves([
+			.withExactArgs(aExpectedRequests).resolves([
 				[
 					createResponse({Name : "bar2", Note : "hello, world"}),
 					createResponse({Name : "p1"}),
@@ -1304,6 +1361,7 @@ sap.ui.define([
 					assert.strictEqual(oResponse, oConvertedPayload);
 				});
 
+			aExpectedRequests.iChangeSet = 0;
 			oRequestorMock.expects("sendBatch")
 				.withExactArgs(aExpectedRequests)
 				.resolves([createResponse(oFixture.mProductsResponse)]);
@@ -1638,6 +1696,16 @@ sap.ui.define([
 			fnCancel3 = this.spy(),
 			fnCancelPost = this.spy(),
 			iCount = 1,
+			aExpectedRequests = [
+				sinon.match({
+					method : "POST",
+					url : "ActionImport('42')"
+				}),
+				sinon.match({
+					method : "GET",
+					url : "Employees"
+				})
+			],
 			oPostData = {},
 			oProduct0 = {},
 			oPromise,
@@ -1698,17 +1766,9 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oRequestor.hasPendingChanges(), false);
 
+		aExpectedRequests.iChangeSet = 0;
 		this.mock(oRequestor).expects("sendBatch")
-			.withExactArgs([
-				sinon.match({
-					method : "POST",
-					url : "ActionImport('42')"
-				}),
-				sinon.match({
-					method : "GET",
-					url : "Employees"
-				})
-			]).resolves([createResponse(), createResponse()]);
+			.withExactArgs(aExpectedRequests).resolves([createResponse(), createResponse()]);
 
 		oRequestor.submitBatch("groupId");
 
@@ -1784,6 +1844,17 @@ sap.ui.define([
 	//*****************************************************************************************
 	QUnit.test("removePatch: various requests", function (assert) {
 		var fnCancel = this.spy(),
+			aExpectedRequests = [
+				sinon.match({
+					method : "PATCH",
+					url : "Products('0')",
+					body : {Name : "bar"}
+				}),
+				sinon.match({
+					method : "GET",
+					url : "Employees"
+				})
+			],
 			oProduct0 = {},
 			oPromise,
 			aPromises,
@@ -1809,18 +1880,9 @@ sap.ui.define([
 			oRequestor.request("GET", "Employees", new _GroupLock("groupId"))
 		];
 
+		aExpectedRequests.iChangeSet = 0;
 		this.mock(oRequestor).expects("sendBatch")
-			.withExactArgs([
-				sinon.match({
-					method : "PATCH",
-					url : "Products('0')",
-					body : {Name : "bar"}
-				}),
-				sinon.match({
-					method : "GET",
-					url : "Employees"
-				})
-			]).resolves([createResponse({}), createResponse({})]);
+			.withExactArgs(aExpectedRequests).resolves([createResponse({}), createResponse({})]);
 
 		// code under test
 		oRequestor.removePatch(oPromise);
@@ -1855,6 +1917,13 @@ sap.ui.define([
 		var oBody = {},
 			fnCancel1 = this.spy(),
 			fnCancel2 = this.spy(),
+			aExpectedRequests = [
+				sinon.match({
+					method : "POST",
+					url : "Products",
+					body : {Name : "bar"}
+				})
+			],
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oTestPromise;
 
@@ -1876,14 +1945,9 @@ sap.ui.define([
 
 		assert.ok(oRequestor.cancelChangesByFilter.calledWithExactly(sinon.match.func, "groupId"));
 
+		aExpectedRequests.iChangeSet = 0;
 		this.mock(oRequestor).expects("sendBatch")
-			.withExactArgs([
-				sinon.match({
-					method : "POST",
-					url : "Products",
-					body : {Name : "bar"}
-				})
-			]).resolves([createResponse()]);
+			.withExactArgs(aExpectedRequests).resolves([createResponse()]);
 
 		// code under test
 		oRequestor.submitBatch("groupId");
@@ -1945,19 +2009,21 @@ sap.ui.define([
 
 	//*****************************************************************************************
 	QUnit.test("submitBatch: unwrap single change", function (assert) {
-		var oRequestor = _Requestor.create("/Service/", oModelInterface),
-			oRequestorMock = this.mock(oRequestor);
-
-		oRequestor.request("POST", "Products", new _GroupLock("groupId"), {}, {Name : "bar"});
-		oRequestorMock.expects("isChangeSetOptional").withExactArgs().returns(true);
-		oRequestorMock.expects("sendBatch")
-			.withExactArgs([
+		var aExpectedRequests = [
 				sinon.match({
 					method : "POST",
 					url : "Products",
 					body : {Name : "bar"}
 				})
-			]).resolves([createResponse()]);
+			],
+			oRequestor = _Requestor.create("/Service/", oModelInterface),
+			oRequestorMock = this.mock(oRequestor);
+
+		oRequestor.request("POST", "Products", new _GroupLock("groupId"), {}, {Name : "bar"});
+		oRequestorMock.expects("isChangeSetOptional").withExactArgs().returns(true);
+		aExpectedRequests.iChangeSet = 0;
+		oRequestorMock.expects("sendBatch")
+			.withExactArgs(aExpectedRequests).resolves([createResponse()]);
 
 		// code under test
 		return oRequestor.submitBatch("groupId");
@@ -2796,6 +2862,201 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oRequestor.getModelInterface(), oModelInterface);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("getOrCreateBatchQueue", function (assert) {
+		var aBatchQueue,
+			oInterface = {},
+			oRequestor = _Requestor.create("/", oInterface);
+
+		function checkBatchQueue(oBatchQueue0, sGroupId) {
+			assert.strictEqual(oRequestor.mBatchQueue[sGroupId], oBatchQueue0);
+			assert.strictEqual(oBatchQueue0.length, 1);
+			assert.strictEqual(oBatchQueue0.iChangeSet, 0);
+			assert.strictEqual(oBatchQueue0[0].length, 0);
+			assert.strictEqual(oBatchQueue0[0].iSerialNumber, 0);
+		}
+
+		// code under test
+		aBatchQueue = oRequestor.getOrCreateBatchQueue("group");
+
+		checkBatchQueue(aBatchQueue, "group");
+
+		// code under test
+		assert.strictEqual(oRequestor.getOrCreateBatchQueue("group"), aBatchQueue);
+
+		oInterface.fnOnCreateGroup = function () {};
+		this.mock(oInterface).expects("fnOnCreateGroup").withExactArgs("group2");
+
+		// code under test
+		checkBatchQueue(oRequestor.getOrCreateBatchQueue("group2"), "group2");
+	});
+
+	//*****************************************************************************************
+	QUnit.test("getSerialNumber", function (assert) {
+		var oRequestor = _Requestor.create("/", oModelInterface);
+
+		// code under test
+		assert.strictEqual(oRequestor.getSerialNumber(), 1);
+		assert.strictEqual(oRequestor.getSerialNumber(), 2);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("addChangeSet", function (assert) {
+		var aChangeSet0 = [],
+			oGetRequest = {},
+			oRequestor = _Requestor.create("/", oModelInterface),
+			aRequests = [aChangeSet0, oGetRequest];
+
+		aRequests.iChangeSet = 0;
+		this.mock(oRequestor).expects("getOrCreateBatchQueue").withExactArgs("group")
+			.returns(aRequests);
+		this.mock(oRequestor).expects("getSerialNumber").withExactArgs().returns(42);
+
+		// code under test
+		oRequestor.addChangeSet("group");
+
+		assert.strictEqual(aRequests.length, 3);
+		assert.strictEqual(aRequests.iChangeSet, 1);
+		assert.strictEqual(aRequests[1].length, 0);
+		assert.strictEqual(aRequests[0], aChangeSet0);
+		assert.strictEqual(aRequests[0].iSerialNumber, undefined);
+		assert.strictEqual(aRequests[1].iSerialNumber, 42);
+		assert.strictEqual(aRequests[2], oGetRequest);
+	});
+
+	//*****************************************************************************************
+	[{
+		changes : false,
+		requests : [],
+		result : [],
+		title : "no requests"
+	}, {
+		changes : false,
+		requests : [[], {method : "GET", url : "Products"}],
+		result : [{method : "GET", url : "Products"}],
+		title : "delete empty change set"
+	}, {
+		changes : true,
+		requests : [[{method : "PATCH", url : "Products('0')", body : {Name : "p1"}}]],
+		result : [{method : "PATCH", url : "Products('0')", body : {Name : "p1"}}],
+		title : "unwrap change set"
+	}, {
+		changes : true,
+		requests : [[
+			{method : "PATCH", url : "Products('0')", body : {Name : null},
+				headers : {"If-Match" : "ETag0"}, $promise : {}},
+			{method : "PATCH", url : "Products('0')", body : {Name : "bar"},
+				headers : {"If-Match" : "ETag0"}, $resolve : function () {}, _mergeInto : 0},
+			{method : "PATCH", url : "Products('0')", body : {Note : "hello, world"},
+				headers : {"If-Match" : "ETag0"}, $resolve : function () {}, _mergeInto : 0},
+			{method : "PATCH", url : "Products('1')", body : {Name : "p1"},
+				headers : {"If-Match" : "ETag1"}, $promise : {}},
+			{method : "PATCH", url : "Products('0')", body : {Name : "bar2"},
+				headers : {"If-Match" : "ETag0"}, $resolve : function () {}, _mergeInto : 0},
+			{method : "PATCH", url : "Products('0')", body : {Name : "no merge!"},
+				headers : {"If-Match" : "ETag2"}},
+			{method : "POST", url : "Products", body : {Name : "baz"}},
+			{method : "POST", url : "Products('0')/GetCurrentStock", body : {Name : "baz"},
+				headers : {"If-Match" : "ETag0"}},
+			{method : "PATCH", url : "BusinessPartners('42')",
+				body : {Address : null}, headers : {"If-Match" : "ETag3"}, $promise : {}},
+			{method : "PATCH", url : "BusinessPartners('42')",
+				body : {Address : {City : "Walldorf"}}, headers : {"If-Match" : "ETag3"},
+				$resolve : function () {}, _mergeInto : 8},
+			{method : "PATCH", url : "BusinessPartners('42')",
+				body : {Address : {PostalCode : "69190"}}, headers : {"If-Match" : "ETag3"},
+				$resolve : function () {}, _mergeInto : 8}
+		], {
+			method : "GET", url : "Products"
+		}],
+		result : [[
+			{method : "PATCH", url : "Products('0')", body : {Name : "bar2", Note : "hello, world"},
+				headers : {"If-Match" : "ETag0"}},
+			{method : "PATCH", url : "Products('1')", body : {Name : "p1"},
+				headers : {"If-Match" : "ETag1"}},
+			{method : "PATCH", url : "Products('0')", body : {Name : "no merge!"},
+				headers : {"If-Match" : "ETag2"}},
+			{method : "POST", url : "Products", body : {Name : "baz"}},
+			{method : "POST", url : "Products('0')/GetCurrentStock", body : {Name : "baz"},
+				headers : {"If-Match" : "ETag0"}},
+			{method : "PATCH", url : "BusinessPartners('42')",
+				body : {Address : {City : "Walldorf", PostalCode : "69190"}},
+				headers : {"If-Match" : "ETag3"}}
+		], {
+			method : "GET", url : "Products"
+		}],
+		title : "merge PATCHes"
+	}, {
+		changes : true,
+		requests : [
+			[],
+			[{method : "PATCH", url : "Products('0')", body : {Name : "p1"}}],
+			[
+				{method : "PATCH", url : "Products('0')", body : {Name : null},
+					headers : {"If-Match" : "ETag0"}, $promise : {}},
+				{method : "PATCH", url : "Products('0')", body : {Name : "bar"},
+					headers : {"If-Match" : "ETag0"}, $resolve : function () {}, _mergeInto : 0}
+			],
+			[
+				{method : "POST", url : "Products('0')/GetCurrentStock", body : {Name : "baz"},
+					headers : {"If-Match" : "ETag0"}},
+				{method : "PATCH", url : "BusinessPartners('42')",
+					body : {Address : {City : "Walldorf"}}, headers : {"If-Match" : "ETag3"}}
+			],
+			[],
+			{method : "GET", url : "Products"}
+		],
+		result : [
+			{method : "PATCH", url : "Products('0')", body : {Name : "p1"}},
+			{method : "PATCH", url : "Products('0')", body : {Name : "bar"},
+				headers : {"If-Match" : "ETag0"}},
+			[
+				{method : "POST", url : "Products('0')/GetCurrentStock", body : {Name : "baz"},
+					headers : {"If-Match" : "ETag0"}},
+				{method : "PATCH", url : "BusinessPartners('42')",
+					body : {Address : {City : "Walldorf"}},
+					headers : {"If-Match" : "ETag3"}}
+			],
+			{method : "GET", url : "Products"}
+		],
+		title : "multiple change sets"
+	}].forEach(function (oFixture) {
+		QUnit.test("cleanUpChangeSets, " + oFixture.title, function (assert) {
+			var oRequestor = _Requestor.create("/", oModelInterface),
+				that = this;
+
+			function checkRequests(aActualRequests, aExpectedRequests) {
+				assert.strictEqual(aActualRequests.length, aExpectedRequests.length);
+				aActualRequests.forEach(function (vActualRequest, i) {
+					if (Array.isArray(vActualRequest)) { // change set
+						checkRequests(vActualRequest, aExpectedRequests[i]);
+						return;
+					}
+					assert.strictEqual(vActualRequest.method, aExpectedRequests[i].method);
+					assert.deepEqual(vActualRequest.body, aExpectedRequests[i].body);
+					assert.deepEqual(vActualRequest.headers, aExpectedRequests[i].headers);
+				});
+			}
+
+			oFixture.requests.forEach(function (vActualRequest, i) {
+				if (Array.isArray(vActualRequest)) { // change set
+					oFixture.requests.iChangeSet = i;
+					vActualRequest.forEach(function (oRequest) {
+						if (oRequest.$resolve) {
+							that.mock(oRequest).expects("$resolve")
+								.withExactArgs(vActualRequest[oRequest._mergeInto].$promise);
+						}
+					});
+				}
+			});
+
+			// code under test
+			assert.strictEqual(oRequestor.cleanUpChangeSets(oFixture.requests), oFixture.changes);
+
+			checkRequests(oFixture.requests, oFixture.result);
+		});
 	});
 });
 // TODO: continue-on-error? -> flag on model

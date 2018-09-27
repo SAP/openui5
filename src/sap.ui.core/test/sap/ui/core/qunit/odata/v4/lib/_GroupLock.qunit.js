@@ -173,6 +173,15 @@ sap.ui.define([
 		assert.strictEqual(oGroupLock.oOwner, oOwner);
 		assert.strictEqual(oGroupLock.toString(),
 			"sap.ui.model.odata.v4.lib._GroupLock(locked,owner=owner)");
+
+		oGroupLock = new _GroupLock(undefined, false, oOwner, 42);
+		assert.strictEqual(oGroupLock.oOwner, oOwner);
+		assert.strictEqual(oGroupLock.toString(),
+			"sap.ui.model.odata.v4.lib._GroupLock(unlocked,owner=owner,serialNumber=42)");
+
+		oGroupLock = new _GroupLock(undefined, false, undefined, 0);
+		assert.strictEqual(oGroupLock.toString(),
+			"sap.ui.model.odata.v4.lib._GroupLock(unlocked,serialNumber=0)");
 	});
 
 	//*********************************************************************************************
@@ -184,5 +193,12 @@ sap.ui.define([
 		// ensure that $cached can be unlocked several times
 		_GroupLock.$cached.unlock();
 		_GroupLock.$cached.unlock();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("serial number", function (assert) {
+		assert.strictEqual((new _GroupLock("group", true, "owner", 42)).getSerialNumber(), 42);
+		assert.strictEqual((new _GroupLock("group", true, "owner")).getSerialNumber(), Infinity);
+		assert.strictEqual((new _GroupLock("group", true, "owner", 0)).getSerialNumber(), 0);
 	});
 });
