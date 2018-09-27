@@ -35,12 +35,12 @@ sap.ui.require(["sap/ui/thirdparty/jquery"],
 		oPl.setShowEditHeaderButton(true);
 		sap.ui.getCore().applyChanges();
 
-		var aEditHeaderBtn = oPl._getHeaderContent().$().find('#__content2-editHeaderBtn');
+		var aEditHeaderBtn = oPl._getHeaderContent().$().find('#UxAP-ObjectPageHeaderContent--ObjectPageLayout-OPHeaderContent-editHeaderBtn');
 
 		assert.ok(aEditHeaderBtn.length === 1, "button is rendered inside the HeaderContent");
 
 		oPl.rerender();
-		aEditHeaderBtn = oPl._getHeaderContent().$().find('#__content2-editHeaderBtn');
+		aEditHeaderBtn = oPl._getHeaderContent().$().find('#UxAP-ObjectPageHeaderContent--ObjectPageLayout-OPHeaderContent-editHeaderBtn');
 
 		assert.ok(aEditHeaderBtn.length === 1, "button is rendered inside the HeaderContent after rerender");
 	});

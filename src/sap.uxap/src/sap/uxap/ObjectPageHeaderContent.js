@@ -203,12 +203,15 @@ sap.ui.define([
 		 * @param aContent
 		 * @param bVisible
 		 * @param sContentDesign
+		 * @param bPinnable
+		 * @param sStableId
 		 */
-		ObjectPageHeaderContent.createInstance = function (aContent, bVisible, sContentDesign) {
+		ObjectPageHeaderContent.createInstance = function (aContent, bVisible, sContentDesign, bPinnable, sStableId) {
 			return new ObjectPageHeaderContent({
 				content: aContent,
 				visible: bVisible,
-				contentDesign: sContentDesign
+				contentDesign: sContentDesign,
+				id: sStableId
 			});
 		};
 
