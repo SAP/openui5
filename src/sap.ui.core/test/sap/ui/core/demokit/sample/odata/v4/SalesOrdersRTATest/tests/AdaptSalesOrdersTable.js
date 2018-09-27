@@ -9,11 +9,6 @@ sap.ui.define([
 
 	return {
 		adaptSalesOrdersTable : function (Given, When, Then, sUIComponent) {
-			if (!TestUtils.isRealOData()) {
-				Opa5.assert.ok(true, "Test runs only with real OData");
-				return;
-			}
-
 			Given.iStartMyUIComponent({
 				componentConfig : {
 					name : sUIComponent || "sap.ui.core.sample.odata.v4.SalesOrdersRTA"

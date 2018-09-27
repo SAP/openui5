@@ -34,6 +34,7 @@ sap.ui.define([
 	 * <li> '$$inheritExpandSelect' with allowed values <code>false</code> and <code>true</code>
 	 * <li> '$$operationMode' with value {@link sap.ui.model.odata.OperationMode.Server}
 	 * <li> '$$ownRequest' with value <code>true</code>
+	 * <li> '$$patchWithoutSideEffects' with value <code>true</code>
 	 * </ul>
 	 *
 	 * @param {object} mParameters
@@ -87,9 +88,10 @@ sap.ui.define([
 					}
 					break;
 				case "$$ownRequest":
+				case "$$patchWithoutSideEffects":
 					if (vValue !== true) {
-						throw new Error("Unsupported value for binding parameter "
-							+ "'$$ownRequest': " + vValue);
+						throw new Error("Unsupported value for binding parameter '" + sKey + "': "
+							+ vValue);
 					}
 					break;
 				default:

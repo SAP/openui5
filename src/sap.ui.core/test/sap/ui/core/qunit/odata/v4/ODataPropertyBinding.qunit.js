@@ -1281,6 +1281,7 @@ sap.ui.define([
 				oError = {},
 				oGroupLock = new _GroupLock(),
 				oParentBindingMock = this.mock(oParentBinding),
+				bPatchWithoutSideEffects = {/*false,true*/},
 				fnUpdate,
 				oUpdatePromise = {},
 				fnWithCache;
@@ -1305,12 +1306,15 @@ sap.ui.define([
 			oBinding.setValue(oFixture.value, oFixture.updateGroupId);
 
 			// the "Unit" property associated with Address/City
-			oBindingMock.expects("getUnitOrCurrencyPath").withExactArgs().returns("Unit");
-			oParentBindingMock.expects("getUpdateGroupId").returns("up");
+			oParentBindingMock.expects("getUpdateGroupId").withExactArgs().returns("up");
 			this.mock(oGroupLock).expects("setGroupId").withExactArgs("up");
+			oBindingMock.expects("getUnitOrCurrencyPath").withExactArgs().returns("Unit");
+			oParentBindingMock.expects("isPatchWithoutSideEffects").withExactArgs()
+				.returns(bPatchWithoutSideEffects);
 			fnUpdate = oCacheMock.expects("update")
 				.withExactArgs(sinon.match.same(oGroupLock), "Address/City", oFixture.value,
-					sinon.match.func, "/BusinessPartnerList('0100000000')", sCachePath, "Unit")
+					sinon.match.func, "/BusinessPartnerList('0100000000')", sCachePath, "Unit",
+					bPatchWithoutSideEffects)
 				.returns(oUpdatePromise);
 
 			// code under test: call arg to withCache
