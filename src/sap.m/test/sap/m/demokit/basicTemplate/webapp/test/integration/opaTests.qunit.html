@@ -1,38 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Integration Tests for Basic Template</title>
-	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
-	<meta charset="UTF-8">
+	<meta charset="utf-8">
+	<title>Integration tests for Basic Template</title>
 
-	<script
-		id="sap-ui-bootstrap"
+	<script id="sap-ui-bootstrap"
 		src="../../../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme='sap_belize'
 		data-sap-ui-resourceroots='{
-			"sap.ui.demo.basicTemplate" : "../../"
+			"sap.ui.demo.basicTemplate": "../../"
 		}'
-		data-sap-ui-preload="async">
+		data-sap-ui-animation="false"
+		data-sap-ui-compatVersion="edge"
+		data-sap-ui-async="true">
 	</script>
 
-	<script src="../../../../../../../../resources/sap/ui/qunit/qunit-css.js"></script>
-	<script src="../../../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.css">
+
+	<script src="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
 	<script src="../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script src="../../../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 
-	<script>
-		/* global QUnit */
-
-		QUnit.config.autostart = false;
-
-		sap.ui.getCore().attachInit(function() {
-			sap.ui.require([
-				"sap/ui/demo/basicTemplate/test/integration/AllJourneys"
-			], function() {
-				QUnit.start();
-			});
-		});
-	</script>
-
+	<script src="opaTests.qunit.js"></script>
 </head>
 <body>
 	<div id="qunit"></div>
