@@ -143,4 +143,15 @@ sap.ui.require([
 					"scroll", "attached event to _$ScrollRef is of type scroll");
 		}
 	});
+
+	QUnit.test("onThemeChanged", function(assert) {
+		// Arrange
+		var oInvalidateSpy = this.spy(this.oSB, "invalidate");
+
+		// Act
+		this.oSB.onThemeChanged();
+
+		// Assert
+		assert.strictEqual(oInvalidateSpy.callCount, 1, "Theme change causes invalidation");
+	});
 });

@@ -74,6 +74,10 @@ function(Control, ScrollBarRenderer) {
 		this._setScrollPosition(this.getScrollPosition());
 	};
 
+	ScrollBar.prototype.onThemeChanged = function() {
+		this.invalidate();
+	};
+
 	/**
 	 * @override
 	 */
