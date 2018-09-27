@@ -140,7 +140,12 @@ sap.ui.define([
 										value : "Change for the inner variant"
 									}
 								};
-								ControlPersonalizationAPI.addPersonalizationChanges([mMoveChangeData, mRenameChangeData1, mRenameChangeData2]);
+								ControlPersonalizationAPI.addPersonalizationChanges({
+									controlChanges: [mMoveChangeData, mRenameChangeData1, mRenameChangeData2]
+								})
+								.then(function(aAppliedChanges) {
+									ControlPersonalizationAPI.saveChanges(aAppliedChanges, oAppComponent);
+								});
 
 								this.iCounter++;
 							} else if (this.iCounter === 1) {
@@ -154,7 +159,9 @@ sap.ui.define([
 										value : "Personalization Test (2. Change)"
 									}
 								};
-								ControlPersonalizationAPI.addPersonalizationChanges([mRenameChangeData3]);
+								ControlPersonalizationAPI.addPersonalizationChanges({
+									controlChanges: [mRenameChangeData3]
+								});
 
 								oButton.setEnabled(false);
 								this.iCounter++;

@@ -393,7 +393,9 @@ sap.ui.define([
 				});
 				this.oComp = new MockComponent("testComponent");
 				this.oFlexController = FlexControllerFactory.createForControl(this.oComp);
-				this.oComp.setModel(new VariantModel({}, this.oFlexController, this.oComp), "$FlexVariants");
+				var oVariantModel = new VariantModel({}, this.oFlexController, this.oComp);
+				sandbox.stub(oVariantModel, "_addChange");
+				this.oComp.setModel(oVariantModel, "$FlexVariants");
 				this.oCompContainer = new ComponentContainer("sap-ui-static", {
 					component: this.oComp
 				}).placeAt("qunit-fixture");
@@ -526,17 +528,22 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when calling 'addPersonalizationChanges' with variant changes for different variant management controls", function(assert) {
+		QUnit.test("when calling 'addPersonalizationChanges' where one change content has variantReference set", function(assert) {
 			sandbox.stub(Utils, "getCurrentLayer").returns("CUSTOMER"); //needed as some ChangeHandlers are not available for USER layer
+			sandbox.spy(ControlPersonalizationAPI, "_getVariantManagement");
+			this.mMoveChangeData1.changeSpecificData.variantReference = "mockVariantReference";
 			return ControlPersonalizationAPI.addPersonalizationChanges({
 				controlChanges: [this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2, this.mRenameChangeData2]
 			})
-			.then(function() {
-				assert.equal(this.fnUtilsLogErrorSpy.callCount, 0, "no error ocurred");assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 4, "FlexController.createAndApplyChange has been called four times");
-				assert.equal(this.fnCreateAndApplyChangeSpy.getCall(0).args[0].variantReference, "mockview--VariantManagement1", "first change is for VariantManagement1");
-				assert.equal(this.fnCreateAndApplyChangeSpy.getCall(1).args[0].variantReference, "mockview--VariantManagement1", "second change is for VariantManagement1");
-				assert.equal(this.fnCreateAndApplyChangeSpy.getCall(2).args[0].variantReference, "mockview--VariantManagement1", "third change is for VariantManagement1");
-				assert.equal(this.fnCreateAndApplyChangeSpy.getCall(3).args[0].variantReference, "mockview--VariantManagement2", "fourth change is for VariantManagement2");
+			.then(function(aSuccessfulChanges) {
+				assert.equal(this.fnUtilsLogErrorSpy.callCount, 0, "no error ocurred");
+				assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 4, "FlexController.createAndApplyChange has been called four times");
+				assert.strictEqual(aSuccessfulChanges.length, 4, "then all passed change contents were applied successfully");
+				assert.strictEqual(ControlPersonalizationAPI._getVariantManagement.callCount, 3, "then variant reference is not called for the change content where variantReference was preset");
+				assert.equal(this.fnCreateAndApplyChangeSpy.getCall(0).args[0].variantReference, "mockVariantReference", "first change belongs to the preset variant reference");
+				assert.equal(this.fnCreateAndApplyChangeSpy.getCall(1).args[0].variantReference, "mockview--VariantManagement1", "second change belongs to VariantManagement1");
+				assert.equal(this.fnCreateAndApplyChangeSpy.getCall(2).args[0].variantReference, "mockview--VariantManagement1", "third change belongs to VariantManagement1");
+				assert.equal(this.fnCreateAndApplyChangeSpy.getCall(3).args[0].variantReference, "mockview--VariantManagement2", "fourth change belongs to VariantManagement2");
 			}.bind(this));
 		});
 
@@ -567,15 +574,18 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when calling 'addPersonalizationChanges' with variant changes for different variant management controls and 'ignoreVariantManagement' argument property set", function(assert) {
+		QUnit.test("when calling 'addPersonalizationChanges' with 'ignoreVariantManagement' property set, for change contents with and without variantReference", function(assert) {
 			sandbox.stub(Utils, "getCurrentLayer").returns("CUSTOMER"); //needed as some ChangeHandlers are not available for USER layer
+			this.mMoveChangeData1.changeSpecificData.variantReference = "mockVariantReference";
 			return ControlPersonalizationAPI.addPersonalizationChanges({
 				controlChanges: [this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2, this.mRenameChangeData2],
 				ignoreVariantManagement: true
 			})
-			.then(function () {
+			.then(function (aSuccessfulChanges) {
 				assert.equal(this.fnUtilsLogErrorSpy.callCount, 0, "no error ocurred");
 				assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 4, "FlexController.createAndApplyChange has been called four times");
+				assert.strictEqual(aSuccessfulChanges.length, 4, "then all passed change contents were applied successfully");
+				assert.notOk(aSuccessfulChanges[0].getVariantReference(), "then variantReference property is deleted for the change, where it was preset");
 				assert.notOk(this.fnCreateAndApplyChangeSpy.getCall(0).args[0].variantReference, "first change is without VariantManagement1");
 				assert.notOk(this.fnCreateAndApplyChangeSpy.getCall(1).args[0].variantReference, "second change is without VariantManagement1");
 				assert.notOk(this.fnCreateAndApplyChangeSpy.getCall(2).args[0].variantReference, "third change is without VariantManagement1");
