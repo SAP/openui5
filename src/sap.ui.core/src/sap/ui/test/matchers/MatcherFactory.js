@@ -55,7 +55,6 @@ sap.ui.define([
 				return aSupportedMatchers.indexOf(sMatcher) > -1;
 			}).map(function (sMatcher) {
 				var sMatcherCapitalized = capitalize(sMatcher);
-
 				var MatcherConstructor = sap.ui.test.matchers[sMatcherCapitalized];
 				var aMatcherOptions = jQueryDOM.isArray(mMatchers[sMatcher]) ? mMatchers[sMatcher] : [mMatchers[sMatcher]];
 

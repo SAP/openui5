@@ -1,21 +1,28 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/test/_ControlFinder",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/Button",
 	"sap/m/SearchField",
+	"sap/m/List",
+	"sap/m/ObjectListItem",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/AggregationLengthEquals"
-], function (_ControlFinder, Button, SearchField, PropertyStrictEquals, AggregationLengthEquals) {
+], function (_ControlFinder, $, Button, SearchField, List, ObjectListItem, JSONModel, PropertyStrictEquals, AggregationLengthEquals) {
 	"use strict";
 
 	QUnit.module("_ControlFinder - controls", {
 		beforeEach: function () {
 			this.oButton = new Button("myId", {text : "foo", type: sap.m.ButtonType.Emphasized});
+			this.oObjectListItem = new ObjectListItem({title: "testItem", number: 8});
 			this.oButton.placeAt("qunit-fixture");
+			this.oObjectListItem.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
 			this.oButton.destroy();
+			this.oObjectListItem.destroy();
 		}
 	});
 
@@ -47,7 +54,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should get control for element", function (assert) {
-		var oControl = _ControlFinder._getControlForElement("myId-content");
+		var oControl = _ControlFinder._getControlForElement($("#myId-content")[0]);
+		assert.strictEqual(oControl, this.oButton);
+	});
+
+	QUnit.test("Should get control for element ID", function (assert) {
+		var oControl = _ControlFinder._getControlForElementID("myId-content");
 		assert.strictEqual(oControl, this.oButton);
 	});
 
@@ -58,14 +70,53 @@ sap.ui.define([
 		assert.strictEqual(bEnabled, true);
 	});
 
+	QUnit.test("Should apply ancestor matcher", function (assert) {
+		var oObjectNumber = _ControlFinder._findControls({
+			controlType: "sap.m.ObjectNumber"
+		})[0];
+		var aResult = _ControlFinder._findControls({
+			controlType: "sap.m.ObjectNumber",
+			ancestor: {
+				controlType: "sap.m.ObjectListItem"
+			}
+		});
+
+		assert.strictEqual(aResult.length, 1, "Should match the correct element");
+		assert.strictEqual(aResult[0], oObjectNumber);
+	});
+
+	QUnit.test("Should not find any control if ancestor is not found", function (assert) {
+		var aResult = _ControlFinder._findControls({
+			controlType: "sap.m.ObjectNumber",
+			ancestor: {
+				controlType: "sap.m.StandardListItem"
+			}
+		});
+
+		assert.strictEqual(aResult.length, 0, "Should not find any controls with non-existent ancestor");
+	});
+
 	QUnit.module("_ControlFinder - interaction adapters", {
 		beforeEach: function () {
+			var oJSONModel = new JSONModel({
+                items: [{id: 1, name: "Item 11"}, {id: 2, name: "Item 22"}]
+			});
+			sap.ui.getCore().setModel(oJSONModel);
+			this.oList = new List("myList");
+			this.oList.bindItems({
+				path : "/items",
+				template : new ObjectListItem({
+					title: "{name}"
+				})
+			});
 			this.oSearchField = new SearchField("myId");
 			this.oSearchField.placeAt("qunit-fixture");
+			this.oList.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
 			this.oSearchField.destroy();
+			this.oList.destroy();
 		}
 	});
 
@@ -122,4 +173,13 @@ sap.ui.define([
 		assert.strictEqual(aElements[0].id, "myId-reset", "Should return the reset button");
 	});
 
+	QUnit.test("Should get stable element ID suffix", function (assert) {
+		var sControlRelativeID = _ControlFinder._getDomElementIDSuffix($("#myId-reset")[0]);
+		assert.strictEqual(sControlRelativeID, "reset", "Should get control relative ID suffix");
+	});
+
+	QUnit.test("Should not return unstable element ID suffix", function (assert) {
+		var sControlRelativeID = _ControlFinder._getDomElementIDSuffix($("#myList li")[0]);
+		assert.ok(!sControlRelativeID, "Should not use unstable relative ID suffix");
+	});
 });
