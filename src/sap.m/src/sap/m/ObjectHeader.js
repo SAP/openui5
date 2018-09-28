@@ -787,7 +787,7 @@ sap.ui.define([
 			this.fireTitleSelectorPress({
 				domRef : jQuery.sap.domById(sSourceId)
 			});
-		} else {
+		} else if (sSourceId.indexOf(this.getId()) !== -1) {
 			// we didn't click on any of the active parts of the ObjectHeader
 			// event should not trigger any further actions
 			oEvent.setMarked();
