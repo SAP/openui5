@@ -114,13 +114,10 @@ sap.ui.define([
 		 */
 		getSelector: function (vControl, oAppComponent, mAdditionalSelectorInformation) {
 			var sControlId = vControl;
-			if (vControl instanceof ManagedObject) {
-				sControlId = vControl.getId();
+			if (typeof sControlId !== "string") {
+				sControlId = (vControl) ? this.getId(vControl) : undefined;
 			} else if (!oAppComponent) {
 				throw new Error("App Component instance needed to get a selector from string ID");
-			}
-			if (typeof sControlId !== "string") {
-				sControlId = (vControl) ? vControl.getAttribute("id") : undefined;
 			}
 
 			if (mAdditionalSelectorInformation && (mAdditionalSelectorInformation.id || mAdditionalSelectorInformation.idIsLocal)) {
