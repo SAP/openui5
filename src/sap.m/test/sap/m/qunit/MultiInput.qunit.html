@@ -1508,10 +1508,72 @@
 
 		// assert
 		assert.strictEqual(fnReadOnlyPopDestroySpy.callCount, 1, "The tokenizer was destroyed once during cloning");
-
-		// clean up
-		fnReadOnlyPopDestroySpy.restore();
 	});
+
+	QUnit.test("Read-only popover should be closed on focusout", function (assert) {
+		// arrange
+		var oMultiInput = new sap.m.MultiInput({
+			editable: false,
+			width: "200px",
+			tokens: [
+				new sap.m.Token({ text: "XXXX" }),
+				new sap.m.Token({ text: "XXXX" }),
+				new sap.m.Token({ text: "XXXX" }),
+				new sap.m.Token({ text: "XXXX" })
+			]
+		}), oListItemRef;
+
+		// act
+		oMultiInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oMultiInput._oReadOnlyPopover, "Readonly Popover should be created");
+
+		// act
+		oMultiInput._handleIndicatorPress();
+		this.clock.tick(300);
+
+		oMultiInput.onsapfocusleave({});
+		this.clock.tick(300);
+
+		assert.notOk(oMultiInput._oReadOnlyPopover.isOpen(), "Readonly Popover should be closed");
+
+		// delete
+		oMultiInput.destroy();
+	});
+
+	QUnit.test("Read-only popover should be closed on after selection of an item from its list", function (assert) {
+		// arrange
+		var oMultiInput = new sap.m.MultiInput({
+			editable: false,
+			width: "200px",
+			tokens: [
+				new sap.m.Token({ text: "XXXX" }),
+				new sap.m.Token({ text: "XXXX" }),
+				new sap.m.Token({ text: "XXXX" }),
+				new sap.m.Token({ text: "XXXX" })
+			]
+		}), oListItemRef;
+
+		// act
+		oMultiInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oMultiInput._handleIndicatorPress();
+		this.clock.tick(300);
+
+		sap.ui.test.qunit.triggerEvent("tap", oMultiInput._oReadOnlyPopover.getContent()[0].getItems()[0].getDomRef());
+		this.clock.tick(300);
+
+		// assert
+		assert.notOk(oMultiInput._oReadOnlyPopover.isOpen(), "Read-only Popover should be closed");
+
+		// delete
+		oMultiInput.destroy();
+	});
+
 
 	QUnit.test("Read-only popover is opened after N-more is pressed", function(assert){
 		var oPicker;
@@ -1576,6 +1638,36 @@
 		multiInput.destroy();
 	});
 
+	QUnit.test("Input visibility with read-only state", function (assert) {
+		// arrange
+		var oMultiInput = new sap.m.MultiInput({
+			editable: false,
+			width: "200px",
+			value: "111"
+		});
+
+		// act
+		oMultiInput.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oMultiInput.$("inner").css("opacity"), "1", "The input value remains visible, if the n-more label is hidden");
+
+		oMultiInput.setTokens([
+			new sap.m.Token({ text: "XXXX" }),
+			new sap.m.Token({ text: "XXXX" }),
+			new sap.m.Token({ text: "XXXX" }),
+			new sap.m.Token({ text: "XXXX" })
+		]);
+
+		// act
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oMultiInput.$("inner").css("opacity"), "0", "The input value is not visible, if the n-more label is shown");
+
+		// clean up
+		oMultiInput.destroy();
+	});
 </script>
 
 </head>

@@ -247,6 +247,10 @@ function(
 		this._tokenizer.attachTokenUpdate(this._onTokenUpdate, this);
 		this._tokenizer._handleNMoreIndicatorPress(this._handleIndicatorPress.bind(this));
 
+		this._tokenizer.addEventDelegate({
+			onThemeChanged: this._handleInnerVisibility.bind(this)
+		}, this);
+
 		this.setShowValueHelp(true);
 		this.setShowSuggestion(true);
 
@@ -294,7 +298,15 @@ function(
 		this._tokenizer.scrollToEnd();
 		this._registerResizeHandler();
 		this._tokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
+		this._handleInnerVisibility();
 		Input.prototype.onAfterRendering.apply(this, arguments);
+	};
+
+	MultiInput.prototype._handleInnerVisibility = function () {
+		if (this._oReadOnlyPopover && !this.getEditable()) {
+			var bHideInnerInput = this._tokenizer._hasMoreIndicator();
+			this[bHideInnerInput ? "_setValueInvisible" : "_setValueVisible"].call(this);
+		}
 	};
 
 	/**
@@ -339,6 +351,7 @@ function(
 	 */
 	MultiInput.prototype._onResize = function () {
 		this._tokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
+		this._handleInnerVisibility();
 	};
 
 	MultiInput.prototype._onTokenChange = function (args) {
@@ -969,6 +982,10 @@ function(
 
 			// hide the text value only if the indicator is visible
 			this._tokenizer._getIndicatorVisibility() && this._setValueInvisible();
+		}
+
+		if (this._oReadOnlyPopover && this._oReadOnlyPopover.isOpen() && !bNewFocusIsInTokenizer) {
+			this._oReadOnlyPopover.close();
 		}
 	};
 
@@ -1673,7 +1690,7 @@ function(
 				this._openSelectedItemsPicker();
 			} else {
 				this._fillList();
-				this._getReadOnlyPopover().openBy(this._tokenizer._oIndicator);
+				this._getReadOnlyPopover().openBy(this._tokenizer._oIndicator[0]);
 			}
 	};
 
@@ -1689,6 +1706,8 @@ function(
 
 		if (this._bUseDialog) {
 			this._oSuggestionPopup.close();
+		} else if (this._oReadOnlyPopover && this._oReadOnlyPopover.isOpen()) {
+			this._oReadOnlyPopover.close();
 		} else {
 			this._getSelectedItemsPicker().close();
 		}
