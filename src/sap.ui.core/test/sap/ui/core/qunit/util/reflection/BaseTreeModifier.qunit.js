@@ -70,6 +70,17 @@ function(
 			var oControl = XmlTreeModifier.bySelector(oSelector, this.oComponent, this.oXmlView);
 			assert.ok(oControl);
 		});
+
+		QUnit.test("can determine a selector for a given node", function (assert) {
+			var oFormNode = XmlTreeModifier._children(this.oXmlView)[0];
+			var oFormSelector = {
+					id: "myView--myForm",
+					idIsLocal: true
+				};
+
+			var oSelector = XmlTreeModifier.getSelector(oFormNode, this.oComponent);
+			assert.propEqual(oSelector, oFormSelector, "ok");
+		});
 	});
 
 	QUnit.module("While handling js views the BaseTreeModifier", {

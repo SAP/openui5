@@ -32,11 +32,12 @@ sap.ui.define([
 	/**
 	 * Adds a smart field
 	 *
-	 * @param {sap.ui.fl.Change} oChange change wrapper object with instructions to be applied on the control map
+	 * @param {sap.ui.fl.Change} oChange Change wrapper object with instructions to be applied on the control map
 	 * @param {sap.ui.layout.form.SimpleForm} oSimpleForm - Simple Form that matches the change selector for applying the change
-	 * @param {object} mPropertyBag - Property bag containing the modifier and the view
-	 * @param {object} mPropertyBag.modifier - modifier for the controls
-	 * @param {object} mPropertyBag.view - application view
+	 * @param {object} mPropertyBag Property bag containing the modifier, the appComponent and the view
+	 * @param {object} mPropertyBag.modifier Modifier for the controls
+	 * @param {object} mPropertyBag.appComponent Component in which the change should be applied
+	 * @param {object} mPropertyBag.view Application view
 	 * @return {boolean} True if successful
 	 * @public
 	 */
@@ -72,7 +73,7 @@ sap.ui.define([
 		if (fnCheckChangeDefinition(oChangeDefinition)) {
 			var oChangeContent = oChangeDefinition.content;
 
-			var sFieldSelector = oChangeContent.newFieldSelector;
+			var oFieldSelector = oChangeContent.newFieldSelector;
 			var sBindingPath = oChangeContent.bindingPath;
 			var insertIndex = oChangeContent.newFieldIndex;
 
@@ -117,11 +118,17 @@ sap.ui.define([
 			var mCreateProperties = {
 				"appComponent" : mPropertyBag.appComponent,
 				"view" : mPropertyBag.view,
-				"fieldSelector" : sFieldSelector,
+				"fieldSelector" : oFieldSelector,
 				"bindingPath" : sBindingPath
 			};
 
 			var oCreatedControls = fnChangeHandlerCreateFunction(oModifier, mCreateProperties);
+			var mCreatedControlSelectors = {};
+			if (oCreatedControls.label && oCreatedControls.control) {
+				mCreatedControlSelectors.label = oModifier.getSelector(oCreatedControls.label, mPropertyBag.appComponent);
+			}
+			mCreatedControlSelectors.control = oModifier.getSelector(oCreatedControls.control, mPropertyBag.appComponent);
+			oChange.setRevertData(mCreatedControlSelectors);
 
 			aContentClone.splice(iNewIndex, 0, oCreatedControls.label, oCreatedControls.control);
 
@@ -143,7 +150,7 @@ sap.ui.define([
 	/**
 	 * Completes the change by adding change handler specific content
 	 *
-	 * @param {sap.ui.fl.Change} oChange change wrapper object to be completed
+	 * @param {sap.ui.fl.Change} oChange Change wrapper object to be completed
 	 * @param {Object} oSpecificChangeInfo - information specific to this change
 	 * @param {string} oSpecificChangeInfo.newControlId - the control ID for the control to be added,
 	 * @param {string} oSpecificChangeInfo.bindingPath - the binding path for the new control,
@@ -193,6 +200,37 @@ sap.ui.define([
 		} else {
 			oChangeDefinition.content.oDataServiceVersion = oSpecificChangeInfo.oDataServiceVersion;
 		}
+	};
+
+	/**
+	 * Reverts the applied change
+	 *
+	 * @param {sap.ui.fl.Change} oChange Change wrapper object with instructions to be applied on the control map
+	 * @param {sap.ui.layout.form.SimpleForm} oSimpleForm - Simple Form that matches the change selector for applying the change
+	 * @param {object} mPropertyBag Property bag containing the modifier, the appComponent and the view
+	 * @param {object} mPropertyBag.modifier Modifier for the controls
+	 * @param {object} mPropertyBag.appComponent Component in which the change should be applied
+	 * @param {object} mPropertyBag.view Application view
+	 * @return {boolean} True if successful
+	 * @public
+	 */
+	AddSimpleFormField.revertChange = function (oChange, oSimpleForm, mPropertyBag) {
+		var oAppComponent = mPropertyBag.appComponent;
+		var oView = mPropertyBag.view;
+		var oModifier = mPropertyBag.modifier;
+		var mCreatedControlSelectors = oChange.getRevertData();
+
+		var oField = oModifier.bySelector(mCreatedControlSelectors.control, oAppComponent, oView);
+		if (mCreatedControlSelectors.label) {
+			var oLabel = oModifier.bySelector(mCreatedControlSelectors.label, oAppComponent, oView);
+			oModifier.removeAggregation(oSimpleForm, "content", oLabel);
+			oModifier.destroy(oLabel);
+		}
+		oModifier.removeAggregation(oSimpleForm, "content", oField);
+		oModifier.destroy(oField);
+		oChange.resetRevertData();
+
+		return true;
 	};
 
 	return AddSimpleFormField;
