@@ -58,7 +58,7 @@ sap.ui.define([
 		this.setAutoExpandMode(this.mParameters.autoExpandMode || TreeAutoExpandMode.Bundled);
 	};
 
-	/**
+	/*
 	 * Returns the Root context of our tree, which is actually the context for the Grand Total
 	 * Used by the AnalyticalTable to display the sum row.
 	 */
@@ -68,7 +68,7 @@ sap.ui.define([
 		}
 	};
 
-	/**
+	/*
 	 * Returns the Root node of our tree, which is actually the context for the Grand Total
 	 * Used by the AnalyticalTable to display the sum row.
 	 */
@@ -78,7 +78,7 @@ sap.ui.define([
 		}
 	};
 
-	/**
+	/*
 	 * Returns the Root node, which contains the rendering information.
 	 */
 	AnalyticalTreeBindingAdapter.prototype.getGrandTotalContextInfo = function () {
@@ -141,7 +141,7 @@ sap.ui.define([
 		return this.findNode(iIndex);
 	};
 
-	/**
+	/*
 	 * Checks if the given node can be selected.
 	 * In the AnalyticalTable, only leaf nodes can be selected.
 	 */
@@ -152,7 +152,7 @@ sap.ui.define([
 		return oNode.isLeaf && !oNode.isArtificial;
 	};
 
-	/**
+	/*
 	 * Retrieves the requested part from the tree.
 	 * @param {int} iStartIndex the first index to be retrieved
 	 * @param {int} iLength the number of entries to be retrieved, starting at iStartIndex
@@ -239,7 +239,7 @@ sap.ui.define([
 		}
 	};
 
-	/**
+	/*
 	 * Trigger paging requests in auto expand mode
 	 */
 	AnalyticalTreeBindingAdapter.prototype._autoExpandPaging = function () {
@@ -257,7 +257,7 @@ sap.ui.define([
 		return aChildContexts;
 	};
 
-	/**
+	/*
 	 * This hook is called after all children of a node are matched.
 	 * Used to insert sum row nodes (if any).
 	 * @param {object} oNode the node which is currently matched (and whose children have already been matched)
@@ -277,7 +277,7 @@ sap.ui.define([
 		}
 	};
 
-	/**
+	/*
 	 * This hook is called after all children of "oNode" have been mapped.
 	 * Used to also map on sum nodes (if any).
 	 * @param {object} oNode the node which will be mapped again
@@ -288,7 +288,7 @@ sap.ui.define([
 		}
 	};
 
-	/**
+	/*
 	 * Creates a sum node.
 	 * The sum node is later stored inside the tree structure, but is not part of the children array of a node.
 	 * A sum node is a copy of the given node, minus the children and with a relative "positionInParent" to it's children.
@@ -375,7 +375,7 @@ sap.ui.define([
 
 	};
 
-	/**
+	/*
 	 * (Re-)Loads the child contexts for the given node "oNode".
 	 * This happens recursively for all expanded/autoExpanded child nodes -> the whole subtree starting at "oNode" is created.
 	 * All subsequently loaded child nodes will be added to the children collection of oNode.
@@ -571,7 +571,7 @@ sap.ui.define([
 
 	};
 
-	/**
+	/*
 	 * Retrieves the group ID for the given node.
 	 * The implementation differs from the ODataTreeBindingAdapter, since the AnalyticalBinding already exposes
 	 * certain convenience functions.
@@ -598,7 +598,7 @@ sap.ui.define([
 		return sGroupID;
 	};
 
-	/**
+	/*
 	 * Collapses the given node, either a node instance or an index.
 	 * Overwritten from the ODataTreeBindingAdapter, because of additional analytical logic.
 	 */
@@ -726,7 +726,7 @@ sap.ui.define([
 		}
 	};
 
-	/**
+	/*
 	 * Resets the data.
 	 * If mParameters.reason is set to ChangeReason.Sort:
 	 * Expand/Collapse states and the selection is kept in case the reset was triggered from within a sort() call.
@@ -777,7 +777,7 @@ sap.ui.define([
 		return bHasMeasures;
 	};
 
-	/**
+	/*
 	 * Returns if the Binding is grouped. This depends on the aggregation level.
 	 * If the aggregation level is 0, the binding essentially holds a list.
 	 */
@@ -785,7 +785,7 @@ sap.ui.define([
 		return (this.aAggregationLevel.length > 0);
 	};
 
-	/**
+	/*
 	 * Returns if the binding is in auto expand mode. Used to branch paging behavior.
 	 */
 	AnalyticalTreeBindingAdapter.prototype._isRunningInAutoExpand = function (sAutoExpandMode) {
@@ -834,7 +834,7 @@ sap.ui.define([
 		return this.mParameters.numberOfExpandedLevels;
 	};
 
-	/**
+	/*
 	 * Overrides the default from the TBA.
 	 * Returns the maximum number of currently selectable nodes, in this case the total number of leaves.
 	 * @returns {int} Maximum number of currently selectable node

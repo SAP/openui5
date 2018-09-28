@@ -67,7 +67,7 @@ sap.ui.define(['./AnalyticalBinding', "./AnalyticalTreeBindingAdapter", './odata
 
 	};
 
-	/**
+	/*
 	 * @see sap.ui.model.odata.ODataModel#bindList
 	 * @see sap.ui.model.odata.v2.ODataModel#bindList
 	 */
@@ -83,7 +83,7 @@ sap.ui.define(['./AnalyticalBinding', "./AnalyticalTreeBindingAdapter", './odata
 		}
 	};
 
-	/**
+	/*
 	 * @see sap.ui.model.odata.ODataModel#bindTree
 	 * @see sap.ui.model.odata.v2.ODataModel#bindTree
 	 */
