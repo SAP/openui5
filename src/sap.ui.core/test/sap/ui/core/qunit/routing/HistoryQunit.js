@@ -2,8 +2,10 @@
 // The HashChanger allows to replace the default instance with a custom implementation to intercept the logic -
 // this is currently done by the unified shell in order to handle cross-application navigation.
 // Factoring out the unit tests into this module allows to execute the same test suite in the shell context
+//
+// The sinon-qunit-bridge isn't available in ushell therefore the sinon sandbox isn't available in each test
 
-/*global QUnit, hasher*/
+/*global QUnit, hasher, sinon*/
 sap.ui.define([
 	"sap/base/util/uid",
 	"sap/ui/core/routing/HashChanger",
@@ -517,7 +519,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Log a warning if window.history.state is already in use", function (assert) {
-		var oSpy = this.spy(Log, "debug");
+		var oSpy = sinon.spy(Log, "debug");
 
 		var fnExtendedFireHashChange = this.oExtendedHashChanger.fireHashChanged;
 		this.oExtendedHashChanger.fireHashChanged = function(newHash, oldHash) {
@@ -535,6 +537,7 @@ sap.ui.define([
 				}
 			}.bind(this)).then(function() {
 				assert.ok(oSpy.alwaysCalledWith("Unable to determine HistoryDirection as history.state is already set: invalid_state", "sap.ui.core.routing.History"), "The debug log is done correctly");
+				oSpy.restore();
 			});
 		}.bind(this));
 	});
