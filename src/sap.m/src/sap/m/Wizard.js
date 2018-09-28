@@ -351,6 +351,7 @@ sap.ui.define([
 			var progressAchieved = this.getProgress(),
 				steps = this._stepPath,
 				index = this._stepPath.indexOf(step),
+				lastStep = this._stepPath[index],
 				progressNavigatorIndex = index + 1;
 
 			if (progressNavigatorIndex > progressAchieved || progressNavigatorIndex <= 0) {
@@ -362,7 +363,7 @@ sap.ui.define([
 
 			this._updateNextButtonState();
 			this._restoreInitialValidatedState(progressNavigatorIndex);
-			this._stepPath[index]._markAsLast();
+			lastStep._markAsLast();
 
 			for (var j = 0; j < progressNavigatorIndex - 1; j++) {
 				var oButton = steps[j].getAggregation("_nextButton");
@@ -383,6 +384,8 @@ sap.ui.define([
 			steps.splice(progressNavigatorIndex);
 			this._updateProgressNavigator();
 			this.setAssociation("currentStep", step);
+
+			lastStep._oNextButton.setVisible(true);
 
 			return this;
 		};
