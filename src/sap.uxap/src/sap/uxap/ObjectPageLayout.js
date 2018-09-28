@@ -2481,7 +2481,10 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._moveAnchorBarToContentArea = function () {
 		if (!this._shouldPreserveHeaderInTitleArea()) {
+			var iScrollTopBeforeAppend = this._$opWrapper.scrollTop();
 			this._$anchorBar.css("height", "auto").append(this._$stickyAnchorBar.children()); //TODO: css auto redundant?
+			// ensure that appending the anchorBar does not change the scrollTop, as it may happen in certain cases (if another part of content freshly rerendered (BCP: 1870365138)
+			this._$opWrapper.scrollTop(iScrollTopBeforeAppend);
 
 			this._toggleHeaderStyleRules(false);
 		}

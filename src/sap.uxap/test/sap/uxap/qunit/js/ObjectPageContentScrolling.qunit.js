@@ -9,6 +9,48 @@
 	jQuery.sap.require("sap.uxap.ObjectPageSection");
 	jQuery.sap.require("sap.uxap.ObjectPageSectionBase");
 
+	var oFactory = {
+			getSection: function (iNumber, sTitleLevel, aSubSections) {
+				return new sap.uxap.ObjectPageSection({
+					title: "Section" + iNumber,
+					titleLevel: sTitleLevel,
+					subSections: aSubSections || []
+				});
+			},
+			getSubSection: function (iNumber, aBlocks, sTitleLevel) {
+				return new sap.uxap.ObjectPageSubSection({
+					title: "SubSection " + iNumber,
+					titleLevel: sTitleLevel,
+					blocks: aBlocks || []
+				});
+			},
+			getBlocks: function (sText) {
+				return [
+					new sap.m.Text({text: sText || "some text"})
+				];
+			},
+			getObjectPage: function () {
+				return new sap.uxap.ObjectPageLayout();
+			}
+		},
+
+		helpers = {
+			generateObjectPageWithContent: function (oFactory, iNumberOfSection) {
+				var oObjectPage = oFactory.getObjectPage(),
+					oSection,
+					oSubSection;
+
+				for (var i = 0; i < iNumberOfSection; i++) {
+					oSection = oFactory.getSection(i);
+					oSubSection = oFactory.getSubSection(i, oFactory.getBlocks());
+					oSection.addSubSection(oSubSection);
+					oObjectPage.addSection(oSection);
+				}
+
+				return oObjectPage;
+			}
+		};
+
 	QUnit.module("ObjectPage Content scrolling");
 	QUnit.test("Should validate each section's position after scrolling to it, considering UI rules", function (assert) {
 
@@ -264,6 +306,34 @@
 
 		clock.restore();
 		oObjectPageContentScrollingView.destroy();
+	});
+
+	// ensure that appending the anchorBar does not change the scrollTop,
+	// as it may happen in certain cases (if another part of content freshly rerendered (BCP: 1870365138)
+	QUnit.test("_moveAnchorBarToContentArea preserves the page scrollTop", function (assert) {
+		var oObjectPageLayout = helpers.generateObjectPageWithContent(oFactory, 2 /* two sections */),
+			oFirstSection = oObjectPageLayout.getSections()[0],
+			oLastSection = oObjectPageLayout.getSections()[1],
+			done = assert.async();
+
+		oObjectPageLayout.setSelectedSection(oLastSection);
+
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			var iScrollTopBefore = oObjectPageLayout.getDomRef().scrollTop;
+
+			// act
+			oFirstSection.rerender();
+			oObjectPageLayout._moveAnchorBarToContentArea();
+
+			assert.strictEqual(oObjectPageLayout.getDomRef().scrollTop, iScrollTopBefore, "scrollTop is preserved");
+			oObjectPageLayout.destroy();
+			done();
+		});
+
+		// arrange
+		oObjectPageLayout.placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
 	});
 
 	function isObjectPageHeaderStickied(oObjectPage) {
