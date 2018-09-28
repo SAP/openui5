@@ -146,21 +146,18 @@ function(
 
 			/**
 			 * The list of items with key and value that can be sorted over (for example, a list of columns for a table).
-			 * Have in mind that the first item of the sort order list is always the GroupHeaderListItem "Sort By" while the first item of the sort list is "Sort Object".
 			 * @since 1.16
 			 */
 			sortItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "sortItem", bindable : "bindable"},
 
 			/**
 			 * The list of items with key and value that can be grouped on (for example, a list of columns for a table).
-			 * Have in mind that the first item of the group order list is always the GroupHeaderListItem "Group By" while the first item of the group list is "Group Object".
 			 * @since 1.16
 			 */
 			groupItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "groupItem", bindable : "bindable"},
 
 			/**
 			 * The list of items with key and value that can be filtered on (for example, a list of columns for a table). A filterItem is associated with one or more detail filters.
-			 * Have in mind that the first item is always the GroupHeaderListItem "Filter By".
 			 *
 			 * <b>Note:</b> It is recommended to use the <code>sap.m.ViewSettingsFilterItem</code> as it fits best at the filter page.
 			 * @since 1.16
@@ -1859,7 +1856,7 @@ function(
 				that.setProperty('sortDescending', oEvent.getParameter("listItem").data("item"), true);
 			},
 			ariaLabelledBy: this._ariaSortOrderInvisibleText
-		}).addStyleClass("sapMVSDUpperList");
+		});
 		this._sortOrderList.addItem(new GroupHeaderListItem({title: sTitleSortBy}));
 		this._sortOrderList.addItem(new StandardListItem({
 			title : this._rb.getText("VIEWSETTINGS_ASCENDING_ITEM")
@@ -1956,7 +1953,7 @@ function(
 				that.setProperty('groupDescending', oEvent.getParameter("listItem").data("item"), true);
 			},
 			ariaLabelledBy: this._ariaGroupOrderInvisibleText
-		}).addStyleClass("sapMVSDUpperList");
+		});
 
 		this._groupOrderList.addItem(new GroupHeaderListItem({title: sTitleGroupBy}));
 		this._groupOrderList.addItem(new StandardListItem({
@@ -2079,7 +2076,7 @@ function(
 					that.setAssociation("selectedPresetFilterItem", item, true);
 					that._clearSelectedFilters();
 				}
-			}).addStyleClass("sapMVSDUpperList");
+			});
 
 		this._filterList = new List(this.getId() + "-filterlist", {});
 
@@ -2182,11 +2179,9 @@ function(
 			oSegmentedButton.addButton(this._getFilterButton());
 			if (!bPredefinedFilter) {
 				this._presetFilterList.setVisible(false);
-				this._presetFilterList.addStyleClass("sapMVSDUpperList");
 			}
 			if (!bFilter) {
 				this._filterList.setVisible(false);
-				this._presetFilterList.removeStyleClass("sapMVSDUpperList");
 			}
 		}
 		if (bGroup) {
