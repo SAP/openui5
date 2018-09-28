@@ -471,6 +471,39 @@
 					oObjectHeader.destroy();
 				});
 
+				QUnit.test("Tap on ObjectAttribute should not lead to preventing default action", function(assert){
+					var oEvent_attr,
+						oSpyPreventDefaultOA,
+						oa1 = new sap.m.ObjectAttribute("attrId", {title: "title", text: "link", active: true}),
+						oObjectHeader = createObjectHeader({
+							title: "OH title",
+							responsive: true,
+							titleActive: true,
+							attributes: [oa1]
+						});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// click on ObjectAttribute link
+					oEvent_attr = {
+						setMarked: function(){},
+						preventDefault: function(){},
+						stopPropagation: function(){},
+						target: oa1.$().children()[2]
+					};
+
+					oSpyPreventDefaultOA = this.spy(oEvent_attr, "preventDefault");
+
+					oObjectHeader.ontap(oEvent_attr);
+					assert.equal(oSpyPreventDefaultOA.callCount, 0, "preventDefault wasn't called");
+
+					// Clean up
+					oSpyPreventDefaultOA.restore();
+					oObjectHeader.destroy();
+				});
+
 			QUnit.module("Basic aggregations rendering", {
 				afterEach: function () {
 					oCore.byId(sControlId).destroy();
