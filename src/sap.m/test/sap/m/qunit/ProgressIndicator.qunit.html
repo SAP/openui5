@@ -337,7 +337,8 @@
 	});
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
-		var oControl = new sap.m.ProgressIndicator({percentValue: 50});
+		var oControl = new sap.m.ProgressIndicator({percentValue: 50}),
+			sDisplayValue = "Display value";
 		assert.ok(!!oControl.getAccessibilityInfo, "ProgressIndicator has a getAccessibilityInfo function");
 		var oInfo = oControl.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
@@ -353,6 +354,9 @@
 		assert.strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PROGRESS", [10]), "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
+		oControl.setDisplayValue(sDisplayValue);
+		oInfo = oControl.getAccessibilityInfo();
+		assert.strictEqual(oInfo.description, sDisplayValue, "Description should equal the displayValue when set");
 		oControl.destroy();
 	});
 </script>
