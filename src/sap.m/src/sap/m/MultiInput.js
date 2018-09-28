@@ -488,6 +488,9 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 		//add token when no suggestion item
 		if (this._oSuggestionTable.getItems().length === 0) {
 			this._oPopupInput.onsapenter = function (oEvent) {
+				// Fire through the MultiInput Popup's input value and save it
+				that.onChange(oEvent, null, this.getValue());
+
 				that._validateCurrentText();
 				that._setValueInvisible();
 			};
