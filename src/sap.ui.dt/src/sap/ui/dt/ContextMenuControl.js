@@ -236,7 +236,7 @@ sap.ui.define([
 
 				this._replaceLastVisibleButtonWithOverflowButton(aButtons);
 
-			} else if (iButtonsEnabled < aButtons.length && iButtonsEnabled !== 0) {
+			} else if (iButtonsEnabled < aButtons.length - 1 && iButtonsEnabled !== 0) {
 
 				this.addOverflowButton();
 			}
@@ -361,7 +361,6 @@ sap.ui.define([
 			var oFakeDiv = document.getElementById(sFakeDivId);
 
 			// place the Popover invisible
-			this.getPopover().setContentWidth("");
 			this.getPopover().openBy(oFakeDiv);
 
 			//get Dimensions
@@ -374,7 +373,7 @@ sap.ui.define([
 				oPopoverDimensions.height = (oViewportDimensions.height * 2 / 3).toFixed(0);
 				this.getPopover().setContentHeight(oPopoverDimensions.height + "px");
 			} else {
-				this.getPopover().setContentHeight("");
+				this.getPopover().setContentHeight(undefined);
 			}
 
 			// check if horizontal size is too big
@@ -382,7 +381,7 @@ sap.ui.define([
 				oPopoverDimensions.width = 400;
 				this.getPopover().setContentWidth("400px");
 			} else {
-				this.getPopover().setContentWidth("");
+				this.getPopover().setContentWidth(undefined);
 			}
 
 			//calculate exact position
@@ -740,6 +739,7 @@ sap.ui.define([
 			var oButtonOptions = {
 				icon: this._getIcon(oButtonItem.icon),
 				text: sText,
+				tooltip: sText,
 				type: "Transparent",
 				enabled: bEnabled,
 				press: fnHandler,
@@ -755,7 +755,6 @@ sap.ui.define([
 			var oExpandedMenuButton = new Button(oButtonOptions);
 			oExpandedMenuButton.data(oButtonCustomData);
 
-			oButtonOptions.tooltip = oButtonOptions.text;
 			delete oButtonOptions.text;
 			var oCompactMenuButton = new Button(oButtonOptions);
 			oCompactMenuButton.data(oButtonCustomData);
@@ -775,6 +774,8 @@ sap.ui.define([
 		close: function (bExplicitClose) {
 			if (this.getPopover()) {
 
+				this.getPopover().setContentHeight(undefined);
+				this.getPopover().setContentWidth(undefined);
 				if (bExplicitClose) {
 					this.getPopover(true).close();
 					this.getPopover(false).close();
@@ -920,6 +921,8 @@ sap.ui.define([
 
 			if (this.getPopover()) { // in case the Menu was destroyed
 
+				this.getPopover().setContentHeight("");
+				this.getPopover().setContentWidth("");
 				this.fireClosed();
 
 				if (this.bOpenNew) {
