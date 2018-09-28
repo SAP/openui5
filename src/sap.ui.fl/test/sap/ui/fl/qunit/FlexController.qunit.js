@@ -2045,6 +2045,78 @@ function (
 				oMissingControl2.destroy();
 			}.bind(this));
 		});
+
+		QUnit.test("_applyChangesOnControl dependency test 7 - with broken changes", function (assert) {
+			var oControlGroup1 = new Control("group7-1");
+
+			var oChange0 = {
+				getId: function () {
+					return "fileNameChange0";
+				}
+			};
+			var oChange1 = {
+				getId: function () {
+					return "fileNameChange1";
+				}
+			};
+			var oChange2 = {
+				getId: function () {
+					return "fileNameChange2";
+				}
+			};
+
+			var mChanges = {
+				"group7-1": [oChange0, oChange1, oChange2]
+			};
+
+			var mDependencies = {
+				"fileNameChange1": {
+					"changeObject": oChange1,
+					"dependencies": ["fileNameChange0"]
+				},
+				"fileNameChange2": {
+					"changeObject": oChange2,
+					"dependencies": ["fileNameChange1"]
+				}
+			};
+
+			var mDependentChangesOnMe = {
+				"fileNameChange0": ["fileNameChange1"],
+				"fileNameChange1": ["fileNameChange2"]
+			};
+
+			var fnGetChangesMap = function () {
+				return {
+					"mChanges": mChanges,
+					"mDependencies": mDependencies,
+					"mDependentChangesOnMe": mDependentChangesOnMe
+				};
+			};
+			var oAppComponent = {};
+
+			sandbox.restore();
+			this.oCheckTargetAndApplyChangeStub = sandbox.stub(this.oFlexController, "checkTargetAndApplyChange")
+			.onFirstCall().callsFake(function() {
+				return new Utils.FakePromise({success: false, error: new Error('testError')});
+			})
+			.onSecondCall().callsFake(function() {
+				return new Utils.FakePromise({success: false, error: new Error('testError')});
+			})
+			.callsFake(function() {
+				return new Utils.FakePromise({success: true});
+			});
+
+			return Promise.resolve()
+
+			.then(this.oFlexController._applyChangesOnControl.bind(this.oFlexController, fnGetChangesMap, oAppComponent, oControlGroup1))
+
+			.then(function() {
+				assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 3, "three changes were processed");
+				assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange0, "the first change was processed first");
+				assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange1, "the second change was processed second");
+				assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(2).args[0], oChange2, "the third change was processed third");
+			}.bind(this));
+		});
 	});
 
 	QUnit.module("[JS] checkTargetAndApplyChange / removeFromAppliedChanges with one change for a label", {
