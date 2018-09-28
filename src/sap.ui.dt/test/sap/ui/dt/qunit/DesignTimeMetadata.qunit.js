@@ -130,6 +130,20 @@ function(
 			});
 			assert.strictEqual(this.oDesignTimeMetadata.isIgnored(), true, "then ignore property is returned right");
 		});
+
+		QUnit.test("when 'getControllerExtensionTemplate' is called with a path specified", function(assert) {
+			this.oDesignTimeMetadata = new DesignTimeMetadata({
+				data : {
+					controllerExtensionTemplate: "foo"
+				}
+			});
+
+			assert.equal(this.oDesignTimeMetadata.getControllerExtensionTemplate(), "foo", "the correct path is retrieved");
+		});
+
+		QUnit.test("when 'getControllerExtensionTemplate' is called without a path specified", function(assert) {
+			assert.equal(this.oDesignTimeMetadata.getControllerExtensionTemplate(), undefined, "the correct path is retrieved");
+		});
 	});
 
 	QUnit.module("Given a dedicated rendered control and designtime metadata is created", {
