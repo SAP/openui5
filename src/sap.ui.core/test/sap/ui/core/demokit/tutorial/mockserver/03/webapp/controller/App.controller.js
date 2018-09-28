@@ -1,7 +1,7 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller",
-    "sap/m/ObjectListItem",
-    "sap/m/ObjectAttribute"
+	"sap/ui/core/mvc/Controller",
+	"sap/m/ObjectListItem",
+	"sap/m/ObjectAttribute"
 ], function(Controller, ObjectListItem, ObjectAttribute) {
 	"use strict";
 
