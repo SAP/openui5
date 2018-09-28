@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/rta/Utils",
 	"sap/base/util/uid",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/hasher"
 ],
 	function(
 		DescriptorVariantFactory,
@@ -19,7 +20,8 @@ sap.ui.define([
 		MessageBox,
 		RtaUtils,
 		uid,
-		Log
+		Log,
+		hasher
 	) {
 
 		"use strict";
@@ -122,7 +124,7 @@ sap.ui.define([
 		AppVariantUtils.getURLParsedHash = function() {
 			var oURLParser = sap.ushell.Container.getService("URLParsing");
 			if (oURLParser.parseShellHash && oURLParser.getHash){
-				return oURLParser.parseShellHash(oURLParser.getHash(window.location.href));
+				return oURLParser.parseShellHash(hasher.getHash());
 			}
 		};
 
