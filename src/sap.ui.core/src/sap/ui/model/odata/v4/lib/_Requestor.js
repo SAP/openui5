@@ -20,21 +20,6 @@ sap.ui.define([
 		_Requestor;
 
 	/**
-	 * Deletes the queue for the given group ID if it contains only the empty change set, so that
-	 * no empty batch is sent.
-	 *
-	 * @param {Requestor} oRequestor The requestor
-	 * @param {string} sGroupId The group ID
-	 */
-	function deleteEmptyGroup(oRequestor, sGroupId) {
-		var aBatchQueue = oRequestor.mBatchQueue[sGroupId];
-
-		if (aBatchQueue[0].length === 0 && aBatchQueue.length === 1) {
-			delete oRequestor.mBatchQueue[sGroupId];
-		}
-	}
-
-	/**
 	 * The getResponseHeader() method imitates the jqXHR.getResponseHeader() method for a $batch
 	 * error response.
 	 *
@@ -274,7 +259,6 @@ sap.ui.define([
 					bCanceled = true;
 				}
 			}
-			deleteEmptyGroup(that, sGroupId0);
 		}
 
 		if (sGroupId) {
@@ -634,6 +618,30 @@ sap.ui.define([
 	};
 
 	/**
+	 * Tells whether there are pending changes for the given group ID.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {object} oEntity
+	 *   The entity used to identify a request based on its "If-Match" header
+	 * @returns {boolean}
+	 *   Whether there are pending changes for the given group ID
+	 *
+	 * @public
+	 */
+	Requestor.prototype.hasChanges = function (sGroupId, oEntity) {
+		var aRequests = this.mBatchQueue[sGroupId];
+
+		if (aRequests) {
+			return aRequests[0].some(function (oRequest) {
+				return oRequest.headers["If-Match"] === oEntity;
+			});
+		}
+
+		return false;
+	};
+
+	/**
 	 * Returns <code>true</code> if there are pending changes.
 	 *
 	 * @returns {boolean} <code>true</code> if there are pending changes
@@ -732,7 +740,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Searches the request identified by the given group and body, removes it from that group and
+	 * Finds the request identified by the given group and body, removes it from that group and
 	 * triggers a new request with the new group ID, based on the found request.
 	 * The result of the new request is delegated to the found request.
 	 *
@@ -756,13 +764,45 @@ sap.ui.define([
 							oChange.headers, oBody, oChange.$submit, oChange.$cancel)
 						.then(oChange.$resolve, oChange.$reject);
 					aRequests[0].splice(i, 1);
-					deleteEmptyGroup(that, sCurrentGroupId);
 					return true;
 				}
 			});
 
 		if (!bFound) {
 			throw new Error("Request not found in group '" + sCurrentGroupId + "'");
+		}
+	};
+
+	/**
+	 * Finds all requests identified by the given group and entity, removes them from that group
+	 * and triggers new requests with the new group ID, based on each found request.
+	 * The result of each new request is delegated to the corresponding found request.
+	 *
+	 * @param {string} sCurrentGroupId
+	 *   The ID of the group in which to search
+	 * @param {object} oEntity
+	 *   The entity used to identify a request based on its "If-Match" header
+	 * @param {string} sNewGroupId
+	 *   The ID of the group for the new requests
+	 *
+	 * @private
+	 */
+	Requestor.prototype.relocateAll = function (sCurrentGroupId, oEntity, sNewGroupId) {
+		var j = 0,
+			aRequests = this.mBatchQueue[sCurrentGroupId],
+			that = this;
+
+		if (aRequests) {
+			aRequests[0].slice().forEach(function (oChange) {
+				if (oChange.headers["If-Match"] === oEntity) {
+					aRequests[0].splice(j, 1);
+					that.request(oChange.method, oChange.url, new _GroupLock(sNewGroupId),
+							oChange.headers, oChange.body, oChange.$submit, oChange.$cancel)
+						.then(oChange.$resolve, oChange.$reject);
+				} else {
+					j += 1;
+				}
+			});
 		}
 	};
 
@@ -892,6 +932,12 @@ sap.ui.define([
 	 *   The meta path corresponding to the resource path; needed in case V2 response does not
 	 *   contain <code>__metadata.type</code>, for example "2.2.7.2.4 RetrievePrimitiveProperty
 	 *   Request"
+	 * @param {string} [sOriginalResourcePath=sResourcePath]
+	 *   The path by which this resource has originally been requested and thus can be identified on
+	 *   the client. Only required for non-GET requests where <code>sResourcePath</code> is a
+	 *   different (canonical) path.
+	 * @param {boolean} [bAtFront=false]
+	 *   Whether the request is added at the front of the change set (ignored for method "GET")
 	 * @returns {Promise}
 	 *   A promise on the outcome of the HTTP request
 	 * @throws {Error}
@@ -900,7 +946,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Requestor.prototype.request = function (sMethod, sResourcePath, oGroupLock, mHeaders, oPayload,
-			fnSubmit, fnCancel, sMetaPath) {
+			fnSubmit, fnCancel, sMetaPath, sOriginalResourcePath, bAtFront) {
 		var oError,
 			sGroupId = oGroupLock && oGroupLock.getGroupId() || "$direct",
 			oPromise,
@@ -917,6 +963,7 @@ sap.ui.define([
 			oGroupLock.unlock();
 		}
 		sResourcePath = this.convertResourcePath(sResourcePath);
+		sOriginalResourcePath = sOriginalResourcePath || sResourcePath;
 		if (this.getGroupSubmitMode(sGroupId) !== "Direct") {
 			oPromise = new Promise(function (fnResolve, fnReject) {
 				var aRequests = that.mBatchQueue[sGroupId];
@@ -940,10 +987,13 @@ sap.ui.define([
 					$metaPath : sMetaPath,
 					$reject : fnReject,
 					$resolve : fnResolve,
+					$resourcePath : sOriginalResourcePath,
 					$submit : fnSubmit
 				};
 				if (sMethod === "GET") { // push behind change set
 					aRequests.push(oRequest);
+				} else if (bAtFront) { // add at front of change set
+					aRequests[0].unshift(oRequest);
 				} else { // push into change set
 					aRequests[0].push(oRequest);
 				}
@@ -957,7 +1007,7 @@ sap.ui.define([
 		}
 		return this.sendRequest(sMethod, sResourcePath,
 			jQuery.extend({}, mHeaders, this.mFinalHeaders),
-			JSON.stringify(_Requestor.cleanPayload(oPayload))
+			JSON.stringify(_Requestor.cleanPayload(oPayload)), sOriginalResourcePath
 		).then(function (oResponse) {
 			that.reportUnboundMessages(oResponse.resourcePath, oResponse.messages);
 			return that.doConvertResponse(oResponse.body, sMetaPath);
@@ -998,6 +1048,8 @@ sap.ui.define([
 	 *   default headers given to the factory.
 	 * @param {string} [sPayload]
 	 *   Data to be sent to the server
+	 * @param {string} [sOriginalResourcePath]
+	 *  The path by which the resource has originally been requested
 	 * @returns {Promise}
 	 *   A promise that is resolved with an object having the properties body and contentType. The
 	 *   body is already an object if the Content-Type is "application/json". The promise is
@@ -1005,7 +1057,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Requestor.prototype.sendRequest = function (sMethod, sResourcePath, mHeaders, sPayload) {
+	Requestor.prototype.sendRequest = function (sMethod, sResourcePath, mHeaders, sPayload,
+			sOriginalResourcePath) {
 		var sRequestUrl = this.sServiceUrl + sResourcePath,
 			that = this;
 
@@ -1048,7 +1101,7 @@ sap.ui.define([
 							send(true);
 						}, fnReject);
 					} else {
-						fnReject(_Helper.createError(jqXHR));
+						fnReject(_Helper.createError(jqXHR, sRequestUrl, sOriginalResourcePath));
 					}
 				});
 			}
@@ -1120,7 +1173,7 @@ sap.ui.define([
 					vRequest.$reject(oError);
 				} else if (vResponse.status >= 400) {
 					vResponse.getResponseHeader = getResponseHeader;
-					oCause = _Helper.createError(vResponse);
+					oCause = _Helper.createError(vResponse, vRequest.url, vRequest.$resourcePath);
 					reject(oCause, vRequest);
 				} else if (vResponse.responseText) {
 					oResponse = JSON.parse(vResponse.responseText);
@@ -1166,7 +1219,7 @@ sap.ui.define([
 			}
 		}
 
-		if (!aRequests) {
+		if (!aRequests || aRequests[0].length === 0 && aRequests.length === 1) {
 			return Promise.resolve();
 		}
 		delete this.mBatchQueue[sGroupId];

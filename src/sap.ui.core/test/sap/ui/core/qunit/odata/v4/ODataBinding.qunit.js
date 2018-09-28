@@ -24,6 +24,8 @@ sap.ui.define([
 	 *   A template object to fill the binding, all properties are copied
 	 */
 	function ODataBinding(oTemplate) {
+		asODataBinding.call(this);
+
 		jQuery.extend(this, {
 			//Returns the metadata for the class that this object belongs to.
 			getMetadata : function () {
@@ -48,6 +50,15 @@ sap.ui.define([
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("initialize members for mixin", function (assert) {
+		var oBinding = new ODataBinding();
+
+		//TODO add missing properties introduced by oDataBinding
+		assert.ok(oBinding.hasOwnProperty("mCacheByContext"));
+		assert.strictEqual(oBinding.mCacheByContext, undefined);
 	});
 
 	//*********************************************************************************************
@@ -1772,18 +1783,33 @@ sap.ui.define([
 		var aAllowedParams = ["$$ownRequest"],
 			oBinding = new ODataBinding();
 
-		assert.throws(function () {
-			oBinding.checkBindingParameters({$$ownRequest : "foo"}, aAllowedParams);
-		}, new Error("Unsupported value for binding parameter '$$ownRequest': foo"));
-		assert.throws(function () {
-			oBinding.checkBindingParameters({$$ownRequest : false}, aAllowedParams);
-		}, new Error("Unsupported value for binding parameter '$$ownRequest': false"));
-		assert.throws(function () {
-			oBinding.checkBindingParameters({$$ownRequest : undefined}, aAllowedParams);
-		}, new Error("Unsupported value for binding parameter '$$ownRequest': undefined"));
+		["foo", false, undefined].forEach(function (sValue) {
+			assert.throws(function () {
+				// code under test
+				oBinding.checkBindingParameters({$$ownRequest : sValue}, aAllowedParams);
+			}, new Error("Unsupported value for binding parameter '$$ownRequest': " + sValue));
+		});
 
 		// code under test
 		oBinding.checkBindingParameters({$$ownRequest : true}, aAllowedParams);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkBindingParameters, $$patchWithoutSideEffects", function (assert) {
+		var aAllowedParams = ["$$patchWithoutSideEffects"],
+			oBinding = new ODataBinding();
+
+		["foo", false, undefined].forEach(function (sValue) {
+			assert.throws(function () {
+				// code under test
+				oBinding.checkBindingParameters({$$patchWithoutSideEffects : sValue},
+					aAllowedParams);
+			}, new Error("Unsupported value for binding parameter '$$patchWithoutSideEffects': "
+				+ sValue));
+		});
+
+		// code under test
+		oBinding.checkBindingParameters({$$patchWithoutSideEffects : true}, aAllowedParams);
 	});
 
 	//*********************************************************************************************

@@ -71,7 +71,7 @@ sap.ui.define(function () {
 					"sap/ui/core/sample/odata/v4/ListBindingTemplate/Opa.qunit"
 				],
 				coverage : {
-					only : "[/odata/type/,/odata/v4/]"
+					only : "[/odata/type/,/odata/v4/,XMLPreprocessor]"
 				}
 			},
 			"OPA.SalesOrders" : {
@@ -86,7 +86,7 @@ sap.ui.define(function () {
 					"sap/ui/core/sample/odata/v4/SalesOrders/pages/Main"
 				],
 				coverage : {
-					only : "[/odata/type/,/odata/v4/,XMLPreprocessor]"
+					only : "[/odata/type/,/odata/v4/]"
 				}
 			},
 			"OPA.SalesOrdersTemplate" : {
@@ -96,7 +96,7 @@ sap.ui.define(function () {
 					"sap/ui/core/sample/odata/v4/SalesOrdersTemplate/pages/Main"
 				],
 				coverage : {
-					only : "[/odata/type/,/odata/v4/]"
+					only : "[/odata/type/,/odata/v4/,XMLPreprocessor]"
 				}
 			},
 			"OPA.SalesOrderTP100_V2" : {

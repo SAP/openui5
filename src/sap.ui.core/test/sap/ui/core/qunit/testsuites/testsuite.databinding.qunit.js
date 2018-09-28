@@ -17,7 +17,10 @@ sap.ui.define(function() {
 		},
 		tests: {
 			BindingParser: {
-				title: "sap.ui.base.BindingParser - QUnit Tests"
+				title: "sap.ui.base.BindingParser - QUnit Tests",
+				coverage : {
+					only : "sap/ui/base/BindingParser"
+				}
 			},
 			CalculatedFields: {
 				title: "Calculated Fields - QUnit Tests",
@@ -44,7 +47,10 @@ sap.ui.define(function() {
 				title: "sap.ui.model.DataState - QUnit Tests"
 			},
 			ExpressionParser: {
-				title: "sap.ui.base.ExpressionParser - QUnit Tests"
+				title: "sap.ui.base.ExpressionParser - QUnit Tests",
+				coverage : {
+					only : "sap/ui/base/ExpressionParser"
+				}
 			},
 			Filter: {
 				title: "sap.ui.model.Filter - QUnit Tests",
@@ -152,52 +158,50 @@ sap.ui.define(function() {
 				title: "QUnit tests: sap.ui.model.base.ManagedObjectModel",
 				page: "test-resources/sap/ui/core/qunit/ManagedObjectModel.qunit.html"
 			},
-			/*
-			 * the following tests have not been migrated
-			 */
-			AnalyticalBinding: {
-				page: "test-resources/sap/ui/core/qunit/analytics/AnalyticalBinding.qunit.html",
-				title: "sap.ui.model.analytics.AnalyticalBinding - QUnit Tests",
+			"analytics/AnalyticalBinding": {
+				coverage : {
+					only : "sap/ui/model/analytics/AnalyticalBinding"
+				},
 				qunit: {
 					version: 1
 				},
 				sinon: {
-					version: 1,
-					qunitBridge: true
-				}
+					version: 1
+				},
+				title: "sap.ui.model.analytics.AnalyticalBinding - QUnit Tests"
 			},
-			odata4analytics: {
-				page: "test-resources/sap/ui/core/qunit/analytics/odata4analytics.qunit.html",
-				title: "sap.ui.model.analytics.odata4analytics - QUnit Tests",
+			"analytics/odata4analytics": {
+				coverage : {
+					only : "sap/ui/model/analytics/odata4analytics"
+				},
 				qunit: {
 					version: 1
 				},
 				sinon: {
-					version: 1,
-					qunitBridge: true
-				}
-			},
-			AnnotationHelper: {
-				page: "test-resources/sap/ui/core/qunit/odata/AnnotationHelper.qunit.html",
-				title: "sap.ui.model.odata.AnnotationHelper - QUnit Tests",
-				qunit: {
-					version: 2
+					version: 1
 				},
-				sinon: {
-					version: 4,
-					qunitBridge: true
-				}
+				title: "sap.ui.model.analytics.odata4analytics - QUnit Tests"
 			},
-			ODataMetaModel: {
-				page: "test-resources/sap/ui/core/qunit/odata/ODataMetaModel.qunit.html",
-				title: "sap.ui.model.odata.ODataMetaModel - QUnit Tests",
-				qunit: {
-					version: 2
+			"odata/AnnotationHelper": {
+				coverage : {
+					only : "[sap/ui/model/odata/AnnotationHelper,sap/ui/model/odata/_AnnotationHelper]"
 				},
-				sinon: {
-					version: 4,
-					qunitBridge: true
-				}
+				module: [
+					"test-resources/sap/ui/core/qunit/odata/AnnotationHelper.qunit",
+					"test-resources/sap/ui/core/qunit/odata/_AnnotationHelperBasics.qunit",
+					"test-resources/sap/ui/core/qunit/odata/_AnnotationHelperExpression.qunit"
+				],
+				title: "sap.ui.model.odata.AnnotationHelper - QUnit Tests"
+			},
+			"odata/ODataMetaModel": {
+				coverage : {
+					only : "[sap/ui/model/odata/ODataMetaModel,sap/ui/model/odata/_ODataMetaModelUtils]"
+				},
+				module: [
+					"test-resources/sap/ui/core/qunit/odata/ODataMetaModel.qunit",
+					"test-resources/sap/ui/core/qunit/odata/_ODataMetaModelUtils.qunit"
+				],
+				title: "sap.ui.model.odata.ODataMetaModel - QUnit Tests"
 			}
 		}
 	};

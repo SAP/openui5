@@ -31,6 +31,7 @@ sap.ui.define([
 	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
 		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 		sFlight = "/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/",
+		sSalesOrderService = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
 
 	/**
@@ -87,9 +88,7 @@ sap.ui.define([
 	 * @returns {ODataModel} The model
 	 */
 	function createSalesOrdersModel(mModelParameters) {
-		return createModel(
-			"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
-			mModelParameters);
+		return createModel(sSalesOrderService, mModelParameters);
 	}
 
 	/**
@@ -135,6 +134,22 @@ sap.ui.define([
 			.expectChange("text", ["Frederic Fall"]);
 
 		return oTest.createView(assert, sView, oModel);
+	}
+
+	/**
+	 * @param {function} fnCallback
+	 *   A callback function
+	 * @param {number} [iDelay=5]
+	 *   A delay in milliseconds
+	 * @returns {Promise}
+	 *   A promise which resolves with the result of the given callback after the given delay
+	 */
+	function resolveLater(fnCallback, iDelay) {
+		return new Promise(function (resolve) {
+			setTimeout(function () {
+				resolve(fnCallback());
+			}, iDelay || 5);
+		});
 	}
 
 	//*********************************************************************************************
@@ -315,23 +330,38 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks that exactly the expected messages have been reported.
+		 * Checks that exactly the expected messages have been reported, the order doesn't matter.
 		 *
 		 * @param {object} assert The QUnit assert object
 		 */
 		checkMessages : function (assert) {
-			assert.deepEqual(
-				sap.ui.getCore().getMessageManager().getMessageModel().getObject("/")
-					.map(function (oMessage) {
+			var aCurrentMessages = sap.ui.getCore().getMessageManager().getMessageModel()
+					.getObject("/").map(function (oMessage) {
 						return {
 							code : oMessage.getCode(),
+							descriptionUrl : oMessage.getDescriptionUrl(),
 							message : oMessage.getMessage(),
-							target : oMessage.getTarget(),
 							persistent : oMessage.getPersistent(),
+							target : oMessage.getTarget(),
+							technical : oMessage.getTechnical(),
 							type : oMessage.getType()
 						};
-					}),
-				this.aMessages,
+					});
+
+			function sortMessages(aMessages) {
+				aMessages.sort(function (oMessage1, oMessage2) {
+					var s1 = oMessage1.message,
+						s2 = oMessage2.message;
+
+					if (s1 < s2) {
+						return -1;
+					}
+					return s1 > s2 ? 1 : 0;
+				});
+				return aMessages;
+			}
+
+			assert.deepEqual(sortMessages(aCurrentMessages), sortMessages(this.aMessages),
 				this.aMessages.length + " messages in message manager");
 		},
 
@@ -522,9 +552,11 @@ sap.ui.define([
 			 * @param {object} mHeaders The headers (including various generic headers)
 			 * @param {object|string} [vPayload] The payload (string from the requestor, object from
 			 *   checkBatch)
+			 * @param {string} [sOriginalResourcePath]
+			 *  The path by which the resource has originally been requested
 			 * @returns {Promise} A promise on an object with the response in the property "body"
 			 */
-			function checkRequest(sMethod, sUrl, mHeaders, vPayload) {
+			function checkRequest(sMethod, sUrl, mHeaders, vPayload, sOriginalResourcePath) {
 				var oActualRequest = {
 						method : sMethod,
 						url : sUrl,
@@ -579,6 +611,8 @@ sap.ui.define([
 
 				return Promise.resolve(oResponse).then(function (oResponseBody) {
 					if (oResponseBody instanceof Error) {
+						oResponseBody.requestUrl = that.oModel.sServiceUrl + sUrl;
+						oResponseBody.resourcePath = sOriginalResourcePath;
 						throw oResponseBody;
 					}
 
@@ -731,14 +765,20 @@ sap.ui.define([
 
 		/**
 		 * The following code (either {@link #createView} or anything before
-		 * {@link #waitForChanges}) is expected to report exactly the given messages.
+		 * {@link #waitForChanges}) is expected to report exactly the given messages. All expected
+		 * messages should have a different message text.
 		 *
 		 * @param {object[]} aExpectedMessages The expected messages (with properties code, message,
-		 *   target, persistent and type corresponding the getters of sap.ui.core.message.Message)
+		 *   target, persistent, technical and type corresponding the getters of
+		 *   sap.ui.core.message.Message)
 		 * @returns {object} The test instance for chaining
 		 */
 		expectMessages : function (aExpectedMessages) {
-			this.aMessages = aExpectedMessages;
+			this.aMessages = aExpectedMessages.map(function (oMessage) {
+				oMessage.descriptionUrl = oMessage.descriptionUrl || undefined;
+				oMessage.technical = oMessage.technical || false;
+				return oMessage;
+			});
 
 			return this;
 		},
@@ -1083,6 +1123,100 @@ sap.ui.define([
 	);
 
 	//*********************************************************************************************
+	// Scenario: Failure to read from an ODataListBinding returning a bound message
+	QUnit.test("ODLB: read failure & message", function (assert) {
+		var oError = new Error("Failure"),
+			sView = '\
+<Table items="{/EMPLOYEES}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="text" text="{Name}" />\
+	</ColumnListItem>\
+</Table>';
+
+		oError.error = {
+			"code" : "CODE",
+			"message" : "Could not read",
+			"target" : "('42')/Name"
+		};
+		this.oLogMock.expects("error")
+			.withExactArgs("Failed to get contexts for " + sTeaBusi
+				+ "EMPLOYEES with start index 0 and length 100", sinon.match(oError.message),
+				"sap.ui.model.odata.v4.ODataListBinding");
+		this.expectRequest("EMPLOYEES?$skip=0&$top=100", oError)
+			.expectMessages([{
+				"code" : "CODE",
+				"message" : "Could not read",
+				"persistent" : true,
+				"target" : "/EMPLOYEES('42')/Name",
+				"technical" : true,
+				"type" : "Error"
+			}]);
+
+		return this.createView(assert, sView);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Failure to read from an ODataContextBinding returning a bound message
+	QUnit.test("ODCB: read failure & message", function (assert) {
+		var oError = new Error("Failure"),
+			sView = '\
+<FlexBox binding="{/EMPLOYEES(\'42\')}">\
+	<Text id="text" text="{Name}" />\
+</FlexBox>';
+
+		oError.error = {
+			"code" : "CODE",
+			"message" : "Could not read",
+			"target" : "Name"
+		};
+		this.oLogMock.expects("error")
+			.withExactArgs("Failed to read path /EMPLOYEES('42')", sinon.match(oError.message),
+				"sap.ui.model.odata.v4.ODataContextBinding");
+		this.oLogMock.expects("error")
+			.withExactArgs("Failed to read path /EMPLOYEES('42')/Name", sinon.match(oError.message),
+				"sap.ui.model.odata.v4.ODataPropertyBinding");
+		this.expectRequest("EMPLOYEES('42')", oError)
+			.expectMessages([{
+				"code" : "CODE",
+				"message" : "Could not read",
+				"persistent" : true,
+				"target" : "/EMPLOYEES('42')/Name",
+				"technical" : true,
+				"type" : "Error"
+			}]);
+
+		return this.createView(assert, sView);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Failure to read from an ODataPropertyBinding returning a bound message
+	QUnit.test("ODPB: read failure & message", function (assert) {
+		var oError = new Error("Failure"),
+			sView = '<Text id="text" text="{/EMPLOYEES(\'42\')/Name}" />';
+
+		oError.error = {
+			"code" : "CODE",
+			"message" : "Could not read",
+			"target" : ""
+		};
+		this.oLogMock.expects("error")
+			.withExactArgs("Failed to read path /EMPLOYEES('42')/Name", sinon.match(oError.message),
+				"sap.ui.model.odata.v4.ODataPropertyBinding");
+		this.expectRequest("EMPLOYEES('42')/Name", oError)
+			.expectMessages([{
+				"code" : "CODE",
+				"message" : "Could not read",
+				"persistent" : true,
+				"target" : "/EMPLOYEES('42')/Name",
+				"technical" : true,
+				"type" : "Error"
+			}]);
+
+		return this.createView(assert, sView);
+	});
+
+	//*********************************************************************************************
 	// Scenario: inherit query options (see ListBinding sample application)
 	// If there is a relative binding without an own cache and the parent binding defines $orderby
 	// or $filter for that binding, then these values need to be considered if that binding gets
@@ -1275,15 +1409,86 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Refreshing a single entry of a table must not cause "failed to drill-down" errors
+	// Refresh a single row that has been removed in between. Check the bound message of the error
+	// response.
+	QUnit.test("Context#refresh() error messages", function (assert) {
+		var oError = new Error("404 Not Found"),
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{/EMPLOYEES}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text text="{ID}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		oError.error = {
+			code : "CODE",
+			message : "Not found",
+			target : "ID"
+		};
+		this.expectRequest("EMPLOYEES?$select=ID&$skip=0&$top=100", {
+				"value" : [{"ID" : "0"}]
+			});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to refresh entity: /EMPLOYEES('0')[0]",
+					sinon.match("404 Not Found"), "sap.ui.model.odata.v4.ODataListBinding");
+			that.expectRequest("EMPLOYEES('0')?$select=ID", oError)
+				.expectMessages([{
+					"code" : "CODE",
+					"message" : "Not found",
+					"persistent" : true,
+					"target" : "/EMPLOYEES('0')/ID",
+					"technical" : true,
+					"type" : "Error"
+				}]);
+
+			// code under test
+			that.oView.byId("table").getItems()[0].getBindingContext().refresh();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Refreshing (a single entry of) a table must not cause "failed to drill-down" errors
 	// if data of a dependent binding has been deleted in between.
 	// This scenario is similar to the deletion of a sales order line item in the SalesOrders
 	// application. Deleting a sales order line item also deletes the corresponding schedule. After
 	// the deletion the application automatically refreshes the sales order which the item has
 	// belonged to.
-	QUnit.test("Context#refresh: No drill-down error for deleted data", function (assert) {
-		var oContext,
-			sView = '\
+	[function (oTable) {
+		this.expectRequest("EMPLOYEES('0')?$select=AGE,ID,Name",
+				{"ID" : "0", "Name" : "Frederic Fall", "AGE" : 70})
+			.expectRequest("EMPLOYEES('0')/EMPLOYEE_2_EQUIPMENTS?"
+				+ "$select=Category,ID,Name&$skip=0&$top=100", {
+				"value" : [{
+					"Category" : "Electronics",
+					"ID" : "1",
+					"Name" : "Office PC"
+				}]
+			});
+
+		oTable.getItems()[0].getBindingContext().refresh();
+	}, function (oTable) {
+		this.expectRequest("EMPLOYEES?$select=AGE,ID,Name&$skip=0&$top=100", {
+				"value" : [{"ID" : "0", "Name" : "Frederic Fall", "AGE" : 70}]
+			})
+			.expectRequest("EMPLOYEES('0')/EMPLOYEE_2_EQUIPMENTS?"
+				+ "$select=Category,ID,Name&$skip=0&$top=100", {
+				"value" : [{
+					"Category" : "Electronics",
+					"ID" : "1",
+					"Name" : "Office PC"
+				}]
+			});
+		oTable.getBinding("items").refresh();
+	}].forEach(function (fnRefresh, i) {
+		QUnit.test("refresh: No drill-down error for deleted data #" + i, function (assert) {
+			var sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', templateShareable : false}">\
 	<columns><Column/><Column/></columns>\
 	<ColumnListItem>\
@@ -1291,60 +1496,51 @@ sap.ui.define([
 		<Text id="age" text="{AGE}" />\
 	</ColumnListItem>\
 </Table>\
-<Table id="detailTable" items="{EMPLOYEE_2_EQUIPMENTS}">\
+<Table id="detailTable" items="{path : \'EMPLOYEE_2_EQUIPMENTS\',\
+		parameters : {$$ownRequest : true}}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="equipmentName" text="{Name}" />\
 	</ColumnListItem>\
 </Table>',
-			that = this;
+				that = this;
 
-		this.expectRequest("EMPLOYEES?$select=AGE,ID,Name&$skip=0&$top=100", {
-				"value" : [{
-					"ID" : "0",
-					"Name" : "Frederic Fall",
-					"AGE" : 70
-				}]
-			})
-			.expectChange("text", ["Frederic Fall"])
-			.expectChange("age", ["70"])
-			.expectChange("equipmentName", []);
+			this.expectRequest("EMPLOYEES?$select=AGE,ID,Name&$skip=0&$top=100", {
+					"value" : [{
+						"ID" : "0",
+						"Name" : "Frederic Fall",
+						"AGE" : 70
+					}]
+				})
+				.expectChange("text", ["Frederic Fall"])
+				.expectChange("age", ["70"])
+				.expectChange("equipmentName", []);
 
-		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
-			.then(function () {
-				oContext = that.oView.byId("table").getItems()[0].getBindingContext();
-
-				that.expectRequest("EMPLOYEES('0')/EMPLOYEE_2_EQUIPMENTS?"
-						+ "$select=Category,ID,Name&$skip=0&$top=100", {
-						"value" : [{
-							"Category" : "Electronics",
-							"ID" : "1",
-							"Name" : "Office PC"
-						}, {
-							"Category" : "Electronics",
-							"ID" : "2",
-							"Name" : "Tablet X"
-						}]
-					})
-					.expectChange("equipmentName", ["Office PC", "Tablet X"]);
-				that.oView.byId("detailTable").setBindingContext(oContext);
-
-				return that.waitForChanges(assert);
-			}).then(function () {
-				that.expectRequest("EMPLOYEES('0')?$select=AGE,ID,Name",
-						{"ID" : "0", "Name" : "Frederic Fall", "AGE" : 70})
-					.expectRequest("EMPLOYEES('0')/EMPLOYEE_2_EQUIPMENTS?"
+			return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
+				.then(function () {
+					that.expectRequest("EMPLOYEES('0')/EMPLOYEE_2_EQUIPMENTS?"
 							+ "$select=Category,ID,Name&$skip=0&$top=100", {
-						"value" : [{
-							"Category" : "Electronics",
-							"ID" : "1",
-							"Name" : "Office PC"
-						}]
-					});
-				oContext.refresh();
+							"value" : [{
+								"Category" : "Electronics",
+								"ID" : "1",
+								"Name" : "Office PC"
+							}, {
+								"Category" : "Electronics",
+								"ID" : "2",
+								"Name" : "Tablet X"
+							}]
+						})
+						.expectChange("equipmentName", ["Office PC", "Tablet X"]);
+					that.oView.byId("detailTable").setBindingContext(
+						that.oView.byId("table").getItems()[0].getBindingContext());
 
-				return that.waitForChanges(assert);
-			});
+					return that.waitForChanges(assert);
+				}).then(function () {
+					fnRefresh.call(that, that.oView.byId("table"));
+
+					return that.waitForChanges(assert);
+				});
+		});
 	});
 
 	//*********************************************************************************************
@@ -1526,6 +1722,7 @@ sap.ui.define([
 					"message" : "Employee does not exist",
 					"persistent" : true,
 					"target" : "",
+					"technical" : true,
 					"type" : "Error"
 				}]);
 
@@ -2054,57 +2251,61 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Create a sales order w/o key properties, enter a note, then submit the batch
-	QUnit.test("Create with user input", function (assert) {
-		var sView = '\
+	[false, true].forEach(function (bSkipRefresh) {
+		QUnit.test("Create with user input - bSkipRefresh: " + bSkipRefresh, function (assert) {
+			var sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="note" text="{Note}" />\
 	</ColumnListItem>\
 </Table>',
-			oModel = createSalesOrdersModel({
-				autoExpandSelect : true,
-				updateGroupId : "update"
-			}),
-			that = this;
+				oModel = createSalesOrdersModel({
+					autoExpandSelect : true,
+					updateGroupId : "update"
+				}),
+				that = this;
 
-		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
-				"value" : [{
-					"Note" : "foo",
-					"SalesOrderID" : "42"
-				}]
-			})
-			.expectChange("note", ["foo"]);
-
-		return this.createView(assert, sView, oModel).then(function () {
-			var oTable = that.oView.byId("table");
-
-			that.expectChange("note", ["baz", "foo"]);
-
-			oTable.getBinding("items").create({Note : "bar"});
-			oTable.getItems()[0].getCells()[0].getBinding("text").setValue("baz");
-
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectRequest({
-					method : "POST",
-					url : "SalesOrderList",
-					payload : {"Note" : "baz"}
-				}, {
-					"CompanyName" : "Bar",
-					"Note" : "from server",
-					"SalesOrderID" : "42"
+			this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+					"value" : [{
+						"Note" : "foo",
+						"SalesOrderID" : "42"
+					}]
 				})
-				.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
-					"Note" : "from server",
-					"SalesOrderID" : "42"
-				})
-				.expectChange("note", "from server", 0);
+				.expectChange("note", ["foo"]);
 
-			return Promise.all([
-				that.oModel.submitBatch("update"),
-				that.waitForChanges(assert)
-			]);
+			return this.createView(assert, sView, oModel).then(function () {
+				var oTable = that.oView.byId("table");
+
+				that.expectChange("note", ["baz", "foo"]);
+
+				oTable.getBinding("items").create({Note : "bar"}, bSkipRefresh);
+				oTable.getItems()[0].getCells()[0].getBinding("text").setValue("baz");
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				that.expectRequest({
+						method : "POST",
+						url : "SalesOrderList",
+						payload : {"Note" : "baz"}
+					}, {
+						"CompanyName" : "Bar",
+						"Note" : "from server",
+						"SalesOrderID" : "42"
+					});
+				if (!bSkipRefresh){
+					that.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
+							"Note" : "from server",
+							"SalesOrderID" : "42"
+						});
+				}
+				that.expectChange("note", "from server", 0);
+
+				return Promise.all([
+					that.oModel.submitBatch("update"),
+					that.waitForChanges(assert)
+				]);
+			});
 		});
 	});
 
@@ -2197,7 +2398,7 @@ sap.ui.define([
 	QUnit.test("Create with default value in a currency/unit", function (assert) {
 		var sView = '\
 <Table id="table" items="{/SalesOrderList(\'42\')/SO_2_SOITEM}">\
-	<columns><Column/></columns>\
+	<columns><Column/><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="quantity" text="{Quantity}" />\
 		<Text id="unit" text="{QuantityUnit}" />\
@@ -2264,6 +2465,165 @@ sap.ui.define([
 				that.oModel.submitBatch("update"),
 				that.waitForChanges(assert)
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Failure when creating a sales order line item. Observe the message.
+	QUnit.test("Create error", function (assert) {
+		var oError = new Error("Failure"),
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'42\')}">\
+	<Table id="table" items="{SO_2_SOITEM}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Text id="pos" text="{ItemPosition}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')?$select=SalesOrderID"
+			+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)", {
+				"SalesOrderID" : "42",
+				"SO_2_SOITEM" : []
+			});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.oLogMock.expects("error")
+				.withExactArgs("POST on 'SalesOrderList('42')/SO_2_SOITEM' failed; "
+					+ "will be repeated automatically", sinon.match("Failure"),
+					"sap.ui.model.odata.v4.ODataParentBinding");
+			oError.error = {
+				code : "CODE",
+				message : "Enter a product ID",
+				target : "ProductID"
+			};
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList('42')/SO_2_SOITEM",
+					payload : {}
+				}, oError)
+				.expectMessages([{
+					code : "CODE",
+					message : "Enter a product ID",
+					persistent : true,
+					target : "/SalesOrderList('42')/SO_2_SOITEM/-1/ProductID",
+					technical : true,
+					type : "Error"
+				}]);
+
+			return Promise.all([
+				that.oView.byId("table").getBinding("items").create(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Read a sales order line item via a navigation property, enter an invalid quantity.
+	// Expect an error response with a bound and unbound error in the details, and that existing
+	// messages are not deleted.
+	// The navigation property is necessary so that read path and patch path are different.
+	QUnit.test("Read a sales order line item, enter an invalid quantity", function (assert) {
+		var sView = '\
+<FlexBox binding="{\
+		path : \'/BusinessPartnerList(\\\'1\\\')/BP_2_SO(\\\'42\\\')/SO_2_SOITEM(\\\'0010\\\')\',\
+		parameters : {$select : \'Messages\'}}">\
+	<Text id="quantity" text="{Quantity}"/>\
+	<Text id="unit" text="{QuantityUnit}"/>\
+</FlexBox>',
+			oError = new Error("Error occurred while processing the request"),
+			oExpectedMessage = {
+				"code" : "23",
+				"message" : "Enter a minimum quantity of 2",
+				"persistent" : false,
+				"target" : "/BusinessPartnerList('1')/BP_2_SO('42')/SO_2_SOITEM('0010')/Quantity",
+				"technical" : false,
+				"type" : "Warning"
+			},
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true
+			}),
+			that = this;
+
+		oError.error = {
+			"code" : "top",
+			"message" : "Error occurred while processing the request",
+			"details" : [{
+				"code" : "bound",
+				"message" : "Value must be greater than 0",
+				"@Common.longtextUrl" : "../Messages(1)/LongText",
+				"@Common.numericSeverity" : 4,
+				"target" : "Quantity"
+			}, {
+				"code" : "unbound",
+				"message" : "Some unbound warning",
+				"@Common.numericSeverity" : 3
+			}]
+		};
+
+		this.expectRequest("BusinessPartnerList('1')/BP_2_SO('42')/SO_2_SOITEM('0010')"
+			+ "?$select=ItemPosition,Messages,Quantity,QuantityUnit,SalesOrderID", {
+				"SalesOrderID" : "42",
+				"ItemPosition" : "0010",
+				"Quantity" : "1.000",
+				"QuantityUnit" : "DZ",
+				"Messages" : [{
+					"code" : "23",
+					"message" : "Enter a minimum quantity of 2",
+					"target" : "Quantity",
+					"numericSeverity" : 3
+				}]
+			})
+			.expectChange("quantity", "1.000")
+			.expectChange("unit", "DZ")
+			.expectMessages([oExpectedMessage]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+
+			that.oLogMock.expects("error").twice() // TODO twice?
+				.withExactArgs("Failed to update path /BusinessPartnerList('1')/BP_2_SO('42')"
+					+ "/SO_2_SOITEM('0010')/Quantity",
+					sinon.match(oError.message), "sap.ui.model.odata.v4.ODataPropertyBinding");
+			that.expectChange("quantity", "0.000")
+				.expectRequest({
+						method : "PATCH",
+						url : "SalesOrderList('42')/SO_2_SOITEM('0010')",
+						payload : {
+							"Quantity" : "0.000",
+							"QuantityUnit" : "DZ"
+						}
+					},
+					oError)
+				.expectMessages([
+					oExpectedMessage, {
+						"code" : "top",
+						"message" : "Error occurred while processing the request",
+						"persistent" : true,
+						"target" : "",
+						"technical" : true,
+						"type" : "Error"
+					}, {
+						"code" : "unbound",
+						"message" : "Some unbound warning",
+						"persistent" : true,
+						"target" : "",
+						"type" : "Warning"
+					}, {
+						"code" : "bound",
+						"descriptionUrl" : sSalesOrderService + "Messages(1)/LongText",
+						"message" : "Value must be greater than 0",
+						"persistent" : true,
+						"target" :
+							"/BusinessPartnerList('1')/BP_2_SO('42')/SO_2_SOITEM('0010')/Quantity",
+						"type" : "Error"
+					}]);
+
+			that.oView.byId("quantity").getBinding("text").setValue("0.000");
+
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -2735,6 +3095,163 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Support of Draft: Test eventing for PATCH requests
+	["update", "$auto"].forEach(function (sUpdateGroupId) {
+		var sTitle = "Support of Draft: Test eventing for PATCH requests; updateGroupId = "
+				+ sUpdateGroupId;
+
+		QUnit.test(sTitle, function (assert) {
+			var fnAfterPatchCompleted,
+				oBatchPromise0,
+				oBatchPromise1,
+				oError = new Error("500 Service not available"),
+				oModel = createSalesOrdersModel({
+					autoExpandSelect : true,
+					updateGroupId : sUpdateGroupId
+				}),
+				oParentBinding,
+				iPatchCompleted = 0,
+				iPatchSent = 0,
+				fnReject,
+				fnRespond,
+				sView = '\
+<FlexBox binding="{/SalesOrderList(\'42\')}" id="parent">\
+	<Text id="lifecycleStatus" text="{LifecycleStatus}"/>\
+	<Text id="note" text="{Note}"/>\
+</FlexBox>',
+				that = this;
+
+			function getWaitForPatchCompletedPromise() {
+				return new Promise(function (resolve) {
+					fnAfterPatchCompleted = resolve;
+				});
+			}
+
+			this.expectRequest("SalesOrderList('42')?$select=LifecycleStatus,Note,SalesOrderID", {
+					"@odata.etag" : "ETag0",
+					"LifecycleStatus" : "N",
+					"Note" : "Note",
+					"SalesOrderID" : "42"
+				})
+				.expectChange("lifecycleStatus", "N")
+				.expectChange("note", "Note");
+
+			return this.createView(assert, sView, oModel).then(function () {
+				oParentBinding = that.oView.byId("parent").getElementBinding();
+
+				oParentBinding.attachPatchCompleted(function (oEvent) {
+					assert.strictEqual(oEvent.getSource(), oParentBinding);
+					iPatchCompleted++;
+					if (fnAfterPatchCompleted) {
+						fnAfterPatchCompleted();
+						fnAfterPatchCompleted = undefined;
+					}
+				});
+				oParentBinding.attachPatchSent(function (oEvent) {
+					assert.strictEqual(oEvent.getSource(), oParentBinding);
+					iPatchSent++;
+				});
+
+				that.expectRequest({
+						method : "PATCH",
+						url : "SalesOrderList('42')",
+						headers : {"If-Match" : "ETag0"},
+						payload : {Note : "Changed Note"}
+					}, new Promise(function (resolve, reject) {
+						fnReject = reject;
+					}))
+					.expectChange("note", "Changed Note");
+
+				that.oView.byId("note").getBinding("text").setValue("Changed Note");
+				if (sUpdateGroupId === "update") {
+					oBatchPromise0 = that.oModel.submitBatch(sUpdateGroupId).then(function () {
+						assert.ok(false, "unexpected success");
+					}, function () {
+						assert.ok(true, "first batch failed as expected");
+					});
+				}
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				var oPromise = getWaitForPatchCompletedPromise();
+
+				assert.strictEqual(iPatchSent, 1, "patchSent 1");
+				assert.strictEqual(iPatchCompleted, 0, "patchCompleted 0");
+
+				// don't care about other parameters
+				that.oLogMock.expects("error").withArgs("$batch failed");
+				that.oLogMock.expects("error")
+					.withArgs("Failed to update path /SalesOrderList('42')/Note");
+
+				fnReject(oError);
+
+				return oPromise;
+			}).then(function () {
+				assert.strictEqual(iPatchSent, 1, "patchSent 1");
+				assert.strictEqual(iPatchCompleted, 1, "patchCompleted 1");
+
+				that.expectMessages([{
+						"code": undefined,
+						"message": "500 Service not available",
+						"persistent": true,
+						"target": "",
+						"technical" : true,
+						"type": "Error"
+					}, {
+						"code": undefined,
+						"message": "HTTP request was not processed because $batch failed",
+						"persistent": true,
+						"target": "",
+						"technical" : true,
+						"type": "Error"
+					}])
+					.expectChange("lifecycleStatus", "P")
+					.expectRequest({
+						method : "PATCH",
+						url : "SalesOrderList('42')",
+						headers : {"If-Match" : "ETag0"},
+						payload : {
+							LifecycleStatus : "P",
+							Note : "Changed Note"
+						}
+					}, new Promise(function (resolve, reject) {
+						fnRespond = resolve.bind(null, {
+							"@odata.etag" : "ETag1",
+							LifecycleStatus : "P",
+							Note : "Changed Note From Server"
+						});
+					}));
+
+				that.oView.byId("lifecycleStatus").getBinding("text").setValue("P");
+
+				if (sUpdateGroupId === "update") {
+					oBatchPromise1 = that.oModel.submitBatch(sUpdateGroupId);
+				}
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				var oPromise = getWaitForPatchCompletedPromise();
+
+				assert.strictEqual(iPatchSent, 2, "patchSent 2");
+				assert.strictEqual(iPatchCompleted, 1, "patchCompleted 1");
+
+				that.expectChange("note", "Changed Note From Server");
+
+				fnRespond();
+				return Promise.all([
+					oBatchPromise0,
+					oBatchPromise1,
+					oPromise,
+					that.waitForChanges(assert)
+				]);
+			}).then(function () {
+				assert.strictEqual(iPatchSent, 2, "patchSent 2");
+				assert.strictEqual(iPatchCompleted, 2, "patchCompleted 2");
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Enable autoExpandSelect mode for an ODataContextBinding with relative
 	// ODataPropertyBindings
 	// The SalesOrders application does not have such a scenario.
@@ -3177,6 +3694,19 @@ sap.ui.define([
 		}).then(function () {
 			var oError = new Error("Missing team ID");
 
+			oError.error = {
+				message : "Missing team ID",
+				target : "TeamID",
+				details : [{
+					message : "Illegal Status",
+					"@Common.numericSeverity" : 4,
+					target : "EMPLOYEE/STATUS"
+				}, {
+					message : "Target resolved to ''",
+					"@Common.numericSeverity" : 4,
+					target : "EMPLOYEE"
+				}]
+			};
 			that.oLogMock.expects("error").withExactArgs("Failed to execute /" + sUrl + "(...)",
 				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataContextBinding");
 			that.oLogMock.expects("error").withExactArgs(
@@ -3193,6 +3723,19 @@ sap.ui.define([
 					"message" : "Missing team ID",
 					"persistent" : true,
 					"target" : "",
+					"technical" : true,
+					"type" : "Error"
+				}, {
+					"code" : undefined,
+					"message" : "Illegal Status",
+					"persistent" : true,
+					"target" : "/EMPLOYEES('1')/STATUS",
+					"type" : "Error"
+				}, {
+					"code" : undefined,
+					"message" : "Target resolved to ''",
+					"persistent" : true,
+					"target" : "/EMPLOYEES('1')",
 					"type" : "Error"
 				}])
 				.expectChange("teamId", null); // reset to initial state
@@ -7256,29 +7799,29 @@ sap.ui.define([
 				+ "UI5grand__SalesAmountSum),top(4))", {
 				"value" : [{
 						"UI5grand__SalesAmountSum" : 351,
-						"UI5grand__SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR",
+						"UI5grand__SalesAmountSum@Analytics.AggregatedAmountCurrency" : "EUR",
 						//TODO this should be used by auto type detection
 						"UI5grand__SalesAmountSum@odata.type" : "#Decimal"
 					}, {
 						"Region" : "Z",
 						"SalesNumber" : 1,
 						"SalesAmountSum" : 1,
-						"SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR"
+						"SalesAmountSum@Analytics.AggregatedAmountCurrency" : "EUR"
 					}, {
 						"Region" : "Y",
 						"SalesNumber" : 2,
 						"SalesAmountSum" : 2,
-						"SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR"
+						"SalesAmountSum@Analytics.AggregatedAmountCurrency" : "EUR"
 					}, {
 						"Region" : "X",
 						"SalesNumber" : 3,
 						"SalesAmountSum" : 3,
-						"SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR"
+						"SalesAmountSum@Analytics.AggregatedAmountCurrency" : "EUR"
 					}, {
 						"Region" : "W",
 						"SalesNumber" : 4,
 						"SalesAmountSum" : 4,
-						"SalesAmountSum@Analytics.AggregatedAmountCurrency": "EUR"
+						"SalesAmountSum@Analytics.AggregatedAmountCurrency" : "EUR"
 					}
 				]
 			})
@@ -8451,12 +8994,13 @@ sap.ui.define([
 			this.expectRequest("TEAMS('42')/TEAM_2_MANAGER?custom=foo", {"ID" : "23"}, {
 					"sap-messages" : JSON.stringify([
 						{"code" : "foo-42", "message" : "text0", "numericSeverity" : 3,
-							"longtextUrl" : "Messages(1)/LongText/$value"},
+							"longtextUrl" : "../Messages(1)/LongText/$value"},
 						{"code" : "foo-77", "message" : "text1", "numericSeverity" : 2}
 					])
 				})
 				.expectMessages([{
 					"code" : "foo-42",
+					"descriptionUrl" : sTeaBusi + "Messages(1)/LongText/$value",
 					"message" : "text0",
 					"persistent" : true,
 					"target" : "",
@@ -8565,7 +9109,22 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Delete an entity with messages from an ODataListBinding
 	QUnit.test("Delete an entity with messages from an ODataListBinding", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oDeleteMessage = {
+				code : "top",
+				message : "Error occurred while processing the request",
+				persistent : true,
+				target : "/EMPLOYEES('1')",
+				technical : true,
+				type : "Error"
+			},
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oReadMessage = {
+				"code" : "1",
+				"message" : "Text",
+				"persistent" : false,
+				"target" : "/EMPLOYEES('1')/Name",
+				"type" : "Warning"
+			},
 			sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', \
 		parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
@@ -8597,15 +9156,29 @@ sap.ui.define([
 				}]
 			})
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
-			.expectMessages([{
-				"code" : "1",
-				"message" : "Text",
-				"persistent" : false,
-				"target" : "/EMPLOYEES('1')/Name",
-				"type" : "Warning"
-			}]);
+			.expectMessages([oReadMessage]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("table").getItems()[0].getBindingContext(),
+				oError = new Error("Deletion failed");
+
+			oError.error = {
+				"code" : "top",
+				"message" : "Error occurred while processing the request",
+				"target" : ""
+			};
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to delete /EMPLOYEES('1')[0]", sinon.match(oError.message),
+					"sap.ui.model.odata.v4.Context");
+			that.expectRequest({method : "DELETE", url : "EMPLOYEES('1')"}, oError)
+				.expectMessages([oReadMessage, oDeleteMessage]);
+
+			return Promise.all([
+				// code under test
+				oContext.delete().catch(function () {}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
 			var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
 
 			that.expectRequest({
@@ -8613,7 +9186,7 @@ sap.ui.define([
 					url : "EMPLOYEES('1')"
 				})
 				.expectChange("name", ["Frederic Fall"])
-				.expectMessages([]);
+				.expectMessages([oDeleteMessage]);
 
 			return Promise.all([
 				// code under test
@@ -9121,15 +9694,437 @@ sap.ui.define([
 					}
 				})
 				.expectMessages([{
-					"code": "1",
-					"message": "Enter a name",
-					"persistent": false,
-					"target": "/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES/-1/Name",
-					"type": "Warning"
+					"code" : "1",
+					"message" : "Enter a name",
+					"persistent" : false,
+					"target" : "/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES/-1/Name",
+					"type" : "Warning"
 				}]);
 
 			return Promise.all([
 				that.oModel.submitBatch("foo"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Modify a property without side effects, i.e. the PATCH request's response is
+	// ignored.
+	QUnit.test("$$patchWithoutSideEffects", function (assert) {
+		var oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "$auto"
+			}),
+			sView = '\
+<FlexBox binding="{\
+			path : \'/SalesOrderList(\\\'42\\\')\',\
+			parameters : {$$patchWithoutSideEffects : true}\
+		}"\
+		id="objectPageForm">\
+	<Text id="netAmount" text="{NetAmount}"/>\
+	<Text id="grossAmount" text="{GrossAmount}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')?$select=GrossAmount,NetAmount,SalesOrderID", {
+				"@odata.etag" : "ETag0",
+				"GrossAmount" : "119.00",
+				"NetAmount" : "100.00"
+//				"SalesOrderID" : "42"
+			})
+			.expectChange("netAmount", "100.00")
+			.expectChange("grossAmount", "119.00");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("netAmount", "200.00")
+				.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "ETag0"},
+					payload : {"NetAmount" : "200"}
+				}, {
+					"@odata.etag" : "ETag1",
+					"GrossAmount" : "238.00", // side effect
+					"NetAmount" : "200.00" // "side effect": decimal places added
+//					"SalesOrderID" : "42"
+				});
+
+			that.oView.byId("netAmount").getBinding("text").setValue("200");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("netAmount", "0.00")
+				.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "ETag1"}, // new ETag is used!
+					payload : {"NetAmount" : "0"}
+				}, {
+//					"@odata.etag" : "ETag2",
+					"GrossAmount" : "0.00", // side effect
+					"NetAmount" : "0.00", // "side effect": decimal places added
+//					"SalesOrderID" : "42",
+					"Messages" : [{
+						"code" : "23",
+						"message" : "Enter a minimum amount of 1",
+						"target" : "NetAmount",
+						"numericSeverity" : 3
+					}]
+				});
+
+			that.oView.byId("netAmount").getBinding("text").setValue("0");
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Automatic retry of failed PATCHes, along the lines of
+	// MIT.SalesOrderCreateRelative.html, but with $auto group
+	[function () {
+		var oStatusBinding = this.oView.byId("status").getBinding("text");
+
+		this.expectChange("status", "Busy")
+			.expectRequest({
+				method : "PATCH",
+				url : "EMPLOYEES('3')",
+				headers : {"If-Match" : "ETag0"},
+				payload : {
+					"ROOM_ID" : "42", // <-- retry
+					"STATUS" : "Busy"
+				}
+			}, {/* don't care */});
+
+		oStatusBinding.setValue("Busy"); // a different field is changed
+	}, function () {
+		var oRoomIdBinding = this.oView.byId("roomId").getBinding("text");
+
+		this.expectChange("roomId", "23")
+			.expectRequest({
+				method : "PATCH",
+				url : "EMPLOYEES('3')",
+				headers : {"If-Match" : "ETag0"},
+				payload : {
+					"ROOM_ID" : "23" // <-- new change wins over retry
+				}
+			}, {/* don't care */});
+
+		oRoomIdBinding.setValue("23"); // the same field is changed again
+	}, function () {
+		var sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
+			oRoomIdBinding = this.oView.byId("roomId").getBinding("text");
+
+		this.expectRequest({
+				method : "PATCH",
+				url : "EMPLOYEES('3')",
+				headers : {"If-Match" : "ETag0"},
+				payload : {
+					"ROOM_ID" : "42" // <-- retry
+				}
+			}, {/* don't care */})
+			.expectRequest({
+				method : "POST",
+				headers : {"If-Match" : "ETag0"},
+				url : "EMPLOYEES('3')/" + sAction,
+				payload : {"TeamID" : "23"}
+			}, {/* don't care */});
+
+		// bound action also triggers retry
+		return this.oModel.bindContext(sAction + "(...)", oRoomIdBinding.getContext())
+			.setParameter("TeamID", "23")
+			.execute("$auto");
+//
+// Note: "Cannot delete due to pending changes" --> this scenario is currently impossible
+//
+//	}, function () {
+//		var oRoomIdBinding = this.oView.byId("roomId").getBinding("text");
+//
+//		this.expectRequest({
+//				method : "PATCH",
+//				url : "EMPLOYEES('3')",
+//				headers : {"If-Match" : "ETag0"},
+//				payload : {
+//					"ROOM_ID" : "42" // <-- retry
+//				}
+//			}, {/* don't care */})
+//			.expectRequest({
+//				method : "DELETE",
+//				url : "EMPLOYEES('3')",
+//				headers : {"If-Match" : "ETag0"}
+//			});
+//
+//		return oRoomIdBinding.getContext().delete(); // DELETE also triggers retry
+	}].forEach(function (fnCodeUnderTest, i) {
+		QUnit.test("Later retry failed PATCHes for $auto, " + i, function (assert) {
+			var oModel = createTeaBusiModel({updateGroupId : "$auto"}),
+				sView = '\
+<FlexBox binding="{/EMPLOYEES(\'3\')}">\
+	<Text id="roomId" text="{ROOM_ID}" />\
+	<Text id="status" text="{STATUS}" />\
+</FlexBox>',
+				that = this;
+
+			this.expectRequest("EMPLOYEES('3')", {
+					"@odata.etag" : "ETag0",
+					"ID" : "3",
+					"ROOM_ID" : "2",
+					"STATUS" : "Occupied"
+				})
+				.expectChange("roomId", "2")
+				.expectChange("status", "Occupied");
+
+			return this.createView(assert, sView, oModel).then(function () {
+				var oRoomIdBinding = that.oView.byId("roomId").getBinding("text");
+
+				that.expectChange("roomId", "42")
+					.expectRequest({
+						method : "PATCH",
+						url : "EMPLOYEES('3')",
+						headers : {"If-Match" : "ETag0"},
+						payload : {
+							"ROOM_ID" : "42"
+						}
+					}, new Error("500 Internal Server Error"))
+					.expectMessages([{
+						"code": undefined,
+						"message": "500 Internal Server Error",
+						"persistent": true,
+						"target": "",
+						"technical": true,
+						"type": "Error"
+					}, {
+						"code": undefined,
+						"message": "HTTP request was not processed because $batch failed",
+						"persistent": true,
+						"target": "",
+						"technical": true,
+						"type": "Error"
+					}]);
+				that.oLogMock.expects("error").twice(); // don't care about console here
+
+				oRoomIdBinding.setValue("42");
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				return Promise.all([
+					fnCodeUnderTest.call(that),
+					that.waitForChanges(assert)
+				]);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Immediate retry of failed PATCHes; make sure that order is preserved
+	["$auto", "group"].forEach(function (sUpdateGroupId) {
+		QUnit.test("Immediately retry failed PATCHes for " + sUpdateGroupId, function (assert) {
+			var oAgeBinding,
+				oModel = createTeaBusiModel({updateGroupId : sUpdateGroupId}),
+				oPromise,
+				fnReject,
+				oRoomIdBinding,
+				sView = '\
+<FlexBox binding="{/EMPLOYEES(\'3\')}">\
+	<Text id="age" text="{AGE}" />\
+	<Text id="roomId" text="{ROOM_ID}" />\
+	<Text id="status" text="{STATUS}" />\
+</FlexBox>',
+				that = this;
+
+			this.expectRequest("EMPLOYEES('3')", {
+					"@odata.etag" : "ETag0",
+					"ID" : "3",
+					"AGE" : 66,
+					"ROOM_ID" : "2",
+					"STATUS" : "Occupied"
+				})
+				.expectChange("age", "66")
+				.expectChange("roomId", "2")
+				.expectChange("status", "Occupied");
+
+			return this.createView(assert, sView, oModel).then(function () {
+				oAgeBinding = that.oView.byId("age").getBinding("text");
+				oRoomIdBinding = that.oView.byId("roomId").getBinding("text");
+
+				that.expectChange("age", "67")
+					.expectChange("roomId", "42")
+					.expectRequest({
+						method : "PATCH",
+						url : "EMPLOYEES('3')",
+						headers : {"If-Match" : "ETag0"},
+						payload : {
+							"AGE" : 67,
+							"ROOM_ID" : "42"
+						}
+					}, new Promise(function (resolve, reject) {
+						fnReject = reject;
+					}));
+
+				oAgeBinding.setValue(67); // Happy Birthday!
+				oRoomIdBinding.setValue("42");
+				oPromise = oModel.submitBatch("group");
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				var oError = new Error("500 Internal Server Error");
+
+				that.expectChange("roomId", "23")
+					.expectRequest({
+						method : "PATCH",
+						url : "EMPLOYEES('3')",
+						headers : {"If-Match" : "ETag0"},
+						payload : {
+							"AGE" : 67,
+							"ROOM_ID" : "23"
+						}
+					}, {
+						"@odata.etag" : "ETag1",
+						"AGE" : 67,
+						"ROOM_ID" : "23"
+					}).expectMessages([{
+						"code" : undefined,
+						"message" : "500 Internal Server Error",
+						"persistent" : true,
+						"target" : "",
+						"technical" : true,
+						"type" : "Error"
+					}, {
+						"code" : undefined,
+						"message" : "HTTP request was not processed because $batch failed",
+						"persistent" : true,
+						"target" : "",
+						"technical" : true,
+						"type" : "Error"
+					}]);
+				that.oLogMock.expects("error").thrice(); // don't care about console here
+
+				oRoomIdBinding.setValue("23");
+				fnReject(oError);
+
+				return Promise.all([
+					oPromise.catch(function (oError0) {
+						assert.strictEqual(oError0, oError);
+					}),
+					oModel.submitBatch("group"),
+					that.waitForChanges(assert)
+				]);
+			}).then(function () {
+				var oStatusBinding = that.oView.byId("status").getBinding("text");
+
+				that.expectChange("status", "Busy")
+					.expectRequest({
+						method : "PATCH",
+						url : "EMPLOYEES('3')",
+						headers : {"If-Match" : "ETag1"},
+						payload : {
+							"STATUS" : "Busy"
+						}
+					}, {/* don't care */});
+
+				oStatusBinding.setValue("Busy"); // a different field is changed
+
+				return Promise.all([
+					oModel.submitBatch("group"),
+					that.waitForChanges(assert)
+				]);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: ODCB#execute waits until PATCHes are back and happens inside same $batch as retry
+	// (CPOUI5UISERVICESV3-1451)
+	QUnit.test("CPOUI5UISERVICESV3-1451: ODCB#execute after all PATCHes", function (assert) {
+		var oModel = createTeaBusiModel({updateGroupId : "$auto"}),
+			fnReject,
+			oRoomIdBinding,
+			sView = '\
+<FlexBox binding="{/EMPLOYEES(\'3\')}">\
+	<Text id="age" text="{AGE}" />\
+	<Text id="roomId" text="{ROOM_ID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('3')", {
+				"@odata.etag" : "ETag0",
+				"ID" : "3",
+				"AGE" : 66,
+				"ROOM_ID" : "2"
+			})
+			.expectChange("age", "66")
+			.expectChange("roomId", "2");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oRoomIdBinding = that.oView.byId("roomId").getBinding("text");
+
+			that.expectChange("age", "67")
+				.expectChange("roomId", "42")
+				.expectRequest({
+					method : "PATCH",
+					url : "EMPLOYEES('3')",
+					headers : {"If-Match" : "ETag0"},
+					payload : {
+						"AGE" : 67,
+						"ROOM_ID" : "42"
+					}
+				}, new Promise(function (resolve, reject) {
+					fnReject = reject;
+				}));
+
+			that.oView.byId("age").getBinding("text").setValue(67); // Happy Birthday!
+			oRoomIdBinding.setValue("42");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
+				oPromise;
+
+			function reject() {
+				that.expectMessages([
+					"500 Internal Server Error",
+					"HTTP request was not processed because $batch failed"
+				].map(function (sMessage) {
+					return {
+						"code" : undefined,
+						"message" : sMessage,
+						"persistent" : true,
+						"target" : "",
+						"technical" : true,
+						"type" : "Error"
+					};
+				}));
+				that.oLogMock.expects("error").thrice(); // don't care about console here
+
+				fnReject(new Error("500 Internal Server Error"));
+			}
+
+			that.expectRequest({
+					batchNo : 3,
+					method : "PATCH",
+					url : "EMPLOYEES('3')",
+					headers : {"If-Match" : "ETag0"},
+					payload : {
+						"AGE" : 67,
+						"ROOM_ID" : "42"
+					}
+				}, {/* don't care */})
+				.expectRequest({
+					batchNo : 3,
+					method : "POST",
+					headers : {"If-Match" : "ETag0"},
+					url : "EMPLOYEES('3')/" + sAction,
+					payload : {"TeamID" : "23"}
+				}, {/* don't care */});
+
+			// bound action waits for PATCHes and triggers retry
+			oPromise = that.oModel.bindContext(sAction + "(...)", oRoomIdBinding.getContext())
+				.setParameter("TeamID", "23")
+				.execute("$auto");
+
+			return Promise.all([
+				oPromise,
+				resolveLater(reject),
 				that.waitForChanges(assert)
 			]);
 		});

@@ -39,6 +39,8 @@ sap.ui.define([
 	 *   A template object to fill the binding, all properties are copied
 	 */
 	function ODataParentBinding(oTemplate) {
+		asODataParentBinding.call(this);
+
 		jQuery.extend(this, {
 			oCachePromise : SyncPromise.resolve(), // mimic c'tor
 			//Returns the metadata for the class that this object belongs to.
@@ -64,6 +66,22 @@ sap.ui.define([
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("initialize members for mixin", function (assert) {
+		var oBinding = new ODataParentBinding();
+
+		//TODO add missing properties introduced by oParentDataBinding
+		// members introduced by ODataParentBinding
+		assert.ok(oBinding.hasOwnProperty("iPatchCounter"));
+		assert.strictEqual(oBinding.iPatchCounter, 0);
+		assert.ok(oBinding.hasOwnProperty("bPatchSuccess"));
+		assert.strictEqual(oBinding.bPatchSuccess, true);
+
+		// members introduced by ODataBinding; check inheritance
+		assert.ok(oBinding.hasOwnProperty("mCacheByContext"));
+		assert.strictEqual(oBinding.mCacheByContext, undefined);
 	});
 
 	//*********************************************************************************************
@@ -2336,15 +2354,141 @@ sap.ui.define([
 		// code under test
 		oBinding.removeReadGroupLock();
 	});
-	//TODO Fix issue with ODataModel.integration.qunit
-	//  "suspend/resume: list binding with nested context binding, only context binding is adapted"
-	//TODO ODLB#resumeInternal: checkUpdate on dependent bindings of header context after change
-	//  event (see ODLB#reset)
-	//TODO check: resumeInternal has no effect for operations
-	//TODO check/update jsdoc change-event for ODParentBinding#resume
-	//TODO error handling for write APIs, refresh
-	//   (change only in resume is probably not sufficient)
-	//TODO Performance: Compare previous aggregated query options with current state and
-	// do not recreate cache if there is no diff (e.g no UI change applied, UI change
-	// does not affect current $expand/$select)
+
+	//*********************************************************************************************
+	[{}, {$$patchWithoutSideEffects : true}].forEach(function (mParameters, i) {
+		QUnit.test("isPatchWithoutSideEffects: " + i, function (assert) {
+			var oBinding = new ODataParentBinding({
+					mParameters : mParameters
+				});
+
+			// code under test
+			assert.strictEqual(oBinding.isPatchWithoutSideEffects(),
+				!!mParameters.$$patchWithoutSideEffects);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("attachPatchCompleted/detachPatchCompleted", function (assert) {
+		var oBinding = new ODataParentBinding({
+				attachEvent : function () {},
+				detachEvent : function () {}
+			}),
+			oBindingMock = this.mock(oBinding),
+			fnFunction = {},
+			oListener = {};
+
+		oBindingMock.expects("attachEvent")
+			.withExactArgs("patchCompleted", sinon.match.same(fnFunction),
+				sinon.match.same(oListener));
+
+		// code under test
+		oBinding.attachPatchCompleted(fnFunction, oListener);
+
+		oBindingMock.expects("detachEvent")
+			.withExactArgs("patchCompleted", sinon.match.same(fnFunction),
+				sinon.match.same(oListener));
+
+		// code under test
+		oBinding.detachPatchCompleted(fnFunction, oListener);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("attachPatchSent/detachPatchSent", function (assert) {
+		var oBinding = new ODataParentBinding({
+				attachEvent : function () {},
+				detachEvent : function () {}
+			}),
+			oBindingMock = this.mock(oBinding),
+			fnFunction = {},
+			oListener = {};
+
+		oBindingMock.expects("attachEvent")
+			.withExactArgs("patchSent", sinon.match.same(fnFunction), sinon.match.same(oListener));
+
+		// code under test
+		oBinding.attachPatchSent(fnFunction, oListener);
+
+		oBindingMock.expects("detachEvent")
+			.withExactArgs("patchSent", sinon.match.same(fnFunction), sinon.match.same(oListener));
+
+		// code under test
+		oBinding.detachPatchSent(fnFunction, oListener);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("firePatchSent/firePatchCompleted", function (assert) {
+		var oBinding = new ODataParentBinding({
+				fireEvent : function () {}
+			}),
+			oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("fireEvent").withExactArgs("patchSent");
+
+		// code under test
+		oBinding.firePatchSent();
+
+		// if there is a sequence of firePatchSent calls, the event is fired only for the first call
+		// code under test
+		oBinding.firePatchSent();
+
+		// code under test
+		oBinding.firePatchSent();
+
+		// firePatchCompleted triggers a patchCompleted event only if firePatchCompleted is called
+		// as often as firePatchSent
+		// code under test
+		oBinding.firePatchCompleted(true);
+
+		// code under test
+		oBinding.firePatchCompleted(true);
+
+		oBindingMock.expects("fireEvent").withExactArgs("patchCompleted", {success : true});
+
+		// code under test
+		oBinding.firePatchCompleted(true);
+
+		// code under test
+		assert.throws(function () {
+			oBinding.firePatchCompleted();
+		}, new Error("Completed more PATCH requests than sent"));
+
+		oBindingMock.expects("fireEvent").withExactArgs("patchSent");
+
+		// code under test
+		oBinding.firePatchSent();
+
+		// code under test
+		oBinding.firePatchSent();
+
+		// if at least one PATCH failed patchCompleted event is fired with success = false
+		// code under test
+		oBinding.firePatchCompleted(false);
+
+		oBindingMock.expects("fireEvent").withExactArgs("patchCompleted", {success : false});
+
+		// code under test
+		oBinding.firePatchCompleted(true);
+
+		oBindingMock.expects("fireEvent").withExactArgs("patchSent");
+
+		// code under test - bPatchSuccess is reset after patchCompleted event is fired
+		oBinding.firePatchSent();
+
+		oBindingMock.expects("fireEvent").withExactArgs("patchCompleted", {success : true});
+
+		// code under test - bPatchSuccess is reset after patchCompleted event is fired
+		oBinding.firePatchCompleted(true);
+	});
 });
+//TODO Fix issue with ODataModel.integration.qunit
+//  "suspend/resume: list binding with nested context binding, only context binding is adapted"
+//TODO ODLB#resumeInternal: checkUpdate on dependent bindings of header context after change
+//  event (see ODLB#reset)
+//TODO check: resumeInternal has no effect for operations
+//TODO check/update jsdoc change-event for ODParentBinding#resume
+//TODO error handling for write APIs, refresh
+//   (change only in resume is probably not sufficient)
+//TODO Performance: Compare previous aggregated query options with current state and
+// do not recreate cache if there is no diff (e.g no UI change applied, UI change
+// does not affect current $expand/$select)

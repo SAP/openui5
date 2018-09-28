@@ -148,7 +148,6 @@ sap.ui.define([
 					MessageToast.show("Sales order " + sSalesOrderID + " confirmed");
 				}, function (oError) {
 					oView.setBusy(false);
-					MessageBox.error(oError.message);
 				});
 				oSalesOrderContext.refresh(undefined, true);
 			}
@@ -257,8 +256,6 @@ sap.ui.define([
 
 			oContext.delete(oContext.getModel().getGroupId()).then(function () {
 				MessageBox.success("Deleted Business Partner");
-			}, function (oError) {
-				MessageBox.error("Could not delete Business Partner: " + oError.message);
 			});
 		},
 
@@ -276,9 +273,6 @@ sap.ui.define([
 				oSalesOrderContext.delete(oSalesOrderContext.getModel().getGroupId())
 					.then(function () {
 						MessageBox.success("Deleted Sales Order " + sOrderID);
-					}, function (oError) {
-						MessageBox.error("Could not delete Sales Order " + sOrderID + ": "
-							+ oError.message);
 					});
 			}
 
@@ -307,9 +301,6 @@ sap.ui.define([
 						// item removed, remove context of dependent bindings and hide details
 						that._setSalesOrderLineItemBindingContext();
 						that.refreshSingle();
-					}, function (oError) {
-						MessageBox.error("Could not delete Sales Order " + sSalesOrderLineItem
-							+ ": " + oError.message);
 					});
 			}
 
@@ -333,8 +324,6 @@ sap.ui.define([
 				oTable.removeSelections();
 				oUiModel.setProperty("/bScheduleSelected", false);
 				MessageBox.success("Deleted " + aPromises.length + " Sales Order Schedule(s)");
-			}, function (oError) {
-				MessageBox.error("Could not delete a Sales Order Schedule: " + oError.message);
 			});
 		},
 

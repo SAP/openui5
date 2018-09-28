@@ -14,9 +14,7 @@ sap.ui.define([
 	return sap.ui.controller("sap.ui.core.sample.odata.v4.SalesOrdersRTATest.Main", {
 
 		onInit : function () {
-			var bRealOData = TestUtils.isRealOData(),
-				oAdaptSalesOrdersButton = new Button({
-					enabled : bRealOData,
+			var oAdaptSalesOrdersButton = new Button({
 					icon : "sap-icon://settings",
 					id : "AdaptUISalesOrdersTable",
 					press : this.onAdaptSalesOrders.bind(this),
@@ -29,21 +27,18 @@ sap.ui.define([
 			this.byId("SalesOrdersToolbar").addContent(oAdaptSalesOrdersButton);
 
 			this.byId("SalesOrderDetailsToolbar").addContent(new Button({
-				enabled : bRealOData,
 				icon : "sap-icon://settings",
 				id : "AdaptUISalesOrdersDetails",
 				press : this.onAdaptSODetails.bind(this),
 				tooltip : "Adapt Sales Order Details"
 			}));
 			this.byId("BusinessPartner").addContent(new Button({
-				enabled : bRealOData,
 				icon : "sap-icon://settings",
 				id : "AdaptUIBusinessPartner",
 				press : this.onAdaptBusinessPartner.bind(this),
 				tooltip : "Adapt Business Partner Table"
 			}));
 			this.byId("SalesOrderLineItemsTitleToolbar").addContent(new Button({
-				enabled : bRealOData,
 				icon : "sap-icon://settings",
 				id : "AdaptUISalesOrderLineItems",
 				press : this.onAdaptSalesOrderItems.bind(this),
@@ -55,7 +50,7 @@ sap.ui.define([
 		/**
 		 * Adapt the given container control like table or form
 		 *
-		 * @param {oControl} [oContainerControl]
+		 * @param {oControl} [oControl]
 		 *   The Container control
 		 * @param {number} [iStart]
 		 *   Index in the "items" or "content" aggregation of the container control: controls can be
