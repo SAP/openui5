@@ -40,8 +40,11 @@ sap.ui.define([
 		URI) {
 	"use strict";
 
-	var sClassName = "sap.ui.model.odata.v4.ODataModel",
-		rApplicationGroupID = /^\w+$/,
+	var rApplicationGroupID = /^\w+$/,
+		sClassName = "sap.ui.model.odata.v4.ODataModel",
+		// system query options allowed within a $expand query option
+		aExpandQueryOptions = ["$count", "$expand", "$filter", "$levels", "$orderby", "$search",
+			"$select"],
 		rGroupID = /^(\$auto(\.\w+)?|\$direct|\w+)$/,
 		MessageType = coreLibrary.MessageType,
 		aMessageTypes = [
@@ -69,9 +72,6 @@ sap.ui.define([
 		},
 		// system query options allowed in mParameters
 		aSystemQueryOptions = ["$apply", "$count", "$expand", "$filter", "$orderby", "$search",
-			"$select"],
-		// system query options allowed within a $expand query option
-		aExpandQueryOptions = ["$count", "$expand", "$filter", "$levels", "$orderby", "$search",
 			"$select"];
 
 	/**
@@ -278,7 +278,7 @@ sap.ui.define([
 							fnOnCreateGroup : function (sGroupId) {
 								if (that.isAutoGroup(sGroupId)) {
 									sap.ui.getCore().addPrerenderingTask(
-										that._submitBatch.bind(that, sGroupId));
+										that._submitBatch.bind(that, sGroupId, true));
 								}
 							},
 							fnReportBoundMessages : this.reportBoundMessages.bind(this),
@@ -305,13 +305,16 @@ sap.ui.define([
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
+	 * @param {boolean} [bCatch=false]
+	 *   Whether the returned promise always resolves and never rejects
 	 * @returns {Promise}
 	 *   A promise on the outcome of the HTTP request resolving with <code>undefined</code>; it is
-	 *   rejected with an error if the batch request itself fails
+	 *   rejected with an error if the batch request itself fails. Use <code>bCatch</code> to catch
+	 *   that error and make the promise resolve with <code>undefined</code> instead.
 	 *
 	 * @private
 	 */
-	ODataModel.prototype._submitBatch = function (sGroupId) {
+	ODataModel.prototype._submitBatch = function (sGroupId, bCatch) {
 		var bBlocked,
 			oPromise,
 			that = this;
@@ -334,7 +337,9 @@ sap.ui.define([
 			});
 			return that.oRequestor.submitBatch(sGroupId).catch(function (oError) {
 				that.reportError("$batch failed", sClassName, oError);
-				throw oError;
+				if (!bCatch) {
+					throw oError;
+				}
 			});
 		}));
 	};
@@ -439,6 +444,9 @@ sap.ui.define([
 	 *   context.
 	 * @param {boolean} [mParameters.$$ownRequest]
 	 *   Whether the binding always uses an own service request to read its data; only the value
+	 *   <code>true</code> is allowed.
+	 * @param {boolean} [mParameters.$$patchWithoutSideEffects]
+	 *   Whether implicit loading of side effects via PATCH requests is switched off; only the value
 	 *   <code>true</code> is allowed.
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
@@ -1075,18 +1083,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Method not supported
-	 *
-	 * @throws {Error}
-	 *
-	 * @private
-	 * @see sap.ui.model.Model#isList
-	 */
-	ODataModel.prototype.isList = function () {
-		throw new Error("Unsupported operation: v4.ODataModel#isList");
-	};
-
-	/**
 	 * Determines whether the given group ID uses mode {@link sap.ui.model.odata.v4.SubmitMode.Auto}
 	 *
 	 * @param {string} sGroupId
@@ -1111,6 +1107,18 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.isDirectGroup = function (sGroupId) {
 		return this.getGroupProperty(sGroupId, "submit") === SubmitMode.Direct;
+	};
+
+	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 *
+	 * @private
+	 * @see sap.ui.model.Model#isList
+	 */
+	ODataModel.prototype.isList = function () {
+		throw new Error("Unsupported operation: v4.ODataModel#isList");
 	};
 
 	/**
@@ -1200,18 +1208,21 @@ sap.ui.define([
 	 * @param {string} sResourcePath
 	 *   The resource path of the cache that saw the messages
 	 * @param {object} mPathToODataMessages
-	 *   Maps a resource path with key predicates to an array of messages. The messages have at
-	 *   least following properties:
+	 *   Maps a cache-relative path with key predicates to an array of messages with the following
+	 *   properties:
 	 *   {string} code - The error code
-	 *   {string} longtextUrl - The absolute URL for the message's long text
+	 *   {string} [longtextUrl] - The absolute URL for the message's long text
 	 *   {string} message - The message text
 	 *   {number} numericSeverity
 	 *      The numeric message severity (1 for "success", 2 for "info", 3 for "warning" and 4 for
 	 *      "error")
-	 *   {string} target - The target for the message relative to the resource path with key
-	 *      predicates
-	 *   {boolean} transition - Whether the message is reported as <code>persistent=true</code> and
-	 *      therefore needs to be managed by the application
+	 *   {boolean} [technical]
+	 *      Whether the message is reported as <code>technical</code> (used by reportError)
+	 *   {string} target
+	 *      The relative target for the message; the reported target path is a concatenation of the
+	 *      resource path, the cache-relative path and this property
+	 *   {boolean} [transition] - Whether the message is reported as <code>persistent=true</code>
+	 *      and therefore needs to be managed by the application
 	 * @param {string[]} [aCachePaths]
 	 *    An array of cache-relative paths of the entities for which non-persistent messages have to
 	 *    be removed; if the array is not given, all entities are affected
@@ -1225,11 +1236,9 @@ sap.ui.define([
 			aOldMessages = [],
 			that = this;
 
-		Object.keys(mPathToODataMessages).forEach(function (sKeyPredicateTreePath) {
-			mPathToODataMessages[sKeyPredicateTreePath].forEach(function (oRawMessage) {
-				var sTarget = sDataBindingPath
-						+ sKeyPredicateTreePath
-						+ (oRawMessage.target ? "/" + oRawMessage.target : "");
+		Object.keys(mPathToODataMessages).forEach(function (sCachePath) {
+			mPathToODataMessages[sCachePath].forEach(function (oRawMessage) {
+				var sTarget = _Helper.buildPath(sDataBindingPath, sCachePath, oRawMessage.target);
 
 				aNewMessages.push(new Message({
 					code : oRawMessage.code,
@@ -1238,7 +1247,7 @@ sap.ui.define([
 					persistent : oRawMessage.transition,
 					processor : that,
 					target : sTarget,
-					technical : false,
+					technical : oRawMessage.technical,
 					type : aMessageTypes[oRawMessage.numericSeverity] || MessageType.None
 				}));
 			});
@@ -1265,7 +1274,7 @@ sap.ui.define([
 	/**
 	 * Reports a technical error by firing a <code>messageChange</code> event with a new message and
 	 * logging the error to the console. Takes care that the error is only reported once via the
-	 * <code>messageChange</code> event.
+	 * <code>messageChange</code> event. Existing messages remain untouched.
 	 *
 	 * @param {string} sLogMessage
 	 *   The message to write to the console log
@@ -1278,11 +1287,62 @@ sap.ui.define([
 	 *   console with level DEBUG; example: errors caused by cancellation of backend requests.
 	 *   For the string value "noDebugLog", the method does nothing; example: errors caused by
 	 *   suspended bindings.
+	 * @param {object} [oError.error]
+	 *   An error response as sent from the OData server
+	 * @param {object[]} [oError.error.details]
+	 *   A list of detail messages sent from the OData server. These messages are reported, too.
+	 * @param {string} [oError.requestUrl]
+	 *   The request URL of the failed OData request, added by the requestor; it is required to
+	 *   resolve a longtextUrl.
+	 * @param {string} [oError.resourcePath]
+	 *   The resource path by which the resource causing the error has originally been requested;
+	 *   since a request can fail before reaching the server this may be set even if there is no
+	 *   error property
 	 *
 	 * @private
 	 */
 	ODataModel.prototype.reportError = function (sLogMessage, sReportingClassName, oError) {
-		var sDetails;
+		var aBoundMessages = [],
+			sDetails,
+			sResourcePath,
+			aUnboundMessages = [];
+
+		/*
+		 * Clones the message object taking all relevant properties, converts the annotations for
+		 * numeric severity and longtext to the corresponding properties and adds it to one of the
+		 * arrays to be reported later.
+		 * @param {object} oMessage The message
+		 */
+		function addMessage(oMessage) {
+			var oReportMessage = {
+					code : oMessage.code,
+					message : oMessage.message,
+					target : oMessage.target,
+					technical : oMessage.technical
+				};
+
+			Object.keys(oMessage).forEach(function (sProperty) {
+				if (sProperty[0] === '@') {
+					if (sProperty.endsWith(".numericSeverity")) {
+						oReportMessage.numericSeverity = oMessage[sProperty];
+					} else if (sProperty.endsWith(".longtextUrl")) {
+						oReportMessage.longtextUrl =
+							_Helper.makeAbsolute(oMessage[sProperty], oError.requestUrl);
+					}
+				}
+			});
+
+			if (typeof oReportMessage.target !== "string") {
+				aUnboundMessages.push(oReportMessage);
+			} else if (oReportMessage.target[0] === "$") {
+				oReportMessage.message = oReportMessage.target + ": " + oReportMessage.message;
+				delete oReportMessage.target;
+				aUnboundMessages.push(oReportMessage);
+			} else {
+				oReportMessage.transition = true;
+				aBoundMessages.push(oReportMessage);
+			}
+		}
 
 		if (oError.canceled === "noDebugLog") {
 			return;
@@ -1303,16 +1363,23 @@ sap.ui.define([
 			return;
 		}
 		oError.$reported = true;
-		this.fireMessageChange({
-			newMessages : [new Message({
-				message : oError.message,
-				processor : this,
-				persistent : true,
-				target : "",
-				technical : true,
-				type : "Error"
-			})]
-		});
+
+		if (oError.error) {
+			oError.error["@.numericSeverity"] = 4; //"Error"
+			oError.error.technical = true;
+			addMessage(oError.error);
+			if (oError.error.details) {
+				oError.error.details.forEach(addMessage);
+			}
+			sResourcePath = oError.resourcePath.split("?")[0];
+		} else {
+			oError["@.numericSeverity"] = 4; //"Error"
+			oError.technical = true;
+			addMessage(oError);
+		}
+
+		this.reportUnboundMessages(sResourcePath, aUnboundMessages);
+		this.reportBoundMessages(sResourcePath, {"" : aBoundMessages}, []);
 	};
 
 	/**
@@ -1322,7 +1389,16 @@ sap.ui.define([
 	 * @param {string} sResourcePath
 	 *   The resource path of the request whose response contained the messages
 	 * @param {object[]} [aMessages]
-	 *   The array of messages as contained in the <code>sap-messages</code> response header
+	 *   The array of messages as contained in the <code>sap-messages</code> response header with
+	 *   the following properties:
+	 *   {string} code - The error code
+	 *   {string} [longtextUrl] - The absolute URL for the message's long text
+	 *   {string} message - The message text
+	 *   {number} numericSeverity
+	 *      The numeric message severity (1 for "success", 2 for "info", 3 for "warning" and 4 for
+	 *      "error")
+	 *   {boolean} [technical]
+	 *      Whether the message is reported as <code>technical</code> (used by reportError)
 	 *
 	 * @private
 	 */
@@ -1344,7 +1420,7 @@ sap.ui.define([
 						persistent : true,
 						processor : that,
 						target : "",
-						technical : false,
+						technical : oMessage.technical,
 						type : aMessageTypes[oMessage.numericSeverity] || MessageType.None
 					});
 				})

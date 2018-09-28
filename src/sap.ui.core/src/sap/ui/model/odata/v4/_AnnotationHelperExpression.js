@@ -365,6 +365,42 @@ sap.ui.define([
 		},
 
 		/**
+		 * Handling of "14.5.3.1.2 Function odata.fillUriTemplate".
+		 *
+		 * @param {object} oPathValue
+		 *   path and value information pointing to the parameter array (see Expression object)
+		 * @returns {object}
+		 *   the result object
+		 */
+		fillUriTemplate : function (oPathValue) {
+			var i,
+				sName,
+				oParameter,
+				aParameters = oPathValue.value,
+				aParts = [],
+				sPrefix = "",
+				oResult,
+				oTemplate = Expression.parameter(oPathValue, 0, "Edm.String");
+
+			aParts.push('odata.fillUriTemplate(', Basics.resultToString(oTemplate, true), ',{');
+			for (i = 1; i < aParameters.length; i += 1) {
+				oParameter = Basics.descend(oPathValue, i, "object");
+				sName = Basics.property(oParameter, "$Name", "string");
+				oResult = Expression.expression(
+					Basics.descend(oParameter, "$LabeledElement", true/*"as expression"*/));
+				aParts.push(sPrefix, Basics.toJSON(sName), ":",
+					Basics.resultToString(oResult, true));
+				sPrefix = ",";
+			}
+			aParts.push("})");
+			return {
+				result : "expression",
+				type : "Edm.String",
+				value : aParts.join("")
+			};
+		},
+
+		/**
 		 * Formats the result to be an operand for a logical or comparison operator. Handles
 		 * constants accordingly.
 		 *
@@ -432,42 +468,6 @@ sap.ui.define([
 				}
 				throw e;
 			}
-		},
-
-		/**
-		 * Handling of "14.5.3.1.2 Function odata.fillUriTemplate".
-		 *
-		 * @param {object} oPathValue
-		 *   path and value information pointing to the parameter array (see Expression object)
-		 * @returns {object}
-		 *   the result object
-		 */
-		fillUriTemplate : function (oPathValue) {
-			var i,
-				sName,
-				aParts = [],
-				sPrefix = "",
-				oParameter,
-				aParameters = oPathValue.value,
-				oResult,
-				oTemplate = Expression.parameter(oPathValue, 0, "Edm.String");
-
-			aParts.push('odata.fillUriTemplate(', Basics.resultToString(oTemplate, true), ',{');
-			for (i = 1; i < aParameters.length; i += 1) {
-				oParameter = Basics.descend(oPathValue, i, "object");
-				sName = Basics.property(oParameter, "$Name", "string");
-				oResult = Expression.expression(
-					Basics.descend(oParameter, "$LabeledElement", true/*"as expression"*/));
-				aParts.push(sPrefix, Basics.toJSON(sName), ":",
-					Basics.resultToString(oResult, true));
-				sPrefix = ",";
-			}
-			aParts.push("})");
-			return {
-				result : "expression",
-				type : "Edm.String",
-				value : aParts.join("")
-			};
 		},
 
 		/**

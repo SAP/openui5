@@ -136,6 +136,8 @@ sap.ui.define([
 					: vCacheData, // deleting at root level
 				mHeaders,
 				sKeyPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate"),
+				sEntityPath = _Helper.buildPath(sParentPath,
+					Array.isArray(vCacheData) ? sKeyPredicate : vDeleteProperty),
 				sTransientGroup = _Helper.getPrivateAnnotation(oEntity, "transient");
 
 			if (sTransientGroup === true) {
@@ -152,7 +154,9 @@ sap.ui.define([
 			oEntity["$ui5.deleting"] = true;
 			mHeaders = {"If-Match" : oEntity};
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
-			return that.oRequestor.request("DELETE", sEditUrl, oGroupLock, mHeaders)
+			return that.oRequestor.request("DELETE", sEditUrl, oGroupLock, mHeaders, undefined,
+					undefined, undefined, undefined,
+					_Helper.buildPath(that.sResourcePath, sEntityPath))
 				.catch(function (oError) {
 					if (oError.status !== 404) {
 						delete oEntity["$ui5.deleting"];
@@ -160,8 +164,7 @@ sap.ui.define([
 					} // else: map 404 to 200
 				})
 				.then(function () {
-					var sMessagePath,
-						sPredicate;
+					var sPredicate;
 
 					if (Array.isArray(vCacheData)) {
 						if (vCacheData[vDeleteProperty] !== oEntity) {
@@ -180,7 +183,6 @@ sap.ui.define([
 						addToCount(that.mChangeListeners, sParentPath, vCacheData, -1);
 						that.iLimit -= 1;
 						fnCallback(Number(vDeleteProperty), vCacheData);
-						sMessagePath = _Helper.buildPath(sParentPath, sKeyPredicate);
 					} else {
 						if (vDeleteProperty) {
 							// set to null and notify listeners
@@ -190,9 +192,8 @@ sap.ui.define([
 							oEntity["$ui5.deleted"] = true;
 						}
 						fnCallback();
-						sMessagePath = _Helper.buildPath(sParentPath, vDeleteProperty);
 					}
-					that.oRequestor.reportBoundMessages(that.sResourcePath, [], [sMessagePath]);
+					that.oRequestor.reportBoundMessages(that.sResourcePath, [], [sEntityPath]);
 				});
 		});
 	};
@@ -220,7 +221,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Calculates the key predicate for the given entity.
+	 * Calculates the key predicate for the given entity and stores it as private annotation at the
+	 * given entity. If at least one key property is <code>undefined</code>, no private annotation
+	 * for the key predicate is created.
 	 *
 	 * @param {object} oInstance
 	 *   The instance for which to calculate the key predicate
@@ -232,11 +235,14 @@ sap.ui.define([
 	 * @private
 	 */
 	Cache.prototype.calculateKeyPredicate = function (oInstance, mTypeForMetaPath, sMetaPath) {
-		var oType = mTypeForMetaPath[sMetaPath];
+		var sPredicate,
+			oType = mTypeForMetaPath[sMetaPath];
 
 		if (oType && oType.$Key) {
-			_Helper.setPrivateAnnotation(oInstance, "predicate",
-				_Helper.getKeyPredicate(oInstance, sMetaPath, mTypeForMetaPath));
+			sPredicate = _Helper.getKeyPredicate(oInstance, sMetaPath, mTypeForMetaPath);
+			if (sPredicate) {
+				_Helper.setPrivateAnnotation(oInstance, "predicate", sPredicate);
+			}
 		}
 	};
 
@@ -267,7 +273,7 @@ sap.ui.define([
 	 * @param {string|sap.ui.base.SyncPromise} vPostPath
 	 *   The path for the POST request or a SyncPromise that resolves with that path
 	 * @param {string} sPath
-	 *   The entity's path within the cache
+	 *   The collection's path within the cache
 	 * @param {string} [oEntityData={}]
 	 *   The initial entity data
 	 * @param {function} fnCancelCallback
@@ -304,7 +310,8 @@ sap.ui.define([
 			that.addByPath(that.mPostRequests, sPath, oEntityData);
 			return SyncPromise.all([
 				that.oRequestor.request("POST", sPostPath, oPostGroupLock, null, oEntityData,
-					setCreatePending, cleanUp),
+					setCreatePending, cleanUp, undefined,
+					_Helper.buildPath(that.sResourcePath, sPath, "-1")),
 				that.fetchTypes()
 			]).then(function (aResult) {
 				var oResult = aResult[0];
@@ -324,9 +331,7 @@ sap.ui.define([
 					// for cancellation no error is reported via fnErrorCallback
 					throw oError;
 				}
-				if (fnErrorCallback) {
-					fnErrorCallback(oError);
-				}
+				fnErrorCallback(oError);
 				return request(sPostPath, new _GroupLock(
 					that.oRequestor.getGroupSubmitMode(sPostGroupId) === "API" ?
 						sPostGroupId : "$parked." + sPostGroupId));
@@ -738,13 +743,18 @@ sap.ui.define([
 	 *   Path of the entity, relative to the cache
 	 * @param {string} [sUnitOrCurrencyPath]
 	 *   Path of the unit or currency for the property, relative to the entity
+	 * @param {boolean} [bPatchWithoutSideEffects=false]
+	 *   Whether the PATCH response is ignored, except for a new ETag
+	 * @param {function} [fnPatchSent]
+	 *   The function is called just before a back-end request is sent for the first time.
+	 *   If no back-end request is needed, the function is not called.
 	 * @returns {Promise}
-	 *   A promise for the PATCH request
+	 *   A promise for the PATCH request (resolves with <code>undefined</code>)
 	 *
 	 * @public
 	 */
 	Cache.prototype.update = function (oGroupLock, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
-			sEntityPath, sUnitOrCurrencyPath) {
+			sEntityPath, sUnitOrCurrencyPath, bPatchWithoutSideEffects, fnPatchSent) {
 		var aPropertyPath = sPropertyPath.split("/"),
 			aUnitOrCurrencyPath,
 			that = this;
@@ -770,7 +780,7 @@ sap.ui.define([
 					Cache.makeUpdateData(aPropertyPath, vOldValue));
 			}
 
-			function patch(oPatchGroupLock) {
+			function patch(oPatchGroupLock, bAtFront) {
 				var oRequestLock;
 
 				/*
@@ -779,12 +789,16 @@ sap.ui.define([
 				 * this request has returned and its response is applied to the cache.
 				 */
 				function onSubmit() {
-					oRequestLock =  that.oRequestor.getModelInterface()
+					oRequestLock = that.oRequestor.getModelInterface()
 						.lockGroup(sGroupId, true, that);
+					if (fnPatchSent) {
+						fnPatchSent();
+					}
 				}
 
 				oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, oPatchGroupLock,
-					{"If-Match" : oEntity}, oUpdateData, onSubmit, onCancel);
+					{"If-Match" : oEntity}, oUpdateData, onSubmit, onCancel, /*sMetaPath*/undefined,
+					_Helper.buildPath(that.sResourcePath, sEntityPath), bAtFront);
 				that.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 				return SyncPromise.all([
 					oPatchPromise,
@@ -793,26 +807,48 @@ sap.ui.define([
 					var oPatchResult = aResult[0];
 
 					that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
-					// visit response to report the messages
-					that.visitResponse(oPatchResult, aResult[1], false,
-						_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sEntityPath)),
-						sEntityPath
-					);
+					if (!bPatchWithoutSideEffects) {
+						// visit response to report the messages
+						that.visitResponse(oPatchResult, aResult[1], false,
+							_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sEntityPath)),
+							sEntityPath
+						);
+					}
 					// update the cache with the PATCH response
 					_Helper.updateExisting(that.mChangeListeners, sEntityPath, oEntity,
-						oPatchResult);
-					return oPatchResult;
+						bPatchWithoutSideEffects
+						? {"@odata.etag" : oPatchResult["@odata.etag"]}
+						: oPatchResult);
 				}, function (oError) {
+					var sRetryGroupId = sGroupId;
+
 					that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
-					if (!oError.canceled) {
-						fnErrorCallback(oError);
-						if (that.oRequestor.getGroupSubmitMode(sGroupId) === "API") {
-							oRequestLock.unlock();
-							oRequestLock = undefined;
-							return patch(oPatchGroupLock.getUnlockedCopy());
-						}
+					if (oError.canceled) {
+						throw oError;
 					}
-					throw oError;
+
+					// Note: We arrive here only for the PATCH which was really sent to the server.
+					// The other ones which have been merged are still pending on this one!
+					// In the end, they will either succeed or be canceled.
+					fnErrorCallback(oError);
+					switch (that.oRequestor.getGroupSubmitMode(sGroupId)) {
+						case "API":
+							break;
+						case "Auto":
+							if (!that.oRequestor.hasChanges(sGroupId, oEntity)) {
+								// park PATCH until another change to this entity happens
+								// Note: At most one change per entity is parked (see above), thus
+								// order does not matter and bAtFront = true is OK!
+								sRetryGroupId = "$parked." + sGroupId;
+							}
+							break;
+						default:
+							throw oError; // no retry, just give up
+					}
+					oRequestLock.unlock();
+					oRequestLock = undefined;
+
+					return patch(new _GroupLock(sRetryGroupId), true);
 				}).finally(function () {
 					if (oRequestLock) {
 						oRequestLock.unlock();
@@ -865,8 +901,10 @@ sap.ui.define([
 					that.oRequestor.relocate(sParkedGroup, oEntity, sTransientGroup);
 				}
 				oGroupLock.unlock();
-				return Promise.resolve({});
+				return Promise.resolve();
 			}
+			// Note: there should be only *one* parked PATCH per entity, but we don't rely on that
+			that.oRequestor.relocateAll("$parked." + sGroupId, oEntity, sGroupId);
 			// send and register the PATCH request
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
 			return patch(oGroupLock);
@@ -994,7 +1032,7 @@ sap.ui.define([
 				var sCount,
 					sPropertyMetaPath = sMetaPath + "/" + sProperty,
 					vPropertyValue = oInstance[sProperty],
-					sPropertyPath = sInstancePath + "/" + sProperty;
+					sPropertyPath = _Helper.buildPath(sInstancePath, sProperty);
 
 				if (sProperty.endsWith("@odata.mediaReadLink")) {
 					oInstance[sProperty] = _Helper.makeAbsolute(vPropertyValue, sContextUrl);
@@ -1027,9 +1065,6 @@ sap.ui.define([
 			visitArray(oRoot.value, sRootMetaPath || this.sMetaPath, "",
 				buildContextUrl(sRequestUrl, oRoot["@odata.context"]));
 		} else if (oRoot && typeof oRoot === "object") {
-			if (sRootPath && sRootPath[0] !== "(") {
-				sRootPath = "/" + sRootPath;
-			}
 			visitInstance(oRoot, sRootMetaPath || this.sMetaPath, sRootPath || "", sRequestUrl);
 		}
 		if (bHasMessages) {
@@ -1610,13 +1645,13 @@ sap.ui.define([
 		var that = this;
 
 		that.registerChange("", oListener);
-		if (!this.oPromise) {
+		if (this.oPromise) {
+			oGroupLock.unlock();
+		} else {
 			this.oPromise = SyncPromise.resolve(this.oRequestor.request("GET",
 				this.sResourcePath + this.sQueryString, oGroupLock, undefined, undefined,
 				fnDataRequested, undefined, this.sMetaPath));
 			this.bSentReadRequest = true;
-		} else {
-			oGroupLock.unlock();
 		}
 		return this.oPromise.then(function (oResult) {
 			that.checkActive();
@@ -1708,7 +1743,9 @@ sap.ui.define([
 			that = this;
 
 		this.registerChange(sPath, oListener);
-		if (!this.oPromise) {
+		if (this.oPromise) {
+			oGroupLock.unlock();
+		} else {
 			if (this.bPost) {
 				throw new Error("Cannot fetch a value before the POST request");
 			}
@@ -1722,8 +1759,6 @@ sap.ui.define([
 				return aResult[0];
 			});
 			this.bSentReadRequest = true;
-		} else {
-			oGroupLock.unlock();
 		}
 		return this.oPromise.then(function (oResult) {
 			that.checkActive();
@@ -1754,7 +1789,8 @@ sap.ui.define([
 	 * @public
 	 */
 	SingleCache.prototype.post = function (oGroupLock, oData, oEntity) {
-		var sHttpMethod = "POST",
+		var sGroupId = oGroupLock.getGroupId(),
+			sHttpMethod = "POST",
 			aPromises,
 			that = this;
 
@@ -1767,6 +1803,10 @@ sap.ui.define([
 		if (this.bPosting) {
 			throw new Error("Parallel POST requests not allowed");
 		}
+
+		// Note: there should be only *one* parked PATCH per entity, but we don't rely on that
+		this.oRequestor.relocateAll("$parked." + sGroupId, oEntity, sGroupId);
+
 		if (oData) {
 			sHttpMethod = oData["X-HTTP-Method"] || sHttpMethod;
 			delete oData["X-HTTP-Method"];
@@ -1792,6 +1832,7 @@ sap.ui.define([
 			throw oError;
 		});
 		this.bPosting = true;
+
 		return this.oPromise;
 	};
 

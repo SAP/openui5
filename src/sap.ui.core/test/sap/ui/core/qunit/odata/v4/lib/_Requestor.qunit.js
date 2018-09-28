@@ -293,7 +293,8 @@ sap.ui.define([
 
 			oHelperMock.expects("createError")
 				.exactly(bSuccess || o.bReadFails ? 0 : 1)
-				.withExactArgs(sinon.match.same(oTokenRequiredResponse))
+				.withExactArgs(sinon.match.same(oTokenRequiredResponse), "/Service/foo",
+					"original/path")
 				.returns(oError);
 			oHelperMock.expects("resolveIfMatchHeader").exactly(o.iRequests)
 				.withExactArgs(sinon.match.same(mHeaders))
@@ -351,7 +352,7 @@ sap.ui.define([
 				});
 			}
 
-			return oRequestor.sendRequest("FOO", "foo", mHeaders, "payload")
+			return oRequestor.sendRequest("FOO", "foo", mHeaders, "payload", "original/path")
 				.then(function (oPayload) {
 					assert.ok(bSuccess, "success possible");
 					assert.strictEqual(oPayload.contentType, "application/json");
@@ -548,7 +549,7 @@ sap.ui.define([
 				.withExactArgs("METHOD", "~Employees~?custom=value", {
 						"header" : "value",
 						"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
-					}, JSON.stringify(oChangedPayload))
+					}, JSON.stringify(oChangedPayload), "~Employees~?custom=value")
 				.resolves(oResponse);
 			this.mock(oRequestor).expects("reportUnboundMessages")
 				.withExactArgs(oResponse.resourcePath, sinon.match.same(oResponse.messages));
@@ -759,6 +760,44 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("request: sOriginalPath, $direct", function (assert) {
+		var sOriginalPath = "TEAM('0')/TEAM_2_EMPLOYEES",
+			oRequestor = _Requestor.create("/", oModelInterface);
+
+		this.mock(oRequestor).expects("sendRequest")
+			.withExactArgs("POST", "EMPLOYEES", sinon.match.object, sinon.match.string,
+				sOriginalPath)
+			.returns(Promise.resolve({}));
+
+		// code under test
+		return oRequestor.request("POST", "EMPLOYEES", new _GroupLock("$direct"), {}, {}, undefined,
+			undefined, undefined, sOriginalPath);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("request: sOriginalPath, $batch", function (assert) {
+		var sOriginalPath = "TEAM('0')/TEAM_2_EMPLOYEES",
+			oRequestor = _Requestor.create("/", oModelInterface),
+			oResponse = {
+				status : 500
+			};
+
+		this.mock(oRequestor).expects("sendBatch")
+			// do not check parameters
+			.returns(Promise.resolve([oResponse]));
+		this.mock(_Helper).expects("createError")
+			.withExactArgs(sinon.match.same(oResponse), "EMPLOYEES", sOriginalPath)
+			.returns(new Error());
+
+		// code under test
+		return Promise.all([
+			oRequestor.request("POST", "EMPLOYEES", new _GroupLock("group"), {}, {}, undefined,
+				undefined, undefined, sOriginalPath).catch(function () {}),
+			oRequestor.submitBatch("group")
+		]);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("request(...): batch group id", function (assert) {
 		var oGroupLock = new _GroupLock("group"),
 			oRequestor = _Requestor.create("/", oModelInterface);
@@ -770,6 +809,11 @@ sap.ui.define([
 			{"c" : "d"});
 		oRequestor.request("PATCH", "EntitySet3", new _GroupLock("$auto"), {"header" : "value"},
 			{"e" : "f"});
+		oRequestor.request("PATCH", "EntitySet4", new _GroupLock("$auto"), {"header" : "beAtFront"},
+			{"g" : "h"}, undefined, undefined, undefined, undefined, /*bAtFront*/true);
+		oRequestor.request("GET", "EntitySet5", new _GroupLock("$auto"));
+		oRequestor.request("GET", "EntitySet6", new _GroupLock("$auto"), undefined, undefined,
+			undefined, undefined, undefined, undefined, /*bAtFront*/true);
 
 		TestUtils.deepContains(oRequestor.mBatchQueue, {
 			"group" : [
@@ -792,12 +836,25 @@ sap.ui.define([
 			"$auto" : [
 				[/*change set!*/{
 					method : "PATCH",
+					url : "EntitySet4",
+					headers : {
+						"header" : "beAtFront"
+					},
+					body : {"g" : "h"}
+				}, {
+					method : "PATCH",
 					url : "EntitySet3",
 					headers : {
 						"header" : "value"
 					},
 					body : {"e" : "f"}
-				}]
+				}], {
+					method : "GET",
+					url : "EntitySet5"
+				}, { // bAtFront is ignored for GET
+					method : "GET",
+					url : "EntitySet6"
+				}
 			]
 		});
 	});
@@ -910,12 +967,26 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("submitBatch(...): with empty group", function (assert) {
-		var oRequestor = _Requestor.create();
+		var oBody = {},
+			oRequestor = _Requestor.create("/Service/", oModelInterface);
 
-		this.mock(oRequestor).expects("request").never();
+		this.mock(oRequestor).expects("sendBatch").never();
 
 		return oRequestor.submitBatch("testGroupId").then(function (oResult) {
+			var oPromise;
+
 			assert.deepEqual(oResult, undefined);
+
+			oPromise = oRequestor.request("POST", "Customers", new _GroupLock("testGroupId"), {},
+				oBody, undefined, function () {});
+			oRequestor.removePost("testGroupId", oBody);
+
+			return Promise.all([
+				oPromise.catch(function (oError) {
+					assert.ok(oError.canceled);
+				}),
+				oRequestor.submitBatch("testGroupId")
+			]);
 		});
 	});
 
@@ -937,6 +1008,7 @@ sap.ui.define([
 				$promise : sinon.match.defined,
 				$reject : sinon.match.func,
 				$resolve : sinon.match.func,
+				$resourcePath : "~Customers",
 				$submit : undefined
 			}, {
 				method : "DELETE",
@@ -952,6 +1024,7 @@ sap.ui.define([
 				$promise : sinon.match.defined,
 				$reject : sinon.match.func,
 				$resolve : sinon.match.func,
+				$resourcePath : "~SalesOrders('42')",
 				$submit : undefined
 			}], {
 				method : "GET",
@@ -968,6 +1041,7 @@ sap.ui.define([
 				$promise : sinon.match.defined,
 				$reject : sinon.match.func,
 				$resolve : sinon.match.func,
+				$resourcePath : "~Products",
 				$submit : undefined
 			}],
 			aPromises = [],
@@ -1212,6 +1286,7 @@ sap.ui.define([
 					$promise : sinon.match.defined,
 					$reject : sinon.match.func,
 					$resolve : sinon.match.func,
+					$resourcePath : "Products",
 					$submit : undefined
 				}],
 				oGetProductsPromise,
@@ -1892,24 +1967,23 @@ sap.ui.define([
 	QUnit.test("relocate", function (assert) {
 		var oBody1 = {},
 			oBody2 = {},
-			fnCancel = this.spy(),
-			oExpectedHeader = {
-				"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
-				"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
-				"foo" : "bar"
-			},
-			oHeaders = {foo : "bar"},
+			fnCancel1 = assert.ok.bind(assert, false),
+			fnCancel2 = assert.ok.bind(assert, false),
+			mExpectedHeaders = sinon.match.has("foo", "bar"),
+			mHeaders = {foo : "bar"},
 			oCreatePromise1,
 			oCreatePromise2,
 			oError = new Error("Post failed"),
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oRequestorMock = this.mock(oRequestor),
-			fnSubmit = this.spy();
+			oResult = {},
+			fnSubmit1 = assert.ok.bind(assert, false),
+			fnSubmit2 = assert.ok.bind(assert, false);
 
 		oCreatePromise1 = oRequestor.request("POST", "Employees", new _GroupLock("$parked.$auto"),
-			oHeaders, oBody1, fnSubmit, fnCancel);
+			mHeaders, oBody1, fnSubmit1, fnCancel1);
 		oCreatePromise2 = oRequestor.request("POST", "Employees", new _GroupLock("$parked.$auto"),
-			oHeaders, oBody2, fnSubmit, fnCancel);
+			mHeaders, oBody2, fnSubmit2, fnCancel2);
 
 		assert.throws(function () {
 			// code under test
@@ -1922,9 +1996,9 @@ sap.ui.define([
 		}, new Error("Request not found in group '$parked.$auto'"));
 
 		oRequestorMock.expects("request")
-			.withExactArgs("POST", "Employees", new _GroupLock("$auto"), oExpectedHeader,
-				sinon.match.same(oBody2), fnSubmit, fnCancel)
-			.resolves();
+			.withExactArgs("POST", "Employees", new _GroupLock("$auto"), mExpectedHeaders,
+				sinon.match.same(oBody2), sinon.match.same(fnSubmit2), sinon.match.same(fnCancel2))
+			.resolves(oResult);
 
 		// code under test
 		oRequestor.relocate("$parked.$auto", oBody2, "$auto");
@@ -1932,20 +2006,145 @@ sap.ui.define([
 		assert.strictEqual(oRequestor.mBatchQueue["$parked.$auto"][0].length, 1, "one left");
 		assert.strictEqual(oRequestor.mBatchQueue["$parked.$auto"][0][0].body, oBody1);
 
-		return oCreatePromise2.then(function () {
+		return oCreatePromise2.then(function (oResult0) {
+			assert.strictEqual(oResult0, oResult);
+
 			oRequestorMock.expects("request")
-				.withExactArgs("POST", "Employees", new _GroupLock("$auto"), oExpectedHeader,
-					sinon.match.same(oBody1), fnSubmit, fnCancel)
+				.withExactArgs("POST", "Employees", new _GroupLock("$auto"), mExpectedHeaders,
+					sinon.match.same(oBody1), sinon.match.same(fnSubmit1),
+					sinon.match.same(fnCancel1))
 				.rejects(oError);
 
 			// code under test
 			oRequestor.relocate("$parked.$auto", oBody1, "$auto");
 
-			return oCreatePromise1.then(undefined, function (oError0) {
+			return oCreatePromise1.then(function () {
+				assert.ok(false);
+			}, function (oError0) {
 				assert.strictEqual(oError0, oError);
-				assert.strictEqual(oRequestor.mBatchQueue["$parked.$auto"], undefined);
+				assert.deepEqual(oRequestor.mBatchQueue["$parked.$auto"], [[]]);
 			});
-		}, undefined);
+		});
+	});
+
+	//*****************************************************************************************
+	QUnit.test("relocateAll, hasChanges", function (assert) {
+		var oBody1 = {key : "value 1"},
+			oBody2 = {key : "value 2"},
+			fnCancel1 = assert.ok.bind(assert, false),
+			fnCancel2 = assert.ok.bind(assert, false),
+			oEntity = {},
+			mExpectedHeaders = sinon.match.has("If-Match", sinon.match.same(oEntity)),
+			aPromises = [],
+			oRequestor = _Requestor.create("/Service/", oModelInterface),
+			oRequestorMock = this.mock(oRequestor),
+			fnSubmit1 = assert.ok.bind(assert, false),
+			fnSubmit2 = assert.ok.bind(assert, false),
+			oYetAnotherEntity = {};
+
+		aPromises.push(oRequestor.request("PATCH", "Employees('1')",
+			new _GroupLock("$parked.$auto"), {"If-Match" : oEntity}, oBody1, fnSubmit1, fnCancel1));
+		aPromises.push(oRequestor.request("DELETE", "Employees('2')",
+			new _GroupLock("$parked.$auto"), {"If-Match" : oYetAnotherEntity}));
+		aPromises.push(oRequestor.request("PATCH", "Employees('1')",
+			new _GroupLock("$parked.$auto"), {"If-Match" : oEntity}, oBody2, fnSubmit2, fnCancel2));
+
+		// code under test
+		oRequestor.relocateAll("$parked.unused", oEntity, "$auto");
+
+		// code under test
+		oRequestor.relocateAll("$parked.$auto", {/* some other entity */}, "unexpected");
+
+		// code under test
+		assert.strictEqual(oRequestor.hasChanges("$parked.$auto", oEntity), true);
+
+		// code under test
+		assert.strictEqual(oRequestor.hasChanges("$parked.unused", oEntity), false);
+
+		oRequestorMock.expects("request")
+			.withExactArgs("PATCH", "Employees('1')", new _GroupLock("$auto"), mExpectedHeaders,
+				sinon.match.same(oBody1), sinon.match.same(fnSubmit1), sinon.match.same(fnCancel1))
+			.resolves();
+		oRequestorMock.expects("request")
+			.withExactArgs("PATCH", "Employees('1')", new _GroupLock("$auto"), mExpectedHeaders,
+				sinon.match.same(oBody2), sinon.match.same(fnSubmit2), sinon.match.same(fnCancel2))
+			.resolves();
+
+		// code under test
+		oRequestor.relocateAll("$parked.$auto", oEntity, "$auto");
+
+		// code under test
+		assert.strictEqual(oRequestor.hasChanges("$parked.$auto", oEntity), false);
+
+		// code under test: must not unpark anything again
+		oRequestor.relocateAll("$parked.$auto", oEntity, "unexpected");
+
+		// code under test
+		assert.strictEqual(oRequestor.hasChanges("$parked.$auto", oYetAnotherEntity), true);
+
+		oRequestorMock.expects("request")
+			.withExactArgs("DELETE", "Employees('2')", new _GroupLock("$auto"),
+				sinon.match.has("If-Match", sinon.match.same(oYetAnotherEntity)), undefined,
+				undefined, undefined)
+			.resolves();
+
+		// code under test
+		oRequestor.relocateAll("$parked.$auto", oYetAnotherEntity, "$auto");
+
+		// code under test
+		assert.strictEqual(oRequestor.hasChanges("$parked.$auto", oYetAnotherEntity), false);
+
+		return Promise.all(aPromises);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("relocateAll: original promise resolves just like new one", function (assert) {
+		var oEntity = {},
+			oPromise,
+			oRequestor = _Requestor.create("/Service/", oModelInterface),
+			oRequestorMock = this.mock(oRequestor),
+			oResult = {};
+
+		oPromise = oRequestor.request("DELETE", "Employees('1')", new _GroupLock("$parked.$auto"),
+			{"If-Match" : oEntity});
+		oRequestorMock.expects("request")
+			.withExactArgs("DELETE", "Employees('1')", new _GroupLock("$auto"),
+				sinon.match.has("If-Match", sinon.match.same(oEntity)), undefined,
+				undefined, undefined)
+			.resolves(oResult);
+
+		// code under test
+		oRequestor.relocateAll("$parked.$auto", oEntity, "$auto");
+
+		return oPromise.then(function (oResult0) {
+			assert.strictEqual(oResult0, oResult);
+		});
+	});
+
+	//*****************************************************************************************
+	QUnit.test("relocateAll: original promise rejects just like new one", function (assert) {
+		var oEntity = {},
+			oPromise,
+			oRequestor = _Requestor.create("/Service/", oModelInterface),
+			oRequestorMock = this.mock(oRequestor),
+			oError = {};
+
+		oPromise = oRequestor.request("DELETE", "Employees('1')", new _GroupLock("$parked.$auto"),
+			{"If-Match" : oEntity});
+		oRequestorMock.expects("request")
+			.withExactArgs("DELETE", "Employees('1')", new _GroupLock("$auto"),
+				sinon.match.has("If-Match", sinon.match.same(oEntity)), undefined,
+				undefined, undefined)
+			.rejects(oError);
+
+		// code under test
+		oRequestor.relocateAll("$parked.$auto", oEntity, "$auto");
+
+		return oPromise.then(function () {
+			assert.ok(false);
+		}, function (oError0) {
+			assert.strictEqual(oError0, oError);
+		});
 	});
 
 	//*****************************************************************************************
@@ -2593,8 +2792,7 @@ sap.ui.define([
 
 	//*****************************************************************************************
 	QUnit.test("getModelInterface", function (assert) {
-		var	oModelInterface = {},
-			oRequestor = _Requestor.create("/", oModelInterface);
+		var oRequestor = _Requestor.create("/", oModelInterface);
 
 		// code under test
 		assert.strictEqual(oRequestor.getModelInterface(), oModelInterface);

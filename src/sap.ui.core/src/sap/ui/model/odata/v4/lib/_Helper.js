@@ -134,6 +134,10 @@ sap.ui.define([
 		 *   HTTP status code
 		 * @param {string} jqXHR.statusText
 		 *   HTTP status text
+		 * @param {string} [sRequestUrl]
+		 *   The request URL
+		 * @param {string} [sResourcePath]
+		 *   The path by which this resource has originally been requested
 		 * @returns {Error}
 		 *   An <code>Error</code> instance with the following properties:
 		 *   <ul>
@@ -142,6 +146,9 @@ sap.ui.define([
 		 *     <li><code>isConcurrentModification</code>: <code>true</code> In case of a
 		 *     concurrent modification detected via ETags (i.e. HTTP status code 412)
 		 *     <li><code>message</code>: Error message
+		 *     <li><code>requestUrl</code>: The request URL
+		 *     <li><code>resourcePath</code>: The path by which this resource has originally been
+		 *     requested
 		 *     <li><code>status</code>: HTTP status code
 		 *     <li><code>statusText</code>: (optional) HTTP status text
 		 *   </ul>
@@ -149,13 +156,15 @@ sap.ui.define([
 		 * "http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html"
 		 * >"19 Error Response"</a>
 		 */
-		createError : function (jqXHR) {
+		createError : function (jqXHR, sRequestUrl, sResourcePath) {
 			var sBody = jqXHR.responseText,
 				sContentType = jqXHR.getResponseHeader("Content-Type"),
 				oResult = new Error(jqXHR.status + " " + jqXHR.statusText);
 
 			oResult.status = jqXHR.status;
 			oResult.statusText = jqXHR.statusText;
+			oResult.requestUrl = sRequestUrl;
+			oResult.resourcePath = sResourcePath;
 			if (jqXHR.status === 0) {
 				oResult.message = "Network error";
 				return oResult;

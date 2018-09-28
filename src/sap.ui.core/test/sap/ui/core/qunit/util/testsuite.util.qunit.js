@@ -18,6 +18,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			},
 			loader: {
 				paths: {
+					"sap/ui/core/sample" : "test-resources/sap/ui/core/demokit/sample",
 					"static": "test-resources/sap/ui/core/qunit/util/static/"
 				}
 			}
@@ -215,20 +216,40 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			SapPcpWebSocket: {},
 			WebSocket: {},
 			ViewTemplate: {
-				page: "test-resources/sap/ui/core/demokit/sample/ViewTemplate/scenario/Opa.qunit.html",
-				title: "QUnit tests for ViewTemplate scenario"
+				coverage : {
+					only : "[/odata/type/,ODataMetaModel,XMLPreprocessor,AnnotationHelper]"
+				},
+				module : [
+					"sap/ui/core/sample/common/pages/Any",
+					"sap/ui/core/sample/ViewTemplate/scenario/Opa.qunit"
+				]
 			},
 			SyncPromise: {
-				page: "test-resources/sap/ui/core/qunit/SyncPromise.qunit.html",
-				title: "QUnit tests for Sync Promises"
+				coverage : {
+					only : "sap/ui/base/SyncPromise"
+				},
+				sinon: {
+					version: 4
+				}
 			},
 			TestUtils: {
-				page: "test-resources/sap/ui/test/qunit/TestUtils.qunit.html",
-				title: "QUnit tests for Utils"
+				coverage : {
+					only : "sap/ui/test/TestUtils"
+				},
+				module : [
+					"test-resources/sap/ui/test/qunit/TestUtils.qunit"
+				],
+				sinon: {
+					version: 4
+				}
 			},
 			XMLPreprocessor: {
-				page: "test-resources/sap/ui/core/qunit/util/XMLPreprocessor.qunit.html",
-				title: "QUnit tests for XMLPreprocessor"
+				coverage : {
+					only : "sap/ui/core/util/XMLPreprocessor"
+				},
+				sinon: {
+					version: 4
+				}
 			}
 
 		}

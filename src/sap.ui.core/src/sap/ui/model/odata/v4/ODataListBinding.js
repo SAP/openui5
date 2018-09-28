@@ -34,6 +34,8 @@ sap.ui.define([
 			dataReceived : true,
 			dataRequested : true,
 			DataStateChange : true,
+			patchCompleted : true,
+			patchSent : true,
 			refresh : true
 		};
 
@@ -74,7 +76,13 @@ sap.ui.define([
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#resetChanges as #resetChanges
+	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#attachPatchCompleted as
+	 *   #attachPatchCompleted
+	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#attachPatchSent as #attachPatchSent
 	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#changeParameters as #changeParameters
+	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#detachPatchCompleted as
+	 *   #detachPatchCompleted
+	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#detachPatchSent as #detachPatchSent
 	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#initialize as #initialize
 	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#resume as #resume
 	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#suspend as #suspend
@@ -82,6 +90,8 @@ sap.ui.define([
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
 			constructor : function (oModel, sPath, oContext, vSorters, vFilters, mParameters) {
 				ListBinding.call(this, oModel, sPath);
+				// initialize mixin members
+				asODataParentBinding.call(this);
 
 				if (sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
@@ -323,6 +333,38 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 
+	/**
+	 * The 'patchCompleted' event is fired when the backend has responded to the last PATCH request
+	 * for this binding. If there is more than one PATCH request in a $batch, the event is fired
+	 * only once. Only bindings using an own data service request fire a 'patchCompleted' event.
+	 * For each 'patchSent' event, a 'patchCompleted' event is fired.
+	 *
+	 * @param {sap.ui.base.Event} oEvent The event object
+	 * @param {sap.ui.model.odata.v4.ODataListBinding} oEvent.getSource() This binding
+	 * @param {object} oEvent.getParameters() Object containing all event parameters
+	 * @param {boolean} oEvent.getParameters().success
+	 *   Whether all PATCHes are successfully processed
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataListBinding#patchCompleted
+	 * @public
+	 * @since 1.59.0
+	 */
+
+	/**
+	 * The 'patchSent' event is fired when the first PATCH request for this binding is sent to the
+	 * backend. If there is more than one PATCH request in a $batch, the event is fired only once.
+	 * Only bindings using an own data service request fire a 'patchSent' event. For each
+	 * 'patchSent' event, a 'patchCompleted' event is fired.
+	 *
+	 * @param {sap.ui.base.Event} oEvent The event object
+	 * @param {sap.ui.model.odata.v4.ODataListBinding} oEvent.getSource() This binding
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataListBinding#patchSent
+	 * @public
+	 * @since 1.59.0
+	 */
+
 	// See class documentation
 	// @override
 	// @public
@@ -368,8 +410,14 @@ sap.ui.define([
 	 * initial data, for example if the server requires a unit for an amount. This also applies if
 	 * this property has a default value.
 	 *
+	 * Note: After creation, the created entity is refreshed to ensure that the data specified in
+	 * this list binding's $expand is available; to skip this refresh, set <code>bSkipRefresh</code>
+	 * to <code>true</code>.
+	 *
 	 * @param {object} [oInitialData={}]
 	 *   The initial data for the created entity
+	 * @param {boolean} [bSkipRefresh=false]
+	 *   Whether an automatic refresh of the created entity will be skipped
 	 * @returns {sap.ui.model.odata.v4.Context}
 	 *   The context object for the created entity; its method
 	 *   {@link sap.ui.model.odata.v4.Context#created} returns a promise that is resolved when the
@@ -381,7 +429,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.43.0
 	 */
-	ODataListBinding.prototype.create = function (oInitialData) {
+	ODataListBinding.prototype.create = function (oInitialData, bSkipRefresh) {
 		var oContext,
 			vCreatePath, // {string|SyncPromise}
 			oCreatePromise,
@@ -416,7 +464,7 @@ sap.ui.define([
 			var sGroupId;
 
 			that.iMaxLength += 1;
-			if (that.isRefreshable()) {
+			if (!bSkipRefresh && that.isRefreshable()) {
 				sGroupId = that.getGroupId();
 				if (!that.oModel.isDirectGroup(sGroupId) && !that.oModel.isAutoGroup(sGroupId)) {
 					sGroupId = "$auto";
@@ -1401,7 +1449,8 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
 	ODataListBinding.prototype.refreshInternal = function (sGroupId) {
-		var that = this;
+		var aContexts = this.aContexts, // keep it, because reset sets a new, empty array
+			that = this;
 
 		this.createReadGroupLock(sGroupId, this.isRefreshable());
 		this.oCachePromise.then(function (oCache) {
@@ -1410,12 +1459,18 @@ sap.ui.define([
 				that.fetchCache(that.oContext);
 			}
 			that.reset(ChangeReason.Refresh);
-			that.getDependentBindings().forEach(function (oDependentBinding) {
-				// Call refreshInternal with bCheckUpdate = false because property bindings should
-				// not check for updates yet, otherwise they will cause a "Failed to drill down..."
-				// when the row is no longer part of the collection. They get another update request
-				// in createContexts, when the context for the row is reused.
-				oDependentBinding.refreshInternal(sGroupId, false);
+			// Do not use this.getDependentBindings() because this still contains the children of
+			// the -1 context which will not survive.
+			// The array may be sparse, but forEach skips the gaps and the -1
+			aContexts.forEach(function (oContext) {
+				that.oModel.getDependentBindings(oContext).forEach(function (oDependentBinding) {
+					// Call refreshInternal with bCheckUpdate = false because property bindings
+					// should not check for updates yet, otherwise they will cause a "Failed to
+					// drill down..." when the row is no longer part of the collection. They get
+					// another update request in createContexts, when the context for the row is
+					// reused.
+					oDependentBinding.refreshInternal(sGroupId, false);
+				});
 			});
 		});
 	};

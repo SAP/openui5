@@ -65,6 +65,24 @@ sap.ui.define([
 			},
 
 			/**
+			 * Formats the given OData value into a literal suitable for usage in URLs.
+			 *
+			 * @param {any} vValue
+			 *   The value according to "OData JSON Format Version 4.0" section
+			 *   "7.1 Primitive Value"
+			 * @param {string} sType
+			 *   The OData primitive type, e.g. "Edm.String"
+			 * @returns {string}
+			 *   The literal according to "OData Version 4.0 Part 2: URL Conventions" section
+			 *   "5.1.1.6.1 Primitive Literals"
+			 * @throws {Error}
+			 *   If the value is undefined or the type is not supported
+			 */
+			formatLiteral : function (vValue, sType) {
+				return _Helper.formatLiteral(vValue, sType);
+			},
+
+			/**
 			 * Parses an "Edm.Date" value and returns the corresponding JavaScript <code>Date</code>
 			 * value (UTC with a time value of "00:00:00").
 			 *
@@ -158,24 +176,6 @@ sap.ui.define([
 					throw new Error("Not a valid Edm.TimeOfDay value: " + sTimeOfDay);
 				}
 				return oTimeOfDay;
-			},
-
-			/**
-			 * Formats the given OData value into a literal suitable for usage in URLs.
-			 *
-			 * @param {any} vValue
-			 *   The value according to "OData JSON Format Version 4.0" section
-			 *   "7.1 Primitive Value"
-			 * @param {string} sType
-			 *   The OData primitive type, e.g. "Edm.String"
-			 * @returns {string}
-			 *   The literal according to "OData Version 4.0 Part 2: URL Conventions" section
-			 *   "5.1.1.6.1 Primitive Literals"
-			 * @throws {Error}
-			 *   If the value is undefined or the type is not supported
-			 */
-			formatLiteral : function (vValue, sType) {
-				return _Helper.formatLiteral(vValue, sType);
 			}
 		};
 
