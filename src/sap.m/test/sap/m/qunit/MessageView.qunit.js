@@ -654,6 +654,87 @@ sap.ui.define([
 		assert.strictEqual(this.oMessageView._oLists.all.getItems()[0].getType(), "Navigation", "The first item should be navigation type");
 	});
 
+	QUnit.test("MessageItem with active title - propagation to MessageListItems", function (assert) {
+		var oFirstMessageItem = new MessageItem({
+			activeTitle: true,
+			type: "Error"
+		}), oFirstListItem;
+
+		this.oMessageView.addItem(oFirstMessageItem);
+		this.oMessageView.addItem(new MessageItem({
+			activeTitle: true,
+			type: "Warning"
+		}));
+		this.oMessageView.addItem(new MessageItem({
+			activeTitle: true,
+			type: "Information"
+		}));
+
+		this.oMessageView.placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		oFirstListItem = this.oMessageView._oLists.all.getItems()[0];
+
+		assert.strictEqual(oFirstListItem.getMessageType(), oFirstMessageItem.getType(), "MessageItem Type should be propagated");
+		assert.strictEqual(oFirstListItem.getLink().$().attr("aria-describedby"), oFirstListItem.getLinkAriaDescribedBy().getId(), "Describedby of the title and the MessageListItem itself should be the same");
+	});
+
+	QUnit.test("MessageItem with active title - Details page", function (assert) {
+		var oFirstMessageItem = new MessageItem({
+			activeTitle: true,
+			type: "Error"
+		}), oFirstListItem, oDetailsTitle;
+
+		this.oMessageView.addItem(oFirstMessageItem);
+		this.oMessageView.addItem(new MessageItem({
+			activeTitle: true,
+			type: "Warning"
+		}));
+		this.oMessageView.addItem(new MessageItem({
+			activeTitle: true,
+			type: "Information"
+		}));
+
+		this.oMessageView.placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+		oFirstListItem = this.oMessageView._oLists.all.getItems()[0];
+
+		this.oMessageView._navigateToDetails(oFirstMessageItem, oFirstListItem, "slide", false);
+		this.clock.tick(300);
+
+		oDetailsTitle = this.oMessageView._detailsPage.getContent()[0];
+
+		assert.ok(oDetailsTitle.getAriaDescribedBy().indexOf(oFirstListItem.getId() + "-link") > -1, "Details title should be described by the item's link");
+	});
+
+	QUnit.test("MessageItem with active title - Message Bundle Texts", function (assert) {
+		var oFirstMessageItem = new MessageItem({
+			type: "Error"
+		}), oBundle, sMessageAnnouncement,
+			sContentAnnouncement, sAnnouncement;
+
+		this.oMessageView.addItem(oFirstMessageItem);
+		this.oMessageView.placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		sMessageAnnouncement = oBundle.getText("MESSAGEVIEW_BUTTON_TOOLTIP_ERROR");
+		sContentAnnouncement = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT", [sMessageAnnouncement]);
+		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
+
+		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncement), -1, "Message List Item should not include information for the navigation");
+
+		oFirstMessageItem.setActiveTitle(true);
+		sap.ui.getCore().applyChanges();
+
+		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
+
+		assert.ok(sAnnouncement.indexOf(sContentAnnouncement) > -1 , "Message List Item should include information for the navigation");
+	});
+
 	QUnit.module("Binding", {
 		beforeEach: function () {
 			var that = this;

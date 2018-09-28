@@ -5,14 +5,17 @@
 // Provides control sap.m.MessageListItem.
 sap.ui.define([
 	"sap/ui/core/library",
+	"sap/ui/core/InvisibleText",
 	"./library",
 	'./StandardListItem',
 	'./Link',
 	"./MessageListItemRenderer"
 ],
-	function (coreLibrary, library, StandardListItem, Link, MessageListItemRenderer) {
+	function (coreLibrary, InvisibleText, library, StandardListItem, Link, MessageListItemRenderer) {
 		"use strict";
 
+		// shortcut for sap.ui.core.MessageType
+		var MessageType = coreLibrary.MessageType;
 
 		/**
 		 * Constructor for a new MessageListItem.
@@ -37,11 +40,13 @@ sap.ui.define([
 
 				library: "sap.m",
 				properties: {
-					activeTitle: { type: "boolean", group: "Misc", defaultValue: false}
+					activeTitle: { type: "boolean", group: "Misc", defaultValue: false},
+					messageType: { type: "sap.ui.core.MessageType", group: "Appearance", defaultValue: MessageType.Error }
 				},
 
 				aggregations: {
-					link: { type: "sap.m.Link", group: "Misc", multiple: false }
+					link: { type: "sap.m.Link", group: "Misc", multiple: false },
+					linkAriaDescribedBy: {type: "sap.ui.core.Control", group: "Misc", multiple: false}
 				},
 				events: {
 					activeTitlePress: {}
@@ -55,9 +60,11 @@ sap.ui.define([
 			var oLink = this.getLink();
 
 			if (!oLink && bActive) {
-				this.setLink(new Link({
+				oLink = new Link({
 					press: [this.fireActiveTitlePress, this]
-				}));
+
+				});
+				this.setLink(oLink);
 			}
 
 			return this;
@@ -65,11 +72,24 @@ sap.ui.define([
 
 		MessageListItem.prototype.onBeforeRendering = function () {
 			StandardListItem.prototype.onBeforeRendering.apply(this, arguments);
-			var oLink = this.getLink();
+			var oLink = this.getLink(), oDescribedByText;
 
 			if (oLink) {
+				oDescribedByText = this._getLinkAriaDescribedBy();
+
 				oLink.setProperty("text", this.getTitle(), true);
+				oLink.addAssociation('ariaDescribedBy', oDescribedByText.getId(), true);
+
+				this.setAggregation("linkAriaDescribedBy", oDescribedByText, true);
 			}
+		};
+
+		MessageListItem.prototype._getLinkAriaDescribedBy = function () {
+			var sAccessibilityText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("MESSAGE_VIEW_LINK_FOCUS_TEXT", [this.getMessageType()]);
+
+			return new InvisibleText(this.getId() + "-link", {
+				text: sAccessibilityText
+			});
 		};
 
 		/**
@@ -81,6 +101,20 @@ sap.ui.define([
 			if (this.getActiveTitle() && oEvent.altKey && oEvent.key === 'Enter') {
 				this.fireActiveTitlePress(this);
 			}
+		};
+
+		MessageListItem.prototype.getContentAnnouncement = function(oBundle) {
+			var sAnnouncement = StandardListItem.prototype.getContentAnnouncement.apply(this, arguments),
+				sAdditionalText, sMessageType;
+
+			if (this.getActiveTitle()) {
+
+				sMessageType = oBundle.getText("MESSAGEVIEW_BUTTON_TOOLTIP_" + this.getMessageType().toUpperCase());
+				sAdditionalText = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT", [sMessageType]);
+
+				sAnnouncement += " ".concat(sAdditionalText);
+			}
+			return sAnnouncement;
 		};
 
 		return MessageListItem;
