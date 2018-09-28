@@ -1441,7 +1441,9 @@ function(
 		this._oPopupInput.onsapenter = function (oEvent) {
 			that._validateCurrentText();
 			that._setValueInvisible();
-			that._closeSuggestionPopup();
+
+			// Fire through the MultiInput Popup's input value and save it
+			that.onChange(oEvent, null, this.getValue());
 		};
 
 		this._oPopupInput.attachLiveChange(function(){
