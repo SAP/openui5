@@ -312,18 +312,28 @@ module.exports = function(grunt, config) {
 		    'cldr-download',
 		    'cldr-generate'
 		],
-		'cldr-download': [
-		    'npm-install:cldr-core@33.0.0',
-		    'npm-install:cldr-numbers-modern@33.0.0',
-		    'npm-install:cldr-dates-modern@33.0.0',
-		    'npm-install:cldr-misc-modern@33.0.0',
-		    'npm-install:cldr-units-modern@33.0.0',
-		    'npm-install:cldr-localenames-modern@33.0.0',
-		    'npm-install:cldr-cal-islamic-modern@33.0.0',
-		    'npm-install:cldr-cal-japanese-modern@33.0.0',
-		    'npm-install:cldr-cal-persian-modern@33.0.0',
-		    'npm-install:cldr-cal-buddhist-modern@33.0.0'
-		],
+		'cldr-download': function() {
+			var aPakets = [
+					'cldr-core',
+					'cldr-numbers-modern',
+					'cldr-dates-modern',
+					'cldr-misc-modern',
+					'cldr-units-modern',
+					'cldr-localenames-modern',
+					'cldr-cal-islamic-modern',
+					'cldr-cal-japanese-modern',
+					'cldr-cal-persian-modern',
+					'cldr-cal-buddhist-modern'
+				],
+				sVersion = "33.0.0",
+				aArgs;
+			aArgs = aPakets.map(function(sName) {
+				return sName + "@" + sVersion;
+			});
+			aArgs.push("--no-save")
+			grunt.config(['npm-command', 'install-cldr', 'options', 'args'], aArgs);
+			grunt.task.run(['npm-command:install-cldr']);
+		},
 		'cldr-generate': function() {
 			var done = this.async();
 
