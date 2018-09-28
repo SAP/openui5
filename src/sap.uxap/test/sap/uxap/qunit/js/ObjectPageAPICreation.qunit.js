@@ -2437,6 +2437,41 @@
 		helpers.renderObject(this.oObjectPage);
 	});
 
+	QUnit.test("Title is toggled only upon snap/unsnap", function (assert) {
+
+		var oObjectPage = this.oObjectPage,
+			oHeaderTitle = new sap.uxap.ObjectPageHeader({
+				objectTitle: "Title"
+			}),
+			toggleTitleSpy = sinon.spy(oObjectPage, "_toggleHeaderTitle"),
+			done = assert.async();
+
+		assert.expect(2);
+
+		oObjectPage.setHeaderTitle(oHeaderTitle);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			toggleTitleSpy.reset();
+
+			// Act: scroll to position that does not require snap
+			oObjectPage._$opWrapper.scrollTop(20);
+
+			setTimeout(function() {
+				assert.strictEqual(toggleTitleSpy.callCount, 0, "title is not toggled");
+
+				// Act: scroll to position that does not require snap
+				oObjectPage._$opWrapper.scrollTop(oObjectPage._getSnapPosition());
+
+				setTimeout(function() {
+					assert.strictEqual(toggleTitleSpy.callCount, 1, "title is toggled");
+					done();
+				}, 100);
+			}, 100);
+		});
+
+		helpers.renderObject(this.oObjectPage);
+	});
+
 
 	function checkObjectExists(sSelector) {
 		var oObject = jQuery(sSelector);
