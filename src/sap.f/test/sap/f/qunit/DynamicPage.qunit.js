@@ -3387,4 +3387,40 @@ function($, DynamicPage, DynamicPageTitle, DynamicPageHeader, Device) {
 		assert.equal(parseFloat(oContent.css("flex-shrink")).toFixed(1), 2, "Content shrink factor is correct");
 		assert.equal(parseFloat(oActions.css("flex-shrink")).toFixed(1), 4, "Actions shrink factor is correct");
 	});
+
+
+	QUnit.module("DynamicPage - Preserving scroll position", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPage();
+			oUtil.renderObject(this.oDynamicPage);
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
+
+	QUnit.test("Toggling page visibility preserves the scroll", function(assert) {
+		var SCROLL_POSITION = 200,
+			oDynamicPageDOMElement = document.getElementById(this.oDynamicPage.getId());
+
+		// arrange
+		this.oDynamicPage._setScrollPosition(SCROLL_POSITION);
+
+		// act
+		oDynamicPageDOMElement.style.display = 'none';
+
+		// assert
+		assert.strictEqual(this.oDynamicPage._getHeight(this.oDynamicPage), 0,
+			"Dynamic Page is hidden");
+
+		// act
+		oDynamicPageDOMElement.style.display = 'flex';
+
+		// assert
+		assert.notEqual(this.oDynamicPage._getHeight(this.oDynamicPage), 0,
+			"DynamicPage is visible again");
+		assert.strictEqual(this.oDynamicPage._getScrollPosition(), SCROLL_POSITION,
+			"Scroll position " + SCROLL_POSITION + "is preserved.");
+	});
 });

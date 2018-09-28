@@ -1074,7 +1074,7 @@ sap.ui.define([
 			bScrollBarNeeded,
 			bNeedUpdate;
 
-		if (!Device.system.desktop || !exists(this.$wrapper)) {
+		if (!Device.system.desktop || !exists(this.$wrapper) || (this._getHeight(this) === 0)) {
 			return;
 		}
 
@@ -1090,7 +1090,6 @@ sap.ui.define([
 		}
 		setTimeout(this._updateFitContainer.bind(this), 0);
 		setTimeout(this._updateScrollBarOffset.bind(this), 0);
-
 	};
 
 	DynamicPage.prototype._updateFitContainer = function (bNeedsVerticalScrollBar) {
