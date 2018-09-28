@@ -477,7 +477,6 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 .sapUiTableCol {
 	vertical-align: middle;
 	box-sizing: border-box;
-	min-height: @_sap_ui_table_Table_ColHdrHeight;
 	padding-top: 7px;
 	padding-bottom: 7px;
 	border-right: 1px solid @sapUiListVerticalBorderColor;
@@ -507,10 +506,6 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 
 .sapUiTableColHdrTr > .sapUiTableCol {
 	position: relative;
-}
-
-.sapUiSizeCozy .sapUiTableCol {
-	min-height: @_sap_ui_table_Table_ColHdrHeightCozy;
 }
 
 .sapUiTableColCell {
@@ -1125,7 +1120,7 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	height: @_sap_ui_table_RowHeightCozy;
 }
 
-.sapUiSizeCondensed .sapUiTableCtrl tr {
+.sapUiSizeCondensed .sapUiTableCtrl tr:not(.sapUiTableColHdrTr) {
 	height: @_sap_ui_table_RowHeightCondensed;
 }
 
