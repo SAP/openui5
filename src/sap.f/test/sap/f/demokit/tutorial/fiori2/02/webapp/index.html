@@ -18,10 +18,14 @@
 
 	<script>
 		sap.ui.getCore().attachInit(function() {
-			new sap.ui.core.ComponentContainer({
-				height : "100%",
-				name : "sap.ui.demo.fiori2"
-			}).placeAt("content");
+			sap.ui.require([
+				"sap/ui/core/ComponentContainer"
+			], function (ComponentContainer) {
+				new ComponentContainer({
+					height: "100%",
+					name: "sap.ui.demo.fiori2"
+				}).placeAt("content");
+			});
 		});
 	</script>
 </head>

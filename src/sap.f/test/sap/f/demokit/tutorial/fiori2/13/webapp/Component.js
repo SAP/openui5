@@ -1,9 +1,8 @@
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/UIComponent',
 	'sap/ui/model/json/JSONModel',
 	'sap/f/FlexibleColumnLayoutSemanticHelper'
-], function(jQuery, UIComponent, JSONModel, FlexibleColumnLayoutSemanticHelper) {
+], function(UIComponent, JSONModel, FlexibleColumnLayoutSemanticHelper) {
 	'use strict';
 
 	return UIComponent.extend('sap.ui.demo.fiori2.Component', {
@@ -22,7 +21,7 @@ sap.ui.define([
 			this.setModel(oModel);
 
 			// set products demo model on this sample
-			oProductsModel = new JSONModel(jQuery.sap.getModulePath('sap.ui.demo.mock', '/products.json'));
+			oProductsModel = new JSONModel(sap.ui.require.toUrl('sap/ui/demo/mock') + '/products.json');
 			oProductsModel.setSizeLimit(1000);
 			this.setModel(oProductsModel, 'products');
 
