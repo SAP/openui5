@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/ui/core/routing/HashChanger",
 	"sap/ui/core/routing/History",
 	"sap/ui/core/library",
-	"sap/base/Log"
-], function(createUID, HashChanger, History, coreLibrary, Log) {
+	"sap/base/Log",
+	"sap/ui/Device"
+], function(createUID, HashChanger, History, coreLibrary, Log, Device) {
 	"use strict";
 
 	var HistoryDirection = coreLibrary.routing.HistoryDirection;
@@ -512,7 +513,7 @@ sap.ui.define([
 				window.history.go(1);
 			}, function(sHash) {
 				if (sHash === "foo") {
-					assert.strictEqual(this.oHistory.getDirection(), "Forwards");
+					assert.strictEqual(this.oHistory.getDirection(), Device.browser.msie ? "Unknown" : "Forwards");
 				}
 			}.bind(this));
 		}.bind(this));
