@@ -1294,17 +1294,6 @@ function(
 	};
 
 	/**
-	 * Returns the URL parsed hash from UShell
-	 * @return {map} Parsed shell hash map
-	 */
-	RuntimeAuthoring.prototype._getURLParsedHash = function(){
-		var oURLParser = sap.ushell.Container.getService("URLParsing");
-		if (oURLParser.parseShellHash && oURLParser.getHash){
-			return oURLParser.parseShellHash(oURLParser.getHash(window.location.href));
-		}
-	};
-
-	/**
 	 * Build the navigation arguments object required to trigger the navigation
 	 * using the CrossApplicationNavigation ushell service.
 	 * @param  {Object} mParsedHash Parsed URL hash
@@ -1360,8 +1349,8 @@ function(
 	RuntimeAuthoring.prototype._removeMaxLayerParameter = function(){
 		if (Utils.getUshellContainer() && this.getLayer() !== "USER") {
 			var oCrossAppNav = Utils.getUshellContainer().getService("CrossApplicationNavigation");
-			var mParsedHash = this._getURLParsedHash();
-			if (oCrossAppNav.toExternal && mParsedHash){
+			var mParsedHash = FlexUtils.getParsedURLHash();
+			if (oCrossAppNav.toExternal && !jQuery.isEmptyObject(mParsedHash)){
 				if (this._hasCustomerLayerParameter(mParsedHash)) {
 					delete mParsedHash.params[FL_MAX_LAYER_PARAM];
 					// triggers the navigation without leaving FLP
@@ -1407,13 +1396,13 @@ function(
 	RuntimeAuthoring.prototype._handlePersonalizationChangesOnStart = function() {
 		var oUshellContainer = Utils.getUshellContainer();
 		if (oUshellContainer && this.getLayer() !== "USER") {
-			var mParsedHash = this._getURLParsedHash();
+			var mParsedHash = FlexUtils.getParsedURLHash();
 			return this._getFlexController().isPersonalized({ignoreMaxLayerParameter : false})
 			.then(function(bIsPersonalized){
 				if (bIsPersonalized) {
 					return this._handlePersonalizationMessageBoxOnStart().then(function() {
 						var oCrossAppNav = sap.ushell.Container.getService("CrossApplicationNavigation");
-						if (oCrossAppNav.toExternal && mParsedHash){
+						if (oCrossAppNav.toExternal && !jQuery.isEmptyObject(mParsedHash)){
 							return this._reloadWithoutPersonalizationChanges(mParsedHash, oCrossAppNav);
 						}
 					}.bind(this));

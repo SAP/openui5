@@ -870,7 +870,7 @@ function(
 			var oUshellContainer = Utils.getUshellContainer();
 			if (oUshellContainer) {
 				var oURLParser = oUshellContainer.getService("URLParsing");
-				var oParsedHash = oURLParser.parseShellHash(oURLParser.getHash(window.location.href));
+				var oParsedHash = oURLParser.parseShellHash(hasher.getHash());
 				return oParsedHash ? oParsedHash : { };
 			}
 			return { };
