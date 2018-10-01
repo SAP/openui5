@@ -1117,6 +1117,27 @@ sap.ui.define([
 			return bResult;
 		};
 
+		/**
+		 * Schedule a promise on the OPA5 queue.The promise will be executed in order with all waitFors -
+		 * any subsequent waitFor will be executed after the promise is done.
+		 * The promise is not directly chained, but instead its result is awaited in a new waitFor statement.
+		 * This means that any "thenable" should be acceptable.
+		 * @public
+		 * @param {jQuery.promise|oPromise} oPromise promise to schedule on the OPA5 queue
+		 * @returns {jQuery.promise} promise which is the result of a {@link sap.ui.test.Opa5.waitFor}
+		 */
+		Opa5.prototype.iWaitForPromise = function (oPromise) {
+			var oOptions = {
+				// make sure no controls are searched by the defaults
+				viewName: null,
+				controlType: null,
+				id: null,
+				searchOpenDialogs: false,
+				autoWait: false
+			};
+			return Opa.prototype._schedulePromiseOnFlow.call(this, oPromise, oOptions);
+		};
+
 		/*
 		 * Apply defaults
 		 */
@@ -1213,7 +1234,7 @@ sap.ui.define([
 
 			// schedule the extension loading promise on flow so waitFor's are synchronized
 			// return waitFor-like promise to comply with the caller return
-			return this._schedulePromiseOnFlow(oExtensionsPromise);
+			return this.iWaitForPromise(oExtensionsPromise);
 		};
 
 		Opa5.prototype._unloadExtensions = function(oAppWindow) {
@@ -1239,7 +1260,7 @@ sap.ui.define([
 			}));
 
 			// schedule the extension uploading promise on flow so waitFor's are synchronized
-			this._schedulePromiseOnFlow(oExtensionsPromise);
+			this.iWaitForPromise(oExtensionsPromise);
 		};
 
 		Opa5.prototype._addExtension = function(oExtension) {

@@ -31,8 +31,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("waitFor", {
+		beforeEach: function () {
+			sinon.config.useFakeTimers = true;
+		},
 		afterEach: function () {
 			Opa.resetConfig();
+			sinon.config.useFakeTimers = false;
 		}
 	});
 
@@ -277,7 +281,58 @@ sap.ui.define([
 		this.clock.tick(5000);
 	});
 
-	QUnit.module("Exception Handling");
+	QUnit.test("Should wait for promise scheduled on flow", function (assert) {
+		assert.expect(3);
+		// sinon clock interferes with promises: disable it for this test
+		// re-enable in beforeEach
+		this.clock.restore();
+		var oOpa = new Opa();
+		var fnDone = assert.async();
+		var mResult = {};
+		var fnWithJQueryPromise = function () {
+			var oDeferred = new $.Deferred();
+			setTimeout(function() {
+				oDeferred.resolve();
+			}, 200);
+			return oDeferred.promise().then(function () {
+				assert.ok(mResult.initDone, "Should wait for jQuery promise to complete in order with the queue");
+				mResult.jQueryDone = true;
+			});
+		};
+		var fnWithNativePromise = function () {
+			return new Promise(function (resolve) {
+				setTimeout(function () {
+					resolve();
+				}, 200);
+			}).then(function () {
+				assert.ok(mResult.jQueryDone, "Should wait for native promise to complete after jQueryPromise");
+				mResult.nativeDone = true;
+			});
+		};
+
+		oOpa.waitFor({
+			check: function () {
+				mResult.initDone = true;
+				return true;
+			}
+		});
+		oOpa.iWaitForPromise(fnWithJQueryPromise());
+		oOpa.iWaitForPromise(fnWithNativePromise());
+
+		oOpa.emptyQueue().always(function () {
+			assert.ok(mResult.jQueryDone && mResult.nativeDone, "Should empty the queue after both promises are done");
+			fnDone();
+		});
+	});
+
+	QUnit.module("Exception Handling", {
+		beforeEach: function () {
+			sinon.config.useFakeTimers = true;
+		},
+		afterEach: function () {
+			sinon.config.useFakeTimers = false;
+		}
+	});
 
 	QUnit.test("Should reject the emptyQueue promise if there is an error in the check or success", function(assert) {
 
@@ -367,11 +422,9 @@ sap.ui.define([
 	QUnit.module("StopQueue", {
 		beforeEach : function () {
 			this.fnErrorLogStub = sinon.stub(oLogger, "error", $.noop);
-			sinon.config.useFakeTimers = false;
 		},
 		afterEach : function () {
 			this.fnErrorLogStub.restore();
-			sinon.config.useFakeTimers = true;
 		}
 	});
 
@@ -499,11 +552,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Timeouts", {
-		beforeEach : function () {
-			sinon.config.useFakeTimers = false;
-		},
 		afterEach : function () {
-			sinon.config.useFakeTimers = true;
 			Opa.resetConfig();
 		}
 	});
@@ -653,14 +702,7 @@ sap.ui.define([
 		, "threw the error");
 	});
 
-	QUnit.module("waitFor counts", {
-		beforeEach: function () {
-			sinon.config.useFakeTimers = false;
-		},
-		afterEach: function () {
-			sinon.config.useFakeTimers = true;
-		}
-	});
+	QUnit.module("waitFor counts");
 
 	QUnit.test("Should calculate how many waitFors have been added in a timeframe", function (assert) {
 		var fnTimeoutDone = assert.async(),
@@ -693,14 +735,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.module("Opa Config", {
-		beforeEach: function () {
-			sinon.config.useFakeTimers = false;
-		},
-		afterEach: function () {
-			sinon.config.useFakeTimers = true;
-		}
-	});
+	QUnit.module("Opa Config");
 
 	function assertDefaults (assert) {
 		assert.strictEqual(Opa.config.timeout, 15);
@@ -797,14 +832,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Opa Empty queue", {
-		beforeEach: function () {
-			sinon.config.useFakeTimers = false;
-		},
-		afterEach: function () {
-			sinon.config.useFakeTimers = true;
-		}
-	});
+	QUnit.module("Opa Empty queue");
 
 	QUnit.test("Should throw an exception if emptyQueue is called twice", function (assert) {
 		var oOpa = new Opa();
