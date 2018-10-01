@@ -106,13 +106,29 @@ sap.ui.define([
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : 'auto'},
 
 			/**
-			 * The height of the row content in pixel. The actual row height is also influenced by other factors, such as the border width.
-			 * If no value is set, a default height is applied based on the content density configuration.
+			 * Row height in pixel.
+			 *
+			 * In the table's header, it defines the minimum height of the row, but it cannot be less than the default height based on the
+			 * content density configuration. The actual height can increase based on the content.
+			 *
+			 * In the table's body, it defines the height of the row content. The actual row height is also influenced by other factors, such as
+			 * the border width. If the <code>visibleRowCountMode</code> property is set to {@link sap.ui.table.VisibleRowCountMode.Fixed Fixed} or
+			 * {@link sap.ui.table.VisibleRowCountMode.Interactive Interactive}, the value defines the minimum height, and the actual height can
+			 * increase based on the content. If the mode is {@link sap.ui.table.VisibleRowCountMode.Auto Auto}, the value defines the actual
+			 * height, and any content that doesn't fit is cut off.
+			 *
+			 * If no value is set (includes 0), a default height is applied based on the content density configuration. In any
+			 * <code>visibleRowCountMode</code>, the actual height can increase based on the content.
 			 */
 			rowHeight : {type : "int", group : "Appearance", defaultValue : null},
 
 			/**
-			 * Height of the column header of the Table in pixel.
+			 * Header row height in pixel. If a value greater than 0 is set, it overrides the height defined in the <code>rowHeight</code> property
+			 * for the rows in the table's header. The value defines the minimum height, but it cannot be less than the default height based on the
+			 * content density configuration. The actual height can increase based on the content.
+			 *
+			 * <b>Note</b>: In a {@link sap.ui.table.Column#getMultiLabels MultiLabel} scenario, the height is applied to each individual row of the
+			 * table's header.
 			 */
 			columnHeaderHeight : {type : "int", group : "Appearance", defaultValue : null},
 
@@ -984,10 +1000,6 @@ sap.ui.define([
 			return [];
 		}
 
-		if (bHeader && this.getColumnHeaderHeight()) {
-			return []; // column headers are set fix in the renderer
-		}
-
 		var iDefaultRowHeight = this._getDefaultRowHeight();
 		var sRowCSSClass = bHeader ? ".sapUiTableColHdrTr" : ".sapUiTableTr";
 		var aRowsInFixedColumnsArea = oDomRef.querySelectorAll(".sapUiTableCtrlFixed > tbody > tr" + sRowCSSClass);
@@ -995,6 +1007,10 @@ sap.ui.define([
 		var iRowCount = this.getRows().length;
 		var aRowHeights = [];
 		var bIsZoomedInChrome = Device.browser.chrome && window.devicePixelRatio != 1;
+
+		if (bHeader && this.getColumnHeaderHeight() > 0) {
+			iDefaultRowHeight = this.getColumnHeaderHeight();
+		}
 
 		for (var i = 0; i < iRowCount; i++) {
 			var nFixedColumnsAreaRowHeight = aRowsInFixedColumnsArea[i] ? aRowsInFixedColumnsArea[i].getBoundingClientRect().height : 0;
@@ -1055,10 +1071,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._resetColumnHeaderHeights = function() {
-		if (this.getColumnHeaderHeight()) {
-			return; // height is set fixed in renderer
-		}
-
 		var oDomRef = this.getDomRef();
 		if (oDomRef) {
 			var aRowItems = oDomRef.querySelectorAll(".sapUiTableColHdrTr");
@@ -1245,10 +1257,6 @@ sap.ui.define([
 		var oDomRef = this.getDomRef();
 		if (!oDomRef) {
 			return;
-		}
-
-		if (bHeader && this.getColumnHeaderHeight()) {
-			return; // column headers are set fix in the renderer
 		}
 
 		function updateRow (row, index) {
