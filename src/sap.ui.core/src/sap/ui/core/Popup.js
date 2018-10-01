@@ -693,12 +693,6 @@ sap.ui.define([
 		// save current focused element to restore the focus after closing
 		this._oPreviousFocus = Popup.getCurrentFocusInfo();
 
-		// if the Popup is modal, remove the focus from the current focused element to avoid
-		// the same action being triggered again before the focus is moved into the Popup
-		if (this._bModal && document.activeElement) {
-			document.activeElement.blur();
-		}
-
 		// It is mandatroy to check if the new Popup runs within another Popup because
 		// if this new Popup is rendered via 'this._$(true)' and focused (happens e.g. if
 		// the Datepicker runs in a Popup and the corresponding Calendar will also open
@@ -775,6 +769,7 @@ sap.ui.define([
 		}
 
 		this._duringOpen();
+
 		if (iRealDuration == 0) { // do not animate if there is a duration == 0
 			this._opened();
 		} else if (this._animations.open) { // if custom animation is defined, call it
@@ -782,6 +777,27 @@ sap.ui.define([
 		} else { // otherwise play the default animation
 			$Ref.fadeIn(iRealDuration, this._opened.bind(this));
 		}
+	};
+
+	Popup.prototype._getDomRefToFocus = function() {
+		var $Ref = this._$(/* force rendering */false, /* getter only */true),
+			oDomRefToFocus,
+			oControl;
+
+		if (this._shouldGetFocusAfterOpen()) {
+			if (this._sInitialFocusId) {
+				oControl = sap.ui.getCore().byId(this._sInitialFocusId);
+
+				if (oControl) {
+					oDomRefToFocus = oControl.getFocusDomRef();
+				}
+				oDomRefToFocus = oDomRefToFocus || window.document.getElementById(this._sInitialFocusId);
+			}
+
+			oDomRefToFocus = oDomRefToFocus || $Ref.firstFocusableDomRef();
+		}
+
+		return oDomRefToFocus;
 	};
 
 	/**
@@ -809,28 +825,19 @@ sap.ui.define([
 		}
 
 		// in modal and auto-close case the focus needs to be in the popup; provide this generic implementation as helper, but users can change the focus in the "opened" event handler
-		if (this._bModal || this._bAutoClose || this._sInitialFocusId) {
-			var domRefToFocus = null;
-			if (this._sInitialFocusId) {
-				var control = sap.ui.getCore().byId(this._sInitialFocusId);
+		if (this._shouldGetFocusAfterOpen()) {
+			var domRefToFocus = this._getDomRefToFocus();
 
-				if (control) {
-					domRefToFocus = control.getFocusDomRef();
-				}
-				domRefToFocus = domRefToFocus || window.document.getElementById(this._sInitialFocusId);
-			}
-
-			domRefToFocus = domRefToFocus || $Ref.firstFocusableDomRef();
 			if (domRefToFocus) {
 				domRefToFocus.focus();
 			}
+
 			// if the opener was focused but it exceeds the current window width
 			// the window will scroll/reposition accordingly.
 			// When this popup registers the followOf-Handler the check if the
 			// opener moved will result in that the opener moved due to the focus
 			// and scrolling of the browser. So it is necessary to resize/reposition
 			// the popup right after the focus.
-
 			var oCurrentOfRef = this._getOfDom(this._oLastPosition.of);
 			var oCurrentOfRect = jQuery(oCurrentOfRef).rect();
 			if (this._oLastOfRect && oCurrentOfRect && !fnRectEqual(this._oLastOfRect, oCurrentOfRect)) {
@@ -860,7 +867,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup.prototype._duringOpen = function() {
-		var $Ref = this._$(/* force rendering */false, /* getter only */true);
+		var $Ref = this._$(/* force rendering */false, /* getter only */true),
+			oDomRefToFocus;
 
 		// shield layer is needed for mobile devices whose browser fires the mosue
 		// events with delay after touch events to prevent the delayed mouse events
@@ -893,6 +901,22 @@ sap.ui.define([
 			this._showBlockLayer();
 		}
 
+		// IE 11 fires a focus event on the html body tag when another element blurs. This
+		// causes the onfocusevent function to be called synchronously within the current
+		// call stack. Therefore the blur of the previous focused element should be done
+		// at the end of this open method to first show the block layer which changes the
+		// top most displayed popup
+		if (this._shouldGetFocusAfterOpen() && document.activeElement) {
+			oDomRefToFocus = this._getDomRefToFocus();
+
+			// If the focus needs to be set into the popup and it's different than the current
+			// document active element, the current active element is blurred here to prevent
+			// it from getting further events during the opening animation of the popup
+			if (oDomRefToFocus !== document.activeElement) {
+				document.activeElement.blur();
+			}
+		}
+
 		// add Delegate to hosted content for handling of events (e.g. onfocusin)
 		if (this.oContent instanceof Element) {
 			this.oContent.addDelegate(this);
@@ -908,6 +932,10 @@ sap.ui.define([
 		if (this._oBlindLayer) {
 			this._resizeListenerId = ResizeHandler.register(this._$().get(0), jQuery.proxy(this.onresize, this));
 		}
+	};
+
+	Popup.prototype._shouldGetFocusAfterOpen = function() {
+		return this._bModal || this._bAutoClose || this._sInitialFocusId;
 	};
 
 	/**

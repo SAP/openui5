@@ -361,7 +361,6 @@ sap.ui.define([
 		oPopup.open();
 	});
 
-
 	QUnit.test("Check if focus is set back to the opener after closing", function(assert) {
 		var done = assert.async();
 		var sLeftTop = Popup.Dock.LeftTop;
@@ -1323,7 +1322,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("The DOM element of Autoclose area should be updated when it's rerendered", function(assert) {
-		assert.expect(3);
+		assert.expect(4);
 
 		var that = this, done = assert.async();
 		// Setup
@@ -1361,10 +1360,52 @@ sap.ui.define([
 		this.oPopup.setAutoCloseAreas([this.oInput]);
 
 		this.oInput.focus();
+		assert.ok(jQuery.sap.containsOrEquals(this.oInput.getDomRef(), document.activeElement), "focus is inside input");
+
 		QUnitUtils.triggerKeydown(this.oInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
 		QUnitUtils.triggerKeyup(this.oInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
 
+		assert.ok(!jQuery.sap.containsOrEquals(this.oInput.getDomRef(), document.activeElement), "The input is blurred after calling popup.open");
+
+		assert.ok(this.oPopup.isOpen(), "Popup should be opened");
+	});
+
+	QUnit.test("The previous active element isn't blurred before the opening animation, if it's the same element which gets the focus after popup open", function(assert) {
+		var done = assert.async(),
+			that = this,
+			oFocusDomElement, oBlurSpy;
+
+		// Setup
+		this.oInput = new this.CustomInput({
+			change: function () {
+				that.oPopup.open();
+			}
+		}).placeAt("uiarea");
+
+		Core.applyChanges();
+
+		var fnOpened = function() {
+			assert.equal(oBlurSpy.callCount, 0, "The document.activeElement isn't blurred");
+			assert.ok(jQuery.sap.containsOrEquals(that.oInput.getDomRef(), document.activeElement), "focus is still inside input");
+
+			oBlurSpy.restore();
+			done();
+		};
+
+		this.oPopup.attachOpened(fnOpened);
+		this.oPopup.setInitialFocusId(this.oInput.getId());
+
+		this.oInput.focus();
 		assert.ok(jQuery.sap.containsOrEquals(this.oInput.getDomRef(), document.activeElement), "focus is inside input");
+
+		oFocusDomElement = document.activeElement;
+		oBlurSpy = sinon.spy(oFocusDomElement, "blur");
+
+		QUnitUtils.triggerKeydown(this.oInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		QUnitUtils.triggerKeyup(this.oInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+
+		assert.ok(jQuery.sap.containsOrEquals(this.oInput.getDomRef(), document.activeElement), "The input is still focused after calling popup.open");
+
 		assert.ok(this.oPopup.isOpen(), "Popup should be opened");
 	});
 
