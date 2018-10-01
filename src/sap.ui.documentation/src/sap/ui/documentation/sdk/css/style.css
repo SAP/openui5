@@ -2106,7 +2106,7 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 /* External links disclaimer */
 .sapUISDKExternalLink {
 	cursor: pointer;
-	width: 0.8rem;
+	width: 1rem;
 }
 .sapUIDisclaimerLink img:first-child {
 	margin-left: 0.8rem;
