@@ -110,7 +110,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("be V8-friendly", function (assert) {
-		var oBinding = this.bindContext("/EMPLOYEES('42')");
+		var oParentBindingSpy = this.spy(asODataParentBinding, "call"),
+			oBinding = this.bindContext("/EMPLOYEES('42')");
 
 		assert.ok(oBinding.hasOwnProperty("oCachePromise"));
 		assert.ok(oBinding.hasOwnProperty("mCacheByContext"));
@@ -122,11 +123,10 @@ sap.ui.define([
 		assert.ok(oBinding.hasOwnProperty("oReadGroupLock"));
 		assert.ok(oBinding.hasOwnProperty("sUpdateGroupId"));
 
-		assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
-		assert.strictEqual(oBinding.bAggregatedQueryOptionsInitial, true);
-		assert.strictEqual(oBinding.aChildCanUseCachePromises.length, 0);
 		assert.strictEqual(oBinding.bInheritExpandSelect, undefined);
 		assert.strictEqual(oBinding.oReturnValueContext, null);
+
+		assert.ok(oParentBindingSpy.calledOnceWithExactly(sinon.match.same(oBinding)));
 	});
 
 	//*********************************************************************************************
@@ -326,10 +326,12 @@ sap.ui.define([
 			oMixin = {};
 
 		asODataParentBinding(oMixin);
-		asODataParentBinding.call(oMixin); // initialize members
 
+		assert.notStrictEqual(oBinding["destroy"], oMixin["destroy"], "overwrite destroy");
 		Object.keys(oMixin).forEach(function (sKey) {
-			assert.strictEqual(oBinding[sKey], oMixin[sKey], sKey);
+			if (sKey !== "destroy") {
+				assert.strictEqual(oBinding[sKey], oMixin[sKey], sKey);
+			}
 		});
 	});
 
@@ -1846,9 +1848,11 @@ sap.ui.define([
 			oBindingPrototypeMock = this.mock(ContextBinding.prototype),
 			oContext = Context.create(this.oModel, {}, "/foo"),
 			oModelMock = this.mock(this.oModel),
+			oParentBindingPrototypeMock = this.mock(asODataParentBinding.prototype),
 			oReturnValueContext = Context.create(this.oModel, {}, "/bar");
 
 		oBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
+		oParentBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
 
 		// code under test
@@ -1858,6 +1862,7 @@ sap.ui.define([
 		oBinding.setContext(oContext);
 		this.mock(oBinding.oElementContext).expects("destroy").withExactArgs();
 		oBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
+		oParentBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
 
 		oBinding.mCacheByContext = {/*mCacheByContext*/};
@@ -1873,7 +1878,6 @@ sap.ui.define([
 		assert.strictEqual(oBinding.oCachePromise.isFulfilled(), true);
 		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
 		assert.strictEqual(oBinding.mCacheByContext, undefined);
-		assert.strictEqual(oBinding.aChildCanUseCachePromises.getResult(), undefined);
 		assert.strictEqual(oBinding.oContext, undefined,
 			"context removed as in ODPropertyBinding#destroy");
 		assert.strictEqual(oBinding.oElementContext, undefined);
@@ -1884,6 +1888,7 @@ sap.ui.define([
 		oBinding = this.bindContext("/absolute", oContext);
 		this.mock(oBinding.oElementContext).expects("destroy").withExactArgs();
 		oBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
+		oParentBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
 		this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
 
@@ -1896,6 +1901,7 @@ sap.ui.define([
 		this.mock(oBinding.oElementContext).expects("destroy").withExactArgs();
 		this.mock(oReturnValueContext).expects("destroy").withExactArgs();
 		oBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
+		oParentBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
 		this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
 

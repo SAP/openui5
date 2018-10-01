@@ -21,7 +21,22 @@ sap.ui.define([
 	 * @extends sap.ui.model.odata.v4.ODataBinding
 	 * @mixin
 	 */
-	function ODataParentBinding() {}
+	function ODataParentBinding() {
+		// initialize members introduced by ODataBinding
+		asODataBinding.call(this);
+
+		// the aggregated query options
+		this.mAggregatedQueryOptions = {};
+		// whether the aggregated query options are processed the first time
+		this.bAggregatedQueryOptionsInitial = true;
+		// auto-$expand/$select: promises to wait until child bindings have provided
+		// their path and query options
+		this.aChildCanUseCachePromises = [];
+		// counts the sent but not yet completed PATCHes
+		this.iPatchCounter = 0;
+		// whether all sent PATCHes have been successfully processed
+		this.bPatchSuccess = true;
+	}
 
 	asODataBinding(ODataParentBinding.prototype);
 
@@ -452,6 +467,16 @@ sap.ui.define([
 			iCount = 2 + (iCount || 0);
 			addUnlockTask();
 		}
+	};
+
+	/**
+	 * Destroys the object. The object must not be used anymore after this function was called.
+	 *
+	 * @public
+	 * @since 1.61
+	 */
+	ODataParentBinding.prototype.destroy = function () {
+		this.aChildCanUseCachePromises = [];
 	};
 
 	/**
@@ -915,16 +940,15 @@ sap.ui.define([
 		return mQueryOptions;
 	};
 
-	return function (oPrototype) {
-		if (oPrototype) {
+	function asODataParentBinding(oPrototype) {
+		if (this) {
+			ODataParentBinding.apply(this, arguments);
+		} else {
 			jQuery.extend(oPrototype, ODataParentBinding.prototype);
-			return;
 		}
-		// initialize members introduced by ODataBinding
-		asODataBinding.call(this);
-		// initialize members introduced by ODataParentBinding
-		this.iPatchCounter = 0; // counts the sent but not yet completed PATCHes
-		this.bPatchSuccess = true; // whether all sent PATCHes have been successfully processed
-	};
+	}
 
+	asODataParentBinding.prototype.destroy = ODataParentBinding.prototype.destroy;
+
+	return asODataParentBinding;
 }, /* bExport= */ false);

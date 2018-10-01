@@ -218,12 +218,12 @@ sap.ui.define([
 			oMixin = {};
 
 		asODataParentBinding(oMixin);
-		asODataParentBinding.call(oMixin); // initialize members
 
+		assert.notStrictEqual(oBinding["getDependentBindings"], oMixin["getDependentBindings"],
+			"overwrite getDependentBindings");
+		assert.notStrictEqual(oBinding["destroy"], oMixin["destroy"], "overwrite destroy");
 		Object.keys(oMixin).forEach(function (sKey) {
-			if (sKey === "getDependentBindings") {
-				assert.notStrictEqual(oBinding[sKey], oMixin[sKey], sKey);
-			} else {
+			if (!(sKey === "getDependentBindings" || sKey === "destroy")) {
 				assert.strictEqual(oBinding[sKey], oMixin[sKey], sKey);
 			}
 		});
@@ -258,7 +258,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("be V8-friendly", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES");
+		var oParentBindingSpy = this.spy(asODataParentBinding, "call"),
+			oBinding = this.bindList("/EMPLOYEES");
 
 		assert.ok(oBinding.hasOwnProperty("oAggregation"));
 		assert.ok(oBinding.hasOwnProperty("aApplicationFilters"));
@@ -273,6 +274,8 @@ sap.ui.define([
 		assert.ok(oBinding.hasOwnProperty("oReadGroupLock"));
 		assert.ok(oBinding.hasOwnProperty("aSorters"));
 		assert.ok(oBinding.hasOwnProperty("sUpdateGroupId"));
+
+		assert.ok(oParentBindingSpy.calledOnceWithExactly(oBinding));
 	});
 
 	//*********************************************************************************************
@@ -305,12 +308,9 @@ sap.ui.define([
 		oBinding = new ODataListBinding(this.oModel, "/EMPLOYEES", oContext, vSorters, vFilters,
 			mParameters);
 
-		assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
-		assert.strictEqual(oBinding.bAggregatedQueryOptionsInitial, true);
 		assert.strictEqual(oBinding.aApplicationFilters, aFilters);
 		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 		assert.strictEqual(oBinding.sChangeReason, undefined);
-		assert.deepEqual(oBinding.aChildCanUseCachePromises, []);
 		assert.strictEqual(oBinding.oDiff, undefined);
 		assert.deepEqual(oBinding.aFilters, []);
 		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
@@ -2349,11 +2349,13 @@ sap.ui.define([
 			oBindingMock = this.mock(ListBinding.prototype),
 			oContext = Context.create(this.oModel, {}, "/foo"),
 			oModelMock = this.mock(this.oModel),
+			oParentBindingPrototypeMock = this.mock(asODataParentBinding.prototype),
 			oTransientBindingContext = {destroy : function () {}},
 			oTransientBindingContextMock = this.mock(oTransientBindingContext);
 
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
 		oBindingMock.expects("destroy").on(oBinding).withExactArgs();
+		oParentBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
 
 		// code under test
 		oBinding.destroy();
@@ -2366,6 +2368,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.mAggregatedQueryOptions, undefined);
 		assert.strictEqual(oBinding.oAggregation, undefined);
 		assert.strictEqual(oBinding.aApplicationFilters, undefined);
+		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 		assert.strictEqual(oBinding.aContexts, undefined);
 		assert.strictEqual(oBinding.aFilters, undefined);
 		assert.strictEqual(oBinding.mPreviousContextsByPath, undefined);
@@ -2380,6 +2383,7 @@ sap.ui.define([
 		oTransientBindingContextMock.expects("destroy").withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
 		oBindingMock.expects("destroy").on(oBinding).withExactArgs();
+		oParentBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
 		this.mock(oBinding.getHeaderContext()).expects("destroy").withExactArgs();
 
 		this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
@@ -2387,7 +2391,6 @@ sap.ui.define([
 		// code under test
 		oBinding.destroy();
 
-		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 		assert.strictEqual(oBinding.oContext, undefined,
 			"context removed as in ODPropertyBinding#destroy");
 		assert.strictEqual(oBinding.oDiff, undefined);
@@ -2400,6 +2403,7 @@ sap.ui.define([
 		oTransientBindingContextMock.expects("destroy").withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
 		oBindingMock.expects("destroy").on(oBinding).withExactArgs();
+		oParentBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
 		this.mock(oBinding.getHeaderContext()).expects("destroy").withExactArgs();
 
 		// code under test

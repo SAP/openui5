@@ -70,13 +70,14 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("initialize members for mixin", function (assert) {
-		var oBinding = new ODataParentBinding();
+		var oBinding = {};
 
-		//TODO add missing properties introduced by oParentDataBinding
-		// members introduced by ODataParentBinding
-		assert.ok(oBinding.hasOwnProperty("iPatchCounter"));
+		ODataParentBinding.call(oBinding);
+
+		assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
+		assert.strictEqual(oBinding.bAggregatedQueryOptionsInitial, true);
+		assert.deepEqual(oBinding.aChildCanUseCachePromises, []);
 		assert.strictEqual(oBinding.iPatchCounter, 0);
-		assert.ok(oBinding.hasOwnProperty("bPatchSuccess"));
 		assert.strictEqual(oBinding.bPatchSuccess, true);
 
 		// members introduced by ODataBinding; check inheritance
@@ -1003,7 +1004,6 @@ sap.ui.define([
 							oCachePromise : bCacheCreationPending
 								? SyncPromise.resolve(Promise.resolve())
 								: SyncPromise.resolve(undefined),
-							aChildCanUseCachePromises : [],
 							oContext : {},
 							doFetchQueryOptions : function () {},
 							oModel : {getMetaModel : function () {return oMetaModel;}}
@@ -1090,9 +1090,8 @@ sap.ui.define([
 				},
 				oCachePromise = fnCachePromise(),
 				oBinding = new ODataParentBinding({
-					mAggregatedQueryOptions : {},
+					bAggregatedQueryOptionsInitial : false,
 					oCachePromise : oCachePromise,
-					aChildCanUseCachePromises : [],
 					doFetchQueryOptions : function () {},
 					oModel : {
 						getMetaModel : function () {
@@ -1159,8 +1158,8 @@ sap.ui.define([
 			oCachePromise = SyncPromise.resolve(oCache),
 			oBinding = new ODataParentBinding({
 				mAggregatedQueryOptions : {$select : "foo"},
+				bAggregatedQueryOptionsInitial : false,
 				oCachePromise : oCachePromise,
-				aChildCanUseCachePromises : [],
 				doFetchQueryOptions : function () {},
 				oModel : {
 					getMetaModel : function () { return oMetaModel; },
@@ -1217,10 +1216,7 @@ sap.ui.define([
 				getMetaPath : function () {}
 			},
 			oBinding = new ODataParentBinding({
-				mAggregatedQueryOptions : {},
-				bAggregatedQueryOptionsInitial : true,
 				oCachePromise : SyncPromise.resolve(Promise.resolve()),
-				aChildCanUseCachePromises : [],
 				oContext : {},
 				wrapChildQueryOptions : function () {},
 				doFetchQueryOptions : function () {},
@@ -1277,13 +1273,13 @@ sap.ui.define([
 				mOriginalAggregatedQueryOptions = {$expand : { "foo" : {$select : ["bar"]}}},
 				oBinding = new ODataParentBinding({
 					mAggregatedQueryOptions : mOriginalAggregatedQueryOptions,
+					bAggregatedQueryOptionsInitial : false,
 					// cache will be created, waiting for child bindings
 					oCachePromise : SyncPromise.resolve(Promise.resolve()),
 					doFetchQueryOptions : function () {
 						return SyncPromise.resolve({});
 					},
 					oModel : {getMetaModel : function () {return oMetaModel;}},
-					aChildCanUseCachePromises : [],
 					bRelative : false
 				}),
 				oContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('2')"),
@@ -1327,9 +1323,9 @@ sap.ui.define([
 			},
 			oBinding = new ODataParentBinding({
 				mAggregatedQueryOptions : {$expand : { "foo" : {$select : ["bar"]}}},
+				bAggregatedQueryOptionsInitial : false,
 				// cache will be created, waiting for child bindings
 				oCachePromise : SyncPromise.resolve(Promise.resolve()),
-				aChildCanUseCachePromises : [],
 				doFetchQueryOptions : function () {
 					return SyncPromise.resolve({});
 				},
@@ -1404,13 +1400,10 @@ sap.ui.define([
 				}
 			},
 			oBinding = new ODataParentBinding({
-				mAggregatedQueryOptions : {},
-				bAggregatedQueryOptionsInitial : true,
 				// cache will be created, waiting for child bindings
 				oCachePromise : SyncPromise.resolve(Promise.resolve()),
 				doFetchQueryOptions : function () {},
 				oModel : {getMetaModel : function () {return oMetaModel;}},
-				aChildCanUseCachePromises : [],
 				bRelative : false
 			}),
 			oBindingMock = this.mock(oBinding),
@@ -2479,6 +2472,18 @@ sap.ui.define([
 
 		// code under test - bPatchSuccess is reset after patchCompleted event is fired
 		oBinding.firePatchCompleted(true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("destroy", function (assert) {
+		var oBinding = new ODataParentBinding();
+
+		oBinding.aChildCanUseCachePromises = [{}, {}];
+
+		// code under test
+		oBinding.destroy();
+
+		assert.deepEqual(oBinding.aChildCanUseCachePromises, []);
 	});
 });
 //TODO Fix issue with ODataModel.integration.qunit
