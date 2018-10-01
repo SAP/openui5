@@ -28,6 +28,8 @@ sap.ui.define([
 	// shortcut for sap.ui.core.Orientation
 	var Orientation = coreLibrary.Orientation;
 
+	var iRemAsPixels = 16;
+
 	/**
 	 * Constructor for a new Splitter.
 	 *
@@ -812,7 +814,11 @@ sap.ui.define([
 			sSize = aSizes[i];
 			var iSize;
 
-			if (sSize.indexOf("px") > -1) {
+			if (sSize.indexOf("rem") > -1) {
+				iSize = parseFloat(sSize) * iRemAsPixels;
+				iRest -= iSize;
+				this._calculatedSizes[i] = iSize;
+			} else if (sSize.indexOf("px") > -1) {
 				// Pixel based Value - deduct it from available size
 				iSize = parseInt(sSize, 10);
 				iRest -= iSize;
