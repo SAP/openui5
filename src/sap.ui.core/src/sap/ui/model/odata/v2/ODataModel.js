@@ -3804,7 +3804,7 @@ sap.ui.define([
 
 		//get additional request info for created entries
 		aUrlParams = mParams && mParams.urlParameters ? ODataUtils._createUrlParamsArray(mParams.urlParameters) : undefined;
-		mHeaders = mParams && mParams.headers ? this._getHeaders(mParams.headers) : this._getHeaders();
+		mHeaders = mParams ? this._getHeaders(mParams.headers) : this._getHeaders();
 		sETag = mParams && mParams.eTag ? mParams.eTag : this.getETag(oPayload);
 
 		sUrl = this._createRequestUrl('/' + sKey, null, aUrlParams, this.bUseBatch);
@@ -5366,11 +5366,12 @@ sap.ui.define([
 			mUrlParams = mParameters.urlParameters;
 			bRefreshAfterChange = mParameters.refreshAfterChange;
 		}
+		mHeaders = mHeaders || {};
+
 		bRefreshAfterChange = this._getRefreshAfterChange(bRefreshAfterChange, sGroupId);
 
 		sGroupId = sGroupId ? sGroupId : this.sDefaultChangeGroup;
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
-		mHeaders = this._getHeaders(mHeaders);
 
 		var oRequestHandle = {
 			abort: function() {
