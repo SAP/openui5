@@ -2905,7 +2905,8 @@ function (
 			return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView})
 
 			.then(function(vReturn) {
-				assert.deepEqual(vReturn, {success: false, error: Error("Change can not be applied in XML. Retrying in JS.")}, "the function returns success: false and an error as parameter");
+				assert.equal(vReturn.error.message, "Change cannot be applied in XML. Retrying in JS.", "the function returns success: false and an error as parameter");
+				assert.notOk(vReturn.success, "the function returns success: false and an error as parameter");
 				assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 0, "the changeHandler was not called");
 				assert.notOk(this.oControl.getElementsByTagName("customData")[0], "the custom data is not set");
 			}.bind(this));
