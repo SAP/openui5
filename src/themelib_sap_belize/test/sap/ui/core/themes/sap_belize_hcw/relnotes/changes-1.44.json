@@ -712,5 +712,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.36": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "14a7633e1bc8261108242a51d52321cb5069e54b",
+        "type": "FIX",
+        "text": " sap.m.Input: Value help icon is now properly displayed in compact mode",
+        "references": []
+      }
+    ]
   }
 }

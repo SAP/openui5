@@ -1092,5 +1092,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.11": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "51aec72b9037be5ec2578308612c438b299e8bb8",
+        "type": "FIX",
+        "text": " format/DateFormat: Multiple instances shouldn\u0027t share fallback formats",
+        "references": []
+      }
+    ]
   }
 }

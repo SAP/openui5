@@ -340,5 +340,16 @@
         ]
       }
     ]
+  },
+  "1.38.38": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "483c0ce60ab5276f8ca081cb9cf1a6bec97e33f5",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: fix forms spacing",
+        "references": []
+      }
+    ]
   }
 }

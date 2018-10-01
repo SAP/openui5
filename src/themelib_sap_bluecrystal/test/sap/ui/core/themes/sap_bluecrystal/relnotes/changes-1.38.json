@@ -785,5 +785,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.38": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "996e80738825c60da530f61115c2b94730eeb989",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Adding semantic colors in print",
+        "references": []
+      }
+    ]
   }
 }
