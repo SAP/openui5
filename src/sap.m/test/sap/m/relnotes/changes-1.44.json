@@ -5108,5 +5108,28 @@
         "references": []
       }
     ]
+  },
+  "1.44.36": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "d0be6e382ddf4ddbc087b97c521d7c51f7744cf9",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: search with relative item binding works now.",
+        "references": []
+      },
+      {
+        "id": "14a7633e1bc8261108242a51d52321cb5069e54b",
+        "type": "FIX",
+        "text": " sap.m.Input: Value help icon is now properly displayed in compact mode",
+        "references": []
+      },
+      {
+        "id": "c8fb65a2e3862985cb866c1c722ffe480b6943dd",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: propagete properties to internal TabStripItem",
+        "references": []
+      }
+    ]
   }
 }

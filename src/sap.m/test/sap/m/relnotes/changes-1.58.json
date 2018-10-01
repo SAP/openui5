@@ -1324,6 +1324,12 @@
         "type": "FIX",
         "text": " sap.m.Wizard: Stable ID restored",
         "references": []
+      },
+      {
+        "id": "4fa8d4e8ccb3d28bb8ea3bc5021e40c94fb2e6a2",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: doesn\u0027t throw error when given customContent is null",
+        "references": []
       }
     ]
   }
