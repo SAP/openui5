@@ -191,7 +191,7 @@
 				oTextButton = oInnerButton._getTextButton(),
 				oArrowButton = oInnerButton._getArrowButton(),
 				bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
-				aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" ");console.log(aAriaLabelledByIds)
+				aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" ");
 				bAriaLabeledByHasCorrectValue = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT"));
 
 			//assert
@@ -302,6 +302,51 @@
 			assert.ok(oInnerButton._oInvisibleTooltipInfoLabel.getDomRef(), "There is tooltip info label and it is rendered");
 			assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct value');
 			assert.strictEqual(oInnerButton.$().attr('title'), sTooltip, "The icon tooltip is successfully set");
+		});
+
+		QUnit.module("Accessibility (Labelling)", {
+			beforeEach: function () {
+				this.oLabel = new sap.m.Label("initialLabel", {
+					labelFor: "menuButton"
+				});
+				this.oMenuButton = new sap.m.MenuButton("menuButton");
+
+				this.oLabel.placeAt("content");
+				this.oMenuButton.placeAt("content");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oLabel.destroy();
+				this.oMenuButton.destroy();
+
+				this.oLabel = null;
+				this.oMenuButton = null;
+			}
+		});
+
+		QUnit.test("Label is redirected to internal button", function (assert) {
+			var sInternalButtonAriaLabelledby = this.oMenuButton._getButtonControl().$().attr("aria-labelledby");
+
+			assert.notOk(this.oMenuButton.$().attr("aria-labelledby"), "MenuButton doesn't have aria-labelledby attribute");
+			assert.ok(sInternalButtonAriaLabelledby.indexOf("initialLabel") !== -1,
+					"Reference to the label is added on the internal button");
+		});
+
+		QUnit.test("Dynamically created label", function (assert) {
+			var oLabel = new sap.m.Label("newLabel", { labelFor: "menuButton" }),
+				sInternalButtonAriaLabelledby;
+
+			oLabel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			sInternalButtonAriaLabelledby = this.oMenuButton._getButtonControl().$().attr("aria-labelledby");
+
+			assert.ok(sInternalButtonAriaLabelledby.indexOf("initialLabel") !== -1,
+					"Initial label reference is still kept");
+			assert.ok(sInternalButtonAriaLabelledby.indexOf("newLabel") !== -1,
+					"Internal button has reference to the newly created label");
+
+			oLabel.destroy();
 		});
 
 		QUnit.module("Pressing", {

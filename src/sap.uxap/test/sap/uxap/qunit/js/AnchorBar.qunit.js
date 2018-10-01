@@ -12,6 +12,14 @@ sap.ui.require(["sap/ui/thirdparty/jquery"],
 	var ANCHORBAR_CLASS_SELECTOR = ".sapUxAPAnchorBar";
 	var HIERARCHICAL_CLASS_SELECTOR = ".sapUxAPHierarchicalSelect";
 
+	function checkButtonAriaAttribute(assert, oButton, sAttribute, sExpected, sMessage) {
+		if (oButton.isA("sap.m.MenuButton")) {
+			oButton = oButton._getButtonControl();
+		}
+
+		assert.strictEqual(oButton.$().attr(sAttribute), sExpected, sMessage);
+	}
+
 	QUnit.module("properties", {
 		beforeEach: function () {
 			this.clock = sinon.useFakeTimers();
@@ -85,17 +93,16 @@ sap.ui.require(["sap/ui/thirdparty/jquery"],
 		this.clock.tick(iRenderingDelay);
 
 		assert.strictEqual(oLastSectionButton.$().hasClass("sapUxAPAnchorBarButtonSelected"), true, "select button programmatically");
-		assert.strictEqual(oLastSectionButton.$().attr("aria-checked"), "true", "ARIA checked state should be true for the selected button");
-		assert.strictEqual(oFirstSectionButton.$().attr("aria-checked"), "false", "ARIA checked state should be false for the unselected button");
-
-		assert.strictEqual(oMenuButton._getButtonControl().$().attr("aria-checked"), "false", "ARIA checked state should be false for the unselected split button");
+		checkButtonAriaAttribute(assert, oLastSectionButton, "aria-checked", "true", "ARIA checked state should be true for the selected button");
+		checkButtonAriaAttribute(assert, oFirstSectionButton, "aria-checked", "false", "ARIA checked state should be false for the unselected button");
+		checkButtonAriaAttribute(assert, oMenuButton, "aria-checked", "false", "ARIA checked state should be false for the unselected split button");
 
 		oAnchorBar.setSelectedButton(oMenuButton);
 
 		// allow for scroling
 		this.clock.tick(iRenderingDelay);
 
-		assert.strictEqual(oMenuButton._getButtonControl().$().attr("aria-checked"), "true", "ARIA checked state should be true for the selected split button");
+		checkButtonAriaAttribute(assert, oMenuButton, "aria-checked", "true", "ARIA checked state should be true for the selected split button");
 	});
 
 	QUnit.test("Custom button", function (assert) {
@@ -452,22 +459,17 @@ sap.ui.require(["sap/ui/thirdparty/jquery"],
 	QUnit.test("Count information", function (assert) {
 		var aAnchorBarContent = this.oObjectPage.getAggregation("_anchorBar").getContent(),
 			iAnchorBarContentLength = aAnchorBarContent.length,
-			$oCurrentButtonDomRef,
-			$oCurrentButtonChildDomRef,
+			oCurrentButton,
 			iIndex;
 
 		for (iIndex = 0; iIndex < iAnchorBarContentLength; iIndex++) {
-			$oCurrentButtonDomRef = aAnchorBarContent[iIndex].$();
+			oCurrentButton = aAnchorBarContent[iIndex];
 			// Convert the numbers to strings, since .attr would return a string
 			// We need to add '+ 1' to the index for posinset, since posinset starts from 1, rather than 0
-			assert.strictEqual($oCurrentButtonDomRef.attr("aria-setsize"), iAnchorBarContentLength.toString(), "aria-setsize indicates anchorBar's length correctly");
-			assert.strictEqual($oCurrentButtonDomRef.attr("aria-posinset"), (iIndex + 1).toString(), "aria-posinset indicates the correct position of the button");
-
-			if (aAnchorBarContent[iIndex] instanceof sap.m.MenuButton) {
-				$oCurrentButtonChildDomRef = aAnchorBarContent[iIndex]._getButtonControl().$();
-				assert.strictEqual($oCurrentButtonChildDomRef.attr("aria-setsize"), iAnchorBarContentLength.toString(), "aria-setsize of the split button indicates anchorBar's length correctly");
-				assert.strictEqual($oCurrentButtonChildDomRef.attr("aria-posinset"), (iIndex + 1).toString(), "aria-posinset indicates the correct position of the split button");
-			}
+			checkButtonAriaAttribute(assert, oCurrentButton, "aria-setsize", iAnchorBarContentLength.toString(),
+				"aria-setsize of the button indicates anchorBar's length correctly");
+			checkButtonAriaAttribute(assert, oCurrentButton, "aria-posinset", (iIndex + 1).toString(),
+				"aria-posinset indicates the correct position of the button");
 		}
 	});
 

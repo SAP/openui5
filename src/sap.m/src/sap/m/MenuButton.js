@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/library',
 	'sap/ui/core/Popup',
+	'sap/ui/core/LabelEnablement',
 	'sap/m/Menu',
 	"./MenuButtonRenderer"
 ], function(
@@ -23,6 +24,7 @@ sap.ui.define([
 	EnabledPropagator,
 	coreLibrary,
 	Popup,
+	LabelEnablement,
 	Menu,
 	MenuButtonRenderer
 ) {
@@ -634,6 +636,39 @@ sap.ui.define([
 			if (this.getMenu()) {
 				this.$().attr("aria-controls", this.getMenu().getDomRefId());
 			}
+		};
+
+		/**
+		 * Returns the DOMNode Id to be used for the "labelFor" attribute of the label.
+		 *
+		 * By default, this is the Id of the control itself.
+		 *
+		 * @return {string} Id to be used for the <code>labelFor</code>
+		 * @public
+		 */
+		MenuButton.prototype.getIdForLabel = function () {
+			return this.getId() + "-internalBtn";
+		};
+
+		/**
+		 * Ensures that MenuButton's internal button will have a reference back to the labels, by which
+		 * the MenuButton is labelled
+		 *
+		 * @returns {sap.m.MenuButton} For chaining
+		 * @private
+		 */
+		MenuButton.prototype._ensureBackwardsReference = function () {
+			var oInternalButton = this._getButtonControl(),
+				aInternalButtonAriaLabelledBy = oInternalButton.getAriaLabelledBy(),
+				aReferencingLabels = LabelEnablement.getReferencingLabels(this);
+
+			aReferencingLabels.forEach(function (sLabelId) {
+				if (aInternalButtonAriaLabelledBy && aInternalButtonAriaLabelledBy.indexOf(sLabelId) === -1) {
+					oInternalButton.addAriaLabelledBy(sLabelId);
+				}
+			});
+
+			return this;
 		};
 
 		return MenuButton;
