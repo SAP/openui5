@@ -27,6 +27,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Split",
 	"sap/ui/rta/plugin/Selection",
 	"sap/ui/rta/plugin/Settings",
+	"sap/ui/rta/plugin/Stretch",
 	"sap/ui/rta/plugin/ControlVariant",
 	"sap/ui/dt/plugin/ContextMenu",
 	"sap/ui/dt/plugin/TabHandling",
@@ -77,6 +78,7 @@ function(
 	SplitPlugin,
 	SelectionPlugin,
 	SettingsPlugin,
+	StretchPlugin,
 	ControlVariantPlugin,
 	ContextMenuPlugin,
 	TabHandlingPlugin,
@@ -365,6 +367,9 @@ function(
 
 			// Tab Handling
 			this._mDefaultPlugins["tabHandling"] = new TabHandlingPlugin();
+
+			// Stretching
+			this._mDefaultPlugins["stretch"] = new StretchPlugin();
 
 			//Control Variant
 			this._mDefaultPlugins["controlVariant"] = new ControlVariantPlugin({

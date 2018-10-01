@@ -126,6 +126,18 @@ sap.ui.define([
 			},
 
 			// Plugins
+			"plugin/additionalElements/AddElementsDialog": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/additionalElements/AddElementsDialog"]
+				}
+			},
+			"plugin/additionalElements/AdditionalElementsPlugin": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin"]
+				}
+			},
 			"plugin/Combine": {
 				group: "Plugin",
 				coverage: {
@@ -198,16 +210,10 @@ sap.ui.define([
 					only: ["sap/ui/rta/plugin/Split"]
 				}
 			},
-			"plugin/additionalElements/AddElementsDialog": {
+			"plugin/Stretch": {
 				group: "Plugin",
 				coverage: {
-					only: ["sap/ui/rta/plugin/additionalElements/AddElementsDialog"]
-				}
-			},
-			"plugin/additionalElements/AdditionalElementsPlugin": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin"]
+					only: ["sap/ui/rta/plugin/Stretch"]
 				}
 			},
 

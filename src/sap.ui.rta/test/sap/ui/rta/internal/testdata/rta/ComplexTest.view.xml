@@ -279,8 +279,8 @@
 				</form:SimpleForm>
 			</sap.ui.layout:VerticalLayout>
 
-			<sap.ui.layout:VerticalLayout>
-				<VBox class="sapUiSmallMargin">
+			<sap.ui.layout:VerticalLayout id="verticalLayoutSameSize">
+				<VBox>
 					<form:SimpleForm id="SimpleFormChangeColumn_twoGroups234"
 						editable="true"
 						layout="ColumnLayout"
