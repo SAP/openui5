@@ -5084,6 +5084,28 @@ sap.ui.define([
 			delete this.oModel;
 		}
 	});
+
+	QUnit.test("Check context path of created entry", function(assert) {
+		var done = assert.async();
+		this.oModel.setUseBatch(true);
+		this.oModel.metadataLoaded().then(function() {
+			var oContext = this.oModel.createEntry("/Products", {properties: {Name: 'test', ID: '1000'}, urlParameters: {'create': "id_1000"}});
+
+			this.oModel.submitChanges({
+				success: function() {
+					assert.deepEqual("/Products(1000)", oContext.getPath());
+					assert.deepEqual(oContext, this.oModel.getContext(oContext.getPath()));
+					done();
+				}.bind(this),
+				error: function() {
+					assert.fail("There should be no error");
+					done();
+				}
+			});
+
+		}.bind(this));
+	});
+
 	QUnit.test("set same value again", function(assert) {
 		var done = assert.async();
 		this.oModel.metadataLoaded().then(function() {
