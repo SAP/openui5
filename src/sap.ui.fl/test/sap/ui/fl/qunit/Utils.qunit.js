@@ -1723,8 +1723,7 @@ function(
 				assert.notOk(true, "then the 'then' method shouldn't be called");
 			})
 			.catch(function(oErrorValue) {
-				assert.strictEqual(oErrorValue.message, 'aWrongType.some is not a function',
-					"then the correct error parameter is passed to the second 'catch' method");
+				assert.ok(oErrorValue.message.includes("some"), "then the error was caught and communicated properly");
 			});
 		});
 
@@ -1743,9 +1742,8 @@ function(
 			.then(function() {
 				assert.notOk(true, "then the 'then' method in the root chain also shouldn't be called");
 			})
-			.catch(function(oErrorValue) {
-				assert.strictEqual(oErrorValue.message, '"should be an array".some is not a function',
-					"then the correct error parameter is passed to the second 'catch' method");
+			.catch(function (oErrorValue) {
+				assert.ok(oErrorValue.message.includes("some"), "then the error was caught and communicated properly");
 			});
 		});
 
@@ -1795,9 +1793,8 @@ function(
 			.then(function() {
 				assert.notOk(true, "then the 'then' method in the root chain also shouldn't be called");
 			})
-			.catch(function(oErrorValue) {
-				assert.strictEqual(oErrorValue.message, '"should be an array".some is not a function',
-					"then the correct error parameter is passed to the second 'catch' method");
+			.catch(function (oErrorValue) {
+				assert.ok(oErrorValue.message.includes("some"), "then the error was caught and communicated properly");
 			});
 		});
 	});
