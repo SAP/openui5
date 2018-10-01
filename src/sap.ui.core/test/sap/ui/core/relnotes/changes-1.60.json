@@ -211,6 +211,48 @@
         "type": "FIX",
         "text": "sap.ui.fl - Fixed switching variants with stashed controls",
         "references": []
+      },
+      {
+        "id": "62d7673a085745d7f8f355ace614bd98b48bb700",
+        "type": "FEATURE",
+        "text": " Opa5: RecordReplay API introduction",
+        "references": []
+      },
+      {
+        "id": "3e39ef0edb3a8f7bc4e4ae8cdb5e6647a0808777",
+        "type": "FEATURE",
+        "text": " sap.ui.core.AccessibleLandmarkRole: New roles added",
+        "references": []
+      },
+      {
+        "id": "d309143dac0e2a14dd45c6080413129b93d39fe0",
+        "type": "FIX",
+        "text": " Component: Propagate module loading errors",
+        "references": []
+      },
+      {
+        "id": "ca35299d6edaa7024322b212481a6e99c2fe4e58",
+        "type": "FIX",
+        "text": " NumberFormat: Fix private API _shiftDecimalPoint for negative values",
+        "references": []
+      },
+      {
+        "id": "5c95d1579a05a1da1b9af0772b1bec3df582862b",
+        "type": "FIX",
+        "text": " core.Popup: autoclose is done by using focus event on combi device",
+        "references": []
+      },
+      {
+        "id": "9ec00c36c7b982716235eef86f78a405d25a1456",
+        "type": "FIX",
+        "text": " core.RenderManager: writeIcon should put font family in quotes",
+        "references": []
+      },
+      {
+        "id": "10a063692ff7f04e723ba7697ad1aec2baad4ef8",
+        "type": "FIX",
+        "text": " m/TextArea: do not trigger FieldGroupValidation on enter",
+        "references": []
       }
     ]
   }

@@ -55,6 +55,12 @@
         "type": "FEATURE",
         "text": " sap.ui.unified.ColorPickerPopover: enabling popover/dialog mode of ColorPicker",
         "references": []
+      },
+      {
+        "id": "c9e6074ee4e05181eaaaf85270c044dd83685373",
+        "type": "FIX",
+        "text": " PlanningCalendar: Show interval headers in one month view",
+        "references": []
       }
     ]
   }

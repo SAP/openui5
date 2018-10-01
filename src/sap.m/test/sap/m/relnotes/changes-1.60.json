@@ -679,6 +679,102 @@
         "type": "FIX",
         "text": " sap.m.PDFViewerDisplayTypes: change the enum according to the OpenUI5\u0027s code style",
         "references": []
+      },
+      {
+        "id": "cf9f45c4cbb3e01d71c5fda2e887d8b679a09860",
+        "type": "FEATURE",
+        "text": " MessageView: Keyboard handling enhanced",
+        "references": []
+      },
+      {
+        "id": "aca260baa479458a0e54135d9a4ac4e0cfaf13b4",
+        "type": "FEATURE",
+        "text": " sap.m.FeedInput: FeedInput Enhancements",
+        "references": []
+      },
+      {
+        "id": "a42bc6a0762cf00f3cc253b93f4ea55e49549798",
+        "type": "FEATURE",
+        "text": " sap.m.Table: Container-based pop-in behavior added",
+        "references": []
+      },
+      {
+        "id": "47ec59ebf32cec8136a6a0f95ce2542973c2c6f0",
+        "type": "FEATURE",
+        "text": " sap.m.ViewSettingsDialog: Now the control implements its current visual specification",
+        "references": []
+      },
+      {
+        "id": "59b882556f6488ab8632eff2082282028c880051",
+        "type": "FIX",
+        "text": " CheckBox: Ensure setSelected toggles the checked state correctly",
+        "references": []
+      },
+      {
+        "id": "c4a7e8b8dee22c9f97cab1050dc6ee616783536f",
+        "type": "FIX",
+        "text": " MultiInput: Value Input is hidden if n-more is shown",
+        "references": []
+      },
+      {
+        "id": "10a063692ff7f04e723ba7697ad1aec2baad4ef8",
+        "type": "FIX",
+        "text": " m/TextArea: do not trigger FieldGroupValidation on enter",
+        "references": []
+      },
+      {
+        "id": "f84300fb818697126167519ae09bb7237278313d",
+        "type": "FIX",
+        "text": " sap.m.GenericTile : In IE11 when a DOM Element which is only partially visible in the browser viewport gets the focus, the IE 11 browser shifts the element to make it fully visible in the viewport. This has conflict with UI5 event onTap detection.",
+        "references": []
+      },
+      {
+        "id": "cc7df00e849d4b01f55acd83aef9cfe08f7e79cb",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Close Dialog on Enter",
+        "references": []
+      },
+      {
+        "id": "f649a59324bbce7a85719292366191c814de067b",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fire change event on enter on mobile",
+        "references": []
+      },
+      {
+        "id": "79a244a1f9b4d5eb1f630c11adafa9f6e80707d6",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: doesn\u0027t throw error when given customContent is null",
+        "references": []
+      },
+      {
+        "id": "d2c940b72dbf735d2d6b431cd8e91007d88ae498",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: prevent default actions, only when click is on its none-active parts",
+        "references": []
+      },
+      {
+        "id": "9faaeeecbd55c5a06d7210fd7d2bb1752351bffd",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Accessibility description corrected",
+        "references": []
+      },
+      {
+        "id": "880ae1c5b8c2bee8fbe2804dfd4dda4590050ab7",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Optional label fixed in branching case",
+        "references": []
+      },
+      {
+        "id": "92a5bb5bab4812b03a01247eeb9c3f32aa57b27a",
+        "type": "FIX",
+        "text": " sap.m.Wizard: nextStep handling in branching fixed",
+        "references": []
+      },
+      {
+        "id": "ce0704984ea380ff409d44d6109dcb8816432e39",
+        "type": "FIX",
+        "text": " sap.m.WizardStep: Next button visibility adjusted",
+        "references": []
       }
     ]
   }

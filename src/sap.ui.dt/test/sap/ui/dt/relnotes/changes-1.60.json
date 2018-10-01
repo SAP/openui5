@@ -85,6 +85,24 @@
         "type": "FIX",
         "text": "sap.ui.dt - Expanded compact menu is now equal to context menu",
         "references": []
+      },
+      {
+        "id": "9535aca94ba2c70feb816897c4104cc091e59288",
+        "type": "FIX",
+        "text": ": DT - Context Menu size fix and Minimenu fix",
+        "references": []
+      },
+      {
+        "id": "7b6bf3fade5e462bafced5ebfbde82a116b03891",
+        "type": "FIX",
+        "text": ": DT - don\u0027t set focus after closing Contextmenu",
+        "references": []
+      },
+      {
+        "id": "24d4cd99c2c469a401d418551428ad96d79230a4",
+        "type": "FIX",
+        "text": ": DT-Contextmenu size and positioning",
+        "references": []
       }
     ]
   }
