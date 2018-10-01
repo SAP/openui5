@@ -694,24 +694,15 @@ function(
 			var bMaxIsNumber = this._isNumericLike(max),
 				bMinIsNumber = this._isNumericLike(min),
 				oIncrementButton = this._getIncrementButton(),
-				oDecrementButton = this._getDecrementButton();
+				oDecrementButton = this._getDecrementButton(),
+				bEnabled = this.getEnabled(),
+				bReachedMin = bMinIsNumber && min >= value, //min is set and it's bigger or equal to the value
+				bReachedMax = bMaxIsNumber && max <= value, //max is set and it's lower or equal to the value
+				bShouldDisableDecrement = bEnabled ? bReachedMin : true, //if enabled - set the value according to the min value, if not - set disable flag to true
+				bShouldDisableIncrement = bEnabled ? bReachedMax : true; //if enabled - set the value according to the max value, if not - set disable flag to true;
 
-			if (oDecrementButton) {
-				if (bMinIsNumber && min < value && this.getEnabled()) {
-					oDecrementButton.toggleStyleClass("sapMStepInputIconDisabled", false);
-				}
-				if (!this.getEnabled() || (bMinIsNumber && value <= min)) {
-					oDecrementButton.toggleStyleClass("sapMStepInputIconDisabled", true);
-				}
-			}
-			if (oIncrementButton) {
-				if (bMaxIsNumber && value < max && this.getEnabled()) {
-					oIncrementButton.toggleStyleClass("sapMStepInputIconDisabled", false);
-				}
-				if (!this.getEnabled() || (bMaxIsNumber && value >= max)) {
-					oIncrementButton.toggleStyleClass("sapMStepInputIconDisabled", true);
-				}
-			}
+			oDecrementButton && oDecrementButton.toggleStyleClass("sapMStepInputIconDisabled", bShouldDisableDecrement);
+			oIncrementButton && oIncrementButton.toggleStyleClass("sapMStepInputIconDisabled", bShouldDisableIncrement);
 
 			return this;
 		};
