@@ -1169,7 +1169,7 @@
 			sap.ui.getCore().applyChanges();
 
 			assert.equal(sut.getContextualWidth(), "Inherit", "ContextualWidth with initial size has been applied.");
-			assert.equal(jQuery(".sapMListTblSubCntGridSmall").length, 0, "by default no popin for table");
+			assert.equal(jQuery(".sapMListTblSubRow").length, 0, "by default no popin for table");
 
 			// CSS size
 			sut.setContextualWidth("200px");
@@ -1177,7 +1177,7 @@
 			sap.ui.getCore().applyChanges();
 
 			assert.equal(sut.getContextualWidth(), "200px", "ContextualWidth with css size has been applied.");
-			assert.ok(jQuery(".sapMListTblSubCntGridSmall").length > 0, "popin is correct when contextualWidth is set to fixed pixel value.");
+			assert.ok(jQuery(".sapMListTblSubRow").length > 0, "popin is correct when contextualWidth is set to fixed pixel value.");
 
 			// auto, resizeHandler
 			sut.setContextualWidth("auto");
@@ -1195,7 +1195,7 @@
 			sap.ui.getCore().applyChanges();
 
 			assert.equal(sut.getContextualWidth(), "Inherit", "ContextualWidth with inherit has been applied.");
-			assert.equal(jQuery(".sapMListTblSubCntGridSmall").length, 0, "no popin for table when contextualWidth is set to inherit");
+			assert.equal(jQuery(".sapMListTblSubRow").length, 0, "no popin for table when contextualWidth is set to inherit");
 
 			sut.destroy();
 
