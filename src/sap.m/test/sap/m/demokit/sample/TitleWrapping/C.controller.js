@@ -13,7 +13,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 		},
 		onWrappingChange: function() {
 
-			var title = sap.ui.getCore().byId("__xmlview0--WrappingTitle");
+			var title = sap.ui.getCore().byId(this.getView().getId() + "--WrappingTitle");
 			title.setWrapping(!title.getWrapping());
 		}
 	});
