@@ -118,6 +118,13 @@
   },
   "1.58.3": {
     "date": "September 2018",
-    "notes": []
+    "notes": [
+      {
+        "id": "30a125299f23b15557b2313c69efd127a85ba872",
+        "type": "FIX",
+        "text": " Prevent encoding of URL before hashing",
+        "references": []
+      }
+    ]
   }
 }

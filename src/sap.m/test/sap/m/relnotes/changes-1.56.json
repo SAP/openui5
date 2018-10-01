@@ -1729,5 +1729,40 @@
         "references": []
       }
     ]
+  },
+  "1.56.11": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "3c5b26ed1d4176145121049a8087796008215a10",
+        "type": "FIX",
+        "text": " OverflowToolbar: Fixed resetting of child size cache",
+        "references": []
+      },
+      {
+        "id": "5b7606519303743ea167c542807220ab94298884",
+        "type": "FIX",
+        "text": " sap.m.GenericTile : In IE11 when a DOM Element which is only partially visible in the browser viewport gets the focus, the IE 11 browser shifts the element to make it fully visible in the viewport. This has conflict with UI5 event onTap detection.",
+        "references": []
+      },
+      {
+        "id": "7e0fc6d49a3e943ceba359500869340fb5ec303c",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: prevent default actions, only when click is on its none-active parts",
+        "references": []
+      },
+      {
+        "id": "43b544b44938771a23b664c3d2a234081bc173a7",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: status rendered in correct column when the attribute is empty",
+        "references": []
+      },
+      {
+        "id": "0682678cb0d02500295004fd231770016c8239ca",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Accessibility description corrected",
+        "references": []
+      }
+    ]
   }
 }

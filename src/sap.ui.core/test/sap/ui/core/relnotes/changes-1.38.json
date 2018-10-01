@@ -3402,5 +3402,28 @@
         "references": []
       }
     ]
+  },
+  "1.38.38": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "770a11dd21d3c211bfa0e2f8dd54d64fe396c8b6",
+        "type": "FIX",
+        "text": " AppCacheBuster: ignore query parameter for index lookup",
+        "references": []
+      },
+      {
+        "id": "d70b26c61e178cb38801c3ce7411103018a86e33",
+        "type": "FIX",
+        "text": " Theming Parameters: Improve inline parameters decoding",
+        "references": []
+      },
+      {
+        "id": "7fda72367cc0d28b64cc454af8f84432a6d0e3f6",
+        "type": "FIX",
+        "text": " sap/ui/dom/computedStylePolyfill: document.body is not there yet",
+        "references": []
+      }
+    ]
   }
 }

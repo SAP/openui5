@@ -512,5 +512,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.38": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "2d2bf46a0929e3d99c5bf8b43252dca8c00b2a30",
+        "type": "FIX",
+        "text": " ui.unified.FileUploader: Documentation improved",
+        "references": []
+      }
+    ]
   }
 }
