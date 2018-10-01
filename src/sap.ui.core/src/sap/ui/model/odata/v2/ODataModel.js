@@ -5218,8 +5218,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks if there exist pending changes in the model created by the {@link #setProperty} method.
-	 * @return {boolean} Whether there are pending changes
+	 * Checks if there exist pending changes in the model created by {@link #setProperty} or {@link #createEntry}.
+	 * @return {boolean} <code>true</code> if there are pending changes, <code>false</code> otherwise.
 	 * @public
 	 */
 	ODataModel.prototype.hasPendingChanges = function() {
