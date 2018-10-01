@@ -1513,14 +1513,12 @@ sap.ui.define([
 		if (sPath && sPath[0] === "/") {
 			sResolvedPath = sPath;
 		} else if (oContext) {
+			sResolvedPath = oContext.getPath();
 			if (sPath) {
-				if (oContext.getPath().slice(-1) === "/") {
-					sResolvedPath = oContext.getPath() + sPath;
-				} else {
-					sResolvedPath = oContext.getPath() + "/" + sPath;
+				if (sResolvedPath.slice(-1) !== "/") {
+					sResolvedPath += "/";
 				}
-			} else {
-				sResolvedPath = oContext.getPath();
+				sResolvedPath += sPath;
 			}
 		}
 
