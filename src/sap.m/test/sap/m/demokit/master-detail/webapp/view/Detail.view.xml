@@ -1,8 +1,8 @@
 <mvc:View
 	controllerName="sap.ui.demo.masterdetail.controller.Detail"
 	xmlns="sap.m"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:semantic="sap.f.semantic">
+	xmlns:semantic="sap.f.semantic"
+	xmlns:mvc="sap.ui.core.mvc">
 
 	<semantic:SemanticPage
 		id="detailPage"
@@ -27,7 +27,7 @@
 				id="lineItemsList"
 				width="auto"
 				items="{LineItems}"
-				updateFinished="onListUpdateFinished"
+				updateFinished=".onListUpdateFinished"
 				noDataText="{i18n>detailLineItemTableNoDataText}"
 				busyIndicatorDelay="{detailView>/lineItemTableDelay}">
 				<headerToolbar>
@@ -70,26 +70,26 @@
 		<semantic:sendEmailAction>
 			<semantic:SendEmailAction
 				id="shareEmail"
-				press="onSendEmailPress"/>
+				press=".onSendEmailPress"/>
 		</semantic:sendEmailAction>
 
 		<semantic:closeAction>
 			<semantic:CloseAction
 					id="closeColumn"
-					press="onCloseDetailPress"/>
+					press=".onCloseDetailPress"/>
 		</semantic:closeAction>
 
 		<semantic:fullScreenAction>
 			<semantic:FullScreenAction
 					id="enterFullScreen"
 					visible="{= !${device>/system/phone} &amp;&amp; !${appView>/actionButtonsInfo/midColumn/fullScreen}}"
-					press="toggleFullScreen"/>
+					press=".toggleFullScreen"/>
 		</semantic:fullScreenAction>
 		<semantic:exitFullScreenAction>
 			<semantic:ExitFullScreenAction
 					id="exitFullScreen"
 					visible="{= !${device>/system/phone} &amp;&amp; ${appView>/actionButtonsInfo/midColumn/fullScreen}}"
-					press="toggleFullScreen"/>
+					press=".toggleFullScreen"/>
 		</semantic:exitFullScreenAction>
 
 	</semantic:SemanticPage>

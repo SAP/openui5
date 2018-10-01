@@ -1,8 +1,8 @@
 <mvc:View
 	controllerName="sap.ui.demo.masterdetail.controller.Master"
-	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
-	xmlns:semantic="sap.f.semantic">
+	xmlns:semantic="sap.f.semantic"
+	xmlns:mvc="sap.ui.core.mvc">
 
 	<semantic:SemanticPage
 		id="masterPage"
@@ -32,14 +32,14 @@
 				mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}"
 				growing="true"
 				growingScrollToLoad="true"
-				updateFinished="onUpdateFinished"
-				selectionChange="onSelectionChange">
+				updateFinished=".onUpdateFinished"
+				selectionChange=".onSelectionChange">
 				<infoToolbar>
 					<Toolbar
 						active="true"
 						id="filterBar"
 						visible="{masterView>/isFilterBarVisible}"
-						press="onOpenViewSettings">
+						press=".onOpenViewSettings">
 						<Title
 							id="filterBarLabel"
 							text="{masterView>/filterBarLabel}" />
@@ -51,7 +51,7 @@
 							id="searchField"
 							showRefreshButton="true"
 							tooltip="{i18n>masterSearchTooltip}"
-							search="onSearch"
+							search=".onSearch"
 							width="auto">
 							<layoutData>
 								<OverflowToolbarLayoutData
@@ -64,17 +64,17 @@
 						<ToolbarSpacer/>
 						<Button
 							id="sortButton"
-							press="onOpenViewSettings"
+							press=".onOpenViewSettings"
 							icon="sap-icon://sort"
 							type="Transparent"/>
 						<Button
 							id="filterButton"
-							press="onOpenViewSettings"
+							press=".onOpenViewSettings"
 							icon="sap-icon://filter"
 							type="Transparent"/>
 						<Button
 							id="groupButton"
-							press="onOpenViewSettings"
+							press=".onOpenViewSettings"
 							icon="sap-icon://group-2"
 							type="Transparent"/>
 					</OverflowToolbar>
@@ -82,7 +82,7 @@
 				<items>
 					<ObjectListItem
 						type="Navigation"
-						press="onSelectionChange"
+						press=".onSelectionChange"
 						title="{Name}"
 						number="{
 							path: 'UnitNumber',
