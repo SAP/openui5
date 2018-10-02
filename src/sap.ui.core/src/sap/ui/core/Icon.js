@@ -319,8 +319,16 @@ sap.ui.define([
 	/* =========================================================== */
 
 	Icon.prototype._restoreColors = function(sMode) {
-		var sColor = sMode === "hover" ? this.getHoverColor() : this.getColor(),
-			sBackgroundColor = sMode === "hover" ? this.getHoverBackgroundColor() : this.getBackgroundColor();
+		var sColor, sBackgroundColor;
+
+		if (sMode === "hover") {
+			sColor = this.getHoverColor();
+			sBackgroundColor = this.getHoverBackgroundColor();
+		}
+
+		// always fallback to the normal color if no hover color exists
+		sColor = sColor || this.getColor();
+		sBackgroundColor = sBackgroundColor || this.getBackgroundColor();
 
 		this._addColorClass(sColor || "", "color");
 		this._addColorClass(sBackgroundColor || "", "background-color");
