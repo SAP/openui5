@@ -128,7 +128,7 @@
 	QUnit.test("amd - local require string probing", function(assert) {
 		var done = assert.async();
 
-		sap.ui.define("sap/test/localRequire", ["require"], function (require) {
+		sap.ui.define("sap/test/localRequire01", ["require"], function (require) {
 
 			assert.throws(
 				function() {
@@ -138,7 +138,7 @@
 				"Module 'fixture/error-handling-standard-api/amdModule2.js' has not been loaded yet"
 			);
 
-			define("sap/test/2ndRequire", ["require"], function (require) {
+			define("sap/test/2ndRequire01", ["require"], function (require) {
 				// local require should fail with an error if the module was not loaded yet
 				assert.throws(
 					function() {
@@ -156,7 +156,7 @@
 	QUnit.test("amd - local require - loaded modules", function(assert) {
 		var done = assert.async();
 
-		sap.ui.define("sap/test/localRequire", ["require"], function (require) {
+		sap.ui.define("sap/test/localRequire02", ["require"], function (require) {
 			// local require should fail with an error if the module was not loaded yet
 			assert.throws(
 				function() {
@@ -169,7 +169,7 @@
 			var oSapReturn = sap.ui.require("fixture/error-handling-standard-api/amdModule2");
 			assert.strictEqual(oSapReturn, undefined, "sap.ui.require(): returns undefined for missing module");
 
-			define("sap/test/2ndRequire", ["require", "fixture/error-handling-standard-api/amdModule2"], function (require, amdModule) {
+			define("sap/test/2ndRequire02", ["require", "fixture/error-handling-standard-api/amdModule2"], function (require, amdModule) {
 				// local require should return the module if it was already loaded
 				var oAmdReturn = require("fixture/error-handling-standard-api/amdModule2");
 				assert.strictEqual(oAmdReturn, amdModule, "require(): Module was correctly returned");

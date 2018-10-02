@@ -577,10 +577,10 @@
 
 
 	// ========================================================================================
-	// Mixed Async / Sync Calls
+	// Async / Sync Conflict
 	// ========================================================================================
 
-	QUnit.module("Mixed Async/Sync Calls");
+	QUnit.module("Async/Sync Conflict");
 
 	QUnit.test("Warning Message", function(assert) {
 		var done = assert.async();
@@ -607,7 +607,7 @@
 	});
 
 	// this test only exists to prove that the module is executed twice in case of an async/sync conflict
-	QUnit.test("Double Execution", function(assert) {
+	QUnit.skip("Double Execution", function(assert) {
 		var done = assert.async();
 
 		// to get a loader-independent notification for the end of the async script loading,
@@ -649,6 +649,35 @@
 
 	});
 
+	/*
+	 * Case where a module A (SomeControl) modifies one of its dependencies (SomeControlRenderer).
+	 * When an async / sync conflict occurs for A, the change to the dependency might get lost when the second
+	 */
+	QUnit.test("Conflict for a preloaded module", function(assert) {
+		var done = assert.async();
+
+		sap.ui.predefine("fixture/async-sync-conflict/SomeControl", ["fixture/async-sync-conflict/SomeControlRenderer"], function(Renderer) {
+			Renderer.someProperty = "some value";
+			return {};
+		});
+
+		sap.ui.predefine("fixture/async-sync-conflict/SomeControlRenderer", function() {
+			return {};
+		});
+
+		// Act:
+		// async request for the control class
+		sap.ui.require(["fixture/async-sync-conflict/SomeControl"], function(SomeControlASync) {
+			assert.ok(SomeControlASync, "control should have been loaded async");
+			assert.strictEqual(sap.ui.require("fixture/async-sync-conflict/SomeControlRenderer").someProperty, "some value", "render property should have been init after async loading");
+			done();
+		});
+		// conflicting sync request for the same class
+		/* var SomeControl = */ sap.ui.requireSync("fixture/async-sync-conflict/SomeControl");
+
+		// Assert
+		assert.equal(sap.ui.require("fixture/async-sync-conflict/SomeControlRenderer").someProperty, "some value", "property should have the expected value after sync loading");
+	});
 
 
 	// ========================================================================================
@@ -673,6 +702,418 @@
 		});
 	});
 
+
+
+	// ========================================================================================
+	// Inconsistent Module IDs
+	// ========================================================================================
+
+	QUnit.module("Inconsistent Module IDs");
+
+	/*
+	 * Case where a module uses a named sap.ui.define call with ID 'A', but is required with ID 'B'.
+	 * After requiring and executing the module, both IDs should be known and have the same export.
+	 */
+	QUnit.test("single module", function(assert) {
+		var done = assert.async();
+		var expected = {
+			id:"fluffy-unicorn"
+		};
+		sap.ui.require(["fixture/inconsistent-naming/inconsistently-named-module"], function(mod) {
+			assert.deepEqual(mod, expected, "the right module should have been loaded");
+			assert.strictEqual(sap.ui.require(expected.id), mod, "the alternative name should give the exact same export");
+			done();
+		}, function(err) {
+			assert.strictEqual(err, null, "errback should not be called");
+			done();
+		});
+	});
+
+	/*
+	 * Case where a module uses a named sap.ui.define call with ID 'A', but is required with ID 'B'.
+	 * Additionally, it declares a dependency to itself, using ID 'B' (cycle with alias).
+	 *
+	 * The cycle should be detected and be broken up and after requiring and executing the module,
+	 * both IDs should be known and have the same export.
+	 */
+	QUnit.test("single module with cycle to self", function(assert) {
+		var done = assert.async();
+		var expected = {
+			id:"fluffy-self-regarding-unicorn",
+			alt: undefined
+		};
+		sap.ui.require(["fixture/inconsistent-naming/inconsistently-named-self-regarding-module"], function(mod) {
+			assert.deepEqual(mod, expected, "the right module should have been loaded");
+			assert.strictEqual(sap.ui.require(expected.id), mod, "the alternative name should give the exact same export");
+			done();
+		}, function() {
+			assert.notOk(true, "errback should not be called");
+			done();
+		});
+	});
+
+	/*
+	 * Case where a module uses a named sap.ui.define call with ID 'A', but is required with ID 'B'.
+	 * Additionally, the module is part of a longer cyclic dependency which refers to the module using 'B'.
+	 *
+	 * The cycle should be detected and be broken up and after requiring and executing the modules,
+	 * the expected export should be returned.
+	 */
+	QUnit.test("cycle of length 3", function(assert) {
+		var done = assert.async();
+		sap.ui.require(["fixture/inconsistent-naming/cycle-member1"], function(mod) {
+			assert.ok(true, "the cycle should have been detected and the modules should have been loaded");
+			assert.deepEqual(sap.ui.require("fixture/inconsistent-naming/cycle-member1"), {id:"fixture/inconsistent-naming/cycle-member1"}, "the first member of the circle");
+			assert.deepEqual(sap.ui.require("fixture/inconsistent-naming/cycle-member2-inconsistently-named"), {id:"beautiful-butterfly"}, "the 2nd member of the circle");
+			assert.deepEqual(sap.ui.require("fixture/inconsistent-naming/cycle-member3"), {id:"fixture/inconsistent-naming/cycle-member3"}, "the 3rd member of the circle");
+			assert.deepEqual(sap.ui.require("beautiful-butterfly"), {id:"beautiful-butterfly"}, "the alioas of the 2nd member of the circle");
+			done();
+		}, function() {
+			assert.notOk(true, "errback should not be called");
+			done();
+		});
+	});
+
+
+
+	// ========================================================================================
+	// Multiple Module Definitions in one File
+	// ========================================================================================
+
+	QUnit.module("Multiple Modules per File (No Conflict)");
+
+	QUnit.test("One named, one unnamed module", function(assert) {
+		var done = assert.async();
+		sap.ui.require(["fixture/multiple-modules-per-file/one-named-one-unnamed-define"], function(mod) {
+			var expected1 = {
+				id: "fixture/multiple-modules-per-file/named-module-01"
+			};
+			var expected2 = {
+				id: "fixture/multiple-modules-per-file/one-named-one-unnamed-define"
+			};
+			assert.deepEqual(mod, expected2, "the required module should have the expected export");
+			assert.ok(sap.ui.loader._.getModuleState(expected1.id + ".js") > 0, "second module should be known to the loader");
+			done();
+		}, function() {
+			assert.notOk(true, "errback should not be called");
+			done();
+		});
+	});
+
+	QUnit.test("Two named, but unexpected modules", function(assert) {
+		var done = assert.async();
+		sap.ui.require(["fixture/multiple-modules-per-file/two-named-but-unexpected-defines"], function(mod) {
+			var expected1 = {
+				id: "fixture/multiple-modules-per-file/named-module-02"
+			};
+			var expected2 = {
+				id: "fixture/multiple-modules-per-file/named-module-03"
+			};
+			assert.deepEqual(mod, expected1, "the required module should have the sme export as the first named module (alias)");
+			assert.ok(sap.ui.loader._.getModuleState(expected1.id + ".js") > 0, "first named module should be known to the loader");
+			assert.ok(sap.ui.loader._.getModuleState(expected2.id + ".js") > 0, "second named module should be known to the loader");
+			done();
+		}, function() {
+			assert.notOk(true, "errback should not be called");
+			done();
+		});
+	});
+
+	QUnit.test("Two named modules", function(assert) {
+		var done = assert.async();
+		sap.ui.require(["fixture/multiple-modules-per-file/two-named-defines"], function(mod) {
+			var expected1 = {
+				id: "fixture/multiple-modules-per-file/named-module-04"
+			};
+			var expected2 = {
+				id: "fixture/multiple-modules-per-file/two-named-defines"
+			};
+			assert.deepEqual(mod, expected2, "the required module should have the expected export");
+			assert.ok(sap.ui.loader._.getModuleState(expected1.id + ".js") > 0, "second module should be known to the loader");
+			done();
+		}, function() {
+			assert.notOk(true, "errback should not be called");
+			done();
+		});
+	});
+
+
+
+	// ========================================================================================
+	// Multiple Module Definitions in one File
+	// ========================================================================================
+
+	QUnit.module("Multiple Modules per File (Conflict)");
+
+	// has to be skipped in non-strictModuleDefinitions mode as the call then succeeds due to the compatibility tweak for anonymous modules
+	QUnit.test("Two unnamed modules", function(assert) {
+		var done = assert.async();
+		sap.ui.require(["fixture/multiple-modules-per-file/two-unnamed-defines"], function(mod) {
+			assert.ok(false, "request unexpectedly succeeded");
+			done();
+		}, function(err) {
+			assert.ok(true, "having two unnamed module definitions in one file should fail in strictModuleDefinitions mode");
+			done();
+		});
+	});
+
+	QUnit.test("Conflicting unnamed and named modules", function(assert) {
+		var done = assert.async();
+		sap.ui.require(["fixture/multiple-modules-per-file/conflicting-unnamed-and-named-define"], function(mod) {
+			var expected = {
+				id: "fixture/multiple-modules-per-file/conflicting-unnamed-and-named-define#unnamed"
+			};
+			assert.ok(true, "request should succeed");
+			assert.deepEqual(mod, expected, "import should match the export of the first module (unnamed)");
+			done();
+		}, function() {
+			assert.ok(false, "request should not fail");
+			done();
+		});
+	});
+
+	QUnit.test("Conflicting named and unnamed modules", function(assert) {
+		var done = assert.async();
+		sap.ui.require(["fixture/multiple-modules-per-file/conflicting-unnamed-and-named-define"], function(mod) {
+			var expected = {
+				id: "fixture/multiple-modules-per-file/conflicting-unnamed-and-named-define#unnamed"
+			};
+			assert.ok(true, "request should succeed");
+			assert.deepEqual(mod, expected, "import should match the export of the first module (unnamed)");
+			done();
+		}, function() {
+			assert.ok(false, "request should not fail");
+			done();
+		});
+	});
+
+	QUnit.test("Conflicting named modules", function(assert) {
+		var done = assert.async();
+		sap.ui.require(["fixture/multiple-modules-per-file/conflicting-named-defines"], function(mod) {
+			var expected = {
+				id: "fixture/multiple-modules-per-file/conflicting-named-defines#named-1"
+			};
+			assert.ok(true, "request should succeed");
+			assert.deepEqual(mod, expected, "import should match the export of the first module (unnamed)");
+			done();
+		}, function() {
+			assert.ok(false, "request should not fail");
+			done();
+		});
+	});
+
+
+	// ========================================================================================
+	// Unmanaged Module Definitions
+	// ========================================================================================
+
+	QUnit.module("Unmanaged Module Definitions");
+
+	QUnit.test("Unnamed Definition", function(assert) {
+		var done = assert.async();
+
+		// for adhoc defines, there's no module that could report the error -> throws
+		var origOnError = window.onerror;
+		window.onerror = sinon.stub().returns(true);
+
+		sap.ui.define(function() {
+			assert.ok(false, "should not be executed");
+		});
+
+		setTimeout(function() {
+			assert.ok(window.onerror.calledOnce, "an error was thrown");
+			assert.ok(window.onerror.calledWith(sinon.match(/anonymous/).and(sinon.match(/require.*call/))), "...with the expected message");
+			window.onerror = origOnError;
+			done();
+		}, 100);
+	});
+
+	QUnit.test("Named Definition", function(assert) {
+		var done = assert.async();
+
+		// for adhoc defines, there's no module that could report the error -> throws
+		var origOnError = window.onerror;
+		window.onerror = sinon.stub().returns(true);
+
+		sap.ui.define("fixture/unmanaged-defines/module01", [], function() {
+			assert.ok(true, "named module definition should be executed");
+			return {
+				id: "fixture/unmanaged-defines/module01"
+			};
+		});
+
+		sap.ui.require(["fixture/unmanaged-defines/module01"], function(mod) {
+			var expected = {
+				id: "fixture/unmanaged-defines/module01"
+			};
+			assert.deepEqual(mod, expected, "export should be the expected one");
+			assert.strictEqual(window.onerror.callCount, 0, "no error was thrown");
+			window.onerror = origOnError;
+			done();
+		}, function(err) {
+			assert.ok(false, "errback should not be called");
+		});
+	});
+
+	QUnit.test("Repeated Named Definition", function(assert) {
+		var done = assert.async();
+
+		var origOnError = window.onerror;
+		window.onerror = sinon.stub().returns(true);
+		sinon.stub(sap.ui.loader._.logger, "warning");
+
+		function restoreAndDone() {
+			sap.ui.loader._.logger.warning.restore();
+			window.onerror = origOnError;
+			done();
+		}
+
+		sap.ui.define("fixture/unmanaged-defines/module02", [], function() {
+			assert.ok(true, "named module definition should be executed");
+			return {
+				id: "fixture/unmanaged-defines/module02#def-1"
+			};
+		});
+
+		sap.ui.define("fixture/unmanaged-defines/module02", [], function() {
+			assert.ok(false, "2nd module definition must not be executed");
+			return {
+				id: "fixture/unmanaged-defines/module02#def-2"
+			};
+		});
+
+		sap.ui.require(["fixture/unmanaged-defines/module02"], function(mod) {
+			var expected = {
+				id: "fixture/unmanaged-defines/module02#def-1"
+			};
+			assert.deepEqual(mod, expected, "export should be the expected one");
+			assert.strictEqual(window.onerror.callCount, 0, "no error was thrown");
+			assert.ok(
+				sap.ui.loader._.logger.warning.calledWith(
+					sinon.match(/fixture\/unmanaged-defines\/module02/)
+					.and(sinon.match(/defined more than once/))
+					.and(sinon.match(/will be ignored/))),
+				"a warning has been logged");
+
+			restoreAndDone();
+		}, function(err) {
+			assert.ok(false, "errback should not be called");
+
+			restoreAndDone();
+		});
+	});
+
+	// ========================================================================================
+	// "Real World" scenarios
+	// ========================================================================================
+
+	QUnit.module("'Real World' scenarios");
+
+	/*
+	 * Case where a named module definition is not top-level but nested in some other module,
+	 * e.g. in a factory method. The module definition might be executed multiple times
+	 * by the application.
+	 *
+	 * While standard AMD loaders ignore all but the first execution, ui5loader executes
+	 * each of them but should warn about the unsupported usage.
+	 */
+	QUnit.skip("Repeated Module Definition (named)", function(assert) {
+
+		var logger = sap.ui.loader._.logger;
+		sinon.spy(logger, "error");
+
+		var done = assert.async();
+
+		var incarnation = 0;
+		function defineModule(incarnation) {
+			sap.ui.define("fixture/repeated-named-defines/module01", function() {
+				return {
+					id: "incarnation-" + incarnation
+				};
+			});
+			return {
+				id: "incarnation-" + incarnation
+			};
+		}
+
+		var expected1 = defineModule(++incarnation);
+		assert.equal(sap.ui.require("fixture/repeated-named-defines/module01"), null,
+			"synchronously after the module definition, the export must not be visible");
+
+		setTimeout(function() {
+			sap.ui.require(["fixture/repeated-named-defines/module01"], function(mod1) {
+				assert.deepEqual(mod1, expected1, "require should find the expected incarnation of the module");
+
+				var expected2 = defineModule(++incarnation);
+				assert.deepEqual(sap.ui.require("fixture/repeated-named-defines/module01"), expected1,
+					"synchronously after the module definition, the export must not be visible");
+
+				setTimeout(function() {
+					sap.ui.require(["fixture/repeated-named-defines/module01"], function(mod2) {
+						assert.deepEqual(mod2, expected2, "require should find the expected incarnation of the module");
+
+						assert.ok(
+							logger.error.calledWith(
+								sinon.match(/executed more than once/i).and(sinon.match(/will fail in future/i))
+							),
+							"an error with the expected text fragments should have been logged");
+
+
+						logger.error.restore();
+						done();
+					});
+				}, 50);
+			});
+		}, 50);
+
+	});
+
+	/*
+	 * Case where an unnamed module definition is not top-level but nested in some other module,
+	 * e.g. in a factory method. The module definition might be executed multiple times
+	 * by the application.
+	 *
+	 * While standard AMD loaders complain about each execution, ui5loader executes
+	 * all of them but should warn about the unsupported usage.
+	 */
+	QUnit.skip("Repeated Module Definition (unnamed)", function(assert) {
+
+		var logger = sap.ui.loader._.logger;
+		sinon.spy(logger, "error");
+
+		var done = assert.async();
+		var myGlobalExport;
+
+		var incarnation = 0;
+		function defineModule(incarnation) {
+			sap.ui.define(function() {
+				myGlobalExport = {
+					id: "incarnation-" + incarnation
+				};
+			});
+			return {
+				id: "incarnation-" + incarnation
+			};
+		}
+
+		var expected1 = defineModule(++incarnation);
+		assert.equal(myGlobalExport, null, "synchronously after the module definition there must be no export visible");
+		// there's no official way to wait for the module definition to be executed as it has no well defined name
+		// instead, we wait a while and check the global export then
+		setTimeout(function() {
+			assert.deepEqual(myGlobalExport, expected1, "after some time, the global variable should match the module's export");
+
+			var expected2 = defineModule(++incarnation);
+			assert.deepEqual(myGlobalExport, expected1, "synchronously after the 2nd module definition still the old value must be visible");
+			setTimeout(function() {
+				assert.deepEqual(myGlobalExport, expected2, "after some time, the global variable should match the module's export");
+
+				logger.error.restore();
+				done();
+			}, 50);
+		}, 50);
+
+	});
 
 
 	// ========================================================================================
