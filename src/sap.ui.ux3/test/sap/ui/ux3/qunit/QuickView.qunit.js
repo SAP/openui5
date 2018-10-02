@@ -1,30 +1,52 @@
-<!DOCTYPE HTML>
-<!--
- Tested control/class: sap.ui.ux3.QuickView
--->
+/*global QUnit */
+sap.ui.define([
+    "sap/ui/qunit/QUnitUtils",
+    "sap/ui/qunit/utils/createAndAppendDiv",
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/commons/Button",
+    "sap/ui/commons/TextView",
+    "sap/ui/commons/Link",
+    "sap/ui/commons/library",
+    "sap/ui/ux3/QuickView",
+    "jquery.sap.keycodes",
+    "sap/ui/commons/layout/MatrixLayoutCell",
+    "sap/ui/commons/layout/MatrixLayoutRow",
+    "sap/ui/commons/layout/MatrixLayout",
+    "jquery.sap.global"
+], function(
+    qutils,
+	createAndAppendDiv,
+	JSONModel,
+	Button,
+	TextView,
+	Link,
+	commonsLibrary,
+	QuickView,
+	jQuery,
+	MatrixLayoutCell,
+	MatrixLayoutRow,
+	MatrixLayout
+) {
+	"use strict";
 
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<style type="text/css">
-	#uiArea1 {
-		width: 250px;
-		margin: auto;
-	}
-</style>
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js" data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.ui.core,sap.ui.ux3">
-</script>
-<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+    // shortcut for sap.ui.commons.layout.VAlign
+	var VAlign = commonsLibrary.layout.VAlign;
 
-<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	// shortcut for sap.ui.commons.layout.HAlign
+	var HAlign = commonsLibrary.layout.HAlign;
 
-<!-- Control initialization -->
-<script>
+
+	// prepare DOM
+	createAndAppendDiv("uiArea1");
+	var styleElement = document.createElement("style");
+	styleElement.textContent =
+		"#uiArea1 {" +
+		"	width: 250px;" +
+		"	margin: auto;" +
+		"}";
+	document.head.appendChild(styleElement);
+
+
 
 	// Example data
 	var oJSONData = {
@@ -32,7 +54,7 @@
 		"name": "Name",
 		"href": "http://www.google.com",
 		"description":  "Description",
-		"icon": "../images/feeder/m_01.png",
+		"icon": "test-resources/sap/ui/ux3/images/feeder/m_01.png",
 		"accountData": [
 			{ "label": "label1", "text": "text1" },
 			{ "label": "label2", "text": "text2" },
@@ -40,14 +62,12 @@
 			{ "label": "label4", "text": "link4", "href": "http://www.google.com" }
 		]
 	};
-	//create controls
-	jQuery.sap.require("sap.ui.model.json.JSONModel");
-	var oModel = new sap.ui.model.json.JSONModel();
+	var oModel = new JSONModel();
 	oModel.setData(oJSONData);
 	sap.ui.getCore().setModel(oModel);
 
 	// Parent control
-	oButton = new sap.ui.commons.Button("QVButton");
+	var oButton = new Button("QVButton");
 	oButton.setText("QuickView");
 	oButton.setLite(true);
 
@@ -56,22 +76,21 @@
 	function createQuickViewContent(){
 		// In form of "label: value", the value can be either a link or a text view
 		// Both (link and text view are created but only one is shown depending on the contents)
-		var oLabel = new sap.ui.commons.TextView()
+		var oLabel = new TextView()
 			.bindProperty("text", "label", function( label ){ return label ? label + ":" : ""; });
-		var oTextView = new sap.ui.commons.TextView({text : "{text}"})
+		var oTextView = new TextView({text : "{text}"})
 			.bindProperty("visible", "href", function( href ){ return !href; });
-		var oLink = new sap.ui.commons.Link({text : "{text}", href: "{href}"})
+		var oLink = new Link({text : "{text}", href: "{href}"})
 			.bindProperty("visible", "href", function( href ){ return !!href; });
 
-		var c = sap.ui.commons;
-		var oLeftCell = new c.layout.MatrixLayoutCell({hAlign : c.layout.HAlign.End, vAlign : c.layout.VAlign.Top, content:[oLabel]});
+		var oLeftCell = new MatrixLayoutCell({hAlign : HAlign.End, vAlign : VAlign.Top, content:[oLabel]});
 		oLeftCell.addStyleClass("qvlabel");
-		var oRightCell = new c.layout.MatrixLayoutCell({hAlign : c.layout.HAlign.Begin, vAlign : c.layout.VAlign.Top, content:[oTextView, oLink]});
+		var oRightCell = new MatrixLayoutCell({hAlign : HAlign.Begin, vAlign : VAlign.Top, content:[oTextView, oLink]});
 		oRightCell.addStyleClass("qvvalue");
 
-		var oRow = new c.layout.MatrixLayoutRow({cells:[oLeftCell, oRightCell]});
+		var oRow = new MatrixLayoutRow({cells:[oLeftCell, oRightCell]});
 
-		var oContent = new c.layout.MatrixLayout({layoutFixed:true, widths: ["45%", "140px"]});
+		var oContent = new MatrixLayout({layoutFixed:true, widths: ["45%", "140px"]});
 		oContent.bindAggregation("rows", "/accountData", oRow);
 
 		return oContent;
@@ -102,7 +121,7 @@
 	}
 
 	// 2. create a QuickView control
-	oQuickView = new sap.ui.ux3.QuickView( "QuickView", {
+	var oQuickView = new QuickView( "QuickView", {
 		type:			"{/type}",
 		firstTitle:		"{/name}",
 		firstTitleHref:	"{/href}",
@@ -120,7 +139,6 @@
 	oButton.placeAt("uiArea1");
 
 	// TEST functions
-	qutils.delayTestStart();
 
 	QUnit.module("Appearance");
 
@@ -140,10 +158,10 @@
 		assert.ok(true, "A-sync OK start");
 		qutils.triggerMouseEvent("QVButton", "mouseover");
 		setTimeout(function() {
-			assert.ok(isQuickViewVisible()==true, "QuickView is visible after mouseover");
+			assert.ok(isQuickViewVisible() == true, "QuickView is visible after mouseover");
 			qutils.triggerMouseEvent("QuickView", "mouseout");
 			setTimeout(function() {
-				assert.ok(isQuickViewVisible()==false, "QuickView is not visible after mouseout");
+				assert.ok(isQuickViewVisible() == false, "QuickView is not visible after mouseout");
 				done();
 			}, 600);
 		}, 900);
@@ -154,10 +172,10 @@
 		assert.ok(true, "A-sync close() start");
 		qutils.triggerMouseEvent("QVButton", "mouseover");
 		setTimeout(function() {
-			assert.ok(isQuickViewVisible()==true, "QuickView is visible after mouseover");
+			assert.ok(isQuickViewVisible() == true, "QuickView is visible after mouseover");
 			oQuickView.close();
 			setTimeout(function() {
-				assert.ok(isQuickViewVisible()==false, "QuickView is not visible after close()");
+				assert.ok(isQuickViewVisible() == false, "QuickView is not visible after close()");
 				done();
 			}, 500);
 		}, 700);
@@ -170,11 +188,11 @@
 		assert.ok(document.activeElement.id == "QVButton", "Focus the button initially");
 		qutils.triggerKeyboardEvent("QVButton", jQuery.sap.KeyCodes.I, false, false, true);
 		setTimeout(function(){
-			assert.ok(isQuickViewVisible()==true, "QuickView is visible after Ctrl-I");
+			assert.ok(isQuickViewVisible() == true, "QuickView is visible after Ctrl-I");
 			//click on the Name link
 			 jQuery('#QuickView-link').trigger('click');
 			setTimeout(function(){
-				assert.ok(isQuickViewVisible()==false, "QuickView is not visible after navigate event");
+				assert.ok(isQuickViewVisible() == false, "QuickView is not visible after navigate event");
 				assert.equal(document.activeElement.id, "QVButton", "The parent element should be focused after the focused QuickView is closed");
 				done();
 			}, 1000); // CLOSE
@@ -186,7 +204,7 @@
 		assert.ok(true, "A-sync close() start");
 		qutils.triggerMouseEvent("QVButton", "mouseover");
 		setTimeout(function() {
-			assert.ok(isQuickViewVisible()==true, "QuickView is visible after mouseover");
+			assert.ok(isQuickViewVisible() == true, "QuickView is visible after mouseover");
 			jQuery('.sapUiUx3ActionBarAction').eq(1).trigger("click");
 			setTimeout(function() {
 				assert.ok(oActionParams.id !== undefined, "Action id is available after click on action");
@@ -213,19 +231,4 @@
 			}, 400);
 		}, 500);
 	});
-
-</script>
-
-<title>QUnit Test for QuickViewThing</title>
-</head>
-
-<body class="sapUiBody">
-	<h1 id="qunit-header">QUnit tests: sap.ui.ux3.QuickViewThing</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-	<br>
-	<div id="uiArea1"></div>
-</body>
-</html>
+});
