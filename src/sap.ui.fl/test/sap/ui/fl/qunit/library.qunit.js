@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/fl/RegistrationDelegator"
+	"sap/ui/fl/RegistrationDelegator",
+	"sap/ui/core/Configuration"
 ], function(
 	sinon,
 	jQuery,
-	RegistrationDelegator
+	RegistrationDelegator,
+	Configuration
 ) {
 	"use strict";
 
@@ -20,9 +22,21 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("triggers all its registrations", function (assert) {
 			var oRegisterAllStub = sandbox.stub(RegistrationDelegator, "registerAll");
+
 			var fnDone = assert.async();
 			sap.ui.require(["sap/ui/fl/library"], function() {
 				assert.ok(oRegisterAllStub.calledOnce, "the registration is done");
+				fnDone();
+			});
+		});
+
+		QUnit.test("flexibilityServices is set correctly", function (assert) {
+
+			// setup is done in the testsuite.qunit.js
+
+			var fnDone = assert.async();
+			sap.ui.require(["sap/ui/fl/library"], function() {
+				assert.equal(sap.ui.fl.flexibilityServices, false, "the flexibilityServices was set to 'false'");
 				fnDone();
 			});
 		});

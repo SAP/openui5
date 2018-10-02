@@ -1493,6 +1493,29 @@ sap.ui.define([
 		});
 	});
 
+
+	QUnit.module("No requests are sent in case of a bootstrapping with 'useNoFlexibilityServices'", function (hooks) {
+		hooks.beforeEach(function() {
+			sap.ui.fl.flexibilityServices = true;
+		});
+
+		hooks.afterEach(function() {
+			sap.ui.fl.flexibilityServices = false;
+		});
+
+		QUnit.test("does not send a request in case the useNoFlexibilityServices is set to 'true'", function (assert) {
+			var done = assert.async();
+			assert.expect(0);
+
+			new LrepConnector()._sendAjaxRequest().then(function () {
+				assert.ok(false, "if you see this, then no rejection took place. This should not happen.");
+				done();
+			}, function () {
+				done();
+			});
+		});
+	});
+
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();
 	});

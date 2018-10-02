@@ -265,12 +265,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sends an AJAX request; this request is suppressed in case the flexibility services are disabled in the bootstrap.
+	 *
 	 * @param {String} sUri - Complete request URL
 	 * @param {Object} mOptions - Options to be used by the request
 	 * @returns {Promise} Returns a Promise with the status and response and messages
 	 * @private
 	 */
 	Connector.prototype._sendAjaxRequest = function(sUri, mOptions) {
+
+		if (!sap.ui.fl.flexibilityServices) {
+			return Promise.reject({
+				status: "warning",
+				message: "Flexibility Services requests were not sent. The UI5 bootstrap is configured to not send any requests."
+			});
+		}
+
 		var that = this;
 		var sFetchXsrfTokenUrl = "/sap/bc/lrep/actions/getcsrftoken/";
 		var mFetchXsrfTokenOptions = {
