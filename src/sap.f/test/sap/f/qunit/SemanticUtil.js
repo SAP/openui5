@@ -1,6 +1,17 @@
-/* eslint-disable no-undef */
-SemanticUtil = (function (
-/* eslint-enable no-undef */
+sap.ui.define([
+	"sap/ui/core/Core",
+	"sap/f/semantic/SemanticPage",
+	"sap/f/DynamicPageTitle",
+	"sap/m/OverflowToolbar",
+	"sap/m/ActionSheet",
+	"sap/m/MessageStrip",
+	"sap/m/Button",
+	"sap/m/Title",
+	"sap/m/Breadcrumbs",
+	"sap/m/Link"
+],
+function (
+	oCore,
 	SemanticPage,
 	DynamicPageTitle,
 	OverflowToolbar,
@@ -9,17 +20,11 @@ SemanticUtil = (function (
 	Button,
 	Title,
 	Breadcrumbs,
-	Link) {
+	Link
+) {
 	"use strict";
 
-	jQuery.sap.require("sap.f.semantic.SemanticConfiguration");
-	jQuery.sap.require("sap.f.semantic.SemanticTitle");
-	jQuery.sap.require("sap.f.semantic.SemanticFooter");
-	jQuery.sap.require("sap.f.semantic.SemanticShareMenu");
-	jQuery.sap.require("sap.f.semantic.SemanticConfiguration");
-
-	var oCore = sap.ui.getCore(),
-		TESTS_DOM_CONTAINER = "qunit-fixture",
+	var TESTS_DOM_CONTAINER = "qunit-fixture",
 		aSemanticActionsMetadata = [
 			{
 				"constructor" : sap.f.semantic.AddAction,
@@ -190,4 +195,4 @@ SemanticUtil = (function (
 				}
 			}
 		};
-})(sap.f.semantic.SemanticPage, sap.f.DynamicPageTitle, sap.m.OverflowToolbar, sap.m.ActionSheet, sap.m.MessageStrip, sap.m.Button, sap.m.Title, sap.m.Breadcrumbs, sap.m.Link);
+});

@@ -1,6 +1,6 @@
-/* global QUnit,sinon*/
-
-(function () {
+/*global QUnit, sinon*/
+sap.ui.define(["sap/ui/core/Core"],
+function(oCore) {
 	"use strict";
 
 	var sControlId = "AvatarId",
@@ -10,8 +10,7 @@
 		sPreAvatarShape = "Avatar's shape is ",
 		sPreAvatarType = "Avatar's type is ",
 		sDefaultIconRendered = "Avatar is a default icon",
-		sPreAvatarFitType = "Avatar's image fit type is ",
-		oCore = sap.ui.getCore();
+		sPreAvatarFitType = "Avatar's image fit type is ";
 
 	function createAvatar(oProps, sId) {
 		var oAvatarProps = {};
@@ -216,7 +215,10 @@
 		}
 	});
 
-	QUnit.test("detailBox", 7, function (oAssert) {
+	QUnit.test("detailBox", function (oAssert) {
+		// Assert
+		oAssert.expect(7);
+
 		// Arrange
 		var oLightBox = new sap.m.LightBox(),
 			fnDone = oAssert.async();
@@ -372,5 +374,4 @@
 		//assert
 		assert.strictEqual($oAvatar.attr("role"), "img", "Aria role should be 'img'");
 	});
-
-})();
+});
