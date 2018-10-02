@@ -28,10 +28,12 @@ sap.ui.define([
 
 			var oExport = Extractor.extractData(oChangePersistence);
 
+			assert.ok(oExport.sVersion, "'sVersion' is present");
 			assert.ok(oExport.bIsInvestigationExport, "'bIsInvestigationExport' was set correct");
 			assert.ok(oExport.mControlData, "'mControlData' is present");
 			assert.ok(oExport.aAppliedChanges, "'aAppliedChanges' is present");
 			assert.ok(oExport.aFailedChanges, "'aFailedChanges' is present");
+			assert.ok(oExport.aNotApplicableChanges, "'aNotApplicableChanges' is present");
 			assert.ok(oExport.mChangesEntries, "'mChangesEntries' is present");
 			assert.ok(oExport.mVariantsChanges, "'mVariantsChanges' is present");
 			assert.equal(oExport.sComponentName, sName, "'sComponentName' was set correct");
@@ -162,7 +164,8 @@ sap.ui.define([
 			var oExport = {
 				mControlData: {},
 				aAppliedChanges: [],
-				aFailedChanges: []
+				aFailedChanges: [],
+				aNotApplicableChangess: []
 			};
 
 			Extractor._enhanceExportWithControlData(oChangePersistence, oExport);
@@ -192,7 +195,8 @@ sap.ui.define([
 			var oExport = {
 				mControlData: {},
 				aAppliedChanges: [],
-				aFailedChanges: []
+				aFailedChanges: [],
+				aNotApplicableChangess: []
 			};
 
 			Extractor._enhanceExportWithControlData(oChangePersistence, oExport);
@@ -212,7 +216,8 @@ sap.ui.define([
 			var oExport = {
 				mControlData: {},
 				aAppliedChanges: [],
-				aFailedChanges: []
+				aFailedChanges: [],
+				aNotApplicableChangess: []
 			};
 
 			Extractor._enhanceExportWithControlData(oChangePersistence, oExport);
@@ -236,6 +241,10 @@ sap.ui.define([
 				key: "sap.ui.fl.failedChanges.xml",
 				value: "f,g,h,i"
 			}));
+			this.oControl.addCustomData(new sap.ui.core.CustomData({
+				key: "sap.ui.fl.notApplicableChanges",
+				value: "j,k"
+			}));
 		},
 		afterEach: function () {
 			this.oControl.destroy();
@@ -253,7 +262,8 @@ sap.ui.define([
 			var oExport = {
 				mControlData: {},
 				aAppliedChanges: [],
-				aFailedChanges: []
+				aFailedChanges: [],
+				aNotApplicableChanges: []
 			};
 
 			Extractor._enhanceExportWithControlData(oChangePersistence, oExport);
@@ -263,13 +273,16 @@ sap.ui.define([
 			assert.equal(oExport.mControlData["someControlId"].aAppliedChanges[1], "b", "applied changeId added correct");
 			assert.equal(oExport.mControlData["someControlId"].aAppliedChanges[2], "c", "applied changeId added correct");
 			assert.equal(oExport.mControlData["someControlId"].aFailedChangesJs.length, 2, "2 failed js changes were added");
-			assert.equal(oExport.mControlData["someControlId"].aFailedChangesJs[0], "d", "applied changeId added correct");
-			assert.equal(oExport.mControlData["someControlId"].aFailedChangesJs[1], "e", "applied changeId added correct");
+			assert.equal(oExport.mControlData["someControlId"].aFailedChangesJs[0], "d", "failed js changeId added correct");
+			assert.equal(oExport.mControlData["someControlId"].aFailedChangesJs[1], "e", "failed js changeId added correct");
 			assert.equal(oExport.mControlData["someControlId"].aFailedChangesXml.length, 4, "4 failed xml changes were added");
-			assert.equal(oExport.mControlData["someControlId"].aFailedChangesXml[0], "f", "applied changeId added correct");
-			assert.equal(oExport.mControlData["someControlId"].aFailedChangesXml[1], "g", "applied changeId added correct");
-			assert.equal(oExport.mControlData["someControlId"].aFailedChangesXml[2], "h", "applied changeId added correct");
-			assert.equal(oExport.mControlData["someControlId"].aFailedChangesXml[3], "i", "applied changeId added correct");
+			assert.equal(oExport.mControlData["someControlId"].aFailedChangesXml[0], "f", "failed xml changeId added correct");
+			assert.equal(oExport.mControlData["someControlId"].aFailedChangesXml[1], "g", "failed xml changeId added correct");
+			assert.equal(oExport.mControlData["someControlId"].aFailedChangesXml[2], "h", "failed xml changeId added correct");
+			assert.equal(oExport.mControlData["someControlId"].aFailedChangesXml[3], "i", "failed xml changeId added correct");
+			assert.equal(oExport.mControlData["someControlId"].aNotApplicableChanges.length, 2, "2 not applicable changes were added");
+			assert.equal(oExport.mControlData["someControlId"].aNotApplicableChanges[0], "j", "not applicable changeId added correct");
+			assert.equal(oExport.mControlData["someControlId"].aNotApplicableChanges[1], "k", "not applicable changeId added correct");
 		});
 	});
 
