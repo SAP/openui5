@@ -1,3 +1,4 @@
+/* global Promise */
 sap.ui.define([
 	"sap/ui/demo/masterdetail/localService/mockserver"
 ], function (mockserver) {

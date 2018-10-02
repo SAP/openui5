@@ -1,8 +1,9 @@
+/* global Promise */
 sap.ui.define([
-    "sap/ui/core/util/MockServer",
+	"sap/ui/core/util/MockServer",
 	"sap/ui/model/json/JSONModel",
-    "sap/base/Log",
-    "sap/base/util/UriParameters"
+	"sap/base/Log",
+	"sap/base/util/UriParameters"
 ], function (MockServer, JSONModel, Log, UriParameters) {
 	"use strict";
 

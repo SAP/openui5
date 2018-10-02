@@ -19,28 +19,6 @@ sap.ui.define([
 
 			actions : {
 
-				iWaitUntilTheListIsLoaded : function () {
-					return this.waitFor({
-						id : "list",
-						viewName : sViewName,
-						matchers : new AggregationFilled({name : "items"}),
-						errorMessage : "The master list has not been loaded"
-					});
-				},
-
-				iWaitUntilTheFirstItemIsSelected : function () {
-					return this.waitFor({
-						id : "list",
-						viewName : sViewName,
-						matchers : function(oList) {
-							// wait until the list has a selected item
-							var oSelectedItem = oList.getSelectedItem();
-							return oSelectedItem && oList.getItems().indexOf(oSelectedItem) === 0;
-						},
-						errorMessage : "The first item of the master list is not selected"
-					});
-				},
-
 				iSortTheListOnName : function () {
 					return this.iChooseASorter("sortButton", "Sort By <Name>");
 				},

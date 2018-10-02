@@ -13,7 +13,7 @@ sap.ui.define([
 
 	opaTest("Should navigate on press", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartTheApp();
+		Given.iStartMyApp();
 
 		// Actions
 		When.onTheMasterPage.iRememberTheIdOfListItemAtPosition(1).
@@ -82,29 +82,40 @@ sap.ui.define([
 		Then.onTheMasterPage.theListShouldHaveNoSelection();
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 	opaTest("Start the App and simulate metadata error: MessageBox should be shown", function (Given, When, Then) {
 		//Arrangement
-		Given.iStartMyAppOnADesktopToTestErrorHandler("metadataError=true");
+		Given.iStartMyApp({
+			delay : 1000,
+			metadataError : true
+		});
 
 		// Assertions
 		Then.onTheAppPage.iShouldSeeTheMessageBox();
 
+		// Actions
+		When.onTheAppPage.iCloseTheMessageBox();
+
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 	opaTest("Start the App and simulate bad request error: MessageBox should be shown", function (Given, When, Then) {
 		//Arrangement
-		Given.iStartMyAppOnADesktopToTestErrorHandler("errorType=serverError");
-
+		Given.iStartMyApp({
+			delay : 1000,
+			errorType : 'serverError'
+		});
 		// Assertions
 		Then.onTheAppPage.iShouldSeeTheMessageBox();
 
+		// Actions
+		When.onTheAppPage.iCloseTheMessageBox();
+
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 });
