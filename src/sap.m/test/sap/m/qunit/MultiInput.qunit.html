@@ -774,6 +774,40 @@
 		oSpy.restore();
 	});
 
+	QUnit.test("onsapenter on mobile device", function (assert) {
+		// Setup
+		var oMI, sValue;
+
+		this.stub(sap.ui.Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+		oMI = new sap.m.MultiInput({
+			change: function (oEvent) {
+				sValue = oEvent.getParameter("value");
+			}
+		}).placeAt("qunit-fixture");
+
+		// Act
+		oMI._oSuggestionPopup.open();
+		this.clock.tick(1000);
+
+		// Assert
+		assert.ok(oMI._oSuggestionPopup.isOpen(), "The dialog is opened");
+
+		// Act
+		oMI._oPopupInput.setValue("test");
+		sap.ui.test.qunit.triggerKeydown(oMI._oPopupInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+
+		// Assert
+		assert.ok(oMI._oSuggestionPopup.isOpen(), "The dialog is still open after enter key");
+		assert.strictEqual(sValue, 'test', "The change event is triggered and the right value is passed");
+
+		// // Cleanup
+		oMI.destroy();
+	});
+
 	QUnit.module("Events", {
 		beforeEach: function() {
 			this.multiInput1 = new sap.m.MultiInput();
