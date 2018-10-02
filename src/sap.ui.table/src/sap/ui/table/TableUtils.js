@@ -159,6 +159,15 @@ sap.ui.define([
 	}
 
 	/**
+	 * The selectors which define whether an element is interactive. Due to the usage of pseudo selectors this can only be used in jQuery.
+	 *
+	 * @type {string}
+	 * @static
+	 * @constant
+	 */
+	var INTERACTIVE_ELEMENT_SELECTORS = ":sapTabbable, .sapUiTableTreeIcon:not(.sapUiTableTreeIconLeaf)";
+
+	/**
 	 * Static collection of utility functions related to the sap.ui.table.Table, ...
 	 *
 	 * @author SAP SE
@@ -178,6 +187,7 @@ sap.ui.define([
 		ROW_HORIZONTAL_FRAME_SIZE: ROW_HORIZONTAL_FRAME_SIZE,
 		DEFAULT_ROW_HEIGHT: DEFAULT_ROW_HEIGHT,
 		RowsUpdateReason: ROWS_UPDATE_REASON,
+		INTERACTIVE_ELEMENT_SELECTORS: INTERACTIVE_ELEMENT_SELECTORS,
 
 		/**
 		 * Returns whether the table has a row header or not
@@ -1428,6 +1438,30 @@ sap.ui.define([
 			debounced.pending = pending;
 
 			return debounced;
+		},
+
+		/**
+		 * Returns all interactive elements in a data cell.
+		 *
+		 * @param {jQuery|HTMLElement} oCell The data cell from which to get the interactive elements.
+		 * @returns {jQuery|null} Returns <code>null</code>, if the passed cell is not a cell or does not contain any interactive elements.
+		 */
+		getInteractiveElements: function(oCell) {
+			if (!oCell) {
+				return null;
+			}
+
+			var $Cell = jQuery(oCell);
+			var oCellInfo = TableUtils.getCellInfo($Cell);
+
+			if (oCellInfo.isOfType(CELLTYPE.DATACELL | CELLTYPE.ROWACTION)) {
+				var $InteractiveElements = $Cell.find(INTERACTIVE_ELEMENT_SELECTORS);
+				if ($InteractiveElements.length > 0) {
+					return $InteractiveElements;
+				}
+			}
+
+			return null;
 		}
 	};
 

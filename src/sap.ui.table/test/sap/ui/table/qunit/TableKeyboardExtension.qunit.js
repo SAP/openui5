@@ -20,7 +20,6 @@ sap.ui.define([
 	var destroyTables = window.destroyTables;
 	var getCell = window.getCell;
 	var getColumnHeader = window.getColumnHeader;
-	var iNumberOfCols = window.iNumberOfCols;
 	var setFocusOutsideOfTable = window.setFocusOutsideOfTable;
 
 	var TestControl = TableQUnitUtils.getTestControl();
@@ -176,11 +175,11 @@ sap.ui.define([
 		oExtension.initItemNavigation();
 
 		var oInfo = oExtension._getLastFocusedCellInfo();
-		assert.strictEqual(oInfo.cell, iNumberOfCols + 2 /* 2* row header*/, "cell");
+		assert.strictEqual(oInfo.cell, oTable.columnCount + 2 /* 2* row header*/, "cell");
 		assert.strictEqual(oInfo.row, 1, "row");
-		assert.strictEqual(oInfo.columnCount, iNumberOfCols + 1 /*row header*/, "columnCount");
+		assert.strictEqual(oInfo.columnCount, oTable.columnCount + 1 /*row header*/, "columnCount");
 		assert.strictEqual(oInfo.cellInRow, 1, "cellInRow");
-		assert.strictEqual(oInfo.cellCount, (iNumberOfCols + 1) * (3 /*visible rows*/ + 1), "cellCount");
+		assert.strictEqual(oInfo.cellCount, (oTable.columnCount + 1) * (3 /*visible rows*/ + 1), "cellCount");
 		assert.strictEqual(oInfo.header, 1, "header");
 
 		assert.ok(!oExtension._oLastFocusedCellInfo, "No LastFocusedCellInfo stored");
@@ -188,11 +187,11 @@ sap.ui.define([
 		getCell(1, 2, true, assert);
 
 		oInfo = oExtension._getLastFocusedCellInfo();
-		assert.strictEqual(oInfo.cell, 2 * (iNumberOfCols + 1) + 3, "cell");
+		assert.strictEqual(oInfo.cell, 2 * (oTable.columnCount + 1) + 3, "cell");
 		assert.strictEqual(oInfo.row, 2, "row");
-		assert.strictEqual(oInfo.columnCount, iNumberOfCols + 1 /*row header*/, "columnCount");
+		assert.strictEqual(oInfo.columnCount, oTable.columnCount + 1 /*row header*/, "columnCount");
 		assert.strictEqual(oInfo.cellInRow, 3, "cellInRow");
-		assert.strictEqual(oInfo.cellCount, (iNumberOfCols + 1) * (3 /*visible rows*/ + 1), "cellCount");
+		assert.strictEqual(oInfo.cellCount, (oTable.columnCount + 1) * (3 /*visible rows*/ + 1), "cellCount");
 		assert.strictEqual(oInfo.header, 1, "header");
 
 		assert.ok(oExtension._oLastFocusedCellInfo === oInfo, "LastFocusedCellInfo stored");

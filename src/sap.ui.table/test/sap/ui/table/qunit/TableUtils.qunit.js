@@ -26,12 +26,10 @@ sap.ui.define([
 	var getRowHeader = window.getRowHeader;
 	var getRowAction = window.getRowAction;
 	var getSelectAll = window.getSelectAll;
-	var iNumberOfCols = window.iNumberOfCols;
 	var iNumberOfRows = window.iNumberOfRows;
 	var initRowActions = window.initRowActions;
 
 	var TestControl = TableQUnitUtils.getTestControl();
-	var TestInputControl = TableQUnitUtils.getTestInputControl();
 
 	QUnit.module("TableUtils", {
 		beforeEach: function() {
@@ -395,12 +393,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("getVisibleColumnCount", function(assert) {
-		assert.equal(TableUtils.getVisibleColumnCount(oTable), iNumberOfCols, "All columns visible");
+		assert.equal(TableUtils.getVisibleColumnCount(oTable), oTable.columnCount, "All columns visible");
 
 		oTable.getColumns()[1].setVisible(false);
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(TableUtils.getVisibleColumnCount(oTable), iNumberOfCols - 1, "1 column hidden");
+		assert.equal(TableUtils.getVisibleColumnCount(oTable), oTable.columnCount - 1, "1 column hidden");
 	});
 
 	QUnit.test("getHeaderRowCount", function(assert) {
@@ -653,18 +651,18 @@ sap.ui.define([
 		var oInfo = TableUtils.getFocusedItemInfo(oTable);
 		assert.strictEqual(oInfo.cell, 14, "cell");
 		assert.strictEqual(oInfo.row, 2, "row");
-		assert.strictEqual(oInfo.columnCount, iNumberOfCols + 1 /*row header*/, "columnCount");
+		assert.strictEqual(oInfo.columnCount, oTable.columnCount + 1 /*row header*/, "columnCount");
 		assert.strictEqual(oInfo.cellInRow, 2, "cellInRow");
-		assert.strictEqual(oInfo.cellCount, (iNumberOfCols + 1) * (3 /*visible rows*/ + 1), "cellCount");
+		assert.strictEqual(oInfo.cellCount, (oTable.columnCount + 1) * (3 /*visible rows*/ + 1), "cellCount");
 		assert.strictEqual(oInfo.domRef, oCell.get(0), "domRef");
 
 		oCell = getCell(0, 0, true);
 		oInfo = TableUtils.getFocusedItemInfo(oTable);
 		assert.strictEqual(oInfo.cell, 7, "cell");
 		assert.strictEqual(oInfo.row, 1, "row");
-		assert.strictEqual(oInfo.columnCount, iNumberOfCols + 1 /*row header*/, "columnCount");
+		assert.strictEqual(oInfo.columnCount, oTable.columnCount + 1 /*row header*/, "columnCount");
 		assert.strictEqual(oInfo.cellInRow, 1, "cellInRow");
-		assert.strictEqual(oInfo.cellCount, (iNumberOfCols + 1) * (3 /*visible rows*/ + 1), "cellCount");
+		assert.strictEqual(oInfo.cellCount, (oTable.columnCount + 1) * (3 /*visible rows*/ + 1), "cellCount");
 		assert.strictEqual(oInfo.domRef, oCell.get(0), "domRef");
 
 		var oTableDummy = {
@@ -1038,6 +1036,121 @@ sap.ui.define([
 		}), ["string", 1], "The array of return values was returned");
 	});
 
+	QUnit.test("getInteractiveElements", function(assert) {
+		TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "Focus&NoTabSpan", false, true, false);
+		TableQUnitUtils.addColumn(oTable, "Not Focusable & Not Tabbable", "NoFocus&NoTabSpan", false, false, false);
+		TableQUnitUtils.addColumn(oTable, "Focusable & Tabbable", "Focus&TabInput", true, null, true);
+		TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "Focus&NoTabInput", true, null, false);
+		initRowActions(oTable, 2, 2);
+
+		var $InteractiveElements = TableUtils.getInteractiveElements(getCell(0, oTable.columnCount - 1));
+		assert.strictEqual($InteractiveElements.length, 1, "(JQuery) Data cell with focusable element: One element was returned");
+		assert.strictEqual($InteractiveElements[0].value, "Focus&NoTabInput1",
+			"(JQuery) Data cell with focusable element: The correct element was returned");
+
+		$InteractiveElements = TableUtils.getInteractiveElements(getCell(0, oTable.columnCount - 1)[0]);
+		assert.strictEqual($InteractiveElements.length, 1, "(HTMLElement) Data cell with focusable element: One element was returned");
+		assert.strictEqual($InteractiveElements[0].value, "Focus&NoTabInput1",
+			"(HTMLElement) Data cell with focusable element: The correct element was returned");
+
+		$InteractiveElements = TableUtils.getInteractiveElements(getCell(0, oTable.columnCount - 2));
+		assert.strictEqual($InteractiveElements.length, 1, "(jQuery) Data cell with focusable & tabbable element: One element was returned");
+		assert.strictEqual($InteractiveElements[0].value, "Focus&TabInput1",
+			"(jQuery) Data cell with focusable & tabbable element: The correct element was returned");
+
+		$InteractiveElements = TableUtils.getInteractiveElements(getCell(0, oTable.columnCount - 2)[0]);
+		assert.strictEqual($InteractiveElements.length, 1, "(HTMLElement) Data cell with focusable & tabbable element: One element was returned");
+		assert.strictEqual($InteractiveElements[0].value, "Focus&TabInput1",
+			"(HTMLElement) Data cell with focusable & tabbable element: The correct element was returned");
+
+		$InteractiveElements = TableUtils.getInteractiveElements(getCell(0, oTable.columnCount - 3));
+		assert.strictEqual($InteractiveElements, null, "Data cell without interactive element: Null was returned");
+
+		var $RowActionCell = getRowAction(0);
+		var $RowActionIcons = $RowActionCell.find(".sapUiTableActionIcon:visible");
+		$InteractiveElements = TableUtils.getInteractiveElements($RowActionCell);
+		assert.strictEqual($InteractiveElements.length, 2, "(jQuery) Row Action cell with 2 action items: Two elements have been returned");
+		assert.strictEqual($InteractiveElements[0], $RowActionIcons[0], "(jQuery) The first returned element is the correct row action icon");
+		assert.strictEqual($InteractiveElements[1], $RowActionIcons[1], "(jQuery) The second returned element is the correct row action icon");
+
+		$InteractiveElements = TableUtils.getInteractiveElements($RowActionCell[0]);
+		assert.strictEqual($InteractiveElements.length, 2, "(HTMLElement) Row Action cell with 2 action items: Two elements have been returned");
+		assert.strictEqual($InteractiveElements[0], $RowActionIcons[0], "(HTMLElement) The first returned element is the correct row action icon");
+		assert.strictEqual($InteractiveElements[1], $RowActionIcons[1], "(HTMLElement) The second returned element is the correct row action icon");
+
+		initRowActions(oTable, 1, 1);
+		$RowActionCell = getRowAction(0);
+		$RowActionIcons = $RowActionCell.find(".sapUiTableActionIcon:visible");
+		$InteractiveElements = TableUtils.getInteractiveElements($RowActionCell);
+		assert.strictEqual($InteractiveElements.length, 1, "(jQuery) Row Action cell with 1 action item: One element was returned");
+		assert.strictEqual($InteractiveElements[0], $RowActionIcons[0], "(jQuery) The returned element is the correct row action icon");
+
+		$InteractiveElements = TableUtils.getInteractiveElements($RowActionCell[0]);
+		assert.strictEqual($InteractiveElements.length, 1, "(HTMLElement) Row Action cell with 1 action item: One elements was returned");
+		assert.strictEqual($InteractiveElements[0], $RowActionIcons[0], "(HTMLElement) The first returned element is the correct row action icon");
+
+		initRowActions(oTable, 1, 0);
+		$InteractiveElements = TableUtils.getInteractiveElements(getRowAction(0));
+		assert.strictEqual($InteractiveElements, null, "Row action cell without interactive element: Null was returned");
+
+		$InteractiveElements = TableUtils.getInteractiveElements(getColumnHeader(0));
+		assert.strictEqual($InteractiveElements, null, "Column header: Null was returned");
+
+		$InteractiveElements = TableUtils.getInteractiveElements(getRowHeader(0));
+		assert.strictEqual($InteractiveElements, null, "Row header: Null was returned");
+
+		$InteractiveElements = TableUtils.getInteractiveElements(getRowAction(0));
+		assert.strictEqual($InteractiveElements, null, "Row action: Null was returned");
+
+		$InteractiveElements = TableUtils.getInteractiveElements(getSelectAll(0));
+		assert.strictEqual($InteractiveElements, null, "SelectAll: Null was returned");
+
+		$InteractiveElements = TableUtils.getInteractiveElements();
+		assert.strictEqual($InteractiveElements, null, "No parameter passed: Null was returned");
+	});
+
+	QUnit.test("getInteractiveElements - TreeTable Icon Cell", function(assert) {
+		var $TreeIconCell = getCell(0, 0, null, null, oTreeTable);
+		var sTreeIconOpenClass = "sapUiTableTreeIconNodeOpen";
+		var sTreeIconClosedClass = "sapUiTableTreeIconNodeClosed";
+		var sTreeIconLeafClass = "sapUiTableTreeIconLeaf";
+
+		// Closed node
+		var $InteractiveElements = TableUtils.getInteractiveElements($TreeIconCell);
+		assert.strictEqual($InteractiveElements.length, 1, "(JQuery) Tree icon cell of closed node: One element was returned");
+		assert.ok($InteractiveElements[0].classList.contains(sTreeIconClosedClass),
+			"(JQuery) Tree icon cell of closed node: The correct closed node element was returned");
+
+		$InteractiveElements = TableUtils.getInteractiveElements($TreeIconCell[0]);
+		assert.strictEqual($InteractiveElements.length, 1, "(HTMLElement) Tree icon cell of closed node: One element was returned");
+		assert.ok($InteractiveElements[0].classList.contains(sTreeIconClosedClass),
+			"(HTMLElement) Tree icon cell of closed node: The correct closed node element was returned");
+
+		// Open node
+		$InteractiveElements[0].classList.remove(sTreeIconClosedClass);
+		$InteractiveElements[0].classList.add(sTreeIconOpenClass);
+
+		$InteractiveElements = TableUtils.getInteractiveElements($TreeIconCell);
+		assert.strictEqual($InteractiveElements.length, 1, "(JQuery) Tree icon cell of open node: One element was returned");
+		assert.ok($InteractiveElements[0].classList.contains(sTreeIconOpenClass),
+			"(JQuery) Tree icon cell of open node: The correct open node element was returned");
+
+		$InteractiveElements = TableUtils.getInteractiveElements($TreeIconCell[0]);
+		assert.strictEqual($InteractiveElements.length, 1, "(HTMLElement) Tree icon cell of open node: One element was returned");
+		assert.ok($InteractiveElements[0].classList.contains(sTreeIconOpenClass),
+			"(HTMLElement) Tree icon cell of open node: The correct open node element was returned");
+
+		// Leaf node
+		$InteractiveElements[0].classList.remove(sTreeIconOpenClass);
+		$InteractiveElements[0].classList.add(sTreeIconLeafClass);
+
+		$InteractiveElements = TableUtils.getInteractiveElements($TreeIconCell);
+		assert.strictEqual($InteractiveElements, null, "(JQuery) Tree icon cell of leaf node: No element was returned");
+
+		$InteractiveElements = TableUtils.getInteractiveElements($TreeIconCell[0]);
+		assert.strictEqual($InteractiveElements, null, "(HTMLElement) Tree icon cell of leaf node: No element was returned");
+	});
+
 	QUnit.module("Cozy", {
 		beforeEach: function() {
 			jQuery(document.body).toggleClass("sapUiSizeCozy", true);
@@ -1302,46 +1415,14 @@ sap.ui.define([
 	QUnit.module("Cell Content", {
 		beforeEach: function() {
 			createTables();
-
-			function addColumn(sTitle, sText, bFocusable, bTabbable) {
-				var oControlTemplate;
-				if (!bFocusable) {
-					oControlTemplate = new TestControl({
-						text: "{" + sText + "}",
-						index: iNumberOfCols,
-						visible: true,
-						tabbable: bTabbable
-					});
-				} else {
-					oControlTemplate = new TestInputControl({
-						text: "{" + sText + "}",
-						index: iNumberOfCols,
-						visible: true,
-						tabbable: bTabbable
-					});
-				}
-
-				oTable.addColumn(new Column({
-					label: sTitle,
-					width: "100px",
-					template: oControlTemplate
-				}));
-				iNumberOfCols++;
-
-				for (var i = 0; i < iNumberOfRows; i++) {
-					oTable.getModel().getData().rows[i][sText] = sText + (i + 1);
-				}
-			}
-
-			addColumn("Not Focusable & Not Tabbable", "NoFocusNoTab", false, false);
-			addColumn("Focusable & Tabbable", "FocusTab", true, true);
-			addColumn("Focusable & Not Tabbable", "NoTab", true, false);
+			TableQUnitUtils.addColumn(oTable, "Not Focusable & Not Tabbable", "NoFocusNoTab");
+			TableQUnitUtils.addColumn(oTable, "Focusable & Tabbable", "FocusTab", true, null, true);
+			TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "NoTab", true, null, false);
 
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
 			destroyTables();
-			iNumberOfCols -= 3;
 		}
 	});
 
@@ -1356,7 +1437,7 @@ sap.ui.define([
 
 		/* Data Cell */
 
-		var oCell = getCell(0, iNumberOfCols - 1);
+		var oCell = getCell(0, oTable.columnCount - 1);
 		var $ParentCell = TableUtils.getParentCell(oTable, _getFirstInteractiveElement(oCell));
 		assert.strictEqual($ParentCell.length, 1, "A data cell was returned");
 		assert.strictEqual($ParentCell[0], oCell[0], "jQuery object passed: The correct data cell was returned");
@@ -1365,7 +1446,7 @@ sap.ui.define([
 		assert.strictEqual($ParentCell.length, 1, "A data cell was returned");
 		assert.strictEqual($ParentCell[0], oCell[0], "DOM element passed: The correct data cell was returned");
 
-		oCell = getCell(0, iNumberOfCols - 2);
+		oCell = getCell(0, oTable.columnCount - 2);
 		$ParentCell = TableUtils.getParentCell(oTable, _getFirstInteractiveElement(oCell));
 		assert.strictEqual($ParentCell.length, 1, "A data cell was returned");
 		assert.strictEqual($ParentCell[0], oCell[0], "jQuery object passed: The correct data cell was returned");
@@ -1389,7 +1470,7 @@ sap.ui.define([
 		$ParentCell = TableUtils.getParentCell(oTable);
 		assert.strictEqual($ParentCell, null, "No element passed: Null was returned");
 
-		$ParentCell = TableUtils.getParentCell(null, _getFirstInteractiveElement(getCell(0, iNumberOfCols - 1)));
+		$ParentCell = TableUtils.getParentCell(null, _getFirstInteractiveElement(getCell(0, oTable.columnCount - 1)));
 		assert.strictEqual($ParentCell, null, "No table passed: Null was returned");
 	});
 

@@ -1176,7 +1176,6 @@ sap.ui.define([
 	QUnit.test("Imitating Arrow Left/Right and Home/End key navigation", function(assert) {
 		var done = assert.async();
 		var that = this;
-		var iNumberOfCols = oTable.getColumns().length;
 		var iAssertionDelay = 50;
 
 		// Start at the first cell in the header.
@@ -1257,7 +1256,7 @@ sap.ui.define([
 		}).then(function() {
 
 			// Header: Navigate to the last cell.
-			iColIndex = iNumberOfCols - 1;
+			iColIndex = oTable.columnCount - 1;
 			qutils.triggerKeydown(oCell, "END", false, false, false);
 			oCell = jQuery.sap.domById((oTable._getVisibleColumns()[iColIndex]).getId());
 
