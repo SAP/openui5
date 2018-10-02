@@ -206,6 +206,8 @@ sap.ui.define([
 		$.extend(this, extensionObject);
 	};
 
+	Opa._testComponents = ["arrangements", "actions", "assertions"];
+
 	/**
 	 * The global configuration of Opa.
 	 * All of the global values can be overwritten in an individual <code>waitFor</code> call.
@@ -288,23 +290,24 @@ sap.ui.define([
 	 * @param {object} options The values to be added to the existing config
 	 * @public
 	 */
-	Opa.extendConfig = function (options) {
-		// Opa extend to preserver properties on these three parameters
-		["actions", "assertions", "arrangements"].forEach(function (sArrangeActAssert) {
-			if (!options[sArrangeActAssert]) {
-				return;
-			}
-
-			Object.keys(Opa.config[sArrangeActAssert]).forEach(function (sKey) {
-				if (!options[sArrangeActAssert][sKey]) {
-					options[sArrangeActAssert][sKey] = Opa.config[sArrangeActAssert][sKey];
+	Opa.extendConfig = function (oOptions) {
+		// extend oOptions to include existing OPA values for arrange, act and assert
+		// oOptions overwrite Opa.config
+		// arrangements, actions and assertions are initialized with an empty OPA object:
+		// preserve their prototype by using simple key comparison instead of $.extend
+		Opa._testComponents.forEach(function (sArrangeActAssert) {
+			for (var sKey in Opa.config[sArrangeActAssert]) {
+				if (sArrangeActAssert in oOptions && !(sKey in oOptions[sArrangeActAssert])) {
+					var mExistingPair = {};
+					mExistingPair[sKey] = Opa.config[sArrangeActAssert][sKey];
+					$.extend(Object.getPrototypeOf(oOptions[sArrangeActAssert]), mExistingPair);
 				}
-			});
+			}
 		});
 
-		// URI params overwrite default
+		// URI params overwrite any oOptions of extendConfig
 		// deep extend is necessary so appParams object is not overwritten but merged
-		Opa.config = $.extend(true, Opa.config, options, opaUriParams);
+		Opa.config = $.extend(true, Opa.config, oOptions, opaUriParams);
 		_OpaLogger.setLevel(Opa.config.logLevel);
 	};
 
