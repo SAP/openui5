@@ -1,5 +1,6 @@
 /*global OData, QUnit, sinon */
 sap.ui.define([
+		"sap/base/Log",
 		"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService",
 		"sap/ui/model/odata/v2/ODataModel",
 		"sap/ui/model/Filter",
@@ -14,6 +15,7 @@ sap.ui.define([
 		"sap/ui/core/message/Message"
 	],
 	function(
+		Log,
 		fakeService,
 		ODataModel,
 		Filter,
@@ -5105,6 +5107,29 @@ sap.ui.define([
 
 		}.bind(this));
 	});
+
+
+	QUnit.test("check logs for created entry", function(assert) {
+		var done = assert.async();
+		this.oModel.metadataLoaded().then(function() {
+			var oLogSpy = sinon.spy(Log, "warning");
+			var oContext = this.oModel.createEntry("/Products", {properties: {Name: 'test'}});
+			assert.equal(oLogSpy.callCount, 0, "There should be no warning log initially");
+
+			this.oModel.setProperty('Name', "test2", oContext);
+			assert.equal(oLogSpy.callCount, 0, "There should be no warning log after setProperty");
+
+			this.oModel.attachRequestCompleted(function() {
+				assert.ok(oContext, "should be present");
+				assert.equal(oLogSpy.callCount, 0, "There should be no warning log during createEntry call");
+				oLogSpy.restore();
+				done();
+			});
+
+			this.oModel.submitChanges();
+		}.bind(this));
+	});
+
 
 	QUnit.test("set same value again", function(assert) {
 		var done = assert.async();
