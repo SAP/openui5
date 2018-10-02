@@ -1186,34 +1186,34 @@ sap.ui.define([
 		oCell.focus();
 
 		function navigateHorizontal(bRight) {
-			return new Promise(
-				function(resolve) {
-					iColIndex = bRight ? iColIndex + 1 : iColIndex - 1;
+			return new Promise(function(resolve) {
+				iColIndex = bRight ? iColIndex + 1 : iColIndex - 1;
 
-					var sKey = bRight ? "ARROW_RIGHT" : "ARROW_LEFT";
-					qutils.triggerKeydown(oCell, sKey, false, false, false);
+				var sKey = bRight ? "ARROW_RIGHT" : "ARROW_LEFT";
+				qutils.triggerKeydown(oCell, sKey, false, false, false);
 
-					if (iRowIndex === 0) {
-						oCell = jQuery.sap.domById((oTable._getVisibleColumns()[iColIndex]).getId());
-					} else {
-						oCell = jQuery.sap.domById(oTable.getId() + "-rows-row" + (iRowIndex - 1) + "-col" + iColIndex);
-					}
-
-					window.setTimeout(function() {
-						that.assertSynchronization(assert);
-						resolve();
-					}, iAssertionDelay);
+				if (iRowIndex === 0) {
+					oCell = jQuery.sap.domById((oTable._getVisibleColumns()[iColIndex]).getId());
+				} else {
+					oCell = jQuery.sap.domById(oTable.getId() + "-rows-row" + (iRowIndex - 1) + "-col" + iColIndex);
 				}
-			);
+
+				window.setTimeout(function() {
+					that.assertSynchronization(assert);
+					resolve();
+				}, iAssertionDelay);
+			});
 		}
 
 		// Header: Navigate from the first column header cell to the last.
-		navigateHorizontal(true).then(function() {	// 2
-			return navigateHorizontal(true);		// 3
+		Promise.resolve().then(function() {
+			return navigateHorizontal(true); // 2
 		}).then(function() {
-			return navigateHorizontal(true);		// 4
+			return navigateHorizontal(true); // 3
 		}).then(function() {
-			return navigateHorizontal(true);		// 5
+			return navigateHorizontal(true); // 4
+		}).then(function() {
+			return navigateHorizontal(true); // 5
 		}).then(function() {
 
 			// Header: Navigate to the content.
