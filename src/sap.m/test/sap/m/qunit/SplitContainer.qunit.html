@@ -507,6 +507,14 @@
 						tablet: false
 					};
 
+				// Manually create a SPY as sinon can't provide the full Event object
+				var bMasterButtonVisible = null;
+				var iCalled = 0;
+				var onMasterButton = function (oEvent) {
+					bMasterButtonVisible = oEvent.getParameter("show");
+					iCalled++;
+				};
+
 				this.stub(sap.ui.Device, "system", oSystem);
 				this.stub(sap.ui.Device, "orientation", oLandscape);
 
@@ -516,21 +524,37 @@
 							pages: oPage
 						}),
 						oSC = new sap.m.SplitContainer({
-							detailPages: oNavContainer
+							detailPages: oNavContainer,
+							masterButton: onMasterButton
 						});
 
 				// Act
 				oSC.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// Act - Change Orientation
+				// Act - Change Orientation to portrait
 				this.stub(sap.ui.Device, "orientation", oPortrait);
 				oSC._fnResize();
 				sap.ui.getCore().applyChanges();
 
-				// Assert
+				// Assert - portrait orientation
 				assert.ok(oPage._getAnyHeader(), "Header is in page");
 				assert.strictEqual(oPage._getAnyHeader().getContentLeft()[0], oSC._oShowMasterBtn, "Master button is inserted into the page in nav container");
+				assert.strictEqual(iCalled, 1, "Should fire masterButton event once");
+				assert.ok(bMasterButtonVisible, "Should fire masterButton event with parameter 'show'=true");
+
+				// Reset
+				iCalled = 0;
+				bMasterButtonVisible = null;
+
+				// Act - Change Orientation to landscape
+				this.stub(sap.ui.Device, "orientation", oLandscape);
+				oSC._fnResize();
+				sap.ui.getCore().applyChanges();
+
+				// Assert - landscape orientation
+				assert.strictEqual(iCalled, 1, "Should fire masterButton event once");
+				assert.notOk(bMasterButtonVisible, "Should fire masterButton event with parameter 'show'=false");
 
 				oSC.destroy();
 			});
