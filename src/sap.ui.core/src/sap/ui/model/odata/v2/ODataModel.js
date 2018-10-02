@@ -3595,9 +3595,8 @@ sap.ui.define([
 					var sKey = this._getKey(oResultData);
 					// rewrite context for new path
 					var oContext = this.getContext("/" + oRequest.key);
-					oContext.sPath = '/' + sKey;
 					oContext.bCreated = false;
-					this.mContexts[sKey] = oContext;
+					this._updateContext(oContext, '/' + sKey);
 					// remove old entity
 					this._removeEntity(oRequest.key);
 					//delete created flag after successful creation
