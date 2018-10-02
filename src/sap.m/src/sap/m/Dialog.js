@@ -435,7 +435,7 @@ function(
 						} else {
 							scrollPosX = window.scrollX;
 						}
-						if (scrollPosX < 0) {
+						if (Device.os.ios || scrollPosX < 0) {
 							scrollPosX = 0;
 						}
 						oPosition.at.left = 'calc(50% + ' + scrollPosX + 'px)';
