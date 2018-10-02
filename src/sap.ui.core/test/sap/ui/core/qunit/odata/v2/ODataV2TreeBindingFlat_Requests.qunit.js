@@ -738,4 +738,32 @@ sap.ui.define([
 			oBinding.getContexts(0, 100, 0);
 		});
 	});
+
+	QUnit.test("abortPendingRequest - Aborts all pending requests", function(assert){
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+		var iAbortCalled = 0;
+		var oFakeRequest = {
+			oRequestHandle: {
+				abort: function () {
+					iAbortCalled++;
+				}
+			}
+		};
+		oBinding._aPendingRequests = [oFakeRequest, oFakeRequest];
+		oBinding._aPendingChildrenRequests = [oFakeRequest, oFakeRequest];
+		oBinding.mRequestHandles = {
+			request1: oFakeRequest.oRequestHandle,
+			request2: oFakeRequest.oRequestHandle
+		};
+		oBinding._abortPendingRequest();
+		assert.equal(iAbortCalled, 6, "All four fake requests got aborted");
+		assert.equal(oBinding._aPendingRequests.length, 0, "There are no more pending requests");
+		assert.equal(oBinding._aPendingChildrenRequests.length, 0, "There are no more pending children requests");
+		assert.equal(Object.keys(oBinding.mRequestHandles).length, 0, "There are no more pending OTB requests");
+	});
 });

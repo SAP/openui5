@@ -2999,4 +2999,26 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 			"Error thrown if  multi-filter instances contain an unsupported FilterOperator"
 		);
 	});
+
+	QUnit.test("abortPendingRequest - Aborts all pending requests", function(assert){
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+		var iAbortCalled = 0;
+		var oFakeRequestHandle = {
+			abort: function () {
+				iAbortCalled++;
+			}
+		};
+		oBinding.mRequestHandles = {
+			request1: oFakeRequestHandle,
+			request2: oFakeRequestHandle
+		};
+		oBinding._abortPendingRequest();
+		assert.equal(iAbortCalled, 2, "All four fake requests got aborted");
+		assert.equal(Object.keys(oBinding.mRequestHandles).length, 0, "There are no more pending requests");
+	});
 });

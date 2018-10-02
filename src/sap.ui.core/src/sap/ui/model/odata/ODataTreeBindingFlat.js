@@ -3122,6 +3122,8 @@ sap.ui.define([
 	ODataTreeBindingFlat.prototype._restoreTreeState = function(oOptimizedChanges) {
 		var that = this;
 
+		this._abortPendingRequest();
+
 		oOptimizedChanges = oOptimizedChanges || {
 			creationCancelled: [],
 			added: [],
@@ -3221,7 +3223,7 @@ sap.ui.define([
 
 
 		// Dump all data
-		this.resetData();
+		this.resetData(true);
 
 		function restoreCollapseState() {
 			if (iCollapsedNodesCount > 0) {
@@ -4163,6 +4165,25 @@ sap.ui.define([
 		}.bind(this);
 
 		aNodes.sort(fnSort);
+	};
+
+	/**
+	* Abort all pending requests
+	*/
+	ODataTreeBindingFlat.prototype._abortPendingRequest = function() {
+		ODataTreeBinding.prototype._abortPendingRequest.apply(this, arguments);
+
+		var i, j;
+
+		for (i = this._aPendingRequests.length - 1; i >= 0; i--) {
+			this._aPendingRequests[i].oRequestHandle.abort();
+		}
+		this._aPendingRequests = [];
+
+		for (j = this._aPendingChildrenRequests.length - 1; j >= 0; j--) {
+			this._aPendingChildrenRequests[j].oRequestHandle.abort();
+		}
+		this._aPendingChildrenRequests = [];
 	};
 
 	//*********************************************

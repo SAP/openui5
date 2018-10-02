@@ -1397,11 +1397,18 @@ sap.ui.define([
 	/**
 	 * Resets the current tree data and the lengths of the different nodes/groups.
 	 *
-	 * @param {object} oContext the context for which the lengths values should be resetted.
+	 * @param {object|boolean} vContextOrDoNotAbortReq If boolean, <code>true</code> will suppress abortion of pending requests.
+	 * If an object is supplied, it is treated as the context for which the lengths values should be resetted.
 	 *
 	 * @private
 	 */
-	ODataTreeBinding.prototype.resetData = function(oContext) {
+	ODataTreeBinding.prototype.resetData = function(vContextOrDoNotAbortReq) {
+		var oContext, bDoNotAbortRequests = false;
+		if (typeof vContextOrDoNotAbortReq === "boolean") {
+			bDoNotAbortRequests = vContextOrDoNotAbortReq;
+		} else {
+			oContext = vContextOrDoNotAbortReq;
+		}
 		if (oContext) {
 			//Only reset specific content
 			var sPath = oContext.getPath();
@@ -1440,13 +1447,9 @@ sap.ui.define([
 			this.oRootContext = null;
 			this._bRootMissing = false;
 
-			// abort running request and clear the map afterwards
-			jQuery.each(this.mRequestHandles, function (sRequestKey, oRequestHandle) {
-				if (oRequestHandle) {
-					oRequestHandle.abort();
-				}
-			});
-			this.mRequestHandles = {};
+			if (!bDoNotAbortRequests) {
+				this._abortPendingRequest();
+			}
 
 			this._mLoadedSections = {};
 			this._iPageSize = 0;
@@ -1603,12 +1606,6 @@ sap.ui.define([
 				}
 			} else {
 				this.resetData();
-				// abort running request, since new requests will be sent containing $orderby
-				jQuery.each(this.mRequestHandles, function (sRequestKey, oRequestHandle) {
-					if (oRequestHandle) {
-						oRequestHandle.abort();
-					}
-				});
 				this.sChangeReason = ChangeReason.Filter;
 				this._fireRefresh({reason: this.sChangeReason});
 			}
@@ -1724,12 +1721,7 @@ sap.ui.define([
 		this.aSorters = aSorters || [];
 
 		if (!this.bInitial) {
-			// abort running request, since new requests will be sent containing $orderby
-			jQuery.each(this.mRequestHandles, function (sRequestKey, oRequestHandle) {
-				if (oRequestHandle) {
-					oRequestHandle.abort();
-				}
-			});
+			this._abortPendingRequest();
 
 			if (this.bClientOperation) {
 				this.addSortComparators(aSorters, this.oEntityType);
@@ -2411,6 +2403,19 @@ sap.ui.define([
 		}
 
 		return this.sFilterParams;
+	};
+
+	/**
+	* Abort all pending requests
+	*/
+	ODataTreeBinding.prototype._abortPendingRequest = function() {
+		// abort running request and clear the map afterwards
+		jQuery.each(this.mRequestHandles, function (sRequestKey, oRequestHandle) {
+			if (oRequestHandle) {
+				oRequestHandle.abort();
+			}
+		});
+		this.mRequestHandles = {};
 	};
 
 	/**
