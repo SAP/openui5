@@ -384,8 +384,22 @@ sap.ui.define([
 		var oMonth = new Month(sId, {width: "100%"});
 
 		oMonth.attachEvent("datehovered", this._handleDateHovered, this);
+		oMonth.attachEvent("weekNumberSelect", this._handleWeekNumberSelect, this);
 
 		return oMonth;
+	};
+
+	Calendar.prototype._handleWeekNumberSelect = function (oEvent) {
+		var bExecuteDefault = this.fireWeekNumberSelect({
+			weekNumber: oEvent.getParameter("weekNumber"),
+			weekDays: oEvent.getParameter("weekDays")
+		});
+
+		if (!bExecuteDefault) {
+			oEvent.preventDefault();
+		}
+
+		return this;
 	};
 
 	Calendar.prototype._handleDateHovered = function(oEvent) {
@@ -960,12 +974,7 @@ sap.ui.define([
 	};
 
 	Calendar.prototype.onclick = function(oEvent){
-		var oEventTarget = oEvent.target,
-			bTargetClassList = oEventTarget.classList.contains("sapUiCalWeekNum");
-
-		if (this.getIntervalSelection() && this.getPrimaryCalendarType() === sap.ui.core.CalendarType.Gregorian && bTargetClassList) {
-			this._handleWeekSelection(oEventTarget);
-		}
+		var oEventTarget = oEvent.target;
 
 		if (oEvent.isMarked("delayedMouseEvent") ) {
 			return;
@@ -2317,41 +2326,6 @@ sap.ui.define([
 		oHeader.setAdditionalTextButton2(sYear);
 		oHeader._setAdditionalTextButton4(sYear);
 		oSecondMonthHeader.setAdditionalTextButton2(sYear);
-	};
-
-	/*
-	 * Fires a <code>weekNumberSelect</code> event when a week number is clicked.
-	 * @param {object} oEventTarget The clicked week number.
-	 * @private
-	 */
-	Calendar.prototype._handleWeekSelection = function (oEventTarget) {
-		var oSelectedWeekNumber = parseInt(oEventTarget.innerText, 10),
-			sStartDate = jQuery(oEventTarget.parentElement).attr("data-sap-day"),
-			oFormatter = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"}),
-			oStartDate = oFormatter.parse(sStartDate),
-			oEndDate = new Date(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate() + 6),
-			oDateRange = new DateRange({startDate: oStartDate, endDate: oEndDate}),
-			aSelectedDates = this.getSelectedDates();
-
-		if (
-			aSelectedDates.length &&
-			aSelectedDates[0].getStartDate().getTime() === oDateRange.getStartDate().getTime() &&
-			aSelectedDates[0].getEndDate() &&
-			aSelectedDates[0].getEndDate().getTime() === oDateRange.getEndDate().getTime()
-		) {
-			oDateRange = null;
-		}
-
-		if (this.fireWeekNumberSelect({weekNumber: oSelectedWeekNumber, weekDays: oDateRange})) {
-			//when intervalSelection: true, only one range can be selected at a time, so
-			//destroy the old selected dates and select the new ones except one case -
-			//when again clicked on a same week number - then remove the selections
-			this.removeAllSelectedDates();
-
-			this.addSelectedDate(oDateRange);
-
-			this.focusDate(oStartDate);
-		}
 	};
 
 	function _handleResize(oEvent){

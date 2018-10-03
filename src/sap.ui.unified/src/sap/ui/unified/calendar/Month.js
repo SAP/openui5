@@ -10,6 +10,7 @@ sap.ui.define([
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/unified/calendar/CalendarDate',
+	'sap/ui/unified/DateRange',
 	'sap/ui/unified/library',
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/library',
@@ -25,6 +26,7 @@ sap.ui.define([
 	ItemNavigation,
 	CalendarUtils,
 	CalendarDate,
+	DateRange,
 	library,
 	DateFormat,
 	coreLibrary,
@@ -202,7 +204,34 @@ sap.ui.define([
 					 */
 					restoreOldDate : {type : "boolean"}
 				}
+			},
+
+			/**
+			 * Fired when a week number selection is changed. By default, choosing the week number will select the corresponding week.
+			 * If the week has already been selected, choosing the week number will deselect it.
+			 *
+			 * The default behavior can be prevented using the <code>preventDefault</code> method.
+			 *
+			 * <b>Note:</b> Works for Gregorian calendars only and when <code>intervalSelection</code> is set to <code>true</code>.
+			 * @since 1.60
+			 */
+			weekNumberSelect : {
+				allowPreventDefault: true,
+				parameters : {
+					/**
+					 * The selected week number.
+					 */
+					weekNumber : {type: "int"},
+					/**
+					 * The days of the corresponding week that are selected or deselected.
+					 *
+					 * <b>Note:</b> Will be set to <code>null</code> if that week is being deselected.
+					 */
+					weekDays: {type: "sap.ui.unified.DateRange"}
+				}
 			}
+
+
 		}
 	}});
 
@@ -620,6 +649,20 @@ sap.ui.define([
 	 * if used inside Calendar get the value from the parent
 	 * To don't have sync issues...
 	 */
+	Month.prototype.getPrimaryCalendarType = function() {
+		var oParent = this.getParent();
+
+		if (oParent && oParent.getPrimaryCalendarType) {
+			return oParent.getPrimaryCalendarType();
+		}
+
+		return this.getProperty("primaryCalendarType");
+	};
+
+	/*
+	 * if used inside Calendar get the value from the parent
+	 * To don't have sync issues...
+	 */
 	Month.prototype._getShowHeader = function(){
 
 		var oParent = this.getParent();
@@ -996,15 +1039,20 @@ sap.ui.define([
 		if (this._bMousedownChange) {
 			this._bMousedownChange = false;
 			_fireSelect.call(this);
-		} else if (Device.support.touch
-			&& this._isValueInThreshold(this._oMousedownPosition.clientX, oEvent.clientX, 10)
-			&& this._isValueInThreshold(this._oMousedownPosition.clientY, oEvent.clientY, 10)
-			&& (oEvent.target.classList.contains("sapUiCalItemText")
-			|| oEvent.target.classList.contains("sapUiCalDayName"))
-		) {
-			var oSelectedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(jQuery(oEvent.target).parent().attr("data-sap-day")), this.getPrimaryCalendarType());
-			this._selectDay(oSelectedDate, false, false);
-			_fireSelect.call(this);
+		} else if (Device.support.touch && this._areMouseEventCoordinatesInThreshold(oEvent.clientX, oEvent.clientY, 10)) {
+			var classList = oEvent.target.classList,
+				bIsDateSelected = (classList.contains("sapUiCalItemText") || classList.contains("sapUiCalDayName")),
+				bIsWeekSelected = classList.contains("sapUiCalWeekNum"),
+				oSelectedDate = this._getSelectedDateFromEvent(oEvent);
+
+			if (bIsWeekSelected && this._isWeekSelectionAllowed()) {
+				this._handleWeekSelection(oSelectedDate, true);
+			} else if (bIsDateSelected && oEvent.shiftKey && this._isConsecutiveDaysSelectionAllowed()) {
+				this._handleConsecutiveDaysSelection(oSelectedDate);
+			} else if (bIsDateSelected) {
+				this._selectDay(oSelectedDate, false, false);
+				_fireSelect.call(this);
+			}
 		}
 
 	};
@@ -1012,7 +1060,7 @@ sap.ui.define([
 	Month.prototype.onsapselect = function(oEvent){
 
 		// focused item must be selected
-		var bSelected = this._selectDay(this._getDate());
+		var bSelected = this._selectDay(this._getSelectedDateFromEvent(oEvent));
 		if (bSelected) {
 			_fireSelect.call(this);
 		}
@@ -1024,9 +1072,21 @@ sap.ui.define([
 	};
 
 	Month.prototype.onsapselectmodifiers = function(oEvent){
+		var oSelectedDate = this._getSelectedDateFromEvent(oEvent),
+			oFirstWeekDate;
 
-		this.onsapselect(oEvent);
+		if (this._isWeekSelectionAllowed() && oEvent.shiftKey && oEvent.keyCode === KeyCodes.SPACE) {
+			// Handle Shift + Space, when week selection is allowed
+			// We need to get the first week's day, because Shift + Space could be called
+			// from any week's day
+			oFirstWeekDate = CalendarUtils._getFirstDateOfWeek(oSelectedDate);
 
+			this._handleWeekSelection(oFirstWeekDate, false);
+		} else if (this._isConsecutiveDaysSelectionAllowed() && oEvent.shiftKey && oEvent.keyCode === KeyCodes.ENTER) {
+			this._handleConsecutiveDaysSelection(oSelectedDate);
+		}
+
+		oEvent.preventDefault();
 	};
 
 	Month.prototype.onsappageupmodifiers = function(oEvent){
@@ -1104,6 +1164,20 @@ sap.ui.define([
 			iUpperThreshold = iReference + iThreshold;
 
 		return iValue >= iLowerThreshold && iValue <= iUpperThreshold;
+	};
+
+	/**
+	 * Determines if the mouse event coordinates were in a specific threshold.
+	 *
+	 * @param {int} clientX Mouse's horizontal coordinates
+	 * @param {int} clientY Mouse's vertical coordinates
+	 * @param {int} iThreshold Desired threshold
+	 * @returns {boolean} Coordinates are in that threshold
+	 * @private
+	 */
+	Month.prototype._areMouseEventCoordinatesInThreshold = function (clientX, clientY, iThreshold) {
+		return this._isValueInThreshold(this._oMousedownPosition.clientX, clientX, iThreshold)
+			&& this._isValueInThreshold(this._oMousedownPosition.clientY, clientY, iThreshold);
 	};
 
 	/*
@@ -1354,18 +1428,26 @@ sap.ui.define([
 		return this._aVisibleDays;
 	};
 
-	Month.prototype._handleMousedown = function(oEvent, oFocusedDate, iIndex){
-		var bTouchIeOrEdge = (Device.browser.msie || Device.browser.edge) && navigator.maxTouchPoints,
-			bWeekNumberPressed = oEvent.target.classList.contains("sapUiCalWeekNum"),
-			bLeftMouseButton = !oEvent.button;
+	Month.prototype._handleMousedown = function(oEvent, oFocusedDate){
+		var bWeekNumberPressed = oEvent.target.classList.contains("sapUiCalWeekNum"),
+			bLeftMouseButton = !oEvent.button,
+			oSelectedDate = this._getSelectedDateFromEvent(oEvent);
 
-		if (!bLeftMouseButton || Device.support.touch || (bWeekNumberPressed && (bLeftMouseButton || bTouchIeOrEdge))) {
+		if (!bLeftMouseButton || Device.support.touch) {
 			// don't select date:
 			// - if other than left button is pressed
 			// - on touch device in order to avoid date selection when scrolling
-			// - on a touch device with IE/Edge because they don't recognise touch devices as such
-			// so we use navigator.maxTouchPoints when press on the week number
-			return;
+			return this;
+		}
+
+		if (bWeekNumberPressed) {
+			this._isWeekSelectionAllowed() && this._handleWeekSelection(oSelectedDate, true);
+
+			return this;
+		} else if (oEvent.shiftKey && this._isConsecutiveDaysSelectionAllowed()) {
+			this._handleConsecutiveDaysSelection(oSelectedDate);
+
+			return this;
 		}
 
 		var bSelected = this._selectDay(oFocusedDate);
@@ -1387,6 +1469,283 @@ sap.ui.define([
 		oEvent.preventDefault(); // to prevent focus set outside of DatePicker
 		oEvent.setMark("cancelAutoClose");
 
+	};
+
+	/**
+	 * Gets what date was selected.
+	 * @param oEvent Selection event
+	 * @returns {sap.ui.unified.calendar.CalendarDate} Clicked date
+	 * @private
+	 */
+	Month.prototype._getSelectedDateFromEvent = function (oEvent) {
+		var $oEventTarget = jQuery(oEvent.target),
+			// The date will be either on the element itself when selected via KB,
+			// or on the internal span (which contains the date number) if selected via mouse
+			oExtractedDate = $oEventTarget.attr("data-sap-day") || $oEventTarget.parent().attr("data-sap-day"),
+			oParsedDate = this._oFormatYyyymmdd.parse(oExtractedDate);
+
+		// Return null for cases like user clicking on an empty space, today's border, etc...
+		return oParsedDate ? CalendarDate.fromLocalJSDate(oParsedDate, this.getPrimaryCalendarType()) : null;
+	};
+
+	/**
+	 * Decides if selecting/deselecting week's days should be done individually for each day or as one interval.
+	 * In addition to this, depending on user's decision, this method either refocuses or keeps the focus.
+	 * @param {sap.ui.unified.calendar.CalendarDate} oStartDate The first date of a given week
+	 * @param {boolean} bFocusStartDate
+	 * 			Whether or not the first date should be focused.
+	 * 			<b>Note:</b> This should be set to <code>true</code> if week number is selected,
+	 * 			since that isn't a focusable element.
+	 * @returns {sap.ui.unified.calendar.Month} this For chaining
+	 * @private
+	 */
+	Month.prototype._handleWeekSelection = function (oStartDate, bFocusStartDate) {
+		var iSelectedWeekNumber = CalendarUtils.calculateWeekNumber(oStartDate.toUTCJSDate(), oStartDate.getYear(), this._getLocale(), this._getLocaleData()),
+			oEndDate = this._getLastWeekDate(oStartDate),
+			bSingleSelection = this.getSingleSelection(),
+			bIntervalSelection = this.getIntervalSelection();
+
+		if (!bSingleSelection && !bIntervalSelection) {
+			// Selecting each day separately
+			this._handleWeekSelectionByMultipleDays(iSelectedWeekNumber, oStartDate, oEndDate);
+		} else if (bSingleSelection && bIntervalSelection) {
+			// Selecting the week as a whole interval
+			this._handleWeekSelectionBySingleInterval(iSelectedWeekNumber, oStartDate, oEndDate);
+		}
+
+		// When this method is called due to a week number's press, then focus
+		// should be moved to the first date, since the week number itself isn't focusable
+		bFocusStartDate && this._focusDate(oStartDate);
+
+		return this;
+	};
+
+	/**
+	 * Selects N-count independent consecutive days from the last selected date,
+	 * or deselects them if they are already selected.
+	 *
+	 * @param {sap.ui.unified.calendar.CalendarDate} oEndDate The last of those days to be selected
+	 * @returns {sap.ui.unified.calendar.Month} this For chaining
+	 * @private
+	 */
+	Month.prototype._handleConsecutiveDaysSelection = function (oEndDate) {
+		var aSelectedDates = this.getSelectedDates(),
+			oLastSelectedDate = aSelectedDates.length && aSelectedDates[aSelectedDates.length - 1].getStartDate(),
+			oStartDate = oLastSelectedDate ? CalendarDate.fromLocalJSDate(oLastSelectedDate) : oEndDate,
+			bShouldDeselectDays;
+
+		bShouldDeselectDays = this._areAllDaysBetweenSelected(oStartDate, oEndDate);
+
+		this._toggleDaysBetween(oStartDate, oEndDate, !bShouldDeselectDays);
+
+		return this;
+	};
+
+	/**
+	 * Determines if week selection is allowed.
+	 * @returns {boolean} Week selection is allowed
+	 * @private
+	 */
+	Month.prototype._isWeekSelectionAllowed = function () {
+		var bSingleSelection = this.getSingleSelection(),
+			bIntervalSelection = this.getIntervalSelection(),
+			sCalendarType = this.getPrimaryCalendarType(),
+			bCustomFirstDayOfWeekSet = this.getFirstDayOfWeek() !== -1,
+			bIsMultipleDaySelection = !bSingleSelection && !bIntervalSelection,
+			bIsSingleIntervalSelection = bSingleSelection && bIntervalSelection,
+			bAllowedSelection = bIsSingleIntervalSelection || bIsMultipleDaySelection;
+
+		// Week selection is allowed only for Gregorian calendar when:
+		// 1) We have multiple day selection
+		// 2) We don't have custom firstDayOfWeek set
+		// 3) We have single interval selection
+		return sCalendarType === CalendarType.Gregorian
+			&& !bCustomFirstDayOfWeekSet
+			&& bAllowedSelection;
+	};
+
+	/**
+	 * Determines if selecting consecutive days using SHIFT is allowed.
+	 * @returns {boolean} Such selection is allowed
+	 * @private
+	 */
+	Month.prototype._isConsecutiveDaysSelectionAllowed = function () {
+		var bSingleSelection = this.getSingleSelection(),
+			bIntervalSelection = this.getIntervalSelection();
+
+		return !bSingleSelection && !bIntervalSelection;
+	};
+
+	/**
+	 * Selects week's days individually, or deselects them if they were already selected.
+	 *
+	 * @param {int} iWeekNumber Week's number
+	 * @param {sap.ui.unified.calendar.CalendarDate} oStartDate Week's start date
+	 * @param {sap.ui.unified.calendar.CalendarDate} oEndDate Week's end date
+	 * @returns {sap.ui.unified.calendar.Month} this For chaining
+	 * @private
+	 */
+	Month.prototype._handleWeekSelectionByMultipleDays = function (iWeekNumber, oStartDate, oEndDate) {
+		var oSelectedWeekDays,
+			bExecuteDefault;
+
+		if (this._areAllDaysBetweenSelected(oStartDate, oEndDate)) {
+			oSelectedWeekDays = null;
+		} else {
+			oSelectedWeekDays = new DateRange({ startDate: oStartDate.toLocalJSDate(), endDate: oEndDate.toLocalJSDate() });
+		}
+
+		bExecuteDefault = this.fireWeekNumberSelect({
+			weekNumber: iWeekNumber,
+			weekDays: oSelectedWeekDays
+		});
+
+		if (bExecuteDefault) {
+			this._toggleDaysBetween(oStartDate, oEndDate, !!oSelectedWeekDays);
+		}
+
+		return this;
+	};
+
+	/**
+	 * Selects week's days as a single interval, or deselects that interval if it already exists.
+	 *
+	 * @param {int} iWeekNumber Week's number
+	 * @param {sap.ui.unified.calendar.CalendarDate} oStartDate Week's start date
+	 * @param {sap.ui.unified.calendar.CalendarDate} oEndDate Week's end date
+	 * @returns {sap.ui.unified.calendar.Month} this For chaining
+	 * @private
+	 */
+	Month.prototype._handleWeekSelectionBySingleInterval = function(iWeekNumber, oStartDate, oEndDate) {
+		var oDateRange = new DateRange({ startDate: oStartDate.toLocalJSDate(), endDate: oEndDate.toLocalJSDate() }),
+			oMonthParent = this.getParent(),
+			oAggOwner = this,
+			bExecuteDefault;
+
+		if (oMonthParent && oMonthParent.getSelectedDates) {
+			oAggOwner = oMonthParent;
+		}
+
+		if (this._isIntervalSelected(oDateRange)) {
+			oDateRange = null;
+		}
+
+		bExecuteDefault = this.fireWeekNumberSelect({
+			weekNumber: iWeekNumber,
+			weekDays: oDateRange
+		});
+
+		if (bExecuteDefault) {
+			// when intervalSelection: true, only one range can be selected at a time, so
+			// destroy the old selected dates and select the new ones except one case -
+			// when again clicked on a same week number - then remove the selections
+			oAggOwner.removeAllSelectedDates();
+			oAggOwner.addSelectedDate(oDateRange);
+		}
+
+		return this;
+	};
+
+	/**
+	 * Determines if a selected interval with the same start and end already exists.
+	 *
+	 * @param {sap.ui.unified.DateRange} oDateRangeInterval The interval we want to check
+	 * @returns {boolean} Interval was selected
+	 * @private
+	 */
+	Month.prototype._isIntervalSelected = function(oDateRangeInterval) {
+		var aSelectedDates = this.getSelectedDates(),
+			aSelectedInterval = aSelectedDates.length && aSelectedDates[0],
+			aSelectedIntervalEndDate = aSelectedInterval && aSelectedInterval.getEndDate();
+
+		return aSelectedInterval
+			&& aSelectedInterval.getStartDate().getTime() === oDateRangeInterval.getStartDate().getTime()
+			&& aSelectedIntervalEndDate
+			&& aSelectedInterval.getEndDate().getTime() === oDateRangeInterval.getEndDate().getTime();
+	};
+
+	/**
+	 * Returns the last week's date based on that week's start date.
+	 * @param {sap.ui.unified.calendar.CalendarDate} oStartDate Week's start date
+	 * @returns {sap.ui.unified.calendar.CalendarDate} Last week's date
+	 * @private
+	 */
+	Month.prototype._getLastWeekDate = function (oWeekStartDate) {
+		return new CalendarDate(oWeekStartDate).setDate(oWeekStartDate.getDate() + 6);
+	};
+
+	/**
+	 * Selects/deselects all dates between other two dates.
+	 *
+	 * @param {sap.ui.unified.calendar.CalendarDate} oStartDate Starting date
+	 * @param {sap.ui.unified.calendar.CalendarDate} oEndDate End date
+	 * @param {boolean} bSelect [bSelect=false] Whether to select or deselect the days
+	 * @returns {sap.ui.unified.calendar.Month} this For chaining
+	 * @private
+	 */
+	Month.prototype._toggleDaysBetween = function (oStartDate, oEndDate, bSelect) {
+		var oArrangedDates = this._arrangeStartAndEndDates(oStartDate, oEndDate),
+			oDateToBeToggled = new CalendarDate(oArrangedDates.startDate),
+			bDateIsAlreadySelected;
+
+		do {
+			bDateIsAlreadySelected = this._checkDateSelected(oDateToBeToggled);
+			// Add only dates, which are not selected already, in order to avoid duplicates
+			// TODO: Maybe deselect them and then select them again, so that their order is kept the same?
+			if ((!bDateIsAlreadySelected && bSelect) || (bDateIsAlreadySelected && !bSelect)) {
+				this._selectDay(oDateToBeToggled);
+				_fireSelect.call(this);
+			}
+
+			oDateToBeToggled.setDate(oDateToBeToggled.getDate() + 1);
+		} while (oDateToBeToggled.isSameOrBefore(oArrangedDates.endDate));
+
+		return this;
+	};
+
+	/**
+	 * Determines if all dates between two dates are already selected.
+	 *
+	 * @param {sap.ui.unified.calendar.CalendarDate} oStartDate Starting date
+	 * @param {sap.ui.unified.calendar.CalendarDate} oEndDate End date
+	 * @returns {boolean} All dates are selected
+	 * @private
+	 */
+	Month.prototype._areAllDaysBetweenSelected = function (oStartDate, oEndDate) {
+		var oArrangedDates = this._arrangeStartAndEndDates(oStartDate, oEndDate),
+			oCurrentDate = new CalendarDate(oArrangedDates.startDate),
+			bAllDaysAreSelected = true;
+
+		do {
+			// If we find an unselected date in our range, then immediately break the loop
+			// and return false
+			if (!this._checkDateSelected(oCurrentDate)) {
+				bAllDaysAreSelected = false;
+				break;
+			}
+
+			oCurrentDate.setDate(oCurrentDate.getDate() + 1);
+		} while (oCurrentDate.isSameOrBefore(oArrangedDates.endDate));
+
+		return bAllDaysAreSelected;
+	};
+
+	/**
+	 * Arranges two dates in such a way, that the starting date precedes (or is at least equal to)
+	 * the endingDate.
+	 *
+	 * @param {sap.ui.unified.calendar.CalendarDate} oStartDate Provided starting date
+	 * @param {sap.ui.unified.calendar.CalendarDate} oEndDate Provided end date
+	 * @returns {Object} The correctly arranged dates
+	 * @private
+	 */
+	Month.prototype._arrangeStartAndEndDates = function (oStartDate, oEndDate) {
+		var bAreInitiallyArranged = oStartDate.isSameOrBefore(oEndDate);
+
+		return {
+			startDate: bAreInitiallyArranged ? oStartDate : oEndDate,
+			endDate: bAreInitiallyArranged ? oEndDate : oStartDate
+		};
 	};
 
 	/**
