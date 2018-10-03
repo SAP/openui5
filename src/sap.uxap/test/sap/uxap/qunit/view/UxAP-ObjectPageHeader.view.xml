@@ -16,7 +16,7 @@
 							  markLocked="true"
 							  markChanges="true"
 							  objectSubtitle="Senior Developer"
-							  objectImageURI="./img/HugeHeaderPicture.png"
+							  objectImageURI="test-resources/sap/uxap/qunit/img/HugeHeaderPicture.png"
 							  objectImageShape="Circle"
 							  isObjectIconAlwaysVisible="true"
 							  isObjectTitleAlwaysVisible="true"

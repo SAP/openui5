@@ -37,8 +37,8 @@
 				<m:Label text="(321) 123-4567"/>
 				<m:Link text="DeniseSmith@sap.com"/>
 				<layout:HorizontalLayout>
-					<m:Image height="24px" width="24px" src="./img/twitterIcon.png"/>
-					<m:Image height="24px" width="24px" src="./img/linkedInIcon.png"/>
+					<m:Image height="24px" width="24px" src="test-resources/sap/uxap/qunit/img/twitterIcon.png"/>
+					<m:Image height="24px" width="24px" src="test-resources/sap/uxap/qunit/img/linkedInIcon.png"/>
 				</layout:HorizontalLayout>
 			</layout:VerticalLayout>
 			<m:Text width="200px"
