@@ -96,7 +96,7 @@
 		selected : true,
 		select : function() {
 			bCheckBoxSet = !bCheckBoxSet;
-			on1.setVisible(bCheckBoxSet);
+			oi1.setVisible(bCheckBoxSet);
 		}
 	});
 
@@ -110,7 +110,8 @@
 	});
 
 	var oi3 = new sap.m.ObjectIdentifier("oi3", {
-		title : "Gummib\u00E4" + "r\u00E7" + "he\u00D1nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+		title : "Gummib\u00E4" + "r\u00E7" + "he\u00D1" + "are what I need most of all",
+		titleActive : "{/true}",
 		text : "Tiny Text",
 		badgeNotes : true,
 		badgePeople : true,
@@ -193,7 +194,9 @@
 			new sap.m.ObjectIdentifier({
 				title : "{Name}",
 				text : "{ProductId}",
-				titleActive : "{active}"
+				titleActive : "{active}",
+				badgeNotes : true,
+				badgeAttachments : true
 			}),
 			new sap.m.Text({
 				text : "{Category}"
