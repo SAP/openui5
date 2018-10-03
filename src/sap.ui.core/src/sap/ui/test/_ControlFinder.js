@@ -7,14 +7,17 @@ sap.ui.define([
     "sap/ui/test/Opa5",
     "sap/ui/test/OpaPlugin",
     "sap/ui/test/actions/Press",
+    "sap/ui/test/_LogCollector",
     "sap/ui/thirdparty/jquery",
     "sap/ui/base/ManagedObjectMetadata"
-], function(UI5Object, Opa5, OpaPlugin, Press, $, ManagedObjectMetadata) {
+], function(UI5Object, Opa5, OpaPlugin, Press, _LogCollector, $, ManagedObjectMetadata) {
     "use strict";
 
     var oPlugin = new OpaPlugin();
 
     var _ControlFinder = UI5Object.extend("sap.ui.test._ControlFinder", {});
+    var oLogCollector = _LogCollector.getInstance('^((?!autowaiter).)*$');
+    var aLogs = [];
 
     /**
      * Retrieves the controls matching oOptions. Does not wait or poll for the controls to become available.
@@ -77,12 +80,14 @@ sap.ui.define([
      * @private
      */
     _ControlFinder._findElements = function (oOptions) {
+        oLogCollector.start();
+
         var aControls = _ControlFinder._findControls(oOptions);
         var fnGetDefaultElement = function (oControl) {
             return new Press().$(oControl)[0] || oControl.getDomRef();
         };
 
-        return aControls.map(function (oControl) {
+        var aElements = aControls.map(function (oControl) {
             switch (oOptions.interaction) {
                 case "root":
                     return oControl.getDomRef();
@@ -98,6 +103,11 @@ sap.ui.define([
                     return sIdSuffix ? oControl.$(sIdSuffix)[0] : fnGetDefaultElement(oControl);
             }
         });
+
+        aLogs.push(oLogCollector.getAndClearLog());
+        oLogCollector.stop();
+
+        return aElements;
     };
 
     /**
@@ -166,6 +176,15 @@ sap.ui.define([
      */
     _ControlFinder._getIdentifiedDOMElement = function (vSelector) {
         return $(vSelector).closest("[data-sap-ui]");
+    };
+
+     /**
+     * Get latest log collected during control/element search
+     * @returns {string} string of concatenated logs
+     * @private
+     */
+    _ControlFinder._getLatestLog = function () {
+        return aLogs && aLogs.pop();
     };
 
     return _ControlFinder;

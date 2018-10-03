@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery"
 ], function (_LogCollector, Log, capitalize, jQueryDOM) {
 	"use strict";
-	var oLogger = Log.getLogger("sap.ui.test.matchers.Properties", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS);
+	var oLogger = Log.getLogger("sap.ui.test.matchers.Properties");
 
 	/**
 	 * @class Properties - checks if a control's properties have the provided values - all properties have to match their values.

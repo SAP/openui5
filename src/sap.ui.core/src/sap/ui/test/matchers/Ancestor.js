@@ -4,7 +4,7 @@
 
 sap.ui.define(["sap/ui/test/_LogCollector", "sap/base/Log"], function (_LogCollector, Log) {
 	"use strict";
-	var oLogger = Log.getLogger("sap.ui.test.matchers.Ancestor", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS);
+	var oLogger = Log.getLogger("sap.ui.test.matchers.Ancestor");
 
 	function matchControls(oParent, aAncestor) {
 		var bMatchById = typeof aAncestor === "string";

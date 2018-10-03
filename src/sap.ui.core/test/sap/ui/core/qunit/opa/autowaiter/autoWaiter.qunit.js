@@ -6,7 +6,6 @@ sap.ui.define([
 	"./_timeoutWaiter",
 	"./_promiseWaiter",
 	"./_autoWaiterAsync",
-	"./_autoWaiterLogCollector",
 	"./_utils",
 	"./_XHRWaiter"
 ], function () {
