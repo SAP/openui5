@@ -9474,6 +9474,41 @@
 			oComboBox.destroy();
 		});
 
+		QUnit.test("it should set the focus to the body after fired onAfterClose event", function(assert) {
+
+			// system under test
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+
+			var oComboBox = new sap.m.ComboBox({
+				items: [
+					new sap.ui.core.Item({
+						key: "GER",
+						text: "Germany"
+					})
+				]
+			});
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.open();
+
+			// act
+			oComboBox.close();
+			this.clock.tick(1000);
+
+			// assert
+			assert.strictEqual(document.activeElement.tagName.toLowerCase(), "body", "After closing the dialog, the focus should not be on an input");
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
+
 		QUnit.module("onBeforeClose");
 
 		QUnit.test("onBeforeClose", function(assert) {
@@ -10088,7 +10123,6 @@
 			// assert
 			assert.strictEqual(fnChangeSpy.callCount, 1, "The change event was fired");
 			assert.strictEqual(oComboBox.getValue(), "lorem ipsum");
-			assert.ok(oComboBox.getFocusDomRef() === document.activeElement);
 
 			// cleanup
 			oComboBox.destroy();
