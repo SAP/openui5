@@ -2940,6 +2940,7 @@ sap.ui.define([
 		var oHeaderTitle = this.getHeaderTitle(),
 			sHeaderTitleBackgroundDesign = oHeaderTitle && oHeaderTitle.supportsBackgroundDesign() && oHeaderTitle.getBackgroundDesign(),
 			oHeaderContent = this.getAggregation("_headerContent"),
+			oOldHeaderContent,
 			oNewHeaderContent;
 
 		// If no title is set, but the header needs to be created, use the old class by default
@@ -2947,7 +2948,19 @@ sap.ui.define([
 
 		// If the header content is not set or is set, but is an instance of another class, create a new header content and use it
 		if (!(oHeaderContent instanceof fnHeaderContentClass)) {
-			var oNewHeaderContent = fnHeaderContentClass.createInstance(this.getAggregation("headerContent"), this.getShowHeaderContent(), this._getHeaderDesign(), this.getHeaderContentPinnable());
+			oOldHeaderContent = this.getAggregation("_headerContent");
+
+			if (oOldHeaderContent) {
+				oOldHeaderContent.destroy();
+			}
+
+			oNewHeaderContent = fnHeaderContentClass.createInstance(
+				this.getAggregation("headerContent"),
+				this.getShowHeaderContent(),
+				this._getHeaderDesign(),
+				this.getHeaderContentPinnable(),
+				this.getId() + "-OPHeaderContent"
+			);
 
 			sHeaderTitleBackgroundDesign && oNewHeaderContent.setBackgroundDesign(sHeaderTitleBackgroundDesign);
 			this.setAggregation("_headerContent", oNewHeaderContent, true);
