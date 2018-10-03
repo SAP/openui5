@@ -3445,7 +3445,9 @@ sap.ui.define([
 		oHeaderContent = this._getHeaderContent();
 
 		// "_headerContent" aggregation is hidden and it is not cloned by default
-		oClone.setAggregation("_headerContent", oHeaderContent.clone(), true);
+		if (oHeaderContent) {
+			oClone.setAggregation("_headerContent", oHeaderContent.clone(), true);
+		}
 
 		return oClone;
 	};
