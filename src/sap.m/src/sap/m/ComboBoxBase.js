@@ -866,6 +866,10 @@ sap.ui.define([
 				beforeOpen: function() {
 					that.updatePickerHeaderTitle();
 				},
+				afterClose: function() {
+					that.focus();
+					library.closeKeyboard();
+				},
 				ariaLabelledBy: that.getPickerInvisibleTextId() || undefined
 			});
 		};
