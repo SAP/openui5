@@ -667,9 +667,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		}
 
 		if (this._hasTabularSuggestions()) {
-			bHasSelectedItem = !!this._oSuggestionTable.getSelectedItem();
+			bHasSelectedItem = this._oSuggestionTable && !!this._oSuggestionTable.getSelectedItem();
 		} else {
-			bHasSelectedItem = !!this._oList.getSelectedItem();
+			bHasSelectedItem = this._oList && !!this._oList.getSelectedItem();
 		}
 
 		if (bHasSelectedItem) {
@@ -719,16 +719,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 */
 	Input.prototype.setSelectionItem = function (oItem, bInteractionChange) {
 
+		this._bSelectingItem = true;
+
 		if (!oItem) {
 			this.setAssociation("selectedItem", null, true);
-			this.setProperty("selectedKey", '', true);
-
-			this.setValue('');
-
 			return;
 		}
 
-		this._bSelectingItem = true;
 
 		var iCount = this._iSetCount,
 			sNewValue;
@@ -813,9 +810,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 */
 	Input.prototype.setSelectedKey = function(sKey) {
 		sKey = this.validateProperty("selectedKey", sKey);
+		this.setProperty("selectedKey", sKey, true);
 
 		if (this._hasTabularSuggestions()) {
-			this.setProperty("selectedKey", sKey, true);
 			return this;
 		}
 
@@ -825,12 +822,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		}
 
 		var oItem = this.getSuggestionItemByKey(sKey);
-
-		if (oItem) {
-			this.setSelectionItem(oItem);
-		} else {
-			this.setProperty("selectedKey", sKey, true);
-		}
+		this.setSelectionItem(oItem);
 
 		return this;
 	};
@@ -870,10 +862,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		if (!oListItem) {
 			this.setAssociation("selectedRow", null, true);
-			this.setProperty("selectedKey", '', true);
-
-			this.setValue('');
-
 			return;
 		}
 
@@ -1623,8 +1611,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	Input.prototype.updateSuggestionItems = function() {
 		this._bSuspendInvalidate = true;
 		this.updateAggregation("suggestionItems");
-		this._bShouldRefreshListItems = true;
-		this._refreshItemsDelayed();
+		this._synchronizeSuggestions();
 		this._bSuspendInvalidate = false;
 		return this;
 	};
@@ -1912,8 +1899,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		 */
 		Input.prototype.addSuggestionItem = function(oItem) {
 			this.addAggregation("suggestionItems", oItem, true);
-			this._bShouldRefreshListItems = true;
-			this._refreshItemsDelayed();
+			this._synchronizeSuggestions();
 			createSuggestionPopupContent(this);
 			return this;
 		};
@@ -1930,8 +1916,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		 */
 		Input.prototype.insertSuggestionItem = function(oItem, iIndex) {
 			this.insertAggregation("suggestionItems", iIndex, oItem, true);
-			this._bShouldRefreshListItems = true;
-			this._refreshItemsDelayed();
+			this._synchronizeSuggestions();
 			createSuggestionPopupContent(this);
 			return this;
 		};
@@ -1947,8 +1932,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		 */
 		Input.prototype.removeSuggestionItem = function(oItem) {
 			var res = this.removeAggregation("suggestionItems", oItem, true);
-			this._bShouldRefreshListItems = true;
-			this._refreshItemsDelayed();
+			this._synchronizeSuggestions();
 			return res;
 		};
 
@@ -1962,8 +1946,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		 */
 		Input.prototype.removeAllSuggestionItems = function() {
 			var res = this.removeAllAggregation("suggestionItems", true);
-			this._bShouldRefreshListItems = true;
-			this._refreshItemsDelayed();
+			this._synchronizeSuggestions();
 			return res;
 		};
 
@@ -1977,8 +1960,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		 */
 		Input.prototype.destroySuggestionItems = function() {
 			this.destroyAggregation("suggestionItems", true);
-			this._bShouldRefreshListItems = true;
-			this._refreshItemsDelayed();
+			this._synchronizeSuggestions();
 			return this;
 		};
 
@@ -1994,8 +1976,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		Input.prototype.addSuggestionRow = function(oItem) {
 			oItem.setType(ListType.Active);
 			this.addAggregation("suggestionRows", oItem);
-			this._bShouldRefreshListItems = true;
-			this._refreshItemsDelayed();
+			this._synchronizeSuggestions();
 			createSuggestionPopupContent(this);
 			return this;
 		};
@@ -2013,8 +1994,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		Input.prototype.insertSuggestionRow = function(oItem, iIndex) {
 			oItem.setType(ListType.Active);
 			this.insertAggregation("suggestionRows", oItem, iIndex);
-			this._bShouldRefreshListItems = true;
-			this._refreshItemsDelayed();
+			this._synchronizeSuggestions();
 			createSuggestionPopupContent(this);
 			return this;
 		};
@@ -2030,8 +2010,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		 */
 		Input.prototype.removeSuggestionRow = function(oItem) {
 			var res = this.removeAggregation("suggestionRows", oItem);
-			this._bShouldRefreshListItems = true;
-			this._refreshItemsDelayed();
+			this._synchronizeSuggestions();
 			return res;
 		};
 
@@ -2045,8 +2024,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		 */
 		Input.prototype.removeAllSuggestionRows = function() {
 			var res = this.removeAllAggregation("suggestionRows");
-			this._bShouldRefreshListItems = true;
-			this._refreshItemsDelayed();
+			this._synchronizeSuggestions();
 			return res;
 		};
 
@@ -2060,8 +2038,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		 */
 		Input.prototype.destroySuggestionRows = function() {
 			this.destroyAggregation("suggestionRows");
-			this._bShouldRefreshListItems = true;
-			this._refreshItemsDelayed();
+			this._synchronizeSuggestions();
 			return this;
 		};
 
@@ -2146,6 +2123,38 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				this._sPrevSuggValue = null;
 			}
 
+		};
+
+		/**
+		 * Synchronize the displayed suggestion items and sets the correct selectedItem/selectedRow
+		 * @private
+		 */
+		Input.prototype._synchronizeSuggestions = function() {
+			this._bShouldRefreshListItems = true;
+			this._refreshItemsDelayed();
+
+			if (!this.getDomRef() || (this._oSuggestionPopup && this._oSuggestionPopup.isOpen())) {
+				return;
+			}
+
+			this._synchronizeSelection();
+		};
+
+		/**
+		 * Synchronizes the selectedItem/selectedRow, depending on the selectedKey
+		 * @private
+		 */
+		Input.prototype._synchronizeSelection = function() {
+			var sSelectedKey = this.getSelectedKey();
+			if (!sSelectedKey) {
+				return;
+			}
+
+			if (this.getValue() && !this.getSelectedItem() && !this.getSelectedRow()) {
+				return;
+			}
+
+			this.setSelectedKey(sSelectedKey);
 		};
 
 		/**
