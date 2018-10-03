@@ -27,6 +27,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	TokenRenderer.render = function(oRm, oControl){
+		var sTooltip = oControl._getTooltip(oControl, oControl.getEditable());
 		// write the HTML into the render manager
 		oRm.write("<div tabindex=\"-1\"");
 		oRm.writeControlData(oControl);
@@ -47,9 +48,8 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 		oRm.writeClasses();
 
 		// add tooltip if available
-		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
-			oRm.writeAttributeEscaped("title", sTooltip);
+			oRm.writeAttributeEscaped('title', sTooltip);
 		}
 
 		var oAccAttributes = {}; // additional accessibility attributes

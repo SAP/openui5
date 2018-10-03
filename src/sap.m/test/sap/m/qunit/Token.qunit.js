@@ -42,16 +42,21 @@ sap.ui.define([
 	});
 
 	QUnit.test("setter / getter editable", function(assert) {
-		var isEditable = true;
+		var sTooltipText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TOKEN_ARIA_DELETABLE"),
+			isEditable = true;
+
 		assert.equal(this.token1.getEditable(), isEditable, "Token is editable");
+		assert.strictEqual(this.token1._getTooltip(this.token1, this.token1.getEditable()), sTooltipText, "Token has a tooltip");
 
 		isEditable = false;
 		this.token1.setEditable(isEditable);
 		assert.equal(this.token1.getEditable(), isEditable, "Token is not editable");
+		assert.ok(!this.token1._getTooltip(this.token1, this.token1.getEditable()), "Token does not have a tooltip");
 
 		isEditable = true;
 		this.token1.setEditable(isEditable);
 		assert.equal(this.token1.getEditable(), isEditable, "Token is editable");
+		assert.strictEqual(this.token1._getTooltip(this.token1, this.token1.getEditable()), sTooltipText, "Token has a tooltip");
 	});
 
 	QUnit.test("setter / getter isSelected", function(assert) {
