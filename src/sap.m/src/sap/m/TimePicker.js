@@ -1427,6 +1427,44 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 			return this._oTimeSemanticMaskHelper.replaceChar(sChar, iPlacePosition, sCurrentInputValue);
 		};
 
+		//BCP: 002075129500004097892018
+		/*
+		 * This method is called by MaskEnabler just after the user input has completed(focusout, <enter>).
+		 * MaskEnabler gives a chance to subclasses to early pre-alter the user-input value before the string is being
+		 * set to the InputBase <value> property.
+		 * At this point, MaskInput didn't propagate change to its subclasses (i.e. didn't call this.onChange)
+		 *
+		 * TimePicker uses it to workaround the issue with leading space or 0 at the beginning of the string & databinding,
+		 * wheres the scenario is :
+		 * - the user-input is about to be transmitted to InputBase#value including the leading space (e.g. " 8:00:00 AM",
+		 * or respectively "08:00:00 AM" when mask is off)
+		 *
+		 * - since a property is updated, this triggers model update
+		 *
+		 * - model update uses property' binding type to get the external value.
+		 *
+		 * - in case of type=sap.ui.model.odata.type.Time, the format could be "h:mm:ss a" (i.e. no leading space nor 0),
+		 *   so the external value would be "8:00:00 AM".
+		 *
+		 * - since the external value differs than the original ("8:00:00 AM" != " 8:00:00 AM", respectively
+		 * "8:00:00 AM" != "08:00:00 AM"), the model re-sets the value to the external one (see ManagedObject.prototype#updateModelProperty)
+		 *
+		 * - this breaks TimePicker logic for previous and new value, by making the TimePicker wrongly "remember" new
+		 * value (see this._oLastChangeValue).
+		 *
+		 * - The result is that TimePicker does not fire the change event.
+		 *
+		 * To solve it, the workaround here pre-formats the user-input value, so the value is the same as expected by used
+		 * TimePicker formatter logic(includes binding type formatters) and this does not re-set back any value.
+		 *
+		 * @override
+		 * @private
+		 * @param {string} sValue
+		 */
+		TimePicker.prototype._getAlteredUserInputValue = function (sValue) {
+			return sValue ? this._formatValue(this._parseValue(sValue), true) : sValue;
+		};
+
 
 		/**
 		 * @see sap.ui.core.Control#getAccessibilityInfo
