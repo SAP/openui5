@@ -1001,7 +1001,55 @@
 		});
 
 
-		QUnit.module("Setters");
+		QUnit.module("Setters", {
+			beforeEach: function() {
+				this.oPC = createPlanningCalendar("SelectionMode", new sap.m.SearchField(), new sap.m.Button());
+				// CalendarTimeInterval, CalendarDateInterval, CalendarMonthInterval represent all 5 existing intervals.
+				// That is because the two left intervals (CalendarOneMonthInterval and CalendarWeekInterval)
+				// inherit CalendarDateInterval one.
+				this.aIntervalRepresentatives = ["sap.ui.unified.CalendarTimeInterval",
+					"sap.ui.unified.CalendarDateInterval",
+					"sap.ui.unified.CalendarMonthInterval"];
+			},
+			afterEach: function() {
+				//Cleanup
+				this.oPC.destroy();
+			},
+			checkInitItemPlacement: function  () {
+				var oInfoToolbarContent = this.oPC._oInfoToolbar.getContent();
+
+				assert.strictEqual(oInfoToolbarContent.length, 2, "Internal _oInfoToolbar has correct amount of controls in it's content.");
+				assert.ok(oInfoToolbarContent[0].isA("CalendarHeader"), "First child of _oInfoToolbar is a CalendarHeader");
+				assert.ok(oInfoToolbarContent[1].isA(this.aIntervalRepresentatives), "Second child of _oInfoToolbar is an interval");
+				assert.notOk(jQuery("#SelectionMode-All").get(0), "Select All CheckBox not rendered");
+			},
+			checkItemPlacementInMultiSel: function (iInfoToolbarContentLength) {
+				var oInfoToolbarContent = this.oPC._oInfoToolbar.getContent();
+
+				assert.strictEqual(oInfoToolbarContent.length, iInfoToolbarContentLength, "Internal _oInfoToolbar has correct amount of controls in it's content.");
+				assert.ok(oInfoToolbarContent[0].isA("CalendarHeader"), "First child of _oInfoToolbar is a CalendarHeader");
+				assert.ok(oInfoToolbarContent[1].isA(this.aIntervalRepresentatives), "Second child of _oInfoToolbar is an interval");
+				if (iInfoToolbarContentLength > 2) {
+					assert.notOk(this.oPC._oCalendarHeader.getAllCheckBox(), "Select All CheckBox does not exist in the _oCalendarHeader");
+				} else {
+					assert.ok(this.oPC._oCalendarHeader.getAllCheckBox(), "Internal _oCalendarHeader holds the select all checkbox");
+				}
+				assert.ok(jQuery("#SelectionMode-All").get(0), "Select All CheckBox rendered");
+			},
+			checkItemPlacementAfterHidingRowHeaders: function (bDesktop) {
+				var oInfoToolbarContent = this.oPC._oInfoToolbar.getContent();
+
+				assert.strictEqual(oInfoToolbarContent.length, 3, "Internal _oInfoToolbar has correct amount of controls in it's content.");
+				assert.ok(oInfoToolbarContent[0].isA("CalendarHeader"), "First child of _oInfoToolbar is a CalendarHeader");
+				if (bDesktop) {
+					assert.ok(oInfoToolbarContent[1].isA("sap.m.CheckBox"), "Second child of _oInfoToolbar is a checkBox");
+					assert.ok(oInfoToolbarContent[2].isA(this.aIntervalRepresentatives), "Third child of _oInfoToolbar is an interval");
+				} else {
+					assert.ok(oInfoToolbarContent[1].isA(this.aIntervalRepresentatives), "Second child of _oInfoToolbar is an interval");
+					assert.ok(oInfoToolbarContent[2].isA("sap.m.CheckBox"), "Third child of _oInfoToolbar is a checkBox");
+				}
+			}
+		});
 
 		QUnit.test("startDate", function(assert) {
 			var oExpectedDate = new Date("2015", "0", "1", "08", "00");
@@ -1896,6 +1944,143 @@
 			oPC.destroy();
 		});
 
+		QUnit.test("singleSelection setter", function() {
+			var oTable = sap.ui.getCore().byId("SelectionMode-Table");
+
+			// Assert
+			assert.strictEqual(this.oPC.getSingleSelection(), true, "Single selection set");
+			assert.strictEqual(oTable.getMode(), sap.m.ListMode.SingleSelectMaster, "Table selection mode is SingleSelectMaster");
+
+			// Act
+			this.oPC.setSingleSelection(false);
+
+			// Assert
+			assert.strictEqual(this.oPC.getSingleSelection(), false, "Single selection set");
+			assert.strictEqual(oTable.getMode(), sap.m.ListMode.MultiSelect, "Table selection mode is MultiSelect");
+
+			// Act
+			this.oPC.setSingleSelection(true);
+
+			// Assert
+			assert.strictEqual(this.oPC.getSingleSelection(), true, "Single selection set");
+			assert.strictEqual(oTable.getMode(), sap.m.ListMode.SingleSelectMaster, "Table selection mode is SingleSelectMaster");
+		});
+
+		QUnit.test("SelectAllCheckBox initial placement - desktop", function() {
+			// Prepare
+			this.oPC.placeAt("bigUiArea");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			this.checkInitItemPlacement();
+		});
+
+		QUnit.test("SelectAllCheckBox initial placement - tablet/phone", function() {
+			// Prepare
+			this.oPC.placeAt("smallUiArea");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			this.checkInitItemPlacement();
+		});
+
+		QUnit.test("SelectAllCheckBox placement in multiple selection mode - desktop", function() {
+			// Prepare
+			this.oPC.setSingleSelection(false);
+			this.oPC.placeAt("bigUiArea");
+			sap.ui.getCore().applyChanges();
+
+			// Prepare
+			this.oPC.setSingleSelection(false);
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			// there should be 2 items in the infoToolbar content when selectAll checkBox exists.
+			this.checkItemPlacementInMultiSel(2);
+		});
+
+		QUnit.test("SelectAllCheckBox placement in multiple selection mode - tablet/phone", function() {
+			// Prepare
+			this.oPC.setSingleSelection(false);
+			this.oPC.placeAt("smallUiArea");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			// there should be 3 items in the infoToolbar content when selectAll checkBox exists.
+			this.checkItemPlacementInMultiSel(3);
+		});
+
+		QUnit.test("SelectAllCheckBox placement after changing the view - desktop", function() {
+			var oCalType = sap.ui.unified.CalendarIntervalType,
+					// Check only for Day, Month and Hour view, because CalendarTimeInterval, CalendarDateInterval and
+					// CalendarMonthInterval represent all 5 existing intervals. That is because the two left intervals
+					// (CalendarOneMonthInterval and CalendarWeekInterval) inherit CalendarDateInterval one.
+					aCalTypes = [oCalType.Day, oCalType.Month, oCalType.Hour];
+
+			// Prepare
+			this.oPC.placeAt("bigUiArea");
+			this.oPC.setSingleSelection(false);
+
+			aCalTypes.forEach(function (oType) {
+				// Act
+				this.oPC.setViewKey(oType);
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				// there should be 2 items in the _oInfoToolbar content
+				this.checkItemPlacementInMultiSel(2);
+			}.bind(this));
+		});
+
+		QUnit.test("SelectAllCheckBox placement after changing the view - tablet/phone", function() {
+			var oCalType = sap.ui.unified.CalendarIntervalType,
+					// Check only for Day, Month and Hour view, because CalendarTimeInterval, CalendarDateInterval and
+					// CalendarMonthInterval represent all 5 existing intervals. That is because the two left intervals
+					// (CalendarOneMonthInterval and CalendarWeekInterval) inherit CalendarDateInterval one.
+					aCalTypes = [oCalType.Day, oCalType.Month, oCalType.Hour];
+
+			// Prepare
+			this.oPC.placeAt("smallUiArea");
+			this.oPC.setSingleSelection(false);
+
+			aCalTypes.forEach(function (oType) {
+				// Act
+				this.oPC.setViewKey(oType);
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				// there should be 3 items in the _oInfoToolbar content
+				this.checkItemPlacementInMultiSel(3);
+			}.bind(this));
+		});
+
+		QUnit.test("SelectAllCheckBox placement after hiding the row headers - desktop", function() {
+			// Prepare
+			this.oPC.placeAt("bigUiArea");
+			sap.ui.getCore().applyChanges();
+
+			// Act
+			// argument: true - desktop; false - tablet or phone
+			this.oPC.setSingleSelection(false);
+			this.oPC.setShowRowHeaders(false);
+
+			// Assert
+			this.checkItemPlacementAfterHidingRowHeaders(true);
+		});
+
+		QUnit.test("SelectAllCheckBox placement after hiding the row headers - tablet/phone", function() {
+			// Prepare
+			this.oPC.placeAt("smallUiArea");
+			sap.ui.getCore().applyChanges();
+
+			// Act
+			this.oPC.setSingleSelection(false);
+			this.oPC.setShowRowHeaders(false);
+
+			// Assert
+			// argument: true - desktop; false - tablet or phone
+			this.checkItemPlacementAfterHidingRowHeaders(false);
+		});
 
 		QUnit.module("NonWorking Special Dates", {
 			beforeEach: function() {
