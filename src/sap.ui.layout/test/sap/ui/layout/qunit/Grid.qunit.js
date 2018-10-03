@@ -1,13 +1,26 @@
 /* global QUnit, sinon */
 
-sap.ui.require([
+sap.ui.define([
+	"sap/m/Label",
+	"sap/m/Button",
+	"sap/m/Input",
 	"sap/ui/layout/Grid",
-	"sap/ui/layout/library"
-], function (Grid, Library) {
+	"sap/ui/layout/GridData",
+	"sap/ui/layout/library",
+	"sap/ui/core/Core"
+],
+function (
+	Label,
+	Button,
+	Input,
+	Grid,
+	GridData,
+	Library,
+	Core
+) {
 	"use strict";
 
-	var oCore = sap.ui.getCore(),
-		TESTS_DOM_CONTAINER = 'qunit-fixture',
+	var TESTS_DOM_CONTAINER = 'qunit-fixture',
 		GRID_ID = 'grid1',
 		VISIBLE_PREFIX = 'visible_',
 		CLASSES_FOR_PREFIX = 'CSS classes for ',
@@ -24,7 +37,7 @@ sap.ui.require([
 			getLabel: function(sId, oLayoutData) {
 				oLayoutData = oLayoutData && oFactory.getLayoutData(oLayoutData);
 
-				return new sap.m.Label(sId, {
+				return new Label(sId, {
 					text: "Label's text",
 					width: '100%',
 					layoutData: oLayoutData
@@ -33,7 +46,7 @@ sap.ui.require([
 			getButton: function (sId, bVisible, oLayoutData) {
 				oLayoutData = oLayoutData && oFactory.getLayoutData(oLayoutData);
 
-				return new sap.m.Button(sId, {
+				return new Button(sId, {
 					text: "Button's text",
 					width: "100%",
 					visible: bVisible,
@@ -43,7 +56,7 @@ sap.ui.require([
 			getInput: function (sId, oLayoutData) {
 				oLayoutData = oLayoutData && oFactory.getLayoutData(oLayoutData);
 
-				return new sap.m.Input(sId, {
+				return new Input(sId, {
 					value: "Input's value",
 					width: '100%',
 					layoutData: oLayoutData
@@ -51,10 +64,10 @@ sap.ui.require([
 			},
 			getLayoutData: function (oProps) {
 				oProps = oProps || {};
-				return new sap.ui.layout.GridData(oProps);
+				return new GridData(oProps);
 			},
 			getGrid: function (sId) {
-				return new sap.ui.layout.Grid(sId, {
+				return new Grid(sId, {
 					hSpacing: 1,
 					vSpacing: 1,
 					defaultSpan: 'L2',
@@ -108,13 +121,13 @@ sap.ui.require([
 			setupFunction: function() {
 				this.oGrid = oFactory.getGrid(GRID_ID);
 				this.oGrid.placeAt(TESTS_DOM_CONTAINER);
-				oCore.applyChanges();
+				Core.applyChanges();
 			},
 			teardownFunction: function() {
 				this.oGrid.destroy();
 			},
 			getRefById: function(sId) {
-				var oElement = oCore.byId(sId);
+				var oElement = Core.byId(sId);
 				return oElement ? oElement.$() : null;
 			},
 			getParentRefById: function(sId) {
@@ -183,8 +196,8 @@ sap.ui.require([
 		assert.ok(!$oVisibleButtonContainer.hasClass("sapUiRespGridSpanInvisible"), "Visible element doesn't have the class for hidden elements");
 
 		// Swap visibility
-		sap.ui.getCore().byId('hiddenButton').setVisible(true);
-		sap.ui.getCore().byId('visibleButton').setVisible(false);
+		Core.byId('hiddenButton').setVisible(true);
+		Core.byId('visibleButton').setVisible(false);
 
 		assert.ok(!$oInvisibleButtonContainer.hasClass("sapUiRespGridSpanInvisible"), "Class is removed after element's visibility is changed to visible");
 		assert.ok($oVisibleButtonContainer.hasClass("sapUiRespGridSpanInvisible"), "Class is added when element's visibility changed to hidden");

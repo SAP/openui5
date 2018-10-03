@@ -4,8 +4,16 @@ sap.ui.define([
 	"sap/ui/layout/cssgrid/CSSGrid",
 	"sap/ui/core/HTML",
 	"sap/ui/layout/cssgrid/GridItemLayoutData",
-	"sap/ui/Device"
-], function (CSSGrid, HTML, GridItemLayoutData, Device) {
+	"sap/ui/Device",
+	"sap/ui/core/Core"
+],
+function (
+	CSSGrid,
+	HTML,
+	GridItemLayoutData,
+	Device,
+	Core
+) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
@@ -157,7 +165,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oGrid = new CSSGrid();
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
@@ -179,7 +187,7 @@ sap.ui.define([
 		aItems.forEach(function (oItem) {
 			this.oGrid.addItem(oItem);
 		}, this);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.ok(this.oGrid.getItems().length === 3, "Should have 3 items");
@@ -293,7 +301,7 @@ sap.ui.define([
 			});
 			this.oItem = this.oGrid.getItems()[0];
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
@@ -311,7 +319,7 @@ sap.ui.define([
 
 		// Act
 		this.oItem.setLayoutData(this.oLayoutData);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.ok(CSSGrid._setItemStyles.calledOnce, "Should update item styles on layout data change");
@@ -331,7 +339,7 @@ sap.ui.define([
 
 		// Arrange
 		this.oItem.setLayoutData(this.oLayoutData);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		this.oItem.setLayoutData(null);
@@ -347,7 +355,7 @@ sap.ui.define([
 
 			// Arrange
 			this.oItem.setLayoutData(this.oLayoutData);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// Act
 			this.oLayoutData.setGridRow("span 5");
@@ -375,7 +383,7 @@ sap.ui.define([
 				]
 			});
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
@@ -387,7 +395,7 @@ sap.ui.define([
 		// Act
 		var oClone = this.oGrid.clone();
 		oClone.placeAt(DOM_RENDER_LOCATION);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var sGridRow = oClone.getItems()[0].getDomRef().style.getPropertyValue("grid-row");
 
@@ -533,7 +541,7 @@ sap.ui.define([
 			]
 		});
 		oGrid.placeAt(DOM_RENDER_LOCATION);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		var oItemDomRef = oGrid.getItems()[0].getDomRef();
