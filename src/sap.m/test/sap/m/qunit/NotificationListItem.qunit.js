@@ -1,16 +1,31 @@
 /* global QUnit, sinon */
 
-(function() {
+sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
+	"sap/m/NotificationListItem",
+	"sap/m/List",
+	"sap/ui/core/library",
+	"sap/m/Button",
+	"sap/m/MessageToast",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/Filter"
+], function(
+	qutils,
+	NotificationListItem,
+	List,
+	coreLibrary,
+	Button,
+	MessageToast,
+	JSONModel,
+	Filter
+) {
 	'use strict';
 
-	jQuery.sap.require('sap.ui.qunit.qunit-css');
-	jQuery.sap.require('sap.ui.qunit.QUnitUtils');
-	jQuery.sap.require('sap.ui.thirdparty.qunit');
-	jQuery.sap.require('sap.ui.thirdparty.sinon');
-	jQuery.sap.require('sap.ui.thirdparty.sinon-qunit');
-	sinon.config.useFakeTimers = true;
 
-	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	// shortcut for sap.ui.core.Priority
+	var Priority = coreLibrary.Priority;
+
+
 
 	var classNameUnread = '.sapMNLI-Unread';
 	var classNameHeader = '.sapMNLI-Header';
@@ -27,8 +42,8 @@
 	//================================================================================
 	QUnit.module('API', {
 		beforeEach: function() {
-			this.NotificationListItem = new sap.m.NotificationListItem();
-			this.list = new sap.m.List({
+			this.NotificationListItem = new NotificationListItem();
+			this.list = new List({
 				items: [
 					this.NotificationListItem
 				]
@@ -49,7 +64,7 @@
 		this.NotificationListItem.setTitle('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.', true);
 		this.NotificationListItem.setDatetime('3 hours');
 		this.NotificationListItem.setUnread(true);
-		this.NotificationListItem.setPriority(sap.ui.core.Priority.High);
+		this.NotificationListItem.setPriority(Priority.High);
 		sap.ui.getCore().applyChanges();
 
 		// assert
@@ -64,7 +79,7 @@
 
 	QUnit.test('Default values', function(assert) {
 		// assert
-		assert.strictEqual(this.NotificationListItem.getPriority(), sap.ui.core.Priority.None, 'Priority should be set to "None"');
+		assert.strictEqual(this.NotificationListItem.getPriority(), Priority.None, 'Priority should be set to "None"');
 		assert.strictEqual(this.NotificationListItem.getTitle(), '', 'Title should be empty');
 		assert.strictEqual(this.NotificationListItem.getDescription(), '', 'Description should be empty');
 		assert.strictEqual(this.NotificationListItem.getShowButtons(), true, 'Notification List Item should be set to show buttons by default');
@@ -101,15 +116,15 @@
 	});
 
 	QUnit.test('Setting title', function(assert) {
-	    // arrange
+		// arrange
 		var title = 'Notification list item title';
 		var newTitle = 'New Notification list item title';
 
-	    // act
+		// act
 		this.NotificationListItem.setTitle(title);
 
-	    // assert
-	    assert.strictEqual(this.NotificationListItem.getTitle(), title, 'The title should be set to ' + title);
+		// assert
+		assert.strictEqual(this.NotificationListItem.getTitle(), title, 'The title should be set to ' + title);
 		assert.strictEqual(this.NotificationListItem._getHeaderTitle().getText(), title, 'The description in the title aggregation should be set to ' + title);
 
 		// act
@@ -171,8 +186,8 @@
 
 	QUnit.test('Setting priority', function(assert) {
 		// arrange
-		var priority = sap.ui.core.Priority.High;
-		var newPriority = sap.ui.core.Priority.Medium;
+		var priority = Priority.High;
+		var newPriority = Priority.Medium;
 
 		var fnEventSpy = sinon.spy(this.NotificationListItem, '_updateAriaAdditionalInfo');
 
@@ -202,15 +217,15 @@
 	});
 
 	QUnit.test('Adding and removing a button', function(assert) {
-	    // arrange
-		var button = new sap.m.Button({text: 'First Button'});
+		// arrange
+		var button = new Button({text: 'First Button'});
 
-	    // act
+		// act
 		this.NotificationListItem.addButton(button);
 
-	    // assert
-	    assert.strictEqual(this.NotificationListItem.getButtons().length, 1, 'Notification List Item should have one button.');
-	    assert.strictEqual(this.NotificationListItem.getButtons()[0], button, 'Notification List Item should the correct button set as aggregation.');
+		// assert
+		assert.strictEqual(this.NotificationListItem.getButtons().length, 1, 'Notification List Item should have one button.');
+		assert.strictEqual(this.NotificationListItem.getButtons()[0], button, 'Notification List Item should the correct button set as aggregation.');
 
 		// act
 		this.NotificationListItem.removeButton(button);
@@ -221,8 +236,8 @@
 
 	QUnit.test('Setting several buttons', function(assert) {
 		// arrange
-		var firstButton = new sap.m.Button({text: 'First Button'});
-		var secondButton = new sap.m.Button({text: 'Second Button'});
+		var firstButton = new Button({text: 'First Button'});
+		var secondButton = new Button({text: 'Second Button'});
 
 		// act
 		this.NotificationListItem.addButton(firstButton);
@@ -246,23 +261,23 @@
 	});
 
 	QUnit.test('Adding and removing a button aggregation', function(assert) {
-	    // arrange
-		var firstButton = new sap.m.Button({text: 'First Button'});
-		var secondButton = new sap.m.Button({text: 'Second Button'});
+		// arrange
+		var firstButton = new Button({text: 'First Button'});
+		var secondButton = new Button({text: 'Second Button'});
 
-	    // act
+		// act
 		this.NotificationListItem.addAggregation('buttons', firstButton);
 		this.NotificationListItem.addAggregation('buttons', secondButton);
 
-	    // assert
-	    assert.strictEqual(this.NotificationListItem.getButtons().length, 2, 'The buttons should be added to the NotificationListItem');
-	    assert.strictEqual(this.NotificationListItem.getAggregation('buttons').length, 2, 'The buttons should be added to the NotificationListItem');
+		// assert
+		assert.strictEqual(this.NotificationListItem.getButtons().length, 2, 'The buttons should be added to the NotificationListItem');
+		assert.strictEqual(this.NotificationListItem.getAggregation('buttons').length, 2, 'The buttons should be added to the NotificationListItem');
 	});
 
 	QUnit.test('Cloning a NotificationListItem', function(assert) {
 		// arrange
-		var firstButton = new sap.m.Button({text: 'First Button'});
-		var secondButton = new sap.m.Button({text: 'Second Button'});
+		var firstButton = new Button({text: 'First Button'});
+		var secondButton = new Button({text: 'Second Button'});
 		var secondNotification;
 
 		// act
@@ -283,8 +298,8 @@
 
 	QUnit.module('Rendering', {
 		beforeEach: function() {
-			this.NotificationListItem = new sap.m.NotificationListItem();
-			this.list = new sap.m.List({
+			this.NotificationListItem = new NotificationListItem();
+			this.list = new List({
 				items: [
 					this.NotificationListItem
 				]
@@ -330,15 +345,15 @@
 		// arrange
 		var that = this;
 		this.NotificationListItem.addAggregation('buttons',
-			new sap.m.Button({
+			new Button({
 				text: 'Accept',
 				tap: function () {
-					sap.m.MessageToast.show('Accept button pressed');
+					MessageToast.show('Accept button pressed');
 				}
 			})
 		);
 		this.NotificationListItem.addAggregation('buttons',
-			new sap.m.Button({
+			new Button({
 				text: 'Cancel',
 				tap: function () {
 					that.NotificationListItem.close();
@@ -422,20 +437,20 @@
 	});
 
 	QUnit.test('Check if the priority classes are added', function(assert) {
-	    // arrange
+		// arrange
 		var priorityDiv;
 
-	    // act
-		this.NotificationListItem.setPriority(sap.ui.core.Priority.None);
+		// act
+		this.NotificationListItem.setPriority(Priority.None);
 		this.NotificationListItem.invalidate();
 		sap.ui.getCore().applyChanges();
 		priorityDiv = this.NotificationListItem.$().find('.sapMNLB-Priority');
 
-	    // assert
-	    assert.strictEqual(priorityDiv.hasClass('sapMNLB-None'), true, 'Priority should be set to "None"');
+		// assert
+		assert.strictEqual(priorityDiv.hasClass('sapMNLB-None'), true, 'Priority should be set to "None"');
 
 		// act
-		this.NotificationListItem.setPriority(sap.ui.core.Priority.Low);
+		this.NotificationListItem.setPriority(Priority.Low);
 		sap.ui.getCore().applyChanges();
 		priorityDiv = this.NotificationListItem.$().find('.sapMNLB-Priority');
 
@@ -443,7 +458,7 @@
 		assert.strictEqual(priorityDiv.hasClass('sapMNLB-Low'), true, 'Priority should be set to "Low"');
 
 		// act
-		this.NotificationListItem.setPriority(sap.ui.core.Priority.Medium);
+		this.NotificationListItem.setPriority(Priority.Medium);
 		sap.ui.getCore().applyChanges();
 		priorityDiv = this.NotificationListItem.$().find('.sapMNLB-Priority');
 
@@ -451,7 +466,7 @@
 		assert.strictEqual(priorityDiv.hasClass('sapMNLB-Medium'), true, 'Priority should be set to "Medium"');
 
 		// act
-		this.NotificationListItem.setPriority(sap.ui.core.Priority.High);
+		this.NotificationListItem.setPriority(Priority.High);
 		sap.ui.getCore().applyChanges();
 		priorityDiv = this.NotificationListItem.$().find('.sapMNLB-Priority');
 
@@ -664,16 +679,16 @@
 	});
 
 	QUnit.test('Notifications on L size (bigger than 640px) should position footer differently', function(assert) {
-	    // arrange
+		// arrange
 		var lSizeClass = 'sapMNLI-LSize';
 
-	    // act
+		// act
 		this.list.setWidth('658px'); // 8px over the threshold go for margins
 		sap.ui.getCore().applyChanges();
 		this.NotificationListItem._resizeNotification(); // Manually triggering resizing
 
-	    // assert
-	    assert.strictEqual(this.NotificationListItem.getDomRef().classList.contains(lSizeClass), true, 'NotificationListItem should have class "sapMNLI-LSize"');
+		// assert
+		assert.strictEqual(this.NotificationListItem.getDomRef().classList.contains(lSizeClass), true, 'NotificationListItem should have class "sapMNLI-LSize"');
 
 		// act
 		this.list.setWidth('340px');
@@ -718,8 +733,8 @@
 
 	QUnit.module('Events', {
 		beforeEach: function() {
-			this.NotificationListItem = new sap.m.NotificationListItem();
-			this.list = new sap.m.List({
+			this.NotificationListItem = new NotificationListItem();
+			this.list = new List({
 				items: [
 					this.NotificationListItem
 				]
@@ -762,7 +777,7 @@
 
 		var that = this;
 		this.NotificationListItem.addAggregation('buttons',
-			new sap.m.Button('closeButton',{
+			new Button('closeButton',{
 				text: 'Cancel',
 				tap: function () {
 					that.NotificationListItem.close();
@@ -804,13 +819,13 @@
 
 	QUnit.module('Data Binding', {
 		beforeEach: function() {
-			var model = new sap.ui.model.json.JSONModel();
-			var oItemTemplate = new sap.m.NotificationListItem({
+			var model = new JSONModel();
+			var oItemTemplate = new NotificationListItem({
 				close : function(oEvent) {
 					var item = oEvent.getSource();
 					model.setProperty(item.getBindingContext().getPath() + "/displayed", false);
 					sap.ui.getCore().byId("list").getBinding("items").filter([
-						new sap.ui.model.Filter("displayed", "EQ", true)
+						new Filter("displayed", "EQ", true)
 					]);
 				}
 			});
@@ -820,7 +835,7 @@
 				{lastName: "Mann", name: "Anita", displayed: true, linkText: "www.kicker.de", href: "http://www.kicker.de", rating: 3}
 			]);
 
-			this.list = new sap.m.List("list", {
+			this.list = new List("list", {
 				headerText : "Items",
 				items : {
 					path : "/",
@@ -853,8 +868,8 @@
 
 	QUnit.module('ARIA support', {
 		beforeEach: function() {
-			this.NotificationListItem = new sap.m.NotificationListItem();
-			this.list = new sap.m.List({
+			this.NotificationListItem = new NotificationListItem();
+			this.list = new List({
 				items: [
 					this.NotificationListItem
 				]
@@ -869,23 +884,23 @@
 	});
 
 	QUnit.test('ListItem role should be set', function(assert) {
-	    // arrange
+		// arrange
 		var notificationDomRef = this.NotificationListItem.getDomRef();
 		var role = notificationDomRef.getAttribute('role');
 
-	    // assert
-	    assert.strictEqual(role, 'listitem', 'The control should have "listitem" role');
+		// assert
+		assert.strictEqual(role, 'listitem', 'The control should have "listitem" role');
 	});
 
 	QUnit.test('Checking the labelledby attribute', function(assert) {
-	    // arrange
+		// arrange
 		var notificationDomRef = this.NotificationListItem.getDomRef();
 		var descibedByControls = this.NotificationListItem._getHeaderTitle().getId() + ' ' +
 			this.NotificationListItem._getDescriptionText().getId() + ' ' + this.NotificationListItem._ariaDetailsText.getId();
 		var labelledby = notificationDomRef.getAttribute('aria-labelledby');
 
-	    // assert
-	    assert.strictEqual(labelledby, descibedByControls, 'The labbeledby attribute should point to the detailed invisible text, describing the control');
+		// assert
+		assert.strictEqual(labelledby, descibedByControls, 'The labbeledby attribute should point to the detailed invisible text, describing the control');
 	});
 
 	QUnit.test('Checking the labelledby info text is set correctly', function(assert) {
@@ -894,11 +909,11 @@
 		var unreadText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_UNREAD');
 		var createdBy = resourceBundle.getText('NOTIFICATION_LIST_ITEM_CREATED_BY') + ' ' + 'John Smith';
 		var dueAndPriorityString = resourceBundle.getText('NOTIFICATION_LIST_ITEM_DATETIME_PRIORITY',
-			['5 minutes', sap.ui.core.Priority.High]);
+			['5 minutes', Priority.High]);
 		var infoText = unreadText + ' ' + createdBy + ' ' + dueAndPriorityString;
 
 		this.NotificationListItem.setUnread(true);
-		this.NotificationListItem.setPriority(sap.ui.core.Priority.High);
+		this.NotificationListItem.setPriority(Priority.High);
 		this.NotificationListItem.setAuthorName('John Smith');
 		this.NotificationListItem.setDatetime('5 minutes');
 
@@ -912,15 +927,15 @@
 		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 		var unreadText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_UNREAD');
 		var dueAndPriorityString = resourceBundle.getText('NOTIFICATION_LIST_ITEM_DATETIME_PRIORITY',
-			['5 minutes', sap.ui.core.Priority.High]);
+			['5 minutes', Priority.High]);
 		var infoText = unreadText + ' ' + dueAndPriorityString;
 
 		this.NotificationListItem.setUnread(true);
-		this.NotificationListItem.setPriority(sap.ui.core.Priority.High);
+		this.NotificationListItem.setPriority(Priority.High);
 		this.NotificationListItem.setDatetime('5 minutes');
 
 		// assert
 		assert.strictEqual(this.NotificationListItem._ariaDetailsText.getText(), infoText,
 			'The info text should be set correctly with unread status, author, due date and priority');
 	});
-})();
+});

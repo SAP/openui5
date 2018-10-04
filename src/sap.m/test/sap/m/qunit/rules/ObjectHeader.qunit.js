@@ -1,4 +1,4 @@
-/*global QUnit testRule*/
+/*global QUnit */
 
 sap.ui.define([
 	"sap/m/Page",
@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/m/ObjectMarker",
 	"sap/m/ObjectStatus",
 	"sap/m/ObjectNumber",
-	"sap/m/HeaderContainer"],
-	function (Page, ObjectHeader, ObjectMarker, ObjectStatus, ObjectNumber, HeaderContainer)  {
+	"sap/m/HeaderContainer",
+	"test-resources/sap/ui/support/TestHelper"
+], function (Page, ObjectHeader, ObjectMarker, ObjectStatus, ObjectNumber, HeaderContainer, testRule)  {
 	"use strict";
 
 	QUnit.module("ObjectHeader markers aggregation with markFlagged: true", {

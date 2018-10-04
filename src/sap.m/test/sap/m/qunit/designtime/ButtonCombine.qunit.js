@@ -1,17 +1,16 @@
-/*global QUnit*/
-QUnit.config.autostart = false;
-
-sap.ui.require([
-		"sap/ui/core/Title",
-		"sap/ui/core/mvc/View",
-		"sap/m/changeHandler/CombineButtons",
-		"sap/m/Bar",
-		"sap/m/Button",
-		"sap/ui/fl/Change",
-		"sap/ui/core/util/reflection/JsControlTreeModifier",
-		"sap/ui/core/util/reflection/XmlTreeModifier"
-	],
-	function (
+/*global QUnit */
+sap.ui.define([
+	"sap/ui/core/Title",
+	"sap/ui/core/mvc/View",
+	"sap/m/changeHandler/CombineButtons",
+	"sap/m/Bar",
+	"sap/m/Button",
+	"sap/ui/fl/Change",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/util/reflection/XmlTreeModifier",
+	"sap/ui/events/jquery/EventExtension"
+],
+	function(
 		Title,
 		View,
 		CombineButtons,
@@ -19,11 +18,12 @@ sap.ui.require([
 		Button,
 		Change,
 		JsControlTreeModifier,
-		XmlTreeModifier
+		XmlTreeModifier,
+		EventExtension
 	) {
 		'use strict';
 
-		QUnit.start();
+
 
 		QUnit.module("Checking the combine action: ", {
 			beforeEach: function () {
@@ -44,13 +44,13 @@ sap.ui.require([
 		});
 
 		QUnit.test('Press event fired correctly after combine', function (assert) {
-			var oBtn1 = new sap.m.Button({
+			var oBtn1 = new Button({
 					id: "btn1",
 					text: "button",
 					press: function () {
 					}
 				}),
-				oBtn2 = new sap.m.Button({id: "btn2"});
+				oBtn2 = new Button({id: "btn2"});
 			this.oBar = new Bar({
 				id: "idBar",
 				contentRight: [ oBtn1, oBtn2 ]
@@ -92,12 +92,12 @@ sap.ui.require([
 		});
 
 		QUnit.test('Enable / Disable Button is in sync with MenuItem', function (assert) {
-			var oBtn1 = new sap.m.Button({
+			var oBtn1 = new Button({
 				id: "btn1",
 				text: "button",
 				enabled: false
 			}),
-			oBtn2 = new sap.m.Button({id: "btn2"});
+			oBtn2 = new Button({id: "btn2"});
 			this.oBar = new Bar({
 				id: "idBar",
 				contentRight: [ oBtn1, oBtn2 ]

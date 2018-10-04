@@ -1,9 +1,10 @@
-/*global QUnit testRule*/
+/*global QUnit */
 
 sap.ui.define([
 		"sap/m/Page",
-		"sap/m/ObjectMarker"],
-	function (Page, ObjectMarker)  {
+		"sap/m/ObjectMarker",
+		"test-resources/sap/ui/support/TestHelper"
+], function (Page, ObjectMarker, testRule)  {
 		"use strict";
 
 		QUnit.module("ObjectMarker with additional info and no type", {

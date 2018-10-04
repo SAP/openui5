@@ -1,16 +1,34 @@
 /*global QUnit,sinon*/
 
-(function () {
+sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
+	"sap/m/NotificationListBase",
+	"sap/ui/core/library",
+	"sap/m/Button",
+	"sap/m/List",
+	"sap/m/NotificationListItem",
+	"sap/m/library",
+	"sap/ui/model/json/JSONModel"
+], function(
+	qutils,
+	NotificationListBase,
+	coreLibrary,
+	Button,
+	List,
+	NotificationListItem,
+	mobileLibrary,
+	JSONModel
+) {
 	'use strict';
 
-	jQuery.sap.require('sap.ui.qunit.qunit-css');
-	jQuery.sap.require('sap.ui.qunit.QUnitUtils');
-	jQuery.sap.require('sap.ui.thirdparty.qunit');
-	jQuery.sap.require('sap.ui.thirdparty.sinon');
-	jQuery.sap.require('sap.ui.thirdparty.sinon-qunit');
-	sinon.config.useFakeTimers = false;
 
-	jQuery.sap.require('sap.ui.qunit.qunit-coverage');
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
+
+	// shortcut for sap.ui.core.Priority
+	var Priority = coreLibrary.Priority;
+
+
 
 	var RENDER_LOCATION = 'qunit-fixture';
 
@@ -20,7 +38,7 @@
 
 	QUnit.module('API', {
 		beforeEach: function() {
-			this.NotificationListBase = new sap.m.NotificationListBase();
+			this.NotificationListBase = new NotificationListBase();
 		},
 		afterEach: function() {
 			this.NotificationListBase.destroy();
@@ -30,7 +48,7 @@
 	QUnit.test('Default values', function(assert) {
 		// assert
 		assert.strictEqual(this.NotificationListBase.getUnread(), false, 'The notification should be unread.');
-		assert.strictEqual(this.NotificationListBase.getPriority(), sap.ui.core.Priority.None, 'Priority should be set to none.');
+		assert.strictEqual(this.NotificationListBase.getPriority(), Priority.None, 'Priority should be set to none.');
 		assert.strictEqual(this.NotificationListBase.getTitle(), '', 'Title should be empty');
 		assert.strictEqual(this.NotificationListBase.getDatetime(), '', 'Datetime should be empty.');
 		assert.strictEqual(this.NotificationListBase.getShowButtons(), true, 'The notification should show the footer buttons by default.');
@@ -47,7 +65,7 @@
 
 	QUnit.module('Public setters and getters', {
 		beforeEach: function() {
-			this.NotificationListBase = new sap.m.NotificationListBase();
+			this.NotificationListBase = new NotificationListBase();
 		},
 		afterEach: function() {
 			this.NotificationListBase.destroy();
@@ -108,7 +126,7 @@
 
 	QUnit.module('Overwritten methods', {
 		beforeEach: function() {
-			this.NotificationListBase = new sap.m.NotificationListBase();
+			this.NotificationListBase = new NotificationListBase();
 		},
 		afterEach: function() {
 			this.NotificationListBase.destroy();
@@ -117,8 +135,8 @@
 
 	QUnit.test('Cloning a notification', function(assert) {
 		// arrange
-		var firstButton = new sap.m.Button({text: 'First Button'});
-		var secondButton = new sap.m.Button({text: 'Second Button'});
+		var firstButton = new Button({text: 'First Button'});
+		var secondButton = new Button({text: 'Second Button'});
 		var secondNotification;
 
 		// act
@@ -127,7 +145,7 @@
 		secondNotification = this.NotificationListBase.clone();
 
 		// assert
-		assert.strictEqual((secondNotification instanceof sap.m.NotificationListBase), true, 'The notification should be cloned.');
+		assert.strictEqual((secondNotification instanceof NotificationListBase), true, 'The notification should be cloned.');
 		assert.strictEqual(secondNotification.getAggregation('buttons').length, 2, 'The buttons should be cloned.');
 
 		assert.strictEqual((secondNotification.getAggregation('_overflowToolbar') instanceof sap.m.OverflowToolbar),
@@ -140,8 +158,8 @@
 	QUnit.test('Closing a notification', function(assert) {
 		// arrange
 		var parent;
-		var list = new sap.m.List();
-		var notification = new sap.m.NotificationListItem();
+		var list = new List();
+		var notification = new NotificationListItem();
 		var fnSpy = sinon.spy(notification, 'fireClose');
 
 		// act
@@ -169,21 +187,21 @@
 
 	QUnit.module('Handling aggregations', {
 		beforeEach: function() {
-			this.NotificationListBase = new sap.m.NotificationListBase();
+			this.NotificationListBase = new NotificationListBase();
 
 			var data = {
 				buttons: [
 					{
 						buttonText: 'Accept',
-						buttonType: sap.m.ButtonType.Accept
+						buttonType: ButtonType.Accept
 					},
 					{
 						buttonText: 'Consider',
-						buttonType: sap.m.ButtonType.Default
+						buttonType: ButtonType.Default
 					},
 					{
 						buttonText: 'Reject',
-						buttonType: sap.m.ButtonType.Reject
+						buttonType: ButtonType.Reject
 					}
 				],
 				title: [
@@ -193,12 +211,12 @@
 				]
 			};
 
-			var model = new sap.ui.model.json.JSONModel();
+			var model = new JSONModel();
 			model.setData(data);
 
 			sap.ui.getCore().setModel(model);
 
-			this.buttonTemplate = new sap.m.Button({
+			this.buttonTemplate = new Button({
 				text : '{buttonText}',
 				type : '{buttonType}'
 			});
@@ -227,7 +245,7 @@
 		var toolbar = this.NotificationListBase.getAggregation('_overflowToolbar');
 		var notificationMethodSpy = sinon.spy(this.NotificationListBase, 'validateAggregation');
 		var toolbarMethodSpy = sinon.spy(toolbar, 'validateAggregation');
-		var button = new sap.m.Button({text: 'Button'});
+		var button = new Button({text: 'Button'});
 
 		// act
 		this.NotificationListBase.validateAggregation('buttons', button, true);
@@ -258,8 +276,8 @@
 		var notificationMethodSpy = sinon.spy(this.NotificationListBase, 'indexOfAggregation');
 		var toolbarMethodSpy = sinon.spy(toolbar, 'indexOfAggregation');
 
-		var button = new sap.m.Button();
-		var secondButton = new sap.m.Button();
+		var button = new Button();
+		var secondButton = new Button();
 
 		this.NotificationListBase.addButton(button);
 		this.NotificationListBase.addButton(secondButton);
@@ -279,8 +297,8 @@
 		var notificationMethodSpy = sinon.spy(this.NotificationListBase, 'insertAggregation');
 		var toolbarMethodSpy = sinon.spy(toolbar, 'insertAggregation');
 
-		var button = new sap.m.Button();
-		var secondButton = new sap.m.Button();
+		var button = new Button();
+		var secondButton = new Button();
 
 		this.NotificationListBase.addButton(button);
 		this.NotificationListBase.insertAggregation('buttons', secondButton, 0);
@@ -300,8 +318,8 @@
 		var notificationMethodSpy = sinon.spy(this.NotificationListBase, 'addAggregation');
 		var toolbarMethodSpy = sinon.spy(toolbar, 'addAggregation');
 
-		var button = new sap.m.Button();
-		var secondButton = new sap.m.Button();
+		var button = new Button();
+		var secondButton = new Button();
 
 		// act
 		this.NotificationListBase.addButton(button);
@@ -324,7 +342,7 @@
 		var notificationMethodSpy = sinon.spy(this.NotificationListBase, 'removeAggregation');
 		var toolbarMethodSpy = sinon.spy(toolbar, 'removeAggregation');
 
-		var button = new sap.m.Button();
+		var button = new Button();
 
 		// act
 		this.NotificationListBase.addAggregation('buttons', button);
@@ -342,8 +360,8 @@
 		var notificationMethodSpy = sinon.spy(this.NotificationListBase, 'removeAllAggregation');
 		var toolbarMethodSpy = sinon.spy(toolbar, 'removeAllAggregation');
 
-		var button = new sap.m.Button();
-		var secondButton = new sap.m.Button();
+		var button = new Button();
+		var secondButton = new Button();
 
 		// act
 		this.NotificationListBase.addAggregation('buttons', button);
@@ -362,8 +380,8 @@
 		var notificationMethodSpy = sinon.spy(this.NotificationListBase, 'destroyAggregation');
 		var toolbarMethodSpy = sinon.spy(toolbar, 'destroyAggregation');
 
-		var button = new sap.m.Button();
-		var secondButton = new sap.m.Button();
+		var button = new Button();
+		var secondButton = new Button();
 
 		// act
 		this.NotificationListBase.addAggregation('buttons', button);
@@ -403,7 +421,7 @@
 		// assert
 		assert.strictEqual(notificationMethodSpy.callCount, 1, 'The method getBindingInfo() of the notification should be called.');
 		assert.ok(toolbarMethodSpy.callCount > 0, 'The method getBindingInfo() of the notification toolbar should be called.');
-		assert.strictEqual(bidingInfo.template instanceof sap.m.Button, true, 'The template should be correct.');
+		assert.strictEqual(bidingInfo.template instanceof Button, true, 'The template should be correct.');
 		assert.strictEqual(bidingInfo.path, '/buttons', 'The method biding info should be correct.');
 	});
 
@@ -429,7 +447,7 @@
 
 	QUnit.module('Private getters for lazy loading', {
 		beforeEach: function() {
-			this.NotificationListBase = new sap.m.NotificationListBase();
+			this.NotificationListBase = new NotificationListBase();
 		},
 		afterEach: function() {
 			this.NotificationListBase.destroy();
@@ -539,5 +557,4 @@
 		// assert
 		assert.strictEqual(toolbar instanceof sap.m.OverflowToolbar, true, 'Toolbar should be reinited.');
 	});
-
-})();
+});

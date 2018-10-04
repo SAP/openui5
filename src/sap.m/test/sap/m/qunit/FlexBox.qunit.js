@@ -1,21 +1,30 @@
-/*global document, jQuery, sap, QUnit*/
-(function ($) {
+sap.ui.define([
+	"sap/m/FlexBox",
+	"sap/ui/core/HTML",
+	"jquery.sap.global",
+	"sap/m/Image",
+	"sap/m/FlexItemData",
+	"sap/ui/Device",
+	"sap/m/VBox"
+], function(FlexBox, HTML, jQuery, Image, FlexItemData, Device, VBox) {
+	/*global document, jQuery, sap, QUnit*/
 	"use strict";
 
-	(function setTitle(sTitle){
-		document.title = sTitle;
-		$(function(){
-			$("#qunit-header").text(sTitle);
-		});
-	})("QUnit Page for FlexBox - sap.m");
+	var styleElem = document.createElement("style");
+	styleElem.textContent =
+		".sapMFlexItem {" +
+		"	padding: 1rem;" +
+		"	border: 1px solid black;" +
+		"	box-sizing: border-box;" +
+		"}";
+	document.head.appendChild(styleElem);
 
-	jQuery.sap.require("sap.ui.qunit.qunit-css");
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
 	// Helper function to create the flexboxes for the tests
 	var getFlexBoxWithItems = function(oBoxConfig, vItemTemplates, vItemConfigs) {
-		var box = new sap.m.FlexBox(oBoxConfig),
+		var box = new FlexBox(oBoxConfig),
 			item = null,
 			i = 0;
 
@@ -24,7 +33,7 @@
 			var j = vItemTemplates;
 			vItemTemplates = [];
 			while (j) {
-				vItemTemplates.push(sap.ui.core.HTML);
+				vItemTemplates.push(HTML);
 				j--;
 			}
 		}
@@ -105,15 +114,15 @@
 				renderType: "List"
 			};
 			this.vItemTemplates = [
-				sap.m.Image,
-				sap.ui.core.HTML,
-				sap.ui.core.HTML
+				Image,
+				HTML,
+				HTML
 			];
 			this.vItemConfigs = [
 				{},
 				{
 					content: "<div class='items'>2</div>",
-					layoutData: new sap.m.FlexItemData({
+					layoutData: new FlexItemData({
 						growFactor: 2,
 						baseSize: "58%"
 					})
@@ -150,7 +159,7 @@
 		this.oBox.setRenderType("Bare");
 		sap.ui.getCore().applyChanges();
 		assert.equal(this.oBox.getItems()[0].$().get(0).tagName, "IMG", "First item of Flex Box should now be rendered as IMG");
-		if (!sap.ui.Device.browser.phantomJS && !sap.ui.Device.browser.internet_explorer) {// TODO remove after 1.62 version
+		if (!Device.browser.phantomJS && !Device.browser.internet_explorer) {// TODO remove after 1.62 version
 			assert.equal(this.oBox.getItems()[1].getDomRef().style.flexGrow, "2", "Inline style for grow factor is set on second item");
 			assert.equal(this.oBox.getItems()[1].getDomRef().style.flexBasis, "58%", "Inline style for base size is set on second item");
 		}
@@ -176,13 +185,13 @@
 	QUnit.test("Inline", function(assert) {
 		this.oBox.setDisplayInline(true);
 		// phantomjs wants to add the webkit prefix here...
-		assert.equal(this.oBox.$().css('display'), (sap.ui.Device.browser.phantomJS ? "-webkit-" : "") + "inline-flex", "Flex Box display property should be set to inline");
+		assert.equal(this.oBox.$().css('display'), (Device.browser.phantomJS ? "-webkit-" : "") + "inline-flex", "Flex Box display property should be set to inline");
 	});
 
 	QUnit.test("Block", function(assert) {
 		this.oBox.setDisplayInline(false);
 		// phantomjs wants to add the webkit prefix here...
-		assert.equal(this.oBox.$().css('display'), (sap.ui.Device.browser.phantomJS ? "-webkit-" : "") + "flex", "Flex Box display property should be set to block");
+		assert.equal(this.oBox.$().css('display'), (Device.browser.phantomJS ? "-webkit-" : "") + "flex", "Flex Box display property should be set to block");
 	});
 
 	QUnit.module("Fit Container", {
@@ -249,7 +258,7 @@
 				},
 				{
 				content: "<div class='items'>3</div>",
-				layoutData: new sap.m.FlexItemData({})
+				layoutData: new FlexItemData({})
 				}
 			];
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
@@ -356,15 +365,15 @@
 			this.vItemConfigs = [
 				{
 				content: "<div class='items'>1</div>",
-				layoutData: new sap.m.FlexItemData({order: 1})
+				layoutData: new FlexItemData({order: 1})
 				},
 				{
 				content: "<div class='items'>2</div>",
-				layoutData: new sap.m.FlexItemData({order: 2})
+				layoutData: new FlexItemData({order: 2})
 				},
 				{
 				content: "<div class='items'>3</div>",
-				layoutData: new sap.m.FlexItemData({order: 3})
+				layoutData: new FlexItemData({order: 3})
 				}
 			];
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
@@ -401,7 +410,7 @@
 			this.vItemConfigs = [
 				{
 				content: "<div class='items'>1</div>",
-				layoutData: new sap.m.FlexItemData({})
+				layoutData: new FlexItemData({})
 				},
 				{
 				content: "<div class='items'>2</div>"
@@ -446,7 +455,7 @@
 		assert.ok((this.oItem1DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left) === 0, "Item 1 should be placed at the horizontal start");
 		assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 179) <= 1, "Item 2 should be placed at the horizontal center");
 		assert.ok(Math.abs(this.oItem3DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 345) <= 1, "Item 3 should be placed at the horizontal end");
-		if (!sap.ui.Device.browser.phantomJS) {	// Baseline is not supported for align-items by phantomjs
+		if (!Device.browser.phantomJS) {	// Baseline is not supported for align-items by phantomjs
 			assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 22) <= 1, "Item 2 should be pushed down to align with Item 1 baseline");
 		}
 		this.oItem1DomRef.style.fontSize = "";
@@ -609,15 +618,15 @@
 			this.vItemConfigs = [
 				{
 				content: "<div class='items'>1</div>",
-				layoutData: new sap.m.FlexItemData({})
+				layoutData: new FlexItemData({})
 				},
 				{
 				content: "<div class='items'>2</div>",
-				layoutData: new sap.m.FlexItemData({})
+				layoutData: new FlexItemData({})
 				},
 				{
 				content: "<div class='items'>3</div>",
-				layoutData: new sap.m.FlexItemData({})
+				layoutData: new FlexItemData({})
 				}
 			];
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
@@ -654,7 +663,7 @@
 		this.oItem1DomRef.style.width = "100%";
 		this.oItem2DomRef.style.width = "100%";
 		this.oItem3DomRef.style.width = "100%";
-		if (sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.phantomJS) {
+		if (Device.browser.internet_explorer || Device.browser.phantomJS) {
 			// IE 10-11, PhantomJS miscalculate the width of the flex items when box-sizing: border-box// TODO remove after 1.62 version
 			assert.ok(Math.abs(this.oItem1DomRef.offsetWidth - 247) <= 1, "Width of Item 1 should be 247 (is " + this.oItem1DomRef.offsetWidth + ")");
 			assert.ok(Math.abs(this.oItem2DomRef.offsetWidth - 107) <= 1, "Width of Item 2 should be 107 (is " + this.oItem2DomRef.offsetWidth + ")");
@@ -714,7 +723,7 @@
 	});
 
 	QUnit.test("Add Item", function(assert) {
-		this.oItem5 = new sap.ui.core.HTML("item5", {
+		this.oItem5 = new HTML("item5", {
 			content: "<div class='items'>5</div>"
 		});
 		this.oBox.addItem(this.oItem5);
@@ -723,7 +732,7 @@
 	});
 
 	QUnit.test("Insert Item", function(assert) {
-		this.oItem6 = new sap.ui.core.HTML("item6", {
+		this.oItem6 = new HTML("item6", {
 			content: "<div class='items'>6</div>"
 		});
 		this.oBox.insertItem(this.oItem6, 2);
@@ -750,24 +759,24 @@
 		beforeEach: function() {
 			this.oBoxConfig = {};
 			this.vItemTemplates = [
-				sap.m.VBox,
-				sap.ui.core.HTML,
-				sap.ui.core.HTML
+				VBox,
+				HTML,
+				HTML
 			];
 			this.vItemConfigs = [
 				{
-				layoutData: new sap.m.FlexItemData({
+				layoutData: new FlexItemData({
 					baseSize: "0",
 					growFactor: 3
 				})
 				},
 				{
 				content: "<div class='items'>2</div>",
-				layoutData: new sap.m.FlexItemData({})
+				layoutData: new FlexItemData({})
 				},
 				{
 				content: "<div class='items'>3</div>",
-				layoutData: new sap.m.FlexItemData({})
+				layoutData: new FlexItemData({})
 				}
 			];
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
@@ -789,8 +798,8 @@
 		beforeEach: function() {
 			this.oBoxConfig = {};
 			this.vItemTemplates = [
-				sap.m.FlexBox,
-				sap.m.FlexBox
+				FlexBox,
+				FlexBox
 			];
 			this.vItemConfigs = [
 				{},
@@ -818,4 +827,4 @@
 		assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 		assert.ok(oInfo.children && oInfo.children.length == 2, "Children");
 	});
-})(jQuery);
+});
