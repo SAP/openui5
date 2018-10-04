@@ -948,7 +948,7 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oMetaModel.getAdapterFactoryModulePath(),
-			"sap/ui/model/odata/v2/meta/ODataAdapterFactory");
+			"sap/ui/mdc/experimental/adapter/odata/v2/ODataAdapterFactory");
 
 		return oMetaModel.loaded().then(function () {
 			var oMetaModelMock = that.mock(oMetaModel),
