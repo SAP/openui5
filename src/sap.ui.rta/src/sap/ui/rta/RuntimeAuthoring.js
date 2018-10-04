@@ -862,10 +862,17 @@ function(
 		var bMacintosh = Device.os.macintosh;
 		var bFocusInsideOverlayContainer = Overlay.getOverlayContainer().get(0).contains(document.activeElement);
 		var bFocusInsideRtaToolbar = this.getShowToolbars() && this.getToolbar().getDomRef().contains(document.activeElement);
+		var bFocusOnContextMenu = false;
+		// there might be two divs with that style-class (compact and expanded context menu)
+		jQuery(".sapUiDtContextMenu").each(function(iIndex, oDomRef) {
+			if (oDomRef.contains(document.activeElement)) {
+				bFocusOnContextMenu = true;
+			}
+		});
 		var bFocusOnBody = document.body === document.activeElement;
 		var bFocusInsideRenameField = jQuery(document.activeElement).parents('.sapUiRtaEditableField').length > 0;
 
-		if ((bFocusInsideOverlayContainer || bFocusInsideRtaToolbar || bFocusOnBody) && !bFocusInsideRenameField) {
+		if ((bFocusInsideOverlayContainer || bFocusInsideRtaToolbar || bFocusOnContextMenu || bFocusOnBody) && !bFocusInsideRenameField) {
 			// OSX: replace CTRL with CMD
 			var bCtrlKey = bMacintosh ? oEvent.metaKey : oEvent.ctrlKey;
 			if (
