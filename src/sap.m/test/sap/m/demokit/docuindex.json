@@ -2611,7 +2611,7 @@
 		},
 		{
 		  "id": "sap.m.sample.PopoverControllingCloseBehavior",
-		  "name": "Popover - Cotrolling Closing Behavior",
+		  "name": "Popover - Controlling Closing Behavior",
 		  "description": "In some cases the closing behavior of the Popover can lead to drill down navigation. This is a sample demonstrating how this can be controlled. When the popover is opened, add a style \"pointer-events: none\" to the area that should remain static and when the popover is closed, remove it. "
 		},
 		{
