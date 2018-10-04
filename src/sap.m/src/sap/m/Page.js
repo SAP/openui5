@@ -456,6 +456,7 @@ function(
 		};
 
 		Page.prototype._adjustFooterWidth = function () {
+			var bDirection  = sap.ui.getCore().getConfiguration().getRTL() ? "left" : "right";
 			if (!this.getShowFooter() || !this.getFloatingFooter() || !this.getFooter()) {
 				return;
 			}
@@ -463,10 +464,10 @@ function(
 			var $footer = jQuery(this.getDomRef()).find(".sapMPageFooter").last();
 
 			if (this._contentHasScroll()) {
-				$footer.css("right", jQuery.position.scrollbarWidth() + "px");
+				$footer.css(bDirection, jQuery.position.scrollbarWidth() + "px");
 				$footer.css("width", "initial");
 			} else {
-				$footer.css("right", 0);
+				$footer.css(bDirection, 0);
 				$footer.css("width", "");
 			}
 		};
