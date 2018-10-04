@@ -747,68 +747,88 @@ sap.ui.require([
 			oComponentContainer.destroy();
 		});
 	*/
-	QUnit.module("clone");
+    QUnit.module("clone");
 
-	QUnit.test("simple", function (assert) {
-		var oXMLComposite = new composites.TextToggleButton("Frag1");
-		var sId;
-		var iCount = 0;
+    QUnit.test("simple", function (assert) {
+        var oXMLComposite = new composites.TextToggleButton("Frag1"), oButton, oText;
+        var sId;
+        var iCount = 0;
 
-		oXMLComposite.attachTextChanged(function (oEvent) {
-			iCount++;
-			sId = oEvent.oSource.getId();
-		});
+        oXMLComposite.attachTextChanged(function (oEvent) {
+            iCount++;
+            sId = oEvent.oSource.getId();
+        });
 
-		var fnVBoxCloneSpy = sinon.spy(oXMLComposite.getAggregation("_content"), "clone");
+        //TEMP-CLONE-ISSUE var fnVBoxCloneSpy = sinon.spy(oXMLComposite.getAggregation("_content"), "clone");
 
-		var oClone = oXMLComposite.clone("MyClone");
-		assert.equal(oClone.getId(), "Frag1-MyClone", "XMLComposite cloned");
-		var oContent = oClone.getAggregation("_content");
-		//TEMP-CLONE-ISSUE assert.notOk(fnVBoxCloneSpy.called, "VBox clone function not called");
-		//TEMP-CLONE-ISSUE assert.equal(oContent.getId(), "Frag1-MyClone--myVBox", "VBox created, not cloned");
+        var oClone = oXMLComposite.clone("MyClone");
+        assert.equal(oClone.getId(), "Frag1-MyClone", "XMLComposite cloned");
+        this.clock.tick(500);
+        var oContent = oClone._getCompositeAggregation();
 
-		oXMLComposite.placeAt("content");
-		oClone.placeAt("content");
-		sap.ui.getCore().applyChanges();
+        oXMLComposite.placeAt("content");
+        oClone.placeAt("content");
+        sap.ui.getCore().applyChanges();
 
-		sap.ui.test.qunit.triggerTouchEvent("tap", oContent.getItems()[1].getDomRef());
-		//TEMP-CLONE-ISSUE assert.equal(sId, "Frag1-MyClone", "Event fired on clone");
-		assert.equal(iCount, 1, "Event fired only once");
+        //Id access
+        oButton = oXMLComposite.byId("myButton");
+        oText = oXMLComposite.byId("myText");
+        assert.ok(oButton, "The button is accessed from the original control");
+        assert.ok(oText, "The text is accessed from the original control");
+        assert.ok(oButton.getId().endsWith("myButton"), "the button has the correct suffix");
+        assert.ok(oText.getId().endsWith("myText"), "the text has the correct suffix");
 
-		oXMLComposite.destroy();
-		oClone.destroy();
-	});
+        oButton = oClone.byId("myButton");
+        oText = oClone.byId("myText");
+        assert.ok(oButton, "The button is accessed from the the clone");
+        assert.ok(oText, "The text is accessed from the clone");
+        assert.ok(oButton.getId().endsWith("myButton"), "the button has the correct suffix");
+        assert.ok(oText.getId().endsWith("myText"), "the text has the correct suffix");
 
-	QUnit.test("list", function (assert) {
-		var oXMLComposite = new composites.TextList("Frag1", {
-			texts: [
-				new sap.ui.core.Item("I1", {
-					key: "K1",
-					text: "Text 1"
-				}), new sap.ui.core.Item("I2", {
-					key: "K2",
-					text: "Text 2"
-				}), new sap.ui.core.Item("I3", {
-					key: "K3",
-					text: "Text 3"
-				})
-			]
-		});
+        //Eventing
+        sap.ui.test.qunit.triggerTouchEvent("tap", oContent.getItems()[1].getDomRef());
+        assert.equal(iCount, 1, "Event fired only once");
+        assert.equal(sId, oClone.getId(), "The event is really fired from the clone");
 
-		var oClone = oXMLComposite.clone("MyClone");
-		assert.equal(oClone.getId(), "Frag1-MyClone", "XMLComposite cloned");
-		var aItems = oClone.getTexts();
-		assert.equal(aItems.length, 3, "Clone has 3 Items");
-		assert.equal(aItems[0].getId(), "I1-MyClone", "Item cloned");
+        //To be sure fire from the template
+        oContent = oXMLComposite._getCompositeAggregation();
+        sap.ui.test.qunit.triggerTouchEvent("tap", oContent.getItems()[1].getDomRef());
+        assert.equal(iCount, 2, "Event fired again");
+        assert.equal(sId, oXMLComposite.getId(), "The event is fired from the template");
 
-		var aTexts = oClone.getAggregation("_content").getItems()[1].getItems();
-		assert.equal(aTexts.length, 3, "Clone has 3 Texts");
+        oXMLComposite.destroy();
+        oClone.destroy();
+    });
 
-		oXMLComposite.destroy();
-		oClone.destroy();
-	});
+    QUnit.test("list", function (assert) {
+        var oXMLComposite = new composites.TextList("Frag1", {
+            texts: [
+                new sap.ui.core.Item("I1", {
+                    key: "K1",
+                    text: "Text 1"
+                }), new sap.ui.core.Item("I2", {
+                    key: "K2",
+                    text: "Text 2"
+                }), new sap.ui.core.Item("I3", {
+                    key: "K3",
+                    text: "Text 3"
+                })
+            ]
+        });
 
-	//*********************************************************************************************
+        var oClone = oXMLComposite.clone("MyClone");
+        assert.equal(oClone.getId(), "Frag1-MyClone", "XMLComposite cloned");
+        var aItems = oClone.getTexts();
+        assert.equal(aItems.length, 3, "Clone has 3 Items");
+        assert.equal(aItems[0].getId(), "I1-MyClone", "Item cloned");
+
+        var aTexts = oClone.getAggregation("_content").getItems()[1].getItems();
+        assert.equal(aTexts.length, 3, "Clone has 3 Texts");
+        oXMLComposite.destroy();
+        oClone.destroy();
+    });
+
+    //*********************************************************************************************
 	QUnit.module("sap.ui.core.XMLComposite: Wrapper default properties", {
 		beforeEach: function () {
 			var Wrapper = sap.ui.core.XMLComposite.extend("Wrapper", {

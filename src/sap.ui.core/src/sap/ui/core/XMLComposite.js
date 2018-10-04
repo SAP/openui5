@@ -646,6 +646,14 @@ sap.ui.define([
 		};
 
 		/**
+		 * Returns the composite aggregation
+		 */
+		XMLComposite.prototype._getCompositeAggregation = function () {
+			var sCompositeName = this.getMetadata().getCompositeAggregationName();
+			return this.getAggregation(sCompositeName);
+		};
+
+		/**
 		 * Sets the internal composite aggregation
 		 *
 		 * @returns {sap.ui.core.XMLComposite} Returns <code>this</code> to allow method chaining
@@ -745,20 +753,14 @@ sap.ui.define([
 				bInitialized = false;
 			if (mSettings && sAggregationName) {
 				var oNode = mSettings[sAggregationName];
-				if (oNode instanceof ManagedObject) {
-					this._destroyCompositeAggregation();
-					this._setCompositeAggregation(oNode);
-					bInitialized = true;
-				} else {
-					if (oNode && oNode.localName === "FragmentDefinition") {
-						this._destroyCompositeAggregation();
-						this._setCompositeAggregation(sap.ui.xmlfragment({
-							sId: this.getId(),
-							fragmentContent: mSettings[sAggregationName],
-							oController: this
-						}));
-						bInitialized = true;
-					}
+				if (oNode && oNode.localName === "FragmentDefinition") {
+				    this._destroyCompositeAggregation();
+				    this._setCompositeAggregation(sap.ui.xmlfragment({
+                        sId: this.getId(),
+                        fragmentContent: mSettings[sAggregationName],
+                        oController: this
+				    }));
+				    bInitialized = true;
 				}
 				delete mSettings[sAggregationName];
 			}
