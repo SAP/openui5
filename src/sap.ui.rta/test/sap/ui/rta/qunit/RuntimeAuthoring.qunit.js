@@ -331,6 +331,8 @@ function(
 			this.oToolbarDomRef = jQuery('<input/>').appendTo('#qunit-fixture').get(0);
 			this.oOverlayContainer = jQuery('<button/>').appendTo('#qunit-fixture');
 			this.oAnyOtherDomRef = jQuery('<button/>').appendTo('#qunit-fixture').get(0);
+			this.oContextMenu = jQuery('<button class="sapUiDtContextMenu" />').appendTo('#qunit-fixture').get(0);
+			this.oContextMenu2 = jQuery('<button class="sapUiDtContextMenu" />').appendTo('#qunit-fixture').get(0);
 
 			this.oUndoEvent = new Event("dummyEvent", new EventProvider());
 			this.oUndoEvent.keyCode = jQuery.sap.KeyCodes.Z;
@@ -371,9 +373,9 @@ function(
 	}, function() {
 		QUnit.test("with focus on an overlay", function(assert) {
 			this.oOverlayContainer.get(0).focus();
+
 			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
 			assert.equal(this.fnUndoStub.callCount, 1, "then _onUndo was called once");
-
 			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oRedoEvent);
 			assert.equal(this.fnRedoStub.callCount, 1, "then _onRedo was called once");
 		});
@@ -383,9 +385,24 @@ function(
 
 			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
 			assert.equal(this.fnUndoStub.callCount, 1, "then _onUndo was called once");
-
 			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oRedoEvent);
 			assert.equal(this.fnRedoStub.callCount, 1, "then _onRedo was called once");
+		});
+
+		QUnit.test("with focus on the context menu", function(assert) {
+			this.oContextMenu.focus();
+
+			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
+			assert.equal(this.fnUndoStub.callCount, 1, "then _onUndo was called once");
+			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oRedoEvent);
+			assert.equal(this.fnRedoStub.callCount, 1, "then _onRedo was called once");
+
+			this.oContextMenu2.focus();
+
+			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
+			assert.equal(this.fnUndoStub.callCount, 2, "then _onUndo was called once again");
+			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oRedoEvent);
+			assert.equal(this.fnRedoStub.callCount, 2, "then _onRedo was called once again");
 		});
 
 		QUnit.test("with focus on an outside element (e.g. dialog)", function(assert) {
@@ -393,7 +410,6 @@ function(
 
 			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
 			assert.equal(this.fnUndoStub.callCount, 0, "then _onUndo was not called");
-
 			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oRedoEvent);
 			assert.equal(this.fnRedoStub.callCount, 0, "then _onRedo was not called");
 		});
@@ -406,7 +422,6 @@ function(
 
 			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
 			assert.equal(this.fnUndoStub.callCount, 0, "then _onUndo was not called");
-
 			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oRedoEvent);
 			assert.equal(this.fnRedoStub.callCount, 0, "then _onRedo was not called");
 		});
@@ -414,7 +429,6 @@ function(
 		QUnit.test("using the public API", function(assert) {
 			RuntimeAuthoring.prototype.undo.call(this.mContext);
 			assert.equal(this.fnUndoStub.callCount, 1, "then _onUndo was called");
-
 			RuntimeAuthoring.prototype.redo.call(this.mContext);
 			assert.equal(this.fnRedoStub.callCount, 1, "then _onRedo was called");
 		});
