@@ -215,7 +215,7 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	 * @param {boolean} bIncludeOrigin include information about the filter objects the tree has been created from
 	 * @returns {object} The AST of the filter tree
 	 * @private
-	 * @ui5-restricted sap.ui.table
+	 * @ui5-restricted sap.ui.table, sap.ui.export
 	 */
 	TreeBinding.prototype.getFilterInfo = function(bIncludeOrigin) {
 		if (this.oCombinedFilter) {
