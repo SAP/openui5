@@ -613,7 +613,8 @@ sap.ui.define([
 			assert.ok(true, "Should throw no error");
 		});
 
-		QUnit.test("calling _getPopoverDimensions for non MiniMenu", function (assert) {
+		// TODO Enable again when 1880551783 is resolved
+		QUnit.skip("calling _getPopoverDimensions for non MiniMenu", function (assert) {
 			this.clock = sinon.useFakeTimers();
 			this.oButton2Overlay.setSelected(true);
 			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
@@ -631,7 +632,8 @@ sap.ui.define([
 			this.clock.restore();
 		});
 
-		QUnit.test("calling _getPopoverDimensions for ContextMenu", function (assert) {
+		// TODO Enable again when 1880551783 is resolved
+		QUnit.skip("calling _getPopoverDimensions for ContextMenu", function (assert) {
 			this.clock = sinon.useFakeTimers();
 			this.oButton2Overlay.setSelected(true);
 			jQuery(this.oButton2Overlay.getDomRef()).contextmenu();
