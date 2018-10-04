@@ -1624,7 +1624,7 @@ sap.ui.define([
 			var oModelConfig = mModelConfigurations[sModelName];
 
 			// load model class and log error message if it couldn't be loaded.
-			// error gets catched to continue creating the other models and not breaking the execution here
+			// error gets caught to continue creating the other models and not breaking the execution here
 			try {
 				sap.ui.requireSync(oModelConfig.type.replace(/\./g, "/"));
 			} catch (oError) {
