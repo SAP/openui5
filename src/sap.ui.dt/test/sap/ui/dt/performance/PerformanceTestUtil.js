@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/m/Slider",
 	"sap/m/RatingIndicator",
 	"sap/m/Panel",
+	"sap/m/VBox",
 	"sap/base/Log"
 ], function(
 	DesignTime,
@@ -27,6 +28,7 @@ sap.ui.define([
 	Slider,
 	RatingIndicator,
 	Panel,
+	VBox,
 	Log
 ) {
 	"use strict";
@@ -71,6 +73,22 @@ sap.ui.define([
 				}
 
 				oLayout.addContent(oControl);
+			}
+		},
+
+		addBoxesWithMixedControls: function(oParent, iCount) {
+			for (var i = 0; i < iCount; i++) {
+				oParent.addContent(
+					new VBox("box" + i, {
+						items: [
+							new Label("Label" + i, {text: "Control " + i}),
+							new DatePicker("DatePicker" + i),
+							new Slider("Slider" + i),
+							new RatingIndicator("RatingIndicator" + i),
+							new Button("Button" + i, {text: "Control " + i})
+						]
+					})
+				);
 			}
 		},
 

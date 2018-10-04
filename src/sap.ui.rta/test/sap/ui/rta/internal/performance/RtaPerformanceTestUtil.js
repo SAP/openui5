@@ -81,12 +81,7 @@ sap.ui.define([
 			// will result in custom timer in webPageTest
 			window.performance.mark("rta.start.starts");
 
-			return Promise.all([
-				new Promise(function (fnResolve) {
-					oRuntimeAuthoring.attachStart(fnResolve);
-				}),
-				oRuntimeAuthoring.start()
-			])
+			return oRuntimeAuthoring.start()
 			.then(function() {
 				var sMeasureName = "RTA start function called";
 				//will result in custom timer in webPageTest
@@ -96,6 +91,36 @@ sap.ui.define([
 				jQuery.sap.log.info(sMeasureName, sap.ui.rta.startTime + "ms");
 				//visual change at the end
 				var oOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oHorizontalLayout);
+				oOverlay.setSelected(true);
+			})
+			.then(function() {
+				sinon.restore();
+			});
+		},
+
+		startRtaWithoutStretch: function(oRootControl) {
+			var oRuntimeAuthoring = new RuntimeAuthoring({
+				rootControl: oRootControl
+			});
+			var mPlugins = oRuntimeAuthoring.getDefaultPlugins();
+			delete mPlugins["stretch"];
+			oRuntimeAuthoring.setPlugins(mPlugins);
+
+			Util._defineTestStubs(oRuntimeAuthoring);
+
+			// will result in custom timer in webPageTest
+			window.performance.mark("rta.start.starts");
+
+			return oRuntimeAuthoring.start()
+			.then(function() {
+				var sMeasureName = "RTA start function called";
+				//will result in custom timer in webPageTest
+				window.performance.mark("rta.start.ends");
+				window.performance.measure(sMeasureName, "rta.start.starts", "rta.start.ends");
+				sap.ui.rta.startTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
+				jQuery.sap.log.info(sMeasureName, sap.ui.rta.startTime + "ms");
+				//visual change at the end
+				var oOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oRootControl);
 				oOverlay.setSelected(true);
 			})
 			.then(function() {
