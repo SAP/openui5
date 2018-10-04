@@ -120,9 +120,11 @@ function(
 	};
 
 	/**
-	 * Check if the size of the parent is same as the size of his children
-	 * @param {sap.ui.dt.ElementOverlay} oReferenceOverlay overlay object
-	 * @param {sap.ui.dt.ElementOverlay[]} aChildOverlays array of overlay objects that should be checked
+	 * Check if the size of an overlay is the same as an array of overlays.
+	 * If no array is passed to the function the children of the reference overlay are used.
+	 *
+	 * @param {sap.ui.dt.ElementOverlay} oReferenceOverlay - overlay object
+	 * @param {sap.ui.dt.ElementOverlay[]} [aChildOverlays] - array of overlay objects that should be checked
 	 * @returns {boolean} Returns true if the overlay has the same size as all the children
 	 * @private
 	 */
@@ -135,8 +137,12 @@ function(
 		});
 
 		var oChildrenGeometry = OverlayUtil.getGeometry(aChildrenGeometry);
-		var iChildrenSize = oChildrenGeometry.size.width * oChildrenGeometry.size.height;
 
+		if (!oChildrenGeometry) {
+			return false;
+		}
+
+		var iChildrenSize = oChildrenGeometry.size.width * oChildrenGeometry.size.height;
 		return iChildrenSize === iParentSize;
 	};
 
