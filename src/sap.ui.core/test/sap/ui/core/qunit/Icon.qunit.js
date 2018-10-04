@@ -106,6 +106,35 @@ sap.ui.define([
 			assert.equal($icon.css("color"), sHoverColor);
 			assert.equal($icon.css("background-color"), sHoverBackgroundColor);
 		});
+
+		QUnit.test("Icon without Hover color", function(assert) {
+			var sColor = "#666666",
+				sBackgroundColor = "#CCCCCC",
+				oIcon = new Icon({
+					color: sColor,
+					backgroundColor: sBackgroundColor
+				}),
+				$dummy = jQuery.sap.byId("dummy");
+
+			$dummy.css("color", sColor);
+			$dummy.css("background-color", sBackgroundColor);
+
+			var sTestColor = $dummy.css("color"),
+				sTestBackgroundColor = $dummy.css("background-color");
+			oIcon.placeAt("uiAreaA");
+			sap.ui.getCore().applyChanges();
+
+			var $icon = oIcon.$();
+			qutils.triggerEvent("mousedown", oIcon.getId());
+			assert.equal($icon.css("color"), sTestColor);
+			assert.equal($icon.css("background-color"), sTestBackgroundColor);
+
+			qutils.triggerEvent("mouseup", oIcon.getId());
+			assert.equal($icon.css("color"), sTestColor);
+			assert.equal($icon.css("background-color"), sTestBackgroundColor);
+
+			oIcon.destroy();
+		});
 	}
 
 	QUnit.test("Attach press handler", function(assert) {
