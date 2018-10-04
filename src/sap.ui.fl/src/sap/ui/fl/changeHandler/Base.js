@@ -36,5 +36,19 @@ sap.ui.define(function() {
 		oChange.texts[sKey].type = sType;
 	};
 
+	/**
+	 * Creates a return object. Should be called in case the change is not applicable.
+	 * @param {string} sNotApplicableCauseMessage - Indicates reason why the change is not applicable
+	 * @param {boolean} bAsync - Determines whether a not-applicable object should be thrown (synchronous) or an asynchronous promise reject with the same object should be returned
+	 * @returns {promise} Returns rejected promise with not-applicable message inside
+	 */
+	Base.markAsNotApplicable = function(sNotApplicableCauseMessage, bAsync) {
+		var oReturn = { message: sNotApplicableCauseMessage };
+		if (!bAsync) {
+			throw oReturn;
+		}
+		return Promise.reject(oReturn);
+	};
+
 	return Base;
 }, /* bExport= */true);
