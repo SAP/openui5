@@ -62,16 +62,16 @@ sap.ui.define([
 			if (bRealOData) {
 				Then.onTheMainPage.checkNewSalesOrderItemProductName("Notebook Basic 15");
 				// update note of new sales order item
-				When.onTheMainPage.changeSalesOrderLineItemNote(0, "Line Item Note Changed - 1");
+				When.onTheMainPage.changeNoteInFirstLineItem("Line Item Note Changed - 1");
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				Then.onTheMainPage.checkSalesOrderLineItemNote(0, "Line Item Note Changed - 1");
 
 				// check correct error handling of multiple changes in one $batch
-				When.onTheMainPage.changeSalesOrderLineItemNote(0, "Line Item Note Changed - 2");
-				When.onTheMainPage.changeSalesOrderLineItemQuantity(0, "0.0");
+				When.onTheMainPage.changeNoteInFirstLineItem("Line Item Note Changed - 2");
+				When.onTheMainPage.changeQuantityInFirstLineItem("0.0");
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				When.onTheMessagePopover.close();
-				When.onTheMainPage.changeSalesOrderLineItemQuantity(0, "2.0");
+				When.onTheMainPage.changeQuantityInFirstLineItem("2.0");
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				Then.onTheMainPage.checkSalesOrderLineItemNote(0, "Line Item Note Changed - 2");
 
@@ -87,7 +87,7 @@ sap.ui.define([
 				When.onTheMainPage.changeNoteInDetails("Sales Order Details Note Changed - 1");
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				// this is only possible if it has got a new ETag via refresh single
-				When.onTheMainPage.changeNote(0, "Sales Order Note Changed - 1");
+				When.onTheMainPage.changeNoteInNewSalesOrder("Sales Order Note Changed - 1");
 				When.onTheMainPage.pressSaveSalesOrdersButton();
 
 				// change again Note in details causes error because of outdated ETag

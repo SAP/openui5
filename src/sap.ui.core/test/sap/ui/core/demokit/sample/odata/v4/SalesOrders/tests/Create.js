@@ -58,7 +58,7 @@ sap.ui.define([
 			}
 			Then.onTheMainPage.checkID(0, "");
 			Then.onTheMainPage.checkSalesOrderSelected(0);
-			When.onTheMainPage.changeNote(0, sModifiedNote + "_2");
+			When.onTheMainPage.changeNoteInNewSalesOrder(sModifiedNote + "_2");
 			Then.onTheMainPage.checkNote(0, sModifiedNote + "_2");
 			When.onTheMainPage.deleteSelectedSalesOrder();
 			When.onTheSalesOrderDeletionConfirmation.cancel();
@@ -84,7 +84,7 @@ sap.ui.define([
 				// TODO: TestUtils may support to provide JSON response/or generated keys...
 				Then.onTheMainPage.checkDifferentID(0, "");
 				// TODO: TestUtils does not support PATCH at all
-				When.onTheMainPage.changeNote(0, sModifiedNote + "_3");
+				When.onTheMainPage.changeNoteInNewSalesOrder(sModifiedNote + "_3");
 				When.onTheMainPage.pressSaveSalesOrdersButton();
 			}
 			When.onTheMainPage.deleteSelectedSalesOrder();
@@ -146,7 +146,7 @@ sap.ui.define([
 				// Create a sales order with invalid note, save, cancel
 				When.onTheMainPage.pressCreateSalesOrdersButton();
 				When.onTheCreateNewSalesOrderDialog.confirmDialog();
-				When.onTheMainPage.changeNote(0, "RAISE_ERROR");
+				When.onTheMainPage.changeNoteInNewSalesOrder("RAISE_ERROR");
 				When.onTheMainPage.pressSaveSalesOrdersButton();
 				When.onTheMessagePopover.close();
 				When.onTheMainPage.pressRefreshSalesOrdersButton();
@@ -157,13 +157,13 @@ sap.ui.define([
 				// Create a sales order with invalid note, save, update note, save -> success
 				When.onTheMainPage.pressCreateSalesOrdersButton();
 				When.onTheCreateNewSalesOrderDialog.confirmDialog();
-				When.onTheMainPage.changeNote(0, "RAISE_ERROR");
+				When.onTheMainPage.changeNoteInNewSalesOrder("RAISE_ERROR");
 				When.onTheMainPage.pressSaveSalesOrdersButton();
 				When.onTheMessagePopover.close();
 				// Do it again to ensure that it is retried without update
 				When.onTheMainPage.pressSaveSalesOrdersButton();
 				When.onTheMessagePopover.close();
-				When.onTheMainPage.changeNote(0, "Valid Note");
+				When.onTheMainPage.changeNoteInNewSalesOrder("Valid Note");
 				When.onTheMainPage.pressSaveSalesOrdersButton();
 				When.onTheSuccessInfo.confirm();
 				Then.onTheMainPage.checkDifferentID(0, "");

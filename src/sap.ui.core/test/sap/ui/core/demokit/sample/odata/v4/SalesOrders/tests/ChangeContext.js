@@ -9,10 +9,6 @@ sap.ui.define([
 
 	return {
 		changeContext : function (Given, When, Then, sUIComponent) {
-			if (TestUtils.isRealOData()) {
-				Opa5.assert.ok(true, "Test runs only with mock data");
-				return;
-			}
 
 			Given.iStartMyUIComponent({
 				componentConfig : {
@@ -25,7 +21,7 @@ sap.ui.define([
 			// change a sales order line item, change sales order context
 			When.onTheMainPage.selectFirstSalesOrder();
 			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000010");
-			When.onTheMainPage.changeSalesOrderLineItemNote(0, "Changed by OPA 1");
+			When.onTheMainPage.changeNoteInFirstLineItem(0, "Changed by OPA 1");
 			When.onTheMainPage.selectSalesOrderWithId("0500000001");
 			// check hasPendingChanges via refresh
 			When.onTheMainPage.pressRefreshSalesOrdersButton();
@@ -38,7 +34,7 @@ sap.ui.define([
 
 			// check the same via Reset All button
 			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000010");
-			When.onTheMainPage.changeSalesOrderLineItemNote(0, "Changed by OPA 2");
+			When.onTheMainPage.changeNoteInFirstLineItem(0, "Changed by OPA 2");
 			When.onTheMainPage.selectSalesOrderWithId("0500000001");
 			// check hasPendingChanges via refresh all button
 			When.onTheMainPage.pressRefreshAllButton();
