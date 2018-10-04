@@ -416,24 +416,24 @@ sap.ui.define([
                 var iValue = 0;
 
                 var sMaxHeight = this.getMaxHeight();
-                var iMaxHeight = sMaxHeight ? parseInt(sMaxHeight, 10) : 0;
+                var iMaxHeight = sMaxHeight ? parseInt(sMaxHeight) : 0;
 
                 /*
                  * Fix the width (if necessary)
                  */
                 var sMaxWidth = this.getMaxWidth();
                 if (sMaxWidth) {
-                    var iMaxWidth = parseInt(sMaxWidth, 10);
+                    var iMaxWidth = parseInt(sMaxWidth);
 
                     var sBorderLeft = $This.css("border-left-width");
-                    var iBorderLeft = parseInt(sBorderLeft, 10);
+                    var iBorderLeft = parseInt(sBorderLeft);
                     var sBorderRight = $This.css("border-right-width");
-                    var iBorderRight = parseInt(sBorderRight, 10);
+                    var iBorderRight = parseInt(sBorderRight);
 
                     var sPaddingLeft = $This.css("padding-left");
-                    var iPaddingLeft = parseInt(sPaddingLeft, 10);
+                    var iPaddingLeft = parseInt(sPaddingLeft);
                     var sPaddingRight = $This.css("padding-right");
-                    var iPaddingRight = parseInt(sPaddingRight, 10);
+                    var iPaddingRight = parseInt(sPaddingRight);
 
                     iMaxWidth -= iBorderLeft + iPaddingLeft + iPaddingRight + iBorderRight;
                     $This.css("max-width", iMaxWidth + "px");
@@ -446,15 +446,15 @@ sap.ui.define([
                  */
                 // get all paddings
                 var sPaddingTop = $This.css("padding-top");
-                var iPaddingTop = parseInt(sPaddingTop, 10);
+                var iPaddingTop = parseInt(sPaddingTop);
                 var sPaddingBottom = $This.css("padding-bottom");
-                var iPaddingBottom = parseInt(sPaddingBottom, 10);
+                var iPaddingBottom = parseInt(sPaddingBottom);
 
                 // get all border widths
                 var sBorderTop = $This.css("border-top-width");
-                var iBorderTop = parseInt(sBorderTop, 10);
+                var iBorderTop = parseInt(sBorderTop);
                 var sBorderBottom = $This.css("border-bottom-width");
-                var iBorderBottom = parseInt(sBorderBottom, 10);
+                var iBorderBottom = parseInt(sBorderBottom);
 
                 var iPaddings = iPaddingTop + iPaddingBottom + iBorderTop + iBorderBottom;
 
@@ -480,7 +480,7 @@ sap.ui.define([
                     if (iBottomEnd > iOpenerBottom && aOffset.length > 0) {
                         // check if the offset is responsible for pushing the ToolPopup below the opener
                         // and therefore out of the window
-                        iYOffset = Math.abs(parseInt(aOffset[1], 10));
+                        iYOffset = Math.abs(parseInt(aOffset[1]));
 
                         // this check inverts the variable to prevent any resize of the ToolPopup since it
                         // is pushed out of the window because of the offset
@@ -522,7 +522,7 @@ sap.ui.define([
                     iValue -= $Buttons.length > 0 ? $Buttons.outerHeight(true) : 0;
 
                     // if the height has to be corrected
-                    iValue = parseInt(iValue, 10);
+                    iValue = parseInt(iValue);
 
                     var $Content = this.$("content");
                     $Content.css("max-height", iValue + "px");
@@ -654,8 +654,8 @@ sap.ui.define([
                                 break;
                         }
 
-                        iOffsetX = parseInt(iOffsetX, 10);
-                        iOffsetY = parseInt(iOffsetY, 10);
+                        iOffsetX = parseInt(iOffsetX);
+                        iOffsetY = parseInt(iOffsetY);
                         this.sOffset = "" + iOffsetX + " " + iOffsetY;
                         // my, at, of, offset, collision /*none*/
                         this.setPosition(this._my, this._at, $OpenerRef, this.sOffset, "none");
@@ -732,19 +732,19 @@ sap.ui.define([
             var fnSetArrowDimensions = function (oThis) {
                 var sParam = "sapUiUx3ToolPopupArrowWidth";
                 oThis.sArrowWidth = Parameters.get(sParam);
-                oThis.iArrowWidth = parseInt(oThis.sArrowWidth, 10);
+                oThis.iArrowWidth = parseInt(oThis.sArrowWidth);
 
                 sParam = "sapUiUx3ToolPopupArrowHeight";
                 oThis.sArrowHeight = Parameters.get(sParam);
-                oThis.iArrowHeight = parseInt(oThis.sArrowHeight, 10);
+                oThis.iArrowHeight = parseInt(oThis.sArrowHeight);
 
                 sParam = "sapUiUx3ToolPopupArrowRightMarginCorrection";
                 oThis.sArrowPadding = Parameters.get(sParam);
-                oThis.iArrowPadding = parseInt(oThis.sArrowPadding, 10);
+                oThis.iArrowPadding = parseInt(oThis.sArrowPadding);
 
                 sParam = "sapUiUx3ToolPopupArrowRightMarginCorrectionInverted";
                 oThis.sArrowPaddingInverted = Parameters.get(sParam);
-                oThis.iArrowPaddingInverted = parseInt(oThis.sArrowPaddingInverted, 10);
+                oThis.iArrowPaddingInverted = parseInt(oThis.sArrowPaddingInverted);
             };
 
             /**
@@ -887,8 +887,8 @@ sap.ui.define([
                     sKey = "top";
 
                     if (oOpenerRect) {
-                        popupBorder = parseInt(oThis.$().css('border-top-width'), 10) || 0;
-                        iZero = parseInt(oOpenerRect.top - popupBorder - oPopRect.top, 10);
+                        popupBorder = parseInt(oThis.$().css('border-top-width')) || 0;
+                        iZero = parseInt(oOpenerRect.top - popupBorder - oPopRect.top);
 
                         iVal = Math.round(iZero + oOpenerRect.height / 2 - iHalfArrow);
 
@@ -903,11 +903,11 @@ sap.ui.define([
 
                         if (isRTL) {
                             sKey = "right";
-                            popupBorder = parseInt(oThis.$().css('border-right-width'), 10) || 0;
-                            iZero = parseInt(oPopRect.left + oPopRect.width - oOpenerRect.left - oOpenerRect.width - popupBorder, 10);
+                            popupBorder = parseInt(oThis.$().css('border-right-width')) || 0;
+                            iZero = parseInt(oPopRect.left + oPopRect.width - oOpenerRect.left - oOpenerRect.width - popupBorder);
                         } else {
-                            popupBorder = parseInt(oThis.$().css('border-left-width'), 10) || 0;
-                            iZero = parseInt(oOpenerRect.left - oPopRect.left - popupBorder, 10);
+                            popupBorder = parseInt(oThis.$().css('border-left-width')) || 0;
+                            iZero = parseInt(oOpenerRect.left - oPopRect.left - popupBorder);
                         }
 
                         iVal = Math.round(iZero + oOpenerRect.width / 2 - iHalfArrow);
@@ -953,7 +953,7 @@ sap.ui.define([
                     });
                 }
 
-                iVal = parseInt(iVal, 10);
+                iVal = parseInt(iVal);
                 iVal = iVal < -popupBorder ? -popupBorder : iVal;
 
                 $Arrow.css(sKey, iVal + "px");

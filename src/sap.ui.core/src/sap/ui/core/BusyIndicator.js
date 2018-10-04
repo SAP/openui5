@@ -204,8 +204,8 @@ sap.ui.define([
 		}
 
 		if ((iDelay === undefined)
-				|| ((iDelay != 0) && (parseInt(iDelay, 10) == 0))
-				|| (parseInt(iDelay, 10) < 0)) {
+				|| ((iDelay != 0) && (parseInt(iDelay) == 0))
+				|| (parseInt(iDelay) < 0)) {
 			iDelay = this.iDEFAULT_DELAY_MS;
 		}
 		if (FESR.getActive()) {

@@ -3797,7 +3797,7 @@ sap.ui.define([
 			method: "GET",
 			path: /.*LeaveItemCollection\?code=(.*)/,//path : new RegExp(".*\\?(projects)"),
 			response: function (oXhr, sCode) {
-				oXhr.respondJSON(parseInt(sCode, 10),
+				oXhr.respondJSON(parseInt(sCode),
 					{
 						"Content-Type": "application/json"
 					},

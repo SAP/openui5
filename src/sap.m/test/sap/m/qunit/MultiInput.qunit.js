@@ -185,7 +185,7 @@ sap.ui.define([
 
 		output = multiInput._calculateSpaceForTokenizer();
 
-		assert.strictEqual(isNaN(parseInt(output, 10)), false, "_calculateSpaceForTokenizer returns a valid value");
+		assert.strictEqual(isNaN(parseInt(output)), false, "_calculateSpaceForTokenizer returns a valid value");
 	});
 
 	QUnit.test("token data binding", function(assert) {

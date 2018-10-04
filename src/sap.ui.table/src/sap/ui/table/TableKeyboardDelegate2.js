@@ -1581,7 +1581,7 @@ sap.ui.define([
 			// the selected cell index is the index of the first cell in the span.
 			// Treat this case like there is no span and the last cell of the fixed area is selected.
 			if (oCellInfo.isOfType(CellType.COLUMNHEADER) && TableUtils.hasFixedColumns(this)) {
-				var iColSpan = parseInt(oCellInfo.cell.attr("colspan") || 1, 10);
+				var iColSpan = parseInt(oCellInfo.cell.attr("colspan") || 1);
 				if (iColSpan > 1 && iFocusedCellInRow + iColSpan - iRowHeaderOffset === iFixedColumnCount) {
 					bIsColSpanAtFixedAreaEnd = true;
 				}
@@ -1946,7 +1946,7 @@ sap.ui.define([
 				var bHasRowHeader = TableUtils.hasRowHeader(this);
 				var iRowHeaderOffset = bHasRowHeader ? 1 : 0;
 				var iVisibleColumnCount = TableUtils.getVisibleColumnCount(this);
-				var iColSpan = parseInt(oCellInfo.cell.attr("colspan") || 1, 10);
+				var iColSpan = parseInt(oCellInfo.cell.attr("colspan") || 1);
 
 				preventItemNavigation(oEvent);
 

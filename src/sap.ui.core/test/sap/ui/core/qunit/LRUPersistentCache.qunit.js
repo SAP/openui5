@@ -575,7 +575,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 							if (Object.keys(oItem).length != 1) {
 								throw new Error("There should be only one key inside an item, but they are not " + JSON.stringify(oItem));
 							}
-							var iPosition = parseInt(Object.keys(oItem)[0], 10);
+							var iPosition = parseInt(Object.keys(oItem)[0]);
 							var oKey = oItem[iPosition];
 							if (oKey) {
 								assert.equal(oCache._metadata.__byKey__[oKey], iPosition, "LRU map structure __byKey__ should contain the entry with key '" + oKey + "'");

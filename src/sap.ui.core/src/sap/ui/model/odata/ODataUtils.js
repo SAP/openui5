@@ -623,9 +623,9 @@ sap.ui.define([
 	 */
 	function extractMilliseconds(vValue) {
 		if (typeof vValue === "string" && rTime.test(vValue)) {
-			vValue = parseInt(RegExp.$1, 10) * 3600000 +
-				parseInt(RegExp.$2, 10) * 60000 +
-				parseInt(RegExp.$3, 10) * 1000;
+			vValue = parseInt(RegExp.$1) * 3600000 +
+				parseInt(RegExp.$2) * 60000 +
+				parseInt(RegExp.$3) * 1000;
 		}
 		if (vValue instanceof Date) {
 			return vValue.getTime();

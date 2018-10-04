@@ -405,7 +405,7 @@ sap.ui.define([
 				oDateValue = new Date();
 
 			if (oHoursSlider) {
-				iHours = parseInt(oHoursSlider.getSelectedValue(), 10);
+				iHours = parseInt(oHoursSlider.getSelectedValue());
 			}
 
 			if (oFormatSlider) {

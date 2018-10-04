@@ -301,7 +301,7 @@ sap.ui.define([
 			$Target = $Target.parent();
 		}
 
-		iDate1 = parseInt(this._oFormatYyyymmdd.format(oSelectedDateRange.getStartDate()), 10);
+		iDate1 = parseInt(this._oFormatYyyymmdd.format(oSelectedDateRange.getStartDate()));
 		iDate2 = $Target.data("sapDay");
 
 		if (this.hasListeners("datehovered")) {
@@ -1300,8 +1300,8 @@ sap.ui.define([
 			// as part of the new interval.
 			if (this._isMarkingUnfinishedRangeAllowed()) {
 				var oIntervalStart = this.getSelectedDates()[0],
-					iParsedStartDate = parseInt(this._oFormatYyyymmdd.format(oIntervalStart.getStartDate()), 10),
-					iParsedEndDate = parseInt(this._oFormatYyyymmdd.format(oFocusedDate.toLocalJSDate()), 10);
+					iParsedStartDate = parseInt(this._oFormatYyyymmdd.format(oIntervalStart.getStartDate())),
+					iParsedEndDate = parseInt(this._oFormatYyyymmdd.format(oFocusedDate.toLocalJSDate()));
 
 				this._markDatesBetweenStartAndHoveredDate(iParsedStartDate, iParsedEndDate);
 			}
@@ -2019,7 +2019,7 @@ sap.ui.define([
 				return;
 			}
 
-			iIntervalStartDate = parseInt(this._oFormatYyyymmdd.format(oSelectedDateRange.getStartDate()), 10);
+			iIntervalStartDate = parseInt(this._oFormatYyyymmdd.format(oSelectedDateRange.getStartDate()));
 			iIntervalEndDate = $DomRef.data("sapDay");
 
 			this._markDatesBetweenStartAndHoveredDate(iIntervalStartDate, iIntervalEndDate);

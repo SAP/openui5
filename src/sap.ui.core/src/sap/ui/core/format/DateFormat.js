@@ -488,7 +488,7 @@ sap.ui.define([
 			iLength++; //"+" or "-"
 			sPart = this.findNumbers(sValue.substr(iLength), 2);
 
-			var iTZDiffHour = parseInt(sPart, 10);
+			var iTZDiffHour = parseInt(sPart);
 			iLength += 2; //hh: 2 digits for hours
 
 			if (bISO) {
@@ -497,7 +497,7 @@ sap.ui.define([
 			sPart = this.findNumbers(sValue.substr(iLength), 2);
 			iLength += 2; //mm: 2 digits for minutes
 
-			var iTZDiff = parseInt(sPart, 10);
+			var iTZDiff = parseInt(sPart);
 
 			return {
 				length: iLength,
@@ -629,7 +629,7 @@ sap.ui.define([
 					sPart = oParseHelper.findNumbers(sValue, oPart.digits);
 				}
 
-				var iYear = parseInt(sPart, 10);
+				var iYear = parseInt(sPart);
 				// Find the right century for two-digit years
 				if (sCalendarType != CalendarType.Japanese && sPart.length <= 2) {
 					var oCurrentDate = UniversalDate.getInstance(new Date(), sCalendarType),
@@ -679,7 +679,7 @@ sap.ui.define([
 				} else {
 					sPart = oParseHelper.findNumbers(sValue, oPart.digits);
 				}
-				var iYear = parseInt(sPart, 10);
+				var iYear = parseInt(sPart);
 				var iWeekYear;
 				// Find the right century for two-digit years
 				if (sCalendarType != CalendarType.Japanese && sPart.length <= 2) {
@@ -726,7 +726,7 @@ sap.ui.define([
 				if (oPart.digits < 3) {
 					sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2));
 					bValid = oParseHelper.checkValid(oPart.type, sPart === "", oFormat);
-					iMonth = parseInt(sPart, 10) - 1;
+					iMonth = parseInt(sPart) - 1;
 					if (oConfig.strict && (iMonth > 11 || iMonth < 0)) {
 						bValid = false;
 					}
@@ -773,7 +773,7 @@ sap.ui.define([
 				if (oPart.digits < 3) {
 					sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2));
 					bValid = oParseHelper.checkValid(oPart.type, sPart === "", oFormat);
-					iMonth = parseInt(sPart, 10) - 1;
+					iMonth = parseInt(sPart) - 1;
 					if (oConfig.strict && (iMonth > 11 || iMonth < 0)) {
 						bValid = false;
 					}
@@ -819,7 +819,7 @@ sap.ui.define([
 				if (oPart.digits < 3) {
 					sPart = oParseHelper.findNumbers(sValue, 2);
 					iLength = sPart.length;
-					iWeek = parseInt(sPart, 10) - 1;
+					iWeek = parseInt(sPart) - 1;
 					bValid = oParseHelper.checkValid(oPart.type, !sPart, oFormat);
 				} else {
 					sPart = oFormat.oLocaleData.getCalendarWeek(oPart.digits === 3 ? "narrow" : "wide");
@@ -828,7 +828,7 @@ sap.ui.define([
 						oResult = rWeekNumber.exec(sValue);
 					if (oResult) {
 						iLength = oResult[0].length;
-						iWeek = parseInt(oResult[0], 10) - 1;
+						iWeek = parseInt(oResult[0]) - 1;
 					} else {
 						bValid = oParseHelper.checkValid(oPart.type, true, oFormat);
 					}
@@ -869,7 +869,7 @@ sap.ui.define([
 			parse: function(sValue, oPart, oFormat, oConfig) {
 				var sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2));
 				var bValid = oParseHelper.checkValid(oPart.type, sPart === "", oFormat);
-				var iDay = parseInt(sPart, 10);
+				var iDay = parseInt(sPart);
 				if (oConfig.strict && (iDay > 31 || iDay < 1)) {
 					bValid = false;
 				}
@@ -903,7 +903,7 @@ sap.ui.define([
 				if (oPart.digits < 3) {
 					sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2));
 					bValid = oParseHelper.checkValid(oPart.type, sPart === "", oFormat);
-					iQuarter = parseInt(sPart, 10) - 1;
+					iQuarter = parseInt(sPart) - 1;
 					if (oConfig.strict && iQuarter > 3) {
 						bValid = false;
 					}
@@ -951,7 +951,7 @@ sap.ui.define([
 				if (oPart.digits < 3) {
 					sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2));
 					bValid = oParseHelper.checkValid(oPart.type, sPart === "", oFormat);
-					iQuarter = parseInt(sPart, 10) - 1;
+					iQuarter = parseInt(sPart) - 1;
 					if (oConfig.strict && iQuarter > 3) {
 						bValid = false;
 					}
@@ -1055,7 +1055,7 @@ sap.ui.define([
 				var sPart = oParseHelper.findNumbers(sValue, oPart.digits);
 
 				return {
-					dayNumberOfWeek: parseInt(sPart, 10),
+					dayNumberOfWeek: parseInt(sPart),
 					length: sPart.length
 				};
 			}
@@ -1108,7 +1108,7 @@ sap.ui.define([
 			parse: function(sValue, oPart, oFormat, oConfig) {
 				var bValid;
 				var sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2));
-				var iHours = parseInt(sPart, 10);
+				var iHours = parseInt(sPart);
 
 				bValid = oParseHelper.checkValid(oPart.type, sPart === "", oFormat);
 
@@ -1134,7 +1134,7 @@ sap.ui.define([
 			parse: function(sValue, oPart, oFormat, oConfig) {
 				var bValid;
 				var sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2));
-				var iHours = parseInt(sPart, 10);
+				var iHours = parseInt(sPart);
 
 				bValid = oParseHelper.checkValid(oPart.type, sPart === "", oFormat);
 
@@ -1163,7 +1163,7 @@ sap.ui.define([
 			parse: function(sValue, oPart, oFormat, oConfig) {
 				var bValid;
 				var sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2));
-				var iHours = parseInt(sPart, 10);
+				var iHours = parseInt(sPart);
 
 				bValid = oParseHelper.checkValid(oPart.type, sPart === "", oFormat);
 
@@ -1196,7 +1196,7 @@ sap.ui.define([
 			parse: function(sValue, oPart, oFormat, oConfig) {
 				var bPM = oConfig.dateValue.pm;
 				var sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2));
-				var iHours = parseInt(sPart, 10);
+				var iHours = parseInt(sPart);
 
 				var bValid = oParseHelper.checkValid(oPart.type, sPart === "", oFormat);
 
@@ -1228,7 +1228,7 @@ sap.ui.define([
 			parse: function(sValue, oPart, oFormat, oConfig) {
 				var bValid;
 				var sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2));
-				var iMinutes = parseInt(sPart, 10);
+				var iMinutes = parseInt(sPart);
 
 				bValid = oParseHelper.checkValid(oPart.type, sPart === "", oFormat);
 
@@ -1252,7 +1252,7 @@ sap.ui.define([
 			parse: function(sValue, oPart, oFormat, oConfig) {
 				var bValid;
 				var sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2));
-				var iSeconds = parseInt(sPart, 10);
+				var iSeconds = parseInt(sPart);
 
 				bValid = oParseHelper.checkValid(oPart.type, sPart === "", oFormat);
 
@@ -1284,7 +1284,7 @@ sap.ui.define([
 				sPart = sPart.substr(0, 3);
 				sPart = sPart.padEnd(3, "0");
 
-				var iMilliseconds = parseInt(sPart, 10);
+				var iMilliseconds = parseInt(sPart);
 
 				return {
 					length: iLength,
@@ -1990,7 +1990,7 @@ sap.ui.define([
 				if (oEntry.value !== undefined) {
 					return computeRelativeDate(oEntry.value, oEntry.scale);
 				} else {
-					iValue = parseInt(oResult[1], 10);
+					iValue = parseInt(oResult[1]);
 					return computeRelativeDate(iValue * oEntry.sign, oEntry.scale);
 				}
 			}

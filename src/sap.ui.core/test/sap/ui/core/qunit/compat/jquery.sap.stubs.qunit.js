@@ -152,7 +152,7 @@
 
 			oConfig.mode = oParams.get("test-mode") || "all";
 			if (oParams.get("chunk")) {
-				oConfig.chunk = parseInt(oParams.get("chunk"), 10);
+				oConfig.chunk = parseInt(oParams.get("chunk"));
 			}
 
 			// Chunk paging logic

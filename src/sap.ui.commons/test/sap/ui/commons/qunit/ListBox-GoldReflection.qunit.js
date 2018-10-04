@@ -83,7 +83,7 @@ sap.ui.define([
 
 		// check width in DOM
 		var oDomRef = jQuery.sap.domById("ListBox1");
-		assert.equal(oDomRef.offsetWidth, parseInt(sWidth, 10), "actual ListBox width should match the applied setting");
+		assert.equal(oDomRef.offsetWidth, parseInt(sWidth), "actual ListBox width should match the applied setting");
 	});
 
 
@@ -147,7 +147,7 @@ sap.ui.define([
 		// check height in DOM
 		var oDomRef = jQuery.sap.domById("ListBox1");
 
-		assert.equal(oDomRef.offsetHeight, parseInt(sHeight, 10), "actual ListBox height must reflect settings");
+		assert.equal(oDomRef.offsetHeight, parseInt(sHeight), "actual ListBox height must reflect settings");
 	});
 
 

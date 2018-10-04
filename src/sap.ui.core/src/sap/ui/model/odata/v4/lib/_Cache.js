@@ -68,7 +68,7 @@ sap.ui.define([
 		// Note: @odata.count is of type Edm.Int64, represented as a string in OData responses;
 		// $count should be a number and the loss of precision is acceptable
 		if (typeof vCount === "string") {
-			vCount = parseInt(vCount, 10);
+			vCount = parseInt(vCount);
 		}
 		// Note: this relies on $count being present as an own property of aCollection
 		_Helper.updateExisting(mChangeListeners, sPath, aCollection, {$count : vCount});
@@ -1254,7 +1254,7 @@ sap.ui.define([
 		this.sContext = oResult["@odata.context"];
 		sCount = oResult["@odata.count"];
 		if (sCount) {
-			this.iLimit = parseInt(sCount, 10);
+			this.iLimit = parseInt(sCount);
 			setCount(this.mChangeListeners, "", this.aElements, this.iLimit);
 		}
 		this.visitResponse(oResult, mTypeForMetaPath, true);

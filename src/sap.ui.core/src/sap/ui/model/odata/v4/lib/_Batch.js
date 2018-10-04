@@ -97,7 +97,7 @@ sap.ui.define([
 			throw new Error("Content-ID MIME header missing for the change set response.");
 		}
 
-		iResponseIndex = parseInt(sContentID, 10);
+		iResponseIndex = parseInt(sContentID);
 		if (isNaN(iResponseIndex)) {
 			throw new Error("Invalid Content-ID value in change set response.");
 		}
@@ -173,7 +173,7 @@ sap.ui.define([
 			// e.g. HTTP/1.1 200 OK
 			aHttpStatusInfos = aHttpHeaders[0].split(" ");
 
-			oResponse.status = parseInt(aHttpStatusInfos[1], 10);
+			oResponse.status = parseInt(aHttpStatusInfos[1]);
 			oResponse.statusText = aHttpStatusInfos.slice(2).join(' ');
 			oResponse.headers = {};
 

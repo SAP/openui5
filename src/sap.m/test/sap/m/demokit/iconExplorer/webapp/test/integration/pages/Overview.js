@@ -531,7 +531,7 @@ sap.ui.define([
 								}),
 								success: function (aTabFilters) {
 									var oTabFilter = aTabFilters[0];
-									Opa5.assert.strictEqual(parseInt(oTabFilter.getCount(), 10), iObjectCount, "The icon tab fillter \"all\" shows the total number of icons " + iObjectCount);
+									Opa5.assert.strictEqual(parseInt(oTabFilter.getCount()), iObjectCount, "The icon tab fillter \"all\" shows the total number of icons " + iObjectCount);
 								},
 								errorMessage: "The icon tab fillter \"all\" does not contain the number of items " + iObjectCount
 							});

@@ -51,7 +51,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 						// other browsers return a string
 						// we ignore the case of nested elements with an explicit value of 0
 						// <div style="z-index: -10;"><div style="z-index: 0;"></div></div>
-						value = parseInt( elem.css( "zIndex" ), 10 );
+						value = parseInt( elem.css( "zIndex" ));
 						if ( !isNaN( value ) && value !== 0 ) {
 							return value;
 						}

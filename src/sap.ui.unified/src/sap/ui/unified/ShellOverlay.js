@@ -280,7 +280,7 @@ sap.ui.define([
 	/**** Private Helpers ****/
 
 	ShellOverlay.prototype._getAnimDurationThemeParam = function(sParam, bClearIfNotActive){
-		var val = parseInt(Parameters.get(sParam), 10);
+		var val = parseInt(Parameters.get(sParam));
 		if (!this._getAnimActive() && bClearIfNotActive) {
 			val = 0;
 		}

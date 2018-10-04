@@ -289,7 +289,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/IconPoo
 	ListBoxRenderer.fixWidth = function(sCssWidth) {
 		if (ListBoxRenderer.borderWidths > 0) {
 			if (sCssWidth && jQuery.sap.endsWithIgnoreCase(sCssWidth, "px")) {
-				var iWidth = parseInt(sCssWidth.substr(0, sCssWidth.length - 2), 10);
+				var iWidth = parseInt(sCssWidth.substr(0, sCssWidth.length - 2));
 				var newWidth = iWidth - ListBoxRenderer.borderWidths;
 				if (newWidth >= 0) {
 					return newWidth + "px";

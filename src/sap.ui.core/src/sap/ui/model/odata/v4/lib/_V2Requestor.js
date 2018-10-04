@@ -98,7 +98,7 @@ sap.ui.define([
 		if (!aMatches) {
 			throw new Error("Not a valid Edm.DateTime value '" + sV2Value + "'");
 		}
-		oDate = new Date(parseInt(aMatches[1], 10));
+		oDate = new Date(parseInt(aMatches[1]));
 		if (Number(aMatches[1] % (24 * 60 * 60 * 1000)) !== 0) {
 			throw new Error("Cannot convert Edm.DateTime value '" + sV2Value
 				+ "' to Edm.Date because it contains a time of day");
@@ -134,9 +134,9 @@ sap.ui.define([
 		if (!aMatches) {
 			throw new Error("Not a valid Edm.DateTimeOffset value '" + sV2Value + "'");
 		}
-		iTicks = parseInt(aMatches[1], 10);
-		iOffsetHours = parseInt(aMatches[3], 10);
-		iOffsetMinutes = parseInt(aMatches[4], 10);
+		iTicks = parseInt(aMatches[1]);
+		iOffsetHours = parseInt(aMatches[3]);
+		iOffsetMinutes = parseInt(aMatches[4]);
 		if (!aMatches[2] || iOffsetHours === 0 && iOffsetMinutes === 0) {
 			sOffset = "Z";
 		} else {

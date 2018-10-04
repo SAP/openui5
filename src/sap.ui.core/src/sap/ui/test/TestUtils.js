@@ -493,7 +493,7 @@ sap.ui.define([
 				oSandbox.add(oServer);
 				oServer.autoRespond = true;
 				if (sAutoRespondAfter) {
-					oServer.autoRespondAfter = parseInt(sAutoRespondAfter, 10);
+					oServer.autoRespondAfter = parseInt(sAutoRespondAfter);
 				}
 
 				for (sUrl in mUrls) {

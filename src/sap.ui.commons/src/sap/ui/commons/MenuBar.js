@@ -423,7 +423,7 @@ sap.ui.define([
 				if (sItemIdx == "ovrflw") {
 					return "ovrflw";
 				} else {
-					var iIdx = parseInt(sItemIdx, 10);
+					var iIdx = parseInt(sItemIdx);
 					var oMenuItem = oThis.getItems()[iIdx];
 					return oMenuItem;
 				}

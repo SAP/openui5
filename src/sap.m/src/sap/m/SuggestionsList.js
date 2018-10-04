@@ -108,7 +108,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control'],
 			var descendantAttr = "aria-activedecendant";
 
 			// selectByIndex(null || undefined || -1) -> remove selection
-			if (isNaN(parseInt(iIndex, 10))) {
+			if (isNaN(parseInt(iIndex))) {
 				iIndex = -1;
 				bRelative = false;
 			}

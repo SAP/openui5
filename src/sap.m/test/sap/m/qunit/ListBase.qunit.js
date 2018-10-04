@@ -739,10 +739,10 @@ sap.ui.define([
 			$list = oList.$();
 			assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
 			assert.strictEqual($list.css("width"), sWidthPx, 'The CSS property "width" is now "' + sWidth + '" on ' + oList);
-			assert.strictEqual($list.width(), parseInt(sWidthPx.replace("px", ""), 10), 'The px width is now "' + parseInt(sWidthPx.replace("px", ""), 10) + '" on ' + oList);
+			assert.strictEqual($list.width(), parseInt(sWidthPx.replace("px", "")), 'The px width is now "' + parseInt(sWidthPx.replace("px", "")) + '" on ' + oList);
 
 			sWidth = "50%";
-			sWidthPx = Math.ceil(parseInt($list.parent().css("width"), 10) / 2.0) + "px";
+			sWidthPx = Math.ceil(parseInt($list.parent().css("width")) / 2.0) + "px";
 			oList.setWidth(sWidth);
 			sap.ui.getCore().applyChanges();
 			$list = oList.$();

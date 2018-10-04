@@ -1020,7 +1020,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', './Locale', 'sa
 				oScale = this._get("dateFields", sScale + "-" + sStyle);
 				for (var sEntry in oScale) {
 					if (sEntry.indexOf("relative-type-") === 0) {
-						iValue = parseInt(sEntry.substr(14), 10);
+						iValue = parseInt(sEntry.substr(14));
 						aPatterns.push({
 							scale: sScale,
 							value: iValue,
@@ -1387,7 +1387,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', './Locale', 'sa
 			var oEras = this._get(getCLDRCalendarName(sCalendarType), "era-" + sWidth),
 				aEras = [];
 			for (var i in oEras) {
-				aEras[parseInt(i, 10)] = oEras[i];
+				aEras[parseInt(i)] = oEras[i];
 			}
 			return aEras;
 		},
@@ -1405,7 +1405,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', './Locale', 'sa
 			var oEraDates = this._get("eras-" + sCalendarType.toLowerCase()),
 				aEraDates = [];
 			for (var i in oEraDates) {
-				aEraDates[parseInt(i, 10)] = oEraDates[i];
+				aEraDates[parseInt(i)] = oEraDates[i];
 			}
 			return aEraDates;
 		},
@@ -1600,7 +1600,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', './Locale', 'sa
 				var fnOperand;
 				fnOperand = operand();
 				if (accept(OP_MOD)) {
-					var iDivisor = parseInt(consume(), 10);
+					var iDivisor = parseInt(consume());
 					return function(o) {
 						return fnOperand(o) % iDivisor;
 					};
@@ -1646,10 +1646,10 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', './Locale', 'sa
 				aParts.forEach(function(sPart) {
 					aRange = sPart.split(RANGE);
 					if (aRange.length === 1) {
-						aValues.push(parseInt(sPart, 10));
+						aValues.push(parseInt(sPart));
 					} else {
-						iFrom = parseInt(aRange[0], 10);
-						iTo = parseInt(aRange[1], 10);
+						iFrom = parseInt(aRange[0]);
+						iTo = parseInt(aRange[1]);
 						for (var i = iFrom; i <= iTo; i++) {
 							aValues.push(i);
 						}
@@ -1680,11 +1680,11 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', './Locale', 'sa
 
 				o = {
 					n: parseFloat(sValue),
-					i: parseInt(sDecimal, 10),
+					i: parseInt(sDecimal),
 					v: sFraction.length,
 					w: sFractionNoZeros.length,
-					f: parseInt(sFraction, 10),
-					t: parseInt(sFractionNoZeros, 10)
+					f: parseInt(sFraction),
+					t: parseInt(sFractionNoZeros)
 				};
 				return fnOr(o);
 			};

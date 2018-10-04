@@ -700,7 +700,7 @@ function(
 						.closest("." + WizardProgressNavigatorRenderer.CLASSES.STEP)
 						.attr(WizardProgressNavigatorRenderer.ATTRIBUTES.STEP);
 
-		return parseInt(stepNumber, 10);
+		return parseInt(stepNumber);
 	};
 
 	return WizardProgressNavigator;

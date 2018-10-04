@@ -623,8 +623,8 @@ sap.ui.define([
 			var iArrSize = oContextMenuControl._getBaseFontSize() * oContextMenuControl._getArrowHeight();
 			this.clock.tick(this.oContextMenuPlugin.iMenuLeftclickOpeningDelay);
 			var oPopover = oContextMenuControl._getPopoverDimensions(true);
-			var iHeight = parseInt(jQuery("#" + oContextMenuControl.getPopover().getId()).css("height"), 10) + iArrSize;
-			var iWidth = parseInt(jQuery("#" + oContextMenuControl.getPopover().getId()).css("width"), 10) + iArrSize;
+			var iHeight = parseInt(jQuery("#" + oContextMenuControl.getPopover().getId()).css("height")) + iArrSize;
+			var iWidth = parseInt(jQuery("#" + oContextMenuControl.getPopover().getId()).css("width")) + iArrSize;
 			assert.strictEqual(typeof oPopover.height, "number", "the height of a non-expanded ContextMenu should be a number");
 			assert.strictEqual(oPopover.height, iHeight, "the height of a non-expanded ContextMenu is correct");
 			assert.ok(!isNaN(oPopover.height), "the height of a non-expanded ContextMenu shouldn't be NaN");
@@ -641,8 +641,8 @@ sap.ui.define([
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			this.clock.tick(this.oContextMenuPlugin.iMenuLeftclickOpeningDelay);
 			var oPopoverContext = oContextMenuControl._getPopoverDimensions(false);
-			var iHeight = parseInt(jQuery("#" + oContextMenuControl.getPopover().getId()).css("height"), 10);
-			var iWidth = parseInt(jQuery("#" + oContextMenuControl.getPopover().getId()).css("width"), 10);
+			var iHeight = parseInt(jQuery("#" + oContextMenuControl.getPopover().getId()).css("height"));
+			var iWidth = parseInt(jQuery("#" + oContextMenuControl.getPopover().getId()).css("width"));
 			assert.strictEqual(typeof oPopoverContext.height, "number", "the height of a context menu should be a number");
 			assert.strictEqual(oPopoverContext.height, iHeight, "the height of a context menu is correct");
 			assert.ok(!isNaN(oPopoverContext.height), "the height of a context menu shouldn't be NaN");
@@ -1354,7 +1354,7 @@ sap.ui.define([
 			assert.strictEqual(oFakeDiv.getAttribute("overlay"), this.oButton2Overlay.getId(), "the fakeDiv should have an overlay attribute containing the id of the original overlay");
 			assert.strictEqual(oFakeDiv.getAttribute("id"), sFakeDivId, "the fakeDiv should have the correct contextMenu fakeDiv id");
 			assert.strictEqual(oFakeDiv, jQuery("#" + this.oButton2Overlay.getId()).children()[1], "the fakeDiv should be a child of the overlay the ContextMenu was placed by");
-			assert.strictEqual(parseInt(oFakeDiv.style.top, 10), 0, "the FakeDiv top position is zero when the Overlay is not on top position");
+			assert.strictEqual(parseInt(oFakeDiv.style.top), 0, "the FakeDiv top position is zero when the Overlay is not on top position");
 			assert.ok(oSpyContext.calledOnce);
 			assert.ok(oSpyMini.notCalled);
 			oSpyContext.reset();
@@ -1364,7 +1364,7 @@ sap.ui.define([
 			// calling "_placeContextMenu" with faked overlay position to check top calculation
 			sinon.stub(this.oContextMenuControl, "_getOverlayDimensions").returns({top: 40, left: 1787, width: 40, height: 48, right: 1827, bottom: 88, isOverlappedAtBottom: false, isOverlappedAtTop: false});
 			oFakeDiv = this.oContextMenuControl._placeContextMenu(this.oButton2Overlay, false);
-			assert.strictEqual(parseInt(oFakeDiv.style.top, 10) > 0, true, "the FakeDiv top position is greater than zero when the Overlay is on top position");
+			assert.strictEqual(parseInt(oFakeDiv.style.top) > 0, true, "the FakeDiv top position is greater than zero when the Overlay is on top position");
 			assert.ok(oSpyMini.calledOnce);
 			assert.ok(oSpyContext.notCalled);
 		});
@@ -1387,9 +1387,9 @@ sap.ui.define([
 				placement: "Bottom"
 			}).openBy(oCompactBtn);
 			var fCalculatedCozyArrowSize = this.oContextMenuControl._getArrowHeight(false);
-			var fMeasuredCozyArrowSize = parseInt(jQuery("#" + oCozyPop.getId() + "-arrow").css("height"), 10) / 16;
+			var fMeasuredCozyArrowSize = parseInt(jQuery("#" + oCozyPop.getId() + "-arrow").css("height")) / 16;
 			var fCalculatedCompactArrowSize = this.oContextMenuControl._getArrowHeight(true);
-			var fMeasuredCompactArrowSize = parseInt(jQuery("#" + oCompactPop.getId() + "-arrow").css("height"), 10) / 16;
+			var fMeasuredCompactArrowSize = parseInt(jQuery("#" + oCompactPop.getId() + "-arrow").css("height")) / 16;
 			oCozyPop.close();
 			oCompactPop.close();
 			assert.strictEqual(fCalculatedCozyArrowSize, fMeasuredCozyArrowSize, "To prevent rendering the ContextMenu a bunch of times the size of the Popover's Arrow is calculated based on the css values of sap.m.Popover. If this test fails the css values of sap.m.Popover may have changed. Please run this test again to make sure it didn't fail randomly. If it fails again the return value of _getArrowHeight (for bCompact = false) has to be adjusted to whatever the expected value was in this test.");

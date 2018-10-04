@@ -73,7 +73,7 @@ sap.ui.define([
 				return null;
 			}
 
-			iLen = iLen ? parseInt(iLen, 10) : 10;
+			iLen = iLen ? parseInt(iLen) : 10;
 
 			if (iLen > 50) {
 				sColumnWidth = "15rem";

@@ -587,7 +587,7 @@ sap.ui.define([
 
 			// update iLength (only when the inline count was requested and is available)
 			if (bInlineCountRequested && oData.__count !== undefined) {
-				that.iLength = parseInt(oData.__count, 10);
+				that.iLength = parseInt(oData.__count);
 				that.bLengthFinal = true;
 
 				// in the OpertionMode.Auto, we check if the count is LE than the given threshold (which also was requested!)
@@ -783,7 +783,7 @@ sap.ui.define([
 		}
 
 		function _handleSuccess(oData) {
-			that.iLength = parseInt(oData, 10);
+			that.iLength = parseInt(oData);
 			that.bLengthFinal = true;
 			that.bLengthRequested = true;
 			that.oCountHandle = null;
@@ -1298,10 +1298,10 @@ sap.ui.define([
 			case "Edm.Int32":
 			case "Edm.SByte":
 				if (typeof oFilter.oValue1 == "string") {
-					oFilter.oValue1 = parseInt(oFilter.oValue1, 10);
+					oFilter.oValue1 = parseInt(oFilter.oValue1);
 				}
 				if (typeof oFilter.oValue2 == "string") {
-					oFilter.oValue2 = parseInt(oFilter.oValue2, 10);
+					oFilter.oValue2 = parseInt(oFilter.oValue2);
 				}
 				break;
 			case "Edm.Float":

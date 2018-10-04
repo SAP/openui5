@@ -827,7 +827,7 @@ sap.ui.define([
 			var gridParent = document.getElementById('sapUiSupportPerfHeaderTimelineBarWrapper');
 			var gridLineNumbers = Math.round(gridParent.offsetWidth / 10);
 			var filteredDuration = filterOptions.filterByTime.end - filterOptions.filterByTime.start;
-			var gridLineStepInTime = parseInt(filteredDuration / gridLineNumbers, 10);
+			var gridLineStepInTime = parseInt(filteredDuration / gridLineNumbers);
 
 			if (document.getElementById('grid')) {
 				document.getElementById('grid').parentNode.removeChild(document.getElementById('grid'));
@@ -842,7 +842,7 @@ sap.ui.define([
 				var divForText = document.createElement('div');
 
 				if (i % 5 === 0 || i === 1) {
-					var time = parseInt(filterOptions.filterByTime.start, 10);
+					var time = parseInt(filterOptions.filterByTime.start);
 
 					if (i !== 1) {
 						time += i * gridLineStepInTime;
@@ -883,7 +883,7 @@ sap.ui.define([
 			var handleComputedWidth = window.getComputedStyle(_sliderVars.nodes.handle).width;
 			var oldSliderWidth = _sliderVars.sizes.width;
 
-			_sliderVars.sizes.handleWidth = parseInt(handleComputedWidth, 10);
+			_sliderVars.sizes.handleWidth = parseInt(handleComputedWidth);
 			_sliderVars.sizes.width = _sliderVars.nodes.slider.offsetWidth;
 
 			if (_sliderVars.sizes.width !== _sliderVars.sizes.handleWidth) {
@@ -970,7 +970,7 @@ sap.ui.define([
 		function _updateUI() {
 			var handleComputedWidth = window.getComputedStyle(_sliderVars.nodes.handle).width;
 
-			_sliderVars.sizes.handleWidth = parseInt(handleComputedWidth, 10);
+			_sliderVars.sizes.handleWidth = parseInt(handleComputedWidth);
 			_sliderVars.drag.handleOffsetLeft = _sliderVars.nodes.handle.offsetLeft;
 
 			//var filteredOptions = _getFilterOptions();

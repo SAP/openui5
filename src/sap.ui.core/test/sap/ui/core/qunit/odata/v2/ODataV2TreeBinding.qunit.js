@@ -23,7 +23,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 	var aAnnotationsMockdata = oAnnotationMockServer._oMockdata.GLAccountHierarchyInChartOfAccountsLiSet;
 	aAnnotationsMockdata.forEach(function(oMockdata) {
 		//convert string based level properties (NUMC fields) to real numbers
-		oMockdata.FinStatementHierarchyLevelVal = parseInt(oMockdata.FinStatementHierarchyLevelVal, 10);
+		oMockdata.FinStatementHierarchyLevelVal = parseInt(oMockdata.FinStatementHierarchyLevelVal);
 	});
 
 	//MockServer for use with annotated tree -> guids instead of strings as IDs
@@ -38,7 +38,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 	var aAnnotationsMockdataGUID = oAnnotationMockServerGUID._oMockdata.GLAccountHierarchyInChartOfAccountsLiSet;
 	aAnnotationsMockdataGUID.forEach(function(oMockData) {
 		//convert string based level properties (NUMC fields) to real numbers
-		oMockData.FinStatementHierarchyLevelVal = parseInt(oMockData.FinStatementHierarchyLevelVal, 10);
+		oMockData.FinStatementHierarchyLevelVal = parseInt(oMockData.FinStatementHierarchyLevelVal);
 	});
 
 	var oModel, oBinding;

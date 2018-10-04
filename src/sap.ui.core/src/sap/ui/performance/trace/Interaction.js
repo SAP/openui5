@@ -236,7 +236,7 @@ sap.ui.define([
 			var sContentLength = this.getResponseHeader("content-length"),
 				bCompressed = this.getResponseHeader("content-encoding") === "gzip",
 				sFesrec = this.getResponseHeader("sap-perf-fesrec");
-			this.pendingInteraction.bytesReceived += sContentLength ? parseInt(sContentLength, 10) : 0;
+			this.pendingInteraction.bytesReceived += sContentLength ? parseInt(sContentLength) : 0;
 			// double string length for byte length as in js characters are stored as 16 bit ints
 			this.pendingInteraction.bytesReceived += this.getAllResponseHeaders().length * 2;
 			this.pendingInteraction.bytesSent += this.requestHeaderLength || 0;

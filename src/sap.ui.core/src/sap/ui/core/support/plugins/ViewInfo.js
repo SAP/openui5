@@ -814,7 +814,7 @@ sap.ui.define([
 			if (oDomRef.getAttribute("selected")) {
 				oDomRef = oDomRef.parentNode;
 			}
-			var iIndex = parseInt(oDomRef.getAttribute("idx"),10),
+			var iIndex = parseInt(oDomRef.getAttribute("idx")),
 				oTree = this.aTrees[iIndex];
 			if (oTree.toggleIds()) {
 				oDomRef.innerHTML = "<span selected=\"false\"></span>Show XML View Ids";
@@ -828,7 +828,7 @@ sap.ui.define([
 			if (oDomRef.getAttribute("selected")) {
 				oDomRef = oDomRef.parentNode;
 			}
-			var iIndex = parseInt(oDomRef.getAttribute("idx"), 10),
+			var iIndex = parseInt(oDomRef.getAttribute("idx")),
 				oTree = this.aTrees[iIndex];
 			if (oTree.toggleInactive()) {
 				oDomRef.innerHTML = "<span selected=\"false\"></span>Hide inactive";
@@ -843,7 +843,7 @@ sap.ui.define([
 			if (oDomRef.getAttribute("selected")) {
 				oDomRef = oDomRef.parentNode;
 			}
-			var iIndex = parseInt(oDomRef.getAttribute("idx"), 10),
+			var iIndex = parseInt(oDomRef.getAttribute("idx")),
 				oTree = this.aTrees[iIndex];
 			if (oTree.toggleNS()) {
 				oDomRef.innerHTML = "<span selected=\"false\"></span>Hide tag namespace";
@@ -854,7 +854,7 @@ sap.ui.define([
 		};
 
 		ViewInfo.prototype._onToggleDebugNodes = function(oEvent) {
-			var iIndex = parseInt(oEvent.target.getAttribute("idx"), 10),
+			var iIndex = parseInt(oEvent.target.getAttribute("idx")),
 				oTree = this.aTrees[iIndex];
 			oTree.expandNodesWithSelectedInfo(0);
 			oTree.expandNodesWithSelectedInfo(1);
@@ -983,7 +983,7 @@ sap.ui.define([
 					oSupportInfo = this.supportInfo,
 					iLevel = 0;
 				for (var i = 0; i < aIndices.length; i++) {
-					var iIdx = parseInt(aIndices[i], 10);
+					var iIdx = parseInt(aIndices[i]);
 					var oDebugInfo = oSupportInfo.byIndex(iIdx);
 					if (!oDebugInfo) {
 						continue;

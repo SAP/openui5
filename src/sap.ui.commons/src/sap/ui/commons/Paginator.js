@@ -132,9 +132,9 @@ sap.ui.define([
 		} else {
 			oOldRange = {};
 			var aParts = aChildren[0].id.split("--");
-			oOldRange.firstPage = parseInt(aParts[aParts.length - 1], 10);
+			oOldRange.firstPage = parseInt(aParts[aParts.length - 1]);
 			aParts = aChildren[aChildren.length - 1].id.split("--");
-			oOldRange.lastPage = parseInt(aParts[aParts.length - 1], 10);
+			oOldRange.lastPage = parseInt(aParts[aParts.length - 1]);
 		}
 
 		// the pages to be shown only after the animation are those to be rendered invisible, initially
@@ -396,7 +396,7 @@ sap.ui.define([
 					// we have a number - a page has been clicked
 					if (lastPart.match(/^\d+$/)) {
 						sEventType = sap.ui.commons.PaginatorEvent.Goto;
-						iTargetPage = parseInt(lastPart, 10);
+						iTargetPage = parseInt(lastPart);
 
 					} else if (lastPart == "firstPageLink") {
 						sEventType = sap.ui.commons.PaginatorEvent.First;

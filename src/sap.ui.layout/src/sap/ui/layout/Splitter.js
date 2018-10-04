@@ -395,7 +395,7 @@ sap.ui.define([
 		this.disableAutoResize(/* temporarily: */ true);
 
 		var iPos = oJEv[this._moveCord];
-		var iBar = parseInt(oJEv.target.id.substr((sId + "-splitbar-").length), 10);
+		var iBar = parseInt(oJEv.target.id.substr((sId + "-splitbar-").length));
 		var $Bar = jQuery(oJEv.target);
 		var mCalcSizes = this.getCalculatedSizes();
 		var iBarSize = this._bHorizontal ?  $Bar.innerWidth() : $Bar.innerHeight();
@@ -428,9 +428,9 @@ sap.ui.define([
 			bar : jQuery(oJEv.target),
 			// The content sizes for fast resize bound calculation
 			c1Size : mCalcSizes[iBar],
-			c1MinSize : oLd1 ? parseInt(oLd1.getMinSize(), 10) : 0,
+			c1MinSize : oLd1 ? parseInt(oLd1.getMinSize()) : 0,
 			c2Size : mCalcSizes[iBar + 1],
-			c2MinSize : oLd2 ? parseInt(oLd2.getMinSize(), 10) : 0
+			c2MinSize : oLd2 ? parseInt(oLd2.getMinSize()) : 0
 		};
 
 		// Event handlers use bound handler methods - see init()
@@ -580,8 +580,8 @@ sap.ui.define([
 
 		var iNewSize1 = this._move.c1Size + iPixels;
 		var iNewSize2 = this._move.c2Size - iPixels;
-		var iMinSize1 = parseInt(oLd1.getMinSize(), 10);
-		var iMinSize2 = parseInt(oLd2.getMinSize(), 10);
+		var iMinSize1 = parseInt(oLd1.getMinSize());
+		var iMinSize2 = parseInt(oLd2.getMinSize());
 
 		// Adhere to size constraints
 		var iDiff;
@@ -820,14 +820,14 @@ sap.ui.define([
 				this._calculatedSizes[i] = iSize;
 			} else if (sSize.indexOf("px") > -1) {
 				// Pixel based Value - deduct it from available size
-				iSize = parseInt(sSize, 10);
+				iSize = parseInt(sSize);
 				iRest -= iSize;
 				this._calculatedSizes[i] = iSize;
 			} else if (sSize.indexOf("%") > -1) {
 				aPercentsizeIdx.push(i);
 			} else if (aSizes[i] == "auto") {
 				oLayoutData = aContentAreas[i].getLayoutData();
-				if (oLayoutData && parseInt(oLayoutData.getMinSize(), 10) != 0) {
+				if (oLayoutData && parseInt(oLayoutData.getMinSize()) != 0) {
 					aAutoMinsizeIdx.push(i);
 				} else {
 					aAutosizeIdx.push(i);
@@ -863,7 +863,7 @@ sap.ui.define([
 		var iAutoMinSizes = aAutoMinsizeIdx.length;
 		for (i = 0; i < iAutoMinSizes; ++i) {
 			idx = aAutoMinsizeIdx[i];
-			var iMinSize = parseInt(aContentAreas[idx].getLayoutData().getMinSize(), 10);
+			var iMinSize = parseInt(aContentAreas[idx].getLayoutData().getMinSize());
 			if (iMinSize > iColSize) {
 				this._calculatedSizes[idx] = iMinSize;
 				iAvailableSize -= iMinSize;
@@ -949,7 +949,7 @@ sap.ui.define([
 
 		var iBigStep  = 999999;
 
-		var iBar = parseInt(oEvent.target.id.substr(sBarId.length), 10);
+		var iBar = parseInt(oEvent.target.id.substr(sBarId.length));
 		var mCalcSizes = this.getCalculatedSizes();
 		// TODO: These two lines are incomprehensible magic - find better solution
 		this._move.c1Size = mCalcSizes[iBar];

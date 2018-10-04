@@ -148,13 +148,13 @@ sap.ui.define([
 			assert.equal(jQuery('#Dialog').css('visibility'), 'visible', 'Dialog should be visible after opening');
 
 			var oDomRef = that.oDialog.getDomRef();
-			assert.strictEqual(oDomRef.offsetWidth, parseInt(that.oDialog.getWidth(), 10), 'Width of the Dialog should be equal to the set value.');
+			assert.strictEqual(oDomRef.offsetWidth, parseInt(that.oDialog.getWidth()), 'Width of the Dialog should be equal to the set value.');
 
 			var offsetHeight = oDomRef.offsetHeight;
 			if (Device.browser.chrome && offsetHeight == 351) { // a known issue in Chrome that sometimes happens
 				offsetHeight = 350;
 			}
-			assert.strictEqual(offsetHeight, parseInt(that.oDialog.getHeight(), 10), 'Height of the Dialog should be equal to the set value.');
+			assert.strictEqual(offsetHeight, parseInt(that.oDialog.getHeight()), 'Height of the Dialog should be equal to the set value.');
 			done();
 		};
 
@@ -166,7 +166,7 @@ sap.ui.define([
 		var done = assert.async();
 		var that = this;
 		var iWinWidth = window.innerWidth;
-		var iWinMiddle = parseInt(iWinWidth / 2, 10);
+		var iWinMiddle = parseInt(iWinWidth / 2);
 
 		var sTitle = "Lorem Ipsum dolor sit amet";
 
@@ -174,7 +174,7 @@ sap.ui.define([
 			var oDomRef = that.oDialog.getDomRef();
 			var iDialWidth = oDomRef.offsetWidth;
 			var iDialLeft = oDomRef.offsetLeft;
-			var iDialMiddleAbsolute = iDialLeft + parseInt(iDialWidth / 2, 10);
+			var iDialMiddleAbsolute = iDialLeft + parseInt(iDialWidth / 2);
 
 			// is the dialog centered (calculated with a little puffer)
 			var bDialogCentered = iWinMiddle + 3 > iDialMiddleAbsolute &&

@@ -162,7 +162,7 @@ sap.ui.define([
 	QUnit.test("OffsetWidthOk", function(assert) {
 		//test the pixel perfect width of the control
 		var oDomRef = window.document.getElementById("c1");
-		assert.strictEqual(oDomRef.offsetWidth, parseInt(c1.getWidth(), 10), "c1.offsetWidth should equal parseInt(c1.getWidth())");
+		assert.strictEqual(oDomRef.offsetWidth, parseInt(c1.getWidth()), "c1.offsetWidth should equal parseInt(c1.getWidth())");
 		c2.setWidth("1000px");
 		sap.ui.getCore().applyChanges();
 		oDomRef = window.document.getElementById("c2");

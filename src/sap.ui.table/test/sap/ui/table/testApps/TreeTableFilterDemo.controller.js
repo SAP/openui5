@@ -78,7 +78,7 @@ sap.ui.define([
 			oView.getModel().read("/orgHierarchy/$count", {
 				filters: aFilters,
 				success: function(oData) {
-					var iThreshold = parseInt(oView.byId("bindingThreshold").getValue(), 10);
+					var iThreshold = parseInt(oView.byId("bindingThreshold").getValue());
 
 					if (oData <= iThreshold) {
 						that.bindTable("Client", aFilters, 3);

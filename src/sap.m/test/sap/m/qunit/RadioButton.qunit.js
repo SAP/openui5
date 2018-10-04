@@ -402,7 +402,7 @@ sap.ui.define([
 		oRadioButton1.setTabIndex(iTabIndex);
 
 		// assertions
-		assert.equal(parseInt(oRadioButton1.getFocusDomRef().getAttribute("tabindex"), 10), iTabIndex, "RadioButton's tabindex should be set to 1");
+		assert.equal(parseInt(oRadioButton1.getFocusDomRef().getAttribute("tabindex")), iTabIndex, "RadioButton's tabindex should be set to 1");
 
 		// cleanup
 		oRadioButton1.destroy();

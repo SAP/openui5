@@ -64,7 +64,7 @@ function($, Core) {
 		var aGridCells = oFormBlock.$().find(".sapUiForm .sapUiFormResGridMain>div");
 
 		var oTestInput = Core.byId("__input0"),
-			iTestInputTop = parseInt(oTestInput.$().offset().top, 10);
+			iTestInputTop = parseInt(oTestInput.$().offset().top);
 
 		assert.strictEqual(aGridCells.length, 4, "form grid has 4 cells");
 
@@ -101,7 +101,7 @@ function($, Core) {
 
 		this.clock.tick(iRenderingDelay);
 
-		assert.strictEqual(parseInt(oTestInput.$().offset().top, 10) < (iTestInputTop - oTestInput.$().height()), true, "Input field should be visible");
+		assert.strictEqual(parseInt(oTestInput.$().offset().top) < (iTestInputTop - oTestInput.$().height()), true, "Input field should be visible");
 
 		oObjectPageFormView.destroy();
 	});

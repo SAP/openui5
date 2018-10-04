@@ -373,7 +373,7 @@ sap.ui.define([
 				facetGroups = this.$().find(".sapUiUx3TVFacetThingGroup");
 				minWidth = jQuery(facetGroups[0]).css("min-width");
 				if (minWidth) {
-					this._triggerValue = parseInt(minWidth, 10) * 2;
+					this._triggerValue = parseInt(minWidth) * 2;
 				}
 			}
 		};

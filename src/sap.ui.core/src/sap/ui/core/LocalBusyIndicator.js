@@ -94,8 +94,8 @@ sap.ui.define([
 		};
 
 		LocalBusyIndicator.prototype.onAfterRendering = function() {
-			var w = parseInt(this.getWidth(), 10);
-			var h = parseInt(this.getHeight(), 10);
+			var w = parseInt(this.getWidth());
+			var h = parseInt(this.getHeight());
 
 			var $this = this.$();
 			$this.css("width", w + "px");

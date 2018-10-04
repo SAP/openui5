@@ -215,13 +215,13 @@ sap.ui.define([
 	QUnit.test("OffsetWidthOk", function(assert) {
 		//test the pixel perfect width of the control
 		var oDomRef = window.document.getElementById("b1");
-		assert.ok(parseInt(b1.getWidth(), 10) == oDomRef.offsetWidth,"b1.offsetWidth == parseInt(b1.getWidth())");
-		assert.equal(oDomRef.offsetWidth,parseInt(b1.getWidth(), 10),"b1.offsetWidth == parseInt(b1.getWidth())");
+		assert.ok(parseInt(b1.getWidth()) == oDomRef.offsetWidth,"b1.offsetWidth == parseInt(b1.getWidth())");
+		assert.equal(oDomRef.offsetWidth,parseInt(b1.getWidth()),"b1.offsetWidth == parseInt(b1.getWidth())");
 		b2.setWidth("500px");
 		sap.ui.getCore().applyChanges();
 		oDomRef = window.document.getElementById("b2");
-		assert.ok(parseInt(oDomRef.offsetWidth, 10) == 500,"b2.offsetWidth == 500)");
-		assert.equal(parseInt(oDomRef.offsetWidth, 10),500,"b2.offsetWidth == 500");
+		assert.ok(parseInt(oDomRef.offsetWidth) == 500,"b2.offsetWidth == 500)");
+		assert.equal(parseInt(oDomRef.offsetWidth),500,"b2.offsetWidth == 500");
 	});
 
 	QUnit.test("eventWithAdditionalDataOk", function(assert){

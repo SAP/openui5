@@ -73,14 +73,14 @@ function(
 
 		QUnit.test('setZIndex() method', function(assert) {
 			return this.oToolbar.show().then(function () {
-				var iInitialZIndex = parseInt(this.oToolbar.$().css('z-index'), 10);
+				var iInitialZIndex = parseInt(this.oToolbar.$().css('z-index'));
 				assert.strictEqual(this.oToolbar.getZIndex(), iInitialZIndex, 'z-index is rendered properly');
 
 				var iZIndex = iInitialZIndex + 1;
 				this.oToolbar.setZIndex(iZIndex);
 				sap.ui.getCore().applyChanges();
 
-				assert.strictEqual(parseInt(this.oToolbar.$().css('z-index'), 10), iZIndex, 'z-index is updated properly');
+				assert.strictEqual(parseInt(this.oToolbar.$().css('z-index')), iZIndex, 'z-index is updated properly');
 			}.bind(this));
 		});
 

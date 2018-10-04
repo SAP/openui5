@@ -374,8 +374,8 @@ sap.ui.define([
 	};
 
 	P13nFilterPanel.prototype._updatePanel = function() {
-		var iMaxIncludes = this.getMaxIncludes() === "-1" ? 1000 : parseInt(this.getMaxIncludes(), 10);
-		var iMaxExcludes = this.getMaxExcludes() === "-1" ? 1000 : parseInt(this.getMaxExcludes(), 10);
+		var iMaxIncludes = this.getMaxIncludes() === "-1" ? 1000 : parseInt(this.getMaxIncludes());
+		var iMaxExcludes = this.getMaxExcludes() === "-1" ? 1000 : parseInt(this.getMaxExcludes());
 
 		if (iMaxIncludes > 0) {
 			if (iMaxExcludes <= 0) {

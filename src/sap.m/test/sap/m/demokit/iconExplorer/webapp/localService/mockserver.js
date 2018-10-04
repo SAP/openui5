@@ -26,7 +26,7 @@ sap.ui.define([
 			// create a fake server with configurable delay
 			this.oServer = sinon.fakeServer.create();
 			this.oServer.autoRespond = true;
-			this.oServer.autoRespondAfter = parseInt(oUriParameters.get("serverDelay") || iAutoRespondAfterDefault, 10);
+			this.oServer.autoRespondAfter = parseInt(oUriParameters.get("serverDelay") || iAutoRespondAfterDefault);
 
 			// set up the filters for the mocked URLs
 			sinon.fakeServer.xhr.useFilters = true;

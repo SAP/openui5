@@ -10,7 +10,7 @@ sap.ui.define([
   var Steps = StepDefinitions.extend("GherkinWithQUnit.Steps", {
     init: function() {
       this.register(/^I expect (\d+?) assertions?$/i, function(sNumAssertions) {
-        assert.expect(parseInt(sNumAssertions, 10));
+        assert.expect(parseInt(sNumAssertions));
       });
       this.register(/^that quantum phenomena exist at the macroscopic level$/i, function() {
         this.bMacroQuanta = true;

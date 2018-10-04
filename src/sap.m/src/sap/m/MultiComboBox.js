@@ -411,9 +411,9 @@ function(
 	MultiComboBox.prototype._calculateSpaceForTokenizer = function () {
 		if (this.getDomRef()) {
 			var iWidth = this.getDomRef().offsetWidth,
-				iArrowButtonWidth = parseInt(this.getDomRef("arrow").offsetWidth, 10),
-				iInputWidth = parseInt(this.$().find(".sapMInputBaseInner").css("min-width"), 10) || 0,
-				iInputPadding = parseInt(this.$().find(".sapMInputBaseInner").css("padding-right"), 10) || 0;
+				iArrowButtonWidth = parseInt(this.getDomRef("arrow").offsetWidth),
+				iInputWidth = parseInt(this.$().find(".sapMInputBaseInner").css("min-width")) || 0,
+				iInputPadding = parseInt(this.$().find(".sapMInputBaseInner").css("padding-right")) || 0;
 
 			return iWidth - (iArrowButtonWidth + iInputWidth + iInputPadding) + "px";
 		} else {

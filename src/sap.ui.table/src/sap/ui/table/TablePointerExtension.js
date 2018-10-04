@@ -641,7 +641,7 @@ sap.ui.define([
 					center: oRect.left + iWidth / 2,
 					right: oRect.left + iWidth,
 					width: iWidth,
-					index: parseInt($HeaderDomRef.attr("data-sap-ui-headcolindex"), 10),
+					index: parseInt($HeaderDomRef.attr("data-sap-ui-headcolindex")),
 					id: $HeaderDomRef.attr("data-sap-ui-colid")
 				};
 
@@ -765,7 +765,7 @@ sap.ui.define([
 
 				} else if ($Target.hasClass("sapUiTableColResizer")) { // mousedown on mobile column resize button
 					var iColIndex = $Target.closest(".sapUiTableCol").attr("data-sap-ui-colindex");
-					this._iLastHoveredColumnIndex = parseInt(iColIndex, 10);
+					this._iLastHoveredColumnIndex = parseInt(iColIndex);
 					ColumnResizeHelper.initColumnResizing(this, oEvent);
 
 				} else if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER)) {

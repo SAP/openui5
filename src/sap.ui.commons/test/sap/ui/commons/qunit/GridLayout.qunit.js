@@ -436,7 +436,7 @@ sap.ui.define([
 				var oCell = jQuery(aCells[j]);
 				var sColspan = oCell.attr("colspan");
 				if ( sColspan ){
-					iCells = iCells + parseInt(sColspan, 10);
+					iCells = iCells + parseInt(sColspan);
 				} else {
 					iCells++;
 				}

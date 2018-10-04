@@ -228,7 +228,7 @@ sap.ui.define([
 			}
 
 			// Add scrolling for entire FixFlex
-			if (nFlexSize <= parseInt(this.getMinFlexSize(), 10)) {
+			if (nFlexSize <= parseInt(this.getMinFlexSize())) {
 				$this.addClass("sapUiFixFlexScrolling");
 				$this.removeClass("sapUiFixFlexInnerScrolling");
 

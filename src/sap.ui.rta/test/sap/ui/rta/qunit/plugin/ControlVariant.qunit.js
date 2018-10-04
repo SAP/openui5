@@ -962,7 +962,7 @@ sap.ui.define([
 
 			var $editableControl = this.oVariantManagementOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oVariantManagementControl, vDomRef); /* Text control */
 			var $control = jQuery(this.oVariantManagementControl.getDomRef()); /* Main control */
-			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.$().outerWidth(), 10);
+			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.$().outerWidth());
 
 			$control.css({
 				"width": "10px",
@@ -980,7 +980,7 @@ sap.ui.define([
 				"position": "fixed"
 			});
 
-			var iWidthDiff = parseInt($control.outerWidth(), 10) - parseInt($editableControl.parent().outerWidth(), 10);
+			var iWidthDiff = parseInt($control.outerWidth()) - parseInt($editableControl.parent().outerWidth());
 			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 
 			var $editableWrapper = this.oVariantManagementOverlay.$().find(".sapUiRtaEditableField");
@@ -992,9 +992,9 @@ sap.ui.define([
 
 			var $editableControl = this.oVariantManagementOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oVariantManagementControl, vDomRef); /* Text control */
 			var $control = jQuery(this.oVariantManagementControl.getDomRef()); /* Main control */
-			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.$().innerWidth(), 10);
+			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.$().innerWidth());
 
-			var iWidthDiff = parseInt($control.outerWidth(), 10) - parseInt($editableControl.outerWidth(), 10);
+			var iWidthDiff = parseInt($control.outerWidth()) - parseInt($editableControl.outerWidth());
 			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 
 			var $editableWrapper = this.oVariantManagementOverlay.$().find(".sapUiRtaEditableField");
@@ -1017,7 +1017,7 @@ sap.ui.define([
 				"min-width": "20px",
 				"position": "fixed"
 			});
-			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.$().innerWidth(), 10);
+			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.$().innerWidth());
 
 			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 

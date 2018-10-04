@@ -47,7 +47,7 @@ sap.ui.define([
 			var sServiceUrl = oDataModel.getProperty("/serviceURL");
 			var sCollection = oDataModel.getProperty("/collection");
 			var sResultSet = oDataModel.getProperty("/resultSet");
-			var iRowCount = parseInt(oDataModel.getProperty("/visibleRowCount"), 10);
+			var iRowCount = parseInt(oDataModel.getProperty("/visibleRowCount"));
 
 			var oStoredData = TABLESETTINGS.getAnalyticalService();
 			sServiceUrl = sServiceUrl || oStoredData.url;

@@ -59,7 +59,7 @@ sap.ui.define([
 			"color": "#666666",
 			"backgroundColor": "#FFFFFF"
 		});
-		assert.equal(parseInt($icon.css("font-size"), 10), 20);
+		assert.equal(parseInt($icon.css("font-size")), 20);
 		assert.equal($icon.width(), 24);
 		assert.equal($icon.height(), 24);
 		assert.equal($icon.css("color"), $dummy.css("color"));

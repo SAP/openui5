@@ -472,7 +472,7 @@ sap.ui.define([
 
 			if (oOverlay.top >= oPopover.height && !oOverlay.isOverlappedAtTop) {
 				oPos = this._placeContextMenuOnTop(oOverlay);
-			} else if (oViewport.height - oOverlay.top >= parseInt(oPopover.height, 10) + 5) {
+			} else if (oViewport.height - oOverlay.top >= parseInt(oPopover.height) + 5) {
 				oPos = this._placeContextMenuAtTheBottom(oOverlay, oPopover, oViewport);
 			} else {
 				oPos = this._placeContextMenuSideways(oOverlay, oPopover, oViewport);
@@ -620,8 +620,8 @@ sap.ui.define([
 			var iBaseFontsize = this._getBaseFontSize();
 			this._iFirstVisibleButtonIndex = null;
 
-			oPopover.height = parseInt(jQuery("#" + this.getPopover().getId()).css("height"), 10) || 40;
-			oPopover.width = parseInt(jQuery("#" + this.getPopover().getId()).css("width"), 10) || 80;
+			oPopover.height = parseInt(jQuery("#" + this.getPopover().getId()).css("height")) || 40;
+			oPopover.width = parseInt(jQuery("#" + this.getPopover().getId()).css("width")) || 80;
 
 			if (bWithArrow) {
 				var iArr = iBaseFontsize * fArrowHeight;
@@ -652,7 +652,7 @@ sap.ui.define([
 		 * @return {int} the base font size in px
 		 */
 		_getBaseFontSize: function () {
-			return parseInt(jQuery(document.documentElement).css("fontSize"), 10);
+			return parseInt(jQuery(document.documentElement).css("fontSize"));
 		},
 
 		/**
@@ -698,7 +698,7 @@ sap.ui.define([
 
 			oViewport.width = window.innerWidth;
 			oViewport.height = window.innerHeight;
-			oViewport.top = parseInt(jQuery(".type_standalone").css("height"), 10) || 0;
+			oViewport.top = parseInt(jQuery(".type_standalone").css("height")) || 0;
 			oViewport.bottom = oViewport.top + oViewport.height;
 
 			return oViewport;

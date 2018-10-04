@@ -104,8 +104,8 @@ sap.ui.define([
 	QUnit.test("Offset Dimensions", function(assert) {
 		// test the initial dimensions
 		var oDomRef = jQuery.sap.domById("i1");
-		assert.equal(oDomRef.offsetWidth, parseInt(i1.getWidth(), 10), "i1.offsetWidth should equal parseInt(i1.getWidth())");
-		assert.equal(oDomRef.offsetHeight, parseInt(i1.getHeight(), 10), "i1.offsetHeight should equal parseInt(i1.getHeight())");
+		assert.equal(oDomRef.offsetWidth, parseInt(i1.getWidth()), "i1.offsetWidth should equal parseInt(i1.getWidth())");
+		assert.equal(oDomRef.offsetHeight, parseInt(i1.getHeight()), "i1.offsetHeight should equal parseInt(i1.getHeight())");
 	});
 
 

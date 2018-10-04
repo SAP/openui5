@@ -122,7 +122,7 @@ window.getShellOptionsPanel = function(oShell, aAdditionalContent, bVertical){
 				getLabelledControl("Pane Width", new c.TextField({
 					value: oShell.getPaneWidth(),
 					change:function(oEvent){
-						var val = parseInt(oEvent.getParameter("newValue"), 10);
+						var val = parseInt(oEvent.getParameter("newValue"));
 						oShell.setPaneWidth(val);
 						this.setValue(oShell.getPaneWidth());
 				}}))

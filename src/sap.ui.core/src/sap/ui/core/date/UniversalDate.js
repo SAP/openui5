@@ -336,13 +336,13 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData'],
 			iYear, iMonth, iDay;
 		if (aParts[0] == "") {
 			// negative year
-			iYear = -parseInt(aParts[1], 10);
-			iMonth = parseInt(aParts[2], 10) - 1;
-			iDay = parseInt(aParts[3], 10);
+			iYear = -parseInt(aParts[1]);
+			iMonth = parseInt(aParts[2]) - 1;
+			iDay = parseInt(aParts[3]);
 		} else {
-			iYear = parseInt(aParts[0], 10);
-			iMonth = parseInt(aParts[1], 10) - 1;
-			iDay = parseInt(aParts[2], 10);
+			iYear = parseInt(aParts[0]);
+			iMonth = parseInt(aParts[1]) - 1;
+			iDay = parseInt(aParts[2]);
 		}
 		return {
 			timestamp: new Date(0).setUTCFullYear(iYear, iMonth, iDay),

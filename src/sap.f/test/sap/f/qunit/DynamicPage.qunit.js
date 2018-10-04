@@ -761,7 +761,7 @@ function (
 		Core.applyChanges();
 		this.clock.tick(1000);
 
-		var iFlexBasisBefore = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"), 10);
+		var iFlexBasisBefore = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"));
 
 		// Act
 		oLabel.setText("Some non-empty text");
@@ -769,7 +769,7 @@ function (
 		this.clock.tick(1000);
 
 		// Assert
-		var sFlexBasisAfter = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"), 10);
+		var sFlexBasisAfter = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"));
 		assert.ok(sFlexBasisAfter > iFlexBasisBefore + 50, "Flex-basis increased to show the new text");
 	});
 
@@ -779,7 +779,7 @@ function (
 		Core.applyChanges();
 		this.clock.tick(1000);
 
-		var iFlexBasisBefore = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"), 10);
+		var iFlexBasisBefore = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"));
 
 		// Act
 		oLink.setText("Some non-empty text");
@@ -787,7 +787,7 @@ function (
 		this.clock.tick(1000);
 
 		// Assert
-		var sFlexBasisAfter = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"), 10);
+		var sFlexBasisAfter = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"));
 		assert.ok(sFlexBasisAfter > iFlexBasisBefore + 50, "Flex-basis increased to show the new text");
 	});
 
@@ -3309,7 +3309,7 @@ function (
 	QUnit.test("Test flex-basis styles change when an action is added", function(assert) {
 		// arrange
 		var oTitle = Core.byId("comp---view--DynamicPageTitle"),
-			nOldFlexBasis = parseInt(oTitle.$("mainActions").css("flex-basis"), 10),
+			nOldFlexBasis = parseInt(oTitle.$("mainActions").css("flex-basis")),
 			nNewFlexBasis;
 
 		// act
@@ -3320,7 +3320,7 @@ function (
 
 		Core.applyChanges();
 
-		nNewFlexBasis = parseInt(oTitle.$("mainActions").css("flex-basis"), 10);
+		nNewFlexBasis = parseInt(oTitle.$("mainActions").css("flex-basis"));
 
 		// assert
 		assert.ok(nNewFlexBasis > nOldFlexBasis, "New flex-basis value should be greater since an action was added.");

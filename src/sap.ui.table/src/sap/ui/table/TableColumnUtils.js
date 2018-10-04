@@ -249,7 +249,7 @@ sap.ui.define(['sap/ui/Device', './library', "sap/base/Log"],
 				}
 
 				function getSpan(sSpan) {
-					var result = parseInt(sSpan, 10);
+					var result = parseInt(sSpan);
 					return isNaN(result) ? 1 : result;
 				}
 

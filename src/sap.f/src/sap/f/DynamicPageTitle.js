@@ -1232,7 +1232,7 @@ sap.ui.define([
 		var sFlexBasis,
 			sFlexBasisCachedValue;
 
-		iContentSize = parseInt(iContentSize, 10);
+		iContentSize = parseInt(iContentSize);
 		sFlexBasis = iContentSize ? iContentSize + "px" : "auto";
 
 		sFlexBasisCachedValue = sFlexBasis !== "auto" ? sFlexBasis : undefined;

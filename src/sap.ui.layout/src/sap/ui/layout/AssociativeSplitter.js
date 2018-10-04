@@ -161,7 +161,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log", "sap/ui/third
 			return;
 		}
 
-		iBar = parseInt(this._oLastDOMclicked.id.substr((sId + "-splitbar-").length), 10);
+		iBar = parseInt(this._oLastDOMclicked.id.substr((sId + "-splitbar-").length));
 		oContentArea = this._getContentAreas()[iBar];
 		oContentArea._currentPosition = this.getCalculatedSizes()[iBar];
 		oContentArea._lastPosition = oContentArea._lastPosition || oContentArea._currentPosition;
@@ -211,8 +211,8 @@ sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log", "sap/ui/third
 		this.disableAutoResize(/* temporarily: */ true);
 
 		var iPos = oJEv[this._moveCord];
-		var iSplitBar = parseInt(oJEv.target.id.substr((sId + "-splitbar-").length), 10);
-		var iSplitBarCircle = parseInt(oJEv.target.parentElement.id.substr((sId + "-splitbar-").length), 10);
+		var iSplitBar = parseInt(oJEv.target.id.substr((sId + "-splitbar-").length));
+		var iSplitBarCircle = parseInt(oJEv.target.parentElement.id.substr((sId + "-splitbar-").length));
 		var iBar = (iSplitBar + 1) ? iSplitBar : iSplitBarCircle;
 		var $Bar = jQuery(oJEv.target);
 		// on tablet in landscape mode the target is the bar's icon
@@ -251,9 +251,9 @@ sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log", "sap/ui/third
 			bar : jQuery(oJEv.target),
 			// The content sizes for fast resize bound calculation
 			c1Size : mCalcSizes[iBar],
-			c1MinSize : oLd1 ? parseInt(oLd1.getMinSize(), 10) : 0,
+			c1MinSize : oLd1 ? parseInt(oLd1.getMinSize()) : 0,
 			c2Size : mCalcSizes[iBar + 1],
-			c2MinSize : oLd2 ? parseInt(oLd2.getMinSize(), 10) : 0
+			c2MinSize : oLd2 ? parseInt(oLd2.getMinSize()) : 0
 		};
 
 		// Event handlers use bound handler methods - see init()
@@ -310,8 +310,8 @@ sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log", "sap/ui/third
 
 		iNewSize1 = fMoveC1Size + iPixels;
 		iNewSize2 = fMoveC2Size - iPixels;
-		iMinSize1 = parseInt(oLd1.getMinSize(), 10);
-		iMinSize2 = parseInt(oLd2.getMinSize(), 10);
+		iMinSize1 = parseInt(oLd1.getMinSize());
+		iMinSize2 = parseInt(oLd2.getMinSize());
 
 		sOrientation = this.getOrientation();
 		iSplitterSize = sOrientation === "Horizontal" ? this.$().width() : this.$().height();
@@ -397,14 +397,14 @@ sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log", "sap/ui/third
 
 			if (sSize.indexOf("px") > -1) {
 				// Pixel based Value - deduct it from available size
-				iSize = parseInt(sSize, 10);
+				iSize = parseInt(sSize);
 				iAvailableSize -= iSize;
 				this._calculatedSizes[i] = iSize;
 			} else if (sSize.indexOf("%") > -1) {
 				aPercentsizeIdx.push(i);
 			} else if (sSize === "auto") {
 				oLayoutData = aContentAreas[i].getLayoutData();
-				if (oLayoutData && parseInt(oLayoutData.getMinSize(), 10) !== 0) {
+				if (oLayoutData && parseInt(oLayoutData.getMinSize()) !== 0) {
 					aAutoMinsizeIdx.push(i);
 				} else {
 					aAutosizeIdx.push(i);
@@ -432,7 +432,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log", "sap/ui/third
 			} else {
 				// Percent based Value - deduct it from available size
 				iColSize = parseFloat(aSizes[idx]) / 100 * iAvailableSize;
-				iMinSize = parseInt(aContentAreas[idx].getLayoutData().getMinSize(), 10);
+				iMinSize = parseInt(aContentAreas[idx].getLayoutData().getMinSize());
 
 				if (iColSize < iMinSize) {
 					iColSize = iMinSize;
@@ -452,7 +452,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log", "sap/ui/third
 		var iAutoMinSizes = aAutoMinsizeIdx.length;
 		for (i = 0; i < iAutoMinSizes; ++i) {
 			idx = aAutoMinsizeIdx[i];
-			iMinSize = parseInt(aContentAreas[idx].getLayoutData().getMinSize(), 10);
+			iMinSize = parseInt(aContentAreas[idx].getLayoutData().getMinSize());
 			if (iMinSize > iColSize) {
 				this._calculatedSizes[idx] = iMinSize;
 				iAvailableSize -= iMinSize;
