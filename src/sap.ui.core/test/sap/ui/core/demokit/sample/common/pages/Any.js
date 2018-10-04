@@ -95,8 +95,7 @@ sap.ui.require([
 				applySupportAssistant : function () {
 					// we use support assistant only on-demand and only with mock data
 					sap.ui.test.Opa.getContext().bSupportAssistant =
-						jQuery.sap.getUriParameters().get("supportAssistant") === "true"
-						&& !TestUtils.isRealOData();
+						TestUtils.isSupportAssistant() && !TestUtils.isRealOData();
 					Opa5.extendConfig(getConfig(sap.ui.test.Opa.getContext().bSupportAssistant));
 				},
 				cleanUp : function(sControlId) {
