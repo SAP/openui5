@@ -1,5 +1,5 @@
-/* global sinon, QUnit, notStrictEqual */
-sap.ui.require([
+/*global QUnit, sinon */
+sap.ui.define([
 	"sap/m/library",
 	"sap/m/App",
 	"sap/m/Page",
@@ -7,6 +7,8 @@ sap.ui.require([
 	"sap/m/Button",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/Device",
 	"sap/ui/qunit/qunit-css",
 	"sap/ui/thirdparty/qunit",
 	"sap/ui/qunit/qunit-junit",
@@ -14,11 +16,27 @@ sap.ui.require([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
-], function (library, App, Page, ActionSheet, Button, KeyCodes, Log) {
+], function(
+	library,
+	App,
+	Page,
+	ActionSheet,
+	Button,
+	KeyCodes,
+	Log,
+	createAndAppendDiv,
+	Device
+) {
 	"use strict";
 
-	sinon.config.useFakeTimers = false;
-	sap.ui.test.qunit.delayTestStart();
+	// shortcut for sap.m.PlacementType
+	var PlacementType = library.PlacementType;
+
+	document.body.insertBefore(createAndAppendDiv("content"), document.body.firstChild);
+	document.body.insertBefore(createAndAppendDiv("uiArea"), document.body.firstChild);
+	document.body.insertBefore(createAndAppendDiv("contentHolder"), document.body.firstChild);
+
+
 
 	var ButtonType = library.ButtonType;
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
@@ -40,7 +58,7 @@ sap.ui.require([
 		],
 		cancelButtonText: "Cancel",
 		title: "Please choose one action",
-		placement: sap.m.PlacementType.Bottom,
+		placement: PlacementType.Bottom,
 		cancelButtonPress: function () {
 			Log.info("sap.m.ActionSheet: cancelButton is pressed");
 		},
@@ -95,7 +113,7 @@ sap.ui.require([
 		assert.ok(oActionSheet.isOpen(), "ActionSheet is already open");
 		setTimeout(function () {
 			var $actionSheet = sap.ui.getCore().byId("actionsheet").$(),
-				$parentControl = !sap.ui.Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
+				$parentControl = !Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
 				$header = $parentControl.children("header.sapMBar"),
 				$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
 			assert.expect(8);
@@ -103,12 +121,12 @@ sap.ui.require([
 			assert.ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
 			assert.ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
 
-			if (!sap.ui.Device.system.phone) {
+			if (!Device.system.phone) {
 				assert.ok(!($header[0]), "Title is always ignored when doesn't run on phone");
 			} else {
 				assert.ok($header[0], "Title is rendered");
 			}
-			if (!sap.ui.Device.system.phone) {
+			if (!Device.system.phone) {
 				assert.ok(!($cancelButton[0]), "Cancel button is never rendered when doesn't run on phone");
 			} else {
 				assert.ok($cancelButton[0], "Cancel button is rendered");
@@ -132,7 +150,7 @@ sap.ui.require([
 		assert.ok(oActionSheet.isOpen(), "ActionSheet is already open");
 		setTimeout(function () {
 			var $actionSheet = sap.ui.getCore().byId("actionsheet").$(),
-				$parentControl = !sap.ui.Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
+				$parentControl = !Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
 				$header = $parentControl.children("header.sapMBar"),
 				$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
 			assert.expect(8);
@@ -140,7 +158,7 @@ sap.ui.require([
 			assert.ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
 			assert.ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
 
-			if (!sap.ui.Device.system.phone) {
+			if (!Device.system.phone) {
 				assert.ok(!($header[0]), "Title is always ignored in iPad");
 			} else {
 				assert.ok($header[0], "Title is rendered");
@@ -166,7 +184,7 @@ sap.ui.require([
 		assert.ok(oActionSheet.isOpen(), "ActionSheet is already open");
 		setTimeout(function () {
 			var $actionSheet = sap.ui.getCore().byId("actionsheet").$(),
-				$parentControl = !sap.ui.Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
+				$parentControl = !Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
 				$header = $parentControl.children("div.sapMBar"),
 				$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
 			assert.expect(8);
@@ -176,7 +194,7 @@ sap.ui.require([
 
 			assert.ok(!($header[0]), "There is no title because title property is set to null");
 
-			if (!sap.ui.Device.system.phone) {
+			if (!Device.system.phone) {
 				assert.ok(!($cancelButton[0]), "Cancel button is never rendered in iPad");
 			} else {
 				assert.ok($cancelButton[0], "Cancel button is rendered");
@@ -200,7 +218,7 @@ sap.ui.require([
 		assert.ok(oActionSheet.isOpen(), "ActionSheet is already open");
 		setTimeout(function () {
 			var $actionSheet = sap.ui.getCore().byId("actionsheet").$(),
-				$parentControl = !sap.ui.Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
+				$parentControl = !Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
 				$header = $parentControl.children("div.sapMBar"),
 				$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
 			assert.expect(8);
@@ -371,7 +389,7 @@ sap.ui.require([
 			tablet: false
 		};
 
-		this.stub(sap.ui.Device, "system", oSystem);
+		this.stub(Device, "system", oSystem);
 		assert.expect(2);
 		var oButton = new Button({
 			text: "Open ActionSheet",
@@ -445,7 +463,7 @@ sap.ui.require([
 			phone: false
 		};
 
-		this.stub(sap.ui.Device, "system", oSystem);
+		this.stub(Device, "system", oSystem);
 		assert.expect(2);
 		var oButton = new Button({
 			text: "Open ActionSheet",
@@ -521,7 +539,7 @@ sap.ui.require([
 			phone: false
 		};
 
-		this.stub(sap.ui.Device, "system", oSystem);
+		this.stub(Device, "system", oSystem);
 		var oButton = new Button({
 			text: "Open ActionSheet",
 			press: function () {
@@ -667,7 +685,7 @@ sap.ui.require([
 				tablet: false
 			};
 
-		this.stub(sap.ui.Device, "system", oSystem);
+		this.stub(Device, "system", oSystem);
 
 		var oButton = new Button({
 			text: "Open ActionSheet",
@@ -902,14 +920,14 @@ sap.ui.require([
 
 		var aPreCloneHandlers = oButton.mEventRegistry.press;
 		oActionSheet.getButtons().forEach(function (oButton, i) {
-			notStrictEqual(aPreCloneHandlers, undefined,
+			assert.notStrictEqual(aPreCloneHandlers, undefined,
 				"The buttons of the original action sheet should have defined mock handlers attached BEFORE we clone it");
 		});
 		var oClonedActionSheet = oActionSheet.clone();
 
 		var aPostCloneHandlers = oButton.mEventRegistry.press;
 		oActionSheet.getButtons().forEach(function (oButton, i) {
-			notStrictEqual(aPostCloneHandlers, undefined,
+			assert.notStrictEqual(aPostCloneHandlers, undefined,
 				"The buttons of the original action sheet should still have defined mock handlers AFTER we clone it");
 		});
 

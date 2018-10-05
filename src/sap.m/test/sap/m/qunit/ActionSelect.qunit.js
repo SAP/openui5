@@ -1,5 +1,5 @@
-/* global sinon, QUnit */
-sap.ui.require([
+/*global QUnit */
+sap.ui.define([
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/m/ActionSelect",
@@ -7,6 +7,7 @@ sap.ui.require([
 	"sap/ui/core/Item",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/qunit-css",
 	"sap/ui/thirdparty/qunit",
 	"sap/ui/qunit/qunit-junit",
@@ -14,10 +15,20 @@ sap.ui.require([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
-], function (App, Page, ActionSelect, Button, Item, KeyCodes, QUnitUtils) {
+], function(
+	App,
+	Page,
+	ActionSelect,
+	Button,
+	Item,
+	KeyCodes,
+	qutils,
+	createAndAppendDiv
+) {
 	"use strict";
+	createAndAppendDiv("actionselect-content");
 
-	sinon.config.useFakeTimers = true;
+
 
 	var oApp = new App("myApp", {
 		initialPage: "page1"
@@ -31,8 +42,7 @@ sap.ui.require([
 	oApp.addPage(oPage);
 	oApp.placeAt("actionselect-content");
 
-	QUnit.config.autostart = false;
-	sap.ui.test.qunit.delayTestStart();
+
 
 	/* =========================================================== */
 	/* API module                                                  */
@@ -274,7 +284,7 @@ sap.ui.require([
 		oActionSelect.open();
 		this.clock.tick(500);
 
-		QUnitUtils.triggerKeydown(oActionSelect.getDomRef(), KeyCodes.TAB);
+		qutils.triggerKeydown(oActionSelect.getDomRef(), KeyCodes.TAB);
 		this.clock.tick(500);
 
 		// assert
@@ -331,7 +341,7 @@ sap.ui.require([
 		oActionSelect.open();
 		this.clock.tick(500);
 
-		QUnitUtils.triggerKeydown(oActionSelect.getDomRef(), KeyCodes.TAB, true, false, false);
+		qutils.triggerKeydown(oActionSelect.getDomRef(), KeyCodes.TAB, true, false, false);
 		this.clock.tick(500);
 
 		// assert

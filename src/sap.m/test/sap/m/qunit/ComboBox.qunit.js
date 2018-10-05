@@ -1,6 +1,5 @@
-/* global QUnit */
-
-sap.ui.require([
+/*global QUnit */
+sap.ui.define([
 	"sap/m/ComboBoxBase",
 	"sap/m/ComboBox",
 	"sap/m/ComboBoxTextField",
@@ -18,32 +17,74 @@ sap.ui.require([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/dom/containsOrEquals",
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/Device",
+	"sap/m/InputBase",
+	"sap/ui/core/library",
+	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/qunit/qunit-css",
 	"sap/ui/thirdparty/qunit",
 	"sap/ui/qunit/qunit-junit",
 	"sap/ui/qunit/qunit-coverage",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/sinon-qunit"
-], function (ComboBoxBase, ComboBox, ComboBoxTextField, Label, Select, Item, ListItem, SimpleForm, JSONModel, ODataModel, Event, Log, Capitalize, KeyCodes, MockServer, sinon, containsOrEquals) {
+], function(
+	ComboBoxBase,
+	ComboBox,
+	ComboBoxTextField,
+	Label,
+	Select,
+	Item,
+	ListItem,
+	SimpleForm,
+	JSONModel,
+	ODataModel,
+	Event,
+	Log,
+	Capitalize,
+	KeyCodes,
+	MockServer,
+	sinon,
+	containsOrEquals,
+	createAndAppendDiv,
+	Device,
+	InputBase,
+	coreLibrary,
+	EventExtension
+) {
 	"use strict";
 
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
+
+	// shortcut for sap.ui.core.TextAlign
+	var TextAlign = coreLibrary.TextAlign;
+
+	// shortcut for sap.ui.core.OpenState
+	var OpenState = coreLibrary.OpenState;
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
+
+	document.body.insertBefore(createAndAppendDiv("content"), document.body.firstChild);
+
+
 	window._setTimeout = this.setTimeout;
-	sinon.config.useFakeTimers = true;
+
 
 	// make jQuery.now work with Sinon fake timers (since jQuery 2.x, jQuery.now caches the native Date.now)
 	jQuery.now = function () {
 		return Date.now();
 	};
 
-	QUnit.config.autostart = false;
-	sap.ui.test.qunit.delayTestStart();
+
 
 	var fnStartMockServer = function (sUri, iAutoRespondAfter) {
-		var sMetadataUrl = "data/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/m/qunit/data/metadata.xml";
 		sUri = sUri || "/service/";
 
 		// configure respond to requests delay
-		sap.ui.core.util.MockServer.config({
+		MockServer.config({
 			autoRespond: true,
 			autoRespondAfter: iAutoRespondAfter || 10
 		});
@@ -54,7 +95,7 @@ sap.ui.require([
 		});
 
 		// start and return
-		oMockServer.simulate(sMetadataUrl, "data");
+		oMockServer.simulate(sMetadataUrl, "test-resources/sap/m/qunit/data");
 		oMockServer.start();
 		return oMockServer;
 	};
@@ -1372,7 +1413,7 @@ sap.ui.require([
 	QUnit.module("Cancel selection");
 
 	QUnit.test("it should cancel the selection after closing the dialog with close button", function (assert) {
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -2726,16 +2767,16 @@ sap.ui.require([
 		// assert
 		assert.ok(oComboBox.isOpen(), "ComboBox is open");
 
-		if (!sap.ui.Device.system.phone) {
+		if (!Device.system.phone) {
 			assert.strictEqual(document.activeElement, oComboBox.getFocusDomRef(), "The ComboBox should get the focus");
 		}
 
-		assert.ok(oComboBox.hasStyleClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS));
+		assert.ok(oComboBox.hasStyleClass(InputBase.ICON_PRESSED_CSS_CLASS));
 
-		if (sap.ui.Device.system.desktop || sap.ui.Device.system.tablet) {
+		if (Device.system.desktop || Device.system.tablet) {
 			assert.strictEqual(oComboBox.$().outerWidth(), oComboBox.getPicker().$().outerWidth(), "The width of the picker pop-up is strictEqual to the width of the input");
 			assert.strictEqual(document.activeElement, oComboBox.getFocusDomRef(), "The ComboBox should get the focus");
-		} else if (sap.ui.Device.system.phone) {
+		} else if (Device.system.phone) {
 			assert.strictEqual(oComboBox.getPicker().$().width(), jQuery(window).width(), "The width of the picker pop-up is strictEqual to the width of the browser view port");
 		}
 
@@ -2778,7 +2819,7 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.ok(oComboBox.hasStyleClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS));
+		assert.ok(oComboBox.hasStyleClass(InputBase.ICON_PRESSED_CSS_CLASS));
 
 		// cleanup
 		oComboBox.destroy();
@@ -2786,7 +2827,7 @@ sap.ui.require([
 
 	QUnit.test("open() the picker popup (dropdown list) should automatically size itself to fit its content", function (assert) {
 
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: true,
 			phone: false,
 			tablet: false
@@ -2819,7 +2860,7 @@ sap.ui.require([
 
 	QUnit.test("it should propagate the entered value to the picker text field", function (assert) {
 
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -2852,7 +2893,7 @@ sap.ui.require([
 
 	QUnit.test("it should show the label text as picker header title", function (assert) {
 
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -2887,7 +2928,7 @@ sap.ui.require([
 
 	QUnit.test("it should update the header title if the label reference is destroyed", function (assert) {
 
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -3491,7 +3532,7 @@ sap.ui.require([
 	QUnit.test("it should not throw errors when methods are called after the control is destroyed", function (assert) {
 
 		// arrange
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -3567,7 +3608,7 @@ sap.ui.require([
 
 		/* TODO remove after 1.62 version */
 		// workaround to fix failing test in IE9-11
-		if (sap.ui.Device.browser.msie) {
+		if (Device.browser.msie) {
 			oErrorComboBox.focus();
 			this.clock.tick(1000);
 		}
@@ -3617,7 +3658,7 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 
 		// act
-		oComboBox.setValueState(sap.ui.core.ValueState.Error);
+		oComboBox.setValueState(ValueState.Error);
 
 		// assert
 		assert.ok(oComboBox.$("content").hasClass("sapMInputBaseContentWrapperState"));
@@ -5051,11 +5092,11 @@ sap.ui.require([
 		assert.strictEqual(fnShowSpy.callCount, 1, "onsapshow() method was called exactly once");
 
 		if (jQuery.support.cssAnimations) {
-			assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPENING, "Control's picker pop-up is opening");
+			assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.OPENING, "Control's picker pop-up is opening");
 		}
 
 		this.clock.tick(1000);
-		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Control's picker pop-up is open");
+		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.OPEN, "Control's picker pop-up is open");
 		assert.ok(oComboBox.isOpen(), "Control picker pop-up is open");
 
 		// cleanup
@@ -5090,7 +5131,7 @@ sap.ui.require([
 
 		// assert
 		this.clock.tick(1000);
-		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.CLOSED, "Control's picker pop-up is closed");
+		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.CLOSED, "Control's picker pop-up is closed");
 		assert.strictEqual(oComboBox.isOpen(), false, "Control picker pop-up is closed");
 
 		// cleanup
@@ -5127,11 +5168,11 @@ sap.ui.require([
 		assert.strictEqual(fnShowSpy.callCount, 1, "onsapshow() method was called exactly once");
 
 		if (jQuery.support.cssAnimations) {
-			assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPENING, "Control's picker pop-up is opening");
+			assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.OPENING, "Control's picker pop-up is opening");
 		}
 
 		this.clock.tick(1000);
-		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Control picker pop-up is open");
+		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.OPEN, "Control picker pop-up is open");
 		assert.ok(oComboBox.isOpen(), "ComboBox is open");
 
 		// cleanup
@@ -5166,7 +5207,7 @@ sap.ui.require([
 
 		// assert
 		this.clock.tick(1000);
-		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.CLOSED, "Control's picker pop-up is closed");
+		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.CLOSED, "Control's picker pop-up is closed");
 		assert.strictEqual(oComboBox.isOpen(), false, "Control picker pop-up is closed");
 
 		// cleanup
@@ -5207,7 +5248,7 @@ sap.ui.require([
 
 		// assert
 		assert.strictEqual(fnShowSpy.callCount, 2, "onsapshow() method was called twice");
-		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.CLOSED, "Control's picker pop-up is close");
+		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.CLOSED, "Control's picker pop-up is close");
 
 		// cleanup
 		oComboBox.destroy();
@@ -5290,7 +5331,7 @@ sap.ui.require([
 
 		// assert
 		assert.strictEqual(fnShowSpy.callCount, 2, "onsapshow() method was called twice");
-		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.CLOSED, "Control's picker pop-up is close");
+		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.CLOSED, "Control's picker pop-up is close");
 
 		// cleanup
 		oComboBox.destroy();
@@ -5449,11 +5490,11 @@ sap.ui.require([
 		assert.strictEqual(fnHideSpy.callCount, 1, "onsaphide() method was called exactly once");
 
 		if (jQuery.support.cssAnimations) {
-			assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPENING, "Control's picker pop-up is opening");
+			assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.OPENING, "Control's picker pop-up is opening");
 		}
 
 		this.clock.tick(1000);
-		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Control's picker pop-up is open");
+		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.OPEN, "Control's picker pop-up is open");
 		assert.ok(oComboBox.isOpen(), "Control's picker pop-up is open");
 
 		// cleanup
@@ -5488,7 +5529,7 @@ sap.ui.require([
 
 		// assert
 		this.clock.tick(1000);
-		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.CLOSED, "Control's picker pop-up is closed");
+		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.CLOSED, "Control's picker pop-up is closed");
 		assert.strictEqual(oComboBox.isOpen(), false, "Control picker pop-up is closed");
 
 		// cleanup
@@ -5525,7 +5566,7 @@ sap.ui.require([
 
 		// assert
 		assert.strictEqual(fnHideSpy.callCount, 2, "onsaphide() method was called twice");
-		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.CLOSED, "Control's picker pop-up is close");
+		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.CLOSED, "Control's picker pop-up is close");
 
 		// cleanup
 		oComboBox.destroy();
@@ -5644,7 +5685,7 @@ sap.ui.require([
 		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ESCAPE);
 
 		// assert
-		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Control's picker pop-up is open");
+		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.OPEN, "Control's picker pop-up is open");
 		assert.strictEqual(oComboBox.isOpen(), true);
 
 		// cleanup
@@ -5752,7 +5793,7 @@ sap.ui.require([
 		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
 
 		// assert
-		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Control's picker pop-up is open");
+		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.OPEN, "Control's picker pop-up is open");
 		assert.strictEqual(oComboBox.isOpen(), true);
 
 		// cleanup
@@ -8036,7 +8077,7 @@ sap.ui.require([
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 		var fnOpenSpy = this.spy(oComboBox, "open");
 		var fnCloseSpy = this.spy(oComboBox, "close");
-		var sOpenState = !jQuery.support.cssAnimations ? sap.ui.core.OpenState.CLOSED : sap.ui.core.OpenState.CLOSING;	// no animation on ie9
+		var sOpenState = !jQuery.support.cssAnimations ? OpenState.CLOSED : OpenState.CLOSING;	// no animation on ie9
 
 		// act
 		oComboBox.getFocusDomRef().value = "v";
@@ -8284,7 +8325,7 @@ sap.ui.require([
 		// arrange
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		var fnOpenSpy = this.spy(sap.m.ComboBox.prototype, "open");
+		var fnOpenSpy = this.spy(ComboBox.prototype, "open");
 		oComboBox.focus();
 
 		// act
@@ -8395,7 +8436,7 @@ sap.ui.require([
 
 	QUnit.test("it should filter the list on phones", function (assert) {
 
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -8599,7 +8640,7 @@ sap.ui.require([
 
 	QUnit.test("it should filter with empty value when input is deleted on mobile device", function (assert) {
 
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -8662,7 +8703,7 @@ sap.ui.require([
 
 	QUnit.test("onfocusin", function (assert) {
 
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: true,
 			phone: false,
 			tablet: false
@@ -8689,7 +8730,7 @@ sap.ui.require([
 
 	QUnit.test("onfocusin select the text", function (assert) {
 
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: true,
 			phone: false,
 			tablet: false
@@ -8719,7 +8760,7 @@ sap.ui.require([
 	// BCP 1570441294
 	QUnit.test("onfocusin it should correctly restore the selection of the text after re-rendering", function (assert) {
 
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: true,
 			phone: false,
 			tablet: false
@@ -8762,7 +8803,7 @@ sap.ui.require([
 	QUnit.test("onBeforeOpen", function (assert) {
 
 		// system under test
-		var fnOnBeforeOpenSpy = this.spy(sap.m.ComboBox.prototype, "onBeforeOpen");
+		var fnOnBeforeOpenSpy = this.spy(ComboBox.prototype, "onBeforeOpen");
 		var oComboBox = new ComboBox({
 			value: "Germany"
 		});
@@ -8788,7 +8829,7 @@ sap.ui.require([
 	QUnit.test("onAfterOpen test case 1", function (assert) {
 
 		// system under test
-		var fnOnAfterOpenSpy = this.spy(sap.m.ComboBox.prototype, "onAfterOpen");
+		var fnOnAfterOpenSpy = this.spy(ComboBox.prototype, "onAfterOpen");
 		var oComboBox = new ComboBox({
 			items: [
 				new Item({
@@ -9017,7 +9058,7 @@ sap.ui.require([
 	QUnit.test("onAfterClose", function (assert) {
 
 		// system under test
-		var fnOnAfterCloseSpy = this.spy(sap.m.ComboBox.prototype, "onAfterClose");
+		var fnOnAfterCloseSpy = this.spy(ComboBox.prototype, "onAfterClose");
 		var oComboBox = new ComboBox({
 			items: [
 				new Item({
@@ -9052,15 +9093,15 @@ sap.ui.require([
 	QUnit.test("it should set the focus to the body after fired onAfterClose event", function(assert) {
 
 		// system under test
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: false,
 			phone: true,
 			tablet: false
 		});
 
-		var oComboBox = new sap.m.ComboBox({
+		var oComboBox = new ComboBox({
 			items: [
-				new sap.ui.core.Item({
+				new Item({
 					key: "GER",
 					text: "Germany"
 				})
@@ -9088,7 +9129,7 @@ sap.ui.require([
 	QUnit.test("onBeforeClose", function (assert) {
 
 		// system under test
-		var fnOnBeforeCloseSpy = this.spy(sap.m.ComboBox.prototype, "onBeforeClose");
+		var fnOnBeforeCloseSpy = this.spy(ComboBox.prototype, "onBeforeClose");
 		var oComboBox = new ComboBox();
 
 		// arrange
@@ -9617,7 +9658,7 @@ sap.ui.require([
 
 	QUnit.test("it should change the value and fire the change event", function (assert) {
 
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -9654,7 +9695,7 @@ sap.ui.require([
 
 	QUnit.test("it should fire the change event after the dialog is closed", function (assert) {
 
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -9690,7 +9731,7 @@ sap.ui.require([
 
 	QUnit.test("it should fire the change event when the ENTER key is pressed", function (assert) {
 
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -9731,7 +9772,7 @@ sap.ui.require([
 	// BCP 1680061025
 	QUnit.test("it should fire the change event after the selection is updated on mobile devices", function (assert) {
 		var done = assert.async();
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -9807,7 +9848,7 @@ sap.ui.require([
 
 	QUnit.test("it should close the dialog when the close button is pressed", function (assert) {
 
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -10064,7 +10105,7 @@ sap.ui.require([
 
 	QUnit.test("onItemPress should fire change when the first filtered item is clicked - mobile", function (assert) {
 		// system under test
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -10109,7 +10150,7 @@ sap.ui.require([
 
 	QUnit.test("it should propagate some property changes to the picker text field", function (assert) {
 
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -10122,8 +10163,8 @@ sap.ui.require([
 			name: "name",
 			placeholder: "placeholder",
 			editable: false,
-			textAlign: sap.ui.core.TextAlign.Center,
-			textDirection: sap.ui.core.TextDirection.LTR
+			textAlign: TextAlign.Center,
+			textDirection: TextDirection.LTR
 		});
 
 		// arrange
@@ -10135,8 +10176,8 @@ sap.ui.require([
 		assert.strictEqual(oComboBoxPickerTextField.getName(), "name");
 		assert.strictEqual(oComboBoxPickerTextField.getPlaceholder(), "placeholder");
 		assert.strictEqual(oComboBoxPickerTextField.getEditable(), false);
-		assert.strictEqual(oComboBoxPickerTextField.getTextAlign(), sap.ui.core.TextAlign.Center);
-		assert.strictEqual(oComboBoxPickerTextField.getTextDirection(), sap.ui.core.TextDirection.LTR);
+		assert.strictEqual(oComboBoxPickerTextField.getTextAlign(), TextAlign.Center);
+		assert.strictEqual(oComboBoxPickerTextField.getTextDirection(), TextDirection.LTR);
 
 		// cleanup
 		oComboBox.destroy();
@@ -10144,7 +10185,7 @@ sap.ui.require([
 
 	QUnit.test("it should propagate some property changes to the picker text field", function (assert) {
 
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -10157,8 +10198,8 @@ sap.ui.require([
 			name: "name",
 			placeholder: "placeholder",
 			editable: false,
-			textAlign: sap.ui.core.TextAlign.Center,
-			textDirection: sap.ui.core.TextDirection.LTR
+			textAlign: TextAlign.Center,
+			textDirection: TextDirection.LTR
 		});
 
 		// arrange
@@ -10170,8 +10211,8 @@ sap.ui.require([
 		oComboBox.setName("new name");
 		oComboBox.setPlaceholder("new placeholder");
 		oComboBox.setEditable(true);
-		oComboBox.setTextAlign(sap.ui.core.TextAlign.Initial);
-		oComboBox.setTextDirection(sap.ui.core.TextDirection.RTL);
+		oComboBox.setTextAlign(TextAlign.Initial);
+		oComboBox.setTextDirection(TextDirection.RTL);
 
 		// assert
 		assert.strictEqual(oComboBoxPickerTextField.getValue(), "new value");
@@ -10179,8 +10220,8 @@ sap.ui.require([
 		assert.strictEqual(oComboBoxPickerTextField.getName(), "new name");
 		assert.strictEqual(oComboBoxPickerTextField.getPlaceholder(), "new placeholder");
 		assert.strictEqual(oComboBoxPickerTextField.getEditable(), true);
-		assert.strictEqual(oComboBoxPickerTextField.getTextAlign(), sap.ui.core.TextAlign.Initial);
-		assert.strictEqual(oComboBoxPickerTextField.getTextDirection(), sap.ui.core.TextDirection.RTL);
+		assert.strictEqual(oComboBoxPickerTextField.getTextAlign(), TextAlign.Initial);
+		assert.strictEqual(oComboBoxPickerTextField.getTextDirection(), TextDirection.RTL);
 
 		// cleanup
 		oComboBox.destroy();
@@ -10351,7 +10392,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("Keep the focus on the input", function (assert) {
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: false,
 			phone: false,
 			tablet: true,
@@ -10533,7 +10574,7 @@ sap.ui.require([
 	QUnit.module("Tablet focus handling");
 
 	QUnit.test("it should not set the focus to the input", function (assert) {
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: false,
 			tablet: true,
 			phone: false
@@ -10556,7 +10597,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("it should has initial focus set to the input", function (assert) {
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: false,
 			tablet: true,
 			phone: false
@@ -10573,7 +10614,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("it should initially focus the picker", function (assert) {
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: false,
 			tablet: true,
 			phone: false
@@ -10637,7 +10678,7 @@ sap.ui.require([
 	QUnit.module("highlighting");
 
 	QUnit.test("_boldItemRef should return a bold string", function (assert) {
-		var oFunctionRef = sap.m.ComboBox.prototype._boldItemRef;
+		var oFunctionRef = ComboBox.prototype._boldItemRef;
 
 		assert.strictEqual(oFunctionRef("Test", /^t/i, 1), "<b>T</b>est");
 		assert.strictEqual(oFunctionRef("Test", /^Test/i, 4), "<b>Test</b>");
@@ -10647,7 +10688,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("_boldItemRef bold starts with per term", function (assert) {
-		var oFunctionRef = sap.m.ComboBox.prototype._boldItemRef,
+		var oFunctionRef = ComboBox.prototype._boldItemRef,
 			sItemText = "Hong Kong China",
 			sQuery1 = "Kong",
 			sQuery2 = "Hong",
@@ -10692,7 +10733,7 @@ sap.ui.require([
 	QUnit.test("_highlightList doesn't throw an error when showSecondaryValues=true and sap.ui.core.Item is set", function (assert) {
 
 		// system under test
-		var fnOnAfterOpenSpy = this.spy(sap.m.ComboBox.prototype, "onAfterOpen");
+		var fnOnAfterOpenSpy = this.spy(ComboBox.prototype, "onAfterOpen");
 		var oComboBox = new ComboBox({
 			showSecondaryValues: true,
 			items: [
@@ -10722,7 +10763,7 @@ sap.ui.require([
 	QUnit.test("_highlightList doesn't throw an error when combobox's value contains special characters", function (assert) {
 
 		// system under test
-		var fnOnAfterOpenSpy = this.spy(sap.m.ComboBox.prototype, "onAfterOpen");
+		var fnOnAfterOpenSpy = this.spy(ComboBox.prototype, "onAfterOpen");
 		var oComboBox = new ComboBox({
 			showSecondaryValues: true,
 			items: [
@@ -10782,7 +10823,7 @@ sap.ui.require([
 	QUnit.test("Setting an invalid filter should fallback to default text filter", function (assert) {
 		var log = sap.ui.require('sap/base/Log'),
 			fnWarningSpy = this.spy(log, "warning"),
-			fnDefaultFilterSpy = this.stub(sap.m.ComboBoxBase, "DEFAULT_TEXT_FILTER");
+			fnDefaultFilterSpy = this.stub(ComboBoxBase, "DEFAULT_TEXT_FILTER");
 
 		// null is passed for a filter
 		this.oComboBox.setFilterFunction(null);

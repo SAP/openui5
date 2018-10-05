@@ -1,16 +1,22 @@
-/* global sinon, QUnit */
-sap.ui.require([
+/*global QUnit, sinon */
+sap.ui.define([
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/m/List",
 	"sap/m/InputListItem",
+	"sap/m/InstanceManager",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
+	"sap/m/MessageBox",
 	"sap/m/TextArea",
 	"sap/m/Text",
 	"sap/m/CheckBox",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/m/library",
+	"sap/ui/core/library",
+	"sap/ui/Device",
 	"sap/ui/qunit/qunit-css",
 	"sap/ui/thirdparty/qunit",
 	"sap/ui/qunit/qunit-junit",
@@ -18,12 +24,36 @@ sap.ui.require([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
-], function (App, Page, List, InputListItem, VerticalLayout, Button, TextArea, Text, CheckBox, KeyCodes, QUnitUtils) {
+], function(
+	App,
+	Page,
+	List,
+	InputListItem,
+	InstanceManager,
+	VerticalLayout,
+	Button,
+	MessageBox,
+	TextArea,
+	Text,
+	CheckBox,
+	KeyCodes,
+	qutils,
+	createAndAppendDiv,
+	mobileLibrary,
+	coreLibrary,
+	Device
+) {
 	"use strict";
 
-	sinon.config.useFakeTimers = true;
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
-	sap.ui.test.qunit.delayTestStart();
+	// shortcut for sap.m.DialogType
+	var DialogType = mobileLibrary.DialogType;
+
+	createAndAppendDiv("content");
+
+
 
 	var page = new Page("myFirstPage", {
 		title: "MessageBox Test",
@@ -53,8 +83,6 @@ sap.ui.require([
 		"STANDARD": "sapMMessageBoxStandard"
 	};
 
-	var MessageBox = sap.ui.requireSync("sap/m/MessageBox");
-
 	QUnit.test("show", function (assert) {
 		MessageBox.show(sMessageText, {
 			title: sMessageTitle,
@@ -66,7 +94,7 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 		var oMessageBox = sap.ui.getCore().byId("messagebox1");
 		assert.ok(oMessageBox, "Dialog should be created");
-		assert.equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		assert.ok(oMessageBox.$().hasClass(sClassName));
@@ -225,7 +253,7 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 		oMessageBox = sap.ui.getCore().byId("messagebox1");
 		assert.ok(oMessageBox, "Dialog should be created");
-		assert.equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		assert.ok(oMessageBox.$().hasClass(sClassName));
@@ -242,7 +270,7 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 		var oMessageBox = sap.ui.getCore().byId("messageboxError");
 		assert.ok(oMessageBox, "Dialog should be created");
-		assert.equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
 		assert.equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_CLOSE"), "Default action Cancel is set");
 		assert.equal(oMessageBox.getTitle(), oResourceBundle.getText("MSGBOX_TITLE_ERROR"), "The title should be Error");
@@ -258,7 +286,7 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 		var oMessageBox = sap.ui.getCore().byId("messageboxInfo");
 		assert.ok(oMessageBox, "Dialog should be created");
-		assert.equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
 		assert.equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_OK"), "Default action OK is set");
 		assert.equal(oMessageBox.getTitle(), oResourceBundle.getText("MSGBOX_TITLE_INFO"), "The title should be Info");
@@ -274,7 +302,7 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 		var oMessageBox = sap.ui.getCore().byId("messageboxWarning");
 		assert.ok(oMessageBox, "Dialog should be created");
-		assert.equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
 		assert.equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_OK"), "Default action OK is set");
 		assert.equal(oMessageBox.getTitle(), oResourceBundle.getText("MSGBOX_TITLE_WARNING"), "The title should be Warning");
@@ -290,7 +318,7 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 		var oMessageBox = sap.ui.getCore().byId("messageboxSuccess");
 		assert.ok(oMessageBox, "Dialog should be created");
-		assert.equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
 		assert.equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_OK"), "Default action OK is set");
 		assert.equal(oMessageBox.getTitle(), oResourceBundle.getText("MSGBOX_TITLE_SUCCESS"), "The title should be Success");
@@ -335,7 +363,7 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 		var oMessageBox = sap.ui.getCore().byId("messageBoxScrolling");
 		assert.ok(oMessageBox, "Dialog should be created");
-		assert.equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
 		assert.equal(oMessageBox.getHorizontalScrolling(), false, "The horizontal scrolling is disabled");
 		assert.equal(oMessageBox.getVerticalScrolling(), false, "The vertical scrolling is disabled");
@@ -360,7 +388,7 @@ sap.ui.require([
 
 		var oMessageBox = sap.ui.getCore().byId("messagebox2");
 		assert.ok(oMessageBox, "Dialog should be created");
-		assert.equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.equal(oMessageBox.getButtons().length, 4, "All four buttons are added to dialog");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		assert.equal(oMessageBox.getInitialFocus(), oButton.sId, "InitialFocus is set correctly");
@@ -440,7 +468,7 @@ sap.ui.require([
 		})();
 
 		assert.ok(oMessageBox, "Dialog should be created");
-		assert.equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		assert.equal(oMessageBox.getInitialFocus(), sInitialFocusControlId, "InitialFocus is set correctly");
@@ -476,7 +504,7 @@ sap.ui.require([
 
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString(), "bg", "locale of page");
-		assert.equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		assert.equal(oMessageBox.getInitialFocus(), getInitialFocusControlId, "InitialFocus is set correctly");
@@ -496,7 +524,7 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 		var oMessageBox = sap.ui.getCore().byId("alertbox1");
 		assert.ok(oMessageBox, "Dialog should be created");
-		assert.equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.ok(oMessageBox.getButtons().length, "Only one button in alert.");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		assert.ok(oMessageBox.$().hasClass(sClassName));
@@ -514,7 +542,7 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 		var oMessageBox = sap.ui.getCore().byId("confirmbox1");
 		assert.ok(oMessageBox, "Dialog should be created");
-		assert.equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		assert.ok(oMessageBox.$().hasClass(sClassName));
@@ -527,7 +555,7 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 		var oMessageBox = sap.ui.getCore().byId("messagebox1");
 		assert.ok(oMessageBox, "Dialog should be created");
-		assert.equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		assert.ok(oMessageBox.$().hasClass(sClassName));
@@ -546,7 +574,7 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 		oMessageBox = sap.ui.getCore().byId("messagebox1");
 		assert.ok(oMessageBox, "Dialog should be created");
-		assert.equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		assert.ok(oMessageBox.$().hasClass(sClassName));
@@ -561,7 +589,7 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 		var oMessageBox = sap.ui.getCore().byId("alertbox1");
 		assert.ok(oMessageBox, "Dialog should be created");
-		assert.equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.ok(oMessageBox.getButtons().length, "Only one button is created");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		assert.ok(oMessageBox.$().hasClass(sClassName));
@@ -573,7 +601,7 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 		var oMessageBox = sap.ui.getCore().byId("confirmbox1");
 		assert.ok(oMessageBox, "Dialog should be created");
-		assert.equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		assert.ok(oMessageBox.$().hasClass(sClassName));
@@ -584,7 +612,6 @@ sap.ui.require([
 		MessageBox.alert("I have {abc}");
 		sap.ui.getCore().applyChanges();
 		assert.equal(jQuery("span:contains('I have {abc}')").length, 1, "Text with curly bracket is rendered");
-		var InstanceManager = sap.ui.requireSync("sap/m/InstanceManager");
 		InstanceManager.getOpenDialogs()[0].destroy();
 	});
 
@@ -599,7 +626,7 @@ sap.ui.require([
 			actions: [MessageBox.Action.OK, MessageBox.Action.NO, "Custom Text"],
 			onClose: callback.bind(this, assert),
 			id: sMessageBoxId,
-			textDirection: sap.ui.core.TextDirection.RTL
+			textDirection: TextDirection.RTL
 		});
 
 		sap.ui.getCore().applyChanges();
@@ -614,7 +641,7 @@ sap.ui.require([
 			actions: [MessageBox.Action.OK, MessageBox.Action.NO, "Custom Text"],
 			onClose: callback.bind(this, assert),
 			id: sMessageBoxId,
-			textDirection: sap.ui.core.TextDirection.LTR
+			textDirection: TextDirection.LTR
 		});
 
 		sap.ui.getCore().applyChanges();
@@ -639,12 +666,12 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 		var oMessageBox = sap.ui.getCore().byId("messagedialog1");
 		assert.ok(oMessageBox, "Dialog should be created");
-		assert.equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
 		assert.ok(oMessageBox.$().find('a.sapMMessageBoxLinkText').length != 0, "MessageBox has formatted link text");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
-		if (sap.ui.Device.support.touch) {
+		if (Device.support.touch) {
 			sLinkText.tap();
 		} else {
 			sLinkText.click();
@@ -710,7 +737,7 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 		var oMessageBox = sap.ui.getCore().byId("messagedialog2");
 		assert.ok(oMessageBox, "Dialog should be created");
-		assert.equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		assert.ok(oMessageBox.getContent()[0] instanceof sap.ui.core.Control, "Content is control");
@@ -734,12 +761,12 @@ sap.ui.require([
 		this.clock.tick(500);
 		var oMessageBox = sap.ui.getCore().byId("messagedialog2");
 		assert.ok(oMessageBox, "Dialog should be created");
-		assert.equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
 		assert.ok(oMessageBox.$().find('a.sapMMessageBoxLinkText').length != 0, "MessageBox has formatted link text");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
-		if (sap.ui.Device.support.touch) {
+		if (Device.support.touch) {
 			sLinkText.tap();
 		} else {
 			sLinkText.click();
@@ -767,7 +794,7 @@ sap.ui.require([
 		var oMessageBox = sap.ui.getCore().byId("messagedialogdetails");
 		assert.ok(oMessageBox, "Dialog should be created");
 		var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
-		if (sap.ui.Device.support.touch) {
+		if (Device.support.touch) {
 			sLinkText.tap();
 		} else {
 			sLinkText.click();
@@ -793,12 +820,12 @@ sap.ui.require([
 		this.clock.tick(500);
 		var oMessageBox = sap.ui.getCore().byId("messagedialog3");
 		assert.ok(oMessageBox, "Dialog should be created");
-		assert.equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
 		assert.ok(oMessageBox.$().find('a.sapMMessageBoxLinkText').length != 0, "MessageBox has formatted link text");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
-		if (sap.ui.Device.support.touch) {
+		if (Device.support.touch) {
 			sLinkText.tap();
 		} else {
 			sLinkText.click();
@@ -814,7 +841,7 @@ sap.ui.require([
 
 	// When the message box is used on phone device and contains exactly 2 buttons it should use internally beginButton and endButton aggregations instead of buttons.
 	QUnit.test("When the message box is used on phone device and contains exactly 2 buttons:", function (assert) {
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			phone: true,
 			tablet: false,
 			desktop: false

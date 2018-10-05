@@ -1,12 +1,46 @@
-/*global QUnit,sinon,qutils*/
+/*global QUnit,sinon */
 
-(function () {
+sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
+	"sap/m/Carousel",
+	"sap/m/library",
+	"sap/m/Image",
+	"sap/m/Page",
+	"sap/m/Button",
+	"jquery.sap.keycodes",
+	"sap/ui/Device",
+	"sap/m/ResponsivePopover",
+	"jquery.sap.global"
+], function(
+	qutils,
+	Carousel,
+	mobileLibrary,
+	Image,
+	Page,
+	Button,
+	jQuery,
+	Device,
+	ResponsivePopover
+) {
 	'use strict';
+
+	// shortcut for sap.m.CarouselArrowsPlacement
+	var CarouselArrowsPlacement = mobileLibrary.CarouselArrowsPlacement;
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = mobileLibrary.PlacementType;
+
+	var styleElement = document.createElement("style");
+	styleElement.textContent =
+		"#mSAPUI5SupportMessage {" +
+		"	display: none !important;" +
+		"}";
+	document.head.appendChild(styleElement);
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
 	<!-- use the sinon faketimers for this test -->
-	sinon.config.useFakeTimers = true;
+
 	var sinonClockTickValue = 600;
 
 	//================================================================================
@@ -14,7 +48,7 @@
 	//================================================================================
 	QUnit.module("Properties", {
 		beforeEach: function () {
-			this.oCarousel = new sap.m.Carousel();
+			this.oCarousel = new Carousel();
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
@@ -30,8 +64,8 @@
 		assert.strictEqual(this.oCarousel.getVisible(), true, "Default 'visible' value is true");
 		assert.strictEqual(this.oCarousel.getActivePage(), null, "Default 'activePage' value is null");
 		assert.strictEqual(this.oCarousel.getShowPageIndicator(), true, "Default 'showPageIndicator' value is true");
-		assert.strictEqual(this.oCarousel.getPageIndicatorPlacement(), sap.m.PlacementType.Bottom, "Default 'pageIndicatorPlacement' value is Bottom");
-		assert.strictEqual(this.oCarousel.getArrowsPlacement(), sap.m.CarouselArrowsPlacement.Content, "Default 'arrowsPlacement' value is 'Content'");
+		assert.strictEqual(this.oCarousel.getPageIndicatorPlacement(), PlacementType.Bottom, "Default 'pageIndicatorPlacement' value is Bottom");
+		assert.strictEqual(this.oCarousel.getArrowsPlacement(), CarouselArrowsPlacement.Content, "Default 'arrowsPlacement' value is 'Content'");
 	});
 
 	//================================================================================
@@ -40,26 +74,26 @@
 	QUnit.module("Methods", {
 		beforeEach: function () {
 			sinon.config.useFakeTimers = false;
-			this.oCarousel = new sap.m.Carousel({
+			this.oCarousel = new Carousel({
 				height: "100%",
 				width: "100%",
 				pages: [
-					new sap.m.Image("keyTestPage_1", {
+					new Image("keyTestPage_1", {
 						src: "../images/demo/nature/desert.jpg"
 					}),
-					new sap.m.Image("keyTestPage_2", {
+					new Image("keyTestPage_2", {
 						src: "../images/demo/nature/elephant.jpg"
 					}),
-					new sap.m.Image("keyTestPage_3", {
+					new Image("keyTestPage_3", {
 						src: "../images/demo/nature/fish.jpg"
 					}),
-					new sap.m.Image("keyTestPage_4", {
+					new Image("keyTestPage_4", {
 						src: "../images/demo/nature/forest.jpg"
 					}),
-					new sap.m.Image("keyTestPage_5", {
+					new Image("keyTestPage_5", {
 						src: "../images/demo/nature/huntingLeopard.jpg"
 					}),
-					new sap.m.Image("keyTestPage_6", {
+					new Image("keyTestPage_6", {
 						src: "../images/demo/nature/prairie.jpg"
 					})
 				]
@@ -178,7 +212,7 @@
 
 	QUnit.test("#setPageIndicatorPlacement() to 'top' position", function (assert) {
 		// Act
-		this.oCarousel.setPageIndicatorPlacement(sap.m.PlacementType.Top);
+		this.oCarousel.setPageIndicatorPlacement(PlacementType.Top);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
@@ -187,7 +221,7 @@
 
 	QUnit.test("#setPageIndicatorPlacement() to 'bottom' position", function (assert) {
 		// Act
-		this.oCarousel.setPageIndicatorPlacement(sap.m.PlacementType.Bottom);
+		this.oCarousel.setPageIndicatorPlacement(PlacementType.Bottom);
 
 		// Assert
 		assert.ok(this.oCarousel.$().children().last().hasClass('sapMCrslControlsBottom'), "Page Indicator should be at bottom");
@@ -195,7 +229,7 @@
 
 	QUnit.test("#setArrowsPlacement() to 'Content' position", function (assert) {
 		// Act
-		this.oCarousel.setArrowsPlacement(sap.m.CarouselArrowsPlacement.Content);
+		this.oCarousel.setArrowsPlacement(CarouselArrowsPlacement.Content);
 
 		// Assert
 		assert.strictEqual(this.oCarousel.$().find('.sapMCrslHud').length, 1, "Arrows should be rendered next to the image");
@@ -203,7 +237,7 @@
 
 	QUnit.test("#setArrowsPlacement() to 'PageIndicator' position", function (assert) {
 		// Act
-		this.oCarousel.setArrowsPlacement(sap.m.CarouselArrowsPlacement.PageIndicator);
+		this.oCarousel.setArrowsPlacement(CarouselArrowsPlacement.PageIndicator);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
@@ -213,26 +247,26 @@
 
 	QUnit.module("Methods", {
 		beforeEach: function () {
-			this.oCarousel = new sap.m.Carousel({
+			this.oCarousel = new Carousel({
 				height: "100%",
 				width: "100%",
 				pages: [
-					new sap.m.Image("keyTestPage_1", {
+					new Image("keyTestPage_1", {
 						src: "../images/demo/nature/desert.jpg"
 					}),
-					new sap.m.Image("keyTestPage_2", {
+					new Image("keyTestPage_2", {
 						src: "../images/demo/nature/elephant.jpg"
 					}),
-					new sap.m.Image("keyTestPage_3", {
+					new Image("keyTestPage_3", {
 						src: "../images/demo/nature/fish.jpg"
 					}),
-					new sap.m.Image("keyTestPage_4", {
+					new Image("keyTestPage_4", {
 						src: "../images/demo/nature/forest.jpg"
 					}),
-					new sap.m.Image("keyTestPage_5", {
+					new Image("keyTestPage_5", {
 						src: "../images/demo/nature/huntingLeopard.jpg"
 					}),
-					new sap.m.Image("keyTestPage_6", {
+					new Image("keyTestPage_6", {
 						src: "../images/demo/nature/prairie.jpg"
 					})
 				]
@@ -274,17 +308,17 @@
 		beforeEach: function () {
 			sinon.config.useFakeTimers = false;
 			//carousel with 9 pages. Page Indicator will be numeric.
-			this.oCarousel = new sap.m.Carousel("myCrsl", {
+			this.oCarousel = new Carousel("myCrsl", {
 				pages: [
-					new sap.m.Page("keyTestPage_1"),
-					new sap.m.Page("keyTestPage_2"),
-					new sap.m.Page("keyTestPage_3"),
-					new sap.m.Page("keyTestPage_4"),
-					new sap.m.Page("keyTestPage_5"),
-					new sap.m.Page("keyTestPage_6"),
-					new sap.m.Page("keyTestPage_7"),
-					new sap.m.Page("keyTestPage_8"),
-					new sap.m.Page("keyTestPage_9")
+					new Page("keyTestPage_1"),
+					new Page("keyTestPage_2"),
+					new Page("keyTestPage_3"),
+					new Page("keyTestPage_4"),
+					new Page("keyTestPage_5"),
+					new Page("keyTestPage_6"),
+					new Page("keyTestPage_7"),
+					new Page("keyTestPage_8"),
+					new Page("keyTestPage_9")
 				],
 				activePage: "keyTestPage_2"
 			});
@@ -384,16 +418,16 @@
 	QUnit.module("Nested Carousel", {
 		beforeEach: function () {
 
-			this.oNestedCarousel = new sap.m.Carousel({
-				pages: [new sap.m.Page()]
+			this.oNestedCarousel = new Carousel({
+				pages: [new Page()]
 			});
 
-			this.oCarousel = new sap.m.Carousel({
+			this.oCarousel = new Carousel({
 				pages: [
-					new sap.m.Page({
+					new Page({
 						content: this.oNestedCarousel
 					}),
-					new sap.m.Page()
+					new Page()
 				]
 			});
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
@@ -439,12 +473,12 @@
 	//================================================================================
 	QUnit.module("Clean up", {
 		beforeEach: function () {
-			this.oCarousel = new sap.m.Carousel({
+			this.oCarousel = new Carousel({
 				pages: [
-					new sap.m.Page("keyTestPage_1"),
-					new sap.m.Page("keyTestPage_2"),
-					new sap.m.Page("keyTestPage_3"),
-					new sap.m.Page("keyTestPage_4")
+					new Page("keyTestPage_1"),
+					new Page("keyTestPage_2"),
+					new Page("keyTestPage_3"),
+					new Page("keyTestPage_4")
 				],
 				activePage: "keyTestPage_1"
 			});
@@ -463,7 +497,7 @@
 	});
 
 	QUnit.test("Destroy not rendered Carousels", function (assert) {
-		var oNotRenderedCarousel = new sap.m.Carousel();
+		var oNotRenderedCarousel = new Carousel();
 		oNotRenderedCarousel.destroy();
 		assert.strictEqual(oNotRenderedCarousel._mScrollContainerMap, undefined, "Empty Carousel's container map has been cleaned up");
 	});
@@ -474,26 +508,26 @@
 	QUnit.module("Keyboard", {
 		beforeEach: function () {
 			sinon.config.useFakeTimers = false;
-			this.oCarousel = new sap.m.Carousel({
+			this.oCarousel = new Carousel({
 				pages: [
-					new sap.m.Page("keyTestPage1"),
-					new sap.m.Page("keyTestPage2", {
+					new Page("keyTestPage1"),
+					new Page("keyTestPage2", {
 						content: [
-							new sap.m.Button(),
-							new sap.m.Button(),
-							new sap.m.Button()
+							new Button(),
+							new Button(),
+							new Button()
 						]
 					}),
-					new sap.m.Page("keyTestPage3"),
-					new sap.m.Page("keyTestPage4"),
-					new sap.m.Page("keyTestPage5"),
-					new sap.m.Page("keyTestPage6"),
-					new sap.m.Page("keyTestPage7"),
-					new sap.m.Page("keyTestPage8"),
-					new sap.m.Page("keyTestPage9"),
-					new sap.m.Page("keyTestPage10"),
-					new sap.m.Page("keyTestPage11"),
-					new sap.m.Page("keyTestPage12")
+					new Page("keyTestPage3"),
+					new Page("keyTestPage4"),
+					new Page("keyTestPage5"),
+					new Page("keyTestPage6"),
+					new Page("keyTestPage7"),
+					new Page("keyTestPage8"),
+					new Page("keyTestPage9"),
+					new Page("keyTestPage10"),
+					new Page("keyTestPage11"),
+					new Page("keyTestPage12")
 				]
 			});
 
@@ -946,14 +980,14 @@
 	//================================================================================
 	QUnit.test("Container Padding Classes", function (assert) {
 		// System under Test + Act
-		var oContainer = new sap.m.Carousel({
+		var oContainer = new Carousel({
 				pages: [
-					new sap.m.Page("keyTestPage20")
+					new Page("keyTestPage20")
 				]
 			}),
 			sContentSelector = ".sapMCrslInner > .sapMCrslItem > .sapMScrollCont > .sapMScrollContScroll",
-			sResponsiveLargeSize = (sap.ui.Device.resize.width <= 1023 ? "16px" : "16px 32px"),
-			sResponsiveSize = (sap.ui.Device.resize.width <= 599 ? "0px" : sResponsiveLargeSize),
+			sResponsiveLargeSize = (Device.resize.width <= 1023 ? "16px" : "16px 32px"),
+			sResponsiveSize = (Device.resize.width <= 599 ? "0px" : sResponsiveLargeSize),
 			aResponsiveSize = sResponsiveSize.split(" "),
 			$containerContent;
 
@@ -994,20 +1028,20 @@
 	});
 
 	QUnit.test("Non touch devices in Popup: Navigating clicking on arrows", function (assert) {
-		var oCarousel = new sap.m.Carousel({
+		var oCarousel = new Carousel({
 			pages:[
-				new sap.m.Image("image1", {src:"https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg"}),
-				new sap.m.Image("image2", {src:"https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg"}),
-				new sap.m.Image("image3", {src:"https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg"})
+				new Image("image1", {src:"https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg"}),
+				new Image("image2", {src:"https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg"}),
+				new Image("image3", {src:"https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg"})
 			]
 		});
-		 var oPopup = new sap.m.ResponsivePopover({
+		 var oPopup = new ResponsivePopover({
 			contentWidth:"400px",
 			contentHeight:"300px",
 			showHeader:false,
 			content:[ oCarousel ]
 		});
-		var oButton = new sap.m.Button({
+		var oButton = new Button({
 			text: "Open Carousel"
 		});
 		oButton.placeAt('qunit-fixture');
@@ -1021,7 +1055,7 @@
 			touch: false
 		};
 
-		this.stub(sap.ui.Device, "system", oSystem);
+		this.stub(Device, "system", oSystem);
 		oCarousel.setActivePage("image2");
 
 		// Wait for CSS animation caused by setActivePage to complete
@@ -1041,4 +1075,4 @@
 			done();
 		}, sinonClockTickValue);
 	});
-})();
+});

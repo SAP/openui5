@@ -1,6 +1,10 @@
-/* global sinon, QUnit */
-sap.ui.require([
+/*global QUnit, sinon */
+sap.ui.define([
 	"sap/ui/events/KeyCodes",
+	"sap/m/MessageStrip",
+	"sap/m/Link",
+	"sap/m/FormattedText",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/qunit-css",
 	"sap/ui/thirdparty/qunit",
 	"sap/ui/qunit/qunit-junit",
@@ -8,10 +12,10 @@ sap.ui.require([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
-], function(KeyCodes) {
+], function(KeyCodes, MessageStrip, Link, FormattedText, JSONModel) {
 	"use strict";
 
-	sinon.config.useFakeTimers = false;
+
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 	var CLASS_CLOSE_BUTTON = ".sapMMsgStripCloseButton";
 	var CLASS_TEXT_MESSAGE = ".sapMMsgStripMessage";
@@ -21,7 +25,7 @@ sap.ui.require([
 
 	QUnit.module("API", {
 		beforeEach: function() {
-			this.oMessageStrip = new sap.m.MessageStrip();
+			this.oMessageStrip = new MessageStrip();
 
 			this.oMessageStrip.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
@@ -84,7 +88,7 @@ sap.ui.require([
 	QUnit.test("Link control via setLink", function(assert) {
 		var linkText = "Link Text";
 
-		this.oMessageStrip.setLink(new sap.m.Link({ text: linkText }));
+		this.oMessageStrip.setLink(new Link({ text: linkText }));
 		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(this.oMessageStrip.getLink().getText(), linkText,
@@ -93,7 +97,7 @@ sap.ui.require([
 
 	QUnit.test("Link control via setAggregation", function(assert) {
 		// arrange
-		var oLink = new sap.m.Link({
+		var oLink = new Link({
 			text: "Link Text"
 		});
 
@@ -121,7 +125,7 @@ sap.ui.require([
 	QUnit.test("setText", 2, function (oAssert) {
 		// Arrange
 		var sTestString = "test string",
-			oFormattedText = new sap.m.FormattedText(),
+			oFormattedText = new FormattedText(),
 			fnDone = oAssert.async();
 
 		// Mock formatted text setter on the instance and attach to control aggregation
@@ -140,8 +144,8 @@ sap.ui.require([
 
 	QUnit.test("setEnableFormattedText", function (oAssert) {
 		// Arrange
-		var oLimitSpy = sinon.spy(sap.m.FormattedText.prototype, "_setUseLimitedRenderingRules"),
-			oSetterSpy = sinon.spy(sap.m.FormattedText.prototype, "setHtmlText"),
+		var oLimitSpy = sinon.spy(FormattedText.prototype, "_setUseLimitedRenderingRules"),
+			oSetterSpy = sinon.spy(FormattedText.prototype, "setHtmlText"),
 			sTestString = "test string",
 			oFormattedText;
 
@@ -152,7 +156,7 @@ sap.ui.require([
 		// Assert
 		oAssert.strictEqual(oLimitSpy.callCount, 1, "sap.m.FormattedText._setUseLimitedRenderingRules called once");
 		oAssert.strictEqual(oSetterSpy.callCount, 1, "sap.m.FormattedText.setHtmlText called once");
-		oAssert.ok(oFormattedText instanceof sap.m.FormattedText,
+		oAssert.ok(oFormattedText instanceof FormattedText,
 			"Internal aggregation of type sap.m.FormattedText is created");
 
 		// Act - apply test string and trigger UI update
@@ -193,7 +197,7 @@ sap.ui.require([
 		oFormattedText = this.oMessageStrip.getAggregation("_formattedText");
 
 		// Assert
-		oAssert.ok(oFormattedText instanceof sap.m.FormattedText,
+		oAssert.ok(oFormattedText instanceof FormattedText,
 			"Internal sap.m.FormattedText is initiated and attached to the _formattedText hidden aggregation");
 		oAssert.ok(oFormattedText.getDomRef(),
 			"sap.m.FormattedText should be rendered in the DOM by the MessageStrip control");
@@ -205,7 +209,7 @@ sap.ui.require([
 
 	QUnit.test("setText and sap.m.FormattedText - limiting sap.m.FormattedText valid HTML elements", function (oAssert) {
 		// Arrange
-		var oSpy = sinon.spy(sap.m.FormattedText.prototype, "_setUseLimitedRenderingRules"),
+		var oSpy = sinon.spy(FormattedText.prototype, "_setUseLimitedRenderingRules"),
 			sHTMLString = [
 				// If you change the order of elements here you should also change the order of the assertions below
 				"a", "abbr", "blockquote", "br", "cite",
@@ -226,7 +230,7 @@ sap.ui.require([
 		$Result = jQuery(this.oMessageStrip.$().find(CLASS_FORMATTED_TEXT).html());
 
 		// Assert
-		oAssert.ok(sap.m.FormattedText.prototype._setUseLimitedRenderingRules,
+		oAssert.ok(FormattedText.prototype._setUseLimitedRenderingRules,
 			"sap.m.FormattedText should have this SAP-restricted method");
 		oAssert.strictEqual(oSpy.callCount, 1, "The method should be called once by the 'setEnableFormattedText' setter.");
 		oAssert.strictEqual($Result.length, 4, "Only 4 HTML elements are rendered and evaluated");
@@ -241,7 +245,7 @@ sap.ui.require([
 
 	QUnit.module("Data binding", {
 		beforeEach: function() {
-			this.oMessageStrip = new sap.m.MessageStrip();
+			this.oMessageStrip = new MessageStrip();
 
 			this.oMessageStrip.placeAt(DOM_RENDER_LOCATION);
 
@@ -259,7 +263,7 @@ sap.ui.require([
 
 	QUnit.test("JSON model text binding", function(assert) {
 		// arrange
-		var oModel = new sap.ui.model.json.JSONModel(this.generateData());
+		var oModel = new JSONModel(this.generateData());
 		var sData = this.generateData().text;
 
 		// act
@@ -275,7 +279,7 @@ sap.ui.require([
 
 	QUnit.module("Events", {
 		beforeEach: function() {
-			this.oMessageStrip = new sap.m.MessageStrip({
+			this.oMessageStrip = new MessageStrip({
 				text: "Test",
 				showCloseButton: true
 			});
@@ -338,10 +342,10 @@ sap.ui.require([
 
 	QUnit.module("ARIA Support", {
 		beforeEach: function() {
-			this.oMessageStrip = new sap.m.MessageStrip({
+			this.oMessageStrip = new MessageStrip({
 				text: "Test",
 				showCloseButton: true,
-				link: new sap.m.Link({text: "Sample link"})
+				link: new Link({text: "Sample link"})
 			});
 
 			this.oMessageStrip.placeAt(DOM_RENDER_LOCATION);

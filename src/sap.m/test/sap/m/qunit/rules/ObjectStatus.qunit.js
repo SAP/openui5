@@ -1,9 +1,10 @@
-/*global QUnit testRule*/
+/*global QUnit */
 
 sap.ui.define([
 		"sap/m/Page",
-		"sap/m/ObjectStatus"],
-	function (Page, ObjectStatus)  {
+		"sap/m/ObjectStatus",
+		"test-resources/sap/ui/support/TestHelper"
+], function (Page, ObjectStatus, testRule)  {
 		"use strict";
 
 		QUnit.module("ObjectStatus with active: true and no icon or text", {

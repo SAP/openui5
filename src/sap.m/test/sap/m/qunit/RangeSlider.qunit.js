@@ -1,4 +1,4 @@
-/* global QUnit,sinon,qutils */
+/* global QUnit,sinon */
 
 sap.ui.define([
 	"sap/base/Log",
@@ -6,9 +6,24 @@ sap.ui.define([
 	"sap/m/ResponsiveScale",
 	"sap/m/SliderTooltipBase",
 	"sap/m/SliderTooltipBaseRenderer",
-	"sap/m/Text"
-], function (Log, RangeSlider, ResponsiveScale, SliderTooltipBase, SliderTooltipBaseRenderer, Text) {
+	"sap/m/Text",
+	"sap/ui/qunit/QUnitUtils",
+	"jquery.sap.keycodes",
+	"sap/ui/model/json/JSONModel",
+	"jquery.sap.global"
+], function(
+	Log,
+	RangeSlider,
+	ResponsiveScale,
+	SliderTooltipBase,
+	SliderTooltipBaseRenderer,
+	Text,
+	qutils,
+	jQuery,
+	JSONModel
+) {
 	"use strict";
+
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
@@ -843,7 +858,7 @@ sap.ui.define([
 
 	QUnit.test("Model change from the outside", function (assert) {
 		var oData = {min: 0, max: 5000, range: [100, 500]},
-			oModel = new sap.ui.model.json.JSONModel(oData),
+			oModel = new JSONModel(oData),
 			oRangeSlider = new RangeSlider({min: "{/min}", max: "{/max}", range: "{/range}"});
 
 		oRangeSlider.setModel(oModel);
@@ -874,7 +889,7 @@ sap.ui.define([
 
 	QUnit.test("Model change from the inside", function (assert) {
 		var oData = {min: 0, max: 5000, range: [100, 500]},
-			oModel = new sap.ui.model.json.JSONModel(oData),
+			oModel = new JSONModel(oData),
 			oRangeSlider = new RangeSlider({min: "{/min}", max: "{/max}", range: "{/range}"});
 
 		oRangeSlider.setModel(oModel);
@@ -970,7 +985,7 @@ sap.ui.define([
 
 	QUnit.test("value, value2 and range setters, bindings + outer Model", function (assert) {
 		var oData = {min: 0, max: 5000, range: [100, 500]},
-			oModel = new sap.ui.model.json.JSONModel(oData),
+			oModel = new JSONModel(oData),
 			oRangeSlider = new RangeSlider({min: "{/min}", max: "{/max}", range: "{/range}"});
 
 		oRangeSlider.setModel(oModel);
@@ -1019,7 +1034,7 @@ sap.ui.define([
 
 	QUnit.test("value, value2 and range setters, bindings + outer Model V2", function (assert) {
 		var oData = {min: 0, max: 5000, range: [100, 500]},
-			oModel = new sap.ui.model.json.JSONModel(oData),
+			oModel = new JSONModel(oData),
 			oRangeSlider = new RangeSlider({min: "{/min}", max: "{/max}", value: "{/range/0}", value2: "{/range/1}", range: "{/range}"});
 
 		oRangeSlider.setModel(oModel);
@@ -1068,7 +1083,7 @@ sap.ui.define([
 
 	QUnit.test("value, value2 and range setters, bindings + outer Model change", function (assert) {
 		var oData = {min: 0, max: 5000, range: [100, 500]},
-			oModel = new sap.ui.model.json.JSONModel(oData),
+			oModel = new JSONModel(oData),
 			oRangeSlider = new RangeSlider({min: "{/min}", max: "{/max}", range: "{/range}", value: "{/range/0}", value2: "{/range/1}"});
 
 		oRangeSlider.setModel(oModel);

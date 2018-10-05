@@ -1,15 +1,18 @@
 /*global QUnit,sinon*/
 
-(function () {
+sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
+	"sap/m/WizardProgressNavigator",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/Device"
+], function(QUnitUtils, WizardProgressNavigator, JSONModel, Device) {
 	"use strict";
-
-	jQuery.sap.require("sap.m.WizardProgressNavigator");
 
 	QUnit.module("sap.m.WizardProgressNavigator API", {
 		oSpies: {},
 		beforeEach: function () {
 			this.oSpies.stepChanged = sinon.spy();
-			this.oProgressNavigator = new sap.m.WizardProgressNavigator({
+			this.oProgressNavigator = new WizardProgressNavigator({
 				stepChanged: this.oSpies.stepChanged,
 				stepCount: 5
 			}).placeAt("qunit-fixture");
@@ -143,8 +146,8 @@
 
 	QUnit.module("sap.m.WizardProgressNavigator Data binding", {
 		beforeEach: function () {
-			this.oProgressNavigator = new sap.m.WizardProgressNavigator();
-			this.oModel = new sap.ui.model.json.JSONModel({
+			this.oProgressNavigator = new WizardProgressNavigator();
+			this.oModel = new JSONModel({
 				steps: 5
 			});
 
@@ -169,7 +172,7 @@
 
 	QUnit.module("sap.m.WizardProgressNavigator CSS Classes", {
 		beforeEach: function () {
-			this.oProgressNavigator = new sap.m.WizardProgressNavigator({
+			this.oProgressNavigator = new WizardProgressNavigator({
 				stepCount: 5
 			});
 
@@ -285,7 +288,7 @@
 				that.oParams.currentIndex = event.getParameter("current");
 			});
 
-			this.oProgressNavigator = new sap.m.WizardProgressNavigator({
+			this.oProgressNavigator = new WizardProgressNavigator({
 				stepCount: 5,
 				stepChanged: this.oSpies.stepChanged
 			});
@@ -301,7 +304,7 @@
 
 	QUnit.module("sap.m.WizardProgressNavigator Interaction", {
 		beforeEach: function () {
-			this.oProgressNavigator = new sap.m.WizardProgressNavigator({
+			this.oProgressNavigator = new WizardProgressNavigator({
 				stepCount: 7
 			});
 
@@ -316,7 +319,7 @@
 
 	QUnit.test("Tapping on action sheet on mobile should fire stepChanged", function(assert) {
 
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -364,7 +367,7 @@
 
 	QUnit.module("sap.m.WizardProgressNavigator ARIA Support", {
 		beforeEach: function () {
-			this.oProgressNavigator = new sap.m.WizardProgressNavigator({
+			this.oProgressNavigator = new WizardProgressNavigator({
 				stepCount: 5
 			});
 
@@ -496,4 +499,4 @@
 			assert.strictEqual($anchors.eq(i).attr("title"), sStepTitle, "'title' attribute of the WizardProgressNavigator's list item No" + (i + 1) + " should be set to '" + sStepTitle + "'");
 		}
 	});
-}());
+});

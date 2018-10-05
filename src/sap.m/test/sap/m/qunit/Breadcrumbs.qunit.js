@@ -1,24 +1,27 @@
-/*global QUnit, sinon, jQuery*/
-sap.ui.require([
+/*global QUnit */
+sap.ui.define([
 	"sap/ui/dom/units/Rem",
 	"sap/ui/core/theming/Parameters",
-	"sap/m/Breadcrumbs"],
-function(DomUnitsRem, Parameters, Breadcrumbs) {
+	"sap/m/Breadcrumbs",
+	"sap/m/Link",
+	"sap/m/Text"
+],
+function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text) {
 	"use strict";
 	var core, oFactory, helpers, $ = jQuery;
 
-	sinon.config.useFakeTimers = true;
+
 
 	core = sap.ui.getCore();
 	oFactory = {
 		getLink: function (sText, sHref) {
-			return new sap.m.Link({
+			return new Link({
 				text: sText || "Page 1 long link",
 				href: sHref || "http://go.sap.com/index.html"
 			});
 		},
 		getText: function (sText) {
-			return new sap.m.Text({
+			return new Text({
 				text: sText || "Current Location Text"
 			});
 		},

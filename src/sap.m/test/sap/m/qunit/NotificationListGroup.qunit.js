@@ -1,16 +1,37 @@
 /*global QUnit,sinon*/
 
-(function() {
+sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
+	"sap/m/NotificationListGroup",
+	"sap/m/NotificationListItem",
+	"sap/m/Button",
+	"sap/m/library",
+	"sap/ui/core/library",
+	"sap/m/MessageToast",
+	"sap/ui/Device",
+	"jquery.sap.keycodes",
+	"jquery.sap.global"
+], function(
+	qutils,
+	NotificationListGroup,
+	NotificationListItem,
+	Button,
+	mobileLibrary,
+	coreLibrary,
+	MessageToast,
+	Device,
+	jQuery
+) {
 	'use strict';
 
-	jQuery.sap.require('sap.ui.qunit.qunit-css');
-	jQuery.sap.require('sap.ui.qunit.QUnitUtils');
-	jQuery.sap.require('sap.ui.thirdparty.qunit');
-	jQuery.sap.require('sap.ui.thirdparty.sinon');
-	jQuery.sap.require('sap.ui.thirdparty.sinon-qunit');
-	sinon.config.useFakeTimers = false;
 
-	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	// shortcut for sap.ui.core.Priority
+	var Priority = coreLibrary.Priority;
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
+
+
 
 	var classNameHeader = '.sapMNLG-Header';
 	var classNameDatetime = '.sapMNLI-Datetime';
@@ -24,7 +45,7 @@
 
 	QUnit.module('API', {
 		beforeEach: function() {
-			this.NotificationListGroup = new sap.m.NotificationListGroup();
+			this.NotificationListGroup = new NotificationListGroup();
 
 			this.NotificationListGroup.placeAt(RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
@@ -39,13 +60,13 @@
 		this.NotificationListGroup.setTitle('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.');
 		this.NotificationListGroup.setDatetime('3 hours');
 		for (var index = 0; index < 5; index++) {
-			this.NotificationListGroup.addAggregation('items', new sap.m.NotificationListItem({title: index}));
+			this.NotificationListGroup.addAggregation('items', new NotificationListItem({title: index}));
 		}
 
-		this.NotificationListGroup.addAggregation('buttons', new sap.m.Button({text : 'Accept', type: sap.m.ButtonType.Accept}));
-		this.NotificationListGroup.addAggregation('buttons', new sap.m.Button({text : 'Reject', type: sap.m.ButtonType.Reject}));
+		this.NotificationListGroup.addAggregation('buttons', new Button({text : 'Accept', type: ButtonType.Accept}));
+		this.NotificationListGroup.addAggregation('buttons', new Button({text : 'Reject', type: ButtonType.Reject}));
 
-		this.NotificationListGroup.getItems()[0].setPriority(sap.ui.core.Priority.High);
+		this.NotificationListGroup.getItems()[0].setPriority(Priority.High);
 		this.NotificationListGroup.getItems()[0].setUnread(true);
 		sap.ui.getCore().applyChanges();
 
@@ -63,8 +84,8 @@
 
 	QUnit.test('Default values', function(assert) {
 		// arrange
-		var notification = new sap.m.NotificationListItem({
-			priority: sap.ui.core.Priority.Medium,
+		var notification = new NotificationListItem({
+			priority: Priority.Medium,
 			unread: true
 		});
 
@@ -79,16 +100,16 @@
 		assert.strictEqual(this.NotificationListGroup.getShowCloseButton(), true, 'Notification List Item should be set to show the close by default');
 		assert.strictEqual(this.NotificationListGroup.getAutoPriority(), true, 'The auto calculations should be turned on by default.');
 		assert.strictEqual(this.NotificationListGroup.getCollapsed(), false, 'The notification group should be expanded by default.');
-		assert.strictEqual(this.NotificationListGroup.getPriority(), sap.ui.core.Priority.Medium, 'The group should have high priority.');
+		assert.strictEqual(this.NotificationListGroup.getPriority(), Priority.Medium, 'The group should have high priority.');
 		assert.strictEqual(this.NotificationListGroup.getUnread(), true, 'The group should be unread.');
 		assert.strictEqual(this.NotificationListGroup.getShowEmptyGroup(), false, 'Empty groups should not be shown.');
 
 		// act
 		this.NotificationListGroup.setAutoPriority(false);
-		this.NotificationListGroup.setPriority(sap.ui.core.Priority.None);
+		this.NotificationListGroup.setPriority(Priority.None);
 
 		// assert
-		assert.strictEqual(this.NotificationListGroup.getPriority(), sap.ui.core.Priority.None, 'The group should have high priority.');
+		assert.strictEqual(this.NotificationListGroup.getPriority(), Priority.None, 'The group should have high priority.');
 	});
 
 	QUnit.test('Setting datetime', function(assert) {
@@ -96,26 +117,26 @@
 		var threeHoursConst = '3 hours';
 		var fiveMinsConst = 'Five minutes';
 		this.NotificationListGroup.addItem(
-				new sap.m.NotificationListItem({
+				new NotificationListItem({
 					title: 'Single Item Notification',
 					description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
 					unread: true,
 					visible: true,
 					showCloseButton: false,
-					priority: sap.ui.core.Priority.Medium,
+					priority: Priority.Medium,
 					buttons: [
-						new sap.m.Button({
+						new Button({
 							text: 'Accept',
-							type: sap.m.ButtonType.Accept,
+							type: ButtonType.Accept,
 							tap: function () {
-								sap.m.MessageToast.show('Accept button pressed');
+								MessageToast.show('Accept button pressed');
 							}
 						}),
-						new sap.m.Button({
+						new Button({
 							text: 'Cancel',
-							type: sap.m.ButtonType.Reject,
+							type: ButtonType.Reject,
 							tap: function () {
-								sap.m.MessageToast.show('Cancel button pressed');
+								MessageToast.show('Cancel button pressed');
 							}
 						})
 					]
@@ -159,8 +180,8 @@
 
 	QUnit.test('Cloning a NotificationListGroup', function(assert) {
 		// arrange
-		var firstButton = new sap.m.Button({text: 'First Button'});
-		var secondButton = new sap.m.Button({text: 'Second Button'});
+		var firstButton = new Button({text: 'First Button'});
+		var secondButton = new Button({text: 'Second Button'});
 		var secondGroup;
 
 		// act
@@ -178,8 +199,8 @@
 	QUnit.test('Pressing the collapse button should expand a collapsed group', function(assert) {
 		// arrange
 		this.NotificationListGroup.setCollapsed(true);
-		var firstNotification = new sap.m.NotificationListItem({title: 'First Notification'});
-		var secondNotification = new sap.m.NotificationListItem({title: 'Second Notification'});
+		var firstNotification = new NotificationListItem({title: 'First Notification'});
+		var secondNotification = new NotificationListItem({title: 'Second Notification'});
 		var fnEventSpy = sinon.spy(this.NotificationListGroup, 'setCollapsed');
 		var fnCollapseEventSpy = sinon.spy(this.NotificationListGroup, 'fireOnCollapse');
 
@@ -202,9 +223,9 @@
 		this.NotificationListGroup.setAutoPriority(true);
 
 		// act
-		var firstNotification = new sap.m.NotificationListItem({priority: sap.ui.core.Priority.None});
-		var secondNotification = new sap.m.NotificationListItem({priority: sap.ui.core.Priority.Medium});
-		var thirdNotification = new sap.m.NotificationListItem({priority: sap.ui.core.Priority.Low});
+		var firstNotification = new NotificationListItem({priority: Priority.None});
+		var secondNotification = new NotificationListItem({priority: Priority.Medium});
+		var thirdNotification = new NotificationListItem({priority: Priority.Low});
 
 		this.NotificationListGroup.addItem(firstNotification);
 		this.NotificationListGroup.addItem(secondNotification);
@@ -212,7 +233,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.strictEqual(this.NotificationListGroup.getPriority(), sap.ui.core.Priority.Medium, 'The priority should be set to "Medium".');
+		assert.strictEqual(this.NotificationListGroup.getPriority(), Priority.Medium, 'The priority should be set to "Medium".');
 	});
 
 	QUnit.test('Priority must be set accordingly', function(assert) {
@@ -220,36 +241,36 @@
 		this.NotificationListGroup.setAutoPriority(true);
 
 		// act
-		var firstNotification = new sap.m.NotificationListItem({priority: sap.ui.core.Priority.None});
-		var secondNotification = new sap.m.NotificationListItem({priority: sap.ui.core.Priority.Low});
+		var firstNotification = new NotificationListItem({priority: Priority.None});
+		var secondNotification = new NotificationListItem({priority: Priority.Low});
 
 		this.NotificationListGroup.addItem(firstNotification);
 		this.NotificationListGroup.addItem(secondNotification);
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.strictEqual(this.NotificationListGroup.getPriority(), sap.ui.core.Priority.Low, 'The priority should be set to "Low".');
+		assert.strictEqual(this.NotificationListGroup.getPriority(), Priority.Low, 'The priority should be set to "Low".');
 
 		// act
-		firstNotification.setPriority(sap.ui.core.Priority.Low);
-		secondNotification.setPriority(sap.ui.core.Priority.Medium);
+		firstNotification.setPriority(Priority.Low);
+		secondNotification.setPriority(Priority.Medium);
 
 		// assert
-		assert.strictEqual(this.NotificationListGroup.getPriority(), sap.ui.core.Priority.Medium, 'The priority should be set to "Medium".');
+		assert.strictEqual(this.NotificationListGroup.getPriority(), Priority.Medium, 'The priority should be set to "Medium".');
 
 		// act
-		firstNotification.setPriority(sap.ui.core.Priority.Medium);
-		secondNotification.setPriority(sap.ui.core.Priority.High);
+		firstNotification.setPriority(Priority.Medium);
+		secondNotification.setPriority(Priority.High);
 
 		// assert
-		assert.strictEqual(this.NotificationListGroup.getPriority(), sap.ui.core.Priority.High, 'The priority should be set to "High".');
+		assert.strictEqual(this.NotificationListGroup.getPriority(), Priority.High, 'The priority should be set to "High".');
 
 		// act
-		firstNotification.setPriority(sap.ui.core.Priority.None);
-		secondNotification.setPriority(sap.ui.core.Priority.None);
+		firstNotification.setPriority(Priority.None);
+		secondNotification.setPriority(Priority.None);
 
 		// assert
-		assert.strictEqual(this.NotificationListGroup.getPriority(), sap.ui.core.Priority.None, 'The priority should be set to "None".');
+		assert.strictEqual(this.NotificationListGroup.getPriority(), Priority.None, 'The priority should be set to "None".');
 	});
 
 	QUnit.test('Expand button in group without notifications', function(assert) {
@@ -269,12 +290,12 @@
 
 	QUnit.test('Reach max number of notifications', function(assert) {
 		//arrange
-		var maxNumberOfNotifications = (sap.ui.Device.system.desktop ? 400 : 100) + 1;
+		var maxNumberOfNotifications = (Device.system.desktop ? 400 : 100) + 1;
 		var expectedNumberOfNotifications = maxNumberOfNotifications - 1;
 
 		//act
 		for (var index = 0; index < maxNumberOfNotifications; index++) {
-			this.NotificationListGroup.addItem(new sap.m.NotificationListItem());
+			this.NotificationListGroup.addItem(new NotificationListItem());
 		}
 
 		//Should trigger rerender to update the _maxNumberReached property in onAfterRendering method.
@@ -287,12 +308,12 @@
 
 	QUnit.test('Remove notification after reaching max number of notifications', function(assert) {
 		//arrange
-		var maxNumberOfNotifications = (sap.ui.Device.system.desktop ? 400 : 100);
-		var lastNotification = new sap.m.NotificationListItem();
+		var maxNumberOfNotifications = (Device.system.desktop ? 400 : 100);
+		var lastNotification = new NotificationListItem();
 
 		//act
 		for (var index = 0; index < maxNumberOfNotifications; index++) {
-			this.NotificationListGroup.addItem(new sap.m.NotificationListItem());
+			this.NotificationListGroup.addItem(new NotificationListItem());
 		}
 
 		this.NotificationListGroup.addItem(lastNotification);
@@ -308,7 +329,7 @@
 
 	QUnit.module('Rendering', {
 		beforeEach: function() {
-			this.NotificationListGroup = new sap.m.NotificationListGroup();
+			this.NotificationListGroup = new NotificationListGroup();
 
 			this.NotificationListGroup.placeAt(RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
@@ -320,11 +341,11 @@
 
 	QUnit.test('Max number of notifications message displayed', function(assert) {
 		//arrange
-		var maxNumberOfNotifications = (sap.ui.Device.system.desktop ? 400 : 100) + 1;
+		var maxNumberOfNotifications = (Device.system.desktop ? 400 : 100) + 1;
 
 		//act
 		for (var index = 0; index < maxNumberOfNotifications; index++) {
-			this.NotificationListGroup.addItem(new sap.m.NotificationListItem());
+			this.NotificationListGroup.addItem(new NotificationListItem());
 		}
 
 		//Should trigger rerender on the NotificationListGroup to display the Max Number of Notifications reached message.
@@ -336,12 +357,12 @@
 
 	QUnit.test('Max number of notifications message not displayed', function(assert) {
 		//arrange
-		var maxNumberOfNotifications = sap.ui.Device.system.desktop ? 400 : 100;
-		var lastNotification = new sap.m.NotificationListItem();
+		var maxNumberOfNotifications = Device.system.desktop ? 400 : 100;
+		var lastNotification = new NotificationListItem();
 
 		//act
 		for (var index = 0; index < maxNumberOfNotifications; index++) {
-			this.NotificationListGroup.addItem(new sap.m.NotificationListItem());
+			this.NotificationListGroup.addItem(new NotificationListItem());
 		}
 
 		this.NotificationListGroup.addItem(lastNotification);
@@ -362,26 +383,26 @@
 		var that = this;
 		var buttonsInFooter = 2;
 		this.NotificationListGroup.addItem(
-			new sap.m.NotificationListItem({
+			new NotificationListItem({
 				title: 'Single Item Notification',
 				description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
 				unread: true,
 				visible: true,
 				showCloseButton: false,
-				priority: sap.ui.core.Priority.Medium
+				priority: Priority.Medium
 			})
 		);
 
 		this.NotificationListGroup.addAggregation('buttons',
-			new sap.m.Button({
+			new Button({
 				text: 'Accept',
 				tap: function () {
-					sap.m.MessageToast.show('Accept button pressed');
+					MessageToast.show('Accept button pressed');
 				}
 			})
 		);
 		this.NotificationListGroup.addAggregation('buttons',
-			new sap.m.Button({
+			new Button({
 				text: 'Cancel',
 				tap: function () {
 					that.NotificationListGroup.close();
@@ -412,13 +433,13 @@
 		// arrange
 		var datetime = '2 hours';
 		this.NotificationListGroup.addItem(
-			new sap.m.NotificationListItem({
+			new NotificationListItem({
 				title: 'Single Item Notification',
 				description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
 				unread: true,
 				visible: true,
 				showCloseButton: false,
-				priority: sap.ui.core.Priority.Medium
+				priority: Priority.Medium
 			})
 		);
 
@@ -433,8 +454,8 @@
 	QUnit.test('Collapsing and expanding the group', function(assert) {
 		// arrange
 		var groupBody;
-		var firstNotification = new sap.m.NotificationListItem({title: 'First Notification'});
-		var secondNotification = new sap.m.NotificationListItem({title: 'Second Notification'});
+		var firstNotification = new NotificationListItem({title: 'First Notification'});
+		var secondNotification = new NotificationListItem({title: 'Second Notification'});
 
 		this.NotificationListGroup.addItem(firstNotification);
 		this.NotificationListGroup.addItem(secondNotification);
@@ -462,7 +483,7 @@
 
 	QUnit.module('Events', {
 		beforeEach: function() {
-			this.NotificationListGroup = new sap.m.NotificationListGroup();
+			this.NotificationListGroup = new NotificationListGroup();
 
 			this.NotificationListGroup.placeAt(RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
@@ -501,7 +522,7 @@
 
 		var that = this;
 		this.NotificationListGroup.addAggregation('buttons',
-			new sap.m.Button('closeButton',{
+			new Button('closeButton',{
 				text: 'Cancel',
 				tap: function () {
 					that.NotificationListGroup.close();
@@ -524,7 +545,7 @@
 
 	QUnit.module('Group with 0 items', {
 		beforeEach: function() {
-			this.NotificationListGroup = new sap.m.NotificationListGroup();
+			this.NotificationListGroup = new NotificationListGroup();
 
 			this.NotificationListGroup.placeAt(RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
@@ -540,15 +561,15 @@
 		var buttonsInFooter = 0;
 
 		this.NotificationListGroup.addAggregation('buttons',
-			new sap.m.Button({
+			new Button({
 				text: 'Accept',
 				tap: function () {
-					sap.m.MessageToast.show('Accept button pressed');
+					MessageToast.show('Accept button pressed');
 				}
 			})
 		);
 		this.NotificationListGroup.addAggregation('buttons',
-			new sap.m.Button({
+			new Button({
 				text: 'Cancel',
 				tap: function () {
 					that.NotificationListGroup.close();
@@ -582,15 +603,15 @@
 		// act
 		this.NotificationListGroup.setTitle(title);
 		this.NotificationListGroup.addAggregation('buttons',
-			new sap.m.Button({
+			new Button({
 				text: 'Accept',
 				tap: function () {
-					sap.m.MessageToast.show('Accept button pressed');
+					MessageToast.show('Accept button pressed');
 				}
 			})
 		);
 		this.NotificationListGroup.addAggregation('buttons',
-			new sap.m.Button({
+			new Button({
 				text: 'Cancel',
 				tap: function () {
 					this.NotificationListGroup.close();
@@ -608,7 +629,7 @@
 
 	QUnit.module('Test Visible property', {
 		beforeEach: function() {
-			this.NotificationListGroup = new sap.m.NotificationListGroup();
+			this.NotificationListGroup = new NotificationListGroup();
 
 			this.NotificationListGroup.placeAt(RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
@@ -624,15 +645,15 @@
 		var buttonsInFooter = 0;
 
 		this.NotificationListGroup.addAggregation('buttons',
-			new sap.m.Button({
+			new Button({
 				text: 'Accept',
 				tap: function () {
-					sap.m.MessageToast.show('Accept button pressed');
+					MessageToast.show('Accept button pressed');
 				}
 			})
 		);
 		this.NotificationListGroup.addAggregation('buttons',
-			new sap.m.Button({
+			new Button({
 				text: 'Cancel',
 				tap: function () {
 					that.NotificationListGroup.close();
@@ -640,13 +661,13 @@
 			})
 		);
 		this.NotificationListGroup.addItem(
-			new sap.m.NotificationListItem({
+			new NotificationListItem({
 				title: 'Single Item Notification',
 				description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
 				unread: true,
 				visible: false,
 				showCloseButton: false,
-				priority: sap.ui.core.Priority.Medium
+				priority: Priority.Medium
 			})
 		);
 		sap.ui.getCore().applyChanges();
@@ -661,15 +682,15 @@
 		var that = this;
 
 		this.NotificationListGroup.addAggregation('buttons',
-			new sap.m.Button({
+			new Button({
 				text: 'Accept',
 				tap: function () {
-					sap.m.MessageToast.show('Accept button pressed');
+					MessageToast.show('Accept button pressed');
 				}
 			})
 		);
 		this.NotificationListGroup.addAggregation('buttons',
-			new sap.m.Button({
+			new Button({
 				text: 'Cancel',
 				tap: function () {
 					that.NotificationListGroup.close();
@@ -677,13 +698,13 @@
 			})
 		);
 		this.NotificationListGroup.addItem(
-			new sap.m.NotificationListItem({
+			new NotificationListItem({
 				title: 'Single Item Notification',
 				description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
 				unread: true,
 				visible: true,
 				showCloseButton: false,
-				priority: sap.ui.core.Priority.Medium
+				priority: Priority.Medium
 			})
 		);
 		// despite of the number of visible items, group is hidden when its property is false
@@ -699,15 +720,15 @@
 		var that = this;
 
 		this.NotificationListGroup.addAggregation('buttons',
-			new sap.m.Button({
+			new Button({
 				text: 'Accept',
 				tap: function () {
-					sap.m.MessageToast.show('Accept button pressed');
+					MessageToast.show('Accept button pressed');
 				}
 			})
 		);
 		this.NotificationListGroup.addAggregation('buttons',
-			new sap.m.Button({
+			new Button({
 				text: 'Cancel',
 				tap: function () {
 					that.NotificationListGroup.close();
@@ -715,13 +736,13 @@
 			})
 		);
 		this.NotificationListGroup.addItem(
-			new sap.m.NotificationListItem({
+			new NotificationListItem({
 				title: 'Single Item Notification',
 				description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
 				unread: true,
 				visible: false,
 				showCloseButton: false,
-				priority: sap.ui.core.Priority.Medium
+				priority: Priority.Medium
 			})
 		);
 
@@ -733,7 +754,7 @@
 
 	QUnit.module('Test buttons enabled state when just 1 item is in the group', {
 		beforeEach: function() {
-			this.NotificationListGroup = new sap.m.NotificationListGroup();
+			this.NotificationListGroup = new NotificationListGroup();
 
 			this.NotificationListGroup.placeAt(RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
@@ -748,15 +769,15 @@
 		var that = this;
 
 		this.NotificationListGroup.addAggregation('buttons',
-			new sap.m.Button({
+			new Button({
 				text: 'Accept',
 				tap: function () {
-					sap.m.MessageToast.show('Accept button pressed');
+					MessageToast.show('Accept button pressed');
 				}
 			})
 		);
 		this.NotificationListGroup.addAggregation('buttons',
-			new sap.m.Button({
+			new Button({
 				text: 'Cancel',
 				tap: function () {
 					that.NotificationListGroup.close();
@@ -764,13 +785,13 @@
 			})
 		);
 		this.NotificationListGroup.addItem(
-			new sap.m.NotificationListItem({
+			new NotificationListItem({
 				title: 'Single Item Notification',
 				description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
 				unread: true,
 				visible: true,
 				showCloseButton: false,
-				priority: sap.ui.core.Priority.Medium
+				priority: Priority.Medium
 			})
 		);
 		sap.ui.getCore().applyChanges();
@@ -785,15 +806,15 @@
 		var that = this;
 
 		this.NotificationListGroup.addAggregation('buttons',
-			new sap.m.Button({
+			new Button({
 				text: 'Accept',
 				tap: function () {
-					sap.m.MessageToast.show('Accept button pressed');
+					MessageToast.show('Accept button pressed');
 				}
 			})
 		);
 		this.NotificationListGroup.addAggregation('buttons',
-			new sap.m.Button({
+			new Button({
 				text: 'Cancel',
 				tap: function () {
 					that.NotificationListGroup.close();
@@ -801,23 +822,23 @@
 			})
 		);
 		this.NotificationListGroup.addItem(
-			new sap.m.NotificationListItem({
+			new NotificationListItem({
 				title: 'Single Item Notification',
 				description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
 				unread: true,
 				visible: true,
 				showCloseButton: false,
-				priority: sap.ui.core.Priority.Medium
+				priority: Priority.Medium
 			})
 		);
 		this.NotificationListGroup.addItem(
-			new sap.m.NotificationListItem({
+			new NotificationListItem({
 				title: 'Single Item Notification2',
 				description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
 				unread: true,
 				visible: true,
 				showCloseButton: false,
-				priority: sap.ui.core.Priority.Medium
+				priority: Priority.Medium
 			})
 		);
 		sap.ui.getCore().applyChanges();
@@ -833,7 +854,7 @@
 
 	QUnit.module('ARIA support', {
 		beforeEach: function () {
-			this.NotificationListGroup = new sap.m.NotificationListGroup();
+			this.NotificationListGroup = new NotificationListGroup();
 
 			this.NotificationListGroup.placeAt(RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
@@ -858,14 +879,14 @@
 		// arrange
 		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 		var createdByText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_CREATED_BY') + ' ' + 'John Doe';
-		var infoText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_DATETIME_PRIORITY', ['5 minutes', sap.ui.core.Priority.Medium]);
+		var infoText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_DATETIME_PRIORITY', ['5 minutes', Priority.Medium]);
 		var unreadText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_UNREAD');
 		var ariaText = createdByText + ' ' + infoText + ' ' + unreadText;
 
 		// act
 		this.NotificationListGroup.setTitle('Some title');
 		this.NotificationListGroup.setAutoPriority(false);
-		this.NotificationListGroup.setPriority(sap.ui.core.Priority.Medium);
+		this.NotificationListGroup.setPriority(Priority.Medium);
 		this.NotificationListGroup.setDatetime('5 minutes');
 		this.NotificationListGroup.setAuthorName('John Doe');
 		this.NotificationListGroup.setUnread(true);
@@ -879,14 +900,14 @@
 	QUnit.test('Checking the labelledby info text is set correctly without author name', function (assert) {
 		// arrange
 		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
-		var infoText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_DATETIME_PRIORITY', ['5 minutes', sap.ui.core.Priority.Medium]);
+		var infoText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_DATETIME_PRIORITY', ['5 minutes', Priority.Medium]);
 		var unreadText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_UNREAD');
 		var ariaText = infoText + ' ' + unreadText;
 
 		// act
 		this.NotificationListGroup.setTitle('Some title');
 		this.NotificationListGroup.setAutoPriority(false);
-		this.NotificationListGroup.setPriority(sap.ui.core.Priority.Medium);
+		this.NotificationListGroup.setPriority(Priority.Medium);
 		this.NotificationListGroup.setDatetime('5 minutes');
 		this.NotificationListGroup.setUnread(true);
 		sap.ui.getCore().applyChanges();
@@ -898,9 +919,9 @@
 
 	QUnit.test('Focusing a notification inside the notification group', function (assert) {
 		// arrange
-		var firstNotification = new sap.m.NotificationListItem();
-		var secondNotification = new sap.m.NotificationListItem();
-		var thirdNotification = new sap.m.NotificationListItem();
+		var firstNotification = new NotificationListItem();
+		var secondNotification = new NotificationListItem();
+		var thirdNotification = new NotificationListItem();
 
 		this.NotificationListGroup.addItem(firstNotification);
 		this.NotificationListGroup.addItem(secondNotification);
@@ -934,11 +955,11 @@
 
 	QUnit.module('Keyboard handling', {
 		beforeEach: function () {
-			this.NotificationListGroup = new sap.m.NotificationListGroup({
+			this.NotificationListGroup = new NotificationListGroup({
 				items: [
-					new sap.m.NotificationListItem(),
-					new sap.m.NotificationListItem(),
-					new sap.m.NotificationListItem()
+					new NotificationListItem(),
+					new NotificationListItem(),
+					new NotificationListItem()
 				]
 			});
 
@@ -1013,4 +1034,4 @@
 		// assert
 		assert.strictEqual(document.activeElement.id, thirdNotification.getId(), 'Should not move the focus');
 	});
-})();
+});
