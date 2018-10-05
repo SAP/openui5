@@ -1103,5 +1103,22 @@
         "references": []
       }
     ]
+  },
+  "1.56.12": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "86c235f7cc315b6a9691a4f3e62f926f5249c636",
+        "type": "FIX",
+        "text": " XMLComposite: Repair id access for clones",
+        "references": []
+      },
+      {
+        "id": "0485cf58ff35c3f57e010edca3e2810163078e90",
+        "type": "FIX",
+        "text": " format/DateFormat: Remove unsupported API calls",
+        "references": []
+      }
+    ]
   }
 }

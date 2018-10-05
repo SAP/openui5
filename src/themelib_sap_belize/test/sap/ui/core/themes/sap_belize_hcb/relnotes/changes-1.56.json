@@ -254,5 +254,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.12": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "b789285d201a09a6b1d777a9460fb09f05e04f34",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fixed header content transparency",
+        "references": []
+      }
+    ]
   }
 }
