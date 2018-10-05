@@ -1,44 +1,43 @@
 /*global QUnit, sinon */
-(function() {
-	"use strict";
+sap.ui.define([
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"jquery.sap.global",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/m/ListBaseRenderer",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/Device",
+	"sap/ui/core/library",
+	"sap/m/library",
+	"sap/m/StandardListItem",
+	"sap/m/App",
+	"sap/m/Page",
+	"sap/m/ListBase",
+	"sap/m/List",
+	"sap/m/Toolbar",
+	"sap/m/ToolbarSpacer",
+	"sap/m/GrowingEnablement",
+	"sap/m/Input",
+	"sap/m/CustomListItem",
+	"sap/m/InputListItem",
+	"sap/m/GroupHeaderListItem",
+	"sap/m/Button",
+	"sap/m/VBox",
+	"sap/m/Text",
+	"sap/m/Menu",
+	"sap/m/MenuItem",
+	"sap/m/MessageToast",
+	"sap/m/ScrollContainer",
+	"sap/m/Title"
+], function(createAndAppendDiv, jQuery,
+			qutils, ListBaseRenderer, KeyCodes, JSONModel, Sorter, Filter, FilterOperator, Device, coreLibrary, library, StandardListItem, App, Page, ListBase, List, Toolbar,
+			ToolbarSpacer, GrowingEnablement, Input, CustomListItem, InputListItem, GroupHeaderListItem, Button, VBox, Text, Menu, MenuItem, MessageToast, ScrollContainer, Title) {
+		"use strict";
+		createAndAppendDiv("content").setAttribute("data-sap-ui-fastnavgroup", "true");
 
-	QUnit.config.autostart = false;
-
-	sap.ui.require([
-		"sap/ui/qunit/QUnitUtils",
-		"sap/m/ListBaseRenderer",
-		"sap/ui/events/KeyCodes",
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/model/Sorter",
-		"sap/ui/model/Filter",
-		"sap/ui/model/FilterOperator",
-		"sap/ui/Device",
-		"sap/ui/core/library",
-		"sap/m/library",
-		"sap/m/StandardListItem",
-		"sap/m/App",
-		"sap/m/Page",
-		"sap/m/ListBase",
-		"sap/m/List",
-		"sap/m/Toolbar",
-		"sap/m/ToolbarSpacer",
-		"sap/m/GrowingEnablement",
-		"sap/m/Input",
-		"sap/m/CustomListItem",
-		"sap/m/InputListItem",
-		"sap/m/GroupHeaderListItem",
-		"sap/m/Button",
-		"sap/m/VBox",
-		"sap/m/Text",
-		"sap/m/Menu",
-		"sap/m/MenuItem",
-		"sap/m/MessageToast",
-		"sap/m/ScrollContainer",
-		"sap/m/Title"
-	], function(qutils, ListBaseRenderer, KeyCodes, JSONModel, Sorter, Filter, FilterOperator, Device, coreLibrary, library, StandardListItem, App, Page, ListBase, List, Toolbar,
-				ToolbarSpacer, GrowingEnablement, Input, CustomListItem, InputListItem, GroupHeaderListItem, Button, VBox, Text, Menu, MenuItem, MessageToast, ScrollContainer, Title) {
-
-		sinon.config.useFakeTimers = true;
 
 		/*******************************************************************************
 		 * Helper variables & functions
@@ -2378,7 +2377,5 @@
 			}
 		});
 
-		QUnit.start();
-	});
-
-})();
+	}
+);
