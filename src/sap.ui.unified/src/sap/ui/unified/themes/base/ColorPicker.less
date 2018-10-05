@@ -718,13 +718,11 @@
 	}
 }
 
-.phoneGrid.sapUiColorPicker-ColorPickerMatrix.sapUnifiedColorPicker {
-	&.sapUiRespGrid.sapUiRespGridHSpace1 > div {
-		&:first-child {
-			height: auto;
-			padding-top: 0;
-		}
-	}
+//in a dialog the control don't have to have padding-top in order to be as compact as possible
+//therefore we're handling it when it's mobile
+.phoneGrid.sapUnifiedColorPicker.sapUiRespGrid.sapUiRespGridHSpace1 > div:first-child {
+	height: auto;
+	padding-top: 0;
 }
 
 //Unified Simplified ColorPicker
