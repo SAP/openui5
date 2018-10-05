@@ -108,7 +108,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oTest The QUnit test object
 	 * @param {object} assert The QUnit assert object
-	 * @returns {Promise} A Promise that is resolved when the view is created and ready to create
+	 * @returns {Promise} A promise that is resolved when the view is created and ready to create
 	 *   a relative entity
 	 */
 	function prepareTestForCreateOnRelativeBinding(oTest, assert) {
@@ -185,6 +185,9 @@ sap.ui.define([
 
 			// Counter for batch requests
 			this.iBatchNo = 0;
+			// maps $batch number to an error response object which replaces all responses for
+			// the requests contained in that $batch
+			this.mBatch2Error = {};
 			// {map<string, string[]>}
 			// this.mChanges["id"] is a list of expected changes for the property "text" of the
 			// control with ID "id"
@@ -373,7 +376,7 @@ sap.ui.define([
 		 * @param {object} assert The QUnit assert object
 		 * @param {function} fnGetResetable The function to determine the object to call
 		 *   resetChanges at. The function gets the view as parameter.
-		 * @returns {Promise} A Promise that is resolved when the change event has been fired
+		 * @returns {Promise} A promise that is resolved when the change event has been fired
 		 */
 		checkResetInvalidDataState : function (assert, fnGetResetable) {
 			var oModel = createTeaBusiModel({updateGroupId : "update"}),
@@ -520,12 +523,11 @@ sap.ui.define([
 			 * @returns {Promise} A promise on the array of batch responses
 			 */
 			function checkBatch(aRequests) {
-				that.iBatchNo += 1;
-
-				return Promise.all(aRequests.map(function (oRequest) {
-					return Array.isArray(oRequest)
-						? checkBatch(oRequest)
-						: checkRequest(oRequest.method, oRequest.url, oRequest.headers,
+				function processRequests(aRequests0) {
+					return Promise.all(aRequests0.map(function (oRequest) {
+						return Array.isArray(oRequest)
+							? processRequests(oRequest)
+							: checkRequest(oRequest.method, oRequest.url, oRequest.headers,
 								oRequest.body
 							).then(function (oResponse) {
 								var mHeaders = {};
@@ -533,14 +535,25 @@ sap.ui.define([
 								if (oResponse.messages) {
 									mHeaders["sap-messages"] = oResponse.messages;
 								}
-
 								return {
 									headers : mHeaders,
 									status : 200,
 									responseText : JSON.stringify(oResponse.body)
 								};
 							});
-				}));
+					}));
+				}
+
+				that.iBatchNo += 1;
+
+				return processRequests(aRequests).then(function (aResponses) {
+					var oErrorResponse = that.mBatch2Error[that.iBatchNo];
+
+					if (oErrorResponse) {
+						return [oErrorResponse];
+					}
+					return aResponses;
+				});
 			}
 
 			/*
@@ -554,7 +567,15 @@ sap.ui.define([
 			 *   checkBatch)
 			 * @param {string} [sOriginalResourcePath]
 			 *  The path by which the resource has originally been requested
-			 * @returns {Promise} A promise on an object with the response in the property "body"
+			 * @returns {Promise} A promise resolving with an object having following properties:
+			 *  - body: The response body of the matching request
+			 *  - messages: The messages contained in the "sap-messages" response header
+			 *  - resourcePath: The value of "sUrl"
+			 *  If the response (see expectRequest) is of type "Error" the promise rejects with the
+			 *  error. If the response is of type "Error" and the error has a property
+			 *  "errorResponse" then the content of "errorResponse" is stored in "mBatch2Error" for
+			 *  the current $batch and the promise resolves with the content of "errorResponse" as
+			 *  "body".
 			 */
 			function checkRequest(sMethod, sUrl, mHeaders, vPayload, sOriginalResourcePath) {
 				var oActualRequest = {
@@ -611,9 +632,15 @@ sap.ui.define([
 
 				return Promise.resolve(oResponse).then(function (oResponseBody) {
 					if (oResponseBody instanceof Error) {
-						oResponseBody.requestUrl = that.oModel.sServiceUrl + sUrl;
-						oResponseBody.resourcePath = sOriginalResourcePath;
-						throw oResponseBody;
+						if (oResponseBody.errorResponse) {
+							// single error response for a request within a successful $batch
+							oResponseBody = oResponseBody.errorResponse;
+							that.mBatch2Error[that.iBatchNo] = oResponseBody;
+						} else {
+							oResponseBody.requestUrl = that.oModel.sServiceUrl + sUrl;
+							oResponseBody.resourcePath = sOriginalResourcePath;
+							throw oResponseBody;
+						}
 					}
 
 					return {
@@ -2754,6 +2781,101 @@ sap.ui.define([
 			oBindingNote1.setValue("Note11");
 			oBindingNote1.setValue("Note12");
 			oBindingNote0.setValue("Note02");
+
+			return Promise.all([
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Error response for a change set without contend-ID
+	// Without target $<content-ID> in the error response we can not assign the error to the
+	// right request -> all requests in the change set are rejected with the same error;
+	// the error is logged for each request in the change set, but it is reported only once to
+	// the message model
+	QUnit.test("Error response for a change set w/o content-ID", function (assert) {
+		var oError = new Error("Failure"),
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<columns><Column/><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="amount" text="{GrossAmount}"/>\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		oError.errorResponse = {
+			headers : {
+				"Content-Type" : "application/json;odata.metadata=minimal;charset=utf-8"
+			},
+			responseText : '{"error":{"code":"CODE","message":"Value 4.22 not allowed"}}',
+			status : 400,
+			statusText : "Bad Request"
+		};
+
+		this.expectRequest(
+			"SalesOrderList?$select=GrossAmount,SalesOrderID&$skip=0&$top=100", {
+				value : [{
+					"@odata.etag" : "ETag0",
+					"GrossAmount" : "4.1",
+					"SalesOrderID" : "41"
+				},{
+					"@odata.etag" : "ETag1",
+					"GrossAmount" : "4.2",
+					"SalesOrderID" : "42"
+				}]
+			})
+			.expectChange("amount", ["4.10", "4.20"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var aTableItems = that.oView.byId("table").getItems(),
+				oBindingAmount0 = aTableItems[0].getCells()[0].getBinding("text"),
+				oBindingAmount1 = aTableItems[1].getCells()[0].getBinding("text");
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('41')",
+					headers : {"If-Match" : "ETag0"},
+					payload : {
+						GrossAmount : "4.11"
+					}
+				}, /*not relevant as $batch uses oError.errorResponse for response*/undefined)
+				.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "ETag1"},
+					payload : {
+						GrossAmount : "4.22"
+					}
+				}, oError)
+				.expectChange("amount", ["4.11", "4.22"])
+				.expectMessages([{
+					"code" : "CODE",
+					"message" : "Value 4.22 not allowed",
+					"persistent" : true,
+					"target" : "",
+					"technical" : true,
+					"type" : "Error"
+				}]);
+
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to update path /SalesOrderList('41')/GrossAmount",
+					sinon.match("Value 4.22 not allowed"),
+					"sap.ui.model.odata.v4.ODataPropertyBinding");
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to update path /SalesOrderList('42')/GrossAmount",
+					sinon.match("Value 4.22 not allowed"),
+					"sap.ui.model.odata.v4.ODataPropertyBinding");
+
+			// Code under test
+			oBindingAmount0.setValue("4.11");
+			oBindingAmount1.setValue("4.22");
 
 			return Promise.all([
 				oModel.submitBatch("update"),
@@ -10100,7 +10222,7 @@ sap.ui.define([
 			}
 
 			that.expectRequest({
-					batchNo : 3,
+					batchNo : 2,
 					method : "PATCH",
 					url : "EMPLOYEES('3')",
 					headers : {"If-Match" : "ETag0"},
@@ -10110,7 +10232,7 @@ sap.ui.define([
 					}
 				}, {/* don't care */})
 				.expectRequest({
-					batchNo : 3,
+					batchNo : 2,
 					method : "POST",
 					headers : {"If-Match" : "ETag0"},
 					url : "EMPLOYEES('3')/" + sAction,
