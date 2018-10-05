@@ -209,8 +209,8 @@ function(
 	}
 
 	function configureRevealCommand(oElement, mSettings, oDesignTimeMetadata){
-		var oRevealParent = mSettings.directParent;
-		var oAction = oDesignTimeMetadata.getAction("reveal", oRevealParent);
+		var oRevealedElement = mSettings.element;
+		var oAction = oDesignTimeMetadata.getAction("reveal", oRevealedElement);
 		return oAction;
 	}
 
