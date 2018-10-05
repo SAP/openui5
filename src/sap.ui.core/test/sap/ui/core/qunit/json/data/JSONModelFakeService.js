@@ -39,7 +39,14 @@ sap.ui.define([
 						'"baz": [52, 97],' +
 						'"merged": true' +
 					'}';
-				break;
+					break;
+				case "/fake/broken.json":
+					sAnswer = '{' +
+						'"foo": "The quick brown fox jumps over the lazy dog.",' +
+						'"bar": "ABCDEFGHIJ"' + // missing ","
+						'"baz": [52, 97]' +
+					'}';
+					break;
 
 				default:
 					// No dummy request!

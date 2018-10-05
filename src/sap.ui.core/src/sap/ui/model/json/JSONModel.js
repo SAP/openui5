@@ -192,6 +192,7 @@ sap.ui.define([
 	 * @param {boolean} [bCache=true] Disables caching if set to false. Default is true.
 	 * @param {object} [mHeaders] An object of additional header key/value pairs to send along with the request
 	 *
+	 * @return {Promise|undefined} in case bAsync is set to true a Promise is returned; this promise resolves/rejects based on the request status
 	 * @public
 	 */
 	JSONModel.prototype.loadData = function(sURL, oParameters, bAsync, sType, bMerge, bCache, mHeaders){
@@ -233,6 +234,10 @@ sap.ui.define([
 			this.fireRequestCompleted({url : sURL, type : sType, async : bAsync, headers: mHeaders,
 				info : "cache=" + bCache + ";bMerge=" + bMerge, infoObject: {cache : bCache, merge : bMerge}, success: false, errorobject: oError});
 			this.fireRequestFailed(oError);
+
+			if (bAsync) {
+				return Promise.reject(oError);
+			}
 		}.bind(this);
 
 		var _loadData = function(fnSuccess, fnError) {
@@ -257,15 +262,37 @@ sap.ui.define([
 				_loadData(resolve, fnReject);
 			});
 
-			this.pSequentialImportCompleted = this.pSequentialImportCompleted.then(function() {
-				//must always resolve
-				return pImportCompleted.then(fnSuccess, fnError).catch(function(oError) {
-					Log.error("Loading of data failed: " + oError.stack);
-				});
+			// chain the existing loadData calls, so the import is done sequentially
+			var pReturn = this.pSequentialImportCompleted.then(function() {
+				return pImportCompleted.then(fnSuccess, fnError);
 			});
+
+			// attach exception/rejection handler, so the internal import promise always resolves
+			this.pSequentialImportCompleted = pReturn.catch(function(oError) {
+				Log.error("Loading of data failed: " + oError.stack);
+			});
+
+			// return chained loadData promise (sequential imports)
+			// but without a catch handler, so the application can also is notified about request failures
+			return pReturn;
 		} else {
 			_loadData(fnSuccess, fnError);
 		}
+	};
+
+	/**
+	 * Returns a Promise of the current data-loading state.
+	 * Every currently running {@link sap.ui.model.json.JSONModel#loadData} call is respected by the returned Promise.
+	 * This also includes a potential loadData call from the JSONModel's constructor in case a URL was given.
+	 * The data-loaded Promise will resolve once all running requests have finished.
+	 * Only request, which have been queued up to the point of calling
+	 * this function will be respected by the returned Promise.
+	 *
+	 * @return {Promise} a Promise, which resolves if all pending data-loading requests have finished
+	 * @public
+	 */
+	JSONModel.prototype.dataLoaded = function() {
+		return this.pSequentialImportCompleted;
 	};
 
 	/**
