@@ -37,19 +37,19 @@ function(
 				return aAllFormElements.concat(oFormContainer.getFormElements());
 			},[]).filter(function(oFormElement){
 				return oFormElement.isVisible() === false;
+			}).map(function(oFormElement){
+				return {
+					element : oFormElement,
+					action : {
+						//nothing relevant for the analyzer
+					}
+				};
 			});
 
 			var oActionsObject = {
 				aggregation: "formElements",
 				reveal : {
-					elements : aFormElements,
-					types : {
-						"sap.ui.layout.form.FormElement" : {
-							action : {
-								//nothing relevant for the analyzer
-							}
-						}
-					}
+					elements : aFormElements
 				}
 			};
 
@@ -75,20 +75,20 @@ function(
 				return aAllFormElements.concat(oFormContainer.getFormElements());
 			},[]).filter(function(oFormElement){
 				return oFormElement.isVisible() === false;
+			}).map(function(oFormElement){
+				return {
+					element : oFormElement,
+					action : {
+						//nothing relevant for the analyzer
+					}
+				};
 			});
 			oSimpleFormWithJSONModel.setModel(new JSONModel({elements: "foo"}));
 
 			var oActionsObject = {
 				aggregation: "formElements",
 				reveal : {
-					elements : aFormElements,
-					types : {
-						"sap.ui.layout.form.FormElement" : {
-							action : {
-								//nothing relevant for the analyzer
-							}
-						}
-					}
+					elements : aFormElements
 				}
 			};
 

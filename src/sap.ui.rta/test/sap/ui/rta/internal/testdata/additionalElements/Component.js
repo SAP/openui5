@@ -99,6 +99,15 @@ sap.ui.define([
 						return {
 							hrefForExternal : function(mData){
 								return "./testdata/additionalElements/extensibilityTool.html?" + URI.encodeQuery(JSON.stringify(mData));
+							},
+							parseShellHash : function(){
+								//dummy
+							},
+							registerNavigationFilter : function(){
+								//dummy
+							},
+							unregisterNavigationFilter : function(){
+								//dummy
 							}
 						};
 					},
