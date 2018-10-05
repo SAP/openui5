@@ -372,6 +372,8 @@ sap.ui.define([], function() {
         //create Entry
         "Products?create=id_1000":
           [200, oJSONHeaders, sProduct1000CreatedJSON],
+        "DisableProduct?id='1000'":
+          [200, oJSONHeaders, sProduct1000FunctionCallJSON],
         "Products?Fail500=true":
           [500, oJSONHeaders, ''],
         "Products?Fail500=false":
@@ -1364,6 +1366,9 @@ sap.ui.define([], function() {
           </AssociationSet>\
       <FunctionImport Name="GetProductsByRating" EntitySet="Products" ReturnType="Collection(NorthwindModel.Product)" m:HttpMethod="PUT">\
         <Parameter Name="rating" Type="Edm.Int32" Mode="In"/>\
+      </FunctionImport>\
+      <FunctionImport Name="DisableProduct" EntitySet="Products" ReturnType="NorthwindModel.Product" m:HttpMethod="POST">\
+        <Parameter Name="id" Type="Edm.String" Mode="In"/>\
       </FunctionImport>\
         </EntityContainer>\
       </Schema>\
@@ -5975,6 +5980,32 @@ sap.ui.define([], function() {
         "		}" +
         "	}" +
         "}";
+
+	var sProduct1000FunctionCallJSON = "{" +
+		"	\"d\": {" +
+		"		\"__metadata\": {" +
+		"			\"uri\": \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Products(1001)\"," +
+		"			\"type\": \"NorthwindModel.Product\"" +
+		"		}," +
+		"		\"ID\": 1001," +
+		"		\"Name\": \"test2\"," +
+		"		\"Description\": null," +
+		"		\"ReleaseDate\": null," +
+		"		\"DiscontinuedDate\": null," +
+		"		\"Rating\": null," +
+		"		\"Price\": null," +
+		"		\"Category\": {" +
+		"			\"__deferred\": {" +
+		"				\"uri\": \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Products(1001)/Category\"" +
+		"			}" +
+		"		}," +
+		"		\"Supplier\": {" +
+		"			\"__deferred\": {" +
+		"				\"uri\": \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Products(1001)/Supplier\"" +
+		"			}" +
+		"		}" +
+		"	}" +
+		"}";
 
   var sProduct2JSON = "{\n" +
       "	\"d\" : {\n" +

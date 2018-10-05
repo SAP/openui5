@@ -3590,20 +3590,22 @@ sap.ui.define([
 				if (oEntityMetadata) {
 					mEntityTypes[oEntityMetadata.entityType] = true;
 				}
-				// for createEntry entities change context path to new one
-				if (oRequest.key) {
-					var sKey = this._getKey(oResultData);
-					// rewrite context for new path
-					var oContext = this.getContext("/" + oRequest.key);
-					oContext.bCreated = false;
-					this._updateContext(oContext, '/' + sKey);
-					// remove old entity
-					this._removeEntity(oRequest.key);
-					//delete created flag after successful creation
-					oEntity = this._getEntity(sKey);
-					if (oEntity) {
-						delete oEntity.__metadata.created;
+				if (oRequest.key) { // e.g. /myEntity
+					// for createEntry entities change context path to new one
+					if (oRequest.created) {
+						var sKey = this._getKey(oResultData); // e.g. /myEntity-4711
+						// rewrite context for new path
+						var oContext = this.getContext("/" + oRequest.key);
+						oContext.bCreated = false;
+						this._updateContext(oContext, '/' + sKey);
+						//delete created flag after successful creation
+						oEntity = this._getEntity(sKey);
+						if (oEntity) {
+							delete oEntity.__metadata.created;
+						}
 					}
+					// remove old entity/context for created and function imports
+					this._removeEntity(oRequest.key);
 				}
 			}
 
@@ -4411,8 +4413,8 @@ sap.ui.define([
 		mHeaders = this._getHeaders(mHeaders);
 
 		pContextCreated = new Promise(function(resolve, reject) {
-				fnResolve = resolve;
-				fnReject = reject;
+			fnResolve = resolve;
+			fnReject = reject;
 		});
 
 		oRequestHandle = this._processRequest(function(requestHandle) {
@@ -4479,7 +4481,7 @@ sap.ui.define([
 		}, fnError);
 
 		oRequestHandle.contextCreated = function() {
-				return pContextCreated;
+			return pContextCreated;
 		};
 
 		return oRequestHandle;

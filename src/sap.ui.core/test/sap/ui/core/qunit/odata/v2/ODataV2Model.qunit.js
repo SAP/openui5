@@ -5077,6 +5077,70 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.module("Model: Function import", {
+		beforeEach: function() {
+			this.oModel = initModel(sURI);
+		},
+		afterEach: function() {
+			this.oModel.destroy();
+			delete this.oModel;
+		}
+	});
+
+	QUnit.test("Check context path of created entry and function import", function(assert) {
+		var done = assert.async();
+		this.oModel.setUseBatch(true);
+		var that = this;
+
+		// create entry (context)
+		this.oModel.metadataLoaded().then(function() {
+
+			return new Promise(function(resolve, reject) {
+
+				var oContext = that.oModel.createEntry("/Products", {properties: {Name: 'test', ID: '1000'}, urlParameters: {'create': "id_1000"}});
+
+				that.oModel.submitChanges({
+					success: function() {
+						assert.deepEqual("/Products(1000)", oContext.getPath());
+						assert.ok(oContext === that.oModel.getContext(oContext.getPath()), "Context must be the same");
+						resolve(oContext);
+					},
+					error: function(oError) {
+						reject("There should be no error " + oError);
+					}
+				});
+			});
+
+		// perform callFunction
+		}).then(function(oContext) {
+			var oHandle = that.oModel.callFunction("/DisableProduct", {
+				groupId: "changes",
+				method: "POST",
+				urlParameters: {"id": "1000"}
+			});
+
+			oHandle.contextCreated().then(function(oContextCallFunction) {
+
+				that.oModel.submitChanges({
+					success: function() {
+						assert.deepEqual("/Products(1000)", oContext.getPath());
+						assert.ok(oContext === that.oModel.getContext(oContext.getPath()), "Context must be the same");
+						assert.ok(oContextCallFunction !== that.oModel.getContext(oContextCallFunction.getPath()), "Context must not be the same, since function import should not modify the original context");
+						assert.ok(oContext !== oContextCallFunction);
+						done();
+					},
+					error: function(oError) {
+						assert.fail("There should be no error " + oError);
+						done(oError);
+					}
+				});
+			}, function(oError) {
+				assert.fail("There should be no error " + oError);
+				done(oError);
+			});
+		});
+	});
+
 	QUnit.module("Model: createEntry", {
 		beforeEach: function() {
 			this.oModel = initModel(sURI);
@@ -5096,6 +5160,7 @@ sap.ui.define([
 			this.oModel.submitChanges({
 				success: function() {
 					assert.deepEqual("/Products(1000)", oContext.getPath());
+					assert.ok(oContext === this.oModel.getContext(oContext.getPath()), "Context must be the same");
 					assert.deepEqual(oContext, this.oModel.getContext(oContext.getPath()));
 					done();
 				}.bind(this),
