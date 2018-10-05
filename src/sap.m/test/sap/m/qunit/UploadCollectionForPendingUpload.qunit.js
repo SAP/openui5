@@ -11,10 +11,24 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 	"sap/ui/base/Event",
 	"sap/m/UploadCollectionParameter",
 	"sap/ui/Device",
-	"sap/base/Log"
-], function (jQuery, UploadCollection, JSONModel, ListMode, UploadCollectionItem, MessageBox, FileUploader, Event,
-             UploadCollectionParameter, Device, Log) {
+	"sap/base/Log",
+	"sap/ui/qunit/QUnitUtils", // only used indirectly as it adds some methods to fake events
+	"sap/ui/events/jquery/EventExtension"
+], function(
+	jQuery,
+	UploadCollection,
+	JSONModel,
+	ListMode,
+	UploadCollectionItem,
+	MessageBox,
+	FileUploader,
+	Event,
+	UploadCollectionParameter,
+	Device,
+	Log
+) {
 	"use strict";
+
 
 	QUnit.module("PendingUpload: public and private methods", {
 		beforeEach: function() {
@@ -1118,4 +1132,3 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		assert.strictEqual(this.oUploadCollection._onUploadProgress.callCount, 1, "Method _onUploadProgress has been called.");
 	});
 });
-

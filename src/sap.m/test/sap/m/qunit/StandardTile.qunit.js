@@ -1,7 +1,5 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/StandardTile",
 	"sap/ui/core/IconPool",
@@ -9,7 +7,6 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/Device"
 ], function(
-	qutils,
 	createAndAppendDiv,
 	StandardTile,
 	IconPool,
@@ -17,9 +14,13 @@ sap.ui.define([
 	jQuery,
 	Device
 ) {
+	"use strict";
+
+	// prepare DOM
 	createAndAppendDiv("tiles");
 
 
+	var IMAGE_PATH = "test-resources/sap/m/images/";
 
 	var tileBasic, tileNoIcon, tileNoNumber, tileIconFont;
 
@@ -35,7 +36,7 @@ sap.ui.define([
 	}
 
 	tileBasic = new StandardTile(tileBasicId, {
-		icon : "../images/action.png",
+		icon : IMAGE_PATH + "action.png",
 		number : 37,
 		numberUnit : "EUR",
 		title : "Lorem ipsum dolor",
@@ -51,7 +52,7 @@ sap.ui.define([
 	});
 
 	tileNoNumber = new StandardTile(tileNoNumberId, {
-		icon : "../images/action.png",
+		icon : IMAGE_PATH + "action.png",
 		title : "Lorem ipsum dolor",
 		info : "1 day ago"
 	});
@@ -123,7 +124,7 @@ sap.ui.define([
 
 	QUnit.test("ShouldStyleLongNumbersDifferently", function(assert) {
 		//SUT
-		var sut = new StandardTile({type: "Monitor", number:"4000", icon : "../images/action.png"}),
+		var sut = new StandardTile({type: "Monitor", number:"4000", icon : IMAGE_PATH + "action.png"}),
 				result;
 		sut.placeAt("qunit-fixture");
 		core.applyChanges();
@@ -182,7 +183,7 @@ sap.ui.define([
 		// Arrange
 		var oStandardTile = new StandardTile(),
 			bSpyDestroyHandler = this.spy(oStandardTile, "focus"),
-			oBrowserStub = this.stub(Device, "browser", { msie: true });
+			oBrowserStub = this.stub(Device, "browser").value({ msie: true });
 
 		// Act
 		oStandardTile.ontap();

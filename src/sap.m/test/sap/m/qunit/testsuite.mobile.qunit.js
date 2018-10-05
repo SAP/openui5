@@ -1517,49 +1517,56 @@ sap.ui.define(function() {
 				}
 			},
 			FeedContent: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "Test Page for sap.m.FeedContent",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				},
+				coverage: {
+					only: "//sap\/m\/FeedContent.*/"
+				},
 				ui5: {
 					libs: "sap.ui.core,sap.m",
 					language: "en"
-				},
-				page: "test-resources/sap/m/qunit/FeedContent.qunit.html"
+				}
 			},
 			FeedInput: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "Test Page for sap.m.FeedInput",
-				page: "test-resources/sap/m/qunit/FeedInput.qunit.html"
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				},
+				coverage: {
+					only: "//sap\/m\/FeedInput.*/"
+				}
 			},
 			FeedListItem: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "Test Page for sap.m.FeedListItem",
 				qunit: {
 					version: 2
 				},
-				page: "test-resources/sap/m/qunit/FeedListItem.qunit.html"
+				sinon: {
+					version: 4
+				},
+				coverage: {
+					only: "//sap\/m\/FeedListItem.*/"
+				}
 			},
 			FeedListItemAction: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Test Page for sap.m.FeedListItemAction",
-				ui5: {
-					language: "en"
-				},
 				qunit: {
 					version: 2
 				},
-				page: "test-resources/sap/m/qunit/FeedListItemAction.qunit.html"
+				sinon: {
+					version: 4
+				},
+				ui5: {
+					language: "en"
+				}
 			},
 			Fiori20Adapter: {
 				title: "QUnit Page for Fiori20Adapter",
@@ -1591,18 +1598,19 @@ sap.ui.define(function() {
 				title: "QUnit test for the sap.m.FormattedTextAnchorGenerator"
 			},
 			GenericTile: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Test Page for sap.m.GenericTile",
-				ui5: {
-					language: "en"
-				},
 				qunit: {
 					version: 2
 				},
-				page: "test-resources/sap/m/qunit/GenericTile.qunit.html"
+				sinon: {
+					version: 4
+				},
+				coverage: {
+					only: "//sap\/m\/GenericTile.*/"
+				},
+				ui5: {
+					language: "en"
+				}
 			},
 			GrowingEnablement: {
 				title: "QUnit Page for sap.m.GrowingEnablement"
@@ -1614,15 +1622,19 @@ sap.ui.define(function() {
 				title: "QUnit Page for sap.m.HBox"
 			},
 			HeaderContainer: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit: HeaderContainer - sap.m",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				},
+				coverage: {
+					only: "//sap\/m\/HeaderContainer.*/"
+				},
 				ui5: {
 					libs: "sap.m, sap.ui.layout"
-				},
-				page: "test-resources/sap/m/qunit/HeaderContainer.qunit.html"
+				}
 			},
 			IconTabBar: {
 				title: "QUnit Page for sap.m.IconTabBar",
@@ -1635,15 +1647,19 @@ sap.ui.define(function() {
 				_alternativeTitle: "QUnit Page for sap.m.Image"
 			},
 			ImageContent: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "sap.m.ImageContent",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				},
+				coverage: {
+					only: "//sap\/m\/ImageContent.*/"
+				},
 				ui5: {
 					language: "en"
-				},
-				page: "test-resources/sap/m/qunit/ImageContent.qunit.html"
+				}
 			},
 			Input: {
 				title: "QUnit page for sap.m.Input",
@@ -1814,6 +1830,16 @@ sap.ui.define(function() {
 					useFakeTimers: true
 				}
 			},
+			MultiEditField: {
+				title: "MultiEditField - sap.m - QUnit test",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 1, // no fakeTimer support in new sinon-qunit bridge
+					useFakeTimers: true
+				}
+			},
 			MultiInput: {
 				title: "QUnit page for sap.m.MultiInput",
 				sinon: {
@@ -1824,15 +1850,19 @@ sap.ui.define(function() {
 				title: "QUnit Page for sap.m.NavContainer"
 			},
 			NewsContent: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "sap.m.NewsContent",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				},
+				coverage: {
+					only: "//sap\/m\/NewsContent.*/"
+				},
 				ui5: {
 					language: "en"
-				},
-				page: "test-resources/sap/m/qunit/NewsContent.qunit.html"
+				}
 			},
 			NotificationListBase: {
 				title: "QUnit Page for sap.m.NotificationListBase"
@@ -1847,16 +1877,20 @@ sap.ui.define(function() {
 				}
 			},
 			NumericContent: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "Test Page for sap.m.NumericContent",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				},
+				coverage: {
+					only: "//sap\/m\/NumericContent.*/"
+				},
 				ui5: {
 					libs: "sap.ui.core,sap.m",
 					language: "en"
-				},
-				page: "test-resources/sap/m/qunit/NumericContent.qunit.html"
+				}
 			},
 			ObjectAttribute: {
 				title: "ObjectAttribute - sap.m"
@@ -1992,12 +2026,16 @@ sap.ui.define(function() {
 				page: "test-resources/sap/m/qunit/P13nSortPanel.qunit.html"
 			},
 			PDFViewer: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "PdfViewer - sap.m",
-				page: "test-resources/sap/m/qunit/PDFViewer.qunit.html"
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				},
+				coverage: {
+					only: "//sap\/m\/PDF.*/"
+				}
 			},
 			Page: {
 				title: "QUnit Page for sap.m.Page"
@@ -2177,46 +2215,50 @@ sap.ui.define(function() {
 				}
 			},
 			SelectionDetails: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "Test Page for sap.m.SelectionDetails",
-				ui5: {
-					language: "en"
-				},
-				qunit: {
-					version: 2
-				},
-				page: "test-resources/sap/m/qunit/SelectionDetails.qunit.html"
-			},
-			SelectionDetailsItem: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
-				title: "QUnit Test Page for sap.m.SelectionDetailsItem",
-				ui5: {
-					language: "en"
-				},
-				page: "test-resources/sap/m/qunit/SelectionDetailsItem.qunit.html"
-			},
-			SelectionDetailsItemLine: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
-				title: "QUnit Test Page for sap.m.SelectionDetailsItemLine",
-				ui5: {
-					language: "en"
-				},
 				qunit: {
 					version: 2
 				},
 				sinon: {
+					version: 4
+				},
+				coverage: {
+					only: "[sap/m/SelectionDetailsItem.js,sap/m/SelectionDetailsListItemRenderer.js]"
+				},
+				ui5: {
+					language: "en"
+				}
+			},
+			SelectionDetailsItem: {
+				title: "QUnit Test Page for sap.m.SelectionDetailsItem",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				},
+				coverage: {
+					only: "[sap/m/SelectionDetailsItem.js,sap/m/SelectionDetailsListItemRenderer.js]"
+				},
+				ui5: {
+					language: "en"
+				}
+			},
+			SelectionDetailsItemLine: {
+				title: "QUnit Test Page for sap.m.SelectionDetailsItemLine",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 1, // no support for fake timers in new qunit-sinon-bridge
 					useFakeTimers: true
 				},
-				page: "test-resources/sap/m/qunit/SelectionDetailsItemLine.qunit.html"
+				coverage: {
+					only: "sap/m/SelectionDetailsItemLine.js"
+				},
+				ui5: {
+					language: "en"
+				}
 			},
 			Shell: {
 				title: "QUnit Page for sap.m.Shell",
@@ -2225,15 +2267,19 @@ sap.ui.define(function() {
 				}
 			},
 			SlideTile: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "Test Page for sap.m.SlideTile",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				},
+				coverage: {
+					only: "//sap\/m\/SlideTile.*/"
+				},
 				ui5: {
 					language: "en"
-				},
-				page: "test-resources/sap/m/qunit/SlideTile.qunit.html"
+				}
 			},
 			Slider: {
 				title: "Test page for sap.m.Slider",
@@ -2252,7 +2298,13 @@ sap.ui.define(function() {
 				title: "QUnit Page for sap.m.SplitContainer"
 			},
 			StandardTile: {
-				title: "StandardTile - sap.m"
+				title: "StandardTile - sap.m",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				}
 			},
 			StepInput: {
 				title: "QUnit Page for sap.m.StepInput",
@@ -2375,12 +2427,16 @@ sap.ui.define(function() {
 				title: "TileContainer - sap.m"
 			},
 			TileContent: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "Test Page for sap.m.TileContent",
-				page: "test-resources/sap/m/qunit/TileContent.qunit.html"
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				},
+				coverage: {
+					only: "//sap\/m\/TileContent.*/"
+				}
 			},
 			TimePicker: {
 				title: "Test Page for sap.m.TimePicker",
@@ -2435,29 +2491,27 @@ sap.ui.define(function() {
 				}
 			},
 			UploadCollection: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "Test Page for sap.m.UploadCollection",
-				ui5: {
-					language: "en"
-				},
 				qunit: {
 					version: 2
 				},
+				sinon: {
+					version: 4
+				},
+				coverage: {
+					only: "[sap/m/UploadCollection.js,sap/m/UploadCollectionParameter.js,sap/m/UploadCollectionToolbarPlaceholder.js,sap/m/UploadCollectionRenderer.js]"
+				},
+				ui5: {
+					language: "en"
+				},
 				module: [
-					"test-resources/sap/m/qunit/UploadCollectionForPendingUpload.qunit",
-					"test-resources/sap/m/qunit/UploadCollectionToolbar.qunit",
-					"test-resources/sap/m/qunit/UploadCollectionOpenFileDialog.qunit"
-				],
-				page: "test-resources/sap/m/qunit/UploadCollection.qunit.html"
+					"./UploadCollection.qunit",
+					"./UploadCollectionForPendingUpload.qunit",
+					"./UploadCollectionToolbar.qunit",
+					"./UploadCollectionOpenFileDialog.qunit"
+				]
 			},
 			UploadCollectionItem: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "Test Page for sap.m.UploadCollectionItem",
 				ui5: {
 					language: "en"
@@ -2465,7 +2519,12 @@ sap.ui.define(function() {
 				qunit: {
 					version: 2
 				},
-				page: "test-resources/sap/m/qunit/UploadCollectionItem.qunit.html"
+				sinon: {
+					version: 4
+				},
+				coverage: {
+					only: "sap/m/UploadCollectionItem.js"
+				}
 			},
 			VBox: {
 				title: "QUnit Page for sap.m.VBox"

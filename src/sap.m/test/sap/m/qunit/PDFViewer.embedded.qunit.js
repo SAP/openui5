@@ -1,13 +1,12 @@
 /*global QUnit*/
 
-sap.ui.define("sap.m.qunit.PDFViewerEmbedded", [
+sap.ui.define([
 	"jquery.sap.global",
-	"test/sap/m/qunit/PDFViewerTestUtils",
-	"sap/m/PDFViewer",
+	"./PDFViewerTestUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/PDFViewerRenderer",
 	"sap/m/PDFViewerDisplayType"
-], function (jQuery, TestUtils, PDFViewer, JSONModel, PDFViewerRenderer, PDFViewerDisplayType) {
+], function (jQuery, TestUtils, JSONModel, PDFViewerRenderer, PDFViewerDisplayType) {
 	"use strict";
 
 	var oPdfViewer = null;
@@ -29,7 +28,7 @@ sap.ui.define("sap.m.qunit.PDFViewerEmbedded", [
 		var sTitle = "My Title";
 
 		var oModel = new JSONModel({
-			source: "./pdfviewer/sample-file.pdf"
+			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf"
 		});
 
 		var fnCheckControlStructure = function () {
@@ -71,7 +70,7 @@ sap.ui.define("sap.m.qunit.PDFViewerEmbedded", [
 		var sTitle = "My Title";
 
 		var oModel = new JSONModel({
-			source: "./pdfviewer/sample-file.pdf"
+			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf"
 		});
 
 		var fnCheckControlStructure = function () {
@@ -113,7 +112,7 @@ sap.ui.define("sap.m.qunit.PDFViewerEmbedded", [
 		var done = assert.async();
 
 		var oModel = new JSONModel({
-			source: "./pdfviewer/sample-file.pdf"
+			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf"
 		});
 
 		var fnCheckControlStructure = function () {
@@ -152,7 +151,7 @@ sap.ui.define("sap.m.qunit.PDFViewerEmbedded", [
 		var done = assert.async();
 
 		var oModel = new JSONModel({
-			source: "./pdfviewer/sample-file.pdf",
+			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			showDownloadButton: false
 		});
 
@@ -211,7 +210,7 @@ sap.ui.define("sap.m.qunit.PDFViewerEmbedded", [
 		var sTitle = "My Title";
 
 		var oModel = new JSONModel({
-			source: "./pdfviewer/sample-file.pdf"
+			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf"
 		});
 
 		var fnIsContentDisplayed = function () {
