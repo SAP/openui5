@@ -297,7 +297,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 				sKey = sKey + "-" + "interval";
 			}
 
-			var oFallbackFormats = oInfo.oFallbackFormats[sKey] ? Object.assign({}, oInfo.oFallbackFormats[sKey]) : undefined;
+			var oFallbackFormats = oInfo.oFallbackFormats[sKey] ? jQuery.sap.extend(false, {}, oInfo.oFallbackFormats[sKey]) : undefined;
 
 			if (!oFallbackFormats) {
 				aFallbackFormatOptions = oInfo.aFallbackFormatOptions;
@@ -380,7 +380,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 		return aFallbackFormatOptions.map(function(oOptions) {
 			// The format options within the aFallbackFormatOptions array are static
 			// and shouldn't be manipulated. Hence, cloning each format option is required.
-			var oFormatOptions = Object.assign({}, oOptions);
+			var oFormatOptions = jQuery.sap.extend(false, {}, oOptions);
 			if (bInterval) {
 				oFormatOptions.interval = true;
 			}
