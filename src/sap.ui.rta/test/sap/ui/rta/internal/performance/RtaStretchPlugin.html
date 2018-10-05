@@ -45,19 +45,11 @@
 
 			sap.ui.getCore().attachInit(function() {
 				sap.ui.require([
-					"sap/ui/fl/registry/ChangeRegistry",
 					"dt/performance/PerformanceTestUtil",
-					"rta/performance/RtaPerformanceTestUtil",
-					"sap/ui/layout/VerticalLayout",
-					"sap/ui/dt/OverlayRegistry",
-					"sap/base/Log"
+					"sap/ui/layout/VerticalLayout"
 				], function(
-					ChangeRegistry,
 					PerformanceTestUtil,
-					RtaPerformanceTestUtil,
-					VerticalLayout,
-					OverlayRegistry,
-					BaseLog
+					VerticalLayout
 				) {
 					var oLayout = new VerticalLayout("visibleLayout");
 					PerformanceTestUtil.addBoxesWithMixedControls(oLayout, 100);
@@ -133,12 +125,12 @@
 						var fnDebouncedFn = PerformanceTestUtil.debounce(function () {
 							if (!bMeasurementDone) {
 								bMeasurementDone = true;
-								window.wpp.customMetrics.applyStylesAfterStart = aStack[aStack.length - 1] - aStack[0];
-								BaseLog.info("ApplyStylesAfterStart = " + window.wpp.customMetrics.applyStylesAfterStart + "ms");
+								window.wpp.customMetrics.applyStylesAfterStartWithoutStretch = aStack[aStack.length - 1] - aStack[0];
+								BaseLog.info("ApplyStylesAfterStartWithoutStretch = " + window.wpp.customMetrics.applyStylesAfterStartWithoutStretch + "ms");
 								BaseLog.info("Count call = " + iCountCall);
 							} else {
 								BaseLog.error("Some applyStyles() calculation exceeded timeout of 2000ms");
-								window.wpp.customMetrics.applyStylesAfterStart = 10000;
+								window.wpp.customMetrics.applyStylesAfterStartWithoutStretch = 10000;
 							}
 						}, 2000);
 
