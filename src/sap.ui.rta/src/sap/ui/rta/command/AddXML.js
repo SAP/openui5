@@ -2,11 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/rta/command/FlexCommand',
-	'sap/ui/fl/Utils'
+	'sap/ui/rta/command/FlexCommand'
 ], function(
-	FlexCommand,
-	FlUtils
+	FlexCommand
 ) {
 	"use strict";
 
@@ -71,20 +69,21 @@ sap.ui.define([
 		return mSpecificInfo;
 	};
 
+
+
 	/**
-	 * Normally when the changes are loaded, the backend loads the fragment and adds the content as ascii to the change content.
-	 * When first applying a change we need to do the same, but delete it before we save it.
+	 * Normally when the changes are loaded, the backend preloads the fragment as a module,
+	 * When first applying a change we need to do the same.
 	 * @override
 	 */
-	AddXML.prototype._applyChange = function(vChange, bNotMarkAsAppliedChange) {
-		vChange.getDefinition().content.fragment = FlUtils.stringToAscii(this.getFragment());
-		return FlexCommand.prototype._applyChange.apply(this, arguments)
+	AddXML.prototype._applyChange = function(vChange) {
+		// preload the module to be applicable in this session
+		var mModulePreloads = {};
+		mModulePreloads[vChange.getModuleName] = this.getFragment();
+		sap.ui.require.preload(mModulePreloads);
 
-		.then(function() {
-			delete vChange.getDefinition().content.fragment;
-		});
+		return FlexCommand.prototype._applyChange.apply(this, arguments);
 	};
 
 	return AddXML;
-
 }, /* bExport= */true);

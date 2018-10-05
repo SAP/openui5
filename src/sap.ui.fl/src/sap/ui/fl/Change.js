@@ -43,10 +43,14 @@ sap.ui.define([
 			this._vRevertData = null;
 			this._aUndoOperations = null;
 			this.setState(Change.states.NEW);
+			this.setModuleName(oFile.moduleName);
 		},
 		metadata : {
 			properties : {
 				state : {
+					type: "string"
+				},
+				moduleName: {
 					type: "string"
 				}
 			}
@@ -796,6 +800,7 @@ sap.ui.define([
 	 * @param {String}  [oPropertyBag.reference] Application component name
 	 * @param {String}  [oPropertyBag.namespace] The namespace of the change file
 	 * @param {String}  [oPropertyBag.projectId] The project id of the change file
+	 * @param {String}  [oPropertyBag.moduleName] The name of the module which this changes refers to (i.e. xml / js)
 	 * @param {String}  [oPropertyBag.generator] The tool which is used to generate the change file
 	 * @param {Boolean}  [oPropertyBag.jsOnly] The change can only be applied with the JS modifier
 	 * @param {Object}  [oPropertyBag.oDataInformation] Object with information about the oData service
@@ -826,6 +831,7 @@ sap.ui.define([
 			fileName: oPropertyBag.id || Utils.createDefaultFileName(oPropertyBag.changeType),
 			fileType: sFileType,
 			changeType: oPropertyBag.changeType || "",
+			moduleName: oPropertyBag.moduleName || "",
 			reference: oPropertyBag.reference || "",
 			packageName: oPropertyBag.packageName || "",
 			content: oPropertyBag.content || {},
