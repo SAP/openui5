@@ -294,6 +294,7 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/library"]
 				},
 				ui5: {
+					flexibilityServices: false,
 					libs: null // The fl library is being loaded inside the test
 				}
 			},
