@@ -2375,7 +2375,7 @@ sap.ui.require(["sap/ui/thirdparty/jquery"],
 
 		oObjectPage.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		oGetBoundingClientRectSpy = sinon.spy(oObjectPage.getDomRef(), "getBoundingClientRect");
+		oGetBoundingClientRectSpy = sinon.spy(oObjectPage._$opWrapper.get(0), "getBoundingClientRect");
 
 		// Act - call method
 		oObjectPage._getScrollableViewportHeight();
