@@ -1,0 +1,289 @@
+/*global QUnit sinon */
+/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/base/Log',
+	'sap/ui/model/json/JSONModel',
+	'sap/m/Text',
+	'sap/m/App',
+	'sap/m/Page',
+	'sap/m/Button',
+	'sap/m/OverflowToolbarLayoutData',
+	'sap/m/ToolbarSpacer',
+	'sap/m/IconTabHeader',
+	'sap/m/IconTabFilter',
+	'sap/tnt/ToolHeader',
+	'sap/tnt/ToolHeaderUtilitySeparator'
+], function(
+	jQuery,
+	Log,
+	JSONModel,
+	Text,
+	App,
+	Page,
+	Button,
+	OverflowToolbarLayoutData,
+	ToolbarSpacer,
+	IconTabHeader,
+	IconTabFilter,
+	ToolHeader,
+	ToolHeaderUtilitySeparator) {
+	'use strict';
+
+	jQuery("#qunit-fixture").width('300px');
+
+	//create JSON model instance
+	var oModel = new JSONModel();
+
+	// create and add app
+	var oApp = new App("myApp", {initialPage: "toolHeaderPage"});
+	oApp.placeAt("qunit-fixture");
+
+	var oPage = new Page("toolHeaderPage", {
+		title: "Tool Header"
+	});
+	oApp.addPage(oPage);
+
+	function getToolHeader() {
+		return new ToolHeader({
+			content: [
+				new Button({
+					icon: 'sap-icon://menu2',
+					type: sap.m.ButtonType.Transparent,
+					press: function () {
+
+					},
+					layoutData: new OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.NeverOverflow
+					})
+				}),
+				new ToolbarSpacer({
+					width: '20px'
+				}),
+				new Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "File",
+					press: function () {
+
+					},
+					layoutData: new OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Edit",
+					press: function () {
+
+					},
+					layoutData: new OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Edit",
+					press: function () {
+
+					},
+					layoutData: new OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Edit",
+					press: function () {
+
+					},
+					layoutData: new OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Edit",
+					press: function () {
+
+					},
+					layoutData: new OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Edit",
+					press: function () {
+
+					},
+					layoutData: new OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Edit",
+					press: function () {
+
+					},
+					layoutData: new OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "View",
+					press: function () {
+
+					},
+					layoutData: new OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Navigate",
+					press: function () {
+
+					},
+					layoutData: new OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Code",
+					press: function () {
+
+					},
+					layoutData: new OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new ToolHeaderUtilitySeparator({}),
+				new ToolbarSpacer({
+					layoutData: new OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.NeverOverflow,
+						minWidth: "20px"
+					})
+				}),
+				new Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "User Name",
+					press: function () {
+
+					},
+					layoutData: new OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.NeverOverflow
+					})
+				}),
+				new Button({
+					type: sap.m.ButtonType.Transparent,
+					icon: "sap-icon://log",
+					press: function () {
+
+					},
+					layoutData: new OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.NeverOverflow
+					})
+				})
+			]
+		});
+	}
+
+	QUnit.module("API and Rendering", {
+		beforeEach: function () {
+			this.toolHeader = getToolHeader();
+			oPage.addContent(this.toolHeader);
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.toolHeader.destroy();
+			this.toolHeader = null;
+		}
+	});
+
+	QUnit.test("rendered", function (assert) {
+		assert.strictEqual(this.toolHeader.$().length, 1, "should render");
+	});
+
+	QUnit.test("created", function (assert) {
+		assert.ok(sap.ui.getCore().byId(this.toolHeader.getId()), "created");
+	});
+
+	QUnit.test("contains elements and classes", function (assert) {
+		assert.ok(this.toolHeader.$().hasClass('sapTntToolHeader'), "sapTntToolHeader class is set");
+	});
+
+	QUnit.test("overflow button", function (assert) {
+
+		var overflowButton = this.toolHeader.$('overflowButton');
+		assert.ok(overflowButton.length > 0, "Overflow button is rendered");
+	});
+
+	QUnit.test("overflow popover", function (assert) {
+		assert.ok(jQuery('.sapMOTAPopover').length == 0, "Popover is not rendered");
+
+
+		var overflowButton = this.toolHeader.$('overflowButton');
+		overflowButton.trigger('tap');
+
+		assert.ok(jQuery('.sapMOTAPopover').length > 0, "Popover is rendered");
+	});
+
+
+	QUnit.module("ToolHeader with IconTabHeader", {
+		beforeEach: function () {
+
+			this.isDesktop = sap.ui.Device.system.desktop;
+			sap.ui.Device.system.desktop = false;
+
+			var tabItems = [];
+			for (var i = 0; i < 30; i++) {
+				tabItems.push(new IconTabFilter({
+					key: i.toString(),
+					text: 'Tab ' + i
+				}));
+			}
+
+			var iconTabHeader = new IconTabHeader({
+				showOverflowSelectList: true,
+				items: tabItems,
+				selectedKey: 'invalidKey',
+				layoutData: new OverflowToolbarLayoutData({
+					priority: sap.m.OverflowToolbarPriority.NeverOverflow,
+					shrinkable: true
+				})
+			});
+
+			var toolHeader = new ToolHeader({
+				content: [
+					iconTabHeader
+				]
+			});
+
+			this.iconTabHeader = iconTabHeader;
+			this.toolHeader = toolHeader;
+
+			oPage.addContent(toolHeader);
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+
+			sap.ui.Device.system.desktop = this.isDesktop;
+
+			this.toolHeader.destroy();
+			this.toolHeader = null;
+		}
+	});
+
+	QUnit.test("Tabs visibility", function (assert) {
+		this.iconTabHeader.$().width('300px');
+		this.iconTabHeader._afterIscroll();
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(this.iconTabHeader.$().find('.sapMITBFilterHidden').length > 0, 'Some tabs are hidden');
+	});
+});
