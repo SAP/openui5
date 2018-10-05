@@ -13,7 +13,7 @@ sap.ui.define([
 		onTheObjectPage: {
 			baseClass : Common,
 
-			actions : jQuery.extend({
+			actions : Object.assign({
 				iPressTheBackButton : function () {
 					return this.waitFor({
 						id : "page",
@@ -25,7 +25,7 @@ sap.ui.define([
 
 			}, shareOptions.createActions(sViewName)),
 
-			assertions: jQuery.extend({
+			assertions: Object.assign({
 
 				iShouldSeeTheRememberedObject : function () {
 					return this.waitFor({

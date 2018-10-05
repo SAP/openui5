@@ -1,7 +1,10 @@
 sap.ui.define([
-	"sap/ui/core/ValueState"
-] , function (ValueState) {
-	"use strict";
+	"sap/ui/core/library"
+] , function (library) {
+    "use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = library.ValueState;
 
 	return {
 

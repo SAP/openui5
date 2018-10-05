@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
+	"sap/base/util/UriParameters",
 	"sap/base/Log"
-], function (MockServer, Log) {
+], function (MockServer, UriParameters, Log) {
 		"use strict";
 
 		var oMockServer,
@@ -18,7 +19,8 @@ sap.ui.define([
 			 */
 
 			init : function () {
-				var oUriParameters = jQuery.sap.getUriParameters(),
+				//TODO: global jquery call found
+				var oUriParameters = new UriParameters(window.location.href),
 					sJsonFilesUrl = sap.ui.require.toUrl((_sJsonFilesModulePath).replace(/\./g, "/")),
 					sManifestUrl = sap.ui.require.toUrl((_sAppModulePath + "manifest").replace(/\./g, "/")) + ".json",
 					sEntity = "Products",
