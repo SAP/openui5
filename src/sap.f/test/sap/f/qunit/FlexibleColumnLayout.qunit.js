@@ -1,15 +1,24 @@
-/*global QUnit, sinon */
-sap.ui.require([
+/*global QUnit, sinon*/
+sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/f/FlexibleColumnLayout",
 	"sap/f/FlexibleColumnLayoutSemanticHelper",
 	"sap/m/Page",
 	"sap/m/Button",
-	"sap/f/LayoutType"],
-function($, FlexibleColumnLayout, FlexibleColumnLayoutSemanticHelper, Page, Button, LT) {
+	"sap/f/LayoutType",
+	"sap/ui/core/Core"
+],
+function (
+	$,
+	FlexibleColumnLayout,
+	FlexibleColumnLayoutSemanticHelper,
+	Page,
+	Button,
+	LT,
+	Core
+) {
 	"use strict";
-	var oCore = sap.ui.getCore(),
-		sQUnitFixture = "qunit-fixture",
+	var sQUnitFixture = "qunit-fixture",
 		DESKTOP_SIZE = "1300px",
 		TABLET_SIZE = "1200px",
 		PHONE_SIZE = "900px",
@@ -32,7 +41,7 @@ function($, FlexibleColumnLayout, FlexibleColumnLayoutSemanticHelper, Page, Butt
 		oMetadata = oMetadata || {};
 		var oFCL = new FlexibleColumnLayout(oMetadata);
 		oFCL.placeAt(sQUnitFixture);
-		oCore.applyChanges();
+		Core.applyChanges();
 		return oFCL;
 	};
 
@@ -114,7 +123,7 @@ function($, FlexibleColumnLayout, FlexibleColumnLayoutSemanticHelper, Page, Butt
 		// Act: change backgroundDesign to Solid
 		this.oFCL.setBackgroundDesign("Solid");
 
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// Assert backgroundDesign
 		assert.ok(this.oFCL.$().hasClass("sapFFCLBackgroundDesignSolid"), "Solid background is set in the  DOM");
@@ -123,7 +132,7 @@ function($, FlexibleColumnLayout, FlexibleColumnLayoutSemanticHelper, Page, Butt
 		// Act: change backgroundDesign to Translucent
 		this.oFCL.setBackgroundDesign("Translucent");
 
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// Assert backgroundDesign
 		assert.ok(this.oFCL.$().hasClass("sapFFCLBackgroundDesignTranslucent"), "Translucent background is set in the  DOM");
@@ -310,7 +319,7 @@ function($, FlexibleColumnLayout, FlexibleColumnLayoutSemanticHelper, Page, Butt
 		var oEventSpy = this.spy(this.oFCL, "fireStateChange");
 
 		this.oFCL.placeAt(sQUnitFixture);
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		assert.ok(oEventSpy.called, "Layout change event fired");
 	});
@@ -367,7 +376,7 @@ function($, FlexibleColumnLayout, FlexibleColumnLayoutSemanticHelper, Page, Butt
 		var oEventSpy = this.spy(this.oFCL, "fireStateChange");
 
 		this.oFCL.placeAt(sQUnitFixture);
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		assert.ok(!oEventSpy.called, "Layout change event from onAfterRendering not fired");
 
@@ -804,7 +813,11 @@ function($, FlexibleColumnLayout, FlexibleColumnLayoutSemanticHelper, Page, Butt
 		}
 	});
 
-	QUnit.test("Suspending and resuming ResizeHandler upon column layout change", 6, function (assert) {
+	QUnit.test("Suspending and resuming ResizeHandler upon column layout change", function (assert) {
+		// assert
+		assert.expect(6);
+
+		// arrange
 		var fnDone = assert.async(),
 			iAnimationDelay = 600,
 			oBeginColumnArrow =  this.oFCL.getAggregation("_beginColumnBackArrow"),
@@ -869,7 +882,7 @@ function($, FlexibleColumnLayout, FlexibleColumnLayoutSemanticHelper, Page, Butt
 
 	QUnit.test("Each column has correct region role and it's labeled correctly", function (assert) {
 		var fnGetLabelText = function (sColumnName) {
-			return sap.ui.getCore().byId(this.oFCL.$(sColumnName).attr("aria-labelledby")).getText();
+			return Core.byId(this.oFCL.$(sColumnName).attr("aria-labelledby")).getText();
 		}.bind(this);
 
 		assert.strictEqual(this.oFCL.$("beginColumn").attr("role"), "region", "Begin column has correct role");
@@ -947,6 +960,4 @@ function($, FlexibleColumnLayout, FlexibleColumnLayoutSemanticHelper, Page, Butt
 		assert.equal(this.oFCL._hasAnyColumnPagesRendered(), true, "_hasAnyColumnPagesRendered is true");
 		assert.strictEqual(oEventSpy.callCount, 1, "_hideShowArrows is called");
 	});
-
-
 });
