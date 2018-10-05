@@ -394,6 +394,9 @@ sap.ui.define([
 				/**
 				* The <code>footerCustomActions</code> are placed in the <code>FooterRight</code> area of the
 				* <code>SemanticPage</code> footer, right after the semantic footer actions.
+        *
+				* <b>Note:</b> Buttons that are part of this aggregation will always have their <code>type</code>
+				* property set to <code>Transparent</code> by design.
 				*/
 				footerCustomActions: {type: "sap.m.Button", multiple: true},
 
