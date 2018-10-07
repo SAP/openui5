@@ -649,6 +649,10 @@ sap.ui.define([
 		oIcon.setSrc(sIcon);
 	};
 
+	CustomLink.prototype._getTabindex = function () {
+		return "0";
+	};
+
 	/**
 	 * Returns the _iconControl aggregation.
 	 *
