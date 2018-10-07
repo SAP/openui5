@@ -1,29 +1,38 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>NotificationBar - sap.ui.ux3</title>
+/*global QUnit */
+sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/ux3/NotificationBar",
+	"sap/ui/ux3/Notifier",
+	"sap/ui/core/Message",
+	"sap/ui/core/library",
+	"jquery.sap.global",
+	"sap/ui/ux3/library",
+	"jquery.sap.keycodes",
+	"sap/ui/events/jquery/EventExtension"
+], function(
+	qutils,
+	createAndAppendDiv,
+	NotificationBar,
+	Notifier,
+	Message,
+	coreLibrary,
+	jQuery,
+	ux3Library
+) {
+	"use strict";
 
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js" data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.ui.ux3">
+	// prepare DOM
+	// shortcut for sap.ui.ux3.NotificationBarStatus
+	var NotificationBarStatus = ux3Library.NotificationBarStatus;
 
-</script>
+	// shortcut for sap.ui.core.MessageType
+	var MessageType = coreLibrary.MessageType;
 
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	createAndAppendDiv("uiArea1").setAttribute("style", "margin-top: 40px;");
 
-<script>
+
+	var oNotiBar;
 
 	function openHandler(oEvent) {
 		var bShow = oEvent.getParameter("show");
@@ -33,9 +42,9 @@
 			oNotiBar.setVisibleStatus("None");
 		}
 		sap.ui.getCore().applyChanges();
-	};
+	}
 
-	function minimize(oNBar, sFrom, sTo, done) {
+	function minimize(assert, oNBar, sFrom, sTo, done) {
 		oNBar.setVisibleStatus(sFrom);
 		sap.ui.getCore().applyChanges();
 
@@ -45,17 +54,15 @@
 		sap.ui.getCore().applyChanges();
 
 		var iAfter = oNBar.$().height();
-		var sMessage = "Bar minimized from " + sFrom + " to " + sTo;
-		var bTest = (iBefore > iAfter) ? true : false;
 
-		assert.ok(bTest, sMessage);
+		assert.ok(iBefore > iAfter, "Bar minimized from " + sFrom + " to " + sTo);
 
 		if (done) {
 			done();
 		}
-	};
+	}
 
-	function maximize(oNBar, sFrom, sTo) {
+	function maximize(assert, oNBar, sFrom, sTo) {
 		oNBar.setVisibleStatus(sFrom);
 		sap.ui.getCore().applyChanges();
 
@@ -65,13 +72,10 @@
 		sap.ui.getCore().applyChanges();
 
 		var iAfter = oNBar.$().height();
-		var bTest = (iBefore < iAfter) ? true : false;
-		var sMessage = "Bar maximized from " + sFrom + " to " + sTo;
+		assert.ok(iBefore < iAfter, "Bar maximized from " + sFrom + " to " + sTo);
+	}
 
-		assert.ok(bTest, sMessage);
-	};
-
-	function toggleVisibility(oNBar, sFrom, sTo) {
+	function toggleVisibility(assert, oNBar, sFrom, sTo) {
 		oNBar.setVisibleStatus(sFrom);
 		sap.ui.getCore().applyChanges();
 
@@ -81,23 +85,19 @@
 		sap.ui.getCore().applyChanges();
 
 		var sAfter = oNBar.$().css("display");
-		var bTest = (sBefore != sAfter) ? true : false;
-		var sMessage = "Bar toggled from " + sFrom + " to " + sTo;
 
-		assert.ok(bTest, sMessage);
-	};
-</script>
+		assert.notEqual(sBefore, sAfter, "Bar toggled from " + sFrom + " to " + sTo);
+	}
 
 
-<script>
 	var fx = jQuery.fx.off;
 
-	var oNotiBar = new sap.ui.ux3.NotificationBar("my-very-long-id", {
+	oNotiBar = new NotificationBar("my-very-long-id", {
 		display : openHandler,
 		enableResize : false
 	});
 	oNotiBar.placeAt("uiArea1");
-	var oMN = new sap.ui.ux3.Notifier({
+	var oMN = new Notifier({
 		title : "Messages"
 	});
 
@@ -114,28 +114,28 @@
 
 		var now = (new Date()).toUTCString();
 		var sText = "Lorem Ipsum";
-		var sUri = "../images/notification_bar/Thumbnail_32.png";
+		var sUri = "test-resources/sap/ui/ux3/images/notification_bar/Thumbnail_32.png";
 
 		oNotiBar.setMessageNotifier(oMN);
-		var oMessage = new sap.ui.core.Message("message1", {
+		var oMessage = new Message("message1", {
 			text : sText,
 			icon : sUri,
-			level : sap.ui.core.MessageType.Error,
+			level : MessageType.Error,
 			timestamp : now
 		});
 		oMN.addMessage(oMessage);
 
 		now = (new Date()).toUTCString();
-		oMessage = new sap.ui.core.Message("message2", {
+		oMessage = new Message("message2", {
 			text : sText,
 			icon : sUri,
-			level : sap.ui.core.MessageType.Error,
+			level : MessageType.Error,
 			timestamp : now
 		});
 		oMN.addMessage(oMessage);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(oMN.hasItems(), "Message added to Notifier")
+		assert.ok(oMN.hasItems(), "Message added to Notifier");
 		assert.ok(oNotiBar.hasItems(), "Message reached NotificationBar");
 
 		var bTest = oNotiBar.getVisibleStatus() != "None";
@@ -160,10 +160,10 @@
 
 		assert.ok(!oNotiBar.hasItems(), "Messages removed from bar");
 
-		var bTest = oNotiBar.getVisibleStatus() === "None";
+		bTest = oNotiBar.getVisibleStatus() === "None";
 		assert.ok(bTest, "Visibility status correctly set to None");
 
-		var sDisplay = oNotiBar.$().css("display");
+		sDisplay = oNotiBar.$().css("display");
 		bTest = sDisplay === "none";
 		assert.ok(bTest, "Bar invisible in DOM");
 	});
@@ -174,18 +174,18 @@
 		oNotiBar.setMessageNotifier(oMN);
 
 		// test if common message WITHOUT event listener is selectable
-		now = (new Date()).toUTCString();
-		var oMessage = new sap.ui.core.Message("message2readOnly", {
+		var now = (new Date()).toUTCString();
+		var oMessage = new Message("message2readOnly", {
 			text : "Common message",
-			level : sap.ui.core.MessageType.Error,
+			level : MessageType.Error,
 			timestamp : now
 		});
 		oMN.addMessage(oMessage);
 		sap.ui.getCore().applyChanges();
 
-		$InplaceText = jQuery.sap.byId(oNotiBar.getId() + "-inplaceMessage");
-		bTest = $InplaceText.hasClass("sapUiInPlaceMessageSelectable");
-		assert.ok(!bTest, "Inplace text for common message is not selectable - there is no event listener")
+		var $InplaceText = jQuery.sap.byId(oNotiBar.getId() + "-inplaceMessage");
+		var bTest = $InplaceText.hasClass("sapUiInPlaceMessageSelectable");
+		assert.ok(!bTest, "Inplace text for common message is not selectable - there is no event listener");
 
 		// test if common message with event listener is selectable
 		oMN.attachMessageSelected(function() {
@@ -193,22 +193,22 @@
 		sap.ui.getCore().applyChanges();
 		$InplaceText = jQuery.sap.byId(oNotiBar.getId() + "-inplaceMessage");
 		bTest = $InplaceText.hasClass("sapUiInPlaceMessageSelectable");
-		assert.ok(bTest, "Inplace text for common message is selectable")
+		assert.ok(bTest, "Inplace text for common message is selectable");
 
 		// test if read only message is selectable (event listener needed of course)
 		now = (new Date()).toUTCString();
-		var oReadOnlyMessage = new sap.ui.core.Message("message1readOnly", {
+		var oReadOnlyMessage = new Message("message1readOnly", {
 			text : "Read only message",
-			level : sap.ui.core.MessageType.Error,
+			level : MessageType.Error,
 			timestamp : now,
 			readOnly : true
 		});
 		oMN.addMessage(oReadOnlyMessage);
 		sap.ui.getCore().applyChanges();
 
-		var $InplaceText = jQuery.sap.byId(oNotiBar.getId() + "-inplaceMessage");
-		var bTest = $InplaceText.hasClass("sapUiInPlaceMessageSelectable");
-		assert.ok(!bTest, "Inplace text is not selectable because it's read only")
+		$InplaceText = jQuery.sap.byId(oNotiBar.getId() + "-inplaceMessage");
+		bTest = $InplaceText.hasClass("sapUiInPlaceMessageSelectable");
+		assert.ok(!bTest, "Inplace text is not selectable because it's read only");
 	});
 
 	/*
@@ -224,9 +224,9 @@
 	});
 	QUnit.test("From None", function(assert) {
 		assert.expect(3);
-		toggleVisibility(oNotiBar, "None", "Min");
-		toggleVisibility(oNotiBar, "None", "Default");
-		toggleVisibility(oNotiBar, "None", "Max");
+		toggleVisibility(assert, oNotiBar, "None", "Min");
+		toggleVisibility(assert, oNotiBar, "None", "Default");
+		toggleVisibility(assert, oNotiBar, "None", "Max");
 	});
 
 	/*
@@ -234,8 +234,8 @@
 	 */
 	QUnit.test("From Minimized", function(assert) {
 		assert.expect(2);
-		toggleVisibility(oNotiBar, "Min", "None");
-		maximize(oNotiBar, "Min", "Default");
+		toggleVisibility(assert, oNotiBar, "Min", "None");
+		maximize(assert, oNotiBar, "Min", "Default");
 	});
 
 	/*
@@ -243,9 +243,9 @@
 	 */
 	QUnit.test("From Default", function(assert) {
 		assert.expect(3);
-		toggleVisibility(oNotiBar, "Default", "None");
-		minimize(oNotiBar, "Default", "Min");
-		maximize(oNotiBar, "Default", "Max");
+		toggleVisibility(assert, oNotiBar, "Default", "None");
+		minimize(assert, oNotiBar, "Default", "Min");
+		maximize(assert, oNotiBar, "Default", "Max");
 	});
 
 	/*
@@ -253,8 +253,8 @@
 	 */
 	QUnit.test("From Maximized", function(assert) {
 		assert.expect(2);
-		toggleVisibility(oNotiBar, "Max", "None");
-		minimize(oNotiBar, "Max", "Default");
+		toggleVisibility(assert, oNotiBar, "Max", "None");
+		minimize(assert, oNotiBar, "Max", "Default");
 	});
 
 	/*
@@ -271,7 +271,7 @@
 
 		oNotiBar.attachResize(fnResizeHandler);
 
-		minimize(oNotiBar, "Max", "Default", done);
+		minimize(assert, oNotiBar, "Max", "Default", done);
 	});
 
 	/*
@@ -289,10 +289,10 @@
 		var done = assert.async();
 		assert.expect(1);
 
-		var oNotifier = new sap.ui.ux3.Notifier({
-			title : "First Notifier",
+		var oNotifier = new Notifier({
+			title : "First Notifier"
 		});
-		var oMessage = new sap.ui.core.Message({
+		var oMessage = new Message({
 			text : "Lorem Ipsum"
 		});
 		oNotifier.addMessage(oMessage);
@@ -322,9 +322,9 @@
 		afterEach : function() {
 			jQuery.fx.off = fx;
 
-			oNotiBar.destroyMessageNotifier()
+			oNotiBar.destroyMessageNotifier();
 			oNotiBar.destroyNotifiers();
-			oNotiBar.setVisibleStatus(sap.ui.ux3.NotificationBarStatus.None);
+			oNotiBar.setVisibleStatus(NotificationBarStatus.None);
 		}
 	});
 	QUnit.test("Navigate through Notifiers (minimized)", function(assert) {
@@ -333,12 +333,11 @@
 
 		var sKeyLeft = jQuery.sap.KeyCodes.ARROW_LEFT;
 		var sKeyRight = jQuery.sap.KeyCodes.ARROW_RIGHT;
-		var sKeyI = jQuery.sap.KeyCodes.I;
 
-		var oMN = new sap.ui.ux3.Notifier({
-			title : "Message Notifier",
+		var oMN = new Notifier({
+			title : "Message Notifier"
 		});
-		var oMsg2 = new sap.ui.core.Message({
+		var oMsg2 = new Message({
 			text : "Lorem Ipsum"
 		});
 		oMN.addMessage(oMsg2);
@@ -348,15 +347,13 @@
 		var aNotifiers = oNotiBar.getNotifiers();
 
 		var notifierDomRef = aNotifiers[0].$();
-		var $notifier = jQuery(notifierDomRef);
-		var $MN = jQuery(oMN.$());
 
-		sap.ui.test.qunit.triggerMouseEvent(notifierDomRef, "focusin");
+		qutils.triggerMouseEvent(notifierDomRef, "focusin");
 
 		setTimeout(function() {
 			var before = document.activeElement;
 
-			sap.ui.test.qunit.triggerKeydown(notifierDomRef, sKeyRight);
+			qutils.triggerKeydown(notifierDomRef, sKeyRight);
 
 			var after = document.activeElement;
 
@@ -364,7 +361,7 @@
 			assert.ok(bTest, "Moved from Notifier to MessageNotifier");
 
 			setTimeout(function() {
-				sap.ui.test.qunit.triggerKeydown(oMN.$(), sKeyLeft);
+				qutils.triggerKeydown(oMN.$(), sKeyLeft);
 
 				var after = document.activeElement;
 
@@ -380,33 +377,31 @@
 		var done = assert.async();
 		assert.expect(5);
 
-		var sKeyLeft = jQuery.sap.KeyCodes.ARROW_LEFT;
 		var sKeyRight = jQuery.sap.KeyCodes.ARROW_RIGHT;
-		var sKeyI = jQuery.sap.KeyCodes.I;
 
-		var oMN = new sap.ui.ux3.Notifier("messageNotifier", {
-			title : "Message Notifier",
+		var oMN = new Notifier("messageNotifier", {
+			title : "Message Notifier"
 		});
-		var oMsg1 = new sap.ui.core.Message("messageMaximized1", {
+		var oMsg1 = new Message("messageMaximized1", {
 			text : "Lorem Ipsum"
 		});
-		var oMsg2 = new sap.ui.core.Message("messageMaximized2", {
+		var oMsg2 = new Message("messageMaximized2", {
 			text : "Lorem Ipsum"
 		});
 		oMN.addMessage(oMsg1);
 		oMN.addMessage(oMsg2);
 		oNotiBar.setMessageNotifier(oMN);
 
-		var oN = new sap.ui.ux3.Notifier("anotherNotifier", {
-			title : "Message Notifier",
+		var oN = new Notifier("anotherNotifier", {
+			title : "Message Notifier"
 		});
-		var oMsg3 = new sap.ui.core.Message("messageMaximized3", {
+		var oMsg3 = new Message("messageMaximized3", {
 			text : "Lorem Ipsum"
 		});
 		oN.addMessage(oMsg3);
 		oNotiBar.addNotifier(oN);
 
-		oNotiBar.setVisibleStatus(sap.ui.ux3.NotificationBarStatus.Max);
+		oNotiBar.setVisibleStatus(NotificationBarStatus.Max);
 		sap.ui.getCore().applyChanges();
 
 		// NotificationBar is in maximized-mode
@@ -415,7 +410,7 @@
 
 		setTimeout(function() {
 			var before = document.activeElement;
-			sap.ui.test.qunit.triggerKeydown(oDomRef, sKeyRight);
+			qutils.triggerKeydown(oDomRef, sKeyRight);
 
 			setTimeout(function() {
 				var after = document.activeElement;
@@ -428,7 +423,7 @@
 
 				oDomRef = jQuery.sap.domById(after.id);
 				before = after;
-				sap.ui.test.qunit.triggerKeydown(oDomRef, sKeyRight);
+				qutils.triggerKeydown(oDomRef, sKeyRight);
 
 				setTimeout(function() {
 					after = document.activeElement;
@@ -438,7 +433,7 @@
 
 					oDomRef = jQuery.sap.domById(after.id);
 					before = after;
-					sap.ui.test.qunit.triggerKeydown(oDomRef, sKeyRight);
+					qutils.triggerKeydown(oDomRef, sKeyRight);
 
 					setTimeout(function() {
 						after = document.activeElement;
@@ -454,16 +449,4 @@
 			}, 100);
 		}, 500);
 	});
-</script>
-
-</head>
-<body class="sapUiBody">
-	<h1 id="qunit-header">QUnit Page for sap.ui.ux3.NotificationBar</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<ol id="qunit-tests"></ol>
-	<div id="qunit-fixture">test markup, will be hidden</div>
-
-	<div style="margin-top: 40px;" id="uiArea1"></div>
-</body>
-</html>
+});

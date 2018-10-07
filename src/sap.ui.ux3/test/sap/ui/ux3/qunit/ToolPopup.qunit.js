@@ -1,48 +1,76 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>ToolPopup - sap.ui.ux3</title>
+/*global QUnit, sinon */
+sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/commons/Button",
+	"sap/ui/ux3/ToolPopup",
+	"jquery.sap.global",
+	"sap/ui/core/Popup",
+	"sap/ui/commons/FormattedTextView",
+	"sap/ui/commons/TextField",
+	"sap/ui/commons/TextView",
+	"sap/ui/commons/Link",
+	"sap/ui/commons/Label",
+	"sap/ui/commons/layout/MatrixLayoutCell",
+	"sap/ui/commons/library",
+	"sap/ui/commons/layout/MatrixLayoutRow",
+	"sap/ui/commons/layout/MatrixLayout",
+	"sap/ui/core/HTML",
+	"jquery.sap.keycodes"
+], function(
+	qutils,
+	createAndAppendDiv,
+	Button,
+	ToolPopup,
+	jQuery,
+	Popup,
+	FormattedTextView,
+	TextField,
+	TextView,
+	Link,
+	Label,
+	MatrixLayoutCell,
+	commonsLibrary,
+	MatrixLayoutRow,
+	MatrixLayout,
+	HTML
+) {
+	"use strict";
 
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js" data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.ui.ux3">
+	// shortcut for sap.ui.commons.layout.VAlign
+	var VAlign = commonsLibrary.layout.VAlign;
 
-</script>
+	// shortcut for sap.ui.commons.layout.HAlign
+	var HAlign = commonsLibrary.layout.HAlign;
 
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<!--[if IE]>
-<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
-<![endif]-->
-<!-- TODO remove after 1.62 version -->
-
-<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	// shortcut for sap.ui.core.Popup.Dock
+	var Dock = Popup.Dock;
 
 
-<style>
-.widePopup {
-	width: 800px;
-}
+	// prepare DOM
+	(function(){
+		var elem = document.createElement("DIV");
+		elem.setAttribute("id", "Placeholder");
+		elem.setAttribute("style", "margin-top: 100px;");
+		elem.setAttribute("tabindex", "0");
+		document.body.insertBefore(elem, document.body.firstChild);
+	}());
+	document.body.insertBefore(createAndAppendDiv("uiArea2"), document.body.firstChild).setAttribute("style", "margin-top: 20px; margin-right: 100px; text-align: right;");
+	document.body.insertBefore(createAndAppendDiv("uiArea1"), document.body.firstChild).setAttribute("style", "margin-top: 100px; margin-left: 200px;");
+	var styleElement = document.createElement("style");
+	styleElement.textContent =
+		".widePopup {" +
+		"	width: 800px;" +
+		"}" +
+		".widePopup2 {" +
+		"	width: 200px;" +
+		"}" +
+		".highPopup {" +
+		"	width: 120px;" +
+		"}";
+	document.head.appendChild(styleElement);
 
-.widePopup2 {
-	width: 200px;
-}
 
-.highPopup {
-	width: 120px;
-}
-</style>
-
-<script>
-	sinon.config.useFakeTimers = false;
 
 	var bTest = false;
 	var sBorderWidth = "";
@@ -53,7 +81,7 @@
 	var oBtnRect = {};
 	var oTPRect = {};
 
-	$Window = jQuery(window);
+	var $Window = jQuery(window);
 	var oWindowRect = $Window.rect();
 
 	var oPosition = {
@@ -64,23 +92,21 @@
 		"collision" : ""
 	};
 
-	var iTimeout = 500;
-
-	var oBtn1 = new sap.ui.commons.Button({
+	var oBtn1 = new Button({
 		text : "open here",
 		width : "100px"
 	}).placeAt("uiArea1");
 
-	var oBtn2 = new sap.ui.commons.Button({
+	var oBtn2 = new Button({
 		text : "open here",
 		width : "100px"
 	}).placeAt("uiArea2");
 
-	var oBtnClose = new sap.ui.commons.Button({
+	var oBtnClose = new Button({
 		text : "Press to close"
 	});
 
-	var oTP1 = new sap.ui.ux3.ToolPopup("tp1", {
+	var oTP1 = new ToolPopup("tp1", {
 		content : [ oBtnClose ],
 		opener : oBtn1
 	});
@@ -135,7 +161,7 @@
 		oTP1.setCloseDuration(1000);
 		oBtnClose.press = function() {
 			oTP1.close();
-		}
+		};
 
 		oTP1.startTime = new Date();
 
@@ -169,8 +195,8 @@
 			oTP1.setCloseDuration(0);
 			oTP1.setOpenDuration(0);
 
-			oPosition.my = sap.ui.core.Popup.Dock.BeginTop;
-			oPosition.at = sap.ui.core.Popup.Dock.BeginBottom
+			oPosition.my = Dock.BeginTop;
+			oPosition.at = Dock.BeginBottom;
 			oTP1.open(oPosition.my, oPosition.at);
 		};
 
@@ -221,10 +247,10 @@
 			oTP1.detachClosed(fnClosed);
 
 			oBtn1.press = function() {
-				oPosition.my = sap.ui.core.Popup.Dock.EndTop;
-				oPosition.at = sap.ui.core.Popup.Dock.BeginTop
+				oPosition.my = Dock.EndTop;
+				oPosition.at = Dock.BeginTop;
 				oTP1.open(oPosition.my, oPosition.at);
-			}
+			};
 
 			oBtn1.press();
 			sap.ui.getCore().applyChanges();
@@ -271,10 +297,10 @@
 		sap.ui.getCore().applyChanges();
 
 		oBtn1.press = function() {
-			oPosition.my = sap.ui.core.Popup.Dock.BeginBottom;
-			oPosition.at = sap.ui.core.Popup.Dock.BeginTop;
+			oPosition.my = Dock.BeginBottom;
+			oPosition.at = Dock.BeginTop;
 			oTP1.open(oPosition.my, oPosition.at);
-		}
+		};
 
 		var fnOpened = function() {
 			oTP1.detachOpened(fnOpened);
@@ -318,15 +344,15 @@
 		sap.ui.getCore().applyChanges();
 
 		oBtn1.press = function() {
-			oPosition.my = sap.ui.core.Popup.Dock.BeginBottom;
-			oPosition.at = sap.ui.core.Popup.Dock.BeginTop;
+			oPosition.my = Dock.BeginBottom;
+			oPosition.at = Dock.BeginTop;
 			oPosition.of = this;
 			oPosition.offset = "-20 -27";
 			oPosition.collision = "none";
 
 			oTP1.setPosition(oPosition.my, oPosition.at, oPosition.of, oPosition.offset, oPosition.collision);
 			oTP1.open();
-		}
+		};
 
 		var fnOpened = function() {
 			oTP1.detachOpened(fnOpened);
@@ -382,7 +408,7 @@
 		}
 		assert.expect(2);
 
-		oTP2 = new sap.ui.ux3.ToolPopup("tp2", {
+		var oTP2 = new ToolPopup("tp2", {
 			content : [ oBtnClose ],
 			opener : oBtn1,
 			openDuration : 0,
@@ -391,8 +417,8 @@
 		oTP2.addStyleClass("widePopup");
 
 		oBtn1.press = function() {
-			oPosition.my = sap.ui.core.Popup.Dock.BeginTop;
-			oPosition.at = sap.ui.core.Popup.Dock.EndTop;
+			oPosition.my = Dock.BeginTop;
+			oPosition.at = Dock.EndTop;
 			oPosition.of = this;
 			oPosition.offset = "13 0";
 			oPosition.collision = "fit";
@@ -448,15 +474,15 @@
 		}
 		assert.expect(3);
 
-		oTP3 = new sap.ui.ux3.ToolPopup("tp3", {
+		var oTP3 = new ToolPopup("tp3", {
 			content : [ oBtnClose ],
 			opener : oBtn2
 		});
 		oTP3.addStyleClass("widePopup2");
 
 		oBtn2.press = function() {
-			oPosition.my = sap.ui.core.Popup.Dock.BeginTop;
-			oPosition.at = sap.ui.core.Popup.Dock.EndTop;
+			oPosition.my = Dock.BeginTop;
+			oPosition.at = Dock.EndTop;
 			oPosition.of = this;
 			oPosition.offset = "13 0";
 			oPosition.collision = "flip";
@@ -503,16 +529,16 @@
 	var oTPFocus;
 	QUnit.module("Focus handling", {
 		beforeEach : function() {
-			oTPFocus = new sap.ui.ux3.ToolPopup("focusPopup", {
-				content : [ new sap.ui.commons.FormattedTextView("FormattedTextView1",{
+			oTPFocus = new ToolPopup("focusPopup", {
+				content : [ new FormattedTextView("FormattedTextView1",{
 					htmlText : "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
-				}), new sap.ui.commons.Button("focusBtn1", {
+				}), new Button("focusBtn1", {
 					text : "focus_button1"
-				}), new sap.ui.commons.Button("focusBtn2", {
+				}), new Button("focusBtn2", {
 					text : "focus_button2"
-				}), new sap.ui.commons.Button("defaultBtn1", {
+				}), new Button("defaultBtn1", {
 					text : "default_button1"
-				}), new sap.ui.commons.Button("focusBtn3", {
+				}), new Button("focusBtn3", {
 					text : "focus_button3"
 				})],
 				opener : oBtn1,
@@ -536,7 +562,7 @@
 
 			bTest = document.activeElement.id === "focusBtn1";
 
-			assert.ok(bTest, "First button was focused per default")
+			assert.ok(bTest, "First button was focused per default");
 			done();
 		};
 
@@ -571,7 +597,7 @@
 		var fnOpened = function() {
 			oTPFocus.detachOpened(fnOpened);
 
-			bTest = typeof oTPFocus.getFocusDomRef() === 'object' ;
+			bTest = typeof oTPFocus.getFocusDomRef() === 'object';
 
 			assert.ok(bTest, "getFocusDomRef returns object");
 			done();
@@ -592,7 +618,7 @@
 
 			var sKeyEnter = jQuery.sap.KeyCodes.ENTER;
 			var oDomRef = sap.ui.getCore().byId("FormattedTextView1").getDomRef();
-			sap.ui.test.qunit.triggerKeydown(oDomRef, sKeyEnter);
+			qutils.triggerKeydown(oDomRef, sKeyEnter);
 
 			bTest = document.activeElement.id === "defaultBtn1";
 
@@ -627,12 +653,12 @@
 	QUnit.test("Focusable area (type check)", function(assert) {
 		assert.expect(4);
 
-		var oTF = new sap.ui.commons.TextField().placeAt("uiArea1");
+		var oTF = new TextField().placeAt("uiArea1");
 		oTPFocus.setAutoClose(true);
 
 		// since a wrong type is given 'oValue' should be null
 		var oValue = oTPFocus.addFocusableArea(oTF);
-		assert.ok(!!!oValue, "Wrong type is recognized while adding");
+		assert.ok(!oValue, "Wrong type is recognized while adding");
 		oValue = null; // reset result for next test
 
 		oValue = oTPFocus.addFocusableArea(oTF.getId());
@@ -641,7 +667,7 @@
 
 		oValue = oTPFocus.removeFocusableArea(oTF);
 		// since a wrong type is given 'oValue' should be null
-		assert.ok(!!!oValue, "Wrong type is recognized while removal");
+		assert.ok(!oValue, "Wrong type is recognized while removal");
 		oValue = null;
 
 		oValue = oTPFocus.removeFocusableArea(oTF.getId());
@@ -672,32 +698,32 @@
 		});
 
 
-		oTPFocus.open(sap.ui.core.Popup.Dock.BeginBottom, sap.ui.core.Popup.Dock.BeginTop);
+		oTPFocus.open(Dock.BeginBottom, Dock.BeginTop);
 	});
 
 	var oTPMaxHeight;
 	QUnit.module("Size of the ToolPopup", {
 		beforeEach : function() {
-			oTPMaxHeight = new sap.ui.ux3.ToolPopup("focusPopup", {
-				content : [ new sap.ui.commons.Button({
+			oTPMaxHeight = new ToolPopup("focusPopup", {
+				content : [ new Button({
 					text : "button1"
-				}), new sap.ui.commons.Button({
+				}), new Button({
 					text : "button2"
-				}), new sap.ui.commons.Button({
+				}), new Button({
 					text : "button3"
-				}), new sap.ui.commons.Button({
+				}), new Button({
 					text : "button4"
-				}), new sap.ui.commons.Button({
+				}), new Button({
 					text : "button5"
-				}), new sap.ui.commons.Button({
+				}), new Button({
 					text : "button6"
-				}), new sap.ui.commons.Button({
+				}), new Button({
 					text : "button7"
-				}), new sap.ui.commons.Button({
+				}), new Button({
 					text : "button8"
-				}), new sap.ui.commons.Button({
+				}), new Button({
 					text : "button9"
-				}), new sap.ui.commons.Button({
+				}), new Button({
 					text : "button10"
 				}) ],
 				opener : oBtn1,
@@ -770,15 +796,15 @@
 		var fnClosed = function() {
 			oTPMaxHeight.detachOpened(fnOpened);
 
-			assert.ok(!!!oTPMaxHeight._sResizeID, "Resize handler deregistered again");
+			assert.ok(!oTPMaxHeight._sResizeID, "Resize handler deregistered again");
 
 			done();
-		}
+		};
 
 		oTPMaxHeight.attachOpened(fnOpened);
 		oTPMaxHeight.attachClosed(fnClosed);
 
-		assert.ok(!!!oTPMaxHeight._sResizeID, "No resize handler attached if ToolPopup is closed");
+		assert.ok(!oTPMaxHeight._sResizeID, "No resize handler attached if ToolPopup is closed");
 		oBtn1.press();
 		sap.ui.getCore().applyChanges();
 	});
@@ -801,7 +827,7 @@
 
 		oTPMaxHeight.setMaxHeight("0px");
 		for (var i = 0; i < 100; i++) {
-			oTPMaxHeight.addContent(new sap.ui.commons.Button({
+			oTPMaxHeight.addContent(new Button({
 				text : "Blow it up"
 			}));
 		}
@@ -815,14 +841,14 @@
 	var oTPContent;
 	QUnit.module("Changing content", {
 		beforeEach : function() {
-			oButtonContent = new sap.ui.commons.Button({
+			oButtonContent = new Button({
 				text : "Open"
 			}).placeAt("uiArea1");
 			oButtonContent.press = 	function() {
 					oTPContent.open();
 			};
 
-			oTPContent = new sap.ui.ux3.ToolPopup({
+			oTPContent = new ToolPopup({
 				maxWidth : '200px',
 				opener : oButtonContent
 			});
@@ -837,17 +863,16 @@
 	QUnit.test("Change Content", function(assert){
 		var done = assert.async();
 		assert.expect(2);
-		var that = this;
 
 		function row(sLabel, sText, sUrl) {
 			var oControl;
 			if (!sUrl) {
-				oControl = new sap.ui.commons.TextView({
+				oControl = new TextView({
 					text : sText,
 					tooltip : sText
 				});
 			} else {
-				oControl = new sap.ui.commons.Link({
+				oControl = new Link({
 					text : sText,
 					href : sUrl,
 					tooltip : sText,
@@ -855,28 +880,28 @@
 				});
 			}
 
-			var oLabel = new sap.ui.commons.Label({
+			var oLabel = new Label({
 				text : sLabel + ":",
 				labelFor : oControl
 			});
 
-			var oMLCell1 = new sap.ui.commons.layout.MatrixLayoutCell({
-				hAlign : sap.ui.commons.layout.HAlign.End,
-				vAlign : sap.ui.commons.layout.VAlign.Top,
+			var oMLCell1 = new MatrixLayoutCell({
+				hAlign : HAlign.End,
+				vAlign : VAlign.Top,
 				content : [ oLabel ]
 			});
-			var oMLCell2 = new sap.ui.commons.layout.MatrixLayoutCell({
-				hAlign : sap.ui.commons.layout.HAlign.Begin,
-				vAlign : sap.ui.commons.layout.VAlign.Top,
+			var oMLCell2 = new MatrixLayoutCell({
+				hAlign : HAlign.Begin,
+				vAlign : VAlign.Top,
 				content : [ oControl ]
 			});
 
-			return new sap.ui.commons.layout.MatrixLayoutRow({
+			return new MatrixLayoutRow({
 				cells : [ oMLCell1, oMLCell2 ]
 			});
-		};
+		}
 
-		fnOpened = function() {
+		var fnOpened = function() {
 			oTPContent.detachOpened(fnOpened);
 
 			var fnApplyPosition = sinon.spy(oTPContent.oPopup, "_applyPosition");
@@ -884,7 +909,7 @@
 			var $Rect = oTPContent.$().rect();
 			var iOldHeight = $Rect.height;
 
-			var oLayout = new sap.ui.commons.layout.MatrixLayout({
+			var oLayout = new MatrixLayout({
 				rows : [ row("Date of birth", "09/09/1999"), row("Gender", "male"),
 					row("Nationality", "german"), row("VIP", "yes"),
 					row("Address", "Hauptstraße 10, Musterstadt, Germany"),
@@ -913,7 +938,7 @@
 	QUnit.test("Preserve Dialog Content", function(assert) {
 		var done = assert.async();
 		var bRendered = false;
-		var oHtml = new sap.ui.core.HTML({
+		var oHtml = new HTML({
 			content: "<div id='htmlControl'>test</div>",
 			preferDOM : true,
 			afterRendering : function(oEvent) {
@@ -931,10 +956,10 @@
 			assert.ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
 			assert.equal(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
 
-			oTPContent.attachClosed(start);
+			oTPContent.attachClosed(done);
 
 			oTPContent.close();
-		}.bind(this);
+		};
 
 		var fnClosed1 = function() {
 			oTPContent.detachClosed(fnClosed1);
@@ -943,7 +968,7 @@
 
 			oTPContent.open();
 			oTPContent.attachOpened(fnOpened2);
-		}.bind(this);
+		};
 
 
 		var fnOpened1 = function() {
@@ -954,7 +979,7 @@
 
 			oTPContent.attachClosed(fnClosed1);
 			oTPContent.close();
-		}.bind(this);
+		};
 
 
 		assert.equal(document.querySelector("#htmlControl"), null, "HTML control not rendered");
@@ -962,20 +987,4 @@
 		oTPContent.attachOpened(fnOpened1);
 		oTPContent.open();
 	});
-
-</script>
-
-</head>
-<body class="sapUiBody">
-	<div style="margin-top: 100px; margin-left: 200px;" id="uiArea1"></div>
-	<div style="margin-top: 20px; margin-right: 100px; text-align: right;" id="uiArea2"></div>
-	<div style="margin-top: 100px;" id="Placeholder" tabindex="0">Placeholder for space below</div>
-
-	<h1 id="qunit-header">QUnit Page for sap.ui.ux3.ToolPopup</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<ol id="qunit-tests"></ol>
-	<div id="qunit-fixture">test markup, will be hidden</div>
-
-</body>
-</html>
+});
