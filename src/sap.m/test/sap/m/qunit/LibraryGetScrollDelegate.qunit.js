@@ -1,12 +1,16 @@
+/*global QUnit */
 sap.ui.define([
 	'jquery.sap.global',
+	'sap/ui/qunit/utils/createAndAppendDiv',
 	'sap/m/library',
 	'sap/ui/core/ComponentContainer',
 	'sap/m/Page'
-], function(jQuery, mLib, ComponentContainer, Page) {
-
+], function(jQuery, createAndAppendDiv, mLib, ComponentContainer, Page) {
 	"use strict";
-	/*global QUnit*/
+
+	// prepare DOM
+	createAndAppendDiv("area").setAttribute("style", "height:500px;");
+
 
 	var oCompCont = new ComponentContainer("CompCont", {
 		name: "samples.scrollcomp"
