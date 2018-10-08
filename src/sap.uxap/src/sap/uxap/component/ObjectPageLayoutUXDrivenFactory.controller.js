@@ -78,9 +78,7 @@ sap.ui.define([
 
 			try {
 				//retrieve the block class
-				//TODO: global jquery call found
-				jQuery.sap.require(oControlInfo.Type);
-				oControlClass = ObjectPath.get(oControlInfo.Type || "");
+				oControlClass = sap.ui.requireSync(oControlInfo.Type.replace(/\./g, "/"));
 				oControlMetadata = oControlClass.getMetadata();
 
 				//pre-processing: substitute event handler as strings by their function instance
