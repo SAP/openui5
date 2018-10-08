@@ -61,6 +61,12 @@
         "type": "FIX",
         "text": "sap.ui.fl - Test for revert changes in stashed controls",
         "references": []
+      },
+      {
+        "id": "822b1b8114f026b1fd5193d12f1d6fa8a6019aa9",
+        "type": "FEATURE",
+        "text": " Flexibility services requests can be disabled in the bootstrap",
+        "references": []
       }
     ]
   }

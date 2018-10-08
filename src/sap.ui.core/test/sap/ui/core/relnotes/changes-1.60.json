@@ -253,6 +253,42 @@
         "type": "FIX",
         "text": " m/TextArea: do not trigger FieldGroupValidation on enter",
         "references": []
+      },
+      {
+        "id": "822b1b8114f026b1fd5193d12f1d6fa8a6019aa9",
+        "type": "FEATURE",
+        "text": " Flexibility services requests can be disabled in the bootstrap",
+        "references": []
+      },
+      {
+        "id": "d06b98c0e9bf1d33f37ead0f74a7308cebd2ce1c",
+        "type": "FEATURE",
+        "text": " Opa5: expose iWaitForPromise",
+        "references": []
+      },
+      {
+        "id": "ace6887fc40474dd756a383b61fd2fc1c4cb31c3",
+        "type": "FIX",
+        "text": " core.Icon: reset to hover color on mouseup only when there is",
+        "references": []
+      },
+      {
+        "id": "af8005558dccd8585f35f8954d8f9d7065b5422d",
+        "type": "FIX",
+        "text": " core.Popup: avoid element shifting when resetting focus",
+        "references": []
+      },
+      {
+        "id": "2ddf2f70887bd7089e96c5b18c54a6eb03dfd9de",
+        "type": "FIX",
+        "text": " v2/ODataModel: createEntry context path fix",
+        "references": []
+      },
+      {
+        "id": "869e1a4eb0460e76a540ffae0dcd7e02684fed23",
+        "type": "FIX",
+        "text": " v2/ODataModel: createEntry warning logs",
+        "references": []
       }
     ]
   }
