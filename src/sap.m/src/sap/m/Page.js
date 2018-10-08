@@ -251,6 +251,7 @@ function(
 					 */
 					navButtonPress: {}
 				},
+				dnd: { draggable: false, droppable: true },
 				designtime: "sap/m/designtime/Page.designtime"
 			}
 		});
