@@ -212,7 +212,10 @@ sap.ui.define([
 						},
 						"componentUsages": {
 							"myUsage": {
-								"name": "samples.components.button"
+								"name": "samples.components.button",
+								"settings": {
+									"id": "myUsage"
+								}
 							}
 						}
 					}
@@ -377,6 +380,46 @@ sap.ui.define([
 			assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
 			assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of samples.components.button.Component");
 			assert.equal(oOwnerComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
+			done();
+
+		});
+
+	});
+
+	QUnit.test("Container with autoPrefixId=true", function (assert) {
+
+		var oOwnerComponent = sap.ui.component({
+			name: "my.usage"
+		});
+
+		// create the container within the context of the owner component
+		var oComponentContainer = oOwnerComponent.runAsOwner(function() {
+			return new ComponentContainer("container", {
+				usage: "myUsage",
+				lifecycle: ComponentLifecycle.Container,
+				autoPrefixId: true
+			});
+		});
+
+		// simulate onBeforeRendering to force to create the component
+		oComponentContainer.onBeforeRendering();
+
+		var done = (function() {
+			var asyncDone = assert.async();
+			return function cleanup() {
+				oComponentContainer.destroy();
+				oOwnerComponent.destroy();
+				asyncDone();
+			};
+		})();
+
+		sap.ui.require([
+			"samples/components/button/Component"
+		], function(UsedComponent) {
+
+			var oUsageComponent = oComponentContainer.getComponentInstance();
+
+			assert.equal(oUsageComponent.getId(), "container-myUsage", "The id of the Component instance created for the component usage must be prefixed with the ComponentContainer id");
 			done();
 
 		});

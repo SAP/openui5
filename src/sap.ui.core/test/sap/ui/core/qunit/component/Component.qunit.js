@@ -1062,7 +1062,7 @@ sap.ui.define([
 		var oComponent = sap.ui.component({
 			name : "my.usage"
 		});
-		var oSpy = sinon.spy(oComponent, "_createComponent");
+		var oSpy = sinon.spy(Component, "create");
 
 		var done = (function() {
 			var asyncDone = assert.async();
@@ -1095,7 +1095,6 @@ sap.ui.define([
 				assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of my.used.Component");
 				assert.equal(oComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
 				assert.equal(1, oSpy.callCount, "Nested component created with instance factory function");
-				assert.equal("myUsage", oSpy.args[0][0].usage, "Nested component created with config 'usage: \"myUsage\"'");
 				assert.equal(true, oSpy.args[0][0].async, "Nested component created with config 'async: true'");
 				assert.deepEqual(mConfig.settings, oSpy.args[0][0].settings, "ComponentUsage must receive the correct settings");
 				assert.deepEqual(mSettings, oComponentUsage._mSettings, "ComponentUsage must receive the correct settings");
@@ -1127,7 +1126,7 @@ sap.ui.define([
 			name : "my.usage",
 			manifest: false
 		}).then(function (oComponent) {
-			var oSpy = sinon.spy(oComponent, "_createComponent");
+			var oSpy = sinon.spy(Component, "create");
 
 			sap.ui.require([
 				"my/used/Component"
@@ -1150,7 +1149,6 @@ sap.ui.define([
 					assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of my.used.Component");
 					assert.equal(oComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
 					assert.equal(1, oSpy.callCount, "Nested component created with instance factory function");
-					assert.equal("myUsage", oSpy.args[0][0].usage, "Nested component created with config 'usage: \"myUsage\"'");
 					assert.equal(true, oSpy.args[0][0].async, "Nested component created with config 'async: true'");
 					assert.deepEqual(mConfig.settings, oSpy.args[0][0].settings, "ComponentUsage must receive the correct settings");
 					assert.deepEqual(mSettings, oComponentUsage._mSettings, "ComponentUsage must receive the correct settings");
@@ -1173,7 +1171,7 @@ sap.ui.define([
 		var oComponent = sap.ui.component({
 			name : "my.usage"
 		});
-		var oSpy = sinon.spy(oComponent, "_createComponent");
+		var oSpy = sinon.spy(sap.ui, "component"); // legacy factory for sync calls only
 
 		var done = (function() {
 			var asyncDone = assert.async();
@@ -1206,7 +1204,6 @@ sap.ui.define([
 			assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of my.used.Component");
 			assert.equal(oComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
 			assert.equal(1, oSpy.callCount, "Nested component created with instance factory function");
-			assert.equal("myUsage", oSpy.args[0][0].usage, "Nested component created with config 'usage: \"myUsage\"'");
 			assert.equal(false, oSpy.args[0][0].async, "Nested component created with config 'async: true'");
 			assert.deepEqual(mConfig.settings, oSpy.args[0][0].settings, "ComponentUsage must receive the correct settings");
 			assert.deepEqual(mSettings, oComponentUsage._mSettings, "ComponentUsage must receive the correct settings");
