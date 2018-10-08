@@ -10,7 +10,7 @@ sap.ui.define(function() {
 				version: "edge"					// Whether QUnit should be loaded and if so, what version
 			},
 			sinon: {
-				version: "edge"					// Whether Sinon should be loaded and if so, what version
+				version: 1					// Whether Sinon should be loaded and if so, what version
 			},
 			ui5: {
 				language: "en-US",
@@ -31,12 +31,6 @@ sap.ui.define(function() {
 			autostart: true					// Whether to call QUnit.start() when the test setup is done
 		},
 		tests: {
-			"Grid": {
-				coverage: {
-					only : ["sap/ui/layout/Grid"]
-				}
-			},
-
 			"ExploredSamples": {
 				coverage: {
 					only : ["sap/ui/layout/ExploredSamples"]
@@ -47,6 +41,63 @@ sap.ui.define(function() {
 				sinon: false,
 				autostart: false
 			},
+			"Grid": {
+				coverage: {
+					only : ["sap/ui/layout/Grid"]
+				}
+			},
+			"CSSGrid-CSSGrid": {
+				group: "CSSGrid",
+				module: "./cssgrid/CSSGrid.qunit",
+				sinon: 1
+			},
+			"CSSGrid-GridTypes": {
+				group: "CSSGrid",
+				module: "./cssgrid/GridTypes.qunit",
+				sinon: false
+			},
+			"Splitter": {
+				coverage: {
+					only: [
+						"sap/ui/layout/Splitter",
+						"sap/ui/layout/SplitPane",
+						"sap/ui/layout/PaneContainer",
+						"sap/ui/layout/SplitLayoutData"
+					]
+				}
+			},
+			"ResponsiveSplitter": {
+				sinon: {
+					useFakeTimers: true
+				},
+				coverage: {
+					only: [
+						"sap/ui/layout/ResponsiveSplitter",
+						"sap/ui/layout/SplitPane",
+						"sap/ui/layout/PaneContainer",
+						"sap/ui/layout/SplitLayoutData"
+					]
+				}
+			},
+			"AssociativeSplitter": {
+				coverage: {
+					only: ["sap/ui/layout/AssociativeSplitter"]
+				}
+			},
+			"FixFlex": {
+				coverage: {
+					only: ["sap/ui/layout/FixFlex"]
+				}
+			},
+			"BlockLayout": {
+				coverage: {
+					only: [
+						"sap/ui/layout/BlockLayout",
+						"sap/ui/layout/BlockLayoutCell",
+						"sap/ui/layout/BlockLayoutRow"
+					]
+				}
+			},
 
 			// Design Time
 			"Designtime-Grid": {
@@ -54,20 +105,31 @@ sap.ui.define(function() {
 				module: "./designtime/Grid.qunit",
 				sinon: false
 			},
-
-			// CSSGrid
-			"CSSGrid-CSSGrid": {
-				group: "CSSGrid",
-				module: "./cssgrid/CSSGrid.qunit",
-				sinon: 1
+			"Designtime-BlockLayout": {
+				group: "Designtime",
+				module: "./designtime/BlockLayout.qunit",
+				sinon: false
 			},
-
-			"CSSGrid-GridTypes": {
-				group: "CSSGrid",
-				module: "./cssgrid/GridTypes.qunit",
+			"Designtime-BlockLayoutCell": {
+				group: "Designtime",
+				module: "./designtime/BlockLayoutCell.qunit",
+				sinon: false
+			},
+			"Designtime-BlockLayoutRow": {
+				group: "Designtime",
+				module: "./designtime/BlockLayoutRow.qunit",
+				sinon: false
+			},
+			"Designtime-FixFlex": {
+				group: "Designtime",
+				module: "./designtime/FixFlex.qunit",
+				sinon: false
+			},
+			"Designtime-Splitter": {
+				group: "Designtime",
+				module: "./designtime/Splitter.qunit",
 				sinon: false
 			}
 		}
 	};
-
 });

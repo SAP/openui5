@@ -1,32 +1,16 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>FixFlex - sap.ui.layout</title>
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js" data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.ui.layout, sap.m">
-</script>
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-<script>
-	// Create test for given property
-	var fnTestControlProperty = function(mOptions) {
-		var sProperty = mOptions.property.charAt(0).toUpperCase() + mOptions.property.slice(1);
-
-		QUnit.test("get" + sProperty + "()", function(assert) {
-			assert.strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
-		});
-	};
+/*global QUnit sinon */
+/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/layout/FixFlex',
+	'sap/m/Button',
+	'sap/m/Label'
+], function(
+	jQuery,
+	FixFlex,
+	Button,
+	Label) {
+	'use strict';
 
 	/* =========================================================== */
 	/* Initialize module                                           */
@@ -34,16 +18,16 @@
 
 	QUnit.module("Init");
 
-	QUnit.test("Initial Check", function(assert) {
+	QUnit.test("Initial Check", function (assert) {
 		// Arrange
-		var oButton1 = new sap.m.Button();
-		var oButton2 = new sap.m.Button();
-		var oButton3 = new sap.m.Button();
+		var oButton1 = new Button();
+		var oButton2 = new Button();
+		var oButton3 = new Button();
 
 		// System under Test
-		var oFixFlex = new sap.ui.layout.FixFlex({
-			flexContent : oButton1,
-			fixContent : [ oButton2, oButton3 ]
+		var oFixFlex = new FixFlex({
+			flexContent: oButton1,
+			fixContent: [oButton2, oButton3]
 		});
 
 		// Act
@@ -62,14 +46,14 @@
 
 	QUnit.module("Render");
 
-	QUnit.test("Check if fix/flex content is rendered", function(assert) {
+	QUnit.test("Check if fix/flex content is rendered", function (assert) {
 		// Arrange
-		var oButton1 = new sap.m.Button(), oButton2 = new sap.m.Button(), oButton3 = new sap.m.Button();
+		var oButton1 = new Button(), oButton2 = new Button(), oButton3 = new Button();
 
 		// System under Test
-		var oFixFlex = new sap.ui.layout.FixFlex({
-			flexContent : oButton1,
-			fixContent : [ oButton2, oButton3 ]
+		var oFixFlex = new FixFlex({
+			flexContent: oButton1,
+			fixContent: [oButton2, oButton3]
 		});
 
 		oFixFlex.placeAt("qunit-fixture");
@@ -93,14 +77,14 @@
 
 	QUnit.module("API");
 
-	QUnit.test("Test child order", function(assert) {
+	QUnit.test("Test child order", function (assert) {
 		// Arrange
-		var oButton1 = new sap.m.Button(), oButton2 = new sap.m.Button(), oButton3 = new sap.m.Button();
+		var oButton1 = new Button(), oButton2 = new Button(), oButton3 = new Button();
 
 		// System under test
-		var oFixFlex = new sap.ui.layout.FixFlex({
-			flexContent : oButton1,
-			fixContent : [ oButton2, oButton3 ]
+		var oFixFlex = new FixFlex({
+			flexContent: oButton1,
+			fixContent: [oButton2, oButton3]
 		});
 
 		oFixFlex.placeAt("qunit-fixture");
@@ -117,14 +101,14 @@
 		oFixFlex.destroy();
 	});
 
-	QUnit.test("Test layout direction", function(assert) {
+	QUnit.test("Test layout direction", function (assert) {
 		// Arrange
-		var oButton1 = new sap.m.Button(), oButton2 = new sap.m.Button(), oButton3 = new sap.m.Button();
+		var oButton1 = new Button(), oButton2 = new Button(), oButton3 = new Button();
 
 		// System under test
-		var oFixFlex = new sap.ui.layout.FixFlex({
-			flexContent : oButton1,
-			fixContent : [ oButton2, oButton3 ]
+		var oFixFlex = new FixFlex({
+			flexContent: oButton1,
+			fixContent: [oButton2, oButton3]
 		});
 
 		oFixFlex.placeAt("qunit-fixture");
@@ -141,8 +125,8 @@
 		oFixFlex.destroy();
 	});
 
-	QUnit.test("Legacy support", function(assert) {
-		var	$FixChild,
+	QUnit.test("Legacy support", function (assert) {
+		var $FixChild,
 			$FlexChild,
 			iFixChildWidth,
 			iFixChildHeight,
@@ -150,12 +134,12 @@
 			iFlexChildHeight;
 
 		// Arrange
-		var oButton1 = new sap.m.Button(), oButton2 = new sap.m.Button(), oButton3 = new sap.m.Button();
+		var oButton1 = new Button(), oButton2 = new Button(), oButton3 = new Button();
 
 		// System under test
-		var oFixFlex = new sap.ui.layout.FixFlex({
-			flexContent : oButton1,
-			fixContent : [ oButton2, oButton3 ]
+		var oFixFlex = new FixFlex({
+			flexContent: oButton1,
+			fixContent: [oButton2, oButton3]
 		});
 
 		oFixFlex.placeAt("qunit-fixture");
@@ -183,13 +167,13 @@
 		oFixFlex.destroy();
 	});
 
-	QUnit.test("Flexible part Scrolling", function(assert) {
-		var oFlexLabel = new sap.m.Label({
-					text: "Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text."
-				}),
-				oFixLabel = new sap.m.Label({text: "Ninja!"});
+	QUnit.test("Flexible part Scrolling", function (assert) {
+		var oFlexLabel = new Label({
+				text: "Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text."
+			}),
+			oFixLabel = new Label({text: "Ninja!"});
 
-		var oFixFlex = new sap.ui.layout.FixFlex({
+		var oFixFlex = new FixFlex({
 			flexContent: oFlexLabel,
 			fixContent: [oFixLabel]
 		});
@@ -211,15 +195,4 @@
 		// Cleanup
 		oFixFlex.destroy();
 	});
-</script>
-</head>
-<body>
-	<h1 id="qunit-header">QUnit Page for sap.ui.layout.FixFlex</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-
-	<div id="qunit-fixture"></div>
-</body>
-</html>
+});

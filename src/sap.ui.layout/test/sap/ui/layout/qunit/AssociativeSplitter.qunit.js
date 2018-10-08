@@ -1,25 +1,31 @@
-/*global QUnit,sinon*/
+/*global QUnit sinon */
+/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/layout/SplitPane',
+	'sap/ui/layout/PaneContainer',
+	'sap/ui/layout/AssociativeSplitter',
+	'sap/ui/layout/SplitterLayoutData',
+	'sap/m/Button',
+	'sap/m/ScrollContainer'
+], function(
+	jQuery,
+	SplitPane,
+	PaneContainer,
+	AssociativeSplitter,
+	SplitterLayoutData,
+	Button,
+	ScrollContainer) {
+	'use strict';
 
-(function () {
-	"use strict";
-
-	jQuery.sap.require("sap.ui.qunit.qunit-css");
-	jQuery.sap.require("sap.ui.thirdparty.qunit");
-	jQuery.sap.require("sap.ui.qunit.qunit-junit");
-	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	jQuery.sap.require("sap.ui.qunit.QUnitUtils");
-	jQuery.sap.require("sap.ui.thirdparty.sinon");
-	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-	jQuery.sap.require("sap.ui.layout.AssociativeSplitter");
-	sinon.config.useFakeTimers = true;
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
 	QUnit.module("Responsiveness", {
 		beforeEach: function () {
-			this.oSplitter = new sap.ui.layout.AssociativeSplitter();
-			this.oContainer = new sap.m.ScrollContainer({ content: this.oSplitter, width: "400px", height: "300px"});
-			this.oSplitter.addAssociatedContentArea(new sap.m.Button());
-			this.oSplitter.addAssociatedContentArea(new sap.m.Button());
+			this.oSplitter = new AssociativeSplitter();
+			this.oContainer = new ScrollContainer({content: this.oSplitter, width: "400px", height: "300px"});
+			this.oSplitter.addAssociatedContentArea(new Button());
+			this.oSplitter.addAssociatedContentArea(new Button());
 
 			this.oContainer.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
@@ -44,7 +50,7 @@
 		assert.strictEqual(iFirstContentAreaWidth + iSecondContentAreaWidth, 496, "Sum of the widths of content areas should be equal to the size of the container minus the splitterbar(0.25rem)");
 	});
 
-	QUnit.test("Calculations should be done with 5 digit precision", function(assert) {
+	QUnit.test("Calculations should be done with 5 digit precision", function (assert) {
 		// setup
 		this.oSplitter._move.c1Size = 20.000000000000153;
 		this.oSplitter._move.c2Size = 599.9999999999998;
@@ -56,4 +62,4 @@
 		// Before that fix this code would throw and exception and the test would fail.
 		assert.ok(true, "Resizing should be successful");
 	});
-})();
+});
