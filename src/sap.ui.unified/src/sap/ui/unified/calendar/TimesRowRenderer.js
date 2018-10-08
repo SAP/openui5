@@ -186,7 +186,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/Univer
 	TimesRowRenderer.renderTime = function(oRm, oTimesRow, oDate, oHelper, sWidth, sAmPm){
 
 		var mAccProps = {
-				role: "gridcell",
+				role: oTimesRow._getAriaRole(),
 				selected: false,
 				label: "",
 				describedby: ""

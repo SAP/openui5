@@ -733,6 +733,38 @@ sap.ui.define([
 
 	};
 
+	PlanningCalendar.prototype.attachEvent = function (eventId, data, functionToCall, listener) {
+		Control.prototype.attachEvent.call(this, eventId, data, functionToCall, listener);
+		if (this.hasListeners("intervalSelect")) {
+			INTERVAL_CTR_REFERENCES.forEach(function (sControlRef) {
+				if (this[sControlRef]) {
+					this[sControlRef]._setAriaRole("button"); // set new aria role
+				}
+			}, this);
+		}
+		return this;
+	};
+
+	PlanningCalendar.prototype.detachEvent = function (eventId, functionToCall, listener) {
+		Control.prototype.detachEvent.call(this, eventId, functionToCall, listener);
+		if (!this.hasListeners("intervalSelect")) {
+			INTERVAL_CTR_REFERENCES.forEach(function (sControlRef) {
+				if (this[sControlRef]) {
+					this[sControlRef]._setAriaRole("gridcell"); // set new aria role
+				}
+			}, this);
+		}
+		return this;
+	};
+
+	PlanningCalendar.prototype._setAriaRole = function (oInterval) {
+		if (this.hasListeners("intervalSelect")) {
+			oInterval._setAriaRole("button"); // set new aria role
+		} else {
+			oInterval._setAriaRole("gridcell"); // set new aria role
+		}
+	};
+
 	/**
 	 * Handles the enabled/disabled state of the Today button
 	 * based on the visibility of the current date.
@@ -1065,6 +1097,8 @@ sap.ui.define([
 							pickerPopup: true,
 							legend: this.getLegend()
 						});
+						this._setAriaRole(this._oTimeInterval);
+
 						this._oTimeInterval.attachEvent("startDateChange", this._handleStartDateChange, this);
 						this._oTimeInterval.attachEvent("select", this._handleCalendarSelect, this);
 						this._oTimeInterval._oPlanningCalendar = this;
@@ -1099,6 +1133,7 @@ sap.ui.define([
 							legend: this.getLegend(),
 							showWeekNumbers: this.getShowWeekNumbers()
 						});
+						this._setAriaRole(oInterval);
 
 						oInterval.attachEvent("startDateChange", this._handleStartDateChange, this);
 						oInterval.attachEvent("select", this._handleCalendarSelect, this);
@@ -1133,6 +1168,8 @@ sap.ui.define([
 							pickerPopup: true,
 							legend: this.getLegend()
 						});
+						this._setAriaRole(this._oMonthInterval);
+
 						this._oMonthInterval.attachEvent("startDateChange", this._handleStartDateChange, this);
 						this._oMonthInterval.attachEvent("select", this._handleCalendarSelect, this);
 						this._oMonthInterval._oPlanningCalendar = this;

@@ -242,6 +242,15 @@ sap.ui.define([
 
 	};
 
+	CalendarMonthInterval.prototype._setAriaRole = function(sRole){
+		var oMonthsRow = this.getAggregation("monthsRow");
+
+		oMonthsRow._setAriaRole(sRole);
+		oMonthsRow.invalidate();
+
+		return this;
+	};
+
 	CalendarMonthInterval.prototype._initializeHeader = function() {
 		var oHeader = new Header(this.getId() + "--Head", {
 			visibleButton0: false,

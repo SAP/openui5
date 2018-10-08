@@ -253,6 +253,11 @@ sap.ui.define([
 		this._aVisibleDays = [];
 	};
 
+	Month.prototype._getAriaRole = function(){
+		// the role is always "gridcell" inside Calendar
+		return "gridcell";
+	};
+
 	Month.prototype.exit = function(){
 
 		if (this._oItemNavigation) {

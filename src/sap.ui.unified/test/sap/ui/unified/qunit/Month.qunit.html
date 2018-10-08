@@ -485,6 +485,14 @@
 					}
 				});
 
+				QUnit.test("role gridcell", function (assert) {
+					//Act
+					this.oSut.placeAt('qunit-fixture');
+					sap.ui.getCore().applyChanges();
+
+					assert.equal(jQuery("#" + this.oSut.getId() + "-20160105").attr("role"), "gridcell", "The day cell has role gridcell");
+				});
+
 				QUnit.test("Special Dates with legend", function (assert) {
 					//Act
 					this.oSut.placeAt('qunit-fixture');
