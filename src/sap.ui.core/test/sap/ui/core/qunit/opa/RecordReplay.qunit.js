@@ -36,7 +36,17 @@ sap.ui.define([
             domElement: $("#myView--mySearch")[0]
         }).then(function (mSelector) {
             assert.strictEqual(mSelector.id, "myView--mySearch", "Should generate a selector");
-            assert.strictEqual(mSelector.interaction.idSuffix, "mySearch", "Should generate a selector with DOM ID suffix");
+            assert.strictEqual(mSelector.interaction.idSuffix, "", "Should not include interaction suffix");
+        }).finally(fnDone);
+    });
+
+    QUnit.test("Should generate selector for DOM element with interaction ID suffix", function (assert) {
+        var fnDone = assert.async();
+        RecordReplay.findControlSelectorByDOMElement({
+            domElement: $("#myView--mySearch-reset")[0]
+        }).then(function (mSelector) {
+            assert.strictEqual(mSelector.id, "myView--mySearch", "Should generate a selector");
+            assert.strictEqual(mSelector.interaction.idSuffix, "reset", "Should generate a selector with interaction DOM ID suffix");
         }).finally(fnDone);
     });
 
