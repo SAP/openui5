@@ -47,8 +47,8 @@ sap.ui.define(["sap/ui/support/library", "sap/base/Log"],
 		 * 		resolutionurls: [{text: "Text to be displayed", href: "URL to public(!) docu"}] - list of useful URLs, Default []
 		 * 		check:			function(oIssueManager, oCoreFacade, oScope) { ... } - Check function code, MANDATORY
 		 *
-		 * @param {object} The rule definition
-		 * @returns The normalized rule definition
+		 * @param {object} oRuleDef The rule definition
+		 * @returns {object} The normalized rule definition
 		 */
 		normalizeRule : function(oRuleDef) {
 			return jQuery.extend({}, TableSupportHelper.DEFAULT_RULE_DEF, oRuleDef);
@@ -59,8 +59,8 @@ sap.ui.define(["sap/ui/support/library", "sap/base/Log"],
 		 *
 		 * @see #normalizeRule
 		 *
-		 * @param {object} The rule definition
-		 * @param {sap.ui.support.supportRules.RuleSet} The ruleset
+		 * @param {object} oRuleDef The rule definition
+		 * @param {sap.ui.support.supportRules.RuleSet} oRuleset The ruleset
 		 */
 		addRuleToRuleset : function(oRuleDef, oRuleset) {
 			oRuleDef = TableSupportHelper.normalizeRule(oRuleDef);
@@ -74,7 +74,7 @@ sap.ui.define(["sap/ui/support/library", "sap/base/Log"],
 		 * Creates a documentation link description in the format as requested by the parameter resolutionurls of a rule.
 		 * @param {string} sText 		The text of the docu link.
 		 * @param {string} sRefSuffix 	The url suffix. It gets automatically prefixed by TableSupportHelper.DOCU_REF.
-		 * @returns Documentation link description
+		 * @returns {object} Documentation link description
 		 */
 		createDocuRef : function(sText, sRefSuffix) {
 			return {
@@ -101,17 +101,17 @@ sap.ui.define(["sap/ui/support/library", "sap/base/Log"],
 		/**
 		 * Return all existing control instances of the given type.
 		 * @param {object} oScope The scope as given in the rule check function.
-		 * @param {boolean} bVisisbleOnly Whether all existing controls or only the ones which currently have a DOM reference should be returned.
+		 * @param {boolean} bVisibleOnly Whether all existing controls or only the ones which currently have a DOM reference should be returned.
 		 * @param {string} sType The type
-		 * @returns All existing control instances
+		 * @returns {sap.ui.core.Element[]} All existing control instances
 		 */
-		find: function(oScope, bVisisbleOnly, sType) {
+		find: function(oScope, bVisibleOnly, sType) {
 			var mElements = oScope.getElements();
 			var aResult = [];
 			for (var n in mElements) {
 				var oElement = mElements[n];
 				if (oElement.isA(sType)) {
-					if (bVisisbleOnly && oElement.getDomRef() || !bVisisbleOnly) {
+					if (bVisibleOnly && oElement.getDomRef() || !bVisibleOnly) {
 						aResult.push(oElement);
 					}
 				}
