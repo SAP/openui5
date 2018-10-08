@@ -91,11 +91,17 @@ function(
 	 * @since 1.60.0
 	 */
 	PreprocessorImpl.getExtensionModules = function(aCodeExtModuleNames) {
+		if (aCodeExtModuleNames.length === 0) {
+			return Promise.resolve([]);
+		}
+
 		return new Promise(function(resolve) {
 			sap.ui.require(
 				aCodeExtModuleNames,
 				function() {
-					resolve(arguments);
+					// arguments are not a real array. This creates one for further processing
+					var aModules = Array.prototype.slice.call(arguments);
+					resolve(aModules);
 				},
 				function(oError) {
 					Utils.log.error("Code Extension not found", oError.message);
