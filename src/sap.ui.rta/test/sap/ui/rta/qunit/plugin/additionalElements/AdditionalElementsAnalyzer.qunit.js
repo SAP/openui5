@@ -35,18 +35,22 @@ function(
 			var oActionsObject = {
 				aggregation: "formElements",
 				reveal : {
-					elements : [
-						oGroupElement1,
-						oGroupElement2,
-						oGroupElement3
-					],
-					types : {
-						"sap.ui.comp.smartform.GroupElement" : {
-							action : {
-								//nothing relevant for the analyzer
-							}
+					elements : [{
+						element : oGroupElement1,
+						action : {
+							//nothing relevant for the analyzer tests
 						}
-					}
+					},{
+						element : oGroupElement2,
+						action : {
+							//nothing relevant for the analyzer tests
+						}
+					},{
+						element : oGroupElement3,
+						action : {
+							//nothing relevant for the analyzer tests
+						}
+					}]
 				},
 				addODataProperty : {
 					action : {
@@ -72,22 +76,24 @@ function(
 				aggregation: "sections",
 				reveal : {
 					elements : [
-						oView.byId("idMain1--ObjectPageSectionInvisible"),
-						oView.byId("idMain1--ObjectPageSectionStashed1"),
-						oView.byId("idMain1--ObjectPageSectionStashed2")
-					],
-					types : {
-						"sap.ui.core._StashedControl" :{
+						{
+							element : oView.byId("idMain1--ObjectPageSectionInvisible"),
 							action : {
-								//nothing relevant for the analyzer
+								//nothing relevant for the analyzer tests
+							}
+						},{
+							element : oView.byId("idMain1--ObjectPageSectionStashed1"),
+							action : {
+								//nothing relevant for the analyzer tests
 							}
 						},
-						"sap.uxap.ObjectPageSection" : {
+						{
+							element : oView.byId("idMain1--ObjectPageSectionStashed2"),
 							action : {
-								//nothing relevant for the analyzer
+								//nothing relevant for the analyzer tests
 							}
 						}
-					}
+					]
 				}
 			};
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oObjectPageLayout, oActionsObject).then(function(aAdditionalElements) {
@@ -327,14 +333,17 @@ function(
 			var oActionsObject = {
 				aggregation: "formElements",
 				reveal : {
-					elements : [oGroupElement1, oGroupElement2],
-					types : {
-						"sap.ui.comp.smartform.GroupElement" : {
-							action : {
-								//nothing relevant for the analyzer
-							}
+					elements : [{
+						element: oGroupElement1,
+						action : {
+							//nothing relevant for the analyzer test
 						}
-					}
+					},{
+						element: oGroupElement2,
+						action : {
+							//nothing relevant for the analyzer test
+						}
+					}]
 				},
 				addODataProperty : {
 					action : {
@@ -364,14 +373,12 @@ function(
 			var oActionsObject = {
 				aggregation: "formElements",
 				reveal : {
-					elements : [oGroupElement1],
-					types : {
-						"sap.ui.comp.smartform.GroupElement" : {
-							action : {
-								//nothing relevant for the analyzer
-							}
+					elements : [{
+						element: oGroupElement1,
+						action : {
+							//nothing relevant for the analyzer test
 						}
-					}
+					}]
 				},
 				addODataProperty : {
 					action : {
@@ -398,14 +405,12 @@ function(
 			var oActionsObject = {
 				aggregation: "formElements",
 				reveal : {
-					elements : [oGroupElement1],
-					types : {
-						"sap.ui.comp.smartform.GroupElement" : {
-							action : {
-								//nothing relevant for the analyzer
-							}
+					elements : [{
+						element: oGroupElement1,
+						action : {
+							//nothing relevant for the analyzer test
 						}
-					}
+					}]
 				}
 			};
 
@@ -431,14 +436,12 @@ function(
 			var oActionsObject = {
 				aggregation: "formElements",
 				reveal : {
-					elements : [oGroupElement1],
-					types : {
-						"sap.ui.comp.smartform.GroupElement" : {
-							action : {
-								//nothing relevant for the analyzer
-							}
+					elements : [{
+						element: oGroupElement1,
+						action : {
+							//nothing relevant for the analyzer test
 						}
-					}
+					}]
 				},
 				addODataProperty : {
 					action : {
@@ -470,14 +473,17 @@ function(
 			var oActionsObject = {
 					aggregation: "formElements",
 					reveal : {
-						elements : [oGroupElement1, oGroupElement2],
-						types : {
-							"sap.ui.comp.smartform.GroupElement" : {
-								action : {
-									//nothing relevant for the analyzer
-								}
+						elements : [{
+							element: oGroupElement1,
+							action : {
+								//nothing relevant for the analyzer test
 							}
-						}
+						},{
+							element: oGroupElement2,
+							action : {
+								//nothing relevant for the analyzer test
+							}
+						}]
 					},
 					addODataProperty : {
 						action : {
@@ -499,19 +505,19 @@ function(
 				return aAllFormElements.concat(oFormContainer.getFormElements());
 			},[]).filter(function(oFormElement){
 				return oFormElement.isVisible() === false;
+			}).map(function(oFormElement){
+				return {
+					element : oFormElement,
+					action : {
+						//nothing relevant for the analyzer
+					}
+				};
 			});
 
 			var oActionsObject = {
 				aggregation: "formElements",
 				reveal : {
-					elements : aFormElements,
-					types : {
-						"sap.ui.layout.form.FormElement" : {
-							action : {
-								//nothing relevant for the analyzer
-							}
-						}
-					}
+					elements : aFormElements
 				},
 				addODataProperty : {
 					action : {

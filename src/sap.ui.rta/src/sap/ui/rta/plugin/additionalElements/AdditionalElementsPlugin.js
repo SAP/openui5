@@ -101,13 +101,9 @@ sap.ui.define([
 			}
 		}
 		if (mActions.reveal){
-			Object.keys(mActions.reveal.types).forEach(function(sType){
-				var mType = mActions.reveal.types[sType];
-				mControlType = mType.name;
-				if (mControlType) {
-					sControlType = bSingular ? mControlType.singular : mControlType.plural;
-					aNames.push(sControlType);
-				}
+			mActions.reveal.controlTypeNames.forEach(function(mControlType){
+				sControlType = bSingular ? mControlType.singular : mControlType.plural;
+				aNames.push(sControlType);
 			});
 		}
 		var aNonDuplicateNames = aNames.reduce(function(_aNames, sName){
@@ -137,10 +133,10 @@ sap.ui.define([
 					data : {
 						name : {
 							singular : function(){
-								return sap.uxap.i18nModel.getResourceBundle().getText("SECTION_CONTROL_NAME");
+								return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME");
 							},
 							plural : function(){
-								return sap.uxap.i18nModel.getResourceBundle().getText("SECTION_CONTROL_NAME_PLURAL");
+								return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME_PLURAL");
 							}
 						},
 						actions : {
@@ -157,6 +153,18 @@ sap.ui.define([
 				getAggregationName : _defaultGetAggregationName
 			}
 		};
+	}
+
+	function _getRevealDataFromActions(mActions, oRevealedElement){
+		var mRevealData;
+		mActions.reveal.elements.some(function(mElement){
+			if ( mElement.element.getId() === oRevealedElement.getId()) {
+				mRevealData = mElement;
+				return false;
+			}
+		});
+
+		return mRevealData;
 	}
 
 	/**
@@ -255,11 +263,7 @@ sap.ui.define([
 
 		_getRevealActions: function(bSibling, oOverlay) {
 			var mParents = _getParents(bSibling, oOverlay);
-			var mReveal = this._getTypes(mReveal, mParents, bSibling, oOverlay);
-			return mReveal;
-		},
 
-		_getTypes: function(mReveal, mParents, bSibling, oOverlay) {
 			var aParents = [mParents.parentOverlay];
 			var oRelevantContainer = oOverlay.getRelevantContainer(!bSibling);
 			if (oRelevantContainer !== mParents.parent){
@@ -277,64 +281,69 @@ sap.ui.define([
 					return oAggregationOverlay.getAggregationName();
 				});
 			}
-			mReveal = aAggregationNames.reduce(this._getRevealActionFromAggregations.bind(this, aParents), {});
+			var mReveal = aAggregationNames.reduce(this._getRevealActionFromAggregations.bind(this, aParents), {});
 			return mReveal;
 		},
 
 		_getRevealActionFromAggregations: function(aParents, _mReveal, sAggregationName){
-			var aInvisibleElements = aParents.reduce(function(aInvisibleChilden, oParentOverlay){
-				return oParentOverlay ? aInvisibleChilden.concat(_getInvisibleElements.call(this, oParentOverlay, sAggregationName)) : aInvisibleChilden;
+			var aInvisibleElements = aParents.reduce(function(aInvisibleChildren, oParentOverlay){
+				return oParentOverlay ? aInvisibleChildren.concat(_getInvisibleElements.call(this, oParentOverlay, sAggregationName)) : aInvisibleChildren;
 			}.bind(this), []);
 
-			var fnCallback = function(mTypes, oElement){
-				var sType = oElement.getMetadata().getName();
-				if (!mTypes[sType]){
-					//TODO Fix if we have the stashed type info
-					if (sType === "sap.ui.core._StashedControl"){
-						mTypes[sType] = _fakeStashedControlInfos();
-					} else {
-						var oOverlay = OverlayRegistry.getOverlay(oElement);
-						if (oOverlay) {
-							var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
-							//first element should be representative for all of its type in this relevant container
-							var mRevealAction = oDesignTimeMetadata && oDesignTimeMetadata.getAction("reveal", oElement);
-							if (mRevealAction && mRevealAction.changeType) {
-								if (mRevealAction.changeOnRelevantContainer) {
-									oElement = oOverlay.getRelevantContainer();
-								}
-								if (this.hasChangeHandler(mRevealAction.changeType, oElement) &&
-									this._checkRelevantContainerStableID(mRevealAction, oOverlay)) {
-									if (!mRevealAction.getAggregationName){
-										mRevealAction.getAggregationName = _defaultGetAggregationName;
-									}
-									mTypes[sType] = {
-										designTimeMetadata : oDesignTimeMetadata,
-										action : mRevealAction,
-										name: oDesignTimeMetadata.getName(oElement)
-									};
-								}
-							}
-						}
-					}
-				}
-				return mTypes;
-			};
-
-			var mTypes = aInvisibleElements.reduce(fnCallback.bind(this), {});
-
-			aInvisibleElements = aInvisibleElements.filter(function(oElement) {
-				return !!mTypes[oElement.getMetadata().getName()];
+			var mReveal = aInvisibleElements.reduce(this._invisibleToReveal.bind(this), {
+				elements : [],
+				controlTypeNames: []
 			});
 
-			if (aInvisibleElements.length > 0 && Object.keys(mTypes).length > 0){
+			if (mReveal.elements.length > 0){
 				_mReveal[sAggregationName] = {
-					reveal : {
-						elements : aInvisibleElements,
-						types : mTypes
-					}
+					reveal : mReveal
 				};
 			}
 			return _mReveal;
+		},
+
+		_invisibleToReveal: function(mReveal, oInvisibleElement){
+			var sType = oInvisibleElement.getMetadata().getName();
+			var oDesignTimeMetadata;
+			var mRevealAction;
+			var bRevealEnabled = false;
+			if (sType === "sap.ui.core._StashedControl"){
+				//TODO Fix if we have the stashed type info
+				var mStashedInfos = _fakeStashedControlInfos();
+				oDesignTimeMetadata = mStashedInfos.designTimeMetadata;
+				mRevealAction = mStashedInfos.action;
+				bRevealEnabled = true;
+			} else {
+				var oOverlay = OverlayRegistry.getOverlay(oInvisibleElement);
+				if (oOverlay) {
+					oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
+
+					mRevealAction = oDesignTimeMetadata && oDesignTimeMetadata.getAction("reveal", oInvisibleElement);
+					if (mRevealAction && mRevealAction.changeType) {
+						var oRevealSelector = oInvisibleElement;
+						if (mRevealAction.changeOnRelevantContainer) {
+							oRevealSelector = oOverlay.getRelevantContainer();
+						}
+						if (this.hasChangeHandler(mRevealAction.changeType, oRevealSelector) &&
+							this._checkRelevantContainerStableID(mRevealAction, oOverlay)) {
+							if (!mRevealAction.getAggregationName){
+								mRevealAction.getAggregationName = _defaultGetAggregationName;
+							}
+							bRevealEnabled = true;
+						}
+					}
+				}
+			}
+			if (bRevealEnabled){
+				mReveal.elements.push({
+					element : oInvisibleElement,
+					designTimeMetadata : oDesignTimeMetadata,
+					action : mRevealAction
+				});
+				mReveal.controlTypeNames.push(oDesignTimeMetadata.getName(oInvisibleElement));
+			}
+			return mReveal;
 		},
 
 		_getAddODataPropertyActions: function(bSibling, oOverlay) {
@@ -373,6 +382,33 @@ sap.ui.define([
 
 		},
 
+		/**
+		 * Calculate a map with all "add/reveal" action relevant data collected:
+		 * <pre>
+		 * {
+		 *    <aggregationName> : {
+		 *        addODataProperty : {
+		 *             designTimeMetadata : <sap.ui.dt.ElementDesignTimeMetadata of parent>,
+		 *             action : <addODataProperty action section from designTimeMetadata>
+		 *        },
+		 *        reveal : {
+		 *            elements : [{
+		 *                element : <invisible element>,
+		 *                designTimeMetadata : <sap.ui.dt.ElementDesignTimeMetadata of invisible element>,
+		 *                action : <reveal action section from designTimeMetadata>
+		 *            }],
+		 *            controlTypeNames : string[] <all controlTypeNames collected via designTimeMetadata>
+		 *        }
+		 *    }
+		 * }
+		 * </pre>
+		 *
+		 * @param {boolean} bSibling - indicates if the elements should be added as sibling (true) or child (false) to the overlay
+		 * @param {sap.ui.dt.ElementOverlay} oOverlay - Elements will be added in relation (sibling/parent) to this overlay
+		 *
+		 * @return {Map} - returns a map with all "add/reveal" action relevant data collected
+		 * @private
+		 */
 		_getActions: function(bSibling, oOverlay) {
 			var mRevealActions = this._getRevealActions(bSibling, oOverlay);
 			var mAddODataPropertyActions = this._getAddODataPropertyActions(bSibling, oOverlay);
@@ -393,7 +429,7 @@ sap.ui.define([
 		// _getRevealActions for isEditable check
 		_hasRevealActionsOnChildren: function(oOverlay){
 			var mRevealActions = this._getRevealActions(false, oOverlay);
-			return !!mRevealActions && Object.keys(mRevealActions).length > 0;
+			return Object.keys(mRevealActions).length > 0;
 		},
 
 		showAvailableElements: function(bOverlayIsSibling, aElementOverlays, iIndex, sControlName) {
@@ -404,7 +440,7 @@ sap.ui.define([
 
 			var mActions = this._getActions(bOverlayIsSibling, oElementOverlay);
 			if (mActions.reveal) {
-					aPromises.push(this.getAnalyzer().enhanceInvisibleElements(mParents.parent, mActions));
+				aPromises.push(this.getAnalyzer().enhanceInvisibleElements(mParents.parent, mActions));
 			}
 			if (mActions.addODataProperty) {
 				mActions.addODataProperty.relevantContainer = oElementOverlay.getRelevantContainer(!bOverlayIsSibling);
@@ -636,28 +672,28 @@ sap.ui.define([
 			}, oParentAggregationDTMetadata);
 		},
 
-		_createRevealCommandForInvisible: function(oSelectedElement, mActions, mParents, oSiblingElement) {
-			var oRevealedElement = ElementUtil.getElementInstance(oSelectedElement.elementId);
+		_createRevealCommandForInvisible: function(mSelectedElement, mActions, mParents, oSiblingElement) {
+			var oRevealedElement = ElementUtil.getElementInstance(mSelectedElement.elementId);
 			var oRevealedElementOverlay = OverlayRegistry.getOverlay(oRevealedElement);
-			var sType = oRevealedElement.getMetadata().getName();
-			var mType = mActions.reveal.types[sType];
-			var oDesignTimeMetadata = mType.designTimeMetadata;
-			var oRevealAction = oDesignTimeMetadata.getAction("reveal", oRevealedElement);
-			var oElementOverlay = OverlayRegistry.getOverlay(oRevealedElement);
+			var mRevealData = _getRevealDataFromActions(mActions, oRevealedElement);
+
+			var oDesignTimeMetadata = mRevealData.designTimeMetadata;
+			var oRevealAction = mRevealData.action;
 
 			//Parent Overlay passed as argument as no overlay is yet available for stashed control
-			if	(!oElementOverlay) {
+			if (!oRevealedElementOverlay) {
 				var oSourceParent = _getSourceParent(oRevealedElement, mParents, oRevealedElementOverlay);
-				oElementOverlay = OverlayRegistry.getOverlay(oSourceParent);
+				oRevealedElementOverlay = OverlayRegistry.getOverlay(oSourceParent);
 			}
 
 			var sVariantManagementReference;
 			var oStashedElement;
+			var sType = oRevealedElement.getMetadata().getName();
 			if (sType === "sap.ui.core._StashedControl") {
 				oStashedElement = oRevealedElement;
 			}
-			if (oElementOverlay) {
-				sVariantManagementReference = this.getVariantManagementReference(oElementOverlay, oRevealAction, false, oStashedElement);
+			if (oRevealedElementOverlay) {
+				sVariantManagementReference = this.getVariantManagementReference(oRevealedElementOverlay, oRevealAction, false, oStashedElement);
 			}
 
 			if (oRevealAction.changeOnRelevantContainer) {
@@ -672,14 +708,13 @@ sap.ui.define([
 		_createMoveCommandForInvisible: function(oSelectedElement, mActions, mParents, oSiblingElement, iIndex) {
 			var oRevealedElement = ElementUtil.getElementInstance(oSelectedElement.elementId);
 			var oRevealedElementOverlay = OverlayRegistry.getOverlay(oRevealedElement);
-			var sType = oRevealedElement.getMetadata().getName();
 			var sParentAggregationName;
 			if (oRevealedElementOverlay) {
 				sParentAggregationName = oRevealedElementOverlay.getParentAggregationOverlay().getAggregationName();
 			} else {
 				// stashed control is not in DOM tree and therefore has no overlay
-				var mType = mActions.reveal.types[sType];
-				sParentAggregationName = mType.action.getAggregationName(mParents.parent, oRevealedElement);
+				var mRevealData = _getRevealDataFromActions(mActions, oRevealedElement);
+				sParentAggregationName = mRevealData.action.getAggregationName(mParents.parent, oRevealedElement);
 			}
 			var oSourceParent = _getSourceParent(oRevealedElement, mParents, oRevealedElementOverlay);
 			var oTargetParent = mParents.parent;
