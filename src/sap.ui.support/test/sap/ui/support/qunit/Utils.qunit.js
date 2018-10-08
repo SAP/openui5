@@ -1,23 +1,19 @@
 /*global QUnit*/
-sap.ui.require([
+sap.ui.define([
 		"jquery.sap.global",
 		"sap/ui/support/supportRules/util/Utils"],
 	function (jQuery, Utils) {
 		"use strict";
 
-
-
 		QUnit.module("Utils.js methods", {
 			beforeEach: function () {
-
-
 				this.oVersionInfo = {
 					name: "testsuite",
 					gav: "com.sap.openui5:testsuite:1.53.0-SNAPSHOT"
 				};
 			},
 			afterEach: function () {
-				this.oVersionInfo  = null;
+				this.oVersionInfo = null;
 			}
 		});
 
@@ -51,5 +47,4 @@ sap.ui.require([
 			// assert
 			assert.strictEqual(uuidV4Regex.test(uuid), true, "The generated uuid has correct format.");
 		});
-
 	});

@@ -1,5 +1,5 @@
 /* global QUnit,sinon */
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/support/supportRules/History",
 	"sap/ui/support/supportRules/IssueManager",
 	"sap/ui/support/supportRules/RuleSetLoader"],
@@ -7,67 +7,67 @@ function (History, IssueManager, RuleSetLoader) {
 	"use strict";
 
 	var oTemplateObject = {
-		analysisInfo: {
-			date: "",
-			duration: "",
-			executionScope: {
-				type: "",
-				selectors: ""
-			},
-			rulePreset: {
-				id: "",
-				title: "",
-				description: "",
-				dateExported: ""
-			}
-		},
-		applicationInfo: [
-			{
-				applicationVersion: {version: ""},
-				id: "",
-				title: "",
-				type: "",
-				registrationIds: []
-			},
-			{
-				applicationVersion: {version: ""},
-				id: "",
-				title: "",
-				type: "",
-				registrationIds: []
-			}
-		],
-		loadedLibraries: {
-			"sap.m": {
-				rules: {
-					breadcrumbsInOverflowToolbar: {
-						audiences: [],
-						categories: [],
-						description: "",
-						id: "",
-						issues: [],
-						issuesCount: "",
-						minVersion: "",
-						resolution: "",
-						selected: ""
-					}
-
+			analysisInfo: {
+				date: "",
+				duration: "",
+				executionScope: {
+					type: "",
+					selectors: ""
 				},
-				allRulesSelected: "",
-				issueCount: ""
-			}
+				rulePreset: {
+					id: "",
+					title: "",
+					description: "",
+					dateExported: ""
+				}
+			},
+			applicationInfo: [
+				{
+					applicationVersion: {version: ""},
+					id: "",
+					title: "",
+					type: "",
+					registrationIds: []
+				},
+				{
+					applicationVersion: {version: ""},
+					id: "",
+					title: "",
+					type: "",
+					registrationIds: []
+				}
+			],
+			loadedLibraries: {
+				"sap.m": {
+					rules: {
+						breadcrumbsInOverflowToolbar: {
+							audiences: [],
+							categories: [],
+							description: "",
+							id: "",
+							issues: [],
+							issuesCount: "",
+							minVersion: "",
+							resolution: "",
+							selected: ""
+						}
+
+					},
+					allRulesSelected: "",
+					issueCount: ""
+				}
+			},
+			issues: [],
+			technicalInfo: {title: ""},
+			totalIssuesCount: ""
 		},
-		issues: [],
-		technicalInfo: {title: ""},
-		totalIssuesCount: ""
-	},
-	oTemplateForIssue = {
-		context: "",
-		details: "",
-		name: "",
-		severity: ""
-	},
-	sReferenceFormattedHistory = "Run1-executedonRulePreset/ID:TestPreset/TestPreset---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|ruleid:breadcrumbsInOverflowToolbar||name:BreadcrumbsinOverflowToolbar||library:sap.m||categories:Usability||audiences:Control||description:TheBreadcrumbsshouldnotbeplacedinsideanOverflowToolbar||resolution:Placebreadcrumbsinanothercontainer.|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|id|classname|status|details|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------";
+		oTemplateForIssue = {
+			context: "",
+			details: "",
+			name: "",
+			severity: ""
+		},
+		sReferenceFormattedHistory = "Run1-executedonRulePreset/ID:TestPreset/TestPreset---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|ruleid:breadcrumbsInOverflowToolbar||name:BreadcrumbsinOverflowToolbar||library:sap.m||categories:Usability||audiences:Control||description:TheBreadcrumbsshouldnotbeplacedinsideanOverflowToolbar||resolution:Placebreadcrumbsinanothercontainer.|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|id|classname|status|details|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------";
 
 	var compareJSON = function (oTemplateObj, oComparedObj) {
 		var aKeys = (typeof oTemplateObj === "string" || !oTemplateObj) ? [] : Object.keys(oTemplateObj);
@@ -111,7 +111,8 @@ function (History, IssueManager, RuleSetLoader) {
 		return {
 			audiences: ["Control"],
 			categories: ["Usability"],
-			check: function () {},
+			check: function () {
+			},
 			description: "The Breadcrumbs should not be placed inside an OverflowToolbar",
 			enabled: true,
 			id: "breadcrumbsInOverflowToolbar",

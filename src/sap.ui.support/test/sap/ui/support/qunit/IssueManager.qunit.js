@@ -1,10 +1,29 @@
 /* global QUnit */
-sap.ui.require([
+sap.ui.define([
+	"sap/ui/support/Bootstrap",
 	'sap/ui/support/supportRules/IssueManager',
 	'sap/ui/support/supportRules/RuleSet',
-	'sap/ui/support/supportRules/Storage'],
-	function (IssueManager, RuleSet, Storage, Main) {
+	'sap/ui/support/supportRules/Storage',
+	'sap/ui/support/supportRules/Main'],
+	function (Bootstrap,
+			  IssueManager,
+			  RuleSet,
+			  Storage,
+			  Main) {
 		"use strict";
+
+		var createValidRule = function (id) {
+			return {
+				id: id,
+				check: function () { },
+				title: "title",
+				description: "desc",
+				resolution: "res",
+				audiences: ["Control"],
+				categories: ["Performance"],
+				selected:true
+			};
+		};
 
 		var createValidIssue = function () {
 			return {
@@ -17,15 +36,26 @@ sap.ui.require([
 		};
 
 		QUnit.module('IssueManager API test', {
-			setup: function () {
-				this.IssueManager = sap.ui.support.supportRules.IssueManager;
-				this.ruleSet = new sap.ui.support.supportRules.RuleSet({ name: 'testRuleSet' });
-				this.ruleSet.addRule(window.saptest.createValidRule('id1'));
-				this.IssueManagerFacade = this.IssueManager.createIssueManagerFacade(this.ruleSet.getRules().id1);
-				this.issue = createValidIssue();
+			beforeEach: function (assert) {
+				var done = assert.async();
+
+
+				Bootstrap.initSupportRules(["true", "silent"], {
+					onReady: function() {
+
+						this.IssueManager = IssueManager;
+						this.ruleSet = new RuleSet({ name: 'testRuleSet' });
+						this.ruleSet.addRule(createValidRule('id1'));
+						this.IssueManagerFacade = this.IssueManager.createIssueManagerFacade(this.ruleSet.getRules().id1);
+						this.issue = createValidIssue();
+
+
+						done();
+					}.bind(this)
+				});
 			},
-			teardown: function () {
-				sap.ui.support.supportRules.RuleSet.clearAllRuleSets();
+			afterEach: function () {
+				RuleSet.clearAllRuleSets();
 				this.issue = null;
 				this.IssueManager.clearIssues();
 			}
