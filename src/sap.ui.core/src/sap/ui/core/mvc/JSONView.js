@@ -234,6 +234,7 @@ sap.ui.define([
 	 * Loads and returns the template from a given URL.
 	 *
 	 * @param {string} sTemplateName The name of the template
+	 * @param {object} [mOptions] with view settings
 	 * @param {boolean} [mOptions.async=false] whether the action should be performed asynchronously
 	 * @return {string|Promise} the template data, or a Promise resolving with it when async
 	 * @private

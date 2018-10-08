@@ -58,7 +58,7 @@ sap.ui.define([
 	/**
 	 * Creates an instance of a declarative HTML view.
 	 *
-	 * @param {map} mOptions A map containig the view configuration options.
+	 * @param {map} mOptions A map containing the view configuration options.
 	 * @param {string} [mOptions.id] Specifies an ID for the View instance. If no ID is given, an ID will be generated.
 	 * @param {string} [mOptions.viewName] Name of the view resource in module name notation (without suffix)
 	 * @param {string} [mOptions.definition] The view definition.
@@ -148,6 +148,7 @@ sap.ui.define([
 	 * Loads and returns a template for the given template name. Templates are only loaded once {@link sap.ui.core.mvc.HTMLView._mTemplates}.
 	 *
 	 * @param {string} sTemplateName The name of the template
+	 * @param {object} mOptions configuration options
 	 * @param {boolean} [mOptions.async=false] whether the action should be performed asynchronously
 	 * @return {string|Promise} the template data, or a Promise resolving with it when async
 	 * @private
@@ -200,6 +201,7 @@ sap.ui.define([
 	 * Loads and returns the template from a given URL.
 	 *
 	 * @param {string} sTemplateName The name of the template
+	 * @param {object} [mOptions] configuration options
 	 * @param {boolean} [mOptions.async=false] whether the action should be performed asynchronously
 	 * @return {string|Promise} the template data, or a Promise resolving with it when async
 	 * @private
