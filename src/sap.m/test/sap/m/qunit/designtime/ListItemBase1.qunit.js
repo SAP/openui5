@@ -1,1 +1,0 @@
-window.ListItemBaseTest('m:StandardListItem');

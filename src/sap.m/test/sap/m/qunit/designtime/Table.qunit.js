@@ -1,4 +1,4 @@
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/dt/test/report/QUnit",
 	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/m/Table",
@@ -15,8 +15,10 @@ sap.ui.require([
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/fl/library" // We have to ensure to load fl, so that change handler gets registered
-], function (
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	// We have to ensure to load fl, so that change handler gets registered
+	"sap/ui/fl/library"
+], function(
 	QUnitReport,
 	ElementEnablementTest,
 	Table,
@@ -32,9 +34,12 @@ sap.ui.require([
 	CommandFactory,
 	ElementUtil,
 	ElementDesignTimeMetadata,
-	JSONModel
+	JSONModel,
+	createAndAppendDiv
 ) {
 	"use strict";
+	createAndAppendDiv("content");
+
 
 	var oElementEnablementTest = new ElementEnablementTest({
 		type: "sap.m.Table",

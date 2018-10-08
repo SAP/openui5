@@ -1285,8 +1285,7 @@ sap.ui.define(function() {
 			ActionListItem: {
 				sinon: {
 					useFakeTimers: true
-				},
-				page: "test-resources/sap/m/qunit/ActionListItem.qunit.html"
+				}
 			},
 			ActionSelect: {
 				title: "Test Page for sap.m.ActionSelect",
@@ -1382,42 +1381,25 @@ sap.ui.define(function() {
 				}
 			},
 			Column: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "Column - sap.m",
 				sinon: {
 					useFakeTimers: true
-				},
-				page: "test-resources/sap/m/qunit/Column.qunit.html"
+				}
 			},
 			ColumnHeader: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Page for sap.m.ColumnHeader",
+				coverage: {
+					only: "sap/m/ColumnHeader"
+				},
 				ui5: {
 					language: "en"
-				},
-				page: "test-resources/sap/m/qunit/ColumnHeader.qunit.html"
+				}
 			},
 			ColumnListItem: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
-				title: "ColumnListItem - sap.m",
-				page: "test-resources/sap/m/qunit/ColumnListItem.qunit.html"
+				title: "ColumnListItem - sap.m"
 			},
 			ColumnMergeDuplicates: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
-				title: "QUnit Page for Column Merge Duplicates",
-				page: "test-resources/sap/m/qunit/ColumnMergeDuplicates.qunit.html"
+				title: "QUnit Page for Column Merge Duplicates"
 			},
 			ComboBox: {
 				title: "Test Page for sap.m.ComboBox",
@@ -1434,12 +1416,11 @@ sap.ui.define(function() {
 				title: "QUnit Tests - sap.m.CustomTile"
 			},
 			CustomTreeItem: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Page for sap.m.CustomTreeItem",
-				page: "test-resources/sap/m/qunit/CustomTreeItem.qunit.html"
+				coverage: {
+					branchTracking: true,
+					only: "sap/m/CustomTreeItem"
+				}
 			},
 			DatePicker: {
 				title: "DatePicker - sap.m",
@@ -1497,12 +1478,7 @@ sap.ui.define(function() {
 				}
 			},
 			DisplayListItem: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
-				title: "Test Page for sap.m.DisplayListItem",
-				page: "test-resources/sap/m/qunit/DisplayListItem.qunit.html"
+				title: "Test Page for sap.m.DisplayListItem"
 			},
 			DraftIndicator: {
 				/*
@@ -1629,20 +1605,10 @@ sap.ui.define(function() {
 				page: "test-resources/sap/m/qunit/GenericTile.qunit.html"
 			},
 			GrowingEnablement: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
-				title: "QUnit Page for sap.m.GrowingEnablement",
-				page: "test-resources/sap/m/qunit/GrowingEnablement.qunit.html"
+				title: "QUnit Page for sap.m.GrowingEnablement"
 			},
 			GrowingList_databinding: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
-				title: "QUnit Page for sap.m.GrowingList databinding",
-				page: "test-resources/sap/m/qunit/GrowingList_databinding.qunit.html"
+				title: "QUnit Page for sap.m.GrowingList databinding"
 			},
 			HBox: {
 				title: "QUnit Page for sap.m.HBox"
@@ -1748,31 +1714,19 @@ sap.ui.define(function() {
 				title: "QUnit page for sap.ui.m.Link"
 			},
 			List: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Page for sap.m.List and all sap.m List Items",
-				page: "test-resources/sap/m/qunit/List.qunit.html"
+				coverage: {
+					only: "sap/m/List"
+				}
 			},
 			ListBase: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "Test Page for sap.m.ListBase",
 				sinon: {
 					useFakeTimers: true
-				},
-				page: "test-resources/sap/m/qunit/ListBase.qunit.html"
+				}
 			},
 			ListBaseBinding: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
-				title: "QUnit Page for sap.m.ListBase Binding",
-				page: "test-resources/sap/m/qunit/ListBaseBinding.qunit.html"
+				title: "QUnit Page for sap.m.ListBase Binding"
 			},
 			MarginCssClasses: {
 				title: "QUnit Page for sap.m Margin CSS Classes",
@@ -2357,15 +2311,13 @@ sap.ui.define(function() {
 				page: "test-resources/sap/m/qunit/TabStripItem.qunit.html"
 			},
 			Table: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Page for sap.m.Table",
+				coverage: {
+					only: "sap/m/Table"
+				},
 				ui5: {
 					language: "en"
-				},
-				page: "test-resources/sap/m/qunit/Table.qunit.html"
+				}
 			},
 			TablePersoController: {
 				/*
@@ -2470,23 +2422,17 @@ sap.ui.define(function() {
 				_alternativeTitle: "QUnit tests: sap.m.Toolbar"
 			},
 			Tree: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Page for sap.m.Tree",
 				sinon: {
 					useFakeTimers: true
-				},
-				page: "test-resources/sap/m/qunit/Tree.qunit.html"
+				}
 			},
 			Treeodata: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Page for sap.m.Tree - odata",
-				page: "test-resources/sap/m/qunit/Treeodata.qunit.html"
+				coverage: {
+					branchTracking: true,
+					only: "sap/ui/core/util"
+				}
 			},
 			UploadCollection: {
 				/*
@@ -2568,26 +2514,16 @@ sap.ui.define(function() {
 				title: "QUnit Page for sap.m.WizardStep"
 			},
 			"changeHandler/AddTableColumn": {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit - sap.m.changeHandler.AddTableColumn",
 				ui5: {
 					libs: "sap.m,sap.ui.fl"
-				},
-				page: "test-resources/sap/m/qunit/changeHandler/AddTableColumn.qunit.html"
+				}
 			},
 			"changeHandler/MoveTableColumns": {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit - sap.m.changeHandler.MoveTableColumns",
 				ui5: {
 					libs: "sap.m,sap.ui.fl"
-				},
-				page: "test-resources/sap/m/qunit/changeHandler/MoveTableColumns.qunit.html"
+				}
 			},
 			"colorpalette/test/integration/opaTest": {
 				/*
@@ -2660,10 +2596,6 @@ sap.ui.define(function() {
 				]
 			},
 			"designtime/CustomListItem": {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Page for sap.m.CustomListItem design time and rta enabling",
 				ui5: {
 					libs: "sap.m,sap.ui.dt"
@@ -2673,8 +2605,7 @@ sap.ui.define(function() {
 						dt: "test-resources/sap/m/qunit/designtime/"
 					}
 				},
-				group: "Designtime",
-				page: "test-resources/sap/m/qunit/designtime/CustomListItem.qunit.html"
+				group: "Designtime"
 			},
 			"designtime/CustomTile": {
 				title: "QUnit Page for sap.m.CustomTile design time",
@@ -2737,16 +2668,11 @@ sap.ui.define(function() {
 				group: "Designtime"
 			},
 			"designtime/InputListItem": {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Page for sap.m.InputListItem design time and rta enabling",
 				ui5: {
 					libs: "sap.m,sap.ui.dt"
 				},
-				group: "Designtime",
-				page: "test-resources/sap/m/qunit/designtime/InputListItem.qunit.html"
+				group: "Designtime"
 			},
 			"designtime/Label": {
 				title: "QUnit Page for sap.m.Label design time and rta enabling",
@@ -2767,28 +2693,18 @@ sap.ui.define(function() {
 				group: "Designtime"
 			},
 			"designtime/ListBase": {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Page for sap.m.ListBase design time and rta enabling",
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
-				group: "Designtime",
-				page: "test-resources/sap/m/qunit/designtime/ListBase.qunit.html"
+				group: "Designtime"
 			},
 			"designtime/ListItemBase": {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Page for sap.m.ListItemBase design time and rta enabling",
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
-				group: "Designtime",
-				page: "test-resources/sap/m/qunit/designtime/ListItemBase.qunit.html"
+				group: "Designtime"
 			},
 			"designtime/MenuButton": {
 				title: "QUnit Page for sap.m.MenuButton design time and rta enabling",
@@ -2873,28 +2789,18 @@ sap.ui.define(function() {
 				group: "Designtime"
 			},
 			"designtime/StandardListItem": {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Page for sap.m.StandardListItem design time and rta enabling",
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
-				group: "Designtime",
-				page: "test-resources/sap/m/qunit/designtime/StandardListItem.qunit.html"
+				group: "Designtime"
 			},
 			"designtime/Table": {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Page for sap.m.Table design time and rta enabling",
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
-				group: "Designtime",
-				page: "test-resources/sap/m/qunit/designtime/Table.qunit.html"
+				group: "Designtime"
 			},
 			"designtime/Text": {
 				title: "QUnit Page for sap.m.Text design time and rta enabling",
