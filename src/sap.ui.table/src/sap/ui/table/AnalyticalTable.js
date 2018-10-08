@@ -1079,7 +1079,7 @@ sap.ui.define([
 	 * Sets the selection of the <code>AnalyticalTable</code> control to the given range (including boundaries).
 	 *
 	 * <b>Note:</b> The previous selection will be lost/overridden. If this is not the required behavior,
-	 * please use <code>addSelectionInterval</code> and <code>removeSelectionIntervall</code>.
+	 * please use <code>addSelectionInterval</code> and <code>removeSelectionInterval</code>.
 	 *
 	 * @param {int} iFromIndex the start index of the selection range
 	 * @param {int} iToIndex the end index of the selection range

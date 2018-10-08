@@ -67,7 +67,7 @@ function(
 
 	/**
 	 * Function is called initially for every overlay in the DesignTime and then when any new overlay is created inside of the DesignTime
-	 * This function should be overriden by the plugins to handle the overlays (attach events and etc.)
+	 * This function should be overridden by the plugins to handle the overlays (attach events and etc.)
 	 * @function
 	 * @name sap.ui.dt.Plugin.prototype.registerElementOverlay
 	 * @param {sap.ui.dt.ElementOverlay} an oElementOverlay which should be registered
@@ -77,7 +77,7 @@ function(
 
 	/**
 	 * Function is called for every overlay in the DesignTime when the Plugin is deactivated.
-	 * This function should be overriden by the plugins to rollback the registration and cleanup attached event etc.
+	 * This function should be overridden by the plugins to rollback the registration and cleanup attached event etc.
 	 * @function
 	 * @name sap.ui.dt.Plugin.prototype.deregisterElementOverlay
 	 * @param {sap.ui.dt.ElementOverlay} an oElementOverlay which should be deregistered
@@ -87,7 +87,7 @@ function(
 
 	/**
 	 * Function is called initially for every aggregation overlay in the DesignTime and then when any new aggregation overlay is created inside of the DesignTime
-	 * This function should be overriden by the plugins to handle the aggregation overlays (attach events and etc.)
+	 * This function should be overridden by the plugins to handle the aggregation overlays (attach events and etc.)
 	 * @function
 	 * @name sap.ui.dt.Plugin.prototype.registerAggregationOverlay
 	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay which should be registered
@@ -97,7 +97,7 @@ function(
 
 	/**
 	 * Function is called for every aggregation overlay in the DesignTime when the Plugin is deactivated.
-	 * This function should be overriden by the plugins to rollback the registration and cleanup attached event etc.
+	 * This function should be overridden by the plugins to rollback the registration and cleanup attached event etc.
 	 * @function
 	 * @name sap.ui.dt.Plugin.prototype.deregisterAggregationOverlay
 	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay which should be deregistered
