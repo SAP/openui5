@@ -1079,7 +1079,7 @@ sap.ui.define([
 		} else {
 			var oInitialFocusedDateValue = this.getInitialFocusedDateValue();
 			var oFocusDate = oInitialFocusedDateValue ? oInitialFocusedDateValue : new Date();
-			var iMaxTimeMillis = this._oMaxDate.getTime() + 86400000 /* one day in milliseconds */;
+			var iMaxTimeMillis = this._oMaxDate.getTime();
 
 			if (oFocusDate.getTime() < this._oMinDate.getTime() || oFocusDate.getTime() > iMaxTimeMillis) {
 				oFocusDate = this._oMinDate;
