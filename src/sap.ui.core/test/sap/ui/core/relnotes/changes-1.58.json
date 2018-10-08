@@ -660,5 +660,16 @@
         "references": []
       }
     ]
+  },
+  "1.58.4": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "878d64eba17508e48f1e04c03f6c9f404ddedb89",
+        "type": "FIX",
+        "text": " m/TextArea: do not trigger FieldGroupValidation on enter",
+        "references": []
+      }
+    ]
   }
 }

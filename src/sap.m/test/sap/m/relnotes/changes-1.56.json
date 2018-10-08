@@ -1764,5 +1764,28 @@
         "references": []
       }
     ]
+  },
+  "1.56.12": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "ff4698107a2b75e3b7dbe7fa111c62fc59ee214c",
+        "type": "FIX",
+        "text": " sap.m.ComboBoxBase: Set the focus to the body after dialog is closed",
+        "references": []
+      },
+      {
+        "id": "11439df75ad30823b7f1ab1c2a580ab64a74058f",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fire change event on enter on mobile",
+        "references": []
+      },
+      {
+        "id": "7310b8e002a55ab3621a32538a0c04d16b3776dc",
+        "type": "FIX",
+        "text": " sap.m.WizardStep: Next button visibility adjusted",
+        "references": []
+      }
+    ]
   }
 }

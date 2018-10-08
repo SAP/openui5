@@ -1332,5 +1332,58 @@
         "references": []
       }
     ]
+  },
+  "1.58.4": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "878d64eba17508e48f1e04c03f6c9f404ddedb89",
+        "type": "FIX",
+        "text": " m/TextArea: do not trigger FieldGroupValidation on enter",
+        "references": []
+      },
+      {
+        "id": "96174ea78dd28b35db1d77bafe94ab98e895591f",
+        "type": "FIX",
+        "text": " sap.m.ComboBoxBase: Set the focus to the body after dialog is closed",
+        "references": []
+      },
+      {
+        "id": "d12bf75349dc296246cb12a8817d20e912591a58",
+        "type": "FIX",
+        "text": " sap.m.GenericTile : In IE11 when a DOM Element which is only partially visible in the browser viewport gets the focus, the IE 11 browser shifts the element to make it fully visible in the viewport. This has conflict with UI5 event onTap detection.",
+        "references": []
+      },
+      {
+        "id": "c686bae723618f7155b669de2a5912f00330e079",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Focus outline corrected",
+        "references": []
+      },
+      {
+        "id": "bfeef5efa9c05c6b1079cd6ef35d4204b72334f9",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fire change event on enter on mobile",
+        "references": []
+      },
+      {
+        "id": "b0cf5ca271d688d115e840687f58282844e6f651",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: prevent default actions, only when click is on its none-active parts",
+        "references": []
+      },
+      {
+        "id": "a373ff91a3cd8c9fd064c3fc3a8ed6eae3174576",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Accessibility description corrected",
+        "references": []
+      },
+      {
+        "id": "a2a393ff3e9514e71ef17dd8661277140772d868",
+        "type": "FIX",
+        "text": " sap.m.WizardStep: Next button visibility adjusted",
+        "references": []
+      }
+    ]
   }
 }

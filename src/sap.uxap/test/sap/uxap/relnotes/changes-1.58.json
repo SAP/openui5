@@ -122,5 +122,16 @@
         "references": []
       }
     ]
+  },
+  "1.58.4": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "e2290323d803433074123cefe5e297e1042b1ce0",
+        "type": "FIX",
+        "text": " ObjectPageSubSection: Aligned SimpleForm Toolbar",
+        "references": []
+      }
+    ]
   }
 }

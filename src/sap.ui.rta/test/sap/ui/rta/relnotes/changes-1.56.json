@@ -277,5 +277,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.12": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "71b0129c3aa1265590371dad8b3ad2edb642a8d2",
+        "type": "FIX",
+        "text": " Fixing CSP problem in sap.ui.rta",
+        "references": []
+      }
+    ]
   }
 }

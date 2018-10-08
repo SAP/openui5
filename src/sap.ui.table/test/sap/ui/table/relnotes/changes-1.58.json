@@ -103,5 +103,16 @@
         "references": []
       }
     ]
+  },
+  "1.58.4": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "785555b937a30d91c6d94a64cf25da97e287c18d",
+        "type": "FIX",
+        "text": " Table: Avoid infinite requests if no count is provided",
+        "references": []
+      }
+    ]
   }
 }
