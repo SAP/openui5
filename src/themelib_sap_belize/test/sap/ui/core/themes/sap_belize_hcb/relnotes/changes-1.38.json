@@ -521,5 +521,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.38": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "61d14d106d71359f997fbad009d64a420813a6db",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Selection now visible in print",
+        "references": []
+      }
+    ]
   }
 }

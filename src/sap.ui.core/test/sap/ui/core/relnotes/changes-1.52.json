@@ -1482,5 +1482,40 @@
         "references": []
       }
     ]
+  },
+  "1.52.20": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "7cceda650d8f1413f702a6a33575b5ef84346784",
+        "type": "FIX",
+        "text": " ODataMetadata: Namespace handling",
+        "references": []
+      },
+      {
+        "id": "04388ede67eda3e7664eb1676d78bcff42005903",
+        "type": "FIX",
+        "text": " Theming Parameters: Prevent timing issues in Safari/Edge",
+        "references": []
+      },
+      {
+        "id": "9f7d6977b11f497bd4970a0e2d9b06e5eb8c1d5d",
+        "type": "FIX",
+        "text": " core.Popup: autoclose is done by using focus event on combi device",
+        "references": []
+      },
+      {
+        "id": "bc3cbd6307b15546453c8f4ac64421f49b7979e1",
+        "type": "FIX",
+        "text": " format/DateFormat: Multiple instances shouldn\u0027t share fallback formats",
+        "references": []
+      },
+      {
+        "id": "8ba5033b7a1e6641b036fa65db2d8bdbd75b468f",
+        "type": "FIX",
+        "text": " format/DateFormat: Remove unsupported API calls",
+        "references": []
+      }
+    ]
   }
 }
