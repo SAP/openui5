@@ -945,6 +945,17 @@ sap.ui.define([
 
 	};
 
+	TimesRow.prototype._setAriaRole = function(sRole){
+		this._ariaRole = sRole;
+
+		return this;
+	};
+
+	TimesRow.prototype._getAriaRole = function(){
+
+		return this._ariaRole ? this._ariaRole : "gridcell";
+	};
+
 	function _initItemNavigation(){
 
 		var oDate = this._getDate();

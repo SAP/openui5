@@ -201,6 +201,15 @@ sap.ui.define([
 		return oCalPicker;
 	};
 
+	CalendarDateInterval.prototype._setAriaRole = function(sRole){
+		var oDatesRow = this.getAggregation("month")[0];
+
+		oDatesRow._setAriaRole(sRole);
+		oDatesRow.invalidate();
+
+		return this;
+	};
+
 	CalendarDateInterval.prototype._handleButton1 = function(oEvent){
 		if (this.getPickerPopup()) {
 			this._showCalendarPicker();

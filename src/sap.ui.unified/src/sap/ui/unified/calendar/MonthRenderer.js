@@ -323,7 +323,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		CalendarUtils._checkCalendarDate(oDay);
 		var oSecondaryDay = new CalendarDate(oDay, oHelper.sSecondaryCalendarType),
 			mAccProps = {
-				role: "gridcell",
+				role: oMonth._getAriaRole(),
 				selected: false,
 				label: "",
 				describedby: ""

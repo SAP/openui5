@@ -4138,6 +4138,100 @@ sap.ui.define([
 		//Assert
 		assert.strictEqual(jQuery("#" + oSut.getId() + "-DateInt--Month0-20150102").attr("aria-label"), sExpectedAria,
 			"Correct week day and date aria are written");
+
+		// Clean up
+		oSut.destroy();
+	});
+
+	QUnit.test("role button set on header cells in different views when we have intervalSelect event attached", function(assert) {
+		//Prepare
+		var oSut = createPlanningCalendar("PC", new sap.m.SearchField(), new sap.m.Button(), new Date(2015, 0, 1)),
+			sExpectedRole = "button";
+
+		//Act
+		oSut.setViewKey(CalendarIntervalType.Hour);
+		oSut.placeAt('uiArea1');
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(jQuery("#" + oSut.getId() + "-TimeInt--TimesRow-201501010800").attr("role"), sExpectedRole, "Correct role 'button' is set in Hours view");
+
+		//Act
+		oSut.setViewKey(CalendarIntervalType.Day);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(jQuery("#" + oSut.getId() + "-DateInt--Month0-20150102").attr("role"), sExpectedRole, "Correct role 'button' is set in Days view");
+
+		//Act
+		oSut.setViewKey(CalendarIntervalType.Month);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(jQuery("#" + oSut.getId() + "-MonthInt--MonthsRow-20150101").attr("role"), sExpectedRole, "Correct role 'button' is set in Month view");
+
+		//Act
+		oSut.setViewKey(CalendarIntervalType.Week);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(jQuery("#" + oSut.getId() + "-WeekInt--Month0-20150102").attr("role"), sExpectedRole, "Correct role 'button' is set in Week view");
+
+		//Act
+		oSut.setViewKey(CalendarIntervalType.OneMonth);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(jQuery("#" + oSut.getId() + "-OneMonthInt--Month0-20141201").attr("role"), sExpectedRole, "Correct role 'button' is set in One Month view");
+
+		// Clean up
+		oSut.destroy();
+	});
+
+	QUnit.test("role gridcell set on header cells in different views when there is no intervalSelect event attached", function(assert) {
+		//Prepare
+		var oSut = createPlanningCalendar("PC", new sap.m.SearchField(), new sap.m.Button(), new Date(2015, 0, 1)),
+			sExpectedRole = "gridcell";
+		oSut.detachEvent("intervalSelect", handleIntervalSelect);
+
+		//Act
+		oSut.setViewKey(CalendarIntervalType.Hour);
+		oSut.placeAt('uiArea1');
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(jQuery("#" + oSut.getId() + "-TimeInt--TimesRow-201501010800").attr("role"), sExpectedRole, "Correct role 'gridcell' is set in Hours view");
+
+		//Act
+		oSut.setViewKey(CalendarIntervalType.Day);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(jQuery("#" + oSut.getId() + "-DateInt--Month0-20150102").attr("role"), sExpectedRole, "Correct role 'gridcell' is set in Days view");
+
+		//Act
+		oSut.setViewKey(CalendarIntervalType.Month);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(jQuery("#" + oSut.getId() + "-MonthInt--MonthsRow-20150101").attr("role"), sExpectedRole, "Correct role 'gridcell' is set in Month view");
+
+		//Act
+		oSut.setViewKey(CalendarIntervalType.Week);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(jQuery("#" + oSut.getId() + "-WeekInt--Month0-20150102").attr("role"), sExpectedRole, "Correct role 'gridcell' is set in Week view");
+
+		//Act
+		oSut.setViewKey(CalendarIntervalType.OneMonth);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(jQuery("#" + oSut.getId() + "-OneMonthInt--Month0-20141201").attr("role"), sExpectedRole, "Correct role 'gridcell' is set in One Month view");
+
+		// Clean up
+		oSut.destroy();
 	});
 
 	//Aria appointments & special dates for Hours view

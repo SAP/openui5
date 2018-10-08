@@ -336,6 +336,15 @@ sap.ui.define([
 
 	};
 
+	CalendarTimeInterval.prototype._setAriaRole = function(sRole){
+		var oTimesRow = this.getAggregation("timesRow");
+
+		oTimesRow._setAriaRole(sRole);
+		oTimesRow.invalidate();
+
+		return this;
+	};
+
 	/**
 	 * Lazily initializes the <code>Calendar</code> aggregation.
 	 * @private
