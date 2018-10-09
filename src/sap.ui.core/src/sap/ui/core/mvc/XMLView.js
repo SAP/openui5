@@ -444,7 +444,7 @@ sap.ui.define([
  		* This function initialized the view settings.
  		*
  		* @param {object} mSettings with view settings
- 		* @return {Promise|null} [oMyPromise] will be returned if running in async mode
+ 		* @return {Promise|null} will be returned if running in async mode
  		*/
 		XMLView.prototype.initViewSettings = function(mSettings) {
 			var that = this, _xContent;
