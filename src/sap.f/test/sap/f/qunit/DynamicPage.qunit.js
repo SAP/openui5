@@ -1924,8 +1924,7 @@ function (
 
 	QUnit.test("DynamicPage On Snap Header when not enough scrollHeight to snap with scroll and scrollTop > 0", function (assert) {
 		/* TODO remove after 1.62 version */
-		var bIsIE = Device.browser.internet_explorer,
-			sHeight = this.oDynamicPage._bMSBrowser  ? "300px" : "400px"; // due to different MS browsers calculation
+		var sHeight = this.oDynamicPage._bMSBrowser  ? "300px" : "400px"; // due to different MS browsers calculation
 
 		this.oDynamicPage.setContent(oFactory.getContent(1)); // not enough content to snap on scroll
 		// Arrange
@@ -1948,7 +1947,7 @@ function (
 		assert.strictEqual(this.oDynamicPage.getHeaderExpanded(), false, "header is snapped");
 		assert.ok(!this.oDynamicPage._needsVerticalScrollBar(), "not enough scrollHeight to scroll");//because header was hidden during snap
 		/* TODO remove after 1.62 version */
-		assert.equal(this.oDynamicPage._getScrollPosition(), bIsIE ? 1 : 0); // because no more scrolled-out content
+		assert.strictEqual(this.oDynamicPage._getScrollPosition(), 0); // because no more scrolled-out content
 
 		// explicitly call the onscroll listener (to save a timeout in the test):
 		this.oDynamicPage._toggleHeaderOnScroll({target: {scrollTop: 0}});
@@ -2173,7 +2172,7 @@ function (
 		iDynamicPageBottom = Math.round(Math.abs(this.oDynamicPage.getDomRef().getBoundingClientRect().bottom));
 
 		// check position
-		assert.strictEqual(iCollapseButtonBottom + 1, iDynamicPageBottom, "CollapseButton is at the bottom of the page, pos: " + iCollapseButtonBottom);
+		assert.ok(Math.abs(iCollapseButtonBottom - iDynamicPageBottom) <= 1, "CollapseButton is at the bottom of the page, pos: " + iCollapseButtonBottom);
 	});
 
 
@@ -3423,10 +3422,13 @@ function (
 
 	QUnit.test("Toggling page visibility preserves the scroll", function(assert) {
 		var SCROLL_POSITION = 200,
-			oDynamicPageDOMElement = document.getElementById(this.oDynamicPage.getId());
+			oDynamicPageDOMElement = document.getElementById(this.oDynamicPage.getId()),
+			iActualSetScrollPosition;
 
-		// arrange
+		// arrange - store the actual reached scroll position, as the container might not have enough scroll height
 		this.oDynamicPage._setScrollPosition(SCROLL_POSITION);
+		iActualSetScrollPosition = this.oDynamicPage._getScrollPosition();
+
 
 		// act
 		oDynamicPageDOMElement.style.display = 'none';
@@ -3441,7 +3443,7 @@ function (
 		// assert
 		assert.notEqual(this.oDynamicPage._getHeight(this.oDynamicPage), 0,
 			"DynamicPage is visible again");
-		assert.strictEqual(this.oDynamicPage._getScrollPosition(), SCROLL_POSITION,
-			"Scroll position " + SCROLL_POSITION + "is preserved.");
+		assert.strictEqual(this.oDynamicPage._getScrollPosition(), iActualSetScrollPosition,
+			"Scroll position " + iActualSetScrollPosition + "is preserved.");
 	});
 });
