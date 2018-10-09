@@ -1,18 +1,30 @@
 /*global QUnit,sinon*/
 
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/support/Bootstrap",
 	"sap/ui/support/supportRules/Main",
 	"sap/ui/support/supportRules/WindowCommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/RuleSet",
-	"sap/ui/support/supportRules/RuleSetLoader"],
-	function (jQuery, Main, CommunicationBus, channelNames, RuleSet, RuleSetLoader) {
+	"sap/ui/support/supportRules/RuleSetLoader",
+	"sap/ui/core/Icon",
+	"sap/m/Panel",
+	"sap/m/Button",
+	"sap/m/Text"
+	],
+	function (jQuery,
+			  Bootstrap,
+			  Main,
+			  CommunicationBus,
+			  channelNames,
+			  RuleSet,
+			  RuleSetLoader,
+			  Icon,
+			  Panel,
+			  Button,
+			  Text) {
 		"use strict";
-
-		/*eslint-disable no-unused-vars*/
-		var core;
-		/*eslint-enable no-unused-vars*/
 
 		var spyChannel = function (channelName) {
 			sinon.spy(CommunicationBus, "publish");
@@ -28,7 +40,8 @@ sap.ui.require([
 		function createValidRule(sRuleId) {
 			return {
 				id: sRuleId,
-				check: function () { },
+				check: function () {
+				},
 				title: "title",
 				description: "desc",
 				resolution: "res",
@@ -75,43 +88,24 @@ sap.ui.require([
 			};
 		}
 
-		Main.startPlugin();
-
-		sap.ui.getCore().registerPlugin({
-			startPlugin: function (oCore) {
-				core = oCore;
-			}
-		});
-
 		QUnit.module("Main.js test", {
-			setup: function () {
-				this.clock = sinon.useFakeTimers();
+			beforeEach: function (assert) {
+				var done = assert.async();
+
+				Bootstrap.initSupportRules(["true", "silent"], {
+					onReady: function() {
+						done();
+					}
+				});
 			},
-			teardown: function () {
-				this.clock.restore();
+			afterEach: function () {
 			}
 		});
-
-		/*
-		TODO: Fix the issue with race condition
-		Temporary commenting the test to avoid build problems.
-		*/
-		// QUnit.test("When a library is loaded", function () {
-		// 	sinon.spy(Main, "_fetchSupportRuleSets");
-
-		// 	core.fireLibraryChanged({
-		// 		stereotype: "library"
-		// 	});
-
-		// 	assert.ok(Main._fetchSupportRuleSets.calledOnce, " the support rules should be updated");
-
-		// 	Main._fetchSupportRuleSets.restore();
-		// });
 
 		QUnit.test("When a new control is created", function (assert) {
 			var spyCoreStateChanged = spyChannel(channelNames.ON_CORE_STATE_CHANGE);
 
-			var icon = new sap.ui.core.Icon();
+			var icon = new Icon();
 			this.clock.tick(600);
 
 			spyCoreStateChanged.assertCalled(assert);
@@ -119,7 +113,7 @@ sap.ui.require([
 		});
 
 		QUnit.test("When a control is deleted", function (assert) {
-			var icon = new sap.ui.core.Icon();
+			var icon = new Icon();
 			var spyCoreStateChanged = spyChannel(channelNames.ON_CORE_STATE_CHANGE);
 
 			icon.destroy();
@@ -148,24 +142,24 @@ sap.ui.require([
 				}
 			};
 
-			var oPanel = new sap.m.Panel({
+			var oPanel = new Panel({
 				id: "rootPanel",
 				content: [
-					new sap.m.Panel({
+					new Panel({
 						id: "innerPanel1",
 						content: [
-							new sap.m.Button({
+							new Button({
 								id: "innerButton"
 							}),
-							new sap.m.Text({
+							new Text({
 								id: "innerText"
 							})
 						]
 					}),
-					new sap.m.Panel({
+					new Panel({
 						id: "innerPanel2",
 						content: [
-							new sap.m.Button({
+							new Button({
 								id: "innerButton2"
 							})
 						]
@@ -186,105 +180,105 @@ sap.ui.require([
 			assertIsDirectChild("innerPanel2", "rootPanel", et);
 			assertIsDirectChild("innerButton", "innerPanel1", et);
 			assertIsDirectChild("innerText", "innerPanel1", et);
-			assertIsDirectChild("innerButton2", "innerPanel2",et);
+			assertIsDirectChild("innerButton2", "innerPanel2", et);
 
 			oPanel.destroy();
 		});
 
 		QUnit.module("Main.js methods", {
-			setup: function () {
+			beforeEach: function () {
 				// Store _mRuleSets
 				this._mRuleSets = jQuery.extend(true, {}, RuleSetLoader._mRuleSets);
 
 				RuleSetLoader._mRuleSets = {
 					"temporary": {
-					   "lib": {
-						  "name": "temporary"
-					   },
-					   "ruleset": {
-						  "_oSettings": {
-							 "name": "temporary"
-						  },
-						  "_mRules": {
-							"tmpRule": {
-								"id": "tmpRule",
-								"libName": "temporary"
+						"lib": {
+							"name": "temporary"
+						},
+						"ruleset": {
+							"_oSettings": {
+								"name": "temporary"
+							},
+							"_mRules": {
+								"tmpRule": {
+									"id": "tmpRule",
+									"libName": "temporary"
+								}
+							},
+							"getRules": function () {
+								return this._mRules;
 							}
-						  },
-						  "getRules": function () {
-							return this._mRules;
-						  }
-					   }
+						}
 					},
 					"sap.ui.core": {
-					   "lib": {
-						  "name": "sap.ui.core",
-						  "niceName": "UI5 Core Library"
-					   },
-					   "ruleset": {
-						  "_oSettings": {
-							 "name": "sap.ui.core",
-							 "niceName": "UI5 Core Library"
-						  },
-						  "_mRules": {
-							"preloadAsyncCheck": {
-								"id": "preloadAsyncCheck",
-								"libName": "sap.ui.core"
+						"lib": {
+							"name": "sap.ui.core",
+							"niceName": "UI5 Core Library"
+						},
+						"ruleset": {
+							"_oSettings": {
+								"name": "sap.ui.core",
+								"niceName": "UI5 Core Library"
 							},
-							 "cacheBusterToken": {
-								"id": "cacheBusterToken",
-								"libName": "sap.ui.core"
-							 },
-							 "bindingPathSyntaxValidation": {
-								"id": "bindingPathSyntaxValidation",
-								"libName": "sap.ui.core"
-							 },
-							 "XMLViewWrongNamespace": {
-								"id": "XMLViewWrongNamespace",
-								"libName": "sap.ui.core"
-							 },
-							 "XMLViewDefaultNamespace": {
-								"id": "XMLViewDefaultNamespace",
-								"libName": "sap.ui.core"
-							 }
-						  },
-						  "getRules": function () {
-							return this._mRules;
-						  }
-					   }
+							"_mRules": {
+								"preloadAsyncCheck": {
+									"id": "preloadAsyncCheck",
+									"libName": "sap.ui.core"
+								},
+								"cacheBusterToken": {
+									"id": "cacheBusterToken",
+									"libName": "sap.ui.core"
+								},
+								"bindingPathSyntaxValidation": {
+									"id": "bindingPathSyntaxValidation",
+									"libName": "sap.ui.core"
+								},
+								"XMLViewWrongNamespace": {
+									"id": "XMLViewWrongNamespace",
+									"libName": "sap.ui.core"
+								},
+								"XMLViewDefaultNamespace": {
+									"id": "XMLViewDefaultNamespace",
+									"libName": "sap.ui.core"
+								}
+							},
+							"getRules": function () {
+								return this._mRules;
+							}
+						}
 					},
 					"sap.m": {
-					   "lib": {
-						  "name": "sap.m",
-						  "niceName": "UI5 Main Library"
-					   },
-					   "ruleset": {
-						  "_oSettings": {
-							 "name": "sap.m",
-							 "niceName": "UI5 Main Library"
-						  },
-						  "_mRules":{
-							 "onlyIconButtonNeedsTooltip": {
-								"id": "onlyIconButtonNeedsTooltip",
-								"libName": "sap.m"
-							 },
-							 "dialogarialabelledby": {
-								"id": "dialogarialabelledby",
-								"libName": "sap.m"
-							 },
-							 "inputNeedsLabel": {
-								"id": "inputNeedsLabel",
-								"libName": "sap.m"
-							 }
-						  },
-						  "getRules": function () {
-							return this._mRules;
-						  }
-					   }
+						"lib": {
+							"name": "sap.m",
+							"niceName": "UI5 Main Library"
+						},
+						"ruleset": {
+							"_oSettings": {
+								"name": "sap.m",
+								"niceName": "UI5 Main Library"
+							},
+							"_mRules": {
+								"onlyIconButtonNeedsTooltip": {
+									"id": "onlyIconButtonNeedsTooltip",
+									"libName": "sap.m"
+								},
+								"dialogarialabelledby": {
+									"id": "dialogarialabelledby",
+									"libName": "sap.m"
+								},
+								"inputNeedsLabel": {
+									"id": "inputNeedsLabel",
+									"libName": "sap.m"
+								}
+							},
+							"getRules": function () {
+								return this._mRules;
+							}
+						}
 					}
 				};
 			},
-			teardown: function () {
+			afterEach: function () {
 				// Restore _mRuleSets
 				RuleSetLoader._mRuleSets = jQuery.extend(true, {}, this._mRuleSets);
 				this._mRuleSets = null;
@@ -518,4 +512,4 @@ sap.ui.require([
 			jQuery.sap.getObject.restore();
 			jQuery.sap.log.error.restore();
 		});
-});
+	});
