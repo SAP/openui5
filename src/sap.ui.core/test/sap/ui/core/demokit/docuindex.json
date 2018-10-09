@@ -660,7 +660,7 @@
 			{
 				"id": "sap.ui.core.sample.matcher.BindingPath",
 				"name": "Binding Path Matcher",
-				"description": "The binding path matcher checks if a control has a binding context with the exact same binding path in OPA tests."
+				"description": "The binding path matcher checks if a control has a binding with the exact same binding context and/or binding property path in OPA tests."
 			},
 			{
 				"id": "sap.ui.core.sample.matcher.I18NText",

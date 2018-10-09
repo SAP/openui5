@@ -58,11 +58,13 @@ sap.ui.define([
                         };
                     } else {
                         this._oLogger.debug("Control " + oControl + " property " + sProperty +
-                            " has data binding for model " + mBinding.model.name + " with path " + mBinding.path);
+                            " has data binding for model " + mBinding.model.name + " with context " + mBinding.contextPath +
+                            " and path " + mBinding.path);
 
                         return {
                             bindingPath: {
-                                path: mBinding.path,
+                                path: mBinding.contextPath,
+                                propertyPath: mBinding.path,
                                 modelName: mBinding.model.name
                             }
                         };
@@ -99,15 +101,12 @@ sap.ui.define([
         _mapBindingData: function (oBinding, oBindingInfoPart) {
             var oModel = oBinding.getModel();
             var oContext = oBinding.getContext();
-            var sContextPath = oContext ? oContext.getPath() + "/" : "";
-            var sPath = sContextPath + oBinding.getPath();
-
-            this._oLogger.debug("Control binding " + (oContext ? "has context path " + sContextPath : " does not have object binding"));
 
             return {
-                path: sPath,
+                path: oBinding.getPath(),
+                contextPath: oContext ? oContext.getPath() : "",
                 model: {
-                    name: oBindingInfoPart.model || undefined, // don't save empty strings
+                    name: oBindingInfoPart.model || undefined, // ignore empty strings,
                     type: oModel.getMetadata().getName(),
                     data: oModel.getData ? oModel.getData() : undefined
                 }
