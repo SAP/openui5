@@ -220,10 +220,10 @@ sap.ui.define([
 				 * sap.m.MessageBox.show("This message should appear in the message box", {
 				 *     icon: sap.m.MessageBox.Icon.NONE,                    // default
 				 *     title: "",                                           // default
-				 *     actions: sap.m.MessageBox.Action.OK                  // default
-				 *     onClose: null                                        // default
-				 *     styleClass: ""                                       // default
-				 *     initialFocus: null                                   // default
+				 *     actions: sap.m.MessageBox.Action.OK,                 // default
+				 *     onClose: null,                                       // default
+				 *     styleClass: "",                                      // default
+				 *     initialFocus: null,                                  // default
 				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
 				 * });
 				 * </pre>
@@ -480,8 +480,8 @@ sap.ui.define([
 				 * sap.m.MessageBox.alert("This message should appear in the alert", {
 				 *     title: "Alert",                                      // default
 				 *     onClose: null,                                       // default
-				 *     styleClass: ""                                       // default
-				 *     initialFocus: null                                   // default
+				 *     styleClass: "",                                      // default
+				 *     initialFocus: null,                                  // default
 				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
 				 * });
 				 * </pre>
@@ -553,11 +553,11 @@ sap.ui.define([
 				 * <pre>
 				 * sap.m.MessageBox.confirm("This message should appear in the confirmation", {
 				 *     title: "Confirm",                                    // default
-				 *     onClose: null                                        // default
-				 *     styleClass: ""                                       // default
-				 *     initialFocus: null                                   // default
+				 *     onClose: null,                                       // default
+				 *     styleClass: "",                                      // default
+				 *     initialFocus: null,                                  // default
 				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
-				 *     });
+				 * });
 				 * </pre>
 				 *
 				 * The callback is called with the following signature
@@ -628,11 +628,11 @@ sap.ui.define([
 				 * <pre>
 				 * sap.m.MessageBox.error("This message should appear in the error message box", {
 				 *     title: "Error",                                      // default
-				 *     onClose: null                                        // default
-				 *     styleClass: ""                                       // default
-				 *     initialFocus: null                                   // default
+				 *     onClose: null,                                       // default
+				 *     styleClass: "",                                      // default
+				 *     initialFocus: null,                                  // default
 				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
-				 *     });
+				 * });
 				 * </pre>
 				 *
 				 * The callback is called with the following signature
@@ -685,11 +685,11 @@ sap.ui.define([
 				 * <pre>
 				 * sap.m.MessageBox.information("This message should appear in the information message box", {
 				 *     title: "Information",                                // default
-				 *     onClose: null                                        // default
-				 *     styleClass: ""                                       // default
-				 *     initialFocus: null                                   // default
+				 *     onClose: null,                                       // default
+				 *     styleClass: "",                                      // default
+				 *     initialFocus: null,                                  // default
 				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
-				 *     });
+				 * });
 				 * </pre>
 				 *
 				 * The callback is called with the following signature
@@ -741,11 +741,11 @@ sap.ui.define([
 				 * <pre>
 				 * sap.m.MessageBox.warning("This message should appear in the warning message box", {
 				 *     title: "Warning",                                    // default
-				 *     onClose: null                                        // default
-				 *     styleClass: ""                                       // default
-				 *     initialFocus: null                                   // default
+				 *     onClose: null,                                       // default
+				 *     styleClass: "",                                      // default
+				 *     initialFocus: null,                                  // default
 				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
-				 *     });
+				 * });
 				 * </pre>
 				 *
 				 * The callback is called with the following signature
@@ -797,11 +797,11 @@ sap.ui.define([
 				 * <pre>
 				 * sap.m.MessageBox.success("This message should appear in the success message box", {
 				 *     title: "Success",                                    // default
-				 *     onClose: null                                        // default
-				 *     styleClass: ""                                       // default
-				 *     initialFocus: null                                   // default
+				 *     onClose: null,                                       // default
+				 *     styleClass: "",                                      // default
+				 *     initialFocus: null,                                  // default
 				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
-				 *     });
+				 * });
 				 * </pre>
 				 *
 				 * The callback is called with the following signature
