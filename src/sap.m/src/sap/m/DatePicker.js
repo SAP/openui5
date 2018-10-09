@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/Popup",
+	"./InstanceManager",
 	// jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/cursorPos"
 ],
@@ -35,7 +36,8 @@ sap.ui.define([
 		assert,
 		Log,
 		IconPool,
-		Popup
+		Popup,
+		InstanceManager
 	) {
 	"use strict";
 
@@ -1254,6 +1256,7 @@ sap.ui.define([
 		this.$("inner").attr("aria-owns", this.getId() + "-cal");
 		this.$("inner").attr("aria-expanded", true);
 
+		InstanceManager.addPopoverInstance(this._oPopup);
 	}
 
 	function _handleClosed(oEvent) {
@@ -1261,6 +1264,8 @@ sap.ui.define([
 		this.$("inner").attr("aria-expanded", false);
 
 		this._restoreInputSelection(this._$input.get(0));
+
+		InstanceManager.removePopoverInstance(this._oPopup);
 	}
 
 	function _resizeCalendar(oEvent){
