@@ -2,15 +2,15 @@
 
 sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
-	"sap/ui/dt/ElementUtil",
 	"sap/ui/model/json/JSONModel",
+	"sap/m/ColumnListItem",
 	'sap/ui/rta/util/BindingsExtractor',
 	'sap/ui/thirdparty/sinon-4'
 ],
 function(
 	AdditionalElementsAnalyzer,
-	ElementUtil,
 	JSONModel,
+	ColumnListItem,
 	BindingsExtractor,
 	sinon
 ) {
@@ -670,6 +670,23 @@ function(
 
 			return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oTable, oActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 16, "then the correct amount of ODataProperties has been returned");
+			});
+		});
+
+		QUnit.test("when getting unbound elements for table with absolute binding in a named model", function(assert) {
+			var oSomeNamedModel = new JSONModel({ foo : [1,2]});
+			this.oTable.setModel(oSomeNamedModel, "named");
+			this.oTable.bindItems("named>/foo", new ColumnListItem());
+
+			var oActionObject = {
+				action : {
+					aggregation: "items"
+				},
+				relevantContainer: this.oTable
+			};
+
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oTable, oActionObject).then(function(aAdditionalElements) {
+				assert.equal(aAdditionalElements.length, 0, "then no ODataProperties are returned, as the scenario is not supported (but it doesn't break)");
 			});
 		});
 	});

@@ -2,13 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
-	"sap/ui/dt/ElementUtil",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/layout/form/SimpleForm"
 ],
 function(
 	AdditionalElementsAnalyzer,
-	ElementUtil,
 	JSONModel,
 	SimpleForm
 ) {
