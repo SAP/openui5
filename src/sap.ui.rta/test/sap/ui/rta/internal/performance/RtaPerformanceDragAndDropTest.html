@@ -1,0 +1,185 @@
+<!DOCTYPE HTML>
+<html style="height: 100%">
+	<head>
+		<meta charset="utf-8">
+		<title>Adaptation at runtime - Drag and Drop Test</title>
+
+		<script src="../../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.ui.rta, sap.ui.dt, sap.m, sap.ui.layout"
+				data-sap-ui-resourceroots='{"rta.performance": "./",
+					"dt.performance": "../../../../../sap/ui/dt/performance/"}'
+				>
+		</script>
+
+		<script>
+			window.fnResolve;
+			window.onAppReady = new Promise(function (fnResolve) {
+				window.fnResolve = fnResolve;
+			});
+			window.wpp = {
+				customMetrics: {}
+			};
+			sap.ui.getCore().attachInit(function() {
+				sap.ui.require([
+					"sap/ui/core/mvc/JSView",
+					"sap/ui/core/UIComponent",
+					"sap/ui/core/ComponentContainer",
+					"dt/performance/PerformanceTestUtil",
+					"rta/performance/RtaPerformanceTestUtil",
+					"sap/ui/layout/VerticalLayout",
+					"sap/m/FlexWrap",
+					"sap/m/HBox",
+					"sap/ui/thirdparty/sinon-4"
+				], function(
+					JSView,
+					UIComponent,
+					ComponentContainer,
+					DtPerformanceTestUtil,
+					RtaPerformanceTestUtil,
+					VerticalLayout,
+					FlexWrap,
+					HBox,
+					sinon
+				){
+
+					//create Vertical Layout
+					var oLayout1 = new VerticalLayout("Layout1");
+					DtPerformanceTestUtil.addMixedControlsTo(oLayout1, 1, 30, true /*visible*/);
+					DtPerformanceTestUtil.addMixedControlsTo(oLayout1, 31, 60, false /*invisible*/);
+					window.oContainerLayout1 = new VerticalLayout({
+						id : "ContainerLayout1",
+						content :  [
+							new sap.m.Label({
+								text : "ContainerLayout1"
+							}),
+							oLayout1
+						]
+					});
+					var oLayout2 = new VerticalLayout("Layout2");
+					DtPerformanceTestUtil.addMixedControlsTo(oLayout2, 61, 90, true /*visible*/);
+					DtPerformanceTestUtil.addMixedControlsTo(oLayout2, 91, 120, false /*invisible*/);
+					window.oContainerLayout2 = new VerticalLayout({
+						id : "ContainerLayout2",
+						content :  [
+							new sap.m.Label({
+								text : "ContainerLayout2"
+							}),
+							oLayout2
+						]
+					});
+					var oLayout3 = new VerticalLayout("Layout3");
+					DtPerformanceTestUtil.addMixedControlsTo(oLayout3, 121, 150, true /*visible*/);
+					DtPerformanceTestUtil.addMixedControlsTo(oLayout3, 151, 200, false /*invisible*/);
+					window.oContainerLayout3 = new VerticalLayout({
+						id : "ContainerLayout3",
+						content :  [
+							new sap.m.Label({
+								text : "ContainerLayout3"
+							}),
+							oLayout3
+						]
+					});
+
+					var oHBox = new HBox("HBox", {
+						wrap : FlexWrap.Wrap,
+						items : [oContainerLayout1, oContainerLayout2, oContainerLayout3],
+						customData: [
+							new sap.ui.core.CustomData({
+								key : "sap-ui-custom-settings",
+								value : {
+									"sap.ui.dt" : {
+										designtime : "rta/performance/HBox.designtime"
+									}
+								}
+							})
+						]
+					});
+					oHBox.setWidth('100%');
+					oHBox.placeAt("content");
+					sap.ui.getCore().applyChanges();
+					var mHBoxDesigntimeMetadata = {
+						aggregations: {
+							items: {
+								propagateRelevantContainer : true
+							}
+						}
+					};
+					var oRequireStub = sinon.stub(sap.ui, "require");
+					oRequireStub.callThrough();
+					oRequireStub.withArgs(["rta/performance/HBox.designtime"]).callsArgWithAsync(1, mHBoxDesigntimeMetadata);
+
+					// Start RTA
+					fnResolve(RtaPerformanceTestUtil.startRta(oHBox));
+				});
+			});
+
+			function startDragAndDrop(){
+				sap.ui.require([
+					"dt/performance/PerformanceTestUtil",
+					"sap/ui/dt/OverlayRegistry",
+					"sap/base/Log"
+				], function(
+					DtPerformanceTestUtil,
+					OverlayRegistry,
+					BaseLog
+				) {
+					jQuery.get("./dragDropEvents.json")
+					.done(function(aEvents) {
+						DtPerformanceTestUtil.measureApplyStylePerformance("applyStylesDragDrop", 3000);
+
+						(function fnRecursiveloop(aEvents) {
+							var aEvent = aEvents.shift();
+							if (aEvent) {
+								setTimeout(function() {
+									jQuery("#" + aEvent[1]).trigger(aEvent[0]);
+									fnRecursiveloop(aEvents);
+								}, aEvent[0] === "dragenter" ? 50 : 0);
+							}
+						}) (aEvents);
+					}.bind(this));
+				});
+			}
+
+			function startResizeTest() {
+				sap.ui.require([
+					"dt/performance/PerformanceTestUtil",
+					"sap/ui/dt/OverlayRegistry",
+					"sap/base/Log"
+				], function(
+					DtPerformanceTestUtil,
+					OverlayRegistry,
+					BaseLog
+				) {
+					DtPerformanceTestUtil.measureApplyStylePerformance("applyStylesResize", 2000);
+
+					var iStartWidth = jQuery('#content').width(),
+						aWidthsToTest = [450, 300, 650, 500],
+						iJumpsInPxls = 5,
+						iNextWidth = iStartWidth - (iStartWidth % iJumpsInPxls);
+
+					(function fnRecursiveloop(aWidthsToTest) {
+						var iTargetWidth = aWidthsToTest.shift();
+						if (iTargetWidth) {
+							for(iNextWidth = iStartWidth - (iStartWidth % iJumpsInPxls); iNextWidth !== iTargetWidth; iNextWidth = (iTargetWidth > iStartWidth) ? iNextWidth + iJumpsInPxls : iNextWidth - iJumpsInPxls) {
+								setTimeout(function(iNextWidth) { jQuery('#content').width(iNextWidth + 'px'); }, 0, iNextWidth);
+								console.log("set width to", iNextWidth);
+							}
+							iStartWidth = iNextWidth;
+							setTimeout(function() {
+								jQuery('#content').width(iNextWidth + 'px');
+								console.log("set next step width to", iNextWidth);
+								fnRecursiveloop(aWidthsToTest, iStartWidth, iJumpsInPxls);
+							}, 100);
+						}
+					}) (aWidthsToTest, iStartWidth, iJumpsInPxls);
+				});
+			}
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<div id="content" style="width:700px"></div>
+	</body>
+</html>
