@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/App",
 	"sap/m/Page",
-	"jquery.sap.global"
+	"sap/ui/thirdparty/jquery"
 ], function(QUnitUtils, createAndAppendDiv, App, Page, jQuery) {
 	createAndAppendDiv("content");
 	var styleElement = document.createElement("style");
@@ -34,15 +34,15 @@ sap.ui.define([
 
 
 	QUnit.test("App rendered", function(assert) {
-		assert.ok(jQuery.sap.domById("myFirstApp"), "App should be rendered");
-		assert.ok(jQuery.sap.domById("page1"), "Initially the first page should be rendered");
+		assert.ok(document.getElementById("myFirstApp"), "App should be rendered");
+		assert.ok(document.getElementById("page1"), "Initially the first page should be rendered");
 	});
 
 
 	QUnit.test("Background Image", function(assert) {
 		if (window.getComputedStyle) {
-			var appStyle = window.getComputedStyle(jQuery.sap.domById("myFirstApp"));
-			var bgStyle = window.getComputedStyle(jQuery.sap.domById("myFirstApp-BG"));
+			var appStyle = window.getComputedStyle(document.getElementById("myFirstApp"));
+			var bgStyle = window.getComputedStyle(document.getElementById("myFirstApp-BG"));
 			assert.equal(appStyle.backgroundColor, "rgb(255, 0, 0)", "the custom background color should be set");
 			assert.equal(appStyle.backgroundImage, "none", "no standard background image should be set");
 			assert.ok(bgStyle.backgroundImage.indexOf("images/demo/nature/huntingLeopard.jpg") > -1, "Background image should be a Cheetah");
