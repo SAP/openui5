@@ -705,4 +705,24 @@ sap.ui.define([
 		assert.strictEqual(oResult.focusable, oExpected.focusable, "acc info.focusable is the same as in the internal control");
 		assert.strictEqual(oResult.enabled, oExpected.enabled, "acc info.enabled is the same as in the internal control");
 	});
+
+	QUnit.test("tabindex=0 for ObjectMarker of 'Favorite' type", function (assert) {
+		// Act
+		this.marker.setType(sap.m.ObjectMarkerType.Favorite);
+		this.marker.attachPress(function () {}); // Make ObjectMarker interactive
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.marker._getInnerControl().$().attr("tabindex"), "0", "tabindex is set to '0'");
+	});
+
+	QUnit.test("tabindex=0 for ObjectMarker of 'Flagged' type", function (assert) {
+		// Act
+		this.marker.setType(sap.m.ObjectMarkerType.Flagged);
+		this.marker.attachPress(function () {}); // Make ObjectMarker interactive
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.marker._getInnerControl().$().attr("tabindex"), "0", "tabindex is set to '0'");
+	});
 });
