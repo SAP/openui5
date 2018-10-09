@@ -1,16 +1,30 @@
-sap.ui.define(function() {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function(Log, jQuery) {
 
 	"use strict";
+
+	// check whether sap.ui.comp is available
+	var bSapUiCompAvailable = false;
+	jQuery.ajax({
+		type: "HEAD",
+		url: sap.ui.require.toUrl("sap/ui/comp/library.js"),
+		async: false,
+		success: function() {
+			bSapUiCompAvailable = true;
+		}
+	});
 
 	return {
 		name: "Library 'sap.ui.layout'",	/* Just for a nice title on the pages */
 		defaults: {
-			group: "Library",
+			group: "",
 			qunit: {
-				version: "edge"					// Whether QUnit should be loaded and if so, what version
+				version: "edge"				// Whether QUnit should be loaded and if so, what version
 			},
 			sinon: {
-				version: 1					// Whether Sinon should be loaded and if so, what version
+				version: "edge"				// Whether Sinon should be loaded and if so, what version
 			},
 			ui5: {
 				language: "en-US",
@@ -31,6 +45,27 @@ sap.ui.define(function() {
 			autostart: true					// Whether to call QUnit.start() when the test setup is done
 		},
 		tests: {
+
+			AlignedFlowLayout: {
+				page: "test-resources/sap/ui/layout/qunit/AlignedFlowLayout.qunit.html"
+			},
+
+			"AlignedFlowLayout (RTL)": {
+				page: "test-resources/sap/ui/layout/qunit/AlignedFlowLayout.qunit.html?sap-ui-rtl=true"
+			},
+
+			DynamicSideContent: {
+				page: "test-resources/sap/ui/layout/qunit/DynamicSideContent.qunit.html"
+			},
+
+			HorizontalLayout: {
+				page: "test-resources/sap/ui/layout/qunit/HorizontalLayout.qunit.html"
+			},
+
+			ResponsiveFlowLayout: {
+				page: "test-resources/sap/ui/layout/qunit/ResponsiveFlowLayout.qunit.html"
+			},
+
 			"ExploredSamples": {
 				loader: {
 					paths: {
@@ -50,6 +85,7 @@ sap.ui.define(function() {
 				},
 				autostart: false
 			},
+
 			"Grid": {
 				coverage: {
 					only : ["sap/ui/layout/Grid"]
@@ -82,6 +118,7 @@ sap.ui.define(function() {
 			},
 			"ResponsiveSplitter": {
 				sinon: {
+					version: 1, // because the bridge for sinon-4 doesn't support fake timers yet
 					useFakeTimers: true
 				},
 				coverage: {
@@ -121,7 +158,137 @@ sap.ui.define(function() {
 				}
 			},
 
-			// Design Time
+			// Form
+			"ColumnLayout": {
+				group: "Form",
+				module: "./form/ColumnLayout.qunit",
+				coverage: {
+					only: "[sap/ui/layout/form]"
+				}
+			},
+
+			"Form": {
+				group: "Form",
+				module: "./form/Form.qunit",
+				coverage: {
+					only: "[sap/ui/layout/form]"
+				}
+			},
+
+			"FormContainer": {
+				group: "Form",
+				module: "./form/FormContainer.qunit",
+				coverage: {
+					only: "[sap/ui/layout/form]"
+				}
+			},
+
+			"FormElement": {
+				group: "Form",
+				module: "./form/FormElement.qunit",
+				coverage: {
+					only: "[sap/ui/layout/form]"
+				}
+			},
+
+			"GridLayout": {
+				group: "Form",
+				module: "./form/GridLayout.qunit",
+				coverage: {
+					only: "[sap/ui/layout/form]"
+				}
+			},
+
+			"ResponsiveGridLayout": {
+				group: "Form",
+				module: "./form/ResponsiveGridLayout.qunit",
+				coverage: {
+					only: "[sap/ui/layout/form]"
+				}
+			},
+
+			"ResponsiveLayout": {
+				group: "Form",
+				module: "./form/ResponsiveLayout.qunit",
+				coverage: {
+					only: "[sap/ui/layout/form]"
+				}
+			},
+
+			"SimpleForm": {
+				group: "Form",
+				module: "./form/SimpleForm.qunit",
+				coverage: {
+					only: "[sap/ui/layout/form]"
+				}
+			},
+
+
+			// --------------------------
+			// Demokti Samples
+			// --------------------------
+
+			"demokit/Form354": {
+				group: "Demokit",
+				page: "test-resources/sap/ui/layout/demokit/sample/Form354/test/FormSampleJourney.qunit.html"
+			},
+
+			"demokit/SimpleForm354": {
+				group: "Demokit",
+				page: "test-resources/sap/ui/layout/demokit/sample/SimpleForm354/test/FormSampleJourney.qunit.html"
+			},
+
+			"demokit/SimpleForm354wide": {
+				group: "Demokit",
+				page: "test-resources/sap/ui/layout/demokit/sample/SimpleForm354wide/test/FormSampleJourney.qunit.html"
+			},
+
+			"demokit/SimpleForm354wideDual": {
+				group: "Demokit",
+				page: "test-resources/sap/ui/layout/demokit/sample/SimpleForm354wideDual/test/FormSampleJourney.qunit.html"
+			},
+
+			"demokit/SimpleForm471": {
+				group: "Demokit",
+				page: "test-resources/sap/ui/layout/demokit/sample/SimpleForm471/test/FormSampleJourney.qunit.html"
+			},
+
+			// --------------------------
+			// Design Time & RTA Enabling
+			// --------------------------
+
+			//complete libraries dt files general json data
+			"designtime/Library": {
+				group: "Designtime",
+				page: "test-resources/sap/ui/layout/qunit/designtime/Library.qunit.html"
+			},
+
+			//individual controls
+			"designtime/DynamicSideContent": {
+				group: "Designtime",
+				page: "test-resources/sap/ui/layout/qunit/designtime/DynamicSideContent.qunit.html"
+			},
+			"designtime/HorizontalLayout": {
+				group: "Designtime",
+				page: "test-resources/sap/ui/layout/qunit/designtime/HorizontalLayout.qunit.html"
+			},
+			"designtime/form/Form": {
+				group: "Designtime",
+				page: "test-resources/sap/ui/layout/qunit/designtime/form/Form.qunit.html"
+			},
+			"designtime/form/FormContainer": {
+				group: "Designtime",
+				page: "test-resources/sap/ui/layout/qunit/designtime/form/FormContainer.qunit.html"
+			},
+			"designtime/form/FormElement": {
+				group: "Designtime",
+				page: "test-resources/sap/ui/layout/qunit/designtime/form/FormElement.qunit.html"
+			},
+			"designtime/form/SimpleForm": {
+				group: "Designtime",
+				page: "test-resources/sap/ui/layout/qunit/designtime/form/SimpleForm.qunit.html"
+			},
+
 			"Designtime-Grid": {
 				group: "Designtime",
 				module: "./designtime/Grid.qunit",
@@ -156,7 +323,39 @@ sap.ui.define(function() {
 				group: "Designtime",
 				module: "./designtime/VerticalLayout.qunit",
 				sinon: false
+			},
+			"designtime/form/AddODataFormField": {
+				skip: !bSapUiCompAvailable,
+				page: "test-resources/sap/ui/layout/qunit/designtime/form/AddODataFormField.qunit.html"
+			},
+
+			// change handlers
+			"flex/RenameSimpleForm": {
+				group: "Change Handler",
+				page: "test-resources/sap/ui/layout/qunit/form/changes/RenameSimpleForm.qunit.html"
+			},
+
+			"flex/HideSimpleForm": {
+				group: "Change Handler",
+				page: "test-resources/sap/ui/layout/qunit/form/changes/HideSimpleForm.qunit.html"
+			},
+
+			"flex/AddSimpleFormGroup": {
+				group: "Change Handler",
+				page: "test-resources/sap/ui/layout/qunit/form/changes/AddSimpleFormGroup.qunit.html"
+			},
+
+			"flex/UnhideSimpleForm": {
+				group: "Change Handler",
+				page: "test-resources/sap/ui/layout/qunit/form/changes/UnhideSimpleForm.qunit.html"
+			},
+
+			"flex/AddSimpleFormField": {
+				group: "Change Handler",
+				skip: !bSapUiCompAvailable,
+				page: "test-resources/sap/ui/layout/qunit/form/changes/AddSimpleFormField.qunit.html"
 			}
+
 		}
 	};
 });

@@ -3,10 +3,9 @@
 // Test only the things relevant for ResponsiveGridLayout. The basic Form functionality
 // is tested in Form, FormContainer and FormElement qUnit tests.
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/base/util/each",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/ResponsiveGridLayout",
@@ -23,6 +22,7 @@ sap.ui.require([
 	],
 	function(
 		jQuery,
+		qutils,
 		each,
 		Form,
 		ResponsiveGridLayout,
@@ -1160,7 +1160,5 @@ sap.ui.require([
 		var oDom = oResponsiveGridLayout.getElementRenderedDomRef(oFormElement1);
 		assert.notOk(oDom, "no Dom for FormElement returned");
 	});
-
-	QUnit.start();
 
 });

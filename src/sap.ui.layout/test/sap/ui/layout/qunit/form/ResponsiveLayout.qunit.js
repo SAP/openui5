@@ -3,10 +3,9 @@
 // Test only the things relevant for ResponsiveLayout. The basic Form functionality
 // is tested in Form, FormContainer and FormElement qUnit tests.
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/base/util/each",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/ResponsiveLayout",
@@ -23,6 +22,7 @@ sap.ui.require([
 	],
 	function(
 		jQuery,
+		qutils,
 		each,
 		Form,
 		ResponsiveLayout,
@@ -640,7 +640,5 @@ sap.ui.require([
 		oDom = oResponsiveLayout.getElementRenderedDomRef(oFormElement2);
 		assert.notOk(oDom, "no Dom for Element2 returned if invisible Form");
 	});
-
-	QUnit.start();
 
 });

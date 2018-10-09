@@ -1,12 +1,11 @@
-/* global QUnit, qutils */
+/* global QUnit */
 
 // Test only the things relevant for GridLayout. The basic Form functionality
 // is tested in Form, FormContainer and FormElement qUnit tests.
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/base/Log",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
@@ -28,6 +27,7 @@ sap.ui.require([
 	],
 	function(
 		jQuery,
+		qutils,
 		Log,
 		Device,
 		KeyCodes,
@@ -837,7 +837,5 @@ sap.ui.require([
 		assert.ok(oDom, "Field found");
 		assert.equal(oDom.id, oField3.getFocusDomRef().id, "Field3 found");
 	});
-
-	QUnit.start();
 
 });

@@ -2,10 +2,9 @@
 
 /*eslint max-nested-callbacks: [2, 5]*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/layout/library",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/layout/GridData",
 	"sap/ui/layout/ResponsiveFlowLayoutData",
@@ -17,6 +16,7 @@ sap.ui.require([
 	],
 	function(
 		library,
+		qutils,
 		SimpleForm,
 		GridData,
 		ResponsiveFlowLayoutData,
@@ -2293,7 +2293,5 @@ sap.ui.require([
 			}, 500);
 		}, 10);
 	});
-
-	QUnit.start();
 
 });

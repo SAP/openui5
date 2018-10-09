@@ -1,9 +1,8 @@
-/* global QUnit, sinon, qutils */
+/* global QUnit, sinon */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/layout/library",
 	"sap/ui/layout/form/Form",
@@ -22,6 +21,7 @@ sap.ui.require([
 	],
 	function(
 		jQuery,
+		qutils,
 		KeyCodes,
 		library,
 		Form,
@@ -662,8 +662,11 @@ sap.ui.require([
 		oForm.addFormContainer(oFormContainer1);
 		oForm.addFormContainer(oFormContainer2);
 
-		var oFieldBefore = new Input("I-B").placeAt("before");
-		var oFieldAfter = new Input("I-A").placeAt("after");
+		var oUiArea = oForm.getParent();
+		var oFieldBefore = new Input("I-B");
+		oUiArea.insertContent(oFieldBefore, 0);
+		var oFieldAfter = new Input("I-A");
+		oUiArea.addContent(oFieldAfter);
 		sap.ui.getCore().applyChanges();
 
 		jQuery("#I-B").focus();
@@ -689,7 +692,5 @@ sap.ui.require([
 		oFieldBefore.destroy();
 		oFieldAfter.destroy();
 	});
-
-	QUnit.start();
 
 });
