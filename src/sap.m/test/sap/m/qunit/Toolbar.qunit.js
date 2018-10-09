@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/Toolbar",
 	"sap/m/library",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/RenderManager",
 	"sap/m/ToolbarSeparator",
 	"sap/m/Button",
@@ -13,9 +13,10 @@ sap.ui.define([
 	"sap/m/SearchField",
 	"sap/m/ToolbarLayoutData",
 	"sap/m/ToolbarRenderer",
-	"sap/m/ToolbarSpacer"
+	"sap/m/ToolbarSpacer",
+	"sap/ui/core/Core"
 ], function(
-	qutils,
+	QUtils,
 	Toolbar,
 	mobileLibrary,
 	jQuery,
@@ -27,7 +28,8 @@ sap.ui.define([
 	SearchField,
 	ToolbarLayoutData,
 	ToolbarRenderer,
-	ToolbarSpacer
+	ToolbarSpacer,
+	Core
 ) {
 	// shortcut for sap.m.ToolbarStyle
 	var ToolbarStyle = mobileLibrary.ToolbarStyle;
@@ -58,7 +60,7 @@ sap.ui.define([
 		// render
 		if (bShouldRender) {
 			oTB.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		}
 
 		return oTB;
@@ -75,8 +77,8 @@ sap.ui.define([
 		assert.strictEqual(oTB.$().length, 1, "Toolbar is in DOM");
 		assert.ok(oTB.$().hasClass("sapMTB"), "Toolbar has correct class name");
 		oTB.setVisible(false);
-		sap.ui.getCore().applyChanges();
-		var $ToolbarPlaceHolder = jQuery.sap.byId(RenderManager.createInvisiblePlaceholderId(oTB));
+		Core.applyChanges();
+		var $ToolbarPlaceHolder = jQuery("#" + RenderManager.createInvisiblePlaceholderId(oTB));
 		assert.strictEqual(oTB.$().length, 0, "Toolbar is no longer in DOM after setting it to invisible");
 		assert.strictEqual($ToolbarPlaceHolder.length, 1, "Toolbar placeholder is in DOM after setting it to invisible");
 		assert.strictEqual($ToolbarPlaceHolder.css("display"), "none", "Toolbar placeholder should have display none when invisible");
@@ -112,24 +114,24 @@ sap.ui.define([
 		assert.ok(!oTB.$().hasClass("sapMTB-Transparent-CTX"), "Initially, toolbar has no transparent context class");
 
 		oTB.setDesign(ToolbarDesign.Transparent);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(oTB.$().hasClass("sapMTB-Transparent-CTX"), "Toolbar has transparent context");
 
 		oTB.setDesign(ToolbarDesign.Solid);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(oTB.$().hasClass("sapMTB-Solid-CTX"), "Toolbar has solid context");
 
 		oTB.setDesign(ToolbarDesign.Info);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(oTB.$().hasClass("sapMTB-Info-CTX"), "Toolbar has info context");
 
 		oTB.setDesign(ToolbarDesign.Auto);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(!oTB.$().hasClass("sapMTB-Transparent-CTX"), "Transparent context has been removed again");
 
 		oTB.setDesign(ToolbarDesign.Info, true);
 		oTB.rerender();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(oTB.$().hasClass("sapMTB-Info-CTX"), "Toolbar has now Info design.");
 		assert.ok(!oTB.$().hasClass("sapMTB-Transparent-CTX"), "Transparent context is not set");
 		assert.strictEqual(ToolbarDesign.Info, oTB.getActiveDesign(), "Active design should be 'Info'");
@@ -146,7 +148,7 @@ sap.ui.define([
 
 		// Act
 		oTB.applyTagAndContextClassFor("footer");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.ok(oTB.$().hasClass("sapMIBar-CTX"), "Toolbar does have the IBar context");
@@ -167,7 +169,7 @@ sap.ui.define([
 
 		//act
 		oTB.setStyle(ToolbarStyle.Clear);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//check
 		assert.ok(!oTB.$().hasClass("sapMTBStandard"), "toolbar has correct style class");
@@ -204,7 +206,7 @@ sap.ui.define([
 			content : oBtn
 		}).applyTagAndContextClassFor("header");
 		oTB.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.equal(oTB.$().attr("role"), "toolbar", "Toolbar has attribute role='toolbar'");
@@ -212,7 +214,7 @@ sap.ui.define([
 
 		//Act
 		oTB.setEnabled(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.equal(oTB.$().attr("aria-disabled"), "true", "Toolbar has attribute aria-disabled='true'");
@@ -233,13 +235,13 @@ sap.ui.define([
 			ariaLabelledBy: oLabel.getId()
 		});
 		oTB.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.equal(oTB.$().attr("aria-labelledby"), oLabel.getId(), "Toolbar has attribute aria-labelledby external label");
 
 		oTB.applyTagAndContextClassFor("header");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Cleanup
 		oLabel.destroy();
@@ -256,7 +258,7 @@ sap.ui.define([
 			ariaLabelledBy: oLabel.getId()
 		}).applyTagAndContextClassFor("header");
 		oTB.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.equal(oTB.$().attr("aria-labelledby"), oLabel.getId(), "Toolbar has attribute aria-labelledby for internal and external labels");
@@ -333,7 +335,7 @@ sap.ui.define([
 			var sShrinkClass = "shrink";
 			var oControl = new mobileLibrary[sControlName](oConfig || {});
 			oControl.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			var bShrink = Toolbar.checkShrinkable(oControl, sShrinkClass);
 			var sPrefix = (bExpected) ? "should shrink" : "should not shrink";
@@ -482,7 +484,7 @@ sap.ui.define([
 
 		// change label
 		oTB.getContent()[0].setText("this is a long label");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// compare width the inital endpoint
 		var iLastEndPoint = oTB._getEndPoint();
@@ -502,13 +504,13 @@ sap.ui.define([
 			}
 		});
 
-		sap.ui.test.qunit.triggerEvent("tap", oLabel.getDomRef());
+		QUtils.triggerEvent("tap", oLabel.getDomRef());
 		assert.strictEqual(fnPressSpy.callCount, 1, "Tap event from Label is triggered the press event of the active Toolbar");
 
-		sap.ui.test.qunit.triggerKeydown(oTB.getDomRef(), "SPACE");
+		QUtils.triggerKeydown(oTB.getDomRef(), "SPACE");
 		assert.strictEqual(fnPressSpy.callCount, 2, "Space hotkey of the active Toolbar triggered press event.");
 
-		sap.ui.test.qunit.triggerKeydown(oTB.getDomRef(), "ENTER");
+		QUtils.triggerKeydown(oTB.getDomRef(), "ENTER");
 		assert.strictEqual(fnPressSpy.callCount, 3, "Enter hotkey of the active Toolbar triggered press event");
 
 		//Cleanup
@@ -527,13 +529,13 @@ sap.ui.define([
 			}
 		});
 
-		sap.ui.test.qunit.triggerEvent("tap", oLabel.getDomRef());
+		QUtils.triggerEvent("tap", oLabel.getDomRef());
 		assert.strictEqual(fnPressSpy.callCount, 0, "Tap event from Label is not triggered the press event of the inactive Toolbar");
 
-		sap.ui.test.qunit.triggerKeydown(oTB.getDomRef(), "SPACE");
+		QUtils.triggerKeydown(oTB.getDomRef(), "SPACE");
 		assert.strictEqual(fnPressSpy.callCount, 0, "Space hotkey is not triggered the press event of the inactive Toolbar");
 
-		sap.ui.test.qunit.triggerKeydown(oTB.getDomRef(), "ENTER");
+		QUtils.triggerKeydown(oTB.getDomRef(), "ENTER");
 		assert.strictEqual(fnPressSpy.callCount, 0, "Enter hotkey is not triggered the press event of the inactive Toolbar");
 
 		//Cleanup
@@ -552,13 +554,13 @@ sap.ui.define([
 			}
 		});
 
-		sap.ui.test.qunit.triggerEvent("tap", oButton.getDomRef());
+		QUtils.triggerEvent("tap", oButton.getDomRef());
 		assert.strictEqual(fnPressSpy.callCount, 0, "Tap event is handled by Button so press event did not fired from the Toolbar");
 
-		sap.ui.test.qunit.triggerKeydown(oButton.getDomRef(), "ENTER");
+		QUtils.triggerKeydown(oButton.getDomRef(), "ENTER");
 		assert.strictEqual(fnPressSpy.callCount, 0, "Space hotkey is handled by Button so press event did not fired from the Toolbar");
 
-		sap.ui.test.qunit.triggerKeydown(oButton.getDomRef(), "SPACE");
+		QUtils.triggerKeydown(oButton.getDomRef(), "SPACE");
 		assert.strictEqual(fnPressSpy.callCount, 0, "Enter hotkey is handled by Button so press event did not fired from the Toolbar");
 
 		//Cleanup
@@ -633,7 +635,7 @@ sap.ui.define([
 
 		// act
 		oBtn.rerender();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oBtn.getDomRef().style.minWidth, sMinWidth, "After rerender minWidth is still available on the DOM");
@@ -726,7 +728,7 @@ sap.ui.define([
 
 		// Act + assert
 		oTB.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		function assertButton (oButton, oWidth) {

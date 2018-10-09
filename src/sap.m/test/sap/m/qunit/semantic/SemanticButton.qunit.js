@@ -16,8 +16,9 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/semantic/DetailPage",
 	"sap/m/semantic/MasterPage",
-	"jquery.sap.keycodes",
-	"jquery.sap.global"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -34,7 +35,9 @@ sap.ui.define([
 	Label,
 	DetailPage,
 	MasterPage,
-	jQuery
+	KeyCodes,
+	jQuery,
+	Core
 ) {
 	createAndAppendDiv("qunit-fixture-visible");
 
@@ -42,7 +45,7 @@ sap.ui.define([
 
 	//
 
-	var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var oBundle = Core.getLibraryResourceBundle("sap.m");
 
 	function capitalize(sName) {
 		return sName.substring(0, 1).toUpperCase() + sName.substring(1);
@@ -256,7 +259,7 @@ sap.ui.define([
 		assert.strictEqual(oEditButton.getId(), "editBtn", "control has the expected id");
 
 		// Act
-		var oRetrievedBtn = sap.ui.getCore().byId("editBtn");
+		var oRetrievedBtn = Core.byId("editBtn");
 
 		// Assert
 		assert.notEqual(oRetrievedBtn, undefined, "the button is retrieved by id");
@@ -394,7 +397,7 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		oEditButton.firePress();
@@ -420,7 +423,7 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		var $ref = oEditButton.getDomRef();
@@ -444,7 +447,7 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oMultiSelectAction.getPressed(), false, "multiselect off by default");
@@ -464,7 +467,7 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Act
 		jQuery(oMultiSelectAction.getDomRef()).trigger('tap');
@@ -489,7 +492,7 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Act
 		jQuery(oMultiSelectAction.getDomRef()).trigger('tap');
@@ -514,10 +517,10 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Act
-		qutils.triggerKeydown(oMultiSelectAction.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oMultiSelectAction.getDomRef(), KeyCodes.SPACE);
 
 		// Assert
 		assert.strictEqual(oMultiSelectAction.getPressed(), true, "multiselect on after press");
@@ -539,11 +542,11 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Act
-		qutils.triggerKeydown(oMultiSelectAction.getDomRef(), jQuery.sap.KeyCodes.SPACE);
-		qutils.triggerKeydown(oMultiSelectAction.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oMultiSelectAction.getDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeydown(oMultiSelectAction.getDomRef(), KeyCodes.SPACE);
 
 		// Assert
 		assert.strictEqual(oMultiSelectAction.getPressed(), false, "multiselect on after unpress");
@@ -565,7 +568,7 @@ sap.ui.define([
 		oSemanticPage.setModel(oStatusModel, "status");
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oMultiSelectAction.getEnabled(), false, "baound value initialized correctly");
@@ -593,7 +596,7 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(callback.calledOnce, true, "delegate is called");
 
@@ -611,7 +614,7 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(callback.getCall(0).args[0].srcControl.getId(), "multiAction");
 		assert.strictEqual(oResult.getId(), "multiAction");
@@ -630,7 +633,7 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(oResult.getId(), "multiAction");
 
@@ -649,14 +652,14 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(callback.calledOnce, true, "delegate is called");
 
 		var oResult = oMultiSelectAction.removeEventDelegate(oDelegate);
 
 		oSemanticPage.rerender();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(callback.calledOnce, true, "delegate is called only once");
 
@@ -675,7 +678,7 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(callback.calledOnce, true, "delegate is called");
 

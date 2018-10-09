@@ -4,9 +4,10 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ProgressIndicator",
-	"jquery.sap.global",
-	"sap/ui/core/library"
-], function(QUnitUtils, createAndAppendDiv, ProgressIndicator, jQuery, coreLibrary) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/library",
+	"sap/ui/core/Core"
+], function(QUnitUtils, createAndAppendDiv, ProgressIndicator, jQuery, coreLibrary, Core) {
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
@@ -48,7 +49,7 @@ sap.ui.define([
 	});
 
 	oProgInd4.placeAt("content");
-	sap.ui.getCore().applyChanges();
+	Core.applyChanges();
 
 	//deferment
 
@@ -58,9 +59,9 @@ sap.ui.define([
 
 	//basic rendering
 	QUnit.test("basic rendering", function(assert) {
-		var oDomRefPI = jQuery.sap.domById("pi1");
+		var oDomRefPI = document.getElementById("pi1");
 		assert.equal(oDomRefPI.style.width, "50%", "control width should be the same");
-		var oDomRefPIRemainingBar = jQuery.sap.domById("pi1" + "-remainingBar");
+		var oDomRefPIRemainingBar = document.getElementById("pi1" + "-remainingBar");
 		assert.ok(oDomRefPIRemainingBar, "the remaining bar  is rendered");
 	});
 
@@ -73,7 +74,7 @@ sap.ui.define([
 		});
 
 		oProgressIndicator.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(oProgressIndicator.$().attr("title"), sTooltipText, "Tooltip is in the DOM");
 
@@ -82,16 +83,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("percentValue greater half", function(assert) {
-		assert.equal(jQuery.sap.byId("pi1").hasClass("sapMPIValueGreaterHalf"), false, "css-class sapMPIValueGreaterHalf should not be set");
-		assert.equal(jQuery.sap.byId("pi2").hasClass("sapMPIValueGreaterHalf"), true, "css-class sapMPIValueGreaterHalf should be set");
+		assert.equal(jQuery("#pi1").hasClass("sapMPIValueGreaterHalf"), false, "css-class sapMPIValueGreaterHalf should not be set");
+		assert.equal(jQuery("#pi2").hasClass("sapMPIValueGreaterHalf"), true, "css-class sapMPIValueGreaterHalf should be set");
 	});
 
 	QUnit.test("showValue", function(assert) {
-		assert.equal(jQuery.sap.byId("pi1").hasClass("sapMPIValueGreaterHalf"), false, "css-class sapMPIValueGreaterHalf should not be set");
-		assert.equal(jQuery.sap.byId("pi2").hasClass("sapMPIValueGreaterHalf"), true, "css-class sapMPIValueGreaterHalf should be set");
+		assert.equal(jQuery("#pi1").hasClass("sapMPIValueGreaterHalf"), false, "css-class sapMPIValueGreaterHalf should not be set");
+		assert.equal(jQuery("#pi2").hasClass("sapMPIValueGreaterHalf"), true, "css-class sapMPIValueGreaterHalf should be set");
 
-		var sDomRefPIText2Left = jQuery.sap.domById("pi2-textLeft").firstChild;
-		var sDomRefPIText2Right = jQuery.sap.domById("pi2-textRight").firstChild;
+		var sDomRefPIText2Left = document.getElementById("pi2-textLeft").firstChild;
+		var sDomRefPIText2Right = document.getElementById("pi2-textRight").firstChild;
 		assert.equal(sDomRefPIText2Left, null, "textValue should not be shown");
 		assert.equal(sDomRefPIText2Right, null, "textValue should not be shown");
 	});
@@ -103,7 +104,7 @@ sap.ui.define([
 		});
 
 		oProgIndicator.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oProgIndicator.setPercentValue(0);
 		assert.strictEqual(oProgIndicator.$().hasClass("sapMPIValueMin"), true, "sapMPIValueMin class added");
@@ -157,7 +158,7 @@ sap.ui.define([
 		};
 
 		oProgressIndicator.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		$progressIndicator = oProgressIndicator.$();
 
 		aTestCases.forEach(function (oTestCase){
@@ -182,7 +183,7 @@ sap.ui.define([
 				};
 
 		oProgressIndicator.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		$progressIndicator = oProgressIndicator.$();
 
 		aNotValidTypes.forEach(function (vValue){
@@ -198,7 +199,7 @@ sap.ui.define([
 		});
 
 		oProgIndicator.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(oProgIndicator.$().find(".sapMPITextLeft").text(), "", "no text is rendered");
 		assert.strictEqual(oProgIndicator.$().find(".sapMPITextRight").text(), "", "no text is rendered");
@@ -212,12 +213,12 @@ sap.ui.define([
 		});
 
 		oProgIndicator.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(oProgIndicator.$().hasClass("sapMPIDisplayOnly"), true, "should have class 'sapMPIDisplayOnly'");
 
 		oProgIndicator.setDisplayOnly(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(oProgIndicator.$().hasClass("sapMPIDisplayOnly"), false, "class 'sapMPIDisplayOnly' should be removed");
 
@@ -230,7 +231,7 @@ sap.ui.define([
 		});
 
 		oProgIndicator.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(parseInt(oProgIndicator.$().attr("aria-valuemin"), 10), 0, "aria-valuemin should equal 0");
 		assert.strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow"), 10), 50, "aria-valuenow should equal 50");
@@ -246,7 +247,7 @@ sap.ui.define([
 		});
 
 		oProgIndicator.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow"), 10), 50, "aria-valuenow should equal 50");
 		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50%", "aria-valuetext should be 50%");
@@ -269,7 +270,7 @@ sap.ui.define([
 		});
 
 		oProgIndicator.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50/100", "aria-valuetext should be '50/100'");
 
@@ -286,18 +287,18 @@ sap.ui.define([
 		});
 
 		oProgIndicator.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var stateText = oProgIndicator._getStateText();
 		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
 
 		oProgIndicator.setState(ValueState.Error);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		stateText = oProgIndicator._getStateText();
 		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
 
 		oProgIndicator.setState(ValueState.Warning);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		stateText = oProgIndicator._getStateText();
 		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
 
@@ -305,25 +306,25 @@ sap.ui.define([
 	});
 
 	QUnit.test("explicitly setting textDirection to RTL should override the global setting", function(assert) {
-		var $TestSubject = jQuery.sap.byId("pi3").find("span");
+		var $TestSubject = jQuery("#pi3").find("span");
 		var sDirAttribute = $TestSubject.attr("dir");
 		assert.equal(sDirAttribute, 'rtl', "the attribute 'dir' should have it's value set to rtl");
 	});
 
 	QUnit.test("explicitly setting textDirection to LTR should override the global setting", function(assert) {
-		var $TestSubject = jQuery.sap.byId("pi4").find("span");
+		var $TestSubject = jQuery("#pi4").find("span");
 		var sDirAttribute = $TestSubject.attr("dir");
 		assert.equal(sDirAttribute, 'ltr', "the attribute 'dir' should have it's value set to ltr");
 	});
 
 	QUnit.test("not setting textDirection should not change the global text direction", function(assert) {
-		var $TestSubject = jQuery.sap.byId("pi1").find("span");
+		var $TestSubject = jQuery("#pi1").find("span");
 		var sDirAttribute = $TestSubject.attr("dir");
 		assert.equal(sDirAttribute, undefined, "the attribute 'dir' should not exist");
 	});
 
 	QUnit.test("explicitly setting textDirection to RTL should result in 'dir' attribute added", function(assert) {
-		var $TestSubject = jQuery.sap.byId("pi3").find("span");
+		var $TestSubject = jQuery("#pi3").find("span");
 		var sDirAttribute = $TestSubject.attr("dir");
 		var bDirAttributeExists = sDirAttribute !== null && sDirAttribute !== undefined;
 		assert.equal(bDirAttributeExists, true, "the attribute 'dir' should exist");
@@ -336,15 +337,15 @@ sap.ui.define([
 		var oInfo = oControl.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "progressbar", "AriaRole");
-		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_PROGRESS"), "Type");
-		assert.strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PROGRESS", [50]), "Description");
+		assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_PROGRESS"), "Type");
+		assert.strictEqual(oInfo.description, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PROGRESS", [50]), "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 		oControl.setPercentValue(10);
 		oControl.setEnabled(false);
 		oInfo = oControl.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PROGRESS", [10]), "Description");
+		assert.strictEqual(oInfo.description, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PROGRESS", [10]), "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		oControl.setDisplayValue(sDisplayValue);

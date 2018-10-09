@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/NavContainer",
 	"sap/m/Page",
 	"sap/m/Popover",
@@ -12,7 +12,10 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Input",
 	"sap/m/Text",
-	"sap/m/Dialog"
+	"sap/m/Dialog",
+	"sap/base/Log",
+	"sap/ui/util/Mobile",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -25,7 +28,10 @@ sap.ui.define([
 	Label,
 	Input,
 	Text,
-	Dialog
+	Dialog,
+	Log,
+	Mobile,
+	Core
 ) {
 	createAndAppendDiv("content");
 	var styleElement = document.createElement("style");
@@ -40,7 +46,7 @@ sap.ui.define([
 
 
 
-	jQuery.sap.initMobile();
+	Mobile.init();
 
 	window.expectedNav = {};
 	window.mPage1EventLog = {};
@@ -108,9 +114,9 @@ sap.ui.define([
 		title: "Page 2"
 	}).addEventDelegate(getDelegate(window.mPage2EventLog)), 1);
 
-	var page1 = sap.ui.getCore().byId("page1"),
-		page2 = sap.ui.getCore().byId("page2"),
-		page3 = sap.ui.getCore().byId("page3");
+	var page1 = Core.byId("page1"),
+		page2 = Core.byId("page2"),
+		page3 = Core.byId("page3");
 
 	resetEventLog(window.mPage1EventLog);
 	resetEventLog(window.mPage2EventLog);
@@ -158,9 +164,9 @@ sap.ui.define([
 		assert.equal(window.mPage3EventLog.beforeHide, 0, "Lifecycle event invocation count page3 beforeHide should be correct");
 		assert.equal(window.mPage3EventLog.afterHide, 0, "Lifecycle event invocation count page3 afterHide should be correct");
 
-		assert.ok(jQuery.sap.domById("myNC"), "NavContainer should be rendered");
-		assert.ok(!jQuery.sap.domById("nc2"), "NavContainer 2 should not be rendered");
-		assert.ok(jQuery.sap.domById("page1"), "Initially the first page should be rendered");
+		assert.ok(document.getElementById("myNC"), "NavContainer should be rendered");
+		assert.ok(!document.getElementById("nc2"), "NavContainer 2 should not be rendered");
+		assert.ok(document.getElementById("page1"), "Initially the first page should be rendered");
 		assert.equal(nc.getCurrentPage().getId(), "page1", "getCurrentPage should return Page1");
 		assert.equal(nc._pageStack.length, 1, "the page stack size should be 1");
 
@@ -288,7 +294,7 @@ sap.ui.define([
 				]
 			}).placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oNavContainer.attachNavigate(function (oEvent) {
 			// Assert
@@ -368,8 +374,8 @@ sap.ui.define([
 		assert.equal(window.mPage3EventLog.backData, null, "BackData given to page3 should be correct");
 
 		setTimeout(function() {
-			assert.ok(jQuery.sap.domById("page1"), "Page 1 should still be in DOM");
-			assert.ok(jQuery.sap.domById("page2"), "Page 2 should now be rendered");
+			assert.ok(document.getElementById("page1"), "Page 1 should still be in DOM");
+			assert.ok(document.getElementById("page2"), "Page 2 should now be rendered");
 			assert.equal(nc.getCurrentPage().getId(), "page2", "getCurrentPage should return Page 2");
 			assert.equal(nc._pageStack.length, 2, "the page stack size should be 2");
 
@@ -431,8 +437,8 @@ sap.ui.define([
 		assert.ok(!!window.mPage3EventLog.backData, "BackData given to page3 should be correct");
 
 		setTimeout(function() {
-			assert.ok(jQuery.sap.domById("page2"), "Page 2 should still be in DOM");
-			assert.ok(jQuery.sap.domById("page3"), "Page 3 should now be rendered");
+			assert.ok(document.getElementById("page2"), "Page 2 should still be in DOM");
+			assert.ok(document.getElementById("page3"), "Page 3 should now be rendered");
 			assert.equal(nc.getCurrentPage().getId(), "page3", "getCurrentPage should return Page 3");
 			assert.equal(nc._pageStack.length, 3, "the page stack size should be 3");
 
@@ -496,8 +502,8 @@ sap.ui.define([
 		assert.equal(window.mPage3EventLog.backData, null, "BackData given to page3 should be correct");
 
 		setTimeout(function() {
-			assert.ok(jQuery.sap.domById("page3"), "Page 3 should still be in DOM");
-			assert.ok(jQuery.sap.domById("page2"), "Page 2 should now be visible");
+			assert.ok(document.getElementById("page3"), "Page 3 should still be in DOM");
+			assert.ok(document.getElementById("page2"), "Page 2 should now be visible");
 			assert.equal(nc.getCurrentPage().getId(), "page2", "getCurrentPage should return Page 2");
 			assert.equal(nc._pageStack.length, 2, "getStackLevel should return 2");
 
@@ -679,17 +685,17 @@ sap.ui.define([
 	QUnit.test("Dimensions", function(assert) {
 		nc.setWidth("100px");
 		nc.setHeight("100px");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
-		var ncDom = jQuery.sap.domById("myNC");
+		var ncDom = document.getElementById("myNC");
 		assert.equal(ncDom.offsetWidth, "100", "width should be 100px");
 		assert.equal(ncDom.offsetHeight, "100", "height should be 100px");
 
 		nc.setWidth("100%");
 		nc.setHeight("100%");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
-		ncDom = jQuery.sap.domById("myNC");
+		ncDom = document.getElementById("myNC");
 		var ww = document.documentElement.clientWidth || window.innerWidth; // depending on the browser
 		assert.equal(ncDom.offsetWidth, ww, "width should be the complete window width");
 		assert.ok((ncDom.offsetHeight === window.innerHeight || ncDom.offsetHeight === document.documentElement.clientHeight),
@@ -753,7 +759,7 @@ sap.ui.define([
 
 		nc.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		spy = mySinon.spy(NavContainer.transitions["slide"], "back");
 
@@ -772,22 +778,22 @@ sap.ui.define([
 	var realPageRender;
 	QUnit.test("Page rerendering", function(assert) {
 		realPageRender = PageRenderer.render;
-		sap.m.PageRenderer.render = function() {
+		PageRenderer.render = function() {
 			pageRenderCounter++;
 			realPageRender.apply(PageRenderer, arguments);
 		};
 
 		assert.equal(pageRenderCounter, 0, "no rendering should have happened yet");
 
-		sap.ui.getCore().getControl("page2").rerender();
+		Core.getControl("page2").rerender();
 		assert.equal(pageRenderCounter, 1, "one page rendering should have happened");
 
-		sap.ui.getCore().getControl("page2").addContent(new Button({text:"Button p2"}));
-		sap.ui.getCore().applyChanges();
+		Core.getControl("page2").addContent(new Button({text:"Button p2"}));
+		Core.applyChanges();
 		assert.equal(pageRenderCounter, 2, "two page renderings should have happened");
 
-		sap.ui.getCore().getControl("page3").addContent(new Button({text:"Button p3"})); // invisible page - should cause NO re-rendering!
-		sap.ui.getCore().applyChanges();
+		Core.getControl("page3").addContent(new Button({text:"Button p3"})); // invisible page - should cause NO re-rendering!
+		Core.applyChanges();
 		assert.equal(pageRenderCounter, 2, "still, only two page renderings should have happened");
 
 		assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
@@ -814,7 +820,7 @@ sap.ui.define([
 			setTimeout(function() {
 				assert.equal(pageRenderCounter, 3, "still, only three page renderings should have happened");
 
-				sap.m.PageRenderer.render = realPageRender; // restore original renderer
+				PageRenderer.render = realPageRender; // restore original renderer
 				assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
 				assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 				done();
@@ -934,12 +940,12 @@ sap.ui.define([
 					if (calls.length === 6) {
 						fnResolve();
 					}
-					jQuery.sap.log.info("afterNavigate with toId: " + evt.getParameter("toId"));
+					Log.info("afterNavigate with toId: " + evt.getParameter("toId"));
 				};
 
 			// Render
 			oNavContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			//Act
 			oNavContainer.attachAfterNavigate(afterNavigate);
@@ -1020,7 +1026,7 @@ sap.ui.define([
 					var sPageId = evt.getParameter("toId");
 
 					if (sPageId === "firstPage") {
-						var oButtonPage1FocusDom = sap.ui.getCore().byId("btn1_1").getFocusDomRef();
+						var oButtonPage1FocusDom = Core.byId("btn1_1").getFocusDomRef();
 						assert.equal(oButtonPage1FocusDom, document.activeElement, "button <To Page 2> on page 1 should have the focus");
 
 						//cleanup
@@ -1028,17 +1034,17 @@ sap.ui.define([
 						done();
 					}
 					if (sPageId === "secondPage") {
-						var oButtonPage2FocusDom = sap.ui.getCore().byId("secondPage-navButton").getFocusDomRef();
+						var oButtonPage2FocusDom = Core.byId("secondPage-navButton").getFocusDomRef();
 						assert.equal(oButtonPage2FocusDom, document.activeElement, "nav button in the  header on page 2 should have the focus");
 					}
 			};
 
 		// Render
 		oNavContainer.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Initial focus check on first page
-		var oButtonPage1FocusDom = sap.ui.getCore().byId("btn1_1").getFocusDomRef();
+		var oButtonPage1FocusDom = Core.byId("btn1_1").getFocusDomRef();
 		assert.equal(oButtonPage1FocusDom, document.activeElement, "button <To Page 2>  on page 1 should have the focus");
 
 		//Act
@@ -1054,7 +1060,7 @@ sap.ui.define([
 		var calls = [],
 			afterNavigate = function(evt) {
 				calls.push(evt.getParameter("toId"));
-				jQuery.sap.log.info("afterNavigate with toId: " + evt.getParameter("toId"));
+				Log.info("afterNavigate with toId: " + evt.getParameter("toId"));
 			};
 
 		//Act
@@ -1111,12 +1117,12 @@ sap.ui.define([
 
 	QUnit.test("Navigation interrupted by rerendering of child controls - SLIDE", function(assert) {
 		var done = assert.async();
-		jQuery.sap.log.warning("## START - Navigation interrupted by rerendering of child controls");
+		Log.warning("## START - Navigation interrupted by rerendering of child controls");
 		//Arrange
 		var calls = [],
 			afterNavigate = function(evt) {
 				calls.push(evt.getParameter("toId"));
-				jQuery.sap.log.info("afterNavigate with toId: " + evt.getParameter("toId"));
+				Log.info("afterNavigate with toId: " + evt.getParameter("toId"));
 			};
 
 		//Act
@@ -1179,7 +1185,7 @@ sap.ui.define([
 		var calls = [],
 			afterNavigate = function(evt) {
 				calls.push(evt.getParameter("toId"));
-				jQuery.sap.log.info("afterNavigate with toId: " + evt.getParameter("toId"));
+				Log.info("afterNavigate with toId: " + evt.getParameter("toId"));
 			};
 
 		//Act
@@ -1236,12 +1242,12 @@ sap.ui.define([
 
 	QUnit.test("Navigation interrupted by rerendering of child controls - FADE", function(assert) {
 		var done = assert.async();
-		jQuery.sap.log.warning("## START - Navigation interrupted by rerendering of child controls");
+		Log.warning("## START - Navigation interrupted by rerendering of child controls");
 		//Arrange
 		var calls = [],
 			afterNavigate = function(evt) {
 				calls.push(evt.getParameter("toId"));
-				jQuery.sap.log.info("afterNavigate with toId: " + evt.getParameter("toId"));
+				Log.info("afterNavigate with toId: " + evt.getParameter("toId"));
 			};
 
 		//Act
@@ -1304,7 +1310,7 @@ sap.ui.define([
 		var calls = [],
 			afterNavigate = function(evt) {
 				calls.push(evt.getParameter("toId"));
-				jQuery.sap.log.info("afterNavigate with toId: " + evt.getParameter("toId"));
+				Log.info("afterNavigate with toId: " + evt.getParameter("toId"));
 			};
 
 		//Act
@@ -1361,12 +1367,12 @@ sap.ui.define([
 
 	QUnit.test("Navigation interrupted by rerendering of child controls - FLIP", function(assert) {
 		var done = assert.async();
-		jQuery.sap.log.warning("## START - Navigation interrupted by rerendering of child controls");
+		Log.warning("## START - Navigation interrupted by rerendering of child controls");
 		//Arrange
 		var calls = [],
 			afterNavigate = function(evt) {
 				calls.push(evt.getParameter("toId"));
-				jQuery.sap.log.info("afterNavigate with toId: " + evt.getParameter("toId"));
+				Log.info("afterNavigate with toId: " + evt.getParameter("toId"));
 			};
 
 		//Act
@@ -1429,7 +1435,7 @@ sap.ui.define([
 		var calls = [],
 			afterNavigate = function(evt) {
 				calls.push(evt.getParameter("toId"));
-				jQuery.sap.log.info("afterNavigate with toId: " +evt.getParameter("toId"));
+				Log.info("afterNavigate with toId: " +evt.getParameter("toId"));
 			};
 
 		//Act
@@ -1486,12 +1492,12 @@ sap.ui.define([
 
 	QUnit.test("Navigation interrupted by rerendering of child controls - DOOR", function(assert) {
 		var done = assert.async();
-		jQuery.sap.log.warning("## START - Navigation interrupted by rerendering of child controls");
+		Log.warning("## START - Navigation interrupted by rerendering of child controls");
 		//Arrange
 		var calls = [],
 			afterNavigate = function(evt) {
 				calls.push(evt.getParameter("toId"));
-				jQuery.sap.log.info("afterNavigate with toId: " +evt.getParameter("toId"));
+				Log.info("afterNavigate with toId: " +evt.getParameter("toId"));
 			};
 
 		//Act
@@ -1554,7 +1560,7 @@ sap.ui.define([
 		var calls = [],
 			afterNavigate = function(evt) {
 				calls.push(evt.getParameter("toId"));
-				jQuery.sap.log.info("afterNavigate with toId: " + evt.getParameter("toId"));
+				Log.info("afterNavigate with toId: " + evt.getParameter("toId"));
 			};
 
 		//Act
@@ -1605,12 +1611,12 @@ sap.ui.define([
 			]
 		});
 		localNc.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		//Arrange
 		var calls = [],
 			afterNavigate = function(evt) {
 				calls.push(evt.getParameter("toId"));
-				jQuery.sap.log.info("afterNavigate with toId: " + evt.getParameter("toId"));
+				Log.info("afterNavigate with toId: " + evt.getParameter("toId"));
 			};
 
 		//Act
@@ -1650,7 +1656,7 @@ sap.ui.define([
 				]
 			});
 		oLocalNavContainer.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oLocalNavContainer.to(oPage2.getId(), "show");
 		oLocalNavContainer.to(oPage3.getId(), "show");
@@ -1658,7 +1664,7 @@ sap.ui.define([
 		//Act
 		oLocalNavContainer.removePage(oPage3);
 		assert.ok(!oPage3.getDomRef(), "Did remove the dom of page 3");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(oLocalNavContainer.getCurrentPage().getId(), oPage2.getId(), "Page2 is the current page, since page3 got removed");
 		assert.ok(oPage2.$().is(":visible"), "Page 2 is visible");
@@ -1706,7 +1712,7 @@ sap.ui.define([
 
 
 			// Render
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 		});
 	}
@@ -1735,7 +1741,7 @@ sap.ui.define([
 		oNavContainer.to(oInitialPage.getId(), "show", oNavigationData);
 		oNavContainer.to(oSecondPage.getId(), "show");
 		oNavContainer.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oInitialPage.addEventDelegate({
 			onBeforeShow: function(oEvent) {
@@ -1767,7 +1773,7 @@ sap.ui.define([
 			]
 		});
 		localNc.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Arrange
 		var afterNavigate = function(evt) {
@@ -1893,7 +1899,7 @@ sap.ui.define([
 				]
 			}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		oInsideButton.$().focus();

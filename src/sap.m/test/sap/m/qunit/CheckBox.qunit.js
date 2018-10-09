@@ -8,17 +8,18 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/Label",
 	"sap/ui/Device",
-	"jquery.sap.keycodes",
-	"jquery.sap.global"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
 ], function(
-	qutils,
+	QUtils,
 	createAndAppendDiv,
 	CheckBox,
 	ValueState,
 	coreLibrary,
 	Label,
 	Device,
-	jQuery
+	KeyCodes,
+	Core
 ) {
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
@@ -53,7 +54,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oCheckBox.getEnabled(), bEnabled, "Property 'enabled': Default value should be '" + bEnabled + "'");
@@ -82,7 +83,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.ok(oCheckBox.getDomRef(), "visible=true: CheckBox should have been rendered");
@@ -103,7 +104,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.ok(!oCheckBox.getDomRef(), "visible=false: CheckBox should not have been rendered");
@@ -125,7 +126,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.ok(!oCheckBox.$("CbBg").hasClass("sapMCbBgDis"), "enabled=" + bEnabled + ": CheckBox should not have class sapMCbBgDis");
@@ -150,7 +151,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.ok(!oCheckBox.$().hasClass("sapMPointer"), "enabled=" + bEnabled + ": CheckBox should not have class sapMPointer");
@@ -174,7 +175,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oCheckBox.getTabIndex(), 0 , "'getTabindex' should return 0");
@@ -197,7 +198,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oCheckBox.getTabIndex(), -1 , "'getTabindex' should return -1");
@@ -220,7 +221,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.equal(oCheckBox.$().hasClass("sapMCbDisplayOnly"), false, ": The CheckBox should not have class sapMCbDisplayOnly");
@@ -242,7 +243,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.ok(oCheckBox.$("CbBg").hasClass("sapMCbMarkChecked"), "selected=true: CheckBox should have class sapMCbMarkChecked");
@@ -265,7 +266,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.ok(!oCheckBox.$("CbBg").hasClass("sapMCbMarkChecked"), "selected=false: CheckBox should not have class sapMCbMarkChecked");
@@ -287,7 +288,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//act
 		oCheckBox.setSelected(null);
@@ -310,7 +311,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.ok(oCheckBox.$("CbBg").hasClass("sapMCbMarkPartiallyChecked"), "Should have sapMCbMarkPartiallyChecked class");
@@ -336,7 +337,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.ok(oCheckBox._getLabel().getWrapping(), "wrapping=true: CheckBox's label wrapping should be set");
@@ -344,7 +345,7 @@ sap.ui.define([
 
 		//act
 		oCheckBox.setWrapping(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.ok(!oCheckBox._getLabel().getWrapping(), "wrapping=false: CheckBox's label wrapping should not be set");
@@ -371,7 +372,7 @@ sap.ui.define([
 		// arrange
 		oCheckBox.placeAt("content");
 		oCheckBox.setWidth("50px");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oCheckBox.$().outerWidth(), CHECKBOX_WIDTH, "CheckBox main div should have width of '50px'");
@@ -379,7 +380,7 @@ sap.ui.define([
 
 		// act
 		oCheckBox.setUseEntireWidth(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oCheckBox.$().prop("style")["width"], "", "CheckBox main div should not have width set");
@@ -399,7 +400,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.ok(oCheckBox.$().hasClass("sapMCbErr"), "The CheckBox has value state error css class.");
@@ -419,7 +420,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.ok(oCheckBox.$().hasClass("sapMCbWarn"), "The CheckBox has value state warning css class.");
@@ -442,7 +443,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oCheckBox.$("CB").attr("name"), sName, "Property 'name=" + sName + "': CheckBox input element should have attribute 'name=" + sName + "'");
@@ -521,7 +522,7 @@ sap.ui.define([
 		// arrange
 		oCheckBox.placeAt("content");
 		oCheckBox.setTabIndex(iTabIndex);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oCheckBox.$().attr("tabindex"), iTabIndex.toString() , "Property 'tabIndex=" + iTabIndex + "': CheckBox should have attribute 'tabindex=" + iTabIndex + "'");
@@ -562,7 +563,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oSpy.lastCall.args[0], value, "Property '" + property + "=" + value + "'testSetLabelProperty: Corresponding setter method of label control should have been called accordingly");
@@ -578,11 +579,11 @@ sap.ui.define([
 
 		// System under Test
 		oCheckBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		oCheckBox.setText("foo");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.ok(oCheckBox.$("label").length);
@@ -697,7 +698,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.ok(oCheckBox.$().hasClass("sapMCb"), "CheckBox should have class sapMCb");
@@ -719,7 +720,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		if (bDesktop){
@@ -768,23 +769,23 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.equal(oCheckBox.getSelected(), false, "CheckBox should not be selected");
 		assert.strictEqual(oCheckBox.$().attr("aria-checked"), "false", "Property 'aria-checked': Default value should be 'false'");
 
-		qutils.triggerEvent("tap", oCheckBox.getId());
+		QUtils.triggerEvent("tap", oCheckBox.getId());
 		assert.ok(oSpy.calledOnce, "Event 'select' should have been fired");
 		assert.equal(oCheckBox.getSelected(), true, "CheckBox should be selected");
 		assert.strictEqual(oCheckBox.$().attr("aria-checked"), "true", "Property 'aria-checked': Default value should be 'true'");
 
-		qutils.triggerEvent("tap", oCheckBox.getId());
+		QUtils.triggerEvent("tap", oCheckBox.getId());
 		assert.ok(oSpy.calledTwice, "Event 'select' should have been fired");
 		assert.equal(oCheckBox.getSelected(), false, "CheckBox should not be selected");
 
 		oCheckBox.setEditable(false);
-		qutils.triggerEvent("tap", oCheckBox.getId());
+		QUtils.triggerEvent("tap", oCheckBox.getId());
 		assert.ok(oSpy.calledTwice, "Event 'select' should have been fired");
 		assert.equal(oCheckBox.getSelected(), false, "CheckBox should not be selected");
 
@@ -804,8 +805,8 @@ sap.ui.define([
 
 			// arrange
 			oCheckBox.placeAt("content");
-			sap.ui.getCore().applyChanges();
-			qutils.triggerEvent("tap", oCheckBox.getId());
+			Core.applyChanges();
+			QUtils.triggerEvent("tap", oCheckBox.getId());
 
 			// assertions
 			assert.equal(oCheckBox.getSelected(), oAssertion.isSelected, "Selected should be: " + oAssertion.isSelected);
@@ -855,11 +856,11 @@ sap.ui.define([
 
 			// System under Test
 			oCheckBox.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			oCheckBox.$().focus(); // set focus on checkbox
 
-			sap.ui.test.qunit.triggerKeydown(oCheckBox.$(), jQuery.sap.KeyCodes.SPACE); // trigger Space on checkbox
+			QUtils.triggerKeydown(oCheckBox.$(), KeyCodes.SPACE); // trigger Space on checkbox
 			assert.strictEqual(oSpy.callCount, 1, "SPACE is pressed, select event was fired");
 			assert.equal(oCheckBox.getSelected(), oOptions.expectedSelection, oOptions.expectedMessage);
 			assert.strictEqual(oCheckBox.$().attr("aria-checked"), "" + oOptions.expectedSelection, oOptions.expectedMessageAria);
@@ -896,11 +897,11 @@ sap.ui.define([
 
 			// System under Test
 			oCheckBox.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			oCheckBox.$().focus(); // set focus on checkbox
 
-			sap.ui.test.qunit.triggerKeydown(oCheckBox.$(), jQuery.sap.KeyCodes.ENTER); // trigger Enter on checkbox
+			QUtils.triggerKeydown(oCheckBox.$(), KeyCodes.ENTER); // trigger Enter on checkbox
 			assert.strictEqual(oSpy.callCount, 1, "Enter is pressed, select event was fired");
 			assert.equal(oCheckBox.getSelected(), oOptions.expectedSelection, oOptions.expectedMessage);
 			assert.strictEqual(oCheckBox.$().attr("aria-checked"), "" + oOptions.expectedSelection, oOptions.expectedMessageAria);
@@ -1008,7 +1009,7 @@ sap.ui.define([
 		var oInfo = oControl.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "checkbox", "AriaRole");
-		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_CHECKBOX"), "Type");
+		assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_CHECKBOX"), "Type");
 		assert.strictEqual(oInfo.description, "Text", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
@@ -1017,7 +1018,7 @@ sap.ui.define([
 		oControl.setEnabled(false);
 		oControl.setEditable(false);
 		oInfo = oControl.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Text " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_CHECKED"), "Description");
+		assert.strictEqual(oInfo.description, "Text " + Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_CHECKED"), "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
@@ -1033,7 +1034,7 @@ sap.ui.define([
 
 			// arrange
 			oCheckBox.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assertions
 			assert.strictEqual(oCheckBox.$().attr("aria-checked"), sAssertion);

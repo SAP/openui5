@@ -5,9 +5,10 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/App",
 	"sap/m/Page",
-	"jquery.sap.global",
-	"sap/ui/Device"
-], function(QUnitUtils, createAndAppendDiv, App, Page, jQuery, Device) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/Device",
+	"sap/ui/core/Core"
+], function(QUnitUtils, createAndAppendDiv, App, Page, jQuery, Device, Core) {
 	createAndAppendDiv("content");
 
 
@@ -39,8 +40,8 @@ sap.ui.define([
 
 
 	QUnit.test("App rendered", function(assert) {
-		assert.ok(jQuery.sap.domById("myFirstApp"), "App should be rendered");
-		assert.ok(jQuery.sap.domById("page1"), "Initially the first page should be rendered");
+		assert.ok(document.getElementById("myFirstApp"), "App should be rendered");
+		assert.ok(document.getElementById("page1"), "Initially the first page should be rendered");
 	});
 
 	QUnit.test("Home Icon Tag", function(assert) {
@@ -69,7 +70,7 @@ sap.ui.define([
 	}
 
 	QUnit.test("Dimensions", function(assert) {
-		var appDom = jQuery.sap.domById("myFirstApp");
+		var appDom = document.getElementById("myFirstApp");
 		var ww = document.body.getBoundingClientRect().width;
 		var wh = document.documentElement.getBoundingClientRect().height;
 		assert.equal(appDom.getBoundingClientRect().width, ww, "width should be the complete window width");
@@ -78,11 +79,11 @@ sap.ui.define([
 
 	QUnit.test("destroy", function(assert) {
 		app.destroy();
-		assert.equal(jQuery.sap.domById("page1"), undefined, "Page 1 should not exist anymore in the DOM");
-		assert.ok(sap.ui.getCore().byId("page1") === undefined, "Page 1 should not exist anymore as control");
-		assert.equal(jQuery.sap.domById("page2"), undefined, "Page 2 should not exist anymore in the DOM");
-		assert.ok(sap.ui.getCore().byId("page2") === undefined, "Page 2 should not exist anymore as control");
-		assert.equal(jQuery.sap.domById("page3"), undefined, "Page 3 should not exist anymore in the DOM");
-		assert.ok(sap.ui.getCore().byId("page3") === undefined, "Page 3 should not exist anymore as control");
+		assert.equal(document.getElementById("page1"), undefined, "Page 1 should not exist anymore in the DOM");
+		assert.ok(Core.byId("page1") === undefined, "Page 1 should not exist anymore as control");
+		assert.equal(document.getElementById("page2"), undefined, "Page 2 should not exist anymore in the DOM");
+		assert.ok(Core.byId("page2") === undefined, "Page 2 should not exist anymore as control");
+		assert.equal(document.getElementById("page3"), undefined, "Page 3 should not exist anymore in the DOM");
+		assert.ok(Core.byId("page3") === undefined, "Page 3 should not exist anymore as control");
 	});
 });

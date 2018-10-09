@@ -2,11 +2,12 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/m/Image",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/library",
 	"sap/m/LightBox",
-	"sap/m/Text"
-], function(Image, jQuery, mobileLibrary, LightBox, Text) {
+	"sap/m/Text",
+	"sap/ui/core/Core"
+], function(Image, jQuery, mobileLibrary, LightBox, Text, Core) {
 	// shortcut for sap.m.ImageMode
 	var ImageMode = mobileLibrary.ImageMode;
 
@@ -21,8 +22,7 @@ sap.ui.define([
 		sTooltip = "tooltip",
 		sAlt = "alternative text";
 
-	var sControlId = "ImId",
-	oCore = sap.ui.getCore();
+	var sControlId = "ImId";
 
 	// Creates a Image with generic properties
 	// Config object can be passed as argument. If some property already exist it will be overridden
@@ -46,7 +46,7 @@ sap.ui.define([
 
 		// System under test
 		oImage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		var $oImage = oImage.$();
@@ -65,12 +65,12 @@ sap.ui.define([
 
 		// System under test
 		oImage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		var $oImage = oImage.$();
 		assert.ok(!$oImage.hasClass("sapMImg"), "sapMImage class is not found.");
-		assert.ok(!jQuery.sap.domById(sControlId) , "oImage is not rendered");
+		assert.ok(!document.getElementById(sControlId) , "oImage is not rendered");
 
 		// Clean up
 		oImage.destroy();
@@ -88,13 +88,13 @@ sap.ui.define([
 
 		// System under test
 		oImage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// read alt attribute from DOM
-		assert.equal(jQuery.sap.byId(sControlId).attr("alt"), "", "alt text of oImage should be an empty string because the image is decorative");
+		assert.equal(jQuery("#" + sControlId).attr("alt"), "", "alt text of oImage should be an empty string because the image is decorative");
 
 		// read title attribute from DOM
-		assert.equal(jQuery.sap.byId(sControlId).attr("title"), sTooltip, "tooltip text should be rendered");
+		assert.equal(jQuery("#" + sControlId).attr("title"), sTooltip, "tooltip text should be rendered");
 
 		// Clean up
 		oImage.destroy();
@@ -108,10 +108,10 @@ sap.ui.define([
 
 		// System under test
 		oImage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 
-		assert.equal(jQuery.sap.domById(sControlId).getAttribute("alt"), "", "alt attribute of oImage should be an empty string because the image is decorative");
-		assert.equal(jQuery.sap.domById(sControlId).getAttribute("title"), null, "title attribute of oImage should NOT be rendered");
+		assert.equal(document.getElementById(sControlId).getAttribute("alt"), "", "alt attribute of oImage should be an empty string because the image is decorative");
+		assert.equal(document.getElementById(sControlId).getAttribute("title"), null, "title attribute of oImage should NOT be rendered");
 
 		// Clean up
 		oImage.destroy();
@@ -124,7 +124,7 @@ sap.ui.define([
 
 		// System under test
 		oImage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		var $oImage = oImage.$();
@@ -134,7 +134,7 @@ sap.ui.define([
 		assert.ok(!$oImage.attr("title"), "title isn't set when no tooltip is provided");
 
 		oImage.setTooltip(sTooltip);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(oImage.$().attr("title"),sTooltip, "title is updated with tooltip after it's set");
 
 		// Clean up
@@ -154,13 +154,13 @@ sap.ui.define([
 
 		// System under test
 		oImage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// read alt attribute from DOM
-		assert.equal(jQuery.sap.byId(sControlId).attr("alt"), sAlt, "alt text of oImage should be rendered");
+		assert.equal(jQuery("#" + sControlId).attr("alt"), sAlt, "alt text of oImage should be rendered");
 
 		// read title attribute from DOM
-		assert.equal(jQuery.sap.byId(sControlId).attr("title"), sTooltip, "tooltip text should be rendered");
+		assert.equal(jQuery("#" + sControlId).attr("title"), sTooltip, "tooltip text should be rendered");
 
 		// Clean up
 		oImage.destroy();
@@ -174,11 +174,11 @@ sap.ui.define([
 
 		// System under test
 		oImage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// Assert
-		assert.equal(jQuery.sap.domById(sControlId).getAttribute("alt"), null, "alt attribute of oImage should NOT be rendered");
-		assert.equal(jQuery.sap.domById(sControlId).getAttribute("title"), null, "title attribute of oImage should NOT be rendered");
+		assert.equal(document.getElementById(sControlId).getAttribute("alt"), null, "alt attribute of oImage should NOT be rendered");
+		assert.equal(document.getElementById(sControlId).getAttribute("title"), null, "title attribute of oImage should NOT be rendered");
 
 		// Clean up
 		oImage.destroy();
@@ -193,17 +193,17 @@ sap.ui.define([
 
 		// System under test
 		oImage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// Assert
-		assert.equal(jQuery.sap.byId(sControlId).attr("alt"), sTooltip, "alt text of oImage should have the tooltip when alt is not set, but tooltip is");
+		assert.equal(jQuery("#" + sControlId).attr("alt"), sTooltip, "alt text of oImage should have the tooltip when alt is not set, but tooltip is");
 
 		oImage.setAlt(sAlt);
 		oImage.setTooltip("");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
-		assert.equal(jQuery.sap.byId(sControlId).attr("alt"), sAlt, "alt text of oImage should be rendered");
-		assert.equal(jQuery.sap.domById(sControlId).getAttribute("title"), null, "title attribute of oImage should NOT be rendered");
+		assert.equal(jQuery("#" + sControlId).attr("alt"), sAlt, "alt text of oImage should be rendered");
+		assert.equal(document.getElementById(sControlId).getAttribute("title"), null, "title attribute of oImage should NOT be rendered");
 
 		// Clean up
 		oImage.destroy();
@@ -218,7 +218,7 @@ sap.ui.define([
 
 		// System under test
 		oImage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		var $oImage = oImage.$();
@@ -240,7 +240,7 @@ sap.ui.define([
 
 		// System under test
 		oImage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.equal(oImage.getMode(), ImageMode.Image, "The default mode is set to sap.m.ImageMode.Image");
@@ -258,7 +258,7 @@ sap.ui.define([
 
 		// System under test
 		oImage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		jQuery(oImage._oImage).on("load", function() {
@@ -399,7 +399,7 @@ sap.ui.define([
 		});
 
 		oLabelledImage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		assert.notOk(oLabelledImage.$().attr("aria-describedby"), "Image with only ariaLabelledBy association shouldn't have aria-describedby attribute");
 		assert.strictEqual(oLabelledImage.$().attr("aria-labelledby"), "sampleText anotherText", "aria-labelledby association is set correctly");
@@ -420,7 +420,7 @@ sap.ui.define([
 		});
 
 		oDescribedImage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		assert.notOk(oDescribedImage.$().attr("aria-labelledby"), "Image with only ariaDescribedBy association shouldn't have aria-labelledby attribute");
 		assert.strictEqual(oDescribedImage.$().attr("aria-describedby"), "sampleText anotherText", "aria-describedby association is set correctly");
@@ -438,10 +438,10 @@ sap.ui.define([
 
 		// System under test
 		oImage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// test the initial dimensions
-		var oDomRef = jQuery.sap.domById(sControlId);
+		var oDomRef = document.getElementById(sControlId);
 		assert.equal(oDomRef.offsetWidth, parseInt(oImage.getWidth(), 10), "oImage.offsetWidth should equal " + parseInt(oImage.getWidth(), 10));
 		assert.equal(oDomRef.offsetHeight, parseInt(oImage.getHeight(), 10), "oImage.offsetHeight should equal " + parseInt(oImage.getHeight(), 10));
 
@@ -455,12 +455,12 @@ sap.ui.define([
 
 		// System under test
 		oImage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// test original width
 		oImage.setWidth("");
 		oImage.setHeight("");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		setTimeout(function() {
 			var oDomRef = window.document.getElementById(sControlId);
@@ -479,16 +479,16 @@ sap.ui.define([
 
 		// System under test
 		oImage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// test changed dimensions
 		oImage.setWidth("292px");
 		oImage.setHeight("292px");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		setTimeout(function() {
-			var oDomRef = jQuery.sap.domById(sControlId);
+			var oDomRef = document.getElementById(sControlId);
 			assert.equal(oDomRef.offsetWidth, 292, "oImage.offsetWidth should equal 292");
 			assert.equal(oDomRef.offsetHeight, 292, "oImage.offsetHeight should equal 292");
 
@@ -504,12 +504,12 @@ sap.ui.define([
 
 		// System under test
 		oImage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// test aspect ratio after changed dimensions
 		oImage.setWidth("300px");
 		oImage.setHeight("");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		setTimeout(function() {
 			var oDomRef = window.document.getElementById(sControlId);
@@ -535,12 +535,12 @@ sap.ui.define([
 
 			// System under test
 			oImage.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			Core.applyChanges();
 
 			setTimeout(function() {
-				assert.equal(jQuery.sap.byId(sControlId).attr("src"), sSrc, "oImage is NOT density aware, it loads the default image.");
+				assert.equal(jQuery("#" + sControlId).attr("src"), sSrc, "oImage is NOT density aware, it loads the default image.");
 
-				var oDomRef = jQuery.sap.domById(sControlId);
+				var oDomRef = document.getElementById(sControlId);
 
 				assert.equal(oDomRef.offsetWidth, 150, "density perfect image also has the default size");
 				assert.equal(oDomRef.offsetHeight, 74, "density perfect image also has the default size");
@@ -561,12 +561,12 @@ sap.ui.define([
 
 			// System under test
 			oImage.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			Core.applyChanges();
 
 			setTimeout(function() {
-				assert.equal(jQuery.sap.byId(sControlId).attr("src"), sSrc2, "oImage is density aware, so it loads the density perfect image.");
+				assert.equal(jQuery("#" + sControlId).attr("src"), sSrc2, "oImage is density aware, so it loads the density perfect image.");
 
-				var oDomRef = jQuery.sap.domById(sControlId);
+				var oDomRef = document.getElementById(sControlId);
 
 				assert.equal(oDomRef.offsetWidth, 150, "default image has the default size");
 				assert.equal(oDomRef.offsetHeight, 74, "default image has the default size");
@@ -586,11 +586,11 @@ sap.ui.define([
 
 			// System under test
 			oImage.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			Core.applyChanges();
 
 			setTimeout(function() {
-				var oDomRef = jQuery.sap.domById(sControlId);
-				assert.equal(jQuery.sap.byId(sControlId).attr("src"), sSrc3, "default image should be loaded because the high resolution version isn't available");
+				var oDomRef = document.getElementById(sControlId);
+				assert.equal(jQuery("#" + sControlId).attr("src"), sSrc3, "default image should be loaded because the high resolution version isn't available");
 				assert.equal(oDomRef.naturalWidth === 100, true, "default image loaded successfully");
 
 				// Clean up
@@ -609,7 +609,7 @@ sap.ui.define([
 
 		// System under test
 		oImage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		oImage.$().on("load", function() {
 			assert.ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is taken");
@@ -638,9 +638,9 @@ sap.ui.define([
 
 			// System under test
 			oImage.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			Core.applyChanges();
 
-			var $oImage = jQuery.sap.byId(sControlId);
+			var $oImage = jQuery("#" + sControlId);
 
 			oImage.ontouchstart({
 				targetTouches: [{}],
@@ -686,13 +686,13 @@ sap.ui.define([
 
 		// System under test
 		oImage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 	});
 
 	QUnit.test("Image with Invalid src and src change", function(assert) {
 		var done = assert.async();
 		var oLoadSpy = sinon.spy(function() {
-				var $oImage = jQuery.sap.byId(sControlId);
+				var $oImage = jQuery("#" + sControlId);
 				assert.equal($oImage.css("visibility"), "visible", "Image with valid src should be set back to visible");
 				assert.equal(oErrorSpy.callCount, 1, "error handler isn't called again");
 
@@ -702,7 +702,7 @@ sap.ui.define([
 			oErrorSpy = sinon.spy(function() {
 				assert.equal(oLoadSpy.callCount, 0 ,"load handler shouldn't be called");
 
-				var $oImage = jQuery.sap.byId(sControlId);
+				var $oImage = jQuery("#" + sControlId);
 				assert.equal($oImage.css("visibility"), "visible", "Image with invalid src should be visible to show the alt text");
 
 				oImage.setSrc(sSrcAction);
@@ -720,7 +720,7 @@ sap.ui.define([
 
 		// System under test
 		oImage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 	});
 
 	QUnit.test("Image with invalid src, no alt text and decorative mode - true", 2, function(assert) {
@@ -756,7 +756,7 @@ sap.ui.define([
 
 		// System under test
 		oImage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		var $Image = oImage.$();
 		assert.equal($Image.attr("tabindex"), "0", "tabindex 0 is output");
@@ -800,7 +800,7 @@ sap.ui.define([
 		oImage.setDecorative(false);
 		oInfo = oImage.getAccessibilityInfo();
 		assert.strictEqual(oInfo.role, "img", "AriaRole");
-		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_IMAGE"), "Type");
+		assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_IMAGE"), "Type");
 		assert.strictEqual(oInfo.description, "Alt", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.ok(oInfo.enabled === undefined || oInfo.enabled === null, "Enabled");
@@ -809,7 +809,7 @@ sap.ui.define([
 		oImage.attachPress(function(){});
 		oInfo = oImage.getAccessibilityInfo();
 		assert.strictEqual(oInfo.role, "button", "AriaRole");
-		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+		assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
 		assert.strictEqual(oInfo.description, "Tooltip", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		oImage.destroy();
@@ -824,7 +824,7 @@ sap.ui.define([
 		// Arrange
 		oImage.setDetailBox(oLightBox);
 		oImage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.ok(oImage._getDomImg().attr("src"), sSrc, "Image src attribute is properly set");
@@ -857,7 +857,7 @@ sap.ui.define([
 		});
 
 		oImage.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 	});
 
 	QUnit.test("Image with Invalid src and src change under default densityAware", function(assert) {
@@ -889,7 +889,7 @@ sap.ui.define([
 		});
 
 		oImage.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 	});
 
 	QUnit.test("Image with density 1.5, source handling after rerendering", function(assert) {
@@ -909,7 +909,7 @@ sap.ui.define([
 		});
 
 		oImage.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oImage.$().on("load", function() {
 			assert.ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is taken");
 			assert.equal(oLoadSpy.callCount, 1, "load event handler is called");
