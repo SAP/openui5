@@ -424,6 +424,28 @@
 				assert.ok(bStartDateChanged, "Calendar2: startDateChangeEvent fired");
 			});
 
+			QUnit.test("Selecting a date from previous month", function(assert) {
+				//Prepare
+				var oCalendarTimeInt = new sap.ui.unified.CalendarTimeInterval("CTI", {
+							startDate: new Date("2018", "10", "01"),
+							pickerPopup: true
+						}).placeAt("uiArea"),
+						oCalendar = oCalendarTimeInt._getCalendarPicker(),
+						oLastDateOfOct = new Date("2018", "09", "31");
+
+				sap.ui.getCore().applyChanges();
+
+				// Act
+				oCalendar.addSelectedDate(new sap.ui.unified.DateRange({startDate: oLastDateOfOct}));
+				oCalendar.fireSelect();
+
+				// Assert
+				assert.strictEqual(oCalendarTimeInt.getStartDate().getTime(), oLastDateOfOct.getTime(), "startDate correct");
+
+				// Clean
+				oCalendarTimeInt.destroy();
+			});
+
 			QUnit.module("Month Picker");
 			QUnit.test("displayed months", function(assert) {
 				assert.ok(!jQuery("#Cal1--MP").get(0), "Calendar1: Month picker not initial rendered");
