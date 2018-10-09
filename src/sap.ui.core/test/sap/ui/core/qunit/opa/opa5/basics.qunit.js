@@ -34,6 +34,12 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Should have instances of OPA5 in the config", function (assert) {
+		assert.ok(Opa.config.assertions instanceof Opa5, "assertions is an Opa5");
+		assert.ok(Opa.config.actions instanceof Opa5, "assertions is an Opa5");
+		assert.ok(Opa.config.arrangements instanceof Opa5, "assertions is an Opa5");
+	});
+
 	function assertDefaults (assert) {
 		assert.ok(!Opa.config.autoWait, "autoWait is false");
 		assert.strictEqual(Opa.config.viewNamespace, "", "namespace is correct");
@@ -59,6 +65,24 @@ sap.ui.define([
 
 		Opa5.resetConfig();
 		assertDefaults(assert);
+	});
+
+	QUnit.test("Should replace the OPA5 instances but keep their own functions and properties", function (assert) {
+		Opa.config.assertions.foo = "bar";
+		Opa.config.actions.func = $.noop;
+		var oNewAssertions = new Opa5(),
+			oNewActions = new Opa5();
+
+		oNewAssertions.foo = "baz";
+		Opa5.extendConfig({
+			assertions: oNewAssertions,
+			actions: oNewActions
+		});
+
+		assert.strictEqual(Opa.config.assertions, oNewAssertions, "Assertions have been replaced");
+		assert.strictEqual(Opa.config.actions, oNewActions, "Actions have been replaced");
+		assert.strictEqual(oNewAssertions.foo, "baz", "the new property wins vs the old one");
+		assert.strictEqual(oNewActions.func, $.noop, "kept the func property");
 	});
 
 	QUnit.test("Should replace the timeout and polling interval", function (assert) {
@@ -117,37 +141,6 @@ sap.ui.define([
 					"App params should be cleared now");
 				fnDone();
 			});
-		});
-	});
-
-	QUnit.test("Should have instances of OPA5 in the config", function (assert) {
-		assert.ok(Opa.config.assertions instanceof Opa5, "Assertions should be an instance of Opa5");
-		assert.ok(Opa.config.actions instanceof Opa5, "Actions should be an instance of Opa5");
-		assert.ok(Opa.config.arrangements instanceof Opa5, "assertions should be an instance of Opa5");
-	});
-
-	QUnit.test("Should replace the OPA5 instances but keep their own functions and properties", function (assert) {
-		["arrangements", "actions", "assertions"].forEach(function (sProperty) {
-			var InitialConfig = Opa5.extend("sap.ui.test.InitialConfig", {
-				valueToOverwrite: "foo",
-				valueToKeep: "other foo"
-			});
-			var NewConfig = Opa5.extend("sap.ui.test.NewConfig", {
-				valueToOverwrite: "bar",
-				newValue: "baz"
-			});
-
-			var mInitConfig = {};
-			mInitConfig[sProperty] = new InitialConfig();
-			Opa5.extendConfig(mInitConfig);
-
-			var mNewConfig = {};
-			mNewConfig[sProperty] = new NewConfig();
-			Opa5.extendConfig(mNewConfig);
-
-			assert.strictEqual(Opa.config[sProperty].valueToOverwrite, "bar", "Should overwrite existing value when keys duplicate");
-			assert.strictEqual(Opa.config[sProperty].valueToKeep, "other foo", "Should keep existing key and value when not overriden");
-			assert.strictEqual(Opa.config[sProperty].newValue, "baz", "Should add new key and value");
 		});
 	});
 

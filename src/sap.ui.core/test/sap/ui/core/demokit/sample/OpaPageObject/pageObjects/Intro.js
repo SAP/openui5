@@ -1,14 +1,14 @@
-sap.ui.define(["sap/ui/test/Opa5", "sap/ui/test/actions/Press"], function (Opa5, Press) {
+sap.ui.define(["sap/ui/test/Opa5", "sap/ui/test/actions/Press"], function(Opa5, Press){
 	"use strict";
 
 	Opa5.createPageObjects({
 
-		onTheIntroPage: {
+		onTheIntro : {
 			viewName: "Main",
-			actions: {
-				iPressOnGoToOverview: function () {
+			actions : {
+				iPressOnGoToOverview : function () {
 					return this.waitFor({
-						id: "navToOverview",
+						id : "navToOverview",
 						actions: new Press()
 					});
 				}
