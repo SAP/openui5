@@ -88,6 +88,18 @@ function(
 				text: {type: "string", group: "Data", defaultValue: null},
 
 				/**
+				 * Customizable text for the "MORE" link at the end of the feed list item.<br> When the maximum number of characters defined by the <code>maxCharacters</code> property is exceeded and the text of the feed list item is collapsed, the "MORE" link can be used to expand the feed list item and show the rest of the text.
+				 * @since 1.60
+				 */
+				moreLabel: {type: "string", group: "Data", defaultValue: null},
+
+				/**
+				 * Customizable text for the "LESS" link at the end of the feed list item.<br> Clicking the "LESS" link collapses the item, hiding the text that exceeds the allowed maximum number of characters.
+				 * @since 1.60
+				 */
+				lessLabel: {type: "string", group: "Data", defaultValue: null},
+
+				/**
 				 * The Info text.
 				 */
 				info: {type: "string", group: "Data", defaultValue: null},
@@ -296,9 +308,13 @@ function(
 
 	FeedListItem.prototype.invalidate = function() {
 		Control.prototype.invalidate.apply(this, arguments);
+		var sMoreLabel = FeedListItem._sTextShowMore;
+		if (this.getMoreLabel()) {
+			sMoreLabel = this.getMoreLabel();
+		}
 		delete this._bTextExpanded;
 		if (this._oLinkExpandCollapse) {
-			this._oLinkExpandCollapse.setProperty("text", FeedListItem._sTextShowMore, true);
+			this._oLinkExpandCollapse.setProperty("text", sMoreLabel, true);
 		}
 	};
 
@@ -559,16 +575,24 @@ function(
 	FeedListItem.prototype._toggleTextExpanded = function() {
 		var $text = this.$("realtext");
 		var $threeDots = this.$("threeDots");
+		var sMoreLabel = FeedListItem._sTextShowMore;
+		var sLessLabel = FeedListItem._sTextShowLess;
+		if (this.getMoreLabel()) {
+			sMoreLabel = this.getMoreLabel();
+		}
+		if (this.getLessLabel()) {
+			sLessLabel = this.getLessLabel();
+		}
 		if (this._bTextExpanded) {
 			$text.html(this._sShortText.replace(/&#xa;/g, "<br>"));
 			$threeDots.text(" ... ");
-			this._oLinkExpandCollapse.setText(FeedListItem._sTextShowMore);
+			this._oLinkExpandCollapse.setText(sMoreLabel);
 			this._bTextExpanded = false;
 			this._clearEmptyTagsInCollapsedText();
 		} else {
 			$text.html(this._sFullText.replace(/&#xa;/g, "<br>"));
 			$threeDots.text("  ");
-			this._oLinkExpandCollapse.setText(FeedListItem._sTextShowLess);
+			this._oLinkExpandCollapse.setText(sLessLabel);
 			this._bTextExpanded = true;
 		}
 	};
@@ -577,12 +601,16 @@ function(
 	 * Gets the link for expanding/collapsing the text
 	 *
 	 * @private
-	 * @returns {sap.m.Link} Link control for expanded function ("MORE" or "LESS")
+	 * @returns {sap.m.Link} Link control for expanded function ("MORE" or "LESS" or Alternative texts)
 	 */
 	FeedListItem.prototype._getLinkExpandCollapse = function() {
+		var sMoreLabel = FeedListItem._sTextShowMore;
+		if (this.getMoreLabel()) {
+			sMoreLabel = this.getMoreLabel();
+		}
 		if (!this._oLinkExpandCollapse) {
 			this._oLinkExpandCollapse = new Link({
-				text: FeedListItem._sTextShowMore,
+				text: sMoreLabel,
 				press: [this._toggleTextExpanded, this]
 			});
 			this._bTextExpanded = false;
