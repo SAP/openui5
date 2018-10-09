@@ -52,6 +52,7 @@ button.sapUiSupportHelpButton {
 	border: none;
 	background-color: rgb(47, 60, 72);
 	color: rgb(202, 228, 251);
+	cursor: pointer;
 }
 
 button.sapUiSupportHelpButton:hover {
@@ -1498,9 +1499,8 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 .sapUiSupportIntFupInputMask > input { /* the real, but hidden file input */
 	position: absolute;
 	opacity: 0;
-	top: 0px;
-	bottom: 0px;
-	cursor: pointer;
+	top: 0;
+	bottom: 0;
 	cursor: hand;
 	left: -4em;       /* avoid the input field behind the file chooser */
 	font-size: 500px; /* to make the field high enough for most themes; for themes with very large fonts this needs to be increased further */
