@@ -29,6 +29,7 @@ sap.ui.define([
 	createAndAppendDiv("content67");
 	createAndAppendDiv("content68");
 	createAndAppendDiv("content69");
+	createAndAppendDiv("content8");
 	var sView1 =
 		"<mvc:View xmlns=\"sap.m\" xmlns:mvc=\"sap.ui.core.mvc\" controllerName=\"myController\">" +
 		"    <Text id=\"xmltext1\" text=\"Should visualize tab&#009;and new line&#xA;and escaped \n and \t\" renderWhitespace=\"true\" width=\"100%\"></Text>" +
@@ -86,6 +87,12 @@ sap.ui.define([
 
 	var t6 = new Text("Text6", {text:""});
 	sap.ui.setRoot("content6", t6);
+
+	var t8 = new Text("Text8", {text: "pneumonoultramicroscopicsilicovolcanoconiosis"}); // longest word in English
+		t8.setWidth("400px");
+		t8.setWrapping(true);
+		t8.setWrappingType("Hyphenated");
+		sap.ui.setRoot("content8", t8);
 
 	// run tests
 	// =========
@@ -244,6 +251,11 @@ sap.ui.define([
 		assert.strictEqual(t4.$().hasClass("sapMTextNoWrap"), true, "Text has correct class for non-wrapping");
 		assert.strictEqual(t4.$().css("white-space"), "nowrap", "Text has correct white-space style for non-wrapping");
 		assert.strictEqual(t4.$().css("word-wrap"), "normal", "Text has correct word-wrap style for non-wrapping");
+	});
+
+	QUnit.test("hyphenation", function(assert) {
+		oDom = jQuery.sap.domById("Text8");
+		assert.notEqual(oDom.innerHTML, "", "When property wrappingType is 'Hyphenated' some text is rendered"); // this is the only possible check. Provided hypens (dashes) will be additionally checked by Visual test
 	});
 
 	if (t5.canUseNativeLineClamp()) {

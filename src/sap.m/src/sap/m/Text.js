@@ -1,6 +1,6 @@
 /*!
- * ${copyright}
- */
+* ${copyright}
+*/
 
 // Provides control sap.m.Text
 sap.ui.define([
@@ -8,9 +8,9 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
 	'sap/ui/Device',
-	'./TextRenderer'
+	'sap/m/HyphenationSupport'
 ],
-	function(library, Control, coreLibrary, Device, TextRenderer) {
+function (library, Control, coreLibrary, Device, HyphenationSupport) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextAlign
@@ -19,6 +19,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
+	// shortcut for sap.m.WrappingType
+	var WrappingType = library.WrappingType;
+
 	/**
 	 * Constructor for a new Text.
 	 *
@@ -26,9 +29,20 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The <code>Text</code> control can be used for embedding longer text paragraphs, that need text wrapping, into your app.
-	 * If the configured text value contains HTML code or script tags, those will be escaped.<br>
-	 * <b>Note: </b>Line breaks will always be visualized except when the <code>wrapping</code> property is set to <code>false</code>. In addition, tabs and whitespace can be preserved by setting the <code>renderWhitespace</code> property to <code>true</code>
+	 * The <code>Text</code> control can be used for embedding longer text paragraphs,
+	 * that need text wrapping, into your app.
+	 * If the configured text value contains HTML code or script tags, those will be
+	 * escaped.
+	 *
+	 * As of version 1.60, you can hyphenate the text with the use of the
+	 * <code>wrappingType</code> property. For more information, see
+	 * {@link topic:6322164936f047de941ec522b95d7b70 Text Controls Hyphenation}.
+	 *
+	 * <b>Note:</b> Line breaks will always be visualized except when the
+	 * <code>wrapping</code> property is set to <code>false</code>. In addition, tabs and
+	 * whitespace can be preserved by setting the <code>renderWhitespace</code> property
+	 * to <code>true</code>.
+	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IShrinkable, sap.ui.core.IFormContent
 	 *
@@ -42,59 +56,72 @@ sap.ui.define([
 	 * @see {@link topic:f94deb45de184a3a87850b75d610d9c0 Text}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var Text = Control.extend("sap.m.Text", /** @lends sap.m.Text.prototype */ { metadata : {
+	var Text = Control.extend("sap.m.Text", /** @lends sap.m.Text.prototype */ {
+		metadata: {
 
-		interfaces : [
-			"sap.ui.core.IShrinkable",
-			"sap.ui.core.IFormContent"
-		],
-		library : "sap.m",
-		properties : {
+			interfaces: [
+				"sap.ui.core.IShrinkable",
+				"sap.ui.core.IFormContent",
+				"sap.m.IHyphenation"
+			],
+			library: "sap.m",
+			properties: {
 
-			/**
-			 * Determines the text to be displayed.
-			 */
-			text : {type : "string", defaultValue : '', bindable : "bindable"},
+				/**
+				 * Determines the text to be displayed.
+				 */
+				text: { type: "string", defaultValue: '', bindable: "bindable" },
 
-			/**
-			 * Available options for the text direction are LTR and RTL. By default the control inherits the text direction from its parent control.
-			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
+				/**
+				 * Available options for the text direction are LTR and RTL. By default the control inherits the text direction from its parent control.
+				 */
+				textDirection: { type: "sap.ui.core.TextDirection", group: "Appearance", defaultValue: TextDirection.Inherit },
 
-			/**
-			 * Enables text wrapping.
-			 */
-			wrapping : {type : "boolean", group : "Appearance", defaultValue : true},
+				/**
+				 * Enables text wrapping.
+				 */
+				wrapping: { type: "boolean", group: "Appearance", defaultValue: true },
 
-			/**
-			 * Sets the horizontal alignment of the text.
-			 */
-			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Begin},
+				/**
+				 * Defines the type of text wrapping to be used (hyphenated or normal).
+				 *
+				 * <b>Note:</b> This property takes effect only when the <code>wrapping</code>
+				 * property is set to <code>true</code>.
+				 *
+				 * @since 1.60
+				 */
+				wrappingType : {type: "sap.m.WrappingType", group : "Appearance", defaultValue : WrappingType.Normal},
 
-			/**
-			 * Sets the width of the Text control. By default, the Text control uses the full width available. Set this property to restrict the width to a custom value.
-			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+				/**
+				 * Sets the horizontal alignment of the text.
+				 */
+				textAlign: { type: "sap.ui.core.TextAlign", group: "Appearance", defaultValue: TextAlign.Begin },
 
-			/**
-			 * Limits the number of lines for wrapping texts.
-			 *
-			 * <b>Note</b>: The multi-line overflow indicator depends on the browser line clamping support. For such browsers, this will be shown as ellipsis, for the other browsers the overflow will just be hidden.
-			 * @since 1.13.2
-			 */
-			maxLines : {type : "int", group : "Appearance", defaultValue : null},
+				/**
+				 * Sets the width of the Text control. By default, the Text control uses the full width available. Set this property to restrict the width to a custom value.
+				 */
+				width: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: null },
 
-			/**
-			 * Specifies how whitespace and tabs inside the control are handled. If true, whitespace will be preserved by the browser.
-			 * Depending on wrapping property text will either only wrap on line breaks or wrap when necessary, and on line breaks.
-			 *
-			 * @since 1.51
-			 */
-			renderWhitespace : {type : "boolean", group : "Appearance", defaultValue : false}
+				/**
+				 * Limits the number of lines for wrapping texts.
+				 *
+				 * <b>Note</b>: The multi-line overflow indicator depends on the browser line clamping support. For such browsers, this will be shown as ellipsis, for the other browsers the overflow will just be hidden.
+				 * @since 1.13.2
+				 */
+				maxLines: { type: "int", group: "Appearance", defaultValue: null },
 
-		},
-		designtime: "sap/m/designtime/Text.designtime"
-	}});
+				/**
+				 * Specifies how whitespace and tabs inside the control are handled. If true, whitespace will be preserved by the browser.
+				 * Depending on wrapping property text will either only wrap on line breaks or wrap when necessary, and on line breaks.
+				 *
+				 * @since 1.51
+				 */
+				renderWhitespace: { type: "boolean", group: "Appearance", defaultValue: false }
+			},
+
+			designtime: "sap/m/designtime/Text.designtime"
+		}
+	});
 
 	/**
 	 * Default line height value as a number when line height is normal.
@@ -140,7 +167,7 @@ sap.ui.define([
 	 * @readonly
 	 * @static
 	 */
-	Text.hasNativeLineClamp = (function() {
+	Text.hasNativeLineClamp = (function () {
 		return typeof document.documentElement.style.webkitLineClamp != "undefined" && Device.browser.chrome;
 	})();
 
@@ -153,7 +180,7 @@ sap.ui.define([
 	 * @param {String} [sNodeValue] new Node value.
 	 * @since 1.30.3
 	 */
-	Text.setNodeValue = function(oDomRef, sNodeValue) {
+	Text.setNodeValue = function (oDomRef, sNodeValue) {
 		sNodeValue = sNodeValue || "";
 		var aChildNodes = oDomRef.childNodes;
 		if (aChildNodes.length === 1 && aChildNodes[0].nodeType === window.Node.TEXT_NODE) {
@@ -170,15 +197,15 @@ sap.ui.define([
 	 * @param {string} sText Text value.
 	 * @returns {sap.m.Text} this Text reference for chaining.
 	 */
-	Text.prototype.setText = function(sText) {
+	Text.prototype.setText = function (sText) {
 		// suppress invalidation of text property setter
-		this.setProperty("text", sText , true);
+		this.setProperty("text", sText, true);
 
 		// check text dom ref
 		var oDomRef = this.getTextDomRef();
 		if (oDomRef) {
 			// update the node value of the DOM text
-			Text.setNodeValue(oDomRef, this.getText(true));
+			Text.setNodeValue(oDomRef, HyphenationSupport.getTextForRender(this, "main"));
 
 			// toggles the sapMTextBreakWord class when the text value is changed
 			if (this.getWrapping()) {
@@ -201,7 +228,7 @@ sap.ui.define([
 	 * @param {boolean} bNormalize Indication for normalized text.
 	 * @returns {string} Text value.
 	 */
-	Text.prototype.getText = function(bNormalize) {
+	Text.prototype.getText = function (bNormalize) {
 		// returns the text value and normalize line-ending character for rendering
 		var sText = this.getProperty("text");
 
@@ -212,13 +239,12 @@ sap.ui.define([
 
 		return sText;
 	};
-
 	/**
 	 * Overwrites onAfterRendering
 	 *
 	 * @public
 	 */
-	Text.prototype.onAfterRendering = function() {
+	Text.prototype.onAfterRendering = function () {
 		// required adaptations after rendering
 		// check visible, max-lines and line-clamping support
 		if (this.getVisible() &&
@@ -237,7 +263,7 @@ sap.ui.define([
 	 * @returns {HTMLElement|null} Max lines of the text.
 	 * @since 1.22
 	 */
-	Text.prototype.hasMaxLines = function() {
+	Text.prototype.hasMaxLines = function () {
 		return (this.getWrapping() && this.getMaxLines() > 1);
 	};
 
@@ -249,7 +275,7 @@ sap.ui.define([
 	 * @returns {HTMLElement|null} DOM reference of the text.
 	 * @since 1.22
 	 */
-	Text.prototype.getTextDomRef = function() {
+	Text.prototype.getTextDomRef = function () {
 		if (!this.getVisible()) {
 			return null;
 		}
@@ -270,7 +296,7 @@ sap.ui.define([
 	 * @protected
 	 * @return {Boolean}
 	 */
-	Text.prototype.canUseNativeLineClamp = function() {
+	Text.prototype.canUseNativeLineClamp = function () {
 		// has line clamp feature
 		if (!Text.hasNativeLineClamp) {
 			return false;
@@ -298,7 +324,7 @@ sap.ui.define([
 	 * @see sap.m.Text#cacheLineHeight
 	 * @since 1.22
 	 */
-	Text.prototype.getLineHeight = function(oDomRef) {
+	Text.prototype.getLineHeight = function (oDomRef) {
 		// return cached value if possible and available
 		if (this.cacheLineHeight && this._fLineHeight) {
 			return this._fLineHeight;
@@ -351,7 +377,7 @@ sap.ui.define([
 	 * @returns {int} The clamp height of the text.
 	 * @since 1.22
 	 */
-	Text.prototype.getClampHeight = function(oDomRef) {
+	Text.prototype.getClampHeight = function (oDomRef) {
 		oDomRef = oDomRef || this.getTextDomRef();
 		return this.getMaxLines() * this.getLineHeight(oDomRef);
 	};
@@ -364,7 +390,7 @@ sap.ui.define([
 	 * @returns {int} Calculated max height value.
 	 * @since 1.22
 	 */
-	Text.prototype.clampHeight = function(oDomRef) {
+	Text.prototype.clampHeight = function (oDomRef) {
 		oDomRef = oDomRef || this.getTextDomRef();
 		if (!oDomRef) {
 			return 0;
@@ -390,7 +416,7 @@ sap.ui.define([
 	 * @returns {int|undefined} Returns found ellipsis position or undefined.
 	 * @since 1.20
 	 */
-	Text.prototype.clampText = function(oDomRef, iStartPos, iEndPos) {
+	Text.prototype.clampText = function (oDomRef, iStartPos, iEndPos) {
 		// check DOM reference
 		oDomRef = oDomRef || this.getTextDomRef();
 		if (!oDomRef) {
@@ -460,9 +486,36 @@ sap.ui.define([
 	 * @returns {object} Accessibility information for the text.
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 */
-	Text.prototype.getAccessibilityInfo = function() {
-		return {description: this.getText()};
+	Text.prototype.getAccessibilityInfo = function () {
+		return { description: this.getText() };
 	};
+
+	/**
+	 * Gets a map of texts which should be hyphenated.
+	 *
+	 * @private
+	 * @returns {map} The texts to be hyphenated.
+	 */
+	Text.prototype.getTextsToBeHyphenated = function () {
+		return {
+			"main": this.getText(true)
+		};
+	};
+
+	/**
+	 * Gets the DOM refs where the hyphenated texts should be placed.
+	 *
+	 * @private
+	 * @returns {map|null} The elements in which the hyphenated texts should be placed
+	 */
+	Text.prototype.getDomRefsForHyphenatedTexts = function () {
+		return {
+			"main": this.getTextDomRef()
+		};
+	};
+
+	// Add hyphenation to Text functionality
+	HyphenationSupport.mixInto(Text.prototype);
 
 	return Text;
 

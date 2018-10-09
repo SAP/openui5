@@ -7,6 +7,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/LabelEnablement',
+	'sap/m/HyphenationSupport',
 	'sap/ui/core/library',
 	'./LabelRenderer',
 	"sap/base/Log",
@@ -16,6 +17,7 @@ function(
 	library,
 	Control,
 	LabelEnablement,
+	HyphenationSupport,
 	coreLibrary,
 	LabelRenderer,
 	Log,
@@ -35,6 +37,9 @@ function(
 	// shortcut for sap.ui.core.VerticalAlign
 	var VerticalAlign = coreLibrary.VerticalAlign;
 
+	// shortcut for sap.m.WrappingType
+	var WrappingType = library.WrappingType;
+
 	/**
 	 * Constructor for a new Label.
 	 *
@@ -43,13 +48,22 @@ function(
 	 *
 	 * @class
 	 * Provides a textual label for other controls.
-	 * Label appearance can be influenced by properties such as <code>textAlign</code>, <code>design</code>,
-	 * <code>displayOnly</code> and <code>wrapping</code>.
-	 * As of version 1.50 the default value of the <code>wrapping</code> property is set to <code>false</code>
 	 *
-	 * Labels for required fields are marked with an asterisk.
 	 * <h3>Overview</h3>
 	 * Labels are used as titles for single controls or groups of controls.
+	 * Labels for required fields are marked with an asterisk.
+	 *
+	 * Label appearance can be influenced by properties, such as <code>textAlign</code>,
+	 * <code>design</code>, <code>displayOnly</code>, <code>wrapping</code> and
+	 * <code>wrappingType</code>.
+	 *
+	 * As of version 1.50, the default value of the <code>wrapping</code> property is set
+	 * to <code>false</code>.
+	 *
+	 * As of version 1.60, you can hyphenate the label's text with the use of the
+	 * <code>wrappingType</code> property. For more information, see
+	 * {@link topic:6322164936f047de941ec522b95d7b70 Text Controls Hyphenation}.
+	 *
 	 * <h3>Usage</h3>
 	 * <h4>When to use</h4>
 	 * <ul>
@@ -77,7 +91,8 @@ function(
 		interfaces : [
 			"sap.ui.core.Label",
 			"sap.ui.core.IShrinkable",
-			"sap.m.IOverflowToolbarContent"
+			"sap.m.IOverflowToolbarContent",
+			"sap.m.IHyphenation"
 		],
 		library : "sap.m",
 		properties : {
@@ -131,6 +146,16 @@ function(
 			wrapping: {type : "boolean", group : "Appearance", defaultValue : false},
 
 			/**
+			 * Defines the type of text wrapping to be used (hyphenated or normal).
+			 *
+			 * <b>Note:</b> This property takes effect only when the <code>wrapping</code>
+			 * property is set to <code>true</code>.
+			 *
+			 * @since 1.60
+			 */
+			wrappingType : {type: "sap.m.WrappingType", group : "Appearance", defaultValue : WrappingType.Normal},
+
+			/**
 			 * Specifies the vertical alignment of the <code>Label</code> related to the tallest and lowest element on the line.
 			 * @since 1.54
 			 */
@@ -155,7 +180,7 @@ function(
 
 			this.setProperty("text", sText, true);
 
-			this.$("bdi").html(encodeXML(this.getProperty("text")));
+			this.$("bdi").html(encodeXML(HyphenationSupport.getTextForRender(this, "main")));
 
 
 			if (sText) {
@@ -262,8 +287,33 @@ function(
 		return oConfig;
 	};
 
+	/**
+	 * Gets a map of texts which should be hyphenated.
+	 *
+	 * @private
+	 * @returns {map} The texts to be hyphenated.
+	 */
+	Label.prototype.getTextsToBeHyphenated = function () {
+		return {
+			"main": this.getText()
+		};
+	};
+
+	/**
+	 * Gets the DOM refs where the hyphenated texts should be placed.
+	 *
+	 * @private
+	 * @returns {map|null} The elements in which the hyphenated texts should be placed
+	 */
+	Label.prototype.getDomRefsForHyphenatedTexts = function () {
+		return {
+			"main": this.$("bdi")[0]
+		};
+	};
+
 	// enrich Label functionality
 	LabelEnablement.enrich(Label.prototype);
+	HyphenationSupport.mixInto(Label.prototype);
 
 	// utility function to check if an object is an instance of a class
 	// without forcing the loading of the module that defines the class
