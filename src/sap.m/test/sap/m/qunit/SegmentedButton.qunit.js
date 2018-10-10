@@ -2112,6 +2112,36 @@ sap.ui.define([
 		this._ojQueryInnerWidthMethod = null;
 	});
 
+	QUnit.test("_handleContainerResize fires _containerWidthChanged event when width is changed", function (assert) {
+		// Arrange
+		var oSB = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({text: "Btn 1"}),
+				new sap.m.SegmentedButtonItem({text: "Btn 2"}),
+				new sap.m.SegmentedButtonItem({text: "Btn 3"})
+			]
+		}).placeAt("qunit-fixture");
+
+		this.spy(oSB, "fireEvent");
+
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.equal(oSB.fireEvent.callCount, 0, "FireEvent is not called on first rendering");
+
+		// Act
+		oSB.$().parent().innerWidth("10px");
+		oSB._handleContainerResize();
+
+		// Assert
+		assert.ok(oSB.fireEvent.calledWith("_containerWidthChanged"), "The _containerWidthChanged event is fired");
+
+		// Cleanup
+		oSB.destroy();
+		oSB = null;
+	});
+
+
 	/* =========================================================== */
 	/* Helper functionality module                                 */
 	/* =========================================================== */

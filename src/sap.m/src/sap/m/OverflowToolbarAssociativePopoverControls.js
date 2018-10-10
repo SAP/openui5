@@ -110,17 +110,6 @@ sap.ui.define(['sap/ui/base/Metadata', './OverflowToolbarButton', './OverflowToo
 			this._postProcessSapMToggleButton(oControl);
 		};
 
-
-		// SegmentedButton - switch to/from select mode
-		OverflowToolbarAssociativePopoverControls.prototype._preProcessSapMSegmentedButton = function(oControl) {
-			oControl._toSelectMode();
-		};
-
-		OverflowToolbarAssociativePopoverControls.prototype._postProcessSapMSegmentedButton = function(oControl) {
-			oControl._toNormalMode();
-		};
-
-
 		/******************************   STATIC properties and methods   ****************************/
 
 		/**
@@ -170,11 +159,6 @@ sap.ui.define(['sap/ui/base/Metadata', './OverflowToolbarButton', './OverflowToo
 				canOverflow: true,
 				listenForEvents: ["search"],
 				noInvalidationProps: ["enabled", "value", "selectOnFocus"]
-			},
-			"sap.m.SegmentedButton": {
-				canOverflow: true,
-				listenForEvents: ["select"],
-				noInvalidationProps: ["enabled", "selectedKey"]
 			},
 			"sap.m.Input": {
 				canOverflow: true,
