@@ -1,23 +1,16 @@
-/*global QUnit*/
+/*global QUnit, sinon */
 
-sap.ui.define("sap.m.qunit.PDFViewerSpecialUseCases", [
-	"test/sap/m/qunit/PDFViewerTestUtils",
+sap.ui.define( [
+	"./PDFViewerTestUtils",
 	"sap/ui/Device",
-	"sap/m/PDFViewer",
-	'sap/m/PDFViewerRenderer',
-	"jquery.sap.global",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
-	// QUnit dependency cannot be defined here because test requires the instance specified in *.html file
-], function (TestUtils, Device, PDFViewer, PDFViewerRenderer, $, sinon) {
+	"sap/m/PDFViewerRenderer"
+], function (TestUtils, Device, PDFViewerRenderer) {
 	"use strict";
 
 	var oPDFViewer;
-	var sandbox = sinon.sandbox.create();
 	QUnit.module('Special use cases', {
 		afterEach: function (assert) {
 			oPDFViewer.destroy();
-			sandbox.verifyAndRestore();
 		}
 	});
 
@@ -34,7 +27,7 @@ sap.ui.define("sap.m.qunit.PDFViewerSpecialUseCases", [
 			var done = assert.async();
 
 			var oOptions = {
-				"source": "./pdfviewer/different-content.html",
+				"source": "test-resources/sap/m/qunit/pdfviewer/different-content.html",
 				"loaded": function () {
 					if (!Device.browser.firefox) {
 						assert.ok(false, "'Load' event should not be fired");
@@ -66,7 +59,7 @@ sap.ui.define("sap.m.qunit.PDFViewerSpecialUseCases", [
 		var done = assert.async();
 
 		var oOptions = {
-			"source": "./pdfviewer/not-existing",
+			"source": "test-resources/sap/m/qunit/pdfviewer/not-existing",
 			"loaded": function () {
 				assert.ok(false, "'Load' event fired but should not.");
 			},
@@ -93,7 +86,7 @@ sap.ui.define("sap.m.qunit.PDFViewerSpecialUseCases", [
 				assert.ok(true, "'Error' event fired");
 			},
 			oErrorOptions = {
-				"source": "./pdfviewer/not-existing",
+				"source": "test-resources/sap/m/qunit/pdfviewer/not-existing",
 				"loaded": fnLoadedFailListener,
 				"error": fnErrorOkListener
 			},
@@ -114,7 +107,7 @@ sap.ui.define("sap.m.qunit.PDFViewerSpecialUseCases", [
 				oPDFViewer.detachError(fnErrorOkListener);
 				oPDFViewer.attachLoaded(fnLoadedOkListener);
 				oPDFViewer.attachError(fnErrorFailListener);
-				oPDFViewer.setSource("./pdfviewer/sample-file.pdf");
+				oPDFViewer.setSource("test-resources/sap/m/qunit/pdfviewer/sample-file.pdf");
 			})
 			.then(TestUtils.wait(2000))
 			.then(function () {
@@ -123,7 +116,7 @@ sap.ui.define("sap.m.qunit.PDFViewerSpecialUseCases", [
 				oPDFViewer.detachError(fnErrorFailListener);
 				oPDFViewer.attachLoaded(fnLoadedFailListener);
 				oPDFViewer.attachError(fnErrorOkListener);
-				oPDFViewer.setSource("./pdfviewer/not-existing");
+				oPDFViewer.setSource("test-resources/sap/m/qunit/pdfviewer/not-existing");
 			})
 			.then(TestUtils.wait(2000))
 			.then(function () {
@@ -148,7 +141,7 @@ sap.ui.define("sap.m.qunit.PDFViewerSpecialUseCases", [
 				assert.ok(false, "'Error' event fired");
 			},
 			oErrorOptions = {
-				"source": "./pdfviewer/sample-file.pdf",
+				"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 				"loaded": fnLoadedListener,
 				"error": fnErrorListener
 			},
@@ -188,7 +181,7 @@ sap.ui.define("sap.m.qunit.PDFViewerSpecialUseCases", [
 		var done = assert.async();
 
 		oPDFViewer = TestUtils.createPdfViewer({
-			source: "./pdfviewer/sample file with spaces.pdf",
+			source: "test-resources/sap/m/qunit/pdfviewer/sample file with spaces.pdf",
 			loaded: function fnLoadedHandler() {
 				assert.ok(true, "The pdf was loaded");
 				done();
@@ -203,11 +196,11 @@ sap.ui.define("sap.m.qunit.PDFViewerSpecialUseCases", [
 	});
 
 	QUnit.test("Height on mobile/tablet devices is always auto", function (assert) {
-		this.sandbox.stub(Device, "system", {desktop: false});
+		this.stub(Device, "system").value({desktop: false});
 
 		oPDFViewer = TestUtils.createPdfViewer({
 			height: '250px',
-			source: "./pdfviewer/sample file with spaces.pdf"
+			source: "test-resources/sap/m/qunit/pdfviewer/sample file with spaces.pdf"
 		});
 
 		TestUtils.renderPdfViewer(oPDFViewer);

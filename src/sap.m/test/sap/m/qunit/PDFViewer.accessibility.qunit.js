@@ -1,15 +1,8 @@
-/*global QUnit*/
-
-sap.ui.define("sap.m.qunit.PDFViewerAccessibility", [
-	"test/sap/m/qunit/PDFViewerTestUtils",
-	"sap/ui/Device",
-	"sap/m/PDFViewer",
-	'sap/m/PDFViewerRenderer',
-	"jquery.sap.global",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
-	// QUnit dependency cannot be defined here because test requires the instance specified in *.html file
-], function (TestUtils, Device, PDFViewer, PDFViewerRenderer, $, sinon) {
+/*global QUnit */
+sap.ui.define([
+	"./PDFViewerTestUtils",
+	"sap/m/PDFViewerRenderer"
+], function (TestUtils, PDFViewerRenderer) {
 	"use strict";
 
 	var oPDFViewer;
@@ -31,7 +24,7 @@ sap.ui.define("sap.m.qunit.PDFViewerAccessibility", [
 		var done = assert.async(),
 			oOptions = {
 			"title": sExpectedTitleText,
-			"source": "./pdfviewer/sample-file.pdf",
+			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired");
 				checkToolbar();
@@ -61,7 +54,7 @@ sap.ui.define("sap.m.qunit.PDFViewerAccessibility", [
 		var done = assert.async();
 
 		var oOptions = {
-			"source": "./pdfviewer/sample-file.pdf",
+			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired");
 				checkPopupContent();

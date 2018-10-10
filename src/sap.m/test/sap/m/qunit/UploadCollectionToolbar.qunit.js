@@ -1,7 +1,6 @@
 /*global QUnit,sinon*/
 
 sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
-	"jquery.sap.global",
 	"sap/m/UploadCollection",
 	"sap/m/UploadCollectionToolbarPlaceholder",
 	"sap/m/Title",
@@ -11,8 +10,8 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 	"sap/m/OverflowToolbar",
 	"sap/m/ToggleButton",
 	"sap/base/Log"
-], function (jQuery, UploadCollection, UploadCollectionToolbarPlaceholder, Title, ToolbarSpacer, FileUploader, Button,
-             OverflowToolbar, ToggleButton, Log) {
+], function (UploadCollection, UploadCollectionToolbarPlaceholder, Title, ToolbarSpacer, FileUploader, Button,
+			 OverflowToolbar, ToggleButton, Log) {
 	"use strict";
 
 	QUnit.module("Toolbar Default", {

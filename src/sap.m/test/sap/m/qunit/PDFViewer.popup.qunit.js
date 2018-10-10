@@ -1,13 +1,11 @@
 /*global QUnit*/
 
-sap.ui.define("sap.m.qunit.PDFViewerPopup", [
-	"test/sap/m/qunit/PDFViewerTestUtils",
+sap.ui.define([
+	"./PDFViewerTestUtils",
 	"sap/m/library",
-	"sap/m/PDFViewer",
-	'jquery.sap.global',
-	'sap/m/PDFViewerRenderer'
-	// QUnit dependency cannot be defined here because test requires the instance specified in *.html file
-], function (TestUtils, library, PDFViewer, $, PDFViewerRenderer) {
+	"jquery.sap.global",
+	"sap/m/PDFViewerRenderer"
+], function (TestUtils, library, $, PDFViewerRenderer) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -31,7 +29,7 @@ sap.ui.define("sap.m.qunit.PDFViewerPopup", [
 		var done = assert.async();
 
 		var oOptions = {
-			"source": "./pdfviewer/sample-file.pdf",
+			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			"loaded": function () {
 				assert.ok(false, "'Load' event should not be fired");
 
@@ -53,7 +51,7 @@ sap.ui.define("sap.m.qunit.PDFViewerPopup", [
 		var done = assert.async();
 
 		var oOptions = {
-			"source": "./pdfviewer/sample-file.pdf",
+			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			"loaded": function () {
 				assert.ok(true, "'Load' event should be fired");
 				done();
@@ -73,7 +71,7 @@ sap.ui.define("sap.m.qunit.PDFViewerPopup", [
 		var done = assert.async();
 
 		var oOptions = {
-			"source": './pdfviewer/sample-file.pdf',
+			"source": 'test-resources/sap/m/qunit/pdfviewer/sample-file.pdf',
 			"loaded": function () {
 				assert.ok(true, "'Load' event should not be fired");
 			},
@@ -110,7 +108,7 @@ sap.ui.define("sap.m.qunit.PDFViewerPopup", [
 		var done = assert.async();
 
 		var oOptions = {
-			"source": "./pdfviewer/sample-file.pdf",
+			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			"popupHeaderTitle": "Custom header title",
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired but should not.");
@@ -126,8 +124,8 @@ sap.ui.define("sap.m.qunit.PDFViewerPopup", [
 		TestUtils.wait(2000)()
 			.then(function () {
 				var oTitleNode = $('.sapMDialogTitle.sapMTitle');
-			  assert.ok(oTitleNode.length === 1, 'Header has to be shown');
-			  assert.ok(oTitleNode.find("*:contains('Custom header title')").length === 1, "Header contains correct title");
+				assert.ok(oTitleNode.length === 1, 'Header has to be shown');
+				assert.ok(oTitleNode.find("*:contains('Custom header title')").length === 1, "Header contains correct title");
 				done();
 			});
 	});
@@ -137,7 +135,7 @@ sap.ui.define("sap.m.qunit.PDFViewerPopup", [
 		var done = assert.async();
 
 		var oOptions = {
-			"source": "./pdfviewer/sample-file.pdf",
+			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired but should not.");
 			},
@@ -166,7 +164,7 @@ sap.ui.define("sap.m.qunit.PDFViewerPopup", [
 		var done = assert.async();
 
 		var oOptions = {
-			"source": "./pdfviewer/sample-file.pdf",
+			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			"popupHeaderTitle": "",
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired but should not.");
@@ -192,7 +190,7 @@ sap.ui.define("sap.m.qunit.PDFViewerPopup", [
 		assert.expect(2);
 
 		var oOptions = {
-			"source": "./pdfviewer/sample-file.pdf",
+			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired but should not.");
 			},
@@ -216,7 +214,7 @@ sap.ui.define("sap.m.qunit.PDFViewerPopup", [
 		assert.expect(2);
 
 		var oOptions = {
-			"source": "./pdfviewer/sample-file.pdf",
+			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired but should not.");
 			},
@@ -240,7 +238,7 @@ sap.ui.define("sap.m.qunit.PDFViewerPopup", [
 		assert.expect(2);
 
 		var oOptions = {
-			"source": "./pdfviewer/sample-file.pdf",
+			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			"showDownloadButton": false,
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired but should not.");

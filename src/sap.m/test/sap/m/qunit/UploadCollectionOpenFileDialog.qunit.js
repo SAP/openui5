@@ -12,6 +12,8 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 ], function (jQuery, UploadCollection, JSONModel, Event, Device, UploadCollectionItem, ObjectMarker, Log) {
 	"use strict";
 
+	var IMAGE_PATH = "test-resources/sap/m/images/";
+
 	var oData = {
 		"items": [
 			{
@@ -66,7 +68,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 				"fileName": "Picture of a woman.png",
 				"fileSize": 70,
 				"mimeType": "image/png",
-				"thumbnailUrl": "../images/Woman_04.png",
+				"thumbnailUrl": IMAGE_PATH + "Woman_04.png",
 				"uploadedDate": "2014-07-25",
 				"url": "/pathToTheFile/Woman_04.png",
 				"ariaLabelForPicture": "textForImageOfItemKateBrown"
