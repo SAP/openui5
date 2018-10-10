@@ -2142,6 +2142,31 @@ sap.ui.define([
 		assert.equal(this.stepInput._sumValues(1.1376, 0.2, -1, 3), 0.937, "sumValues(0.937, 0,2, -1, 3)=1.337");
 	});
 
+	QUnit.test("_disableButtons works accordingly when enabled: false and min & max available", function (assert) {
+		this.stepInput.setMin(0).setMax(10).setEnabled(false).setValue(5);
+		oCore.applyChanges();
+
+		assert.strictEqual(this.stepInput._getIncrementButton().$().hasClass("sapMStepInputIconDisabled"), true,
+			"the increment button is still disabled after setValue");
+		assert.strictEqual(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"), true,
+			"the decrement button is still disabled after setValue");
+	});
+
+	QUnit.test("_disableButtons works when the enablement of the control is toggled", function (assert) {
+		this.stepInput.setValue(5);
+
+		this.stepInput.setEnabled(false);
+		oCore.applyChanges();
+
+		this.stepInput.setEnabled(true);
+		oCore.applyChanges();
+
+		assert.strictEqual(this.stepInput._getIncrementButton().$().hasClass("sapMStepInputIconDisabled"), false,
+			"the increment button is enabled after the StepInput is enabled again");
+		assert.strictEqual(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"), false,
+			"the decrement button is enabled after the StepInput is enabled again");
+	});
+
 	QUnit.module("Misc");
 
 	QUnit.test("increment/decrement buttons enabled state", function (assert) {
@@ -2198,28 +2223,6 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(oStepInput._getInput().getTextAlign(), oStepInput.getTextAlign(), "textAlign of the Input should be the same as the textAlign of the StepInput");
-
-		oStepInput.destroy();
-	});
-
-	QUnit.test("_disableButtons works accordingly when enabled: false and min & max available", function (assert) {
-		// arrange
-		var oStepInput = new StepInput({
-			enabled: false,
-			min: 0,
-			max: 10
-		});
-		oStepInput.placeAt('qunit-fixture');
-		oCore.applyChanges();
-
-		//act
-		oStepInput.setValue(5);
-
-		// assert
-		assert.strictEqual(oStepInput._getIncrementButton().$().hasClass("sapMStepInputIconDisabled"), true,
-			"the increment button is still disabled after setValue");
-		assert.strictEqual(oStepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"), true,
-			"the decrement button is still disabled after setValue");
 
 		oStepInput.destroy();
 	});
