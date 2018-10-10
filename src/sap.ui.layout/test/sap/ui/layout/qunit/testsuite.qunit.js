@@ -56,6 +56,11 @@ sap.ui.define(function() {
 				module: "./cssgrid/GridTypes.qunit",
 				sinon: false
 			},
+			"CSSGrid-GridLayouts": {
+				group: "CSSGrid",
+				module: "./cssgrid/GridLayouts.qunit",
+				sinon: 1
+			},
 			"Splitter": {
 				coverage: {
 					only: [

@@ -189,10 +189,10 @@ sap.ui.define([
 	 * @private
 	 */
 	GridResponsiveLayout.mSizeClasses = {
-		"Phone": ".sapUiLayoutCSSGridS",
-		"Tablet": ".sapUiLayoutCSSGridM",
-		"Desktop": ".sapUiLayoutCSSGridL",
-		"LargeDesktop": ".sapUiLayoutCSSGridXL"
+		"Phone": "sapUiLayoutCSSGridS",
+		"Tablet": "sapUiLayoutCSSGridM",
+		"Desktop": "sapUiLayoutCSSGridL",
+		"LargeDesktop": "sapUiLayoutCSSGridXL"
 	};
 
 	/**
