@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/format/DateFormat",
 	"sap/m/DatePicker",
+	"sap/m/InstanceManager",
 	"sap/ui/model/type/Date",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/library",
@@ -26,6 +27,7 @@ sap.ui.define([
 	JSONModel,
 	DateFormat,
 	DatePicker,
+	InstanceManager,
 	TypeDate,
 	ODataModel,
 	coreLibrary,
@@ -1399,6 +1401,35 @@ sap.ui.define([
 		oStub.restore();
 		oDPStoreInputSelectionSpy.restore();
 		oDP.destroy();
+	});
+
+
+	QUnit.test("Instance manager detects popup state changes", function (assert) {
+		// Prepare
+		var oCore = sap.ui.getCore(),
+			oDatePicker = new DatePicker();
+
+		oDatePicker.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Assert
+		assert.notOk(InstanceManager.isPopoverOpen(oDatePicker._oPopup), "Initially closed popup detected");
+
+		// Act
+		oDatePicker.toggleOpen(false);
+		oCore.applyChanges();
+
+		// Assert
+		assert.ok(InstanceManager.isPopoverOpen(oDatePicker._oPopup), "Opening popup detected");
+
+		// Act
+		oDatePicker.toggleOpen(true);
+		oCore.applyChanges();
+
+		// Assert
+		assert.notOk(InstanceManager.isPopoverOpen(oDatePicker._oPopup), "Closing popup detected");
+
+		oDatePicker.destroy();
 	});
 
 	QUnit.module("ARIA");
