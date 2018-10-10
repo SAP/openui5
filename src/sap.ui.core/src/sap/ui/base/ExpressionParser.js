@@ -45,11 +45,11 @@ sap.ui.define([
 					ODataUtils = sap.ui.requireSync("sap/ui/model/odata/v4/ODataUtils");
 					return ODataUtils.compare.apply(ODataUtils, arguments);
 				},
-				"fillUriTemplate": function () {
+				"fillUriTemplate": function (sExpression, mData) {
 					if (!URI.expand) {
 						/* URITemplate = */ sap.ui.requireSync("sap/ui/thirdparty/URITemplate");
 					}
-					return URI.expand.apply(URI, arguments).toString();
+					return URI.expand(sExpression.trim(), mData).toString();
 				},
 				"uriEncode": function () {
 					var ODataUtils;
