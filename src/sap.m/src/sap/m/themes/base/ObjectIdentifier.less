@@ -9,7 +9,7 @@
     font-size: 1rem;
 	color: @sapUiContentNonInteractiveIconColor;
 	display: inline-block;
-	vertical-align: top;
+	vertical-align: middle;
 }
 
 .sapMObjectIdentifierIconSpan {
@@ -54,7 +54,7 @@
 }
 
 .sapMLIBActive .sapMObjectIdentifier {
-		color: @sapUiListActiveTextColor;
+	color: @sapUiListActiveTextColor;
 }
 
 /* ObjectIdentifier inside a table */
@@ -76,4 +76,8 @@
 
 .sapMObjectIdentifierTitle {
 	display: inline;
+}
+
+html[data-sap-ui-browser^='ie'].sap-desktop .sapMObjectIdentifier :not(.sapMLnkDsbl).sapMLnk:focus::before {
+	top: auto;
 }
