@@ -279,21 +279,16 @@ function(
 		 */
 		this.bFocusoutDueRendering = false;
 
-		/**
-		 * Internal variable used to handle html input firing input events when value contains accented characters in IE10+
-		 * @private
-		 */
-		this._bIgnoreNextInputEventNonASCII = false; // TODO remove after 1.62 version
-
-		/**
-		 * Indicates whether the <code>onAfterRendering</code> event was called.
-		 */
-		this.bAfterRenderingWasCalled = false;
 
 		this._oValueStateMessage = new ValueStateMessage(this);
 	};
 
 	InputBase.prototype.onBeforeRendering = function() {
+
+		// Ignore the input event which is raised by MS Internet Explorer when non-ASCII characters are typed in// TODO remove after 1.62 version
+		if (Device.browser.msie && Device.browser.version > 9 && !/^[\x00-\x7F]*$/.test(this.getValue())){// TODO remove after 1.62 version
+			this._bIgnoreNextInput = true;
+		}
 
 		if (this._bCheckDomValue && !this.bRenderingPhase) {
 
@@ -470,12 +465,6 @@ function(
 			// save the value on change
 			this.setValue(sValue);
 
-			if (oEvent) {
-			//IE10+ fires Input event when Non-ASCII characters are used. As this is a real change// TODO remove after 1.62 version
-			// event shouldn't be ignored.
-				this._bIgnoreNextInputEventNonASCII = false;
-			}
-
 			// get the value back maybe formatted
 			sValue = this.getValue();
 
@@ -600,31 +589,16 @@ function(
 	InputBase.prototype.oninput = function(oEvent) {
 
 		// ie 10+ fires the input event when an input field with a native placeholder is focused
-		if (this._bIgnoreNextInput && this.bAfterRenderingWasCalled) {
+		if (this._bIgnoreNextInput) {
 			this._bIgnoreNextInput = false;
-			this.bAfterRenderingWasCalled = false;
 			oEvent.setMarked("invalid");
 			return;
 		}
 
-		this.bAfterRenderingWasCalled = false;
+		this._bIgnoreNextInput = false;
 
 		// ie11 fires input event from read-only fields
 		if (!this.getEditable()) {
-			oEvent.setMarked("invalid");
-			return;
-		}
-
-		//IE10+ fires the input event when attribute "value" is set with Non-ASCII characters
-		if (this._bIgnoreNextInputEventNonASCII && this.getValue() === this._lastValue) {
-			this._bIgnoreNextInputEventNonASCII = false;
-			oEvent.setMarked("invalid");
-			return;
-		}
-
-		// ie11 fires input event after rendering when value contains an accented character
-		// ie11 fires input event whenever placeholder attribute is changed
-		if (document.activeElement !== oEvent.target && Device.browser.msie && this.getValue() === this._lastValue) {
 			oEvent.setMarked("invalid");
 			return;
 		}
@@ -790,11 +764,6 @@ function(
 
 		// respect to max length
 		sValue = this._getInputValue(sValue);
-
-		//Ignore the input event which is raised by MS Internet Explorer when non-ASCII characters are typed in// TODO remove after 1.62 version
-		if (Device.browser.msie && Device.browser.version > 9 && !/^[\x00-\x7F]*$/.test(sValue)){// TODO remove after 1.62 version
-			this._bIgnoreNextInput = true;
-		}
 
 		// update the DOM value when necessary
 		// otherwise cursor can goto end of text unnecessarily
@@ -995,11 +964,6 @@ function(
 
 		// update the dom value when necessary
 		this.updateDomValue(sValue);
-
-		//Ignore the input event which is raised by MS Internet Explorer when non-ASCII characters are typed in// TODO remove after 1.62 version
-		if (Device.browser.msie && Device.browser.version > 9 && !/^[\x00-\x7F]*$/.test(sValue)){// TODO remove after 1.62 version
-			this._bIgnoreNextInputEventNonASCII = true;
-		}
 
 		// check if we need to update the last value because
 		// when setProperty("value") called setValue is called again via binding
