@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/demo/walkthrough/controller/HelloDialog"
-], function (UIComponent, JSONModel, HelloDialog) {
+	"sap/ui/demo/walkthrough/controller/HelloDialog",
+	"sap/base/Log"
+], function (UIComponent, JSONModel, HelloDialog, Log) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.walkthrough.Component", {
@@ -31,7 +32,7 @@ sap.ui.define([
 			// open support window (only for demonstration purpose)
 			if (sap.ui.Device.system.desktop) {
 				setTimeout(function () {
-					jQuery.sap.log.info("opening support window");
+					Log.info("opening support window");
 					sap.ui.require(["sap/ui/core/support/Support"], function (Support) {
 						var oSupport = Support.getStub("APPLICATION");
 						oSupport.openSupportTool();

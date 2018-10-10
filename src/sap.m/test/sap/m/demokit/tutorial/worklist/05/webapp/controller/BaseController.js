@@ -1,7 +1,9 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller"
-], function (Controller) {
-	"use strict";
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/UIComponent",
+	"sap/m/library"
+], function(Controller, UIComponent, mobileLibrary) {
+    "use strict";
 
 	return Controller.extend("mycompany.myapp.MyWorklistApp.controller.BaseController", {
 		/**
@@ -10,7 +12,7 @@ sap.ui.define([
 		 * @returns {sap.ui.core.routing.Router} the router for this component
 		 */
 		getRouter : function () {
-			return sap.ui.core.UIComponent.getRouterFor(this);
+			return UIComponent.getRouterFor(this);
 		},
 
 		/**
@@ -49,7 +51,7 @@ sap.ui.define([
 		 */
 		onShareEmailPress : function () {
 			var oViewModel = (this.getModel("objectView") || this.getModel("worklistView"));
-			sap.m.URLHelper.triggerEmail(
+			mobileLibrary.URLHelper.triggerEmail(
 				null,
 				oViewModel.getProperty("/shareSendEmailSubject"),
 				oViewModel.getProperty("/shareSendEmailMessage")
