@@ -61,6 +61,18 @@
         "type": "FIX",
         "text": " PlanningCalendar: Show interval headers in one month view",
         "references": []
+      },
+      {
+        "id": "e4767ba0f3dd00b84404ed5531ff6e90188061b6",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.calendar.Month: Multi selection mode implemented",
+        "references": []
+      },
+      {
+        "id": "6836691409bee19f24a0cb159d6871aad1e32c67",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarTimeInterval: navigates to the correct date",
+        "references": []
       }
     ]
   }

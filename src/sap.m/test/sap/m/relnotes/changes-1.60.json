@@ -775,6 +775,36 @@
         "type": "FIX",
         "text": " sap.m.WizardStep: Next button visibility adjusted",
         "references": []
+      },
+      {
+        "id": "3384468044640c13ab0b5c3f1107ee96e139580c",
+        "type": "FIX",
+        "text": " sap.m.ComboBoxBase: Set the focus to the body after dialog is closed",
+        "references": []
+      },
+      {
+        "id": "05a9ebcba0fed15769361c4a6b01d8cb72dcb9dc",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Dialog is now positioned correctly on IOS devices",
+        "references": []
+      },
+      {
+        "id": "b312068472e76c5d46256a4367e2126e44e1b31a",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Labelling improved",
+        "references": []
+      },
+      {
+        "id": "635e8adfc60ba6a19a906c7b02a87e6e12785eb9",
+        "type": "FIX",
+        "text": " sap.m.Page: Initial rendering of floating footer corrected",
+        "references": []
+      },
+      {
+        "id": "4d899d72559159841bd16dff86a1bcf507bf5bbb",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: shows selectAll checkBox at the correct position",
+        "references": []
       }
     ]
   }
