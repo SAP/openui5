@@ -15,6 +15,7 @@ sap.ui.define(["./StandardListItemRenderer", "sap/ui/core/Renderer"],
 		MessageListItemRenderer.renderTitle = function (oRm, oControl) {
 			if (oControl.getActiveTitle()) {
 				oRm.renderControl(oControl.getLink());
+				oRm.renderControl(oControl.getLinkAriaDescribedBy());
 			} else {
 				StandardListItemRenderer.renderTitle.apply(this, arguments);
 			}

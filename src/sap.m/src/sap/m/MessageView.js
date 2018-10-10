@@ -299,7 +299,6 @@ sap.ui.define([
 	MessageView.prototype.init = function () {
 
 		var that = this;
-
 		this._bHasHeaderButton = false;
 
 		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
@@ -724,6 +723,7 @@ sap.ui.define([
 				infoState: this._mapInfoState(sType),
 				info: "\r", // There should be a content in the info property in order to use the info states
 				type: listItemType,
+				messageType: oMessageItem.getType(),
 				activeTitle: oMessageItem.getActiveTitle(),
 				activeTitlePress: function () {
 					that.fireActiveTitlePress({ item: oMessageItem });
@@ -889,7 +889,7 @@ sap.ui.define([
 	 * @param {sap.m.MessageItem} oMessageItem The message item
 	 * @private
 	 */
-	MessageView.prototype._setTitle = function (oMessageItem) {
+	MessageView.prototype._setTitle = function (oMessageItem, oListItem) {
 		var bActive = oMessageItem.getActiveTitle(),
 			oDetailsContent, that = this,
 			sText = ManagedObject.escapeSettingsValue(oMessageItem.getTitle()),
@@ -898,6 +898,7 @@ sap.ui.define([
 		if (bActive) {
 			oDetailsContent = new Link(sId, {
 				text: sText,
+				ariaDescribedBy: oListItem.getId() + "-link",
 				press: function () {
 					that.fireActiveTitlePress({ item: oMessageItem });
 				}
@@ -1188,7 +1189,7 @@ sap.ui.define([
 	};
 
 	MessageView.prototype._navigateToDetails = function(oMessageItem, oListItem, sTransiotionName, bSuppressNavigate) {
-		this._setTitle(oMessageItem);
+		this._setTitle(oMessageItem, oListItem);
 		this._sanitizeDescription(oMessageItem);
 		this._setIcon(oMessageItem, oListItem);
 		this._detailsPage.rerender();
