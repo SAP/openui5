@@ -1860,19 +1860,32 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._highlightList = function (sValue) {
-		var aListItemsDOM = [];
+		var aListItemsDOM = [],
+			aListItemAdditionalText = [],
+			oItemAdditionalTextRef, oItemDomRef;
 
 		this._oList.getItems().forEach(function(oItem) {
+			oItemDomRef = oItem.getDomRef();
 
-			if (oItem.getDomRef()) {
+			if (oItemDomRef) {
 				aListItemsDOM.push({
-					ref: oItem.getDomRef().getElementsByClassName("sapMSLITitleOnly")[0],
+					ref: oItemDomRef.getElementsByClassName("sapMSLITitleOnly")[0],
 					text: oItem.getTitle()
 				});
+
+				oItemAdditionalTextRef = oItemDomRef.querySelector(".sapMSLIInfo");
+
+				if (oItemAdditionalTextRef && oItem.getInfo) {
+					aListItemAdditionalText.push({
+						ref: oItemAdditionalTextRef,
+						text: oItem.getInfo()
+					});
+				}
 			}
 		});
 
 		this.highLightList(sValue, aListItemsDOM);
+		this.highLightList(sValue, aListItemAdditionalText);
 	};
 
 	/**
@@ -2655,10 +2668,12 @@ function(
 			return null;
 		}
 
+		var sAdditionalText = oItem.getAdditionalText && this.getShowSecondaryValues() ? oItem.getAdditionalText() : "";
 		var sListItem = this.getRenderer().CSS_CLASS_MULTICOMBOBOX + "Item";
 		var sListItemSelected = (this.isItemSelected(oItem)) ? sListItem + "Selected" : "";
 		var oListItem = new sap.m.StandardListItem({
 			type: ListType.Active,
+			info: sAdditionalText,
 			visible: oItem.getEnabled()
 		}).addStyleClass(sListItem + " " + sListItemSelected);
 		oListItem.setTooltip(oItem.getTooltip());
