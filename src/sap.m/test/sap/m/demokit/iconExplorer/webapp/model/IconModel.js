@@ -322,10 +322,6 @@ sap.ui.define([
 				count : aIcons.length
 			});
 
-			// Add all icons of this font to the AllIcons path in IconModel for the global search
-			/*var aClonedIcons = aIcons.map(function (oIcon) {
-				return jQuery.extend(true, {}, oIcon);
-			});*/
 			this.setProperty("/AllIcons", this.getProperty("/AllIcons").concat(aIcons));
 
 			// calculate top tag and relate tags to other groups than "all"

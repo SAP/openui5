@@ -1,7 +1,11 @@
 sap.ui.define([
-	"sap/ui/thirdparty/jquery"
-] , function (jQuery) {
-	"use strict";
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/library"
+] , function(jQuery, coreLibrary) {
+    "use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 	return {
 
@@ -93,9 +97,9 @@ sap.ui.define([
 		 */
 		deliveryState: function (sDelivery) {
 			if (sDelivery === "OpenUI5") {
-				return sap.ui.core.ValueState.Success;
+				return ValueState.Success;
 			} else {
-				return sap.ui.core.ValueState.Error;
+				return ValueState.Error;
 			}
 		},
 
@@ -110,5 +114,4 @@ sap.ui.define([
 			}
 
 	};
-
 });

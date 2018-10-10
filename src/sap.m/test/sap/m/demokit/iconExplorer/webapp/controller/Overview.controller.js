@@ -1,18 +1,19 @@
 sap.ui.define([
-	"sap/ui/demo/iconexplorer/controller/BaseController",
-	"sap/ui/core/IconPool",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/demo/iconexplorer/model/formatter",
-	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator",
-	"sap/ui/Device",
-	"sap/m/MessageToast",
-	"sap/m/Label",
-	"sap/m/ToggleButton",
-	"sap/m/library",
-	"sap/ui/thirdparty/jquery"
-], function (
-	BaseController,
+    "sap/ui/demo/iconexplorer/controller/BaseController",
+    "sap/ui/core/IconPool",
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/demo/iconexplorer/model/formatter",
+    "sap/ui/model/Filter",
+    "sap/ui/model/FilterOperator",
+    "sap/ui/Device",
+    "sap/m/MessageToast",
+    "sap/m/Label",
+    "sap/m/ToggleButton",
+    "sap/m/library",
+    "sap/ui/thirdparty/jquery",
+    "sap/ui/core/theming/Parameters"
+], function(
+    BaseController,
 	IconPool,
 	JSONModel,
 	formatter,
@@ -23,7 +24,9 @@ sap.ui.define([
 	Label,
 	ToggleButton,
 	mobileLibrary,
-	jQuery) {
+	jQuery,
+	Parameters
+) {
 	"use strict";
 
 	var TYPING_DELAY = 200; // ms
@@ -193,7 +196,7 @@ sap.ui.define([
 								this._sNormalIconColor = oRoot.$().find(".sapUiIcon").control(0).getColor();
 							}
 							oRoot.$().find(".sapUiVltCell > .sapUiIcon").control().forEach(function (oIcon) {
-								oIcon.setColor(sap.ui.core.theming.Parameters.get("sapUiTextInverted"));
+								oIcon.setColor(Parameters.get("sapUiTextInverted"));
 							});
 						}.bind(this),
 						// touchend: remove active class, reset icon color
