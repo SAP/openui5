@@ -3102,6 +3102,7 @@ sap.ui.require([
 			testNoData(bNoDataVisible, sTestTitle);
 		}
 
+		oGetBindingLength.returns(1);
 		oTable.setShowNoData(true);
 
 		// Data available: NoData area is not visible.
