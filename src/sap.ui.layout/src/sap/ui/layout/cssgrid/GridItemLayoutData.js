@@ -8,6 +8,15 @@ sap.ui.define([
 ], function(LayoutData) {
 	"use strict";
 
+	var mGridItemProperties = {
+		gridColumnStart: "grid-column-start",
+		gridColumnEnd: "grid-column-end",
+		gridRowStart: "grid-row-start",
+		gridRowEnd: "grid-row-end",
+		gridColumn: "grid-column",
+		gridRow: "grid-row"
+	};
+
 	/**
 	 * Constructor for a new <code>sap.ui.layout.cssgrid.GridItemLayoutData</code>.
 	 *
@@ -66,6 +75,109 @@ sap.ui.define([
 			gridRow: { type: "sap.ui.layout.cssgrid.CSSGridLine", defaultValue: ""}
 		}
 	}});
+
+	/**
+	 * Updates the display:grid styles of a single item
+	 *
+	 * @private
+	 * @static
+	 * @param {sap.ui.core.Control} oItem The item which styles have to be updated
+	 */
+	GridItemLayoutData._setItemStyles = function (oItem) {
+
+		if (!oItem) {
+			return;
+		}
+
+		var oLayoutData = GridItemLayoutData._getLayoutDataForControl(oItem),
+			oItemDom = oItem.getDomRef(),
+			oProperties,
+			sProp,
+			sPropValue;
+
+		if (!oLayoutData) {
+			GridItemLayoutData._removeItemStyles(oItemDom);
+			return;
+		}
+
+		oProperties = oLayoutData.getMetadata().getProperties();
+
+		for (sProp in mGridItemProperties) {
+			if (oProperties[sProp]) {
+				sPropValue = oLayoutData.getProperty(sProp);
+
+				if (typeof sPropValue !== "undefined") {
+					GridItemLayoutData._setItemStyle(oItemDom, mGridItemProperties[sProp], sPropValue);
+				}
+			}
+		}
+	};
+
+	/**
+	 * Remove all grid properties from the item
+	 *
+	 * @private
+	 * @static
+	 * @param {HTMLElement} oItemDom The Item DOM reference
+	 */
+	GridItemLayoutData._removeItemStyles = function (oItemDom) {
+		for (var sProp in mGridItemProperties) {
+			oItemDom.style.removeProperty(mGridItemProperties[sProp]);
+		}
+	};
+
+	/**
+	 * Sets a property on the DOM element
+	 *
+	 * @private
+	 * @static
+	 * @param {HTMLElement} oItemDom The item DOM reference
+	 * @param {string} sProperty The name of the property to set
+	 * @param {string} sValue The value of the property to set
+	 */
+	GridItemLayoutData._setItemStyle = function (oItemDom, sProperty, sValue) {
+		if (sValue !== "0" && !sValue) {
+			oItemDom.style.removeProperty(sProperty);
+		} else {
+			oItemDom.style.setProperty(sProperty, sValue);
+		}
+	};
+
+	/**
+	 * @private
+	 * @static
+	 * @param {sap.ui.core.Control} oControl The control to get the layoutData from
+	 * @returns {sap.ui.layout.cssgrid.GridItemLayoutData|undefined} The layoutData used by the grid item
+	 */
+	GridItemLayoutData._getLayoutDataForControl = function (oControl) {
+		var oLayoutData,
+			aLayoutData,
+			oInnerLayoutData;
+
+		if (!oControl) {
+			return undefined;
+		}
+
+		oLayoutData = oControl.getLayoutData();
+
+		if (!oLayoutData) {
+			return undefined;
+		}
+
+		if (oLayoutData.isA("sap.ui.layout.cssgrid.GridItemLayoutData")) {
+			return oLayoutData;
+		}
+
+		if (oLayoutData.isA("sap.ui.core.VariantLayoutData")) {
+			aLayoutData = oLayoutData.getMultipleLayoutData();
+			for (var i = 0; i < aLayoutData.length; i++) {
+				oInnerLayoutData = aLayoutData[i];
+				if (oInnerLayoutData.isA("sap.ui.layout.cssgrid.GridItemLayoutData")) {
+					return oInnerLayoutData;
+				}
+			}
+		}
+	};
 
 	return GridItemLayoutData;
 });
