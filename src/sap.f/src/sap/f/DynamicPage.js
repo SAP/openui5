@@ -133,6 +133,8 @@ sap.ui.define([
 				 * If set to <code>false</code>, the <code>DynamicPageTitle</code> is not clickable,
 				 * the visual indicators are not available and the application
 				 * must provide other means for expanding/collapsing the <code>DynamicPageHeader</code>, if necessary.
+				 *
+				 * <b>Note: </b> This property is taken into account only if a non-empty <code>header</code> aggregation is provided.
 				 */
 				toggleHeaderOnTitleClick: {type: "boolean", group: "Behavior", defaultValue: true},
 
@@ -304,14 +306,8 @@ sap.ui.define([
 	};
 
 	DynamicPage.prototype.onBeforeRendering = function () {
-		var oDynamicPageTitle = this.getTitle();
-
 		if (!this._preserveHeaderStateOnScroll()) {
 			this._attachPinPressHandler();
-		}
-
-		if (exists(oDynamicPageTitle)) {
-			oDynamicPageTitle._toggleFocusableState(this.getToggleHeaderOnTitleClick());
 		}
 
 		this._attachTitlePressHandler();
@@ -354,6 +350,7 @@ sap.ui.define([
 		}
 
 		this._updateToggleHeaderVisualIndicators();
+		this._updateTitleVisualState();
 	};
 
 	DynamicPage.prototype.exit = function () {
@@ -390,18 +387,13 @@ sap.ui.define([
 	};
 
 	DynamicPage.prototype.setToggleHeaderOnTitleClick = function (bToggleHeaderOnTitleClick) {
-		var oDynamicPageTitle = this.getTitle(),
-			bHeaderExpanded = this.getHeaderExpanded(),
+		var bHeaderExpanded = this.getHeaderExpanded(),
 			vResult = this.setProperty("toggleHeaderOnTitleClick", bToggleHeaderOnTitleClick, true);
 
 		bToggleHeaderOnTitleClick = this.getProperty("toggleHeaderOnTitleClick");
-		this.$().toggleClass("sapFDynamicPageTitleClickEnabled", bToggleHeaderOnTitleClick);
+		this._updateTitleVisualState();
 		this._updateToggleHeaderVisualIndicators();
 		this._updateARIAStates(bHeaderExpanded);
-
-		if (exists(oDynamicPageTitle)) {
-			oDynamicPageTitle._toggleFocusableState(bToggleHeaderOnTitleClick);
-		}
 
 		return vResult;
 	};
@@ -563,8 +555,6 @@ sap.ui.define([
 			if (bAppendHeaderToContent && this._bHeaderInTitleArea) {
 				this._moveHeaderToContentArea(true);
 			}
-
-			oDynamicPageTitle._updateAriaExpandedState(false);
 		}
 
 		if (!exists(this.$titleArea)) {
@@ -601,8 +591,6 @@ sap.ui.define([
 			if (bAppendHeaderToTitle) {
 				this._moveHeaderToTitleArea(true);
 			}
-
-			oDynamicPageTitle._updateAriaExpandedState(true);
 		}
 
 		if (!exists(this.$titleArea)) {
@@ -1131,11 +1119,10 @@ sap.ui.define([
 	};
 
 	DynamicPage.prototype._updateTitleARIAState = function (bExpanded) {
-		var oDynamicPageTitle = this.getTitle(),
-			bToggleHeaderOnTitleClick = this.getToggleHeaderOnTitleClick();
+		var oDynamicPageTitle = this.getTitle();
 
 		if (exists(oDynamicPageTitle)) {
-			oDynamicPageTitle._updateARIAState(bExpanded, bToggleHeaderOnTitleClick);
+			oDynamicPageTitle._updateARIAState(bExpanded);
 		}
 	};
 
@@ -1246,6 +1233,20 @@ sap.ui.define([
 
 		this._toggleCollapseVisualIndicator(bCollapseVisualIndicatorVisible);
 		this._toggleExpandVisualIndicator(bExpandVisualIndicatorVisible);
+	};
+
+	/**
+	 * Updates the focus visibility and active state of the <code>title</code>.
+	 * @private
+	 */
+	DynamicPage.prototype._updateTitleVisualState = function () {
+		var oTitle = this.getTitle(),
+			bTitleActive = this._hasVisibleTitleAndHeader() && this.getToggleHeaderOnTitleClick();
+
+		this.$().toggleClass("sapFDynamicPageTitleClickEnabled", bTitleActive);
+		if (exists(oTitle)) {
+			oTitle._toggleFocusableState(bTitleActive);
+		}
 	};
 
 	/**
@@ -1608,10 +1609,10 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._onTitlePress = function () {
-		if (this.getToggleHeaderOnTitleClick()) {
+		if (this.getToggleHeaderOnTitleClick() && this._hasVisibleTitleAndHeader()) {
 			this._titleExpandCollapseWhenAllowed(true /* user interaction */);
+			this.getTitle()._focus();
 		}
-		this.getTitle()._focus();
 	};
 
 	DynamicPage.prototype._onExpandHeaderVisualIndicatorPress = function () {

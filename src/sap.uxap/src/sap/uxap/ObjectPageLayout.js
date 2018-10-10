@@ -629,12 +629,8 @@ sap.ui.define([
 		}
 
 		bToggleHeaderOnTitleClick = this.getProperty("toggleHeaderOnTitleClick");
-		this.$().toggleClass("sapUxAPObjectPageLayoutTitleClickEnabled", bToggleHeaderOnTitleClick);
 		this._updateToggleHeaderVisualIndicators();
-
-		if (exists(oDynamicPageTitle)) {
-			oDynamicPageTitle._toggleFocusableState(bToggleHeaderOnTitleClick);
-		}
+		this._updateTitleVisualState();
 
 		return vResult;
 	};
@@ -730,7 +726,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._handleDynamicTitlePress = function () {
-		if (!this.getToggleHeaderOnTitleClick()) {
+		if (!this.getToggleHeaderOnTitleClick() || !this._hasVisibleDynamicTitleAndHeader()) {
 			return;
 		}
 
@@ -957,6 +953,7 @@ sap.ui.define([
 		}
 
 		this._updateToggleHeaderVisualIndicators();
+		this._updateTitleVisualState();
 
 		this.fireEvent("onAfterRenderingDOMReady");
 	};
@@ -3662,6 +3659,16 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Returns <code>true</code> if ObjectPageLayout has <code>headerTitle</code> and <code>headerContent</code> aggregations set and they are both visible.
+	 * @private
+	 */
+	ObjectPageLayout.prototype._hasVisibleDynamicTitleAndHeader = function () {
+		var oTitle = this.getHeaderTitle(),
+			oHeader = this.getHeaderContent();
+
+		return exists(oTitle) && oTitle.isDynamic() && oTitle.getVisible() && exists(oHeader) && oHeader.length > 0;
+	};
 
 	/**
 	 * Updates the visibility of the <code>expandButton</code> and <code>collapseButton</code>.
@@ -3670,9 +3677,10 @@ sap.ui.define([
 	ObjectPageLayout.prototype._updateToggleHeaderVisualIndicators = function () {
 		var bHeaderExpanded,
 			bCollapseVisualIndicatorVisible,
-			bExpandVisualIndicatorVisible;
+			bExpandVisualIndicatorVisible,
+			bHasTitleAndHeader = this._hasVisibleDynamicTitleAndHeader();
 
-		if (!this.getToggleHeaderOnTitleClick()) {
+		if (!this.getToggleHeaderOnTitleClick() || !bHasTitleAndHeader) {
 			bCollapseVisualIndicatorVisible = false;
 			bExpandVisualIndicatorVisible = false;
 		} else {
@@ -3683,6 +3691,20 @@ sap.ui.define([
 
 		this._toggleCollapseVisualIndicator(bCollapseVisualIndicatorVisible);
 		this._toggleExpandVisualIndicator(bExpandVisualIndicatorVisible);
+	};
+
+	/**
+	 * Updates the focus visibility and active state of the <code>headerTitle</code>.
+	 * @private
+	 */
+	ObjectPageLayout.prototype._updateTitleVisualState = function () {
+		var oTitle = this.getHeaderTitle(),
+			bTitleActive = this._hasVisibleDynamicTitleAndHeader() && this.getToggleHeaderOnTitleClick();
+
+		this.$().toggleClass("sapUxAPObjectPageLayoutTitleClickEnabled", bTitleActive);
+		if (exists(oTitle)) {
+			oTitle._toggleFocusableState(bTitleActive);
+		}
 	};
 
 	/**

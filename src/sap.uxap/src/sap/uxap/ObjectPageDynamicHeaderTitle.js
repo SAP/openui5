@@ -140,6 +140,7 @@ sap.ui.define([
 		 */
 		ObjectPageDynamicHeaderTitle.prototype.snap = function (bUserInteraction) {
 			this._toggleState(false, bUserInteraction);
+			this._updateARIAState(false);
 		};
 
 		/**
@@ -147,6 +148,7 @@ sap.ui.define([
 		 */
 		ObjectPageDynamicHeaderTitle.prototype.unSnap = function (bUserInteraction) {
 			this._toggleState(true, bUserInteraction);
+			this._updateARIAState(true);
 		};
 
 		/**
