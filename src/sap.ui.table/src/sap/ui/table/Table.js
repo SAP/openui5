@@ -2166,14 +2166,13 @@ sap.ui.define([
 		// especially for tree bindings using the TreeBindingAdapter, where a tree structure must be created to
 		// calculate the correct length.
 		if (this._iBindingLength === null) {
-			this._iBindingLength = 0; // Initialize the binding length. From now on always the cached version should be used.
+			this._iBindingLength = 0; // Initialize the cached binding length.
 		}
 
 		var oBinding = this.getBinding("rows");
-		var iCurrentTotalRowCount = this._getTotalRowCount();
 		var iNewTotalRowCount = oBinding ? oBinding.getLength() : 0;
 
-		if (iCurrentTotalRowCount !== iNewTotalRowCount) {
+		if (this._iBindingLength !== iNewTotalRowCount) {
 			this._iBindingLength = iNewTotalRowCount;
 
 			// If the binding length changes, some parts of the UI need to be updated.
@@ -2498,21 +2497,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the number of rows the <code>rows</code> aggregation is bound to. The return value of this function is cached for performance
-	 * reasons. If the <code>rows</code> aggregation is not bound, always 0 is returned.
+	 * Returns the number of rows the <code>rows</code> aggregation is bound to.
 	 *
-	 * @param {boolean} [bIgnoreCache=false] If set to <code>true</code>, the length will be requested from the binding, ignoring any cached value.
-	 * @returns {int} The total number of rows.
+	 * @returns {int} The total number of rows. Returns 0 if the <code>rows</code> aggregation is not bound.
 	 * @see sap.ui.table.Table#_updateTotalRowCount
 	 * @private
 	 */
-	Table.prototype._getTotalRowCount = function(bIgnoreCache) {
-		if (this._iBindingLength === null || bIgnoreCache === true) {
-			var oBinding = this.getBinding("rows");
-			return oBinding ? oBinding.getLength() : 0;
-		} else {
-			return this._iBindingLength;
-		}
+	Table.prototype._getTotalRowCount = function() {
+		var oBinding = this.getBinding("rows");
+		return oBinding ? oBinding.getLength() : 0;
 	};
 
 	/**

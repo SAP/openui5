@@ -312,13 +312,13 @@ sap.ui.define([
 		 * @private
 		 */
 		hasData : function(oTable) {
-			var oBinding = oTable.getBinding("rows"),
-			iBindingLength = oTable._getTotalRowCount(),
-			bHasData = oBinding ? !!iBindingLength : false;
+			var oBinding = oTable.getBinding("rows");
+			var iTotalRowCount = oTable._getTotalRowCount();
+			var bHasData = iTotalRowCount > 0;
 
 			if (oBinding && oBinding.providesGrandTotal) { // Analytical Binding
 				var bHasTotal = oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures();
-				bHasData = (bHasTotal && iBindingLength < 2) || (!bHasTotal && iBindingLength === 0) ? false : true;
+				bHasData = (bHasTotal && iTotalRowCount > 1) || (!bHasTotal && iTotalRowCount > 0);
 			}
 
 			return bHasData;
