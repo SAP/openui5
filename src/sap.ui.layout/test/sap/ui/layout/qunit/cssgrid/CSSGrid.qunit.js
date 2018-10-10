@@ -181,7 +181,7 @@ function (
 			new HTML({ content: "<div></div>" })
 		];
 
-		sinon.stub(CSSGrid, "_setItemStyles");
+		sinon.stub(GridItemLayoutData, "_setItemStyles");
 
 		// Act
 		aItems.forEach(function (oItem) {
@@ -191,10 +191,10 @@ function (
 
 		// Assert
 		assert.ok(this.oGrid.getItems().length === 3, "Should have 3 items");
-		assert.ok(CSSGrid._setItemStyles.callCount === 3, "Should set styles for every item");
+		assert.ok(GridItemLayoutData._setItemStyles.callCount === 3, "Should set styles for every item");
 
 		// Cleanup
-		CSSGrid._setItemStyles.restore();
+		GridItemLayoutData._setItemStyles.restore();
 	});
 
 	QUnit.module("_onGridChange", {
@@ -314,7 +314,7 @@ function (
 	QUnit.test("Set item layoutData", function (assert) {
 
 		// Arrange
-		sinon.spy(CSSGrid, "_setItemStyles");
+		sinon.spy(GridItemLayoutData, "_setItemStyles");
 		sinon.spy(this.oGrid, "onLayoutDataChange");
 
 		// Act
@@ -322,7 +322,7 @@ function (
 		Core.applyChanges();
 
 		// Assert
-		assert.ok(CSSGrid._setItemStyles.calledOnce, "Should update item styles on layout data change");
+		assert.ok(GridItemLayoutData._setItemStyles.calledOnce, "Should update item styles on layout data change");
 		assert.ok(this.oGrid.onLayoutDataChange.calledOnce, "Should call layoutDataChange handler");
 
 		if (bBrowserSupportGrid) {
@@ -331,7 +331,7 @@ function (
 		}
 
 		// Cleanup
-		CSSGrid._setItemStyles.restore();
+		GridItemLayoutData._setItemStyles.restore();
 		this.oGrid.onLayoutDataChange.restore();
 	});
 
@@ -411,7 +411,7 @@ function (
 	QUnit.module("_getLayoutDataForControl");
 
 	QUnit.test("Missing control", function (assert) {
-		assert.notOk(CSSGrid._getLayoutDataForControl(), "Should have NO layoutData if a control is not provided");
+		assert.notOk(GridItemLayoutData._getLayoutDataForControl(), "Should have NO layoutData if a control is not provided");
 	});
 
 	QUnit.test("Missing layoutData for control", function (assert) {
@@ -422,7 +422,7 @@ function (
 		};
 
 		// Act
-		var oLayoutData = CSSGrid._getLayoutDataForControl(oMockControl);
+		var oLayoutData = GridItemLayoutData._getLayoutDataForControl(oMockControl);
 
 		// Assert
 		assert.notOk(oLayoutData, "Should have NO layoutData");
@@ -446,7 +446,7 @@ function (
 		};
 
 		// Act
-		var oLayoutData = CSSGrid._getLayoutDataForControl(oMockControl);
+		var oLayoutData = GridItemLayoutData._getLayoutDataForControl(oMockControl);
 
 		// Assert
 		assert.ok(oLayoutData, "Should have layoutData");
@@ -477,7 +477,7 @@ function (
 		};
 
 		// Act
-		var oLayoutData = CSSGrid._getLayoutDataForControl(oMockControl);
+		var oLayoutData = GridItemLayoutData._getLayoutDataForControl(oMockControl);
 
 		// Assert
 		assert.ok(oLayoutData, "Should have layoutData");
@@ -498,7 +498,7 @@ function (
 		};
 
 		// Act
-		var oLayoutData = CSSGrid._getLayoutDataForControl(oMockControl);
+		var oLayoutData = GridItemLayoutData._getLayoutDataForControl(oMockControl);
 
 		// Assert
 		assert.notOk(oLayoutData, "Should have NO layoutData");
@@ -509,19 +509,19 @@ function (
 	QUnit.test("_setItemStyles - Missing item object", function (assert) {
 
 		// Arrange
-		sinon.spy(CSSGrid, "_removeItemStyles");
-		sinon.spy(CSSGrid, "_setItemStyle");
+		sinon.spy(GridItemLayoutData, "_removeItemStyles");
+		sinon.spy(GridItemLayoutData, "_setItemStyle");
 
 		// Act
-		CSSGrid._setItemStyles();
+		GridItemLayoutData._setItemStyles();
 
 		// Assert
-		assert.ok(CSSGrid._removeItemStyles.notCalled, "Should NOT call _removeItemStyles when no item is provided");
-		assert.ok(CSSGrid._setItemStyle.notCalled, "Should NOT call _setItemStyle when no item is provided");
+		assert.ok(GridItemLayoutData._removeItemStyles.notCalled, "Should NOT call _removeItemStyles when no item is provided");
+		assert.ok(GridItemLayoutData._setItemStyle.notCalled, "Should NOT call _setItemStyle when no item is provided");
 
 		// Cleanup
-		CSSGrid._removeItemStyles.restore();
-		CSSGrid._setItemStyle.restore();
+		GridItemLayoutData._removeItemStyles.restore();
+		GridItemLayoutData._setItemStyle.restore();
 	});
 
 	QUnit.test("_setItemStyle", function (assert) {
@@ -545,7 +545,7 @@ function (
 
 		// Act
 		var oItemDomRef = oGrid.getItems()[0].getDomRef();
-		CSSGrid._setItemStyle(oItemDomRef, "grid-column", "");
+		GridItemLayoutData._setItemStyle(oItemDomRef, "grid-column", "");
 
 		// Assert
 		assert.notOk(oItemDomRef.style.getPropertyValue("grid-column"), "Should remove the property when empty string");

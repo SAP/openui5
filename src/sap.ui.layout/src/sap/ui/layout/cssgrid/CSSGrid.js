@@ -4,22 +4,14 @@
 
 sap.ui.define([
 	"sap/ui/core/Control",
+	"sap/ui/layout/cssgrid/GridItemLayoutData",
 	"sap/ui/layout/cssgrid/GridBasicLayout",
 	"sap/ui/layout/cssgrid/GridLayoutDelegate",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/layout/library",
 	"./CSSGridRenderer"
-], function (Control, GridBasicLayout, GridLayoutDelegate, ManagedObjectObserver) {
+], function (Control, GridItemLayoutData, GridBasicLayout, GridLayoutDelegate, ManagedObjectObserver) {
 	"use strict";
-
-	var mGridItemProperties = {
-		gridColumnStart: "grid-column-start",
-		gridColumnEnd: "grid-column-end",
-		gridRowStart: "grid-row-start",
-		gridRowEnd: "grid-row-end",
-		gridColumn: "grid-column",
-		gridRow: "grid-row"
-	};
 
 	/**
 	 * Constructor for a new CSSGrid.
@@ -221,7 +213,7 @@ sap.ui.define([
 	 * @private
 	 */
 	CSSGrid.prototype._onAfterItemRendering = function () {
-		CSSGrid._setItemStyles(this);
+		GridItemLayoutData._setItemStyles(this);
 	};
 
 	/**
@@ -232,114 +224,7 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent The event from a layoutDataChange
 	 */
 	CSSGrid.prototype.onLayoutDataChange = function (oEvent) {
-		CSSGrid._setItemStyles(oEvent.srcControl);
-	};
-
-	/**
-	 * =================== START of static helper functions ===================
-	 */
-
-	/**
-	 * Updates the display:grid styles of a single item
-	 *
-	 * @private
-	 * @static
-	 * @param {sap.ui.core.Control} oItem The item which styles have to be updated
-	 */
-	CSSGrid._setItemStyles = function (oItem) {
-
-		if (!oItem) {
-			return;
-		}
-
-		var oLayoutData = CSSGrid._getLayoutDataForControl(oItem),
-			oItemDom = oItem.getDomRef(),
-			oProperties,
-			sProp,
-			sPropValue;
-
-		if (!oLayoutData) {
-			CSSGrid._removeItemStyles(oItemDom);
-			return;
-		}
-
-		oProperties = oLayoutData.getMetadata().getProperties();
-
-		for (sProp in mGridItemProperties) {
-			if (oProperties[sProp]) {
-				sPropValue = oLayoutData.getProperty(sProp);
-
-				if (typeof sPropValue !== "undefined") {
-					CSSGrid._setItemStyle(oItemDom, mGridItemProperties[sProp], sPropValue);
-				}
-			}
-		}
-	};
-
-	/**
-	 * Remove all grid properties from the item
-	 *
-	 * @private
-	 * @static
-	 * @param {HTMLElement} oItemDom The Item DOM reference
-	 */
-	CSSGrid._removeItemStyles = function (oItemDom) {
-		for (var sProp in mGridItemProperties) {
-			oItemDom.style.removeProperty(mGridItemProperties[sProp]);
-		}
-	};
-
-	/**
-	 * Sets a property on the DOM element
-	 *
-	 * @private
-	 * @static
-	 * @param {HTMLElement} oItemDom The item DOM reference
-	 * @param {string} sProperty The name of the property to set
-	 * @param {string} sValue The value of the property to set
-	 */
-	CSSGrid._setItemStyle = function (oItemDom, sProperty, sValue) {
-		if (sValue !== "0" && !sValue) {
-			oItemDom.style.removeProperty(sProperty);
-		} else {
-			oItemDom.style.setProperty(sProperty, sValue);
-		}
-	};
-
-	/**
-	 * @private
-	 * @static
-	 * @param {sap.ui.layout.cssgrid.CSSGrid} oControl The CSSGrid control
-	 * @returns {sap.ui.layout.cssgrid.GridItemLayoutData|undefined} The layoutData used by the grid item
-	 */
-	CSSGrid._getLayoutDataForControl = function (oControl) {
-		var oLayoutData,
-			aLayoutData,
-			oInnerLayoutData;
-
-		if (!oControl) {
-			return undefined;
-		}
-
-		oLayoutData = oControl.getLayoutData();
-
-		if (!oLayoutData) {
-			return undefined;
-		}
-
-		if (oLayoutData.isA("sap.ui.layout.cssgrid.GridItemLayoutData")) {
-			return oLayoutData;
-		}
-
-		if (oLayoutData.isA("sap.ui.core.VariantLayoutData")) {
-			aLayoutData = oLayoutData.getMultipleLayoutData();
-			for (var i = 0; i < aLayoutData.length; i++) {
-				oInnerLayoutData = aLayoutData[i];
-				if (oInnerLayoutData.isA("sap.ui.layout.cssgrid.GridItemLayoutData")) {
-					return oInnerLayoutData;
-				}
-			}
-		}
+		GridItemLayoutData._setItemStyles(oEvent.srcControl);
 	};
 
 	return CSSGrid;
