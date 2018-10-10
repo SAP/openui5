@@ -1,6 +1,8 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller"
-], function(Controller) {
+    "sap/ui/core/mvc/Controller",
+    "sap/m/ObjectListItem",
+    "sap/m/ObjectAttribute"
+], function(Controller, ObjectListItem, ObjectAttribute) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.MockServer.controller.App", {
@@ -18,7 +20,7 @@ sap.ui.define([
 						first: "3"
 					}
 				},
-				template: new sap.m.ObjectListItem({
+				template: new ObjectListItem({
 					title: "{Title}",
 					number: {
 						path: 'EventDate',
@@ -28,7 +30,7 @@ sap.ui.define([
 						}
 					},
 					attributes: [
-						new sap.m.ObjectAttribute({
+						new ObjectAttribute({
 							text: "{Description}"
 						})
 					]
