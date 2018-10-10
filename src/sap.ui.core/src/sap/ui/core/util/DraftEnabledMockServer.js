@@ -21,7 +21,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/thirdparty/jquery", "jquer
 		},
 
 		/**
-		 * Enriches MockServer with draft capablities based on the given OData service annotations.
+		 * Enriches MockServer with draft capabilities based on the given OData service annotations.
 		 * @param {object} oAnnotations annotation object of sap.ui.model.odata.ODataModel
 		 * @param {object} oMockServer
 		 */

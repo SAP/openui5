@@ -38,7 +38,7 @@ sap.ui.define([
 		/** Function determining the control targeted by the change.
 		* The function differs between local IDs generated starting with 1.40 and the global IDs generated in previous versions.
 		*
-		* @param {object} oSelector Target of a flexiblity change
+		* @param {object} oSelector Target of a flexibility change
 		* @param {string} oSelector.id ID of the control targeted by the change
 		* @param {boolean} oSelector.isLocalId true if the ID within the selector is a local ID or a global ID
 		* @param {sap.ui.core.UIComponent} oAppComponent asd
