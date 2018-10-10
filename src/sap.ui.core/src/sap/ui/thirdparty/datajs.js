@@ -7954,7 +7954,7 @@
             return invokeRequest(request, success, error, handler, httpClient, context);
         } catch (err) {
         	// ##### BEGIN: MODIFIED BY SAP
-            // errors in success handler for sync requests are catched here and result in error handler calls.
+            // errors in success handler for sync requests are caught here and result in error handler calls.
         	// So here we fix this and throw that error further.
         	if (err.bIsSuccessHandlerError) {
         		throw err;
