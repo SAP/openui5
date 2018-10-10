@@ -176,6 +176,10 @@ sap.ui.define([
 	QUnit.test("Should get stable element ID suffix", function (assert) {
 		var sControlRelativeID = _ControlFinder._getDomElementIDSuffix($("#myId-reset")[0]);
 		assert.strictEqual(sControlRelativeID, "reset", "Should get control relative ID suffix");
+		["input", "input-content"].forEach(function (sSuffix) {
+			sControlRelativeID = _ControlFinder._getDomElementIDSuffix({id: "app.myView--supplier::field-" + sSuffix});
+			assert.strictEqual(sControlRelativeID, sSuffix, "Should get control relative ID suffix " + sSuffix);
+		});
 	});
 
 	QUnit.test("Should not return unstable element ID suffix", function (assert) {

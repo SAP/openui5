@@ -135,11 +135,27 @@ sap.ui.define([
      * @private
      */
     _ControlFinder._getDomElementIDSuffix = function (oElement) {
-        // TODO: make safer match
-        if (!ManagedObjectMetadata.isGeneratedId(oElement.id) && oElement.id.indexOf("-") > -1) {
-            var sControlRelativeID = oElement.id.split("-").pop();
-            if (!sControlRelativeID.match(/[0-9]$/)) {
-                return sControlRelativeID;
+        var sId = oElement.id;
+        var sDelimiter = "-";
+
+        if (!ManagedObjectMetadata.isGeneratedId(sId)) {
+            var iDelimiterIndex;
+            var iCounter = 1;
+
+            // find the first single-dash delimiter
+            while (iCounter < sId.length - 1 && !iDelimiterIndex) {
+                if (sId[iCounter] === sDelimiter && sId[iCounter - 1] !== sDelimiter && sId[iCounter + 1] !== sDelimiter) {
+                    iDelimiterIndex = iCounter;
+                } else {
+                    iCounter++;
+                }
+            }
+
+            if (iDelimiterIndex) {
+                var sControlRelativeID = sId.substring(iDelimiterIndex + 1);
+                if (!sControlRelativeID.match(/[0-9]$/)) {
+                    return sControlRelativeID;
+                }
             }
         }
     };
