@@ -60,7 +60,7 @@ some.lib/
                     SomeControl.spec.js
 ```
 
-At runtime (and after the Grunt build) all libraries are merged into one directory tree, but during development libraries are separated, hence the duplication of the library name, once as folder containing the complete library and twice inside as folder structure for the runtime sources as well as for the test pages.
+At runtime (and after a build) all libraries are merged into one directory tree, but during development libraries are separated, hence the duplication of the library name, once as folder containing the complete library and twice inside as folder structure for the runtime sources as well as for the test pages.
 
 Below the "themes" folder, there is one directory for each supported theme, with sub-folders for image resources if required (including the right-to-left version). Inside the folders for the themes, there can be any CSS files. The convention is to have one CSS file per control and one "shared.css" file for styles that are not specific to one control, but rather valid for the entire library. The library.source.less files are responsible for making LESS aware of all files that should be combined and how parts of the theme are connected. All CSS files should reside at the same directory level to avoid changing image paths when they are combined to one file in the build step.
  Note: themes can also be in separate theme libraries. For the standard UI5 controls sap\_bluecrystal and sap\_belize are such separate theme libraries. Their internal file structure is identical to control libraries, but when they support several control libraries, all their paths are contained.
@@ -263,7 +263,7 @@ The main JavaScript file of a control contains the metadata object describing th
 
 1.  By convention, the overall control is implemented in an [AMD structure](http://requirejs.org/docs/whyamd.html) ("Asynchronous Module Definition"), so there is a `sap.ui.define` function call wrapping the implementation and passing in all dependencies. Inside the implementation only the passed objects are used, not fully-namespaced global objects. E.g. if a `sap.ui.commons.Button` is required, it is added to the `define` function and the inner code only refers to a local `Button` object. This is to allow asynchronous usage and to conform with many tools depending on this structure.
 2.  Usually [the renderer](#the-control-renderer) is not just a static function in the behavior JS file, but a separate JS file. This is technically not mandatory, but a way to keep files smaller and more maintainable.
-3.  The documentation written for the API definition and any public methods is significant because it can be automatically extracted and converted into JSDoc documentation pages (this build step is not yet re-implemented with the Grunt build, though).
+3.  The documentation written for the API definition and any public methods is significant because it can be automatically extracted and converted into JSDoc documentation pages (this build step is not yet re-implemented with the UI5 Tooling build, though).
 4.  To be built and packaged with the library, controls need to be registered in [the library.js file](#libraryjs-file).
 
 #### The AMD syntax

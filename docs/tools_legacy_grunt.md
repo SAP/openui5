@@ -2,7 +2,9 @@
 Grunt tasks
 ===========
 
-The following Grunt tasks are available after [setting up the development environment](developing.md).
+The following Grunt tasks are available after [setting up the legacy Grunt development environment](developing_legacy_grunt.md).
+
+Please consider using the new [UI5 Build and Development Tooling](https://github.com/SAP/ui5-tooling) based setup. See the [developing OpenUI5 guide](developing.md) for details.
 
 ## serve
 

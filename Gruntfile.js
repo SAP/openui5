@@ -266,6 +266,11 @@ module.exports = function(grunt) {
 	var configExtensionFile = grunt.option("config-extension");
 	if (configExtensionFile) {
 		configExtensionFile.split(',').forEach(file => require(path.resolve(file))(grunt, gruntData));
+	} else if (process.argv[2] === "serve") {
+		console.log();
+		grunt.log.warn('Hey! Seems like you are still using "grunt serve".');
+		grunt.log.warn('Please consider using the new development setup based on the UI5 Tooling:');
+		grunt.log.warn('https://github.com/SAP/openui5/blob/master/docs/developing.md');
 	}
 
 	// Normalize all library 'path' to individual 'src' and 'test' paths
