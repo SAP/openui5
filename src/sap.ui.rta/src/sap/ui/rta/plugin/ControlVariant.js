@@ -10,7 +10,7 @@ sap.ui.define([
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/dt/Util',
-	'sap/ui/fl/changeHandler/BaseTreeModifier',
+	'sap/ui/core/util/reflection/JsControlTreeModifier',
 	'sap/ui/fl/Utils',
 	'sap/ui/fl/variants/VariantManagement',
 	'sap/ui/base/ManagedObject',
@@ -25,7 +25,7 @@ sap.ui.define([
 	OverlayRegistry,
 	OverlayUtil,
 	DtUtil,
-	BaseTreeModifier,
+	JsControlTreeModifier,
 	flUtils,
 	VariantManagement,
 	ManagedObject,
@@ -95,7 +95,7 @@ sap.ui.define([
 			var vAssociationElement = oControl.getFor(),
 				aVariantManagementTargetElements;
 
-			sVariantManagementReference = BaseTreeModifier.getSelector(oControl, flUtils.getComponentForControl(oControl)).id;
+			sVariantManagementReference = JsControlTreeModifier.getSelector(oControl, flUtils.getComponentForControl(oControl)).id;
 
 			if (!vAssociationElement ||
 				(Array.isArray(vAssociationElement) && vAssociationElement.length === 0)) {

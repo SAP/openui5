@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/variants/util/VariantUtil",
-	"sap/ui/core/util/reflection/BaseTreeModifier",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
@@ -17,7 +17,7 @@ function(
 	Utils,
 	FlexControllerFactory,
 	VariantUtil,
-	BaseTreeModifier,
+	JsControlTreeModifier,
 	BusyIndicator,
 	jQuery,
 	sinon
@@ -984,7 +984,7 @@ function(
 				"variantChanges": {}
 			};
 			sandbox.stub(this.oModel, "_duplicateVariant").returns(oVariantData);
-			sandbox.stub(BaseTreeModifier, "getSelector").returns({id: "variantMgmtId1"});
+			sandbox.stub(JsControlTreeModifier, "getSelector").returns({id: "variantMgmtId1"});
 			sandbox.stub(this.oModel.oFlexController._oChangePersistence, "addDirtyChange").returnsArg(0);
 
 			var mPropertyBag = {
