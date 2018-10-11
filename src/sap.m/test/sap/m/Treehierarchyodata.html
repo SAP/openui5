@@ -50,11 +50,11 @@ this.oODataModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, {
 	json: true,
 	defaultUpdateMethod: "PUT",
 	disableHeadRequestForToken: true,
-	tokenHandling: true,
-	sizeLimit: 20
+	tokenHandling: true
 });
 
 oTree.setModel(this.oODataModel, "odata");
+this.oODataModel.setSizeLimit(20);
 
 oTree.bindItems({
 	path: "odata>/orgHierarchy",
@@ -127,12 +127,23 @@ function onDrop(oEvent) {
 	}
 };
 
+function onCreate(oEvent) {
+	var oBinding = oTree.getBinding();
+	var oTableModel = oTree.getModel("odata");
+	var oContext = oBinding.createEntry();
+
+	// add new entry to the binding
+	oBinding.addContexts(oBinding.getContextByIndex(5), [oContext]);
+
+};
+
 var oApp = new sap.m.App();
 var oLabel3 = new sap.m.Label({text:"*********************Tree*********************"});
+var oButton = new sap.m.Button({text:"creat node", press: onCreate});
 
 var oPage = new sap.m.Page("TreeTest", {
 	title : "Test Page for m.Tree hierarchy",
-	content : [oTree]
+	content : [oButton, oTree]
 });
 
 oApp.addPage(oPage).placeAt("body");
