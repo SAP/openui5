@@ -7,7 +7,7 @@
 		"webapp/controller/ErrorHandler.js",
 		"webapp/controller/Overview.controller.js",
 		"webapp/control/ColorPreview.js",
-		"webapp/control/Transparenz.jpg",
+		"webapp/css/Transparenz.jpg",
 		"webapp/css/style.css",
 		"webapp/i18n/i18n.properties",
 		"webapp/index.html",
