@@ -10,26 +10,57 @@
 			width: auto !important;
 			min-width: 0px !important;
 		}
+
 		.hyphenatedText {
-			color:dodgerblue;
+			color: dodgerblue;
 			font-weight: bold;
 		}
+
 		.sapUiHyphenation {
 			-webkit-hyphens: auto;
 			-moz-hyphens: auto;
 			-ms-hyphens: auto;
 			hyphens: auto;
 		}
+
+		.labelForSlider {
+			margin-top: 1rem;
+		}
+
+		.labelHyphChoiseNat-true {
+			font-weight: bold;
+			background-color: #d6eaf8;
+			border: 1px solid #aed6f1;
+			border-radius: 8px;
+		}
+
+		.labelHyphChoise3rd-true {
+			font-weight: bold;
+			background-color: #e8daef;
+			border: 1px solid #d2b4de;
+			border-radius: 8px;
+		}
+
+		.sapUiSimpleForm .sapMLabel {
+			margin-right: 10px !important;
+		}
+
+		.sapUiHLayout.sapUiHLayoutNoWrap .sapMLabel.sapMLabelMaxWidth.sapMLabelDisplayOnly.sapUiSelectable {
+			margin: 0 4rem !important;
+		}
 	</style>
-	<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m, sap.tnt, sap.ui.layout, sap.ui.core" data-sap-ui-theme="sap_belize">
+	<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m, sap.tnt, sap.ui.layout, sap.ui.core"
+	 data-sap-ui-theme="sap_belize">
 	</script>
 	<script>
-		sap.ui.require(['sap/ui/core/hyphenation/Hyphenation'],
-			function (Hyphenation) {
+		sap.ui.require(['sap/ui/core/hyphenation/Hyphenation', 'sap/m/FlexBox', "sap/base/util/UriParameters"],
+			function (HyphenationDelegate, FlexBox, UriParameters) {
 				"use strict";
 
 				// create and add app
-				var app = new sap.m.App("myApp", { initialPage: "pg" });
+				var app = new sap.m.App("myApp", {
+					initialPage: "pg"
+				});
 				app.placeAt("body");
 				var initialPage = new sap.m.Page("pg", {
 					showHeader: true,
@@ -66,6 +97,7 @@
 					"tr": "Muvaffakiyetsizleştiricileştiriveremeyebileceklerimizdenmişsinizcesine",
 					"uk": "Нікотинамідаденіндинуклеотидфосфат"
 				};
+
 				var aLangCodes = [
 					"bg",
 					"ca",
@@ -126,7 +158,6 @@
 					"uk": "Ukrainian",
 				};
 
-
 				var oLangTexts = {
 					"bg": "Примерен текст, който ще послужи за проверка на пренасянето",
 					"ca": "Una manera especial de provar la partició de paraules en català a la web.",
@@ -157,47 +188,84 @@
 					"uk": "Зразок тексту, який буде служити для перевірки передачі",
 				};
 
+				var getFilteredLangs = function () {
+					if (langsParam && langsParam[0]) {
+						return langsParam[0].split(",");
+					}
+				};
 
-				var hyph = Hyphenation.getInstance();
+				var hyph = HyphenationDelegate.getInstance();
+				var langsParam = new UriParameters(window.location.href).mParams["filter-langs"];
+				var filteredLangs = getFilteredLangs();
 
-				aLangCodes.forEach(function (lang) {
-					hyph.initialize(lang, {hyphen:"-"}).then(function (lang) {
-						createSectionFor(lang);
-					}).catch(function (e) {
-						console.error(e);
-					})
-				});
+				if (filteredLangs) {
+					filteredLangs.forEach(function (lang) {
+						hyph.initialize(lang).then(function (lang) {
+							createSectionFor(lang);
+						}).catch(function (e) {
+							var errLang = e.slice(23, 25);
+							if ((errLang == "CS") || (errLang == "PL") || (errLang == "SR")) {
+								createSectionFor(errLang.toLowerCase());
+							}
+							console.error(e);
+						})
+					});
+
+				} else {
+					aLangCodes.forEach(function (lang) {
+						hyph.initialize(lang).then(function (lang) {
+							createSectionFor(lang);
+						}).catch(function (e) {
+							var errLang = e.slice(23, 25);
+							if ((errLang == "CS") || (errLang == "PL") || (errLang == "SR")) {
+								createSectionFor(errLang.toLowerCase());
+							}
+							console.error(e);
+						})
+					});
+				}
 
 				var fnChangeText = function (evt) {
 					var sLng = evt.getSource().getId().slice(4);
 					var sNewText = sap.ui.getCore().byId("inpChTxt-" + sLng).getValue();
-					sap.ui.getCore().byId("txt-" + sLng).setContent("<div style='font-size: 14px;'>" + sNewText +"</div>");
+					sap.ui.getCore().byId("txt-" + sLng).setContent("<div style='font-size: 14px;' lang='" + sLng +
+						"' class='sapUiHyphenation'>" + sNewText + "</div>");
 					var sHyphenatedText = hyph.hyphenate(sNewText, sLng);
-					sap.ui.getCore().byId("hyph-" + sLng).setContent("<div style='font-size: 14px;' class='hyphenatedText'>" + sHyphenatedText +"</div>");
-				}
+					sap.ui.getCore().byId("hyph-" + sLng).setContent("<div style='font-size: 14px;'>" + sHyphenatedText + "</div>");
+					sap.ui.getCore().byId("slider-" + sLng).setValue(100);
+				};
 
 				var fnApplyConfig = function (evt) {
 					var lang = evt.getParameters().id.split("button-")[1];
 					//get input values and change config
 					var sExeption = sap.ui.getCore().byId("inpExc-" + lang).getValue();
-					var nMinWordLen = sap.ui.getCore().byId("inpMinWordLen-" + lang).getValue() ;
+					var nMinWordLen = sap.ui.getCore().byId("inpMinWordLen-" + lang).getValue();
 					var sSymbol = sap.ui.getCore().byId("inpSym-" + lang).getValue();
-					var oExeptions = sExeption?JSON.parse(sExeption):{};
+					var oExeptions = sExeption ? JSON.parse(sExeption) : {};
 					var oConfig = {
-						exceptions:oExeptions,
-						hyphen:sSymbol,
-						minWordLength:nMinWordLen
+						exceptions: oExeptions,
+						hyphen: sSymbol,
+						minWordLength: nMinWordLen
 					}
-					hyph.initialize(lang,oConfig).then(function (lang) {
+					hyph.initialize(lang, oConfig).then(function (lang) {
 						var sNewText = sap.ui.getCore().byId("inpChTxt-" + lang).getValue();
-						sap.ui.getCore().byId("txt-" + lang).setContent("<div style='font-size: 14px;'>" + sNewText +"</div>");
+						sap.ui.getCore().byId("txt-" + lang).setContent("<div style='font-size: 14px; 'lang='" + lang +
+							"' class='sapUiHyphenation' >" + sNewText + "</div>");
 						var sHyphenatedText = hyph.hyphenate(sNewText, lang);
-						sap.ui.getCore().byId("hyph-" + lang).setContent("<div style='font-size: 14px;' class='hyphenatedText'>" + sHyphenatedText +"</div>");
+						sap.ui.getCore().byId("hyph-" + lang).setContent("<div style='font-size: 14px;'>" + sHyphenatedText +
+							"</div>");
 					});
-					// TODO implement change config
-				}
+					sap.ui.getCore().byId("slider-" + lang).setValue(100);
+				};
+				var fnSliderChange = function (oEvent) {
+					var value = oEvent.getParameter("value");
+					var sLang = oEvent.getParameter("id").slice(7);
+					document.getElementById("txt-" + sLang).style.width = value + "%";
+					document.getElementById("hyph-" + sLang).style.width = value + "%";
+				};
 
 				function createSectionFor(lang) {
+					var isSupportedBy3rdParty = (lang != "cs") && (lang != "pl") && (lang != "sr");
 					var oTitle = new sap.m.Title({
 						text: oLangFullText[lang] + ": " + lang.toUpperCase(),
 						width: "100%",
@@ -215,29 +283,34 @@
 						press: fnChangeText,
 						text: "Change Text"
 					});
+
 					var oInputExc = new sap.m.Input({
 						id: "inpExc-" + lang,
-						placeholder:' {"Example": "E-x-a-m-p-l-e", "word": "wo-rd"}',
+						placeholder: ' {"Example": "E-x-a-m-p-l-e", "word": "wo-rd"}',
 						value: "",
-						width: "60%"
+						width: "60%",
+						visible: isSupportedBy3rdParty,
 					});
 
 					var oInputMinWordLen = new sap.m.Input({
 						id: "inpMinWordLen-" + lang,
 						value: 6,
-						width: "48px"
+						width: "48px",
+						visible: isSupportedBy3rdParty,
 					});
 
 					var oInputSym = new sap.m.Input({
 						id: "inpSym-" + lang,
 						value: "-",
-						width: "48px"
+						width: "48px",
+						visible: isSupportedBy3rdParty,
 					});
+
 					var oInputWord = new sap.m.Input({
 						id: "inpWord-" + lang,
 						value: oTestingWords[lang],
-						editable:false,
-						width: "60%"
+						editable: false,
+						width: "60%",
 					});
 
 					var oButtonApply = new sap.m.Button({
@@ -245,26 +318,40 @@
 						//value: oLangTexts[aLangCodes[i]],
 						width: "100px",
 						press: fnApplyConfig,
-						text: "Apply"
+						text: "Apply",
+						visible: isSupportedBy3rdParty,
 					});
 
 					var oFormConfig = new sap.ui.layout.form.SimpleForm({
 						layout: "ResponsiveGridLayout",
-						labelSpanM: 2,
-						labelSpanS: 2,
+						labelSpanM: 3,
+						labelSpanS: 3,
 						labelSpanL: 2,
 						editable: true,
 						content: [
-
-							new sap.m.Label({text: "Exceptions"}),
-							oInputExc,
-							new sap.m.Label({text:"Word used for testing browser hyphenation function"}),
+							new sap.m.Label({
+								text: "Word used for testing browser hyphenation function"
+							}),
 							oInputWord,
-							new sap.m.Label({text: "Min word length"}),
+							new sap.m.Label({
+								text: "Exceptions",
+								visible: isSupportedBy3rdParty
+							}),
+							oInputExc,
+							new sap.m.Label({
+								text: "Min word length",
+								visible: isSupportedBy3rdParty
+							}),
 							oInputMinWordLen,
-							new sap.m.Label({text: "Symbol"}),
+							new sap.m.Label({
+								text: "Symbol",
+								visible: isSupportedBy3rdParty
+							}),
 							oInputSym,
-							new sap.m.Label({text:"Apply configuration"}),
+							new sap.m.Label({
+								text: "Apply configuration",
+								visible: isSupportedBy3rdParty
+							}),
 							oButtonApply
 						]
 					});
@@ -277,37 +364,75 @@
 						content: [oFormConfig]
 					});
 
-					var oText = new sap.ui.core.HTML({
+					var oCssHyphenatedText = new sap.ui.core.HTML({
 						id: "txt-" + lang
 					});
-					oText.setContent("<div style='font-size: 14px;' lang='"+lang+"' class='sapUiHyphenation'>" + oLangTexts[lang] + "</div>");
+					oCssHyphenatedText.setContent("<div style='font-size: 14px;' lang='" + lang + "' class='sapUiHyphenation'>" +
+						oLangTexts[lang] + "</div>");
 
-					var oTextHyphenated = new sap.ui.core.HTML({
+					var oThirdPartyTextHyphenated = new sap.ui.core.HTML({
 						id: "hyph-" + lang,
-						content: ["<div style='font-size: 14px;' class='hyphenatedText'>" + hyph.hyphenate(oLangTexts[lang], lang) + "</div>"]
+						visible: isSupportedBy3rdParty,
+						content: ["<div style='font-size: 14px;'>" + hyph.hyphenate(oLangTexts[lang], lang) + "</div>"]
 					});
-					var oFormTexts = new sap.ui.layout.form.SimpleForm({
-						//title: "Text results",
+
+					var fnConfigurationText = function () {
+						if (sap.ui.getCore().getConfiguration().getHyphenation() === 'thirdparty') {
+							return 'Thirdparty hyphenation';
+						} else {
+							if (!hyph.canUseNativeHyphenation(lang)) {
+								return 'Thirdparty hyphenation';
+							} else {
+								return 'Native Hyphenation';
+							}
+						}
+					};
+					var sConfigurationText = sap.ui.getCore().getConfiguration().getHyphenation();
+					var sSlId = "slider-" + lang;
+					var sFormId = "formWitTexts-" + lang;
+
+					var oFormTexts = new sap.ui.layout.form.SimpleForm(sFormId, {
 						layout: "ResponsiveGridLayout",
+						width: "80%",
 						labelSpanM: 2,
-						labelSpanS: 2,
-						labelSpanL: 2,
+						labelSpanS: 5,
+						labelSpanL: 1,
 						content: [
-							new sap.m.Label({text: "Unhyphenated text"}),
-							oText,
-							new sap.m.Label({text: "Hyphenated text"}),
-							oTextHyphenated,
-							new sap.m.Label({text: "Hyphenation property will use"}),
-							new sap.tnt.InfoLabel({text:hyph.canUseNativeHyphenation(lang)?"CSS hyphenation":"Hyphenopoly", colorScheme:hyph.canUseNativeHyphenation(lang)?7:3})
+							new sap.m.Label({
+								text: "Container width",
+								displayOnly: false
+							}).addStyleClass("labelForSlider"),
+							new sap.m.Slider(sSlId, {
+								value: 100,
+								liveChange: fnSliderChange,
+								width: "100%"
+							}),
+							new sap.m.Label({
+								text: "Browser native",
+								displayOnly: false
+							}).addStyleClass("labelHyphChoiseNat-" + hyph.canUseNativeHyphenation(lang)),
+							oCssHyphenatedText,
+							new sap.m.Label({
+								text: "3rd party",
+								visible: isSupportedBy3rdParty,
+								displayOnly: false
+							}).addStyleClass("labelHyphChoise3rd-" + !hyph.canUseNativeHyphenation(lang)),
+							oThirdPartyTextHyphenated,
 						]
 					});
 
+					var oLayoutTexts = new sap.ui.layout.VerticalLayout({
+						width: "100%",
+						content: [
+
+							oFormTexts
+						]
+					});
 					initialPage.addContent(oTitle);
 					initialPage.addContent(oInput);
 					initialPage.addContent(oBtn);
 					initialPage.addContent(oConfigPanel);
-					initialPage.addContent(oFormTexts);
-//					console.log("LANGUAGE " + lang + " COMPLEATED");
+					initialPage.addContent(oLayoutTexts);
 				}
 
 			});
