@@ -2,7 +2,16 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", 'sap/ui/base/Object', "sap/base/util/UriParameters", "sap/ui/thirdparty/jquery"], function(jQuery, BaseObject, UriParameters, jQueryDOM) {
+sap.ui.define(["jquery.sap.global",
+		'sap/ui/base/Object',
+		"sap/base/util/UriParameters",
+		"sap/ui/thirdparty/jquery",
+		"sap/ui/support/RuleAnalyzer"],
+	function(jQuery,
+			 BaseObject,
+			 UriParameters,
+			 jQueryDOM,
+			 RuleAnalyzer) {
 	"use strict";
 
 	var Extension = BaseObject.extend("sap.ui.core.support.RuleEngineOpaExtension", {
@@ -70,8 +79,8 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/base/Object', "sap/base/util/UriPara
 						executionScope = options.executionScope;
 
 					// private API provided by jquery.sap.global
-					jQuery.sap.support.analyze(executionScope, rules || preset).then(function () {
-						var analysisHistory = jQuery.sap.support.getAnalysisHistory(),
+					RuleAnalyzer.analyze(executionScope, rules || preset).then(function () {
+						var analysisHistory = RuleAnalyzer.getAnalysisHistory(),
 							lastAnalysis = { issues: [] };
 
 						if (analysisHistory.length) {
@@ -116,8 +125,8 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/base/Object', "sap/base/util/UriPara
 				 */
 				getFinalReport: function () {
 					var ruleDeferred = jQueryDOM.Deferred(),
-						history = jQuery.sap.support.getFormattedAnalysisHistory(),
-						analysisHistory = jQuery.sap.support.getAnalysisHistory(),
+						history = RuleAnalyzer.getFormattedAnalysisHistory(),
+						analysisHistory = RuleAnalyzer.getAnalysisHistory(),
 						totalIssues = analysisHistory.reduce(function (total, analysis) {
 							return total + analysis.issues.length;
 						}, 0),
