@@ -23,6 +23,8 @@ sap.ui.define([
 	'./DialogRenderer',
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core",
+	"sap/ui/core/Configuration",
 	// jQuery Plugin "control"
 	"sap/ui/dom/jquery/control",
 	// jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
@@ -47,7 +49,9 @@ function(
 	TitlePropagationSupport,
 	DialogRenderer,
 	Log,
-	jQuery
+	jQuery,
+	Core,
+	Configuration
 ) {
 		"use strict";
 
@@ -59,6 +63,15 @@ function(
 
 		// shortcut for sap.ui.core.ValueState
 		var ValueState = coreLibrary.ValueState;
+
+
+		var sAnimationMode = Core.getConfiguration().getAnimationMode();
+		var bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
+
+		// the time should be longer the longest transition in the CSS (200ms),
+		// because of focusing and transition relate issues especially in IE,
+		// where 200ms transition sometimes seems to last a little longer
+		var iAnimationDuration = bUseAnimations ? 300 : 10;
 
 		/**
 		* Constructor for a new Dialog.
@@ -782,7 +795,7 @@ function(
 			$Ref.addClass("sapMDialogOpen");
 
 			$Ref.css("display", "block");
-			setTimeout(fnOpened, 300); // the time should be longer the longest transition in the CSS (200ms), because of focusing and transition relate issues especially in IE where 200ms transition sometimes seems to last a little longer// TODO remove after 1.62 version
+			setTimeout(fnOpened, iAnimationDuration);
 		};
 
 		/**
@@ -795,7 +808,7 @@ function(
 		Dialog.prototype._closeAnimation = function ($Ref, iRealDuration, fnClose) {
 			$Ref.removeClass("sapMDialogOpen");
 
-			setTimeout(fnClose, 300);
+			setTimeout(fnClose, iAnimationDuration);
 		};
 
 		/**
