@@ -51,8 +51,8 @@ sap.ui.define([
 						{
 							title: "{message>message}",
 							subtitle: "{message>additionalText}",
-							groupName: {parts: [{path: 'message>controlId'}], formatter: this.getGroupName},
-							activeTitle: {parts: [{path: 'message>controlId'}], formatter: this.isPositionable},
+							groupName: {parts: [{path: 'message>controlIds'}], formatter: this.getGroupName},
+							activeTitle: {parts: [{path: 'message>controlIds'}], formatter: this.isPositionable},
 							type: "{message>type}",
 							description: "{message>message}"
 						})
