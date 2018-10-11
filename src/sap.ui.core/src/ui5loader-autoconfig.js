@@ -281,6 +281,10 @@
 		},
 
 		shim: {
+			'sap/ui/thirdparty/bignumber': {
+				amd: true,
+				exports: 'BigNumber'
+			},
 			'sap/ui/thirdparty/blanket': {
 				amd: true,
 				exports: 'blanket' // '_blanket', 'esprima', 'falafel', 'inBrowser', 'parseAndModify'
@@ -335,8 +339,43 @@
 				amd: true,
 				exports: 'jQuery'
 			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-datepicker': {
+				deps: ['sap/ui/thirdparty/jqueryui/jquery-ui-core'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-draggable': {
+				deps: ['sap/ui/thirdparty/jqueryui/jquery-ui-mouse'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-droppable': {
+				deps: ['sap/ui/thirdparty/jqueryui/jquery-ui-mouse', 'sap/ui/thirdparty/jqueryui/jquery-ui-draggable'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-effect': {
+				deps: ['sap/ui/thirdparty/jquery'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-mouse': {
+				deps: ['sap/ui/thirdparty/jqueryui/jquery-ui-core', 'sap/ui/thirdparty/jqueryui/jquery-ui-widget'],
+				exports: 'jQuery'
+			},
 			'sap/ui/thirdparty/jqueryui/jquery-ui-position': {
-				amd: true,
+				deps: ['sap/ui/thirdparty/jquery'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-resizable': {
+				deps: ['sap/ui/thirdparty/jqueryui/jquery-ui-mouse'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-selectable': {
+				deps: ['sap/ui/thirdparty/jqueryui/jquery-ui-mouse'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-sortable': {
+				deps: ['sap/ui/thirdparty/jqueryui/jquery-ui-mouse'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-widget': {
 				deps: ['sap/ui/thirdparty/jquery'],
 				exports: 'jQuery'
 			},
@@ -364,6 +403,11 @@
 			'sap/ui/thirdparty/punycode': {
 				amd: true,
 				exports: 'punycode'
+			},
+			'sap/ui/thirdparty/RequestRecorder': {
+				amd: true,
+				exports: 'RequestRecorder',
+				deps: ['sap/ui/thirdparty/URI', 'sap/ui/thirdparty/sinon']
 			},
 			'sap/ui/thirdparty/require': {
 				exports: 'define' // 'require', 'requirejs'
@@ -417,32 +461,36 @@
 				amd: true,
 				exports: 'esprima'
 			},
-			'sap/ui/thirdparty/RequestRecorder': {
+			'sap/viz/libs/canvg': {
 				amd: true,
-				exports: 'RequestRecorder',
-				deps: ['sap/ui/thirdparty/URI', 'sap/ui/thirdparty/sinon.js']
+				deps: ['sap/viz/libs/rgbcolor']
+			},
+			'sap/viz/libs/rgbcolor': {
+				amd: true
 			},
 			'sap/viz/libs/sap-viz': {
-				amd: true
-			},
-			'sap/viz/libs/sap-viz-info-framework': {
-				amd: true
+				amd: true,
+				deps: ['sap/ui/thirdparty/jquery', 'sap/ui/thirdparty/d3', 'sap/viz/libs/canvg']
 			},
 			'sap/viz/libs/sap-viz-info-charts': {
-				amd: true
-			},
-			'sap/viz/container/libs/sap-viz-controls-vizcontainer': {
-				amd: true
-			},
-			'sap/viz/controls/libs/sap-viz-vizframe': {
-				amd: true
-			},
-			'sap/viz/controls/libs/sap-viz-vizservices': {
-				amd: true
-			},
-			'sap/ui/thirdparty/bignumber': {
 				amd: true,
-				exports: 'BigNumber'
+				deps: ['sap/viz/libs/sap-viz-info-framework']
+			},
+			'sap/viz/libs/sap-viz-info-framework': {
+				amd: true,
+				deps: ['sap/ui/thirdparty/jquery', 'sap/ui/thirdparty/d3']
+			},
+			'sap/viz/ui5/container/libs/sap-viz-controls-vizcontainer': {
+				amd: true,
+				deps: ['sap/viz/libs/sap-viz', 'sap/viz/ui5/container/libs/common/libs/rgbcolor/rgbcolor_static']
+			},
+			'sap/viz/ui5/controls/libs/sap-viz-vizframe': {
+				amd: true,
+				deps: ['sap/viz/libs/sap-viz-info-charts']
+			},
+			'sap/viz/ui5/controls/libs/sap-viz-vizservices': {
+				amd: true,
+				deps: ['sap/viz/libs/sap-viz-info-charts']
 			}
 		}
 	});
