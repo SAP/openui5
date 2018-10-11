@@ -151,7 +151,7 @@ sap.ui.define([
 	 *   if <code>sTargetType</code> is unsupported
 	 * @public
 	 */
-	EdmDate.prototype.formatValue = function(vValue, sTargetType) {
+	EdmDate.prototype.formatValue = function (vValue, sTargetType) {
 		var oDate;
 
 		if (vValue === undefined || vValue === null) {
@@ -180,7 +180,7 @@ sap.ui.define([
 	 * @override
 	 * @protected
 	 */
-	EdmDate.prototype.getModelFormat = function() {
+	EdmDate.prototype.getModelFormat = function () {
 		return getModelFormatter();
 	};
 

@@ -98,7 +98,7 @@ sap.ui.define([
 	 *   if <code>sTargetType</code> is unsupported
 	 * @public
 	 */
-	EdmGuid.prototype.formatValue = function(sValue, sTargetType) {
+	EdmGuid.prototype.formatValue = function (sValue, sTargetType) {
 		if (sValue === undefined || sValue === null) {
 			return null;
 		}

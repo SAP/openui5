@@ -159,7 +159,7 @@ sap.ui.define([
 	 *   "No" in the current {@link sap.ui.core.Configuration#getLanguage language}.
 	 * @public
 	 */
-	EdmBoolean.prototype.parseValue = function(vValue, sSourceType) {
+	EdmBoolean.prototype.parseValue = function (vValue, sSourceType) {
 		var sValue;
 
 		if (vValue === null || vValue === "") {
