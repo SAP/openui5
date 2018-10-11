@@ -1962,7 +1962,7 @@ sap.ui.define([
 		 * An input control for specifying a date value. The user can select a month, day of the month, and year.
 		 * @public
 		 * @deprecated Since version 1.9.1.
-		 * Please use sap.m.DateTimeInput control with type "Date" to create date input.
+		 * Please use dedicated {@link sap.m.DatePicker} to create date input.
 		 */
 		Date : "Date",
 
@@ -1970,7 +1970,7 @@ sap.ui.define([
 		 * An input control for specifying a date and time value. The user can select a month, day of the month, year, and time of day.
 		 * @public
 		 * @deprecated Since version 1.9.1.
-		 * Please use dedicated sap.m.DateTimeInput control with type "DateTime" to create date-time input.
+		 * Please use dedicated {@link sap.m.DateTimePicker} control to create date-time input.
 		 */
 		Datetime : "Datetime",
 
@@ -1978,7 +1978,7 @@ sap.ui.define([
 		 * An input control for specifying a date and time value where the format depends on the locale.
 		 * @public
 		 * @deprecated Since version 1.9.1.
-		 * Please use dedicated sap.m.DateTimeInput control with type "DateTime" to create date-time input.
+		 * Please use dedicated {@link sap.m.DateTimePicker} control create date-time input.
 		 */
 		DatetimeLocale : "DatetimeLocale",
 
@@ -2012,7 +2012,7 @@ sap.ui.define([
 		 * An input control for specifying a time value. The user can select the hour, minute, and optionally AM or PM.
 		 * @public
 		 * @deprecated Since version 1.9.1.
-		 * Please use dedicated sap.m.DateTimeInput control with type "Time" to create time input.
+		 * Please use dedicated {@link sap.m.TimePicker} control to create time input.
 		 */
 		Time : "Time",
 
