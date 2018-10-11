@@ -2,10 +2,14 @@
 		  xmlns="sap.uxap"
 		  xmlns:m="sap.m"
 		  xmlns:mvc="sap.ui.core.mvc"
+		  xmlns:custom="sap.ui.documentation.sdk.controls"
+		  xmlns:blocks="sap.ui.documentation.sdk.blocks"
 		  xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
-	<ObjectPageLayout enableLazyLoading="false"
+	<ObjectPageLayout id="objectPage"
+					  enableLazyLoading="true"
 					  showAnchorBarPopover="true"
 					  upperCaseAnchorBar="false"
+					  useIconTabBar="true"
 					  sections="{/}">
 		<headerTitle>
 			<ObjectPageHeader objectTitle="Index by Version"/>
@@ -15,25 +19,7 @@
 				titleUppercase="false"
 				title="As of {name}">
 			<ObjectPageSubSection>
-				<m:List updateFinished="._modifyLinks"
-						items="{ path: 'apis', templateShareable: 'false'}"
-						showSeparators="Inner"
-						class="sapUxAPObjectPageSubSectionAlignContent"
-						width="auto">
-					<m:items>
-						<m:FeedListItem
-								showIcon="false"
-								sender="{parts : [{path : 'control'},
-										{path : 'entityName'}, {path: 'type'}],
-										formatter : '.formatSenderLink'}"
-								text="{path : 'text', formatter: '.formatLinks'}"
-								class="specialListFeedItem"
-								app:control="{control}"
-								app:entity="{entityName}"
-								app:type="{type}"
-								app:static="{static}"/>
-					</m:items>
-				</m:List>
+				<blocks:IndexEntry></blocks:IndexEntry>
 			</ObjectPageSubSection>
 		</ObjectPageSection>
 	</ObjectPageLayout>
