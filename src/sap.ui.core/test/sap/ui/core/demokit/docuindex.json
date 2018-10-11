@@ -146,6 +146,15 @@
 				]
 			},
 			{
+				"id": "sap.ui.core.hyphenation.Hyphenation",
+				"name": "Hyphenation API",
+				"category": "Display",
+				"since": "1.60",
+				"samples": [
+					"sap.ui.core.sample.HyphenationAPI"
+				]
+			},
+			{
 				"id": "sap.ui.test.matchers",
 				"name": "Matcher",
 				"category": "Testing",
@@ -746,6 +755,11 @@
 				"id": "sap.ui.core.sample.ControllerExtension",
 				"name": "Controller Extension",
 				"description": "This sample demonstrates the controller extension features. They can be used by app developers to extract reusable controller code that is mixed into the controller. They can be used by other developers to extend the existing controller without modifying it. The extension scenario is simulated in this example."
+			},
+			{
+				"id": "sap.ui.core.sample.HyphenationAPI",
+				"name": "Hyphenation API",
+				"description": "This sample demonstrates usage of the Hyphenation API"
 			}
 		]
 	}

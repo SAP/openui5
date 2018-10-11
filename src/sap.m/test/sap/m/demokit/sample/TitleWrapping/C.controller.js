@@ -15,6 +15,13 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 
 			var title = sap.ui.getCore().byId(this.getView().getId() + "--WrappingTitle");
 			title.setWrapping(!title.getWrapping());
+		},
+		onHyphenationChange: function(oEvent) {
+
+			var title = this.byId("WrappingTitle");
+
+			var wrappingTypeValue = oEvent.getParameter("state") ? "Hyphenated" : "Normal";
+			title.setWrappingType(wrappingTypeValue);
 		}
 	});
 
