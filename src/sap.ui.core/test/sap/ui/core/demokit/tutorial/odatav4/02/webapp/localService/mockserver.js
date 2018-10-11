@@ -1,7 +1,8 @@
 sap.ui.define([
 	'jquery.sap.global',
-	'sap/ui/thirdparty/sinon'
-], function (jQuery, sinon) {
+	'sap/ui/thirdparty/sinon',
+	"sap/base/Log"
+], function (jQuery, sinon, Log) {
 	"use strict";
 
 	var oSandbox = sinon.sandbox.create(),
@@ -37,7 +38,7 @@ sap.ui.define([
 			});
 
 			// Set the logging level for console entries from the mock server
-			jQuery.sap.log.setLevel(3, sLogComponent);
+			Log.setLevel(3, sLogComponent);
 		},
 
 		/**
@@ -159,6 +160,7 @@ sap.ui.define([
 		var oResult;
 
 		// Read metadata file
+		//TODO: global jquery call found
 		oResult = jQuery.sap.sjax({
 			url : "./localService/metadata.xml",
 			dataType : "text"
@@ -169,6 +171,7 @@ sap.ui.define([
 			sMetadata = oResult.data;
 		}
 
+		//TODO: global jquery call found
 		oResult = jQuery.sap.sjax({
 			url : "./localService/mockdata/people.json",
 			dataType : "text"
@@ -624,7 +627,7 @@ sap.ui.define([
 		var aResponse;
 
 		// Log the request
-		jQuery.sap.log.info(
+		Log.info(
 			"Mockserver: Received " + oXhr.method + " request to URL " + oXhr.url,
 			(oXhr.requestBody ? "Request body is:\n" + oXhr.requestBody : "No request body.") + "\n",
 			sLogComponent);
@@ -638,7 +641,7 @@ sap.ui.define([
 		oXhr.respond(aResponse[0], aResponse[1], aResponse[2]);
 
 		// Log the response
-		jQuery.sap.log.info(
+		Log.info(
 			"Mockserver: Sent response with return code " + aResponse[0],
 			("Response headers: " + JSON.stringify(aResponse[1]) + "\n\nResponse body:\n" + aResponse[2]) + "\n",
 			sLogComponent);

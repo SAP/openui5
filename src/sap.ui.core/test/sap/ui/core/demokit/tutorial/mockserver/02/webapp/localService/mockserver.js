@@ -1,6 +1,7 @@
 sap.ui.define([
-	"sap/ui/core/util/MockServer"
-], function(MockServer) {
+	"sap/ui/core/util/MockServer",
+	"sap/base/Log"
+], function(MockServer, Log) {
 	"use strict";
 
 	return {
@@ -25,7 +26,7 @@ sap.ui.define([
 			// start
 			oMockServer.start();
 
-			jQuery.sap.log.info("Running the app with mock data");
+			Log.info("Running the app with mock data");
 		}
 
 	};

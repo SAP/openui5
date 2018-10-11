@@ -10,6 +10,7 @@ sap.ui.define([
 		init: function () {
 			var sManifestUrl = sap.ui.require.toUrl(_sAppModulePath + "manifest.json"),
 				sJsonFilesUrl = sap.ui.require.toUrl(_sJsonFilesModulePath),
+				//TODO: global jquery call found
 				oManifest = jQuery.sap.syncGetJSON(sManifestUrl).data,
 				oMainDataSource = oManifest["sap.app"].dataSources.employeeRemote,
 				sMetadataUrl = sap.ui.require.toUrl(_sAppModulePath + oMainDataSource.settings.localUri);
