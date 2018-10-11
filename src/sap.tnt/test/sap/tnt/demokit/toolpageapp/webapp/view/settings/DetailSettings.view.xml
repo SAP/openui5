@@ -44,7 +44,7 @@
 							'view>/currentUser',
 							'view>/lastLogin'
 						],
-						formatter: 'jQuery.sap.formatMessage'
+						formatter: 'sap.base.strings.formatMessage'
 						}"
 					type="Information"
 					showIcon="true">
