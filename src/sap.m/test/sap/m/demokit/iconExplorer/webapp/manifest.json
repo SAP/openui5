@@ -46,6 +46,9 @@
 				"sap.m": {
 					"minVersion": "1.36.0"
 				},
+				"sap.f": {
+					"minVersion": "1.36.0"
+				},
 				"sap.ui.layout" : {
 					"minVersion": "1.36.0"
 				}
