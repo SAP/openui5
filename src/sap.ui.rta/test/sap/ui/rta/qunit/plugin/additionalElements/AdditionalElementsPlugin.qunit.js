@@ -203,6 +203,26 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test(" when the control's dt metadata has a reveal action, but no name", function(assert) {
+			return createOverlayWithAggregationActions.call(this, {
+				"reveal" : {
+					changeType : "unhideControl"
+				},
+				noName : true
+			}, ON_SIBLING)
+			.then(function(oOverlay) {
+				this.oPlugin.setDesignTime(this.oDesignTime);
+				this.oPlugin.registerElementOverlay(oOverlay);
+				var sExpectedControlTypeText = this.oRTATexts.getText("MULTIPLE_CONTROL_NAME");
+				var sExpectedText = this.oRTATexts.getText("CTX_ADD_ELEMENTS", [sExpectedControlTypeText]);
+				assert.equal(this.oPlugin.getContextMenuTitle(true, oOverlay), sExpectedText, "then the translated context menu entry is properly set");
+				assert.ok(this.oPlugin.isAvailable(true, [oOverlay]), "then the action is available");
+				assert.ok(this.oPlugin.isEnabled(true, [oOverlay]), "then the action is enabled");
+				assert.ok(this.oPlugin._isEditableCheck(oOverlay, true), "then the overlay is editable");
+			}.bind(this));
+
+		});
+
 		QUnit.test(" when the control's dt metadata has a reveal action with function allowing reveal only for some instances", function(assert) {
 			return createOverlayWithAggregationActions.call(this, {
 				"reveal" : function(oControl){
@@ -211,7 +231,6 @@ sap.ui.define([
 							changeType : "unhideControl"
 						};
 					}
-					return null;
 				}
 			}, ON_SIBLING)
 
@@ -1061,7 +1080,7 @@ sap.ui.define([
 			singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
 			plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
 		};
-		var mName =  {
+		var mName = mActions.noName ? undefined : {
 			singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
 			plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
 		};
