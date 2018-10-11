@@ -1924,7 +1924,8 @@ function (
 
 	QUnit.test("DynamicPage On Snap Header when not enough scrollHeight to snap with scroll and scrollTop > 0", function (assert) {
 		/* TODO remove after 1.62 version */
-		var sHeight = this.oDynamicPage._bMSBrowser  ? "300px" : "400px"; // due to different MS browsers calculation
+		var sHeight = this.oDynamicPage._bMSBrowser  ? "300px" : "400px",
+			aAcceptableValues = Device.browser.edge ? [0, 1] : [0]; // due to different MS browsers calculation
 
 		this.oDynamicPage.setContent(oFactory.getContent(1)); // not enough content to snap on scroll
 		// Arrange
@@ -1947,7 +1948,8 @@ function (
 		assert.strictEqual(this.oDynamicPage.getHeaderExpanded(), false, "header is snapped");
 		assert.ok(!this.oDynamicPage._needsVerticalScrollBar(), "not enough scrollHeight to scroll");//because header was hidden during snap
 		/* TODO remove after 1.62 version */
-		assert.strictEqual(this.oDynamicPage._getScrollPosition(), 0); // because no more scrolled-out content
+		assert.ok(aAcceptableValues.indexOf(this.oDynamicPage._getScrollPosition()) !== -1,
+			"Page is scrolled to top"); // because no more scrolled-out content
 
 		// explicitly call the onscroll listener (to save a timeout in the test):
 		this.oDynamicPage._toggleHeaderOnScroll({target: {scrollTop: 0}});
