@@ -5087,6 +5087,21 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("BindList with function import", function(assert) {
+		var done = assert.async();
+		this.oModel.setUseBatch(true);
+		this.oModel.metadataLoaded().then(function() {
+			var oListBinding = this.oModel.bindList("/GetProductsByRating");
+			oListBinding.attachChange(function() {});
+			var oLogSpy = sinon.spy(Log, "error");
+			oListBinding.initialize();
+			assert.deepEqual(oLogSpy.getCalls(), [], "There should be no error logged, since the function import returns an entitySet");
+			oLogSpy.restore();
+			done();
+
+		}.bind(this));
+	});
+
 	QUnit.test("Check context path of created entry and function import", function(assert) {
 		var done = assert.async();
 		this.oModel.setUseBatch(true);
@@ -5354,11 +5369,11 @@ sap.ui.define([
 		this.oModel.metadataLoaded().then(function() {
 			var fnSent = function(oInfo) {
 				that.oModel.detachRequestCompleted(fnSent);
-				assert.ok(oInfo.getParameter('headers')['If-Match'] === 'myEtag', 'header for eTag set correctly');
+				assert.equal(oInfo.getParameter('headers')['If-Match'], 'myEtag', 'header for eTag set correctly');
 				done();
 			};
 			this.oModel.attachRequestSent(fnSent);
-			this.oModel.callFunction("/GetProductsByRating", {method: "PUT", eTag: "myEtag"});
+			this.oModel.callFunction("/UpdateProducts", {method: "PUT", eTag: "myEtag"});
 			this.oModel.submitChanges();
 		}.bind(this));
 	});
