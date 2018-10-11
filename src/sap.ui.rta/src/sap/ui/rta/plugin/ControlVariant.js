@@ -539,6 +539,7 @@ sap.ui.define([
 		var regexForCopy = new RegExp(sCopyTextSingle + "+");
 		var regexForIncrement = new RegExp(sCopyTextMultiple);
 		var sTitleTrimmed;
+		// calculate index for counter and title
 		var iIndexForCounter = sCopyTextMultiple.lastIndexOf("(.*)") > sCopyTextMultiple.lastIndexOf("([0-9]+)") ? 1 : 2;
 		var iIndexForTrimmedTitle = (iIndexForCounter === 1) ? 2 : 1;
 		var iTitleCounter = 0;
@@ -564,8 +565,11 @@ sap.ui.define([
 					return;
 				}
 				/* First copy with counter is matched, if not, then only copy is matched */
-				if (aRegexExecOnVariantTitle.length === 3 &&
-					sTitleTrimmed === aRegexExecOnVariantTitle[iIndexForTrimmedTitle]) {
+				if (
+					aRegexExecOnVariantTitle.length === 3
+					&& sTitleTrimmed === aRegexExecOnVariantTitle[iIndexForTrimmedTitle]
+					&& iTitleCounter <= parseInt(aRegexExecOnVariantTitle[iIndexForCounter], 10)
+				) {
 					// Extract integer part & increment counter
 					iTitleCounter =
 						aRegexExecOnVariantTitle[iIndexForCounter]

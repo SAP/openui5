@@ -190,7 +190,7 @@ function(
 		var bIsUiElement = vElement instanceof sap.ui.base.ManagedObject;
 		mSettings = jQuery.extend(mSettings, {
 			element : bIsUiElement ? vElement : undefined,
-			selector : bIsUiElement ? undefined : vElement,
+			selector : bIsUiElement ? null : vElement,
 			name : sCommand
 		});
 
