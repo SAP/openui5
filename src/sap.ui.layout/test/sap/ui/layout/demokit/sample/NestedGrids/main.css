@@ -1,0 +1,26 @@
+.sapMFlexBox.demoBox{
+	border-radius: 10px;
+	background-color: #427cac;
+	text-align: center;
+}
+.demoBox .sapMTitle {
+	color: #ffffff;
+}
+.demoBox .sapMLabel {
+	color: #ffffff;
+}
+
+.sapUiLayoutCSSGrid .stylePageLayout {
+	background-color: #3b6f9a;
+	color: #ffffff;
+	height: 100%;
+	border-radius: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.sapMFlexBox.sapMFlexBoxWrapNoWrap.sapMVBox .demoInnerBox {
+	background: lightblue;
+	border-radius: 10px;
+}
