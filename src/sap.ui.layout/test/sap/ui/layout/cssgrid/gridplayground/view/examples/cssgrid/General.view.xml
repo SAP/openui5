@@ -129,7 +129,7 @@ controllerName="sap.ui.layout.cssgrid.gridplayground.controller.Main">
 					<grid:customLayout>
 						<grid:GridBasicLayout
 								gridTemplateColumns="auto 1fr"
-								gridTamplateRows="repeat(3, 2fr)"
+								gridTemplateRows="repeat(3, 2fr)"
 								gridGap="1rem">
 						</grid:GridBasicLayout>
 					</grid:customLayout>

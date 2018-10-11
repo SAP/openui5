@@ -172,6 +172,10 @@
 			});
 		}
 
+		var handleIntervalSelect = function (oEvent) {
+			new sap.m.MessageToast.show("Interval Select was handled");
+		};
+
 		var handleAppointmentSelect = function (oEvent) {
 			var oInput = sap.ui.getCore().byId("I1"),
 				oAppointment = oEvent.getParameter("appointment"),
@@ -1129,6 +1133,7 @@
 				oGroupModeSelect
 			],
 			legend: oLegend,
+			intervalSelect: handleIntervalSelect,
 			appointmentSelect: handleAppointmentSelect,
 			startDateChange: handleStartDateChange,
 			rowHeaderClick: handleRowHeaderClick,

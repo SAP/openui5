@@ -67,6 +67,18 @@
         "type": "FIX",
         "text": " ObjectPageSubSection: Aligned SimpleForm Toolbar",
         "references": []
+      },
+      {
+        "id": "b312068472e76c5d46256a4367e2126e44e1b31a",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Labelling improved",
+        "references": []
+      },
+      {
+        "id": "b54ffddd6d656291c15e54017f65f13e60c29aee",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected content height calculation",
+        "references": []
       }
     ]
   }

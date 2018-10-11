@@ -1,9 +1,10 @@
 /*global history*/
 
 sap.ui.define([
-	'sap/ui/core/mvc/Controller',
-	'sap/ui/core/routing/History'
-], function (Controller, History) {
+    'sap/ui/core/mvc/Controller',
+    'sap/ui/core/routing/History',
+    'sap/ui/core/UIComponent'
+], function(Controller, History, UIComponent) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.bulletinboard.controller.BaseController", {
@@ -23,7 +24,7 @@ sap.ui.define([
 		 * @returns {sap.ui.core.routing.Router} the router for this component
 		 */
 		getRouter: function () {
-			return sap.ui.core.UIComponent.getRouterFor(this);
+			return UIComponent.getRouterFor(this);
 		},
 
 		/**

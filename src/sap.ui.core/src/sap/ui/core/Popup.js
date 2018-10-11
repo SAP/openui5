@@ -338,7 +338,7 @@ sap.ui.define([
 	 * @private
 	 */
 	//TODO: global jquery call found
-	Popup.prototype.touchEnabled = Device.support.touch;
+	Popup.prototype.touchEnabled = Device.support.touch && !Device.system.combi;
 
 	/**
 	 * On mobile device, the browser may set the focus to somewhere else after
@@ -1363,19 +1363,25 @@ sap.ui.define([
 	 *                                from the control (if available)
 	 */
 	Popup.applyFocusInfo = function(oPreviousFocus) {
+		var oOptions = {
+			// this option informs the browser not to scroll the focused element
+			// into the viewport
+			preventScroll: true
+		};
+
 		if (oPreviousFocus) {
 			var oFocusedControl = sap.ui.getCore().byId(oPreviousFocus.sFocusId);
 			if (oFocusedControl) {
 
 				// if an SAPUI5 control had been focused, just re-focus it
-				oFocusedControl.applyFocusInfo(oPreviousFocus.oFocusInfo);
+				oFocusedControl.applyFocusInfo(Object.assign(oOptions, oPreviousFocus.oFocusInfo));
 			} else {
 
 				// no SAPUI5 control... try to find the control by ID if an ID was there
 				var oElement = ((oPreviousFocus.sFocusId ? window.document.getElementById(oPreviousFocus.sFocusId) : null))
 						|| oPreviousFocus.oFocusedElement; // if not even an ID was available when focus was lost maybe the original DOM element is still there
 				if (oElement){
-					oElement.focus();
+					oElement.focus(oOptions);
 				}
 			}
 		}

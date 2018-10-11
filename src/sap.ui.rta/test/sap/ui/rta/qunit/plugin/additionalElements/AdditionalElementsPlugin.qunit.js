@@ -218,6 +218,29 @@ sap.ui.define([
 
 			});
 		});
+
+		QUnit.test(" when the control's dt metadata has a reveal action with function allowing reveal only for some instances", function(assert) {
+			return createOverlayWithAggregationActions({
+				"reveal" : function(oControl){
+					if (oControl.getId() === "Invisible1"){
+						return {
+							changeType : "unhideControl"
+						};
+					}
+					return null;
+				}
+			}, ON_SIBLING)
+
+			.then(function(oOverlay) {
+				oPlugin.setDesignTime(oDesignTime);
+				oPlugin.registerElementOverlay(oOverlay);
+				assert.ok(oPlugin.isAvailable(ON_SIBLING, [oOverlay]), "then the action is available");
+				assert.ok(oPlugin.isEnabled(ON_SIBLING, [oOverlay]), "then the action is enabled");
+				assert.ok(oPlugin._isEditableCheck(oOverlay, ON_SIBLING), "then the overlay is editable");
+			});
+
+		});
+
 		[{
 			overlay : createOverlayWithAggregationActions.bind(null,
 					{	},
@@ -272,7 +295,6 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("when the control's dt metadata has addODataProperty and reveal action", function (assert) {
-			assert.expect(3);
 			var fnElementModifiedStub = sandbox.stub();
 
 			return createOverlayWithAggregationActions({
@@ -319,6 +341,34 @@ sap.ui.define([
 				assert.ok(fnGetCommandSpy.notCalled, "then no commands are created");
 				assert.ok(fnElementModifiedStub.notCalled, "then the element modified event is not thrown");
 			});
+		});
+
+		QUnit.test(" when the control's dt metadata has a reveal action with function allowing reveal only for some instances", function(assert) {
+			var REVEALABLE_CTRL_ID = "Invisible1";
+			fnEnhanceInvisibleElementsStub.restore();
+			fnEnhanceInvisibleElementsStub = sandbox.stub(AdditionalElementsAnalyzer,"enhanceInvisibleElements").returns(Promise.resolve([]));
+
+			return createOverlayWithAggregationActions({
+				"reveal" : function(oControl){
+					if (oControl.getId() === REVEALABLE_CTRL_ID){
+						return {
+							changeType : "unhideControl"
+						};
+					}
+					return null;
+				}
+			}, ON_SIBLING)
+
+			.then(function(oOverlay) {
+				return oPlugin.showAvailableElements(true, [oOverlay]);
+			})
+
+			.then(function() {
+				var mActions = fnEnhanceInvisibleElementsStub.firstCall.args[1];
+				assert.equal(mActions.reveal.elements.length, 1, "only one of the invisible actions can be revealed");
+				assert.equal(mActions.reveal.elements[0].element.getId(), REVEALABLE_CTRL_ID, "only the control that can be revealed is found");
+			});
+
 		});
 	});
 
@@ -500,11 +550,11 @@ sap.ui.define([
 
 			return createOverlayWithAggregationActions({
 					"addODataProperty" : {
-							changeType : "addFields"
-						},
-						"reveal" : {
-							changeType : "unhideControl"
-						},
+						changeType : "addFields"
+					},
+					"reveal" : {
+						changeType : "unhideControl"
+					},
 					"move" : "moveControls"
 				},
 				ON_SIBLING
@@ -990,10 +1040,6 @@ sap.ui.define([
 
 		//simulate analyzer returning some elements
 		fnEnhanceInvisibleElementsStub = sandbox.stub(AdditionalElementsAnalyzer,"enhanceInvisibleElements").callsFake(function (oParent, mActions) {
-			var bUnsupportedElement = mActions.reveal.elements.some(function(oElement) {
-				return !mActions.reveal.types[oElement.getMetadata().getName()];
-			});
-			assert.notOk(bUnsupportedElement, "no unsupported invisible controls");
 			return Promise.resolve([
 				{ selected : false, label : "Invisible1", tooltip : "", type : "invisible", elementId : oInvisible1.getId(), bindingPaths: ["Property01"]},
 				{ selected : true, label : "Invisible2", tooltip : "", type : "invisible", elementId : oInvisible2.getId(), bindingPaths: ["Property02"]}

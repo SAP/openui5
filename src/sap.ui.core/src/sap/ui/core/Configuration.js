@@ -127,6 +127,7 @@ sap.ui.define([
 					"bindingSyntax"         : { type : "string",   defaultValue : "default", noUrl:true }, // default|simple|complex
 					"versionedLibCss"       : { type : "boolean",  defaultValue : false },
 					"manifestFirst"         : { type : "boolean",  defaultValue : false },
+					"flexibilityServices"   : { type : "boolean",  defaultValue : true },
 
 					"whitelistService"      : { type : "string",   defaultValue : null,      noUrl: true }, // url/to/service
 					"frameOptions"          : { type : "string",   defaultValue : "default", noUrl: true }, // default/allow/deny/trusted (default => allow)
@@ -157,6 +158,7 @@ sap.ui.define([
 					"xx-waitForTheme"       : { type : "boolean",  defaultValue : false},
 					"xx-xml-processing"     : { type : "string",  defaultValue : "" },
 					"xx-avoidAriaApplicationRole" : { type : "boolean",  defaultValue : false}, // Avoid ACC role 'application'
+					"xx-hyphenation" : { type : "string",  defaultValue : ""}, // (empty string)|native|thirdparty
 					"statistics"            : { type : "boolean",  defaultValue : false }
 			};
 
@@ -1316,6 +1318,17 @@ sap.ui.define([
 		},
 
 		/**
+		 * Flag whether the UI5 Flexibility Services should be called.
+		 *
+		 * @returns {boolean} true if a request to the Flexibility Services should be triggered
+		 * @public
+		 * @since 1.60.0
+		 */
+		getFlexibilityServices : function() {
+			return this.flexibilityServices;
+		},
+
+		/**
 		 * Currently active preload mode for components or falsy value.
 		 *
 		 * @returns {string} component preload mode
@@ -1422,6 +1435,16 @@ sap.ui.define([
 		 */
 		getHandleValidation : function() {
 			return this["xx-handleValidation"];
+		},
+
+		/**
+		 * Gets if the hyphenation has to be forced to use only browser-native or only third-party.
+		 *
+		 * @returns {string} empty string, "native" or "thirdparty"
+		 * @private
+		 */
+		getHyphenation : function() {
+			return this["xx-hyphenation"];
 		},
 
 		/**

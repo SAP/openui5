@@ -173,7 +173,7 @@ sap.ui.define(function() {
 					'testdata/core/Element_data.qunit',
 					'testdata/core/Element_delegates.qunit',
 					'testdata/core/Element_dependents.qunit',
-					'testdata/core/Element_focusWhenMissing.qunit',
+					'testdata/core/Element_focus.qunit',
 					'testdata/core/Element_layoutData.qunit',
 					'testdata/core/Element_metadata_selector.qunit',
 					'testdata/core/Element_metadata_dnd.qunit',
@@ -481,6 +481,10 @@ sap.ui.define(function() {
 						"sap/ui/testlib": "test-resources/sap/ui/core/qunit/testdata/uilib/"
 					}
 				}
+			},
+			Hyphenation: {
+				title: "sap.ui.core.hyphenation.Hyphenation",
+				page: "test-resources/sap/ui/core/qunit/Hyphenation.qunit.html"
 			},
 
 			"jquery.sap.global-config": {

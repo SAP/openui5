@@ -1101,7 +1101,7 @@ sap.ui.define([
 				revertChange: sandbox.stub()
 			});
 
-			sandbox.stub(this.oFlexController, "_writeAppliedChangesCustomData");
+			sandbox.stub(this.oFlexController, "_writeCustomData");
 
 			this.mPropertyBag = {
 				viewId: "view1--view2",

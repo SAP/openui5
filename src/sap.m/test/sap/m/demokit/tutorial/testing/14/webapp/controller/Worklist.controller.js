@@ -6,8 +6,9 @@ sap.ui.define([
 	'sap/ui/demo/bulletinboard/model/formatter',
 	'sap/ui/demo/bulletinboard/model/FlaggedType',
 	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator"
-], function (BaseController, JSONModel, formatter, FlaggedType, Filter, FilterOperator) {
+	"sap/ui/model/FilterOperator",
+	'sap/m/library'
+], function (BaseController, JSONModel, formatter, FlaggedType, Filter, FilterOperator, mobileLibrary) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.bulletinboard.controller.Worklist", {
@@ -139,7 +140,7 @@ sap.ui.define([
 		 */
 		onShareEmailPress: function () {
 			var oViewModel = this.getModel("worklistView");
-			sap.m.URLHelper.triggerEmail(
+			mobileLibrary.URLHelper.triggerEmail(
 				null,
 				oViewModel.getProperty("/shareSendEmailSubject"),
 				oViewModel.getProperty("/shareSendEmailMessage")

@@ -1,7 +1,8 @@
 sap.ui.define([
-	'sap/ui/core/mvc/Controller',
-	'sap/m/MessageToast'
-], function (Controller, MessageToast) {
+    'sap/ui/core/mvc/Controller',
+    'sap/m/MessageToast',
+    'sap/ui/core/UIComponent'
+], function(Controller, MessageToast, UIComponent) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.cart.controller.BaseController", {
@@ -12,7 +13,7 @@ sap.ui.define([
 		 * @returns {sap.ui.core.routing.Router} the router for this component
 		 */
 		getRouter: function () {
-			return sap.ui.core.UIComponent.getRouterFor(this);
+			return UIComponent.getRouterFor(this);
 		},
 
 		/**

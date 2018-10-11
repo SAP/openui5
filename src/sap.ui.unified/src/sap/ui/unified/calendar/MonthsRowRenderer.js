@@ -216,7 +216,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		CalendarUtils._checkCalendarDate(oDate);
 
 		var mAccProps = {
-				role: "gridcell",
+				role: oMonthsRow._getAriaRole(),
 				selected: false,
 				label: "",
 				describedby: ""

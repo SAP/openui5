@@ -791,7 +791,7 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oMetaModel.getAdapterFactoryModulePath(),
-			"sap/ui/model/odata/v4/meta/ODataAdapterFactory");
+			"sap/ui/mdc/experimental/adapter/odata/v4/ODataAdapterFactory");
 	});
 
 	//*********************************************************************************************

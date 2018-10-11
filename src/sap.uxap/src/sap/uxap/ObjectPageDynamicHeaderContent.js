@@ -67,12 +67,14 @@ sap.ui.define([
 		 * @param bVisible
 		 * @param sContentDesign
 		 * @param bPinnable
+		 * @param sStableId
 		 */
-		ObjectPageDynamicHeaderContent.createInstance = function (aContent, bVisible, sContentDesign, bPinnable) {
+		ObjectPageDynamicHeaderContent.createInstance = function (aContent, bVisible, sContentDesign, bPinnable, sStableId) {
 			return new ObjectPageDynamicHeaderContent({
 				content: aContent,
 				visible: bVisible,
-				pinnable: bPinnable
+				pinnable: bPinnable,
+				id: sStableId
 			});
 		};
 

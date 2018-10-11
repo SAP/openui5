@@ -533,6 +533,17 @@ sap.ui.define([
 
 	};
 
+	MonthsRow.prototype._setAriaRole = function(sRole){
+		this._ariaRole = sRole;
+
+		return this;
+	};
+
+	MonthsRow.prototype._getAriaRole = function(){
+
+		return this._ariaRole ? this._ariaRole : "gridcell";
+	};
+
 	/*
 	 * Checks if a date is selected and what kind of selected
 	 * @param {sap.ui.unified.calendar.CalendarDate} oDate

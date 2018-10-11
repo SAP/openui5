@@ -3590,21 +3590,22 @@ sap.ui.define([
 				if (oEntityMetadata) {
 					mEntityTypes[oEntityMetadata.entityType] = true;
 				}
-				// for createEntry entities change context path to new one
-				if (oRequest.key) {
-					var sKey = this._getKey(oResultData);
-					// rewrite context for new path
-					var oContext = this.getContext("/" + oRequest.key);
-					oContext.sPath = '/' + sKey;
-					oContext.bCreated = false;
-					this.mContexts[sKey] = oContext;
-					// remove old entity
-					this._removeEntity(oRequest.key);
-					//delete created flag after successful creation
-					oEntity = this._getEntity(sKey);
-					if (oEntity) {
-						delete oEntity.__metadata.created;
+				if (oRequest.key) { // e.g. /myEntity
+					// for createEntry entities change context path to new one
+					if (oRequest.created) {
+						var sKey = this._getKey(oResultData); // e.g. /myEntity-4711
+						// rewrite context for new path
+						var oContext = this.getContext("/" + oRequest.key);
+						oContext.bCreated = false;
+						this._updateContext(oContext, '/' + sKey);
+						//delete created flag after successful creation
+						oEntity = this._getEntity(sKey);
+						if (oEntity) {
+							delete oEntity.__metadata.created;
+						}
 					}
+					// remove old entity/context for created and function imports
+					this._removeEntity(oRequest.key);
 				}
 			}
 
@@ -3805,7 +3806,7 @@ sap.ui.define([
 
 		//get additional request info for created entries
 		aUrlParams = mParams && mParams.urlParameters ? ODataUtils._createUrlParamsArray(mParams.urlParameters) : undefined;
-		mHeaders = mParams && mParams.headers ? this._getHeaders(mParams.headers) : this._getHeaders();
+		mHeaders = mParams ? this._getHeaders(mParams.headers) : this._getHeaders();
 		sETag = mParams && mParams.eTag ? mParams.eTag : this.getETag(oPayload);
 
 		sUrl = this._createRequestUrl('/' + sKey, null, aUrlParams, this.bUseBatch);
@@ -4412,8 +4413,8 @@ sap.ui.define([
 		mHeaders = this._getHeaders(mHeaders);
 
 		pContextCreated = new Promise(function(resolve, reject) {
-				fnResolve = resolve;
-				fnReject = reject;
+			fnResolve = resolve;
+			fnReject = reject;
 		});
 
 		oRequestHandle = this._processRequest(function(requestHandle) {
@@ -4480,7 +4481,7 @@ sap.ui.define([
 		}, fnError);
 
 		oRequestHandle.contextCreated = function() {
-				return pContextCreated;
+			return pContextCreated;
 		};
 
 		return oRequestHandle;
@@ -5218,8 +5219,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks if there exist pending changes in the model created by the {@link #setProperty} method.
-	 * @return {boolean} Whether there are pending changes
+	 * Checks if there exist pending changes in the model created by {@link #setProperty} or {@link #createEntry}.
+	 * @return {boolean} <code>true</code> if there are pending changes, <code>false</code> otherwise.
 	 * @public
 	 */
 	ODataModel.prototype.hasPendingChanges = function() {
@@ -5367,11 +5368,12 @@ sap.ui.define([
 			mUrlParams = mParameters.urlParameters;
 			bRefreshAfterChange = mParameters.refreshAfterChange;
 		}
+		mHeaders = mHeaders || {};
+
 		bRefreshAfterChange = this._getRefreshAfterChange(bRefreshAfterChange, sGroupId);
 
 		sGroupId = sGroupId ? sGroupId : this.sDefaultChangeGroup;
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
-		mHeaders = this._getHeaders(mHeaders);
 
 		var oRequestHandle = {
 			abort: function() {

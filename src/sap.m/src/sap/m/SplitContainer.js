@@ -2008,7 +2008,7 @@ function(
 							}
 						});
 						/*eslint-enable no-loop-func */
-						return;
+						break;
 					}
 				}
 			}

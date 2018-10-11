@@ -492,4 +492,21 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 
 	aUserAgentsAndResults.forEach(fnUATest);
 
+	QUnit.test("Media queries", function(assert){
+		
+		Device.media.initRangeSet("MyRangeSet", [200, 400], "px", ["Small", "Medium", "Large"]);
+
+		assert.deepEqual(Device.media.getCurrentRange("MyRangeSet", 199), {from: 0, unit: "px", to: 200, name: "Small"}, "Correct small range returned.");
+		assert.deepEqual(Device.media.getCurrentRange("MyRangeSet", 200), {from: 200, unit: "px", to: 400, name: "Medium"}, "Correct medium range returned.");
+		assert.deepEqual(Device.media.getCurrentRange("MyRangeSet", 399), {from: 200, unit: "px", to: 400, name: "Medium"}, "Correct medium range returned.");
+		assert.deepEqual(Device.media.getCurrentRange("MyRangeSet", 400), {from: 400, unit: "px", name: "Large"}, "Correct large range returned.");
+
+		assert.ok(Device.media.hasRangeSet("MyRangeSet"), "MyRangeSet is available.");
+
+		Device.media.removeRangeSet("MyRangeSet");
+
+		assert.notOk(Device.media.hasRangeSet("MyRangeSet"), "MyRangeSet was removed correctly.");
+		
+	})
+
 });

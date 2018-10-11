@@ -613,20 +613,23 @@ sap.ui.define([
 			assert.ok(true, "Should throw no error");
 		});
 
-		QUnit.test("calling _getPopoverDimensions for non MiniMenu", function (assert) {
+		QUnit.test("calling _getPopoverDimensions for MiniMenu", function (assert) {
 			this.clock = sinon.useFakeTimers();
 			this.oButton2Overlay.setSelected(true);
 			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			oSandbox.stub(oContextMenuControl, "_getBaseFontSize").returns(16);
 			oSandbox.stub(oContextMenuControl, "_getArrowHeight").returns(0.5625);
+			var iArrSize = oContextMenuControl._getBaseFontSize() * oContextMenuControl._getArrowHeight();
 			this.clock.tick(this.oContextMenuPlugin.iMenuLeftclickOpeningDelay);
 			var oPopover = oContextMenuControl._getPopoverDimensions(true);
+			var iHeight = parseInt(jQuery("#" + oContextMenuControl.getPopover().getId()).css("height"), 10) + iArrSize;
+			var iWidth = parseInt(jQuery("#" + oContextMenuControl.getPopover().getId()).css("width"), 10) + iArrSize;
 			assert.strictEqual(typeof oPopover.height, "number", "the height of a non-expanded ContextMenu should be a number");
-			assert.strictEqual(oPopover.height, 41, "the height of a non-expanded ContextMenu is correct");
+			assert.strictEqual(oPopover.height, iHeight, "the height of a non-expanded ContextMenu is correct");
 			assert.ok(!isNaN(oPopover.height), "the height of a non-expanded ContextMenu shouldn't be NaN");
 			assert.strictEqual(typeof oPopover.width, "number", "the width of a non-expanded ContextMenu should be a number");
-			assert.strictEqual(oPopover.width, 181, "the width of a non-expanded ContextMenu is correct");
+			assert.strictEqual(oPopover.width, iWidth, "the width of a non-expanded ContextMenu is correct");
 			assert.ok(!isNaN(oPopover.width), "the width of a non-expanded ContextMenu shouldn't be NaN");
 			this.clock.restore();
 		});
@@ -638,11 +641,13 @@ sap.ui.define([
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			this.clock.tick(this.oContextMenuPlugin.iMenuLeftclickOpeningDelay);
 			var oPopoverContext = oContextMenuControl._getPopoverDimensions(false);
+			var iHeight = parseInt(jQuery("#" + oContextMenuControl.getPopover().getId()).css("height"), 10);
+			var iWidth = parseInt(jQuery("#" + oContextMenuControl.getPopover().getId()).css("width"), 10);
 			assert.strictEqual(typeof oPopoverContext.height, "number", "the height of a context menu should be a number");
-			assert.strictEqual(oPopoverContext.height, 317, "the height of a context menu is correct");
+			assert.strictEqual(oPopoverContext.height, iHeight, "the height of a context menu is correct");
 			assert.ok(!isNaN(oPopoverContext.height), "the height of a context menu shouldn't be NaN");
 			assert.strictEqual(typeof oPopoverContext.width, "number", "the width of a context menu should be a number");
-			assert.strictEqual(oPopoverContext.width, 247, "the width of a context menu is correct");
+			assert.strictEqual(oPopoverContext.width, iWidth, "the width of a context menu is correct");
 			assert.ok(!isNaN(oPopoverContext.width), "the width of a context menu shouldn't be NaN");
 			this.clock.restore();
 		});

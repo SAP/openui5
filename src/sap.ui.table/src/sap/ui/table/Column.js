@@ -747,6 +747,9 @@ function(
 			.toggleClass("sapUiTableColSortedD", bSorted && this.getSortOrder() === SortOrder.Descending);
 
 		oTable._getAccExtension().updateAriaStateOfColumn(this);
+
+		oTable._resetColumnHeaderHeights();
+		oTable._updateRowHeights(oTable._collectRowHeights(true), true);
 	};
 
 	Column.prototype._renderSortIcon = function() {

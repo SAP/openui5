@@ -252,14 +252,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restoration of scroll positions", function(assert) {
-		var iAssertionDelay = 150;
 		var iDefaultRowHeight = 49;
 		var done = assert.async();
 		var that = this;
-
-		if (Device.browser.msie) {
-			iAssertionDelay = 200;
-		}
 
 		sinon.stub(oTable, "_getDefaultRowHeight").returns(iDefaultRowHeight);
 
@@ -293,163 +288,126 @@ sap.ui.define([
 			});
 		}
 
-		new Promise(function(resolve) {
+		function wait() {
+			return new Promise(function(resolve) {
+				window.setTimeout(resolve, Device.browser.msie ? 250 : 150);
+			});
+		}
+
+		function afterRendering() {
+			return new Promise(function(resolve) {
+				oTable.addEventDelegate({
+					onAfterRendering: resolve
+				});
+			});
+		}
+
+		Promise.resolve().then(function() {
 			assertScrollPositions("Initial", 0, 0);
 			that.oScrollExtension.getHorizontalScrollbar().scrollLeft = 50;
 			that.oScrollExtension.getVerticalScrollbar().scrollTop = 110;
-			resolve();
-		}).then(function() {
-			return new Promise(function(resolve) {
-				window.setTimeout(function() {
-					assertScrollPositions("Scrolled", 50, 110);
-					that.oOnAfterRenderingEventHandler = sinon.spy(that.oScrollExtension._ExtensionDelegate, "onAfterRendering");
-					oTable.invalidate();
-					resolve();
-				}, iAssertionDelay);
-			});
-		}).then(function() {
-			return new Promise(function(resolve) {
-				window.setTimeout(function() {
-					assertOnAfterRenderingEventHandlerCall("Invalidated");
-					assertScrollPositions("Invalidated", 50, 110);
-					// Add data to test a binding length change and later visibleRowCountMode "Auto".
-					oTable.getModel().oData.rows = oTable.getModel().oData.rows.concat(oTable.getModel().oData.rows);
-					oTable.getModel().oData.rows = oTable.getModel().oData.rows.concat(oTable.getModel().oData.rows);
-					oTable.getModel().oData.rows = oTable.getModel().oData.rows.concat(oTable.getModel().oData.rows);
-					oTable.getModel().refresh();
-					resolve();
-				}, iAssertionDelay);
-			});
-		}).then(function() {
-			return new Promise(function(resolve) {
-				window.setTimeout(function() {
-					assertScrollPositions("Binding length increased", 50, 2 * iDefaultRowHeight);
-					oTable.setProperty("visibleRowCountMode", tableLibrary.VisibleRowCountMode.Auto, true);
-					oTable._updateTableSizes();
-					resolve();
-				}, iAssertionDelay);
-			});
-		}).then(function() {
-			return new Promise(function(resolve) {
-				window.setTimeout(function() {
-					assertOnAfterRenderingEventHandlerCall("Content updated");
-					assertScrollPositions("Content updated", 50, 2 * iDefaultRowHeight);
-					oTable.getModel().oData.rows.splice(oTable.getVisibleRowCount() + 1);
-					oTable.getModel().refresh();
-					resolve();
-				}, iAssertionDelay);
-			});
-		}).then(function() {
-			return new Promise(function(resolve) {
-				window.setTimeout(function() {
-					assertScrollPositions("Binding length decreased", 50, iDefaultRowHeight);
-					oTable.invalidate();
-					resolve();
-				}, iAssertionDelay);
-			});
-		}).then(function() {
-			return new Promise(function(resolve) {
-				window.setTimeout(function() {
-					assertOnAfterRenderingEventHandlerCall("Invalidated");
-					assertScrollPositions("Invalidated", 50, iDefaultRowHeight);
-					oTable.getModel().oData.rows.splice(oTable.getVisibleRowCount());
-					oTable.getModel().refresh();
-					resolve();
-				}, iAssertionDelay);
-			});
-		}).then(function() {
-			return new Promise(function(resolve) {
-				window.setTimeout(function() {
-					assertScrollPositions("Binding length decreased - Vertical scrolling is no longer possible", 50, 0);
-					oTable.getModel().oData.rows = oTable.getModel().oData.rows.concat(oTable.getModel().oData.rows);
-					oTable.getModel().oData.rows = oTable.getModel().oData.rows.concat(oTable.getModel().oData.rows);
-					oTable.getModel().oData.rows = oTable.getModel().oData.rows.concat(oTable.getModel().oData.rows);
-					oTable.getModel().refresh();
-					resolve();
-				}, iAssertionDelay);
-			});
-		}).then(function() {
-			return new Promise(function(resolve) {
-				window.setTimeout(function() {
-					assertScrollPositions("Binding length increased - Vertical scrolling is possible again", 50, 0);
-					oTable._getDefaultRowHeight.restore();
 
-					// Resize the first scrollable column.
-					var oColumn = oTable.getColumns()[1];
-					oColumn.setWidth("600px");
-					sap.ui.getCore().applyChanges();
+		}).then(wait).then(function() {
+			assertScrollPositions("Scrolled", 50, 110);
+			that.oOnAfterRenderingEventHandler = sinon.spy(that.oScrollExtension._ExtensionDelegate, "onAfterRendering");
+			oTable.invalidate();
 
-					var $Resizer = oTable.$("rsz");
-					var oColumnRect = oColumn.getDomRef().getBoundingClientRect();
-					var iResizeHandlerTop = oColumnRect.top + 1;
-					var iResizeHandlerLeft = oColumnRect.right - 1;
+		}).then(afterRendering).then(wait).then(function() {
+			assertOnAfterRenderingEventHandlerCall("Invalidated");
+			assertScrollPositions("Invalidated", 50, 110);
+			// Add data to test a binding length change and later visibleRowCountMode "Auto".
+			oTable.getModel().oData.rows = oTable.getModel().oData.rows.concat(oTable.getModel().oData.rows);
+			oTable.getModel().oData.rows = oTable.getModel().oData.rows.concat(oTable.getModel().oData.rows);
+			oTable.getModel().oData.rows = oTable.getModel().oData.rows.concat(oTable.getModel().oData.rows);
+			oTable.getModel().refresh();
 
-					moveResizer(oColumn);
-					qutils.triggerMouseEvent($Resizer, "mousedown", 1, 1, iResizeHandlerLeft, iResizeHandlerTop, 0);
-					qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
-					qutils.triggerMouseEvent($Resizer, "mouseup", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
+		}).then(wait).then(function() {
+			assertScrollPositions("Binding length increased", 50, 2 * iDefaultRowHeight);
+			oTable.setProperty("visibleRowCountMode", tableLibrary.VisibleRowCountMode.Auto, true);
+			oTable._updateTableSizes();
 
-					resolve();
-				}, iAssertionDelay);
-			});
-		}).then(function() {
-			return new Promise(function(resolve) {
-				window.setTimeout(function() {
-					assertScrollPositions("First scrollable column resized", 0, 0);
-					// Prepare test of an edge case:
-					// Scroll the rightmost column that is visible if the scroll position is at the beginning, so that it is fully visible.
-					that.oScrollExtension.getHorizontalScrollbar().scrollLeft += 70;
-					resolve();
-				}, iAssertionDelay);
-			});
-		}).then(function() {
-			return new Promise(function(resolve) {
-				window.setTimeout(function() {
-					var oColumn = oTable.getColumns()[3];
-					var $Resizer = oTable.$("rsz");
-					var oColumnRect = oColumn.getDomRef().getBoundingClientRect();
-					var iResizeHandlerTop = oColumnRect.top + 1;
-					var iResizeHandlerLeft = oColumnRect.right - 1;
+		}).then(wait).then(function() {
+			assertOnAfterRenderingEventHandlerCall("Content updated");
+			assertScrollPositions("Content updated", 50, 2 * iDefaultRowHeight);
+			oTable.getModel().oData.rows.splice(oTable.getVisibleRowCount() + 1);
+			oTable.getModel().refresh();
 
-					moveResizer(oColumn);
-					qutils.triggerMouseEvent($Resizer, "mousedown", 1, 1, iResizeHandlerLeft, iResizeHandlerTop, 0);
-					qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
-					qutils.triggerMouseEvent($Resizer, "mouseup", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
-					resolve();
-				}, iAssertionDelay);
-			});
-		}).then(function() {
-			return new Promise(function(resolve) {
-				window.setTimeout(function() {
-					assertScrollPositions("Resized the rightmost column that is visible if the scroll position is at the beginning", 70, 0);
-					that.oScrollExtension.getHorizontalScrollbar().scrollLeft = oTable.getDomRef("sapUiTableCtrlScr").scrollWidth;
-					resolve();
-				}, iAssertionDelay);
-			});
-		}).then(function() {
-			return new Promise(function(resolve) {
-				window.setTimeout(function() {
-					var oColumn = oTable.getColumns()[4];
-					var $Resizer = oTable.$("rsz");
-					var oColumnRect = oColumn.getDomRef().getBoundingClientRect();
-					var iResizeHandlerTop = oColumnRect.top + 10;
-					var iResizeHandlerLeft = oColumnRect.right - 1;
+		}).then(wait).then(function() {
+			assertScrollPositions("Binding length decreased", 50, iDefaultRowHeight);
+			oTable.invalidate();
 
-					moveResizer(oColumn);
-					qutils.triggerMouseEvent($Resizer, "mousedown", 1, 1, iResizeHandlerLeft, iResizeHandlerTop, 0);
-					qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
-					qutils.triggerMouseEvent($Resizer, "mouseup", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
-					resolve();
-				}, iAssertionDelay);
-			});
-		}).then(function() {
-			window.setTimeout(function() {
-				var oHSb = that.oScrollExtension.getHorizontalScrollbar();
-				var iMaxScrollLeft = oHSb.scrollWidth - oHSb.clientWidth;
-				assertScrollPositions("Resized the last column", iMaxScrollLeft, 0);
-				done();
-			}, iAssertionDelay);
-		});
+		}).then(afterRendering).then(wait).then(function() {
+			assertOnAfterRenderingEventHandlerCall("Invalidated");
+			assertScrollPositions("Invalidated", 50, iDefaultRowHeight);
+			oTable.getModel().oData.rows.splice(oTable.getVisibleRowCount());
+			oTable.getModel().refresh();
+
+		}).then(wait).then(function() {
+			assertScrollPositions("Binding length decreased - Vertical scrolling is no longer possible", 50, 0);
+			oTable.getModel().oData.rows = oTable.getModel().oData.rows.concat(oTable.getModel().oData.rows);
+			oTable.getModel().oData.rows = oTable.getModel().oData.rows.concat(oTable.getModel().oData.rows);
+			oTable.getModel().oData.rows = oTable.getModel().oData.rows.concat(oTable.getModel().oData.rows);
+			oTable.getModel().refresh();
+
+		}).then(wait).then(function() {
+			assertScrollPositions("Binding length increased - Vertical scrolling is possible again", 50, 0);
+			oTable._getDefaultRowHeight.restore();
+
+			// Resize the first scrollable column.
+			var oColumn = oTable.getColumns()[1];
+			oColumn.setWidth("600px");
+			sap.ui.getCore().applyChanges();
+
+			var $Resizer = oTable.$("rsz");
+			var oColumnRect = oColumn.getDomRef().getBoundingClientRect();
+			var iResizeHandlerTop = oColumnRect.top + 1;
+			var iResizeHandlerLeft = oColumnRect.right - 1;
+
+			moveResizer(oColumn);
+			qutils.triggerMouseEvent($Resizer, "mousedown", 1, 1, iResizeHandlerLeft, iResizeHandlerTop, 0);
+			qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
+			qutils.triggerMouseEvent($Resizer, "mouseup", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
+
+		}).then(afterRendering).then(wait).then(function() {
+			assertScrollPositions("First scrollable column resized", 0, 0);
+			// Prepare test of an edge case:
+			// Scroll the rightmost column that is visible if the scroll position is at the beginning, so that it is fully visible.
+			that.oScrollExtension.getHorizontalScrollbar().scrollLeft += 70;
+
+		}).then(wait).then(function() {
+			var oColumn = oTable.getColumns()[3];
+			var $Resizer = oTable.$("rsz");
+			var oColumnRect = oColumn.getDomRef().getBoundingClientRect();
+			var iResizeHandlerTop = oColumnRect.top + 1;
+			var iResizeHandlerLeft = oColumnRect.right - 1;
+
+			moveResizer(oColumn);
+			qutils.triggerMouseEvent($Resizer, "mousedown", 1, 1, iResizeHandlerLeft, iResizeHandlerTop, 0);
+			qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
+			qutils.triggerMouseEvent($Resizer, "mouseup", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
+
+		}).then(afterRendering).then(wait).then(function() {
+			assertScrollPositions("Resized the rightmost column that is visible if the scroll position is at the beginning", 70, 0);
+			that.oScrollExtension.getHorizontalScrollbar().scrollLeft = oTable.getDomRef("sapUiTableCtrlScr").scrollWidth;
+
+		}).then(wait).then(function() {
+			var oColumn = oTable.getColumns()[4];
+			var $Resizer = oTable.$("rsz");
+			var oColumnRect = oColumn.getDomRef().getBoundingClientRect();
+			var iResizeHandlerTop = oColumnRect.top + 10;
+			var iResizeHandlerLeft = oColumnRect.right - 1;
+
+			moveResizer(oColumn);
+			qutils.triggerMouseEvent($Resizer, "mousedown", 1, 1, iResizeHandlerLeft, iResizeHandlerTop, 0);
+			qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
+			qutils.triggerMouseEvent($Resizer, "mouseup", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
+
+		}).then(afterRendering).then(wait).then(function() {
+			var oHSb = that.oScrollExtension.getHorizontalScrollbar();
+			var iMaxScrollLeft = oHSb.scrollWidth - oHSb.clientWidth;
+			assertScrollPositions("Resized the last column", iMaxScrollLeft, 0);
+
+		}).then(done);
 	});
 
 	QUnit.module("Extension methods", {
@@ -1218,7 +1176,6 @@ sap.ui.define([
 	QUnit.test("Imitating Arrow Left/Right and Home/End key navigation", function(assert) {
 		var done = assert.async();
 		var that = this;
-		var iNumberOfCols = oTable.getColumns().length;
 		var iAssertionDelay = 50;
 
 		// Start at the first cell in the header.
@@ -1228,34 +1185,34 @@ sap.ui.define([
 		oCell.focus();
 
 		function navigateHorizontal(bRight) {
-			return new Promise(
-				function(resolve) {
-					iColIndex = bRight ? iColIndex + 1 : iColIndex - 1;
+			return new Promise(function(resolve) {
+				iColIndex = bRight ? iColIndex + 1 : iColIndex - 1;
 
-					var sKey = bRight ? "ARROW_RIGHT" : "ARROW_LEFT";
-					qutils.triggerKeydown(oCell, sKey, false, false, false);
+				var sKey = bRight ? "ARROW_RIGHT" : "ARROW_LEFT";
+				qutils.triggerKeydown(oCell, sKey, false, false, false);
 
-					if (iRowIndex === 0) {
-						oCell = jQuery.sap.domById((oTable._getVisibleColumns()[iColIndex]).getId());
-					} else {
-						oCell = jQuery.sap.domById(oTable.getId() + "-rows-row" + (iRowIndex - 1) + "-col" + iColIndex);
-					}
-
-					window.setTimeout(function() {
-						that.assertSynchronization(assert);
-						resolve();
-					}, iAssertionDelay);
+				if (iRowIndex === 0) {
+					oCell = jQuery.sap.domById((oTable._getVisibleColumns()[iColIndex]).getId());
+				} else {
+					oCell = jQuery.sap.domById(oTable.getId() + "-rows-row" + (iRowIndex - 1) + "-col" + iColIndex);
 				}
-			);
+
+				window.setTimeout(function() {
+					that.assertSynchronization(assert);
+					resolve();
+				}, iAssertionDelay);
+			});
 		}
 
 		// Header: Navigate from the first column header cell to the last.
-		navigateHorizontal(true).then(function() {	// 2
-			return navigateHorizontal(true);		// 3
+		Promise.resolve().then(function() {
+			return navigateHorizontal(true); // 2
 		}).then(function() {
-			return navigateHorizontal(true);		// 4
+			return navigateHorizontal(true); // 3
 		}).then(function() {
-			return navigateHorizontal(true);		// 5
+			return navigateHorizontal(true); // 4
+		}).then(function() {
+			return navigateHorizontal(true); // 5
 		}).then(function() {
 
 			// Header: Navigate to the content.
@@ -1299,7 +1256,7 @@ sap.ui.define([
 		}).then(function() {
 
 			// Header: Navigate to the last cell.
-			iColIndex = iNumberOfCols - 1;
+			iColIndex = oTable.columnCount - 1;
 			qutils.triggerKeydown(oCell, "END", false, false, false);
 			oCell = jQuery.sap.domById((oTable._getVisibleColumns()[iColIndex]).getId());
 

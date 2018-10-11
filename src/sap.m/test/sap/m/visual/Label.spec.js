@@ -86,11 +86,18 @@ describe("sap.m.Label", function() {
 		expect(takeScreenshot(lbl13)).toLookAs("13_width");
 	});
 
+	//  wrappingType (hyphenation)
+	it("should visualize label with hyphenation", function () {
+		var lbl14 = element(by.id('lbl14'));
+		lbl14.click();
+		expect(takeScreenshot(lbl14)).toLookAs("14_hyphenation");
+	});
+
 	// required truncated label
 	it("should visualize required label Form", function () {
 		var lbl14 = element(by.id('truncatedRequiredLabel'));
 		browser.executeScript('document.getElementById("truncatedRequiredLabel").scrollIntoView()').then(function() {
-			expect(takeScreenshot(lbl14)).toLookAs("14__truncated_required");
+			expect(takeScreenshot(lbl14)).toLookAs("15__truncated_required");
 		});
 	});
 
@@ -98,20 +105,20 @@ describe("sap.m.Label", function() {
 	it("should visualize truncated required label in Form", function () {
 		var lbl15 = element(by.id('requiredTruncated'));
 		browser.executeScript('document.getElementById("simpleForm").scrollIntoView()').then(function() {
-			expect(takeScreenshot(lbl15)).toLookAs("15__truncated_required_form");
+			expect(takeScreenshot(lbl15)).toLookAs("16__truncated_required_form");
 		});
 	});
 
 	// required  label in form
 	it("should visualize truncated label in Form", function () {
 		var lbl16 = element(by.id('truncated'));
-			expect(takeScreenshot(lbl16)).toLookAs("16__truncated_form");
+			expect(takeScreenshot(lbl16)).toLookAs("17__truncated_form");
 	});
 
 	// required  label in form
 	it("should visualize required label Form", function () {
 		var lbl17 = element(by.id('requiredOnly'));
-			expect(takeScreenshot(lbl17)).toLookAs("17__required_form");
+			expect(takeScreenshot(lbl17)).toLookAs("18__required_form");
 	});
 
 });

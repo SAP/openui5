@@ -29,7 +29,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/dom/jquery/hasTabIndex"], fun
 	 * As some UI5 controls rely on the old behavior, this method restores it.
 	 *
 	 * @param {Element} oElem Element to check the dimensions for
-	 * @returns {boolean} Whether the Element either has only zero dimensions or has visiblity:hidden (CSS)
+	 * @returns {boolean} Whether the Element either has only zero dimensions or has visibility:hidden (CSS)
 	 * @private
 	 */
 	function isHidden(oElem) {

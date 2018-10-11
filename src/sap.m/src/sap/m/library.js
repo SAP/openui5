@@ -118,7 +118,8 @@ sap.ui.define([
 			"sap.m.semantic.IFilter",
 			"sap.m.semantic.ISort",
 			"sap.m.ObjectHeaderContainer",
-			"sap.m.IOverflowToolbarContent"
+			"sap.m.IOverflowToolbarContent",
+			"sap.m.IHyphenation"
 		],
 		controls: [
 			"sap.m.ActionListItem",
@@ -1676,6 +1677,61 @@ sap.ui.define([
 	 * @interface
 	 * @public
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
+	 * Represents an Interface for controls that can have their text hyphenated.
+	 * Those controls can use <code>HyphenationSupport</code> mixin.
+	 *
+	 * @name sap.m.IHyphenation
+	 * @interface
+	 * @private
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
+	 * Checks if the control should wrap.
+	 *
+	 * @returns {boolean} True if the control should wrap
+	 *
+	 * @function
+	 * @name sap.m.IHyphenation.getWrapping
+	 * @private
+	 */
+
+	/**
+	 * Checks how the control should wrap.
+	 *
+	 * @returns {sap.m.WrappingType} What is the text wrapping type.
+	 *
+	 * @function
+	 * @name sap.m.IHyphenation.getWrappingType
+	 * @private
+	 */
+
+	/**
+	 * Gets the map of texts to be hyphenated and rendered.
+	 * For example, for <code>sap.m.Text</code> this would be the <code>text</code> property.
+	 *
+	 * @returns {map} The texts map which should be hyphenated
+	 *
+	 * @function
+	 * @name sap.m.IHyphenation.getTextsToBeHyphenated
+	 * @private
+	 */
+
+	/**
+	 * Gets the DOM element reference map where the hyphenated texts should be placed.
+	 * This is used to optimize performance and prevent flickering for hyphenated controls during the initial loading of hyphenation.
+	 * For example, for <code>sap.m.Text</code> this would be the inner DOM element.
+	 *
+	 * If a DOM ref is not returned, the control will be invalidated.
+	 *
+	 * @returns {map|null} The map of dom refs for each corresponding hyphenated text
+	 *
+	 * @function
+	 * @name sap.m.IHyphenation.getDomRefsForHyphenatedTexts
+	 * @private
 	 */
 
 	/**
@@ -3457,6 +3513,33 @@ sap.ui.define([
 		 * @public
 		 */
 		Multiple: "Multiple"
+	};
+
+	/**
+	 * Available wrapping types for text controls that can be wrapped that enable you
+	 * to display the text as hyphenated.
+	 *
+	 * For more information about text hyphenation, see
+	 * {@link sap.ui.core.hyphenation.Hyphenation} and
+	 * {@link topic:6322164936f047de941ec522b95d7b70 Text Controls Hyphenation}.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.60
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.WrappingType = {
+		/**
+		 * Normal text wrapping will be used. Words won't break based on hyphenation.
+		 * @public
+		 */
+		Normal : "Normal",
+
+		/**
+		 * Hyphenation will be used to break words on syllables where possible.
+		 * @public
+		 */
+		Hyphenated : "Hyphenated"
 	};
 
 

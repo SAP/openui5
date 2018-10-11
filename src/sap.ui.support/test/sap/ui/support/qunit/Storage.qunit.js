@@ -1,9 +1,7 @@
 /*global QUnit*/
-
-(function () {
-	"use strict";
-
-	jQuery.sap.require('sap/ui/support/supportRules/Storage');
+sap.ui.define(['sap/ui/support/supportRules/Storage'],
+	function(Storage) {
+		'use strict';
 
 	var createValidRule = function (id) {
 		return {
@@ -18,11 +16,11 @@
 	};
 
 	QUnit.module('Storage API test', {
-		setup: function () {
-			this.storage = sap.ui.support.supportRules.Storage;
+		beforeEach: function () {
+			this.storage = Storage;
 		},
-		teardown: function () {
-			sap.ui.support.supportRules.Storage.removeAllData();
+		afterEach: function () {
+			Storage.removeAllData();
 		}
 	});
 
@@ -91,4 +89,4 @@
 
 		this.storage.deletePersistenceCookie('persistance-cookie-test');
 	});
-}());
+});

@@ -296,10 +296,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.write("<div");
 		rm.addClass("sapUiTableColHdrCnt");
 		rm.writeClasses();
-		if (oTable.getColumnHeaderHeight() > 0) {
-			rm.addStyle("height", (oTable.getColumnHeaderHeight() * nRows) + "px");
-		}
-		rm.writeStyles();
 		rm.write(">");
 
 		this.renderColRowHdr(rm, oTable);
@@ -394,11 +390,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			rm.write("<div");
 			rm.addClass("sapUiTableColRowHdrIco");
 			rm.writeClasses();
-			if (oTable.getColumnHeaderHeight() > 0) {
-				rm.addStyle("height", oTable.getColumnHeaderHeight() + "px");
-			}
-			rm.write(">");
-			rm.write("</div>");
+			rm.write("></div>");
 		}
 
 		rm.write("</div>");

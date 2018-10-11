@@ -1,13 +1,10 @@
 sap.ui.define([
-	'sap/ui/core/UIComponent',
-	'sap/ui/demo/cart/model/LocalStorageModel',
-	"sap/ui/thirdparty/jquery",
-	'sap/ui/demo/cart/model/models'
-], function (
-	UIComponent,
-	LocalStorageModel,
-	jQuery,
-	models) {
+    'sap/ui/core/UIComponent',
+    'sap/ui/demo/cart/model/LocalStorageModel',
+    'sap/ui/thirdparty/jquery',
+    'sap/ui/demo/cart/model/models',
+    'sap/ui/core/routing/History'
+], function(UIComponent, LocalStorageModel, jQuery, models, History) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.cart.Component", {
@@ -47,7 +44,7 @@ sap.ui.define([
 		},
 
 		myNavBack: function () {
-			var oHistory = sap.ui.core.routing.History.getInstance();
+			var oHistory = History.getInstance();
 			var oPrevHash = oHistory.getPreviousHash();
 			if (oPrevHash !== undefined) {
 				window.history.go(-1);

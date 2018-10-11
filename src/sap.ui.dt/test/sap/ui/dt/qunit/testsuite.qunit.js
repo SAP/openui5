@@ -190,19 +190,19 @@ sap.ui.define(function () {
 			// -------------------------------------------------------------------------------
 			// Integration tests:
 			// -------------------------------------------------------------------------------
-			"intergration/FormInDesignTime": {
+			"integration/FormInDesignTime": {
 				group: "Integration"
 			},
-			"intergration/IconTabBarInDesignTime": {
+			"integration/IconTabBarInDesignTime": {
 				group: "Integration"
 			},
-			"intergration/ObjectPage": {
+			"integration/ObjectPage": {
 				group: "Integration"
 			},
-			"intergration/SimpleFormInDesignTime": {
+			"integration/SimpleFormInDesignTime": {
 				group: "Integration"
 			},
-			"intergration/SimpleForm": {
+			"integration/SimpleForm": {
 				group: "Integration",
 				ui5: {
 					resourceroots: {
@@ -210,16 +210,16 @@ sap.ui.define(function () {
 					}
 				}
 			},
-			"intergration/InvisibleControls": {
+			"integration/InvisibleControls": {
 				group: "Integration"
 			},
-			"intergration/TablesInDesignTime": {
+			"integration/TablesInDesignTime": {
 				group: "Integration"
 			},
-			"intergration/ComponentContainerInDesignTime": {
+			"integration/ComponentContainerInDesignTime": {
 				group: "Integration"
 			},
-			"intergration/ControlMovement": {
+			"integration/ControlMovement": {
 				group: "Integration"
 			},
 

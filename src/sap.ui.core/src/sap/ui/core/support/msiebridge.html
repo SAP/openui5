@@ -2,15 +2,11 @@
 <html style="overflow: auto;">
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<script>
-	// set bootstrap config which will be used by the script below and the fallback script
-	window["sap-ui-config"] = {
-		libs: "sap.ui.core",
-		modules: "sap.ui.core.support.Support",
-		onInit: "sap.ui.core.support.Support.getStub(sap.ui.core.support.Support.StubType.IFRAME);"
-	};
-	</script>
-	<script id="sap-ui-bootstrap" src="../../../../sap-ui-core.js"></script>
+	<script id="sap-ui-bootstrap"
+			src="../../../../sap-ui-core.js"
+			data-sap-ui-libs="sap.ui.core"
+			data-sap-ui-modules="sap.ui.core.support.Support"
+			data-sap-ui-oninit="sap.ui.core.support.Support.getStub(sap.ui.core.support.Support.StubType.IFRAME);"></script>
 	<script src="bootstrapFallback.js"></script>
 </head>
 <body>

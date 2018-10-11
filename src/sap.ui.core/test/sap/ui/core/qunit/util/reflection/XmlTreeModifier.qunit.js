@@ -427,5 +427,13 @@ function(
 			var oHBox = XmlTreeModifier._children(this.oXmlView)[1];
 			assert.ok(XmlTreeModifier.getBindingTemplate(oHBox, "items"), "then content inside item is returned");
 		});
+
+		QUnit.test("when destroy is called for a control that is directly under the parent node", function (assert) {
+			var oHBox = XmlTreeModifier._children(this.oXmlView)[1];
+			var oText = oHBox.childNodes[1].childNodes[0];
+			var iChildNodesBeforeDestroy = oHBox.childNodes[1].childNodes.length;
+			XmlTreeModifier.destroy(oText);
+			assert.equal(oHBox.childNodes[1].childNodes.length, iChildNodesBeforeDestroy - 1, "then the parent node has one child node less");
+		});
 	});
 });

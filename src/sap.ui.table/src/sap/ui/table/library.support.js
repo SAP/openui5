@@ -105,8 +105,16 @@ sap.ui.define([
 			if ($Condensed.length > 0) {
 				var bFound = checkDensity($Condensed, ".sapUiSizeCompact");
 				if (!bFound) {
-					SupportHelper.reportIssue(oIssueManager, "'Condensed' content density must be used in combination with 'Compact'.", Severity.High);
+					SupportHelper.reportIssue(oIssueManager, "'Condensed' content density must be used in combination with 'Compact'.",
+											  Severity.High);
 				}
+			}
+
+			if (sap.ui.getCore().getLoadedLibraries()["sap.m"] && $Cozy.length === 0 && $Compact.length === 0 && $Condensed.length === 0) {
+				SupportHelper.reportIssue(oIssueManager,
+										  "If the sap.ui.table and the sap.m libraries are used together, a content density must be specified.",
+										  Severity.High
+				);
 			}
 		}
 	});

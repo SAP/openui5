@@ -44,15 +44,6 @@ sap.ui.define([
 		DOWN: "Down"
 	};
 
-	/**
-	 * The selectors which define whether an element is interactive. Due to the usage of pseudo selectors this can only be used in jQuery.
-	 *
-	 * @type {string}
-	 * @static
-	 * @constant
-	 */
-	var INTERACTIVE_ELEMENT_SELECTORS = ":sapTabbable, .sapUiTableTreeIcon:not(.sapUiTableTreeIconLeaf)";
-
 	// Workaround until (if ever) these values can be set by applications.
 	var HORIZONTAL_SCROLLING_PAGE_SIZE = 5;
 	var COLUMN_RESIZE_STEP_CSS_SIZE = "1em";
@@ -216,7 +207,7 @@ sap.ui.define([
 			}
 
 			if (bEnterActionMode) {
-				var $InteractiveElements = TableKeyboardDelegate._getInteractiveElements(oEvent.target);
+				var $InteractiveElements = TableUtils.getInteractiveElements(oEvent.target);
 				if ($InteractiveElements) {
 					oTable._getKeyboardExtension().setActionMode(true);
 				}
@@ -368,7 +359,7 @@ sap.ui.define([
 		}
 
 		if (bFirstInteractiveElement) {
-			var $InteractiveElements = TableKeyboardDelegate._getInteractiveElements(oCell);
+			var $InteractiveElements = TableUtils.getInteractiveElements(oCell);
 
 			if ($InteractiveElements) {
 				TableKeyboardDelegate._focusElement(oTable, $InteractiveElements[0]);
@@ -528,32 +519,7 @@ sap.ui.define([
 			return false;
 		}
 
-		return jQuery(oElement).is(INTERACTIVE_ELEMENT_SELECTORS);
-	};
-
-	/**
-	 * Returns all interactive elements in a data cell.
-	 * @param {jQuery|HTMLElement} oCell The data cell from which to get the interactive elements.
-	 * @returns {jQuery|null} Returns <code>null</code>, if the passed cell is not a cell or does not contain any interactive elements.
-	 * @private
-	 * @static
-	 */
-	TableKeyboardDelegate._getInteractiveElements = function(oCell) {
-		if (!oCell) {
-			return null;
-		}
-
-		var $Cell = jQuery(oCell);
-		var oCellInfo = TableUtils.getCellInfo($Cell);
-
-		if (oCellInfo.isOfType(CellType.DATACELL | CellType.ROWACTION)) {
-			var $InteractiveElements = $Cell.find(INTERACTIVE_ELEMENT_SELECTORS);
-			if ($InteractiveElements.length > 0) {
-				return $InteractiveElements;
-			}
-		}
-
-		return null;
+		return jQuery(oElement).is(TableUtils.INTERACTIVE_ELEMENT_SELECTORS);
 	};
 
 	/**
@@ -580,7 +546,7 @@ sap.ui.define([
 
 		for (var i = 0; i < aCells.length; i++) {
 			$Cell = TableUtils.getParentCell(oTable, aCells[i].getDomRef());
-			$InteractiveElements = this._getInteractiveElements($Cell);
+			$InteractiveElements = TableUtils.getInteractiveElements($Cell);
 
 			if ($InteractiveElements) {
 				return $InteractiveElements.first();
@@ -614,7 +580,7 @@ sap.ui.define([
 
 		for (var i = aCells.length - 1; i >= 0; i--) {
 			$Cell = TableUtils.getParentCell(oTable, aCells[i].getDomRef());
-			$InteractiveElements = this._getInteractiveElements($Cell);
+			$InteractiveElements = TableUtils.getInteractiveElements($Cell);
 
 			if ($InteractiveElements) {
 				return $InteractiveElements.last();
@@ -654,7 +620,7 @@ sap.ui.define([
 		var iColumnIndexToStartSearch;
 
 		// Search for the previous interactive element in the current cell.
-		$InteractiveElements = this._getInteractiveElements($Cell);
+		$InteractiveElements = TableUtils.getInteractiveElements($Cell);
 		if ($InteractiveElements[0] !== $Element[0]) {
 			return $InteractiveElements.eq($InteractiveElements.index(oElement) - 1);
 		}
@@ -676,7 +642,7 @@ sap.ui.define([
 		for (var i = iColumnIndexToStartSearch; i >= 0; i--) {
 			oCellContent = aCells[i].getDomRef();
 			$Cell = TableUtils.getParentCell(oTable, oCellContent);
-			$InteractiveElements = this._getInteractiveElements($Cell);
+			$InteractiveElements = TableUtils.getInteractiveElements($Cell);
 
 			if ($InteractiveElements) {
 				return $InteractiveElements.last();
@@ -716,7 +682,7 @@ sap.ui.define([
 		var iColumnIndexInCellsAggregation;
 
 		// Search for the next interactive element in the current cell.
-		$InteractiveElements = this._getInteractiveElements($Cell);
+		$InteractiveElements = TableUtils.getInteractiveElements($Cell);
 		if ($InteractiveElements.get(-1) !== $Element[0]) {
 			return $InteractiveElements.eq($InteractiveElements.index(oElement) + 1);
 		}
@@ -737,7 +703,7 @@ sap.ui.define([
 		for (var i = iColumnIndexInCellsAggregation + 1; i < aCells.length; i++) {
 			oCellContent = aCells[i].getDomRef();
 			$Cell = TableUtils.getParentCell(oTable, oCellContent);
-			$InteractiveElements = this._getInteractiveElements($Cell);
+			$InteractiveElements = TableUtils.getInteractiveElements($Cell);
 
 			if ($InteractiveElements) {
 				return $InteractiveElements.first();
@@ -747,7 +713,7 @@ sap.ui.define([
 		// Search in the row action cell.
 		if (TableUtils.hasRowActions(oTable)) {
 			$Cell = TableUtils.getParentCell(oTable, oRow.getAggregation("_rowAction").getDomRef());
-			$InteractiveElements = this._getInteractiveElements($Cell);
+			$InteractiveElements = TableUtils.getInteractiveElements($Cell);
 
 			if ($InteractiveElements.get(-1) !== $Element[0]) {
 				return $InteractiveElements.eq($InteractiveElements.index(oElement) + 1);
@@ -768,7 +734,7 @@ sap.ui.define([
 	TableKeyboardDelegate.prototype.enterActionMode = function() {
 		var oKeyboardExtension = this._getKeyboardExtension();
 		var oActiveElement = document.activeElement;
-		var $InteractiveElements = TableKeyboardDelegate._getInteractiveElements(oActiveElement);
+		var $InteractiveElements = TableUtils.getInteractiveElements(oActiveElement);
 		var $Cell = TableUtils.getParentCell(this, oActiveElement);
 
 		if ($InteractiveElements) {

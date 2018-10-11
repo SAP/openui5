@@ -17,12 +17,13 @@ sap.ui.define([
 	var UnhideForm = { };
 
 	/**
-	 * Unhides a control.
+	 * Unhides a control
 	 *
 	 * @param {sap.ui.fl.Change} oChangeWrapper - change object with instructions to be applied on the control map
 	 * @param {sap.ui.core.Control} oControl - control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag - map containing the control modifier object (either sap.ui.core.util.reflection.JsControlTreeModifier or
 	 *                                sap.ui.core.util.reflection.XmlTreeModifier), the view object where the controls are embedded and the application component
+	 * @returns {boolean} True if successful
 	 * @public
 	 */
 	UnhideForm.applyChange = function(oChangeWrapper, oControl, mPropertyBag) {
@@ -32,12 +33,13 @@ sap.ui.define([
 
 		var oChangeDefinition = oChangeWrapper.getDefinition();
 
-		// !important : sUnhideId was used in 1.40, do not remove for compatibility!
+		// !important : sUnhideId was used in 1.40, do not remove for compatibility reasons!
 		var oControlToUnhide = oModifier.bySelector(oChangeDefinition.content.elementSelector || oChangeDefinition.content.sUnhideId, oAppComponent, oView);
 		var aContent = oModifier.getAggregation(oControl, "content");
 		var iStart = -1;
 
 		if (oChangeDefinition.changeType === "unhideSimpleFormField") {
+			oChangeWrapper.setRevertData(true);
 			aContent.some(function (oField, index) {
 				if (oField === oControlToUnhide) {
 					iStart = index;
@@ -85,6 +87,55 @@ sap.ui.define([
 		} else {
 			throw new Error("oSpecificChangeInfo.revealedElementId attribute required");
 		}
+	};
+
+	/**
+	 * Reverts the applied change
+	 *
+	 * @param {sap.ui.fl.Change} oChangeWrapper - Change object with instructions to be applied to the control map
+	 * @param {sap.ui.core.Control} oControl - Control that matches the change selector for applying the change
+	 * @param {object} mPropertyBag Property bag containing the modifier, the appComponent and the view
+	 * @param {object} mPropertyBag.modifier Modifier for the controls
+	 * @param {object} mPropertyBag.appComponent Component in which the change should be applied
+	 * @param {object} mPropertyBag.view Application view
+	 * @returns {boolean} True if successful
+	 * @public
+	 */
+	UnhideForm.revertChange = function(oChangeWrapper, oControl, mPropertyBag) {
+		var oModifier = mPropertyBag.modifier;
+		var oView = mPropertyBag.view;
+		var oAppComponent = mPropertyBag.appComponent;
+
+		var oChangeDefinition = oChangeWrapper.getDefinition();
+
+		// !important : sUnhideId was used in 1.40, do not remove for compatibility reasons!
+		var oControlToRevertUnhide = oModifier.bySelector(oChangeDefinition.content.elementSelector || oChangeDefinition.content.sUnhideId, oAppComponent, oView);
+		var aContent = oModifier.getAggregation(oControl, "content");
+		var iStart = -1;
+
+		if (oChangeDefinition.changeType === "unhideSimpleFormField") {
+			aContent.some(function (oField, index) {
+				if (oField === oControlToRevertUnhide) {
+					iStart = index;
+					oModifier.setVisible(oField, false);
+				}
+				if (iStart >= 0 && index > iStart) {
+					if ((oModifier.getControlType(oField) === "sap.m.Label")
+						|| (oModifier.getControlType(oField) === "sap.ui.comp.smartfield.SmartLabel")
+						|| (oModifier.getControlType(oField) === "sap.ui.core.Title")
+						|| (oModifier.getControlType(oField) === "sap.m.Title")
+						|| (oModifier.getControlType(oField) === "sap.m.Toolbar")
+						|| (oModifier.getControlType(oField) === "sap.m.OverflowToolbar")) {
+						return true;
+					} else {
+						oModifier.setVisible(oField, false);
+					}
+				}
+			});
+			oChangeWrapper.resetRevertData();
+		}
+
+		return true;
 	};
 
 	return UnhideForm;

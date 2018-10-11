@@ -478,6 +478,16 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * Destroys a given control
+		 *
+		 * @param {Element} oControl Control which will be destroyed
+		 */
+		destroy: function(oControl) {
+			var oParent = oControl.parentNode;
+			oParent.removeChild(oControl);
+		},
+
 		getChangeHandlerModulePath: function(oControl) {
 			if (!oControl){
 				return undefined;

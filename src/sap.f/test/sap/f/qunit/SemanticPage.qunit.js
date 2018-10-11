@@ -1,6 +1,14 @@
-/* global QUnit,sinon,SemanticUtil*/
-
-(function ($, QUnit, sinon, SemanticPage) {
+/*global QUnit, sinon*/
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
+	"sap/f/semantic/SemanticPage",
+	"qunit/SemanticUtil"
+],
+function (
+	$,
+	SemanticPage,
+	SemanticUtil
+) {
 	"use strict";
 
 	sinon.config.useFakeTimers = false;
@@ -946,5 +954,4 @@
 		assert.equal(oSemanticConfiguration.shouldBePreprocessed(sSemanticAddType), false,
 			sSemanticAddType + " should not be preprocessed");
 	});
-
-})(jQuery, QUnit, sinon, sap.f.semantic.SemanticPage);
+});

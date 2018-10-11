@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/Utils",
-	"sap/ui/core/util/reflection/BaseTreeModifier",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/core/BusyIndicator",
@@ -16,7 +16,7 @@ sap.ui.define([
 	jQuery,
 	JSONModel,
 	Utils,
-	BaseTreeModifier,
+	JsControlTreeModifier,
 	Change,
 	BaseChangeHandler,
 	BusyIndicator,
@@ -298,7 +298,7 @@ sap.ui.define([
 			variantChanges: {}
 		};
 
-		var iCurrentLayerComp = Utils.isLayerAboveCurrentLayer(oSourceVariant.content.layer);
+		var iCurrentLayerComp = Utils.compareAgainstCurrentLayer(oSourceVariant.content.layer);
 
 		Object.keys(oSourceVariant.content).forEach(function(sKey) {
 			if (sKey === "fileName") {
@@ -322,7 +322,7 @@ sap.ui.define([
 
 		var oDuplicateChange = {};
 		oDuplicateVariant.controlChanges = aVariantChanges.reduce(function (aSameLayerChanges, oChange) {
-			if (Utils.isLayerAboveCurrentLayer(oChange.layer) === 0) {
+			if (Utils.compareAgainstCurrentLayer(oChange.layer) === 0) {
 				oDuplicateChange = fnBaseMerge({}, oChange);
 				oDuplicateChange.fileName = Utils.createDefaultFileName(oChange.changeType);
 				oDuplicateChange.variantReference = oDuplicateVariant.content.fileName;
@@ -794,7 +794,7 @@ sap.ui.define([
 	};
 
 	VariantModel.prototype._getLocalId = function(sId, oAppComponent) {
-		return BaseTreeModifier.getSelector(sId, oAppComponent).id;
+		return JsControlTreeModifier.getSelector(sId, oAppComponent).id;
 	};
 
 	VariantModel.prototype.switchToDefaultForVariantManagement = function (sVariantManagementReference) {

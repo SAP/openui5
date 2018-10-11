@@ -1,15 +1,14 @@
-/*global QUnit*/
-
-QUnit.config.autostart = false;
-
-sap.ui.require([
+/*global QUnit */
+sap.ui.define([
 	"sap/m/changeHandler/AddTableColumn",
 	"sap/ui/fl/Change",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/createAndAppendDiv"
 ], function(
 	AddTableColumnChangeHandler,
 	Change,
@@ -17,10 +16,14 @@ sap.ui.require([
 	XmlTreeModifier,
 	UIComponent,
 	ComponentContainer,
-	JSONModel
+	JSONModel,
+	qutils,
+	createAndAppendDiv
 ) {
 	'use strict';
-	QUnit.start();
+	createAndAppendDiv("content");
+
+
 
 	var oXmlString = [
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">',
@@ -263,5 +266,4 @@ sap.ui.require([
 			"template has been restored successfully"
 		);
 	});
-
 });

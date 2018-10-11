@@ -528,6 +528,18 @@ sap.ui.define([
 		PlanningCalendarBuiltInView.Week,
 		PlanningCalendarBuiltInView.OneMonth];
 
+	var SCREEEN_BREAKPOINTS = {
+		PHONE: "600",
+		TABLET: "1024"
+	};
+
+	// CalendarTimeInterval, CalendarDateInterval, CalendarMonthInterval represent all 5 existing intervals.
+	// That is because the two left intervals (CalendarOneMonthInterval and CalendarWeekInterval)
+	// inherit CalendarDateInterval one.
+	var aIntervalRepresentatives = ["sap.ui.unified.CalendarTimeInterval",
+		"sap.ui.unified.CalendarDateInterval",
+		"sap.ui.unified.CalendarMonthInterval"];
+
 	var CalendarHeader = Control.extend("CalendarHeader", {
 
 		metadata : {
@@ -719,6 +731,38 @@ sap.ui.define([
 
 		this._bBeforeRendering = undefined;
 
+	};
+
+	PlanningCalendar.prototype.attachEvent = function (eventId, data, functionToCall, listener) {
+		Control.prototype.attachEvent.call(this, eventId, data, functionToCall, listener);
+		if (this.hasListeners("intervalSelect")) {
+			INTERVAL_CTR_REFERENCES.forEach(function (sControlRef) {
+				if (this[sControlRef]) {
+					this[sControlRef]._setAriaRole("button"); // set new aria role
+				}
+			}, this);
+		}
+		return this;
+	};
+
+	PlanningCalendar.prototype.detachEvent = function (eventId, functionToCall, listener) {
+		Control.prototype.detachEvent.call(this, eventId, functionToCall, listener);
+		if (!this.hasListeners("intervalSelect")) {
+			INTERVAL_CTR_REFERENCES.forEach(function (sControlRef) {
+				if (this[sControlRef]) {
+					this[sControlRef]._setAriaRole("gridcell"); // set new aria role
+				}
+			}, this);
+		}
+		return this;
+	};
+
+	PlanningCalendar.prototype._setAriaRole = function (oInterval) {
+		if (this.hasListeners("intervalSelect")) {
+			oInterval._setAriaRole("button"); // set new aria role
+		} else {
+			oInterval._setAriaRole("gridcell"); // set new aria role
+		}
 	};
 
 	/**
@@ -1002,6 +1046,15 @@ sap.ui.define([
 
 	};
 
+	PlanningCalendar.prototype.removeIntervalInstanceFromInfoToolbar = function () {
+		var aInfoToolbarContent = this._oInfoToolbar.getContent();
+		aInfoToolbarContent.forEach(function (oControl) {
+			if (oControl.isA(aIntervalRepresentatives)) {
+				this._oInfoToolbar.removeContent(oControl);
+			}
+		}.bind(this));
+	};
+
 	PlanningCalendar.prototype.setViewKey = function(sKey){
 		var oInterval, oOldStartDate, oIntervalMetadata,
 			sOldViewKey = this.getViewKey(),
@@ -1011,9 +1064,7 @@ sap.ui.define([
 
 		this._oIntervalTypeSelect.setSelectedKey(sKey);
 
-		if (this._oInfoToolbar.getContent().length > 1) {
-			this._oInfoToolbar.removeContent(1);
-		}
+		this.removeIntervalInstanceFromInfoToolbar();
 
 		if (sKey === PlanningCalendarBuiltInView.Week || sKey === PlanningCalendarBuiltInView.OneMonth || sKey === PlanningCalendarBuiltInView.Month) {
 			oOldStartDate = this.getStartDate();
@@ -1046,6 +1097,8 @@ sap.ui.define([
 							pickerPopup: true,
 							legend: this.getLegend()
 						});
+						this._setAriaRole(this._oTimeInterval);
+
 						this._oTimeInterval.attachEvent("startDateChange", this._handleStartDateChange, this);
 						this._oTimeInterval.attachEvent("select", this._handleCalendarSelect, this);
 						this._oTimeInterval._oPlanningCalendar = this;
@@ -1061,7 +1114,7 @@ sap.ui.define([
 					}else if (this._oTimeInterval.getItems() != iIntervals) {
 						this._oTimeInterval.setItems(iIntervals);
 					}
-					this._oInfoToolbar.addContent(this._oTimeInterval);
+					this._insertInterval(this._oTimeInterval);
 					break;
 
 				case CalendarIntervalType.Day:
@@ -1080,6 +1133,7 @@ sap.ui.define([
 							legend: this.getLegend(),
 							showWeekNumbers: this.getShowWeekNumbers()
 						});
+						this._setAriaRole(oInterval);
 
 						oInterval.attachEvent("startDateChange", this._handleStartDateChange, this);
 						oInterval.attachEvent("select", this._handleCalendarSelect, this);
@@ -1102,7 +1156,7 @@ sap.ui.define([
 					} else if (oInterval.getDays() !== iIntervals) {
 						oInterval.setDays(iIntervals);
 					}
-					this._oInfoToolbar.addContent(oInterval);
+					this._insertInterval(oInterval);
 					this[oIntervalMetadata.sInstanceName] = oInterval;
 					break;
 
@@ -1114,6 +1168,8 @@ sap.ui.define([
 							pickerPopup: true,
 							legend: this.getLegend()
 						});
+						this._setAriaRole(this._oMonthInterval);
+
 						this._oMonthInterval.attachEvent("startDateChange", this._handleStartDateChange, this);
 						this._oMonthInterval.attachEvent("select", this._handleCalendarSelect, this);
 						this._oMonthInterval._oPlanningCalendar = this;
@@ -1129,7 +1185,7 @@ sap.ui.define([
 					} else if (this._oMonthInterval.setMonths() != iIntervals) {
 						this._oMonthInterval.setMonths(iIntervals);
 					}
-					this._oInfoToolbar.addContent(this._oMonthInterval);
+					this._insertInterval(this._oMonthInterval);
 					break;
 
 				default:
@@ -1172,6 +1228,23 @@ sap.ui.define([
 
 		return this;
 
+	};
+
+	/**
+	 * Inserts the needed interval to the right position in the toolbar of the PlanningCalendar.
+	 * When the screen is big, the interval should be placed at the end.
+	 * Else - after(below) the calendar header.
+	 * @param {object} oInterval The interval to be placed in the toolbar
+	 * @private
+	 */
+	PlanningCalendar.prototype._insertInterval = function  (oInterval) {
+		if (this._iSizeScreen > 1) {
+			// place the interval at the end.
+			this._oInfoToolbar.addContent(oInterval);
+		} else {
+			// place the interval after the calendar header.
+			this._oInfoToolbar.insertContent(oInterval, 1);
+		}
 	};
 
 	/**
@@ -3486,15 +3559,13 @@ sap.ui.define([
 			this._iSize = 2; // desktop
 		}
 
-		// use header sizes, as m.Table uses this for it's resizing
-		if (jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
+		if (iWidth < SCREEEN_BREAKPOINTS.PHONE) {
 			this._iSizeScreen = 0;
-		}else if (jQuery('html').hasClass("sapUiMedia-Std-Tablet")) {
+		} else if (iWidth < SCREEEN_BREAKPOINTS.TABLET) {
 			this._iSizeScreen = 1;
-		}else {
+		} else {
 			this._iSizeScreen = 2;
 		}
-
 	}
 
 	// as all our css should depend on the main container size, not screen size like sapUiMedia-Std-Tablet...

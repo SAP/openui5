@@ -48,7 +48,7 @@ sap.ui.define([
 
 		onTheWorklistPage : {
 			baseClass : Common,
-			actions : jQuery.extend({
+			actions : Object.assign({
 				iPressATableItemAtPosition : function (iPosition) {
 					return this.waitFor(createWaitForItemAtPosition({
 						position : iPosition,
@@ -161,7 +161,7 @@ sap.ui.define([
 
 			}, shareOptions.createActions(sViewName)),
 
-			assertions: jQuery.extend({
+			assertions: Object.assign({
 
 				iShouldSeeTheTable : function () {
 					return this.waitFor({

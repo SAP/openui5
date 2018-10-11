@@ -24,7 +24,7 @@ sap.ui.define([
 
 	var MyCompositeType = CompositeType.extend("MyCompositeType", {
 		constructor: function() {
-			CompositeType.constructor.apply(this);
+			CompositeType.apply(this);
 			this.sName = "MyCompositeType";
 		},
 		formatValue: function(aValues) {
@@ -42,7 +42,7 @@ sap.ui.define([
 
 	var MyRawValueType = MyCompositeType.extend("MyRawValueType", {
 		constructor: function() {
-			MyCompositeType.constructor.apply(this);
+			MyCompositeType.apply(this);
 			this.sName = "MyRawValueType";
 			this.bUseRawValues = true;
 		}
@@ -50,7 +50,7 @@ sap.ui.define([
 
 	var MyInternalValueType = MyCompositeType.extend("MyInternalValueType", {
 		constructor: function() {
-			MyCompositeType.constructor.apply(this);
+			MyCompositeType.apply(this);
 			this.sName = "MyInternalValueType";
 			this.bUseInternalValues = true;
 		},
@@ -390,7 +390,7 @@ sap.ui.define([
 	QUnit.test("Throw Error if bUseRawValues & bUseInternalValues are true", function(assert) {
 		var EvilType = MyCompositeType.extend("EvilType", {
 			constructor: function() {
-				MyCompositeType.constructor.apply(this);
+				MyCompositeType.apply(this);
 				this.sName = "EvilType";
 				this.bUseRawValues = true;
 				this.bUseInternalValues = true;

@@ -234,7 +234,7 @@ sap.ui.define([
 		 *
 		 * @param {object} mPropertyBag - Changes along with other settings that need to be added
 		 * @param {array} mPropertyBag.controlChanges - Array of control changes of type {@link sap.ui.fl.ControlPersonalizationAPI.PersonalizationChange}
-		 * @param {boolean} [mPropertyBag.ignoreVariantManagement] - If flag is set to true then variant management will be ignored
+		 * @param {boolean} [mPropertyBag.ignoreVariantManagement=false] - If flag is set to true then variant management will be ignored
 		 *
 		 * @returns {Promise} Returns Promise resolving to an array of successfully applied changes,
 		 * after the changes have been written to the map of dirty changes and applied to the control
@@ -267,11 +267,17 @@ sap.ui.define([
 
 				var mParams = this._determineParameters(oChange.selectorControl);
 				if (!mPropertyBag.ignoreVariantManagement) {
-					var sVariantManagementReference = this._getVariantManagement(oChange.selectorControl, mParams);
-					if (sVariantManagementReference) {
-						var sCurrentVariantReference = mParams.variantModel.oData[sVariantManagementReference].currentVariant;
-						oChange.changeSpecificData.variantReference = sCurrentVariantReference;
+					// check for preset variantReference
+					if (!oChange.changeSpecificData.variantReference) {
+						var sVariantManagementReference = this._getVariantManagement(oChange.selectorControl, mParams);
+						if (sVariantManagementReference) {
+							var sCurrentVariantReference = mParams.variantModel.oData[sVariantManagementReference].currentVariant;
+							oChange.changeSpecificData.variantReference = sCurrentVariantReference;
+						}
 					}
+				} else {
+					// delete preset variantReference
+					delete oChange.changeSpecificData.variantReference;
 				}
 				aPromises.push(
 					function() {

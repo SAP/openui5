@@ -10,7 +10,7 @@
 					  showEditHeaderButton="true"
 					  editHeaderButtonPress="handleEditBtnPress">
 		<headerTitle>
-			<ObjectPageHeader objectImageURI="./img/person.png"
+			<ObjectPageHeader objectImageURI="test-resources/sap/uxap/qunit/img/person.png"
 							  objectTitle="Denise Smith"
 							  objectImageShape="Circle"
 							  objectImageAlt="Denise Smith"
@@ -38,8 +38,8 @@
 			</layout:VerticalLayout>
 
 			<layout:HorizontalLayout>
-				<m:Image src="./img/linkedin.png"></m:Image>
-				<m:Image src="./img/Twitter.png"></m:Image>
+				<m:Image src="test-resources/sap/uxap/qunit/img/linkedin.png"></m:Image>
+				<m:Image src="test-resources/sap/uxap/qunit/img/Twitter.png"></m:Image>
 			</layout:HorizontalLayout>
 
 			<layout:VerticalLayout>

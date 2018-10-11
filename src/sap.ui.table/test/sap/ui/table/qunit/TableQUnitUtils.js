@@ -10,6 +10,11 @@ sap.ui.define([
 ], function (JSONModel, Control, Table, TreeTable, Column, RowAction, RowActionItem) {
 	"use strict";
 
+	var oTable, oTreeTable;
+	var oModel = new JSONModel();
+	var aFields = ["A", "B", "C", "D", "E"];
+	var iNumberOfRows = 8;
+
 	//************************************************************************
 	// Preparation Code
 	//************************************************************************
@@ -20,9 +25,9 @@ sap.ui.define([
 				"text": "string",
 				"src": "sap.ui.core.URI",
 				"alt": "string",
-				"visible": "boolean",
-				"focusable": "boolean",
-				"tabbable": "boolean",
+				"visible": {type: "boolean", defaultValue: true},
+				"focusable": {type: "boolean", defaultValue: false},
+				"tabbable": {type: "boolean", defaultValue: false},
 				"index": "int", // Results in different behavior of the control in different columns.
 				"width": "sap.ui.core.CSSSize" // Table sets "width" for the title text.
 			},
@@ -34,11 +39,14 @@ sap.ui.define([
 		renderer: function (oRm, oControl) {
 			oRm.write("<span");
 			oRm.writeControlData(oControl);
-			oRm.writeClasses();
 			if (oControl.getTabbable()) {
 				oRm.writeAttribute("tabindex", "0");
 			} else if (oControl.getFocusable()) {
 				oRm.writeAttribute("tabindex", "-1");
+			}
+			if (!oControl.getVisible()) {
+				oRm.addStyle("display", "none");
+				oRm.writeStyles();
 			}
 			oRm.write(">");
 			oRm.writeEscaped(oControl.getText() || oControl.getAlt() || "");
@@ -50,10 +58,13 @@ sap.ui.define([
 		metadata: {
 			properties: {
 				"text": "string",
-				"visible": "boolean",
-				"tabbable": "boolean",
+				"visible": {type: "boolean", defaultValue: true},
+				"tabbable": {type: "boolean", defaultValue: false},
 				"index": "int", // Results in different behavior of the control in different columns.
 				"type": "string"
+			},
+			associations: {
+				"ariaLabelledBy": {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
 			}
 		},
 
@@ -62,9 +73,12 @@ sap.ui.define([
 			oRm.writeControlData(oControl);
 			oRm.writeAttribute("type", oControl.getType() || "text");
 			oRm.writeAttribute("value", oControl.getText() || "");
-			oRm.writeClasses();
 			if (oControl.getTabbable()) {
 				oRm.writeAttribute("tabindex", "0");
+			}
+			if (!oControl.getVisible()) {
+				oRm.addStyle("display", "none");
+				oRm.writeStyles();
 			}
 			oRm.write(">");
 		}
@@ -90,20 +104,73 @@ sap.ui.define([
 
 		getTestInputControl: function() {
 			return TestInputControl;
+		},
+
+		/**
+		 * Adds a column to the tested table.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {string} sTitle The label of the column.
+		 * @param {string} sText The text of the column template.
+		 * @param {boolean} bInputElement If set to <code>true</code>, the column template will be an input element, otherwise a span.
+		 * @param {boolean} bFocusable If set to <code>true</code>, the column template will focusable. Only relevant, if <code>bInputElement</code>
+		 *                             is set to true.
+		 * @param {boolean} bTabbable If set to <code>true</code>, the column template will be tabbable.
+		 * @param {string} sInputType The type of the input element. Only relevant, if <code>bInputElement</code> is set to true.
+		 * @param {boolean} [bBindText=true] If set to <code>true</code>, the text property will be bound to the value of <code>sText</code>.
+		 * @returns {sap.ui.table.Column} The added column.
+		 */
+		addColumn: function(oTable, sTitle, sText, bInputElement, bFocusable, bTabbable, sInputType, bBindText) {
+			if (bBindText == null) {
+				bBindText = true;
+			}
+
+			var oControlTemplate;
+
+			if (bInputElement) {
+				oControlTemplate = new TestInputControl({
+					text: bBindText ? "{" + sText + "}" : sText,
+					index: oTable.getColumns().length,
+					visible: true,
+					tabbable: bTabbable,
+					type: sInputType
+				});
+			} else {
+				oControlTemplate = new TestControl({
+					text: bBindText ? "{" + sText + "}" : sText,
+					index: oTable.getColumns().length,
+					visible: true,
+					focusable: bFocusable,
+					tabbable: bFocusable && bTabbable
+				});
+			}
+
+			var oColumn = new Column({
+				label: sTitle,
+				width: "100px",
+				template: oControlTemplate
+			});
+			oTable.addColumn(oColumn);
+
+			for (var i = 0; i < iNumberOfRows; i++) {
+				oTable.getModel().getData().rows[i][sText] = sText + (i + 1);
+			}
+
+			return oColumn;
 		}
 	};
 
-	var oTable, oTreeTable;
+	[Table, TreeTable].forEach(function(TableClass) {
+		Object.defineProperty(TableClass.prototype, "columnCount", {
+			get: function() {
+				return this.getColumns().length;
+			}
+		});
+	});
 
-	var oModel = new JSONModel();
 	window.oModel = oModel;
-
-	var aFields = ["A", "B", "C", "D", "E"];
-	var iNumberOfRows = 8;
-	var iNumberOfCols = aFields.length;
 	window.aFields = aFields;
 	window.iNumberOfRows = iNumberOfRows;
-	window.iNumberOfCols = iNumberOfCols;
 
 	window.createTables = function(bSkipPlaceAt, bFocusableCellTemplates) {
 		oTable = new Table({
@@ -156,6 +223,7 @@ sap.ui.define([
 						width: "100px",
 						template: new TestControl({
 							text: "{" + aFields[j] + "}",
+							index: j,
 							tabbable: !!bFocusableCellTemplates
 						})
 					}));

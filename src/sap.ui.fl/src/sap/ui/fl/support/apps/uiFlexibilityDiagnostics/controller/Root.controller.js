@@ -18,13 +18,15 @@ sap.ui.define([
 			this._oView.setModel(this._oDataSelectedModel, "selectedData");
 		},
 
-		formatStatus: function (sKey, aAppliedChanges, aFailedChanges) {
+		formatStatus: function (sKey, aAppliedChanges, aFailedChanges, aNotApplicableChanges) {
 			if (!sKey || !aAppliedChanges || !aFailedChanges) {
 				return;
 			}
 
+			aNotApplicableChanges = aNotApplicableChanges || [];
 			var bSuccessful = aAppliedChanges.indexOf(sKey) !== -1;
 			var bFailed = aFailedChanges.indexOf(sKey) !== -1;
+			var bNotApplicable = aNotApplicableChanges.indexOf(sKey) !== -1;
 
 			if (bSuccessful) {
 				if (!bFailed) {
@@ -33,7 +35,13 @@ sap.ui.define([
 					return "Warning";
 				}
 			}
-
+			if (bNotApplicable) {
+				if (!bFailed) {
+					return "CustomNotApplicable";
+				} else {
+					return "Warning";
+				}
+			}
 			if (bFailed) {
 				return "Error";
 			}
@@ -186,7 +194,8 @@ sap.ui.define([
 				lines: [],
 				nodeBoxWidth: 100,
 				appliedChanges: mFlexData.aAppliedChanges,
-				failedChanges: mFlexData.aFailedChanges
+				failedChanges: mFlexData.aFailedChanges,
+				notApplicableChanges: mFlexData.aNotApplicableChanges
 			};
 
 			var mChanges = mFlexData.mChangesEntries;

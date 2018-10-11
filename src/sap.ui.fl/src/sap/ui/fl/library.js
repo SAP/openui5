@@ -50,6 +50,8 @@ sap.ui.define([
 		UiAdaptation: "UI_ADAPTATION"
 	};
 
+	sap.ui.fl.flexibilityServices = sap.ui.getCore().getConfiguration().getFlexibilityServices();
+
 	RegistrationDelegator.registerAll();
 
 	return sap.ui.fl;

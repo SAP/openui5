@@ -241,7 +241,7 @@ function(library, Control, coreLibrary, Text, ObjectAttributeRenderer, Log) {
 	};
 
 	ObjectAttribute.prototype.setCustomContent = function(oCustomContent) {
-		if (oCustomContent.isA('sap.m.Link')) {
+		if (oCustomContent && oCustomContent.isA('sap.m.Link')) {
 			oCustomContent._getTabindex = function() {
 				return "-1";
 			};

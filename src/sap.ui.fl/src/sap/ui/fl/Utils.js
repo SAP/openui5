@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/UriParameters",
 	"sap/base/util/uid",
+	"sap/base/strings/formatMessage",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/mvc/View"
 ],
@@ -21,6 +22,7 @@ function(
 	Log,
 	UriParameters,
 	uid,
+	formatMessage,
 	ManagedObject,
 	View
 ) {
@@ -75,6 +77,20 @@ function(
 			info: function (sMessage, sDetails, sComponent) {
 				Log.info(sMessage, sDetails, sComponent);
 			}
+		},
+
+		/**
+		 * Formats the log message by replacing placeholders with values and logging the message.
+		 *
+		 * @param {string} sLogType - Logging type to be used. Possible values: info | warning | debug | error
+		 * @param {array.<string>} aMessageComponents - Individual parts of the message text
+		 * @param {array.<any>} aValuesToInsert - The values to be used instead of the placeholders in the message
+		 * @param {string} [sCallStack] - Passes the callstack to the logging function
+		 */
+		formatAndLogMessage: function(sLogType, aMessageComponents, aValuesToInsert, sCallStack) {
+			var sLogMessage = aMessageComponents.join(' ');
+			sLogMessage = formatMessage(sLogMessage, aValuesToInsert);
+			this.log[sLogType](sLogMessage, sCallStack || "");
 		},
 
 		/**
@@ -365,17 +381,18 @@ function(
 		 * -1: Lower layer, 0: Same layer, 1: Layer above
 		 *
 		 * @param {String} sLayer - Layer name to be evaluated
-		 * @returns {boolean} <code>true</code> if input layer is higher than current layer
+		 * @param {String} [sCurrentLayer] - Current layer name to be evaluated, if not provided the layer is taken from URL parameter
+		 * @returns {int} -1: Lower layer, 0: Same layer, 1: Layer above
 		 * @public
 		 * @function
 		 * @name sap.ui.fl.Utils.isLayerOverCurrentLayer
 		 */
-		isLayerAboveCurrentLayer: function(sLayer) {
-			var sCurrentLayer = Utils.getCurrentLayer(false);
+		compareAgainstCurrentLayer: function(sLayer, sCurrentLayer) {
+			var sCurrent = sCurrentLayer || Utils.getCurrentLayer(false);
 			// If sLayer is undefined, it is assumed it be on the lowest layer
-			if ((this.getLayerIndex(sCurrentLayer) > this.getLayerIndex(sLayer)) || !sLayer) {
+			if ((this.getLayerIndex(sCurrent) > this.getLayerIndex(sLayer)) || !sLayer) {
 				return -1;
-			} else if (this.getLayerIndex(sCurrentLayer) === this.getLayerIndex(sLayer)) {
+			} else if (this.getLayerIndex(sCurrent) === this.getLayerIndex(sLayer)) {
 				return 0;
 			} else {
 				return 1;
@@ -870,7 +887,7 @@ function(
 			var oUshellContainer = Utils.getUshellContainer();
 			if (oUshellContainer) {
 				var oURLParser = oUshellContainer.getService("URLParsing");
-				var oParsedHash = oURLParser.parseShellHash(oURLParser.getHash(window.location.href));
+				var oParsedHash = oURLParser.parseShellHash(hasher.getHash());
 				return oParsedHash ? oParsedHash : { };
 			}
 			return { };

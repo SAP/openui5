@@ -1,0 +1,152 @@
+<!DOCTYPE HTML>
+<html style="height: 100%">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Rta Stretch Plugin Test</title>
+
+		<style>
+			html, body, #content {
+				height : 100%;
+			}
+			.sapUiView {
+				height: 100%;
+			}
+
+			.sapUiDtOverlay {
+				background-color: rgba(255,0,0,0.1);
+			}
+			#overlay-container {
+				background-color: rgba(255,0,255,0.5);
+			}
+			#visibleLayout {
+				margin-top: 50px;
+			}
+		</style>
+
+		<script src="../../shared-config.js"></script>
+		<script>
+			window['sap-ui-config'].noConflict = 'true';
+			window['sap-ui-config'].libs = 'sap.ui.rta, sap.ui.dt, sap.m, sap.ui.layout';
+			window['sap-ui-config'].resourceroots = {
+				"rta.performance": "./",
+				"dt.performance": "../../../../../sap/ui/dt/performance/"
+			};
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+		</script>
+
+		<script>
+			window.wpp = {
+				customMetrics: {}
+			};
+			window.fnResolve;
+			window.onAppReady = new Promise(function (fnResolve) {
+				window.fnResolve = fnResolve;
+			});
+
+			sap.ui.getCore().attachInit(function() {
+				sap.ui.require([
+					"dt/performance/PerformanceTestUtil",
+					"sap/ui/layout/VerticalLayout"
+				], function(
+					PerformanceTestUtil,
+					VerticalLayout
+				) {
+					var oLayout = new VerticalLayout("visibleLayout");
+					PerformanceTestUtil.addBoxesWithMixedControls(oLayout, 100);
+					oLayout.placeAt("content");
+					sap.ui.getCore().applyChanges();
+					fnResolve()
+				});
+			});
+
+			window.measureApplyStylesAfterStartUpWithStretchPlugin = function() {
+				sap.ui.require([
+					"dt/performance/PerformanceTestUtil",
+					"rta/performance/RtaPerformanceTestUtil",
+					"sap/ui/dt/OverlayRegistry",
+					"sap/base/Log"
+				], function (
+					PerformanceTestUtil,
+					RtaPerformanceTestUtil,
+					OverlayRegistry,
+					BaseLog
+				) {
+					var aStack = [];
+					aStack.push(new Date().getTime());
+
+					RtaPerformanceTestUtil.startRta(sap.ui.getCore().byId("visibleLayout"))
+					.then(function() {
+						var iCountCall = 0;
+						var bMeasurementDone = false;
+
+						var fnDebouncedFn = PerformanceTestUtil.debounce(function () {
+							if (!bMeasurementDone) {
+								bMeasurementDone = true;
+								window.wpp.customMetrics.applyStylesAfterStartWithStretch = aStack[aStack.length - 1] - aStack[0];
+								BaseLog.info("ApplyStylesAfterStart = " + window.wpp.customMetrics.applyStylesAfterStartWithStretch + "ms");
+								BaseLog.info("Count call = " + iCountCall);
+							} else {
+								BaseLog.error("Some applyStyles() calculation exceeded timeout of 2000ms");
+								window.wpp.customMetrics.applyStylesAfterStartWithStretch = 10000;
+							}
+						}, 2000);
+
+						OverlayRegistry.getOverlays().forEach(function (oElementOverlay) {
+							oElementOverlay.attachGeometryChanged(function () {
+								aStack.push(new Date().getTime());
+								iCountCall++;
+								setTimeout(fnDebouncedFn);
+							});
+						});
+					});
+				});
+			}
+
+			window.measureApplyStylesAfterStartUpWithoutStretchPlugin = function() {
+				sap.ui.require([
+					"dt/performance/PerformanceTestUtil",
+					"rta/performance/RtaPerformanceTestUtil",
+					"sap/ui/dt/OverlayRegistry",
+					"sap/base/Log"
+				], function (
+					PerformanceTestUtil,
+					RtaPerformanceTestUtil,
+					OverlayRegistry,
+					BaseLog
+				) {
+					var aStack = [];
+					aStack.push(new Date().getTime());
+
+					RtaPerformanceTestUtil.startRtaWithoutStretch(sap.ui.getCore().byId("visibleLayout"))
+					.then(function() {
+						var iCountCall = 0;
+						var bMeasurementDone = false;
+
+						var fnDebouncedFn = PerformanceTestUtil.debounce(function () {
+							if (!bMeasurementDone) {
+								bMeasurementDone = true;
+								window.wpp.customMetrics.applyStylesAfterStartWithoutStretch = aStack[aStack.length - 1] - aStack[0];
+								BaseLog.info("ApplyStylesAfterStartWithoutStretch = " + window.wpp.customMetrics.applyStylesAfterStartWithoutStretch + "ms");
+								BaseLog.info("Count call = " + iCountCall);
+							} else {
+								BaseLog.error("Some applyStyles() calculation exceeded timeout of 2000ms");
+								window.wpp.customMetrics.applyStylesAfterStartWithoutStretch = 10000;
+							}
+						}, 2000);
+
+						OverlayRegistry.getOverlays().forEach(function (oElementOverlay) {
+							oElementOverlay.attachGeometryChanged(function () {
+								aStack.push(new Date().getTime());
+								iCountCall++;
+								setTimeout(fnDebouncedFn);
+							});
+						});
+					});
+				});
+			}
+		</script>
+	</head>
+	<body class="sapUiBody sapUiSizeCompact" role="application">
+		<div id="content"></div>
+	</body>
+</html>

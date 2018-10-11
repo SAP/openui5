@@ -121,7 +121,7 @@ sap.ui.define([
 	 * @throws Error if loading the resource failed
 	 * @static
 	 * @private
-	 * @sap-restricted sap.ui.core
+	 * @sap-restricted sap.ui.core, sap.ui.fl
 	 */
 	LoaderExtensions.loadResource = function(sResourceName, mOptions) {
 		var sType,

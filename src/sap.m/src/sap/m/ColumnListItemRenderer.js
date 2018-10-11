@@ -198,7 +198,7 @@ sap.ui.define([
 
 			if (bRenderCell) {
 				this.applyAriaLabelledBy(oHeader, oCell);
-				rm.renderControl(oColumn.applyAlignTo(oCell));
+				rm.renderControl(oCell);
 			}
 
 			rm.write("</td>");
@@ -308,7 +308,6 @@ sap.ui.define([
 
 				oColumn.addDependent(oHeader);
 				oLI._addClonedHeader(oHeader);
-				oColumn.applyAlignTo(oHeader, "Begin");
 				rm.renderControl(oHeader);
 				rm.write("</div>");
 
@@ -323,7 +322,6 @@ sap.ui.define([
 				rm.addClass("sapMListTblSubCntVal" + sPopinDisplay);
 				rm.writeClasses();
 				rm.write(">");
-				oColumn.applyAlignTo(oCell, "Begin");
 				this.applyAriaLabelledBy(oHeader, oCell);
 				rm.renderControl(oCell);
 				rm.write("</div>");

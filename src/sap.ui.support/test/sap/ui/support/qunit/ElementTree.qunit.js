@@ -1,12 +1,8 @@
 /*global sinon, QUnit*/
 
-sap.ui.require(['sap/ui/support/supportRules/ui/external/ElementTree'],
+sap.ui.define(['sap/ui/support/supportRules/ui/external/ElementTree'],
 	function (ElementTree) {
 		'use strict';
-
-		jQuery.sap.require('sap/ui/thirdparty/sinon');
-		jQuery.sap.require('sap/ui/thirdparty/sinon-qunit');
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 		var CONTAINER_LOCATION = 'qunit-fixture';
 

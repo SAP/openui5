@@ -1655,7 +1655,7 @@ sap.ui.define([
 	 */
 	// @override
 	ODataMetaModel.prototype.getAdapterFactoryModulePath = function () {
-		return "sap/ui/model/odata/v4/meta/ODataAdapterFactory";
+		return "sap/ui/mdc/experimental/adapter/odata/v4/ODataAdapterFactory";
 	};
 
 	/**

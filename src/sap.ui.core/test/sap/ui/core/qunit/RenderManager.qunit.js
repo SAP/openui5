@@ -648,7 +648,7 @@ sap.ui.define([
 		var $icon1 = jQuery.sap.byId("icon1");
 		assert.ok($icon1[0], "icon should be rendered");
 		assert.ok($icon1.is("span"), "Icon URI should be rendered as a span");
-		assert.equal($icon1.css("font-family"), oIconInfo.fontFamily, "Icon's font family is rendered");
+		assert.equal($icon1.css("font-family").replace(/"|'/g, ""), oIconInfo.fontFamily, "Icon's font family is rendered");
 		assert.equal($icon1.attr("data-sap-ui-icon-content"), oIconInfo.content, "Icon content is rendered as attribute");
 		assert.ok($icon1.hasClass("classA"), "icon has classA as a CSS class");
 		assert.ok($icon1.hasClass("classB"), "icon has classB as a CSS class");
@@ -673,7 +673,7 @@ sap.ui.define([
 		$icon1 = jQuery.sap.byId("icon1");
 		assert.ok($icon1[0], "icon should be rendered");
 		assert.ok($icon1.is("span"), "Icon URI should be rendered as a span");
-		assert.equal($icon1.css("font-family"), oIconInfo.fontFamily, "Icon's font family is rendered");
+		assert.equal($icon1.css("font-family").replace(/"|'/g, ""), oIconInfo.fontFamily, "Icon's font family is rendered");
 		assert.equal($icon1.attr("data-sap-ui-icon-content"), oIconInfo.content, "Icon content is rendered as attribute");
 		assert.ok($icon1.hasClass("classA"), "icon has classA as a CSS class");
 		assert.ok($icon1.hasClass("classB"), "icon has classB as a CSS class");

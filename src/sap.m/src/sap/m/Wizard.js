@@ -347,10 +347,11 @@ sap.ui.define([
 		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining.
 		 * @public
 		 */
-		Wizard.prototype.discardProgress = function (step) {
+		Wizard.prototype.discardProgress = function (step, preserveNextStep) {
 			var progressAchieved = this.getProgress(),
 				steps = this._stepPath,
 				index = this._stepPath.indexOf(step),
+				lastStep = this._stepPath[index],
 				progressNavigatorIndex = index + 1;
 
 			if (progressNavigatorIndex > progressAchieved || progressNavigatorIndex <= 0) {
@@ -362,7 +363,7 @@ sap.ui.define([
 
 			this._updateNextButtonState();
 			this._restoreInitialValidatedState(progressNavigatorIndex);
-			this._stepPath[index]._markAsLast();
+			lastStep._markAsLast();
 
 			for (var j = 0; j < progressNavigatorIndex - 1; j++) {
 				var oButton = steps[j].getAggregation("_nextButton");
@@ -376,13 +377,15 @@ sap.ui.define([
 				}
 			}
 
-			if (step.getSubsequentSteps().length > 1) {
+			if (step.getSubsequentSteps().length > 1 && !preserveNextStep) {
 				step.setNextStep(null);
 			}
 
 			steps.splice(progressNavigatorIndex);
 			this._updateProgressNavigator();
 			this.setAssociation("currentStep", step);
+
+			lastStep._oNextButton.setVisible(true);
 
 			return this;
 		};
@@ -508,7 +511,7 @@ sap.ui.define([
 
 		Wizard.prototype._activateAllPreceedingSteps = function (step) {
 			if (this._stepPath.indexOf(step) >= 0) {
-				this.discardProgress(step);
+				this.discardProgress(step, true);
 				return;
 			}
 
@@ -879,7 +882,7 @@ sap.ui.define([
 				allSteps = this.getSteps(),
 				stepTitles = [currentStep.getTitle()],
 				stepIcons = [currentStep.getIcon()],
-				stepOptionalIndication = [],
+				stepOptionalIndication = [currentStep.getOptional()],
 				stepCount = 1;
 
 			if (this.getEnableBranching()) {

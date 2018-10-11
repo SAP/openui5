@@ -1,10 +1,11 @@
-/*global QUnit testRule*/
+/*global QUnit */
 
 sap.ui.define([
 		"sap/m/Page",
 		"sap/m/ObjectListItem",
-		"sap/m/ObjectMarker"],
-	function (Page, ObjectListItem, ObjectMarker)  {
+		"sap/m/ObjectMarker",
+		"test-resources/sap/ui/support/TestHelper"
+], function (Page, ObjectListItem, ObjectMarker, testRule)  {
 		"use strict";
 
 		QUnit.module("ObjectListItem markers aggregation with markFlagged: true", {

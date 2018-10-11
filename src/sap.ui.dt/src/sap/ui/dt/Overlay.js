@@ -608,7 +608,6 @@ function (
 		this._setPosition(this.$(), oGeometry, $RenderingParent, bForceScrollbarSync);
 		if (oGeometry.domRef) {
 			this._setZIndex(oGeometry, this.$());
-			this._handleOverflowScroll(oGeometry, this.$(), this.getParent(), bForceScrollbarSync);
 		}
 
 		this.getChildren().forEach(function(oChild) {
@@ -726,27 +725,28 @@ function (
 	};
 
 	/**
+	 * Cleans up when scrolling is no longer needed in the overlay
+	 * @param {jQuery} $TargetDomRef - DOM reference to the element where dummy container is located
+	 * @param {sap.ui.dt.ElementOverlay} [oTargetOverlay]
+	 *        Overlay which holds scrollbar padding via CSS classes. In case of root overlay, the target is undefined.
+	 *
 	 * @private
 	 */
-	Overlay.prototype._deleteDummyContainer = function($Overlay) {
-		var $DummyScrollContainer = $Overlay.find(">.sapUiDtDummyScrollContainer");
-
+	Overlay.prototype._deleteDummyContainer = function($TargetDomRef, oTargetOverlay) {
+		var $DummyScrollContainer = $TargetDomRef.find(">.sapUiDtDummyScrollContainer");
 		if ($DummyScrollContainer.length) {
 			$DummyScrollContainer.remove();
-			this._oScrollbarSynchronizers.get($Overlay.get(0)).destroy();
-			this._oScrollbarSynchronizers.delete($Overlay.get(0));
-
+			this._oScrollbarSynchronizers.get($TargetDomRef.get(0)).destroy();
+			this._oScrollbarSynchronizers.delete($TargetDomRef.get(0));
 			if (
-				!this.isRoot()
-				&& this.getParent()._oScrollbarSynchronizers.size === 0
-				&& !this.getParent().getChildren().some(function (oAggregationOverlay) {
+				oTargetOverlay._oScrollbarSynchronizers.size === 0
+				&& !oTargetOverlay.getChildren().some(function (oAggregationOverlay) {
 					return oAggregationOverlay._oScrollbarSynchronizers.size > 0;
 				})
 			) {
-				var $Parent = this.getParent();
-				$Parent.removeStyleClass("sapUiDtOverlayWithScrollBar");
-				$Parent.removeStyleClass("sapUiDtOverlayWithScrollBarVertical");
-				$Parent.removeStyleClass("sapUiDtOverlayWithScrollBarHorizontal");
+				oTargetOverlay.removeStyleClass("sapUiDtOverlayWithScrollBar");
+				oTargetOverlay.removeStyleClass("sapUiDtOverlayWithScrollBarVertical");
+				oTargetOverlay.removeStyleClass("sapUiDtOverlayWithScrollBarHorizontal");
 			}
 		}
 	};
@@ -755,15 +755,15 @@ function (
 	 * Handle overflow from controls and sync with overlay
 	 * @private
 	 */
-	Overlay.prototype._handleOverflowScroll = function(oGeometry, $overlayDomRef, oOverlayParent, bForceScrollbarSync) {
+	Overlay.prototype._handleOverflowScroll = function(oGeometry, $TargetDomRef, oTargetOverlay, bForceScrollbarSync) {
 		var oOriginalDomRef = oGeometry.domRef;
 		var mSize = oGeometry.size;
 
 		// OVERFLOW & SCROLLING
 		var oOverflows = DOMUtil.getOverflows(oOriginalDomRef);
 
-		$overlayDomRef.css("overflow-x", oOverflows.overflowX);
-		$overlayDomRef.css("overflow-y", oOverflows.overflowY);
+		$TargetDomRef.css("overflow-x", oOverflows.overflowX);
+		$TargetDomRef.css("overflow-y", oOverflows.overflowY);
 
 		var iScrollHeight = oOriginalDomRef.scrollHeight;
 		var iScrollWidth = oOriginalDomRef.scrollWidth;
@@ -772,7 +772,7 @@ function (
 		// example: iScrollHeight = 24px, mSize.height = 23.98375. Both should be the same.
 		if (iScrollHeight > Math.ceil(mSize.height) || iScrollWidth > Math.ceil(mSize.width)) {
 			// TODO: save ref to DummyScrollContainer somewhere to avoid "find" selector
-			var oDummyScrollContainer = $overlayDomRef.find("> .sapUiDtDummyScrollContainer");
+			var oDummyScrollContainer = $TargetDomRef.find("> .sapUiDtDummyScrollContainer");
 			if (!oDummyScrollContainer.length) {
 				oDummyScrollContainer = jQuery("<div/>", {
 					css: {
@@ -782,26 +782,26 @@ function (
 				});
 				oDummyScrollContainer = jQuery("<div class='sapUiDtDummyScrollContainer' style='height: " + iScrollHeight + "px; width: " + iScrollWidth + "px;'></div>");
 
-				if (oOverlayParent && DOMUtil.hasVerticalScrollBar(oOriginalDomRef)) {
-					oOverlayParent.addStyleClass("sapUiDtOverlayWithScrollBar");
-					oOverlayParent.addStyleClass("sapUiDtOverlayWithScrollBarVertical");
+				if (oTargetOverlay && DOMUtil.hasVerticalScrollBar(oOriginalDomRef)) {
+					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBar");
+					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBarVertical");
 				}
-				if (oOverlayParent && DOMUtil.hasHorizontalScrollBar(oOriginalDomRef)) {
-					oOverlayParent.addStyleClass("sapUiDtOverlayWithScrollBar");
-					oOverlayParent.addStyleClass("sapUiDtOverlayWithScrollBarHorizontal");
+				if (oTargetOverlay && DOMUtil.hasHorizontalScrollBar(oOriginalDomRef)) {
+					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBar");
+					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBarHorizontal");
 				}
-				$overlayDomRef.append(oDummyScrollContainer);
+				$TargetDomRef.append(oDummyScrollContainer);
 				var oScrollbarSynchronizer = new ScrollbarSynchronizer({
 					synced: this.fireScrollSynced.bind(this)
 				});
-				oScrollbarSynchronizer.addTarget(oOriginalDomRef, $overlayDomRef.get(0));
-				this._oScrollbarSynchronizers.set($overlayDomRef.get(0), oScrollbarSynchronizer);
+				oScrollbarSynchronizer.addTarget(oOriginalDomRef, $TargetDomRef.get(0));
+				this._oScrollbarSynchronizers.set($TargetDomRef.get(0), oScrollbarSynchronizer);
 			} else {
 				oDummyScrollContainer.css({
 					"height": iScrollHeight,
 					"width" : iScrollWidth
 				});
-				var oScrollbarSynchronizer = this._oScrollbarSynchronizers.get($overlayDomRef.get(0));
+				var oScrollbarSynchronizer = this._oScrollbarSynchronizers.get($TargetDomRef.get(0));
 				if (!oScrollbarSynchronizer.hasTarget(oOriginalDomRef)) {
 					oScrollbarSynchronizer.addTarget(oOriginalDomRef);
 				}
@@ -811,7 +811,7 @@ function (
 				oScrollbarSynchronizer.sync(oOriginalDomRef, true);
 			}
 		} else {
-			this._deleteDummyContainer($overlayDomRef);
+			this._deleteDummyContainer($TargetDomRef, oTargetOverlay);
 		}
 	};
 

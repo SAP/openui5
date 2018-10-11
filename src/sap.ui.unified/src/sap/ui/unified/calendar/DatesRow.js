@@ -78,6 +78,17 @@ sap.ui.define([
 
 	};
 
+	DatesRow.prototype._setAriaRole = function(sRole){
+		this._ariaRole = sRole;
+
+		return this;
+	};
+
+	DatesRow.prototype._getAriaRole = function(){
+
+		return this._ariaRole ? this._ariaRole : "gridcell";
+	};
+
 	/*
 	 * Sets a start date.
 	 * @param {Date} oStartDate A JavaScript date

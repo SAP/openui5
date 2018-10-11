@@ -32,12 +32,16 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The <code>Grid</code> control is a layout which positions its child controls in a 12 column flow layout.
-	 * Its children can be specified to take on a variable amount of columns depending on available
-	 * screen size. With this control it is possible to achieve flexible layouts and line-breaks for
-	 * extra large-, large-, medium- and small-sized screens, such as large desktop, desktop, tablet,
-	 * and mobile. The <code>Grid</code> control's width can be percentage- or pixel-based and the spacing between
+	 * A layout control which positions its child controls in a 12 column flow layout.
+	 *
+	 * The <code>Grid</code> control's children can be specified to take on a variable
+	 * amount of columns depending on available screen size. With this control it is possible
+	 * to achieve flexible layouts and line-breaks for extra large-, large-, medium- and
+	 * small-sized screens, such as large desktop, desktop, tablet, and mobile.
+	 *
+	 * The <code>Grid</code> control's width can be percentage- or pixel-based and the spacing between
 	 * its columns can be set to various predefined values.
+	 *
 	 * <b>Note:</b> The visibility of the child control does not affect the horizontal space it occupies.
 	 * This means that even if the control is not visible, its horizontal space will still exist, even if it is empty.
 	 *
@@ -60,37 +64,50 @@ sap.ui.define([
 		properties : {
 
 			/**
-			 * Optional. Width of the Grid. If not specified, then 100%.
+			 * Optional. Defines the width of the <code>Grid</code>. If not specified, then 100%.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
 
 			/**
-			 * Optional. Vertical spacing between the rows in the Grid. In rem, allowed values are 0, 0.5, 1 and 2.
+			 * Optional. Defines the vertical spacing between the rows in the <code>Grid</code>.
+			 * In rem, allowed values are 0, 0.5, 1 and 2.
 			 */
 			vSpacing : {type : "float", group : "Dimension", defaultValue : 1},
 
 			/**
-			 * Optional. Horizontal spacing between the content in the Grid. In rem, allowed values are 0, 0.5 , 1 or 2.
+			 * Optional. Defines the horizontal spacing between the content in the <code>Grid</code>.
+			 * In rem, allowed values are 0, 0.5 , 1 or 2.
 			 */
 			hSpacing : {type : "float", group : "Dimension", defaultValue : 1},
 
 			/**
-			 * Optional. Position of the Grid in the window or surrounding container. Possible values are "Center", "Left" and "Right".
+			 * Optional. Defines the position of the <code>Grid</code> in the window or surrounding container.
 			 */
 			position : {type : "sap.ui.layout.GridPosition", group : "Dimension", defaultValue : "Left"},
 
 			/**
-			 * Optional. A string type that represents Grid's default span values for large, medium and small screens for the whole Grid. Allowed values are separated by space Letters L, M or S followed by number of columns from 1 to 12 that the container has to take, for example: "L2 M4 S6", "M12", "s10" or "l4 m4". Note that the parameters has to be provided in the order large medium small.
+			 * Optional. A string type that represents the span values of the <code>Grid</code> for
+			 * large, medium and small screens. Allowed values are separated by space Letters L, M or S followed
+			 * by number of columns from 1 to 12 that the container has to take, for example, <code>L2 M4 S6</code>,
+			 * <code>M12</code>, <code>s10</code> or <code>l4 m4</code>.
+			 *
+			 * <b>Note:</b> The parameters must be provided in the order <large medium small>.
 			 */
 			defaultSpan : {type : "sap.ui.layout.GridSpan", group : "Behavior", defaultValue : "XL3 L3 M6 S12"},
 
 			/**
-			 * Optional. Defines default for the whole Grid numbers of empty columns before the current span begins. It can be defined for large, medium and small screens. Allowed values are separated by space Letters L, M or S followed by number of columns from 0 to 11 that the container has to take, for example: "L2 M4 S6", "M11", "s10" or "l4 m4". Note that the parameters has to be provided in the order large medium small.
+			 * Optional. Defines default for the whole Grid numbers of empty columns before the current span begins.
+			 * It can be defined for large, medium and small screens. Allowed values are separated by space Letters
+			 * L, M or S followed by number of columns from 0 to 11 that the container has to take, for example,
+			 * <code>L2 M4 S6</code>, <code>M11</code>, <code>s10</code> or <code>l4 m4</code>.
+			 *
+			 * <b>Note:</b> The parameters must be provided in the order <large medium small>.
 			 */
 			defaultIndent : {type : "sap.ui.layout.GridIndent", group : "Behavior", defaultValue : "XL0 L0 M0 S0"},
 
 			/**
-			 * If true then not the media Query ( device screen size), but the size of the container surrounding the grid defines the current range (large, medium or small).
+			 * If set to <code>true</code>, the current range (large, medium or small) is defined by the size of the
+			 * container surrounding the <code>Grid</code> instead of the device screen size (media Query).
 			 */
 			containerQuery : {type : "boolean", group : "Behavior", defaultValue : false}
 		},

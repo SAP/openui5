@@ -1,15 +1,15 @@
 /*global QUnit*/
-(function () {
-	'use strict';
-
-	jQuery.sap.require('sap/ui/support/supportRules/WindowCommunicationBus');
+sap.ui.define([
+		"sap/ui/support/supportRules/WindowCommunicationBus"],
+	function (WindowCommunicationBus) {
+	"use strict";
 
 	QUnit.module('Testing subscribe functionality', {
-		setup: function () {
-			this.communicationBus = sap.ui.support.supportRules.WindowCommunicationBus;
+		beforeEach: function () {
+			this.communicationBus = WindowCommunicationBus;
 			this.communicationBus.channels = {};
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.communicationBus = null;
 		}
 	});
@@ -75,7 +75,7 @@
 
 	QUnit.module('Publish method functionality', {
 		setup: function () {
-			this.communicationBus = sap.ui.support.supportRules.WindowCommunicationBus;
+			this.communicationBus = WindowCommunicationBus;
 			this.communicationBus.destroyChannels();
 
 			this.channelName = 'testChannel';
@@ -85,4 +85,4 @@
 			this.channelName = null;
 		}
 	});
-}());
+});

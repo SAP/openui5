@@ -49,6 +49,24 @@
         "type": "FIX",
         "text": "sap.ui.fl - Fixed switching variants with stashed controls",
         "references": []
+      },
+      {
+        "id": "53ea1be8a68de032117115f5e75c4018d4ff9fcc",
+        "type": "FIX",
+        "text": " Prevent encoding of URL before hashing",
+        "references": []
+      },
+      {
+        "id": "9f3470181e659a132de8a59fd9850894bacdf57c",
+        "type": "FIX",
+        "text": "sap.ui.fl - Test for revert changes in stashed controls",
+        "references": []
+      },
+      {
+        "id": "822b1b8114f026b1fd5193d12f1d6fa8a6019aa9",
+        "type": "FEATURE",
+        "text": " Flexibility services requests can be disabled in the bootstrap",
+        "references": []
       }
     ]
   }

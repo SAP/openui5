@@ -58,21 +58,21 @@
 
 	QUnit.test("Visibility", function(assert) {
 		// controls must be one below the other -> same X coordinate, nut higher Y coordinate
-		var oButtonDom = jQuery.sap.domById('B1');
-		var oTextDom = jQuery.sap.domById('TF1');
-		var oImageDom = jQuery.sap.domById('I1');
+		var oButtonDom = document.getElementById('B1');
+		var oTextDom = document.getElementById('TF1');
+		var oImageDom = document.getElementById('I1');
 		assert.equal(oButtonDom.offsetLeft, oTextDom.offsetLeft, "Left offset of Button same as for TextField");
 		assert.equal(oButtonDom.offsetLeft, oImageDom.offsetLeft, "Left offset of Button same as for Image");
 		assert.ok(oButtonDom.offsetTop < oTextDom.offsetTop, "Top offset of Button < TextField");
 		assert.ok(oTextDom.offsetTop < oImageDom.offsetTop, "Top offset of TextField < Image");
 
 		// width must fit to defined one even if content is larger
-		var oLayout2Dom = jQuery.sap.domById('Layout2');
+		var oLayout2Dom = document.getElementById('Layout2');
 		assert.equal(oLayout2Dom.offsetWidth, 200, "Width of Layout fits defined one");
-		var oSliderDom = jQuery.sap.domById('S2');
-		var oTextADom = jQuery.sap.domById('TA2');
-		var oRatingDom = jQuery.sap.domById('RI2');
-		var oCheckBDom = jQuery.sap.domById('CB2');
+		var oSliderDom = document.getElementById('S2');
+		var oTextADom = document.getElementById('TA2');
+		var oRatingDom = document.getElementById('RI2');
+		var oCheckBDom = document.getElementById('CB2');
 		assert.equal(oSliderDom.offsetLeft, oTextADom.offsetLeft, "Left offset of Slider same as for TextArea");
 		assert.equal(oSliderDom.offsetLeft, oRatingDom.offsetLeft, "Left offset of Slider same as for RatingIndicator");
 		assert.equal(oSliderDom.offsetLeft, oCheckBDom.offsetLeft, "Left offset of Slider same as for CheckBox");

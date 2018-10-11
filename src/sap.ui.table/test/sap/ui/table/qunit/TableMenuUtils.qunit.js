@@ -17,7 +17,6 @@ sap.ui.define([
 	var getColumnHeader = window.getColumnHeader;
 	var getRowHeader = window.getRowHeader;
 	var getSelectAll = window.getSelectAll;
-	var iNumberOfCols = window.iNumberOfCols;
 	var iNumberOfRows = window.iNumberOfRows;
 
 	//************************************************************************
@@ -322,7 +321,7 @@ sap.ui.define([
 		this.assertAllColumnContextMenusClosed(assert);
 		TableUtils.Menu.openColumnContextMenu(oTable, -1);
 		this.assertAllColumnContextMenusClosed(assert);
-		TableUtils.Menu.openColumnContextMenu(oTable, iNumberOfCols);
+		TableUtils.Menu.openColumnContextMenu(oTable, oTable.columnCount);
 		this.assertAllColumnContextMenusClosed(assert);
 
 		// Column menu has no items: The context menu will not be opened.
@@ -371,7 +370,7 @@ sap.ui.define([
 		TableUtils.Menu.closeColumnContextMenu(oTable, -1);
 		this.assertColumnContextMenuOpen(assert, 0, true);
 
-		TableUtils.Menu.closeColumnContextMenu(oTable, iNumberOfCols);
+		TableUtils.Menu.closeColumnContextMenu(oTable, oTable.columnCount);
 		this.assertColumnContextMenuOpen(assert, 0, true);
 
 		TableUtils.Menu.closeColumnContextMenu(oTable, 1);
@@ -544,7 +543,7 @@ sap.ui.define([
 		this.assertNoColumnHeaderCellMenusExists(assert);
 		TableUtils.Menu.applyColumnHeaderCellMenu(oTable, -1);
 		this.assertNoColumnHeaderCellMenusExists(assert);
-		TableUtils.Menu.applyColumnHeaderCellMenu(oTable, iNumberOfCols);
+		TableUtils.Menu.applyColumnHeaderCellMenu(oTable, oTable.columnCount);
 		this.assertNoColumnHeaderCellMenusExists(assert);
 
 		var oColumn = oTable.getColumns()[0];

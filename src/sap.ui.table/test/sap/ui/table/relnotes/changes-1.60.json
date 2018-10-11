@@ -55,6 +55,18 @@
         "type": "FIX",
         "text": " TableUtils: Update OpenSource usage documentation",
         "references": []
+      },
+      {
+        "id": "1fa170f567bfa3b29f3348b443d95156f11a19ff",
+        "type": "FIX",
+        "text": " Table: Avoid infinite requests if no count is provided",
+        "references": []
+      },
+      {
+        "id": "dc96123d8e22e86917f2861f8c89eac6fe8cd8e4",
+        "type": "FIX",
+        "text": " Table: Always fully display the content in header rows",
+        "references": []
       }
     ]
   }

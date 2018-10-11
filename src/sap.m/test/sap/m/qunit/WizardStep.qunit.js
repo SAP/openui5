@@ -1,9 +1,7 @@
-/*global QUnit,sinon*/
-
-sap.ui.require([
-	"sap/m/WizardStep"
-], function (WizardStep) {
+/*global QUnit, sinon */
+sap.ui.define(["sap/m/WizardStep", "sap/ui/qunit/QUnitUtils"], function(WizardStep, QUnitUtils) {
 	"use strict";
+
 
 	QUnit.module("WizardStep API", {
 		beforeEach: function () {
@@ -109,5 +107,4 @@ sap.ui.require([
 		oSpy.restore();
 		oControl.destroy();
 	});
-
 });

@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log", "sap/ui/thirdparty/URI"],
-	function(library, HashChanger, Log, URI) {
+sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log", "sap/ui/thirdparty/URI", "sap/ui/Device"],
+	function(library, HashChanger, Log, URI, Device) {
 	"use strict";
 
 
@@ -238,7 +238,9 @@ sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log", "sap/ui/t
 		this._bIsInitial = false;
 
 		// Extended direction determination with window.history.state
-		if (sFullHash) {
+		// IE 11 doesn't clear the window.history.state when new hash is set
+		// therefore the state solution can't be used
+		if (sFullHash && !Device.browser.msie) {
 			sDirection = this._getDirectionWithState(sFullHash);
 		}
 

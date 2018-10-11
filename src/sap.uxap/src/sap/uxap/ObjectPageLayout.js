@@ -2084,7 +2084,7 @@ sap.ui.define([
 				bStickyTitleMode = true; // by the time the bottom of the page is reached, the header will be snapped on scroll => obtain the *sticky* title height
 			}
 
-			iSpacerHeight = this._computeSpacerHeight(oLastVisibleSubSection, iLastVisibleHeight, bAllowScrollSectionToTop, bStickyTitleMode);
+			iSpacerHeight = this._computeSpacerHeight(oLastVisibleSubSection, iLastVisibleHeight, bAllowScrollSectionToTop);
 
 			this._$spacer.height(iSpacerHeight + "px");
 			Log.debug("ObjectPageLayout :: bottom spacer is now " + iSpacerHeight + "px");
@@ -2158,8 +2158,8 @@ sap.ui.define([
 	/* *
 	* Computes the height of the viewport bellow the sticky area
 	* */
-	ObjectPageLayout.prototype._getScrollableViewportHeight = function(bIsStickyMode) {
-		return this.getDomRef().getBoundingClientRect().height - this._getStickyAreaHeight(bIsStickyMode);
+	ObjectPageLayout.prototype._getScrollableViewportHeight = function() {
+		return this._$opWrapper.length ? this._getDOMRefHeight(this._$opWrapper.get(0)) : 0;
 	};
 
 	ObjectPageLayout.prototype._getSectionPositionTop = function(oSectionBase, bShouldStick) {
@@ -2216,10 +2216,10 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._checkContentBottomRequiresSnap = function(oSection) {
 		var bSnappedMode = false; // calculate for expanded mode
-		return this._getSectionPositionBottom(oSection, bSnappedMode) >= (this._getScrollableViewportHeight(bSnappedMode) + this._getSnapPosition());
+		return this._getSectionPositionBottom(oSection, bSnappedMode) >= (this._getScrollableViewportHeight() + this._getSnapPosition());
 	};
 
-	ObjectPageLayout.prototype._computeSpacerHeight = function(oLastVisibleSubSection, iLastVisibleHeight, bAllowSpaceToSnapViaScroll, bStickyTitleMode) {
+	ObjectPageLayout.prototype._computeSpacerHeight = function(oLastVisibleSubSection, iLastVisibleHeight, bAllowSpaceToSnapViaScroll) {
 
 		var iSpacerHeight,
 			iScrollableViewportHeight,
@@ -2229,7 +2229,7 @@ sap.ui.define([
 			iFooterHeight = this.$("footerWrapper").outerHeight();
 		}
 
-		iScrollableViewportHeight = this._getScrollableViewportHeight(bStickyTitleMode);
+		iScrollableViewportHeight = this._getScrollableViewportHeight();
 
 		if (!bAllowSpaceToSnapViaScroll) {
 			iLastVisibleHeight = this._getSectionPositionBottom(oLastVisibleSubSection, false); /* in expanded mode, all the content above lastSection bottom is visible */
@@ -2759,24 +2759,30 @@ sap.ui.define([
 
 	/**
 	 * toggles the header state
-	 * @param {boolean} bStick boolean true for fixing the header, false for keeping it moving
+	 * @param {boolean} bShouldStick boolean true for fixing the header, false for keeping it moving
 	 * @private
 	 */
-	ObjectPageLayout.prototype._toggleHeader = function (bStick, bUserInteraction) {
-		var oHeaderTitle = this.getHeaderTitle();
+	ObjectPageLayout.prototype._toggleHeader = function (bShouldStick, bUserInteraction) {
+		var oHeaderTitle;
+
+		if (bShouldStick === this._bStickyAnchorBar) {
+			return;
+		}
+
+		oHeaderTitle = this.getHeaderTitle();
 
 		//switch to stickied
 		if (!this._shouldPreserveHeaderInTitleArea() && !this._bHeaderInTitleArea) {
-			this._toggleHeaderTitle(!bStick, bUserInteraction);
+			this._toggleHeaderTitle(!bShouldStick, bUserInteraction);
 		}
 
-		if (!this._bStickyAnchorBar && bStick) {
+		if (!this._bStickyAnchorBar && bShouldStick) {
 			this._restoreFocusAfter(this._moveAnchorBarToTitleArea);
 			oHeaderTitle && oHeaderTitle.snap();
 			this._bHeaderExpanded = false;
 			this._adjustHeaderHeights();
 			this._updateToggleHeaderVisualIndicators();
-		} else if (this._bStickyAnchorBar && !bStick) {
+		} else if (this._bStickyAnchorBar && !bShouldStick) {
 			this._restoreFocusAfter(this._moveAnchorBarToContentArea);
 			oHeaderTitle && oHeaderTitle.unSnap();
 			this._bHeaderExpanded = true;
@@ -2934,6 +2940,7 @@ sap.ui.define([
 		var oHeaderTitle = this.getHeaderTitle(),
 			sHeaderTitleBackgroundDesign = oHeaderTitle && oHeaderTitle.supportsBackgroundDesign() && oHeaderTitle.getBackgroundDesign(),
 			oHeaderContent = this.getAggregation("_headerContent"),
+			oOldHeaderContent,
 			oNewHeaderContent;
 
 		// If no title is set, but the header needs to be created, use the old class by default
@@ -2941,7 +2948,19 @@ sap.ui.define([
 
 		// If the header content is not set or is set, but is an instance of another class, create a new header content and use it
 		if (!(oHeaderContent instanceof fnHeaderContentClass)) {
-			var oNewHeaderContent = fnHeaderContentClass.createInstance(this.getAggregation("headerContent"), this.getShowHeaderContent(), this._getHeaderDesign(), this.getHeaderContentPinnable());
+			oOldHeaderContent = this.getAggregation("_headerContent");
+
+			if (oOldHeaderContent) {
+				oOldHeaderContent.destroy();
+			}
+
+			oNewHeaderContent = fnHeaderContentClass.createInstance(
+				this.getAggregation("headerContent"),
+				this.getShowHeaderContent(),
+				this._getHeaderDesign(),
+				this.getHeaderContentPinnable(),
+				this.getId() + "-OPHeaderContent"
+			);
 
 			sHeaderTitleBackgroundDesign && oNewHeaderContent.setBackgroundDesign(sHeaderTitleBackgroundDesign);
 			this.setAggregation("_headerContent", oNewHeaderContent, true);
@@ -3439,7 +3458,9 @@ sap.ui.define([
 		oHeaderContent = this._getHeaderContent();
 
 		// "_headerContent" aggregation is hidden and it is not cloned by default
-		oClone.setAggregation("_headerContent", oHeaderContent.clone(), true);
+		if (oHeaderContent) {
+			oClone.setAggregation("_headerContent", oHeaderContent.clone(), true);
+		}
 
 		return oClone;
 	};

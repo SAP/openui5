@@ -1,13 +1,35 @@
-/*global QUnit,sinon,qutils*/
+/* global QUnit,sinon */
 
-(function () {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/m/RangeSlider",
+	"sap/m/ResponsiveScale",
+	"sap/m/SliderTooltipBase",
+	"sap/m/SliderTooltipBaseRenderer",
+	"sap/m/Text",
+	"sap/ui/qunit/QUnitUtils",
+	"jquery.sap.keycodes",
+	"sap/ui/model/json/JSONModel",
+	"jquery.sap.global"
+], function(
+	Log,
+	RangeSlider,
+	ResponsiveScale,
+	SliderTooltipBase,
+	SliderTooltipBaseRenderer,
+	Text,
+	qutils,
+	jQuery,
+	JSONModel
+) {
 	"use strict";
+
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
 	QUnit.module("HTML", {
 		beforeEach: function () {
-			this.rangeSlider = new sap.m.RangeSlider();
+			this.rangeSlider = new RangeSlider();
 
 			this.rangeSlider.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
@@ -46,7 +68,7 @@
 	QUnit.test("Aria labels forwarding to handles and progress indicator", function (assert) {
 		// arrange & act
 		var s1stHandleLabels, s2ndHandleLabels, sProgressIndicatorLabels, sRSLabelId;
-		this.rangeSlider.addAriaLabelledBy(new sap.m.Text({text: "LabelForRS"}));
+		this.rangeSlider.addAriaLabelledBy(new Text({text: "LabelForRS"}));
 
 		sap.ui.getCore().applyChanges();
 
@@ -104,7 +126,7 @@
 
 	QUnit.module("API", {
 		beforeEach: function () {
-			this.rangeSlider = new sap.m.RangeSlider();
+			this.rangeSlider = new RangeSlider();
 
 			this.rangeSlider.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
@@ -140,7 +162,7 @@
 		// arrange & act
 		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 			oBoundleCalledStub = this.stub(oResourceBundle, "getText"),
-			oSlider = new sap.m.RangeSlider(),
+			oSlider = new RangeSlider(),
 			aLabels = oSlider.getAggregation("_handlesLabels");
 
 		oSlider.placeAt("qunit-fixture");
@@ -237,8 +259,7 @@
 
 	QUnit.test("set/getStep()", function (assert) {
 		//arrange
-		var aTooltips, log = sap.ui.require('sap/base/Log'),
-			fnWarningSpy = this.spy(log, "warning");
+		var aTooltips, fnWarningSpy = this.spy(Log, "warning");
 
 		assert.strictEqual(this.rangeSlider._iDecimalPrecision, 0, "The decimal precision should be 0 initially");
 
@@ -296,8 +317,7 @@
 	});
 
 	QUnit.test("Invalid range starting value of -20 (where min is 0)", function (assert) {
-		var log = sap.ui.require('sap/base/Log'),
-			fnWarningSpy = this.spy(log, "warning");
+		var fnWarningSpy = this.spy(Log, "warning");
 
 		this.rangeSlider.setRange([-20, 50]);
 		sap.ui.getCore().applyChanges();
@@ -314,8 +334,7 @@
 	});
 
 	QUnit.test("Invalid range ending value of 150 (where max is 100)", function (assert) {
-		var log = sap.ui.require('sap/base/Log'),
-			fnWarningSpy = this.spy(log, "warning");
+		var fnWarningSpy = this.spy(Log, "warning");
 
 		this.rangeSlider.setRange([20, 150]);
 		sap.ui.getCore().applyChanges();
@@ -426,7 +445,7 @@
 	QUnit.test('Slider with decimal values, should apply all dom element attributes correctly', function (assert) {
 		// arrange
 		var oSliderInputElement, oProgressHandle,
-			oSlider = new sap.m.RangeSlider({
+			oSlider = new RangeSlider({
 				min: -10,
 				max: 10,
 				range: [-5.05, 3],
@@ -455,7 +474,7 @@
 	QUnit.test("Calculate movement offset", function (assert) {
 		var aRange = [4, 27],
 			iStep = 5,
-			oSlider = new sap.m.RangeSlider("RangeSlider6", {
+			oSlider = new RangeSlider("RangeSlider6", {
 				step: iStep,
 				min: 4,
 				max: 27,
@@ -494,7 +513,7 @@
 	});
 
 	QUnit.test("_updateHandleAria", function (assert) {
-		var oSlider = new sap.m.RangeSlider().placeAt(DOM_RENDER_LOCATION);
+		var oSlider = new RangeSlider().placeAt(DOM_RENDER_LOCATION);
 		sap.ui.getCore().applyChanges();
 
 		//Act
@@ -510,7 +529,7 @@
 
 	QUnit.test("_updateHandlesAriaLabels", function (assert) {
 		var clock = sinon.useFakeTimers(),
-			oSlider = new sap.m.RangeSlider().placeAt(DOM_RENDER_LOCATION),
+			oSlider = new RangeSlider().placeAt(DOM_RENDER_LOCATION),
 			oInitStateStartLabel, oInitStateEndLabel;
 		sap.ui.getCore().applyChanges();
 
@@ -535,7 +554,7 @@
 	});
 
 	QUnit.test("_swapTooltips", function (assert) {
-		var oSlider = new sap.m.RangeSlider({
+		var oSlider = new RangeSlider({
 			showAdvancedTooltip: true
 		}).placeAt(DOM_RENDER_LOCATION),
 			oInitStateStartTooltip, oInitStateEndTooltip;
@@ -558,7 +577,7 @@
 
 	QUnit.test("The order of the arguments should not matter when setting the properties min/max, value/value2", function (assert) {
 		var check = function (oSliderConfig) {
-			var oSlider = new sap.m.RangeSlider(oSliderConfig).placeAt(DOM_RENDER_LOCATION);
+			var oSlider = new RangeSlider(oSliderConfig).placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 
 			//Assert
@@ -580,7 +599,7 @@
 
 	QUnit.test("The values of value and value2 properties should be adjusted correctly when they are not in the boundaries of min and max values", function (assert) {
 		var check = function (oSliderConfig) {
-			var oSlider = new sap.m.RangeSlider(oSliderConfig).placeAt(DOM_RENDER_LOCATION);
+			var oSlider = new RangeSlider(oSliderConfig).placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 
 			//Assert
@@ -602,7 +621,7 @@
 
 	QUnit.test("The order of the arguments should not matter when setting the properties min/max, range", function (assert) {
 		var check = function (oSliderConfig) {
-			var oSlider = new sap.m.RangeSlider(oSliderConfig).placeAt(DOM_RENDER_LOCATION);
+			var oSlider = new RangeSlider(oSliderConfig).placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 
 			//Assert
@@ -622,7 +641,7 @@
 
 	QUnit.test("The values of the range property should be adjusted correctly when they are not in the boundaries of min and max values", function (assert) {
 		var check = function (oSliderConfig) {
-			var oSlider = new sap.m.RangeSlider(oSliderConfig).placeAt(DOM_RENDER_LOCATION);
+			var oSlider = new RangeSlider(oSliderConfig).placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 
 			//Assert
@@ -643,7 +662,7 @@
 	QUnit.test("Swap tooltips when values are swapped.", function (assert) {
 		//Setup
 		var oLeftTooltip, oRightTooltip,
-			oRangeSlider = new sap.m.RangeSlider({
+			oRangeSlider = new RangeSlider({
 				showAdvancedTooltip: true,
 				showHandleTooltip: true,
 				enableTickmarks: false,
@@ -670,7 +689,7 @@
 
 	QUnit.module("SAP KH", {
 		beforeEach: function () {
-			this.oRangeSlider = new sap.m.RangeSlider({range: [20, 30]});
+			this.oRangeSlider = new RangeSlider({range: [20, 30]});
 			this.oRangeSlider.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 
@@ -767,7 +786,7 @@
 				stopPropagation: function () {},
 				setMarked: function () {}
 			},
-			oRangeSlider = new sap.m.RangeSlider().placeAt(DOM_RENDER_LOCATION),
+			oRangeSlider = new RangeSlider().placeAt(DOM_RENDER_LOCATION),
 			oEventSpyPreventDefault = this.spy(oMockEvent, "preventDefault"),
 			oEventSpySetMarked = this.spy(oMockEvent, "setMarked");
 
@@ -795,7 +814,7 @@
 				var aRangeParam = oEvent.getParameter("range");
 				assert.deepEqual(aRangeParam, aRange, "Range should be properly set");
 			}),
-			oRangeSlider = new sap.m.RangeSlider({range: aRange, min: 0, max: 100, liveChange: fnLiveChange}).placeAt(DOM_RENDER_LOCATION);
+			oRangeSlider = new RangeSlider({range: aRange, min: 0, max: 100, liveChange: fnLiveChange}).placeAt(DOM_RENDER_LOCATION);
 
 		assert.expect(5);
 
@@ -824,7 +843,7 @@
 
 	QUnit.test("getRange", function (assert) {
 		var aRange = [12, 38],
-			oRangeSlider = new sap.m.RangeSlider({range: aRange, min: 0, max: 100}).placeAt(DOM_RENDER_LOCATION);
+			oRangeSlider = new RangeSlider({range: aRange, min: 0, max: 100}).placeAt(DOM_RENDER_LOCATION);
 
 		sap.ui.getCore().applyChanges();
 
@@ -839,8 +858,8 @@
 
 	QUnit.test("Model change from the outside", function (assert) {
 		var oData = {min: 0, max: 5000, range: [100, 500]},
-			oModel = new sap.ui.model.json.JSONModel(oData),
-			oRangeSlider = new sap.m.RangeSlider({min: "{/min}", max: "{/max}", range: "{/range}"});
+			oModel = new JSONModel(oData),
+			oRangeSlider = new RangeSlider({min: "{/min}", max: "{/max}", range: "{/range}"});
 
 		oRangeSlider.setModel(oModel);
 		oRangeSlider.placeAt(DOM_RENDER_LOCATION);
@@ -870,8 +889,8 @@
 
 	QUnit.test("Model change from the inside", function (assert) {
 		var oData = {min: 0, max: 5000, range: [100, 500]},
-			oModel = new sap.ui.model.json.JSONModel(oData),
-			oRangeSlider = new sap.m.RangeSlider({min: "{/min}", max: "{/max}", range: "{/range}"});
+			oModel = new JSONModel(oData),
+			oRangeSlider = new RangeSlider({min: "{/min}", max: "{/max}", range: "{/range}"});
 
 		oRangeSlider.setModel(oModel);
 		oRangeSlider.placeAt(DOM_RENDER_LOCATION);
@@ -891,7 +910,7 @@
 	});
 
 	QUnit.test("Change whole range when a to-be-set is lower than min value", function (assert) {
-		var oRangeSlider = new sap.m.RangeSlider({min: -100, max: 100, range: [-50, 50]}),
+		var oRangeSlider = new RangeSlider({min: -100, max: 100, range: [-50, 50]}),
 			aInitialRange = oRangeSlider.getRange(), aNormalizedRange,
 			aHandles = [oRangeSlider._mHandleTooltip.start.tooltip, oRangeSlider._mHandleTooltip.end.tooltip];
 
@@ -926,7 +945,7 @@
 	});
 
 	QUnit.test("value, value2 and range bindings through setters", function (assert) {
-		var oRangeSlider = new sap.m.RangeSlider({value: 12, value2: 88, min: 0, max: 90});
+		var oRangeSlider = new RangeSlider({value: 12, value2: 88, min: 0, max: 90});
 		sap.ui.getCore().applyChanges();
 
 		//assert
@@ -966,8 +985,8 @@
 
 	QUnit.test("value, value2 and range setters, bindings + outer Model", function (assert) {
 		var oData = {min: 0, max: 5000, range: [100, 500]},
-			oModel = new sap.ui.model.json.JSONModel(oData),
-			oRangeSlider = new sap.m.RangeSlider({min: "{/min}", max: "{/max}", range: "{/range}"});
+			oModel = new JSONModel(oData),
+			oRangeSlider = new RangeSlider({min: "{/min}", max: "{/max}", range: "{/range}"});
 
 		oRangeSlider.setModel(oModel);
 		sap.ui.getCore().applyChanges();
@@ -1015,8 +1034,8 @@
 
 	QUnit.test("value, value2 and range setters, bindings + outer Model V2", function (assert) {
 		var oData = {min: 0, max: 5000, range: [100, 500]},
-			oModel = new sap.ui.model.json.JSONModel(oData),
-			oRangeSlider = new sap.m.RangeSlider({min: "{/min}", max: "{/max}", value: "{/range/0}", value2: "{/range/1}", range: "{/range}"});
+			oModel = new JSONModel(oData),
+			oRangeSlider = new RangeSlider({min: "{/min}", max: "{/max}", value: "{/range/0}", value2: "{/range/1}", range: "{/range}"});
 
 		oRangeSlider.setModel(oModel);
 		sap.ui.getCore().applyChanges();
@@ -1064,8 +1083,8 @@
 
 	QUnit.test("value, value2 and range setters, bindings + outer Model change", function (assert) {
 		var oData = {min: 0, max: 5000, range: [100, 500]},
-			oModel = new sap.ui.model.json.JSONModel(oData),
-			oRangeSlider = new sap.m.RangeSlider({min: "{/min}", max: "{/max}", range: "{/range}", value: "{/range/0}", value2: "{/range/1}"});
+			oModel = new JSONModel(oData),
+			oRangeSlider = new RangeSlider({min: "{/min}", max: "{/max}", range: "{/range}", value: "{/range/0}", value2: "{/range/1}"});
 
 		oRangeSlider.setModel(oModel);
 		sap.ui.getCore().applyChanges();
@@ -1116,7 +1135,7 @@
 	QUnit.test("Range can be changed with progress bar when the current range is 1 step lower that max number of steps", function (assert) {
 
 		var clock = sinon.useFakeTimers(),
-			oRangeSlider = new sap.m.RangeSlider({
+			oRangeSlider = new RangeSlider({
 			enableTickmarks: true,
 			range: [0,9],
 			min: 0,
@@ -1170,9 +1189,9 @@
 
 	QUnit.test("RangeSlider with custom scale, should fallback to default one, after the scale is destroyed", function(assert) {
 		var oSlider, oDefaultScale,
-			oScale = new sap.m.ResponsiveScale({tickmarksBetweenLabels: 1});
+			oScale = new ResponsiveScale({tickmarksBetweenLabels: 1});
 
-		oSlider = new sap.m.RangeSlider({
+		oSlider = new RangeSlider({
 			enableTickmarks: true,
 			scale: oScale
 		});
@@ -1196,9 +1215,9 @@
 
 	QUnit.test("RangeSlider with enabled tickmarks and not set scale, should remove the default one, after 'scale' aggregation is set", function(assert) {
 		var oSlider, oDefaultScale,
-			oScale = new sap.m.ResponsiveScale({tickmarksBetweenLabels: 1});
+			oScale = new ResponsiveScale({tickmarksBetweenLabels: 1});
 
-		oSlider = new sap.m.RangeSlider({
+		oSlider = new RangeSlider({
 			enableTickmarks: true
 		});
 
@@ -1230,7 +1249,7 @@
 	QUnit.test("RangeSlider with custom scale should change handle title html attribute accordingly", function(assert) {
 		var clock = sinon.useFakeTimers(),
 			oSlider,
-			oScale = new sap.m.ResponsiveScale({tickmarksBetweenLabels: 1}),
+			oScale = new ResponsiveScale({tickmarksBetweenLabels: 1}),
 			oHandleDomRef, oProgressHandle, aRange, oSecondHandleDomRef;
 
 		oScale.getLabel = function (fCurValue, oSlider) {
@@ -1239,7 +1258,7 @@
 			return monthList[fCurValue];
 		};
 
-		oSlider = new sap.m.RangeSlider({
+		oSlider = new RangeSlider({
 			step: 1,
 			min: 0,
 			max: 3,
@@ -1280,7 +1299,7 @@
 	QUnit.test("RangeSlider with scale and tooltip should use the prioritisation of the labelling", function (assert) {
 		var oSlider, oTooltip, oHandleDomRef, oSecondHandleDomRef, oProgressHandle,
 			clock = sinon.useFakeTimers(),
-			oScale = new sap.m.ResponsiveScale({tickmarksBetweenLabels: 1});
+			oScale = new ResponsiveScale({tickmarksBetweenLabels: 1});
 
 		oScale.getLabel = function (fCurValue) {
 			var monthList = ["Zero", "One", "2"];
@@ -1288,12 +1307,9 @@
 			return monthList[fCurValue];
 		};
 
-		jQuery.sap.require('sap.m.SliderTooltipBase');
-		jQuery.sap.require('sap.m.SliderTooltipBaseRenderer');
-
-		oTooltip = sap.m.SliderTooltipBase.extend("sap.xx.TestTooltip", {
+		oTooltip = SliderTooltipBase.extend("sap.xx.TestTooltip", {
 			renderer: function (oRm, oControl) {
-				sap.m.SliderTooltipBaseRenderer.render.apply({
+				SliderTooltipBaseRenderer.render.apply({
 					renderTooltipContent: function (oRm, oControl) {
 						oRm.write("zzzz");
 					}
@@ -1305,7 +1321,7 @@
 			return "XXXXXXX-" + fValue;
 		};
 
-		oSlider = new sap.m.RangeSlider({
+		oSlider = new RangeSlider({
 			step: 1,
 			min: 0,
 			max: 2,
@@ -1374,14 +1390,12 @@
 
 	QUnit.module("Tooltips", function (hooks) {
 		hooks.before(function () {
-			jQuery.sap.require("sap/m/SliderTooltipBase");
-
 			// dummy class
-			sap.m.SliderTooltipBase.extend("sap.xx.SliderTooltipCustom", {});
+			SliderTooltipBase.extend("sap.xx.SliderTooltipCustom", {});
 		});
 
 		hooks.beforeEach(function () {
-			this.oRangeSlider = new sap.m.RangeSlider({
+			this.oRangeSlider = new RangeSlider({
 				showAdvancedTooltip: true
 			});
 
@@ -1498,7 +1512,7 @@
 
 		QUnit.test("Tooltips: Rendering when advanced tooltips are not used", function (assert) {
 			// setup
-			var oRangeSlider = new sap.m.RangeSlider({
+			var oRangeSlider = new RangeSlider({
 				showAdvancedTooltip: false,
 				inputsAsTooltips: true
 			});
@@ -1520,4 +1534,4 @@
 			assert.ok(true, "should not throw an error");
 		});
 	});
-}());
+});

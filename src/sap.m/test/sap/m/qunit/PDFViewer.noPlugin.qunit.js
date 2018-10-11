@@ -1,14 +1,13 @@
 /*global QUnit*/
 
-sap.ui.define("sap.m.qunit.PDFViewerNoPlugin", [
+sap.ui.define([
 	"jquery.sap.global",
-	"test/sap/m/qunit/PDFViewerTestUtils",
-	"sap/m/PDFViewer",
+	"./PDFViewerTestUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/PDFViewerRenderer",
 	"sap/m/PDFViewerDisplayType",
 	"sap/ui/Device"
-], function (jQuery, TestUtils, PDFViewer, JSONModel, PDFViewerRenderer, PDFViewerDisplayType, Device) {
+], function (jQuery, TestUtils, JSONModel, PDFViewerRenderer, PDFViewerDisplayType, Device) {
 	"use strict";
 
 	var oPdfViewer = null;
@@ -29,7 +28,7 @@ sap.ui.define("sap.m.qunit.PDFViewerNoPlugin", [
 		var done = assert.async();
 
 		var oModel = new JSONModel({
-			source: "./pdfviewer/sample-file.pdf"
+			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf"
 		});
 
 		var oOptions = {

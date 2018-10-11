@@ -290,30 +290,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Apply text alignment of the Column to the Text controls
-	 *
-	 * @param {sap.ui.core.Control} oControl List control
-	 * @param {String} [sAlign] TextAlign enumeration
-	 * @return {sap.ui.core.Control} oControl
-	 * @protected
-	 */
-	Column.prototype.applyAlignTo = function(oControl, sAlign) {
-		// TODO: This is so ugly to check content functions
-		// instead we should document how to use our controls
-		// to inherit text-alignment and we should add a new
-		// sap.ui.core.TextAlign type called "Inherit"
-		sAlign = sAlign || this.getHAlign();
-		if (sAlign === TextAlign.Initial ||
-			!oControl.getMetadata().getProperties().textAlign ||
-			oControl.getTextAlign() === sAlign) {
-			return oControl;
-		}
-
-		return oControl.setTextAlign(sAlign);
-	};
-
-
-	/**
 	 * Returns CSS alignment according to column hAlign setting or given parameter
 	 * for Begin/End values checks the locale settings
 	 *

@@ -205,7 +205,7 @@ function(
 			assert.ok(true);
 		});
 
-		QUnit.test("isLayerAboveCurrentLayer shall return a layer comparision between current (CUSTOMER) and passed layers", function (assert) {
+		QUnit.test("compareAgainstCurrentLayer shall return a layer comparision between current (CUSTOMER) and passed layers", function (assert) {
 			var oUriParams = {
 				mParams: {
 					"sap-ui-layer": [
@@ -214,10 +214,14 @@ function(
 				}
 			};
 			sandbox.stub(Utils, "_getUriParameters").returns(oUriParams);
-			assert.equal(Utils.isLayerAboveCurrentLayer(""), -1, "then with VENDOR layer -1 is returned");
-			assert.equal(Utils.isLayerAboveCurrentLayer("VENDOR"), -1, "then with VENDOR layer -1 is returned");
-			assert.equal(Utils.isLayerAboveCurrentLayer("CUSTOMER"), 0, "then with CUSTOMER layer 0 is returned");
-			assert.equal(Utils.isLayerAboveCurrentLayer("USER"), 1, "then with USER layer 1 is returned");
+			assert.equal(Utils.compareAgainstCurrentLayer(""), -1, "then with VENDOR layer -1 is returned");
+			assert.equal(Utils.compareAgainstCurrentLayer("VENDOR"), -1, "then with VENDOR layer -1 is returned");
+			assert.equal(Utils.compareAgainstCurrentLayer("CUSTOMER"), 0, "then with CUSTOMER layer 0 is returned");
+			assert.equal(Utils.compareAgainstCurrentLayer("USER"), 1, "then with USER layer 1 is returned");
+			assert.equal(Utils.compareAgainstCurrentLayer("", "CUSTOMER_BASE"), -1, "then with VENDOR layer -1 is returned");
+			assert.equal(Utils.compareAgainstCurrentLayer("VENDOR", "CUSTOMER_BASE"), -1, "then with VENDOR layer -1 is returned");
+			assert.equal(Utils.compareAgainstCurrentLayer("CUSTOMER_BASE", "CUSTOMER_BASE"), 0, "then with CUSTOMER_BASE layer 0 is returned");
+			assert.equal(Utils.compareAgainstCurrentLayer("CUSTOMER", "CUSTOMER_BASE"), 1, "then with CUSTOMER layer 1 is returned");
 		});
 
 		QUnit.test("doesSharedVariantRequirePackageCustomer", function (assert) {
@@ -1723,8 +1727,7 @@ function(
 				assert.notOk(true, "then the 'then' method shouldn't be called");
 			})
 			.catch(function(oErrorValue) {
-				assert.strictEqual(oErrorValue.message, 'aWrongType.some is not a function',
-					"then the correct error parameter is passed to the second 'catch' method");
+				assert.ok(oErrorValue.message.includes("some"), "then the error was caught and communicated properly");
 			});
 		});
 
@@ -1743,9 +1746,8 @@ function(
 			.then(function() {
 				assert.notOk(true, "then the 'then' method in the root chain also shouldn't be called");
 			})
-			.catch(function(oErrorValue) {
-				assert.strictEqual(oErrorValue.message, '"should be an array".some is not a function',
-					"then the correct error parameter is passed to the second 'catch' method");
+			.catch(function (oErrorValue) {
+				assert.ok(oErrorValue.message.includes("some"), "then the error was caught and communicated properly");
 			});
 		});
 
@@ -1795,9 +1797,8 @@ function(
 			.then(function() {
 				assert.notOk(true, "then the 'then' method in the root chain also shouldn't be called");
 			})
-			.catch(function(oErrorValue) {
-				assert.strictEqual(oErrorValue.message, '"should be an array".some is not a function',
-					"then the correct error parameter is passed to the second 'catch' method");
+			.catch(function (oErrorValue) {
+				assert.ok(oErrorValue.message.includes("some"), "then the error was caught and communicated properly");
 			});
 		});
 	});

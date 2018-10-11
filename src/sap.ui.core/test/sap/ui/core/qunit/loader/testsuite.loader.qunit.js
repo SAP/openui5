@@ -51,6 +51,7 @@ sap.ui.define(function() {
 			 * (The generic starter Test.qunit.html and runTest.js script both use the loader internally)
 			 */
 			asyncMode: {
+				/* separate test page as it only wants the loader, no core */
 				page: "test-resources/sap/ui/core/qunit/loader/asyncMode.qunit.html",
 				title: "Test Page for Module Loading (ui5loader)",
 				loader: {
@@ -64,6 +65,21 @@ sap.ui.define(function() {
 				},
 				bootCore: false,
 				autostart: false
+			},
+			asyncModeUsingCoreFeatures: {
+				title: "Test Page for Module Loading (ui5loader), using Core features",
+				loader: {
+					paths: {
+						'fixture': 'test-resources/sap/ui/core/qunit/loader/fixture/'
+					}
+				},
+				sinon: {
+					version: 1,
+					qunitBridge: false
+				},
+				ui5: {
+					preload: "async"
+				}
 			},
 			config: {
 				page: "test-resources/sap/ui/core/qunit/loader/config.qunit.html",
@@ -86,7 +102,7 @@ sap.ui.define(function() {
 				title: "Test Page for ui5loader (sync mode)",
 				loader: {
 					paths: {
-						fixture: "fixture/"
+						'fixture': 'test-resources/sap/ui/core/qunit/loader/fixture/'
 					}
 				},
 				sinon: {

@@ -6,6 +6,7 @@
 sap.ui.define([
 	'sap/ui/core/support/Plugin',
 	'sap/ui/core/util/serializer/ViewSerializer',
+	'sap/ui/core/util/File',
 	'sap/ui/thirdparty/jszip',
 	'sap/ui/base/DataType',
 	'sap/ui/core/Element',
@@ -22,6 +23,7 @@ sap.ui.define([
 ], function(
 	Plugin,
 	ViewSerializer,
+	File,
 	JSZip,
 	DataType,
 	Element,
@@ -773,23 +775,11 @@ sap.ui.define([
 			}
 
 			if (zip) {
-				var content = zip.generate({
-					base64 : true
+				var oContent = zip.generate({
+					type: "blob"
 				});
-				var raw = window.atob(content);
-				var uInt8Array = new Uint8Array(raw.length);
-				for ( var i = 0; i < uInt8Array.length; ++i) {
-					uInt8Array[i] = raw.charCodeAt(i);
-				}
-				var blob = new Blob([ uInt8Array ], {
-					type : 'application/zip'
-				});
-				var evt = document.createEvent("HTMLEvents");
-				evt.initEvent("click");
-				$("<a>", {
-					download : sType.toUpperCase() + "Export.zip",
-					href : window.URL.createObjectURL(blob)
-				}).get(0).dispatchEvent(evt);
+
+				File.save(oContent, sType.toUpperCase() + "Export", "zip", "application/zip");
 			}
 		};
 
@@ -1152,24 +1142,15 @@ sap.ui.define([
 
 			try {
 				if (oControl) {
-					var oParentControl = oControl.getParent();
-					var index;
-					index = oParentControl.indexOfContent(oControl);
-
 					if (oControl instanceof View) {
 						oViewSerializer = new ViewSerializer(oControl, window, "sap.m");
 					} else {
 						var oView = sap.ui.jsview(sType + "ViewExported");
-						oView.addContent(oControl);
+						oView.addContent(oControl.clone());
 						oViewSerializer = new ViewSerializer(oView, window, "sap.m");
 					}
 					// By now just XML and HTML can be serialized
 					mViews = (sType && sType !== "XML") ? oViewSerializer.serializeToHTML() : oViewSerializer.serializeToXML();
-					if (index) {
-						oParentControl.insertContent(oControl, index);
-					} else {
-						oParentControl.addContent(oControl);
-					}
 				} else {
 					var oUIArea = this.oCore.getUIArea(oEvent.getParameter("controlID"));
 					var oView = sap.ui.jsview(sType + "ViewExported");

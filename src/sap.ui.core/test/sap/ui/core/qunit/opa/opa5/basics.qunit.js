@@ -359,6 +359,31 @@ sap.ui.define([
 		});
 	});
 
+	opaTest("Should wait for promise scheduled on flow", function (oOpa) {
+		Opa5.assert.expect(2);
+		var bPromiseDone;
+		var fnOriginalSchedule = Opa.prototype._schedulePromiseOnFlow;
+		Opa.prototype._schedulePromiseOnFlow = function (oPromise, oOptions) {
+			var aFalsyOptions = Object.keys(oOptions).filter(function (sOption) {
+				return !oOptions[sOption];
+			});
+			Opa5.assert.strictEqual(aFalsyOptions.length, 5, "Should assign empty values to all options");
+			return fnOriginalSchedule.apply(this, arguments);
+		}
+		var oPromise = new Promise(function (resolve) {
+			setTimeout(function () {
+				bPromiseDone = true;
+				resolve();
+			}, 200);
+		});
+		oOpa.iWaitForPromise(oPromise);
+		oOpa.waitFor({
+			success: function () {
+				Opa5.assert.ok(bPromiseDone, "Should wait for scheduled promise");
+			}
+		});
+	});
+
 	QUnit.module("Config and waitFor",{
 		beforeEach: function () {
 			var sView = [

@@ -1,12 +1,22 @@
 /*global QUnit*/
 
-sap.ui.require([
-	"sap/ui/support/Bootstrap"
-], function (bootstrap) {
+sap.ui.define([
+	"sap/ui/support/Bootstrap",
+	"sap/m/Panel",
+	"sap/m/Button",
+	"sap/m/Link",
+	"sap/m/Text",
+	"sap/m/Input"
+], function (bootstrap,
+			 Panel,
+			 Button,
+			 Link,
+			 Text,
+			 Input) {
 		"use strict";
 
 	QUnit.module("jQuery.sap.support", {
-		setup: function () {
+		beforeEach: function () {
 
 			this.scope = {
 				type: "subtree",
@@ -47,7 +57,7 @@ sap.ui.require([
 				]
 			});
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.panel.destroy();
 			delete this.scope;
 		}

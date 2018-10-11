@@ -150,16 +150,6 @@ sap.ui.define([
 		this._initTitlePropagationSupport();
 	};
 
-	/**
-	 * Called before the control is rendered.
-	 *
-	 * @private
-	 */
-	WizardStep.prototype.onBeforeRendering = function () {
-		var bVisible = this._getWizardParent() ? this._getWizardParent().getShowNextButton() : true;
-		this._oNextButton.setProperty("visible", bVisible, true);
-	};
-
 	WizardStep.prototype._handleNextButtonPress = function () {};
 
 	WizardStep.prototype.setValidated = function (validated) {
@@ -253,8 +243,14 @@ sap.ui.define([
 	};
 
 	WizardStep.prototype._activate = function () {
+		var parent = this._getWizardParent();
+
 		if (this.hasStyleClass("sapMWizardStepActivated")) {
 			return;
+		}
+
+		if (parent) {
+			this._oNextButton.setVisible(parent.getShowNextButton());
 		}
 
 		this._markAsLast();

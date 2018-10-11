@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/fl/changeHandler/Base",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/base/util/LoaderExtensions"
 ], function(
 	Base,
-	Utils
+	Utils,
+	LoaderExtensions
 ) {
 	"use strict";
 
@@ -46,13 +48,15 @@ sap.ui.define([
 	AddXML.applyChange = function(oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var oChangeDefinition = oChange.getDefinition();
+		var sModuleName = oChange.getModuleName();
 		var sAggregationName = oChangeDefinition.content.targetAggregation;
-		// the backend loads the content of the fragment as ascii and adds it to the change specific content.
-		if (!oChangeDefinition.content.fragment) {
-			throw new Error("The content of the fragment is not set. This should happen in the backend");
+
+		if (!sModuleName) {
+			throw new Error("The module name of the fragment is not set. This should happen in the backend");
 		}
 
-		var sFragment = Utils.asciiToString(oChangeDefinition.content.fragment);
+		var sFragment = LoaderExtensions.loadResource(sModuleName, {dataType: "text"});
+
 		var iIndex = oChangeDefinition.content.index;
 		var oView = mPropertyBag.view;
 		var sNamespace = oChange.getProjectId();
@@ -71,7 +75,7 @@ sap.ui.define([
 		}
 
 		aNewControls.forEach(function(oNewControl, iIterator) {
-			if (!oModifier.validateType(oNewControl, oAggregationDefinition, oControl, sFragment, iIterator)) {
+			if (!oModifier.validateType(oNewControl, oAggregationDefinition, oControl, sFragment , iIterator)) {
 				destroyArrayOfControls(aNewControls);
 				throw new Error("The content of the xml fragment does not match the type of the targetAggregation: " + oAggregationDefinition.type);
 			}
@@ -158,6 +162,19 @@ sap.ui.define([
 		} else {
 			_throwError("index");
 		}
+
+		var generateModuleName = function(oChangeDefinition) {
+			var sModuleName = oChangeDefinition.reference.replace(/\./g, "/");
+			sModuleName += "/$$flexModules/";
+			sModuleName += oChangeDefinition.validAppVersions.creation;
+			sModuleName += "/changes/";
+			sModuleName += oChangeDefinition.content.fragmentPath.replace(/\.fragment\.xml/g, "");
+
+			return sModuleName;
+		};
+
+		var sModuleName = generateModuleName(oChangeDefinition);
+		oChange.setModuleName(sModuleName);
 	};
 
 	return AddXML;

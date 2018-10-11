@@ -240,8 +240,7 @@ sap.ui.define([
 			},
 			sinon: {
 				version: 1,
-				qunitBridge: true,
-				useFakeTimers: true
+				qunitBridge: true
 			},
 			module: "./Opa.qunit"
 		},
@@ -419,6 +418,22 @@ sap.ui.define([
 				qunitBridge: true
 			},
 			module: "./_UsageReport.qunit"
+		},
+		"RecordReplay": {
+			title: "QUnit Page for sap.ui.test.RecordReplay",
+			sinon: {
+				version: 1,
+				qunitBridge: true
+			},
+			module: "./RecordReplay.qunit"
+		},
+		"selectors/selectors": {
+			title: "QUnit Page for sap.ui.test.selectors",
+			sinon: {
+				version: 1,
+				qunitBridge: true
+			},
+			module: "./selectors/selectors.qunit"
 		}
 	};
 

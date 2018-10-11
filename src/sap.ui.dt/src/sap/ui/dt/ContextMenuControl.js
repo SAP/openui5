@@ -123,6 +123,7 @@ sap.ui.define([
 
 			var oPopoverExpanded = new Popover(sPopExpId, {
 				showHeader: false,
+				showArrow: false,
 				verticalScrolling: true,
 				horizontalScrolling: false,
 				content: new VBox(sPopExpId + "ContentBox", {
@@ -207,6 +208,8 @@ sap.ui.define([
 			// fires the open event after popover is opened
 			this.getPopover().attachAfterOpen(this._handleAfterOpen, this);
 
+			this.getPopover().attachBeforeClose(this._handleBeforeClose, this);
+
 			//place the Popover and get the target DIV
 			this._oTarget = this._placeContextMenu(this._oTarget, this._bOpenAsContextMenu);
 
@@ -236,7 +239,7 @@ sap.ui.define([
 
 				this._replaceLastVisibleButtonWithOverflowButton(aButtons);
 
-			} else if (iButtonsEnabled < aButtons.length && iButtonsEnabled !== 0) {
+			} else if (iButtonsEnabled < aButtons.length - 1 && iButtonsEnabled !== 0) {
 
 				this.addOverflowButton();
 			}
@@ -361,7 +364,8 @@ sap.ui.define([
 			var oFakeDiv = document.getElementById(sFakeDivId);
 
 			// place the Popover invisible
-			this.getPopover().setContentWidth("");
+			this.getPopover().setContentWidth(undefined);
+			this.getPopover().setContentHeight(undefined);
 			this.getPopover().openBy(oFakeDiv);
 
 			//get Dimensions
@@ -374,7 +378,7 @@ sap.ui.define([
 				oPopoverDimensions.height = (oViewportDimensions.height * 2 / 3).toFixed(0);
 				this.getPopover().setContentHeight(oPopoverDimensions.height + "px");
 			} else {
-				this.getPopover().setContentHeight("");
+				this.getPopover().setContentHeight(undefined);
 			}
 
 			// check if horizontal size is too big
@@ -382,7 +386,7 @@ sap.ui.define([
 				oPopoverDimensions.width = 400;
 				this.getPopover().setContentWidth("400px");
 			} else {
-				this.getPopover().setContentWidth("");
+				this.getPopover().setContentWidth(undefined);
 			}
 
 			//calculate exact position
@@ -740,6 +744,7 @@ sap.ui.define([
 			var oButtonOptions = {
 				icon: this._getIcon(oButtonItem.icon),
 				text: sText,
+				tooltip: sText,
 				type: "Transparent",
 				enabled: bEnabled,
 				press: fnHandler,
@@ -755,7 +760,6 @@ sap.ui.define([
 			var oExpandedMenuButton = new Button(oButtonOptions);
 			oExpandedMenuButton.data(oButtonCustomData);
 
-			oButtonOptions.tooltip = oButtonOptions.text;
 			delete oButtonOptions.text;
 			var oCompactMenuButton = new Button(oButtonOptions);
 			oCompactMenuButton.data(oButtonCustomData);
@@ -1048,9 +1052,25 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * Handle After Open
+		 * Sets the Popover visible and fires Event "opened"
+		 * @private
+		 */
 		_handleAfterOpen: function () {
 			this.getPopover().detachAfterOpen(this._handleAfterOpen, this);
+			this.getPopover().addStyleClass("sapUiDtContextMenuVisible");
 			this.fireOpened();
+		},
+
+		/**
+		 * Handle Before Close
+		 * Sets the Popover invisible (to avoid flickering)
+		 * @private
+		 */
+		_handleBeforeClose: function () {
+			this.getPopover().detachBeforeClose(this._handleBeforeClose, this);
+			this.getPopover().removeStyleClass("sapUiDtContextMenuVisible");
 		},
 
 		setStyleClass: function (sStyleClass) {

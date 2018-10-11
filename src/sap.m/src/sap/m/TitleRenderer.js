@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.m.Title
-sap.ui.define(["sap/ui/core/library"],
-	function(coreLibrary) {
+sap.ui.define(["sap/ui/core/library", "sap/m/HyphenationSupport"],
+	function(coreLibrary, HyphenationSupport) {
 	"use strict";
 
 
@@ -30,7 +30,8 @@ sap.ui.define(["sap/ui/core/library"],
 		var oAssoTitle = oTitle._getTitle(),
 			sLevel = (oAssoTitle ? oAssoTitle.getLevel() : oTitle.getLevel()) || TitleLevel.Auto,
 			bAutoLevel = sLevel == TitleLevel.Auto,
-			sTag = bAutoLevel ? "div" : sLevel;
+			sTag = bAutoLevel ? "div" : sLevel,
+			sText = HyphenationSupport.getTextForRender(oTitle, "main");
 
 		oRm.write("<", sTag);
 		oRm.writeControlData(oTitle);
@@ -64,13 +65,16 @@ sap.ui.define(["sap/ui/core/library"],
 			oRm.writeAttribute("role", "heading");
 		}
 
+		HyphenationSupport.writeHyphenationClass(oRm, oTitle);
+
 		oRm.writeClasses();
 		oRm.writeStyles();
 
 		oRm.write("><span");
 		oRm.writeAttribute("id", oTitle.getId() + "-inner");
 		oRm.write(">");
-		oRm.writeEscaped(oAssoTitle ? oAssoTitle.getText() : oTitle.getText());
+
+		oRm.writeEscaped(sText);
 		oRm.write("</span></", sTag, ">");
 	};
 

@@ -471,9 +471,9 @@
 					var aAllElementData = [];
 					var aInvisibleElements = mRevealData.elements || [];
 
-					aInvisibleElements.forEach(function(oInvisibleElement) {
-						var sType = oInvisibleElement.getMetadata().getName();
-						var mAction = mRevealData.types[sType].action;
+					aInvisibleElements.forEach(function(mInvisibleElement) {
+						var oInvisibleElement = mInvisibleElement.element;
+						var mAction = mInvisibleElement.action;
 						var bIncludeElement = true;
 
 						// BCP: 1880498671

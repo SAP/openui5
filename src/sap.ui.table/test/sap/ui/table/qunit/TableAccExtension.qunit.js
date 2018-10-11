@@ -13,7 +13,6 @@ sap.ui.define([
 	"use strict";
 
 	// mapping of global function calls
-	var aFields = window.aFields;
 	var createTables = window.createTables;
 	var destroyTables = window.destroyTables;
 	var getCell = window.getCell;
@@ -46,6 +45,7 @@ sap.ui.define([
 	});
 
 	var TestControl = TableQUnitUtils.getTestControl();
+	var TestInputControl = TableQUnitUtils.getTestInputControl();
 
 	TestControl.prototype.getAccessibilityInfo = function() {
 		var iMode = this.getIndex();
@@ -54,7 +54,6 @@ sap.ui.define([
 				return {
 					type: "TYPE_" + this.getText(),
 					description: "DESCRIPTION_" + this.getText(),
-					focusable: true,
 					enabled: true,
 					editable: false
 				};
@@ -62,14 +61,12 @@ sap.ui.define([
 				return {
 					type: "TYPE_" + this.getText(),
 					description: "DESCRIPTION_" + this.getText(),
-					focusable: false,
 					enabled: true
 				};
 			case 2:
 				return {
 					type: "TYPE_" + this.getText(),
 					description: "DESCRIPTION_" + this.getText(),
-					focusable: true,
 					enabled: false,
 					children: [new TextControl({text: "CHILD1"}), new TextControl({text: "CHILD2"})]
 				};
@@ -77,28 +74,36 @@ sap.ui.define([
 				return {
 					type: "TYPE_" + this.getText(),
 					description: "DESCRIPTION_" + this.getText(),
-					focusable: true,
 					enabled: true
 				};
 			default:
 				return null;
 		}
 	};
+	TestInputControl.prototype.getAccessibilityInfo = TestControl.prototype.getAccessibilityInfo;
 
 	function _modifyTables() {
-		var oColumn = oTable.getColumns()[1];
-		oColumn.setSortProperty(aFields[1]);
-		oColumn.setFilterProperty(aFields[1]);
-		oColumn.setSortOrder("Ascending");
-		oColumn.setSorted(true);
-		oColumn.setFiltered(true);
-		oTable.setRowSettingsTemplate(new RowSettings({
-			highlight: "Success"
-		}));
-		oTreeTable.setRowSettingsTemplate(new RowSettings({
-			highlight: "Success"
-		}));
+		[oTable, oTreeTable].forEach(function(_oTable) {
+			_oTable.removeAllColumns();
+			TableQUnitUtils.addColumn(_oTable, "A Label", "A", false, true, true);
+			TableQUnitUtils.addColumn(_oTable, "B Label", "B");
+			TableQUnitUtils.addColumn(_oTable, "C Label", "C", true).setTooltip("tooltip");
+			TableQUnitUtils.addColumn(_oTable, "D Label", "D", false, true, true).getTemplate().setVisible(false);
+			TableQUnitUtils.addColumn(_oTable, "E Label", "E", false, true, true);
+
+			var oColumn = _oTable.getColumns()[1];
+			oColumn.setSortProperty("SomeSortProperty");
+			oColumn.setFilterProperty("SomeFilterProperty");
+			oColumn.setSortOrder("Ascending");
+			oColumn.setSorted(true);
+			oColumn.setFiltered(true);
+
+			_oTable.setRowSettingsTemplate(new RowSettings({highlight: "Success"}));
+		});
+
+		oTreeTable.setFixedColumnCount(1);
 		oTreeTable.setSelectedIndex(0);
+
 		sap.ui.getCore().applyChanges();
 	}
 
@@ -262,9 +267,7 @@ sap.ui.define([
 	function testAriaDescriptionsForFocusedDataCell($Cell, iRow, iCol, assert, mParams) {
 		var mParams = mParams || {};
 		var bGroup = !!mParams.group;
-
 		var aDescriptions = [];
-
 		var oRow = oTable.getRows()[iRow];
 		var oCell = oRow.getCells()[iCol];
 		var iIndex = oCell.getIndex();
@@ -284,17 +287,17 @@ sap.ui.define([
 		var done = assert.async();
 		var $Cell;
 		var i;
-		for (i = 0; i < aFields.length; i++) {
+		for (i = 0; i < oTable.columnCount; i++) {
 			$Cell = getCell(0, i, true, assert);
 			testAriaLabelsForFocusedDataCell($Cell, 0, i, assert, {firstTime: i == 0, colChange: true});
 		}
-		for (i = 0; i < aFields.length; i++) {
+		for (i = 0; i < oTable.columnCount; i++) {
 			$Cell = getCell(1, i, true, assert);
 			testAriaLabelsForFocusedDataCell($Cell, 1, i, assert, {rowChange: i == 0, colChange: true});
 		}
 		setFocusOutsideOfTable(assert);
 		setTimeout(function() {
-			testAriaLabelsForNonFocusedDataCell($Cell, 1, aFields.length - 1, assert);
+			testAriaLabelsForNonFocusedDataCell($Cell, 1, oTable.columnCount - 1, assert);
 			done();
 		}, 100);
 	});
@@ -303,17 +306,17 @@ sap.ui.define([
 		var done = assert.async();
 		var $Cell;
 		var i;
-		for (i = 0; i < aFields.length; i++) {
+		for (i = 0; i < oTreeTable.columnCount; i++) {
 			$Cell = getCell(0, i, true, assert, oTreeTable);
 			testAriaLabelsForFocusedDataCell($Cell, 0, i, assert, {firstTime: i == 0, colChange: true, table: oTreeTable});
 		}
-		for (i = 0; i < aFields.length; i++) {
+		for (i = 0; i < oTreeTable.columnCount; i++) {
 			$Cell = getCell(1, i, true, assert, oTreeTable);
 			testAriaLabelsForFocusedDataCell($Cell, 1, i, assert, {rowChange: i == 0, colChange: true, table: oTreeTable});
 		}
 		setFocusOutsideOfTable(assert);
 		setTimeout(function() {
-			testAriaLabelsForNonFocusedDataCell($Cell, 1, aFields.length - 1, assert, {table: oTreeTable});
+			testAriaLabelsForNonFocusedDataCell($Cell, 1, oTreeTable.columnCount - 1, assert, {table: oTreeTable});
 			done();
 		}, 100);
 	});
@@ -322,11 +325,11 @@ sap.ui.define([
 		setFocusOutsideOfTable(assert);
 		var $Cell;
 		var i;
-		for (i = 0; i < aFields.length; i++) {
+		for (i = 0; i < oTable.columnCount; i++) {
 			$Cell = getCell(0, i, false, assert);
 			testAriaLabelsForNonFocusedDataCell($Cell, 0, i, assert);
 		}
-		for (i = 0; i < aFields.length; i++) {
+		for (i = 0; i < oTable.columnCount; i++) {
 			$Cell = getCell(1, i, false, assert);
 			testAriaLabelsForNonFocusedDataCell($Cell, 1, i, assert);
 		}
@@ -336,13 +339,13 @@ sap.ui.define([
 	QUnit.test("ACCInfo", function(assert) {
 		var done = assert.async();
 		var $Cell;
-		for (var i = 0; i < aFields.length; i++) {
+		for (var i = 0; i < oTable.columnCount; i++) {
 			$Cell = getCell(0, i, true, assert);
 			testACCInfoForFocusedDataCell($Cell, 0, i, assert);
 		}
 		setFocusOutsideOfTable(assert);
 		setTimeout(function() {
-			testAriaLabelsForNonFocusedDataCell($Cell, 0, aFields.length - 1, assert);
+			testAriaLabelsForNonFocusedDataCell($Cell, 0, oTable.columnCount - 1, assert);
 			done();
 		}, 100);
 	});
@@ -351,17 +354,17 @@ sap.ui.define([
 		var done = assert.async();
 		var $Cell;
 		var i;
-		for (i = 0; i < aFields.length; i++) {
+		for (i = 0; i < oTable.columnCount; i++) {
 			$Cell = getCell(0, i, true, assert);
 			testAriaDescriptionsForFocusedDataCell($Cell, 0, i, assert, {firstTime: i == 0, colChange: true});
 		}
-		for (i = 0; i < aFields.length; i++) {
+		for (i = 0; i < oTable.columnCount; i++) {
 			$Cell = getCell(1, i, true, assert);
 			testAriaDescriptionsForFocusedDataCell($Cell, 1, i, assert, {rowChange: i == 0, colChange: true});
 		}
 		setFocusOutsideOfTable(assert);
 		setTimeout(function() {
-			assert.ok(!$Cell.attr("aria-describedby"), "No aria-describedby on cell [1, " + (aFields.length - 1) + "]");
+			assert.ok(!$Cell.attr("aria-describedby"), "No aria-describedby on cell [1, " + (oTable.columnCount - 1) + "]");
 			done();
 		}, 100);
 	});
@@ -370,11 +373,11 @@ sap.ui.define([
 		setFocusOutsideOfTable(assert);
 		var $Cell;
 		var i;
-		for (i = 0; i < aFields.length; i++) {
+		for (i = 0; i < oTable.columnCount; i++) {
 			$Cell = getCell(0, i, false, assert);
 			assert.ok(!$Cell.attr("aria-describedby"), "No aria-describedby on cell [0, " + i + "]");
 		}
-		for (i = 0; i < aFields.length; i++) {
+		for (i = 0; i < oTable.columnCount; i++) {
 			$Cell = getCell(1, i, false, assert);
 			assert.ok(!$Cell.attr("aria-describedby"), "No aria-describedby on cell [1, " + i + "]");
 		}
@@ -396,13 +399,13 @@ sap.ui.define([
 
 		var $Cell;
 		var i;
-		for (i = 0; i < aFields.length; i++) {
+		for (i = 0; i < oTable.columnCount; i++) {
 			$Cell = getCell(1, i, false, assert);
 			assert.strictEqual($Cell.attr("aria-describedby") || "", "", "aria-describedby not set on data cell group row");
 			testAriaLabelsForNonFocusedDataCell($Cell, 1, i, assert, {group: true});
 		}
 
-		for (i = 0; i < aFields.length; i++) {
+		for (i = 0; i < oTable.columnCount; i++) {
 			$Cell = getCell(1, i, true, assert);
 			testAriaLabelsForFocusedDataCell($Cell, 1, i, assert, {firstTime: i == 0, colChange: true, group: true});
 			testAriaDescriptionsForFocusedDataCell($Cell, 1, i, assert, {
@@ -414,7 +417,7 @@ sap.ui.define([
 
 		setFocusOutsideOfTable(assert);
 		setTimeout(function() {
-			testAriaLabelsForNonFocusedDataCell(getCell(1, aFields.length - 1, false, assert), 1, aFields.length - 1, assert);
+			testAriaLabelsForNonFocusedDataCell(getCell(1, oTable.columnCount - 1, false, assert), 1, oTable.columnCount - 1, assert);
 			oTable.rerender();
 			done();
 		}, 100);
@@ -432,13 +435,13 @@ sap.ui.define([
 
 		var $Cell;
 		var i;
-		for (i = 0; i < aFields.length; i++) {
+		for (i = 0; i < oTable.columnCount; i++) {
 			$Cell = getCell(1, i, false, assert);
 			assert.strictEqual($Cell.attr("aria-describedby") || "", "", "aria-describedby not set on data cell sum row");
 			testAriaLabelsForNonFocusedDataCell($Cell, 1, i, assert, {sum: true});
 		}
 
-		for (i = 0; i < aFields.length; i++) {
+		for (i = 0; i < oTable.columnCount; i++) {
 			$Cell = getCell(1, i, true, assert);
 			testAriaLabelsForFocusedDataCell($Cell, 1, i, assert, {firstTime: i == 0, colChange: true, sum: true});
 			testAriaDescriptionsForFocusedDataCell($Cell, 1, i, assert, {
@@ -450,7 +453,7 @@ sap.ui.define([
 
 		setFocusOutsideOfTable(assert);
 		setTimeout(function() {
-			testAriaLabelsForNonFocusedDataCell(getCell(1, aFields.length - 1, false, assert), 1, aFields.length - 1, assert);
+			testAriaLabelsForNonFocusedDataCell(getCell(1, oTable.columnCount - 1, false, assert), 1, oTable.columnCount - 1, assert);
 			oTable.rerender();
 			done();
 		}, 100);
@@ -537,13 +540,13 @@ sap.ui.define([
 	QUnit.test("aria-labelledby with Focus", function(assert) {
 		var done = assert.async();
 		var $Cell;
-		for (var i = 0; i < aFields.length; i++) {
+		for (var i = 0; i < oTable.columnCount; i++) {
 			$Cell = getColumnHeader(i, true, assert);
 			testAriaLabelsForColumnHeader($Cell, i, assert, {firstTime: i == 0, colChange: true, focus: true});
 		}
 		setFocusOutsideOfTable(assert);
 		setTimeout(function() {
-			testAriaLabelsForColumnHeader($Cell, aFields.length - 1, assert);
+			testAriaLabelsForColumnHeader($Cell, oTable.columnCount - 1, assert);
 			done();
 		}, 100);
 	});
@@ -551,7 +554,7 @@ sap.ui.define([
 	QUnit.test("aria-labelledby without Focus", function(assert) {
 		setFocusOutsideOfTable(assert);
 		var $Cell;
-		for (var i = 0; i < aFields.length; i++) {
+		for (var i = 0; i < oTable.columnCount; i++) {
 			$Cell = getColumnHeader(i, false, assert);
 			testAriaLabelsForColumnHeader($Cell, i, assert, {firstTime: i == 0, colChange: true});
 		}
@@ -561,7 +564,7 @@ sap.ui.define([
 	QUnit.test("aria-describedby with Focus", function(assert) {
 		var done = assert.async();
 		var $Cell;
-		for (var i = 0; i < aFields.length; i++) {
+		for (var i = 0; i < oTable.columnCount; i++) {
 			$Cell = getColumnHeader(i, true, assert);
 			assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of column header " + i);
 		}
@@ -574,7 +577,7 @@ sap.ui.define([
 	QUnit.test("aria-describedby without Focus", function(assert) {
 		setFocusOutsideOfTable(assert);
 		var $Cell;
-		for (var i = 0; i < aFields.length; i++) {
+		for (var i = 0; i < oTable.columnCount; i++) {
 			$Cell = getColumnHeader(i, false, assert);
 			assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of column header " + i);
 		}
@@ -1408,11 +1411,11 @@ sap.ui.define([
 		assert.ok(sHtml.indexOf("aria") < 0, "No ACC related information in DOM");
 
 		var i;
-		for (i = 0; i < aFields.length; i++) {
+		for (i = 0; i < oTable.columnCount; i++) {
 			getCell(0, i, true, assert);
 			assert.ok(sHtml.indexOf("aria") < 0, "No ACC related information in DOM on focus of cell [0, " + i + "]");
 		}
-		for (i = 0; i < aFields.length; i++) {
+		for (i = 0; i < oTable.columnCount; i++) {
 			getCell(1, i, true, assert);
 			assert.ok(sHtml.indexOf("aria") < 0, "No ACC related information in DOM on focus of cell [1, " + i + "]");
 		}

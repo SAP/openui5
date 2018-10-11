@@ -1,6 +1,12 @@
-/* global QUnit,sinon,SemanticUtil*/
-
-(function ($, QUnit, sinon) {
+/*global QUnit, sinon*/
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
+	"qunit/SemanticUtil"
+],
+function (
+	$,
+	SemanticUtil
+) {
 	"use strict";
 
 	sinon.config.useFakeTimers = false;
@@ -811,4 +817,4 @@
 			this.oActionSheet = null;
 		}
 	});
-})(jQuery, QUnit, sinon);
+});

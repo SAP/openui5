@@ -79,6 +79,13 @@
 				width: "250px",
 			});
 
+			var oLabelHyphenation = new sap.m.Label("lbl14", {
+				text: 'mobile label with wrappingType property set to "Hyphenated" and wrapping set to "true"',
+				width: "100px",
+				wrapping: true,
+				wrappingType: "Hyphenated"
+			});
+
 			var oLabel1 = new sap.m.Label({
 				text: "Label with text set:",
 				design: "Bold"
@@ -106,6 +113,11 @@
 
 			var oLabel6 = new sap.m.Label({
 				text: "Label with width property set:",
+				design: "Bold"
+			});
+
+			var oLabel7 = new sap.m.Label({
+				text: 'Label with wrappingType property set to "Hyphenated" ',
 				design: "Bold"
 			});
 
@@ -185,10 +197,12 @@
                             oLabelEnd,
                             oLabelLeft,
                             oLabelRight,
-                            oLabel6,
-                            oLabelWidth,
                             oLabel5,
                             oLabelNoText,
+                            oLabel6,
+                            oLabelWidth,
+                            oLabel7,
+                            oLabelHyphenation,
                             oVL,
                             sf
                         ]

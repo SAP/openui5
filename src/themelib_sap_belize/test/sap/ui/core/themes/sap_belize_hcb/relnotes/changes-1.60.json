@@ -37,6 +37,18 @@
         "type": "FIX",
         "text": " sap.m.StepInput: Focus is fixed in HCB and HCW themes",
         "references": []
+      },
+      {
+        "id": "da75e099528d7732b6ad720a84f33958c8dfb531",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fixed header content transparency",
+        "references": []
+      },
+      {
+        "id": "344e15ea29aec889151e40d4d33365564249dd7f",
+        "type": "FIX",
+        "text": "sap.m.themes.sap_belize.GenericTile.less: Focus changed from Dotted to Dashed to improve color contrast Ratio",
+        "references": []
       }
     ]
   }

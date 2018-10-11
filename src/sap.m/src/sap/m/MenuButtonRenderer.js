@@ -31,11 +31,6 @@ sap.ui.define([],
 			oRm.write("<div");
 			oRm.writeControlData(oMenuButton);
 
-			//write aria attributes
-			oRm.writeAccessibilityState(oMenuButton, {
-				haspopup: "true"
-			});
-
 			//classes
 			oRm.addClass(MenuButtonRenderer.CSS_CLASS);
 			oRm.addClass(MenuButtonRenderer.CSS_CLASS + oMenuButton.getButtonMode());
@@ -49,6 +44,7 @@ sap.ui.define([],
 
 			oRm.write(">");
 
+			oMenuButton._ensureBackwardsReference();
 			oRm.renderControl(oMenuButton._getButtonControl());
 
 			oRm.write("</div>");

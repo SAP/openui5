@@ -110,14 +110,29 @@
 						<extension>gif</extension>
 						<extension>png</extension>
 						<extension>ico</extension>
+						<extension>swf</extension>
+						<extension>wav</extension>
 						<extension>properties</extension><!-- excluded as those files don't use UTF-8 encoding and as no filtering is needed -->
 						<extension>woff</extension>
 						<extension>woff2</extension>
+						<extension>hpb</extension><!-- hyphenation pattern binary (introduced by OSS component 'hyphenopoly') -->
+						<extension>wasm</extension><!-- web assembly, compiled binary -->
 					</nonFilteredFileExtensions>
+
+					<!--
+						With the default delimiter settings, filtering fails for lines with an odd number of delimiter chars
+						like in
+
+						  @version @version@
+
+						We therefore disable the defaults and use only ${*}.
+
+					  -->
+					<useDefaultDelimiters>false</useDefaultDelimiters>
 					<delimiters>
 						<delimiter>${*}</delimiter>
 					</delimiters>
-					<useDefaultDelimiters>false</useDefaultDelimiters>
+
 				</configuration>
 			</plugin>
 

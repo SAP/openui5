@@ -43,6 +43,18 @@
         "type": "FEATURE",
         "text": " Card Implementation",
         "references": []
+      },
+      {
+        "id": "49288c64d1c1c1d924a9b4772944105f36b615ee",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Preserved scroll position on show/hide",
+        "references": []
+      },
+      {
+        "id": "45bf56e8c3286e50a82e0fdca1b0e617076c59d9",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Expand/Collapse buttons tolltip fixed",
+        "references": []
       }
     ]
   }
