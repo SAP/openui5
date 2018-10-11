@@ -1192,13 +1192,13 @@ function (
 			getId: function () {
 				return "";
 			},
-			APPLIED: true
+			PROCESSED: true
 		};
 		var oChange1 = {
 			getId: function () {
 				return "";
 			},
-			APPLIED: true
+			PROCESSED: true
 		};
 		var mChanges = {
 			"someId": [oChange0, oChange1]
@@ -1218,9 +1218,9 @@ function (
 		.then(function() {
 			assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 2, "all four changes for the control were applied");
 			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange0, "the first change was applied first");
-			assert.notOk(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0].APPLIED, "the APPLIED flag got deleted");
+			assert.notOk(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0].PROCESSED, "the PROCESSED flag got deleted");
 			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange1, "the second change was applied second");
-			assert.notOk(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0].APPLIED, "the APPLIED flag got deleted");
+			assert.notOk(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0].PROCESSED, "the PROCESSED flag got deleted");
 			assert.equal(oCopyDependenciesFromInitialChangesMap.callCount, 2, "and update dependencies was called twice");
 		}.bind(this));
 	});
@@ -1477,10 +1477,10 @@ function (
 		this.oFlexController._applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlField1);
 		this.oFlexController._applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlForm1);
 
-		// as checkTargetAndApplyChanges function is stubbed we set the APPLIED flag manually
+		// as checkTargetAndApplyChanges function is stubbed we set the PROCESSED flag manually
 		Object.keys(oDependencySetup.mChanges).forEach(function(sKey) {
 			oDependencySetup.mChanges[sKey].forEach(function(oChange) {
-				oChange.APPLIED = true;
+				oChange.PROCESSED = true;
 			});
 		});
 
@@ -1976,6 +1976,7 @@ function (
 			assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "apply change functionality was called");
 			assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.failedChangesCustomDataKeyJs, "failed custom data was written");
 			assert.equal(mergeErrorStub.callCount, 1, "set merge error was called");
+			assert.strictEqual(this.oChange.PROCESSED, true, "then PROCESSED property for change was set to true");
 		}.bind(this));
 	});
 
@@ -1994,6 +1995,7 @@ function (
 		assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
 		var sExpectedFlexCustomDataValue = sAlreadyAppliedChangeId + "," + this.oChange.getId();
 		assert.equal(this.oControl.getCustomData()[0].getValue(), sExpectedFlexCustomDataValue, "the change id is the value");
+		assert.strictEqual(this.oChange.PROCESSED, true, "then PROCESSED property for change was set to true");
 	});
 
 	QUnit.test("delete only reverted changeId from custom data", function (assert) {
