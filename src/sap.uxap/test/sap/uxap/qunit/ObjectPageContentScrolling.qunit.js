@@ -385,14 +385,15 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		oLastSubSection.addBlock(oResizableControl);
 
 		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
-
-			// make the height of the last section smaller
-			oResizableControl.getDomRef().style.height = "10px";
-
 			setTimeout(function() {
-				assert.ok(oObjectPageLayout.getSelectedSection() === oLastSection.getId(), "Selection is preserved");
-				oObjectPageLayout.destroy();
-				done();
+				// make the height of the last section smaller
+				oResizableControl.getDomRef().style.height = "10px";
+
+				setTimeout(function() {
+					assert.ok(oObjectPageLayout.getSelectedSection() === oLastSection.getId(), "Selection is preserved");
+					oObjectPageLayout.destroy();
+					done();
+				}, 500); // allow the page to scroll to the position of the selected section
 			}, 500);
 		});
 
