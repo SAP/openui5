@@ -114,17 +114,28 @@
 		return sPath.indexOf("/") === 0;
 	}
 
-	var _getBindingContext = function(oElement, bAbsoluteAggregationBinding, sAggregationName) {
-		return bAbsoluteAggregationBinding ? oElement.getBindingInfo(sAggregationName) : oElement.getBindingContext();
-	};
+	function _getDefaultModelBindingData(oElement, bAbsoluteAggregationBinding, sAggregationName) {
+		var vBinding;
+		if (bAbsoluteAggregationBinding) {
+			vBinding = oElement.getBindingInfo(sAggregationName);
+			//check to be default model binding otherwise return undefined
+			if (typeof vBinding.model === "string" && vBinding.model !== ""){
+				vBinding = undefined;
+			}
+		} else {
+			//here we explicitly request the default models binding context
+			vBinding = oElement.getBindingContext();
+		}
+		return vBinding;
+	}
 
-	var _getBindingPath = function(oElement, sAggregationName) {
+	function _getBindingPath(oElement, sAggregationName) {
 		var bAbsoluteAggregationBinding = _checkForAbsoluteAggregationBinding(oElement, sAggregationName);
-		var vBinding = _getBindingContext(oElement, bAbsoluteAggregationBinding, sAggregationName);
+		var vBinding = _getDefaultModelBindingData(oElement, bAbsoluteAggregationBinding, sAggregationName);
 		if (vBinding) {
 			return bAbsoluteAggregationBinding ? vBinding.path : vBinding.getPath();
 		}
-	};
+	}
 
 	/**
 	 * Fetching all available properties of the Element's Model
