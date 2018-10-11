@@ -242,6 +242,11 @@ sap.ui.define([
 			this._oExpanderControl.setSrc(sSrc);
 			this.$().attr("aria-expanded", this.getExpanded());
 
+			// make the expander visible
+			if (!this.isLeaf()) {
+				this.$().removeClass("sapMTreeItemBaseLeaf");
+			}
+
 			// update the indentation again
 			var iIndentation = this._getPadding(),
 				sStyleRule = sap.ui.getCore().getConfiguration().getRTL() ? "paddingRight" : "paddingLeft";
@@ -253,7 +258,6 @@ sap.ui.define([
 	TreeItemBase.prototype.setBindingContext = function() {
 		ListItemBase.prototype.setBindingContext.apply(this, arguments);
 		this._updateExpander();
-
 		return this;
 	};
 
@@ -270,8 +274,15 @@ sap.ui.define([
 		iIndentation = 0,
 		iDeepestLevel;
 
+		// use number count from hierarchy binding
 		if (oTree) {
 			iDeepestLevel = oTree.getDeepestLevel();
+		}
+
+		// for add node
+		if (iDeepestLevel < iNodeLevel) {
+			oTree._iDeepestLevel = iNodeLevel;
+			iDeepestLevel = oTree._iDeepestLevel;
 		}
 
 		if (iDeepestLevel < 2) {
