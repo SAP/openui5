@@ -135,7 +135,7 @@ sap.ui.define([
 					return this.waitFor({
 						id: "presetImport--fileUpload",
 						success: function(oFileUploader) {
-							var sFileContent = jQuery.sap.syncGet("data/Presets/" + sFileName).data;
+							var sFileContent = jQuery.sap.syncGet("test-resources/sap/ui/support/integration/ui/data/Presets/" + sFileName).data;
 
 							var oFile = new Blob(
 								[sFileContent],

@@ -40,7 +40,7 @@ sap.ui.define([
 		});
 
 		CommunicationBus.subscribe(Channels.ON_INIT_ANALYSIS_CTRL, function () {
-			jQuery.getJSON("data/RuleSets.json").done(function (oRuleSets) {
+			jQuery.getJSON("test-resources/sap/ui/support/integration/ui/data/RuleSets.json").done(function (oRuleSets) {
 				CommunicationBus.publish(Channels.UPDATE_SUPPORT_RULES, {
 					sRuleSet: oRuleSets
 				});
@@ -62,7 +62,7 @@ sap.ui.define([
 		}, this);
 
 		CommunicationBus.subscribe(Channels.LOAD_RULESETS, function () {
-			jQuery.getJSON("data/RuleSetAdditional.json").done(function (oRuleSets) {
+			jQuery.getJSON("test-resources/sap/ui/support/integration/ui/data/RuleSetAdditional.json").done(function (oRuleSets) {
 				CommunicationBus.publish(Channels.UPDATE_SUPPORT_RULES, {
 					sRuleSet: oRuleSets
 				});
