@@ -1,10 +1,12 @@
 /*global QUnit, sinon*/
 
-sap.ui.define(["sap/ui/thirdparty/jquery",
-               "sap/ui/core/Core",
-               "sap/ui/model/json/JSONModel",
-               "sap/uxap/AnchorBar"],
-	function ($, Core, JSONModel, AnchorBar) {
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core",
+	"sap/ui/model/json/JSONModel",
+	"sap/uxap/AnchorBar",
+	"sap/m/Button"
+], function ($, Core, JSONModel, AnchorBar, Button) {
 	"use strict";
 
 	var iRenderingDelay = 2000;
@@ -485,4 +487,40 @@ sap.ui.define(["sap/ui/thirdparty/jquery",
 		assert.ok(accEnhanceSpy.calledTwice, "Enhance accessibility function of the menu is called for 2 buttons");
 	});
 
+	QUnit.module("Rendering", {
+		beforeEach: function () {
+			this.oAnchorBarButton1 = new Button({text: "Section 1"});
+			this.oAnchorBarButton2 = new Button({text: "Section 2"});
+			this.oAnchorBar = new AnchorBar({
+				content: [
+					this.oAnchorBarButton1,
+					this.oAnchorBarButton2
+				]
+			});
+		},
+		afterEach: function () {
+			this.oAnchorBar.destroy();
+			this.oAnchorBar = null;
+			this.oAnchorBarButton = null;
+		}
+	});
+
+	QUnit.test("content tabindex values", function (assert) {
+		assert.expect(4);
+
+		// act
+		this.oAnchorBar.placeAt('qunit-fixture');
+		Core.applyChanges();
+
+		// assert
+		this.oAnchorBar.getContent().forEach(function(oButton) {
+			assert.strictEqual(oButton.$().attr('tabindex'), '-1', "All button has tabindex of -1 by default");
+		});
+
+		// act
+		this.oAnchorBar.setSelectedButton(this.oAnchorBarButton2);
+
+		assert.strictEqual(this.oAnchorBarButton2.$().attr('tabindex'), '0', "Selected button has tabindex of 0");
+		assert.strictEqual(this.oAnchorBarButton1.$().attr('tabindex'), '-1', "Rest of the button remains with tabindex of -1");
+	});
 });
