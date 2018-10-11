@@ -10,13 +10,13 @@ sap.ui.define([
 	'sap/ui/dt/ElementOverlay',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/OverlayUtil',
-	'sap/ui/fl/changeHandler/BaseTreeModifier',
+	'sap/ui/core/util/reflection/JsControlTreeModifier',
 	'sap/ui/fl/Utils',
 	'sap/ui/fl/variants/VariantManagement',
 	'sap/ui/base/ManagedObject',
 	'sap/m/delegate/ValueStateMessage',
 	'sap/ui/rta/command/CompositeCommand'
-], function(Plugin, RenameHandler, Utils, ElementOverlay, OverlayRegistry, OverlayUtil, BaseTreeModifier, flUtils, VariantManagement, ManagedObject, ValueStateMessage, CompositeCommand) {
+], function(Plugin, RenameHandler, Utils, ElementOverlay, OverlayRegistry, OverlayUtil, JsControlTreeModifier, flUtils, VariantManagement, ManagedObject, ValueStateMessage, CompositeCommand) {
 	"use strict";
 
 	/**
@@ -83,7 +83,7 @@ sap.ui.define([
 				vAssociationElement = oControl.getFor(),
 				aVariantManagementTargetElements;
 
-			sVariantManagementReference = BaseTreeModifier.getSelector(oControl, flUtils.getComponentForControl(oControl)).id;
+			sVariantManagementReference = JsControlTreeModifier.getSelector(oControl, flUtils.getComponentForControl(oControl)).id;
 
 			if (!vAssociationElement ||
 				(Array.isArray(vAssociationElement) && vAssociationElement.length === 0)) {

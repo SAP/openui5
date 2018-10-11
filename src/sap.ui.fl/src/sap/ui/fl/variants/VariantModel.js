@@ -6,7 +6,7 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/Utils",
-	"sap/ui/core/util/reflection/BaseTreeModifier",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/core/BusyIndicator",
@@ -15,7 +15,7 @@ sap.ui.define([
 	jQuery,
 	JSONModel,
 	Utils,
-	BaseTreeModifier,
+	JsControlTreeModifier,
 	Change,
 	BaseChangeHandler,
 	BusyIndicator,
@@ -747,7 +747,7 @@ sap.ui.define([
 	};
 
 	VariantModel.prototype._getLocalId = function(sId, oAppComponent) {
-		return BaseTreeModifier.getSelector(sId, oAppComponent).id;
+		return JsControlTreeModifier.getSelector(sId, oAppComponent).id;
 	};
 
 	VariantModel.prototype.switchToDefaultForVariantManagement = function (sVariantManagementReference) {
