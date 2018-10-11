@@ -1,17 +1,17 @@
-.exampleDiv {
+.GridDataSample .exampleDiv {
 	height: 7rem;
 	width: 100%;
 	background-color: #A9EAFF;
 }
 
-.exampleDiv>p,
-.propertiesDisplay {
+.GridDataSample .exampleDiv>p,
+.GridDataSample .propertiesDisplay {
 	position: relative;
 	top: 50%;
 	transform: translateY(-50%);
 }
 
-p {
+.GridDataSample p {
 	margin: 0;
 	text-align: center;
 	line-height: 150%;
