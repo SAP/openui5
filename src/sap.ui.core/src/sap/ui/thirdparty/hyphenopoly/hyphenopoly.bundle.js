@@ -496,7 +496,10 @@
 				"Uint8Array": window.Uint8Array
 			}, createImportObject(baseData), baseData.heapBuffer);
 			theHyphenEngine.convert();
-			prepareLanguagesObj(lang, encloseHyphenateFunction(baseData, theHyphenEngine.hyphenate), decode(new Uint16Array(heapBuffer).subarray(384, 640)), baseData.leftmin, baseData.rightmin);
+
+			setTimeout(function() {
+				prepareLanguagesObj(lang, encloseHyphenateFunction(baseData, theHyphenEngine.hyphenate), decode(new Uint16Array(heapBuffer).subarray(384, 640)), baseData.leftmin, baseData.rightmin);
+			}, 0);
 		}
 
 		var engineInstantiator = null;
