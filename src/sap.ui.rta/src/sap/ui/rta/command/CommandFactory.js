@@ -310,7 +310,7 @@ function(
 
 			mSettings = Object.assign({}, mSettings, {
 				element : bIsUiElement ? vElement : undefined,
-				selector : bIsUiElement ? undefined : vElement,
+				selector : bIsUiElement ? null : vElement,
 				name : sCommand
 			});
 
