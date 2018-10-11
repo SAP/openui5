@@ -77,12 +77,13 @@ var sSingleLangTest = "de",
         "hu": ["Megszentségteleníthetetlenségeskedéseitekért", "Meg-szent-ség-te-le-nít-he-tet-len-sé-ges-ke-dé-se-i-te-kért"],
         "it": ["hippopotomonstrosesquippedaliofobia", "hip-po-po-to-mon-stro-se-squip-pe-da-lio-fo-bia"],
         "lt": ["nebeprisikiškiakopūstlapiaujančiuosiuose", "ne-be-pri-si-kiš-kia-ko-pūst-la-piau-jan-čiuo-siuo-se"],
+        "nb-no": ["Omtrentlig", "Om-trent-lig"],
         "pt": ["pneumoultramicroscopicossilicovulcanoconiose", "pneu-moul-tra-mi-cros-co-pi-cos-si-li-co-vul-ca-no-co-ni-ose"],
         "ru": ["превысокомногорассмотрительствующий", "пре-вы-со-ком-но-го-рас-смот-ри-тель-ству-ю-щий"],
         "sl": ["Dialektičnomaterialističen", "Di-a-lek-tič-no-ma-te-ri-a-li-sti-čen"],
         "es": ["Electroencefalografistas", "Elec-tro-en-ce-fa-lo-gra-fis-tas"],
         "sv": ["Realisationsvinstbeskattning", "Re-a-li-sa-tions-vinst-be-skatt-ning"],
-        "th": ["ตัวอย่างข้อความที่จะใช้ในการยืนยันการถ่ายโอน", "ตัวอย่างข้อค-วามที่จะใช้ใน-การยืน-ยัน-การถ่ายโอน"],
+        "th": ["ตัวอย่างข้อความที่จะใช้ใน", "ตัวอย่างข้อค-วามที่จะใช้ใน"],
         "tr": ["Muvaffakiyetsizleştiricileştiriveremeyebileceklerimizdenmişsinizcesine", "Muvaffakiyetsizleştiricileştiriveremeyebileceklerimizdenmişsinizcesine"],
         "uk": ["Нікотинамідаденіндинуклеотидфосфат", "Ні-ко-ти-на-мі-да-де-нін-ди-ну-кле-о-тид-фо-сфат"]
     },
@@ -149,7 +150,7 @@ var sSingleLangTest = "de",
     });
 
     QUnit.test("initialize only single language - " + sSingleLangTest, function(assert) {
-        assert.expect(3);
+        assert.expect(2);
 
         var done = assert.async();
 
@@ -157,8 +158,6 @@ var sSingleLangTest = "de",
             assert.strictEqual(this.oHyphenation.isLanguageInitialized(sSingleLangTest), true, "hyphenation api is initialized with language - " + sSingleLangTest);
 
             assert.ok(this.oHyphenation.getInitializedLanguages().indexOf(sSingleLangTest) > -1, "list of initialized languages contains " + sSingleLangTest);
-
-            assert.ok(this.oHyphenation.getInitializedLanguages().length <= 2, "not more than 2 languages are initialized");
 
             done();
         }.bind(this)).catch(function(e) {
@@ -240,7 +239,7 @@ var sSingleLangTest = "de",
 
         this.oHyphenation.initialize("en-us", {"hyphen": "-"}).then(function() {
             assert.strictEqual(
-                that.oHyphenation.hyphenate("hyphen"),
+                that.oHyphenation.hyphenate("hyphen", "en-us"),
                 "hy-phen",
                 "hyphenation symbol is changed to '-'"
             );
@@ -329,8 +328,8 @@ var sSingleLangTest = "de",
         this.oHyphenation.initialize("en-us", {hyphen: "-", exceptions: mExceptionsEn}).then(function() {
             assert.deepEqual(that.oHyphenation.getExceptions("en-us"), mExceptionsEn, "get exceptions returns correct exceptions");
 
-            assert.strictEqual(that.oHyphenation.hyphenate("hyphen"), "h-y-p-h-e-n", "exception for word 'hyphen' works");
-            assert.strictEqual(that.oHyphenation.hyphenate("example"), "example", "exception for word 'example' works");
+            assert.strictEqual(that.oHyphenation.hyphenate("hyphen", "en-us"), "h-y-p-h-e-n", "exception for word 'hyphen' works");
+            assert.strictEqual(that.oHyphenation.hyphenate("example", "en-us"), "example", "exception for word 'example' works");
 
             done();
         });
@@ -345,8 +344,8 @@ var sSingleLangTest = "de",
         this.oHyphenation.initialize("en-us").then(function() {
             assert.notDeepEqual(that.oHyphenation.getExceptions(), mExceptionsEn, "get exceptions returns correct exceptions");
 
-            assert.notEqual(that.oHyphenation.hyphenate("hyphen"), "h-y-p-h-e-n", "there are no exceptions for word 'hyphen'");
-            assert.notEqual(that.oHyphenation.hyphenate("example"), "example", "there are no exceptions for word 'example'");
+            assert.notEqual(that.oHyphenation.hyphenate("hyphen", "en-us"), "h-y-p-h-e-n", "there are no exceptions for word 'hyphen'");
+            assert.notEqual(that.oHyphenation.hyphenate("example", "en-us"), "example", "there are no exceptions for word 'example'");
 
             done();
         });
@@ -363,8 +362,8 @@ var sSingleLangTest = "de",
 
             assert.deepEqual(that.oHyphenation.getExceptions("en-us"), mExceptionsEn, "get exceptions returns correct exceptions");
 
-            assert.strictEqual(that.oHyphenation.hyphenate("hyphen"), "h-y-p-h-e-n", "exception for word 'hyphen' works");
-            assert.strictEqual(that.oHyphenation.hyphenate("example"), "example", "exception for word 'example' works");
+            assert.strictEqual(that.oHyphenation.hyphenate("hyphen", "en-us"), "h-y-p-h-e-n", "exception for word 'hyphen' works");
+            assert.strictEqual(that.oHyphenation.hyphenate("example", "en-us"), "example", "exception for word 'example' works");
 
             done();
         });
