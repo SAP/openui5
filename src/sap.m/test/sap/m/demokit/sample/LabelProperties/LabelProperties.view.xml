@@ -12,19 +12,13 @@
 		labelSpanXL="2"
 		labelSpanL="2"
 		labelSpanM="2"
-		labelSpanS="4"
-		emptySpanXL="0"
-		emptySpanL="0"
-		emptySpanM="0"
-		emptySpanS="0"
-		columnsXL="1"
-		columnsL="1"
-		columnsM="1"
-		columnsS="1">
+		labelSpanS="5">
 		<Label text="Display Only" />
 		<Switch state="true" change="onDisplayOnlyChange" />
 		<Label text="Wrapping" />
-		<Switch state="true" change="onWrappingChange" />
+		<Switch id="wrappingSwitch" state="true" change="onWrappingChange" />
+		<Label text="Enable Hyphenation" />
+		<Switch state="false" change="onHyphenationChange" />
 		<Label text="Container Width" />
 		<Slider id="widthSlider" value="100" liveChange="onSliderMoved" />
 	</form:SimpleForm>
@@ -36,7 +30,7 @@
 			layout="ResponsiveGridLayout"
 			editable="true"
 			title="Result in a Form">
-			<Label id="labelInForm" displayOnly="true" wrapping="true" text="Lorem ipsum dolor sit amet, consetetursadipscingelitrseddiamnonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat"/>
+			<Label id="labelInForm" displayOnly="true" wrapping="true" text="Labels are used as titles [long test word] forsinglecontrolsorgroups of controls. Label appearance can be influenced by properties"/>
 			<Input></Input>
 		</form:SimpleForm>
 	</ScrollContainer>
@@ -47,7 +41,11 @@
 				labelFor="containerInput"
 				displayOnly="true"
 				wrapping="true"
-				text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet:"/>
+				text="Labels are used as titles [long test word] forsinglecontrolsorgroups of controls. Label appearance can be influenced by properties"/>
 		<Input id="containerInput"></Input>
 	</Panel>
+	<MessageStrip
+		class="sapUiSmallMarginBeginEnd sapUiSmallMarginTopBottom"
+		type="Warning"
+		text='Note: Hyphenation is not possible when Wrapping is set to "false"' />
 </mvc:View>

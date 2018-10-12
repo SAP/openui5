@@ -1153,7 +1153,8 @@
 		  "samples": [
 			"sap.m.sample.Text",
 			"sap.m.sample.TextMaxLines",
-			"sap.m.sample.TextRenderWhitespace"
+			"sap.m.sample.TextRenderWhitespace",
+			"sap.m.sample.TextHyphenation"
 		  ]
 		},
 		{
@@ -1841,14 +1842,19 @@
 		  "description": "The Text control has a property allowing browsers to render whitespace and tabs."
 		},
 		{
+		  "id": "sap.m.sample.TextHyphenation",
+		  "name": "Text - Hyphenation",
+		  "description": "The Text control has a property allowing hyphenation."
+		},
+		{
 		  "id": "sap.m.sample.Title",
 		  "name": "Title",
 		  "description": "The Title control is a simple one line text with additional semantic information about the level of the following section in the page structure for accessibility purposes."
 		},
 		{
 			"id": "sap.m.sample.TitleWrapping",
-			"name": "Title - wrapping",
-			"description": "The Title wrapping property can be used to change the layout of the Title control within containers with dynamic width."
+			"name": "Title Properties",
+			"description": "This sample shows the different behaviors of a title."
 		},
 		{
 		  "id": "sap.m.sample.ObjectAttributes",

@@ -29,6 +29,15 @@ sap.ui.define([
 			labelInForm.setWrapping(state);
 		},
 
+		onHyphenationChange: function(oEvent) {
+			var lblInForm = this.byId("labelInForm");
+			var lbl = this.byId("label");
+
+			var wrappingTypeValue = oEvent.getParameter("state") ? "Hyphenated" : "Normal";
+			lblInForm.setWrappingType(wrappingTypeValue);
+			lbl.setWrappingType(wrappingTypeValue);
+		},
+
 		onSliderMoved: function (evt) {
 			var value = evt.getParameter("value") + "%";
 			this.byId("containerForm").setWidth(value);
