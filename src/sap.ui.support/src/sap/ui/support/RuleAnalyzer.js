@@ -10,30 +10,29 @@ sap.ui.define(["sap/ui/support/supportRules/Main",
 
 
 		/**
-		 * The <code>jQuery.sap.support</code> namespace is the central entry point for the Support Assistant functionality.
+		 * The <code>sap.ui.support.RuleAnalyzer</code> namespace is the central entry point for the Support Assistant functionality.
 		 *
 		 * <h3>Overview</h3>
-		 * <code>jQuery.sap.support</code> reveals an API for the Support Assistant which you can easily work with to analyze an application.
+		 * <code>sap.ui.support.RuleAnalyzer</code> reveals an API for the Support Assistant which you can easily work with to analyze an application.
 		 *
 		 * <h3>Usage</h3>
 		 *
 		 * <ul>
-		 * <li> <code>jQuery.sap.support.addRule</code> method allows adding a new rule. </li>
-		 * <li> <code>jQuery.sap.support.analyze</code> starts the analysis of the application. </li>
-		 * <li> Then the result can be accessed with methods <code>jQuery.sap.support.getAnalysisHistory</code>,
-		 * <code>jQuery.sap.support.getLastAnalysisHistory</code> or <code>jQuery.sap.support.getFormattedAnalysisHistory</code>. </li>
+		 * <li> <code>sap.ui.support.RuleAnalyzer.addRule</code> method allows adding a new rule. </li>
+		 * <li> <code>sap.ui.support.RuleAnalyzer.analyze</code> starts the analysis of the application. </li>
+		 * <li> Then the result can be accessed with methods <code>sap.ui.support.RuleAnalyzer.getAnalysisHistory</code>,
+		 * <code>sap.ui.support.RuleAnalyzer.getLastAnalysisHistory</code> or <code>sap.ui.support.RuleAnalyzer.getFormattedAnalysisHistory</code>. </li>
 		 * </ul>
 		 *
 		 * For more information, see {@link topic:a34eb58aaf124f538a3ead23a6cab04a Support Assistant API}.
 		 *
 		 * @namespace
-		 * @deprecated Since version 1.60.0. Please use sap/ui/support/RuleAnalyzer instead.
-		 * @alias jQuery.sap.support
+		 * @alias sap.ui.support.RuleAnalyzer
 		 * @author SAP SE
 		 * @version ${version}
 		 * @public
 		 */
-		jQuery.sap.support = {
+		var RuleAnalyzer = {
 
 			/**
 			 * Main method to perform analysis of a given running application.
@@ -41,8 +40,7 @@ sap.ui.define(["sap/ui/support/supportRules/Main",
 			 * Allows to choose a particular execution scope - desired part of the UI
 			 * to be checked and a flexible way to specify the list of rules to be used.
 			 *
-			 * @memberof jQuery.sap.support
-			 * @deprecated Since version 1.60.0. Please use sap/ui/support/RuleAnalyzer instead.
+			 * @memberof sap.ui.support.RuleAnalyzer
 			 * @public
 			 * @param {object} [oExecutionScope] The execution scope of the analysis (see {@link topic:e15067d976f24b11907f4c262bd749a0 Execution Scopes}).
 			 * @param {string} [oExecutionScope.type = "global"] Possible values are <code>global</code>, <code>subtree</code> or <code>component</code>.
@@ -69,8 +67,7 @@ sap.ui.define(["sap/ui/support/supportRules/Main",
 
 			/**
 			 * Returns the result of the last analysis performed.
-			 * @memberof jQuery.sap.support
-			 * @deprecated Since version 1.60.0. Please use sap/ui/support/RuleAnalyzer instead.
+			 * @memberof sap.ui.support.RuleAnalyzer
 			 * @public
 			 * @returns {Object} Last analysis history.
 			 */
@@ -81,8 +78,7 @@ sap.ui.define(["sap/ui/support/supportRules/Main",
 			/**
 			 * Returns the history of all executed analyses.
 			 *
-			 * @memberof jQuery.sap.support
-			 * @deprecated Since version 1.60.0. Please use sap/ui/support/RuleAnalyzer instead.
+			 * @memberof sap.ui.support.RuleAnalyzer
 			 * @public
 			 * @returns {Object[]} Array of history objects in the order of analyses performed. The results of the last analysis are contained in the last element in the array.
 			 */
@@ -93,8 +89,7 @@ sap.ui.define(["sap/ui/support/supportRules/Main",
 			/**
 			 * Returns the history of all executed analyses into formatted output depending on the passed format.
 			 *
-			 * @memberof jQuery.sap.support
-			 * @deprecated Since version 1.60.0. Please use sap/ui/support/RuleAnalyzer instead.
+			 * @memberof sap.ui.support.RuleAnalyzer
 			 * @public
 			 * @param {sap.ui.support.HistoryFormats} [sFormat=sap.ui.support.HistoryFormats.String] The format into which the history object will be converted. Possible values are listed in sap.ui.support.HistoryFormats.
 			 * @returns {*} All analysis history objects in the correct format.
@@ -106,8 +101,7 @@ sap.ui.define(["sap/ui/support/supportRules/Main",
 			 /**
 			 * Adds new temporary rule when in silent mode
 			 *
-			 * @memberof jQuery.sap.support
-			 * @deprecated Since version 1.60.0. Please use sap/ui/support/RuleAnalyzer instead.
+			 * @memberof sap.ui.support.RuleAnalyzer
 			 * @public
 			 * @since 1.60
 			 * @param {Object} oRule Settings for the new rule. For detailed information about its properties see {@link topic:eaeea19a991d46f29e6d8d8827317d0e Rule Property Values}
@@ -118,5 +112,5 @@ sap.ui.define(["sap/ui/support/supportRules/Main",
 			}
 		};
 
-		return jQuery.sap.support;
+		return RuleAnalyzer;
 	});

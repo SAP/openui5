@@ -18,29 +18,33 @@ function testRule(oSettings) {
 
 		var done = assert.async();
 
-		jQuery.sap.support.analyze(
-			{
-				type: oSettings.executionScopeType,
-				selectors: oSettings.executionScopeSelectors
-			},
-			[{
-				libName: oSettings.libName,
-				ruleId: oSettings.ruleId
-			}]
-		).then(function () {
-			var oHistory = jQuery.sap.support.getLastAnalysisHistory();
+		sap.ui.require(["sap/ui/support/RuleAnalyzer"],
+			function (RuleAnalyzer) {
 
-			assert.equal(oHistory.issues.length, oSettings.expectedNumberOfIssues, " there should be " + oSettings.expectedNumberOfIssues + " issues");
+				RuleAnalyzer.analyze({
+						type: oSettings.executionScopeType,
+						selectors: oSettings.executionScopeSelectors
+					},
+					[{
+						libName: oSettings.libName,
+						ruleId: oSettings.ruleId
+					}]
+				).then(function () {
+					var oHistory = RuleAnalyzer.getLastAnalysisHistory();
 
-			// If there are issues found check the rule id
-			if (oHistory.issues.length) {
-				assert.equal(oHistory.issues[0].rule.id, oSettings.ruleId, " should be an issue from rule " + oSettings.ruleId);
-			}
+					assert.equal(oHistory.issues.length, oSettings.expectedNumberOfIssues, " there should be " + oSettings.expectedNumberOfIssues + " issues");
 
-			done();
-		});
+					// If there are issues found check the rule id
+					if (oHistory.issues.length) {
+						assert.equal(oHistory.issues[0].rule.id, oSettings.ruleId, " should be an issue from rule " + oSettings.ruleId);
+					}
 
-		this.clock.tick(500);
-		this.clock.restore();
+					done();
+				});
+
+				this.clock.tick(500);
+				this.clock.restore();
+
+			});
 	});
 }

@@ -10,7 +10,9 @@
 			data-sap-ui-libs="sap.m, sap.ui.support">
 	</script>
 	<script>
-		sap.ui.require(["sap/ui/support/Bootstrap"], function (bootstrap) {
+		sap.ui.require(["sap/ui/support/Bootstrap",
+					"sap/ui/support/RuleAnalyzer"],
+				function (bootstrap, RuleAnalyzer) {
 			bootstrap.initSupportRules(["true", "silent"]);
 
 			var oPanel = new sap.m.Panel({
@@ -54,10 +56,10 @@
 				text:'Analyze',
 				press: function() {
 
-					jQuery.sap.support.analyze({
+					RuleAnalyzer.analyze({
 						type : 'global'
 					}, "Accessibility").then(function () {
-						var history = jQuery.sap.support.getLastAnalysisHistory();
+						var history = RuleAnalyzer.getLastAnalysisHistory();
 
 						list.destroyItems();
 
@@ -79,8 +81,6 @@
 			list.placeAt('analyze');
 			btn.placeAt('analyze');
 		});
-
-
 	</script>
 </head>
 <body class="sapUiBody" role="application">
