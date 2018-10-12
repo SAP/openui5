@@ -444,7 +444,7 @@ function(
 			noInvalidationProps: ["enabled", "selectedKey"],
 			invalidationEvents: ["_containerWidthChanged"],
 			onBeforeEnterOverflow: this._onBeforeEnterOverflow,
-			onAfterExitOverflow: this.onAfterExitOverflow
+			onAfterExitOverflow: this._onAfterExitOverflow
 		};
 
 		return oConfig;
