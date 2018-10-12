@@ -384,13 +384,14 @@ sap.ui.define([
 			checkTitle.call(this, assert, "SampleTitle Copy", "SampleTitle Copy");
 		});
 
-		QUnit.test("when calling '_getVariantTitleForCopy' with a title containing -> copy pattern, no counter, previous existence without counter", function(assert) {
-			this.oModel.oData["varMgtKey"].variants.push({
-				title: "SampleTitle Copy",
-				visible: true
-			});
-			checkTitle.call(this, assert, "SampleTitle Copy(1)", "SampleTitle Copy");
-			this.oModel.oData["varMgtKey"].variants.splice(3, 1);
+		QUnit.test("when calling '_getVariantTitleForCopy' with the greatest counter at the beginning of the model and title containing -> copy pattern, counter, previous existence with counter", function(assert) {
+			this.oModel.oData["varMgtKey"].variants.unshift({
+					key: "variant100",
+					title: "SampleTitle Copy(100)",
+					visible: true
+				});
+			checkTitle.call(this, assert, "SampleTitle Copy(101)", "SampleTitle Copy");
+			this.oModel.oData["varMgtKey"].variants.splice(0, 1);
 		});
 
 		QUnit.test("when calling '_getVariantTitleForCopy' with a title containing -> no copy pattern, no counter, previous existence with counter", function(assert) {
@@ -399,7 +400,7 @@ sap.ui.define([
 				visible: true
 			});
 			checkTitle.call(this, assert, "SampleTitle Copy(6)", "SampleTitle");
-			this.oModel.oData["varMgtKey"].variants.splice(3, 1);
+			this.oModel.oData["varMgtKey"].variants.splice(2, 1);
 		});
 
 		QUnit.test("when calling '_getVariantTitleForCopy' with a title containing -> copy pattern, counter, previous existence with counter", function(assert) {
@@ -411,7 +412,7 @@ sap.ui.define([
 				visible: true
 			});
 			checkTitle.call(this, assert, "SampleTitle Copy(9)", "SampleTitle Copy(5)");
-			this.oModel.oData["varMgtKey"].variants.splice(3, 2);
+			this.oModel.oData["varMgtKey"].variants.splice(2, 2);
 		});
 
 		QUnit.test("when calling '_getVariantTitleForCopy' with a title containing -> copy pattern, counter, previous existence without counter and a different base title", function(assert) {
@@ -423,7 +424,7 @@ sap.ui.define([
 				visible: true
 			});
 			checkTitle.call(this, assert, "TitleSample Copy", "TitleSample");
-			this.oModel.oData["varMgtKey"].variants.splice(3, 2);
+			this.oModel.oData["varMgtKey"].variants.splice(2, 2);
 		});
 
 		QUnit.test("when calling '_getVariantTitleForCopy' with a title containing -> copy pattern, counter, no previous existence and a different resource bundle pattern", function(assert) {
@@ -445,7 +446,7 @@ sap.ui.define([
 				visible: true
 			});
 			checkTitle.call(this, assert, "(1) SampleTitle Copy", "SampleTitle Copy(5)");
-			this.oModel.oData["varMgtKey"].variants.splice(3, 2);
+			this.oModel.oData["varMgtKey"].variants.splice(2, 2);
 		});
 
 		//Integration Test

@@ -312,7 +312,7 @@ function(
 
 			if (sCommand !== "appDescriptor" && sCommand !== "composite"){
 				mSettings = Object.assign({}, mSettings, {
-					selector : bIsUiElement ? undefined : vElement
+					selector : bIsUiElement ? null : vElement
 				});
 			}
 
