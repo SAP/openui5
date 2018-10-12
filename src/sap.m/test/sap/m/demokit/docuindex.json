@@ -1026,7 +1026,8 @@
 		  "samples": [
 			"sap.m.sample.MultiComboBox",
 			"sap.m.sample.MultiComboBoxDefaultFiltering",
-			"sap.m.sample.MultiComboBoxCustomFiltering"
+			"sap.m.sample.MultiComboBoxCustomFiltering",
+			"sap.m.sample.MultiComboBoxTwoColumnsLayout"
 		  ]
 		},
 		{
@@ -2065,6 +2066,11 @@
 		  "id": "sap.m.sample.MultiComboBoxCustomFiltering",
 		  "name": "MultiComboBox - Custom Filtering and Suggestions",
 		  "description": "The default filtering for the suggestionsItems aggregation uses a 'starts with per term' style operator. You can override this with your own custom filter function using the setFilterFunction method."
+		},
+		{
+		  "id": "sap.m.sample.MultiComboBoxTwoColumnsLayout",
+		  "name": "MultiComboBox - Two columns layout",
+		  "description": "Use the dropdown list with two columns layout if you need to display additional information to your options, like e.g. currencies to countries or abbreviations to systems."
 		},
 		{
 		  "id": "sap.m.sample.P13nDialog",

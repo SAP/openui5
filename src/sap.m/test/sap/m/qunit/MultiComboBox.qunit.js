@@ -5900,4 +5900,74 @@ sap.ui.define([
 		// cleanup
 		oMultiComboBox.destroy();
 	});
+
+	QUnit.module("Two Column Layout", {
+		beforeEach: function(){
+			this.oMultiComboBox = new sap.m.MultiComboBox({
+				showSecondaryValues: true,
+				items: [
+					new sap.ui.core.ListItem({
+						key: "001",
+						text: "Algeria",
+						additionalText: "AL"
+					}),
+					new sap.ui.core.ListItem({
+						key: "002",
+						text: "Argentina",
+						additionalText: "AR"
+					}),
+					new sap.ui.core.ListItem({
+						key: "003",
+						text: "Qatar",
+						additionalText: "QA"
+					})
+				]
+			}).placeAt("MultiComboBox-content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function(){
+			this.oMultiComboBox.destroy();
+		}
+	});
+
+	QUnit.test("Highlighting", function(){
+		var oFakeEvent = {
+			target: {
+				value: "a"
+			},
+			setMarked: function () { },
+			srcControl: this.oMultiComboBox
+		}, oListItemRef;
+
+		this.oMultiComboBox.oninput(oFakeEvent);
+		this.clock.tick(2000);
+
+		oListItemRef = this.oMultiComboBox.getList().getItems()[0].$();
+		assert.strictEqual(oListItemRef.find(".sapMSLITitleOnly")[0].innerHTML,
+			"<b>A</b>lgeria", "The main text is correctly highlighted.");
+
+		assert.strictEqual(oListItemRef.find(".sapMSLIInfo")[0].innerHTML,
+			"<b>A</b>L", "The additional text is correctly highlighted.");
+	});
+
+	QUnit.test("StandardListItem mapping", function(){
+		var oFakeEvent = {
+			target: {
+				value: "a"
+			},
+			setMarked: function () { },
+			srcControl: this.oMultiComboBox
+		}, aListItems = [],
+			aSuggestions = this.oMultiComboBox.getItems();
+
+		this.oMultiComboBox.open();
+		this.clock.tick(2000);
+
+		aListItems = this.oMultiComboBox.getList().getItems();
+
+		for (var i = 0; i < 3; i++) {
+			assert.strictEqual(aListItems[i].getTitle(), aSuggestions[i].getText(), "Item " + i + " text is correctly mapped.");
+			assert.strictEqual(aListItems[i].getInfo(), aSuggestions[i].getAdditionalText(), "Item " + i + " info is correctly mapped.");
+		}
+	});
 });

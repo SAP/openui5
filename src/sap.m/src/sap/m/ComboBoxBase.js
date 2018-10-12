@@ -77,6 +77,18 @@ sap.ui.define([
 				library: "sap.m",
 				"abstract": true,
 				defaultAggregation: "items",
+				properties: {
+					/**
+					 * Indicates whether the text values of the <code>additionalText</code> property of a
+					 * {@link sap.ui.core.ListItem} are shown.
+					 * @since 1.60
+					 */
+					showSecondaryValues: {
+						type: "boolean",
+						group: "Misc",
+						defaultValue: false
+					}
+				},
 				aggregations: {
 
 					/**

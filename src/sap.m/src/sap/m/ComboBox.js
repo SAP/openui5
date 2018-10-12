@@ -106,17 +106,6 @@ sap.ui.define([
 					},
 
 					/**
-					 * Indicates whether the text values of the <code>additionalText</code> property of a
-					 * {@link sap.ui.core.ListItem} are shown.
-					 * @since 1.32.3
-					 */
-					showSecondaryValues: {
-						type: "boolean",
-						group: "Misc",
-						defaultValue: false
-					},
-
-					/**
 					 * Indicates whether the filter should check in both the <code>text</code> and the <code>additionalText</code> property of the
 					 * {@link sap.ui.core.ListItem} for the suggestion.
 					 * @since 1.46
