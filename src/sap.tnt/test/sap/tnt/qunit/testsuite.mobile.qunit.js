@@ -31,11 +31,6 @@ sap.ui.define(function () {
 		},
 		tests: {
 			"demokit/toolpageapp/webapp/test/integration/opaTests": {
-				/*
-				 * Page kept because of
-				 *  - Demokit Content
-				 */
-				page: "test-resources/sap/tnt/demokit/toolpageapp/webapp/test/integration/opaTests.qunit.html",
 				title: "Integration Tests for ToolPage app",
 				ui5: {
 					preload: "async"
@@ -48,7 +43,8 @@ sap.ui.define(function () {
 				group: "Demokit Other Content",
 				module: [
 					"sap/ui/demo/toolpageapp/test/integration/AllJourneys"
-				]
+				],
+				autostart: false
 			},
 			"InfoLabel": {
 				coverage: {
