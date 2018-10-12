@@ -18,7 +18,7 @@ sap.ui.define([
 	"sap/ui/performance/Measurement",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
-], function(
+], function (
 	BindingMode,
 	BindingParser,
 	Context,
@@ -495,7 +495,7 @@ sap.ui.define([
 	 * @since 1.55.0
 	 */
 	// @override
-	ODataMetaModel.prototype.getAdapterFactoryModulePath = function() {
+	ODataMetaModel.prototype.getAdapterFactoryModulePath = function () {
 		return "sap/ui/mdc/experimental/adapter/odata/v2/ODataAdapterFactory";
 	};
 

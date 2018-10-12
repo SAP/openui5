@@ -851,7 +851,7 @@ sap.ui.define([
 			function copyPathValue(sPath, sProperty, oOldValue , oNewValue) {
 				var aSegments = sProperty.split("/");
 
-				aSegments.every(function(sSegment, iIndex) {
+				aSegments.every(function (sSegment, iIndex) {
 					if (oNewValue[sSegment] === null) {
 						oOldValue[sSegment] = null;
 						if (iIndex < aSegments.length - 1) {
