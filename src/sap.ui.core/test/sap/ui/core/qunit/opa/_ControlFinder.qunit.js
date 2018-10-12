@@ -59,7 +59,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should get control for element ID", function (assert) {
-		var oControl = _ControlFinder._getControlForElementID("myId-content");
+		var oControl = _ControlFinder._getControlForElement("myId-content");
 		assert.strictEqual(oControl, this.oButton);
 	});
 
@@ -94,6 +94,18 @@ sap.ui.define([
 		});
 
 		assert.strictEqual(aResult.length, 0, "Should not find any controls with non-existent ancestor");
+	});
+
+	QUnit.test("Should accept only ancestor ID for backwards compatibility", function (assert) {
+		var oObjectNumber = _ControlFinder._findControls({
+			controlType: "sap.m.ObjectNumber"
+		})[0];
+		var aResult = _ControlFinder._findControls({
+			controlType: "sap.m.ObjectNumber",
+			ancestor: [this.oObjectListItem.getId()]
+		});
+
+		assert.strictEqual(aResult[0], oObjectNumber, "Should match the correct element");
 	});
 
 	QUnit.module("_ControlFinder - interaction adapters", {

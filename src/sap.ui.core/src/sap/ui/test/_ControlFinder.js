@@ -27,7 +27,14 @@ sap.ui.define([
      */
     _ControlFinder._findControls = function (oOptions) {
         if (oOptions.ancestor) {
-            var oAncestor = _ControlFinder._findControls(oOptions.ancestor)[0];
+            var mAncestorSelector = {};
+            // ensure backwards compatibility with UIVeri5
+            if ($.isArray(oOptions.ancestor)) {
+                mAncestorSelector = {id: oOptions.ancestor[0]};
+            } else {
+                mAncestorSelector = oOptions.ancestor;
+            }
+            var oAncestor = _ControlFinder._findControls(mAncestorSelector)[0];
             if (!oAncestor) {
                 return [];
             }
@@ -93,25 +100,16 @@ sap.ui.define([
         });
     };
 
-     /**
-     * Retrieves the control best corresponding to the DOM element with a certain ID.
-     * @param {string} sElementId DOM element ID
-     * @returns {sap.ui.core.Control} the control in the given context
-     * @private
-     */
-    _ControlFinder._getControlForElementID = function (sElementId) {
-        var controls = _ControlFinder._getIdentifiedDOMElement("#" + sElementId).control();
-        return controls && controls[0];
-    };
-
     /**
      * Retrieves the control best corresponding to the DOM element
-     * @param {object} oElement DOM element
+     * @param {object|string} vElement DOM element or its ID
+     * Before change 3592877, only ID is allowed
      * @returns {sap.ui.core.Control} the control in the given context
      * @private
      */
-    _ControlFinder._getControlForElement = function (oElement) {
-        var controls = _ControlFinder._getIdentifiedDOMElement(oElement).control();
+    _ControlFinder._getControlForElement = function (vElement) {
+        var vSelector = Object.prototype.toString.call(vElement) === "[object String]" ? "#" + vElement : vElement;
+        var controls = _ControlFinder._getIdentifiedDOMElement(vSelector).control();
         return controls && controls[0];
     };
 
