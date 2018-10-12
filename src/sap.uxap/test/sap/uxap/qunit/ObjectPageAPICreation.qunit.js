@@ -133,6 +133,15 @@ function (
 				oSapUiObject.placeAt("qunit-fixture");
 				Core.applyChanges();
 				return oSapUiObject;
+			},
+			exists: function (vObject) {
+				if (arguments.length === 1) {
+					return vObject && ("length" in vObject) ? vObject.length > 0 : !!vObject;
+				}
+
+				return Array.prototype.slice.call(arguments).every(function (oObject) {
+					return this.exists(oObject);
+				});
 			}
 		};
 
@@ -628,7 +637,7 @@ function (
 				assert.strictEqual(oObjectPage._oScroller._$Container.get(0), oObjectPage._$opWrapper.get(0), "scroller has correct container reference");
 
 				oObjectPage._oScroller.scrollTo(0, 10);
-				assert.strictEqual(oObjectPage._$opWrapper.get(0).scrollTop, 10, "scroller can correctly scroll after we have externally provided the container reference");
+				assert.strictEqual(Math.round(oObjectPage._$opWrapper.scrollTop()), 10, "scroller can correctly scroll after we have externally provided the container reference");
 
 				oObjectPage.removeEventDelegate(oDelegate);
 				jQuery("#qunit-fixture").height(vOriginalHeight); // restore the original height
@@ -1879,6 +1888,38 @@ function (
 		assert.ok(oSpy.calledWith("Transparent"), "setBackgroundDesign is called on headerContent with correct param");
 	});
 
+	QUnit.module("ObjectPage with ObjectPageDynamicHeaderTitle without header content", {
+		beforeEach: function () {
+			this.NUMBER_OF_SECTIONS = 2;
+			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, this.NUMBER_OF_SECTIONS, false);
+			this.oObjectPage.setHeaderTitle(new ObjectPageDynamicHeaderTitle());
+			helpers.renderObject(this.oObjectPage);
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("ObjectPage headerContent not rendered", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oTitle = oObjectPage.getHeaderTitle(),
+			done = assert.async();
+
+		this.oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			setTimeout(function () {
+				assert.notOk(helpers.exists(oObjectPage.getHeaderContent()), "The DynamicPage Header does not exist.");
+				assert.equal(oTitle._getFocusSpan().$().attr("tabindex"), undefined, "Focus span should be excluded from the tab chain");
+				assert.notOk(oObjectPage.$().hasClass("sapUxAPObjectPageLayoutTitleClickEnabled"), "No ObjectPage Header content - sapUxAPObjectPageLayoutTitleClickEnabled not added");
+
+				oObjectPage.setToggleHeaderOnTitleClick(true);
+
+				assert.equal(oTitle._getFocusSpan().$().attr("tabindex"), undefined, "Focus span should still be excluded from the tab chain");
+				assert.notOk(oObjectPage.$().hasClass("sapUxAPObjectPageLayoutTitleClickEnabled"), "No ObjectPage Header content - sapUxAPObjectPageLayoutTitleClickEnabled not added");
+				done();
+			}, 0);
+		});
+	});
+
 	QUnit.module("ObjectPage with ObjectPageDynamicHeaderTitle", {
 		beforeEach: function () {
 			this.NUMBER_OF_SECTIONS = 2;
@@ -2264,14 +2305,14 @@ function (
 		// wait for the event when the page is rendered and ready
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 			// Setup: save init scroll position
-			iInitScrollTop = oObjectPage._$opWrapper.scrollTop();
+			iInitScrollTop = Math.round(oObjectPage._$opWrapper.scrollTop());
 
 			// Act: call scrolling while scrolling is suppressed
 			iNewScrollTop = iInitScrollTop + 10;
 			oObjectPage.getScrollDelegate().scrollTo(0 /* x */, iNewScrollTop /* y */);
 
 			// Check if scroll was effective
-			assert.strictEqual(oObjectPage._$opWrapper.scrollTop(), iNewScrollTop, "scroll top is changed");
+			assert.strictEqual(Math.round(oObjectPage._$opWrapper.scrollTop()), iNewScrollTop, "scroll top is changed");
 			done();
 		});
 

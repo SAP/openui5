@@ -1246,26 +1246,24 @@ sap.ui.define([
 		}
 	};
 
-	DynamicPageTitle.prototype._updateARIAState = function () {
-		var sARIAText = this._getARIALabelReferences();
+	DynamicPageTitle.prototype._updateARIAState = function (bExpanded) {
+		var sARIAText = this._getARIALabelReferences(bExpanded) || DynamicPageTitle.DEFAULT_HEADER_TEXT_ID,
+			$oFocusSpan = this._getFocusSpan().$();
 
-		this._getFocusSpan().$().attr("aria-labelledby", sARIAText);
+		$oFocusSpan.attr("aria-labelledby", sARIAText);
+		$oFocusSpan.attr("aria-expanded", bExpanded);
 		return this;
 	};
 
-	DynamicPageTitle.prototype._getARIALabelReferences = function () {
+	DynamicPageTitle.prototype._getARIALabelReferences = function (bExpanded) {
 		var sReferences = "",
-			oHeading = this.getHeading();
+			oHeading = this.getHeading() || (bExpanded ? this.getExpandedHeading() : this.getSnappedHeading());
 
 		if (oHeading) {
 			sReferences += oHeading.getId();
 		}
 
 		return sReferences;
-	};
-
-	DynamicPageTitle.prototype._updateAriaExpandedState = function (bExpanded) {
-		this._getFocusSpan().$().attr("aria-expanded", bExpanded);
 	};
 
 	DynamicPageTitle.prototype._focus = function () {
@@ -1275,7 +1273,7 @@ sap.ui.define([
 	DynamicPageTitle.prototype._getFocusSpan = function () {
 		if (!this.getAggregation("_focusSpan")) {
 			var sTabIndex = this._bIsFocusable ? 'tabindex="0"' : '',
-				sLabelledBy = this._getARIALabelReferences() || DynamicPageTitle.DEFAULT_HEADER_TEXT_ID,
+				sLabelledBy = this._getARIALabelReferences(this._bExpandedState) || DynamicPageTitle.DEFAULT_HEADER_TEXT_ID,
 				oFocusSpan = new HTML({
 					id: this.getId() + "-focusSpan",
 					preferDOM: false,
