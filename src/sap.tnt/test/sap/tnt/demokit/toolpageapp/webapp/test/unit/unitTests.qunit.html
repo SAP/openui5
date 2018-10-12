@@ -8,8 +8,10 @@
 	<script
 		id="sap-ui-bootstrap"
 		src="../../../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-oninit="module:unit/allTests"
 		data-sap-ui-resourceroots='{
-			"sap.ui.demo.toolpageapp": "../../"
+			"sap.ui.demo.toolpageapp": "../../",
+			"unit": "./"
 		}'
 		data-sap-ui-preload="async">
 	</script>
@@ -19,20 +21,6 @@
 	<script src="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
 	<script src="../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script src="../../../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
-
-	<script>
-		QUnit.config.autostart = false;
-		sap.ui.getCore().attachInit(function () {
-			"use strict";
-			sap.ui.require([
-				"sap/ui/demo/toolpageapp/test/unit/allTests"
-			], function () {
-				QUnit.start();
-			});
-		});
-
-	</script>
-
 </head>
 <body>
 	<div id="qunit"></div>

@@ -1,3 +1,4 @@
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"./arrangements/Arrangement",
@@ -8,4 +9,6 @@ sap.ui.define([
 		arrangements: new Arrangement(),
 		viewNamespace: "sap.ui.demo.toolpageapp.view."
 	});
+
+	QUnit.start();
 });
