@@ -102,8 +102,10 @@ sap.ui.define([
 		}
 		if (mActions.reveal){
 			mActions.reveal.controlTypeNames.forEach(function(mControlType){
-				sControlType = bSingular ? mControlType.singular : mControlType.plural;
-				aNames.push(sControlType);
+				if (mControlType) {
+					sControlType = bSingular ? mControlType.singular : mControlType.plural;
+					aNames.push(sControlType);
+				}
 			});
 		}
 		var aNonDuplicateNames = aNames.reduce(function(_aNames, sName){
@@ -123,7 +125,7 @@ sap.ui.define([
 		} else {
 			sControlType = oTextResources.getText("MULTIPLE_CONTROL_NAME");
 		}
-		return oTextResources.getText(sRtaTextKey, sControlType);
+		return oTextResources.getText(sRtaTextKey, [sControlType]);
 	}
 
 	function _fakeStashedControlInfos() {
