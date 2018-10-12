@@ -2398,7 +2398,7 @@ sap.ui.define([
 				return this;
 			}
 
-			this.oPopup.setModal(bModal, jQuery.trim("sapMPopoverBLayer " + sModalCSSClass || ""));
+			this.oPopup.setModal(bModal, jQuery.trim("sapMPopoverBLayer " + (sModalCSSClass || "")));
 
 			// suppress re-rendering
 			this.setProperty("modal", bModal, true);

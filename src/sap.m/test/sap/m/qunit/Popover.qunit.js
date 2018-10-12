@@ -1480,6 +1480,21 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("setModal arguments forwarding", function(assert){
+		// setup
+		this.oPopover = new Popover();
+
+		var oSpy = sinon.spy(this.oPopover.oPopup, "setModal");
+		this.oPopover.setModal(true, undefined);
+
+		// assert
+		assert.strictEqual(oSpy.getCall(0).args[1], "sapMPopoverBLayer", "The css styles are forwarded properly to the popup.");
+
+		// restore
+		this.oPopover.destroy();
+		oSpy.restore();
+	});
+
 
 	QUnit.module("Internal methods");
 
