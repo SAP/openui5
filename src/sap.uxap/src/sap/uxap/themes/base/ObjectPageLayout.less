@@ -15,6 +15,17 @@
 	isolation: isolate;
 	z-index: 0;
 	white-space: normal; // BCP: 1780382804
+
+	/* ObjectAttribute will not truncate inside ObjectPage but rather will go on more lines */
+	.sapUxAPObjectPageHeaderDetails {
+		.sapMObjectAttributeActive .sapMObjectAttributeTitle,
+		.sapMObjectAttributeActive .sapMObjectAttributeText {
+			display: inline;
+			position: relative;
+			white-space: pre-line;
+			word-wrap: break-word;
+		}
+	}
 }
 
 body > .sapUxAPObjectPageLayout,
