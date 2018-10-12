@@ -606,29 +606,78 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when the control's dt metadata has a reveal action with changeOnRelevantContainer true but the relevant container does not have stable ID", function(assert) {
+		function whenOverlayHasNoStableId(oOverlayWithoutStableID){
 			sandbox.stub(this.oPlugin, "hasStableId").callsFake(function(oOverlay){
-				if (oOverlay === this.oParentOverlay){
+				if (oOverlay === oOverlayWithoutStableID){
 					return false;
 				} else {
 					return true;
 				}
-			}.bind(this));
+			});
+		}
 
+		QUnit.test("when the control's dt metadata has a reveal action with changeOnRelevantContainer true but the relevant container does not have stable ID", function(assert) {
 			return createOverlayWithAggregationActions.call(this, {
 					"reveal" : {
 						changeType : "unhideControl",
 						changeOnRelevantContainer: true
 					}
 				},
-				ON_CHILD
+				ON_SIBLING
 			)
-
 			.then(function(oOverlay) {
-				assert.equal(this.oPlugin._isEditableCheck(oOverlay, false), false, "then _isEditableCheck returns false");
+				whenOverlayHasNoStableId.call(this, this.oPseudoPublicParentOverlay);
+
+				assert.equal(this.oPlugin._isEditableCheck(oOverlay, true), false, "then the overlay is not editable");
 			}.bind(this));
 		});
 
+		QUnit.test("when the control's dt metadata has a reveal action with changeOnRelevantContainer true but the parent does not have stable ID", function(assert) {
+			return createOverlayWithAggregationActions.call(this, {
+				"reveal" : {
+					changeType : "unhideControl",
+					changeOnRelevantContainer: true
+				}
+			},
+			ON_SIBLING
+			)
+			.then(function(oOverlay) {
+				whenOverlayHasNoStableId.call(this, this.oParentOverlay);
+
+				assert.equal(this.oPlugin._isEditableCheck(oOverlay, true), false, "then the overlay is not editable");
+			}.bind(this));
+		});
+		QUnit.test("when the control's dt metadata has a reveal action but the parent does not have stable ID", function(assert) {
+			return createOverlayWithAggregationActions.call(this, {
+					"reveal" : {
+						changeType : "unhideControl"
+					}
+				},
+				ON_CHILD
+			)
+			.then(function(oOverlay) {
+				whenOverlayHasNoStableId.call(this, this.oParentOverlay);
+
+				assert.equal(this.oPlugin._isEditableCheck(oOverlay, false), false, "then the overlay is not editable");
+			}.bind(this));
+		});
+
+		QUnit.test("when the control has sibling actions but the parent does not have stable ID", function(assert) {
+			return createOverlayWithAggregationActions.call(this, {
+				"reveal" : {
+					changeType : "unhideControl"
+				}
+			},
+			ON_SIBLING
+			)
+			.then(function(oOverlay) {
+				// E.g. FormContainer has no stable ID, but another FormContainer has stable ID and has a hidden FormElement that could be revealed,
+				// then the move to the FormContainer without stable ID would fail, so no reveal action should be available.
+				whenOverlayHasNoStableId.call(this, this.oParentOverlay);
+
+				assert.equal(this.oPlugin._isEditableCheck(oOverlay, true), false, "then the overlay is not editable");
+			}.bind(this));
+		});
 		QUnit.test("when the control has addODataProperty and Reveal in different aggregations from DesignTimeMetadata", function(assert) {
 			var fnLogErrorSpy = sandbox.spy(Log, "error");
 			sandbox.stub(this.oPlugin, "_getRevealActions").returns({
@@ -1085,15 +1134,20 @@ sap.ui.define([
 			plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
 		};
 
+		var bPropagateRelevantContainer = false;
+
 		if (mActions.reveal){
 			mActions.reveal.getInvisibleElements = function(){
 				return [this.oInvisible1, this.oInvisible2];
 			};
+
+			bPropagateRelevantContainer = mActions.reveal.changeOnRelevantContainer;
 		}
 
 		var oPseudoPublicParentDesignTimeMetadata = {
 			aggregations : {
 				panes : {
+					propagateRelevantContainer : bPropagateRelevantContainer,
 					actions : null,
 					childNames : null,
 					getStableElements: function() {
