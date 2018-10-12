@@ -99,7 +99,7 @@ sap.ui.define([
 
 			var oPopover = new Popover(sPopId, {
 				showHeader: false,
-				verticalScrolling: true,
+				verticalScrolling: false,
 				placement: "Top",
 				showArrow: true,
 				horizontalScrolling: false,
@@ -124,7 +124,7 @@ sap.ui.define([
 			var oPopoverExpanded = new Popover(sPopExpId, {
 				showHeader: false,
 				showArrow: false,
-				verticalScrolling: true,
+				verticalScrolling: false,
 				horizontalScrolling: false,
 				content: new VBox(sPopExpId + "ContentBox", {
 					renderType: "Bare"
@@ -375,9 +375,11 @@ sap.ui.define([
 
 			// check if vertical scrolling should be done
 			if (oPopoverDimensions.height >= oViewportDimensions.height * 2 / 3) {
+				this.getPopover().setVerticalScrolling(true);
 				oPopoverDimensions.height = (oViewportDimensions.height * 2 / 3).toFixed(0);
 				this.getPopover().setContentHeight(oPopoverDimensions.height + "px");
 			} else {
+				this.getPopover().setVerticalScrolling(false);
 				this.getPopover().setContentHeight(undefined);
 			}
 
