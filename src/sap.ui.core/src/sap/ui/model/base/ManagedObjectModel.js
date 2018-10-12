@@ -2,34 +2,11 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	'../json/JSONModel',
-	'../json/JSONPropertyBinding',
-	'../json/JSONListBinding',
-	'sap/ui/base/ManagedObject',
-	'sap/ui/base/ManagedObjectObserver',
-	'../Context',
-	'../ChangeReason',
-	"sap/base/util/uid",
-	"sap/base/Log",
-	"sap/base/util/isPlainObject"
-], function(
-	JSONModel,
-	JSONPropertyBinding,
-	JSONListBinding,
-	ManagedObject,
-	ManagedObjectObserver,
-	Context,
-	ChangeReason,
-	uid,
-	Log,
-	isPlainObject
-) {
+	'../json/JSONModel', '../json/JSONPropertyBinding', '../json/JSONListBinding', 'sap/ui/base/ManagedObject', 'sap/ui/base/ManagedObjectObserver', '../Context', '../ChangeReason', "sap/base/util/uid", "sap/base/Log", "sap/base/util/isPlainObject"
+], function(JSONModel, JSONPropertyBinding, JSONListBinding, ManagedObject, ManagedObjectObserver, Context, ChangeReason, uid, Log, isPlainObject) {
 	"use strict";
 
-	var ManagedObjectModelAggregationBinding = JSONListBinding.extend("sap.ui.model.base.ManagedObjectModelAggregationBinding"),
-		ManagedObjectModelPropertyBinding = JSONPropertyBinding.extend("sap.ui.model.base.ManagedObjectModelPropertyBinding"),
-		CUSTOMDATAKEY = "@custom",
-		ID_DELIMITER = "--";
+	var ManagedObjectModelAggregationBinding = JSONListBinding.extend("sap.ui.model.base.ManagedObjectModelAggregationBinding"), ManagedObjectModelPropertyBinding = JSONPropertyBinding.extend("sap.ui.model.base.ManagedObjectModelPropertyBinding"), CUSTOMDATAKEY = "@custom", ID_DELIMITER = "--";
 
 	/**
 	 * The ManagedObjectModel class allows you to bind to properties and aggregations of managed objects.
@@ -59,7 +36,9 @@ sap.ui.define([
 				aggregations: {}
 			};
 			this.mListBinding = {};
-			JSONModel.apply(this, [oData]);
+			JSONModel.apply(this, [
+				oData
+			]);
 
 			this._oObserver = new ManagedObjectObserver(this.observerChanges.bind(this));
 		}
@@ -115,7 +94,9 @@ sap.ui.define([
 		var _oData = {};
 		_oData[CUSTOMDATAKEY] = oData;
 
-		JSONModel.prototype.setData.apply(this, [_oData, bMerge]);
+		JSONModel.prototype.setData.apply(this, [
+			_oData, bMerge
+		]);
 	};
 
 	/**
@@ -140,10 +121,7 @@ sap.ui.define([
 	 * @experimental This is only restricted to properties not to aggregations. This means it is not possible to add an aggregation within the managed object model.
 	 */
 	ManagedObjectModel.prototype.setProperty = function(sPath, oValue, oContext, bAsyncUpdate) {
-		var sResolvedPath = this.resolve(sPath, oContext),
-			iLastSlash,
-			sObjectPath,
-			sProperty;
+		var sResolvedPath = this.resolve(sPath, oContext), iLastSlash, sObjectPath, sProperty;
 
 		// return if path / context is invalid
 		if (!sResolvedPath) {
@@ -190,7 +168,7 @@ sap.ui.define([
 	ManagedObjectModel.prototype.addBinding = function(oBinding) {
 		JSONModel.prototype.addBinding.apply(this, arguments);
 		if (oBinding instanceof ManagedObjectModelAggregationBinding) {
-			var sAggregationName = oBinding.sPath.replace("/","");
+			var sAggregationName = oBinding.sPath.replace("/", "");
 			this.mListBinding[sAggregationName] = oBinding;
 		}
 		oBinding.checkUpdate(false);
@@ -199,7 +177,7 @@ sap.ui.define([
 	ManagedObjectModel.prototype.removeBinding = function(oBinding) {
 		JSONModel.prototype.removeBinding.apply(this, arguments);
 		if (oBinding instanceof ManagedObjectModelAggregationBinding) {
-			var sAggregationName = oBinding.sPath.replace("/","");
+			var sAggregationName = oBinding.sPath.replace("/", "");
 			delete this.mListBinding[sAggregationName];
 		}
 		this._observeBeforeEvaluating(oBinding, false);
@@ -469,9 +447,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ManagedObjectModel.prototype._getObject = function(sPath, oContext) {
-		var oNode = this._oObject,
-			sResolvedPath = "",
-			that = this;
+		var oNode = this._oObject, sResolvedPath = "", that = this;
 
 		this.aBindings.forEach(function(oBinding) {
 			if (!oBinding._bAttached) {
@@ -493,7 +469,9 @@ sap.ui.define([
 			}
 			// handling custom data stored in the original this.oData object of the JSONModel
 			if (sResolvedPath.indexOf("/" + CUSTOMDATAKEY) === 0) {
-				return JSONModel.prototype._getObject.apply(this, [sPath, oContext]);
+				return JSONModel.prototype._getObject.apply(this, [
+					sPath, oContext
+				]);
 			}
 		} else {
 			oNode = oContext;
@@ -504,16 +482,13 @@ sap.ui.define([
 			return null;
 		}
 
-		var aParts = sResolvedPath.split("/"),
-			iIndex = 0;
+		var aParts = sResolvedPath.split("/"), iIndex = 0;
 
 		if (!aParts[0]) {
 			// absolute path starting with slash
 			iIndex++;
 		}
-		var oParentNode = null,
-			sParentPart = null,
-			sPart;
+		var oParentNode = null, sParentPart = null, sPart;
 		while (oNode !== null && aParts[iIndex]) {
 			sPart = aParts[iIndex];
 			if (sPart == "id") {
@@ -642,12 +617,13 @@ sap.ui.define([
 	ManagedObjectModel.prototype.observerChanges = function(oChange) {
 		if (oChange.type == "aggregation") {
 			if (oChange.mutation == "insert") {
-				// listen to inner changes
-				this._oObserver.observe(oChange.child, {
-					properties: true,
-					aggegations: true
-				});
-
+				// listen to inner changes only in case there is no alternative type used
+				if (oChange.child instanceof ManagedObject) {
+					this._oObserver.observe(oChange.child, {
+						properties: true,
+						aggegations: true
+					});
+				}
 
 				if (this.mListBinding[oChange.name]) {
 					var oListBinding = this._oObject.getBinding(oChange.name);
@@ -659,10 +635,12 @@ sap.ui.define([
 				}
 			} else {
 				// stop listening inner changes
-				this._oObserver.unobserve(oChange.child, {
-					properties: true,
-					aggegations: true
-				});
+				if (oChange.child instanceof ManagedObject) {
+					this._oObserver.unobserve(oChange.child, {
+						properties: true,
+						aggegations: true
+					});
+				}
 			}
 		}
 
