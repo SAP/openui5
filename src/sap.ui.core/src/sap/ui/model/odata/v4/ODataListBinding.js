@@ -293,9 +293,10 @@ sap.ui.define([
 
 	/**
 	 * The 'dataReceived' event is fired after the back-end data has been processed and the
-	 * registered 'change' event listeners have been notified.
-	 * It is to be used by applications for example to switch off a busy indicator or to process an
-	 * error.
+	 * registered 'change' event listeners have been notified. It is only fired for GET requests.
+	 * The 'dataReceived' event is to be used by applications for example to switch off a busy
+	 * indicator or to process an error.
+	 *
 	 * If back-end requests are successful, the event has almost no parameters. For compatibility
 	 * with {@link sap.ui.model.Binding#event:dataReceived}, an event parameter
 	 * <code>data : {}</code> is provided: "In error cases it will be undefined", but otherwise it
@@ -322,8 +323,9 @@ sap.ui.define([
 
 	/**
 	 * The 'dataRequested' event is fired directly after data has been requested from a backend.
-	 * It is to be used by applications for example to switch on a busy indicator.
-	 * Registered event handlers are called without parameters.
+	 * It is only fired for GET requests. The 'dataRequested' event is to be used by applications
+	 * for example to switch on a busy indicator. Registered event handlers are called without
+	 * parameters.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
 	 *
