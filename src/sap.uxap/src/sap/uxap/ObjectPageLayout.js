@@ -2546,7 +2546,7 @@ sap.ui.define([
 
 		this._oLastScrollState = {
 			iScrollTop: iScrollTop,
-			iScrollableContentLength: this._getScrollableContentLength(),
+			iScrollableContentLength: Math.ceil(this._getScrollableContentLength()),
 			iScrollableViewportHeight: $wrapper.offsetHeight,
 			iSpacerHeight: iSpacerHeight
 		};
