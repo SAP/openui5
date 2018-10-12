@@ -275,7 +275,7 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library', './ActionSe
 				bTutorMessageNotReferenced;
 
 			if (!this._sTutorMessageId) {
-				this._sTutorMessageId = this.getId() + "-tutorMessage";
+				this._sTutorMessageId = this._getTutorMessageId();
 				this._oTutorMessageText = new InvisibleText(this._sTutorMessageId, {
 					text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACTION_SELECT_TUTOR_MESSAGE")
 				}).toStatic();
@@ -290,6 +290,16 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library', './ActionSe
 					oPicker.removeAriaLabelledBy(this._sTutorMessageId);
 				}
 			}
+		};
+
+		/**
+		 * Gets the tutor message id.
+		 *
+		 * @returns {string} The id of the tutor message.
+		 * @private
+		 */
+		ActionSelect.prototype._getTutorMessageId = function() {
+			return this.getId() + "-tutorMessage";
 		};
 
 		/**

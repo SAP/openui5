@@ -115,6 +115,59 @@ html.sap-desktop .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
 	border-color: @sapUiHcReducedForeground;
 	color: @sapUiContentDisabledTextColor;
 }
+/* ------------------------------ */
+/* picker                         */
+/* ------------------------------ */
+@_sap_m_SltPicker_SubHeader_BoxShadow_Bottom: 0.125rem;
+div.sapMSltPicker {
+	.sapMBar {
+		box-shadow: inset 0 -@_sap_m_SltPicker_SubHeader_BoxShadow_Bottom @sapUiPageHeaderBorderColor;
+	}
+	&.sapMDialogWithSubHeader.sapMSltPickerWithSubHeader {
+		padding-top: @_sap_m_Dialog_BarHeight + @_sap_m_SltPicker_SubHeader_BarHeight + @_sap_m_SltPicker_SubHeader_BoxShadow_Bottom;
+	}
+
+	&.sapMSltPickerWithSubHeader {
+		.sapMDialogSubHeader,
+		.sapMPopoverSubHeader {
+
+			.sapMSltPickerValueState {
+				padding-left: 0;
+
+				.sapMBarLeft{
+					padding-left: 0;
+				}
+
+				.sapMSltPickerSubHeaderTitle.sapMTitle {
+					padding-left: 0.5rem;
+				}
+			}
+
+			.sapMSltPickerSubHeaderTitle::before {
+				font-family: "SAP-icons";
+				vertical-align: bottom;
+				margin-right: 0.5rem;
+				font-size: 1rem;
+			}
+
+			.sapMSltPickerErrorState .sapMSltPickerSubHeaderTitle::before {
+				content: '\e0b1';
+			}
+
+			.sapMSltPickerWarningState .sapMSltPickerSubHeaderTitle::before {
+				content: '\e201';
+			}
+
+			.sapMSltPickerSuccessState .sapMSltPickerSubHeaderTitle::before {
+				content: '\e203';
+			}
+
+			.sapMSltPickerInformationState .sapMSltPickerSubHeaderTitle::before {
+				content: '\e202';
+			}
+		}
+	}
+}
 
 /* ------------------------------ */
 /* label                          */

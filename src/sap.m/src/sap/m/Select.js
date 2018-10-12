@@ -323,6 +323,14 @@ function(
 						type: "sap.m.Bar",
 						multiple: false,
 						visibility: "hidden"
+					},
+					/**
+					 * Internal aggregation to hold the picker's subheader.
+					 */
+					_pickerSubHeader: {
+						type: "sap.m.Bar",
+						multiple: false,
+						visibility: "hidden"
 					}
 				},
 				associations: {
@@ -834,6 +842,126 @@ function(
 			return this._sPickerType;
 		};
 
+		/**
+		 * Get's the picker's subheader.
+		 *
+		 * @returns {sap.m.Bar} Picker's header
+		 * @private
+		 */
+		Select.prototype._getPickerSubHeader = function() {
+			var CSS_CLASS = this.getRenderer().CSS_CLASS,
+				sPickerTitleClass = CSS_CLASS + "PickerSubHeaderTitle",
+				sPickerSubHeaderValueStateClass = CSS_CLASS + "PickerValueState";
+
+			if (!this.getAggregation("_pickerSubHeader")) {
+				this.setAggregation("_pickerSubHeader", new Bar({
+					contentLeft: new Title(this._getPickerSubHeaderId(), {
+						text: this._getTextForPickerSubHeader()
+					}).addStyleClass(sPickerTitleClass)
+				}).addStyleClass(sPickerSubHeaderValueStateClass));
+			}
+
+			return this.getAggregation("_pickerSubHeader");
+		};
+
+		/**
+		 * Sets the <code>valueStateText</code> into the picker's subheader title.
+		 * @returns {void}
+		 * @private
+		 */
+		Select.prototype._updatePickerSubHeaderText = function() {
+			var oPicker = this.getPicker(),
+				oPickerSubHeader = oPicker.getSubHeader(),
+				sText;
+
+			if (oPickerSubHeader) {
+				sText = this._getTextForPickerSubHeader();
+				oPickerSubHeader.getContentLeft()[0].setText(sText);
+			}
+		};
+
+		/**
+		 * Gets the text for the picker's subheader title.
+		 * In case <code>valueStateText</code> is not set, a default value is returned.
+		 * @returns {string}
+		 * @private
+		 */
+		Select.prototype._getTextForPickerSubHeader = function() {
+			var sValueStateText = this.getValueStateText(),
+				sText;
+
+			if (sValueStateText) {
+				sText = sValueStateText;
+			} else {
+				sText = this._getDefaultTextForPickerSubHeader();
+			}
+			return sText;
+		};
+
+		/**
+		 *  Gets the default text for the picker's subheader title.
+		 * @returns {string}
+		 * @private
+		 */
+		Select.prototype._getDefaultTextForPickerSubHeader = function() {
+			var sValueState = this.getValueState(),
+				oResourceBundle,
+				sText;
+
+			if (sValueState === ValueState.None) {
+				sText = "";
+			} else {
+				oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
+				sText = oResourceBundle.getText("VALUE_STATE_" + sValueState.toUpperCase());
+			}
+
+			return sText;
+		};
+
+		/**
+		 * Updates CSS classes for the <code>valueStateText</code> in the picker's subheader.
+		 * @private
+		 */
+		Select.prototype._updatePickerSubHeaderStyles = function() {
+			var sValueState = this.getValueState(),
+				mValueState = ValueState,
+				CSS_CLASS =  this.getRenderer().CSS_CLASS,
+				PICKER_CSS_CLASS = CSS_CLASS + "Picker",
+				sCssClass = PICKER_CSS_CLASS + sValueState + "State",
+				sPickerWithSubHeader = PICKER_CSS_CLASS + "WithSubHeader",
+				oPicker = this.getPicker(),
+				oCustomHeader = oPicker.getSubHeader();
+
+			if (oCustomHeader) {
+				this._removePickerSubHeaderValueStateClasses(oPicker);
+				oCustomHeader.addStyleClass(sCssClass);
+
+				if (sValueState !== mValueState.None) {
+					oPicker.addStyleClass(sPickerWithSubHeader);
+				} else {
+					oPicker.removeStyleClass(sPickerWithSubHeader);
+				}
+			}
+		};
+
+		/**
+		 * Removes the picker's subheader value state classes for all available value states.
+		 * @param  {sap.m.Popover | sap.m.Dialog} oPicker
+		 * @returns {void}
+		 * @private
+		 */
+		Select.prototype._removePickerSubHeaderValueStateClasses = function(oPicker) {
+			var mValueState = ValueState,
+				CSS_CLASS =  this.getRenderer().CSS_CLASS,
+				PICKER_CSS_CLASS = CSS_CLASS + "Picker",
+				subHeader = oPicker.getSubHeader();
+
+			Object.keys(mValueState).forEach(function (key) {
+				var sOldCssClass = PICKER_CSS_CLASS + key + "State";
+				subHeader.removeStyleClass(sOldCssClass);
+			});
+		};
+
 		/* ----------------------------------------------------------- */
 		/* Popover                                                     */
 		/* ----------------------------------------------------------- */
@@ -850,12 +978,13 @@ function(
 			var oPicker = new Popover({
 				showArrow: false,
 				showHeader: false,
+				subHeader: this._getPickerSubHeader(),
 				placement: PlacementType.VerticalPreferredBottom,
 				offsetX: 0,
 				offsetY: 0,
 				initialFocus: this,
 				bounce: false,
-				ariaLabelledBy: this._getPickerHiddenLabelId()
+				ariaLabelledBy: [this._getPickerSubHeaderId(), this._getPickerHiddenLabelId()]
 			});
 
 			// detect when the scrollbar or an item is pressed
@@ -915,8 +1044,9 @@ function(
 			var that = this;
 			return new Dialog({
 				stretch: true,
-				ariaLabelledBy: this._getPickerHiddenLabelId(),
+				ariaLabelledBy: [this._getPickerSubHeaderId(), this._getPickerHiddenLabelId()],
 				customHeader: this._getPickerHeader(),
+				subHeader: this._getPickerSubHeader(),
 				beforeOpen: function() {
 					that.updatePickerHeaderTitle();
 				}
@@ -970,6 +1100,10 @@ function(
 
 		Select.prototype._getPickerHiddenLabelId = function() {
 			return InvisibleText.getStaticId("sap.m", "INPUT_AVALIABLE_VALUES");
+		};
+
+		Select.prototype._getPickerSubHeaderId = function() {
+			return this.getId() + "-valueStateText";
 		};
 
 		Select.prototype.updatePickerHeaderTitle = function() {
@@ -1041,6 +1175,9 @@ function(
 			}
 
 			this.synchronizeSelection();
+
+			this._updatePickerSubHeaderText();
+			this._updatePickerSubHeaderStyles();
 		};
 
 		Select.prototype.onAfterRendering = function() {
@@ -2336,7 +2473,7 @@ function(
 				oDomRef.removeAttribute("aria-invalid");
 			}
 
-			if (this.shouldValueStateMessageBeOpened() && document.activeElement === oDomRef) {
+			if (!this.isOpen() && this.shouldValueStateMessageBeOpened() && document.activeElement === oDomRef) {
 				this.openValueStateMessage();
 			} else {
 				this.closeValueStateMessage();
@@ -2344,7 +2481,22 @@ function(
 
 			this.updateValueStateClasses(sValueState, sOldValueState);
 			this.updateAriaLabelledBy(sValueState, sOldValueState);
+			this._updatePickerSubHeaderText();
+			this._updatePickerSubHeaderStyles();
 			return this;
+		};
+
+		Select.prototype.setValueStateText = function(sValueStateText) {
+			var oDomRef = this.getDomRefForValueState();
+
+			this.setProperty("valueStateText", sValueStateText, true);
+
+			if (!oDomRef) {
+				return this;
+			}
+
+			this._updatePickerSubHeaderText();
+			this._updatePickerSubHeaderStyles();
 		};
 
 		/**
