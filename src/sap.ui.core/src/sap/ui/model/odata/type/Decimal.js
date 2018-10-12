@@ -239,7 +239,7 @@ sap.ui.define([
 	 *   if <code>sTargetType</code> is unsupported
 	 * @public
 	 */
-	Decimal.prototype.formatValue = function(sValue, sTargetType) {
+	Decimal.prototype.formatValue = function (sValue, sTargetType) {
 		if (sValue === null || sValue === undefined) {
 			return null;
 		}
@@ -277,7 +277,7 @@ sap.ui.define([
 	 *   Decimal
 	 * @public
 	 */
-	Decimal.prototype.parseValue = function(vValue, sSourceType) {
+	Decimal.prototype.parseValue = function (vValue, sSourceType) {
 		var sResult;
 
 		if (vValue === null || vValue === "") {

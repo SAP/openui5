@@ -132,7 +132,7 @@ sap.ui.define([
 	 *   for this type.
 	 * @public
 	 */
-	Double.prototype.formatValue = function(vValue, sTargetType) {
+	Double.prototype.formatValue = function (vValue, sTargetType) {
 		var oFormatOptions,
 			fValue;
 
@@ -190,7 +190,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.29.0
 	 */
-	Double.prototype.parseValue = function(vValue, sSourceType) {
+	Double.prototype.parseValue = function (vValue, sSourceType) {
 		var fResult;
 
 		if (vValue === null || vValue === "") {

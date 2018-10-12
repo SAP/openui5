@@ -175,7 +175,7 @@ sap.ui.define([
 	 *   exceeds <code>Number.MIN/MAX_SAFE_INTEGER</code>
 	 * @public
 	 */
-	Int64.prototype.formatValue = function(sValue, sTargetType) {
+	Int64.prototype.formatValue = function (sValue, sTargetType) {
 		var sErrorText;
 
 		if (sValue === null || sValue === undefined) {
@@ -237,7 +237,7 @@ sap.ui.define([
 	 *   Int64
 	 * @public
 	 */
-	Int64.prototype.parseValue = function(vValue, sSourceType) {
+	Int64.prototype.parseValue = function (vValue, sSourceType) {
 		var sResult;
 
 		if (vValue === null || vValue === "") {

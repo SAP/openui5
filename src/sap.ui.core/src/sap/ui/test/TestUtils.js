@@ -27,6 +27,7 @@ sap.ui.define([
 		mData = {},
 		bProxy = sRealOData === "true" || sRealOData === "proxy",
 		bRealOData = bProxy || sRealOData === "direct",
+		bSupportAssistant = oUriParameters.get("supportAssistant") === "true",
 		TestUtils,
 		sV2VersionKey = "DataServiceVersion",
 		sV2VersionKeyLower = sV2VersionKey.toLowerCase(),
@@ -604,6 +605,14 @@ sap.ui.define([
 		 */
 		isRealOData : function () {
 			return bRealOData;
+		},
+
+		/**
+		 * @returns {boolean}
+		 *   <code>true</code> if the support assistant shall be used.
+		 */
+		isSupportAssistant : function () {
+			return bSupportAssistant;
 		},
 
 		/**

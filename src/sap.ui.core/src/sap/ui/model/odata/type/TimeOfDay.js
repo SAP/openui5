@@ -172,7 +172,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.37.0
 	 */
-	TimeOfDay.prototype.formatValue = function(sValue, sTargetType) {
+	TimeOfDay.prototype.formatValue = function (sValue, sTargetType) {
 		var oDate,
 			iIndex;
 
@@ -210,7 +210,7 @@ sap.ui.define([
 	 * @override
 	 * @protected
 	 */
-	TimeOfDay.prototype.getModelFormat = function() {
+	TimeOfDay.prototype.getModelFormat = function () {
 		return getModelFormat(this);
 	};
 

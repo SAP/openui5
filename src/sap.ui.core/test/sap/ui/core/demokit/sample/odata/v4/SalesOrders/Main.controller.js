@@ -162,7 +162,8 @@ sap.ui.define([
 		onCreateSalesOrder : function (oEvent) {
 			var oBPListBinding = this.byId("NewBuyerID").getBinding("suggestionItems"),
 				oContext = this.byId("SalesOrders").getBinding("items").create({
-					"BuyerID" : "0100000000"
+					"BuyerID" : "0100000000",
+					"LifecycleStatus" : "N"
 				}),
 				oCreateSalesOrderDialog = this.byId("CreateSalesOrderDialog"),
 				oUiModel = this.getView().getModel("ui"),

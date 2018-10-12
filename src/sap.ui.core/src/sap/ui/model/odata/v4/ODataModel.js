@@ -447,7 +447,8 @@ sap.ui.define([
 	 *   <code>true</code> is allowed.
 	 * @param {boolean} [mParameters.$$patchWithoutSideEffects]
 	 *   Whether implicit loading of side effects via PATCH requests is switched off; only the value
-	 *   <code>true</code> is allowed.
+	 *   <code>true</code> is allowed. This requires the service to return an ETag header even for
+	 *   "204 No Content" responses (for example, if the "return=minimal" preference is used).
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
 	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
@@ -1297,7 +1298,7 @@ sap.ui.define([
 	 * @param {string} [oError.resourcePath]
 	 *   The resource path by which the resource causing the error has originally been requested;
 	 *   since a request can fail before reaching the server this may be set even if there is no
-	 *   error property
+	 *   error property; it is required to resolve a longtextUrl or a target.
 	 *
 	 * @private
 	 */
@@ -1317,7 +1318,6 @@ sap.ui.define([
 			var oReportMessage = {
 					code : oMessage.code,
 					message : oMessage.message,
-					target : oMessage.target,
 					technical : oMessage.technical
 				};
 
@@ -1325,20 +1325,22 @@ sap.ui.define([
 				if (sProperty[0] === '@') {
 					if (sProperty.endsWith(".numericSeverity")) {
 						oReportMessage.numericSeverity = oMessage[sProperty];
-					} else if (sProperty.endsWith(".longtextUrl")) {
+					} else if (sProperty.endsWith(".longtextUrl") && oError.requestUrl
+							&& sResourcePath) {
 						oReportMessage.longtextUrl =
 							_Helper.makeAbsolute(oMessage[sProperty], oError.requestUrl);
 					}
 				}
 			});
 
-			if (typeof oReportMessage.target !== "string") {
+			if (typeof oMessage.target !== "string") {
 				aUnboundMessages.push(oReportMessage);
-			} else if (oReportMessage.target[0] === "$") {
-				oReportMessage.message = oReportMessage.target + ": " + oReportMessage.message;
-				delete oReportMessage.target;
+			} else if (oMessage.target[0] === "$" || !sResourcePath) {
+				// target for the bound message cannot be resolved -> report as unbound message
+				oReportMessage.message = oMessage.target + ": " + oReportMessage.message;
 				aUnboundMessages.push(oReportMessage);
 			} else {
+				oReportMessage.target = oMessage.target;
 				oReportMessage.transition = true;
 				aBoundMessages.push(oReportMessage);
 			}
@@ -1365,13 +1367,16 @@ sap.ui.define([
 		oError.$reported = true;
 
 		if (oError.error) {
+			sResourcePath = oError.resourcePath && oError.resourcePath.split("?")[0];
 			oError.error["@.numericSeverity"] = 4; //"Error"
 			oError.error.technical = true;
 			addMessage(oError.error);
 			if (oError.error.details) {
 				oError.error.details.forEach(addMessage);
 			}
-			sResourcePath = oError.resourcePath.split("?")[0];
+			if (aBoundMessages.length) {
+				this.reportBoundMessages(sResourcePath, {"" : aBoundMessages}, []);
+			}
 		} else {
 			oError["@.numericSeverity"] = 4; //"Error"
 			oError.technical = true;
@@ -1379,15 +1384,15 @@ sap.ui.define([
 		}
 
 		this.reportUnboundMessages(sResourcePath, aUnboundMessages);
-		this.reportBoundMessages(sResourcePath, {"" : aBoundMessages}, []);
 	};
 
 	/**
 	 * Reports the given unbound OData messages by firing a <code>messageChange</code> event with
 	 * the new messages.
 	 *
-	 * @param {string} sResourcePath
-	 *   The resource path of the request whose response contained the messages
+	 * @param {string} [sResourcePath]
+	 *   The resource path of the request whose response contained the messages. If it is
+	 *   <code>undefined</code> the message's long text URL cannot be determined.
 	 * @param {object[]} [aMessages]
 	 *   The array of messages as contained in the <code>sap-messages</code> response header with
 	 *   the following properties:
@@ -1412,7 +1417,7 @@ sap.ui.define([
 
 					return new Message({
 						code : oMessage.code,
-						descriptionUrl : sMessageLongTextUrl
+						descriptionUrl : sMessageLongTextUrl && sResourcePath
 							? _Helper.makeAbsolute(sMessageLongTextUrl,
 								that.sServiceUrl + sResourcePath)
 							: undefined,
@@ -1512,14 +1517,12 @@ sap.ui.define([
 		if (sPath && sPath[0] === "/") {
 			sResolvedPath = sPath;
 		} else if (oContext) {
+			sResolvedPath = oContext.getPath();
 			if (sPath) {
-				if (oContext.getPath().slice(-1) === "/") {
-					sResolvedPath = oContext.getPath() + sPath;
-				} else {
-					sResolvedPath = oContext.getPath() + "/" + sPath;
+				if (sResolvedPath.slice(-1) !== "/") {
+					sResolvedPath += "/";
 				}
-			} else {
-				sResolvedPath = oContext.getPath();
+				sResolvedPath += sPath;
 			}
 		}
 

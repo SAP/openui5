@@ -10,10 +10,11 @@ sap.ui.require([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
+	"sap/ui/test/matchers/BindingPath",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Properties"
 ], function (MessageBox, Filter, FilterOperator, ODataUtils, QUnitUtils, Opa5, EnterText, Press,
-		Interactable, Properties) {
+		BindingPath, Interactable, Properties) {
 	"use strict";
 	var COMPANY_NAME_COLUMN_INDEX = 1,
 		GROSS_AMOUNT_COLUMN_INDEX = 2,
@@ -163,55 +164,48 @@ sap.ui.require([
 		 */
 		onTheMainPage : {
 			actions : {
-				changeNote : function (iRow, sNewNoteValue) {
-					return this.waitFor({
-						controlType : "sap.m.Table",
-						id : "SalesOrders",
-						success : function (oSalesOrderTable) {
-							var oRow = oSalesOrderTable.getItems()[iRow];
-
-							oRow.getCells()[NOTE_COLUMN_INDEX].setValue(sNewNoteValue);
-							Opa5.assert.ok(true,
-								"Note of row " + iRow + " set to " + sNewNoteValue);
-						},
-						viewName : sViewName
-					});
-				},
 				changeNoteInDetails : function (sValue) {
 					return this.waitFor({
 						actions : new EnterText({ clearTextFirst : true, text : sValue }),
 						controlType : "sap.m.Input",
 						id : "SOD_Note",
 						success : function (oInput) {
-							Opa5.assert.ok(true, "Details Note text set to " + sValue);
+							Opa5.assert.ok(true, "Details Note set to " + sValue);
 						},
 						viewName : sViewName
 					});
 				},
-				changeSalesOrderLineItemNote : function (iRow, sNewNoteValue) {
+				changeNoteInFirstLineItem : function (sValue) {
 					return this.waitFor({
-						controlType : "sap.m.Table",
-						id : "SalesOrderLineItems",
-						success : function (oSalesOrderTable) {
-							var oRow = oSalesOrderTable.getItems()[iRow];
-
-							oRow.getCells()[SOITEM_NOTE_COLUMN_INDEX].setValue(sNewNoteValue);
-							Opa5.assert.ok(true,
-								"SO Item Note of row " + iRow + " set to " + sNewNoteValue);
+						actions : new EnterText({clearTextFirst : true, text : sValue}),
+						controlType : "sap.m.Input",
+						id : /.*lineItemNote.*-0/,
+						success : function () {
+							Opa5.assert.ok(true, "SO Item Note of first row set to " + sValue);
 						},
 						viewName : sViewName
 					});
 				},
-				changeSalesOrderLineItemQuantity : function (iRow, sNewQuantity) {
+				changeNoteInNewSalesOrder : function (sValue) {
 					return this.waitFor({
-						controlType : "sap.m.Table",
-						id : "SalesOrderLineItems",
-						success : function (oSalesOrderTable) {
-							var oRow = oSalesOrderTable.getItems()[iRow];
-
-							oRow.getCells()[SOITEM_QUANTITY_COLUMN_INDEX].setValue(sNewQuantity);
+						actions : new EnterText({clearTextFirst : true, text : sValue}),
+						controlType : "sap.m.Input",
+						matchers : new BindingPath({path: "/SalesOrderList/-1"}),
+						id : /--Note_ID-__clone/,
+						success : function (oControls) {
 							Opa5.assert.ok(true,
-								"SO Item Quantity of row " + iRow + " set to " + sNewQuantity);
+								"Note of new created Sales Order set to " + sValue);
+						},
+						viewName : sViewName
+					});
+				},
+				changeQuantityInFirstLineItem : function (sValue) {
+					return this.waitFor({
+						actions : new EnterText({clearTextFirst : true, text : sValue}),
+						controlType : "sap.m.Input",
+						id : /.*lineItemQuantity.*-0/,
+						success : function () {
+							Opa5.assert.ok(true, "SO Item Quantity of first row set to " + sValue);
 						},
 						viewName : sViewName
 					});
@@ -1058,7 +1052,9 @@ sap.ui.require([
 							var aTableItems = oSalesOrderTable.getItems();
 
 							Opa5.assert.strictEqual(oSalesOrderTable.getSelectedItem(),
-								aTableItems[iRow]);
+								aTableItems[iRow],
+								"Check that Sales Order #" + iRow + " is selected"
+							);
 						},
 						viewName : sViewName
 					});

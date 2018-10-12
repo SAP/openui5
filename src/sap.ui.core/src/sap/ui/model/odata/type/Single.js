@@ -141,7 +141,7 @@ sap.ui.define([
 	 *   for this type.
 	 * @public
 	 */
-	Single.prototype.formatValue = function(vValue, sTargetType) {
+	Single.prototype.formatValue = function (vValue, sTargetType) {
 		var fValue;
 
 		if (vValue === null || vValue === undefined) {
@@ -191,7 +191,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.29.0
 	 */
-	Single.prototype.parseValue = function(vValue, sSourceType) {
+	Single.prototype.parseValue = function (vValue, sSourceType) {
 		var fResult;
 
 		if (vValue === null || vValue === "") {
