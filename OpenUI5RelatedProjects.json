@@ -232,5 +232,14 @@
 			"owner": "kozubikmichal",
 			"license": "MIT",
 			"type": "Extension"
+		},
+		{
+			"name": "UI5 Build and Development Tooling",
+			"description": "An open and modular toolchain to develop state of the art UI5 applications",
+			"githubLink": "https://github.com/SAP/ui5-tooling",
+			"documentationLink": "https://github.com/SAP/ui5-tooling#readme",
+			"owner": "SAP",
+			"license": "Apache 2.0",
+			"type": "Tool"
 		}
 	]
