@@ -194,7 +194,7 @@ sap.ui.define([
 	 *   if <code>sTargetType</code> is unsupported
 	 * @public
 	 */
-	Time.prototype.formatValue = function(oValue, sTargetType) {
+	Time.prototype.formatValue = function (oValue, sTargetType) {
 		if (oValue === undefined || oValue === null) {
 			return null;
 		}
@@ -220,7 +220,7 @@ sap.ui.define([
 	 * @override
 	 * @protected
 	 */
-	Time.prototype.getModelFormat = function() {
+	Time.prototype.getModelFormat = function () {
 		return oModelFormat;
 	};
 

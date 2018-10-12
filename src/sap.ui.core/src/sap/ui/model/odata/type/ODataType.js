@@ -136,7 +136,7 @@ sap.ui.define([
 	 * @returns {object} this
 	 * @public
 	 */
-	ODataType.prototype.getInterface = function() {
+	ODataType.prototype.getInterface = function () {
 		return this;
 	};
 
@@ -149,7 +149,7 @@ sap.ui.define([
 	 *   constraints, see {@link #constructor}.
 	 * @private
 	 */
-	ODataType.prototype.setConstraints = function(oConstraints) {
+	ODataType.prototype.setConstraints = function (oConstraints) {
 		// do nothing!
 	};
 
@@ -162,7 +162,7 @@ sap.ui.define([
 	 *   format options, see {@link #constructor}.
 	 * @private
 	 */
-	ODataType.prototype.setFormatOptions = function(oFormatOptions) {
+	ODataType.prototype.setFormatOptions = function (oFormatOptions) {
 		// do nothing!
 	};
 

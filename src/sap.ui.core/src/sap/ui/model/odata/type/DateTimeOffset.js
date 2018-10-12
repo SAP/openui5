@@ -142,7 +142,7 @@ sap.ui.define([
 	 * @override
 	 * @protected
 	 */
-	DateTimeOffset.prototype.getModelFormat = function() {
+	DateTimeOffset.prototype.getModelFormat = function () {
 		if (this.bV4) {
 			return getModelFormat(this);
 		}

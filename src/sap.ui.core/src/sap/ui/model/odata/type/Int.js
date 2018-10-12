@@ -130,7 +130,7 @@ sap.ui.define([
 	 *   for this type.
 	 * @public
 	 */
-	Int.prototype.formatValue = function(iValue, sTargetType) {
+	Int.prototype.formatValue = function (iValue, sTargetType) {
 		if (iValue === undefined || iValue === null) {
 			return null;
 		}
@@ -169,7 +169,7 @@ sap.ui.define([
 	 *   the parsed value
 	 * @public
 	 */
-	Int.prototype.parseValue = function(vValue, sSourceType) {
+	Int.prototype.parseValue = function (vValue, sSourceType) {
 		var iResult;
 
 		if (vValue === null || vValue === "") {
@@ -202,7 +202,7 @@ sap.ui.define([
 	 *   if the value is not in the allowed range of Int or if it is of invalid type.
 	 * @public
 	 */
-	Int.prototype.validateValue = function(iValue) {
+	Int.prototype.validateValue = function (iValue) {
 		var oRange = this.getRange();
 
 		if (iValue === null) {

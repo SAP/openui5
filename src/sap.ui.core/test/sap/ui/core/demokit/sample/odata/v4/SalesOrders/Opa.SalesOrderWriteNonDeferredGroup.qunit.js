@@ -21,6 +21,6 @@ sap.ui.require([
 				WriteNonDeferredGroupTest.writeNonDeferredGroup.bind(null, sGroupId, ""));
 		});
 	} else {
-		QUnit.skip("POST/PATCH SalesOrder via group: tests run only with realOData=true");
+		QUnit.skip("Tests run only with realOData=true");
 	}
 });

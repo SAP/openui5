@@ -11,7 +11,7 @@ sap.ui.define([
 ], function (assert, Log, Device, jQuery) {
 "use strict";
 
-/**
+/*
  * Whitelist of property node names whose values should be put through alias replacement
  */
 var mAliasNodeWhitelist = {
@@ -121,7 +121,7 @@ var AnnotationParser =  {
 	},
 
 
-	/**
+	/*
 	 * @static
 	 * @private
 	 */
@@ -385,7 +385,7 @@ var AnnotationParser =  {
 		return mappingList;
 	},
 
-	/**
+	/*
 	 * Backs up the annotation corresponding to the given element by adding it also as a sibling of
 	 * the array under the name of "Property@Term#Qualifier". This way, it will survive
 	 * (de-)serialization via JSON.stringify and JSON.parse. Returns a path which points to it.
@@ -485,7 +485,7 @@ var AnnotationParser =  {
 		}
 	},
 
-	/**
+	/*
 	 * Sync annotations at arrays and their siblings.
 	 *
 	 * @param {object} mAnnotations
@@ -495,6 +495,7 @@ var AnnotationParser =  {
 	 * @param {boolean} bWarn
 	 *   Whether warnings are allowed
 	 *
+	 * @private
 	 * @see AnnotationParser.backupAnnotationAtArray
 	 * @see AnnotationParser.restoreAnnotationsAtArrays
 	 */
@@ -522,7 +523,7 @@ var AnnotationParser =  {
 		}
 	},
 
-	/**
+	/*
 	 * Sets the parsed annotation term at the given oAnnotationTarget object.
 	 * @static
 	 * @private
@@ -543,11 +544,10 @@ var AnnotationParser =  {
 		}
 	},
 
-	/**
+	/*
 	 * Parses the alias definitions of the annotation document and fills the internal oAlias object.
 	 *
 	 * @param {map} mAnnotationReferences - The annotation reference object (output)
-	 * @param {map} mAlias - The alias reference object (output)
 	 * @return {boolean} Whether references where found in the XML document
 	 * @static
 	 * @private
@@ -589,7 +589,7 @@ var AnnotationParser =  {
 		return bFound;
 	},
 
-	/**
+	/*
 	 * @static
 	 * @private
 	 */
@@ -691,7 +691,7 @@ var AnnotationParser =  {
 		return oReturn;
 	},
 
-	/**
+	/*
 	 * @static
 	 * @private
 	 */
@@ -743,7 +743,7 @@ var AnnotationParser =  {
 		return vPropertyValues;
 	},
 
-	/**
+	/*
 	 * @static
 	 * @private
 	 */
@@ -776,13 +776,12 @@ var AnnotationParser =  {
 	},
 
 
-	/**
+	/*
 	 * Returns a map of key value pairs corresponding to the attributes of the given Node -
 	 * attributes named "Property", "Term" and "Qualifier" are ignored.
 	 *
 	 * @param {map} mAttributes - A map that may already contain attributes, this map will be filled and returned by this method
 	 * @param {Node} oNode - The node with the attributes
-	 * @param {map} mAlias - A map containing aliases that should be replaced in the attribute value
 	 * @return {map} A map containing the attributes as key/value pairs
 	 * @static
 	 * @private
@@ -814,11 +813,9 @@ var AnnotationParser =  {
 		return mAttributes;
 	},
 
-	/**
+	/*
 	 * Returns a property value object for the given nodes
 	 *
-	 * @param {Document} oXmlDoc - The XML document that is parsed
-	 * @param {map} mAlias - Alias map
 	 * @param {XPathResult} oNodeList - As many nodes as should be checked for Record values
 	 * @return {object|object[]} The extracted values
 	 * @static
@@ -843,12 +840,10 @@ var AnnotationParser =  {
 		return aNodeValues;
 	},
 
-	/**
+	/*
 	 * Extracts the text value from all nodes in the given NodeList and puts them into an array
 	 *
-	 * @param {Document} oXmlDoc - The XML document that is parsed
 	 * @param {XPathResult} oNodeList - As many nodes as should be checked for Record values
-	 * @param {map} [mAlias] - If this map is given, alias replacement with the given values will be performed on the found text
 	 * @return {object[]} Array of values
 	 * @static
 	 * @private
@@ -869,11 +864,10 @@ var AnnotationParser =  {
 		return aNodeValues;
 	},
 
-	/**
+	/*
 	 * Returns the text value of a given node and does an alias replacement if neccessary.
 	 *
 	 * @param {Node} oNode - The Node of which the text value should be determined
-	 * @param {map} mAlias - The alias map
 	 * @return {string} The text content
  	 * @static
  	 * @private
@@ -894,7 +888,7 @@ var AnnotationParser =  {
 		return sValue;
 	},
 
-	/**
+	/*
 	 * @static
 	 * @private
 	 */
@@ -997,13 +991,11 @@ var AnnotationParser =  {
 		return vPropertyValue;
 	},
 
-	/**
+	/*
 	 * Returns a map with all Annotation- and PropertyValue-elements of the given Node. The properties of the returned
 	 * map consist of the PropertyValue's "Property" attribute or the Annotation's "Term" attribute.
 	 *
-	 * @param {Document} oXmlDocument - The document to use for the node search
 	 * @param {Element} oParentElement - The parent element in which to search
-	 * @param {map} mAlias - The alias map used in {@link #replaceWithAlias}
 	 * @returns {map} The collection of record values and annotations as a map
 	 * @static
 	 * @private
@@ -1072,7 +1064,7 @@ var AnnotationParser =  {
 		return mProperties;
 	},
 
-	/**
+	/*
 	 * @static
 	 * @private
 	 */
@@ -1111,13 +1103,12 @@ var AnnotationParser =  {
 		return mApply;
 	},
 
-	/**
+	/*
 	 * Returns true if the given path combined with the given entity-type is found in the
 	 * given metadata
 	 *
 	 * @param {string} sEntityType - The entity type to look for
 	 * @param {string} sPathValue - The path to look for
-	 * @param {object} oMetadata - The service's metadata object to search in
 	 * @returns {map|null} The NavigationProperty map as defined in the EntityType or null if nothing is found
  	 * @static
  	 * @private
@@ -1143,13 +1134,12 @@ var AnnotationParser =  {
 		return null;
 	},
 
-	/**
+	/*
 	 * Replaces the first alias (existing as key in the map) found in the given string with the
 	 * respective value in the map if it is not directly behind a ".". By default only one
 	 * replacement is done, unless the iReplacements parameter is set to a higher number or 0
 	 *
 	 * @param {string} sValue - The string where the alias should be replaced
-	 * @param {map} mAlias - The alias map with the alias as key and the target value as value
 	 * @param {int} iReplacements - The number of replacements to doo at most or 0 for all
 	 * @return {string} The string with the alias replaced
  	 * @static
@@ -1172,9 +1162,7 @@ var AnnotationParser =  {
 		return sValue;
 	},
 
-
-
-	/**
+	/*
 	 * @static
 	 * @private
 	 */

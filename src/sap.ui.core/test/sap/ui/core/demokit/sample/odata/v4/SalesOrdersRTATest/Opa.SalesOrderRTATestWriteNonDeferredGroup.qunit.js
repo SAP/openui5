@@ -22,6 +22,6 @@ sap.ui.require([
 					"sap.ui.core.sample.odata.v4.SalesOrdersRTATest"));
 		});
 	} else {
-		QUnit.skip("POST/PATCH SalesOrder via group: tests run only with realOData=true");
+		QUnit.skip("Tests run only with realOData=true");
 	}
 });
