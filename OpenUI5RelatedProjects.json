@@ -191,11 +191,20 @@
 		 {
 			"name": "Deoplete sap-icon",
 			"description": "Neovim deoplete sap-icon plugin", 
-			"githubLink": "https://github.com/Trulsaa/deoplete-sap-icon", 
+			"githubLink": "https://github.com/aaa/deoplete-sap-icon", 
 			"documentationLink": "https://github.com/Trulsaa/deoplete-sap-icon", 
 			"owner": "Trulsaa", 
 			"license": "MIT License", 
 			"type": "nvim plugin" 
+		},
+		{
+			"name": "ui5-mockdata-downloader",
+			"description": "Downloads all data from the Odata services listed in manifest.json and puts it in the mockdata folder", 
+			"githubLink": "https://github.com/Trulsaa/ui5-mockdata-downloader", 
+			"documentationLink": "https://github.com/Trulsaa/ui5-mockdata-downloader", 
+			"owner": "Trulsaa", 
+			"license": "MIT License", 
+			"type": "Tool" 
 		},
 		 {
 			"name": "Express UI5",
