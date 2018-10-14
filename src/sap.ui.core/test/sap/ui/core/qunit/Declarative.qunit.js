@@ -1,4 +1,4 @@
-/* global QUnit, assert */
+/* global QUnit */
 sap.ui.define(["sap/ui/core/DeclarativeSupport", "sap/ui/model/json/JSONModel"], function(DeclarativeSupport, JSONModel) {
 	"use strict";
 	QUnit.module("Basic");
@@ -173,6 +173,10 @@ sap.ui.define(["sap/ui/core/DeclarativeSupport", "sap/ui/model/json/JSONModel"],
 		var oPanel3 = sap.ui.getCore().byId("complexDeclarationPanel3");
 		assert.equal(!!oPanel2, false, 'No control with id "complexDeclarationPanel3" found.');
 
+		window.handlePress = function(evt) {
+			assert.ok(true, "Handler is called");
+		};
+
 		DeclarativeSupport.compile(jQuery("#complex-declaration"));
 
 		var oUIArea = sap.ui.getCore().getUIArea("complexDeclarationUIArea");
@@ -186,6 +190,8 @@ sap.ui.define(["sap/ui/core/DeclarativeSupport", "sap/ui/model/json/JSONModel"],
 
 		var oPanel3 = sap.ui.getCore().byId("complexDeclarationPanel3");
 		assert.ok(!!oPanel3, 'Control with id "complexDeclarationPanel3" found.');
+
+		delete window.handlePress;
 	});
 
 	QUnit.test("Events", function(assert) {
@@ -193,11 +199,17 @@ sap.ui.define(["sap/ui/core/DeclarativeSupport", "sap/ui/model/json/JSONModel"],
 		var oButton1 = sap.ui.getCore().byId("buttonWithEvent");
 		assert.equal(!!oButton1, false, 'No control with id "buttonWithEvent" found.');
 
+		window.handlePress = function(evt) {
+			assert.ok(true, "Handler is called");
+		};
+
 		DeclarativeSupport.compile(jQuery("#events"));
 
 		var oButton1 = sap.ui.getCore().byId("buttonWithEvent");
 		assert.ok(!!oButton1, 'Control with id "buttonWithEvent" found.');
 		oButton1.firePress();
+
+		delete window.handlePress;
 	});
 
 
@@ -303,9 +315,5 @@ sap.ui.define(["sap/ui/core/DeclarativeSupport", "sap/ui/model/json/JSONModel"],
 		assert.equal(oButton.data("customData1"), "customvalue", 'Custom Data not applied!');
 		assert.equal(oButton.data("CustomData2"), "customvalue", 'Custom Data not applied!');
 	});
-
-	window.handlePress = function(evt) {
-		assert.ok(true, "Handler is called");
-	};
 
 });

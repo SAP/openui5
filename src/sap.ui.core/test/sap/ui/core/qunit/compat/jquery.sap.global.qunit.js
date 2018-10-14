@@ -46,7 +46,7 @@ sap.ui.require(["jquery.sap.global", "sap/ui/Device"], function(jQuery) {
 		assertSpy.reset();
 
 		jQuery.sap.assert(false, sMessage);
-		sinon.assert.calledOnce(assertSpy, "false, String");
+		assert.ok(assertSpy.calledOnce, "false, String");
 		sinon.assert.calledWith(assertSpy, false, sRefMessage);
 		assertSpy.reset();
 

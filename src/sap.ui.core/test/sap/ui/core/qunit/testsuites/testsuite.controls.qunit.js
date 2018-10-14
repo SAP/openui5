@@ -16,7 +16,7 @@ sap.ui.define(function() {
 					libs: "sap.ui.commons, sap.m"
 				},
 				sinon: {
-					version: 1,
+					version: 4,
 					qunitBridge: true
 				}
 			},
@@ -64,7 +64,7 @@ sap.ui.define(function() {
 					reorder: false
 				},
 				sinon: {
-					version: 1,
+					version: 4,
 					qunitBridge: true
 				}
 			},
@@ -74,7 +74,7 @@ sap.ui.define(function() {
 					language: "en"
 				},
 				sinon: {
-					version: 1,
+					version: 4,
 					qunitBridge: true
 				}
 			},
@@ -84,7 +84,7 @@ sap.ui.define(function() {
 					libs: "sap.ui.commons, sap.m"
 				},
 				sinon: {
-					version: 1,
+					version: 4,
 					qunitBridge: true,
 					useFakeTimers: false
 				}
@@ -95,7 +95,7 @@ sap.ui.define(function() {
 					reorder: false
 				},
 				sinon: {
-					version: 1,
+					version: 4,
 					qunitBridge: true
 				}
 			}

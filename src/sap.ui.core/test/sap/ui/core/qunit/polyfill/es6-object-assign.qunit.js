@@ -1,5 +1,5 @@
 /*global QUnit */
-sap.ui.require([], function() {
+sap.ui.define([], function() {
 	"use strict";
 
 	/* Tests mostly taken over from the now removed, jQuery based extendShallow module */

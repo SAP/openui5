@@ -4,13 +4,18 @@ sap.ui.define(function() {
 	return {
 		name: "TestSuite for sap.ui.core.service: Service Injection",
 		defaults: {
-			qunit: {
-				version: 2
-			},
 			loader: {
 				paths: {
 					"samples/components": "test-resources/sap/ui/core/samples/components/"
 				}
+			},
+			qunit: {
+				version: 2
+			},
+			sinon: {
+				version: 4,
+				qunitBridge: true,
+				useFakeTimers: false
 			}
 		},
 		tests: {
@@ -19,11 +24,6 @@ sap.ui.define(function() {
 				ui5: {
 					libs: "sap.m",
 					language: "en"
-				},
-				sinon: {
-					version: 1,
-					qunitBridge: true,
-					useFakeTimers: false
 				}
 			}
 		}

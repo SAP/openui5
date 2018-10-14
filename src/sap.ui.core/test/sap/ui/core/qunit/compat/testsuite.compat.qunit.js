@@ -8,7 +8,7 @@ sap.ui.define(function() {
 				version: 2
 			},
 			sinon: {
-				version: 1
+				version: 4
 			}
 		},
 		tests: {

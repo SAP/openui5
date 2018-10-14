@@ -1498,7 +1498,7 @@ sap.ui.define([
 		var that = this,
 			iLoadResourceBundleAsync = 0,
 			fnJQuerySapResource = ResourceBundle.create,
-			jQuerySapResourcesStub = sinon.stub(ResourceBundle, "create", function(mConfig) {
+			jQuerySapResourcesStub = sinon.stub(ResourceBundle, "create").callsFake(function(mConfig) {
 				if (mConfig.async) {
 					iLoadResourceBundleAsync++;
 					return Promise.reject();

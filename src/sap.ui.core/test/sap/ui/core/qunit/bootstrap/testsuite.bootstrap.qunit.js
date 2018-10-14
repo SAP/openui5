@@ -14,6 +14,12 @@ sap.ui.define(function() {
 			},
 			qunit: {
 				version: 2
+			},
+			sinon: {
+				version: 4,
+				qunitBridge: true,
+				useFakeServer: false,
+				useFakeTimers: false
 			}
 		},
 		tests: {
@@ -230,13 +236,12 @@ sap.ui.define(function() {
 			},
 			"Configuration": {
 				group: "Configuration",
-				page: "test-resources/sap/ui/core/qunit/bootstrap/Configuration.qunit.html",
 				ui5: {
-					language: "en"
-				},
-				sinon: {
-					version: 1,
-					qunitBridge: true
+					language: "en",
+					calendarType: "islamic",
+					logLevel: "WARNING",
+					noConflict: "true",
+					libs: "sap.ui.core"
 				}
 			},
 			"PegasusEnvironment": {
@@ -295,10 +300,6 @@ sap.ui.define(function() {
 					language: "en",
 					preload: "async"
 				},
-				sinon: {
-					version: 1,
-					qunitBridge: true
-				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
 				module: "./ThemeVersion.qunit",
 				autostart : false
@@ -310,10 +311,6 @@ sap.ui.define(function() {
 					theme: "base",
 					language: "en",
 					preload: "sync"
-				},
-				sinon: {
-					version: 1,
-					qunitBridge: true
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
 				module: "./ThemeVersion.qunit",
@@ -327,10 +324,6 @@ sap.ui.define(function() {
 					language: "en",
 					preload: "async"
 				},
-				sinon: {
-					version: 1,
-					qunitBridge: true
-				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
 				module: "./ThemeVersion.qunit",
 				autostart : false
@@ -342,10 +335,6 @@ sap.ui.define(function() {
 					theme: "base",
 					language: "en",
 					preload: "async"
-				},
-				sinon: {
-					version: 1,
-					qunitBridge: true
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
 				module: "./ThemeVersion.qunit",
@@ -359,10 +348,6 @@ sap.ui.define(function() {
 					language: "en",
 					preload: "sync"
 				},
-				sinon: {
-					version: 1,
-					qunitBridge: true
-				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
 				module: "./ThemeVersion.qunit",
 				autostart : false
@@ -375,10 +360,6 @@ sap.ui.define(function() {
 					language: "en",
 					preload: "sync"
 				},
-				sinon: {
-					version: 1,
-					qunitBridge: true
-				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
 				module: "./ThemeVersion.qunit",
 				autostart : false
@@ -386,18 +367,12 @@ sap.ui.define(function() {
 			"polyfill/ComputedStyle": {
 				group: "Polyfills",
 				title: "Test Page for the getComputedStyle polyfill functionality",
-				module: "polyfill/ComputedStyle.qunit",
-				qunit: {
-					version: 1
-				}
+				module: "polyfill/ComputedStyle.qunit"
 			},
 			"polyfill/es6-object-assign": {
 				group: "Polyfills",
 				title: "Test Page for shallow object extension using Object.assign (polyfill)",
-				module: "polyfill/es6-object-assign.qunit",
-				qunit: {
-					version: 1
-				}
+				module: "polyfill/es6-object-assign.qunit"
 			}
 		}
 	};

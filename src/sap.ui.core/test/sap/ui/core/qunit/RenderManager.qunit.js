@@ -1,13 +1,34 @@
 /* global QUnit, sinon, TestControlRenderer */
 sap.ui.define([
+	"sap/ui/Device",
 	"sap/ui/core/Control",
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/Element",
-	"sap/ui/core/IconPool"
-], function(Control, RenderManager, Element, IconPool){
+	"sap/ui/core/IconPool",
+	"sap/ui/thirdparty/jquery",
+	"sap/base/security/encodeXML",
+	"sap/ui/qunit/utils/createAndAppendDiv"
+], function(Device, Control, RenderManager, Element, IconPool, jQuery, encodeXML, createAndAppendDiv) {
 	"use strict";
 
-	var fCheckRendererInterface = null;
+	// prepare DOM
+	var styleElement = document.createElement("style");
+	styleElement.textContent =
+		"#testArea div {" +
+		"    display: inline-block;" +
+		"}" +
+		"#testArea > div {" +
+		"    border: 1px solid black;" +
+		"}";
+	document.head.appendChild(styleElement);
+	createAndAppendDiv(["area1", "area2", "area3", "area4", "area5", "area6", "area7", "area8"], createAndAppendDiv("testArea"));
+
+
+	var fnCheckRendererInterface = null;
+
+	function jQueryById(id) {
+		return new jQuery(document.getElementById(id));
+	}
 
 	//Declare a simple test controls
 
@@ -19,8 +40,8 @@ sap.ui.define([
 				TestControlRenderer.doAdditionalThings(oRM, oControl);
 				oRM.write(">[" + oControl.getId() + "]</div>");
 
-				if (fCheckRendererInterface) {
-					fCheckRendererInterface(oRM);
+				if (fnCheckRendererInterface) {
+					fnCheckRendererInterface(oRM);
 				}
 			},
 			doAdditionalThings: function(oRM, oControl) {}
@@ -88,7 +109,7 @@ sap.ui.define([
 
 	//Test helper functions
 
-	var checkRendering = function(assert, aControls, sTargetId, bExpectExisting, fActionCallBack, sOldParentId) {
+	function checkRendering(assert, aControls, sTargetId, bExpectExisting, fnActionCallBack, sOldParentId) {
 		return new Promise(function(done) {
 			var iBeforeCounter = 0;
 			var iAfterCounter = 0;
@@ -108,13 +129,13 @@ sap.ui.define([
 
 			checkControlsInDom(assert, aControls, sOldParentId ? sOldParentId : sTargetId, bExpectExisting);
 
-			fActionCallBack(jQuery.sap.byId(sTargetId).get(0), aControls);
+			fnActionCallBack(jQueryById(sTargetId).get(0), aControls);
 
 			assert.equal(iBeforeCounter, aControls.length, "onBeforeRendering should be called");
 
 			checkControlsInDom(assert, aControls, sTargetId, true);
 
-			if (sap.ui.Device.browser.safari) {
+			if (Device.browser.safari) {
 				//in safari async because onAfterRendering ist called with delay
 				var delayedCall = function() {
 					assert.equal(iAfterCounter, aControls.length, "onAfterRendering should be called");
@@ -136,38 +157,38 @@ sap.ui.define([
 
 		});
 
-	};
+	}
 
-	var getTestControlHtml = function(sId, sAdditionalHTML) {
+	function getTestControlHtml(sId, sAdditionalHTML) {
 		if (!sAdditionalHTML){
 			sAdditionalHTML = "";
 		}
 		return "<div id=\"" + sId + "\" data-sap-ui=\"" + sId + "\"" + sAdditionalHTML + ">[" + sId + "]</div>";
-	};
+	}
 
-	var checkControlsInDom = function(assert, aControls, sTargetId, bExpectExisting) {
+	function checkControlsInDom(assert, aControls, sTargetId, bExpectExisting) {
 		for (var i = 0; i < aControls.length; i++) {
-			var jControlRef = jQuery.sap.byId(aControls[i].getId());
+			var $ControlRef = jQueryById(aControls[i].getId());
 			if (bExpectExisting) {
-				assert.equal(jControlRef.length, 1, "Control is rendered already");
-				assert.equal(jControlRef.parent().attr("id"), sTargetId, "Control is child of Dom Ref with ID '" + sTargetId + "'");
+				assert.equal($ControlRef.length, 1, "Control is rendered already");
+				assert.equal($ControlRef.parent().attr("id"), sTargetId, "Control is child of Dom Ref with ID '" + sTargetId + "'");
 			} else {
-				assert.equal(jControlRef.length, 0, "Control is not rendered yet");
+				assert.equal($ControlRef.length, 0, "Control is not rendered yet");
 			}
 		}
-	};
+	}
 
-	var checkChildOrder = function(assert, sParentId, aChildIds) {
-		var jChildren = jQuery.sap.byId(sParentId).children();
-		assert.equal(aChildIds.length, jChildren.length, "Number of children of DOM node '" + sParentId + "'");
+	function checkChildOrder(assert, sParentId, aChildIds) {
+		var $Children = jQueryById(sParentId).children();
+		assert.equal(aChildIds.length, $Children.length, "Number of children of DOM node '" + sParentId + "'");
 		for (var i = 0; i < aChildIds.length; i++) {
-			assert.equal(aChildIds[i], jQuery(jChildren.get(i)).attr("id"), "DOM node '" + aChildIds[i] + "' is at position " + i);
+			assert.equal(aChildIds[i], jQuery($Children.get(i)).attr("id"), "DOM node '" + aChildIds[i] + "' is at position " + i);
 		}
-	};
+	}
 
-	var checkRMWriter = function(assert, sExpectedResult, bExpectReturnsRM, iExpectedNumberOfControls, fActionCallback, fCheckCallBack) {
+	function checkRMWriter(assert, sExpectedResult, bExpectReturnsRM, iExpectedNumberOfControls, fnActionCallback, fnCheckCallBack) {
 		var rm = new RenderManager();
-		var oCheckFunctionResult = fActionCallback(rm);
+		var oCheckFunctionResult = fnActionCallback(rm);
 		assert.equal(rm.aBuffer.join(""), sExpectedResult, "Writer function produce expected output.");
 		if (bExpectReturnsRM) {
 			assert.ok(rm === oCheckFunctionResult, "Writer function returns RenderManager again for chaining.");
@@ -175,10 +196,10 @@ sap.ui.define([
 			assert.ok(rm != oCheckFunctionResult, "Writer function does not return RenderManager for chaining.");
 		}
 		assert.equal(rm.aRenderedControls.length, iExpectedNumberOfControls, "Writer function rendered expected number of controls.");
-		if (fCheckCallBack){
-			fCheckCallBack(rm);
+		if (fnCheckCallBack){
+			fnCheckCallBack(rm);
 		}
-	};
+	}
 
 
 	//Control initialization
@@ -222,13 +243,13 @@ sap.ui.define([
 	QUnit.test("Renderer Interface", function(assert) {
 		var rm = sap.ui.getCore().createRenderManager();
 		var oControl0 = new TestControl("TestContr0");
-		fCheckRendererInterface = function(rmIf) {
+		fnCheckRendererInterface = function(rmIf) {
 			for (var s in rmIf) {
 				assert.ok(aCommonFunctions.indexOf(s) >= 0, "Renderer Interface provides function '" + s + "'.");
 			}
 		};
 		rm.renderControl(oControl0);
-		fCheckRendererInterface = null;
+		fnCheckRendererInterface = null;
 	});
 
 
@@ -384,9 +405,9 @@ sap.ui.define([
 		checkACCOutput(sOutput, "aria-selected=\"true\"");
 		checkACCOutput(sOutput, "aria-checked=\"true\"");
 		// escape it because attributes' values are escaped since 1.19.0 & 1.18.5 & 1.16.10
-		var sText = jQuery.sap.escapeHTML("TestACCContr1 test1");
+		var sText = encodeXML("TestACCContr1 test1");
 		checkACCOutput(sOutput, "aria-describedby=\"" + sText + "\"");
-		sText = jQuery.sap.escapeHTML("TestACCContr1 test2");
+		sText = encodeXML("TestACCContr1 test2");
 		checkACCOutput(sOutput, "aria-labelledby=\"" + sText + "\"");
 
 		//Check reset
@@ -425,9 +446,9 @@ sap.ui.define([
 		checkACCOutput(sOutput, "aria-selected=\"true\"");
 		checkACCOutput(sOutput, "aria-checked=\"true\"");
 		// escape it because attributes' values are escaped since 1.19.0 & 1.18.5 & 1.16.10
-		sText = jQuery.sap.escapeHTML("TestACCContr1 test1");
+		sText = encodeXML("TestACCContr1 test1");
 		checkACCOutput(sOutput, "aria-describedby=\"" + sText + "\"");
-		sText = jQuery.sap.escapeHTML("TestACCContr1 test2");
+		sText = encodeXML("TestACCContr1 test2");
 		checkACCOutput(sOutput, "aria-labelledby=\"" + sText + "\"");
 		checkACCOutput(sOutput, "aria-hello1=\"hello2\"");
 
@@ -450,9 +471,9 @@ sap.ui.define([
 		sOutput = rm.aBuffer.join("");
 		checkACCOutput(sOutput, "aria-readonly=\"false\"");
 		// escape it because attributes' values are escaped since 1.19.0 & 1.18.5 & 1.16.10
-		sText = jQuery.sap.escapeHTML("TestACCContr1 test1 hello1");
+		sText = encodeXML("TestACCContr1 test1 hello1");
 		checkACCOutput(sOutput, "aria-describedby=\"" + sText + "\"");
-		sText = jQuery.sap.escapeHTML("TestACCContr1 test2 hello2");
+		sText = encodeXML("TestACCContr1 test2 hello2");
 		checkACCOutput(sOutput, "aria-labelledby=\"" + sText + "\"");
 	});
 
@@ -570,13 +591,13 @@ sap.ui.define([
 			done = assert.async();
 
 		rm.renderControl(aControls[5]);
-		rm.flush(jQuery.sap.domById("area2"), false, 1);
+		rm.flush(document.getElementById("area2"), false, 1);
 		rm.destroy();
 
 		window.setTimeout(function() { // for delayed rendering in Safari
 			checkChildOrder(assert, "area2", [aControls[4].getId(), aControls[5].getId(), "divider"]);
 			done();
-		}, sap.ui.Device.browser.safari ? 500 : 0);
+		}, Device.browser.safari ? 500 : 0);
 	});
 
 	QUnit.test("RenderManager.flush(insert at certain position < 0)", function(assert) {
@@ -584,13 +605,13 @@ sap.ui.define([
 			done = assert.async();
 
 		rm.renderControl(aControls[6]);
-		rm.flush(jQuery.sap.domById("area2"), false, -1);
+		rm.flush(document.getElementById("area2"), false, -1);
 		rm.destroy();
 
 		window.setTimeout(function() { // for delayed rendering in Safari
 			checkChildOrder(assert, "area2", [aControls[6].getId(), aControls[4].getId(), aControls[5].getId(), "divider"]);
 			done();
-		}, sap.ui.Device.browser.safari ? 500 : 0);
+		}, Device.browser.safari ? 500 : 0);
 	});
 
 	QUnit.test("RenderManager.flush(insert at certain position > #items)", function(assert) {
@@ -598,13 +619,13 @@ sap.ui.define([
 			done = assert.async();
 
 		rm.renderControl(aControls[7]);
-		rm.flush(jQuery.sap.domById("area2"), false, 42);
+		rm.flush(document.getElementById("area2"), false, 42);
 		rm.destroy();
 
 		window.setTimeout(function() { // for delayed rendering in Safari
 			checkChildOrder(assert, "area2", [aControls[6].getId(), aControls[4].getId(), aControls[5].getId(), "divider", aControls[7].getId()]);
 			done();
-		}, sap.ui.Device.browser.safari ? 500 : 0);
+		}, Device.browser.safari ? 500 : 0);
 	});
 
 	QUnit.test("RenderManager lock", function(assert) {
@@ -642,10 +663,10 @@ sap.ui.define([
 			propertyA: "valueA",
 			propertyB: "valueB"
 		});
-		rm.flush(jQuery.sap.domById("area6"));
+		rm.flush(document.getElementById("area6"));
 		rm.destroy();
 
-		var $icon1 = jQuery.sap.byId("icon1");
+		var $icon1 = jQueryById("icon1");
 		assert.ok($icon1[0], "icon should be rendered");
 		assert.ok($icon1.is("span"), "Icon URI should be rendered as a span");
 		assert.equal($icon1.css("font-family").replace(/"|'/g, ""), oIconInfo.fontFamily, "Icon's font family is rendered");
@@ -658,7 +679,7 @@ sap.ui.define([
 		assert.equal($icon1.attr("propertyB"), "valueB", "Attribute should be set");
 		assert.notEqual($icon1.attr("aria-label"), undefined, "Attribute aria-label should be set");
 
-		jQuery.sap.byId("area6").empty();
+		jQueryById("area6").empty();
 
 		rm = sap.ui.getCore().createRenderManager();
 		oIconInfo = IconPool.getIconInfo("calendar");
@@ -667,10 +688,10 @@ sap.ui.define([
 			propertyA: "valueA",
 			propertyB: "valueB"
 		});
-		rm.flush(jQuery.sap.domById("area6"));
+		rm.flush(document.getElementById("area6"));
 		rm.destroy();
 
-		$icon1 = jQuery.sap.byId("icon1");
+		$icon1 = jQueryById("icon1");
 		assert.ok($icon1[0], "icon should be rendered");
 		assert.ok($icon1.is("span"), "Icon URI should be rendered as a span");
 		assert.equal($icon1.css("font-family").replace(/"|'/g, ""), oIconInfo.fontFamily, "Icon's font family is rendered");
@@ -683,7 +704,7 @@ sap.ui.define([
 		assert.equal($icon1.attr("propertyB"), "valueB", "Attribute should be set");
 		assert.notEqual($icon1.attr("aria-label"), undefined, "Attribute aria-label should be set");
 
-		jQuery.sap.byId("area6").empty();
+		jQueryById("area6").empty();
 	});
 
 	QUnit.test("RenderManager writeIcon with Icon URL. aria-label and aria-labelledby are set to null", function(assert) {
@@ -694,18 +715,18 @@ sap.ui.define([
 			"aria-label": null,
 			"aria-labelledby": null
 		});
-		rm.flush(jQuery.sap.domById("area6"));
+		rm.flush(document.getElementById("area6"));
 		rm.destroy();
 
-		var $icon1 = jQuery.sap.byId("icon1"),
-			$invisibleText = jQuery.sap.byId("icon1-label");
+		var $icon1 = jQueryById("icon1"),
+			$invisibleText = jQueryById("icon1-label");
 
 		assert.ok($icon1[0], "icon should be rendered");
 		assert.equal($icon1.attr("aria-label"), undefined, "Attribute aria-label should not be set");
 		assert.equal($icon1.attr("aria-labelledby"), undefined, "Attribute aria-labelledby should not be set");
 		assert.equal($invisibleText.length, 0, "No invisible text is rendered");
 
-		jQuery.sap.byId("area6").empty();
+		jQueryById("area6").empty();
 	});
 
 	QUnit.test("RenderManager writeIcon with Icon URL and aria-labelledby", function(assert) {
@@ -716,11 +737,11 @@ sap.ui.define([
 			"aria-labelledby": "foo",
 			alt: "abc"
 		});
-		rm.flush(jQuery.sap.domById("area6"));
+		rm.flush(document.getElementById("area6"));
 		rm.destroy();
 
-		var $icon1 = jQuery.sap.byId("icon1"),
-			$invisibleText = jQuery.sap.byId("icon1-label"),
+		var $icon1 = jQueryById("icon1"),
+			$invisibleText = jQueryById("icon1-label"),
 			sText = $invisibleText.text();
 		assert.ok($icon1[0], "icon should be rendered");
 
@@ -728,7 +749,7 @@ sap.ui.define([
 		assert.equal($icon1.attr("aria-labelledby"), "foo icon1-label", "Attribute aria-labelledby should contain both the given id and the id of the invisible text");
 		assert.equal(sText, "abc", "The content of invisible text should be set");
 
-		jQuery.sap.byId("area6").empty();
+		jQueryById("area6").empty();
 	});
 
 	QUnit.test("RenderManager writeIcon with font-family which has space inside", function(assert) {
@@ -745,10 +766,10 @@ sap.ui.define([
 		rm.writeIcon(oIconInfo.uri, [], {
 			id: "icon1"
 		});
-		rm.flush(jQuery.sap.domById("area6"));
+		rm.flush(document.getElementById("area6"));
 		rm.destroy();
 
-		var $icon1 = jQuery.sap.byId("icon1");
+		var $icon1 = jQueryById("icon1");
 		assert.ok($icon1[0], "icon should be rendered");
 		assert.ok($icon1.is("span"), "Icon URI should be rendered as a span");
 		assert.equal($icon1.css("font-family"), "\"" + sFontFamily + "\"", "Icon's font family is rendered");
@@ -757,22 +778,22 @@ sap.ui.define([
 		assert.ok($icon1.hasClass("sapUiIconMirrorInRTL"), "icon has sapUiIconMirrorInRTL as a CSS class");
 		assert.notEqual($icon1.attr("aria-label"), undefined, "Attribute aria-label should be set");
 
-		jQuery.sap.byId("area6").empty();
+		jQueryById("area6").empty();
 		oStub.restore();
 	});
 
 	QUnit.test("RenderManager writeIcon with Image URL", function(assert) {
 		var rm = sap.ui.getCore().createRenderManager(),
-			sImgURL = jQuery.sap.getModulePath("sap.ui.core", "/themes/base/img/Busy.gif");
-		rm.writeIcon(sImgURL, ["classA", "classB"], {
+			sImgURL = sap.ui.require.toUrl("sap/ui/core/themes/base/img/Busy.gif");
+			rm.writeIcon(sImgURL, ["classA", "classB"], {
 			id: "img1",
 			propertyA: "valueA",
 			propertyB: "valueB"
 		});
-		rm.flush(jQuery.sap.domById("area7"));
+		rm.flush(document.getElementById("area7"));
 		rm.destroy();
 
-		var $img1 = jQuery.sap.byId("img1");
+		var $img1 = jQueryById("img1");
 		assert.ok($img1[0], "icon should be rendered");
 		assert.ok($img1.is("img"), "Image URI should be rendered as a img");
 		assert.ok($img1.hasClass("classA"), "img has classA as a CSS class");
@@ -782,7 +803,7 @@ sap.ui.define([
 		assert.equal($img1.attr("role"), "presentation", "Default attribute should be set");
 		assert.equal($img1.attr("alt"), "", "Default attribute should be set");
 
-		jQuery.sap.byId("area7").empty();
+		jQueryById("area7").empty();
 
 		rm = sap.ui.getCore().createRenderManager();
 		rm.writeIcon(sImgURL, ["classA", "classB"], {
@@ -790,10 +811,10 @@ sap.ui.define([
 			role: "",
 			alt: "test alt message"
 		});
-		rm.flush(jQuery.sap.domById("area7"));
+		rm.flush(document.getElementById("area7"));
 		rm.destroy();
 
-		$img1 = jQuery.sap.byId("img1");
+		$img1 = jQueryById("img1");
 		assert.ok($img1[0], "icon should be rendered");
 		assert.ok($img1.is("img"), "Image URI should be rendered as a img");
 		assert.ok($img1.hasClass("classA"), "img has classA as a CSS class");

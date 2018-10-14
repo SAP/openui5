@@ -97,6 +97,8 @@ sap.ui.define([
 
 	oCustomArea.onAfterRendering = function() {
 
+		QUnit.module("");
+
 		QUnit.test("Forward Navigation", function(assert) {
 			var aFields = ["before", testControlId + "-input-1", testControlId + "-input-2", testControlId + "-input-3", "after", "before"];
 

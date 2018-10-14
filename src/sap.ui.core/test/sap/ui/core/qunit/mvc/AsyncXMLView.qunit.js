@@ -374,7 +374,7 @@ sap.ui.define([
 					keys: [sKey]
 				}).loaded().then(function(oView) {
 					oView.destroy();
-					that.oSpy.reset();
+					that.oSpy.resetHistory();
 				}).then(function() {
 					return viewFactory({
 						keys: [sKey]

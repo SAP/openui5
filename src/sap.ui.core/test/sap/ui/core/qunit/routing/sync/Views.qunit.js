@@ -39,7 +39,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should create a view", function (assert) {
-		var fnStub = this.stub(View, "_legacyCreate", function () {
+		var fnStub = this.stub(View, "_legacyCreate").callsFake(function () {
 				return this.oView;
 			}.bind(this));
 
@@ -56,7 +56,7 @@ sap.ui.define([
 
 	QUnit.test("Should set a view to the cache", function (assert) {
 		var oReturnValue,
-			fnStub = this.stub(View, "_legacyCreate", function () {
+			fnStub = this.stub(View, "_legacyCreate").callsFake(function () {
 				return this.oView;
 			});
 
@@ -88,7 +88,7 @@ sap.ui.define([
 		// Arrange
 		var fnOwnerSpy = this.spy(this.oUIComponent, "runAsOwner"),
 			oView = createXmlView(),
-			fnViewStub = this.stub(View, "_legacyCreate", function () {
+			fnViewStub = this.stub(View, "_legacyCreate").callsFake(function () {
 				return oView;
 			});
 
@@ -108,7 +108,7 @@ sap.ui.define([
 		// Arrange
 		var sViewId = "ViewId",
 			oView = createXmlView(),
-			fnViewStub = this.stub(View, "_legacyCreate", function () {
+			fnViewStub = this.stub(View, "_legacyCreate").callsFake(function () {
 				return oView;
 			}),
 			oOptions = {
@@ -130,7 +130,7 @@ sap.ui.define([
 		// Arrange
 		var sViewId = "ViewId",
 			oView = createXmlView(),
-			fnViewStub = this.stub(View, "_legacyCreate", function () {
+			fnViewStub = this.stub(View, "_legacyCreate").callsFake(function () {
 				return oView;
 			});
 
@@ -247,7 +247,7 @@ sap.ui.define([
 				oParameters = oEvent.getParameters();
 			});
 
-		this.stub(View, "_legacyCreate", function () {
+		this.stub(View, "_legacyCreate").callsFake(function () {
 			return oView;
 		});
 

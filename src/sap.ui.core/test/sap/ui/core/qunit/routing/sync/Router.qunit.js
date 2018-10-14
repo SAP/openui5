@@ -28,6 +28,12 @@ sap.ui.define([
 	// use sap.m.Panel as a lightweight drop-in replacement for the ux3.Shell
 	var ShellSubstitute = Panel;
 
+	function addClock() {
+		if ( this.clock == null && this._oSandbox ) {
+			this.clock = this._oSandbox.useFakeTimers();
+		}
+	}
+
 	QUnit.module("initialization");
 
 	QUnit.test("Should initialize the router instance", function(assert) {
@@ -172,7 +178,7 @@ sap.ui.define([
 	QUnit.test("Should log a warning if a router gets destroyed while the hash changes", function (assert) {
 
 		// Arrange
-		var oStub = this.stub(Log, "warning", jQuery.noop),
+		var oStub = this.stub(Log, "warning").callsFake(jQuery.noop),
 			oFirstRouter = new Router({
 				"matchingRoute" : {
 					pattern: "matches"
@@ -188,7 +194,7 @@ sap.ui.define([
 		oFirstRouter.initialize();
 		oRouterToBeDestroyed.initialize();
 
-		this.stub(oFirstRouter, "parse", function() {
+		this.stub(oFirstRouter, "parse").callsFake(function() {
 			Router.prototype.parse.apply(this, arguments);
 			oRouterToBeDestroyed.destroy();
 		});
@@ -205,6 +211,7 @@ sap.ui.define([
 		beforeEach : function() {
 			//make sure to start with an empty hash
 			hasher.setHash("");
+			addClock.call(this);
 		}
 	});
 
@@ -261,7 +268,7 @@ sap.ui.define([
 			}
 		});
 
-		var oViewCreateStub = sinon.stub(sap.ui, "view", function() {
+		var oViewCreateStub = sinon.stub(sap.ui, "view").callsFake(function() {
 			var oView = {
 				loaded: function() {
 					return Promise.resolve(oView);
@@ -403,7 +410,9 @@ sap.ui.define([
 		oRouter.destroy();
 	});
 
-	QUnit.module("greedy");
+	QUnit.module("greedy", {
+		beforeEach: addClock
+	});
 
 	QUnit.test("Should create a greedy route", function (assert) {
 		// Arrange + System under test
@@ -490,6 +499,7 @@ sap.ui.define([
 
 	QUnit.module("routing", {
 		beforeEach : function() {
+			addClock.call(this);
 			//make sure to start with an empty hash
 			hasher.setHash("");
 		}
@@ -734,7 +744,7 @@ sap.ui.define([
 			text: "Test-Button"
 		});
 
-		var oStub = this.stub(View, "_legacyCreate", function() {
+		var oStub = this.stub(View, "_legacyCreate").callsFake(function() {
 			return oButton;
 		});
 
@@ -1086,7 +1096,7 @@ sap.ui.define([
 
 	QUnit.test("Should create a view", function (assert) {
 		var that = this,
-			fnStub = this.stub(View, "_legacyCreate", function (oViewOptions) {
+			fnStub = this.stub(View, "_legacyCreate").callsFake(function (oViewOptions) {
 				assert.strictEqual(oViewOptions.viewName, "foo", "DId pass the viewname");
 				assert.strictEqual(oViewOptions.type, "bar", "DId pass the type");
 				assert.strictEqual(oViewOptions.id, "baz", "DId pass the id");
@@ -1106,7 +1116,7 @@ sap.ui.define([
 	QUnit.test("Should set a view to the cache", function (assert) {
 		var that = this,
 			oReturnValue,
-			fnStub = this.stub(View, "_legacyCreate", function () {
+			fnStub = this.stub(View, "_legacyCreate").callsFake(function () {
 				return that.oView;
 			});
 
@@ -1167,7 +1177,7 @@ sap.ui.define([
 				oParameters = oEvent.getParameters();
 			});
 
-		this.stub(View, "_legacyCreate", function () {
+		this.stub(View, "_legacyCreate").callsFake(function () {
 			return oView;
 		});
 
@@ -1191,7 +1201,7 @@ sap.ui.define([
 			this.sTitle = "myTitle";
 
 			var oView = createXmlView();
-			this.fnStub = sinon.stub(View, "_legacyCreate", function () {
+			this.fnStub = sinon.stub(View, "_legacyCreate").callsFake(function () {
 				return oView;
 			});
 
@@ -1381,7 +1391,7 @@ sap.ui.define([
 			this.oApp = new App();
 
 			var oView = createXmlView();
-			this.fnStub = sinon.stub(View, "_legacyCreate", function () {
+			this.fnStub = sinon.stub(View, "_legacyCreate").callsFake(function () {
 				return oView;
 			});
 
@@ -1671,13 +1681,13 @@ sap.ui.define([
 		// Act
 		this.oRouter.initialize();
 
-		sinon.assert.calledOnce(fnEventSpy, "titleChanged event is fired");
+		assert.ok(fnEventSpy.calledOnce, "titleChanged event is fired");
 		assert.equal(oParameters.title, sHomeTitle, "title parameter is set");
 		assert.equal(oParameters.history.length, 0, "No new history entry is created");
 		assert.equal(this.oRouter._aHistory[0].title, sHomeTitle, "title is updated in title history stack");
 
 		oModel.setProperty("/title", sNewTitle);
-		sinon.assert.calledTwice(fnEventSpy, "titleChanged event is fired again");
+		assert.ok(fnEventSpy.calledTwice, "titleChanged event is fired again");
 		assert.equal(oParameters.title, sNewTitle, "title parameter is set");
 		assert.equal(oParameters.history.length, 0, "No new history entry is created");
 		assert.equal(this.oRouter._aHistory[0].title, sNewTitle, "title is updated in title history stack");
@@ -2037,7 +2047,7 @@ sap.ui.define([
 			fnOwnerSpy = this.spy(oUIComponent, "runAsOwner"),
 			oView = createXmlView(),
 			oRouter = new Router({}, {}, oUIComponent),
-				fnViewStub = this.stub(View, "_legacyCreate", function () {
+				fnViewStub = this.stub(View, "_legacyCreate").callsFake(function () {
 					return oView;
 			});
 
@@ -2084,7 +2094,7 @@ sap.ui.define([
 
 	QUnit.test("Should display a target referenced by a route", function (assert) {
 		// Arrange
-		this.stub(Views.prototype, "_getView", function () {
+		this.stub(Views.prototype, "_getView").callsFake(function () {
 			return createXmlView();
 		});
 
@@ -2115,7 +2125,7 @@ sap.ui.define([
 
 	QUnit.test("Should display multiple targets referenced by a route", function (assert) {
 		// Arrange
-		this.stub(Views.prototype, "_getView", function () {
+		this.stub(Views.prototype, "_getView").callsFake(function () {
 			return createXmlView();
 		});
 
@@ -2150,7 +2160,7 @@ sap.ui.define([
 
 	QUnit.test("Should display child targets referenced by a route", function (assert) {
 		// Arrange
-		this.stub(Views.prototype, "_getView", function () {
+		this.stub(Views.prototype, "_getView").callsFake(function () {
 			return createXmlView();
 		});
 
@@ -2271,8 +2281,8 @@ sap.ui.define([
 				}
 			});
 
-		var fnDisplayFooStub = this.stub(this.oRouter.getTarget("foo"), "display", jQuery.noop),
-			fnDisplayBarStub = this.stub(this.oRouter.getTarget("bar"), "display", jQuery.noop);
+		var fnDisplayFooStub = this.stub(this.oRouter.getTarget("foo"), "display").callsFake(jQuery.noop),
+			fnDisplayBarStub = this.stub(this.oRouter.getTarget("bar"), "display").callsFake(jQuery.noop);
 
 		// Act
 		this.oRouter.initialize();
@@ -2284,7 +2294,9 @@ sap.ui.define([
 		sinon.assert.calledWith(fnDisplayBarStub, sinon.match({ hash: "test"}));
 	});
 
-	QUnit.module("Bug fix in Crossroads");
+	QUnit.module("Bug fix in Crossroads", {
+		beforeEach: addClock
+	});
 
 	QUnit.test("slash should be optional when it's between ')' and ':'", function (assert) {
 		var callCount = 0,
@@ -2399,6 +2411,7 @@ sap.ui.define([
 
 	QUnit.module("nested components", {
 		beforeEach: function() {
+			addClock.call(this);
 			hasher.setHash("");
 			var that = this;
 			this.fnInitRouter = function() {

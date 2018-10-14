@@ -41,7 +41,7 @@ sap.ui.define([
 
 	QUnit.test("Should create a view", function (assert) {
 		var done = assert.async();
-		var fnStub = this.stub(sap.ui, "view", function () {
+		var fnStub = this.stub(sap.ui, "view").callsFake(function () {
 				return this.oView;
 			}.bind(this));
 
@@ -61,7 +61,7 @@ sap.ui.define([
 	QUnit.test("Should set a view to the cache", function (assert) {
 		var done = assert.async();
 		var oReturnValue,
-			fnStub = this.stub(sap.ui, "view", function () {
+			fnStub = this.stub(sap.ui, "view").callsFake(function () {
 				return this.oView;
 			}.bind(this));
 
@@ -95,7 +95,7 @@ sap.ui.define([
 	QUnit.test("Should create a view with an component", function (assert) {
 		// Arrange
 		var fnOwnerSpy = this.spy(this.oUIComponent, "runAsOwner"),
-			fnViewStub = this.stub(sap.ui, "view", function () {
+			fnViewStub = this.stub(sap.ui, "view").callsFake(function () {
 				return this.oView;
 			}.bind(this));
 
@@ -116,7 +116,7 @@ sap.ui.define([
 	QUnit.test("Should prefix the id with the components id", function (assert) {
 		// Arrange
 		var sViewId = "ViewId",
-			fnViewStub = this.stub(sap.ui, "view", function () {
+			fnViewStub = this.stub(sap.ui, "view").callsFake(function () {
 				return this.oView;
 			}.bind(this)),
 			oOptions = {
@@ -139,7 +139,7 @@ sap.ui.define([
 	QUnit.test("Should not prefix the id with the components id if the private getView is invoked (by the router)", function (assert) {
 		// Arrange
 		var sViewId = "ViewId",
-			fnViewStub = this.stub(sap.ui, "view", function () {
+			fnViewStub = this.stub(sap.ui, "view").callsFake(function () {
 				return this.oView;
 			}.bind(this));
 
@@ -196,7 +196,7 @@ sap.ui.define([
 
 	QUnit.test("Should log an error if the options are missing", function (assert) {
 		// Arrange
-		var fnStub = this.stub(sap.ui, "view", this.fnView);
+		var fnStub = this.stub(sap.ui, "view").callsFake(this.fnView);
 		var fnErrorSpy = this.spy(Log, "error");
 
 		// Act
@@ -212,7 +212,7 @@ sap.ui.define([
 
 	QUnit.test("Should log an error if the viewName is missing", function (assert) {
 		// Arrange
-		var fnStub = this.stub(sap.ui, "view", this.fnView);
+		var fnStub = this.stub(sap.ui, "view").callsFake(this.fnView);
 		var fnErrorSpy = this.spy(Log, "error");
 
 		// Act
@@ -264,7 +264,7 @@ sap.ui.define([
 	QUnit.test("Should fire the view created event if a view is created", function (assert) {
 		// Arrange
 		var oView = createXmlView(),
-			fnStub = this.stub(sap.ui, "view", function () {
+			fnStub = this.stub(sap.ui, "view").callsFake(function () {
 				return oView;
 			}),
 			oViewOptions = {

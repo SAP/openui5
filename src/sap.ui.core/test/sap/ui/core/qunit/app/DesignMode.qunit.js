@@ -1,5 +1,9 @@
 /*global QUnit */
-sap.ui.define([], function () {
+sap.ui.define([
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/mvc/HTMLView",
+	"sap/ui/commons/Button" // used in HTML view
+], function (XMLView, HTMLView) {
 	"use strict";
 
 	QUnit.module("sap/ui/core/Configuration: DesignMode enabled");
@@ -15,25 +19,32 @@ sap.ui.define([], function () {
 	QUnit.test("Create an HTMLView instance and check controller methods are replaced by empty ones", function (assert) {
 		assert.expect(2);
 
-		var oView = sap.ui.htmlview("example.designmode.test01");
-		var oController = oView.getController();
+		return HTMLView.create({
+			viewName: "example.designmode.test01"
+		}).then(function(oView) {
+			var oController = oView.getController();
 
-		assert.ok(typeof oController !== "undefined", "Controller is not undefined");
-		assert.ok(oController["_sap.ui.core.mvc.EmptyControllerImpl"], "Controller is an empty Controller");
+			assert.ok(typeof oController !== "undefined", "Controller is not undefined");
+			assert.ok(oController["_sap.ui.core.mvc.EmptyControllerImpl"], "Controller is an empty Controller");
 
-		oView.destroy();
+			oView.destroy();
+		});
 	});
 
 	QUnit.test("Create a XMLView instance and check controller methods are replaced by empty ones", function (assert) {
 		assert.expect(2);
 
-		var oView = sap.ui.xmlview("example.designmode.test01");
-		var oController = oView.getController();
+		return XMLView.create({
+			viewName: "example.designmode.test01"
+		}).then(function(oView) {
+			var oController = oView.getController();
 
-		assert.ok(typeof oController !== "undefined", "Controller is not undefined");
-		assert.ok(oController["_sap.ui.core.mvc.EmptyControllerImpl"], "Controller is an empty Controller");
+			assert.ok(typeof oController !== "undefined", "Controller is not undefined");
+			assert.ok(oController["_sap.ui.core.mvc.EmptyControllerImpl"], "Controller is an empty Controller");
 
-		oView.destroy();
+			oView.destroy();
+		});
+
 	});
 
 });

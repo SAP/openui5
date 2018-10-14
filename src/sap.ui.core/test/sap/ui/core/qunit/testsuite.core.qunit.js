@@ -11,6 +11,9 @@ sap.ui.define(function() {
 			},
 			qunit: {
 				version: 2
+			},
+			sinon: {
+				version: 4
 			}
 		},
 		tests: {
@@ -18,21 +21,18 @@ sap.ui.define(function() {
 				title: "sap.ui.dom.activeElementFix"
 			},
 			AppCacheBuster: {
-				title: "sap.ui.core.AppCacheBuster",
+				/**
+				 * Page kept because test assumes a specific baseURI
+				 */
 				page: "test-resources/sap/ui/core/qunit/AppCacheBuster.qunit.html",
-				sinon: {
-					version: 1
-				}
+				title: "sap.ui.core.AppCacheBuster"
 			},
 			baseuri: {
 				title: "sap.ui.thirdparty.baseuri",
 				bootCore: false
 			},
 			CacheManager: {
-				title: "sap.ui.core.cache.CacheManager",
-				sinon: {
-					version: 1
-				}
+				title: "sap.ui.core.cache.CacheManager"
 			},
 			ContextMenuSupport: {
 				title: "sap.ui.core.ContextMenuSupport"
@@ -48,11 +48,11 @@ sap.ui.define(function() {
 			},
 			Core: {
 				title: "sap.ui.core.Core",
-				page: "test-resources/sap/ui/core/qunit/Core.qunit.html"
 				/**
 				 * Due to several tests (e.g. 'loadLibraries: multiple libraries (async, preloads are deactivated)') a separate HTML page is needed.
 				 * The root cause is related to async loading behavior via script tags of the ui5 loader.
 				 */
+				page: "test-resources/sap/ui/core/qunit/Core.qunit.html"
 			},
 			CoreLock: {
 				title: "sap.ui.core.Core: Core unlocks unconditionally itself upon load/init",
@@ -72,10 +72,6 @@ sap.ui.define(function() {
 					paths: {
 						testlibs: "testdata/libraries/"
 					}
-				},
-				sinon: {
-					version: 1,
-					qunitBridge: true
 				}
 			},
 			Core_libraryPreloadFiles2: {
@@ -121,10 +117,6 @@ sap.ui.define(function() {
 						"sap/ui/testlib": "test-resources/sap/ui/core/qunit/testdata/uilib/",
 						"sap/ui/legacy/testlib": "test-resources/sap/ui/core/qunit/testdata/legacy-uilib/"
 					}
-				},
-				sinon: {
-					version: 1,
-					qunitBridge: true
 				}
 			},
 			CustomThemeFallback: {
@@ -139,11 +131,6 @@ sap.ui.define(function() {
 							"sap.ui.core": "test-resources/sap/ui/core/qunit/testdata/customcss/"
 						}
 					}
-				},
-				sinon: {
-					version: 1,
-					qunitBridge: true,
-					useFakeTimers: false
 				}
 			},
 			Declarative: {
@@ -154,7 +141,7 @@ sap.ui.define(function() {
 					libs: "sap.ui.commons,sap.ui.ux3"
 				},
 				qunit: {
-					version: 1 //global assert used
+					reorder: false
 				}
 			},
 			DuplicateIds: {
@@ -192,12 +179,7 @@ sap.ui.define(function() {
 					}
 				},
 				qunit: {
-					version: 1,
 					reorder: false
-				},
-				sinon: {
-					version: 1,
-					qunitBridge: true
 				}
 			},
 			"IconPool-custom-theme": {
@@ -214,7 +196,6 @@ sap.ui.define(function() {
 					}
 				},
 				qunit: {
-					version: 1,
 					reorder: false
 				}
 			},
@@ -224,12 +205,7 @@ sap.ui.define(function() {
 					libs: "sap.ui.core,sap.m"
 				},
 				qunit: {
-					version: 1,
 					reorder: false
-				},
-				sinon: {
-					version: 1,
-					qunitBridge: true
 				}
 			},
 			IntervalTrigger: {
@@ -246,23 +222,15 @@ sap.ui.define(function() {
 				qunit: {
 					reorder: false
 				},
-				sinon: {
-					version: 1,
-					qunitBridge: true
-				},
 				autostart: false
 			},
 			ManagedObject: {
-				title: "sap.ui.base.ManagedObject",
-				sinon: {
-					version: 1,
-					qunitBridge: true
-				}
+				title: "sap.ui.base.ManagedObject"
 			},
 			ManagedObjectMetadata: {
 				title: "sap.ui.base.ManagedObjectMetadata",
 				sinon: {
-					version: 1,
+					version: 1, // bridge does not support nested modules
 					qunitBridge: true
 				}
 			},
@@ -281,8 +249,7 @@ sap.ui.define(function() {
 					reorder: false
 				},
 				sinon: {
-					version: 4,
-					qunitBridge: false
+					qunitBridge: false // deactivate bridge as it can't handle QUnit.modules with callback functions
 				},
 				module: [
 					// sap/base/*
@@ -383,11 +350,7 @@ sap.ui.define(function() {
 				title: "QUnit tests: General QUnit 2 checks"
 			},
 			RenderManager: {
-				page: "test-resources/sap/ui/core/qunit/RenderManager.qunit.html",
-				title: "Test Page for RenderManager",
-				qunit: {
-					version: 1
-				}
+				title: "Test Page for RenderManager"
 			},
 			SinonJS: {
 				title: "sap.ui.thirdparty.sinon: Support",
@@ -395,11 +358,8 @@ sap.ui.define(function() {
 					libs: "sap.ui.commons",
 					theme: "sap_bluecrystal"
 				},
-				qunit: {
-					version: 1
-				},
 				sinon: {
-					version: 1,
+					version: 1, // sinon 1 itself is tested
 					qunitBridge: true
 				}
 			},
@@ -412,13 +372,6 @@ sap.ui.define(function() {
 					paths: {
 						test: "test-resources/sap/ui/core/qunit/"
 					}
-				},
-				qunit: {
-					version: 1
-				},
-				sinon: {
-					version: 1,
-					qunitBridge: true
 				}
 			},
 			ThemeCheck: {
@@ -443,10 +396,6 @@ sap.ui.define(function() {
 				},
 				qunit: {
 					reorder: false
-				},
-				sinon: {
-					version: 1,
-					qunitBridge: true
 				}
 			},
 			ThemeParameters: {
@@ -494,23 +443,12 @@ sap.ui.define(function() {
 				title: "jQuery.sap.global",
 				ui5: {
 					libs: "sap.ui.core"
-				},
-				qunit: {
-					version: 1
-				},
-				sinon: {
-					version: 4,
-					qunitBridge: true
 				}
 			},
 			"jquery.sap.mobile": {
 				title: "jquery.sap.mobile: 1",
 				ui5: {
 					theme: "base"
-				},
-				sinon: {
-					version: 1,
-					qunitBridge: true
 				}
 			},
 			"jquery.sap.mobile2": {
@@ -545,11 +483,7 @@ sap.ui.define(function() {
 				title: "sap.ui.performance.trace.FESR: Activation of FESR via url-param"
 			},
 			"sap.ui.Global": {
-				title: "sap.ui.Global",
-				sinon: {
-					version: 1,
-					qunitBridge: true
-				}
+				title: "sap.ui.Global"
 			}
 		}
 	};

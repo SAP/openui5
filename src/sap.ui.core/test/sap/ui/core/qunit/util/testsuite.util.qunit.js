@@ -9,7 +9,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				reorder: false
 			},
 			sinon: {
-				version: 1,
+				version: 4,
 				qunitBridge: true,
 				useFakeTimers: false
 			},
@@ -135,14 +135,14 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				}
 			},
 			"postmessage/Bus": {
-				sinon: {
-					version: 4
-				},
 				coverage: {
 					only: "[sap/ui/core/postmessage/Bus]"
 				}
 			},
 			"postmessage/ConfirmationDialog": {
+				sinon: {
+					version: 1 // because the bridge doesn't support nested modules yet
+				},
 				coverage: {
 					only: "[sap/ui/core/postmessage/confirmationDialog]"
 				}
@@ -158,6 +158,14 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			},
 			"support/TechnicalInfo": {},
 			"support/TechnicalInfo.opa": {
+				loader: {
+					map: {
+						// Opa _XHRWaiter requires sap/ui/thirdparty/sinon, redirect to sinon-4
+						'sap/ui/test/autowaiter': {
+							'sap/ui/thirdparty/sinon': 'sap/ui/thirdparty/sinon-4'
+						}
+					}
+				},
 				ui5: {
 					libs: "sap.m",
 					language: "EN"
@@ -167,7 +175,10 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			ExportTypeCSV: {},
 			PasteHelper: {},
 			"reflection/BaseTreeModifier": {
-				sinon: false,
+				sinon: {
+					version: 4,
+					qunitBridge: false
+				},
 				coverage: {
 					only: "[sap/ui/core/util/reflection]"
 				},
@@ -178,7 +189,10 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				}
 			},
 			"reflection/JsControlTreeModifier": {
-				sinon: false,
+				sinon: {
+					version: 4,
+					qunitBridge: false
+				},
 				coverage: {
 					only: "[sap/ui/core/util/reflection]"
 				},
@@ -189,7 +203,10 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				}
 			},
 			"reflection/XmlTreeModifier": {
-				sinon: false,
+				sinon: {
+					version: 4,
+					qunitBridge: false
+				},
 				coverage: {
 					only: "[sap/ui/core/util/reflection]"
 				},
@@ -228,9 +245,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			SyncPromise: {
 				coverage : {
 					only : "sap/ui/base/SyncPromise"
-				},
-				sinon: {
-					version: 4
 				}
 			},
 			TestUtils: {
@@ -239,17 +253,11 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				},
 				module : [
 					"test-resources/sap/ui/test/qunit/TestUtils.qunit"
-				],
-				sinon: {
-					version: 4
-				}
+				]
 			},
 			XMLPreprocessor: {
 				coverage : {
 					only : "sap/ui/core/util/XMLPreprocessor"
-				},
-				sinon: {
-					version: 4
 				}
 			}
 

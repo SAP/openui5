@@ -251,7 +251,7 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 			});
 			var oErrorLogSpy = this.spy(Log, "error");
 
-			var oServer = this.sandbox.useFakeServer(),
+			var oServer = this._oSandbox.useFakeServer(),
 				oResponse = {
 					version: "1.0",
 					active: !!bActive,
@@ -338,6 +338,12 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 		});
 	}
 
+	function setup() {
+		if ( this.clock == null && this._oSandbox ) {
+			this.clock = this._oSandbox.useFakeTimers();
+		}
+	}
+
 	function teardown() {
 		if (this.oFrameOptions && this.oFrameOptions._lockDiv) {
 			document.body.removeChild(this.oFrameOptions._lockDiv);
@@ -361,19 +367,19 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 
 //                    test name,                                  environment,     parent mode,    frame option,  same origin,  jQuery.sap.log.error message
 
-	QUnit.module("mode: deny", { afterEach: teardown });
+	QUnit.module("mode: deny", { beforeEach: setup, afterEach: teardown });
 	testDirectUnlock(    "no frame",                                  'NO_FRAME',      'SAFE',         'deny',        true);
 	testDirectLock(      "same origin",                               'SAME_ORIGIN',   'SAFE',         'deny',        true,         ["Embedding blocked because configuration mode is set to 'DENY'", "", "sap/ui/security/FrameOptions"]);
 	testDirectLock(      "different origin",                          'DIFF_ORIGIN',   'SAFE',         'deny',        true,         ["Embedding blocked because configuration mode is set to 'DENY'", "", "sap/ui/security/FrameOptions"]);
 
-	QUnit.module("mode: allow", { afterEach: teardown });
+	QUnit.module("mode: allow", { beforeEach: setup, afterEach: teardown });
 	testDirectUnlock(    "no frame",                                  'NO_FRAME',      'SAFE',         'allow');
 	testDirectUnlock(    "same origin",                               'SAME_ORIGIN',   'SAFE',         'allow');
 	testDirectUnlock(    "different origin",                          'DIFF_ORIGIN',   'SAFE',         'allow');
 
 //                    test name,                                  environment,     parent mode,    frame option,  same origin,  jQuery.sap.log.error message
 
-	QUnit.module("mode: trusted", { afterEach: teardown });
+	QUnit.module("mode: trusted", { beforeEach: setup, afterEach: teardown });
 	testDirectUnlock(    "no frame",                                  'NO_FRAME',      'SAFE',         'trusted');
 	testDirectUnlock(    "same origin",                               'SAME_ORIGIN',   'SAFE',         'trusted');
 	testDirectUnlock(    "same origin, unsafe",                       'SAME_ORIGIN',   'UNSAFE',       'trusted');
@@ -382,30 +388,30 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 	testPostMessageLock( "same origin not allowed",                   'SAME_ORIGIN',   'SAFE',         'trusted',     false,        ["Embedding blocked because the whitelist or the whitelist service is not configured correctly", "", "sap/ui/security/FrameOptions"]);
 	testPostMessageLock( "different origin",                          'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         ["Embedding blocked because the whitelist or the whitelist service is not configured correctly", "", "sap/ui/security/FrameOptions"]);
 
-	QUnit.module("mode: trusted, whitelist", { afterEach: teardown });
+	QUnit.module("mode: trusted, whitelist", { beforeEach: setup, afterEach: teardown });
 	testWhitelistUnlock( "same origin not allowed, whitelist",        'SAME_ORIGIN',   'SAFE',         'trusted',     false);
 	testWhitelistUnlock( "different origin, whitelist",               'DIFF_ORIGIN',   'SAFE',         'trusted');
 
 //                   test name,                                   environment,     parent mode,    frame option,  same origin,  active,   framing,  allow,  jQuery.sap.log.error message
 
-	QUnit.module("mode: trusted, whitelist service, parent safe", { afterEach: teardown });
+	QUnit.module("mode: trusted, whitelist service, parent safe", { beforeEach: setup, afterEach: teardown });
 	testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'SAFE',         'trusted',     false,        true,     true,     true);
 	testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         true,     true,     true);
 	testWhitelistService("diff origin, whitelistService, denied",     'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         true,     false,    false,  ["Embedding blocked because the whitelist service does not allow framing", "", "sap/ui/security/FrameOptions"]);
 	testWhitelistService("diff origin, whitelistService, inactive",   'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         false,    true,     true);
 
-	QUnit.module("mode: trusted, whitelist service, parent safe delayed", { afterEach: teardown });
+	QUnit.module("mode: trusted, whitelist service, parent safe delayed", { beforeEach: setup, afterEach: teardown });
 	testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'SAFE_DELAYED', 'trusted',     false,        true,     true,     true);
 	testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'SAFE_DELAYED', 'trusted',     true,         true,     true,     true);
 	testWhitelistService("diff origin, whitelistService, denied",     'DIFF_ORIGIN',   'SAFE_DELAYED', 'trusted',     true,         true,     false,    false,  ["Embedding blocked because the whitelist service does not allow framing", "", "sap/ui/security/FrameOptions"]);
 	testWhitelistService("diff origin, whitelistService, inactive",   'DIFF_ORIGIN',   'SAFE_DELAYED', 'trusted',     true,         false,    true,     true);
 
-	QUnit.module("mode: trusted, whitelist service, parent unsafe", { afterEach: teardown });
+	QUnit.module("mode: trusted, whitelist service, parent unsafe", { beforeEach: setup, afterEach: teardown });
 	testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'UNSAFE',       'trusted',     false,        true,     true,     false,  ["Reached timeout of 200ms waiting for the parent to be unlocked", "", "sap/ui/security/FrameOptions"]);
 	testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'UNSAFE',       'trusted',     true,         true,     true,     false,  ["Reached timeout of 200ms waiting for the parent to be unlocked", "", "sap/ui/security/FrameOptions"]);
 	testWhitelistService("diff origin, whitelistService, inactive",   'DIFF_ORIGIN',   'UNSAFE',       'trusted',     true,         false,    true,     true);
 
-	QUnit.module("mode: trusted, whitelist service, parent no response", { afterEach: teardown });
+	QUnit.module("mode: trusted, whitelist service, parent no response", { beforeEach: setup, afterEach: teardown });
 	testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'NO_RESPONSE',  'trusted',     false,        true,     true,     false,  ["Reached timeout of 200ms waiting for a response from parent window", "", "sap/ui/security/FrameOptions"]);
 	testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'NO_RESPONSE',  'trusted',     true,         true,     true,     false,  ["Reached timeout of 200ms waiting for a response from parent window", "", "sap/ui/security/FrameOptions"]);
 	testWhitelistService("diff origin, whitelistService, inactive",   'DIFF_ORIGIN',   'NO_RESPONSE',  'trusted',     true,         false,    true,     true);

@@ -262,9 +262,9 @@ sap.ui.define([
 			}
 		};
 
-		var oServer = this.sandbox.useFakeServer();
-		oServer.useFilters = true;
+		var oServer = this._oSandbox.useFakeServer();
 		oServer.autoRespond = true;
+		oServer.xhr.useFilters = true;
 		oServer.xhr.addFilter(function(method, url) {
 			return url !== "/anylocation/manifest.json?sap-language=EN";
 		});

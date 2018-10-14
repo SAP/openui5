@@ -185,7 +185,7 @@ sap.ui.define([
 
 	QUnit.test("access and parsing", function (assert) {
 		// redirect access to URL + Accept header to files with language specific texts
-		this.stub(LoaderExtensions, "loadResource", function (sResourceName, mOptions) {
+		this.stub(LoaderExtensions, "loadResource").callsFake(function (sResourceName, mOptions) {
 			if (typeof sResourceName === 'object') {
 				mOptions = sResourceName;
 				sResourceName = undefined;

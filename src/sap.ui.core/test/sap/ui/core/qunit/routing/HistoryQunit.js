@@ -27,6 +27,19 @@ sap.ui.define([
 		};
 	};
 
+	// Helper to abstract from Sinon 1 and Sinon 4
+	// (this module is used with both versions)
+	function stubWith(sandbox, object, property, value) {
+		if ( sinon.log ) {// sinon has no version property, but 'log' was removed with 2.x
+			return sandbox.stub(object, property, value);
+		} else if ( typeof value === "function" ) {
+			return sandbox.stub(object, property).callsFake(value);
+		} else {
+			return sandbox.stub(object, property).value(value);
+		}
+	}
+
+
 	QUnit.test("Should record a hash change", function(assert) {
 		//System under Test
 		var oHashChanger = HashChanger.getInstance();
@@ -475,7 +488,7 @@ sap.ui.define([
 			// The fireEvent method nees to be stubbed instead of the fireHashChanged because the original
 			// fireHashChanged is already registered as an event handler to hasher at HashChanger.init and
 			// the stub of it here can't affect the hasher event handler anymore
-			this.oFireHashChangeStub = sinon.stub(this.oExtendedHashChanger, "fireEvent", function(sEventName, oParameter) {
+			this.oFireHashChangeStub = stubWith(sinon, this.oExtendedHashChanger, "fireEvent", function(sEventName, oParameter) {
 				if (sEventName === "hashChanged") {
 					if (that.fnBeforeFireHashChange) {
 						that.fnBeforeFireHashChange();

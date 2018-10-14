@@ -9,6 +9,11 @@ sap.ui.define(function() {
 			},
 			qunit: {
 				version: 2
+			},
+			sinon: {
+				version: 4,
+				qunitBridge: true,
+				useFakeTimers: false
 			}
 		},
 		tests: {
@@ -39,10 +44,6 @@ sap.ui.define(function() {
 			amdAPIs: {
 				page: "test-resources/sap/ui/core/qunit/loader/amdAPIs.qunit.html",
 				title: "QUnit tests: ui5loader AMD APIs (global define/require)",
-				sinon: {
-					version: 4,
-					qunitBridge: true
-				},
 				bootCore: false
 			},
 			/*
@@ -59,10 +60,6 @@ sap.ui.define(function() {
 						'fixture': 'test-resources/sap/ui/core/qunit/loader/fixture/'
 					}
 				},
-				sinon: {
-					version: 1,
-					qunitBridge: false
-				},
 				bootCore: false,
 				autostart: false
 			},
@@ -72,10 +69,6 @@ sap.ui.define(function() {
 					paths: {
 						'fixture': 'test-resources/sap/ui/core/qunit/loader/fixture/'
 					}
-				},
-				sinon: {
-					version: 1,
-					qunitBridge: false
 				},
 				ui5: {
 					preload: "async"
@@ -104,13 +97,8 @@ sap.ui.define(function() {
 					paths: {
 						'fixture': 'test-resources/sap/ui/core/qunit/loader/fixture/'
 					}
-				},
-				sinon: {
-					version: 1,
-					qunitBridge: true
 				}
 			},
-
 			syncModuleDefinition: {
 				page: "test-resources/sap/ui/core/qunit/loader/syncModuleDefinition.qunit.html",
 				title: "Test Page for ui5loader synchronous module definition"

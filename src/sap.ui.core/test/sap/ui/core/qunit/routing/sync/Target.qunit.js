@@ -15,6 +15,12 @@ sap.ui.define([
 	// use sap.m.Panel as a lightweight drop-in replacement for the ux3.Shell
 	var ShellSubstitute = Panel;
 
+	function addClock() {
+		if ( this.clock == null && this._oSandbox ) {
+			this.clock = this._oSandbox.useFakeTimers();
+		}
+	}
+
 	function createView (aContent, sId) {
 		var sXmlViewContent = aContent.join(''),
 				oViewOptions = {
@@ -60,7 +66,7 @@ sap.ui.define([
 		// Arrange
 		var oButton = new Button();
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return oButton;
 		});
 
@@ -77,7 +83,7 @@ sap.ui.define([
 	QUnit.test("Should pass the correct values to the view creation", function (assert) {
 		// Arrange
 		var that = this,
-			oStub = this.stub(this.oViews, "_getView", function (oOptions) {
+			oStub = this.stub(this.oViews, "_getView").callsFake(function (oOptions) {
 				assert.strictEqual(oOptions.name, "bar.foo");
 				assert.strictEqual(oOptions.type, "XML");
 				assert.strictEqual(oOptions.id, "baz");
@@ -95,7 +101,7 @@ sap.ui.define([
 		// Arrange
 		var that = this,
 			oSpy = this.spy(this.oViews, "_getView"),
-			oStub = this.stub(this.oViews, "_getViewWithGlobalId", function (oOptions) {
+			oStub = this.stub(this.oViews, "_getViewWithGlobalId").callsFake(function (oOptions) {
 				assert.strictEqual(oOptions.name, "bar.foo");
 				assert.strictEqual(oOptions.type, "XML");
 				assert.strictEqual(oOptions.id, "baz");
@@ -120,7 +126,7 @@ sap.ui.define([
 		this.oTarget._oOptions.clearControlAggregation = true;
 		this.oShell.addContent(oExistingButton);
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return oButton;
 		});
 
@@ -141,7 +147,7 @@ sap.ui.define([
 	QUnit.test("Should log an error if the target parent is not found", function (assert) {
 
 		// Arrange
-		var oStub = this.stub(Log, "error", jQuery.noop);
+		var oStub = this.stub(Log, "error").callsFake(jQuery.noop);
 
 		this.oTarget._oOptions.rootView = "foo";
 
@@ -155,7 +161,7 @@ sap.ui.define([
 	QUnit.test("Should log an error if the target control does not have an nonexistion aggregation specified", function (assert) {
 
 		// Arrange
-		var oStub = this.stub(Log, "error", jQuery.noop);
+		var oStub = this.stub(Log, "error").callsFake(jQuery.noop);
 
 		this.oTarget._oOptions.controlAggregation = "foo";
 
@@ -169,7 +175,7 @@ sap.ui.define([
 	QUnit.test("Should log an error if the target control does not have an aggregation specified", function (assert) {
 
 		// Arrange
-		var oStub = this.stub(Log, "error", jQuery.noop);
+		var oStub = this.stub(Log, "error").callsFake(jQuery.noop);
 
 		this.oTarget._oOptions.controlAggregation = undefined;
 
@@ -183,7 +189,7 @@ sap.ui.define([
 	QUnit.test("Should log an error if the target control could not be found", function (assert) {
 
 		// Arrange
-		var oStub = this.stub(Log, "error", jQuery.noop);
+		var oStub = this.stub(Log, "error").callsFake(jQuery.noop);
 
 		this.oTarget._oOptions.controlId = "foo";
 
@@ -272,6 +278,7 @@ sap.ui.define([
 
 	QUnit.module("display event", {
 		beforeEach: function () {
+			addClock.call(this);
 			this.oShell = new ShellSubstitute();
 			this.oView =  createView(
 					['<View xmlns="sap.ui.core.mvc">',
@@ -337,7 +344,7 @@ sap.ui.define([
 				oParameters = oEvent.getParameters();
 			});
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return that.oView;
 		});
 

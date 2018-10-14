@@ -1,5 +1,12 @@
-sap.ui.define(["sap/ui/core/StashedControlSupport", "sap/ui/core/Component", "sap/m/Button", "sap/m/Panel", "sap/base/Log", "sap/ui/qunit/utils/createAndAppendDiv"],
-function(StashedControlSupport, Component, Button, Panel, Log, createAndAppendDiv) {
+sap.ui.define([
+	"sap/ui/core/StashedControlSupport",
+	"sap/ui/core/Component",
+	"sap/ui/core/mvc/XMLView",
+	"sap/m/Button",
+	"sap/m/Panel",
+	"sap/base/Log",
+	"sap/ui/qunit/utils/createAndAppendDiv"],
+function(StashedControlSupport, Component, XMLView, Button, Panel, Log, createAndAppendDiv) {
 	/* global QUnit */
 	"use strict";
 
@@ -199,10 +206,13 @@ function(StashedControlSupport, Component, Button, Panel, Log, createAndAppendDi
 				// extend the real sap.m.Button for test purposes - once!
 				StashedControlSupport.mixInto(Button);
 			}
-			this.oView = sap.ui.xmlview("view", {
-				viewName: 'test.StashedControl',
-				async: true
-			}).placeAt("content");
+			return XMLView.create({
+				id: "view",
+				viewName: 'test.StashedControl'
+			}).then(function(oView) {
+				this.oView = oView;
+				oView.placeAt("content");
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oView.destroy();

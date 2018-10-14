@@ -4,9 +4,6 @@ sap.ui.define(function () {
 	return {
 		name: "TestSuite for app",
 		defaults: {
-			qunit: {
-				version: 2
-			},
 			beforeBootstrap: "./beforeBootstrap"
 		},
 		tests: {
@@ -19,6 +16,7 @@ sap.ui.define(function () {
 			},
 			MockServer: {
 				title: "Tests for sap/ui/core/util/MockServer",
+				sinon: 1, // because MockServer is used which has a hard dependency to sinon v1
 				ui5: {
 					libs: ["sap.ui.commons"]
 				},
@@ -29,13 +27,16 @@ sap.ui.define(function () {
 				}
 			},
 			MockServerFeature: {
-				title: "Tests for sap/ui/core/util/Mockserver: given data and complex filter features"
+				title: "Tests for sap/ui/core/util/Mockserver: given data and complex filter features",
+				sinon: 1 // because MockServer is used which has a hard dependency to sinon v1
 			},
 			MockServerAPF: {
-				title: "Tests for sap/ui/core/util/MockServer: APF model"
+				title: "Tests for sap/ui/core/util/MockServer: APF model",
+				sinon: 1 // because MockServer is used which has a hard dependency to sinon v1
 			},
 			DraftEnabledMockServer: {
-				title: "Tests for sap/ui/core/util/DraftEnabledMockServer"
+				title: "Tests for sap/ui/core/util/DraftEnabledMockServer",
+				sinon: 1 // because MockServer is used which has a hard dependency to sinon v1
 			},
 			DesignMode: {
 				title: "Tests for sap/ui/core/Configuration: DesignMode",

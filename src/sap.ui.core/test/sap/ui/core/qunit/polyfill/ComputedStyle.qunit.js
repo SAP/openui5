@@ -6,9 +6,9 @@ sap.ui.define(['require'],function (require) {
 
 		var fnDone = assert.async();
 
-		var bThrowedError = false;
+		var bThrewError = false;
 		window.onerror = function(){
-			bThrowedError = true;
+			bThrewError = true;
 		};
 
 		var oIFrame = document.createElement("iframe");
@@ -17,7 +17,7 @@ sap.ui.define(['require'],function (require) {
 		document.body.appendChild(oIFrame);
 
 		oIFrame.onload = function(){
-			assert.ok(!bThrowedError, "The returned Object Type of getComputedStyle has to match the CSS2Properties Object");
+			assert.ok(!bThrewError, "The returned Object Type of getComputedStyle has to match the CSS2Properties Object");
 			fnDone();
 		};
 	});

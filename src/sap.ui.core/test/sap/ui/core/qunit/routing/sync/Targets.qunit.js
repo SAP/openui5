@@ -12,6 +12,12 @@ sap.ui.define([
 	// use sap.m.Panel as a lightweight drop-in replacement for the ux3.Shell
 	var ShellSubstitute = Panel;
 
+	function addClock() {
+		if ( this.clock == null && this._oSandbox ) {
+			this.clock = this._oSandbox.useFakeTimers();
+		}
+	}
+
 	QUnit.module("getTarget and target names", {
 		beforeEach: function () {
 			// System under test + Arrange
@@ -65,7 +71,7 @@ sap.ui.define([
 
 	QUnit.test("Should be able to get multiple targets", function (assert) {
 		// Arrange
-		var oStub = this.stub(Log, "error", jQuery.noop);
+		var oStub = this.stub(Log, "error").callsFake(jQuery.noop);
 
 		// Act
 		var aTargets = this.oTargets.getTarget(["myTarget",  "foo", "myParent"]);
@@ -93,7 +99,7 @@ sap.ui.define([
 	QUnit.test("Should kept the existing target and log an error message if 'addTarget' is called with the same name", function (assert) {
 
 		// Arrange
-		var oStub = this.stub(Log, "error", jQuery.noop);
+		var oStub = this.stub(Log, "error").callsFake(jQuery.noop);
 
 		// Act
 		this.oTargets.addTarget("myParent", {
@@ -166,7 +172,7 @@ sap.ui.define([
 					}
 				}
 			},
-			oErrorStub = this.stub(Log, "error", jQuery.noop);
+			oErrorStub = this.stub(Log, "error").callsFake(jQuery.noop);
 
 		// System under test + Act
 		this.oTargets = new Targets(oIncorrectConfig);
@@ -195,8 +201,8 @@ sap.ui.define([
 	QUnit.test("Should display one target", function (assert) {
 		// Arrange
 		// Replace display with an empty fn
-		var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display", jQuery.noop);
-		var fnSecondDisplayStub = this.stub(this.oTargets.getTarget("secondTarget"), "display", jQuery.noop);
+		var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display").callsFake(jQuery.noop);
+		var fnSecondDisplayStub = this.stub(this.oTargets.getTarget("secondTarget"), "display").callsFake(jQuery.noop);
 
 		// Act
 		this.oTargets.display("firstTarget");
@@ -209,8 +215,8 @@ sap.ui.define([
 	QUnit.test("Should display multiple targets", function (assert) {
 		// Arrange
 		// Replace display with an empty fn
-		var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display", jQuery.noop);
-		var fnSecondDisplayStub = this.stub(this.oTargets.getTarget("secondTarget"), "display", jQuery.noop);
+		var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display").callsFake(jQuery.noop);
+		var fnSecondDisplayStub = this.stub(this.oTargets.getTarget("secondTarget"), "display").callsFake(jQuery.noop);
 
 		// Act
 		this.oTargets.display(["firstTarget", "secondTarget"]);
@@ -223,7 +229,7 @@ sap.ui.define([
 	QUnit.test("Should log an error if user tries to display a non existing Target", function (assert) {
 
 		// Assert
-		var oErrorStub = this.stub(Log, "error", jQuery.noop);
+		var oErrorStub = this.stub(Log, "error").callsFake(jQuery.noop);
 
 		// Act
 		this.oTargets.display("foo");
@@ -235,8 +241,8 @@ sap.ui.define([
 	QUnit.test("Should log an error if user tries to display a non existing Target, but should display existing ones", function (assert) {
 
 		// Assert
-		var oErrorStub = this.stub(Log, "error", jQuery.noop);
-		var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display", jQuery.noop);
+		var oErrorStub = this.stub(Log, "error").callsFake(jQuery.noop);
+		var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display").callsFake(jQuery.noop);
 
 		// Act
 		this.oTargets.display(["foo", "firstTarget"]);
@@ -259,6 +265,7 @@ sap.ui.define([
 
 	QUnit.module("display event", {
 		beforeEach: function () {
+			addClock.call(this);
 			this.oShell = new ShellSubstitute();
 			this.oView = createView(
 					['<View xmlns="sap.ui.core.mvc">',
@@ -357,7 +364,7 @@ sap.ui.define([
 			}),
 			oData = {some : "data"};
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return that.oView;
 		});
 
@@ -391,7 +398,7 @@ sap.ui.define([
 				assert.strictEqual(oParameters.data, oData, "data was passed");
 			});
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return that.oView;
 		});
 
@@ -410,6 +417,7 @@ sap.ui.define([
 
 	QUnit.module("titleChanged event", {
 		beforeEach: function () {
+			addClock.call(this);
 			this.oApp = new App();
 			this.oView = createView(
 					['<View xmlns="sap.ui.core.mvc">',
@@ -496,7 +504,7 @@ sap.ui.define([
 			}),
 			oData = {some : "data"};
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return that.oView;
 		});
 
@@ -523,7 +531,7 @@ sap.ui.define([
 				assert.strictEqual(oParameters.title, "myTitle", "title got passed to the event");
 			});
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return that.oView;
 		});
 
@@ -548,7 +556,7 @@ sap.ui.define([
 				assert.strictEqual(oParameters.title, "mySecondTitle", "title got passed to the event");
 			});
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return that.oView;
 		});
 
@@ -568,7 +576,7 @@ sap.ui.define([
 			oData = {some : "data"},
 			fnEventSpy = this.spy();
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return that.oView;
 		});
 
@@ -579,7 +587,7 @@ sap.ui.define([
 		this.clock.tick(0);
 
 		// Assert
-		sinon.assert.notCalled(fnEventSpy, "the event isn't fired");
+		assert.ok(fnEventSpy.notCalled, "the event isn't fired");
 	});
 
 	QUnit.test("provided invalid TitleTarget", function (assert) {
@@ -588,7 +596,7 @@ sap.ui.define([
 			oData = {some : "data"},
 			fnEventSpy = this.spy();
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return that.oView;
 		});
 		var oLogSpy = this.spy(Log, "error");
@@ -600,7 +608,7 @@ sap.ui.define([
 		this.clock.tick(0);
 
 		// Assert
-		sinon.assert.notCalled(fnEventSpy, "the event isn't fired");
+		assert.ok(fnEventSpy.notCalled, "the event isn't fired");
 		sinon.assert.calledWithExactly(
 			oLogSpy,
 			"The target with the name \"foo\" where the titleChanged event should be fired does not exist!",
@@ -619,7 +627,7 @@ sap.ui.define([
 				assert.strictEqual(oParameters.title, "myTitle", "title from parent target is taken");
 			});
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return that.oView;
 		});
 
@@ -644,7 +652,7 @@ sap.ui.define([
 				assert.strictEqual(oParameters.title, "myTitle", "title from parent target is taken");
 			});
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return that.oView;
 		});
 
@@ -673,7 +681,7 @@ sap.ui.define([
 				assert.strictEqual(oParameters.data, oData, "data was passed");
 			});
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return that.oView;
 		});
 

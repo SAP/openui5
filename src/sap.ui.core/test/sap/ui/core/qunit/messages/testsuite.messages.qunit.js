@@ -6,16 +6,16 @@ sap.ui.define(function() {
 		defaults: {
 			qunit: {
 				version: 2
+			},
+			sinon: {
+				version: 4,
+				qunitBridge: true,
+				useFakeTimers: false
 			}
 		},
 		tests: {
 			DataBindingMessages: {
-				title: "Test Page for DataBinding Messages",
-				sinon: {
-					version: 1,
-					qunitBridge: true,
-					useFakeTimers: false
-				}
+				title: "Test Page for DataBinding Messages"
 			},
 			"Message": {
 				title: "QUnit tests: Messaging"
@@ -37,9 +37,6 @@ sap.ui.define(function() {
 				ui5: {
 					// test checks for hard coded English texts
 					language: "en"
-				},
-				sinon: {
-					version: 1
 				}
 			}
 		}

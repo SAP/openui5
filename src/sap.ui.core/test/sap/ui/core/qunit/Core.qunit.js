@@ -3,7 +3,12 @@
 QUnit.config.autostart = false;
 
 //Note: this file is embedded via script tag. It therefore uses sap.ui.require, not sap.ui.define.
-sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/LoaderExtensions', 'sap/ui/Device'], function(ResourceBundle, Log, LoaderExtensions, Device) {
+sap.ui.require([
+	'sap/base/i18n/ResourceBundle',
+	'sap/base/Log',
+	'sap/base/util/LoaderExtensions',
+	'sap/ui/Device'
+], function(ResourceBundle, Log, LoaderExtensions, Device) {
 	"use strict";
 
 	function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /** function */ fnClass, /**boolean*/ bFailEarly) {
@@ -24,10 +29,14 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 		return result;
 	}
 
+	// lazy dependency
+	var TestButton;
+
 	// custom assertion
 	QUnit.assert.equalControls = function(actual, expected, message) {
 		this.ok(actual === expected, message);
 	};
+
 	QUnit.assert.isLibLoaded = function(libName) {
 		this.ok(jQuery.sap.getObject(libName), "namespace for " + libName + " should exist");
 		this.ok(sap.ui.getCore().getLoadedLibraries()[libName], "Core should know and list " + libName + " as 'loaded'");
@@ -69,6 +78,13 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 		assert.ok(sap.ui.loader._.getModuleState("sap/ui/testlib/library.js") !== 0, "testlib lib has been loaded");
 		assert.ok(jQuery.sap.getObject("sap.ui.testlib"), "testlib namespace exists");
 		assert.ok(jQuery("head > link[id='sap-ui-theme-sap.ui.testlib']").length === 1, "style sheets have been added");
+
+		// load TestButton class
+		var done = assert.async();
+		sap.ui.require(["sap/ui/testlib/TestButton"], function(_TestButton) {
+			TestButton = _TestButton;
+			done();
+		});
 	});
 
 	/**
@@ -85,7 +101,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 	});
 
 	QUnit.test("testSetRoot", function(assert) {
-		var oButton = new sap.ui.testlib.TestButton("test2Button", {text:"Hallo JSUnit"});
+		var oButton = new TestButton("test2Button", {text:"Hallo JSUnit"});
 		sap.ui.getCore().setRoot("uiArea2", oButton);
 		var oUIAreaCheck = sap.ui.getCore().getUIArea("uiArea2");
 		assert.ok(oUIAreaCheck, "UIArea must be returned");
@@ -93,7 +109,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 	});
 
 	QUnit.test("testGetElementById", function(assert) {
-		var oButton = new sap.ui.testlib.TestButton("test3Button", {text:"Hallo JSUnit"});
+		var oButton = new TestButton("test3Button", {text:"Hallo JSUnit"});
 		sap.ui.getCore().setRoot("uiArea3", oButton);
 		var oButtonCheck = sap.ui.getCore().getElementById("test3Button");
 		assert.ok(oButtonCheck, "Button must be returned");
@@ -101,29 +117,33 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 	});
 
 	/**
-	 *
-	 * Tests that <code>sap.ui.getCore().notifiyContentDensityChanged()</code> calls each control's #onThemeChanged method
+	 * Tests that <code>sap.ui.getCore().notifyContentDensityChanged()</code> calls each control's #onThemeChanged method
 	 */
-	QUnit.test("test #notifiyContentDensityChanged", function(assert) {
+	QUnit.test("test #notifyContentDensityChanged", function(assert) {
 		assert.expect(4);
 
-		var oBtn = new sap.ui.testlib.TestButton("testMyButton", {text:"Hallo JSUnit"});
+		var oBtn = new TestButton("testMyButton", {text:"Hallo JSUnit"});
 		oBtn.onThemeChanged = function(oCtrlEvent) {
 			assert.ok(oCtrlEvent, "TestButton#onThemeChanged is called");
 			assert.equal(oCtrlEvent.theme, sap.ui.getCore().getConfiguration().getTheme(), "Default theme is passed along control event");
 		};
 
-		sap.ui.getCore().attachThemeChanged(function(oEvent) {
+		function handler(oEvent) {
 			assert.ok(oEvent, "attachThemeChanged is called");
 			assert.equal(oEvent.getParameter("theme"), sap.ui.getCore().getConfiguration().getTheme(), "Default theme is passed along Core event");
-		});
+		}
+		sap.ui.getCore().attachThemeChanged(handler);
 
 		//call to #notifyContentDensityChanged
 		sap.ui.getCore().notifyContentDensityChanged();
+
+		// cleanup
+		sap.ui.getCore().detachThemeChanged(handler);
+		oBtn.destroy();
 	});
 
 	QUnit.test("testGetControl", function(assert) {
-		var oButton = new sap.ui.testlib.TestButton("test4Button", {text:"Hallo JSUnit"});
+		var oButton = new TestButton("test4Button", {text:"Hallo JSUnit"});
 		sap.ui.getCore().setRoot("uiArea4", oButton);
 		var oButtonCheck = sap.ui.getCore().getControl("test4Button");
 		assert.ok(oButtonCheck, "Button must be returned");
@@ -324,19 +344,15 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 	});
 
 	QUnit.test("sync: testGetLibraryResourceBundle with i18n set to false in manifest.json", function(assert) {
-		this.stub(sap.ui.loader._, 'getModuleState', function() {
-			return true;
-		});
+		this.stub(sap.ui.loader._, 'getModuleState').returns(true);
 
-		this.stub(LoaderExtensions, 'loadResource', function() {
-			return {
-				"_version": "1.9.0",
-				"sap.ui5": {
-					"library": {
-						"i18n": false
-					}
+		this.stub(LoaderExtensions, 'loadResource').returns({
+			"_version": "1.9.0",
+			"sap.ui5": {
+				"library": {
+					"i18n": false
 				}
-			};
+			}
 		});
 
 		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test1", "de");
@@ -345,19 +361,15 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 	});
 
 	QUnit.test("async: testGetLibraryResourceBundle with i18n set to false in manifest.json", function(assert) {
-		this.stub(sap.ui.loader._, 'getModuleState', function() {
-			return true;
-		});
+		this.stub(sap.ui.loader._, 'getModuleState').returns(true);
 
-		this.stub(LoaderExtensions, 'loadResource', function() {
-			return {
-				"_version": "1.9.0",
-				"sap.ui5": {
-					"library": {
-						"i18n": false
-					}
+		this.stub(LoaderExtensions, 'loadResource').returns({
+			"_version": "1.9.0",
+			"sap.ui5": {
+				"library": {
+					"i18n": false
 				}
-			};
+			}
 		});
 
 		var pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test1", "de", true);
@@ -370,11 +382,9 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 	});
 
 	QUnit.test("async: testGetLibraryResourceBundle with i18n set to true in manifest.json", function(assert) {
-		this.stub(sap.ui.loader._, 'getModuleState', function() {
-			return true;
-		});
+		this.stub(sap.ui.loader._, 'getModuleState').returns(true);
 		var fnOrigLoadResource = LoaderExtensions.loadResource;
-		this.stub(LoaderExtensions, 'loadResource', function(sURL) {
+		this.stub(LoaderExtensions, 'loadResource').callsFake(function(sURL) {
 			if (typeof sURL === "string" && sURL.indexOf("manifest.json") !== -1) {
 				return {
 					"_version": "1.9.0",
@@ -407,13 +417,9 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 	});
 
 	QUnit.test("async: testGetLibraryResourceBundle with i18n missing in manifest.json", function(assert) {
-		this.stub(sap.ui.loader._, 'getModuleState', function() {
-			return true;
-		});
+		this.stub(sap.ui.loader._, 'getModuleState').returns(true);
 		// no i18n property in manifest
-		this.stub(LoaderExtensions, 'loadResource', function() {
-			return undefined;
-		});
+		this.stub(LoaderExtensions, 'loadResource').returns(undefined);
 
 		var oSpySapUiResource = this.spy(sap.ui, 'resource'),
 			pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test1", "fr", true),
@@ -430,13 +436,11 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 	});
 
 	QUnit.test("async: testGetLibraryResourceBundle with a given i18n in manifest.json", function(assert) {
-		this.stub(sap.ui.loader._, 'getModuleState', function() {
-			return true;
-		});
+		this.stub(sap.ui.loader._, 'getModuleState').returns(true);
 
 		var fnOrigLoadResource = LoaderExtensions.loadResource;
 
-		 this.stub(LoaderExtensions, 'loadResource', function(sURL) {
+		 this.stub(LoaderExtensions, 'loadResource').callsFake(function(sURL) {
 			if (typeof sURL === "string" && sURL.indexOf("manifest.json") !== -1) {
 				return {
 					"_version": "1.9.0",
@@ -469,7 +473,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 	QUnit.test("testGetLibraryResourceBundle: Called with async first and then with sync before the async is resolved", function(assert) {
 		var fnResolve, pBundle, oBundle;
 
-		this.stub(ResourceBundle, 'create', function(options) {
+		this.stub(ResourceBundle, 'create').callsFake(function(options) {
 			if (options.async) {
 				return new Promise(function(resolve, reject) {
 					fnResolve = resolve;
@@ -498,7 +502,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 			pBundle,
 			oBundle;
 
-		this.stub(ResourceBundle, 'create', function(options) {
+		this.stub(ResourceBundle, 'create').callsFake(function(options) {
 			iCounter++;
 			if (options.async) {
 				assert.ok(false, "no Promise should be returned");
@@ -797,7 +801,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 	 */
 	QUnit.test("async (config object)", function(assert) {
 
-		this.stub(sap.ui.loader._, "loadJSResourceAsync" , function() {
+		this.stub(sap.ui.loader._, "loadJSResourceAsync").callsFake(function() {
 			jQuery.sap.declare('testlibs.scenario9.lib1.library');
 			sap.ui.getCore().initLibrary({
 				name: 'testlibs.scenario9.lib1',
@@ -823,7 +827,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 	 */
 	QUnit.test("async (convenience shortcut)", function(assert) {
 
-		this.stub(sap.ui.loader._, "loadJSResourceAsync" , function() {
+		this.stub(sap.ui.loader._, "loadJSResourceAsync").callsFake(function() {
 			jQuery.sap.declare('testlibs.scenario10.lib1.library');
 			sap.ui.getCore().initLibrary({
 				name: 'testlibs.scenario10.lib1',
@@ -845,10 +849,10 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 	 */
 	QUnit.test("async (missing preload)", function(assert) {
 
-		this.stub(sap.ui.loader._, "loadJSResourceAsync", function() {
+		this.stub(sap.ui.loader._, "loadJSResourceAsync").callsFake(function() {
 			return Promise.reject(new Error());
 		});
-		this.stub(sap.ui, "require", function(name, callback) {
+		this.stub(sap.ui, "require").callsFake(function(name, callback) {
 			jQuery.sap.declare('testlibs.scenario11.lib1.library');
 			sap.ui.getCore().initLibrary({
 				name: 'testlibs.scenario11.lib1',
@@ -878,7 +882,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 	 */
 	QUnit.test("async (missing library)", function(assert) {
 
-		this.stub(sap.ui.loader._, "loadJSResourceAsync", function() {
+		this.stub(sap.ui.loader._, "loadJSResourceAsync").callsFake(function() {
 			return Promise.reject(new Error());
 		});
 

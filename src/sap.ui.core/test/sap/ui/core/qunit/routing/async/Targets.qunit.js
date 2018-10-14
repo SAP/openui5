@@ -66,7 +66,7 @@ sap.ui.define([
 
 	QUnit.test("Should be able to get multiple targets", function (assert) {
 		// Arrange
-		var oStub = this.stub(Log, "error", jQuery.noop);
+		var oStub = this.stub(Log, "error").callsFake(jQuery.noop);
 
 		// Act
 		var aTargets = this.oTargets.getTarget(["myTarget",  "foo", "myParent"]);
@@ -93,7 +93,7 @@ sap.ui.define([
 
 	QUnit.test("Should kept the existing target and log an error message if 'addTarget' is called with the same name", function (assert) {
 		// Arrange
-		var oStub = this.stub(Log, "error", jQuery.noop);
+		var oStub = this.stub(Log, "error").callsFake(jQuery.noop);
 
 		// Act
 		this.oTargets.addTarget("myParent", {
@@ -165,7 +165,7 @@ sap.ui.define([
 					}
 				}
 			},
-			oErrorStub = this.stub(Log, "error", jQuery.noop);
+			oErrorStub = this.stub(Log, "error").callsFake(jQuery.noop);
 
 		// System under test + Act
 		this.oTargets = new Targets(oIncorrectConfig);
@@ -198,10 +198,10 @@ sap.ui.define([
 		// Arrange
 		var sName = "firstTarget";
 		// Replace display with an empty fn
-		var fnFirstDisplayStub = this.stub(this.oTargets.getTarget(sName), "_display", function() {
+		var fnFirstDisplayStub = this.stub(this.oTargets.getTarget(sName), "_display").callsFake(function() {
 			return Promise.resolve({name:sName});
 		});
-		var fnSecondDisplayStub = this.stub(this.oTargets.getTarget("secondTarget"), "_display", jQuery.noop);
+		var fnSecondDisplayStub = this.stub(this.oTargets.getTarget("secondTarget"), "_display").callsFake(jQuery.noop);
 
 		// Act
 		return this.oTargets.display("firstTarget").then(function(oViewInfo) {
@@ -218,7 +218,7 @@ sap.ui.define([
 		// Set the parentInfo to a non-undefined value because it will be set to undefined later and checked with undefined in an assertion
 		var oParentInfo = {};
 		// Replace display with an empty fn
-		var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "_display", function(vData, oSequencePromise) {
+		var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "_display").callsFake(function(vData, oSequencePromise) {
 			return oSequencePromise.then(function() {
 				return {
 					name: "firstTarget",
@@ -227,7 +227,7 @@ sap.ui.define([
 				};
 			});
 		});
-		var fnSecondDisplayStub = this.stub(this.oTargets.getTarget("secondTarget"), "_display", function(vData, oSequencePromise) {
+		var fnSecondDisplayStub = this.stub(this.oTargets.getTarget("secondTarget"), "_display").callsFake(function(vData, oSequencePromise) {
 			return oSequencePromise.then(function(oInfo) {
 				oParentInfo = oInfo;
 				return {
@@ -254,7 +254,7 @@ sap.ui.define([
 
 	QUnit.test("Should log an error if user tries to display a non existing Target", function (assert) {
 		// Assert
-		var oErrorStub = this.stub(Log, "error", jQuery.noop);
+		var oErrorStub = this.stub(Log, "error").callsFake(jQuery.noop);
 
 		// Act
 		return this.oTargets.display("foo").then(function(aViewInfos) {
@@ -267,9 +267,9 @@ sap.ui.define([
 
 	QUnit.test("Should log an error if user tries to display a non existing Target, but should display existing ones", function (assert) {
 		// Assert
-		var oErrorStub = this.stub(Log, "error", jQuery.noop);
+		var oErrorStub = this.stub(Log, "error").callsFake(jQuery.noop);
 		// Replace display with an empty fn
-		var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "_display", function() {
+		var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "_display").callsFake(function() {
 			return Promise.resolve({name:"firstTarget"});
 		});
 
@@ -374,7 +374,7 @@ sap.ui.define([
 			}),
 			oData = {some : "data"};
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return that.oView;
 		});
 
@@ -418,7 +418,7 @@ sap.ui.define([
 				assert.strictEqual(oParameters.data, oData, "data was passed");
 			});
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return that.oView;
 		});
 
@@ -525,7 +525,7 @@ sap.ui.define([
 			}),
 			oData = {some : "data"};
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return that.oView;
 		});
 
@@ -553,7 +553,7 @@ sap.ui.define([
 				assert.strictEqual(oParameters.title, "myTitle", "title got passed to the event");
 			});
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return that.oView;
 		});
 
@@ -579,7 +579,7 @@ sap.ui.define([
 				assert.strictEqual(oParameters.title, "mySecondTitle", "title got passed to the event");
 			});
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return that.oView;
 		});
 
@@ -600,7 +600,7 @@ sap.ui.define([
 			oData = {some : "data"},
 			fnEventSpy = this.spy();
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return that.oView;
 		});
 
@@ -611,7 +611,7 @@ sap.ui.define([
 
 		// Assert
 		return oDisplayed.then(function() {
-			sinon.assert.notCalled(fnEventSpy, "the event isn't fired");
+			assert.ok(fnEventSpy.notCalled, "the event isn't fired");
 		});
 	});
 
@@ -621,7 +621,7 @@ sap.ui.define([
 			oData = {some : "data"},
 			fnEventSpy = this.spy();
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return that.oView;
 		});
 		var oLogSpy = this.spy(Log, "error");
@@ -633,7 +633,7 @@ sap.ui.define([
 
 		return oDisplayed.then(function() {
 			// Assert
-			sinon.assert.notCalled(fnEventSpy, "the event isn't fired");
+			assert.ok(fnEventSpy.notCalled, "the event isn't fired");
 			sinon.assert.calledWithExactly(
 				oLogSpy,
 				"The target with the name \"foo\" where the titleChanged event should be fired does not exist!",
@@ -653,7 +653,7 @@ sap.ui.define([
 				assert.strictEqual(oParameters.title, "myTitle", "title from parent target is taken");
 			});
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return that.oView;
 		});
 
@@ -679,7 +679,7 @@ sap.ui.define([
 				assert.strictEqual(oParameters.title, "myTitle", "title from parent target is taken");
 			});
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return that.oView;
 		});
 
@@ -709,7 +709,7 @@ sap.ui.define([
 				assert.strictEqual(oParameters.data, oData, "data was passed");
 			});
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return that.oView;
 		});
 
