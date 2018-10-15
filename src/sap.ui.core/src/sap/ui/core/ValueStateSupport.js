@@ -29,6 +29,7 @@ sap.ui.define(['./Element', './library', "sap/base/assert"],
 				mTexts[ValueState.Error] = rb.getText("VALUE_STATE_ERROR");
 				mTexts[ValueState.Warning] = rb.getText("VALUE_STATE_WARNING");
 				mTexts[ValueState.Success] = rb.getText("VALUE_STATE_SUCCESS");
+				mTexts[ValueState.Highlight] = rb.getText("VALUE_STATE_HIGHLIGHT");
 			}
 		};
 

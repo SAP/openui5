@@ -546,6 +546,7 @@
 			"sap.m.sample.InputSuggestionsOpenSearch",
 			"sap.m.sample.InputTypes",
 			"sap.m.sample.InputStates",
+			"sap.m.sample.InputValueState",
 			"sap.m.sample.InputValueUpdate",
 			"sap.m.sample.InputKeyValue",
 			"sap.m.sample.InputKeyValueTabularSuggestions"
@@ -2315,6 +2316,11 @@
 			"id": "sap.m.sample.InputKeyValueTabularSuggestions",
 			"name": "Input - Key and Value Tabular Suggestions",
 			"description": "This sample illustrates how the Input works with key and value values, when the data is provided with table-like suggestions."
+		},
+		{
+			"id": "sap.m.sample.InputValueState",
+			"name": "Input - Value States",
+			"description": "This example shows different input value states."
 		},
 		{
 		  "id": "sap.m.sample.ListToolbar",
