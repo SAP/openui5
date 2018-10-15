@@ -266,23 +266,138 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			changes: {
 				changes: [
 					{
-						fileName: "variant0",
-						fileType: "ctrl_variant",
-						variantManagementReference: "varMgmt"
-					},
-					{
-						fileName: "variant0",
-						fileType: "ctrl_variant_change",
-						changeType: "setTitle",
-						variantReference: "variant0"
+						"fileName": "dummyChange0",
+						"fileType": "change",
+						"selector": {
+							"id": "dummy_selector"
+						},
+						"layer": "CUSTOMER_BASE"
 					}
-				]
+				],
+				variantSection: {
+					"varMgmt": {
+						"variants": [
+							{
+								"content": {
+									"fileName": "varMgmt",
+									"content": {
+										"title": "Standard"
+									},
+									"variantManagementReference": "varMgmt"
+								},
+								"controlChanges": [],
+								"variantChanges": []
+							},
+							{
+								"content": {
+									"fileName": "variant0",
+									"content": {
+										"title": "variant 0"
+									},
+									"layer": "CUSTOMER_BASE",
+									"variantManagementReference": "varMgmt",
+									"variantReference": "varMgmt"
+								},
+								"controlChanges": [{
+									"fileName": "controlChange0",
+									"fileType": "change",
+									"selector": {
+										"id": "dummy_selector"
+									},
+									"variantReference": "variant0",
+									"layer": "CUSTOMER_BASE"
+								}],
+								"variantChanges": {
+									"setTitle": [{
+										"fileName": "variantChange0",
+										"fileType": "ctrl_variant_change",
+										"layer": "CUSTOMER_BASE",
+										"selector": {
+											"id": "variant0"
+										}
+									}]
+								}
+							}, {
+								"content": {
+									"content": {
+										"title": "variant 1"
+									},
+									"fileName": "variant1",
+									"fileType": "ctrl_variant",
+									"layer": "VENDOR",
+									"variantManagementReference": "varMgmt"
+								},
+								"controlChanges": [{
+									"fileName": "controlChange1",
+									"fileType": "change",
+									"selector": {
+										"id": "dummy_selector"
+									},
+									"variantReference": "variant1",
+									"layer": "CUSTOMER_BASE"
+								},
+								{
+									"fileName": "controlChange2",
+									"fileType": "change",
+									"selector": {
+										"id": "dummy_selector"
+									},
+									"variantReference": "variant1",
+									"layer": "CUSTOMER_BASE"
+								}],
+								"variantChanges": {
+									"setTitle": [
+										{
+											"fileName": "variantChange1",
+											"fileType": "ctrl_variant_change",
+											"selector": {
+												"id": "variant1"
+											},
+											"layer": "VENDOR"
+										}
+									],
+									"setVisible": [
+										{
+											"fileName": "variantChange2",
+											"fileType": "ctrl_variant_change",
+											"selector": {
+												"id": "variant1"
+											},
+											"content": {
+												"visible": false,
+												"createdByReset": true
+											},
+											"layer": "CUSTOMER"
+										}
+									]
+								}
+							}
+						],
+						"variantManagementChanges": {
+							"setDefault" : [
+								{
+									"fileName": "setDefault",
+									"fileType": "ctrl_variant_management_change",
+									"layer": "VENDOR",
+									"content": {
+										"defaultVariant":"variant0"
+									},
+									"selector": {
+										"id": "varMgmt"
+									}
+								}
+							]
+						}
+					}
+				}
 			}
 		};
 		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(aWrappedContent));
 		return this.oChangePersistence.getChangesForComponent().then(function (aChanges) {
-			assert.equal(aChanges[0].getId(), aWrappedContent.changes.changes[0].fileName, "then change with 'ctrl_variant' fileType received");
-			assert.equal(aChanges[1].getId(), aWrappedContent.changes.changes[1].fileName, "then change with 'ctrl_variant_change' fileType received");
+			assert.equal(aChanges[0].getId(), aWrappedContent.changes.changes[0].fileName, "then global control change is received");
+			assert.equal(aChanges[1].getId(), aWrappedContent.changes.variantSection["varMgmt"].variants[1].controlChanges[0].getId(), "then control change for default variant is received");
+			assert.ok(aChanges[0] instanceof Change, "then global control change is instance of sap.ui.fl.Change");
+			assert.ok(aChanges[1] instanceof Change, "then control change is instance of sap.ui.fl.Change");
 		});
 	});
 

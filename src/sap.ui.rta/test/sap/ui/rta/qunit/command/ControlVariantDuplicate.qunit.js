@@ -5,6 +5,7 @@ jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 sap.ui.define([
 	// internal:
 	'sap/ui/fl/Utils',
+	'sap/ui/fl/Change',
 	'sap/ui/core/Manifest',
 	'sap/ui/rta/command/CommandFactory',
 	'sap/ui/dt/ElementDesignTimeMetadata',
@@ -13,6 +14,7 @@ sap.ui.define([
 	'sap/ui/fl/variants/VariantManagement',
 	'sap/ui/rta/plugin/ControlVariant',
 	'sap/ui/fl/variants/VariantModel',
+	'sap/ui/fl/variants/VariantController',
 	'sap/ui/fl/FlexControllerFactory',
 	// should be last:
 	'sap/ui/thirdparty/sinon',
@@ -21,6 +23,7 @@ sap.ui.define([
 ],
 function(
 	Utils,
+	Change,
 	Manifest,
 	CommandFactory,
 	ElementDesignTimeMetadata,
@@ -29,6 +32,7 @@ function(
 	VariantManagement,
 	ControlVariant,
 	VariantModel,
+	VariantController,
 	FlexControllerFactory
 ) {
 	'use strict';
@@ -78,6 +82,23 @@ function(
 
 	var oModel = new VariantModel(oData, oFlexController, oMockedAppComponent);
 
+	var oChange1 = new Change({
+		"fileName": "change44",
+		"layer":"CUSTOMER",
+		"selector": {
+			"id": "abc123"
+		},
+		"reference": "Dummy.Component"
+	});
+	var oChange2 = new Change({
+		"fileName": "change45",
+		"layer":"CUSTOMER",
+		"selector": {
+			"id": "abc123"
+		},
+		"reference": "Dummy.Component"
+	});
+
 	var oVariant = {
 		"content": {
 			"fileName":"variant0",
@@ -89,22 +110,13 @@ function(
 			"support":{
 				"user":"Me"
 			},
-			reference: "Dummy.Component"
+			"reference": "Dummy.Component"
 		},
-		"controlChanges" : [
-			{
-				"fileName":"change44",
-				"layer":"CUSTOMER"
-			},
-			{
-				"fileName":"change45",
-				"layer":"CUSTOMER"
-			}
-		]
-	};
+		"controlChanges" : [oChange1, oChange2]	};
 
 	sinon.stub(oModel, "getVariant").returns(oVariant);
 	sinon.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
+	sinon.stub(VariantController.prototype, "getVariantChanges").returns([oChange1, oChange2]);
 	sinon.stub(oModel.oVariantController, "getVariants").returns([oVariant]);
 	sinon.stub(oModel.oVariantController, "addVariantToVariantManagement").returns(1);
 	sinon.stub(oModel.oVariantController, "removeVariantFromVariantManagement").returns(1);
@@ -144,7 +156,7 @@ function(
 			assert.equal(oDuplicateVariant.getVariantReference(), oVariant.content.variantReference, "then variant reference correctly duplicated");
 			assert.equal(oDuplicateVariant.getTitle(), "variant A" + " Copy", "then variant reference correctly duplicated");
 			assert.equal(oDuplicateVariant.getControlChanges().length, 2, "then 2 changes duplicated");
-			assert.equal(oDuplicateVariant.getControlChanges()[0].support.sourceChangeFileName, oVariant.controlChanges[0].fileName, "then changes duplicated with source filenames in Change.support.sourceChangeFileName");
+			assert.equal(oDuplicateVariant.getControlChanges()[0].getDefinition().support.sourceChangeFileName, oVariant.controlChanges[0].getDefinition().fileName, "then changes duplicated with source filenames in Change.support.sourceChangeFileName");
 			assert.equal(oControlVariantDuplicateCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 3, "then 3 dirty changes present - variant and 2 changes");
 
 			oControlVariantDuplicateCommand.undo().then( function() {

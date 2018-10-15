@@ -7,6 +7,7 @@ sap.ui.require([
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/Change",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/variants/util/VariantUtil",
@@ -17,6 +18,7 @@ function(
 	VariantModel,
 	VariantManagement,
 	Utils,
+	Change,
 	FlexControllerFactory,
 	JsControlTreeModifier,
 	VariantUtil,
@@ -436,6 +438,7 @@ function(
 	});
 
 	QUnit.test("when calling 'updateCurrentVariant' with dirty changes in current variant", function(assert) {
+		sandbox.stub(this.oModel.oVariantController, "getVariantChanges");
 		var fnRemoveDirtyChangesStub = sandbox.stub(this.oModel, "_removeDirtyChanges");
 
 		this.oModel.oData["variantMgmtId1"].modified = true;
@@ -575,20 +578,41 @@ function(
 	});
 
 	QUnit.test("when calling '_removeDirtyChanges'", function(assert) {
+		var oChange1 = new Change({
+			"fileName": "change1",
+			"selector": {
+				"id": "abc123"
+			}
+		});
+		var oChange2 = new Change({
+			"fileName": "change2",
+			"selector": {
+				"id": "abc123"
+			}
+		});
+		var oChange3 = new Change({
+			"fileName": "change3",
+			"selector": {
+				"id": "abc123"
+			}
+		});
+		var oChange4 = new Change({
+			"fileName": "change4",
+			"selector": {
+				"id": "abc123"
+			}
+		});
+
 		sandbox.stub(Utils, "getAppComponentForControl").returns(this.oComponent);
-		sandbox.stub(this.oFlexController._oChangePersistence, "getDirtyChanges").returns(
-				[{getDefinition: function() {return {fileName: "change2"};}},
-				 {getDefinition: function() {return {fileName: "change3"};}},
-				 {getDefinition: function() {return {fileName: "change4"};}}]
-		);
+		sandbox.stub(this.oFlexController._oChangePersistence, "getDirtyChanges").returns([oChange2, oChange3, oChange4]);
 		sandbox.stub(this.oModel.oVariantController, "removeChangeFromVariant");
-		var aChanges = [{fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}];
+		var aChanges = [oChange1, oChange2, oChange3];
 
 		this.oModel._removeDirtyChanges(aChanges, "variantMgmtId1", this.oModel.oData["variantMgmtId1"].currentVariant);
 		assert.ok(this.fnRevertChangesStub.calledOnce, "then 'revertChangesOnControl' called once");
 		assert.equal(this.fnRevertChangesStub.args[0][0].length, 2, "and two changes are dirty and in Variant");
-		assert.propEqual(this.fnRevertChangesStub.args[0][0][0].getDefinition(), aChanges[2], "the first change was applied before the second change");
-		assert.propEqual(this.fnRevertChangesStub.args[0][0][1].getDefinition(), aChanges[1], "the second change was applied before the first change");
+		assert.propEqual(this.fnRevertChangesStub.args[0][0][0], aChanges[2], "the first change was applied before the second change");
+		assert.propEqual(this.fnRevertChangesStub.args[0][0][1], aChanges[1], "the second change was applied before the first change");
 		assert.equal(this.fnDeleteChangeStub.callCount, 2, "and 'deleteChange' called twice (due to 2 changes)");
 	});
 
@@ -621,6 +645,7 @@ function(
 		var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
 		oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
 		oSourceVariantCopy.content.fileName = "newVariant";
+		sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns([]);
 		sandbox.stub(Utils, "isLayerAboveCurrentLayer").returns(0);
 		sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
 		var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
@@ -657,14 +682,15 @@ function(
 		oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
 		oSourceVariantCopy.content.fileName = "newVariant";
 		oSourceVariantCopy.content.variantReference = "variant0";
+		sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns([]);
 		sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
 		var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
 		assert.deepEqual(oDuplicateVariant, oSourceVariantCopy, "then the duplicate variant returned with customized properties");
 	});
 
 	QUnit.test("when calling '_duplicateVariant' from CUSTOMER layer with reference to a variant on VENDOR layer with one CUSTOMER and one VENDOR change", function(assert) {
-		var oChangeContent0 = {"fileName":"change0", "variantReference":"variant0", "layer": "CUSTOMER", "support": {}};
-		var oChangeContent1 = {"fileName":"change1", "variantReference":"variant0", "layer": "VENDOR", "support": {}};
+		var oChange0 = new Change({"fileName":"change0", "selector": {"id": "abc123"}, "variantReference":"variant0", "layer": "CUSTOMER", "support": {}, "reference": "test.Component"});
+		var oChange1 = new Change({"fileName":"change1", "selector": {"id": "abc123"}, "variantReference":"variant0", "layer": "VENDOR", "support": {}, "reference": "test.Component"});
 
 		var oSourceVariant = {
 			"content": {
@@ -679,7 +705,7 @@ function(
 				"layer":"VENDOR",
 				"namespace":"Dummy.Component"
 			},
-			"controlChanges": [oChangeContent0, oChangeContent1],
+			"controlChanges": [oChange0, oChange1],
 			"variantChanges": {}
 		};
 
@@ -692,23 +718,20 @@ function(
 		};
 
 		sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
+		sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns(oSourceVariant.controlChanges);
 
 		var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
 		oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
 		oSourceVariantCopy.content.fileName = "newVariant";
 		oSourceVariantCopy.content.variantReference = "variant0";
-		oSourceVariantCopy.controlChanges.splice(1, 1);
+
 		var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
 
-		oSourceVariantCopy.controlChanges.forEach( function (oCopiedChange, iIndex) {
-			oCopiedChange.variantReference = "newVariant";
-			oCopiedChange.support.sourceChangeFileName = oSourceVariant.controlChanges[iIndex].fileName;
-			oSourceVariantCopy.controlChanges[iIndex].fileName = oDuplicateVariant.controlChanges[iIndex].fileName; /*mock*/
-		});
-
-		assert.deepEqual(oDuplicateVariant, oSourceVariantCopy, "then the duplicate variant returned with customized properties");
+		assert.deepEqual(oDuplicateVariant.content, oSourceVariantCopy.content, "then the duplicate variant returned with customized properties");
 		assert.equal(oDuplicateVariant.controlChanges.length, 1, "then only one change duplicated");
-		assert.equal(oDuplicateVariant.controlChanges[0].layer, Utils.getCurrentLayer(), "then only one change duplicated");
+		assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().variantReference, "newVariant", "then the change has the correct variantReference");
+		assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, oSourceVariant.controlChanges[0].getDefinition().fileName, "then the fileName of the origin change is written to support object");
+		assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().layer, Utils.getCurrentLayer(), "then only the change with the same layer is duplicated");
 		assert.equal(oDuplicateVariant.content.variantReference, oSourceVariant.content.fileName, "then the duplicate variant has reference to the source variant from VENDOR layer");
 	});
 
@@ -737,6 +760,7 @@ function(
 			title: "variant A Copy"
 		};
 
+		sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns([]);
 		sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
 
 		var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
@@ -749,8 +773,8 @@ function(
 	});
 
 	QUnit.test("when calling '_duplicateVariant' from CUSTOMER layer with reference to a variant on the same layer", function(assert) {
-		var oChangeContent0 = {"fileName":"change0", "variantReference":"variant0", "layer": "CUSTOMER", "support": {}};
-		var oChangeContent1 = {"fileName":"change1", "variantReference":"variant0", "layer": "CUSTOMER", "support": {}};
+		var oChange0 = new Change({"fileName":"change0", "selector": {"id": "abc123"}, "variantReference":"variant0", "layer": "CUSTOMER", "support": {}, "reference": "test.Component"});
+		var oChange1 = new Change({"fileName":"change1", "selector": {"id": "abc123"}, "variantReference":"variant0", "layer": "CUSTOMER", "support": {}, "reference": "test.Component"});
 
 		var oSourceVariant = {
 			"content": {
@@ -765,7 +789,7 @@ function(
 				"layer":"CUSTOMER",
 				"namespace":"Dummy.Component"
 			},
-			"controlChanges": [oChangeContent0, oChangeContent1],
+			"controlChanges": [oChange0, oChange1],
 			"variantChanges": {}
 		};
 
@@ -778,23 +802,20 @@ function(
 		};
 
 		sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
+		sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns(oSourceVariant.controlChanges);
 
 		var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
 		oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
 		oSourceVariantCopy.content.fileName = "newVariant";
 		var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
 
-		oSourceVariantCopy.controlChanges.forEach( function (oCopiedChange, iIndex) {
-			oCopiedChange.variantReference = "newVariant";
-			oCopiedChange.support.sourceChangeFileName = oSourceVariant.controlChanges[iIndex].fileName;
-			oSourceVariantCopy.controlChanges[iIndex].fileName = oDuplicateVariant.controlChanges[iIndex].fileName; /*mock*/
-		});
-
-		assert.deepEqual(oDuplicateVariant, oSourceVariantCopy, "then the duplicate variant returned with customized properties");
-		assert.equal(oDuplicateVariant.controlChanges.length, 2, "then both changes duplicated");
+		assert.deepEqual(oDuplicateVariant.content, oSourceVariantCopy.content, "then the duplicate variant returned with customized properties");		assert.equal(oDuplicateVariant.controlChanges.length, 2, "then both changes duplicated");
 		assert.equal(oDuplicateVariant.content.variantReference, oSourceVariant.content.variantReference, "then the duplicate variant references to the reference of the source variant");
-		assert.equal(oDuplicateVariant.controlChanges[0].support.sourceChangeFileName , oChangeContent0.fileName, "then first duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
-		assert.equal(oDuplicateVariant.controlChanges[1].support.sourceChangeFileName , oChangeContent1.fileName, "then second duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
+		assert.equal(oDuplicateVariant.controlChanges.length, 2, "then both changes duplicated");
+		assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().variantReference, "newVariant", "then the change has the correct variantReference");
+		assert.equal(oDuplicateVariant.controlChanges[1].getDefinition().variantReference, "newVariant", "then the change has the correct variantReference");
+		assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, oChange0.getDefinition().fileName, "then first duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
+		assert.equal(oDuplicateVariant.controlChanges[1].getDefinition().support.sourceChangeFileName, oChange1.getDefinition().fileName, "then second duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
 	});
 
 	QUnit.test("when calling '_ensureStandardVariantExists'", function(assert) {
@@ -995,6 +1016,25 @@ function(
 	QUnit.test("when calling '_handleSave' with parameter from SaveAs button and default box checked", function(assert) {
 		var done = assert.async();
 
+		var oChange1 = new Change({
+			"fileName": "change1",
+			"selector": {
+				"id": "abc123"
+			}
+		});
+		var oChange2 = new Change({
+			"fileName": "change2",
+			"selector": {
+				"id": "abc123"
+			}
+		});
+		var oChange3 = new Change({
+			"fileName": "change3",
+			"selector": {
+				"id": "abc123"
+			}
+		});
+
 		var oVariantManagement = new VariantManagement("variantMgmtId1");
 		var oCopiedVariantContent = {
 			content: {
@@ -1023,7 +1063,7 @@ function(
 		this.oModel.getData()["variantMgmtId1"].modified = true;
 
 		sandbox.stub(this.oModel, "_getLocalId").returns("variantMgmtId1");
-		sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns([{fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
+		sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns([oChange1, oChange2, oChange3]);
 		sandbox.stub(this.oFlexController._oChangePersistence, "getDirtyChanges").returns([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
 		var fnCopyVariantStub = sandbox.stub(this.oModel, "_copyVariant").returns(Promise.resolve([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]));
 		var fnRemoveDirtyChangesStub = sandbox.stub(this.oModel, "_removeDirtyChanges").returns(Promise.resolve());
@@ -1046,6 +1086,25 @@ function(
 	QUnit.test("when calling '_handleSave' with parameter from SaveAs button and default box unchecked", function(assert) {
 		var done = assert.async();
 
+		var oChange1 = new Change({
+			"fileName": "change1",
+			"selector": {
+				"id": "abc123"
+			}
+		});
+		var oChange2 = new Change({
+			"fileName": "change2",
+			"selector": {
+				"id": "abc123"
+			}
+		});
+		var oChange3 = new Change({
+			"fileName": "change3",
+			"selector": {
+				"id": "abc123"
+			}
+		});
+
 		var oVariantManagement = new VariantManagement("variantMgmtId1");
 		var oCopiedVariantContent = {
 			content: {
@@ -1074,7 +1133,7 @@ function(
 		this.oModel.getData()["variantMgmtId1"].modified = true;
 
 		sandbox.stub(this.oModel, "_getLocalId").returns("variantMgmtId1");
-		sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns([{fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
+		sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns([oChange1, oChange2, oChange3]);
 		sandbox.stub(this.oFlexController._oChangePersistence, "getDirtyChanges").returns([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
 		var fnCopyVariantStub = sandbox.stub(this.oModel, "_copyVariant").returns(Promise.resolve([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]));
 		var fnRemoveDirtyChangesStub = sandbox.stub(this.oModel, "_removeDirtyChanges").returns(Promise.resolve());
@@ -1095,6 +1154,25 @@ function(
 	QUnit.test("when calling '_handleSave' with parameter from Save button", function(assert) {
 		var done = assert.async();
 
+		var oChange1 = new Change({
+			"fileName": "change1",
+			"selector": {
+				"id": "abc123"
+			}
+		});
+		var oChange2 = new Change({
+			"fileName": "change2",
+			"selector": {
+				"id": "abc123"
+			}
+		});
+		var oChange3 = new Change({
+			"fileName": "change3",
+			"selector": {
+				"id": "abc123"
+			}
+		});
+
 		var oVariantManagement = new VariantManagement("variantMgmtId1");
 		var oEvent = {
 			getParameter: function(sParameter) {
@@ -1112,7 +1190,7 @@ function(
 		this.oModel.getData()["variantMgmtId1"].modified = true;
 
 		sandbox.stub(this.oModel, "_getLocalId").returns("variantMgmtId1");
-		sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns([{fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
+		sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns([oChange1, oChange2, oChange3]);
 		var fnCopyVariantStub = sandbox.stub(this.oModel, "_copyVariant");
 		var fnRemoveDirtyChangesStub = sandbox.stub(this.oModel, "_removeDirtyChanges");
 		var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "_setVariantProperties");

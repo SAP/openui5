@@ -217,12 +217,14 @@ sap.ui.require([
 				support: {
 					generator: "Change.createInitialFileContent",
 					service: "",
+					sourceChangeFileName: "",
 					user: "",
 					sapui5Version: sap.ui.version,
 					compositeCommand: ""
 				},
 				dependentSelector: {},
 				validAppVersions: {},
+				variantReference: "",
 				jsOnly: false
 			},
 			{
@@ -248,12 +250,14 @@ sap.ui.require([
 				support: {
 					generator: "Change.createInitialFileContent",
 					service: "",
+					sourceChangeFileName: "",
 					user: "",
 					sapui5Version: sap.ui.version,
 					compositeCommand: ""
 				},
 				dependentSelector: {},
 				validAppVersions: {},
+				variantReference: "",
 				jsOnly: false
 			}
 		];

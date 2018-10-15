@@ -18,6 +18,7 @@ sap.ui.require([
 	'sap/ui/fl/FlexControllerFactory',
 	'sap/ui/fl/Change',
 	'sap/ui/fl/variants/VariantModel',
+	'sap/ui/fl/variants/VariantController',
 	'sap/ui/fl/variants/VariantManagement',
 	'sap/m/Input',
 	'sap/m/Panel',
@@ -37,6 +38,7 @@ sap.ui.require([
 	FlexControllerFactory,
 	Change,
 	VariantModel,
+	VariantController,
 	VariantManagement,
 	Input,
 	Panel,
@@ -104,6 +106,23 @@ sap.ui.require([
 			]
 		}
 	};
+
+	var oVariant = {
+			"content": {
+				"fileName":"variant0",
+				"fileType":"ctrl_variant",
+				"variantManagementReference":"variantMgmtId1",
+				"variantReference":"variantMgmtId1",
+				"content":{
+					"title":"variant A"
+				},
+				"selector":{},
+				"layer":"CUSTOMER",
+				"namespace":"Dummy.Component"
+			},
+			"controlChanges": [],
+			"variantChanges": {}
+		};
 
 	var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent);
 	var oAppDescriptorFlexController = FlexControllerFactory.create(COMPONENT_NAME, "1.2.3");
@@ -865,6 +884,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("when the LREPSerializer.saveAsCommands gets called with 4 different ctrl variant commands created containing one or more changes and this is booked for a new app variant with different id", function(assert) {
+		sandbox.stub(oModel.oVariantController, "getVariant").returns(oVariant);
 		var done = assert.async();
 		// then five changes are expected to be written in LREP, the switch command is ignored
 		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(5, assert, "save");
