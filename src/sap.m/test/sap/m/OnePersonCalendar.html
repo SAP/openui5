@@ -41,7 +41,7 @@
 			endHour: 20,
 			appointmentsVisualization: "Filled",
 			showFullDay: false,
-			views: [oView1],
+			views: [oView1, oView2, oView3],
 			actions: [
 				new sap.m.ToggleButton("showFullDayButton", {
 					text: "Full day",
@@ -51,8 +51,16 @@
 						oOPH.setShowFullDay(bPressed);
 					}
 				}),
-				new sap.m.Button("firstButton1", {
-					text: "I am a Button"
+				new sap.m.Button("overrideTime", {
+					text: "Override current time",
+					press: function () {
+						var oGrid = sap.ui.getCore().byId("OnePersonCalendar")._getGrid();
+
+						oGrid._getUniversalCurrentDate = function () {
+							return new sap.ui.core.date.UniversalDate(new Date(2018, 6, 8));
+						};
+						oGrid._updateRowHeaderAndNowMarker();
+					}
 				})
 			],
 			appointments: [
@@ -346,20 +354,13 @@
 				})
 			]
 		});
-		oOPH.addView(oView2);
-		oOPH.addView(oView3);
-		// oOPH.addView(oView3);
-		// oOPH.insertView(oView2, 0);
-		// oOPH.removeAllViews();
-		// oOPH.removeView(oView1);
-		// oOPH.destroyViews();
 
 		new sap.m.App({
 			pages: new sap.m.Page({
 				title: "SinglePlanningCalendar test page",
 				content: oOPH
 			})
-		}).placeAt("body")
+		}).placeAt("body");
 	</script>
 	<style>
 		body {

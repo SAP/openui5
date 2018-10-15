@@ -20,7 +20,7 @@ sap.ui.define([
 		var CalendarAppointmentVisualization = unifiedLibrary.CalendarAppointmentVisualization;
 
 		var ROW_HEIGHT = 48,
-			BLOCKER_ROW_HEIGHT = 28,
+			BLOCKER_ROW_HEIGHT = 25, // 1
 			HALF_HOUR = 3600000 / 2,
 			ONE_DAY = 86400000;
 
@@ -191,19 +191,19 @@ sap.ui.define([
 
 		OnePersonGrid.prototype._formatTimeAsString = function (oDate) {
 			var iCurrentMinutes = oDate.getMinutes(),
-				oHoursFormat = this._getHoursFormat(),
-				oAMPMFormat = this._getAMPMFormat(),
-				sAMPM = "";
+				oHoursFormat = this._getHoursFormat();
 
 			if (iCurrentMinutes < 10) {
 				iCurrentMinutes = "0" + iCurrentMinutes;
 			}
 
-			if (this._hasAMPM()) {
-				sAMPM += " " + oAMPMFormat.format(oDate); // TODO: use second param true when convert all dates to UTC
-			}
+			return oHoursFormat.format(oDate) + ":" + iCurrentMinutes; // TODO: use second param true when convert all dates to UTC
+		};
 
-			return oHoursFormat.format(oDate) + ":" + iCurrentMinutes + sAMPM; // TODO: use second param true when convert all dates to UTC
+		OnePersonGrid.prototype._addAMPM = function (oDate) { // 8
+			var oAMPMFormat = this._getAMPMFormat();
+
+			return " " + oAMPMFormat.format(oDate); // TODO: use second param true when convert all dates to UTC
 		};
 
 		OnePersonGrid.prototype._calculateTopPosition = function (oDate) {
@@ -234,11 +234,14 @@ sap.ui.define([
 		OnePersonGrid.prototype._updateNowMarker = function (oDate) {
 			var $nowMarker = this.$("nowMarker"),
 				$nowMarkerText = this.$("nowMarkerText"),
+				$nowMarkerAMPM = this.$("nowMarkerAMPM"),
 				bCurrentHourNotVisible = this._isOutsideVisibleHours(oDate.getHours());
 
 			$nowMarker.toggleClass("sapMOnePersonNowMarkerHidden", bCurrentHourNotVisible);
 			$nowMarker.css("top", this._calculateTopPosition(oDate) + "px");
 			$nowMarkerText.text(this._formatTimeAsString(oDate));
+			$nowMarkerAMPM.text(this._addAMPM(oDate)); // 8
+			$nowMarkerText.append($nowMarkerAMPM);
 		};
 
 		OnePersonGrid.prototype._updateRowHeaders = function (oDate) {
