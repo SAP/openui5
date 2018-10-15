@@ -1787,5 +1787,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.13": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "d0ac5415bb98a867dc61ff5a7708cc7a041b15b5",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: shows selectAll checkBox at the correct position",
+        "references": []
+      }
+    ]
   }
 }

@@ -273,5 +273,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.13": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "a0ad506ccb2e720a465824922611bb9020a5a3a7",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarTimeInterval: navigates to the correct date",
+        "references": []
+      }
+    ]
   }
 }
