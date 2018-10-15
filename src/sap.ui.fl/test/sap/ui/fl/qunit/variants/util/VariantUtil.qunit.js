@@ -44,6 +44,28 @@ function(
 			assert.deepEqual(VariantUtil.getCurrentHashParamsFromRegister.call(this), ["expectedParameter1", "expectedParameter2"], "then expected parameters are returned");
 		});
 
+		QUnit.test("when calling 'getCurrentHashParamsFromRegister' with oHashRegister.currentIndex set to -1", function (assert) {
+			this._oHashRegister = {
+				currentIndex: -1,
+				hashParams : [
+					["expectedParameter1", "expectedParameter2"],
+					["unExpectedParameter"]
+				]
+			};
+			assert.deepEqual(VariantUtil.getCurrentHashParamsFromRegister.call(this), undefined);
+		});
+
+		QUnit.test("when calling 'getCurrentHashParamsFromRegister' with oHashRegister.currentIndex set to non-numeric value", function (assert) {
+			this._oHashRegister = {
+				currentIndex: 'zero',
+				hashParams : [
+					["expectedParameter1", "expectedParameter2"],
+					["unExpectedParameter"]
+				]
+			};
+			assert.deepEqual(VariantUtil.getCurrentHashParamsFromRegister.call(this), undefined);
+		});
+
 		QUnit.test("when calling 'initializeHashRegister' with oHashRegister.currentIndex set to null", function (assert) {
 			sandbox.stub(VariantUtil, "_setOrUnsetCustomNavigationForParameter");
 			VariantUtil.initializeHashRegister.call(this);
