@@ -239,5 +239,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.13": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "ce7b74f71f487c6becc8702d624050e5335e9413",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected content height calculation",
+        "references": []
+      }
+    ]
   }
 }
