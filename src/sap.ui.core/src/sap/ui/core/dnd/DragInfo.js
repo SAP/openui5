@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["./DragDropBase", "sap/base/Log"],
+sap.ui.define(["./DragDropBase"],
 	function(DragDropBase, Log) {
 	"use strict";
 
@@ -86,11 +86,9 @@ sap.ui.define(["./DragDropBase", "sap/base/Log"],
 			return false;
 		}
 
-		// draggable by default
+		// metadata restrictions
 		var sSourceAggregation = this.getSourceAggregation();
-		var oMetadata = oDragSource.getMetadata().getDragDropInfo(sSourceAggregation);
-		if (!oMetadata.draggable) {
-			Log.warning((sSourceAggregation ? sSourceAggregation + " aggregation of " : "") + oDragSource + " is not configured to be draggable");
+		if (!DragDropBase.checkMetadata(oDragSource, sSourceAggregation, "draggable")) {
 			return false;
 		}
 

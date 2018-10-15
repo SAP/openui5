@@ -90,7 +90,13 @@ sap.ui.define([
 		var oStaticInfo = oClassInfo.metadata;
 
 		this._sVisibility = oStaticInfo.visibility || "public";
-		this.dnd = jQuery.extend({}, {draggable: true, droppable: true}, oStaticInfo.dnd);
+		this.dnd = Object.assign({
+			draggable: false,
+			droppable: false
+		}, (typeof oStaticInfo.dnd == "boolean") ? {
+			draggable: oStaticInfo.dnd,
+			droppable: oStaticInfo.dnd
+		} : oStaticInfo.dnd);
 
 		// remove renderer stuff before calling super.
 		var vRenderer = oClassInfo.hasOwnProperty("renderer") ? (oClassInfo.renderer || "") : undefined;
@@ -140,9 +146,9 @@ sap.ui.define([
 
 	function Aggregation(oClass, name, info) {
 		fnMetaFactoryAggregation.apply(this, arguments);
-		this.dnd = jQuery.extend({
-			draggable: !this.multiple,
-			droppable: !this.multiple,
+		this.dnd = Object.assign({
+			draggable: false,
+			droppable: false,
 			layout: "Vertical"
 		}, (typeof info.dnd == "boolean") ? {
 			draggable: info.dnd,

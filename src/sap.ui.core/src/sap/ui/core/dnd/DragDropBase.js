@@ -3,8 +3,8 @@
  */
 
 // Provides the base class for all drag and drop configurations.
-sap.ui.define(['../Element', '../library', './DragAndDrop'],
-	function(Element, library /*, DragAndDrop */) {
+sap.ui.define(['../Element', '../library', 'sap/base/Log', './DragAndDrop'],
+	function(Element, library, Log /*, DragAndDrop */) {
 	"use strict";
 
 	/**
@@ -70,6 +70,19 @@ sap.ui.define(['../Element', '../library', './DragAndDrop'],
 	 */
 	DragDropBase.prototype.isDroppable = function(oControl, oEvent) {
 		return false;
+	};
+
+	/**
+	 * Checks control metadata restrictions.
+	 */
+	DragDropBase.checkMetadata = function(oControl, sAggregation, sRestriction) {
+		var oMetadata = oControl.getMetadata().getDragDropInfo(sAggregation);
+		if (!oMetadata[sRestriction]) {
+			Log.warning((sAggregation ? sAggregation + " aggregation of " : "") + oControl + " is not configured to be " + sRestriction);
+			return false;
+		}
+
+		return true;
 	};
 
 	/**

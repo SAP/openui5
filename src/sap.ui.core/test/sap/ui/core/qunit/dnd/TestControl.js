@@ -5,6 +5,7 @@ sap.ui.define([
 
 	var TestControl = Control.extend("test.TestControl", {
 		metadata: {
+			dnd: true,
 			properties: {
 				title: { type: "string", defaultValue: "" },
 				showNoData : {type : "boolean", defaultValue : false}
