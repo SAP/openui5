@@ -402,6 +402,9 @@ sap.ui.define([
 	}, {
 		expression: "{=odata.fillUriTemplate('http://foo.com/p1,p2')}",
 		result: "http://foo.com/p1,p2"
+	}, { // BCP: 1870419342
+		expression: "{=odata.fillUriTemplate('\n http://foo.com/\n\t\t\t\t\t\t\t\t\t',{})}",
+		result: "http://foo.com/"
 	}]);
 
 	//*********************************************************************************************
