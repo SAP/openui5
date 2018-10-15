@@ -44,11 +44,11 @@
 						sFormattedTextWithTopicLink = "<p>UI5 modules and their dependencies should be defined using <a class=\"jsdoclink\" href=\"#/api/sap.ui/methods/define\" target=\"_self\">sap.ui.define</a>. For more details see <a class=\"jsdoclink\" href=\"#/topic/91f23a736f4d1014b6dd926db0e91070\" target=\"_self\">Modules and Dependencies</a> in the documentation.</p>",
 						sTextWithoutLink = "replaced by <code>getSelectedFilterCompoundKeys</code> method";
 
-					assert.strictEqual(this.controller.formatLinks(sTextWithLink), sFormattedTextWithLink, "Links were formatted properly.");
-					assert.strictEqual(this.controller.formatLinks(sTextWithHash), sFormattedTextWithHash, "Links were formatted properly.");
-					assert.strictEqual(this.controller.formatLinks(sTextWithLinkAndHash), sFormattedTextWithLinkAndHash, "Links were formatted properly.");
+					assert.strictEqual(this.controller.formatter.formatLinks(sTextWithLink), sFormattedTextWithLink, "Links were formatted properly.");
+					assert.strictEqual(this.controller.formatter.formatLinks(sTextWithHash), sFormattedTextWithHash, "Links were formatted properly.");
+					assert.strictEqual(this.controller.formatter.formatLinks(sTextWithLinkAndHash), sFormattedTextWithLinkAndHash, "Links were formatted properly.");
 					//assert.strictEqual(this.controller.formatLinks(sTextWithTopicLink), sFormattedTextWithTopicLink, "Links were formatted properly.");
-					assert.strictEqual(this.controller.formatLinks(sTextWithoutLink), "<p>" + sTextWithoutLink + "</p>", "Links were formatted properly.");
+					assert.strictEqual(this.controller.formatter.formatLinks(sTextWithoutLink), "<p>" + sTextWithoutLink + "</p>", "Links were formatted properly.");
 				});
 			});
 		</script>
