@@ -67,6 +67,12 @@
         "type": "FIX",
         "text": " Table: Always fully display the content in header rows",
         "references": []
+      },
+      {
+        "id": "f167d57792c4b26195eae6003270ad64acd5d474",
+        "type": "FIX",
+        "text": " Table: Update the scroll position when setting firstVisibleRow",
+        "references": []
       }
     ]
   }

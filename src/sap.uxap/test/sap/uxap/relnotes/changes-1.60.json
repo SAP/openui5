@@ -79,6 +79,42 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Corrected content height calculation",
         "references": []
+      },
+      {
+        "id": "0d85f4b0668faee4c070e5f5d9b2b1c849aea7fe",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Header without content title issues fixed",
+        "references": []
+      },
+      {
+        "id": "79091dd544661faa123ba13c7c79b0ebf1eb823c",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Fixed tab focusable state",
+        "references": []
+      },
+      {
+        "id": "f54194f8bbafa644eda56d9c8b380f624f238a89",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected calculationn",
+        "references": []
+      },
+      {
+        "id": "fc4d27e01c55f5ec5e402199982a9d80ef7e063b",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected qunit timing",
+        "references": []
+      },
+      {
+        "id": "144de4da41c82f08811f5c613b1c82beed16c496",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Truncation of ObjectAttribute is fixed",
+        "references": []
+      },
+      {
+        "id": "19160d07f9da9d34ce91d7bbed71a62d7f450cd7",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Changed header rendering",
+        "references": []
       }
     ]
   }

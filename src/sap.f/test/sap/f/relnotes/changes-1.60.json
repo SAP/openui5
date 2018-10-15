@@ -55,6 +55,24 @@
         "type": "FIX",
         "text": " sap.f.FlexibleColumnLayout: Expand/Collapse buttons tolltip fixed",
         "references": []
+      },
+      {
+        "id": "39adada22add74b1446aba4c9098fbd77421ba6e",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fixed unit test failure",
+        "references": []
+      },
+      {
+        "id": "a84ddd6423d0f6d3575fe81cd735eb168d48e30c",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fixed unit test failure in Edge",
+        "references": []
+      },
+      {
+        "id": "0d85f4b0668faee4c070e5f5d9b2b1c849aea7fe",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Header without content title issues fixed",
+        "references": []
       }
     ]
   }
