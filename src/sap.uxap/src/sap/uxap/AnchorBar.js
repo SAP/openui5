@@ -841,7 +841,7 @@ sap.ui.define([
 
 		aAnchorBarContent.forEach(function (oAnchorBarItem) {
 			$anchorBarItem = oAnchorBarItem.getAggregation("_button") ? oAnchorBarItem.getAggregation("_button").$() : oAnchorBarItem.$();
-			if (oAnchorBarItem.sId === oSelectedButton.sId) {
+			if (oAnchorBarItem.sId === (oSelectedButton && oSelectedButton.sId)) {
 				$anchorBarItem.attr(sTabIndex, sFocusable);
 			} else {
 				$anchorBarItem.attr(sTabIndex, sNotFocusable);
@@ -915,6 +915,7 @@ sap.ui.define([
 		}
 
 		oSelectedButton = sap.ui.getCore().byId(this.getSelectedButton());
+		this._setAnchorButtonsTabFocusValues(oSelectedButton);
 
 		//save max for arrow show/hide management, the max position is the required scroll for the item to be fully visible
 		this._iMaxPosition = -1;
@@ -927,7 +928,6 @@ sap.ui.define([
 		//restore state from previous rendering
 		if (oSelectedButton) {
 			this.setSelectedButton(oSelectedButton);
-			this._setAnchorButtonsTabFocusValues(oSelectedButton);
 		}
 
 		//initial state
