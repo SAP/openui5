@@ -288,18 +288,47 @@ sap.ui.define([
 			var aContextObjects = oWrappedChangeFileContent.changes.contexts || [];
 			return new Promise(function (resolve) {
 				ContextManager.getActiveContexts(aContextObjects).then(function (aActiveContexts) {
-					resolve(aChanges.filter(this._preconditionsFulfilled.bind(this, aActiveContexts, bIncludeVariants)).map(getChange.bind(this)));
+					resolve(aChanges.filter(this._preconditionsFulfilled.bind(this, aActiveContexts, bIncludeVariants)).map(getChange.bind(this, oWrappedChangeFileContent)));
 				}.bind(this));
 			}.bind(this));
 		}.bind(this));
 
-		function getChange(oChangeContent) {
+		function findVariant(oWrappedChangeFileContent, oChange) {
+			var oFoundVariant;
+			Object.keys(oWrappedChangeFileContent.changes.variantSection).some(function(sVariantManagementReference) {
+				return oWrappedChangeFileContent.changes.variantSection[sVariantManagementReference].variants.some(function(oVariant) {
+					if (oVariant.content.fileName === oChange.getDefinition().variantReference) {
+						oFoundVariant = oVariant;
+						return true;
+					}
+				});
+			});
+			return oFoundVariant;
+		}
+
+		function replaceChangeContentWithInstance(oVariant, oChange) {
+			return oVariant.controlChanges.some(function(oChangeContent, index) {
+				if (oChangeContent.fileName === oChange.getDefinition().fileName) {
+					oVariant.controlChanges.splice(index, 1, oChange);
+					return true;
+				}
+			});
+		}
+
+		function getChange(oWrappedChangeFileContent, oChangeContent) {
 			var oChange;
+
 			if (!this._mChangesEntries[oChangeContent.fileName]) {
 				this._mChangesEntries[oChangeContent.fileName] = new Change(oChangeContent);
 			}
 			oChange = this._mChangesEntries[oChangeContent.fileName];
 			oChange.setState(Change.states.PERSISTED);
+
+			if (oChangeContent.variantReference) {
+				var oVariant = findVariant(oWrappedChangeFileContent, oChange);
+				replaceChangeContentWithInstance(oVariant, oChange);
+			}
+
 			return oChange;
 		}
 	};
