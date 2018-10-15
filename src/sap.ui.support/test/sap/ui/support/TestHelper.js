@@ -45,6 +45,6 @@ function testRule(oSettings) {
 				this.clock.tick(500);
 				this.clock.restore();
 
-			});
+			}.bind(this));
 	});
 }
