@@ -149,8 +149,19 @@ sap.ui.define([
 		var that = this;
 		var fnInitModel = function() {
 			if ((that._oJSONView.resourceBundleName || that._oJSONView.resourceBundleUrl) && (!mSettings.models || !mSettings.models[that._oJSONView.resourceBundleAlias])) {
-				var model = new ResourceModel({bundleName:that._oJSONView.resourceBundleName, bundleUrl:that._oJSONView.resourceBundleUrl});
-				that.setModel(model, that._oJSONView.resourceBundleAlias);
+				var oModel = new ResourceModel({
+					bundleName: that._oJSONView.resourceBundleName,
+					bundleUrl: that._oJSONView.resourceBundleUrl,
+					async: mSettings.async
+				});
+				var vBundle = oModel.getResourceBundle();
+				// if ResourceBundle was created with async flag vBundle will be a Promise
+				if (vBundle instanceof Promise) {
+					return vBundle.then(function() {
+						that.setModel(oModel, that._oJSONView.resourceBundleAlias);
+					});
+				}
+				that.setModel(oModel, that._oJSONView.resourceBundleAlias);
 			}
 		};
 

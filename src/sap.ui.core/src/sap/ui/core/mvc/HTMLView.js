@@ -278,8 +278,20 @@ sap.ui.define([
 				that._controllerName = mSettings.controllerName;
 			}
 			if ((mSettings.resourceBundleName || mSettings.resourceBundleUrl) && (!mSettings.models || !mSettings.models[mSettings.resourceBundleAlias])) {
-				var model = new ResourceModel({bundleName:mSettings.resourceBundleName, bundleUrl:mSettings.resourceBundleUrl, bundleLocale:mSettings.resourceBundleLocale});
-				that.setModel(model, mSettings.resourceBundleAlias);
+				var oModel = new ResourceModel({
+					bundleName: mSettings.resourceBundleName,
+					bundleUrl: mSettings.resourceBundleUrl,
+					bundleLocale: mSettings.resourceBundleLocale,
+					async: mSettings.async
+				});
+				var vBundle = oModel.getResourceBundle();
+				// if ResourceBundle was created with async flag vBundle will be a Promise
+				if (vBundle instanceof Promise) {
+					return vBundle.then(function() {
+						that.setModel(oModel, mSettings.resourceBundleAlias);
+					});
+				}
+				that.setModel(oModel, mSettings.resourceBundleAlias);
 			}
 		}
 
@@ -293,9 +305,9 @@ sap.ui.define([
 		if (mSettings.async) {
 			// return the promise
 			return vHTML.then(function(_vHTML) {
-					vHTML = _vHTML;
-					fnInitViewSettings();
-				});
+				vHTML = _vHTML;
+				return fnInitViewSettings();
+			});
 		}
 
 		fnInitViewSettings();
