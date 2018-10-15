@@ -40,7 +40,7 @@ sap.ui.define([
 			relevantContainerOverlay : oRelevantContainerOverlay,
 			parentOverlay : oParentOverlay,
 			relevantContainer : oRelevantContainer,
-			parent : oParentOverlay.getElement()
+			parent : oParentOverlay && oParentOverlay.getElement() //root overlay has no parent
 		};
 	}
 
@@ -102,10 +102,8 @@ sap.ui.define([
 		}
 		if (mActions.reveal){
 			mActions.reveal.controlTypeNames.forEach(function(mControlType){
-				if (mControlType) {
-					sControlType = bSingular ? mControlType.singular : mControlType.plural;
-					aNames.push(sControlType);
-				}
+				sControlType = bSingular ? mControlType.singular : mControlType.plural;
+				aNames.push(sControlType);
 			});
 		}
 		var aNonDuplicateNames = aNames.reduce(function(_aNames, sName){
@@ -267,9 +265,8 @@ sap.ui.define([
 			var mParents = _getParents(bSibling, oOverlay);
 
 			var aParents = [mParents.parentOverlay];
-			var oRelevantContainer = oOverlay.getRelevantContainer(!bSibling);
-			if (oRelevantContainer !== mParents.parent){
-				aParents = ElementUtil.findAllSiblingsInContainer(mParents.parent, oRelevantContainer).map(function(oParent){
+			if (mParents.relevantContainer !== mParents.parent){
+				aParents = ElementUtil.findAllSiblingsInContainer(mParents.parent, mParents.relevantContainer).map(function(oParent){
 					return OverlayRegistry.getOverlay(oParent);
 				});
 			}
@@ -327,12 +324,18 @@ sap.ui.define([
 						if (mRevealAction.changeOnRelevantContainer) {
 							oRevealSelector = oOverlay.getRelevantContainer();
 						}
-						if (this.hasChangeHandler(mRevealAction.changeType, oRevealSelector) &&
-							this._checkRelevantContainerStableID(mRevealAction, oOverlay)) {
+						if (this.hasChangeHandler(mRevealAction.changeType, oRevealSelector)) {
+							if (mRevealAction.changeOnRelevantContainer) {
+								//we have the child overlay, so we need the parents
+								var mParents = _getParents(true, oOverlay);
+								bRevealEnabled = this.hasStableId(mParents.relevantContainerOverlay)
+									&& this.hasStableId(mParents.parentOverlay);
+							} else {
+								bRevealEnabled = true;
+							}
 							if (!mRevealAction.getAggregationName){
 								mRevealAction.getAggregationName = _defaultGetAggregationName;
 							}
-							bRevealEnabled = true;
 						}
 					}
 				}
@@ -343,7 +346,10 @@ sap.ui.define([
 					designTimeMetadata : oDesignTimeMetadata,
 					action : mRevealAction
 				});
-				mReveal.controlTypeNames.push(oDesignTimeMetadata.getName(oInvisibleElement));
+				var mName = oDesignTimeMetadata.getName(oInvisibleElement);
+				if (mName){
+					mReveal.controlTypeNames.push(mName);
+				}
 			}
 			return mReveal;
 		},
@@ -767,15 +773,13 @@ sap.ui.define([
 
 		_isEditableCheck: function(oOverlay, bOverlayIsSibling) {
 			var bEditable = false;
+			var mParents = _getParents(bOverlayIsSibling, oOverlay);
 
-			var oRelevantContainer = oOverlay.getRelevantContainer();
-			var oRelevantContainerOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
-			if (!oRelevantContainerOverlay) {
+			if (!mParents.relevantContainerOverlay) {
 				return false;
 			}
 
 			var mActions = this._getActions(bOverlayIsSibling, oOverlay);
-			var mParents = _getParents(bOverlayIsSibling, oOverlay);
 
 			if (mActions.addODataProperty) {
 				var oAddODataPropertyAction = mActions.addODataProperty.action;
@@ -793,10 +797,9 @@ sap.ui.define([
 			}
 
 			if (bEditable) {
-				return this.hasStableId(oOverlay);
-			} else {
-				return false;
+				bEditable = this.hasStableId(mParents.parentOverlay);
 			}
+			return bEditable;
 		},
 
 		/**
