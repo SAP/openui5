@@ -43,7 +43,234 @@ sap.ui.define(function() {
 			"SplitContainer": {
 				group: "Shell"
 			},
-
+			"Calendar": {
+				group: "Calendar",
+				ui5: {
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/layout/Calendar"]
+				}
+			},
+			"CalendarRow": {
+				group: "Calendar",
+				ui5: {
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/layout/CalendarRow"]
+				}
+			},
+			"CalendarDateInterval": {
+				group: "Calendar",
+				ui5: {
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				sinon: {
+					useFakeTimers: false
+				},
+				coverage: {
+					only: ["sap/ui/layout/CalendarDateInterval"]
+				}
+			},
+			"CalendarMonthInterval": {
+				group: "Calendar",
+				ui5: {
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				sinon: {
+					useFakeTimers: true
+				},
+				coverage: {
+					only: ["sap/ui/layout/CalendarMonthInterval"]
+				}
+			},
+			"CalendarOneMonthInterval": {
+				group: "Calendar",
+				ui5: {
+					libs: ["sap.ui.unified", "sap.m"],
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/layout/CalendarOneMonthInterval"]
+				}
+			},
+			"CalendarWeekInterval": {
+				group: "Calendar",
+				ui5: {
+					libs: ["sap.ui.unified", "sap.m"],
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/layout/CalendarWeekInterval"]
+				}
+			},
+			"CalendarTimeInterval": {
+				group: "Calendar",
+				ui5: {
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/layout/CalendarTimeInterval"]
+				}
+			},
+			"CalendarDate": {
+				group: "Calendar",
+				ui5: {
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/layout/CalendarDate"]
+				}
+			},
+			"Calendar_Islamic": {
+				group: "Calendar",
+				ui5: {
+					calendarType: "islamic",
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/layout/Calendar_Islamic"]
+				}
+			},
+			"Calendar_Japanese": {
+				group: "Calendar",
+				ui5: {
+					calendarType: "Japanese",
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/layout/Calendar_Japanese"]
+				}
+			},
+			"CalendarLegend": {
+				group: "Calendar",
+				ui5: {
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/layout/CalendarLegend"]
+				}
+			},
+			"CalendarUtils": {
+				group: "Calendar",
+				ui5: {
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/layout/CalendarUtils"]
+				}
+			},
+			"Month": {
+				group: "Calendar",
+				ui5: {
+					libs: ["sap.ui.unified", "sap.m"],
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/layout/Month"]
+				}
+			},
+			"FileUploader": {
+				group: "FileUploader",
+				ui5: {
+					libs: ["sap.ui.unified", "sap.m"],
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/layout/FileUploader"]
+				}
+			},
+			"Header": {
+				group: "Header",
+				qunit: {
+					version: 2
+				},
+				ui5: {
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/layout/Header"]
+				}
+			},
+			"ColorPicker": {
+				group: "Calendar",
+				ui5: {
+					libs: ["sap.ui.unified", "sap.m"],
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/layout/ColorPicker"]
+				}
+			},
+			"Currency": {
+				group: "Currency",
+				ui5: {
+					libs: ["sap.ui.unified", "sap.m"],
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/layout/Currency"]
+				}
+			},
+			"Menu": {
+				group: "Menu",
+				ui5: {
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/layout/Menu"]
+				}
+			},
+			"MenuItem": {
+				group: "Menu",
+				ui5: {
+					libs: ["sap.ui.unified", "sap.m"],
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/layout/MenuItem"]
+				}
+			},
+			"MonthPicker": {
+				group: "Calendar",
+				ui5: {
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/layout/MonthPicker"]
+				}
+			},
+			"YearPicker": {
+				group: "Calendar",
+				ui5: {
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/layout/YearPicker"]
+				}
+			},
 			"ExploredSamples": {
 				runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
 				qunit: {
@@ -58,7 +285,6 @@ sap.ui.define(function() {
 				},
 				autostart: false
 			},
-
 			// Design Time & RTA Enabling
 			"Designtime-Library": {
 				group: "Designtime",
@@ -70,5 +296,4 @@ sap.ui.define(function() {
 			}
 		}
 	};
-
 });

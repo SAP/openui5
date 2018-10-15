@@ -1,61 +1,27 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>ResponsiveFlowLayout - sap.ui.layout</title>
+/*global QUnit, sinon */
 
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js" data-sap-ui-noConflict="true"
-	data-sap-ui-theme="sap_bluecrystal"
-	data-sap-ui-libs="sap.ui.layout, sap.ui.commons">
+sap.ui.define([
+	"jquery.sap.global",
+	"sap/ui/layout/ResponsiveFlowLayout",
+	"sap/ui/layout/ResponsiveFlowLayoutData",
+	"sap/ui/commons/Button"
+], function(jQuery, ResponsiveFlowLayout, ResponsiveFlowLayoutData, Button) {
+	"use strict";
 
-</script>
+	var oRFL = new ResponsiveFlowLayout("rflLayout");
+	oRFL.placeAt("qunit-fixture");
 
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script
-	src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<script
-	src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
-<style type="text/css">
-.sampleButtonBox {
-	border: 1px solid blue;
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
-	margin: 0 10px;
-	padding: 5px;
-}
-</style>
-
-<!-- Define stuff -->
-<script language="javascript">
-	var rfl = sap.ui.layout.ResponsiveFlowLayout;
-	var rflLD = sap.ui.layout.ResponsiveFlowLayoutData;
-
-	var oRFL = new rfl("rflLayout");
-	oRFL.placeAt("uiArea1");
-
-	var oBtn1 = new sap.ui.commons.Button("button1", {
+	var oBtn1 = new Button("button1", {
 		text : "Button1",
 		width : "100%"
 	});
-	oBtn1.setLayoutData(new rflLD());
+	oBtn1.setLayoutData(new ResponsiveFlowLayoutData());
 
-	var oBtn2 = new sap.ui.commons.Button("button2", {
+	var oBtn2 = new Button("button2", {
 		text : "Button2 (lb)",
 		width : "100%"
 	});
-	oBtn2.setLayoutData(new rflLD({
+	oBtn2.setLayoutData(new ResponsiveFlowLayoutData({
 		weight : 2,
 		linebreak : false
 	}));
@@ -63,16 +29,13 @@
 	// adding content
 	oRFL.addContent(oBtn1);
 	oRFL.addContent(oBtn2);
-</script>
 
-<!-- Do the tests -->
-<script language="javascript">
 	QUnit.module("Basics", {
 		beforeEach : function() {
 			oBtn1.getLayoutData().setLinebreak(false);
 			oBtn2.getLayoutData().setLinebreak(false);
 
-			var $layout = jQuery.sap.byId("uiArea1");
+			var $layout = jQuery.sap.byId("qunit-fixture");
 			$layout.css("width", "300px");
 			sap.ui.getCore().applyChanges();
 		}
@@ -121,7 +84,7 @@
 			oBtn1.getLayoutData().setLinebreak(false);
 			oBtn2.getLayoutData().setLinebreak(false);
 
-			var $layout = jQuery.sap.byId("uiArea1");
+			var $layout = jQuery.sap.byId("qunit-fixture");
 			$layout.css("width", "400px");
 			sap.ui.getCore().applyChanges();
 		}
@@ -130,7 +93,7 @@
 		var done = assert.async();
 		assert.expect(2);
 
-		var $layout = jQuery.sap.byId("uiArea1");
+		var $layout = jQuery.sap.byId("qunit-fixture");
 		// this sets the layout to a size where the size falls below the min-width of a button
 		$layout.css("width", "150px");
 		sap.ui.getCore().applyChanges();
@@ -199,12 +162,12 @@
 		//prepare
 		var oResponsiveFlowLayout = {};
 		//act
-		sap.ui.layout.ResponsiveFlowLayout.prototype.init.call(oResponsiveFlowLayout);
+		ResponsiveFlowLayout.prototype.init.call(oResponsiveFlowLayout);
 		//check
 		assert.ok(!oResponsiveFlowLayout.oRm, "RenderManager should not be created in ResponsiveFlowLayout.prototype.init method, as focus handler is not available yet (no dom yet)");
 
 		//prepare
-		oResponsiveFlowLayout = new sap.ui.layout.ResponsiveFlowLayout();
+		oResponsiveFlowLayout = new ResponsiveFlowLayout();
 		//act
 		oResponsiveFlowLayout.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
@@ -216,8 +179,8 @@
 
 	QUnit.module("destroy on exit");
 	QUnit.test("Render manager is not created when control is not visible therefore it is not destroyed on exit", function(assert) {
-		var oResponsiveFlowLayout = new rfl({visible: false});
-		var oExitSpy = sinon.spy(sap.ui.layout.ResponsiveFlowLayout.prototype, "exit");
+		var oResponsiveFlowLayout = new ResponsiveFlowLayout({visible: false});
+		var oExitSpy = sinon.spy(ResponsiveFlowLayout.prototype, "exit");
 		//act
 		oResponsiveFlowLayout.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
@@ -238,7 +201,7 @@
 	});
 
 	QUnit.test("Render manager is destroyed on exit of the control", function(assert) {
-		var oResponsiveFlowLayout = new rfl();
+		var oResponsiveFlowLayout = new ResponsiveFlowLayout();
 		//act
 		oResponsiveFlowLayout.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
@@ -255,17 +218,4 @@
 		assert.strictEqual(oDestroySpy.callCount, 1, "destroy is called on the RenderManager");
 		assert.strictEqual(oResponsiveFlowLayout.oRm, undefined, "RenderManager is undefined after destroy");
 	});
-</script>
-
-</head>
-<body class="sapUiBody">
-	<h1 id="qunit-header">QUnit Page for
-		sap.ui.layout.ResponsiveFlowLayout</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<ol id="qunit-tests"></ol>
-	<div id="qunit-fixture">test markup, will be hidden</div>
-
-	<div class="sampleButtonBox" id="uiArea1"></div>
-</body>
-</html>
+});

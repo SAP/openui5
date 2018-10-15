@@ -1,0 +1,590 @@
+/*global QUnit, window */
+
+sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/thirdparty/sinon",
+	"sap/ui/unified/calendar/CalendarUtils",
+	"sap/ui/core/date/UniversalDate",
+	"sap/ui/unified/calendar/CalendarDate"
+], function(qutils, sinon, CalendarUtils, UniversalDate, CalendarDate) {
+	"use strict";
+
+	QUnit.module("getFirstDateOfWeek/Month for week Sunday-Saturday (en_US locale)", {
+		beforeEach: function () {
+			this.oStub1 = sinon.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale", function () {
+				return new sap.ui.core.Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
+			});
+			this.oStub2 = sinon.stub(sap.ui.getCore().getConfiguration(), "getFormatLocale", function () {
+				return new sap.ui.core.Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
+			});
+		},
+		afterEach: function () {
+			this.oStub1.restore();
+			this.oStub2.restore();
+		}
+	});
+
+	QUnit.test("getFirstDateOfWeek() for US border case where the first date of the first week is in the previous year", function(assert) {
+		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 0, 1, 0))).toString(), new Date(Date.UTC(2015, 11, 27, 0)).toString(),
+			"1 Jan 2016->27 Dec 2015");
+	});
+
+	QUnit.test("getFirstDateOfWeek() for US border case where the first date of the first week matches the CLDR's firstDayOfWeek(i.e. Sunday, Monday)", function(assert) {
+		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2017, 0, 1, 0))).toString(), new Date(Date.UTC(2017, 0, 1, 0)).toString(),
+			"1 Jan 2017->1 Jan 2017");
+	});
+
+	QUnit.test("getFirstDateOfWeek() for date at the middle of the month", function (assert) {
+		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 4, 18, 0))).toString(), new Date(Date.UTC(2016, 4, 15, 0)).toString(),
+			"18 May 2016->15 May 2016");
+	});
+
+	QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the beginning of the week", function (assert) {
+		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 4, 1, 0))).toString(), new Date(Date.UTC(2016, 4, 1, 0)).toString(),
+			"1 May 2016->1 May 2016");
+	});
+
+	QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the end of the week", function (assert) {
+		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 9, 1, 0))).toString(), new Date(Date.UTC(2016, 8, 25, 0)).toString(),
+			"1 Oct 2016->25 Sep 2016");
+	});
+
+	QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the middle of the week", function (assert) {
+		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 5, 1, 0))).toString(), new Date(Date.UTC(2016, 4, 29, 0)).toString(),
+			"1 Jun 2016->29 May 2016");
+	});
+
+	QUnit.test("getFirstDateOfMonth() returns the first date of the month for a given date", function (assert) {
+		assert.equal(CalendarUtils.getFirstDateOfMonth(new Date(Date.UTC(2016, 5, 12, 0))).toString(), new Date(Date.UTC(2016, 5, 1, 0)).toString(),
+			"12 Jun 2016 -> 1 Jun 2016");
+	});
+
+	QUnit.module("getFirstDateOfWeek for week Monday-Sunday (en_GB locale)", {
+		beforeEach: function () {
+			this.oStub1 = sinon.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale", function () {
+				return new sap.ui.core.Locale("en_GB");//first date of week is Monday (JS Date.getDay() = 1)
+			});
+			this.oStub2 = sinon.stub(sap.ui.getCore().getConfiguration(), "getFormatLocale", function () {
+				return new sap.ui.core.Locale("en_GB");//first date of week is Monday (JS Date.getDay() = 1)
+			});
+		},
+		afterEach: function () {
+			this.oStub1.restore();
+			this.oStub2.restore();
+		}
+	});
+
+	QUnit.test("getFirstDateOfWeek() for non US border case where the first date of the first week is in the previous year", function (assert) {
+		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 0, 1, 0))).toString(), new Date(Date.UTC(2015, 11, 28, 0)).toString(),
+			"1 Jan 2016->28 Dec 2015");
+	});
+
+	QUnit.test("getFirstDateOfWeek() for date at the middle of the month", function (assert) {
+		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 4, 18, 0))).toString(), new Date(Date.UTC(2016, 4, 16, 0)).toString(),
+			"18 May 2016->16 May 2016");
+	});
+
+	QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the beginning of the week", function (assert) {
+		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 1, 1, 0))).toString(), new Date(Date.UTC(2016, 1, 1, 0)).toString(),
+			"1 Feb 2016->1 Feb 2016");
+	});
+
+	QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the end of the week", function (assert) {
+		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 4, 1, 0))).toString(), new Date(Date.UTC(2016, 3, 25, 0)).toString(),
+			"1 May 2016->25 Apr 2016");
+	});
+
+	QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the middle of the week", function (assert) {
+		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 11, 1, 0))).toString(), new Date(Date.UTC(2016, 10, 28, 0)).toString(),
+			"1 Dec 2016->25 Nov 2016");
+	});
+
+	QUnit.module("getNumberOfWeeksForAYear()", {
+		beforeEach: function () {
+			this._oUI5Core = sap.ui.getCore();
+			this._oBigYears = {"en-US": [1972, 1977, 1983, 1988, 1994, 2000, 2005, 2011, 2016], "en-GB": [1970, 1976, 1981, 1987, 1992, 1998, 2004, 2009, 2015]};
+			this._oRegularYears = {"en-US": [1970, 1975, 1980, 1985, 1992, 1998, 2003, 2008, 2013], "en-GB": [1972, 1977, 1983, 1988, 1994, 2000, 2005, 2011, 2016]};
+		},
+		afterEach: function () {},
+		_fnBigYearTest: function (iYear, assert) {
+			var iNumberOfWeeksForYear = CalendarUtils._getNumberOfWeeksForYear(iYear);
+			//assert
+			assert.strictEqual(iNumberOfWeeksForYear, 53, "Correct number of weeks (" + iNumberOfWeeksForYear + ") for year " + iYear);
+		},
+		_fnRegularYearTest: function (iYear, assert) {
+			var iNumberOfWeeksForYear = CalendarUtils._getNumberOfWeeksForYear(iYear);
+			//assert
+			assert.strictEqual(iNumberOfWeeksForYear, 52, "Correct number of weeks (" + iNumberOfWeeksForYear + ") for year " + iYear);
+		}
+	});
+
+	QUnit.test("en-US locale", function (assert) {
+		//prepare
+		this._oUI5Core.getConfiguration().setFormatLocale('en-US');
+		this._oUI5Core.applyChanges();
+		//act
+		this._oBigYears["en-US"].forEach(function (iYear) {
+			this._fnBigYearTest(iYear, assert);
+		}, this);
+		this._oRegularYears["en-US"].forEach(function (iYear) {
+			this._fnRegularYearTest(iYear, assert);
+		}, this);
+	});
+
+	QUnit.test("en-GB locale", function (assert) {
+		//prepare
+		this._oUI5Core.getConfiguration().setFormatLocale('en-GB');
+		this._oUI5Core.applyChanges();
+		//act
+		this._oBigYears["en-GB"].forEach(function (iYear) {
+			this._fnBigYearTest(iYear, assert);
+		}, this);
+		this._oRegularYears["en-GB"].forEach(function (iYear) {
+			this._fnRegularYearTest(iYear, assert);
+		}, this);
+	});
+
+	QUnit.module("Calculate week number");
+
+	QUnit.test("Week number when locale is valid en-US", function(assert) {
+		// prepare
+		var iWeekNumber_enUS,
+			iWeekNumber_enUS_custom,
+			oDate,
+			oLocale,
+			oLocaleData;
+
+		oDate = new Date(Date.UTC(2016, 10, 17, 0)); // 17.11.2016
+		oLocale = new sap.ui.core.Locale('en-US');
+		oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
+
+		// act
+		iWeekNumber_enUS = CalendarUtils.calculateWeekNumber(oDate, 2016, 'en-US-x-sapufmt', oLocaleData);
+		iWeekNumber_enUS_custom = CalendarUtils.calculateWeekNumber(oDate, 2016, 'en-US', oLocaleData);
+
+		// assert
+		assert.strictEqual(iWeekNumber_enUS, 47, "The week is 47 for 17.11.2016 when locale is en-US-x-sapufmt");
+		assert.strictEqual(iWeekNumber_enUS_custom, 47, "The week is 47 for 17.11.2016 when locale is en-US");
+	});
+
+	QUnit.test("Week number when locale is en-GB", function(assert) {
+		// prepare
+		var iWeekNumber,
+			oDate,
+			oLocale,
+			oLocaleData;
+
+		oDate = new Date(Date.UTC(2016, 10, 17, 0)); // 17.11.2016
+		oLocale = new sap.ui.core.Locale('en-GB');
+		oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
+
+		// act
+		iWeekNumber = CalendarUtils.calculateWeekNumber(oDate, 2016, 'en-GB', oLocaleData);
+
+		// assert
+		assert.strictEqual(iWeekNumber, 46, "The week is 46 for 17.11.2016 when locale is en-GB");
+	});
+
+	QUnit.test("'isDateLastInMonth' checks if the corresponding date is last in a month depending on its parameter", function(assert) {
+		//prepare
+		var oSut = CalendarUtils,
+			oLastDateInTheMonth = new UniversalDate(Date.UTC(2015, 0, 31)),
+			oNotLastDateInTheMonth = new UniversalDate(Date.UTC(2015, 0, 15));
+
+		//assert
+		assert.ok(oSut.isDateLastInMonth(oLastDateInTheMonth), "Jan 31st is the last date of the month");
+		assert.ok(!oSut.isDateLastInMonth(oNotLastDateInTheMonth), "Jan 15th is not the last date of the month");
+	});
+
+	QUnit.test('_isNextMonth', function(assert) {
+		var oDate = new Date(2011, 10, 11);
+		assert.ok(CalendarUtils._isNextMonth(new Date(2012, 10, 11), oDate), 'month from the next year is some next month date');
+		assert.ok(CalendarUtils._isNextMonth(new Date(2012, 9, 11), oDate), 'previous month from the next year is some next month date');
+		assert.ok(!CalendarUtils._isNextMonth(new Date(2011, 10, 30), oDate), 'date from the same month is not a next month date');
+		assert.ok(!CalendarUtils._isNextMonth(new Date(2011, 9, 30), oDate), 'date from the prev month is not a next month date');
+	});
+
+	QUnit.module("_DATE_getFirstDateOfWeek for week Sunday-Saturday (en_US locale)", {
+		beforeEach: function () {
+			this.oStub = sinon.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale", function () {
+				return new sap.ui.core.Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
+			});
+		},
+		afterEach: function () {
+			this.oStub.restore();
+		}
+	});
+
+	QUnit.test("getFirstDateOfWeek() throws with invalid parameters", function(assert) {
+
+		assert.throws(function() {
+			CalendarUtils._getFirstDateOfWeek();
+		}, "Without parameters");
+
+		assert.throws(function() {
+			CalendarUtils._getFirstDateOfWeek(null);
+		}, "with null as a parameter");
+
+	});
+
+	QUnit.test("getFirstDateOfWeek() for US border case where the first date of the first week is in the previous year", function(assert) {
+		assert.equal(CalendarUtils._getFirstDateOfWeek(new CalendarDate(2016, 0, 1)).toString(), CalendarUtils._getFirstDateOfWeek(new CalendarDate(2015, 11, 27)).toString(),
+			"1 Jan 2016->27 Dec 2015");
+	});
+
+	QUnit.test("getFirstDateOfWeek() for date at the middle of the month", function(assert) {
+		assert.equal(CalendarUtils._getFirstDateOfWeek(new CalendarDate(2016, 4, 18)).toString(), CalendarUtils._getFirstDateOfWeek(new CalendarDate(2016, 4, 15)).toString(),
+			"18 May 2016->15 May 2016");
+	});
+
+	QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the beginning of the week", function(assert) {
+		assert.equal(CalendarUtils._getFirstDateOfWeek(new CalendarDate(2016, 4, 1)).toString(), CalendarUtils._getFirstDateOfWeek(new CalendarDate(2016, 4, 1)).toString(),
+			"1 May 2016->1 May 2016");
+	});
+
+	QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the end of the week", function(assert) {
+		assert.equal(CalendarUtils._getFirstDateOfWeek(new CalendarDate(2016, 9, 1)).toString(), CalendarUtils._getFirstDateOfWeek(new CalendarDate(2016, 8, 25)).toString(),
+			"1 Oct 2016->25 Sep 2016");
+	});
+
+	QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the middle of the week", function(assert) {
+		assert.equal(CalendarUtils._getFirstDateOfWeek(new CalendarDate(2016, 5, 1)).toString(), CalendarUtils._getFirstDateOfWeek(new CalendarDate(2016, 4, 29)).toString(),
+			"1 Jun 2016->29 May 2016");
+	});
+
+	QUnit.module("_getFirstDateOfWeek(CalendarDate) for week Monday-Sunday (en_GB locale)", {
+		beforeEach: function () {
+			this.oStub = sinon.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale", function () {
+				return new sap.ui.core.Locale("en_GB");//first date of week is Monday (JS Date.getDay() = 1)
+			});
+		},
+		afterEach: function () {
+			this.oStub.restore();
+		}
+	});
+
+	QUnit.test("getFirstDateOfWeek() for non US border case where the first date of week is in the previous year", function (assert) {
+		assert.equal(CalendarUtils._getFirstDateOfWeek(new CalendarDate(2016, 0, 1)).toString(), new CalendarDate(2015, 11, 28).toString(),
+			"1 Jan 2016->28 Dec 2015");
+	});
+
+	QUnit.test("getFirstDateOfWeek() for date at the middle of the month", function (assert) {
+		assert.equal(CalendarUtils._getFirstDateOfWeek(new CalendarDate(2016, 4, 18)).toString(), new CalendarDate(2016, 4, 16).toString(),
+			"18 May 2016->16 May 2016");
+	});
+
+	QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the beginning of the week", function (assert) {
+		assert.equal(CalendarUtils._getFirstDateOfWeek(new CalendarDate(2016, 1, 1)).toString(), new CalendarDate(2016, 1, 1).toString(),
+			"1 Feb 2016->1 Feb 2016");
+	});
+
+	QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the end of the week", function (assert) {
+		assert.equal(CalendarUtils._getFirstDateOfWeek(new CalendarDate(2016, 4, 1)).toString(), new CalendarDate(2016, 3, 25).toString(),
+			"1 May 2016->25 Apr 2016");
+	});
+
+	QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the middle of the week", function (assert) {
+		assert.equal(CalendarUtils._getFirstDateOfWeek(new CalendarDate(2016, 11, 1)).toString(), new CalendarDate(2016, 10, 28).toString(),
+			"1 Dec 2016->25 Nov 2016");
+	});
+
+	QUnit.module("Utilities with CalendarDate");
+
+	QUnit.test("_daysInMonth", function(assert) {
+
+		assert.throws(function() {
+			CalendarUtils._daysInMonth();
+		}, "Without parameters");
+
+		assert.throws(function() {
+			CalendarUtils._daysInMonth(null);
+		}, "with null as a parameter");
+
+		assert.equal(CalendarUtils._daysInMonth(new CalendarDate(2017, 0, 5)), 31, "in 31-day month");
+		assert.equal(CalendarUtils._daysInMonth(new CalendarDate(2017, 1, 5)), 28, "in 28-day month");
+		assert.equal(CalendarUtils._daysInMonth(new CalendarDate(2016, 1, 5)), 29, "in 29-day month");
+		assert.equal(CalendarUtils._daysInMonth(new CalendarDate(2017, 3, 5)), 30, "in 30-day month");
+
+	});
+
+	QUnit.test("_isLastDateInMonth", function(assert) {
+
+		assert.throws(function() {
+			CalendarUtils._isLastDateInMonth();
+		}, "Without parameters");
+
+		assert.throws(function() {
+			CalendarUtils._isLastDateInMonth(null);
+		}, "with null as a parameter");
+
+		assert.equal(CalendarUtils._isLastDateInMonth(new CalendarDate(2017, 0, 31)), true, "last day in 31-day month");
+		assert.equal(CalendarUtils._isLastDateInMonth(new CalendarDate(2017, 2, 31)), true, "last day in 31-day month");
+		assert.equal(CalendarUtils._isLastDateInMonth(new CalendarDate(2017, 1, 28)), true, "last day in 28-day month");
+		assert.equal(CalendarUtils._isLastDateInMonth(new CalendarDate(2016, 1, 29)), true, "last day in 29-day month");
+		assert.equal(CalendarUtils._isLastDateInMonth(new CalendarDate(2017, 3, 30)), true, "last day in 30-day month");
+		assert.equal(CalendarUtils._isLastDateInMonth(new CalendarDate(2017, 3, 1)), false, "first day");
+
+	});
+
+	QUnit.test("_getFirstDateOfMonth", function(assert) {
+
+		assert.throws(function() {
+			CalendarUtils._getFirstDateOfMonth();
+		}, "Without parameters");
+
+		assert.throws(function() {
+			CalendarUtils._getFirstDateOfMonth(null);
+		}, "With null as a parameter");
+
+		CalendarUtils._getFirstDateOfMonth(new CalendarDate(2017, 1, 29));
+		assert.ok(true, "getFirstDateOfMonth with invalid date as a parameter does not throw an error");
+
+		CalendarUtils._getFirstDateOfMonth(new CalendarDate(2017, 3, 31));
+		assert.ok(true, "getFirstDateOfMonth with invalid date as a parameter does not throw an error");
+
+		assert.equal(CalendarUtils._getFirstDateOfMonth(new CalendarDate(2017, 2, 28)).getYear(), 2017, "the year is the same");
+		assert.equal(CalendarUtils._getFirstDateOfMonth(new CalendarDate(2017, 2, 28)).getMonth(), 2, "the month is the same");
+		assert.equal(CalendarUtils._getFirstDateOfMonth(new CalendarDate(2017, 2, 28)).getDate(), 1, "the date is the same");
+		assert.equal(CalendarUtils._getFirstDateOfMonth(new CalendarDate(2016, 2, 29)).getYear(), 2016, "the year is the same in a leap year");
+		assert.equal(CalendarUtils._getFirstDateOfMonth(new CalendarDate(2016, 2, 29)).getMonth(), 2, "the month is the same in a leap year");
+		assert.equal(CalendarUtils._getFirstDateOfMonth(new CalendarDate(2016, 2, 29)).getDate(), 1, "the date is the same in a leap year");
+
+
+	});
+
+	QUnit.test("_minDate", function(assert) {
+
+		CalendarUtils._minDate();
+		assert.ok(true, "minDate without parameters does not throw an error");
+
+		CalendarUtils._minDate(null);
+		assert.ok(true, "minDate with null as a parameter does not throw an error");
+
+		assert.equal(CalendarUtils._minDate("Gregorian").getYear(), 1, "the year is the same");
+		assert.equal(CalendarUtils._minDate("Gregorian").getMonth(), 0, "the month is the same");
+		assert.equal(CalendarUtils._minDate("Gregorian").getDate(), 1, "the date is the same");
+
+	});
+
+	QUnit.test("_maxDate", function(assert) {
+
+		CalendarUtils._maxDate();
+		assert.ok(true, "maxDate without parameters does not throw an error");
+
+		CalendarUtils._maxDate(null);
+		assert.ok(true, "maxDate with null as a parameter does not throw an error");
+
+		assert.equal(CalendarUtils._maxDate("Gregorian").getYear(), 9999, "the year is the same");
+		assert.equal(CalendarUtils._maxDate("Gregorian").getMonth(), 11, "the month is the same");
+		assert.equal(CalendarUtils._maxDate("Gregorian").getDate(), 31, "the date is the same");
+
+	});
+
+	QUnit.test('_isBetween', function(assert) {
+		assert.throws(function() {
+			CalendarUtils._isBetween();
+		}, "Without parameters");
+
+		assert.throws(function() {
+			CalendarUtils._isBetween(null, new CalendarDate());
+		}, "Without first parameter");
+
+		assert.throws(function() {
+			CalendarUtils._isBetween(new CalendarDate());
+		}, "Without second parameter");
+
+		assert.throws(function() {
+			CalendarUtils._isBetween(new CalendarDate(), new CalendarDate());
+		}, "Without third parameter");
+
+		assert.equal(CalendarUtils._isBetween(new CalendarDate(2017, 0, 7), new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 10)), true, "the date is in the range");
+		assert.equal(CalendarUtils._isBetween(new CalendarDate(2017, 0, 3), new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 10)), false, "the date is not in the range");
+		assert.equal(CalendarUtils._isBetween(new CalendarDate(2017, 0, 13), new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 10)), false, "the date is not in the range");
+		assert.equal(CalendarUtils._isBetween(new CalendarDate(2017, 0, 10), new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 10)), false, "the date is in the range");
+		assert.equal(CalendarUtils._isBetween(new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 10)), false, "the date is in the range");
+		assert.equal(CalendarUtils._isBetween(new CalendarDate(2017, 0, 10), new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 10), false), false, "the date is not in the range");
+		assert.equal(CalendarUtils._isBetween(new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 10), false), false, "the date is not in the range");
+		assert.equal(CalendarUtils._isBetween(new CalendarDate(2017, 0, 10), new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 10), true), true, "the date is not in the range");
+		assert.equal(CalendarUtils._isBetween(new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 10), true), true, "the date is not in the range");
+		assert.equal(CalendarUtils._isBetween(new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 5)), false, "the date is in the range");
+		assert.equal(CalendarUtils._isBetween(new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 5)), false, "the date is in the range");
+		assert.equal(CalendarUtils._isBetween(new CalendarDate(2017, 1, 5), new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 5)), false, "the date is not in the range");
+		assert.equal(CalendarUtils._isBetween(new CalendarDate(2016, 0, 5), new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 5)), false, "the date is not in the range");
+	});
+
+	QUnit.test("_daysBetween", function(assert) {
+
+		assert.throws(function() {
+			CalendarUtils._daysBetween();
+		}, "Without parameters");
+
+		assert.throws(function() {
+			CalendarUtils._daysBetween(null, new CalendarDate());
+		}, "Without first parameter");
+
+		assert.throws(function() {
+			CalendarUtils._daysBetween(new CalendarDate());
+		}, "Without second parameter");
+
+		assert.equal(CalendarUtils._daysBetween(new CalendarDate(2017, 0, 2), new CalendarDate(2017, 0, 1)), 1, "1 day in the same month");
+		assert.equal(CalendarUtils._daysBetween(new CalendarDate(2017, 1, 1), new CalendarDate(2017, 0, 31)), 1, "1 day in different months");
+		assert.equal(CalendarUtils._daysBetween(new CalendarDate(2017, 0, 1), new CalendarDate(2016, 11, 31)), 1, "1 day in different years");
+		assert.equal(CalendarUtils._daysBetween(new CalendarDate(2017, 0, 1), new CalendarDate(2017, 0, 2)), -1, "1 day negative");
+
+		assert.equal(CalendarUtils._daysBetween(new CalendarDate(2017, 0, 1), new CalendarDate(2017, 0, 1)), 0, "no delta");
+		assert.equal(CalendarUtils._daysBetween(new CalendarDate(2017, 0, 1, sap.ui.core.CalendarType.Islamic),
+			new CalendarDate(2017, 0, 2, sap.ui.core.CalendarType.Islamic)), -1, "1 day negative");
+
+	});
+
+	QUnit.test('_isOutside', function(assert) {
+		assert.throws(function() {
+			CalendarUtils._isOutside();
+		}, "Without parameters");
+
+		assert.throws(function() {
+			CalendarUtils._isOutside(null, new CalendarDate());
+		}, "Without first parameter");
+
+		assert.throws(function() {
+			CalendarUtils._isOutside(new CalendarDate());
+		}, "Without second parameter");
+
+		assert.throws(function() {
+			CalendarUtils._isOutside(new CalendarDate(), new CalendarDate());
+		}, "Without third parameter");
+
+		assert.equal(CalendarUtils._isOutside(new CalendarDate(2017, 0, 7), new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 10)), false, "the date is in the range");
+		assert.equal(CalendarUtils._isOutside(new CalendarDate(2017, 0, 3), new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 10)), true, "the date is not in the range");
+		assert.equal(CalendarUtils._isOutside(new CalendarDate(2017, 0, 13), new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 10)), true, "the date is not in the range");
+		assert.equal(CalendarUtils._isOutside(new CalendarDate(2017, 0, 10), new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 10)), false, "the date is in the range");
+		assert.equal(CalendarUtils._isOutside(new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 10)), false, "the date is in the range");
+		assert.equal(CalendarUtils._isOutside(new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 5)), false, "the date is in the range");
+		assert.equal(CalendarUtils._isOutside(new CalendarDate(2017, 1, 5), new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 5)), true, "the date is not in the range");
+		assert.equal(CalendarUtils._isOutside(new CalendarDate(2016, 0, 5), new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 5)), true, "the date is not in the range");
+	});
+
+	QUnit.test("_isSameMonthAndYear", function(assert) {
+
+		assert.throws(function() {
+			CalendarUtils._isSameMonthAndYear();
+		}, "Without parameters");
+
+		assert.throws(function() {
+			CalendarUtils._isSameMonthAndYear(null, new CalendarDate(2017, 2, 2));
+		}, "without first parameter");
+
+		assert.throws(function() {
+			CalendarUtils._isSameMonthAndYear(new CalendarDate(2017, 2, 2));
+		}, "without second parameter");
+
+		assert.equal(CalendarUtils._isSameMonthAndYear(new CalendarDate(2017, 1, 5), new CalendarDate(2017, 1, 5)), true, "the date is in the same month and year");
+		assert.equal(CalendarUtils._isSameMonthAndYear(new CalendarDate(2017, 0, 5), new CalendarDate(2017, 1, 5)), false, "the date is not in the same month and year");
+		assert.equal(CalendarUtils._isSameMonthAndYear(new CalendarDate(2016, 1, 5), new CalendarDate(2017, 1, 5)), false, "the date is not in the same month and year");
+
+	});
+
+	QUnit.test("_checkCalendarDate", function(assert) {
+
+		assert.throws(function() {
+			CalendarUtils._checkCalendarDate();
+		}, "Without parameters");
+
+		assert.throws(function() {
+			CalendarUtils._checkCalendarDate(null);
+		}, "null passed");
+
+		assert.throws(function() {
+			CalendarUtils._checkCalendarDate(new CalendarDate(2017, 2));
+		}, "Indalid date");
+
+		CalendarUtils._checkCalendarDate(new CalendarDate(2017, 0, 2));
+		assert.ok(true, "when valid date, there is no exeption thrown");
+
+	});
+
+	QUnit.test("_getWeek", function(assert) {
+
+		assert.throws(function() {
+			CalendarUtils._getWeek();
+		}, "Without parameters");
+
+		assert.throws(function() {
+			CalendarUtils._getWeek(null);
+		}, "With null as a parameter");
+
+		assert.deepEqual(CalendarUtils._getWeek(new CalendarDate(2017, 0, 1)), {year: 2016, week: 51}, "returns last week of 2016 when first date of 2017 is passed");
+		assert.deepEqual(CalendarUtils._getWeek(new CalendarDate(2016, 11, 31)), {year: 2016, week: 51}, "returns last week of 2016 when last date of 2016 is passed");
+		assert.deepEqual(CalendarUtils._getWeek(new CalendarDate(2017, 0, 8)), {year: 2017, week: 0}, "returns first week of 2017 when 8 date of 2017 is passed");
+		assert.deepEqual(CalendarUtils._getWeek(new CalendarDate(2017, 0, 9)), {year: 2017, week: 1}, "returns second week of 2017 when 9 date of 2017 is passed");
+
+	});
+
+	// BCP: 1880065660
+	QUnit.test("_checkJSDateObject with iframe's JS date object should work properly", function (assert) {
+		// arrange
+		var iframe = document.createElement('iframe');
+		document.body.appendChild(iframe);
+		var oWindow = iframe.contentWindow;
+		oWindow.dateObj = new oWindow.Date(2017, 11, 12);
+
+		// act
+		CalendarUtils._checkJSDateObject(oWindow.dateObj);
+
+		// assert
+		assert.ok(true, "_checkJSDateObject did not throw an expection with date object from an iframe");
+
+		// cleanup
+		document.body.removeChild(iframe);
+		iframe = null;
+	});
+
+
+
+
+	QUnit.module("Handling year and date check");
+
+	QUnit.test("Check if Year is in the valid range", function (assert) {
+
+		CalendarUtils._checkYearInValidRange(2017);
+		assert.ok(true, "year 2017 is in the correct range 1 - 9999");
+
+		assert.throws(function () {
+			CalendarUtils._checkYearInValidRange(-1);
+		}, "Year is less than 1");
+
+		assert.throws(function () {
+			CalendarUtils._checkYearInValidRange(100000);
+		}, "Year is more than 9999");
+
+		assert.throws(function () {
+			CalendarUtils._checkYearInValidRange();
+		}, "Year is undefined");
+
+		assert.throws(function () {
+			CalendarUtils._checkYearInValidRange(null);
+		}, "Year is null");
+
+		assert.throws(function () {
+			CalendarUtils._checkYearInValidRange("test");
+		}, "Year is not a number");
+	});
+
+	QUnit.test("Check if the given date is valid JavaScript date object", function (assert) {
+
+		CalendarUtils._checkJSDateObject(new Date());
+		assert.ok(true, "given date is JavaScript date object");
+
+		assert.throws(function () {
+			CalendarUtils._checkJSDateObject("test some invalid date");
+		}, "Date is not valid JS date Object");
+
+		assert.throws(function () {
+			CalendarUtils._checkJSDateObject();
+		}, "Date is undefined");
+
+		assert.throws(function () {
+			CalendarUtils._checkJSDateObject(null);
+		}, "Date is null");
+	});
+});
