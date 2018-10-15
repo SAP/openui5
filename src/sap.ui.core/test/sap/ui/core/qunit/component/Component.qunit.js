@@ -886,6 +886,37 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Usage of manifest property in component configuration for manifest object + resourceRoot url", function(assert) {
+
+		sap.ui.define("samples/components/oneview2/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("samples.components.oneview2.Component", {
+				metadata: {
+					manifest: {
+						"sap.app" : {
+							"id" : "samples.components.oneview2"
+						}
+					}
+				}
+			});
+		});
+
+		return sap.ui.component({
+			name: "samples.components.oneview2",
+			url: "/someUrl/oneview2",
+			manifest: {
+				"sap.app" : {
+					"id" : "samples.components.oneview2"
+				}
+			}
+		}).then(function(oComponent) {
+			assert.equal(oComponent.getManifestObject().getComponentName(), "samples.components.oneview2", "The proper component has been loaded!");
+			assert.equal(oComponent.getManifestObject()._oBaseUri.path(), "/someUrl/oneview2/", "Manifest baseURI is set correctly");
+		}, function(oError) {
+			assert.ok(false, "Component should be loaded!");
+		});
+
+	});
+
 	QUnit.test("Usage of manifest property in component configuration for URL (sync)", function(assert) {
 
 		var oComponent = sap.ui.component({

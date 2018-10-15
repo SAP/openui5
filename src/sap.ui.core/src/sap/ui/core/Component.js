@@ -2335,6 +2335,17 @@ sap.ui.define([
 			return oConfig.async ? Promise.resolve(oManifest) : oManifest;
 		}
 
+		// if a component name and a URL is given, we register this URL for the name of the component:
+		// the name is the package in which the component is located (dot separated)
+		if (sName && sUrl) {
+			registerModulePath(sName, sUrl);
+		}
+
+		// set the name of this newly loaded component at the interaction measurement,
+		// as otherwise this would be the outer component from where it was called,
+		// which is not true - this component causes the load
+		Interaction.setStepComponent(sName);
+
 		if ( vManifest === undefined ) {
 			// no manifest property set, evaluate legacy properties
 			bManifestFirst = oConfig.manifestFirst === undefined ? oConfiguration.getManifestFirst() : !!oConfig.manifestFirst;
@@ -2351,11 +2362,6 @@ sap.ui.define([
 			oManifest = vManifest && typeof vManifest === 'object' ? createSanitizedManifest(vManifest) : undefined;
 		}
 
-		// set the name of this newly loaded component at the interaction measurement,
-		// as otherwise this would be the outer component from where it was called,
-		// which is not true - this component causes the load
-		Interaction.setStepComponent(sName);
-
 		// if we find a manifest URL in the configuration
 		// we will load the manifest from the specified URL (sync or async)
 		if (!oManifest && sManifestUrl) {
@@ -2369,6 +2375,12 @@ sap.ui.define([
 		// once the manifest is available we extract the controller name
 		if (oManifest && !oConfig.async) {
 			sName = oManifest.getComponentName();
+
+			// if a component name and a URL is given, we register this URL for the name of the component:
+			// the name is the package in which the component is located (dot separated)
+			if (sName && sUrl) {
+				registerModulePath(sName, sUrl);
+			}
 		}
 
 		// Only if loading a manifest is done asynchronously we will skip the
@@ -2383,12 +2395,6 @@ sap.ui.define([
 			// check the type of the name
 			assert(typeof sName === 'string', "sName must be a string");
 
-		}
-
-		// if a component name and a URL is given, we register this URL for the name of the component:
-		// the name is the package in which the component is located (dot separated)
-		if (sName && sUrl) {
-			registerModulePath(sName, sUrl);
 		}
 
 		// in case of loading the manifest first by configuration we need to
