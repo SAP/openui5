@@ -1,4 +1,4 @@
-/*global QUnit, testRule*/
+/*global QUnit*/
 
 sap.ui.define([
 	"sap/ui/core/UIComponent",
@@ -20,7 +20,9 @@ sap.ui.define([
 	Button,
 	jQuery,
 	sinon,
-	Bootstrap
+	Bootstrap,
+	main,
+	testRule
 ) {
 	"use strict";
 
