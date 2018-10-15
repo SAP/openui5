@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8">
+
+		<title>GridList Playground</title>
+
+		<script
+			id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_belize"
+			data-sap-ui-preload="async"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-xx-bindingSyntax="complex"
+			data-sap-ui-resourceroots='{
+				"sap.f.gridlist": "./"
+			}'>
+			//@todo failed to load Javascript resource: sap/ui/core/library-preload.js
+		</script>
+		<script>
+			sap.ui.getCore().attachInit(function () {
+				sap.ui.require([
+					"sap/ui/core/ComponentContainer"
+				], function (ComponentContainer) {
+					new ComponentContainer({
+						name: "sap.f.gridlist",
+						settings: {
+							id: "gridplayground"
+						}
+					}).placeAt("content");
+				});
+			});
+		</script>
+		<style>
+			.sapFGridList.alignStart .sapFGridListGroup {
+				align-items: start;
+			}
+
+
+			.sapFGridList > .sapMListHdrText,
+			.sapFGridList > .sapMListHdrTBar {
+				margin-bottom: 0.5rem;
+			}
+			/* List Group headers overrides. */
+			.sapFGridListGroup > .sapMLIB.sapMGHLI {
+				background: none;
+				border: none;
+				padding-top: 0.25rem;
+				grid-column: 1 / -1;
+			}
+			.sapFGridListGroup > .sapMLIB.sapMGHLI .sapMGHLITitle {
+				font-size: 1.125rem;
+				color: #333333;
+			}
+			.sapFGridList .sapMLIB {
+				border-width: 1px;
+				border-style: solid;
+				border-color: #e5e5e5;
+			}
+			.sapFGridList .sapMLIB > .sapMLIBContent {
+				height: 100%;
+			}
+			.sapFGridListDefault {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+				grid-auto-rows: 1fr;
+				grid-gap: 0.5rem 0.5rem;
+			}
+			.sapFGridListDefault.sapFGridListGroup {
+				grid-template-rows: 3rem;
+			}
+		</style>
+	</head>
+
+	<body class="sapUiBody sapUiSizeCompact" id="content">
+	</body>
+</html>
