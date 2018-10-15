@@ -73,4 +73,63 @@ sap.ui.define([
 		ruleId: "syncFactoryLoading",
 		expectedNumberOfIssues: fnIncrement(1)
 	});
+
+	QUnit.module("sap.ui.view rule tests", {
+		beforeEach: function () {
+			try {
+				sap.ui.view("test");
+			} catch (e) {
+				// Nothing to be done.
+				// We provoke the triggering of a rule, but the exception itself is irrelevant.
+			}
+
+			try {
+				sap.ui.xmlview("test");
+			} catch (e) {
+				// Nothing to be done.
+			}
+
+			try {
+				sap.ui.jsview("test");
+			} catch (e) {
+				// Nothing to be done.
+			}
+
+			try {
+				sap.ui.htmlview("test");
+			} catch (e) {
+				// Nothing to be done.
+			}
+
+			try {
+				sap.ui.jsonview("test");
+			} catch (e) {
+				// Nothing to be done.
+			}
+		}
+	});
+
+	testRule({
+		executionScopeType: "global",
+		libName: "sap.ui.core",
+		ruleId: "syncFactoryLoading",
+		expectedNumberOfIssues: fnIncrement(5)
+	});
+
+	QUnit.module("sap.ui.template rule tests", {
+		beforeEach: function () {
+			try {
+				sap.ui.template("test");
+			} catch (e) {
+				// Nothing to be done.
+			}
+		}
+	});
+
+	testRule({
+		executionScopeType: "global",
+		libName: "sap.ui.core",
+		ruleId: "syncFactoryLoading",
+		expectedNumberOfIssues: fnIncrement(1)
+	});
 });

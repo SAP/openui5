@@ -32,6 +32,22 @@ sap.ui.define(function () {
 			"app/syncFactoryLoading": {
 				title: "QUnit Tests for 'sync fragment loading' rules"
 			},
+			"app/syncXHR": {
+				title: "QUnit Tests for 'sync XHR' rules",
+				qunit: {
+					reorder: false
+				}
+			},
+			"app/syncXHRBootstrap": {
+				title: "QUnit Tests for 'sync XHR bootstrap' rules",
+				bootCore: false,
+				page: "test-resources/sap/ui/core/qunit/rule/syncXHRBootstrap.qunit.html"
+			},
+			"app/syncXHRBootstrapDebug": {
+				title: "QUnit Tests for 'sync XHR bootstrap debug' rules",
+				bootCore: false,
+				page: "test-resources/sap/ui/core/qunit/rule/syncXHRBootstrapDebug.qunit.html"
+			},
 			"misc/silentEventBus": {
 				title: "QUnit Tests for 'silent event bus usage' rules"
 			}

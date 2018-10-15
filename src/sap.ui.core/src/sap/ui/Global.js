@@ -105,9 +105,16 @@ sap.ui.define([
 	 */
 	sap.ui.getVersionInfo = function(mOptions) {
 		if (mOptions && mOptions.async) {
-			Log.info("Do not use deprecated function 'sap.ui.getVersionInfo'. Use 'sap.ui.VersionInfo.load' instead");
+			Log.info("Do not use deprecated function 'sap.ui.getVersionInfo'. Use" +
+				" 'sap/ui/VersionInfo' module's asynchronous .load function instead");
 		} else {
-			Log.warning("Do not use deprecated function 'sap.ui.getVersionInfo' synchronously! Use asynchronous 'sap.ui.VersionInfo.load' instead");
+			Log.warning("Do not use deprecated function 'sap.ui.getVersionInfo' synchronously! Use" +
+				" 'sap/ui/VersionInfo' module's asynchronous .load function instead", "Deprecation", null, function() {
+				return {
+					type: "sap.ui.getVersionInfo",
+					name: "Global"
+				};
+			});
 		}
 
 		return VersionInfo._load(mOptions); // .load() is async only!

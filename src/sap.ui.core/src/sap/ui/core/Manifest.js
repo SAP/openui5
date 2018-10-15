@@ -762,6 +762,14 @@ sap.ui.define([
 		sManifestUrl = oManifestUrl.toString();
 
 		Log.info("Loading manifest via URL: " + sManifestUrl);
+		if (!bAsync) {
+			Log.warning("Synchronous loading of manifest, due to Manifest.load() call for '" + sManifestUrl + "'. Use parameter 'async' true to avoid this.", "SyncXHR", null, function() {
+				return {
+					type: "SyncXHR",
+					name: "Manifest"
+				};
+			});
+		}
 		var oManifestJSON = LoaderExtensions.loadResource({
 			url: sManifestUrl,
 			dataType: "json",
