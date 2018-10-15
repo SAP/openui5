@@ -165,6 +165,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			},
 			Export: {},
 			ExportTypeCSV: {},
+			PasteHelper: {},
 			"reflection/BaseTreeModifier": {
 				coverage: {
 					only: "[sap/ui/core/util/reflection]"
