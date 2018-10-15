@@ -626,8 +626,6 @@ function(
 			.then(function () {
 				// this is needed to initially check if undo is available, e.g. when the stack gets initialized with changes
 				this._onStackModified();
-				this.fnKeyDown = this._onKeyDown.bind(this);
-				jQuery(document).on("keydown", this.fnKeyDown);
 			}.bind(this))
 			.then(function () {
 				// non-blocking style loading
@@ -657,6 +655,9 @@ function(
 				}
 			}.bind(this))
 			.then(function() {
+				this.fnKeyDown = this._onKeyDown.bind(this);
+				jQuery(document).on("keydown", this.fnKeyDown);
+
 				var oRootOverlay = OverlayRegistry.getOverlay(this.getRootControl());
 				this._$RootControl = oRootOverlay.getAssociatedDomRef();
 				if (this._$RootControl) {
