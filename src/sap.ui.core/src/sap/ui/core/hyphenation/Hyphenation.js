@@ -147,10 +147,14 @@ function (jQuery, ManagedObject, Log) {
 			"path": jQuery.sap.getResourcePath("sap/ui/thirdparty/hyphenopoly")
 		};
 
-		// we are passing only 2 properties to hyphenopoly: hyphen and exceptions
+		// we are passing only 3 properties to hyphenopoly: hyphen, exceptions and minWordLength
 		if (oConfig) {
 			if ("hyphen" in oConfig) {
 				oConfigurationForLanguage.hyphen = oConfig.hyphen;
+			}
+
+			if ("minWordLength" in oConfig) {
+				oConfigurationForLanguage.minWordLength = oConfig.minWordLength;
 			}
 
 			if ("exceptions" in oConfig) {
@@ -321,7 +325,7 @@ function (jQuery, ManagedObject, Log) {
 
 	/**
 	 * @class
-	 * This class provides methods to evaluate the possibility of using browser-native hyphenation or to initialize and use third-party hyphenation module.
+	 * This class provides methods for evaluating the possibility of using browser-native hyphenation or initializing and using a third-party hyphenation module.
 	 *
 	 * <h3>Overview</h3>
 	 * By using this API, a developer can check if browser-native hyphenation is supported for a particular language.
@@ -351,7 +355,7 @@ function (jQuery, ManagedObject, Log) {
 	 * <pre>
 	 * if (!Hyphenation.getInstance().canUseNativeHyphenation("en-us")) {
 	 * 	Hyphenation.getInstance().initialize("en-us").then(function() {
-	 * 		console.log(Hyphenation.getInstance().hyphenate("An example text to hyphenate., "en-us"));
+	 * 		console.log(Hyphenation.getInstance().hyphenate("An example text to hyphenate.", "en-us"));
 	 * 	});
 	 * }
 	 * </pre>
@@ -431,6 +435,7 @@ function (jQuery, ManagedObject, Log) {
 
 	/**
 	 * Hyphenates the given text with the third-party library.
+	 *
 	 * Adds the soft hyphen symbol at the places where words can break.
 	 *
 	 * @param {string} sText The text to hyphenate
@@ -470,6 +475,7 @@ function (jQuery, ManagedObject, Log) {
 
 	/**
 	 * Gets a list of word exceptions which was added for the given language.
+	 *
 	 * A word exception is a custom-defined hyphenation for a specific word. It's useful if the hyphenation algorithm does not hyphenate a given word correctly.
 	 *
 	 * @see sap.ui.core.hyphenation.Hyphenation#addExceptions
@@ -488,6 +494,7 @@ function (jQuery, ManagedObject, Log) {
 
 	/**
 	 * Adds a list of exceptions defining how specific words should be hyphenated.
+	 *
 	 * This way a custom-defined hyphenation for a specific word can be defined. It's useful if the hyphenation algorithm does not hyphenate a given word correctly.
 	 *
 	 * @example
@@ -512,6 +519,7 @@ function (jQuery, ManagedObject, Log) {
 
 	/**
 	 * Initializes the third-party library for the given language.
+	 *
 	 * Loads required third-party resources and language-specific resources.
 	 *
 	 * @example
@@ -520,10 +528,10 @@ function (jQuery, ManagedObject, Log) {
 	 * });
 	 *
 	 * @param {string} [sLang] The language for which the third-party library should be initialized. The global application language is the default one
-	 * @param {map} [oConfig] A configuration for the given language
 	 * @returns {Promise} A promise which resolves when all language resources are loaded. Rejects if the language is not supported
 	 * @public
 	 */
+	// Parameter oConfig is not mentioned in jsdoc on purpose. It is only for internal use for now.
 	Hyphenation.prototype.initialize = function (sLang, oConfig) {
 		var sLanguage = getLanguage(sLang);
 
@@ -533,6 +541,7 @@ function (jQuery, ManagedObject, Log) {
 		 * @example
 		 * {
 		 *	hyphen: "-",
+		 *	minWordLength: 6,
 		 *	exceptions: {
 		 *		"academy": "a-c-a-d-e-m-y",
 		 *		"word": "w-o-r-d"
