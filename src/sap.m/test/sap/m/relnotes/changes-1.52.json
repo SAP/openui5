@@ -3452,5 +3452,58 @@
         "references": []
       }
     ]
+  },
+  "1.52.20": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "a5fccfc9377aa523988970e1eaee583c0cc64b86",
+        "type": "FIX",
+        "text": " OverflowToolbar: Fixed resetting of child size cache",
+        "references": []
+      },
+      {
+        "id": "bf565230c8f0ccd92416fee48ba247dc07e83e9e",
+        "type": "FIX",
+        "text": " sap.m.ComboBoxBase: Set the focus to the body after dialog is closed",
+        "references": []
+      },
+      {
+        "id": "e61d5c49431ec83d31dee94dbdf2308ae865a91e",
+        "type": "FIX",
+        "text": " sap.m.GenericTile : In IE11 when a DOM Element which is only partially visible in the browser viewport gets the focus, the IE 11 browser shifts the element to make it fully visible in the viewport. This has conflict with UI5 event onTap detection.",
+        "references": []
+      },
+      {
+        "id": "0b869f6eed2dda110cf38867c96b43ea1fbb5ede",
+        "type": "FIX",
+        "text": " sap.m.Input: SelectedKey is lost if oData is used as data source",
+        "references": []
+      },
+      {
+        "id": "ce1d644e6777aff67b3472aa2c92dafdd4fd7fd8",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fire change event on enter on mobile",
+        "references": []
+      },
+      {
+        "id": "2c018b2b2ad711d24fae71c1cd79298b76cb6ce8",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Accessibility description corrected",
+        "references": []
+      },
+      {
+        "id": "07aea9bf1f88588b28eb0796ad2118c356c7b387",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Exception thrown on initialization fixed",
+        "references": []
+      },
+      {
+        "id": "0f21159ddd4ced4dfa87ad525bd80885753679ef",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: if binding format differs from input, \"change\" is fired",
+        "references": []
+      }
+    ]
   }
 }

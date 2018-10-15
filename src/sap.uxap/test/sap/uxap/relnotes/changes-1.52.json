@@ -204,5 +204,28 @@
         "references": []
       }
     ]
+  },
+  "1.52.20": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "3cdf3ad33161418a3235eebffe915ed5258936c2",
+        "type": "FIX",
+        "text": " ObjectPage: AnchorBar submenu buttons accessibility improvement",
+        "references": []
+      },
+      {
+        "id": "696f96be17d0826f0ea84af0c69edb2089bb8d16",
+        "type": "FIX",
+        "text": " ObjectPageHeader: Long titles are now truncated",
+        "references": []
+      },
+      {
+        "id": "26cc82438913eb116144d6ab9e07c4067ec03004",
+        "type": "FIX",
+        "text": " ObjectPageSubSection: Aligned SimpleForm Toolbar",
+        "references": []
+      }
+    ]
   }
 }
