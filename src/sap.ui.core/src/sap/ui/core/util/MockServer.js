@@ -1920,7 +1920,7 @@ sap.ui
 			};
 
 			/**
-			 * Simulates an existing OData service by sepcifiying the metadata URL and the base URL for the mockdata. The server
+			 * Simulates an existing OData service by sepcifying the metadata URL and the base URL for the mockdata. The server
 			 * configures the request handlers depending on the service metadata. The mockdata needs to be stored individually for
 			 * each entity type in a separate JSON file. The name of the JSON file needs to match the name of the entity type. If
 			 * no base url for the mockdata is specified then the mockdata are generated from the metadata
