@@ -45,8 +45,12 @@ sap.ui.define([
 				 */
 				domChanged: {
 					parameters: {
-						type: { type : "string" },
-						targetNodes: { type : "element[]" }
+						type: {
+							type : "string"
+						},
+						targetNodes: {
+							type : "element[]"
+						}
 					}
 				}
 			}
@@ -54,26 +58,20 @@ sap.ui.define([
 	});
 
 	MutationObserver.prototype.init = function() {
-		this._fnFireDomChanged = function() {
-			this.fireDomChanged();
-		}.bind(this);
-		this._onScroll = this._fireDomChangeOnScroll.bind(this);
+		this._fireDomChangeOnTransitionEnd = this._fireDomChangeOnTransitionEnd.bind(this);
+		this._fireDomChangeOnAnimationEnd = this._fireDomChangeOnAnimationEnd.bind(this);
+		this._fireDomChangeOnResize = this._fireDomChangeOnResize.bind(this);
+		this._fireDomChangeOnScroll = this._fireDomChangeOnScroll.bind(this);
 
-		this._startMutationObserver();
+		window.addEventListener("transitionend", this._fireDomChangeOnTransitionEnd, true);
+		window.addEventListener("animationend", this._fireDomChangeOnAnimationEnd, true);
+		window.addEventListener("scroll", this._fireDomChangeOnScroll, true);
+		jQuery(window).on("resize", this._fireDomChangeOnResize);
 
-		// after CSS transition / animation ends, domChanged event is triggered
-		window.addEventListener("transitionend", this._fnFireDomChanged, true);
-		window.addEventListener("webkitTransitionEnd", this._fnFireDomChanged, true);
-		window.addEventListener("otransitionend", this._fnFireDomChanged, true);
-		window.addEventListener("animationend", this._fnFireDomChanged, true);
-		window.addEventListener("webkitAnimationEnd", this._fnFireDomChanged, true);
-		window.addEventListener("oanimationend", this._fnFireDomChanged, true);
-
-		jQuery(window).on("resize", this._fnFireDomChanged);
-
-		window.addEventListener("scroll", this._onScroll, true);
 		this._aIgnoredMutations = [];
 		this._aWhiteList = [];
+
+		this._startMutationObserver();
 	};
 
 	/**
@@ -84,12 +82,10 @@ sap.ui.define([
 	MutationObserver.prototype.exit = function() {
 		this._stopMutationObserver();
 
-		window.removeEventListener("transitionend", this._fnFireDomChanged, true);
-		window.removeEventListener("animationend", this._fnFireDomChanged, true);
-
-		jQuery(window).off("resize", this._fnFireDomChanged);
-
-		window.removeEventListener("scroll", this._onScroll, true);
+		window.removeEventListener("transitionend", this._fireDomChangeOnTransitionEnd, true);
+		window.removeEventListener("animationend", this._fireDomChangeOnAnimationEnd, true);
+		window.removeEventListener("scroll", this._fireDomChangeOnScroll, true);
+		jQuery(window).off("resize", this._fireDomChangeOnResize);
 	};
 
 	/**
@@ -214,6 +210,25 @@ sap.ui.define([
 			this._oMutationObserver.disconnect();
 			delete this._oMutationObserver;
 		}
+	};
+
+	MutationObserver.prototype._fireDomChangeOnTransitionEnd = function () {
+		this.fireDomChanged({
+			type: "transitionend"
+		});
+	};
+
+
+	MutationObserver.prototype._fireDomChangeOnAnimationEnd = function () {
+		this.fireDomChanged({
+			type: "animationend"
+		});
+	};
+
+	MutationObserver.prototype._fireDomChangeOnResize = function () {
+		this.fireDomChanged({
+			type: "resize"
+		});
 	};
 
 	MutationObserver.prototype._fireDomChangeOnScroll = function (oEvent) {
