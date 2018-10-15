@@ -10,7 +10,7 @@ sap.ui.define([
 	"./BlockBaseMetadata",
 	"sap/ui/model/Context",
 	"sap/ui/Device",
-	"sap/ui/layout/form/ResponsiveGridLayout",
+	"sap/ui/layout/form/ColumnLayout",
 	"./library",
 	"sap/ui/core/Component",
 	"sap/ui/layout/library",
@@ -22,7 +22,7 @@ sap.ui.define([
 	BlockBaseMetadata,
 	Context,
 	Device,
-	ResponsiveGridLayout,
+	ColumnLayout,
 	library,
 	Component,
 	layoutLibrary,
@@ -524,28 +524,17 @@ sap.ui.define([
 			return oView;
 		};
 
-		// This offset is needed so the breakpoints of the simpleForm match those of the GridLayout (offset = left-padding of grid + margins of grid-cells [that create the horizontal spacing between the cells])
-		BlockBase.FORM_ADUSTMENT_OFFSET = 32;
+		// This offset is needed so the breakpoints of the ColumnLayout match those of the GridLayout (offset = Grid container width - ColumnLayout container width)
+		BlockBase.FORM_ADUSTMENT_OFFSET = 16;
 
 		BlockBase._FORM_ADJUSTMENT_CONST = {
-			breakpoints: {
-				XL: Device.media._predefinedRangeSets.StdExt.points[2] - BlockBase.FORM_ADUSTMENT_OFFSET,
-				L: Device.media._predefinedRangeSets.StdExt.points[1] - BlockBase.FORM_ADUSTMENT_OFFSET,
-				M: Device.media._predefinedRangeSets.StdExt.points[0] - BlockBase.FORM_ADUSTMENT_OFFSET
-			},
 			labelSpan: {
 				/* values specified by design requirement */
-				XL: 12,
-				L: 12,
-				M: 12,
-				S: 12
+				L: 12
 			},
 			emptySpan: {
 				/* values specified by design requirement */
-				XL: 0,
-				L: 0,
-				M: 0,
-				S: 0
+				L: 0
 			},
 			columns: {
 				XL: 1,
@@ -560,13 +549,12 @@ sap.ui.define([
 
 			if (oView && oLayoutData && sFormAdjustment && oParentColumns) {
 
-				var oColumns = this._computeFormColumns(oLayoutData, sFormAdjustment, oParentColumns),
-					oBreakpoints = this._computeFormBreakpoints(oLayoutData, sFormAdjustment);
+				var oColumns = this._computeFormColumns(oLayoutData, sFormAdjustment, oParentColumns);
 
 				return jQuery.extend({},
 					BlockBase._FORM_ADJUSTMENT_CONST,
-					{columns: oColumns},
-					{breakpoints: oBreakpoints});
+					{columns: oColumns}
+				);
 			}
 		};
 
@@ -585,20 +573,16 @@ sap.ui.define([
 				oColumns.M = oLayoutData.getSpanM() / iColumnSpanM;
 			}
 
-			return oColumns;
-		};
-
-		BlockBase.prototype._computeFormBreakpoints = function (oLayoutData, sFormAdjustment) {
-
-			var oBreakpoints = jQuery.extend({}, BlockBase._FORM_ADJUSTMENT_CONST.breakpoints);
-
-			if (sFormAdjustment === BlockBaseFormAdjustment.BlockColumns) {
-				oBreakpoints.XL = Math.round(oBreakpoints.XL * oLayoutData.getSpanXL() / BlockBase._PARENT_GRID_SIZE);
-				oBreakpoints.L = Math.round(oBreakpoints.L * oLayoutData.getSpanL() / BlockBase._PARENT_GRID_SIZE);
-				oBreakpoints.M = Math.round(oBreakpoints.M * oLayoutData.getSpanM() / BlockBase._PARENT_GRID_SIZE);
+			// Those two checks are needed in order to avoid an exception thrown by ColumnLayout
+			if (oColumns.L > oColumns.XL) {
+				oColumns.L = oColumns.XL;
 			}
 
-			return oBreakpoints;
+			if (oColumns.M > oColumns.L) {
+				oColumns.M = oColumns.L;
+			}
+
+			return oColumns;
 		};
 
 		BlockBase.prototype._applyFormAdjustment = function () {
@@ -607,7 +591,9 @@ sap.ui.define([
 				sFormAdjustment = this.getFormAdjustment(),
 				oView = this._getSelectedViewContent(),
 				oParent = this._oParentObjectPageSubSection,
-				oFormAdjustmentFields;
+				oFormAdjustmentFields,
+				oColumnLayout,
+				oLayout;
 
 			if (sFormAdjustment && (sFormAdjustment !== BlockBaseFormAdjustment.None)
 				&& oView && oLayoutData && oParent) {
@@ -617,32 +603,45 @@ sap.ui.define([
 				oView.getContent().forEach(function (oItem) {
 					if (oItem.getMetadata().getName() === "sap.ui.layout.form.SimpleForm") {
 
-						oItem.setLayout(SimpleFormLayout.ResponsiveGridLayout);
+						oItem.setLayout(SimpleFormLayout.ColumnLayout);
 
 						if (!oFormAdjustmentFields) {
 							oFormAdjustmentFields = this._computeFormAdjustmentFields(oView, oLayoutData, sFormAdjustment, oParentColumns);
 						}
 
+						oLayout = oItem.getAggregation("form").getLayout();
+
+						oLayout._iBreakPointTablet -= BlockBase.FORM_ADUSTMENT_OFFSET;
+						oLayout._iBreakPointDesktop -= BlockBase.FORM_ADUSTMENT_OFFSET;
+						oLayout._iBreakPointLargeDesktop -= BlockBase.FORM_ADUSTMENT_OFFSET;
+
+						oItem.setLabelSpanL(oFormAdjustmentFields.labelSpan.L);
+						oItem.setEmptySpanL(oFormAdjustmentFields.emptySpan.L);
 						this._applyFormAdjustmentFields(oFormAdjustmentFields, oItem);
 
 						oItem.setWidth("100%");
 					} else if (oItem.getMetadata().getName() === "sap.ui.layout.form.Form") {
 
-						var oLayout = oItem.getLayout(),
-							oResponsiveGridLayout;
+						oLayout = oItem.getLayout();
 
-						if (oLayout && oLayout.getMetadata().getName() === "sap.ui.layout.form.ResponsiveGridLayout") {
-							oResponsiveGridLayout = oLayout; // existing ResponsiveGridLayout must be reused, otherwise an error is thrown in the existing implementation
+						if (oLayout && oLayout.getMetadata().getName() === "sap.ui.layout.form.ColumnLayout") {
+							oColumnLayout = oLayout; // existing ColumnLayout must be reused, otherwise an error is thrown in the existing implementation
 						} else {
-							oResponsiveGridLayout = new ResponsiveGridLayout();
-							oItem.setLayout(oResponsiveGridLayout);
+							oColumnLayout = new ColumnLayout();
+							oItem.setLayout(oColumnLayout);
 						}
 
 						if (!oFormAdjustmentFields) {
 							oFormAdjustmentFields = this._computeFormAdjustmentFields(oView, oLayoutData, sFormAdjustment, oParentColumns);
 						}
 
-						this._applyFormAdjustmentFields(oFormAdjustmentFields, oResponsiveGridLayout);
+						oColumnLayout._iBreakPointTablet -= BlockBase.FORM_ADUSTMENT_OFFSET;
+						oColumnLayout._iBreakPointDesktop -= BlockBase.FORM_ADUSTMENT_OFFSET;
+						oColumnLayout._iBreakPointLargeDesktop -= BlockBase.FORM_ADUSTMENT_OFFSET;
+
+						oColumnLayout.setLabelCellsLarge(oFormAdjustmentFields.labelSpan.L);
+						oColumnLayout.setEmptyCellsLarge(oFormAdjustmentFields.emptySpan.L);
+						this._applyFormAdjustmentFields(oFormAdjustmentFields, oColumnLayout);
 
 						oItem.setWidth("100%");
 					}
@@ -655,20 +654,6 @@ sap.ui.define([
 			oFormLayout.setColumnsXL(oFormAdjustmentFields.columns.XL);
 			oFormLayout.setColumnsL(oFormAdjustmentFields.columns.L);
 			oFormLayout.setColumnsM(oFormAdjustmentFields.columns.M);
-
-			oFormLayout.setLabelSpanXL(oFormAdjustmentFields.labelSpan.XL);
-			oFormLayout.setLabelSpanL(oFormAdjustmentFields.labelSpan.L);
-			oFormLayout.setLabelSpanM(oFormAdjustmentFields.labelSpan.M);
-			oFormLayout.setLabelSpanS(oFormAdjustmentFields.labelSpan.S);
-
-			oFormLayout.setEmptySpanXL(oFormAdjustmentFields.emptySpan.XL);
-			oFormLayout.setEmptySpanL(oFormAdjustmentFields.emptySpan.L);
-			oFormLayout.setEmptySpanM(oFormAdjustmentFields.emptySpan.M);
-			oFormLayout.setEmptySpanS(oFormAdjustmentFields.emptySpan.S);
-
-			oFormLayout.setBreakpointXL(oFormAdjustmentFields.breakpoints.XL);
-			oFormLayout.setBreakpointL(oFormAdjustmentFields.breakpoints.L);
-			oFormLayout.setBreakpointM(oFormAdjustmentFields.breakpoints.M);
 		};
 
 		/*************************************************************************************

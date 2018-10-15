@@ -59,7 +59,7 @@
 				<subSections>
 					<ObjectPageSubSection title=" ">
 						<blocks>
-							<personal:PersonalFormBlock id="personalinfo" columnLayout="4"/>
+							<personal:PersonalFormBlock id="personalinfo" columnLayout="3"/>
 							<blockcolor:BlockBlue id="bbt1"/>
 							<blockcolor:BlockBlue id="bbt2"/>
 							<blockcolor:BlockBlue id="bbt3"/>
@@ -73,7 +73,7 @@
 				<subSections>
 					<ObjectPageSubSection title="Employment">
 						<blocks>
-							<employment:BlockJobInfo id="jobinfo" columnLayout="2"/>
+							<employment:BlockJobInfo id="jobinfo" columnLayout="3"/>
 							<blockcolor:BlockBlue id="bbt5"/>
 							<blockcolor:BlockBlue id="bbt6"/>
 							<blockcolor:BlockBlue id="bbt7"/>
