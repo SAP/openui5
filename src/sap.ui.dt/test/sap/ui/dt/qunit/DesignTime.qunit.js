@@ -121,9 +121,9 @@ function(
 					assert.equal(oInnerOverlay.getElement().getId(), "inner-layout", "then the button overlay is inside in inner-layout overlay");
 					var oOuterOverlay = oInnerOverlay.getParentElementOverlay();
 					assert.equal(oOuterOverlay.getElement().getId(), "outer-layout", "then the inner-layout overlay is chained at outer-layout overlay");
-					assert.ok(oOuterOverlay.$().is(":visible"), "then the outer-layout overlay is visible");
-					assert.ok(oInnerOverlay.$().is(":visible"), "then the inner-layout overlay is visible");
-					assert.ok(oButtonOverlay.$().is(":visible"), "then the button-layout overlay is visible");
+					assert.ok(DOMUtil.isVisible(oOuterOverlay.getDomRef()), "then the outer-layout overlay is visible");
+					assert.ok(DOMUtil.isVisible(oInnerOverlay.getDomRef()), "then the inner-layout overlay is visible");
+					assert.ok(DOMUtil.isVisible(oButtonOverlay.getDomRef()), "then the button-layout overlay is visible");
 
 					oOuterLayout.destroy();
 					fnDone();

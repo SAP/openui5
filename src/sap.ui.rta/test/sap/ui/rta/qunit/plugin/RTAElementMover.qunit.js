@@ -1,11 +1,13 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/DragDrop",
 	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/DOMUtil",
+	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/ElementDesignTimeMetadata",
-	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/comp/smartform/SmartForm",
 	"sap/ui/comp/smartform/Group",
@@ -13,14 +15,16 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
 	"sap/m/Bar",
-	"sap/ui/dt/OverlayUtil",
+	"sap/ui/core/ComponentContainer",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	CommandFactory,
 	DragDropPlugin,
 	OverlayRegistry,
+	DOMUtil,
+	OverlayUtil,
 	DesignTime,
 	ElementDesignTimeMetadata,
-	CommandFactory,
 	ChangeRegistry,
 	SmartForm,
 	Group,
@@ -28,19 +32,12 @@ sap.ui.define([
 	VerticalLayout,
 	Button,
 	Bar,
-	OverlayUtil,
+	ComponentContainer,
 	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-
-	function fnRenderComplexView() {
-		var oView = sap.ui.xmlview("idMain1", "sap.ui.rta.test.additionalElements.ComplexTest");
-		oView.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-		return oView;
-	}
 
 	/**
 	 * create valid designtime metadata object
@@ -79,6 +76,95 @@ sap.ui.define([
 		}
 		return { propagateRelevantContainer: vRelevantContainerValue };
 	}
+
+	// test app only used in the first module
+	QUnit.module("Given a complex test view rendered and data ready", {
+		// One model with EntityType01, EntityType02 (default) and EntityTypeNav + one i18n model ("i18n")
+		before: function() {
+			QUnit.config.fixture = null;
+			var oComp = sap.ui.getCore().createComponent({
+				name : "sap.ui.rta.test.additionalElements",
+				id : "Comp1",
+				settings : {
+					componentData : {
+						"showAdaptButton" : true,
+						"useSessionStorage": true
+					}
+				}
+			});
+
+			this.oCompCont = new ComponentContainer({
+				component: oComp
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oView = sap.ui.getCore().byId("Comp1---idMain1");
+			return this.oView.loaded().then(function() {
+				return this.oView.getController().isDataReady();
+			}.bind(this));
+		},
+		beforeEach : function (assert) {
+			var done = assert.async();
+			this.oDragDropPlugin = new DragDropPlugin({
+				commandFactory : new CommandFactory()
+			});
+
+			this.oDesignTime = new DesignTime({
+				rootElements: [
+					this.oView
+				],
+				plugins: [this.oDragDropPlugin]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				sap.ui.getCore().applyChanges();
+				var oNavGroup = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[0];
+				var oOtherGroup = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[1];
+				var oBoundGroupElement = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[1].getGroupElements()[0];
+				var oGroupEntityType01 = this.oView.byId("GroupEntityType01");
+				var oGroupEntityType02 = this.oView.byId("GroupEntityType02");
+				var oForm = this.oView.byId("MainForm");
+
+				this.oOtherGroupButton = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[1].getGroupElements()[1];
+				this.oNavGroupAggrOverlay = OverlayRegistry.getOverlay(oNavGroup).getAggregationOverlay("formElements");
+				this.oOtherGroupAggrOverlay = OverlayRegistry.getOverlay(oOtherGroup).getAggregationOverlay("formElements");
+				this.oBoundGroupElementOverlay = OverlayRegistry.getOverlay(oBoundGroupElement);
+				this.oFormAggrOverlay = OverlayRegistry.getOverlay(oForm).getAggregationOverlay("groups");
+				this.oGroupEntityType01Overlay = OverlayRegistry.getOverlay(oGroupEntityType01);
+				this.oGroupEntityType02Overlay = OverlayRegistry.getOverlay(oGroupEntityType02);
+				this.oElementMover = this.oDragDropPlugin.getElementMover();
+
+				done();
+			}, this);
+		},
+		after: function() {
+			this.oCompCont.destroy();
+			QUnit.config.fixture = '';
+		},
+		afterEach : function () {
+			this.oDesignTime.destroy();
+			this.oDragDropPlugin.destroy();
+			this.oElementMover.destroy();
+		}
+	}, function () {
+		QUnit.test("when moving the group element bound to EntityType01 inside the group bound to EntityTypeNav...", function(assert) {
+			this.oElementMover.setMovedOverlay(this.oBoundGroupElementOverlay);
+			assert.notOk(this.oElementMover.checkTargetZone(this.oNavGroupAggrOverlay), "then the group bound to the navigation is not a possible target zone");
+			assert.ok(this.oElementMover.checkTargetZone(this.oOtherGroupAggrOverlay), "then the group with the element is a possible target zone");
+			this.oOtherGroupButton.setVisible(false);
+			assert.notOk(this.oElementMover.checkMovable(this.oBoundGroupElementOverlay), "then the field is no longer movable if there are no more target zones");
+		});
+
+		QUnit.test("when DT is loaded and moving the group bound to EntityType02 inside the form bound to EntityType02...", function(assert) {
+			this.oElementMover.setMovedOverlay(this.oGroupEntityType02Overlay);
+			assert.ok(this.oElementMover.checkTargetZone(this.oFormAggrOverlay), "then the form is a possible target zone");
+		});
+
+		QUnit.test("when moving the group bound to EntityType01 inside the form bound to EntityType02...", function(assert) {
+			this.oElementMover.setMovedOverlay(this.oGroupEntityType01Overlay);
+			assert.ok(this.oElementMover.checkTargetZone(this.oFormAggrOverlay), "then the form is a possible target zone");
+		});
+	});
 
 	QUnit.module("Given a group element, overlays, RTAElementMover", {
 		beforeEach : function(assert) {
@@ -163,105 +249,6 @@ sap.ui.define([
 
 		QUnit.test("and a group without stable id, when checking the target zone,", function(assert) {
 			assert.notOk(this.oElementMover.checkTargetZone(this.oGroup3AggrOverlay), "then the group is not a possible target zone as the id is not stable");
-		});
-	});
-
-	QUnit.module("Given a complex test view with oData Model and a NavForm,", {
-		// One model with EntityType01, EntityType02 (default) and EntityTypeNav + one i18n model ("i18n")
-		beforeEach : function () {
-			this.oView = fnRenderComplexView();
-			this.oDragDropPlugin = new DragDropPlugin({
-				commandFactory : new CommandFactory()
-			});
-
-			return this.oView.getController().isDataReady().then(function () {
-				this.oDesignTime = new DesignTime({
-					rootElements: [
-						this.oView
-					],
-					plugins: [this.oDragDropPlugin]
-				});
-
-				return new Promise(function (fnResolve) {
-					this.oDesignTime.attachEventOnce("synced", function() {
-						sap.ui.getCore().applyChanges();
-						fnResolve();
-					});
-				}.bind(this));
-			}.bind(this))
-			.then(function () {
-				this.oNavGroup = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[0];
-				this.oOtherGroup = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[1];
-				this.oBoundGroupElement = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[1].getGroupElements()[0];
-				this.oOtherGroupButton = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[1].getGroupElements()[1];
-				this.oNavGroupAggrOverlay = OverlayRegistry.getOverlay(this.oNavGroup).getAggregationOverlay("formElements");
-				this.oOtherGroupAggrOverlay = OverlayRegistry.getOverlay(this.oOtherGroup).getAggregationOverlay("formElements");
-				this.oBoundGroupElementOverlay = OverlayRegistry.getOverlay(this.oBoundGroupElement);
-				this.oElementMover = this.oDragDropPlugin.getElementMover();
-				this.oElementMover.setMovedOverlay(this.oBoundGroupElementOverlay);
-			}.bind(this));
-		},
-		afterEach : function () {
-			this.oView.destroy();
-			this.oDesignTime.destroy();
-			this.oDragDropPlugin.destroy();
-			this.oElementMover.destroy();
-		}
-	}, function () {
-		QUnit.test("when moving the group element bound to EntityType01 inside the group bound to EntityTypeNav...", function(assert) {
-			assert.notOk(this.oElementMover.checkTargetZone(this.oNavGroupAggrOverlay), "then the group bound to the navigation is not a possible target zone");
-			assert.ok(this.oElementMover.checkTargetZone(this.oOtherGroupAggrOverlay), "then the group with the element is a possible target zone");
-			this.oOtherGroupButton.setVisible(false);
-			assert.notOk(this.oElementMover.checkMovable(this.oBoundGroupElementOverlay), "then the field is no longer movable if there are no more target zones");
-		});
-	});
-
-	QUnit.module("Given a complex test view with oData Model and a MainForm bound to EntityType2,", {
-		// One model with EntityType01, EntityType02 (default) and EntityTypeNav + one i18n model ("i18n")
-		beforeEach : function(assert) {
-			this.oView = fnRenderComplexView(assert);
-			this.oDragDropPlugin = new DragDropPlugin({
-				commandFactory : new CommandFactory()
-			});
-
-			this.oDesignTime = new DesignTime({
-				rootElements: [
-					this.oView
-				],
-				plugins: [this.oDragDropPlugin]
-			});
-
-			var done = assert.async();
-			this.oDesignTime.attachEventOnce("synced", function() {
-				sap.ui.getCore().applyChanges();
-
-				this.oGroupEntityType01 = this.oView.byId("GroupEntityType01");
-				this.oGroupEntityType02 = this.oView.byId("GroupEntityType02");
-				this.oForm = this.oView.byId("MainForm");
-
-				this.oFormAggrOverlay = OverlayRegistry.getOverlay(this.oForm).getAggregationOverlay("groups");
-				this.oGroupEntityType01Overlay = OverlayRegistry.getOverlay(this.oGroupEntityType01);
-				this.oGroupEntityType02Overlay = OverlayRegistry.getOverlay(this.oGroupEntityType02);
-
-				this.oElementMover = this.oDragDropPlugin.getElementMover();
-
-				done();
-			}.bind(this));
-		},
-		afterEach : function () {
-			this.oDesignTime.destroy();
-			this.oDragDropPlugin.destroy();
-			this.oView.destroy();
-		}
-	}, function () {
-		QUnit.test("when DT is loaded and moving the group bound to EntityType02 inside the form bound to EntityType02...", function(assert) {
-			this.oElementMover.setMovedOverlay(this.oGroupEntityType02Overlay);
-			assert.ok(this.oElementMover.checkTargetZone(this.oFormAggrOverlay), "then the form is a possible target zone");
-		});
-
-		QUnit.test("when moving the group bound to EntityType01 inside the form bound to EntityType02...", function(assert) {
-			this.oElementMover.setMovedOverlay(this.oGroupEntityType01Overlay);
-			assert.ok(this.oElementMover.checkTargetZone(this.oFormAggrOverlay), "then the form is a possible target zone");
 		});
 	});
 

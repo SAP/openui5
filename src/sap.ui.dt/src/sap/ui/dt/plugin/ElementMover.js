@@ -4,17 +4,17 @@
 
 // Provides class sap.ui.dt.plugin.ElementMover.
 sap.ui.define([
-	'sap/ui/base/Object',
-	'sap/ui/base/ManagedObject',
-	'sap/ui/dt/ElementUtil',
-	'sap/ui/dt/OverlayUtil',
-	'sap/ui/dt/OverlayRegistry'
-], function
-(	BaseObject,
+	"sap/ui/base/Object",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/dt/DOMUtil",
+	"sap/ui/dt/OverlayUtil"
+], function(
+	BaseObject,
 	ManagedObject,
 	ElementUtil,
-	OverlayUtil,
-	OverlayRegistry
+	DOMUtil,
+	OverlayUtil
 ) {
 	"use strict";
 
@@ -136,9 +136,9 @@ sap.ui.define([
 		var oGeometry = oAggregationOverlay.getGeometry();
 		var bGeometryVisible = oGeometry && oGeometry.size.height > 0 && oGeometry.size.width > 0;
 
-		// this function can get called on overlay registration, when there are no overlays in dom yet. In this case, $().is(":visible") is always false.
+		// this function can get called on overlay registration, when there are no overlays in dom yet. In this case, DOMUtil.isVisible is always false.
 		if ((bOverlayNotInDom && !bGeometryVisible)
-			|| !bOverlayNotInDom && !oAggregationOverlay.$().is(":visible")
+			|| !bOverlayNotInDom && !DOMUtil.isVisible(oAggregationOverlay.getDomRef())
 			|| !(oAggregationOverlay.getElement().getVisible && oAggregationOverlay.getElement().getVisible())) {
 			return false;
 		}

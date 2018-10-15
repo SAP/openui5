@@ -5,10 +5,16 @@
 // Provides object sap.ui.dt.test.Element.
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/dt/ElementUtil',
-	'sap/ui/dt/OverlayRegistry'
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/dt/DOMUtil",
+	"sap/ui/dt/OverlayRegistry"
 ],
-function(jQuery, ElementUtil, OverlayRegistry) {
+function(
+	jQuery,
+	ElementUtil,
+	DOMUtil,
+	OverlayRegistry
+) {
 	"use strict";
 
 	/**
@@ -73,10 +79,10 @@ function(jQuery, ElementUtil, OverlayRegistry) {
 		if (oDesignTimeMetadata && !oDesignTimeMetadata.isIgnored(oElement)) {
 			mAggregationTest.ignored = false;
 			mAggregationTest.domRefDeclared = !!oDesignTimeMetadata.getDomRef();
-			var oAggregationDomRef = oAggregationOverlay.getAssociatedDomRef();
-			if (oAggregationDomRef) {
+			var $AggregationDomRef = oAggregationOverlay.getAssociatedDomRef();
+			if ($AggregationDomRef) {
 				mAggregationTest.domRefFound = true;
-				mAggregationTest.domRefVisible = jQuery(oAggregationDomRef).is(":visible");
+				mAggregationTest.domRefVisible = DOMUtil.isVisible($AggregationDomRef.get(0));
 			}
 
 			var mGeometry = oAggregationOverlay.getGeometry();
@@ -84,7 +90,7 @@ function(jQuery, ElementUtil, OverlayRegistry) {
 				var mSize = mGeometry.size;
 				mAggregationTest.overlayTooSmall = (mSize.width <= MIN_SIZE || mSize.height <= MIN_SIZE);
 				mAggregationTest.overlayGeometryCalculatedByChildren = !mGeometry.domRef;
-				mAggregationTest.overlayVisible = oAggregationOverlay.$().is(":visible");
+				mAggregationTest.overlayVisible = mGeometry.visible;
 			}
 		}
 

@@ -68,7 +68,7 @@ function (
 			assert.strictEqual(oAggregationTestInfo.ignored, false, "aggregation isn't ignored in DT Metadata");
 			assert.strictEqual(oAggregationTestInfo.domRefDeclared, true, "domRef for content aggregation is declared in DT Metadata");
 			assert.strictEqual(oAggregationTestInfo.domRefFound, true, "domRef for content aggregation is found in dom");
-			assert.strictEqual(oAggregationTestInfo.domRefVisible, true, "domRef for content aggregation isn't visible");
+			assert.strictEqual(oAggregationTestInfo.domRefVisible, false, "domRef for content aggregation isn't visible");
 			assert.strictEqual(oAggregationTestInfo.overlayTooSmall, true, "overlay domRef is too small");
 			assert.strictEqual(oAggregationTestInfo.overlayGeometryCalculatedByChildren, false, "overlay geometry is not calculated by children");
 			assert.strictEqual(oAggregationTestInfo.overlayVisible, false, "overlay isn't visible");

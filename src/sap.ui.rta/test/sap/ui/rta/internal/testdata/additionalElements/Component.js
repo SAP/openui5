@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/ViewType",
 	"sap/ui/fl/FakeLrepConnectorLocalStorage",
+	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/rta/util/UrlParser",
 	"sap/ui/fl/fieldExt/Access",
 	"sap/ui/model/json/JSONModel",
@@ -12,6 +13,7 @@ sap.ui.define([
 	UIComponent,
 	ViewType,
 	FakeLrepConnectorLocalStorage,
+	FakeLrepConnectorSessionStorage,
 	UrlParser,
 	Access,
 	JSONModel,
@@ -33,6 +35,7 @@ sap.ui.define([
 
 			// default init methods
 			this._bShowAdaptButton = this.getComponentData().showAdaptButton ? this.getComponentData().showAdaptButton : false;
+			this.FakeLrepConnectorStorage = this.getComponentData().useSessionStorage ? FakeLrepConnectorSessionStorage : FakeLrepConnectorLocalStorage;
 			UIComponent.prototype.init.apply(this, arguments);
 		},
 
@@ -72,7 +75,7 @@ sap.ui.define([
 		 */
 		_createFakeLrep: function () {
 			if (UrlParser.getParam('sap-rta-mock-lrep') !== false) {
-				FakeLrepConnectorLocalStorage.enableFakeConnector({
+				this.FakeLrepConnectorStorage.enableFakeConnector({
 					"isAtoEnabled": true,
 					"isAtoAvailable": true
 				});
