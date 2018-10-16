@@ -93,6 +93,26 @@ sap.ui.define([
 		 */
 		_getOwnerComponent: function () {
 			return this._oOwner; // Accessing owner component from reference on the instance object.
+		},
+
+		/**
+		 * Destroys the current sample component
+		 * @private
+		 */
+		_destroySampleComponent: function () {
+			var oComponent = this._getOwnerComponent()._oCurrentOpenedSample;
+			if (oComponent) {
+				oComponent.destroy();
+				oComponent = null;
+			}
+		},
+
+		/**
+		 * @override
+		 */
+		navTo: function () {
+			this._destroySampleComponent(); // BCP: 1880458601
+			Router.prototype.navTo.apply(this, arguments);
 		}
 	});
 
