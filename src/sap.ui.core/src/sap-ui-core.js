@@ -24,7 +24,7 @@
 		for (i = 0; i < aScripts.length; i++) {
 			sSrc = aScripts[i].getAttribute("src");
 			if (sSrc) {
-				mMatch = sSrc.match(/(.*\/)sap-ui-core\.js$/i);
+				mMatch = sSrc.match(/(.*\/)sap-ui-core\.js(?:\?[a-f0-9]+)?$/i);
 				if (mMatch) {
 					sBaseUrl = mMatch[1];
 					break;
