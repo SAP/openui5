@@ -27,11 +27,11 @@ sap.ui.define([
 
 		var oFakeLrepConnectorLocalStorage = sap.ui.fl.LrepConnector.createConnector();
 
-		var oTestData = { "fileName": "id_1445501120486_25", "fileType": "change", "changeType": "hideControl", "reference": "sap.ui.rta.test.Demo.md.Component", "packageName": "$TMP", "content": {}, "selector": { "id": "RTADemoAppMD---detail--GroupElementDatesShippingStatus" }, "layer": "CUSTOMER", "texts": {}, "namespace": "sap.ui.rta.test.Demo.md.Component", "creation": "1", "originalLanguage": "EN", "conditions": {}, "support": { "generator": "Change.createInitialFileContent", "service": "", "user": "" }, "validAppVersions": { "creation": "1.0.0", "from": "1.0.0" } };
+		var oTestData = { "fileName": "id_1445501120486_25", "fileType": "change", "changeType": "hideControl", "reference": "sap.ui.rta.test.Demo.md.Component", "packageName": "$TMP", "content": {}, "selector": { "id": "RTADemoAppMD---detail--GroupElementDatesShippingStatus" }, "layer": "CUSTOMER", "texts": {}, "namespace": "sap.ui.rta.test.Demo.md.Component", "creation": "2018-10-16T08:00:01", "originalLanguage": "EN", "conditions": {}, "support": { "generator": "Change.createInitialFileContent", "service": "", "user": "" }, "validAppVersions": { "creation": "1.0.0", "from": "1.0.0" } };
 
-		var aTestData = [{ "fileName": "id_1449484290389_26", "fileType": "change", "changeType": "moveFields", "reference": "sap.ui.rta.test.Demo.md.Component", "packageName": "$TMP", "content": { "moveFields": [{ "id": "RTADemoAppMD---detail--GroupElementGeneralDataAddressStreet", "index": 1 }] }, "selector": { "id": "RTADemoAppMD---detail--GroupGeneralData" }, "layer": "CUSTOMER", "texts": {}, "namespace": "sap.ui.rta.test.Demo.md.Component", "creation": "2", "originalLanguage": "EN", "conditions": {}, "support": { "generator": "Change.createInitialFileContent", "service": "", "user": "" }, "validAppVersions": { "creation": "1.0.0", "from": "1.0.0" } },
-		{ "fileName": "id_1449484290389_27", "fileType": "change", "changeType": "moveFields", "reference": "sap.ui.rta.test.Demo.md.Component", "packageName": "$TMP", "content": { "moveFields": [{ "id": "RTADemoAppMD---detail--GroupElementGeneralDataAddressZipCode", "index": 4 }] }, "selector": { "id": "RTADemoAppMD---detail--GroupGeneralData" }, "layer": "CUSTOMER", "texts": {}, "namespace": "sap.ui.rta.test.Demo.md.Component", "creation": "5", "originalLanguage": "EN", "conditions": {}, "support": { "generator": "Change.createInitialFileContent", "service": "", "user": "" }, "validAppVersions": { "creation": "1.0.0", "from": "1.0.0" } },
-		{ "fileName": "id_1449484290389_28", "fileType": "change", "changeType": "moveFields", "reference": "sap.ui.rta.test.Demo.md.Component", "packageName": "$TMP", "content": { "moveFields": [{ "id": "RTADemoAppMD---detail--GroupElementDatesShippingStatus", "index": 4 }], "targetId": "RTADemoAppMD---detail--GroupGeneralData" }, "selector": { "id": "RTADemoAppMD---detail--GroupDates" }, "layer": "CUSTOMER", "texts": {}, "namespace": "sap.ui.rta.test.Demo.md.Component", "creation": "3", "originalLanguage": "EN", "conditions": {}, "support": { "generator": "Change.createInitialFileContent", "service": "", "user": "" }, "validAppVersions": { "creation": "1.0.0", "from": "1.0.0" } }];
+		var aTestData = [{ "fileName": "id_1449484290389_26", "fileType": "change", "changeType": "moveFields", "reference": "sap.ui.rta.test.Demo.md.Component", "packageName": "$TMP", "content": { "moveFields": [{ "id": "RTADemoAppMD---detail--GroupElementGeneralDataAddressStreet", "index": 1 }] }, "selector": { "id": "RTADemoAppMD---detail--GroupGeneralData" }, "layer": "CUSTOMER", "texts": {}, "namespace": "sap.ui.rta.test.Demo.md.Component", "creation": "2018-10-16T08:00:02", "originalLanguage": "EN", "conditions": {}, "support": { "generator": "Change.createInitialFileContent", "service": "", "user": "" }, "validAppVersions": { "creation": "1.0.0", "from": "1.0.0" } },
+		{ "fileName": "id_1449484290389_27", "fileType": "change", "changeType": "moveFields", "reference": "sap.ui.rta.test.Demo.md.Component", "packageName": "$TMP", "content": { "moveFields": [{ "id": "RTADemoAppMD---detail--GroupElementGeneralDataAddressZipCode", "index": 4 }] }, "selector": { "id": "RTADemoAppMD---detail--GroupGeneralData" }, "layer": "CUSTOMER", "texts": {}, "namespace": "sap.ui.rta.test.Demo.md.Component", "creation": "2018-10-16T08:00:05", "originalLanguage": "EN", "conditions": {}, "support": { "generator": "Change.createInitialFileContent", "service": "", "user": "" }, "validAppVersions": { "creation": "1.0.0", "from": "1.0.0" } },
+		{ "fileName": "id_1449484290389_28", "fileType": "change", "changeType": "moveFields", "reference": "sap.ui.rta.test.Demo.md.Component", "packageName": "$TMP", "content": { "moveFields": [{ "id": "RTADemoAppMD---detail--GroupElementDatesShippingStatus", "index": 4 }], "targetId": "RTADemoAppMD---detail--GroupGeneralData" }, "selector": { "id": "RTADemoAppMD---detail--GroupDates" }, "layer": "CUSTOMER", "texts": {}, "namespace": "sap.ui.rta.test.Demo.md.Component", "creation": "2018-10-16T08:00:03", "originalLanguage": "EN", "conditions": {}, "support": { "generator": "Change.createInitialFileContent", "service": "", "user": "" }, "validAppVersions": { "creation": "1.0.0", "from": "1.0.0" } }];
 
 		QUnit.module("Given I use SAP RTA Fake Lrep Connector Local Storage", {
 			beforeEach: function (assert) {
@@ -64,7 +64,7 @@ sap.ui.define([
 					"&appVersion=" + "1.0.0" +
 					"&layer=" + aTestData[0].layer +
 					"&generator=Change.createInitialFileContent";
-				var oForeignTestData = { "fileName": "id_1445501120486_45", "fileType": "change", "changeType": "hideControl", "reference": "sap.ui.rta.test.ForeignDemo.md.Component", "packageName": "$TMP", "content": {}, "selector": { "id": "RTADemoAppMD---detail--GroupElementDatesShippingStatus" }, "layer": "CUSTOMER", "texts": {}, "namespace": "sap.ui.rta.test.ForeignDemo.md.Component", "creation": "7", "originalLanguage": "EN", "conditions": {}, "support": { "generator": "Change.createInitialFileContent", "service": "", "user": "" }, "validAppVersions": { "creation": "1.0.0", "from": "1.0.0" } };
+				var oForeignTestData = { "fileName": "id_1445501120486_45", "fileType": "change", "changeType": "hideControl", "reference": "sap.ui.rta.test.ForeignDemo.md.Component", "packageName": "$TMP", "content": {}, "selector": { "id": "RTADemoAppMD---detail--GroupElementDatesShippingStatus" }, "layer": "CUSTOMER", "texts": {}, "namespace": "sap.ui.rta.test.ForeignDemo.md.Component", "creation": "2018-10-16T08:00:07", "originalLanguage": "EN", "conditions": {}, "support": { "generator": "Change.createInitialFileContent", "service": "", "user": "" }, "validAppVersions": { "creation": "1.0.0", "from": "1.0.0" } };
 				var aMixedTestData = aTestData.concat([oForeignTestData]);
 
 				var fnDeleteChangeSpy = sandbox.spy(FakeLrepLocalStorage, "deleteChange");
@@ -392,6 +392,7 @@ sap.ui.define([
 
 		QUnit.module("Given JSON data passed during initiailization of FakeLrepConnectorLocalStorage", {
 			beforeEach: function () {
+				//TODO: Cleanup missing: this setup code is influencing other modules
 				oFakeLrepConnectorLocalStorage.deleteChanges();
 				FakeLrepConnectorLocalStorage.disableFakeConnector();
 				var mSettings = {};
@@ -423,17 +424,17 @@ sap.ui.define([
 					{
 						fileType: "change",
 						fileName: "Change1",
-						creation: "8",
+						creation: "2018-10-16T08:00:08",
 						layer: "CUSTOMER"
 					},{
 						fileType: "change",
 						fileName: "vendorChange",
-						creation: "4",
+						creation: "2018-10-16T08:00:04",
 						layer: "VENDOR"
 					},{
 						fileType: "change",
 						fileName: "Change3",
-						creation: "5",
+						creation: "2018-10-16T08:00:05",
 						layer: "CUSTOMER"
 					}, {
 						fileType: "ctrl_variant_change",
