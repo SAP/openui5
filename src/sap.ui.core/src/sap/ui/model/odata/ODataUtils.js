@@ -14,15 +14,18 @@
 sap.ui.define([
 	'sap/ui/model/Sorter',
 	'sap/ui/model/FilterProcessor',
-	'sap/ui/core/CalendarType',
 	'sap/ui/core/format/DateFormat',
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/security/encodeURL"
+	"sap/base/security/encodeURL",
+	"sap/ui/core/library"
 ],
-	function(Sorter, FilterProcessor, CalendarType, DateFormat, Log, assert, jQuery, encodeURL ) {
+	function(Sorter, FilterProcessor, DateFormat, Log, assert, jQuery, encodeURL, library ) {
 	"use strict";
+
+	// shortcut for sap.ui.core.CalendarType
+	var CalendarType = library.CalendarType;
 
 	var rDecimal = /^([-+]?)0*(\d+)(\.\d+|)$/,
 		rTrailingDecimal = /\.$/,
