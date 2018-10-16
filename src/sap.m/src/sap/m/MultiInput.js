@@ -408,8 +408,11 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	MultiInput.prototype._openMultiLineOnPhone = function() {
 		var that = this;
 
-		this._oSuggestionPopup.open();
-		this._oSuggestionPopup.insertContent(this._tokenizer, 0);
+		if (this._oSuggestionPopup){
+			this._oSuggestionPopup.open();
+			this._oSuggestionPopup.insertContent(this._tokenizer, 0);
+		}
+
 		this._tokenizer.setReverseTokens(true);
 		var sValue = this._oPopupInput.getValue();
 
@@ -516,7 +519,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 
 		// on phone close full screen dialog
 		if (this._bUseDialog) {
-			this._oSuggestionPopup.close();
+			this._oSuggestionPopup && this._oSuggestionPopup.close();
 			this._tokenizer.setVisible(true);
 		} else {
 			this.$("border").removeClass("sapMMultiInputMultiModeBorder");
