@@ -729,6 +729,12 @@
 		});
 
 		var oValueStateInput3 = new sap.m.Input("vsinput3", {
+			valueState: "Highlight",
+			valueStateText: "Highlight Message!!!!!!!!!",
+			placeholder: "Highlight Input"
+		});
+
+		var oValueStateInput4 = new sap.m.Input("vsinput4", {
 			placeholder: "value state changes while you are typing",
 			liveChange: function (oEvent) {
 				var i = oValueStateInput3.getValue().length;
@@ -823,6 +829,7 @@
 					oValueStateInput1,
 					oValueStateInput2,
 					oValueStateInput3,
+					oValueStateInput4,
 					new sap.m.Input({
 						value: "10",
 						description: "PC",
