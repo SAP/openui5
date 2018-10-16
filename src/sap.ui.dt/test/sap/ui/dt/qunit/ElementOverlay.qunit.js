@@ -1108,9 +1108,7 @@ function (
 		});
 
 		QUnit.test("when scrollcontainer loses scrolling, then scrollbar classes have to be removed", function (assert) {
-
 			var fnDone = assert.async();
-
 			var oVerticalLayout = new VerticalLayout('layout', {
 				content: [
 					this.oScrollControl = new SimpleScrollControl({

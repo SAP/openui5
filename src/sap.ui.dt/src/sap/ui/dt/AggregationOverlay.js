@@ -208,7 +208,7 @@ function(
 		// Apply Overlay position first, then extra logic based on this new position
 		Overlay.prototype._setPosition.apply(this, arguments);
 
-		if (oGeometry.domRef) {
+		if (oGeometry.domRef && !Util.isInteger(this.getScrollContainerId())) {
 			this._handleOverflowScroll(oGeometry, this.$(), this.getParent(), bForceScrollbarSync);
 		}
 	};
