@@ -34,8 +34,11 @@ var sSingleLangTest = "de",
         "tr",
         "uk"
     ],
-    aNotaSupportedLanguages = [
-        "cs", "vi"
+    aLanguagesWithNoThirdParty = [
+        "cs", "pl", "sr"
+    ],
+    aNotSupportedLanguages = [
+        "mn", "vi", "test-lang"
     ],
     mWords = {
         // lang: [not hyphenated, hyphenated]
@@ -141,6 +144,18 @@ var sSingleLangTest = "de",
         });
     });
 
+    QUnit.test("is language supported", function(assert) {
+        var that = this;
+
+        aSupportedLanguages.forEach(function(sLang) {
+            assert.strictEqual(that.oHyphenation.isLanguageSupported(sLang), true, sLang + " is supported");
+        });
+
+        aNotSupportedLanguages.forEach(function(sLang) {
+            assert.strictEqual(that.oHyphenation.isLanguageSupported(sLang), false, sLang + " is not supported");
+        });
+    });
+
     QUnit.test("initialize all supported languages", function(assert) {
         assert.expect(aSupportedLanguages.length + 1);
 
@@ -165,13 +180,13 @@ var sSingleLangTest = "de",
     });
 
     QUnit.test("fail to initialize not supported languages", function(assert) {
-        assert.expect(aNotaSupportedLanguages.length * 2);
+        assert.expect(aNotSupportedLanguages.length * 2);
 
         var done = assert.async(),
             that = this,
             counter = 0;
 
-        aNotaSupportedLanguages.forEach(function(sLang) {
+        aNotSupportedLanguages.forEach(function(sLang) {
             assert.strictEqual(that.oHyphenation.isLanguageInitialized(sLang), false, sLang + " is by default not initialized");
 
             that.oHyphenation.initialize(sLang).then(function() {
@@ -180,7 +195,7 @@ var sSingleLangTest = "de",
                 counter++;
                 assert.ok(true, sLang + " is not supported");
 
-                if (counter === aNotaSupportedLanguages.length) {
+                if (counter === aNotSupportedLanguages.length) {
                     done();
                 }
             });
@@ -191,6 +206,18 @@ var sSingleLangTest = "de",
         before : function () {
             this.oHyphenation = Hyphenation.getInstance();
         }
+    });
+
+    QUnit.test("can use third party hyphenation", function(assert) {
+        var that = this;
+
+        aSupportedLanguages.forEach(function(sLang) {
+            assert.strictEqual(that.oHyphenation.canUseThirdPartyHyphenation(sLang), true, sLang + " is supported");
+        });
+
+        aLanguagesWithNoThirdParty.forEach(function(sLang) {
+            assert.strictEqual(that.oHyphenation.canUseThirdPartyHyphenation(sLang), false, sLang + " is not supported");
+        });
     });
 
     QUnit.test("change hyphen symbol", function(assert) {
