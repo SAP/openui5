@@ -372,8 +372,13 @@ sap.ui.define([], function() {
         //create Entry
         "Products?create=id_1000":
           [200, oJSONHeaders, sProduct1000CreatedJSON],
+        // function import
         "DisableProduct?id='1000'":
           [200, oJSONHeaders, sProduct1000FunctionCallJSON],
+        "GetProductsByRating":
+          [200, oJSONHeaders, sProduct2JSON],
+        "UpdateProducts":
+          [200, oJSONHeaders, sProduct2JSON],
         "Products?Fail500=true":
           [500, oJSONHeaders, ''],
         "Products?Fail500=false":
@@ -1364,8 +1369,11 @@ sap.ui.define([], function() {
             <End Role="Employees" EntitySet="Employees" />\
             <End Role="Territories" EntitySet="Territories" />\
           </AssociationSet>\
-      <FunctionImport Name="GetProductsByRating" EntitySet="Products" ReturnType="Collection(NorthwindModel.Product)" m:HttpMethod="PUT">\
+      <FunctionImport Name="GetProductsByRating" EntitySet="Products" ReturnType="Collection(NorthwindModel.Product)" m:HttpMethod="GET">\
         <Parameter Name="rating" Type="Edm.Int32" Mode="In"/>\
+      </FunctionImport>\
+      <FunctionImport Name="UpdateProducts" EntitySet="Products" ReturnType="Collection(NorthwindModel.Product)" m:HttpMethod="PUT">\
+        <Parameter Name="price" Type="Edm.Decimal" Mode="In"/>\
       </FunctionImport>\
       <FunctionImport Name="DisableProduct" EntitySet="Products" ReturnType="NorthwindModel.Product" m:HttpMethod="POST">\
         <Parameter Name="id" Type="Edm.String" Mode="In"/>\

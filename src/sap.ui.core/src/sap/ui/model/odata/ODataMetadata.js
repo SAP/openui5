@@ -13,9 +13,10 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/base/Log",
 	"sap/base/assert",
+	"sap/base/util/each",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(EventProvider, OData, CacheManager, Utils, uid, Log, assert, jQuery) {
+	function(EventProvider, OData, CacheManager, Utils, uid, Log, assert, each, jQuery) {
 	"use strict";
 
 	/**
@@ -838,6 +839,54 @@ sap.ui.define([
 		return bUseBatch;
 	};
 
+
+	ODataMetadata.prototype._getFunctionImportMetadataIterate = function(fnCheck, bSingleEntry) {
+		var aObjects = [];
+		// search in all schemas for the sObjectName
+		each(this.oMetadata.dataServices.schema, function(iSchema, oSchema) {
+			// check if we found the right schema which will contain the sObjectName
+			if (oSchema["entityContainer"]) {
+				each(oSchema["entityContainer"], function(iEntityContainer, oEntityContainer) {
+					if (oEntityContainer["functionImport"]) {
+						each(oEntityContainer["functionImport"], function(iFunctionImport, oFunctionImport) {
+							if (fnCheck(oFunctionImport)) {
+								aObjects.push(oFunctionImport);
+								if (bSingleEntry) {
+									return false;
+								}
+							}
+						});
+					}
+					// break if single entry is wanted and there is exactly one
+					return !(bSingleEntry && aObjects.length === 1);
+				});
+			}
+			// break if single entry is wanted and there is exactly one
+			return !(bSingleEntry && aObjects.length === 1);
+		});
+		return aObjects;
+	};
+
+	ODataMetadata.prototype._getFirstMatchingFunctionImportMetadata = function(fnCheck){
+		var aObjects = this._getFunctionImportMetadataIterate(fnCheck, true);
+		return aObjects.length === 1 ? aObjects[0] : null;
+	};
+
+	/**
+	 * Retrieve the function import metadata for a name.
+	 *
+	 * @param {string} sFunctionName The name of the function import to look up
+	 * @return {object[]} array of matching function import metadata
+	 */
+	ODataMetadata.prototype._getFunctionImportMetadataByName = function(sFunctionName) {
+		if (sFunctionName.indexOf("/") > -1) {
+			sFunctionName = sFunctionName.substr(sFunctionName.indexOf("/") + 1);
+		}
+		return this._getFunctionImportMetadataIterate(function(oFunctionImport) {
+			return oFunctionImport.name === sFunctionName;
+		});
+	};
+
 	/**
 	 * Retrieve the function import metadata for a name and a method.
 	 *
@@ -845,29 +894,12 @@ sap.ui.define([
 	 * @param {string} sMethod The HTTP Method for which this function is requested
 	 */
 	ODataMetadata.prototype._getFunctionImportMetadata = function(sFunctionName, sMethod) {
-		var oObject = null;
 		if (sFunctionName.indexOf("/") > -1) {
 			sFunctionName = sFunctionName.substr(sFunctionName.indexOf("/") + 1);
 		}
-		// search in all schemas for the sObjectName
-		jQuery.each(this.oMetadata.dataServices.schema, function(i, oSchema) {
-			// check if we found the right schema which will contain the sObjectName
-			if (oSchema["entityContainer"]) {
-				jQuery.each(oSchema["entityContainer"], function(j,oEntityContainer) {
-					if (oEntityContainer["functionImport"]) {
-						jQuery.each(oEntityContainer["functionImport"], function(k,oFunctionImport) {
-							if (oFunctionImport.name === sFunctionName && oFunctionImport.httpMethod === sMethod) {
-								oObject = oFunctionImport;
-								return false;
-							}
-						});
-					}
-					return !oObject;
-				});
-			}
-			return !oObject;
+		return this._getFirstMatchingFunctionImportMetadata(function(oFunctionImport) {
+			return oFunctionImport.name === sFunctionName && oFunctionImport.httpMethod === sMethod;
 		});
-		return oObject;
 	};
 
 
