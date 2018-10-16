@@ -8,7 +8,7 @@ sap.ui.define([
 ], function(jQuery, UIComponent, ComponentContainer, ComponentSupport, library /*, jQuerySapStrings */) {
 
 	"use strict";
-	/*global QUnit, Promise*/
+	/*global QUnit, sinon, Promise*/
 
 	var ComponentLifecycle = library.ComponentLifecycle;
 
@@ -111,9 +111,55 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Parser with unknown property/event", function(assert) {
+
+		var oElement = document.createElement("div");
+		oElement.setAttribute("data-unkown", "foo");
+		assert.throws(function() {
+			ComponentSupport._parse(oElement);
+		}, new Error("Property or event \"unkown\" does not exist in sap.ui.core.ComponentContainer"));
+
+	});
+
+	QUnit.test("Parser with invalid event callback", function(assert) {
+
+		var oElement = document.createElement("div");
+		oElement.setAttribute("data-component-created", "does.not.exist");
+		assert.throws(function() {
+			ComponentSupport._parse(oElement);
+		}, new Error("Callback handler for event \"componentCreated\" not found"));
+
+	});
+
 	QUnit.test("ComponentContainer Factory", function(assert) {
 
-		return runComponentSupport().then(function() {
+		var oComponentContainerApplySettingsSpy = this.spy(ComponentContainer.prototype, "applySettings");
+
+		var aComponentElements = document.querySelectorAll("[data-sap-ui-component]");
+
+		assert.equal(aComponentElements.length, 2, "There should be two declarative elements");
+		assert.ok(aComponentElements[0].hasAttribute("data-sap-ui-component"), "First element should have the indicator attribute");
+		assert.ok(aComponentElements[1].hasAttribute("data-sap-ui-component"), "Second element should have the indicator attribute");
+
+		var pComponentSupport = runComponentSupport();
+
+		// Two ComponentContainers should have been created
+		sinon.assert.callCount(oComponentContainerApplySettingsSpy, 2);
+
+		assert.notOk(aComponentElements[0].hasAttribute("data-sap-ui-component"), "First element should not have the indicator attribute anymore");
+		assert.ok(aComponentElements[0].parentNode, "First element should still be part of the DOM");
+		assert.notOk(aComponentElements[1].hasAttribute("data-sap-ui-component"), "Second element should not have the indicator attribute anymore");
+		assert.ok(aComponentElements[1].parentNode, "Second element should still be part of the DOM");
+
+		assert.equal(document.querySelectorAll("[data-sap-ui-component]").length, 0, "There should not be any declarative elements anymore");
+
+		// Directly executing run again shouldn't try to create the same containers again
+		ComponentSupport.run();
+
+		// Still, only two ComponentContainers should have been created
+		sinon.assert.callCount(oComponentContainerApplySettingsSpy, 2);
+
+		return pComponentSupport.then(function() {
 
 			assert.ok(document.getElementById("div1"), "Placeholder DIV for first Component found!");
 			assert.ok(document.getElementById("div2"), "Placeholder DIV for second Component found!");
@@ -134,6 +180,12 @@ sap.ui.define([
 			assert.equal(oComponent1.getMetadata().getName(), "sap.ui.test.v2empty.Component", "The name of the first Component is correct!");
 			assert.equal(oComponent2.getId(), oContainer2.getId() + "-component2", "The id of the second Component is correct!");
 			assert.equal(oComponent2.getMetadata().getName(), "sap.ui.test.v2empty.Component", "The name of the second Component is correct!");
+
+			// Executing run again afterwards also shouldn't try to create the same containers again
+			ComponentSupport.run();
+
+			// Still, only two ComponentContainers should have been created
+			sinon.assert.callCount(oComponentContainerApplySettingsSpy, 2);
 
 		});
 

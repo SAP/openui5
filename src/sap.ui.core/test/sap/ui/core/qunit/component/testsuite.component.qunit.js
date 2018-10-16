@@ -69,6 +69,10 @@ sap.ui.define(function() {
 						// Other tests only need successful loading, so the name doesn't matter
 						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata/"
 					}
+				},
+				coverage : {
+					only : "[sap/ui/core/ComponentSupport]",
+					branchTracking : true
 				}
 			},
 			Customizing: {

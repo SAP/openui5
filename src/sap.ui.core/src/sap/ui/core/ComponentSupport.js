@@ -10,8 +10,7 @@ sap.ui.define([
 	'sap/ui/core/library',
 	"sap/base/Log",
 	"sap/base/util/ObjectPath",
-	"sap/base/strings/camelize",
-	"sap/base/util/UriParameters"
+	"sap/base/strings/camelize"
 ],
 	function(
 		DataType,
@@ -20,8 +19,7 @@ sap.ui.define([
 		library,
 		Log,
 		ObjectPath,
-		camelize,
-		UriParameters
+		camelize
 	) {
 	"use strict";
 
@@ -54,11 +52,14 @@ sap.ui.define([
 	ComponentSupport.run = function() {
 		var aElements = ComponentSupport._find();
 		for (var i = 0, l = aElements.length; i < l; i++) {
-			Log.debug("ComponentSupport found and parses element: " + aElements[i]);
-			var mSettings = ComponentSupport._parse(aElements[i]);
+			var oElement = aElements[i];
+			Log.debug("ComponentSupport found and parses element: " + oElement);
+			var mSettings = ComponentSupport._parse(oElement);
 			ComponentSupport._applyDefaultSettings(mSettings);
 			Log.debug("ComponentSupport creates ComponentContainer with the following settings:\n" + JSON.stringify(mSettings, 0, 2));
-			new ComponentContainer(mSettings).placeAt(aElements[i]);
+			new ComponentContainer(mSettings).placeAt(oElement);
+			// Remove marker so that the element won't be processed again in case "run" is called again
+			oElement.removeAttribute("data-sap-ui-component");
 		}
 	};
 
@@ -147,14 +148,8 @@ sap.ui.define([
 		mSettings.autoPrefixId = mSettings.autoPrefixId === undefined ? true : mSettings.autoPrefixId;
 	};
 
-	// get the URI parameters
-	var oUriParams = new UriParameters(window.location.href);
-	var sAutorun = oUriParams.get("sap-ui-xx-componentsupport-autorun");
-	if (!sAutorun || sAutorun.toLowerCase() !== "false") {
-		ComponentSupport.run();
-	} else {
-		Log.info("ComponentSupport autorun has been interrupted by URL parameter.");
-	}
+	// Automatically run once
+	ComponentSupport.run();
 
 	return ComponentSupport;
 
