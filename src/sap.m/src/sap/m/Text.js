@@ -8,9 +8,10 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
 	'sap/ui/Device',
-	'sap/m/HyphenationSupport'
+	'sap/m/HyphenationSupport',
+	"./TextRenderer"
 ],
-function (library, Control, coreLibrary, Device, HyphenationSupport) {
+function(library, Control, coreLibrary, Device, HyphenationSupport, TextRenderer) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextAlign

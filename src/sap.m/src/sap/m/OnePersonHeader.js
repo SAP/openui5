@@ -17,7 +17,8 @@ sap.ui.define([
 	'sap/ui/core/date/UniversalDate',
 	'sap/ui/core/Popup',
 	'sap/ui/core/IconPool',
-	'sap/ui/core/LocaleData'
+	'sap/ui/core/LocaleData',
+	"./OnePersonHeaderRenderer"
 ],
 function(
 	Control,
@@ -33,7 +34,8 @@ function(
 	UniversalDate,
 	Popup,
 	IconPool,
-	LocaleData
+	LocaleData,
+	OnePersonHeaderRenderer
 ) {
 	"use strict";
 
