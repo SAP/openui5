@@ -732,8 +732,8 @@ sap.ui.define([
 
 			if (aScrollHierarchy && aScrollHierarchy.length > 0) {
 				// restore the scroll position if it's changed after setting focus
-				if (Device.browser.safari || Device.browser.msie) {
-					// Safari and IE11 need a little delay to get the scroll position updated
+				if (Device.browser.safari || Device.browser.msie || Device.browser.edge) {
+					// Safari, IE11 and Edge need a little delay to get the scroll position updated
 					setTimeout(restoreScrollPositions.bind(null, aScrollHierarchy), 0);
 				} else {
 					restoreScrollPositions(aScrollHierarchy);
