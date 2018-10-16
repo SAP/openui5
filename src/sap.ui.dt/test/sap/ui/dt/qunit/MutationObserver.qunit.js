@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/m/Panel',
 	'sap/m/Button',
 	'sap/ui/layout/VerticalLayout',
+	'sap/ui/dt/DOMUtil',
 	'sap/base/util/includes',
 	'sap/ui/thirdparty/sinon-4'
 ],
@@ -21,6 +22,7 @@ function(
 	Panel,
 	Button,
 	VerticalLayout,
+	DOMUtil,
 	includes,
 	sinon
 ) {
@@ -90,6 +92,54 @@ function(
 				this.$Node.append("<div />");
 			}.bind(this));
 		});
+
+		QUnit.test("when animationend is called", function(assert) {
+			var fnDone = assert.async();
+
+			DOMUtil.insertStyles('\
+				@keyframes example {\
+					from	{ width: 100px; }\
+					to		{ width: 200px; }\
+				}\
+				.customClass {\
+					animation-name: example;\
+					animation-duration: 0.05s;\
+					animation-fill-mode: forwards;\
+					height: 30px;\
+					width: 100px;\
+					background-color: blue;\
+				} \
+			', document.getElementById("qunit-fixture"));
+
+			this.oMutationObserver.attachEvent("domChanged", function (oEvent) {
+				if (oEvent.getParameter('type') === 'animationend') {
+					assert.ok(true, 'domChanged event for animationend is fired');
+					fnDone();
+				}
+			});
+
+			this.$Node.addClass('customClass');
+		});
+
+		QUnit.test("when transitionend is called", function(assert) {
+			var fnDone = assert.async();
+
+			this.$Node.css({
+				width: '100px',
+				height: '30px',
+				backgroundColor: 'blue',
+				transition: 'width 0.05s linear'
+			});
+
+			this.oMutationObserver.attachEvent("domChanged", function (oEvent) {
+				if (oEvent.getParameter('type') === 'transitionend') {
+					assert.ok(true, 'domChanged event for transitionend is fired');
+					fnDone();
+				}
+			});
+
+			this.$Node.width('200px');
+		});
 	});
 
 	QUnit.module("Static area mutations", {
@@ -133,7 +183,7 @@ function(
 
 		QUnit.test("when mutations in static UIArea happen on relevant node (simulate UI5 re-rendering)", function (assert) {
 			var fnDone = assert.async();
-			this.oMutationObserver.attachEventOnce("domChanged", function (oEvent) {
+			this.oMutationObserver.attachEventOnce("domChanged", function () {
 				assert.ok(true, 'then domChanged event has been emitted');
 				fnDone();
 			}, this);
