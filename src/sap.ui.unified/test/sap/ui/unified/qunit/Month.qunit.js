@@ -504,9 +504,106 @@ sap.ui.define([
 					"The corresponding CalendarDayType.Type02 text is used as aria-describedby");
 		});
 
-		QUnit.module("Other");
+		QUnit.module("Unfinished range selection indication allowance", {
+			beforeEach: function () {
+				this.oMonth = new Month();
+				this.oSelectedRange = new sap.ui.unified.DateRange();
 
-		QUnit.test("interval selection feedback", function(assert) {
+				this.oMonth.addAggregation("selectedDates", this.oSelectedRange);
+			},
+			afterEach: function () {
+				this.oMonth.destroy();
+				this.oMonth = null;
+			}
+		});
+
+		QUnit.test("Unfinished range in intervalSelection mode", function (assert) {
+			// Act
+			this.oMonth.setIntervalSelection(true);
+			this.oSelectedRange.setStartDate(new Date());
+
+			// Assert
+			assert.strictEqual(this.oMonth._isMarkingUnfinishedRangeAllowed(), true,
+				"Indication is allowed");
+		});
+
+		QUnit.test("Unfinished range not in intervalSelection mode", function (assert) {
+			// Act
+			this.oSelectedRange.setStartDate(new Date());
+
+			// Assert
+			assert.strictEqual(this.oMonth._isMarkingUnfinishedRangeAllowed(), false,
+				"Indication is not allowed");
+		});
+
+		QUnit.test("Finished range in intervalSelection mode", function (assert) {
+			// Act
+			this.oMonth.setIntervalSelection(true);
+			this.oSelectedRange.setStartDate(new Date());
+			this.oSelectedRange.setEndDate(new Date());
+
+			// Assert
+			assert.strictEqual(this.oMonth._isMarkingUnfinishedRangeAllowed(), false,
+				"Indication is not allowed");
+		});
+
+		QUnit.test("Finished range not in intervalSelection mode", function (assert) {
+			// Act
+			this.oSelectedRange.setStartDate(new Date());
+			this.oSelectedRange.setEndDate(new Date());
+
+			// Assert
+			assert.strictEqual(this.oMonth._isMarkingUnfinishedRangeAllowed(), false,
+				"Indication is not allowed");
+		});
+
+		QUnit.test("Month in intervalSelection mode and no selection started", function (assert) {
+			// Act
+			this.oMonth.setIntervalSelection(true);
+			this.oMonth.removeAllAggregation("selectedDates");
+
+			// Assert
+			assert.strictEqual(this.oMonth._isMarkingUnfinishedRangeAllowed(), false,
+				"Indication is not allowed");
+		});
+
+		QUnit.module("Unfinished range selection indication in the DOM");
+
+		QUnit.test("Unfinished interval selection feedback when using keyboard", function (assert) {
+			// Prepare
+			var aItemsMarkedAsBetween,
+				oMonth = new Month({
+					intervalSelection: true,
+					date: new Date(2018, 9, 16), // 2018, October 16
+					selectedDates: new sap.ui.unified.DateRange({
+						startDate: new Date(2018, 9, 14) // 2018, October 14
+					})
+				});
+
+			oMonth.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			aItemsMarkedAsBetween = jQuery('.sapUiCalItemSelBetween');
+
+			// Assert
+			assert.strictEqual(aItemsMarkedAsBetween.length, 0, "No dates marked yet");
+
+			// Act
+			// Simulate arrow right/down (sapnext) and focusing on the 20th date
+			oMonth._oItemNavigation.focusItem(20, {
+				type: "sapnext"
+			});
+
+			aItemsMarkedAsBetween = jQuery('.sapUiCalItemSelBetween');
+
+			// Assert
+			assert.strictEqual(aItemsMarkedAsBetween.length, 5,
+				"5 dates (15, 16, 17, 18, 19) have been marked as 'between' dates");
+
+			oMonth.destroy();
+		});
+
+		QUnit.test("Unfinished interval selection feedback when using mouse", function(assert) {
 			//arrange
 			var oMonth = new Month({
 					intervalSelection: true,
