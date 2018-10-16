@@ -1,4 +1,4 @@
-/*global QUnit testRule*/
+/*global QUnit*/
 
 sap.ui.define([
 	"jquery.sap.global",
@@ -16,7 +16,8 @@ sap.ui.define([
 	ComponentContainer,
 	XMLView,
 	VerticalLayout,
-	Button
+	Button,
+	testRule
 ) {
 	"use strict";
 

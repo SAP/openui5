@@ -1,10 +1,10 @@
-/*global QUnit testRule*/
+/*global QUnit */
 
 sap.ui.define([
 	"sap/base/Log",
 	"jquery.sap.global",
 	"test-resources/sap/ui/support/TestHelper"
-], function(Log/*, jQuery, TestHelper*/) {
+], function(Log, jQuery, testRule) {
 	"use strict";
 
 	// the rules rely on a certain log level for analyzing issues
