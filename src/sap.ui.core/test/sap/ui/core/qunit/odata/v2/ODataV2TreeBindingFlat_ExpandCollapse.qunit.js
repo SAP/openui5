@@ -1,10 +1,12 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
-	"sap/ui/model/odata/v2/ODataModel"
+	"sap/ui/model/odata/v2/ODataModel",
+	"test-resources/sap/ui/core/qunit/odata/v2/data/ODataTreeBindingFakeService"
 ], function(
 	MockServer,
-	ODataModel
+	ODataModel,
+	ODataTreeBindingFakeService
 ) {
 	"use strict";
 
@@ -36,7 +38,7 @@ sap.ui.define([
 		oModel.addBinding(oBinding);
 	}
 
-	QUnit.module("ODataTreeBinding - AutoExpand", {
+	QUnit.module("ODataTreeBindingFlat - AutoExpand", {
 		beforeEach: function() {
 			fnSetupNewMockServer();
 			oModel = new ODataModel(sServiceUrl, {useBatch:false});
@@ -433,5 +435,4 @@ sap.ui.define([
 			oBinding.getContexts(0, 10, 10);
 		});
 	});
-
 });
