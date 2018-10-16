@@ -33,7 +33,7 @@
 			sBaseUrl = oMatch[1] || "";
 			oBootstrapScript = oScript;
 			sBootstrapUrl = sUrl;
-			bNojQuery = /sap-ui-core-nojQuery\.js(?:\?|#|$)/.test(sUrl);
+			bNojQuery = /sap-ui-core-nojQuery\.js(?:[?#]|$)/.test(sUrl);
 			return true;
 		}
 	}
@@ -49,10 +49,10 @@
 	// Prefer script tags which have the sap-ui-bootstrap ID
 	// This prevents issues when multiple script tags point to files named
 	// "sap-ui-core.js", for example when using the cache buster for UI5 resources
-	if ( !findBaseUrl(document.querySelector('SCRIPT[src][id=sap-ui-bootstrap]'), /^((?:.*\/)?resources\/)/ ) ) {
+	if ( !findBaseUrl(document.querySelector('SCRIPT[src][id=sap-ui-bootstrap]'), /^((?:[^?#]*\/)?resources\/)/ ) ) {
 
 		// only when there's no such script tag, check all script tags
-		rBootScripts = /^(.*\/)?(?:sap-ui-(?:core|custom|boot|merged)(?:-[^?#/]*)?|jquery.sap.global|ui5loader(?:-autoconfig)?)\.js(?:[?#]|$)/;
+		rBootScripts = /^([^?#]*\/)?(?:sap-ui-(?:core|custom|boot|merged)(?:-[^?#/]*)?|jquery.sap.global|ui5loader(?:-autoconfig)?)\.js(?:[?#]|$)/;
 		aScripts = document.scripts;
 		for ( i = 0; i < aScripts.length; i++ ) {
 			if ( findBaseUrl(aScripts[i], rBootScripts) ) {
