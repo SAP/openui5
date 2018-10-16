@@ -221,7 +221,7 @@ sap.ui.define([
 		XHRInterceptor.register(INTERACTION, "open", function () {
 			// only use Interaction for non CORS requests
 			if (!isCORSRequest(arguments[1])) {
-				this.addEventListener("readystatechange", handleResponse);
+				this.addEventListener("readystatechange", handleResponse.bind(this));
 			}
 			// assign the current interaction to the xhr for later response header retrieval.
 			this.pendingInteraction = oPendingInteraction;
