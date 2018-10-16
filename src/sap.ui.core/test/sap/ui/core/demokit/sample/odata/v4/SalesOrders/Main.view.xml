@@ -8,12 +8,12 @@
 	xmlns:mvc="sap.ui.core.mvc">
 	<VBox>
 		<Toolbar design="Transparent">
-			<Label design="Bold" labelFor="FavoriteProduct" text="Favorite product:">
+			<Label design="Bold" labelFor="favoriteProduct" text="Favorite product:">
 				<layoutData>
 					<ToolbarLayoutData shrinkable="false" />
 				</layoutData>
 			</Label>
-			<Input enabled="false" id="FavoriteProduct" width="auto"
+			<Input enabled="false" id="favoriteProduct" width="auto"
 				value="{
 					path : '/ProductList(\'HT-1000\')/Name',
 					events : {
@@ -33,18 +33,18 @@
 			<Button enabled="{ui>/bRealOData}" icon="sap-icon://message-error"
 				press="produceTechnicalError" tooltip="Provoke read error"/>
 			<ToolbarSpacer />
-			<Label design="Bold" id="FavoriteProductIDLabel" labelFor="FavoriteProductID"
+			<Label design="Bold" id="favoriteProductId::Label" labelFor="favoriteProductId"
 				text="Favorite product ID:">
 				<layoutData>
 					<ToolbarLayoutData shrinkable="false" />
 				</layoutData>
 			</Label>
-			<Input editable="false" id="FavoriteProductID" width="6em">
+			<Input editable="false" id="favoriteProductId" width="6em">
 				<layoutData>
 					<ToolbarLayoutData shrinkable="false" />
 				</layoutData>
 			</Input>
-			<Button ariaDescribedBy="FavoriteProductIDLabel FavoriteProductID"
+			<Button ariaDescribedBy="favoriteProductId::Label favoriteProductId"
 				icon="sap-icon://accept" id="setBindingContext" press="onSetBindingContext"
 				tooltip="Get favorite product ID"/>
 			<ToolbarSpacer />
@@ -53,20 +53,20 @@
 				icon="{:= ${ui>/bRealOData} ? 'sap-icon://building' : 'sap-icon://record' }"
 				tooltip="{:= ${ui>/bRealOData} ? 'real OData service' : 'mock OData service' }"
 				type="Transparent"/>
-			<Button id="MessagesButton" icon="sap-icon://message-popup" tooltip="Show messages"
+			<Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
 				press="onMessagePopoverPress" text="{ui>/iMessages}"
 				type="{= (${ui>/iMessages} ? 'Emphasized' : 'Default')}"/>
 			<dependents>
-				<Dialog id="CreateSalesOrderDialog" title="Create New Sales Order">
+				<Dialog id="createSalesOrderDialog" title="Create New Sales Order">
 					<buttons>
 						<Button id="confirmCreateSalesOrder" text="OK"
 							press="onCloseSalesOrderDialog" type="Accept"/>
 					</buttons>
 					<form:SimpleForm editable="true" layout="ResponsiveGridLayout"
-						ariaLabelledBy="CreateSalesOrderDialog">
-						<Label labelFor="NewBuyerID" text="Buyer ID"/>
+						ariaLabelledBy="createSalesOrderDialog">
+						<Label labelFor="BuyerID::new" text="Buyer ID"/>
 						<!-- TODO Q: derive maxLength from type's constraints?! A: SmartField?! -->
-						<Input id="NewBuyerID"
+						<Input id="BuyerID::new"
 							maxLength="10"
 							placeholder="Enter Buyer ID starting with '0'..."
 							showSuggestion="true"
@@ -78,17 +78,17 @@
 									text="{BusinessPartnerID}"/>
 							</suggestionItems>
 						</Input>
-						<Label labelFor="NewNote" text="Note"/>
-						<Input id="NewNote" value="{Note}"/>
-						<Label id="SalesOrderList:CurrencyCode::Label" text="Currency Code"/>
-						<demo:ValueHelp ariaLabelledBy="SalesOrderList:CurrencyCode::Label"
-							id="NewCurrencyCode" value="{CurrencyCode}"/>
+						<Label labelFor="Note::new" text="Note"/>
+						<Input id="Note::new" value="{Note}"/>
+						<Label id="CurrencyCode::Label" text="Currency Code"/>
+						<demo:ValueHelp ariaLabelledBy="CurrencyCode::Label"
+							id="CurrencyCode::new" value="{CurrencyCode}"/>
 					</form:SimpleForm>
 				</Dialog>
 			</dependents>
 		</Toolbar>
 		<!-- Note: 'BuyerID' is selected below because it is used when creating new entries -->
-		<Table growing="true" growingThreshold="5" id="SalesOrders"
+		<Table growing="true" growingThreshold="5" id="SalesOrderList"
 			items="{
 					path : '/SalesOrderList',
 					filters : [
@@ -109,8 +109,9 @@
 			mode="{= ${ui>/bCreateItemPending} ? 'None' : 'SingleSelectMaster'}"
 			selectionChange="onSalesOrdersSelect">
 			<headerToolbar>
-				<Toolbar id="SalesOrdersToolbar">
-					<Title id="SalesOrdersTitle" text="{$count} New Sales Orders" titleStyle="H2">
+				<Toolbar id="salesOrderListToolbar">
+					<Title id="salesOrderListTitle" text="{$count} New Sales Orders"
+						titleStyle="H2">
 						<layoutData>
 							<ToolbarLayoutData shrinkable="false" />
 						</layoutData>
@@ -159,7 +160,7 @@
 			</headerToolbar>
 			<columns>
 				<Column hAlign="Right" width="9em">
-					<Button enabled="{ui>/bRealOData}" id="sortBySalesOrderID"
+					<Button enabled="{ui>/bRealOData}" id="sortBySalesOrderId"
 						icon="{ui>/sSortSalesOrderIDIcon}" iconFirst="false"
 						press="onSortBySalesOrderID" text="Sales Order ID" />
 				</Column>
@@ -185,16 +186,16 @@
 				</Column>
 			</columns>
 			<ColumnListItem>
-				<Text id="SalesOrders_ID" text="{SalesOrderID}"/>
+				<Text id="SalesOrderID" text="{SalesOrderID}"/>
 				<Text binding="{SO_2_BP}" text="{CompanyName}"/>
 				<Text text="{GrossAmount}"/>
 				<Text text="{CurrencyCode}"/>
-				<Input id="Note_ID" enabled="{= %{LifecycleStatus} === 'N' }" value="{Note}"/>
+				<Input id="Note" enabled="{= %{LifecycleStatus} === 'N' }" value="{Note}"/>
 				<Text text="{LifecycleStatusDesc}"/>
 				<Text text="{ChangedAt}"/>
 			</ColumnListItem>
 		</Table>
-		<VBox id="ObjectPage"
+		<VBox id="objectPage"
 			visible="{=${ui>/bSalesOrderSelected} &amp;&amp; !${ui>/bSelectedSalesOrderTransient}}"
 			binding="{
 					events : {
@@ -208,7 +209,7 @@
 					}
 				}">
 			<Toolbar design="Transparent">
-				<Title id="ObjectPageTitle" text="Sales Order Details" titleStyle="H2"/>
+				<Title id="objectPageTitle" text="Sales Order Details" titleStyle="H2"/>
 				<!--Button icon="sap-icon://refresh"
 					press="onRefreshSalesOrderDetails"/-->
 				<Button icon="sap-icon://calendar" id="showSalesOrderSchedules"
@@ -220,9 +221,9 @@
 					tooltip="Cancel sales order changes"/>
 				<dependents>
 					<Dialog class="sapUiSizeCompact"
-							id="SalesOrderSchedulesDialog" title="Sales Order Schedules">
+							id="salesOrderSchedulesDialog" title="Sales Order Schedules">
 						<Toolbar design="Transparent">
-							<Title id="SalesOrderSchedulesTitle"
+							<Title id="salesOrderSchedulesTitle"
 									text="{headerContext>$count} Schedules" titleStyle="H2">
 								<layoutData>
 									<ToolbarLayoutData shrinkable="false" />
@@ -238,7 +239,7 @@
 								press="onCloseSalesOrderSchedules" text="Close"
 								tooltip="Close dialog"/>
 						</buttons>
-						<Table id="SalesOrderSchedules" items="{SO_2_SCHDL}"
+						<Table id="SO_2_SCHDL" items="{SO_2_SCHDL}"
 								mode="MultiSelect"
 								selectionChange="onSalesOrderScheduleSelect">
 							<columns>
@@ -257,39 +258,40 @@
 					</Dialog>
 				</dependents>
 			</Toolbar>
-			<form:SimpleForm ariaLabelledBy="ObjectPageTitle" backgroundDesign="Transparent"
-				editable="true" id="SalesOrderDetails" labelSpanM="4" layout="ResponsiveGridLayout">
-				<Toolbar design="Transparent" id="SalesOrderDetailsToolbar">
+			<form:SimpleForm ariaLabelledBy="objectPageTitle" backgroundDesign="Transparent"
+				editable="true" id="SalesOrderList::detail" labelSpanM="4"
+				layout="ResponsiveGridLayout">
+				<Toolbar design="Transparent" id="salesOrderDetailsToolbar">
 					<Title text="Sales Order"/>
 				</Toolbar>
-				<Label labelFor="SOD_SalesOrderID" text="Sales Order ID" />
-				<Text id="SOD_SalesOrderID" text="{SalesOrderID}" />
-				<Label labelFor="SOD_CreatedAt" text="Created At" />
-				<Text id="SOD_CreatedAt" text="{CreatedAt}" />
-				<Label labelFor="SOD_ChangedAt" text="Changed At" />
-				<Text id="SOD_ChangedAt" text="{ChangedAt}" />
-				<Label labelFor="SOD_LifecycleStatusDesc" text="Lifecycle Status Desc" />
-				<Text id="SOD_LifecycleStatusDesc" text="{LifecycleStatusDesc}" />
-				<Label labelFor="SOD_Note" text="Note" />
-				<Input id="SOD_Note" value="{Note}" editable="{= %{LifecycleStatus} === 'N'}"/>
-				<Toolbar design="Transparent" id="BusinessPartner" binding="{SO_2_BP}">
+				<Label labelFor="SalesOrderID::detail" text="Sales Order ID" />
+				<Text id="SalesOrderID::detail" text="{SalesOrderID}" />
+				<Label labelFor="CreatedAt::detail" text="Created At" />
+				<Text id="CreatedAt::detail" text="{CreatedAt}" />
+				<Label labelFor="ChangedAt::detail" text="Changed At" />
+				<Text id="ChangedAt::detail" text="{ChangedAt}" />
+				<Label labelFor="LifecycleStatusDesc::detail" text="Lifecycle Status Desc" />
+				<Text id="LifecycleStatusDesc::detail" text="{LifecycleStatusDesc}" />
+				<Label labelFor="Note::detail" text="Note" />
+				<Input id="Note::detail" value="{Note}" editable="{= %{LifecycleStatus} === 'N'}"/>
+				<Toolbar design="Transparent" id="SO_2_BP::detail" binding="{SO_2_BP}">
 					<Title text="Business Partner"/>
 					<Button enabled="{:= !${ui>/bRealOData} }" icon="sap-icon://delete"
 						id="deleteBusinessPartner" press="onDeleteBusinessPartner"
 						tooltip="Delete business partner"/>
 				</Toolbar>
-				<Label labelFor="BP_BusinessPartnerID" text="Business Partner ID" />
-				<Text id="BP_BusinessPartnerID" text="{SO_2_BP/BusinessPartnerID}" />
-				<Label labelFor="BP_CompanyName" text="CompanyName" />
-				<Text id="BP_CompanyName" text="{SO_2_BP/CompanyName}" />
-				<Label labelFor="BP_PhoneNumber" text="PhoneNumber" />
-				<Input id="BP_PhoneNumber" value="{SO_2_BP/PhoneNumber}" />
-				<Label labelFor="BP_City" text="City" />
-				<Input id="BP_City" value="{SO_2_BP/Address/City}"/>
-				<Label labelFor="BP_PostalCode" text="Postal Code" />
-				<Input id="BP_PostalCode" value="{SO_2_BP/Address/PostalCode}"/>
+				<Label labelFor="BusinessPartnerID::detail" text="Business Partner ID" />
+				<Text id="BusinessPartnerID::detail" text="{SO_2_BP/BusinessPartnerID}" />
+				<Label labelFor="CompanyName::detail" text="CompanyName" />
+				<Text id="CompanyName::detail" text="{SO_2_BP/CompanyName}" />
+				<Label labelFor="PhoneNumber::detail" text="PhoneNumber" />
+				<Input id="PhoneNumber::detail" value="{SO_2_BP/PhoneNumber}" />
+				<Label labelFor="City::detail" text="City" />
+				<Input id="City::detail" value="{SO_2_BP/Address/City}"/>
+				<Label labelFor="PostalCode::detail" text="Postal Code" />
+				<Input id="PostalCode::detail" value="{SO_2_BP/Address/PostalCode}"/>
 			</form:SimpleForm>
-			<Table id="SalesOrderLineItems"
+			<Table id="SO_2_SOITEM"
 				items="{
 						events : {
 							dataReceived : '.onDataEvents',
@@ -326,8 +328,8 @@
 					template is destroyed by the framework, otherwise the reuse of the template
 					(e.g. within OPA test sequence) leads to duplicate ID errors-->
 				<headerToolbar>
-					<Toolbar id="SalesOrderLineItemsTitleToolbar">
-						<Title id="SalesOrderLineItemsTitle"
+					<Toolbar id="lineItemsToolbar">
+						<Title id="lineItemsTitle"
 							text="{headerContext>$count} Sales Order Line Items"
 							titleStyle="H2"/>
 						<Button enabled="{= !${ui>/bCreateItemPending} }"
@@ -394,27 +396,28 @@
 					<demo:ValueHelp value="{SOITEM_2_PRODUCT/TypeCode}"
 						enabled="{= %{ItemPosition} !== ''}"/>
 					<Text text="{SOITEM_2_PRODUCT/SupplierName}"/>
-					<Input id="lineItemQuantity" value="{Quantity}" textAlign="Right"/>
+					<Input id="SO_2_SOITEM:Quantity" value="{Quantity}" textAlign="Right"/>
 					<Input value="{QuantityUnit}"/>
 					<Text text="{GrossAmount}"/>
 					<Text text="{DeliveryDate}"/>
-					<Input id="lineItemNote" value="{Note}"/>
+					<Input id="SO_2_SOITEM:Note" value="{Note}"/>
 				</ColumnListItem>
 			</Table>
 		</VBox>
 		<VBox visible="{ui>/bLineItemSelected}">
 			<Toolbar design="Transparent">
-				<Title id="SupplierDetailsTitle" text="Supplier Details" titleStyle="H2"/>
+				<Title id="supplierDetailsTitle" text="Supplier Details" titleStyle="H2"/>
 			</Toolbar>
-			<form:SimpleForm ariaLabelledBy="SupplierDetailsTitle"
-				binding="{SOITEM_2_PRODUCT/PRODUCT_2_BP}" editable="true" id="SupplierDetailsForm"
+			<form:SimpleForm ariaLabelledBy="supplierDetailsTitle"
+				binding="{SOITEM_2_PRODUCT/PRODUCT_2_BP}" editable="true" id="PRODUCT_2_BP"
 				layout="ResponsiveGridLayout">
-				<Label labelFor="SD_CompanyName" text="Supplier" />
-				<Text id="SD_CompanyName" text="{CompanyName} {LegalForm}" />
-				<Label labelFor="SD_PhoneNumber" text="Phone Number" />
-				<Input id="SD_PhoneNumber" value="{PhoneNumber}" enabled="{= !!%{CompanyName}}"/>
+				<Label labelFor="PRODUCT_2_BP:CompanyName" text="Supplier" />
+				<Text id="PRODUCT_2_BP:CompanyName" text="{CompanyName} {LegalForm}" />
+				<Label labelFor="PRODUCT_2_BP:PhoneNumber" text="Phone Number" />
+				<Input id="PRODUCT_2_BP:PhoneNumber" value="{PhoneNumber}"
+					enabled="{= !!%{CompanyName}}"/>
 			</form:SimpleForm>
-			<List headerText="Supplier Contact Information" id="SupplierContactData"
+			<List headerText="Supplier Contact Information" id="BP_2_CONTACT"
 				items="{
 					path : 'SOITEM_2_PRODUCT/PRODUCT_2_BP/BP_2_CONTACT'
 				}">

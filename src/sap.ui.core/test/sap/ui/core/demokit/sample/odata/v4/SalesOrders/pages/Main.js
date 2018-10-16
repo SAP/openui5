@@ -58,7 +58,7 @@ sap.ui.require([
 	function selectSalesOrder(oOpa, iIndex, bRememberGrossAmount) {
 		return oOpa.waitFor({
 			controlType : "sap.m.Table",
-			id : "SalesOrders",
+			id : "SalesOrderList",
 			success : function (oTable) {
 				var oItem = oTable.getItems()[iIndex],
 					oControl = oItem.getCells()[ID_COLUMN_INDEX];
@@ -89,7 +89,7 @@ sap.ui.require([
 					return this.waitFor({
 						actions : new EnterText({ clearTextFirst : true, text : sNewNoteValue }),
 						controlType : "sap.m.Input",
-						id : "NewNote",
+						id : "Note::new",
 						success : function (oNewNoteInput) {
 							Opa5.assert.ok(true, "Note text set to " + sNewNoteValue);
 						},
@@ -102,7 +102,7 @@ sap.ui.require([
 				pressValueHelpOnCurrencyCode : function () {
 					return this.waitFor({
 						controlType : "sap.ui.core.sample.common.ValueHelp",
-						id : "NewCurrencyCode",
+						id : "CurrencyCode::new",
 						success : function (oValueHelp) {
 							oValueHelp.onValueHelp();
 							Opa5.assert.ok(true, "ValueHelp on CurrencyCode pressed");
@@ -116,7 +116,7 @@ sap.ui.require([
 					return this.waitFor({
 						controlType : "sap.ui.core.sample.common.ValueHelp",
 						matchers : new Interactable(),
-						id : "NewCurrencyCode",
+						id : "CurrencyCode::new",
 						success : function (oValueHelp) {
 							Opa5.assert.ok(oValueHelp.getAggregation("field").getShowValueHelp(),
 								"CurrencyCode has value help");
@@ -127,7 +127,7 @@ sap.ui.require([
 				checkNewBuyerId : function (sExpectedBuyerID) {
 					return this.waitFor({
 						controlType : "sap.m.Input",
-						id : "NewBuyerID",
+						id : "BuyerID::new",
 						success : function (oNewBuyerIDInput) {
 							Opa5.assert.strictEqual(oNewBuyerIDInput.getValue(), sExpectedBuyerID,
 								"New Buyer ID");
@@ -140,7 +140,7 @@ sap.ui.require([
 				checkNewNote : function (sExpectedNote) {
 					return this.waitFor({
 						controlType : "sap.m.Input",
-						id : "NewNote",
+						id : "Note::new",
 						success : function (oNewNoteInput) {
 							sLastNewNoteValue = oNewNoteInput.getValue();
 							if (sExpectedNote) {
@@ -164,7 +164,7 @@ sap.ui.require([
 					return this.waitFor({
 						actions : new EnterText({ clearTextFirst : true, text : sValue }),
 						controlType : "sap.m.Input",
-						id : "SOD_Note",
+						id : "Note::detail",
 						success : function (oInput) {
 							Opa5.assert.ok(true, "Details Note set to " + sValue);
 						},
@@ -175,7 +175,7 @@ sap.ui.require([
 					return this.waitFor({
 						actions : new EnterText({clearTextFirst : true, text : sValue}),
 						controlType : "sap.m.Input",
-						id : /.*lineItemNote.*-0/,
+						id : /.*SO_2_SOITEM:Note.*-0/,
 						success : function () {
 							Opa5.assert.ok(true, "SO Item Note of first row set to " + sValue);
 						},
@@ -189,7 +189,7 @@ sap.ui.require([
 						matchers : function (oControl) {
 							return oControl.getBindingContext().getIndex() === iRow;
 						},
-						id : /--Note_ID-__clone/,
+						id : /--Note-__clone/,
 						success : function (oControls) {
 							Opa5.assert.ok(true,
 								"Note of Sales Order " + oControls[0].getBindingContext().getPath()
@@ -202,7 +202,7 @@ sap.ui.require([
 					return this.waitFor({
 						actions : new EnterText({clearTextFirst : true, text : sValue}),
 						controlType : "sap.m.Input",
-						id : /.*lineItemQuantity.*-0/,
+						id : /.*SO_2_SOITEM:Quantity.*-0/,
 						success : function () {
 							Opa5.assert.ok(true, "SO Item Quantity of first row set to " + sValue);
 						},
@@ -212,7 +212,7 @@ sap.ui.require([
 				createInvalidSalesOrderViaAPI : function () {
 					return this.waitFor({
 						controlType : "sap.m.Table",
-						id : "SalesOrders",
+						id : "SalesOrderList",
 						success : function (oTable) {
 							var oNewContext = oTable.getBinding("items").create({
 								"SalesOrderID" : "",
@@ -246,7 +246,7 @@ sap.ui.require([
 				deleteSelectedSalesOrderViaGroupId : function (sGroupId) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
-						id : "SalesOrders",
+						id : "SalesOrderList",
 						success : function (oSalesOrderTable) {
 							var oSalesOrderContext = oSalesOrderTable.getSelectedItem()
 									.getBindingContext(),
@@ -265,7 +265,7 @@ sap.ui.require([
 				doubleRefresh : function () {
 					return this.waitFor({
 						controlType : "sap.m.Table",
-						id : "SalesOrders",
+						id : "SalesOrderList",
 						success : function (oSalesOrderTable) {
 							oSalesOrderTable.getBinding("items").refresh();
 							oSalesOrderTable.getBinding("items").refresh();
@@ -299,7 +299,7 @@ sap.ui.require([
 				filterGrossAmountViaAPI : function (sFilterValue) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
-						id : "SalesOrders",
+						id : "SalesOrderList",
 						success : function (oTable) {
 							oTable.getBinding("items").filter(
 								new Filter("GrossAmount", FilterOperator.GT, sFilterValue));
@@ -312,7 +312,7 @@ sap.ui.require([
 				filterSOItemsByProductIdWithChangeParameters : function (iRow) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
-						id : "SalesOrderLineItems",
+						id : "SO_2_SOITEM",
 						success : function (oSOItemsTable) {
 							var sProductID,
 								oRow;
@@ -347,7 +347,7 @@ sap.ui.require([
 				filterSalesOrderItemsByProductID : function (sValue) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
-						id : "SalesOrderLineItems",
+						id : "SO_2_SOITEM",
 						success : function (oSalesOrderItemsTable) {
 							// Note: filter cannot be triggered via UI; field is disabled
 							oSalesOrderItemsTable.getBinding("items")
@@ -359,13 +359,13 @@ sap.ui.require([
 				firstSalesOrderIsVisible : function () {
 					return this.waitFor({
 						controlType : "sap.m.Table",
-						id : "SalesOrders",
+						id : "SalesOrderList",
 						check : function (oSalesOrderTable) {
 							return  oSalesOrderTable.getItems().length > 0;
 						},
 						success : function (oControl) {
 							var oCore = sap.ui.getCore(),
-								sSalesOrderId = oCore.byId(sViewName).byId("SalesOrders")
+								sSalesOrderId = oCore.byId(sViewName).byId("SalesOrderList")
 									.getItems()[0].getCells()[0].getText();
 							sap.ui.test.Opa.getContext().firstSalesOrderId = sSalesOrderId;
 							Opa5.assert.ok(true, "First SalesOrderID: " + sSalesOrderId);
@@ -377,7 +377,7 @@ sap.ui.require([
 				firstSalesOrderIsAtPos0 : function () {
 					return this.waitFor({
 						controlType : "sap.m.Table",
-						id : "SalesOrders",
+						id : "SalesOrderList",
 						check : function (oSalesOrderTable) {
 							return  oSalesOrderTable.getItems()[0].getCells()[0].getText()
 								=== sap.ui.test.Opa.getContext().firstSalesOrderId;
@@ -421,7 +421,7 @@ sap.ui.require([
 					return pressButton(this, "deleteBusinessPartner");
 				},
 				pressMessagesButton : function () {
-					return pressButton(this, "MessagesButton");
+					return pressButton(this, "showMessages");
 				},
 				pressMessagePopoverCloseButton : function () {
 					return this.waitFor({
@@ -481,7 +481,7 @@ sap.ui.require([
 						controlType : "sap.m.Text",
 						success : function () {
 							var oCore = sap.ui.getCore(),
-								sSalesOrderId = oCore.byId(sViewName).byId("SalesOrders")
+								sSalesOrderId = oCore.byId(sViewName).byId("SalesOrderList")
 									.getItems()[0].getCells()[ID_COLUMN_INDEX].getText();
 							if (!sap.ui.test.Opa.getContext().aOrderIds) {
 								sap.ui.test.Opa.getContext().aOrderIds = [];
@@ -497,10 +497,10 @@ sap.ui.require([
 				resetSalesOrderListChanges : function () {
 					return this.waitFor({
 						controlType : "sap.m.Table",
-						id : "SalesOrders",
+						id : "SalesOrderList",
 						success : function (oTable) {
 							oTable.getBinding("items").resetChanges();
-							Opa5.assert.ok(true, "SalesOrders reset by API");
+							Opa5.assert.ok(true, "SalesOrderList reset by API");
 						},
 						viewName : sViewName
 					});
@@ -528,7 +528,7 @@ sap.ui.require([
 				selectSalesOrderItemWithPosition : function (sPosition) {
 					return this.waitFor({
 						controlType : "sap.m.Text",
-						id : /--SalesOrderLineItems-/,
+						id : /--SO_2_SOITEM-/,
 						matchers : new Properties({text: sPosition}),
 						success : function (aControls) {
 							new Press().executeOn(aControls[0]);
@@ -540,7 +540,7 @@ sap.ui.require([
 				selectSalesOrderWithId : function (sSalesOrderId) {
 					return this.waitFor({
 						controlType : "sap.m.Text",
-						id : /--SalesOrders_ID-/,
+						id : /--SalesOrderID-/,
 						matchers : new Properties({text: sSalesOrderId}),
 						success : function (aControls) {
 							new Press().executeOn(aControls[0]);
@@ -566,7 +566,7 @@ sap.ui.require([
 				sortByGrossAmountViaController : function () {
 					return this.waitFor({
 						controlType : "sap.m.Table",
-						id : "SalesOrders",
+						id : "SalesOrderList",
 						success : function () {
 							sap.ui.getCore().byId(sViewName).oController.onSortByGrossAmount();
 							Opa5.assert.ok(true, "controller.onSortByGrossAmount() called" );
@@ -575,12 +575,12 @@ sap.ui.require([
 					});
 				},
 				sortBySalesOrderID  : function () {
-					return pressButton(this, "sortBySalesOrderID");
+					return pressButton(this, "sortBySalesOrderId");
 				},
 				sortBySalesOrderIDviaController : function () {
 					return this.waitFor({
 						controlType : "sap.m.Table",
-						id : "SalesOrders",
+						id : "SalesOrderList",
 						success : function () {
 							sap.ui.getCore().byId(sViewName).oController.onSortBySalesOrderID();
 							Opa5.assert.ok(true, "controller.onSortBySalesOrderID() called" );
@@ -616,7 +616,7 @@ sap.ui.require([
 				checkCompanyName : function (iRow, sExpectedCompanyName) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
-						id : "SalesOrders",
+						id : "SalesOrderList",
 						success : function (oSalesOrderTable) {
 							Opa5.assert.strictEqual(oSalesOrderTable.getItems()[iRow].getCells()
 								[COMPANY_NAME_COLUMN_INDEX].getText(), sExpectedCompanyName,
@@ -629,7 +629,7 @@ sap.ui.require([
 				checkContactNameInRow : function (iRow, sExpectedContactName) {
 					return this.waitFor({
 						controlType : "sap.m.List",
-						id : "SupplierContactData",
+						id : "BP_2_CONTACT",
 						success : function (oContactList) {
 							var oItem = oContactList.getItems()[iRow];
 
@@ -644,7 +644,7 @@ sap.ui.require([
 				checkDifferentID : function (iRow, sExpectedID) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
-						id : "SalesOrders",
+						id : "SalesOrderList",
 						success : function (oSalesOrderTable) {
 							var oRow = oSalesOrderTable.getItems()[iRow];
 
@@ -658,7 +658,7 @@ sap.ui.require([
 				checkFavoriteProductID : function () {
 					return this.waitFor({
 						controlType : "sap.m.Input",
-						id : "FavoriteProductID",
+						id : "favoriteProductId",
 						matchers : new Properties({value : "HT-1000"}),
 						success : function () {
 							Opa5.assert.ok(true, "Product ID 'HT-1000' found");
@@ -669,7 +669,7 @@ sap.ui.require([
 				checkFirstGrossAmountGreater : function (sExpectedAmount) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
-						id : "SalesOrders",
+						id : "SalesOrderList",
 						success : function (oSalesOrderTable) {
 							var sAmount,
 								aTableItems = oSalesOrderTable.getItems();
@@ -695,7 +695,7 @@ sap.ui.require([
 						success : function () {
 							return that.waitFor({
 								controlType : "sap.m.Table",
-								id : "SalesOrders",
+								id : "SalesOrderList",
 								success : function (oSalesOrderTable) {
 									var oRow = oSalesOrderTable.getItems()[iRow];
 									if (sExpectedID === undefined) {
@@ -739,7 +739,7 @@ sap.ui.require([
 				checkNewSalesOrderItemProductName : function (sExpectProductName) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
-						id : "SalesOrderLineItems",
+						id : "SO_2_SOITEM",
 						success : function (oSalesOrderItemsTable) {
 							var oRow = oSalesOrderItemsTable.getItems()[0];
 
@@ -753,7 +753,7 @@ sap.ui.require([
 					return this.waitFor({
 						controlType : "sap.m.Table",
 						autoWait : false,
-						id : "SalesOrders",
+						id : "SalesOrderList",
 						success : function (oSalesOrderTable) {
 							var oRow = oSalesOrderTable.getItems()[iRow];
 
@@ -768,7 +768,7 @@ sap.ui.require([
 				checkNoteValueState : function (iRow, sExpectedValueState, sExpectedValueStateText) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
-						id : "SalesOrders",
+						id : "SalesOrderList",
 						success : function (oSalesOrderTable) {
 							var oInput = oSalesOrderTable.getItems()[iRow]
 									.getCells()[NOTE_COLUMN_INDEX];
@@ -787,7 +787,7 @@ sap.ui.require([
 				checkMessageCount : function (iExpectedCount) {
 					return this.waitFor({
 						controlType : "sap.m.Button",
-						id : "MessagesButton",
+						id : "showMessages",
 						success : function (oButton) {
 							Opa5.assert.strictEqual(parseInt(oButton.getText(), 10), iExpectedCount,
 								"Message count is as expected: " + iExpectedCount);
@@ -836,7 +836,7 @@ sap.ui.require([
 				checkSalesOrderIdInDetails : function (bChanged) {
 					return this.waitFor({
 						controlType : "sap.m.Text",
-						id : "SOD_SalesOrderID",
+						id : "SalesOrderID::detail",
 						success : function (oText) {
 							var sCurrentId = oText.getText(),
 								sIdBefore  = sap.ui.test.Opa.getContext().firstSalesOrderId,
@@ -852,7 +852,7 @@ sap.ui.require([
 				checkSalesOrderItemInRow : function (iRow, sExpectedSalesOrderID, sExpectedItem) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
-						id : "SalesOrderLineItems",
+						id : "SO_2_SOITEM",
 						check : function (oSalesOrderItemsTable) {
 							var oRow = oSalesOrderItemsTable.getItems()[iRow],
 								sItem,
@@ -883,12 +883,12 @@ sap.ui.require([
 					});
 				},
 				checkSalesOrderItemsCount : function (iExpectedCount) {
-					return checkCount(this, iExpectedCount, "SalesOrderLineItemsTitle");
+					return checkCount(this, iExpectedCount, "lineItemsTitle");
 				},
 				checkSalesOrderLineItemNote : function (iRow, sNoteValue) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
-						id : "SalesOrderLineItems",
+						id : "SO_2_SOITEM",
 						success : function (oSalesOrderTable) {
 							var oRow = oSalesOrderTable.getItems()[iRow];
 
@@ -903,7 +903,7 @@ sap.ui.require([
 						sExpectedValueStateText) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
-						id : "SalesOrderLineItems",
+						id : "SO_2_SOITEM",
 						success : function (oTable) {
 							var oInput = oTable.getItems()[iRow]
 									.getCells()[SOITEM_QUANTITY_COLUMN_INDEX];
@@ -920,12 +920,12 @@ sap.ui.require([
 					});
 				},
 				checkSalesOrdersCount : function (iExpectedCount) {
-					return checkCount(this, iExpectedCount, "SalesOrdersTitle");
+					return checkCount(this, iExpectedCount, "salesOrderListTitle");
 				},
 				checkSalesOrderSelected : function (iRow) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
-						id : "SalesOrders",
+						id : "SalesOrderList",
 						success : function (oSalesOrderTable) {
 							var aTableItems = oSalesOrderTable.getItems();
 
@@ -940,7 +940,7 @@ sap.ui.require([
 				checkSupplierPhoneNumber : function (sExpectedPhoneNumber) {
 					return this.waitFor({
 						controlType : "sap.m.Input",
-						id : "SD_PhoneNumber",
+						id : "PRODUCT_2_BP:PhoneNumber",
 						success : function (oPhoneNumberInput) {
 							Opa5.assert.strictEqual(oPhoneNumberInput.getValue(),
 								sExpectedPhoneNumber, "checkSupplierPhoneNumber('"
