@@ -1,3 +1,4 @@
+/* global QUnit, assert, sinon */
 sap.ui.define([
 	"jquery.sap.global",
 	"unitTests/utils/loggerInterceptor"
@@ -24,7 +25,11 @@ sap.ui.define([
 			return;
 		}
 
-		QUnit.module("timeoutCounter - no " + sFunctionUnderTest);
+		QUnit.module("timeoutCounter - no " + sFunctionUnderTest, {
+			afterEach: function () {
+				oDebugSpy.reset();
+			}
+		});
 
 		QUnit.test("Should make sure there is no pending timeout before starting these tests", function (assert) {
 			var fnDone = assert.async();
@@ -67,7 +72,11 @@ sap.ui.define([
 			clearTimeout(iID);
 		});
 
-		QUnit.module("timeoutCounter - single " + sFunctionUnderTest);
+		QUnit.module("timeoutCounter - single " + sFunctionUnderTest, {
+			afterEach: function () {
+				oDebugSpy.reset();
+			}
+		});
 
 		QUnit.test("Should respect the this pointer", function (assert) {
 			var oThis = {},
