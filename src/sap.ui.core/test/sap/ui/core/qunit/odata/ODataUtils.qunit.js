@@ -3,10 +3,13 @@ sap.ui.define([
 	'sap/ui/model/odata/ODataUtils',
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
-	'sap/ui/core/CalendarType'
-], function(ODataUtils, Filter, FilterOperator, CalendarType) {
+	"sap/ui/core/library"
+], function(ODataUtils, Filter, FilterOperator, library) {
 
 	"use strict";
+
+	// shortcut for sap.ui.core.CalendarType
+	var CalendarType = library.CalendarType;
 
 	function time(iMillis) {
 		return {
