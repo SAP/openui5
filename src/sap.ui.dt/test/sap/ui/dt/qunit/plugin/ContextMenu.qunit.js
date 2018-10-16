@@ -1348,18 +1348,23 @@ sap.ui.define([
 			});
 			var oSpyContext = sinon.spy(this.oContextMenuControl, "_placeAsExpandedContextMenu");
 			var oSpyMini = sinon.spy(this.oContextMenuControl, "_placeAsCompactContextMenu");
-			var oFakeDiv = this.oContextMenuControl._placeContextMenu(this.oButton2Overlay, true, true);
+			var oFakeDiv = this.oContextMenuControl._placeContextMenu(this.oButton2Overlay, true);
 			var sFakeDivId = "contextMenuFakeDiv";
 			assert.ok(oFakeDiv instanceof Element, "should return an HTML Element");
 			assert.strictEqual(oFakeDiv.getAttribute("overlay"), this.oButton2Overlay.getId(), "the fakeDiv should have an overlay attribute containing the id of the original overlay");
 			assert.strictEqual(oFakeDiv.getAttribute("id"), sFakeDivId, "the fakeDiv should have the correct contextMenu fakeDiv id");
 			assert.strictEqual(oFakeDiv, jQuery("#" + this.oButton2Overlay.getId()).children()[1], "the fakeDiv should be a child of the overlay the ContextMenu was placed by");
+			assert.strictEqual(parseInt(oFakeDiv.style.top, 10), 0, "the FakeDiv top position is zero when the Overlay is not on top position");
 			assert.ok(oSpyContext.calledOnce);
 			assert.ok(oSpyMini.notCalled);
 			oSpyContext.reset();
 			oSpyMini.reset();
+
 			this.oContextMenuControl._iButtonsVisible = 3;
-			this.oContextMenuControl._placeContextMenu(this.oButton2Overlay, false, false);
+			// calling "_placeContextMenu" with faked overlay position to check top calculation
+			sinon.stub(this.oContextMenuControl, "_getOverlayDimensions").returns({top: 40, left: 1787, width: 40, height: 48, right: 1827, bottom: 88, isOverlappedAtBottom: false, isOverlappedAtTop: false});
+			oFakeDiv = this.oContextMenuControl._placeContextMenu(this.oButton2Overlay, false);
+			assert.strictEqual(parseInt(oFakeDiv.style.top, 10) > 0, true, "the FakeDiv top position is greater than zero when the Overlay is on top position");
 			assert.ok(oSpyMini.calledOnce);
 			assert.ok(oSpyContext.notCalled);
 		});
