@@ -381,6 +381,10 @@ sap.ui.define([
 					"$kind" : "ActionImport",
 					"$Action" : "name.space.OverloadedAction"
 				},
+				"ServiceGroups" : {
+					"$kind" : "EntitySet",
+					"$Type" : "tea_busi.ServiceGroup"
+				},
 				"TEAMS" : {
 					"$kind" : "EntitySet",
 					"$NavigationPropertyBinding" : {
@@ -416,6 +420,21 @@ sap.ui.define([
 					"$Type" : "Edm.Int16"
 				}
 			}],
+			"tea_busi.ServiceGroup" : {
+				"$kind" : "EntityType",
+				"DefaultSystem" : {
+					"$ContainsTarget" : true,
+					"$kind" : "NavigationProperty",
+					"$Type" : "tea_busi.System"
+				}
+			},
+			"tea_busi.System" : {
+				"$kind" : "EntityType",
+				"SystemAlias" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.String"
+				}
+			},
 			"tea_busi.TEAM" : {
 				"$kind" : "EntityType",
 				"$Key" : ["Team_Id"],
@@ -2323,6 +2342,9 @@ sap.ui.define([
 	}, { // decode navigation property, encode entity set
 		path : "/EMPLOYEES('7')/EMPLOYEE_2_EQUIPM%E2%82%ACNTS(42)|ID",
 		editUrl : "EQUIPM%E2%82%ACNTS(42)"
+	}, { // entity set w/o navigation property bindings
+		path : "/ServiceGroups('42')/DefaultSystem|SystemAlias",
+		editUrl : "ServiceGroups('42')/DefaultSystem"
 	}].forEach(function (oFixture) {
 		QUnit.test("fetchUpdateData: " + oFixture.path, function (assert) {
 			var i = oFixture.path.indexOf("|"),
@@ -3060,6 +3082,7 @@ sap.ui.define([
 			"/GetEmployeeMaxAge",
 			"/Me",
 			"/OverloadedAction",
+			"/ServiceGroups",
 			"/TEAMS",
 			"/T€AMS",
 			"/VoidAction"

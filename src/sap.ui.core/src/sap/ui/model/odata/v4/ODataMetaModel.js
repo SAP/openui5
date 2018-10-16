@@ -1461,7 +1461,8 @@ sap.ui.define([
 					}
 					oType = mScope[oProperty.$Type];
 					if (oProperty.$kind === "NavigationProperty") {
-						if (sNavigationPath in oEntitySet.$NavigationPropertyBinding) {
+						if (oEntitySet.$NavigationPropertyBinding
+								&& sNavigationPath in oEntitySet.$NavigationPropertyBinding) {
 							sEntitySetName = oEntitySet.$NavigationPropertyBinding[sNavigationPath];
 							oEntitySet = oEntityContainer[sEntitySetName];
 							sNavigationPath = "";
