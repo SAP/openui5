@@ -3198,6 +3198,39 @@ sap.ui.define([
 		assert.equal(oInputClone.getValue(), "The selected item: Auch ein gutes Ding", "The selectedRow association should be cloned");
 	});
 
+	QUnit.test("Input suggestions description", function(assert) {
+		// setup
+		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			oInput = new Input({
+				showSuggestion: true,
+				suggestionItems: [
+					new sap.ui.core.Item({
+						text: "Item 1",
+						key: "001"
+					}),
+					new sap.ui.core.Item({
+						text: "Item 2",
+						key: "002"
+					})
+				]
+			});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput.onfocusin();
+		oInput._$input.focus().val("I").trigger("input");
+		this.clock.tick(400);
+
+		// assert
+		assert.ok(!!oInput.getDomRef("SuggDescr"), "The description is added in the DOM.");
+		assert.strictEqual(oInput.getDomRef("SuggDescr").innerText,
+			oMessageBundle.getText("INPUT_SUGGESTIONS_MORE_HITS", 2), "The description has correct text.");
+
+		// clean up
+		oInput.destroy();
+	});
+
 	QUnit.module("Focus");
 
 	QUnit.test("Value Help Only 'tap' on Phone", function(assert) {

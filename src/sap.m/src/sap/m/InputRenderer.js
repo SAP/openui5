@@ -90,6 +90,12 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 		if (oControl.getDescription()) {
 			this.writeDescription(oRm, oControl);
 		}
+
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			if (oControl.getShowSuggestion() && oControl.getEnabled() && oControl.getEditable()) {
+				oRm.write("<span id=\"" +  oControl.getId() + "-SuggDescr\" class=\"sapUiPseudoInvisibleText\" role=\"status\" aria-live=\"polite\"></span>");
+			}
+		}
 	};
 
 	InputRenderer.addWrapperStyles = function (oRm, oControl) {
