@@ -37,29 +37,7 @@ var sSingleLangTest = "de",
     aNotaSupportedLanguages = [
         "cs", "vi"
     ],
-    sBrowserAndDevice = Device.browser.name + "-" + Device.os.name,
-    mBrowserNativeSupport = {
-        "ie-win": {
-            "en-us": true,
-            "de": false,
-            "ru": false
-        },
-        "ed-win": {
-            "en-us": true,
-            "de": false,
-            "ru": false
-        },
-        "cr-win": {
-            "en-us": false,
-            "de": false,
-            "ru": false
-        },
-        "ff-win": {
-            "en-us": true,
-            "de": true,
-            "ru": true
-        }
-    },
+
     mWords = {
         // lang: [not hyphenated, hyphenated]
         "bg": ["непротивоконституционствувателствувайте", "неп-ро-ти-во-кон-с-ти-ту-ци-он-с-т-ву-ва-тел-с-т-ву-вай-те"],
@@ -214,20 +192,6 @@ var sSingleLangTest = "de",
     QUnit.module("Hyphenation", {
         before : function () {
             this.oHyphenation = Hyphenation.getInstance();
-        }
-    });
-
-    QUnit.test("can use native hyphenation for " + sBrowserAndDevice, function(assert) {
-        var mCanUseLanguages = mBrowserNativeSupport[sBrowserAndDevice];
-
-        if (mCanUseLanguages) {
-            assert.expect(Object.keys(mCanUseLanguages).length);
-
-            for (var sLang in mCanUseLanguages) {
-                assert.strictEqual(this.oHyphenation.canUseNativeHyphenation(sLang), mCanUseLanguages[sLang], "can use for lang '" + sLang + "' should be '" + mCanUseLanguages[sLang]);
-            }
-        } else {
-            assert.ok(true, "no tests available for browser '" + sBrowserAndDevice + "'");
         }
     });
 
