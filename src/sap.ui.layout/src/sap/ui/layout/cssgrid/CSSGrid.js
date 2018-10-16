@@ -160,11 +160,11 @@ sap.ui.define([
 		this._oGridObserver = new ManagedObjectObserver(CSSGrid.prototype._onGridChange.bind(this));
 		this._oGridObserver.observe(this, { aggregations: ["items"] });
 
-		this._initGridLayoutDelegate();
+		this._addGridLayoutDelegate();
 	};
 
 	CSSGrid.prototype.exit = function () {
-		this._destroyGridLayoutDelegate();
+		this._removeGridLayoutDelegate();
 
 		if (this._oGridObserver) {
 			this._oGridObserver.disconnect();
@@ -177,7 +177,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	CSSGrid.prototype._initGridLayoutDelegate = function () {
+	CSSGrid.prototype._addGridLayoutDelegate = function () {
 		if (!this.oGridLayoutDelegate) {
 			this.oGridLayoutDelegate = new GridLayoutDelegate();
 			this.addDelegate(this.oGridLayoutDelegate, false, this, false);
@@ -189,7 +189,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	CSSGrid.prototype._destroyGridLayoutDelegate = function () {
+	CSSGrid.prototype._removeGridLayoutDelegate = function () {
 		if (this.oGridLayoutDelegate) {
 			this.removeDelegate(this.oGridLayoutDelegate);
 			this.oGridLayoutDelegate.destroy();
