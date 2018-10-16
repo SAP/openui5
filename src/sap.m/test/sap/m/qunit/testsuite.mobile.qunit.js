@@ -1481,16 +1481,15 @@ sap.ui.define(function() {
 				title: "Test Page for sap.m.DisplayListItem"
 			},
 			DraftIndicator: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "Test Page for sap.m.DraftIndicator",
 				_alternativeTitle: "QUnit tests: sap.m.DraftIndicator",
-				sinon: {
-					useFakeTimers: true
+				qunit: {
+					version: 2
 				},
-				page: "test-resources/sap/m/qunit/DraftIndicator.qunit.html"
+				sinon: {
+					version: 1, // as sinon-qunit-bridge doesn't support fake timers yet
+					useFakeTimers: true
+				}
 			},
 			ExploredSamples: {
 				/*
@@ -1674,32 +1673,28 @@ sap.ui.define(function() {
 				}
 			},
 			InstanceManager: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Page for sap.m.InstanceManager",
-				page: "test-resources/sap/m/qunit/InstanceManager.qunit.html"
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				}
 			},
 			Ios7: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Page for sap.m.Ios7",
-				sinon: {
-					useFakeTimers: true
+				qunit: {
+					version: 2
 				},
-				page: "test-resources/sap/m/qunit/Ios7.qunit.html"
+				sinon: {
+					version: 1,
+					useFakeTimers: true
+				}
 			},
 			Label: {
 				title: "QUnit page for sap.m.Label"
 			},
 			LibraryGetScrollDelegate: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit test: sap.m.getScrollDelegate",
 				loader: {
 					paths: {
@@ -1709,10 +1704,12 @@ sap.ui.define(function() {
 				qunit: {
 					version: 2
 				},
+				sinon: {
+					version: 4
+				},
 				ui5: {
 					language: "en"
-				},
-				page: "test-resources/sap/m/qunit/LibraryGetScrollDelegate.qunit.html"
+				}
 			},
 			LightBox: {
 				title: "QUnit Page for sap.m.LightBox"
@@ -1940,31 +1937,30 @@ sap.ui.define(function() {
 				}
 			},
 			P13nColumnsPanel: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "Test Page for sap.m.P13nColumnsPanel",
 				_alternativeTitle: "QUnit Page for sap.m.P13nColumnsPanel",
-				sinon: {
-					useFakeTimers: true
+				qunit: {
+					version: 2
 				},
-				page: "test-resources/sap/m/qunit/P13nColumnsPanel.qunit.html"
+				sinon: {
+					version: 1,
+					useFakeTimers: true
+				}
 			},
 			P13nConditionPanel: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "Test Page for sap.m.P13nConditionPanel",
 				_alternativeTitle: "QUnit Page for sap.m.P13nConditionPanel",
-				page: "test-resources/sap/m/qunit/P13nConditionPanel.qunit.html"
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				},
+				ui5: {
+					language: "en" // one test depends on locale specific date formatting
+				}
 			},
 			P13nDialog: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "Test Page for sap.m.P13nDialog",
 				_alternativeTitle: "QUnit Page for sap.m.P13nDialog",
 				loader: {
@@ -1972,58 +1968,64 @@ sap.ui.define(function() {
 						resourceroot: "test-resources/sap/m/qunit/"
 					}
 				},
-				page: "test-resources/sap/m/qunit/P13nDialog.qunit.html"
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				}
 			},
 			P13nDimMeasurePanel: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "Test Page for sap.m.P13nDimMeasurePanel",
 				_alternativeTitle: "QUnit Page for sap.m.P13nDimMeasurePanel",
-				sinon: {
-					useFakeTimers: true
+				qunit: {
+					version: 2
 				},
-				page: "test-resources/sap/m/qunit/P13nDimMeasurePanel.qunit.html"
+				sinon: {
+					version: 1,
+					useFakeTimers: true
+				}
 			},
 			P13nFilterPanel: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "Test Page for sap.m.P13nFilterPanel",
 				_alternativeTitle: "QUnit Page for sap.m.P13nFilterPanel",
-				page: "test-resources/sap/m/qunit/P13nFilterPanel.qunit.html"
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				}
 			},
 			P13nGroupPanel: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "Test Page for sap.m.P13nGroupPanel",
 				_alternativeTitle: "QUnit Page for sap.m.P13nGroupPanel",
-				page: "test-resources/sap/m/qunit/P13nGroupPanel.qunit.html"
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				}
 			},
 			P13nSelectionPanel: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "Test Page for sap.m.P13nSelectionPanel",
 				_alternativeTitle: "QUnit Page for sap.m.P13nSelectionPanel",
-				sinon: {
-					useFakeTimers: true
+				qunit: {
+					version: 2
 				},
-				page: "test-resources/sap/m/qunit/P13nSelectionPanel.qunit.html"
+				sinon: {
+					version: 1,
+					useFakeTimers: true
+				}
 			},
 			P13nSortPanel: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "Test Page for sap.m.P13nSortPanel",
 				_alternativeTitle: "QUnit Page for sap.m.P13nSortPanel",
-				page: "test-resources/sap/m/qunit/P13nSortPanel.qunit.html"
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				}
 			},
 			PDFViewer: {
 				title: "PdfViewer - sap.m",
@@ -2045,12 +2047,13 @@ sap.ui.define(function() {
 				_alternativeTitle: "QUnit tests for sap.m.Page"
 			},
 			PagingButton: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Page for sap.m.PagingButton",
-				page: "test-resources/sap/m/qunit/PagingButton.qunit.html"
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				}
 			},
 			Panel: {
 				title: "QUnit page for sap.m.Panel"
@@ -2338,29 +2341,29 @@ sap.ui.define(function() {
 				}
 			},
 			TabStrip: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Page for sap.m.TabStrip",
 				ui5: {
 					language: "en-US"
 				},
-				sinon: {
-					useFakeTimers: true
+				qunit: {
+					version: 2
 				},
-				page: "test-resources/sap/m/qunit/TabStrip.qunit.html"
+				sinon: {
+					version: 1,
+					useFakeTimers: true
+				}
 			},
 			TabStripItem: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Page for sap.m.TabStripItem",
 				ui5: {
 					language: "en-US"
 				},
-				page: "test-resources/sap/m/qunit/TabStripItem.qunit.html"
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				}
 			},
 			Table: {
 				title: "QUnit Page for sap.m.Table",
@@ -2372,40 +2375,43 @@ sap.ui.define(function() {
 				}
 			},
 			TablePersoController: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Page for sap.m.TablePersoController",
-				page: "test-resources/sap/m/qunit/TablePersoController.qunit.html"
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				}
 			},
 			TablePersoControllerMigrationInComponent: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Page for sap.m.TablePersoDialog - Migration in Component",
-				page: "test-resources/sap/m/qunit/TablePersoControllerMigrationInComponent.qunit.html"
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				}
 			},
 			TablePersoDialog: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Page for sap.m.TablePersoController",
 				_alternativeTitle: "QUnit Page for sap.m.TablePersoDialog",
-				sinon: {
-					useFakeTimers: true
+				qunit: {
+					version: 2
 				},
-				page: "test-resources/sap/m/qunit/TablePersoDialog.qunit.html"
+				sinon: {
+					version: 1,
+					useFakeTimers: true
+				}
 			},
 			TableSelectDialog: {
-				/*
-				 * Page kept because of
-				 * - review pending
-				 */
 				title: "QUnit Page for sap.m.TableSelectDialog",
-				page: "test-resources/sap/m/qunit/TableSelectDialog.qunit.html"
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 1,
+					useFakeTimers: false // some tests activate it
+				}
 			},
 			Text: {
 				title: "QUnit Tests - sap.m.Text"
@@ -2903,79 +2909,77 @@ sap.ui.define(function() {
 				}
 			},
 			"routing/async/RouteMatchedHandler": {
-				/*
-				 * Page kept because of
-				 *  - non-trivial inline script
-				 *  - Script Include of QUnitUtils
-				 */
 				title: "QUnit Page for RouteMatchedHandler",
-				page: "test-resources/sap/m/qunit/routing/async/RouteMatchedHandler.qunit.html?noglobals=true"
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				}
 			},
 			"routing/async/Router": {
-				/*
-				 * Page kept because of
-				 *  - non-trivial inline script
-				 *  - Script Include of QUnitUtils
-				 */
 				title: "QUnit Page for sap.m.routing.Router",
-				page: "test-resources/sap/m/qunit/routing/async/Router.qunit.html?noglobals=true"
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				}
 			},
 			"routing/async/Targets": {
-				/*
-				 * Page kept because of
-				 *  - non-trivial inline script
-				 *  - Script Include of QUnitUtils
-				 */
 				title: "QUnit Page for sap.m.routing.Targets",
-				page: "test-resources/sap/m/qunit/routing/async/Targets.qunit.html?noglobals=true"
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				}
 			},
 			"routing/common/RouteMatchedHandler": {
-				/*
-				 * Page kept because of
-				 *  - non-trivial inline script
-				 *  - Script Include of QUnitUtils
-				 */
 				title: "QUnit Page for RouteMatchedHandler",
-				page: "test-resources/sap/m/qunit/routing/common/RouteMatchedHandler.qunit.html?noglobals=true"
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				}
 			},
 			"routing/common/TargetHandler": {
-				/*
-				 * Page kept because of
-				 *  - non-trivial inline script
-				 *  - Script Include of QUnitUtils
-				 */
 				title: "QUnit Page for sap.m.routing.TargetHandler",
-				page: "test-resources/sap/m/qunit/routing/common/TargetHandler.qunit.html?noglobals=true"
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				}
 			},
 			"routing/sync/RouteMatchedHandler": {
-				/*
-				 * Page kept because of
-				 *  - non-trivial inline script
-				 *  - Script Include of QUnitUtils
-				 */
 				title: "QUnit Page for RouteMatchedHandler",
-				sinon: {
-					useFakeTimers: true
+				qunit: {
+					version: 2
 				},
-				page: "test-resources/sap/m/qunit/routing/sync/RouteMatchedHandler.qunit.html?noglobals=true"
+				sinon: {
+					version: 1,
+					useFakeTimers: true
+				}
 			},
 			"routing/sync/Router": {
-				/*
-				 * Page kept because of
-				 *  - non-trivial inline script
-				 *  - Script Include of QUnitUtils
-				 */
 				title: "QUnit Page for sap.m.routing.Router",
-				page: "test-resources/sap/m/qunit/routing/sync/Router.qunit.html?noglobals=true"
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				}
 			},
 			"routing/sync/Targets": {
-				/*
-				 * Page kept because of
-				 *  - non-trivial inline script
-				 *  - Script Include of QUnitUtils
-				 */
 				title: "QUnit Page for sap.m.routing.Targets",
-				page: "test-resources/sap/m/qunit/routing/sync/Targets.qunit.html?noglobals=true"
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				}
 			},
 			"semantic/Segment": {
 				title: "Test Page for sap.m.semantic.Segment",

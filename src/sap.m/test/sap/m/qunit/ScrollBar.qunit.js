@@ -1,5 +1,5 @@
-/*global QUnit*/
-sap.ui.require([
+/*global QUnit */
+sap.ui.define([
 	"sap/m/ScrollBar"
 ], function(ScrollBar) {
 	"use strict";

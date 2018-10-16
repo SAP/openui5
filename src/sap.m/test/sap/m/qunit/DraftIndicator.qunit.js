@@ -1,33 +1,15 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta charset="utf-8">
-	<title>Test Page for sap.m.DraftIndicator</title>
-<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+/*global QUnit */
+sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/m/DraftIndicator"
+], function(QUnitUtils, createAndAppendDiv, DraftIndicator) {
+	"use strict";
 
-		<!-- UI5 Bootstrap -->
-		<script src="../shared-config.js"></script>
-		<script id="sap-ui-bootstrap"
-			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-noConflict="true"
-			data-sap-ui-libs="sap.m">
-		</script>
-
-		<!-- QUnit libraries -->
-		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	// prepare DOM
+	createAndAppendDiv("qunit-fixture-visible");
 
 
-	<!-- use the sinon faketimers for this test -->
-	<script>
-		sinon.config.useFakeTimers = true;
-	</script>
-
-	<script>
 
 	var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 	var oCore = sap.ui.getCore();
@@ -36,7 +18,7 @@
 
 	QUnit.test("semantic control can be retrieved by Id", function (assert) {
 		// Arrange
-		var oDraftIndi = new sap.m.DraftIndicator("draftId");
+		var oDraftIndi = new DraftIndicator("draftId");
 
 		assert.strictEqual(oDraftIndi.getId(), "draftId", "control has the expected id");
 
@@ -55,7 +37,7 @@
 
 	QUnit.test("set 'Saving draft' and 'Clear Draft' state", function (assert) {
 		// Arrange
-		var oDraftIndi = new sap.m.DraftIndicator();
+		var oDraftIndi = new DraftIndicator();
 
 		// System under test
 		oDraftIndi.placeAt("qunit-fixture-visible");
@@ -79,7 +61,7 @@
 
 	QUnit.test("set Draft Saved state and check that it is not cleared after default timeout", function (assert) {
 		// Arrange
-		var oDraftIndi = new sap.m.DraftIndicator();
+		var oDraftIndi = new DraftIndicator();
 
 		// System under test
 		oDraftIndi.placeAt("qunit-fixture-visible");
@@ -93,7 +75,7 @@
 		this.clock.tick(1500);
 
 		// Assert
-		assert.ok(oDraftIndi.$("label").text()!="", "Draft saved state is not cleared after default timeout");
+		assert.ok(oDraftIndi.$("label").text() != "", "Draft saved state is not cleared after default timeout");
 
 		// Clean up
 		oDraftIndi.destroy();
@@ -101,7 +83,7 @@
 
 	QUnit.test("set Draft Saving state and check that if it is cleared after default timeout", function (assert) {
 		// Arrange
-		var oDraftIndi = new sap.m.DraftIndicator();
+		var oDraftIndi = new DraftIndicator();
 
 		// System under test
 		oDraftIndi.placeAt("qunit-fixture-visible");
@@ -123,7 +105,7 @@
 
 	QUnit.test("the control doesn't recreate the label upon destruction", function (assert) {
 		// Arrange
-		var oDraftIndi = new sap.m.DraftIndicator();
+		var oDraftIndi = new DraftIndicator();
 
 		// Act
 		oDraftIndi.showDraftSaving();
@@ -136,19 +118,4 @@
 		// Clean up
 		oDraftIndi.destroy();
 	});
-
-
-	</script>
-</head>
-<body id="body" class="sapUiBody">
-<h1 id="qunit-header">QUnit tests: sap.m.DraftIndicator</h1>
-
-<h2 id="qunit-banner"></h2>
-
-<h2 id="qunit-userAgent"></h2>
-<!--<div id="qunit-testrunner-toolbar"></div>-->
-<ol id="qunit-tests"></ol>
-<div id="qunit-fixture"></div>
-<div id="qunit-fixture-visible"></div>
-</body>
-</html>
+});
