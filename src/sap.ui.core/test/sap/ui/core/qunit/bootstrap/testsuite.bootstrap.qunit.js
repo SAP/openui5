@@ -106,6 +106,7 @@ sap.ui.define(function() {
 			"BootstrapMainModule": {
 				group: "Bootstrap",
 				title: "Test Page for Bootstrap within Head",
+				bootCore: false,
 				ui5: {
 					onInit: "module:sap/ui/test/BootstrapMainModule"
 				},
