@@ -74,6 +74,17 @@
 			"Starting with Two Columns",
 			"Setting the Master-Detail Pattern"
 		  ]
+		},
+		{
+		  "id": "sap.f.GridList",
+		  "name": "Grid List",
+		  "category": "Display",
+		  "since": "1.60",
+		  "samples": [
+			"sap.f.sample.GridListBasic",
+			"sap.f.sample.GridListBreakPoints",
+			"sap.f.sample.GridListBoxContainer"
+		  ]
 		}
 	  ],
 	  "samples": [
@@ -121,7 +132,22 @@
 		  "id": "sap.f.sample.SemanticPageFreeStyle",
 		  "name": "Semantic Page - Freestyle Sample",
 		  "description": "This sample demonstrates a <code>SemanticPage</code> with all semantic-specific actions both in the title and in the footer areas."
-		 }
+		 },
+		{
+		  "id": "sap.f.sample.GridListBasic",
+		  "name": "Grid List - Basic examples",
+		  "description": ""
+		},
+		{
+		  "id": "sap.f.sample.GridListBreakPoints",
+		  "name": "Grid List - Break point examples - S,M,L,XL",
+		  "description": ""
+		},
+		{
+		  "id": "sap.f.sample.GridListBoxContainer",
+		  "name": "Grid List with Boxes with minWith",
+		  "description": ""
+		}
 		]
 	}
 }
