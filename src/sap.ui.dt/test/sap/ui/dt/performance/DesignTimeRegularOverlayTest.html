@@ -32,24 +32,22 @@
 		</script>
 
 		<script>
-			jQuery(function() {
+			sap.ui.getCore().attachInit(function() {
 				sap.ui.require([
 					"dt/performance/PerformanceTestUtil",
-					"rta/performance/RtaPerformanceTestUtil",
 					"sap/ui/layout/VerticalLayout",
 					"sap/ui/layout/HorizontalLayout"
 				], function(
 					PerformanceTestUtil,
-					RtaPerformanceTestUtil,
 					VerticalLayout,
 					HorizontalLayout
 				){
 					//create Vertical Layout
-					var oLayout = new VerticalLayout("visibleLayout", {});
+					var oLayout = new VerticalLayout("visibleLayout");
 					PerformanceTestUtil.addMixedControlsTo(oLayout, 1, 200, true /*visible*/);
 					PerformanceTestUtil.addMixedControlsTo(oLayout, 201, 500, false /*invisible*/);
 
-					oInvisibleLayout = new VerticalLayout("invisibleLayout", {
+					var oInvisibleLayout = new VerticalLayout("invisibleLayout", {
 						visible : false
 					});
 					PerformanceTestUtil.addMixedControlsTo(oInvisibleLayout, 2001, 3000, true /*visible*/);
@@ -58,8 +56,8 @@
 						content : [oLayout, oInvisibleLayout]
 					});
 					oHorizontalLayout.placeAt("content");
+					sap.ui.getCore().applyChanges();
 				});
-
 			});
 		</script>
 	</head>

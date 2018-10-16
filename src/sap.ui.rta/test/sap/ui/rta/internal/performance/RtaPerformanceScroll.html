@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Adaptation at Runtime - Apply Styles for Scroll Test</title>
+		<script src="../../shared-config.js"></script>
+		<script
+			id="sap-ui-bootstrap"
+			src="../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.rta, sap.ui.dt, sap.m, sap.ui.layout"
+			data-sap-ui-resourceroots='{"rta.performance": "./",
+				"dt.performance": "../../../../../sap/ui/dt/performance/"}'
+		></script>
+		<script>
+			window.wpp = {
+				customMetrics: {}
+			};
+			window.fnResolve;
+			window.onAppReady = new Promise(function (fnResolve) {
+				window.fnResolve = fnResolve;
+			});
+			sap.ui.getCore().attachInit(function() {
+				sap.ui.require([
+					"dt/performance/PerformanceTestUtil",
+					"rta/performance/RtaPerformanceTestUtil",
+					"sap/uxap/ObjectPageLayout",
+					"sap/uxap/ObjectPageSection",
+					"sap/uxap/ObjectPageSubSection",
+					"sap/uxap/ObjectPageHeader",
+					"sap/ui/layout/HorizontalLayout",
+					"sap/ui/layout/VerticalLayout",
+					"sap/m/Panel"
+				], function(
+					DtPerformanceTestUtil,
+					RtaPerformanceTestUtil,
+					ObjectPageLayout,
+					ObjectPageSection,
+					ObjectPageSubSection,
+					ObjectPageHeader,
+					HorizontalLayout,
+					VerticalLayout,
+					Panel
+				){
+
+					var oHeaderLayout = new Panel("layout-header");
+					DtPerformanceTestUtil.addMixedControlsTo(oHeaderLayout, 1, 10, true /*visible*/);
+					DtPerformanceTestUtil.addMixedControlsTo(oHeaderLayout, 11, 20, false /*invisible*/);
+
+					var oFirstSectionPanel = new VerticalLayout("panel1");
+					DtPerformanceTestUtil.addMixedControlsTo(oFirstSectionPanel, 21, 30, true /*visible*/);
+					DtPerformanceTestUtil.addMixedControlsTo(oFirstSectionPanel, 31, 40, false /*invisible*/);
+
+					var oSecondSectionPanel = new VerticalLayout("panel2");
+					DtPerformanceTestUtil.addMixedControlsTo(oSecondSectionPanel, 41, 60, true /*visible*/);
+					DtPerformanceTestUtil.addMixedControlsTo(oSecondSectionPanel, 61, 80, false /*invisible*/);
+
+					var oObjectPageLayout = new ObjectPageLayout("opLayout", {
+						headerTitle : new ObjectPageHeader("opHeader", {
+							objectTitle : "RtaPerformance",
+							objectSubtitle : "ScrollTest",
+
+						}),
+						headerContent : oHeaderLayout,
+						// headerContent : new Panel("panel-header", {
+						// 	height : '100px'
+						// }),
+						sections : [
+							new ObjectPageSection("opSection1", {
+								title : "section1",
+								subSections : [
+									new ObjectPageSubSection("opSubSection1", {
+										title : "subsection1",
+										blocks : [
+											oFirstSectionPanel
+											// new Panel("panel1", {
+											// 	height : '500px'
+											// })
+										]
+									})
+								]
+							}),
+							new ObjectPageSection("opSection2", {
+								title : "section2",
+								subSections : [
+									new ObjectPageSubSection("opSubSection2", {
+										title : "subsection2",
+										blocks : [
+											oSecondSectionPanel
+											// new Panel("panel2", {
+											// 	height : '500px'
+											// })
+										]
+									})
+								]
+							})
+						]
+					});
+
+					oObjectPageLayout.placeAt('content');
+					sap.ui.getCore().applyChanges();
+
+					// start RTA
+					fnResolve(RtaPerformanceTestUtil.startRta(oObjectPageLayout));
+				});
+			});
+
+			function startScrollTest() {
+				sap.ui.require([
+					"dt/performance/PerformanceTestUtil",
+					"sap/ui/dt/OverlayRegistry",
+					"sap/base/Log"
+				], function(
+					DtPerformanceTestUtil,
+					OverlayRegistry,
+					BaseLog
+				) {
+					DtPerformanceTestUtil.measureApplyStylePerformance("applyStylesScroll", 2000);
+
+					var iStartWidth = 0,
+						aWidthsToTest = [1000, 0, 100, 200, 300, 400, 50],
+						iJumpsInPxls = 5,
+						iNextWidth = iStartWidth - (iStartWidth % iJumpsInPxls);
+
+					(function fnRecursiveloop(aWidthsToTest) {
+						var iTargetWidth = aWidthsToTest.shift();
+						if (iTargetWidth !== undefined) {
+							for(iNextWidth = iStartWidth - (iStartWidth % iJumpsInPxls); iNextWidth !== iTargetWidth; iNextWidth = (iTargetWidth > iStartWidth) ? iNextWidth + iJumpsInPxls : iNextWidth - iJumpsInPxls) {
+								setTimeout(function(iNextWidth) { jQuery('#opLayout-opwrapper').scrollTop(iNextWidth); }, 0, iNextWidth);
+								console.log("scrolled to", iNextWidth);
+							}
+							iStartWidth = iNextWidth;
+							setTimeout(function() {
+								jQuery('#opLayout-opwrapper').scrollTop(iNextWidth);
+								console.log("scrolled to next step", iNextWidth);
+								fnRecursiveloop(aWidthsToTest, iStartWidth, iJumpsInPxls);
+							}, 500);
+						}
+					}) (aWidthsToTest, iStartWidth, iJumpsInPxls);
+				});
+			}
+
+		</script>
+	</head>
+	<body>
+		<div id="content" class="sapUiBody" style="margin-top:50px; height:1000px"></div>
+	</body>
+</html>

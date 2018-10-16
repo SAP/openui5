@@ -142,24 +142,46 @@ sap.ui.define([
 		debounce: function(fn, iWait) {
 			iWait = iWait || 0;
 
-			var bInvoked = false;
-			var vResult;
 			var iTimerId;
 
-			function invoke() {
-				bInvoked = true;
-				vResult = fn();
-			}
-
 			return function () {
-				if (bInvoked) {
-					return vResult;
-				}
 				if (iTimerId) {
 					clearTimeout(iTimerId);
 				}
-				iTimerId = setTimeout(invoke, iWait);
+				iTimerId = setTimeout(fn, iWait);
 			};
+		},
+
+		measureApplyStylePerformance: function(sCustomMetricName, iWaitUntilDoneInMs) {
+			window.wpp = {
+				customMetrics: {}
+			};
+
+			var aStack = [],
+				iCountCall = 0,
+				bMeasurementDone = false;
+
+			var fnDebouncedFn = Util.debounce(function () {
+				if (!bMeasurementDone) {
+					bMeasurementDone = true;
+					window.wpp.customMetrics[sCustomMetricName] = aStack[aStack.length - 1] - aStack[0];
+					Log.info(sCustomMetricName + " = " + window.wpp.customMetrics[sCustomMetricName] + "ms");
+					Log.info("Count call = " + iCountCall);
+				} else {
+					Log.error("Some applyStyles() calculation exceeded timeout of " + iWaitUntilDoneInMs + "ms");
+					window.wpp.customMetrics[sCustomMetricName] = 100000;
+				}
+			}, iWaitUntilDoneInMs);
+
+			OverlayRegistry.getOverlays().forEach(function (oElementOverlay) {
+				oElementOverlay.attachGeometryChanged(function () {
+					aStack.push(new Date().getTime());
+					iCountCall++;
+					setTimeout(fnDebouncedFn);
+				});
+			});
+
+			aStack.push(new Date().getTime());
 		}
 	};
 
