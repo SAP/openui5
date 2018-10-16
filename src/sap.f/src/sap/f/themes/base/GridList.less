@@ -11,10 +11,6 @@
 	grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
 	grid-auto-rows: 1fr;
 	grid-gap: 0.5rem 0.5rem;
-
-	&.sapFGridListGroup {
-		grid-template-rows: 3rem;
-	}
 }
 
 /* List Group headers overrides. */
@@ -33,9 +29,7 @@
 }
 
 .sapFGridList .sapMLIB {
-	border-width: 1px;
-	border-style: solid;
-	border-color: @sapUiListBorderColor;
+	border: 1px solid @sapUiListBorderColor;
 
 	& > .sapMLIBContent {
 		height: 100%;
