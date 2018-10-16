@@ -42,7 +42,8 @@ sap.ui.define([
 		FrameType = library.FrameType,
 		Size = library.Size,
 		GenericTileMode = library.GenericTileMode,
-		TileSizeBehavior = library.TileSizeBehavior;
+		TileSizeBehavior = library.TileSizeBehavior,
+		WrappingType = library.WrappingType;
 
 	var DEVICE_SET = "GenericTileDeviceSet";
 
@@ -125,7 +126,12 @@ sap.ui.define([
 				 * Additional description for aria-label. The aria-label is rendered before the standard aria-label.
 				 * @since 1.50.0
 				 */
-				ariaLabel: {type: "string", group: "Accessibility", defaultValue: null}
+				ariaLabel: {type: "string", group: "Accessibility", defaultValue: null},
+				/**
+				 * Defines the type of text wrapping to be used (hyphenated or normal).
+				 * @since 1.60
+				 */
+				wrappingType : {type: "sap.m.WrappingType", group : "Appearance", defaultValue : WrappingType.Normal}
 			},
 			defaultAggregation: "tileContent",
 			aggregations: {
@@ -237,6 +243,13 @@ sap.ui.define([
 		} else {
 			this._handleCoreInitialized();
 		}
+	};
+
+	GenericTile.prototype.setWrappingType = function (sWrappingType) {
+		this.setProperty("wrappingType", sWrappingType, true);
+		this._oTitle.setWrappingType(sWrappingType);
+		this._oFailedText.setWrappingType(sWrappingType);
+		return this;
 	};
 
 

@@ -72,7 +72,9 @@
 		indicators: Object.keys(sap.m.DeviationIndicator),
 		modes : Object.keys(sap.m.GenericTileMode),
 		states : Object.keys(sap.m.LoadState),
-		scopes : Object.keys(sap.m.GenericTileScope)
+		scopes : Object.keys(sap.m.GenericTileScope),
+		wrappingTypes: Object.keys(sap.m.WrappingType),
+		wrappingType: sap.m.WrappingType.Normal
 	};
 
 	var fnPress = function(oEvent) {
@@ -141,6 +143,7 @@
 		state : "{/state}",
 		scope : "{/scope}",
 		headerImage : "{/headerImage}",
+		wrappingType: "{/wrappingType}",
 		imageDescription : "{/imageDescription}",
 		press : fnPress,
 		failedText : "{/failedText}",
@@ -174,6 +177,7 @@
 		scope : "{/scope}",
 		headerImage : "{/headerImage}",
 		imageDescription : "{/imageDescription}",
+		wrappingType: "{/wrappingType}",
 		press : fnPress,
 		failedText : "{/failedText}",
 		tileContent : [oTc2x1]
@@ -198,6 +202,7 @@
 		headerImage : "{/headerImage}",
 		imageDescription : "{/imageDescription}",
 		backgroundImage : "{/backgroundImage}",
+		wrappingType: "{/wrappingType}",
 		press : fnPress,
 		failedText : "{/failedText}",
 		tileContent : {
@@ -226,6 +231,7 @@
 		scope : "{/scope}",
 		headerImage : "{/headerImage}",
 		imageDescription : "{/imageDescription}",
+		wrappingType: "{/wrappingType}",
 		press : fnPress,
 		failedText : "{/failedText}",
 		tileContent : {
@@ -487,6 +493,22 @@
 		content : [oGenericTile1, oGenericTile2, oGenericTile3, oGenericTile4]
 	});
 
+	var oWrappingLabel = new sap.m.Label({
+		text: "Wrapping Type",
+		labelFor: "wrapping-type"
+	});
+
+	var oWrappingSelect = new sap.m.Select({
+		items: {
+			path: "/wrappingTypes",
+			template: new sap.ui.core.Item({
+				key: "{}",
+				text: "{}"
+			})
+		},
+		selectedKey: "{/wrappingType}"
+	});
+
 	var editableSimpleForm = new sap.ui.layout.form.SimpleForm("controls", {
 		maxContainerCols : 2,
 		editable : true,
@@ -494,7 +516,7 @@
 			text : "Modify Tile"
 		}), oModeLabel, oModeSelect, oTitleLbl, oTitleInput, oTitleDscr, oDescInput, oTitleFoot, oFooterInputNum, oFooterInputComp, oTooltipLbl, oTooltipInput, oUpdateValueLbl, oUpdateValueInput, oTitleUnit,
 				oUnitInput, oFailedLabel, oFailedInput, oFrameTypeLabel, oFrameTypeSelect, oPictureLbl, oPictureSlct,oImageDescLbl, oImageDescInput, oStateLabel, oStateSelect, oScopeLabel, oScopeSelect, oPressLbl,
-				oPressSwtch, oIndicatorLabel, oIndicatorSelect, oSizeLbl, oSizeBtn]
+				oPressSwtch, oIndicatorLabel, oIndicatorSelect, oSizeLbl, oSizeBtn, oWrappingLabel, oWrappingSelect]
 	});
 
 	var oPage = new sap.m.Page("initial-page", {

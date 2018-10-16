@@ -18,11 +18,12 @@ sap.ui.define([
 	"sap/m/DeviationIndicator",
 	"sap/m/GenericTileRenderer",
 	"sap/m/Size",
+	"sap/m/library",
 	"sap/ui/events/jquery/EventExtension", // used only indirectly
 	"jquery.sap.keycodes"
 ], function(jQuery, GenericTile, TileContent, NumericContent, Device, ResizeHandler, GenericTileLineModeRenderer,
 			Text, GenericTileScope, GenericTileMode, LoadState, ScrollContainer, FlexBox, ValueColor, FrameType, DeviationIndicator,
-			GenericTileRenderer, Size) {
+			GenericTileRenderer, Size, library) {
 	"use strict";
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
@@ -410,6 +411,12 @@ sap.ui.define([
 
 			done();
 		}.bind(this));
+	});
+
+	QUnit.test("Wrapping type is propagated to title", function (assert) {
+		this.oGenericTile.setWrappingType(library.WrappingType.Hyphenated);
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(library.WrappingType.Hyphenated, this.oGenericTile._oTitle.getWrappingType(), "Title wrapping type should be Hyphenated");
 	});
 
 	QUnit.module("FrameType rendering tests", {
