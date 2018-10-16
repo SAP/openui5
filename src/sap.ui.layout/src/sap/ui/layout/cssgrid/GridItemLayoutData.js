@@ -95,6 +95,10 @@ sap.ui.define([
 			sProp,
 			sPropValue;
 
+		if (!oItemDom) {
+			return;
+		}
+
 		if (!oLayoutData) {
 			GridItemLayoutData._removeItemStyles(oItemDom);
 			return;
