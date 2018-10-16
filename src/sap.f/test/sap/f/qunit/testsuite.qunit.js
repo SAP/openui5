@@ -54,6 +54,11 @@ sap.ui.define(function () {
 					only: ["sap/f/FlexibleColumnLayout"]
 				}
 			},
+			"GridList": {
+				coverage: {
+					only: ["sap/f/GridList"]
+				}
+			},
 			"Router": {
 				coverage: {
 					only: ["sap/f/Router"]

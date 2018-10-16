@@ -3,8 +3,10 @@
  */
 sap.ui.define([
 	"sap/m/ListBase",
-	"sap/ui/layout/cssgrid/GridLayoutDelegate"
-], function(ListBase, GridLayoutDelegate) {
+	"sap/ui/base/ManagedObjectObserver",
+	"sap/ui/layout/cssgrid/GridLayoutDelegate",
+	"sap/ui/layout/cssgrid/GridItemLayoutData"
+], function(ListBase, ManagedObjectObserver, GridLayoutDelegate, GridItemLayoutData) {
 	"use strict";
 
 /**
@@ -41,12 +43,26 @@ var GridList = ListBase.extend("sap.f.GridList", { metadata : {
 
 GridList.prototype.init = function () {
 	ListBase.prototype.init.apply(this, arguments);
+
+	this._oItemDelegate = {
+		onAfterRendering: this._onAfterItemRendering
+	};
+
 	this._startGridLayoutDelegate();
+
+	this._oGridObserver = new ManagedObjectObserver(GridList.prototype._onGridChange.bind(this));
+	this._oGridObserver.observe(this, { aggregations: ["items"] });
 };
 
 GridList.prototype.exit = function () {
-	ListBase.prototype.exit.apply(this, arguments);
 	this._destroyGridLayoutDelegate();
+
+	if (this._oGridObserver) {
+		this._oGridObserver.disconnect();
+		this._oGridObserver = null;
+	}
+
+	ListBase.prototype.exit.apply(this, arguments);
 };
 
 // Implement IGridConfigurable interface
@@ -82,6 +98,36 @@ GridList.prototype._destroyGridLayoutDelegate = function () {
 		this.oGridLayoutDelegate.destroy();
 		this.oGridLayoutDelegate = null;
 	}
+};
+
+GridList.prototype._onGridChange = function (oChanges) {
+	if (oChanges.name !== "items" || !oChanges.child) { return; }
+
+	if (oChanges.mutation === "insert") {
+		oChanges.child.addEventDelegate(this._oItemDelegate, oChanges.child);
+	} else if (oChanges.mutation === "remove") {
+		oChanges.child.removeEventDelegate(this._oItemDelegate, oChanges.child);
+	}
+};
+
+/**
+ * Item's onAfterRendering handler
+ *
+ * @private
+ */
+GridList.prototype._onAfterItemRendering = function () {
+	GridItemLayoutData._setItemStyles(this);
+};
+
+/**
+ * Handler for layout data change events.
+ * Update the styles of the item which layoutData changed
+ *
+ * @private
+ * @param {jQuery.Event} oEvent The event from a layoutDataChange
+ */
+GridList.prototype.onLayoutDataChange = function (oEvent) {
+	GridItemLayoutData._setItemStyles(oEvent.srcControl);
 };
 
 return GridList;

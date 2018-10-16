@@ -26,7 +26,7 @@ function (
 	QUnit.test("Initialization", function (assert) {
 
 		// Arrange
-		sinon.spy(CSSGrid.prototype, "_initGridLayoutDelegate");
+		sinon.spy(CSSGrid.prototype, "_addGridLayoutDelegate");
 
 		// Act
 		var oGrid = new CSSGrid();
@@ -48,11 +48,11 @@ function (
 		assert.notOk(oGrid.getGridAutoRows(), "gridAutoRows should be unset");
 		assert.notOk(oGrid.getGridAutoColumns(), "gridAutoColumns should be unset");
 
-		assert.ok(CSSGrid.prototype._initGridLayoutDelegate.calledOnce, "GridLayoutDelegate should be initialized");
+		assert.ok(CSSGrid.prototype._addGridLayoutDelegate.calledOnce, "GridLayoutDelegate should be initialized");
 		assert.ok(oGrid.oGridLayoutDelegate, "GridLayoutDelegate initialized");
 
 		// Cleanup
-		CSSGrid.prototype._initGridLayoutDelegate.restore();
+		CSSGrid.prototype._addGridLayoutDelegate.restore();
 	});
 
 	QUnit.test("IGridConfigurable Interface implementation", function (assert) {
@@ -134,7 +134,7 @@ function (
 	QUnit.test("Delegate", function (assert) {
 
 		// Arrange
-		sinon.spy(CSSGrid.prototype, "_destroyGridLayoutDelegate");
+		sinon.spy(CSSGrid.prototype, "_removeGridLayoutDelegate");
 
 		var oGrid = new CSSGrid();
 
@@ -142,11 +142,11 @@ function (
 		oGrid.destroy();
 
 		// Assert
-		assert.ok(CSSGrid.prototype._destroyGridLayoutDelegate.calledOnce, "Should call _destroyGridLayoutDelegate on exit");
+		assert.ok(CSSGrid.prototype._removeGridLayoutDelegate.calledOnce, "Should call _removeGridLayoutDelegate on exit");
 		assert.ok(oGrid.oGridLayoutDelegate === null, "Should destroy GridLayoutDelegate on exit");
 
 		// Cleanup
-		CSSGrid.prototype._destroyGridLayoutDelegate.restore();
+		CSSGrid.prototype._removeGridLayoutDelegate.restore();
 	});
 
 	QUnit.test("Observer", function (assert) {
