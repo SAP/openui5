@@ -147,6 +147,13 @@
                             new sap.m.RadioButton({groupName:'v05', selected: true, valueState: sap.ui.core.ValueState.Warning, text: 'Selected'}),
                             new sap.m.RadioButton("warning-vbox-button-notselected", {groupName:'v05', selected: false, valueState: sap.ui.core.ValueState.Warning, text: 'Not Selected'})
                         ]
+                    }),
+                    new sap.m.VBox("highlight-vbox", {
+                        items: [
+                            new sap.m.Label({text: 'Highlight'}),
+                            new sap.m.RadioButton({groupName: 'highlightGroup', selected: true, valueState: sap.ui.core.ValueState.Highlight, text: 'Selected'}),
+                            new sap.m.RadioButton("highlight-vbox-button-notselected", {groupName: 'highlightGroup', selected: false, valueState: sap.ui.core.ValueState.Highlight, text: 'Not Selected'})
+                        ]
                     })
                 ]
             });
@@ -186,6 +193,13 @@
                             new sap.m.Label({text: 'Warning Read Only'}),
                             new sap.m.RadioButton({groupName:'v10', selected: true, valueState: sap.ui.core.ValueState.Warning, text: 'Selected', editable: false}),
                             new sap.m.RadioButton({groupName:'v10', selected: false, valueState: sap.ui.core.ValueState.Warning, text: 'Not Selected', editable: false}),
+                        ]
+                    }),
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({text: 'Highlight Read Only'}),
+                            new sap.m.RadioButton({groupName: 'highlightROGroup', selected: true, valueState: sap.ui.core.ValueState.Highlight, text: 'Selected', editable: false}),
+                            new sap.m.RadioButton({groupName: 'highlightROGroup', selected: false, valueState: sap.ui.core.ValueState.Highlight, text: 'Not Selected', editable: false}),
                         ]
                     })
                 ]

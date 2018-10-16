@@ -43,6 +43,16 @@
 	background-color: @sapUiFieldWarningBackground;
 }
 
+.sapMRbHighlight.sapMRbSel .sapMRbBInn {
+	background-color: @sapUiFieldSpotlightColor;
+}
+
+.sapMRbHighlight .sapMRbBOut,
+.sapMRbHighlight.sapMRbBTouched .sapMRbBOut {
+	border-color: @sapUiFieldSpotlightColor;
+	background-color: @sapUiFieldSpotlightBackground;
+}
+
 /* When printing border is needed for the selection */
 @media only print {
 	.sapMLIBActive .sapMRbSel .sapMRbBOut {
