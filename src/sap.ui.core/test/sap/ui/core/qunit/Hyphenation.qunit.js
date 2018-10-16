@@ -14,7 +14,7 @@ var sSingleLangTest = "de",
         "hr",
         "da",
         "nl",
-        "en-us",
+        "en",
         "et",
         "fi",
         "fr",
@@ -24,7 +24,7 @@ var sSingleLangTest = "de",
         "hu",
         "it",
         "lt",
-        "nb-no",
+        "no",
         "pt",
         "ru",
         "sl",
@@ -37,7 +37,6 @@ var sSingleLangTest = "de",
     aNotaSupportedLanguages = [
         "cs", "vi"
     ],
-
     mWords = {
         // lang: [not hyphenated, hyphenated]
         "bg": ["непротивоконституционствувателствувайте", "неп-ро-ти-во-кон-с-ти-ту-ци-он-с-т-ву-ва-тел-с-т-ву-вай-те"],
@@ -45,17 +44,20 @@ var sSingleLangTest = "de",
         "hr": ["prijestolonasljednikovičičinima", "pri-jes-to-lo-na-s-ljed-ni-ko-vi-či-či-ni-ma"],
         "da": ["Gedebukkebensoverogundergeneralkrigskommander", "Ge-de-buk-ke-ben-soverogun-der-ge-ne-ral-krigskom-man-der"], // original word was Gedebukkebensoverogundergeneralkrigskommandersergenten
         "nl": ["meervoudigepersoonlijkheidsstoornissen", "meer-vou-di-ge-per-soon-lijk-heids-stoor-nis-sen"],
+        "en": ["pneumonoultramicroscopicsilicovolcanoconiosis", "pneu-mo-noul-tra-mi-cro-scop-ic-sil-i-co-vol-canoco-nio-sis"],
+        "en-gb": ["pneumonoultramicroscopicsilicovolcanoconiosis", "pneu-mo-noul-tra-mi-cro-scop-ic-sil-i-co-vol-canoco-nio-sis"],
         "en-us": ["pneumonoultramicroscopicsilicovolcanoconiosis", "pneu-mo-noul-tra-mi-cro-scop-ic-sil-i-co-vol-canoco-nio-sis"],
         "et": ["Sünnipäevanädalalõpupeopärastlõunaväsimus", "Sün-ni-päe-va-nä-da-la-lõ-pu-peo-pä-rast-lõu-na-vä-si-mus"],
         "fi": ["kolmivaihekilowattituntimittari", "kolmivaihekilowattituntimittari"],
         "fr": ["hippopotomonstrosesquippedaliophobie", "hip-po-po-to-mons-tro-ses-quip-pe-da-lio-pho-bie"],
         "de": ["Kindercarnavalsoptochtvoorbereidingswerkzaamheden", "Kin-der-car-na-vals-op-tocht-vo-or-berei-dings-werk-zaam-he-den"], // original word was Kindercarnavalsoptochtvoorbereidingswerkzaamhedenplan
+        "de-at": ["Kindercarnavalsoptochtvoorbereidingswerkzaamheden", "Kin-der-car-na-vals-op-tocht-vo-or-berei-dings-werk-zaam-he-den"],
         "el": ["ηλεκτροεγκεφαλογράφημα", "ηλε-κτρο-ε-γκε-φα-λο-γρά-φη-μα"],
         "hi": ["किंकर्तव्यविमूढ़", "किं-क-र्-त-व्-य-वि-मूढ़"],
         "hu": ["Megszentségteleníthetetlenségeskedéseitekért", "Meg-szent-ség-te-le-nít-he-tet-len-sé-ges-ke-dé-se-i-te-kért"],
         "it": ["hippopotomonstrosesquippedaliofobia", "hip-po-po-to-mon-stro-se-squip-pe-da-lio-fo-bia"],
         "lt": ["nebeprisikiškiakopūstlapiaujančiuosiuose", "ne-be-pri-si-kiš-kia-ko-pūst-la-piau-jan-čiuo-siuo-se"],
-        "nb-no": ["Omtrentlig", "Om-trent-lig"],
+        "no": ["Omtrentlig", "Om-trent-lig"],
         "pt": ["pneumoultramicroscopicossilicovulcanoconiose", "pneu-moul-tra-mi-cros-co-pi-cos-si-li-co-vul-ca-no-co-ni-ose"],
         "ru": ["превысокомногорассмотрительствующий", "пре-вы-со-ком-но-го-рас-смот-ри-тель-ству-ю-щий"],
         "sl": ["Dialektičnomaterialističen", "Di-a-lek-tič-no-ma-te-ri-a-li-sti-čen"],
@@ -67,7 +69,7 @@ var sSingleLangTest = "de",
     },
     mTexts = {
         // lang: [not hyphenated, hyphenated]
-        "en-us": [
+        "en": [
             "A hyphenation algorithm is a set of rules that decides at which points a word can be broken over two lines with a hyphen.",
             "A hy-phen-ation al-go-rithm is a set of rules that de-cides at which points a word can be bro-ken over two lines with a hy-phen."
         ],
@@ -88,10 +90,6 @@ var sSingleLangTest = "de",
     function getDefaultLang() {
         var oLocale = sap.ui.getCore().getConfiguration().getLocale(),
             sLanguage = oLocale.getLanguage().toLowerCase();
-
-        if (sLanguage === "en") {
-            sLanguage += "-us";
-        }
 
         return sLanguage;
     }
@@ -121,7 +119,7 @@ var sSingleLangTest = "de",
 
             var sDefaultLang = getDefaultLang();
             assert.strictEqual(this.oHyphenation.isLanguageInitialized(sDefaultLang), true, "default lang '" + sDefaultLang + "' was initialized");
-            assert.notOk(this.oHyphenation.getExceptions(), "there are no exceptions defined");
+            assert.deepEqual(this.oHyphenation.getExceptions(), {}, "there are no exceptions defined");
 
             done();
         }.bind(this));
@@ -201,9 +199,9 @@ var sSingleLangTest = "de",
         var done = assert.async(),
             that = this;
 
-        this.oHyphenation.initialize("en-us", {"hyphen": "-"}).then(function() {
+        this.oHyphenation.initialize("en", {"hyphen": "-"}).then(function() {
             assert.strictEqual(
-                that.oHyphenation.hyphenate("hyphen", "en-us"),
+                that.oHyphenation.hyphenate("hyphen", "en"),
                 "hy-phen",
                 "hyphenation symbol is changed to '-'"
             );
@@ -289,11 +287,11 @@ var sSingleLangTest = "de",
         var done = assert.async(),
             that = this;
 
-        this.oHyphenation.initialize("en-us", {hyphen: "-", exceptions: mExceptionsEn}).then(function() {
-            assert.deepEqual(that.oHyphenation.getExceptions("en-us"), mExceptionsEn, "get exceptions returns correct exceptions");
+        this.oHyphenation.initialize("en", {hyphen: "-", exceptions: mExceptionsEn}).then(function() {
+            assert.deepEqual(that.oHyphenation.getExceptions("en"), mExceptionsEn, "get exceptions returns correct exceptions");
 
-            assert.strictEqual(that.oHyphenation.hyphenate("hyphen", "en-us"), "h-y-p-h-e-n", "exception for word 'hyphen' works");
-            assert.strictEqual(that.oHyphenation.hyphenate("example", "en-us"), "example", "exception for word 'example' works");
+            assert.strictEqual(that.oHyphenation.hyphenate("hyphen", "en"), "h-y-p-h-e-n", "exception for word 'hyphen' works");
+            assert.strictEqual(that.oHyphenation.hyphenate("example", "en"), "example", "exception for word 'example' works");
 
             done();
         });
@@ -305,11 +303,11 @@ var sSingleLangTest = "de",
         var done = assert.async(),
             that = this;
 
-        this.oHyphenation.initialize("en-us").then(function() {
+        this.oHyphenation.initialize("en").then(function() {
             assert.notDeepEqual(that.oHyphenation.getExceptions(), mExceptionsEn, "get exceptions returns correct exceptions");
 
-            assert.notEqual(that.oHyphenation.hyphenate("hyphen", "en-us"), "h-y-p-h-e-n", "there are no exceptions for word 'hyphen'");
-            assert.notEqual(that.oHyphenation.hyphenate("example", "en-us"), "example", "there are no exceptions for word 'example'");
+            assert.notEqual(that.oHyphenation.hyphenate("hyphen", "en"), "h-y-p-h-e-n", "there are no exceptions for word 'hyphen'");
+            assert.notEqual(that.oHyphenation.hyphenate("example", "en"), "example", "there are no exceptions for word 'example'");
 
             done();
         });
@@ -321,13 +319,13 @@ var sSingleLangTest = "de",
         var done = assert.async(),
             that = this;
 
-        this.oHyphenation.initialize("en-us").then(function() {
-            that.oHyphenation.addExceptions("en-us", mExceptionsEn);
+        this.oHyphenation.initialize("en").then(function() {
+            that.oHyphenation.addExceptions("en", mExceptionsEn);
 
-            assert.deepEqual(that.oHyphenation.getExceptions("en-us"), mExceptionsEn, "get exceptions returns correct exceptions");
+            assert.deepEqual(that.oHyphenation.getExceptions("en"), mExceptionsEn, "get exceptions returns correct exceptions");
 
-            assert.strictEqual(that.oHyphenation.hyphenate("hyphen", "en-us"), "h-y-p-h-e-n", "exception for word 'hyphen' works");
-            assert.strictEqual(that.oHyphenation.hyphenate("example", "en-us"), "example", "exception for word 'example' works");
+            assert.strictEqual(that.oHyphenation.hyphenate("hyphen", "en"), "h-y-p-h-e-n", "exception for word 'hyphen' works");
+            assert.strictEqual(that.oHyphenation.hyphenate("example", "en"), "example", "exception for word 'example' works");
 
             done();
         });
