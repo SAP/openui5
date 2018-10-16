@@ -832,6 +832,17 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Should start log collector on import", function (assert) {
+		var fnDone = assert.async();
+		var fnStartLogCollectorSpy = sinon.spy(sap.ui.test._LogCollector.prototype, "start");
+		$.sap.unloadResources("sap/ui/test/Opa.js", false, true, true);
+		sap.ui.require(["sap/ui/test/Opa"], function (Opa) {
+			sinon.assert.calledOnce(fnStartLogCollectorSpy, "Should start log collection");
+			fnStartLogCollectorSpy.restore();
+			fnDone();
+		});
+	});
+
 	QUnit.module("Opa Empty queue");
 
 	QUnit.test("Should throw an exception if emptyQueue is called twice", function (assert) {

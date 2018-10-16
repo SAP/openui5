@@ -127,6 +127,7 @@ sap.ui.define([
 
 	function afterModulesLoaded () {
 		// forward OPA log messages from the inner iframe to the Log listener of the outer frame
+		// the listener should already be created and started by OPA
 		oFrameJQuery.sap.log.addLogListener(_LogCollector.getInstance()._oListener);
 
 		bUi5Loaded = true;

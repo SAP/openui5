@@ -30,6 +30,8 @@ sap.ui.define([
 			errorPrefix: "sap.ui.test.Opa#waitFor"
 		});
 
+	oLogCollector.start();
+
 	function internalWait (fnCallback, oOptions) {
 
 		// Increase the wait timeout in debug mode, to allow debugging the waitFor without getting timeouts
