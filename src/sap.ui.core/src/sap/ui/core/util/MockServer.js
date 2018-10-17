@@ -108,7 +108,7 @@ sap.ui
 						 *
 						 * Default value is is <code>[]</code>
 						 *
-						 * Each array entry should consist of an array with the following properties / values:
+						 * Each array entry should consist of an object with the following properties / values:
 						 *
 						 * <ul>
 						 * <li><b>method <string>: "GET"|"POST"|"DELETE|"PUT"</b>
