@@ -5,7 +5,7 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-sap.ui.define(["sap/ui/performance/trace/FESR"], function(FESR) {
+sap.ui.define(["sap/ui/performance/trace/FESR", "sap/base/Log"], function(FESR, Log) {
 
 	"use strict";
 
@@ -25,7 +25,11 @@ sap.ui.define(["sap/ui/performance/trace/FESR"], function(FESR) {
 			bActive = aParamMatches[1] && aParamMatches[1] != "false";
 		}
 
-		FESR.setActive(bActive);
+		if (typeof window.performance.getEntriesByType === "function") {
+			FESR.setActive(bActive);
+		} else {
+			Log.debug("FESR is not supported in clients without support of window.Performance extensions.");
+		}
 
 		// TODO this should be part of a Configuration
 		// *********** Include E2E-Trace Scripts *************
