@@ -1,151 +1,194 @@
-/*global QUnit, sinon */
+/*global QUnit */
 sap.ui.define([
-	'sap/ui/test/matchers/BindingPath',
-	'sap/m/List',
-	'sap/m/StandardListItem',
-	'sap/ui/model/json/JSONModel'
-], function (BindingPath, List, StandardListItem, JSONModel) {
-	"use strict";
+    'sap/ui/test/matchers/BindingPath',
+    'sap/m/List',
+    '../fixture/bindingPath'
+], function (BindingPath, List, fixture) {
+    "use strict";
 
-	function generateJSONModel() {
-		// Arrange
-		// Create JSON-Data
-		var oJSONData = [
-			{
-				name: "Barbara"
-			},
-			{
-				name: "Gerry"
-			},
-			{
-				name: "Susan"
-			}
-		];
-		return new JSONModel(oJSONData);
-	}
+	QUnit.module("BindingPath - basics");
 
-	QUnit.module("Using two models at the same time", {
+	QUnit.test("Should not match anything if context and property path are undefined", function (assert) {
+        var oBindingPath = new BindingPath();
+        var bMatch = oBindingPath.isMatching(new List());
 
-		beforeEach: function () {
-			this.oModel = generateJSONModel.call(this);
-			this.oModel2 = generateJSONModel.call(this);
-			this.oBindingPath = new BindingPath();
-			// Create new control
-			this.oList = new List();
-			this.oList.setModel(this.oModel, "JSONModel");
-			this.oList.setModel(this.oModel2);
-			this.oList.bindAggregation("items", {
-				path: "JSONModel>/",
-				template: new StandardListItem()
-			});
-			this.oSpy = sinon.spy(this.oBindingPath._oLogger, "debug");
-		},
+        assert.ok(!bMatch, "Should not match any element if both paths are undefined");
+    });
 
-		afterEach: function () {
-			// Cleanup
-			this.oModel.destroy();
-			this.oModel2.destroy();
-			this.oList.destroy();
-			this.oBindingPath.destroy();
-			this.oSpy.restore();
-		}
+	QUnit.module("BindingPath - properties", {
+        beforeEach: function () {
+            fixture.PropertyFixture.beforeEach.call(this);
+        },
+
+        afterEach: function () {
+            fixture.PropertyFixture.afterEach.call(this);
+        }
+    });
+
+    QUnit.test("Should match property path", function (assert) {
+        var oBindingPath = new BindingPath({
+            propertyPath: "/propertyText"
+        });
+        var bResult = oBindingPath.isMatching(this.oPropertyText);
+        assert.ok(bResult, "Should match control with exact property path");
+    });
+
+    QUnit.test("Should match composite property binding path", function (assert) {
+        var oBindingPath = new BindingPath();
+		oBindingPath.setPropertyPath("/compositeProperty/partOne");
+		var bResultOne = oBindingPath.isMatching(this.oCompositePropertyText);
+		oBindingPath.setPropertyPath("/compositeProperty/partTwo");
+        var bResultTwo = oBindingPath.isMatching(this.oCompositePropertyText);
+        assert.ok(bResultOne && bResultTwo, "Should match control with composite property path and model name");
+    });
+
+    QUnit.test("Should match both property path and model name", function (assert) {
+        var oBindingPath = new BindingPath({
+            modelName: "myModel",
+            propertyPath: "/propertyText"
+        });
+        var bResult = oBindingPath.isMatching(this.oNamedModelPropertyText);
+        assert.ok(bResult, "Should match control with exact property path and model name");
+    });
+
+    QUnit.test("Should not match property path if model name is different", function (assert) {
+        var oBindingPath = new BindingPath({
+            modelName: "name",
+            propertyPath: "/propertyText"
+        });
+        var bResult = oBindingPath.isMatching(this.oNamedModelPropertyText);
+        assert.ok(!bResult, "Should not match if path is the same but model name does not match");
+    });
+
+    QUnit.test("Should not match if property path is different and model is the same", function (assert) {
+        var oBindingPath = new BindingPath({
+            modelName: "myModel",
+            propertyPath: "/property"
+        });
+        var bResult = oBindingPath.isMatching(this.oNamedModelPropertyText);
+        assert.ok(!bResult, "Should not match if property path is different");
+    });
+
+	QUnit.module("_BindingPath - object binding", {
+        beforeEach: function () {
+            fixture.ObjectFixture.beforeEach.call(this);
+        },
+        afterEach: function () {
+            fixture.ObjectFixture.afterEach.call(this);
+        }
 	});
 
-	QUnit.test("Should throw an error on an incorrect binding path", function (assert) {
-		var oErrorSpy = sinon.spy(this.oBindingPath._oLogger, "error");
+	QUnit.test("Should match control with bound object", function (assert) {
+		var oBindingPath = new BindingPath({
+			path: "/compositeProperty"
+		});
+		oBindingPath.setPropertyPath("partOne");
+		var bResultOne = oBindingPath.isMatching(this.oInput);
+		oBindingPath.setPropertyPath("partTwo");
+		var bResultTwo = oBindingPath.isMatching(this.oInput);
+		assert.ok(bResultOne && bResultTwo, "Should match control with composite property path and object binding");
+    });
 
-		this.oBindingPath.setPath("");
-		this.oBindingPath.isMatching(this.oList.getItems()[0]);
+    QUnit.test("Should match control with parent object binding", function (assert) {
+		var oBindingPath = new BindingPath({
+			path: "/compositeProperty"
+		});
+		oBindingPath.setPropertyPath("partOne");
+		var bResultOne = oBindingPath.isMatching(this.oTexts[0]);
+		oBindingPath.setPropertyPath("partTwo");
+		var bResultTwo = oBindingPath.isMatching(this.oTexts[1]);
+		assert.ok(bResultOne && bResultTwo, "Should match control with composite property path and parent object binding");
+    });
 
-		sinon.assert.calledWithMatch(oErrorSpy, /The binding path property is required but not defined/);
-		oErrorSpy.restore();
-	});
+    // crucial usecase for tests exising before propertyPath is introduced
+    QUnit.test("Should match with context path only", function (assert) {
+        var oBindingPath = new BindingPath({
+            path: "/compositeProperty"
+        });
+        var aMatchingControls = this.oTexts.concat([this.oInput]);
+        var bResults = aMatchingControls.filter(function (oControl) {
+            return oBindingPath.isMatching(oControl);
+        });
+        assert.strictEqual(bResults.length, aMatchingControls.length, "Should match even if only context path is given");
+    });
 
-	QUnit.test("Should not match an incorrect binding path despite of using correct model name", function (assert) {
-		// System under Test
-		this.oBindingPath.setPath("/1");
-		this.oBindingPath.setModelName("JSONModel");
-		var bResult = this.oBindingPath.isMatching(this.oList.getItems()[0]);
-		// Assert
-		assert.ok(!bResult, "Did not match because the binding path is incorrect");
-		sinon.assert.calledWithMatch(this.oSpy, "has a binding context for the model JSONModel but its binding path is /0 when it should be /1");
-	});
+    QUnit.test("Should not match if only context path is different", function (assert) {
+        var oBindingPath = new BindingPath({
+            path: "/compositeProperty11",
+            propertyPath: "partOne"
+        });
+        var bResult = oBindingPath.isMatching(this.oInput);
+        assert.ok(!bResult, "Should not match if context path is different");
+    });
 
-	QUnit.test("Should match an correct model name and binding path", function (assert) {
-		// System under Test
-		this.oBindingPath.setPath("/0");
-		this.oBindingPath.setModelName("JSONModel");
-		var bResult = this.oBindingPath.isMatching(this.oList.getItems()[0]);
-		// Assert
-		assert.ok(bResult, "Matched because the binding path and model name are correct");
-	});
+    QUnit.test("Should not match if only property path is different", function (assert) {
+         var oBindingPath = new BindingPath({
+            path: "/compositeProperty",
+            propertyPath: "partOne11"
+        });
+        var bResult = oBindingPath.isMatching(this.oInput);
+        assert.ok(!bResult, "Should not match if property path is different");
+    });
 
-	QUnit.test("Should not match an incorrect model name despite of using correct binding path", function (assert) {
-		// System under Test
-		this.oBindingPath.setPath("/0");
-		this.oBindingPath.setModelName("Model");
-		var bResult = this.oBindingPath.isMatching(this.oList.getItems()[0]);
-		// Assert
-		assert.ok(!bResult, "Did not match because the model name is incorrect");
-		sinon.assert.calledWithMatch(this.oSpy, /has no binding context for the model Model/);
-	});
+    QUnit.test("Should not match if only model name is different", function (assert) {
+        var oBindingPath = new BindingPath({
+            path: "/compositeProperty",
+            propertyPath: "partOne"
+        });
+        assert.ok(!oBindingPath.isMatching(this.oNamedInput), "Should not match if model name is different");
+        oBindingPath.setModelName("myModel");
+        assert.ok(oBindingPath.isMatching(this.oNamedInput), "Should match if model name matches");
+    });
 
-	QUnit.test("Should not match no model name despite of using correct binding path", function (assert) {
-		// System under Test
-		this.oBindingPath.setPath("/0");
-		this.oBindingPath.setModelName("");
-		var bResult = this.oBindingPath.isMatching(this.oList.getItems()[0]);
-		// Assert
-		assert.ok(!bResult, "Did not match because no model name was set");
-	});
+	QUnit.module("_BindingPath - aggregation", {
+        beforeEach: function () {
+            fixture.AggregationFixture.beforeEach.call(this);
+        },
+        afterEach: function () {
+            fixture.AggregationFixture.afterEach.call(this);
+        }
+    });
 
+    QUnit.test("Should match control with aggregation binding", function (assert) {
+        var aMatchingLists = this.aLists.filter(function (oList, iListIndex) {
+            var oBindingPath = new BindingPath({
+                propertyPath: "/" + fixture.AggregationFixture.data.paths[iListIndex]
+            });
+		    return oBindingPath.isMatching(oList);
+        });
+		assert.strictEqual(aMatchingLists.length, this.aLists.length, "Should match control with aggregation context binding");
+    });
 
-	QUnit.module("Using an unnamed model", {
+    QUnit.test("Should match control with named aggregation binding", function (assert) {
+        var mModels = {unnamed: "", named: "myModel"};
+        var aMatches = Object.keys(mModels).map(function (sKey, index) {
+            var aMatchingLists = this.aNamedLists.filter(function (oList, iListIndex) {
+                var oBindingPath = new BindingPath({
+                    propertyPath: "/" + fixture.AggregationFixture.data.paths[iListIndex],
+                    modelName: mModels[sKey]
+                });
+                return oBindingPath.isMatching(oList);
+            });
+            return aMatchingLists.length === this.aNamedLists.length;
+        }.bind(this));
 
-		beforeEach: function () {
-			this.oModel = generateJSONModel.call(this);
-			this.oBindingPath = new BindingPath();
-			// Create new control
-			this.oList = new List();
-			this.oList.setModel(this.oModel);
-			this.oList.bindAggregation("items", {
-				path: "/",
-				template: new StandardListItem()
-			});
-		},
+        assert.ok(!aMatches[0], "Should not match control with aggregation context binding when model is different");
+        assert.ok(aMatches[1], "Should match control with aggregation context binding when model is the same");
+    });
 
-		afterEach: function () {
-			// Cleanup
-			this.oModel.destroy();
-			this.oList.destroy();
-		}
-	});
-
-	QUnit.test("Should not match an incorrect model name despite of using correct binding path", function (assert) {
-		// System under Test
-		this.oBindingPath.setPath("/0");
-		this.oBindingPath.setModelName("Model");
-		var bResult = this.oBindingPath.isMatching(this.oList.getItems()[0]);
-		// Assert
-		assert.ok(!bResult, "Did not match because the model name is incorrect");
-	});
-
-	QUnit.test("Should match a correct binding path", function (assert) {
-		// System under Test
-		this.oBindingPath.setPath("/0");
-		this.oBindingPath.setModelName("");
-		var bResult = this.oBindingPath.isMatching(this.oList.getItems()[0]);
-		// Assert
-		assert.ok(bResult, "Matched because the binding path is correct");
-	});
-
-	QUnit.test("Should not match an incorrect binding path", function (assert) {
-		// System under Test
-		this.oBindingPath.setPath("/");
-		this.oBindingPath.setModelName("");
-		var bResult = this.oBindingPath.isMatching(this.oList.getItems()[0]);
-		// Assert
-		assert.ok(!bResult, "Did not match because the biding path is incorrect");
-	});
+    QUnit.test("Should match control within aggregation", function (assert) {
+        var aMatchingLists = this.aLists.filter(function (oList, iListIndex) {
+            var aItems = oList.getAggregation("items");
+            var aMatchingItems = aItems.filter(function (oItem) {
+                var oBindingPath = new BindingPath({
+                    path: "/" + fixture.AggregationFixture.data.paths[iListIndex],
+                    propertyPath: "name"
+                });
+                return oBindingPath.isMatching(oItem);
+            });
+            return aMatchingItems.length === aItems.length;
+        });
+		assert.ok(aMatchingLists.length, this.aLists.length, "Should match control within aggregation");
+    });
 
 });
