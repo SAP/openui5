@@ -383,6 +383,29 @@ sap.ui.define([
 		oWizard.destroy();
 	});
 
+	QUnit.test("addStep - next button handler propagation", function (assert) {
+		var oStep1 = new WizardStep({
+			title: "First"
+		}), oWizard = new Wizard({
+				steps: [oStep1]
+			});
+
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oWizard.removeAllSteps();
+
+		sap.ui.getCore().applyChanges();
+		oWizard.addStep(oStep1);
+
+		// assert
+		assert.strictEqual(oStep1._oNextButton.mEventRegistry.press.length, 1,
+			"Only one press handler is attached to the next button.");
+
+		// clean up
+		oWizard.destroy();
+	});
+
 	QUnit.module("Wizard Branching", {
 		sWizardId: "wizard-branching-id",
 		beforeEach: function () {
