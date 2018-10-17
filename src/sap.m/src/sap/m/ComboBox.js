@@ -794,7 +794,11 @@ sap.ui.define([
 		 * This event handler is called before the picker popup is opened.
 		 *
 		 */
-		ComboBox.prototype.onBeforeOpenDropdown = function() {};
+		ComboBox.prototype.onBeforeOpenDropdown = function() {
+			if (this.getSelectedItem()) {
+				this.$().removeClass("sapMFocus");
+			}
+		};
 
 		ComboBox.prototype.onBeforeOpenDialog = function() {
 			var oPickerTextField = this.getPickerTextField();
@@ -875,6 +879,10 @@ sap.ui.define([
 			// the value state message should be reopen
 			if (this.shouldValueStateMessageBeOpened() && (document.activeElement === oDomRef)) {
 				this.openValueStateMessage();
+			}
+
+			if (document.activeElement === this.getFocusDomRef()) {
+				this.$().addClass("sapMFocus");
 			}
 		};
 
