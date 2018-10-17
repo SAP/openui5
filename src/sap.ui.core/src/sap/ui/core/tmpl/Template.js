@@ -487,7 +487,7 @@ function(
 				type: Template.DEFAULT_TEMPLATE
 			}, oTemplate);
 
-			// in case of specifiying a src attribute for the configuration object
+			// in case of specifying a src attribute for the configuration object
 			// we load the template from a remote resource
 			var sId, sType, sControl, sContent, sController = false,
 				bLoadTemplate = typeof oTemplate.src === "string",

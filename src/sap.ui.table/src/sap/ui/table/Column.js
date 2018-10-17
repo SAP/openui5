@@ -346,7 +346,7 @@ function(
 	Column.prototype.invalidate = function(oOrigin) {
 		// prevent changes in the template (especially the databinding ones)
 		//  - what about exchanging the template? => implemented in setTemplate
-		//  - what about modifiying properties? => developer must call invalidate!
+		//  - what about modifying properties? => developer must call invalidate!
 		// The problem is that we just need to prevent databinding changes. The
 		// problem here is that the databinding bindings are created ones the template
 		// is created and has its own model. If now changes are done in the model
@@ -357,7 +357,7 @@ function(
 		 * connection to its data (also for the template of the column!) and this
 		 * finally invalidates the Table which triggers the re-rendering. One
 		 * option is to complete decouple the template from the Table by
-		 * supressing the invalidate. But this finally also decouples the Table
+		 * suppressing the invalidate. But this finally also decouples the Table
 		 * from any changes on the template after the template has been applied
 		 * to the Column. But when re-rendering it would update the column cells.
 		 * To notify the Table on proper changes one has to call the method
