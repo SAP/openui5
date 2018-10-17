@@ -1,6 +1,8 @@
 /*global QUnit,sinon*/
 
 sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery",
 	"jquery.sap.global",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
@@ -9,12 +11,13 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
-], function(jQuery, Component, ComponentContainer, LibraryInfo, ODataModel, App, Page) {
+	"sap/ui/thirdparty/sinon-qunit",
+	"jquery.sap.sjax" // only used indirectly via jQuery.sap.syncHead
+], function(Log, jQuery, jQuery_, Component, ComponentContainer, LibraryInfo, ODataModel, App, Page) {
 
 	"use strict";
 
-	var oLog = jQuery.sap.log.getLogger("SampleTester");
+	var oLog = Log.getLogger("SampleTester");
 
 	var SampleTester = function(sLibraryName, aExcludes) {
 		this._sLibraryName = sLibraryName;

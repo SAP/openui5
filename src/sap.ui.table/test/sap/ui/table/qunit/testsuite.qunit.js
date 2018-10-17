@@ -58,10 +58,17 @@ sap.ui.define([
 			},
 			"ExploredSamples": {
 				group: "Library",
-				ui5: {
-					libs: ["sap.ui.table", "sap.m", "sap.ui.layout", "sap.ui.documentation"]
+				runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
+				qunit: {
+					version: 2
 				},
-				sinon: false,
+				sinon: {
+					version: 1 // because MockServer is used by samples
+				},
+				ui5: {
+					libs: ["sap.ui.table", "sap.m", "sap.ui.layout", "sap.ui.documentation"],
+					"xx-componentPreload": "off"
+				},
 				autostart: false
 			},
 

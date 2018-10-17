@@ -32,13 +32,22 @@ sap.ui.define(function() {
 		},
 		tests: {
 			"ExploredSamples": {
-				coverage: {
-					only : ["sap/ui/layout/ExploredSamples"]
+				loader: {
+					paths: {
+						"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
+					}
+				},
+				runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 1 // because MockServer is used by samples
 				},
 				ui5: {
-					libs: ["sap.ui.unified", "sap.ui.documentation", "sap.ui.layout", "sap.m"]
+					libs: ["sap.ui.layout", "sap.m", "sap.tnt", "sap.ui.documentation"],
+					"xx-componentPreload": "off"
 				},
-				sinon: false,
 				autostart: false
 			},
 			"Grid": {

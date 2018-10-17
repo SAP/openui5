@@ -162,8 +162,8 @@
 	};
 
 	function initTestModule(oConfig) {
-		var pQUnit, pSinon, pSinonQUnitBridge, pSinonConfig, pCoverage, pTestEnv,
-			sQUnit, aJUnitDoneCallbacks;
+		var pAfterLoader, pQUnit, pSinon, pSinonQUnitBridge, pSinonConfig, pCoverage, pTestEnv,
+			sQUnitModule, sQUnitCSS, aJUnitDoneCallbacks;
 
 		document.title = oConfig.title;
 
@@ -172,10 +172,26 @@
 			sap.ui.loader.config(oConfig.loader);
 		}
 
+		if ( oConfig.runAfterLoader ) {
+			pAfterLoader = requireP( oConfig.runAfterLoader );
+		} else {
+			pAfterLoader = Promise.resolve();
+		}
+
 		if ( oConfig.qunit.version === "edge" || oConfig.qunit.version === true ) {
 			oConfig.qunit.version = 2;
 		}
 		if ( typeof oConfig.qunit.version === "number" ) {
+
+			if ( oConfig.qunit.version === 1 ) {
+				sQUnitModule = "sap/ui/thirdparty/qunit";
+				sQUnitCSS = "sap/ui/thirdparty/qunit.css";
+			} else if ( oConfig.qunit.version === 2 ) {
+				sQUnitModule = "sap/ui/thirdparty/qunit-2";
+				sQUnitCSS = "sap/ui/thirdparty/qunit-2.css";
+			} else {
+				throw new TypeError("unsupported qunit version " + oConfig.qunit.version);
+			}
 
 			// QUnit configuration can be set in advance, we always disable the autostart
 			window.QUnit = window.QUnit || {};
@@ -186,16 +202,9 @@
 			QUnit.config.autostart = false;
 
 			// now load QUnit, its CSS + the reporter bridge
-			pQUnit = new Promise(function(resolve, reject) {
-				if ( oConfig.qunit.version === 1 ) {
-					utils.addStylesheet("sap/ui/thirdparty/qunit.css");
-					resolve( requireP(sQUnit = "sap/ui/thirdparty/qunit") );
-				} else if ( oConfig.qunit.version === 2 ) {
-					utils.addStylesheet("sap/ui/thirdparty/qunit-2.css");
-					resolve( requireP(sQUnit = "sap/ui/thirdparty/qunit-2") );
-				} else {
-					throw new TypeError("unsupported qunit version " + oConfig.qunit.version);
-				}
+			pQUnit = pAfterLoader.then(function() {
+				utils.addStylesheet(sQUnitCSS);
+				return requireP(sQUnitModule);
 			}).then(function() {
 
 				// install a mock version of the qunit-reporter-junit API to collect jUnitDone callbacks
@@ -220,23 +229,27 @@
 			oConfig.sinon.version = 4;
 		}
 		if ( typeof oConfig.sinon.version === "number" ) {
-			var bridge;
+			var sinonModule, bridgeModule;
 			if ( oConfig.sinon.version === 1 ) {
-				pSinon = requireP("sap/ui/thirdparty/sinon");
-				bridge = "sap/ui/thirdparty/sinon-qunit";
+				sinonModule = "sap/ui/thirdparty/sinon";
+				bridgeModule = "sap/ui/thirdparty/sinon-qunit";
 			} else if ( oConfig.sinon.version === 4 ) {
-				pSinon = requireP("sap/ui/thirdparty/sinon-4");
-				bridge = "sap/ui/qunit/sinon-qunit-bridge";
+				sinonModule = "sap/ui/thirdparty/sinon-4";
+				bridgeModule = "sap/ui/qunit/sinon-qunit-bridge";
 			} else {
 				throw new TypeError("unsupported sinon version " + oConfig.sinon.version);
 			}
+
+			pSinon = pAfterLoader.then(function() {
+				return requireP(sinonModule);
+			});
 
 			if ( oConfig.sinon.qunitBridge && pQUnit ) {
 				pSinonQUnitBridge = Promise.all([
 					pQUnit,
 					pSinon
 				]).then(function() {
-					return requireP(bridge);
+					return requireP(bridgeModule);
 				});
 			}
 
@@ -253,16 +266,16 @@
 				});
 			}
 
-		} else if ( sQUnit ) {
+		} else if ( sQUnitModule ) {
 			// shim dependencies for the bridges, based on the selected QUnit version
 			// might be needed if tests load the bridge on their own
 			sap.ui.loader.config({
 				shim: {
 					"sap/ui/thirdparty/sinon-qunit": {
-						deps: [sQUnit, "sap/ui/thirdparty/sinon"]
+						deps: [sQUnitModule, "sap/ui/thirdparty/sinon"]
 					},
 					"sap/ui/qunit/sinon-qunit-bridge": {
-						deps: [sQUnit, "sap/ui/thirdparty/sinon-4"]
+						deps: [sQUnitModule, "sap/ui/thirdparty/sinon-4"]
 					}
 				}
 			});
@@ -312,6 +325,7 @@
 		});
 
 		pTestEnv = Promise.all([
+			pAfterLoader,
 			pQUnit,
 			pSinon,
 			pSinonQUnitBridge,
