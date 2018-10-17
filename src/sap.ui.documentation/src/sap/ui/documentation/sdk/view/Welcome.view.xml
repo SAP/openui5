@@ -4,7 +4,8 @@
 		xmlns:l="sap.ui.layout"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:custom="sap.ui.documentation.sdk.controls">
+		xmlns:custom="sap.ui.documentation.sdk.controls"
+		xmlns:html="http://www.w3.org/1999/xhtml">
 
 	<Page showHeader="false">
 		<l:BlockLayout>
@@ -77,7 +78,7 @@
 									href="#/topic/50eadaac8d2e49ee8996dc2b560cb76b"
 									text="Responsive Across Browsers and Devices"
 									titleStyle="H2"
-									class="demokitInitialPagesWhiteText sapUiSmallMarginBottom "/>
+									class="demokitInitialPagesWhiteText sapUiSmallMarginBottom"/>
 							<Text
 									text="No need to worry about device specifics! UI5 apps run on smartphones, tablets, and desktops. The UI controls automatically adapt themselves to each device's capabilities and make the most of the available real estate."
 									class="demokitInitialPagesWhiteText"/>
@@ -99,10 +100,10 @@
 					<l:VerticalLayout
 							width="100%">
 						<custom:TitleLink
-								text="Powerful Development Concepts"
-								href="#/topic/ec699e0817fb46a0817b0fa276a249f8"
-								class="sapUiSmallMarginBottom"
-								titleStyle="H2"/>
+							text="Powerful Development Concepts"
+							href="#/topic/ec699e0817fb46a0817b0fa276a249f8"
+							class="sapUiSmallMarginBottom"
+							titleStyle="H2"/>
 						<Text
 								text="The UI5 core offers a solid foundation that simplifies your work by managing many aspects of modern development behind the scenes. It comes with built-in support for architectural concepts like MVC, two-way data binding, and routing."
 								class="sapUiSmallMarginBottom"/>
@@ -192,14 +193,19 @@
 							defaultSpan="L6 M12 S12"
 							hSpacing="0"
 							vSpacing="0">
-						<l:VerticalLayout
-								width="100%">
-							<custom:TitleLink
+						<l:VerticalLayout width="100%">
+							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
+								<custom:TitleLink
 									href="https://experience.sap.com/fiori-design/"
 									text="Award-Winning SAP Fiori Design in Action"
-									class="sapUiSmallMarginBottom"
 									titleStyle="H2"
 									target="_blank"/>
+								<Image
+									src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
+									tooltip="Information published on SAP site"
+									width="1.25rem"
+									press="onDisclaimerLinkPress"/>
+							</html:div>
 							<Text
 									text="UI5 applications benefit from a consistent design language and predefined UX patterns across all frontend features. Use a predefined theme or try our online theming tool to create a custom theme."
 									class="sapUiSmallMarginBottom"/>
@@ -234,12 +240,18 @@
 						backgroundColorShade="ShadeD">
 					<l:VerticalLayout
 							width="100%">
-						<custom:TitleLink
-								href="https://www.sap.com/developer/tutorials/hcp-create-trial-account.html"
-								text="SAPUI5 on SAP Cloud Platform"
-								titleStyle="H2"
-								target="_blank"
-								class="sapUiSmallMarginBottom"/>
+						<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
+							<custom:TitleLink
+									href="https://www.sap.com/developer/tutorials/hcp-create-trial-account.html"
+									text="SAPUI5 on SAP Cloud Platform"
+									titleStyle="H2"
+									target="_blank"/>
+							<Image
+								src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
+								tooltip="Information published on SAP site"
+								width="1.25rem"
+								press="onDisclaimerLinkPress"/>
+						</html:div>
 						<Text
 								text="Sign up for the free SAP Cloud Platform developer edition to test the platform and build cloud-based UI5 apps."
 								class="sapUiSmallMarginBottom"/>
@@ -267,12 +279,18 @@
 						backgroundColorShade="ShadeB">
 					<l:VerticalLayout
 							width="100%">
-						<custom:TitleLink
-								href="https://sapui5.hana.ondemand.com/#/topic/91f346786f4d1014b6dd926db0e91070"
-								target="_blank"
-								text="SAPUI5 On-Premise"
-								titleStyle="H2"
-								class="sapUiSmallMarginBottom"/>
+						<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
+							<custom:TitleLink
+									href="https://sapui5.hana.ondemand.com/#/topic/91f346786f4d1014b6dd926db0e91070"
+									target="_blank"
+									text="SAPUI5 On-Premise"
+									titleStyle="H2"/>
+							<Image
+								src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
+								tooltip="Information published on SAP site"
+								width="1.25rem"
+								press="onDisclaimerLinkPress"/>
+						</html:div>
 						<Text
 								text="SAPUI5 is part of the user interface technologies in SAP HANA, NetWeaver ABAP or Java systems."
 								class="sapUiSmallMarginBottom"/>
@@ -302,12 +320,18 @@
 						backgroundColorShade="ShadeA">
 					<l:VerticalLayout
 							width="100%">
-						<custom:TitleLink
-								href="http://openui5.org"
-								text="OpenUI5 - Free and Open Source"
-								target="_blank"
-								titleStyle="H2"
-								class="sapUiSmallMarginBottom"/>
+						<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
+							<custom:TitleLink
+									href="http://openui5.org"
+									text="OpenUI5 - Free and Open Source"
+									target="_blank"
+									titleStyle="H2"/>
+							<Image
+								src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
+								tooltip="Information published on SAP site"
+								width="1.25rem"
+								press="onDisclaimerLinkPress"/>
+						</html:div>
 						<Text
 								text="Try the open source variant of UI5. It contains all core UI5 features and is available on GitHub under the Apache 2.0 license."
 								class="sapUiSmallMarginBottom"/>
@@ -393,7 +417,13 @@
 								text="SAP Community"
 								titleStyle="H2"
 								wrap="false"
-								class="sapUiSmallMargin sapUiNoMarginBottom"/>
+								class="sapUiSmallMargin sapUiNoMarginBottom sapUiNoMarginEnd"/>
+						<Image
+							src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
+							tooltip="Information published on SAP site"
+							width="1.5rem"
+							class="sapUiDisclaimerCommunityLink"
+							press="onDisclaimerLinkPress"/>
 					</l:HorizontalLayout>
 				</l:BlockLayoutCell>
 
@@ -413,7 +443,13 @@
 								text="StackOverflow"
 								titleStyle="H2"
 								wrap="false"
-								class="sapUiSmallMargin sapUiNoMarginBottom"/>
+								class="sapUiSmallMargin sapUiNoMarginBottom sapUiNoMarginEnd"/>
+						<Image
+							src="./resources/sap/ui/documentation/sdk/images/link-external.png"
+							tooltip="Information published on non SAP site"
+							width="1.5rem"
+							class="sapUiDisclaimerCommunityLink"
+							press="onDisclaimerLinkPress"/>
 					</l:HorizontalLayout>
 				</l:BlockLayoutCell>
 
@@ -433,7 +469,13 @@
 								text="YouTube"
 								titleStyle="H2"
 								wrap="false"
-								class="sapUiSmallMargin sapUiNoMarginBottom"/>
+								class="sapUiSmallMargin sapUiNoMarginBottom sapUiNoMarginEnd"/>
+						<Image
+							src="./resources/sap/ui/documentation/sdk/images/link-external.png"
+							tooltip="Information published on non SAP site"
+							width="1.5rem"
+							class="sapUiDisclaimerCommunityLink"
+							press="onDisclaimerLinkPress"/>
 					</l:HorizontalLayout>
 				</l:BlockLayoutCell>
 
@@ -453,7 +495,13 @@
 								text="Twitter"
 								titleStyle="H2"
 								wrap="false"
-								class="sapUiSmallMargin sapUiNoMarginBottom"/>
+								class="sapUiSmallMargin sapUiNoMarginBottom sapUiNoMarginEnd"/>
+						<Image
+							src="./resources/sap/ui/documentation/sdk/images/link-external.png"
+							tooltip="Information published on non SAP site"
+							width="1.5rem"
+							class="sapUiDisclaimerCommunityLink"
+							press="onDisclaimerLinkPress"/>
 					</l:HorizontalLayout>
 				</l:BlockLayoutCell>
 

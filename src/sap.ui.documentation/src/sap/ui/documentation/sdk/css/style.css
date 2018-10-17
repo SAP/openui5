@@ -2102,3 +2102,18 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 .specialListFeedItem p {
 	margin: 0.5rem 0;
 }
+
+/* External links disclaimer */
+.sapUISDKExternalLink {
+	cursor: pointer;
+	width: 1rem;
+}
+.sapUIDisclaimerLink img:first-child {
+	margin-left: 0.8rem;
+}
+.sapUIDisclaimerLink :first-child {
+	display: inline;
+}
+.sapUiDisclaimerCommunityLink {
+	margin-top: 1.25rem;
+}

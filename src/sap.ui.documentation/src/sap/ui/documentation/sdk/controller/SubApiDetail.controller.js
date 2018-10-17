@@ -152,11 +152,17 @@ sap.ui.define([
 			onJSDocLinkClick: function (oEvent) {
 				var oClassList = oEvent.target.classList,
 					bJSDocLink = oClassList.contains("jsdoclink"),
+					bExternalLink = oClassList.contains("sapUISDKExternalLink"),
 					sLinkTarget = oEvent.target.getAttribute("data-sap-ui-target"),
 					sEntityType;
 
 				// Not a JSDocLink - we do nothing
-				if (!bJSDocLink) {
+				if (!bJSDocLink && !bExternalLink) {
+					return;
+				}
+
+				if (bExternalLink) {
+					this.onDisclaimerLinkPress(oEvent);
 					return;
 				}
 
