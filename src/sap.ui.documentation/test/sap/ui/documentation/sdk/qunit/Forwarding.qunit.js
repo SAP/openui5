@@ -73,7 +73,7 @@ function () {
 	QUnit.test("properties", function(assert) {
 
 		var sRequestURL = sExploredBaseURL + "#/entity/sap.m.ActionSheet/properties",
-				sRedirectURL = sDemokitBaseURL + "#/api/sap.m.ActionSheet/properties";
+				sRedirectURL = sDemokitBaseURL + "#/api/sap.m.ActionSheet/controlProperties";
 
 		fnCompareOnhashchange(assert, this.iframe, sRequestURL, sRedirectURL);
 	});
