@@ -353,14 +353,21 @@ sap.ui.define([
 		 */
 		_placeContextMenu: function (oSource, bContextMenu) {
 			this.getPopover().setShowArrow(true);
-
 			var sOverlayId = (oSource.getId && oSource.getId()) || oSource.getAttribute("overlay");
 			var sFakeDivId = "contextMenuFakeDiv";
 
+			// get Dimensions of Overlay and Viewport
+			var oOverlayDimensions = this._getOverlayDimensions(sOverlayId);
+			var oViewportDimensions = this._getViewportDimensions();
+
+			// if the Overlay is near the top position of the Viewport, the Popover makes wrong calculation for positioning it.
+			// The MiniMenu has been placed above the Overlay even if there has not been enough place.
+			// Therefore we have to calculate the top position and also consider the high of the Arrow (10 Pixels).
+			var iFakeDivTop = oOverlayDimensions.top - 10 > oViewportDimensions.top ? 0 : oViewportDimensions.top - (oOverlayDimensions.top - 10);
+
 			// place a Target DIV (for the moment at wrong position)
 			jQuery("#" + sFakeDivId).remove();
-			jQuery("#" + sOverlayId).append("<div id=\"" + sFakeDivId + "\" overlay=\"" + sOverlayId + "\" style = \"position:absolute;top: -3000px;left: -3000px;\" />");
-
+			jQuery("#" + sOverlayId).append("<div id=\"" + sFakeDivId + "\" overlay=\"" + sOverlayId + "\" style = \"position: absolute; top: " + iFakeDivTop + "px; left: 0px;\" />");
 			var oFakeDiv = document.getElementById(sFakeDivId);
 
 			// place the Popover invisible
@@ -368,10 +375,8 @@ sap.ui.define([
 			this.getPopover().setContentHeight(undefined);
 			this.getPopover().openBy(oFakeDiv);
 
-			//get Dimensions
+			// get Dimensions of Popover
 			var oPopoverDimensions = this._getPopoverDimensions(!bContextMenu);
-			var oOverlayDimensions = this._getOverlayDimensions(sOverlayId);
-			var oViewportDimensions = this._getViewportDimensions();
 
 			// check if vertical scrolling should be done
 			if (oPopoverDimensions.height >= oViewportDimensions.height * 2 / 3) {
@@ -391,7 +396,7 @@ sap.ui.define([
 				this.getPopover().setContentWidth(undefined);
 			}
 
-			//calculate exact position
+			// calculate exact position
 			var oPosition = {};
 
 			if (bContextMenu) {
