@@ -338,7 +338,6 @@ sap.ui.define([
 			// Assert
 			assert.ok(oDialog, "..returns an object");
 			assert.equal(oDialog.getMetadata().getName(), "sap.m.Dialog", "..of type sap.m.Dialog");
-			assert.equal(oDialog.getContentWidth(), "29rem", "..with certain contentWidth");
 			assert.equal(oDialog.getStretch(), false, ".. with no stretch");
 
 			assert.ok(oDialog.getBeginButton(), "..and with begin button");

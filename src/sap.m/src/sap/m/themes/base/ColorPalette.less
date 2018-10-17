@@ -316,3 +316,18 @@ html:not(.sap-phone)[data-sap-ui-browser^="ie"], html:not(.sap-phone)[data-sap-u
 		}
 	}
 }
+
+html.sap-desktop .sapMDialog.CPDialog{
+	min-width: 18rem; //override the  Dialog's min-width for desktop
+	.sapUiColorPicker-ColorPickerMatrix {
+		&.sapUiRespGrid.sapUiRespGridHSpace1 {
+			padding-bottom: 0.5rem;
+		}
+		//in a dialog ColorPicker doesn't have padding-top in order to be as compact as possible
+		&.sapUnifiedColorPicker.sapUiRespGrid.sapUiRespGridHSpace1 > div:first-child {
+			height: auto;
+			padding-top: 0;
+		}
+	}
+}
+
