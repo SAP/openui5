@@ -178,7 +178,6 @@ sap.ui.define([
 	 * @param {object} [mPropertyBag.appDescriptor] - Manifest that belongs to actual component
 	 * @param {string} [mPropertyBag.siteId] - <code>sideId</code> that belongs to actual component
 	 * @param {string} [mPropertyBag.cacheKey] - key to validate the client side stored cache entry
-	 * @param {string} [mPropertyBag.url] - address to which the request for change should be sent in case the data is not cached
 	 * @param {string} [mPropertyBag.appName] - name where bundled changes from the application development are stored
 	 * @param {boolean} bInvalidateCache - should the cache be invalidated
 	 * @returns {Promise} resolves with the change file for the given component, either from cache or back end
