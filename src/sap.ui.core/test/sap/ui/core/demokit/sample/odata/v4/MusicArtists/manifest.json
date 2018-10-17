@@ -37,6 +37,8 @@
 					"MasterList.view.xml",
 					"ObjectPage.controller.js",
 					"ObjectPage.view.xml",
+					"PublicationObjectPage.controller.js",
+					"PublicationObjectPage.view.xml",
 					"manifest.json"
 				]
 			}
@@ -87,23 +89,32 @@
 			"routes" : [
 				{
 					"pattern" : "",
-					"name" : "masterlist",
-					"target" : "masterlist"
+					"name" : "masterList",
+					"target" : "masterList"
 				},
 				{
-					"pattern" : "objectpage/{artistPath}",
-					"name" : "objectpage",
-					"target" : "objectpage"
+					"pattern" : "objectPage/{artistPath}",
+					"name" : "objectPage",
+					"target" : "objectPage"
+				},
+				{
+					"pattern" : "publicationObjectPage/{artistPath}/{publicationPath}",
+					"name" : "publicationObjectPage",
+					"target" : "publicationObjectPage"
 				}
 			],
 			"targets" : {
-				"masterlist" : {
+				"masterList" : {
 					"viewName" : "MasterList",
 					"viewLevel" : 0
 				},
-				"objectpage": {
+				"objectPage": {
 					"viewName" : "ObjectPage",
 					"viewLevel" : 1
+				},
+				"publicationObjectPage": {
+					"viewName" : "PublicationObjectPage",
+					"viewLevel" : 2
 				}
 			}
 		}

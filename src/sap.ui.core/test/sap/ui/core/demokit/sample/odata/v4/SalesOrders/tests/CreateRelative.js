@@ -9,7 +9,13 @@ sap.ui.define([
 
 	return {
 		createRelative : function (Given, When, Then, sUIComponent) {
-			var bRealOData = TestUtils.isRealOData();
+			var oExpectedError = {
+					component : "sap.ui.model.odata.v4.ODataPropertyBinding",
+					level : Log.Level.ERROR,
+					message : "Failed to update path /SalesOrderList"
+				},
+				aExpectedErrors = [],
+				bRealOData = TestUtils.isRealOData();
 
 			// we check supportAssistantIssues only within this test journey because it is the most
 			// deepest one regarding reached UI elements
@@ -67,7 +73,9 @@ sap.ui.define([
 				Then.onTheMainPage.checkSalesOrderLineItemNote(0, "Line Item Note Changed - 1");
 
 				// check correct error handling of multiple changes in one $batch
+				aExpectedErrors.push(oExpectedError);
 				When.onTheMainPage.changeNoteInFirstLineItem("Line Item Note Changed - 2");
+				aExpectedErrors.push(oExpectedError);
 				When.onTheMainPage.changeQuantityInFirstLineItem("0.0");
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				When.onTheMessagePopover.close();
@@ -92,6 +100,7 @@ sap.ui.define([
 
 				// change again Note in details causes error because of outdated ETag
 				// because refresh on relative bindings is not supported
+				aExpectedErrors.push(oExpectedError);
 				When.onTheMainPage.changeNoteInDetails("Sales Order Details Note Changed - 2");
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				When.onTheMessagePopover.close();
@@ -120,6 +129,7 @@ sap.ui.define([
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				When.onTheSuccessInfo.confirm();
 				When.onTheMainPage.pressConfirmSalesOrderButton();
+				//TODO how to wait until confirmation is done?
 			}
 
 			// test refresh single
@@ -143,22 +153,7 @@ sap.ui.define([
 
 			// delete all created SalesOrders again
 			When.onAnyPage.cleanUp("SalesOrders");
-			Then.onAnyPage.checkLog(bRealOData ? [{
-				component : "sap.ui.model.odata.v4.ODataPropertyBinding",
-				level : Log.Level.ERROR,
-				message : "Failed to update path /SalesOrderList/-1/SO_2_SOITEM"
-				//TODO: enable checkLog to deal with RegExp
-			}, {
-				component : "sap.ui.model.odata.v4.ODataPropertyBinding",
-				level : Log.Level.ERROR,
-				message : "Failed to update path /SalesOrderList/-1/SO_2_SOITEM"
-				//TODO: enable checkLog to deal with RegExp
-			}, {
-				component : "sap.ui.model.odata.v4.ODataPropertyBinding",
-				level : Log.Level.ERROR,
-				message : "Failed to update path /SalesOrderList/-1/Note"
-				//TODO: enable checkLog to deal with RegExp
-			}] : undefined);
+			Then.onAnyPage.checkLog(aExpectedErrors);
 			Then.onAnyPage.analyzeSupportAssistant();
 			Then.iTeardownMyUIComponent();
 		}

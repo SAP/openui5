@@ -462,7 +462,7 @@ sap.ui.define([
 				delete that.aContexts[-1];
 				that._fireChange({reason : ChangeReason.Remove});
 			}
-		).then(function () {
+		).then(function (oCreatedEntity) {
 			var sGroupId;
 
 			that.iMaxLength += 1;
@@ -471,11 +471,23 @@ sap.ui.define([
 				if (!that.oModel.isDirectGroup(sGroupId) && !that.oModel.isAutoGroup(sGroupId)) {
 					sGroupId = "$auto";
 				}
+
 				return that.refreshSingle(oContext, that.lockGroup(sGroupId));
 			}
+
+			return oCreatedEntity;
 		}, function (oError) {
 			oGroupLock.unlock(true); // createInCache failed, so the lock might still be blocking
 			throw oError;
+		}).then(function (oCreatedEntity) {
+			var sPredicate;
+
+			if (!(oInitialData && oInitialData["@$ui5.keepTransientPath"])) {
+				sPredicate = _Helper.getPrivateAnnotation(oCreatedEntity, "predicate");
+				if (sPredicate) {
+					oContext.sPath = sResolvedPath + sPredicate;
+				}
+			}
 		});
 		oContext = Context.create(this.oModel, this, sResolvedPath + "/-1", -1, oCreatePromise);
 
@@ -1492,8 +1504,8 @@ sap.ui.define([
 	 *   destroyed, see {@link sap.ui.model.Context#destroy}.
 	 *   Supported since 1.55.0
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise which resolves with <code>undefined</code> when the entity is updated in the
-	 *   cache.
+	 *   A promise which resolves with the entity when the entity is updated in the
+	 *   cache, or <code>undefined</code> if <code>bAllowRemoval</code> is set to true.
 	 *
 	 * @private
 	 */
@@ -1555,7 +1567,7 @@ sap.ui.define([
 					? oCache.refreshSingleWithRemove(oGroupLock, oContext.iIndex, fireDataRequested,
 						onRemove)
 					: oCache.refreshSingle(oGroupLock, oContext.iIndex, fireDataRequested))
-				.then(function () {
+				.then(function (oEntity) {
 					fireDataReceived({data : {}});
 					if (oContext.oBinding) { // do not update destroyed context
 						oContext.checkUpdate();
@@ -1563,6 +1575,8 @@ sap.ui.define([
 							refreshDependentBindings();
 						}
 					}
+
+					return oEntity;
 				}, function (oError) {
 					fireDataReceived({error : oError});
 					throw oError;

@@ -1305,4 +1305,54 @@ sap.ui.define([
 			assert.deepEqual(mResolvedHeaders, oFixture.mResolvedHeader);
 		});
 	});
+
+	//*********************************************************************************************
+	[{
+		sPathInCache : "",
+		mExpectedMap : {
+			"('23')/Team_Id" : ["listener0"],
+			"('23')/Name" : ["listener1"],
+			"('23')/TEAM_2_EMPLOYEES/-1/EMPLOYEE_2_EQUIPMENTS/-1/ID" : ["listener2"],
+			"('23')/TEAM_2_EMPLOYEES/-1/EMPLOYEE_2_EQUIPMENTS/-1/Category" : ["listener3"],
+			"('23')/TEAM_2_EMPLOYEES/-1/ID" : ["listener4"],
+			"('23')/TEAM_2_EMPLOYEES('47')/ID" : ["listener5"],
+			"('42')/Team_Id" : ["listener6"],
+			"('42')/Name" : ["listener7"],
+			"('42')/TEAM_2_EMPLOYEES/-1/ID" : ["listener8"]
+		}
+	}, {
+		sPathInCache : "-1/TEAM_2_EMPLOYEES",
+		mExpectedMap : {
+			"-1/Team_Id" : ["listener0"],
+			"-1/Name" : ["listener1"],
+			"-1/TEAM_2_EMPLOYEES('23')/EMPLOYEE_2_EQUIPMENTS/-1/ID" : ["listener2"],
+			"-1/TEAM_2_EMPLOYEES('23')/EMPLOYEE_2_EQUIPMENTS/-1/Category" : ["listener3"],
+			"-1/TEAM_2_EMPLOYEES('23')/ID" : ["listener4"],
+			"-1/TEAM_2_EMPLOYEES('47')/ID" : ["listener5"],
+			"('42')/Team_Id" : ["listener6"],
+			"('42')/Name" : ["listener7"],
+			"('42')/TEAM_2_EMPLOYEES/-1/ID" : ["listener8"]
+		}
+	}].forEach(function (oFixture) {
+		var sTitle = "update transient path, path in cache: " + oFixture.sPathInCache;
+
+		QUnit.test(sTitle, function (assert) {
+			var mMap = {
+					"-1/Team_Id" : ["listener0"],
+					"-1/Name" : ["listener1"],
+					"-1/TEAM_2_EMPLOYEES/-1/EMPLOYEE_2_EQUIPMENTS/-1/ID" : ["listener2"],
+					"-1/TEAM_2_EMPLOYEES/-1/EMPLOYEE_2_EQUIPMENTS/-1/Category" : ["listener3"],
+					"-1/TEAM_2_EMPLOYEES/-1/ID" : ["listener4"],
+					"-1/TEAM_2_EMPLOYEES('47')/ID" : ["listener5"],
+					"('42')/Team_Id" : ["listener6"],
+					"('42')/Name" : ["listener7"],
+					"('42')/TEAM_2_EMPLOYEES/-1/ID" : ["listener8"]
+				};
+
+			// code under test
+			_Helper.updateTransientPaths(mMap, oFixture.sPathInCache, "('23')");
+
+			assert.deepEqual(mMap, oFixture.mExpectedMap);
+		});
+	});
 });
