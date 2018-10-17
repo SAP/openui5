@@ -550,3 +550,14 @@ html[data-sap-ui-animation='off'] {
 		box-shadow: inset 0 -0.125rem @sapUiSuccessBorder;
 	}
 }
+
+.sapMDialogHighlight > header {
+
+	&.sapMDialogTitle .sapMDialogIcon.sapUiIcon {
+		color: @sapHighlightColor;
+	}
+
+	&:last-of-type .sapMIBar.sapMIBar { // .sapMIBar.sapMIBar - doubles the specificity in order to override other styles
+		box-shadow: inset 0 -0.125rem @sapHighlightColor;
+	}
+}

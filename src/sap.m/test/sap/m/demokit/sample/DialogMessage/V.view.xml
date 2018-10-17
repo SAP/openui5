@@ -30,6 +30,12 @@
 				width="230px"
 				press="onMessageErrorDialogPress"
 				class="sapUiSmallMarginBottom" />
+
+			<Button
+				text="Message Dialog (Highlight)"
+				width="230px"
+				press="onMessageHighlightDialogPress"
+				class="sapUiSmallMarginBottom" />
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>

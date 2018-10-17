@@ -76,6 +76,24 @@
 				]
 			});
 
+			var oDialogHighlightState = new sap.m.Dialog("dialogHighlightState", {
+				title: "Highlight",
+				ariaDescribedBy: "p1",
+				state: sap.ui.core.ValueState.Highlight,
+				content: [
+					new sap.ui.core.HTML({content: '<p id="p1" style="margin:0; padding: 16px;">Highlighted information!</p>'})
+				],
+				buttons: [
+					new sap.m.Button({
+						id: 'oDialogHighlightStateOKButton',
+						text: "OK",
+						press: function () {
+							oDialogHighlightState.close();
+						}
+					})
+				]
+			});
+
 			var oCustomHeader = new sap.m.Bar("customHeader", {
 				contentLeft: [new sap.ui.core.Icon("myAppIcon", {src: "manager"}),
 					new sap.m.Label("IconHeader", {text: "Icon Header"})],
@@ -1483,6 +1501,14 @@
 						width: _buttonWidth,
 						press: function () {
 							oDialogErrorState.open();
+						}
+					}),
+
+					new sap.m.Button('dialogWithHighlightStateButton', {
+						text: "With Highlight State",
+						width: _buttonWidth,
+						press: function () {
+							oDialogHighlightState.open();
 						}
 					}),
 

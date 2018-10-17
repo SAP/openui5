@@ -737,19 +737,22 @@
 		var oValueStateInput4 = new sap.m.Input("vsinput4", {
 			placeholder: "value state changes while you are typing",
 			liveChange: function (oEvent) {
-				var i = oValueStateInput3.getValue().length;
-				switch( i % 4 ){
+				var i = oValueStateInput4.getValue().length;
+				switch( i % 5 ){
 					case 0:
-						oValueStateInput3.setValueState("Success");
+						oValueStateInput4.setValueState("Success");
 						break;
 					case 1:
-						oValueStateInput3.setValueState("Warning");
+						oValueStateInput4.setValueState("Warning");
 						break;
 					case 2:
-						oValueStateInput3.setValueState("Error");
+						oValueStateInput4.setValueState("Error");
 						break;
 					case 3:
-						oValueStateInput3.setValueState("None");
+						oValueStateInput4.setValueState("Highlight");
+						break;
+					case 4:
+						oValueStateInput4.setValueState("None");
 						break;
 				}
 			}

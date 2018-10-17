@@ -1274,6 +1274,25 @@ sap.ui.define([
 
 		// Clean up
 		oDialogError.destroy();
+
+
+		// Arrange
+		var oDialogHighlight = new Dialog({
+			state: ValueState.Highlight
+		});
+		overwriteAnimationIE(oDialogHighlight);
+		sValueState = rb.getText("LIST_ITEM_STATE_HIGHLIGHT");
+
+		// Act
+		oDialogHighlight.open();
+		this.clock.tick(500);
+		sInvisibleTextContent = oDialogHighlight.getAggregation("_valueState").getText();
+
+		// Assert
+		assert.strictEqual(sInvisibleTextContent, sValueState, "Highlight state value should be the same.");
+
+		// Clean up
+		oDialogHighlight.destroy();
 	});
 
 	QUnit.test("Check if header toolbar role is set correctly", function(assert) {

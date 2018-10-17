@@ -767,6 +767,13 @@ sap.ui.define([
 
 	fnSetValueStateTestCase1({
 		control: new InputBase({
+			valueState: ValueState.Highlight
+		}),
+		output: "sapMInputBaseContentWrapperHighlight"
+	});
+
+	fnSetValueStateTestCase1({
+		control: new InputBase({
 			valueState: ValueState.Error
 		}),
 		output: "sapMInputBaseContentWrapperState"
@@ -1163,7 +1170,7 @@ sap.ui.define([
 					liveChange: function() {
 						var i = oValueStateInput.getValue().length;
 
-						switch (i % 4) {
+						switch (i % 5) {
 							case 0:
 								oValueStateInput.setValueState("None");
 								break;
@@ -1178,6 +1185,10 @@ sap.ui.define([
 
 							case 3:
 								oValueStateInput.setValueState("Error");
+								break;
+
+							case 4:
+								oValueStateInput.setValueState("Highlight");
 								break;
 						}
 					}
@@ -1214,8 +1225,18 @@ sap.ui.define([
 		assert.strictEqual(jQuery.sap.byId("vsinput-message-text").text(), oCoreRB.getText("VALUE_STATE_ERROR"));
 		assert.strictEqual(jQuery.sap.byId("vsinput-message").text(), oMobileRB.getText("INPUTBASE_VALUE_STATE_ERROR") + oCoreRB.getText("VALUE_STATE_ERROR"));
 
-		// none state
+		// highlight state
 		oValueStateInput.updateDomValue("1234");
+		sap.ui.test.qunit.triggerEvent("input", oValueStateInput.getFocusDomRef());
+		this.clock.tick(1000);
+		oValueStateInput.getValueState();
+		assert.strictEqual(oValueStateInput.getValueState(), "Highlight");
+		assert.ok(jQuery.sap.domById("vsinput-message"), "Highlight message popup is open");
+		assert.strictEqual(jQuery.sap.byId("vsinput-message-text").text(), oCoreRB.getText("VALUE_STATE_HIGHLIGHT"));
+		assert.strictEqual(jQuery.sap.byId("vsinput-message").text(), oMobileRB.getText("INPUTBASE_VALUE_STATE_HIGHLIGHT") + oCoreRB.getText("VALUE_STATE_HIGHLIGHT"));
+
+		// none state
+		oValueStateInput.updateDomValue("12345");
 		sap.ui.test.qunit.triggerEvent("input", oValueStateInput.getFocusDomRef());
 		assert.strictEqual(oValueStateInput.getValueState(), "None");
 		assert.ok(!jQuery.sap.domById("vsinput-message"), "no message popup");
@@ -1811,6 +1832,9 @@ sap.ui.define([
 
 		oInput.setValueState(ValueState.Success);
 		assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Success does not make control invalid");
+
+		oInput.setValueState(ValueState.Highlight);
+		assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Highlight does not make control invalid");
 
 		oInput.setValueState(ValueState.Error);
 		assert.strictEqual($Input.attr("aria-invalid"), "true", "valueState=Error makes control invalid");
