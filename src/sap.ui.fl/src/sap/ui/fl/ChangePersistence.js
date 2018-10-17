@@ -195,7 +195,6 @@ sap.ui.define([
 	 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] Indicates that changes shall be loaded without layer filtering
 	 * @param {boolean} [mPropertyBag.includeVariants] Indicates that smart variants shall be included
 	 * @param {string} [mPropertyBag.cacheKey] Key to validate the cache entry stored on client side
-	 * @param {string} [mPropertyBag.url] Address to which the request for change should be sent in case the data is not cached
 	 * @param {sap.ui.core.Component} [mPropertyBag.component] - Component instance
 	 * @param {boolean} bInvalidateCache - should the cache be invalidated
 	 * @see sap.ui.fl.Change

@@ -394,7 +394,6 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.siteId] - <code>sideId</code> that belongs to actual component
 	 * @param {string} [mPropertyBag.layer] - Layer up to which changes shall be read (excluding the specified layer)
 	 * @param {string} [mPropertyBag.appVersion] - Version of application whose changes shall be read
-	 * @param {string} [mPropertyBag.url] - address to which the request for change should be sent in case the data is not cached
 	 * @param {string} [mPropertyBag.flexModulesUrl] - address to which the request for modules should be sent in case modules are present
 	 *
 	 * @returns {Promise} Returns a Promise with the changes (changes, contexts, optional messagebundle), <code>componentClassName</code> and <code>etag</code> value;
@@ -476,17 +475,7 @@ sap.ui.define([
 
 		var mOptions = _createRequestOptions(oComponent, mPropertyBag);
 
-		var mUrls = {
-			flexDataUrl : undefined,
-			flexModulesUrl : undefined
-		};
-
-		if (mPropertyBag.url) {
-			mUrls.flexDataUrl = mPropertyBag.url;
-			mUrls.flexModulesUrl = mPropertyBag.flexModulesUrl;
-		} else {
-			mUrls = _createUrls(oComponent, mPropertyBag, this._sClient);
-		}
+		var mUrls = _createUrls(oComponent, mPropertyBag, this._sClient);
 
 		return this.send(mUrls.flexDataUrl, undefined, undefined, mOptions)
 			.then(this._onChangeResponseReceived.bind(this, oComponent.name, mUrls.flexModulesUrl), function (oError) {
