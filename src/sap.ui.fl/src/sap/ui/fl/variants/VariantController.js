@@ -302,7 +302,7 @@ sap.ui.define([
 		return Object.keys(this._mVariantManagement)
 			.reduce(function (aInitialChanges, sVariantManagementReference) {
 				var sCurrentOrDefaultVariant = this._mVariantManagement[sVariantManagementReference].currentVariant ? "currentVariant" : "defaultVariant";
-				var oInitialVariant = this.getVariant(sVariantManagementReference, this._mVariantManagement[sVariantManagementReference][sCurrentOrDefaultVariant], false);
+				var oInitialVariant = this.getVariant(sVariantManagementReference, this._mVariantManagement[sVariantManagementReference][sCurrentOrDefaultVariant]);
 
 				// if variant doesn't exist and visible property is unset - fallback to standard variant
 				if (!oInitialVariant || !oInitialVariant.content.content.visible) {
@@ -311,7 +311,7 @@ sap.ui.define([
 
 				// Concatenate with the previous flex changes
 				return aInitialChanges.concat(
-					this.getVariantChanges(sVariantManagementReference, this._mVariantManagement[sVariantManagementReference][sCurrentOrDefaultVariant])
+					this.getVariantChanges(sVariantManagementReference, this._mVariantManagement[sVariantManagementReference][sCurrentOrDefaultVariant], false)
 				);
 			}.bind(this), []);
 	};
