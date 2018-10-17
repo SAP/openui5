@@ -1,12 +1,12 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller",
-    "sap/ui/model/type/Currency",
-    "sap/m/ObjectAttribute",
-    "sap/m/library",
-    "sap/ui/core/Locale",
-    "sap/ui/core/LocaleData"
-], function(Controller, Currency, ObjectAttribute, mobileLibrary, Locale, LocaleData) {
-    "use strict";
+	"sap/ui/core/mvc/Controller",
+	"sap/m/library",
+	"sap/ui/core/Locale",
+	"sap/ui/core/LocaleData",
+	"sap/ui/model/type/Currency",
+	"sap/m/ObjectAttribute"
+], function (Controller, mobileLibrary, Locale, LocaleData, Currency, ObjectAttribute) {
+	"use strict";
 
 	return Controller.extend("sap.ui.demo.db.controller.App", {
 		formatMail: function(sFirstName, sLastName) {
