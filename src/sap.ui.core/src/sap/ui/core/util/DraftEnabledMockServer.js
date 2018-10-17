@@ -389,7 +389,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/thirdparty/jquery", "jquer
 		},
 
 		// =================================
-		// overriden functions of MockServer
+		// overridden functions of MockServer
 		// =================================
 
 		setRequests: function(aRequests) {

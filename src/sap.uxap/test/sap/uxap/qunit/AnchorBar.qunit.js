@@ -143,7 +143,7 @@ sap.ui.define([
 		var $menuButton = $("#UxAP-69_anchorBar--ObjectPageLayout-anchBar-UxAP-69_anchorBar--section16-anchor");
 
 		assert.ok(parseInt($menuButton.css("width"), 10) > (12 * parseInt($("body").css("font-size"), 10)),
-			"Max width style of MenuButton is overriden so that it is bigger than 12rem");
+			"Max width style of MenuButton is overridden so that it is bigger than 12rem");
 	});
 
 	QUnit.test("Phone view", function (assert) {

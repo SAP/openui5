@@ -418,8 +418,8 @@ sap.ui.define([
 
 	/**
 	 * Sets the selection of the TreeTable to the given range (including boundaries).
-	 * Beware: The previous selection will be lost/overriden. If this is not wanted, please use "addSelectionInterval" and
-	 * "removeSelectionIntervall".
+	 * Beware: The previous selection will be lost/overridden. If this is not wanted, please use "addSelectionInterval" and
+	 * "removeSelectionInterval".
 	 *
 	 * @param {int} iFromIndex the start index of the selection range
 	 * @param {int} iToIndex the end index of the selection range

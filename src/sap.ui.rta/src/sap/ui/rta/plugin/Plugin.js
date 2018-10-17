@@ -33,7 +33,7 @@ function(
 	 *
 	 * @class
 	 * The Plugin allows to handle the overlays and aggregation overlays from the DesignTime
-	 * The Plugin should be overriden by the real plugin implementations, which define some actions through events attached to an overlays
+	 * The Plugin should be overridden by the real plugin implementations, which define some actions through events attached to an overlays
 	 * @extends sap.ui.dt.Plugin
 	 *
 	 * @author SAP SE
