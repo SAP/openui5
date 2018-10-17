@@ -315,11 +315,11 @@ sap.ui.define([
 						success: function(oComboBox) {
 							// press on the item with the key specified by the parameter
 							return this.waitFor({
-								controlType: "sap.ui.core.Item",
+								controlType: "sap.m.StandardListItem",
 								matchers: new Ancestor(oComboBox),
 								success: function(aItems) {
 									aItems.some(function (oItem) {
-										if (oItem.getText() === sName) {
+										if (oItem.getTitle() === sName) {
 											new Press().executeOn(oItem);
 											return true;
 										}

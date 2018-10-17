@@ -201,7 +201,7 @@ sap.ui.define([
 			var publicElements = this.es.getPublicElements();
 			assert.equal(
 				publicElements.length,
-				36,
+				37,
 				" should exclude internal controls from mElements"
 			);
 		});
@@ -261,7 +261,7 @@ sap.ui.define([
 
 			assert.strictEqual(
 				publicNotCloned.length,
-				17,
+				18,
 				"should be with less elements than global scope"
 			);
 
@@ -271,7 +271,7 @@ sap.ui.define([
 
 			assert.strictEqual(
 				publicElements.length,
-				36,
+				37,
 				"should be with less elements than global scope"
 			);
 		});

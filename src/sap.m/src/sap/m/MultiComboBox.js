@@ -2432,52 +2432,6 @@ function(
 		}
 	};
 
-	/**
-	 * Retrieves the first enabled item from the aggregation named <code>items</code>.
-	 *
-	 * @param {array} [aItems] The item aggregation
-	 * @returns {sap.ui.core.Item | null} The first enabled item
-	 */
-	MultiComboBox.prototype.findFirstEnabledItem = function(aItems) {
-		aItems = aItems || this.getItems();
-
-		for (var i = 0; i < aItems.length; i++) {
-			if (aItems[i].getEnabled()) {
-				return aItems[i];
-			}
-		}
-
-		return null;
-	};
-
-	/**
-	 * Gets the visible items from the aggregation named <code>items</code>.
-	 *
-	 * @return {sap.ui.core.Item[]} The visible items in the aggregation
-	 */
-	MultiComboBox.prototype.getVisibleItems = function() {
-		for (var i = 0, oListItem, aItems = this.getItems(), aVisibleItems = []; i < aItems.length; i++) {
-			oListItem = this.getListItem(aItems[i]);
-
-			if (oListItem && oListItem.getVisible()) {
-				aVisibleItems.push(aItems[i]);
-			}
-		}
-
-		return aVisibleItems;
-	};
-
-	/**
-	 * Retrieves the last enabled item from the aggregation named <code>items</code>.
-	 *
-	 * @param {array} [aItems] The item aggregation
-	 * @returns {sap.ui.core.Item | null} The last enabled item
-	 */
-	MultiComboBox.prototype.findLastEnabledItem = function(aItems) {
-		aItems = aItems || this.getItems();
-		return this.findFirstEnabledItem(aItems.reverse());
-	};
-
 	/* =========================================================== */
 	/* API methods */
 	/* =========================================================== */
@@ -2706,15 +2660,6 @@ function(
 		return aItems;
 	};
 
-	/**
-	 * Gets the selectable items from the aggregation named <code>items</code>.
-	 *
-	 * @returns {sap.ui.core.Item[]} An array containing the selectable items.
-	 */
-	MultiComboBox.prototype.getSelectableItems = function() {
-		return this.getEnabledItems(this.getVisibleItems());
-	};
-
 	MultiComboBox.prototype.getWidth = function() {
 		return this.getProperty("width") || "100%";
 	};
@@ -2734,22 +2679,6 @@ function(
 			this._getReadOnlyPopover().addContent(oList);
 		}
 		return this;
-	};
-
-	MultiComboBox.prototype.clearFilter = function() {
-		this.getItems().forEach(function(oItem) {
-			this.getListItem(oItem).setVisible(oItem.getEnabled() && this.getSelectable(oItem));
-		}, this);
-	};
-
-	/**
-	 * @returns {boolean} true if the list has at least one not visible item, false if all items in the list are visible.
-	 * @private
-	 */
-	MultiComboBox.prototype._isListInSuggestMode = function() {
-		return this.getList().getItems().some(function(oListItem) {
-			return !oListItem.getVisible() && this._getItemByListItem(oListItem).getEnabled();
-		}, this);
 	};
 
 	/**
@@ -2853,17 +2782,6 @@ function(
 		if (oToken) {
 			oToken.setVisible(bSelectable);
 		}
-	};
-
-	/**
-	 * Get selectable property of sap.ui.core.Item
-	 *
-	 * @param {sap.ui.core.Item} oItem The item in question
-	 * @returns {boolean} The selectable value
-	 * @private
-	 */
-	MultiComboBox.prototype.getSelectable = function(oItem) {
-		return oItem._bSelectable;
 	};
 
 	/**
@@ -3066,20 +2984,6 @@ function(
 		this.removeAllSelectedItems();
 	};
 
-	MultiComboBox.prototype.addItem = function(oItem) {
-		this.addAggregation("items", oItem);
-
-		if (oItem) {
-			oItem.attachEvent("_change", this.onItemChange, this);
-		}
-
-		if (this.getList()) {
-			this.getList().addItem(this._mapItemToListItem(oItem));
-		}
-
-		return this;
-	};
-
 	/**
 	 * Inserts an item into the aggregation named <code>items</code>.
 	 *
@@ -3137,33 +3041,6 @@ function(
 	};
 
 	/**
-	 * Gets the enabled items from the aggregation named <code>items</code>.
-	 *
-	 * @param {sap.ui.core.Item[]} [aItems=getItems()] Items to filter.
-	 * @return {sap.ui.core.Item[]} An array containing the enabled items.
-	 * @public
-	 */
-	MultiComboBox.prototype.getEnabledItems = function(aItems) {
-		aItems = aItems || this.getItems();
-
-		return aItems.filter(function(oItem) {
-			return oItem.getEnabled();
-		});
-	};
-
-	/**
-	 * Gets the item with the given key from the aggregation named <code>items</code>.<br>
-	 * <b>Note:</b> If duplicate keys exist, the first item matching the key is returned.
-	 *
-	 * @param {string} sKey An item key that specifies the item to retrieve.
-	 * @returns {sap.ui.core.Item} The matching item
-	 * @public
-	 */
-	MultiComboBox.prototype.getItemByKey = function(sKey) {
-		return this.findItem("key", sKey);
-	};
-
-	/**
 	 * Removes an item from the aggregation named <code>items</code>.
 	 *
 	 * @param {int | string | sap.ui.core.Item} oItem The item to remove or its index or id.
@@ -3198,42 +3075,12 @@ function(
 	};
 
 	/**
-	 * Retrieves an item by searching for the given property/value from the aggregation named <code>items</code>.<br>
-	 * <b>Note:</b> If duplicate values exist, the first item matching the value is returned.
-	 *
-	 * @param {string} sProperty An item property.
-	 * @param {string} sValue An item value that specifies the item to retrieve.
-	 * @returns {sap.ui.core.Item | null} The matched item or null.
-	 */
-	MultiComboBox.prototype.findItem = function(sProperty, sValue) {
-		var sMethod = "get" + sProperty.charAt(0).toUpperCase() + sProperty.slice(1);
-
-		for (var i = 0, aItems = this.getItems(); i < aItems.length; i++) {
-			if (aItems[i][sMethod]() === sValue) {
-				return aItems[i];
-			}
-		}
-
-		return null;
-	};
-
-	/**
 	 * Destroy the tokens in the Tokenizer.
 	 *
 	 * @private
 	 */
 	MultiComboBox.prototype._clearTokenizer = function() {
 		this._oTokenizer.destroyAggregation("tokens", true);
-	};
-
-	/**
-	 * Getter for the control's List.
-	 *
-	 * @returns {sap.m.List} The list
-	 * @private
-	 */
-	MultiComboBox.prototype.getList = function() {
-		return this._oList;
 	};
 
 	MultiComboBox.prototype.exit = function() {
@@ -3284,18 +3131,6 @@ function(
 	};
 
 	/**
-	 * Get item corresponding to given list item.
-	 *
-	 * @param {sap.m.StandardListItem | null} oListItem The given list item
-	 * @return {sap.ui.core.Item} The corresponding item
-	 * @private
-	 * @since 1.24.0
-	 */
-	MultiComboBox.prototype._getItemByListItem = function(oListItem) {
-		return this._getItemBy(oListItem, "ListItem");
-	};
-
-	/**
 	 * Get item corresponding to given token.
 	 *
 	 * @param {sap.m.Token | null} oToken The given token
@@ -3305,39 +3140,6 @@ function(
 	 */
 	MultiComboBox.prototype._getItemByToken = function(oToken) {
 		return this._getItemBy(oToken, "Token");
-	};
-
-	/**
-	 * Get item corresponding to given data object.
-	 *
-	 * @param {Object | null} oDataObject The given object
-	 * @param {string} sDataName The data name
-	 * @return {sap.ui.core.Item} The corresponding item
-	 * @private
-	 * @since 1.24.0
-	 */
-	MultiComboBox.prototype._getItemBy = function(oDataObject, sDataName) {
-		sDataName = this.getRenderer().CSS_CLASS_COMBOBOXBASE + sDataName;
-
-		for ( var i = 0, aItems = this.getItems(), iItemsLength = aItems.length; i < iItemsLength; i++) {
-			if (aItems[i].data(sDataName) === oDataObject) {
-				return aItems[i];
-			}
-		}
-
-		return null;
-	};
-
-	/**
-	 * Getter for the control's ListItem.
-	 *
-	 * @param {sap.ui.core.Item} oItem The item
-	 * @returns {sap.m.StandardListItem | null} The ListItem
-	 * @private
-	 * @since 1.24.0
-	 */
-	MultiComboBox.prototype.getListItem = function(oItem) {
-		return oItem ? oItem.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "ListItem") : null;
 	};
 
 	/**
