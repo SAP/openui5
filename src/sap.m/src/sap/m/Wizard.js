@@ -460,7 +460,7 @@ sap.ui.define([
 				Log.error("The Wizard is supposed to handle up to 8 steps.");
 				return this;
 			}
-			wizardStep._oNextButton.attachPress(this._handleNextButtonPress.bind(this));
+			wizardStep._attachNextButtonHandler(this._handleNextButtonPress.bind(this));
 			this._incrementStepCount();
 			return this.addAggregation("steps", wizardStep);
 		};
@@ -493,6 +493,9 @@ sap.ui.define([
 		 */
 		Wizard.prototype.removeAllSteps = function () {
 			this._resetStepCount();
+			this.getSteps().forEach(function(oStep){
+				oStep._detachNextButtonHandler();
+			});
 			return this.removeAllAggregation("steps");
 		};
 
