@@ -28,7 +28,7 @@ sap.ui.define([
 			aRequests.push({
 				method: "GET",
 				path: new RegExp("FindUpcomingMeetups(.*)"),
-				response: function(oXhr, sUrlParams) {
+				response: function(oXhr) {
 					Log.debug("Incoming request for FindUpcomingMeetups");
 					var today = new Date();
 					today.setHours(0); // or today.toUTCString(0) due to timezone differences
