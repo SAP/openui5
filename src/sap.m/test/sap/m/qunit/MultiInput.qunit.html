@@ -664,6 +664,34 @@
 		oMIMultiLineMode.destroy();
 	});
 
+	test("open multi line mode on phone without suggestions", function() {
+		//arrange
+		var oSystem = {
+			desktop: false,
+			phone: true,
+			tablet: false
+		};
+
+		this.stub(sap.ui.Device, "system", oSystem);
+
+		var oMIMultiLineMode = new sap.m.MultiInput({
+			showSuggestion: false
+		});
+
+		oMIMultiLineMode.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		this.clock.tick(500);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.notOk(oMIMultiLineMode._oSuggestionPopup, "No suggestion popup is created");
+		assert.throws(oMIMultiLineMode._openMultiLineOnPhone(), false, "No error is thrown.");
+
+		//clean-up
+		oMIMultiLineMode.destroy();
+	});
+
 	module("Events", {
 		setup: function() {
 			this.multiInput1 = new sap.m.MultiInput();
