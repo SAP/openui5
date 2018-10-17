@@ -2,14 +2,10 @@
 
 sap.ui.define([
 	"sap/f/GridList",
-	"sap/ui/core/HTML",
-	"sap/ui/layout/cssgrid/GridItemLayoutData",
 	"sap/ui/core/Core"
 ],
 function (
 	GridList,
-	HTML,
-	GridItemLayoutData,
 	Core
 ) {
 	"use strict";
@@ -21,7 +17,7 @@ function (
 	QUnit.test("Initialization", function (assert) {
 
 		// Arrange
-		sinon.spy(GridList.prototype, "_startGridLayoutDelegate");
+		sinon.spy(GridList.prototype, "_addGridLayoutDelegate");
 
 		// Act
 		var oGrid = new GridList();
@@ -33,11 +29,11 @@ function (
 		assert.equal(oGrid.getItems().length, 0, "Grid should have no items");
 		assert.notOk(oGrid.getCustomLayout(), "customLayout should be unset");
 
-		assert.ok(GridList.prototype._startGridLayoutDelegate.calledOnce, "GridLayoutDelegate should be initialized");
+		assert.ok(GridList.prototype._addGridLayoutDelegate.calledOnce, "GridLayoutDelegate should be initialized");
 		assert.ok(oGrid.oGridLayoutDelegate, "GridLayoutDelegate initialized");
 
 		// Cleanup
-		GridList.prototype._startGridLayoutDelegate.restore();
+		GridList.prototype._addGridLayoutDelegate.restore();
 	});
 
 	QUnit.test("IGridConfigurable Interface implementation", function (assert) {
@@ -72,25 +68,6 @@ function (
 		GridList.prototype.getDomRef.restore();
 	});
 
-	QUnit.test("IGridConfigurable Interface implementation - getGridLayoutConfiguration custom", function (assert) {
-
-		// Arrange
-		var oGrid = new GridList();
-
-		sinon.stub(GridList.prototype, "getCustomLayout", function () {
-			return { test: "test" };
-		});
-
-		// Act
-		var oLayout = oGrid.getGridLayoutConfiguration();
-
-		// Assert
-		assert.ok(oLayout && oLayout.test === "test", "Should have a custom layout");
-
-		// Cleanup
-		GridList.prototype.getCustomLayout.restore();
-	});
-
 	QUnit.test("IGridConfigurable Interface implementation - getGridLayoutConfiguration default", function (assert) {
 
 		// Arrange
@@ -112,7 +89,7 @@ function (
 	QUnit.test("Delegate", function (assert) {
 
 		// Arrange
-		sinon.spy(GridList.prototype, "_destroyGridLayoutDelegate");
+		sinon.spy(GridList.prototype, "_removeGridLayoutDelegate");
 
 		var oGrid = new GridList();
 
@@ -120,11 +97,11 @@ function (
 		oGrid.destroy();
 
 		// Assert
-		assert.ok(GridList.prototype._destroyGridLayoutDelegate.calledOnce, "Should call _destroyGridLayoutDelegate on exit");
+		assert.ok(GridList.prototype._removeGridLayoutDelegate.calledOnce, "Should call _removeGridLayoutDelegate on exit");
 		assert.ok(oGrid.oGridLayoutDelegate === null, "Should destroy GridLayoutDelegate on exit");
 
 		// Cleanup
-		GridList.prototype._destroyGridLayoutDelegate.restore();
+		GridList.prototype._removeGridLayoutDelegate.restore();
 	});
 
 	QUnit.test("Observer", function (assert) {

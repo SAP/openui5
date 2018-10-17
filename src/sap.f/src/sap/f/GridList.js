@@ -48,14 +48,14 @@ GridList.prototype.init = function () {
 		onAfterRendering: this._onAfterItemRendering
 	};
 
-	this._startGridLayoutDelegate();
+	this._addGridLayoutDelegate();
 
 	this._oGridObserver = new ManagedObjectObserver(GridList.prototype._onGridChange.bind(this));
 	this._oGridObserver.observe(this, { aggregations: ["items"] });
 };
 
 GridList.prototype.exit = function () {
-	this._destroyGridLayoutDelegate();
+	this._removeGridLayoutDelegate();
 
 	if (this._oGridObserver) {
 		this._oGridObserver.disconnect();
@@ -67,20 +67,18 @@ GridList.prototype.exit = function () {
 
 // Implement IGridConfigurable interface
 GridList.prototype.getGridDomRefs = function () {
-	return [this.getDomRef("listUl")];
+	return [this.getItemsContainerDomRef()];
 };
 
 // Implement IGridConfigurable interface
-GridList.prototype.getGridLayoutConfiguration = function () {
-	return this.getCustomLayout();
-};
+GridList.prototype.getGridLayoutConfiguration = GridList.prototype.getCustomLayout;
 
 /**
  * Adds the GridLayoutDelegate
  *
  * @private
  */
-GridList.prototype._startGridLayoutDelegate = function () {
+GridList.prototype._addGridLayoutDelegate = function () {
 	if (!this.oGridLayoutDelegate) {
 		this.oGridLayoutDelegate = new GridLayoutDelegate();
 		this.addEventDelegate(this.oGridLayoutDelegate, this);
@@ -92,7 +90,7 @@ GridList.prototype._startGridLayoutDelegate = function () {
  *
  * @private
  */
-GridList.prototype._destroyGridLayoutDelegate = function () {
+GridList.prototype._removeGridLayoutDelegate = function () {
 	if (this.oGridLayoutDelegate) {
 		this.removeEventDelegate(this.oGridLayoutDelegate);
 		this.oGridLayoutDelegate.destroy();
