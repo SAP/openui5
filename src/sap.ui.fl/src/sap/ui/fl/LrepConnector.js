@@ -15,7 +15,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Provides the connectivity to the ABAP based LRep REST-service
+	 * Provides the connectivity to the LRep & UI5 Flexibility Services REST-routes
 	 *
 	 * @param {object} [mParameters] - map of parameters, see below
 	 * @param {String} [mParameters.XsrfToken] - XSRF token which can be reused for back-end connectivity. If no XSRF token is passed, a new one
@@ -27,7 +27,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 */
-	var Connector = function(mParameters) {
+	var LrepConnector = function(mParameters) {
 		this._initClientParam();
 		this._initLanguageParam();
 		if (mParameters) {
@@ -36,17 +36,25 @@ sap.ui.define([
 
 	};
 
-	Connector.createConnector = function(mParameters) {
-		return new Connector(mParameters);
+	LrepConnector.createConnector = function(mParameters) {
+		return new LrepConnector(mParameters);
 	};
 
-	Connector._bServiceAvailability = undefined;
-	Connector.prototype.DEFAULT_CONTENT_TYPE = "application/json; charset=utf-8";
-	Connector.prototype._sClient = undefined;
-	Connector.prototype._sLanguage = undefined;
-	Connector.prototype._aSentRequestListeners = [];
-	Connector.prototype._sRequestUrlPrefix = "";
-	Connector._oLoadSettingsPromise = undefined;
+	LrepConnector._bServiceAvailability = undefined;
+	LrepConnector._oLoadSettingsPromise = undefined;
+	LrepConnector.prototype._sClient = undefined;
+	LrepConnector.prototype._sLanguage = undefined;
+	LrepConnector.prototype._aSentRequestListeners = [];
+	LrepConnector.prototype._sRequestUrlPrefix = "";
+	LrepConnector.DEFAULT_CONTENT_TYPE = "application/json; charset=utf-8";
+	LrepConnector.ROUTES = {
+		CONTENT: "/content/",
+		CSRF: "/actions/getcsrftoken/",
+		PUBLISH: "/actions/publish/",
+		DATA: "/flex/data/",
+		MODULES: "/flex/modules/",
+		SETTINGS: "/flex/settings"
+	};
 
 	/**
 	 * Gets the availability status of the flexibility service.
@@ -54,16 +62,21 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolved with a boolean value of the availability status
 	 * @public
 	 * @function
-	 * @name sap.ui.fl.Connector.isFlexServiceAvailable
+	 * @name sap.ui.fl.LrepConnector.isFlexServiceAvailable
 	 */
-	Connector.isFlexServiceAvailable =  function() {
-		if (Connector._bServiceAvailability !== undefined) {
-			return Promise.resolve(Connector._bServiceAvailability);
+	LrepConnector.isFlexServiceAvailable =  function() {
+		if (LrepConnector._bServiceAvailability !== undefined) {
+			return Promise.resolve(LrepConnector._bServiceAvailability);
 		}
 		//probe service availability by sending settings request
-		return Connector.createConnector().loadSettings().then(function (){
-			return Promise.resolve(Connector._bServiceAvailability);
+		return LrepConnector.createConnector().loadSettings().then(function (){
+			return Promise.resolve(LrepConnector._bServiceAvailability);
 		});
+	};
+
+
+	LrepConnector.prototype._getFlexibilityServicesUrlPrefix = function() {
+		return sap.ui.getCore().getConfiguration().getFlexibilityServices();
 	};
 
 	/**
@@ -74,9 +87,9 @@ sap.ui.define([
 	 * @param {function} fCallback function called after all related promises are resolved
 	 * @public
 	 */
-	Connector.attachSentRequest = function(fCallback) {
-		if (typeof fCallback === "function" && Connector.prototype._aSentRequestListeners.indexOf(fCallback) === -1) {
-			Connector.prototype._aSentRequestListeners.push(fCallback);
+	LrepConnector.attachSentRequest = function(fCallback) {
+		if (typeof fCallback === "function" && LrepConnector.prototype._aSentRequestListeners.indexOf(fCallback) === -1) {
+			LrepConnector.prototype._aSentRequestListeners.push(fCallback);
 		}
 	};
 
@@ -86,10 +99,10 @@ sap.ui.define([
 	 * @param {function} fCallback function called after all related promises are resolved
 	 * @public
 	 */
-	Connector.detachSentRequest = function(fCallback) {
-		var iIndex = Connector.prototype._aSentRequestListeners.indexOf(fCallback);
+	LrepConnector.detachSentRequest = function(fCallback) {
+		var iIndex = LrepConnector.prototype._aSentRequestListeners.indexOf(fCallback);
 		if (iIndex !== -1) {
-			Connector.prototype._aSentRequestListeners.splice(iIndex, 1);
+			LrepConnector.prototype._aSentRequestListeners.splice(iIndex, 1);
 		}
 	};
 
@@ -98,7 +111,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Connector.prototype._initClientParam = function() {
+	LrepConnector.prototype._initClientParam = function() {
 		var client = FlexUtils.getClient();
 		if (client) {
 			this._sClient = client;
@@ -110,7 +123,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Connector.prototype._initLanguageParam = function() {
+	LrepConnector.prototype._initLanguageParam = function() {
 		var sLanguage;
 		sLanguage = FlexUtils.getUrlParameter("sap-language") || FlexUtils.getUrlParameter("sap-ui-language");
 		if (sLanguage) {
@@ -125,7 +138,7 @@ sap.ui.define([
 	 * @private
 	 * @sap-restricted
 	 */
-	Connector.prototype.setRequestUrlPrefix = function(sRequestUrlPrefix) {
+	LrepConnector.prototype.setRequestUrlPrefix = function(sRequestUrlPrefix) {
 		this._sRequestUrlPrefix = sRequestUrlPrefix;
 	};
 
@@ -136,7 +149,7 @@ sap.ui.define([
 	 * @returns {sap.ui.core.URI} returns the complete uri for this request
 	 * @private
 	 */
-	Connector.prototype._resolveUrl = function(sRelativeUrl) {
+	LrepConnector.prototype._resolveUrl = function(sRelativeUrl) {
 		if (!sRelativeUrl.startsWith("/")) {
 			sRelativeUrl = "/" + sRelativeUrl;
 		}
@@ -151,7 +164,7 @@ sap.ui.define([
 	 * @returns {Object} Returns an object containing all headers for each request
 	 * @private
 	 */
-	Connector.prototype._getDefaultHeader = function() {
+	LrepConnector.prototype._getDefaultHeader = function() {
 		return {
 			headers: {
 				"X-CSRF-Token": this._sXsrfToken || "fetch"
@@ -168,10 +181,10 @@ sap.ui.define([
 	 * @returns {Object} Returns an object containing the options and the default header for a jQuery.ajax request
 	 * @private
 	 */
-	Connector.prototype._getDefaultOptions = function(sMethod, sContentType, oData) {
+	LrepConnector.prototype._getDefaultOptions = function(sMethod, sContentType, oData) {
 		var mOptions;
 		if (!sContentType) {
-			sContentType = this.DEFAULT_CONTENT_TYPE;
+			sContentType = LrepConnector.DEFAULT_CONTENT_TYPE;
 		} else if (sContentType.indexOf("charset") === -1) {
 			sContentType += "; charset=utf-8";
 		}
@@ -218,20 +231,13 @@ sap.ui.define([
 	 * @returns {Promise} Returns a promise to the result of the request
 	 * @public
 	 */
-	Connector.prototype.send = function(sUri, sMethod, oData, mOptions) {
+	LrepConnector.prototype.send = function(sUri, sMethod, oData, mOptions) {
 		sMethod = sMethod || "GET";
 		sMethod = sMethod.toUpperCase();
 		mOptions = mOptions || {};
 		sUri = this._resolveUrl(sUri);
 
-		if (mOptions.success || mOptions.error) {
-			var sErrorMessage = "Success and error handler are not allowed in mOptions";
-			throw new Error(sErrorMessage);
-		}
-
-		var sContentType = mOptions.contentType || this.DEFAULT_CONTENT_TYPE;
-
-		mOptions = fnBaseMerge(this._getDefaultOptions(sMethod, sContentType, oData), mOptions);
+		mOptions = fnBaseMerge(this._getDefaultOptions(sMethod, mOptions.contentType, oData), mOptions);
 
 		return this._sendAjaxRequest(sUri, mOptions);
 	};
@@ -243,7 +249,7 @@ sap.ui.define([
 	 * @returns {Array} Array of messages, for example <code>[ { "severity": "Error", "text": "content id must be non-initial" } ] </code>
 	 * @private
 	 */
-	Connector.prototype._getMessagesFromXHR = function(oXHR) {
+	LrepConnector.prototype._getMessagesFromXHR = function(oXHR) {
 		var errorResponse, aMessages, length, i;
 		aMessages = [];
 		try {
@@ -272,17 +278,18 @@ sap.ui.define([
 	 * @returns {Promise} Returns a Promise with the status and response and messages
 	 * @private
 	 */
-	Connector.prototype._sendAjaxRequest = function(sUri, mOptions) {
+	LrepConnector.prototype._sendAjaxRequest = function(sUri, mOptions) {
 
-		if (!sap.ui.fl.flexibilityServices) {
+		var sFlexibilityServicePrefix = this._getFlexibilityServicesUrlPrefix();
+
+		if (!sFlexibilityServicePrefix) {
 			return Promise.reject({
 				status: "warning",
 				message: "Flexibility Services requests were not sent. The UI5 bootstrap is configured to not send any requests."
 			});
 		}
 
-		var that = this;
-		var sFetchXsrfTokenUrl = "/sap/bc/lrep/actions/getcsrftoken/";
+		var sFetchXsrfTokenUrl = sFlexibilityServicePrefix + LrepConnector.ROUTES.CSRF;
 		var mFetchXsrfTokenOptions = {
 			headers: {
 				"X-CSRF-Token": "fetch"
@@ -298,7 +305,7 @@ sap.ui.define([
 			function handleValidRequest(oResponse, sStatus, oXhr) {
 
 				var sNewCsrfToken = oXhr.getResponseHeader("X-CSRF-Token");
-				that._sXsrfToken = sNewCsrfToken || that._sXsrfToken;
+				this._sXsrfToken = sNewCsrfToken || this._sXsrfToken;
 				var sEtag = oXhr.getResponseHeader("etag");
 
 				var oResult = {
@@ -309,24 +316,24 @@ sap.ui.define([
 
 				resolve(oResult);
 
-				jQuery.each(that._aSentRequestListeners, function(iIndex, fCallback) {
+				jQuery.each(this._aSentRequestListeners, function(iIndex, fCallback) {
 					fCallback(oResult);
 				});
 			}
 
 			function fetchTokenAndHandleRequest(oResponse, sStatus, oXhr) {
-				that._sXsrfToken = oXhr.getResponseHeader("X-CSRF-Token");
+				this._sXsrfToken = oXhr.getResponseHeader("X-CSRF-Token");
 				mOptions.headers = mOptions.headers || {};
-				mOptions.headers["X-CSRF-Token"] = that._sXsrfToken;
+				mOptions.headers["X-CSRF-Token"] = this._sXsrfToken;
 
 				// Re-send request after fetching token
 				jQuery.ajax(sUri, mOptions).done(handleValidRequest).fail(function(oXhr, sStatus, sErrorThrown) {
 					var oError = new Error(sErrorThrown);
 					oError.status = "error";
 					oError.code = oXhr.statusCode().status;
-					oError.messages = that._getMessagesFromXHR(oXhr);
+					oError.messages = this._getMessagesFromXHR(oXhr);
 					reject(oError);
-				});
+				}.bind(this));
 			}
 
 			function refetchTokenAndRequestAgainOrHandleInvalidRequest(oXhr) {
@@ -348,7 +355,7 @@ sap.ui.define([
 						result = {
 							status: "error",
 							code: oXhr.statusCode().status,
-							messages: that._getMessagesFromXHR(oXhr)
+							messages: this._getMessagesFromXHR(oXhr)
 						};
 						reject(result);
 					}
@@ -360,26 +367,26 @@ sap.ui.define([
 			if (mOptions && mOptions.type) {
 				if (mOptions.type === "GET" || mOptions.type === "HEAD") {
 					bRequestCSRFToken = false;
-				} else if (that._sXsrfToken && that._sXsrfToken !== "fetch") {
+				} else if (this._sXsrfToken && this._sXsrfToken !== "fetch") {
 					bRequestCSRFToken = false;
 				}
 			}
 
 			if (bRequestCSRFToken) {
 				// Fetch XSRF Token
-				jQuery.ajax(sFetchXsrfTokenUrl, mFetchXsrfTokenOptions).done(fetchTokenAndHandleRequest).fail(function(oXhr) {
+				jQuery.ajax(sFetchXsrfTokenUrl, mFetchXsrfTokenOptions).done(fetchTokenAndHandleRequest.bind(this)).fail(function(oXhr) {
 					// Fetching XSRF Token failed
 					reject({
 						status: "error",
 						code: oXhr.statusCode().status,
-						messages: that._getMessagesFromXHR(oXhr)
+						messages: this._getMessagesFromXHR(oXhr)
 					});
-				});
+				}.bind(this));
 			} else {
 				// Send normal request
-				jQuery.ajax(sUri, mOptions).done(handleValidRequest).fail(refetchTokenAndRequestAgainOrHandleInvalidRequest);
+				jQuery.ajax(sUri, mOptions).done(handleValidRequest.bind(this)).fail(refetchTokenAndRequestAgainOrHandleInvalidRequest.bind(this));
 			}
-		});
+		}.bind(this));
 	};
 
 	/**
@@ -400,7 +407,7 @@ sap.ui.define([
 	 * in case modules are present the Promise is resolved after the module request is finished
 	 * @public
 	 */
-	Connector.prototype.loadChanges = function(oComponent, mPropertyBag) {
+	LrepConnector.prototype.loadChanges = function(oComponent, mPropertyBag) {
 
 		function _createRequestOptions(oComponent, mPropertyBag) {
 			var mOptions = {};
@@ -435,8 +442,8 @@ sap.ui.define([
 
 		function _createUrls(oComponent, mPropertyBag, sClient) {
 			var mUrls = {};
-			var sFlexDataPrefix = "/sap/bc/lrep/flex/data/";
-			var sFlexModulesPrefix = "/sap/bc/lrep/flex/modules/";
+			var sFlexDataPrefix = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.DATA;
+			var sFlexModulesPrefix = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.MODULES;
 			var sPostFix = "";
 
 			if (mPropertyBag.cacheKey) {
@@ -475,19 +482,19 @@ sap.ui.define([
 
 		var mOptions = _createRequestOptions(oComponent, mPropertyBag);
 
-		var mUrls = _createUrls(oComponent, mPropertyBag, this._sClient);
+		var mUrls = _createUrls.call(this, oComponent, mPropertyBag, this._sClient);
 
 		return this.send(mUrls.flexDataUrl, undefined, undefined, mOptions)
 			.then(this._onChangeResponseReceived.bind(this, oComponent.name, mUrls.flexModulesUrl), function (oError) {
 				if (oError.code === 404) {
-					Connector._bServiceAvailability = false;
+					LrepConnector._bServiceAvailability = false;
 				}
 				throw (oError);
 			});
 	};
 
-	Connector.prototype._onChangeResponseReceived = function (sComponentName, sFlexModulesUri, oResponse) {
-		Connector._bServiceAvailability = true;
+	LrepConnector.prototype._onChangeResponseReceived = function (sComponentName, sFlexModulesUri, oResponse) {
+		LrepConnector._bServiceAvailability = true;
 		var mFlexData = {
 			changes : oResponse.response,
 			loadModules : oResponse.response.loadModules,
@@ -521,22 +528,22 @@ sap.ui.define([
 	 * @returns {Promise} Returns a Promise with the flexibility settings content
 	 * @public
 	 */
-	Connector.prototype.loadSettings = function() {
-		if (!Connector._oLoadSettingsPromise) {
-			var sUri = "/sap/bc/lrep/flex/settings";
+	LrepConnector.prototype.loadSettings = function() {
+		if (!LrepConnector._oLoadSettingsPromise) {
+			var sUri = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.SETTINGS;
 
 			if (this._sClient) {
 				sUri += "?sap-client=" + this._sClient;
 			}
-			Connector._oLoadSettingsPromise = this.send(sUri, undefined, undefined, {});
+			LrepConnector._oLoadSettingsPromise = this.send(sUri, undefined, undefined, {});
 		}
 
-		return Connector._oLoadSettingsPromise.then(function(oResponse) {
-				Connector._bServiceAvailability = true;
+		return LrepConnector._oLoadSettingsPromise.then(function(oResponse) {
+				LrepConnector._bServiceAvailability = true;
 				return oResponse.response;
 			}, function(oError) {
 				if (oError.code === 404) {
-					Connector._bServiceAvailability = false;
+					LrepConnector._bServiceAvailability = false;
 				}
 				//In case of failure, resolve promise without value. Error handle is done in Settings class
 				return Promise.resolve();
@@ -548,7 +555,7 @@ sap.ui.define([
 	 * @returns {String} Returns a String with all parameters concatenated
 	 * @private
 	 */
-	Connector.prototype._buildParams = function(aParams) {
+	LrepConnector.prototype._buildParams = function(aParams) {
 		if (!aParams) {
 			aParams = [];
 		}
@@ -590,11 +597,11 @@ sap.ui.define([
 	 * @returns {String} URL prefix
 	 * @private
 	 */
-	Connector.prototype._getUrlPrefix = function(bIsVariant) {
+	LrepConnector.prototype._getUrlPrefix = function(bIsVariant) {
 		if (bIsVariant) {
-			return "/sap/bc/lrep/variants/";
+			return this._getFlexibilityServicesUrlPrefix() + "/variants/";
 		}
-		return "/sap/bc/lrep/changes/";
+		return this._getFlexibilityServicesUrlPrefix() + "/changes/";
 	};
 
 	/**
@@ -606,7 +613,7 @@ sap.ui.define([
 	 * @returns {Object} Returns the result from the request
 	 * @public
 	 */
-	Connector.prototype.create = function(oPayload, sChangelist, bIsVariant) {
+	LrepConnector.prototype.create = function(oPayload, sChangelist, bIsVariant) {
 		var sRequestPath = this._getUrlPrefix(bIsVariant);
 
 		var aParams = [];
@@ -632,7 +639,7 @@ sap.ui.define([
 	 * @returns {Object} Returns the result from the request
 	 * @public
 	 */
-	Connector.prototype.update = function(oPayload, sChangeName, sChangelist, bIsVariant) {
+	LrepConnector.prototype.update = function(oPayload, sChangeName, sChangelist, bIsVariant) {
 		var sRequestPath = this._getUrlPrefix(bIsVariant);
 		sRequestPath += sChangeName;
 
@@ -661,7 +668,7 @@ sap.ui.define([
 	 * @returns {Object} Returns the result from the request
 	 * @public
 	 */
-	Connector.prototype.deleteChange = function(mParameters, bIsVariant) {
+	LrepConnector.prototype.deleteChange = function(mParameters, bIsVariant) {
 		// REVISE rename to deleteFile
 		var sRequestPath = this._getUrlPrefix(bIsVariant);
 		sRequestPath += mParameters.sChangeName;
@@ -702,8 +709,8 @@ sap.ui.define([
 	 * @returns {Object} Returns the result from the request
 	 * @public
 	 */
-	Connector.prototype.getStaticResource = function(sNamespace, sName, sType, bIsRuntime) {
-		var sRequestPath = "/sap/bc/lrep/content/";
+	LrepConnector.prototype.getStaticResource = function(sNamespace, sName, sType, bIsRuntime) {
+		var sRequestPath = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.CONTENT;
 		sRequestPath += sNamespace + "/" + sName + "." + sType;
 
 		var aParams = [];
@@ -729,8 +736,8 @@ sap.ui.define([
 	 * @returns {Object} Returns the result from the request
 	 * @public
 	 */
-	Connector.prototype.getFileAttributes = function(sNamespace, sName, sType, sLayer) {
-		var sRequestPath = "/sap/bc/lrep/content/";
+	LrepConnector.prototype.getFileAttributes = function(sNamespace, sName, sType, sLayer) {
+		var sRequestPath = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.CONTENT;
 		sRequestPath += sNamespace + "/" + sName + "." + sType;
 
 		var aParams = [];
@@ -764,7 +771,7 @@ sap.ui.define([
 	 * @returns {Object} Returns the result from the request
 	 * @public
 	 */
-	Connector.prototype.upsert = function(sNamespace, sName, sType, sLayer, sContent, sContentType, sChangelist) {
+	LrepConnector.prototype.upsert = function(sNamespace, sName, sType, sLayer, sContent, sContentType, sChangelist) {
 		var that = this;
 		return Promise.resolve(that._fileAction("PUT", sNamespace, sName, sType, sLayer, sContent, sContentType, sChangelist));
 	};
@@ -780,12 +787,12 @@ sap.ui.define([
 	 * @returns {Object} Returns the result from the request
 	 * @public
 	 */
-	Connector.prototype.deleteFile = function(sNamespace, sName, sType, sLayer, sChangelist) {
+	LrepConnector.prototype.deleteFile = function(sNamespace, sName, sType, sLayer, sChangelist) {
 		return this._fileAction("DELETE", sNamespace, sName, sType, sLayer, null, null, sChangelist);
 	};
 
-	Connector.prototype._fileAction = function(sMethod, sNamespace, sName, sType, sLayer, sContent, sContentType, sChangelist) {
-		var sRequestPath = "/sap/bc/lrep/content/";
+	LrepConnector.prototype._fileAction = function(sMethod, sNamespace, sName, sType, sLayer, sContent, sContentType, sChangelist) {
+		var sRequestPath = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.CONTENT;
 		sRequestPath += sNamespace + "/" + sName + "." + sType;
 
 		var aParams = [];
@@ -804,7 +811,7 @@ sap.ui.define([
 		sRequestPath += this._buildParams(aParams);
 
 		var mOptions = {
-			contentType: sContentType || this.DEFAULT_CONTENT_TYPE
+			contentType: sContentType || LrepConnector.DEFAULT_CONTENT_TYPE
 		};
 
 		return this.send(sRequestPath, sMethod.toUpperCase(), sContent, mOptions);
@@ -821,8 +828,8 @@ sap.ui.define([
 	 * @returns {Object} Returns the result from the request
 	 * @private Private for now, as is not in use.
 	 */
-	Connector.prototype.publish = function(sOriginNamespace, sName, sType, sOriginLayer, sTargetLayer, sTargetNamespace, sChangelist) {
-		var sRequestPath = "/sap/bc/lrep/actions/publish/";
+	LrepConnector.prototype.publish = function(sOriginNamespace, sName, sType, sOriginLayer, sTargetLayer, sTargetNamespace, sChangelist) {
+		var sRequestPath = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.PUBLISH;
 		sRequestPath += sOriginNamespace + "/" + sName + "." + sType;
 
 		var aParams = [];
@@ -864,8 +871,8 @@ sap.ui.define([
 	 * @returns {Object} Returns the result from the request
 	 * @public
 	 */
-	Connector.prototype.listContent = function(sNamespace, sLayer) {
-		var sRequestPath = "/sap/bc/lrep/content/";
+	LrepConnector.prototype.listContent = function(sNamespace, sLayer) {
+		var sRequestPath = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.CONTENT;
 		sRequestPath += sNamespace;
 
 		var aParams = [];
@@ -881,5 +888,5 @@ sap.ui.define([
 		return this.send(sRequestPath, "GET", null, null);
 	};
 
-	return Connector;
+	return LrepConnector;
 }, true);
