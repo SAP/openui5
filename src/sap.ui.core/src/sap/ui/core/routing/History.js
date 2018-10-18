@@ -240,7 +240,13 @@ sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log", "sap/ui/t
 		// Extended direction determination with window.history.state
 		// IE 11 doesn't clear the window.history.state when new hash is set
 		// therefore the state solution can't be used
-		if (sFullHash && !Device.browser.msie) {
+		//
+		// The enhancement for direction determination is only done for the global
+		// instance because the window.history.state can only be used once for the
+		// new entry determination. Once the window.history.state is changed, it
+		// can't be used again for the same hashchange event to determine the
+		// direction which is the case if additional History instance is created
+		if (sFullHash && !Device.browser.msie && this === History.getInstance()) {
 			sDirection = this._getDirectionWithState(sFullHash);
 		}
 
