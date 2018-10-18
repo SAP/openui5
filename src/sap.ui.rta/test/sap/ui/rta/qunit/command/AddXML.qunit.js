@@ -1,24 +1,26 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/ui/rta/command/CommandFactory',
-	'sap/ui/fl/changeHandler/AddXML',
-	'sap/ui/fl/registry/ChangeRegistry',
-	'sap/ui/fl/Utils',
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/fl/changeHandler/AddXML",
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/Change",
+	"sap/ui/fl/Utils",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
-	'sap/ui/dt/ElementDesignTimeMetadata',
-	'sap/ui/model/json/JSONModel',
-	'sap/m/Button',
-	'sap/m/Text',
-	'sap/m/List',
-	'sap/m/CustomListItem',
-	'sap/ui/thirdparty/sinon-4'
+	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/ui/model/json/JSONModel",
+	"sap/m/Button",
+	"sap/m/Text",
+	"sap/m/List",
+	"sap/m/CustomListItem",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	CommandFactory,
 	AddXML,
 	ChangeRegistry,
+	Change,
 	Utils,
 	DesignTime,
 	OverlayRegistry,
@@ -62,18 +64,22 @@ function (
 	sinon.stub(Utils, "_getAppComponentForComponent").returns(oMockedAppComponent);
 
 	QUnit.module("Given an AddXML command with a valid entry in the change registry,", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			sandbox.stub(Utils, "getCurrentLayer").returns("VENDOR");
 			this.oButton = new Button(oMockedAppComponent.createId("myButton"));
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.oButton.destroy();
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("when getting an AddXML command for the change ...", function(assert) {
+			var sPath = "abc.test";
+			var sFragment = "fragment";
 			var oApplyChangeStub = sandbox.stub(AddXML, "applyChange");
 			var oCompleteChangeContentSpy = sandbox.spy(AddXML, "completeChangeContent");
+			sandbox.stub(Change.prototype, "getModuleName").returns(sPath);
+			var oPreloadSpy = sandbox.spy(sap.ui.require, "preload");
 
 			var oCommandFactory = new CommandFactory({
 				flexSettings: {
@@ -83,7 +89,7 @@ function (
 
 			return oCommandFactory.getCommandFor(this.oButton, "addXML", {
 				fragmentPath: "pathToFragment",
-				fragment: "fragment",
+				fragment: sFragment,
 				targetAggregation: "targetAggregation",
 				index: 0
 			})
@@ -92,7 +98,7 @@ function (
 				assert.ok(oAddXmlCommand, "then command without flex settings is available");
 				assert.strictEqual(oAddXmlCommand.getTargetAggregation(), "targetAggregation", "and its settings are merged correctly");
 				assert.strictEqual(oAddXmlCommand.getFragmentPath(), "pathToFragment", "and its settings are merged correctly");
-				assert.strictEqual(oAddXmlCommand.getFragment(), "fragment", "and its settings are merged correctly");
+				assert.strictEqual(oAddXmlCommand.getFragment(), sFragment, "and its settings are merged correctly");
 				assert.strictEqual(oAddXmlCommand.getIndex(), 0, "and its settings are merged correctly");
 			})
 
@@ -103,7 +109,7 @@ function (
 				});
 				return oCommandFactory.getCommandFor(this.oButton, "addXML", {
 					fragmentPath: "pathToFragment",
-					fragment: "fragment",
+					fragment: sFragment,
 					targetAggregation : "targetAggregation",
 					index: 0
 				});
@@ -113,7 +119,7 @@ function (
 				assert.ok(oAddXmlCommand, "then command with flex settings is available");
 				assert.strictEqual(oAddXmlCommand.getTargetAggregation(), "targetAggregation", "and its settings are merged correctly");
 				assert.strictEqual(oAddXmlCommand.getFragmentPath(), "pathToFragment", "and its settings are merged correctly");
-				assert.strictEqual(oAddXmlCommand.getFragment(), "fragment", "and its settings are merged correctly");
+				assert.strictEqual(oAddXmlCommand.getFragment(), sFragment, "and its settings are merged correctly");
 				assert.strictEqual(oAddXmlCommand.getIndex(), 0, "and its settings are merged correctly");
 				oCommandFactory.setFlexSettings({
 					layer: "VENDOR",
@@ -129,6 +135,8 @@ function (
 				assert.equal(oCompleteChangeContentSpy.callCount, 2, "then completeChangeContent is called twice");
 				assert.equal(oApplyChangeStub.callCount, 1, "then applyChange is called once");
 				assert.notOk(oAddXmlCommand._oPreparedChange.getDefinition().content.fragment, "after applying, the fragment content is not in the change anymore");
+				assert.ok(oPreloadSpy.lastCall.args[0][sPath], "the preload was called with the correct object");
+				assert.equal(oPreloadSpy.lastCall.args[0][sPath], sFragment, "the preload was called with the correct object");
 			})
 
 			.catch(function (oError) {
