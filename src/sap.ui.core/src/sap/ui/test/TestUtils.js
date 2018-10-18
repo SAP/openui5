@@ -44,9 +44,9 @@ sap.ui.define([
 	 *
 	 * @param {object} oActual
 	 *   the actual value to be tested
-	 * @param {object} oExpected
+	 * @param {object|RegExp} oExpected
 	 *   the expected value which needs to be contained structurally (as a subset) within the
-	 *   actual value
+	 *   actual value, or a regular expression which must match the actual string(!) value
 	 * @param {string} sPath
 	 *   path to the values under investigation
 	 * @throws {Error}
@@ -57,6 +57,14 @@ sap.ui.define([
 		var sActualType = QUnit.objectType(oActual),
 			sExpectedType = QUnit.objectType(oExpected),
 			sName;
+
+		if (sActualType === "string" && sExpectedType === "regexp") {
+			if (!oExpected.test(oActual)) {
+				throw new Error(sPath + ": actual value " + oActual
+					+ " does not match expected reg.exp. " + oExpected);
+			}
+			return;
+		}
 
 		if (sActualType !== sExpectedType) {
 			throw new Error(sPath + ": actual type " + sActualType
