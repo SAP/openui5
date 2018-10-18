@@ -2,6 +2,8 @@
 sap.ui.define(["sap/base/strings/hyphenate"], function(hyphenate) {
 	"use strict";
 
+	QUnit.module("hyphenate");
+
 	QUnit.test("hyphenate", function(assert) {
 		assert.expect(2);
 		var sHyphen = hyphenate("thisIsAnCamelCaseString");
