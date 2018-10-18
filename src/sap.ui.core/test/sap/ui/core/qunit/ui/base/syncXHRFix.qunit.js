@@ -131,6 +131,26 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Device', 'sap/ui/base/syncXHR
 		}, 100);
 	});
 
+	QUnit.test("setTimeout/setInterval with non-functions", function(assert) {
+		assert.throws(function(){setTimeout()}, TypeError, "Empty setTimeout throws");
+		assert.throws(function(){setInterval()}, TypeError, "Empty setInterval throws");
+		/* eslint-disable no-implied-eval */
+		clearTimeout(setTimeout(undefined));
+		clearTimeout(setTimeout(123));
+		clearTimeout(setTimeout(true));
+		clearTimeout(setTimeout([]));
+		clearTimeout(setTimeout({}));
+		clearTimeout(setTimeout(/test/));
+		clearInterval(setInterval(undefined));
+		clearInterval(setInterval(123));
+		clearInterval(setInterval(true));
+		clearInterval(setInterval([]));
+		clearInterval(setInterval({}));
+		clearInterval(setInterval(/test/));
+		assert.ok(true, "No runtime errors have been thrown");
+		/* eslint-enable no-implied-eval */
+	});
+
 	QUnit.test("sync/Promise/setTimeout", function(assert) {
 		var bSyncOngoing = false,
 			bTimeoutTriggered = false,
