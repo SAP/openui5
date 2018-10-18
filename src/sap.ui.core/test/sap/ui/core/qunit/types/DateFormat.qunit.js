@@ -1,7 +1,10 @@
 /*global QUnit, sinon */
-sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/core/LocaleData", "sap/ui/core/CalendarType", "sap/ui/core/date/UniversalDate"],
-	function (DateFormat, Locale, LocaleData, CalendarType, UniversalDate) {
+sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/core/LocaleData", "sap/ui/core/date/UniversalDate", "sap/ui/core/library"],
+	function (DateFormat, Locale, LocaleData, UniversalDate, library) {
 		"use strict";
+
+		// shortcut for sap.ui.core.CalendarType
+		var CalendarType = library.CalendarType;
 
 		var oDateTime = new Date("Tue Sep 11 08:46:13 2001"),
 			oTZDateTime = new Date("Tue Sep 11 03:46:13 2001 GMT+0530"),
