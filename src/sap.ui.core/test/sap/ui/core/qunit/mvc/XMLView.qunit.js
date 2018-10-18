@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	'sap/base/i18n/ResourceBundle',
 	'sap/ui/core/library',
 	'sap/ui/core/mvc/View',
 	'sap/ui/core/mvc/XMLView',
@@ -10,7 +11,7 @@ sap.ui.define([
 	'sap/ui/commons/Panel',
 	'./AnyView.qunit',
 	'jquery.sap.sjax'
-], function(coreLibrary, View, XMLView, RenderManager, JSONModel, VerticalLayout, Button, Panel, testsuite) {
+], function(ResourceBundle, coreLibrary, View, XMLView, RenderManager, JSONModel, VerticalLayout, Button, Panel, testsuite) {
 	"use strict";
 
 	// shortcut
@@ -75,7 +76,17 @@ sap.ui.define([
 	}, true);
 
 
-	QUnit.module("Apply settings");
+	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+
+	QUnit.module("Apply settings", {
+		beforeEach : function () {
+			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+		},
+		afterEach : function () {
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+		}
+	});
+
 	// Settings can be provided at the constructor call or in the according view source. View source wins.
 
 	QUnit.test("sync loading", function(assert) {
@@ -97,6 +108,26 @@ sap.ui.define([
 		assert.equal(oView.getDisplayBlock(), false, "Displayblock should be false for the async-view stub");
 		return oView.loaded().then(function() {
 			assert.equal(oView.getDisplayBlock(), true, "DisplayBlock should be true for the resolved async view");
+			oView.destroy();
+		});
+	});
+
+	QUnit.test("async loading new Factory with resource bundle", function(assert) {
+		var oResourceBundleCreateSpy = sinon.spy(ResourceBundle, "create");
+		var oViewPromise = XMLView.create({definition: "" +
+				"<mvc:View resourceBundleName=\"testdata.mvc.text\"\n" +
+				"\t\t   resourceBundleAlias=\"i18n\"\n" +
+				"\t\t   xmlns:mvc=\"sap.ui.core.mvc\" xmlns=\"sap.ui.commons\" xmlns:html=\"http://www.w3.org/1999/xhtml\">\n" +
+				"\t<Panel id=\"aPanel\">\n" +
+				"\t\t<Button id=\"Button1\" text=\"{i18n>TEXT_CLOSE}\" press=\"doIt\"></Button>\n" +
+				"\t</Panel>\n" +
+				"</mvc:View>" +
+				""});
+
+		return oViewPromise.then(function(oView) {
+			var oCreateCall = oResourceBundleCreateSpy.getCall(0);
+			assert.ok(oCreateCall.args[0].async, "async call");
+			oResourceBundleCreateSpy.restore();
 			oView.destroy();
 		});
 	});
