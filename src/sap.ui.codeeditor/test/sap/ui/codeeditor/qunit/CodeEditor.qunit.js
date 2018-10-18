@@ -4,7 +4,7 @@ sap.ui.define([], function () {
 		"use strict";
 
 		QUnit.module("Init", {
-			setup: function () {
+			beforeEach: function () {
 				this.oCodeEditor = new sap.ui.codeeditor.CodeEditor({
 					type: "html",
 					height: "300px",
@@ -19,7 +19,7 @@ sap.ui.define([], function () {
 				this.oButton.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oCodeEditor.destroy();
 				this.oButton.destroy();
 			}
