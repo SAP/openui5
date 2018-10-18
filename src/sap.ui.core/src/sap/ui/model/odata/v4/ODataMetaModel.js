@@ -1210,9 +1210,8 @@ sap.ui.define([
 							if (i + 1 < aSegments.length) {
 								return log(WARNING, "Unsupported path after ", sSegment);
 							}
-							return computedAnnotation(sSegment, "/"
-								+ aSegments.slice(0, i).join("/") + "/"
-								+ aSegments[i].slice(0, iIndexOfAt));
+							return computedAnnotation(sSegment, [""].concat(aSegments.slice(0, i),
+								aSegments[i].slice(0, iIndexOfAt)).join("/"));
 						}
 					}
 					if (!vResult || typeof vResult !== "object") {
