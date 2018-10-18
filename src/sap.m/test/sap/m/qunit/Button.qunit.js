@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/Device",
 	"jquery.sap.global",
 	"sap/m/Label",
-	"sap/ui/core/dnd/DragInfo",
 	"jquery.sap.keycodes"
 ], function(
 	qutils,
@@ -707,28 +706,6 @@ sap.ui.define([
 
 		// Assert
 		assert.equal(pressSpy.callCount, 1, "Press event should be fired once");
-
-		// Cleanup
-		oButton.destroy();
-	});
-
-	QUnit.test("draggable attribute in firefox", function(assert) {
-		this.stub(Device, "browser", {"firefox": true});
-
-		// System under Test
-		var oButton = new Button({
-			text: "Test",
-			dragDropConfig: new DragInfo()
-		});
-
-		// Action
-		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		// Assert
-		var oDomRef = oButton.getDomRef();
-		assert.notOk(oDomRef.draggable, "Draggable attribute is not set on the control dom");
-		assert.ok(oDomRef.firstChild.draggable, "Draggable attribute is set on the inner dom");
 
 		// Cleanup
 		oButton.destroy();

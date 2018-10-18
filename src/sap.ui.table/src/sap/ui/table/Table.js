@@ -98,6 +98,7 @@ sap.ui.define([
 	var Table = Control.extend("sap.ui.table.Table", /** @lends sap.ui.table.Table.prototype */ { metadata : {
 
 		library : "sap.ui.table",
+		dnd : true,
 		properties : {
 
 			/**

@@ -65,18 +65,18 @@
 
 										<custom:JSDocText text="{/description}"/>
 
-										<template:if test="{=${data>/dnd/draggable} === false}">
+										<template:if test="{=${data>/dnd/draggable} === true}">
 											<m:MessageStrip
-												text="This control cannot be a drag source."
+												text="This control can be a drag source."
 												type="Information"
 												showIcon="true"
 												showCloseButton="false"
 												class="sapUiSmallMarginBottom sapUiSmallMarginTop">
 											</m:MessageStrip>
 										</template:if>
-										<template:if test="{=${data>/dnd/droppable} === false}">
+										<template:if test="{=${data>/dnd/droppable} === true}">
 											<m:MessageStrip
-												text="This control cannot be a drop target."
+												text="This control can be a drop target."
 												type="Information"
 												showIcon="true"
 												showCloseButton="false"

@@ -203,19 +203,6 @@ sap.ui.define([
 			// now, this._bActive may be false if the button was disabled
 			this._bRenderActive = this._bActive;
 		}
-
-		// button element is not draggable on Firefox so make the inner draggable
-		// https://bugzilla.mozilla.org/show_bug.cgi?id=568313
-		if (Device.browser.firefox) {
-			var oDomRef = this.getDomRef();
-			// in some cases the domRef might not exist onAfterRendering
-			// for example if the Button is used from another control which doesn't render its Id
-			// in that case getDomRef returns null
-			if (oDomRef && oDomRef.draggable) {
-				oDomRef.draggable = false;
-				oDomRef.firstChild.draggable = true;
-			}
-		}
 	};
 
 	/**
