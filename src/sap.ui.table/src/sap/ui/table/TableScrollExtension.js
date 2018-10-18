@@ -1398,13 +1398,19 @@ sap.ui.define([
 				oVSb.scrollTop = iNewScrollTop;
 				oVSb._scrollTop = oVSb.scrollTop;
 
+				if (iNewScrollTop === iVerticalScrollRange && iNewScrollTop !== oVSb.scrollTop) {
+					Log.debug("updateVerticalScrollPosition: (async) Adjusted from " + this._nVerticalScrollPosition + " to " + oVSb.scrollTop,
+						oTable);
+					this._nVerticalScrollPosition = oVSb.scrollTop;
+				}
+
 				// The first visible row (incl. the inner scroll position) might still need to be adjusted, even if scrollTop did not change. This
 				// could be the case if zoomed in Chrome, or if the browser adjusted scrollTop while waiting for the animation frame (e.g. when the
 				// scroll height has changed).
 				if (oVSb.scrollTop === nOldScrollTop) {
 					VerticalScrollingHelper.updateFirstVisibleRow(oTable);
 				}
-			});
+			}.bind(this));
 		} else if (this._nVerticalScrollPosition !== nOldScrollPosition) {
 			if (oTable._mAnimationFrames.verticalScrollUpdate) {
 				window.cancelAnimationFrame(oTable._mAnimationFrames.verticalScrollUpdate);
