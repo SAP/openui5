@@ -8,13 +8,15 @@ sap.ui.define([
     "sap/ui/core/Control",
     "sap/ui/core/ComponentContainer",
     "sap/f/cards/CardComponent",
-    "sap/base/Log"
-], function (
+    "sap/base/Log",
+    "./CardRenderer"
+], function(
     library,
     Control,
     ComponentContainer,
     CardContentComponent,
-    Log
+    Log,
+    CardRenderer
 ) {
     "use strict";
 
