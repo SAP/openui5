@@ -1334,7 +1334,12 @@ function(
 		 */
 		Input.prototype._refreshItemsDelayed = function() {
 			clearTimeout(this._iRefreshListTimeout);
-			this._iRefreshListTimeout = setTimeout(this._oSuggPopover._refreshListItems.bind(this._oSuggPopover), 0);
+
+			this._iRefreshListTimeout = setTimeout(function () {
+				if (this._oSuggPopover) {
+					this._oSuggPopover._refreshListItems();
+				}
+			}.bind(this), 0);
 		};
 
 		/**
