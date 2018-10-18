@@ -131,24 +131,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("when calling 'getVariantChanges' of the VariantController with bChangeInstance = true", function(assert) {
-		var done = assert.async();
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
 		var aChanges = oVariantController.getVariantChanges("idMain1--variantManagementOrdersTable", "variant2", true);
 		aChanges.forEach(function (oChange) {
 			assert.ok(oChange instanceof Change, "the change is an instance of sap.ui.fl.Change");
 		});
-		done();
 	});
 
 	QUnit.test("when calling 'getVariantChanges' of the VariantController with bChangeInstance = false", function(assert) {
-		var done = assert.async();
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
 		var aChanges = oVariantController.getVariantChanges("idMain1--variantManagementOrdersTable", "variant2", false);
 		aChanges.forEach(function (oChange) {
 			assert.notOk(oChange instanceof Change, "the change is not an instance of sap.ui.fl.Change");
 			assert.ok(oChange.fileName, "the change consists of the change definition");
 		});
-		done();
 	});
 
 	QUnit.test("when calling 'loadVariantChanges' of the VariantController without changes in variant", function(assert) {
