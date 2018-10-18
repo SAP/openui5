@@ -12,12 +12,14 @@ sap.ui.define([
 	'./ToggleButton',
 	'./List',
 	'./Popover',
+	'./GroupHeaderListItem',
 	'./library',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'sap/ui/core/Item',
+	'sap/ui/core/SeparatorItem',
 	'sap/ui/core/ResizeHandler',
 	'./MultiComboBoxRenderer',
 	"sap/ui/dom/containsOrEquals",
@@ -41,12 +43,14 @@ function(
 	ToggleButton,
 	List,
 	Popover,
+	GroupHeaderListItem,
 	library,
 	EnabledPropagator,
 	IconPool,
 	coreLibrary,
 	Device,
 	Item,
+	SeparatorItem,
 	ResizeHandler,
 	MultiComboBoxRenderer,
 	containsOrEquals,
@@ -549,7 +553,7 @@ function(
 	MultiComboBox.prototype._handleItemTap = function(oEvent) {
 		var oTappedControl = jQuery(oEvent.target).control(0);
 
-		if (!oTappedControl.isA("sap.m.CheckBox")) {
+		if (!oTappedControl.isA("sap.m.CheckBox") && !oTappedControl.isA("sap.m.GroupHeaderListItem")) {
 			this._bCheckBoxClicked = false;
 			if (this.isOpen() && !this._isListInSuggestMode()) {
 				this.close();
@@ -708,16 +712,35 @@ function(
 	MultiComboBox.prototype.filterItems = function (mOptions) {
 		var fnFilter = this.fnFilter ? this.fnFilter : ComboBoxBase.DEFAULT_TEXT_FILTER;
 		var aFilteredItems = [];
+		var bGrouped = false;
+		var oGroups = [];
 
 		mOptions.items.forEach(function(oItem) {
+
+			if (oItem.isA("sap.ui.core.SeparatorItem")) {
+				oGroups.push({
+					separator: oItem
+				});
+
+				this.getListItem(oItem).setVisible(false);
+
+				bGrouped = true;
+
+				return;
+			}
+
 			var bMatch = !!fnFilter(mOptions.value, oItem, "getText");
 
 			if (mOptions.value === "") {
 				bMatch = true;
-				if (!this.bOpenedByKeyboardOrButton) {
+				if (!this.bOpenedByKeyboardOrButton && !this.isPickerDialog()) {
 					// prevent filtering of the picker if it will be closed
 					return;
 				}
+			}
+
+			if (bGrouped && bMatch) {
+				this.getListItem(oGroups[oGroups.length - 1].separator).setVisible(true);
 			}
 
 			var oListItem = this.getListItem(oItem);
@@ -1110,15 +1133,27 @@ function(
 			bShowSelectedOnly = (oSource && oSource.getPressed && oSource.getPressed()) || bForceShowSelected,
 			aVisibleItems = this.getVisibleItems(),
 			aItems = this.getItems(),
-			aSelectedItems = this.getSelectedItems();
+			aSelectedItems = this.getSelectedItems(),
+			oLastGroupListItem = null;
 
 		if (bShowSelectedOnly) {
 			aVisibleItems.forEach(function(oItem) {
 				bMatch = aSelectedItems.indexOf(oItem) > -1 ? true : false;
 				oListItem = this.getListItem(oItem);
 
-				if (oListItem) {
+				if (!oListItem) {
+					return;
+				}
+
+				if (oListItem.isA("sap.m.GroupHeaderListItem")) {
+					oListItem.setVisible(false);
+					oLastGroupListItem = oListItem;
+				} else {
 					oListItem.setVisible(bMatch);
+
+					if (bMatch && oLastGroupListItem) {
+						oLastGroupListItem.setVisible(true);
+					}
 				}
 			}, this);
 		} else {
@@ -2663,21 +2698,35 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._mapItemToListItem = function(oItem) {
+		var oListItem, sListItem, sListItemSelected, sAdditionalText;
+		var oRenderer = this.getRenderer();
 
 		if (!oItem) {
 			return null;
 		}
+		sAdditionalText = (oItem.getAdditionalText && this.getShowSecondaryValues()) ? oItem.getAdditionalText() : "";
 
-		var sAdditionalText = oItem.getAdditionalText && this.getShowSecondaryValues() ? oItem.getAdditionalText() : "";
-		var sListItem = this.getRenderer().CSS_CLASS_MULTICOMBOBOX + "Item";
-		var sListItemSelected = (this.isItemSelected(oItem)) ? sListItem + "Selected" : "";
-		var oListItem = new sap.m.StandardListItem({
+		if (oItem.isA("sap.ui.core.SeparatorItem")) {
+			oListItem = this._mapSeparatorItemToGroupHeader(oItem);
+			oItem.data(oRenderer.CSS_CLASS_COMBOBOXBASE + "ListItem", oListItem);
+			oListItem.addStyleClass(oRenderer.CSS_CLASS_MULTICOMBOBOX + "NonInteractiveItem");
+			this._decorateListItem(oListItem);
+
+			return oListItem;
+		}
+
+		sListItem = oRenderer.CSS_CLASS_MULTICOMBOBOX + "Item";
+		sListItemSelected = (this.isItemSelected(oItem)) ? sListItem + "Selected" : "";
+
+		oListItem = new sap.m.StandardListItem({
 			type: ListType.Active,
 			info: sAdditionalText,
 			visible: oItem.getEnabled()
 		}).addStyleClass(sListItem + " " + sListItemSelected);
+
 		oListItem.setTooltip(oItem.getTooltip());
-		oItem.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "ListItem", oListItem);
+
+		oItem.data(oRenderer.CSS_CLASS_COMBOBOXBASE + "ListItem", oListItem);
 		oListItem.setTitle(oItem.getText());
 
 		if (sListItemSelected) {
@@ -2687,7 +2736,7 @@ function(
 			oToken.setText(oItem.getText());
 			oToken.setTooltip(oItem.getText());
 
-			oItem.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Token", oToken);
+			oItem.data(oRenderer.CSS_CLASS_COMBOBOXBASE + "Token", oToken);
 			// TODO: Check this invalidation
 			this._oTokenizer.addToken(oToken, true);
 		}
@@ -2865,6 +2914,10 @@ function(
 		// type ahead, if there is an matching unselected item in the list
 		var aSelectedItems = this.getSelectedItems();
 		var aItemsUnselected = aItems.filter(function (oItem) {
+			if (oItem.isA("sap.ui.core.SeparatorItem")) {
+				return false;
+			}
+
 			return aSelectedItems.indexOf(oItem) === -1;
 		});
 
@@ -2984,6 +3037,37 @@ function(
 		}
 
 		return this;
+	};
+
+	/**
+	 * Add an sap.ui.core.SeparatorItem item to the aggregation named <code>items</code>.
+	 *
+	 * @param {sap.ui.core.Item} oGroup Item of that group
+	 * @param {sap.ui.core.SeparatorItem} oHeader The item to be added
+	 * @param {boolean} bSuppressInvalidate Flag indicating whether invalidation should be suppressed
+	 * @returns {sap.m.GroupHeaderListItem} The group header
+	 * @private
+	 */
+	MultiComboBox.prototype.addItemGroup = function(oGroup, oHeader, bSuppressInvalidate) {
+		oHeader = oHeader || new SeparatorItem({
+			text: oGroup.text || oGroup.key
+		});
+
+		this.addAggregation("items", oHeader, bSuppressInvalidate);
+		return oHeader;
+	};
+
+	/**
+	 * Map an item type of sap.ui.core.SeparatorItem to an item type of sap.m.GroupHeaderListItem.
+	 *
+	 * @param {sap.ui.core.SeparatorItem} oSeparatorItem The item to be matched
+	 * @returns {sap.m.GroupHeaderListItem} The matched GroupHeaderListItem
+	 * @private
+	 */
+	MultiComboBox.prototype._mapSeparatorItemToGroupHeader = function (oSeparatorItem) {
+		return new GroupHeaderListItem({
+			title: oSeparatorItem.getText()
+		});
 	};
 
 	/**

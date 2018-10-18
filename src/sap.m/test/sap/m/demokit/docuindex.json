@@ -1028,7 +1028,8 @@
 			"sap.m.sample.MultiComboBox",
 			"sap.m.sample.MultiComboBoxDefaultFiltering",
 			"sap.m.sample.MultiComboBoxCustomFiltering",
-			"sap.m.sample.MultiComboBoxTwoColumnsLayout"
+			"sap.m.sample.MultiComboBoxTwoColumnsLayout",
+			"sap.m.sample.MultiComboBoxGrouping"
 		  ]
 		},
 		{
@@ -2064,9 +2065,14 @@
 		  "description": "The default filtering is 'starts with per term', which filters by the beginning of every word in every column."
 		},
 		{
-		  "id": "sap.m.sample.MultiComboBoxCustomFiltering",
-		  "name": "MultiComboBox - Custom Filtering and Suggestions",
-		  "description": "The default filtering for the suggestionsItems aggregation uses a 'starts with per term' style operator. You can override this with your own custom filter function using the setFilterFunction method."
+			"id": "sap.m.sample.MultiComboBoxCustomFiltering",
+			"name": "MultiComboBox - Custom Filtering and Suggestions",
+			"description": "The default filtering for the suggestionsItems aggregation uses a 'starts with per term' style operator. You can override this with your own custom filter function using the setFilterFunction method."
+		},
+		{
+			"id": "sap.m.sample.MultiComboBoxGrouping",
+			"name": "MultiComboBox - Grouping of items",
+			"description": "Items in the MultiComboBox could be grouped by a property"
 		},
 		{
 		  "id": "sap.m.sample.MultiComboBoxTwoColumnsLayout",
