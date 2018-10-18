@@ -1,48 +1,34 @@
-<!DOCTYPE HTML>
+/*global QUnit*/
+sap.ui.define([
+	"sap/ui/Device",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/commons/Button",
+	"sap/ui/commons/TextField",
+	"sap/ui/commons/Image",
+	"sap/ui/commons/Slider",
+	"sap/ui/commons/TextArea",
+	"sap/ui/commons/RatingIndicator",
+	"sap/ui/commons/CheckBox",
+	"sap/ui/commons/Label"
+], function(Device, qutils, VerticalLayout, Button, TextField, Image, Slider, TextArea, RatingIndicator, CheckBox, Label) {
+	"use strict";
 
-<!--
-  Tested control/class: sap.ui.layout.VerticalLayout
-  Author: SAP
--->
-
-<html>
-<head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<script src="../shared-config.js"></script>
-	<script id="sap-ui-bootstrap"
-		src="../../../../../resources/sap-ui-core.js"
-		data-sap-ui-noConflict="true"
-		data-sap-ui-libs="sap.ui.layout,sap.ui.commons">
-	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-	<!-- Control initialization -->
-	<script language="javascript">
-
-	var oLayout1 = new sap.ui.layout.VerticalLayout("Layout1", {
-		content: [new sap.ui.commons.Button("B1",{text:"Press me", tooltip:"Button tooltip"}),
-		          new sap.ui.commons.TextField("TF1",{value:"Test"}),
-		          new sap.ui.commons.Image("I1",{src:"http://www.sap.com/global/images/SAPLogo.gif"})]
+	var oLayout1 = new VerticalLayout("Layout1", {
+		content: [new Button("B1",{text:"Press me", tooltip:"Button tooltip"}),
+				new TextField("TF1",{value:"Test"}),
+				new Image("I1",{src:"http://www.sap.com/global/images/SAPLogo.gif"})]
 	});
-	oLayout1.placeAt("uiArea1");
+	oLayout1.placeAt("content");
 
-	oLayout2 = new sap.ui.layout.VerticalLayout("Layout2", {
+	var oLayout2 = new VerticalLayout("Layout2", {
 		width: "200px",
-		content: [new sap.ui.commons.Slider("S2",{value:25, tooltip:"Slider tooltip", width: "300px"}),
-		          new sap.ui.commons.TextArea("TA2",{value:"Test \n1\n2\n3\n4\n5\n6\n7\n8\n9", width: "250px", height: "150px"}),
-		          new sap.ui.commons.RatingIndicator("RI2",{value: 4}),
-					    new sap.ui.commons.CheckBox("CB2",{text: "Test"})]
+		content: [new Slider("S2",{value:25, tooltip:"Slider tooltip", width: "300px"}),
+				new TextArea("TA2",{value:"Test \n1\n2\n3\n4\n5\n6\n7\n8\n9", width: "250px", height: "150px"}),
+				new RatingIndicator("RI2",{value: 4}),
+				new CheckBox("CB2",{text: "Test"})]
 	});
-	oLayout2.placeAt("uiArea2");
-	</script>
-
-	<!-- Test functions -->
-	<script language="javascript">
-
-	qutils.delayTestStart();
+	oLayout2.placeAt("content");
 
 	QUnit.module("Properties");
 
@@ -79,25 +65,29 @@
 		assert.ok(oSliderDom.offsetTop < oTextADom.offsetTop, "Top offset of Slider < TextArea");
 		assert.ok(oTextADom.offsetTop < oRatingDom.offsetTop, "Top offset of TextArea < RatingIndicator");
 		assert.ok(oRatingDom.offsetTop < oCheckBDom.offsetTop, "Top offset of RatingIndicator < CheckBox");
-
-
 	});
 
 	QUnit.test("Container Padding Classes", function (assert) {
 		// System under Test + Act
-		var oContainer = new sap.ui.layout.VerticalLayout({
-					content: [
-						new sap.ui.commons.Label({text: "foo"}),
-						new sap.ui.commons.Label({text: "bar"})
-					]
-				}),
-			sResponsiveSize = (sap.ui.Device.resize.width <= 599 ? "0px" : (sap.ui.Device.resize.width <= 1023 ? "16px" : "16px 32px")),
-			aResponsiveSize = sResponsiveSize.split(" "),
-			$container,
-			$containerContent;
+		var oContainer = new VerticalLayout({
+			content: [
+				new Label({text: "foo"}),
+				new Label({text: "bar"})
+			]
+		}),
+		sResponsiveSize,
+		$containerContent;
 
+		if (Device.resize.width <= 599) {
+			sResponsiveSize = "0px";
+		} else if (Device.resize.width <= 1023) {
+			sResponsiveSize = "16px";
+		} else {
+			sResponsiveSize = "16px 32px";
+		}
+		var aResponsiveSize = sResponsiveSize.split(" ");
 		// Act
-		oContainer.placeAt("uiArea1");
+		oContainer.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		oContainer.addStyleClass("sapUiNoContentPadding");
 		$containerContent = oContainer.$();
@@ -129,7 +119,7 @@
 		assert.strictEqual($containerContent.css("padding-right"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]) , "The container has " + sResponsiveSize + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
 		assert.strictEqual($containerContent.css("padding-top"), aResponsiveSize[0], "The container has " + sResponsiveSize + " top content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
 		assert.strictEqual($containerContent.css("padding-bottom"), aResponsiveSize[0], "The container has " + sResponsiveSize + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-		assert.strictEqual($containerContent.children().css("padding-bottom"), (sap.ui.Device.resize.width <= 599 ? "0px" : "16px"), "The container children have " + (sap.ui.Device.resize.width <= 599 ? "0px" : "16px") + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set");
+		assert.strictEqual($containerContent.children().css("padding-bottom"), (Device.resize.width <= 599 ? "0px" : "16px"), "The container children have " + (Device.resize.width <= 599 ? "0px" : "16px") + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set");
 		assert.strictEqual($containerContent.children().last().css("padding-bottom"), "0px", "The last container child has no bottom content padding when class \"sapUiResponsiveContentPadding\" is set");
 
 		// Cleanup
@@ -139,10 +129,10 @@
 	QUnit.module("Accessibility");
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
-		var oLayout = new sap.ui.layout.VerticalLayout({
+		var oLayout = new VerticalLayout({
 			content: [
-				new sap.ui.layout.VerticalLayout(),
-				new sap.ui.layout.VerticalLayout()
+				new VerticalLayout(),
+				new VerticalLayout()
 			]
 		});
 		assert.ok(!!oLayout.getAccessibilityInfo, "VerticalLayout has a getAccessibilityInfo function");
@@ -157,28 +147,4 @@
 		assert.ok(oInfo.children && oInfo.children.length == 2, "Children");
 		oLayout.destroy();
 	});
-
-	</script>
-
-	<title>qunit Test for VerticalLayout</title>
-	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.layout.VerticalLayout.gif">
-
-
-</head>
-<body class="sapUiBody">
-	<h1 id="qunit-header">QUnit tests: sap.ui.layout.VerticalLayout</h1>
-	<h2 id="qunit-banner"></h2>
- 	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-	<br>
-	<div id="uiArea1"></div>
-	<br>
-	<div id="uiArea2"></div>
-<!-- 	<br>
-	<div id="uiArea3"></div>
-	<br>
-	<div id="uiArea4"></div>
--->
-</body>
-</html>
+});
