@@ -68,6 +68,11 @@ sap.ui.define([
 			this.aProductCollection = [];
 			this.oEditableTemplate.destroy();
 			this.oModel.destroy();
+		},
+
+		onPaste: function(oEvent) {
+			var aData = oEvent.getParameter("data");
+			sap.m.MessageToast.show("Pasted Data: " + aData);
 		}
 	});
 

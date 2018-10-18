@@ -12,11 +12,12 @@ sap.ui.define([
 	"./TableRenderer",
 	"sap/base/Log",
 	"sap/ui/core/ResizeHandler",
+	"sap/ui/core/util/PasteHelper",
 	"sap/ui/thirdparty/jquery",
 	// jQuery custom selectors ":sapTabbable"
 	"sap/ui/dom/jquery/Selectors"
 ],
-	function(Device, library, ListBase, ListItemBase, CheckBox, TableRenderer, Log, ResizeHandler, jQuery) {
+	function(Device, library, ListBase, ListItemBase, CheckBox, TableRenderer, Log, ResizeHandler, PasteHelper, jQuery) {
 	"use strict";
 
 
@@ -140,6 +141,21 @@ sap.ui.define([
 					 * <b>Note:</b> This parameter might be undefined for the items that are not part of a column definition.
 					 */
 					column : {type : "sap.m.Column"}
+				}
+			},
+			/**
+			 * This event gets fired when the user performs paste from clipboard on the table.
+			 * Paste action can be performed from the context menu or with CTRL-V keyboard key combination.
+			 * @since 1.60
+			 */
+			paste : {
+				allowPreventDefault: true,
+				parameters : {
+					/**
+					 * 2D-Array of strings with data from the clipboard. The first dimension represents the rows and the
+					 * second dimension represents the cells of the tabular data.
+					 */
+					data : {type : "string[][]"}
 				}
 			}
 		},
@@ -815,6 +831,28 @@ sap.ui.define([
 
 		return "sapMListTblAlternateRowColors";
 	};
+
+		/**
+		 * Handles paste event and fires Paste event of the Table , so that it can be used in the application
+		 * @private
+		 * @param oEvent -browser paste event that occurs when a user pastes the data from the clipboard into the table
+		 */
+		Table.prototype.onpaste = function(oEvent) {
+
+			// Check whether the paste event is already handled by input enabled control and avoid pasting into this input-enabled control when focus is in there.
+			if (oEvent.isMarked() || (/^(input|textarea)$/i.test(oEvent.target.tagName))) {
+				return;
+			}
+
+			// Get the data from the PasteHelper utility in format of 2D Array
+			var aData = PasteHelper.getPastedDataAs2DArray(oEvent.originalEvent);
+			if (!aData || aData.length === 0 /* no rows pasted */ || aData[0].length === 0 /* no columns pasted */) {
+				return; // no pasted data
+			}
+
+			//var oRow = sap.ui.getCore().byId(jQuery(oEvent.target).closest(".sapMLIB").attr("id"));
+			this.firePaste({data: aData});
+		};
 
 	return Table;
 

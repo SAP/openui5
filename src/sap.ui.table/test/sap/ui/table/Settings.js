@@ -823,6 +823,24 @@
 							oTable.detachCellClick(TABLESETTINGS.actions.EVENTS.group.CELLCLICK._cellClickHandler);
 						}
 					}
+				},
+				PASTE: {
+					text: "Paste",
+					value: function(oTable) {
+						return oTable.hasListeners("paste");
+					},
+					input: "boolean",
+					_pasteHandler: function(oEvent) {
+						jQuery.sap.require("sap.m.MessageToast");
+						sap.m.MessageToast.show("Paste data: " + oEvent.getParameter("data"));
+					},
+					action: function(oTable, bValue) {
+						if (bValue) {
+							oTable.attachPaste(TABLESETTINGS.actions.EVENTS.group.PASTE._pasteHandler);
+						} else {
+							oTable.detachPaste(TABLESETTINGS.actions.EVENTS.group.PASTE._pasteHandler);
+						}
+					}
 				}
 			}
 		}
