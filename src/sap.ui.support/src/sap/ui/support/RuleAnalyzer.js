@@ -2,10 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/support/supportRules/Main",
-		"sap/ui/support/supportRules/RuleSetLoader"],
-	function (Main,
-			  RuleSetLoader) {
+sap.ui.define([
+	"sap/ui/support/Bootstrap",
+	"sap/ui/support/supportRules/Main",
+	"sap/ui/support/supportRules/RuleSetLoader"],
+	function (Bootstrap, Main, RuleSetLoader) {
 		"use strict";
 
 
@@ -55,13 +56,23 @@ sap.ui.define(["sap/ui/support/supportRules/Main",
 			 * @returns {Promise} Notifies the finished state by starting the Analyzer
 			 */
 			analyze: function (oExecutionScope, vPresetOrRules) {
+				// Temporary fix until the module is fully refactored.
+				var oLoadingPromise = new Promise(function (resolve) {
+					Bootstrap.initSupportRules(["true", "silent"], {
+						onReady: function () {
+							resolve();
+						}
+					});
+				});
 
-				if (RuleSetLoader._rulesCreated) {
-					return Main.analyze(oExecutionScope, vPresetOrRules);
-				}
+				return oLoadingPromise.then(function () {
+					if (RuleSetLoader._rulesCreated) {
+						return Main.analyze(oExecutionScope, vPresetOrRules);
+					}
 
-				return RuleSetLoader._oMainPromise.then(function () {
-					return Main.analyze(oExecutionScope, vPresetOrRules);
+					return RuleSetLoader._oMainPromise.then(function () {
+						return Main.analyze(oExecutionScope, vPresetOrRules);
+					});
 				});
 			},
 
