@@ -633,7 +633,7 @@ sap.ui.define([
 			// when the input has no value, close the Popup when not runs on the phone because the opened dialog on phone shouldn't be closed.
 			if (!oInput._bUseDialog) {
 				oInput._iPopupListSelectedIndex = -1;
-				this.cancelPendingSuggest();
+				oInput.cancelPendingSuggest();
 				oPopup.close();
 			} else {
 				// hide table on phone when value is empty
