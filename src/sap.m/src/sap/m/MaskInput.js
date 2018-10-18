@@ -1013,7 +1013,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 		}
 
 		if (this._sOldInputValue !== this._oTempValue.toString()) {
-			InputBase.prototype.setValue.call(this, sValue);
+			// Altered value (if any) should be used only for updating <value>. Mask works on dom level.
+			InputBase.prototype.setValue.call(this, this._getAlteredUserInputValue ? this._getAlteredUserInputValue(sValue) : sValue);
 			this._sOldInputValue = sValue;
 			if (this.onChange && !this.onChange({value: sValue})) {//if the subclass didn't fire the "change" event by itself
 				this.fireChangeEvent(sValue);
