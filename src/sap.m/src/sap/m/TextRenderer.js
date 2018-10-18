@@ -36,45 +36,43 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/m/Hyphenation
 				bRenderWhitespace = oText.getRenderWhitespace();
 
 			// start writing html
-			oRm.write("<span");
-			oRm.writeControlData(oText);
-			oRm.addClass("sapMText");
-			oRm.addClass("sapUiSelectable");
+			oRm.openStart("span");
+			oRm.controlData(oText);
+			oRm.class("sapMText");
+			oRm.class("sapUiSelectable");
 
 			// set classes for wrapping
 			if (!bWrapping || nMaxLines == 1) {
-				oRm.addClass("sapMTextNoWrap");
+				oRm.class("sapMTextNoWrap");
 			} else if (bWrapping) {
 				// no space text must break
 				if (sText && sText.length > 0 && !/\s/.test(sText)) {
-					oRm.addClass("sapMTextBreakWord");
+					oRm.class("sapMTextBreakWord");
 				}
 			}
 
 			// write style and attributes
-			sWidth ? oRm.addStyle("width", sWidth) : oRm.addClass("sapMTextMaxWidth");
+			sWidth ? oRm.style("width", sWidth) : oRm.class("sapMTextMaxWidth");
 			if (sTextDir !== TextDirection.Inherit){
-				oRm.writeAttribute("dir", sTextDir.toLowerCase());
+				oRm.attr("dir", sTextDir.toLowerCase());
 			}
-			sTooltip && oRm.writeAttributeEscaped("title", sTooltip);
+			sTooltip && oRm.attr("title", sTooltip);
 			if (sTextAlign) {
 				sTextAlign = Renderer.getTextAlign(sTextAlign, sTextDir);
 				if (sTextAlign) {
-					oRm.addStyle("text-align", sTextAlign);
+					oRm.style("text-align", sTextAlign);
 				}
 			}
 
 			if (bRenderWhitespace) {
 				var whitespaceClass = bWrapping ? "sapMTextRenderWhitespaceWrap" : "sapMTextRenderWhitespace";
-				oRm.addClass(whitespaceClass);
+				oRm.class(whitespaceClass);
 			}
 
 			HyphenationSupport.writeHyphenationClass(oRm, oText);
 
 			// finish writing html
-			oRm.writeClasses();
-			oRm.writeStyles();
-			oRm.write(">");
+			oRm.openEnd();
 
 			// handle max lines
 			if (oText.hasMaxLines()) {
@@ -84,7 +82,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/m/Hyphenation
 			}
 
 			// finalize
-			oRm.write("</span>");
+			oRm.close("span");
 		};
 
 		/**
@@ -94,21 +92,19 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/m/Hyphenation
 		 * @param {sap.m.Text} oText An object representation of the control that should be rendered
 		 */
 		TextRenderer.renderMaxLines = function(oRm, oText) {
-			oRm.write("<span");
-			oRm.writeAttribute("id", oText.getId() + "-inner");
-			oRm.addClass("sapMTextMaxLine");
+			oRm.openStart("span");
+			oRm.attr("id", oText.getId() + "-inner");
+			oRm.class("sapMTextMaxLine");
 
 			// check native line clamp support
 			if (oText.canUseNativeLineClamp()) {
-				oRm.addClass("sapMTextLineClamp");
-				oRm.addStyle("-webkit-line-clamp", oText.getMaxLines());
+				oRm.class("sapMTextLineClamp");
+				oRm.style("-webkit-line-clamp", oText.getMaxLines());
 			}
 
-			oRm.writeClasses();
-			oRm.writeStyles();
-			oRm.write(">");
+			oRm.openEnd();
 			this.renderText(oRm, oText);
-			oRm.write("</span>");
+			oRm.close("span");
 		};
 
 		/**
@@ -119,7 +115,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/m/Hyphenation
 		 */
 		TextRenderer.renderText = function(oRm, oText) {
 			var sText = HyphenationSupport.getTextForRender(oText, "main");
-			oRm.writeEscaped(sText);
+			oRm.text(sText);
 		};
 
 		return TextRenderer;
