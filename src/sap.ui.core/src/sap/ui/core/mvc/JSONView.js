@@ -61,7 +61,7 @@ sap.ui.define([
 	 * @param {string} [mOptions.viewName] The view name that corresponds to a JSON module that can be loaded
 	 * via the module system (viewName + suffix ".view.json").
 	 * @param {string|object} [mOptions.definition] view definition as a JSON string or an object literal
-	 * @param {sap.ui.core.mvc.Controller} [vView.controller] Controller instance to be used for this view.
+	 * @param {sap.ui.core.mvc.Controller} [mOptions.controller] Controller instance to be used for this view.
 	 * The given controller instance overrides the controller defined in the view definition. Sharing a controller instance
 	 * between multiple views is not supported.
 	 * @public
@@ -73,7 +73,7 @@ sap.ui.define([
 		//remove unsupported options:
 		for (var sOption in mParameters) {
 			if (sOption === 'preprocessors') {
-				delete mParameters[sOption];
+				delete mParameters['preprocessors'];
 				Log.warning("JSView.create does not support the option preprocessors!");
 			}
 		}
