@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/m/library",
 	"./ObjectPageSubSectionRenderer",
 	"sap/base/Log",
+	"sap/ui/base/DataType",
 	"sap/ui/events/KeyCodes",
 	// jQuery Plugin "firstFocusableDomRef"
 	"sap/ui/dom/jquery/Focusable"
@@ -38,6 +39,7 @@ sap.ui.define([
 	mobileLibrary,
 	ObjectPageSubSectionRenderer,
 	Log,
+	DataType,
 	KeyCodes
 ) {
 	"use strict";
@@ -145,6 +147,9 @@ sap.ui.define([
 		return this._getTitleDomId();
 	});
 
+
+	ObjectPageSubSection.FIT_CONTAINER_CLASS = "sapUxAPObjectPageSubSectionFitContainer";
+
 	/**
 	 * Retrieves the resource bundle for the <code>sap.uxap</code> library.
 	 * @static
@@ -182,6 +187,33 @@ sap.ui.define([
 		// Title Propagation Support
 		this._initTitlePropagationSupport();
 		this._sBorrowedTitleDomId = false;
+		this._height = ""; // css height property
+	};
+
+	ObjectPageSubSection.prototype._getHeight = function () {
+		return this._height;
+	};
+
+	ObjectPageSubSection.prototype._setHeight = function (oValue) {
+
+		var oType, oDom;
+
+		if (this._height === oValue) {
+			return;
+		}
+
+		oType = DataType.getType("sap.ui.core.CSSSize");
+
+		if (!oType.isValid(oValue)) {
+			throw new Error("\"" + oValue + "\" is of type " + typeof oValue + ", expected " +
+				oType.getName() + " for property \"_height\" of " + this);
+		}
+		this._height = oValue;
+
+		oDom = this.getDomRef();
+		if (oDom) {
+			oDom.style.height = oValue;
+		}
 	};
 
 	/**
@@ -296,6 +328,15 @@ sap.ui.define([
 			properties: ["visible"]
 		});
 	};
+
+	["addStyleClass", "toggleStyleClass", "removeStyleClass"].forEach(function(sMethodName) {
+		ObjectPageSubSection.prototype[sMethodName] = function(sStyleClass, bSuppressRerendering) {
+			if (sStyleClass === ObjectPageSubSection.FIT_CONTAINER_CLASS) {
+				this._notifyObjectPageLayout();
+			}
+			return ObjectPageSectionBase.prototype[sMethodName].apply(this, arguments);
+		};
+	});
 
 	ObjectPageSubSection.prototype._unStashControls = function () {
 		StashedControlSupport.getStashedControls(this.getId()).forEach(function (oControl) {

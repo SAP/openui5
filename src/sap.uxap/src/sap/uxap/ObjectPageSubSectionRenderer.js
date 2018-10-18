@@ -28,6 +28,10 @@ sap.ui.define(function () {
 		oRm.write("<div ");
 		oRm.writeAttribute("role", "region");
 		oRm.writeControlData(oControl);
+
+		if (oControl._getHeight()) {
+		    oRm.writeAttribute("style", "height:" + oControl._getHeight() + ";");
+		}
 		oRm.addClass("sapUxAPObjectPageSubSection");
 		oRm.addClass("ui-helper-clearfix");
 		oRm.writeClasses(oControl);
