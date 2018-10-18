@@ -111,8 +111,7 @@
 											<custom:LightTable rows="{path: '/parameters'}"
 															   columnTitles="Param,Type,Default Value,Description"
 															   columnCount="4"
-															   class="sapUxAPObjectPageSubSectionAlignContent sapUiDocumentationParamsTable"
-															   width="auto">
+															   class="sapUiDocumentationParamsTable">
 												<custom:Row>
 													<custom:ParamText text="{name}" phoneText="{phoneName}" depth="{depth}" optional="{optional}"/>
 													<layout:VerticalLayout content="{path: 'types', templateShareable: 'false'}" width="100%">
@@ -129,8 +128,7 @@
 										<template:if test="{= ${data>/returnValue} !== undefined}">
 											<custom:LightTable columnCount="2"
 															   columnTitles="Returns,Description"
-															   width="auto"
-															   class="sapUxAPObjectPageSubSectionAlignContent sapUiDocumentation2ColumnsEqualTable">
+															   class="sapUiDocumentation2ColumnsEqualTable">
 												<custom:Row>
 													<layout:VerticalLayout class="sapUiDocumentationOrList" width="100%">
 														<template:repeat list="{data>/returnValue/types}" var="rtype">
@@ -149,8 +147,7 @@
 												 rows="{path : '/nodes'}"
 												 columnTitles="Namespaces &amp; Classes,Description"
 												 columnCount="2"
-												 width="auto"
-												 class="sapUxAPObjectPageSubSectionAlignContent sapUiSmallMarginTop">
+												 class="sapUiSmallMarginTop">
 												<custom:Row>
 													<m:Link href="{ref}" text="{name}"/>
 													<custom:JSDocText text="{description}"/>
@@ -174,8 +171,7 @@
 										<custom:LightTable rows="{path : '/properties'}"
 											 columnCount="3"
 											 columnTitles="Name,Type,Description"
-											 width="auto"
-											 class="sapUxAPObjectPageSubSectionAlignContent sapUiSmallMarginTop">
+											 class="sapUiSmallMarginTop">
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" deprecated="{= ${deprecated} !== undefined }"/>
 												<m:Link text="{type}"
@@ -232,8 +228,7 @@
 												<custom:LightTable rows="{path: '/constructor/parameters'}"
 														columnTitles="Param,Type,Default Value,Description"
 														columnCount="4"
-														width="auto"
-														class="sapUxAPObjectPageSubSectionAlignContent sapUiDocumentationParamsTable">
+														class="sapUiDocumentationParamsTable">
 													<custom:Row>
 														<custom:ParamText text="{name}" phoneText="{phoneName}" depth="{depth}" optional="{optional}"/>
 														<layout:VerticalLayout content="{path: 'types', templateShareable: 'false'}" width="100%">
@@ -251,8 +246,7 @@
 												<custom:LightTable rows="{path : '/constructor/throws', templateShareable: 'false'}"
 														columnTitles="Throws,Desktop"
 														columnCount="2"
-														width="auto"
-														class="sapUxAPObjectPageSubSectionAlignContent sapUiDocumentation2ColumnsEqualTable">
+														class="sapUiDocumentation2ColumnsEqualTable">
 													<custom:Row>
 														<m:Link text="{type}"
 																href="#/api/{type}"
@@ -278,8 +272,7 @@
 										<custom:LightTable rows="{path : '/ui5-metadata/properties'}"
 											columnTitles="Name,Type,Default Value,Description"
 											columnCount="4"
-											width="auto"
-											class="sapUxAPObjectPageSubSectionAlignContent sapUiSmallMarginTop">
+											class="sapUiSmallMarginTop">
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}"/>
 												<m:Link text="{type}"
@@ -326,8 +319,7 @@
 										<custom:LightTable rows="{path : '/ui5-metadata/aggregations'}"
 											columnTitles="{= ${data>/hasAggregationAltTypes} ? 'Name,Cardinality,Type,Alt types,Description' : 'Name,Cardinality,Type,Description'}"
 											columnCount="{= ${data>/hasAggregationAltTypes} ? 5 : 4}"
-											width="auto"
-											class="sapUxAPObjectPageSubSectionAlignContent sapUiSmallMarginTop">
+											class="sapUiSmallMarginTop">
 											<custom:Row visible="{= ${visibility} === 'public'}">
 												<custom:ParamText text="{name}" defaultFlag="{= ${/ui5-metadata/defaultAggregation} === ${path: 'name'} }"/>
 												<m:Text text="{cardinality}" wrapping="false"/>
@@ -392,8 +384,7 @@
 										<custom:LightTable rows="{path : '/ui5-metadata/associations'}"
 											columnCount="4"
 											columnTitles="Name,Cardinality,Type,Description"
-											width="auto"
-											class="sapUxAPObjectPageSubSectionAlignContent sapUiSmallMarginTop">
+											class="sapUiSmallMarginTop">
 											<custom:Row visible="{visibility === 'public'}">
 												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" />
 												<m:Text text="{cardinality}" wrapping="false"/>
@@ -438,11 +429,7 @@
 									<custom:blocks>
 										<layout:VerticalLayout width="100%">
 											<template:if test="{data>/hasOwnEvents}">
-												<custom:LightTable
-														columnCount="2"
-														columnTitles="Event,Description"
-														width="auto"
-														class="sapUxAPObjectPageSubSectionAlignContent">
+												<custom:LightTable columnCount="2" columnTitles="Event,Description">
 													<template:repeat list="{data>/events}" var="event">
 														<custom:Row>
 															<custom:ParamText text="{event>name}"
@@ -500,11 +487,7 @@
 													</m:MessageStrip>
 												</template:if>
 												<template:if test="{= !!${event>parameters} &amp;&amp; ${event>parameters}.length > 0}">
-													<custom:LightTable
-														columnTitles="Param,Type,Description"
-														columnCount="3"
-														width="auto"
-														class="sapUxAPObjectPageSubSectionAlignContent">
+													<custom:LightTable columnTitles="Param,Type,Description" columnCount="3">
 														<template:repeat list="{event>parameters}" var="parameter">
 															<custom:Row>
 																<custom:ParamText text="{parameter>name}" phoneText="{parameter>phoneName}" depth="{parameter>depth}" optional="{parameter>optional}"/>
@@ -535,11 +518,7 @@
 									<custom:blocks>
 										<layout:VerticalLayout width="100%">
 											<template:if test="{data>/hasOwnMethods}">
-												<custom:LightTable
-														columnCount="2"
-														columnTitles="Method,Description"
-														width="auto"
-														class="sapUxAPObjectPageSubSectionAlignContent">
+												<custom:LightTable columnCount="2" columnTitles="Method,Description">
 													<template:repeat list="{data>/methods}" var="method">
 														<custom:Row>
 															<custom:ParamText text="{method>name}"
@@ -615,8 +594,7 @@
 														<custom:LightTable
 																columnCount="4"
 																columnTitles="Param,Type,Default Value,Description"
-																width="auto"
-																class="sapUxAPObjectPageSubSectionAlignContent sapUiDocumentationParamsTable">
+																class="sapUiDocumentationParamsTable">
 															<template:repeat list="{method>parameters}" var="parameter">
 																<custom:Row>
 																	<custom:ParamText text="{parameter>name}" phoneText="{parameter>phoneName}" depth="{parameter>depth}" optional="{parameter>optional}"/>
@@ -644,8 +622,7 @@
 													<template:if test="{= ${method>returnValue} !== undefined}">
 														<custom:LightTable columnCount="2"
 																	columnTitles="Returns,Description"
-																	width="auto"
-																	class="sapUxAPObjectPageSubSectionAlignContent sapUiDocumentation2ColumnsEqualTable">
+																	class="sapUiDocumentation2ColumnsEqualTable">
 															<custom:Row>
 																<layout:VerticalLayout class="sapUiDocumentationOrList" width="100%">
 																	<template:repeat list="{method>returnValue/types}" var="rtype">
@@ -663,8 +640,7 @@
 														<custom:LightTable
 																columnTitles="Throws,Description"
 																columnCount="2"
-																width="auto"
-																class="sapUxAPObjectPageSubSectionAlignContent sapUiDocumentation2ColumnsEqualTable">
+																class="sapUiDocumentation2ColumnsEqualTable">
 															<template:repeat list="{method>throws}" var="throws">
 																<custom:Row>
 																	<m:Link text="{throws>type}"
@@ -697,8 +673,7 @@
 										<custom:LightTable rows="{path : '/ui5-metadata/specialSettings'}"
 											columnCount="3"
 											columnTitles="Name,Type,Description"
-											width="auto"
-											class="sapUxAPObjectPageSubSectionAlignContent sapUiSmallMarginTop sapUiDocumentationSpecialSettingsTable">
+											class="sapUiSmallMarginTop sapUiDocumentationSpecialSettingsTable">
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}"/>
 												<m:Link text="{type}"
@@ -720,11 +695,7 @@
 							<subSections>
 								<custom:ObjectPageSubSection title="Summary">
 									<custom:blocks>
-										<custom:LightTable
-												columnCount="2"
-												columnTitles="Annotation,Description"
-												width="auto"
-												class="sapUxAPObjectPageSubSectionAlignContent">
+										<custom:LightTable columnCount="2" columnTitles="Annotation,Description">
 											<template:repeat list="{data>/ui5-metadata/annotations}" var="annotation">
 												<custom:Row>
 													<m:Link text="{= ${annotation>annotation} !== 'undefined' ? ${annotation>annotation} : '(' + ${annotation>namespaceText} + ')' }"
@@ -744,11 +715,7 @@
 
 												<custom:JSDocText text="{path: 'annotation>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 
-												<custom:LightTable
-													columnTitles="Namespace,Target Type,Applies To"
-													columnCount="3"
-													width="auto"
-													class="sapUxAPObjectPageSubSectionAlignContent">
+												<custom:LightTable columnTitles="Namespace,Target Type,Applies To" columnCount="3">
 													<custom:Row>
 														<custom:JSDocText text="{annotation>namespace}"/>
 														<custom:JSDocText text="{annotation>target}"/>

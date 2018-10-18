@@ -20,7 +20,7 @@
 			<op:subSections>
 				<op:ObjectPageSubSection>
 					<op:blocks>
-						<VBox>
+						<VBox class="sapUxAPObjectPageSubSectionAlignContent" width="auto">
 							<OverflowToolbar design="Transparent" height="3rem">
 								<Title text="ALL ({=!!${/AllLength} > 0 ? '1 - ' + ${/visibleAllLength} : '0'} of {/AllLength})"/>
 							</OverflowToolbar>
@@ -37,9 +37,7 @@
 										group: true
 									},
 									groupHeaderFactory: '.getGroupHeader'
-								}"
-								class="sapUxAPObjectPageSubSectionAlignContent"
-								width="auto">
+								}">
 								<FeedListItem
 									sender="{title}"
 									text="{summary}"
@@ -55,7 +53,7 @@
 				<op:subSections>
 					<op:ObjectPageSubSection>
 						<op:blocks>
-							<VBox>
+							<VBox class="sapUxAPObjectPageSubSectionAlignContent" width="auto">
 								<OverflowToolbar design="Transparent" height="3rem">
 									<Title text="API Reference (1 - {/visibleAPILength} of {/APILength})"/>
 								</OverflowToolbar>
@@ -70,9 +68,7 @@
 											path: 'title',
 											descending: false
 										}
-									}"
-									class="sapUxAPObjectPageSubSectionAlignContent"
-									width="auto">
+									}">
 									<FeedListItem
 										visible="{path:'category', formatter:'.categoryAPIFormatter'}"
 										sender="{title}"
@@ -89,7 +85,7 @@
 				<op:subSections>
 					<op:ObjectPageSubSection>
 						<op:blocks>
-							<VBox>
+							<VBox class="sapUxAPObjectPageSubSectionAlignContent" width="auto">
 								<OverflowToolbar design="Transparent" height="3rem">
 									<Title text="Documentation (1 - {/visibleDocLength} of {/DocLength})"/>
 								</OverflowToolbar>
@@ -104,9 +100,7 @@
 											path: 'title',
 											descending: false
 										}
-									}"
-									class="sapUxAPObjectPageSubSectionAlignContent"
-									width="auto">
+									}">
 									<FeedListItem
 										visible="{path:'category', formatter:'.categoryDocFormatter'}"
 										sender="{title}"
@@ -123,7 +117,7 @@
 				<op:subSections>
 					<op:ObjectPageSubSection>
 						<op:blocks>
-							<VBox>
+							<VBox class="sapUxAPObjectPageSubSectionAlignContent" width="auto">
 								<OverflowToolbar design="Transparent" height="3rem">
 									<Title text="Samples (1 - {/visibleExploredLength} of {/ExploredLength})"/>
 								</OverflowToolbar>
@@ -138,9 +132,7 @@
 											path: 'title',
 											descending: false
 										}
-									}"
-									class="sapUxAPObjectPageSubSectionAlignContent"
-									width="auto">
+									}">
 									<FeedListItem
 										visible="{path:'category', formatter:'.categoryExploredFormatter'}"
 										sender="{title}"
