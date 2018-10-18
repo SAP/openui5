@@ -416,12 +416,16 @@ function (jQuery, ManagedObject, Log, Locale) {
 	 * Checks if native hyphenation works in the current browser for the given language.
 	 *
 	 * @param {string} [sLang] For what language to check. The global application language is the default one
-	 * @returns {boolean} True if native hyphenation works for the given language
+	 * @returns {(boolean|null)} True if native hyphenation works for the given language. False if native hyphenation will not work. Null if the language is not known to the Hyphenation API
 	 * @public
 	 */
 	Hyphenation.prototype.canUseNativeHyphenation = function (sLang) {
 		var sLanguage = getLanguage(sLang);
 		var bCanUseNativeHyphenation;
+
+		if (!this.isLanguageSupported(sLang)) {
+			return null;
+		}
 
 		if (!oBrowserSupportCSS.hasOwnProperty(sLanguage)) {
 			createTest(sLanguage);
@@ -448,6 +452,43 @@ function (jQuery, ManagedObject, Log, Locale) {
 			Log.info("[UI5 Hyphenation] third-party module hyphenation");
 		}
 		return bCanUseNativeHyphenation;
+	};
+
+	/**
+	 * Checks if third-party hyphenation works for the given language.
+	 *
+	 * @param {string} [sLang] For what language to check. The global application language is the default one.
+	 * @returns {boolean|null} True if third-party hyphenation works for the given language. False if third-party hyphenation doesn't work. Null if the language is not known to the <code>Hyphenation</code> API.
+	 * @public
+	 */
+	Hyphenation.prototype.canUseThirdPartyHyphenation = function (sLang) {
+		var sLanguage = getLanguage(sLang);
+
+		if (!this.isLanguageSupported(sLang)) {
+			return null;
+		}
+
+		return oThirdPartySupportedLanguages.hasOwnProperty(sLanguage) && oThirdPartySupportedLanguages[sLanguage];
+	};
+
+	/**
+	 * Checks if <code>Hyphenation</code> API knows about the given language.
+	 *
+	 * If it is a known language, the API can be used to check browser-native and third-party support.
+	 *
+	 * @param {string} [sLang] For what language to check. The global application language is the default one.
+	 * @returns {boolean} True if the language is known to the <code>Hyphenation</code> API
+	 * @public
+	 */
+	Hyphenation.prototype.isLanguageSupported = function (sLang) {
+		var sLanguage = getLanguage(sLang),
+			bIsSupported = oTestingWords.hasOwnProperty(sLanguage);
+
+		if (bIsSupported) {
+			Log.info("[UI5 Hyphenation] " + sLang + " is not supported by Hyphenation API. Browser-native hyphenation may work.");
+		}
+
+		return bIsSupported;
 	};
 
 	/**
