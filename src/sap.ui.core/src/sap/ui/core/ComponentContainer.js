@@ -154,6 +154,18 @@ sap.ui.define([
 					 */
 					component : { type: "sap.ui.core.UIComponent" }
 				}
+			},
+			/**
+			 * Fired when the creation of the component instance has failed.
+			 * @since 1.60
+			 */
+			componentFailed : {
+				parameters : {
+					/**
+					 * The reason object as returned by the component promise
+					 */
+					reason : { type: "object" }
+				}
 			}
 		},
 		designtime: "sap/ui/core/designtime/ComponentContainer.designtime"
@@ -325,13 +337,20 @@ sap.ui.define([
 					});
 				}.bind(this), function(oReason) {
 					delete this._oComponentPromise;
+					this.fireComponentFailed({
+						reason: oReason
+					});
 					Log.error("Failed to load component for container " + this.getId() + ". Reason: " + oReason);
 				}.bind(this));
-			} else {
+			} else if (oComponent) {
 				this.setComponent(oComponent, true);
 				// notify listeners that a new component instance has been created
 				this.fireComponentCreated({
 					component: oComponent
+				});
+			} else {
+				this.fireComponentFailed({
+					reason: new Error("The component could not be created.")
 				});
 			}
 		}
