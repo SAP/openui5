@@ -519,16 +519,23 @@ sap.ui.define([
 			 * Stub function for _Requestor#sendBatch. Checks that all requests in the batch are as
 			 * expected.
 			 *
-			 * @param {object[]} aRequests The array of batch requests
+			 * @param {object[]} aRequests The array of requests in a $batch
 			 * @returns {Promise} A promise on the array of batch responses
 			 */
 			function checkBatch(aRequests) {
-				function processRequests(aRequests0) {
-					return Promise.all(aRequests0.map(function (oRequest) {
+				/*
+				 * @param {object[]} aRequests The array of requests in a $batch or in a change set
+				 * @param {number} [iChangeSetNo] Number of the change set in the current batch, in
+				 * 	 case aRequests are the requests of a change set. Note: Change sets are
+				 * 	 numbered starting with 1, just as batches.
+				 * @returns {Promise} A promise on the array of batch responses
+				 */
+				function processRequests(aRequests0, iChangeSetNo) {
+					return Promise.all(aRequests0.map(function (oRequest, i) {
 						return Array.isArray(oRequest)
-							? processRequests(oRequest)
+							? processRequests(oRequest, i + 1)
 							: checkRequest(oRequest.method, oRequest.url, oRequest.headers,
-								oRequest.body
+								oRequest.body, undefined, iChangeSetNo || i + 1
 							).then(function (oResponse) {
 								var mHeaders = {};
 
@@ -576,8 +583,14 @@ sap.ui.define([
 			 *  "errorResponse" then the content of "errorResponse" is stored in "mBatch2Error" for
 			 *  the current $batch and the promise resolves with the content of "errorResponse" as
 			 *  "body".
+			 * @param {string} [sOriginalResourcePath] The path by which the resource has originally
+			 *   been requested
+			 * @param {number} [iChangeSetNo] Number of the change set in the current batch which
+			 *   the request is expected to belong to
+			 * @returns {Promise} A promise on an object with the response in the property "body"
 			 */
-			function checkRequest(sMethod, sUrl, mHeaders, vPayload, sOriginalResourcePath) {
+			function checkRequest(sMethod, sUrl, mHeaders, vPayload, sOriginalResourcePath,
+					iChangeSetNo) {
 				var oActualRequest = {
 						method : sMethod,
 						url : sUrl,
@@ -617,6 +630,9 @@ sap.ui.define([
 					delete oExpectedRequest.responseHeaders;
 					if (oExpectedRequest.batchNo) {
 						oActualRequest.batchNo = that.iBatchNo;
+					}
+					if (oExpectedRequest.changeSetNo) {
+						oActualRequest.changeSetNo = iChangeSetNo;
 					}
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
 				} else {
@@ -3036,6 +3052,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Modify a property while an update request is not yet resolved. The second PATCH
 	// request must wait for the first one to finish and use the eTag returned in its response.
+	// A third PATCH request which also waits goes into a separate change set when submitBatch
+	// has been called before it was created (CPOUI5UISERVICESV3-1531).
 	QUnit.test("PATCH entity, two subsequent PATCHes on this entity wait", function (assert) {
 		var oBinding,
 			oModel = createSalesOrdersModel({
@@ -3078,10 +3096,25 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			var oMetaModel = oModel.getMetaModel(),
+				fnFetchObject = oMetaModel.fetchObject,
+				oMetaModelMock = that.mock(oMetaModel);
+
 			that.expectChange("note", "(1) Changed Note while $batch is running");
+
+			// enforce delayed creation of PATCH request for setValue: submitBatch is called
+			// *before* this request is created, but the request is in the change set which is
+			// the current one before the submitBatch
+			oMetaModelMock.expects("fetchObject")
+				.withExactArgs("/SalesOrderList/Note")
+				.callsFake(function () {
+					return resolveLater(fnFetchObject.bind(oMetaModel, "/SalesOrderList/Note"));
+				});
 
 			oBinding.setValue("(1) Changed Note while $batch is running");
 			aPromises.push(that.oModel.submitBatch("update"));
+
+			oMetaModelMock.restore();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -3092,18 +3125,29 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			// The two PATCH requests on Note are merged, only the second remains
 			that.expectChange("note", "Changed Note From Server")
 				.expectRequest({
+					changeSetNo : 1,
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "ETag1"},
+					payload : {Note : "(1) Changed Note while $batch is running"}
+				}, {
+					"@odata.etag" : "ETag2",
+					Note : "(1) Changed Note From Server - 2"
+				})
+				.expectRequest({
+					changeSetNo : 2,
 					method : "PATCH",
 					url : "SalesOrderList('42')",
 					headers : {"If-Match" : "ETag1"},
 					payload : {Note : "(2) Changed Note while $batch is running"}
 				}, {
 					"@odata.etag" : "ETag2",
-					Note : "Changed Note From Server - 2"
+					Note : "(2) Changed Note From Server - 2"
 				})
-				.expectChange("note", "Changed Note From Server - 2");
+				.expectChange("note", "(1) Changed Note From Server - 2")
+				.expectChange("note", "(2) Changed Note From Server - 2");
 
 			fnRespond();
 			aPromises.push(that.waitForChanges(assert));
@@ -3190,6 +3234,7 @@ sap.ui.define([
 			//TODO suppress change event for outdated value "42Changed Note From Server"
 			that.expectChange("note42", "42Changed Note From Server")
 				.expectRequest({
+					changeSetNo : 1,
 					method : "PATCH",
 					url : "SalesOrderList('42')",
 					headers : {"If-Match" : "42ETag1"},
@@ -3199,16 +3244,28 @@ sap.ui.define([
 					Note : "42Changed Note From Server - 1"
 				})
 				.expectRequest({
+					changeSetNo : 1,
+					method : "PATCH",
+					url : "SalesOrderList('77')",
+					headers : {"If-Match" : "77ETag0"},
+					payload : {Note : "(1) 77Changed Note while $batch is running"}
+				}, {
+					"@odata.etag" : "77ETag1",
+					Note : "(1) 77Changed Note From Server - 1"
+				})
+				.expectRequest({
+					changeSetNo : 2,
 					method : "PATCH",
 					url : "SalesOrderList('77')",
 					headers : {"If-Match" : "77ETag0"},
 					payload : {Note : "77Changed Note"}
 				}, {
 					"@odata.etag" : "77ETag1",
-					Note : "77Changed Note From Server - 1"
+					Note : "(2) 77Changed Note From Server - 1"
 				})
 				.expectChange("note42", "42Changed Note From Server - 1")
-				.expectChange("note77", "77Changed Note From Server - 1");
+				.expectChange("note77", "(1) 77Changed Note From Server - 1")
+				.expectChange("note77", "(2) 77Changed Note From Server - 1");
 
 			fnRespond42();
 			aPromises.push(that.waitForChanges(assert));

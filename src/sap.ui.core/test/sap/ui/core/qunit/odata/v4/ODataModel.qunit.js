@@ -623,6 +623,7 @@ sap.ui.define([
 			oSubmitPromise = {};
 
 		oModelMock.expects("checkDeferredGroupId").withExactArgs("groupId");
+		this.mock(oModel.oRequestor).expects("addChangeSet").withExactArgs("groupId");
 		oModelMock.expects("_submitBatch").never(); // not yet
 		this.mock(sap.ui.getCore()).expects("addPrerenderingTask").callsFake(function (fnCallback) {
 			setTimeout(function () {
@@ -1619,7 +1620,10 @@ sap.ui.define([
 	QUnit.test("lockGroup: non-blocking", function (assert) {
 		var oGroupLock1,
 			oGroupLock2,
-			oModel = createModel("");
+			oModel = createModel(""),
+			oRequestorMock = this.mock(oModel.oRequestor);
+
+		oRequestorMock.expects("getSerialNumber").returns(42);
 
 		// code under test
 		oGroupLock1 = oModel.lockGroup("foo");
@@ -1627,18 +1631,23 @@ sap.ui.define([
 		assert.ok(oGroupLock1 instanceof _GroupLock);
 		assert.strictEqual(oGroupLock1.getGroupId(), "foo");
 		assert.notOk(oGroupLock1.isLocked());
+		assert.strictEqual(oGroupLock1.getSerialNumber(), 42);
+
+		oRequestorMock.expects("getSerialNumber").returns(77);
 
 		// code under test
 		oGroupLock1 = oModel.lockGroup();
 
 		assert.strictEqual(oGroupLock1.getGroupId(), undefined);
 		assert.notOk(oGroupLock1.isLocked());
+		assert.strictEqual(oGroupLock1.getSerialNumber(), 77);
 
 		// code under test
 		oGroupLock2 = oModel.lockGroup("foo", oGroupLock1);
 
 		assert.strictEqual(oGroupLock1, oGroupLock2);
 		assert.strictEqual(oGroupLock1.getGroupId(), "foo");
+		assert.strictEqual(oGroupLock1.getSerialNumber(), 77);
 	});
 
 	//*********************************************************************************************

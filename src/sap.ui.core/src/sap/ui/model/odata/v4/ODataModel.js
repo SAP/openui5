@@ -1157,7 +1157,7 @@ sap.ui.define([
 			vLock.setGroupId(sGroupId);
 			return vLock;
 		}
-		oGroupLock = new _GroupLock(sGroupId, vLock, oOwner);
+		oGroupLock = new _GroupLock(sGroupId, vLock, oOwner, this.oRequestor.getSerialNumber());
 		if (oGroupLock.isLocked()) {
 			this.aLockedGroupLocks.push(oGroupLock);
 		}
@@ -1553,8 +1553,7 @@ sap.ui.define([
 	/**
 	 * Submits the requests associated with the given application group ID in one batch request.
 	 * Requests from subsequent calls to this method for the same group ID may be combined in one
-	 * batch request using a single change set. Use different group IDs to guarantee separate batch
-	 * requests and thus separate change sets.
+	 * batch request using separate change sets.
 	 *
 	 * @param {string} sGroupId
 	 *   The application group ID as specified in {@link sap.ui.model.odata.v4.ODataModel}.
@@ -1574,6 +1573,7 @@ sap.ui.define([
 
 		this.checkDeferredGroupId(sGroupId);
 
+		this.oRequestor.addChangeSet(sGroupId);
 		return new Promise(function (resolve) {
 			sap.ui.getCore().addPrerenderingTask(function () {
 				resolve(that._submitBatch(sGroupId));
