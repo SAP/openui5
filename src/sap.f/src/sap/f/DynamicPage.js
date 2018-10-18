@@ -180,10 +180,10 @@ sap.ui.define([
 				 * <code>DynamicPageHeader</code>'s content and the <code>DynamicPage</code>'s content
 				 * are aligned vertically. When using {@link sap.ui.layout.form.Form},
 				 * {@link sap.m.Panel}, {@link sap.m.Table} and {@link sap.m.List} in the content area of
-				 * <code>DynamicPage</code>, you need to adjust their left text offset to achieve the
-				 * vertical alignment. To do this, apply the <code>sapFDynamicPageAlignContent</code>
-				 * CSS class to them and set their <code>width</code> property to <code>auto</code>
-				 * (if not set by default).
+				 * <code>DynamicPage</code>, if the content is not already aligned, you need to adjust
+				 * their left text offset to achieve the vertical alignment. To do this, apply the
+				 * <code>sapFDynamicPageAlignContent</code> CSS class to them and set their <code>width</code>
+				 * property to <code>auto</code> (if not set by default).
 				 *
 				 * Example:
 				 *
