@@ -20,8 +20,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Call to setLocaleId sets right AM and PM values and regenerates the lists", function (assert) {
-		var sExpectedAM = "vorm.",
-			sExpectedPM = "nachm.",
+		var sExpectedAM = "AM",
+			sExpectedPM = "PM",
 			sLocale = "de_DE",
 			oSetPropertySpy = this.spy(this.oTPS, "setProperty"),
 			oSetupListsSpy = this.spy(this.oTPS, "_setupLists");

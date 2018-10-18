@@ -61,7 +61,7 @@
 		"bfq": "badaga",
 		"bg": "bulgare",
 		"bgn": "baloutchi occidental",
-		"bho": "bhojpuri",
+		"bho": "bhodjpouri",
 		"bi": "bichelamar",
 		"bik": "bicol",
 		"bin": "bini",
@@ -89,6 +89,7 @@
 		"car": "caribe",
 		"cay": "cayuga",
 		"cch": "atsam",
+		"ccp": "ccp",
 		"ce": "tchétchène",
 		"ceb": "cebuano",
 		"cgg": "kiga",
@@ -154,9 +155,9 @@
 		"enm": "moyen anglais",
 		"eo": "espéranto",
 		"es": "espagnol",
-		"es_419": "espagnol (Amérique latine)",
-		"es_ES": "espagnol (Espagne)",
-		"es_MX": "espagnol (Mexique)",
+		"es_419": "espagnol d’Amérique latine",
+		"es_ES": "espagnol d’Espagne",
+		"es_MX": "espagnol du Mexique",
 		"esu": "yupik central",
 		"et": "estonien",
 		"eu": "basque",
@@ -201,7 +202,7 @@
 		"gom": "konkani de Goa",
 		"gon": "gondi",
 		"gor": "gorontalo",
-		"got": "gothique",
+		"got": "gotique",
 		"grb": "grebo",
 		"grc": "grec ancien",
 		"gsw": "suisse allemand",
@@ -328,27 +329,27 @@
 		"lt": "lituanien",
 		"ltg": "latgalien",
 		"lu": "luba-katanga",
-		"lua": "luba-lulua",
+		"lua": "luba-kasaï (ciluba)",
 		"lui": "luiseño",
 		"lun": "lunda",
 		"luo": "luo",
 		"lus": "lushaï",
-		"luy": "luhya",
+		"luy": "luyia",
 		"lv": "letton",
 		"lzh": "chinois classique",
 		"lzz": "laze",
-		"mad": "madourais",
+		"mad": "madurais",
 		"maf": "mafa",
 		"mag": "magahi",
-		"mai": "maithili",
+		"mai": "maïthili",
 		"mak": "makassar",
 		"man": "mandingue",
-		"mas": "massaï",
+		"mas": "maasaï",
 		"mde": "maba",
-		"mdf": "moksa",
+		"mdf": "mokcha",
 		"mdr": "mandar",
 		"men": "mendé",
-		"mer": "mérou",
+		"mer": "meru",
 		"mfe": "créole mauricien",
 		"mg": "malgache",
 		"mga": "moyen irlandais",
@@ -390,7 +391,7 @@
 		"ne": "népalais",
 		"new": "newari",
 		"ng": "ndonga",
-		"nia": "nias",
+		"nia": "niha",
 		"niu": "niuéen",
 		"njo": "ao naga",
 		"nl": "néerlandais",
@@ -406,9 +407,9 @@
 		"nr": "ndébélé du Sud",
 		"nso": "sotho du Nord",
 		"nus": "nuer",
-		"nv": "navaho",
+		"nv": "navajo",
 		"nwc": "newari classique",
-		"ny": "nyanja",
+		"ny": "chewa",
 		"nym": "nyamwezi",
 		"nyn": "nkole",
 		"nyo": "nyoro",
@@ -465,13 +466,13 @@
 		"rue": "ruthène",
 		"rug": "roviana",
 		"rup": "aroumain",
-		"rw": "rwanda",
+		"rw": "kinyarwanda",
 		"rwk": "rwa",
 		"sa": "sanskrit",
 		"sad": "sandawe",
 		"sah": "iakoute",
 		"sam": "araméen samaritain",
-		"saq": "sambourou",
+		"saq": "samburu",
 		"sas": "sasak",
 		"sat": "santali",
 		"saz": "saurashtra",
@@ -496,7 +497,7 @@
 		"shi": "chleuh",
 		"shn": "shan",
 		"shu": "arabe tchadien",
-		"si": "cinghalais",
+		"si": "cingalais",
 		"sid": "sidamo",
 		"sk": "slovaque",
 		"sl": "slovène",
@@ -533,10 +534,10 @@
 		"ta": "tamoul",
 		"tcy": "toulou",
 		"te": "télougou",
-		"tem": "temne",
+		"tem": "timné",
 		"teo": "teso",
 		"ter": "tereno",
-		"tet": "tetum",
+		"tet": "tétoum",
 		"tg": "tadjik",
 		"th": "thaï",
 		"ti": "tigrigna",
@@ -551,7 +552,7 @@
 		"tly": "talysh",
 		"tmh": "tamacheq",
 		"tn": "tswana",
-		"to": "tonguien",
+		"to": "tongien",
 		"tog": "tonga nyasa",
 		"tpi": "tok pisin",
 		"tr": "turc",
@@ -562,7 +563,7 @@
 		"tsi": "tsimshian",
 		"tt": "tatar",
 		"ttt": "tati caucasien",
-		"tum": "toumbouka",
+		"tum": "tumbuka",
 		"tvl": "tuvalu",
 		"tw": "twi",
 		"twq": "tasawaq",
@@ -571,10 +572,10 @@
 		"tzm": "tamazight",
 		"udm": "oudmourte",
 		"ug": "ouïghour",
-		"ug_alt-variant": "ouïgour",
+		"ug_alt-variant": "ouïghour",
 		"uga": "ougaritique",
 		"uk": "ukrainien",
-		"umb": "oumboundou",
+		"umb": "umbundu",
 		"und": "langue indéterminée",
 		"ur": "ourdou",
 		"uz": "ouzbek",
@@ -655,6 +656,7 @@
 		"Cyrl": "cyrillique",
 		"Cyrs": "cyrillique (variante slavonne)",
 		"Deva": "devanagari",
+		"Dogr": "Dogr",
 		"Dsrt": "déséret",
 		"Dupl": "Dupl",
 		"Egyd": "démotique égyptien",
@@ -665,6 +667,7 @@
 		"Geok": "géorgien khoutsouri",
 		"Geor": "géorgien",
 		"Glag": "glagolitique",
+		"Gong": "Gong",
 		"Gonm": "Gonm",
 		"Goth": "gotique",
 		"Gran": "Gran",
@@ -675,9 +678,9 @@
 		"Hang": "hangûl",
 		"Hani": "sinogrammes",
 		"Hano": "hanounóo",
-		"Hans": "simplifié",
+		"Hans": "idéogrammes han simplifiés",
 		"Hans-alt-stand-alone": "caractères chinois simplifiés",
-		"Hant": "traditionnel",
+		"Hant": "idéogrammes han traditionnels",
 		"Hant-alt-stand-alone": "caractères chinois traditionnels",
 		"Hatr": "Hatr",
 		"Hebr": "hébreu",
@@ -712,10 +715,12 @@
 		"Lyci": "lycien",
 		"Lydi": "lydien",
 		"Mahj": "Mahj",
+		"Maka": "Maka",
 		"Mand": "mandéen",
 		"Mani": "manichéen",
 		"Marc": "Marc",
 		"Maya": "hiéroglyphes mayas",
+		"Medf": "Medf",
 		"Mend": "Mend",
 		"Merc": "Merc",
 		"Mero": "méroïtique",
@@ -748,7 +753,9 @@
 		"Phnx": "phénicien",
 		"Plrd": "phonétique de Pollard",
 		"Prti": "parthe des inscriptions",
+		"Qaag": "Qaag",
 		"Rjng": "rejang",
+		"Rohg": "Rohg",
 		"Roro": "rongorongo",
 		"Runr": "runique",
 		"Samr": "samaritain",
@@ -760,7 +767,9 @@
 		"Shrd": "Shrd",
 		"Sidd": "Sidd",
 		"Sind": "Sind",
-		"Sinh": "cinghalais",
+		"Sinh": "cingalais",
+		"Sogd": "Sogd",
+		"Sogo": "Sogo",
 		"Sora": "Sora",
 		"Soyo": "Soyo",
 		"Sund": "sundanais",
@@ -1099,6 +1108,8 @@
 		"VU": "Vanuatu",
 		"WF": "Wallis-et-Futuna",
 		"WS": "Samoa",
+		"XA": "XA",
+		"XB": "XB",
 		"XK": "Kosovo",
 		"YE": "Yémen",
 		"YT": "Mayotte",
@@ -1194,6 +1205,44 @@
 				"intervalFormatFallback": "{0} – {1}",
 				"d": {
 					"d": "d – d"
+				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h 'h' a – h 'h' a",
@@ -1559,7 +1608,7 @@
 			"short": "{1} {0}",
 			"availableFormats": {
 				"Bh": "h 'h' B",
-				"Bhm": "h:mm B",
+				"Bhm": "h 'h' mm B",
 				"Bhms": "h 'h' mm 'min' ss 's' B",
 				"d": "d",
 				"E": "ccc",
@@ -1620,6 +1669,44 @@
 				"intervalFormatFallback": "{0} – {1}",
 				"d": {
 					"d": "d – d"
+				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -1982,7 +2069,7 @@
 			"short": "{1} {0}",
 			"availableFormats": {
 				"Bh": "h 'h' B",
-				"Bhm": "h:mm B",
+				"Bhm": "h 'h' mm B",
 				"Bhms": "h 'h' mm 'min' ss 's' B",
 				"d": "d",
 				"E": "ccc",
@@ -2043,6 +2130,44 @@
 				"intervalFormatFallback": "{0} – {1}",
 				"d": {
 					"d": "d – d"
+				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -2414,7 +2539,7 @@
 			"short": "{1} {0}",
 			"availableFormats": {
 				"Bh": "h 'h' B",
-				"Bhm": "h:mm B",
+				"Bhm": "h 'h' mm B",
 				"Bhms": "h 'h' mm 'min' ss 's' B",
 				"d": "d",
 				"E": "ccc",
@@ -2475,6 +2600,44 @@
 				"intervalFormatFallback": "{0} – {1}",
 				"d": {
 					"d": "d – d"
+				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -2837,7 +3000,7 @@
 			"short": "{1} {0}",
 			"availableFormats": {
 				"Bh": "h 'h' B",
-				"Bhm": "h:mm B",
+				"Bhm": "h 'h' mm B",
 				"Bhms": "h 'h' mm 'min' ss 's' B",
 				"d": "d",
 				"E": "ccc",
@@ -2898,6 +3061,44 @@
 				"intervalFormatFallback": "{0} – {1}",
 				"d": {
 					"d": "d – d"
+				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -3302,9 +3503,9 @@
 		},
 		"quarter-short": {
 			"displayName": "trim.",
-			"relative-type--1": "le trimestre dernier",
-			"relative-type-0": "ce trimestre-ci",
-			"relative-type-1": "le trimestre prochain",
+			"relative-type--1": "trim. dernier",
+			"relative-type-0": "ce trim.",
+			"relative-type-1": "trim. prochain",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "dans {0} trim.",
 				"relativeTimePattern-count-other": "dans {0} trim."
@@ -3316,9 +3517,9 @@
 		},
 		"quarter-narrow": {
 			"displayName": "trim.",
-			"relative-type--1": "le trimestre dernier",
-			"relative-type-0": "ce trimestre-ci",
-			"relative-type-1": "le trimestre prochain",
+			"relative-type--1": "trim. dernier",
+			"relative-type-0": "ce trim.",
+			"relative-type-1": "trim.prochain",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "+{0} trim.",
 				"relativeTimePattern-count-other": "+{0} trim."
@@ -3713,7 +3914,7 @@
 		"RHD": "$RH",
 		"SGD": "$ SG",
 		"USD": "$ US",
-		"WST": "WS$"
+		"XXX": "¤"
 	},
 	"rtl": false,
 	"listPattern-standard-wide": {
@@ -3757,8 +3958,8 @@
 			},
 			"angle-revolution": {
 				"displayName": "tr",
-				"unitPattern-count-one": "{0} tr",
-				"unitPattern-count-other": "{0} tr"
+				"unitPattern-count-one": "{0} tr",
+				"unitPattern-count-other": "{0} tr"
 			},
 			"angle-radian": {
 				"displayName": "rad",
@@ -3832,23 +4033,33 @@
 			},
 			"concentr-karat": {
 				"displayName": "carats",
-				"unitPattern-count-one": "{0} ct",
-				"unitPattern-count-other": "{0} ct"
+				"unitPattern-count-one": "{0} ct",
+				"unitPattern-count-other": "{0} ct"
 			},
 			"concentr-milligram-per-deciliter": {
 				"displayName": "mg/dl",
-				"unitPattern-count-one": "{0} mg/dl",
-				"unitPattern-count-other": "{0} mg/dl"
+				"unitPattern-count-one": "{0} mg/dl",
+				"unitPattern-count-other": "{0} mg/dl"
 			},
 			"concentr-millimole-per-liter": {
 				"displayName": "mmol/l",
-				"unitPattern-count-one": "{0} mmol/l",
-				"unitPattern-count-other": "{0} mmol/l"
+				"unitPattern-count-one": "{0} mmol/l",
+				"unitPattern-count-other": "{0} mmol/l"
 			},
 			"concentr-part-per-million": {
 				"displayName": "ppm",
-				"unitPattern-count-one": "{0} ppm",
-				"unitPattern-count-other": "{0} ppm"
+				"unitPattern-count-one": "{0} ppm",
+				"unitPattern-count-other": "{0} ppm"
+			},
+			"concentr-percent": {
+				"displayName": "%",
+				"unitPattern-count-one": "{0} %",
+				"unitPattern-count-other": "{0} %"
+			},
+			"concentr-permille": {
+				"displayName": "‰",
+				"unitPattern-count-one": "{0} ‰",
+				"unitPattern-count-other": "{0} ‰"
 			},
 			"consumption-liter-per-kilometer": {
 				"displayName": "L/km",
@@ -3870,13 +4081,18 @@
 				"unitPattern-count-one": "{0} mi/gal Imp",
 				"unitPattern-count-other": "{0} mi/gal Imp"
 			},
+			"digital-petabyte": {
+				"displayName": "Po",
+				"unitPattern-count-one": "{0} Po",
+				"unitPattern-count-other": "{0} Po"
+			},
 			"digital-terabyte": {
 				"displayName": "To",
 				"unitPattern-count-one": "{0} To",
 				"unitPattern-count-other": "{0} To"
 			},
 			"digital-terabit": {
-				"displayName": "Tbit",
+				"displayName": "Tb",
 				"unitPattern-count-one": "{0} Tb",
 				"unitPattern-count-other": "{0} Tb"
 			},
@@ -3921,9 +4137,9 @@
 				"unitPattern-count-other": "{0} bit"
 			},
 			"duration-century": {
-				"displayName": "si",
-				"unitPattern-count-one": "{0} si",
-				"unitPattern-count-other": "{0} si"
+				"displayName": "siècles",
+				"unitPattern-count-one": "{0} siècle",
+				"unitPattern-count-other": "{0} siècles"
 			},
 			"duration-year": {
 				"displayName": "ans",
@@ -3933,32 +4149,32 @@
 			},
 			"duration-month": {
 				"displayName": "m.",
-				"unitPattern-count-one": "{0} m.",
-				"unitPattern-count-other": "{0} m.",
+				"unitPattern-count-one": "{0} m.",
+				"unitPattern-count-other": "{0} m.",
 				"perUnitPattern": "{0}/m."
 			},
 			"duration-week": {
 				"displayName": "sem.",
-				"unitPattern-count-one": "{0} sem.",
-				"unitPattern-count-other": "{0} sem.",
+				"unitPattern-count-one": "{0} sem.",
+				"unitPattern-count-other": "{0} sem.",
 				"perUnitPattern": "{0}/sem."
 			},
 			"duration-day": {
 				"displayName": "j",
-				"unitPattern-count-one": "{0} j",
-				"unitPattern-count-other": "{0} j",
+				"unitPattern-count-one": "{0} j",
+				"unitPattern-count-other": "{0} j",
 				"perUnitPattern": "{0}/j"
 			},
 			"duration-hour": {
 				"displayName": "h",
-				"unitPattern-count-one": "{0} h",
-				"unitPattern-count-other": "{0} h",
+				"unitPattern-count-one": "{0} h",
+				"unitPattern-count-other": "{0} h",
 				"perUnitPattern": "{0}/h"
 			},
 			"duration-minute": {
 				"displayName": "min",
-				"unitPattern-count-one": "{0} min",
-				"unitPattern-count-other": "{0} min",
+				"unitPattern-count-one": "{0} min",
+				"unitPattern-count-other": "{0} min",
 				"perUnitPattern": "{0}/min"
 			},
 			"duration-second": {
@@ -3969,8 +4185,8 @@
 			},
 			"duration-millisecond": {
 				"displayName": "ms",
-				"unitPattern-count-one": "{0} ms",
-				"unitPattern-count-other": "{0} ms"
+				"unitPattern-count-one": "{0} ms",
+				"unitPattern-count-other": "{0} ms"
 			},
 			"duration-microsecond": {
 				"displayName": "μs",
@@ -4054,14 +4270,14 @@
 			},
 			"length-kilometer": {
 				"displayName": "km",
-				"unitPattern-count-one": "{0} km",
-				"unitPattern-count-other": "{0} km",
+				"unitPattern-count-one": "{0} km",
+				"unitPattern-count-other": "{0} km",
 				"perUnitPattern": "{0}/km"
 			},
 			"length-meter": {
 				"displayName": "m",
-				"unitPattern-count-one": "{0} m",
-				"unitPattern-count-other": "{0} m",
+				"unitPattern-count-one": "{0} m",
+				"unitPattern-count-other": "{0} m",
 				"perUnitPattern": "{0}/m"
 			},
 			"length-decimeter": {
@@ -4139,8 +4355,8 @@
 			},
 			"length-fathom": {
 				"displayName": "fm",
-				"unitPattern-count-one": "{0} fm",
-				"unitPattern-count-other": "{0} fm"
+				"unitPattern-count-one": "{0} fth",
+				"unitPattern-count-other": "{0} fth"
 			},
 			"length-nautical-mile": {
 				"displayName": "NM",
@@ -4149,13 +4365,13 @@
 			},
 			"length-mile-scandinavian": {
 				"displayName": "smi",
-				"unitPattern-count-one": "{0} smi",
-				"unitPattern-count-other": "{0} smi"
+				"unitPattern-count-one": "{0} smi",
+				"unitPattern-count-other": "{0} smi"
 			},
 			"length-point": {
 				"displayName": "points",
-				"unitPattern-count-one": "{0} pt",
-				"unitPattern-count-other": "{0} pt"
+				"unitPattern-count-one": "{0} pt",
+				"unitPattern-count-other": "{0} pt"
 			},
 			"light-lux": {
 				"displayName": "lx",
@@ -4164,13 +4380,13 @@
 			},
 			"mass-metric-ton": {
 				"displayName": "t",
-				"unitPattern-count-one": "{0} t",
-				"unitPattern-count-other": "{0} t"
+				"unitPattern-count-one": "{0} t",
+				"unitPattern-count-other": "{0} t"
 			},
 			"mass-kilogram": {
 				"displayName": "kg",
-				"unitPattern-count-one": "{0} kg",
-				"unitPattern-count-other": "{0} kg",
+				"unitPattern-count-one": "{0} kg",
+				"unitPattern-count-other": "{0} kg",
 				"perUnitPattern": "{0}/kg"
 			},
 			"mass-gram": {
@@ -4186,8 +4402,8 @@
 			},
 			"mass-microgram": {
 				"displayName": "µg",
-				"unitPattern-count-one": "{0} µg",
-				"unitPattern-count-other": "{0} µg"
+				"unitPattern-count-one": "{0} µg",
+				"unitPattern-count-other": "{0} µg"
 			},
 			"mass-ton": {
 				"displayName": "tc",
@@ -4201,25 +4417,25 @@
 			},
 			"mass-pound": {
 				"displayName": "lb",
-				"unitPattern-count-one": "{0} lb",
-				"unitPattern-count-other": "{0} lb",
+				"unitPattern-count-one": "{0} lb",
+				"unitPattern-count-other": "{0} lb",
 				"perUnitPattern": "{0}/lb"
 			},
 			"mass-ounce": {
 				"displayName": "oz",
-				"unitPattern-count-one": "{0} oz",
-				"unitPattern-count-other": "{0} oz",
+				"unitPattern-count-one": "{0} oz",
+				"unitPattern-count-other": "{0} oz",
 				"perUnitPattern": "{0}/oz"
 			},
 			"mass-ounce-troy": {
 				"displayName": "oz t",
-				"unitPattern-count-one": "{0} oz t",
-				"unitPattern-count-other": "{0} oz t"
+				"unitPattern-count-one": "{0} oz t",
+				"unitPattern-count-other": "{0} oz t"
 			},
 			"mass-carat": {
 				"displayName": "ct",
-				"unitPattern-count-one": "{0} ct",
-				"unitPattern-count-other": "{0} ct"
+				"unitPattern-count-one": "{0} ct",
+				"unitPattern-count-other": "{0} ct"
 			},
 			"power-gigawatt": {
 				"displayName": "GW",
@@ -4253,13 +4469,13 @@
 			},
 			"pressure-hectopascal": {
 				"displayName": "hPa",
-				"unitPattern-count-one": "{0} hPa",
-				"unitPattern-count-other": "{0} hPa"
+				"unitPattern-count-one": "{0} hPa",
+				"unitPattern-count-other": "{0} hPa"
 			},
 			"pressure-millimeter-of-mercury": {
-				"displayName": "mmHg",
-				"unitPattern-count-one": "{0} mmHg",
-				"unitPattern-count-other": "{0} mmHg"
+				"displayName": "mm Hg",
+				"unitPattern-count-one": "{0} mm Hg",
+				"unitPattern-count-other": "{0} mm Hg"
 			},
 			"pressure-pound-per-square-inch": {
 				"displayName": "psi",
@@ -4267,19 +4483,24 @@
 				"unitPattern-count-other": "{0} psi"
 			},
 			"pressure-inch-hg": {
-				"displayName": "inHg",
-				"unitPattern-count-one": "{0} inHg",
-				"unitPattern-count-other": "{0} inHg"
+				"displayName": "po Hg",
+				"unitPattern-count-one": "{0} po Hg",
+				"unitPattern-count-other": "{0} po Hg"
 			},
 			"pressure-millibar": {
 				"displayName": "mbar",
 				"unitPattern-count-one": "{0} mbar",
 				"unitPattern-count-other": "{0} mbar"
 			},
+			"pressure-atmosphere": {
+				"displayName": "atm",
+				"unitPattern-count-one": "{0} atm",
+				"unitPattern-count-other": "{0} atm"
+			},
 			"speed-kilometer-per-hour": {
 				"displayName": "km/h",
-				"unitPattern-count-one": "{0} km/h",
-				"unitPattern-count-other": "{0} km/h"
+				"unitPattern-count-one": "{0} km/h",
+				"unitPattern-count-other": "{0} km/h"
 			},
 			"speed-meter-per-second": {
 				"displayName": "m/s",
@@ -4293,8 +4514,8 @@
 			},
 			"speed-knot": {
 				"displayName": "nd",
-				"unitPattern-count-one": "{0} nd",
-				"unitPattern-count-other": "{0} nd"
+				"unitPattern-count-one": "{0} nd",
+				"unitPattern-count-other": "{0} nd"
 			},
 			"temperature-generic": {
 				"displayName": "°",
@@ -4323,20 +4544,20 @@
 			},
 			"volume-cubic-meter": {
 				"displayName": "m³",
-				"unitPattern-count-one": "{0} m³",
-				"unitPattern-count-other": "{0} m³",
+				"unitPattern-count-one": "{0} m³",
+				"unitPattern-count-other": "{0} m³",
 				"perUnitPattern": "{0}/m³"
 			},
 			"volume-cubic-centimeter": {
 				"displayName": "cm³",
-				"unitPattern-count-one": "{0} cm³",
-				"unitPattern-count-other": "{0} cm³",
+				"unitPattern-count-one": "{0} cm³",
+				"unitPattern-count-other": "{0} cm³",
 				"perUnitPattern": "{0}/cm³"
 			},
 			"volume-cubic-mile": {
 				"displayName": "mi³",
-				"unitPattern-count-one": "{0} mi³",
-				"unitPattern-count-other": "{0} mi³"
+				"unitPattern-count-one": "{0} mi³",
+				"unitPattern-count-other": "{0} mi³"
 			},
 			"volume-cubic-yard": {
 				"displayName": "vg³",
@@ -4446,10 +4667,11 @@
 				"unitPattern-count-other": "{0} c. à t."
 			},
 			"coordinateUnit": {
-				"east": "{0} E",
-				"north": "{0} N",
-				"south": "{0} S",
-				"west": "{0} O"
+				"displayName": "direction",
+				"east": "{0} E",
+				"north": "{0} N",
+				"south": "{0} S",
+				"west": "{0} O"
 			}
 		}
 	},
@@ -4457,20 +4679,16 @@
 		"ADP": 0,
 		"AFN": 0,
 		"ALL": 0,
-		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
 		"BYR": 0,
 		"CLF": 4,
 		"CLP": 0,
-		"COP": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
 		"ESP": 0,
 		"GNF": 0,
-		"GYD": 0,
 		"HUF": 0,
-		"IDR": 0,
 		"IQD": 0,
 		"IRR": 0,
 		"ISK": 0,
@@ -4488,11 +4706,8 @@
 		"MGA": 0,
 		"MGF": 0,
 		"MMK": 0,
-		"MNT": 0,
 		"MRO": 0,
-		"MUR": 0,
 		"OMR": 3,
-		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
@@ -4504,10 +4719,9 @@
 		"TND": 3,
 		"TRL": 0,
 		"TWD": 0,
-		"TZS": 0,
 		"UGX": 0,
 		"UYI": 0,
-		"UZS": 0,
+		"UYW": 4,
 		"VND": 0,
 		"VUV": 0,
 		"XAF": 0,

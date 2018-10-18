@@ -839,8 +839,8 @@ sap.ui.define([
 			{ key: "setDateValue", value: getDate(17, 23, 18) }
 		],
 		{
-			expValue: "5:23 nachm.",
-			expInputVal: "05:23:18 nachm.",
+			expValue: "5:23 PM",
+			expInputVal: "05:23:18 PM",
 			expDateValue: getDate(17, 23, 18)
 		});
 
@@ -2785,9 +2785,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("TimeSemanticMaskHelper.replaceChar replaces with unique value and completes with spaces when am,pm length differs", function(assert) {
+		sinon.stub(LocaleData.prototype, "getDayPeriods").returns([ "vorm.", "nachm."]);
+
 		//system under test
 		var tp = new TimePicker({
-			localeId: "de_DE",
 			displayFormat: "hh a"
 		});
 
@@ -2802,6 +2803,7 @@ sap.ui.define([
 		assert.equal(sCharReplaced, "vorm. ", "replaceChar completes with spaces");
 
 		//cleanup
+		LocaleData.prototype.getDayPeriods.restore();
 		tp.destroy();
 	});
 

@@ -89,6 +89,7 @@
 		"car": "カリブ語",
 		"cay": "カユーガ語",
 		"cch": "チャワイ語",
+		"ccp": "ccp",
 		"ce": "チェチェン語",
 		"ceb": "セブアノ語",
 		"cgg": "チガ語",
@@ -116,7 +117,7 @@
 		"cy": "ウェールズ語",
 		"da": "デンマーク語",
 		"dak": "ダコタ語",
-		"dar": "ダルガン語",
+		"dar": "ダルグワ語",
 		"dav": "タイタ語",
 		"de": "ドイツ語",
 		"de_AT": "ドイツ語 (オーストリア)",
@@ -243,7 +244,7 @@
 		"io": "イド語",
 		"is": "アイスランド語",
 		"it": "イタリア語",
-		"iu": "イヌクウティトット語",
+		"iu": "イヌクティトット語",
 		"izh": "イングリア語",
 		"ja": "日本語",
 		"jam": "ジャマイカ・クレオール語",
@@ -416,7 +417,7 @@
 		"oc": "オック語",
 		"oj": "オジブウェー語",
 		"om": "オロモ語",
-		"or": "オリヤー語",
+		"or": "オディア語",
 		"os": "オセット語",
 		"osa": "オセージ語",
 		"ota": "オスマントルコ語",
@@ -656,6 +657,7 @@
 		"Cyrl": "キリル文字",
 		"Cyrs": "古代教会スラブ語キリル文字",
 		"Deva": "デーバナーガリー文字",
+		"Dogr": "Dogr",
 		"Dsrt": "デセレット文字",
 		"Dupl": "デュプロワエ式速記",
 		"Egyd": "エジプト民衆文字",
@@ -666,6 +668,7 @@
 		"Geok": "ジョージア文字(フツリ)",
 		"Geor": "ジョージア文字",
 		"Glag": "グラゴル文字",
+		"Gong": "Gong",
 		"Gonm": "Gonm",
 		"Goth": "ゴート文字",
 		"Gran": "グランタ文字",
@@ -716,10 +719,12 @@
 		"Lyci": "リキア文字",
 		"Lydi": "リディア文字",
 		"Mahj": "マハージャニー文字",
+		"Maka": "Maka",
 		"Mand": "マンダ文字",
 		"Mani": "マニ文字",
 		"Marc": "Marc",
 		"Maya": "マヤ象形文字",
+		"Medf": "Medf",
 		"Mend": "メンデ文字",
 		"Merc": "メロエ文字草書体",
 		"Mero": "メロエ文字",
@@ -753,7 +758,9 @@
 		"Phnx": "フェニキア文字",
 		"Plrd": "ポラード音声記号",
 		"Prti": "碑文パルティア文字",
+		"Qaag": "Qaag",
 		"Rjng": "ルジャン文字",
+		"Rohg": "Rohg",
 		"Roro": "ロンゴロンゴ文字",
 		"Runr": "ルーン文字",
 		"Samr": "サマリア文字",
@@ -766,6 +773,8 @@
 		"Sidd": "梵字",
 		"Sind": "クダワディ文字",
 		"Sinh": "シンハラ文字",
+		"Sogd": "Sogd",
+		"Sogo": "Sogo",
 		"Sora": "ソラング・ソンペング文字",
 		"Soyo": "Soyo",
 		"Sund": "スンダ文字",
@@ -1105,6 +1114,8 @@
 		"VU": "バヌアツ",
 		"WF": "ウォリス・フツナ",
 		"WS": "サモア",
+		"XA": "XA",
+		"XB": "XB",
 		"XK": "コソボ",
 		"YE": "イエメン",
 		"YT": "マヨット",
@@ -1204,6 +1215,44 @@
 				"intervalFormatFallback": "{0}～{1}",
 				"d": {
 					"d": "d日～d日"
+				},
+				"Gy": {
+					"G": "Gy年～Gy年",
+					"y": "Gy年～y年"
+				},
+				"GyM": {
+					"G": "Gy/MM～Gy/MM",
+					"M": "Gy/MM～y/MM",
+					"y": "Gy/MM～y/MM"
+				},
+				"GyMd": {
+					"d": "Gy/MM/dd～y/MM/dd",
+					"G": "Gy/MM/dd～Gy/MM/dd",
+					"M": "Gy/MM/dd～y/MM/dd",
+					"y": "Gy/MM/dd～y/MM/dd"
+				},
+				"GyMEd": {
+					"d": "Gy/MM/dd(E)～y/MM/dd(E)",
+					"G": "Gy/MM/dd(E)～Gy/MM/dd(E)",
+					"M": "Gy/MM/dd(E)～y/MM/dd(E)",
+					"y": "Gy/MM/dd(E)～y/MM/dd(E)"
+				},
+				"GyMMM": {
+					"G": "Gy年M月～Gy年M月",
+					"M": "Gy年M月～M月",
+					"y": "Gy年M月～y年M月"
+				},
+				"GyMMMd": {
+					"d": "Gy年M月d日～d日",
+					"G": "Gy年M月d日～Gy年M月d日",
+					"M": "Gy年M月d日～M月d日",
+					"y": "Gy年M月d日～y年M月d日"
+				},
+				"GyMMMEd": {
+					"d": "Gy年M月d日(E)～d日(E)",
+					"G": "Gy年M月d日(E)～Gy年M月d日(E)",
+					"M": "Gy年M月d日(E)～M月d日(E)",
+					"y": "Gy年M月d日(E)～y年M月d日(E)"
 				},
 				"h": {
 					"a": "aK時～aK時",
@@ -1637,6 +1686,44 @@
 				"d": {
 					"d": "d日～d日"
 				},
+				"Gy": {
+					"G": "Gy年～Gy年",
+					"y": "Gy年～y年"
+				},
+				"GyM": {
+					"G": "Gy/MM～Gy/MM",
+					"M": "Gy/MM～y/MM",
+					"y": "Gy/MM～y/MM"
+				},
+				"GyMd": {
+					"d": "Gy/MM/dd～y/MM/dd",
+					"G": "Gy/MM/dd～Gy/MM/dd",
+					"M": "Gy/MM/dd～y/MM/dd",
+					"y": "Gy/MM/dd～y/MM/dd"
+				},
+				"GyMEd": {
+					"d": "Gy/MM/dd(E)～y/MM/dd(E)",
+					"G": "Gy/MM/dd(E)～Gy/MM/dd(E)",
+					"M": "Gy/MM/dd(E)～y/MM/dd(E)",
+					"y": "Gy/MM/dd(E)～y/MM/dd(E)"
+				},
+				"GyMMM": {
+					"G": "Gy年M月～Gy年M月",
+					"M": "Gy年M月～M月",
+					"y": "Gy年M月～y年M月"
+				},
+				"GyMMMd": {
+					"d": "Gy年M月d日～d日",
+					"G": "Gy年M月d日～Gy年M月d日",
+					"M": "Gy年M月d日～M月d日",
+					"y": "Gy年M月d日～y年M月d日"
+				},
+				"GyMMMEd": {
+					"d": "Gy年M月d日(E)～d日(E)",
+					"G": "Gy年M月d日(E)～Gy年M月d日(E)",
+					"M": "Gy年M月d日(E)～M月d日(E)",
+					"y": "Gy年M月d日(E)～y年M月d日(E)"
+				},
 				"h": {
 					"a": "aK時～aK時",
 					"h": "aK時～K時"
@@ -2066,6 +2153,44 @@
 				"intervalFormatFallback": "{0}～{1}",
 				"d": {
 					"d": "d日～d日"
+				},
+				"Gy": {
+					"G": "Gy年～Gy年",
+					"y": "Gy年～y年"
+				},
+				"GyM": {
+					"G": "Gy/MM～Gy/MM",
+					"M": "Gy/MM～y/MM",
+					"y": "Gy/MM～y/MM"
+				},
+				"GyMd": {
+					"d": "Gy/MM/dd～y/MM/dd",
+					"G": "Gy/MM/dd～Gy/MM/dd",
+					"M": "Gy/MM/dd～y/MM/dd",
+					"y": "Gy/MM/dd～y/MM/dd"
+				},
+				"GyMEd": {
+					"d": "Gy/MM/dd(E)～y/MM/dd(E)",
+					"G": "Gy/MM/dd(E)～Gy/MM/dd(E)",
+					"M": "Gy/MM/dd(E)～y/MM/dd(E)",
+					"y": "Gy/MM/dd(E)～y/MM/dd(E)"
+				},
+				"GyMMM": {
+					"G": "Gy年M月～Gy年M月",
+					"M": "Gy年M月～M月",
+					"y": "Gy年M月～y年M月"
+				},
+				"GyMMMd": {
+					"d": "Gy年M月d日～d日",
+					"G": "Gy年M月d日～Gy年M月d日",
+					"M": "Gy年M月d日～M月d日",
+					"y": "Gy年M月d日～y年M月d日"
+				},
+				"GyMMMEd": {
+					"d": "Gy年M月d日(E)～d日(E)",
+					"G": "Gy年M月d日(E)～Gy年M月d日(E)",
+					"M": "Gy年M月d日(E)～M月d日(E)",
+					"y": "Gy年M月d日(E)～y年M月d日(E)"
 				},
 				"h": {
 					"a": "aK時～aK時",
@@ -2505,6 +2630,44 @@
 				"d": {
 					"d": "d日～d日"
 				},
+				"Gy": {
+					"G": "Gy年～Gy年",
+					"y": "Gy年～y年"
+				},
+				"GyM": {
+					"G": "Gy/MM～Gy/MM",
+					"M": "Gy/MM～y/MM",
+					"y": "Gy/MM～y/MM"
+				},
+				"GyMd": {
+					"d": "Gy/MM/dd～y/MM/dd",
+					"G": "Gy/MM/dd～Gy/MM/dd",
+					"M": "Gy/MM/dd～y/MM/dd",
+					"y": "Gy/MM/dd～y/MM/dd"
+				},
+				"GyMEd": {
+					"d": "Gy/MM/dd(E)～y/MM/dd(E)",
+					"G": "Gy/MM/dd(E)～Gy/MM/dd(E)",
+					"M": "Gy/MM/dd(E)～y/MM/dd(E)",
+					"y": "Gy/MM/dd(E)～y/MM/dd(E)"
+				},
+				"GyMMM": {
+					"G": "Gy年M月～Gy年M月",
+					"M": "Gy年M月～M月",
+					"y": "Gy年M月～y年M月"
+				},
+				"GyMMMd": {
+					"d": "Gy年M月d日～d日",
+					"G": "Gy年M月d日～Gy年M月d日",
+					"M": "Gy年M月d日～M月d日",
+					"y": "Gy年M月d日～y年M月d日"
+				},
+				"GyMMMEd": {
+					"d": "Gy年M月d日(E)～d日(E)",
+					"G": "Gy年M月d日(E)～Gy年M月d日(E)",
+					"M": "Gy年M月d日(E)～M月d日(E)",
+					"y": "Gy年M月d日(E)～y年M月d日(E)"
+				},
 				"h": {
 					"a": "aK時～aK時",
 					"h": "aK時～K時"
@@ -2935,6 +3098,44 @@
 				"intervalFormatFallback": "{0}～{1}",
 				"d": {
 					"d": "d日～d日"
+				},
+				"Gy": {
+					"G": "Gy年～Gy年",
+					"y": "Gy年～y年"
+				},
+				"GyM": {
+					"G": "Gy/MM～Gy/MM",
+					"M": "Gy/MM～y/MM",
+					"y": "Gy/MM～y/MM"
+				},
+				"GyMd": {
+					"d": "Gy/MM/dd～y/MM/dd",
+					"G": "Gy/MM/dd～Gy/MM/dd",
+					"M": "Gy/MM/dd～y/MM/dd",
+					"y": "Gy/MM/dd～y/MM/dd"
+				},
+				"GyMEd": {
+					"d": "Gy/MM/dd(E)～y/MM/dd(E)",
+					"G": "Gy/MM/dd(E)～Gy/MM/dd(E)",
+					"M": "Gy/MM/dd(E)～y/MM/dd(E)",
+					"y": "Gy/MM/dd(E)～y/MM/dd(E)"
+				},
+				"GyMMM": {
+					"G": "Gy年M月～Gy年M月",
+					"M": "Gy年M月～M月",
+					"y": "Gy年M月～y年M月"
+				},
+				"GyMMMd": {
+					"d": "Gy年M月d日～d日",
+					"G": "Gy年M月d日～Gy年M月d日",
+					"M": "Gy年M月d日～M月d日",
+					"y": "Gy年M月d日～y年M月d日"
+				},
+				"GyMMMEd": {
+					"d": "Gy年M月d日(E)～d日(E)",
+					"G": "Gy年M月d日(E)～Gy年M月d日(E)",
+					"M": "Gy年M月d日(E)～M月d日(E)",
+					"y": "Gy年M月d日(E)～y年M月d日(E)"
 				},
 				"h": {
 					"a": "aK時～aK時",
@@ -3786,6 +3987,14 @@
 				"displayName": "ppm",
 				"unitPattern-count-other": "{0} ppm"
 			},
+			"concentr-percent": {
+				"displayName": "パーセント",
+				"unitPattern-count-other": "{0}%"
+			},
+			"concentr-permille": {
+				"displayName": "パーミル",
+				"unitPattern-count-other": "{0}‰"
+			},
 			"consumption-liter-per-kilometer": {
 				"displayName": "L/km",
 				"unitPattern-count-other": "{0} L/km"
@@ -3801,6 +4010,10 @@
 			"consumption-mile-per-gallon-imperial": {
 				"displayName": "マイル毎英ガロン",
 				"unitPattern-count-other": "{0} mpg Imp."
+			},
+			"digital-petabyte": {
+				"displayName": "ペタバイト",
+				"unitPattern-count-other": "{0} PB"
 			},
 			"digital-terabyte": {
 				"displayName": "テラバイト",
@@ -4020,7 +4233,7 @@
 			},
 			"length-fathom": {
 				"displayName": "ファゾム",
-				"unitPattern-count-other": "{0} fm"
+				"unitPattern-count-other": "{0} fth"
 			},
 			"length-nautical-mile": {
 				"displayName": "海里",
@@ -4129,6 +4342,10 @@
 			"pressure-millibar": {
 				"displayName": "ミリバール",
 				"unitPattern-count-other": "{0} mb"
+			},
+			"pressure-atmosphere": {
+				"displayName": "気圧",
+				"unitPattern-count-other": "{0} atm"
 			},
 			"speed-kilometer-per-hour": {
 				"displayName": "km/h",
@@ -4268,6 +4485,7 @@
 				"unitPattern-count-other": "小さじ {0}"
 			},
 			"coordinateUnit": {
+				"displayName": "方位",
 				"east": "東経{0}",
 				"north": "北緯{0}",
 				"south": "南緯{0}",
@@ -4279,20 +4497,16 @@
 		"ADP": 0,
 		"AFN": 0,
 		"ALL": 0,
-		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
 		"BYR": 0,
 		"CLF": 4,
 		"CLP": 0,
-		"COP": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
 		"ESP": 0,
 		"GNF": 0,
-		"GYD": 0,
 		"HUF": 0,
-		"IDR": 0,
 		"IQD": 0,
 		"IRR": 0,
 		"ISK": 0,
@@ -4310,11 +4524,8 @@
 		"MGA": 0,
 		"MGF": 0,
 		"MMK": 0,
-		"MNT": 0,
 		"MRO": 0,
-		"MUR": 0,
 		"OMR": 3,
-		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
@@ -4326,10 +4537,9 @@
 		"TND": 3,
 		"TRL": 0,
 		"TWD": 0,
-		"TZS": 0,
 		"UGX": 0,
 		"UYI": 0,
-		"UZS": 0,
+		"UYW": 4,
 		"VND": 0,
 		"VUV": 0,
 		"XAF": 0,

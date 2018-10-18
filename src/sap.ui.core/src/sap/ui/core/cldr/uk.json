@@ -30,7 +30,7 @@
 		"arq": "алжирська арабська",
 		"ars": "надждійська арабська",
 		"arw": "аравакська",
-		"as": "ассамська",
+		"as": "асамська",
 		"asa": "асу",
 		"ase": "американська мова рухів",
 		"ast": "астурська",
@@ -83,6 +83,7 @@
 		"car": "карібська",
 		"cay": "кайюга",
 		"cch": "атсам",
+		"ccp": "ccp",
 		"ce": "чеченська",
 		"ceb": "себуанська",
 		"cgg": "кіга",
@@ -174,7 +175,7 @@
 		"ga": "ірландська",
 		"gaa": "га",
 		"gag": "гагаузька",
-		"gan": "gan",
+		"gan": "ґань",
 		"gay": "гайо",
 		"gba": "гбайя",
 		"gd": "гаельська",
@@ -196,7 +197,7 @@
 		"gwi": "кучін",
 		"ha": "хауса",
 		"hai": "хайда",
-		"hak": "hak",
+		"hak": "хаккаська",
 		"haw": "гавайська",
 		"he": "іврит",
 		"hi": "гінді",
@@ -399,7 +400,7 @@
 		"pro": "давньопровансальська",
 		"ps": "пушту",
 		"pt": "портуґальська",
-		"pt_BR": "портуґальська (Бразілія)",
+		"pt_BR": "португальська (Бразилія)",
 		"pt_PT": "європейська портуґальська",
 		"qu": "кечуа",
 		"quc": "кіче",
@@ -504,7 +505,7 @@
 		"twq": "тасавак",
 		"ty": "таїтянська",
 		"tyv": "тувинська",
-		"tzm": "центральномароканська тамазіт",
+		"tzm": "центральноатласька тамазігт",
 		"udm": "удмуртська",
 		"ug": "уйгурська",
 		"uga": "угаритська",
@@ -583,6 +584,7 @@
 		"Cyrl": "кирилиця",
 		"Cyrs": "давньоцерковнословʼянський",
 		"Deva": "деванагарі",
+		"Dogr": "Dogr",
 		"Dsrt": "дезерет",
 		"Dupl": "Dupl",
 		"Egyd": "єгипетський демотичний",
@@ -593,6 +595,7 @@
 		"Geok": "кхутсурі",
 		"Geor": "грузинська",
 		"Glag": "глаголичний",
+		"Gong": "Gong",
 		"Gonm": "Gonm",
 		"Goth": "готичний",
 		"Gran": "Gran",
@@ -641,10 +644,12 @@
 		"Lyci": "лікійський",
 		"Lydi": "лідійський",
 		"Mahj": "Mahj",
+		"Maka": "Maka",
 		"Mand": "мандейський",
 		"Mani": "маніхейський",
 		"Marc": "Marc",
 		"Maya": "майя ієрогліфічний",
+		"Medf": "Medf",
 		"Mend": "Mend",
 		"Merc": "Merc",
 		"Mero": "мероїтський",
@@ -677,7 +682,9 @@
 		"Phnx": "фінікійський",
 		"Plrd": "писемність Полларда",
 		"Prti": "парфянський",
+		"Qaag": "Qaag",
 		"Rjng": "реджанг",
+		"Rohg": "Rohg",
 		"Roro": "ронго-ронго",
 		"Runr": "рунічний",
 		"Samr": "самаритянський",
@@ -690,6 +697,8 @@
 		"Sidd": "Sidd",
 		"Sind": "Sind",
 		"Sinh": "сингальська",
+		"Sogd": "Sogd",
+		"Sogo": "Sogo",
 		"Sora": "Sora",
 		"Soyo": "Soyo",
 		"Sund": "сунданський",
@@ -749,7 +758,7 @@
 		"014": "Східна Африка",
 		"015": "Північна Африка",
 		"017": "Центральна Африка",
-		"018": "Південна Африка",
+		"018": "Південний регіон Африки",
 		"019": "Америка",
 		"021": "Північна Америка (регіон)",
 		"029": "Карибський басейн",
@@ -776,7 +785,7 @@
 		"AT": "Австрія",
 		"AU": "Австралія",
 		"AW": "Аруба",
-		"AX": "Аландські острови",
+		"AX": "Аландські Острови",
 		"AZ": "Азербайджан",
 		"BA": "Боснія і Герцеґовина",
 		"BB": "Барбадос",
@@ -788,7 +797,7 @@
 		"BI": "Бурунді",
 		"BJ": "Бенін",
 		"BL": "Сен-Бартельмі",
-		"BM": "Бермудські острови",
+		"BM": "Бермудські Острови",
 		"BN": "Бруней",
 		"BO": "Болівія",
 		"BQ": "Нідерландські Карибські острови",
@@ -800,14 +809,14 @@
 		"BY": "Білорусь",
 		"BZ": "Беліз",
 		"CA": "Канада",
-		"CC": "Кокосові (Кілінгові) острови",
+		"CC": "Кокосові (Кілінґ) Острови",
 		"CD": "Конго – Кіншаса",
 		"CD-alt-variant": "Конго (ДРК)",
 		"CF": "Центральноафриканська Республіка",
 		"CG": "Конго – Браззавіль",
 		"CG-alt-variant": "Конго (Республіка)",
 		"CH": "Швейцарія",
-		"CI": "Кот-д’Івуар",
+		"CI": "Кот-дʼІвуар",
 		"CI-alt-variant": "Берег Слонової Кістки",
 		"CK": "Острови Кука",
 		"CL": "Чілі",
@@ -842,8 +851,8 @@
 		"EZ": "Єврозона",
 		"FI": "Фінляндія",
 		"FJ": "Фіджі",
-		"FK": "Фолклендські острови",
-		"FK-alt-variant": "Фолклендські (Мальвінські) острови",
+		"FK": "Фолклендські Острови",
+		"FK-alt-variant": "Фолклендські (Мальвінські) Острови",
 		"FM": "Мікронезія",
 		"FM-alt-variant": "Федеративні Штати Мікронезії",
 		"FO": "Фарерські Острови",
@@ -863,19 +872,19 @@
 		"GP": "Ґваделупа",
 		"GQ": "Екваторіальна Гвінея",
 		"GR": "Греція",
-		"GS": "Південна Джорджія та Південні Сандвічеві острови",
+		"GS": "Південна Джорджія та Південні Сандвічеві Острови",
 		"GT": "Ґватемала",
 		"GU": "Ґуам",
 		"GW": "Гвінея-Бісау",
 		"GY": "Ґайана",
 		"HK": "Гонконг, О.А.Р. Китаю",
 		"HK-alt-short": "Гонконг",
-		"HM": "острів Герд і острови Макдоналд",
+		"HM": "Острови Герд і Макдоналд",
 		"HN": "Гондурас",
 		"HR": "Хорватія",
 		"HT": "Гаїті",
 		"HU": "Угорщина",
-		"IC": "Канарські острови",
+		"IC": "Канарські Острови",
 		"ID": "Індонезія",
 		"IE": "Ірландія",
 		"IL": "Ізраїль",
@@ -894,12 +903,12 @@
 		"KG": "Киргизстан",
 		"KH": "Камбоджа",
 		"KI": "Кірібаті",
-		"KM": "Коморські острови",
+		"KM": "Комори",
 		"KN": "Сент-Кітс і Невіс",
 		"KP": "Північна Корея",
 		"KR": "Південна Корея",
 		"KW": "Кувейт",
-		"KY": "Кайманові острови",
+		"KY": "Кайманові Острови",
 		"KZ": "Казахстан",
 		"LA": "Лаос",
 		"LB": "Ліван",
@@ -980,7 +989,7 @@
 		"SG": "Сінгапур",
 		"SH": "Острів Святої Єлени",
 		"SI": "Словенія",
-		"SJ": "Шпіцберґен і Ян-Майен",
+		"SJ": "Шпіцберген та Ян-Маєн",
 		"SK": "Словаччина",
 		"SL": "Сьєрра-Леоне",
 		"SM": "Сан-Маріно",
@@ -1029,6 +1038,8 @@
 		"VU": "Вануату",
 		"WF": "Уолліс і Футуна",
 		"WS": "Самоа",
+		"XA": "XA",
+		"XB": "XB",
 		"XK": "Косово",
 		"YE": "Ємен",
 		"YT": "Майотта",
@@ -1122,6 +1133,44 @@
 				"intervalFormatFallback": "{0} – {1}",
 				"d": {
 					"d": "d–d"
+				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -1547,6 +1596,44 @@
 				"d": {
 					"d": "d–d"
 				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
+				},
 				"h": {
 					"a": "h a – h a",
 					"h": "h–h a"
@@ -1967,6 +2054,44 @@
 				"intervalFormatFallback": "{0} – {1}",
 				"d": {
 					"d": "d–d"
+				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -2398,6 +2523,44 @@
 				"d": {
 					"d": "d–d"
 				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
+				},
 				"h": {
 					"a": "h a – h a",
 					"h": "h–h a"
@@ -2819,6 +2982,44 @@
 				"d": {
 					"d": "d–d"
 				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
+				},
 				"h": {
 					"a": "h a – h a",
 					"h": "h–h a"
@@ -3201,7 +3402,7 @@
 			}
 		},
 		"year-narrow": {
-			"displayName": "р.",
+			"displayName": "р",
 			"relative-type--1": "торік",
 			"relative-type-0": "цього року",
 			"relative-type-1": "наступного року",
@@ -3309,7 +3510,7 @@
 			}
 		},
 		"month-narrow": {
-			"displayName": "міс.",
+			"displayName": "м",
 			"relative-type--1": "минулого місяця",
 			"relative-type-0": "цього місяця",
 			"relative-type-1": "наступного місяця",
@@ -3365,7 +3566,7 @@
 			"relativePeriod": "тиждень з {0}"
 		},
 		"week-narrow": {
-			"displayName": "тиж.",
+			"displayName": "т",
 			"relative-type--1": "минулого тижня",
 			"relative-type-0": "цього тижня",
 			"relative-type-1": "наступного тижня",
@@ -3424,7 +3625,7 @@
 			}
 		},
 		"day-narrow": {
-			"displayName": "д.",
+			"displayName": "д",
 			"relative-type--2": "позавчора",
 			"relative-type--1": "учора",
 			"relative-type-0": "сьогодні",
@@ -3463,7 +3664,7 @@
 			}
 		},
 		"hour-short": {
-			"displayName": "год",
+			"displayName": "год.",
 			"relative-type-0": "цієї години",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "через {0} год",
@@ -3511,7 +3712,7 @@
 			}
 		},
 		"minute-short": {
-			"displayName": "хв",
+			"displayName": "хв.",
 			"relative-type-0": "цієї хвилини",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "через {0} хв",
@@ -3705,7 +3906,7 @@
 	},
 	"currencyFormat": {
 		"standard": "#,##0.00 ¤",
-		"accounting": "#,##0.00¤;(#,##0.00¤)",
+		"accounting": "#,##0.00 ¤",
 		"currencySpacing": {
 			"beforeCurrency": {
 				"currencyMatch": "[:^S:]",
@@ -3787,7 +3988,8 @@
 		"UAK": "крб.",
 		"XAF": "FCFA",
 		"XOF": "CFA",
-		"XPF": "CFPF"
+		"XPF": "CFPF",
+		"XXX": "¤"
 	},
 	"rtl": false,
 	"listPattern-standard-wide": {
@@ -3964,6 +4166,20 @@
 				"unitPattern-count-many": "{0} ppm",
 				"unitPattern-count-other": "{0} ppm"
 			},
+			"concentr-percent": {
+				"displayName": "відсоток",
+				"unitPattern-count-one": "{0}%",
+				"unitPattern-count-few": "{0}%",
+				"unitPattern-count-many": "{0}%",
+				"unitPattern-count-other": "{0}%"
+			},
+			"concentr-permille": {
+				"displayName": "проміле",
+				"unitPattern-count-one": "{0}‰",
+				"unitPattern-count-few": "{0}‰",
+				"unitPattern-count-many": "{0}‰",
+				"unitPattern-count-other": "{0}‰"
+			},
 			"consumption-liter-per-kilometer": {
 				"displayName": "літри/км",
 				"unitPattern-count-one": "{0} л/км",
@@ -3991,6 +4207,13 @@
 				"unitPattern-count-few": "{0} милі/англ. галон",
 				"unitPattern-count-many": "{0} миль/англ. галон",
 				"unitPattern-count-other": "{0} милі/англ. галон"
+			},
+			"digital-petabyte": {
+				"displayName": "ПБ",
+				"unitPattern-count-one": "{0} ПБ",
+				"unitPattern-count-few": "{0} ПБ",
+				"unitPattern-count-many": "{0} ПБ",
+				"unitPattern-count-other": "{0} ПБ"
 			},
 			"digital-terabyte": {
 				"displayName": "Тбайт",
@@ -4360,7 +4583,7 @@
 			},
 			"length-fathom": {
 				"displayName": "fm",
-				"unitPattern-count-other": "{0} fm"
+				"unitPattern-count-other": "{0} fth"
 			},
 			"length-nautical-mile": {
 				"displayName": "м. милі",
@@ -4377,8 +4600,11 @@
 				"unitPattern-count-other": "{0} сканд. милі"
 			},
 			"length-point": {
-				"displayName": "pt",
-				"unitPattern-count-other": "{0} pt"
+				"displayName": "пт",
+				"unitPattern-count-one": "{0} пт",
+				"unitPattern-count-few": "{0} пт",
+				"unitPattern-count-many": "{0} пт",
+				"unitPattern-count-other": "{0} пт"
 			},
 			"light-lux": {
 				"displayName": "люкс",
@@ -4541,6 +4767,13 @@
 				"unitPattern-count-few": "{0} мбари",
 				"unitPattern-count-many": "{0} мбарів",
 				"unitPattern-count-other": "{0} мбара"
+			},
+			"pressure-atmosphere": {
+				"displayName": "атм",
+				"unitPattern-count-one": "{0} атм",
+				"unitPattern-count-few": "{0} атм",
+				"unitPattern-count-many": "{0} атм",
+				"unitPattern-count-other": "{0} атм"
 			},
 			"speed-kilometer-per-hour": {
 				"displayName": "км/годину",
@@ -4776,6 +5009,7 @@
 				"unitPattern-count-other": "{0} ч. л."
 			},
 			"coordinateUnit": {
+				"displayName": "напрямок",
 				"east": "{0} на Сх",
 				"north": "{0} на Пн",
 				"south": "{0} на Пд",
@@ -4787,20 +5021,16 @@
 		"ADP": 0,
 		"AFN": 0,
 		"ALL": 0,
-		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
 		"BYR": 0,
 		"CLF": 4,
 		"CLP": 0,
-		"COP": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
 		"ESP": 0,
 		"GNF": 0,
-		"GYD": 0,
 		"HUF": 0,
-		"IDR": 0,
 		"IQD": 0,
 		"IRR": 0,
 		"ISK": 0,
@@ -4818,11 +5048,8 @@
 		"MGA": 0,
 		"MGF": 0,
 		"MMK": 0,
-		"MNT": 0,
 		"MRO": 0,
-		"MUR": 0,
 		"OMR": 3,
-		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
@@ -4834,10 +5061,9 @@
 		"TND": 3,
 		"TRL": 0,
 		"TWD": 0,
-		"TZS": 0,
 		"UGX": 0,
 		"UYI": 0,
-		"UZS": 0,
+		"UYW": 4,
 		"VND": 0,
 		"VUV": 0,
 		"XAF": 0,

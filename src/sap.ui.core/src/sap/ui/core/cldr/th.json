@@ -69,7 +69,7 @@
 		"bkm": "กม",
 		"bla": "สิกสิกา",
 		"bm": "บัมบารา",
-		"bn": "เบงกาลี",
+		"bn": "บังกลา",
 		"bo": "ทิเบต",
 		"bpy": "พิศนุปริยะ",
 		"bqi": "บักติยารี",
@@ -84,11 +84,12 @@
 		"bum": "บูลู",
 		"byn": "บลิน",
 		"byv": "เมดุมบา",
-		"ca": "กาตาลัง",
+		"ca": "คาตาลัน",
 		"cad": "คัดโด",
 		"car": "คาริบ",
 		"cay": "คายูกา",
 		"cch": "แอตแซม",
+		"ccp": "ccp",
 		"ce": "เชเชน",
 		"ceb": "เซบู",
 		"cgg": "คีกา",
@@ -102,7 +103,7 @@
 		"chp": "ชิพิวยัน",
 		"chr": "เชอโรกี",
 		"chy": "เชเยนเน",
-		"ckb": "เคิร์ดโซรานี",
+		"ckb": "เคิร์ดตอนกลาง",
 		"co": "คอร์ซิกา",
 		"cop": "คอปติก",
 		"cps": "กาปิซนอน",
@@ -127,7 +128,7 @@
 		"din": "ดิงกา",
 		"dje": "ซาร์มา",
 		"doi": "โฑครี",
-		"dsb": "ซอร์บส์ตอนล่าง",
+		"dsb": "ซอร์เบียตอนล่าง",
 		"dtp": "ดูซุนกลาง",
 		"dua": "ดัวลา",
 		"dum": "ดัตช์กลาง",
@@ -295,7 +296,7 @@
 		"krj": "กินารายอา",
 		"krl": "แกรเลียน",
 		"kru": "กุรุข",
-		"ks": "กัศมีร์",
+		"ks": "แคชเมียร์",
 		"ksb": "ชัมบาลา",
 		"ksf": "บาเฟีย",
 		"ksh": "โคโลญ",
@@ -332,7 +333,7 @@
 		"lui": "ลุยเซโน",
 		"lun": "ลันดา",
 		"luo": "ลัว",
-		"lus": "ลูไช",
+		"lus": "มิโซ",
 		"luy": "ลูเยีย",
 		"lv": "ลัตเวีย",
 		"lzh": "จีนคลาสสิก",
@@ -385,13 +386,13 @@
 		"naq": "นามา",
 		"nb": "นอร์เวย์บุคมอล",
 		"nd": "เอ็นเดเบเลเหนือ",
-		"nds": "เยอรมันต่ำ - แซกซอนต่ำ",
+		"nds": "เยอรมันต่ำ",
 		"nds_NL": "แซกซอนใต้",
 		"ne": "เนปาล",
 		"new": "เนวาร์",
 		"ng": "ดองกา",
 		"nia": "นีอัส",
-		"niu": "นีอู",
+		"niu": "นีวเว",
 		"njo": "อ๋าวนากา",
 		"nl": "ดัตช์",
 		"nl_BE": "เฟลมิช",
@@ -416,7 +417,7 @@
 		"oc": "อ็อกซิตัน",
 		"oj": "โอจิบวา",
 		"om": "โอโรโม",
-		"or": "โอริยา",
+		"or": "โอดิยา",
 		"os": "ออสเซเตีย",
 		"osa": "โอซากี",
 		"ota": "ตุรกีออตโตมัน",
@@ -546,7 +547,7 @@
 		"tkl": "โตเกเลา",
 		"tkr": "แซคเซอร์",
 		"tl": "ตากาล็อก",
-		"tlh": "คลิงกอน",
+		"tlh": "คลิงงอน",
 		"tli": "ทลิงกิต",
 		"tly": "ทาลิช",
 		"tmh": "ทามาเชก",
@@ -615,8 +616,8 @@
 		"zen": "เซนากา",
 		"zgh": "ทามาไซต์โมร็อกโกมาตรฐาน",
 		"zh": "จีน",
-		"zh_Hans": "จีนตัวย่อ",
-		"zh_Hant": "จีนตัวเต็ม",
+		"zh_Hans": "จีนประยุกต์",
+		"zh_Hant": "จีนดั้งเดิม",
 		"zu": "ซูลู",
 		"zun": "ซูนิ",
 		"zxx": "ไม่มีข้อมูลภาษา",
@@ -655,6 +656,7 @@
 		"Cyrl": "ซีริลลิก",
 		"Cyrs": "เชอร์ชสลาโวนิกซีริลลิกโบราณ",
 		"Deva": "เทวนาครี",
+		"Dogr": "Dogr",
 		"Dsrt": "เดเซเรท",
 		"Dupl": "ชวเลขดัปโลยัน",
 		"Egyd": "ดีโมติกอียิปต์",
@@ -665,6 +667,7 @@
 		"Geok": "คัตซูรีจอร์เจีย",
 		"Geor": "จอร์เจีย",
 		"Glag": "กลาโกลิติก",
+		"Gong": "Gong",
 		"Gonm": "Gonm",
 		"Goth": "โกธิก",
 		"Gran": "คฤณห์",
@@ -715,10 +718,12 @@
 		"Lyci": "ไลเซีย",
 		"Lydi": "ลีเดีย",
 		"Mahj": "มหาชนี",
+		"Maka": "Maka",
 		"Mand": "แมนเดียน",
 		"Mani": "มานิแชน",
 		"Marc": "Marc",
 		"Maya": "มายาไฮโรกลิฟส์",
+		"Medf": "Medf",
 		"Mend": "เมนเด",
 		"Merc": "เคอร์ซีฟ-เมโรอิติก",
 		"Mero": "เมโรติก",
@@ -752,7 +757,9 @@
 		"Phnx": "ฟินิเชีย",
 		"Plrd": "สัทศาสตร์พอลลาร์ด",
 		"Prti": "พาร์เทียอินสคริปชันแนล",
+		"Qaag": "Qaag",
 		"Rjng": "เรจัง",
+		"Rohg": "Rohg",
 		"Roro": "รองโกรองโก",
 		"Runr": "รูนิก",
 		"Samr": "ซามาเรีย",
@@ -765,6 +772,8 @@
 		"Sidd": "สิทธัม",
 		"Sind": "คุดาวาดี",
 		"Sinh": "สิงหล",
+		"Sogd": "Sogd",
+		"Sogo": "Sogo",
 		"Sora": "โสราสมเป็ง",
 		"Soyo": "Soyo",
 		"Sund": "ซุนดา",
@@ -925,7 +934,7 @@
 		"FR": "ฝรั่งเศส",
 		"GA": "กาบอง",
 		"GB": "สหราชอาณาจักร",
-		"GB-alt-short": "อังกฤษ",
+		"GB-alt-short": "สหราชอาณาจักร",
 		"GD": "เกรเนดา",
 		"GE": "จอร์เจีย",
 		"GF": "เฟรนช์เกียนา",
@@ -1099,11 +1108,13 @@
 		"VC": "เซนต์วินเซนต์และเกรนาดีนส์",
 		"VE": "เวเนซุเอลา",
 		"VG": "หมู่เกาะบริติชเวอร์จิน",
-		"VI": "หมู่เกาะยูเอสเวอร์จิน",
+		"VI": "หมู่เกาะเวอร์จินของสหรัฐอเมริกา",
 		"VN": "เวียดนาม",
 		"VU": "วานูอาตู",
 		"WF": "วาลลิสและฟุตูนา",
 		"WS": "ซามัว",
+		"XA": "XA",
+		"XB": "XB",
 		"XK": "โคโซโว",
 		"YE": "เยเมน",
 		"YT": "มายอต",
@@ -1185,8 +1196,8 @@
 				"yMMMMEEEEd": "EEEEที่ d MMMM G y",
 				"yQQQ": "QQQ y",
 				"yQQQQ": "QQQQ G y",
-				"MMMMW": "สัปดาห์ที่ W ของ MMM",
-				"yw": "สัปดาห์ที่ w ของ Y"
+				"MMMMW": "สัปดาห์ที่ W ของเดือนMMMM",
+				"yw": "สัปดาห์ที่ w ของปี Y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1205,6 +1216,44 @@
 				"intervalFormatFallback": "{0} – {1}",
 				"d": {
 					"d": "d–d"
+				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -1562,11 +1611,11 @@
 			}
 		},
 		"era-wide": {
-			"0": "ปีก่อนคริสต์ศักราช",
+			"0": "ปีก่อนคริสตกาล",
 			"1": "คริสต์ศักราช"
 		},
 		"era-abbreviated": {
-			"0": "ปีก่อน ค.ศ.",
+			"0": "ก่อน ค.ศ.",
 			"1": "ค.ศ."
 		},
 		"era-narrow": {
@@ -1655,6 +1704,44 @@
 				"intervalFormatFallback": "{0} - {1}",
 				"d": {
 					"d": "d–d"
+				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -2087,6 +2174,44 @@
 				"intervalFormatFallback": "{0} - {1}",
 				"d": {
 					"d": "d–d"
+				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -2529,6 +2654,44 @@
 				"d": {
 					"d": "d–d"
 				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
+				},
 				"h": {
 					"a": "h a – h a",
 					"h": "h–h a"
@@ -2962,6 +3125,44 @@
 				"intervalFormatFallback": "{0} - {1}",
 				"d": {
 					"d": "d–d"
+				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -3507,7 +3708,7 @@
 			}
 		},
 		"weekday": {
-			"displayName": "วันในสัปดาห์"
+			"displayName": "วันของสัปดาห์"
 		},
 		"hour-wide": {
 			"displayName": "ชั่วโมง",
@@ -3696,6 +3897,7 @@
 		"KRW": "₩",
 		"MXN": "MX$",
 		"NZD": "NZ$",
+		"THB": "฿",
 		"TWD": "NT$",
 		"USD": "US$",
 		"VND": "₫",
@@ -3819,6 +4021,14 @@
 				"displayName": "ส่วน/ล้าน",
 				"unitPattern-count-other": "{0} สตล."
 			},
+			"concentr-percent": {
+				"displayName": "%",
+				"unitPattern-count-other": "{0}%"
+			},
+			"concentr-permille": {
+				"displayName": "‰",
+				"unitPattern-count-other": "{0}‰"
+			},
 			"consumption-liter-per-kilometer": {
 				"displayName": "ลิตร/กม.",
 				"unitPattern-count-other": "{0} ล./กม."
@@ -3834,6 +4044,10 @@
 			"consumption-mile-per-gallon-imperial": {
 				"displayName": "ไมล์/แกลลอนอังกฤษ",
 				"unitPattern-count-other": "{0} ไมล์ต่อแกลลอนอังกฤษ"
+			},
+			"digital-petabyte": {
+				"displayName": "PB",
+				"unitPattern-count-other": "{0} PB"
 			},
 			"digital-terabyte": {
 				"displayName": "TB",
@@ -4053,7 +4267,7 @@
 			},
 			"length-fathom": {
 				"displayName": "fm",
-				"unitPattern-count-other": "{0} fm"
+				"unitPattern-count-other": "{0} fth"
 			},
 			"length-nautical-mile": {
 				"displayName": "ไมล์ทะเล",
@@ -4162,6 +4376,10 @@
 			"pressure-millibar": {
 				"displayName": "มิลลิบาร์",
 				"unitPattern-count-other": "{0} มิลลิบาร์"
+			},
+			"pressure-atmosphere": {
+				"displayName": "บรรยากาศ",
+				"unitPattern-count-other": "{0} atm"
 			},
 			"speed-kilometer-per-hour": {
 				"displayName": "กม./ชั่วโมง",
@@ -4301,9 +4519,10 @@
 				"unitPattern-count-other": "{0} ชช."
 			},
 			"coordinateUnit": {
+				"displayName": "ทิศหลัก",
 				"east": "{0} ตอ",
 				"north": "{0} น",
-				"south": "{0}ใต้",
+				"south": "{0} ต",
 				"west": "{0} ตต"
 			}
 		}
@@ -4312,20 +4531,16 @@
 		"ADP": 0,
 		"AFN": 0,
 		"ALL": 0,
-		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
 		"BYR": 0,
 		"CLF": 4,
 		"CLP": 0,
-		"COP": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
 		"ESP": 0,
 		"GNF": 0,
-		"GYD": 0,
 		"HUF": 0,
-		"IDR": 0,
 		"IQD": 0,
 		"IRR": 0,
 		"ISK": 0,
@@ -4343,11 +4558,8 @@
 		"MGA": 0,
 		"MGF": 0,
 		"MMK": 0,
-		"MNT": 0,
 		"MRO": 0,
-		"MUR": 0,
 		"OMR": 3,
-		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
@@ -4359,10 +4571,9 @@
 		"TND": 3,
 		"TRL": 0,
 		"TWD": 0,
-		"TZS": 0,
 		"UGX": 0,
 		"UYI": 0,
-		"UZS": 0,
+		"UYW": 4,
 		"VND": 0,
 		"VUV": 0,
 		"XAF": 0,

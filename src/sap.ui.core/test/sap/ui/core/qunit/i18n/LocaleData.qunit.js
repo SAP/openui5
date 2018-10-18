@@ -231,7 +231,7 @@ sap.ui.define([
 			assert.equal(oLocaleData.getCustomDateTimePattern("jms"), "HH:mm:ss", "datetime format \"jms\"");
 			assert.equal(oLocaleData.getCustomDateTimePattern("Jms"), "HH:mm:ss", "datetime format \"Jms\"");
 			assert.equal(oLocaleData.getCustomIntervalPattern("y", "y"), "y–y", "interval format \"y\", \"y\"");
-			assert.equal(oLocaleData.getCustomIntervalPattern("yMd", "d"), "dd.MM.y – dd.MM.y", "interval format \"yMd\", \"d\"");
+			assert.equal(oLocaleData.getCustomIntervalPattern("yMd", "d"), "dd.–dd.MM.y", "interval format \"yMd\", \"d\"");
 			assert.equal(oLocaleData.getCustomIntervalPattern("yMdjm", "j"), "d.M.y, HH:mm–HH:mm 'Uhr'", "interval format \"yMdjm\", \"j\"");
 			assert.equal(oLocaleData.getCustomIntervalPattern("MMMd", "d"), "d.–d. MMM", "interval format \"MMMd\", \"d\"");
 			assert.equal(oLocaleData.getCustomIntervalPattern("MMMdd", "d"), "dd.–dd. MMM", "interval format \"MMMdd\", \"d\"");
@@ -240,7 +240,7 @@ sap.ui.define([
 			assert.equal(oLocaleData.getCustomIntervalPattern("yw", "y"), "'Woche' w 'des' 'Jahres' Y – 'Woche' w 'des' 'Jahres' Y", "interval format \"yw\", \"y\"");
 			assert.equal(oLocaleData.getCustomIntervalPattern("Q", "Q"), "Q – Q", "interval format \"Q\", \"Q\"");
 			assert.equal(oLocaleData.getCustomIntervalPattern("y", { Year: true }), "y–y", "interval format \"y\", { Year: true }");
-			assert.equal(oLocaleData.getCustomIntervalPattern("yMd", { Day: true }), "dd.MM.y – dd.MM.y", "interval format \"yMd\", { Day: true }");
+			assert.equal(oLocaleData.getCustomIntervalPattern("yMd", { Day: true }), "dd.–dd.MM.y", "interval format \"yMd\", { Day: true }");
 			assert.equal(oLocaleData.getCustomIntervalPattern("yMdjm", { Hour: true }), "d.M.y, HH:mm–HH:mm 'Uhr'", "interval format \"yMdjm\", { Hour: true }");
 			assert.equal(oLocaleData.getCustomIntervalPattern("MMMd", { Day: true }), "d.–d. MMM", "interval format \"MMMd\", { Day: true }");
 			assert.equal(oLocaleData.getCustomIntervalPattern("MMMdd", { Day: true }), "dd.–dd. MMM", "interval format \"MMMdd\", { Day: true}");
@@ -401,7 +401,7 @@ sap.ui.define([
 			assert.equal(oLocaleData.getCustomDateTimePattern("yMMMMEEEEdHms"), "EEEE d MMMM y 'à' HH:mm:ss", "datetime format \"yMMMMdEEEEHms\"");
 			assert.equal(oLocaleData.getCustomDateTimePattern("ydHs"), "y ('jour': d) HH 'h' ('seconde': s)", "datetime format \"ydHs\"");
 			assert.equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
-			assert.equal(oLocaleData.getNumberSymbol("group"), "\xa0", "group separator");
+			assert.equal(oLocaleData.getNumberSymbol("group"), "\u202f", "group separator");
 		},
 
 		ja_JP: function customTests_ja_JP(assert, oLocaleData) {
@@ -452,30 +452,30 @@ sap.ui.define([
 			assert.equal(oLocaleData.getDays("narrow")[0], "вс", "1st day narrow");
 			assert.equal(oLocaleData.getDays("short")[0], "вс", "1st day short");
 			assert.equal(oLocaleData.getDatePattern("medium"), "d MMM y 'г'.", "date pattern \"medium\"");
-			assert.equal(oLocaleData.getTimePattern("medium"), "H:mm:ss", "time pattern \"medium\"");
+			assert.equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "time pattern \"medium\"");
 			assert.equal(oLocaleData.getDateTimePattern("long"), "{1}, {0}", "datetime pattern \"long\"");
-			assert.equal(oLocaleData.getCombinedDateTimePattern("medium", "short"), "d MMM y 'г'., H:mm", "datetime pattern \"medium\", \"short\"");
+			assert.equal(oLocaleData.getCombinedDateTimePattern("medium", "short"), "d MMM y 'г'., HH:mm", "datetime pattern \"medium\", \"short\"");
 			assert.equal(oLocaleData.getCustomDateTimePattern("y"), "y", "datetime format \"y\"");
 			assert.equal(oLocaleData.getCustomDateTimePattern("y", "Japanese"), "y 'г'. G", "datetime format \"y\"");
 			assert.equal(oLocaleData.getCustomDateTimePattern("yMMd"), "dd.MM.y", "datetime format \"yMMd\"");
 			assert.equal(oLocaleData.getCustomDateTimePattern("yMMMw"), "LLL y 'г'. ('неделя': w)", "datetime format \"yMMMw\"");
-			assert.equal(oLocaleData.getCustomDateTimePattern("yMdHms"), "dd.MM.y, H:mm:ss", "datetime format \"yMdHms\"");
-			assert.equal(oLocaleData.getCustomDateTimePattern("yMMMMEEEEdHms"), "EEEE, d MMMM y 'г'., H:mm:ss", "datetime format \"yMMMMdEEEEHms\"");
-			assert.equal(oLocaleData.getCustomDateTimePattern("ydHs"), "y ('день': d), H ('секунда': s)", "datetime format \"ydHs\"");
+			assert.equal(oLocaleData.getCustomDateTimePattern("yMdHms"), "dd.MM.y, HH:mm:ss", "datetime format \"yMdHms\"");
+			assert.equal(oLocaleData.getCustomDateTimePattern("yMMMMEEEEdHms"), "EEEE, d MMMM y 'г'., HH:mm:ss", "datetime format \"yMMMMdEEEEHms\"");
+			assert.equal(oLocaleData.getCustomDateTimePattern("ydHs"), "y ('день': d), HH ('секунда': s)", "datetime format \"ydHs\"");
 			assert.equal(oLocaleData.getCustomIntervalPattern("y", "y"), "y–y", "interval format \"y\", \"y\"");
 			assert.equal(oLocaleData.getCustomIntervalPattern("yMd", "d"), "dd.MM.y – dd.MM.y", "interval format \"yMd\", \"d\"");
-			assert.equal(oLocaleData.getCustomIntervalPattern("yMdjm", "j"), "dd.MM.y, H:mm–H:mm", "interval format \"yMdjm\", \"j\"");
+			assert.equal(oLocaleData.getCustomIntervalPattern("yMdjm", "j"), "dd.MM.y, HH:mm–HH:mm", "interval format \"yMdjm\", \"j\"");
 			assert.equal(oLocaleData.getCustomIntervalPattern("MMMd", "d"), "d–d MMM", "interval format \"MMMd\", \"d\"");
 			assert.equal(oLocaleData.getCustomIntervalPattern("MMMdd", "d"), "dd–dd MMM", "interval format \"MMMdd\", \"d\"");
-			assert.equal(oLocaleData.getCustomIntervalPattern("Hm", "H"), "H:mm–H:mm", "interval format \"Hm\", \"H\"");
-			assert.equal(oLocaleData.getCustomIntervalPattern("jm", "j"), "H:mm–H:mm", "interval format \"jm\", \"j\"");
+			assert.equal(oLocaleData.getCustomIntervalPattern("Hm", "H"), "HH:mm–HH:mm", "interval format \"Hm\", \"H\"");
+			assert.equal(oLocaleData.getCustomIntervalPattern("jm", "j"), "HH:mm–HH:mm", "interval format \"jm\", \"j\"");
 			assert.equal(oLocaleData.getCustomIntervalPattern("y", { Year: true }), "y–y", "interval format \"y\", { Year: true }");
 			assert.equal(oLocaleData.getCustomIntervalPattern("yMd", { Day: true }), "dd.MM.y – dd.MM.y", "interval format \"yMd\", { Day: true }");
-			assert.equal(oLocaleData.getCustomIntervalPattern("yMdjm", { Hour: true }), "dd.MM.y, H:mm–H:mm", "interval format \"yMdjm\", { Hour: true }");
+			assert.equal(oLocaleData.getCustomIntervalPattern("yMdjm", { Hour: true }), "dd.MM.y, HH:mm–HH:mm", "interval format \"yMdjm\", { Hour: true }");
 			assert.equal(oLocaleData.getCustomIntervalPattern("MMMd", { Day: true }), "d–d MMM", "interval format \"MMMd\", { Day: true }");
 			assert.equal(oLocaleData.getCustomIntervalPattern("MMMdd", { Day: true }), "dd–dd MMM", "interval format \"MMMdd\", { Day: true }");
-			assert.equal(oLocaleData.getCustomIntervalPattern("Hm", { Hour: true }), "H:mm–H:mm", "interval format \"Hm\", { Hour: true }");
-			assert.equal(oLocaleData.getCustomIntervalPattern("jm", { Hour: true }), "H:mm–H:mm", "interval format \"jm\", { Hour: true }");
+			assert.equal(oLocaleData.getCustomIntervalPattern("Hm", { Hour: true }), "HH:mm–HH:mm", "interval format \"Hm\", { Hour: true }");
+			assert.equal(oLocaleData.getCustomIntervalPattern("jm", { Hour: true }), "HH:mm–HH:mm", "interval format \"jm\", { Hour: true }");
 			assert.equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
 			assert.equal(oLocaleData.getNumberSymbol("group"), "\xa0", "group separator");
 			assert.equal(oLocaleData.getPluralCategories().length, 4, "four plural forms");
@@ -495,7 +495,7 @@ sap.ui.define([
 		},
 
 		pt_PT: function customTests_pt_PT(assert, oLocaleData) {
-			assert.equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week");
+			assert.equal(oLocaleData.getFirstDayOfWeek(), 0, "first day of week");
 			assert.equal(oLocaleData.getWeekendStart(), 6, "weekend start");
 			assert.equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
 		},
