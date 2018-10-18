@@ -105,14 +105,12 @@
 @sapWarningBackground: lighten(@sapCriticalColor, 46); // #fef0db
 @sapSuccessBackground: lighten(@sapPositiveColor, 60); // #e4f6e4
 @sapNeutralBackground: lighten(@sapNeutralColor, 56); // #f4f5f6
-@sapSpotlightBackground: lighten(@sapSpotlightColor, 55); // #e5eefc
 
 
 /* Semantic Border Colors */
 @sapErrorBorderColor:   @sapErrorColor; // #ee0000
 @sapWarningBorderColor: @sapWarningColor; // #f9a429
 @sapSuccessBorderColor: @sapSuccessColor; // #38a238
-@sapSpotlightBorderColor: @sapSpotlightColor; // #1453B5
 
 
 /* Semantic Foreground Elements */
@@ -120,7 +118,6 @@
 @sapCriticalElementColor: @sapCriticalColor; // #e78c07
 @sapPositiveElementColor: @sapPositiveColor; // #2b7c2b
 @sapNeutralElementColor:  @sapNeutralColor; // #5e696e
-@sapSpotlightElementColor: @sapSpotlightColor; // #1453B5
 
 
 /* Semantic Text */
@@ -128,7 +125,6 @@
 @sapCriticalTextColor:  @sapCriticalColor; // #e78c07
 @sapPositiveTextColor:  @sapPositiveColor; // #2b7c2b
 @sapNeutralTextColor:   @sapNeutralColor; // #5e696e
-@sapSpotlightTextColor: @sapSpotlightColor; // #1453B5
 
 
 /* Semantic Foreground Colors */
@@ -153,10 +149,6 @@
 // [Tags "Base", "SemanticColor", "Color"]
 @sapNeutralColor: #5e696e;
 
-// [Label "Spotlight Color"]
-// [Description "The color for elements showing spotlighted state"]
-// [Tags "Base", "SemanticColor", "Color"]
-@sapSpotlightColor: #1453B5;
 
 @sapErrorColor:   lighten(@sapNegativeColor, 10); // #ee0000
 @sapWarningColor: lighten(@sapCriticalColor, 10); // #f9a429
@@ -538,16 +530,6 @@
 // [Description "The background color of an input field indicating a successful user action."]
 // [Tags "Base", "Field", "Color"]
 @sapField_SuccessBackground: @sapField_Background;
-
-// [Label "Spotlight Field Color"]
-// [Description "The base color of input fields with spotlighted value."]
-// [Tags "Base", "Field", "Color"]
-@sapField_SpotlightColor: @sapSpotlightColor;
-
-// [Label "Spotlight Field Background Color"]
-// [Description "The background color of an input field with spotlighted value."]
-// [Tags "Base", "Field", "Color"]
-@sapField_SpotlightBackground: @sapField_Background;
 
 // [Label "Group Title Background Color"]
 // [Description "The background color of the group header area."]
