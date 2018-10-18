@@ -938,7 +938,7 @@ sap.ui.define([
 			 * @param {string} sPath
 			 *   Path where the segment was found
 			 * @returns {boolean}
-			 *   <code>false</code>
+			 *   <code>true</code>
 			 */
 			function computedAnnotation(sSegment, sPath) {
 				var fnAnnotation,
@@ -968,7 +968,7 @@ sap.ui.define([
 					log(WARNING, "Error calling ", sSegment, ": ", e);
 				}
 
-				return false;
+				return true;
 			}
 
 			/*
@@ -1067,7 +1067,7 @@ sap.ui.define([
 				}
 
 				if (isThenable(vResult) && vResult.isPending()) {
-					// load on demand still pending
+					// load on demand still pending (else it must be rejected at this point)
 					return logWithLocation(DEBUG, "Waiting for ", sSchema);
 				}
 
@@ -1266,9 +1266,9 @@ sap.ui.define([
 				return bContinue;
 			}
 
-			steps(sResolvedPath.slice(1));
-
-			if (isThenable(vResult)) {
+			if (!steps(sResolvedPath.slice(1)) && isThenable(vResult)) {
+				// try again after getOrFetchSchema's promise has resolved,
+				// but avoid endless loop for computed annotations returning a promise!
 				vResult = vResult.then(function () {
 					return that.fetchObject(sPath, oContext, mParameters);
 				});
