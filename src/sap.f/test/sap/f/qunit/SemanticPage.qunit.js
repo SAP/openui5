@@ -1,6 +1,6 @@
 /* global QUnit,sinon,SemanticUtil*/
 
-(function ($, QUnit, sinon, SemanticPage) {
+(function ($, QUnit, sinon, SemanticPage, ResourceModel) {
 	"use strict";
 
 	sinon.config.useFakeTimers = false;
@@ -650,6 +650,96 @@
 		assert.ok(oButton2.bIsDestroyed, "SemanticPage item has been destroyed.");
 	});
 
+	// This test is needed to ensure that the buttons added to customShareActions can be bound
+	// the same way as other buttons
+	// Due to the buttons being shown in the static UI area there might be issues with bindings
+	QUnit.test("test SemanticPage customShareActions content bindings", function (assert) {
+		var sButtonText = "Action 1";
+		var aTexts = [];
+		aTexts["action1"] = sButtonText;
+
+		var oMockResourceBundle = {
+			getText: function(sKey, aArgs, bIgnoreKeyFallback) {
+				return aTexts[sKey];
+			}
+		};
+
+		var i18n = new ResourceModel({
+			bundle: oMockResourceBundle
+		});
+
+		this.oSemanticPage.setModel(i18n, "i18n");
+
+
+		var oCustomShareButton = new sap.m.Button({
+			icon: "sap-icon://excel-attachment",
+			text: "{i18n>action1}"
+		});
+
+		this.oSemanticPage.addCustomShareAction(oCustomShareButton);
+
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oCustomShareButton.getText(), sButtonText, "Expected text from binding in button is there");
+	});
+
+	QUnit.test("test adding of CSS SemanticPage class not mentioned in CONTENT_PADDING_CLASSES_TO_FORWARD," +
+			" to its _dynamicPage aggregation", function (assert) {
+
+		// Arrange
+		var oDynamicPage = this.oSemanticPage.getAggregation("_dynamicPage");
+
+		// Act
+		this.oSemanticPage.addStyleClass("NOT_EXISTING_CSS_CLASS");
+
+		// Assert
+		assert.strictEqual(oDynamicPage.aCustomStyleClasses.indexOf("NOT_EXISTING_CSS_CLASS"), -1,
+				"NOT_EXISTING_CSS_CLASS CSS class not added to _dynamicPage aggregation.");
+	});
+
+	QUnit.test("test adding of CSS SemanticPage classes mentioned in CONTENT_PADDING_CLASSES_TO_FORWARD," +
+			" to its _dynamicPage aggregation", function (assert) {
+
+		// Arrange
+		var oDynamicPage = this.oSemanticPage.getAggregation("_dynamicPage");
+
+		// Act
+		this.oSemanticPage.addStyleClass("sapUiNoContentPadding");
+		this.oSemanticPage.addStyleClass("sapUiContentPadding");
+		this.oSemanticPage.addStyleClass("sapUiResponsiveContentPadding");
+
+		// Assert
+		assert.ok(oDynamicPage.aCustomStyleClasses.indexOf("sapUiNoContentPadding"),
+				"sapUiNoContentPadding CSS class applied to _dynamicPage aggregation.");
+		assert.ok(oDynamicPage.aCustomStyleClasses.indexOf("sapUiContentPadding"),
+				"sapUiContentPadding CSS class applied to _dynamicPage aggregation.");
+		assert.ok(oDynamicPage.aCustomStyleClasses.indexOf("sapUiResponsiveContentPadding"),
+				"sapUiResponsiveContentPadding CSS class applied to _dynamicPage aggregation.");
+	});
+
+	QUnit.test("test removing of CSS SemanticPage classes mentioned in CONTENT_PADDING_CLASSES_TO_FORWARD," +
+			" to its _dynamicPage aggregation", function (assert) {
+
+		// Arrange
+		var oDynamicPage = this.oSemanticPage.getAggregation("_dynamicPage");
+
+		// Act
+		this.oSemanticPage.addStyleClass("sapUiNoContentPadding");
+		this.oSemanticPage.addStyleClass("sapUiContentPadding");
+		this.oSemanticPage.addStyleClass("sapUiResponsiveContentPadding");
+		this.oSemanticPage.removeStyleClass("sapUiNoContentPadding");
+		this.oSemanticPage.removeStyleClass("sapUiContentPadding");
+		this.oSemanticPage.removeStyleClass("sapUiResponsiveContentPadding");
+
+		// Assert
+		assert.strictEqual(oDynamicPage.aCustomStyleClasses.indexOf("sapUiNoContentPadding"), -1,
+				"sapUiNoContentPadding CSS class removed from _dynamicPage aggregation.");
+		assert.strictEqual(oDynamicPage.aCustomStyleClasses.indexOf("sapUiContentPadding"), -1,
+				"sapUiContentPadding CSS class removed from _dynamicPage aggregation.");
+		assert.strictEqual(oDynamicPage.aCustomStyleClasses.indexOf("sapUiResponsiveContentPadding"), -1,
+				"sapUiResponsiveContentPadding CSS class removed from _dynamicPage aggregation.");
+	});
+
 	QUnit.test("test SemanticPage destroy method", function (assert) {
 		var oPage = this.oSemanticPage._getPage(),
 			oTitle = this.oSemanticPage._getTitle(),
@@ -816,4 +906,4 @@
 			sSemanticAddType + " should not be preprocessed");
 	});
 
-})(jQuery, QUnit, sinon, sap.f.semantic.SemanticPage);
+})(jQuery, QUnit, sinon, sap.f.semantic.SemanticPage, sap.ui.model.resource.ResourceModel);

@@ -610,7 +610,12 @@ sap.ui.define([
 	].forEach(function (sMethod) {
 		SemanticPage.prototype[sMethod] = function () {
 			var oSemanticShareMenu = this._getShareMenu(),
-				sSemanticShareMenuMethod = sMethod.replace(/CustomShareAction?/, "CustomAction");
+				sSemanticShareMenuMethod = sMethod.replace(/CustomShareAction?/, "CustomAction"),
+				aCustomActionMethods = ["addCustomAction", "insertCustomAction"];
+
+				if (aCustomActionMethods.indexOf(sSemanticShareMenuMethod) > -1) {
+					this.addDependent(arguments[0]);
+				}
 
 			return oSemanticShareMenu[sSemanticShareMenuMethod].apply(oSemanticShareMenu, arguments);
 		};
