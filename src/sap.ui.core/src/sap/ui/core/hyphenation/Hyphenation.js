@@ -2,8 +2,8 @@
 * ${copyright}
 */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject", "sap/base/Log"],
-function (jQuery, ManagedObject, Log) {
+sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject", "sap/base/Log", "sap/ui/core/Locale"],
+function (jQuery, ManagedObject, Log, Locale) {
 	"use strict";
 
 	/**
@@ -23,7 +23,7 @@ function (jQuery, ManagedObject, Log) {
 		"fi": "kolmivaihekilowattituntimittari",
 		"fr": "hippopotomonstrosesquippedaliophobie",
 		"de": "Kindercarnavalsoptochtvoorbereidingswerkzaamhedenplan",
-		"el": "ηλεκτροεγκεφαλογράφημα", // no native css hyphenation by documentation, but will be tested
+		"el-monoton": "ηλεκτροεγκεφαλογράφημα", // no native css hyphenation by documentation, but will be tested
 		"hi": "किंकर्तव्यविमूढ़", // no native css hyphenation by documentation, but will be tested
 		"hu": "Megszentségteleníthetetlenségeskedéseitekért",
 		"it": "hippopotomonstrosesquippedaliofobia",
@@ -58,7 +58,7 @@ function (jQuery, ManagedObject, Log) {
 		'fi': true,
 		'fr': true,
 		'de': true,
-		'el': true,
+		'el-monoton': true,
 		'hi': true,
 		'hu': true,
 		'it': true,
@@ -128,7 +128,9 @@ function (jQuery, ManagedObject, Log) {
 			aLanguagesQueue = [];
 		}
 		oHyphenationInstance.bLoading = false;
-		resolve(sLanguage);
+		resolve(
+			getLanguageFromPattern(sLanguage)
+		);
 	}
 
 	/**
@@ -288,27 +290,42 @@ function (jQuery, ManagedObject, Log) {
 	 * @private
 	 */
 	function getLanguage(sLang) {
-		var configuration = sap.ui.getCore().getConfiguration().getLocale();
-		var sLanguage;
+		var oLocale;
 		if (sLang) {
-			sLanguage = sLang.toLowerCase();
+			oLocale = new Locale(sLang);
 		} else {
-			sLanguage = configuration.getLanguage().toLowerCase();
+			oLocale = sap.ui.getCore().getConfiguration().getLocale();
+		}
 
-			if (configuration.getRegion()) {
-				sLanguage += "-" + configuration.getRegion().toLowerCase();
-			}
+		var sLanguage = oLocale.getLanguage().toLowerCase();
 
-			// adjustment of the language to corresponds to Hyphenopoly .hpb files
-			if (sLanguage == "en" && !configuration.getRegion()) {
-				sLanguage += "-us";
-			}
-			if (sLanguage == "no") {
+		// adjustment of the language to corresponds to Hyphenopoly pattern files (.hpb files)
+		switch (sLanguage) {
+			case "en":
+				sLanguage = "en-us";
+				break;
+			case "nb":
 				sLanguage = "nb-no";
-			}
+				break;
+			case "no":
+				sLanguage = "nb-no";
+				break;
+			case "el":
+				sLanguage = "el-monoton";
+				break;
 		}
 
 		return sLanguage;
+	}
+
+	/**
+	 * Gets language code from pattern name (hbp file name).
+	 *
+	 * @param {string} sPatternName The hpb file name
+	 * @return {string} Language code
+	 */
+	function getLanguageFromPattern(sPatternName) {
+		return sPatternName.substring(0, 2); // get the main language code only
 	}
 
 	/**
@@ -353,9 +370,9 @@ function (jQuery, ManagedObject, Log) {
 	 *
 	 * <h3>Example</h3>
 	 * <pre>
-	 * if (!Hyphenation.getInstance().canUseNativeHyphenation("en-us")) {
-	 * 	Hyphenation.getInstance().initialize("en-us").then(function() {
-	 * 		console.log(Hyphenation.getInstance().hyphenate("An example text to hyphenate.", "en-us"));
+	 * if (!Hyphenation.getInstance().canUseNativeHyphenation("en")) {
+	 * 	Hyphenation.getInstance().initialize("en").then(function() {
+	 * 		console.log(Hyphenation.getInstance().hyphenate("An example text to hyphenate.", "en"));
 	 * 	});
 	 * }
 	 * </pre>
@@ -459,7 +476,9 @@ function (jQuery, ManagedObject, Log) {
 	 * @public
 	 */
 	Hyphenation.prototype.getInitializedLanguages = function () {
-		return Object.keys(oHyphenateMethods);
+		return Object.keys(oHyphenateMethods).map(function(sLangPattern) {
+			return getLanguageFromPattern(sLangPattern);
+		});
 	};
 
 	/**
@@ -470,7 +489,8 @@ function (jQuery, ManagedObject, Log) {
 	 * @public
 	 */
 	Hyphenation.prototype.isLanguageInitialized = function (sLang) {
-		return this.getInitializedLanguages().indexOf(sLang) != -1;
+		var sLang = getLanguage(sLang);
+		return Object.keys(oHyphenateMethods).indexOf(sLang) != -1;
 	};
 
 	/**
@@ -484,6 +504,7 @@ function (jQuery, ManagedObject, Log) {
 	 * @private
 	 */
 	Hyphenation.prototype.getExceptions = function (sLang) {
+		var sLang = getLanguage(sLang);
 		if (this.isLanguageInitialized(sLang)) {
 			return window.hyphenopoly.languages[sLang].exceptions;
 		} else {
@@ -499,7 +520,7 @@ function (jQuery, ManagedObject, Log) {
 	 *
 	 * @example
 	 *
-	 *   addExceptions("en-us", {"academy": "a-c-a-d-e-m-y"})
+	 *   addExceptions("en", {"academy": "a-c-a-d-e-m-y"})
 	 *
 	 * @param {string} sLang The language for which an exception is added
 	 * @param {map} oExceptions An object map of word exceptions. Example <code>{"academy": "a-c-a-d-e-m-y", "word": "w-o-r-d"}</code>
@@ -507,6 +528,7 @@ function (jQuery, ManagedObject, Log) {
 	 * @private
 	 */
 	Hyphenation.prototype.addExceptions = function (sLang, oExceptions) {
+		var sLang = getLanguage(sLang);
 		if (this.isLanguageInitialized(sLang)) {
 			Object.keys(oExceptions).forEach(function (key) {
 				window.hyphenopoly.languages[sLang].cache[key] = oExceptions[key];
@@ -523,8 +545,8 @@ function (jQuery, ManagedObject, Log) {
 	 * Loads required third-party resources and language-specific resources.
 	 *
 	 * @example
-	 * Hyphenation.getInstance().initialize("en-us").then(function() {
-	 * 	console.log(Hyphenation.getInstance().hyphenate("An example text to hyphenate.", "en-us"));
+	 * Hyphenation.getInstance().initialize("en").then(function() {
+	 * 	console.log(Hyphenation.getInstance().hyphenate("An example text to hyphenate.", "en"));
 	 * });
 	 *
 	 * @param {string} [sLang] The language for which the third-party library should be initialized. The global application language is the default one
@@ -581,7 +603,7 @@ function (jQuery, ManagedObject, Log) {
 			}
 			oHyphenationInstance.bLoading = true;
 			return oPromisesForLang[sLanguage];
-		}else {
+		} else {
 			return new Promise(function (resolve, reject) {
 				reject("[UI5 Hyphenation] The '" + sLanguage.toUpperCase() + "' language is not supported by hyphenation module.");
 			});

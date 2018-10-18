@@ -153,7 +153,7 @@ sap.ui.define([
 				});
 
 				var oHyphenation = Hyphenation.getInstance();
-				if (!oHyphenation.bIsInitialized) {
+				if (!oHyphenation.isLanguageInitialized()) {
 					oHyphenation.initialize().then(function () {
 
 						var mDomRefs = oControl.isActive() ? oControl.getDomRefsForHyphenatedTexts() : null,
