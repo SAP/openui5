@@ -3039,7 +3039,8 @@ sap.ui.define([
 				oModelMock = this.mock(this.oModel),
 				bRefreshSingleFinished = false,
 				oRefreshSinglePromise = new Promise(function (resolve) {
-					setTimeout(resolve({}), 0); // ensure that it is finished after all Promises
+					// ensure that it is finished after all Promises
+					setTimeout(resolve.bind(null, {}), 0);
 				});
 
 			if (oFixture.bRelative) {
@@ -3379,7 +3380,7 @@ sap.ui.define([
 		assert.deepEqual(aContexts, oBinding.getCurrentContexts());
 
 		oCacheMock.expects("read")
-			.withExactArgs(1, 3, 0, new _GroupLock("$auto", undefined, oBinding, 3),
+			.withExactArgs(1, 3, 0, new _GroupLock("$auto", undefined, oBinding, 4),
 				sinon.match.func)
 			.returns(SyncPromise.resolve({value : [{}, {}, {}]}));
 
@@ -3393,7 +3394,7 @@ sap.ui.define([
 		assert.deepEqual(aContexts, oBinding.getCurrentContexts());
 
 		oCacheMock.expects("read")
-			.withExactArgs(0, 2, 0, new _GroupLock("$auto", undefined, oBinding, 4),
+			.withExactArgs(0, 2, 0, new _GroupLock("$auto", undefined, oBinding, 5),
 				sinon.match.func)
 			.returns(SyncPromise.resolve({value : [{}, {}]}));
 
