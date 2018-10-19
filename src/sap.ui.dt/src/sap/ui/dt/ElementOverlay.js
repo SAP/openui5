@@ -884,7 +884,7 @@ function (
 
 	/**
 	 * Checks if the associated Element is visible or not. For controls it returns the result of .getVisible,
-	 * otherwise it gets the domRef from DesigntimeMetadata and checks $().is(":visible").
+	 * otherwise it gets the domRef from DesigntimeMetadata and checks visibility in the DOM.
 	 *
 	 * @returns {boolean|undefined} Returns the visibility of the associated Element or undefined, if it is not a control and has no domRef
 	 */

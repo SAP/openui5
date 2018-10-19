@@ -3,18 +3,20 @@
  */
 
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
-	'sap/ui/fl/Utils',
-	'sap/ui/dt/OverlayUtil',
-	'sap/ui/fl/registry/Settings',
-	'sap/m/MessageBox',
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/dt/OverlayUtil",
+	"sap/ui/dt/DOMUtil",
+	"sap/m/MessageBox",
 	"sap/base/Log"
 ],
 function(
 	jQuery,
 	FlexUtils,
-	OverlayUtil,
 	Settings,
+	OverlayUtil,
+	DOMUtil,
 	MessageBox,
 	Log
 ) {
@@ -238,7 +240,7 @@ function(
 	Utils.isOverlaySelectable = function(oOverlay) {
 		// check the real DOM visibility should be preformed while oOverlay.isVisible() can be true, but if element
 		// has no geometry, overlay will not be visible in UI
-		return oOverlay.isSelectable() && oOverlay.$().is(":visible");
+		return oOverlay.isSelectable() && DOMUtil.isVisible(oOverlay.getDomRef());
 	};
 
 	/**

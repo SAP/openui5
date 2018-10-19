@@ -384,7 +384,7 @@ function (
 		QUnit.test("when the control's domRef is changed to visible...", function(assert) {
 			this.oLabel.setText("test");
 			this.oOverlay.applyStyles();
-			assert.ok(this.oOverlay.$().is(":visible"), "the overlay is also visible in DOM");
+			assert.ok(DOMUtil.isVisible(this.oOverlay.getDomRef()), "the overlay is also visible in DOM");
 		});
 	});
 
@@ -573,7 +573,7 @@ function (
 	}, function () {
 		QUnit.test("then...", function(assert) {
 			assert.strictEqual(this.oOverlay.isVisible(), false, "the overlay is marked as invisible");
-			assert.strictEqual(this.oOverlay.$().is(":visible"), false, "the overlay is hidden in DOM");
+			assert.strictEqual(DOMUtil.isVisible(this.oOverlay.getDomRef()), false, "the overlay is hidden in DOM");
 		});
 	});
 

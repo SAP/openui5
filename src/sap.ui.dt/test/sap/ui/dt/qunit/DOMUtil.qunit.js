@@ -414,6 +414,44 @@ function(
 		});
 	});
 
+	QUnit.module("when isVisible is called with ", {
+		beforeEach: function() {
+			this.oNode = document.createElement("div");
+			document.getElementById("qunit-fixture").appendChild(this.oNode);
+		}
+	}, function() {
+		QUnit.test("a visible div", function(assert) {
+			this.oNode.style.height = "10px";
+			this.oNode.style.width = "10px";
+			assert.strictEqual(DOMUtil.isVisible(this.oNode), true, "with both offsetWidth and offsetHeight > 0 the domRef is visible");
+		});
+
+		QUnit.test("a div with 0 height", function(assert) {
+			this.oNode.style.height = "0px";
+			this.oNode.style.width = "10px";
+			assert.strictEqual(DOMUtil.isVisible(this.oNode), false, "with at least one part <= 0 the domRef is not visible");
+		});
+
+		QUnit.test("a div with 0 width", function(assert) {
+			this.oNode.style.height = "10px";
+			this.oNode.style.width = "0px";
+			assert.strictEqual(DOMUtil.isVisible(this.oNode), false, "with at least one part <= 0 the domRef is not visible");
+		});
+
+		QUnit.test("a div with 0 height and width", function(assert) {
+			this.oNode.style.height = "0px";
+			this.oNode.style.width = "0px";
+			assert.strictEqual(DOMUtil.isVisible(this.oNode), false, "with at least one part <= 0 the domRef is not visible");
+		});
+
+		QUnit.test("a div with height and width but visible none", function(assert) {
+			this.oNode.style.height = "10px";
+			this.oNode.style.width = "10px";
+			this.oNode.style.display = "none";
+			assert.strictEqual(DOMUtil.isVisible(this.oNode), false, "with display:none the domRef is not visible");
+		});
+	});
+
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
