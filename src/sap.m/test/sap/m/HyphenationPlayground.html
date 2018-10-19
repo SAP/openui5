@@ -189,41 +189,14 @@
 				};
 
 				var getFilteredLangs = function () {
+					var langsParam = new UriParameters(window.location.href).mParams["filter-langs"];
 					if (langsParam && langsParam[0]) {
 						return langsParam[0].split(",");
 					}
 				};
 
 				var hyph = HyphenationDelegate.getInstance();
-				var langsParam = new UriParameters(window.location.href).mParams["filter-langs"];
-				var filteredLangs = getFilteredLangs();
-
-				if (filteredLangs) {
-					filteredLangs.forEach(function (lang) {
-						hyph.initialize(lang).then(function (lang) {
-							createSectionFor(lang);
-						}).catch(function (e) {
-							var errLang = e.slice(23, 25);
-							if ((errLang == "CS") || (errLang == "PL") || (errLang == "SR")) {
-								createSectionFor(errLang.toLowerCase());
-							}
-							console.error(e);
-						})
-					});
-
-				} else {
-					aLangCodes.forEach(function (lang) {
-						hyph.initialize(lang).then(function (lang) {
-							createSectionFor(lang);
-						}).catch(function (e) {
-							var errLang = e.slice(23, 25);
-							if ((errLang == "CS") || (errLang == "PL") || (errLang == "SR")) {
-								createSectionFor(errLang.toLowerCase());
-							}
-							console.error(e);
-						})
-					});
-				}
+				var filteredLangs = getFilteredLangs() || aLangCodes;
 
 				var fnChangeText = function (evt) {
 					var sLng = evt.getSource().getId().slice(4);
@@ -263,6 +236,16 @@
 					document.getElementById("txt-" + sLang).style.width = value + "%";
 					document.getElementById("hyph-" + sLang).style.width = value + "%";
 				};
+
+				filteredLangs.forEach(function (lang) {
+					if (hyph.canUseThirdPartyHyphenation(lang)) {
+						hyph.initialize(lang).then(function () {
+							createSectionFor(lang);
+						});
+					} else {
+						createSectionFor(lang);
+					}
+				});
 
 				function createSectionFor(lang) {
 					var isSupportedBy3rdParty = (lang != "cs") && (lang != "pl") && (lang != "sr");

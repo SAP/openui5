@@ -2,8 +2,8 @@
 * ${copyright}
 */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject", "sap/base/Log", "sap/ui/core/Locale"],
-function (jQuery, ManagedObject, Log, Locale) {
+sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject", "sap/base/Log", "sap/ui/core/Locale", "sap/ui/core/LocaleData"],
+function (jQuery, ManagedObject, Log, Locale, LocaleData) {
 	"use strict";
 
 	/**
@@ -76,7 +76,16 @@ function (jQuery, ManagedObject, Log, Locale) {
 		'uk': true
 	};
 
+	/**
+	 * Holds a map of names of languages in english. Like <code>{"de" => "German"}</code>
+	 * @type {map}
+	 * @private
+	 */
+	var mLanguageNamesInEnglish = (new LocaleData(new Locale("en"))).getLanguages();
+
 	var oBrowserSupportCSS = {};
+	var oSupportCheck = {};
+	var oThirdPartySupportCheck = {};
 	var oHyphenationInstance = null;
 	var fakeBody = null;
 	var oHyphenateMethods = {};
@@ -93,6 +102,11 @@ function (jQuery, ManagedObject, Log, Locale) {
 	 * @private
 	 */
 	function initializeLanguage(sLanguage, oConfig, resolve) {
+		Log.info(
+			"[UI5 Hyphenation] Initializing third-party module for language " + getLanguageDisplayName(sLanguage),
+			"sap.ui.core.hyphenation.Hyphenation.initialize()"
+		);
+
 		window.hyphenopoly.initializeLanguage(oConfig)
 			.then(onLanguageInitialized.bind(this, sLanguage, resolve));
 	}
@@ -106,6 +120,11 @@ function (jQuery, ManagedObject, Log, Locale) {
 	 * @private
 	 */
 	function reInitializeLanguage(sLanguage, oConfig, resolve) {
+		Log.info(
+			"[UI5 Hyphenation] Re-initializing third-party module for language " + getLanguageDisplayName(sLanguage),
+			"sap.ui.core.hyphenation.Hyphenation.initialize()"
+		);
+
 		window.hyphenopoly.reInitializeLanguage(sLanguage, oConfig)
 			.then(onLanguageInitialized.bind(this, sLanguage, resolve));
 	}
@@ -160,6 +179,11 @@ function (jQuery, ManagedObject, Log, Locale) {
 			}
 
 			if ("exceptions" in oConfig) {
+				Log.info(
+					"[UI5 Hyphenation] Add hyphenation exceptions '" + JSON.stringify(oConfig.exceptions) + "' for language " + getLanguageDisplayName(sLanguage),
+					"sap.ui.core.hyphenation.Hyphenation"
+				);
+
 				// transform "exceptions: {word1: "w-o-r-d-1", word2: "w-o-r-d-2"}" to "exceptions: {en-us: 'w-o-r-d-1,w-o-r-d-2'}"
 				var aWordsExceptions = [];
 				Object.keys(oConfig.exceptions).forEach(function(sWord) {
@@ -325,7 +349,28 @@ function (jQuery, ManagedObject, Log, Locale) {
 	 * @return {string} Language code
 	 */
 	function getLanguageFromPattern(sPatternName) {
-		return sPatternName.substring(0, 2); // get the main language code only
+		if (typeof sPatternName === "string") {
+			return sPatternName.substring(0, 2); // get the main language code only
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Gets a human readable english name for the language.
+	 * If not found - returns a string with the language code.
+	 *
+	 * @param {string} sPatternName The pattern name (hpb file name)
+	 * @return {string} Returns a human readable english name for the language
+	 */
+	function getLanguageDisplayName(sPatternName) {
+		var sLang = getLanguageFromPattern(sPatternName);
+
+		if (mLanguageNamesInEnglish.hasOwnProperty(sLang)) {
+			return "'" + mLanguageNamesInEnglish[sLang] + "' (code:'" + sLang + "')";
+		} else {
+			return "'" + sLang + "'";
+		}
 	}
 
 	/**
@@ -336,7 +381,7 @@ function (jQuery, ManagedObject, Log, Locale) {
 	 */
 	function fireError(sErrorMessage) {
 		oHyphenationInstance.fireError(sErrorMessage);
-		jQuery.sap.log.error("[UI5 Hyphenation] Hyphenation API: " + sErrorMessage);
+		Log.error("[UI5 Hyphenation] " + sErrorMessage, "sap.ui.core.hyphenation.Hyphenation");
 		oHyphenationInstance.bLoading = false;
 	}
 
@@ -376,6 +421,8 @@ function (jQuery, ManagedObject, Log, Locale) {
 	 * 	});
 	 * }
 	 * </pre>
+	 *
+	 * For more information, see {@link topic:6322164936f047de941ec522b95d7b70 Hyphenation for Text Controls}.
 	 *
 	 * <code>Caution:</code> Note that as the hyphenation feature uses third-party
 	 * and browser-native tools, we are not responsible for any grammatical incorrectness
@@ -440,17 +487,22 @@ function (jQuery, ManagedObject, Log, Locale) {
 				clearTests();
 			}
 			oBrowserSupportCSS[sLanguage] = bCanUseNativeHyphenation;
+
+			if (bCanUseNativeHyphenation) {
+				Log.info(
+					"[UI5 Hyphenation] Browser-native hyphenation can be used for language " + getLanguageDisplayName(sLanguage),
+					"sap.ui.core.hyphenation.Hyphenation.canUseNativeHyphenation()"
+				);
+			} else {
+				Log.info(
+					"[UI5 Hyphenation] Browser-native hyphenation is not supported by current platform for language " + getLanguageDisplayName(sLanguage),
+					"sap.ui.core.hyphenation.Hyphenation.canUseNativeHyphenation()"
+				);
+			}
 		} else {
 			bCanUseNativeHyphenation = oBrowserSupportCSS[sLanguage];
 		}
 
-		Log.info("[UI5 Hyphenation] language is " + sLanguage);
-
-		if (bCanUseNativeHyphenation) {
-			Log.info("[UI5 Hyphenation] native css hyphenation");
-		} else {
-			Log.info("[UI5 Hyphenation] third-party module hyphenation");
-		}
 		return bCanUseNativeHyphenation;
 	};
 
@@ -462,13 +514,34 @@ function (jQuery, ManagedObject, Log, Locale) {
 	 * @public
 	 */
 	Hyphenation.prototype.canUseThirdPartyHyphenation = function (sLang) {
-		var sLanguage = getLanguage(sLang);
+		var sLanguage = getLanguage(sLang),
+			bCanUseThirdPartyHyphenation;
 
 		if (!this.isLanguageSupported(sLang)) {
 			return null;
 		}
 
-		return oThirdPartySupportedLanguages.hasOwnProperty(sLanguage) && oThirdPartySupportedLanguages[sLanguage];
+		if (!oThirdPartySupportCheck.hasOwnProperty(sLanguage)) {
+			bCanUseThirdPartyHyphenation = oThirdPartySupportedLanguages.hasOwnProperty(sLanguage) && oThirdPartySupportedLanguages[sLanguage];
+
+			if (bCanUseThirdPartyHyphenation) {
+				Log.info(
+					"[UI5 Hyphenation] Third-party hyphenation can be used for language " + getLanguageDisplayName(sLanguage),
+					"sap.ui.core.hyphenation.Hyphenation.canUseThirdPartyHyphenation()"
+				);
+			} else {
+				Log.info(
+					"[UI5 Hyphenation] Third-party hyphenation is not supported for language " + getLanguageDisplayName(sLanguage),
+					"sap.ui.core.hyphenation.Hyphenation.canUseThirdPartyHyphenation()"
+				);
+			}
+
+			oThirdPartySupportCheck[sLanguage] = bCanUseThirdPartyHyphenation;
+		} else {
+			bCanUseThirdPartyHyphenation = oThirdPartySupportCheck[sLanguage];
+		}
+
+		return bCanUseThirdPartyHyphenation;
 	};
 
 	/**
@@ -482,10 +555,21 @@ function (jQuery, ManagedObject, Log, Locale) {
 	 */
 	Hyphenation.prototype.isLanguageSupported = function (sLang) {
 		var sLanguage = getLanguage(sLang),
+			bIsSupported;
+
+		if (!oSupportCheck.hasOwnProperty(sLanguage)) {
 			bIsSupported = oTestingWords.hasOwnProperty(sLanguage);
 
-		if (bIsSupported) {
-			Log.info("[UI5 Hyphenation] " + sLang + " is not supported by Hyphenation API. Browser-native hyphenation may work.");
+			if (!bIsSupported) {
+				Log.info(
+					"[UI5 Hyphenation] Language " + getLanguageDisplayName(sLanguage) + " is not known to the Hyphenation API",
+					"sap.ui.core.hyphenation.Hyphenation.isLanguageSupported()"
+				);
+			}
+
+			oSupportCheck[sLanguage] = bIsSupported;
+		} else {
+			bIsSupported = oSupportCheck[sLanguage];
 		}
 
 		return bIsSupported;
@@ -504,7 +588,7 @@ function (jQuery, ManagedObject, Log, Locale) {
 	Hyphenation.prototype.hyphenate = function (sText, sLang) {
 		var sLanguage = getLanguage(sLang);
 		if (!oHyphenateMethods.hasOwnProperty(sLanguage)) {
-			fireError("The language " + sLang + " is not initialized. Please first call the initialize function with a specific language");
+			fireError("Language " + getLanguageDisplayName(sLanguage) + " is not initialized. You have to initialize it first with method 'initialize()'");
 			return sText;
 		}
 		return oHyphenateMethods[sLanguage](sText);
@@ -549,7 +633,7 @@ function (jQuery, ManagedObject, Log, Locale) {
 		if (this.isLanguageInitialized(sLang)) {
 			return window.hyphenopoly.languages[sLang].exceptions;
 		} else {
-			fireError("[UI5 Hyphenation] Language " + sLang + " not initialized");
+			fireError("Language " + getLanguageDisplayName(sLang) + " is not initialized. You have to initialize it first with method 'initialize()'");
 		}
 
 	};
@@ -571,12 +655,17 @@ function (jQuery, ManagedObject, Log, Locale) {
 	Hyphenation.prototype.addExceptions = function (sLang, oExceptions) {
 		var sLang = getLanguage(sLang);
 		if (this.isLanguageInitialized(sLang)) {
+			Log.info(
+				"[UI5 Hyphenation] Add hyphenation exceptions '" + JSON.stringify(oExceptions) + "' for language " + getLanguageDisplayName(sLang),
+				"sap.ui.core.hyphenation.Hyphenation.addExceptions()"
+			);
+
 			Object.keys(oExceptions).forEach(function (key) {
 				window.hyphenopoly.languages[sLang].cache[key] = oExceptions[key];
 				window.hyphenopoly.languages[sLang].exceptions[key] = oExceptions[key];
 			});
 		} else {
-			fireError("[UI5 Hyphenation] Language " + sLang + " not initialized");
+			fireError("Language " + getLanguageDisplayName(sLang) + " is not initialized. You have to initialize it first with method 'initialize()'");
 		}
 	};
 
@@ -645,8 +734,10 @@ function (jQuery, ManagedObject, Log, Locale) {
 			oHyphenationInstance.bLoading = true;
 			return oPromisesForLang[sLanguage];
 		} else {
+			var sMessage = "Language " + getLanguageDisplayName(sLang) + " can not be initialized. It is either not supported by the third-party module or an error occurred";
+			fireError(sMessage);
 			return new Promise(function (resolve, reject) {
-				reject("[UI5 Hyphenation] The '" + sLanguage.toUpperCase() + "' language is not supported by hyphenation module.");
+				reject(sMessage);
 			});
 		}
 	};

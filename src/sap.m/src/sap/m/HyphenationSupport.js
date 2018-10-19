@@ -27,7 +27,7 @@ sap.ui.define([
 		 */
 		function isValidControl(oControl) {
 			if (!oControl.isA("sap.m.IHyphenation")) {
-				Log.error("The given control does not implement interface sap.m.IHyphenation and can not use HyphenationSupport mixin.");
+				Log.error("[UI5 Hyphenation] The given control does not implement interface sap.m.IHyphenation and can not use HyphenationSupport mixin.");
 				return false;
 			}
 
@@ -46,12 +46,12 @@ sap.ui.define([
 			var mTexts = oControl.getTextsToBeHyphenated();
 
 			if (typeof mTexts !== "object") {
-				Log.error("The result of getTextsToBeHyphenated method is not a map object.", oControl.getId());
+				Log.error("[UI5 Hyphenation] The result of getTextsToBeHyphenated method is not a map object.", oControl.getId());
 				return false;
 			}
 
 			if (Object.keys(mTexts).indexOf(sKey) < 0) {
-				Log.error("The key " + sKey + " is not found in the result of getTextsToBeHyphenated method.", oControl.getId());
+				Log.error("[UI5 Hyphenation] The key " + sKey + " is not found in the result of getTextsToBeHyphenated method.", oControl.getId());
 				return false;
 			}
 
@@ -112,7 +112,9 @@ sap.ui.define([
 				return true;
 			}
 
-			return oHyphenationInstance.isLanguageSupported() && !oHyphenationInstance.canUseNativeHyphenation();
+			return oHyphenationInstance.isLanguageSupported()
+				&& !oHyphenationInstance.canUseNativeHyphenation()
+				&& oHyphenationInstance.canUseThirdPartyHyphenation();
 		}
 
 		/**
@@ -124,7 +126,7 @@ sap.ui.define([
 		 */
 		function shouldControlHyphenate(oControl) {
 			if (oControl.getWrappingType() === WrappingType.Hyphenated && !oControl.getWrapping()) {
-				Log.warning("The property wrappingType=Hyphenated will not take effect unless wrapping=true.", oControl.getId());
+				Log.warning("[UI5 Hyphenation] The property wrappingType=Hyphenated will not take effect unless wrapping=true.", oControl.getId());
 			}
 
 			return oControl.getWrapping() && oControl.getWrappingType() === WrappingType.Hyphenated;
