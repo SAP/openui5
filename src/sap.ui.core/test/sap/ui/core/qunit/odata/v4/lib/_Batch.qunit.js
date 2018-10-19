@@ -1319,7 +1319,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				status : 200,
 				statusText : "OK",
 				headers : {
-					"Content-Type" : "application/json;odata.metadata=minimal",
+					"Content-Type" : /^application\/json;odata\.metadata=minimal/,
 					"odata-version" : "4.0"
 				},
 				responseText : oEmployeesBody
@@ -1327,7 +1327,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				status : 200,
 				statusText : "OK",
 				headers : {
-					"Content-Type" : "application/json;odata.metadata=minimal",
+					"Content-Type" : /^application\/json;odata\.metadata=minimal/,
 					"odata-version" : "4.0"
 				},
 				responseText :  oDepartmentsBody
@@ -1388,7 +1388,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				status : 200,
 				statusText : "OK",
 				headers : {
-					"Content-Type" : "application/json;odata.metadata=minimal",
+					"Content-Type" : /^application\/json;odata\.metadata=minimal/,
 					"odata-version" : "4.0"
 				},
 				responseText : oEmployeesBody
@@ -1403,7 +1403,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				status : 201,
 				statusText : "Created",
 				headers : {
-					"Content-Type" : "application/json;odata.metadata=minimal",
+					"Content-Type" : /^application\/json;odata\.metadata=minimal/,
 					"odata-version" : "4.0"
 				},
 				responseText : oNewEmployeeBody
@@ -1428,7 +1428,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				status : 200,
 				statusText : "OK",
 				headers : {
-					"Content-Type" : "application/json;odata.metadata=minimal",
+					"Content-Type" : /^application\/json;odata\.metadata=minimal/,
 					"odata-version" : "4.0"
 				},
 				responseText : oDepartmentsBody
@@ -1436,7 +1436,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				status : 404,
 				statusText : "Not Found",
 				headers : {
-					"Content-Type" : "application/json;odata.metadata=minimal;charset=utf-8",
+					"Content-Type" : /^application\/json;odata\.metadata=minimal/,
 					"odata-version" : "4.0"
 				}
 			}]
@@ -1475,7 +1475,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				status : 200,
 				statusText : "OK",
 				headers : {
-					"Content-Type" : "application/json;odata.metadata=minimal",
+					"Content-Type" : /^application\/json;odata\.metadata=minimal/,
 					"odata-version" : "4.0"
 				},
 				responseText : oDepartmentsBody
@@ -1483,7 +1483,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				status : 404,
 				statusText : "Not Found",
 				headers : {
-					"Content-Type" : "application/json;odata.metadata=minimal;charset=utf-8",
+					"Content-Type" : /^application\/json;odata\.metadata=minimal/,
 					"odata-version" : "4.0"
 				}
 			}]
@@ -1524,7 +1524,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				status : 200,
 				statusText : "OK",
 				headers : {
-					"Content-Type" : "application/json;odata.metadata=minimal",
+					"Content-Type" : /^application\/json;odata\.metadata=minimal/,
 					"odata-version" : "4.0"
 				},
 				responseText : oDepartmentsBody
@@ -1532,14 +1532,14 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				status : 404,
 				statusText : "Not Found",
 				headers : {
-					"Content-Type" : "application/json;odata.metadata=minimal;charset=utf-8",
+					"Content-Type" : /^application\/json;odata\.metadata=minimal/,
 					"odata-version" : "4.0"
 				}
 			}, {
 				status : 200,
 				statusText : "OK",
 				headers : {
-					"Content-Type" : "application/json;odata.metadata=minimal",
+					"Content-Type" : /^application\/json;odata\.metadata=minimal/,
 					"odata-version" : "4.0"
 				},
 				responseText : {
@@ -1632,7 +1632,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				status : 200,
 				statusText : "OK",
 				headers : {
-					"Content-Type" : "application/json;odata.metadata=minimal",
+					"Content-Type" : /^application\/json;odata\.metadata=minimal/,
 					"odata-version" : "4.0"
 				},
 				responseText : oEmployeesBody
@@ -1642,7 +1642,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					status : 200,
 					statusText : "OK",
 					headers : {
-						"Content-Type" : "application/json;odata.metadata=minimal",
+						"Content-Type" : /^application\/json;odata\.metadata=minimal/,
 						"odata-version" : "4.0"
 					},
 					responseText : {
@@ -1673,7 +1673,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					status : 200,
 					statusText : "OK",
 					headers : {
-						"Content-Type" : "application/json;odata.metadata=minimal",
+						"Content-Type" : /^application\/json;odata\.metadata=minimal/,
 						"odata-version" : "4.0"
 					},
 					responseText : {
@@ -1705,7 +1705,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				status : 200,
 				statusText : "OK",
 				headers : {
-					"Content-Type" : "application/json;odata.metadata=minimal",
+					"Content-Type" : /^application\/json;odata\.metadata=minimal/,
 					"odata-version" : "4.0"
 				},
 				responseText : {
@@ -1737,7 +1737,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					status : 200,
 					statusText : "OK",
 					headers : {
-						"Content-Type" : "application/json;odata.metadata=minimal",
+						"Content-Type" : /^application\/json;odata\.metadata=minimal/,
 						"odata-version" : "4.0"
 					},
 					responseText : {
@@ -1768,7 +1768,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					status : 200,
 					statusText : "OK",
 					headers : {
-						"Content-Type" : "application/json;odata.metadata=minimal",
+						"Content-Type" : /^application\/json;odata\.metadata=minimal/,
 						"odata-version" : "4.0"
 					},
 					responseText : {
@@ -1823,7 +1823,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					status : 201,
 					statusText : "Created",
 					headers : {
-						"Content-Type" : "application/json;odata.metadata=minimal",
+						"Content-Type" : /^application\/json;odata\.metadata=minimal/,
 						"odata-version" : "4.0"
 					},
 					responseText : oNewTeamBody
@@ -1832,7 +1832,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					status : 201,
 					statusText : "Created",
 					headers : {
-						"Content-Type" : "application/json;odata.metadata=minimal",
+						"Content-Type" : /^application\/json;odata\.metadata=minimal/,
 						"odata-version" : "4.0"
 					},
 					responseText : oNewEmployeeBody

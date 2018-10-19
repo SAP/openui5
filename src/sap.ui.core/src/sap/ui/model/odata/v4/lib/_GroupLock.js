@@ -21,12 +21,14 @@ sap.ui.define([
 	 *   Whether the lock is locked
 	 * @param {object} [oOwner]
 	 *   The lock's owner for debugging
+	 * @param {number} [iSerialNumber=Infinity]
+	 *   A serial number which may be used on unlock
 	 *
 	 * @alias sap.ui.model.odata.v4.lib._GroupLock
 	 * @constructor
 	 * @private
 	 */
-	function _GroupLock(sGroupId, bLocked, oOwner) {
+	function _GroupLock(sGroupId, bLocked, oOwner, iSerialNumber) {
 		this.sGroupId = sGroupId;
 		this.bLocked = bLocked;
 		this.oOwner = oOwner;
@@ -34,6 +36,7 @@ sap.ui.define([
 		this.mPromiseForGroup = {};
 		// maps a group ID to the resolve function of the promise above
 		this.mResolveFunctionForGroup = {};
+		this.iSerialNumber = iSerialNumber === undefined ? Infinity : iSerialNumber;
 	}
 
 	/**
@@ -46,6 +49,18 @@ sap.ui.define([
 	 */
 	_GroupLock.prototype.getGroupId = function () {
 		return this.sGroupId;
+	};
+
+	/**
+	 * Returns the serial number.
+	 *
+	 * @returns {number}
+	 *   The serial number
+	 *
+	 * @public
+	 */
+	_GroupLock.prototype.getSerialNumber = function () {
+		return this.iSerialNumber;
 	};
 
 	/**
@@ -110,6 +125,9 @@ sap.ui.define([
 		}
 		if (this.oOwner) {
 			sDescription += ",owner=" + this.oOwner;
+		}
+		if (this.iSerialNumber !== Infinity) {
+			sDescription += ",serialNumber=" + this.iSerialNumber;
 		}
 		return sDescription + ")";
 	};

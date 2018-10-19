@@ -18,19 +18,13 @@ sap.ui.define([
 				oExpectedPatchLog0 = {
 					component : "sap.ui.model.odata.v4.ODataPropertyBinding",
 					level : Log.Level.ERROR,
-					message: "Failed to update path /SalesOrderList/-1/Note",
+					message: "Failed to update path /SalesOrderList",
 					details : "Property `Note` value `RAISE_ERROR` not allowed!"
 				},
 				oExpectedPatchLog1 = {
 					component : "sap.ui.model.odata.v4.ODataPropertyBinding",
 					level : Log.Level.ERROR,
-					message: "Failed to update path /SalesOrderList/-1/SO_2_SOITEM/-1/Quantity",
-					details : "Error occurred while processing the request"
-				},
-				oExpectedPatchLog2 = {
-					component : "sap.ui.model.odata.v4.ODataPropertyBinding",
-					level : Log.Level.ERROR,
-					message: "Failed to update path /SalesOrderList/-1/SO_2_SOITEM/-1/Note",
+					message: "Failed to update path /SalesOrderList",
 					details : "Error occurred while processing the request"
 				};
 
@@ -75,7 +69,7 @@ sap.ui.define([
 				Then.onTheMainPage.checkSalesOrderLineItemNote(0, "patched line item Note");
 				aExpectedLogs.push(oExpectedPatchLog1);
 				aExpectedLogs.push(oExpectedPatchLog1);
-				aExpectedLogs.push(oExpectedPatchLog2);
+				aExpectedLogs.push(oExpectedPatchLog1);
 				// get ETag before deletion
 				When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
 				Then.onTheMainPage.checkSalesOrderLineItemNote(0, "patched line item Note");

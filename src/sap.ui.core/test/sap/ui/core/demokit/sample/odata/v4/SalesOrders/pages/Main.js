@@ -190,7 +190,9 @@ sap.ui.require([
 					return this.waitFor({
 						actions : new EnterText({clearTextFirst : true, text : sValue}),
 						controlType : "sap.m.Input",
-						matchers : new BindingPath({path: "/SalesOrderList/-1"}),
+						matchers : function (oControl) {
+							return oControl.getBindingContext().getIndex() === 0;
+						},
 						id : /--Note_ID-__clone/,
 						success : function (oControls) {
 							Opa5.assert.ok(true,

@@ -106,11 +106,11 @@ sap.ui.require([
 						id : sControlId,
 						success : function (oSalesOrderTable) {
 							var aPromises = [],
-								bCleanUpFinished = false,
 								oModel = oSalesOrderTable.getModel(),
 								// use private requestor to prevent additional read requests(ETag)
 								// which need additional mockdata
 								oRequestor = oModel.oRequestor;
+
 							sap.ui.test.Opa.getContext().aOrderIds.forEach(function (sOrderId) {
 								aPromises.push(oRequestor.request("DELETE",
 									"SalesOrderList('" + sOrderId + "')",
@@ -119,17 +119,14 @@ sap.ui.require([
 								Opa5.assert.ok(true, "Cleanup; delete SalesOrder:" + sOrderId);
 							});
 							sap.ui.test.Opa.getContext().aOrderIds = [];
-							oRequestor.submitBatch("Cleanup").then(function () {
+							aPromises.push(oRequestor.submitBatch("Cleanup"));
+
+							// Note: $batch fails only for technical reasons, we should also check
+							// the DELETE requests themselves!
+							return /*TODO Promise.all(aPromises)*/aPromises.pop().then(function () {
 								Opa5.assert.ok(true, "Cleanup finished");
-								bCleanUpFinished = true;
 							}, function (oError) {
 								Opa5.assert.ok(false, "Cleanup failed: " + oError.message);
-								bCleanUpFinished = true;
-							});
-							return this.waitFor({
-								check : function() {
-									return bCleanUpFinished;
-								}
 							});
 						},
 						viewName : sap.ui.test.Opa.getContext().sViewName

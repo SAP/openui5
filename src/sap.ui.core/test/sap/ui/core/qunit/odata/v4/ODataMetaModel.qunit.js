@@ -381,6 +381,10 @@ sap.ui.define([
 					"$kind" : "ActionImport",
 					"$Action" : "name.space.OverloadedAction"
 				},
+				"ServiceGroups" : {
+					"$kind" : "EntitySet",
+					"$Type" : "tea_busi.ServiceGroup"
+				},
 				"TEAMS" : {
 					"$kind" : "EntitySet",
 					"$NavigationPropertyBinding" : {
@@ -416,6 +420,21 @@ sap.ui.define([
 					"$Type" : "Edm.Int16"
 				}
 			}],
+			"tea_busi.ServiceGroup" : {
+				"$kind" : "EntityType",
+				"DefaultSystem" : {
+					"$ContainsTarget" : true,
+					"$kind" : "NavigationProperty",
+					"$Type" : "tea_busi.System"
+				}
+			},
+			"tea_busi.System" : {
+				"$kind" : "EntityType",
+				"SystemAlias" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.String"
+				}
+			},
 			"tea_busi.TEAM" : {
 				"$kind" : "EntityType",
 				"$Key" : ["Team_Id"],
@@ -1355,11 +1374,17 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[
-		"/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath",
-		"/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath/"
-	].forEach(function (sPath) {
-		QUnit.test("fetchObject: " + sPath + "@@...isMultiple", function (assert) {
+	[{
+		sPath : "/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath",
+		sSchemaChildName : "tea_busi.Worker"
+	}, {
+		sPath : "/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath/",
+		sSchemaChildName : "tea_busi.Worker"
+	}, {
+		sPath : "/EMPLOYEES",
+		sSchemaChildName : "tea_busi.DefaultContainer"
+	}].forEach(function (oFixture) {
+		QUnit.test("fetchObject: " + oFixture.sPath + "@@...isMultiple", function (assert) {
 			var oContext,
 				oInput,
 				fnIsMultiple = this.mock(AnnotationHelper).expects("isMultiple"),
@@ -1368,15 +1393,15 @@ sap.ui.define([
 
 			this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1) // see oInput
 				.returns(SyncPromise.resolve(mScope));
-			oInput = this.oMetaModel.getObject(sPath);
+			oInput = this.oMetaModel.getObject(oFixture.sPath);
 			fnIsMultiple
 				.withExactArgs(oInput, sinon.match({
 					context : sinon.match.object,
-					schemaChildName : "tea_busi.Worker"
+					schemaChildName : oFixture.sSchemaChildName
 				})).returns(oResult);
 
 			// code under test
-			oSyncPromise = this.oMetaModel.fetchObject(sPath
+			oSyncPromise = this.oMetaModel.fetchObject(oFixture.sPath
 				+ "@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple");
 
 			assert.strictEqual(oSyncPromise.isFulfilled(), true);
@@ -1384,9 +1409,24 @@ sap.ui.define([
 			oContext = fnIsMultiple.args[0][1].context;
 			assert.ok(oContext instanceof BaseContext);
 			assert.strictEqual(oContext.getModel(), this.oMetaModel);
-			assert.strictEqual(oContext.getPath(), sPath);
+			assert.strictEqual(oContext.getPath(), oFixture.sPath);
 			assert.strictEqual(oContext.getObject(), oInput);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchObject: computed annotation returns promise", function (assert) {
+		var oResult = {};
+
+		this.oMetaModelMock.expects("fetchEntityContainer").returns(SyncPromise.resolve(mScope));
+		this.mock(AnnotationHelper).expects("isMultiple").resolves(oResult);
+
+		// code under test
+		return this.oMetaModel.fetchObject("/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath"
+				+ "@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple")
+			.then(function (oResult0) {
+				assert.strictEqual(oResult0, oResult);
+			});
 	});
 
 	//*********************************************************************************************
@@ -2323,6 +2363,9 @@ sap.ui.define([
 	}, { // decode navigation property, encode entity set
 		path : "/EMPLOYEES('7')/EMPLOYEE_2_EQUIPM%E2%82%ACNTS(42)|ID",
 		editUrl : "EQUIPM%E2%82%ACNTS(42)"
+	}, { // entity set w/o navigation property bindings
+		path : "/ServiceGroups('42')/DefaultSystem|SystemAlias",
+		editUrl : "ServiceGroups('42')/DefaultSystem"
 	}].forEach(function (oFixture) {
 		QUnit.test("fetchUpdateData: " + oFixture.path, function (assert) {
 			var i = oFixture.path.indexOf("|"),
@@ -3060,6 +3103,7 @@ sap.ui.define([
 			"/GetEmployeeMaxAge",
 			"/Me",
 			"/OverloadedAction",
+			"/ServiceGroups",
 			"/TEAMS",
 			"/T€AMS",
 			"/VoidAction"

@@ -398,7 +398,7 @@ sap.ui.define([
 
 					oBinding.setType(null, sType);
 					oCacheMock.expects("fetchValue")
-						.withExactArgs(new _GroupLock("$auto", undefined, oBinding), undefined,
+						.withExactArgs(new _GroupLock("$auto", undefined, oBinding, 1), undefined,
 							sinon.match.func, sinon.match.same(oBinding))
 						.returns(SyncPromise.resolve(vValue));
 					if (sType !== "any") {
@@ -548,7 +548,7 @@ sap.ui.define([
 		oBinding = this.oModel.bindProperty("/EntitySet('foo')/property");
 		oBinding.setType(null, "any"); // avoid fetchUI5Type()
 		oCacheMock.expects("fetchValue")
-			.withExactArgs(new _GroupLock("group", undefined, oBinding), undefined,
+			.withExactArgs(new _GroupLock("group", undefined, oBinding, 1), undefined,
 				sinon.match.func, oBinding)
 			.returns(SyncPromise.resolve());
 
@@ -1067,8 +1067,8 @@ sap.ui.define([
 			this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
 				.returns(oTypePromise);
 			this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
-				.withExactArgs(new _GroupLock(sGroupId || "$auto", undefined, oBinding), undefined,
-					sinon.match.func, sinon.match.object)
+				.withExactArgs(new _GroupLock(sGroupId || "$auto", undefined, oBinding, 1),
+					undefined, sinon.match.func, sinon.match.object)
 				.callsArg(2)
 				.returns(oReadPromise);
 
