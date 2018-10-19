@@ -121,7 +121,8 @@ sap.ui.define([], function () {
 		 *     aggregatable property are needed
 		 *   <li><code>with</code>: An optional string that provides the name of the method (for
 		 *     example "sum") used for aggregation of this aggregatable property; see
-		 *     "3.1.2 Keyword with"
+		 *     "3.1.2 Keyword with". Both, "average" and "countdistinct" are not supported for
+		 *     subtotals or grand totals.
 		 *   <li><code>name</code>: An optional string that provides the original aggregatable
 		 *     property name in case a different alias is chosen as the name of the dynamic property
 		 *     used for aggregation of this aggregatable property; see "3.1.1 Keyword as"
@@ -185,14 +186,21 @@ sap.ui.define([], function () {
 			 *
 			 * @param {string} sAlias - An aggregatable property name
 			 * @returns {string} - Part of the "aggregate" term
+			 * @throws {Error} If "average" or "countdistinct" are used together with subtotals or
+			 *   grand totals
 			 */
 			function aggregate(sAlias) {
 				var oDetails = oAggregation.aggregate[sAlias],
 					sAggregate = oDetails.name || sAlias,
-					sGrandTotal = sAlias;
+					sGrandTotal = sAlias,
+					sWith = oDetails.with;
 
-				if (oDetails.with) {
-					sAggregate += " with " + oDetails.with + " as " + sAlias;
+				if (sWith) {
+					if ((sWith === "average" || sWith === "countdistinct")
+							&& (oDetails.grandTotal || oDetails.subtotals)) {
+						throw new Error("Cannot aggregate totals with '" + sWith + "'");
+					}
+					sAggregate += " with " + sWith + " as " + sAlias;
 				} else if (oDetails.name) {
 					sAggregate += " as " + sAlias;
 				}
@@ -207,8 +215,8 @@ sap.ui.define([], function () {
 				if (oDetails.grandTotal) {
 					bHasGrandTotal = true;
 					if (!mQueryOptions.$skip) {
-						if (oDetails.with) {
-							sGrandTotal += " with " + oDetails.with + " as UI5grand__" + sAlias;
+						if (sWith) {
+							sGrandTotal += " with " + sWith + " as UI5grand__" + sAlias;
 						}
 						aConcatAggregate.push(sGrandTotal);
 					}
