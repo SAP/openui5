@@ -3593,18 +3593,21 @@ sap.ui.define([
 			var oSuccessSelect = new Select({ valueState: ValueState.Success }),
 				oWarningSelect = new Select({ valueState: ValueState.Warning }),
 				oErrorSelect = new Select({ valueState: ValueState.Error }),
+				oHighlightSelect = new Select({ valueState: ValueState.Highlight }),
 				sCoreLib = "sap.ui.core";
 
 			// arrange
 			oSuccessSelect.placeAt("content");
 			oWarningSelect.placeAt("content");
 			oErrorSelect.placeAt("content");
+			oHighlightSelect.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
 			// assert
 			assert.ok(oSuccessSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS")) > -1, "success select is labelled by invisible text");
 			assert.ok(oWarningSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_WARNING")) > -1, "warning select is labelled by invisible text");
 			assert.ok(oErrorSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_ERROR")) > -1, "error select is labelled by invisible text");
+			assert.ok(oHighlightSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_HIGHLIGHT")) > -1, "highlight select is labelled by invisible text");
 
 			// act
 			oSuccessSelect.setValueState("None");
@@ -3622,6 +3625,7 @@ sap.ui.define([
 			oSuccessSelect.destroy();
 			oWarningSelect.destroy();
 			oErrorSelect.destroy();
+			oHighlightSelect.destroy();
 		});
 
 		QUnit.module("setTooltip()");
@@ -3662,23 +3666,30 @@ sap.ui.define([
 				oErrorSelect = new Select({
 					tooltip: sSampleText,
 					valueState: ValueState.Error
+				}),
+				oHighlightSelect = new Select({
+					tooltip: sSampleText,
+					valueState: ValueState.Highlight
 				});
 
 			// arrange
 			oSuccessSelect.placeAt("content");
 			oWarningSelect.placeAt("content");
 			oErrorSelect.placeAt("content");
+			oHighlightSelect.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
 			// assert
 			assert.strictEqual(oSuccessSelect.$().attr("title"), sSampleText, "select title attribute is correct");
 			assert.strictEqual(oWarningSelect.$().attr("title"), sSampleText, "select title attribute is correct");
 			assert.strictEqual(oErrorSelect.$().attr("title"), sSampleText, "select title attribute is correct");
+			assert.strictEqual(oHighlightSelect.$().attr("title"), sSampleText, "select title attribute is correct");
 
 			// cleanup
 			oSuccessSelect.destroy();
 			oWarningSelect.destroy();
 			oErrorSelect.destroy();
+			oHighlightSelect.destroy();
 		});
 
 		QUnit.module("removeItem()");

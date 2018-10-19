@@ -130,6 +130,10 @@
 	background: @sapUiCriticalElement;
 }
 
+.sapMPIBarHighlight {
+	background: @sapUiHighlight;
+}
+
 /* Progress Indicator Remaining Bar */
 .sapMPIValueMin .sapMPIBarRemaining {
 	border-radius: 0.5rem;
@@ -151,6 +155,10 @@
 
 .sapMPIBarCritical .sapMPIText.sapMPITextLeft {
 	color: contrast(@sapUiCriticalElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+}
+
+.sapMPIBarHighlight .sapMPIText.sapMPITextLeft {
+	color: contrast(@sapUiHighlight, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 }
 
 /* Compact */

@@ -150,6 +150,24 @@
 						valueState: "Error"
 					}),
 					new sap.m.CheckBox({
+						id:"cb_highlight_deselected",
+						text: "Highlight",
+						valueState: "Highlight"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_highlight_selected",
+						text: "Highlight checked",
+						selected: true,
+						valueState: "Highlight"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_highlight_selected_disabled",
+						text: "Highlight disabled",
+						selected: true,
+						enabled: false,
+						valueState: "Highlight"
+					}),
+					new sap.m.CheckBox({
 						id:"cb_partially_selected",
 						selected: true,
 						partiallySelected: true,

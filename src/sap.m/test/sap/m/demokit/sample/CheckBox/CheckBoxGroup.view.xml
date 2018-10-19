@@ -14,6 +14,8 @@
 		<CheckBox text="Warning disabled" valueState="Warning" enabled="false" selected="true" />
 		<CheckBox text="Error" valueState="Error" />
 		<CheckBox text="Error disabled" valueState="Error" enabled="false" selected="true" />
+		<CheckBox text="Highlight" valueState="Highlight" />
+		<CheckBox text="Highlight disabled" valueState="Highlight" enabled="false" selected="true" />
 		<CheckBox text="Checkbox with wrapping='true' and long text" wrapping="true" width="150px"/>
 	</VBox>
 	<f:SimpleForm

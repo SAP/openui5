@@ -119,6 +119,18 @@
 				state: sap.ui.core.ValueState.Success
 			});
 
+			var label9 = new sap.m.Label({
+				text : "Progress Indicator with 39% highlight"
+			});
+
+			// create progressIndicator
+			var oProgInd9 = new sap.m.ProgressIndicator("pi9", {
+				width:"80%",
+				percentValue:39,
+				displayValue:"39%",
+				state: sap.ui.core.ValueState.Highlight
+			});
+
 			var oButton = new sap.m.Button("button", {
 				text:"ChangePI",
 				press: function(){
@@ -191,6 +203,8 @@
 					oProgInd6,
 					label7,
 					oProgInd7,
+					label9,
+					oProgInd9,
 					label8,
 					oProgInd8,
 					oInput,

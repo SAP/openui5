@@ -13,8 +13,17 @@
 	border: 0.125rem dashed @sapUiFieldInvalidColor;
 }
 
+.sapMCb.sapMCbHighlight .sapMCbBg {
+	background-color: @sapUiFieldBackground;
+	border-color: @sapUiContentHelpColor;
+}
+
 .sapMCb.sapMCbBgDis.sapMCbWarn .sapMCbBg.sapMCbMarkChecked:before {
 	color: @sapUiFieldWarningColor;
+}
+
+.sapMCb.sapMCbBgDis.sapMCbHighlight .sapMCbBg.sapMCbMarkChecked:before {
+	color: @sapUiContentHelpColor;
 }
 
 .sapMCb.sapMCbBgDis.sapMCbErr .sapMCbBg {
