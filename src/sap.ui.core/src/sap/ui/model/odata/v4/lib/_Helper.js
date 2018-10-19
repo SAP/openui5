@@ -15,14 +15,34 @@ sap.ui.define([
 		rEscapedOpenBracket = /%28/g,
 		rEscapedTick = /%27/g,
 		rHash = /#/g,
+		_Helper,
 		// matches the rest of a segment after '(' and any segment that consists only of a number
 		rNotMetaContext = /\([^/]*|\/-?\d+/g,
 		rNumber = /^-?\d+$/,
 		rPlus = /\+/g,
-		rSingleQuote = /'/g,
-		Helper;
+		rSingleQuote = /'/g;
 
-	Helper = {
+	_Helper = {
+		/**
+		 * Adds an item to the given map by path.
+		 *
+		 * @param {object} mMap
+		 *   A map from path to a list of items
+		 * @param {string} sPath
+		 *   The path
+		 * @param {object} [oItem]
+		 *   The item; if it is <code>undefined</code>, nothing happens
+		 */
+		addByPath : function (mMap, sPath, oItem) {
+			if (oItem) {
+				if (!mMap[sPath]) {
+					mMap[sPath] = [oItem];
+				} else if (mMap[sPath].indexOf(oItem) < 0) {
+					mMap[sPath].push(oItem);
+				}
+			}
+		},
+
 		/**
 		 * Builds a relative path from the given arguments. Iterates over the arguments and appends
 		 * them to the path if defined and non-empty. The arguments are expected to be strings or
@@ -94,10 +114,10 @@ sap.ui.define([
 
 				if (Array.isArray(vValue)) {
 					vValue.forEach(function (sItem) {
-						aQuery.push(Helper.encodePair(sKey, sItem));
+						aQuery.push(_Helper.encodePair(sKey, sItem));
 					});
 				} else {
-					aQuery.push(Helper.encodePair(sKey, vValue));
+					aQuery.push(_Helper.encodePair(sKey, vValue));
 				}
 			});
 
@@ -309,7 +329,7 @@ sap.ui.define([
 		 *   The encoded key-value pair in the form "key=value"
 		 */
 		encodePair : function (sKey, sValue) {
-			return Helper.encode(sKey, true) + "=" + Helper.encode(sValue, false);
+			return _Helper.encode(sKey, true) + "=" + _Helper.encode(sValue, false);
 		},
 
 		/**
@@ -342,13 +362,13 @@ sap.ui.define([
 		 */
 		fireChanges : function (mChangeListeners, sPath, oValue, bRemoved) {
 			Object.keys(oValue).forEach(function (sProperty) {
-				var sPropertyPath = Helper.buildPath(sPath, sProperty),
+				var sPropertyPath = _Helper.buildPath(sPath, sProperty),
 					vValue = oValue[sProperty];
 
 				if (vValue && typeof vValue === "object") {
-					Helper.fireChanges(mChangeListeners, sPropertyPath, vValue, bRemoved);
+					_Helper.fireChanges(mChangeListeners, sPropertyPath, vValue, bRemoved);
 				} else {
-					Helper.fireChange(mChangeListeners, sPropertyPath,
+					_Helper.fireChange(mChangeListeners, sPropertyPath,
 						bRemoved ? undefined : vValue);
 				}
 			});
@@ -425,7 +445,7 @@ sap.ui.define([
 		 */
 		getKeyPredicate : function (oInstance, sMetaPath, mTypeForMetaPath) {
 			var aKeyProperties = [],
-				mKey2Value = Helper.getKeyProperties(oInstance, sMetaPath, mTypeForMetaPath, true);
+				mKey2Value = _Helper.getKeyProperties(oInstance, sMetaPath, mTypeForMetaPath, true);
 
 			if (!mKey2Value) {
 				return undefined;
@@ -480,7 +500,7 @@ sap.ui.define([
 				}
 				aPath = sKeyPath.split("/");
 
-				vValue = Helper.drillDown(oInstance, aPath);
+				vValue = _Helper.drillDown(oInstance, aPath);
 				if (vValue === undefined) {
 					return true;
 				}
@@ -488,8 +508,8 @@ sap.ui.define([
 				// the last path segment is the name of the simple property
 				sPropertyName = aPath.pop();
 				// find the type containing the simple property
-				oType = mTypeForMetaPath[Helper.buildPath(sMetaPath, aPath.join("/"))];
-				vValue = Helper.formatLiteral(vValue, oType[sPropertyName].$Type);
+				oType = mTypeForMetaPath[_Helper.buildPath(sMetaPath, aPath.join("/"))];
+				vValue = _Helper.formatLiteral(vValue, oType[sPropertyName].$Type);
 				mKey2Value[sKey] = vValue;
 			});
 
@@ -691,12 +711,38 @@ sap.ui.define([
 		 * @see sap.ui.model.odata.v4.lib._Helper.clone
 		 */
 		publicClone : function (vValue) {
-			var vClone = Helper.clone(vValue);
+			var vClone = _Helper.clone(vValue);
 
 			if (vClone) {
 				delete vClone["@$ui5._"];
 			}
 			return vClone;
+		},
+
+		/**
+		 * Removes an item from the given map by path.
+		 *
+		 * @param {object} mMap
+		 *   A map from path to a list of items
+		 * @param {string} sPath
+		 *   The path
+		 * @param {object} oItem
+		 *   The item
+		 */
+		removeByPath : function (mMap, sPath, oItem) {
+			var aItems = mMap[sPath],
+				iIndex;
+
+			if (aItems) {
+				iIndex = aItems.indexOf(oItem);
+				if (iIndex >= 0) {
+					if (aItems.length === 1) {
+						delete mMap[sPath];
+					} else {
+						aItems.splice(iIndex, 1);
+					}
+				}
+			}
 		},
 
 		/**
@@ -785,7 +831,7 @@ sap.ui.define([
 
 			// iterate over all properties in the old value
 			Object.keys(oOldValue).forEach(function (sProperty) {
-				var sPropertyPath = Helper.buildPath(sPath, sProperty),
+				var sPropertyPath = _Helper.buildPath(sPath, sProperty),
 					vOldValue = oOldValue[sProperty],
 					vNewValue;
 
@@ -799,22 +845,22 @@ sap.ui.define([
 							oOldValue[sProperty] = vNewValue;
 						} else if (vOldValue) {
 							// a structural property in cache and patch -> recursion
-							Helper.updateExisting(mChangeListeners, sPropertyPath, vOldValue,
+							_Helper.updateExisting(mChangeListeners, sPropertyPath, vOldValue,
 								vNewValue);
 						} else {
 							// a structural property was added
 							oOldValue[sProperty] = vNewValue;
-							Helper.fireChanges(mChangeListeners, sPropertyPath, vNewValue, false);
+							_Helper.fireChanges(mChangeListeners, sPropertyPath, vNewValue, false);
 						}
 					} else if (vOldValue && typeof vOldValue === "object") {
 						// a structural property was removed
 						oOldValue[sProperty] = vNewValue;
-						Helper.fireChanges(mChangeListeners, sPropertyPath, vOldValue, true);
+						_Helper.fireChanges(mChangeListeners, sPropertyPath, vOldValue, true);
 					} else {
 						// a primitive property
 						oOldValue[sProperty] = vNewValue;
 						if (vOldValue !== vNewValue) {
-							Helper.fireChange(mChangeListeners, sPropertyPath, vNewValue);
+							_Helper.fireChange(mChangeListeners, sPropertyPath, vNewValue);
 						}
 					}
 				}
@@ -857,15 +903,15 @@ sap.ui.define([
 						if (iIndex < aSegments.length - 1) {
 							return false;
 						}
-						Helper.fireChange(mChangeListeners, Helper.buildPath(sPath, sProperty),
+						_Helper.fireChange(mChangeListeners, _Helper.buildPath(sPath, sProperty),
 							oOldValue[sSegment]);
 					} else if (typeof oNewValue[sSegment] === "object") {
 						oOldValue[sSegment] = oOldValue[sSegment] || {};
 					} else {
 						if (oOldValue[sSegment] !== oNewValue[sSegment]) {
 							oOldValue[sSegment] = oNewValue[sSegment];
-							Helper.fireChange(mChangeListeners, Helper.buildPath(sPath, sProperty),
-								oOldValue[sSegment]);
+							_Helper.fireChange(mChangeListeners,
+								_Helper.buildPath(sPath, sProperty), oOldValue[sSegment]);
 						}
 						return false;
 					}
@@ -928,7 +974,7 @@ sap.ui.define([
 		 */
 		updateTransientPaths : function (mMap, sPathInCache, sPredicate) {
 			var sPath,
-				sPathToMinus1 = Helper.buildPath(sPathInCache, "-1");
+				sPathToMinus1 = _Helper.buildPath(sPathInCache, "-1");
 
 			for (sPath in mMap) {
 				if (sPath.startsWith(sPathToMinus1)) {
@@ -940,5 +986,5 @@ sap.ui.define([
 		}
 	};
 
-	return Helper;
+	return _Helper;
 }, /* bExport= */false);

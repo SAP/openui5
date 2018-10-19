@@ -424,49 +424,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#addByPath", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "TEAMS"),
-			mMap = {};
-
-		oCache.addByPath(mMap, "path1", "item1");
-		assert.deepEqual(mMap, {"path1" : ["item1"]});
-
-		oCache.addByPath(mMap, "path2", "item2");
-		assert.deepEqual(mMap, {"path1" : ["item1"], "path2" : ["item2"]});
-
-		oCache.addByPath(mMap, "path3", undefined);
-		assert.deepEqual(mMap, {"path1" : ["item1"], "path2" : ["item2"]});
-
-		oCache.addByPath(mMap, "path1", "item3");
-		assert.deepEqual(mMap, {"path1" : ["item1", "item3"], "path2" : ["item2"]});
-
-		oCache.addByPath(mMap, "path2", "item2");
-		assert.deepEqual(mMap, {"path1" : ["item1", "item3"], "path2" : ["item2"]});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("_Cache#removeByPath", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "TEAMS"),
-			mMap = {"path1": ["item1", "item2"]};
-
-		oCache.removeByPath(mMap, "path1", "item2");
-		assert.deepEqual(mMap, {"path1" : ["item1"]});
-
-		oCache.removeByPath(mMap, "path2", "item2");
-		assert.deepEqual(mMap, {"path1" : ["item1"]});
-
-		oCache.removeByPath(mMap, "path1", "item2");
-		assert.deepEqual(mMap, {"path1" : ["item1"]});
-
-		oCache.removeByPath(mMap, "path1", "item1");
-		assert.deepEqual(mMap, {});
-	});
-
-	//*********************************************************************************************
 	QUnit.test("_Cache#registerChange", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "TEAMS");
 
-		this.mock(oCache).expects("addByPath")
+		this.mock(_Helper).expects("addByPath")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path", "listener");
 
 		oCache.registerChange("path", "listener");
@@ -476,7 +437,7 @@ sap.ui.define([
 	QUnit.test("_Cache#deregisterChange", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "TEAMS");
 
-		this.mock(oCache).expects("removeByPath")
+		this.mock(_Helper).expects("removeByPath")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path", "listener");
 
 		oCache.deregisterChange("path", "listener");
@@ -1026,14 +987,14 @@ sap.ui.define([
 					sinon.match.same(oUpdateData), sinon.match.func, sinon.match.func, undefined,
 					"~", undefined)
 				.returns(oPatchPromise);
-			oCacheMock.expects("addByPath")
+			oHelperMock.expects("addByPath")
 				.withExactArgs(sinon.match.same(oCache.mPatchRequests), sFullPath,
 					sinon.match.same(oPatchPromise));
 			oPatchPromise.then(function () {
 				var sMetaPath = {/* {string} result of _Helper.getMetaPath(...)*/},
 					sPath = {/* {string} result of _Helper.buildPath(...)*/};
 
-				oCacheMock.expects("removeByPath")
+				oHelperMock.expects("removeByPath")
 					.withExactArgs(sinon.match.same(oCache.mPatchRequests), sFullPath,
 						sinon.match.same(oPatchPromise));
 				oHelperMock.expects("buildPath").exactly(iExpectedCalls)
@@ -1055,7 +1016,7 @@ sap.ui.define([
 				oUnlockCall = that.mock(oRequestLock).expects("unlock").withExactArgs();
 			}, function () {
 				oCacheMock.expects("visitResponse").never();
-				oCacheMock.expects("removeByPath").twice()
+				oHelperMock.expects("removeByPath").twice()
 					.withExactArgs(sinon.match.same(oCache.mPatchRequests), sFullPath,
 						sinon.match.same(oPatchPromise));
 				oStaticCacheMock.expects("makeUpdateData")
@@ -1271,14 +1232,14 @@ sap.ui.define([
 					sinon.match.same(oUpdateData), sinon.match.func, sinon.match.func, undefined,
 					"~", undefined)
 				.returns(oPatchPromise);
-			oCacheMock.expects("addByPath")
+			oHelperMock.expects("addByPath")
 				.withExactArgs(sinon.match.same(oCache.mPatchRequests), sFullPath,
 					sinon.match.same(oPatchPromise));
 			SyncPromise.all([
 				oPatchPromise,
 				oFetchTypesPromise
 			]).catch(function () {
-				oCacheMock.expects("removeByPath")
+				oHelperMock.expects("removeByPath")
 					.withExactArgs(sinon.match.same(oCache.mPatchRequests), sFullPath,
 						sinon.match.same(oPatchPromise));
 				that.oRequestorMock.expects("getGroupSubmitMode")
@@ -1296,7 +1257,7 @@ sap.ui.define([
 						), {"If-Match" : sinon.match.same(oEntity)}, sinon.match.same(oUpdateData),
 						sinon.match.func, sinon.match.func, undefined, "~", /*bAtFront*/true)
 					.returns(oPatchPromise2);
-				oCacheMock.expects("addByPath")
+				oHelperMock.expects("addByPath")
 					.withExactArgs(sinon.match.same(oCache.mPatchRequests), sFullPath,
 						sinon.match.same(oPatchPromise2));
 				SyncPromise.all([
@@ -1306,7 +1267,7 @@ sap.ui.define([
 					var sMetaPath = {/* {string} result of _Helper.getMetaPath(...)*/},
 						sPath = {/* {string} result of _Helper.buildPath(...)*/};
 
-					oCacheMock.expects("removeByPath")
+					oHelperMock.expects("removeByPath")
 						.withExactArgs(sinon.match.same(oCache.mPatchRequests), sFullPath,
 							sinon.match.same(oPatchPromise2));
 					oHelperMock.expects("buildPath")
@@ -1323,7 +1284,7 @@ sap.ui.define([
 						.withExactArgs(sinon.match.same(oCache.mChangeListeners), sEntityPath,
 							sinon.match.same(oEntity), sinon.match.same(oPatchResult));
 				}, function () {
-					oCacheMock.expects("removeByPath").twice()
+					oHelperMock.expects("removeByPath").twice()
 						.withExactArgs(sinon.match.same(oCache.mPatchRequests), sFullPath,
 							sinon.match.same(oPatchPromise2));
 					oStaticCacheMock.expects("makeUpdateData")
@@ -3388,7 +3349,7 @@ sap.ui.define([
 				.returns(oEntityDataCleaned);
 			this.mock(oCache).expects("fetchTypes").withExactArgs()
 				.returns(SyncPromise.resolve(mTypeForMetaPath));
-			this.spy(oCache, "addByPath");
+			this.spy(_Helper, "addByPath");
 			this.oRequestorMock.expects("request")
 				.withExactArgs("POST", "TEAMS('0')/TEAM_2_EMPLOYEES", sinon.match.same(oGroupLock),
 					null, sinon.match.same(oEntityDataCleaned), /*fnSubmit*/sinon.match.func,
@@ -3422,8 +3383,9 @@ sap.ui.define([
 			assert.strictEqual(aCollection.$count, 0);
 
 			// request is added to mPostRequests
-			sinon.assert.calledWithExactly(oCache.addByPath, sinon.match.same(oCache.mPostRequests),
-				sPathInCache, sinon.match.same(oEntityDataCleaned));
+			sinon.assert.calledWithExactly(_Helper.addByPath,
+				sinon.match.same(oCache.mPostRequests), sPathInCache,
+				sinon.match.same(oEntityDataCleaned));
 
 			oCache.registerChange(sPathInCache + "/-1/Name", function () {
 				assert.notOk(true, "No change event for Name");
@@ -3431,7 +3393,7 @@ sap.ui.define([
 
 			oCache.registerChange(sPathInCache + "/$count", oCountChangeListener);
 			oCache.registerChange(sPathInCache + "/-1/ID", oIdChangeListener);
-			this.spy(oCache, "removeByPath");
+			this.spy(_Helper, "removeByPath");
 			return oCreatePromise.then(function (oEntityData) {
 				assert.deepEqual(oEntityData, {
 					"@$ui5._" : {},
@@ -3443,7 +3405,7 @@ sap.ui.define([
 				if (bKeepTransientPath === false) {
 					assert.strictEqual(aCollection.$byPredicate["('7')"], oEntityDataCleaned);
 				}
-				sinon.assert.calledWithExactly(oCache.removeByPath,
+				sinon.assert.calledWithExactly(_Helper.removeByPath,
 					sinon.match.same(oCache.mPostRequests), sPathInCache,
 					sinon.match.same(oEntityDataCleaned));
 			});
@@ -3470,7 +3432,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), sPathInCache)
 			.returns(SyncPromise.resolve(aCollection));
 		oCacheMock.expects("fetchTypes").withExactArgs().returns(SyncPromise.resolve({}));
-		this.spy(oCache, "addByPath");
+		this.spy(_Helper, "addByPath");
 		this.spy(oRequestor, "request");
 
 		// code under test
@@ -3483,9 +3445,9 @@ sap.ui.define([
 			"TEAMS('0')/TEAM_2_EMPLOYEES/-1");
 		oBody = oRequestor.request.args[0][4];
 		// request is added to mPostRequests
-		sinon.assert.calledWithExactly(oCache.addByPath, sinon.match.same(oCache.mPostRequests),
+		sinon.assert.calledWithExactly(_Helper.addByPath, sinon.match.same(oCache.mPostRequests),
 			sPathInCache, sinon.match.same(oBody));
-		this.spy(oCache, "removeByPath");
+		this.spy(_Helper, "removeByPath");
 
 		oCacheMock.expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), sPathInCache)
@@ -3496,7 +3458,7 @@ sap.ui.define([
 		oCache._delete(oGroupLock, "TEAMS('0')/TEAM_2_EMPLOYEES", sPathInCache + "/-1",
 			fnDeleteCallback);
 
-		sinon.assert.calledWithExactly(oCache.removeByPath, sinon.match.same(oCache.mPostRequests),
+		sinon.assert.calledWithExactly(_Helper.removeByPath, sinon.match.same(oCache.mPostRequests),
 			sPathInCache, sinon.match.same(oBody));
 		return oCreatePromise.then(function () {
 			assert.notOk(true, "unexpected success");
