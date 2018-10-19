@@ -1,5 +1,4 @@
-sap.ui.define(["sap/ui/core/Core"], function(Core) {
+sap.ui.define([], function() {
 	"use strict";
-
-	window["sap-ui-main"] = true;
+	window["initModuleResolve"]();
 });
