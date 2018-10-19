@@ -991,53 +991,45 @@ sap.ui.define([
 		var mConfig = {
 			async: true // async is by default true
 		};
-		if (vUsage && typeof vUsage === "object") {
-			mConfig.usage = vUsage.usage;
-			["id", "async", "settings", "componentData"].forEach(function(sName) {
-				if (vUsage[sName] !== undefined) {
-					mConfig[sName] = vUsage[sName];
-				}
-			});
-		} else if (typeof vUsage === "string") {
-			mConfig.usage = vUsage;
-		}
-		// create the component in the owner context of the current component
-		return this._createComponent(mConfig);
-	};
+		if (vUsage) {
+			var sUsageId;
+			if (typeof vUsage === "object") {
+				sUsageId = vUsage.usage;
+				["id", "async", "settings", "componentData"].forEach(function(sName) {
+					if (vUsage[sName] !== undefined) {
+						mConfig[sName] = vUsage[sName];
+					}
+				});
+			} else if (typeof vUsage === "string") {
+				sUsageId = vUsage;
+			}
 
+			mConfig = this._enhanceWithUsageConfig(sUsageId, mConfig);
+		}
+
+		// create the component in the owner context of the current component
+		return Component._createComponent(mConfig, this);
+	};
 
 	/**
-	 * Internal API to create a nested component with the owner context of the
-	 * current component.
+	 * Enhances the given config object with the manifest configuration of the given usage.
+	 * The given object is not modified, but the final object will be returned.
 	 *
-	 * @param {object} mConfig Configuration object that creates the component
-	 * @return {sap.ui.core.Component|Promise} Component instance or Promise which will be resolved with the component instance
+	 * @param {*} sUsageId ID of the component usage
+	 * @param {*} mConfig Configuration object for a component
+	 * @return {object} Enhanced configuration object
 	 *
 	 * @private
-	 * @since 1.47.0
+	 * @ui5-restricted sap.ui.core.ComponentContainer
 	 */
-	Component.prototype._createComponent = function(mConfig) {
-		// check the existence of the usage (mixin here for re-use in ComponentContainer)
-		if (mConfig && mConfig.usage) {
-			var sUsageId = mConfig.usage;
-			var mUsageConfig = this.getManifestEntry("/sap.ui5/componentUsages/" + sUsageId);
-			if (!mUsageConfig) {
-				throw new Error("Component usage \"" + sUsageId + "\" not declared in Component \"" + this.getManifestObject().getComponentName() + "\"!");
-			}
-			// mix in the component configuration on top of the usage configuration
-			mConfig = jQuery.extend(true, mUsageConfig, mConfig);
+	Component.prototype._enhanceWithUsageConfig = function(sUsageId, mConfig) {
+		var mUsageConfig = this.getManifestEntry("/sap.ui5/componentUsages/" + sUsageId);
+		if (!mUsageConfig) {
+			throw new Error("Component usage \"" + sUsageId + "\" not declared in Component \"" + this.getManifestObject().getComponentName() + "\"!");
 		}
-		// create the nested component in the context of this component
-		return this.runAsOwner(function() {
-			if ( mConfig.async === true ) {
-				return Component.create(mConfig);
-			} else {
-				// use deprecated factory for sync use case only
-				return sap.ui.component(mConfig);
-			}
-		});
+		// mix in the component configuration on top of the usage configuration
+		return jQuery.extend(true, mUsageConfig, mConfig);
 	};
-
 
 	/**
 	 * Initializes the Component instance after creation.
@@ -1125,6 +1117,37 @@ sap.ui.define([
 	 */
 	//onConfigChange : null, // function(sConfigKey)
 
+
+	/**
+	 * Internal API to create a component with Component.create (async) or sap.ui.component (sync).
+	 * In case a <code>oOwnerComponent</code> is given, it will be created within the context
+	 * of it.
+	 *
+	 * @param {object} mConfig Configuration object that creates the component
+	 * @param {sap.ui.core.Component} [oOwnerComponent] Owner component
+	 * @return {sap.ui.core.Component|Promise} Component instance or Promise which will be resolved with the component instance
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.core.ComponentContainer
+	 */
+	Component._createComponent = function(mConfig, oOwnerComponent) {
+
+		function createComponent() {
+			if (mConfig.async === true) {
+				return Component.create(mConfig);
+			} else {
+				// use deprecated factory for sync use case only
+				return sap.ui.component(mConfig);
+			}
+		}
+
+		if (oOwnerComponent) {
+			// create the nested component in the context of this component
+			return oOwnerComponent.runAsOwner(createComponent);
+		} else {
+			return createComponent();
+		}
+	};
 
 	/**
 	 * Creates model configurations by processing "/sap.app/dataSources" and "/sap.ui5/models" manifest entries.

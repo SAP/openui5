@@ -239,11 +239,6 @@ sap.ui.define([
 	 */
 	ComponentContainer.prototype.applySettings = function(mSettings, oScope) {
 		if (mSettings) {
-			// support the ID prefixing of the component
-			if (mSettings.autoPrefixId === true && mSettings.settings && mSettings.settings.id) {
-				mSettings.settings.id = this.getId() + "-" + mSettings.settings.id;
-			}
-
 			// The "manifest" property has type "any" to be able to handle string|boolean|object.
 			// When using the ComponentContainer in a declarative way (e.g. XMLView), boolean values
 			// are passed as string. Therefore this type conversion needs to be done manually.
@@ -268,13 +263,11 @@ sap.ui.define([
 	 */
 	function createComponentConfig(oComponentContainer) {
 		var sName = oComponentContainer.getName();
-		var sUsage = oComponentContainer.getUsage();
 		var vManifest = oComponentContainer.getManifest();
 		var sUrl = oComponentContainer.getUrl();
 		var mSettings = oComponentContainer.getSettings();
 		var mConfig = {
 			name: sName ? sName : undefined,
-			usage: sUsage ? sUsage : undefined,
 			manifest: vManifest !== null ? vManifest : false,
 			async: oComponentContainer.getAsync(),
 			url: sUrl ? sUrl : undefined,
@@ -293,18 +286,27 @@ sap.ui.define([
 	ComponentContainer.prototype._createComponent = function() {
 		// determine the owner component
 		var oOwnerComponent = Component.getOwnerComponentFor(this),
+			sUsageId = this.getUsage(),
 			mConfig = createComponentConfig(this);
-		// create the component instance
-		if (!oOwnerComponent) {
-			if ( mConfig.async ) {
-				return Component.create(mConfig);
-			} else {
-				// use deprecated factory for sync use case only
-				return sap.ui.component(mConfig);
-			}
-		} else {
-			return oOwnerComponent._createComponent(mConfig);
+
+		// First, enhance the config object with "usage" definition from manifest
+		if (oOwnerComponent && sUsageId) {
+			mConfig = oOwnerComponent._enhanceWithUsageConfig(sUsageId, mConfig);
 		}
+
+		// Then, prefix component ID with the container ID, as the ID might come from
+		// the usage configuration in the manifest
+		if (this.getAutoPrefixId()) {
+			if (mConfig.id) {
+				mConfig.id = this.getId() + "-" + mConfig.id;
+			}
+			if (mConfig.settings && mConfig.settings.id) {
+				mConfig.settings.id = this.getId() + "-" + mConfig.settings.id;
+			}
+		}
+
+		// Finally, create the component instance
+		return Component._createComponent(mConfig, oOwnerComponent);
 	};
 
 	/*
