@@ -1564,7 +1564,7 @@ function(
 		// Close the ValueStateMessage when the suggestion popup is being opened.
 		// Only do this in case a popup is used.
 		if (!this._bUseDialog && this._oSuggPopover
-			&& this._oSuggPopover._oPopover.isOpen()) {
+			&& this._oSuggPopover._oPopover && this._oSuggPopover._oPopover.isOpen()) {
 			this.closeValueStateMessage();
 		}
 
