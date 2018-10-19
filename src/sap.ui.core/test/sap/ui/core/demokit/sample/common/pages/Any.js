@@ -112,21 +112,28 @@ sap.ui.require([
 								oRequestor = oModel.oRequestor;
 
 							sap.ui.test.Opa.getContext().aOrderIds.forEach(function (sOrderId) {
-								aPromises.push(oRequestor.request("DELETE",
-									"SalesOrderList('" + sOrderId + "')",
-									oModel.lockGroup("Cleanup"),
-									{"If-Match" : "*"}));
-								Opa5.assert.ok(true, "Cleanup; delete SalesOrder:" + sOrderId);
+								aPromises.push(
+									oRequestor.request("DELETE",
+										"SalesOrderList('" + sOrderId + "')",
+										oModel.lockGroup("cleanUp"), {"If-Match" : "*"}
+									).then(function () {
+										Opa5.assert.ok(true, "cleanUp: deleted SalesOrder: "
+											+ sOrderId);
+									}, function (oError) {
+										Opa5.assert.ok(false, "cleanUp: deleting SalesOrder: "
+											+ sOrderId + " failed due to " + oError);
+									})
+								);
 							});
 							sap.ui.test.Opa.getContext().aOrderIds = [];
-							aPromises.push(oRequestor.submitBatch("Cleanup"));
+							aPromises.push(oRequestor.submitBatch("cleanUp"));
 
 							// Note: $batch fails only for technical reasons, we should also check
 							// the DELETE requests themselves!
-							return /*TODO Promise.all(aPromises)*/aPromises.pop().then(function () {
-								Opa5.assert.ok(true, "Cleanup finished");
+							return Promise.all(aPromises).then(function () {
+								Opa5.assert.ok(true, "cleanUp finished");
 							}, function (oError) {
-								Opa5.assert.ok(false, "Cleanup failed: " + oError.message);
+								Opa5.assert.ok(false, "cleanUp failed: " + oError.message);
 							});
 						},
 						viewName : sap.ui.test.Opa.getContext().sViewName
