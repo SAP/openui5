@@ -488,6 +488,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 	QUnit.test("ObjectPage On Title Press", function (assert) {
 		var oObjectPage = this.oObjectPage,
 			oTitle = oObjectPage.getHeaderTitle(),
+			oScrollSpy = sinon.spy(oObjectPage, "_scrollTo"),
 			done = assert.async();
 
 
@@ -499,12 +500,14 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			// setup: scroll to a position where the header is snapped
 			oObjectPage._scrollTo(950);
 			setTimeout(function() {
+				oScrollSpy.reset();
+
 				//act
 				oTitle.fireEvent("_titlePress");
 				assert.equal(oObjectPage._bHeaderInTitleArea, false, "Header is not added to the title");
-				assert.equal(oObjectPage._$opWrapper[0].scrollTop, 0, "scroll position is correct");
+				assert.ok(oScrollSpy.calledWith(0, 0), "scroll position is correct");
 				done();
-			}, 0); // put at the end of queue chain to allow onScroll to be called before it
+			}, 500); //allow the page to scroll to the required position
 		});
 
 		helpers.renderObject(oObjectPage);
@@ -514,9 +517,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 	QUnit.test("expand shows the visual indicator", function (assert) {
 		var oObjectPage = this.oObjectPage,
 			oExpandButton = oObjectPage.getHeaderTitle()._getExpandButton(),
-			oCollapseButton = oObjectPage._getHeaderContent()._getCollapseButton(),
-			iCollapseButtonBottom,
-			iDynamicPageBottom,
+			oScrollSpy = sinon.spy(oObjectPage, "_scrollBelowCollapseVisualIndicator"),
 			done = assert.async();
 
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
@@ -527,17 +528,15 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			// setup: scroll to a position where the header is snapped
 			oObjectPage._scrollTo(950);
 			setTimeout(function() {
+				oScrollSpy.reset();
+
 				//act: expand via the 'expand' visual indicator
 				oExpandButton.firePress();
 
-				// check position
-				iCollapseButtonBottom = oCollapseButton.getDomRef().getBoundingClientRect().bottom;
-				iDynamicPageBottom = oObjectPage.getDomRef().getBoundingClientRect().bottom;
-
-				// check position
-				assert.strictEqual(iCollapseButtonBottom, iDynamicPageBottom, "CollapseButton is at the bottom of the page");
+				// check scroll adjustment called
+				assert.strictEqual(oScrollSpy.callCount, 1, "executed scroll to show the visual indicator");
 				done();
-			}, 0); // put at the end of queue chain to allow onScroll to be called before it
+			}, 500); //allow the page to scroll to the required position
 		});
 
 		helpers.renderObject(oObjectPage);
