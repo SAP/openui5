@@ -28,7 +28,6 @@
 					"sap/uxap/ObjectPageSection",
 					"sap/uxap/ObjectPageSubSection",
 					"sap/uxap/ObjectPageHeader",
-					"sap/ui/layout/HorizontalLayout",
 					"sap/ui/layout/VerticalLayout",
 					"sap/m/Panel"
 				], function(
@@ -38,7 +37,6 @@
 					ObjectPageSection,
 					ObjectPageSubSection,
 					ObjectPageHeader,
-					HorizontalLayout,
 					VerticalLayout,
 					Panel
 				){
@@ -62,21 +60,13 @@
 
 						}),
 						headerContent : oHeaderLayout,
-						// headerContent : new Panel("panel-header", {
-						// 	height : '100px'
-						// }),
 						sections : [
 							new ObjectPageSection("opSection1", {
 								title : "section1",
 								subSections : [
 									new ObjectPageSubSection("opSubSection1", {
 										title : "subsection1",
-										blocks : [
-											oFirstSectionPanel
-											// new Panel("panel1", {
-											// 	height : '500px'
-											// })
-										]
+										blocks : [ oFirstSectionPanel ]
 									})
 								]
 							}),
@@ -85,12 +75,7 @@
 								subSections : [
 									new ObjectPageSubSection("opSubSection2", {
 										title : "subsection2",
-										blocks : [
-											oSecondSectionPanel
-											// new Panel("panel2", {
-											// 	height : '500px'
-											// })
-										]
+										blocks : [ oSecondSectionPanel ]
 									})
 								]
 							})
@@ -107,13 +92,9 @@
 
 			function startScrollTest() {
 				sap.ui.require([
-					"dt/performance/PerformanceTestUtil",
-					"sap/ui/dt/OverlayRegistry",
-					"sap/base/Log"
+					"dt/performance/PerformanceTestUtil"
 				], function(
-					DtPerformanceTestUtil,
-					OverlayRegistry,
-					BaseLog
+					DtPerformanceTestUtil
 				) {
 					DtPerformanceTestUtil.measureApplyStylePerformance("applyStylesScroll", 2000);
 
@@ -127,12 +108,10 @@
 						if (iTargetWidth !== undefined) {
 							for(iNextWidth = iStartWidth - (iStartWidth % iJumpsInPxls); iNextWidth !== iTargetWidth; iNextWidth = (iTargetWidth > iStartWidth) ? iNextWidth + iJumpsInPxls : iNextWidth - iJumpsInPxls) {
 								setTimeout(function(iNextWidth) { jQuery('#opLayout-opwrapper').scrollTop(iNextWidth); }, 0, iNextWidth);
-								console.log("scrolled to", iNextWidth);
 							}
 							iStartWidth = iNextWidth;
 							setTimeout(function() {
 								jQuery('#opLayout-opwrapper').scrollTop(iNextWidth);
-								console.log("scrolled to next step", iNextWidth);
 								fnRecursiveloop(aWidthsToTest, iStartWidth, iJumpsInPxls);
 							}, 500);
 						}
