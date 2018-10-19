@@ -705,71 +705,6 @@ function(
 			assert.equal(oStub.firstCall.args[0], oParentComponent, "the function was called with the parent component the first time");
 		});
 
-		QUnit.test("getSelectorComponentForControl will not search further for the app component if the passed component is of type component", function (assert) {
-			var oAppComponent = new Component("appComponent");
-			var oComponent;
-			var oSapAppEntry = {
-				type: "component"
-			};
-			oAppComponent.runAsOwner(function() {
-				oComponent = new Component("innerComponent");
-				sandbox.stub(oComponent, "getManifestObject")
-					.returns({
-						getEntry: function (sParameter) {
-							return sParameter === "sap.app" ? oSapAppEntry : undefined;
-						}
-					});
-			});
-
-			var oReturnedComponent = Utils.getSelectorComponentForControl(oComponent);
-
-			assert.deepEqual(oReturnedComponent, oComponent, "then the app component is not returned");
-			oAppComponent.destroy();
-			oComponent.destroy();
-		});
-
-		QUnit.test("getSelectorComponentForControl will search further for the app component if the passed component is not of type application or component", function (assert) {
-			var oAppComponent = new Component("appComponent");
-			var oComponent;
-			var oSapAppEntry = {
-				type: "mockType"
-			};
-			oAppComponent.runAsOwner(function() {
-				oComponent = new Component("innerComponent");
-				sandbox.stub(oComponent, "getManifestEntry")
-					.callsFake(function (sParameter) {
-						return sParameter === "sap.app" ? oSapAppEntry : undefined;
-					});
-			});
-
-			var oReturnedComponent = Utils.getSelectorComponentForControl(oComponent);
-
-			assert.deepEqual(oReturnedComponent, oAppComponent, "then the app component is returned");
-			oAppComponent.destroy();
-			oComponent.destroy();
-		});
-
-		QUnit.test("getAppComponentForControl will not search further for the app component if the passed child component is of type application (mis-configured apps)", function (assert) {
-			var oAppComponent = new Component("appComponent");
-			var oComponent;
-			var oSapAppEntry = {
-				type: "application"
-			};
-			oAppComponent.runAsOwner(function() {
-				oComponent = new Component("innerComponent");
-				sandbox.stub(oComponent, "getManifestEntry")
-					.callsFake(function (sParameter) {
-						return sParameter === "sap.app" ? oSapAppEntry : undefined;
-					});
-			});
-
-			var oReturnedComponent = Utils.getSelectorComponentForControl(oComponent);
-
-			assert.deepEqual(oReturnedComponent, oComponent, "then the child app component is not returned");
-			oAppComponent.destroy();
-			oComponent.destroy();
-		});
-
 		QUnit.test("getComponentClassName shall return the next component of type 'application' in the hierarchy", function (assert) {
 			var sComponentNameApp = "testName.ComponentApp";
 			var sComponentNameComp = "testName.ComponentComp";
@@ -872,20 +807,6 @@ function(
 			oObject = undefined;
 			aArray = [{a: 1, b: 2, c: 3}, undefined, {a: 7, b: 8, c: 9}];
 			assert.equal(Utils.indexOfObject(aArray, oObject), 1, "the function returns the correct index");
-		});
-
-		QUnit.test("getLocalIdForSelector will return the local id with a 'idIsLocal' property set, when a local id exists", function(assert) {
-			var oComponent = new UIComponent("mockComponent");
-			var sControlId = "mockComponent---controlId";
-			assert.deepEqual(Utils.getLocalIdForSelectors(sControlId, oComponent), {idIsLocal: true, id: "controlId"}, "then the local id with 'idIsLocal' property set is returned");
-			oComponent.destroy();
-		});
-
-		QUnit.test("getLocalIdForSelector will return the control id with a 'idIsLocal' property unset, when a local id doesn't exist", function(assert) {
-			var oComponent = new UIComponent("mockComponent");
-			var sControlId = "controlIdWithNoPrefix";
-			assert.deepEqual(Utils.getLocalIdForSelectors(sControlId, oComponent), {idIsLocal: false, id: sControlId}, "then the original id with 'idIsLocal' property unset is returned");
-			oComponent.destroy();
 		});
 	});
 

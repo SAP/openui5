@@ -612,7 +612,7 @@ sap.ui.define([
 			return this.getId();
 		}
 
-		return JsControlTreeModifier.getSelector(this, flUtils.getComponentForControl(this)).id;
+		return JsControlTreeModifier.getSelector(this, flUtils.getAppComponentForControl(this)).id;
 	};
 
 	VariantManagement.prototype._setModel = function() {

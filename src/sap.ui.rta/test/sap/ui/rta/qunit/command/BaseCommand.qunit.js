@@ -181,15 +181,17 @@ function (
 	QUnit.module("Given a flex command", {
 		beforeEach : function(assert) {
 			sandbox.stub(FlexUtils, "_getComponentForControl").returns(oMockedAppComponent);
+			this.oButton = new Button("mockButton");
 			this.fnApplyChangeSpy = sandbox.spy(HideControl, "applyChange");
 			this.oFlexCommand = new FlexCommand({
-				element : new Button(),
+				element : this.oButton,
 				changeType : "hideControl"
 			});
 		},
 		afterEach : function(assert) {
 			sandbox.restore();
 			this.oFlexCommand.destroy();
+			this.oButton.destroy();
 		}
 	}, function() {
 		QUnit.test("when executing the command,", function(assert) {

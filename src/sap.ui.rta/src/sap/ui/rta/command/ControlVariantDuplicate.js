@@ -65,20 +65,19 @@ sap.ui.define([
 		var oVariantManagementControl = this.getElement(),
 		sSourceVariantReference = this.getSourceVariantReference(),
 		sNewVariantReference = this.getNewVariantReference();
-		this.oComponent = flUtils.getSelectorComponentForControl(oVariantManagementControl);
-		this.oAppComponent = flUtils.getAppComponentForControl(this.oComponent);
+		this.oAppComponent = flUtils.getAppComponentForControl(oVariantManagementControl);
 
 		if (!sNewVariantReference) {
 			sNewVariantReference = flUtils.createDefaultFileName("Copy");
 			this.setNewVariantReference(sNewVariantReference);
 		}
 
-		this.sVariantManagementReference = JsControlTreeModifier.getSelector(oVariantManagementControl, this.oComponent).id;
+		this.sVariantManagementReference = JsControlTreeModifier.getSelector(oVariantManagementControl, this.oAppComponent).id;
 		this.oModel = this.oAppComponent.getModel(this.MODEL_NAME);
 
 		var mPropertyBag = {
 				variantManagementReference : this.sVariantManagementReference,
-				appComponent : this.oComponent,
+				appComponent : this.oAppComponent,
 				layer : this.sLayer,
 				newVariantReference : sNewVariantReference,
 				sourceVariantReference : sSourceVariantReference,

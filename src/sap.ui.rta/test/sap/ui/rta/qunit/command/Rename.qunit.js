@@ -50,7 +50,7 @@ sap.ui.define([
 			this.oGetAppComponentForControlStub.restore();
 		},
 		beforeEach: function () {
-			this.oButton = new Button({
+			this.oButton = new Button("mockButton", {
 				text : "Label"
 			});
 

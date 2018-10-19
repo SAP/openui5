@@ -34,7 +34,7 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	var fnStubTechnicalParameterValues = function (aUrlTechnicalParameters) {
-		sandbox.stub(this.oModel, "_getLocalId").withArgs(this.oDummyControl.getId(), this.oComponent).returns("variantMgmtId1");
+		sandbox.stub(this.oModel, "_getLocalId").withArgs(this.oDummyControl.getId(), this.oAppComponent).returns("variantMgmtId1");
 		sandbox.spy(this.oModel, "updateHasherEntry");
 		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variant1").returns(true);
 		sandbox.stub(Utils, "getUshellContainer").returns(true);
@@ -52,7 +52,7 @@ sap.ui.define([
 
 	var fnCheckUpdateCurrentVariantCalled = function (assert, sVariantManagement, sVariant) {
 		assert.ok(this.oModel.updateCurrentVariant.calledOnce, "then variantModel.updateCurrentVariant called once");
-		assert.ok(this.oModel.updateCurrentVariant.calledWithExactly(sVariantManagement, sVariant, this.oComponent), "then variantModel.updateCurrentVariant called to activate the target variant");
+		assert.ok(this.oModel.updateCurrentVariant.calledWithExactly(sVariantManagement, sVariant, this.oAppComponent), "then variantModel.updateCurrentVariant called to activate the target variant");
 	};
 
 	var fnCheckActivateVariantErrorResponse = function (assert, sExpectedError, sReceivedError) {
@@ -106,10 +106,6 @@ sap.ui.define([
 				.callThrough()
 				.withArgs(this.oDummyControl).returns(this.oAppComponent)
 				.withArgs(this.oComponent).returns(this.oAppComponent);
-			sandbox.stub(Utils, "getSelectorComponentForControl")
-				.callThrough()
-				.withArgs(this.oDummyControl).returns(this.oComponent)
-				.withArgs(this.oComponent).returns(this.oComponent);
 		},
 		afterEach: function() {
 			sandbox.restore();

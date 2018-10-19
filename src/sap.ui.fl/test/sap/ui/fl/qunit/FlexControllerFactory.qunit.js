@@ -91,8 +91,8 @@ function (
 			 FlexControllerFactory.getChangesAndPropagate(oComponent, {});
 		 });
 
-		QUnit.test("when getChangesForPropagate() is called for a non application type component", function (assert) {
-			assert.expect(4);
+		QUnit.test("when getChangesForPropagate() is called for an embedded component", function (assert) {
+			assert.expect(3);
 			var oModel = {
 				addEmbeddedComponent: function () {}
 			};
@@ -101,6 +101,9 @@ function (
 				getModel: function (sModelName) {
 					assert.strictEqual(sModelName, sVariantModelName, "then variant model called on the app component");
 					return oModel;
+				},
+				addPropagationListener: function () {
+					assert.notOk(true, "addPropagationListener shouldn't be called for an embedded component");
 				}
 			};
 
@@ -109,16 +112,16 @@ function (
 					assert.strictEqual(sModelName, sVariantModelName, "then variant model set on the app component");
 					assert.deepEqual(oModelSet, oModel, "then the correct model was set");
 				},
-				getManifestObject: function () { }
+				getManifestObject: function () {},
+				addPropagationListener: function () {
+					assert.notOk(true, "addPropagationListener shouldn't be called for an embedded component");
+				}
 			};
 
 			sandbox.stub(Utils, "isEmbeddedComponent").returns(true);
 			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oComponent).returns(oAppComponent);
-			sandbox.stub(FlexControllerFactory, "createForControl");
 
 			FlexControllerFactory.getChangesAndPropagate(oComponent, {});
-
-			assert.strictEqual(FlexControllerFactory.createForControl.callCount, 0, "then createForControl() not called");
 		});
 
 		QUnit.test("when createForControl() is called for a non application type component", function (assert) {

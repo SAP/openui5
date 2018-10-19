@@ -516,23 +516,6 @@ function(
 		},
 
 		/**
-		 * Returns the embedded component if the passed control belongs to a component of type "component" or the application component if of type "application".
-		 * If the control has no component, it walks up the control tree in order to find a control having one.
-		 *
-		 * @param {sap.ui.base.ManagedObject} oControl - Managed object instance
-		 * @returns {sap.ui.core.Component|null} component instance if found or null
-		 * @public
-		 */
-		getSelectorComponentForControl: function (oControl) {
-			var oComponent = oControl instanceof Component ? oControl : this._getComponentForControl(oControl);
-			if (oComponent && this.isEmbeddedComponent(oComponent.getManifestObject())) {
-				return oComponent;
-			} else {
-				return this._getAppComponentForComponent(oComponent);
-			}
-		},
-
-		/**
 		 * Returns the Component that belongs to given control. If the control has no component, it walks up the control tree in order to find a
 		 * control having one.
 		 *
@@ -845,7 +828,7 @@ function(
 		checkControlId: function (vControl, oAppComponent, bSuppressLogging) {
 			if (!oAppComponent) {
 				vControl = vControl instanceof ManagedObject ? vControl : sap.ui.getCore().byId(vControl);
-				oAppComponent = Utils.getSelectorComponentForControl(vControl);
+				oAppComponent = Utils.getAppComponentForControl(vControl);
 			}
 			return BaseTreeModifier.checkControlId(vControl, oAppComponent, bSuppressLogging);
 		},
@@ -1024,8 +1007,8 @@ function(
 			return (oManifest && oManifest.getEntry && oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").type === "application");
 		},
 
-		isEmbeddedComponent: function (oManifest) {
-			return (oManifest && oManifest.getEntry && oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").type === "component");
+		isEmbeddedComponent: function (oComponent) {
+			return oComponent instanceof Component && !!oComponent.getManifestEntry("sap.app") && oComponent.getManifestEntry("sap.app").type === "component";
 		},
 
 		/**
@@ -1318,31 +1301,7 @@ function(
 				});
 			});
 			return oResult;
-		},
-
-		/**
-		 * Returns an object containing local id along with the applicable idIsLocal property,
-		 * for the passed app component and control id
-		 *
-		 * @param {string} sControlId - Control id
-		 * @param {sap.ui.core.UIComponent} oAppComponent - Application component responsible for the control id
-		 * @returns {object} Returns object containing local id and isIsLocal property
-		 */
-		getLocalIdForSelectors: function (sControlId, oAppComponent) {
-			if (Utils.hasLocalIdSuffix(sControlId, oAppComponent)) {
-				var sLocalId = oAppComponent.getLocalId(sControlId);
-				return {
-					id: sLocalId,
-					idIsLocal: true
-				};
-			} else {
-				return {
-					id: sControlId,
-					idIsLocal: false
-				};
-			}
 		}
-
 	};
 	return Utils;
 }, true);

@@ -78,13 +78,9 @@ sap.ui.define([
 	 * @returns {sap.ui.core.UIComponent} component
 	 * @private
 	 */
-	FlexCommand.prototype.getAppComponent = function(bEmbedded) {
+	FlexCommand.prototype.getAppComponent = function() {
 		var oElement = this.getElement();
-		if (oElement) {
-			return bEmbedded ? FlUtils.getSelectorComponentForControl(oElement) : FlUtils.getAppComponentForControl(oElement);
-		} else {
-			return this.getSelector().appComponent;
-		}
+		return oElement ? FlUtils.getAppComponentForControl(oElement) : this.getSelector().appComponent;
 	};
 
 	/**
@@ -237,17 +233,16 @@ sap.ui.define([
 		var oChange = vChange.change || vChange;
 
 		var oAppComponent = this.getAppComponent();
-		var oComponent = this.getAppComponent(true);
-		var oSelectorElement = RtaControlTreeModifier.bySelector(oChange.getSelector(), oComponent);
+		var oSelectorElement = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
 		var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 		var mControl = oFlexController._getControlIfTemplateAffected(oChange, oSelectorElement, oSelectorElement.getMetadata().getName(), {
 			modifier: JsControlTreeModifier,
-			component: oComponent
+			appComponent: oAppComponent
 		});
 		var bRevertible = oFlexController.isChangeHandlerRevertible(oChange, mControl.control);
 		var mPropertyBag = {
 			modifier: bRevertible ? JsControlTreeModifier : RtaControlTreeModifier,
-			component: oComponent,
+			appComponent: oAppComponent,
 			view: FlUtils.getViewForControl(oSelectorElement)
 		};
 
@@ -257,7 +252,7 @@ sap.ui.define([
 
 		return Promise.resolve()
 		.then(function() {
-			if (oFlexController.checkForOpenDependenciesForControl(oChange.getSelector(), mPropertyBag.modifier, oComponent)) {
+			if (oFlexController.checkForOpenDependenciesForControl(oChange.getSelector(), mPropertyBag.modifier, oAppComponent)) {
 				throw Error("The following Change cannot be applied because of a dependency: " + oChange.getId());
 			}
 		})
@@ -269,7 +264,7 @@ sap.ui.define([
 		.then(function(oResult) {
 			if (oResult.success) {
 				if (bNotMarkAsAppliedChange) {
-					oFlexController.removeFromAppliedChangesOnControl(oChange, oComponent, oSelectorElement);
+					oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oSelectorElement);
 				}
 			}
 			return oResult;

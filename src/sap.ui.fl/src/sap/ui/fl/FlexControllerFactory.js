@@ -77,28 +77,30 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexControllerFactory.getChangesAndPropagate = function (oComponent, vConfig) {
-		// only manifest with type = "application" will go further
+		// only manifest with type = "application" will fetch changes
 		var oManifest = oComponent.getManifestObject();
 		var sVariantModelName = "$FlexVariants";
+		var oFlexController;
 
 		// if component's manifest is of type 'application' then only a flex controller and change persistence instances are created.
 		// if component's manifest is of type 'component' then no flex controller and change persistence instances are created. The variant model is fetched from the outer app component and applied on this component type.
 		if (Utils.isApplication(oManifest)) {
-			var oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
+			oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
 			ChangePersistenceFactory._getChangesForComponentAfterInstantiation(vConfig, oManifest, oComponent)
 			.then(function (fnGetChangesMap) {
 				oComponent.addPropagationListener(oFlexController.getBoundApplyChangesOnControl(fnGetChangesMap, oComponent));
 				var oData = oFlexController.getVariantModelData() || {};
 				oComponent.setModel(new VariantModel(oData, oFlexController, oComponent), sVariantModelName);
 			});
-		} else if (Utils.isEmbeddedComponent(oManifest)) {
+		} else if (Utils.isEmbeddedComponent(oComponent)) {
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);
-
-			// oAppComponent can be null when component has no parent component, e.g. sap.ushell.plugins.rta component
-			var oVariantModel = oAppComponent && oAppComponent.getModel(sVariantModelName);
-			if (oVariantModel){
-				oComponent.setModel(oVariantModel, sVariantModelName);
-				oVariantModel.addEmbeddedComponent(oComponent);
+			// Some embedded components might not have an app component, e.g. sap.ushell.plugins.rta, sap.ushell.plugins.rta-personalize
+			if (oAppComponent) {
+				var oVariantModel = oAppComponent && oAppComponent.getModel(sVariantModelName);
+				if (oVariantModel) {
+					oComponent.setModel(oVariantModel, sVariantModelName);
+					oVariantModel.addEmbeddedComponent(oComponent);
+				}
 			}
 		}
 	};

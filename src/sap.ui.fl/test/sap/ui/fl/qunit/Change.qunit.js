@@ -39,7 +39,10 @@ function(
 				changeType: "filterVariant",
 				reference: "smartFilterBar",
 				componentName: "smartFilterBar",
-				selector: {"id": "control1", idIsLocal: true},
+				selector: {
+					"id": "control1",
+					"idIsLocal": true
+				},
 				conditions: {},
 				context: [],
 				content: {something: "createNewVariant"},

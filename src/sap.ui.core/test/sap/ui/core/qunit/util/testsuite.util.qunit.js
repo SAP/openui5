@@ -167,6 +167,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			ExportTypeCSV: {},
 			PasteHelper: {},
 			"reflection/BaseTreeModifier": {
+				sinon: false,
 				coverage: {
 					only: "[sap/ui/core/util/reflection]"
 				},
@@ -177,9 +178,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				}
 			},
 			"reflection/JsControlTreeModifier": {
-				sinon: {
-					version: 4
-				},
+				sinon: false,
 				coverage: {
 					only: "[sap/ui/core/util/reflection]"
 				},
@@ -190,6 +189,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				}
 			},
 			"reflection/XmlTreeModifier": {
+				sinon: false,
 				coverage: {
 					only: "[sap/ui/core/util/reflection]"
 				},

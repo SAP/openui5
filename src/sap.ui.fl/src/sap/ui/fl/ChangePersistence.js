@@ -624,18 +624,18 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {sap.ui.core.UIComponent} oComponent component containing the control for which the change should be added
+	 * @param {sap.ui.core.Component} oAppComponent - Application Component containing the control for which the change should be added
 	 * @param {sap.ui.fl.Change} oChange change which should be added into the mapping
 	 * @see sap.ui.fl.Change
 	 * @returns {map} mChanges map with added change
 	 * @private
 	 */
-	ChangePersistence.prototype._addChangeIntoMap = function (oComponent, oChange) {
+	ChangePersistence.prototype._addChangeIntoMap = function (oAppComponent, oChange) {
 		var oSelector = oChange.getSelector();
 		if (oSelector && oSelector.id) {
 			var sSelectorId = oSelector.id;
 			if (oSelector.idIsLocal) {
-				sSelectorId = oComponent.createId(sSelectorId);
+				sSelectorId = oAppComponent.createId(sSelectorId);
 			}
 
 			this._addMapEntry(sSelectorId, oChange);
@@ -646,9 +646,9 @@ sap.ui.define([
 			if (oSelector.idIsLocal === undefined && sSelectorId.indexOf("---") != -1) {
 				var sComponentPrefix = sSelectorId.split("---")[0];
 
-				if (sComponentPrefix !== oComponent.getId()) {
+				if (sComponentPrefix !== oAppComponent.getId()) {
 					sSelectorId = sSelectorId.split("---")[1];
-					sSelectorId = oComponent.createId(sSelectorId);
+					sSelectorId = oAppComponent.createId(sSelectorId);
 					this._addMapEntry(sSelectorId, oChange);
 				}
 			}
@@ -710,7 +710,7 @@ sap.ui.define([
 	/**
 	 * Calls the back end asynchronously and fetches all changes for the component
 	 * New changes (dirty state) that are not yet saved to the back end won't be returned.
-	 * @param {object} oComponent - Component instance used to prepare the IDs (e.g. local)
+	 * @param {object} oAppComponent - Component instance used to prepare the IDs (e.g. local)
 	 * @param {map} mPropertyBag - Contains additional data needed for reading changes
 	 * @param {object} mPropertyBag.appDescriptor - Manifest belonging to actual component
 	 * @param {string} mPropertyBag.siteId - ID of the site belonging to actual component
@@ -718,9 +718,9 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolving with a getter for the changes map
 	 * @public
 	 */
-	ChangePersistence.prototype.loadChangesMapForComponent = function (oComponent, mPropertyBag) {
+	ChangePersistence.prototype.loadChangesMapForComponent = function (oAppComponent, mPropertyBag) {
 
-		mPropertyBag.component = !jQuery.isEmptyObject(oComponent) && oComponent;
+		mPropertyBag.component = !jQuery.isEmptyObject(oAppComponent) && oAppComponent;
 		return this.getChangesForComponent(mPropertyBag).then(createChangeMap.bind(this));
 
 		function createChangeMap(aChanges) {
@@ -731,7 +731,8 @@ sap.ui.define([
 				mDependentChangesOnMe: {},
 				aChanges: []
 			};
-			aChanges.forEach(this._addChangeAndUpdateDependencies.bind(this, oComponent));
+
+			aChanges.forEach(this._addChangeAndUpdateDependencies.bind(this, oAppComponent));
 
 			this._mChangesInitial = fnBaseUtilMerge({}, this._mChanges);
 
@@ -745,13 +746,13 @@ sap.ui.define([
 	 *
 	 * @param {object} oSelector selector of the control
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier - polymorph reuse operations handling the changes on the given view type
-	 * @param {sap.ui.core.Component} oComponent - component instance that is currently loading
+	 * @param {sap.ui.core.Component} oAppComponent - Application Component instance that is currently loading
 	 * @returns {boolean} Returns true if there are open dependencies
 	 */
-	ChangePersistence.prototype.checkForOpenDependenciesForControl = function(oSelector, oModifier, oComponent) {
+	ChangePersistence.prototype.checkForOpenDependenciesForControl = function(oSelector, oModifier, oAppComponent) {
 		return Object.keys(this._mChanges.mDependencies).some(function(sKey) {
 			return this._mChanges.mDependencies[sKey].changeObject.getDependentSelectorList().some(function(sDependencyId) {
-				return sDependencyId === oModifier.getControlIdBySelector(oSelector, oComponent);
+				return sDependencyId === oModifier.getControlIdBySelector(oSelector, oAppComponent);
 			});
 		}, this);
 	};
@@ -786,38 +787,34 @@ sap.ui.define([
 		return this._mChanges;
 	};
 
-	ChangePersistence.prototype._addChangeAndUpdateDependencies = function(oComponent, oChange, iIndex, aChanges) {
-		this._addChangeIntoMap(oComponent, oChange);
-		this._updateDependencies(oChange, iIndex, aChanges, false);
+	ChangePersistence.prototype._addChangeAndUpdateDependencies = function(oAppComponent, oChange) {
+		this._addChangeIntoMap(oAppComponent, oChange);
+		this._updateDependencies(oChange, false);
 	};
 
-	ChangePersistence.prototype._addRunTimeCreatedChangeAndUpdateDependencies = function(oComponent, oChange) {
-		this._addChangeIntoMap(oComponent, oChange);
-		this._updateDependencies(oChange, this._mChanges.aChanges.length - 1, this._mChanges.aChanges, true);
+	ChangePersistence.prototype._addRunTimeCreatedChangeAndUpdateDependencies = function(oAppComponent, oChange) {
+		this._addChangeIntoMap(oAppComponent, oChange);
+		this._updateDependencies(oChange, true);
 	};
 
-	ChangePersistence.prototype._updateDependencies = function (oChange, iIndex, aChanges, bRunTimeCreatedChange) {
+	ChangePersistence.prototype._updateDependencies = function (oChange, bRunTimeCreatedChange) {
 		//create dependencies map
+		var aChanges = this.getChangesMapForComponent().aChanges;
 		var aDependentSelectorList = oChange.getDependentSelectorList();
 		var aDependentControlSelectorList = oChange.getDependentControlSelectorList();
 		this._addControlsDependencies(oChange, aDependentControlSelectorList, bRunTimeCreatedChange);
-		var oPreviousChange;
-		var aPreviousDependentSelectorList;
-		var iDependentIndex;
-		var bFound;
 
-		for (var i = iIndex - 1; i >= 0; i--) {//loop over the changes
-			oPreviousChange = aChanges[i];
-			aPreviousDependentSelectorList = aChanges[i].getDependentSelectorList();
-			bFound = false;
-			for (var j = 0; j < aDependentSelectorList.length && !bFound; j++) {
-				iDependentIndex = Utils.indexOfObject(aPreviousDependentSelectorList, aDependentSelectorList[j]);
+		// start from last change in map, excluding the recently added change
+		aChanges.slice(0, aChanges.length - 1).reverse().forEach(function(oPreviousChange){
+			var aPreviousDependentSelectorList = oPreviousChange.getDependentSelectorList();
+			aDependentSelectorList.some(function(oDependentSelectorList) {
+				var iDependentIndex = Utils.indexOfObject(aPreviousDependentSelectorList, oDependentSelectorList);
 				if (iDependentIndex > -1) {
 					this._addDependency(oChange, oPreviousChange, bRunTimeCreatedChange);
-					bFound = true;
+					return true;
 				}
-			}
-		}
+			}.bind(this));
+		}.bind(this));
 	};
 
 	/**
@@ -849,7 +846,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.siteId] - id of the site that belongs to actual component
 	 * @param {string} mPropertyBag.viewId - id of the view
 	 * @param {string} mPropertyBag.name - name of the view
-	 * @param {sap.ui.core.Component} mPropertyBag.component - responsible component for the view
+	 * @param {sap.ui.core.Component} mPropertyBag.component - Application Component for the view
 	 * @param {string} mPropertyBag.componentId - responsible component's id for the view
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - responsible modifier
 	 * @returns {Promise} resolving with an array of changes
@@ -874,7 +871,7 @@ sap.ui.define([
 			var sViewId;
 
 			if (oChange.getSelector().idIsLocal) {
-				var oComponent = mPropertyBag.component;
+				var oComponent = mPropertyBag.appComponent;
 				if (oComponent) {
 					sViewId = oComponent.getLocalId(mPropertyBag.viewId);
 				}
@@ -890,14 +887,14 @@ sap.ui.define([
 	 * Adds a new change (could be variant as well) and returns the id of the new change.
 	 *
 	 * @param {object} vChange - The complete and finalized JSON object representation the file content of the change or a Change instance
-	 * @param {sap.ui.core.Component} oComponent - Component instance
+	 * @param {sap.ui.core.Component} oAppComponent - Application Component instance
 	 * @returns {sap.ui.fl.Change|sap.ui.fl.variant} the newly created change or variant
 	 * @public
 	 */
-	ChangePersistence.prototype.addChange = function(vChange, oComponent) {
+	ChangePersistence.prototype.addChange = function(vChange, oAppComponent) {
 		var oChange = this.addDirtyChange(vChange);
-		this._addRunTimeCreatedChangeAndUpdateDependencies(oComponent, oChange);
-		this._addPropagationListener(oComponent);
+		this._addRunTimeCreatedChangeAndUpdateDependencies(oAppComponent, oChange);
+		this._addPropagationListener(oAppComponent);
 		return oChange;
 	};
 

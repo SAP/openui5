@@ -1,7 +1,7 @@
-/* global QUnit */
+/* global QUnit*/
 sap.ui.define([
-	'sap/ui/core/util/reflection/XmlTreeModifier',
-	'sap/ui/thirdparty/sinon'
+	"sap/ui/core/util/reflection/XmlTreeModifier",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	XmlTreeModifier,

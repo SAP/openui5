@@ -87,7 +87,8 @@ function(
 				},
 				getManifest: function() {
 					return oManifest;
-				}
+				},
+				getLocalId: function() {}
 			};
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oComponent);
 			sandbox.stub(Utils, "getComponentClassName").returns(this.oComponent.name);
@@ -1376,7 +1377,8 @@ function(
 				},
 				getManifest: function() {
 					return oManifest;
-				}
+				},
+				getLocalId: function() {}
 			};
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			sandbox.stub(Utils, "getComponentClassName").returns("MyComponent");

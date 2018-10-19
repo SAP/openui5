@@ -1569,100 +1569,153 @@ function (
 		});
 
 		QUnit.test("loadChangesMapForComponent shall return a map of changes for the component", function(assert) {
-
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
-				{
-					fileName:"change1",
-					fileType: "change",
-					layer: "USER",
-					selector: { id: "controlId" },
-					dependentSelector: []
-				},
-				{
-					fileName:"change2",
-					fileType: "change",
-					layer: "VENDOR",
-					selector: { id: "controlId" },
-					dependentSelector: []
-				},
-				{
-					fileName:"change3",
-					fileType: "change",
-					layer: "CUSTOMER",
-					selector: { id: "anotherControlId" },
-					dependentSelector: []
+			var oAppComponent = {
+				id: "mockAppComponent"
+			};
+			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+				changes: {
+					changes: [
+						{
+							fileName: "change1",
+							fileType: "change",
+							layer: "USER",
+							reference: "appComponentReference",
+							selector: {id: "controlId"},
+							dependentSelector: []
+						},
+						{
+							fileName: "change2",
+							fileType: "change",
+							layer: "VENDOR",
+							reference: "appComponentReference",
+							selector: {id: "controlId"},
+							dependentSelector: []
+						},
+						{
+							fileName: "change3",
+							fileType: "change",
+							layer: "CUSTOMER",
+							reference: "appComponentReference",
+							selector: {id: "anotherControlId"},
+							dependentSelector: []
+						}
+					]
 				}
-				]}}));
-			return this.oChangePersistence.loadChangesMapForComponent({}, {appComponent: ""}).then(function(fnGetChangesMap) {
-
-				assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
-				var mChanges = fnGetChangesMap().mChanges;
-				assert.ok(mChanges);
-				assert.ok(mChanges["controlId"]);
-				assert.ok(mChanges["anotherControlId"]);
-				assert.equal(mChanges["controlId"].length, 2);
-				assert.equal(mChanges["anotherControlId"].length, 1);
-				assert.ok(mChanges["controlId"][0] instanceof Change, "Change is instanceof Change" );
-				assert.ok(mChanges["controlId"][1] instanceof Change, "Change is instanceof Change" );
-				assert.ok(mChanges["anotherControlId"][0] instanceof Change, "Change is instanceof Change" );
-				assert.ok(mChanges["controlId"].some(function(oChange){return oChange.getId() === "change1";}));
-				assert.ok(mChanges["controlId"].some(function(oChange){return oChange.getId() === "change2";}));
-				assert.ok(mChanges["anotherControlId"].some(function(oChange){return oChange.getId() === "change3";}));
 			});
+			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
+			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
+				.then(function (fnGetChangesMap) {
+					assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
+					var mChanges = fnGetChangesMap().mChanges;
+					assert.ok(mChanges);
+					assert.ok(mChanges["controlId"]);
+					assert.ok(mChanges["anotherControlId"]);
+					assert.equal(mChanges["controlId"].length, 2);
+					assert.equal(mChanges["anotherControlId"].length, 1);
+					assert.ok(mChanges["controlId"][0] instanceof Change, "Change is instanceof Change");
+					assert.ok(mChanges["controlId"][1] instanceof Change, "Change is instanceof Change");
+					assert.ok(mChanges["anotherControlId"][0] instanceof Change, "Change is instanceof Change");
+					assert.ok(mChanges["controlId"].some(function (oChange) {
+						return oChange.getId() === "change1";
+					}));
+					assert.ok(mChanges["controlId"].some(function (oChange) {
+						return oChange.getId() === "change2";
+					}));
+					assert.ok(mChanges["anotherControlId"].some(function (oChange) {
+						return oChange.getId() === "change3";
+					}));
+				});
 		});
 
-		QUnit.test("loadChangesMapForComponent returns a map with dependencies - test1", function(assert) {
-			var oChange1 = new Change(Change.createInitialFileContent({
-					id : "fileNameChange1",
-					layer : "USER",
+		QUnit.test("when loadChangesMapForComponent is called with an app component containing a combination of app and embedded component changes", function(assert) {
+			var oAppComponent = {
+				createId: function(sSelectorId) {
+					return "mockAppComponent---" + sSelectorId;
+				}
+			};
+			var oChange1 = new Change(
+				Change.createInitialFileContent({
+					id: "fileNameChange1",
+					layer: "USER",
+					reference: "appComponentReference",
 					namespace: "namespace",
-					selector: { id: "field3-2" },
+					selector: {
+						id: "field3-2",
+						idIsLocal: true
+					},
 					dependentSelector: {
-						"alias" : [{
-							id: "group3"
-						},{
-							id: "group2"
+						"alias": [{
+							id: "group3",
+							idIsLocal: true
+						}, {
+							id: "group2",
+							idIsLocal: true
 						}]
 					}
-			}));
-			var oChange2 = new Change(Change.createInitialFileContent({
-					id : "fileNameChange2",
-					layer : "USER",
+				})
+			);
+			var oChange2 = new Change(
+				Change.createInitialFileContent({
+					id: "fileNameChange2",
+					layer: "USER",
+					reference: "appComponentReference",
 					namespace: "namespace",
-					selector: { id: "field3-2" },
+					selector: {
+						id: "field3-2",
+						idIsLocal: true
+					},
 					dependentSelector: {
-						"alias" : [{
-							id: "group2"
-						},{
+						"alias": [{
+							id: "group2",
+							idIsLocal: true
+						}, {
 							id: "group1"
 						}],
-						"alias2" :{
-							id: "field3-2"
+						"alias2": {
+							id: "field3-2",
+							idIsLocal: true
 						}
 					}
-			}));
-			var oChange3 = new Change(Change.createInitialFileContent({
-					id : "fileNameChange3",
-					layer : "USER",
+				})
+			);
+			var oChange3 = new Change(
+				Change.createInitialFileContent({
+					id: "fileNameChange3",
+					layer: "USER",
+					reference: "appComponentReference",
 					namespace: "namespace",
-					selector: { id: "group1" }
-			}));
+					selector: {id: "group1"}
+				})
+			);
+			var oChange4 = new Change(
+				Change.createInitialFileContent({
+					id: "fileNameChange4",
+					layer: "USER",
+					reference: "appComponentReference",
+					namespace: "namespace",
+					selector: {
+						id: "embeddedComponent---group1",
+						idIsLocal: false //embedded component
+					}
+				})
+			);
 
 			var mExpectedChanges = {
 				mChanges: {
-					"field3-2": [oChange1, oChange2],
-					"group1": [oChange3]
+					"mockAppComponent---field3-2": [oChange1, oChange2],
+					"group1": [oChange3],
+					"embeddedComponent---group1": [oChange4]
 				},
 				mDependencies: {
 					"fileNameChange1": {
 						"changeObject": oChange1,
 						"dependencies": [],
-						"controlsDependencies": [{id: "group3"}, {id: "group2"}]
+						"controlsDependencies": [{id: "group3", idIsLocal: true}, {id: "group2", idIsLocal: true}]
 					},
 					"fileNameChange2": {
 						"changeObject": oChange2,
 						"dependencies": ["fileNameChange1"],
-						"controlsDependencies": [{id: "group2"}, {id: "group1"}]
+						"controlsDependencies": [{id: "group2", idIsLocal: true}, {id: "group1"}]
 					},
 					"fileNameChange3": {
 						"changeObject": oChange3,
@@ -1673,60 +1726,67 @@ function (
 					"fileNameChange1": ["fileNameChange2"],
 					"fileNameChange2": ["fileNameChange3"]
 				},
-				aChanges: [oChange1, oChange2, oChange3]
+				aChanges: [oChange1, oChange2, oChange3, oChange4]
 			};
 
-			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
-				oChange1,
-				oChange2,
-				oChange3
-			]));
-
-			return this.oChangePersistence.loadChangesMapForComponent({}, {appComponent: ""}).then(function(fnGetChangesMap) {
-
-				assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
-				var mChanges = fnGetChangesMap();
-
-				assert.deepEqual(mChanges, mExpectedChanges);
-			});
+			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([oChange1, oChange2, oChange3, oChange4]);
+			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
+			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
+				.then(function (fnGetChangesMap) {
+					assert.ok(typeof fnGetChangesMap === "function", "then a function for changes map returned");
+					var mChanges = fnGetChangesMap();
+					assert.deepEqual(mChanges, mExpectedChanges, "then the changes map is returned as expected");
+				});
 		});
 
-		QUnit.test("loadChangesMapForComponent returns a map with dependencies - test2", function(assert) {
-			var oChange0 = new Change(Change.createInitialFileContent({
-					id : "fileNameChange0",
-					layer : "USER",
+		QUnit.test("loadChangesMapForComponent returns a map with dependencies - test2", function (assert) {
+			var oAppComponent = {
+				id: "mockAppComponent"
+			};
+			var oChange0 = new Change(
+				Change.createInitialFileContent({
+					id: "fileNameChange0",
+					layer: "USER",
+					reference: "appComponentReference",
 					namespace: "namespace",
-					selector: { id: "group1" }
-			}));
-			var oChange1 = new Change(Change.createInitialFileContent({
-					id : "fileNameChange1",
-					layer : "USER",
+					selector: {id: "group1"}
+				})
+			);
+			var oChange1 = new Change(
+				Change.createInitialFileContent({
+					id: "fileNameChange1",
+					layer: "USER",
+					reference: "appComponentReference",
 					namespace: "namespace",
-					selector: { id: "field3-2" },
+					selector: {id: "field3-2"},
 					dependentSelector: {
-						"alias" : [{
+						"alias": [{
 							id: "group3"
-						},{
+						}, {
 							id: "group2"
 						}]
 					}
-			}));
-			var oChange2 = new Change(Change.createInitialFileContent({
-					id : "fileNameChange2",
-					layer : "USER",
+				})
+			);
+			var oChange2 = new Change(
+				Change.createInitialFileContent({
+					id: "fileNameChange2",
+					layer: "USER",
+					reference: "appComponentReference",
 					namespace: "namespace",
-					selector: { id: "field3-2" },
+					selector: {id: "field3-2"},
 					dependentSelector: {
-						"alias" : [{
+						"alias": [{
 							id: "group2"
-						},{
+						}, {
 							id: "group1"
 						}],
-						"alias2" :{
+						"alias2": {
 							id: "field3-2"
 						}
 					}
-			}));
+				})
+			);
 
 			var mExpectedChanges = {
 				mChanges: {
@@ -1752,42 +1812,46 @@ function (
 				aChanges: [oChange0, oChange1, oChange2]
 			};
 
-			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
-				oChange0,
-				oChange1,
-				oChange2
-			]));
+			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([oChange0, oChange1, oChange2]);
+			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
 
-			return this.oChangePersistence.loadChangesMapForComponent({}, {appComponent: ""}).then(function(fnGetChangesMap) {
-
-				assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
-				var mChanges = fnGetChangesMap();
-
-				assert.deepEqual(mChanges, mExpectedChanges);
-			});
+			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
+				.then(function (fnGetChangesMap) {
+					assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
+					assert.deepEqual(fnGetChangesMap(), mExpectedChanges);
+				});
 		});
 
-		QUnit.test("loadChangesMapForComponent returns a map with dependencies - test3", function(assert) {
-			var oChange1 = new Change(Change.createInitialFileContent({
-					id : "fileNameChange1",
-					layer : "USER",
+		QUnit.test("loadChangesMapForComponent returns a map with dependencies - test3", function (assert) {
+			var oAppComponent = {
+				id: "mockAppComponent"
+			};
+			var oChange1 = new Change(
+				Change.createInitialFileContent({
+					id: "fileNameChange1",
+					layer: "USER",
 					namespace: "namespace",
-					selector: { id: "field3-2" },
+					selector: {id: "field3-2"},
+					reference: "appComponentReference",
 					dependentSelector: {
-						"alias" : {
+						"alias": {
 							id: "group3"
 						},
-						"alias2" : {
+						"alias2": {
 							id: "group2"
 						}
 					}
-			}));
-			var oChange2 = new Change(Change.createInitialFileContent({
-					id : "fileNameChange2",
-					layer : "USER",
+				})
+			);
+			var oChange2 = new Change(
+				Change.createInitialFileContent({
+					id: "fileNameChange2",
+					layer: "USER",
 					namespace: "namespace",
-					selector: { id: "group2" }
-			}));
+					reference: "appComponentReference",
+					selector: {id: "group2"}
+				})
+			);
 
 			var mExpectedChanges = {
 				mChanges: {
@@ -1811,41 +1875,46 @@ function (
 				aChanges: [oChange1, oChange2]
 			};
 
-			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
-				oChange1,
-				oChange2
-			]));
+			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([oChange1, oChange2]);
+			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
 
-			return this.oChangePersistence.loadChangesMapForComponent({}, {appComponent: ""}).then(function(fnGetChangesMap) {
-
-				assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
-				var mChanges = fnGetChangesMap();
-
-				assert.deepEqual(mChanges, mExpectedChanges);
-			});
+			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
+				.then(function (fnGetChangesMap) {
+					assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
+					assert.deepEqual(fnGetChangesMap(), mExpectedChanges);
+				});
 		});
 
 		QUnit.test("loadChangesMapForComponent returns a map with dependencies - test4", function(assert) {
-			var oChange1 = new Change(Change.createInitialFileContent({
-					id : "fileNameChange1",
-					layer : "USER",
+			var oAppComponent = {
+				id: "mockAppComponent"
+			};
+			var oChange1 = new Change(
+				Change.createInitialFileContent({
+					id: "fileNameChange1",
+					layer: "USER",
+					reference: "appComponentReference",
 					namespace: "namespace",
-					selector: { id: "group2" }
-			}));
-			var oChange2 = new Change(Change.createInitialFileContent({
-					id : "fileNameChange2",
-					layer : "USER",
+					selector: {id: "group2"}
+				})
+			);
+			var oChange2 = new Change(
+				Change.createInitialFileContent({
+					id: "fileNameChange2",
+					layer: "USER",
+					reference: "appComponentReference",
 					namespace: "namespace",
-					selector: { id: "field3-2" },
+					selector: {id: "field3-2"},
 					dependentSelector: {
-						"alias" : {
+						"alias": {
 							id: "group3"
 						},
-						"alias2" : {
+						"alias2": {
 							id: "group2"
 						}
 					}
-			}));
+				})
+			);
 			var mExpectedChanges = {
 				mChanges: {
 					"group2": [oChange1],
@@ -1864,33 +1933,42 @@ function (
 				aChanges: [oChange1, oChange2]
 			};
 
-			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
+			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([
 				oChange1,
 				oChange2
-			]));
+			]);
 
-			return this.oChangePersistence.loadChangesMapForComponent({}, {appComponent: ""}).then(function(fnGetChangesMap) {
+			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
 
-				assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
-				var mChanges = fnGetChangesMap();
-
-				assert.deepEqual(mChanges, mExpectedChanges);
-			});
+			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
+				.then(function (fnGetChangesMap) {
+					assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
+					assert.deepEqual(fnGetChangesMap(), mExpectedChanges);
+				});
 		});
 
 		QUnit.test("loadChangesMapForComponent returns a map with dependencies - test5", function(assert) {
-			var oChange1 = new Change(Change.createInitialFileContent({
-					id : "fileNameChange1",
-					layer : "USER",
+			var oAppComponent = {
+				id :"mockAppComponent"
+			};
+			var oChange1 = new Change(
+				Change.createInitialFileContent({
+					id: "fileNameChange1",
+					layer: "USER",
 					namespace: "namespace",
-					selector: { id: "group2" }
-			}));
-			var oChange2 = new Change(Change.createInitialFileContent({
-					id : "fileNameChange2",
-					layer : "USER",
+					reference: "appComponentReference",
+					selector: {id: "group2"}
+				})
+			);
+			var oChange2 = new Change(
+				Change.createInitialFileContent({
+					id: "fileNameChange2",
+					layer: "USER",
 					namespace: "namespace",
-					selector: { id: "group2" }
-			}));
+					reference: "appComponentReference",
+					selector: {id: "group2"}
+				})
+			);
 
 			var mExpectedChanges = {
 				mChanges: {
@@ -1908,18 +1986,14 @@ function (
 				aChanges: [oChange1, oChange2]
 			};
 
-			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
-				oChange1,
-				oChange2
-			]));
+			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([oChange1, oChange2]);
+			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
 
-			return this.oChangePersistence.loadChangesMapForComponent({}, {appComponent: ""}).then(function(fnGetChangesMap) {
-
-				assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
-				var mChanges = fnGetChangesMap();
-
-				assert.deepEqual(mChanges, mExpectedChanges);
-			});
+			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
+				.then(function (fnGetChangesMap) {
+					assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
+					assert.deepEqual(fnGetChangesMap(), mExpectedChanges);
+				});
 		});
 
 		QUnit.test("loadChangesMapForComponent adds legacy change only once in case the component prefix matches the app component ID", function(assert) {
@@ -2109,80 +2183,155 @@ function (
 		});
 
 		QUnit.test("deleteChanges shall remove the given change from the map", function(assert) {
-
-			var that = this;
-
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
-				{
-					fileName:"change1",
-					fileType: "change",
-					selector: { id: "controlId" },
-					dependentSelector: []
-				},
-				{
-					fileName:"change2",
-					fileType: "change",
-					selector: { id: "controlId" },
-					dependentSelector: []
-				},
-				{
-					fileName:"change3",
-					fileType: "change",
-					selector: { id: "anotherControlId" },
-					dependentSelector: []
+			var oAppComponent = {
+				id :"mockAppComponent"
+			};
+			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+				changes: {
+					changes: [
+						{
+							fileName: "change1",
+							fileType: "change",
+							selector: {id: "controlId"},
+							reference: "appComponentReference",
+							dependentSelector: []
+						},
+						{
+							fileName: "change2",
+							fileType: "change",
+							selector: {id: "controlId"},
+							reference: "appComponentReference",
+							dependentSelector: []
+						},
+						{
+							fileName: "change3",
+							fileType: "change",
+							selector: {id: "anotherControlId"},
+							reference: "appComponentReference",
+							dependentSelector: []
+						}
+					]
 				}
-			]}}));
-
-			return this.oChangePersistence.loadChangesMapForComponent({}, {appComponent: ""}).then(function(fnGetChangesMap) {
-				var mChanges = fnGetChangesMap().mChanges;
-				var oChangeForDeletion = mChanges["controlId"][1]; // second change for 'controlId' shall be removed
-				that.oChangePersistence.deleteChange(oChangeForDeletion);
-				assert.equal(mChanges["controlId"].length, 1, "'controlId' has only one change in the map");
-				assert.equal(mChanges["controlId"][0].getId(), "change1", "the change has the id 'change1'");
-				assert.equal(mChanges["anotherControlId"].length, 1, "'anotherControlId' has still one change in the map");
 			});
+
+			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
+
+			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
+				.then(function (fnGetChangesMap) {
+					var mChanges = fnGetChangesMap().mChanges;
+					var oChangeForDeletion = mChanges["controlId"][1]; // second change for 'controlId' shall be removed
+					this.oChangePersistence.deleteChange(oChangeForDeletion);
+					assert.equal(mChanges["controlId"].length, 1, "'controlId' has only one change in the map");
+					assert.equal(mChanges["controlId"][0].getId(), "change1", "the change has the id 'change1'");
+					assert.equal(mChanges["anotherControlId"].length, 1, "'anotherControlId' has still one change in the map");
+				}.bind(this));
 		});
 
-		QUnit.test("getChangesForView shall return the changes that are prefixed with the same view", function(assert) {
+		QUnit.test("when getChangesForView is called with a view id and an app component", function(assert) {
+			var oAppComponent = {
+				id :"mockAppComponent"
+			};
 
-			var change1Button1 = {
-				fileName:"change1Button1",
+			var oChange1View1 = {
+				fileName:"change1View1",
 				fileType: "change",
+				reference: "appComponentReference",
 				selector:{
 					id: "view1--view2--button1"
 				}
 			};
 
-			var change2Button1 = {
-				fileName:"change2Button1",
+			var oChange1View2 = {
+				fileName:"change1View2",
 				fileType: "change",
+				reference: "appComponentReference",
 				selector: {
 					id: "view1--button1"
 				}
 			};
 
-			var change1Button2 = {
-				fileName:"change1Button2",
+			var oChange2View2 = {
+				fileName:"change2View2",
 				fileType: "change",
+				reference: "appComponentReference",
 				selector: {
 					id: "view1--button2"
 				}
 			};
 
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({
-				changes: {
-					changes: [change1Button1, change2Button1, change1Button2]
+			var oChange1View3 = {
+				fileName:"change2View2",
+				fileType: "change",
+				reference: "appComponentReference",
+				selector: {
+					id: "view1--view2--button2",
+					idIsLocal: false
 				}
-			}));
+			};
 
-			var mPropertyBag = {viewId: "view1--view2"};
 
-			return this.oChangePersistence.getChangesForView("view1--view2", mPropertyBag).then(function(changes) {
-				assert.strictEqual(changes.length, 1);
-				assert.strictEqual(changes.some(function(oChange){return oChange.getId() === "change1Button1";}), true);
-				assert.strictEqual(changes.some(function(oChange){return oChange.getId() === "change1Button2";}), false);
-				assert.strictEqual(changes.some(function(oChange){return oChange.getId() === "change2Button1";}), false);
+			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+				changes: {
+					changes: [oChange1View1, oChange1View2, oChange2View2, oChange1View3]
+				}
 			});
+
+			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
+
+			var mPropertyBag = {
+				viewId: "view1--view2",
+				component: oAppComponent
+			};
+
+			return this.oChangePersistence.getChangesForView("view1--view2", mPropertyBag)
+				.then(function (aChanges) {
+					assert.strictEqual(aChanges.length, 1, "then only one change was returned");
+					assert.strictEqual(aChanges[0].getId(), "change1View1", "then only the change with the same view selector prefix and belonging to the passed component was returned");
+				});
+		});
+
+		QUnit.test("when getChangesForView is called with an embedded component and a view id existing both for app and embedded components", function(assert) {
+			var oEmbeddedComponent = {
+				id :"mockEmbeddedComponent"
+			};
+
+			var oChange1View1 = {
+				fileName:"change1View1",
+				fileType: "change",
+				reference: "appComponentReference",
+				selector:{
+					id: "view1--button1",
+					idIsLocal: true
+				}
+			};
+
+			var oChange1View2 = {
+				fileName:"change1View2",
+				fileType: "change",
+				reference: "appComponentReference",
+				selector: {
+					id: "mockEmbeddedComponent---view1--button1",
+					idIsLocal: false
+				}
+			};
+
+			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+				changes: {
+					changes: [oChange1View1, oChange1View2]
+				}
+			});
+			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oEmbeddedComponent).returns("embeddedComponentReference");
+
+			var mPropertyBag = {
+				viewId: "mockEmbeddedComponent---view1",
+				component: oEmbeddedComponent
+			};
+
+			return this.oChangePersistence.getChangesForView("embeddedComponent---view1", mPropertyBag)
+				.then(function (aChanges) {
+					assert.strictEqual(aChanges.length, 1, "then only one change is returned");
+					assert.strictEqual(aChanges[0].getId(), "change1View2", "then only the change belonging to the embedded component was returned");
+				});
 		});
 
 		QUnit.test("when calling transportAllUIChanges successfully", function(assert) {

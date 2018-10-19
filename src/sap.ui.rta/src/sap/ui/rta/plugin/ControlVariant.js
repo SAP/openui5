@@ -95,7 +95,7 @@ sap.ui.define([
 			var vAssociationElement = oControl.getFor(),
 				aVariantManagementTargetElements;
 
-			sVariantManagementReference = JsControlTreeModifier.getSelector(oControl, flUtils.getComponentForControl(oControl)).id;
+			sVariantManagementReference = JsControlTreeModifier.getSelector(oControl, flUtils.getAppComponentForControl(oControl)).id;
 
 			if (!vAssociationElement ||
 				(Array.isArray(vAssociationElement) && vAssociationElement.length === 0)) {
