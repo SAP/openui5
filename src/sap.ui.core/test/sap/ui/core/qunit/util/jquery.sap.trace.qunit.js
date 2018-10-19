@@ -193,7 +193,9 @@ sap.ui.define([
 		assert.ok(!isNaN(aFESRopt[8]), "client_processing_time is a number");
 		assert.ok(aFESRopt[9] === "X" || !aFESRopt[9], "compressed");
 		assert.ok(!isNaN(aFESRopt[14]), "global busy indicator duration is a number");
-		assert.ok(aFESRopt[18].length <= 70, "application_name 70 chars - length");
+		assert.ok(parseInt(aFESRopt[16], 10) >= 0 && parseInt(aFESRopt[16], 10) <= 4, "extension_3 (client device) between 0 and 4");
+		assert.ok(aFESRopt[18].length >= 14 && aFESRopt[18].length <= 20, "extension_5 (interaction start time) between 1 and 20 chars - length");
+		assert.ok(aFESRopt[19].length >= 1 && aFESRopt[19].length <= 70, "application_name between 1 and 70 chars - length");
 	});
 
 

@@ -18,6 +18,7 @@ sap.ui.define([
 		HOST = window.location.host, // static per session
 		CLIENT_OS = Device.os.name + "_" + Device.os.version,
 		CLIENT_MODEL = Device.browser.name + "_" + Device.browser.version,
+		CLIENT_DEVICE = setClientDevice(),
 		sAppVersion = "", // shortened app version with fesr delimiter e.g. "@1.7.1"
 		sAppVersionFull = "", // full app version e.g. 1.7.1-SNAPSHOT
 		iE2eTraceLevel,
@@ -25,6 +26,25 @@ sap.ui.define([
 		iStepCounter = 0, // counts FESR interaction steps
 		sFESR, // current header string
 		sFESRopt; // current header string
+
+	function setClientDevice() {
+		var iClientId = 0;
+		if (Device.system.combi) {
+			iClientId = 1;
+		} else if (Device.system.desktop) {
+			iClientId = 2;
+		} else if (Device.system.tablet) {
+			iClientId = 4;
+		} else if (Device.system.phone) {
+			iClientId = 3;
+		}
+		return iClientId;
+	}
+
+	function formatInteractionStartTimestamp(iTimeStamp) {
+		var oDate = new Date(iTimeStamp);
+		return oDate.toISOString().replace(/[^\d]/g, '');
+	}
 
 	function isCORSRequest(sUrl) {
 		var sHost = new URI(sUrl).host();
@@ -104,16 +124,23 @@ sap.ui.define([
 		return [
 			format(sComponent, 20, true), // application_name
 			format(oInteraction.trigger + "_" + oInteraction.event, 20, true), // step_name
-			"", // 1 empty field
+			"", // not assigned
 			format(CLIENT_MODEL, 20), // client_model
 			format(oInteraction.bytesSent, 16), // client_data_sent
 			format(oInteraction.bytesReceived, 16), // client_data_received
-			"", "", // 2 empty fields
+			"", // network_protocol
+			"", // network_provider
 			format(oInteraction.processing, 16), // client_processing_time
 			oInteraction.requestCompression ? "X" : "", // compressed - empty if not compressed
-			"", "", "", "", // 4 empty fields
-			format(oInteraction.busyDuration, 16), // busy duration
-			"", "", "", "", // 4 empty fields
+			"", // not assigned
+			"", // persistency_accesses
+			"", // persistency_time
+			"", // persistency_data_transferred
+			format(oInteraction.busyDuration, 16), // extension_1 - busy duration
+			"", // extension_2
+			format(CLIENT_DEVICE, 1), // extension_3 - client device
+			"", // extension_4
+			format(formatInteractionStartTimestamp(oInteraction.start), 20), // extension_5 - interaction start time
 			format(sComponent, 70, true) // application_name with 70 characters, trimmed from left
 		].join(",");
 	}
