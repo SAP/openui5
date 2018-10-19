@@ -29,6 +29,9 @@
     margin: 0.9rem 0 0 0.9rem; /*TODO: this should be controlled by the outer layout*/
     border: 1px dotted transparent;
 }
+.sapUiLayoutCSSGrid>.sapFCard {
+    margin: 0; /*TODO: inside of a css grid the margin is actually controlled by the grid-gap property already (see TODO comment above), so removing margin here */
+}
 
 html.sap-desktop .sapFCard:focus {
     border-color: #000000;
