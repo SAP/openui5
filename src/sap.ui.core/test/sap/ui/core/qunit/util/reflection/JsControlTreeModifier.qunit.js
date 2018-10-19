@@ -45,7 +45,7 @@ function(
 			assert.equal(this.oControl.getText(), sButtonText);
 		});
 
-		QUnit.test("the createControl is called asynchronous", function (assert) {
+		QUnit.test("the createControl is called asynchronously", function (assert) {
 			var sButtonText = "ButtonText";
 			return JsControlTreeModifier.createControl('sap.m.Button', this.oComponent, undefined, "myButton", {'text' : sButtonText}, true)
 				.then(function(oButton) {
@@ -54,7 +54,7 @@ function(
 				}.bind(this));
 		});
 
-		QUnit.test("the createControl is called asynchronous expecting error after loading", function (assert) {
+		QUnit.test("the createControl is called asynchronously, expecting an error after loading", function (assert) {
 			var sButtonText = "ButtonText";
 			sandbox.stub(sap.ui, "require").callThrough().withArgs(["sap/m/Button"]).callsArgWithAsync(2);
 			return JsControlTreeModifier.createControl('sap.m.Button', this.oComponent, undefined, "myButton", {'text' : sButtonText}, true)
@@ -79,7 +79,7 @@ function(
 
 			// assert
 			assert.strictEqual(this.oControl.getContent().length, 3, "There are exactly 3 buttons inside of the page");
-			assert.strictEqual(JsControlTreeModifier.findIndexInParentAggregation(this.oButton2), 2, "The index of the lastly created button is corrctly found");
+			assert.strictEqual(JsControlTreeModifier.findIndexInParentAggregation(this.oButton2), 2, "then the index of the most recently created button is found correctly");
 		});
 
 		QUnit.test("the modifier finds the index of the control in its parent aggregation correctly, case 2 - with overwritten methods in parent control", function (assert) {
@@ -94,7 +94,7 @@ function(
 
 			// assert
 			assert.strictEqual(this.oControl.getActions().length, 3, "There are exactly 3 actions inside of the dynamic page title");
-			assert.strictEqual(JsControlTreeModifier.findIndexInParentAggregation(this.oButton2), 2, "The index of the lastly created button is correctly found");
+			assert.strictEqual(JsControlTreeModifier.findIndexInParentAggregation(this.oButton2), 2, "then the index of the most recently created button is found correctly");
 			assert.strictEqual(JsControlTreeModifier.findIndexInParentAggregation(this.oButtonOutsideAggregation), -1, "The action is not in this aggregation and is not found.");
 
 			this.oButtonOutsideAggregation.destroy();
@@ -108,7 +108,7 @@ function(
 			JsControlTreeModifier.insertAggregation(this.oControl, 'heading', this.oButton);
 
 			// assert
-			assert.strictEqual(JsControlTreeModifier.findIndexInParentAggregation(this.oButton), 0, "The index of the lastly created button is correctly found");
+			assert.strictEqual(JsControlTreeModifier.findIndexInParentAggregation(this.oButton), 0, "then the index of the most recently created button is found correctly");
 		});
 	});
 
@@ -127,7 +127,7 @@ function(
 		}
 	}, function () {
 
-		QUnit.test("when the modifier retrieves the change handler module for a control with instance specific change handler module", function(assert){
+		QUnit.test("when the modifier retrieves the change handler module for a control with instance-specific change handler module", function(assert){
 			var sDummyModulePath = '/dummy/path/to/dummy/file.flexibility';
 
 			var mCustomData = {
@@ -147,7 +147,7 @@ function(
 			assert.equal(sChangeHandlerModulePath, sDummyModulePath, "then the correct module is returned");
 		});
 
-		QUnit.test("when the modifier tries to retrieve the change handler module for a control without instance specific change handler module", function(assert){
+		QUnit.test("when the modifier tries to retrieve the change handler module for a control without instance-specific change handler module", function(assert){
 			this.oControl = JsControlTreeModifier.createControl('sap.m.Button', this.oComponent, undefined, "myButton",
 					{'text' : 'ButtonInHeading'});
 

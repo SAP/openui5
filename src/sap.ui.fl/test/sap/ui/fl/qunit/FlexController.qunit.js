@@ -240,7 +240,7 @@ function (
 			oAppComponent.destroy();
 		});
 
-		QUnit.test('_resolveGetChangesForView applies changes with locale id', function (assert) {
+		QUnit.test('_resolveGetChangesForView applies changes with local ID', function (assert) {
 			this.oChange = new Change(labelChangeContent);
 
 			var oSelector = {};
@@ -740,7 +740,7 @@ function (
 			oControl.destroy();
 		});
 
-		QUnit.test("addChange shall add a change using the local id with respect to the root component as selector", function(assert) {
+		QUnit.test("addChange shall add a change using the local ID with respect to the root component as selector", function(assert) {
 			var oControl = new Control("testComponent---Id1");
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
@@ -1113,7 +1113,7 @@ function (
 			oControl.destroy();
 		});
 
-		QUnit.test("creates a change for controls with a stable id which doesn't have the app component's id as a prefix", function (assert) {
+		QUnit.test("creates a change for controls with a stable ID which doesn't have the app component's ID as a prefix", function (assert) {
 			var oControl = new Control("mockControl");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			var oDummyChangeHandler = {
@@ -1131,12 +1131,12 @@ function (
 			sandbox.spy(JsControlTreeModifier, "getSelector");
 
 			var oChange = this.oFlexController.createChange({}, oControl);
-			assert.deepEqual(oChange.getDefinition().selector.idIsLocal, false, "the selector flags the id as NOT local.");
+			assert.deepEqual(oChange.getDefinition().selector.idIsLocal, false, "the selector flags the ID as NOT local.");
 			assert.ok(JsControlTreeModifier.getSelector.calledOnce, "then JsControlTreeModifier.getSelector is called to prepare the control selector");
 			oControl.destroy();
 		});
 
-		QUnit.test("creates a change for controls with a stable id which has the app component's id as a prefix", function (assert) {
+		QUnit.test("creates a change for controls with a stable ID which has the app component's ID as a prefix", function (assert) {
 			var oControl = new Control("testComponent---mockControl");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			var oDummyChangeHandler = {
@@ -1146,12 +1146,12 @@ function (
 			sandbox.spy(JsControlTreeModifier, "getSelector");
 
 			var oChange = this.oFlexController.createChange({}, oControl);
-			assert.deepEqual(oChange.getDefinition().selector.idIsLocal, true, "the selector flags the id as local");
+			assert.deepEqual(oChange.getDefinition().selector.idIsLocal, true, "the selector flags the ID as local");
 			assert.ok(JsControlTreeModifier.getSelector.calledOnce, "then JsControlTreeModifier.getSelector is called to prepare the control selector");
 			oControl.destroy();
 		});
 
-		QUnit.test("creates a change for a map of a control with id, control type and appComponent", function (assert) {
+		QUnit.test("creates a change for a map of a control with ID, control type and appComponent", function (assert) {
 			var oAppComponent = new UIComponent();
 			var mControl = {id : this.oControl.getId(), appComponent : oAppComponent, controlType : "sap.ui.core.Control"};
 
@@ -1170,11 +1170,11 @@ function (
 
 			var oChange = this.oFlexController.createChange({}, mControl);
 
-			assert.deepEqual(oChange.getDefinition().selector.idIsLocal, false, "the selector flags the id as NOT local.");
-			assert.deepEqual(oChange.getDefinition().selector.id, this.oControl.getId(), "the selector flags the id as NOT local.");
+			assert.deepEqual(oChange.getDefinition().selector.idIsLocal, false, "the selector flags the ID as NOT local.");
+			assert.deepEqual(oChange.getDefinition().selector.id, this.oControl.getId(), "the selector flags the ID as NOT local.");
 		});
 
-		QUnit.test("throws an error if a map of a control has no appComponent or no id or no controlType", function (assert) {
+		QUnit.test("throws an error if a map of a control has no appComponent or no ID or no controlType", function (assert) {
 			var oAppComponent = new UIComponent();
 			var mControl1 = {id : this.oControl.getId(), appComponent : undefined, controlType : "sap.ui.core.Control"};
 			var mControl2 = {id : undefined, appComponent : oAppComponent, controlType : "sap.ui.core.Control"};
@@ -1552,7 +1552,7 @@ function (
 				};
 			};
 
-			return this.oFlexController._applyChangesOnControl(fnGetChangesMap, this.oSelectorComponent, this.oControl)
+			return this.oFlexController._applyChangesOnControl(fnGetChangesMap, this.oAppComponent, this.oControl)
 
 			.then(function() {
 				assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 4, "all four changes for the control were processed");
@@ -2236,7 +2236,7 @@ function (
 			});
 		});
 
-		QUnit.test("when the control in refreshed with the same id as the previous control during change application", function (assert) {
+		QUnit.test("when the control in refreshed with the same ID as the previous control during change application", function (assert) {
 			sandbox.restore();
 			var sExistingCustomDataValue = "alreadyExistingCustomData";
 
@@ -2725,7 +2725,7 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("calls the change handler twice and delete the ids from the custom data", function (assert) {
+		QUnit.test("calls the change handler twice and delete the IDs from the custom data", function (assert) {
 			var oFlexCustomData = new CustomData({
 				key: FlexController.appliedChangesCustomDataKey,
 				value: this.oChange.getId() + "," + this.oChange2.getId()
@@ -2741,7 +2741,7 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("calls the change handler twice and delete the ids from the custom data separately", function (assert) {
+		QUnit.test("calls the change handler twice and delete the IDs from the custom data separately", function (assert) {
 			var oFlexCustomData = new CustomData({
 				key: FlexController.appliedChangesCustomDataKey,
 				value: this.oChange.getId() + "," + this.oChange2.getId()
@@ -3160,7 +3160,7 @@ function (
 
 			.then(function(mResult) {
 				assert.notOk(mResult.success, "then the promise is resolved with parameter success: false");
-				assert.equal(mResult.error.message, "Can't create a control with duplicated id undefined", "then the promise is resolved with the right error message");
+				assert.equal(mResult.error.message, "Can't create a control with duplicated ID undefined", "then the promise is resolved with the right error message");
 			})
 
 			.catch(function(vError) {
@@ -3306,7 +3306,7 @@ function (
 				assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
 				var oCustomData = getCustomDataByKeyXML(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
 				var sExpectedFlexCustomDataValue = sAlreadyAppliedChangeId + "," + this.oChange.getId();
-				assert.equal(oCustomData.getAttribute("value"), sExpectedFlexCustomDataValue, "the change id is the value");
+				assert.equal(oCustomData.getAttribute("value"), sExpectedFlexCustomDataValue, "the change ID is the value");
 			}.bind(this));
 		});
 

@@ -111,7 +111,7 @@ sap.ui.define([
 	/**
 	 * Base function for creation of a change
 	 *
-	 * @param {object} oChangeSpecificData - property bag (nvp) holding the change information (see sap.ui.fl.Change#createInitialFileContent)
+	 * @param {object} oChangeSpecificData - Property bag (nvp) holding the change information (see sap.ui.fl.Change#createInitialFileContent)
 	 * The property "oPropertyBag.packageName" is set to $TMP and internally since flex changes are always local when they are created.
 	 * @param {sap.ui.core.Component} oAppComponent - Application Component of the control at runtime in case a map has been used
 	 * @returns {sap.ui.fl.Change} the created change
@@ -127,7 +127,7 @@ sap.ui.define([
 		}
 
 		if (!oAppComponent) {
-			throw new Error("No Application Component found - to offer flexibility. Valid relation to its owning component must be present.");
+			throw new Error("No application component found. To offer flexibility a valid relation to its owning component must be present.");
 		}
 
 		oChangeSpecificData.reference = this.getComponentName(); //in this case the component name can also be the value of sap-app-id
@@ -150,12 +150,12 @@ sap.ui.define([
 	/**
 	 * Create a change
 	 *
-	 * @param {object} oChangeSpecificData - property bag (nvp) holding the change information (see sap.ui.fl.Change#createInitialFileContent)
+	 * @param {object} oChangeSpecificData - Property bag (nvp) holding the change information (see sap.ui.fl.Change#createInitialFileContent)
 	 * The property "oPropertyBag.packageName" is set to $TMP and internally since flex changes are always local when they are created.
-	 * @param {sap.ui.core.Control | map} oControl - control for which the change will be added
-	 * @param {string} oControl.id - id of the control in case a map has been used to specify the control
-	 * @param {sap.ui.core.Component} oControl.appComponent - Application Component of the control at runtime in case a map has been used
-	 * @param {string} oControl.controlType - control type of the control in case a map has been used
+	 * @param {sap.ui.core.Control | map} oControl - Control for which the change will be added
+	 * @param {string} oControl.id - ID of the control in case a map has been used to specify the control
+	 * @param {sap.ui.core.Component} [oControl.appComponent] - Application component of the control at runtime in case a map has been used
+	 * @param {string} oControl.controlType - Control type of the control in case a map has been used
 	 * @returns {sap.ui.fl.Change} the created change
 	 * @public
 	 */
@@ -173,7 +173,7 @@ sap.ui.define([
 		}
 		var oAppComponent = oControl.appComponent || Utils.getAppComponentForControl(oControl);
 		if (!oAppComponent) {
-			throw new Error("No Application Component found - to offer flexibility the control with the id '" + sControlId + "' has to have a valid relation to its owning application component.");
+			throw new Error("No application component found. To offer flexibility, the control with the ID '" + sControlId + "' has to have a valid relation to its owning application component.");
 		}
 		// differentiate between controls containing the component id as a prefix and others
 		// get local Id for control at root component and use it as selector id
@@ -203,9 +203,9 @@ sap.ui.define([
 	/**
 	 * Create a variant
 	 *
-	 * @param {object} oVariantSpecificData property bag (nvp) holding the variant information (see sap.ui.fl.Variant#createInitialFileContentoPropertyBag).
-	 * The property "oPropertyBag.packageName" is set to $TMP and internally since flex changes are always local when they are created.
-	 * @param {sap.ui.base.Component} oAppComponent - Application Component of the control at runtime in case a map has been used
+	 * @param {object} oVariantSpecificData - Property bag (nvp) holding the variant information (see sap.ui.fl.Variant#createInitialFileContentoPropertyBag).
+	 * The property "oPropertyBag.packageName" is set to $TMP internally since flex changes are always local when they are created.
+	 * @param {sap.ui.base.Component} oAppComponent - Application component of the control at runtime in case a map has been used
 	 * @returns {sap.ui.fl.Variant} the created variant
 	 * @public
 	 */
@@ -248,7 +248,7 @@ sap.ui.define([
 	 * Adds a change to the flex persistence (not yet saved). Will be saved with #saveAll.
 	 *
 	 * @param {object} oChangeSpecificData property bag (nvp) holding the change information (see sap.ui.fl.Change#createInitialFileContent
-	 * The property "oPropertyBag.packageName" is set to $TMP and internally since flex changes are always local when they are created.
+	 * The property "oPropertyBag.packageName" is set to $TMP internally since flex changes are always local when they are created.
 	 * @param {sap.ui.core.Control} oControl control for which the change will be added
 	 * @returns {sap.ui.fl.Change} the created change
 	 * @public
@@ -266,8 +266,8 @@ sap.ui.define([
 	 * Will be saved with #saveAll.
 	 *
 	 * @param {object} oChange property bag (nvp) holding the change information (see sap.ui.fl.Change#createInitialFileContent
-	 * The property "oPropertyBag.packageName" is set to $TMP and internally since flex changes are always local when they are created.
-	 * @param {sap.ui.core.Component} oAppComponent application component
+	 * The property "oPropertyBag.packageName" is set to $TMP internally since flex changes are always local when they are created.
+	 * @param {sap.ui.core.Component} oAppComponent - Application component
 	 * @returns {sap.ui.fl.Change} the created change
 	 * @public
 	 */
@@ -294,7 +294,7 @@ sap.ui.define([
 	 * Otherwise it will be marked for deletion.
 	 *
 	 * @param {sap.ui.fl.Change} oChange - the change to be deleted
-	 * @param {sap.ui.core.Component} oAppComponent Application Component instance
+	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
 	 */
 	FlexController.prototype.deleteChange = function (oChange, oAppComponent) {
 		this._oChangePersistence.deleteChange(oChange);
@@ -308,7 +308,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oChangeSpecificData The data specific to the change, e.g. the new label for a RenameField change
 	 * @param {sap.ui.core.Control} oControl The control where the change will be applied to
-	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns Promise in asynchronous or FakePromise for the synchronous processing scenario after completion of the <code>checkTargetAndApplyChange</code> function
+	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise in asynchronous or FakePromise for the synchronous processing scenario after completion of the <code>checkTargetAndApplyChange</code> function
 	 * @public
 	 */
 	FlexController.prototype.createAndApplyChange = function (oChangeSpecificData, oControl) {
@@ -449,7 +449,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - collection of cross-functional attributes
 	 * @param {string} mPropertyBag.viewId - id of the processed view
 	 * @param {string} mPropertyBag.componentId - name of the root component of the view
-	 * @returns {Promise} without parameters. Promise resolves once all changes of the view have been applied
+	 * @returns {Promise} Promise resolves once all changes of the view have been applied
 	 * @public
 	 */
 	FlexController.prototype.processXmlView = function (oView, mPropertyBag) {
@@ -472,8 +472,8 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.view - the view to process as XML tree
 	 * @param {string} mPropertyBag.viewId - id of the processed view
 	 * @param {object} mPropertyBag.modifier - polymorph reuse operations handling the changes on the given view type
-	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Application Component instance responsible for the view
-	 * @returns {Promise} without parameters. Promise resolves once all changes of the view have been applied
+	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Application component instance responsible for the view
+	 * @returns {Promise} Promise resolves once all changes of the view have been applied
 	 * @public
 	 */
 	FlexController.prototype.processViewByModifier = function (mPropertyBag) {
@@ -502,12 +502,12 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - collection of cross-functional attributes
 	 * @param {object} mPropertyBag.view - the view to process
 	 * @param {string} mPropertyBag.viewId - id of the processed view
-	 * @param {string} mPropertyBag.appComponent - Application Component instance responsible for the view
+	 * @param {string} mPropertyBag.appComponent - Application component instance responsible for the view
 	 * @param {object} mPropertyBag.modifier - polymorph reuse operations handling the changes on the given view type
 	 * @param {object} mPropertyBag.appDescriptor - app descriptor containing the metadata of the current application
 	 * @param {string} mPropertyBag.siteId - id of the flp site containing this application
 	 * @param {sap.ui.fl.Change[]} aChanges - list of flexibility changes on controls for the current processed view
-	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns Promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario including view object in both cases
+	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario including view object in both cases
 	 * @private
 	 */
 	FlexController.prototype._resolveGetChangesForView = function (mPropertyBag, aChanges) {
@@ -1017,7 +1017,7 @@ sap.ui.define([
 	/**
 	 * Reset changes on the server.
 	 *
-	 * @returns {Promise} promise that resolves without parameters
+	 * @returns {Promise} Promise that resolves without parameters
 	 */
 	FlexController.prototype.resetChanges = function (sLayer, sGenerator, oComponent) {
 		return this._oChangePersistence.resetChanges(sLayer, sGenerator)
@@ -1041,7 +1041,7 @@ sap.ui.define([
 	 *
 	 * @param {array} aChanges array of {sap.ui.fl.Change} to be discarded
 	 * @param {boolean} bDiscardPersonalization - (optional) specifies that only changes in the USER layer are discarded
-	 * @returns {Promise} promise that resolves without parameters
+	 * @returns {Promise} Promise that resolves without parameters
 	 */
 	FlexController.prototype.discardChanges = function (aChanges, bDiscardPersonalization) {
 		var sActiveLayer = Utils.getCurrentLayer(!!bDiscardPersonalization);
@@ -1072,7 +1072,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sId for which the changes should be deleted
 	 * @param {boolean} bDiscardPersonalization - (optional) specifies that only changes in the USER layer are discarded
-	 * @returns {Promise} promise that resolves without parameters
+	 * @returns {Promise} Promise that resolves without parameters
 	 */
 	FlexController.prototype.discardChangesForId = function (sId, bDiscardPersonalization) {
 		if (!sId) {
@@ -1123,19 +1123,18 @@ sap.ui.define([
 	 * creation process, changes are applied synchronously.
 	 *
 	 * @param {function} fnGetChangesMap Getter to retrieve the mapped changes belonging to the app component
-	 * @param {sap.ui.core.Component} oComponent Component instance that is currently loading
+	 * @param {sap.ui.core.Component} oAppComponent - Application component instance that is currently loading
 	 * @param {sap.ui.core.Element} oControl Control instance that is being created
-	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns Promise that is resolved after all changes were applied in asynchronous or FakePromise for the synchronous processing scenario
+	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise that is resolved after all changes were applied in asynchronous or FakePromise for the synchronous processing scenario
 	 * @private
 	 */
-	FlexController.prototype._applyChangesOnControl = function (fnGetChangesMap, oComponent, oControl) {
+	FlexController.prototype._applyChangesOnControl = function (fnGetChangesMap, oAppComponent, oControl) {
 		var aPromiseStack = [];
 		var mChangesMap = fnGetChangesMap();
 		var mChanges = mChangesMap.mChanges;
 		var mDependencies = mChangesMap.mDependencies;
 		var mDependentChangesOnMe = mChangesMap.mDependentChangesOnMe;
 		var aChangesForControl = mChanges[oControl.getId()] || [];
-		var oAppComponent = Utils.getAppComponentForControl(oControl);
 		var mPropertyBag = {
 			modifier: JsControlTreeModifier,
 			appComponent: oAppComponent,
@@ -1196,9 +1195,9 @@ sap.ui.define([
 	 * Revert changes for a control and removes the change from the applied Changes stored in the Controls Custom Data.
 	 *
 	 * @param {array} aChanges Array of to be reverted changes
-	 * @param {sap.ui.core.Component} oAppComponent Application Component instance
+	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
 	 * @param {object} oControl Control instance
-	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns Promise that is resolved after all changes were reverted in asynchronous or FakePromise for the synchronous processing scenario
+	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise that is resolved after all changes were reverted in asynchronous or FakePromise for the synchronous processing scenario
 	 * @public
 	 */
 	FlexController.prototype.revertChangesOnControl = function(aChanges, oAppComponent) {
@@ -1243,8 +1242,8 @@ sap.ui.define([
 	 * Applying variant changes.
 	 *
 	 * @param {array} aChanges - Array of relevant changes
-	 * @param {sap.ui.core.Component} oAppComponent - Application Component instance
-	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns Promise that is resolved after all changes were applied in asynchronous or FakePromise for the synchronous processing scenario
+	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
+	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise that is resolved after all changes were applied in asynchronous or FakePromise for the synchronous processing scenario
 	 * @public
 	 */
 	FlexController.prototype.applyVariantChanges = function(aChanges, oAppComponent) {
@@ -1273,9 +1272,9 @@ sap.ui.define([
 	 * Remove the change from the applied Changes stored in the Controls Custom Data without reverting the change.
 	 *
 	 * @param {sap.ui.fl.Change} oChange - Change
-	 * @param {sap.ui.core.Component} oAppComponent - Application Component instance
+	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
 	 * @param {sap.ui.core.Element} oControl - Control instance
-	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns Promise for asyncronous or FakePromise for the synchronous processing scenario
+	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise for asynchronous or FakePromise for synchronous processing scenario
 	 * @public
 	 */
 	FlexController.prototype.removeFromAppliedChangesOnControl = function(oChange, oAppComponent, oControl) {
@@ -1322,8 +1321,8 @@ sap.ui.define([
 	 *
 	 * @param {object} mDependencies - Dependencies map
 	 * @param {object} mDependentChangesOnMe - map of changes that cannot be applied with higher priority
-	 * @param {sap.ui.core.Component} oAppComponent - Application Component instance
-	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns Promise for asynchronous or FakePromise for the synchronous processing scenario
+	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
+	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise for asynchronous or FakePromise for synchronous processing scenario
 	 * @private
 	 */
 	FlexController.prototype._iterateDependentQueue = function(mDependencies, mDependentChangesOnMe, oAppComponent) {
@@ -1371,8 +1370,8 @@ sap.ui.define([
 	 *
 	 * @param {object} mDependencies - Dependencies map
 	 * @param {object} mDependentChangesOnMe - map of changes that cannot be applied with higher priority
-	 * @param {sap.ui.core.Component} oAppComponent - Application Component instance
-	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns Promise that is resolved after all dependencies were processed for asynchronous or FakePromise for the synchronous processing scenario
+	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
+	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise that is resolved after all dependencies were processed for asynchronous or FakePromise for the synchronous processing scenario
 	 * @private
 	 */
 	FlexController.prototype._processDependentQueue = function (mDependencies, mDependentChangesOnMe, oAppComponent) {

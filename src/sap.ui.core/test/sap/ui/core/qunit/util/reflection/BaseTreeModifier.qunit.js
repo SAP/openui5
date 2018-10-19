@@ -162,7 +162,7 @@ function(
 			};
 
 			var oSelector = JsControlTreeModifier.getSelector(oManagedObject, this.oComponent);
-			assert.propEqual(oSelector, oControlSelector, "then a selector with control's global id and 'isIsLocal' false is returned");
+			assert.propEqual(oSelector, oControlSelector, "then a selector with the control's global ID and 'isIsLocal' false is returned");
 		});
 	});
 
@@ -356,11 +356,11 @@ function(
 		}
 	}, function () {
 
-		QUnit.test("checkControlId shall return false if the id was generated", function (assert) {
+		QUnit.test("checkControlId shall return false if the ID was generated", function (assert) {
 			assert.equal(BaseTreeModifier.checkControlId(this.oControlWithGeneratedId, this.oComponent), false);
 		});
 
-		QUnit.test("checkControlId shall throw an error if the id was generated", function (assert) {
+		QUnit.test("checkControlId shall throw an error if the ID was generated", function (assert) {
 			var Log = sap.ui.require("sap/base/Log");
 			assert.ok(Log, "Log module should be available");
 
@@ -369,7 +369,7 @@ function(
 			assert.ok(spyLog.calledOnce);
 		});
 
-		QUnit.test("checkControlId does not throw an error if the id was generated but the logging was suppressed", function (assert) {
+		QUnit.test("checkControlId does not throw an error if the ID was generated, but the logging was suppressed", function (assert) {
 			var Log = sap.ui.require("sap/base/Log");
 			assert.ok(Log, "Log module should be available");
 
@@ -378,19 +378,19 @@ function(
 			assert.equal(spyLog.callCount, 0);
 		});
 
-		QUnit.test("checkControlId shall return true if control id was not generated", function (assert) {
+		QUnit.test("checkControlId shall return true if control ID was not generated", function (assert) {
 			assert.equal(BaseTreeModifier.checkControlId(this.oControlWithPrefix, this.oComponent), true);
 		});
 
-		QUnit.test("checkControlId shall return true if the id is a stable Id not containing the ComponentId", function (assert) {
+		QUnit.test("checkControlId shall return true if the ID is a stable ID not containing the ComponentId", function (assert) {
 			assert.equal(BaseTreeModifier.checkControlId(this.oControlWithoutPrefix, this.oComponent), true);
 		});
 
-		QUnit.test("hasLocalIdSuffix can determine that a control has a local id", function(assert) {
+		QUnit.test("hasLocalIdSuffix can determine that a control has a local ID", function(assert) {
 			assert.ok(BaseTreeModifier.hasLocalIdSuffix(this.oControlWithPrefix, this.oComponent));
 		});
 
-		QUnit.test("hasLocalIdSuffix can determine that a control has no local id", function(assert) {
+		QUnit.test("hasLocalIdSuffix can determine that a control has no local ID", function(assert) {
 			assert.notOk(BaseTreeModifier.hasLocalIdSuffix(this.oControlWithoutPrefix, this.oComponent));
 		});
 

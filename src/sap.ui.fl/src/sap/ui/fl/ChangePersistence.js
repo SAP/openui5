@@ -624,7 +624,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {sap.ui.core.Component} oAppComponent - Application Component containing the control for which the change should be added
+	 * @param {sap.ui.core.Component} oAppComponent - Application component containing the control for which the change should be added
 	 * @param {sap.ui.fl.Change} oChange change which should be added into the mapping
 	 * @see sap.ui.fl.Change
 	 * @returns {map} mChanges map with added change
@@ -746,7 +746,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oSelector selector of the control
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier - polymorph reuse operations handling the changes on the given view type
-	 * @param {sap.ui.core.Component} oAppComponent - Application Component instance that is currently loading
+	 * @param {sap.ui.core.Component} oAppComponent - Application component instance that is currently loading
 	 * @returns {boolean} Returns true if there are open dependencies
 	 */
 	ChangePersistence.prototype.checkForOpenDependenciesForControl = function(oSelector, oModifier, oAppComponent) {
@@ -805,12 +805,12 @@ sap.ui.define([
 		this._addControlsDependencies(oChange, aDependentControlSelectorList, bRunTimeCreatedChange);
 
 		// start from last change in map, excluding the recently added change
-		aChanges.slice(0, aChanges.length - 1).reverse().forEach(function(oPreviousChange){
-			var aPreviousDependentSelectorList = oPreviousChange.getDependentSelectorList();
+		aChanges.slice(0, aChanges.length - 1).reverse().forEach(function(oExistingChange){
+			var aExistingDependentSelectorList = oExistingChange.getDependentSelectorList();
 			aDependentSelectorList.some(function(oDependentSelectorList) {
-				var iDependentIndex = Utils.indexOfObject(aPreviousDependentSelectorList, oDependentSelectorList);
+				var iDependentIndex = Utils.indexOfObject(aExistingDependentSelectorList, oDependentSelectorList);
 				if (iDependentIndex > -1) {
-					this._addDependency(oChange, oPreviousChange, bRunTimeCreatedChange);
+					this._addDependency(oChange, oExistingChange, bRunTimeCreatedChange);
 					return true;
 				}
 			}.bind(this));
@@ -846,7 +846,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.siteId] - id of the site that belongs to actual component
 	 * @param {string} mPropertyBag.viewId - id of the view
 	 * @param {string} mPropertyBag.name - name of the view
-	 * @param {sap.ui.core.Component} mPropertyBag.component - Application Component for the view
+	 * @param {sap.ui.core.Component} mPropertyBag.component - Application component for the view
 	 * @param {string} mPropertyBag.componentId - responsible component's id for the view
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - responsible modifier
 	 * @returns {Promise} resolving with an array of changes
@@ -887,7 +887,7 @@ sap.ui.define([
 	 * Adds a new change (could be variant as well) and returns the id of the new change.
 	 *
 	 * @param {object} vChange - The complete and finalized JSON object representation the file content of the change or a Change instance
-	 * @param {sap.ui.core.Component} oAppComponent - Application Component instance
+	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
 	 * @returns {sap.ui.fl.Change|sap.ui.fl.variant} the newly created change or variant
 	 * @public
 	 */
@@ -1185,12 +1185,10 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.variantManagementReference - variant management reference
 	 * @param {string} mPropertyBag.currentVariantReference - current variant reference
 	 * @param {string} mPropertyBag.newVariantReference - new variant reference
-	 * @param {sap.ui.core.Component|sap.ui.core.Component[]} mPropertyBag.component - control component or array of potential components
 	 *
 	 * @typedef {object} SwitchChanges
-	 * @property {array} aRevert - an array of changes to be reverted
-	 * @property {array} aNew - an array of changes to be applied
-	 * @property {sap.ui.core.Component} component - the component responsible
+	 * @property {array} changesToBeReverted - an array of changes to be reverted
+	 * @property {array} changesToBeApplied - an array of changes to be applied
 	 *
 	 * @returns {SwitchChanges} an object containing all changes to be applied and reverted, along with the component, for a control variant
 	 */

@@ -102,9 +102,9 @@ sap.ui.define([
 		/** Function for determining the selector later used to apply a change for a given control.
 		 * The function differs between local IDs generated starting with 1.40 and the global IDs generated in previous versions.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element | string} vControl control or ID string for which the selector should be determined
-		 * @param {sap.ui.core.Component} oAppComponent oAppComponent application component, needed only if vControl is a string or XML Node
-		 * @param {object} mAdditionalSelectorInformation additional mapped data which is added to the selector
+		 * @param {sap.ui.base.ManagedObject | Element | string} vControl - control or ID string for which the selector should be determined
+		 * @param {sap.ui.core.Component} oAppComponent - Application component, needed only if vControl is a string or XML node
+		 * @param {object} [mAdditionalSelectorInformation] - Additional mapped data which is added to the selector
 		 * @returns {object} oSelector
 		 * @returns {string} oSelector.id ID used for determination of the flexibility target
 		 * @returns {boolean} oSelector.idIsLocal flag if the selector.id has to be concatenated with the application component ID

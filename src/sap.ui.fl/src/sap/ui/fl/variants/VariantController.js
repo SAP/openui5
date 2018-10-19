@@ -323,13 +323,11 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.variantManagementReference - The variant management id
 	 * @param {string} mPropertyBag.currentVariantReference - The id of the currently used variant
 	 * @param {string} mPropertyBag.newVariantReference - The id of the newly selected variant
-	 * @param {sap.ui.core.Component|sap.ui.core.Component[]} mPropertyBag.component - Application Component or array of potential components
 	 * @param {object} mPropertyBag.changesMap - The changes inside the current changes map
 	 *
 	 * @typedef {object} sap.ui.fl.variants.SwitchChanges
-	 * @property {array} aRevert - an array of changes to be reverted
-	 * @property {array} aNew - an array of changes to be applied
-	 * @property {sap.ui.core.Component} component - the component responsible
+	 * @property {array} changesToBeReverted - an array of changes to be reverted
+	 * @property {array} changesToBeApplied - an array of changes to be applied
 	 *
 	 * @returns {sap.ui.fl.variants.SwitchChanges} The map containing all changes to be reverted and all new changes
 	 * @public
@@ -337,7 +335,6 @@ sap.ui.define([
 	VariantController.prototype.getChangesForVariantSwitch = function(mPropertyBag) {
 		var aCurrentVariantChanges = this.getVariantChanges(mPropertyBag.variantManagementReference, mPropertyBag.currentVariantReference, true);
 		var aMapChanges = [], aChangeKeysFromMap = [];
-		var oComponent = mPropertyBag.component instanceof Component ? mPropertyBag.component : undefined;
 		Object.keys(mPropertyBag.changesMap).forEach(function(sControlId) {
 			mPropertyBag.changesMap[sControlId].forEach(function(oMapChange) {
 				aMapChanges = aMapChanges.concat(oMapChange);
@@ -349,14 +346,9 @@ sap.ui.define([
 			var iMapIndex = aChangeKeysFromMap.indexOf(oChange.getDefinition().fileName);
 			if (iMapIndex > -1) {
 				aFilteredChanges = aFilteredChanges.concat(aMapChanges[iMapIndex]);
-				// if vControlComponent is an array of embeddedComponents
-				// retrieve which embeddedComponent is responsible for the change
-				if (!oComponent && Array.isArray(mPropertyBag.component)) {
-					oComponent = this._getComponentForChange(aMapChanges[iMapIndex], mPropertyBag.component);
-				}
 			}
 			return aFilteredChanges;
-		}.bind(this), []);
+		}, []);
 
 		var aNewChanges = this.getVariantChanges(mPropertyBag.variantManagementReference, mPropertyBag.newVariantReference, true);
 
@@ -376,26 +368,11 @@ sap.ui.define([
 		}
 
 		var mSwitches = {
-			aRevert : aRevertChanges.reverse(),
-			aNew : aNewChanges,
-			component: oComponent
+			changesToBeReverted : aRevertChanges.reverse(),
+			changesToBeApplied : aNewChanges
 		};
 
 		return mSwitches;
-	};
-
-	VariantController.prototype._getComponentForChange = function (oChange, aComponents) {
-		var oSelector = oChange.getSelector && oChange.getSelector();
-		var oControlComponent;
-		if (oSelector) {
-			aComponents.some(function(oComponent) {
-				if (JsControlTreeModifier.bySelector(oSelector, oComponent) instanceof ManagedObject) {
-					oControlComponent = oComponent;
-					return true;
-				}
-			});
-		}
-		return oControlComponent;
 	};
 
 	VariantController.prototype._applyChangesOnVariant = function(oVariant) {
