@@ -927,22 +927,16 @@ sap.ui.define([
 		 *   The key predicate
 		 */
 		updateTransientPaths : function (mMap, sPathInCache, sPredicate) {
-			Object.keys(mMap).forEach(function (sPath) {
-				var sUpdatedPath;
+			var sPath,
+				sPathToMinus1 = Helper.buildPath(sPathInCache, "-1");
 
-				if (sPathInCache) {
-					if (sPath.startsWith(sPathInCache + "/-1")) {
-						sUpdatedPath = sPathInCache + sPredicate
-							+ sPath.slice(sPathInCache.length + 3);
-					}
-				} else if (sPath.startsWith("-1")) {
-					sUpdatedPath = sPath.replace("-1", sPredicate);
-				}
-				if (sUpdatedPath) {
-					mMap[sUpdatedPath] = mMap[sPath];
+			for (sPath in mMap) {
+				if (sPath.startsWith(sPathToMinus1)) {
+					mMap[sPathInCache + sPredicate + sPath.slice(sPathToMinus1.length)]
+						= mMap[sPath];
 					delete mMap[sPath];
 				}
-			});
+			}
 		}
 	};
 
