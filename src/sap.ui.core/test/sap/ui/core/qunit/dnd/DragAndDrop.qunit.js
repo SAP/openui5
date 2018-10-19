@@ -34,6 +34,7 @@ sap.ui.define([
 
 	var DragAndDropControl = Control.extend("sap.ui.core.dnd.test.DragAndDropControl", {
 		metadata: {
+			dnd: true,
 			properties : {
 				showNoData : {type : "boolean", defaultValue : false}
 			},

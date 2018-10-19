@@ -336,7 +336,6 @@ sap.ui.define([
 			var oGetChangesForComponentCall = oChangePersistenceStub.getCall(0).args[0];
 			assert.ok( "cacheKey" in oGetChangesForComponentCall, "a cache parameter was passed");
 			assert.equal(oGetChangesForComponentCall.cacheKey, sCacheKey, "the cacheKey was determined correct");
-			assert.equal(oGetChangesForComponentCall.url, sUrl, "the url was determined correct");
 		});
 
 		QUnit.test("onLoadComponent sets max layer filter passed on component data", function (assert) {

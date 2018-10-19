@@ -14,7 +14,7 @@
 			"layer":"CUSTOMER",
 			"texts":{},
 			"namespace":"sap.ui.rta.test.Demo.md.Component",
-			"creation":"7",
+			"creation":"2018-10-16T08:00:07",
 			"originalLanguage":"EN",
 			"conditions":{},
 			"support":{
@@ -37,7 +37,7 @@
 			"layer":"CUSTOMER",
 			"texts":{},
 			"namespace":"sap.ui.rta.test.Demo.md.Component",
-			"creation":"2",
+			"creation":"2018-10-16T08:00:02",
 			"originalLanguage":"EN",
 			"conditions":{},
 			"support":{
@@ -60,7 +60,7 @@
 			"layer":"CUSTOMER",
 			"texts":{},
 			"namespace":"sap.ui.rta.test.Demo.md.Component",
-			"creation":"1",
+			"creation":"2018-10-16T08:00:01",
 			"originalLanguage":"EN",
 			"conditions":{},
 			"support":{
@@ -116,7 +116,7 @@
 							"layer":"VENDOR",
 							"texts":{},
 							"namespace":"sap.ui.rta.test.Demo.md.Component",
-							"creation":"2",
+							"creation":"2018-10-16T08:00:02",
 							"originalLanguage":"EN",
 							"conditions":{},
 							"support":{
@@ -139,7 +139,7 @@
 							"layer":"CUSTOMER",
 							"texts":{},
 							"namespace":"sap.ui.rta.test.Demo.md.Component",
-							"creation":"1",
+							"creation":"2018-10-16T08:00:01",
 							"originalLanguage":"EN",
 							"conditions":{},
 							"support":{
@@ -162,7 +162,7 @@
 							"layer":"VENDOR",
 							"texts":{},
 							"namespace":"sap.ui.rta.test.Demo.md.Component",
-							"creation":"4",
+							"creation":"2018-10-16T08:00:04",
 							"originalLanguage":"EN",
 							"conditions":{},
 							"support":{

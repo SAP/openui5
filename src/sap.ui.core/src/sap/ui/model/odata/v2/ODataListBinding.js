@@ -942,6 +942,17 @@ sap.ui.define([
 					oMatchingSet = this.oModel.oMetadata._findEntitySetByName(sName);
 					if (oMatchingSet) {
 						this._mPathType[sPath] = true;
+					} else {
+						var aFunctionImports = this.oModel.oMetadata._getFunctionImportMetadataByName(sName);
+						for (var i = 0; i < aFunctionImports.length; i++) {
+							var oFunctionImport = aFunctionImports[i];
+							if (oFunctionImport.entitySet) {
+								oMatchingSet = this.oModel.oMetadata._findEntitySetByName(oFunctionImport.entitySet);
+								if (oMatchingSet) {
+									this._mPathType[sPath] = true;
+								}
+							}
+						}
 					}
 				}
 			}

@@ -1,10 +1,11 @@
 /*global QUnit,sinon*/
 
 sap.ui.define([
-	"sap/ui/demo/orderbrowser/controller/Detail.controller",
-	"sap/ui/thirdparty/sinon"
-], function (Detail) {
-	"use strict";
+    "sap/ui/demo/orderbrowser/controller/Detail.controller",
+    "sap/m/library",
+    "sap/ui/thirdparty/sinon"
+], function(Detail, mobileLibrary) {
+    "use strict";
 
 	QUnit.module("DetailController" ,{
 		beforeEach: function (){
@@ -23,13 +24,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should trigger the telephone helper in the _onHandleTelephonePress event", function (assert) {
-		var oStub = sinon.stub(sap.m.URLHelper, "triggerTel");
+		var oStub = sinon.stub(mobileLibrary.URLHelper, "triggerTel");
 
 		this.Detail._onHandleTelephonePress(this.oEvent);
 
 		assert.ok(oStub.calledWith("12345"), "The function \"sap.m.URLHelper.triggerTel\" was called with the telephone number");
 		assert.strictEqual(oStub.callCount, 1, "the telephone action has been triggered once");
 	});
-
 });
-

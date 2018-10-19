@@ -61,7 +61,7 @@ sap.ui.define([
 	 * @param {string} [mOptions.viewName] The view name that corresponds to a JSON module that can be loaded
 	 * via the module system (viewName + suffix ".view.json").
 	 * @param {string|object} [mOptions.definition] view definition as a JSON string or an object literal
-	 * @param {sap.ui.core.mvc.Controller} [vView.controller] Controller instance to be used for this view.
+	 * @param {sap.ui.core.mvc.Controller} [mOptions.controller] Controller instance to be used for this view.
 	 * The given controller instance overrides the controller defined in the view definition. Sharing a controller instance
 	 * between multiple views is not supported.
 	 * @public
@@ -73,7 +73,7 @@ sap.ui.define([
 		//remove unsupported options:
 		for (var sOption in mParameters) {
 			if (sOption === 'preprocessors') {
-				delete mParameters[sOption];
+				delete mParameters['preprocessors'];
 				Log.warning("JSView.create does not support the option preprocessors!");
 			}
 		}
@@ -149,8 +149,19 @@ sap.ui.define([
 		var that = this;
 		var fnInitModel = function() {
 			if ((that._oJSONView.resourceBundleName || that._oJSONView.resourceBundleUrl) && (!mSettings.models || !mSettings.models[that._oJSONView.resourceBundleAlias])) {
-				var model = new ResourceModel({bundleName:that._oJSONView.resourceBundleName, bundleUrl:that._oJSONView.resourceBundleUrl});
-				that.setModel(model, that._oJSONView.resourceBundleAlias);
+				var oModel = new ResourceModel({
+					bundleName: that._oJSONView.resourceBundleName,
+					bundleUrl: that._oJSONView.resourceBundleUrl,
+					async: mSettings.async
+				});
+				var vBundle = oModel.getResourceBundle();
+				// if ResourceBundle was created with async flag vBundle will be a Promise
+				if (vBundle instanceof Promise) {
+					return vBundle.then(function() {
+						that.setModel(oModel, that._oJSONView.resourceBundleAlias);
+					});
+				}
+				that.setModel(oModel, that._oJSONView.resourceBundleAlias);
 			}
 		};
 

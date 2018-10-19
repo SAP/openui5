@@ -299,9 +299,9 @@ sap.ui.define([
 
 				oAuto1.oPopup.attachClosed(function(){
 					checkPopup(oAuto1, false, assert);
-					done();
 				});
 
+				done();
 				fAction(oAuto1);
 			}, 200);
 		}, 10);

@@ -3,7 +3,8 @@
 		xmlns:l="sap.ui.layout"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:html="http://www.w3.org/1999/xhtml"
-		controllerName="sap.ui.layout.sample.GridProperties.GridProperties">
+		controllerName="sap.ui.layout.sample.GridProperties.GridProperties"
+		class="GridPropertiesSample">
 
 	<l:VerticalLayout
 			width="100%">

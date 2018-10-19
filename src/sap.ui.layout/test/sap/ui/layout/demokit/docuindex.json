@@ -82,8 +82,8 @@
 				"since" : "1.12",
 				"formFactors" : "-",
 				"samples" : [
-				  	"sap.ui.layout.sample.GridProperties",
-				  	"sap.ui.layout.sample.GridData",
+					"sap.ui.layout.sample.GridProperties",
+					"sap.ui.layout.sample.GridData",
 					"sap.ui.layout.sample.GridInfo",
 					"sap.ui.layout.sample.GridXL"
 				]
@@ -138,6 +138,17 @@
 				"formFactors" : "-",
 				"samples" : [
 					"sap.ui.layout.sample.ResponsiveSplitter"
+				]
+			},
+			{
+				"id" : "sap.ui.layout.CSSGrid",
+				"name" : "CSSGrid",
+				"category" : "Layout",
+				"since" : "1.60",
+				"formFactors" : "-",
+				"samples" : [
+					"sap.ui.layout.sample.CSSGrid",
+					"sap.ui.layout.sample.NestedGrids"
 				]
 			}
 		],
@@ -312,7 +323,7 @@
 			  "name": "Fix Flex - Vertical Direction with minFlexSize",
 			  "description": "Shows a FixFlex control where the minFlexSize is set to 400px."
 			},
-		  	{
+			{
 			  "id": "sap.ui.layout.sample.GridProperties",
 			  "name": "Grid - Own properties",
 			  "description": "You can see how the different properties of the sap.ui.layout.Grid affect it's final appearance."
@@ -376,6 +387,16 @@
 				"id": "sap.ui.layout.sample.ResponsiveSplitter",
 				"name": "Responsive Splitter",
 				"description": "ResponsiveSplitter is used to visually divide the content of its parent. It consists of PaneContainers that further  agregate other PaneContainers and SplitPanes. SplitPanes can be moved to the pagination when a minimum width of their parent is reached."
+			},
+			{
+				"id": "sap.ui.layout.sample.CSSGrid",
+				"name": " CSSGrid ",
+				"description": "CSSGrid example for page layout."
+			},
+			{
+				"id": "sap.ui.layout.sample.NestedGrids",
+				"name": "Nested  example",
+				"description": "CSSGrid example nested grids."
 			}
 		]
 	}

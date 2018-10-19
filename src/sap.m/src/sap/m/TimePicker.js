@@ -20,6 +20,7 @@ sap.ui.define([
 	'./TimePickerRenderer',
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
+	"sap/ui/core/InvisibleText",
 	"sap/ui/thirdparty/jquery"
 ],
 function(
@@ -39,6 +40,7 @@ function(
 	TimePickerRenderer,
 	KeyCodes,
 	Log,
+	InvisibleText,
 	jQuery
 ) {
 		"use strict";
@@ -1075,7 +1077,8 @@ function(
 						secondsStep: this.getSecondsStep()
 					})._setShouldOpenSliderAfterRendering(true)
 				],
-				contentHeight: TimePicker._PICKER_CONTENT_HEIGHT
+				contentHeight: TimePicker._PICKER_CONTENT_HEIGHT,
+				ariaLabelledBy: InvisibleText.getStaticId("sap.m", "TIMEPICKER_SET_TIME")
 			});
 
 			oPopover = oPicker.getAggregation("_popup");

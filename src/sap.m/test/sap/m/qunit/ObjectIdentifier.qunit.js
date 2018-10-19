@@ -1036,4 +1036,38 @@ sap.ui.define([
 		sut.destroy();
 		sut2.destroy();
 	});
+
+	QUnit.test("function getAccessibilityInfo", function(assert) {
+
+		//SUT
+		var oLinkInfo,
+			oTextInfo,
+			sTitle = "My Title",
+			sText = "My Text",
+			activeObjectIdentifier = new ObjectIdentifier({
+				title : sTitle,
+				titleActive: true,
+				text : sText
+			}),
+			inactiveObjectIdentifier = new ObjectIdentifier({
+				title : sTitle,
+				titleActive: false,
+				text : sText
+			});
+
+		//Act
+		oLinkInfo = activeObjectIdentifier.getAccessibilityInfo();
+		oTextInfo = inactiveObjectIdentifier.getAccessibilityInfo();
+
+		//Assert
+		assert.equal(oLinkInfo.description, sTitle + " " + sText, "Description for active ObjectIdentifier is correct");
+		assert.equal(oLinkInfo.type, ObjectIdentifier.OI_ARIA_ROLE + " Link", "Type for active ObjectIdentifier is correct");
+
+		assert.equal(oTextInfo.description, sTitle + " " + sText, "Description for none active ObjectIdentifier is correct");
+		assert.equal(oTextInfo.type, ObjectIdentifier.OI_ARIA_ROLE, "Type for none active ObjectIdentifier is correct");
+
+		//Cleanup
+		activeObjectIdentifier.destroy();
+		inactiveObjectIdentifier.destroy();
+	});
 });

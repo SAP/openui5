@@ -805,18 +805,18 @@ sap.ui.define([
 		}).placeAt("qunit-fixture");
 
 		// Act
-		oMI._oSuggestionPopup.open();
+		oMI._oSuggPopover._oPopover.open();
 		this.clock.tick(1000);
 
 		// Assert
-		assert.ok(oMI._oSuggestionPopup.isOpen(), "The dialog is opened");
+		assert.ok(oMI._oSuggPopover._oPopover.isOpen(), "The dialog is opened");
 
 		// Act
-		oMI._oPopupInput.setValue("test");
-		qutils.triggerKeydown(oMI._oPopupInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		oMI._oSuggPopover._oPopupInput.setValue("test");
+		qutils.triggerKeydown(oMI._oSuggPopover._oPopupInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
 
 		// Assert
-		assert.ok(oMI._oSuggestionPopup.isOpen(), "The dialog is still open after enter key");
+		assert.ok(oMI._oSuggPopover._oPopover.isOpen(), "The dialog is still open after enter key");
 		assert.strictEqual(sValue, 'test', "The change event is triggered and the right value is passed");
 
 		// // Cleanup
@@ -1494,7 +1494,7 @@ sap.ui.define([
 			new Token({text: "XXXX"})
 		]);
 		this.multiInput1.setWidth("200px");
-		var oStub = sinon.stub(	this.multiInput1._oSuggestionPopup, "open");
+		var oStub = sinon.stub(	this.multiInput1._oSuggPopover._oPopover, "open");
 
 
 		sap.ui.getCore().applyChanges();

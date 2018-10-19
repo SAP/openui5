@@ -61,8 +61,19 @@ sap.ui.define(['./library', 'sap/ui/core/Element'],
 		if (oContent) {
 			return oContent.setLayoutData(oLayoutdata);
 		} else {
+			this._oLayoutData = oLayoutdata;
 			return this;
 		}
+	};
+
+	// overrides the default set method in order to apply layout data that is provided before content
+	SplitPane.prototype.setContent = function (oContent) {
+		if (this._oLayoutData) {
+			oContent.setLayoutData(this._oLayoutData);
+			this._oLayoutData = null;
+		}
+
+		return this.setAggregation("content", oContent);
 	};
 
 	SplitPane.prototype.onLayoutDataChange = function() {

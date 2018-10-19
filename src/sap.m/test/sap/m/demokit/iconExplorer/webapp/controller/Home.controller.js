@@ -1,11 +1,9 @@
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/demo/iconexplorer/model/formatter",
-	"sap/ui/demo/iconexplorer/controller/BaseController",
-	"sap/ui/core/Icon",
-	"sap/ui/dom/jquery/control"
-], function (jQuery, JSONModel, formatter, BaseController, Icon) {
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/demo/iconexplorer/model/formatter",
+    "sap/ui/demo/iconexplorer/controller/BaseController",
+    "sap/ui/core/Icon"
+], function(JSONModel, formatter, BaseController, Icon) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.iconexplorer.controller.Home", {
@@ -67,7 +65,7 @@ sap.ui.define([
 				// re-open suggestions when pressing inside the search field again
 				ontap: function (oEvent) {
 					// skip when clicked on an icon
-					if (jQuery(oEvent.target).control(0) instanceof sap.ui.core.Icon) {
+					if (oEvent.srcControl instanceof Icon) {
 						return;
 					}
 					// open the suggestion popup when search value is valid

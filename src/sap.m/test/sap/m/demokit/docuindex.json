@@ -546,6 +546,7 @@
 			"sap.m.sample.InputSuggestionsOpenSearch",
 			"sap.m.sample.InputTypes",
 			"sap.m.sample.InputStates",
+			"sap.m.sample.InputValueState",
 			"sap.m.sample.InputValueUpdate",
 			"sap.m.sample.InputKeyValue",
 			"sap.m.sample.InputKeyValueTabularSuggestions"
@@ -1026,7 +1027,9 @@
 		  "samples": [
 			"sap.m.sample.MultiComboBox",
 			"sap.m.sample.MultiComboBoxDefaultFiltering",
-			"sap.m.sample.MultiComboBoxCustomFiltering"
+			"sap.m.sample.MultiComboBoxCustomFiltering",
+			"sap.m.sample.MultiComboBoxTwoColumnsLayout",
+			"sap.m.sample.MultiComboBoxGrouping"
 		  ]
 		},
 		{
@@ -1153,7 +1156,8 @@
 		  "samples": [
 			"sap.m.sample.Text",
 			"sap.m.sample.TextMaxLines",
-			"sap.m.sample.TextRenderWhitespace"
+			"sap.m.sample.TextRenderWhitespace",
+			"sap.m.sample.TextHyphenation"
 		  ]
 		},
 		{
@@ -1841,14 +1845,19 @@
 		  "description": "The Text control has a property allowing browsers to render whitespace and tabs."
 		},
 		{
+		  "id": "sap.m.sample.TextHyphenation",
+		  "name": "Text - Hyphenation",
+		  "description": "The Text control has a property allowing hyphenation."
+		},
+		{
 		  "id": "sap.m.sample.Title",
 		  "name": "Title",
 		  "description": "The Title control is a simple one line text with additional semantic information about the level of the following section in the page structure for accessibility purposes."
 		},
 		{
 			"id": "sap.m.sample.TitleWrapping",
-			"name": "Title - wrapping",
-			"description": "The Title wrapping property can be used to change the layout of the Title control within containers with dynamic width."
+			"name": "Title Properties",
+			"description": "This sample shows the different behaviors of a title."
 		},
 		{
 		  "id": "sap.m.sample.ObjectAttributes",
@@ -2056,9 +2065,19 @@
 		  "description": "The default filtering is 'starts with per term', which filters by the beginning of every word in every column."
 		},
 		{
-		  "id": "sap.m.sample.MultiComboBoxCustomFiltering",
-		  "name": "MultiComboBox - Custom Filtering and Suggestions",
-		  "description": "The default filtering for the suggestionsItems aggregation uses a 'starts with per term' style operator. You can override this with your own custom filter function using the setFilterFunction method."
+			"id": "sap.m.sample.MultiComboBoxCustomFiltering",
+			"name": "MultiComboBox - Custom Filtering and Suggestions",
+			"description": "The default filtering for the suggestionsItems aggregation uses a 'starts with per term' style operator. You can override this with your own custom filter function using the setFilterFunction method."
+		},
+		{
+			"id": "sap.m.sample.MultiComboBoxGrouping",
+			"name": "MultiComboBox - Grouping of items",
+			"description": "Items in the MultiComboBox could be grouped by a property"
+		},
+		{
+		  "id": "sap.m.sample.MultiComboBoxTwoColumnsLayout",
+		  "name": "MultiComboBox - Two columns layout",
+		  "description": "Use the dropdown list with two columns layout if you need to display additional information to your options, like e.g. currencies to countries or abbreviations to systems."
 		},
 		{
 		  "id": "sap.m.sample.P13nDialog",
@@ -2303,6 +2322,11 @@
 			"id": "sap.m.sample.InputKeyValueTabularSuggestions",
 			"name": "Input - Key and Value Tabular Suggestions",
 			"description": "This sample illustrates how the Input works with key and value values, when the data is provided with table-like suggestions."
+		},
+		{
+			"id": "sap.m.sample.InputValueState",
+			"name": "Input - Value States",
+			"description": "This example shows different input value states."
 		},
 		{
 		  "id": "sap.m.sample.ListToolbar",

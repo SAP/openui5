@@ -92,6 +92,35 @@
 								showValue="true"
 								state="None"/>
 					</layout:VerticalLayout>
+					<layout:HorizontalLayout allowWrapping="true">
+						<layout:VerticalLayout id="executionOptionsHeader" class="sapUiMediumMarginEnd">
+							<layout:layoutData>
+								<ObjectPageHeaderLayoutData showSeparatorAfter="true"/>
+							</layout:layoutData>
+							<m:ObjectStatus class="sapUiTinyMarginBottom" title="Document Types" text="Sales Documents"/>
+							<m:ObjectStatus class="sapUiTinyMarginBottom" title="Execution Method" text="Available-to-Promise" visible="true"/>
+							<m:ObjectStatus title="Checking As" text="Sales Order (Business Scenario: A)"/>
+						</layout:VerticalLayout>
+						<layout:VerticalLayout class="sapUiMediumMarginEnd">
+							<layout:layoutData>
+								<ObjectPageHeaderLayoutData showSeparatorAfter="true"/>
+							</layout:layoutData>
+							<m:ObjectStatus class="sapUiTinyMarginBottom" title="Exception Behavior" text="Stop Failed Material-Plant Combinations"/>
+							<m:ObjectAttribute class="sapUiTinyMarginBottom" title="Fallback Variant Name" text="AC_NEW_VARIANT2_LONG_LONG_LONG"
+									active="true" press="onNavigateToFallbackVariantPress" visible="true"/>
+							<m:ObjectAttribute class="sapUiTinyMarginBottom" title="Fallback Variant Name" text="AC_NEW_VARIANT2_LONG_LONG_LONG"
+									active="false" visible="true"/>
+							<m:ObjectStatus title="Fallback Behavior"	visible="true" text="Trigger Fallback for Failed Material-Plant Combinations"/>
+						</layout:VerticalLayout>
+						<layout:VerticalLayout>
+							<layout:layoutData>
+								<ObjectPageHeaderLayoutData showSeparatorAfter="true"/>
+							</layout:layoutData>
+							<m:ObjectAttribute class="sapUiTinyMarginBottom" title="Global Segment Name" text="PAL_FBD1711_SO_BEFORE_15102017"
+									active="true" visible="true"/>
+							<m:ObjectStatus class="sapUiTinyMarginBottom" title="Remaining Items" text="Ignore"	visible="true"/>
+						</layout:VerticalLayout>
+					</layout:HorizontalLayout>
 				</headerContent>
 				<sections>
 					<ObjectPageSection id="goalsSection" title="2014 Goals Plan">

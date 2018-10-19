@@ -95,6 +95,7 @@ function(
 	var ListBase = Control.extend("sap.m.ListBase", /** @lends sap.m.ListBase.prototype */ { metadata : {
 
 		library : "sap.m",
+		dnd : true,
 		properties : {
 
 			/**

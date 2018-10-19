@@ -345,9 +345,6 @@ function (
 				Overlay.prototype._setPosition.call(this, $ScrollContainerOverlayDomRef, mScrollContainerGeometry, this.$());
 				this._handleOverflowScroll(mScrollContainerGeometry, $ScrollContainerOverlayDomRef, this, bForceScrollbarSync);
 				this._setZIndex(mScrollContainerGeometry, $ScrollContainerOverlayDomRef);
-			} else {
-				this._deleteDummyContainer($ScrollContainerOverlayDomRef);
-				$ScrollContainerOverlayDomRef.css("display", "none");
 			}
 		}, this);
 	};

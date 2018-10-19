@@ -1,13 +1,13 @@
 sap.ui.define([
-"sap/ui/model/base/ManagedObjectModel", "sap/ui/model/json/JSONModel", "sap/m/Text", "sap/m/Input", "sap/m/DatePicker", "sap/ui/model/type/Date", "sap/ui/model/Context", "sap/m/VBox"
-], function (ManagedObjectModel, JSONModel, Text, Input, DatePicker, DateType, Context, VBox) {
+	"sap/ui/model/base/ManagedObjectModel", "sap/ui/model/json/JSONModel", "sap/m/Text", "sap/m/Input", "sap/m/DatePicker", "sap/ui/model/type/Date", "sap/ui/model/Context", "sap/m/VBox"
+], function(ManagedObjectModel, JSONModel, Text, Input, DatePicker, DateType, Context, VBox) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
 
 	var mObjects = {};
 
-//	define new types for testing
+	//	define new types for testing
 	sap.ui.core.Element.extend("sap.ui.test.TestElement", {
 		metadata: {
 			// ---- control specific ----
@@ -86,6 +86,13 @@ sap.ui.define([
 					type: "sap.ui.test.TestElement",
 					multiple: true,
 					visibility: "hiddden"
+				},
+				altType: {
+					type: "sap.m.Text",
+					multiple: false,
+					altTypes: [
+						"string", "int", "boolean"
+					]
 				}
 			},
 			associations: {
@@ -144,15 +151,15 @@ sap.ui.define([
 		]
 	});
 
-
-
 	QUnit.module("ManagedObject Model", {
 		beforeEach: function() {
 			this.obj = new sap.ui.test.TestElement("myObject");
 			this.subObj = new sap.ui.test.TestElement();
 			this.subObj2 = new sap.ui.test.TestElement();
 			this.subObj3 = new sap.ui.test.TestElement();
-			this.hiddenObject = new sap.ui.test.TestElement({value: "hidden"});
+			this.hiddenObject = new sap.ui.test.TestElement({
+				value: "hidden"
+			});
 			this.obj.addAggregation("_hiddenObjects", this.hiddenObject);
 			this.template = new sap.ui.test.TestElement({
 				value: "{value}"
@@ -166,7 +173,7 @@ sap.ui.define([
 		}
 	});
 
-//	check default settings
+	//	check default settings
 	QUnit.test("Create a ManagedObject Model - Property Access", function(assert) {
 
 		var oModel = this.oManagedObjectModel;
@@ -177,18 +184,7 @@ sap.ui.define([
 
 		// access non existing
 		var aNonExistingPropertyPaths = [
-			"/abc",
-			"/abc/def",
-			"/@id/def",
-			"/value/def",
-			"/stringValue/def",
-			"/floatValue/def",
-			"/intValue/def",
-			"/stringArray/def",
-			"/floatArray/def",
-			"/intArray/def",
-			"/booleanArray/def",
-			"/objectValue/def"
+			"/abc", "/abc/def", "/@id/def", "/value/def", "/stringValue/def", "/floatValue/def", "/intValue/def", "/stringArray/def", "/floatArray/def", "/intArray/def", "/booleanArray/def", "/objectValue/def"
 		];
 		for (var i = 0; i < aNonExistingPropertyPaths.length; i++) {
 			assert.equal(oModel.getProperty(aNonExistingPropertyPaths[i]), null, "Property " + aNonExistingPropertyPaths[i] + " does not exist");
@@ -196,9 +192,8 @@ sap.ui.define([
 
 		// access existing with default values
 		var mProperties = this.obj.getMetadata().getAllProperties();
-		for (var n in mProperties) {
-			var oProperty = mProperties[n],
-			oValue = oModel.getProperty("/" + oProperty.name);
+		for ( var n in mProperties) {
+			var oProperty = mProperties[n], oValue = oModel.getProperty("/" + oProperty.name);
 			if (Array.isArray(oValue)) {
 				assert.equal(oValue.length, oProperty.defaultValue.length, "Property " + oProperty.name + " exists and has expected default value");
 			} else {
@@ -238,31 +233,43 @@ sap.ui.define([
 		// create a property binding with a relative path
 		var oRootObject = oModel.getRootObject();
 
-		oRootObject.bindProperty("value",{path:"stringValue"});
+		oRootObject.bindProperty("value", {
+			path: "stringValue"
+		});
 		assert.equal(oModel._oObserver.isObserved(oModel._oObject, {
-			properties: ["stringValue"]
-		}),false,"The 'stringValue' property is not observed");
+			properties: [
+				"stringValue"
+			]
+		}), false, "The 'stringValue' property is not observed");
 		oRootObject.setModel(oModel);
 		assert.equal(oModel._oObserver.isObserved(oRootObject, {
-			properties: ["stringValue"]
-		}),false,"The 'stringValue' property is not observed");
+			properties: [
+				"stringValue"
+			]
+		}), false, "The 'stringValue' property is not observed");
 		oRootObject.setBindingContext(oModel.getContext("/"));
 		assert.equal(oModel._oObserver.isObserved(oRootObject, {
-			properties: ["stringValue"]
-		}),true,"The 'stringValue' property is observed");
+			properties: [
+				"stringValue"
+			]
+		}), true, "The 'stringValue' property is observed");
 		assert.equal(oModel._mObservedCount.properties["myObject/@stringValue"], 1, "1 binding after there context is set for 'myObject/@stringValue'");
 
 		// create a property binding with an absolute path
 		var oBinding1 = oModel.bindProperty("/value");
 		assert.equal(oModel._oObserver.isObserved(oRootObject, {
-			properties: ["value"]
-		}),false,"The 'value' property is not observed");
+			properties: [
+				"value"
+			]
+		}), false, "The 'value' property is not observed");
 		assert.equal(oModel._mObservedCount.properties["myObject/@value"], undefined, "No binding is stored for 'myObject/@value'");
 		// adding a change handler causes the addBinding call on the model. This will add the change handler.
 		oBinding1.attachChange(fnPropertyChangeHandler);
 		assert.equal(oModel._oObserver.isObserved(oRootObject, {
-			properties: ["value"]
-		}),true,"The 'value' property is observed");
+			properties: [
+				"value"
+			]
+		}), true, "The 'value' property is observed");
 		assert.equal(oModel._mObservedCount.properties["myObject/@value"], 1, "1 binding is stored for 'myObject/@value'");
 		// create a second binding
 		var oBinding2 = oModel.bindProperty("/value");
@@ -273,14 +280,18 @@ sap.ui.define([
 		// detach the one change handler, now the model should still have any internal handlers to the _change
 		oBinding2.detachChange(fnPropertyChangeHandler);
 		assert.equal(oModel._oObserver.isObserved(oRootObject, {
-			properties: ["value"]
-		}),true,"The 'value' property is still observed");
+			properties: [
+				"value"
+			]
+		}), true, "The 'value' property is still observed");
 		assert.equal(oModel._mObservedCount.properties["myObject/@value"], 1, "1 binding is stored for 'myObject/@value'");
 		//detach the last change handler, now the model should not have any internal handlers to the _change
 		oBinding1.detachChange(fnPropertyChangeHandler);
 		assert.equal(oModel._oObserver.isObserved(oRootObject, {
-			properties: ["value"]
-		}),false,"The 'value' property is not observed");
+			properties: [
+				"value"
+			]
+		}), false, "The 'value' property is not observed");
 		assert.equal(oModel._mObservedCount.properties["myObject/@value"], undefined, "No binding is stored for 'myObject/@value'");
 	});
 
@@ -292,15 +303,19 @@ sap.ui.define([
 		// create a aggregation binding
 		var oBinding1 = oModel.bindAggregation("/singleAggr");
 		assert.equal(oModel._oObserver.isObserved(oModel._oObject, {
-			aggregations: ["singleAggr"]
-		}),false,"The 'singleAggr' aggregation is not observed");
-		assert.equal(oModel._mObservedCount.aggregations["myObject/@singleAggr"], undefined , "No bindings are stored for 'myObject/@singleAggr'");
+			aggregations: [
+				"singleAggr"
+			]
+		}), false, "The 'singleAggr' aggregation is not observed");
+		assert.equal(oModel._mObservedCount.aggregations["myObject/@singleAggr"], undefined, "No bindings are stored for 'myObject/@singleAggr'");
 
 		// adding a change handler causes the addBinding call on the model. This will add the change handler.
 		oBinding1.attachChange(fnAggregationChangeHandler);
 		assert.equal(oModel._oObserver.isObserved(oModel._oObject, {
-			aggregations: ["singleAggr"]
-		}),true,"The 'singleAggr' aggregation is observed");
+			aggregations: [
+				"singleAggr"
+			]
+		}), true, "The 'singleAggr' aggregation is observed");
 		assert.equal(oModel._mObservedCount.aggregations["myObject/@singleAggr"], 1, "1 binding is stored for 'myObject/@singleAggr'");
 		// create a second binding
 		var oBinding2 = oModel.bindProperty("/singleAggr");
@@ -312,14 +327,18 @@ sap.ui.define([
 		oBinding2.detachChange(fnAggregationChangeHandler);
 		assert.equal(oModel._mObservedCount.aggregations["myObject/@singleAggr"], 1, "1 binding is stored for 'myObject/@singleAggr'");
 		assert.equal(oModel._oObserver.isObserved(oModel._oObject, {
-			aggregations: ["singleAggr"]
-		}),true,"The 'singleAggr' aggregation is still observed");
+			aggregations: [
+				"singleAggr"
+			]
+		}), true, "The 'singleAggr' aggregation is still observed");
 		// detach the last change handler, now the model should not have any internal handlers to the _change
 		oBinding1.detachChange(fnAggregationChangeHandler);
 		assert.equal(oModel._oObserver.isObserved(oModel._oObject, {
-			aggregations: ["singleAggr"]
-		}),false,"The 'singleAggr' aggregation is not observed");
-		assert.equal(oModel._mObservedCount.aggregations["myObject/@singleAggr"], undefined , "No bindings are stored for 'myObject/@singleAggr'");
+			aggregations: [
+				"singleAggr"
+			]
+		}), false, "The 'singleAggr' aggregation is not observed");
+		assert.equal(oModel._mObservedCount.aggregations["myObject/@singleAggr"], undefined, "No bindings are stored for 'myObject/@singleAggr'");
 	});
 
 	QUnit.test("ManagedObject Model  - Multi Aggregation Binding - Registration and Housekeeping", function(assert) {
@@ -331,14 +350,18 @@ sap.ui.define([
 		var oBinding1 = oModel.bindAggregation("/subObjects");
 		// as there is no change handler attached to the property binding, the handler is not yet registerd
 		assert.equal(oModel._oObserver.isObserved(oModel._oObject, {
-			aggregations: ["subObjects"]
-		}),false,"The 'subObjects' aggregation is not observed");
-		assert.equal(oModel._mObservedCount.aggregations["myObject/@subObjects"], undefined , "No bindings are stored for 'myObject/@subObjects'");
+			aggregations: [
+				"subObjects"
+			]
+		}), false, "The 'subObjects' aggregation is not observed");
+		assert.equal(oModel._mObservedCount.aggregations["myObject/@subObjects"], undefined, "No bindings are stored for 'myObject/@subObjects'");
 		// adding a change handler causes the addBinding call on the model. This will add the change handler.
 		oBinding1.attachChange(fnAggregationChangeHandler);
 		assert.equal(oModel._oObserver.isObserved(oModel._oObject, {
-			aggregations: ["subObjects"]
-		}),true,"The 'subObjects' aggregation is observed");
+			aggregations: [
+				"subObjects"
+			]
+		}), true, "The 'subObjects' aggregation is observed");
 		assert.equal(oModel._mObservedCount.aggregations["myObject/@subObjects"], 1, "1 binding is stored for 'myObject/@subObjects'");
 		// create a second binding
 		var oBinding2 = oModel.bindProperty("/subObjects");
@@ -350,14 +373,18 @@ sap.ui.define([
 		oBinding2.detachChange(fnAggregationChangeHandler);
 		assert.equal(oModel._mObservedCount.aggregations["myObject/@subObjects"], 1, "1 binding is stored for 'myObject/@subObjects'");
 		assert.equal(oModel._oObserver.isObserved(oModel._oObject, {
-			aggregations: ["subObjects"]
-		}),true,"The 'subObjects' aggregation is still observed");
+			aggregations: [
+				"subObjects"
+			]
+		}), true, "The 'subObjects' aggregation is still observed");
 		// detach the last change handler, now the model should not have any internal handlers to the _change
 		oBinding1.detachChange(fnAggregationChangeHandler);
 		assert.equal(oModel._oObserver.isObserved(oModel._oObject, {
-			aggregations: ["subObjects"]
-		}),false,"The 'subObjects' aggregation is not observed");
-		assert.equal(oModel._mObservedCount.aggregations["myObject/@subObjects"], undefined , "No bindings are stored for 'myObject/@subObjects'");
+			aggregations: [
+				"subObjects"
+			]
+		}), false, "The 'subObjects' aggregation is not observed");
+		assert.equal(oModel._mObservedCount.aggregations["myObject/@subObjects"], undefined, "No bindings are stored for 'myObject/@subObjects'");
 	});
 
 	QUnit.test("ManagedObject Model  - Property Binding - Value Checks", function(assert) {
@@ -367,12 +394,11 @@ sap.ui.define([
 		assert.equal(oModel.getProperty("/value"), "", "Property exists and has default value");
 
 		var sExpectedValue = "hello";
-			var fnPropertyChangeHandler = function() {
+		var fnPropertyChangeHandler = function() {
 			assert.equal(oPropertyBinding.getValue(), sExpectedValue, "Binding change event fired for property value with " + sExpectedValue);
 		};
 		var oPropertyBinding = oModel.bindProperty("/value");
 		oPropertyBinding.attachChange(fnPropertyChangeHandler);
-
 
 		assert.equal(oModel.setProperty("/value", "hello"), true, "Property set");
 		// TODO: Do this for all properties
@@ -380,7 +406,9 @@ sap.ui.define([
 		assert.equal(oModel.getProperty("/value/@bound"), false, "Value property is not bound");
 
 		var oControl = oModel.getRootObject();
-		oControl.bindProperty("stringValue", {path:"/value"});
+		oControl.bindProperty("stringValue", {
+			path: "/value"
+		});
 		oControl.setModel(oModel);
 		assert.equal(oModel.getProperty("/stringValue/@bound"), true, "stringValue property is bound");
 
@@ -401,7 +429,10 @@ sap.ui.define([
 			iCount++;
 		});
 		var iCount = 0;
-		oControl.bindProperty("stringValue", {path:"/booleanValue", type:"sap.ui.model.type.Boolean"});
+		oControl.bindProperty("stringValue", {
+			path: "/booleanValue",
+			type: "sap.ui.model.type.Boolean"
+		});
 		assert.equal(iCount, 1, "BindingInfo has changed");
 		assert.equal(oControl.getProperty("booleanValue"), false, "Boolean is still false via type");
 		assert.equal(oControl.setProperty("stringValue", "true"), oControl, "Changed the stringValue");
@@ -426,7 +457,6 @@ sap.ui.define([
 
 	});
 
-
 	QUnit.test("ManagedObject Model  - Aggregation Access", function(assert) {
 		var oModel = this.oManagedObjectModel;
 		assert.equal(oModel.getAggregation("/content"), null, "Access none existing aggregation is null");
@@ -445,6 +475,23 @@ sap.ui.define([
 		assert.equal(jQuery.isArray(oResult), true, "Access a multi aggregation that is not set is empty array");
 	});
 
+	QUnit.test("ManagedObject Model  - Aggregations with altType", function(assert) {
+		var oModel = this.oManagedObjectModel;
+		var oAltObject = new sap.ui.test.TestElement({
+			altType: "{obj>/altType}"
+		});
+		oAltObject.setModel(oModel, "obj");
+		assert.equal(oAltObject.getAggregation("altType"), null, "As there is currently no content in the altType we retrieve null");
+
+		//changing via an altType
+		this.obj.setAggregation("altType", "String");
+		assert.equal(oAltObject.getAggregation("altType"), "String", "Setting the string altType on the control feeds this type to the model");
+		this.obj.setAggregation("altType", 42);
+		assert.equal(oAltObject.getAggregation("altType"), 42, "Setting the number altType on the control feeds this type to the model");
+
+		this.obj.setAggregation("altType", true);
+		assert.equal(oAltObject.getAggregation("altType"), true, "Setting the number altType on the control feeds this type to the model");
+	});
 
 	QUnit.test("ManagedObject Model  - Aggregation Binding", function(assert) {
 		assert.equal(this.oManagedObjectModel.getAggregation("/singleAggr"), null, "Access a single aggregation that is not set");
@@ -465,19 +512,11 @@ sap.ui.define([
 		assert.equal(oBinding.getPath(), "/notExist", "Binding path is correctly set for aggregation binding");
 	});
 
-
 	QUnit.test("ManagedObject Model  - List Binding", function(assert) {
 		assert.equal(this.oManagedObjectModel.getAggregation("/subObjects").length === 0, true, "Access a multi aggregation that is not set");
-		var oBinding = this.oManagedObjectModel.bindList("/subObjects"),
-		oLengthBinding = this.oManagedObjectModel.bindProperty("/subObjects/@length"),
-		that = this,
-		iCount = 1,
-		iCalls = 0,
-		iLength,
-		fHandler = function() {
+		var oBinding = this.oManagedObjectModel.bindList("/subObjects"), oLengthBinding = this.oManagedObjectModel.bindProperty("/subObjects/@length"), that = this, iCount = 1, iCalls = 0, iLength, fHandler = function() {
 			iCalls++;
-		},
-		fHandler2 = function() {
+		}, fHandler2 = function() {
 			assert.equal(oLengthBinding.getValue(), iLength, "Length binding called correctly");
 		};
 		oLengthBinding.attachChange(fHandler2);
@@ -532,7 +571,6 @@ sap.ui.define([
 		oLengthBinding.detachChange(fHandler2);
 	});
 
-
 	QUnit.test("ManagedObject Model - getManagedObject", function(assert) {
 		var oModel = this.oManagedObjectModel;
 
@@ -569,7 +607,6 @@ sap.ui.define([
 		assert.ok(oModel.getManagedObject("subObjects/0", createContext("/singleAggr")) === this.subObj3, "CONTEXT + PATH: Path to single entry of multiple Aggregation");
 	});
 
-
 	QUnit.test("ManagedObjectModel - Custom Data", function(assert) {
 		var sCustomDataPath = "/@custom";
 
@@ -579,10 +616,14 @@ sap.ui.define([
 		assert.equal(this.oManagedObjectModel.getProperty("abc", oCustomContext), "value abc", "Property abc is 'value abc' in custom data with context");
 		assert.equal(this.oManagedObjectModel.setProperty("abc", "value 2 abc", oCustomContext), true, "Property abc set to 'value 2 abc' in custom data with context");
 		assert.equal(this.oManagedObjectModel.getProperty("abc", oCustomContext), "value 2 abc", "Property abc is 'value 2 abc' in custom data with context");
-		this.oManagedObjectModel.setData({xyz: "value xyz"}, true);
+		this.oManagedObjectModel.setData({
+			xyz: "value xyz"
+		}, true);
 		assert.equal(this.oManagedObjectModel.getProperty(sCustomDataPath + "/abc"), "value 2 abc", "Property abc is still 'value 2 abc' in custom data with absolute path after merged setData");
 		assert.equal(this.oManagedObjectModel.getProperty(sCustomDataPath + "/xyz"), "value xyz", "Property xyz is 'value xyz' in custom data with absolute path after merged setData");
-		this.oManagedObjectModel.setData({def: "value def"});
+		this.oManagedObjectModel.setData({
+			def: "value def"
+		});
 		assert.equal(this.oManagedObjectModel.getProperty(sCustomDataPath + "/def"), "value def", "Property def is 'value def' in custom data with absolute path after setData");
 		assert.ok(!this.oManagedObjectModel.getProperty(sCustomDataPath + "/xyz"), "Property xyz not available after setData");
 		assert.equal(this.oManagedObjectModel.getJSON(), "{\"def\":\"value def\"}", "getJSON returns the stringified custom data");
@@ -598,95 +639,109 @@ sap.ui.define([
 		// test values for types
 		// maybe we can cover more types
 		var mTestProperties = {
-				"string" : ["", "\\", "{}","ÄÖÜß"],
-				"boolean" : [true, false],
-				"int" : [1, 2, 1000000000000],
-				"float" : [1.1, 2, 1000000000000.000000001]
+			"string": [
+				"", "\\", "{}", "ÄÖÜß"
+			],
+			"boolean": [
+				true, false
+			],
+			"int": [
+				1, 2, 1000000000000
+			],
+			"float": [
+				1.1, 2, 1000000000000.000000001
+			]
 		};
 		var mBlackList = {
-				"sap.m.DatePicker" : {
-					"displayFormatType": true
-				},
-				"sap.m.DateTimeInput" : {
-					"valueFormat": true
-				},
-				"sap.m.TimePicker" : {
-					"localeId": true
-				},
-				"sap.m.TimePickerSlider" : {
-					"selectedValue": true
-				},
-				"sap.m.UploadCollection": {
-					"noDataText" : true,
-					"noDataDescription": true,
-					"instantUpload": true
-				},
-				"sap.m.TableSelectDialog": {
-					"noDataText" : true
-				},
-				"sap.m.FeedContent": {
-					"contentText" : true
-				},
-				"sap.m.MaskInput": {
-					"placeholderSymbol" : true
-				},
-				"sap.m.NewsContent": {
-					"contentText" : true
-				},
-				"sap.m.SplitContainer": {
-					"masterButtonText" : true,
-					"backgroundOpacity" : [0,0.5,0.9,1]
-				},
-				"sap.m.Input": {
-					"selectedKey" : true
-				},
-				"sap.m.Select": {
-					"selectedItemId" : true
-				},
-				"sap.m.SelectList": {
-					"selectedItemId" : true
-				},
-				"sap.m.ComboBox": {
-					"selectedItemId" : true
-				},
-				"sap.m.SelectDialog": {
-					"noDataText" : true
-				},
-				"sap.m.SegmentedButton": {
-					"selectedKey" : true
-				},
-				"sap.m.ListBase": {
-					"noDataText" : true
-				},
-				"sap.m.IconTabBar": {
-					"selectedKey" : true,
-					"showSelection" : true
-				},
-				"sap.m.GrowingList": {
-					"triggerText" : true,
-					"scrollToLoad" : true,
-					"threshold": true
-				},
-				"sap.m.GenericTile": {
-					"header" : true
-				},
-				"sap.m.Carousel": {
-					"showBusyIndicator" : true
-				},
-				"sap.m.App": {
-					"backgroundOpacity" : [0,0.5,0.9,1]
-				},
-				"sap.m.Shell": {
-					"backgroundOpacity" : [0,0.5,0.9,1]
-				},
-				"sap.m._overflowToolbarHelpers.OverflowToolbarAssociativePopover" : true, // not processed at all
-				"sap.m.HeaderContainerItemContainer" : true, // not processed at all
-				"sap.m.TimePickerSliders" : true // not processed at all
+			"sap.m.DatePicker": {
+				"displayFormatType": true
+			},
+			"sap.m.DateTimeInput": {
+				"valueFormat": true
+			},
+			"sap.m.TimePicker": {
+				"localeId": true
+			},
+			"sap.m.TimePickerSlider": {
+				"selectedValue": true
+			},
+			"sap.m.UploadCollection": {
+				"noDataText": true,
+				"noDataDescription": true,
+				"instantUpload": true
+			},
+			"sap.m.TableSelectDialog": {
+				"noDataText": true
+			},
+			"sap.m.FeedContent": {
+				"contentText": true
+			},
+			"sap.m.MaskInput": {
+				"placeholderSymbol": true
+			},
+			"sap.m.NewsContent": {
+				"contentText": true
+			},
+			"sap.m.SplitContainer": {
+				"masterButtonText": true,
+				"backgroundOpacity": [
+					0, 0.5, 0.9, 1
+				]
+			},
+			"sap.m.Input": {
+				"selectedKey": true
+			},
+			"sap.m.Select": {
+				"selectedItemId": true
+			},
+			"sap.m.SelectList": {
+				"selectedItemId": true
+			},
+			"sap.m.ComboBox": {
+				"selectedItemId": true
+			},
+			"sap.m.SelectDialog": {
+				"noDataText": true
+			},
+			"sap.m.SegmentedButton": {
+				"selectedKey": true
+			},
+			"sap.m.ListBase": {
+				"noDataText": true
+			},
+			"sap.m.IconTabBar": {
+				"selectedKey": true,
+				"showSelection": true
+			},
+			"sap.m.GrowingList": {
+				"triggerText": true,
+				"scrollToLoad": true,
+				"threshold": true
+			},
+			"sap.m.GenericTile": {
+				"header": true
+			},
+			"sap.m.Carousel": {
+				"showBusyIndicator": true
+			},
+			"sap.m.App": {
+				"backgroundOpacity": [
+					0, 0.5, 0.9, 1
+				]
+			},
+			"sap.m.Shell": {
+				"backgroundOpacity": [
+					0, 0.5, 0.9, 1
+				]
+			},
+			"sap.m._overflowToolbarHelpers.OverflowToolbarAssociativePopover": true, // not processed at all
+			"sap.m.HeaderContainerItemContainer": true, // not processed at all
+			"sap.m.TimePickerSliders": true
+		// not processed at all
 		};
 
 		// get the controls from sap.m
-		var oLib = sap.ui.getCore().getLoadedLibraries()["sap.m"],
-		aControls = oLib.controls;
+		var oLib = sap.ui.getCore().getLoadedLibraries()["sap.m"], aControls = oLib.controls;
 
 		for (var i = 0; i < aControls.length; i++) {
 			var sControlName = aControls[i];
@@ -700,9 +755,8 @@ sap.ui.define([
 			var oModel = new ManagedObjectModel(oControl);
 			var iBindingCount = 0;
 			var mProperties = oControl.getMetadata().getProperties();
-			for (var n in mProperties) {
-				var oProperty = mProperties[n],
-				aTestValues = mTestProperties[oProperty.type];
+			for ( var n in mProperties) {
+				var oProperty = mProperties[n], aTestValues = mTestProperties[oProperty.type];
 				if (sControlName in mBlackList) {
 					if (mBlackList[sControlName][n] === true) {
 						continue;
@@ -755,7 +809,7 @@ sap.ui.define([
 		var oButton1 = oManagedObjectModel.getProperty("/#button1");
 
 		assert.ok(oButton1, "There is a button");
-		assert.equal(oButton1.getId(),sIdPrefix + "button1","We get the button");
+		assert.equal(oButton1.getId(), sIdPrefix + "button1", "We get the button");
 		assert.ok(oView.byId.called, "As the view has the marker interface sap.ui.core.IDScope the byId method is called");
 
 		var oButton2 = oView.byId("button2");
@@ -765,7 +819,7 @@ sap.ui.define([
 		var oPanel = oManagedObjectModel.getProperty("/#panel");
 
 		assert.ok(oPanel, "There is a panel");
-		assert.equal(oPanel.getId(),sIdPrefix + "panel","We get the correct panel");
+		assert.equal(oPanel.getId(), sIdPrefix + "panel", "We get the correct panel");
 
 		//Check whether observer works on property bindings with ids
 		var oPropertyBinding = oManagedObjectModel.bindProperty("/#button2/text");
@@ -800,7 +854,7 @@ sap.ui.define([
 		oModel.addBinding(oBinding2);
 		oModel.addBinding(oBinding3);
 
-		assert.equal(oModel.aBindings.length,3, "There are three bindings");
+		assert.equal(oModel.aBindings.length, 3, "There are three bindings");
 
 		var fnFilter = function(oBinding) {
 			if (oBinding == oBinding1) {
@@ -810,9 +864,8 @@ sap.ui.define([
 			return false;
 		};
 
-		oModel.checkUpdate(true,false,fnFilter);
-		assert.equal(aTrueBindings.length, 1,"The test is called an delivers true for one binding");
-		assert.deepEqual(aTrueBindings[0],oBinding1,"And this is exactly the first binding");
+		oModel.checkUpdate(true, false, fnFilter);
+		assert.equal(aTrueBindings.length, 1, "The test is called an delivers true for one binding");
+		assert.deepEqual(aTrueBindings[0], oBinding1, "And this is exactly the first binding");
 	});
 });
-

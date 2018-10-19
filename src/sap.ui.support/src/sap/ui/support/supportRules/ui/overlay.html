@@ -13,22 +13,8 @@
 				data-sap-ui-preload="async"
 				data-sap-ui-bindingSyntax="complex"
 				data-sap-ui-libs="sap.m, sap.ui.table, sap.ui.unified, sap.ui.layout, sap.tnt, sap.ui.support"
-				data-sap-ui-theme="sap_belize">
-		</script>
-		<script>
-			sap.ui.getCore().attachInit(function () {
-				var oPage = new sap.m.Page("page", {
-					showHeader: false,
-					backgroundDesign: "Solid",
-					content: [
-						sap.ui.xmlview({
-							viewName: "sap.ui.support.supportRules.ui.views.Main"
-						})
-					]
-				});
-
-				oPage.placeAt("content");
-			});
+				data-sap-ui-theme="sap_belize"
+				data-sap-ui-oninit="module:sap/ui/support/supportRules/ui/Overlay">
 		</script>
 	</head>
 

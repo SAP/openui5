@@ -3298,7 +3298,7 @@ sap.ui.define([
 	 * Collects all entities or entity types that shall be refreshed
 	 *
 	 * @param {object} oGroup The batchGroup
-	 * @param {map} mChangedEntities A map containing the changed entities of the bacthGroup
+	 * @param {map} mChangedEntities A map containing the changed entities of the batchGroup
 	 * @param {map} mEntityTypes A map containing the changed EntityTypes
 	 *
 	 * @private

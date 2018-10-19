@@ -82,6 +82,22 @@ html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
 	padding-bottom: 1rem;
 }
 
+/* 'index by version' entry item */
+.indexEntry {
+	padding-top: 0.9rem;
+	padding-left: 0.9rem;
+	padding-right: 0.6rem;
+	padding-bottom: 0.6rem;
+}
+
+.indexEntry .sapUiJSD > * {
+	margin-top: 0.2rem;
+}
+
+.indexEntry a:first-child {
+	font-weight: bold;
+}
+
 /************************************************* Custom control styles *********************************************/
 
 /* Search */
@@ -2085,4 +2101,19 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 
 .specialListFeedItem p {
 	margin: 0.5rem 0;
+}
+
+/* External links disclaimer */
+.sapUISDKExternalLink {
+	cursor: pointer;
+	width: 1rem;
+}
+.sapUIDisclaimerLink img:first-child {
+	margin-left: 0.8rem;
+}
+.sapUIDisclaimerLink :first-child {
+	display: inline;
+}
+.sapUiDisclaimerCommunityLink {
+	margin-top: 1.25rem;
 }

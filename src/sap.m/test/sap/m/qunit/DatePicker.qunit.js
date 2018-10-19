@@ -580,6 +580,25 @@ sap.ui.define([
 		oDP = null;
 	});
 
+	QUnit.test("setMaxDate to yesterday should not throw error", function (assert) {
+		// Arrange
+		var oDate = new Date(),
+			oDP = new DatePicker("DatePickerApi").placeAt("qunit-fixture");
+
+		oDate.setDate(oDate.getDate() - 1);
+
+		// Act
+		oDP.setMaxDate(oDate);
+		sap.ui.getCore().applyChanges();
+		qutils.triggerEvent("click", "DatePickerApi-icon");
+
+		// Assert
+		assert.ok(true, "setMaxDate did not throw an error when maxDate is yesterday");
+
+		// Clean
+		oDP.destroy();
+	});
+
 	QUnit.test("set(Date)Value to (null)empty string", function(assert) {
 		var oDP1 = new DatePicker({
 				value: "20170101",

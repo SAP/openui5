@@ -256,7 +256,7 @@ sap.ui.define([
 			if (iLayerA !== iLayerB){
 				return iLayerA - iLayerB;
 			}
-			return oChangeA.creation - oChangeB.creation;
+			return new Date(oChangeA.creation) - new Date(oChangeB.creation);
 		}
 
 		FakeLrepConnectorStorage.prototype._sortChanges = function(mResult) {

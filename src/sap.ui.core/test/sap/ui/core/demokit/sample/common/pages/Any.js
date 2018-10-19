@@ -3,10 +3,11 @@
  */
 sap.ui.require([
 	"sap/ui/core/sample/common/Helper",
+	"sap/ui/support/RuleAnalyzer",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/TestUtils",
 	"sap/ui/test/matchers/Properties"
-], function (Helper, Opa5, TestUtils, Properties) {
+], function (Helper, RuleAnalyzer, Opa5, TestUtils, Properties) {
 	"use strict";
 
 	/*
@@ -148,9 +149,9 @@ sap.ui.require([
 								return;
 							}
 
-							jQuery.sap.support.analyze({type : 'global'}).then(function() {
+							RuleAnalyzer.analyze({type : 'global'}).then(function() {
 								var oIssues =
-										jQuery.sap.support.getLastAnalysisHistory().issues || [];
+									RuleAnalyzer.getLastAnalysisHistory().issues || [];
 
 								oIssues = oIssues.filter(function(oIssue) {
 									if (oIssue.severity !== "High"

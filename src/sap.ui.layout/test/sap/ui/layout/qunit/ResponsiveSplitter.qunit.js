@@ -607,4 +607,48 @@ sap.ui.define([
 		oResponsiveSplitter.destroy();
 		oResponsiveSplitter = null;
 	});
+
+	QUnit.test("Order of SplitPane's 'content' and 'layoutData' shouldn't matter.", function (assert) {
+		// Setup
+		var oPaneContainer = new PaneContainer({
+			panes: [
+				new SplitPane({
+					content: [new Text("leftContent", {
+						text: "Content set before layout data"
+					})],
+					layoutData: new SplitterLayoutData({
+						size: "200px"
+					})
+				}),
+				new SplitPane({
+					layoutData: new SplitterLayoutData({
+						size: "350px"
+					}),
+					content: [new Text("rightContent", {
+						text: "Content set after layout data"
+					})]
+				})
+			]
+		});
+
+		var oResponsiveSplitter = new ResponsiveSplitter({
+			rootPaneContainer: oPaneContainer
+		});
+
+		// Act
+		oResponsiveSplitter.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+
+
+		var iLeftWidth = jQuery("#leftContent").parent().width(),
+			iRightWidth = jQuery("#rightContent").parent().width();
+
+		// Assert
+		assert.ok(iLeftWidth === 200, "'size' from layoutData should be applied");
+		assert.ok(iRightWidth === 350, "'size' from layoutData should be applied");
+
+		// Cleanup
+		oResponsiveSplitter.destroy();
+		oResponsiveSplitter = null;
+	});
 });

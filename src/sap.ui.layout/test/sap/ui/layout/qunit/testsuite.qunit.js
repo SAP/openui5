@@ -84,6 +84,14 @@ sap.ui.define(function() {
 					]
 				}
 			},
+			"VerticalLayout": {
+				coverage: {
+					only: ["sap/ui/layout/VerticalLayout"]
+				},
+				ui5: {
+					libs: ["sap.ui.commons"]
+				}
+			},
 			"AssociativeSplitter": {
 				coverage: {
 					only: ["sap/ui/layout/AssociativeSplitter"]
@@ -133,6 +141,11 @@ sap.ui.define(function() {
 			"Designtime-Splitter": {
 				group: "Designtime",
 				module: "./designtime/Splitter.qunit",
+				sinon: false
+			},
+			"Designtime-VerticalLayout": {
+				group: "Designtime",
+				module: "./designtime/VerticalLayout.qunit",
 				sinon: false
 			}
 		}

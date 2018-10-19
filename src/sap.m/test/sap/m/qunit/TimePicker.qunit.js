@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/InvisibleText",
 	"sap/ui/test/TestUtils",
 	"sap/m/TimePickerSliders",
 	"sap/m/TimePickerSlider",
@@ -27,6 +28,7 @@ sap.ui.define([
 	qutils,
 	createAndAppendDiv,
 	DateFormat,
+	InvisibleText,
 	TestUtils,
 	TimePickerSliders,
 	TimePickerSlider,
@@ -2396,6 +2398,20 @@ sap.ui.define([
 
 	QUnit.test("Time picker aria references: Scenario 8: 'aria-labelledby' & 'aria-describedby' are correctly referenced with its external label", function (assert) {
 		this.fnTestReferencing(this.oTP, assert, this.oRB, [true, false, false]);
+	});
+
+	QUnit.test("Popover's placeholder text", function (assert) {
+		// Prepare
+		var sPlaceholderId = InvisibleText.getStaticId("sap.m", "TIMEPICKER_SET_TIME"),
+			oPicker;
+
+		// Act
+		this.oTP.toggleOpen(false); // Open TimePicker's popover
+		oPicker = this.oTP._getPicker();
+
+		// Assert
+		assert.ok(oPicker.getAriaLabelledBy().indexOf(sPlaceholderId) !== -1, "Placeholder's reference is set on API level");
+		assert.ok(oPicker.$().attr("aria-labelledby").indexOf(sPlaceholderId) !== -1, "Placeholder reference can be found in the DOM");
 	});
 
 	QUnit.module("MaskInput integration", {

@@ -79,7 +79,7 @@ sap.ui.define([
 	AddXML.prototype._applyChange = function(vChange) {
 		// preload the module to be applicable in this session
 		var mModulePreloads = {};
-		mModulePreloads[vChange.getModuleName] = this.getFragment();
+		mModulePreloads[vChange.getModuleName()] = this.getFragment();
 		sap.ui.require.preload(mModulePreloads);
 
 		return FlexCommand.prototype._applyChange.apply(this, arguments);

@@ -2,8 +2,8 @@
 * ${copyright}
 */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject", "sap/base/Log"],
-function (jQuery, ManagedObject, Log) {
+sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject", "sap/base/Log", "sap/ui/core/Locale"],
+function (jQuery, ManagedObject, Log, Locale) {
 	"use strict";
 
 	/**
@@ -23,7 +23,7 @@ function (jQuery, ManagedObject, Log) {
 		"fi": "kolmivaihekilowattituntimittari",
 		"fr": "hippopotomonstrosesquippedaliophobie",
 		"de": "Kindercarnavalsoptochtvoorbereidingswerkzaamhedenplan",
-		"el": "ηλεκτροεγκεφαλογράφημα", // no native css hyphenation by documentation, but will be tested
+		"el-monoton": "ηλεκτροεγκεφαλογράφημα", // no native css hyphenation by documentation, but will be tested
 		"hi": "किंकर्तव्यविमूढ़", // no native css hyphenation by documentation, but will be tested
 		"hu": "Megszentségteleníthetetlenségeskedéseitekért",
 		"it": "hippopotomonstrosesquippedaliofobia",
@@ -58,7 +58,7 @@ function (jQuery, ManagedObject, Log) {
 		'fi': true,
 		'fr': true,
 		'de': true,
-		'el': true,
+		'el-monoton': true,
 		'hi': true,
 		'hu': true,
 		'it': true,
@@ -128,7 +128,9 @@ function (jQuery, ManagedObject, Log) {
 			aLanguagesQueue = [];
 		}
 		oHyphenationInstance.bLoading = false;
-		resolve(sLanguage);
+		resolve(
+			getLanguageFromPattern(sLanguage)
+		);
 	}
 
 	/**
@@ -147,10 +149,14 @@ function (jQuery, ManagedObject, Log) {
 			"path": jQuery.sap.getResourcePath("sap/ui/thirdparty/hyphenopoly")
 		};
 
-		// we are passing only 2 properties to hyphenopoly: hyphen and exceptions
+		// we are passing only 3 properties to hyphenopoly: hyphen, exceptions and minWordLength
 		if (oConfig) {
 			if ("hyphen" in oConfig) {
 				oConfigurationForLanguage.hyphen = oConfig.hyphen;
+			}
+
+			if ("minWordLength" in oConfig) {
+				oConfigurationForLanguage.minWordLength = oConfig.minWordLength;
 			}
 
 			if ("exceptions" in oConfig) {
@@ -284,27 +290,42 @@ function (jQuery, ManagedObject, Log) {
 	 * @private
 	 */
 	function getLanguage(sLang) {
-		var configuration = sap.ui.getCore().getConfiguration().getLocale();
-		var sLanguage;
+		var oLocale;
 		if (sLang) {
-			sLanguage = sLang.toLowerCase();
+			oLocale = new Locale(sLang);
 		} else {
-			sLanguage = configuration.getLanguage().toLowerCase();
+			oLocale = sap.ui.getCore().getConfiguration().getLocale();
+		}
 
-			if (configuration.getRegion()) {
-				sLanguage += "-" + configuration.getRegion().toLowerCase();
-			}
+		var sLanguage = oLocale.getLanguage().toLowerCase();
 
-			// adjustment of the language to corresponds to Hyphenopoly .hpb files
-			if (sLanguage == "en" && !configuration.getRegion()) {
-				sLanguage += "-us";
-			}
-			if (sLanguage == "no") {
+		// adjustment of the language to corresponds to Hyphenopoly pattern files (.hpb files)
+		switch (sLanguage) {
+			case "en":
+				sLanguage = "en-us";
+				break;
+			case "nb":
 				sLanguage = "nb-no";
-			}
+				break;
+			case "no":
+				sLanguage = "nb-no";
+				break;
+			case "el":
+				sLanguage = "el-monoton";
+				break;
 		}
 
 		return sLanguage;
+	}
+
+	/**
+	 * Gets language code from pattern name (hbp file name).
+	 *
+	 * @param {string} sPatternName The hpb file name
+	 * @return {string} Language code
+	 */
+	function getLanguageFromPattern(sPatternName) {
+		return sPatternName.substring(0, 2); // get the main language code only
 	}
 
 	/**
@@ -315,13 +336,13 @@ function (jQuery, ManagedObject, Log) {
 	 */
 	function fireError(sErrorMessage) {
 		oHyphenationInstance.fireError(sErrorMessage);
-		jQuery.sap.log.error("[SAPUI5 Hyphenation] Hyphenation API:" + sErrorMessage);
+		jQuery.sap.log.error("[UI5 Hyphenation] Hyphenation API: " + sErrorMessage);
 		oHyphenationInstance.bLoading = false;
 	}
 
 	/**
 	 * @class
-	 * This class provides methods to evaluate the possibility of using browser-native hyphenation or to initialize and use third-party hyphenation module.
+	 * This class provides methods for evaluating the possibility of using browser-native hyphenation or initializing and using a third-party hyphenation module.
 	 *
 	 * <h3>Overview</h3>
 	 * By using this API, a developer can check if browser-native hyphenation is supported for a particular language.
@@ -330,7 +351,7 @@ function (jQuery, ManagedObject, Log) {
 	 *
 	 * It is used internally by controls that support the <code>wrappingType:{@link sap.m.WrappingType WrappingType.Hyphenated}</code> property.
 	 *
-	 * As the class is singleton, an instance should be acquired from {@link sap.ui.core.hyphenation.Hyphenation#getInstance Hyphenation#getInstance}.
+	 * As the class is singleton, an instance should be acquired from {@link sap.ui.core.hyphenation.Hyphenation#sap.ui.core.hyphenation.Hyphenation.getInstance Hyphenation#getInstance}.
 	 *
 	 * <h3>Usage</h3>
 	 * <h4>When to use:</h4>
@@ -349,9 +370,9 @@ function (jQuery, ManagedObject, Log) {
 	 *
 	 * <h3>Example</h3>
 	 * <pre>
-	 * if (!Hyphenation.getInstance().canUseNativeHyphenation("en-us")) {
-	 * 	Hyphenation.getInstance().initialize("en-us").then(function() {
-	 * 		console.log(Hyphenation.getInstance().hyphenate("An example text to hyphenate., "en-us"));
+	 * if (!Hyphenation.getInstance().canUseNativeHyphenation("en")) {
+	 * 	Hyphenation.getInstance().initialize("en").then(function() {
+	 * 		console.log(Hyphenation.getInstance().hyphenate("An example text to hyphenate.", "en"));
 	 * 	});
 	 * }
 	 * </pre>
@@ -361,7 +382,7 @@ function (jQuery, ManagedObject, Log) {
 	 * or inconsistencies of the hyphenation. Also, the variety of supported languages is
 	 * outside the scope of our control and may be subject to future changes.
 	 *
-	 * @see {@link topic:6322164936f047de941ec522b95d7b70 Text Controls Hyphenation}
+	 * @see {@link topic:6322164936f047de941ec522b95d7b70 Hyphenation for Text Controls}
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
 	 * @version ${version}
@@ -395,12 +416,16 @@ function (jQuery, ManagedObject, Log) {
 	 * Checks if native hyphenation works in the current browser for the given language.
 	 *
 	 * @param {string} [sLang] For what language to check. The global application language is the default one
-	 * @returns {boolean} True if native hyphenation works for the given language
+	 * @returns {(boolean|null)} True if native hyphenation works for the given language. False if native hyphenation will not work. Null if the language is not known to the Hyphenation API
 	 * @public
 	 */
 	Hyphenation.prototype.canUseNativeHyphenation = function (sLang) {
 		var sLanguage = getLanguage(sLang);
 		var bCanUseNativeHyphenation;
+
+		if (!this.isLanguageSupported(sLang)) {
+			return null;
+		}
 
 		if (!oBrowserSupportCSS.hasOwnProperty(sLanguage)) {
 			createTest(sLanguage);
@@ -419,18 +444,56 @@ function (jQuery, ManagedObject, Log) {
 			bCanUseNativeHyphenation = oBrowserSupportCSS[sLanguage];
 		}
 
-		Log.info("[SAPUI5 Hyphenation] language is " + sLanguage);
+		Log.info("[UI5 Hyphenation] language is " + sLanguage);
 
 		if (bCanUseNativeHyphenation) {
-			Log.info("[SAPUI5 Hyphenation] native css hyphenation");
+			Log.info("[UI5 Hyphenation] native css hyphenation");
 		} else {
-			Log.info("[SAPUI5 Hyphenation] third-party module hyphenation");
+			Log.info("[UI5 Hyphenation] third-party module hyphenation");
 		}
 		return bCanUseNativeHyphenation;
 	};
 
 	/**
+	 * Checks if third-party hyphenation works for the given language.
+	 *
+	 * @param {string} [sLang] For what language to check. The global application language is the default one.
+	 * @returns {boolean|null} True if third-party hyphenation works for the given language. False if third-party hyphenation doesn't work. Null if the language is not known to the <code>Hyphenation</code> API.
+	 * @public
+	 */
+	Hyphenation.prototype.canUseThirdPartyHyphenation = function (sLang) {
+		var sLanguage = getLanguage(sLang);
+
+		if (!this.isLanguageSupported(sLang)) {
+			return null;
+		}
+
+		return oThirdPartySupportedLanguages.hasOwnProperty(sLanguage) && oThirdPartySupportedLanguages[sLanguage];
+	};
+
+	/**
+	 * Checks if <code>Hyphenation</code> API knows about the given language.
+	 *
+	 * If it is a known language, the API can be used to check browser-native and third-party support.
+	 *
+	 * @param {string} [sLang] For what language to check. The global application language is the default one.
+	 * @returns {boolean} True if the language is known to the <code>Hyphenation</code> API
+	 * @public
+	 */
+	Hyphenation.prototype.isLanguageSupported = function (sLang) {
+		var sLanguage = getLanguage(sLang),
+			bIsSupported = oTestingWords.hasOwnProperty(sLanguage);
+
+		if (bIsSupported) {
+			Log.info("[UI5 Hyphenation] " + sLang + " is not supported by Hyphenation API. Browser-native hyphenation may work.");
+		}
+
+		return bIsSupported;
+	};
+
+	/**
 	 * Hyphenates the given text with the third-party library.
+	 *
 	 * Adds the soft hyphen symbol at the places where words can break.
 	 *
 	 * @param {string} sText The text to hyphenate
@@ -441,7 +504,7 @@ function (jQuery, ManagedObject, Log) {
 	Hyphenation.prototype.hyphenate = function (sText, sLang) {
 		var sLanguage = getLanguage(sLang);
 		if (!oHyphenateMethods.hasOwnProperty(sLanguage)) {
-			fireError("[SAPUI5 Hyphenation] The language is not initialized. Please first call the initialize function with a specific language");
+			fireError("The language " + sLang + " is not initialized. Please first call the initialize function with a specific language");
 			return sText;
 		}
 		return oHyphenateMethods[sLanguage](sText);
@@ -454,7 +517,9 @@ function (jQuery, ManagedObject, Log) {
 	 * @public
 	 */
 	Hyphenation.prototype.getInitializedLanguages = function () {
-		return Object.keys(oHyphenateMethods);
+		return Object.keys(oHyphenateMethods).map(function(sLangPattern) {
+			return getLanguageFromPattern(sLangPattern);
+		});
 	};
 
 	/**
@@ -465,11 +530,13 @@ function (jQuery, ManagedObject, Log) {
 	 * @public
 	 */
 	Hyphenation.prototype.isLanguageInitialized = function (sLang) {
-		return this.getInitializedLanguages().indexOf(sLang) != -1;
+		var sLang = getLanguage(sLang);
+		return Object.keys(oHyphenateMethods).indexOf(sLang) != -1;
 	};
 
 	/**
 	 * Gets a list of word exceptions which was added for the given language.
+	 *
 	 * A word exception is a custom-defined hyphenation for a specific word. It's useful if the hyphenation algorithm does not hyphenate a given word correctly.
 	 *
 	 * @see sap.ui.core.hyphenation.Hyphenation#addExceptions
@@ -478,21 +545,23 @@ function (jQuery, ManagedObject, Log) {
 	 * @private
 	 */
 	Hyphenation.prototype.getExceptions = function (sLang) {
+		var sLang = getLanguage(sLang);
 		if (this.isLanguageInitialized(sLang)) {
 			return window.hyphenopoly.languages[sLang].exceptions;
 		} else {
-			fireError("[SAPUI5 Hyphenation] Language not initialized");
+			fireError("[UI5 Hyphenation] Language " + sLang + " not initialized");
 		}
 
 	};
 
 	/**
 	 * Adds a list of exceptions defining how specific words should be hyphenated.
+	 *
 	 * This way a custom-defined hyphenation for a specific word can be defined. It's useful if the hyphenation algorithm does not hyphenate a given word correctly.
 	 *
 	 * @example
 	 *
-	 *   addExceptions("en-us", {"academy": "a-c-a-d-e-m-y"})
+	 *   addExceptions("en", {"academy": "a-c-a-d-e-m-y"})
 	 *
 	 * @param {string} sLang The language for which an exception is added
 	 * @param {map} oExceptions An object map of word exceptions. Example <code>{"academy": "a-c-a-d-e-m-y", "word": "w-o-r-d"}</code>
@@ -500,30 +569,32 @@ function (jQuery, ManagedObject, Log) {
 	 * @private
 	 */
 	Hyphenation.prototype.addExceptions = function (sLang, oExceptions) {
+		var sLang = getLanguage(sLang);
 		if (this.isLanguageInitialized(sLang)) {
 			Object.keys(oExceptions).forEach(function (key) {
 				window.hyphenopoly.languages[sLang].cache[key] = oExceptions[key];
 				window.hyphenopoly.languages[sLang].exceptions[key] = oExceptions[key];
 			});
 		} else {
-			fireError("[SAPUI5 Hyphenation] Language not initialized");
+			fireError("[UI5 Hyphenation] Language " + sLang + " not initialized");
 		}
 	};
 
 	/**
 	 * Initializes the third-party library for the given language.
+	 *
 	 * Loads required third-party resources and language-specific resources.
 	 *
 	 * @example
-	 * Hyphenation.getInstance().initialize("en-us").then(function() {
-	 * 	console.log(Hyphenation.getInstance().hyphenate("An example text to hyphenate.", "en-us"));
+	 * Hyphenation.getInstance().initialize("en").then(function() {
+	 * 	console.log(Hyphenation.getInstance().hyphenate("An example text to hyphenate.", "en"));
 	 * });
 	 *
 	 * @param {string} [sLang] The language for which the third-party library should be initialized. The global application language is the default one
-	 * @param {map} [oConfig] A configuration for the given language
 	 * @returns {Promise} A promise which resolves when all language resources are loaded. Rejects if the language is not supported
 	 * @public
 	 */
+	// Parameter oConfig is not mentioned in jsdoc on purpose. It is only for internal use for now.
 	Hyphenation.prototype.initialize = function (sLang, oConfig) {
 		var sLanguage = getLanguage(sLang);
 
@@ -533,6 +604,7 @@ function (jQuery, ManagedObject, Log) {
 		 * @example
 		 * {
 		 *	hyphen: "-",
+		 *	minWordLength: 6,
 		 *	exceptions: {
 		 *		"academy": "a-c-a-d-e-m-y",
 		 *		"word": "w-o-r-d"
@@ -572,9 +644,9 @@ function (jQuery, ManagedObject, Log) {
 			}
 			oHyphenationInstance.bLoading = true;
 			return oPromisesForLang[sLanguage];
-		}else {
+		} else {
 			return new Promise(function (resolve, reject) {
-				reject("[SAPUI5 Hyphenation] The '" + sLanguage.toUpperCase() + "' language is not supported by hyphenation module.");
+				reject("[UI5 Hyphenation] The '" + sLanguage.toUpperCase() + "' language is not supported by hyphenation module.");
 			});
 		}
 	};

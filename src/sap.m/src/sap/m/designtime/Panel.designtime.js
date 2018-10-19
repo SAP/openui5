@@ -34,7 +34,21 @@ sap.ui.define([],
 				};
 			},
 			reveal: {
-				changeType: "unhideControl"
+				changeType: "unhideControl",
+				getLabel: function (oControl) {
+					var sLabel,
+						oHeaderToolbar = oControl.getHeaderToolbar();
+
+					// If a toolbar is provided, use getTitleControl to get the first title in it, otherwise return the headerText
+					if (oHeaderToolbar && oHeaderToolbar.getTitleControl()) {
+						sLabel = oHeaderToolbar.getTitleControl().getText();
+					} else {
+						sLabel = oControl.getHeaderText();
+					}
+
+					// If a label is not found, return control id as a label.
+					return sLabel || oControl.getId();
+				}
 			}
 		},
 		aggregations: {

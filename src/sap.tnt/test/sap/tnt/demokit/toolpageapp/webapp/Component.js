@@ -1,8 +1,9 @@
 sap.ui.define([
-	"sap/ui/core/UIComponent",
-	"sap/ui/demo/toolpageapp/model/models",
-	"sap/ui/model/resource/ResourceModel"
-], function (UIComponent, models) {
+    "sap/ui/core/UIComponent",
+    "sap/ui/demo/toolpageapp/model/models",
+    "sap/ui/core/routing/History",
+    "sap/ui/model/resource/ResourceModel"
+], function(UIComponent, models, History) {
 	"use strict";
 	return UIComponent.extend("sap.ui.demo.toolpageapp.Component", {
 		metadata: {
@@ -20,7 +21,7 @@ sap.ui.define([
 		},
 
 		myNavBack: function () {
-			var oHistory = sap.ui.core.routing.History.getInstance();
+			var oHistory = History.getInstance();
 			var oPrevHash = oHistory.getPreviousHash();
 			if (oPrevHash !== undefined) {
 				window.history.go(-1);

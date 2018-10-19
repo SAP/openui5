@@ -15,7 +15,8 @@ sap.ui.define([
 	'sap/ui/model/type/DateTime',
 	'sap/ui/model/odata/type/ODataType',
 	'sap/ui/core/library',
-	'sap/ui/Device'
+	'sap/ui/Device',
+	"./DateTimeInputRenderer"
 ],
 function(
 	jQuery,
@@ -29,7 +30,8 @@ function(
 	DateTime,
 	ODataType,
 	coreLibrary,
-	Device
+	Device,
+	DateTimeInputRenderer
 ) {
 	"use strict";
 

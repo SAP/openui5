@@ -67,6 +67,18 @@
         "type": "FEATURE",
         "text": " Flexibility services requests can be disabled in the bootstrap",
         "references": []
+      },
+      {
+        "id": "3595f3c33dc7eb46ca5f87f0bc94717e5a9a2890",
+        "type": "FIX",
+        "text": " CodeExtensionModules always return an array.",
+        "references": []
+      },
+      {
+        "id": "a3c3f478ff4f416d9d1bf0fb4efa7d65bbf5d74f",
+        "type": "FIX",
+        "text": " sap.ui.fl.FlexController: On control re-creation, initial dependencies from change persistence map are not copied for failing changes",
+        "references": []
       }
     ]
   }

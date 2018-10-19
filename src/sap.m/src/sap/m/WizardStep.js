@@ -119,11 +119,12 @@ sap.ui.define([
 
 	WizardStep.prototype.init = function () {
 		this._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._fnNextButtonPress;
+
 		this._oNextButton = new Button(this.getId() + "-nextButton", {
 			text: this._resourceBundle.getText("WIZARD_STEP") + 2,
 			type: "Emphasized",
-			enabled: this.getValidated(),
-			press: this._handleNextButtonPress.bind(this)
+			enabled: this.getValidated()
 		}).addStyleClass("sapMWizardNextButton");
 
 		this._oNextButton.addEventDelegate({
@@ -149,8 +150,6 @@ sap.ui.define([
 
 		this._initTitlePropagationSupport();
 	};
-
-	WizardStep.prototype._handleNextButtonPress = function () {};
 
 	WizardStep.prototype.setValidated = function (validated) {
 		this.setProperty("validated", validated, true);
@@ -240,6 +239,26 @@ sap.ui.define([
 
 	WizardStep.prototype._unMarkAsLast = function () {
 		this.removeStyleClass("sapMWizardLastActivatedStep");
+	};
+
+	/**
+	 * Attaches the press handler for the next button press
+	 * @param {function} fnPress The press handler to be executed on next button press
+	 * @sap-restricted sap.m.Wizard
+	 * @private
+	 */
+	WizardStep.prototype._attachNextButtonHandler = function (fnPress) {
+		this._fnNextButtonPress = fnPress;
+		this._oNextButton.attachPress(fnPress);
+	};
+
+	/**
+	 * Detaches the press handler for the next button press
+	 * @sap-restricted sap.m.Wizard
+	 * @private
+	 */
+	WizardStep.prototype._detachNextButtonHandler = function () {
+		this._oNextButton.detachPress(this._fnNextButtonPress);
 	};
 
 	WizardStep.prototype._activate = function () {

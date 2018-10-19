@@ -7,14 +7,17 @@ sap.ui.define([
     "sap/ui/test/Opa5",
     "sap/ui/test/OpaPlugin",
     "sap/ui/test/actions/Press",
+    "sap/ui/test/_LogCollector",
     "sap/ui/thirdparty/jquery",
     "sap/ui/base/ManagedObjectMetadata"
-], function(UI5Object, Opa5, OpaPlugin, Press, $, ManagedObjectMetadata) {
+], function(UI5Object, Opa5, OpaPlugin, Press, _LogCollector, $, ManagedObjectMetadata) {
     "use strict";
 
     var oPlugin = new OpaPlugin();
 
     var _ControlFinder = UI5Object.extend("sap.ui.test._ControlFinder", {});
+    var oLogCollector = _LogCollector.getInstance('^((?!autowaiter).)*$');
+    var aLogs = [];
 
     /**
      * Retrieves the controls matching oOptions. Does not wait or poll for the controls to become available.
@@ -27,7 +30,14 @@ sap.ui.define([
      */
     _ControlFinder._findControls = function (oOptions) {
         if (oOptions.ancestor) {
-            var oAncestor = _ControlFinder._findControls(oOptions.ancestor)[0];
+            var mAncestorSelector = {};
+            // ensure backwards compatibility with UIVeri5
+            if ($.isArray(oOptions.ancestor)) {
+                mAncestorSelector = {id: oOptions.ancestor[0]};
+            } else {
+                mAncestorSelector = oOptions.ancestor;
+            }
+            var oAncestor = _ControlFinder._findControls(mAncestorSelector)[0];
             if (!oAncestor) {
                 return [];
             }
@@ -70,12 +80,14 @@ sap.ui.define([
      * @private
      */
     _ControlFinder._findElements = function (oOptions) {
+        oLogCollector.start();
+
         var aControls = _ControlFinder._findControls(oOptions);
         var fnGetDefaultElement = function (oControl) {
             return new Press().$(oControl)[0] || oControl.getDomRef();
         };
 
-        return aControls.map(function (oControl) {
+        var aElements = aControls.map(function (oControl) {
             switch (oOptions.interaction) {
                 case "root":
                     return oControl.getDomRef();
@@ -91,27 +103,23 @@ sap.ui.define([
                     return sIdSuffix ? oControl.$(sIdSuffix)[0] : fnGetDefaultElement(oControl);
             }
         });
-    };
 
-     /**
-     * Retrieves the control best corresponding to the DOM element with a certain ID.
-     * @param {string} sElementId DOM element ID
-     * @returns {sap.ui.core.Control} the control in the given context
-     * @private
-     */
-    _ControlFinder._getControlForElementID = function (sElementId) {
-        var controls = _ControlFinder._getIdentifiedDOMElement("#" + sElementId).control();
-        return controls && controls[0];
+        aLogs.push(oLogCollector.getAndClearLog());
+        oLogCollector.stop();
+
+        return aElements;
     };
 
     /**
      * Retrieves the control best corresponding to the DOM element
-     * @param {object} oElement DOM element
+     * @param {object|string} vElement DOM element or its ID
+     * Before change 3592877, only ID is allowed
      * @returns {sap.ui.core.Control} the control in the given context
      * @private
      */
-    _ControlFinder._getControlForElement = function (oElement) {
-        var controls = _ControlFinder._getIdentifiedDOMElement(oElement).control();
+    _ControlFinder._getControlForElement = function (vElement) {
+        var vSelector = Object.prototype.toString.call(vElement) === "[object String]" ? "#" + vElement : vElement;
+        var controls = _ControlFinder._getIdentifiedDOMElement(vSelector).control();
         return controls && controls[0];
     };
 
@@ -168,6 +176,15 @@ sap.ui.define([
      */
     _ControlFinder._getIdentifiedDOMElement = function (vSelector) {
         return $(vSelector).closest("[data-sap-ui]");
+    };
+
+     /**
+     * Get latest log collected during control/element search
+     * @returns {string} string of concatenated logs
+     * @private
+     */
+    _ControlFinder._getLatestLog = function () {
+        return aLogs && aLogs.pop();
     };
 
     return _ControlFinder;

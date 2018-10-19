@@ -16,7 +16,7 @@ sap.ui.define([
 			UIComponent.prototype.init.apply(this, arguments);
 
 			// set products demo model on this sample
-			oProductsModel = new JSONModel(jQuery.sap.getModulePath('sap.ui.demo.mock', '/products.json'));
+			oProductsModel = new JSONModel(sap.ui.require.toUrl('sap/ui/demo/mock') + '/products.json');
 			oProductsModel.setSizeLimit(1000);
 			this.setModel(oProductsModel, 'products');
 		}

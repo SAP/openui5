@@ -1,0 +1,14 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<l:content>
+			<Input valueState="None" value="Value state None"/>
+			<Input valueState="Success" value="Value state Success"/>
+			<Input valueState="Warning" value="Value state Warning"/>
+			<Input valueState="Error" value="Value state Error"/>
+			<Input valueState="Highlight" value="Value state Highlight"/>
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

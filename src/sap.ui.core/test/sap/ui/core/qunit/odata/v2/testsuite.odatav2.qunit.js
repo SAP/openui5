@@ -35,11 +35,11 @@ sap.ui.define(function() {
 					"mockdata": "test-resources/sap/ui/core/qunit/model"
 				}
 			},
-			ODataV2TreeBindingFlat: {
-				title: "sap.ui.model.odata.ODataTreeBindingFlat - QUnit tests"
+			ODataV2TreeBindingFlat_MockSrv: {
+				title: "sap.ui.model.odata.ODataTreeBindingFlat - MockServer based QUnit tests"
 			},
-			ODataV2TreeBindingFlat_ExpansionState: {
-				title: "sap.ui.model.odata.ODataTreeBindingFlat - QUnit tests"
+			ODataV2TreeBindingFlat_FakeSrv: {
+				title: "sap.ui.model.odata.ODataTreeBindingFlat - Fake service QUnit tests"
 			},
 			V2ODataModel: {
 				title: "sap.ui.model.odata.v2.ODataModel - Mockserver QUnit tests",

@@ -430,11 +430,11 @@ function(
 				this.setValue("");
 			}
 
-			if (this._oList instanceof sap.m.Table) {
+			if (this._getSuggestionsList() instanceof sap.m.Table) {
 				// CSN# 1421140/2014: hide the table for empty/initial results to not show the table columns
-				this._oList.addStyleClass("sapMInputSuggestionTableHidden");
+				this._getSuggestionsList().addStyleClass("sapMInputSuggestionTableHidden");
 			} else {
-				this._oList.destroyItems();
+				this._getSuggestionsList().destroyItems();
 			}
 
 			var oScroll = this._oSuggestionPopup.getScrollDelegate();
@@ -442,7 +442,7 @@ function(
 				oScroll.scrollTo(0, 0, 0);
 			}
 
-			this._oPopupInput.focus();
+			this._oSuggPopover._oPopupInput.focus();
 		}
 	};
 
@@ -812,7 +812,7 @@ function(
 					if (that._bUseDialog && that._isMultiLineMode && that._oSuggestionTable.getItems().length === 0) {
 						var iNewLength = that._tokenizer.getTokens().length;
 						if (iOldLength < iNewLength) {
-							that._oPopupInput.setValue("");
+							that._oSuggPopover._oPopupInput.setValue("");
 						}
 
 						that._setAllTokenVisible();
@@ -901,7 +901,7 @@ function(
 			if (this._hasTabularSuggestions()) {
 				bValidateFreeText = !this._oSuggestionTable.getSelectedItem();
 			} else {
-				bValidateFreeText = !this._oList.getSelectedItem();
+				bValidateFreeText = !this._getSuggestionsList().getSelectedItem();
 			}
 		}
 
@@ -1155,7 +1155,7 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype._getIsSuggestionPopupOpen = function () {
-		return this._oSuggestionPopup && this._oSuggestionPopup.isOpen();
+		return this._oSuggPopover && this._oSuggPopover._oPopover.isOpen();
 	};
 
 	MultiInput.prototype.setEditable = function (bEditable) {
@@ -1174,7 +1174,7 @@ function(
 
 		if (bEditable) {
 			if (this._bUseDialog) {
-				this._oSuggestionPopup.addContent(oTokensList);
+				this._oSuggPopover._oPopover.addContent(oTokensList);
 			} else {
 				this._getSelectedItemsPicker().addContent(oTokensList);
 			}
@@ -1410,8 +1410,8 @@ function(
 		}
 
 		this._bShowSelectedButton = this._createFilterSelectedButton();
-		this._oSuggestionPopup.addContent(this._getTokensList());
-		this._oSuggestionPopup
+		this._oSuggPopover._oPopover.addContent(this._getTokensList());
+		this._oSuggPopover._oPopover
 			.attachBeforeOpen(function(){
 				that._manageListsVisibility(that._bShowListWithTokens);
 				that._fillList();
@@ -1422,23 +1422,23 @@ function(
 				that._bShowListWithTokens = false;
 			});
 
-		this._oSuggestionPopup.setCustomHeader(new Bar({
+		this._oSuggPopover._oPopover.setCustomHeader(new Bar({
 			contentMiddle: [new Title()],
 			contentRight: new Button({
 				icon: IconPool.getIconURI("decline"),
 				press: function() {
-					that._oSuggestionPopup.close();
+					that._oSuggPopover._oPopover.close();
 				}
 			})
 		}));
-		this._oSuggestionPopup.setSubHeader(new Toolbar({
+		this._oSuggPopover._oPopover.setSubHeader(new Toolbar({
 			content : [
-				this._oPopupInput,
+				this._oSuggPopover._oPopupInput,
 				this._bShowSelectedButton
 			]}
 		));
 
-		this._oPopupInput.onsapenter = function (oEvent) {
+		this._oSuggPopover._oPopupInput.onsapenter = function (oEvent) {
 			that._validateCurrentText();
 			that._setValueInvisible();
 
@@ -1446,7 +1446,7 @@ function(
 			that.onChange(oEvent, null, this.getValue());
 		};
 
-		this._oPopupInput.attachLiveChange(function(){
+		this._oSuggPopover._oPopupInput.attachLiveChange(function(){
 			if (that._bShowListWithTokens) {
 				// filter inside tokens
 				that._filterTokens(this.getValue());
@@ -1499,7 +1499,7 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype._onAfterCloseTokensPicker = function() {
-		if (this._oSuggestionPopup && !this.getValue()) {
+		if (this._oSuggPopover && !this.getValue()) {
 			this._tokenizer._useCollapsedMode(true);
 			this._setValueInvisible();
 		}
@@ -1512,7 +1512,7 @@ function(
 	 * @protected
 	 */
 	MultiInput.prototype.getDialogTitle = function() {
-		var oPicker = this._oSuggestionPopup,
+		var oPicker = this._oSuggPopover._oPopover,
 			oHeader = oPicker && oPicker.getCustomHeader();
 
 		if (oHeader) {
@@ -1552,7 +1552,7 @@ function(
 	MultiInput.prototype._openSelectedItemsPicker = function () {
 		// on mobile reuse the input's suggestion popup
 		if (this._bUseDialog) {
-			this._oSuggestionPopup.open();
+			this._oSuggPopover._oPopover.open();
 		} else {
 			// on desktop create separate popover for tokens
 			var oPicker = this._getSelectedItemsPicker();
@@ -1588,7 +1588,7 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype._getSuggestionsList = function() {
-		return this._oList;
+		return this._oSuggPopover && this._oSuggPopover._oList;
 	};
 
 	/**
@@ -1707,7 +1707,7 @@ function(
 		}
 
 		if (this._bUseDialog) {
-			this._oSuggestionPopup.close();
+			this._oSuggPopover._oPopover.close();
 		} else if (this._oReadOnlyPopover && this._oReadOnlyPopover.isOpen()) {
 			this._oReadOnlyPopover.close();
 		} else {

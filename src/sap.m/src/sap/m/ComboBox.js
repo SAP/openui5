@@ -106,17 +106,6 @@ sap.ui.define([
 					},
 
 					/**
-					 * Indicates whether the text values of the <code>additionalText</code> property of a
-					 * {@link sap.ui.core.ListItem} are shown.
-					 * @since 1.32.3
-					 */
-					showSecondaryValues: {
-						type: "boolean",
-						group: "Misc",
-						defaultValue: false
-					},
-
-					/**
 					 * Indicates whether the filter should check in both the <code>text</code> and the <code>additionalText</code> property of the
 					 * {@link sap.ui.core.ListItem} for the suggestion.
 					 * @since 1.46
@@ -805,7 +794,11 @@ sap.ui.define([
 		 * This event handler is called before the picker popup is opened.
 		 *
 		 */
-		ComboBox.prototype.onBeforeOpenDropdown = function() {};
+		ComboBox.prototype.onBeforeOpenDropdown = function() {
+			if (this.getSelectedItem()) {
+				this.$().removeClass("sapMFocus");
+			}
+		};
 
 		ComboBox.prototype.onBeforeOpenDialog = function() {
 			var oPickerTextField = this.getPickerTextField();
@@ -886,6 +879,10 @@ sap.ui.define([
 			// the value state message should be reopen
 			if (this.shouldValueStateMessageBeOpened() && (document.activeElement === oDomRef)) {
 				this.openValueStateMessage();
+			}
+
+			if (document.activeElement === this.getFocusDomRef()) {
+				this.$().addClass("sapMFocus");
 			}
 		};
 

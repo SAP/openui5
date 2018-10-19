@@ -1,0 +1,70 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:grid="sap.ui.layout.cssgrid"
+		controllerName="sap.ui.layout.sample.NestedGrids.NestedGrids">
+	<Panel width="100%" height="100%" class="sapUiResponsiveMargin">
+		<headerToolbar>
+			<Toolbar height="3rem">
+				<Title text=" CssGrid Nested grids example"/>
+			</Toolbar>
+		</headerToolbar>
+		<content>
+			<Slider value="100" liveChange="onSliderMoved" />
+			<grid:CSSGrid id="grid1"
+						  gridTemplateColumns="1fr 1fr"
+						  gridTemplateRows="1fr 3fr"
+						  gridGap="1rem">
+				<grid:items>
+					<VBox class="sapUiSmallMargin demoBox">
+						<Title text="A Box" wrapping="true" />
+						<Label text="A Box subtitle" wrapping="true" />
+					</VBox>
+					<VBox class="sapUiSmallMargin demoBox">
+						<Title text="B Box" wrapping="true" />
+						<Label text="B Box subtitle" wrapping="true" />
+					</VBox>
+					<VBox class="sapUiSmallMargin demoBox">
+						<Title text="C Box" wrapping="true" />
+						<Label text="C Box subtitle" wrapping="true" />
+					</VBox>
+					<VBox class="sapUiSmallMargin demoBox">
+						<grid:CSSGrid
+								gridTemplateColumns="1fr 1fr"
+								gridGap="0.5rem">
+							<grid:items>
+								<VBox class="sapUiSmallMargin demoInnerBox">
+									<layoutData>
+										<grid:GridItemLayoutData
+												gridColumn="1 / 3"
+												gridRow="1"/>
+									</layoutData>
+									<Title text="E Box" wrapping="true" />
+									<Label text="E Box subtitle" wrapping="true" />
+								</VBox>
+								<VBox class="sapUiSmallMargin demoInnerBox">
+									<layoutData>
+										<grid:GridItemLayoutData
+												gridColumn="1"
+												gridRow="2"/>
+									</layoutData>
+									<Title text="F Box" wrapping="true" />
+									<Label text="F Box subtitle" wrapping="true" />
+								</VBox>
+								<VBox class="sapUiSmallMargin demoInnerBox">
+									<layoutData>
+										<grid:GridItemLayoutData
+												gridColumn="2"
+												gridRow="2"/>
+									</layoutData>
+									<Title text="G Box" wrapping="true" />
+									<Label text="G Box subtitle" wrapping="true" />
+								</VBox>
+							</grid:items>
+						</grid:CSSGrid>
+					</VBox>
+				</grid:items>
+			</grid:CSSGrid>
+		</content>
+	</Panel>
+</mvc:View>

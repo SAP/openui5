@@ -16,7 +16,7 @@
 				path: '/ProductCollection',
 				sorter: { path: 'Name' }
 			}">
-			<core:Item key="{ProductId}" text="{Name}" />
+			<core:Item key="{ProductId}" text="{Name}"/>
 		</MultiComboBox>
 	</l:VerticalLayout>
 </mvc:View>

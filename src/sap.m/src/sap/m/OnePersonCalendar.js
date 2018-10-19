@@ -12,7 +12,8 @@ sap.ui.define([
 	'sap/ui/core/date/UniversalDate',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
-	'sap/ui/core/format/DateFormat'
+	'sap/ui/core/format/DateFormat',
+	"./OnePersonCalendarRenderer"
 ],
 function(
 	Control,
@@ -23,7 +24,8 @@ function(
 	UniversalDate,
 	Locale,
 	LocaleData,
-	DateFormat
+	DateFormat,
+	OnePersonCalendarRenderer
 ) {
 	"use strict";
 

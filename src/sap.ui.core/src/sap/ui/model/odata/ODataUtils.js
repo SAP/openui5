@@ -18,10 +18,14 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/security/encodeURL"
+	"sap/base/security/encodeURL",
+	"sap/ui/core/library"
 ],
-	function(Sorter, FilterProcessor, DateFormat, Log, assert, jQuery, encodeURL ) {
+	function(Sorter, FilterProcessor, DateFormat, Log, assert, jQuery, encodeURL, library ) {
 	"use strict";
+
+	// shortcut for sap.ui.core.CalendarType
+	var CalendarType = library.CalendarType;
 
 	var rDecimal = /^([-+]?)0*(\d+)(\.\d+|)$/,
 		rTrailingDecimal = /\.$/,
@@ -448,16 +452,20 @@ sap.ui.define([
 		// Lazy creation of format objects
 		if (!this.oDateTimeFormat) {
 			this.oDateTimeFormat = DateFormat.getDateInstance({
-				pattern: "'datetime'''yyyy-MM-dd'T'HH:mm:ss''"
+				pattern: "'datetime'''yyyy-MM-dd'T'HH:mm:ss''",
+				calendarType: CalendarType.Gregorian
 			});
 			this.oDateTimeFormatMs = DateFormat.getDateInstance({
-				pattern: "'datetime'''yyyy-MM-dd'T'HH:mm:ss.SSS''"
+				pattern: "'datetime'''yyyy-MM-dd'T'HH:mm:ss.SSS''",
+				calendarType: CalendarType.Gregorian
 			});
 			this.oDateTimeOffsetFormat = DateFormat.getDateInstance({
-				pattern: "'datetimeoffset'''yyyy-MM-dd'T'HH:mm:ss'Z'''"
+				pattern: "'datetimeoffset'''yyyy-MM-dd'T'HH:mm:ss'Z'''",
+				calendarType: CalendarType.Gregorian
 			});
 			this.oTimeFormat = DateFormat.getTimeInstance({
-				pattern: "'time''PT'HH'H'mm'M'ss'S'''"
+				pattern: "'time''PT'HH'H'mm'M'ss'S'''",
+				calendarType: CalendarType.Gregorian
 			});
 		}
 

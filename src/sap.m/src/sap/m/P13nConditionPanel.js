@@ -1467,7 +1467,7 @@ sap.ui.define([
 						} else if (vValue !== null && oConditionGrid.oType) {
 
 							// In case vValue is of type string, we try to convert it into the type based format.
-							if (typeof vValue === "string" && oConditionGrid.oType.getName() !== "String") {
+							if (typeof vValue === "string" && ["String", "sap.ui.model.odata.type.String", "sap.ui.model.odata.type.Decimal", "sap.ui.comp.odata.type.StringDate"].indexOf(oConditionGrid.oType.getName()) == -1) {
 								try {
 									vValue = oConditionGrid.oType.parseValue(vValue, "string");
 									oControl.setValue(oConditionGrid.oType.formatValue(vValue, "string"));
@@ -2358,49 +2358,46 @@ sap.ui.define([
 			oConditionGrid.operation.setTooltip(null);
 		}
 
-		// update Value1 field control
-		var sValue1;
-		var oValue1;
-		if (oConditionGrid.value1.getDateValue) {
-			oValue1 = oConditionGrid.value1.getDateValue();
-			if (oConditionGrid.oType && oValue1) {
-				sValue1 = oConditionGrid.oType.formatValue(oValue1, "string");
-			}
-		} else {
-			sValue1 = this._getValueTextFromField(oConditionGrid.value1);
-			oValue1 = sValue1;
-			if (oConditionGrid.oType && sValue1) {
-				try {
-					oValue1 = oConditionGrid.oType.parseValue(sValue1, "string");
-					oConditionGrid.oType.validateValue(oValue1);
-				} catch (err) {
-					sValue1 = "";
-					Log.error("sap.m.P13nConditionPanel", "not able to parse value1 " + sValue1 + " with type " + oConditionGrid.oType.getName());
+		var getValuesFromField = function(oControl, oType) {
+			var sValue;
+			var oValue;
+			if (oControl.getDateValue && !(oControl.isA("sap.m.TimePicker"))) {
+				oValue = oControl.getDateValue();
+				if (oType && oValue) {
+					// TODO when we have a DateTime type and isDateOnly==true, the type is using UTC=true
+					// result is that the local time from the DatePicker is converted and we have the wrong date.
+					//Workaround: change the oFormat.oFormatOptions.UTC to false!
+					if (oType.getName() === "sap.ui.model.odata.type.DateTime") {
+						oType.formatValue(oValue, "string");
+						if (oType.oFormatOptions.UTC == false && oType.oFormat.oFormatOptions.UTC == true) {
+							oType.oFormat.oFormatOptions.UTC = false;
+						}
+					}
+					sValue = oType.formatValue(oValue, "string");
+				}
+			} else {
+				sValue = this._getValueTextFromField(oControl);
+				oValue = sValue;
+				if (oType && sValue) {
+					try {
+						oValue = oType.parseValue(sValue, "string");
+						oType.validateValue(oValue);
+					} catch (err) {
+						sValue = "";
+						Log.error("sap.m.P13nConditionPanel", "not able to parse value " + sValue + " with type " + oType.getName());
+					}
 				}
 			}
-		}
+			return [oValue, sValue];
+		}.bind(this);
+
+		// update Value1 field control
+		var aValues = getValuesFromField(oConditionGrid.value1, oConditionGrid.oType);
+		var oValue1 = aValues[0], sValue1 = aValues[1];
 
 		// update Value2 field control
-		var sValue2;
-		var oValue2;
-		if (oConditionGrid.value2.getDateValue) {
-			oValue2 = oConditionGrid.value2.getDateValue();
-			if (oConditionGrid.oType && oValue2) {
-				sValue2 = oConditionGrid.oType.formatValue(oValue2, "string");
-			}
-		} else {
-			sValue2 = this._getValueTextFromField(oConditionGrid.value2);
-			oValue2 = sValue2;
-			if (oConditionGrid.oType && sValue2) {
-				try {
-					oValue2 = oConditionGrid.oType.parseValue(sValue2, "string");
-					oConditionGrid.oType.validateValue(oValue2);
-				} catch (err) {
-					sValue2 = "";
-					Log.error("sap.m.P13nConditionPanel", "not able to parse value2 " + sValue2 + " with type " + oConditionGrid.oType.getName());
-				}
-			}
-		}
+		aValues = getValuesFromField(oConditionGrid.value2, oConditionGrid.oType);
+		var oValue2 = aValues[0], sValue2 = aValues[1];
 
 		// in case of a BT and a Date type try to set the minDate/maxDate for the From/To value datepicker
 		if (sOperation === "BT") {

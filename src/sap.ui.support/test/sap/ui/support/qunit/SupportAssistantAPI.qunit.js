@@ -2,12 +2,14 @@
 
 sap.ui.define([
 	"sap/ui/support/Bootstrap",
+	"sap/ui/support/RuleAnalyzer",
 	"sap/m/Panel",
 	"sap/m/Button",
 	"sap/m/Link",
 	"sap/m/Text",
 	"sap/m/Input"
 ], function (bootstrap,
+			 RuleAnalyzer,
 			 Panel,
 			 Button,
 			 Link,
@@ -15,7 +17,7 @@ sap.ui.define([
 			 Input) {
 		"use strict";
 
-	QUnit.module("jQuery.sap.support", {
+	QUnit.module("sap.ui.support.Analyzer", {
 		beforeEach: function () {
 
 			this.scope = {
@@ -23,20 +25,20 @@ sap.ui.define([
 				parentId: "rootPanel"
 			};
 
-			this.panel = new sap.m.Panel({
+			this.panel = new Panel({
 				id: "rootPanel",
 				content: [
-					new sap.m.Panel({
+					new Panel({
 						id: "innerPanel1",
 						content: [
-							new sap.m.Button({
+							new Button({
 								id: "innerButton",
 								icon: "sap-icon://task"
 							}),
-							new sap.m.Text({
+							new Text({
 								id: "innerText"
 							}),
-							new sap.m.Link({
+							new Link({
 								href: 'www.google.com',
 								press: function () {
 
@@ -44,14 +46,14 @@ sap.ui.define([
 							})
 						]
 					}),
-					new sap.m.Panel({
+					new Panel({
 						id: "innerPanel2",
 						content: [
-							new sap.m.Button({
+							new Button({
 								id: "innerButton2",
 								icon: "sap-icon://task"
 							}),
-							new sap.m.Input()
+							new Input()
 						]
 					})
 				]
@@ -79,8 +81,8 @@ sap.ui.define([
 					]
 				};
 
-				jQuery.sap.support.analyze(this.scope, customPreset).then(function () {
-					var history = jQuery.sap.support.getLastAnalysisHistory();
+				RuleAnalyzer.analyze(this.scope, customPreset).then(function () {
+					var history = RuleAnalyzer.getLastAnalysisHistory();
 					assert.strictEqual(history.issues.length, 1, "Custom issues are correct");
 					done();
 				});
@@ -99,8 +101,8 @@ sap.ui.define([
 					{ruleId: "inputNeedsLabel", libName: "sap.m"}
 				];
 
-				jQuery.sap.support.analyze(this.scope, rules).then(function () {
-					var history = jQuery.sap.support.getLastAnalysisHistory();
+				RuleAnalyzer.analyze(this.scope, rules).then(function () {
+					var history = RuleAnalyzer.getLastAnalysisHistory();
 					assert.strictEqual(history.issues.length, 1, "List of rules issues are correct");
 					done();
 				});
@@ -139,12 +141,12 @@ sap.ui.define([
 					{ruleId: "TEMP RULE ID", libName: "temporary"}
 				];
 
-				var sResult = jQuery.sap.support.addRule(tempRule);
+				var sResult = RuleAnalyzer.addRule(tempRule);
 
 				assert.strictEqual(sResult, "success", "Rule successfully added");
 
-				jQuery.sap.support.analyze(this.scope, rules).then(function () {
-					var history = jQuery.sap.support.getLastAnalysisHistory();
+				RuleAnalyzer.analyze(this.scope, rules).then(function () {
+					var history = RuleAnalyzer.getLastAnalysisHistory();
 					assert.strictEqual(history.issues.length, 1, "List of temporary rules issues is correct");
 					done();
 				});

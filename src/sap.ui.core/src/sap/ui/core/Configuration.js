@@ -127,7 +127,7 @@ sap.ui.define([
 					"bindingSyntax"         : { type : "string",   defaultValue : "default", noUrl:true }, // default|simple|complex
 					"versionedLibCss"       : { type : "boolean",  defaultValue : false },
 					"manifestFirst"         : { type : "boolean",  defaultValue : false },
-					"flexibilityServices"   : { type : "boolean",  defaultValue : true },
+					"flexibilityServices"   : { type : "string",  defaultValue : "/sap/bc/lrep" },
 
 					"whitelistService"      : { type : "string",   defaultValue : null,      noUrl: true }, // url/to/service
 					"frameOptions"          : { type : "string",   defaultValue : "default", noUrl: true }, // default/allow/deny/trusted (default => allow)
@@ -1318,9 +1318,10 @@ sap.ui.define([
 		},
 
 		/**
-		 * Flag whether the UI5 Flexibility Services should be called.
+		 * Returns the URL from where the UI5 flexibility services are called;
+		 * if empty, the flexibility services are not called.
 		 *
-		 * @returns {boolean} true if a request to the Flexibility Services should be triggered
+		 * @returns {string} URL from where the flexibility services are requested
 		 * @public
 		 * @since 1.60.0
 		 */

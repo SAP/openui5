@@ -6,6 +6,12 @@
 	border-width:1px;
 	border-style: solid;
 }
+
+.myTransparentPreview {
+	background: none;
+	background-image: url("Transparenz.jpg");
+}
+
 .alignment .sapMListTblHeader th{
 	vertical-align: middle;
 }

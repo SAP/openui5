@@ -289,6 +289,24 @@
         "type": "FIX",
         "text": " v2/ODataModel: createEntry warning logs",
         "references": []
+      },
+      {
+        "id": "c7435515efeabd613c961d771b77489cbe0af9f3",
+        "type": "FEATURE",
+        "text": " Hyphenation: Hyphenation for text controls is enabled",
+        "references": []
+      },
+      {
+        "id": "3bff9313da5330f4300f746461d2b90686362548",
+        "type": "FIX",
+        "text": " ManagedObjectModel: Problem in handling of altType",
+        "references": []
+      },
+      {
+        "id": "71166214cbc88cbcd7d74b909aef13fecd2e4812",
+        "type": "FIX",
+        "text": " v2/ODataModel: function import context overwrite",
+        "references": []
       }
     ]
   }

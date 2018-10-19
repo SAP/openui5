@@ -525,7 +525,7 @@ sap.ui.define([
 
 				iShouldSeeColumnListMenu: function () {
 					return this.waitFor({
-						controlType: sap.ui.table.ColumnMenu,
+						controlType: "sap.ui.table.ColumnMenu",
 						success: function () {
 							Opa5.assert.ok(document.activeElement.contentDocument.activeElement.getAttribute("id") === "__xmlview0--analysis--rulesColumn-menu", "Column list menu is opened");
 						},

@@ -73,6 +73,18 @@
         "type": "FIX",
         "text": " sap.ui.unified.CalendarTimeInterval: navigates to the correct date",
         "references": []
+      },
+      {
+        "id": "c573e9008b2a0f5b74917290bd9fb7e570573a48",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Headers now have role \"button\" for indicating that they are clickable",
+        "references": []
+      },
+      {
+        "id": "366d7a48fc005de0d8ccd686b5963ecbc40cf67e",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarDateInterval: example is fixed",
+        "references": []
       }
     ]
   }

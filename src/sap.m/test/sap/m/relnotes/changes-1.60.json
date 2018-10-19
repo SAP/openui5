@@ -805,6 +805,114 @@
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: shows selectAll checkBox at the correct position",
         "references": []
+      },
+      {
+        "id": "c7435515efeabd613c961d771b77489cbe0af9f3",
+        "type": "FEATURE",
+        "text": " Hyphenation: Hyphenation for text controls is enabled",
+        "references": []
+      },
+      {
+        "id": "35c086fdf59706b37af0f4d83178d122c3463f39",
+        "type": "FEATURE",
+        "text": " MessageView: Accessibility improvements",
+        "references": []
+      },
+      {
+        "id": "2dda42683fdaddf8fac4e26220e7fb7353986192",
+        "type": "FEATURE",
+        "text": " sap.m.FeedListItem: Customizable MORE/LESS strings",
+        "references": []
+      },
+      {
+        "id": "fbf721416619b462b1ba480e3995ab2d7a4ad534",
+        "type": "FEATURE",
+        "text": " sap.m.MultiComboBox: Two column layout added",
+        "references": []
+      },
+      {
+        "id": "c573e9008b2a0f5b74917290bd9fb7e570573a48",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Headers now have role \"button\" for indicating that they are clickable",
+        "references": []
+      },
+      {
+        "id": "c3d53f22eb1dccb8c0c53d424a6a11d517798b35",
+        "type": "FIX",
+        "text": " SegmentedButton: Fire event for OverflowToolbar when width is changed",
+        "references": []
+      },
+      {
+        "id": "b026715a1e00bf812790deef980798735246d37b",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Deleting a special characters now work correctly",
+        "references": []
+      },
+      {
+        "id": "072c665ae2ef45bc135879c2d22c4effd7e5c063",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: InstanceManager support added",
+        "references": []
+      },
+      {
+        "id": "cd4833aabdea08947b493793894f911eabe6d1d2",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: does not throw error when max date is yesterday",
+        "references": []
+      },
+      {
+        "id": "48d243ca401a8127c9a9c76a67194b8a6d1878f9",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Buttons inside dialog are rendered correctly now",
+        "references": []
+      },
+      {
+        "id": "4761aa82340536f7ff538a4931b4c711a2578f63",
+        "type": "FIX",
+        "text": " sap.m.Input: InputType documentation is now correct",
+        "references": []
+      },
+      {
+        "id": "63adf24a9616b8e4837f2712ffb4c083a1ceeddd",
+        "type": "FIX",
+        "text": " sap.m.InstanceManager: make documentation visible",
+        "references": []
+      },
+      {
+        "id": "fb3ac437ca8cb25bc4203fa1edd1866948edae59",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: now implements getAccessibilityInfo function",
+        "references": []
+      },
+      {
+        "id": "5f19cf5ef5b74e7e0c7bf034d9f1b337d3c37ebe",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: Tabbing to icon-only ObjectMarkers enabled",
+        "references": []
+      },
+      {
+        "id": "d68296322ea0233628deb28e3e6c5dc3a715ac36",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Fixed OverflowToolbar configuration",
+        "references": []
+      },
+      {
+        "id": "fba16a6ad4341ecd5e80daf8bd8fabd67be30836",
+        "type": "FIX",
+        "text": " sap.m.StepInput: button icons enablement",
+        "references": []
+      },
+      {
+        "id": "ea6352a1d8dad8cd7d45dc1c7d9c7589ec984c29",
+        "type": "FIX",
+        "text": " sap.ui.core.Hyphenation: Playground page problem with encoding was fixed",
+        "references": []
+      },
+      {
+        "id": "485240e9b854e15f7c6596ef73c1e731a918aaa6",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Demokit sample fixed",
+        "references": []
       }
     ]
   }

@@ -101,7 +101,8 @@ sap.ui.define([
 		 * @private
 		 */
 		function shouldUseThirdParty() {
-			var sHyphenationConfig = sap.ui.getCore().getConfiguration().getHyphenation();
+			var sHyphenationConfig = sap.ui.getCore().getConfiguration().getHyphenation(),
+				oHyphenationInstance = Hyphenation.getInstance();
 
 			if (sHyphenationConfig === "native") {
 				return false;
@@ -111,7 +112,7 @@ sap.ui.define([
 				return true;
 			}
 
-			return !Hyphenation.getInstance().canUseNativeHyphenation();
+			return oHyphenationInstance.isLanguageSupported() && !oHyphenationInstance.canUseNativeHyphenation();
 		}
 
 		/**
@@ -153,7 +154,7 @@ sap.ui.define([
 				});
 
 				var oHyphenation = Hyphenation.getInstance();
-				if (!oHyphenation.bIsInitialized) {
+				if (!oHyphenation.isLanguageInitialized()) {
 					oHyphenation.initialize().then(function () {
 
 						var mDomRefs = oControl.isActive() ? oControl.getDomRefsForHyphenatedTexts() : null,

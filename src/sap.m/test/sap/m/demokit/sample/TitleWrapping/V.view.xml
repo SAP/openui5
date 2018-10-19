@@ -6,22 +6,16 @@
 	<f:SimpleForm
 			layout="ResponsiveGridLayout"
 			editable="true"
-			title="Title Wrapping"
+			title="Title Properties"
 			adjustLabelSpan="false"
-			labelSpanXL="1"
-			labelSpanL="1"
-			labelSpanM="1"
-			labelSpanS="4"
-			emptySpanXL="7"
-			emptySpanL="7"
-			emptySpanM="1"
-			emptySpanS="0"
-			columnsXL="1"
-			columnsL="1"
-			columnsM="1"
-			columnsS="1">
+			labelSpanXL="2"
+			labelSpanL="2"
+			labelSpanM="2"
+			labelSpanS="5">
 		<Label text="Wrapping" />
-		<Switch state="true" change="onWrappingChange" />
+		<Switch id="wrappingSwitch" state="true" change="onWrappingChange" />
+		<Label text="Enable Hyphenation" />
+		<Switch state="false" change="onHyphenationChange" />
 		<Label text="Container Width" />
 		<Slider id="widthSlider" value="100" liveChange="onSliderMoved" />
 	</f:SimpleForm>
@@ -30,6 +24,10 @@
 		   width="100%">
 		<Title id="WrappingTitle"
 			   wrapping="true"
-			   text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."/>
+			   text="The Title control represents a single line of text with explicit header / title semantics. The Title control represents a single line of text with explicit header / title semantics."/>
 	</Panel>
+	<MessageStrip
+		class="sapUiSmallMarginBeginEnd sapUiSmallMarginTopBottom"
+		type="Warning"
+		text='Note: Hyphenation is not possible when Wrapping is set to "false"' />
 </mvc:View>

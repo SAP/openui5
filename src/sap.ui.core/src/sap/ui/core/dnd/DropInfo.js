@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./DragDropBase", "sap/base/Log"],
-	function(DragDropBase, Log) {
+sap.ui.define(["./DragDropBase"],
+	function(DragDropBase) {
 	"use strict";
 
 	/**
@@ -129,9 +129,7 @@ sap.ui.define(["./DragDropBase", "sap/base/Log"],
 
 		// droppable by default
 		var sTargetAggregation = this.getTargetAggregation();
-		var oMetadata = oDropTarget.getMetadata().getDragDropInfo(sTargetAggregation);
-		if (!oMetadata.droppable) {
-			Log.warning((sTargetAggregation ? sTargetAggregation + " aggregation of " : "") + oDropTarget + " is not configured to be droppable");
+		if (!DragDropBase.checkMetadata(oDropTarget, sTargetAggregation, "droppable")) {
 			return false;
 		}
 

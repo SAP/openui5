@@ -6,6 +6,8 @@
 	<App>
 		<Page title="List Page">
 			<content>
+				<Text text="{/ProductCollection/0/MainCategory}">
+				</Text>
 				<List
 					id="productList"
 					headerText="Product List"

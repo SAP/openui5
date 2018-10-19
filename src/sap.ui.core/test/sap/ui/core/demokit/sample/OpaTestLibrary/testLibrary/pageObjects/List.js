@@ -3,14 +3,24 @@ sap.ui.define([
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/actions/EnterText",
-	"sap/ui/test/actions/Press"
-], function (Opa5, PropertyStrictEquals, AggregationLengthEquals, EnterText, Press) {
+	"sap/ui/test/actions/Press",
+	"testLibrary/pageObjects/Common1",
+	"testLibrary/pageObjects/Common2"
+], function (Opa5, PropertyStrictEquals, AggregationLengthEquals, EnterText, Press, Common1, Common2) {
 	"use strict";
 
-	// access properties configured by the consumer test
-	var sListView = Opa5.getTestLibConfig('testLibrary').listViewName;
+	// access properties set by the consumer test
+	var sListView = Opa5.getTestLibConfig('viewsLibrary').listViewName;
 
-	// simple example of a page object provided by the test library
+	// all configuration modifications here will also become available in the test journey
+	// when this page object is loaded
+	Opa5.extendConfig({
+		arrangements: new Common1(),
+		assertions: new Common2()
+	});
+
+	// simple example of a page object provided by a test library and registered to OPA5 when the library is loaded.
+	// all methods defined here can be accessed on the page objects' Given, When and Then clauses (eg: Given.onTheListPage.iSetTheFilter())
 	Opa5.createPageObjects({
 
 		onTheListPage: {
@@ -39,6 +49,7 @@ sap.ui.define([
 					});
 				}
 			},
+
 			assertions: {
 				theResultListIsVisible: function (iListLength) {
 					return this.waitFor({

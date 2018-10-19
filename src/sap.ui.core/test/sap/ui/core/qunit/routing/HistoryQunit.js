@@ -445,14 +445,23 @@ sap.ui.define([
 
 	QUnit.module("history.state enhancement", {
 		beforeEach: function(assert) {
-
+			var that = this;
 			// Extended a hashchange to deliver the additional fullHash parameter HashChanger
-			this.oExtendedHashChanger = new HashChanger();
-			this.oExtendedHashChanger.fireHashChanged = function(newHash, oldHash) {
-				// Simulate the fullHash parameter which is necessary for extended direction determination
-				var fullHash = window.location.hash;
-				this.fireEvent("hashChanged",{ newHash : newHash, oldHash : oldHash, fullHash: fullHash});
-			};
+			this.oExtendedHashChanger = HashChanger.getInstance();
+			// The fireEvent method nees to be stubbed instead of the fireHashChanged because the original
+			// fireHashChanged is already registered as an event handler to hasher at HashChanger.init and
+			// the stub of it here can't affect the hasher event handler anymore
+			this.oFireHashChangeStub = sinon.stub(this.oExtendedHashChanger, "fireEvent", function(sEventName, oParameter) {
+				if (sEventName === "hashChanged") {
+					if (that.fnBeforeFireHashChange) {
+						that.fnBeforeFireHashChange();
+					}
+
+					// Simulate the fullHash parameter which is necessary for extended direction determination
+					oParameter.fullHash = window.location.hash;
+				}
+				HashChanger.prototype.fireEvent.apply(this, arguments);
+			});
 
 			this.setup = function() {
 				this.checkDirection = function(fnAction, fnAssertion) {
@@ -475,9 +484,7 @@ sap.ui.define([
 
 				// System under test
 				this.oExtendedHashChanger.init();
-				this.oHistory = new History(this.oExtendedHashChanger);
-
-				assert.strictEqual(this.oHistory.getDirection(), undefined, "state is initial");
+				this.oHistory = History.getInstance();
 
 				// Arrange - setup a history
 				this.oExtendedHashChanger.setHash("foo");
@@ -501,13 +508,12 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oExtendedHashChanger.setHash("");
-			this.oExtendedHashChanger.destroy();
-			this.oHistory.destroy();
+			this.oFireHashChangeStub.restore();
 		}
 	});
 
 	QUnit.test("Consume fullHash parameter of hashChange event", function(assert) {
-		assert.expect(6);
+		assert.expect(5);
 		return this.setup().then(function() {
 			return this.checkDirection(function() {
 				window.history.go(1);
@@ -522,13 +528,11 @@ sap.ui.define([
 	QUnit.test("Log a warning if window.history.state is already in use", function (assert) {
 		var oSpy = sinon.spy(Log, "debug");
 
-		var fnExtendedFireHashChange = this.oExtendedHashChanger.fireHashChanged;
-		this.oExtendedHashChanger.fireHashChanged = function(newHash, oldHash) {
+		this.fnBeforeFireHashChange = function() {
 			window.history.replaceState("invalid_state", window.document.title);
-			fnExtendedFireHashChange.call(this.oExtendedHashChanger, newHash, oldHash);
-		}.bind(this);
+		};
 
-		assert.expect(7);
+		assert.expect(6);
 		return this.setup().then(function() {
 			return this.checkDirection(function() {
 				window.history.go(1);

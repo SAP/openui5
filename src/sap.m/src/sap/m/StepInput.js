@@ -1308,10 +1308,16 @@ function(
 		 * @private
 		 */
 		StepInput.prototype._sumValues = function(fValue1, fValue2, iSign, iPrecision) {
-			var iPrecisionMultiplier = Math.pow(10, iPrecision);
+			var iPrecisionMultiplier = Math.pow(10, iPrecision),
+			//For most of the cases fValue1 * iPrecisionMultiplier  will produce the integer (ex. 0.11 * 100 = 11),
+			//so toFixed won't change anything.
+			//For some cases fValue1 * iPrecisionMultiplier will produce a floating point number(ex. 0.29 * 100 = 28.999999999999996),
+			//but we still can call toFixed as this floating point number is always as closest as
+			//possible(i.e. no rounding errors could appear) to the real integer we expect.
+				iValue1 = parseInt((fValue1 * iPrecisionMultiplier).toFixed(10), 10),
+				iValue2 = parseInt((fValue2 * iPrecisionMultiplier).toFixed(10), 10);
 
-			return (parseInt(fValue1 * iPrecisionMultiplier, 10) +
-				(iSign * parseInt(fValue2 * iPrecisionMultiplier, 10))) / iPrecisionMultiplier;
+			return (iValue1 + (iSign * iValue2)) / iPrecisionMultiplier;
 		};
 
 

@@ -52,14 +52,6 @@ function (
 ) {
 	"use strict";
 
-	DOMUtil.insertStyles('\
-		.sapUiDtTestAnimate {\
-			animation-duration: 0.1s;\
-			width: 0px;\
-			z-index: 2;\
-		} \
-	', document.head);
-
 	// Styles on "qunit-fixture" influence the scrolling tests if positioned on the screen during test execution.
 	// Please keep this tag without any styling.
 	jQuery('#qunit-fixture').removeAttr('style');
@@ -224,13 +216,34 @@ function (
 		});
 
 		QUnit.test("when CSS animation takes place in UI", function (assert) {
+			DOMUtil.insertStyles('\
+				@keyframes example {\
+					from	{ width: 100px; }\
+					to		{ width: 200px; }\
+				}\
+				.sapUiDtTestAnimate {\
+					animation-name: example;\
+					animation-duration: 0.05s;\
+					animation-fill-mode: forwards;\
+				} \
+			', document.getElementById("qunit-fixture"));
+
 			var done = assert.async();
 
-			this.oElementOverlay.attachEventOnce('geometryChanged', function () {
-				assert.strictEqual(this.oButton.$().width(), this.oElementOverlay.$().width(), "the new width is correctly set");
-				assert.strictEqual(this.oButton.$().css("z-index"), this.oElementOverlay.$().css("z-index"), "the new z-index is correctly set");
-				done();
-			}, this);
+			this.oElementOverlay.attachEvent(
+				'geometryChanged',
+				sandbox.stub()
+					// First call triggered by the mutation for adding the CSS class to the DOM element
+					.onFirstCall().callsFake(function () {
+						assert.ok(true);
+					})
+					// Second call triggered by animationend event
+					.onSecondCall().callsFake(function () {
+						assert.strictEqual(this.oButton.$().width(), 200, "then the button width is correct");
+						assert.strictEqual(this.oButton.$().width(), this.oElementOverlay.$().width(), "then the overlay size is in sync");
+						done();
+					}.bind(this))
+			);
 
 			this.oButton.addStyleClass("sapUiDtTestAnimate");
 		});
@@ -1095,9 +1108,7 @@ function (
 		});
 
 		QUnit.test("when scrollcontainer loses scrolling, then scrollbar classes have to be removed", function (assert) {
-
 			var fnDone = assert.async();
-
 			var oVerticalLayout = new VerticalLayout('layout', {
 				content: [
 					this.oScrollControl = new SimpleScrollControl({

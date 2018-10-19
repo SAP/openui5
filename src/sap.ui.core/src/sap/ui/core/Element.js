@@ -129,11 +129,8 @@ sap.ui.define([
 
 				/**
 				 * Defines the drag-and-drop configuration.
+				 * <b>Note:</b> This configuration might be ignored due to control {@link sap.ui.core.Element.extend metadata} restrictions.
 				 *
-				 * This aggregation is provided exclusively to test drag-and-drop functionality of all controls.
-				 * It might be removed or the functionality might be limited due to control {@link sap.ui.core.Element.extend metadata} restrictions.
-				 *
-				 * @experimental As of 1.56
 				 * @since 1.56
 				 */
 				dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true, singularName : "dragDropConfig"}
@@ -191,7 +188,7 @@ sap.ui.define([
 	 *     dnd : { draggable: true, droppable: false },
 	 *     aggregations : {
 	 *       items : { type: 'sap.ui.core.Control', multiple : true, dnd : {draggable: false, dropppable: true, layout: "Horizontal" } },
-	 *       header : {type : "sap.ui.core.Control", multiple : false, dnd : false },
+	 *       header : {type : "sap.ui.core.Control", multiple : false, dnd : true },
 	 *     }
 	 *   }
 	 * });
@@ -199,16 +196,12 @@ sap.ui.define([
 	 *
 	 * <h3><code>dnd</code> key as a metadata property</h3>
 	 *
-	 * <b>Warning:</b> The drag-and-drop configuration for most controls is experimental at this point. Please be aware that the default behavior is subject to change.
-	 * If you want to enable drag and drop in your controls (either fully or partially), you must specify the desired behavior in their metadata.
-	 * If you do not specify the behavior, the support for drag and drop of a control might differ from what you expected once the default behavior is changed.
-	 *
 	 * <b>dnd</b>: <i>object|boolean</i><br>
 	 * Defines draggable and droppable configuration of the element.
 	 * The following keys can be provided via <code>dnd</code> object literal to configure drag-and-drop behavior of the element:
 	 * <ul>
-	 *  <li><code>[draggable=true]: <i>boolean</i></code> Defines whether the element is draggable or not.</li>
-	 *  <li><code>[droppable=true]: <i>boolean</i></code> Defines whether the element is droppable (it allows being dropped on by a draggable element) or not.</li>
+	 *  <li><code>[draggable=false]: <i>boolean</i></code> Defines whether the element is draggable or not. The default value is <code>false</code>.</li>
+	 *  <li><code>[droppable=false]: <i>boolean</i></code> Defines whether the element is droppable (it allows being dropped on by a draggable element) or not. The default value is <code>false</code>.</li>
 	 * </ul>
 	 * If <code>dnd</code> property is of type Boolean, then the <code>draggable</code> and <code>droppable</code> configuration are set to this Boolean value.
 	 *
@@ -216,13 +209,9 @@ sap.ui.define([
 	 *
 	 * <b>dnd</b>: <i>object|boolean</i><br>
 	 * In addition to draggable and droppable configuration, the layout of the aggregation can be defined as a hint at the drop position indicator.
-	 * Default behavior of draggable and droppable depends on the multiplicity of the aggregation:
 	 * <ul>
-	 *  <li><code>[draggable]: <i>boolean</i></code> Defines whether this aggregation is draggable or not. The default value is <code>false</code> for the aggregation with multiplicity 0..n (<code>multiple: true</code>), otherwise <code>true<code>.</li>
-	 *  <li><code>[droppable]: <i>boolean</i></code> Defines whether dropping is allowed on and/or between the aggregation. The default value is <code>false</code> for the aggregation with multiplicity 0..n (<code>multiple: true</code>), otherwise <code>true<code>.</li>
-	 *  <li><code>[layout="Vertical"]: <i>boolean</i></code> The arrangement of the items in this aggregation. This setting is recommended for the aggregation with multiplicity 0..n (<code>multiple: true</code>). Possible values are <code>Vertical</code>(e.g. rows in a table) and <code>Horizontal</code>(e.g. buttons in a toolbar). It is recommended to use <code>Horizontal</code> layout if the arrangement is multidimensional.</li>
+	 *  <li><code>[layout="Vertical"]: </code> The arrangement of the items in this aggregation. This setting is recommended for the aggregation with multiplicity 0..n (<code>multiple: true</code>). Possible values are <code>Vertical</code> (e.g. rows in a table) and <code>Horizontal</code> (e.g. columns in a table). It is recommended to use <code>Horizontal</code> layout if the arrangement is multidimensional.</li>
 	 * </ul>
-	 * If <code>dnd</code> property is of type Boolean, then the <code>draggable</code> and <code>droppable</code> configuration are set to this Boolean value.
 	 *
 	 * @param {string} sClassName fully qualified name of the class that is described by this metadata object
 	 * @param {object} oStaticInfo static info to construct the metadata from
@@ -732,8 +721,8 @@ sap.ui.define([
 
 			if (aScrollHierarchy && aScrollHierarchy.length > 0) {
 				// restore the scroll position if it's changed after setting focus
-				if (Device.browser.safari || Device.browser.msie) {
-					// Safari and IE11 need a little delay to get the scroll position updated
+				if (Device.browser.safari || Device.browser.msie || Device.browser.edge) {
+					// Safari, IE11 and Edge need a little delay to get the scroll position updated
 					setTimeout(restoreScrollPositions.bind(null, aScrollHierarchy), 0);
 				} else {
 					restoreScrollPositions(aScrollHierarchy);

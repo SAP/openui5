@@ -30,6 +30,8 @@ sap.ui.define([
 			errorPrefix: "sap.ui.test.Opa#waitFor"
 		});
 
+	oLogCollector.start();
+
 	function internalWait (fnCallback, oOptions) {
 
 		// Increase the wait timeout in debug mode, to allow debugging the waitFor without getting timeouts
@@ -288,23 +290,39 @@ sap.ui.define([
 	 * @param {object} options The values to be added to the existing config
 	 * @public
 	 */
-	Opa.extendConfig = function (options) {
-		// Opa extend to preserver properties on these three parameters
-		["actions", "assertions", "arrangements"].forEach(function (sArrangeActAssert) {
-			if (!options[sArrangeActAssert]) {
-				return;
+	Opa.extendConfig = function (oOptions) {
+		var aComponents = ["actions", "assertions", "arrangements"];
+
+		aComponents.filter(function (sArrangeActAssert) {
+			return !!oOptions[sArrangeActAssert];
+		}).forEach(function (sArrangeActAssert) {
+			// actions, assertions and arrangements are objects of a type that extends OPA
+			// this means that somewhere along the prototype chain, .__proto__ will be either OPA or OPA5
+			// this is necessary for chaining in test journeys (".and")
+			var oNewComponent = oOptions[sArrangeActAssert];
+			var oNewComponentProto = Object.getPrototypeOf(oOptions[sArrangeActAssert]);
+			var oCurrentConfig = Opa.config[sArrangeActAssert];
+			var oCurrentConfigProto = Object.getPrototypeOf(Opa.config[sArrangeActAssert]);
+
+			// in order to merge new and existing components and preserve the prototype of the new component,
+			// add existing component properties to the new component
+			for (var sKey in oCurrentConfig) {
+				if (!(sKey in oNewComponent)) {
+					oNewComponent[sKey] = oCurrentConfig[sKey];
+				}
 			}
 
-			Object.keys(Opa.config[sArrangeActAssert]).forEach(function (sKey) {
-				if (!options[sArrangeActAssert][sKey]) {
-					options[sArrangeActAssert][sKey] = Opa.config[sArrangeActAssert][sKey];
+			for (var sProtoKey in oCurrentConfigProto) {
+				if (!(sProtoKey in oNewComponent)) {
+					oNewComponentProto[sProtoKey] = oCurrentConfigProto[sProtoKey];
 				}
-			});
+			}
 		});
 
-		// URI params overwrite default
-		// deep extend is necessary so appParams object is not overwritten but merged
-		Opa.config = $.extend(true, Opa.config, options, opaUriParams);
+		// URI params overwrite other config params
+		// if any action, assertion or arrangement is already defined in OPA, it will be overwritten
+		// deep extend is necessary so plain object configs like appParams are properly merged
+		Opa.config = $.extend(true, Opa.config, oOptions, opaUriParams);
 		_OpaLogger.setLevel(Opa.config.logLevel);
 	};
 

@@ -936,6 +936,7 @@ sap.ui.define([
 		TimePickerSlider.prototype._addSelectionStyle = function() {
 			var $aItems = this.$("content").find("li:not(.TPSliderItemHidden)"),
 				sSelectedItemText = $aItems.eq(this._iSelectedItemIndex).text(),
+				oDescriptionElement,
 				sAriaLabel;
 
 			if (!sSelectedItemText) {
@@ -952,7 +953,10 @@ sap.ui.define([
 
 			$aItems.eq(this._iSelectedItemIndex).addClass("sapMTimePickerItemSelected");
 			//WAI-ARIA region
-			document.getElementById(this.getId() + "-valDescription").innerHTML = sAriaLabel;
+			oDescriptionElement = document.getElementById(this.getId() + "-valDescription");
+			if (oDescriptionElement.innerHTML !== sAriaLabel) {
+				oDescriptionElement.innerHTML = sAriaLabel;
+			}
 		};
 
 		/**

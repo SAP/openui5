@@ -33,7 +33,7 @@ sap.ui.define([
 					"sap/ui/fl/support/Flexibility"
 				],
 				//Configuration used for rule loading of Support Assistant
-				publicRules:true
+				publicRules: true
 			}
 		}
 	});
@@ -49,8 +49,6 @@ sap.ui.define([
 		FioriElementsFromScratch: "FE_FROM_SCRATCH",
 		UiAdaptation: "UI_ADAPTATION"
 	};
-
-	sap.ui.fl.flexibilityServices = sap.ui.getCore().getConfiguration().getFlexibilityServices();
 
 	RegistrationDelegator.registerAll();
 

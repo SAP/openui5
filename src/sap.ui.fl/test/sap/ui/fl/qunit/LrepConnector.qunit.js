@@ -652,27 +652,6 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("loadChanges uses a passed url if provided", function(assert) {
-			var sComponentClassName = "smartFilterBar.Component";
-			var sAppVersion = Utils.DEFAULT_APP_VERSION;
-
-			var sExpectedCallUrl = "/a/complete/different/url/abc";
-
-			var oFakeResponse = {
-				response: {}
-			};
-
-			var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
-
-			return this.oLrepConnector.loadChanges({name: sComponentClassName, appVersion : sAppVersion},{url: sExpectedCallUrl}).then(function() {
-				assert.equal(oSendStub.callCount, 1, "the back-end request was triggered");
-
-				var oCall = oSendStub.getCall(0);
-				var aCallArguments = oCall.args;
-				assert.equal(aCallArguments[0], sExpectedCallUrl, "the request URL was correctly built and the appVersion parameter was not included");
-			});
-		});
-
 		QUnit.test("_buildParams - empty", function(assert) {
 			//Arrange
 			var aParams = [];
@@ -1112,6 +1091,14 @@ sap.ui.define([
 			assert.equal(sPrefix, "/sap/bc/lrep/changes/");
 		});
 
+
+		QUnit.test("_getUrlPrefix shall embody the core configuration '' to the path for changes", function(assert) {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns("/something/else");
+
+			var sPrefix = this.oLrepConnector._getUrlPrefix();
+			assert.equal(sPrefix, "/something/else/changes/");
+		});
+
 		QUnit.test("_sendAjaxRequest - refetch XSRF Token in case of http 403 (not authorised) and reuse of previous XSRF token", function(assert) {
 			var requestCount = 0;
 			var bValidRequestReceived = false;
@@ -1493,21 +1480,32 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("the connector reacts on the core configuration 'flexibilityServices'", function () {
+		QUnit.test("does send a request in case no 'sap-data-ui-flexibilityServices' was set", function (assert) {
 
-	QUnit.module("No requests are sent in case of a bootstrapping with 'useNoFlexibilityServices'", function (hooks) {
-		hooks.beforeEach(function() {
-			sap.ui.fl.flexibilityServices = true;
-		});
+			this.server = sinon.fakeServer.create();
+			this.server.respondWith([200, {
+				"Content-Type": "application/json",
+				"Content-Length": 13,
+				"X-CSRF-Token": "0987654321"
+			}, "{}"]);
+			this.server.autoRespond = true;
 
-		hooks.afterEach(function() {
-			sap.ui.fl.flexibilityServices = false;
-		});
-
-		QUnit.test("does not send a request in case the useNoFlexibilityServices is set to 'true'", function (assert) {
 			var done = assert.async();
 			assert.expect(0);
 
-			new LrepConnector()._sendAjaxRequest().then(function () {
+			new LrepConnector()._sendAjaxRequest("/sap/bc/lrep/flex/data/test", {type: "GET"}).then(function () {
+				done();
+			});
+		});
+
+		QUnit.test("does not send a request in case 'sap-data-ui-flexibilityServices' was set to an empty string", function (assert) {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns("");
+
+			var done = assert.async();
+			assert.expect(0);
+
+			new LrepConnector()._sendAjaxRequest("/sap/bc/lrep/flex/data/test", {type: "GET"}).then(function () {
 				assert.ok(false, "if you see this, then no rejection took place. This should not happen.");
 				done();
 			}, function () {

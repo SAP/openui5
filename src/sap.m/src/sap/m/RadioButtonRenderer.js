@@ -29,8 +29,9 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library', 'sap/ui/D
 		var bEnabled = oRadioButton.getEnabled();
 		var bEditable = oRadioButton.getEditable();
 		var bReadOnly = !bEnabled || !bEditable;
-		var bInErrorState = ValueState.Error == oRadioButton.getValueState();
-		var bInWarningState = ValueState.Warning == oRadioButton.getValueState();
+		var bInErrorState = ValueState.Error === oRadioButton.getValueState();
+		var bInWarningState = ValueState.Warning === oRadioButton.getValueState();
+		var bInHighlightState = ValueState.Highlight === oRadioButton.getValueState();
 		var bUseEntireWidth = oRadioButton.getUseEntireWidth();
 
 		// Radio Button style class
@@ -79,6 +80,10 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library', 'sap/ui/D
 
 		if (bInWarningState) {
 			oRm.addClass("sapMRbWarn");
+		}
+
+		if (bInHighlightState) {
+			oRm.addClass("sapMRbHighlight");
 		}
 
 		oRm.writeClasses();

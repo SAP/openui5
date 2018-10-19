@@ -2,11 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/support/library",
-		"sap/ui/support/supportRules/Main",
+sap.ui.define(["sap/ui/support/supportRules/Main",
 		"sap/ui/support/supportRules/RuleSetLoader"],
-	function (library,
-			  Main,
+	function (Main,
 			  RuleSetLoader) {
 		"use strict";
 
@@ -29,6 +27,7 @@ sap.ui.define(["sap/ui/support/library",
 		 * For more information, see {@link topic:a34eb58aaf124f538a3ead23a6cab04a Support Assistant API}.
 		 *
 		 * @namespace
+		 * @deprecated Since version 1.60.0. Please use sap/ui/support/RuleAnalyzer instead.
 		 * @alias jQuery.sap.support
 		 * @author SAP SE
 		 * @version ${version}
@@ -43,6 +42,7 @@ sap.ui.define(["sap/ui/support/library",
 			 * to be checked and a flexible way to specify the list of rules to be used.
 			 *
 			 * @memberof jQuery.sap.support
+			 * @deprecated Since version 1.60.0. Please use sap/ui/support/RuleAnalyzer instead.
 			 * @public
 			 * @param {object} [oExecutionScope] The execution scope of the analysis (see {@link topic:e15067d976f24b11907f4c262bd749a0 Execution Scopes}).
 			 * @param {string} [oExecutionScope.type = "global"] Possible values are <code>global</code>, <code>subtree</code> or <code>component</code>.
@@ -70,6 +70,7 @@ sap.ui.define(["sap/ui/support/library",
 			/**
 			 * Returns the result of the last analysis performed.
 			 * @memberof jQuery.sap.support
+			 * @deprecated Since version 1.60.0. Please use sap/ui/support/RuleAnalyzer instead.
 			 * @public
 			 * @returns {Object} Last analysis history.
 			 */
@@ -81,6 +82,7 @@ sap.ui.define(["sap/ui/support/library",
 			 * Returns the history of all executed analyses.
 			 *
 			 * @memberof jQuery.sap.support
+			 * @deprecated Since version 1.60.0. Please use sap/ui/support/RuleAnalyzer instead.
 			 * @public
 			 * @returns {Object[]} Array of history objects in the order of analyses performed. The results of the last analysis are contained in the last element in the array.
 			 */
@@ -92,6 +94,7 @@ sap.ui.define(["sap/ui/support/library",
 			 * Returns the history of all executed analyses into formatted output depending on the passed format.
 			 *
 			 * @memberof jQuery.sap.support
+			 * @deprecated Since version 1.60.0. Please use sap/ui/support/RuleAnalyzer instead.
 			 * @public
 			 * @param {sap.ui.support.HistoryFormats} [sFormat=sap.ui.support.HistoryFormats.String] The format into which the history object will be converted. Possible values are listed in sap.ui.support.HistoryFormats.
 			 * @returns {*} All analysis history objects in the correct format.
@@ -104,6 +107,7 @@ sap.ui.define(["sap/ui/support/library",
 			 * Adds new temporary rule when in silent mode
 			 *
 			 * @memberof jQuery.sap.support
+			 * @deprecated Since version 1.60.0. Please use sap/ui/support/RuleAnalyzer instead.
 			 * @public
 			 * @since 1.60
 			 * @param {Object} oRule Settings for the new rule. For detailed information about its properties see {@link topic:eaeea19a991d46f29e6d8d8827317d0e Rule Property Values}

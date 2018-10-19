@@ -250,8 +250,7 @@ sap.ui.define([
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(300);
-		oPopup = oInput._oSuggestionPopup;
-
+		oPopup = oInput._oSuggPopover._oPopover;
 		sap.ui.test.qunit.triggerTouchEvent("tap", oPopup.getContent()[0].getItems()[1].getDomRef());
 		this.clock.tick(300);
 
@@ -308,10 +307,12 @@ sap.ui.define([
 
 		i4.setValueState("Warning");
 		i5.setValueState("Error");
+		i8.setValueState("Highlight");
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(i4.$("content").hasClass('sapMInputBaseContentWrapperWarning'), true, "After new value state : Warning");
 		assert.equal(i5.$("content").hasClass('sapMInputBaseContentWrapperError'), true, "After new value state : Error");
+		assert.equal(i8.$("content").hasClass('sapMInputBaseContentWrapperHighlight'), true, "After new value state : Highlight");
 
 		i4.setValueState();
 		i5.setValueState("None");
@@ -439,10 +440,10 @@ sap.ui.define([
 			oInput._$input.focus().val("abc").trigger("input");
 			this.clock.tick(300);
 
-			assert.ok(oInput._oSuggestionPopup && oInput._oSuggestionPopup.isOpen && oInput._oSuggestionPopup.isOpen(), "Suggestion Popup is open now");
+			assert.ok(oInput._oSuggPopover && oInput._oSuggPopover._oPopover.isOpen && oInput._oSuggPopover._oPopover.isOpen(), "Suggestion Popup is open now");
 			sap.ui.test.qunit.triggerKeydown(oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ARROW_DOWN);
 			checkSubmit("Enter pressed on open Suggestions", true, true, "abcTom");
-			assert.ok(oInput._oSuggestionPopup && oInput._oSuggestionPopup.isOpen && !oInput._oSuggestionPopup.isOpen(), "Suggestion Popup should be closed");
+			assert.ok(oInput._oSuggPopover && oInput._oSuggPopover._oPopover.isOpen && !oInput._oSuggPopover._oPopover.isOpen(), "Suggestion Popup should be closed");
 		}
 
 		oInput.destroy();
@@ -714,8 +715,8 @@ sap.ui.define([
 
 		oInput.destroy();
 
-		assert.ok(oInput._oList === null || oInput._oList === undefined, "The internal list is destroyed");
-		assert.ok(oInput._oSuggestionPopup === null || oInput._oSuggestionPopup === undefined, "The internal popup is destroyed");
+		// assert.ok(oInput._oSuggPopover._oList === null || oInput._oSuggPopover._oList === undefined, "The internal list is destroyed");
+		assert.ok(oInput._oSuggPopover === null || oInput._oSuggPopover === undefined, "The internal popup is destroyed");
 	});
 
 	QUnit.module("Suggestions");
@@ -736,8 +737,8 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		// suggestions are not active, list and popup should not be initialized
-		assert.strictEqual(oInput._oList, undefined, "The internal list is not initialzed when suggestions are set to false");
-		assert.strictEqual(oInput._oSuggestionPopup, undefined, "The internal popup is not initialzed when suggestions are set to false");
+		// assert.strictEqual(oInput._oSuggPopover._oList, undefined, "The internal list is not initialzed when suggestions are set to false");
+		assert.strictEqual(oInput._oSuggPopover, undefined, "The internal popup is not initialzed when suggestions are set to false");
 
 		oInput.destroy();
 	});
@@ -763,7 +764,7 @@ sap.ui.define([
 
 		this.clock.tick(300);
 
-		oPopup = oInput6._oSuggestionPopup;
+		oPopup = oInput6._oSuggPopover._oPopover;
 		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 		assert.equal(oPopup.getContent()[0].getItems().length, aNames.length, "Suggestions are inserted");
@@ -846,7 +847,7 @@ sap.ui.define([
 
 		this.clock.tick(300);
 
-		oPopup = oInput._oSuggestionPopup;
+		oPopup = oInput._oSuggPopover._oPopover;
 		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
@@ -888,11 +889,11 @@ sap.ui.define([
 
 		this.clock.tick(300);
 
-		oPopup = oInput._oSuggestionPopup;
+		oPopup = oInput._oSuggPopover._oPopover;
 		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
-		var oItem = oInput._oSuggestionPopup.getContent()[0].getItems()[0];
+		var oItem = oInput._oSuggPopover._oPopover.getContent()[0].getItems()[0];
 		assert.ok(oItem, "Item should be created");
 
 		oItem.focus();
@@ -940,7 +941,7 @@ sap.ui.define([
 
 		this.clock.tick(300);
 
-		oPopup = oInput._oSuggestionPopup;
+		oPopup = oInput._oSuggPopover._oPopover;
 		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
@@ -975,7 +976,7 @@ sap.ui.define([
 		oInput7._$input.focus().val("abc").trigger("input");
 
 		this.clock.tick(300);
-		oPopup1 = oInput7._oSuggestionPopup;
+		oPopup1 = oInput7._oSuggPopover._oPopover;
 
 		assert.ok(oPopup1 instanceof sap.m.Popover, "Two Value Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup1.isOpen(), "Two Value Suggestion Popup is open now");
@@ -1035,7 +1036,7 @@ sap.ui.define([
 		oInput._$input.focus().val("abc").trigger("input");
 
 		this.clock.tick(300);
-		oPopup = oInput._oSuggestionPopup;
+		oPopup = oInput._oSuggPopover._oPopover;
 
 		assert.ok(oPopup instanceof sap.m.Popover, "Two Value Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Two Value Suggestion Popup is open now");
@@ -1046,19 +1047,19 @@ sap.ui.define([
 		assert.ok(oPopup.isOpen(), "Two Value Suggestion Popup is still open now");
 
 		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
-		assert.ok(oInput._oList.getItems()[0].$().hasClass("sapMLIBSelected"), "The first item is selected after pressing keyDown once");
+		assert.ok(oInput._oSuggPopover._oList.getItems()[0].$().hasClass("sapMLIBSelected"), "The first item is selected after pressing keyDown once");
 
 		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
-		assert.ok(oInput._oList.getItems()[2].$().hasClass("sapMLIBSelected"), "The third item is selected after pressing keyDown twice");
-		assert.ok(!oInput._oList.getItems()[1].$().hasClass("sapMLIBSelected"), "The second item is not selected because it is disabled");
+		assert.ok(oInput._oSuggPopover._oList.getItems()[2].$().hasClass("sapMLIBSelected"), "The third item is selected after pressing keyDown twice");
+		assert.ok(!oInput._oSuggPopover._oList.getItems()[1].$().hasClass("sapMLIBSelected"), "The second item is not selected because it is disabled");
 
 		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
-		assert.ok(oInput._oList.getItems()[2].$().hasClass("sapMLIBSelected"), "The third item is still selected after pressing keyDown three times");
-		assert.ok(!oInput._oList.getItems()[3].$().hasClass("sapMLIBSelected"), "The fourth item is not selected because it is disabled");
+		assert.ok(oInput._oSuggPopover._oList.getItems()[2].$().hasClass("sapMLIBSelected"), "The third item is still selected after pressing keyDown three times");
+		assert.ok(!oInput._oSuggPopover._oList.getItems()[3].$().hasClass("sapMLIBSelected"), "The fourth item is not selected because it is disabled");
 
 		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
-		assert.ok(oInput._oList.getItems()[0].$().hasClass("sapMLIBSelected"), "The first item is now selected after pressing keyUp once");
-		assert.ok(!oInput._oList.getItems()[1].$().hasClass("sapMLIBSelected"), "The second item is not selected because it is disabled");
+		assert.ok(oInput._oSuggPopover._oList.getItems()[0].$().hasClass("sapMLIBSelected"), "The first item is now selected after pressing keyUp once");
+		assert.ok(!oInput._oSuggPopover._oList.getItems()[1].$().hasClass("sapMLIBSelected"), "The second item is not selected because it is disabled");
 
 		oInput.destroy();
 	});
@@ -1174,25 +1175,25 @@ sap.ui.define([
 		oInput._$input.focus().val("Prod").trigger("input");
 
 		this.clock.tick(300);
-		oPopup = oInput._oSuggestionPopup;
+		oPopup = oInput._oSuggPopover._oPopover;
 
 		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
 		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
-		assert.ok(oInput._oList.getItems()[0].$().hasClass("sapMLIBSelected"), "The first item is selected after pressing keyDown once");
+		assert.ok(oInput._oSuggPopover._oList.getItems()[0].$().hasClass("sapMLIBSelected"), "The first item is selected after pressing keyDown once");
 
 		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
-		assert.ok(oInput._oList.getItems()[1].$().hasClass("sapMLIBSelected"), "The second item is selected after pressing keyDown twice");
+		assert.ok(oInput._oSuggPopover._oList.getItems()[1].$().hasClass("sapMLIBSelected"), "The second item is selected after pressing keyDown twice");
 
 		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
-		assert.ok(oInput._oList.getItems()[2].$().hasClass("sapMLIBSelected"), "The third item is selected after pressing keyDown three times");
+		assert.ok(oInput._oSuggPopover._oList.getItems()[2].$().hasClass("sapMLIBSelected"), "The third item is selected after pressing keyDown three times");
 
 		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
-		assert.ok(oInput._oList.getItems()[1].$().hasClass("sapMLIBSelected"), "The second item is selected after pressing keyUp once");
+		assert.ok(oInput._oSuggPopover._oList.getItems()[1].$().hasClass("sapMLIBSelected"), "The second item is selected after pressing keyUp once");
 
 		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
-		assert.ok(oInput._oList.getItems()[0].$().hasClass("sapMLIBSelected"), "The first item is selected after pressing keyUp twice");
+		assert.ok(oInput._oSuggPopover._oList.getItems()[0].$().hasClass("sapMLIBSelected"), "The first item is selected after pressing keyUp twice");
 
 		//close the popoup when nothing is typed in input
 		oInput._$input.focus().val("").trigger("input");
@@ -1241,25 +1242,25 @@ sap.ui.define([
 		oInput._$input.focus().trigger("click");
 		this.clock.tick(500);
 
-		oPopup = oInput._oSuggestionPopup;
+		oPopup = oInput._oSuggPopover._oPopover;
 		assert.ok(oPopup instanceof Dialog, "Suggestion Popup is created and is a Dialog instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
-		oInput._oPopupInput._$input.focus().val("abc").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
 		assert.equal(oPopup.getContent()[0].getItems().length, aNames.length, "Suggestions are inserted");
 
-		oInput._oPopupInput._$input.focus().val("abcT").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.focus().val("abcT").trigger("input");
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
 		assert.equal(oPopup.getContent()[0].getItems().length, 1, "Suggestions are filtered");
 
-		oInput._oPopupInput._$input.focus().val("").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.focus().val("").trigger("input");
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
 		assert.equal(oPopup.getContent()[0].getItems().length, 0, "Suggestions are destroyed");
 
-		oInput._oPopupInput._$input.focus().val("abc").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
 
 		sap.ui.test.qunit.triggerTouchEvent("tap", oPopup.getContent()[0].getItems()[1].getDomRef());
@@ -1312,9 +1313,9 @@ sap.ui.define([
 		oInput._$input.focus().trigger("click");
 		this.clock.tick(500);
 
-		oPopup = oInput._oSuggestionPopup;
+		oPopup = oInput._oSuggPopover._oPopover;
 
-		oInput._oPopupInput._$input.focus().val("abc").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
 		sap.ui.test.qunit.triggerTouchEvent("tap", oPopup.getContent()[0].getItems()[1].getDomRef());
 		this.clock.tick(500);
@@ -1361,26 +1362,26 @@ sap.ui.define([
 
 		oInput._$input.focus().trigger("click");
 		this.clock.tick(500);
-		oPopup = oInput._oSuggestionPopup;
+		oPopup = oInput._oSuggPopover._oPopover;
 
 		assert.ok(oPopup instanceof Dialog, "Two value Suggestion Popup is created and is a Dialog instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
-		oInput._oPopupInput._$input.focus().val("abc").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
 		assert.equal(oPopup.getContent()[0].getItems().length, aNames.length, "Suggestions are inserted");
 
-		oInput._oPopupInput._$input.focus().val("abcT").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.focus().val("abcT").trigger("input");
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Two value Suggestion Popup is still open now");
 		assert.equal(oPopup.getContent()[0].getItems().length, 1, "Suggestions are filtered");
 
-		oInput._oPopupInput._$input.focus().val("").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.focus().val("").trigger("input");
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Two value Suggestion Popup is still open now");
 		assert.equal(oPopup.getContent()[0].getItems().length, 0, "Suggestions are destroyed");
 
-		oInput._oPopupInput._$input.focus().val("abc").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
 
 		sap.ui.test.qunit.triggerTouchEvent("tap", oPopup.getContent()[0].getItems()[1].getDomRef());
@@ -1420,7 +1421,7 @@ sap.ui.define([
 		oInput._$input.focus().trigger("click");
 		this.clock.tick(500);
 
-		oInput._oPopupInput._$input.focus().val("abc").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
 
 		assert.equal(fnLC1.callCount, 1, "liveChange handler on original input is called");
 
@@ -1461,8 +1462,8 @@ sap.ui.define([
 		oInput._$input.focus().trigger("click");
 		this.clock.tick(500);
 
-		var oSpy = this.spy(oInput._oSuggestionPopup, "invalidate");
-		oInput._oPopupInput._$input.focus().val("abc").trigger("input");
+		var oSpy = this.spy(oInput._oSuggPopover._oPopover, "invalidate");
+		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
 
 		assert.equal(oInput.getSuggestionItems().length, 1, "Suggestion Item is inserted");
@@ -1585,12 +1586,12 @@ sap.ui.define([
 		oInput._$input.focus().val("Prod").trigger("input");
 
 		this.clock.tick(300);
-		oPopup = oInput._oSuggestionPopup;
+		oPopup = oInput._oSuggPopover._oPopover;
 
 		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
-		assert.ok(!oInput._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table initially has not the hidden style class");
+		assert.ok(!oInput._oSuggPopover._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table initially has not the hidden style class");
 
 		assert.equal(oPopup.getContent()[0].getItems().length, oSuggestionData.tabularSuggestionItems.length, "Suggestions are inserted");
 		assert.strictEqual(oPopup.getContent()[0].$().length, 1, "Suggestion table is rendered");
@@ -1600,7 +1601,7 @@ sap.ui.define([
 		oInput._$input.focus().val("Product1").trigger("input");
 		this.clock.tick(400);
 
-		assert.ok(!oInput._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class on desktop");
+		assert.ok(!oInput._oSuggPopover._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class on desktop");
 
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
 		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
@@ -1733,7 +1734,7 @@ sap.ui.define([
 		oInput._$input.focus().val("Prod").trigger("input");
 
 		this.clock.tick(300);
-		oPopup = oInput._oSuggestionPopup;
+		oPopup = oInput._oSuggPopover._oPopover;
 
 		// set up a spy on the dialog's renderer (the dialog should not be rerendered)
 		oInputRendererSpy = sinon.spy(InputRenderer, "render");
@@ -1932,7 +1933,7 @@ sap.ui.define([
 
 		this.clock.tick(300);
 
-		assert.ok(!oInput._oSuggestionPopup.getFooter(), "Suggestion Popup doesn't have Toolbar footer");
+		assert.ok(!oInput._oSuggPopover._oPopover.getFooter(), "Suggestion Popup doesn't have Toolbar footer");
 
 		oInput.destroy();
 	});
@@ -2073,23 +2074,23 @@ sap.ui.define([
 		oInput._$input.focus().trigger("click");
 		this.clock.tick(300);
 
-		oPopup = oInput._oSuggestionPopup;
+		oPopup = oInput._oSuggPopover._oPopover;
 		assert.ok(oPopup instanceof Dialog, "Suggestion Popup is created and is a Dialog instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
-		oInput._oPopupInput._$input.focus().val("Product").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.focus().val("Product").trigger("input");
 		this.clock.tick(400);
 		assert.equal(oPopup.getContent()[0].getItems().length, oSuggestionData.tabularSuggestionItems.length, "Suggestions are inserted");
 		assert.strictEqual(oDialogRendererSpy.callCount, 1, "Dialog has been renderded after opening");
-		assert.ok(!oInput._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
+		assert.ok(!oInput._oSuggPopover._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
 
 		// remove input in between (to check if dialog is not re-rendered, this would cause the soft-keyboard to hide)
-		oInput._oPopupInput._$input.focus().val("").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.focus().val("").trigger("input");
 		this.clock.tick(400);
 		assert.strictEqual(oDialogRendererSpy.callCount, 1, "Dialog is not re-rendered when changing the input value to empty string");
-		assert.ok(oInput._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table has the hidden style class when no items are displayed");
+		assert.ok(oInput._oSuggPopover._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table has the hidden style class when no items are displayed");
 
-		oInput._oPopupInput._$input.focus().val("Product1").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.focus().val("Product1").trigger("input");
 		this.clock.tick(400);
 
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now123");
@@ -2098,10 +2099,10 @@ sap.ui.define([
 			assert.equal(oPopup.getContent()[0].$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 		}
 		assert.strictEqual(oDialogRendererSpy.callCount, 1, "Dialog is not re-rendered when changing the input value to a another value");
-		assert.ok(!oInput._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
+		assert.ok(!oInput._oSuggPopover._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
 
 		// enter a string that is not found in suggestions
-		oInput._oPopupInput._$input.focus().val("thisWillNotBeFound").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.focus().val("thisWillNotBeFound").trigger("input");
 		this.clock.tick(400);
 
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
@@ -2110,10 +2111,10 @@ sap.ui.define([
 			assert.strictEqual(oItem.getVisible(), false, "Item " + oItem.getId() + " is not visible");
 		});
 		assert.strictEqual(oDialogRendererSpy.callCount, 1, "Dialog is not re-rendered when changing the input value to a another value");
-		assert.ok(oInput._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table has the hidden style class when no items are found");
+		assert.ok(oInput._oSuggPopover._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table has the hidden style class when no items are found");
 
 		// filter with a string that will display 3 items
-		oInput._oPopupInput._$input.focus().val("Product").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.focus().val("Product").trigger("input");
 		this.clock.tick(400);
 
 		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
@@ -2121,7 +2122,7 @@ sap.ui.define([
 			assert.equal(oPopup.getContent()[0].$().find("tbody").children().length, 3, "3 suggestions are displayed");
 		}
 		assert.strictEqual(oDialogRendererSpy.callCount, 1, "Dialog is not re-rendered during filtering of suggestions");
-		assert.ok(!oInput._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
+		assert.ok(!oInput._oSuggPopover._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
 
 		// checks for the show more button (tabular suggestions only)
 		assert.strictEqual(oPopup.getEndButton() instanceof Button, true, "The show more button is added to the popup");
@@ -2258,7 +2259,7 @@ sap.ui.define([
 		oInput._$input.focus().val("25").trigger("input");
 
 		this.clock.tick(300);
-		oPopup = oInput._oSuggestionPopup;
+		oPopup = oInput._oSuggPopover._oPopover;
 
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
@@ -2453,10 +2454,10 @@ sap.ui.define([
 
 		oInput.setShowSuggestion(true);
 
-		assert.ok(oInput._oList, "List instance is created");
-		assert.ok(oInput._oSuggestionPopup, "Suggestion Popup instance is created");
-		assert.ok(oInput._oSuggestionPopup.getFooter() instanceof sap.m.Toolbar, "Suggestion Popup has Toolbar footer");
-		assert.ok(oInput._oSuggestionPopup.getFooter().getContent()[1] instanceof Button, "Suggestion Popup has showMoreButton");
+		assert.ok(oInput._oSuggPopover._oList, "List instance is created");
+		assert.ok(oInput._oSuggPopover._oPopover, "Suggestion Popup instance is created");
+		assert.ok(oInput._oSuggPopover._oPopover.getFooter() instanceof sap.m.Toolbar, "Suggestion Popup has Toolbar footer");
+		assert.ok(oInput._oSuggPopover._oPopover.getFooter().getContent()[1] instanceof Button, "Suggestion Popup has showMoreButton");
 
 		oInput.destroy();
 	});
@@ -2558,10 +2559,10 @@ sap.ui.define([
 
 		oInput.setShowSuggestion(true);
 
-		assert.ok(oInput._oList, "List instance is created");
-		assert.ok(oInput._oSuggestionPopup, "Suggestion Popup instance is created");
-		assert.ok(oInput._oSuggestionPopup.getFooter() instanceof sap.m.Toolbar, "Suggestion Popup has Toolbar footer");
-		assert.ok(oInput._oSuggestionPopup.getFooter().getContent()[1] instanceof Button, "Suggestion Popup has showMoreButton");
+		assert.ok(oInput._oSuggPopover._oList, "List instance is created");
+		assert.ok(oInput._oSuggPopover._oPopover, "Suggestion Popup instance is created");
+		assert.ok(oInput._oSuggPopover._oPopover.getFooter() instanceof sap.m.Toolbar, "Suggestion Popup has Toolbar footer");
+		assert.ok(oInput._oSuggPopover._oPopover.getFooter().getContent()[1] instanceof Button, "Suggestion Popup has showMoreButton");
 
 		oInput.destroy();
 	});
@@ -2577,7 +2578,7 @@ sap.ui.define([
 
 		this.clock.tick(300);
 
-		var $labels = oInput._oSuggestionPopup.$().find('.sapMDLILabel, .sapMSLITitleOnly, .sapMDLIValue');
+		var $labels = oInput._oSuggPopover._oPopover.$().find('.sapMDLILabel, .sapMSLITitleOnly, .sapMDLIValue');
 
 		assert.ok($labels[0].innerHTML.indexOf('<span') > -1, "Texts is highlighted");
 
@@ -2638,7 +2639,7 @@ sap.ui.define([
 
 		this.clock.tick(300);
 
-		var oItem = oInput._oSuggestionPopup.getContent()[0].getItems()[0];
+		var oItem = oInput._oSuggPopover._oPopover.getContent()[0].getItems()[0];
 		assert.ok(oItem, "Item should be created");
 
 		oItem.focus();
@@ -3034,7 +3035,7 @@ sap.ui.define([
 		sap.ui.test.qunit.triggerKeydown(document.activeElement, "40"); // bottom (arrow)
 
 		// simulate focus out
-		oInput._oSuggestionPopup.close();
+		oInput._oSuggPopover._oPopover.close();
 
 		assert.equal(fnChangeCallback.callCount, 1, "change event is fired once");
 		assert.equal(fnSuggestionItemSelectedCallback.callCount, 1, "suggestionItemSelected event is fired once");
@@ -3139,7 +3140,7 @@ sap.ui.define([
 
 		this.clock.tick(300);
 
-		var $popover = oInput._oSuggestionPopup.$();
+		var $popover = oInput._oSuggPopover._oPopover.$();
 		assert.ok($popover.attr('aria-labelledby'), 'popup ariaLabelledBy is set');
 
 		oInput.destroy();
@@ -3196,6 +3197,39 @@ sap.ui.define([
 		var oInputClone  = this.oTabularInputToClone.clone();
 
 		assert.equal(oInputClone.getValue(), "The selected item: Auch ein gutes Ding", "The selectedRow association should be cloned");
+	});
+
+	QUnit.test("Input suggestions description", function(assert) {
+		// setup
+		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			oInput = new Input({
+				showSuggestion: true,
+				suggestionItems: [
+					new sap.ui.core.Item({
+						text: "Item 1",
+						key: "001"
+					}),
+					new sap.ui.core.Item({
+						text: "Item 2",
+						key: "002"
+					})
+				]
+			});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput.onfocusin();
+		oInput._$input.focus().val("I").trigger("input");
+		this.clock.tick(400);
+
+		// assert
+		assert.ok(!!oInput.getDomRef("SuggDescr"), "The description is added in the DOM.");
+		assert.strictEqual(oInput.getDomRef("SuggDescr").innerText,
+			oMessageBundle.getText("INPUT_SUGGESTIONS_MORE_HITS", 2), "The description has correct text.");
+
+		// clean up
+		oInput.destroy();
 	});
 
 	QUnit.module("Focus");

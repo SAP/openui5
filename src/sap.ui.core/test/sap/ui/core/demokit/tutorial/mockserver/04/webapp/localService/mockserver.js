@@ -1,7 +1,8 @@
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/core/util/MockServer"
-], function(jQuery, MockServer) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/util/MockServer",
+	"sap/base/Log"
+], function(jQuery, MockServer, Log) {
 	"use strict";
 
 	return {
@@ -27,8 +28,8 @@ sap.ui.define([
 			aRequests.push({
 				method: "GET",
 				path: new RegExp("FindUpcomingMeetups(.*)"),
-				response: function(oXhr, sUrlParams) {
-					jQuery.sap.log.debug("Incoming request for FindUpcomingMeetups");
+				response: function(oXhr) {
+					Log.debug("Incoming request for FindUpcomingMeetups");
 					var today = new Date();
 					today.setHours(0); // or today.toUTCString(0) due to timezone differences
 					today.setMinutes(0);
@@ -58,7 +59,7 @@ sap.ui.define([
 			// start
 			oMockServer.start();
 
-			jQuery.sap.log.info("Running the app with mock data");
+			Log.info("Running the app with mock data");
 		}
 
 	};

@@ -282,14 +282,28 @@ sap.ui.define([
 			return xContent.documentElement;
 		}
 
+		/**
+		 *
+		 * @param oView
+		 * @param mSettings
+		 * @return {undefined|Promise} will return a Promise if ResourceModel is instantiated asynchronously, otherwise undefined
+		 */
 		function setResourceModel(oView, mSettings) {
 			if ((oView._resourceBundleName || oView._resourceBundleUrl) && (!mSettings.models || !mSettings.models[oView._resourceBundleAlias])) {
-				var model = new ResourceModel({
+				var oModel = new ResourceModel({
 					bundleName: oView._resourceBundleName,
 					bundleUrl: oView._resourceBundleUrl,
-					bundleLocale: oView._resourceBundleLocale
+					bundleLocale: oView._resourceBundleLocale,
+					async: mSettings.async
 				});
-				oView.setModel(model, oView._resourceBundleAlias);
+				var vBundle = oModel.getResourceBundle();
+				// if ResourceBundle was created with async flag vBundle will be a Promise
+				if (vBundle instanceof Promise) {
+					return vBundle.then(function() {
+						oView.setModel(oModel, mSettings.resourceBundleAlias);
+					});
+				}
+				oView.setModel(oModel, oView._resourceBundleAlias);
 			}
 		}
 
@@ -473,7 +487,13 @@ sap.ui.define([
 					// when used as fragment: prevent connection to controller, only top level XMLView must connect
 					delete mSettings.controller;
 				}
-				setResourceModel(that, mSettings);
+				// vSetResourceModel is a promise if ResourceModel is created async
+				var vSetResourceModel = setResourceModel(that, mSettings);
+				if (vSetResourceModel instanceof Promise) {
+					return vSetResourceModel.then(function() {
+						setAfterRenderingNotifier(that);
+					});
+				}
 				setAfterRenderingNotifier(that);
 			}
 

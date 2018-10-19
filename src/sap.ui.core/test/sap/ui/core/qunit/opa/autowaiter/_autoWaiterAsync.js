@@ -4,13 +4,11 @@ sap.ui.define([
 	"../utils/loggerInterceptor",
 	"sap/ui/test/autowaiter/_autoWaiter",
 	"sap/ui/test/autowaiter/_XHRWaiter",
-	"sap/ui/test/_opaCorePlugin",
-	"sap/ui/test/autowaiter/_autoWaiterLogCollector"
-], function ($, loggerInterceptor, _autoWaiter, _opaCorePlugin, _autoWaiterLogCollector) {
+	"sap/ui/test/autowaiter/_autoWaiterAsync",
+	"sap/ui/test/_LogCollector"
+], function ($, loggerInterceptor, _autoWaiter, _XHRWaiter, _autoWaiterAsync, _LogCollector) {
 	"use strict";
 
-	$.sap.unloadResources("sap/ui/test/autowaiter/_autoWaiterAsync.js", false, true, true);
-	loggerInterceptor.loadAndIntercept("sap.ui.test.autowaiter._autoWaiterAsync")[0];
 	var iPollInterval = 400;
 	var iPollTimeout = 15000;
 
@@ -19,7 +17,6 @@ sap.ui.define([
 			this.clock = sinon.useFakeTimers();
 			this.fnCallbackSpy = sinon.spy();
 			this.fnHasToWaitStub = sinon.stub(sap.ui.test.autowaiter._autoWaiter, "hasToWait");
-			this.autoWaiterAsync = sap.ui.test.autowaiter._autoWaiterAsync;
 		},
 		afterEach: function () {
 			this.clock.restore();
@@ -30,7 +27,7 @@ sap.ui.define([
 	QUnit.test("Should poll until wait conditions are met", function (assert) {
 		this.fnHasToWaitStub.returns(true).onCall(1).returns(false);
 
-		this.autoWaiterAsync.waitAsync(this.fnCallbackSpy);
+		_autoWaiterAsync.waitAsync(this.fnCallbackSpy);
 
 		this.clock.tick(iPollInterval);
 		assert.ok(this.fnHasToWaitStub.calledOnce, "Should poll for autoWaiter conditions to be met");
@@ -46,7 +43,7 @@ sap.ui.define([
 	QUnit.test("Should end immediately if condition is already met", function (assert) {
 		this.fnHasToWaitStub.returns(false);
 
-		this.autoWaiterAsync.waitAsync(this.fnCallbackSpy);
+		_autoWaiterAsync.waitAsync(this.fnCallbackSpy);
 
 		this.clock.tick(iPollInterval);
 		assert.ok(this.fnHasToWaitStub.calledOnce, "Should poll for autoWaiter conditions to be met");
@@ -59,7 +56,7 @@ sap.ui.define([
 		var iTimeoutAttempts = Math.ceil(iPollTimeout / iPollInterval);
 		this.fnHasToWaitStub.returns(true);
 
-		this.autoWaiterAsync.waitAsync(this.fnCallbackSpy);
+		_autoWaiterAsync.waitAsync(this.fnCallbackSpy);
 
 		this.clock.tick(iTimeoutAttempts * iPollInterval);
 		assert.strictEqual(this.fnHasToWaitStub.callCount, iTimeoutAttempts, "Should poll for autoWaiter conditions to be met");
@@ -70,7 +67,7 @@ sap.ui.define([
 
 	QUnit.test("Should not fail if no callback was passed", function (assert) {
 		this.fnHasToWaitStub.returns(false);
-		this.autoWaiterAsync.waitAsync();
+		_autoWaiterAsync.waitAsync();
 
 		this.clock.tick(iPollInterval);
 		assert.ok($.isEmptyObject(this.clock.timers), "Should stop polling when autoWaiter conditions are met");
@@ -80,8 +77,8 @@ sap.ui.define([
 		this.fnHasToWaitStub.returns(true);
 		var oConfig = {interval: 200, timeout: 1000};
 
-		this.autoWaiterAsync.extendConfig(oConfig);
-		this.autoWaiterAsync.waitAsync(this.fnCallbackSpy);
+		_autoWaiterAsync.extendConfig(oConfig);
+		_autoWaiterAsync.waitAsync(this.fnCallbackSpy);
 
 		this.clock.tick(200);
 		assert.ok(this.fnHasToWaitStub.calledOnce, "Should poll for autoWaiter conditions to be met");
@@ -112,13 +109,13 @@ sap.ui.define([
 	QUnit.test("Should log autoWaiter pending work on timeout", function (assert) {
 		var iTimeoutAttempts = Math.ceil(iPollTimeout / iPollInterval);
 		var sAutoWaiterLog = "autoWaiterLogCollector#getAndClearLog";
-		var fnGetAndClearLogStub = sinon.stub(sap.ui.test.autowaiter._autoWaiterLogCollector, "getAndClearLog");
-		var fnStartLogSpy = sinon.spy(sap.ui.test.autowaiter._autoWaiterLogCollector, "start");
-		var fnStopLogSpy = sinon.spy(sap.ui.test.autowaiter._autoWaiterLogCollector, "stop");
+		var fnGetAndClearLogStub = sinon.stub(sap.ui.test._LogCollector.prototype, "getAndClearLog");
+		var fnStartLogSpy = sinon.spy(sap.ui.test._LogCollector.prototype, "start");
+		var fnDestroyLogSpy = sinon.spy(sap.ui.test._LogCollector.prototype, "destroy");
 		fnGetAndClearLogStub.returns(sAutoWaiterLog);
 		this.fnHasToWaitStub.returns(true);
 
-		this.autoWaiterAsync.waitAsync(this.fnCallbackSpy);
+		_autoWaiterAsync.waitAsync(this.fnCallbackSpy);
 
 		assert.ok(fnStartLogSpy.calledOnce, "Should start listening for log entries");
 		this.clock.tick(iTimeoutAttempts * iPollInterval);
@@ -126,11 +123,11 @@ sap.ui.define([
 
 		assert.ok(this.fnCallbackSpy.calledWithMatch(/there is still pending asynchronous work/),
 			"Should invoke the callback with the pending work log");
-		assert.ok(fnStopLogSpy.calledOnce, "Should stop listening for log entries on polling stop");
+		assert.ok(fnDestroyLogSpy.calledOnce, "Should stop listening for log entries on polling stop");
 
 		fnGetAndClearLogStub.restore();
 		fnStartLogSpy.restore();
-		fnStopLogSpy.restore();
+		fnDestroyLogSpy.restore();
 	});
 
 	QUnit.module("AutoWaiterAsync - autoWait timeout waiter", {

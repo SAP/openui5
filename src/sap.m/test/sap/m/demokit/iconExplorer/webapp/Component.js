@@ -1,16 +1,17 @@
 sap.ui.define([
-	"sap/ui/core/UIComponent",
-	"sap/ui/Device",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/demo/iconexplorer/model/models",
-	"sap/ui/demo/iconexplorer/model/IconModel",
-	"sap/ui/demo/iconexplorer/model/FavoriteModel",
-	"sap/ui/demo/iconexplorer/controller/ErrorHandler",
-	"sap/ui/core/IconPool",
-	"sap/ui/VersionInfo",
-	"sap/ui/thirdparty/jquery"
+    "sap/ui/core/UIComponent",
+    "sap/ui/Device",
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/demo/iconexplorer/model/models",
+    "sap/ui/demo/iconexplorer/model/IconModel",
+    "sap/ui/demo/iconexplorer/model/FavoriteModel",
+    "sap/ui/demo/iconexplorer/controller/ErrorHandler",
+    "sap/ui/core/IconPool",
+    "sap/ui/VersionInfo",
+    "sap/ui/thirdparty/jquery",
+    "sap/ui/core/library"
 ], function(
-	UIComponent,
+    UIComponent,
 	Device,
 	JSONModel,
 	models,
@@ -19,7 +20,9 @@ sap.ui.define([
 	ErrorHandler,
 	IconPool,
 	VersionInfo,
-	jQuery) {
+	jQuery,
+	coreLibrary
+) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.iconexplorer.Component", {
@@ -40,7 +43,7 @@ sap.ui.define([
 			UIComponent.prototype.init.apply(this, arguments);
 
 			// set up a helper model to manage OpenUI5/SAPUI5
-			VersionInfo.load(sap.ui.core).then(function (oVersionInfo) {
+			VersionInfo.load(coreLibrary).then(function (oVersionInfo) {
 				var oVersionModel = new JSONModel({
 					isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav)
 				});

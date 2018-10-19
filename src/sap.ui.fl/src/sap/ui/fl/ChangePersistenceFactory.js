@@ -114,7 +114,6 @@ sap.ui.define([
 					var oFlAsyncHint = this._findFlAsyncHint(aAsyncHints.requests, sComponentName);
 					if (oFlAsyncHint) {
 						oChangePersistenceWrapper.oRequestOptions.cacheKey = oFlAsyncHint.cachebusterToken || "<NO CHANGES>";
-						oChangePersistenceWrapper.oRequestOptions.url = oFlAsyncHint.url;
 					}
 				}
 			}

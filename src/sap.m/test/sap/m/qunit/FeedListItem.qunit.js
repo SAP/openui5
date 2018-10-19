@@ -580,6 +580,57 @@ sap.ui.define([
 		assert.ok(sStyleClass.indexOf("sapMFeedListItemImageInactive") >= 0, "Css class 'sapMFeedListItemImageInactive' is present");
 	});
 
+	QUnit.module("Customizing LESS/MORE strings");
+
+	QUnit.test("Default behaviour of expand collapse text", function (assert) {
+		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), "MORE");
+		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), FeedListItem._sTextShowMore);
+	});
+
+	QUnit.test("Expand collapse text changed", function (assert) {
+		oFeedList.getItems()[10].setMoreLabel("MORE TEXT");
+		oFeedList.getItems()[10].setLessLabel("LESS TEXT");
+		sap.ui.getCore().applyChanges();
+		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), "MORE TEXT");
+		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), oFeedList.getItems()[10].getMoreLabel());
+	});
+
+	QUnit.test("Text Expanded", function (assert) {
+		oFeedList.getItems()[10]._toggleTextExpanded();
+		oFeedList.getItems()[10].rerender();
+		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), "LESS TEXT");
+		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), oFeedList.getItems()[10].getLessLabel());
+	});
+
+	QUnit.test("Text Collapsed", function (assert) {
+		oFeedList.getItems()[10]._toggleTextExpanded();
+		oFeedList.getItems()[10].rerender();
+		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), "MORE TEXT");
+		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), oFeedList.getItems()[10].getMoreLabel());
+	});
+
+	QUnit.test("Invalidation leads to collapsed text", function (assert) {
+		oFeedList.getItems()[10]._toggleTextExpanded();
+		oFeedList.getItems()[10].invalidate();
+		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), "MORE TEXT");
+		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), oFeedList.getItems()[10].getMoreLabel());
+	});
+
+	QUnit.test("MoreLabel property set to 'null'", function (assert) {
+		oFeedList.getItems()[10].setMoreLabel(null);
+		sap.ui.getCore().applyChanges();
+		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), "MORE");
+		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), FeedListItem._sTextShowMore);
+	});
+
+	QUnit.test("LessLabel property set to 'null'", function (assert) {
+		oFeedList.getItems()[10].setLessLabel(null);
+		sap.ui.getCore().applyChanges();
+		oFeedList.getItems()[10]._toggleTextExpanded();
+		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), "LESS");
+		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), FeedListItem._sTextShowLess);
+	});
+
 	QUnit.module("Check property combination", {
 		beforeEach: function () {
 			this.oFeedListItem = new FeedListItem({

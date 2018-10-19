@@ -1664,6 +1664,12 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 		Success : "Success",
 
 		/**
+		 * State is highlighted.
+		 * @public
+		 */
+		Highlight : "Highlight",
+
+		/**
 		 * State is not specified.
 		 * @public
 		 */

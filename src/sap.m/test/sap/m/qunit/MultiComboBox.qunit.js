@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/m/Tokenizer",
 	"sap/ui/model/SimpleType",
 	"sap/ui/core/ListItem",
-	"sap/m/ComboBoxBase"
+	"sap/m/ComboBoxBase",
+	"sap/ui/core/SeparatorItem"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -39,7 +40,8 @@ sap.ui.define([
 	Tokenizer,
 	SimpleType,
 	ListItem,
-	ComboBoxBase
+	ComboBoxBase,
+	SeparatorItem
 ) {
 	// shortcut for sap.ui.core.OpenState
 	var OpenState = coreLibrary.OpenState;
@@ -5247,6 +5249,62 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("_filterSelectedItems() with grouping", function(assert) {
+		this.stub(Device, "system", {
+			desktop: false,
+			tablet: false,
+			phone: true
+		});
+
+		var oFirstItem = new Item({key: "Item1", text: "Item1"}),
+			oMultiComboBox = new MultiComboBox({
+			items: [
+				new SeparatorItem({ text: "First Group" }),
+				oFirstItem,
+				new Item({key: "Item2", text: "Item2"}),
+				new SeparatorItem({ text: "Second Group" }),
+				new Item({key: "Item3", text: "Item3"}),
+				new SeparatorItem({ text: "Third Group" }),
+				new Item({key: "XXX", text: "XXX"})
+			]
+		}), oSelectedButton = oMultiComboBox._getFilterSelectedButton();
+
+		var oFakeEvent = {
+			target: {
+				value: "I"
+			},
+			setMarked: function () { },
+			srcControl: oMultiComboBox
+		};
+		oMultiComboBox.setSelectedItems([oFirstItem]);
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		oMultiComboBox.open();
+		this.clock.tick(300);
+		oSelectedButton.setPressed(true);
+		oMultiComboBox._filterSelectedItems({"oSource": oSelectedButton});
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(300);
+
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 1, "There is one selected item");
+		assert.strictEqual(oMultiComboBox.getVisibleItems().length, 2, "Only one item should be visible");
+		assert.strictEqual(oSelectedButton.getPressed(),true,"the SelectedButton is pressed");
+
+		oMultiComboBox.oninput(oFakeEvent);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oMultiComboBox.getVisibleItems().length, 5, "All three items are visible");
+		assert.strictEqual(oSelectedButton.getPressed(), false, "the SelectedButton is not pressed");
+		this.clock.tick(300);
+
+		oMultiComboBox.close();
+		this.clock.tick(300);
+
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.test("Popup should have ariaLabelledBy that points to the PopupHiddenLabelId", function(assert) {
 		var oItem = new Item({
 			key: "li",
@@ -5573,6 +5631,36 @@ sap.ui.define([
 		assert.strictEqual(aFilteredItems[1].getText(), "Bbbb", "Text text should start with B");
 	});
 
+	QUnit.test("Filtered values should be grouped", function(assert) {
+		this.oMultiComboBox = new MultiComboBox({
+			items: [
+				new SeparatorItem({ text: "China-Cities" }),
+				new ListItem({
+					text: "Hong Kong",
+					additionalText: "China"
+				}),
+				new ListItem({
+					text: "Haskovo",
+					additionalText: "Bulgaria"
+				}),
+				new SeparatorItem({ text: "Kenya-Cities" }),
+				new ListItem({
+					text: "Baragoi",
+					additionalText: "Kenya"
+				}),
+				new SeparatorItem({ text: "Belgium-Cities" }),
+				new ListItem({
+					text: "Brussel",
+					additionalText: "Belgium"
+
+				})
+			]
+		});
+		var aFilteredItems = this.oMultiComboBox.filterItems({ value: "B", items: this.oMultiComboBox.getItems() });
+		assert.strictEqual(aFilteredItems.length, 2, "Two items should be filtered");
+		assert.strictEqual(this.oMultiComboBox.getVisibleItems().length, 4, "There are two visible items with their group names");
+	});
+
 	QUnit.test("Default filtering should be per term", function (assert) {
 		var aFilteredItems = this.oMultiComboBox.filterItems({ value: "K", items: this.oMultiComboBox.getItems() });
 
@@ -5693,6 +5781,59 @@ sap.ui.define([
 
 		// clean up
 		oMCB.destroy();
+	});
+
+	QUnit.module("Expanded state (N-more)", {
+		beforeEach : function() {
+			var aItems = [
+				new SeparatorItem({ text: "First Group" }),
+				new Item('item1', {text: "XXXX"}),
+				new Item('item2', {text: "XXXX"}),
+				new SeparatorItem({ text: "Second Group" }),
+				new Item('item3', {text: "XXXX"}),
+				new SeparatorItem({ text: "Third Group" }),
+				new Item('item4', {text: "XXXX"})];
+
+			this.oMCB1 = new MultiComboBox({
+				items: aItems,
+				selectedItems: ['item1', 'item3'],
+				width: "200px"
+			});
+			this.oMCB1.placeAt("MultiComboBox-content");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oMCB1.destroy();
+		}
+	});
+
+	QUnit.test("Desktop: Selected items are grouped when picker is opened", function(assert) {
+		this.stub(Device, "system", {
+			desktop: true,
+			phone: false,
+			tablet: false
+		});
+		this.oMCB1.$().find(".sapMTokenizerIndicator")[0].click();
+		this.clock.tick(200);
+
+		//assert
+		assert.strictEqual(this.oMCB1.getSelectedItems().length, 2, "There are two selected items");
+		assert.strictEqual(this.oMCB1.getVisibleItems().length, 4, "The selected items are shown grouped");
+	});
+
+	QUnit.test("Phone: Selected items are grouped when picker is opened", function(assert) {
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+		this.oMCB1.$().find(".sapMTokenizerIndicator")[0].click();
+		this.clock.tick(200);
+
+		//assert
+		assert.strictEqual(this.oMCB1.getSelectedItems().length, 2, "There are two selected items");
+		assert.strictEqual(this.oMCB1.getVisibleItems().length, 4, "The selected items are shown grouped");
 	});
 
 	QUnit.module("Type-ahead");
@@ -5899,5 +6040,119 @@ sap.ui.define([
 
 		// cleanup
 		oMultiComboBox.destroy();
+	});
+
+	QUnit.module("Two Column Layout", {
+		beforeEach: function(){
+			this.oMultiComboBox = new MultiComboBox({
+				showSecondaryValues: true,
+				items: [
+					new ListItem({
+						key: "001",
+						text: "Algeria",
+						additionalText: "AL"
+					}),
+					new ListItem({
+						key: "002",
+						text: "Argentina",
+						additionalText: "AR"
+					}),
+					new ListItem({
+						key: "003",
+						text: "Qatar",
+						additionalText: "QA"
+					})
+				]
+			}).placeAt("MultiComboBox-content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function(){
+			this.oMultiComboBox.destroy();
+		}
+	});
+
+	QUnit.test("Highlighting", function(){
+		var oFakeEvent = {
+			target: {
+				value: "a"
+			},
+			setMarked: function () { },
+			srcControl: this.oMultiComboBox
+		}, oListItemRef;
+
+		this.oMultiComboBox.oninput(oFakeEvent);
+		this.clock.tick(2000);
+
+		oListItemRef = this.oMultiComboBox.getList().getItems()[0].$();
+		assert.strictEqual(oListItemRef.find(".sapMSLITitleOnly")[0].innerHTML,
+			"<b>A</b>lgeria", "The main text is correctly highlighted.");
+
+		assert.strictEqual(oListItemRef.find(".sapMSLIInfo")[0].innerHTML,
+			"<b>A</b>L", "The additional text is correctly highlighted.");
+	});
+
+	QUnit.test("StandardListItem mapping", function(){
+		var oFakeEvent = {
+			target: {
+				value: "a"
+			},
+			setMarked: function () { },
+			srcControl: this.oMultiComboBox
+		}, aListItems = [],
+			aSuggestions = this.oMultiComboBox.getItems();
+
+		this.oMultiComboBox.open();
+		this.clock.tick(2000);
+
+		aListItems = this.oMultiComboBox.getList().getItems();
+
+		for (var i = 0; i < 3; i++) {
+			assert.strictEqual(aListItems[i].getTitle(), aSuggestions[i].getText(), "Item " + i + " text is correctly mapped.");
+			assert.strictEqual(aListItems[i].getInfo(), aSuggestions[i].getAdditionalText(), "Item " + i + " info is correctly mapped.");
+		}
+	});
+
+	QUnit.module("Grouping", {
+		beforeEach : function() {
+			this.oMultiComboBox = new MultiComboBox({
+				items: [
+					new SeparatorItem({ text: "Asia-Countries" }),
+					new ListItem({
+						text: "Hong Kong",
+						additionalText: "China"
+					}),
+					new ListItem({
+						text: "Haskovo",
+						additionalText: "Bulgaria"
+					}),
+					new SeparatorItem({ text: "Africa-Countries" }),
+					new ListItem({
+						text: "Baragoi",
+						additionalText: "Kenya"
+					}),
+					new SeparatorItem({ text: "Europe-Countries" }),
+					new ListItem({
+						text: "Brussel",
+						additionalText: "Belgium"
+					})
+				]
+			});
+			this.oMultiComboBox.placeAt("MultiComboBox-content");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oMultiComboBox.destroy();
+		}
+	});
+
+	QUnit.test("The groups names are not filtered", function(assert) {
+		var aFilteredItems = this.oMultiComboBox.filterItems({ value: "A", items: this.oMultiComboBox.getItems() });
+		assert.strictEqual(aFilteredItems.length, 0, "There is no filtered items");
+	});
+
+	QUnit.test("_mapItemToList()", function(assert) {
+		var groupHeader = this.oMultiComboBox.getList().getItems()[0];
+		assert.ok(groupHeader instanceof sap.m.GroupHeaderListItem, "The control used for the group name is instance of sap.m.GroupHeaderListItem");
 	});
 });

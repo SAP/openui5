@@ -1,5 +1,6 @@
-sap.ui.define(function() {
-
+sap.ui.define([
+	"sap/ui/Device"
+], function(Device) {
 	"use strict";
 
 	return {
@@ -66,6 +67,9 @@ sap.ui.define(function() {
 
 			/* Control */
 			"Table": {
+				qunit: {
+					testTimeout: Device.browser.msie ? 90000 : undefined /*default*/ // BCP: 1880602291
+				},
 				ui5: {
 					libs: ["sap.ui.table", "sap.m"]
 				}

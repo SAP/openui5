@@ -43,6 +43,12 @@
         "type": "FEATURE",
         "text": " sap.ui.layout.cssgrid.CSSGrid: New Grid control implemented",
         "references": []
+      },
+      {
+        "id": "0f26881ed1a05db416564b658b2e37ca0fa71f8d",
+        "type": "FIX",
+        "text": " sap.ui.layout.Grid: Samples CSS affecting the whole DemoKit",
+        "references": []
       }
     ]
   }

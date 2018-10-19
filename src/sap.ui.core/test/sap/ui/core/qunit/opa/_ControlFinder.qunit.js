@@ -8,8 +8,10 @@ sap.ui.define([
 	"sap/m/ObjectListItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"sap/ui/test/matchers/AggregationLengthEquals"
-], function (_ControlFinder, $, Button, SearchField, List, ObjectListItem, JSONModel, PropertyStrictEquals, AggregationLengthEquals) {
+	"sap/ui/test/matchers/AggregationLengthEquals",
+	"sap/ui/test/_LogCollector"
+], function (_ControlFinder, $, Button, SearchField, List, ObjectListItem, JSONModel, PropertyStrictEquals,
+		AggregationLengthEquals, _LogCollector) {
 	"use strict";
 
 	QUnit.module("_ControlFinder - controls", {
@@ -59,7 +61,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should get control for element ID", function (assert) {
-		var oControl = _ControlFinder._getControlForElementID("myId-content");
+		var oControl = _ControlFinder._getControlForElement("myId-content");
 		assert.strictEqual(oControl, this.oButton);
 	});
 
@@ -94,6 +96,36 @@ sap.ui.define([
 		});
 
 		assert.strictEqual(aResult.length, 0, "Should not find any controls with non-existent ancestor");
+	});
+
+	QUnit.test("Should accept only ancestor ID for backwards compatibility", function (assert) {
+		var oObjectNumber = _ControlFinder._findControls({
+			controlType: "sap.m.ObjectNumber"
+		})[0];
+		var aResult = _ControlFinder._findControls({
+			controlType: "sap.m.ObjectNumber",
+			ancestor: [this.oObjectListItem.getId()]
+		});
+
+		assert.strictEqual(aResult[0], oObjectNumber, "Should match the correct element");
+	});
+
+	QUnit.test("Should collect logs while searching for elements", function (assert) {
+		var fnStartSpy = sinon.spy(_LogCollector.prototype, "start");
+		var fnStopSpy = sinon.spy(_LogCollector.prototype, "stop");
+		var fnGetSpy = sinon.spy(_LogCollector.prototype, "getAndClearLog");
+
+		_ControlFinder._findElements({id: "myId"});
+		sinon.assert.calledOnce(fnStartSpy, "Should start log collection");
+		sinon.assert.calledOnce(fnStopSpy, "Should stop log collection");
+		assert.ok(fnStartSpy.calledBefore(fnStopSpy));
+		var sLog = _ControlFinder._getLatestLog();
+		sinon.assert.calledOnce(fnGetSpy, "Should get and clear log");
+		assert.ok(sLog.match("Found control with the global ID 'myId'"), "Should include logs");
+
+		fnStartSpy.restore();
+		fnStopSpy.restore();
+		fnGetSpy.restore();
 	});
 
 	QUnit.module("_ControlFinder - interaction adapters", {
