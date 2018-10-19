@@ -646,22 +646,26 @@ sap.ui.define([
 	 *     If set to <code>true</code> or 'bindable', additional named methods <code>bind<i>Name</i></code> and <code>unbind<i>Name</i></code> are generated as convenience.
 	 *     Despite its name, setting this flag is not mandatory to make the managed property bindable. The generic methods {@link #bindProperty} and
 	 *     {@link #unbindProperty} can always be used. </li>
-	 * <li><code>selector: <i>string</i></code> either can be omitted or set to a valid selector string as defined by the
+	 * <li><code>selector: <i>string</i></code> Optional; can be set to a valid CSS selector (as accepted by the
 	 *     {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector Element.prototype.querySelector}
-	 *     method should locate the DOM element that rendered this property's value. It should only be set
+	 *     method). When set, it locates the DOM element that represents this property's value. It should only be set
 	 *     for properties that have a visual text representation in the DOM.
 	 *
-	 *     In addition to the CSS selector syntax, the selector string can contain the placeholder <code>{id}</code>
-	 *     (multiple times). Before evaluating the selector in the context of an Element or Control, all occurrences of the
-	 *     placeholder have to be replaced by the (potentially escaped) ID of that Element or Control.
+	 *     The purpose of the selector is to allow other framework parts or design time tooling to identify the DOM parts
+	 *     of a control or element that represent a specific property without knowing the control or element implementation
+	 *     in detail.
+	 *
+	 *     As an extension to the standard CSS selector syntax, the selector string can contain the placeholder <code>{id}</code>
+	 *     (multiple times). Before evaluating the selector in the context of an element or control, all occurrences of the
+	 *     placeholder have to be replaced by the (potentially escaped) ID of that element or control.
 	 *     In fact, any selector should start with <code>#{id}</code> to ensure that the query result is limited to the
-	 *     desired Element or Control.
+	 *     desired element or control.
 	 *
 	 *     <b>Note</b>: there is a convenience method {@link sap.ui.core.Element#getDomRefForSetting} that evaluates the
-	 *     selector in the context of a concrete Element or Control instance. It also handles the placeholder <code>{id}</code>.
+	 *     selector in the context of a concrete element or control instance. It also handles the placeholder <code>{id}</code>.
 	 *     Only selected framework features may use that private method, it is not yet a public API and might be changed
 	 *     or removed in future versions of UI5. However, instead of maintaining the <code>selector</code> in the metadata,
-	 *     Element and Control classes can overwrite <code>getDomRefForSetting</code> and determine the DOM Element
+	 *     element and control classes can overwrite <code>getDomRefForSetting</code> and determine the DOM element
 	 *     dynamically.</li>
 	 * </ul>
 	 * Property names should use camelCase notation, start with a lowercase letter and only use characters from the set [a-zA-Z0-9_$].
@@ -735,24 +739,28 @@ sap.ui.define([
 	 *         </li>
 	 *     </ul>
 	 * </li>
-	 * <li><code>selector: <i>string</i></code> either can be omitted or set to a valid selector string as defined by the
+	 * <li><code>selector: <i>string</i></code> Optional; can be set to a valid CSS selector (as accepted by the
 	 *     {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector Element.prototype.querySelector}
-	 *     method. The selector should locate the DOM element that surrounds the aggregation's content. It should only be
+	 *     method). When set, it locates the DOM element that surrounds the aggregation's content. It should only be
 	 *     set for aggregations that have a visual representation in the DOM. A DOM element surrounding the aggregation's
 	 *     rendered content should be available in the DOM, even if the aggregation is empty or not rendered for some reason.
 	 *     In cases where this is not possible or not intended, <code>getDomRefForSetting</code> can be overridden, see below.
 	 *
-	 *     In addition to the CSS selector syntax, the selector string can contain the magic token <code>{id}</code>
-	 *     (multiple times). Before evaluating the selector in the context of an Element or Control, all occurrences of the
-	 *     token have to be replaced by the (potentially escaped) ID of that Element or Control.
+	 *     The purpose of the selector is to allow other framework parts like drag and drop or design time tooling to identify
+	 *     those DOM parts of a control or element that represent a specific aggregation without knowing the control or element
+	 *     implementation in detail.
+	 *
+	 *     As an extension to the standard CSS selector syntax, the selector string can contain the placeholder <code>{id}</code>
+	 *     (multiple times). Before evaluating the selector in the context of an element or control, all occurrences of the
+	 *     placeholder have to be replaced by the (potentially escaped) ID of that element or control.
 	 *     In fact, any selector should start with <code>#{id}</code> to ensure that the query result is limited to the
-	 *     desired Element or Control.
+	 *     desired element or control.
 	 *
 	 *     <b>Note</b>: there is a convenience method {@link sap.ui.core.Element#getDomRefForSetting} that evaluates the
-	 *     selector in the context of a concrete Element or Control instance. It also handles the placeholder <code>{id}</code>.
+	 *     selector in the context of a concrete element or control instance. It also handles the placeholder <code>{id}</code>.
 	 *     Only selected framework features may use that private method, it is not yet a public API and might be changed
 	 *     or removed in future versions of UI5. However, instead of maintaining the <code>selector</code> in the metadata,
-	 *     Element and Control classes can overwrite <code>getDomRefForSetting</code> to calculate or add the appropriate
+	 *     element and control classes can overwrite <code>getDomRefForSetting</code> to calculate or add the appropriate
 	 *     DOM Element dynamically.</li>
 	 *     </li>
 	 * </ul>
@@ -837,7 +845,7 @@ sap.ui.define([
 	 * <li><code>allowPreventDefault: <i>boolean</i></code> whether the event allows to prevented the default behavior of the event source</li>
 	 * <li><code>parameters: <i>object</i></code> an object literal that describes the parameters of this event. </li>
 	 * </ul>
-	 * Event names should use camelCase notation, start with a lowercase letter and only use characters from the set [a-zA-Z0-9_$].
+	 * Event names should use camelCase notation, start with a lower-case letter and only use characters from the set [a-zA-Z0-9_$].
 	 * If an event in the literal is preceded by a JSDoc comment (doclet) and if the UI5 plugin and template are used for JSDoc3 generation, the doclet will be used
 	 * as generic documentation of the event.
 	 *
@@ -851,7 +859,10 @@ sap.ui.define([
 	 *
 	 *
 	 * <b>'specialSettings'</b> : <i>object</i><br>
-	 * Special settings are an experimental feature and MUST NOT BE USED by controls or applications outside of the sap.ui.core project.
+	 * Special settings are an experimental feature and MUST NOT BE DEFINED in controls or applications outside of the <code>sap.ui.core</code> library.
+	 * There's no generic or general way how to set or get the values for special settings. For the same reason, they cannot be bound against a model.
+	 * If there's a way for consumers to define a value for a special setting, it must be documented in the class that introduces the setting.
+	 *
 	 *
 	 *
 	 *

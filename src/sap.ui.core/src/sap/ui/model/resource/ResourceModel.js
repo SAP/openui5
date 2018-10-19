@@ -27,21 +27,58 @@ sap.ui.define([
 	/**
 	 * Constructor for a new ResourceModel.
 	 *
-	 * @class Model implementation for resource bundles
+	 * @class Model implementation for resource bundles.
+	 *
+	 * This model allows to bind control or <code>ManagedObject</code> properties against translatable texts.
+	 * Its data is taken from a {@link module:sap/base/i18n/ResourceBundle} and it only supports property bindings,
+	 * no aggregation or tree bindings.
+	 *
+	 * In contrast to most other models, binding paths for a <code>ResourceModel</code> must not start with a slash,
+	 * they are absolute by default and there's no further structure. Each key in the underlying resource bundle
+	 * is a valid binding path.
+	 *
+	 * To allow extensibility scenarios, the texts of the resource bundle can be {@link #enhance enhanced} with
+	 * additional resource bundles. These additional bundles can define new texts for existing keys, texts for new
+	 * keys, or both. When texts for existing keys are replaced, the latest enhancement wins.
+	 *
+	 * This model supports the binding modes <code>OneWay</code> and <code>OneTime</code>, but not <code>TwoWay</code>.
+	 * When the recommended asynchronous loading of the bundle is used, binding mode <code>OneTime</code> can't be used.
 	 *
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @param {object} oData parameters used to initialize the ResourceModel; at least either bundle, bundleName or bundleUrl must be set on this object; if more than one is set, they will be used in the mentioned order
-	 * @param {string} [oData.bundleUrl] the URL to the base .properties file of a bundle (.properties file without any locale information, e.g. "mybundle.properties")
-	 * @param {string} [oData.bundleName] the UI5 module name of the .properties file; this name will be resolved to a path like the paths of normal UI5 modules and ".properties" will then be appended (e.g. a name like "myBundle" can be given)
-	 * @param {string} [oData.bundleLocale] an optional locale; when not given, the default is the active locale from the UI5 configuration
-	 * @param {string} [oData.bundle] an optional resource bundle; when given, the ResourceModel uses this bundle instead of creating another bundle using the provided bundleUrl, bundleName and bundleLocale.
-	 *                                To support reloading the bundle when the locale changes it is required to also provide the corresponding bundleName or bundleUrl. Otherwise the bundle isn't updated if only the bundle option is given.
-	 * @param {boolean} [oData.async=false] whether the language bundle should be loaded asynchronously
-	 * @param {object[]} [oData.enhanceWith] optional parameter to provide a list of additional resource bundle configurations to enhance the ResourceModel with
+	 * @param {object} oData
+	 *                     Parameters used to initialize the <code>ResourceModel</code>; at least one of <code>bundle</code>,
+	 *                     <code>bundleName</code> or <code>bundleUrl</code> must be set; if more than one property is set,
+	 *                     they will be evaluated in the mentioned order
+	 * @param {string} [oData.bundleUrl]
+	 *                     URL pointing to the base .properties file of a bundle (.properties file without any locale
+	 *                     information, e.g. "../../i18n/mybundle.properties"); relative URLs will be evaluated relative
+	 *                     to the document.baseURI
+	 * @param {string} [oData.bundleName]
+	 *                     UI5 module name in dot notation referring to the base .properties file; this name will be
+	 *                     resolved to a path like the paths of normal UI5 modules and ".properties" will then be
+	 *                     appended (e.g. a name like "myapp.i18n.myBundle" can be given); relative module names are
+	 *                     not supported
+	 * @param {string} [oData.bundleLocale]
+	 *                     A locale in "BCP-47 language tag" notation specifying the locale in which to load the bundle;
+	 *                     when not given, the current session locale of UI5 will be used (recommended)
+	 * @param {(module:sap/base/i18n/ResourceBundle|jQuery.sap.util.ResourceBundle)} [oData.bundle]
+	 *                     A resource bundle instance; when given, this bundle will be used instead of creating a bundle
+	 *                     from the provided <code>bundleUrl</code>, <code>bundleName</code> and <code>bundleLocale</code>
+	 *                     properties. However, to support reloading the bundle when the current session locale changes,
+	 *                     the corresponding <code>bundleName</code> or <code>bundleUrl</code> should be specified if known.
+	 *                     Otherwise, the bundle is not updated on locale changes.
+	 * @param {boolean} [oData.async=false]
+	 *                     Whether the language bundle should be loaded asynchronously.
+	 * @param {sap.ui.model.BindingMode} [oData.defaultBindingMode=OneWay]
+	 *                     The default binding mode to use; can be <code>OneWay</code> or <code>OneTime</code>
+	 *                     (only when sync loading is used); the <code>TwoWay</code> mode is not supported
+	 * @param {Array.<(module:sap/base/i18n/ResourceBundle|jQuery.sap.util.ResourceBundle)>} [oData.enhanceWith]
+	 *                     Optional list of resource bundles that should enhance the texts from the main bundle;
+	 *                     intended for extensibility scenarios, also see the class documentation.
 	 * @public
 	 * @alias sap.ui.model.resource.ResourceModel
 	 */
@@ -119,16 +156,34 @@ sap.ui.define([
 	};
 
 	/**
-	 * Enhances the resource model with a custom resource bundle. The resource model
-	 * can be enhanced with multiple resource bundles. The last enhanced resource
-	 * bundle wins against the previous ones and the original ones. This function
-	 * can be called several times.
+	 * Enhances the resource model with a custom resource bundle.
 	 *
-	 * @param {object|jQuery.sap.util.ResourceBundle} oData parameters used to initialize the ResourceModel; at least either bundleUrl or bundleName must be set on this object; if both are set, bundleName wins - or an instance of an existing {@link jQuery.sap.util.ResourceBundle}
-	 * @param {string} [oData.bundleUrl] the URL to the base .properties file of a bundle (.properties file without any locale information, e.g. "mybundle.properties")
-	 * @param {string} [oData.bundleName] the UI5 module name of the .properties file; this name will be resolved to a path like the paths of normal UI5 modules and ".properties" will then be appended (e.g. a name like "myBundle" can be given)
-	 * @param {string} [oData.bundleLocale] an optional locale; when not given, the default is the active locale from the UI5 configuration
-	 * @returns {Promise} Promise in async case (async ResourceModel) which is resolved when the enhancement is finished
+	 * The custom bundle can define new texts for keys existing in the main bundle, texts for new keys, or both.
+	 * A resource model can be enhanced with multiple resource bundles by calling this
+	 * method multiple times. Each call appends to the list of enhancements, but no bundle can be removed from
+	 * the list.
+	 *
+	 * When looking up a text for a key, the enhancements are processed in reverse order. Texts from the last
+	 * added resource bundle are preferred over texts from previously added bundles or texts from the main bundle.
+	 *
+	 * @param {(module:sap/base/i18n/ResourceBundle|jQuery.sap.util.ResourceBundle|object)} oData
+	 *                     Either an already loaded bundle instance, or a configuration object with parameters to load
+	 *                     a new resource bundle. When a configuration object is given, at least one of <code>bundleUrl</code>
+	 *                     or <code>bundleName</code> must be set; if both are set, <code>bundleName</code> wins
+	 * @param {string} [oData.bundleUrl]
+	 *                     URL pointing to the base .properties file of a bundle (.properties file without any locale
+	 *                     information, e.g. "../../i18n/mybundle.properties"); relative URLs will be evaluated
+	 *                     relative to the document.baseURI
+	 * @param {string} [oData.bundleName]
+	 *                     UI5 module name in dot notation, referring to the base .properties file; this name will be
+	 *                     resolved to a path like the paths of normal UI5 modules, and ".properties" will then be
+	 *                     appended (e.g. a name like "myapp.i18n.myBundle" can be given); relative module names are
+	 *                     not supported
+	 * @param {string} [oData.bundleLocale]
+	 *                     A locale in "BCP-47 language tag" notation specifying the locale in which to load the bundle;
+	 *                     when not given, the current session locale of UI5 will be used (recommended)
+	 * @returns {Promise} A Promise when this <code>ResourceModel</code> configured to act asynchronously, null otherwise;
+	 *                     the Promise resolves when the enhancement is finished
 	 * @since 1.16.1
 	 * @public
 	 */
@@ -196,9 +251,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the resource bundle of this model
+	 * Returns the resource bundle of this model.
 	 *
-	 * @returns {jQuery.sap.util.ResourceBundle|Promise} loaded resource bundle or ECMA Script 6 Promise in asynchronous case
+	 * @returns {(module:sap/base/i18n/ResourceBundle|Promise<module:sap/base/i18n/ResourceBundle>)}
+	 *              loaded resource bundle or a Promise on it in asynchronous case
 	 * @public
 	 */
 	ResourceModel.prototype.getResourceBundle = function() {

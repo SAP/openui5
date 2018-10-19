@@ -277,6 +277,7 @@ sap.ui.define(['sap/ui/model/TreeBinding', './v2/ODataTreeBinding', 'sap/ui/mode
 	 * Please see the constructor documentation of sap.ui.model.odata.v2.ODataTreeBinding for the API documentation of the "treeState" constructor parameter.
 	 *
 	 * @name sap.ui.model.odata.ODataTreeBindingAdapter#getCurrentTreeState
+	 * @function
 	 * @public
 	 */
 
