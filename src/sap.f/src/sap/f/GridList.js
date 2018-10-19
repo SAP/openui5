@@ -5,8 +5,15 @@ sap.ui.define([
 	"sap/m/ListBase",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/layout/cssgrid/GridLayoutDelegate",
-	"sap/ui/layout/cssgrid/GridItemLayoutData"
-], function(ListBase, ManagedObjectObserver, GridLayoutDelegate, GridItemLayoutData) {
+	"sap/ui/layout/cssgrid/GridItemLayoutData",
+	"./GridListRenderer"
+], function(
+	ListBase,
+	ManagedObjectObserver,
+	GridLayoutDelegate,
+	GridItemLayoutData,
+	GridListRenderer
+) {
 	"use strict";
 
 /**
