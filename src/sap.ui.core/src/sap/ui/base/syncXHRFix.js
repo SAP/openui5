@@ -91,13 +91,14 @@ sap.ui.define([], function() {
 			// If there are promise handlers waiting for execution at the time the
 			// timeout fires, start another timeout to postpone timer execution after
 			// promise execution.
-			function wrapTimerHandler(fnHandler) {
+			function wrapTimerHandler(vHandler) {
 				var fnWrappedHandler = function() {
-					var aArgs;
+					var aArgs, fnHandler;
 					if (bPromisesQueued) {
 						aArgs = [fnWrappedHandler, 0].concat(arguments);
 						_timeout.apply(window, aArgs);
 					} else {
+						fnHandler = typeof vHandler !== "function" ? new Function(vHandler) : vHandler; // eslint-disable-line no-new-func
 						fnHandler.apply(window, arguments);
 					}
 				};
@@ -106,17 +107,17 @@ sap.ui.define([], function() {
 			// setTimeout and setInterval can have arbitrary number of additional
 			// parameters, which are passed to the handler function when invoked.
 			window.setTimeout = function(vHandler) {
-				var aArgs = Array.prototype.slice.call(arguments),
-					fnHandler = typeof vHandler === "string" ? new Function(vHandler) : vHandler, // eslint-disable-line no-new-func
-					fnWrappedHandler = wrapTimerHandler(fnHandler);
-				aArgs[0] = fnWrappedHandler;
+				var aArgs = Array.prototype.slice.call(arguments);
+				if (aArgs.length !== 0) {
+					aArgs[0] = wrapTimerHandler(vHandler);
+				}
 				return _timeout.apply(window, aArgs);
 			};
 			window.setInterval = function(vHandler) {
-				var aArgs = Array.prototype.slice.call(arguments),
-					fnHandler = typeof vHandler === "string" ? new Function(vHandler) : vHandler, // eslint-disable-line no-new-func
-					fnWrappedHandler = wrapTimerHandler(fnHandler, true);
-				aArgs[0] = fnWrappedHandler;
+				var aArgs = Array.prototype.slice.call(arguments);
+				if (aArgs.length !== 0) {
+					aArgs[0] = wrapTimerHandler(vHandler);
+				}
 				return _interval.apply(window, aArgs);
 			};
 
