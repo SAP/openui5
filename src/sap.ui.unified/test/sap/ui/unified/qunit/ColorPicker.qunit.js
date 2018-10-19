@@ -263,31 +263,6 @@ sap.ui.define([
 			this.oCP._updateColorStringProperty(true, true);
 		});
 
-		QUnit.test("_updateControlVisualState", function (oAssert) {
-			// Arrange
-			this.oCP._createLayout(); // Force creation of inner controls
-			var oGrid = this.oCP.getAggregation("_grid");
-
-			// Act
-			this.oCP._updateControlVisualState();
-
-			// Assert
-			oAssert.strictEqual(this.oCP.swatches.getSpanM(), 3, 'Property "spanM" should be set to 3');
-			oAssert.notOk(this.oCP.swatches.getLinebreak(), 'Property "linebreak" should be false');
-			oAssert.notOk(oGrid.hasStyleClass(CONSTANTS.HSLClass),
-				'The grid should not have class "' + CONSTANTS.HSLClass + '"');
-
-			// Act - switch to HSL mode
-			this.oCP.setMode(sap.ui.unified.ColorPickerMode.HSL);
-			this.oCP._updateControlVisualState();
-
-			// Assert
-			oAssert.strictEqual(this.oCP.swatches.getSpanM(), 4, 'Property "spanM" should be set to 4');
-			oAssert.ok(this.oCP.swatches.getLinebreak(), 'Property "linebreak" should be true');
-			oAssert.ok(oGrid.hasStyleClass(CONSTANTS.HSLClass),
-				'The grid should have class "' + CONSTANTS.HSLClass + '"');
-		});
-
 		QUnit.test("_updateControlVisualState - mock commons control mode", function (oAssert) {
 			// Arrange
 			this.oCP.bResponsive = false; // Mock commons mode
@@ -366,85 +341,6 @@ sap.ui.define([
 			oAssert.strictEqual(oHL.getContent().length, 2,
 				"When using the method with only 2 arguments the returned HorizontalLayout should contain " +
 				"only 2 items in it's 'content' aggregation");
-		});
-
-		QUnit.test("_adaptControlToLibrary", function (oAssert) {
-			// Arrange
-			var oSpy = sinon.spy(this.oCP, "_adaptControlToLibrary"),
-				oGrid;
-
-			// Act
-			this.oCP._createLayout(); // Force creation of inner controls
-			oGrid = this.oCP.getAggregation("_grid");
-
-			// Assert
-			oAssert.strictEqual(oSpy.callCount, 1, "Method should be called only once");
-			oAssert.ok(oGrid.hasStyleClass(CONSTANTS.CPResponsiveClass), "Responsive CSS class is applied to the Grid");
-
-			// Cleanup
-			oSpy.restore();
-		});
-
-		QUnit.test("_adaptControlToLibrary for phone sizes", function (oAssert) {
-			// Arrange
-			this.oDeviceStub = sinon.sandbox;
-			this.oDeviceStub.stub(sap.ui.Device, "system", {
-				desktop : false,
-				phone : true,
-				tablet : false
-			});
-			var oSpy = sinon.spy(this.oCP, "_adaptControlToLibrary"),
-				oGrid;
-
-			// Act
-			this.oCP._createLayout(); // Force creation of inner controls
-			oGrid = this.oCP.getAggregation("_grid");
-
-			// Assert
-			oAssert.strictEqual(oSpy.callCount, 1, "Method should be called only once");
-			oAssert.notEqual(oGrid._iBreakPointTablet, 400, "The breakpoint for tablet shouldn't be applyed");
-			oAssert.ok(oGrid.hasStyleClass(CONSTANTS.CPResponsiveClass), "Responsive CSS class is applied to the Grid");
-
-			// Cleanup
-			oSpy.restore();
-			this.oDeviceStub.restore();
-			this.oDeviceStub = null;
-		});
-
-		QUnit.test("_createLayout", function (oAssert) {
-			// Arrange
-			var aAggregations,
-				oCounts = {},
-				oGrid,
-				sName,
-				i;
-
-			// Act - init creation of internal controls
-			this.oCP.placeAt("qunit-fixture");
-			applyChanges();
-			oGrid = this.oCP.getAggregation("_grid");
-
-			// Assert
-			oAssert.ok(oGrid instanceof sap.ui.layout.Grid,
-				"Grid control should be created");
-
-			// Act - Get all child aggregations of the Grid recursively
-			aAggregations = oGrid.findAggregatedObjects(true, true);
-
-			// Count by control type
-			for (i = 0; i < aAggregations.length; i++) {
-				sName = aAggregations[i].getMetadata().getElementName();
-				oCounts[sName] = 1 + (oCounts[sName] || 0);
-			}
-
-			// Assert
-			oAssert.ok(oGrid.getDomRef(), "The internally created grid is rendered and has a dom reference");
-			oAssert.strictEqual(oCounts["sap.ui.core.HTML"], 2, "There should be 3 HTML controls created");
-			oAssert.strictEqual(oCounts["sap.ui.layout.VerticalLayout"], 2, "There should be 2 VerticalLayouts created");
-			oAssert.strictEqual(oCounts["sap.m.Slider"], 2, "There should be 2 Sliders created");
-			oAssert.strictEqual(oCounts["sap.m.Label"], 17, "There should be 17 labels created");
-			oAssert.strictEqual(oCounts["sap.m.InputBase"], 10, "There should be 10 inputs created");
-			oAssert.strictEqual(oCounts["sap.ui.unified._ColorPickerBox"], 1, "There should be 1 ColorPickerBox created");
 		});
 
 		QUnit.test("_createLayout lifecycle", function (oAssert) {
