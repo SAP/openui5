@@ -3,6 +3,8 @@
 /* Base theme                               */
 /* ======================================== */
 
+@_sap_m_ValueStateMessage_HighlightBG: lighten(@sapUiHighlight, 48);
+
 .sapMValueStateMessage {
 	box-sizing: border-box;
 	background: @sapUiFieldBackground;
@@ -24,5 +26,5 @@
 }
 
 .sapMValueStateMessageHighlight {
-	background: @sapUiNeutralBG;
+	background: @_sap_m_ValueStateMessage_HighlightBG;
 }
