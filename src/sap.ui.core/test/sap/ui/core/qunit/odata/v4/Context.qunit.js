@@ -889,26 +889,34 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refresh, context binding", function (assert) {
-		var oBinding = {
-				refresh : function () {}
-			},
-			oModel = {
-				checkGroupId : function () {}
-			},
-			oContext =  Context.create(oModel, oBinding, "/EMPLOYEES('42')");
+	[false, true].forEach(function (bReturnValueContext) {
+		QUnit.test("refresh, context binding, " + bReturnValueContext, function (assert) {
+			var oBinding = {
+					refresh : function () {},
+					refreshReturnValueContext : function () {}
+				},
+				oModel = {
+					checkGroupId : function () {}
+				},
+				oModelMock = this.mock(oModel),
+				oContext =  Context.create(oModel, oBinding, "/EMPLOYEES('42')");
 
-		this.mock(oModel).expects("checkGroupId").never();
-		this.mock(oBinding).expects("refresh").withExactArgs("myGroup");
+			oModelMock.expects("checkGroupId").withExactArgs("myGroup");
+			this.mock(oBinding).expects("refreshReturnValueContext")
+				.withExactArgs(sinon.match.same(oContext), "myGroup")
+				.returns(bReturnValueContext);
+			this.mock(oBinding).expects("refresh").withExactArgs("myGroup")
+				.exactly(bReturnValueContext ? 0 : 1);
 
-		// code under test
-		oContext.refresh("myGroup");
-
-		assert.throws(function () {
 			// code under test
-			oContext.refresh("myGroup", false);
-		}, new Error("Must not call refresh on a context belonging to a context binding with "
-			+ "parameter bAllowRemoval"));
+			oContext.refresh("myGroup");
+
+			oModelMock.expects("checkGroupId").withExactArgs("myGroup");
+			assert.throws(function () {
+				// code under test
+				oContext.refresh("myGroup", undefined);
+			}, new Error("Unsupported parameter bAllowRemoval: undefined"));
+		});
 	});
 
 	//*********************************************************************************************
