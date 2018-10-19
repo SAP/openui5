@@ -1415,6 +1415,21 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fetchObject: computed annotation returns promise", function (assert) {
+		var oResult = {};
+
+		this.oMetaModelMock.expects("fetchEntityContainer").returns(SyncPromise.resolve(mScope));
+		this.mock(AnnotationHelper).expects("isMultiple").resolves(oResult);
+
+		// code under test
+		return this.oMetaModel.fetchObject("/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath"
+				+ "@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple")
+			.then(function (oResult0) {
+				assert.strictEqual(oResult0, oResult);
+			});
+	});
+
+	//*********************************************************************************************
 	["@@computedAnnotation", "@@.computedAnnotation"].forEach(function (sSuffix) {
 		var sPath,
 			sPathPrefix,
