@@ -2,18 +2,17 @@
 <html>
 <head>
 	<title>Integration tests for Shop Administration Tool</title>
-	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
 	<meta charset="UTF-8">
 
 	<script
 		id="sap-ui-bootstrap"
 		src="../../../../../../../../resources/sap-ui-core.js"
-		data-sap-ui-oninit="module:integration/AllJourneys"
 		data-sap-ui-resourceroots='{
 			"sap.ui.demo.toolpageapp": "../../",
 			"integration": "./"
 		}'
-		data-sap-ui-preload="async">
+		data-sap-ui-compatVersion="edge"
+		data-sap-ui-async="true">
 	</script>
 
 	<link rel="stylesheet" type="text/css" href="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.css">
@@ -21,6 +20,8 @@
 	<script src="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
 	<script src="../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script src="../../../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+
+	<script src="opaTests.qunit.js"></script>
 </head>
 <body>
 	<div id="qunit"></div>
