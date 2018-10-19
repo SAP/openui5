@@ -147,6 +147,11 @@
 		sap.m.MessageToast.show("Personalization Dialog");
 	}
 
+    function applyPastedData(oEvent) {
+        var aData = oEvent.getParameter("data");
+        sap.m.MessageToast.show("Pasted Data: " + aData);
+    }
+
 	var oSalaryFooter = new sap.m.Label({
 		text : "9.470.095 EUR",
 		tooltip: "Sum"
@@ -432,7 +437,8 @@
 		},
 		itemPress : function(e) {
 			sap.m.MessageToast.show("item is pressed");
-		}
+		},
+        paste: applyPastedData
 	});
 
 	oTable.setModel(oModel);

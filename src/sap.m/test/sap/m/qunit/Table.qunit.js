@@ -7,18 +7,20 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/model/Filter",
 	"sap/ui/model/Sorter",
+	"sap/ui/core/util/PasteHelper",
 	"sap/m/Table",
 	"sap/m/Column",
 	"sap/m/Label",
 	"sap/m/Toolbar",
 	"sap/m/ToolbarSpacer",
 	"sap/m/Button",
+	"sap/m/Input",
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
 	"sap/m/Title",
 	"sap/m/ScrollContainer",
 	"sap/m/library"
-], function(qutils, TablePersoDialog, KeyCodes, JSONModel, Device, Filter, Sorter, Table, Column, Label, Toolbar, ToolbarSpacer, Button, ColumnListItem, Text, Title, ScrollContainer, library) {
+], function(qutils, TablePersoDialog, KeyCodes, JSONModel, Device, Filter, Sorter, PasteHelper, Table, Column, Label, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library) {
 	"use strict";
 
 
@@ -1197,5 +1199,38 @@ sap.ui.define([
 
 		sut.destroy();
 
+	});
+
+	QUnit.module("Paste Data");
+
+	QUnit.test("Paste to the table on input-enabled cell", function(assert) {
+		assert.expect(1);
+
+		var table = new Table({
+			columns: [
+				new Column({header: new Label({text: "Last Name"})}),
+				new Column({header: new Label({text: "First Name"})})
+			],
+			items : new ColumnListItem({
+				cells: [
+					new Label(),
+					new Input()
+				]
+			})
+		});
+		table.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var sTest = "Aa\tBb b\nCc\tDd";
+		var aTestResult = [["Aa", "Bb b"],["Cc", "Dd"]];
+
+		table.attachPaste(function(e) {
+			assert.deepEqual(e.getParameter("data"), aTestResult);
+		});
+
+		table.$().trigger(jQuery.Event("paste", {originalEvent:{clipboardData: {getData : function () { return sTest;}}}}));
+		table.getItems()[0].getCells()[1].$("inner").trigger(jQuery.Event("paste", {originalEvent:{clipboardData: {getData : function () { return sTest;}}}}));
+
+		table.destroy();
 	});
 });

@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/table/ColumnMenu",
@@ -15,11 +16,12 @@ sap.ui.define([
 	'sap/ui/table/library',
 	'sap/ui/core/library',
 	"sap/ui/core/Control",
+	"sap/ui/core/util/PasteHelper",
 	"sap/ui/Device", "sap/ui/model/json/JSONModel", "sap/ui/model/Sorter", "sap/ui/model/Filter", "sap/ui/model/type/Float",
 	"sap/m/Text", "sap/m/Input", "sap/m/Label", "sap/m/CheckBox", "sap/m/Button", "sap/m/Link", "sap/m/RatingIndicator", "sap/m/Image",
 	"sap/m/Toolbar", "sap/m/ToolbarDesign", "sap/ui/unified/Menu", "sap/ui/unified/MenuItem", "sap/m/Menu", "sap/m/MenuItem", "sap/base/Log"
-], function(qutils, Table, Column, ColumnMenu, ColumnMenuRenderer, AnalyticalColumnMenuRenderer, TablePersoController, RowAction, RowActionItem,
-			RowSettings, TableUtils, TableLibrary, CoreLibrary, Control,
+], function(qutils, TableQUnitUtils, Table, Column, ColumnMenu, ColumnMenuRenderer, AnalyticalColumnMenuRenderer, TablePersoController, RowAction,
+			RowActionItem, RowSettings, TableUtils, TableLibrary, CoreLibrary, Control, PasteHelper,
 			Device, JSONModel, Sorter, Filter, FloatType,
 			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, ToolbarDesign, Menu, MenuItem, MenuM, MenuItemM, Log) {
 	"use strict";
@@ -30,6 +32,13 @@ sap.ui.define([
 	var VisibleRowCountMode = TableLibrary.VisibleRowCountMode;
 	var NavigationMode = TableLibrary.NavigationMode;
 	var SharedDomRef = TableLibrary.SharedDomRef;
+
+	// mapping of global function calls
+	var getCell = window.getCell;
+	var getColumnHeader = window.getColumnHeader;
+	var getRowHeader = window.getRowHeader;
+	var getRowAction = window.getRowAction;
+	var getSelectAll = window.getSelectAll;
 
 	var personImg = "../images/Person.png";
 	var jobPosImg = "../images/JobPosition.png";
@@ -2987,6 +2996,142 @@ sap.ui.define([
 				done();
 			});
 		}, 0);
+	});
+
+	QUnit.module("Paste", {
+		beforeEach: function() {
+			var PasteTestControl = this.PasteTestControl;
+			createTable({
+				visibleRowCount: 1,
+				fixedColumnCount: 1,
+				selectionMode: SelectionMode.MultiToggle,
+				rowActionCount: 1,
+				rowActionTemplate: new RowAction({items: [new RowActionItem()]}),
+				title: new PasteTestControl({tagName: "div", handleOnPaste: false}),
+				toolbar: new Toolbar({content: [new PasteTestControl({tagName: "div", handleOnPaste: false})]}),
+				extension: [new PasteTestControl({tagName: "div", handleOnPaste: false})],
+				footer: new PasteTestControl({tagName: "div", handleOnPaste: false})
+			}, function(oTable) {
+				["div", "input", "textarea"].forEach(function(sTagName) {
+					oTable.addColumn(new Column({
+						label: new PasteTestControl({tagName: sTagName, handleOnPaste: false}),
+						template: new PasteTestControl({tagName: sTagName, handleOnPaste: false})
+					}));
+					oTable.addColumn(new Column({
+						label: new PasteTestControl({tagName: sTagName, handleOnPaste: true}),
+						template: new PasteTestControl({tagName: sTagName, handleOnPaste: true})
+					}));
+				});
+			});
+			this.oPasteSpy = sinon.spy(function(oEvent) {
+				this.oPasteSpy._mEventParameters = oEvent.mParameters;
+			}.bind(this));
+			oTable.attachPaste(this.oPasteSpy);
+		},
+		afterEach: function() {
+			this.oPasteSpy = null;
+			destroyTable();
+		},
+		PasteTestControl: Control.extend("sap.ui.table.test.PasteTestControl", {
+			metadata: {
+				properties: {
+					tagName: {type: "string"},
+					handleOnPaste: {type: "boolean"}
+				}
+			},
+			renderer: function(oRm, oControl) {
+				oRm.write("<" + oControl.getTagName());
+				oRm.writeControlData(oControl);
+				oRm.write("></" + oControl.getTagName() + ">");
+			},
+			onpaste: function(oEvent) {
+				if (this.getHandleOnPaste()) {
+					oEvent.setMarked();
+				}
+			},
+			allowsPasteOnTable: function() {
+				return this.getTagName() !== "input" && this.getTagName() !== "textarea" && !this.getHandleOnPaste();
+			}
+		}),
+		createPasteEvent: function(sData) {
+			var oEvent;
+
+			if (typeof Event === "function") {
+				oEvent = new Event("paste", {
+					bubbles: true,
+					cancelable: true
+				});
+			} else { // IE
+				oEvent = document.createEvent("Event");
+				oEvent.initEvent("paste", true, true);
+			}
+
+			oEvent.clipboardData = {
+				getData: function() {
+					return sData;
+				}
+			};
+
+			return oEvent;
+		},
+		test: function(assert, sTestTitle, oHTMLElement, bShouldFireOnce) {
+			var sData = "data";
+			sTestTitle = sTestTitle == null ? "" : sTestTitle + ": ";
+
+			oHTMLElement.dispatchEvent(this.createPasteEvent(sData));
+
+			assert.strictEqual(this.oPasteSpy.callCount, bShouldFireOnce ? 1 : 0,
+				sTestTitle + "The paste event was fired the correct number of times");
+
+			if (this.oPasteSpy.callCount === 1 && bShouldFireOnce) {
+				assert.deepEqual(this.oPasteSpy._mEventParameters.data, [[sData]], sTestTitle + "The data parameter has the correct value");
+			}
+
+			this.oPasteSpy.reset();
+		}
+	});
+
+	QUnit.test("Elements where the paste event should not be fired", function(assert) {
+		this.test(assert, "Title control", oTable.getTitle().getDomRef(), false);
+		this.test(assert, "Toolbar control", oTable.getToolbar().getDomRef(), false);
+		this.test(assert, "Toolbar content control", oTable.getToolbar().getContent()[0].getDomRef(), false);
+		this.test(assert, "Extension control", oTable.getExtension()[0].getDomRef(), false);
+		this.test(assert, "Footer control", oTable.getFooter().getDomRef(), false);
+	});
+
+	QUnit.test("NoData", function(assert) {
+		oTable.unbindRows();
+		this.test(assert, null, oTable.getDomRef("noDataCnt"), true);
+	});
+
+	QUnit.test("Cells", function(assert) {
+		this.test(assert, "SelectAll", getSelectAll(null, null, oTable)[0], true);
+		this.test(assert, "Header cell in fixed column", getColumnHeader(0, null, null, oTable)[0], true);
+		this.test(assert, "Header cell in scrollable column", getColumnHeader(1, null, null, oTable)[0], true);
+		this.test(assert, "Row selector cell", getRowHeader(0, null, null, oTable)[0], true);
+		this.test(assert, "Content cell in fixed column", getCell(0, 0, null, null, oTable)[0], true);
+		this.test(assert, "Content cell in scrollable column", getCell(0, 1, null, null, oTable)[0], true);
+		this.test(assert, "Row action cell", getRowAction(0, null, null, oTable)[0], true);
+	});
+
+	QUnit.test("Cell content", function(assert) {
+		oTable.getColumns().forEach(function(oColumn) {
+			var oControl = oColumn.getLabel();
+			this.test(assert, "Header - Column " + oColumn.getIndex(), oControl.getDomRef(), oControl.allowsPasteOnTable());
+		}.bind(this));
+		oTable.getColumns().forEach(function(oColumn) {
+			var oControl = oTable.getRows()[0].getCells()[oColumn.getIndex()];
+			this.test(assert, "Content - Column " + oColumn.getIndex(), oControl.getDomRef(), oControl.allowsPasteOnTable());
+		}.bind(this));
+		this.test(assert, "Content - Row action", oTable.getRows()[0].getAggregation("_rowAction").getAggregation("_icons")[0].getDomRef(), true);
+	});
+
+	QUnit.test("No paste data", function(assert) {
+		sinon.stub(PasteHelper, "getPastedDataAs2DArray").returns([]);
+		this.test(assert, "Element that allows paste on table", getCell(0, 1, null, null, oTable)[0], false);
+		PasteHelper.getPastedDataAs2DArray.returns([[]]);
+		this.test(assert, "Element that allows paste on table", getCell(0, 1, null, null, oTable)[0], false);
+		PasteHelper.getPastedDataAs2DArray.restore();
 	});
 
 	QUnit.module("Legacy Modules", {});

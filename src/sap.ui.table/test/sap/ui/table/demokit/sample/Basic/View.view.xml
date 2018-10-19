@@ -15,7 +15,8 @@
 				rows="{/ProductCollection}"
 				title="Products"
 				selectionMode="MultiToggle"
-				visibleRowCount="7">
+				visibleRowCount="7"
+				paste="onPaste">
 				<columns>
 					<Column width="11rem">
 						<m:Label text="Product Name" />
