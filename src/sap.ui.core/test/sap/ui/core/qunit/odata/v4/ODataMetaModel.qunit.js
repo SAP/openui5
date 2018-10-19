@@ -1374,11 +1374,17 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[
-		"/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath",
-		"/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath/"
-	].forEach(function (sPath) {
-		QUnit.test("fetchObject: " + sPath + "@@...isMultiple", function (assert) {
+	[{
+		sPath : "/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath",
+		sSchemaChildName : "tea_busi.Worker"
+	}, {
+		sPath : "/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath/",
+		sSchemaChildName : "tea_busi.Worker"
+	}, {
+		sPath : "/EMPLOYEES",
+		sSchemaChildName : "tea_busi.DefaultContainer"
+	}].forEach(function (oFixture) {
+		QUnit.test("fetchObject: " + oFixture.sPath + "@@...isMultiple", function (assert) {
 			var oContext,
 				oInput,
 				fnIsMultiple = this.mock(AnnotationHelper).expects("isMultiple"),
@@ -1387,15 +1393,15 @@ sap.ui.define([
 
 			this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1) // see oInput
 				.returns(SyncPromise.resolve(mScope));
-			oInput = this.oMetaModel.getObject(sPath);
+			oInput = this.oMetaModel.getObject(oFixture.sPath);
 			fnIsMultiple
 				.withExactArgs(oInput, sinon.match({
 					context : sinon.match.object,
-					schemaChildName : "tea_busi.Worker"
+					schemaChildName : oFixture.sSchemaChildName
 				})).returns(oResult);
 
 			// code under test
-			oSyncPromise = this.oMetaModel.fetchObject(sPath
+			oSyncPromise = this.oMetaModel.fetchObject(oFixture.sPath
 				+ "@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple");
 
 			assert.strictEqual(oSyncPromise.isFulfilled(), true);
@@ -1403,7 +1409,7 @@ sap.ui.define([
 			oContext = fnIsMultiple.args[0][1].context;
 			assert.ok(oContext instanceof BaseContext);
 			assert.strictEqual(oContext.getModel(), this.oMetaModel);
-			assert.strictEqual(oContext.getPath(), sPath);
+			assert.strictEqual(oContext.getPath(), oFixture.sPath);
 			assert.strictEqual(oContext.getObject(), oInput);
 		});
 	});
