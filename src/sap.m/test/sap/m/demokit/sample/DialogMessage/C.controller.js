@@ -93,6 +93,28 @@ sap.ui.define([
 			});
 
 			dialog.open();
+		},
+
+		onMessageHighlightDialogPress: function (oEvent) {
+			var dialog = new Dialog({
+				title: 'Highlight',
+				type: 'Message',
+				state: 'Highlight',
+				content: new Text({
+					text: 'A dialog that represents highlighted information.'
+				}),
+				beginButton: new Button({
+					text: 'OK',
+					press: function () {
+						dialog.close();
+					}
+				}),
+				afterClose: function() {
+					dialog.destroy();
+				}
+			});
+
+			dialog.open();
 		}
 	});
 
