@@ -1492,21 +1492,24 @@ sap.ui.define(function() {
 				}
 			},
 			ExploredSamples: {
-				/*
-				 * Page kept because of
-				 *  - multiple non-contiguous inline scripts
-				 *  - UIAreas not created per script
-				 */
-				page: "test-resources/sap/m/qunit/ExploredSamples.qunit.html",
 				title: "Test Page for 'Explored' samples from sap.m",
-				ui5: {
-					libs: "sap.ui.layout,sap.ui.documentation,sap.m"
-				},
 				loader: {
 					paths: {
-						"sap/ui/demo/mock": "test-resources/sap/m/qunit/test-resources/sap/ui/documentation/sdk/"
+						"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
 					}
-				}
+				},
+				runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 1 // because MockServer is used by samples
+				},
+				ui5: {
+					libs: "sap.ui.layout,sap.m,sap.ui.documentation",
+					"xx-componentPreload": "off"
+				},
+				autostart: false
 			},
 			FacetFilter: {
 				title: "FacetFilter - sap.m",

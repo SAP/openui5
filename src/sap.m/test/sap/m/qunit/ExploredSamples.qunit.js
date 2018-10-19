@@ -6,6 +6,12 @@ sap.ui.define([
 
 	createAndAppendDiv("content");
 
-	new SampleTester('sap.tnt', [] /*Excludes*/).placeAt('content');
+	new SampleTester(
+		'sap.m',
+		[
+			"sap.m.sample.PageListReportIconTabBar",
+			"sap.m.sample.PageListReportToolbar"
+		]
+	).placeAt('content');
 
 });

@@ -68,13 +68,17 @@ sap.ui.define(function () {
 				}
 			},
 			"ExploredSamples": {
-				coverage: {
-					only: ["sap/f/ExploredSamples"]
+				runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 1 // because MockServer is used by samples
 				},
 				ui5: {
-					libs: ["sap.ui.unified", "sap.ui.documentation", "sap.ui.layout", "sap.m"]
+					libs: ["sap.ui.unified", "sap.ui.documentation", "sap.ui.layout", "sap.m"],
+					"xx-componentPreload": "off"
 				},
-				sinon: false,
 				autostart: false
 			},
 			"ObjectPageAPICreation": {
