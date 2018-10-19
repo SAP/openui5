@@ -28,15 +28,18 @@ sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log", "sap/ui/t
 		this.aHistory = [];
 		this._bIsInitial = true;
 
-		var oState = window.history.state === null ? {} : window.history.state;
+		if (!Device.browser.msie) { // the state information isn't used for IE
+			// because it doesn't clear the state after new hash is set
+			var oState = window.history.state === null ? {} : window.history.state;
 
-		if (typeof oState === "object") {
-			History._aStateHistory.push(window.location.hash);
-			oState.sap = {};
-			oState.sap.history = History._aStateHistory;
-			window.history.replaceState(oState, window.document.title);
-		} else {
-			Log.debug("Unable to determine HistoryDirection as history.state is already set: " + window.history.state, "sap.ui.core.routing.History");
+			if (typeof oState === "object") {
+				History._aStateHistory.push(window.location.hash);
+				oState.sap = {};
+				oState.sap.history = History._aStateHistory;
+				window.history.replaceState(oState, window.document.title);
+			} else {
+				Log.debug("Unable to determine HistoryDirection as history.state is already set: " + window.history.state, "sap.ui.core.routing.History");
+			}
 		}
 
 		if (!oHashChanger) {

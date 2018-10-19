@@ -541,7 +541,11 @@ sap.ui.define([
 					assert.strictEqual(this.oHistory.getDirection(), "Unknown");
 				}
 			}.bind(this)).then(function() {
-				assert.ok(oSpy.alwaysCalledWith("Unable to determine HistoryDirection as history.state is already set: invalid_state", "sap.ui.core.routing.History"), "The debug log is done correctly");
+				if (Device.browser.msie) {
+					assert.equal(oSpy.callCount, 0, "there's no log written for IE");
+				} else {
+					assert.ok(oSpy.alwaysCalledWith("Unable to determine HistoryDirection as history.state is already set: invalid_state", "sap.ui.core.routing.History"), "The debug log is done correctly");
+				}
 				oSpy.restore();
 			});
 		}.bind(this));
