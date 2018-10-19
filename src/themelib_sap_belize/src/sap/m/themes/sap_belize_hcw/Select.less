@@ -18,8 +18,8 @@
 	outline-offset: -0.1875rem;
 }
 
-html.sap-desktop .sapMSlt:not(.sapMSltIconOnly):not(.sapMSltDisabled):focus,
-.sapMSltHoverable:not(.sapMSltIconOnly):hover {
+html.sap-desktop .sapMSlt:not(.sapMSltIconOnly):not(.sapMSltDisabled):not(.sapMSltHighlight):focus,
+.sapMSltHoverable:not(.sapMSltIconOnly):not(.sapMSltHighlight):hover {
 	border-color: @sapUiFieldHoverBorderColor;
 }
 
@@ -101,6 +101,11 @@ html.sap-desktop .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
 .sapMSltWarning,
 .sapMSltError {
 	border-style: dashed;
+}
+
+.sapMSltHighlight {
+	background: @sapUiFieldBackground;
+	border-color: @sapUiContentHelpColor;
 }
 
 /* disabled */

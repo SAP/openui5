@@ -226,7 +226,7 @@ function(
 
 					/**
 					 * Visualizes the validation state of the control, e.g. <code>Error</code>, <code>Warning</code>,
-					 * <code>Success</code>.
+					 * <code>Success</code>, <code>Highlight</code>.
 					 * @since 1.40.2
 					 */
 					valueState: {

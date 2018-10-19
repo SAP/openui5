@@ -21,6 +21,14 @@
 	}
 }
 
+.sapMCb.sapMCbHighlight .sapMCbBg {
+	background-color: @sapUiFieldBackground;
+	border-color: @sapUiHighlight;
+	&.sapMCbMarkChecked:before {
+		color: @sapUiHighlight;
+	}
+}
+
 .sapUiForm .sapMCbBg { /* In forms, align left with '0.0625rem(1px)' ( the focus width) */
 	left: 1px; // Must be in pixels to behave correctly in IE
 }

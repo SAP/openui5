@@ -302,6 +302,11 @@ sap.ui.define([
 		stateText = oProgIndicator._getStateText();
 		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
 
+		oProgIndicator.setState(ValueState.Highlight);
+		Core.applyChanges();
+		stateText = oProgIndicator._getStateText();
+		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
+
 		oProgIndicator.destroy();
 	});
 

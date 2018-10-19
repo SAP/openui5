@@ -429,6 +429,24 @@ sap.ui.define([
 		oCheckBox.destroy();
 	});
 
+	/* ----------------------------------------------- */
+	/* Test: 'ValueState=Highlight'						   */
+	/* ----------------------------------------------- */
+
+	QUnit.test("'ValueState=Highlight'", function(assert) {
+		// system under test
+		var oCheckBox = new CheckBox({valueState: ValueState.Highlight});
+
+		// arrange
+		oCheckBox.placeAt("content");
+		Core.applyChanges();
+
+		// assertions
+		assert.ok(oCheckBox.$().hasClass("sapMCbHighlight"), "The CheckBox has value state highlight css class.");
+
+		// cleanup
+		oCheckBox.destroy();
+	});
 
 	/* ----------------------------------------------- */
 	/* Test: 'name'                                    */

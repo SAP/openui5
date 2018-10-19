@@ -487,6 +487,16 @@
 			}
 		});
 
+		var oSelectHighlight = new sap.m.Select({
+			width: "15rem",
+			valueState: sap.ui.core.ValueState.Highlight,
+			valueStateText: "value state text",
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			}
+		});
+
 		var oSelectBusy = new sap.m.Select({
 			busy: true,
 			items: {
@@ -530,6 +540,10 @@
 
 				new sap.ui.core.HTML({ content: "<h3>Error state</h3>" }),
 				oSelectError,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Highlight state</h3>" }),
+				oSelectHighlight,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
 				new sap.ui.core.HTML({ content: "<h3>Busy</h3>" }),

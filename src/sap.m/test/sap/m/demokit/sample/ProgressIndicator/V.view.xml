@@ -30,6 +30,12 @@
 				displayValue="25%"
 				showValue="true"
 				state="Warning" />
+			<ProgressIndicator
+				class="sapUiSmallMarginBottom"
+				percentValue="40"
+				displayValue="40%"
+				showValue="true"
+				state="Highlight" />
 			<Text text="Invalid percent values" class="sapUiSmallMarginBottom" />
 			<ProgressIndicator
 				class="sapUiSmallMarginBottom"
@@ -70,6 +76,13 @@
 				displayValue="25%"
 				showValue="true"
 				state="Warning"
+				displayOnly="true" />
+			<ProgressIndicator
+				class="sapUiSmallMarginBottom"
+				percentValue="40"
+				displayValue="40%"
+				showValue="true"
+				state="Highlight"
 				displayOnly="true" />
 		</l:content>
 	</l:VerticalLayout>

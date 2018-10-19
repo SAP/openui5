@@ -65,7 +65,8 @@ sap.ui.define([
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * Specifies the state of the bar. Enumeration sap.ui.core.ValueState provides Error (red), Warning (yellow), Success (green), None (blue) (default value).
+			 * Specifies the state of the bar. Enumeration sap.ui.core.ValueState provides Error, Warning, Success, Highlight, None (default value).
+			 * The color for each state depends on the theme.
 			 */
 			state : {type : "sap.ui.core.ValueState", group : "Appearance", defaultValue : ValueState.None},
 
