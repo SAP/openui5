@@ -797,7 +797,9 @@ sap.ui.define([
 			}
 
 			if (bEditable) {
-				bEditable = this.hasStableId(mParents.parentOverlay);
+				bEditable =
+					this.hasStableId(oOverlay) //don't confuse the user/Web IDE by an editable overlay without stable ID
+					&& this.hasStableId(mParents.parentOverlay);
 			}
 			return bEditable;
 		},
