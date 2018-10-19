@@ -376,7 +376,7 @@ sap.ui.define([
 	 * @param {function} fnCancelCallback
 	 *   A function which is called after a transient entity has been canceled from the cache
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   The create Promise which is resolved without data when the POST request has been
+	 *   A promise which is resolved with the created entity when the POST request has been
 	 *   successfully sent and the entity has been marked as non-transient
 	 *
 	 * @private
@@ -393,13 +393,13 @@ sap.ui.define([
 						that.oModel.reportError("POST on '" + vCreatePath
 								+ "' failed; will be repeated automatically",
 							"sap.ui.model.odata.v4.ODataParentBinding", oError);
-				}).then(function (oResult) {
+				}).then(function (oCreatedEntity) {
 					if (oCache.$canonicalPath) {
 						// Ensure that a cache containing a persisted created entity is recreated
 						// when the parent binding changes to another row and back again.
 						delete that.mCacheByContext[oCache.$canonicalPath];
 					}
-					return oResult;
+					return oCreatedEntity;
 				});
 			}
 			return that.oContext.getBinding().createInCache(oUpdateGroupLock, vCreatePath,

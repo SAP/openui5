@@ -851,7 +851,7 @@ sap.ui.define([
 			function copyPathValue(sPath, sProperty, oOldValue , oNewValue) {
 				var aSegments = sProperty.split("/");
 
-				aSegments.every(function(sSegment, iIndex) {
+				aSegments.every(function (sSegment, iIndex) {
 					if (oNewValue[sSegment] === null) {
 						oOldValue[sSegment] = null;
 						if (iIndex < aSegments.length - 1) {
@@ -913,6 +913,30 @@ sap.ui.define([
 			aSelect.forEach(function (sProperty) {
 				copyPathValue(sPath, sProperty, oOldValue, oNewValue);
 			});
+		},
+
+		/**
+		 * Updates certain transient paths from the given map, replacing the "-1" segment with the
+		 * given key predicate.
+		 *
+		 * @param {object} mMap
+		 *   A map from path to anything
+		 * @param {string} sPathInCache
+		 *   A path inside the cache where the "-1" segment should be replaced
+		 * @param {string} sPredicate
+		 *   The key predicate
+		 */
+		updateTransientPaths : function (mMap, sPathInCache, sPredicate) {
+			var sPath,
+				sPathToMinus1 = Helper.buildPath(sPathInCache, "-1");
+
+			for (sPath in mMap) {
+				if (sPath.startsWith(sPathToMinus1)) {
+					mMap[sPathInCache + sPredicate + sPath.slice(sPathToMinus1.length)]
+						= mMap[sPath];
+					delete mMap[sPath];
+				}
+			}
 		}
 	};
 

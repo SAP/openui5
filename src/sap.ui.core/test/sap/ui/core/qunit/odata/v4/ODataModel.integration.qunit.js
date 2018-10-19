@@ -519,16 +519,23 @@ sap.ui.define([
 			 * Stub function for _Requestor#sendBatch. Checks that all requests in the batch are as
 			 * expected.
 			 *
-			 * @param {object[]} aRequests The array of batch requests
+			 * @param {object[]} aRequests The array of requests in a $batch
 			 * @returns {Promise} A promise on the array of batch responses
 			 */
 			function checkBatch(aRequests) {
-				function processRequests(aRequests0) {
-					return Promise.all(aRequests0.map(function (oRequest) {
+				/*
+				 * @param {object[]} aRequests The array of requests in a $batch or in a change set
+				 * @param {number} [iChangeSetNo] Number of the change set in the current batch, in
+				 * 	 case aRequests are the requests of a change set. Note: Change sets are
+				 * 	 numbered starting with 1, just as batches.
+				 * @returns {Promise} A promise on the array of batch responses
+				 */
+				function processRequests(aRequests0, iChangeSetNo) {
+					return Promise.all(aRequests0.map(function (oRequest, i) {
 						return Array.isArray(oRequest)
-							? processRequests(oRequest)
+							? processRequests(oRequest, i + 1)
 							: checkRequest(oRequest.method, oRequest.url, oRequest.headers,
-								oRequest.body
+								oRequest.body, undefined, iChangeSetNo || i + 1
 							).then(function (oResponse) {
 								var mHeaders = {};
 
@@ -576,8 +583,14 @@ sap.ui.define([
 			 *  "errorResponse" then the content of "errorResponse" is stored in "mBatch2Error" for
 			 *  the current $batch and the promise resolves with the content of "errorResponse" as
 			 *  "body".
+			 * @param {string} [sOriginalResourcePath] The path by which the resource has originally
+			 *   been requested
+			 * @param {number} [iChangeSetNo] Number of the change set in the current batch which
+			 *   the request is expected to belong to
+			 * @returns {Promise} A promise on an object with the response in the property "body"
 			 */
-			function checkRequest(sMethod, sUrl, mHeaders, vPayload, sOriginalResourcePath) {
+			function checkRequest(sMethod, sUrl, mHeaders, vPayload, sOriginalResourcePath,
+					iChangeSetNo) {
 				var oActualRequest = {
 						method : sMethod,
 						url : sUrl,
@@ -617,6 +630,9 @@ sap.ui.define([
 					delete oExpectedRequest.responseHeaders;
 					if (oExpectedRequest.batchNo) {
 						oActualRequest.batchNo = that.iBatchNo;
+					}
+					if (oExpectedRequest.changeSetNo) {
+						oActualRequest.changeSetNo = iChangeSetNo;
 					}
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
 				} else {
@@ -2318,15 +2334,16 @@ sap.ui.define([
 					}, {
 						"CompanyName" : "Bar",
 						"Note" : "from server",
-						"SalesOrderID" : "42"
-					});
+						"SalesOrderID" : "43"
+					})
+					.expectChange("note", "from server", 0);
 				if (!bSkipRefresh){
-					that.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
-							"Note" : "from server",
-							"SalesOrderID" : "42"
-						});
+					that.expectRequest("SalesOrderList('43')?$select=Note,SalesOrderID", {
+							"Note" : "fresh from server",
+							"SalesOrderID" : "43"
+						})
+						.expectChange("note", "fresh from server", 0);
 				}
-				that.expectChange("note", "from server", 0);
 
 				return Promise.all([
 					that.oModel.submitBatch("update"),
@@ -3035,6 +3052,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Modify a property while an update request is not yet resolved. The second PATCH
 	// request must wait for the first one to finish and use the eTag returned in its response.
+	// A third PATCH request which also waits goes into a separate change set when submitBatch
+	// has been called before it was created (CPOUI5UISERVICESV3-1531).
 	QUnit.test("PATCH entity, two subsequent PATCHes on this entity wait", function (assert) {
 		var oBinding,
 			oModel = createSalesOrdersModel({
@@ -3077,10 +3096,25 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			var oMetaModel = oModel.getMetaModel(),
+				fnFetchObject = oMetaModel.fetchObject,
+				oMetaModelMock = that.mock(oMetaModel);
+
 			that.expectChange("note", "(1) Changed Note while $batch is running");
+
+			// enforce delayed creation of PATCH request for setValue: submitBatch is called
+			// *before* this request is created, but the request is in the change set which is
+			// the current one before the submitBatch
+			oMetaModelMock.expects("fetchObject")
+				.withExactArgs("/SalesOrderList/Note")
+				.callsFake(function () {
+					return resolveLater(fnFetchObject.bind(oMetaModel, "/SalesOrderList/Note"));
+				});
 
 			oBinding.setValue("(1) Changed Note while $batch is running");
 			aPromises.push(that.oModel.submitBatch("update"));
+
+			oMetaModelMock.restore();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -3091,18 +3125,29 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			// The two PATCH requests on Note are merged, only the second remains
 			that.expectChange("note", "Changed Note From Server")
 				.expectRequest({
+					changeSetNo : 1,
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "ETag1"},
+					payload : {Note : "(1) Changed Note while $batch is running"}
+				}, {
+					"@odata.etag" : "ETag2",
+					Note : "(1) Changed Note From Server - 2"
+				})
+				.expectRequest({
+					changeSetNo : 2,
 					method : "PATCH",
 					url : "SalesOrderList('42')",
 					headers : {"If-Match" : "ETag1"},
 					payload : {Note : "(2) Changed Note while $batch is running"}
 				}, {
 					"@odata.etag" : "ETag2",
-					Note : "Changed Note From Server - 2"
+					Note : "(2) Changed Note From Server - 2"
 				})
-				.expectChange("note", "Changed Note From Server - 2");
+				.expectChange("note", "(1) Changed Note From Server - 2")
+				.expectChange("note", "(2) Changed Note From Server - 2");
 
 			fnRespond();
 			aPromises.push(that.waitForChanges(assert));
@@ -3189,6 +3234,7 @@ sap.ui.define([
 			//TODO suppress change event for outdated value "42Changed Note From Server"
 			that.expectChange("note42", "42Changed Note From Server")
 				.expectRequest({
+					changeSetNo : 1,
 					method : "PATCH",
 					url : "SalesOrderList('42')",
 					headers : {"If-Match" : "42ETag1"},
@@ -3198,16 +3244,28 @@ sap.ui.define([
 					Note : "42Changed Note From Server - 1"
 				})
 				.expectRequest({
+					changeSetNo : 1,
+					method : "PATCH",
+					url : "SalesOrderList('77')",
+					headers : {"If-Match" : "77ETag0"},
+					payload : {Note : "(1) 77Changed Note while $batch is running"}
+				}, {
+					"@odata.etag" : "77ETag1",
+					Note : "(1) 77Changed Note From Server - 1"
+				})
+				.expectRequest({
+					changeSetNo : 2,
 					method : "PATCH",
 					url : "SalesOrderList('77')",
 					headers : {"If-Match" : "77ETag0"},
 					payload : {Note : "77Changed Note"}
 				}, {
 					"@odata.etag" : "77ETag1",
-					Note : "77Changed Note From Server - 1"
+					Note : "(2) 77Changed Note From Server - 1"
 				})
 				.expectChange("note42", "42Changed Note From Server - 1")
-				.expectChange("note77", "77Changed Note From Server - 1");
+				.expectChange("note77", "(1) 77Changed Note From Server - 1")
+				.expectChange("note77", "(2) 77Changed Note From Server - 1");
 
 			fnRespond42();
 			aPromises.push(that.waitForChanges(assert));
@@ -8897,6 +8955,8 @@ sap.ui.define([
 			var oAction = oModel.bindContext("com.sap.gateway.default.iwbep.tea_busi.v0001."
 					+ "AcChangeManagerOfTeam(...)", oCreatedContext);
 
+			assert.strictEqual(oCreatedContext.getPath(), "/TEAMS('newer')");
+
 			that.expectRequest({
 					method : "POST",
 					url : "TEAMS('newer')/com.sap.gateway.default.iwbep.tea_busi.v0001."
@@ -8959,6 +9019,8 @@ sap.ui.define([
 			var oAction = that.oModel.bindContext(
 					"com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee(...)",
 					oCreatedContext);
+
+			assert.strictEqual(oCreatedContext.getPath(), "/TEAMS('42')/TEAM_2_EMPLOYEES('7')");
 
 			that.expectRequest({
 					method : "POST",
@@ -9749,88 +9811,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Create an employee and get messages for the newly created employee
-	QUnit.test("Create a new EMPLOYEE and get messages", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
-			sView = '\
-<FlexBox binding="{path : \'/TEAMS(\\\'TEAM_01\\\')\', \
-		parameters : {\
-			$expand : {\
-				\'TEAM_2_EMPLOYEES\' : {\
-					$select : \'__CT__FAKE__Message/__FAKE__Messages\'\
-				}\
-			},\
-			$$updateGroupId : \'foo\'\
-		}}" id="form">\
-	<Text id="teamId" text="{Team_Id}" />\
-	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<columns><Column/></columns>\
-		<ColumnListItem>\
-			<Text id="name" text="{Name}" />\
-		</ColumnListItem>\
-	</Table>\
-</FlexBox>',
-			that = this;
-
-		this.expectRequest(
-			"TEAMS('TEAM_01')?"
-				+ "$expand=TEAM_2_EMPLOYEES($select=ID,Name,__CT__FAKE__Message/__FAKE__Messages)"
-				+ "&$select=Team_Id", {
-				"Team_Id" : "TEAM_01",
-				"TEAM_2_EMPLOYEES" : [{
-					"ID" : "1",
-					"Name" : "Jonathan Smith",
-					"__CT__FAKE__Message" : { "__FAKE__Messages" : [] }
-				}]
-			})
-			.expectChange("teamId", "TEAM_01")
-			.expectChange("name", ["Jonathan Smith"])
-			.expectMessages([]);
-
-		return this.createView(assert, sView, oModel).then(function () {
-			var oTable = that.oView.byId("table");
-
-			that.expectChange("name", "Jonathan Smith", 1)
-				.expectChange("name", "", 0);
-
-			oTable.getBinding("items").create({Name : ""});
-
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectRequest({
-					method : "POST",
-					url : "TEAMS('TEAM_01')/TEAM_2_EMPLOYEES",
-					payload : {"Name" : ""}
-				}, {
-					"@odata.context" : "../$metadata#TEAMS('TEAM_01')/TEAM_2_EMPLOYEES/$entity",
-					"ID" : "42",
-					"Name" : "",
-					"__CT__FAKE__Message" : {
-						"__FAKE__Messages" : [{
-							"code" : "1",
-							"message" : "Enter a name",
-							"transition" : false,
-							"target" : "Name",
-							"numericSeverity" : 3
-						}]
-					}
-				})
-				.expectMessages([{
-					"code" : "1",
-					"message" : "Enter a name",
-					"persistent" : false,
-					"target" : "/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES/-1/Name",
-					"type" : "Warning"
-				}]);
-
-			return Promise.all([
-				that.oModel.submitBatch("foo"),
-				that.waitForChanges(assert)
-			]);
-		});
-	});
-
-	//*********************************************************************************************
 	// Scenario: Modify a property without side effects, i.e. the PATCH request's response is
 	// ignored.
 	QUnit.test("$$patchWithoutSideEffects", function (assert) {
@@ -10249,6 +10229,124 @@ sap.ui.define([
 				resolveLater(reject),
 				that.waitForChanges(assert)
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create entity for a ListBinding relative to a newly created entity
+	[false, true].forEach(function (bKeepTransientPath) {
+		var sTitle = "Create relative, on newly created entity, keep transient path: "
+				+ bKeepTransientPath;
+
+		QUnit.test(sTitle, function (assert) {
+			var oEmployeeCreatedContext,
+				oModel = createTeaBusiModel(),
+				oTeamCreatedContext,
+				sView = '\
+<FlexBox binding="{path : \'\',\
+		parameters : {\
+			$expand : {\
+				\'TEAM_2_EMPLOYEES\' : {\
+					$select : \'__CT__FAKE__Message/__FAKE__Messages,ID\'\
+				}\
+			}\
+		}}" id="form">\
+	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Text id="id" text="{ID}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+				that = this;
+
+			this.expectChange("id", []);
+
+			return this.createView(assert, sView, oModel).then(function () {
+				// create a new team
+				that.expectRequest({
+						method : "POST",
+						url : "TEAMS",
+						payload : {}
+					}, {
+						"Team_Id" : "23"
+					});
+
+				oTeamCreatedContext = oModel.bindList("/TEAMS").create({
+						// private annotation, not to be used unless explicitly adviced to do so
+						"@$ui5.keepTransientPath" : bKeepTransientPath
+					}, true);
+
+				return Promise.all([
+					oTeamCreatedContext.created(),
+					that.waitForChanges(assert)
+				]);
+			}).then(function () {
+				assert.strictEqual(oTeamCreatedContext.getPath(),
+					bKeepTransientPath ? "/TEAMS/-1" : "/TEAMS('23')");
+
+				that.expectRequest("TEAMS('23')?$expand=TEAM_2_EMPLOYEES("
+						+ "$select=__CT__FAKE__Message/__FAKE__Messages,ID)", {
+						"Team_Id" : "23",
+						"TEAM_2_EMPLOYEES" : [{
+							"ID" : "3",
+							"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
+						}]
+					})
+					.expectChange("id", ["3"])
+					.expectMessages([]);
+
+				that.oView.byId("form").setBindingContext(oTeamCreatedContext);
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				// create new relative entity
+				that.expectRequest({
+						method : "POST",
+						url : "TEAMS('23')/TEAM_2_EMPLOYEES",
+						payload : {"ID" : null}
+					}, {
+						"ID" : "7",
+						"__CT__FAKE__Message" : {
+							"__FAKE__Messages" : [{
+								"code" : "1",
+								"message" : "Enter a name",
+								"transition" : false,
+								"target" : "Name",
+								"numericSeverity" : 3
+							}]
+						}
+					})
+					.expectChange("id", "", 0) // from setValue(null)
+					.expectChange("id", ["7", "3"])
+					.expectMessages([{
+						"code" : "1",
+						"message" : "Enter a name",
+						"persistent" : false,
+						"target" : bKeepTransientPath
+						//TODO why does ODataBinding.fetchCache compute a canonical path and how
+						// does this fit to message targets?
+							? "/TEAMS('23')/TEAM_2_EMPLOYEES/-1/Name"
+							: "/TEAMS('23')/TEAM_2_EMPLOYEES('7')/Name",
+						"type" : "Warning"
+					}]);
+
+				oEmployeeCreatedContext = that.oView.byId("table").getBinding("items").create({
+						// private annotation, not to be used unless explicitly adviced to do so
+						"@$ui5.keepTransientPath" : bKeepTransientPath,
+						"ID" : null
+					}, true);
+
+				return Promise.all([
+					oEmployeeCreatedContext.created(),
+					that.waitForChanges(assert)
+				]);
+			}).then(function () {
+				assert.strictEqual(oEmployeeCreatedContext.getPath(),
+					bKeepTransientPath
+					? "/TEAMS/-1/TEAM_2_EMPLOYEES/-1"
+					: "/TEAMS('23')/TEAM_2_EMPLOYEES('7')");
+			});
 		});
 	});
 });

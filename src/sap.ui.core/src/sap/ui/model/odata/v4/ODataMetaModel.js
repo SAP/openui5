@@ -938,7 +938,7 @@ sap.ui.define([
 			 * @param {string} sPath
 			 *   Path where the segment was found
 			 * @returns {boolean}
-			 *   <code>false</code>
+			 *   <code>true</code>
 			 */
 			function computedAnnotation(sSegment, sPath) {
 				var fnAnnotation,
@@ -968,7 +968,7 @@ sap.ui.define([
 					log(WARNING, "Error calling ", sSegment, ": ", e);
 				}
 
-				return false;
+				return true;
 			}
 
 			/*
@@ -1067,7 +1067,7 @@ sap.ui.define([
 				}
 
 				if (isThenable(vResult) && vResult.isPending()) {
-					// load on demand still pending
+					// load on demand still pending (else it must be rejected at this point)
 					return logWithLocation(DEBUG, "Waiting for ", sSchema);
 				}
 
@@ -1210,9 +1210,8 @@ sap.ui.define([
 							if (i + 1 < aSegments.length) {
 								return log(WARNING, "Unsupported path after ", sSegment);
 							}
-							return computedAnnotation(sSegment, "/"
-								+ aSegments.slice(0, i).join("/") + "/"
-								+ aSegments[i].slice(0, iIndexOfAt));
+							return computedAnnotation(sSegment, [""].concat(aSegments.slice(0, i),
+								aSegments[i].slice(0, iIndexOfAt)).join("/"));
 						}
 					}
 					if (!vResult || typeof vResult !== "object") {
@@ -1266,9 +1265,9 @@ sap.ui.define([
 				return bContinue;
 			}
 
-			steps(sResolvedPath.slice(1));
-
-			if (isThenable(vResult)) {
+			if (!steps(sResolvedPath.slice(1)) && isThenable(vResult)) {
+				// try again after getOrFetchSchema's promise has resolved,
+				// but avoid endless loop for computed annotations returning a promise!
 				vResult = vResult.then(function () {
 					return that.fetchObject(sPath, oContext, mParameters);
 				});
@@ -1461,7 +1460,8 @@ sap.ui.define([
 					}
 					oType = mScope[oProperty.$Type];
 					if (oProperty.$kind === "NavigationProperty") {
-						if (sNavigationPath in oEntitySet.$NavigationPropertyBinding) {
+						if (oEntitySet.$NavigationPropertyBinding
+								&& sNavigationPath in oEntitySet.$NavigationPropertyBinding) {
 							sEntitySetName = oEntitySet.$NavigationPropertyBinding[sNavigationPath];
 							oEntitySet = oEntityContainer[sEntitySetName];
 							sNavigationPath = "";

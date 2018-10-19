@@ -366,12 +366,13 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The 'dataReceived' event is fired after the back-end data has been processed. It is to be
-	 * used by applications, for example to switch off a busy indicator or to process an error. In
-	 * case of a deferred operation binding, 'dataReceived' is not fired: Whatever should happen in
-	 * the event handler attached to that event, can instead be done once the <code>oPromise</code>
-	 * returned by {@link #execute} fulfills or rejects (using
-	 * <code>oPromise.then(function () {...}, function () {...})</code>).
+	 * The 'dataReceived' event is fired after the back-end data has been processed. It is only
+	 * fired for GET requests. The 'dataReceived' event is to be used by applications, for example
+	 * to switch off a busy indicator or to process an error. In case of a deferred operation
+	 * binding, 'dataReceived' is not fired: Whatever should happen in the event handler attached
+	 * to that event, can instead be done once the <code>oPromise</code> returned by
+	 * {@link #execute} fulfills or rejects (using <code>oPromise.then(function () {...}, function
+	 * () {...})</code>).
 	 *
 	 * If back-end requests are successful, the event has almost no parameters. For compatibility
 	 * with {@link sap.ui.model.Binding#event:dataReceived}, an event parameter
@@ -399,10 +400,11 @@ sap.ui.define([
 
 	/**
 	 * The 'dataRequested' event is fired directly after data has been requested from a backend.
-	 * It is to be used by applications, for example to switch on a busy indicator. Registered event
-	 * handlers are called without parameters. In case of a deferred operation binding,
-	 * 'dataRequested' is not fired: Whatever should happen in the event handler attached to that
-	 * event, can instead be done before calling {@link #execute}.
+	 * It is only fired for GET requests. The 'dataRequested' event is to be used by
+	 * applications, for example to switch on a busy indicator. Registered event handlers are
+	 * called without parameters. In case of a deferred operation binding, 'dataRequested' is not
+	 * fired: Whatever should happen in the event handler attached to that event, can instead be
+	 * done before calling {@link #execute}.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
 	 *

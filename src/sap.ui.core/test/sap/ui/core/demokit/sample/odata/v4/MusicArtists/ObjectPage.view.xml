@@ -69,6 +69,38 @@
 						</f:FormContainer>
 					</f:formContainers>
 				</f:Form>
+				<List class="sapUiResponsiveMargin" growing="true" growingThreshold="10"
+					id="publicationList"
+					items="{
+						parameters : {$$ownRequest : true},
+						path : '_Publication',
+						sorter : {path : 'ReleaseDate'}
+					}"
+					width="auto">
+					<headerToolbar>
+						<Toolbar>
+						<Title text="Publications"/>
+							<ToolbarSpacer/>
+							<Button id="create" enabled="{ui-op>/bEditMode}" press="onCreate"
+								text="Create" />
+							<ToolbarSeparator/>
+							<!-- refresh on ODLB relative to v4.Context is not possible -->
+							<Button id="refresh" enabled="false" press="onRefresh" text="Refresh" />
+						</Toolbar>
+					</headerToolbar>
+					<items>
+						<ObjectListItem number="{ReleaseDate}" press="onSelect" title="{Name}"
+							type="Active">
+							<firstStatus>
+								<ObjectStatus state="None"
+									text="{Price}" />
+							</firstStatus>
+							<attributes>
+								<ObjectAttribute text="{CurrencyCode}" />
+							</attributes>
+						</ObjectListItem>
+					</items>
+				</List>
 			</VBox>
 		</content>
 		<footer>
@@ -77,12 +109,11 @@
 					<DraftIndicator id="draftIndicator"/>
 				</contentLeft>
 				<contentRight>
-					<Button enabled="{= !${ui-op>/bEditMode}}" id="edit" press="onEditPress"
+					<Button enabled="{= !${ui-op>/bEditMode}}" id="edit" press="onEdit"
 						text="Edit" />
-					<Button enabled="{ui-op>/bEditMode}" id="discard" press="onDiscardPress"
+					<Button enabled="{ui-op>/bEditMode}" id="discard" press="onDiscard"
 						text="Discard" />
-					<Button enabled="{ui-op>/bEditMode}" id="save" press="onSavePress"
-						text="Save" />
+					<Button enabled="{ui-op>/bEditMode}" id="save" press="onSave" text="Save" />
 				</contentRight>
 			</Bar>
 		</footer>

@@ -20,21 +20,37 @@ sap.ui.define([
 		},
 
 		_onObjectMatched : function (oEvent) {
-			var oView = this.getView(),
+			var oArtistContext,
+				oView = this.getView(),
+				that = this;
+
+			if (History.getInstance().getDirection() !== "Backwards") {
+				// we came from the master list view
 				oArtistContext = oView.getModel()
 					.bindContext("/" + oEvent.getParameter("arguments").artistPath, null,
 						{$$patchWithoutSideEffects : true})
-					.getBoundContext(),
-				that = this;
+					.getBoundContext();
 
-			this.oActiveArtistContext = null;
-			this.byId("objectPageForm").setBindingContext(oArtistContext);
-			oArtistContext.requestObject("IsActiveEntity").then(function (bIsActiveEntity) {
-				if (!bIsActiveEntity) {
-					that._attachPatchEventHandlers(oArtistContext.getBinding());
-				}
-				oView.getModel("ui-op").setProperty("/bEditMode", !bIsActiveEntity);
-			});
+				this.oActiveArtistContext = null;
+				oView.setBindingContext(oArtistContext);
+				oArtistContext.requestObject("IsActiveEntity").then(function (bIsActiveEntity) {
+					if (!bIsActiveEntity) {
+						that._attachPatchEventHandlers(oArtistContext.getBinding());
+					}
+					oView.getModel("ui-op").setProperty("/bEditMode", !bIsActiveEntity);
+				});
+			}
+		},
+
+		_navToPublication : function (sPath) {
+			// make these strings router compatible :-(
+			var oRouter = sap.ui.core.UIComponent.getRouterFor(this),
+				aSegments = sPath.slice(1).split("/");
+
+			oRouter.navTo("publicationObjectPage", {
+					artistPath : aSegments[0],
+					publicationPath : aSegments[1]
+				});
 		},
 
 		onBack : function () {
@@ -48,17 +64,27 @@ sap.ui.define([
 			}
 		},
 
-		onDiscardPress : function () {
+		onCreate : function () {
+			var oEntityContext = this.getView().byId("publicationList").getBinding("items")
+					.create(),
+				that = this;
+
+			oEntityContext.created().then(function () {
+				that._navToPublication(oEntityContext.getPath());
+			});
+		},
+
+		onDiscard : function () {
 			var oView = this.getView(),
 				that = this;
 
 			oView.setBusy(true);
 			this.byId("draftIndicator").clearDraftState();
 			oView.getModel("ui-op").setProperty("/bEditMode", false);
-			this.byId("objectPageForm").getBindingContext().delete().then(function () {
+			oView.getBindingContext().delete().then(function () {
 				if (that.oActiveArtistContext) {
 					// show the active entity again
-					that.byId("objectPageForm").setBindingContext(that.oActiveArtistContext);
+					oView.setBindingContext(that.oActiveArtistContext);
 				} else {
 					// we started with a newly created entity so go back to master list
 					sap.ui.core.UIComponent.getRouterFor(that).navTo("masterlist", true);
@@ -67,19 +93,19 @@ sap.ui.define([
 			});
 		},
 
-		onEditPress : function () {
+		onEdit : function () {
 			var oView = this.getView(),
 				that = this;
 
 			oView.setBusy(true);
 			// remember the active version to restore it on discard
-			this.oActiveArtistContext = this.byId("objectPageForm").getBindingContext();
+			this.oActiveArtistContext = oView.getBindingContext();
 			oView.getModel().bindContext(sNamespace + "EditAction(...)", this.oActiveArtistContext,
 					{$$inheritExpandSelect : true, $$patchWithoutSideEffects : true})
 				.setParameter("PreserveChanges", false)
 				.execute()
 				.then(function (oInactiveArtistContext) {
-					that.byId("objectPageForm").setBindingContext(oInactiveArtistContext);
+					oView.setBindingContext(oInactiveArtistContext);
 					that._attachPatchEventHandlers(oInactiveArtistContext.getBinding());
 					oView.getModel("ui-op").setProperty("/bEditMode", true);
 					oView.setBusy(false);
@@ -89,7 +115,7 @@ sap.ui.define([
 		onInit : function () {
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 
-			oRouter.getRoute("objectpage").attachPatternMatched(this._onObjectMatched, this);
+			oRouter.getRoute("objectPage").attachPatternMatched(this._onObjectMatched, this);
 			this.getView().setModel(new JSONModel({bEditMode : false}), "ui-op");
 		},
 
@@ -107,7 +133,13 @@ sap.ui.define([
 			this.byId("draftIndicator").showDraftSaving();
 		},
 
-		onSavePress : function () {
+		//TODO refresh the ObjectPage context to refresh the publication list once Context#refresh
+		// is available
+//		onRefresh : function () {
+//			this.getView().getBindingContext().refresh();
+//		},
+
+		onSave : function () {
 			var oOldBindingContext = this.byId("objectPageForm").getBindingContext(),
 				oView = this.getView(),
 				that = this;
@@ -119,10 +151,14 @@ sap.ui.define([
 				.execute()
 				.then(function (oActiveArtistContext) {
 					that._detachPatchEventHandlers(oOldBindingContext.getBinding());
-					that.byId("objectPageForm").setBindingContext(oActiveArtistContext);
+					oView.setBindingContext(oActiveArtistContext);
 					oView.getModel("ui-op").setProperty("/bEditMode", false);
 					oView.setBusy(false);
 			});
+		},
+
+		onSelect : function (oEvent) {
+			this._navToPublication(oEvent.getSource().getBindingContext().getPath());
 		}
 	});
 });

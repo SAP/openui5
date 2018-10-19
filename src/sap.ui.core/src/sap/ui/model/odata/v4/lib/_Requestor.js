@@ -82,6 +82,7 @@ sap.ui.define([
 		this.sQueryParams = _Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
 		this.mRunningChangeRequests = {};
 		this.oSecurityTokenPromise = null; // be nice to Chrome v8
+		this.iSerialNumber = 0;
 		this.sServiceUrl = sServiceUrl;
 	}
 
@@ -107,6 +108,23 @@ sap.ui.define([
 		"OData-MaxVersion" : "4.0",
 		"OData-Version" : "4.0",
 		"X-CSRF-Token" : "Fetch"
+	};
+
+	/**
+	 * Adds a change set to the batch queue for the given group. All modifying requests created
+	 * until the next call to this method are added to this new change set.
+	 *
+	 * @param {string} sGroupId The group ID
+	 *
+	 * @public
+	 */
+	Requestor.prototype.addChangeSet = function (sGroupId) {
+		var aChangeSet = [],
+			aRequests = this.getOrCreateBatchQueue(sGroupId);
+
+		aChangeSet.iSerialNumber = this.getSerialNumber();
+		aRequests.iChangeSet += 1;
+		aRequests.splice(aRequests.iChangeSet, 0, aChangeSet);
 	};
 
 	/**
@@ -271,6 +289,69 @@ sap.ui.define([
 			}
 		}
 		return bCanceled;
+	};
+
+	/**
+	 * Cleans up the change sets contained in the given requests by merging PATCHes, deleting
+	 * empty change sets and unwrapping change sets containing only one request in case change sets
+	 * are optional.
+	 *
+	 * @param {object[]} aRequests The requests
+	 * @returns {boolean} Whether there is a modifying request in aRequests
+	 *
+	 * @private
+	 * @see sap.ui.model.odata.v4.lib.Requestor#isChangeSetOptional
+	 */
+	Requestor.prototype.cleanUpChangeSets = function (aRequests) {
+		var aChangeSet,
+			bHasChanges = false,
+			i;
+
+		/*
+		 * Adds the given change request to the change set unless it merges with an existing PATCH.
+		 *
+		 * @param {object} oChange The current change
+		 */
+		function addToChangeSet(oChange) {
+			if (!mergePatch(oChange)) {
+				aChangeSet.push(oChange);
+			}
+		}
+
+		/*
+		 * Merges the given change into a "PATCH"-change contained in the change set if possible.
+		 *
+		 * @param {object} oChange The current change
+		 * @returns {boolean} Whether the current change is merged into a change in the change set
+		 */
+		function mergePatch(oChange) {
+			if (oChange.method !== "PATCH") {
+				return false;
+			}
+			return aChangeSet.some(function (oCandidate) {
+				if (oCandidate.method === "PATCH"
+						&& oCandidate.headers["If-Match"] === oChange.headers["If-Match"]) {
+					jQuery.extend(true, oCandidate.body, oChange.body);
+					oChange.$resolve(oCandidate.$promise);
+					return true;
+				}
+			});
+		}
+
+		for (i = aRequests.iChangeSet; i >= 0; i -= 1) {
+			aChangeSet = [];
+			aRequests[i].forEach(addToChangeSet);
+			if (aChangeSet.length === 0) {
+				aRequests.splice(i, 1); // delete empty change set
+			} else if (aChangeSet.length === 1 && this.isChangeSetOptional()) {
+				aRequests[i] = aChangeSet[0]; // unwrap change set
+			} else {
+				aRequests[i] = aChangeSet;
+			}
+			bHasChanges = bHasChanges || aChangeSet.length > 0;
+		}
+
+		return bHasChanges;
 	};
 
 	/**
@@ -440,7 +521,7 @@ sap.ui.define([
 	 * @param {string} sMetaPath
 	 *   The meta path corresponding to the resource path
 	 * @param {object} mQueryOptions The query options
-	 * @param {function(string,any)} fnResultHandler
+	 * @param {function (string,any)} fnResultHandler
 	 *   The function to process the converted options getting the name and the value
 	 * @param {boolean} [bDropSystemQueryOptions=false]
 	 *   Whether all system query options are dropped (useful for non-GET requests)
@@ -552,6 +633,30 @@ sap.ui.define([
 	};
 
 	/**
+	*  Get the batch queue for the given group or create it if it does not exist yet.
+	*
+	*  @param {string} sGroupId The group ID
+	*  @returns {object[]} The batch queue for the group
+	*
+	 * @private
+	 */
+	 Requestor.prototype.getOrCreateBatchQueue = function (sGroupId) {
+		var aChangeSet,
+			aRequests = this.mBatchQueue[sGroupId];
+
+		if (!aRequests) {
+			aChangeSet = [];
+			aChangeSet.iSerialNumber = 0;
+			aRequests = this.mBatchQueue[sGroupId] = [aChangeSet];
+			aRequests.iChangeSet = 0; // the index of the current change set in this queue
+			if (this.oModelInterface.fnOnCreateGroup) {
+				this.oModelInterface.fnOnCreateGroup(sGroupId);
+			}
+		}
+		return aRequests;
+	 };
+
+	 /**
 	 * Returns the resource path relative to the service URL, including function arguments.
 	 *
 	 * @param {string} sPath
@@ -603,6 +708,20 @@ sap.ui.define([
 			}
 		}
 		return sPath;
+	};
+
+	/**
+	 * Gets the serial number for a request or change set.
+	 *
+	 * @returns {number}
+	 *   The serial number
+	 *
+	 * @public
+	 */
+	Requestor.prototype.getSerialNumber = function () {
+		// starts with 1 as first change set created in getOrCreateBatchQueue has serial number 0
+		this.iSerialNumber += 1;
+		return this.iSerialNumber;
 	};
 
 	/**
@@ -937,7 +1056,8 @@ sap.ui.define([
 	 *   the client. Only required for non-GET requests where <code>sResourcePath</code> is a
 	 *   different (canonical) path.
 	 * @param {boolean} [bAtFront=false]
-	 *   Whether the request is added at the front of the change set (ignored for method "GET")
+	 *   Whether the request is added at the front of the first change set (ignored for method
+	 *   "GET")
 	 * @returns {Promise}
 	 *   A promise on the outcome of the HTTP request
 	 * @throws {Error}
@@ -947,9 +1067,11 @@ sap.ui.define([
 	 */
 	Requestor.prototype.request = function (sMethod, sResourcePath, oGroupLock, mHeaders, oPayload,
 			fnSubmit, fnCancel, sMetaPath, sOriginalResourcePath, bAtFront) {
-		var oError,
+		var iChangeSetNo,
+			oError,
 			sGroupId = oGroupLock && oGroupLock.getGroupId() || "$direct",
 			oPromise,
+			iRequestSerialNumber = Infinity,
 			oRequest,
 			that = this;
 
@@ -961,19 +1083,14 @@ sap.ui.define([
 
 		if (oGroupLock) {
 			oGroupLock.unlock();
+			iRequestSerialNumber = oGroupLock.getSerialNumber();
 		}
 		sResourcePath = this.convertResourcePath(sResourcePath);
 		sOriginalResourcePath = sOriginalResourcePath || sResourcePath;
 		if (this.getGroupSubmitMode(sGroupId) !== "Direct") {
 			oPromise = new Promise(function (fnResolve, fnReject) {
-				var aRequests = that.mBatchQueue[sGroupId];
+				var aRequests = that.getOrCreateBatchQueue(sGroupId);
 
-				if (!aRequests) {
-					aRequests = that.mBatchQueue[sGroupId] = [[/*empty change set*/]];
-					if (that.oModelInterface.fnOnCreateGroup) {
-						that.oModelInterface.fnOnCreateGroup(sGroupId);
-					}
-				}
 				oRequest = {
 					method : sMethod,
 					url : sResourcePath,
@@ -990,12 +1107,16 @@ sap.ui.define([
 					$resourcePath : sOriginalResourcePath,
 					$submit : fnSubmit
 				};
-				if (sMethod === "GET") { // push behind change set
+				if (sMethod === "GET") { // push behind last GET and all change sets
 					aRequests.push(oRequest);
-				} else if (bAtFront) { // add at front of change set
+				} else if (bAtFront) { // add at front of first change set
 					aRequests[0].unshift(oRequest);
-				} else { // push into change set
-					aRequests[0].push(oRequest);
+				} else { // push into change set which was current when the request was triggered
+					iChangeSetNo = aRequests.iChangeSet;
+					while (aRequests[iChangeSetNo].iSerialNumber > iRequestSerialNumber) {
+						iChangeSetNo -= 1;
+					}
+					aRequests[iChangeSetNo].push(oRequest);
 				}
 			});
 			oRequest.$promise = oPromise;
@@ -1125,30 +1246,10 @@ sap.ui.define([
 	 * @public
 	 */
 	Requestor.prototype.submitBatch = function (sGroupId) {
-		var aChangeSet = [],
-			bHasChanges,
-			aRequests = this.mBatchQueue[sGroupId],
+		var bHasChanges,
+			aRequests = this.mBatchQueue[sGroupId] || [],
 			that = this;
 
-		/*
-		 * Merges the given change into a "PATCH"-change contained in the change set if possible.
-		 *
-		 * @param {object} oChange The current change
-		 * @returns {boolean} Whether the current change is merged into a change in the change set
-		 */
-		function mergePatch(oChange) {
-			if (oChange.method !== "PATCH") {
-				return false;
-			}
-			return aChangeSet.some(function (oCandidate) {
-				if (oCandidate.method === "PATCH"
-						&& oCandidate.headers["If-Match"] === oChange.headers["If-Match"]) {
-					jQuery.extend(true, oCandidate.body, oChange.body);
-					oChange.$resolve(oCandidate.$promise);
-					return true;
-				}
-			});
-		}
 		/*
 		 * Visits the given request/response pairs, rejecting or resolving the corresponding
 		 * promises accordingly.
@@ -1219,31 +1320,14 @@ sap.ui.define([
 			}
 		}
 
-		if (!aRequests || aRequests[0].length === 0 && aRequests.length === 1) {
+		delete this.mBatchQueue[sGroupId];
+		onSubmit(aRequests);
+		bHasChanges = this.cleanUpChangeSets(aRequests);
+		if (aRequests.length === 0) {
 			return Promise.resolve();
 		}
-		delete this.mBatchQueue[sGroupId];
 
-		onSubmit(aRequests);
-
-		// iterate over the change set and merge related PATCH requests
-		aRequests[0].forEach(function (oChange) {
-			if (!mergePatch(oChange)) {
-				aChangeSet.push(oChange);
-			}
-		});
-
-		if (aChangeSet.length === 0) {
-			aRequests.splice(0, 1); // delete empty change set
-		} else if (aChangeSet.length === 1 && this.isChangeSetOptional()) {
-			aRequests[0] = aChangeSet[0]; // unwrap change set
-		} else {
-			aRequests[0] = aChangeSet;
-		}
-
-		bHasChanges = aChangeSet.length > 0;
 		this.batchRequestSent(sGroupId, bHasChanges);
-
 		return this.sendBatch(_Requestor.cleanBatch(aRequests))
 			.then(function (aResponses) {
 				that.batchResponseReceived(sGroupId, bHasChanges);
