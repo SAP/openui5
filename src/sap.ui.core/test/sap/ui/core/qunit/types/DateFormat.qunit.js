@@ -66,9 +66,9 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 
 		QUnit.test("format date with custom pattern for a specific locale", function (assert) {
 			var oLocale = new Locale("de-DE");
-			assert.equal(DateFormat.getDateInstance({ pattern: "dd MMM yyyy" }, oLocale).format(oDateTime), "11 Sep. 2001", "date with custom pattern for given locale");
-			assert.equal(DateFormat.getDateTimeInstance({ pattern: "dd MMM yyyy hh:mm:ss a" }, oLocale).format(oDateTime), "11 Sep. 2001 08:46:13 vorm.", "datetime with custom pattern for given locale");
-			assert.equal(DateFormat.getTimeInstance({ pattern: "hh:mm:ss a" }, oLocale).format(oDateTime), "08:46:13 vorm.", "datetime with custom pattern for given locale");
+			assert.equal(DateFormat.getDateInstance({ pattern: "dd MMM yyyy" }, oLocale).format(oDateTime), "11 Sept. 2001", "date with custom pattern for given locale");
+			assert.equal(DateFormat.getDateTimeInstance({ pattern: "dd MMM yyyy hh:mm:ss a" }, oLocale).format(oDateTime), "11 Sept. 2001 08:46:13 AM", "datetime with custom pattern for given locale");
+			assert.equal(DateFormat.getTimeInstance({ pattern: "hh:mm:ss a" }, oLocale).format(oDateTime), "08:46:13 AM", "datetime with custom pattern for given locale");
 		});
 
 		QUnit.test("format custom date", function (assert) {

@@ -1986,11 +1986,11 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 		}, new Locale("uk"));
 
 		assert.equal(oCurrencyCodeFormatter.format(123456.789, "UAH"), "123" + "\xa0" + "456,79" + "\xa0" + "UAH", "123456.789 UAH");
-		assert.equal(oCurrencyCodeFormatter.format(-123456.789, "UAH"), "(123" + "\xa0" + "456,79" + "\xa0" + "UAH)", "-123456.789 UAH");
-		assert.equal(oCurrencySymbolFormatter.format(123456.789, "UAH"), "123" + "\xa0" + "456,79" + "\u20b4", "123456.789 UAH");
-		assert.equal(oCurrencySymbolFormatter.format(-123456.789, "UAH"), "(123" + "\xa0" + "456,79" + "\u20b4)", "-123456.789 UAH");
+		assert.equal(oCurrencyCodeFormatter.format(-123456.789, "UAH"), "-123" + "\xa0" + "456,79" + "\xa0" + "UAH", "-123456.789 UAH");
+		assert.equal(oCurrencySymbolFormatter.format(123456.789, "UAH"), "123" + "\xa0" + "456,79" + "\xa0\u20b4", "123456.789 UAH");
+		assert.equal(oCurrencySymbolFormatter.format(-123456.789, "UAH"), "-123" + "\xa0" + "456,79" + "\xa0\u20b4", "-123456.789 UAH");
 		assert.equal(oCurrencySymbolFormatter.format(123456.789, "UAK"), "123" + "\xa0" + "456,79" + "\xa0\u043a\u0440\u0431\u002e", "123456.789 UAK");
-		assert.equal(oCurrencySymbolFormatter.format(-123456.789, "UAK"), "(123" + "\xa0" + "456,79" + "\xa0\u043a\u0440\u0431\u002e)", "-123456.789 UAK");
+		assert.equal(oCurrencySymbolFormatter.format(-123456.789, "UAK"), "-123" + "\xa0" + "456,79" + "\xa0\u043a\u0440\u0431\u002e", "-123456.789 UAK");
 	});
 
 	QUnit.test("Percent format with default rounding mode", function (assert) {

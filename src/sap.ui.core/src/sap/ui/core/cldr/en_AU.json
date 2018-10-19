@@ -663,6 +663,7 @@
 		"Cyrl": "Cyrillic",
 		"Cyrs": "Old Church Slavonic Cyrillic",
 		"Deva": "Devanagari",
+		"Dogr": "Dogra",
 		"Dsrt": "Deseret",
 		"Dupl": "Duployan shorthand",
 		"Egyd": "Egyptian demotic",
@@ -673,6 +674,7 @@
 		"Geok": "Georgian Khutsuri",
 		"Geor": "Georgian",
 		"Glag": "Glagolitic",
+		"Gong": "Gunjala Gondi",
 		"Gonm": "Masaram Gondi",
 		"Goth": "Gothic",
 		"Gran": "Grantha",
@@ -723,10 +725,12 @@
 		"Lyci": "Lycian",
 		"Lydi": "Lydian",
 		"Mahj": "Mahajani",
+		"Maka": "Makasar",
 		"Mand": "Mandaean",
 		"Mani": "Manichaean",
 		"Marc": "Marchen",
 		"Maya": "Mayan hieroglyphs",
+		"Medf": "Medefaidrin",
 		"Mend": "Mende",
 		"Merc": "Meroitic Cursive",
 		"Mero": "Meroitic",
@@ -760,7 +764,9 @@
 		"Phnx": "Phoenician",
 		"Plrd": "Pollard Phonetic",
 		"Prti": "Inscriptional Parthian",
+		"Qaag": "Qaag",
 		"Rjng": "Rejang",
+		"Rohg": "Hanifi Rohingya",
 		"Roro": "Rongorongo",
 		"Runr": "Runic",
 		"Samr": "Samaritan",
@@ -773,6 +779,8 @@
 		"Sidd": "Siddham",
 		"Sind": "Khudawadi",
 		"Sinh": "Sinhala",
+		"Sogd": "Sogdian",
+		"Sogo": "Old Sogdian",
 		"Sora": "Sora Sompeng",
 		"Soyo": "Soyombo",
 		"Sund": "Sundanese",
@@ -1115,6 +1123,8 @@
 		"VU": "Vanuatu",
 		"WF": "Wallis & Futuna",
 		"WS": "Samoa",
+		"XA": "Pseudo-Accents",
+		"XB": "Pseudo-Bidi",
 		"XK": "Kosovo",
 		"YE": "Yemen",
 		"YT": "Mayotte",
@@ -1148,8 +1158,8 @@
 				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
-				"EBhm": "E h:mm B",
-				"EBhms": "E h:mm:ss B",
+				"EBhm": "E, h:mm B",
+				"EBhms": "E, h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1208,6 +1218,44 @@
 				"intervalFormatFallback": "{0} – {1}",
 				"d": {
 					"d": "d – d"
+				},
+				"Gy": {
+					"G": "y G – y G",
+					"y": "y – y G"
+				},
+				"GyM": {
+					"G": "M/y GGGGG – M/y GGGGG",
+					"M": "M/y – M/y GGGGG",
+					"y": "M/y – M/y GGGGG"
+				},
+				"GyMd": {
+					"d": "M/d/y – M/d/y GGGGG",
+					"G": "M/d/y GGGGG – M/d/y GGGGG",
+					"M": "M/d/y – M/d/y GGGGG",
+					"y": "M/d/y – M/d/y GGGGG"
+				},
+				"GyMEd": {
+					"d": "E, M/d/y – E, M/d/y GGGGG",
+					"G": "E, M/d/y GGGGG – E, M/d/y GGGGG",
+					"M": "E, M/d/y – E, M/d/y GGGGG",
+					"y": "E, M/d/y – E, M/d/y GGGGG"
+				},
+				"GyMMM": {
+					"G": "MMM y G – MMM y G",
+					"M": "MMM – MMM y G",
+					"y": "MMM y – MMM y G"
+				},
+				"GyMMMd": {
+					"d": "MMM d – d, y G",
+					"G": "MMM d, y G – MMM d, y G",
+					"M": "MMM d – MMM d, y G",
+					"y": "MMM d, y – MMM d, y G"
+				},
+				"GyMMMEd": {
+					"d": "E, MMM d – E, MMM d, y G",
+					"G": "E, MMM d, y G – E, MMM d, y G",
+					"M": "E, MMM d – E, MMM d, y G",
+					"y": "E, MMM d, y – E, MMM d, y G"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -1303,18 +1351,18 @@
 		"months": {
 			"format": {
 				"abbreviated": [
-					"Jan.",
-					"Feb.",
-					"Mar.",
-					"Apr.",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr",
 					"May",
-					"Jun.",
-					"Jul.",
-					"Aug.",
-					"Sep.",
-					"Oct.",
-					"Nov.",
-					"Dec."
+					"Jun",
+					"Jul",
+					"Aug",
+					"Sep",
+					"Oct",
+					"Nov",
+					"Dec"
 				],
 				"narrow": [
 					"J",
@@ -1347,18 +1395,18 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Jan.",
-					"Feb.",
-					"Mar.",
-					"Apr.",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr",
 					"May",
-					"Jun.",
-					"Jul.",
-					"Aug.",
-					"Sep.",
-					"Oct.",
-					"Nov.",
-					"Dec."
+					"Jun",
+					"Jul",
+					"Aug",
+					"Sep",
+					"Oct",
+					"Nov",
+					"Dec"
 				],
 				"narrow": [
 					"J",
@@ -1393,13 +1441,13 @@
 		"days": {
 			"format": {
 				"abbreviated": [
-					"Sun.",
-					"Mon.",
-					"Tue.",
-					"Wed.",
-					"Thu.",
-					"Fri.",
-					"Sat."
+					"Sun",
+					"Mon",
+					"Tue",
+					"Wed",
+					"Thu",
+					"Fri",
+					"Sat"
 				],
 				"narrow": [
 					"Su.",
@@ -1411,13 +1459,13 @@
 					"Sa."
 				],
 				"short": [
-					"Su.",
-					"Mon.",
-					"Tu.",
-					"Wed.",
-					"Th.",
-					"Fri.",
-					"Sat."
+					"Su",
+					"Mon",
+					"Tu",
+					"Wed",
+					"Th",
+					"Fri",
+					"Sat"
 				],
 				"wide": [
 					"Sunday",
@@ -1431,13 +1479,13 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Sun.",
-					"Mon.",
-					"Tue.",
-					"Wed.",
-					"Thu.",
-					"Fri.",
-					"Sat."
+					"Sun",
+					"Mon",
+					"Tue",
+					"Wed",
+					"Thu",
+					"Fri",
+					"Sat"
 				],
 				"narrow": [
 					"Su.",
@@ -1449,13 +1497,13 @@
 					"Sa."
 				],
 				"short": [
-					"Su.",
-					"Mon.",
-					"Tu.",
-					"Wed.",
-					"Th.",
-					"Fri.",
-					"Sat."
+					"Su",
+					"Mon",
+					"Tu",
+					"Wed",
+					"Th",
+					"Fri",
+					"Sat"
 				],
 				"wide": [
 					"Sunday",
@@ -1574,16 +1622,16 @@
 			"availableFormats": {
 				"Bh": "h B",
 				"Bhm": "h:mm B",
-				"Bhms": "h:mm:ss B",
+				"Bhms": "h:mm.ss B",
 				"d": "d",
 				"E": "ccc",
-				"EBhm": "E h:mm B",
-				"EBhms": "E h:mm:ss B",
+				"EBhm": "E, h:mm B",
+				"EBhms": "E, h:mm:ss B",
 				"Ed": "E d",
-				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
+				"Ehm": "E, h:mm a",
+				"EHm": "E, HH:mm",
+				"Ehms": "E, h:mm:ss a",
+				"EHms": "E, HH:mm:ss",
 				"Gy": "y G",
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d MMM y G",
@@ -1596,7 +1644,7 @@
 				"Hms": "HH:mm:ss",
 				"M": "LL",
 				"Md": "dd/MM",
-				"MEd": "E, dd/MM",
+				"MEd": "E, d/M",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
 				"MMMEd": "E, d MMM",
@@ -1633,6 +1681,44 @@
 				"intervalFormatFallback": "{0} – {1}",
 				"d": {
 					"d": "d – d"
+				},
+				"Gy": {
+					"G": "y G – y G",
+					"y": "y – y G"
+				},
+				"GyM": {
+					"G": "M/y GGGGG – M/y GGGGG",
+					"M": "M/y – M/y GGGGG",
+					"y": "M/y – M/y GGGGG"
+				},
+				"GyMd": {
+					"d": "M/d/y – M/d/y GGGGG",
+					"G": "M/d/y GGGGG – M/d/y GGGGG",
+					"M": "M/d/y – M/d/y GGGGG",
+					"y": "M/d/y – M/d/y GGGGG"
+				},
+				"GyMEd": {
+					"d": "E, M/d/y – E, M/d/y GGGGG",
+					"G": "E, M/d/y GGGGG – E, M/d/y GGGGG",
+					"M": "E, M/d/y – E, M/d/y GGGGG",
+					"y": "E, M/d/y – E, M/d/y GGGGG"
+				},
+				"GyMMM": {
+					"G": "MMM y G – MMM y G",
+					"M": "MMM – MMM y G",
+					"y": "MMM y – MMM y G"
+				},
+				"GyMMMd": {
+					"d": "MMM d – d, y G",
+					"G": "MMM d, y G – MMM d, y G",
+					"M": "MMM d – MMM d, y G",
+					"y": "MMM d, y – MMM d, y G"
+				},
+				"GyMMMEd": {
+					"d": "E, MMM d – E, MMM d, y G",
+					"G": "E, MMM d, y G – E, MMM d, y G",
+					"M": "E, MMM d – E, MMM d, y G",
+					"y": "E, MMM d, y – E, MMM d, y G"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -1818,13 +1904,13 @@
 		"days": {
 			"format": {
 				"abbreviated": [
-					"Sun.",
-					"Mon.",
-					"Tue.",
-					"Wed.",
-					"Thu.",
-					"Fri.",
-					"Sat."
+					"Sun",
+					"Mon",
+					"Tue",
+					"Wed",
+					"Thu",
+					"Fri",
+					"Sat"
 				],
 				"narrow": [
 					"Su.",
@@ -1836,13 +1922,13 @@
 					"Sa."
 				],
 				"short": [
-					"Su.",
-					"Mon.",
-					"Tu.",
-					"Wed.",
-					"Th.",
-					"Fri.",
-					"Sat."
+					"Su",
+					"Mon",
+					"Tu",
+					"Wed",
+					"Th",
+					"Fri",
+					"Sat"
 				],
 				"wide": [
 					"Sunday",
@@ -1856,13 +1942,13 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Sun.",
-					"Mon.",
-					"Tue.",
-					"Wed.",
-					"Thu.",
-					"Fri.",
-					"Sat."
+					"Sun",
+					"Mon",
+					"Tue",
+					"Wed",
+					"Thu",
+					"Fri",
+					"Sat"
 				],
 				"narrow": [
 					"Su.",
@@ -1874,13 +1960,13 @@
 					"Sa."
 				],
 				"short": [
-					"Su.",
-					"Mon.",
-					"Tu.",
-					"Wed.",
-					"Th.",
-					"Fri.",
-					"Sat."
+					"Su",
+					"Mon",
+					"Tu",
+					"Wed",
+					"Th",
+					"Fri",
+					"Sat"
 				],
 				"wide": [
 					"Sunday",
@@ -1996,16 +2082,16 @@
 			"availableFormats": {
 				"Bh": "h B",
 				"Bhm": "h:mm B",
-				"Bhms": "h:mm:ss B",
+				"Bhms": "h:mm.ss B",
 				"d": "d",
 				"E": "ccc",
-				"EBhm": "E h:mm B",
-				"EBhms": "E h:mm:ss B",
+				"EBhm": "E, h:mm B",
+				"EBhms": "E, h:mm:ss B",
 				"Ed": "E d",
-				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
+				"Ehm": "E, h:mm a",
+				"EHm": "E, HH:mm",
+				"Ehms": "E, h:mm:ss a",
+				"EHms": "E, HH:mm:ss",
 				"Gy": "y G",
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d MMM y G",
@@ -2018,7 +2104,7 @@
 				"Hms": "HH:mm:ss",
 				"M": "LL",
 				"Md": "dd/MM",
-				"MEd": "E, dd/MM",
+				"MEd": "E, d/M",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
 				"MMMEd": "E, d MMM",
@@ -2055,6 +2141,44 @@
 				"intervalFormatFallback": "{0} – {1}",
 				"d": {
 					"d": "d – d"
+				},
+				"Gy": {
+					"G": "y G – y G",
+					"y": "y – y G"
+				},
+				"GyM": {
+					"G": "M/y GGGGG – M/y GGGGG",
+					"M": "M/y – M/y GGGGG",
+					"y": "M/y – M/y GGGGG"
+				},
+				"GyMd": {
+					"d": "M/d/y – M/d/y GGGGG",
+					"G": "M/d/y GGGGG – M/d/y GGGGG",
+					"M": "M/d/y – M/d/y GGGGG",
+					"y": "M/d/y – M/d/y GGGGG"
+				},
+				"GyMEd": {
+					"d": "E, M/d/y – E, M/d/y GGGGG",
+					"G": "E, M/d/y GGGGG – E, M/d/y GGGGG",
+					"M": "E, M/d/y – E, M/d/y GGGGG",
+					"y": "E, M/d/y – E, M/d/y GGGGG"
+				},
+				"GyMMM": {
+					"G": "MMM y G – MMM y G",
+					"M": "MMM – MMM y G",
+					"y": "MMM y – MMM y G"
+				},
+				"GyMMMd": {
+					"d": "MMM d – d, y G",
+					"G": "MMM d, y G – MMM d, y G",
+					"M": "MMM d – MMM d, y G",
+					"y": "MMM d, y – MMM d, y G"
+				},
+				"GyMMMEd": {
+					"d": "E, MMM d – E, MMM d, y G",
+					"G": "E, MMM d, y G – E, MMM d, y G",
+					"M": "E, MMM d – E, MMM d, y G",
+					"y": "E, MMM d, y – E, MMM d, y G"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -2150,18 +2274,18 @@
 		"months": {
 			"format": {
 				"abbreviated": [
-					"Jan.",
-					"Feb.",
-					"Mar.",
-					"Apr.",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr",
 					"May",
-					"Jun.",
-					"Jul.",
-					"Aug.",
-					"Sep.",
-					"Oct.",
-					"Nov.",
-					"Dec."
+					"Jun",
+					"Jul",
+					"Aug",
+					"Sep",
+					"Oct",
+					"Nov",
+					"Dec"
 				],
 				"narrow": [
 					"J",
@@ -2194,18 +2318,18 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Jan.",
-					"Feb.",
-					"Mar.",
-					"Apr.",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr",
 					"May",
-					"Jun.",
-					"Jul.",
-					"Aug.",
-					"Sep.",
-					"Oct.",
-					"Nov.",
-					"Dec."
+					"Jun",
+					"Jul",
+					"Aug",
+					"Sep",
+					"Oct",
+					"Nov",
+					"Dec"
 				],
 				"narrow": [
 					"J",
@@ -2240,13 +2364,13 @@
 		"days": {
 			"format": {
 				"abbreviated": [
-					"Sun.",
-					"Mon.",
-					"Tue.",
-					"Wed.",
-					"Thu.",
-					"Fri.",
-					"Sat."
+					"Sun",
+					"Mon",
+					"Tue",
+					"Wed",
+					"Thu",
+					"Fri",
+					"Sat"
 				],
 				"narrow": [
 					"Su.",
@@ -2258,13 +2382,13 @@
 					"Sa."
 				],
 				"short": [
-					"Su.",
-					"Mon.",
-					"Tu.",
-					"Wed.",
-					"Th.",
-					"Fri.",
-					"Sat."
+					"Su",
+					"Mon",
+					"Tu",
+					"Wed",
+					"Th",
+					"Fri",
+					"Sat"
 				],
 				"wide": [
 					"Sunday",
@@ -2278,13 +2402,13 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Sun.",
-					"Mon.",
-					"Tue.",
-					"Wed.",
-					"Thu.",
-					"Fri.",
-					"Sat."
+					"Sun",
+					"Mon",
+					"Tue",
+					"Wed",
+					"Thu",
+					"Fri",
+					"Sat"
 				],
 				"narrow": [
 					"Su.",
@@ -2296,13 +2420,13 @@
 					"Sa."
 				],
 				"short": [
-					"Su.",
-					"Mon.",
-					"Tu.",
-					"Wed.",
-					"Th.",
-					"Fri.",
-					"Sat."
+					"Su",
+					"Mon",
+					"Tu",
+					"Wed",
+					"Th",
+					"Fri",
+					"Sat"
 				],
 				"wide": [
 					"Sunday",
@@ -2427,16 +2551,16 @@
 			"availableFormats": {
 				"Bh": "h B",
 				"Bhm": "h:mm B",
-				"Bhms": "h:mm:ss B",
+				"Bhms": "h:mm.ss B",
 				"d": "d",
 				"E": "ccc",
-				"EBhm": "E h:mm B",
-				"EBhms": "E h:mm:ss B",
+				"EBhm": "E, h:mm B",
+				"EBhms": "E, h:mm:ss B",
 				"Ed": "E d",
-				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
+				"Ehm": "E, h:mm a",
+				"EHm": "E, HH:mm",
+				"Ehms": "E, h:mm:ss a",
+				"EHms": "E, HH:mm:ss",
 				"Gy": "y G",
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d MMM y G",
@@ -2449,7 +2573,7 @@
 				"Hms": "HH:mm:ss",
 				"M": "LL",
 				"Md": "dd/MM",
-				"MEd": "E, dd/MM",
+				"MEd": "E, d/M",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
 				"MMMEd": "E, d MMM",
@@ -2486,6 +2610,44 @@
 				"intervalFormatFallback": "{0} – {1}",
 				"d": {
 					"d": "d – d"
+				},
+				"Gy": {
+					"G": "y G – y G",
+					"y": "y – y G"
+				},
+				"GyM": {
+					"G": "M/y GGGGG – M/y GGGGG",
+					"M": "M/y – M/y GGGGG",
+					"y": "M/y – M/y GGGGG"
+				},
+				"GyMd": {
+					"d": "M/d/y – M/d/y GGGGG",
+					"G": "M/d/y GGGGG – M/d/y GGGGG",
+					"M": "M/d/y – M/d/y GGGGG",
+					"y": "M/d/y – M/d/y GGGGG"
+				},
+				"GyMEd": {
+					"d": "E, M/d/y – E, M/d/y GGGGG",
+					"G": "E, M/d/y GGGGG – E, M/d/y GGGGG",
+					"M": "E, M/d/y – E, M/d/y GGGGG",
+					"y": "E, M/d/y – E, M/d/y GGGGG"
+				},
+				"GyMMM": {
+					"G": "MMM y G – MMM y G",
+					"M": "MMM – MMM y G",
+					"y": "MMM y – MMM y G"
+				},
+				"GyMMMd": {
+					"d": "MMM d – d, y G",
+					"G": "MMM d, y G – MMM d, y G",
+					"M": "MMM d – MMM d, y G",
+					"y": "MMM d, y – MMM d, y G"
+				},
+				"GyMMMEd": {
+					"d": "E, MMM d – E, MMM d, y G",
+					"G": "E, MMM d, y G – E, MMM d, y G",
+					"M": "E, MMM d – E, MMM d, y G",
+					"y": "E, MMM d, y – E, MMM d, y G"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -2671,13 +2833,13 @@
 		"days": {
 			"format": {
 				"abbreviated": [
-					"Sun.",
-					"Mon.",
-					"Tue.",
-					"Wed.",
-					"Thu.",
-					"Fri.",
-					"Sat."
+					"Sun",
+					"Mon",
+					"Tue",
+					"Wed",
+					"Thu",
+					"Fri",
+					"Sat"
 				],
 				"narrow": [
 					"Su.",
@@ -2689,13 +2851,13 @@
 					"Sa."
 				],
 				"short": [
-					"Su.",
-					"Mon.",
-					"Tu.",
-					"Wed.",
-					"Th.",
-					"Fri.",
-					"Sat."
+					"Su",
+					"Mon",
+					"Tu",
+					"Wed",
+					"Th",
+					"Fri",
+					"Sat"
 				],
 				"wide": [
 					"Sunday",
@@ -2709,13 +2871,13 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Sun.",
-					"Mon.",
-					"Tue.",
-					"Wed.",
-					"Thu.",
-					"Fri.",
-					"Sat."
+					"Sun",
+					"Mon",
+					"Tue",
+					"Wed",
+					"Thu",
+					"Fri",
+					"Sat"
 				],
 				"narrow": [
 					"Su.",
@@ -2727,13 +2889,13 @@
 					"Sa."
 				],
 				"short": [
-					"Su.",
-					"Mon.",
-					"Tu.",
-					"Wed.",
-					"Th.",
-					"Fri.",
-					"Sat."
+					"Su",
+					"Mon",
+					"Tu",
+					"Wed",
+					"Th",
+					"Fri",
+					"Sat"
 				],
 				"wide": [
 					"Sunday",
@@ -2849,16 +3011,16 @@
 			"availableFormats": {
 				"Bh": "h B",
 				"Bhm": "h:mm B",
-				"Bhms": "h:mm:ss B",
+				"Bhms": "h:mm.ss B",
 				"d": "d",
 				"E": "ccc",
-				"EBhm": "E h:mm B",
-				"EBhms": "E h:mm:ss B",
+				"EBhm": "E, h:mm B",
+				"EBhms": "E, h:mm:ss B",
 				"Ed": "E d",
-				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
+				"Ehm": "E, h:mm a",
+				"EHm": "E, HH:mm",
+				"Ehms": "E, h:mm:ss a",
+				"EHms": "E, HH:mm:ss",
 				"Gy": "y G",
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d MMM y G",
@@ -2871,7 +3033,7 @@
 				"Hms": "HH:mm:ss",
 				"M": "LL",
 				"Md": "dd/MM",
-				"MEd": "E, dd/MM",
+				"MEd": "E, d/M",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
 				"MMMEd": "E, d MMM",
@@ -2908,6 +3070,44 @@
 				"intervalFormatFallback": "{0} – {1}",
 				"d": {
 					"d": "d – d"
+				},
+				"Gy": {
+					"G": "y G – y G",
+					"y": "y – y G"
+				},
+				"GyM": {
+					"G": "M/y GGGGG – M/y GGGGG",
+					"M": "M/y – M/y GGGGG",
+					"y": "M/y – M/y GGGGG"
+				},
+				"GyMd": {
+					"d": "M/d/y – M/d/y GGGGG",
+					"G": "M/d/y GGGGG – M/d/y GGGGG",
+					"M": "M/d/y – M/d/y GGGGG",
+					"y": "M/d/y – M/d/y GGGGG"
+				},
+				"GyMEd": {
+					"d": "E, M/d/y – E, M/d/y GGGGG",
+					"G": "E, M/d/y GGGGG – E, M/d/y GGGGG",
+					"M": "E, M/d/y – E, M/d/y GGGGG",
+					"y": "E, M/d/y – E, M/d/y GGGGG"
+				},
+				"GyMMM": {
+					"G": "MMM y G – MMM y G",
+					"M": "MMM – MMM y G",
+					"y": "MMM y – MMM y G"
+				},
+				"GyMMMd": {
+					"d": "MMM d – d, y G",
+					"G": "MMM d, y G – MMM d, y G",
+					"M": "MMM d – MMM d, y G",
+					"y": "MMM d, y – MMM d, y G"
+				},
+				"GyMMMEd": {
+					"d": "E, MMM d – E, MMM d, y G",
+					"G": "E, MMM d, y G – E, MMM d, y G",
+					"M": "E, MMM d – E, MMM d, y G",
+					"y": "E, MMM d, y – E, MMM d, y G"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -3003,18 +3203,18 @@
 		"months": {
 			"format": {
 				"abbreviated": [
-					"Jan.",
-					"Feb.",
-					"Mar.",
-					"Apr.",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr",
 					"May",
-					"Jun.",
-					"Jul.",
-					"Aug.",
-					"Sep.",
-					"Oct.",
-					"Nov.",
-					"Dec."
+					"Jun",
+					"Jul",
+					"Aug",
+					"Sep",
+					"Oct",
+					"Nov",
+					"Dec"
 				],
 				"narrow": [
 					"J",
@@ -3047,18 +3247,18 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Jan.",
-					"Feb.",
-					"Mar.",
-					"Apr.",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr",
 					"May",
-					"Jun.",
-					"Jul.",
-					"Aug.",
-					"Sep.",
-					"Oct.",
-					"Nov.",
-					"Dec."
+					"Jun",
+					"Jul",
+					"Aug",
+					"Sep",
+					"Oct",
+					"Nov",
+					"Dec"
 				],
 				"narrow": [
 					"J",
@@ -3093,13 +3293,13 @@
 		"days": {
 			"format": {
 				"abbreviated": [
-					"Sun.",
-					"Mon.",
-					"Tue.",
-					"Wed.",
-					"Thu.",
-					"Fri.",
-					"Sat."
+					"Sun",
+					"Mon",
+					"Tue",
+					"Wed",
+					"Thu",
+					"Fri",
+					"Sat"
 				],
 				"narrow": [
 					"Su.",
@@ -3111,13 +3311,13 @@
 					"Sa."
 				],
 				"short": [
-					"Su.",
-					"Mon.",
-					"Tu.",
-					"Wed.",
-					"Th.",
-					"Fri.",
-					"Sat."
+					"Su",
+					"Mon",
+					"Tu",
+					"Wed",
+					"Th",
+					"Fri",
+					"Sat"
 				],
 				"wide": [
 					"Sunday",
@@ -3131,13 +3331,13 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Sun.",
-					"Mon.",
-					"Tue.",
-					"Wed.",
-					"Thu.",
-					"Fri.",
-					"Sat."
+					"Sun",
+					"Mon",
+					"Tue",
+					"Wed",
+					"Thu",
+					"Fri",
+					"Sat"
 				],
 				"narrow": [
 					"Su.",
@@ -3149,13 +3349,13 @@
 					"Sa."
 				],
 				"short": [
-					"Su.",
-					"Mon.",
-					"Tu.",
-					"Wed.",
-					"Th.",
-					"Fri.",
-					"Sat."
+					"Su",
+					"Mon",
+					"Tu",
+					"Wed",
+					"Th",
+					"Fri",
+					"Sat"
 				],
 				"wide": [
 					"Sunday",
@@ -3700,7 +3900,8 @@
 	"currencySymbols": {
 		"AUD": "$",
 		"SCR": "Rs",
-		"XPF": "CFP"
+		"XPF": "CFP",
+		"XXX": "¤"
 	},
 	"rtl": false,
 	"listPattern-standard-wide": {
@@ -3713,13 +3914,13 @@
 		"2": "{0} or {1}",
 		"start": "{0}, {1}",
 		"middle": "{0}, {1}",
-		"end": "{0}, or {1}"
+		"end": "{0} or {1}"
 	},
 	"listPattern-or-short": {
 		"2": "{0} or {1}",
 		"start": "{0}, {1}",
 		"middle": "{0}, {1}",
-		"end": "{0}, or {1}"
+		"end": "{0} or {1}"
 	},
 	"listPattern-standard-short": {
 		"2": "{0} and {1}",
@@ -3837,6 +4038,16 @@
 				"unitPattern-count-one": "{0} ppm",
 				"unitPattern-count-other": "{0} ppm"
 			},
+			"concentr-percent": {
+				"displayName": "per cent",
+				"unitPattern-count-one": "{0}%",
+				"unitPattern-count-other": "{0}%"
+			},
+			"concentr-permille": {
+				"displayName": "per mill",
+				"unitPattern-count-one": "{0}‰",
+				"unitPattern-count-other": "{0}‰"
+			},
 			"consumption-liter-per-kilometer": {
 				"displayName": "litres/km",
 				"unitPattern-count-one": "{0} L/km",
@@ -3856,6 +4067,11 @@
 				"displayName": "miles/gal.",
 				"unitPattern-count-one": "{0} m.p.g.",
 				"unitPattern-count-other": "{0} m.p.g."
+			},
+			"digital-petabyte": {
+				"displayName": "PByte",
+				"unitPattern-count-one": "{0} PB",
+				"unitPattern-count-other": "{0} PB"
 			},
 			"digital-terabyte": {
 				"displayName": "TByte",
@@ -4126,8 +4342,8 @@
 			},
 			"length-fathom": {
 				"displayName": "fathoms",
-				"unitPattern-count-one": "{0} fm",
-				"unitPattern-count-other": "{0} fm"
+				"unitPattern-count-one": "{0} fth",
+				"unitPattern-count-other": "{0} fth"
 			},
 			"length-nautical-mile": {
 				"displayName": "nmi",
@@ -4262,6 +4478,11 @@
 				"displayName": "mb",
 				"unitPattern-count-one": "{0} mb",
 				"unitPattern-count-other": "{0} mb"
+			},
+			"pressure-atmosphere": {
+				"displayName": "atm",
+				"unitPattern-count-one": "{0} atm",
+				"unitPattern-count-other": "{0} atm"
 			},
 			"speed-kilometer-per-hour": {
 				"displayName": "km/hour",
@@ -4433,6 +4654,7 @@
 				"unitPattern-count-other": "{0} tsp"
 			},
 			"coordinateUnit": {
+				"displayName": "direction",
 				"east": "{0} E",
 				"north": "{0} N",
 				"south": "{0} S",
@@ -4444,20 +4666,16 @@
 		"ADP": 0,
 		"AFN": 0,
 		"ALL": 0,
-		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
 		"BYR": 0,
 		"CLF": 4,
 		"CLP": 0,
-		"COP": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
 		"ESP": 0,
 		"GNF": 0,
-		"GYD": 0,
 		"HUF": 0,
-		"IDR": 0,
 		"IQD": 0,
 		"IRR": 0,
 		"ISK": 0,
@@ -4475,11 +4693,8 @@
 		"MGA": 0,
 		"MGF": 0,
 		"MMK": 0,
-		"MNT": 0,
 		"MRO": 0,
-		"MUR": 0,
 		"OMR": 3,
-		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
@@ -4491,10 +4706,9 @@
 		"TND": 3,
 		"TRL": 0,
 		"TWD": 0,
-		"TZS": 0,
 		"UGX": 0,
 		"UYI": 0,
-		"UZS": 0,
+		"UYW": 4,
 		"VND": 0,
 		"VUV": 0,
 		"XAF": 0,

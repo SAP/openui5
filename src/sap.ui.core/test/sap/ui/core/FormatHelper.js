@@ -244,7 +244,7 @@ var HashParams = sap.ui.model.CompositeType.extend("HashParams", {
 			if (oParam.name === "formatOptions") {
 				sError = validateFormatOptions(vValue, this.oSupportedOptions);
 			}
-		});
+		}.bind(this));
 		if (sError) {
 			throw new sap.ui.model.ValidateException(sError);
 		}
