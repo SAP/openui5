@@ -10,7 +10,83 @@ sap.ui.define([
 
 	var ComponentLifecycle = sapUiCore.ComponentLifecycle;
 
+	sap.ui.loader.config({paths:{"sap/ui/test":"test-resources/sap/ui/core/qunit/component/testdata/"}});
+
 	QUnit.module("General");
+
+	QUnit.test("Should be able to set a component", function (assert) {
+		var oComponentContainer = new ComponentContainer();
+
+		var oComponent = sap.ui.component({
+			name: "samples.components.button"
+		});
+
+		oComponentContainer.setComponent(oComponent);
+
+		assert.strictEqual(oComponent.getId(), oComponentContainer.getComponent(), "Was able to set component");
+	});
+
+	QUnit.test("Should be able to create a component by name", function (assert) {
+		var oComponentContainer = new ComponentContainer({
+			name: "samples.components.button"
+		});
+		oComponentContainer.onBeforeRendering();
+
+		assert.ok(oComponentContainer.getComponent(), "Was able to create component");
+	});
+
+	QUnit.test("Create component sync - componentCreated", function (assert) {
+		var done = assert.async();
+		var oComponentContainer = new ComponentContainer({
+			name: "samples.components.button",
+			async: false,
+			componentCreated: function(oEvent) {
+				var oComponent = oEvent.getParameter("component");
+				assert.strictEqual(oComponent.getId(), oComponentContainer.getComponent(), "Was able to create component, componentCreated fired");
+				done();
+			}
+		});
+		oComponentContainer.onBeforeRendering();
+	});
+
+	QUnit.test("Create component async - componentCreated", function (assert) {
+		var done = assert.async();
+		var oComponentContainer = new ComponentContainer({
+			name: "samples.components.button",
+			async: true,
+			componentCreated: function(oEvent) {
+				var oComponent = oEvent.getParameter("component");
+				assert.strictEqual(oComponent.getId(), oComponentContainer.getComponent(), "Was able to create component, componentCreated fired");
+				done();
+			}
+		});
+		oComponentContainer.onBeforeRendering();
+	});
+
+	QUnit.test("Create component async - componentFailed", function (assert) {
+		var done = assert.async();
+		var oComponentContainer = new ComponentContainer({
+			name: "samples.components.unkown",
+			async: true,
+			componentFailed: function(oEvent) {
+				var oReason = oEvent.getParameter("reason");
+				assert.ok(true, "Was not able to create component, componentFailed fired");
+				assert.ok(oReason.message.indexOf("failed to load") === 0, "Error object is passed as reason");
+				done();
+			}
+		});
+		oComponentContainer.onBeforeRendering();
+	});
+
+	QUnit.test("Should be able to create a component with URL", function (assert) {
+		var oComponentContainer = new ComponentContainer({
+			name: "samples.components.button",
+			url: "test-resources/sap/ui/core/samples/components/button"
+		});
+		oComponentContainer.onBeforeRendering();
+
+		assert.ok(oComponentContainer.getComponent(), "Was able to create component");
+	});
 
 	QUnit.test("Should be able to chain setComponent", function (assert) {
 		var oComponentContainer = new ComponentContainer();
