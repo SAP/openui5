@@ -11,8 +11,9 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/strings/escapeRegExp",
+	"sap/base/util/ObjectPath",
 	"sap/ui/model/Filter"
-], function(Log, escapeRegExp, Filter) {
+], function(Log, escapeRegExp, ObjectPath, Filter) {
 	"use strict";
 
 	/**
@@ -66,10 +67,22 @@ sap.ui.define([
 			}
 			if ( field.path != null ) {
 				if ( field.formatter ) {
+					if ( field.path.indexOf("/") >= 0 ) {
+						var aPath = field.path.split("/");
+						return function(o) {
+							return field.formatter(ObjectPath.get(aPath.slice(), o));
+						};
+					}
 					return function(o) {
 						return field.formatter(o[field.path]);
 					};
 				} else {
+					if ( field.path.indexOf("/") >= 0 ) {
+						var aPath = field.path.split("/");
+						return function(o) {
+							return ObjectPath.get(aPath.slice(), o);
+						};
+					}
 					return function(o) {
 						return o[field.path];
 					};

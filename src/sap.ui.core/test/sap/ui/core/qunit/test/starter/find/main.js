@@ -27,22 +27,26 @@ sap.ui.define([
 ], function(App, Label, Link, Page, SearchField, Text, Toolbar, Table, Column, Filter, JSONModel, Log, Storage, discovery, makeFilterFunction) {
 	"use strict";
 
+	// remove app name
+	function removeWebContext(pathname) {
+		if ( pathname.startsWith("/") ) {
+			pathname = pathname.slice(1);
+		}
+		if ( !pathname.startsWith("resources/") && !pathname.startsWith("test-resources/") ) {
+			pathname = pathname.split("/").slice(1).join("/");
+		}
+		return pathname;
+	}
+
 	function makeNameFromURL(urlStr) {
 		let name;
 		try {
 			let url = new URL(urlStr, document.baseURI),
-				path = url.pathname,
+				path = removeWebContext(url.pathname),
 				search = url.searchParams;
 
-			// remove app name
-			if ( !path.startsWith("/resources/") && !path.startsWith("/test-resources/") ) {
-				path = path.split("/");
-				path.splice(1, 1);
-				path = path.join("/");
-			}
-
 			search.delete("hidepassed");
-			if ( path.includes("/resources/sap/ui/test/starter/Test.qunit.html") && search.has("testsuite") && search.has("test") ) {
+			if ( path.includes("resources/sap/ui/test/starter/Test.qunit.html") && search.has("testsuite") && search.has("test") ) {
 				path = search.get("testsuite") + "/" + search.get("test");
 				search.delete("testsuite");
 				search.delete("test");
@@ -61,13 +65,61 @@ sap.ui.define([
 		return name;
 	}
 
+	function formatModulesShort(module) {
+		let result;
+		if ( !Array.isArray(module) || module.length === 1 ) {
+			return;
+		}
+
+		function shorten(str) {
+			return String(str).replace(/\.qunit$/, "").split(/\s*[-/]\s*/).pop();
+		}
+		result = module.map(shorten).join(', ');
+		if ( result.length > 40 ) {
+			result = result.slice(0,15) + "..." + result.slice(-15) + "(" + module.length + ")";
+		}
+		return result;
+	}
+
+	function formatModules(module) {
+		if ( Array.isArray(module) ) {
+			return module.join(' ');
+		}
+		return String(module);
+	}
+
+	function formatQUnitVersion(v) {
+		return v != null ? "qunit" + v : "";
+	}
+
+	function formatSinonVersion(v) {
+		return v != null ? "sinon" + v : "";
+	}
+
 	var oModel = new JSONModel({data: []});
 	var oTable;
 
 	function fnSearch(oEvent) {
 		var oFilter = new Filter(
 			'', // empty path to access the context object
-			makeFilterFunction([{path:'url', formatter:makeNameFromURL}], oEvent.getParameter("newValue"))
+			makeFilterFunction([
+				{
+					path:'fullpage',
+					formatter: makeNameFromURL
+				},
+				{
+					path:'module',
+					formatter: formatModules
+				},
+				{
+					path:'qunit/version',
+					formatter: formatQUnitVersion
+				},
+				{
+					path:'sinon/version',
+					formatter: formatSinonVersion
+				}
+			], oEvent.getParameter("newValue"))
 		);
 
 		// apply the filtering again
@@ -90,7 +142,8 @@ sap.ui.define([
 						oTable = new Table("table", {
 							models: oModel,
 							selectionMode: "None",
-							columnHeaderVisible: false,
+							columnHeaderHeight: 24,
+							columnHeaderVisible: true,
 							visibleRowCountMode: "Auto",
 							rowHeight: 20,
 							toolbar: new Toolbar({
@@ -115,11 +168,39 @@ sap.ui.define([
 									//width: "85px",
 									label: new Label({text: "Testcase"}),
 									template: new Link({
-										text: { path: "url", formatter: makeNameFromURL },
-										href: { path: "url" },
+										text: { path: "fullpage", formatter: makeNameFromURL },
+										href: { path: "fullpage" },
 										target: "test"
 									}),
-									sortProperty: "name", filterProperty: "name"
+									sortProperty: "page"
+								}),
+								new sap.ui.table.Column("modules",{
+									//width: "85px",
+									label: new Label({text: "Modules"}),
+									width: "40ex",
+									template: new Text({
+										text: { path: "module", formatter: formatModulesShort },
+										tooltip: { path: "module", formatter: formatModules }
+									}),
+									sortProperty: "page"
+								}),
+								new sap.ui.table.Column("qunitVersion",{
+									//width: "85px",
+									label: new Label({text: "Q"}),
+									width: "4ex",
+									template: new Text({
+										text: { path: "qunit/version" }
+									}),
+									sortProperty: "qunit/version"
+								}),
+								new sap.ui.table.Column("sinonVersion",{
+									//width: "85px",
+									label: new Label({text: "S"}),
+									width: "4ex",
+									template: new Text({
+										text: { path: "sinon/version" }
+									}),
+									sortProperty: "sinon/version"
 								})
 							],
 							rows: {
@@ -141,12 +222,12 @@ sap.ui.define([
 		}
 	}
 
-	const SCHEMA_VERSION = "0.0.1";
+	const SCHEMA_VERSION = "0.0.2";
 	const store = new Storage(Storage.Type.local, "sap-ui-find-tests");
 
-	function restoreData() {
+	function restoreData(entryPage) {
 		let data = store.get("data");
-		if ( data && data._$schemaVersion === SCHEMA_VERSION ) {
+		if ( data && data.entryPage === entryPage && data._$schemaVersion === SCHEMA_VERSION ) {
 			oModel.setData(data);
 			return true;
 		}
@@ -154,9 +235,14 @@ sap.ui.define([
 	}
 
 	function saveData() {
-		let data = JSON.parse(JSON.stringify(oModel.oData));
-		data._$schemaVersion = SCHEMA_VERSION;
-		store.put("data", data);
+		store.put("data", oModel.oData);
+	}
+
+	function cleanURL(urlStr) {
+		if ( urlStr == null ) {
+			return urlStr;
+		}
+		return removeWebContext( new URL(urlStr, document.baseURI).pathname );
 	}
 
 	sap.ui.getCore().attachInit( () => {
@@ -165,17 +251,20 @@ sap.ui.define([
 
 			let search = sap.ui.getCore().byId("search");
 			let url = new URL(location.href);
-			search.setValue(url.searchParams.get("testpage") || "");
+			search.setValue( cleanURL(url.searchParams.get("testpage")) || "");
+			let entryPage = cleanURL(url.searchParams.get("root")) || "test-resources/qunit/testsuite.qunit.html";
 
-			if ( restoreData() ) {
+			if ( restoreData(entryPage) ) {
 				sap.ui.getCore().byId("app").setBusy(false);
 			}
 
-			discovery.findTests( "test-resources/qunit/testsuite.qunit.html", progress ).then( aTestURLs => {
+			discovery.findTests( entryPage, progress ).then( aTestURLs => {
 				sap.ui.getCore().byId("app").setBusy(false);
 				oTable.setFooter("Refresh: done.");
 				oModel.setData({
-					tests: aTestURLs.sort().map( (test) => ({url:test}) ),
+					_$schemaVersion: SCHEMA_VERSION,
+					entryPage,
+					tests: aTestURLs.sort(),
 					testCount: aTestURLs.length,
 					filteredTestCount: aTestURLs.length
 				});
