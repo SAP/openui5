@@ -14,25 +14,47 @@ sap.ui.define([
 ], function(Log, jQuery) {
 	"use strict";
 
+	/*
+	 * Simulate the same JSUnit Testsuite API as the TestRunner to collect the available test pages per suite
+	 */
+	function TestSuite() {
+		this.aPages = [];
+	};
+
+	TestSuite.prototype.getTestPages = function() {
+		return this.aPages;
+	};
+
+	TestSuite.prototype.addTestPage = function(sTestPage, oConfig) {
+		// in case of running in the root context the testsuites right now
+		// generate an invalid URL because they assume that test-resources is
+		// the context path - this section makes sure to remove the duplicate
+		// test-resources segments in the path
+		if (sTestPage.startsWith("/test-resources/test-resources") || sTestPage.startsWith("/test-resources/resources")) {
+			sTestPage = sTestPage.slice("/test-resources".length);
+		}
+		this.aPages.push(Object.assign({fullpage: sTestPage}, oConfig));
+	};
+
 	function findPages(sEntryPage, progressCallback) {
 
-		function checkTestPage(sTestPage) {
+		function checkTestPage(oTestPageConfig) {
 
 			return new Promise(function(resolve, reject) {
 
 				// console.log("checking test page: " + sTestPage);
-				let url = new URL(sTestPage, location.href);
+				let url = new URL(oTestPageConfig.fullpage, location.href);
 				if ( !/testsuite\./.test(url.pathname) ) {
-					resolve({name: sTestPage});
+					resolve(oTestPageConfig);
 					return;
 				}
 
 				if ( progressCallback ) {
-					progressCallback(sTestPage);
+					progressCallback(oTestPageConfig.fullpage);
 				}
 
 				// check for an existing test page and check for test suite or page
-				jQuery.get(sTestPage).done(function(sData) {
+				jQuery.get(oTestPageConfig.fullpage).done(function(sData) {
 					if (/(?:window\.suite\s*=|function\s*suite\s*\(\s*\)\s*{)/.test(sData)
 							|| (/data-sap-ui-testsuite/.test(sData) && !/sap\/ui\/test\/starter\/run-test/.test(sData)) ) {
 
@@ -42,15 +64,14 @@ sap.ui.define([
 						var onSuiteReady = function onSuiteReady(oIFrame) {
 							findTestPages(oIFrame).then(function(aTests) {
 								$frame.remove();
-								resolve({
-									name: sTestPage,
+								resolve(Object.assign({
 									tests: aTests,
 									simple: aTests.every((test) => !test.suite)
-								});
+								}, oTestPageConfig));
 							}, function(oError) {
 								Log.error("failed to load page '" + sTestPage + "'");
 								$frame.remove();
-								resolve( { name: sTestPage, error: oError } );
+								resolve(Object.assign({error: oError}, oTestPageConfig));
 							});
 						};
 
@@ -65,17 +86,17 @@ sap.ui.define([
 								}.bind(this));
 							}
 						});
-						let url = new URL(sTestPage, document.baseURI);
+						let url = new URL(oTestPageConfig.fullpage, document.baseURI);
 						url.searchParams.set("sap-ui-xx-noless","true");
 						$frame.attr("src", url);
 						$frame.appendTo(document.body);
 					} else {
-						resolve({ name: sTestPage });
+						resolve(oTestPageConfig);
 					}
 				}).fail(function(xhr,status,msg) {
 					var text = (xhr ? xhr.status + " " : "") + (msg || status || 'unspecified error');
-					Log.error("Failed to load page '" + sTestPage + "': " + text);
-					resolve({name: sTestPage, error: text});
+					Log.error("Failed to load page '" + oTestPageConfig.fullpage + "': " + text);
+					resolve(Object.assign({error: text}, oTestPageConfig));
 				});
 
 			});
@@ -84,9 +105,9 @@ sap.ui.define([
 
 		function sequence(aPages) {
 			// console.log("before sequence:", aPages);
-			return aPages.reduce( (lastPromise, page) => {
+			return aPages.reduce( (lastPromise, pageConfig) => {
 				return lastPromise.then( (lastResult) => {
-					return checkTestPage(page).then( (pageResult) => {
+					return checkTestPage(pageConfig).then( (pageResult) => {
 						lastResult.push(pageResult);
 						return lastResult;
 					});
@@ -108,7 +129,10 @@ sap.ui.define([
 				catch( () => [] );
 		}
 
-		return checkTestPage(sEntryPage);
+		window.jsUnitTestSuite = TestSuite;
+
+		return checkTestPage({fullpage: sEntryPage});
+
 	}
 
 	return {
@@ -134,7 +158,7 @@ sap.ui.define([
 					if ( Array.isArray(test.tests) ) {
 						test.tests.forEach(collect);
 					} else {
-						allTests.push(test.name);
+						allTests.push(test);
 					}
 				}
 				collect(result);

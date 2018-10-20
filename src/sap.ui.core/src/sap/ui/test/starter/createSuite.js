@@ -197,7 +197,7 @@
 			var oSuite = new JSUnitSuite();
 			oSuiteConfig.sortedTests.forEach(function(oTestConfig) {
 				if (!oTestConfig.skip) {
-					oSuite.addTestPage(sContextPath + oTestConfig.page);
+					oSuite.addTestPage(sContextPath + oTestConfig.page, oTestConfig);
 				}
 			});
 			return oSuite;
