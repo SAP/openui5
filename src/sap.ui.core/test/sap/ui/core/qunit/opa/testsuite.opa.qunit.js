@@ -51,6 +51,9 @@ sap.ui.define([
 		},
 		"autowaiter/autoWaiter": {
 			title: "QUnit Page for sap.ui.test.autoWaiter",
+			qunit: {
+				reorder: false // to ensure that _XHRWaiter tests are executed last
+			},
 			sinon: {
 				version: 1,
 				qunitBridge: true
