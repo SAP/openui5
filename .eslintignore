@@ -1,7 +1,5 @@
 src/*/target
-# temporary exclude until eslint issues in this folder are resolved
-src/sap.ui.core/test
-# now could be reduced to the following set of folders
+# temporary excludes until eslint issues in these files/folders have been resolved
 src/sap.ui.core/test/sap/ui/core/samples
 src/sap.ui.core/test/sap/ui/core/qunit/ManagedObjectModel.qunit.js
 src/sap.ui.core/test/sap/ui/core/qunit/odata/v2/data/ODataTreeBindingFakeService.js

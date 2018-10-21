@@ -19,7 +19,7 @@ sap.ui.define([
 	 */
 	function TestSuite() {
 		this.aPages = [];
-	};
+	}
 
 	TestSuite.prototype.getTestPages = function() {
 		return this.aPages;
@@ -69,7 +69,7 @@ sap.ui.define([
 									simple: aTests.every((test) => !test.suite)
 								}, oTestPageConfig));
 							}, function(oError) {
-								Log.error("failed to load page '" + sTestPage + "'");
+								Log.error("failed to load page '" + oTestPageConfig.fullpage + "'");
 								$frame.remove();
 								resolve(Object.assign({error: oError}, oTestPageConfig));
 							});

@@ -1,4 +1,4 @@
-/*global QUnit, sinon */
+/*global QUnit */
 sap.ui.define([
 	"test-resources/sap/ui/core/qunit/odata/v2/data/ODataTreeBindingFakeService",
 	"sap/ui/model/odata/v2/ODataModel"
@@ -574,7 +574,7 @@ sap.ui.define([
 			oBinding.detachChange(handler1);
 			oBinding.getContexts(0, 20, 100);
 			oBinding.attachChange(handler2);
-			oBinding.expand(0, true)
+			oBinding.expand(0, true);
 		}
 
 		function handler2() {

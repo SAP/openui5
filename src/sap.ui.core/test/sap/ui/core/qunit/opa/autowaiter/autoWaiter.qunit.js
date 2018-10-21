@@ -19,7 +19,7 @@ sap.ui.define([
 	return new Promise(function(resolve, reject) {
 		require(["./_XHRWaiter"], function() {
 			resolve();
-		}, reject)
+		}, reject);
 	});
 
 });

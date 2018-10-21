@@ -132,8 +132,8 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Device', 'sap/ui/base/syncXHR
 	});
 
 	QUnit.test("setTimeout/setInterval with non-functions", function(assert) {
-		assert.throws(function(){setTimeout()}, TypeError, "Empty setTimeout throws");
-		assert.throws(function(){setInterval()}, TypeError, "Empty setInterval throws");
+		assert.throws(function(){setTimeout();}, TypeError, "Empty setTimeout throws");
+		assert.throws(function(){setInterval();}, TypeError, "Empty setInterval throws");
 		/* eslint-disable no-implied-eval */
 		clearTimeout(setTimeout(undefined));
 		clearTimeout(setTimeout(123));
