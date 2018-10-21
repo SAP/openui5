@@ -2,11 +2,12 @@
  * ${copyright}
  */
 sap.ui.require([
+	"sap/ui/core/sample/common/Helper",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Properties"
-], function (Opa5, EnterText, Press, Properties) {
+], function (Helper, Opa5, EnterText, Press, Properties) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
@@ -28,15 +29,7 @@ sap.ui.require([
 					});
 				},
 				applyDialog : function () {
-					return this.waitFor({
-						actions : new Press(),
-						controlType : "sap.m.Button",
-						id : /ApplyChangesInFragment/,
-						success : function () {
-							Opa5.assert.ok(true, "Adapt UI dialog applied");
-						},
-						viewName : sViewName
-					});
+					return Helper.pressButton(this, sViewName, "ApplyChangesInFragment");
 				},
 				checkCheckBox: function (sCheckBoxText) {
 					return this.waitFor({
@@ -70,15 +63,7 @@ sap.ui.require([
 		onTheMainPageRTA : {
 			actions : {
 				pressAdaptUIButton : function (sButtonId) {
-					return this.waitFor({
-						actions : new Press(),
-						controlType : "sap.m.Button",
-						id : sButtonId,
-						success : function (oCancelSalesOrderChangesButton) {
-							Opa5.assert.ok(true, "Adapt UI " + sButtonId + " is pressed");
-						},
-						viewName : sViewName
-					});
+					return Helper.pressButton(this, sViewName, sButtonId);
 				}
 			},
 			assertions : {

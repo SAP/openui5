@@ -14,12 +14,7 @@ sap.ui.require([
 		onTheMainPage : {
 			actions : {
 				refreshEmployees : function () {
-					return this.waitFor({
-						actions : new Press(),
-						controlType : "sap.m.Button",
-						id : "refreshEmployees",
-						viewName : sViewName
-					});
+					return Helper.pressButton(this, sViewName, "refreshEmployees");
 				},
 				selectFirstEmployee : function () {
 					return this.waitFor({
