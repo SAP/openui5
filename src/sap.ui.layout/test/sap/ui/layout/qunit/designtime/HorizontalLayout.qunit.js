@@ -1,35 +1,18 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>QUnit Page for sap.ui.layout.HorizontalLayout design time and rta enabling</title>
-
-<script src="../../shared-config.js"></script>
-<script id="sap-ui-bootstrap" src="../../../../../../resources/sap-ui-core.js" data-sap-ui-noConflict="true" data-sap-ui-resourceroots='{"dt": "./"}'
-	data-sap-ui-libs="sap.ui.layout,sap.ui.rta">
-
-</script>
-
-<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script src="../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<script src="../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-<script>
-
-sap.ui.require([
-	'sap/ui/dt/test/report/QUnit',
-	'sap/ui/dt/test/ElementEnablementTest',
-	'dt/HorizontalLayout',
-	'sap/ui/rta/test/controlEnablingCheck'
-], function (QUnit, ElementEnablementTest, HorizontalLayout, rtaControlEnablingCheck) {
+/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+sap.ui.define([
+	"sap/ui/dt/test/report/QUnit",
+	"sap/ui/dt/test/ElementEnablementTest",
+	"./HorizontalLayout",
+	"sap/ui/rta/test/controlEnablingCheck",
+	"sap/m/Button"
+], function(QUnit, ElementEnablementTest, HorizontalLayout, rtaControlEnablingCheck, Button) {
+	"use strict";
 
 	var oElementEnablementTest = new ElementEnablementTest({
 		type: "sap.ui.layout.HorizontalLayout",
 		create : HorizontalLayout.create
 	});
+
 	oElementEnablementTest.run().then(function(oData) {
 		var oReport = new QUnit({
 			data: oData
@@ -113,16 +96,3 @@ sap.ui.require([
 		afterRedo: fnConfirmLayoutIsInvisible
 	});
 });
-
-</script>
-
-</head>
-<body id="body" class="sapUiBody">
-	<h1 id="qunit-header">QUnit Page for sap.ui.layout.HorizontalLayout</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<ol id="qunit-tests"></ol>
-	<div id="content"></div>
-	<div id="qunit-fixture"></div>
-</body>
-</html>

@@ -1,35 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta charset="utf-8">
-<title>Test Page for sap.ui.unified.FileUploader</title>
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.ui.unified, sap.m, sap.ui.commons">
+/*global QUnit, window */
 
-</script>
-
-<link rel="stylesheet"	href="../../../../../resources/sap/ui/thirdparty/qunit.css"	type="text/css" media="screen">
-<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
-<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"
-			data-sap-ui-cover-only="sap/ui/unified/FileUploader.js"
-		></script>
-<script>
+sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/unified/FileUploader"
+], function(qutils, FileUploader) {
+	"use strict";
 
 	/**
  	 * Helper function to create a FileUploader with useful default value
  	 */
 	var createFileUploader = function (mProps) {
 		mProps = mProps || {};
-		return new sap.ui.unified.FileUploader("upload_1", {
+		return new FileUploader("upload_1", {
 			name: mProps.name || "test1",
 			enabled: true,
 			uploadUrl: mProps.uploadUrl || "../../../../upload/",
@@ -46,7 +28,7 @@
 			uploadOnChange: mProps.uploadOnChange || false,
 			buttonText: mProps.buttonText || "Choose!",
 			buttonOnly: mProps.buttonOnly || false,
-			additionalData: mProps.additionalData ||"abc=123&test=456"
+			additionalData: mProps.additionalData || "abc=123&test=456"
 		});
 	};
 
@@ -110,7 +92,7 @@
 		var oFileUploader = createFileUploader({
 				buttonOnly: true
 			}),
-			$fileUploader
+			$fileUploader,
 			sButtonOnlyClassName = "sapUiFupButtonOnly",
 			fnTestButtonOnlyClass = function(fileUploader, bExpected) {
 				assert.equal(fileUploader.hasClass(sButtonOnlyClassName), bExpected,
@@ -359,10 +341,10 @@
 				//this branch is necessary because, the typeMissmatch Event is fired if either the fileType or mimeType is wrong
 				if (oEvent.getParameter("fileType")) {
 					assert.equal(oEvent.getParameter("fileName"), "FileUploader.qunit.html", "typeMissmatch Event has the correct parameter");
-				} else if(oEvent.getParameter("fileType") === "") {
+				} else if (oEvent.getParameter("fileType") === "") {
 					// when file has no extension it should return empty string for the fileType
 					assert.equal(oEvent.getParameter("fileType"), "", "parameter fileType is empty, when file has no extension");
-				} else if(oEvent.getParameter("mimeType")) {
+				} else if (oEvent.getParameter("mimeType")) {
 					assert.equal(oEvent.getParameter("fileName"), "hallo.png", "typeMissmatch Event has the correct parameter");
 				}
 			},
@@ -417,7 +399,7 @@
 		oFileUploader.handlechange(fakeEvent);
 		if (!(!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10)) {
 			assert.equal(oFileAllowedSpy.callCount, 1, "fileAllowed Event should be called exactly ONCE");
-		};
+		}
 
 		//cleanup
 		oFileUploader.destroy();
@@ -462,7 +444,7 @@
 			//cleanup
 			oFileUploader.destroy();
 		});
-	};
+	}
 
 	QUnit.test("Testing the clearing of the input fields - clear()", function (assert) {
 		//setup
@@ -625,8 +607,8 @@
 		assert.equal(oFileUploader.getMaximumFilenameLength(), 0, "setMaximumFilenameLength(null) --> maximumFilenameLength should be 0 (default)");
 		assert.equal(oFileUploader._isFilenameTooLong("FileUploader.js"), false, "Filename should be too long");
 
-		var undefined;
-		oFileUploader.setMaximumFilenameLength(undefined);
+		var undefinedVariable;
+		oFileUploader.setMaximumFilenameLength(undefinedVariable);
 		assert.equal(oFileUploader.getMaximumFilenameLength(), 0, "setMaximumFilenameLength(undefined) --> maximumFilenameLength should be 0 (default)");
 		assert.equal(oFileUploader._isFilenameTooLong("FileUploader.js"), false, "Filename should be too long");
 
@@ -672,7 +654,7 @@
 				stopPropagation: function() {},
 				preventDefault: function () {}
 			},
-			stopPropagationSpy = sinon.spy(oMockEscapePress, "stopPropagation");
+			stopPropagationSpy = this.spy(oMockEscapePress, "stopPropagation");
 
 		oFileUploader.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
@@ -706,14 +688,4 @@
 		});
 	}
 
-</script>
-</head>
-<body>
-	<h1 id="qunit-header">QUnit tests: sap.ui.unified.FileUploader</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-	<div id="qunit-fixture"></div>
-</body>
-</html>
+});

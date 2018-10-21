@@ -120,6 +120,37 @@ sap.ui.define(function() {
 					]
 				}
 			},
+			"HorizontalLayout": {
+				group: "HorizontalLayout",
+				ui5: {
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/layout/HorizontalLayout"]
+				}
+			},
+			"DynamicSideContent": {
+				group: "DynamicSideContent",
+				ui5: {
+					libs: ["sap.ui.layout", "sap.m"],
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/layout/DynamicSideContent"]
+				}
+			},
+			"ResponsiveFlowLayout": {
+				group: "ResponsiveFlowLayout",
+				ui5: {
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				coverage: {
+					only: ["sap/ui/layout/ResponsiveFlowLayout"]
+				}
+			},
 
 			// Design Time
 			"Designtime-Grid": {
@@ -154,7 +185,16 @@ sap.ui.define(function() {
 			},
 			"Designtime-VerticalLayout": {
 				group: "Designtime",
-				module: "./designtime/VerticalLayout.qunit",
+				module: "./designtime/VerticalLayout.qunit"
+			},
+			"Designtime-HorizontalLayout": {
+				group: "Designtime",
+				module: "./designtime/HorizontalLayout.qunit",
+				sinon: false
+			},
+			"Designtime-DynamicSideContent": {
+				group: "Designtime",
+				module: "./designtime/DynamicSideContent.qunit",
 				sinon: false
 			}
 		}
