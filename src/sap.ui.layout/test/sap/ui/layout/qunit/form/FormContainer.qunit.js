@@ -1,8 +1,7 @@
 /* global QUnit, sinon */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
 	"sap/ui/core/Title",
@@ -10,6 +9,7 @@ sap.ui.require([
 	"sap/m/Toolbar"
 	],
 	function(
+			qutils,
 			FormContainer,
 			FormElement,
 			Title,
@@ -371,7 +371,5 @@ sap.ui.require([
 		assert.ok(oFormElement1.invalidateLabel.called, "invalidateLabel on FormElement1");
 		assert.ok(oFormElement2.invalidateLabel.called, "invalidateLabel on FormElement2");
 	});
-
-	QUnit.start();
 
 });

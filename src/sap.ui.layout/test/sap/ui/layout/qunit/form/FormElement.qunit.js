@@ -1,14 +1,14 @@
 /* global QUnit, sinon */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/layout/form/FormElement",
 	"sap/m/Label",
 	"sap/m/Input",
 	"sap/ui/model/json/JSONModel"
 	],
 	function(
+			qutils,
 			FormElement,
 			Label,
 			Input,
@@ -424,7 +424,5 @@ sap.ui.require([
 
 		assert.equal(oFormElement.getRenderedDomRef(), "X", "Value returned from Container");
 	});
-
-	QUnit.start();
 
 });

@@ -1,14 +1,13 @@
-/* global QUnit, sinon, qutils */
+/* global QUnit, sinon */
 
 // Test only the things relevant for ColumnLayout. The basic Form functionality
 // is tested in Form, FormContainer and FormElement qUnit tests.
 // via qUnit only the DOM structure and classes can be tested, so the real
 // layout must be tested in some visual test.
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/layout/form/ColumnLayout",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
@@ -22,6 +21,7 @@ sap.ui.require([
 	],
 	function(
 		jQuery,
+		qutils,
 		ColumnLayout,
 		Form,
 		FormContainer,
@@ -837,7 +837,5 @@ sap.ui.require([
 
 		assert.ok(oException, "exception fired");
 	});
-
-	QUnit.start();
 
 });

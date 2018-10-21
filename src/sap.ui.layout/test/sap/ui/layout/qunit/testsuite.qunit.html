@@ -1,74 +1,15 @@
+<!DOCTYPE html>
 <html>
 	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<base href="../../../../../">
 		<title>QUnit TestSuite for sap.ui.layout</title>
-		<script src="../shared-config.js"></script>
-		<script id="sap-ui-bootstrap" src='../../../../../resources/sap-ui-core.js'> </script>
-		<script src="../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+		<script src="resources/sap/ui/test/starter/createSuite.js"
+				data-sap-ui-testsuite="test-resources/sap/ui/layout/qunit/testsuite.qunit"
+				data-sap-ui-delay="-1"
+		></script>
 	</head>
 	<body>
-		<script>
-
-			/**
-			 * Add test pages to this test suite function.
-			 * Please order alphabetically
-			 */
-			function suite() {
-				var suite = new parent.jsUnitTestSuite(),
-					contextPath = "/" + window.location.pathname.split("/")[1];
-
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/AlignedFlowLayout.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/AlignedFlowLayout.qunit.html?sap-ui-rtl=true");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/DynamicSideContent.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/FormElement.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/FormContainer.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/Form.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/ColumnLayout.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/GridLayout.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/ResponsiveGridLayout.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/ResponsiveLayout.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/SimpleForm.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/HorizontalLayout.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/ResponsiveFlowLayout.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/VerticalLayout.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/changes/RenameSimpleForm.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/changes/HideSimpleForm.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/changes/AddSimpleFormGroup.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/changes/UnhideSimpleForm.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/demokit/sample/Form354/test/FormSampleJourney.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/demokit/sample/SimpleForm354/test/FormSampleJourney.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/demokit/sample/SimpleForm354wide/test/FormSampleJourney.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/demokit/sample/SimpleForm354wideDual/test/FormSampleJourney.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/demokit/sample/SimpleForm471/test/FormSampleJourney.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/testsuite_new.qunit.html");
-
-				// --------------------------
-				// Design Time & RTA Enabling
-				// --------------------------
-				//complete libraries dt files general json data
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/Library.qunit.html");
-
-				//individual controls
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/DynamicSideContent.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/HorizontalLayout.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/VerticalLayout.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/form/Form.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/form/FormContainer.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/form/FormElement.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/form/SimpleForm.qunit.html");
-
-				// Dependency to sap.ui.comp
-				try {
-					sap.ui.getCore().loadLibrary("sap.ui.comp");
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/changes/AddSimpleFormField.qunit.html");
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/form/AddODataFormField.qunit.html");
-				} catch (e) {
-					jQuery.sap.log.info("sap.ui.comp not available", "some tests are skipped, ensure sap.ui.comp from sapui5.runtime is loaded to execute them");
-				}
-
-				return suite;
-			}
-
-		</script>
-
 	</body>
 </html>
