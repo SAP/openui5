@@ -4,8 +4,11 @@
   "description": "OpenUI5 Core & Runtime",
   "private": true,
   "scripts": {
-    "start": "grunt serve",
-    "test": "grunt lint",
+    "postinstall": "node -e 'process.env.npm_config_user_agent.includes(\"yarn\") || console.error(\"===========================================================================\"); console.error(\">> NOTE: This project uses Yarn. Please see: \"); console.error(\">> https://github.com/SAP/openui5/blob/master/docs/developing.md\"); console.error(\"===========================================================================\"); console.error(\"\")'",
+    "start": "cd src/testsuite && ui5 serve",
+    "testsuite": "cd src/testsuite && ui5 serve -o /test-resources/testsuite/testframe.html",
+    "test": "npm run lint",
+    "lint": "eslint ./src",
     "link-all": "wsrun link",
     "unlink-all": "wsrun unlink"
   },
@@ -27,6 +30,7 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@ui5/cli": "^0.2.2",
     "@ui5/server": "^0.2.1",
     "async": "^0.9.0",
     "cheerio": "^1.0.0-rc.2",
