@@ -812,6 +812,12 @@
 								oUploadCollection.invalidate();
 							}
 						}),
+						new sap.m.Button({
+							text: "+/- Icons",
+							press: function () {
+								oUploadCollection.setShowIcons(!oUploadCollection.getShowIcons());
+							}
+						}),
 						new sap.m.Label({
 							text: "Simulates a backend error:"
 						}),

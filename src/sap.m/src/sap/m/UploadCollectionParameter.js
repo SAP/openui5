@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	'./library', 'sap/ui/core/Element'
-], function(library, Element) {
+], function (library, Element) {
 	"use strict";
 
 	/**
@@ -47,5 +47,4 @@ sap.ui.define([
 	});
 
 	return UploadCollectionParameter;
-
 });

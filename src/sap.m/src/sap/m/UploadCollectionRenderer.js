@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['./ListItemBaseRenderer'], function(ListItemBaseRenderer) {
+sap.ui.define(['./ListItemBaseRenderer'], function (ListItemBaseRenderer) {
 	"use strict";
 
 	/**
@@ -16,7 +16,7 @@ sap.ui.define(['./ListItemBaseRenderer'], function(ListItemBaseRenderer) {
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	UploadCollectionRenderer.render = function(oRm, oControl) {
+	UploadCollectionRenderer.render = function (oRm, oControl) {
 		// write the HTML into the render manager
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
@@ -28,7 +28,7 @@ sap.ui.define(['./ListItemBaseRenderer'], function(ListItemBaseRenderer) {
 		oRm.write("</div>");
 	};
 
-	UploadCollectionRenderer.renderNoData = function(oRm, oControl) {
+	UploadCollectionRenderer.renderNoData = function (oRm, oControl) {
 		// If noDataText or noDataDescription property are set by user, the user's text will be rendered.
 		// If it is not set, the default no data text or description from resource bundle will be rendered.
 		var oUploadCollection = oControl.getParent();
@@ -63,7 +63,7 @@ sap.ui.define(['./ListItemBaseRenderer'], function(ListItemBaseRenderer) {
 		oRm.write("</li>");
 	};
 
-	UploadCollectionRenderer.renderDragDropOverlay = function(oRm, oControl) {
+	UploadCollectionRenderer.renderDragDropOverlay = function (oRm, oControl) {
 		oRm.write("<div");
 		oRm.writeAttribute("id", oControl.getId() + "-drag-drop-area");
 		oRm.addClass("sapMUCDragDropOverlay");
@@ -80,7 +80,7 @@ sap.ui.define(['./ListItemBaseRenderer'], function(ListItemBaseRenderer) {
 		oRm.write("</div>");
 	};
 
-	UploadCollectionRenderer.renderList = function(oRm, oControl) {
+	UploadCollectionRenderer.renderList = function (oRm, oControl) {
 		var fnOriginal = oControl._oList.getRenderer().renderNoData;
 		oControl._oList.getRenderer().renderNoData = this.renderNoData;
 		oRm.renderControl(oControl._oList);

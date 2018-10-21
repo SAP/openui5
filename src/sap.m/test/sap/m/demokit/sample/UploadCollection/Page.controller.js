@@ -20,8 +20,8 @@ sap.ui.define([
 			this.getView().setModel(new JSONModel(Device), "device");
 
 			this.getView().setModel(new JSONModel({
-				"maximumFilenameLength": 55,
-				"maximumFileSize": 10,
+				"maximumFilenameLength": 15,
+				"maximumFileSize": 500,
 				"mode": MobileLibrary.ListMode.SingleSelectMaster,
 				"uploadEnabled": true,
 				"uploadButtonVisible": true,
@@ -46,8 +46,9 @@ sap.ui.define([
 			}), "settings");
 
 			this.getView().setModel(new JSONModel({
-				"items": ["jpg", "txt", "ppt", "doc", "xls", "pdf", "png"],
-				"selected": ["jpg", "txt", "ppt", "doc", "xls", "pdf", "png"]
+				"items": ["jpg", "txt", "pdf", "png", "mp4"],
+				"selected": ["jpg", "txt", "pdf", "png", "mp4"],
+				"mime": ["text/plain", "video/mp4", "image/jpg", "application/msword"]
 			}), "fileTypes");
 
 			// Sets the text to the label
@@ -155,7 +156,7 @@ sap.ui.define([
 		},
 
 		onTypeMissmatch: function() {
-			MessageToast.show("TypeMissmatch event triggered.");
+			MessageToast.show("TypeMismatch event triggered.");
 		},
 
 		onUploadComplete: function(oEvent) {

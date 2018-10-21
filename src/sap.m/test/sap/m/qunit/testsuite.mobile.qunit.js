@@ -2516,8 +2516,10 @@ sap.ui.define(function() {
 				module: [
 					"./UploadCollection.qunit",
 					"./UploadCollectionForPendingUpload.qunit",
-					"./UploadCollectionToolbar.qunit",
-					"./UploadCollectionOpenFileDialog.qunit"
+					"./UploadCollectionItem.qunit",
+					"./UploadCollectionMemoryLeak.qunit",
+					"./UploadCollectionOpenFileDialog.qunit",
+					"./UploadCollectionToolbar.qunit"
 				]
 			},
 			UploadCollectionItem: {

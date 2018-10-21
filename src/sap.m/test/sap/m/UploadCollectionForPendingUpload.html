@@ -20,7 +20,7 @@
 	/* =========================================================== */
 
 	// The upper and lower case letters are on purpose to prove that they don't matter
-	var aFileTypes = ["jPg", "tXT", "ppt", "doc", "xls", "pdf", "PNG"];
+	var aFileTypes = ["jPg", "tXT", "ppt", "doc", "xls", "pdf", "PNG", "mp4"];
 	var iRequestCounter = 0, sFileName;
 	var oUploadButton = new sap.m.Button({
 		text : "start upload",
@@ -40,7 +40,7 @@
 	function fnCreateUploadCollection() {
 		return new sap.m.UploadCollection({
 			maximumFilenameLength : 55,
-			maximumFileSize : 50,
+			maximumFileSize : 250,
 			multiple : true,
 			sameFilenameAllowed : true,
 			instantUpload : false,
