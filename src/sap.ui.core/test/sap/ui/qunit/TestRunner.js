@@ -348,12 +348,40 @@
 			return window._$blanket;
 		},
 
-		getTestPageUrl: function() {
+		getTestPageUrl: function(sFallbackUrl) {
 			var sTestPageUrl = this.getUrlParameter("testpage");
-			var sOrigin = window.location.origin ? window.location.origin : (window.location.protocol + "//" + window.location.host);
-			var sContextPath = window.location.href.substr(sOrigin.length);
-			sContextPath = sContextPath.substring(0, sContextPath.indexOf("/test-resources/sap/ui/qunit/testrunner.html"));
-			return sTestPageUrl || sContextPath + "/test-resources/qunit/testsuite.qunit.html";
+			if (sTestPageUrl) {
+				var sOrigin = window.location.origin ? window.location.origin : (window.location.protocol + "//" + window.location.host);
+				// Check whether first character is "/"
+				if (sTestPageUrl.match(/^\/(?!\/)/)) {
+					return sOrigin + sTestPageUrl;
+				}
+				// sTestPageUrl might be a full href
+				// => check whether protocol and host matches current location
+				var aTestPageUrlMatch = sTestPageUrl.match(/^(https?:\/\/[^\/]+)(\/.*)$/i);
+				if (aTestPageUrlMatch && aTestPageUrlMatch[1] === sOrigin) {
+					// Still use the known current location and append given path segment just to make sure
+					return sOrigin + aTestPageUrlMatch[2];
+				}
+
+				throw new Error("Invalid value for URL parameter 'testpage': Path segment must start with '/'. " +
+					"If given, protocol and host must match the current location.");
+			}
+
+			// Fallback to generic testsuite page
+			if ( sFallbackUrl == null ) {
+				var sContextPath;
+				// Match the path segment before the first "test-resources" segment
+				var aContextPathMatch = window.location.pathname.match(/(.*?)\/(?:test-resources)/);
+				if (aContextPathMatch && aContextPathMatch[1]) {
+					sContextPath = aContextPathMatch[1];
+				} else {
+					sContextPath = "";
+				}
+				sFallbackUrl = sContextPath + "/test-resources/qunit/testsuite.qunit.html";
+			}
+
+			return sFallbackUrl;
 		},
 
 		getAutoStart: function() {
