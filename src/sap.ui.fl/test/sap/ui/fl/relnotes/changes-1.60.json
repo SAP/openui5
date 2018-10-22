@@ -79,6 +79,18 @@
         "type": "FIX",
         "text": " sap.ui.fl.FlexController: On control re-creation, initial dependencies from change persistence map are not copied for failing changes",
         "references": []
+      },
+      {
+        "id": "4dacc66020fb863fa232a2473da046950fa02053",
+        "type": "FEATURE",
+        "text": " Flexibility services routes can be defined",
+        "references": []
+      },
+      {
+        "id": "0530c621b497dc8166609a79deb3b091044e5f4a",
+        "type": "FIX",
+        "text": " sap.ui.fl: Changes for VariantManagement are stored as instance",
+        "references": []
       }
     ]
   }

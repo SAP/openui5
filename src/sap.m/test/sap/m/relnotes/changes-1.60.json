@@ -913,6 +913,114 @@
         "type": "FIX",
         "text": "sap.m.MessagePopover: Demokit sample fixed",
         "references": []
+      },
+      {
+        "id": "00a158e54e0ede657c7b0d19ac133bca24e3eeec",
+        "type": "FEATURE",
+        "text": " CLDR: Update to CLDR version 34",
+        "references": []
+      },
+      {
+        "id": "e8e517f173089d28cf050726f38ac28bea09594d",
+        "type": "FEATURE",
+        "text": " GenericTile: Add wrapping type property",
+        "references": []
+      },
+      {
+        "id": "f1789479c853784231f49bff9e01102715f4a14f",
+        "type": "FEATURE",
+        "text": " Table: paste event handling is added",
+        "references": []
+      },
+      {
+        "id": "1e453132d271b423560f9430921605e5e360f30a",
+        "type": "FEATURE",
+        "text": " Upload Collection 1902 Enhancements",
+        "references": []
+      },
+      {
+        "id": "d121ebdbc574cac47548516438004ab763a700e4",
+        "type": "FEATURE",
+        "text": " sap.m.CheckBox/Select/ProgressIndicator: 5th semantic color",
+        "references": []
+      },
+      {
+        "id": "b14232a89f281e0bad90e429a0a5504696f1f05e",
+        "type": "FEATURE",
+        "text": " sap.m.Dialog: 5th semantic highlight color added",
+        "references": []
+      },
+      {
+        "id": "fc208a5800184c322d58f404a4ea8c35b5a8ca55",
+        "type": "FEATURE",
+        "text": " sap.m.MultiComboBox: Grouping items introduced",
+        "references": []
+      },
+      {
+        "id": "572b358095a84f9bec8c7ca60bbad15e11f65881",
+        "type": "FEATURE",
+        "text": " sap.m.RadioButton: Introduced 5th semantic highlight color",
+        "references": []
+      },
+      {
+        "id": "7371695ce3800e61dab88be68f547a9a3924e9c6",
+        "type": "FEATURE",
+        "text": " sap.ui.core.ValueState: 5th semantic highlight color added",
+        "references": []
+      },
+      {
+        "id": "1d1f245ec4c63e4ad3b99a5080940775cfd3c4c2",
+        "type": "FIX",
+        "text": " sap.m.ColorPalette: Now the Dialog responds to the new size of the Color Picker",
+        "references": []
+      },
+      {
+        "id": "b3c74743e023535aedaea839d13fa229fe421fd6",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Duplicated focus fixed",
+        "references": []
+      },
+      {
+        "id": "96c142e06ab03389797e6c4049912f55748c6040",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Minimum width on combi device is now corrected",
+        "references": []
+      },
+      {
+        "id": "fc124f0cf467efefd5fefc06c850a6d4df2fc1ba",
+        "type": "FIX",
+        "text": " sap.m.Input: Suggestion description text added",
+        "references": []
+      },
+      {
+        "id": "7171feb71a10ec450a2b27ebd4b0deb65cd05112",
+        "type": "FIX",
+        "text": " sap.m.Popover: Styles forwarding corrected",
+        "references": []
+      },
+      {
+        "id": "3c58ac5e42c765c27cefd7bbf7be1adc42766050",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Now the floating numbers are correctly calculated",
+        "references": []
+      },
+      {
+        "id": "72ef28c38715d57346b9ed4fe23a00b58c5e7b9f",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Accessibility state improved",
+        "references": []
+      },
+      {
+        "id": "62a80a317020ecb6818ddf704f906adfe7b36071",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Multiple handler attachment removed",
+        "references": []
+      },
+      {
+        "id": "dbfc4ea937013663f68b3d28f6828610df851046",
+        "type": "FIX",
+        "text": "sap.m.themes.base.FeedListItem.less: RadioButton not rendered when FeedListItem used within ListItem.",
+        "references": []
       }
     ]
   }

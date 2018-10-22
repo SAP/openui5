@@ -73,6 +73,18 @@
         "type": "FIX",
         "text": " sap.f.DynamicPage: Header without content title issues fixed",
         "references": []
+      },
+      {
+        "id": "d2e8b6ed7a4685856a619225398c8119c8db7aae",
+        "type": "FEATURE",
+        "text": " sap.f.GridList: New List based control",
+        "references": []
+      },
+      {
+        "id": "6d67fc01e82b806399829c38db46181d9f1ef573",
+        "type": "FIX",
+        "text": " API Documentation: Documentation is improved",
+        "references": []
       }
     ]
   }

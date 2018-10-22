@@ -49,6 +49,24 @@
         "type": "FIX",
         "text": " sap.ui.layout.Grid: Samples CSS affecting the whole DemoKit",
         "references": []
+      },
+      {
+        "id": "0c9562ed2ffa050124dc143c1dec7074e87d8381",
+        "type": "FIX",
+        "text": " ColumnLayout: Fields not wrapped",
+        "references": []
+      },
+      {
+        "id": "a404956296368f8c94ec7720877c959cdccb5f4b",
+        "type": "FIX",
+        "text": " sap.ui.layout.SplitPane: order of layoutData and content no longer matters",
+        "references": []
+      },
+      {
+        "id": "b15e8812bbee73d997634db223f33c8ca7a18c7b",
+        "type": "FIX",
+        "text": " sap.ui.layout.cssgrid.GridItemLayoutData: Now works with attribute bindings",
+        "references": []
       }
     ]
   }

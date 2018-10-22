@@ -73,6 +73,12 @@
         "type": "FIX",
         "text": " Table: Update the scroll position when setting firstVisibleRow",
         "references": []
+      },
+      {
+        "id": "f1789479c853784231f49bff9e01102715f4a14f",
+        "type": "FEATURE",
+        "text": " Table: paste event handling is added",
+        "references": []
       }
     ]
   }

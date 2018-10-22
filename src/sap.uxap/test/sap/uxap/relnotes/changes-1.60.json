@@ -115,6 +115,30 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSubSection: Changed header rendering",
         "references": []
+      },
+      {
+        "id": "6d67fc01e82b806399829c38db46181d9f1ef573",
+        "type": "FIX",
+        "text": " API Documentation: Documentation is improved",
+        "references": []
+      },
+      {
+        "id": "8df1dabe2eed012686d0356eba3cfef83528ed32",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPage: Actions and content are now aligned",
+        "references": []
+      },
+      {
+        "id": "ead0763cd9b9a8bb3f52e4825bf08233c5202f6c",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Rectangle header image layout fixed",
+        "references": []
+      },
+      {
+        "id": "5e3c8ed73d7627bbd439dcc1dba5a016df5d0ed1",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected qunit timing",
+        "references": []
       }
     ]
   }

@@ -85,6 +85,12 @@
         "type": "FIX",
         "text": " sap.ui.unified.CalendarDateInterval: example is fixed",
         "references": []
+      },
+      {
+        "id": "1d1f245ec4c63e4ad3b99a5080940775cfd3c4c2",
+        "type": "FIX",
+        "text": " sap.m.ColorPalette: Now the Dialog responds to the new size of the Color Picker",
+        "references": []
       }
     ]
   }

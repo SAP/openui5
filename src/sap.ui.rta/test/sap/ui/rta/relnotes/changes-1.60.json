@@ -79,6 +79,12 @@
         "type": "FIX",
         "text": " sap.ui.rta: enabld undo/redo via keyboard with opened contextMenu",
         "references": []
+      },
+      {
+        "id": "0530c621b497dc8166609a79deb3b091044e5f4a",
+        "type": "FIX",
+        "text": " sap.ui.fl: Changes for VariantManagement are stored as instance",
+        "references": []
       }
     ]
   }

@@ -49,6 +49,30 @@
         "type": "FIX",
         "text": "sap.m.themes.sap_belize.GenericTile.less: Focus changed from Dotted to Dashed to improve color contrast Ratio",
         "references": []
+      },
+      {
+        "id": "d121ebdbc574cac47548516438004ab763a700e4",
+        "type": "FEATURE",
+        "text": " sap.m.CheckBox/Select/ProgressIndicator: 5th semantic color",
+        "references": []
+      },
+      {
+        "id": "572b358095a84f9bec8c7ca60bbad15e11f65881",
+        "type": "FEATURE",
+        "text": " sap.m.RadioButton: Introduced 5th semantic highlight color",
+        "references": []
+      },
+      {
+        "id": "7371695ce3800e61dab88be68f547a9a3924e9c6",
+        "type": "FEATURE",
+        "text": " sap.ui.core.ValueState: 5th semantic highlight color added",
+        "references": []
+      },
+      {
+        "id": "8df1dabe2eed012686d0356eba3cfef83528ed32",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPage: Actions and content are now aligned",
+        "references": []
       }
     ]
   }

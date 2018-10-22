@@ -307,6 +307,96 @@
         "type": "FIX",
         "text": " v2/ODataModel: function import context overwrite",
         "references": []
+      },
+      {
+        "id": "00a158e54e0ede657c7b0d19ac133bca24e3eeec",
+        "type": "FEATURE",
+        "text": " CLDR: Update to CLDR version 34",
+        "references": []
+      },
+      {
+        "id": "c4ed3b67c550ed33c5327de5e7c306d4513cc57c",
+        "type": "FEATURE",
+        "text": " ComponentContainer: Add \"componentFailed\" event",
+        "references": []
+      },
+      {
+        "id": "4dacc66020fb863fa232a2473da046950fa02053",
+        "type": "FEATURE",
+        "text": " Flexibility services routes can be defined",
+        "references": []
+      },
+      {
+        "id": "90c38aa62ca3432c5e70f24585a5cf1defd404cd",
+        "type": "FEATURE",
+        "text": " Opa: BindingPath matcher - add property path",
+        "references": []
+      },
+      {
+        "id": "9610fe719d4549a1b918a0bba09f7ce494815050",
+        "type": "FEATURE",
+        "text": " PasteHelper.js Paste Helper Utility",
+        "references": []
+      },
+      {
+        "id": "7371695ce3800e61dab88be68f547a9a3924e9c6",
+        "type": "FEATURE",
+        "text": " sap.ui.core.ValueState: 5th semantic highlight color added",
+        "references": []
+      },
+      {
+        "id": "3c299510b815dfb307260a782aefd24857acca75",
+        "type": "FIX",
+        "text": " Component: Register correct resource path for manifest object",
+        "references": []
+      },
+      {
+        "id": "51bde8f6de273655e853fff5292cd0cbd85709de",
+        "type": "FIX",
+        "text": " ComponentContainer: support autoPrefixId for usages",
+        "references": []
+      },
+      {
+        "id": "948cf00ef16f0dfbb52d93954d20277a3379f26b",
+        "type": "FIX",
+        "text": " ODataUtils: Use gregorian calendar for filter values",
+        "references": []
+      },
+      {
+        "id": "27bba351d72a5de083e768529d3c6b249a4b4662",
+        "type": "FIX",
+        "text": " core/Element: reapplying focus on an Element requires delay",
+        "references": []
+      },
+      {
+        "id": "a4feca22c7294076332e67cae8408d4d9a8a4a79",
+        "type": "FIX",
+        "text": " performance/trace/Interaction: bind context for XHR handler",
+        "references": []
+      },
+      {
+        "id": "371eba8f7d5c1d4fd4f092d0932e5beff66b3252",
+        "type": "FIX",
+        "text": " sap.ui.core.util.MockServer: Minor documentation fix for requests",
+        "references": []
+      },
+      {
+        "id": "1a93574a0da6843e0a5b1f2f2aca3e1902bc6876",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataMetaModel#fetchUpdateData: entity set w/o navigation property bindings",
+        "references": []
+      },
+      {
+        "id": "35573130b481a03d874ee301d567b9668ff52cd0",
+        "type": "FIX",
+        "text": " synxXHRFix: Improve compatbility of setTimeout/setInterval",
+        "references": []
+      },
+      {
+        "id": "a8b70200e4f5fa9e89a6d402f53f437c5dbf41b0",
+        "type": "FIX",
+        "text": " v2/ODataListBinding: function import fix list type",
+        "references": []
       }
     ]
   }
