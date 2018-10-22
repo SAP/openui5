@@ -1718,6 +1718,87 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Messages for collection entries without key properties
+	QUnit.test("Absolute ODLB: messages for entries without key properties", function (assert) {
+		var oMessage1 = {
+				"code" : "1",
+				"message" : "Text",
+				"persistent" : false,
+				"target" : "/EMPLOYEES/1/Name",
+				"type" : "Warning"
+			},
+			oMessage2 = {
+				"code" : "2",
+				"message" : "Text2",
+				"persistent" : false,
+				"target" : "/EMPLOYEES/2/Name",
+				"type" : "Warning"
+			},
+			sView = '\
+<t:Table id="table" rows="{\
+			path : \'/EMPLOYEES\',\
+			parameters : {$select : \'Name,__CT__FAKE__Message/__FAKE__Messages\'}\
+		}"\ threshold="0" visibleRowCount="2">\
+	<t:Column>\
+		<t:template>\
+			<Text id="name" text="{Name}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest(
+			"EMPLOYEES?$select=Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=2", {
+				"value" : [{
+					"Name" : "Jonathan Smith",
+					"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
+				}, {
+					"Name" : "Frederic Fall",
+					"__CT__FAKE__Message" : {
+						"__FAKE__Messages" : [{
+							"code" : "1",
+							"message" : "Text",
+							"transition" : false,
+							"target" : "Name",
+							"numericSeverity" : 3
+						}]
+					}
+				}]
+			})
+			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
+			.expectMessages([oMessage1]);
+
+		return this.createView(assert, sView, createTeaBusiModel()).then(function () {
+			var oTable = that.oView.byId("table");
+
+			that.expectRequest(
+				"EMPLOYEES?$select=Name,__CT__FAKE__Message/__FAKE__Messages&$skip=2&$top=1", {
+					"value" : [{
+						"Name" : "Peter Burke",
+						"__CT__FAKE__Message" : {
+							"__FAKE__Messages" : [{
+								"code" : "2",
+								"message" : "Text2",
+								"transition" : false,
+								"target" : "Name",
+								"numericSeverity" : 3
+							}]
+						}
+					}]
+				})
+				.expectChange("name", null, null)
+				.expectChange("name", "Frederic Fall", 1)
+				.expectChange("name", "Peter Burke", 2)
+				.expectMessages([oMessage1, oMessage2]);
+
+			oTable.setFirstVisibleRow(1);
+			return that.waitForChanges();
+		});
+		//TODO: using an index for a bound message leads to a wrong target if for example
+		//      an entity with a lower index gets deleted, see CPOUI5UISERVICESV3-413
+	});
+
+	//*********************************************************************************************
 	// Scenario: Refresh an ODataContextBinding with a message, the entity is deleted in between
 	QUnit.test("Absolute ODCB refresh & message", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),

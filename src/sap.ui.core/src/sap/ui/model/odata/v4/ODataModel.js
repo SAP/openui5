@@ -1209,8 +1209,8 @@ sap.ui.define([
 	 * @param {string} sResourcePath
 	 *   The resource path of the cache that saw the messages
 	 * @param {object} mPathToODataMessages
-	 *   Maps a cache-relative path with key predicates to an array of messages with the following
-	 *   properties:
+	 *   Maps a cache-relative path with key predicates or indices to an array of messages with the
+	 *   following properties:
 	 *   {string} code - The error code
 	 *   {string} [longtextUrl] - The absolute URL for the message's long text
 	 *   {string} message - The message text
