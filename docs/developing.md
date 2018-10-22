@@ -10,18 +10,19 @@ Setting up the OpenUI5 development environment
 OpenUI5 content is developed in an environment based on Node.js. The [UI5 Build and Development Tooling](https://github.com/SAP/ui5-tooling) is used as development server and build tool. To set up this environment follow these simple steps:
 
 1. Install Node.js (get it from [nodejs.org](http://nodejs.org/)); this also includes npm, the [node package manager](https://docs.npmjs.com/getting-started/what-is-npm)
+2. Install [Yarn](https://yarnpkg.com/en/) from [here](https://yarnpkg.com/en/docs/install) (*also see [FAQ: What's the thing with Yarn?](https://github.com/SAP/ui5-tooling#whats-the-thing-with-yarn)*)
 2. Install the UI5 Build and Development Tooling CLI globally
 ```sh
 npm install @ui5/cli -g
 ```
-3. Clone the OpenUI5 git repository (you can download and install Git from  [git-scm.com](http://git-scm.com/download))
+3. Clone the OpenUI5 Git repository (you can download and install Git from [git-scm.com](http://git-scm.com/download))
 ```sh
 git clone https://github.com/SAP/openui5.git
 ```
-4. Install all npm dependencies locally (execute this inside the "openui5" directory)
+4. Install all npm dependencies **using Yarn** (this will also link all OpenUI5 libraries with each other)
 ```sh
 cd openui5
-npm install
+yarn
 ```
 5. Start the server and open the testsuite
 ```sh
@@ -68,7 +69,7 @@ The build is responsible for the following tasks:
 
 #### Troubleshooting
 
-If you encounter errors like the one below, re-do the `npm install` command: there might be new build tools required which need to be downloaded first.
+If you encounter errors like the one below, execute `yarn` in the OpenUI5 root directory: there might be new build tools required which need to be downloaded first.
 
 ```
 Error: Cannot find module 'xyz'
