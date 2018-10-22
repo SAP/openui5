@@ -54,18 +54,6 @@ sap.ui.define([
 				page: "test-resources/sap/ui/layout/qunit/AlignedFlowLayout.qunit.html?sap-ui-rtl=true"
 			},
 
-			DynamicSideContent: {
-				page: "test-resources/sap/ui/layout/qunit/DynamicSideContent.qunit.html"
-			},
-
-			HorizontalLayout: {
-				page: "test-resources/sap/ui/layout/qunit/HorizontalLayout.qunit.html"
-			},
-
-			ResponsiveFlowLayout: {
-				page: "test-resources/sap/ui/layout/qunit/ResponsiveFlowLayout.qunit.html"
-			},
-
 			"ExploredSamples": {
 				loader: {
 					paths: {
@@ -295,14 +283,6 @@ sap.ui.define([
 			},
 
 			//individual controls
-			"designtime/DynamicSideContent": {
-				group: "Designtime",
-				page: "test-resources/sap/ui/layout/qunit/designtime/DynamicSideContent.qunit.html"
-			},
-			"designtime/HorizontalLayout": {
-				group: "Designtime",
-				page: "test-resources/sap/ui/layout/qunit/designtime/HorizontalLayout.qunit.html"
-			},
 			"designtime/form/Form": {
 				group: "Designtime",
 				page: "test-resources/sap/ui/layout/qunit/designtime/form/Form.qunit.html"
