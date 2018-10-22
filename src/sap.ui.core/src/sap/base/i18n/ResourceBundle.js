@@ -547,6 +547,20 @@ sap.ui.define([
 	 * Creates and returns a new instance of {@link module:sap/base/i18n/ResourceBundle}
 	 * using the given URL and locale to determine what to load.
 	 *
+	 * @example <caption>Load a resource bundle</caption>
+	 *
+	 * sap.ui.require(["sap/base/i18n/ResourceBundle"], function(ResourceBundle){
+	 *  // ...
+	 *  ResourceBundle.create({
+	 *      // specify url of the base .properties file
+	 *      url : "i18n/messagebundle.properties",
+	 *      async : true
+	 *  ).then(function(oBundle){
+	 *      // now you can access the bundle
+	 *  });
+	 *  // ...
+	 * });
+	 *
 	 * @public
 	 * @function
 	 * @param {object} [mParams] Parameters used to initialize the resource bundle
