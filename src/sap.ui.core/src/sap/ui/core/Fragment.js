@@ -347,6 +347,16 @@ function(
 	 * If no fixed ID is given, the Fragment ID is generated. In any case, the Fragment ID will be used as prefix for the IDs of
 	 * all contained controls.
 	 *
+	 * @example <caption>Loading an XML fragment (default type)</caption>
+	 *
+	 * sap.ui.require(["sap/ui/core/Fragment"], function(Fragment){
+	 *  Fragment.load({
+	 *      name: "my.useful.VerySimpleUiPart"
+	 *  }).then(function(myButton){
+	 *     // ...
+	 *  });
+	 * });
+	 *
 	 * @param {object} mOptions options map
 	 * @param {string} [mOptions.name] must be supplied if no "definition" parameter is given. The Fragment name must correspond to an XML Fragment which
 	 *    can be loaded via the module system
