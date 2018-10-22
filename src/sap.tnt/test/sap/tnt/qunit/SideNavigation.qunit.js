@@ -46,15 +46,23 @@ sap.ui.define([
 		assert.strictEqual(this.sideNavigation.getAggregation('fixedItem').getExpanded(), true, 'should not collapse the NavigationList in fixedItem aggregation');
 	});
 
-	// QUnit.test('SetExpanded false', function (assert) {
-	// 	this.sideNavigation.setExpanded(false);
-	//
-	// 	this.clock.tick(1000);
-	//
-	// 	assert.strictEqual(this.sideNavigation.getDomRef().classList.contains('sapTntSideNavigationNotExpanded'), true, 'should has "sapTntSideNavigationNotExpanded" class');
-	// 	assert.strictEqual(this.sideNavigation.getAggregation('item').getExpanded(), false, 'should collapse the NavigationList in item aggregation');
-	// 	assert.strictEqual(this.sideNavigation.getAggregation('fixedItem').getExpanded(), false, 'should collapse the NavigationList in fixedItem aggregation');
-	// });
+	QUnit.test('SetExpanded false', function (assert) {
+		// arrange
+		this.clock.restore(); // using real timeouts for this test
+		var done = assert.async();
+
+		// act
+		this.sideNavigation.setExpanded(false);
+
+		setTimeout(function() {
+			// assert
+			assert.strictEqual(this.sideNavigation.getDomRef().classList.contains('sapTntSideNavigationNotExpanded'), true, 'should has "sapTntSideNavigationNotExpanded" class');
+			assert.strictEqual(this.sideNavigation.getAggregation('item').getExpanded(), false, 'should collapse the NavigationList in item aggregation');
+			assert.strictEqual(this.sideNavigation.getAggregation('fixedItem').getExpanded(), false, 'should collapse the NavigationList in fixedItem aggregation');
+
+			done();
+		}.bind(this), 1000);
+	});
 
 	QUnit.test('Switch between active items from item and fixed item aggregation', function (assert) {
 		// arrange

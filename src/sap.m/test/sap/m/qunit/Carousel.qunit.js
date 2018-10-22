@@ -39,7 +39,7 @@ sap.ui.define([
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
-	<!-- use the sinon faketimers for this test -->
+	// use the sinon faketimers for this test
 
 	var sinonClockTickValue = 600;
 
