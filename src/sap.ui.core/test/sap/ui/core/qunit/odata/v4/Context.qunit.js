@@ -863,9 +863,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refresh", function (assert) {
+	QUnit.test("refresh, list binding", function (assert) {
 		var bAllowRemoval = {/*false, true, undefined*/},
 			oBinding = {
+				refresh : function () {},
 				refreshSingle : function () {}
 			},
 			oGroupLock = {},
@@ -873,29 +874,41 @@ sap.ui.define([
 				checkGroupId : function () {},
 				lockGroup : function () {}
 			},
-			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42),
-			oPromise = Promise.resolve();
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
 
 		this.mock(oModel).expects("checkGroupId");
 		this.mock(oModel).expects("lockGroup").withExactArgs("myGroup", true, oContext)
 			.returns(oGroupLock);
+		this.mock(oBinding).expects("refresh").never();
 		this.mock(oBinding).expects("refreshSingle")
 			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock),
-				sinon.match.same(bAllowRemoval))
-			.returns(oPromise);
+				sinon.match.same(bAllowRemoval));
 
 		// code under test
 		oContext.refresh("myGroup", bAllowRemoval);
-
-		return oPromise;
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refresh, error, no list binding", function (assert) {
+	QUnit.test("refresh, context binding", function (assert) {
+		var oBinding = {
+				refresh : function () {}
+			},
+			oModel = {
+				checkGroupId : function () {}
+			},
+			oContext =  Context.create(oModel, oBinding, "/EMPLOYEES('42')");
+
+		this.mock(oModel).expects("checkGroupId").never();
+		this.mock(oBinding).expects("refresh").withExactArgs("myGroup");
+
+		// code under test
+		oContext.refresh("myGroup");
+
 		assert.throws(function () {
 			// code under test
-			Context.create({}, {}, "/EMPLOYEES/42").refresh();
-		}, new Error("Refresh is only supported for contexts of a list binding"));
+			oContext.refresh("myGroup", false);
+		}, new Error("Must not call refresh on a context belonging to a context binding with "
+			+ "parameter bAllowRemoval"));
 	});
 
 	//*********************************************************************************************
