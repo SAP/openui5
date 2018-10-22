@@ -4,50 +4,8 @@
 
 // Provides control sap.m.P13nColumnsPanel.
 sap.ui.define([
-	'sap/ui/core/library',
-	'sap/ui/model/ChangeReason',
-	'sap/ui/model/json/JSONModel',
-	'sap/ui/model/BindingMode',
-	'sap/ui/core/ResizeHandler',
-	'sap/ui/core/IconPool',
-	'./library',
-	'./Table',
-	'./Column',
-	'./ColumnListItem',
-	'./P13nPanel',
-	'./P13nColumnsItem',
-	'./SearchField',
-	'./ScrollContainer',
-	'./Text',
-	'./Button',
-	'./OverflowToolbar',
-	'./OverflowToolbarLayoutData',
-	'./OverflowToolbarButton',
-	'./ToolbarSpacer',
-	"sap/ui/thirdparty/jquery"
-], function(
-	CoreLibrary,
-	ChangeReason,
-	JSONModel,
-	BindingMode,
-	ResizeHandler,
-	IconPool,
-	library,
-	Table,
-	Column,
-	ColumnListItem,
-	P13nPanel,
-	P13nColumnsItem,
-	SearchField,
-	ScrollContainer,
-	Text,
-	Button,
-	OverflowToolbar,
-	OverflowToolbarLayoutData,
-	OverflowToolbarButton,
-	ToolbarSpacer,
-	jQuery
-) {
+	'sap/ui/core/library', 'sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/model/BindingMode', 'sap/ui/core/ResizeHandler', 'sap/ui/core/IconPool', './library', './Table', './Column', './ColumnListItem', './P13nPanel', './P13nColumnsItem', './SearchField', './ScrollContainer', './Text', './Button', './OverflowToolbar', './OverflowToolbarLayoutData', './OverflowToolbarButton', './ToolbarSpacer', "sap/ui/thirdparty/jquery"
+], function(CoreLibrary, ChangeReason, JSONModel, BindingMode, ResizeHandler, IconPool, library, Table, Column, ColumnListItem, P13nPanel, P13nColumnsItem, SearchField, ScrollContainer, Text, Button, OverflowToolbar, OverflowToolbarLayoutData, OverflowToolbarButton, ToolbarSpacer, jQuery) {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
@@ -801,6 +759,10 @@ sap.ui.define([
 	};
 
 	P13nColumnsPanel.prototype._sortModelItemsByPersistentIndex = function(aModelItems) {
+		// BCP 0020751295 0000514259 2018
+		aModelItems.forEach(function(oMItem, iIndex) {
+			oMItem.localIndex = iIndex;
+		});
 		aModelItems.sort(function(a, b) {
 			if (a.persistentSelected === true && (b.persistentSelected === false || b.persistentSelected === undefined)) {
 				return -1;
@@ -812,7 +774,7 @@ sap.ui.define([
 				} else if (b.persistentIndex > -1 && a.persistentIndex > b.persistentIndex) {
 					return 1;
 				} else {
-					return 0;
+					return a.localIndex - b.localIndex;
 				}
 			} else if ((a.persistentSelected === false || a.persistentSelected === undefined) && (b.persistentSelected === false || b.persistentSelected === undefined)) {
 				if (a.text < b.text) {
@@ -820,9 +782,12 @@ sap.ui.define([
 				} else if (a.text > b.text) {
 					return 1;
 				} else {
-					return 0;
+					return a.localIndex - b.localIndex;
 				}
 			}
+		});
+		aModelItems.forEach(function(oMItem) {
+			delete oMItem.localIndex;
 		});
 	};
 
