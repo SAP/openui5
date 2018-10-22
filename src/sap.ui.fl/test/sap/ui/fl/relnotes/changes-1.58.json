@@ -127,8 +127,15 @@
       }
     ]
   },
-  "1.58.4": {
+  "1.58.5": {
     "date": "October 2018",
-    "notes": []
+    "notes": [
+      {
+        "id": "a719c645f5a317a1e79e3e1956e8bab6b16a94b9",
+        "type": "FIX",
+        "text": " sap.ui.fl.FlexController: On control re-creation, initial dependencies from change persistence map are not copied for failing changes",
+        "references": []
+      }
+    ]
   }
 }

@@ -114,5 +114,16 @@
         "references": []
       }
     ]
+  },
+  "1.58.5": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "ea94193c38dda40c9ea9e985159a56cc8be3fe3e",
+        "type": "FIX",
+        "text": " Table: Update the scroll position when setting firstVisibleRow",
+        "references": []
+      }
+    ]
   }
 }

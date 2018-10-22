@@ -133,5 +133,22 @@
         "references": []
       }
     ]
+  },
+  "1.58.5": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "cec4ea742360b560cc6ffee66a808fc0a91842de",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Fixed tab focusable state",
+        "references": []
+      },
+      {
+        "id": "c8c4080900f73a20df1f3fb39aabdcc4cd9fe040",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected content height calculation",
+        "references": []
+      }
+    ]
   }
 }

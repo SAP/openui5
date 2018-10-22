@@ -671,5 +671,22 @@
         "references": []
       }
     ]
+  },
+  "1.58.5": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "816deea98c87aa26ec947270476af6c06c343eeb",
+        "type": "FIX",
+        "text": " ODataUtils: Use gregorian calendar for filter values",
+        "references": []
+      },
+      {
+        "id": "a4f05a263a987c8317ae90e78cb6e620d7e3d491",
+        "type": "FIX",
+        "text": " performance/trace/Interaction: bind context for XHR handler",
+        "references": []
+      }
+    ]
   }
 }

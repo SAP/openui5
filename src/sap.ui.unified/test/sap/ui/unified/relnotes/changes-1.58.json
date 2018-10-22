@@ -150,5 +150,16 @@
         "references": []
       }
     ]
+  },
+  "1.58.5": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "27293da9f3ad3ea8e2e451d84e271c590cd82de8",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarTimeInterval: navigates to the correct date",
+        "references": []
+      }
+    ]
   }
 }

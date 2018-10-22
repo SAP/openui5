@@ -1385,5 +1385,28 @@
         "references": []
       }
     ]
+  },
+  "1.58.5": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "7807e08449e1bb9fcb596cbde7ca45e33abbbf40",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: now implements getAccessibilityInfo function",
+        "references": []
+      },
+      {
+        "id": "996a1444c18f69793bc630683b29279a6fbcbc17",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: shows selectAll checkBox at the correct position",
+        "references": []
+      },
+      {
+        "id": "443a6cc91e675f3f5d43badcb6fac280a2f88beb",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Now the floating numbers are correctly calculated",
+        "references": []
+      }
+    ]
   }
 }
