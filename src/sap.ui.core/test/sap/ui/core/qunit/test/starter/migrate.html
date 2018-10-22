@@ -396,7 +396,7 @@
 		<script id="sap-ui-bootstrap"
 				src="resources/sap-ui-boot.js"
 				data-sap-ui-main="sap/ui/test/starter/list-tests"
-				data-sap-ui-suite="${suitePageInfo.resourceName}"></${script}>
+				data-sap-ui-testsuite="${suitePageInfo.resourceName}"></${script}>
 	</head>
 	<body>
 	</body>
@@ -484,7 +484,7 @@
 				// check for an existing test page and check for test suite or page
 				jQuery.get(sTestPage).done(function(sData) {
 					if (/(?:window\.suite\s*=|function\s*suite\s*\(\s*\)\s*{)/.test(sData)
-							|| (/data-sap-ui-suite/.test(sData) && !/sap\/ui\/test\/starter\/run-test/.test(sData)) ) {
+							|| (/data-sap-ui-testsuite/.test(sData) && !/sap\/ui\/test\/starter\/run-test/.test(sData)) ) {
 
 						// console.log("execute page ", sTestPage);
 						var $frame = jQuery("<iframe>");
@@ -592,9 +592,6 @@
 							content: [
 								new FixFlex({
 									fixContent: [
-										new Label({
-											text: window.location.origin
-										}),
 										new Input({
 											id: "testPage",
 											type:"Text",
@@ -667,9 +664,9 @@
 		createUI().then( () => {
 
 			let input = sap.ui.getCore().byId("testPage");
-			let sTestPage = sap.ui.qunit.TestRunner.getUrlParameter("testpage");
+			let sTestPage = sap.ui.qunit.TestRunner.getTestPageUrl(/* fallback URL = */ "");
 
-			input.setValue(sTestPage || "");
+			input.setValue(sTestPage);
 
 			if (sTestPage && sap.ui.qunit.TestRunner.getAutoStart()) {
 				input.setEnabled(false);
