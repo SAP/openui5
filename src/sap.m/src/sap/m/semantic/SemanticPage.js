@@ -273,6 +273,7 @@ function(
 				 */
 				navButtonPress: {}
 			},
+			dnd: { draggable: false, droppable: true },
 			designtime: "sap/m/designtime/semantic/SemanticPage.designtime"
 		}
 	});

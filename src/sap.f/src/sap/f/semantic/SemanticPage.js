@@ -441,6 +441,7 @@ sap.ui.define([
 				*/
 				_dynamicPage: {type: "sap.f.DynamicPage", multiple: false, visibility: "hidden"}
 			},
+			dnd: { draggable: false, droppable: true },
 			designtime : "sap/f/designtime/SemanticPage.designtime"
 		}
 	});

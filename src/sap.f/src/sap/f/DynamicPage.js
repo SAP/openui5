@@ -213,6 +213,7 @@ sap.ui.define([
 				 */
 				_scrollBar: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
 			},
+			dnd: { draggable: false, droppable: true },
 			designtime: "sap/f/designtime/DynamicPage.designtime"
 		}
 	});
