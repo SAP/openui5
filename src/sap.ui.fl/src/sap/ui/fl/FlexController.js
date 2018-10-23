@@ -649,7 +649,9 @@ sap.ui.define([
 					// the newly rendered control could have custom data set from the XML modifier
 					oControl = oInitializedControl;
 				}
-				if (!bRevertible && oSettings && oSettings._oSettings.recordUndo && oRtaControlTreeModifier){
+				if (bRevertible) {
+					this._addRevertDataToCustomData(oControl, oChange, mPropertyBag);
+				} else if (oSettings && oSettings._oSettings.recordUndo && oRtaControlTreeModifier) {
 					oChange.setUndoOperations(oRtaControlTreeModifier.stopRecordingUndo());
 				}
 				this._addChangeIdToCustomData(oControl, oChange.getId(), mPropertyBag, FlexController.appliedChangesCustomDataKey);
@@ -675,6 +677,35 @@ sap.ui.define([
 			}.bind(this));
 		}
 		return new Utils.FakePromise({success: true});
+	};
+
+	FlexController.prototype._getCustomDataRevertKey = function(oChange) {
+		return FlexController.appliedChangesCustomDataKey + "." + oChange.getId() + ".revertData";
+	};
+
+	FlexController.prototype._escapeCurlyBracketsInString = function(sText) {
+		return sText.replace(/{/g, '\\\{').replace(/}/g, '\\\}');
+	};
+
+	FlexController.prototype._addRevertDataToCustomData = function(oControl, oChange, mPropertyBag) {
+		var oModifier = mPropertyBag.modifier;
+		var sCustomDataKey = this._getCustomDataRevertKey(oChange);
+		// '{' and '}' have to be escaped in order to correctly create the custom data from the view cache. Same effect as unbindProperty during runtime
+		var sCustomDataValue = this._escapeCurlyBracketsInString(JSON.stringify(oChange.getRevertData()));
+		var mCustomData = this._getCustomData(oControl, oModifier, sCustomDataKey);
+
+		if (!mCustomData.customData) {
+			mCustomData.customData = this._createCustomDataControl(oControl, mPropertyBag, sCustomDataKey);
+		}
+
+		oModifier.setProperty(mCustomData.customData, "value", sCustomDataValue);
+	};
+
+	FlexController.prototype._destroyRevertCustomData = function(oControl, sKey, oModifier) {
+		var mCustomData = this._getCustomData(oControl, oModifier, sKey);
+		if (mCustomData.customData) {
+			oModifier.destroy(mCustomData.customData);
+		}
 	};
 
 	FlexController.prototype._getCustomDataKey = function(bError, bXmlModifier) {
@@ -725,6 +756,11 @@ sap.ui.define([
 		// so we have to assume that it is stashed so we can perform the revert
 		if (oChange.getChangeType() === "stashControl" && sControlType === "sap.ui.core._StashedControl"){
 			bStashed = true;
+
+			// if we want to revert we also have to fake the revertData when it is not available
+			if (bRevert && !oChange.getRevertData()) {
+				oChangeHandler.setChangeRevertData(oChange, false);
+			}
 		}
 
 		var sChangeId = oChange.getId();
@@ -752,13 +788,21 @@ sap.ui.define([
 				bRevert && (bPending || (!bPending && iIndex > -1)) ||
 				bRevert && bStashed
 			) {
+				// if the change has no revertData attached to it they may be saved in the custom data
+				if (!oChange.getRevertData()) {
+					var sCustomDataRevertKey = this._getCustomDataRevertKey(oChange);
+					var mCustomData = this._getCustomData(oControl, oModifier, sCustomDataRevertKey);
+					oChange.setRevertData(mCustomData.customDataValue && JSON.parse(mCustomData.customDataValue));
+					this._destroyRevertCustomData(oControl, sCustomDataRevertKey, mPropertyBag.modifier);
+				}
+
 				var oResponse = oChangeHandler.revertChange(oChange, mControl.control, mPropertyBag);
 				if (mControl.bTemplateAffected) {
 					oModifier.updateAggregation(oControl, oChange.getContent().boundAggregation);
 				}
 				return oResponse;
 			}
-		})
+		}.bind(this))
 
 		.then(function() {
 			// After being unstashed the relevant control for the change is no longer sap.ui.core._StashedControl,
