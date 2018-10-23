@@ -332,7 +332,8 @@ sap.ui.define([
 			},
 			"Designtime-VerticalLayout": {
 				group: "Designtime",
-				module: "./designtime/VerticalLayout.qunit"
+				module: "./designtime/VerticalLayout.qunit",
+				sinon: false
 			},
 			"Designtime-HorizontalLayout": {
 				group: "Designtime",
