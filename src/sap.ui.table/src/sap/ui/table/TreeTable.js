@@ -5,6 +5,7 @@
 // Provides control sap.ui.table.TreeTable.
 sap.ui.define([
 	'./Table',
+	"./TableRenderer",
 	'sap/ui/model/ClientTreeBindingAdapter',
 	'sap/ui/model/TreeBindingCompatibilityAdapter',
 	'./library',
@@ -15,6 +16,7 @@ sap.ui.define([
 ],
 	function(
 		Table,
+		TableRenderer,
 		ClientTreeBindingAdapter,
 		TreeBindingCompatibilityAdapter,
 		library,
