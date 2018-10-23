@@ -372,10 +372,9 @@ sap.ui.define([
 		 */
 		ColorPalette.prototype._createMoreColorsDialog = function () {
 			var oDialog = new Dialog(this.getId() + "-moreColorsDialog", {
-				contentWidth: Device.system.phone ? "" : "29rem", /* magic number, otherwise ColorPicker gets to much of height*/
 				stretch: !!Device.system.phone,
 				title: oLibraryResourceBundle.getText("COLOR_PALETTE_MORE_COLORS_TITLE")
-			});
+			}).addStyleClass("CPDialog");
 
 			this._ensureUnifiedLibrary();
 

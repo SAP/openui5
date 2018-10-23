@@ -345,7 +345,6 @@
 					// Assert
 					assert.ok(oDialog, "..returns an object");
 					assert.equal(oDialog.getMetadata().getName(), "sap.m.Dialog", "..of type sap.m.Dialog");
-					assert.equal(oDialog.getContentWidth(), "29rem", "..with certain contentWidth");
 					assert.equal(oDialog.getStretch(), false, ".. with no stretch");
 
 					assert.ok(oDialog.getBeginButton(), "..and with begin button");
@@ -736,7 +735,7 @@
 							var oCP = new ColorPalette(),
 								oSpyFireEvent,
 								oSpyPreventDefault = this.spy();
-								
+
 							this.stub(ColorPalette.prototype._ItemNavigation.prototype, "setItemDomRefs", function () {});
 							oCP._ensureItemNavigation();
 							oCP._oItemNavigation.oDomRef = document.getElementsByClassName("sapUiBody")[0];
@@ -747,7 +746,7 @@
 							this.stub(oCP._oItemNavigation, "getItemDomRefs").returns(new Array(oCP.getColors().length));
 
 							// Act
-							
+
 							oCP._oItemNavigation.onsapprevious(oMockEvent);
 
 							// Assert
