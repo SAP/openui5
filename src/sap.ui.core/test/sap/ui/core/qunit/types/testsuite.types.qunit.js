@@ -71,10 +71,6 @@ sap.ui.define(function () {
 				page: "test-resources/sap/ui/core/qunit/odata/type/Double.qunit.html",
 				title: "QUnit Page for sap/ui/model/odata/type/Double"
 			},
-			Double: {
-				page: "test-resources/sap/ui/core/qunit/odata/type/Double.qunit.html",
-				title: "QUnit Page for sap/ui/model/odata/type/Double"
-			},
 			Guid: {
 				page: "test-resources/sap/ui/core/qunit/odata/type/Guid.qunit.html",
 				title: "QUnit Page for sap/ui/model/odata/type/Guid"
