@@ -757,6 +757,7 @@
 			"sap.m.sample.ObjectHeaderCondensed",
 			"sap.m.sample.ObjectHeaderFavFlag",
 			"sap.m.sample.ObjectHeaderImage",
+			"sap.m.sample.ObjectHeaderCircleImage",
 			"sap.m.sample.ObjectHeaderTitleActive",
 			"sap.m.sample.ObjectHeaderTitleSel",
 			"sap.m.sample.ObjectHeaderResponsiveI",
@@ -1878,6 +1879,11 @@
 		  "id": "sap.m.sample.ObjectHeaderImage",
 		  "name": "Object Header - With Image",
 		  "description": "An Object Header will also make space for an image if one is specified, via a URL for the 'icon' property."
+		},
+		{
+		  "id": "sap.m.sample.ObjectHeaderCircleImage",
+		  "name": "Object Header - With Circle-shaped Image",
+		  "description": "An Object Header can set shape of the image by using 'imageShape' property. The shapes could be Square (by default) and Circle"
 		},
 		{
 		  "id": "sap.m.sample.ObjectHeaderFavFlag",
