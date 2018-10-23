@@ -293,6 +293,7 @@ sap.ui.define([
             var oContent = new ComponentContainer({
                 name: sValue,
                 async: true,
+                propagateModel: true,
                 settings: {
                     verticalSize: this.getVerticalSize(),
                     horizontalSize: this.getHorizontalSize()
