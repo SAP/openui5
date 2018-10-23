@@ -16,9 +16,6 @@ sap.ui.define([
 	function (Control, LocaleData, Locale, DateFormat, UniversalDate, unifiedLibrary, DatesRow, OnePersonGridRenderer) {
 		"use strict";
 
-		// shortcut for sap.ui.unified.CalendarAppointmentVisualization
-		var CalendarAppointmentVisualization = unifiedLibrary.CalendarAppointmentVisualization;
-
 		var ROW_HEIGHT = 48,
 			BLOCKER_ROW_HEIGHT = 25, // 1
 			HALF_HOUR = 3600000 / 2,
@@ -51,9 +48,7 @@ sap.ui.define([
 					startDate: {type: "object", group: "Data"},
 					startHour: {type: "int", group: "Appearance", defaultValue: 8},
 					endHour: {type: "int", group: "Appearance", defaultValue: 17},
-					showFullDay: {type: "boolean", group: "Appearance", defaultValue: true},
-					appointmentsVisualization : {type : "sap.ui.unified.CalendarAppointmentVisualization", group : "Appearance", defaultValue : CalendarAppointmentVisualization.Standard}
-
+					showFullDay: {type: "boolean", group: "Appearance", defaultValue: true}
 				},
 				aggregations: {
 					appointments: {type: "sap.ui.unified.CalendarAppointment", multiple: true, singularName: "appointment"},
@@ -604,6 +599,10 @@ sap.ui.define([
 			}
 
 			return this._oAMPMFormat;
+		};
+
+		OnePersonGrid.prototype._getColumnHeaders = function () {
+			return this.getAggregation("_columnHeaders");
 		};
 
 		// Appointments Node

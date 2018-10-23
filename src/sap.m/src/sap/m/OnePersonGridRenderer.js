@@ -9,9 +9,6 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 		// shortcut for sap.ui.unified.CalendarDayType
 		var CalendarDayType = unifiedLibrary.CalendarDayType;
 
-		// shortcut for sap.ui.unified.CalendarAppointmentVisualization
-		var CalendarAppointmentVisualization = unifiedLibrary.CalendarAppointmentVisualization;
-
 		/**
 		 * OnePersonGrid renderer.
 		 * @namespace
@@ -97,10 +94,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 
 			oRm.write("<div");
 			oRm.addClass("sapMOnePersonBlockers");
-
-			if (oControl.getAppointmentsVisualization() === CalendarAppointmentVisualization.Filled) {
-				oRm.addClass("sapUiCalendarRowVisFilled"); // TODO: when refactor the CSS of appointments maybe we won't need this class
-			}
+			oRm.addClass("sapUiCalendarRowVisFilled"); // TODO: when refactor the CSS of appointments maybe we won't need this class
 
 			oRm.writeClasses();
 			oRm.write(">");
@@ -118,7 +112,6 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 				iStartDayDiff = oControl._calculateDaysDifference(iGridStart, iBlockerStart),
 				iEndDayDiff = oControl._calculateDaysDifference(iGridStart, iBlockerEnd),
 				iColumns = oControl._getColumns(),
-				bFilled = oControl.getAppointmentsVisualization() === CalendarAppointmentVisualization.Filled,
 				iRowHeight = oControl._getBlockerRowHeight(),
 				iBlockerLevel = oBlockerNode.level,
 				iBlockerWidth = oBlockerNode.width,
@@ -165,9 +158,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 			}
 			oRm.writeAccessibilityState(oBlocker, mAccProps);
 			oRm.addClass("sapMOnePersonAppointmentWrap");
-			if (bFilled) {
-				oRm.addClass("sapUiCalendarRowApps"); // TODO: when refactor the CSS of appointments maybe we won't need this class
-			}
+			oRm.addClass("sapUiCalendarRowApps"); // TODO: when refactor the CSS of appointments maybe we won't need this class
 			oRm.addStyle("top", iRowHeight * iBlockerLevel + 1 + "px"); // Adding 1px to render all of the blockers 1px below in order to have space on top of them.
 			oRm.addStyle(bIsRTL ? "right" : "left", Math.max(iLeftPosition, 0) + "%");
 			oRm.addStyle(bIsRTL ? "left" : "right", Math.max(iRightPosition, 0) + "%");
@@ -202,7 +193,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 			oRm.write("<div");
 			oRm.addClass("sapUiCalendarAppCont");
 
-			if (sColor && bFilled) {
+			if (sColor) {
 				oRm.addStyle("background-color", oBlocker._getCSSColorForBackground(sColor));
 				oRm.writeStyles();
 			}
@@ -347,10 +338,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 			if (oAppointmentsByDate) {
 				oRm.write("<div");
 				oRm.addClass("sapMOnePersonAppointments");
-
-				if (oControl.getAppointmentsVisualization() === CalendarAppointmentVisualization.Filled) {
-					oRm.addClass("sapUiCalendarRowVisFilled"); // TODO: when refactor the CSS of appointments maybe we won't need this class
-				}
+				oRm.addClass("sapUiCalendarRowVisFilled"); // TODO: when refactor the CSS of appointments maybe we won't need this class
 
 				oRm.writeClasses();
 				oRm.write(">");
@@ -367,8 +355,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 		};
 
 		OnePersonGridRenderer.renderAppointment = function(oRm, oControl, iMaxLevel, iAppointmentLevel, iAppointmentWidth, oAppointment, oColumnDate) {
-			var bFilled = oControl.getAppointmentsVisualization() === CalendarAppointmentVisualization.Filled,
-				iRowHeight = oControl._getRowHeight(),
+			var iRowHeight = oControl._getRowHeight(),
 				oColumnStartDateAndHour = new UniversalDate(oColumnDate.getFullYear(), oColumnDate.getMonth(), oColumnDate.getDate(), oControl._getVisibleStartHour()),
 				oColumnEndDateAndHour = new UniversalDate(oColumnDate.getFullYear(), oColumnDate.getMonth(), oColumnDate.getDate(), oControl._getVisibleEndHour(), 59, 59),
 				oAppStartDate = oAppointment.getStartDate(),
@@ -417,9 +404,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 			}
 			oRm.writeAccessibilityState(oAppointment, mAccProps);
 			oRm.addClass("sapMOnePersonAppointmentWrap");
-			if (bFilled) {
-				 oRm.addClass("sapUiCalendarRowApps"); // TODO: when refactor the CSS of appointments maybe we won't need this class
-			}
+			oRm.addClass("sapUiCalendarRowApps"); // TODO: when refactor the CSS of appointments maybe we won't need this class
 			oRm.addStyle("top", iAppTop + "px");
 			oRm.addStyle("bottom", iAppBottom + "px");
 			oRm.addStyle(sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left", iAppChunkWidth * iAppointmentLevel + "%");
@@ -486,7 +471,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 			oRm.write("<div");
 			oRm.addClass("sapUiCalendarAppCont");
 
-			if (sColor && bFilled) {
+			if (sColor) {
 				oRm.addStyle("background-color", oAppointment._getCSSColorForBackground(sColor));
 				oRm.writeStyles();
 			}
