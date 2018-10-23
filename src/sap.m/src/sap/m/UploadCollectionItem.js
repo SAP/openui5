@@ -467,7 +467,7 @@ sap.ui.define([
 
 		oRm.write("</div>");
 		this._renderButtons(oRm);
-		oRm.flush(this.getParent().$().find("#" + sContainerId)[0], true, false);
+		oRm.flush(document.getElementById(sContainerId), true, false);
 		this._truncateFileName();
 	};
 
