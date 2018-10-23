@@ -42,7 +42,7 @@ sap.ui.require([
 						id : "SalesOrders",
 						success : function (oTable) {
 							var oControl = oTable.getItems()[iRow].getCells()[0];
-							oControl.$().tap();
+							new Press().executeOn(oControl);
 							Opa5.assert.ok(true, "selectSalesOrder(" + iRow + ")");
 						},
 						viewName : sViewName

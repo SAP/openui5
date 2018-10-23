@@ -26,7 +26,7 @@ sap.ui.require([
 						controlType : "sap.m.Text",
 						id : /--Employee_ID/,
 						success : function (aControls) {
-							aControls[0].$().tap();
+							new Press().executeOn(aControls[0]);
 							Opa5.assert.ok(true, "First Employee selected");
 						},
 						viewName : sViewName

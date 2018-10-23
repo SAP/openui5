@@ -49,7 +49,7 @@ sap.ui.require([
 			controlType : "sap.m.Dialog",
 			matchers : new Properties({title : sTitle}),
 			success : function (aControls) {
-				aControls[0].getButtons()[bConfirm ? 0 : 1].$().tap();
+				new Press().executeOn(aControls[0].getButtons()[bConfirm ? 0 : 1]);
 				Opa5.assert.ok(true, sLog || (bConfirm ? 'Confirm ' : 'Cancel ') + sTitle);
 			}
 		});
@@ -62,7 +62,7 @@ sap.ui.require([
 			success : function (oTable) {
 				var oItem = oTable.getItems()[iIndex],
 					oControl = oItem.getCells()[ID_COLUMN_INDEX];
-				oControl.$().tap();
+				new Press().executeOn(oControl);
 				Opa5.assert.ok(true, "Sales Order selected: " +
 					oControl.getText());
 				if (bRememberGrossAmount) {
@@ -645,7 +645,7 @@ sap.ui.require([
 						id : /--SalesOrderLineItems-/,
 						matchers : new Properties({text: sPosition}),
 						success : function (aControls) {
-							aControls[0].$().tap();
+							new Press().executeOn(aControls[0]);
 							Opa5.assert.ok(true, "Sales Order Item selected: " + sPosition);
 						},
 						viewName : sViewName
@@ -657,7 +657,7 @@ sap.ui.require([
 						id : /--SalesOrders_ID-/,
 						matchers : new Properties({text: sSalesOrderId}),
 						success : function (aControls) {
-							aControls[0].$().tap();
+							new Press().executeOn(aControls[0]);
 							Opa5.assert.ok(true, "Sales Order selected: " + sSalesOrderId);
 						},
 						viewName : sViewName
@@ -1143,7 +1143,7 @@ sap.ui.require([
 						controlType : "sap.m.Dialog",
 						matchers : new Properties({title : "Sales Order Deletion"}),
 						success : function (aControls) {
-							aControls[0].getButtons()[0].$().tap(); // confirm deletion
+							new Press().executeOn(aControls[0].getButtons()[0]); // confirm deletion
 							Opa5.assert.ok(true, "Confirm Delete Sales Order");
 						}
 					});
@@ -1164,7 +1164,7 @@ sap.ui.require([
 						controlType : "sap.m.Dialog",
 						matchers : new Properties({title : "Sales Order Line Item Deletion"}),
 						success : function (aControls) {
-							aControls[0].getButtons()[0].$().tap(); // confirm deletion
+							new Press().executeOn(aControls[0].getButtons()[0]); // confirm deletion
 							Opa5.assert.ok(true, "Confirm Delete Sales Line Item Order");
 						}
 					});
