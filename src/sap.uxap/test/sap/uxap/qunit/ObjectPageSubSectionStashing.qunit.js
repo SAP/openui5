@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/StashedControlSupport",
 	"sap/uxap/ObjectPageLazyLoader"],
-function (controller, xmlview, Core, StashedSupport, ObjectPageLazyLoader) {
+function (controller, XMLView, Core, StashedSupport, ObjectPageLazyLoader) {
 	"use strict";
 
 	controller.create({ name: "viewController" });
@@ -14,7 +14,7 @@ function (controller, xmlview, Core, StashedSupport, ObjectPageLazyLoader) {
 	QUnit.module("Stashing Tests", {
 		beforeEach: function (assert) {
 			var done = assert.async();
-			xmlview.create({
+			XMLView.create({
 				id: "UxAP-12-ObjectPageSubSectionStashing",
 				viewName: "view.UxAP-12-ObjectPageSubSectionStashing"
 			}).then(function (oView) {

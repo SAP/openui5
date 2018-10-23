@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/m/Panel",
 	"sap/m/Button",
-	"sap/f/DynamicPageAccessibleLandmarkInfo"
+	"sap/f/DynamicPageAccessibleLandmarkInfo",
+	"sap/ui/core/mvc/XMLView"
 ],
 function (
 	$,
@@ -29,7 +30,8 @@ function (
 	Link,
 	Panel,
 	Button,
-	DynamicPageAccessibleLandmarkInfo
+	DynamicPageAccessibleLandmarkInfo,
+	XMLView
 ) {
 	"use strict";
 
@@ -3233,7 +3235,7 @@ function (
 	});
 
 	QUnit.module("Title responsiveness", {
-		beforeEach: function() {
+		beforeEach: function(assert) {
 
 			var oXmlString = [
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.uxap" xmlns:m="sap.m" xmlns:f="sap.f" displayBlock="true" height="100%">',
@@ -3293,30 +3295,36 @@ function (
 				'</mvc:View>'
 			].join('');
 
-			var Comp = UIComponent.extend("test"	, {
-				metadata: {
-					manifest : {
-						"sap.app": {
-							"id": "test",
-							"type": "application"
+			var Comp,
+				done = assert.async();
+
+			XMLView.create({
+				id: "comp---view",
+				definition: oXmlString
+			}).then(function (oView) {
+				Comp = UIComponent.extend("test", {
+					metadata: {
+						manifest : {
+							"sap.app": {
+								"id": "test",
+								"type": "application"
+							}
 						}
+					},
+					createContent : function() {
+						return oView;
 					}
-				},
-				createContent : function() {
-					return sap.ui.xmlview({
-						id : this.createId("view"),
-						viewContent : oXmlString
-					});
-				}
-			});
+				});
 
-			this.oUiComponent = new Comp("comp");
-			this.oUiComponentContainer = new ComponentContainer({
-				component : this.oUiComponent
-			});
+				this.oUiComponent = new Comp("comp");
+				this.oUiComponentContainer = new ComponentContainer({
+					component : this.oUiComponent
+				});
 
-			this.oUiComponentContainer.placeAt(TESTS_DOM_CONTAINER);
-			Core.applyChanges();
+				this.oUiComponentContainer.placeAt(TESTS_DOM_CONTAINER);
+				Core.applyChanges();
+				done();
+			}.bind(this));
 		},
 
 		afterEach: function() {
@@ -3354,7 +3362,7 @@ function (
 	});
 
 	QUnit.module("Title responsiveness shrink factors", {
-		beforeEach: function() {
+		beforeEach: function(assert) {
 
 			var oXmlString = [
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.uxap" xmlns:m="sap.m" xmlns:f="sap.f" displayBlock="true" height="100%">',
@@ -3414,32 +3422,37 @@ function (
 				'</mvc:View>'
 			].join('');
 
-			var Comp = UIComponent.extend("test"	, {
-				metadata: {
-					manifest : {
-						"sap.app": {
-							"id": "test",
-							"type": "application"
+			var Comp,
+				done = assert.async();
+
+			XMLView.create({
+				id: "comp---view",
+				definition: oXmlString
+			}).then(function (oView) {
+				Comp = UIComponent.extend("test", {
+					metadata: {
+						manifest : {
+							"sap.app": {
+								"id": "test",
+								"type": "application"
+							}
 						}
+					},
+					createContent : function() {
+						return oView;
 					}
-				},
-				createContent : function() {
-					return sap.ui.xmlview({
-						id : this.createId("view"),
-						viewContent : oXmlString
-					});
-				}
-			});
+				});
 
-			this.oUiComponent = new Comp("comp");
-			this.oUiComponentContainer = new ComponentContainer({
-				component : this.oUiComponent
-			});
+				this.oUiComponent = new Comp("comp");
+				this.oUiComponentContainer = new ComponentContainer({
+					component : this.oUiComponent
+				});
 
-			this.oUiComponentContainer.placeAt(TESTS_DOM_CONTAINER);
-			Core.applyChanges();
+				this.oUiComponentContainer.placeAt(TESTS_DOM_CONTAINER);
+				Core.applyChanges();
+				done();
+			}.bind(this));
 		},
-
 		afterEach: function() {
 			this.oUiComponentContainer.destroy();
 		}

@@ -2,15 +2,13 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
-	"sap/ui/model/json/JSONModel"],
-function (Core, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/mvc/XMLView"],
+function (Core, JSONModel, XMLView) {
 	"use strict";
 
 	// global vars
-	var	controller = sap.ui.controller,
-		xmlview = sap.ui.xmlview,
-		oController = controller("viewController", {}),
-		oConfigModel = new JSONModel(),
+	var	oConfigModel = new JSONModel(),
 		iLoadingDelay = 2500;
 
 	oConfigModel.loadData("test-resources/sap/uxap/qunit/model/OPLazyLoadingWithTabs.json", {}, false);
@@ -91,17 +89,22 @@ function (Core, JSONModel) {
 
 	QUnit.module("ObjectPage with tabs - lazy loading", {
 		beforeEach: function (assert) {
-			this.oView = xmlview("UxAP-27_ObjectPageConfig", {
-				viewName: "view.UxAP-27_ObjectPageConfig",
-				controller: oController
-			});
+			var done = assert.async();
 			this.clock = sinon.useFakeTimers();
-			this.oView.setModel(oConfigModel, "objectPageLayoutMetadata");
-			this.oView.placeAt("qunit-fixture");
-			Core.applyChanges();
+			XMLView.create({
+				id: "UxAP-27_ObjectPageConfig",
+				viewName: "view.UxAP-27_ObjectPageConfig"
+			}).then(function (oView) {
+				this.oView = oView;
+				this.oView.setModel(oConfigModel, "objectPageLayoutMetadata");
+				this.oView.placeAt("qunit-fixture");
+				Core.applyChanges();
+				done();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oView.destroy();
+			this.clock.restore();
 		}
 	});
 

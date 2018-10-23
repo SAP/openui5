@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/core/Core",
 	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/UIComponent"
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/mvc/XMLView"
 ],
 function (
     QUnitReport,
@@ -27,7 +28,8 @@ function (
 	Change,
 	Core,
     ComponentContainer,
-	UIComponent
+	UIComponent,
+	XMLView
 ) {
     "use strict";
 
@@ -547,7 +549,7 @@ function (
 	}
 
 	QUnit.module("Revert Actions on DynamicPageTitle's actions aggregation", {
-		beforeEach: function() {
+		beforeEach: function(assert) {
 
 			var oXmlString = [
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.f" xmlns:m="sap.m">',
@@ -561,30 +563,36 @@ function (
 				'</mvc:View>'
 			].join('');
 
-			var Comp = UIComponent.extend("test", {
-				metadata: {
-					manifest : {
-						"sap.app": {
-							"id": "test",
-							"type": "application"
+			var Comp,
+			done = assert.async();
+
+			XMLView.create({
+				id: "comp---view",
+				definition: oXmlString
+			}).then(function (oView) {
+				Comp = UIComponent.extend("test", {
+					metadata: {
+						manifest : {
+							"sap.app": {
+								"id": "test",
+								"type": "application"
+							}
 						}
+					},
+					createContent : function() {
+						return oView;
 					}
-				},
-				createContent : function() {
-					return sap.ui.xmlview({
-						id : this.createId("view"),
-						viewContent : oXmlString
-					});
-				}
-			});
+				});
 
-			this.oUiComponent = new Comp("comp");
-			this.oUiComponentContainer = new ComponentContainer({
-				component : this.oUiComponent
-			});
+				this.oUiComponent = new Comp("comp");
+				this.oUiComponentContainer = new ComponentContainer({
+					component : this.oUiComponent
+				});
 
-			this.oUiComponentContainer.placeAt("qunit-fixture");
-			Core.applyChanges();
+				this.oUiComponentContainer.placeAt("qunit-fixture");
+				Core.applyChanges();
+				done();
+			}.bind(this));
 		},
 
 		afterEach: function() {
