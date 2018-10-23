@@ -21,7 +21,8 @@ sap.ui.define([
 			'sap.ui.core.sample.odata.v4.SalesOrders',
 			'sap.ui.core.sample.odata.v4.SalesOrdersTemplate',
 			'sap.ui.core.sample.odata.v4.SalesOrderTP100_V2',
-			'sap.ui.core.sample.odata.v4.SalesOrderTP100_V4'
+			'sap.ui.core.sample.odata.v4.SalesOrderTP100_V4',
+			'sap.ui.core.sample.HyphenationAPI' // seems to fail due to WebAssembly trying to allocate memory after test destroyed, BCP: 1880639167
 		]
 	).placeAt('content');
 
