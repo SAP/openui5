@@ -66,119 +66,119 @@ sap.ui.define([
 		intervalSelect: handleIntervalSelect,
 		leaveRow: handleLeaveRow,
 		appointments: [new sap.ui.unified.CalendarAppointment("App0", {
-											startDate: new Date("2015", "01", "01", "08", "15"),
-											endDate: new Date("2015", "01", "01", "08", "20"),
-											type: sap.ui.unified.CalendarDayType.None,
-											title: "Appointment 0",
-											tooltip: "Tooltip 0",
-											text: "Appointment of 5 minutes, 2 hour in past",
-											key: "A0"
-										}),
-										new sap.ui.unified.CalendarAppointment("App1", {
-											startDate: new Date("2015", "01", "01", "11", "15"),
-											endDate: new Date("2015", "01", "01", "13", "15"),
-											type: sap.ui.unified.CalendarDayType.None,
-											title: "Appointment 1",
-											tooltip: "Tooltip 1",
-											text: "Appointment of 2 hours, 1 hour in future",
-											icon: "sap-icon://call",
-											key: "A1"
-										}),
-										new sap.ui.unified.CalendarAppointment("App2", {
-											startDate: new Date("2015", "01", "01", "09", "45"),
-											endDate: new Date("2015", "01", "01", "11", "45"),
-											type: sap.ui.unified.CalendarDayType.Type01,
-											tentative: true,
-											title: "Appointment 2",
-											tooltip: "Tooltip 2",
-											text: "Appointment of 2 hour, 30 minutes in past",
-											key: "A2"
-										}),
-										new sap.ui.unified.CalendarAppointment("App3", {
-											startDate: new Date("2015", "01", "01", "15", "00"),
-											endDate: new Date("2015", "01", "01", "15", "30"),
-											type: sap.ui.unified.CalendarDayType.Type02,
-											title: "Appointment 3",
-											tooltip: "Tooltip 3",
-											text: "Appointment of 30 minutes",
-											key: "A3"
-										}),
-										new sap.ui.unified.CalendarAppointment("App4", {
-											startDate: new Date("2015", "01", "01", "15", "30"),
-											endDate: new Date("2015", "01", "01", "16", "00"),
-											type: sap.ui.unified.CalendarDayType.Type03,
-											title: "Appointment 4",
-											tooltip: "Tooltip 4",
-											text: "Appointment of 30 minutes, starts at end of App3",
-											key: "A4"
-										}),
-										new sap.ui.unified.CalendarAppointment("App5", {
-											startDate: new Date("2015", "01", "02", "10", "30"),
-											endDate: new Date("2015", "01", "02", "11", "00"),
-											type: sap.ui.unified.CalendarDayType.Type04,
-											title: "Appointment 5",
-											tooltip: "Tooltip 5",
-											text: "Appointment of 30 minutes, next day",
-											key: "A5"
-										}),
-										new sap.ui.unified.CalendarAppointment("App6", {
-											startDate: new Date("2015", "01", "02", "0", "0"),
-											endDate: new Date("2015", "01", "02", "23", "59", "59"),
-											type: sap.ui.unified.CalendarDayType.Type05,
-											title: "Appointment 6",
-											tooltip: "Tooltip 6",
-											text: "Appointment of full next day",
-											key: "A6"
-										}),
-										new sap.ui.unified.CalendarAppointment("App7", {
-											startDate: new Date("2015", "02", "01", "0", "0"),
-											endDate: new Date("2015", "04", "31", "23", "59", "59"),
-											type: sap.ui.unified.CalendarDayType.Type06,
-											title: "Appointment 7",
-											tooltip: "Tooltip 7",
-											text: "Appointment of full next 2 months",
-											key: "A7"
-										}),
-										new sap.ui.unified.CalendarAppointment("App8", {
-											startDate: new Date("2015", "05", "02", "0", "0"),
-											endDate: new Date("2015", "05", "02", "23", "59", "59"),
-											type: sap.ui.unified.CalendarDayType.Type07,
-											title: "Appointment 8",
-											tooltip: "Tooltip 8",
-											text: "Appointment of one day",
-											key: "A8"
-										})
-									],
+				startDate: new Date("2015", "01", "01", "08", "15"),
+				endDate: new Date("2015", "01", "01", "08", "20"),
+				type: sap.ui.unified.CalendarDayType.None,
+				title: "Appointment 0",
+				tooltip: "Tooltip 0",
+				text: "Appointment of 5 minutes, 2 hour in past",
+				key: "A0"
+			}),
+			new sap.ui.unified.CalendarAppointment("App1", {
+				startDate: new Date("2015", "01", "01", "11", "15"),
+				endDate: new Date("2015", "01", "01", "13", "15"),
+				type: sap.ui.unified.CalendarDayType.None,
+				title: "Appointment 1",
+				tooltip: "Tooltip 1",
+				text: "Appointment of 2 hours, 1 hour in future",
+				icon: "sap-icon://call",
+				key: "A1"
+			}),
+			new sap.ui.unified.CalendarAppointment("App2", {
+				startDate: new Date("2015", "01", "01", "09", "45"),
+				endDate: new Date("2015", "01", "01", "11", "45"),
+				type: sap.ui.unified.CalendarDayType.Type01,
+				tentative: true,
+				title: "Appointment 2",
+				tooltip: "Tooltip 2",
+				text: "Appointment of 2 hour, 30 minutes in past",
+				key: "A2"
+			}),
+			new sap.ui.unified.CalendarAppointment("App3", {
+				startDate: new Date("2015", "01", "01", "15", "00"),
+				endDate: new Date("2015", "01", "01", "15", "30"),
+				type: sap.ui.unified.CalendarDayType.Type02,
+				title: "Appointment 3",
+				tooltip: "Tooltip 3",
+				text: "Appointment of 30 minutes",
+				key: "A3"
+			}),
+			new sap.ui.unified.CalendarAppointment("App4", {
+				startDate: new Date("2015", "01", "01", "15", "30"),
+				endDate: new Date("2015", "01", "01", "16", "00"),
+				type: sap.ui.unified.CalendarDayType.Type03,
+				title: "Appointment 4",
+				tooltip: "Tooltip 4",
+				text: "Appointment of 30 minutes, starts at end of App3",
+				key: "A4"
+			}),
+			new sap.ui.unified.CalendarAppointment("App5", {
+				startDate: new Date("2015", "01", "02", "10", "30"),
+				endDate: new Date("2015", "01", "02", "11", "00"),
+				type: sap.ui.unified.CalendarDayType.Type04,
+				title: "Appointment 5",
+				tooltip: "Tooltip 5",
+				text: "Appointment of 30 minutes, next day",
+				key: "A5"
+			}),
+			new sap.ui.unified.CalendarAppointment("App6", {
+				startDate: new Date("2015", "01", "02", "0", "0"),
+				endDate: new Date("2015", "01", "02", "23", "59", "59"),
+				type: sap.ui.unified.CalendarDayType.Type05,
+				title: "Appointment 6",
+				tooltip: "Tooltip 6",
+				text: "Appointment of full next day",
+				key: "A6"
+			}),
+			new sap.ui.unified.CalendarAppointment("App7", {
+				startDate: new Date("2015", "02", "01", "0", "0"),
+				endDate: new Date("2015", "04", "31", "23", "59", "59"),
+				type: sap.ui.unified.CalendarDayType.Type06,
+				title: "Appointment 7",
+				tooltip: "Tooltip 7",
+				text: "Appointment of full next 2 months",
+				key: "A7"
+			}),
+			new sap.ui.unified.CalendarAppointment("App8", {
+				startDate: new Date("2015", "05", "02", "0", "0"),
+				endDate: new Date("2015", "05", "02", "23", "59", "59"),
+				type: sap.ui.unified.CalendarDayType.Type07,
+				title: "Appointment 8",
+				tooltip: "Tooltip 8",
+				text: "Appointment of one day",
+				key: "A8"
+			})
+		],
 		intervalHeaders: [new sap.ui.unified.CalendarAppointment("IHead1", {
-												startDate: new Date("2015", "01", "01", "12", "00"),
-												endDate: new Date("2015", "01", "01", "13", "00"),
-												type: sap.ui.unified.CalendarDayType.None,
-												title: "Head 1",
-												tooltip: "Tooltip 1",
-												text: "Head of one hour",
-												icon: "sap-icon://sap-ui5",
-												key: "I1"
-											}),
-											new sap.ui.unified.CalendarAppointment("IHead2", {
-												startDate: new Date("2015", "01", "03", "00", "00"),
-												endDate: new Date("2015", "01", "04", "23", "59"),
-												type: sap.ui.unified.CalendarDayType.Type01,
-												title: "Head 2",
-												tooltip: "Tooltip 2",
-												text: "Head of 2 days",
-												key: "I2"
-											}),
-											new sap.ui.unified.CalendarAppointment("IHead3", {
-												startDate: new Date("2015", "02", "01", "00", "00"),
-												endDate: new Date("2015", "02", "31", "23", "59"),
-												type: sap.ui.unified.CalendarDayType.Type02,
-												title: "Head 3",
-												tooltip: "Tooltip 3",
-												text: "Head of 1 month",
-												key: "I3"
-											})
-										]
-		}).placeAt("content");
+				startDate: new Date("2015", "01", "01", "12", "00"),
+				endDate: new Date("2015", "01", "01", "13", "00"),
+				type: sap.ui.unified.CalendarDayType.None,
+				title: "Head 1",
+				tooltip: "Tooltip 1",
+				text: "Head of one hour",
+				icon: "sap-icon://sap-ui5",
+				key: "I1"
+			}),
+			new sap.ui.unified.CalendarAppointment("IHead2", {
+				startDate: new Date("2015", "01", "03", "00", "00"),
+				endDate: new Date("2015", "01", "04", "23", "59"),
+				type: sap.ui.unified.CalendarDayType.Type01,
+				title: "Head 2",
+				tooltip: "Tooltip 2",
+				text: "Head of 2 days",
+				key: "I2"
+			}),
+			new sap.ui.unified.CalendarAppointment("IHead3", {
+				startDate: new Date("2015", "02", "01", "00", "00"),
+				endDate: new Date("2015", "02", "31", "23", "59"),
+				type: sap.ui.unified.CalendarDayType.Type02,
+				title: "Head 3",
+				tooltip: "Tooltip 3",
+				text: "Head of 1 month",
+				key: "I3"
+			})
+		]
+	}).placeAt("content");
 
 	var initializeRow1 = function(){
 		oRow1.setIntervals(12);
@@ -1011,7 +1011,6 @@ sap.ui.define([
 		//arrange and act
 		var fnCustom = this.spy();
 		oRow1._setCustomAppointmentsSorterCallback(fnCustom);
-		oRow1.placeAt('content');
 		sap.ui.getCore().applyChanges();
 
 		//assert
@@ -1049,7 +1048,7 @@ QUnit.module("RTL", {
 						})
 				]
 			});
-			this.oRowRTL.placeAt("content");
+			this.oRowRTL.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
@@ -1132,7 +1131,7 @@ QUnit.module("Accessibility", {
 					key: "app-2"
 				})
 			]
-		}).placeAt('content');
+		}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 	},
 	afterEach: function () {
