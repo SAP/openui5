@@ -397,6 +397,12 @@
         "type": "FIX",
         "text": " v2/ODataListBinding: function import fix list type",
         "references": []
+      },
+      {
+        "id": "6f12cd28e3b7f66e1e79a06dff11a2dff04629a2",
+        "type": "FIX",
+        "text": " routing.History: return Unknown if hashChanged fired without browser involvement",
+        "references": []
       }
     ]
   }

@@ -1021,6 +1021,24 @@
         "type": "FIX",
         "text": "sap.m.themes.base.FeedListItem.less: RadioButton not rendered when FeedListItem used within ListItem.",
         "references": []
+      },
+      {
+        "id": "e751920152a65b3897a93567729ed0243e9f1f4c",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection - Header params were not propagated correctly",
+        "references": []
+      },
+      {
+        "id": "bf5adcb5ab3ea70988c7f547795b59017c2cdf7a",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection - Query.find fails for IDs containing colons, switch back to document.getElementById",
+        "references": []
+      },
+      {
+        "id": "231cdb8a69b2a15e84923556d86c81f535c2016a",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection - items from aggregation of sap.m.List are not destroyed when removed",
+        "references": []
       }
     ]
   }

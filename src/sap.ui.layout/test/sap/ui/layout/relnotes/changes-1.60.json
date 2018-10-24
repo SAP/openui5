@@ -67,6 +67,12 @@
         "type": "FIX",
         "text": " sap.ui.layout.cssgrid.GridItemLayoutData: Now works with attribute bindings",
         "references": []
+      },
+      {
+        "id": "0bab94f364c2be988f941c017081874626cba9ce",
+        "type": "FIX",
+        "text": " sap.ui.layout.VerticalLayout: Minor QUnit fix",
+        "references": []
       }
     ]
   }
