@@ -890,7 +890,6 @@ function(
 
 				if (oParsedHash.params) {
 					hasher.changed.active = false; //disable changed signal
-					hasher.raw = true; // disable encoding
 
 					var mTechnicalParameters = Utils.getTechnicalParametersForComponent(oComponent);
 					// if mTechnicalParameters are not available we write a warning and continue updating the hash
@@ -905,7 +904,6 @@ function(
 						mTechnicalParameters && (mTechnicalParameters[sParameterName] = aValues); // Technical parameters need to be in sync with the URL hash
 					}
 					hasher.replaceHash(Utils.getUshellContainer().getService("URLParsing").constructShellHash(oParsedHash)); // Set hash without dispatching changed signal nor writing history
-					hasher.raw = false; // Re-enable encoding
 					hasher.changed.active = true; // Re-enable signal
 				}
 		},
