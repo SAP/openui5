@@ -89,7 +89,10 @@ function(
 
 		QUnit.test("will return a selector for a node inside an embedded component", function (assert) {
 			var oFormNode = XmlTreeModifier._children(this.oXmlView)[0];
-			oFormNode.id = oFormNode.id.replace("testComponent", "embeddedComponent");
+			//fake the node belonging to an embedded component
+			var sFormNodeId = oFormNode.getAttribute("id").replace("testComponent", "embeddedComponent");
+			oFormNode.setAttribute("id", sFormNodeId);
+
 			var oFormSelector = {
 				id: "embeddedComponent---myView--myForm",
 				idIsLocal: false
