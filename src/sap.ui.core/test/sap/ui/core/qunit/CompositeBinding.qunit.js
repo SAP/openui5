@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/model/type/Float",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/String",
+	"sap/ui/model/type/Date",
 	"sap/base/util/deepEqual"
 ], function(
 	CompositeType,
@@ -18,6 +19,7 @@ sap.ui.define([
 	TypeFloat,
 	TypeInteger,
 	TypeString,
+	TypeDate,
 	deepEqual
 ) {
 	"use strict";
@@ -171,7 +173,9 @@ sap.ui.define([
 			this.model = new JSONModel({
 				a: 1,
 				b: 2,
-				c: 3
+				c: 3,
+				d: "2018-04-30",
+				e: "2.000"
 			});
 			this.binding1 = this.model.bindProperty("/a");
 			this.binding1.setFormatter(function(value) {return "-" + value + "-";});
@@ -181,13 +185,22 @@ sap.ui.define([
 			this.binding3.setType(new TypeInteger(null, {maximum: 5}), "string");
 			this.composite = new CompositeBinding([this.binding1, this.binding2, this.binding3]);
 			this.compositeraw = new CompositeBinding([this.binding1, this.binding2, this.binding3], true);
+			this.binding4 = this.model.bindProperty("/d");
+			this.binding4.setType(new TypeDate({pattern: "dd.MM.yyyy", source: { pattern: "yyyy-MM-dd" }}), "string");
+			this.binding5 = this.model.bindProperty("/e");
+			this.binding5.setType(new TypeFloat({decimals: 1, source: { decimals: 3 }}), "string");
+			this.compositeinternal = new CompositeBinding([this.binding4, this.binding5]);
 		},
 		afterEach: function() {
 			this.model = null;
 			this.binding1 = null;
 			this.binding2 = null;
 			this.binding3 = null;
+			this.binding4 = null;
+			this.binding5 = null;
 			this.composite = null;
+			this.compositeraw = null;
+			this.compositeinternal = null;
 		}
 	});
 
@@ -202,6 +215,26 @@ sap.ui.define([
 		this.composite.setExternalValue("-3- 2.00 1");
 		assert.equal(this.model.getProperty("/a"), 1, "setExternalValue() cannot change value of binding with formatter");
 		assert.equal(this.model.getProperty("/c"), 1, "setExternalValue() does change model values for contained bindings");
+	});
+
+	QUnit.test("getRawValue/setRawValue", function(assert) {
+		assert.deepEqual(this.composite.getRawValue(), [1, 2, 3], "getRawValue() returns array of raw values");
+		this.composite.setRawValue([3, 2, 1]);
+		assert.equal(this.model.getProperty("/a"), 3, "setRawValue() can change value of binding with formatter");
+		assert.equal(this.model.getProperty("/c"), 1, "setRawValue() does change model values for contained bindings");
+	});
+
+	QUnit.test("getInternalValue/setInternalValue", function(assert) {
+		assert.deepEqual(this.composite.getInternalValue(), [1, 2, 3], "getInternalValue() returns array of values");
+		this.composite.setInternalValue([3, 2, 1]);
+		assert.equal(this.model.getProperty("/a"), 3, "setInternalValue() cann change value of binding with formatter");
+		assert.equal(this.model.getProperty("/c"), 1, "setInternalValue() does change model values for contained bindings");
+		var aInternalValues = this.compositeinternal.getInternalValue();
+		assert.deepEqual(aInternalValues[0], new Date(2018,3,30), "Internal value of Date is a Date object");
+		assert.strictEqual(aInternalValues[1], 2, "Internal value of Float is a JavaScript number");
+		this.compositeinternal.setInternalValue([new Date(2018,7,1), 5]);
+		assert.equal(this.model.getProperty("/d"), "2018-08-01", "setInternalValue() accepts JS native values");
+		assert.equal(this.model.getProperty("/e"), "5.000", "setInternalValue() accepts JS native values");
 	});
 
 	QUnit.test("with bUseRawValues", function(assert) {
@@ -224,6 +257,40 @@ sap.ui.define([
 		assert.equal(this.model.getProperty("/c"), 1, "setExternalValue() does change model values for contained binding");
 		assert.throws(function(){this.composite.setExternalValue("-3-,abc,1");}.bind(this),
 				ParseException, "throws ParseException for invalid inner value");
+	});
+
+	QUnit.test("with composite type validating external values", function(assert) {
+		var oType = new MyCompositeType();
+		oType.validateValue = function(aValues) {
+			assert.equal(aValues[0], "01.08.2018", "validateValue is called with external date value");
+			assert.equal(aValues[1], "5.0", "validateValue is called with external number value");
+		};
+		this.compositeinternal.setType(oType);
+		this.compositeinternal.setExternalValue("01.08.2018,5.0");
+		this.compositeinternal.setInternalValue([new Date(2018,7,1), 5]);
+		this.compositeinternal.setRawValue(["2018-08-01", "5.000"]);
+	});
+
+	QUnit.test("with composite type validating internal values", function(assert) {
+		var oType = new MyInternalValueType();
+		oType.validateValue = function(aValues) {
+			assert.deepEqual(aValues[0], new Date(2018,7,1), "validateValue is called with internal date value");
+			assert.strictEqual(aValues[1], 5, "validateValue is called with internal number value");
+		};
+		this.compositeinternal.setType(oType);
+		this.compositeinternal.setInternalValue([new Date(2018,7,1), 5]);
+		this.compositeinternal.setRawValue(["2018-08-01", "5.000"]);
+	});
+
+	QUnit.test("with composite type validating raw values", function(assert) {
+		var oType = new MyRawValueType();
+		oType.validateValue = function(aValues) {
+			assert.equal(aValues[0], "2018-08-01", "validateValue is called with raw date value");
+			assert.equal(aValues[1], "5.000", "validateValue is called with raw number value");
+		};
+		this.compositeinternal.setType(oType);
+		this.compositeinternal.setInternalValue([new Date(2018,7,1), 5]);
+		this.compositeinternal.setRawValue(["2018-08-01", "5.000"]);
 	});
 
 	QUnit.test("with raw value composite type", function(assert) {
