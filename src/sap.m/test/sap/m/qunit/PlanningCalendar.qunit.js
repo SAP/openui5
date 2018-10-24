@@ -3691,7 +3691,7 @@ sap.ui.define([
 
 		this._createCalendar();
 		//assert
-		assert.strictEqual(oSetDisplayModeSpy.callCount, 3, "'_setDisplayMode()' is called correct number of times"); //viewKey setter + onBeforeRendering + resizeHandler
+		assert.strictEqual(oSetDisplayModeSpy.callCount, 2, "'_setDisplayMode()' is called correct number of times"); //viewKey setter + resizeHandler
 		assert.strictEqual(oSetDisplayModeSpy.getCall(0).args[0], iPhoneSize, "The correct mode value is set");
 	});
 

@@ -656,7 +656,7 @@ sap.ui.define([
 
 		this._resizeProxy = jQuery.proxy(handleResize, this);
 		this._fnCustomSortedAppointments = undefined; //transfers a custom appointments sorter function to the CalendarRow
-
+		this.iWidth = 0;
 	};
 
 	PlanningCalendar.prototype.exit = function(){
@@ -2147,14 +2147,20 @@ sap.ui.define([
 		this.$().toggleClass("sapMPlanCalWithDayNamesLine", bShowDayNamesLine && bCurrentIntervalAllowsDayNamesLine);
 	}
 
-	function handleResize(oEvent, bNoRowResize){
-
-		this._applyContextualSettings();
-
+	function handleResize(oEvent, bNoRowResize) {
 		if (oEvent.size.width <= 0) {
 			// only if visible at all
 			return;
 		}
+
+		// guard against resize loops
+		// 1870423752
+		if (Math.abs(this.iWidth - oEvent.size.width) < 15) {
+			return;
+		}
+		this.iWidth = oEvent.size.width;
+
+		this._applyContextualSettings();
 
 		var aRows = this.getRows();
 		var oRow;
