@@ -1,11 +1,7 @@
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator",
-	'sap/ui/model/Sorter',
-	'sap/m/MessageBox'
-], function (JSONModel, Controller, Filter, FilterOperator, Sorter, MessageBox) {
+	"sap/ui/core/mvc/Controller"
+], function (JSONModel, Controller) {
 	"use strict";
 
 	return Controller.extend("sap.f.FlexibleColumnLayoutWithFullscreenPage.controller.Master", {
@@ -14,44 +10,25 @@ sap.ui.define([
 			this._bDescendingSort = false;
 		},
 		onListItemPress: function (oEvent) {
-			var oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(1),
-				productPath = oEvent.getSource().getBindingContext("products").getPath(),
-				product = productPath.split("/").slice(-1).pop(),
-				bPhone = this.getOwnerComponent().getModel().getProperty("/isPhone");
+			var sCategory = oEvent.getSource().getCells()[0].getTitle(),
+				bPhone = this.getOwnerComponent().getModel().getProperty("/isPhone"),
+				aProducts = this.getView().getModel("products").getData().ProductCollection,
+				iProduct = 0;
+
+			for (var i = 0; i < aProducts.length; i++) {
+				var oProduct = aProducts[i];
+
+				if (oProduct.Category === sCategory) {
+					iProduct = i;
+					break;
+				}
+			}
 
 			if (bPhone) {
-				this.oRouter.navTo("detail", {layout: sap.f.LayoutType.OneColumn, product: product});
+				this.oRouter.navTo("detail", {layout: sap.f.LayoutType.OneColumn, category: sCategory});
 			} else {
-				this.oRouter.navTo("detailDetail", {layout: oNextUIState.layout, product: product, supplier: 0});
+				this.oRouter.navTo("detailDetail", {layout: sap.f.LayoutType.TwoColumnsMidExpanded, category: sCategory, product: iProduct});
 			}
-		},
-		onSearch: function (oEvent) {
-			var oTableSearchState = [],
-				sQuery = oEvent.getParameter("query");
-
-			if (sQuery && sQuery.length > 0) {
-				oTableSearchState = [new Filter("Name", FilterOperator.Contains, sQuery)];
-			}
-
-			this.getView().byId("productsTable").getBinding("items").filter(oTableSearchState, "Application");
-		},
-
-		onAdd: function (oEvent) {
-			MessageBox.show("This functionality is not ready yet.", {
-				icon: MessageBox.Icon.INFORMATION,
-				title: "Aw, Snap!",
-				actions: [MessageBox.Action.OK]
-			});
-		},
-
-		onSort: function (oEvent) {
-			this._bDescendingSort = !this._bDescendingSort;
-			var oView = this.getView(),
-				oTable = oView.byId("productsTable"),
-				oBinding = oTable.getBinding("items"),
-				oSorter = new Sorter("Name", this._bDescendingSort);
-
-			oBinding.sort(oSorter);
 		}
 	});
 }, true);
