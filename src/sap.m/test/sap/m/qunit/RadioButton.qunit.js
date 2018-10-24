@@ -134,6 +134,24 @@ sap.ui.define([
 	});
 
 
+	QUnit.module("Private properties");
+
+	QUnit.test("editableParent should add aria attributes", function (assert) {
+		// arrange and act
+		var oRadioButton = new RadioButton();
+		oRadioButton._setEditableParent(false);
+
+		oRadioButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oRadioButton.getDomRef().getAttribute("aria-readonly"), "Readonly should be set to true");
+		assert.ok(oRadioButton.getDomRef().getAttribute("aria-disabled"), "Disabled should be set to true");
+
+		// cleanup
+		oRadioButton.destroy();
+	});
+
 	/* =========================================================== */
 	/* API module                                                  */
 	/* =========================================================== */
