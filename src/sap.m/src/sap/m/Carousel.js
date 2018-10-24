@@ -285,7 +285,7 @@ function(
 		var oScrollCont;
 		while (this._aScrollContainers && this._aScrollContainers.length > 0) {
 			oScrollCont = this._aScrollContainers.pop();
-			oScrollCont.removeAllContent();
+			oScrollCont.destroyContent();
 			if (oScrollCont && typeof oScrollCont.destroy === 'function') {
 				oScrollCont.destroy();
 			}
