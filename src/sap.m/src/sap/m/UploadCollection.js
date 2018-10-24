@@ -2348,7 +2348,8 @@ sap.ui.define([
 		Control.prototype.removeAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
 		if (sAggregationName === "items") {
 			oListItem = oObject._getListItem();
-			this._oList.removeAggregation("items", oListItem, true);
+			var oItem = this._oList.removeAggregation("items", oListItem, bSuppressInvalidate);
+			oItem.destroy();
 			this._updateGroups(oObject, false);
 		}
 		this._refreshInnerListStyle();
@@ -2356,14 +2357,14 @@ sap.ui.define([
 
 	UploadCollection.prototype.removeAllAggregation = function (sAggregationName, bSuppressInvalidate) {
 		if (sAggregationName === "items") {
-			this._oList.removeAllAggregation("items", true);
+			this._oList.destroyAggregation("items", bSuppressInvalidate);
 		}
 		Control.prototype.removeAllAggregation.call(this, sAggregationName, bSuppressInvalidate);
 	};
 
 	UploadCollection.prototype.destroyAggregation = function (sAggregationName, bSuppressInvalidate) {
 		if (sAggregationName === "items") {
-			this._oList.destroyAggregation("items", true);
+			this._oList.destroyAggregation("items", bSuppressInvalidate);
 		}
 		Control.prototype.destroyAggregation.call(this, sAggregationName, bSuppressInvalidate);
 	};
