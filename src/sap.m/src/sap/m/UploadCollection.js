@@ -1636,9 +1636,7 @@ sap.ui.define([
 
 	UploadCollection.prototype._refreshFileUploaderParams = function (oItem) {
 		this._getFileUploader().removeAllAggregation("headerParameters", true);
-		this.removeAllAggregation("headerParameters", true);
 		this._getFileUploader().removeAllAggregation("parameters", true);
-		this.removeAllAggregation("parameters", true);
 
 		// Params
 		this.getParameters().forEach(function (oParam) {
