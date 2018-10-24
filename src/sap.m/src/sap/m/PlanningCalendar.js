@@ -5,6 +5,7 @@
 //Provides control sap.m.PlanningCalendar.
 sap.ui.define([
 	'sap/ui/core/Control',
+	'sap/ui/base/ManagedObject',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/unified/library',
 	'sap/ui/unified/calendar/CalendarUtils',
@@ -43,6 +44,7 @@ sap.ui.define([
 	"sap/ui/dom/jquery/control"
 ], function(
 	Control,
+	ManagedObject,
 	ManagedObjectObserver,
 	unifiedLibrary,
 	CalendarUtils,
@@ -2136,7 +2138,7 @@ sap.ui.define([
 	}
 
 	PlanningCalendar.prototype._applyContextualSettings = function () {
-		return Control.prototype._applyContextualSettings.call(this, {contextualWidth: this.$().width()});
+		return Control.prototype._applyContextualSettings.call(this, ManagedObject._defaultContextualSettings);
 	};
 
 	function adaptCalHeaderForWeekNumbers(bShowWeekNumbers, bCurrentIntervalAllowsWeekNumbers) {
