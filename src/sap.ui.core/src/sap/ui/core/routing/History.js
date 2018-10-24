@@ -202,8 +202,17 @@ sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log", "sap/ui/t
 				bBackward = oState.sap.history.every(function(sURL, index) {
 					return sURL === History._aStateHistory[index];
 				});
-				sDirection = bBackward ? HistoryDirection.Backwards : HistoryDirection.Forwards;
-				History._aStateHistory = oState.sap.history;
+
+				// If the state history is identical with the history trace, it means
+				// that a hashChanged event is fired without a real brower hash change.
+				// In this case, the _getDirectionWithState can't be used to determine
+				// the history direction and should fallback to the legacy function
+				if (bBackward && oState.sap.history.length === History._aStateHistory.length) {
+					sDirection = undefined;
+				} else {
+					sDirection = bBackward ? HistoryDirection.Backwards : HistoryDirection.Forwards;
+					History._aStateHistory = oState.sap.history;
+				}
 			}
 		} else {
 			Log.debug("Unable to determine HistoryDirection as history.state is already set: " + window.history.state, "sap.ui.core.routing.History");

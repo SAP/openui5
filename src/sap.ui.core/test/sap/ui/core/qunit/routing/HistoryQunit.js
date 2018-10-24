@@ -550,4 +550,28 @@ sap.ui.define([
 			});
 		}.bind(this));
 	});
+
+	QUnit.test("The new direction method should return undefined if hashChanged event is fired without browser hash change", function(assert) {
+		assert.expect(Device.browser.msie ? 6 : 7);
+		var oSpy, that = this;
+		return this.setup().then(function() {
+			return that.checkDirection(function() {
+				oSpy = sinon.spy(that.oHistory, "_getDirectionWithState");
+				that.oExtendedHashChanger.fireHashChanged("");
+			}, function(sHash) {
+				if (sHash === "") {
+					if (Device.browser.msie) {
+						assert.equal(oSpy.callCount, 0, "function is not called in IE");
+					} else {
+						assert.equal(oSpy.callCount, 1, "function is called once");
+					}
+					if (!Device.browser.msie) {
+						assert.equal(oSpy.getCall(0).returnValue, undefined, "the function should return undefined");
+					}
+					assert.strictEqual(that.oHistory.getDirection(), "Unknown", "the direction should be Unknown");
+					oSpy.restore();
+				}
+			});
+		});
+	});
 });
