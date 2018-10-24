@@ -698,6 +698,7 @@ sap.ui.define([
 	QUnit.module("Auto-Close");
 
 	QUnit.test("Focusleave", function(assert) {
+		jQuery("#content").attr("tabindex", -1);
 		openRootMenu(false, assert);
 		qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
 		qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
@@ -727,6 +728,7 @@ sap.ui.define([
 		checkMenusClosed("after focus leave to other control", assert);
 
 		closeAllMenusAndCheck(assert);
+		jQuery("#content").removeAttr("tabindex");
 	});
 
 	QUnit.test("MouseDown", function(assert) {
