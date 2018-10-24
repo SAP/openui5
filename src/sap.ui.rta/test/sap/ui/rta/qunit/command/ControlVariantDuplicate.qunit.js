@@ -168,6 +168,7 @@ function (
 				assert.equal(oDuplicateVariant.getControlChanges().length, 2, "then 2 changes duplicated");
 				assert.equal(oDuplicateVariant.getControlChanges()[0].getDefinition().support.sourceChangeFileName, this.oVariant.controlChanges[0].getDefinition().fileName, "then changes duplicated with source filenames in Change.support.sourceChangeFileName");
 				assert.equal(oControlVariantDuplicateCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 3, "then 3 dirty changes present - variant and 2 changes");
+				assert.deepEqual(oControlVariantDuplicateCommand._oVariantChange, aPreparedChanges[0], "then _oVariantChange property was set for the command");
 				return oControlVariantDuplicateCommand.undo();
 			}.bind(this))
 			.then( function() {
@@ -176,6 +177,11 @@ function (
 				assert.notOk(aPreparedChanges, "then no prepared changes are available after undo");
 				assert.equal(oControlVariantDuplicateCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "then all dirty changes removed");
 				assert.notOk(oDuplicateVariant, "then duplicate variant from command unset");
+				assert.notOk(oControlVariantDuplicateCommand._oVariantChange, "then _oVariantChange property was unset for the command");
+				return oControlVariantDuplicateCommand.undo();
+			})
+			.then( function () {
+				assert.ok(true, "then by default a Promise.resolve() is returned on undo(), even if no changes exist for the command");
 			})
 			.catch(function (oError) {
 				assert.ok(false, 'catch must never be called - Error: ' + oError);

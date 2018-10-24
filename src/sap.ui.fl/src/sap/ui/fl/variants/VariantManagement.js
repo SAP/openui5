@@ -587,7 +587,7 @@ sap.ui.define([
 
 			oModel = this.getModel(this._sModelName);
 			if (oModel) {
-				sLocalId = this._getLocalId();
+				sLocalId = this._getLocalId(oModel);
 				if (sLocalId) {
 
 					this.oContext = new Context(oModel, "/" + sLocalId);
@@ -607,12 +607,11 @@ sap.ui.define([
 		}
 	};
 
-	VariantManagement.prototype._getLocalId = function() {
+	VariantManagement.prototype._getLocalId = function(oModel) {
 		if (this.getModelName() && (this._sModelName !== VariantManagement.MODEL_NAME)) {
 			return this.getId();
 		}
-
-		return JsControlTreeModifier.getSelector(this, flUtils.getAppComponentForControl(this)).id;
+		return oModel.getVariantManagementReferenceForControl(this);
 	};
 
 	VariantManagement.prototype._setModel = function() {

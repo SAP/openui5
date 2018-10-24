@@ -83,7 +83,7 @@ sap.ui.define([
 				if (oVMControl.getMetadata().getName() === "sap.ui.fl.variants.VariantManagement") {
 					aForControlTypes = oVMControl.getFor();
 					aForControlTypes.forEach(function(sControlType) {
-						mParams.variantManagement[sControlType] = mParams.variantModel._getLocalId(oVariantManagementNode.id, oAppComponent);
+						mParams.variantManagement[sControlType] = mParams.variantModel.getLocalId(oVariantManagementNode.id, oAppComponent);
 					});
 				}
 			});
@@ -135,7 +135,7 @@ sap.ui.define([
 
 			//check if variant for the passed variant management control is present
 			if (oControl instanceof VariantManagement) {
-				var sVariantManagementReference = oVariantModel._getLocalId(oControl.getId(), oAppComponent);
+				var sVariantManagementReference = oVariantModel.getLocalId(oControl.getId(), oAppComponent);
 				var mVariantParametersInURL = oVariantModel.getVariantIndexInURL(sVariantManagementReference);
 
 				if (mVariantParametersInURL.index > -1) {
@@ -245,48 +245,53 @@ sap.ui.define([
 			var aPromises = [];
 
 			mPropertyBag.controlChanges.forEach(function(oChange) {
-				var mChangeSpecificData = {};
-				Object.assign(mChangeSpecificData, {
-					developerMode: false,
-					layer: sLayer
-				});
+				try {
+					var mChangeSpecificData = {};
+					Object.assign(mChangeSpecificData, {
+						developerMode: false,
+						layer: sLayer
+					});
 
-				var sCheckResult = this._checkChangeSpecificData(oChange, sLayer);
-				if (sCheckResult) {
-					aPromises.push(function() {
+					var sCheckResult = this._checkChangeSpecificData(oChange, sLayer);
+					if (sCheckResult) {
+						throw new Error(sCheckResult);
+					}
+
+					var mParams = this._determineParameters(oChange.selectorControl);
+					if (!mPropertyBag.ignoreVariantManagement) {
+						// check for preset variantReference
+						if (!oChange.changeSpecificData.variantReference) {
+							var sVariantManagementReference = this._getVariantManagement(oChange.selectorControl, mParams);
+							if (sVariantManagementReference) {
+								var sCurrentVariantReference = mParams.variantModel.oData[sVariantManagementReference].currentVariant;
+								oChange.changeSpecificData.variantReference = sCurrentVariantReference;
+							}
+						}
+					} else {
+						// delete preset variantReference
+						delete oChange.changeSpecificData.variantReference;
+					}
+					aPromises.push(
+						function () {
+							return mParams.flexController.createAndApplyChange(Object.assign(mChangeSpecificData, oChange.changeSpecificData), oChange.selectorControl)
+								.then(function (oAppliedChange) {
+									// FlexController.createAndApplyChanges will only resolve for successfully applied changes
+									aSuccessfulChanges.push(oAppliedChange);
+								});
+						}
+					);
+				} catch (oError) {
+					aPromises.push(function () {
 						return Promise.reject({
 							change: oChange,
-							message: sCheckResult
+							message: oError.message
 						});
 					});
 					return;
 				}
-
-				var mParams = this._determineParameters(oChange.selectorControl);
-				if (!mPropertyBag.ignoreVariantManagement) {
-					// check for preset variantReference
-					if (!oChange.changeSpecificData.variantReference) {
-						var sVariantManagementReference = this._getVariantManagement(oChange.selectorControl, mParams);
-						if (sVariantManagementReference) {
-							var sCurrentVariantReference = mParams.variantModel.oData[sVariantManagementReference].currentVariant;
-							oChange.changeSpecificData.variantReference = sCurrentVariantReference;
-						}
-					}
-				} else {
-					// delete preset variantReference
-					delete oChange.changeSpecificData.variantReference;
-				}
-				aPromises.push(
-					function() {
-						return mParams.flexController.createAndApplyChange(Object.assign(mChangeSpecificData, oChange.changeSpecificData), oChange.selectorControl)
-							.then(function (oAppliedChange) {
-								// FlexController.createAndApplyChanges will only resolve for successfully applied changes
-								aSuccessfulChanges.push(oAppliedChange);
-							});
-					}
-				);
 			}.bind(this));
 
+			// For any Promise.reject, an error is logged in console inside Utils.execPromiseQueueSequentially
 			return Utils.execPromiseQueueSequentially(aPromises)
 				.then(function() {
 					return aSuccessfulChanges;
@@ -323,7 +328,12 @@ sap.ui.define([
 		 * @public
 		 */
 		hasVariantManagement : function(oControl) {
-			return !!this._getVariantManagement(oControl);
+			try {
+				return !!this._getVariantManagement(oControl);
+			} catch (oError) {
+				Utils.log.error(oError.message);
+				return false;
+			}
 		}
 	};
 	return ControlPersonalizationAPI;

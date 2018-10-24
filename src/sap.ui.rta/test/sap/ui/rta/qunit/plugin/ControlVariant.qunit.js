@@ -228,8 +228,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("when _isEditable is called with VariantManagement overlay", function(assert) {
+			sandbox.spy(this.oControlVariantPlugin, "hasStableId");
 			var bEditable = this.oControlVariantPlugin._isEditable(this.oVariantManagementOverlay);
 			assert.ok(bEditable, "then VariantManagement overlay is editable");
+			assert.ok(this.oControlVariantPlugin.hasStableId.calledWith(this.oVariantManagementOverlay), "then the VariantManagement overlay was checked for a stable ID");
 		});
 
 		QUnit.test("when registerElementOverlay is called with VariantManagement control Overlay", function(assert) {
