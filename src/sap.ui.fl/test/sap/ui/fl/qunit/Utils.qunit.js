@@ -973,7 +973,6 @@ function(
 				},
 				constructShellHash : function(oParsedHash){
 					assert.equal(hasher.changed.active, false, "then the 'active' flag of the hasher is first set to false (to avoid navigation)");
-					assert.equal(hasher.raw, true, "then the 'raw' flag of the hasher is set to true (to avoid encoding)");
 					assert.deepEqual(oParsedHash.params["sap-ui-fl-max-layer"][0], "CUSTOMER", "then the previous parameters are still present for the hash");
 					assert.deepEqual(oParsedHash.params["testParameter"][0], "testValue", "then the new parameter is properly added to the hash");
 					assert.deepEqual(oParsedHash.params["testParameter"][1], "testValue2", "then the new parameter is properly added to the hash");
@@ -1007,7 +1006,6 @@ function(
 			assert.ok(fnGetParsedURLHash.calledOnce, "then getParsedURLHash called once");
 			assert.equal(oReplaceHashStub.calledWith("hashValue"), true, "then the 'replaceHash' function of the hasher is called with the right parameter");
 			assert.equal(hasher.changed.active, true, "then the 'active' flag of the hasher is restored to true");
-			assert.equal(hasher.raw, false, "then the 'raw' flag of the hasher is restored to false");
 			assert.equal(oMockComponent.getComponentData().technicalParameters["testParameter"][0], "testValue", "then the new parameter is properly added to the technical parameter");
 			assert.equal(oMockComponent.getComponentData().technicalParameters["testParameter"][1], "testValue2", "then the new parameter is properly added to the technical parameter");
 		});
