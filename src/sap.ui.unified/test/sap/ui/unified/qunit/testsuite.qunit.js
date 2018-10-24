@@ -117,6 +117,9 @@ sap.ui.define(function() {
 					noConflict: true,
 					theme: "sap_belize"
 				},
+				qunit: {
+					reorder: false
+				},
 				coverage: {
 					only: ["sap/ui/layout/CalendarTimeInterval"]
 				}
