@@ -472,6 +472,34 @@
 			assert.strictEqual(stepsAfterDiscard, 1, "should be equal to 1");
 		});
 
+		QUnit.test("First step's initial nextStep shouldn't be overwritten during onafterrendering", function (assert) {
+			var that = this;
+
+			var step3 = new sap.m.WizardStep({
+				content: []
+			}), step2 = new sap.m.WizardStep({
+				subsequentSteps: [step3],
+				nextStep: this.step3,
+				content: []
+			}), step1 = new sap.m.WizardStep({
+				subsequentSteps: [step2, step3],
+				nextStep: step2,
+				content: []
+			}), wizard = new sap.m.Wizard({
+				enableBranching: true,
+				steps: [step1, step2, step3]
+			});
+
+			wizard.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.strictEqual(step1.getNextStep(), step2.getId(), "Step1's nextStep is not overwritten");
+
+			// clean up
+			wizard.destroy();
+		});
+
 		QUnit.test("Branching should change progress navigator varyingStepCount property", function (assert) {
 			var progressNavigator = this.oWizard._getProgressNavigator();
 			var varyingStepCountAtStart = progressNavigator.getVaryingStepCount();
