@@ -2166,14 +2166,20 @@ sap.ui.define(function() {
 				},
 				module: [
 					"./rules/Button.qunit",
+					"./rules/DatePicker.qunit",
+					"./rules/DateRangeSelection.qunit",
 					"./rules/Dialog.qunit",
+					"./rules/FacetFilter.qunit",
 					"./rules/IconTabBar.qunit",
 					"./rules/Input.qunit",
+					"./rules/MaskInput.qunit",
 					"./rules/ObjectHeader.qunit",
 					"./rules/ObjectListItem.qunit",
 					"./rules/ObjectMarker.qunit",
 					"./rules/ObjectStatus.qunit",
-					"./rules/Title.qunit"
+					"./rules/StepInput.qunit",
+					"./rules/Title.qunit",
+					"./rules/ViewSettingsDialog.qunit"
 				]
 			},
 			ScrollContainer: {
