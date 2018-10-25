@@ -129,6 +129,26 @@ sap.ui.define([
 		//Cleanup - redundant
 	});
 
+	QUnit.test("maxDate being yesterday should not throw error on open", function (assert) {
+		// Arrange
+		var oYesterdayDate = new Date(),
+			oDP = new DateTimePicker("DatePicker").placeAt("qunit-fixture");
+
+		oYesterdayDate.setDate(oYesterdayDate.getDate() - 1);
+
+		// Act
+		oDP.setMaxDate(oYesterdayDate);
+		sap.ui.getCore().applyChanges();
+		qutils.triggerEvent("click", "DatePicker-icon");
+
+		// Assert
+		assert.ok(true, "No error is thrown when DateTimePicker opens and maxDate is yesterday");
+
+		// Clean
+		oDP.destroy();
+	});
+
+
 	QUnit.module("Rendering");
 
 	QUnit.test("date format", function(assert) {

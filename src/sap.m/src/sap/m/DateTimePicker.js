@@ -611,7 +611,7 @@ sap.ui.define([
 			oDate = new Date(oDate.getTime());
 		} else {
 			oDate = this._getInitialFocusedDateValue();
-			var iMaxTimeMillis = this._oMaxDate.getTime() + 86400000 /* one day in milliseconds */;
+			var iMaxTimeMillis = this._oMaxDate.getTime();
 
 			if (oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > iMaxTimeMillis) {
 				oDate = this._oMinDate;
