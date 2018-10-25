@@ -85,7 +85,9 @@ sap.ui.define([
 	});
 
 	/**
-	 * @returns {sap.ui.layout.cssgrid.GridSettings} The active GridSettings
+	 * Provides active settings for the <code>CSSGrid</code>.
+	 *
+	 * @returns {sap.ui.layout.cssgrid.GridSettings} GridBasicLayout The active GridSettings
 	 * @override
 	 */
 	GridBasicLayout.prototype.getActiveGridSettings = function () {

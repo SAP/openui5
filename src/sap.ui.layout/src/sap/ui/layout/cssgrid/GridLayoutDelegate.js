@@ -47,6 +47,9 @@ sap.ui.define([
 	GridLayoutDelegate.prototype.exit = function () {
 		GridLayoutDelegate.deregisterResizeListener(this);
 	};
+	/**
+	 * ===================== END of handling IGridConfigurable lifecycle events  =====================
+	 */
 
 	/**
 	 * ===================== START of helper functions =====================
@@ -90,6 +93,10 @@ sap.ui.define([
 		oGridLayout.onGridResize(oEvent);
 		oGridLayout.applyGridLayout(this.getGridDomRefs());
 	};
+
+	/**
+	 * ===================== END of helper functions =====================
+	 */
 
 	return GridLayoutDelegate;
 });

@@ -113,7 +113,6 @@ sap.ui.define([
 	/**
 	 * Implements IGridConfigurable interface
 	 *
-	 * @protected
 	 * @returns {HTMLElement[]} An array with the DOM elements
 	 */
 	CSSGrid.prototype.getGridDomRefs = function () {
@@ -121,10 +120,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Implements IGridConfigurable interface
+	 * Returns the layout configuration of the <code>CSSGrid</code>.
 	 *
-	 * @protected
-	 * @returns {sap.ui.layout.cssgrid.GridLayoutBase} The grid layout
+	 * @returns {sap.ui.layout.cssgrid.GridBasicLayout} The grid layout
 	 */
 	CSSGrid.prototype.getGridLayoutConfiguration = function () {
 		if (this.getCustomLayout()) {
@@ -134,6 +132,12 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Provides default configuration for the <code>CSSGrid</code> if not set.
+	 *
+	 * @private
+	 * @returns {sap.ui.layout.cssgrid.GridBasicLayout} [oDefaultGridLayout] The grid default layout
+	 */
 	CSSGrid.prototype._getDefaultGridLayout = function () {
 		var oDefaultGridLayout = new GridBasicLayout({
 			gridTemplateColumns: this.getGridTemplateColumns(),
@@ -197,6 +201,12 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Updates the <code>CSSGrid</code> depending on change mutations.
+	 *
+	 * @param {object} [oChange] Change that must be applied to CSSGrid
+	 * @private
+	 */
 	CSSGrid.prototype._onGridChange = function (oChanges) {
 		if (oChanges.name !== "items" || !oChanges.child) { return; }
 
@@ -208,7 +218,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Item's onAfterRendering handler
+	 * Item's onAfterRendering handler.
 	 *
 	 * @private
 	 */
@@ -218,14 +228,17 @@ sap.ui.define([
 
 	/**
 	 * Handler for layout data change events.
-	 * Update the styles of the item which layoutData changed
+	 * Updates the styles of the item that were changed by the layoutData.
 	 *
-	 * @private
-	 * @param {jQuery.Event} oEvent The event from a layoutDataChange
+	 * @param {jQuery.Event} [oEvent] The event from a layoutDataChange
 	 */
 	CSSGrid.prototype.onLayoutDataChange = function (oEvent) {
 		GridItemLayoutData._setItemStyles(oEvent.srcControl);
 	};
+
+	/**
+	 * =================== END of lifecycle methods & delegate handling ===================
+	 */
 
 	return CSSGrid;
 });
