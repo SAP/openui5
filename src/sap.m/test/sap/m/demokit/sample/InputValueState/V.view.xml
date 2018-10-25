@@ -8,7 +8,7 @@
 			<Input valueState="Success" value="Value state Success"/>
 			<Input valueState="Warning" value="Value state Warning"/>
 			<Input valueState="Error" value="Value state Error"/>
-			<Input valueState="Highlight" value="Value state Highlight"/>
+			<Input valueState="Information" value="Value state Information"/>
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>

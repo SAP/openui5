@@ -1277,22 +1277,22 @@ sap.ui.define([
 
 
 		// Arrange
-		var oDialogHighlight = new Dialog({
-			state: ValueState.Highlight
+		var oDialogInformation = new Dialog({
+			state: ValueState.Information
 		});
-		overwriteAnimationIE(oDialogHighlight);
-		sValueState = rb.getText("LIST_ITEM_STATE_HIGHLIGHT");
+		overwriteAnimationIE(oDialogInformation);
+		sValueState = rb.getText("LIST_ITEM_STATE_INFORMATION");
 
 		// Act
-		oDialogHighlight.open();
+		oDialogInformation.open();
 		this.clock.tick(500);
-		sInvisibleTextContent = oDialogHighlight.getAggregation("_valueState").getText();
+		sInvisibleTextContent = oDialogInformation.getAggregation("_valueState").getText();
 
 		// Assert
-		assert.strictEqual(sInvisibleTextContent, sValueState, "Highlight state value should be the same.");
+		assert.strictEqual(sInvisibleTextContent, sValueState, "Information state value should be the same.");
 
 		// Clean up
-		oDialogHighlight.destroy();
+		oDialogInformation.destroy();
 	});
 
 	QUnit.test("Check if header toolbar role is set correctly", function(assert) {

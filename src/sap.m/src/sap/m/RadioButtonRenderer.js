@@ -31,7 +31,7 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library', 'sap/ui/D
 		var bReadOnly = !bEnabled || !bEditable;
 		var bInErrorState = ValueState.Error === oRadioButton.getValueState();
 		var bInWarningState = ValueState.Warning === oRadioButton.getValueState();
-		var bInInformationState = ValueState.Highlight === oRadioButton.getValueState();
+		var bInInformationState = ValueState.Information === oRadioButton.getValueState();
 		var bUseEntireWidth = oRadioButton.getUseEntireWidth();
 
 		// Radio Button style class

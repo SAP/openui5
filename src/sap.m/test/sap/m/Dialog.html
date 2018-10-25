@@ -76,19 +76,19 @@
 				]
 			});
 
-			var oDialogHighlightState = new sap.m.Dialog("dialogHighlightState", {
-				title: "Highlight",
+			var oDialogInformationState = new sap.m.Dialog("dialogInformationState", {
+				title: "Information",
 				ariaDescribedBy: "p1",
-				state: sap.ui.core.ValueState.Highlight,
+				state: sap.ui.core.ValueState.Information,
 				content: [
-					new sap.ui.core.HTML({content: '<p id="p1" style="margin:0; padding: 16px;">Highlighted information!</p>'})
+					new sap.ui.core.HTML({content: '<p id="p1" style="margin:0; padding: 16px;">Information!!</p>'})
 				],
 				buttons: [
 					new sap.m.Button({
-						id: 'oDialogHighlightStateOKButton',
+						id: 'oDialogInformationStateOKButton',
 						text: "OK",
 						press: function () {
-							oDialogHighlightState.close();
+							oDialogInformationState.close();
 						}
 					})
 				]
@@ -1504,11 +1504,11 @@
 						}
 					}),
 
-					new sap.m.Button('dialogWithHighlightStateButton', {
-						text: "With Highlight State",
+					new sap.m.Button('dialogWithInformationStateButton', {
+						text: "With Information State",
 						width: _buttonWidth,
 						press: function () {
-							oDialogHighlightState.open();
+							oDialogInformationState.open();
 						}
 					}),
 

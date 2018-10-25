@@ -29,7 +29,7 @@ sap.ui.define(['./Element', './library', "sap/base/assert"],
 				mTexts[ValueState.Error] = rb.getText("VALUE_STATE_ERROR");
 				mTexts[ValueState.Warning] = rb.getText("VALUE_STATE_WARNING");
 				mTexts[ValueState.Success] = rb.getText("VALUE_STATE_SUCCESS");
-				mTexts[ValueState.Highlight] = rb.getText("VALUE_STATE_HIGHLIGHT");
+				mTexts[ValueState.Information] = rb.getText("VALUE_STATE_INFORMATION");
 			}
 		};
 
@@ -98,6 +98,7 @@ sap.ui.define(['./Element', './library', "sap/base/assert"],
 		 *  1 : ValueState.Warning
 		 *  2 : ValueState.Success
 		 *  3 : ValueState.Error
+		 *  4 : ValueState.Information
 		 *
 		 * @param {int} iState the state as an integer
 		 * @return {sap.ui.core.ValueState} the corresponding ValueState object
@@ -115,6 +116,8 @@ sap.ui.define(['./Element', './library', "sap/base/assert"],
 					return ValueState.Success;
 				case 3:
 					return ValueState.Error;
+				case 4:
+					return ValueState.Information;
 				default:
 					return ValueState.None;
 			}

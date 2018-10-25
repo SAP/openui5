@@ -366,7 +366,7 @@ function(
 		Dialog._mIcons[ValueState.Success] = IconPool.getIconURI("message-success");
 		Dialog._mIcons[ValueState.Warning] = IconPool.getIconURI("message-warning");
 		Dialog._mIcons[ValueState.Error] = IconPool.getIconURI("message-error");
-		Dialog._mIcons[ValueState.Highlight] = IconPool.getIconURI("hint");
+		Dialog._mIcons[ValueState.Information] = IconPool.getIconURI("hint");
 
 		/* =========================================================== */
 		/*                  begin: Lifecycle functions                 */
@@ -1443,8 +1443,8 @@ function(
 					return rb.getText("LIST_ITEM_STATE_WARNING");
 				case (ValueState.Error):
 					return rb.getText("LIST_ITEM_STATE_ERROR");
-				case (ValueState.Highlight):
-					return rb.getText("LIST_ITEM_STATE_HIGHLIGHT");
+				case (ValueState.Information):
+					return rb.getText("LIST_ITEM_STATE_INFORMATION");
 				default:
 					return "";
 			}
