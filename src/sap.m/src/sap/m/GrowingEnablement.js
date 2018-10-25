@@ -150,11 +150,13 @@ sap.ui.define([
 		},
 
 		onScrollToLoad: function() {
-			if (this._oControl.getDomRef("triggerList").style.display != "none") {
+			var oTriggerButton = this._oControl.getDomRef("triggerList");
+
+			if (this._bLoading || !oTriggerButton || oTriggerButton.style.display != "none") {
 				return;
 			}
 
-			if (!this._bLoading && this._oControl.getGrowingDirection() == ListGrowingDirection.Upwards) {
+			if (this._oControl.getGrowingDirection() == ListGrowingDirection.Upwards) {
 				var oScrollDelegate = this._oScrollDelegate;
 				this._oScrollPosition = {
 					left : oScrollDelegate.getScrollLeft(),
