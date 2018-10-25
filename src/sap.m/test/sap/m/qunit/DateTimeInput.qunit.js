@@ -241,9 +241,9 @@ sap.ui.define([
 		bValid = true;
 		sId = "";
 		dti0.focus();
-		oDatePicker.$().children("div.sapMInputBaseContentWrapper").children("input").val("33 May, 2012");
+		oDatePicker.$().find("input").val("33 May, 2012");
 		qutils.triggerKeyboardEvent("__input0-Picker-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		oDatePicker.$().children("div.sapMInputBaseContentWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		oDatePicker.$().find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, dti0.getId(), "Change event fired");
 		assert.equal(sValue, "33 May, 2012", "Value of event has entered value if invalid");
 		assert.ok(!bValid, "Value is not valid");
@@ -255,9 +255,9 @@ sap.ui.define([
 		bValid = false;
 		sId = "";
 		dti0.focus();
-		oDatePicker.$().children("div.sapMInputBaseContentWrapper").children("input").val("30 May, 2012");
+		oDatePicker.$().find("input").val("30 May, 2012");
 		qutils.triggerKeyboardEvent("__input0-Picker-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		oDatePicker.$().children("div.sapMInputBaseContentWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		oDatePicker.$().find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, dti0.getId(), "Change event fired");
 		assert.equal(sValue, "2012-05-30", "Value in internal format priovided");
 		assert.ok(bValid, "Value is valid");
