@@ -2442,7 +2442,7 @@ function (
 
 		oObjectPage.placeAt("qunit-fixture");
 		Core.applyChanges();
-		oGetBoundingClientRectSpy = sinon.spy(oObjectPage._$opWrapper.get(0), "getBoundingClientRect");
+		oGetBoundingClientRectSpy = sinon.spy(oObjectPage.getDomRef(), "getBoundingClientRect");
 
 		// Act - call method
 		oObjectPage._getScrollableViewportHeight();
