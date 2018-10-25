@@ -180,70 +180,73 @@ sap.ui.define([
 			this.clock.restore();
 		});
 
-		// QUnit.test("start with asynchronous rules", function (assert) {
-		// 	// Arrange
-		// 	var done = assert.async(),
-		// 		that = this;
-		//
-		// 	sinon.spy(this.oAnalyzer, "_updateProgress");
-		// 	sinon.spy(this.oAnalyzer, "reset");
-		// 	sinon.spy(this.oAnalyzer, "_handleException");
-		// 	sinon.spy(jQuery.sap.log, "error");
-		//
-		// 	this.oAnalyzer._iAllowedTimeout = 1500;
-		//
-		// 	var aRules = [
-		// 		{
-		// 			// Mocks a standard case.
-		// 			async: true,
-		// 			id: "rule1",
-		// 			check: function (oIssueManagerFacade, oCoreFacade, oExecutionScope, resolve) {
-		// 				setTimeout(function () {
-		// 					resolve();
-		// 				}, 500);
-		// 			}
-		// 		},
-		// 		{
-		// 			// Mocks a case where the check function takes too long to resolve.
-		// 			async: true,
-		// 			id: "rule2",
-		// 			check: function (oIssueManagerFacade, oCoreFacade, oExecutionScope, resolve) {
-		// 				setTimeout(function () {
-		// 					resolve();
-		// 				}, 2000);
-		// 			}
-		// 		},
-		// 		{
-		// 			// Mocks a case where the check function doesn't call resolve.
-		// 			async: true,
-		// 			id: "rule3",
-		// 			check: function (oIssueManagerFacade, oCoreFacade, oExecutionScope, resolve) { }
-		// 		},
-		// 		{
-		// 			// Mocks a case where the check function throws an error before being resolved.
-		// 			async: true,
-		// 			id: "rule4",
-		// 			check: function (oIssueManagerFacade, oCoreFacade, oExecutionScope, resolve) {
-		// 				throw "An error occured";
-		// 			}
-		// 		}
-		// 	];
-		//
-		// 	// Act
-		// 	this.oAnalyzer.start(aRules, this.oMockCoreFacade, this.oMockExecutionScope).then(function () {
-		//
-		// 		// Assert
-		// 		assert.equal(jQuery.sap.log.error.callCount, 3, "should have 3 errors logged");
-		// 		assert.equal(that.oAnalyzer._handleException.callCount, 3, "should have 3 errors handled");
-		// 		assert.equal(that.oAnalyzer._updateProgress.callCount, 4, "_updateProgress should be called 4 times");
-		// 		assert.equal(that.oAnalyzer.reset.callCount, 1, "reset should be called once");
-		//
-		// 		that.oAnalyzer._updateProgress.restore();
-		// 		that.oAnalyzer.reset.restore();
-		// 		that.oAnalyzer._handleException.restore();
-		// 		jQuery.sap.log.error.restore();
-		//
-		// 		done();
-		// 	});
-		// });
+		QUnit.test("start with asynchronous rules", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				that = this;
+
+			this.clock.restore(); // using real timeouts for this test
+
+			sinon.spy(this.oAnalyzer, "_updateProgress");
+			sinon.spy(this.oAnalyzer, "reset");
+			sinon.spy(this.oAnalyzer, "_handleException");
+			sinon.spy(jQuery.sap.log, "error");
+
+			this.oAnalyzer._iAllowedTimeout = 1500;
+
+			var aRules = [
+				{
+					// Mocks a standard case.
+					async: true,
+					id: "rule1",
+					check: function (oIssueManagerFacade, oCoreFacade, oExecutionScope, resolve) {
+						setTimeout(function () {
+							resolve();
+						}, 500);
+					}
+				},
+				{
+					// Mocks a case where the check function takes too long to resolve.
+					async: true,
+					id: "rule2",
+					check: function (oIssueManagerFacade, oCoreFacade, oExecutionScope, resolve) {
+						setTimeout(function () {
+							resolve();
+						}, 2000);
+					}
+				},
+				{
+					// Mocks a case where the check function doesn't call resolve.
+					async: true,
+					id: "rule3",
+					check: function (oIssueManagerFacade, oCoreFacade, oExecutionScope, resolve) { }
+				},
+				{
+					// Mocks a case where the check function throws an error before being resolved.
+					async: true,
+					id: "rule4",
+					check: function (oIssueManagerFacade, oCoreFacade, oExecutionScope, resolve) {
+						throw "An error occured";
+					}
+				}
+			];
+
+			// Act
+			this.oAnalyzer.start(aRules, this.oMockCoreFacade, this.oMockExecutionScope).then(function () {
+
+				// Assert
+				assert.equal(jQuery.sap.log.error.callCount, 3, "should have 3 errors logged");
+				assert.equal(that.oAnalyzer._handleException.callCount, 3, "should have 3 errors handled");
+				assert.equal(that.oAnalyzer._updateProgress.callCount, 4, "_updateProgress should be called 4 times");
+				assert.equal(that.oAnalyzer.reset.callCount, 1, "reset should be called once");
+
+				that.oAnalyzer._updateProgress.restore();
+				that.oAnalyzer.reset.restore();
+				that.oAnalyzer._handleException.restore();
+				jQuery.sap.log.error.restore();
+
+				done();
+			});
+
+		});
 });

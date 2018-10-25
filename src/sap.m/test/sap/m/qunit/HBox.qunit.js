@@ -33,10 +33,8 @@ sap.ui.define([
 		]
 	});
 	oHBox1.setDisplayInline(false);
-	// 			oHBox1.setWrap('Wrap');
 	oHBox1.setJustifyContent('Center');
 	oHBox1.setAlignItems('End');
-	// 			oHBox1.setAlignContent('End');
 	oHBox1.setRenderType('List');
 	oHBox1.placeAt("content");
 
@@ -63,10 +61,8 @@ sap.ui.define([
 	});
 	oHBox2.setDirection("RowReverse");
 	oHBox2.setDisplayInline(true);
-	// 			oHBox2.setWrap('Nowrap');
 	oHBox2.setJustifyContent('End');
 	oHBox2.setAlignItems('Center');
-	// 			oHBox2.setAlignContent('Center');
 	oHBox2.setRenderType('Div');
 	oHBox2.placeAt("content");
 
@@ -88,30 +84,25 @@ sap.ui.define([
 	});
 
 	QUnit.module('Final spec property tests');
+
 	QUnit.test("display", function(assert) {
 		// phantomjs wants to add the webkit prefix here...
 		assert.equal(jQuery("#hbox1").css('display'), (Device.browser.phantomJS ? "-webkit-" : "") + "flex", "HBox display property should be set correctly in standard-compatible browsers");
 		assert.equal(jQuery("#hbox2").css('display'), (Device.browser.phantomJS ? "-webkit-" : "") + "inline-flex", "HBox display property should be set correctly in standard-compatible browsers");
 	});
+
 	QUnit.test("flex-direction", function(assert) {
 		assert.equal(jQuery("#hbox1").css('flex-direction'), "row", "HBox flex-direction property should be set correctly in standard-compatible browsers");
 		assert.equal(jQuery("#hbox2").css('flex-direction'), "row-reverse", "HBox flex-direction property should be set correctly in standard-compatible browsers");
 	});
-	// 				QUnit.test("flex-wrap", function(assert) {
-	//					// skip nowrap for Chrome as it has a bug in some versions where it returns "none" instead
-	// 					assert.equal(jQuery("#hbox1").css('flex-wrap'), "wrap", "HBox flex-wrap property should be set correctly in standard-compatible browsers");
-	// 					if(!jQuery.browser.webkit) assert.equal(jQuery("#hbox2").css('flex-wrap'), "nowrap", "HBox flex-wrap property should be set correctly in standard-compatible browsers");
-	// 				});
+
 	QUnit.test("justify-content", function(assert) {
 		assert.equal(jQuery("#hbox1").css('justify-content'), "center", "HBox justify-content property should be set correctly in standard-compatible browsers");
 		assert.equal(jQuery("#hbox2").css('justify-content'), "flex-end", "HBox justify-content property should be set correctly in standard-compatible browsers");
 	});
+
 	QUnit.test("align-items", function(assert) {
 		assert.equal(jQuery("#hbox1").css('align-items'), "flex-end", "HBox align-items property should be set correctly in standard-compatible browsers");
 		assert.equal(jQuery("#hbox2").css('align-items'), "center", "HBox align-items property should be set correctly in standard-compatible browsers");
 	});
-	// 				QUnit.test("align-content", function(assert) {
-	// 					assert.equal(jQuery("#hbox1").css('align-content'), "flex-end", "HBox align-content property should be set correctly in standard-compatible browsers");
-	// 					assert.equal(jQuery("#hbox2").css('align-content'), "center", "HBox align-content property should be set correctly in standard-compatible browsers");
-	// 				});
 });
