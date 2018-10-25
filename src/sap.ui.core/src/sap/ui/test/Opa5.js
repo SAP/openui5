@@ -41,7 +41,7 @@ sap.ui.define([
 			 QUnitUtils,
 			 _autoWaiter,
 			 includeStylesheet,
-	         jQueryDOM) {
+	         $) {
 		"use strict";
 
 		var oLogger = _OpaLogger.getLogger("sap.ui.test.Opa5"),
@@ -91,21 +91,8 @@ sap.ui.define([
 			return oParams;
 		};
 
-		var reduce = function(oTarget, oExcesive) {
-			for (var sKey in oExcesive) {
-				if (oTarget.hasOwnProperty(sKey) && oExcesive.hasOwnProperty(sKey)) {
-					if (typeof oTarget[sKey] == "object" && typeof oExcesive[sKey] == "object") {
-						reduce(oTarget[sKey], oExcesive[sKey]);
-					} else {
-						delete oTarget[sKey];
-					}
-				}
-			}
-			return oTarget;
-		};
-
 		// parse app params from uri
-		var appParams = Opa._extractAppParams();
+		var appParamsFromURL = Opa._extractAppParams();
 
 		/**
 		 * Helps you when writing tests for UI5 applications.
@@ -120,7 +107,7 @@ sap.ui.define([
 		 * @since 1.22
 		 */
 		var Opa5 = Ui5Object.extend("sap.ui.test.Opa5",
-			jQueryDOM.extend({},
+			$.extend({},
 				Opa.prototype,
 				{
 					constructor : function() {
@@ -135,7 +122,7 @@ sap.ui.define([
 			var oOptions = {};
 			var aOptions = ["source", "timeout", "autoWait", "width", "height"];
 			// allow separate arguments for backwards compatibility
-			if (arguments.length === 1 && jQueryDOM.isPlainObject(arguments[0])) {
+			if (arguments.length === 1 && $.isPlainObject(arguments[0])) {
 				oOptions = arguments[0];
 			} else {
 				var aValues = arguments;
@@ -149,7 +136,7 @@ sap.ui.define([
 				oOptions.source = oOptions.source.toString();
 			}
 			var uri = new URI(oOptions.source ? oOptions.source : '');
-			uri.search(jQueryDOM.extend(
+			uri.search($.extend(
 				uri.search(true),Opa.config.appParams));
 
 			// kick starting the frame
@@ -211,7 +198,7 @@ sap.ui.define([
 			var oParamsWaitForOptions = createWaitForObjectWithoutDefaults();
 			oParamsWaitForOptions.success = function() {
 				var uri = new URI();
-				uri.search(jQueryDOM.extend(
+				uri.search($.extend(
 					uri.search(true),Opa.config.appParams));
 				window.history.replaceState({},"",uri.toString());
 			};
@@ -278,16 +265,15 @@ sap.ui.define([
 				componentLauncher.teardown();
 			};
 
-			// remove appParams from this frame URL as application under test is stopped
+			// restore URL before component launch in order to remove any appParams added by extendConfig
 			var oParamsWaitForOptions = createWaitForObjectWithoutDefaults();
 			oParamsWaitForOptions.success = function() {
 				var uri = new URI();
-				uri.search(reduce(
-					uri.search(true),Opa.config.appParams));
-				window.history.replaceState({},"",uri.toString());
+				uri.search(appParamsFromURL);
+				window.history.replaceState({}, "", uri.toString());
 			};
 
-			return jQueryDOM.when(this.waitFor(oOptions), this.waitFor(oParamsWaitForOptions));
+			return $.when(this.waitFor(oOptions), this.waitFor(oParamsWaitForOptions));
 		};
 
 		/**
@@ -324,7 +310,7 @@ sap.ui.define([
 				}
 			}.bind(this);
 
-			return jQueryDOM.when(this.waitFor(oExtensionOptions), this.waitFor(oOptions));
+			return $.when(this.waitFor(oExtensionOptions), this.waitFor(oOptions));
 		};
 
 		/**
@@ -659,7 +645,7 @@ sap.ui.define([
 				// only take the allowed properties from the config
 				oOptionsPassedToOpa;
 
-			options = jQueryDOM.extend({},
+			options = $.extend({},
 					oFilteredConfig,
 					options);
 			options.actions = vActions;
@@ -689,7 +675,7 @@ sap.ui.define([
 
 				// Create a new options object for the plugin to keep the original one as is
 				var oPlugin = Opa5.getPlugin();
-				var oPluginOptions = jQueryDOM.extend({}, options, {
+				var oPluginOptions = $.extend({}, options, {
 					// ensure Interactable matcher is applied if autoWait is true or actions are specified
 					interactable: bInteractable
 				});
@@ -697,7 +683,7 @@ sap.ui.define([
 				// even if we have no control the matchers may provide a value for vControl
 				vResult = oPlugin._getFilteredControls(oPluginOptions, vControl);
 
-				if (iFrameLauncher.hasLaunched() && jQueryDOM.isArray(vResult)) {
+				if (iFrameLauncher.hasLaunched() && $.isArray(vResult)) {
 					// People are using instanceof Array in their check so i need to make sure the Array
 					// comes from the current document. I cannot use slice(0) or map because the original array is kept
 					// so i need to use the slowest way to create a swallow copy of the array
@@ -755,8 +741,8 @@ sap.ui.define([
 				// So waitFors added by an action will block the current execution of success
 				var oWaitForObject = createWaitForObjectWithoutDefaults();
 				// preserve the autoWait value
-				if (jQueryDOM.isPlainObject(options.autoWait)) {
-					oWaitForObject.autoWait = jQueryDOM.extend({}, options.autoWait);
+				if ($.isPlainObject(options.autoWait)) {
+					oWaitForObject.autoWait = $.extend({}, options.autoWait);
 				} else {
 					oWaitForObject.autoWait = options.autoWait;
 				}
@@ -790,7 +776,7 @@ sap.ui.define([
 		 * @public
 		 */
 		Opa5.getJQuery = function () {
-			return iFrameLauncher.getJQuery() || jQueryDOM;
+			return iFrameLauncher.getJQuery() || $;
 		};
 
 		/**
@@ -937,8 +923,9 @@ sap.ui.define([
 		 */
 		Opa5.extendConfig = function(options) {
 			Opa.extendConfig(options);
+			// URL app params overwrite extendConfig app params
 			Opa.extendConfig({
-				appParams: appParams
+				appParams: appParamsFromURL
 			});
 			Opa5._getAutoWaiter().extendConfig(options.autoWait);
 		};
@@ -974,7 +961,7 @@ sap.ui.define([
 				_stackDropCount : 1
 			});
 			Opa.extendConfig({
-				appParams: appParams
+				appParams: appParamsFromURL
 			});
 		};
 
@@ -1147,7 +1134,7 @@ sap.ui.define([
 			// include styles
 			var sIFrameStyleLocation = sap.ui.require.toUrl("sap/ui/test/OpaCss") + ".css";
 			includeStylesheet(sIFrameStyleLocation);
-			var oFrameLaunchOptions = jQueryDOM.extend({}, oOptions, {
+			var oFrameLaunchOptions = $.extend({}, oOptions, {
 				frameId: sFrameId,
 				opaLogLevel: Opa.config.logLevel
 			});
@@ -1165,16 +1152,16 @@ sap.ui.define([
 			};
 		}
 
-		jQueryDOM(function () {
-			if (jQueryDOM("#" + sFrameId).length) {
+		$(function () {
+			if ($("#" + sFrameId).length) {
 				addFrame();
 			}
 
-			jQueryDOM("body").addClass("sapUiBody");
-			jQueryDOM("html").height("100%");
+			$("body").addClass("sapUiBody");
+			$("html").height("100%");
 		});
 
-		Opa5._validationInfo = jQueryDOM.extend({
+		Opa5._validationInfo = $.extend({
 			_stack: "string",
 			viewName: "string",
 			viewNamespace: "string",
@@ -1200,9 +1187,9 @@ sap.ui.define([
 				Opa.config.extensions ? Opa.config.extensions : [];
 
 			// load all required extensions in the app frame
-			var oExtensionsPromise = jQueryDOM.when(jQueryDOM.map(aExtensionNames,function(sExtensionName) {
+			var oExtensionsPromise = $.when($.map(aExtensionNames,function(sExtensionName) {
 				var oExtension;
-				var oExtensionDeferred = jQueryDOM.Deferred();
+				var oExtensionDeferred = $.Deferred();
 
 				oAppWindow.sap.ui.require([
 					sExtensionName
@@ -1240,8 +1227,8 @@ sap.ui.define([
 		Opa5.prototype._unloadExtensions = function(oAppWindow) {
 			var that = this;
 
-			var oExtensionsPromise = jQueryDOM.when(jQueryDOM.map(this._getExtensions(),function(oExtension) {
-				var oExtensionDeferred = jQueryDOM.Deferred();
+			var oExtensionsPromise = $.when($.map(this._getExtensions(),function(oExtension) {
+				var oExtensionDeferred = $.Deferred();
 
 				Opa5._getEventProvider().fireEvent('onExtensionBeforeExit',{
 					extension: oExtension
@@ -1272,7 +1259,7 @@ sap.ui.define([
 		};
 
 		Opa5.prototype._executeExtensionOnAfterInit = function(oExtension,oAppWindow) {
-			var oDeferred = jQueryDOM.Deferred();
+			var oDeferred = $.Deferred();
 
 			var fnOnAfterInit = oExtension.onAfterInit;
 			if (fnOnAfterInit) {
@@ -1291,7 +1278,7 @@ sap.ui.define([
 		};
 
 		Opa5.prototype._executeExtensionOnBeforeExit = function(oExtension,oAppWindow) {
-			var oDeferred = jQueryDOM.Deferred();
+			var oDeferred = $.Deferred();
 
 			var fnOnBeforeExit = oExtension.onBeforeExit;
 			if (fnOnBeforeExit) {
