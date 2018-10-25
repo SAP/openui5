@@ -70,6 +70,10 @@ var sSingleLangTest = "de",
         "tr": ["Muvaffakiyetsizleştiricileştiriveremeyebileceklerimizdenmişsinizcesine", "Muvaffakiyetsizleştiricileştiriveremeyebileceklerimizdenmişsinizcesine"],
         "uk": ["Нікотинамідаденіндинуклеотидфосфат", "Ні-ко-ти-на-мі-да-де-нін-ди-ну-кле-о-тид-фо-сфат"]
     },
+    mCompoundWords = {
+        "en": ["factory-made", "fac-to-ry-​made"],
+        "de": ["Geheimzahl-Aufschreiber", "Ge-heim-zahl-​Auf-schrei-ber"]
+    },
     mTexts = {
         // lang: [not hyphenated, hyphenated]
         "en": [
@@ -242,7 +246,7 @@ var sSingleLangTest = "de",
             counter = 0,
             aLanguages = Object.keys(mWords);
 
-        assert.expect(aLanguages.length);
+        assert.expect(aLanguages.length + Object.keys(mCompoundWords).length);
 
         aLanguages.forEach(function(sLang) {
             that.oHyphenation.initialize(sLang, {"hyphen": "-"}).then(function() {
@@ -253,6 +257,14 @@ var sSingleLangTest = "de",
                     mWords[sLang][1],
                     "hyphenation of example word for '" + sLang + "' is ok"
                 );
+
+                if (mCompoundWords.hasOwnProperty(sLang)) {
+                    assert.strictEqual(
+                        that.oHyphenation.hyphenate(mCompoundWords[sLang][0], sLang),
+                        mCompoundWords[sLang][1],
+                        "compound word hyphenation for '" + sLang + "' is ok"
+                    );
+                }
 
                 if (counter === aLanguages.length) {
                     done();
