@@ -165,6 +165,7 @@ function (jQuery, ManagedObject, Log, Locale, LocaleData) {
 		var oConfigurationForLanguage = {
 			"require": [sLanguage],
 			"hyphen": "\u00AD",
+			"compound": "all", // factory-made -> fac-tory-[ZWSP]made
 			"path": jQuery.sap.getResourcePath("sap/ui/thirdparty/hyphenopoly")
 		};
 
