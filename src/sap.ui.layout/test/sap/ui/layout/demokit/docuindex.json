@@ -141,7 +141,7 @@
 				]
 			},
 			{
-				"id" : "sap.ui.layout.CSSGrid",
+				"id" : "sap.ui.layout.cssgrid.CSSGrid",
 				"name" : "CSSGrid",
 				"category" : "Layout",
 				"since" : "1.60",
