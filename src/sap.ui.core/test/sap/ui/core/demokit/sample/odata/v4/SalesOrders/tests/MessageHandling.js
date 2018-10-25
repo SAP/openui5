@@ -2,15 +2,18 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/MessageType",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/TestUtils"
-], function (MessageType, Opa5, TestUtils) {
+], function (Log, MessageType, Opa5, TestUtils) {
 	"use strict";
 
 	return {
 		checkMessages : function (Given, When, Then, sUIComponent) {
-			var sPersistentMessage = "Enter customer reference if available",
+			var sNoteError = "Property `Note` value `RAISE_ERROR` not allowed!",
+				sPersistentMessage = "Enter customer reference if available",
+				sQuantityError = "Value must be greater than 0",
 				sTransientMessage = "Minimum order quantity is 2",
 				sUnboundMessage = "Example for an unbound message";
 
@@ -25,6 +28,8 @@ sap.ui.define([
 				}
 			});
 
+			// ************************************************************************************
+			// Unbound/Bound Messages
 			When.onTheMainPage.firstSalesOrderIsVisible();
 			Then.onTheMainPage.checkMessageCount(2);
 			Then.onTheMainPage.checkNoteValueState(1, "Warning", sPersistentMessage);
@@ -111,7 +116,61 @@ sap.ui.define([
 			}]);
 
 			When.onTheMainPage.pressMessagePopoverCloseButton();
-			Then.onAnyPage.checkLog();
+
+			// ************************************************************************************
+			// Error Messages
+			// PATCH scenario
+			Then.onTheMainPage.checkMessageCount(1); // still one for 0500000001
+			When.onTheMainPage.selectSalesOrder(4);
+			When.onTheMainPage.changeNoteInSalesOrders(4, "RAISE_ERROR");
+			When.onTheMainPage.pressSaveSalesOrdersButton();
+			Then.onTheMainPage.checkMessages([{
+					message : sTransientMessage,
+					type : MessageType.Error
+				}, {
+					message : sNoteError,
+					type : MessageType.Error
+			}]);
+			Then.onTheMainPage.checkNoteValueState(4, "Error", sNoteError);
+			When.onTheMainPage.pressMessagePopoverCloseButton();
+			When.onTheMainPage.changeNoteInSalesOrders(4, "any Note");
+			When.onTheMainPage.pressSaveSalesOrdersButton();
+			Then.onTheMainPage.checkNoteValueState(4, "None", "");
+			Then.onTheMainPage.checkMessageCount(1);
+
+			// POST scenario
+			When.onTheMainPage.pressCreateSalesOrderItemButton();
+			When.onTheMainPage.changeQuantityInFirstLineItem("0");
+			When.onTheMainPage.pressSaveSalesOrderButton();
+			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(0, "Error",
+				sQuantityError);
+			Then.onTheMainPage.checkMessages([{
+					message : sTransientMessage,
+					type : MessageType.Error
+				}, {
+					message : sQuantityError,
+					type : MessageType.Error
+			}]);
+			When.onTheMainPage.pressMessagePopoverCloseButton();
+			When.onTheMainPage.changeQuantityInFirstLineItem("2.0");
+			When.onTheMainPage.pressSaveSalesOrderButton();
+			When.onTheSuccessInfo.confirm();
+			//TODO: checkMessageCount should be 1 because expected still one for 0500000001
+			Then.onTheMainPage.checkMessageCount(0);
+
+			Then.onAnyPage.checkLog([{
+					component : "sap.ui.model.odata.v4.ODataPropertyBinding",
+					level : Log.Level.ERROR,
+					message: "Failed to update path /SalesOrderList('0500000004')/Note",
+					details : "Property `Note` value `RAISE_ERROR` not allowed!"
+				}, {
+					component : "sap.ui.model.odata.v4.ODataParentBinding",
+					level : Log.Level.ERROR,
+					message: "POST on 'SalesOrderList('0500000004')/SO_2_SOITEM' failed"
+						+ "; will be repeated automatically",
+					details : "Value must be greater than 0"
+			}]);
+
 			Then.iTeardownMyUIComponent();
 		}
 	};
