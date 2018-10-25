@@ -318,8 +318,6 @@ function(
 
 		// rendering phase is finished
 		this.bRenderingPhase = false;
-
-		this.bAfterRenderingWasCalled = true;
 	};
 
 	InputBase.prototype.exit = function() {
