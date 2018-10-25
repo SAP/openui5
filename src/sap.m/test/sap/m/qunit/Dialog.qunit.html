@@ -57,6 +57,12 @@
 				}
 			}
 
+			function isTextTruncated($element) {
+				var iTolerance = 5;
+
+				return $element[0].scrollWidth > ($element.innerWidth() + iTolerance);
+			}
+
 			var oDialog = new sap.m.Dialog("dialog", {
 				title: "World Domination",
 				subHeader: new sap.m.Bar({
@@ -1250,6 +1256,62 @@
 				oDialog.destroy();
 			});
 
+			QUnit.module("Dialog with vertical scroll and list items",{
+				beforeEach: function() {
+					this.oDialog = new sap.m.Dialog({
+						title: 'Will have vertical scroll',
+						contentHeight: "10rem", // ensure that we have a vertical scroll
+						content: [
+							new sap.m.List({
+								items: [
+									new sap.m.StandardListItem({
+										title: "Item 1"
+									}),
+									new sap.m.StandardListItem({
+										title: "Item 2"
+									}),
+									new sap.m.StandardListItem({
+										title: "Item 3"
+									}),
+									new sap.m.StandardListItem({
+										id: "longTextItem", // this item has to be visible without truncation by default
+										title: "Item with some long text. Item with some long text."
+									}),
+									new sap.m.StandardListItem({
+										title: "Item 4"
+									})
+								]
+							})
+						]
+					});
+				},
+				afterEach: function() {
+					this.oDialog.destroy();
+				}
+			});
+
+			QUnit.test("Item texts are not truncated when width is auto", function(assert) {
+				this.oDialog.open();
+				this.clock.tick(500);
+
+				var $longTextItem = this.oDialog.$().find("#longTextItem .sapMSLITitleOnly");
+
+				// assert
+				assert.strictEqual(isTextTruncated($longTextItem), false, "Long text is not truncated when width is auto");
+			});
+
+			QUnit.test("Text is truncated when width is too small", function(assert) {
+				// make the dialog very small to ensure truncation
+				this.oDialog.setContentWidth("20rem");
+
+				this.oDialog.open();
+				this.clock.tick(500);
+
+				var $longTextItem = this.oDialog.$().find("#longTextItem .sapMSLITitleOnly");
+
+				// assert
+				assert.strictEqual(isTextTruncated($longTextItem), true, "Text is truncated when width is small");
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
