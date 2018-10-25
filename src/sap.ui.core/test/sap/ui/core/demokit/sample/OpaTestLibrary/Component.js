@@ -22,7 +22,9 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 						"applicationUnderTest/view/Main.view.xml",
 						"applicationUnderTest/view/Main.controller.js",
 						"pageObjects/Item.js",
-						"testLibrary/pageObjects/List.js"
+						"testLibrary/pageObjects/List.js",
+						"testLibrary/pageObjects/Common1.js",
+						"testLibrary/pageObjects/Common2.js"
 					]
 				}
 			}
