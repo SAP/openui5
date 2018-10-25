@@ -394,7 +394,7 @@ function(
 
 		iCurrentWidth = this.$().width();
 
-		if (this._previousWidth !== undefined && iCurrentWidth !== this._previousWidth) {
+		if (this._previousWidth !== undefined && iCurrentWidth !== this._previousWidth && !this._bInOverflow) {
 			this.fireEvent("_containerWidthChanged");
 		}
 
