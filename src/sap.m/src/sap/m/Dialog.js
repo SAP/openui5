@@ -585,6 +585,9 @@ function(
 			this.fireBeforeOpen();
 			oPopup.attachOpened(this._handleOpened, this);
 
+			// reset scroll fix check
+			this._iLastWidthAndHeightWithScroll = null;
+
 			// Open popup
 			oPopup.setContent(this);
 
@@ -933,8 +936,8 @@ function(
 				$dialogContent.scrollTop(dialogContentScrollTop);
 			}
 
-			// IE and EDGE have specific container behavior (e.g. div with 500px width is about 15px smaller when it has vertical scrollbar
-			if ((oBrowser.internet_explorer || oBrowser.edge)) {
+			// IE, EDGE and Firefox (when width is auto) have specific container behavior (e.g. div with 500px width is about 17px smaller when it has vertical scrollbar
+			if ((oBrowser.internet_explorer || oBrowser.edge || oBrowser.firefox)) {
 
 				var iVerticalScrollBarWidth = Math.ceil($dialogContent.outerWidth() - dialogClientWidth),
 					iCurrentWidthAndHeight = $dialogContent.width() + "x" + $dialogContent.height();
@@ -945,9 +948,11 @@ function(
 						!this.getStretch() && 							// - when the dialog is not stretched
 						$dialogContent.width() < maxDialogWidth) {		// - if the dialog can't grow anymore
 
+						$dialog.addClass("sapMDialogVerticalScrollIncluded");
 						$dialogContent.css({"padding-right" : iVerticalScrollBarWidth});
 						this._iLastWidthAndHeightWithScroll = iCurrentWidthAndHeight;
 					} else {
+						$dialog.removeClass("sapMDialogVerticalScrollIncluded");
 						$dialogContent.css({"padding-right" : ""});
 						this._iLastWidthAndHeightWithScroll = null;
 					}
