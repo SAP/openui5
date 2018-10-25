@@ -1575,7 +1575,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("On focus", function(assert) {
-		var oHSb, oRowContainer;
 		var done = assert.async();
 
 		function getHeaderCellDomRef(iColumnIndex) {
@@ -1590,8 +1589,11 @@ sap.ui.define([
 			return oTable.getRows()[iRowIndex].getCells()[iColumnIndex].getDomRef();
 		}
 
-		function isScrolledIntoView(oCell) {
-			var iScrollLeft = oRowContainer.scrollLeft;
+		function isScrolledIntoView(oCell, bRTL) {
+			var oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
+			var oRowContainer = oTable.getDomRef("sapUiTableCtrlScr");
+
+			var iScrollLeft = bRTL ? jQuery(oHSb).scrollLeftRTL() : oHSb.scrollLeft;
 			var iRowContainerWidth = oRowContainer.clientWidth;
 			var iCellLeft = oCell.offsetLeft;
 			var iCellRight = iCellLeft + oCell.offsetWidth;
@@ -1601,22 +1603,30 @@ sap.ui.define([
 			return iOffsetLeft >= 0 && iOffsetRight <= 0;
 		}
 
-		function test(sTestTitle, oDomElementToFocus, iInitialScrollLeft, bScrollPositionShouldNotChange) {
+		function test(sTestTitle, oDomElementToFocus, iInitialScrollLeft, bScrollPositionShouldNotChange, bRTL) {
 			return new Promise(function(resolve) {
+				var oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
+				var $HSb = jQuery(oHSb);
 				document.body.focus();
-				oHSb.scrollLeft = iInitialScrollLeft;
+
+				if (bRTL){
+					$HSb.scrollLeftRTL(iInitialScrollLeft);
+				} else {
+					oHSb.scrollLeft = iInitialScrollLeft;
+				}
 
 				window.setTimeout(function() {
 					oDomElementToFocus.focus();
 
 					window.setTimeout(function() {
+						var iNewScrollLeft = bRTL ? $HSb.scrollLeftRTL() : oHSb.scrollLeft;
 						if (bScrollPositionShouldNotChange) {
-							assert.strictEqual(oHSb.scrollLeft, iInitialScrollLeft,
+							assert.strictEqual(iNewScrollLeft, iInitialScrollLeft,
 								sTestTitle + ": The horizontal scroll position did not change");
 						} else {
-							assert.notStrictEqual(oHSb.scrollLeft, iInitialScrollLeft,
+							assert.notStrictEqual(iNewScrollLeft, iInitialScrollLeft,
 								sTestTitle + ": The horizontal scroll position did change");
-							assert.ok(isScrolledIntoView(oDomElementToFocus),
+							assert.ok(isScrolledIntoView(oDomElementToFocus, bRTL),
 								sTestTitle + ": The focused cell is fully visible");
 						}
 						resolve();
@@ -1625,40 +1635,52 @@ sap.ui.define([
 			});
 		}
 
+		function changeRTL(bRTL) {
+			return new Promise(function(resolve) {
+				sap.ui.getCore().getConfiguration().setRTL(bRTL);
+				// Give the text direction change enough time, otherwise the UI might not be ready when the tests start.
+				// BCP: 1870395335
+				window.setTimeout(function() {
+					oTable.invalidate();
+					sap.ui.getCore().applyChanges();
+					resolve();
+				}, 500);
+			});
+		}
+
 		oTable.getColumns()[1].setWidth("800px");
 		oTable.getColumns()[2].setWidth("100px");
 		oTable.getColumns()[3].setWidth("800px");
 		oTable.getColumns()[4].setWidth("100px");
 		sap.ui.getCore().applyChanges();
-		oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
-		oRowContainer = oTable.getDomRef("sapUiTableCtrlScr");
 
-		test("Focus header cell in column 3 (scrollable column)", getHeaderCellDomRef(2), 0).then(function() {
-			return test("Focus header cell in column 1 (fixed column)", getHeaderCellDomRef(0), 70, true);
+		Promise.resolve().then(function() {
+			return test("Focus header cell in column 3 (scrollable column)", getHeaderCellDomRef(2), 0, false, false);
 		}).then(function() {
-			return test("Focus header cell in column 2 (scrollable column)", getHeaderCellDomRef(1), 70);
+			return test("Focus header cell in column 1 (fixed column)", getHeaderCellDomRef(0), 70, true, false);
 		}).then(function() {
-			return test("Focus header cell in column 3 (scrollable column)", getHeaderCellDomRef(2), 850);
+			return test("Focus header cell in column 2 (scrollable column)", getHeaderCellDomRef(1), 70, false, false);
 		}).then(function() {
-			return test("Focus header cell in column 4 (scrollable column)", getHeaderCellDomRef(3), 200);
+			return test("Focus header cell in column 3 (scrollable column)", getHeaderCellDomRef(2), 850, false, false);
 		}).then(function() {
-			return test("Focus data cell in column 3, row 1 (scrollable column)", getDataCellDomRef(2, 0), 0);
+			return test("Focus header cell in column 4 (scrollable column)", getHeaderCellDomRef(3), 200, false, false);
 		}).then(function() {
-			return test("Focus data cell in column 1, row 1 (fixed column)", getDataCellDomRef(0, 0), 70, true);
+			return test("Focus data cell in column 3, row 1 (scrollable column)", getDataCellDomRef(2, 0), 0, false, false);
 		}).then(function() {
-			return test("Focus data cell in column 2, row 1 (scrollable column)", getDataCellDomRef(1, 0), 70);
+			return test("Focus data cell in column 1, row 1 (fixed column)", getDataCellDomRef(0, 0), 70, true, false);
 		}).then(function() {
-			return test("Focus data cell in column 3, row 1 (scrollable column)", getDataCellDomRef(2, 0), 850);
+			return test("Focus data cell in column 2, row 1 (scrollable column)", getDataCellDomRef(1, 0), 70, false, false);
 		}).then(function() {
-			return test("Focus data cell in column 4, row 1 (scrollable column)", getDataCellDomRef(3, 0), 200);
+			return test("Focus data cell in column 3, row 1 (scrollable column)", getDataCellDomRef(2, 0), 850, false, false);
+		}).then(function() {
+			return test("Focus data cell in column 4, row 1 (scrollable column)", getDataCellDomRef(3, 0), 200, false, false);
 		}).then(function() {
 			oTable.getColumns()[1].setWidth("1000px");
 			oTable.getColumns()[2].setWidth("100px");
 			oTable.getColumns()[3].setWidth("1000px");
 			oTable.getColumns()[4].setWidth("100px");
 			sap.ui.getCore().applyChanges();
-			oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
-			oRowContainer = oTable.getDomRef("sapUiTableCtrlScr");
+
 			if (Device.browser.msie) {
 				// The following tests do not make sense in IE. IE scrolls when a cell that is wider than the row container is focused.
 				return Promise.reject();
@@ -1666,18 +1688,77 @@ sap.ui.define([
 				return Promise.resolve();
 			}
 		}).then(function() {
-			return test("Focus header cell in column 2 (scrollable column)", getHeaderCellDomRef(1), 50, true);
+			return test("Focus header cell in column 2 (scrollable column)", getHeaderCellDomRef(1), 50, true, false);
 		}).then(function() {
-			return test("Focus header cell in column 4 (scrollable column)", getHeaderCellDomRef(3), 1150, true);
+			return test("Focus header cell in column 4 (scrollable column)", getHeaderCellDomRef(3), 1150, true, false);
 		}).then(function() {
-			return test("Focus data cell in column 2, row 1 (scrollable column)", getDataCellDomRef(1, 0), 50, true);
+			return test("Focus data cell in column 2, row 1 (scrollable column)", getDataCellDomRef(1, 0), 50, true, false);
 		}).then(function() {
-			return test("Focus data cell in column 2, row 2 (scrollable column)", getDataCellDomRef(1, 1), 50, true);
+			return test("Focus data cell in column 2, row 2 (scrollable column)", getDataCellDomRef(1, 1), 50, true, false);
 		}).then(function() {
-			return test("Focus data cell in column 4, row 1 (scrollable column)", getDataCellDomRef(3, 0), 1150, true);
+			return test("Focus data cell in column 4, row 1 (scrollable column)", getDataCellDomRef(3, 0), 1150, true, false);
 		}).then(function() {
-			return test("Focus data cell in column 4, row 2 (scrollable column)", getDataCellDomRef(3, 1), 1150, true);
-		}).then(done).catch(done);
+			return test("Focus data cell in column 4, row 2 (scrollable column)", getDataCellDomRef(3, 1), 1150, true, false);
+		}).then(function(){
+			return changeRTL(true);
+		}).catch(function(){
+			return changeRTL(true);
+		}).then(function() {
+			oTable.getColumns()[1].setWidth("800px");
+			oTable.getColumns()[2].setWidth("100px");
+			oTable.getColumns()[3].setWidth("800px");
+			oTable.getColumns()[4].setWidth("100px");
+			sap.ui.getCore().applyChanges();
+		}).then(function() {
+			return test("RTL: Focus header cell in column 3 (scrollable column)", getHeaderCellDomRef(2), 950, false, true);
+		}).then(function() {
+			return test("RTL: Focus header cell in column 1 (fixed column)", getHeaderCellDomRef(0), 880, true, true);
+		}).then(function() {
+			return test("RTL: Focus header cell in column 2 (scrollable column)", getHeaderCellDomRef(1), 880, false, true);
+		}).then(function() {
+			return test("RTL: Focus header cell in column 3 (scrollable column)", getHeaderCellDomRef(2), 100, false, true);
+		}).then(function() {
+			return test("RTL: Focus header cell in column 4 (scrollable column)", getHeaderCellDomRef(3), 750, false, true);
+		}).then(function() {
+			return test("RTL: Focus data cell in column 3, row 1 (scrollable column)", getDataCellDomRef(2, 0), 950, false, true);
+		}).then(function() {
+			return test("RTL: Focus data cell in column 1, row 1 (fixed column)", getDataCellDomRef(0, 0), 880, true, true);
+		}).then(function() {
+			return test("RTL: Focus data cell in column 2, row 1 (scrollable column)", getDataCellDomRef(1, 0), 880, false, true);
+		}).then(function() {
+			return test("RTL: Focus data cell in column 3, row 1 (scrollable column)", getDataCellDomRef(2, 0), 100, false, true);
+		}).then(function() {
+			return test("RTL: Focus data cell in column 4, row 1 (scrollable column)", getDataCellDomRef(3, 0), 750, false, true);
+		}).then(function() {
+			oTable.getColumns()[1].setWidth("1000px");
+			oTable.getColumns()[2].setWidth("100px");
+			oTable.getColumns()[3].setWidth("1000px");
+			oTable.getColumns()[4].setWidth("100px");
+			sap.ui.getCore().applyChanges();
+
+			if (Device.browser.msie) {
+				// The following tests do not make sense in IE. IE scrolls when a cell that is wider than the row container is focused.
+				return Promise.reject();
+			} else {
+				return Promise.resolve();
+			}
+		}).then(function() {
+			return test("RTL: Focus header cell in column 2 (scrollable column)", getHeaderCellDomRef(1), 1250, true, true);
+		}).then(function() {
+			return test("RTL: Focus header cell in column 4 (scrollable column)", getHeaderCellDomRef(3), 150, true, true);
+		}).then(function() {
+			return test("RTL: Focus data cell in column 2, row 1 (scrollable column)", getDataCellDomRef(1, 0), 1250, true, true);
+		}).then(function() {
+			return test("RTL: Focus data cell in column 2, row 2 (scrollable column)", getDataCellDomRef(1, 1), 1250, true, true);
+		}).then(function() {
+			return test("RTL: Focus data cell in column 4, row 1 (scrollable column)", getDataCellDomRef(3, 0), 150, true, true);
+		}).then(function() {
+			return test("RTL: Focus data cell in column 4, row 2 (scrollable column)", getDataCellDomRef(3, 1), 150, true, true);
+		}).then(function(){
+			return changeRTL(false);
+		}).catch(function(){
+			return changeRTL(false);
+		}).then(done);
 	});
 
 	QUnit.module("Vertical scrolling", {
