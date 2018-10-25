@@ -83,13 +83,19 @@ sap.ui.define([
 		};
 
 		FakeLrepConnectorStorage.prototype.send = function(sUri, sMethod, oData, mOptions) {
+			function _changeShouldBeDeleted(oChangeDefinition, oResponse) {
+				if (
+					(oChangeDefinition.reference === oResponse.parameters[1] || oChangeDefinition.reference + ".Component" === oResponse.parameters[1])
+					&& oChangeDefinition.layer === oResponse.parameters[2]
+				) {
+					return true;
+				}
+			}
+
 			if (sMethod === "DELETE") {
 				return FakeLrepConnector.prototype.send.apply(this, arguments).then(function(oResponse) {
 					oFakeLrepStorage.getChanges().forEach(function(oChangeDefinition) {
-						if (
-							oChangeDefinition.reference === oResponse.response.parameters[1] &&
-							oChangeDefinition.layer === oResponse.response.parameters[2]
-						) {
+						if (_changeShouldBeDeleted(oChangeDefinition, oResponse.response)) {
 							oFakeLrepStorage.deleteChange(oChangeDefinition.fileName);
 						}
 					});
