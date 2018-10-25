@@ -1,4 +1,4 @@
-@_sap_m_OnePersonGrid_HoursBackground: lighten(@sapUiContentForegroundColor, 7);
+@_sap_m_OnePersonGrid_HoursBackground: @sapUiListBackground;
 
 .sapMOnePersonColumnHeader.sapUiCalRow {
 	background-color: @_sap_m_OnePersonGrid_HoursBackground;
@@ -28,7 +28,8 @@
 	border-color: @sapUiListVerticalBorderColor;
 }
 
-.sapMOnePersonBlockersRow {
+.sapMOnePersonBlockersRow,
+.sapMOnePersonGridContent {
 	background-color: @_sap_m_OnePersonGrid_HoursBackground;
 }
 
@@ -85,6 +86,24 @@
 		//	border-left-color: @color;
 		//}
 	}
+}
+
+/* Calendar overstyling */
+
+html.sap-desktop .sapMOnePerCal .sapUiCalItem:not(.sapUiCalItemSel):hover {
+	background-color: darken(@sapUiContentForegroundColor,5);
+}
+
+html.sap-desktop .sapMOnePerCal .sapUiCalItemWeekEnd:not(.sapUiCalItemSel):hover {
+	background-color: darken(@sapUiContentForegroundColor, 10);
+}
+
+html.sap-desktop .sapMOnePerCal .sapUiCalItemOtherMonth:not(.sapUiCalItemSel):hover {
+	background-color: darken(@sapUiListBackground, 10);
+}
+
+html.sap-desktop .sapMOnePerCal .sapUiCalItem:not(.sapUiCalItemSel) :not(.sapUiCalWeekNum):hover {
+	background-color: transparent;
 }
 
 @_sap_m_OnePerCal_sapUiCalendarAppType01: darken(@sapUiAccent1, 10);
