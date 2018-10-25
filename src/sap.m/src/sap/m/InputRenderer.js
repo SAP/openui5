@@ -27,6 +27,10 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 	 */
 	InputRenderer.addOuterClasses = function(oRm, oControl) {
 		oRm.addClass("sapMInput");
+
+		if (oControl.getDescription()) {
+			oRm.addClass("sapMInputWithDescription");
+		}
 	};
 
 	/**
@@ -69,7 +73,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 	InputRenderer.writeDescription = function (oRm, oControl) {
 		oRm.write("<div");
 		oRm.addClass("sapMInputDescriptionWrapper");
-		oRm.addStyle("width", "calc(100% - " + oControl.getFieldWidth() + ")");
+		oRm.addStyle("max-width", "calc(100% - " + oControl.getFieldWidth() + ")");
 		oRm.writeClasses();
 		oRm.writeStyles();
 		oRm.write(">");
