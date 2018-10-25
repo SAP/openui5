@@ -74,7 +74,12 @@ sap.ui.define([
 			StandardListItem.prototype.onBeforeRendering.apply(this, arguments);
 			var oLink = this.getLink(), oDescribedByText;
 
-			if (oLink) {
+			if (!oLink) {
+				return;
+			}
+
+			//prevent unneeded creation of sap.ui.core.InvisibleText
+			if (!oLink.getAriaDescribedBy().length) {
 				oDescribedByText = this._getLinkAriaDescribedBy();
 
 				oLink.setProperty("text", this.getTitle(), true);

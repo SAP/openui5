@@ -1043,4 +1043,88 @@ sap.ui.define([
 
 		oMessageView.destroy();
 	});
+
+	QUnit.test("Filter messages then show all the messages again", function (assert) {
+		//Setup
+		var oModel = new JSONModel([{
+			"message": "Enter a valid number",
+			"additionalText": "ZIP Code/City",
+			"type": "Error",
+			"activeTitle": true
+		}, {
+			"message": "Enter a valid value",
+			"additionalText": "Email",
+			"type": "Error",
+			"activeTitle": true
+		}, {
+			"message": "A mandatory field is required",
+			"additionalText": "Name",
+			"type": "Error",
+			"activeTitle": true
+		}, {
+			"message": "The value should not exceed 40",
+			"additionalText": "Standard Weekly Hours",
+			"type": "Warning"
+		}]);
+
+		var oMessageView = new MessageView({
+			items: {
+				path: "message>/",
+				template: new MessageItem(
+						{
+							title: "{message>message}",
+							subtitle: "{message>additionalText}",
+							type: "{message>type}",
+							description: "{message>message}",
+							activeTitle: "{message>activeTitle}"
+						})
+			}
+		}).setModel(oModel, "message").placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		var oAll = oMessageView._oLists['all'],
+		oError = oMessageView._oLists['error'],
+		oWarning = oMessageView._oLists['warning'];
+
+		//Assert
+		assert.strictEqual(oAll.getItems().length, 4, "The are four messages");
+		assert.strictEqual(oError.getItems().length, 3, "There are three items in the error list.");
+		assert.strictEqual(oWarning.getItems().length, 1, "There are one item in the warning list");
+		assert.ok(oAll.getVisible(), "The list with all the messages is visible");
+
+		//Act
+		oMessageView._oSegmentedButton.getButtons()[1].firePress();
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.ok(oError.getVisible(), "The 'Error' list/section is visible");
+		assert.strictEqual(oError.getItems().length, 3, "There are three items in the error list.");
+
+		//Act
+		oMessageView._oSegmentedButton.getButtons()[2].firePress();
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.ok(oWarning.getVisible(), "The 'Warning' list/section is visible");
+		assert.strictEqual(oWarning.getItems().length, 1, "There is one message");
+
+		//Act
+		oMessageView._oSegmentedButton.getButtons()[1].firePress();
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.ok(oError.getVisible(), "The 'Error' list/section is visible");
+		assert.strictEqual(oError.getItems().length, 3, "There are three messages");
+
+		//Act
+		oMessageView._oSegmentedButton.getButtons()[0].firePress();
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.ok(oAll.getVisible(), "The list with all messages is visible");
+		assert.strictEqual(oAll.getItems().length, 4, "There are four messages");
+
+		oMessageView.destroy();
+	});
 });
