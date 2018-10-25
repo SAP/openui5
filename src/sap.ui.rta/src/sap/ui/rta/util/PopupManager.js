@@ -204,6 +204,10 @@ function (
 				oPopover.oPopup[this._getFocusEventName("remove")]();
 				// set Modal
 				oPopover.oPopup.setModal(true);
+				// ensure the toolbar is visible
+				if (this.getRta().getShowToolbars()) {
+					this.getRta().getToolbar().bringToFront();
+				}
 			}
 		};
 
