@@ -57,6 +57,13 @@
 				var sValue = sText.value;
 				var oControlToBeRenamed = RenameObjectPageSection._getControlForRename(oControl, oModifier);
 
+				if (typeof sValue === "string" && sValue.trim() === "") {
+					Utils.log.error("Change cannot be applied as ObjectPageSubSection's title cannot be empty: ["
+						+ oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
+
+					return false;
+				}
+
 				if (oChangeDefinition.texts && sText && typeof (sValue) === "string") {
 					oChange.setRevertData(oModifier.getProperty(oControlToBeRenamed, sPropertyName));
 					var sMethodName = RenameObjectPageSection._getSetterMethodName(sValue);
