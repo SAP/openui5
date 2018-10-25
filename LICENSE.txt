@@ -604,6 +604,13 @@ License: MIT License
 <year> = 2018
 <copyright holders> = JS Foundation and other contributors
 
+Component: mnater/Hyphenopoly 2.4.0
+Licensor: Mathias Nater
+Website: https://github.com/mnater/Hyphenopoly/
+License: MIT License
+<year> = 2018
+<copyright holders> = Mathias Nater
+
 
 --------------------------------------------------------------------------------------------------------------------------
 
