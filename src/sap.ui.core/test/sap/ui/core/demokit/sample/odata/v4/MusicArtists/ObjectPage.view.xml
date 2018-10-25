@@ -5,10 +5,11 @@
 	xmlns:core="sap.ui.core"
 	xmlns:f="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc">
-	<Page id="objectPage" navButtonPress="onBack" showHeader="true" showNavButton="true">
+	<Page navButtonPress="onBack" showHeader="true" showNavButton="true">
 		<content>
 			<VBox class="sapUiSmallMargin">
-				<f:Form editable="true" id="objectPageForm">
+				<f:Form editable="true" id="objectPageForm"
+					validateFieldGroup="onValidateFieldGroup">
 					<f:title>
 						<core:Title text="Artist Details" />
 					</f:title>
@@ -38,9 +39,10 @@
 								</f:FormElement>
 								<f:FormElement label="Country of Origin">
 									<f:fields>
-										<Input editable="{ui-op>/bEditMode}"
+										<Input change="onChange" editable="{ui-op>/bEditMode}"
+											fieldGroupIds="countryGroup"
 											value="{CountryOfOrigin}" />
-										<Input editable="false"
+										<Input editable="false" fieldGroupIds="countryGroup"
 											value="{CountryOfOrigin_Text}" />
 									</f:fields>
 								</f:FormElement>
@@ -81,8 +83,7 @@
 							<ToolbarSpacer/>
 							<Button enabled="{ui-op>/bEditMode}" press="onCreate" text="Create" />
 							<ToolbarSeparator/>
-							<!-- refresh on ODLB relative to v4.Context is not possible -->
-							<Button enabled="false" press="onRefresh" text="Refresh" />
+							<Button press="onRefresh" text="Refresh" />
 						</Toolbar>
 					</headerToolbar>
 					<items>

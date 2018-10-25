@@ -88,7 +88,9 @@ sap.ui.define([
 	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string
 	 * @param {boolean} [bSortExpandSelect=false]
-	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
+	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string;
+	 *   note that this flag can safely be ignored for all "new" features (after 1.47) which
+	 *   should just sort always
 	 *
 	 * @private
 	 */
@@ -579,14 +581,18 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath The path
 	 * @param {object} oData The data to patch with
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise to be resolved with the patched data
 	 *
 	 * @private
 	 */
 	Cache.prototype.patch = function (sPath, oData) {
 		var that = this;
 
-		this.fetchValue(_GroupLock.$cached, sPath).then(function (oCacheValue) {
+		return this.fetchValue(_GroupLock.$cached, sPath).then(function (oCacheValue) {
 			_Helper.updateExisting(that.mChangeListeners, sPath, oCacheValue, oData);
+
+			return oCacheValue;
 		});
 	};
 
@@ -1597,7 +1603,7 @@ sap.ui.define([
 	 * Returns a promise to be resolved with an OData object for the requested data.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the ID of the group to associate the request with;
+	 *   A lock for the ID of the group that is associated with the request;
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {string} [sPath]
 	 *   ignored for property caches, should be empty
@@ -1691,7 +1697,7 @@ sap.ui.define([
 	 * the key predicates for all entities in the result before the promise is resolved.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the ID of the group to associate the request with;
+	 *   A lock for the ID of the group that is associated with the request;
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
@@ -1748,7 +1754,7 @@ sap.ui.define([
 	 * Calculates the key predicates for all entities in the result before the promise is resolved.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the ID of the group to associate the request with;
+	 *   A lock for the ID of the group that is associated with the request;
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {object} [oData]
 	 *   A copy of the data to be sent with the POST request; may be used to tunnel a different
@@ -1808,6 +1814,47 @@ sap.ui.define([
 		this.bPosting = true;
 
 		return this.oPromise;
+	};
+
+	/**
+	 * Returns a promise to be resolved with the updated data when the side effects have been
+	 * loaded from the given resource path.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the ID of the group that is associated with the request;
+	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
+	 * @param {string[]} aPaths The "14.5.11 Expression edm:NavigationPropertyPath" or
+	 *   "14.5.13 Expression edm:PropertyPath" strings describing which properties need to be loaded
+	 *   because they may have changed due to side effects of a previous update
+	 * @param {string} [sResourcePath=this.sResourcePath]
+	 *   A resource path relative to the service URL; it must not contain a query string
+	 * @returns {Promise}
+	 *   A promise resolving with the updated data
+	 * @throws {Error} If the side effects require a $expand
+	 *
+	 * @public
+	 */
+	SingleCache.prototype.requestSideEffects = function (oGroupLock, aPaths, sResourcePath) {
+		var mQueryOptions = _Helper.intersectQueryOptions(this.mQueryOptions, aPaths),
+			that = this;
+
+		if (mQueryOptions === null) {
+			return this.fetchValue(_GroupLock.$cached, "");
+		}
+
+		return Promise.all([
+			this.oRequestor.request("GET", (sResourcePath || this.sResourcePath)
+					+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true),
+				oGroupLock),
+			this.fetchTypes()
+		]).then(function (aResult) {
+			var oNewValue = aResult[0];
+
+			// visit response to report the messages
+			that.visitResponse(oNewValue, aResult[1], that.sMetaPath);
+
+			return that.patch("", oNewValue);
+		});
 	};
 
 	//*********************************************************************************************

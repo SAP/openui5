@@ -382,7 +382,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oUpdateGroupLock
 	 *   The group ID to be used for the POST request
-	 * @param {string|SyncPromise} vCreatePath
+	 * @param {string|sap.ui.base.SyncPromise} vCreatePath
 	 *   The path for the POST request or a SyncPromise that resolves with that path
 	 * @param {string} sPathInCache
 	 *   The path within the cache where to create the entity
@@ -758,6 +758,31 @@ sap.ui.define([
 			this.oReadGroupLock = undefined;
 		}
 	};
+
+	/**
+	 * Loads side effects for the given context of this binding.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID to be used for requesting side effects
+	 * @param {string[]} aPaths
+	 *   The "14.5.11 Expression edm:NavigationPropertyPath" or
+	 *   "14.5.13 Expression edm:PropertyPath" strings describing which properties need to be loaded
+	 *   because they may have changed due to side effects of a previous update
+	 * @param {sap.ui.model.odata.v4.Context} [oContext]
+	 *   The context instance for which to request side effects; if missing, the whole binding is
+	 *   affected
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving without a defined result, or rejected with an error if loading of side
+	 *   effects fails
+	 * @throws {Error}
+	 *   If this binding does not use own service data requests
+	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects
+	 * @private
+	 * @see sap.ui.model.odata.v4.Context#requestSideEffects
+	 */
 
 	/**
 	 * Resumes this binding. The binding can again fire change events and trigger data service

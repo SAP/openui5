@@ -886,6 +886,60 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects
+	 */
+	ODataContextBinding.prototype.requestSideEffects = function (sGroupId, aPaths, oContext) {
+		var oCache = this.oCachePromise.getResult(),
+			aDependentBindings,
+			oModel = this.oModel,
+			aPromises = [];
+
+		/*
+		 * Push the given promise to "aPromises" and report errors.
+		 *
+		 * @param {Promise} oPromise - A promise
+		 */
+		function push(oPromise) {
+			aPromises.push(oPromise.catch(function (oError) {
+				oModel.reportError("Failed to request side effects", sClassName, oError);
+				throw oError;
+			}));
+		}
+
+		if (aPaths.indexOf("") < 0) {
+			try {
+				push(oCache.requestSideEffects(oModel.lockGroup(sGroupId), aPaths,
+					oContext && oContext.getPath().slice(1)));
+
+				aDependentBindings = oContext
+					? oModel.getDependentBindings(oContext)
+					: this.getDependentBindings();
+				aDependentBindings.forEach(function (oDependentBinding) {
+					var aStrippedPaths;
+
+					if (oDependentBinding.oCachePromise.getResult()) {
+						// dependent binding which has its own cache
+						aStrippedPaths
+							= _Helper.stripPathPrefix(oDependentBinding.getPath(), aPaths);
+						if (aStrippedPaths.length) {
+							push(oDependentBinding.requestSideEffects(sGroupId, aStrippedPaths));
+						}
+					}
+				});
+
+				return SyncPromise.all(aPromises);
+			} catch (e) {
+				if (!e.message.startsWith("Unsupported navigation property")) {
+					throw e;
+				}
+			}
+		}
+		return oContext && this.refreshReturnValueContext(oContext, sGroupId)
+			|| this.refreshInternal(sGroupId, true);
+	};
+
+	/**
 	 * Resumes this binding and all dependent bindings and fires a change event afterwards.
 	 *
 	 * @param {boolean} bCheckUpdate

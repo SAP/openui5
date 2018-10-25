@@ -1111,4 +1111,144 @@ sap.ui.define([
 		// code under test
 		return oContext.patch(oData);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects", function (assert) {
+		var oCache = {
+				// currently used to detect a context binding
+				requestSideEffects : function () {}
+			},
+			oBinding = {
+				oCachePromise : SyncPromise.resolve(oCache),
+				checkSuspended : function () {},
+				requestSideEffects : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')"),
+			sUpdateGroupId = "update";
+
+		assert.throws(function () {
+			// code under test
+			oContext.requestSideEffects();
+		}, new Error("Missing edm:(Navigation)PropertyPath expressions"));
+
+		assert.throws(function () {
+			// code under test
+			oContext.requestSideEffects([]);
+		}, new Error("Missing edm:(Navigation)PropertyPath expressions"));
+
+		[
+			undefined,
+			"foo",
+			{},
+			{$AnnotationPath : "foo"},
+			{$If : [true, {$PropertyPath : "TEAM_ID"}]}, // "a near miss" ;-)
+			{$PropertyPath : ""}
+		].forEach(function (oPath) {
+			var sJSON = JSON.stringify(oPath);
+
+			assert.throws(function () {
+				// code under test
+				oContext.requestSideEffects([oPath]);
+			}, new Error("Not an edm:(Navigation)PropertyPath expression: " + sJSON), sJSON);
+		});
+
+		this.mock(oContext).expects("getUpdateGroupId").withExactArgs().returns(sUpdateGroupId);
+		this.mock(oBinding).expects("requestSideEffects")
+			// Note: $select not yet sorted
+			.withExactArgs(sUpdateGroupId, ["TEAM_ID", "EMPLOYEE_2_MANAGER", "ROOM_ID", ""],
+				sinon.match.same(oContext))
+			.returns(SyncPromise.resolve({}));
+
+		// code under test
+		return oContext.requestSideEffects([{
+				$PropertyPath : "TEAM_ID"
+			}, {
+				$NavigationPropertyPath : "EMPLOYEE_2_MANAGER"
+			}, {
+				$PropertyPath : "ROOM_ID"
+			}, {
+				$NavigationPropertyPath : ""
+			}]).then(function (oResult) {
+				assert.strictEqual(oResult, undefined);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects: suspended binding", function (assert) {
+		var oBinding = {
+				oCachePromise : SyncPromise.resolve({/*oCache*/}),
+				checkSuspended : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')"),
+			oError = new Error("Must not call...");
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs().throws(oError);
+
+		assert.throws(function () {
+			// code under test
+			oContext.requestSideEffects();
+		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects: promise rejected", function (assert) {
+		var oCache = {
+				// currently used to detect a context binding
+				requestSideEffects : function () {}
+			},
+			oBinding = {
+				oCachePromise : SyncPromise.resolve(oCache),
+				checkSuspended : function () {},
+				requestSideEffects : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')"),
+			oError = new Error("Failed intentionally"),
+			oResult,
+			sUpdateGroupId = "update";
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("getUpdateGroupId").withExactArgs().returns(sUpdateGroupId);
+		this.mock(oBinding).expects("requestSideEffects")
+			.withExactArgs(sUpdateGroupId, ["TEAM_ID"], sinon.match.same(oContext))
+			.returns(SyncPromise.reject(oError));
+
+		// code under test
+		oResult = oContext.requestSideEffects([{$PropertyPath : "TEAM_ID"}]);
+
+		assert.ok(oResult instanceof Promise);
+
+		return oResult.then(function () {
+				assert.ok(false, "unexpected success");
+			}, function (oError0) {
+				assert.strictEqual(oError0, oError);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects: no own cache", function (assert) {
+		var oBinding = {
+				oCachePromise : SyncPromise.resolve(),
+				checkSuspended : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')");
+
+		assert.throws(function () {
+			// code under test
+			oContext.requestSideEffects();
+		}, new Error("Unsupported context: " + oContext));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects: not a context binding's context", function (assert) {
+		var oBinding = {
+				oCachePromise : SyncPromise.resolve({/*no requestSideEffects*/}),
+				checkSuspended : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')");
+
+		assert.throws(function () {
+			// code under test
+			oContext.requestSideEffects();
+		}, new Error("Unsupported context: " + oContext));
+	});
 });
