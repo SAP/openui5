@@ -52,7 +52,10 @@ sap.ui.define([
 				// Select the target node and scroll to it
 				if (oLastItem) {
 					oLastItem.setSelected(true);
-
+					this.oSelectedItem = {
+						sTopicId: sTopicId,
+						oModel: oModel
+					};
 					// Only scroll after the dom is ready
 					setTimeout(function () {
 						if (oLastItem.getDomRef() && !isInViewport(oLastItem.getDomRef())) {
@@ -104,6 +107,9 @@ sap.ui.define([
 						this._expandAllNodes();
 					} else {
 						this._collapseAllNodes();
+						if (this.oSelectedItem) {
+							this._expandTreeToNode(this.oSelectedItem.sTopicId, this.oSelectedItem.oModel);
+						}
 					}
 
 					this._filterTimeout = null;
