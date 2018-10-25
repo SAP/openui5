@@ -813,18 +813,29 @@ sap.ui.define([
 
 			if (oRowContainer && oCellInfo.columnIndex >= this.getComputedFixedColumnCount()) {
 				var oHSb = this._getScrollExtension().getHorizontalScrollbar();
+				var $HSb = jQuery(oHSb);
 				var oCell = oCellInfo.cell[0];
-				var iScrollLeft = oHSb.scrollLeft;
+
+				var iCurrentScrollLeft = this._bRtlMode ? $HSb.scrollLeftRTL() : oHSb.scrollLeft;
 				var iRowContainerWidth = oRowContainer.clientWidth;
 				var iCellLeft = oCell.offsetLeft;
 				var iCellRight = iCellLeft + oCell.offsetWidth;
-				var iOffsetLeft = iCellLeft - iScrollLeft;
-				var iOffsetRight = iCellRight - iRowContainerWidth - iScrollLeft;
+				var iOffsetLeft = iCellLeft - iCurrentScrollLeft;
+				var iOffsetRight = iCellRight - iRowContainerWidth - iCurrentScrollLeft;
+				var iNewScrollLeft;
 
 				if (iOffsetLeft < 0 && iOffsetRight < 0) {
-					oHSb.scrollLeft = iScrollLeft + iOffsetLeft;
+					iNewScrollLeft = iCurrentScrollLeft + iOffsetLeft;
 				} else if (iOffsetRight > 0 && iOffsetLeft > 0) {
-					oHSb.scrollLeft = iScrollLeft + iOffsetRight;
+					iNewScrollLeft = iCurrentScrollLeft + iOffsetRight;
+				}
+
+				if (iNewScrollLeft != null) {
+					if (this._bRtlMode) {
+						$HSb.scrollLeftRTL(iNewScrollLeft);
+					} else {
+						oHSb.scrollLeft = iNewScrollLeft;
+					}
 				}
 			}
 
