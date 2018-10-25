@@ -21,7 +21,7 @@ sap.ui.define([
 					return this.waitFor({
 						viewName : sViewName,
 						controlType : "sap.m.Button",
-						matchers: new PropertyStrictEquals({name : "type", value : (Device.os.android ? "Up" : "Back")}),
+						matchers: new PropertyStrictEquals({name : "type", value : "Back"}),
 						actions : new Press(),
 						errorMessage : "Did not find the back button"
 					});
@@ -73,7 +73,6 @@ sap.ui.define([
 						errorMessage : "Did not display the object not found text"
 					});
 				}
-
 			}
 
 		}
