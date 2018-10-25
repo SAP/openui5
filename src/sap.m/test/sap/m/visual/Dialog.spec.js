@@ -78,10 +78,10 @@ describe('sap.m.Dialog', function() {
 		element(by.id('oDialogErrorStateOKButton')).click();
 	});
 
-	it('should open highlight state dialog', function() {
-		element(by.id('dialogWithHighlightStateButton')).click();
-		var dialogHighlightState = element(by.id('dialogHighlightState'));
-		expect(takeScreenshot(dialogHighlightState)).toLookAs('highlight-state-dialog');
-		element(by.id('oDialogHighlightStateOKButton')).click();
+	it('should open information state dialog', function() {
+		element(by.id('dialogWithInformationStateButton')).click();
+		var dialogHighlightState = element(by.id('dialogInformationState'));
+		expect(takeScreenshot(dialogHighlightState)).toLookAs('information-state-dialog');
+		element(by.id('oDialogInformationStateOKButton')).click();
 	});
 });
