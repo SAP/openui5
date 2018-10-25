@@ -242,7 +242,7 @@ sap.ui.define([
 		if ( urlStr == null ) {
 			return urlStr;
 		}
-		let url = new URL(urlStr, document.baseURI).pathname;
+		let url = new URL(urlStr, document.baseURI);
 		if ( url.origin === window.location.origin ) {
 			return url.href;
 		}

@@ -404,7 +404,7 @@
 			return window._$blanket;
 		},
 
-		getTestPageUrl: function() {
+		getTestPageUrl: function(sFallbackUrl) {
 			var sTestPageUrl = this.getUrlParameter("testpage");
 			if (sTestPageUrl) {
 				var sOrigin = window.location.origin ? window.location.origin : (window.location.protocol + "//" + window.location.host);
