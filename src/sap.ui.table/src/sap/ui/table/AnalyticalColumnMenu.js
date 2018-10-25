@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.AnalyticalColumnMenu.
-sap.ui.define(['./ColumnMenu', './library', "sap/ui/thirdparty/jquery"],
-	function(ColumnMenu, library, jQuery) {
+sap.ui.define(['./ColumnMenu', "sap/ui/unified/MenuRenderer", './library', "sap/ui/thirdparty/jquery"],
+	function(ColumnMenu, MenuRenderer, library, jQuery) {
 	"use strict";
 
 	// shortcut
@@ -34,7 +34,7 @@ sap.ui.define(['./ColumnMenu', './library', "sap/ui/thirdparty/jquery"],
 		metadata : {
 			library : "sap.ui.table"
 		},
-		renderer: "sap.ui.table.ColumnMenuRenderer"
+		renderer: "sap.ui.unified.MenuRenderer"
 	});
 
 	/**
