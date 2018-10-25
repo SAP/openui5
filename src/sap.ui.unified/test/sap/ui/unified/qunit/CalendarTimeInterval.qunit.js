@@ -304,7 +304,7 @@ sap.ui.define([
 	QUnit.test("After Rerendering, last focused hour is still focused", function(assert) {
 		//Prepare
 		var oCalendarTimeInt = new CalendarTimeInterval();
-		oCalendarTimeInt.placeAt("content");
+		oCalendarTimeInt.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		var $timesRow = oCalendarTimeInt.getAggregation("timesRow").$();
@@ -323,10 +323,10 @@ sap.ui.define([
 
 		//Prepare
 		var oCalendarTimeInt = new CalendarTimeInterval(),
-				oExternalControl = new CalendarTimeInterval("extControl");
+			oExternalControl = new CalendarTimeInterval("extControl");
 
-		oCalendarTimeInt.placeAt("content");
-		oExternalControl.placeAt("content");
+		oCalendarTimeInt.placeAt("qunit-fixture");
+		oExternalControl.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		oExternalControl.$().focus();
@@ -400,11 +400,11 @@ sap.ui.define([
 	QUnit.test("Selecting a date from previous month", function(assert) {
 		//Prepare
 		var oCalendarTimeInt = new CalendarTimeInterval("CTI", {
-					startDate: new Date("2018", "10", "01"),
-					pickerPopup: true
-				}).placeAt("content"),
-				oCalendar = oCalendarTimeInt._getCalendarPicker(),
-				oLastDateOfOct = new Date("2018", "09", "31");
+			startDate: new Date("2018", "10", "01"),
+			pickerPopup: true
+		}).placeAt("qunit-fixture"),
+		oCalendar = oCalendarTimeInt._getCalendarPicker(),
+		oLastDateOfOct = new Date("2018", "09", "31");
 
 		sap.ui.getCore().applyChanges();
 
@@ -730,9 +730,9 @@ sap.ui.define([
 		// arrange
 		var $Date,
 			oCalP = new CalendarTimeInterval("CalP",{
-						startDate: new Date("2015", "7", "13", "8", "0", "0"),
-						pickerPopup: true
-					}).placeAt("qunit-fixture");
+			startDate: new Date("2015", "7", "13", "8", "0", "0"),
+			pickerPopup: true
+		}).placeAt("qunit-fixture");
 
 		sap.ui.getCore().applyChanges();
 
@@ -761,9 +761,9 @@ sap.ui.define([
 		var $Date, oCalStartDate,
 			oSpyFireDateChange = this.spy(sap.ui.unified.CalendarTimeInterval.prototype, "fireStartDateChange"),
 			oCalP = new CalendarTimeInterval("CalP",{
-						startDate: new Date("2015", "7", "13", "8", "0", "0"),
-						pickerPopup: true
-					}).placeAt("qunit-fixture");
+			startDate: new Date("2015", "7", "13", "8", "0", "0"),
+			pickerPopup: true
+		}).placeAt("qunit-fixture");
 
 		sap.ui.getCore().applyChanges();
 
@@ -805,7 +805,7 @@ sap.ui.define([
 		var oSpyCancel = this.spy(sap.ui.unified.CalendarTimeInterval.prototype, "fireCancel");
 		var oCalP = new CalendarTimeInterval("CalP",{
 			pickerPopup: true
-			}).placeAt("qunit-fixture");
+		}).placeAt("qunit-fixture");
 
 		sap.ui.getCore().applyChanges();
 
@@ -824,8 +824,8 @@ sap.ui.define([
 		// arrange
 		var oCalP = new CalendarTimeInterval("CalP",{
 			pickerPopup: false
-			}),
-			oYearPicker = oCalP.getAggregation("yearPicker");
+		}),
+		oYearPicker = oCalP.getAggregation("yearPicker");
 
 		// initialy the yearPicker has default values for min and max year
 		assert.strictEqual(oYearPicker._oMinDate.getYear(), 1, "min year is set to 1");
@@ -853,8 +853,8 @@ sap.ui.define([
 		// arrange
 		var oCalPicker,
 			oCalP = new CalendarTimeInterval("CalP",{
-				pickerPopup: true
-			}).placeAt("qunit-fixture");
+			pickerPopup: true
+		}).placeAt("qunit-fixture");
 
 		sap.ui.getCore().applyChanges();
 
@@ -896,9 +896,9 @@ sap.ui.define([
 
 	QUnit.test("Triggering button receives the focus on picker ESC", function(assert) {
 		// arrange
-			var oCalP = new CalendarTimeInterval("CalP",{
-				pickerPopup: true
-			}).placeAt("qunit-fixture");
+		var oCalP = new CalendarTimeInterval("CalP",{
+			pickerPopup: true
+		}).placeAt("qunit-fixture");
 
 		sap.ui.getCore().applyChanges();
 
