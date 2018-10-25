@@ -1355,4 +1355,41 @@ sap.ui.define([
 			assert.deepEqual(mMap, oFixture.mExpectedMap);
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("addByPath", function (assert) {
+		var mMap = {};
+
+		_Helper.addByPath(mMap, "path1", "item1");
+		assert.deepEqual(mMap, {"path1" : ["item1"]});
+
+		_Helper.addByPath(mMap, "path2", "item2");
+		assert.deepEqual(mMap, {"path1" : ["item1"], "path2" : ["item2"]});
+
+		_Helper.addByPath(mMap, "path3", undefined);
+		assert.deepEqual(mMap, {"path1" : ["item1"], "path2" : ["item2"]});
+
+		_Helper.addByPath(mMap, "path1", "item3");
+		assert.deepEqual(mMap, {"path1" : ["item1", "item3"], "path2" : ["item2"]});
+
+		_Helper.addByPath(mMap, "path2", "item2");
+		assert.deepEqual(mMap, {"path1" : ["item1", "item3"], "path2" : ["item2"]});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("removeByPath", function (assert) {
+		var mMap = {"path1": ["item1", "item2"]};
+
+		_Helper.removeByPath(mMap, "path1", "item2");
+		assert.deepEqual(mMap, {"path1" : ["item1"]});
+
+		_Helper.removeByPath(mMap, "path2", "item2");
+		assert.deepEqual(mMap, {"path1" : ["item1"]});
+
+		_Helper.removeByPath(mMap, "path1", "item2");
+		assert.deepEqual(mMap, {"path1" : ["item1"]});
+
+		_Helper.removeByPath(mMap, "path1", "item1");
+		assert.deepEqual(mMap, {});
+	});
 });

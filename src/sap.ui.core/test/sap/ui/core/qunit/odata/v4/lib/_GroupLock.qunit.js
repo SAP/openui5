@@ -137,7 +137,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getUnlockedCopy", function (assert) {
-		var oGroupLock1 = new _GroupLock("group", true),
+		var oGroupLock1 = new _GroupLock("group", true, {/*owner*/}, 42),
 			oGroupLock2;
 
 		// code under test
@@ -145,6 +145,8 @@ sap.ui.define([
 
 		assert.strictEqual(oGroupLock2.getGroupId(), oGroupLock1.getGroupId());
 		assert.notOk(oGroupLock2.isLocked());
+		assert.strictEqual(oGroupLock2.oOwner, oGroupLock1.oOwner);
+		assert.strictEqual(oGroupLock2.getSerialNumber(), oGroupLock1.getSerialNumber());
 	});
 
 	//*********************************************************************************************

@@ -24,8 +24,8 @@ sap.ui.define([
 				oExpectedPatchLog1 = {
 					component : "sap.ui.model.odata.v4.ODataPropertyBinding",
 					level : Log.Level.ERROR,
-					message: "Failed to update path /SalesOrderList",
-					details : "Error occurred while processing the request"
+					message: "Failed to update path /SalesOrderList"
+//					details : "Error occurred while processing the request"
 				};
 
 			Given.iStartMyUIComponent({
