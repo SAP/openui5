@@ -72,7 +72,7 @@ sap.ui.define([
 	 * @public
 	 */
 	_GroupLock.prototype.getUnlockedCopy = function () {
-		return new _GroupLock(this.sGroupId);
+		return new _GroupLock(this.sGroupId, undefined, this.oOwner, this.iSerialNumber);
 	};
 
 	/**

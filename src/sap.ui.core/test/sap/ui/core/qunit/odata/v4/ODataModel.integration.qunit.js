@@ -1779,24 +1779,32 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Refresh an ODataContextBinding
 	// The SalesOrders application does not have such a scenario.
-	QUnit.test("Absolute ODCB refresh", function (assert) {
-		var sView = '\
-<FlexBox id="form" binding="{/EMPLOYEES(\'2\')}">\
-	<Text id="text" text="{Name}" />\
-</FlexBox>',
-			that = this;
+	[false, true].forEach(function (bViaContext) {
+		QUnit.test("Absolute ODCB refresh, via bound context " + bViaContext, function (assert) {
+			var sView = '\
+	<FlexBox id="form" binding="{/EMPLOYEES(\'2\')}">\
+		<Text id="text" text="{Name}" />\
+	</FlexBox>',
+				that = this;
 
-		this.expectRequest("EMPLOYEES('2')", {"Name" : "Jonathan Smith"})
-			.expectChange("text", "Jonathan Smith");
-
-		return this.createView(assert, sView).then(function () {
-			that.expectRequest("EMPLOYEES('2')", {"Name" : "Jonathan Smith"})
+			this.expectRequest("EMPLOYEES('2')", {"Name" : "Jonathan Smith"})
 				.expectChange("text", "Jonathan Smith");
 
-			// code under test
-			that.oView.byId("form").getObjectBinding().refresh();
+			return this.createView(assert, sView).then(function () {
+				var oBinding = that.oView.byId("form").getObjectBinding();
 
-			return that.waitForChanges(assert);
+				that.expectRequest("EMPLOYEES('2')", {"Name" : "Jonathan Smith"})
+					.expectChange("text", "Jonathan Smith");
+
+				// code under test
+				if (bViaContext) {
+					oBinding.getBoundContext().refresh();
+				} else {
+					oBinding.refresh();
+				}
+
+				return that.waitForChanges(assert);
+			});
 		});
 	});
 

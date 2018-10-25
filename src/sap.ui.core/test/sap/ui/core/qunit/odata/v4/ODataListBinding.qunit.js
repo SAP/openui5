@@ -4462,8 +4462,9 @@ sap.ui.define([
 		this.oModel.oRequestor.request.restore();
 		this.mock(this.oModel.oRequestor).expects("request")
 			.withExactArgs("GET", "EMPLOYEES?sap-client=111&$skip=0&$top=50",
-				new _GroupLock("$auto"), undefined, undefined, sinon.match.func)
-			.returns(Promise.resolve(oData));
+				new _GroupLock("$auto", undefined, oBinding, 1), undefined, undefined,
+				sinon.match.func)
+			.resolves(oData);
 
 		oBinding.bUseExtendedChangeDetection = true;
 		oBinding.attachEvent("change", function (oEvent) {
@@ -4521,8 +4522,9 @@ sap.ui.define([
 
 			oRequestorMock.expects("request")
 				.withExactArgs("GET", "EMPLOYEES?sap-client=111&$count=true&$skip=50&$top=50",
-					new _GroupLock("$auto"), undefined, undefined, sinon.match.func)
-				.returns(Promise.resolve(oData1));
+					new _GroupLock("$auto", undefined, oBinding, 2), undefined, undefined,
+					sinon.match.func)
+				.resolves(oData1);
 
 			// code under test
 			aContexts = oBinding.getContexts(0, 100);
@@ -4560,8 +4562,9 @@ sap.ui.define([
 		this.oModel.oRequestor.request.restore();
 		oRequestorMock.expects("request")
 			.withExactArgs("GET", "EMPLOYEES?sap-client=111&$count=true&$skip=0&$top=50",
-				new _GroupLock("$auto"), undefined, undefined, sinon.match.func)
-			.returns(Promise.resolve(oData0));
+				new _GroupLock("$auto", undefined, oBinding, 1), undefined, undefined,
+				sinon.match.func)
+			.resolves(oData0);
 
 		oBinding.bUseExtendedChangeDetection = true;
 		oBinding.attachEvent("change", onChange0);
@@ -4604,8 +4607,9 @@ sap.ui.define([
 
 			oRequestorMock.expects("request")
 				.withExactArgs("GET", "EMPLOYEES?sap-client=111&$skip=30&$top=20",
-					new _GroupLock("$auto"), undefined, undefined, sinon.match.func)
-				.returns(Promise.resolve(oData1));
+					new _GroupLock("$auto", undefined, oBinding, 3), undefined, undefined,
+					sinon.match.func)
+				.resolves(oData1);
 
 			// code under test
 			aResult = oBinding.getContexts(30, 50);
@@ -4632,8 +4636,9 @@ sap.ui.define([
 		this.oModel.oRequestor.request.restore();
 		oRequestorMock.expects("request")
 			.withExactArgs("GET", "EMPLOYEES?sap-client=111&$skip=50&$top=50",
-				new _GroupLock("$auto"), undefined, undefined, sinon.match.func)
-			.returns(Promise.resolve(oData0));
+				new _GroupLock("$auto", undefined, oBinding, 1), undefined, undefined,
+				sinon.match.func)
+			.resolves(oData0);
 
 		oBinding.attachEvent("change", onChange0);
 
