@@ -199,28 +199,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds an item to the given map by path.
-	 *
-	 * @param {object} mMap
-	 *   A map from path to a list of items
-	 * @param {string} sPath
-	 *   The path
-	 * @param {object} [oItem]
-	 *   The item; if it is <code>undefined</code>, nothing happens
-	 *
-	 * @private
-	 */
-	Cache.prototype.addByPath = function (mMap, sPath, oItem) {
-		if (oItem) {
-			if (!mMap[sPath]) {
-				mMap[sPath] = [oItem];
-			} else if (mMap[sPath].indexOf(oItem) < 0) {
-				mMap[sPath].push(oItem);
-			}
-		}
-	};
-
-	/**
 	 * Calculates and returns the key predicate for the given entity and stores it as private
 	 * annotation at the given entity. If at least one key property is <code>undefined</code>, no
 	 * private annotation for the key predicate is created.
@@ -235,6 +213,7 @@ sap.ui.define([
 	 *   The key predicate or <code>undefined</code>, if key predicate cannot be determined
 	 * @private
 	 */
+	// Note: overridden by _AggregationCache.calculateKeyPredicate
 	Cache.prototype.calculateKeyPredicate = function (oInstance, mTypeForMetaPath, sMetaPath) {
 		var sPredicate,
 			oType = mTypeForMetaPath[sMetaPath];
@@ -296,7 +275,7 @@ sap.ui.define([
 
 		// Clean-up when the create has been canceled.
 		function cleanUp() {
-			that.removeByPath(that.mPostRequests, sPath, oEntityData);
+			_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
 			delete aCollection[-1];
 			fnCancelCallback();
 		}
@@ -311,7 +290,7 @@ sap.ui.define([
 
 			// mark as transient (again)
 			_Helper.setPrivateAnnotation(oEntityData, "transient", sPostGroupId);
-			that.addByPath(that.mPostRequests, sPath, oEntityData);
+			_Helper.addByPath(that.mPostRequests, sPath, oEntityData);
 			return SyncPromise.all([
 				that.oRequestor.request("POST", sPostPath, oPostGroupLock, null, oEntityData,
 					setCreatePending, cleanUp, undefined,
@@ -324,7 +303,7 @@ sap.ui.define([
 				_Helper.deletePrivateAnnotation(oEntityData, "transient");
 				// now the server has one more element
 				addToCount(that.mChangeListeners, sPath, aCollection, 1);
-				that.removeByPath(that.mPostRequests, sPath, oEntityData);
+				_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
 				that.visitResponse(oCreatedEntity, aResult[1], false,
 					_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)), sPath + "/-1",
 					bKeepTransientPath);
@@ -382,7 +361,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Cache.prototype.deregisterChange = function (sPath, oListener) {
-		this.removeByPath(this.mChangeListeners, sPath, oListener);
+		_Helper.removeByPath(this.mChangeListeners, sPath, oListener);
 	};
 
 	/**
@@ -620,35 +599,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Cache.prototype.registerChange = function (sPath, oListener) {
-		this.addByPath(this.mChangeListeners, sPath, oListener);
-	};
-
-	/**
-	 * Removes an item from the given map by path.
-	 *
-	 * @param {object} mMap
-	 *   A map from path to a list of items
-	 * @param {string} sPath
-	 *   The path
-	 * @param {object} oItem
-	 *   The item
-	 *
-	 * @private
-	 */
-	Cache.prototype.removeByPath = function (mMap, sPath, oItem) {
-		var aItems = mMap[sPath],
-			iIndex;
-
-		if (aItems) {
-			iIndex = aItems.indexOf(oItem);
-			if (iIndex >= 0) {
-				if (aItems.length === 1) {
-					delete mMap[sPath];
-				} else {
-					aItems.splice(iIndex, 1);
-				}
-			}
-		}
+		_Helper.addByPath(this.mChangeListeners, sPath, oListener);
 	};
 
 	/**
@@ -789,7 +740,7 @@ sap.ui.define([
 			 * resetChangesForPath has been called on the binding or model.
 			 */
 			function onCancel() {
-				that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
+				_Helper.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 				// write the previous value into the cache
 				_Helper.updateExisting(that.mChangeListeners, sEntityPath, oEntity,
 					Cache.makeUpdateData(aPropertyPath, vOldValue));
@@ -814,14 +765,14 @@ sap.ui.define([
 				oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, oPatchGroupLock,
 					{"If-Match" : oEntity}, oUpdateData, onSubmit, onCancel, /*sMetaPath*/undefined,
 					_Helper.buildPath(that.sResourcePath, sEntityPath), bAtFront);
-				that.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);
+				_Helper.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 				return SyncPromise.all([
 					oPatchPromise,
 					that.fetchTypes()
 				]).then(function (aResult) {
 					var oPatchResult = aResult[0];
 
-					that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
+					_Helper.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 					if (!bPatchWithoutSideEffects) {
 						// visit response to report the messages
 						that.visitResponse(oPatchResult, aResult[1], false,
@@ -837,7 +788,7 @@ sap.ui.define([
 				}, function (oError) {
 					var sRetryGroupId = sGroupId;
 
-					that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
+					_Helper.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 					if (oError.canceled) {
 						throw oError;
 					}
