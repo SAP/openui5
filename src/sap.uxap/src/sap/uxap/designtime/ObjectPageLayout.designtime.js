@@ -47,7 +47,7 @@ sap.ui.define(["sap/uxap/library"],
 			},
 			headerContent : {
 				domRef : function(oElement) {
-					return oElement.$("headerContent").get(0);
+					return oElement._getHeaderContent().getDomRef();
 				},
 				actions : {
 					move : function(oElement){
@@ -60,7 +60,14 @@ sap.ui.define(["sap/uxap/library"],
 		},
 		scrollContainers : [{
 			domRef : "> .sapUxAPObjectPageWrapper",
-			aggregations : ["sections", "headerContent"]
+			aggregations : function(oElement) {
+				if ((!oElement._hasDynamicTitle() && oElement.getAlwaysShowContentHeader()) ||
+					(oElement._hasDynamicTitle() && oElement.getPreserveHeaderStateOnScroll())) {
+					return ["sections"];
+				} else {
+					return ["sections", "headerContent"];
+				}
+			}
 		}, {
 			domRef : function(oElement) {
 				return oElement.$("vertSB-sb").get(0);
