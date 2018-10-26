@@ -1428,7 +1428,30 @@ sap.ui.define([
 				});
 			});
 		});
-	});
+
+		QUnit.test("create_fiori_setRegistrationIds", function(assert) {
+			return DescriptorInlineChangeFactory.create_fiori_setRegistrationIds({
+				"registrationIds" : ["F01234"]
+			}).then(function(oDescriptorInlineChange) {
+				assert.notEqual(oDescriptorInlineChange, null);
+			});
+		});
+
+		QUnit.test("create_fiori_setRegistrationIds", function (assert) {
+			assert.throws(function(){
+				DescriptorInlineChangeFactory.create_fiori_setRegistrationIds({
+					"registrationIds" : 1.0
+				});
+			});
+			assert.throws(function(){
+				DescriptorInlineChangeFactory.create_fiori_setRegistrationIds({
+					"registrationIds" : { }
+				});
+			});
+		});
+
+});
+
 
 	QUnit.module("DescriptorVariant", {
 		beforeEach: function(assert) {
