@@ -110,6 +110,8 @@
         <raw-module name="sap/ui/thirdparty/URITemplate.js" depends="sap/ui/thirdparty/URI.js"/>
         <raw-module name="sap/ui/thirdparty/vkbeautify.js" />
         <raw-module name="sap/ui/thirdparty/zyngascroll.js" />
+        <raw-module name="sap/ui/thirdparty/hyphenopoly/hyphenopoly.bundle.js" depends="sap/ui/thirdparty/hyphenopoly/hyphenEngine.asm.js" />
+        <raw-module name="sap/ui/thirdparty/hyphenopoly/hyphenEngine.asm.js" />
         <raw-module name="ui5loader.js" depends="sap/ui/thirdparty/baseuri.js,sap/ui/thirdparty/es6-promise.js,sap/ui/thirdparty/es6-string-methods.js,sap/ui/thirdparty/es6-object-assign.js" />
         <raw-module name="ui5loader-autoconfig.js" depends="ui5loader.js" />
         <module-cycle modules="sap/ui/core/Core.js,sap/ui/core/Component.js" />
@@ -196,6 +198,7 @@
         <exclude name="sap/ui/thirdparty/URITemplate.js" />
         <exclude name="sap/ui/thirdparty/vkbeautify.js" />
         <exclude name="sap/ui/thirdparty/zyngascroll.js" />
+        <exclude name="sap/ui/thirdparty/hyphenopoly/**" />
         <!-- INCLUDED (because not mentioned in the list above) are the following libs: -->
         <!-- jquery.sap.global.js -->
         <!-- sap/ui/thirdparty/jquery-mobile-custom.js -->
@@ -352,6 +355,9 @@
         </lib>
         <lib name="lodash" displayName="lodash" homepage="https://github.com/lodash/lodash">
             <license url="https://github.com/lodash/lodash/blob/master/LICENSE" type="MIT License" file="../thirdparty/licenses/lodash-MIT-LICENSE.txt" />
+        </lib>
+        <lib name="hyphenopoly" displayName="Hyphenopoly" homepage="https://github.com/mnater/Hyphenopoly">
+            <license url="https://github.com/mnater/Hyphenopoly/blob/master/LICENSE" type="MIT License" file="../thirdparty/licenses/hyphenopoly-LICENSE.txt" />
         </lib>
     </thirdparty>
 
