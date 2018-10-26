@@ -34,8 +34,8 @@ sap.ui.define([
 	/*eslint max-nested-callbacks: 0, no-new: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var aAllowedBindingParameters = ["$$aggregation", "$$groupId", "$$operationMode",
-			"$$ownRequest", "$$updateGroupId"],
+	var aAllowedBindingParameters = ["$$aggregation", "$$canonicalPath", "$$groupId",
+			"$$operationMode", "$$ownRequest", "$$updateGroupId"],
 		sClassName = "sap.ui.model.odata.v4.ODataListBinding",
 		TestControl = ManagedObject.extend("test.sap.ui.model.odata.v4.ODataListBinding", {
 			metadata : {
@@ -2416,10 +2416,6 @@ sap.ui.define([
 			oReadPromise = SyncPromise.resolve(Promise.resolve());
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext1).expects("fetchCanonicalPath")
-			.returns(SyncPromise.resolve("Employees('1')"));
-		this.mock(oContext2).expects("fetchCanonicalPath")
-			.returns(SyncPromise.resolve("Employees('2')"));
 		oBinding.setContext(oContext1);
 		this.mock(oBinding.oCachePromise.getResult()).expects("read")
 			.withExactArgs(0, 5, 0, new _GroupLock("group", undefined, oBinding, 1),
@@ -4205,8 +4201,6 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("hasPendingChanges").returns(false);
-		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
-			.returns(SyncPromise.resolve("/TEAMS('42')/TEAM_2_EMPLOYEES"));
 
 		// code under test;
 		oBinding.changeParameters({$filter : "bar"});

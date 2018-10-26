@@ -1696,18 +1696,17 @@ sap.ui.define([
 			function (assert) {
 		var oBinding = new ODataParentBinding({
 				oCachePromise : SyncPromise.resolve({
-					$canonicalPath : "/TEAMS('4711')/TEAM_2_EMPLOYEES"
+					$resourcePath : "TEAMS('4711')/TEAM_2_MANAGER"
 				}),
-				oContext : {
-					fetchCanonicalPath : function () {}
-				},
-				sPath : "TEAM_2_MANAGER",
+				oContext : {},
+				sPath : "Manager_to_Team",
 				refreshInternal : function () {},
 				bRelative : true
 			}),
-			oPathPromise = Promise.resolve("/TEAMS('8192')/TEAM_2_EMPLOYEES");
+			oPathPromise = Promise.resolve("TEAMS('8192')/TEAM_2_MANAGER");
 
-		this.mock(oBinding.oContext).expects("fetchCanonicalPath").withExactArgs()
+		this.mock(oBinding).expects("fetchResourcePath")
+			.withExactArgs(sinon.match.same(oBinding.oContext))
 			.returns(SyncPromise.resolve(oPathPromise)); // data for path "/TEAMS/1" has changed
 		this.mock(oBinding).expects("refreshInternal").withExactArgs();
 
@@ -1720,15 +1719,15 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("checkUpdate: relative binding with cache, parent binding not changed",
 			function (assert) {
-		var sPath = "/TEAMS('4711')/TEAM_2_EMPLOYEES",
+		var sPath = "/TEAMS('4711')/TEAM_2_MANAGER",
 			oBinding = new ODataParentBinding({
 				oCachePromise : SyncPromise.resolve({
-					$canonicalPath : sPath
+					$resourcePath : sPath
 				}),
 				oContext : {
 					fetchCanonicalPath : function () {}
 				},
-				sPath : "TEAM_2_MANAGER",
+				sPath : "Manager_to_Team",
 				bRelative : true
 			}),
 			fnGetContext = function () {
@@ -1746,7 +1745,8 @@ sap.ui.define([
 			},
 			oPathPromise = Promise.resolve(sPath);
 
-		this.mock(oBinding.oContext).expects("fetchCanonicalPath").withExactArgs()
+		this.mock(oBinding).expects("fetchResourcePath")
+			.withExactArgs(sinon.match.same(oBinding.oContext))
 			.returns(SyncPromise.resolve(oPathPromise));
 		this.mock(oBinding).expects("getDependentBindings")
 			.withExactArgs()
@@ -1779,7 +1779,8 @@ sap.ui.define([
 			oError = {},
 			oPathPromise = Promise.reject(oError);
 
-		this.mock(oBinding.oContext).expects("fetchCanonicalPath").withExactArgs()
+		this.mock(oBinding).expects("fetchResourcePath")
+			.withExactArgs(sinon.match.same(oBinding.oContext))
 			.returns(SyncPromise.resolve(oPathPromise));
 		this.mock(oBinding.oModel).expects("reportError")
 			.withExactArgs("Failed to update foo", sClassName, sinon.match.same(oError));
@@ -1795,7 +1796,7 @@ sap.ui.define([
 		QUnit.test("createInCache: with cache, canceled: " + bCancel, function (assert) {
 			var sCanonicalPath = "/TEAMS('1')/EMPLOYEES",
 				oCache = {
-					$canonicalPath : sCanonicalPath,
+					$resourcePath : sCanonicalPath,
 					create : function () {}
 				},
 				oCreateError = new Error("canceled"),
@@ -1831,7 +1832,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createInCache: cache without $canonicalPath", function (assert) {
+	QUnit.test("createInCache: cache without $resourcePath", function (assert) {
 		var oCache = {
 				create : function () {}
 			},

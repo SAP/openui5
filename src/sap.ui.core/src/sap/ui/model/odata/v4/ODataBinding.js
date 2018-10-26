@@ -10,7 +10,8 @@ sap.ui.define([
 ], function (_Helper, SyncPromise, OperationMode, jQuery) {
 	"use strict";
 
-	var sClassName = "sap.ui.model.odata.v4.ODataBinding";
+	var sClassName = "sap.ui.model.odata.v4.ODataBinding",
+		rIndexInPath = /\/-?\d/;
 
 	/**
 	 * A mixin for all OData V4 bindings.
@@ -29,6 +30,7 @@ sap.ui.define([
 	 * <li> '$$aggregation' with allowed values as specified in
 	 *      {@link sap.ui.model.odata.v4.ODataListBinding#updateAnalyticalInfo} (but without
 	 *      validation here)
+	 * <li> '$$canonicalPath' with value <code>true</code>
 	 * <li> '$$groupId' with allowed values as specified in {@link #checkGroupId}
 	 * <li> '$$updateGroupId' with allowed values as specified in {@link #checkGroupId}
 	 * <li> '$$inheritExpandSelect' with allowed values <code>false</code> and <code>true</code>
@@ -87,6 +89,7 @@ sap.ui.define([
 						throw new Error("Unsupported operation mode: " + vValue);
 					}
 					break;
+				case "$$canonicalPath":
 				case "$$ownRequest":
 				case "$$patchWithoutSideEffects":
 					if (vValue !== true) {
@@ -143,14 +146,11 @@ sap.ui.define([
 		aPromises = [this.fetchQueryOptionsForOwnCache(oContext), this.oModel.oRequestor.ready()];
 		this.mCacheQueryOptions = undefined;
 		oCachePromise = SyncPromise.all(aPromises).then(function (aResult) {
-			var vCanonicalPath,
-				mQueryOptions = aResult[0];
+			var mQueryOptions = aResult[0];
 
 			// Note: do not create a cache for a virtual context
 			if (mQueryOptions && !(oContext && oContext.getIndex && oContext.getIndex() === -2)) {
-				vCanonicalPath = SyncPromise.resolve(oContext && (oContext.fetchCanonicalPath
-					? oContext.fetchCanonicalPath() : oContext.getPath()));
-				return vCanonicalPath.then(function (sCanonicalPath) {
+				return that.fetchResourcePath(oContext).then(function (sResourcePath) {
 					var oCache,
 						oError;
 
@@ -158,18 +158,18 @@ sap.ui.define([
 					if (!oCachePromise || that.oFetchCacheCallToken === oCallToken) {
 						that.mCacheQueryOptions = jQuery.extend(true, {},
 							that.oModel.mUriParameters, mQueryOptions);
-						if (sCanonicalPath) { // quasi-absolute or relative binding
+						if (that.bRelative) { // quasi-absolute or relative binding
 							// mCacheByContext has to be reset if parameters are changing
 							that.mCacheByContext = that.mCacheByContext || {};
-							oCache = that.mCacheByContext[sCanonicalPath];
+							oCache = that.mCacheByContext[sResourcePath];
 							if (oCache) {
 								oCache.setActive(true);
 							} else {
 								oCache = that.doCreateCache(
-									_Helper.buildPath(sCanonicalPath, that.sPath).slice(1),
+									_Helper.buildPath(sResourcePath, that.sPath),
 										that.mCacheQueryOptions, oContext);
-								that.mCacheByContext[sCanonicalPath] = oCache;
-								oCache.$canonicalPath = sCanonicalPath;
+								that.mCacheByContext[sResourcePath] = oCache;
+								oCache.$resourcePath = sResourcePath;
 							}
 						} else { // absolute binding
 							oCache = that.doCreateCache(that.sPath.slice(1),
@@ -250,7 +250,7 @@ sap.ui.define([
 
 		// auto-$expand/$select: Use parent binding's cache if possible
 		if (this.oModel.bAutoExpandSelect) {
-			bHasNonSystemQueryOptions = that.mParameters
+			bHasNonSystemQueryOptions = this.mParameters
 				&& Object.keys(that.mParameters).some(function (sKey) {
 					return sKey[0] !== "$" || sKey[1] === "$";
 				});
@@ -273,6 +273,37 @@ sap.ui.define([
 		return oQueryOptionsPromise.then(function (mQueryOptions) {
 			return Object.keys(mQueryOptions).length === 0 ? undefined : mQueryOptions;
 		});
+	};
+
+	/**
+	 * Fetches the OData resource path for the given context. If '$$canonicalPath' is set or the
+	 * context's path contains indexes, the resource path is the context's canonical path.
+	 * Otherwise it is the context's path.
+	 *
+	 * @param {sap.ui.model.Context|sap.ui.model.odata.v4.Context} [oContext]
+	 *   A context
+	 * @returns {SyncPromise} A promise resolving with the resource path or <code>undefined</code>
+	 *   if no context is given
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.fetchResourcePath = function (oContext) {
+		var sResourcePath;
+
+		if (!oContext) {
+			return SyncPromise.resolve();
+		}
+
+		sResourcePath = oContext.getPath().slice(1);
+		if (oContext.fetchCanonicalPath
+			&& (this.mParameters && this.mParameters["$$canonicalPath"]
+				|| rIndexInPath.test(sResourcePath))) {
+			return oContext.fetchCanonicalPath().then(function (sCanonicalPath) {
+				return sCanonicalPath.slice(1);
+			});
+		}
+
+		return SyncPromise.resolve(sResourcePath);
 	};
 
 	/**
@@ -574,8 +605,8 @@ sap.ui.define([
 			oModel.reportBoundMessages(sResolvedPath.slice(1), {});
 		}
 		if (this.mCacheByContext) {
-			Object.keys(this.mCacheByContext).forEach(function (sPath) {
-				oModel.reportBoundMessages(sPath.slice(1), {});
+			Object.keys(this.mCacheByContext).forEach(function (sResourcePath) {
+				oModel.reportBoundMessages(sResourcePath, {});
 			});
 			this.mCacheByContext = undefined;
 		}

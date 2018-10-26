@@ -430,6 +430,10 @@ sap.ui.define([
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
+	 * @param {boolean} [mParameters.$$canonicalPath]
+	 *   Whether a binding relative to a {@link sap.ui.model.odata.v4.Context} uses the canonical
+	 *   path computed from its context's path for data service requests; only the value
+	 *   <code>true</code> is allowed.
 	 * @param {string} [mParameters.$$groupId]
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the
@@ -541,6 +545,10 @@ sap.ui.define([
 	 * @param {object} [mParameters.$$aggregation]
 	 *   An object holding the information needed for data aggregation, see
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation} for details.
+	 * @param {boolean} [mParameters.$$canonicalPath]
+	 *   Whether a binding relative to a {@link sap.ui.model.odata.v4.Context} uses the canonical
+	 *   path computed from its context's path for data service requests; only the value
+	 *   <code>true</code> is allowed.
 	 * @param {string} [mParameters.$$groupId]
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the

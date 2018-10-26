@@ -322,7 +322,7 @@ sap.ui.define([
 	};
 
 	/*
-	 * Checks dependent bindings for updates or refreshes the binding if the canonical path of its
+	 * Checks dependent bindings for updates or refreshes the binding if the resource path of its
 	 * parent context changed.
 	 *
 	 * @throws {Error} If called with parameters
@@ -344,10 +344,10 @@ sap.ui.define([
 		}
 
 		this.oCachePromise.then(function (oCache) {
-			if (oCache && that.bRelative && that.oContext.fetchCanonicalPath) {
-				that.oContext.fetchCanonicalPath().then(function (sCanonicalPath) {
+			if (oCache && that.bRelative) {
+				that.fetchResourcePath(that.oContext).then(function (sResourcePath) {
 					// entity of context changed
-					if (oCache.$canonicalPath !== sCanonicalPath) {
+					if (oCache.$resourcePath !== sResourcePath) {
 						that.refreshInternal();
 					} else {
 						updateDependents();
@@ -394,10 +394,10 @@ sap.ui.define([
 								+ "' failed; will be repeated automatically",
 							"sap.ui.model.odata.v4.ODataParentBinding", oError);
 				}).then(function (oCreatedEntity) {
-					if (oCache.$canonicalPath) {
+					if (oCache.$resourcePath) {
 						// Ensure that a cache containing a persisted created entity is recreated
 						// when the parent binding changes to another row and back again.
-						delete that.mCacheByContext[oCache.$canonicalPath];
+						delete that.mCacheByContext[oCache.$resourcePath];
 					}
 					return oCreatedEntity;
 				});

@@ -24,8 +24,8 @@ sap.ui.define([
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var aAllowedBindingParameters = ["$$groupId", "$$inheritExpandSelect", "$$ownRequest",
-			"$$patchWithoutSideEffects", "$$updateGroupId"],
+	var aAllowedBindingParameters = ["$$canonicalPath", "$$groupId", "$$inheritExpandSelect",
+			"$$ownRequest", "$$patchWithoutSideEffects", "$$updateGroupId"],
 		sClassName = "sap.ui.model.odata.v4.ODataContextBinding";
 
 	//*********************************************************************************************
@@ -339,7 +339,7 @@ sap.ui.define([
 			var oBinding,
 				oContext = {
 					getBinding : function () {},
-					getPath : function () {}
+					getPath : function () { return "/contextPath"; }
 				},
 				oModelMock = this.mock(this.oModel),
 				oSetContextSpy = this.spy(Binding.prototype, "setContext");
@@ -347,7 +347,7 @@ sap.ui.define([
 			this.mock(ODataContextBinding.prototype).expects("createReadGroupLock").never();
 			oBinding = this.bindContext("relative");
 			oModelMock.expects("resolve").withExactArgs("relative", sinon.match.same(oContext))
-				.returns("/absolute1");
+				.returns("/contextPath/relative");
 			this.mock(oBinding).expects("_fireChange").twice()
 				.withExactArgs({reason : ChangeReason.Context});
 
@@ -355,7 +355,7 @@ sap.ui.define([
 			oBinding.setContext(oContext);
 
 			assert.strictEqual(oBinding.oContext, oContext);
-			assert.strictEqual(oBinding.getBoundContext().getPath(), "/absolute1");
+			assert.strictEqual(oBinding.getBoundContext().getPath(), "/contextPath/relative");
 			assert.strictEqual(oSetContextSpy.callCount, 1);
 
 			oBinding.oReturnValueContext = oReturnValueContext;
