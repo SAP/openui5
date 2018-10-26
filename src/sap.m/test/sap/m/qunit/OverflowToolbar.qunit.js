@@ -2082,6 +2082,24 @@ sap.ui.define([
 		assert.strictEqual(sSize, 50, "Size is equal to minWidth + margins");
 	});
 
+	QUnit.test("Size of a control with LayoutData, shrinkable = true and minWidth and visible = false, is reported correctly", function (assert) {
+		var oTestButton = new Button(
+							{
+								text: "This is text",
+								visible: false,
+								layoutData: new OverflowToolbarLayoutData({
+									shrinkable: true,
+									minWidth: "50px"
+								})
+							});
+		oTestButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		var sSize = OverflowToolbar._getOptimalControlWidth(oTestButton);
+		assert.strictEqual(sSize, 0, "Size is equal to 0");
+	});
+
 	QUnit.test("Size of a control with LayoutData, shrinkable = false and minWidth, is reported correctly", function (assert) {
 		var oTestButton = new Button(
 							{

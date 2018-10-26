@@ -1095,17 +1095,18 @@ sap.ui.define([
 		var iOptimalWidth,
 			oLayoutData = oControl.getLayoutData(),
 			bShrinkable = oLayoutData && oLayoutData.isA("sap.m.ToolbarLayoutData") ? oLayoutData.getShrinkable() : false,
-			iMinWidth = bShrinkable ? parseInt(oLayoutData.getMinWidth(), 10) : 0;
+			iMinWidth = bShrinkable ? parseInt(oLayoutData.getMinWidth(), 10) : 0,
+			bVisible = oControl.getVisible();
 
 		// For spacers, get the min-width + margins
 		if (oControl instanceof ToolbarSpacer) {
 			iOptimalWidth = parseInt(oControl.$().css('min-width'), 10) || 0 + oControl.$().outerWidth(true) - oControl.$().outerWidth();
 		// For elements with LayoutData get minWidth + margins
-		} else if (bShrinkable && iMinWidth > 0) {
+		} else if (bShrinkable && iMinWidth > 0 && bVisible) {
 			iOptimalWidth = iMinWidth + oControl.$().outerWidth(true) - oControl.$().outerWidth();
 		// For other elements, get the outer width
 		} else {
-			iOptimalWidth = oControl.getVisible() ? oControl.$().outerWidth(true) : 0;
+			iOptimalWidth = bVisible ? oControl.$().outerWidth(true) : 0;
 		}
 
 		if (iOptimalWidth === null) {
