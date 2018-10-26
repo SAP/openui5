@@ -857,6 +857,44 @@
             assert.equal(this.oPanel.$().find("tr").find("span")[2].textContent, "B foo");
         });
 
+        module("sap.m.P13nColumnsPanel: _sortModelItemsByPersistentIndex", {
+            beforeEach: function () {
+                this.oPanel = new sap.m.P13nColumnsPanel();
+            },
+            afterEach: function () {
+                this.oPanel.destroy();
+            }
+        });
+
+        QUnit.test("BCP 0020751295 0000514259 2018", function (assert) {
+            var aModelItems = JSON.parse('[' +
+                    '{"columnKey":"Project>Name","visible":true,"text":"Name","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' +
+                    '{"columnKey":"Project>AmtA2","visible":true,"text":"Actuals Feb","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' +
+                    '{"columnKey":"Project>AmtA12","visible":true,"text":"Actuals Dec","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' +
+                    '{"columnKey":"Project>CreatedByName","visible":true,"text":"Created By","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' +
+                    '{"columnKey":"Project>CreatedTime","visible":true,"text":"Created At","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' +
+                    '{"columnKey":"Project>ChangedByName","visible":true,"text":"Changed By","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' +
+                    '{"columnKey":"Project>ChangedTime","visible":true,"text":"Changed At","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' +
+                    '{"columnKey":"Project>MaxValueC","visible":true,"text":"Project Cap","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' +
+                    '{"columnKey":"Project>MaxValueB","visible":true,"text":"Plan","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' +
+                    '{"columnKey":"Project>AmtLeTot","visible":true,"text":"Actuals+Plan to Go","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' +
+                    '{"columnKey":"Project>DemographicsDesc","visible":true,"text":"Demographics","tooltip":null,"persistentIndex":-1,"persistentSelected":true}]');
+            var aModelItems_ = JSON.parse('[' +
+                    '{"columnKey":"Project>Name","visible":true,"text":"Name","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' +
+                    '{"columnKey":"Project>AmtA2","visible":true,"text":"Actuals Feb","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' +
+                    '{"columnKey":"Project>AmtA12","visible":true,"text":"Actuals Dec","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' +
+                    '{"columnKey":"Project>CreatedByName","visible":true,"text":"Created By","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' +
+                    '{"columnKey":"Project>CreatedTime","visible":true,"text":"Created At","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' +
+                    '{"columnKey":"Project>ChangedByName","visible":true,"text":"Changed By","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' +
+                    '{"columnKey":"Project>ChangedTime","visible":true,"text":"Changed At","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' +
+                    '{"columnKey":"Project>MaxValueC","visible":true,"text":"Project Cap","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' +
+                    '{"columnKey":"Project>MaxValueB","visible":true,"text":"Plan","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' +
+                    '{"columnKey":"Project>AmtLeTot","visible":true,"text":"Actuals+Plan to Go","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' +
+                    '{"columnKey":"Project>DemographicsDesc","visible":true,"text":"Demographics","tooltip":null,"persistentIndex":-1,"persistentSelected":true}]');
+
+            this.oPanel._sortModelItemsByPersistentIndex(aModelItems_);
+            assert.deepEqual(aModelItems_, aModelItems);
+        });
     </script>
 
 
