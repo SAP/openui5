@@ -111,12 +111,13 @@ sap.ui.define([
 				counter: 1,
 				groupName: "{groupName}",
 				description: "{description}",
-				longtextUrl: "{longtextUrl}"
+				longtextUrl: "{longtextUrl}",
+				markupDescription: "{markupDescription}"
 			});
 
-			var oModel = new JSONModel();
-			oModel.setData(this.oMockupData);
-			sap.ui.getCore().setModel(oModel);
+			this.oModel = new JSONModel();
+			this.oModel.setData(this.oMockupData);
+			sap.ui.getCore().setModel(this.oModel);
 
 			this.oMessageView.bindAggregation("items", {
 				path: "/messages",
@@ -466,6 +467,27 @@ sap.ui.define([
 
 	QUnit.test("Active Items: Inactive item should not have a link", function (assert) {
 		assert.notOk(this.oMessageView._oLists.all.getItems()[0].getLink(), "Inactive Item should not have a link");
+	});
+
+	QUnit.test("Markup Description: Markup in the description should be scaped", function (assert) {
+		var sDescription = 'Second Error message description   {http://blblbl} ';
+
+		this.oModel.setProperty("/messages", [{
+			type: "Error",
+			title: "Error message 123 { here is a lot of text} ",
+			description: sDescription,
+			subtitle: "  a  Example of {subtitle} ",
+			counter: 2,
+			markupDescription: true
+		}]);
+
+		sap.ui.getCore().applyChanges();
+
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		assert.ok(true, "No exception has been thrown");
+		assert.strictEqual(this.oMessageView.getItems()[0].getDescription(), sDescription, "Description is not modified");
 	});
 
 	QUnit.module("Core integration", {
