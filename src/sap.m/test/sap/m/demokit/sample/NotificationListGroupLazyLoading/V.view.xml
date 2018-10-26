@@ -1,5 +1,6 @@
 <mvc:View
 		controllerName="sap.m.sample.NotificationListGroupLazyLoading.C"
+		class="sapUiBodyBackground sapContrastPlus"
 		xmlns:l="sap.ui.layout"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m">

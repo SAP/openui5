@@ -1,5 +1,6 @@
 <mvc:View
 		controllerName="sap.m.sample.NotificationListGroup.C"
+		class="sapUiBodyBackground sapContrastPlus"
 		xmlns:l="sap.ui.layout"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m">
@@ -7,7 +8,7 @@
 			class="sapUiContentPadding"
 			width="100%">
 		<l:content>
-			<List class="sapContrast sapContrastPlus">
+			<List>
 				<NotificationListGroup
 						title="Orders"
 						datetime="1 hour"

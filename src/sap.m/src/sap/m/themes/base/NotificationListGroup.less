@@ -8,15 +8,19 @@
 @_sap_m_NotificationListGroup_BorderRadius: 0.25rem;
 
 .sapMNLG {
+	background: transparent;
 	margin-bottom: @_sap_m_NotificationListGroup_BottomMargin;
 	padding-right: 0.5rem;
 	position: relative;
-	background: @sapUiListBackground;
 	box-shadow: @sapUiShadowLevel0;
 	.sapMNLI {
 		border-left: none;
 		border-right: none;
 	}
+}
+
+.sapMNLG-GroupHeader {
+	background: @_sap_m_NotificationListItem_Background;
 }
 
 .sapMNLG.sapMLIB {
@@ -121,6 +125,7 @@ html[data-sap-ui-browser*='ie'] .sapMNLG-SubHeader .sapMBtnInner {
 	padding-left: 0;
 	padding-right: 0;
 	.sapMNLI {
+		background: @_sap_m_NotificationListItemGrouped_Background;
 		margin: 0;
 		box-shadow: none;
 		border-bottom: none;
@@ -197,25 +202,12 @@ html[data-sap-ui-browser*='ie'] .sapMNLG-SubHeader .sapMBtnInner {
 	}
 }
 
-.sapMNLG.sapMNLG-Collapsed {
-	.sapMNLG-Header, .sapMNLG-SubHeader {
-		background-color: @sapUiListBackground;
-	}
-}
-
-.sapMNLG {
-	.sapMNLG-Header, .sapMNLG-SubHeader {
-		background: @sapUiListBackground;
-	}
-}
-
 .sapMNLG-Body {
 	.sapMNLG-MaxNotifications {
 		font-family: @sapUiFontFamily;
 		font-size: @sapMFontMediumSize;
 		color: @sapUiContentLabelColor;
 		border-top: 1px solid @sapUiListBorderColor;
-		background: @sapUiListBackground;
 		span {
 			font-family: @sapUiFontFamily;
 			font-size: @sapMFontLargeSize;
