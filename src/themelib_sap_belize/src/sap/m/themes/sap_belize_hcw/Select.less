@@ -15,7 +15,7 @@
 
 .sapMSlt.sapMSltDefault:not(.sapMSltIconOnly):focus:not(.sapMSltPressed) {
 	outline: 0.125rem dotted @sapUiContentFocusColor;
-	outline-offset: -0.1875rem;
+	outline-offset: -0.25rem;
 }
 
 html.sap-desktop .sapMSlt:not(.sapMSltIconOnly):not(.sapMSltDisabled):not(.sapMSltInformation):focus,
@@ -35,11 +35,11 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMSlt.sapMSltDefault:focus:not(.sapMSltDisabled):not(.sapMSltPressed)::before {
 		content: "";
 		box-sizing: border-box;
-		width: 100%;
-		height: 100%;
 		position: absolute;
-		left: 0;
-		top: 0;
+		top: 1px;
+		right: 1px;
+		bottom: 1px;
+		left: 1px;
 		border: 0.125rem dashed @sapUiContentFocusColor;
 	}
 }
