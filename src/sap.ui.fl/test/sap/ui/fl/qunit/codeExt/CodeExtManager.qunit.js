@@ -228,12 +228,14 @@ sap.ui.define([
 						service: "",
 						user: "",
 						sapui5Version: sap.ui.version,
-						compositeCommand: ""
+						compositeCommand: "",
+						sourceChangeFileName: ""
 					},
 					oDataInformation: {},
 					dependentSelector: {},
 					validAppVersions: {},
-					jsOnly: false
+					jsOnly: false,
+					variantReference: ""
 				},
 				{
 					fileName: sGeneratedId,
@@ -260,12 +262,14 @@ sap.ui.define([
 						service: "",
 						user: "",
 						sapui5Version: sap.ui.version,
-						compositeCommand: ""
+						compositeCommand: "",
+						sourceChangeFileName: ""
 					},
 					oDataInformation: {},
 					dependentSelector: {},
 					validAppVersions: {},
-					jsOnly: false
+					jsOnly: false,
+					variantReference: ""
 				}
 			];
 

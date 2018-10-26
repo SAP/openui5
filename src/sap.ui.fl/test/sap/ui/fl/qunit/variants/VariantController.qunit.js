@@ -126,8 +126,25 @@ sap.ui.define([
 		var aExpectedChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[2].controlChanges;
 		var oRefChange = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges[0];
 		aExpectedChanges.unshift(oRefChange);
-		var aChanges = oVariantController.getVariantChanges("idMain1--variantManagementOrdersTable", "variant2", true);
+		var aChanges = oVariantController.getVariantChanges("idMain1--variantManagementOrdersTable", "variant2");
 		assert.deepEqual(aExpectedChanges, aChanges, "then two changes of variant are returned with a new referenced change");
+	});
+
+	QUnit.test("when calling 'getVariantChanges' of the VariantController with bChangeInstance = true", function(assert) {
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+		var aChanges = oVariantController.getVariantChanges("idMain1--variantManagementOrdersTable", "variant2", true);
+		aChanges.forEach(function (oChange) {
+			assert.ok(oChange instanceof Change, "the change is an instance of sap.ui.fl.Change");
+		});
+	});
+
+	QUnit.test("when calling 'getVariantChanges' of the VariantController with bChangeInstance = false", function(assert) {
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+		var aChanges = oVariantController.getVariantChanges("idMain1--variantManagementOrdersTable", "variant2", false);
+		aChanges.forEach(function (oChange) {
+			assert.notOk(oChange instanceof Change, "the change is not an instance of sap.ui.fl.Change");
+			assert.ok(oChange.fileName, "the change consists of the change definition");
+		});
 	});
 
 	QUnit.test("when calling 'loadVariantChanges' of the VariantController without changes in variant", function(assert) {
@@ -401,8 +418,8 @@ sap.ui.define([
 
 		assert.strictEqual(mSwitches.aRevert.length, 1, "then one change needs to be reverted");
 		assert.strictEqual(mSwitches.aNew.length, 1, "then one change needs to be applied");
-		assert.strictEqual(mSwitches.aRevert[0].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges[1].fileName, "then to be reverted change is correct");
-		assert.strictEqual(mSwitches.aNew[0].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[1].controlChanges[1].fileName, "then to be applied change is correct");
+		assert.strictEqual(mSwitches.aRevert[0].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges[1].getDefinition().fileName, "then to be reverted change is correct");
+		assert.strictEqual(mSwitches.aNew[0].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[1].controlChanges[1].getDefinition().fileName, "then to be applied change is correct");
 		assert.deepEqual(mSwitches.component, oControlComponent, "then the passed component is received");
 		oControlComponent.destroy();
 	});
@@ -438,8 +455,8 @@ sap.ui.define([
 
 		assert.strictEqual(mSwitches.aRevert.length, 1, "then one change needs to be reverted");
 		assert.strictEqual(mSwitches.aNew.length, 1, "then one change needs to be applied");
-		assert.strictEqual(mSwitches.aRevert[0].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges[1].fileName, "then to be reverted change is correct");
-		assert.strictEqual(mSwitches.aNew[0].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[1].controlChanges[1].fileName, "then to be applied change is correct");
+		assert.strictEqual(mSwitches.aRevert[0].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges[1].getDefinition().fileName, "then to be reverted change is correct");
+		assert.strictEqual(mSwitches.aNew[0].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[1].controlChanges[1].getDefinition().fileName, "then to be applied change is correct");
 		assert.deepEqual(mSwitches.component, {id: "applicableComponentId"}, "then the correct embedded component is received");
 	});
 
@@ -963,7 +980,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("when calling 'addVariantToVariantManagement' on CUSTOMER layer and a variant reference from the VENDOR layer with one VENDOR and one CUSTOMER change", function(assert) {
-		var oChangeContent0 = {"fileName":"change0"};
+		var oChange0 = new Change({
+			"fileName": "change0",
+			"selector": {
+				"id": "abc123"
+			}
+		});
 
 		var oFakeVariantData1 = {
 			"content" : {
@@ -973,7 +995,7 @@ sap.ui.define([
 					"title": "AA"
 				}
 			},
-			"controlChanges" : [oChangeContent0]
+			"controlChanges" : [oChange0]
 		};
 
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
@@ -981,18 +1003,23 @@ sap.ui.define([
 
 		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
 		var aChangeFileNames = aVariants[1].controlChanges.map(function (oChange) {
-			return oChange.fileName;
+			return oChange.getDefinition().fileName;
 		});
 
 		assert.equal(iIndex1, 1, "then index 1 received on adding variant AA");
 		assert.equal(aVariants[1].content.fileName, "newVariant1", "then the new variant with title AA added to the second position after Standard Variant (ascending sort)");
 		assert.equal(aVariants[1].controlChanges.length, 2, "then one own change and one referenced change exists");
-		assert.equal(aChangeFileNames[0], aVariants[2].controlChanges[0].fileName, "then referenced change exists and placed to the array start");
-		assert.equal(aChangeFileNames.indexOf(aVariants[2].controlChanges[1].fileName), "-1", "then CUSTOMER layer change not referenced");
+		assert.equal(aChangeFileNames[0], aVariants[2].controlChanges[0].getDefinition().fileName, "then referenced change exists and placed to the array start");
+		assert.equal(aChangeFileNames.indexOf(aVariants[2].controlChanges[1].getDefinition().fileName), "-1", "then CUSTOMER layer change not referenced");
 	});
 
 	QUnit.test("when calling '_getReferencedChanges' on CUSTOMER layer with variant reference to a VENDOR layer variant with one VENDOR and one CUSTOMER change", function(assert) {
-		var oChangeContent0 = {"fileName":"change0"};
+		var oChange0 = new Change({
+			"fileName": "change0",
+			"selector": {
+				"id": "abc123"
+			}
+		});
 
 		var oFakeVariantData1 = {
 			"content" : {
@@ -1002,7 +1029,7 @@ sap.ui.define([
 					"title": "AA"
 				}
 			},
-			"controlChanges" : [oChangeContent0]
+			"controlChanges" : [oChange0]
 		};
 
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
@@ -1010,7 +1037,7 @@ sap.ui.define([
 		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
 
 		assert.equal(aReferencedChanges.length, 1, "then only one change returned");
-		assert.equal(aReferencedChanges[0].fileName, aVariants[2].controlChanges[0].fileName, "then only one VENDOR level change returned");
+		assert.equal(aReferencedChanges[0].getDefinition().fileName, aVariants[2].controlChanges[0].fileName, "then only one VENDOR level change returned");
 	});
 
 	QUnit.test("when calling 'removeVariantFromVariantManagement' with a variant", function(assert) {
@@ -1289,7 +1316,7 @@ sap.ui.define([
 
 		var aChanges = this.oVariantController.getVariantChanges("variantManagementId", "variant0");
 		assert.equal(aChanges.length, 3, "and the number of changes in the variant is correct");
-		assert.equal(aChanges[2], this.oChangeContent2, "and the lately added change is at the end of the changes array");
+		assert.equal(aChanges[2], oChangeToBeAdded1, "and the lately added change is at the end of the changes array");
 	});
 
 	QUnit.test("when calling 'removeChangeFromVariant' of the VariantController", function(assert) {
@@ -1299,7 +1326,7 @@ sap.ui.define([
 
 		var aChanges = this.oVariantController.getVariantChanges("variantManagementId", "variant0");
 		assert.equal(aChanges.length, 1, "and the number of changes in the variant is correct");
-		assert.equal(aChanges[0], this.oChangeContent0, "and the remaining change is the correct one");
+		assert.equal(aChanges[0].getDefinition(), this.oChangeContent0, "and the remaining change is the correct one");
 	});
 
 	QUnit.test("when calling '_setChangeFileContent' & 'loadInitialChanges' with a Component containing a valid URL parameter for the variant", function(assert){
