@@ -538,7 +538,7 @@ function (
 	 * @returns {object[]} - returns an array with scroll containers description
 	 */
 	ElementOverlay.prototype.getScrollContainers = function () {
-		return this.getDesignTimeMetadata().getScrollContainers();
+		return this.getDesignTimeMetadata().getScrollContainers(this.getElement());
 	};
 
 	/**
