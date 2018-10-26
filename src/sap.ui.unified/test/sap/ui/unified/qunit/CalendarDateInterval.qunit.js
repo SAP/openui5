@@ -468,6 +468,7 @@ sap.ui.define([
 		var oCalendarDateInterval = new sap.ui.unified.CalendarWeekInterval();
 		var oHeader = oCalendarDateInterval.getAggregation("header");
 		var oSetHeaderTextSpy = this.spy(oHeader, "setTextButton1");
+		var oSetHeaderAriaSpy = this.spy(oHeader, "setAriaLabelButton1");
 		//simulate as if it is in a planning calendar
 		var oGetPickerPopupStub = this.stub(oCalendarDateInterval, "getPickerPopup", function() {return true;});
 		var sDelimiter = LocaleData.getInstance(new sap.ui.core.Locale("en-US")).getIntervalPattern().replace("{0}", "").replace("{1}", "");
@@ -477,10 +478,12 @@ sap.ui.define([
 
 		//assert
 		assert.equal(oSetHeaderTextSpy.lastCall.args[0], "December 2017" + sDelimiter + "January 2018", "text of the header is ok");
+		assert.equal(oSetHeaderAriaSpy.lastCall.args[0], "December 2017" + sDelimiter + "January 2018", "aria of the header is ok");
 
 		//clean
 		oGetPickerPopupStub.restore();
 		oSetHeaderTextSpy.restore();
+		oSetHeaderAriaSpy.restore();
 		oCalendarDateInterval.destroy();
 		oCalendarDateInterval = null;
 		oHeader = null;
