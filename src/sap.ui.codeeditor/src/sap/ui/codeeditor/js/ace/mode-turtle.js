@@ -5,7 +5,6 @@ var oop = require("../lib/oop");
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
 var TurtleHighlightRules = function() {
-
     this.$rules = {
         start: [{
             include: "#comments"
@@ -110,7 +109,7 @@ var TurtleHighlightRules = function() {
             token: "support.type.datatype.xml.schema.turtle",
             regex: /xsd?:[a-z][a-zA-Z]+/
         }]
-    }
+    };
     
     this.normalizeRules();
 };
@@ -119,7 +118,7 @@ TurtleHighlightRules.metaData = {
     fileTypes: ["ttl", "nt"],
     name: "Turtle",
     scopeName: "source.turtle"
-}
+};
 
 
 oop.inherits(TurtleHighlightRules, TextHighlightRules);
@@ -148,8 +147,8 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 (function() {
     
-    this.foldingStartMarker = /(\{|\[)[^\}\]]*$|^\s*(\/\*)/;
-    this.foldingStopMarker = /^[^\[\{]*(\}|\])|^[\s\*]*(\*\/)/;
+    this.foldingStartMarker = /([\{\[\(])[^\}\]\)]*$|^\s*(\/\*)/;
+    this.foldingStopMarker = /^[^\[\{\(]*([\}\]\)])|^[\s\*]*(\*\/)/;
     this.singleLineBlockCommentRe= /^\s*(\/\*).*\*\/\s*$/;
     this.tripleStarBlockCommentRe = /^\s*(\/\*\*\*).*\*\/\s*$/;
     this.startRegionRe = /^\s*(\/\*|\/\/)#?region\b/;
@@ -282,8 +281,16 @@ var Mode = function() {
 oop.inherits(Mode, TextMode);
 
 (function() {
-    this.$id = "ace/mode/turtle"
+    this.$id = "ace/mode/turtle";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
 });
+                (function() {
+                    ace.require(["ace/mode/turtle"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

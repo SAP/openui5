@@ -153,26 +153,26 @@ exports.SnippetHighlightRules = SnippetHighlightRules;
 var SnippetGroupHighlightRules = function() {
     this.$rules = {
         "start" : [
-			{token: "text", regex: "^\\t", next: "sn-start"},
-			{token:"invalid", regex: /^ \s*/},
+            {token: "text", regex: "^\\t", next: "sn-start"},
+            {token:"invalid", regex: /^ \s*/},
             {token:"comment", regex: /^#.*/},
             {token:"constant.language.escape", regex: "^regex ", next: "regex"},
             {token:"constant.language.escape", regex: "^(trigger|endTrigger|name|snippet|guard|endGuard|tabTrigger|key)\\b"}
         ],
-		"regex" : [
-			{token:"text", regex: "\\."},
-			{token:"keyword", regex: "/"},
-			{token:"empty", regex: "$", next: "start"}
-		]
+        "regex" : [
+            {token:"text", regex: "\\."},
+            {token:"keyword", regex: "/"},
+            {token:"empty", regex: "$", next: "start"}
+        ]
     };
-	this.embedRules(SnippetHighlightRules, "sn-", [
-		{token: "text", regex: "^\\t", next: "sn-start"},
-		{onMatch: function(value, state, stack) {
-			stack.splice(stack.length);
-			return this.tokenName;
-		}, tokenName: "text", regex: "^(?!\t)", next: "start"}
-	])
-	
+    this.embedRules(SnippetHighlightRules, "sn-", [
+        {token: "text", regex: "^\\t", next: "sn-start"},
+        {onMatch: function(value, state, stack) {
+            stack.splice(stack.length);
+            return this.tokenName;
+        }, tokenName: "text", regex: "^(?!\t)", next: "start"}
+    ]);
+    
 };
 
 oop.inherits(SnippetGroupHighlightRules, TextHighlightRules);
@@ -197,3 +197,11 @@ exports.Mode = Mode;
 
 
 });
+                (function() {
+                    ace.require(["ace/mode/snippets"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

@@ -5,7 +5,6 @@ var oop = require("../lib/oop");
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
 var BatchFileHighlightRules = function() {
-
     this.$rules = { start: 
        [ { token: 'keyword.command.dosbatch',
            regex: '\\b(?:append|assoc|at|attrib|break|cacls|cd|chcp|chdir|chkdsk|chkntfs|cls|cmd|color|comp|compact|convert|copy|date|del|dir|diskcomp|diskcopy|doskey|echo|endlocal|erase|fc|find|findstr|format|ftype|graftabl|help|keyb|label|md|mkdir|mode|more|move|path|pause|popd|print|prompt|pushd|rd|recover|ren|rename|replace|restore|rmdir|set|setlocal|shift|sort|start|subst|time|title|tree|type|ver|verify|vol|xcopy)\\b',
@@ -43,14 +42,14 @@ var BatchFileHighlightRules = function() {
          { token: 'constant.numeric', regex: '%%\\w+|%[*\\d]|%\\w+%'},
          { token: 'constant.numeric', regex: '%~\\d+'},
          { token: ['markup.list', 'constant.other', 'markup.list'],
-            regex: '(%)(\\w+)(%?)' }]}
+            regex: '(%)(\\w+)(%?)' }]};
     
     this.normalizeRules();
 };
 
 BatchFileHighlightRules.metaData = { name: 'Batch File',
       scopeName: 'source.dosbatch',
-      fileTypes: [ 'bat' ] }
+      fileTypes: [ 'bat' ] };
 
 
 oop.inherits(BatchFileHighlightRules, TextHighlightRules);
@@ -79,8 +78,8 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 (function() {
     
-    this.foldingStartMarker = /(\{|\[)[^\}\]]*$|^\s*(\/\*)/;
-    this.foldingStopMarker = /^[^\[\{]*(\}|\])|^[\s\*]*(\*\/)/;
+    this.foldingStartMarker = /([\{\[\(])[^\}\]\)]*$|^\s*(\/\*)/;
+    this.foldingStopMarker = /^[^\[\{\(]*([\}\]\)])|^[\s\*]*(\*\/)/;
     this.singleLineBlockCommentRe= /^\s*(\/\*).*\*\/\s*$/;
     this.tripleStarBlockCommentRe = /^\s*(\/\*\*\*).*\*\/\s*$/;
     this.startRegionRe = /^\s*(\/\*|\/\/)#?region\b/;
@@ -221,3 +220,11 @@ oop.inherits(Mode, TextMode);
 
 exports.Mode = Mode;
 });
+                (function() {
+                    ace.require(["ace/mode/batchfile"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

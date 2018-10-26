@@ -79,7 +79,6 @@ var ElasticTabstopsLite = function(editor) {
 
     this.$cellWidthsForRow = function(row) {
         var selectionColumns = this.$selectionColumnsForRow(row);
-
         var tabs = [-1].concat(this.$tabsForRow(row));
         var widths = tabs.map(function(el) { return 0; } ).slice(1);
         var line = this.$editor.session.getLine(row);
@@ -269,6 +268,10 @@ require("../config").defineOptions(Editor.prototype, "editor", {
 
 });
                 (function() {
-                    ace.require(["ace/ext/elastic_tabstops_lite"], function() {});
+                    ace.require(["ace/ext/elastic_tabstops_lite"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
                 })();
             

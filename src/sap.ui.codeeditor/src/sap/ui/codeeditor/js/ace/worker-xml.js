@@ -1,5 +1,5 @@
 "no use strict";
-;(function(window) {
+!(function(window) {
 if (typeof window.window != "undefined" && window.document)
     return;
 if (window.require && window.define)
@@ -134,7 +134,7 @@ window.define = function(id, deps, factory) {
         exports: {},
         factory: function() {
             var module = this;
-            var returnExports = factory.apply(this, deps.map(function(dep) {
+            var returnExports = factory.apply(this, deps.slice(0, factory.length).map(function(dep) {
                 switch (dep) {
                     // Because "require", "exports" and "module" aren't actual
                     // dependencies, we must handle them seperately.
@@ -217,7 +217,7 @@ window.onmessage = function(e) {
 };
 })(this);
 
-ace.define("ace/lib/oop",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/lib/oop",[], function(require, exports, module) {
 "use strict";
 
 exports.inherits = function(ctor, superCtor) {
@@ -245,7 +245,7 @@ exports.implement = function(proto, mixin) {
 
 });
 
-ace.define("ace/lib/lang",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/lib/lang",[], function(require, exports, module) {
 "use strict";
 
 exports.last = function(a) {
@@ -347,7 +347,7 @@ exports.escapeRegExp = function(str) {
 };
 
 exports.escapeHTML = function(str) {
-    return str.replace(/&/g, "&#38;").replace(/"/g, "&#34;").replace(/'/g, "&#39;").replace(/</g, "&#60;");
+    return ("" + str).replace(/&/g, "&#38;").replace(/"/g, "&#34;").replace(/'/g, "&#39;").replace(/</g, "&#60;");
 };
 
 exports.getMatchOffsets = function(string, regExp) {
@@ -433,7 +433,7 @@ exports.delayedCall = function(fcn, defaultTimeout) {
 };
 });
 
-ace.define("ace/range",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/range",[], function(require, exports, module) {
 "use strict";
 var comparePoints = function(p1, p2) {
     return p1.row - p2.row || p1.column - p2.column;
@@ -638,9 +638,9 @@ var Range = function(startRow, startColumn, endRow, endColumn) {
     };
     this.collapseRows = function() {
         if (this.end.column == 0)
-            return new Range(this.start.row, 0, Math.max(this.start.row, this.end.row-1), 0)
+            return new Range(this.start.row, 0, Math.max(this.start.row, this.end.row-1), 0);
         else
-            return new Range(this.start.row, 0, this.end.row, 0)
+            return new Range(this.start.row, 0, this.end.row, 0);
     };
     this.toScreenRange = function(session) {
         var screenPosStart = session.documentToScreenPosition(this.start);
@@ -672,7 +672,7 @@ Range.comparePoints = function(p1, p2) {
 exports.Range = Range;
 });
 
-ace.define("ace/apply_delta",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/apply_delta",[], function(require, exports, module) {
 "use strict";
 
 function throwDeltaError(delta, errorText){
@@ -705,7 +705,6 @@ function validateDelta(docLines, delta) {
 }
 
 exports.applyDelta = function(docLines, delta, doNotValidate) {
-    
     var row = delta.start.row;
     var startColumn = delta.start.column;
     var line = docLines[row] || "";
@@ -734,10 +733,10 @@ exports.applyDelta = function(docLines, delta, doNotValidate) {
             }
             break;
     }
-}
+};
 });
 
-ace.define("ace/lib/event_emitter",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/lib/event_emitter",[], function(require, exports, module) {
 "use strict";
 
 var EventEmitter = {};
@@ -795,7 +794,7 @@ EventEmitter.once = function(eventName, callback) {
 
 
 EventEmitter.setDefaultHandler = function(eventName, callback) {
-    var handlers = this._defaultHandlers
+    var handlers = this._defaultHandlers;
     if (!handlers)
         handlers = this._defaultHandlers = {_disabled_: {}};
     
@@ -812,13 +811,12 @@ EventEmitter.setDefaultHandler = function(eventName, callback) {
     handlers[eventName] = callback;
 };
 EventEmitter.removeDefaultHandler = function(eventName, callback) {
-    var handlers = this._defaultHandlers
+    var handlers = this._defaultHandlers;
     if (!handlers)
         return;
     var disabled = handlers._disabled_[eventName];
     
     if (handlers[eventName] == callback) {
-        var old = handlers[eventName];
         if (disabled)
             this.setDefaultHandler(eventName, disabled.pop());
     } else if (disabled) {
@@ -863,7 +861,7 @@ exports.EventEmitter = EventEmitter;
 
 });
 
-ace.define("ace/anchor",["require","exports","module","ace/lib/oop","ace/lib/event_emitter"], function(require, exports, module) {
+ace.define("ace/anchor",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("./lib/oop");
@@ -923,7 +921,6 @@ var Anchor = exports.Anchor = function(doc, row, column) {
                 column: point.column + (point.row == deltaEnd.row ? deltaColShift : 0)
             };
         }
-        
         return {
             row: deltaStart.row,
             column: deltaStart.column
@@ -988,7 +985,7 @@ var Anchor = exports.Anchor = function(doc, row, column) {
 
 });
 
-ace.define("ace/document",["require","exports","module","ace/lib/oop","ace/apply_delta","ace/lib/event_emitter","ace/range","ace/anchor"], function(require, exports, module) {
+ace.define("ace/document",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("./lib/oop");
@@ -1172,7 +1169,7 @@ var Document = function(textOrLines) {
             column = this.$lines[row].length;
         }
         this.insertMergedLines({row: row, column: column}, lines);
-    };    
+    };
     this.insertMergedLines = function(position, lines) {
         var start = this.clippedPos(position.row, position.column);
         var end = {
@@ -1279,28 +1276,23 @@ var Document = function(textOrLines) {
             return;
         }
         
-        if (isInsert && delta.lines.length > 20000)
+        if (isInsert && delta.lines.length > 20000) {
             this.$splitAndapplyLargeDelta(delta, 20000);
-        applyDelta(this.$lines, delta, doNotValidate);
-        this._signal("change", delta);
+        }
+        else {
+            applyDelta(this.$lines, delta, doNotValidate);
+            this._signal("change", delta);
+        }
     };
     
     this.$splitAndapplyLargeDelta = function(delta, MAX) {
         var lines = delta.lines;
-        var l = lines.length;
+        var l = lines.length - MAX + 1;
         var row = delta.start.row; 
         var column = delta.start.column;
-        var from = 0, to = 0;
-        do {
-            from = to;
+        for (var from = 0, to = 0; from < l; from = to) {
             to += MAX - 1;
             var chunk = lines.slice(from, to);
-            if (to > l) {
-                delta.lines = chunk;
-                delta.start.row = row + from;
-                delta.start.column = column;
-                break;
-            }
             chunk.push("");
             this.applyDelta({
                 start: this.pos(row + from, column),
@@ -1308,7 +1300,11 @@ var Document = function(textOrLines) {
                 action: delta.action,
                 lines: chunk
             }, true);
-        } while(true);
+        }
+        delta.lines = lines.slice(from);
+        delta.start.row = row + from;
+        delta.start.column = column;
+        this.applyDelta(delta, true);
     };
     this.revertDelta = function(delta) {
         this.applyDelta({
@@ -1326,7 +1322,7 @@ var Document = function(textOrLines) {
             if (index < 0)
                 return {row: i, column: index + lines[i].length + newlineLength};
         }
-        return {row: l-1, column: lines[l-1].length};
+        return {row: l-1, column: index + lines[l-1].length + newlineLength};
     };
     this.positionToIndex = function(pos, startRow) {
         var lines = this.$lines || this.getAllLines();
@@ -1344,7 +1340,7 @@ var Document = function(textOrLines) {
 exports.Document = Document;
 });
 
-ace.define("ace/worker/mirror",["require","exports","module","ace/range","ace/document","ace/lib/lang"], function(require, exports, module) {
+ace.define("ace/worker/mirror",[], function(require, exports, module) {
 "use strict";
 
 var Range = require("../range").Range;
@@ -1406,7 +1402,7 @@ var Mirror = exports.Mirror = function(sender) {
 
 });
 
-ace.define("ace/mode/xml/sax",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/mode/xml/sax",[], function(require, exports, module) {
 var nameStartChar = /[A-Z_a-z\xC0-\xD6\xD8-\xF6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]///\u10000-\uEFFFF
 var nameChar = new RegExp("[\\-\\.0-9"+nameStartChar.source.slice(1,-1)+"\u00B7\u0300-\u036F\\ux203F-\u2040]");
 var tagNamePattern = new RegExp('^'+nameStartChar.source+nameChar.source+'*(?:\:'+nameStartChar.source+nameChar.source+'*)?$');
@@ -1917,7 +1913,7 @@ function split(source,start){
 return XMLReader;
 });
 
-ace.define("ace/mode/xml/dom",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/mode/xml/dom",[], function(require, exports, module) {
 
 function copy(src,dest){
 	for(var p in src){
@@ -1925,13 +1921,13 @@ function copy(src,dest){
 	}
 }
 function _extends(Class,Super){
+	var t = function(){};
 	var pt = Class.prototype;
 	if(Object.create){
-		var ppt = Object.create(Super.prototype)
+		var ppt = Object.create(Super.prototype);
 		pt.__proto__ = ppt;
 	}
 	if(!(pt instanceof Super)){
-		function t(){};
 		t.prototype = Super.prototype;
 		t = new t();
 		copy(pt,t);
@@ -1939,13 +1935,13 @@ function _extends(Class,Super){
 	}
 	if(pt.constructor != Class){
 		if(typeof Class != 'function'){
-			console.error("unknow Class:"+Class)
+			console.error("unknown Class:"+Class);
 		}
-		pt.constructor = Class
+		pt.constructor = Class;
 	}
 }
 var htmlns = 'http://www.w3.org/1999/xhtml' ;
-var NodeType = {}
+var NodeType = {};
 var ELEMENT_NODE                = NodeType.ELEMENT_NODE                = 1;
 var ATTRIBUTE_NODE              = NodeType.ATTRIBUTE_NODE              = 2;
 var TEXT_NODE                   = NodeType.TEXT_NODE                   = 3;
@@ -1958,7 +1954,7 @@ var DOCUMENT_NODE               = NodeType.DOCUMENT_NODE               = 9;
 var DOCUMENT_TYPE_NODE          = NodeType.DOCUMENT_TYPE_NODE          = 10;
 var DOCUMENT_FRAGMENT_NODE      = NodeType.DOCUMENT_FRAGMENT_NODE      = 11;
 var NOTATION_NODE               = NodeType.NOTATION_NODE               = 12;
-var ExceptionCode = {}
+var ExceptionCode = {};
 var ExceptionMessage = {};
 var INDEX_SIZE_ERR              = ExceptionCode.INDEX_SIZE_ERR              = ((ExceptionMessage[1]="Index size error"),1);
 var DOMSTRING_SIZE_ERR          = ExceptionCode.DOMSTRING_SIZE_ERR          = ((ExceptionMessage[2]="DOMString size error"),2);
@@ -1995,14 +1991,14 @@ copy(ExceptionCode,DOMException)
 function NodeList() {
 };
 NodeList.prototype = {
-	length:0, 
+	length:0,
 	item: function(index) {
 		return this[index] || null;
 	}
 };
 function LiveNodeList(node,refresh){
 	this._node = node;
-	this._refresh = refresh
+	this._refresh = refresh;
 	_updateLiveList(this);
 }
 function _updateLiveList(list){
@@ -2048,9 +2044,9 @@ function _addNamedNode(el,list,newAttr,oldAttr){
 function _removeNamedNode(el,list,attr){
 	var i = _findNodeIndex(list,attr);
 	if(i>=0){
-		var lastIndex = list.length-1
+		var lastIndex = list.length-1;
 		while(i<lastIndex){
-			list[i] = list[++i]
+			list[i] = list[++i];
 		}
 		list.length = lastIndex;
 		if(el){
@@ -2061,7 +2057,7 @@ function _removeNamedNode(el,list,attr){
 			}
 		}
 	}else{
-		throw DOMException(NOT_FOUND_ERR,new Error())
+		throw new DOMException(NOT_FOUND_ERR,new Error());
 	}
 }
 NamedNodeMap.prototype = {
@@ -2098,8 +2094,8 @@ NamedNodeMap.prototype = {
 		var attr = this.getNamedItem(key);
 		_removeNamedNode(this._ownerElement,this,attr);
 		return attr;
-		
-		
+
+
 	},// raises: NOT_FOUND_ERR,NO_MODIFICATION_ALLOWED_ERR
 	removeNamedItemNS:function(namespaceURI,localName){
 		var attr = this.getNamedItemNS(namespaceURI,localName);
@@ -2175,10 +2171,10 @@ Node.prototype = {
 	namespaceURI : null,
 	prefix : null,
 	localName : null,
-	insertBefore:function(newChild, refChild){//raises 
+	insertBefore:function(newChild, refChild){//raises
 		return _insertBefore(this,newChild,refChild);
 	},
-	replaceChild:function(newChild, oldChild){//raises 
+	replaceChild:function(newChild, oldChild){//raises
 		this.insertBefore(newChild,oldChild);
 		if(oldChild){
 			this.removeChild(oldChild);
@@ -2255,7 +2251,7 @@ function _xmlEncoder(c){
          c == '>' && '&gt;' ||
          c == '&' && '&amp;' ||
          c == '"' && '&quot;' ||
-         '&#'+c.charCodeAt()+';'
+         '&#'+c.charCodeAt()+';';
 }
 
 
@@ -2287,7 +2283,7 @@ function _onRemoveAttribute(doc,el,newAttr,remove){
 	doc && doc._inc++;
 	var ns = newAttr.namespaceURI ;
 	if(ns == 'http://www.w3.org/2000/xmlns/'){
-		delete el._nsMap[newAttr.prefix?newAttr.localName:'']
+		delete el._nsMap[newAttr.prefix?newAttr.localName:''];
 	}
 }
 function _onUpdateChild(doc,el,newChild){
@@ -2341,8 +2337,8 @@ function _insertBefore(parentNode,newChild,nextChild){
 
 	newFirst.previousSibling = pre;
 	newLast.nextSibling = nextChild;
-	
-	
+
+
 	if(pre){
 		pre.nextSibling = newFirst;
 	}else{
@@ -2388,8 +2384,8 @@ Document.prototype = {
 	doctype :  null,
 	documentElement :  null,
 	_inc : 1,
-	
-	insertBefore :  function(newChild, refChild){//raises 
+
+	insertBefore :  function(newChild, refChild){//raises
 		if(newChild.nodeType == DOCUMENT_FRAGMENT_NODE){
 			var child = newChild.firstChild;
 			while(child){
@@ -2402,7 +2398,7 @@ Document.prototype = {
 		if(this.documentElement == null && newChild.nodeType == 1){
 			this.documentElement = newChild;
 		}
-		
+
 		return _insertBefore(this,newChild,refChild),(newChild.ownerDocument = this),newChild;
 	},
 	removeChild :  function(oldChild){
@@ -2423,7 +2419,7 @@ Document.prototype = {
 					return true;
 				}
 			}
-		})
+		});
 		return rtv;
 	},
 	createElement :	function(tagName){
@@ -2445,19 +2441,19 @@ Document.prototype = {
 	createTextNode :	function(data){
 		var node = new Text();
 		node.ownerDocument = this;
-		node.appendData(data)
+		node.appendData(data);
 		return node;
 	},
 	createComment :	function(data){
 		var node = new Comment();
 		node.ownerDocument = this;
-		node.appendData(data)
+		node.appendData(data);
 		return node;
 	},
 	createCDATASection :	function(data){
 		var node = new CDATASection();
 		node.ownerDocument = this;
-		node.appendData(data)
+		node.appendData(data);
 		return node;
 	},
 	createProcessingInstruction :	function(target,data){
@@ -2538,10 +2534,10 @@ Element.prototype = {
 	setAttribute : function(name, value){
 		var attr = this.ownerDocument.createAttribute(name);
 		attr.value = attr.nodeValue = "" + value;
-		this.setAttributeNode(attr)
+		this.setAttributeNode(attr);
 	},
 	removeAttribute : function(name){
-		var attr = this.getAttributeNode(name)
+		var attr = this.getAttributeNode(name);
 		attr && this.removeAttributeNode(attr);
 	},
 	appendChild:function(newChild){
@@ -2564,7 +2560,7 @@ Element.prototype = {
 		var old = this.getAttributeNodeNS(namespaceURI, localName);
 		old && this.removeAttributeNode(old);
 	},
-	
+
 	hasAttributeNS : function(namespaceURI, localName){
 		return this.getAttributeNodeNS(namespaceURI, localName)!=null;
 	},
@@ -2575,12 +2571,12 @@ Element.prototype = {
 	setAttributeNS : function(namespaceURI, qualifiedName, value){
 		var attr = this.ownerDocument.createAttributeNS(namespaceURI, qualifiedName);
 		attr.value = attr.nodeValue = "" + value;
-		this.setAttributeNode(attr)
+		this.setAttributeNode(attr);
 	},
 	getAttributeNodeNS : function(namespaceURI, localName){
 		return this.attributes.getNamedItemNS(namespaceURI, localName);
 	},
-	
+
 	getElementsByTagName : function(tagName){
 		return new LiveNodeList(this,function(base){
 			var ls = [];
@@ -2629,11 +2625,10 @@ CharacterData.prototype = {
 	},
 	insertData: function(offset,text) {
 		this.replaceData(offset,0,text);
-	
 	},
 	appendChild:function(newChild){
-			throw new Error(ExceptionMessage[3])
-		return Node.prototype.appendChild.apply(this,arguments)
+			throw new Error(ExceptionMessage[3]);
+		return Node.prototype.appendChild.apply(this,arguments);
 	},
 	deleteData: function(offset, count) {
 		this.replaceData(offset,count,"");
@@ -2684,27 +2679,27 @@ _extends(CDATASection,CharacterData);
 
 
 function DocumentType() {
-};
+}
 DocumentType.prototype.nodeType = DOCUMENT_TYPE_NODE;
 _extends(DocumentType,Node);
 
 function Notation() {
-};
+}
 Notation.prototype.nodeType = NOTATION_NODE;
 _extends(Notation,Node);
 
 function Entity() {
-};
+}
 Entity.prototype.nodeType = ENTITY_NODE;
 _extends(Entity,Node);
 
 function EntityReference() {
-};
+}
 EntityReference.prototype.nodeType = ENTITY_REFERENCE_NODE;
 _extends(EntityReference,Node);
 
 function DocumentFragment() {
-};
+}
 DocumentFragment.prototype.nodeName =	"#document-fragment";
 DocumentFragment.prototype.nodeType =	DOCUMENT_FRAGMENT_NODE;
 _extends(DocumentFragment,Node);
@@ -2730,10 +2725,10 @@ function serializeToString(node,buf){
 		var len = attrs.length;
 		var child = node.firstChild;
 		var nodeName = node.tagName;
-		var isHTML = htmlns === node.namespaceURI
+		var isHTML = htmlns === node.namespaceURI;
 		buf.push('<',nodeName);
 		for(var i=0;i<len;i++){
-			serializeToString(attrs.item(i),buf,isHTML);
+			serializeToString(attrs.item(i),buf);
 		}
 		if(child || isHTML && !/^(?:meta|link|img|br|hr|input|button)$/i.test(nodeName)){
 			buf.push('>');
@@ -2822,6 +2817,7 @@ function importNode(doc,node,deep){
 	}
 	return node2;
 }
+//
 function cloneNode(doc,node,deep){
 	var node2 = new node.constructor();
 	for(var n in node){
@@ -2840,12 +2836,12 @@ function cloneNode(doc,node,deep){
 	case ELEMENT_NODE:
 		var attrs	= node.attributes;
 		var attrs2	= node2.attributes = new NamedNodeMap();
-		var len = attrs.length
+		var len = attrs.length;
 		attrs2._ownerElement = node2;
 		for(var i=0;i<len;i++){
 			node2.setAttributeNode(cloneNode(doc,attrs.item(i),true));
 		}
-		break;;
+		break;
 	case ATTRIBUTE_NODE:
 		deep = true;
 	}
@@ -2860,7 +2856,24 @@ function cloneNode(doc,node,deep){
 }
 
 function __set__(object,key,value){
-	object[key] = value
+	object[key] = value;
+}
+function getTextContent(node){
+	switch(node.nodeType){
+	case 1:
+	case 11:
+		var buf = [];
+		node = node.firstChild;
+		while(node){
+			if(node.nodeType!==7 && node.nodeType !==8){
+				buf.push(getTextContent(node));
+			}
+			node = node.nextSibling;
+		}
+		return buf.join('');
+	default:
+		return node.nodeValue;
+	}
 }
 try{
 	if(Object.defineProperty){
@@ -2891,28 +2904,11 @@ try{
 					this.nodeValue = data;
 				}
 			}
-		})
-		
-		function getTextContent(node){
-			switch(node.nodeType){
-			case 1:
-			case 11:
-				var buf = [];
-				node = node.firstChild;
-				while(node){
-					if(node.nodeType!==7 && node.nodeType !==8){
-						buf.push(getTextContent(node));
-					}
-					node = node.nextSibling;
-				}
-				return buf.join('');
-			default:
-				return node.nodeValue;
-			}
-		}
+		});
+
 		__set__ = function(object,key,value){
-			object['$$'+key] = value
-		}
+			object['$$'+key] = value;
+		};
 	}
 }catch(e){//ie8
 }
@@ -2920,7 +2916,7 @@ try{
 return DOMImplementation;
 });
 
-ace.define("ace/mode/xml/dom-parser",["require","exports","module","ace/mode/xml/sax","ace/mode/xml/dom"], function(require, exports, module) {
+ace.define("ace/mode/xml/dom-parser",[], function(require, exports, module) {
 	'use strict';
 
 	var XMLReader = require('./sax'),
@@ -2995,7 +2991,7 @@ function DOMHandler() {
 function position(locator,node){
 	node.lineNumber = locator.lineNumber;
 	node.columnNumber = locator.columnNumber;
-} 
+}
 DOMHandler.prototype = {
 	startDocument : function() {
     	this.document = new DOMImplementation().createDocument(null, null, null);
@@ -3126,7 +3122,7 @@ return {
 	 };
 });
 
-ace.define("ace/mode/xml_worker",["require","exports","module","ace/lib/oop","ace/lib/lang","ace/worker/mirror","ace/mode/xml/dom-parser"], function(require, exports, module) {
+ace.define("ace/mode/xml_worker",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
@@ -3189,8 +3185,10 @@ oop.inherits(Worker, Mirror);
 
 });
 
-ace.define("ace/lib/es5-shim",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/lib/es5-shim",[], function(require, exports, module) {
 
+//
+//
 function Empty() {}
 
 if (!Function.prototype.bind) {
@@ -3203,7 +3201,6 @@ if (!Function.prototype.bind) {
         var bound = function () {
 
             if (this instanceof bound) {
-
                 var result = target.apply(
                     this,
                     args.concat(slice.call(arguments))
@@ -3227,6 +3224,7 @@ if (!Function.prototype.bind) {
             bound.prototype = new Empty();
             Empty.prototype = null;
         }
+        //
         return bound;
     };
 }
@@ -3247,6 +3245,9 @@ if ((supportsAccessors = owns(prototypeOfObject, "__defineGetter__"))) {
     lookupGetter = call.bind(prototypeOfObject.__lookupGetter__);
     lookupSetter = call.bind(prototypeOfObject.__lookupSetter__);
 }
+
+//
+//
 if ([1,2].splice(0).length != 2) {
     if(function() { // test IE < 9 to splice bug - see issue #138
         function makeArray(l) {
@@ -3569,6 +3570,9 @@ if (!Array.prototype.lastIndexOf || ([0, 1].lastIndexOf(0, -3) != -1)) {
         return -1;
     };
 }
+
+//
+//
 if (!Object.getPrototypeOf) {
     Object.getPrototypeOf = function getPrototypeOf(object) {
         return object.__proto__ || (
@@ -3652,7 +3656,6 @@ if (!Object.create) {
         return object;
     };
 }
-
 function doesDefinePropertyWork(object) {
     try {
         Object.defineProperty(object, "sentinel", {});
@@ -3818,11 +3821,18 @@ if (!Object.keys) {
     };
 
 }
+
+//
+//
 if (!Date.now) {
     Date.now = function now() {
         return new Date().getTime();
     };
 }
+
+
+//
+//
 var ws = "\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003" +
     "\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028" +
     "\u2029\uFEFF";
@@ -3835,6 +3845,8 @@ if (!String.prototype.trim || ws.trim()) {
     };
 }
 
+//
+//
 function toInteger(n) {
     n = +n;
     if (n !== n) { // isNaN

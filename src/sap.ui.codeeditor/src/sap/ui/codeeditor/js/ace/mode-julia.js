@@ -5,7 +5,6 @@ var oop = require("../lib/oop");
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
 var JuliaHighlightRules = function() {
-
     this.$rules = { start: 
        [ { include: '#function_decl' },
          { include: '#function_call' },
@@ -113,7 +112,7 @@ var JuliaHighlightRules = function() {
               'entity.other.inherited-class.julia' ],
            regex: '(type|immutable)(\\s+)([a-zA-Z0-9_]+)(?:(\\s*)(<:)(\\s*[.a-zA-Z0-9_:]+))?' },
          { token: [ 'other.typed-variable.julia', 'support.type.julia' ],
-           regex: '([a-zA-Z0-9_]+)(::[a-zA-Z0-9_{}]+)' } ] }
+           regex: '([a-zA-Z0-9_]+)(::[a-zA-Z0-9_{}]+)' } ] };
     
     this.normalizeRules();
 };
@@ -123,7 +122,7 @@ JuliaHighlightRules.metaData = { fileTypes: [ 'jl' ],
       foldingStartMarker: '^\\s*(?:if|while|for|begin|function|macro|module|baremodule|type|immutable|let)\\b(?!.*\\bend\\b).*$',
       foldingStopMarker: '^\\s*(?:end)\\b.*$',
       name: 'Julia',
-      scopeName: 'source.julia' }
+      scopeName: 'source.julia' };
 
 
 oop.inherits(JuliaHighlightRules, TextHighlightRules);
@@ -152,8 +151,8 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 (function() {
     
-    this.foldingStartMarker = /(\{|\[)[^\}\]]*$|^\s*(\/\*)/;
-    this.foldingStopMarker = /^[^\[\{]*(\}|\])|^[\s\*]*(\*\/)/;
+    this.foldingStartMarker = /([\{\[\(])[^\}\]\)]*$|^\s*(\/\*)/;
+    this.foldingStopMarker = /^[^\[\{\(]*([\}\]\)])|^[\s\*]*(\*\/)/;
     this.singleLineBlockCommentRe= /^\s*(\/\*).*\*\/\s*$/;
     this.tripleStarBlockCommentRe = /^\s*(\/\*\*\*).*\*\/\s*$/;
     this.startRegionRe = /^\s*(\/\*|\/\/)#?region\b/;
@@ -294,3 +293,11 @@ oop.inherits(Mode, TextMode);
 
 exports.Mode = Mode;
 });
+                (function() {
+                    ace.require(["ace/mode/julia"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

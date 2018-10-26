@@ -9,7 +9,8 @@ var GherkinHighlightRules = function() {
         name: "en",
         labels: "Feature|Background|Scenario(?: Outline)?|Examples",
         keywords: "Given|When|Then|And|But"
-    }];
+    }
+];
     
     var labels = languages.map(function(l) {
         return l.labels;
@@ -103,7 +104,7 @@ var GherkinHighlightRules = function() {
         }]
     };
     this.normalizeRules();
-}
+};
 
 oop.inherits(GherkinHighlightRules, TextHighlightRules);
 
@@ -133,7 +134,7 @@ oop.inherits(Mode, TextMode);
         var tokenizedLine = this.getTokenizer().getLineTokens(line, state);
         var tokens = tokenizedLine.tokens;
         
-        console.log(state)
+        console.log(state);
         
         if(line.match("[ ]*\\|")) {
             indent += "| ";
@@ -161,3 +162,11 @@ oop.inherits(Mode, TextMode);
 
 exports.Mode = Mode;
 });
+                (function() {
+                    ace.require(["ace/mode/gherkin"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

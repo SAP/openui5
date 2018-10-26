@@ -1,5 +1,5 @@
 "no use strict";
-;(function(window) {
+!(function(window) {
 if (typeof window.window != "undefined" && window.document)
     return;
 if (window.require && window.define)
@@ -134,7 +134,7 @@ window.define = function(id, deps, factory) {
         exports: {},
         factory: function() {
             var module = this;
-            var returnExports = factory.apply(this, deps.map(function(dep) {
+            var returnExports = factory.apply(this, deps.slice(0, factory.length).map(function(dep) {
                 switch (dep) {
                     // Because "require", "exports" and "module" aren't actual
                     // dependencies, we must handle them seperately.
@@ -217,7 +217,7 @@ window.onmessage = function(e) {
 };
 })(this);
 
-ace.define("ace/lib/oop",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/lib/oop",[], function(require, exports, module) {
 "use strict";
 
 exports.inherits = function(ctor, superCtor) {
@@ -245,7 +245,7 @@ exports.implement = function(proto, mixin) {
 
 });
 
-ace.define("ace/range",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/range",[], function(require, exports, module) {
 "use strict";
 var comparePoints = function(p1, p2) {
     return p1.row - p2.row || p1.column - p2.column;
@@ -450,9 +450,9 @@ var Range = function(startRow, startColumn, endRow, endColumn) {
     };
     this.collapseRows = function() {
         if (this.end.column == 0)
-            return new Range(this.start.row, 0, Math.max(this.start.row, this.end.row-1), 0)
+            return new Range(this.start.row, 0, Math.max(this.start.row, this.end.row-1), 0);
         else
-            return new Range(this.start.row, 0, this.end.row, 0)
+            return new Range(this.start.row, 0, this.end.row, 0);
     };
     this.toScreenRange = function(session) {
         var screenPosStart = session.documentToScreenPosition(this.start);
@@ -484,7 +484,7 @@ Range.comparePoints = function(p1, p2) {
 exports.Range = Range;
 });
 
-ace.define("ace/apply_delta",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/apply_delta",[], function(require, exports, module) {
 "use strict";
 
 function throwDeltaError(delta, errorText){
@@ -517,7 +517,6 @@ function validateDelta(docLines, delta) {
 }
 
 exports.applyDelta = function(docLines, delta, doNotValidate) {
-    
     var row = delta.start.row;
     var startColumn = delta.start.column;
     var line = docLines[row] || "";
@@ -546,10 +545,10 @@ exports.applyDelta = function(docLines, delta, doNotValidate) {
             }
             break;
     }
-}
+};
 });
 
-ace.define("ace/lib/event_emitter",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/lib/event_emitter",[], function(require, exports, module) {
 "use strict";
 
 var EventEmitter = {};
@@ -607,7 +606,7 @@ EventEmitter.once = function(eventName, callback) {
 
 
 EventEmitter.setDefaultHandler = function(eventName, callback) {
-    var handlers = this._defaultHandlers
+    var handlers = this._defaultHandlers;
     if (!handlers)
         handlers = this._defaultHandlers = {_disabled_: {}};
     
@@ -624,13 +623,12 @@ EventEmitter.setDefaultHandler = function(eventName, callback) {
     handlers[eventName] = callback;
 };
 EventEmitter.removeDefaultHandler = function(eventName, callback) {
-    var handlers = this._defaultHandlers
+    var handlers = this._defaultHandlers;
     if (!handlers)
         return;
     var disabled = handlers._disabled_[eventName];
     
     if (handlers[eventName] == callback) {
-        var old = handlers[eventName];
         if (disabled)
             this.setDefaultHandler(eventName, disabled.pop());
     } else if (disabled) {
@@ -675,7 +673,7 @@ exports.EventEmitter = EventEmitter;
 
 });
 
-ace.define("ace/anchor",["require","exports","module","ace/lib/oop","ace/lib/event_emitter"], function(require, exports, module) {
+ace.define("ace/anchor",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("./lib/oop");
@@ -735,7 +733,6 @@ var Anchor = exports.Anchor = function(doc, row, column) {
                 column: point.column + (point.row == deltaEnd.row ? deltaColShift : 0)
             };
         }
-        
         return {
             row: deltaStart.row,
             column: deltaStart.column
@@ -800,7 +797,7 @@ var Anchor = exports.Anchor = function(doc, row, column) {
 
 });
 
-ace.define("ace/document",["require","exports","module","ace/lib/oop","ace/apply_delta","ace/lib/event_emitter","ace/range","ace/anchor"], function(require, exports, module) {
+ace.define("ace/document",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("./lib/oop");
@@ -984,7 +981,7 @@ var Document = function(textOrLines) {
             column = this.$lines[row].length;
         }
         this.insertMergedLines({row: row, column: column}, lines);
-    };    
+    };
     this.insertMergedLines = function(position, lines) {
         var start = this.clippedPos(position.row, position.column);
         var end = {
@@ -1091,28 +1088,23 @@ var Document = function(textOrLines) {
             return;
         }
         
-        if (isInsert && delta.lines.length > 20000)
+        if (isInsert && delta.lines.length > 20000) {
             this.$splitAndapplyLargeDelta(delta, 20000);
-        applyDelta(this.$lines, delta, doNotValidate);
-        this._signal("change", delta);
+        }
+        else {
+            applyDelta(this.$lines, delta, doNotValidate);
+            this._signal("change", delta);
+        }
     };
     
     this.$splitAndapplyLargeDelta = function(delta, MAX) {
         var lines = delta.lines;
-        var l = lines.length;
+        var l = lines.length - MAX + 1;
         var row = delta.start.row; 
         var column = delta.start.column;
-        var from = 0, to = 0;
-        do {
-            from = to;
+        for (var from = 0, to = 0; from < l; from = to) {
             to += MAX - 1;
             var chunk = lines.slice(from, to);
-            if (to > l) {
-                delta.lines = chunk;
-                delta.start.row = row + from;
-                delta.start.column = column;
-                break;
-            }
             chunk.push("");
             this.applyDelta({
                 start: this.pos(row + from, column),
@@ -1120,7 +1112,11 @@ var Document = function(textOrLines) {
                 action: delta.action,
                 lines: chunk
             }, true);
-        } while(true);
+        }
+        delta.lines = lines.slice(from);
+        delta.start.row = row + from;
+        delta.start.column = column;
+        this.applyDelta(delta, true);
     };
     this.revertDelta = function(delta) {
         this.applyDelta({
@@ -1138,7 +1134,7 @@ var Document = function(textOrLines) {
             if (index < 0)
                 return {row: i, column: index + lines[i].length + newlineLength};
         }
-        return {row: l-1, column: lines[l-1].length};
+        return {row: l-1, column: index + lines[l-1].length + newlineLength};
     };
     this.positionToIndex = function(pos, startRow) {
         var lines = this.$lines || this.getAllLines();
@@ -1156,7 +1152,7 @@ var Document = function(textOrLines) {
 exports.Document = Document;
 });
 
-ace.define("ace/lib/lang",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/lib/lang",[], function(require, exports, module) {
 "use strict";
 
 exports.last = function(a) {
@@ -1258,7 +1254,7 @@ exports.escapeRegExp = function(str) {
 };
 
 exports.escapeHTML = function(str) {
-    return str.replace(/&/g, "&#38;").replace(/"/g, "&#34;").replace(/'/g, "&#39;").replace(/</g, "&#60;");
+    return ("" + str).replace(/&/g, "&#38;").replace(/"/g, "&#34;").replace(/'/g, "&#39;").replace(/</g, "&#60;");
 };
 
 exports.getMatchOffsets = function(string, regExp) {
@@ -1344,7 +1340,7 @@ exports.delayedCall = function(fcn, defaultTimeout) {
 };
 });
 
-ace.define("ace/worker/mirror",["require","exports","module","ace/range","ace/document","ace/lib/lang"], function(require, exports, module) {
+ace.define("ace/worker/mirror",[], function(require, exports, module) {
 "use strict";
 
 var Range = require("../range").Range;
@@ -1406,7 +1402,7 @@ var Mirror = exports.Mirror = function(sender) {
 
 });
 
-ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/mode/lua/luaparse",[], function(require, exports, module) {
 
 (function (root, name, factory) {
    factory(exports)
@@ -1423,7 +1419,6 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     , locations: false
     , ranges: false
   };
-
   var EOF = 1, StringLiteral = 2, Keyword = 4, Identifier = 8
     , NumericLiteral = 16, Punctuator = 32, BooleanLiteral = 64
     , NilLiteral = 128, VarargLiteral = 256;
@@ -1433,7 +1428,6 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     , Punctuator: Punctuator, BooleanLiteral: BooleanLiteral
     , NilLiteral: NilLiteral, VarargLiteral: VarargLiteral
   };
-
   var errors = exports.errors = {
       unexpected: 'Unexpected %1 \'%2\' near \'%3\''
     , expected: '\'%1\' expected near \'%2\''
@@ -1441,7 +1435,7 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     , unfinishedString: 'unfinished string near \'%1\''
     , malformedNumber: 'malformed number near \'%1\''
   };
-
+  //
   var ast = exports.ast = {
       labelStatement: function(label) {
       return {
@@ -1697,7 +1691,6 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
       };
     }
   };
-
   function finishNode(node) {
     if (trackLocations) {
       var location = locations.pop();
@@ -1707,7 +1700,6 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     }
     return node;
   }
-
   var slice = Array.prototype.slice
     , toString = Object.prototype.toString
     , indexOf = function indexOf(array, element) {
@@ -1716,14 +1708,14 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
       }
       return -1;
     };
-
   function indexOfObject(array, property, element) {
     for (var i = 0, length = array.length; i < length; i++) {
       if (array[i][property] === element) return i;
     }
     return -1;
   }
-
+  //
+  //
   function sprintf(format) {
     var args = slice.call(arguments, 1);
     format = format.replace(/%(\d)/g, function (match, index) {
@@ -1731,7 +1723,8 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     });
     return format;
   }
-
+  //
+  //
   function extend() {
     var args = slice.call(arguments)
       , dest = {}
@@ -1745,7 +1738,10 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     }
     return dest;
   }
-
+  //
+  //
+  //
+  //
   function raise(token) {
     var message = sprintf.apply(null, slice.call(arguments, 1))
       , error, col;
@@ -1765,11 +1761,15 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     }
     throw error;
   }
-
+  //
+  //
   function raiseUnexpectedToken(type, token) {
     raise(token, errors.expectedToken, type, token.value);
   }
-
+  //
+  //
+  //
+  //
   function unexpected(found, near) {
     if ('undefined' === typeof near) near = lookahead.value;
     if ('undefined' !== typeof found.type) {
@@ -1788,7 +1788,10 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     }
     return raise(found, errors.unexpected, 'symbol', found, near);
   }
-
+  //
+  //
+  //
+  //
   var index
     , token
     , previousToken
@@ -1859,13 +1862,12 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
         if (91 === next || 61 === next) return scanLongStringLiteral();
         return scanPunctuator('[');
       case 42: case 47: case 94: case 37: case 44: case 123: case 125:
-      case 93: case 40: case 41: case 59: case 35: case 45: case 43:
+      case 93: case 40: case 41: case 59: case 35: case 45: case 43: case 38: case 124:
         return scanPunctuator(input.charAt(index));
     }
 
     return unexpected(input.charAt(index));
   }
-
   function skipWhiteSpace() {
     while (index < length) {
       var charCode = input.charCodeAt(index);
@@ -1879,7 +1881,6 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
       }
     }
   }
-
   function scanIdentifierOrKeyword() {
     var value, type;
     while (isIdentifierPart(input.charCodeAt(++index)));
@@ -1904,7 +1905,6 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
       , range: [tokenStart, index]
     };
   }
-
   function scanPunctuator(value) {
     index += value.length;
     return {
@@ -1915,7 +1915,6 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
       , range: [tokenStart, index]
     };
   }
-
   function scanVarargLiteral() {
     index += 3;
     return {
@@ -1926,7 +1925,6 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
       , range: [tokenStart, index]
     };
   }
-
   function scanStringLiteral() {
     var delimiter = input.charCodeAt(index++)
       , stringStart = index
@@ -1955,7 +1953,6 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
       , range: [tokenStart, index]
     };
   }
-
   function scanLongStringLiteral() {
     var string = readLongString();
     if (false === string) raise(token, errors.expected, '[', token.value);
@@ -1968,7 +1965,7 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
       , range: [tokenStart, index]
     };
   }
-
+  //
   function scanNumericLiteral() {
     var character = input.charAt(index)
       , next = input.charAt(index + 1);
@@ -1984,7 +1981,7 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
       , range: [tokenStart, index]
     };
   }
-
+  //
   function readHexLiteral() {
     var fraction = 0 // defaults to 0 as it gets summed
       , binaryExponent = 1 // defaults to 1 as it gets multiplied
@@ -2021,7 +2018,6 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
 
     return (digit + fraction) * binaryExponent;
   }
-
   function readDecLiteral() {
     while (isDecDigit(input.charCodeAt(index))) index++;
     if ('.' === input.charAt(index)) {
@@ -2039,7 +2035,6 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
 
     return parseFloat(input.slice(tokenStart, index));
   }
-
   function readEscapeSequence() {
     var sequenceStart = index;
     switch (input.charAt(index)) {
@@ -2065,7 +2060,7 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
         return input.charAt(index++);
     }
   }
-
+  //
   function scanComment() {
     tokenStart = index;
     index += 2; // --
@@ -2104,7 +2099,6 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
       comments.push(node);
     }
   }
-
   function readLongString() {
     var level = 0
       , content = ''
@@ -2142,13 +2136,12 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
 
     return content;
   }
-
+  //
   function next() {
     previousToken = token;
     token = lookahead;
     lookahead = lex();
   }
-
   function consume(value) {
     if (value === token.value) {
       next();
@@ -2156,12 +2149,10 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     }
     return false;
   }
-
   function expect(value) {
     if (value === token.value) next();
     else raise(token, errors.expected, value, token.value);
   }
-
   function isWhiteSpace(charCode) {
     return 9 === charCode || 32 === charCode || 0xB === charCode || 0xC === charCode;
   }
@@ -2177,7 +2168,6 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
   function isHexDigit(charCode) {
     return (charCode >= 48 && charCode <= 57) || (charCode >= 97 && charCode <= 102) || (charCode >= 65 && charCode <= 70);
   }
-
   function isIdentifierStart(charCode) {
     return (charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122) || 95 === charCode;
   }
@@ -2185,7 +2175,7 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
   function isIdentifierPart(charCode) {
     return (charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122) || 95 === charCode || (charCode >= 48 && charCode <= 57);
   }
-
+  //
   function isKeyword(id) {
     switch (id.length) {
       case 2:
@@ -2218,7 +2208,6 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     }
     return false;
   }
-
   function isBlockFollow(token) {
     if (EOF === token.type) return true;
     if (Keyword !== token.type) return false;
@@ -2257,7 +2246,7 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
   function scopeHasName(name) {
     return (-1 !== indexOf(scopes[scopeDepth], name));
   }
-
+  //
   var locations = []
     , trackLocations;
 
@@ -2295,7 +2284,7 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
   function pushLocation(marker) {
     if (trackLocations) locations.push(marker);
   }
-
+  //
   function parseChunk() {
     next();
     markLocation();
@@ -2304,7 +2293,7 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     if (trackLocations && !body.length) previousToken = token;
     return finishNode(ast.chunk(body));
   }
-
+  //
   function parseBlock(terminator) {
     var block = []
       , statement;
@@ -2322,7 +2311,7 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     if (options.scope) exitScope();
     return block;
   }
-
+  //
   function parseStatement() {
     markLocation();
     if (Keyword === token.type) {
@@ -2350,7 +2339,6 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
 
     return parseAssignmentOrCallStatement();
   }
-
   function parseLabelStatement() {
     var name = token.value
       , label = parseIdentifier();
@@ -2363,11 +2351,9 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     expect('::');
     return finishNode(ast.labelStatement(label));
   }
-
   function parseBreakStatement() {
     return finishNode(ast.breakStatement());
   }
-
   function parseGotoStatement() {
     var name = token.value
       , label = parseIdentifier();
@@ -2375,13 +2361,11 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     if (options.scope) label.isLabel = scopeHasName('::' + name + '::');
     return finishNode(ast.gotoStatement(label));
   }
-
   function parseDoStatement() {
     var body = parseBlock();
     expect('end');
     return finishNode(ast.doStatement(body));
   }
-
   function parseWhileStatement() {
     var condition = parseExpectedExpression();
     expect('do');
@@ -2389,14 +2373,12 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     expect('end');
     return finishNode(ast.whileStatement(condition, body));
   }
-
   function parseRepeatStatement() {
     var body = parseBlock();
     expect('until');
     var condition = parseExpectedExpression();
     return finishNode(ast.repeatStatement(condition, body));
   }
-
   function parseReturnStatement() {
     var expressions = [];
 
@@ -2411,7 +2393,6 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     }
     return finishNode(ast.returnStatement(expressions));
   }
-
   function parseIfStatement() {
     var clauses = []
       , condition
@@ -2448,7 +2429,7 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     expect('end');
     return finishNode(ast.ifStatement(clauses));
   }
-
+  //
   function parseForStatement() {
     var variable = parseIdentifier()
       , body;
@@ -2486,7 +2467,8 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
       return finishNode(ast.forGenericStatement(variables, iterators, body));
     }
   }
-
+  //
+  //
   function parseLocalStatement() {
     var name;
 
@@ -2522,7 +2504,7 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
       raiseUnexpectedToken('<name>', token);
     }
   }
-
+  //
   function parseAssignmentOrCallStatement() {
     var previous = token
       , expression, marker;
@@ -2556,7 +2538,6 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     }
     return unexpected(previous);
   }
-
   function parseIdentifier() {
     markLocation();
     var identifier = token.value;
@@ -2564,7 +2545,8 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     next();
     return finishNode(ast.identifier(identifier));
   }
-
+  //
+  //
   function parseFunctionDeclaration(name, isLocal) {
     var parameters = [];
     expect('(');
@@ -2595,7 +2577,7 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     isLocal = isLocal || false;
     return finishNode(ast.functionStatement(name, parameters, isLocal, body));
   }
-
+  //
   function parseFunctionName() {
     var base, name, marker;
 
@@ -2620,7 +2602,7 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
 
     return base;
   }
-
+  //
   function parseTableConstructor() {
     var fields = []
       , key, value;
@@ -2657,18 +2639,23 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     expect('}');
     return finishNode(ast.tableConstructorExpression(fields));
   }
+  //
+  //
+  //
+  //
+  //
 
   function parseExpression() {
     var expression = parseSubExpression(0);
     return expression;
   }
-
   function parseExpectedExpression() {
     var expression = parseExpression();
     if (null == expression) raiseUnexpectedToken('<expression>', token);
     else return expression;
   }
-
+  //
+  //
   function binaryPrecedence(operator) {
     var charCode = operator.charCodeAt(0)
       , length = operator.length;
@@ -2679,6 +2666,7 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
         case 42: case 47: case 37: return 7; // * / %
         case 43: case 45: return 6; // + -
         case 60: case 62: return 3; // < >
+        case 38: case 124: return 7; // & |
       }
     } else if (2 === length) {
       switch (charCode) {
@@ -2689,7 +2677,8 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     } else if (97 === charCode && 'and' === operator) return 2;
     return 0;
   }
-
+  //
+  //
   function parseSubExpression(minPrecedence) {
     var operator = token.value
       , expression, marker;
@@ -2728,7 +2717,7 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
     }
     return expression;
   }
-
+  //
   function parsePrefixExpression() {
     var base, name, marker
       , isLocal;
@@ -2789,7 +2778,6 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
 
     return base;
   }
-
   function parseCallExpression(base) {
     if (Punctuator === token.type) {
       switch (token.value) {
@@ -2818,7 +2806,6 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
 
     raiseUnexpectedToken('function arguments', token);
   }
-
   function parsePrimaryExpression() {
     var literals = StringLiteral | NumericLiteral | BooleanLiteral | NilLiteral | VarargLiteral
       , value = token.value
@@ -2841,7 +2828,9 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
       return parseTableConstructor();
     }
   }
-
+  //
+  //
+  //
   exports.parse = parse;
 
   function parse(_input, _options) {
@@ -2896,7 +2885,7 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
 
 });
 
-ace.define("ace/mode/lua_worker",["require","exports","module","ace/lib/oop","ace/worker/mirror","ace/mode/lua/luaparse"], function(require, exports, module) {
+ace.define("ace/mode/lua_worker",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
@@ -2934,8 +2923,10 @@ oop.inherits(Worker, Mirror);
 
 });
 
-ace.define("ace/lib/es5-shim",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/lib/es5-shim",[], function(require, exports, module) {
 
+//
+//
 function Empty() {}
 
 if (!Function.prototype.bind) {
@@ -2948,7 +2939,6 @@ if (!Function.prototype.bind) {
         var bound = function () {
 
             if (this instanceof bound) {
-
                 var result = target.apply(
                     this,
                     args.concat(slice.call(arguments))
@@ -2972,6 +2962,7 @@ if (!Function.prototype.bind) {
             bound.prototype = new Empty();
             Empty.prototype = null;
         }
+        //
         return bound;
     };
 }
@@ -2992,6 +2983,9 @@ if ((supportsAccessors = owns(prototypeOfObject, "__defineGetter__"))) {
     lookupGetter = call.bind(prototypeOfObject.__lookupGetter__);
     lookupSetter = call.bind(prototypeOfObject.__lookupSetter__);
 }
+
+//
+//
 if ([1,2].splice(0).length != 2) {
     if(function() { // test IE < 9 to splice bug - see issue #138
         function makeArray(l) {
@@ -3314,6 +3308,9 @@ if (!Array.prototype.lastIndexOf || ([0, 1].lastIndexOf(0, -3) != -1)) {
         return -1;
     };
 }
+
+//
+//
 if (!Object.getPrototypeOf) {
     Object.getPrototypeOf = function getPrototypeOf(object) {
         return object.__proto__ || (
@@ -3397,7 +3394,6 @@ if (!Object.create) {
         return object;
     };
 }
-
 function doesDefinePropertyWork(object) {
     try {
         Object.defineProperty(object, "sentinel", {});
@@ -3563,11 +3559,18 @@ if (!Object.keys) {
     };
 
 }
+
+//
+//
 if (!Date.now) {
     Date.now = function now() {
         return new Date().getTime();
     };
 }
+
+
+//
+//
 var ws = "\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003" +
     "\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028" +
     "\u2029\uFEFF";
@@ -3580,6 +3583,8 @@ if (!String.prototype.trim || ws.trim()) {
     };
 }
 
+//
+//
 function toInteger(n) {
     n = +n;
     if (n !== n) { // isNaN

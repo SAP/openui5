@@ -131,7 +131,7 @@ var ScssHighlightRules = function() {
     
     var keywords = lang.arrayToMap(
         ("@mixin|@extend|@include|@import|@media|@debug|@warn|@if|@for|@each|@while|@else|@font-face|@-webkit-keyframes|if|and|!default|module|def|end|declare").split("|")
-    )
+    );
     
     var tags = lang.arrayToMap(
         ("a|abbr|acronym|address|applet|area|article|aside|audio|b|base|basefont|bdo|" + 
@@ -144,9 +144,7 @@ var ScssHighlightRules = function() {
          "small|source|span|strike|strong|style|sub|summary|sup|table|tbody|td|" + 
          "textarea|tfoot|th|thead|time|title|tr|tt|u|ul|var|video|wbr|xmp").split("|")
     );
-
     var numRe = "\\-?(?:(?:[0-9]+)|(?:[0-9]*\\.[0-9]+))";
-
     this.$rules = {
         "start" : [
             {
@@ -326,7 +324,7 @@ var CssBehaviour = function () {
     this.inherit(CstyleBehaviour);
 
     this.add("colon", "insertion", function (state, action, editor, session, text) {
-        if (text === ':') {
+        if (text === ':' && editor.selection.isEmpty()) {
             var cursor = editor.getCursorPosition();
             var iterator = new TokenIterator(session, cursor.row, cursor.column);
             var token = iterator.getCurrentToken();
@@ -340,13 +338,13 @@ var CssBehaviour = function () {
                     return {
                        text: '',
                        selection: [1, 1]
-                    }
+                    };
                 }
-                if (!line.substring(cursor.column).match(/^\s*;/)) {
+                if (/^(\s+[^;]|\s*$)/.test(line.substring(cursor.column))) {
                     return {
                        text: ':;',
                        selection: [1, 1]
-                    }
+                    };
                 }
             }
         }
@@ -373,7 +371,7 @@ var CssBehaviour = function () {
     });
 
     this.add("semicolon", "insertion", function (state, action, editor, session, text) {
-        if (text === ';') {
+        if (text === ';' && editor.selection.isEmpty()) {
             var cursor = editor.getCursorPosition();
             var line = session.doc.getLine(cursor.row);
             var rightChar = line.substring(cursor.column, cursor.column + 1);
@@ -381,12 +379,26 @@ var CssBehaviour = function () {
                 return {
                    text: '',
                    selection: [1, 1]
-                }
+                };
             }
         }
     });
 
-}
+    this.add("!important", "insertion", function (state, action, editor, session, text) {
+        if (text === '!' && editor.selection.isEmpty()) {
+            var cursor = editor.getCursorPosition();
+            var line = session.doc.getLine(cursor.row);
+
+            if (/^\s*(;|}|$)/.test(line.substring(cursor.column))) {
+                return {
+                    text: '!important',
+                    selection: [10, 10]
+                };
+            }
+        }
+    });
+
+};
 oop.inherits(CssBehaviour, CstyleBehaviour);
 
 exports.CssBehaviour = CssBehaviour;
@@ -413,8 +425,8 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 (function() {
     
-    this.foldingStartMarker = /(\{|\[)[^\}\]]*$|^\s*(\/\*)/;
-    this.foldingStopMarker = /^[^\[\{]*(\}|\])|^[\s\*]*(\*\/)/;
+    this.foldingStartMarker = /([\{\[\(])[^\}\]\)]*$|^\s*(\/\*)/;
+    this.foldingStopMarker = /^[^\[\{\(]*([\}\]\)])|^[\s\*]*(\*\/)/;
     this.singleLineBlockCommentRe= /^\s*(\/\*).*\*\/\s*$/;
     this.tripleStarBlockCommentRe = /^\s*(\/\*\*\*).*\*\/\s*$/;
     this.startRegionRe = /^\s*(\/\*|\/\/)#?region\b/;
@@ -584,3 +596,11 @@ oop.inherits(Mode, TextMode);
 exports.Mode = Mode;
 
 });
+                (function() {
+                    ace.require(["ace/mode/scss"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            
