@@ -2006,7 +2006,7 @@ sap.ui.define([
 				bStickyTitleMode = true; // by the time the bottom of the page is reached, the header will be snapped on scroll => obtain the *sticky* title height
 			}
 
-			iSpacerHeight = this._computeSpacerHeight(oLastVisibleSubSection, iLastVisibleHeight, bAllowScrollSectionToTop);
+			iSpacerHeight = this._computeSpacerHeight(oLastVisibleSubSection, iLastVisibleHeight, bAllowScrollSectionToTop, bStickyTitleMode);
 
 			this._$spacer.height(iSpacerHeight + "px");
 			jQuery.sap.log.debug("ObjectPageLayout :: bottom spacer is now " + iSpacerHeight + "px");
@@ -2080,8 +2080,8 @@ sap.ui.define([
 	/* *
 	* Computes the height of the viewport bellow the sticky area
 	* */
-	ObjectPageLayout.prototype._getScrollableViewportHeight = function() {
-		return this._$opWrapper.length ? this._getDOMRefHeight(this._$opWrapper.get(0)) : 0;
+	ObjectPageLayout.prototype._getScrollableViewportHeight = function(bIsStickyMode) {
+		return this.getDomRef().getBoundingClientRect().height - this._getStickyAreaHeight(bIsStickyMode);
 	};
 
 	ObjectPageLayout.prototype._getSectionPositionTop = function(oSectionBase, bShouldStick) {
@@ -2138,10 +2138,10 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._checkContentBottomRequiresSnap = function(oSection) {
 		var bSnappedMode = false; // calculate for expanded mode
-		return this._getSectionPositionBottom(oSection, bSnappedMode) >= (this._getScrollableViewportHeight() + this._getSnapPosition());
+		return this._getSectionPositionBottom(oSection, bSnappedMode) >= (this._getScrollableViewportHeight(bSnappedMode) + this._getSnapPosition());
 	};
 
-	ObjectPageLayout.prototype._computeSpacerHeight = function(oLastVisibleSubSection, iLastVisibleHeight, bAllowSpaceToSnapViaScroll) {
+	ObjectPageLayout.prototype._computeSpacerHeight = function(oLastVisibleSubSection, iLastVisibleHeight, bAllowSpaceToSnapViaScroll, bStickyTitleMode) {
 
 		var iSpacerHeight,
 			iScrollableViewportHeight,
@@ -2151,7 +2151,7 @@ sap.ui.define([
 			iFooterHeight = this.$("footerWrapper").outerHeight();
 		}
 
-		iScrollableViewportHeight = this._getScrollableViewportHeight();
+		iScrollableViewportHeight = this._getScrollableViewportHeight(bStickyTitleMode);
 
 		if (!bAllowSpaceToSnapViaScroll) {
 			iLastVisibleHeight = this._getSectionPositionBottom(oLastVisibleSubSection, false); /* in expanded mode, all the content above lastSection bottom is visible */
