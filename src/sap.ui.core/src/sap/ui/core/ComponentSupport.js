@@ -53,10 +53,10 @@ sap.ui.define([
 		var aElements = ComponentSupport._find();
 		for (var i = 0, l = aElements.length; i < l; i++) {
 			var oElement = aElements[i];
-			Log.debug("ComponentSupport found and parses element: " + oElement);
+			Log.debug("Parsing element " + oElement.outerHTML, "", "sap/ui/core/ComponentSupport");
 			var mSettings = ComponentSupport._parse(oElement);
 			ComponentSupport._applyDefaultSettings(mSettings);
-			Log.debug("ComponentSupport creates ComponentContainer with the following settings:\n" + JSON.stringify(mSettings, 0, 2));
+			Log.debug("Creating ComponentContainer with the following settings", JSON.stringify(mSettings, 0, 2), "sap/ui/core/ComponentSupport");
 			new ComponentContainer(mSettings).placeAt(oElement);
 			// Remove marker so that the element won't be processed again in case "run" is called again
 			oElement.removeAttribute("data-sap-ui-component");
@@ -139,10 +139,16 @@ sap.ui.define([
 	ComponentSupport._applyDefaultSettings = function(mSettings) {
 		// force async loading behavior
 		mSettings.async = true;
+
 		// ignore boolean values for manifest property and force manifest first
-		if (mSettings.manifest === undefined || mSettings.manifest === "true" || mSettings.manifest === "false") {
+		if (mSettings.manifest === undefined || mSettings.manifest === "true") {
+			mSettings.manifest = true;
+		} else if (mSettings.manifest === "false") {
+			Log.error("Ignoring \"manifest=false\" for ComponentContainer of component \"" + mSettings.name + "\" as it is not supported by ComponentSupport. " +
+				"Forcing \"manifest=true\"", "", "sap/ui/core/ComponentSupport");
 			mSettings.manifest = true;
 		}
+
 		// different default value behavior for declarative components
 		mSettings.lifecycle = mSettings.lifecycle === undefined ? ComponentLifecycle.Container : mSettings.lifecycle;
 		mSettings.autoPrefixId = mSettings.autoPrefixId === undefined ? true : mSettings.autoPrefixId;
