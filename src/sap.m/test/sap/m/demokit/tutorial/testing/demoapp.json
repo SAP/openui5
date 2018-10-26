@@ -28,7 +28,7 @@
 		"webapp/test/mockServer.html",
 		"webapp/test/test.html",
 		"webapp/test/testsuite.qunit.html",
-		"webapp/test/unit/allTests.js",
+		"webapp/test/unit/AllTests.js",
 		"webapp/test/unit/model/DateFormatter.js",
 		"webapp/test/unit/model/FlaggedType.js",
 		"webapp/test/unit/model/formatter.js",

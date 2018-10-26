@@ -38,7 +38,7 @@
 		"webapp/test/integration/PhoneJourneys.js",
 		"webapp/test/mockServer.html",
 		"webapp/test/testsuite.qunit.html",
-		"webapp/test/unit/allTests.js",
+		"webapp/test/unit/AllTests.js",
 		"webapp/test/unit/controller/ListSelector.js",
 		"webapp/test/unit/model/formatter.js",
 		"webapp/test/unit/model/models.js",
