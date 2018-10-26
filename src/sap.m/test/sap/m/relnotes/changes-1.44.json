@@ -5131,5 +5131,28 @@
         "references": []
       }
     ]
+  },
+  "1.44.37": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "51794fdfc07e9bf4759c4273fd2ab2cf7e183b77",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: MultiLineMode without suggestions fixed",
+        "references": []
+      },
+      {
+        "id": "6146025a41da3b2655d9c2ddf23c60cb7dd383f1",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Exception thrown on initialization fixed",
+        "references": []
+      },
+      {
+        "id": "e2b7ba86dfd7526fb931ac3ce414c3127b076fc2",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: if binding format differs from input, \"change\" is fired",
+        "references": []
+      }
+    ]
   }
 }
