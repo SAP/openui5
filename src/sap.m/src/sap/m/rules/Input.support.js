@@ -23,7 +23,7 @@ sap.ui.define(["sap/ui/support/library"],
 	var oInputNeedsLabelRule = {
 		id: "inputNeedsLabel",
 		audiences: [Audiences.Control],
-		categories: [Categories.Usability],
+		categories: [Categories.Accessibility],
 		enabled: true,
 		minversion: "1.28",
 		title: "Input field: Missing label",
