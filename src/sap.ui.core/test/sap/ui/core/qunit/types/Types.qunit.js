@@ -509,7 +509,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 		});
 
 
-		// unit type tests
+		// Unit type tests
 		QUnit.module("unit type");
 
 		QUnit.test("unit formatValue", function (assert) {
@@ -541,6 +541,116 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.throws(function () { unitType.parseValue(true, "untype"); }, ParseException, "parse test");
 			assert.throws(function () { unitType.parseValue(true, "boolean"); }, ParseException, "parse test");
 			assert.throws(function () { unitType.parseValue("test", "string"); }, ParseException, "parse test");
+		});
+
+		QUnit.test("unit format and parse - simple", function (assert) {
+			var oType = new UnitType();
+
+			// format and parse "kg" (unit-1)
+			assert.equal(oType.formatValue([100, "mass-kilogram"], "string"), "100 kg");
+			assert.deepEqual(oType.parseValue("100 kg", "string"), [100, "mass-kilogram"]);
+
+			// format and parse "Ω" (unit-2)
+			assert.equal(oType.formatValue([30, "electric-ohm"], "string"), "30 Ω");
+			assert.deepEqual(oType.parseValue("30 Ω", "string"), [30, "electric-ohm"]);
+		});
+
+		QUnit.test("unit format and parse - custom units (local)", function (assert) {
+			var oType = new UnitType({
+				"customUnits": {
+					"electric-inductance": {
+						"displayName": "henry",
+						"unitPattern-count-one": "{0} H",
+						"unitPattern-count-other": "{0} H",
+						"perUnitPattern": "{0}/H",
+						"decimals": 2,
+						"precision": 5
+					}
+				}
+			});
+
+			// format and parse invalid unit
+			assert.equal(oType.formatValue([100, "mass-kilogram"], "string"), "", "Format of unknown unit leads to empty string (just as NumberFormat returns it)");
+			assert.throws(function () {
+					oType.parseValue("100 kg", "string");
+				},
+				ParseException,
+				"ParseException is thrown for wrong unit");
+
+			// format and parse valid unit
+			assert.equal(oType.formatValue([200.535, "electric-inductance"], "string"), "200.54 H", "precision 5 is respected (rounded)");
+			assert.deepEqual(oType.parseValue("200.5123 H", "string"), [200.5123, "electric-inductance"], "parsing is valid");
+		});
+
+		QUnit.test("unit format and parse - custom units (global)", function (assert) {
+			var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+			var oConfigObject = {
+				"lebkuchen": {
+					"unitPattern-count-one": "{0} LK",
+					"unitPattern-count-many": "{0} LKs",
+					"unitPattern-count-other": "{0} LKs",
+					"decimals": 3
+				}
+			};
+			oFormatSettings.setCustomUnits(oConfigObject);
+
+			var oType = new UnitType();
+
+			// format and parse valid unit
+			assert.equal(oType.formatValue([100, "mass-kilogram"], "string"), "100 kg", "Format: Standard Unit shines through global custom units");
+			assert.deepEqual(oType.parseValue("100 kg", "string"), [100, "mass-kilogram"], "Parse: Standard Unit shines through global custom units");
+
+			// format and parse valid unit
+			assert.equal(oType.formatValue([200.57, "lebkuchen"], "string"), "200.570 LKs", "decimals '3' is respected");
+			assert.deepEqual(oType.parseValue("200.5123 LKs", "string"), [200.5123, "lebkuchen"], "parsing is valid");
+		});
+
+		QUnit.test("unit format and parse - custom units (global & local)", function (assert) {
+			// global config
+			var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+			var oConfigObject = {
+				"lebkuchen": {
+					"unitPattern-count-one": "{0} LK",
+					"unitPattern-count-many": "{0} LKs",
+					"unitPattern-count-other": "{0} LKs",
+					"decimals": 3
+				}
+			};
+			oFormatSettings.setCustomUnits(oConfigObject);
+
+			// local config  -->  hides global config
+			var oType = new UnitType({
+				"customUnits": {
+					"electric-inductance": {
+						"displayName": "henry",
+						"unitPattern-count-one": "{0} H",
+						"unitPattern-count-other": "{0} H",
+						"perUnitPattern": "{0}/H",
+						"decimals": 2,
+						"precision": 4
+					}
+				}
+			});
+
+			// format and parse invalid unit (excluded by local config)
+			assert.equal(oType.formatValue([100, "mass-kilogram"], "string"), "", "Format of unknown unit leads to empty string (just as NumberFormat returns it)");
+			assert.throws(function () {
+					oType.parseValue("100 kg", "string");
+				},
+				ParseException,
+				"ParseException is thrown for wrong unit");
+
+			// format and parse invalid unit (excluded by local config)
+			assert.equal(oType.formatValue([123.4, "lebkuchen"], "string"), "", "Lebkuchen is not formatted (excluded by local configuration)");
+			assert.throws(function () {
+				oType.parseValue("1234.56 LKs", "string");
+			},
+			ParseException,
+			"ParseException is thrown for wrong unit");
+
+			// format and parse valid unit
+			assert.equal(oType.formatValue([200.575, "electric-inductance"], "string"), "200.6 H", "precision 4 is respected (rounded)");
+			assert.deepEqual(oType.parseValue("200.5123 H", "string"), [200.5123, "electric-inductance"], "parsing is valid");
 		});
 
 		QUnit.test("unit validateValue - minimum and maximum value constraints", function (assert) {
@@ -678,7 +788,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(oMeterType.formatValue([123.123123, "length-meter", 4], "string"), "123.1231 m", "format 4 digits meters expected");
 			assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse 4 digits meters expected");
 			oMeterType.validateValue([123.1231, "length-meter"]);
-			assert.equal(1, oMeterTypeInstanceSpy.callCount, "1 instance because 1 decimal option is provided (4)");
+			assert.equal(oMeterTypeInstanceSpy.callCount, 2, "2 instance because 2 decimal option is provided (4)");
 
 
 			// 5 digits
@@ -692,7 +802,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			oMeterType.validateValue([123.1, "length-meter"]);
 
 			assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
-			assert.equal(2, oMeterTypeInstanceSpy.callCount, "2 instances because 2 different decimal options are provided");
+			assert.equal(oMeterTypeInstanceSpy.callCount, 4, "4 instances because 4 different decimal options are provided");
 
 
 			// 6 digits
@@ -706,18 +816,15 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			oMeterType.validateValue([123.1, "length-meter"]);
 
 			assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
-			assert.equal(3, oMeterTypeInstanceSpy.callCount, "3 instances because 3 different decimal options are provided");
-
+			assert.equal(oMeterTypeInstanceSpy.callCount, 6, "6 instances because 6 different decimal options are provided");
 
 			try {
-
 				oMeterType.validateValue([123.100000000001, "length-meter"]);
 				assert.ok(false, "validation should fail as too many digits");
 			} catch (e) {
 				assert.ok(e);
 				assert.equal(e.name, "ValidateException");
 				assert.equal(e.message, "Enter an amount with less decimals than 6");
-
 			}
 
 		});
@@ -749,17 +856,17 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			// zero
 			assert.equal(oMeterType.formatValue([123.123123, "length-meter", 0], "string"), "123 m", "format with decimals 3 expected");
 			assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse correct");
-			assert.equal(oMeterTypeInstanceSpy.callCount, 1, "1 instance because one decimal value is used");
+			assert.equal(oMeterTypeInstanceSpy.callCount, 2, "2 instance because 2 decimal value is used");
 
 			// empty
 			assert.equal(oMeterType.formatValue([123.123123, "length-meter", undefined], "string"), "123.123 m", "format with decimals 3 expected");
 			assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse correct");
-			assert.equal(oMeterTypeInstanceSpy.callCount, 2, "2 instance because 2 decimal value is used");
+			assert.equal(oMeterTypeInstanceSpy.callCount, 4, "4 instance because 4 decimal value is used");
 
 			//4 digits
 			assert.equal(oMeterType.formatValue([123.123123, "length-meter", 4], "string"), "123.1231 m", "format 4 digits meters expected");
 			assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse 4 digits meters expected");
-			assert.equal(oMeterTypeInstanceSpy.callCount, 3, "3 instance because 3 decimal option is provided (4)");
+			assert.equal(oMeterTypeInstanceSpy.callCount, 6, "6 instance because 6 decimal option is provided (4)");
 
 			// 5 digits
 			assert.equal(oMeterType.formatValue([123.123123, "length-meter", 5], "string"), "123.12312 m", "format 5 digits meters expected");
@@ -769,7 +876,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.deepEqual(oMeterType.parseValue("123.10000 m", "string"), [123.1, "length-meter"], "small number parse 5 digits meters expected");
 
 			assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
-			assert.equal(oMeterTypeInstanceSpy.callCount, 4, "4 instances because 4 different decimal options are provided");
+			assert.equal(oMeterTypeInstanceSpy.callCount, 8, "8 instances because 8 different decimal options are provided");
 
 			// 6 digits
 			assert.equal(oMeterType.formatValue([123.1231236, "length-meter", 6], "string"), "123.123124 m", "format 6 digits meters expected");
@@ -779,7 +886,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.deepEqual(oMeterType.parseValue("123.100000 m", "string"), [123.1, "length-meter"], "small number parse 6 digits meters expected");
 
 			assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
-			assert.equal(oMeterTypeInstanceSpy.callCount, 5, "5 instances because 5 different decimal options are provided");
+			assert.equal(oMeterTypeInstanceSpy.callCount, 10, "10 instances because 10 different decimal options are provided");
 
 		});
 
@@ -810,17 +917,17 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			// empty
 			assert.equal(oMeterType.formatValue([123.163123, "length-meter", 0], "string"), "123 m", "format with precision 4 expected");
 			assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse correct");
-			assert.equal(oMeterTypeInstanceSpy.callCount, 1, "1 instance because one precision value is used");
+			assert.equal(oMeterTypeInstanceSpy.callCount, 2, "2 instance because 2 precision value is used");
 
 			// empty
 			assert.equal(oMeterType.formatValue([123.163123, "length-meter", undefined], "string"), "123.2 m", "format with precision 4 expected");
 			assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse correct");
-			assert.equal(oMeterTypeInstanceSpy.callCount, 2, "2 instance because 2 precision value is used");
+			assert.equal(oMeterTypeInstanceSpy.callCount, 4, "4 instance because 4 precision value is used");
 
 			//4 digits
 			assert.equal(oMeterType.formatValue([123.123123, "length-meter", 3], "string"), "123 m", "format with precision 3 expected");
 			assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse correct");
-			assert.equal(oMeterTypeInstanceSpy.callCount, 3, "3 instances because 3 different precision values are used");
+			assert.equal(oMeterTypeInstanceSpy.callCount, 6, "6 instances because 6 different precision values are used");
 
 			// 5 digits
 			assert.equal(oMeterType.formatValue([123.123123, "length-meter", 2], "string"), "123 m", "format 5 digits meters expected");
@@ -830,7 +937,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.deepEqual(oMeterType.parseValue("123.10000 m", "string"), [123.1, "length-meter"], "small number parse 5 digits meters expected");
 
 			assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
-			assert.equal(oMeterTypeInstanceSpy.callCount, 4, "4 instances because 4 different precision options are provided");
+			assert.equal(oMeterTypeInstanceSpy.callCount, 8, "8 instances because 8 different precision options are provided");
 
 			// 6 digits
 			assert.equal(oMeterType.formatValue([123.123123, "length-meter", 1], "string"), "123 m", "format 6 digits meters expected");
@@ -840,10 +947,9 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.deepEqual(oMeterType.parseValue("123.100000 m", "string"), [123.1, "length-meter"], "small number parse 6 digits meters expected");
 
 			assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
-			assert.equal(oMeterTypeInstanceSpy.callCount, 5, "5 instances because 5 different precision options are provided");
+			assert.equal(oMeterTypeInstanceSpy.callCount, 10, "10 instances because 10 different precision options are provided");
 
 		});
-
 
 		// date type tests
 		QUnit.module("date type");
