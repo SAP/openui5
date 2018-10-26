@@ -522,8 +522,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Check whether cient mode is active. This is either the case if it has
-	 * been explicitely activated by the application, it has been detected
+	 * Check whether client mode is active. This is either the case if it has
+	 * been explicitly activated by the application, it has been detected
 	 * that all data is available or expanded data is available.
 	 *
 	 * @private

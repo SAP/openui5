@@ -507,10 +507,10 @@ sap.ui.define([
 
 
 	/* ----------------------------------------------------------------------- */
-	/* Test: getTabIndex (tabIndex previously set explicitely via setTabIndex) */
+	/* Test: getTabIndex (tabIndex previously set explicitly via setTabIndex) */
 	/* ----------------------------------------------------------------------- */
 
-	QUnit.test("'getTabIndex (tabIndex previously set explicitely via setTabIndex)'", function(assert) {
+	QUnit.test("'getTabIndex (tabIndex previously set explicitly via setTabIndex)'", function(assert) {
 
 		// system under test
 		var oCheckBox = new CheckBox();
