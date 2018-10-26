@@ -29,10 +29,7 @@ sap.ui.define([
 	 * @public
 	 */
 	StashControl.applyChange = function(oChange, oControl, mPropertyBag) {
-		oChange.setRevertData({
-			originalValue: mPropertyBag.modifier.getStashed(oControl)
-		});
-
+		this.setChangeRevertData(oChange, mPropertyBag.modifier.getStashed(oControl));
 		mPropertyBag.modifier.setStashed(oControl, true);
 		return true;
 	};
@@ -69,7 +66,12 @@ sap.ui.define([
 	 * @public
 	 */
 	StashControl.completeChangeContent = function(oChange, oSpecificChangeInfo) {
+	};
 
+	StashControl.setChangeRevertData = function(oChange, bValue) {
+		oChange.setRevertData({
+			originalValue: bValue
+		});
 	};
 
 	return StashControl;
