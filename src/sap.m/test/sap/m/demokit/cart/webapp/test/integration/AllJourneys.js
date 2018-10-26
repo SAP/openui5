@@ -1,16 +1,16 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"Arrangement",
+	"Startup",
 	"./WelcomeJourney",
 	"./NavigationJourney",
 	"./DeleteProductJourney",
 	"./BuyProductJourney",
 	"./FilterJourney"
-], function (Opa5, Arrangement) {
+], function (Opa5, Startup) {
 	"use strict";
 
 	Opa5.extendConfig({
-		arrangements: new Arrangement(),
+		arrangements: new Startup(),
 		viewNamespace: "sap.ui.demo.cart.view.",
 		autoWait: true
 	});
