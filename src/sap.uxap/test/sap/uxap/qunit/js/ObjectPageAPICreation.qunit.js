@@ -2372,7 +2372,7 @@
 
 		oObjectPage.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		oGetBoundingClientRectSpy = sinon.spy(oObjectPage._$opWrapper.get(0), "getBoundingClientRect");
+		oGetBoundingClientRectSpy = sinon.spy(oObjectPage.getDomRef(), "getBoundingClientRect");
 
 		// Act - call method
 		oObjectPage._getScrollableViewportHeight();
