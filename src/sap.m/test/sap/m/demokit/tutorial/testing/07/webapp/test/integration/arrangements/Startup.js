@@ -14,7 +14,7 @@ sap.ui.define([
 		return sUrl + sUrlParameters + "#" + sHash;
 	}
 
-	return Opa5.extend("sap.ui.demo.bulletinboard.test.integration.arrangements.Arrangement", {
+	return Opa5.extend("sap.ui.demo.bulletinboard.test.integration.arrangements.Startup", {
 
 		constructor: function (oConfig) {
 			Opa5.apply(this, arguments);

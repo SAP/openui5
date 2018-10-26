@@ -18,7 +18,7 @@
 		"webapp/manifest.json",
 		"webapp/model/formatter.js",
 		"webapp/model/models.js",
-		"webapp/test/integration/arrangements/Arrangement.js",
+		"webapp/test/integration/arrangements/Startup.js",
 		"webapp/test/integration/AllJourneys.js",
 		"webapp/test/integration/BusyJourney.js",
 		"webapp/test/integration/BusyJourneyPhone.js",

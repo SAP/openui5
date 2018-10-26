@@ -17,7 +17,7 @@ sap.ui.define([
 		return sUrl + sUrlParameters + sHash;
 	}
 
-	return Opa5.extend("sap.ui.demo.orderbrowser.test.integration.arrangements.Arrangement", {
+	return Opa5.extend("sap.ui.demo.orderbrowser.test.integration.arrangements.Startup", {
 
 		iStartTheApp : function (oOptions) {
 			oOptions = oOptions || {};
