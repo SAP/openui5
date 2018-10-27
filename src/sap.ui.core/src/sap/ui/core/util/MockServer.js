@@ -2363,6 +2363,18 @@ sap.ui
 									"content-transfer-encoding: binary\r\n\r\n" + sResponseString);
 							};
 
+							var fnParseHeaders = function (sChangesetRequest) {
+								var mHeaders = {};
+								sChangesetRequest.split("HTTP/1.1")[1].split("{")[0].split("\n").forEach(function (headerLine) {
+									if (headerLine.indexOf(":") !== -1) {
+										var headerPair = headerLine.split(":");
+										mHeaders[headerPair[0].trim()] = headerPair[1].trim();
+									}
+								});
+								delete mHeaders["Content-Length"];
+								return mHeaders;
+							};
+
 							// START BATCH HANDLING
 							var sRequestBody = oXhr.requestBody;
 							var oBoundaryRegex = new RegExp("--batch_[a-z0-9-]*");
@@ -2418,17 +2430,9 @@ sap.ui
 												} else {
 													var sData = sChangesetRequest.substring(sChangesetRequest.indexOf("{"),
 															sChangesetRequest.lastIndexOf("}") + 1),
-														mHeaders = {},
+														mHeaders = fnParseHeaders(sChangesetRequest),
 														sRelativeUrl,
 														sVerb;
-													// Parse headers
-													sChangesetRequest.split("HTTP/1.1")[1].split("{")[0].split("\n").forEach(function (headerLine) {
-														if (headerLine.indexOf(":") !== -1) {
-															var headerPair = headerLine.split(":");
-															mHeaders[headerPair[0].trim()] = headerPair[1].trim();
-														}
-													});
-													delete mHeaders["Content-Length"];
 													if (rPut.test(sChangesetRequest)) {
 														sVerb = "PUT";
 														sRelativeUrl = rPut.exec(sChangesetRequest)[1];
