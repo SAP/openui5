@@ -276,7 +276,7 @@
 				'signals': 'sap/ui/thirdparty/signals',
 				'URI': 'sap/ui/thirdparty/URI',
 				'URITemplate': 'sap/ui/thirdparty/URITemplate',
-				'esprima': 'sap/ui/demokit/js/esprima'
+				'esprima': 'sap/ui/documentation/sdk/thirdparty/esprima'
 			}
 		},
 
@@ -458,6 +458,10 @@
 				exports: 'Scroller' // 'requestAnimationFrame', 'cancelRequestAnimationFrame', 'core'
 			},
 			'sap/ui/demokit/js/esprima': {
+				amd: true,
+				exports: 'esprima'
+			},
+			'sap/ui/documentation/sdk/thirdparty/esprima': {
 				amd: true,
 				exports: 'esprima'
 			},
