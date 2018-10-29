@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Title",
 	"sap/m/Panel",
-	"sap/ui/core/HTML"],
-function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, ObjectPageDynamicHeaderTitle, Text, Title, Panel, HTML) {
+	"sap/ui/core/HTML",
+	"sap/ui/Device"],
+function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, ObjectPageDynamicHeaderTitle, Text, Title, Panel, HTML, Device) {
 	"use strict";
 
 	var oFactory = {
@@ -145,7 +146,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			}
 
 			//Assert
-			assert.strictEqual(oObjectPage._$opWrapper[0].scrollTop, iExpectedPosition, "Assert section: \"" + section + "\" position: " + iExpectedPosition);
+			assert.ok(isPositionsMatch(oObjectPage._$opWrapper[0].scrollTop, iExpectedPosition), "Assert section: \"" + section + "\" position: " + iExpectedPosition);
 		}
 		clock.restore();
 		oObjectPageContentScrollingView.destroy();
@@ -172,7 +173,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			oObjectPage.rerender();
 			setTimeout(function() {
 				iScrollPositionAfterRerender = oObjectPage._$opWrapper[0].scrollTop;
-				assert.strictEqual(iScrollPositionAfterRerender, iScrollPositionBeforeRerender, "scrollPosition is preserved");
+				assert.ok(isPositionsMatch(iScrollPositionAfterRerender, iScrollPositionBeforeRerender), "scrollPosition is preserved");
 				ObjectPageContentScrollingView.destroy();
 				done();
 			}, 1000); // throttling delay
@@ -197,7 +198,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			setTimeout(function() {
 				iScrollPosition = oObjectPage._$opWrapper[0].scrollTop;
 				iExpectedPosition =  oObjectPage._oSectionInfo["UxAP-objectPageContentScrolling--subsection2-1"].positionTop;
-				assert.strictEqual(iScrollPosition, iExpectedPosition, "scrollPosition is correct");
+				assert.ok(isPositionsMatch(iScrollPosition, iExpectedPosition), "scrollPosition is correct");
 				ObjectPageContentScrollingView.destroy();
 				done();
 			}, 1000); // throttling delay
@@ -226,8 +227,8 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			oObjectPage.removeSection(oFirstSection);
 			setTimeout(function() {
 				iScrollPositionAfterRemove = oObjectPage._$opWrapper[0].scrollTop;
-				iExpectedPositionAfterRemove = jQuery("#" + oThirdSection.getId() + " .sapUxAPObjectPageSectionContainer").position().top; // top of third section content
-				assert.strictEqual(iScrollPositionAfterRemove, iExpectedPositionAfterRemove, "scrollPosition is correct");
+				iExpectedPositionAfterRemove = Math.ceil(jQuery("#" + oThirdSection.getId() + " .sapUxAPObjectPageSectionContainer").position().top); // top of third section content
+				assert.ok(isPositionsMatch(iScrollPositionAfterRemove, iExpectedPositionAfterRemove), "scrollPosition is correct");
 				ObjectPageContentScrollingView.destroy();
 				oFirstSection.destroy();
 				done();
@@ -258,7 +259,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			iScrollPositionBeforeRemove = oObjectPage._$opWrapper[0].scrollTop;
 			setTimeout(function() {
 				iScrollPositionAfterRemove = oObjectPage._$opWrapper[0].scrollTop;
-				assert.strictEqual(iScrollPositionAfterRemove, iScrollPositionBeforeRemove, "scrollPosition is preserved");
+				assert.ok(isPositionsMatch(iScrollPositionAfterRemove, iScrollPositionBeforeRemove), "scrollPosition is preserved");
 				ObjectPageContentScrollingView.destroy();
 				oThirdSection.destroy();
 				done();
@@ -549,6 +550,11 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		return oHeaderTitle.classList.contains("sapUxAPObjectPageHeaderStickied") &&
 				oHeaderContent.classList.contains("sapUxAPObjectPageHeaderDetailsHidden") &&
 				oHeaderContent.style["overflow"] == "hidden";
+	}
+
+	function isPositionsMatch(iPos, iPos2) {
+		var iAcceptableOffset = Device.browser.edge ? 1 : 0;
+		return Math.abs(iPos - iPos2) <= iAcceptableOffset;
 	}
 
 });
