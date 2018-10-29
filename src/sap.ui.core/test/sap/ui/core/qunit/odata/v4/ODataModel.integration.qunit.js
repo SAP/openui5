@@ -1414,9 +1414,9 @@ sap.ui.define([
 			oResponseMessage = {
 				"code" : "1",
 				"message" : "Text",
-				"transition" : false,
+				"numericSeverity" : 3,
 				"target" : "ID",
-				"numericSeverity" : 3
+				"transition" : false
 			},
 			that = this;
 
@@ -1676,9 +1676,9 @@ sap.ui.define([
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Text",
-							"transition" : false,
+							"numericSeverity" : 3,
 							"target" : "Name",
-							"numericSeverity" : 3
+							"transition" : false
 						}]
 					}
 				}, {
@@ -1816,9 +1816,9 @@ sap.ui.define([
 					"__FAKE__Messages" : [{
 						"code" : "1",
 						"message" : "Text",
-						"transition" : false,
+						"numericSeverity" : 3,
 						"target" : "Name",
-						"numericSeverity" : 3
+						"transition" : false
 					}]
 				}
 			})
@@ -2706,8 +2706,8 @@ sap.ui.define([
 				"Messages" : [{
 					"code" : "23",
 					"message" : "Enter a minimum quantity of 2",
-					"target" : "Quantity",
-					"numericSeverity" : 3
+					"numericSeverity" : 3,
+					"target" : "Quantity"
 				}]
 			})
 			.expectChange("quantity", "1.000")
@@ -3460,19 +3460,19 @@ sap.ui.define([
 				assert.strictEqual(iPatchCompleted, 1, "patchCompleted 1");
 
 				that.expectMessages([{
-						"code": undefined,
-						"message": "500 Service not available",
-						"persistent": true,
-						"target": "",
+						"code" : undefined,
+						"message" : "500 Service not available",
+						"persistent" : true,
+						"target" : "",
 						"technical" : true,
-						"type": "Error"
+						"type" : "Error"
 					}, {
-						"code": undefined,
-						"message": "HTTP request was not processed because $batch failed",
-						"persistent": true,
-						"target": "",
+						"code" : undefined,
+						"message" : "HTTP request was not processed because $batch failed",
+						"persistent" : true,
+						"target" : "",
 						"technical" : true,
-						"type": "Error"
+						"type" : "Error"
 					}])
 					.expectChange("lifecycleStatus", "P")
 					.expectRequest({
@@ -8680,9 +8680,9 @@ sap.ui.define([
 					"Messages" : [{
 						"code" : "23",
 						"message" : "Just A Message",
-						"target" : "Name",
+						"numericSeverity" : 1,
 						"transition" : true,
-						"numericSeverity" : 1
+						"target" : "Name"
 					}]
 				}).expectMessages([{
 					code : "23",
@@ -8791,9 +8791,9 @@ sap.ui.define([
 					"Messages" : [{
 						"code" : "23",
 						"message" : "Just A Message",
+						"numericSeverity" : 1,
 						"target" : "Name",
-						"transition" : true,
-						"numericSeverity" : 1
+						"transition" : true
 					}],
 					"DraftAdministrativeData" : {
 						"DraftID" : "1",
@@ -9333,9 +9333,9 @@ sap.ui.define([
 							"__FAKE__Messages" : [{
 								"code" : "1",
 								"message" : "Text",
-								"transition" : false,
+								"numericSeverity" : 3,
 								"target" : "Name",
-								"numericSeverity" : 3
+								"transition" : false
 							}]
 						}
 					}]
@@ -9417,9 +9417,9 @@ sap.ui.define([
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Text",
-							"transition" : false,
+							"numericSeverity" : 3,
 							"target" : "Name",
-							"numericSeverity" : 3
+							"transition" : false
 						}]
 					}
 				}, {
@@ -9487,9 +9487,9 @@ sap.ui.define([
 					"__FAKE__Messages" : [{
 						"code" : "1",
 						"message" : "Text",
-						"transition" : false,
+						"numericSeverity" : 3,
 						"target" : "Name",
-						"numericSeverity" : 3
+						"transition" : false
 					}]
 				}
 			})
@@ -9548,9 +9548,9 @@ sap.ui.define([
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Text",
-							"transition" : false,
+							"numericSeverity" : 3,
 							"target" : "Name",
-							"numericSeverity" : 3
+							"transition" : false
 						}]
 					}
 				}, {
@@ -9613,9 +9613,9 @@ sap.ui.define([
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Text",
-							"transition" : false,
+							"numericSeverity" : 3,
 							"target" : "Name",
-							"numericSeverity" : 3
+							"transition" : false
 						}]
 					}
 				}
@@ -9689,9 +9689,9 @@ sap.ui.define([
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Enter a name",
-							"transition" : false,
+							"numericSeverity" : 3,
 							"target" : "Name",
-							"numericSeverity" : 3
+							"transition" : false
 						}]
 					}
 				})
@@ -9794,9 +9794,9 @@ sap.ui.define([
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Enter a name",
-							"transition" : false,
+							"numericSeverity" : 3,
 							"target" : "Name",
-							"numericSeverity" : 3
+							"transition" : false
 						}]
 					}
 				})
@@ -9874,9 +9874,9 @@ sap.ui.define([
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Enter a name",
-							"transition" : false,
+							"numericSeverity" : 3,
 							"target" : "Name",
-							"numericSeverity" : 3
+							"transition" : false
 						}]
 					}
 				})
@@ -10078,19 +10078,19 @@ sap.ui.define([
 						}
 					}, new Error("500 Internal Server Error"))
 					.expectMessages([{
-						"code": undefined,
-						"message": "500 Internal Server Error",
-						"persistent": true,
-						"target": "",
-						"technical": true,
-						"type": "Error"
+						"code" : undefined,
+						"message" : "500 Internal Server Error",
+						"persistent" : true,
+						"target" : "",
+						"technical" : true,
+						"type" : "Error"
 					}, {
-						"code": undefined,
-						"message": "HTTP request was not processed because $batch failed",
-						"persistent": true,
-						"target": "",
-						"technical": true,
-						"type": "Error"
+						"code" : undefined,
+						"message" : "HTTP request was not processed because $batch failed",
+						"persistent" : true,
+						"target" : "",
+						"technical" : true,
+						"type" : "Error"
 					}]);
 				that.oLogMock.expects("error").twice(); // don't care about console here
 
@@ -10400,9 +10400,9 @@ sap.ui.define([
 							"__FAKE__Messages" : [{
 								"code" : "1",
 								"message" : "Enter a name",
-								"transition" : false,
+								"numericSeverity" : 3,
 								"target" : "Name",
-								"numericSeverity" : 3
+								"transition" : false
 							}]
 						}
 					})
