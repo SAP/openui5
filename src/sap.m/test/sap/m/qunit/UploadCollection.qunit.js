@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/ListSeparators",
 	"sap/m/ListMode",
+	"sap/m/UploadState",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/base/ManagedObject",
 	"sap/m/OverflowToolbar",
@@ -24,10 +25,9 @@ sap.ui.define([
 	"sap/ui/events/jquery/EventExtension",
 	"jquery.sap.keycodes"
 ], function (jQuery, UploadCollection, UploadCollectionItem, Toolbar, Label, UploadCollectionRenderer,
-			 ListItemBaseRenderer, Dialog, Device, ListSeparators, ListMode, JSONModel, ManagedObject, OverflowToolbar,
-			 MessageBox, FileUploader, ObjectMarker, Event, UploadCollectionParameter, Sorter, Element) {
+			 ListItemBaseRenderer, Dialog, Device, ListSeparators, ListMode, UploadState, JSONModel, ManagedObject,
+			 OverflowToolbar, MessageBox, FileUploader, ObjectMarker, Event, UploadCollectionParameter, Sorter, Element) {
 	"use strict";
-
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
 
@@ -828,30 +828,30 @@ sap.ui.define([
 		assert.strictEqual(this.oUploadCollection._oFileUploader.getButtonText(), sText, "Correct tooltip of FileUploader");
 	});
 
-	QUnit.skip("Determine icon from filename", function (assert) {
-		assert.equal(this.oUploadCollection._getIconFromFileName("fileName"), "sap-icon://document", "Document icon returned in case no file extension exists.");
-
-		assert.equal(this.oUploadCollection._getIconFromFileName("fileName.pdf"), "sap-icon://pdf-attachment", "Correct icon for file type .pdf determined");
-
-		assert.equal(this.oUploadCollection._getIconFromFileName("fileName.jpg"), "sap-icon://card", "Correct icon for file type .jpg determined");
-		assert.equal(this.oUploadCollection._getIconFromFileName("complexFileName.JPEG"), "sap-icon://card", "Correct icon for file type 'JPEG' determined");
-		assert.equal(this.oUploadCollection._getIconFromFileName("fileName.png"), "sap-icon://card", "Correct icon for file type .png determined");
-		assert.equal(this.oUploadCollection._getIconFromFileName("fileName.bmp"), "sap-icon://card", "Correct icon for file type .bmp determined");
-
-		assert.equal(this.oUploadCollection._getIconFromFileName("fileName.txt"), "sap-icon://document-text", "Correct icon for file type .txt determined");
-
-		assert.equal(this.oUploadCollection._getIconFromFileName("fileName.doc"), "sap-icon://doc-attachment", "Correct icon for file type .doc determined");
-		assert.equal(this.oUploadCollection._getIconFromFileName("fileName.docx"), "sap-icon://doc-attachment", "Correct icon for file type .docx determined");
-		assert.equal(this.oUploadCollection._getIconFromFileName("fileName.odt"), "sap-icon://doc-attachment", "Correct icon for file type .odt determined");
-
-		assert.equal(this.oUploadCollection._getIconFromFileName("fileName.xls"), "sap-icon://excel-attachment", "Correct icon for file type .xls determined");
-		assert.equal(this.oUploadCollection._getIconFromFileName("fileName.csv"), "sap-icon://excel-attachment", "Correct icon for file type .csv determined");
-
-		assert.equal(this.oUploadCollection._getIconFromFileName("fileName.ppt"), "sap-icon://ppt-attachment", "Correct icon for file type .ppt determined");
-		assert.equal(this.oUploadCollection._getIconFromFileName("fileName.pptx"), "sap-icon://ppt-attachment", "Correct icon for file type .pptx determined");
-
-		assert.equal(this.oUploadCollection._getIconFromFileName("complexFileName.123.pdf.jpg.png.bmp.ppt"), "sap-icon://ppt-attachment", "Correct icon for file type determined");
-	});
+	// QUnit.skip("Determine icon from filename", function (assert) {
+	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName"), "sap-icon://document", "Document icon returned in case no file extension exists.");
+	//
+	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.pdf"), "sap-icon://pdf-attachment", "Correct icon for file type .pdf determined");
+	//
+	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.jpg"), "sap-icon://card", "Correct icon for file type .jpg determined");
+	// 	assert.equal(this.oUploadCollection._getIconFromFileName("complexFileName.JPEG"), "sap-icon://card", "Correct icon for file type 'JPEG' determined");
+	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.png"), "sap-icon://card", "Correct icon for file type .png determined");
+	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.bmp"), "sap-icon://card", "Correct icon for file type .bmp determined");
+	//
+	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.txt"), "sap-icon://document-text", "Correct icon for file type .txt determined");
+	//
+	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.doc"), "sap-icon://doc-attachment", "Correct icon for file type .doc determined");
+	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.docx"), "sap-icon://doc-attachment", "Correct icon for file type .docx determined");
+	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.odt"), "sap-icon://doc-attachment", "Correct icon for file type .odt determined");
+	//
+	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.xls"), "sap-icon://excel-attachment", "Correct icon for file type .xls determined");
+	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.csv"), "sap-icon://excel-attachment", "Correct icon for file type .csv determined");
+	//
+	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.ppt"), "sap-icon://ppt-attachment", "Correct icon for file type .ppt determined");
+	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.pptx"), "sap-icon://ppt-attachment", "Correct icon for file type .pptx determined");
+	//
+	// 	assert.equal(this.oUploadCollection._getIconFromFileName("complexFileName.123.pdf.jpg.png.bmp.ppt"), "sap-icon://ppt-attachment", "Correct icon for file type determined");
+	// });
 
 	QUnit.skip("Determine thumbnail of an item", function (assert) {
 		var sThumbnailUrl = "anyFolder/myThumbnailFile.jpg";
@@ -893,126 +893,6 @@ sap.ui.define([
 			}
 		}
 		assert.equal(sFileNameRequestIdValue, this.encodeToAscii(sFileName) + sRequestId, "Unique key for a File is set correctly into requestHeaders");
-	});
-
-	QUnit.skip("handleTerminate - Function _handleTerminate called on terminate button press", function (assert) {
-		var oDialogOpenStub = sinon.stub(Dialog.prototype, "open");
-		var oHandleTerminateSpy = sinon.spy(this.oUploadCollection, "_handleTerminateRequest");
-		var oFileUploader = this.oUploadCollection._getFileUploader();
-		oFileUploader._aXhr = [];
-		var oFile2 = {
-			name: "Document.txt"
-		};
-		oFileUploader.fireChange({
-			files: [oFile2]
-		});
-
-		this.oUploadCollection.invalidate();
-		sap.ui.getCore().applyChanges();
-
-		var oTerminateButton = this.oUploadCollection.aItems[0]._getTerminateButton();
-		oTerminateButton.firePress();
-
-		assert.equal(oHandleTerminateSpy.callCount, 1, "_handleTerminate on UploadCollection was called.");
-
-		// Clean up
-		var oDialog = sap.ui.getCore().byId(this.oUploadCollection.getId() + "deleteDialog");
-		oDialog.destroy();
-		oDialogOpenStub.restore();
-	});
-
-	QUnit.skip("handleTerminate opens a dialog which could be cancelled.", function (assert) {
-		var done = assert.async();
-		var oItem = new UploadCollectionItem({
-			fileName: "otto4711.txt"
-		});
-		this.oUploadCollection._handleTerminateRequest({}, oItem);
-		sap.ui.getCore().applyChanges();
-		var oDialog = sap.ui.getCore().byId(this.oUploadCollection.getId() + "deleteDialog");
-		assert.ok(oDialog.getDomRef(), "Dialog was rendered.");
-		oDialog.attachAfterClose(function () {
-			assert.ok(true, "Dialog is closed.");
-			done();
-		});
-		oDialog.getButtons()[1].firePress();
-		sap.ui.getCore().applyChanges();
-	});
-
-	QUnit.skip("Function _handleDelete creates the popup and changes the internal state of UploadCollection correctly", function (assert) {
-		//Arrange
-		var sItemId = this.oUploadCollection.aItems[0].sId,
-			oMessageBoxStub = sinon.stub(MessageBox, "show"),
-			oCloseMessageBoxStub = sinon.stub(this.oUploadCollection, "_onCloseMessageBoxDeleteItem"),
-			sCompactClass = "sapUiSizeCompact",
-			oEvent = {
-				getParameters: function () {
-					return {
-						id: sItemId + "-deleteButton"
-					};
-				}
-			};
-		//Act
-		this.oUploadCollection.addStyleClass(sCompactClass);
-		this.oUploadCollection._handleDelete(oEvent);
-		oMessageBoxStub.getCall(0).args[1].onClose();
-		//Assert
-		assert.ok(oCloseMessageBoxStub.called, "The _onCloseMessageBoxDeleteItem is correctly registered to handle the closing of MessageBox");
-		assert.equal(this.oUploadCollection.sDeletedItemId, sItemId, "The internal id of the item that may be deleted is updated correctly");
-		assert.equal(oMessageBoxStub.getCall(0).args[1].dialogId, "messageBoxDeleteFile", "Correct dialog id has been handed to the show function");
-		assert.equal(oMessageBoxStub.getCall(0).args[1].actions[0], MessageBox.Action.OK, "OK action is included in the MessageBox call");
-		assert.equal(oMessageBoxStub.getCall(0).args[1].actions[1], MessageBox.Action.CANCEL, "Cancel action is included in the MessageBox call");
-		assert.equal(oMessageBoxStub.getCall(0).args[1].styleClass, sCompactClass, "Compact class has been handed from UploadCollection to the MessageBox successfully");
-		//Restore
-		oMessageBoxStub.restore();
-	});
-
-	QUnit.skip("handleTerminate - abort on FileUploader is called.", function (assert) {
-		var done = assert.async();
-		// Prepare FileUploader Spy
-		this.oUploadCollection._getFileUploader()._aXhr = [];
-		sinon.spy(this.oUploadCollection._getFileUploader(), "abort");
-		// Prepare UploadCollectionItem
-		var oItem = new UploadCollectionItem({
-			fileName: "otto4711.txt"
-		});
-		oItem._status = UploadCollection._uploadingStatus;
-		oItem._requestIdName = 0;
-		this.oUploadCollection.insertItem(oItem);
-		sap.ui.getCore().applyChanges();
-		// Call termination
-		this.oUploadCollection._handleTerminateRequest({}, oItem);
-		var oDialog = sap.ui.getCore().byId(this.oUploadCollection.getId() + "deleteDialog");
-		oDialog.attachAfterClose(function () {
-			assert.ok(true, "Dialog is closed.");
-			done();
-		});
-		oDialog.getButtons()[0].firePress();
-		assert.equal(this.oUploadCollection._getFileUploader().abort.callCount, 1, "Abort on FileUploader was called.");
-	});
-
-	QUnit.skip("handleTerminate - deleteFile is fired if the upload is done before a confirmation of the termination.", function (assert) {
-		var done = assert.async();
-		// Prepare UploadCollectionItem and UploadCollection itself
-		var oItem = new UploadCollectionItem({
-			fileName: "otto4711.txt",
-			documentId: "4712"
-		});
-		oItem._status = UploadCollection._displayStatus;
-		this.oUploadCollection.insertItem(oItem);
-		this.oUploadCollection.attachFileDeleted(function (oEvent) {
-			assert.equal(oEvent.getParameter("documentId"), "4712", "Correct documentId passed.");
-			assert.deepEqual(oEvent.getParameter("item"), oItem, "Correct item passed.");
-		});
-		sap.ui.getCore().applyChanges();
-		// Call termination
-		this.oUploadCollection._handleTerminateRequest({}, oItem);
-		var oDialog = sap.ui.getCore().byId(this.oUploadCollection.getId() + "deleteDialog");
-		oDialog.attachAfterClose(function () {
-			assert.ok(true, "Dialog is closed.");
-			done();
-		});
-		oDialog.getButtons()[0].firePress();
-		sap.ui.getCore().applyChanges();
 	});
 
 	QUnit.module("List API Methods", {
@@ -1255,45 +1135,6 @@ sap.ui.define([
 
 		//Assert
 		assert.equal(this.oUploadCollection.getMode(), ListMode.None, "Mode after setting 'Delete' is 'None'");
-	});
-
-	QUnit.skip("Function _handleSelectionChange triggers the selection change", function (assert) {
-		//Arrange
-		var sListItem = "listItem", sListItems = "listItems", sSelected = "selected",
-			aUploadCollectionListItems = ["dummy"],
-			oUploadCollectionItem = new UploadCollectionItem(),
-			bSelected = true,
-			oListItem = {
-				getSelected: function () {
-					return true;
-				}
-			},
-			oEvent = {
-				getParameter: function (name) {
-					if (name === sListItem) {
-						return oListItem;
-					} else if (name === sListItems) {
-						return aUploadCollectionListItems;
-					} else if (name === sSelected) {
-						return bSelected;
-					}
-				}
-			},
-			oGetUploadCollectionItemsByListItems = sinon.stub(this.oUploadCollection, "_getUploadCollectionItemsByListItems")
-				.returns(aUploadCollectionListItems),
-			oGetUploadCollectionItemByListItem = sinon.stub(this.oUploadCollection, "_getUploadCollectionItemByListItem")
-				.returns(oUploadCollectionItem),
-			oFireSelectionChangeStub = sinon.stub(this.oUploadCollection, "fireSelectionChange"),
-			oSetSelectedStub = sinon.stub(oUploadCollectionItem, "setSelected");
-		//Act
-		this.oUploadCollection._handleSelectionChange(oEvent);
-		//Assert
-		assert.strictEqual(oGetUploadCollectionItemByListItem.getCall(0).args[0], oListItem, "The function _getUploadCollectionItemByListItem has been called with correct argument");
-		assert.strictEqual(oGetUploadCollectionItemsByListItems.getCall(0).args[0], aUploadCollectionListItems, "The function _getUploadCollectionItemsByListItems has been called with correct argument");
-		assert.strictEqual(oFireSelectionChangeStub.getCall(0).args[0]["selectedItem"], oUploadCollectionItem, "The selectionChange event has correct selectedItem parameter");
-		assert.strictEqual(oFireSelectionChangeStub.getCall(0).args[0]["selectedItems"], aUploadCollectionListItems, "The selectionChange event has correct selectedItems parameter");
-		assert.strictEqual(oFireSelectionChangeStub.getCall(0).args[0]["selected"], bSelected, "The selectionChange event has correct selected parameter");
-		assert.strictEqual(oSetSelectedStub.getCall(0).args[0], oListItem.getSelected(), "The setSelected method has been called with correct argument");
 	});
 
 	QUnit.module("Download Item Tests", {
@@ -2026,38 +1867,6 @@ sap.ui.define([
 		this.oUploadCollection._oItemForRename = this.oUploadCollection.getItems()[2]; // contributor : "J Edgar Hoover", documentId : "5082cc4d-da9f-2835-2c0a-8100ed47bcdf"
 		this.oUploadCollection._oItemForRename.setFileName("renamedFileName.txt");
 		this.oUploadCollection._onEditItemOk("renamedFileName.txt");
-	});
-
-	QUnit.skip("uploadComplete", function (assert) {
-		var oFileUploaderEventMock = {
-			fileName: "file1",
-			response: {"propertyOne": "ValueOne"},
-			readyStateXHR: 4,
-			status: 200,
-			responseRaw: "{ \"propertyOne\" : \"ValueOne\" }",
-			headers: {
-				"headerOne": "headerValueOne",
-				"headerTwo": "headerValueTwo"
-			}
-		};
-
-		function uploadComplete(oEvent) {
-			// Deprecated
-			assert.equal(oEvent.getParameters().getParameter("fileName"), "file1", "Correct file1 name in complete event");
-			assert.equal(oEvent.getParameters().getParameter("response"), oFileUploaderEventMock.response, "Correct response in complete event");
-			assert.equal(oEvent.getParameters().getParameter("readyStateXHR"), oFileUploaderEventMock.readyStateXHR, "Correct readyStateXHR in complete event");
-			assert.equal(oEvent.getParameters().getParameter("status"), oFileUploaderEventMock.status, "Correct status in complete event");
-			// check for properly provided parameters
-			assert.equal(oEvent.getParameter("files")[0].fileName, "file1", "Correct file1 name in complete event");
-			assert.equal(oEvent.getParameter("files")[0].response, oFileUploaderEventMock.response, "Correct response in complete event");
-			assert.equal(oEvent.getParameter("files")[0].reponse, oFileUploaderEventMock.response, "Correct reponse in complete event - deprecated event property");
-			assert.equal(oEvent.getParameter("files")[0].status, oFileUploaderEventMock.status, "Correct status in complete event");
-			assert.equal(oEvent.getParameter("files")[0].responseRaw, oFileUploaderEventMock.responseRaw, "Correct raw response in complete event");
-			assert.equal(oEvent.getParameter("files")[0].headers, oFileUploaderEventMock.headers, "Correct headers in complete event");
-		}
-
-		this.oUploadCollection.attachUploadComplete(uploadComplete);
-		this.oUploadCollection._onUploadComplete(new Event("uploadComplete", this.oUploadCollection._getFileUploader(), oFileUploaderEventMock));
 	});
 
 	QUnit.skip("Event terminate", function (assert) {
