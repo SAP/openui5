@@ -1,4 +1,3 @@
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/dt/test/report/QUnit",
 	"sap/ui/dt/test/ElementEnablementTest",
@@ -14,7 +13,7 @@ sap.ui.define([
 	});
 
 	oElementEnablementTest.run().then(function (oData) {
-		var oReport = new QUnitReport({
+		return new QUnitReport({
 			data: oData
 		});
 	});

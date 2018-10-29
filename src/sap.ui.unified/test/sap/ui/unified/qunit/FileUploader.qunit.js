@@ -2,8 +2,9 @@
 
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/unified/FileUploader"
-], function(qutils, FileUploader) {
+	"sap/ui/unified/FileUploader",
+	"sap/ui/core/TooltipBase"
+], function(qutils, FileUploader, TooltipBase) {
 	"use strict";
 
 	/**
@@ -274,7 +275,7 @@ sap.ui.define([
 
 	QUnit.test("Test setTooltip with none-string tooltip", function (assert) {
 		// Set up
-		var oTooltip = new sap.ui.core.TooltipBase({text: "test"});
+		var oTooltip = new TooltipBase({text: "test"});
 		var oFileUploader = createFileUploader({
 			tooltip: oTooltip
 		});
