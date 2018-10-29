@@ -27,7 +27,7 @@ sap.ui.define(["jquery.sap.global"],
 					}
 
 					/**
-					 * Enables the additional logging capabilites of the logger,
+					 * Enables the additional logging capabilities of the logger,
 					 * allowing the developers to pass custom data, that is later going to be added
 					 * to the executionScope of the rules
 					 */
