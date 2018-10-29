@@ -155,6 +155,55 @@ sap.ui.define([
 		secondNotification = null;
 	});
 
+	QUnit.test('Cloning a notification with bindings', function(assert) {
+		// arrange
+		var template = new Button({
+			text: "{text}",
+			type: "{type}"
+		});
+
+		var notification = new NotificationListItem({
+			buttons: {
+				path: "Actions",
+				template: template,
+				templateShareable:true
+			}
+		});
+
+		var model = new JSONModel({
+			Actions: [
+				{
+					text: "accept",
+					type: "Accept",
+					nature: "POSITIVE"
+				}, {
+					text: "reject",
+					type: "Reject",
+					nature: "POSITIVE"
+				}
+			]});
+
+		// act
+		var notificationCloning = notification.clone();
+		var list = new List({
+			items: [
+				notification,
+				notificationCloning
+			]});
+
+		list.setModel(model);
+		list.bindObject("/");
+
+		// assert
+		assert.strictEqual(notificationCloning.getAggregation("buttons").length, 2,"The clone should have the binned aggregation");
+		assert.strictEqual(notification.getAggregation("buttons").length, 2,"The original notification should have the binned aggregation");
+
+		// cleanup
+		list.destroy();
+		notificationCloning.destroy();
+		notification.destroy();
+	});
+
 	QUnit.test('Closing a notification', function(assert) {
 		// arrange
 		var parent;
