@@ -463,8 +463,11 @@ sap.ui.define([
 		_removeResize.call(this);
 
 		var oForm = this.getAggregation("form");
-		if (!this._bResponsiveLayoutRequested && !this._bGridLayoutRequested &&
-				!this._bResponsiveGridLayoutRequested && !this._bColumnLayoutRequested) {
+		var sLayout = this.getLayout();
+		if ((!this._bResponsiveLayoutRequested && sLayout === SimpleFormLayout.ResponsiveLayout) ||
+				(!this._bGridLayoutRequested && sLayout === SimpleFormLayout.GridLayout) ||
+				(!this._bResponsiveGridLayoutRequested && sLayout === SimpleFormLayout.ResponsiveGridLayout) ||
+				(!this._bColumnLayoutRequested && sLayout === SimpleFormLayout.ColumnLayout)) {
 			// if Layout is still loaded do it after it is loaded
 			var bLayout = true;
 			if (!oForm.getLayout()) {
