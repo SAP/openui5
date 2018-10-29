@@ -250,5 +250,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.14": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "503246ca77aeb6b7c4c472bbed7a7c00621634a3",
+        "type": "FIX",
+        "text": " ObjectPageHeader - Fixed styles of navigationBar",
+        "references": []
+      }
+    ]
   }
 }
