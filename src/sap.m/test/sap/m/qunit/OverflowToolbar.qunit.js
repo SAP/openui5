@@ -1476,37 +1476,70 @@ sap.ui.define([
 		oOverflowTB.destroy();
 	});
 
-	QUnit.test("Changing width of sap.m.SegmentedButton triggers _resetAndInvalidateToolbar", function (assert) {
-		var aContent = getDefaultContent(),
+	QUnit.test("Changing width of sap.m.SegmentedButton fires _containerWidthChanged event, which triggers _resetAndInvalidateToolbar when in Toolbar",
+	function (assert) {
+		var oSegmentedButton = new sap.m.SegmentedButton({
+				selectedKey: "Item1",
+				items: [
+					new sap.m.SegmentedButtonItem({id: "idSBItem1", key: "Item1", text: "Item 1", icon: "sap-icon://home"}),
+					new sap.m.SegmentedButtonItem({id: "idSBItem2", key: "Item2", text: "Item 2", icon: "sap-icon://home"})
+				]
+			}),
+			aContent = [oSegmentedButton],
 			oOverflowTB,
 			oSpyInvalidationEvent,
-			iInvalidationCountBefore;
+			oStubWidth;
+
 
 		// arrange
-		var oSegmentedButton = new sap.m.SegmentedButton({
-			selectedKey: "Item1",
-			items: [
-				new sap.m.SegmentedButtonItem({id: "idSBItem1", key: "Item1", text: "Item 1"}),
-				new sap.m.SegmentedButtonItem({id: "idSBItem2", key: "Item2", text: "Item 2"})
-			]
-		});
-
-		aContent.push(oSegmentedButton);
-		oSpyInvalidationEvent = this.spy(sap.m.OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
+		oSpyInvalidationEvent = this.spy(oSegmentedButton, "fireEvent");
 		oOverflowTB = createOverflowToolbar({}, aContent);
-
-		this.clock.tick(1000);
-
-		iInvalidationCountBefore = oSpyInvalidationEvent.callCount;
-
-		// act - simulating width of the SegmentedButton is changed and event is fired
-		oSegmentedButton.fireEvent("_containerWidthChanged");
-
 		this.clock.tick(1000);
 
 		// assert
-		assert.strictEqual(oSpyInvalidationEvent.callCount, iInvalidationCountBefore + 1,
+		assert.notOk(oSpyInvalidationEvent.calledWith("_containerWidthChanged"), "_containerWidthChanged event is not fired on first rendering");
+
+		// act - simulate image load, which changes width and calls _updateWidth
+		oStubWidth = this.stub(oSegmentedButton, "_previousWidth", 100);
+		oSegmentedButton._updateWidth();
+
+		// assert
+		assert.ok(oSpyInvalidationEvent.calledWith("_containerWidthChanged"),
 			"Layout recalculation triggered (when SegmentedButton's width is changed, _resetAndInvalidateToolbar is called)");
+
+		oStubWidth.restore();
+		oOverflowTB.destroy();
+	});
+
+	QUnit.test("Changing width of sap.m.SegmentedButton does not fire _containerWidthChanged event, when in Associative Popover",
+	function (assert) {
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			selectedKey: "Item1",
+			items: [
+				new sap.m.SegmentedButtonItem({id: "idSBItem1", key: "Item1", text: "Item 1", icon: "sap-icon://home"}),
+				new sap.m.SegmentedButtonItem({id: "idSBItem2", key: "Item2", text: "Item 2", icon: "sap-icon://home"})
+			]
+		}),
+		aContent = [oSegmentedButton],
+		oOverflowTB,
+		oSpyInvalidationEvent,
+		oOverflowButton;
+
+		// arrange
+		oSpyInvalidationEvent = this.spy(oSegmentedButton, "fireEvent");
+		oOverflowTB = createOverflowToolbar({width: "50px"}, aContent);
+		this.clock.tick(1000);
+
+		// assert
+		assert.notOk(oSpyInvalidationEvent.calledWith("_containerWidthChanged"), "_containerWidthChanged event is not fired on first rendering");
+
+		// act - click the overflow button
+		oOverflowButton = oOverflowTB._getOverflowButton();
+		oOverflowButton.firePress();
+
+		// assert
+		assert.notOk(oSpyInvalidationEvent.calledWith("_containerWidthChanged"),
+			"_containerWidthChanged event is not fired when SegmentedButton is in the Associative Popover, even though the SegmentedButton's size is changed");
 
 		oOverflowTB.destroy();
 	});
