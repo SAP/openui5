@@ -4,10 +4,9 @@
 			"sap.card": {
 				"height": "80px",
 				"width": "80px",
-				"icon": "sap-icon://accept",
-				"title": "Card Title 1x1",
-				"subTitle": "Card Subtitle",
-				"status": "Count",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"type": "CustomCard"
 			}
 		},
@@ -15,51 +14,45 @@
 			"sap.card": {
 				"height": "80px",
 				"width": "80px",
-				"icon": "sap-icon://accept",
-				"title": "Card Title 1x1",
-				"subTitle": "Card Subtitle",
-				"status": "Count",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"type": "CustomCard"
 			}
 		},
 		"card3": {
 			"sap.card": {
-				"height": "80px",
-				"width": "160px",
-				"icon": "sap-icon://accept",
-				"title": "Card Title 2x1",
-				"subTitle": "Card Subtitle",
-				"status": "Count",
+				"height": "200px",
+				"width": "300px",
+				"title": "This line is the title of sap.f.Card",
 				"type": "CustomCard"
 			}
 		},
 		"card4": {
 			"sap.card": {
-				"height": "80px",
-				"width": "320px",
-				"icon": "sap-icon://accept",
-				"title": "Card Title  4x1",
-				"subTitle": "Card Subtitle",
-				"status": "Count",
-				"type": "CustomCard"
+			  "height": "200px",
+			  "width": "300px",
+			  "title": "This line is the title of sap.f.Card",
+			  "subTitle": " Thi is a sap.f.Card Subtitle",
+			  "type": "CustomCard"
 			}
 		},
 		"card5": {
-			"sap.card": {
-				"height": "160px",
-				"width": "160px",
-				"icon": "sap-icon://accept",
-				"title": "Card Title 2x2",
-				"subTitle": "Card Subtitle",
-				"status": "Count",
-				"type": "CustomCard"
-			}
+		  "sap.card": {
+			"height": "200px",
+			"width": "300px",
+			"title": "This line is the title of sap.f.Card and a very very very very very very very very very very very very very very very very very very long one",
+			"subTitle": " Thi is a sap.f.Card Subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
+			"type": "CustomCard"
+		  }
 		},
 		"card6": {
 			"sap.card": {
 				"height": "160px",
 				"width": "320px",
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card Title  4x2",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -70,7 +63,9 @@
 			"sap.card": {
 				"height": "320px",
 				"width": "320px",
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card Title 4x4",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -81,7 +76,9 @@
 			"sap.card": {
 				"height": "320px",
 				"width": "320px",
-				"icon": "../images/Woman_avatar_01.png",
+				"icon":  {
+				  "src": "../images/Woman_avatar_01.png"
+				},
 				"title": "Card Title 4x4 with image",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -92,11 +89,12 @@
 			"sap.card": {
 				"height": "320px",
 				"width": "480px",
-				"icon": "sap-icon://accept",
-				"title": "Card Title 6x4",
-				"subTitle": "Card Subtitle",
-				"status": "Count",
-				"type": "CustomCard"
+			  "icon":  {
+				"src": "../images/Woman_avatar_01.png",
+				"displayShape":  "Square"
+			  },
+			  "title": "Card Title 6x4 with image",
+			  "type": "CustomCard"
 			}
 		},
 		"card10": {
@@ -104,7 +102,9 @@
 				"height": "320px",
 				"width": "480px",
 				"busy": "true",
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card Title 6x4 Loading State",
 				"subTitle": "Content Loading State and a truncated subtitle subtitle subtitle",
 				"status": "Count",
@@ -115,7 +115,9 @@
 			"sap.card": {
 				"height": "160px",
 				"width": "160px",
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"backgroundImage": "../images/Lamp_avatar_01.jpg",
 				"backgroundImageSize": "strech",
 				"color": "white",
@@ -130,19 +132,203 @@
 			"sap.card": {
 				"height": "480px",
 				"width": "480px",
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card with Component",
 				"manifest": "sap.f.cardsdemo.cardcontent.customcomponent",
 				"subTitle": "Card Component Container is created internally",
 				"status": "",
 				"type": "CustomCard"
 			}
+		},
+	  "card13": {
+        "sap.card": {
+          "title": "Card Title 2x3",
+          "subTitle": "Card Subtitle",
+          "icon":  {
+            "src": "sap-icon://accept"
+          },
+          "status": "100 of 200",
+          "width": "300px",
+          "height": "400px",
+          "type": "ListCard",
+          "settings": {
+            "listdata": {
+              "type": "json",
+              "response": {
+                "json": [{
+                  "Name": "Notebook Basic 15",
+                  "Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+                  "Id": "HT-1000",
+                  "SubCategoryId": "Notebooks"
+                },
+                  {
+                    "Name": "Notebook Basic 17",
+                    "Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+                    "Id": "HT-1001",
+                    "SubCategoryId": "Notebooks"
+                  },
+                  {
+                    "Name": "Notebook Basic 18",
+                    "Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+                    "Id": "HT-1002",
+                    "SubCategoryId": "Notebooks"
+                  },
+                  {
+                    "Name": "Notebook Basic 19",
+                    "Description": "Notebook Basic 19 with 2,80 GHz quad core, 19\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+                    "Id": "HT-1003",
+                    "SubCategoryId": "Notebooks"
+                  },
+                  {
+                    "Name": "ITelO Vault",
+                    "Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+                    "Id": "HT-1007",
+                    "SubCategoryId": "PDAs & Organizers"
+                  },
+                  {
+                    "Name": "Notebook Professional 15",
+                    "Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+                    "Id": "HT-1010",
+                    "SubCategoryId": "Notebooks"
+                  },
+                  {
+                    "Name": "Notebook Professional 26",
+                    "Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+                    "Id": "HT-1022",
+                    "SubCategoryId": "Notebooks"
+                  },
+                  {
+                    "Name": "Notebook Professional 27",
+                    "Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+                    "Id": "HT-1024",
+                    "SubCategoryId": "Notebooks"
+                  }
+                ],
+                "path": "/"
+              }
+            },
+            "fields": {
+              "icon": {
+                "label": "{{icon_label}}",
+                "value": "{SubCategoryId}",
+                "type": "mapper",
+                "importance": 1
+              },
+              "title": {
+                "label": "{{title_label}}",
+                "value": "{Name}",
+                "type": "string",
+                "importance": 0
+              },
+              "description": {
+                "label": "{{description_label}}",
+                "value": "{Description}",
+                "type": "string",
+                "importance": 0
+              }
+            }
+          }
+        }
+      },
+	  "listContent": {
+		"sap.card": {
+		  "title": "Card Title 2x3",
+		  "subTitle": "Card Subtitle",
+		  "icon":  {
+			"src": "sap-icon://accept"
+		  },
+		  "status": "Count",
+		  "width": "200px",
+		  "height": "300px",
+		  "type": "ListCard",
+		  "settings": {
+			"listdata": {
+			  "type": "json",
+			  "response": {
+				"json": [{
+				  "Name": "Notebook Basic 15",
+				  "Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+				  "Id": "HT-1000",
+				  "SubCategoryId": "Notebooks"
+				},
+				  {
+					"Name": "Notebook Basic 17",
+					"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+					"Id": "HT-1001",
+					"SubCategoryId": "Notebooks"
+				  },
+				  {
+					"Name": "Notebook Basic 18",
+					"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+					"Id": "HT-1002",
+					"SubCategoryId": "Notebooks"
+				  },
+				  {
+					"Name": "Notebook Basic 19",
+					"Description": "Notebook Basic 19 with 2,80 GHz quad core, 19\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+					"Id": "HT-1003",
+					"SubCategoryId": "Notebooks"
+				  },
+				  {
+					"Name": "ITelO Vault",
+					"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+					"Id": "HT-1007",
+					"SubCategoryId": "PDAs & Organizers"
+				  },
+				  {
+					"Name": "Notebook Professional 15",
+					"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+					"Id": "HT-1010",
+					"SubCategoryId": "Notebooks"
+				  },
+				  {
+					"Name": "Notebook Professional 26",
+					"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+					"Id": "HT-1022",
+					"SubCategoryId": "Notebooks"
+				  },
+				  {
+					"Name": "Notebook Professional 27",
+					"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+					"Id": "HT-1024",
+					"SubCategoryId": "Notebooks"
+				  }
+				],
+				"path": "/"
+			  }
+			},
+			"fields": {
+			  "icon": {
+				"label": "{{icon_label}}",
+				"value": "{SubCategoryId}",
+				"type": "mapper",
+				"importance": 1
+			  },
+			  "title": {
+				"label": "{{title_label}}",
+				"value": "{Name}",
+				"type": "string",
+				"importance": 0
+			  },
+			  "description": {
+				"label": "{{description_label}}",
+				"value": "{Description}",
+				"type": "string",
+				"importance": 0
+			  }
+			}
+		  }
 		}
+	  }
 	},
 	"splitter": {
 		"card1": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card Title 2x2",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -153,7 +339,9 @@
 		},
 		"card2": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card Title 1x1",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -164,7 +352,9 @@
 		},
 		"card3": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card Title 2x1",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -177,7 +367,9 @@
 	"flexibleHeight": {
 		"card1": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card Title 2x2",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -188,7 +380,9 @@
 		},
 		"card2": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card Title 2x2",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -199,7 +393,9 @@
 		},
 		"card3": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card Title 1x1",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -210,7 +406,9 @@
 		},
 		"card4": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card Title 2x1",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -221,7 +419,9 @@
 		},
 		"card5": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card Title 1x1",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -232,7 +432,9 @@
 		},
 		"card6": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card Title 4x1",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -243,7 +445,9 @@
 		},
 		"card7": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card Title 2x6",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -254,7 +458,9 @@
 		},
 		"card8": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card Title 4x4",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -265,7 +471,9 @@
 		},
 		"card9": {
 			"sap.card": {
-				"icon": "../images/Woman_avatar_01.png",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card Title 4x4 with image",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -276,7 +484,9 @@
 		},
 		"card10": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card Title 2x2",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -287,7 +497,9 @@
 		},
 		"card11": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card Title 2x2",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -298,7 +510,9 @@
 		},
 		"card12": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card Title 6x4",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -309,7 +523,9 @@
 		},
 		"card13": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card Title 6x4",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -322,7 +538,9 @@
 	"grid": {
 		"card1": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card Title 2x2",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -333,7 +551,9 @@
 		},
 		"card2": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+			  "icon":  {
+				"src": "sap-icon://accept"
+			  },
 				"title": "Card Title 4x2",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -344,7 +564,9 @@
 		},
 		"card3": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+			  "icon":  {
+				"src": "sap-icon://accept"
+			  },
 				"title": "Card Title 1x1",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -355,7 +577,9 @@
 		},
 		"card4": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+			  "icon":  {
+				"src": "sap-icon://accept"
+			  },
 				"title": "Card Title 2x1",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -366,7 +590,9 @@
 		},
 		"card5": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+			  "icon":  {
+				"src": "sap-icon://accept"
+			  },
 				"title": "Card Title 1x1",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -377,7 +603,9 @@
 		},
 		"card6": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+			  "icon":  {
+				"src": "sap-icon://accept"
+			  },
 				"title": "Card Title 4x1",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -388,7 +616,9 @@
 		},
 		"card7": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+			  "icon":  {
+				"src": "sap-icon://accept"
+			  },
 				"title": "Card Title 2x6",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -399,7 +629,9 @@
 		},
 		"card8": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+			  "icon":  {
+				"src": "sap-icon://accept"
+			  },
 				"title": "Card Title 4x4",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -410,7 +642,9 @@
 		},
 		"card9": {
 			"sap.card": {
-				"icon": "../images/Woman_avatar_01.png",
+			  "icon":  {
+				"src": "sap-icon://accept"
+			  },
 				"title": "Card Title 4x4 with image",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -421,7 +655,9 @@
 		},
 		"card10": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+			  "icon":  {
+				"src": "sap-icon://accept"
+			  },
 				"title": "Card Title 2x2",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -432,7 +668,9 @@
 		},
 		"card11": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+			  "icon":  {
+				"src": "sap-icon://accept"
+			  },
 				"title": "Card Title 2x2",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -443,7 +681,9 @@
 		},
 		"card12": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+			  "icon":  {
+				"src": "sap-icon://accept"
+			  },
 				"title": "Card Title 6x4",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -454,7 +694,9 @@
 		},
 		"card13": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+			  "icon":  {
+				"src": "sap-icon://accept"
+			  },
 				"title": "Card Title 6x4",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -467,7 +709,9 @@
 	"zflow": {
 		"card1": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+			  "icon":  {
+				"src": "sap-icon://accept"
+			  },
 				"title": "Card Title 2x2",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -478,7 +722,9 @@
 		},
 		"card2": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+			  "icon":  {
+				"src": "sap-icon://accept"
+			  },
 				"title": "Card Title 4x2",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -489,7 +735,9 @@
 		},
 		"card3": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+			  "icon":  {
+				"src": "sap-icon://accept"
+			  },
 				"title": "Card Title 1x1",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -500,7 +748,9 @@
 		},
 		"card4": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+			  "icon":  {
+				"src": "sap-icon://accept"
+			  },
 				"title": "Card Title 2x1",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -511,7 +761,9 @@
 		},
 		"card5": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+			  "icon":  {
+				"src": "sap-icon://accept"
+			  },
 				"title": "Card Title 1x1",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -522,7 +774,9 @@
 		},
 		"card6": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+			  "icon":  {
+				"src": "sap-icon://accept"
+			  },
 				"title": "Card Title 4x1",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -533,7 +787,9 @@
 		},
 		"card7": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+			  "icon":  {
+				"src": "sap-icon://accept"
+			  },
 				"title": "Card Title 2x6",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -544,7 +800,9 @@
 		},
 		"card8": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card Title 4x4",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -555,7 +813,9 @@
 		},
 		"card9": {
 			"sap.card": {
-				"icon": "../images/Woman_avatar_01.png",
+				"icon":  {
+				  "src": "../images/Woman_avatar_01.png"
+				},
 				"title": "Card Title 4x4 with image",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -566,7 +826,9 @@
 		},
 		"card10": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+			  "icon":  {
+				"src": "sap-icon://accept"
+			  },
 				"title": "Card Title 2x2",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -577,7 +839,9 @@
 		},
 		"card11": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+			  "icon":  {
+				"src": "sap-icon://accept"
+			  },
 				"title": "Card Title 2x2",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -588,7 +852,9 @@
 		},
 		"card12": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+			  "icon":  {
+				"src": "sap-icon://accept"
+			  },
 				"title": "Card Title 6x4",
 				"subTitle": "Card Subtitle",
 				"status": "Count",
@@ -599,7 +865,9 @@
 		},
 		"card13": {
 			"sap.card": {
-				"icon": "sap-icon://accept",
+				"icon":  {
+				  "src": "sap-icon://accept"
+				},
 				"title": "Card Title 6x4",
 				"subTitle": "Card Subtitle",
 				"status": "Count",

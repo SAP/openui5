@@ -1,0 +1,80 @@
+{
+	"_version": "1.8.0",
+	"sap.app": {
+		"id": "test.cardcontent.listcardmail",
+		"type": "card",
+		"i18n": "i18n.properties",
+		"title": "{{title}}",
+		"subTitle": "{{subTitle}}",
+		"info": "{{info}}",
+		"description": "{{description}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"icons": {
+			"icon": "sap-icon://add-contact",
+			"favIcon": "icon/F1373_Approve_Purchase_Orders.ico",
+			"phone": "icon/launchicon/57_iPhone_Desktop_Launch.png",
+			"phone@2": "icon/launchicon/114_iPhone-Retina_Web_Clip.png",
+			"tablet": "icon/launchicon/72_iPad_Desktop_Launch.png",
+			"tablet@2": "icon/launchicon/144_iPad_Retina_Web_Clip.png"
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": false
+		}
+	},
+	"sap.card": {
+		"type": "ListCard",
+		"settings": {
+			"listdata": {
+				"type": "json",
+				"serviceType": "OData",
+				"request": {
+					"mode": "same-origin",
+					"url": {
+						"protocol": "https",
+						"host": "mail.sap.com",
+						"port": "443",
+						"path": "/api/v2.0/me/MailFolders/inbox/messages"
+					},
+					"method": "GET",
+					"parameters": {
+						"$select": "Subject,Sender,IsRead",
+						"$top": "10"
+					},
+					"headers": {
+						"Content-Type": "application/json; charset=utf-8"
+					},
+					"credentials": "include"
+				},
+				"response": {
+					"path": "/value"
+				}
+			},
+			"fields": {
+				"icon": {
+					"label": "{{icon_label}}",
+					"value": "{IsRead}",
+					"type": "mapper",
+					"importance": 1
+				},
+				"title": {
+					"label": "{{title_label}}",
+					"value": "{Subject}",
+					"type": "string",
+					"importance": 0
+				},
+				"description": {
+					"label": "{{description_label}}",
+					"value": "{Sender/EmailAddress/Address}",
+					"type": "string",
+					"importance": 0
+				}
+			}
+		}
+	}
+}
