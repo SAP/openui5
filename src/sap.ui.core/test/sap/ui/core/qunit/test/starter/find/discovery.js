@@ -129,9 +129,11 @@ sap.ui.define([
 				catch( () => [] );
 		}
 
+		var origTestSuite = window.jsUnitTestSuite;
 		window.jsUnitTestSuite = TestSuite;
-
-		return checkTestPage({fullpage: sEntryPage});
+		return checkTestPage({fullpage: sEntryPage}).finally(function() {
+			window.jsUnitTestSuite = origTestSuite;
+		});
 
 	}
 
@@ -143,7 +145,7 @@ sap.ui.define([
 					if ( Array.isArray(test.tests) ) {
 						test.tests.forEach(collect);
 						if ( test.simple ) {
-							allSuites.push(test.name);
+							allSuites.push(test.fullpage);
 						}
 					}
 				}

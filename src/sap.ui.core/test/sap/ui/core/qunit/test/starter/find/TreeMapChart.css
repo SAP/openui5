@@ -1,0 +1,42 @@
+svg {
+	overflow: hidden;
+}
+
+rect {
+	pointer-events: all;
+	cursor: pointer;
+	stroke: #EEEEEE;
+}
+
+.chart {
+	display: block;
+	margin: auto;
+	overflow: hidden;
+	margin: 0;
+	font-size: 12px;
+	font-family: "Helvetica Neue", Helvetica;
+}
+
+.label {
+	stroke: #000000;
+	fill: #000000;
+	stroke-width: 0;
+	margin: 2px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.package .label {
+	font-size: 12px;
+	stroke: #000000;
+	fill: #FFFFFF;
+}
+
+.leaf .label {
+	font-size: 11px;
+}
+
+.cell {
+	font-size: 11px;
+	cursor: pointer
+}

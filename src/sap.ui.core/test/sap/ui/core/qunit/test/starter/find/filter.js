@@ -68,7 +68,7 @@ sap.ui.define([
 			if ( field.path != null ) {
 				if ( field.formatter ) {
 					if ( field.path.indexOf("/") >= 0 ) {
-						var aPath = field.path.split("/");
+						let aPath = field.path.split("/");
 						return function(o) {
 							return field.formatter(ObjectPath.get(aPath.slice(), o));
 						};
@@ -78,7 +78,7 @@ sap.ui.define([
 					};
 				} else {
 					if ( field.path.indexOf("/") >= 0 ) {
-						var aPath = field.path.split("/");
+						let aPath = field.path.split("/");
 						return function(o) {
 							return ObjectPath.get(aPath.slice(), o);
 						};

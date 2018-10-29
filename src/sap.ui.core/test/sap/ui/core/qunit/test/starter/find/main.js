@@ -14,6 +14,8 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/m/Page",
 	"sap/m/SearchField",
+	"sap/m/SegmentedButton",
+	"sap/m/SegmentedButtonItem",
 	"sap/m/Text",
 	"sap/m/Toolbar",
 	"sap/ui/table/Table",
@@ -22,10 +24,19 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/base/Log",
 	"sap/ui/util/Storage",
+	"sap/ui/test/starter/_utils",
 	"./discovery",
-	"./filter"
-], function(App, Label, Link, Page, SearchField, Text, Toolbar, Table, Column, Filter, JSONModel, Log, Storage, discovery, makeFilterFunction) {
+	"./filter",
+	"./TreeMapChart"
+], function(App, Label, Link, Page, SearchField, SegmentedButton, SegmentedButtonItem, Text, Toolbar, Table, Column, Filter, JSONModel, Log, Storage, _utils, discovery, makeFilterFunction, TreeMapChart) {
 	"use strict";
+
+	function compare(s1,s2) {
+		if ( s1 === s2 ) {
+			return 0;
+		}
+		return s1 < s2 ? -1 : 1;
+	}
 
 	// remove app name
 	function removeWebContext(pathname) {
@@ -68,7 +79,7 @@ sap.ui.define([
 	function formatModulesShort(module) {
 		let result;
 		if ( !Array.isArray(module) || module.length === 1 ) {
-			return;
+			return "";
 		}
 
 		function shorten(str) {
@@ -98,6 +109,7 @@ sap.ui.define([
 
 	var oModel = new JSONModel({data: []});
 	var oTable;
+	var oTreeMapChart;
 
 	function fnSearch(oEvent) {
 		var oFilter = new Filter(
@@ -130,41 +142,67 @@ sap.ui.define([
 	function createUI() {
 
 		new App("app", {
+			models: oModel,
 			busy: true,
 			busyIndicatorDelay: 0,
 			initialPage: "page",
 			pages: [
 				new Page("page", {
 					enableScrolling: false,
-					showHeader: false,
+					showHeader: true,
 					//title: "Find Test",
+					customHeader: new sap.m.Bar({
+						contentLeft: [
+							new Label({
+								text: "Find Test Case",
+								labelFor: "search"
+							}),
+							new SearchField("search", {
+								showSearchButton: false,
+								width: "500px",
+								placeholder: "Enter parts of a class name or test case name or an abbreviation (e.g. CB for ComboBox)",
+								liveChange : fnSearch
+							}),
+							new Text("info", {
+								text: "{= ${/filteredTestCount} < ${/testCount} ? ${/filteredTestCount} + \" of \" + ${/testCount} : ${/testCount}} Tests"
+							})
+						],
+						contentRight: [
+							new SegmentedButton("view", {
+								selectionChange: function(e) {
+									let key = e.getSource().getSelectedKey();
+									if ( key === "table" ) {
+										oTable.setVisible(true);
+										oTreeMapChart.setVisible(false);
+									} else {
+										oTable.setVisible(false);
+										oTreeMapChart.setVisible(true);
+										oTreeMapChart.setData(oModel.getData().tests);
+										oTreeMapChart.invalidate();
+									}
+								},
+								items: [
+									new SegmentedButtonItem({
+										key: "table",
+										icon: "sap-icon://table-view"
+									}),
+									new SegmentedButtonItem({
+										key: "treemap",
+										icon: "sap-icon://Chart-Tree-Map"
+									})
+								]
+							}).addStyleClass("sapUiSmallMarginBottom")
+						]
+					}),
 					content: [
 						oTable = new Table("table", {
-							models: oModel,
 							selectionMode: "None",
 							columnHeaderHeight: 24,
 							columnHeaderVisible: true,
 							visibleRowCountMode: "Auto",
 							rowHeight: 20,
-							toolbar: new Toolbar({
-								content: [
-									new Label({
-										text: "Find Test Case",
-										labelFor: "search"
-									}),
-									new SearchField("search", {
-										showSearchButton: false,
-										width: "640px",
-										placeholder: "Enter parts of a class name or test case name or an abbreviation (e.g. CB for ComboBox)",
-										liveChange : fnSearch
-									}),
-									new Text("info", {
-										text: "{= ${/filteredTestCount} < ${/testCount} ? ${/filteredTestCount} + \" of \" + ${/testCount} : ${/testCount}} Tests"
-									})
-								]
-							}),
 							columns: [
-								new sap.ui.table.Column("test",{
+								new Column("test",{
 									//width: "85px",
 									label: new Label({text: "Testcase"}),
 									template: new Link({
@@ -174,7 +212,7 @@ sap.ui.define([
 									}),
 									sortProperty: "page"
 								}),
-								new sap.ui.table.Column("modules",{
+								new Column("modules",{
 									//width: "85px",
 									label: new Label({text: "Modules"}),
 									width: "40ex",
@@ -184,7 +222,7 @@ sap.ui.define([
 									}),
 									sortProperty: "page"
 								}),
-								new sap.ui.table.Column("qunitVersion",{
+								new Column("qunitVersion",{
 									//width: "85px",
 									label: new Label({text: "Q"}),
 									width: "4ex",
@@ -193,7 +231,7 @@ sap.ui.define([
 									}),
 									sortProperty: "qunit/version"
 								}),
-								new sap.ui.table.Column("sinonVersion",{
+								new Column("sinonVersion",{
 									//width: "85px",
 									label: new Label({text: "S"}),
 									width: "4ex",
@@ -207,6 +245,10 @@ sap.ui.define([
 								path: "/tests"
 							},
 							footer: ""
+						}),
+						oTreeMapChart = new TreeMapChart({
+							id: "chart",
+							visible: false
 						})
 					]
 				})
@@ -255,21 +297,21 @@ sap.ui.define([
 			let search = sap.ui.getCore().byId("search");
 			let url = new URL(location.href);
 			search.setValue( cleanURL(url.searchParams.get("testpage")) || "");
-			let entryPage = cleanURL(url.searchParams.get("root")) || "test-resources/qunit/testsuite.qunit.html";
+			let entryPage = cleanURL(url.searchParams.get("root")) || _utils.getAttribute("data-sap-ui-root-testsuite") || "test-resources/qunit/testsuite.qunit.html";
 
 			if ( restoreData(entryPage) ) {
 				sap.ui.getCore().byId("app").setBusy(false);
 			}
 
-			discovery.findTests( entryPage, progress ).then( aTestURLs => {
+			discovery.findTests( entryPage, progress ).then( aTests => {
 				sap.ui.getCore().byId("app").setBusy(false);
 				oTable.setFooter("Refresh: done.");
 				oModel.setData({
 					_$schemaVersion: SCHEMA_VERSION,
 					entryPage,
-					tests: aTestURLs.sort(),
-					testCount: aTestURLs.length,
-					filteredTestCount: aTestURLs.length
+					tests: aTests.sort((t1,t2) => compare(t1.fullpage, t2.fullpage)),
+					testCount: aTests.length,
+					filteredTestCount: aTests.length
 				});
 				saveData();
 				setTimeout(function() {
