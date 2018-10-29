@@ -443,6 +443,30 @@ sap.ui.define([
 		assert.strictEqual(sDirection, "Forwards", "After going back to foo, bar should be forwards");
 	});
 
+	QUnit.test("Should attach listener to each of the history relevant event names", function(assert) {
+		var oHashChanger = new HashChanger(),
+			aEventNames = ["foo", "bar"];
+
+		oHashChanger.getEventNamesForHistory = function() {
+			return aEventNames;
+		};
+
+		aEventNames.forEach(function(sEvent) {
+			assert.ok(!oHashChanger.hasListeners(sEvent), "HashChanger doesn't have listener for event " + sEvent + " before History is attached to it");
+		});
+		assert.ok(!oHashChanger.hasListeners("hashChanged"), "HashChanger doesn't have listener for event hashChanged");
+
+		var oHistory = new History(oHashChanger);
+
+		aEventNames.forEach(function(sEvent) {
+			assert.ok(oHashChanger.hasListeners(sEvent), "HashChanger has listener for event " + sEvent + " after History is attached to it");
+		});
+		assert.ok(!oHashChanger.hasListeners("hashChanged"), "HashChanger doesn't have listener for event hashChanged");
+
+		oHistory.destroy();
+		oHashChanger.destroy();
+	});
+
 	QUnit.module("history.state enhancement", {
 		beforeEach: function(assert) {
 			var that = this;
