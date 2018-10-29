@@ -120,7 +120,7 @@ sap.ui.define([
 	 * Interact with specific control.
 	 *
 	 * @param {object} oOptions Options for the interaction
-	 * @param {Object} oOptions.control Control to interact with;
+	 * @param {Object} oOptions.control control selector for the control to interact with
 	 * The returned promise will be rejected if the control is not specified or does not have a DOM reference
 	 * @param {sap.ui.test.RecordReplay.InteractionType} oOptions.interactionType Interaction type;
 	 * Currently supported interaction types are {@link sap.ui.test.RecordReplay.InteractionType}
@@ -131,21 +131,28 @@ sap.ui.define([
 	 * @public
 	 */
 	RecordReplay.interactWithControl = function (oOptions) {
+		var sControl = JSON.stringify(oOptions.control);
+
 		return new Promise(function (resolve, reject) {
 			var oAction;
 			switch (oOptions.interactionType) {
 				case RecordReplay.InteractionType.Press: oAction = new Press(); break;
 				case RecordReplay.InteractionType.EnterText: oAction = new EnterText({text:oOptions.enterText}); break;
-				default: reject(new Error("Could not interact with control " + oOptions.control + ". Unsupported interaction type: " + oOptions.interactionType +
-				" . Supported interaction types are: " + Object.keys(RecordReplay.InteractionType).join(", ")));
+				default: reject(new Error("Could not interact with control " + sControl +
+					". Unsupported interaction type: " + oOptions.interactionType +
+					" . Supported interaction types are: " + Object.keys(RecordReplay.InteractionType).join(", ")));
 			}
 			try {
-				oAction.executeOn(oOptions.control);
-				oLogger.debug("Executed action " + oOptions.interactionType + " on control " + oOptions.oControl);
+				var oControl = _ControlFinder._findControls(oOptions.control)[0];
+				if (!oControl) {
+					throw new Error("No controls found using selector " + sControl);
+				}
+				oAction.executeOn(oControl);
+				oLogger.debug("Executed action " + oOptions.interactionType + " on control " + sControl);
 				resolve();
 			} catch (oError) {
 				reject(new Error("Could not execute interaction " + oOptions.interactionType +
-					" on control " + oOptions.control + ". Error: " + oError));
+					" on control " + sControl + ". Error: " + oError));
 			}
 		});
 	};
@@ -161,6 +168,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RecordReplay.waitForUI5 = function (oOptions) {
+		oOptions = oOptions || {};
 		_autoWaiterAsync.extendConfig(oOptions);
 		return new Promise(function (resolve, reject) {
 			_autoWaiterAsync.waitAsync(function (sError) {
