@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/core/UIComponent",
+	"sap/ui/core/ComponentContainer",
 	"sap/m/Page",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/service/index",
@@ -10,6 +11,7 @@ sap.ui.define([
 ],
 function (
 	UIComponent,
+	ComponentContainer,
 	Page,
 	RuntimeAuthoring,
 	mServicesDictionary,
@@ -22,6 +24,7 @@ function (
 
 	QUnit.module("startService()", {
 		before: function () {
+			QUnit.config.fixture = null;
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
 					manifest: {
@@ -35,7 +38,12 @@ function (
 				}
 			});
 
-			this.oComponent = new FixtureComponent();
+			this.oComponent = new FixtureComponent('Comp');
+			this.oComponentContainer = new ComponentContainer("CompCont", {
+				component: this.oComponent
+			});
+			this.oComponentContainer.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
 		},
 		beforeEach: function () {
 			this.oRta = new RuntimeAuthoring({
@@ -48,7 +56,8 @@ function (
 			sandbox.restore();
 		},
 		after: function () {
-			this.oComponent.destroy();
+			this.oComponentContainer.destroy();
+			QUnit.config.fixture = '';
 		}
 	}, function () {
 		QUnit.test("service initialisation must always wait until RTA is started", function (assert) {
@@ -80,6 +89,7 @@ function (
 
 	QUnit.module("startService() - RTA is pre-started", {
 		before: function () {
+			QUnit.config.fixture = null;
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
 					manifest: {
@@ -93,7 +103,12 @@ function (
 				}
 			});
 
-			this.oComponent = new FixtureComponent();
+			this.oComponent = new FixtureComponent('Comp');
+			this.oComponentContainer = new ComponentContainer('CompCont', {
+				component: this.oComponent
+			});
+			this.oComponentContainer.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
 		},
 		beforeEach: function () {
 			this.oRta = new RuntimeAuthoring({
@@ -108,7 +123,8 @@ function (
 			sandbox.restore();
 		},
 		after: function () {
-			this.oComponent.destroy();
+			this.oComponentContainer.destroy();
+			QUnit.config.fixture = '';
 		}
 	}, function () {
 		QUnit.test("starting a service", function (assert) {
@@ -491,6 +507,7 @@ function (
 
 	QUnit.module("stopService()", {
 		before: function () {
+			QUnit.config.fixture = null;
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
 					manifest: {
@@ -504,7 +521,12 @@ function (
 				}
 			});
 
-			this.oComponent = new FixtureComponent();
+			this.oComponent = new FixtureComponent('Comp');
+			this.oComponentContainer = new ComponentContainer('CompCont', {
+				component: this.oComponent
+			});
+			this.oComponentContainer.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
 		},
 		beforeEach: function () {
 			this.oRta = new RuntimeAuthoring({
@@ -519,7 +541,8 @@ function (
 			sandbox.restore();
 		},
 		after: function () {
-			this.oComponent.destroy();
+			this.oComponentContainer.destroy();
+			QUnit.config.fixture = '';
 		}
 	}, function () {
 		QUnit.test("stopping running service", function (assert) {
@@ -552,6 +575,7 @@ function (
 
 	QUnit.module("getService()", {
 		before: function () {
+			QUnit.config.fixture = null;
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
 					manifest: {
@@ -565,7 +589,12 @@ function (
 				}
 			});
 
-			this.oComponent = new FixtureComponent();
+			this.oComponent = new FixtureComponent('Comp');
+			this.oComponentContainer = new ComponentContainer('CompCont', {
+				component: this.oComponent
+			});
+			this.oComponentContainer.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
 		},
 		beforeEach: function () {
 			this.oRta = new RuntimeAuthoring({
@@ -580,7 +609,8 @@ function (
 			sandbox.restore();
 		},
 		after: function () {
-			this.oComponent.destroy();
+			this.oComponentContainer.destroy();
+			QUnit.config.fixture = '';
 		}
 	}, function () {
 		QUnit.test("check alias to startService()", function (assert) {

@@ -4,6 +4,7 @@ sap.ui.require([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/core/UIComponent",
+	"sap/ui/core/ComponentContainer",
 	"sap/m/Page",
 	"sap/m/Button",
 	"sap/ui/dt/OverlayRegistry",
@@ -13,6 +14,7 @@ function (
 	RuntimeAuthoring,
 	BasePlugin,
 	UIComponent,
+	ComponentContainer,
 	Page,
 	Button,
 	OverlayRegistry,
@@ -24,6 +26,7 @@ function (
 
 	QUnit.module("basic functionality", {
 		before: function () {
+			QUnit.config.fixture = null;
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
 					manifest: {
@@ -44,6 +47,12 @@ function (
 			this.oComponent = new FixtureComponent();
 			this.oPage = this.oComponent.getRootControl();
 			this.oButton = this.oPage.getContent()[0];
+
+			this.oComponentContainer = new ComponentContainer("CompCont1", {
+				component: this.oComponent
+			});
+			this.oComponentContainer.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
 
 			sandbox.stub(BasePlugin.prototype, 'hasChangeHandler').returns(true);
 		},
@@ -72,7 +81,8 @@ function (
 			this.oRta.destroy();
 		},
 		after: function () {
-			this.oComponent.destroy();
+			QUnit.config.fixture = '';
+			this.oComponentContainer.destroy();
 			sandbox.restore();
 		}
 	}, function() {

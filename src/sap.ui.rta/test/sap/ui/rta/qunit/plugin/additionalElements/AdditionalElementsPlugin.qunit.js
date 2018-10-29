@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/Utils",
-	"sap/ui/layout/PaneContainer",
+	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
 	"sap/m/Input",
 	"sap/m/Bar",
@@ -25,7 +25,7 @@ sap.ui.define([
 	RTAPlugin,
 	CommandFactory,
 	RTAUtils,
-	PaneContainer,
+	VerticalLayout,
 	Button,
 	Input,
 	Bar,
@@ -66,7 +66,7 @@ sap.ui.define([
 			},
 			SimpleChanges.moveControls
 		],
-		"sap.ui.layout.PaneContainer": [
+		"sap.ui.layout.VerticalLayout": [
 			{
 				changeType: "addFields",
 				changeHandler : oDummyChangeHandler
@@ -1085,7 +1085,7 @@ sap.ui.define([
 	});
 
 
-	function givenSomeBoundControls(assert){
+	function givenSomeBoundControls() {
 		sandbox.stub(sap.ui.fl.Utils, "_getAppComponentForComponent").returns(oMockedAppComponent);
 
 		this.oSibling = new Button({id: "Sibling", visible : true});
@@ -1099,10 +1099,13 @@ sap.ui.define([
 			contentRight : [ this.oIrrelevantChild]
 		});
 
-		this.oPseudoPublicParent = new PaneContainer({
+		this.oPseudoPublicParent = new VerticalLayout({
 			id : "pseudoParent",
-			panes : [ this.oControl ]
+			content : [ this.oControl ]
 		});
+
+		this.oPseudoPublicParent.placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
 
 		//simulate analyzer returning some elements
 		this.fnEnhanceInvisibleElementsStub = sandbox.stub(AdditionalElementsAnalyzer,"enhanceInvisibleElements").callsFake(function (oParent, mActions) {
@@ -1164,7 +1167,7 @@ sap.ui.define([
 
 		var oPseudoPublicParentDesignTimeMetadata = {
 			aggregations : {
-				panes : {
+				content : {
 					propagateRelevantContainer : bPropagateRelevantContainer,
 					actions : null,
 					childNames : null,
@@ -1203,7 +1206,7 @@ sap.ui.define([
 			actions : null
 		};
 		var oCustomDesignTimeMetadata = {
-			"sap.ui.layout.PaneContainer" : oPseudoPublicParentDesignTimeMetadata,
+			"sap.ui.layout.VerticalLayout" : oPseudoPublicParentDesignTimeMetadata,
 			"sap.m.Input" : oUnsupportedInvisibleDesignTimeMetadata,
 			"sap.m.Bar" : oParentDesignTimeMetadata,
 			"sap.m.Button" : oControlDesignTimeMetadata

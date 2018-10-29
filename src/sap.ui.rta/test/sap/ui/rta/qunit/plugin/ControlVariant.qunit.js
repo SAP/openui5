@@ -1217,6 +1217,8 @@ sap.ui.define([
 				content: [this.oLayoutOuter, this.oObjectPageLayout]
 			}).placeAt("qunit-fixture");
 
+			sap.ui.getCore().applyChanges();
+
 			var oVariantManagementDesignTimeMetadata = {
 				"sap.ui.fl.variants.VariantManagement": {}
 			};
@@ -1312,6 +1314,9 @@ sap.ui.define([
 				"sap.ui.fl.variants.VariantManagement": {}
 			};
 
+			this.oVariantManagementControl.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+
 			this.oDesignTime = new DesignTime({
 				designTimeMetadata : oVariantManagementDesignTimeMetadata,
 				rootElements : [this.oVariantManagementControl]
@@ -1329,6 +1334,7 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			sandbox.restore();
+			this.oVariantManagementControl.destroy();
 			this.oDesignTime.destroy();
 			this.oData = null;
 			this.oModel.destroy();

@@ -672,6 +672,9 @@ function(
 				groups : [this.oGroup]
 			});
 
+			this.oSmartForm.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+
 			// Create commmands
 			this.oGroupElementDesignTimeMetadata = new DesignTimeMetadata({
 				data : {

@@ -555,7 +555,7 @@ function (
 	/**
 	 * @typedef {object} sap.ui.dt.DesignTime.CreateOverlayParameters
 	 * @property {sap.ui.base.ManagedObject} element - Control instance for which overlay is being created
-	 * @property {boolean} [root] - Proxy for "isRoot" property of sap.ui.dt.ElementOverlay constructor
+	 * @property {boolean} [root="true"] - Proxy for "isRoot" property of sap.ui.dt.ElementOverlay constructor
 	 * @property {object} [parentMetadata] - Map with metadata from the parent
 	 * @property {boolean} [visible] - Proxy for "visible" property of sap.ui.dt.ElementOverlay constructor
 	 * @private
@@ -597,7 +597,7 @@ function (
 				return this._mPendingOverlays[sElementId];
 			// 4. Create new ElementOverlay
 			} else {
-				if (typeof mParams.root === "undefined" && !ElementUtil.getParent(mParams.element)) {
+				if (typeof mParams.root === "undefined") {
 					mParams.root = true;
 				}
 				this._mPendingOverlays[sElementId] = this._createElementOverlay(mParams)
@@ -681,8 +681,12 @@ function (
 	DesignTime.prototype._createElementOverlay = function (mParams) {
 		var oElement = mParams.element;
 
+		function createElementOverlay(mParameters) {
+			return new ElementOverlay(mParameters);
+		}
+
 		return new Promise(function (fnResolve, fnReject) {
-			new ElementOverlay({
+			createElementOverlay({
 				element: oElement,
 				isRoot: mParams.root,
 				visible: typeof mParams.visible !== "boolean" || mParams.visible, // TODO: check why defaultValue doesn't work if "undefined" specified
@@ -953,6 +957,7 @@ function (
 				});
 				oElementOverlay = this.createOverlay({
 					element: oElement,
+					root: false,
 					parentMetadata: oParentAggregationOverlay.getDesignTimeMetadata().getData()
 				})
 					.then(function (oElementOverlay) {

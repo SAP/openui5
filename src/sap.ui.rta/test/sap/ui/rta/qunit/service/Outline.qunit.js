@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/ui/core/UIComponent",
+	"sap/ui/core/ComponentContainer",
 	"testdata/StaticDesigntimeMetadata",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
@@ -30,6 +31,7 @@ sap.ui.define([
 	ObjectPageSection,
 	ObjectPageSubSection,
 	UIComponent,
+	ComponentContainer,
 	StaticDesigntimeMetadata,
 	sinon
 ) {
@@ -37,35 +39,28 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 
-	var oPage;
-
-	var MockComponent = UIComponent.extend("MockController", {
-		metadata: {
-			manifest: {
-				"sap.app" : {
-					applicationVersion : {
-						version : "1.2.3"
-					}
-				}
-			}
-		},
-		createContent : function() {
-			oPage = new Page("mainPage");
-			return oPage;
-		}
-	});
-
-	var fnDepthErrorCheck = function(assert, bDepthLevelsCovered) {
-		if (!bDepthLevelsCovered) {
-			assert.ok(false, "all node depth levels not covered");
-		}
-	};
-
 	QUnit.module("Given that RuntimeAuthoring and Outline service are created and get function is called", {
 		before: function(assert) {
+			QUnit.config.fixture = null;
 			var done = assert.async();
+			var MockComponent = UIComponent.extend("MockController", {
+				metadata: {
+					manifest: {
+						"sap.app": {
+							applicationVersion : {
+								version : "1.2.3"
+							}
+						}
+					}
+				},
+				createContent: function() {
+					return new Page("mainPage");
+				}
+			});
 
 			this.oComp = new MockComponent("testComponent");
+
+			this.oPage = this.oComp.getRootControl();
 
 			// --Root control 1
 			//	page
@@ -74,40 +69,45 @@ sap.ui.define([
 			//				objectPageSubSection
 			//					verticalLayout
 			//						button
-
-			this.oButton1 = new Button("button1");
-
-			this.oLayout = new VerticalLayout("layout1",{
-				content : [this.oButton1]
-			});
-
-			this.oObjectPageSubSection = new ObjectPageSubSection("objSubSection", {
-				blocks: [this.oLayout]
-			});
-
-			this.oObjectPageSection = new ObjectPageSection("objSection",{
-				subSections: [this.oObjectPageSubSection]
-			});
-
-			this.oObjectPageLayout = new ObjectPageLayout("objPage",{
-				sections : [this.oObjectPageSection]
-			});
-
-			oPage.addContent(this.oObjectPageLayout);
+			this.oPage.addContent(
+				this.oObjectPageLayout = new ObjectPageLayout("objPage",{
+					sections: [
+						this.oObjectPageSection = new ObjectPageSection("objSection",{
+							subSections: [
+								this.oObjectPageSubSection = new ObjectPageSubSection("objSubSection", {
+									blocks: [
+										this.oLayout = new VerticalLayout("layout1",{
+											content: [
+												this.oButton1 = new Button("button1")
+											]
+										})
+									]
+								})
+							]
+						})
+					]
+				})
+			);
 
 			// --Root control 2
 			//	verticalLayout
 			//		button
-
-			this.oButton2 = new Button("button2");
-
 			this.oOuterLayout = new VerticalLayout("layout2",{
-				content : [this.oButton2]
+				content: [
+					this.oButton2 = new Button("button2")
+				]
 			});
+			this.oOuterLayout.placeAt('qunit-fixture');
+
+			this.oComponentContainer = new ComponentContainer("CompCont", {
+				component: this.oComp
+			});
+			this.oComponentContainer.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
 
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
-				rootControl: oPage
+				rootControl: this.oComponentContainer
 			});
 
 			// check designtime metadata label property
@@ -120,7 +120,7 @@ sap.ui.define([
 
 			sandbox.stub(DesignTime.prototype, "getDesignTimeMetadataFor")
 
-			.withArgs(oPage).returns(StaticDesigntimeMetadata.getPageDesigntimeMetadata())
+			.withArgs(this.oPage).returns(StaticDesigntimeMetadata.getPageDesigntimeMetadata())
 			.withArgs(this.oButton1).returns(StaticDesigntimeMetadata.getButtonDesigntimeMetadata())
 			.withArgs(this.oLayout).returns(oExtendedDesigntimeMetadataForLayout)
 			.withArgs(this.oObjectPageSubSection).returns(StaticDesigntimeMetadata.getObjectPageSubSectionDesigntimeMetadata())
@@ -139,7 +139,7 @@ sap.ui.define([
 				};
 				this.oRta._oDesignTime.attachEvent("elementOverlayCreated", fnElementOverlayCreatedHandler, this);
 				this.oOutline = oService;
-				var oPageOverlay = OverlayRegistry.getOverlay(oPage);
+				var oPageOverlay = OverlayRegistry.getOverlay(this.oPage);
 				oPageOverlay.setEditable(true);
 				this.oRta._oDesignTime.addRootElement(this.oOuterLayout);
 			}.bind(this));
@@ -147,11 +147,10 @@ sap.ui.define([
 			this.oRta.start();
 		},
 		after: function() {
+			QUnit.config.fixture = '';
 			this.oRta.destroy();
-			this.oObjectPageLayout.destroy();
+			this.oComponentContainer.destroy();
 			this.oOuterLayout.destroy();
-			this.oComp.destroy();
-			oPage.destroy();
 			sandbox.restore();
 		}
 	}, function() {
@@ -179,15 +178,14 @@ sap.ui.define([
 
 				assert.ok(Array.isArray(aReceivedResponse[0].elements), "then first level children are returned");
 				var bDepthLevelsCovered = aReceivedResponse[0].elements.some(function(oChild1) {
-
-					if (oChild1.technicalName === "content") { // page content
+					if (oChild1.technicalName === "component") { // component aggregation of ComponentContainer
 						assert.ok(Array.isArray(oChild1.elements), "then second level children are returned");
 
-						var oChild2 = oChild1.elements[0]; // object page
+						var oChild2 = oChild1.elements[0]; // Component
 						assert.ok(Array.isArray(oChild2.elements), "then third level children are returned");
 
-						return oChild2.elements.some(function (oChild3){
-							if (oChild3.technicalName === "sections"){ // object page sections
+						return oChild2.elements.some(function (oChild3) {
+							if (oChild3.technicalName === "rootControl"){ // rootControl aggregation of Component
 								assert.notOk(oChild3.elements, "then fourth level children are not returned");
 								return true;
 							}
@@ -195,7 +193,7 @@ sap.ui.define([
 					}
 				});
 
-				fnDepthErrorCheck(assert, bDepthLevelsCovered);
+				assert.ok(bDepthLevelsCovered, "all node depth levels are covered");
 			});
 		});
 
@@ -227,7 +225,7 @@ sap.ui.define([
 					}
 				});
 
-				fnDepthErrorCheck(assert, bDepthLevelsCovered);
+				assert.ok(bDepthLevelsCovered, "all node depth levels are covered");
 			});
 		});
 
@@ -245,16 +243,34 @@ sap.ui.define([
 					}
 				});
 
-				fnDepthErrorCheck(assert, bDepthLevelsCovered);
+				assert.ok(bDepthLevelsCovered, "all node depth levels are covered");
 			});
 		});
 	});
 
 	QUnit.module("Given that RuntimeAuthoring and Outline service are created and get function is called", {
+		before: function () {
+
+		},
 		beforeEach: function(assert) {
 			var done = assert.async();
+			var MockComponent = UIComponent.extend("MockController", {
+				metadata: {
+					manifest: {
+						"sap.app": {
+							applicationVersion : {
+								version : "1.2.3"
+							}
+						}
+					}
+				},
+				createContent: function() {
+					return new Page("mainPage");
+				}
+			});
 
 			this.oComp = new MockComponent("testComponent");
+			this.oPage = this.oComp.getRootControl();
 
 			// --Root control
 			//	page
@@ -272,14 +288,20 @@ sap.ui.define([
 				content : [this.oButton1]
 			});
 
-			oPage.addContent(this.oLayout);
-			oPage.addContent(this.oLayout1);
+			this.oPage.addContent(this.oLayout);
+			this.oPage.addContent(this.oLayout1);
 
 			var oPlugin = new Plugin({});
 			oPlugin.isEditable = function() { return false; };
 
+			this.oComponentContainer = new ComponentContainer("CompCont", {
+				component: this.oComp
+			});
+			this.oComponentContainer.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+
 			this.oRta = new RuntimeAuthoring({
-				rootControl: oPage,
+				rootControl: this.oComponentContainer,
 				showToolbars: false,
 				plugins: { "testPlugin": oPlugin }
 			});
@@ -293,9 +315,11 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oRta.destroy();
-			oPage.removeContent();
-			this.oComp.destroy();
+			this.oComponentContainer.destroy();
 			sandbox.restore();
+		},
+		after: function () {
+
 		}
 	}, function() {
 		QUnit.test("when an element overlay is destroyed", function (assert) {
@@ -311,14 +335,12 @@ sap.ui.define([
 
 		QUnit.test("when button1 and button2 are destroyed but the parent aggregation of button1 is already being destroyed", function (assert) {
 			var done = assert.async();
-			var oAggregationOverlay = OverlayRegistry.getOverlay(this.oButton).getParentAggregationOverlay();
 			this.oOutline.attachEventOnce("update", function(aUpdates) {
 				var oLastUpdate = aUpdates.pop();
 				assert.strictEqual(oLastUpdate.type, "destroy", "then only one destroy update is sent");
 				assert.strictEqual(oLastUpdate.element.id, this.oButton1.getId(), "and it is sent only for button2");
 				done();
 			}, this);
-			oAggregationOverlay._bIsBeingDestroyed = true;
 			this.oButton.destroy();
 			this.oButton1.destroy();
 		});
@@ -504,6 +526,8 @@ sap.ui.define([
 				var oOuterLayout = new VerticalLayout("layout2", {
 					content: [oButton]
 				});
+				oOuterLayout.placeAt('qunit-fixture');
+				sap.ui.getCore().applyChanges();
 
 				this.oRta._oDesignTime.addRootElement(oOuterLayout);
 				this.oOutline.attachEventOnce("update", function (aUpdates) {

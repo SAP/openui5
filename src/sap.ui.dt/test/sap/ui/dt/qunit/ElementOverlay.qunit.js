@@ -515,22 +515,26 @@ function (
 	});
 
 	QUnit.module("Given that an Overlay is created for a control with custom design time metadata", {
-		beforeEach : function() {
+		beforeEach : function(assert) {
 			this.oButton = new Button({
 				text: "Button"
 			});
+			this.oButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
 			this.oOverlay = new ElementOverlay({
 				element : this.oButton,
 				designTimeMetadata : new ElementDesignTimeMetadata({
 					data : {
 						name : "My Custom Metadata"
 					}
-				})
+				}),
+				init: assert.async(),
+				initFailed: function (oEvent) {
+					assert.ok(false);
+					throw new Error(oEvent.getParameter('error'));
+				}
 			});
-			this.oOverlay.placeInOverlayContainer();
-			this.oButton.placeAt("qunit-fixture");
-			// Render Controls
-			sap.ui.getCore().applyChanges();
 		},
 		afterEach : function() {
 			this.oOverlay.destroy();
@@ -544,29 +548,33 @@ function (
 	});
 
 	QUnit.module("Given that an Overlay is created for a control marked as ignored in the designtime Metadata", {
-		beforeEach : function(assert) {
+		beforeEach: function (assert) {
 			var fnDone = assert.async();
 			this.oButton = new Button({
 				text: "Button"
 			});
 			this.oButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
 			this.oOverlay = new ElementOverlay({
 				isRoot: true,
 				element : this.oButton,
 				designTimeMetadata : new ElementDesignTimeMetadata({
-					data : {
+					data: {
 						ignore : true
 					}
 				}),
-				init: function(){
+				init: function () {
 					this.oOverlay.placeInOverlayContainer();
-					sap.ui.getCore().applyChanges();
 					fnDone();
-				}.bind(this)
+				}.bind(this),
+				initFailed: function (oEvent) {
+					assert.ok(false);
+					throw new Error(oEvent.getParameter('error'));
+				}
 			});
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oOverlay.destroy();
 			this.oButton.destroy();
 		}
