@@ -11,7 +11,6 @@ sap.ui.define([
 	'sap/ui/core/util/PasteHelper',
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/Filter',
-	'sap/ui/model/SelectionModel',
 	'sap/ui/model/Sorter',
 	'sap/ui/model/BindingMode',
 	'./Column',
@@ -25,6 +24,7 @@ sap.ui.define([
 	'./TableScrollExtension',
 	'./TableDragAndDropExtension',
 	"./TableRenderer",
+	"./SelectionModelAdapter",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log"
 ],
@@ -36,7 +36,6 @@ sap.ui.define([
 		PasteHelper,
 		ChangeReason,
 		Filter,
-		SelectionModel,
 		Sorter,
 		BindingMode,
 		Column,
@@ -50,6 +49,7 @@ sap.ui.define([
 		TableScrollExtension,
 		TableDragAndDropExtension,
 		TableRenderer,
+		SelectionModelAdapter,
 		jQuery,
 		Log
 	) {
@@ -813,6 +813,7 @@ sap.ui.define([
 		this._bIsFlexItem = false;
 
 		this._attachExtensions();
+		this._initSelectionAdapter();
 
 		this._bLazyRowCreationEnabled = jQuery.sap.getUriParameters().get('sap-ui-xx-table-lazyrowcreation') !== "false"; // default true
 		this._bRowsBeingBound = false;
@@ -858,9 +859,6 @@ sap.ui.define([
 			this._fireRowsUpdated(sReason);
 		}, {wait: 50, asyncLeading: true});
 
-		// basic selection model (by default the table uses multi selection)
-		this._initSelectionModel(SelectionModel.MULTI_SELECTION);
-
 		this._aTableHeaders = [];
 
 		// text selection for column headers?
@@ -882,6 +880,10 @@ sap.ui.define([
 		this._bInvalid = true;
 	};
 
+	Table.prototype._initSelectionAdapter = function() {
+		this._oSelectionAdapter = new SelectionModelAdapter();
+		this._oSelectionAdapter.attachEvent("selectionChange", this._onSelectionChanged, this);
+	};
 
 	/**
 	 * Attach table extensions
@@ -928,9 +930,9 @@ sap.ui.define([
 		this._detachEvents();
 
 		// selection model
-		if (this._oSelection) {
-			this._oSelection.destroy(); // deregisters all the handler(s)
-			//Note: _oSelection is not nulled to avoid checks everywhere (in case table functions are called after the table destroy, see 1670448195)
+		if (this._oSelectionAdapter) {
+			this._oSelectionAdapter.destroy(); // deregisters all the handler(s)
+			//Note: _oSelectionAdapter is not nulled to avoid checks everywhere (in case table functions are called after the table destroy, see 1670448195)
 		}
 		delete this._aTableHeaders;
 	};
@@ -1755,17 +1757,10 @@ sap.ui.define([
 	 * @public
 	 */
 	Table.prototype.setSelectionMode = function(sSelectionMode) {
-		this.clearSelection();
-		if (sSelectionMode === SelectionMode.Single) {
-			this._oSelection.setSelectionMode(SelectionModel.SINGLE_SELECTION);
-		} else {
-			this._oSelection.setSelectionMode(SelectionModel.MULTI_SELECTION);
-		}
-
 		// Check for valid selection modes (e.g. change deprecated mode "Multi" to "MultiToggle")
 		sSelectionMode = TableUtils.sanitizeSelectionMode(this, sSelectionMode);
-
 		this.setProperty("selectionMode", sSelectionMode);
+		this._oSelectionAdapter.setSelectionMode(sSelectionMode);
 		return this;
 	};
 
@@ -1865,9 +1860,6 @@ sap.ui.define([
 			Table._addBindingListener(oBindingInfo, "change", this._onBindingChange.bind(this));
 			Table._addBindingListener(oBindingInfo, "dataRequested", this._onBindingDataRequested.bind(this));
 			Table._addBindingListener(oBindingInfo, "dataReceived", this._onBindingDataReceived.bind(this));
-
-			// Re-initialize the selection model. Might be necessary in case the rows are rebound.
-			this._initSelectionModel(SelectionModel.MULTI_SELECTION);
 		}
 
 		// Create the binding.
@@ -1876,6 +1868,8 @@ sap.ui.define([
 		if (sName === "rows") {
 			var oBinding = this.getBinding("rows");
 			var oModel = oBinding ? oBinding.getModel() : null;
+
+			this._oSelectionAdapter._setBinding(oBinding);
 
 			if (oModel && oModel.getDefaultBindingMode() === BindingMode.OneTime) {
 				Log.error("The binding mode of the model is set to \"OneTime\"."
@@ -1948,25 +1942,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Initialises a new selection model for the Table instance.
-	 * @param {sap.ui.model.SelectionModel.MULTI_SELECTION|sap.ui.model.SelectionModel.SINGLE_SELECTION} sSelectionMode the selection mode of the
-	 *     selection model
-	 * @returns {sap.ui.table.Table} the table instance for chaining
-	 * @private
-	 */
-	Table.prototype._initSelectionModel = function(sSelectionMode) {
-		// detach old selection model event handler
-		if (this._oSelection) {
-			this._oSelection.detachSelectionChanged(this._onSelectionChanged, this);
-		}
-		//new selection model with the currently set selection mode
-		this._oSelection = new SelectionModel(sSelectionMode);
-		this._oSelection.attachSelectionChanged(this._onSelectionChanged, this);
-
-		return this;
-	};
-
-	/**
 	 * Handler for change events of the binding.
 	 * @param {sap.ui.base.Event} oEvent change event
 	 * @private
@@ -1974,7 +1949,6 @@ sap.ui.define([
 	Table.prototype._onBindingChange = function(oEvent) {
 		var sReason = typeof (oEvent) === "object" ? oEvent.getParameter("reason") : oEvent;
 		if (sReason === "sort" || sReason === "filter") {
-			this.clearSelection();
 			this.setFirstVisibleRow(0);
 		}
 	};
@@ -1998,6 +1972,7 @@ sap.ui.define([
 
 			if (!this._bRowsBeingBound) {
 				// Real unbind of rows.
+				this._oSelectionAdapter._setBinding(null);
 				this._updateTotalRowCount(true);
 				if (this._bLazyRowCreationEnabled) {
 					this._updateRows(this.getVisibleRowCount(), TableUtils.RowsUpdateReason.Unbind);
@@ -2883,7 +2858,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._isRowSelectable = function(iRowIndex) {
-		return iRowIndex >= 0 && iRowIndex < this._getTotalRowCount();
+		return this._oSelectionAdapter.isIndexSelectable(iRowIndex);
 	};
 
 	// =============================================================================
@@ -3063,25 +3038,14 @@ sap.ui.define([
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
 	Table.prototype.getSelectedIndex = function() {
-		return this._oSelection.getLeadSelectedIndex();
+		return this._oSelectionAdapter.getSelectedIndex();
 	};
 
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
 	Table.prototype.setSelectedIndex = function(iIndex) {
-		if (this.getSelectionMode() === SelectionMode.None) {
-			return this;
-		}
-
-		if (iIndex === -1) {
-			//If Index eq -1 no item is selected, therefore clear selection is called
-			//SelectionModel doesn't know that -1 means no selection
-			this.clearSelection();
-		} else {
-			this._oSelection.setSelectionInterval(iIndex, iIndex);
-		}
-		return this;
+		return this._oSelectionAdapter.setSelectedIndex(iIndex);
 	};
 
 	/**
@@ -3092,7 +3056,7 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.clearSelection = function() {
-		this._oSelection.clearSelection();
+		this._oSelectionAdapter.clearSelection();
 		return this;
 	};
 
@@ -3110,12 +3074,7 @@ sap.ui.define([
 		if (!TableUtils.hasSelectAll(this)) {
 			return this;
 		}
-
-		var oBinding = this.getBinding("rows");
-		if (oBinding) {
-			this._oSelection.selectAll(this._getTotalRowCount() - 1);
-		}
-
+		this._oSelectionAdapter.selectAll();
 		return this;
 	};
 
@@ -3127,7 +3086,7 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.getSelectedIndices = function() {
-		return this._oSelection.getSelectedIndices();
+		return this._oSelectionAdapter.getSelectedIndices();
 	};
 
 	/**
@@ -3140,11 +3099,7 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo) {
-		if (this.getSelectionMode() === SelectionMode.None) {
-			return this;
-		}
-
-		this._oSelection.addSelectionInterval(iIndexFrom, iIndexTo);
+		this._oSelectionAdapter.addSelectionInterval(iIndexFrom, iIndexTo);
 		return this;
 	};
 
@@ -3158,11 +3113,7 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo) {
-		if (this.getSelectionMode() === SelectionMode.None) {
-			return this;
-		}
-
-		this._oSelection.setSelectionInterval(iIndexFrom, iIndexTo);
+		this._oSelectionAdapter.setSelectionInterval(iIndexFrom, iIndexTo);
 		return this;
 	};
 
@@ -3176,7 +3127,7 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
-		this._oSelection.removeSelectionInterval(iIndexFrom, iIndexTo);
+		this._oSelectionAdapter.removeSelectionInterval(iIndexFrom, iIndexTo);
 		return this;
 	};
 
@@ -3189,7 +3140,7 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.isIndexSelected = function(iIndex) {
-		return this._oSelection.isSelectedIndex(iIndex);
+		return this._oSelectionAdapter.isIndexSelected(iIndex);
 	};
 
 	// =============================================================================

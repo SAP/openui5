@@ -16,6 +16,7 @@ sap.ui.define([
 	'sap/ui/unified/Menu',
 	'sap/ui/unified/MenuItem',
 	'./TableUtils',
+	"./BindingSelectionAdapter",
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery"
@@ -33,6 +34,7 @@ sap.ui.define([
 		Menu,
 		MenuItem,
 		TableUtils,
+		BindingSelectionAdapter,
 		Log,
 		assert,
 		jQuery
@@ -189,6 +191,8 @@ sap.ui.define([
 		TableUtils.Grouping.setGroupMode(this);
 	};
 
+	AnalyticalTable.prototype._initSelectionAdapter = TreeTable.prototype._initSelectionAdapter;
+
 	AnalyticalTable.prototype.exit = function() {
 		this._cleanupGroupHeaderMenu();
 		Table.prototype.exit.apply(this, arguments);
@@ -315,16 +319,6 @@ sap.ui.define([
 			}.bind(this));
 		}
 	};
-
-	/**
-	 * Overwritten from Table.js - does nothing since the selection is stored in the
-	 */
-	AnalyticalTable.prototype._initSelectionModel = function(sSelectionMode) {
-		this._oSelection = new SelectionModel(sSelectionMode);
-		return this;
-	};
-
-	AnalyticalTable.prototype.setSelectionMode = TreeTable.prototype.setSelectionMode;
 
 	AnalyticalTable.prototype._applyAnalyticalBindingInfo = function(oBindingInfo) {
 		// extract the sorters from the columns (TODO: reconsider this!)
@@ -1046,8 +1040,8 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @function
+	 * @name sap.ui.table.AnalyticalTable#isIndexSelected
 	 */
-	AnalyticalTable.prototype.isIndexSelected = TreeTable.prototype.isIndexSelected;
 
 	/**
 	 * In an <code>AnalyticalTable</code> control you can only select indices, which correspond to the currently visualized tree.
@@ -1059,8 +1053,8 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @function
+	 * @name sap.ui.table.AnalyticalTable#setSelectedIndex
 	 */
-	AnalyticalTable.prototype.setSelectedIndex = TreeTable.prototype.setSelectedIndex;
 
 	/**
 	 * Returns an array containing the row indices of all selected tree nodes (in ascending order).
@@ -1074,8 +1068,8 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @function
+	 * @name sap.ui.table.AnalyticalTable#getSelectedIndices
 	 */
-	AnalyticalTable.prototype.getSelectedIndices = TreeTable.prototype.getSelectedIndices;
 
 	/**
 	 * Sets the selection of the <code>AnalyticalTable</code> control to the given range (including boundaries).
@@ -1089,8 +1083,8 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @function
+	 * @name sap.ui.table.AnalyticalTable#setSelectionInterval
 	 */
-	AnalyticalTable.prototype.setSelectionInterval = TreeTable.prototype.setSelectionInterval;
 
 	/**
 	 * Marks a range of tree nodes as selected, starting with iFromIndex going to iToIndex.
@@ -1107,8 +1101,8 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @function
+	 * @name sap.ui.table.AnalyticalTable#addSelectionInterval
 	 */
-	AnalyticalTable.prototype.addSelectionInterval = TreeTable.prototype.addSelectionInterval;
 
 	/**
 	 * All rows/tree nodes inside the range (including boundaries) will be deselected.
@@ -1122,8 +1116,8 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @function
+	 * @name sap.ui.table.AnalyticalTable#removeSelectionInterval
 	 */
-	AnalyticalTable.prototype.removeSelectionInterval = TreeTable.prototype.removeSelectionInterval;
 
 	/**
 	 * Selects all available nodes/rows.
@@ -1137,8 +1131,8 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @function
+	 * @name sap.ui.table.AnalyticalTable#selectAll
 	 */
-	AnalyticalTable.prototype.selectAll = TreeTable.prototype.selectAll;
 
 	/**
 	 * Retrieves the lead selection index. The lead selection index is, among other things, used to determine the
@@ -1148,18 +1142,8 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @function
+	 * @name sap.ui.table.AnalyticalTable#getSelectedIndex
 	 */
-	AnalyticalTable.prototype.getSelectedIndex = TreeTable.prototype.getSelectedIndex;
-
-	/**
-	 * Clears the complete selection (all analytical table rows/nodes will be deselected).
-	 *
-	 * @returns {sap.ui.table.AnalyticalTable} a reference to the <code>AnalyticalTable</code> control, can be used for chaining
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 * @function
-	 */
-	AnalyticalTable.prototype.clearSelection = TreeTable.prototype.clearSelection;
 
 	/**
 	 * Expands one or more rows.
@@ -1203,16 +1187,6 @@ sap.ui.define([
 	 * @function
 	 */
 	AnalyticalTable.prototype.isExpanded = TreeTable.prototype.isExpanded;
-
-	AnalyticalTable.prototype._isRowSelectable = function(iRowIndex) {
-		var oBinding = this.getBinding("rows");
-		if (oBinding) {
-			return oBinding.isIndexSelectable(iRowIndex);
-		} else {
-			// if there is no binding the selection can't be handled, therefore the row is not selectable
-			return false;
-		}
-	};
 
 	AnalyticalTable.prototype._getSelectedIndicesCount = TreeTable.prototype._getSelectedIndicesCount;
 

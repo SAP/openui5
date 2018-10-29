@@ -4602,17 +4602,17 @@ sap.ui.define([
 		var oElem = checkFocus(getSelectAll(true), assert);
 
 		// Space
-		assert.ok(oTable._oSelection.aSelectedIndices.length === 0, "No rows are selected");
+		assert.ok(oTable.getSelectedIndices().length === 0, "No rows are selected");
 		qutils.triggerKeyup(oElem, Key.SPACE, false, false, false);
 		assert.ok(TableUtils.areAllRowsSelected(oTable), "All rows are selected");
 		qutils.triggerKeyup(oElem, Key.SPACE, false, false, false);
-		assert.ok(oTable._oSelection.aSelectedIndices.length === 0, "No rows are selected");
+		assert.ok(oTable.getSelectedIndices().length === 0, "No rows are selected");
 
 		// Enter
 		qutils.triggerKeydown(oElem, Key.ENTER, false, false, false);
 		assert.ok(TableUtils.areAllRowsSelected(oTable), "All rows are selected");
 		qutils.triggerKeydown(oElem, Key.ENTER, false, false, false);
-		assert.ok(oTable._oSelection.aSelectedIndices.length === 0, "No rows are selected");
+		assert.ok(oTable.getSelectedIndices().length === 0, "No rows are selected");
 	});
 
 	QUnit.test("On a Row Header", function(assert) {
