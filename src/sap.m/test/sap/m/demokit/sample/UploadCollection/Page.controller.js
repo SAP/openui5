@@ -20,7 +20,7 @@ sap.ui.define([
 			this.getView().setModel(new JSONModel(Device), "device");
 
 			this.getView().setModel(new JSONModel({
-				"maximumFilenameLength": 15,
+				"maximumFilenameLength": 10,
 				"maximumFileSize": 500,
 				"mode": MobileLibrary.ListMode.SingleSelectMaster,
 				"uploadEnabled": true,

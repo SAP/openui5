@@ -51,6 +51,11 @@ sap.ui.define([
 			library: "sap.m",
 			properties: {
 				/**
+				 * Aria label for the icon (or for the image).
+				 * @since 1.30.0
+				 */
+				ariaLabelForPicture: {type: "string", group: "Accessibility", defaultValue: null},
+				/**
 				 * Specifies the name of the user who uploaded the file.
 				 * @deprecated since version 1.30. This property is deprecated; use the aggregation attributes instead.
 				 * However, if the property is filled, it is displayed as an attribute. To make sure the title does not appear twice, do not use the property.
@@ -60,6 +65,18 @@ sap.ui.define([
 				 * Specifies a unique identifier of the file (created by the application).
 				 */
 				documentId: {type: "string", group: "Misc", defaultValue: null},
+				/**
+				 * Enables/Disables the Delete button.
+				 * If the value is true, the Delete button is enabled and the delete function can be used.
+				 * If the value is false, the delete function is not available.
+				 */
+				enableDelete: {type: "boolean", group: "Behavior", defaultValue: true},
+				/**
+				 * Enables/Disables the Edit button.
+				 * If the value is true, the Edit button is enabled and the edit function can be used.
+				 * If the value is false, the edit function is not available.
+				 */
+				enableEdit: {type: "boolean", group: "Behavior", defaultValue: true},
 				/**
 				 * Specifies the name of the uploaded file.
 				 */
@@ -74,6 +91,11 @@ sap.ui.define([
 				 */
 				mimeType: {type: "string", group: "Misc", defaultValue: null},
 				/**
+				 * Defines the selected state of the UploadCollectionItem.
+				 * @since 1.34.0
+				 */
+				selected: {type: "boolean", group: "Behavior", defaultValue: false},
+				/**
 				 * Specifies the URL where the thumbnail of the file is located. This can also be an SAPUI5 icon URL.
 				 */
 				thumbnailUrl: {type: "string", group: "Misc", defaultValue: null},
@@ -84,28 +106,15 @@ sap.ui.define([
 				 */
 				uploadedDate: {type: "string", group: "Misc", defaultValue: null},
 				/**
+				 * State of the item with regard to its upload process.
+				 * @since 1.60.0
+				 */
+				uploadState: {type: "sap.m.UploadState", defaultValue: null},
+				/**
 				 * Specifies the URL where the file is located.
 				 * If the application doesn't provide a value for this property, the icon and the file name of the UploadCollectionItem are not clickable.
 				 */
 				url: {type: "string", group: "Misc", defaultValue: null},
-				/**
-				 * Enables/Disables the Edit button.
-				 * If the value is true, the Edit button is enabled and the edit function can be used.
-				 * If the value is false, the edit function is not available.
-				 */
-				enableEdit: {type: "boolean", group: "Behavior", defaultValue: true},
-				/**
-				 * Enables/Disables the Delete button.
-				 * If the value is true, the Delete button is enabled and the delete function can be used.
-				 * If the value is false, the delete function is not available.
-				 */
-				enableDelete: {type: "boolean", group: "Behavior", defaultValue: true},
-				/**
-				 * Show/Hide the Edit button.
-				 * If the value is true, the Edit button is visible.
-				 * If the value is false, the Edit button is not visible.
-				 */
-				visibleEdit: {type: "boolean", group: "Behavior", defaultValue: true},
 				/**
 				 * Show/Hide the Delete button.
 				 * If the value is true, the Delete button is visible.
@@ -113,20 +122,11 @@ sap.ui.define([
 				 */
 				visibleDelete: {type: "boolean", group: "Behavior", defaultValue: true},
 				/**
-				 * Aria label for the icon (or for the image).
-				 * @since 1.30.0
+				 * Show/Hide the Edit button.
+				 * If the value is true, the Edit button is visible.
+				 * If the value is false, the Edit button is not visible.
 				 */
-				ariaLabelForPicture: {type: "string", group: "Accessibility", defaultValue: null},
-				/**
-				 * Defines the selected state of the UploadCollectionItem.
-				 * @since 1.34.0
-				 */
-				selected: {type: "boolean", group: "Behavior", defaultValue: false},
-				/**
-				 * State of the item with regard to its upload process.
-				 * @since 1.60.0
-				 */
-				uploadState: {type: "sap.m.UploadState", defaultValue: null}
+				visibleEdit: {type: "boolean", group: "Behavior", defaultValue: true}
 			},
 			defaultAggregation: "attributes",
 			aggregations: {
@@ -316,11 +316,11 @@ sap.ui.define([
 				id: this.getId() + "-editButton",
 				icon: "sap-icon://edit",
 				type: Library.ButtonType.Standard,
+				enabled: this.getEnableEdit(),
+				visible: this.getVisibleEdit(),
 				tooltip: this._oRb.getText("UPLOADCOLLECTION_EDITBUTTON_TEXT"),
 				press: [this, oParent._handleEdit, oParent]
 			});
-			this._oEditButton.setEnabled(this.getEnableEdit());
-			this._oEditButton.setVisible(this.getVisibleEdit());
 			this._oEditButton.addStyleClass("sapMUCEditBtn");
 			this.addDependent(this._oEditButton);
 		}
@@ -335,10 +335,11 @@ sap.ui.define([
 				id: this.getId() + "-deleteButton",
 				icon: "sap-icon://sys-cancel",
 				type: Library.ButtonType.Standard,
+				enabled: this.getEnableDelete(),
+				visible: this.getVisibleDelete(),
+				tooltip: this._oRb.getText("UPLOADCOLLECTION_DELETEBUTTON_TEXT"),
 				press: [this, oParent._handleDelete, oParent]
 			});
-			this._oDeleteButton.setVisible(this.getVisibleDelete());
-			this._oDeleteButton.setTooltip(this._oRb.getText("UPLOADCOLLECTION_DELETEBUTTON_TEXT"));
 			this._oDeleteButton.addStyleClass("sapMUCDeleteBtn");
 			this.addDependent(this._oDeleteButton);
 		}
@@ -353,10 +354,10 @@ sap.ui.define([
 				id: this.getId() + "-terminateButton",
 				icon: "sap-icon://sys-cancel",
 				type: Library.ButtonType.Standard,
+				visible: oParent.getTerminationEnabled(),
+				tooltip: this._oRb.getText("UPLOADCOLLECTION_TERMINATEBUTTON_TEXT"),
 				press: [this, oParent._handleTerminateRequest, oParent]
 			});
-			this._oTerminateButton.setVisible(oParent.getTerminationEnabled());
-			this._oTerminateButton.setTooltip(this._oRb.getText("UPLOADCOLLECTION_TERMINATEBUTTON_TEXT"));
 			this._oTerminateButton.addStyleClass("sapMUCDeleteBtn");
 			this.addDependent(this._oTerminateButton);
 		}
@@ -579,15 +580,9 @@ sap.ui.define([
 	 * @private
 	 */
 	UploadCollectionItem.prototype._checkFileTypeRestriction = function (aTypes) {
-		var oFile,
-			bRestricted;
-
-		if (!aTypes || aTypes.length === 0) {
-			return;
-		}
-
-		oFile = UploadCollectionItem._splitFileName(this.getFileName());
-		bRestricted = (!!this.getFileName() && aTypes.indexOf(oFile.extension) === -1);
+		var oFile = UploadCollectionItem._splitFileName(this.getFileName()),
+			bRestricted = (!!this.getFileName() && !!aTypes && (aTypes.length > 0)
+				&& oFile.extension && aTypes.indexOf(oFile.extension.toLowerCase()) === -1);
 		if (bRestricted !== this._bFileTypeRestricted) {
 			this._bFileTypeRestricted = bRestricted;
 			this.invalidate();
@@ -607,13 +602,7 @@ sap.ui.define([
 	 * @private
 	 */
 	UploadCollectionItem.prototype._checkFileNameLengthRestriction = function (iMaxLength) {
-		var bRestricted;
-
-		if (!iMaxLength) {
-			return;
-		}
-
-		bRestricted = (!!this.getFileName() && this.getFileName().length > iMaxLength);
+		var bRestricted = (iMaxLength && !!this.getFileName() && this.getFileName().length > iMaxLength);
 		if (bRestricted !== this._bFileNameLengthRestricted) {
 			this._bFileNameLengthRestricted = bRestricted;
 			this.invalidate();
@@ -631,13 +620,7 @@ sap.ui.define([
 	 * @private
 	 */
 	UploadCollectionItem.prototype._checkFileSizeRestriction = function (iMaxSize) {
-		var bRestricted;
-
-		if (!iMaxSize) {
-			return;
-		}
-
-		bRestricted = (this.getFileSize() > iMaxSize);
+		var bRestricted = (iMaxSize && this.getFileSize() > iMaxSize);
 		if (bRestricted !== this._bFileSizeRestricted) {
 			this._bFileSizeRestricted = bRestricted;
 			this.invalidate();
@@ -655,15 +638,8 @@ sap.ui.define([
 	 * @private
 	 */
 	UploadCollectionItem.prototype._checkMimeTypeRestriction = function (aTypes) {
-		var oFile,
-			bRestricted;
-
-		if (!aTypes || aTypes.length === 0) {
-			return;
-		}
-
-		oFile = UploadCollectionItem._splitFileName(this.getFileName());
-		bRestricted = (this.getMimeType() && aTypes.indexOf(this.getMimeType()) === -1);
+		var oFile = UploadCollectionItem._splitFileName(this.getFileName()),
+			bRestricted = (!!aTypes && (aTypes.length > 0) && this.getMimeType() && aTypes.indexOf(this.getMimeType()) === -1);
 		if (bRestricted !== this._bMimeTypeRestricted) {
 			this._bMimeTypeRestricted = bRestricted;
 			this.invalidate();
@@ -690,6 +666,56 @@ sap.ui.define([
 	/* Redefined setter and getter methods */
 	/* =================================== */
 
+	UploadCollectionItem.prototype.setUrl = function (sUrl) {
+		if (this.getUrl() !== sUrl) {
+			this.setProperty("url", sUrl, true);
+			if (this.getParent()) {
+				this._getFileNameLink().setEnabled(this._getPressEnabled() && !this._bContainsError);
+			}
+		}
+		return this;
+	};
+
+	UploadCollectionItem.prototype.setEnableDelete = function (bEnable) {
+		if (this.getEnableDelete() !== bEnable) {
+			this.setProperty("enableDelete", bEnable, true);
+			if (this.getParent()) {
+				this._getDeleteButton().setEnabled(bEnable);
+			}
+		}
+		return this;
+	};
+
+	UploadCollectionItem.prototype.setVisibleDelete = function (bVisible) {
+		if (this.getVisibleDelete() !== bVisible) {
+			this.setProperty("visibleDelete", bVisible, true);
+			if (this.getParent()) {
+				this._getDeleteButton().setVisible(bVisible);
+			}
+		}
+		return this;
+	};
+
+	UploadCollectionItem.prototype.setEnableEdit = function (bEnable) {
+		if (this.getEnableEdit() !== bEnable) {
+			this.setProperty("enableEdit", bEnable, true);
+			if (this.getParent()) {
+				this._getEditButton().setEnabled(bEnable);
+			}
+		}
+		return this;
+	};
+
+	UploadCollectionItem.prototype.setVisibleEdit = function (bVisible) {
+		if (this.getVisibleEdit() !== bVisible) {
+			this.setProperty("visibleEdit", bVisible, true);
+			if (this.getParent()) {
+				this._getEditButton().setVisible(bVisible);
+			}
+		}
+		return this;
+	};
+
 	UploadCollectionItem.prototype.setContributor = function (sContributor) {
 		if (this.getContributor() !== sContributor) {
 			this.setProperty("contributor", sContributor, true);
@@ -710,6 +736,9 @@ sap.ui.define([
 		if (this.getFileSize() !== sFileSize) {
 			this.setProperty("fileSize", sFileSize, true);
 			this._updateDeprecatedProperties();
+			if (this.getParent()) {
+				this._checkFileSizeRestriction(this.getParent().getMaximumFileSize());
+			}
 		}
 		return this;
 	};
@@ -731,6 +760,18 @@ sap.ui.define([
 				this._getFileNameLink().setText(sFileName);
 				oFile = UploadCollectionItem._splitFileName(sFileName);
 				this._getFileNameEdit().setValue(oFile.name);
+				this._checkFileNameLengthRestriction(this.getParent().getMaximumFilenameLength());
+				this._checkFileTypeRestriction(this.getParent().getFileType());
+			}
+		}
+		return this;
+	};
+
+	UploadCollectionItem.prototype.setMimeType = function (sMimeType) {
+		if (this.getMimeType() !== sMimeType) {
+			this.setProperty("mimeType", sMimeType, true);
+			if (this.getParent()) {
+				this._checkMimeTypeRestriction(this.getParent().getMimeType());
 			}
 		}
 		return this;
@@ -762,7 +803,7 @@ sap.ui.define([
 			oXhr.responseType = "blob";// force the HTTP response, response-type header to be blob
 			oXhr.onload = function () {
 				var sFileName = this.getFileName();
-				var oFileNameAndExtension = this._splitFileName(sFileName, false);
+				var oFileNameAndExtension = UploadCollectionItem._splitFileName(sFileName, false);
 				var sFileExtension = oFileNameAndExtension.extension;
 				sFileName = oFileNameAndExtension.name;
 				oBlob = oXhr.response; // oXhr.response is now a blob object
@@ -872,7 +913,7 @@ sap.ui.define([
 			case "jpg" :
 			case "jpeg" :
 			case "png" :
-				return UploadCollectionItem.CARD_ICON;  // if no image is provided a standard placeholder camera is displayed
+				return UploadCollectionItem.CARD_ICON;
 			case "csv" :
 			case "xls" :
 			case "xlsx" :

@@ -268,7 +268,6 @@
 			"documentId": "b68a7065-cc2a-2140-922d-e7528cd32172",
 			"fileName": "Picture of a woman.png",
 			"mimeType": "image/png",
-			"fileSize": 750,
 			"thumbnailUrl": "test-resources/sap/m/images/Woman_04.png",
 			"url": "test-resources/sap/m/images/Woman_04.png",
 			"attributes": [
@@ -284,7 +283,7 @@
 				},
 				{
 					"title": "File Size",
-					"text": "750000000",
+					"text": "40000000",
 					"active": false
 				}
 			],
