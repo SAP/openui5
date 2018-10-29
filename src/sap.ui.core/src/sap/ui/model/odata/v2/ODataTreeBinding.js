@@ -2426,6 +2426,7 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.model.odata.v2.ODataTreeBinding.prototype.expandNodeToLevel
+	 * @since 1.58
 	 * @public
 	 */
 
