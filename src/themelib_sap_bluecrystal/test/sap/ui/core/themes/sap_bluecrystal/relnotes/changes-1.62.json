@@ -1,0 +1,13 @@
+{
+  "1.62.0": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "4c10b3788df69446b9b58d7833369c933b0343b3",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: hover on selected non-working date is correct now",
+        "references": []
+      }
+    ]
+  }
+}

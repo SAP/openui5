@@ -1,0 +1,13 @@
+{
+  "1.62.0": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "b852e15810e0ea4cf34e658b4002701a7c8d867e",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected content height calculation",
+        "references": []
+      }
+    ]
+  }
+}

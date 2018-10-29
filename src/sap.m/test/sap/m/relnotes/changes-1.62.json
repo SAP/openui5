@@ -1,0 +1,55 @@
+{
+  "1.62.0": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "52b69770f1115a01f20a472981a2b368d542941d",
+        "type": "FIX",
+        "text": " m.DateTimePicker: maxDate being increased fixed",
+        "references": []
+      },
+      {
+        "id": "de43a1d1576b9783679fc6f1c7729bb04be34dfc",
+        "type": "FIX",
+        "text": " m.PlanningCalendar: Flickering fixed",
+        "references": []
+      },
+      {
+        "id": "97ce971201ec6e509275e023e87ddd48783041c5",
+        "type": "FIX",
+        "text": " sap.m.Carousel: content of scroll containers is now destroyed correctly",
+        "references": []
+      },
+      {
+        "id": "404bc1772c1fd4c8193d1d0fe7bfd36b520a3d6c",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Adjust width when dialog contains long items",
+        "references": []
+      },
+      {
+        "id": "77dd96210b8885f7aa573e67e11b46a20b9f046c",
+        "type": "FIX",
+        "text": " sap.m.GrowingEnablement: small threshold does not work",
+        "references": []
+      },
+      {
+        "id": "b49aacee0910c0537c5230c3642473de45c43912",
+        "type": "FIX",
+        "text": " sap.m.MessageListItem: Prevent unneeded creation of InvisibleText",
+        "references": []
+      },
+      {
+        "id": "29fa3b8493e7fa7ee0aee1669f3002d9c1440282",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Markup description should be escaped",
+        "references": []
+      },
+      {
+        "id": "28437e62021a1d460d0336081d2f75b8353e6a9e",
+        "type": "FIX",
+        "text": " sap.m.NotificationListBase: A problem with forwarding aggregation is now fixed.",
+        "references": []
+      }
+    ]
+  }
+}

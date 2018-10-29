@@ -1,0 +1,13 @@
+{
+  "1.62.0": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "e61926df34c27f8aec7becbe05322b31f0afc988",
+        "type": "FEATURE",
+        "text": " ui.unified.Month: Keyboard interval selection aligned",
+        "references": []
+      }
+    ]
+  }
+}
