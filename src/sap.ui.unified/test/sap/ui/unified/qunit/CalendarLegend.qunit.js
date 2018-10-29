@@ -1,21 +1,22 @@
 /*global QUnit, window */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1, no-alert: 1*/
+
 sap.ui.define([
 	"sap/ui/unified/CalendarLegend",
 	"sap/ui/unified/CalendarLegendRenderer",
 	"sap/ui/unified/CalendarLegendItem",
-	"sap/ui/unified/CalendarDayType",
+	"sap/ui/unified/library",
 	"sap/ui/unified/DateRange",
-	"sap/ui/unified/DateTypeRange",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/type/Date"
+	"sap/ui/unified/Calendar",
+	"sap/ui/unified/DateTypeRange",
+	"sap/base/Log"
 ], function(CalendarLegend, CalendarLegendRenderer, CalendarLegendItem,
-	CalendarDayType, DateRange, DateTypeRange, JSONModel) {
+	unifiedLibrary, DateRange, JSONModel, Calendar, DateTypeRange, Log) {
 	"use strict";
 
+	var CalendarDayType = unifiedLibrary.CalendarDayType;
 	var StandardCalendarLegendItem = sap.ui.unified.StandardCalendarLegendItem;
-	var oLeg1 = new CalendarLegend("Leg1", {}).placeAt("content");
-	var oLeg2 = new CalendarLegend("Leg2", {}).placeAt("content");
+
 	var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({
 		pattern: "yyyyMMdd"
 	});
@@ -25,10 +26,10 @@ sap.ui.define([
 	var oCal = new sap.ui.unified.Calendar("Cal", {
 		selectedDates: [new DateRange({startDate: oFormatYyyymmdd.parse("20140820")})],
 		select: function (oEvent) {
-			alert("Select");
+			Log.info("Select");
 		},
 		cancel: function (oEvent) {
-			alert("Cancel");
+			Log.info("Cancel");
 		}
 	});
 
@@ -49,21 +50,7 @@ sap.ui.define([
 		}));
 	}
 
-	var oLeg3 = new CalendarLegend("Leg3", {});
 	oCal.placeAt("content");
-	oLeg3.placeAt("content");
-
-	var oLeg4 = new CalendarLegend("Leg4", {
-		items: [new CalendarLegendItem("L4-I0", {text: "Type10", type: CalendarDayType.Type10, tooltip: "Type 10"}),
-			new CalendarLegendItem("L4-I1", {text: "Type09", type: CalendarDayType.Type09, tooltip: "Type 9"}),
-			new CalendarLegendItem("L4-I2", {text: "Type08", type: CalendarDayType.Type08, tooltip: "Type 8"}),
-			new CalendarLegendItem("L4-I3", {text: "no type 1", tooltip: "no type 1"}),
-			new CalendarLegendItem("L4-I4", {text: "Type07", type: CalendarDayType.Type07, tooltip: "Type 7"}),
-			new CalendarLegendItem("L4-I5", {text: "no type 2", tooltip: "no type 2"}),
-			new CalendarLegendItem("L4-I6", {text: "custom color 1", tooltip: "custom color 1", color: "#FF00FF"}),
-			new CalendarLegendItem("L4-I7", {text: "custom color 2", tooltip: "custom color 2", color: "#FF0000"})
-		]
-	}).placeAt("content");
 
 	QUnit.module("API");
 
@@ -171,45 +158,64 @@ sap.ui.define([
 		myView.destroy();
 	});
 
-	QUnit.module("Rendering");
+	QUnit.module("Rendering", {
+		beforeEach: function () {
+			this.oLegend = new CalendarLegend("Leg", {}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oLegend.destroy();
+			this.oLegend = null;
+		}
+	});
 
 	QUnit.test("Standard categories", function (assert) {
-		var $Leg1 = sap.ui.getCore().byId("Leg1").$();
-		var aLegendItems = $Leg1.find(".sapUiUnifiedLegendItems").children();
+		var aLegendItems = this.oLegend.$().find(".sapUiUnifiedLegendItems").children();
 		assert.equal(aLegendItems.length, 4, "4 categories rendered");
 	});
 
 	QUnit.test("Custom categories", function (assert) {
-		var $Leg2 = sap.ui.getCore().byId("Leg2").$();
-		var aLegendItems = $Leg2.find(".sapUiUnifiedLegendItems").children();
+
+		var oLeg2 = new CalendarLegend("Leg2", {
+			items: [new CalendarLegendItem("L2-I0", {text: "Type10", type: CalendarDayType.Type10, tooltip: "Type 10"}),
+				new CalendarLegendItem("L2-I1", {text: "Type09", type: CalendarDayType.Type09, tooltip: "Type 9"}),
+				new CalendarLegendItem("L2-I2", {text: "Type08", type: CalendarDayType.Type08, tooltip: "Type 8"}),
+				new CalendarLegendItem("L2-I3", {text: "no type 1", tooltip: "no type 1"}),
+				new CalendarLegendItem("L2-I4", {text: "Type07", type: CalendarDayType.Type07, tooltip: "Type 7"}),
+				new CalendarLegendItem("L2-I5", {text: "no type 2", tooltip: "no type 2"})
+			]
+		}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var aLegendItems = this.oLegend.$().find(".sapUiUnifiedLegendItems").children();
 		assert.equal(aLegendItems.length, 4, "4 categories rendered");
 
-		oLeg2 = sap.ui.getCore().byId("Leg2");
 		var i = 0;
 		for (i; i < 9; i++) {
-			oLeg2.addItem(new CalendarLegendItem("L2-I" + i, {
+			this.oLegend.addItem(new CalendarLegendItem("L1-I" + i, {
 				text: "Placeholder 0" + (i + 1)
 			}));
 		}
-		oLeg2.addItem(new CalendarLegendItem("L2-I" + i, {
+		this.oLegend.addItem(new CalendarLegendItem("L1-I" + i, {
 			text: "Placeholder " + (i + 1)
 		}));
 
 		sap.ui.getCore().applyChanges();
 
-		$Leg2 = oLeg2.$();
-		var aLegendItems = $Leg2.find(".sapUiUnifiedLegendItems").children();
+		aLegendItems = this.oLegend.$().find(".sapUiUnifiedLegendItems").children();
 		assert.equal(aLegendItems.length, 14, "14 categories rendered");
 
-		assert.ok(jQuery("#L2-I0").hasClass("sapUiCalLegDayType01"), "Legend2: 1. item has type 01");
-		assert.ok(jQuery("#L2-I1").hasClass("sapUiCalLegDayType02"), "Legend2: 2. item has type 02");
+		assert.ok(jQuery("#L1-I0").hasClass("sapUiCalLegDayType01"), "Legend1: 1. item has type 01");
+		assert.ok(jQuery("#L1-I1").hasClass("sapUiCalLegDayType02"), "Legend1: 2. item has type 02");
 
-		assert.ok(jQuery("#L4-I0").hasClass("sapUiCalLegDayType10"), "Legend4: 1. item has type 10");
-		assert.ok(jQuery("#L4-I1").hasClass("sapUiCalLegDayType09"), "Legend4: 2. item has type 09");
-		assert.ok(jQuery("#L4-I2").hasClass("sapUiCalLegDayType08"), "Legend4: 3. item has type 08");
-		assert.ok(jQuery("#L4-I3").hasClass("sapUiCalLegDayType01"), "Legend4: 4. item has type 01");
-		assert.ok(jQuery("#L4-I4").hasClass("sapUiCalLegDayType07"), "Legend4: 5. item has type 07");
-		assert.ok(jQuery("#L4-I5").hasClass("sapUiCalLegDayType02"), "Legend4: 6. item has type 02");
+		assert.ok(jQuery("#L2-I0").hasClass("sapUiCalLegDayType10"), "Legend2: 1. item has type 10");
+		assert.ok(jQuery("#L2-I1").hasClass("sapUiCalLegDayType09"), "Legend2: 2. item has type 09");
+		assert.ok(jQuery("#L2-I2").hasClass("sapUiCalLegDayType08"), "Legend2: 3. item has type 08");
+		assert.ok(jQuery("#L2-I3").hasClass("sapUiCalLegDayType01"), "Legend2: 4. item has type 01");
+		assert.ok(jQuery("#L2-I4").hasClass("sapUiCalLegDayType07"), "Legend2: 5. item has type 07");
+		assert.ok(jQuery("#L2-I5").hasClass("sapUiCalLegDayType02"), "Legend2: 6. item has type 02");
+
+		oLeg2.destroy();
 	});
 
 	function _getCssColorProperty(oJQuerySet, sCssPropertyName) {
@@ -223,27 +229,37 @@ sap.ui.define([
 	}
 
 	QUnit.test("Custom colors", function (assert) {
-		var oCustomColorIfL4I6 = _getCssColorProperty(jQuery("#L4-I6 .sapUiUnifiedLegendSquareColor"), "background-color");
-		var oCustomColorIfL4I7 = _getCssColorProperty(jQuery("#L4-I7 .sapUiUnifiedLegendSquareColor"), "background-color");
+
+		this.oLegend.addItem(new CalendarLegendItem("L1-I0", {
+			text: "custom color 1",
+			tooltip: "custom color 1", color: "#FF00FF"
+		}));
+		this.oLegend.addItem(new CalendarLegendItem("L1-I1", {
+			text: "custom color 2",
+			tooltip: "custom color 2", color: "#FF0000"
+		}));
+		sap.ui.getCore().applyChanges();
+
+		var oCustomColorIfL4I6 = _getCssColorProperty(jQuery("#L1-I0 .sapUiUnifiedLegendSquareColor"), "background-color");
+		var oCustomColorIfL4I7 = _getCssColorProperty(jQuery("#L1-I1 .sapUiUnifiedLegendSquareColor"), "background-color");
 		_checkColor(oCustomColorIfL4I6, {
 			R: 255,
 			G: 0,
 			B: 255
-		}, "Legend 4: custom color 1 item has the right color", assert);
-		_checkColor(oCustomColorIfL4I7, {R: 255, G: 0, B: 0}, "Legend 4: custom color 2 item has the right color", assert);
+		}, "Legend1: custom color 1 item has the right color", assert);
+		_checkColor(oCustomColorIfL4I7, {R: 255, G: 0, B: 0}, "Legend1: custom color 2 item has the right color", assert);
 	});
 
 	QUnit.test("Combination with Calendar", function (assert) {
 		var specialDates = oCal.getSpecialDates();
 		for (var i = 0; i < specialDates.length; i++) {
-			oLeg3.addItem(new CalendarLegendItem({
+			this.oLegend.addItem(new CalendarLegendItem({
 				text: specialDates[i].getTooltip()
 			}));
 		}
-
 		sap.ui.getCore().applyChanges();
 
-		var $Leg = oLeg3.$().find(".sapUiUnifiedLegendItems").children();
+		var $Leg = this.oLegend.$().find(".sapUiUnifiedLegendItems").children();
 
 		for (var i = 1; i < 9; i++) {
 			//compare specialDates of Calendar
@@ -257,7 +273,6 @@ sap.ui.define([
 		//with categories in CalendarLegend //skipping standard categories
 		assert.ok(($Leg[13].textContent == "Type10"), "Type10 is present in Legend");
 		assert.equal($Leg[13].textContent, specialDates[9].getTooltip(), "Type10 matches");
-
 	});
 
 	QUnit.module("items", {

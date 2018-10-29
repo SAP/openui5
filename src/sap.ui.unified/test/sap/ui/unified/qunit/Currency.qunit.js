@@ -1,9 +1,10 @@
-/*global QUnit, window */
+/*global QUnit, sinon, window */
 
 sap.ui.define([
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/unified/Currency"
-], function(sinon, Currency) {
+	"sap/ui/unified/Currency",
+	"sap/ui/model/json/JSONModel",
+	"sap/m/VBox"
+], function(Currency, JSONModel, VBox) {
 	"use strict";
 
 	QUnit.module("Control API", {
@@ -247,8 +248,8 @@ sap.ui.define([
 					useSymbol: true
 				}]
 			};
-			sap.ui.getCore().setModel(new sap.ui.model.json.JSONModel(this.oData));
-			this.sut = new sap.m.VBox({});
+			sap.ui.getCore().setModel(new JSONModel(this.oData));
+			this.sut = new VBox({});
 			this.sut.bindAggregation("items", "/currencyCollection", new Currency({
 				value: "{value}",
 				currency: "{currency}",
@@ -316,8 +317,8 @@ sap.ui.define([
 				maxPrecision: "{maxPrecision}",
 				useSymbol: "{useSymbol}"
 			});
-			sap.ui.getCore().setModel(new sap.ui.model.json.JSONModel(oData));
-			this.oVbox = new sap.m.VBox({});
+			sap.ui.getCore().setModel(new JSONModel(oData));
+			this.oVbox = new VBox({});
 			this.oVbox.bindAggregation("items", "/currencyCollection", oCurrencyTemplate);
 			this.oVbox.placeAt('qunit-fixture');
 			sap.ui.getCore().applyChanges();
@@ -368,7 +369,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Act
-		var oModel = new sap.ui.model.json.JSONModel({value: null});
+		var oModel = new JSONModel({value: null});
 		oCurrency.setModel(oModel);
 		// Assert
 		assert.strictEqual(oCurrency.$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
@@ -511,8 +512,8 @@ sap.ui.define([
 					currency: "*"
 				}]
 			};
-			sap.ui.getCore().setModel(new sap.ui.model.json.JSONModel(this.oData));
-			this.oVBox = new sap.m.VBox({});
+			sap.ui.getCore().setModel(new JSONModel(this.oData));
+			this.oVBox = new VBox({});
 			this.oVBox.bindAggregation("items", "/currencyCollection", new Currency({
 				value: "{value}",
 				currency: "{currency}"

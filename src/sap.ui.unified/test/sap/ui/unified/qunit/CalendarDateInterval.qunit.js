@@ -1,28 +1,26 @@
-/*global QUnit, window */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit, sinon, window */
+
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/CalendarDateInterval",
-	"sap/ui/thirdparty/sinon",
 	"sap/ui/core/LocaleData",
-	"sap/ui/unified/DateTypeRange"
-], function(qutils, CalendarDateInterval, sinon, LocaleData, DateTypeRange) {
+	"sap/ui/unified/DateRange",
+	"sap/ui/unified/DateTypeRange",
+	"sap/ui/unified/calendar/CalendarDate",
+	"sap/ui/unified/CalendarWeekInterval",
+	"sap/ui/unified/calendar/DatesRow",
+	"sap/ui/unified/library",
+	"sap/base/Log"
+], function(qutils, CalendarDateInterval, LocaleData, DateRange, DateTypeRange,
+	CalendarDate, CalendarWeekInterval, DatesRow, unifiedLibrary, Log) {
 	"use strict";
-
 
 	// set language to en-US, since we have specific language strings tested
 	sap.ui.getCore().getConfiguration().setLanguage("en_US");
 
-	var bSelectFired = false;
-	var oSelectedDate;
-
+	var CalendarDayType = unifiedLibrary.CalendarDayType;
 	var handleSelect = function(oEvent){
-		bSelectFired = true;
-		var oCalendar = oEvent.oSource;
-		var aSelectedDates = oCalendar.getSelectedDates();
-		if (aSelectedDates.length > 0 ) {
-			oSelectedDate = aSelectedDates[0].getStartDate();
-		}
+		Log.info("Select event handler fired!");
 	};
 
 	var iStartDateChanged = 0;
@@ -51,14 +49,14 @@ sap.ui.define([
 		maxDate: new Date("2050", "7", "31"),
 		days: 14,
 		intervalSelection: true,
-		selectedDates: [new sap.ui.unified.DateRange({startDate: new Date("2015", "1", "4"), endDate: new Date("2015", "1", "6")})],
-		specialDates: [new sap.ui.unified.DateTypeRange({startDate: new Date("2015", "1", "8"), type: sap.ui.unified.CalendarDayType.Type01, tooltip: "Text"}),
-						new sap.ui.unified.DateTypeRange({startDate: new Date("2015", "1", "9"), endDate: new Date("2015", "1", "10"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"})],
+		selectedDates: [new DateRange({startDate: new Date("2015", "1", "4"), endDate: new Date("2015", "1", "6")})],
+		specialDates: [new DateTypeRange({startDate: new Date("2015", "1", "8"), type: CalendarDayType.Type01, tooltip: "Text"}),
+						new DateTypeRange({startDate: new Date("2015", "1", "9"), endDate: new Date("2015", "1", "10"), type: CalendarDayType.Type02, tooltip: "Text"})],
 		select: handleSelect
 	}).placeAt("content");
 
 	var oCal3 = new CalendarDateInterval("Cal3",{
-		startDate: new Date("2015", "1", "2"),
+		startDate: new Date(),
 		days: 14,
 		showDayNamesLine: false,
 		select: handleSelect,
@@ -76,6 +74,7 @@ sap.ui.define([
 	QUnit.module("Rendering");
 
 	QUnit.test("rendered days", function(assert) {
+		oCal3.setStartDate(new Date("2015", "1", "2"));
 		var $DatesRow = sap.ui.getCore().byId("Cal1").getAggregation("month")[0].$();
 		var aWeekHeaders = $DatesRow.find(".sapUiCalWH");
 		var aDays = $DatesRow.find(".sapUiCalItem");
@@ -351,8 +350,8 @@ sap.ui.define([
 	QUnit.test("_getMaxDateAlignedToMinDate should return provided maxDate if it is after the minDate", function (assert) {
 		// Arrange
 		var oResult,
-			oMaxDate = new sap.ui.unified.calendar.CalendarDate(2018, 10, 20),
-			oMinDate = new sap.ui.unified.calendar.CalendarDate(2018, 9, 20),
+			oMaxDate = new CalendarDate(2018, 10, 20),
+			oMinDate = new CalendarDate(2018, 9, 20),
 			oCalendarDateInterval = new CalendarDateInterval();
 
 		// Act
@@ -369,8 +368,8 @@ sap.ui.define([
 		// Arrange
 		var oResult,
 			iDays = 6,
-			oMaxDate = new sap.ui.unified.calendar.CalendarDate(2018, 9, 20),
-			oMinDate = new sap.ui.unified.calendar.CalendarDate(2018, 10, 20),
+			oMaxDate = new CalendarDate(2018, 9, 20),
+			oMinDate = new CalendarDate(2018, 10, 20),
 			oCalendarDateInterval = new CalendarDateInterval(),
 			oGetDaysStub = this.stub(oCalendarDateInterval, "_getDays", function () { return iDays; });
 
@@ -388,9 +387,9 @@ sap.ui.define([
 	QUnit.test("_getStartDateAlignedToMinAndMaxDate should return the startDate if it is between max and min dates", function (assert) {
 		// Arrange
 		var oResult,
-			oMinDate = new sap.ui.unified.calendar.CalendarDate(2018, 9, 20),
-			oStartDate = new sap.ui.unified.calendar.CalendarDate(2018, 10, 20),
-			oMaxDate = new sap.ui.unified.calendar.CalendarDate(2018, 11, 20),
+			oMinDate = new CalendarDate(2018, 9, 20),
+			oStartDate = new CalendarDate(2018, 10, 20),
+			oMaxDate = new CalendarDate(2018, 11, 20),
 			oCalendarDateInterval = new CalendarDateInterval();
 
 		// Act
@@ -406,9 +405,9 @@ sap.ui.define([
 	QUnit.test("_getStartDateAlignedToMinAndMaxDate should return the minDate if startDate is before it", function (assert) {
 		// Arrange
 		var oResult,
-				oMinDate = new sap.ui.unified.calendar.CalendarDate(2018, 10, 20),
-				oStartDate = new sap.ui.unified.calendar.CalendarDate(2018, 9, 20),
-				oMaxDate = new sap.ui.unified.calendar.CalendarDate(2018, 11, 20),
+				oMinDate = new CalendarDate(2018, 10, 20),
+				oStartDate = new CalendarDate(2018, 9, 20),
+				oMaxDate = new CalendarDate(2018, 11, 20),
 				oCalendarDateInterval = new CalendarDateInterval();
 
 		// Act
@@ -424,9 +423,9 @@ sap.ui.define([
 	QUnit.test("_getStartDateAlignedToMinAndMaxDate should return the maxDate if startDate is after it", function (assert) {
 		// Arrange
 		var oResult,
-				oMinDate = new sap.ui.unified.calendar.CalendarDate(2018, 9, 20),
-				oStartDate = new sap.ui.unified.calendar.CalendarDate(2018, 11, 20),
-				oMaxDate = new sap.ui.unified.calendar.CalendarDate(2018, 10, 20),
+				oMinDate = new CalendarDate(2018, 9, 20),
+				oStartDate = new CalendarDate(2018, 11, 20),
+				oMaxDate = new CalendarDate(2018, 10, 20),
 				oCalendarDateInterval = new CalendarDateInterval();
 
 		// Act
@@ -442,8 +441,8 @@ sap.ui.define([
 	QUnit.test("_calculateStartDate should call _getMaxDateAlignedToMinDate and _getStartDateAlignedToMinAndMaxDate with correct params", function (assert) {
 		// Arrange
 		var iDays = 6,
-			oExpectedCalculatedMaxDate = new sap.ui.unified.calendar.CalendarDate(2018, 11, 20 - iDays + 1),
-			oStartDate = new sap.ui.unified.calendar.CalendarDate(2018, 10, 20),
+			oExpectedCalculatedMaxDate = new CalendarDate(2018, 11, 20 - iDays + 1),
+			oStartDate = new CalendarDate(2018, 10, 20),
 			oCalendarDateInterval = new CalendarDateInterval({ maxDate: new Date(2018, 11, 20) }),
 			ogetMaxDateAlignedToMinDateSpy = this.spy(oCalendarDateInterval, "_getMaxDateAlignedToMinDate"),
 			oAlignStartDateToMinAndMaxSpy = this.spy(oCalendarDateInterval, "_getStartDateAlignedToMinAndMaxDate"),
@@ -465,7 +464,7 @@ sap.ui.define([
 
 	QUnit.test("_setHeaderText", function(assert) {
 		//arrange
-		var oCalendarDateInterval = new sap.ui.unified.CalendarWeekInterval();
+		var oCalendarDateInterval = new CalendarWeekInterval();
 		var oHeader = oCalendarDateInterval.getAggregation("header");
 		var oSetHeaderTextSpy = this.spy(oHeader, "setTextButton1");
 		var oSetHeaderAriaSpy = this.spy(oHeader, "setAriaLabelButton1");
@@ -474,7 +473,7 @@ sap.ui.define([
 		var sDelimiter = LocaleData.getInstance(new sap.ui.core.Locale("en-US")).getIntervalPattern().replace("{0}", "").replace("{1}", "");
 
 		//act
-		oCalendarDateInterval._setHeaderText(new sap.ui.unified.calendar.CalendarDate(2017, 11, 31));
+		oCalendarDateInterval._setHeaderText(new CalendarDate(2017, 11, 31));
 
 		//assert
 		assert.equal(oSetHeaderTextSpy.lastCall.args[0], "December 2017" + sDelimiter + "January 2018", "text of the header is ok");
@@ -776,7 +775,7 @@ sap.ui.define([
 
 	QUnit.test("DatesRow getWeekNumbers", function(assert) {
 		//arrange
-		var oDatesRow = new sap.ui.unified.calendar.DatesRow({
+		var oDatesRow = new DatesRow({
 			startDate: new Date(2016, 11, 26),
 			days: 14
 		});

@@ -5,11 +5,13 @@ sap.ui.define([
 	"sap/ui/unified/Calendar",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/core/LocaleData"
-], function(qutils, Calendar, UniversalDate, DateFormat, LocaleData) {
+	"sap/ui/core/LocaleData",
+	"sap/ui/core/Locale",
+	"sap/ui/unified/DateRange"
+], function(qutils, Calendar, UniversalDate, DateFormat, LocaleData, Locale, DateRange) {
 	"use strict";
 
-	var oLocaleData = LocaleData.getInstance(new sap.ui.core.Locale("en-US"));
+	var oLocaleData = LocaleData.getInstance(new Locale("en-US"));
 	var aMonthNames = oLocaleData.getMonths("wide");
 
 	var oFormat = DateFormat.getDateInstance({
@@ -23,7 +25,7 @@ sap.ui.define([
 	function initializeCalendar(sSelectedDate) {
 		var oDate = oFormat.parse(sSelectedDate, true);
 		oCal1.destroySelectedDates();
-		oCal1.addSelectedDate(new sap.ui.unified.DateRange({startDate : oDate}));
+		oCal1.addSelectedDate(new DateRange({startDate : oDate}));
 		sap.ui.getCore().applyChanges();
 		oCal1.displayDate(oDate);
 	}

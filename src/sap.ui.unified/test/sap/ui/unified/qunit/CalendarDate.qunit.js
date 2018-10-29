@@ -1,5 +1,5 @@
 /*global QUnit, window */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+
 sap.ui.define([
 	"sap/ui/unified/calendar/CalendarDate"
 ], function(CalendarDate) {
@@ -22,37 +22,35 @@ sap.ui.define([
 
 	QUnit.test("With 1 parameter(CalendarDate), which does not accept invalid values", function (assert) {
 		//Act
-		var oCalendarDate,
-				oObject = {};
-
+		var	oObject = {};
 		//Assert
 		assert.throws(
 				function () {
-					oCalendarDate = new CalendarDate(20170001);
+					return new CalendarDate(20170001);
 				},
 				"does not work with a number as a parameter");
 
 		assert.throws(
 				function () {
-					oCalendarDate = new CalendarDate(undefined);
+					return new CalendarDate(undefined);
 				},
 				"does not work with undefined as a parameter");
 
 		assert.throws(
 				function () {
-					oCalendarDate = new CalendarDate(null);
+					return new CalendarDate(null);
 				},
 				"does not work with null as a parameter");
 
 		assert.throws(
 				function () {
-					oCalendarDate = new CalendarDate(oObject);
+					return new CalendarDate(oObject);
 				},
 				"does not work with an object as a parameter");
 
 		assert.throws(
 				function () {
-					oCalendarDate = new CalendarDate(2017, 4, 23, 345, 33);
+					return new CalendarDate(2017, 4, 23, 345, 33);
 				},
 				"does not work with more than 4 parameters");
 
@@ -366,8 +364,7 @@ sap.ui.define([
 
 	QUnit.test("setters return this", function (assert) {
 		//Act
-		var oCalendarDate = new CalendarDate(),
-				oChangedCalendarDate = new CalendarDate();
+		var	oChangedCalendarDate = new CalendarDate();
 
 		//Assert
 		assert.equal(oChangedCalendarDate.setYear(2000), oChangedCalendarDate, "setYear() returns this");
