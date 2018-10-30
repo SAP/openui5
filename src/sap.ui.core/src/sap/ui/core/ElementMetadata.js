@@ -90,13 +90,6 @@ sap.ui.define([
 		var oStaticInfo = oClassInfo.metadata;
 
 		this._sVisibility = oStaticInfo.visibility || "public";
-		this.dnd = Object.assign({
-			draggable: false,
-			droppable: false
-		}, (typeof oStaticInfo.dnd == "boolean") ? {
-			draggable: oStaticInfo.dnd,
-			droppable: oStaticInfo.dnd
-		} : oStaticInfo.dnd);
 
 		// remove renderer stuff before calling super.
 		var vRenderer = oClassInfo.hasOwnProperty("renderer") ? (oClassInfo.renderer || "") : undefined;
@@ -104,7 +97,15 @@ sap.ui.define([
 
 		ManagedObjectMetadata.prototype.applySettings.call(this, oClassInfo);
 
+		var oParent = this.getParent();
 		this._sRendererName = this.getName() + "Renderer";
+		this.dnd = Object.assign({
+			draggable: false,
+			droppable: false
+		}, oParent.dnd, (typeof oStaticInfo.dnd == "boolean") ? {
+			draggable: oStaticInfo.dnd,
+			droppable: oStaticInfo.dnd
+		} : oStaticInfo.dnd);
 
 		if ( typeof vRenderer !== "undefined" ) {
 
