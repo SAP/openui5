@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log"],
-		function(Core, ObjectPath, Log) {
+sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log", "sap/ui/VersionInfo"],
+		function(Core, ObjectPath, Log, VersionInfo) {
 	"use strict";
 
 	/**
@@ -183,13 +183,48 @@ sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log"],
 		   "sap.ui.richtexteditor","sap.ui.rta","sap.ui.suite","sap.ui.table",
 		   "sap.ui.unified","sap.ui.ux3","sap.uxap","sap.viz"];
 
-	var isKnownRuntimeLayerLibrary = function(sLibName) {
-		if (aKnownRuntimeLayerLibraries.indexOf(sLibName) > -1) {
-			return true;
-		} else {
-			return false;
-		}
+	ControlIterator.isKnownRuntimeLayerLibrary = function(sLibName) {
+		return aKnownRuntimeLayerLibraries.indexOf(sLibName) > -1;
 	};
+
+	function getAllLibrariesPromise(fnFilter) {
+
+		// discover what is available in order to also test other libraries than those loaded in bootstrap
+		return VersionInfo.load().then(function(oInfo) {
+			var mLibraries = sap.ui.getCore().getLoadedLibraries(),
+				sInfoLibName,
+				i ,aPromises = [], bNewLibrary;
+
+			var fnSetNewLibrary = function() {
+				bNewLibrary = true;
+			};
+			var fnEmptyLibrary = function() {
+			};
+			for (i = 0; i < oInfo.libraries.length; i++) {
+				sInfoLibName = oInfo.libraries[i].name;
+				if (!mLibraries[sInfoLibName] && (!fnFilter || fnFilter(sInfoLibName))) {
+					Log.info("Libary '" + sInfoLibName + "' is not loaded!");
+					try {
+						aPromises.push(sap.ui.getCore().loadLibrary(sInfoLibName, true).then(fnSetNewLibrary)).catch(fnEmptyLibrary);
+					} catch (e) {
+						// not a control lib? This happens for e.g. "themelib_sap_bluecrystal"...
+					}
+				}
+			}
+			return Promise.all(aPromises).then(function() {
+				// Renew the libraries object if new libraries are added
+				if (bNewLibrary) {
+					mLibraries = sap.ui.getCore().getLoadedLibraries();
+				}
+				for (var sLibName in mLibraries) {
+					if (fnFilter && !fnFilter(sLibName)) {
+						delete mLibraries[sLibName];
+					}
+				}
+				return mLibraries;
+			});
+		});
+	}
 
 
 	/**
@@ -234,7 +269,7 @@ sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log"],
 		// ignore dist-layer libraries if requested
 		if (!bIncludeDistLayer) {
 			for (var sLibName in mLibraries) {
-				if (!isKnownRuntimeLayerLibrary(sLibName)) {
+				if (!ControlIterator.isKnownRuntimeLayerLibrary(sLibName)) {
 					mLibraries[sLibName] = undefined;
 				}
 			}
@@ -404,6 +439,30 @@ sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log"],
 		window.setTimeout(function() { // fake async because sync loading libraries might not be possible in the future
 			_run(fnCallback, mOptions);
 		}, 1);
+	};
+
+	/**
+	 * @param {function} [fnFilterLibraries] filter function, by default all libraries are taken
+	 * Retrieves all control names of all libraries, including dist layer
+	 * @return {Promise<Array>} of all control names, e.g. ["sap.m.Button", "sap.m.Text"]
+	 */
+	ControlIterator.getAllControlNames = function(fnFilterLibraries) {
+
+		return getAllLibrariesPromise(fnFilterLibraries).then(function(mLibraries) {
+
+			var aAllControls = [];
+			Object.keys(mLibraries).forEach(function(sLibraryName) {
+				var oLibrary = mLibraries[sLibraryName];
+				if (oLibrary.controls) {
+					aAllControls = aAllControls.concat(oLibrary.controls);
+				}
+				if (oLibrary.elements) {
+					aAllControls = aAllControls.concat(oLibrary.elements);
+				}
+			});
+			return aAllControls;
+		});
+
 	};
 
 
