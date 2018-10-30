@@ -18,11 +18,6 @@
 	jQuery.sap.require("sap.m.OverflowToolbar");
 	jQuery.sap.require("sap.m.OverflowToolbarLayoutData");
 
-	// for behaviour testing
-	if (oUriParameters.get("oldFlex")) {
-		sap.m.ToolbarRenderer.hasNewFlexBoxSupport = false;
-	}
-
 	var sAddIconURI = sap.ui.core.IconPool.getIconURI("add");
 	var sDeleteIconURI = sap.ui.core.IconPool.getIconURI("delete");
 	var sChangeIconURI = sap.ui.core.IconPool.getIconURI("cause");

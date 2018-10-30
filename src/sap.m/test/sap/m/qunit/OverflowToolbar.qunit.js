@@ -132,14 +132,6 @@ sap.ui.define([
 		return iVisibleButtons;
 	}
 
-	function setFlexboxMode(sMode) {
-		if (sMode === "new") {
-			this.stub(ToolbarRenderer, "hasNewFlexBoxSupport", true);
-		} else if (sMode === "old") {
-			this.stub(ToolbarRenderer, "hasNewFlexBoxSupport", false);
-		}
-	}
-
 	QUnit.module("DOM Rendering");
 	QUnit.test("Creating a toolbar should add it in DOM", function (assert) {
 		var oOverflowTB = createOverflowToolbar();
@@ -154,12 +146,9 @@ sap.ui.define([
 
 
 	function testAllFlexBoxModes(sName, fnTest) {
-		["new", "old"].forEach(function(sMode) {
-			QUnit.test("[" + sMode.toUpperCase() + " flexbox] " + sName, function (assert) {
-				setFlexboxMode.call(this, "new");
-				fnTest.call(this, assert);
-			});
-		}, this);
+		QUnit.test(sName, function (assert) {
+			fnTest.call(this, assert);
+		});
 	}
 
 	testAllFlexBoxModes("Shrinking a toolbar should move some buttons to the overflow", function (assert) {
@@ -1760,14 +1749,14 @@ sap.ui.define([
 		assert.strictEqual(oOverflowTB._bControlsInfoCached, true, "After a toolbar is created, _bControlsInfoCached is set to true");
 		assert.strictEqual(oOverflowTB._aMovableControls.length, 4, "4 of the buttons are properly marked as movable to the popover");
 		assert.strictEqual(oOverflowTB._aToolbarOnlyControls.length, 2, "The 2 texts are properly marked as toolbar only");
-		assert.strictEqual(oOverflowTB._aActionSheetOnlyControls.length, 1, "The button with special layout is properly marked as popover only");
+		assert.strictEqual(oOverflowTB._aPopoverOnlyControls.length, 1, "The button with special layout is properly marked as popover only");
 
 		// Note: control sizes and total content size are not checked here because they depend on margins and calculations are not always predictable
 
 		oOverflowTB.destroy();
 	});
 
-	QUnit.test("no actionSheet when actionSheet content is not visible", function (assert) {
+	QUnit.test("no Popover when Popover content is not visible", function (assert) {
 		var oToolbarOnlyControl = new Text({
 				maxLines: 1, wrapping: true, text: "Sales and Total sales by Product and Quarter",
 				layoutData: new OverflowToolbarLayoutData({
@@ -2376,31 +2365,6 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oOTB._bIsBeingDestroyed, true, "Toolbar is destroyed");
 		assert.strictEqual(oPopover, null, "Popover is destroyed");
-	});
-
-	QUnit.module("Forcing rerender on resize");
-
-	QUnit.test("The OverflowToolbar is reset and rerendered on resize, if _bForceReRenderOnResize is true", function (assert) {
-
-		var oOTB = new OverflowToolbar();
-
-		// Arrange
-		oOTB._bForceRerenderOnResize = true;
-		oOTB.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		var oResetToolbarSpy = this.spy(OverflowToolbar.prototype, "_resetToolbar"),
-			oRerenderSpy = this.spy(OverflowToolbar.prototype, "rerender");
-
-		// Act
-		oOTB._handleResize();
-
-		// Assert
-		assert.ok(oResetToolbarSpy.calledOnce, "_resetToolbar is called once.");
-		assert.ok(oRerenderSpy.calledOnce, "rerender is called once.");
-
-		// Cleanup
-		oOTB.destroy();
 	});
 
 	QUnit.module("Private API: _markControlsWithShrinkableLayoutData", {

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.AssociativeOverflowToolbar.
-sap.ui.define(['sap/base/Log', './OverflowToolbar', './OverflowToolbarRenderer', './Toolbar'],
-	function (Log, OverflowToolbar, OverflowToolbarRenderer, Toolbar) {
+sap.ui.define(['sap/base/Log', './OverflowToolbar', './OverflowToolbarRenderer', './Toolbar', 'sap/ui/Device'],
+	function (Log, OverflowToolbar, OverflowToolbarRenderer, Toolbar, Device) {
 		"use strict";
 
 		/**
@@ -80,6 +80,21 @@ sap.ui.define(['sap/base/Log', './OverflowToolbar', './OverflowToolbarRenderer',
 		AssociativeOverflowToolbar.prototype.indexOfContent = function(oControl) {
 			var controlIds = this.getAssociation("content") || [];
 			return controlIds.indexOf(oControl.getId());
+		};
+
+		/**
+		 * Overrides OverflowToolbar's method in order to reset and invalidate the Toolbar, when the user changes the orientation of a Mobile device.
+		 * Keeps optimization logic for only caching new controls' widths and calling doLayout method when there is an resize event on Desktop
+		 * (skipping reseting and invalidating the control).
+		 * @private
+		 */
+		AssociativeOverflowToolbar.prototype._handleResize = function () {
+			if (Device.system.phone) {
+				this._resetAndInvalidateToolbar();
+			} else {
+				this._bControlsInfoCached = false;
+				OverflowToolbar.prototype._handleResize.apply(this, arguments);
+			}
 		};
 
 		AssociativeOverflowToolbar.prototype._callToolbarMethod = function (sFuncName, aArguments) {
