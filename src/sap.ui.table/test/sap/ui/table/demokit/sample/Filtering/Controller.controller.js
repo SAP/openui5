@@ -11,7 +11,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.sample.Filtering.Controller", {
 
-		onInit : function () {
+		onInit : function() {
 			var oView = this.getView();
 
 			// set explored app's demo model on this sample
@@ -35,7 +35,7 @@ sap.ui.define([
 
 			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json", {
 				dataType: "json",
-				success: function (oData) {
+				success: function(oData) {
 					var aTemp1 = [];
 					var aTemp2 = [];
 					var aSuppliersData = [];
@@ -61,7 +61,7 @@ sap.ui.define([
 
 					oModel.setData(oData);
 				},
-				error: function () {
+				error: function() {
 					jQuery.sap.log.error("failed to load json");
 				}
 			});
@@ -69,7 +69,7 @@ sap.ui.define([
 			return oModel;
 		},
 
-		_filter : function () {
+		_filter : function() {
 			var oFilter = null;
 
 			if (this._oGlobalFilter && this._oPriceFilter) {
@@ -155,7 +155,7 @@ sap.ui.define([
 			this.byId("availability").filter(oEvent.getParameter("pressed") ? "X" : "");
 		},
 
-		formatAvailableToObjectState : function (bAvailable) {
+		formatAvailableToObjectState : function(bAvailable) {
 			return bAvailable ? "Success" : "Error";
 		},
 

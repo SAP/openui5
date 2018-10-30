@@ -8,7 +8,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.sample.DnD.Controller", {
 
-		onInit: function () {
+		onInit: function() {
 			// set explored app's demo model on this sample
 			this.oProductsModel = this.initSampleProductsModel();
 			this.getView().setModel(this.oProductsModel);

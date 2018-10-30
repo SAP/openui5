@@ -13,7 +13,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.sample.Menus.Controller", {
 
-		onInit : function () {
+		onInit : function() {
 			var oView = this.getView();
 
 			// set explored app's demo model on this sample
@@ -34,7 +34,7 @@ sap.ui.define([
 
 			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json", {
 				dataType: "json",
-				success: function (oData) {
+				success: function(oData) {
 					var aTemp1 = [];
 					var aTemp2 = [];
 					var aSuppliersData = [];
@@ -60,7 +60,7 @@ sap.ui.define([
 
 					oModel.setData(oData);
 				},
-				error: function () {
+				error: function() {
 					jQuery.sap.log.error("failed to load json");
 				}
 			});
@@ -68,7 +68,7 @@ sap.ui.define([
 			return oModel;
 		},
 
-		onColumnSelect : function (oEvent) {
+		onColumnSelect : function(oEvent) {
 			var oCurrentColumn = oEvent.getParameter("column");
 			var oImageColumn = this.byId("image");
 			if (oCurrentColumn === oImageColumn) {
@@ -76,7 +76,7 @@ sap.ui.define([
 			}
 		},
 
-		onColumnMenuOpen: function (oEvent) {
+		onColumnMenuOpen: function(oEvent) {
 			var oCurrentColumn = oEvent.getSource();
 			var oImageColumn = this.byId("image");
 			if (oCurrentColumn != oImageColumn) {
@@ -87,7 +87,7 @@ sap.ui.define([
 			oEvent.preventDefault();
 		},
 
-		onProductIdCellContextMenu : function (oEvent) {
+		onProductIdCellContextMenu : function(oEvent) {
 			if (sap.ui.Device.support.touch) {
 				return; //Do not use context menus on touch devices
 			}

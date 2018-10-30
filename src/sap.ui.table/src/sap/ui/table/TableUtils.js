@@ -1038,7 +1038,7 @@ sap.ui.define([
 			var sContentDensity;
 			var aContentDensityStyleClasses = ["sapUiSizeCondensed", "sapUiSizeCompact", "sapUiSizeCozy"];
 
-			var fnGetContentDensity = function (sFnName, oObject) {
+			var fnGetContentDensity = function(sFnName, oObject) {
 				if (!oObject[sFnName]) {
 					return;
 				}

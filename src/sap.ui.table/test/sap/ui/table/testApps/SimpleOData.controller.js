@@ -1,11 +1,11 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel"
-], function (Controller, JSONModel) {
+], function(Controller, JSONModel) {
 	"use strict";
 	return Controller.extend("sap.ui.table.testApps.SimpleOData", {
 
-		onInit: function () {
+		onInit: function() {
 			var oFormData = {
 				serviceURL: "",
 				collection: "orgHierarchy",
@@ -38,7 +38,7 @@ sap.ui.define([
 			this.aVisibleRow = [];
 		},
 
-		onCreateTableClick: function () {
+		onCreateTableClick: function() {
 			var oView = this.getView(),
 				oDataModel = oView.getModel();
 
@@ -88,20 +88,20 @@ sap.ui.define([
 			oTableContainer.addContent(oTable);
 
 			oTable.addDelegate({
-				onBeforeRendering: function () {
+				onBeforeRendering: function() {
 					jQuery.sap.measure.start("onBeforeRendering","",["Render"]);
 					jQuery.sap.measure.start("rendering","",["Render"]);
 				},
-				onAfterRendering: function () {
+				onAfterRendering: function() {
 					jQuery.sap.measure.start("onAfterRendering","",["Render"]);
 				}
 			}, true);
 
 			oTable.addDelegate({
-				onBeforeRendering: function () {
+				onBeforeRendering: function() {
 					jQuery.sap.measure.end("onBeforeRendering");
 				},
-				onAfterRendering: function () {
+				onAfterRendering: function() {
 					jQuery.sap.measure.end("onAfterRendering");
 					jQuery.sap.measure.end("rendering");
 				}

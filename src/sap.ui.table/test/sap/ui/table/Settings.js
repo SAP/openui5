@@ -1507,16 +1507,16 @@
 			contentWidth: "1000px",
 			content: [oSettingsTable],
 			endButton: new sap.m.Button({
-				text: "Cancel", press: function () { oDialog.close(); }
+				text: "Cancel", press: function() { oDialog.close(); }
 			}),
 			beginButton: new sap.m.Button({
 				text: "Ok",
-				press: function () {
+				press: function() {
 					changeSettings();
 					oDialog.close();
 				}
 			}),
-			afterClose: function () { oDialog.destroy(); }
+			afterClose: function() { oDialog.destroy(); }
 		});
 		oDialog.open();
 	}

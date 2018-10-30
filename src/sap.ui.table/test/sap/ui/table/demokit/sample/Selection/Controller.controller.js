@@ -8,7 +8,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.sample.Selection.Controller", {
 
-		onInit : function () {
+		onInit : function() {
 			// set explored app's demo model on this sample
 			var oJSONModel = this.initSampleDataModel();
 			var oView = this.getView();
@@ -42,7 +42,7 @@ sap.ui.define([
 
 			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json", {
 				dataType: "json",
-				success: function (oData) {
+				success: function(oData) {
 					var aTemp1 = [];
 					var aTemp2 = [];
 					var aSuppliersData = [];
@@ -68,7 +68,7 @@ sap.ui.define([
 
 					oModel.setData(oData);
 				},
-				error: function () {
+				error: function() {
 					jQuery.sap.log.error("failed to load json");
 				}
 			});
@@ -95,7 +95,7 @@ sap.ui.define([
 			oTable.setEnableSelectAll(oEvent.getParameter("state"));
 		},
 
-		getSelectedIndices: function (evt) {
+		getSelectedIndices: function(evt) {
 			var aIndices = this.byId("table1").getSelectedIndices();
 			var sMsg;
 			if (aIndices.length < 1) {
@@ -106,7 +106,7 @@ sap.ui.define([
 			MessageToast.show(sMsg);
 		},
 
-		getContextByIndex: function (evt) {
+		getContextByIndex: function(evt) {
 			var oTable = this.byId("table1");
 			var iIndex = oTable.getSelectedIndex();
 			var sMsg;
@@ -118,11 +118,11 @@ sap.ui.define([
 			MessageToast.show(sMsg);
 		},
 
-		clearSelection: function (evt) {
+		clearSelection: function(evt) {
 			this.byId("table1").clearSelection();
 		},
 
-		formatAvailableToObjectState : function (bAvailable) {
+		formatAvailableToObjectState : function(bAvailable) {
 			return bAvailable ? "Success" : "Error";
 		},
 
