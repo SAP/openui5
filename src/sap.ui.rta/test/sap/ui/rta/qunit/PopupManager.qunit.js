@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/rta/util/PopupManager",
 	"sap/m/InstanceManager",
 	"sap/m/Dialog",
 	"sap/m/Popover",
@@ -24,7 +23,6 @@ sap.ui.define([
 function(
 	DesignTime,
 	RuntimeAuthoring,
-	PopupManager,
 	InstanceManager,
 	Dialog,
 	Popover,
@@ -46,7 +44,7 @@ function(
 
 	var sandbox = sinon.sandbox.create();
 	var oView, oApp;
-	var oMockComponent = UIComponent.extend("MockController", {
+	var MockComponent = UIComponent.extend("MockController", {
 		metadata: {
 			manifest: 	{
 				"sap.app" : {
@@ -67,7 +65,7 @@ function(
 			return oApp;
 		}
 	});
-	var oComp = new oMockComponent("testComponent");
+	var oComp = new MockComponent("testComponent");
 	new ComponentContainer("sap-ui-static", {
 		component: oComp
 	}).placeAt("qunit-fixture");
@@ -84,7 +82,7 @@ function(
 		oRta.getPopupManager().setRta(oRta);
 	};
 	QUnit.module("Given RTA instance is created without starting", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp.getAggregation("rootControl")
 			});
@@ -475,16 +473,21 @@ function(
 				// set the initial Modal state to "false"
 				oPopup.setModal(false);
 				assert.equal(oPopup.getModal(), false, "the Popover is not modal before Mode change");
+
 				// change mode to 'adaptation'
 				var oEvent = new Event("testevent", this.oRta, { mode: "adaptation" });
 				this.oRta.getPopupManager()._onModeChange(oEvent);
 				assert.equal(oPopup.getModal(), true, "then the Popover is modal after switch to adaptation mode");
+				assert.strictEqual(this.fnToolsMenuBringToFrontSpy.callCount, 1, "then 'bringToFront' was called");
+
 				// change mode to 'navigation'
 				oEvent = new Event("testevent", this.oRta, { mode: "navigation" });
 				this.oRta.getPopupManager()._onModeChange(oEvent);
 				assert.equal(oPopup.getModal(), false, "then the Popover is not modal after switch back to navigation mode");
+				assert.strictEqual(this.fnToolsMenuBringToFrontSpy.callCount, 1, "then 'bringToFront' was not called again");
 				this.fnApplyPopupMethods = sandbox.spy(this.oRta.getPopupManager(), "_applyPopupMethods");
 				this.oRta.getPopupManager().getRelevantPopups.restore();
+
 				done();
 			}.bind(this));
 			this.oPopover.openBy(oComp.byId("mockview"));
@@ -493,10 +496,11 @@ function(
 		QUnit.test("when _onModeChange is called on a modal popover", function(assert) {
 			var done = assert.async();
 			sandbox.stub(this.oRta.getPopupManager(), "getRelevantPopups").returns(
-					{
-						aDialogs : false,
-						aPopovers: [this.oPopover]
-					});
+				{
+					aDialogs : false,
+					aPopovers: [this.oPopover]
+				}
+			);
 			this.oPopover.attachAfterOpen(function() {
 				var oPopup = this.oPopover.oPopup;
 				// set the initial Modal state to "true"
@@ -523,7 +527,7 @@ function(
 	//integration tests
 	//when RTA is started and then dialogs are opened
 	QUnit.module("Given RTA is started with an app containing dialog(s)", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp.getAggregation("rootControl")
 			});
@@ -595,12 +599,12 @@ function(
 			}.bind(this));
 		});
 		QUnit.test("when dialog with different app component is opened", function(assert) {
+			var done = assert.async();
 			this.oRta._oDesignTime.attachEventOnce("synced", function() {
 				assert.notOk(fnFindOverlay(this.oNonRtaDialog, this.oRta._oDesignTime), "then overlay does not exist for root dialog element");
 				done();
 			}.bind(this));
 			this.oNonRtaDialog.open();
-			var done = assert.async();
 			this.oNonRtaDialog.attachAfterOpen(function() {
 				assert.strictEqual(this.fnCreateDialogSpy.callCount, 0, "then '_createPopupOverlays' is never called");
 				assert.ok(this.fnCreateDialogSpy.neverCalledWith(this.oNonRtaDialog), "then '_createPopupOverlays' is not called");
@@ -659,7 +663,7 @@ function(
 	QUnit.module("Given RTA is started with an app containing dialog(s)", {
 		beforeEach: function (assert) {
 			var oCompContInDialog = new ComponentContainer("CompCont2", {
-				component : new oMockComponent("compInContainer")
+				component : new MockComponent("compInContainer")
 			});
 			var oCompInDialog = oCompContInDialog.getComponentInstance();
 			this.oDialog = new Dialog("appinside");
@@ -714,7 +718,7 @@ function(
 			this.oNonRtaDialog = new Dialog("nonRtaDialog");
 			oComp.runAsOwner(function() {
 				this.oCompContInside = new ComponentContainer("CompContInside", {
-					component : new oMockComponent("compInside")
+					component : new MockComponent("compInside")
 				});
 				oComp.byId("mockview").addContent(this.oCompContInside);
 				this.oCompContInside.getComponentInstance().byId("mockview").addContent(this.oNonRtaDialog);
