@@ -89,7 +89,7 @@ sap.ui.define([
 		/**
 		 * Sets the focus handler to be used by the RenderManager.
 		 *
-		 * @param {sap.ui.core.FocusHandler} oFocusHandler the focus handler to be used.
+		 * @param {sap.ui.core.FocusHandler} oNewFocusHandler the focus handler to be used.
 		 * @private
 		 */
 		this._setFocusHandler = function(oNewFocusHandler) {
@@ -130,7 +130,7 @@ sap.ui.define([
 		 *
 		 * For details about the escaping refer to {@link jQuery.sap.encodeHTML}
 		 *
-		 * @param {any} sText
+		 * @param {any} sText the text to escape
 		 * @param {boolean} bLineBreaks Whether to convert line breaks into <br> tags
 		 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
 		 * @public
@@ -815,7 +815,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {string} sKey
+	 * @param {string} sKey the key
 	 * @deprecated As of version 1.1, never has been implemented - DO NOT USE
 	 * @public
 	 */
@@ -1204,7 +1204,7 @@ sap.ui.define([
 	 * Returns the renderer class for a given control instance
 	 *
 	 * @param {sap.ui.core.Control} oControl the control that should be rendered
-	 * @return the renderer class for a given control instance
+	 * @return {object} the renderer class for a given control instance
 	 * @public
 	 */
 	RenderManager.prototype.getRenderer = function(oControl) {
@@ -1259,7 +1259,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control}
 	 *            oControl the control that should be rendered
 	 * @type function
-	 * @return the renderer class for a given control instance
+	 * @return {object} the renderer class for a given control instance
 	 * @static
 	 * @public
 	 */
@@ -1329,6 +1329,7 @@ sap.ui.define([
 	}
 
 	/**
+	 * @param {Element} node dom node
 	 * Create a placeholder node for the given node (which must have an ID) and insert it before the node
 	 */
 	function makePlaceholder(node) {
@@ -1525,7 +1526,7 @@ sap.ui.define([
 	/**
 	 * Checks whether the given DOM node is an 'inline template' area.
 	 *
-	 * @param {Element} oDomNode
+	 * @param {Element} oDomNode dom node which is checked
 	 * @return {boolean} whether node is an 'inline template' area
 	 * @private
 	 * @static
@@ -1543,7 +1544,7 @@ sap.ui.define([
 
 	/**
 	 * Determines whether Dom Patching is enabled or not
-	 * @returns {boolean}
+	 * @returns {boolean} whether or not dom patching is enabled
 	 * @private
 	 */
 	function isDomPatchingEnabled() {
