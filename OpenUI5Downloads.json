@@ -2,8 +2,8 @@
 	{
 		"version": "1.58.5",
 		"date": "2018-10-30",
-		"WhatsNewId":"b28edde1f4ad425d9247f3bbcdc5d9b7",
-		"beta": false
+		"WhatsNewId":"b28edde1f4ad425d9247f3bbcdc5d9b7"
+		
 	},
 	{
 		"version": "1.56.14",
@@ -23,6 +23,7 @@
 	{
 		"version": "1.38.38",
 		"date": "2018-10-04",
-		"WhatsNewId":"6a875f998994489483e8085705347d72"
+		"WhatsNewId":"6a875f998994489483e8085705347d72",
+		"beta": false
 	}
 ]
