@@ -8,8 +8,9 @@
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 	>
 	<Toolbar id="TeamDetailsToolbar">
-		<Title text="Team" titleStyle="H3"/>
-		<Select id="TeamSelect" change="onTeamSelect" autoAdjustWidth="true"
+		<Title id="teamTitle" text="Team" titleStyle="H3"/>
+		<Select ariaLabelledBy="teamTitle" id="TeamSelect" change="onTeamSelect"
+			autoAdjustWidth="true"
 			items="{
 				path : '/TEAMS',
 				parameters : {
