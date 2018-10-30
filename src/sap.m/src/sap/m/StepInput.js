@@ -258,7 +258,8 @@ function(
 							value: {type: "string"}
 						}
 					}
-				}
+				},
+				dnd: { draggable: false, droppable: true }
 			},
 			constructor : function (vId, mSettings) {
 				Control.prototype.constructor.apply(this, arguments);

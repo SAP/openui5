@@ -138,7 +138,8 @@ sap.ui.define([
 					 */
 					type: {type: "sap.m.ObjectMarkerType"}
 				}
-			}
+			},
+			dnd: { draggable: true, droppable: false }
 		}
 	});
 

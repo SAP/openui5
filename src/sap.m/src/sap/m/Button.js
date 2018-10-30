@@ -155,7 +155,8 @@ sap.ui.define([
 			 */
 			press : {}
 		},
-		designtime: "sap/m/designtime/Button.designtime"
+		designtime: "sap/m/designtime/Button.designtime",
+		dnd: { draggable: true, droppable: false }
 	}});
 
 

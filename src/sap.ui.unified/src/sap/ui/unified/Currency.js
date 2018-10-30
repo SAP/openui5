@@ -101,7 +101,8 @@ sap.ui.define([
 				 */
 				useSymbol : {type : "boolean", group : "Appearance", defaultValue : true}
 			},
-			designtime: "sap/ui/unified/designtime/Currency.designtime"
+			designtime: "sap/ui/unified/designtime/Currency.designtime",
+			dnd: { draggable: true, droppable: false }
 		}});
 
 		//Whitespace characters to align values

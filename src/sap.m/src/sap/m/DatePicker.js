@@ -221,7 +221,8 @@ sap.ui.define([
 				}
 			}
 		},
-		designtime: "sap/m/designtime/DatePicker.designtime"
+		designtime: "sap/m/designtime/DatePicker.designtime",
+		dnd: { draggable: false, droppable: true }
 	}});
 
 

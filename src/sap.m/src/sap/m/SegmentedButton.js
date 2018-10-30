@@ -167,7 +167,8 @@ function(
 					item : {type : "sap.m.SegmentedButtonItem"}
 				}
 			}
-		}
+		},
+		dnd: { draggable: true, droppable: false }
 	}});
 
 

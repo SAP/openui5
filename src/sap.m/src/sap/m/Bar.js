@@ -114,7 +114,8 @@ sap.ui.define([
 			 */
 			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
-		designtime: "sap/m/designtime/Bar.designtime"
+		designtime: "sap/m/designtime/Bar.designtime",
+		dnd: { draggable: false, droppable: true }
 	}});
 
 	Bar.prototype.onBeforeRendering = function() {

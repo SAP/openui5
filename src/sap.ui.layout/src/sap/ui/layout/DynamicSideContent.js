@@ -161,7 +161,8 @@ sap.ui.define([
 				 */
 				sideContent : {type: "sap.ui.core.Control", multiple:  true}
 			},
-			designTime: "sap/ui/layout/designtime/DynamicSideContent.designtime"
+			designTime: "sap/ui/layout/designtime/DynamicSideContent.designtime",
+			dnd: { draggable: false, droppable: true }
 		}});
 
 		var	S = "S",

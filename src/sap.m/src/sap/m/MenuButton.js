@@ -174,7 +174,8 @@ sap.ui.define([
 				defaultAction: {}
 			},
 			defaultAggregation : "menu",
-			designtime: "sap/m/designtime/MenuButton.designtime"
+			designtime: "sap/m/designtime/MenuButton.designtime",
+			dnd: { draggable: true, droppable: false }
 		}});
 
 		EnabledPropagator.call(MenuButton.prototype);

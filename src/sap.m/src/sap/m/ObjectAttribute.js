@@ -97,7 +97,8 @@ function(library, Control, coreLibrary, Text, ObjectAttributeRenderer, Log) {
 					domRef : {type : "string"}
 				}
 			}
-		}
+		},
+		dnd: { draggable: true, droppable: false }
 	}});
 
 	/**
