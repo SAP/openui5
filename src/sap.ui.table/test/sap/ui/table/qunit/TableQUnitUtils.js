@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem"
-], function (JSONModel, Control, Table, TreeTable, Column, RowAction, RowActionItem) {
+], function(JSONModel, Control, Table, TreeTable, Column, RowAction, RowActionItem) {
 	"use strict";
 
 	var oTable, oTreeTable;
@@ -36,7 +36,7 @@ sap.ui.define([
 			}
 		},
 
-		renderer: function (oRm, oControl) {
+		renderer: function(oRm, oControl) {
 			oRm.write("<span");
 			oRm.writeControlData(oControl);
 			if (oControl.getTabbable()) {
@@ -68,7 +68,7 @@ sap.ui.define([
 			}
 		},
 
-		renderer: function (oRm, oControl) {
+		renderer: function(oRm, oControl) {
 			oRm.write("<input");
 			oRm.writeControlData(oControl);
 			oRm.writeAttribute("type", oControl.getType() || "text");
@@ -85,13 +85,13 @@ sap.ui.define([
 	});
 
 	sap.ui.table.TableHelper = {
-		createLabel: function (mConfig) {
+		createLabel: function(mConfig) {
 			return new TestControl(mConfig);
 		},
-		createTextView: function (mConfig) {
+		createTextView: function(mConfig) {
 			return new TestControl(mConfig);
 		},
-		addTableClass: function () {
+		addTableClass: function() {
 			return "sapUiTableTest";
 		},
 		bFinal: true

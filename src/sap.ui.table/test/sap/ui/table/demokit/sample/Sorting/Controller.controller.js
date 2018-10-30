@@ -10,7 +10,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.sample.Sorting.Controller", {
 
-		onInit : function () {
+		onInit : function() {
 			// set explored app's demo model on this sample
 			var oJSONModel = this.initSampleDataModel();
 			var oView = this.getView();
@@ -28,7 +28,7 @@ sap.ui.define([
 
 			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json", {
 				dataType: "json",
-				success: function (oData) {
+				success: function(oData) {
 					var aTemp1 = [];
 					var aTemp2 = [];
 					var aSuppliersData = [];
@@ -54,7 +54,7 @@ sap.ui.define([
 
 					oModel.setData(oData);
 				},
-				error: function () {
+				error: function() {
 					jQuery.sap.log.error("failed to load json");
 				}
 			});

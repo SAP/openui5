@@ -2052,7 +2052,7 @@ sap.ui.define([
 		oModel.attachMetadataLoaded(function() {
 			sap.ui.require([
 				"sap/ui/model/odata/v2/ODataTreeBinding", "sap/ui/model/odata/ODataTreeBindingAdapter"],
-				function (ODataTreeBinding, ODataTreeBindingAdapter) {
+				function(ODataTreeBinding, ODataTreeBindingAdapter) {
 					var oBinding = new ODataTreeBinding({
 						checkFilterOperation: function() { }
 					}, "/");
@@ -2081,7 +2081,7 @@ sap.ui.define([
 					oReq.open("GET", "test-resources/sap/ui/core/qunit/testdata/odata/sfin.json");
 					oReq.send();
 
-					function fnDataLoaded () {
+					function fnDataLoaded() {
 						var oData, aExpandedTreeState;
 						oData = JSON.parse(this.responseText);
 

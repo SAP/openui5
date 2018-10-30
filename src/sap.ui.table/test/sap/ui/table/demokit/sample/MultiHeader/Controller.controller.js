@@ -6,7 +6,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.sample.MultiHeader.Controller", {
 
-		onInit : function () {
+		onInit : function() {
 
 			// create JSON model instance
 			var oModel = new JSONModel();

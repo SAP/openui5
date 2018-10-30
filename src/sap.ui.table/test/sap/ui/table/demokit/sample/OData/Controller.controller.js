@@ -12,7 +12,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.sample.OData.Controller", {
 
-		onInit : function () {
+		onInit : function() {
 			this.oMockServer = new MockServer({
 				rootUri : sServiceUrl
 			});
@@ -43,7 +43,7 @@ sap.ui.define([
 			oView.setModel(new JSONModel(oUiData), "ui");
 		},
 
-		onExit : function () {
+		onExit : function() {
 			this.oBusyIndicator.destroy();
 			this.oBusyIndicator = null;
 

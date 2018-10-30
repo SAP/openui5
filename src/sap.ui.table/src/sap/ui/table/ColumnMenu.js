@@ -231,7 +231,7 @@ sap.ui.define([
 				sDir,
 					"TBL_SORT_" + sDir.toUpperCase(),
 				sIcon,
-				function (oEvent) {
+				function(oEvent) {
 					oColumn.sort(bDesc, oEvent.getParameter("ctrlKey") === true);
 				}
 			));

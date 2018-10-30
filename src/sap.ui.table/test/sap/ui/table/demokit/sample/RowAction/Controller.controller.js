@@ -7,7 +7,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.sample.RowAction.Controller", {
 
-		onInit : function () {
+		onInit : function() {
 			// set explored app's demo model on this sample
 			var oJSONModel = this.initSampleDataModel();
 			this.getView().setModel(oJSONModel);
@@ -86,14 +86,14 @@ sap.ui.define([
 
 			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json", {
 				dataType: "json",
-				success: function (oData) {
+				success: function(oData) {
 					for (var i = 0; i < oData.ProductCollection.length; i++) {
 						var oProduct = oData.ProductCollection[i];
 						oProduct.Available = oProduct.Status == "Available" ? true : false;
 					}
 					oModel.setData(oData);
 				},
-				error: function () {
+				error: function() {
 					jQuery.sap.log.error("failed to load json");
 				}
 			});
@@ -101,11 +101,11 @@ sap.ui.define([
 			return oModel;
 		},
 
-		onBehaviourModeChange : function (oEvent) {
+		onBehaviourModeChange : function(oEvent) {
 			this.switchState(oEvent.getParameter("selectedItem").getKey());
 		},
 
-		switchState : function (sKey) {
+		switchState : function(sKey) {
 			var oTable = this.byId("table");
 			var iCount = 0;
 			var oTemplate = oTable.getRowActionTemplate();

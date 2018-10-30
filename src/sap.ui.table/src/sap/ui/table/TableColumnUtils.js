@@ -155,7 +155,7 @@ sap.ui.define(['sap/ui/Device', './library', "sap/base/Log"],
 			 * @returns {ColumnMapItem|undefined} Column map item with detailed column information
 			 * @private
 			 */
-			_getColumnMapItem : function (oTable, sColumnId) {
+			_getColumnMapItem : function(oTable, sColumnId) {
 				TableColumnUtils.initColumnUtils(oTable);
 				var oSourceColumnMapItem = oTable._oColumnInfo.columnMap[sColumnId];
 				if (!oSourceColumnMapItem) {
@@ -303,7 +303,7 @@ sap.ui.define(['sap/ui/Device', './library', "sap/base/Log"],
 					mColumns[sColumnId] = oColumnMapItem.column;
 				}
 
-				var fnTraverseColumnRelations = function (mColumns, aNewRelations) {
+				var fnTraverseColumnRelations = function(mColumns, aNewRelations) {
 					var oColumn;
 					var i;
 					var aDirectRelations = [];
@@ -621,7 +621,7 @@ sap.ui.define(['sap/ui/Device', './library', "sap/base/Log"],
 				// As a result, flexible columns cannot shrink smaller as their current width after the resize
 				// (see setMinColWidths in Table.js).
 				if (!TableColumnUtils.TableUtils.isFixedColumn(oTable, iColumnIndex)) {
-					oTable._getVisibleColumns().forEach(function (col) {
+					oTable._getVisibleColumns().forEach(function(col) {
 						var width = col.getWidth(),
 							colElement;
 						if (oTableElement && aResizableColumns.indexOf(col) < 0 && TableColumnUtils.TableUtils.isVariableWidth(width)) {

@@ -3,7 +3,7 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 	"sap/m/Popover",
 	"sap/m/List",
 	"sap/m/FeedListItem"
-], function (JSONModel, Popover, List, FeedListItem) {
+], function(JSONModel, Popover, List, FeedListItem) {
 	"use strict";
 
 	function showInfo(aItems, oBy) {
@@ -40,7 +40,7 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 		if (typeof (aItems) == "string") {
 			jQuery.ajax(aItems, {
 				dataType: "json",
-				success: function (oData) {
+				success: function(oData) {
 					showInfo(oData, oBy);
 				}
 			});

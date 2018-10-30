@@ -1,11 +1,11 @@
 sap.ui.define([
 	"sap/ui/core/util/MockServer"
-], function (MockServer) {
+], function(MockServer) {
 	"use strict";
 
 	return {
 
-		init: function (sODataServiceUrl) {
+		init: function(sODataServiceUrl) {
 			var oMockServer, sLocalServicePath;
 
 			// create

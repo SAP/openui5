@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel"
-], function (Controller, JSONModel) {
+], function(Controller, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.testApps.TableTiming", {
@@ -45,8 +45,8 @@ sap.ui.define([
 			this.getView().setModel(oModel, "settings");
 
 			if (!console.profile) {
-				console.profile = function () {};
-				console.profileEnd = function () {};
+				console.profile = function() {};
+				console.profileEnd = function() {};
 			}
 		},
 
@@ -105,7 +105,7 @@ sap.ui.define([
 
 			// delay because addDependent will do a async rerendering and the popover will immediately close without it.
 			var oButton = oEvent.getSource();
-			jQuery.sap.delayedCall(0, this, function () {
+			jQuery.sap.delayedCall(0, this, function() {
 				this._oSettingsPopover.openBy(oButton);
 			});
 		},
