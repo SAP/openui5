@@ -307,12 +307,12 @@ sap.ui.define([
 
 		i4.setValueState("Warning");
 		i5.setValueState("Error");
-		i8.setValueState("Highlight");
+		i8.setValueState("Information");
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(i4.$("content").hasClass('sapMInputBaseContentWrapperWarning'), true, "After new value state : Warning");
 		assert.equal(i5.$("content").hasClass('sapMInputBaseContentWrapperError'), true, "After new value state : Error");
-		assert.equal(i8.$("content").hasClass('sapMInputBaseContentWrapperHighlight'), true, "After new value state : Highlight");
+		assert.equal(i8.$("content").hasClass('sapMInputBaseContentWrapperInformation'), true, "After new value state : Information");
 
 		i4.setValueState();
 		i5.setValueState("None");

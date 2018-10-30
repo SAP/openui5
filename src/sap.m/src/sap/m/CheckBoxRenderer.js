@@ -37,7 +37,7 @@ sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/D
 			sValueState = oCheckBox.getValueState(),
 			bInErrorState = ValueState.Error === sValueState,
 			bInWarningState = ValueState.Warning === sValueState,
-			bInHighlightState = ValueState.Highlight === sValueState,
+			bInInformationState = ValueState.Information === sValueState,
 			bUseEntireWidth = oCheckBox.getUseEntireWidth();
 
 		// CheckBox wrapper
@@ -60,8 +60,8 @@ sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/D
 			oRm.addClass("sapMCbErr");
 		} else if (bInWarningState) {
 			oRm.addClass("sapMCbWarn");
-		} else if (bInHighlightState) {
-			oRm.addClass("sapMCbHighlight");
+		} else if (bInInformationState) {
+			oRm.addClass("sapMCbInfo");
 		}
 
 		if (oCheckBox.getText()) {
