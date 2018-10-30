@@ -95,13 +95,13 @@ sap.ui.define([
 			dialog.open();
 		},
 
-		onMessageHighlightDialogPress: function (oEvent) {
+		onMessageInformationDialogPress: function (oEvent) {
 			var dialog = new Dialog({
-				title: 'Highlight',
+				title: 'Information',
 				type: 'Message',
-				state: 'Highlight',
+				state: 'Information',
 				content: new Text({
-					text: 'A dialog that represents highlighted information.'
+					text: 'Dialog with value state Information.'
 				}),
 				beginButton: new Button({
 					text: 'OK',

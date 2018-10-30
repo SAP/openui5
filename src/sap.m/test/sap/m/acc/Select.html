@@ -487,9 +487,9 @@
 			}
 		});
 
-		var oSelectHighlight = new sap.m.Select({
+		var oSelectInformation = new sap.m.Select({
 			width: "15rem",
-			valueState: sap.ui.core.ValueState.Highlight,
+			valueState: sap.ui.core.ValueState.Information,
 			valueStateText: "value state text",
 			items: {
 				path: "/items",
@@ -542,8 +542,8 @@
 				oSelectError,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
-				new sap.ui.core.HTML({ content: "<h3>Highlight state</h3>" }),
-				oSelectHighlight,
+				new sap.ui.core.HTML({ content: "<h3>Information state</h3>" }),
+				oSelectInformation,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
 				new sap.ui.core.HTML({ content: "<h3>Busy</h3>" }),

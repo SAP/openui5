@@ -13,17 +13,17 @@
 	border: 0.125rem dashed @sapUiFieldInvalidColor;
 }
 
-.sapMCb.sapMCbHighlight .sapMCbBg {
+.sapMCb.sapMCbInfo .sapMCbBg {
 	background-color: @sapUiFieldBackground;
-	border-color: @sapUiContentHelpColor;
+	border: 0.125rem dashed @sapUiFieldWarningColor;
 }
 
 .sapMCb.sapMCbBgDis.sapMCbWarn .sapMCbBg.sapMCbMarkChecked:before {
 	color: @sapUiFieldWarningColor;
 }
 
-.sapMCb.sapMCbBgDis.sapMCbHighlight .sapMCbBg.sapMCbMarkChecked:before {
-	color: @sapUiContentHelpColor;
+.sapMCb.sapMCbBgDis.sapMCbInfo .sapMCbBg.sapMCbMarkChecked:before {
+	color: @sapUiFieldWarningColor;
 }
 
 .sapMCb.sapMCbBgDis.sapMCbErr .sapMCbBg {
@@ -87,7 +87,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	}
 }
 
-.sapMCb:not(.sapMCbWarn):not(.sapMCbErr):not(.sapMCbHighlight) .sapMCbBg.sapMCbHoverable:hover {
+.sapMCb:not(.sapMCbWarn):not(.sapMCbErr):not(.sapMCbInfo) .sapMCbBg.sapMCbHoverable:hover {
 	background-color: @sapUiSelected;
 }
 
