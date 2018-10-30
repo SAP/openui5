@@ -1,5 +1,5 @@
 {
-	"_version": "1.8.0",
+	"_version": "1.12.0",
 	"sap.app": {
 		"id": "sap.ui.fl.support.apps.contentbrowser.app",
 		"type": "application",
