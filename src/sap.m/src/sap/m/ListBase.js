@@ -1661,11 +1661,7 @@ function(
 	};
 
 	ListBase.prototype.getAccessibilityDescription = function() {
-		var sDescription = this.getAriaLabelledBy().map(function(sAriaLabelledBy) {
-			var oAriaLabelledBy = sap.ui.getCore().byId(sAriaLabelledBy);
-			return ListItemBase.getAccessibilityText(oAriaLabelledBy);
-		}).join(" ");
-
+		var sDescription = "";
 		var oHeaderTBar = this.getHeaderToolbar();
 		if (oHeaderTBar) {
 			var oTitle = oHeaderTBar.getTitleControl();
