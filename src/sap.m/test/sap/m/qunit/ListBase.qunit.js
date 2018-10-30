@@ -1737,33 +1737,25 @@ sap.ui.define([
 
 		QUnit.module("Accessibility");
 
-		QUnit.test("aria-labelledby association should be accessibility description", function(assert) {
+		QUnit.test("aria-labelledby association should only be in the DOM", function(assert) {
 			var oList = new List().placeAt("content");
 			var oText1 = new Text({
 				text: "text1"
 			}).placeAt("content");
-			var oText2 = new Text({
-				text: "text2"
-			}).placeAt("content");
 			sap.ui.getCore().applyChanges();
 
 			oList.addAriaLabelledBy(oText1);
-			assert.ok(oList.getAccessibilityDescription().indexOf(oText1.getText()) > -1, "Accessibility info of text1 added to list.");
+			sap.ui.getCore().applyChanges();
 
-			oList.addAriaLabelledBy(oText2.getId());
-			assert.ok(oList.getAccessibilityDescription().indexOf(oText2.getText()) > -1, "Accessibility info of text2 added to list.");
-
-			assert.ok(oList.getAccessibilityDescription().indexOf(oText1.getText() + " " + oText2.getText()) > -1, "both accessibility text found.");
+			assert.ok(oList.getNavigationRoot().getAttribute("aria-labelledby") == oText1.getId(), "Accessibility info of text1 is in the list dom");
+			assert.ok(oList.getAccessibilityDescription().indexOf(oText1.getText()) == -1, "Accessibility info of text1 is not added to the list.");
 
 			oList.removeAriaLabelledBy(oText1);
-			assert.ok(oList.getAccessibilityDescription().indexOf(oText1.getText()) == -1, "Accessibility info of text1 removed from list.");
-
-			oList.removeAriaLabelledBy(oText2.getId());
-			assert.ok(oList.getAccessibilityDescription().indexOf(oText2.getText()) == -1, "Accessibility info of text2 removed from list.");
+			sap.ui.getCore().applyChanges();
+			assert.ok(oList.getNavigationRoot().getAttribute("aria-labelledby") == null, "Accessibility info of text1 is removed from the dom");
 
 			oList.destroy();
 			oText1.destroy();
-			oText2.destroy();
 		});
 
 		QUnit.test("group headers info of the item", function(assert) {
