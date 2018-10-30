@@ -57,15 +57,13 @@ function(
 			});
 
 			this.oLayout = new VerticalLayout({ content: [this.oComponentContainer] }).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout]
 			});
 
-			this.oDesignTime.attachEventOnce("synced", function() {
-				sap.ui.getCore().applyChanges();
-				done();
-			});
+			this.oDesignTime.attachEventOnce("synced", done);
 		},
 		afterEach: function() {
 			this.oDesignTime.destroy();
@@ -108,13 +106,13 @@ function(
 			this.oComponentContainer = new ComponentContainer("CompCont1");
 
 			this.oLayout = new VerticalLayout({ content: [this.oComponentContainer, new Button({ text: "I give the layout a size" })] }).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
-				sap.ui.getCore().applyChanges();
 				this.oOuterLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
 				done();
 			}.bind(this));
@@ -167,6 +165,7 @@ function(
 			});
 
 			this.oLayout = new VerticalLayout({ content: [this.oComponentContainer, new Button({ text: "I give the layout a size" })] }).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout]

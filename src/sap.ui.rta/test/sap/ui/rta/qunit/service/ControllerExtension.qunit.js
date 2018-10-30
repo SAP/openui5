@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/UIComponent",
+	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/mvc/View",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -13,6 +14,7 @@ function(
 	OverlayRegistry,
 	FlexUtils,
 	UIComponent,
+	ComponentContainer,
 	View,
 	sinon
 ) {
@@ -21,7 +23,8 @@ function(
 	var sandbox = sinon.sandbox.create();
 	var server;
 
-	function before () {
+	function before() {
+		QUnit.config.fixture = null;
 		this.oView = new View({});
 		var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 			metadata: {
@@ -36,12 +39,19 @@ function(
 			}.bind(this)
 		});
 
-		this.oComponent = new FixtureComponent();
+		this.oComponent = new FixtureComponent('Comp');
+		this.oComponentContainer = new ComponentContainer('CompCont', {
+			component: this.oComponent
+		});
+		this.oComponentContainer.placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
 	}
 
-	function after () {
+	function after() {
+		QUnit.config.fixture = '';
 		this.oView.destroy();
-		this.oComponent.destroy();
+		// this.oComponent.destroy();
+		this.oComponentContainer.destroy();
 	}
 
 	QUnit.module("Given that RuntimeAuthoring and ControllerExtension service are created and 'add' is called", {
@@ -50,7 +60,7 @@ function(
 		beforeEach: function () {
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
-				rootControl: this.oView
+				rootControl: this.oComponentContainer
 			});
 			this.iCreateBaseChangeCounter = 0;
 			this.iAddPreparedChangeCounter = 0;
@@ -149,7 +159,7 @@ function(
 
 			this.oRta = new RuntimeAuthoring({
 			showToolbars: false,
-			rootControl: this.oView
+			rootControl: this.oComponentContainer
 			});
 			return this.oRta.start().then(function () {
 				return this.oRta.getService("controllerExtension").then(function(oService) {

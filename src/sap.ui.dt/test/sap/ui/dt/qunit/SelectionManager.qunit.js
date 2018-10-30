@@ -30,6 +30,7 @@ sap.ui.define([
 					this.oButton2 = new Button("button2")
 				]
 			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout]

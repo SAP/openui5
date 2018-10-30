@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/m/Page",
 	"sap/ui/core/UIComponent",
+	"sap/ui/core/ComponentContainer",
 	"sap/ui/thirdparty/sinon-4"
 ],
 	function(
@@ -19,6 +20,7 @@ sap.ui.define([
 	Control,
 	Page,
 	UIComponent,
+	ComponentContainer,
 	sinon
 ) {
 	"use strict";
@@ -26,9 +28,7 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given that RuntimeAuthoring and Property service are created", {
-		before: function(assert) {
-			var oPage;
-
+		before: function () {
 			var MockComponent = UIComponent.extend("MockController", {
 				metadata: {
 					manifest: {
@@ -40,25 +40,32 @@ sap.ui.define([
 					}
 				},
 				createContent : function() {
-					oPage = new Page("mainPage");
-					return oPage;
+					return new Page("mainPage");
 				}
 			});
 
 			this.oComp = new MockComponent("testComponent");
 
+			var oPage = this.oComp.getRootControl();
+
 			// --Root control 1
 			//	page
 			//		verticalLayout
 			//		button
+			oPage.addContent(
+				this.oLayout = new VerticalLayout("layout1", {
+					content: [
+						this.oControl = new Control("mockControl")
+					]
+				})
+			);
 
-			this.oControl = new Control("mockControl");
-
-			this.oLayout = new VerticalLayout("layout1",{
-				content : [this.oControl]
+			this.oComponentContainer = new ComponentContainer("CompCont", {
+				component: this.oComp
 			});
+			this.oComponentContainer.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
 
-			oPage.addContent(this.oLayout);
 
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,

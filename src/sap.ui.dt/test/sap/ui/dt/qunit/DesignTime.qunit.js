@@ -344,50 +344,6 @@ function(
 			sap.ui.getCore().applyChanges();
 		});
 
-		QUnit.test("when a control is destroyed while loading design time metadata when creating it via createOverlay() API", function(assert) {
-			var fnDone = assert.async();
-			var oButton = new Button();
-
-			// Simulate control is being destroyed
-			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime").callsFake(function () {
-				oButton.destroy();
-				return Promise.resolve({});
-			});
-
-			var fnElementOverlayCreatedSpy = sinon.spy();
-			var fnElementOverlayDestroyedSpy = sinon.spy();
-			this.oDesignTime.attachEventOnce("elementOverlayCreated", fnElementOverlayCreatedSpy);
-			this.oDesignTime.attachEventOnce("elementOverlayDestroyed", fnElementOverlayDestroyedSpy);
-
-			sandbox.stub(Log, "error").callsFake(function(sError) {
-				if (sError.indexOf("_subscribeToMutationObserver") === -1) {
-					assert.ok(false, 'then no other error than subscribeToMutationObserver must not be raised');
-				}
-			});
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				assert.notOk(fnElementOverlayCreatedSpy.called, "then event 'elementOverlayCreated' wasn't called");
-				assert.notOk(fnElementOverlayDestroyedSpy.called, "then event 'elementOverlayDestroyed' wasn't called");
-			});
-
-			this.oDesignTime.createOverlay(oButton)
-			.then(
-				function () {
-					assert.ok(false, 'resolve() must not ever happen');
-				},
-				function () {
-					assert.notOk(fnElementOverlayCreatedSpy.called, "then event 'elementOverlayCreated' wasn't called");
-					assert.notOk(fnElementOverlayDestroyedSpy.called, "then event 'elementOverlayDestroyed' wasn't called");
-					assert.ok(true, 'then Promise is rejected properly');
-					assert.ok(!OverlayRegistry.getOverlay(oButton), "then overlay of destroyed control is also destroyed");
-					fnDone();
-				}
-			)
-			.catch(function () {
-				assert.ok(false, 'catch() must not ever happen');
-			});
-		});
-
 		QUnit.test("when a control is moved inside of root element", function(assert) {
 			var oOuterLayoutOverlay = OverlayRegistry.getOverlay(this.oOuterLayout);
 
@@ -1316,7 +1272,9 @@ function(
 
 		QUnit.test("when an overlay is created for a control that has no parent control", function (assert) {
 			var oButton = new Button();
-			sandbox.stub(Log, "error");
+
+			oButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
 			return this.oDesignTime.createOverlay(oButton).then(function (oElementOverlay) {
 				assert.ok(oElementOverlay, 'then the overlay is created');
@@ -1488,28 +1446,70 @@ function(
 			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime").returns(Promise.reject(someError));
 
 			sandbox.stub(Log, "error").callsFake(function() {
-				assert.ok(false, 'async public API should not raise any errors in console, Promise.reject() is enough');
+				assert.ok(false, "async public API should not raise any errors in console, Promise.reject() is enough");
 			});
 
 			this.oDesignTime.createOverlay(oButton)
 			.then(
 				// Fulfilled
 				function () {
-					assert.ok(false, 'this must never be called');
+					assert.ok(false, "this must never be called");
 				},
 				// Rejected
 				function (oError) {
-					assert.ok(true, 'then the Promise is rejected as expected');
+					assert.ok(true, "then the Promise is rejected as expected");
 					assert.ok(oError instanceof Error, 'proper rejection reason is provided');
-					assert.ok(
-						oError.message.indexOf('some error occurred') > -1,
-						'then the error contains information about original failure'
-					);
+					assert.ok(oError.message.includes("Can't load designtime metadata data for overlay"), "then the error message is correct");
+					assert.ok(oError.message.includes("some error occurred"), "then the error contains information about original failure");
 					fnDone();
 				}
 			)
 			.catch(function () {
-				assert.ok(false, 'catch must never be called');
+				assert.ok(false, "catch must never be called");
+			});
+		});
+
+		QUnit.test("when a control is destroyed while loading design time metadata", function(assert) {
+			var fnDone = assert.async();
+			var oButton = new Button();
+
+			// Simulate control is being destroyed
+			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime").callsFake(function () {
+				oButton.destroy();
+				return Promise.resolve({});
+			});
+
+			var fnElementOverlayCreatedSpy = sinon.spy();
+			var fnElementOverlayDestroyedSpy = sinon.spy();
+			this.oDesignTime.attachEventOnce("elementOverlayCreated", fnElementOverlayCreatedSpy);
+			this.oDesignTime.attachEventOnce("elementOverlayDestroyed", fnElementOverlayDestroyedSpy);
+
+			sandbox.stub(Log, "error").callsFake(function () {
+				assert.ok(false, 'then the error must not be raised');
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				assert.notOk(fnElementOverlayCreatedSpy.called, "then event 'elementOverlayCreated' wasn't called");
+				assert.notOk(fnElementOverlayDestroyedSpy.called, "then event 'elementOverlayDestroyed' wasn't called");
+			});
+
+			this.oDesignTime.createOverlay(oButton)
+			.then(
+				function () {
+					assert.ok(false, 'resolve() must not ever happen');
+				},
+				function (oError) {
+					assert.ok(true, 'then Promise is rejected as expected');
+					assert.ok(oError instanceof Error, 'proper rejection reason is provided');
+					assert.ok(oError.message.includes("Can't set metadata to overlay which element has been destroyed already"));
+					assert.notOk(fnElementOverlayCreatedSpy.called, "then event 'elementOverlayCreated' wasn't called");
+					assert.notOk(fnElementOverlayDestroyedSpy.called, "then event 'elementOverlayDestroyed' wasn't called");
+					assert.ok(!OverlayRegistry.getOverlay(oButton), "then overlay of destroyed control is not available from registry");
+					fnDone();
+				}
+			)
+			.catch(function () {
+				assert.ok(false, 'catch() must not ever happen');
 			});
 		});
 
