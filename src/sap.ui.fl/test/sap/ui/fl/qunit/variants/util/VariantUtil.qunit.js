@@ -27,7 +27,7 @@ function(
 				hashParams : [],
 				variantControlIds : []
 			};
-			this.oComponent = { };
+			this.oAppComponent = { };
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -141,7 +141,7 @@ function(
 			this.destroy = function() {
 				assert.ok(true, "then the VariantModel passed as context is destroyed");
 			};
-			this.oComponent.destroy = function() {
+			this.oAppComponent.destroy = function() {
 				assert.ok(true, "then the original Component.destroy() is also called");
 			};
 			this.oVariantController = {
@@ -154,7 +154,7 @@ function(
 			sandbox.stub(VariantUtil, "_setOrUnsetCustomNavigationForParameter").callsFake(function(bSet) {
 				assert.strictEqual(bSet, false, "then _setOrUnsetCustomNavigationForParameter called with a false value");
 			});
-			this.oComponent.destroy();
+			this.oAppComponent.destroy();
 		});
 
 		QUnit.test("when calling 'attachHashHandlers' with _oHashRegister.currentIndex not set to null", function (assert) {
@@ -233,12 +233,12 @@ function(
 				parameters: ["testParam1", "testParam2"],
 				updateURL: true
 			};
-			this.oComponent = { id : "TestComponent" };
+			this.oAppComponent = { id : "TestComponent" };
 
 			sandbox.stub(Utils, "setTechnicalURLParameterValues");
 
 			VariantUtil.updateHasherEntry.call(this, mPropertyBag);
-			assert.ok(Utils.setTechnicalURLParameterValues.calledWithExactly(this.oComponent, sVariantParameterName, mPropertyBag.parameters),
+			assert.ok(Utils.setTechnicalURLParameterValues.calledWithExactly(this.oAppComponent, sVariantParameterName, mPropertyBag.parameters),
 				"then Utils.setTechnicalURLParameterValues() with the required parameters");
 		});
 
@@ -508,7 +508,7 @@ function(
 				hashParams: [],
 				variantControlIds: []
 			};
-			this.oComponent = {
+			this.oAppComponent = {
 				destroy: function () {
 				}
 			};

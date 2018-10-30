@@ -491,13 +491,12 @@ function(
 			assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant1", "then initially original current variant is variant1");
 
 			this.oModel.oData["variantMgmtId1"].updateVariantInURL = true;
-			return this.oModel.updateCurrentVariant("variantMgmtId1", "variant0", this.oModel.oComponent)
+			return this.oModel.updateCurrentVariant("variantMgmtId1", "variant0", this.oModel.oAppComponent)
 			.then(function() {
 				assert.ok(this.fnLoadSwitchChangesStub.calledWith({
 					variantManagementReference: "variantMgmtId1",
 					currentVariantReference: "variant1",
-					newVariantReference: "variant0",
-					component: this.oModel.oComponent
+					newVariantReference: "variant0"
 				}), "then ChangePersistence.loadSwitchChangesMapForComponent() called with correct parameters");
 				assert.ok(this.fnLoadSwitchChangesStub.calledOnce, "then loadSwitchChangesMapForComponent called once from ChangePersitence");
 				assert.ok(this.fnRevertChangesStub.calledOnce, "then revertChangesOnControl called once in FlexController");
@@ -510,10 +509,8 @@ function(
 
 		QUnit.test("when calling 'updateCurrentVariant' without a root app component", function(assert) {
 			var fnUpdateCurrentVariantInMapStub = sandbox.stub(this.oModel.oVariantController, "updateCurrentVariantInMap");
-			var oMockComponentObject = {id: "embeddedComponent"};
-			var oReturnObject = {component: oMockComponentObject};
+			var oReturnObject = {};
 
-			this.oModel._oEmbeddedComponents = [oMockComponentObject];
 			this.oModel.oData["variantMgmtId1"].updateVariantInURL = true;
 			this.fnLoadSwitchChangesStub.returns(oReturnObject);
 			return this.oModel.updateCurrentVariant("variantMgmtId1", "variant0")
@@ -521,11 +518,10 @@ function(
 					assert.ok(this.fnLoadSwitchChangesStub.calledWith({
 						variantManagementReference: "variantMgmtId1",
 						currentVariantReference: "variant1",
-						newVariantReference: "variant0",
-						component: this.oModel._oEmbeddedComponents.concat([this.oModel.oComponent])
+						newVariantReference: "variant0"
 					}), "then ChangePersistence.loadSwitchChangesMapForComponent() called with correct parameters");
-					assert.deepEqual(this.fnRevertChangesStub.getCall(0).args[1], oMockComponentObject, "then revertChangesOnControl called in FlexController with the correct component");
-					assert.deepEqual(this.fnApplyChangesStub.getCall(0).args[1], oMockComponentObject, "then applyVariantChanges called in FlexController with the correct component");
+					assert.deepEqual(this.fnRevertChangesStub.getCall(0).args[1], this.oComponent, "then revertChangesOnControl called in FlexController with the correct component");
+					assert.deepEqual(this.fnApplyChangesStub.getCall(0).args[1], this.oComponent, "then applyVariantChanges called in FlexController with the correct component");
 					assert.ok(fnUpdateCurrentVariantInMapStub.calledWith("variantMgmtId1", "variant0"), "then variantController.updateCurrentVariantInMap called with the right parameters");
 				}.bind(this));
 		});
@@ -1044,7 +1040,7 @@ function(
 				variant: oVariant,
 				sourceVariantReference: "sourceVariant",
 				variantManagementReference: "variantMgmtId1",
-				component: this.oModel.oComponent
+				component: this.oModel.oAppComponent
 			};
 			return this.oModel.removeVariant(mPropertyBag)
 				.then(function () {
@@ -1406,19 +1402,6 @@ function(
 			assert.equal(this.oModel.getCurrentVariantReference("varMgmtRef1"), "varMgmtRef1", "then the Current Variant is set to the standard variant");
 			assert.ok(fnRegisterToModelSpy.calledOnce, "then registerToModel called once, when VariantManagement control setModel is called");
 			assert.ok(fnRegisterToModelSpy.calledWith(this.oVariantManagement), "then registerToModel called with VariantManagement control");
-		});
-
-		QUnit.test("when calling 'addEmbeddedComponent' for the first time", function(assert) {
-			var oMockEmbeddedComponent = {id: "mockEmbeddedComponent"};
-			this.oModel.addEmbeddedComponent(oMockEmbeddedComponent);
-			assert.ok(this.oModel._oEmbeddedComponents[0], oMockEmbeddedComponent, "then embedded component is added to VariantModel._oEmbeddedComponent");
-		});
-
-		QUnit.test("when calling 'addEmbeddedComponent' when VariantModel._oEmbeddedComponent already exists", function(assert) {
-			var oMockEmbeddedComponent = {id: "mockEmbeddedComponent"};
-			this.oModel._oEmbeddedComponents = [{id:"alreadyExistingEmbeddedComponent"}];
-			this.oModel.addEmbeddedComponent(oMockEmbeddedComponent);
-			assert.ok(this.oModel._oEmbeddedComponents[1], oMockEmbeddedComponent, "then embedded component is added to VariantModel._oEmbeddedComponent");
 		});
 	});
 

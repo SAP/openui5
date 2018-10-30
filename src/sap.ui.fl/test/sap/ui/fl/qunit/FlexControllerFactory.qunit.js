@@ -93,9 +93,7 @@ function (
 
 		QUnit.test("when getChangesForPropagate() is called for an embedded component", function (assert) {
 			assert.expect(3);
-			var oModel = {
-				addEmbeddedComponent: function () {}
-			};
+			var oModel = {id: "mockVariantModel"};
 			var sVariantModelName = "$FlexVariants";
 			var oAppComponent = {
 				getModel: function (sModelName) {

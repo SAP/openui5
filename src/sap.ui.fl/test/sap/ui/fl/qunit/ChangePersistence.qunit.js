@@ -1335,9 +1335,9 @@ function (
 
 			return this.oChangePersistence.getChangesForComponent().then(function(oChanges) {
 				assert.strictEqual(oChanges.length, 3, "only changes which are under max layer are returned");
-				assert.ok(oChanges[0].getId() === "change2", "with correct id");
-				assert.ok(oChanges[1].getId() === "change4", "with correct id");
-				assert.ok(oChanges[2].getId() === "change5", "with correct id");
+				assert.ok(oChanges[0].getId() === "change2", "with correct ID");
+				assert.ok(oChanges[1].getId() === "change4", "with correct ID");
+				assert.ok(oChanges[2].getId() === "change5", "with correct ID");
 				assert.ok(fnGetCtrlVariantChangesStub.calledOnce, "then _getCtrlVariantChanges called when max layer parameter is set");
 				assert.strictEqual(this.oChangePersistence._bHasChangesOverMaxLayer, true, "then the flag _bHasChangesOverMaxLayer is set");
 			}.bind(this));
@@ -1380,7 +1380,7 @@ function (
 
 			return this.oChangePersistence.getChangesForComponent({currentLayer: "CUSTOMER"}).then(function(oChanges) {
 				assert.strictEqual(oChanges.length, 1, "only changes which are under max layer are returned");
-				assert.ok(oChanges[0].getId() === "change4", "with correct id");
+				assert.ok(oChanges[0].getId() === "change4", "with correct ID");
 			});
 		});
 
@@ -2222,12 +2222,12 @@ function (
 					var oChangeForDeletion = mChanges["controlId"][1]; // second change for 'controlId' shall be removed
 					this.oChangePersistence.deleteChange(oChangeForDeletion);
 					assert.equal(mChanges["controlId"].length, 1, "'controlId' has only one change in the map");
-					assert.equal(mChanges["controlId"][0].getId(), "change1", "the change has the id 'change1'");
+					assert.equal(mChanges["controlId"][0].getId(), "change1", "the change has the ID 'change1'");
 					assert.equal(mChanges["anotherControlId"].length, 1, "'anotherControlId' has still one change in the map");
 				}.bind(this));
 		});
 
-		QUnit.test("when getChangesForView is called with a view id and an app component", function(assert) {
+		QUnit.test("when getChangesForView is called with a view ID and an app component", function(assert) {
 			var oAppComponent = {
 				id :"mockAppComponent"
 			};
@@ -2290,7 +2290,7 @@ function (
 				});
 		});
 
-		QUnit.test("when getChangesForView is called with an embedded component and a view id existing both for app and embedded components", function(assert) {
+		QUnit.test("when getChangesForView is called with an embedded component and a view ID existing both for app and embedded components", function(assert) {
 			var oEmbeddedComponent = {
 				id :"mockEmbeddedComponent"
 			};

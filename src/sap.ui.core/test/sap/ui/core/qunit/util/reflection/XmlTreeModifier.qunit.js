@@ -125,7 +125,7 @@ function(
 			assert.ok(oPromise instanceof Promise, "then a promise is returned");
 			return oPromise
 			.catch(function(oError) {
-				assert.equal(oError.message, "Can't create a control with duplicated id undefined", "then the promise is rejected with the correct error message");
+				assert.equal(oError.message, "Can't create a control with duplicated ID undefined", "then the promise is rejected with the correct error message");
 			});
 		});
 
@@ -133,7 +133,7 @@ function(
 			sandbox.stub(XmlTreeModifier, 'bySelector').returns(true);
 			assert.throws(function() {
 				XmlTreeModifier.createControl('sap.ui.layout.VerticalLayout', this.oComponent, this.oXmlView);
-			}, /Can't create a control with duplicated id undefined/,
+			}, /Can't create a control with duplicated ID undefined/,
 			"then the right exception is thrown");
 		});
 
