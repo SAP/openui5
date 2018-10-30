@@ -593,6 +593,26 @@
 			oWiz.destroy();
 		});
 
+		QUnit.test("Wizard shouldn't throw an error, when currentStep is set.", function (assert) {
+			var s3 = new sap.m.WizardStep({id: "wizStep3"}),
+					s2 = new sap.m.WizardStep({id: "wizStep2", nextStep: "wizStep3"}),
+					s1 = new sap.m.WizardStep({id: "wizStep1", nextStep: "wizStep2", subsequentSteps: [s2, s3]});
+
+			var oWiz = new sap.m.Wizard({
+				currentStep: "wizStep3",
+				steps: [s1, s2, s3],
+				enableBranching: true
+			});
+
+			oWiz.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(s3.getDomRef(), "Step3 is rendered.");
+			assert.ok(s2.getDomRef(), "Step2 is rendered.");
+
+			oWiz.destroy();
+		});
+
 		QUnit.test("Wizard should log an error if next step is outside the wizard", function (assert) {
 			var that = this;
 			assert.throws(function () {
