@@ -7,6 +7,7 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/core/library',
+	'sap/ui/core/IntervalTrigger',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/Icon',
 	'./HeaderContainerRenderer',
@@ -28,6 +29,7 @@ function(
 	Device,
 	ItemNavigation,
 	coreLibrary,
+	IntervalTrigger,
 	ManagedObject,
 	Icon,
 	HeaderContainerRenderer,
@@ -273,7 +275,7 @@ function(
 					}
 				}.bind(this)
 			});
-			sap.ui.getCore().attachIntervalTimer(this._checkOverflow, this);
+			IntervalTrigger.addListener(this._checkOverflow, this);
 		};
 
 		HeaderContainer.prototype.onBeforeRendering = function () {
@@ -303,7 +305,7 @@ function(
 				this._oItemNavigation.destroy();
 				this._oItemNavigation = null;
 			}
-			sap.ui.getCore().detachIntervalTimer(this._checkOverflow, this);
+			IntervalTrigger.removeListener(this._checkOverflow, this);
 		};
 
 		HeaderContainer.prototype.onsaptabnext = function (oEvt) {

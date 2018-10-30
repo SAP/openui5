@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['../base/Object', './EventBus', "sap/base/assert", "sap/ui/thirdparty/jquery"],
-	function(BaseObject, EventBus, assert, jQuery) {
+sap.ui.define(['../base/Object', './EventBus', "sap/base/assert"],
+	function(BaseObject, EventBus, assert) {
 	"use strict";
 
 
@@ -33,7 +33,7 @@ sap.ui.define(['../base/Object', './EventBus', "sap/base/assert", "sap/ui/thirdp
 				this._oEventBus = new EventBus();
 
 				this._delayedCallId = null;
-				this._triggerProxy = jQuery.proxy(trigger, this);
+				this._trigger = trigger.bind(this);
 
 				this._iInterval = 0;
 				if (iInterval) {
@@ -43,8 +43,7 @@ sap.ui.define(['../base/Object', './EventBus', "sap/base/assert", "sap/ui/thirdp
 		});
 
 		/**
-		 * This is the function that will be used for triggering. This function is
-		 * called by a proxy call.
+		 * This is the function that will be used for triggering.
 		 *
 		 * @private
 		 */
@@ -56,7 +55,7 @@ sap.ui.define(['../base/Object', './EventBus', "sap/base/assert", "sap/ui/thirdp
 			if (this._iInterval > 0 && bHasListeners) {
 				this._oEventBus.publish(_EVENT_ID);
 
-				this._delayedCallId = setTimeout(this._triggerProxy.bind(this), this._iInterval);
+				this._delayedCallId = setTimeout(this._trigger, this._iInterval);
 			}
 		};
 
@@ -68,7 +67,7 @@ sap.ui.define(['../base/Object', './EventBus', "sap/base/assert", "sap/ui/thirdp
 		IntervalTrigger.prototype.destroy = function() {
 			BaseObject.prototype.destroy.apply(this, arguments);
 
-			delete this._triggerProxy;
+			delete this._trigger;
 
 			this._oEventBus.destroy();
 			delete this._oEventBus;
@@ -90,7 +89,7 @@ sap.ui.define(['../base/Object', './EventBus', "sap/base/assert", "sap/ui/thirdp
 			// only change and (re)trigger if the interval is different
 			if (this._iInterval !== iInterval) {
 				this._iInterval = iInterval;
-				this._triggerProxy();
+				this._trigger();
 			}
 		};
 
@@ -107,7 +106,7 @@ sap.ui.define(['../base/Object', './EventBus', "sap/base/assert", "sap/ui/thirdp
 		IntervalTrigger.prototype.addListener = function(fnFunction, oListener) {
 			this._oEventBus.subscribe(_EVENT_ID, fnFunction, oListener);
 
-			this._triggerProxy();
+			this._trigger();
 		};
 
 		/**
@@ -130,6 +129,58 @@ sap.ui.define(['../base/Object', './EventBus', "sap/base/assert", "sap/ui/thirdp
 		IntervalTrigger.prototype.getInterface = function() {
 			return this;
 		};
+
+	/**
+	 * Central instance of the IntervalTrigger (Singleton)
+	 *
+	 * @example <caption>Create instance</caption>
+	 *
+	 * sap.ui.require(["sap/ui/core/IntervalTrigger"], function(IntervalTrigger) {
+	 *     var fnDoIt = function(){
+	 *         // my code
+	 *     }
+	 *     IntervalTrigger.addListener(fnDoIt, this);
+	 *     IntervalTrigger.removeListener(fnDoIt, this);
+	 * });
+	 *
+	 * Note: Only <code>addListener</code> and <code>removeListener</code> functions are exposed such that the
+	 * singleton can neither be destroyed nor the interval can be modified.
+	 *
+	 * @return {sap.ui.core.IntervalTrigger} the instance with 200ms interval
+	 */
+	var getInstance = function() {
+
+		var oIntervalTrigger = new IntervalTrigger(200);
+		getInstance = function() {
+			return oIntervalTrigger;
+		};
+		return oIntervalTrigger;
+	};
+
+	/**
+	 * Adds a listener to the list that should be triggered.
+	 *
+	 * @public
+	 * @since 1.61
+	 * @param {function} fnFunction is the called function that should be called when
+	 *            the trigger want to trigger the listener.
+	 * @param {object} [oListener] that should be triggered.
+	 */
+	IntervalTrigger.addListener = function(fnFunction, oListener) {
+		getInstance().addListener(fnFunction, oListener);
+	};
+
+	/**
+	 * Removes corresponding listener from list.
+	 *
+	 * @public
+	 * @since 1.61
+	 * @param {function} fnFunction is the previously registered function
+	 * @param {object} [oListener] that should be removed
+	 */
+	IntervalTrigger.removeListener = function(fnFunction, oListener) {
+		getInstance().removeListener(fnFunction, oListener);
+	};
 
 
 	return IntervalTrigger;
