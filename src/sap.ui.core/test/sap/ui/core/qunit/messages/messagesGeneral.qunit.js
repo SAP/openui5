@@ -332,7 +332,7 @@ sap.ui.define([
 		var oMessage = createMessage();
 
 		// third input field for the same property "firstname", this label is taken
-		var oLabel3 = new sap.m.Label({text: "Nickname"});
+		var oLabel3 = new Label({text: "Nickname"});
 		oLabel3.setLabelFor(oInput3);
 
 		spyDataState(oInput3, function(sName, oDataState) {
@@ -355,7 +355,7 @@ sap.ui.define([
 		var oMessageInfo = createMessage(undefined, undefined, "Information");
 
 		// third input field for the same property "firstname", this label is taken
-		var oLabel4 = new sap.m.Label({text: "Nickname"});
+		var oLabel4 = new Label({text: "Nickname"});
 		oLabel4.setLabelFor(oInput4);
 
 		spyDataState(oInput4, function(sName, oDataState) {
@@ -372,28 +372,32 @@ sap.ui.define([
 		oMessageManager.addMessages(oMessageError);
 	});
 
-	QUnit.test("single addMessage with type 'Information'", function(assert) {
-		var done = assert.async();
-		var oMessageManager = sap.ui.getCore().getMessageManager();
 
-		createMessage();
-		var oMessageInfo = createMessage(undefined, undefined, "Information");
+	// Check mapping message type to value state
+	Object.keys(MessageType).forEach(function(key){
 
-		// third input field for the same property "firstname", this label is taken
-		var oLabel4 = new sap.m.Label({text: "Nickname"});
-		oLabel4.setLabelFor(oInput4);
+		var sCheckedType = MessageType[key];
+		QUnit.test("single addMessage with type '" + sCheckedType + "'", function(assert) {
+			var done = assert.async();
+			var oMessageManager = sap.ui.getCore().getMessageManager();
 
-		spyDataState(oInput4, function(sName, oDataState) {
-				assert.ok(oDataState.getMessages().length == 1, 'Message propagated to control: 1');
-				// assert.ok(oInput1.getValueState() === ValueState.None, 'Input: ValueState is still None --> Nothing has changed!');
+			var oMessage = createMessage(undefined, undefined, sCheckedType);
 
-				oLabel4.destroy();
-				done();
-			}
-		);
+			// third input field for the same property "firstname", this label is taken
+			var oLabel4 = new Label({text: "Nickname"});
+			oLabel4.setLabelFor(oInput4);
 
-		// adding an Information type message should not break anymore
-		oMessageManager.addMessages(oMessageInfo);
+			spyDataState(oInput4, function(sName, oDataState) {
+					assert.ok(oDataState.getMessages().length == 1, 'Message propagated to control: 1');
+					assert.ok(oInput1.getValueState() === ValueState[sCheckedType], 'Input: ValueState is ' + ValueState[sCheckedType]);
+					oLabel4.destroy();
+					done();
+				}
+			);
+
+			// adding an Information type message should not break anymore
+			oMessageManager.addMessages(oMessage);
+		});
 	});
 
 	QUnit.test("Control Message target", function(assert) {
