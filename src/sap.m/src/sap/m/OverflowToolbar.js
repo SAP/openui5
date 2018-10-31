@@ -1040,14 +1040,22 @@ sap.ui.define([
 	OverflowToolbar.prototype.addContent = function (oControl) {
 		this._registerControlListener(oControl);
 		this._resetAndInvalidateToolbar(false);
-		this._moveControlInSuitableCollection(oControl, OverflowToolbar._getControlPriority(oControl));
+
+		if (oControl) {
+			this._moveControlInSuitableCollection(oControl, OverflowToolbar._getControlPriority(oControl));
+		}
+
 		return this._callToolbarMethod("addContent", arguments);
 	};
 
-	OverflowToolbar.prototype.insertContent = function (oControl) {
+	OverflowToolbar.prototype.insertContent = function (oControl, iIndex) {
 		this._registerControlListener(oControl);
 		this._resetAndInvalidateToolbar(false);
-		this._moveControlInSuitableCollection(oControl, OverflowToolbar._getControlPriority(oControl));
+
+		if (oControl) {
+			this._moveControlInSuitableCollection(oControl, OverflowToolbar._getControlPriority(oControl));
+		}
+
 		return this._callToolbarMethod("insertContent", arguments);
 	};
 

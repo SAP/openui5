@@ -1201,10 +1201,45 @@ sap.ui.define([
 			oOverflowTB.destroy();
 			newButton.destroy();
 		});
-
-
 	});
 
+	QUnit.test("[addContent] Calling addContent with falsy value does not throw an exception", function (assert) {
+		var aContent = getDefaultContent(),
+				oOverflowTB = createOverflowToolbar({}, aContent),
+				newButton,
+				newButton2 = "";
+
+			oOverflowTB.addContent(newButton);
+
+			//Assert
+			assert.ok(true, "does not throw an exception with undefined");
+
+			oOverflowTB.addContent(newButton2);
+
+			//Assert
+			assert.ok(true, "does not throw an exception with empty string");
+
+			oOverflowTB.destroy();
+	});
+
+	QUnit.test("[insertContent] Calling insertContent with falsy value does not throw an exception", function (assert) {
+		var aContent = getDefaultContent(),
+				oOverflowTB = createOverflowToolbar({}, aContent),
+				newButton,
+				newButton2 = "";
+
+			oOverflowTB.insertContent(newButton, 1);
+
+			//Assert
+			assert.ok(true, "does not throw an exception with undefined");
+
+			oOverflowTB.insertContent(newButton2, 1);
+
+			//Assert
+			assert.ok(true, "does not throw an exception with empty string");
+
+			oOverflowTB.destroy();
+	});
 
 	QUnit.test("[insertContent] Adding controls with insertContent inserts them at the proper index of the aggregation", function (assert) {
 		var aContent,
