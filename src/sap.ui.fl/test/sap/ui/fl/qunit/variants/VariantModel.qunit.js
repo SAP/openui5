@@ -1085,8 +1085,6 @@ function(
 		QUnit.test("when calling 'manageVariants' in RTA mode", function(assert) {
 			var done = assert.async();
 			var oVariantManagement = new VariantManagement("variantMgmtId1");
-
-			sandbox.stub(this.oModel, "_getLocalId").returns("variantMgmtId1");
 			oVariantManagement.setModel(this.oModel, "$FlexVariants");
 
 			sandbox.stub(oVariantManagement, "openManagementDialog").callsFake(oVariantManagement.fireManage);
@@ -1164,7 +1162,7 @@ function(
 
 			this.oModel.getData()["variantMgmtId1"].modified = true;
 
-			sandbox.stub(this.oModel, "_getLocalId").returns("variantMgmtId1");
+			sandbox.stub(this.oModel, "getLocalId").returns("variantMgmtId1");
 			sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns([oChange1, oChange2, oChange3]);
 			sandbox.stub(this.oFlexController._oChangePersistence, "getDirtyChanges").returns([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
 			var fnCopyVariantStub = sandbox.stub(this.oModel, "_copyVariant").returns(Promise.resolve([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]));
@@ -1234,7 +1232,7 @@ function(
 
 			this.oModel.getData()["variantMgmtId1"].modified = true;
 
-			sandbox.stub(this.oModel, "_getLocalId").returns("variantMgmtId1");
+			sandbox.stub(this.oModel, "getLocalId").returns("variantMgmtId1");
 			sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns([oChange1, oChange2, oChange3]);
 			sandbox.stub(this.oFlexController._oChangePersistence, "getDirtyChanges").returns([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
 			var fnCopyVariantStub = sandbox.stub(this.oModel, "_copyVariant").returns(Promise.resolve([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]));
@@ -1291,7 +1289,7 @@ function(
 
 			this.oModel.getData()["variantMgmtId1"].modified = true;
 
-			sandbox.stub(this.oModel, "_getLocalId").returns("variantMgmtId1");
+			sandbox.stub(this.oModel, "getLocalId").returns("variantMgmtId1");
 			sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns([oChange1, oChange2, oChange3]);
 			var fnCopyVariantStub = sandbox.stub(this.oModel, "_copyVariant");
 			var fnRemoveDirtyChangesStub = sandbox.stub(this.oModel, "_removeDirtyChanges");
@@ -1352,7 +1350,7 @@ function(
 		});
 	});
 
-	QUnit.module("Given an empty VariantModel and a VariantManagement control", {
+	QUnit.module("Given a VariantModel with no data and a VariantManagement control", {
 		beforeEach : function() {
 			this.oData = {};
 
@@ -1365,6 +1363,7 @@ function(
 				}
 			};
 			var oManifest = new sap.ui.core.Manifest(oManifestObj);
+			this.oVariantManagement = new VariantManagement("varMgmtRef1");
 			var oComponent = {
 				name: "MyComponent",
 				appVersion: "1.2.3",
@@ -1374,9 +1373,14 @@ function(
 				getManifest: function() {
 					return oManifest;
 				},
-				getLocalId: function() {}
+				getLocalId: function(sId) {
+					if (sId === this.oVariantManagement.getId()) {
+						return "localId";
+					}
+					return null;
+				}.bind(this)
 			};
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+			this.fnGetAppComponentForControlStub = sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			sandbox.stub(Utils, "getComponentClassName").returns("MyComponent");
 
 			this.oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
@@ -1385,7 +1389,6 @@ function(
 			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "applyVariantChanges");
 
 			this.oModel = new VariantModel(this.oData, this.oFlexController, oComponent);
-			this.oVariantManagement = new VariantManagement("varMgmtRef1");
 		},
 		afterEach : function() {
 			sandbox.restore();
@@ -1396,12 +1399,25 @@ function(
 	}, function() {
 		QUnit.test("when calling 'setModel' of VariantManagement control", function(assert) {
 			var fnRegisterToModelSpy = sandbox.spy(this.oModel, "registerToModel");
-			sandbox.stub(this.oModel, "_getLocalId").returns("varMgmtRef1");
+			sandbox.stub(this.oModel, "getVariantManagementReferenceForControl").returns("varMgmtRef1");
 			this.oVariantManagement.setModel(this.oModel, "$FlexVariants");
 
 			assert.equal(this.oModel.getCurrentVariantReference("varMgmtRef1"), "varMgmtRef1", "then the Current Variant is set to the standard variant");
 			assert.ok(fnRegisterToModelSpy.calledOnce, "then registerToModel called once, when VariantManagement control setModel is called");
 			assert.ok(fnRegisterToModelSpy.calledWith(this.oVariantManagement), "then registerToModel called with VariantManagement control");
+		});
+
+		QUnit.test("when calling 'getVariantManagementReferenceForControl' with a variant management control where app component couldn't be retrieved", function(assert) {
+			this.fnGetAppComponentForControlStub.returns(null);
+			assert.strictEqual(this.oModel.getVariantManagementReferenceForControl(this.oVariantManagement), this.oVariantManagement.getId(), "then control's id is returned");
+		});
+
+		QUnit.test("when calling 'getVariantManagementReferenceForControl' with a variant management control with no app component prefix", function(assert) {
+			assert.strictEqual(this.oModel.getVariantManagementReferenceForControl({getId: function() { return "mockControl"; }}), "mockControl", "then control's id is returned");
+		});
+
+		QUnit.test("when calling 'getVariantManagementReferenceForControl' with a variant management control with an app component prefix", function(assert) {
+			assert.strictEqual(this.oModel.getVariantManagementReferenceForControl(this.oVariantManagement), "localId", "then the local id of the control is retuned");
 		});
 	});
 

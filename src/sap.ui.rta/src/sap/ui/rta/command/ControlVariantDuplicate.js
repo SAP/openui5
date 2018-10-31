@@ -110,6 +110,7 @@ sap.ui.define([
 					this._aPreparedChanges = null;
 				}.bind(this));
 		}
+		return Promise.resolve();
 	};
 
 	return ControlVariantDuplicate;

@@ -94,8 +94,9 @@ sap.ui.define([
 		if (oControl instanceof VariantManagement) {
 			var vAssociationElement = oControl.getFor(),
 				aVariantManagementTargetElements;
-
-			sVariantManagementReference = JsControlTreeModifier.getSelector(oControl, flUtils.getAppComponentForControl(oControl)).id;
+			var oAppComponent = flUtils.getAppComponentForControl(oControl);
+			var sControlId = oControl.getId();
+			sVariantManagementReference = oAppComponent.getLocalId(sControlId) || sControlId;
 
 			if (!vAssociationElement ||
 				(Array.isArray(vAssociationElement) && vAssociationElement.length === 0)) {
@@ -201,7 +202,7 @@ sap.ui.define([
 		if (this._isPersonalizationMode()) {
 			return false;
 		}
-		return this._isVariantManagementControl(oOverlay);
+		return this._isVariantManagementControl(oOverlay) && this.hasStableId(oOverlay);
 	};
 
 	ControlVariant.prototype._isVariantManagementControl = function (oOverlay) {

@@ -1101,8 +1101,9 @@ sap.ui.define([
 	 * Otherwise it will be marked for deletion.
 	 *
 	 * @param {sap.ui.fl.Change} oChange the change to be deleted
+	 * @param {boolean} [bRunTimeCreatedChange] set if the change was created at runtime
 	 */
-	ChangePersistence.prototype.deleteChange = function(oChange) {
+	ChangePersistence.prototype.deleteChange = function(oChange, bRunTimeCreatedChange) {
 		var nIndexInDirtyChanges = this._aDirtyChanges.indexOf(oChange);
 
 		if (nIndexInDirtyChanges > -1) {
@@ -1110,26 +1111,28 @@ sap.ui.define([
 				return;
 			}
 			this._aDirtyChanges.splice(nIndexInDirtyChanges, 1);
-			this._deleteChangeInMap(oChange);
+			this._deleteChangeInMap(oChange, bRunTimeCreatedChange);
 			return;
 		}
 
 		oChange.markForDeletion();
 		this.addDirtyChange(oChange);
-		this._deleteChangeInMap(oChange);
+		this._deleteChangeInMap(oChange, bRunTimeCreatedChange);
 	};
 
 	/**
 	 * Deletes a change object from the internal map.
 	 *
-	 * @param {sap.ui.fl.Change} oChange which has to be removed from the mapping
+	 * @param {sap.ui.fl.Change} oChange change which has to be removed from the mapping
+	 * @param {boolean} [bRunTimeCreatedChange] set if the change was created at runtime
 	 * @private
 	 */
-	ChangePersistence.prototype._deleteChangeInMap = function (oChange) {
+	ChangePersistence.prototype._deleteChangeInMap = function (oChange, bRunTimeCreatedChange) {
 		var sChangeKey = oChange.getId();
 		var mChanges = this._mChanges.mChanges;
-		var mDependencies = this._mChanges.mDependencies;
-		var mDependentChangesOnMe = this._mChanges.mDependentChangesOnMe;
+		var mMapForDependencies = bRunTimeCreatedChange ? this._mChangesInitial : this._mChanges;
+		var mDependencies = mMapForDependencies.mDependencies;
+		var mDependentChangesOnMe = mMapForDependencies.mDependentChangesOnMe;
 
 		//mChanges
 		Object.keys(mChanges).some(function (key) {

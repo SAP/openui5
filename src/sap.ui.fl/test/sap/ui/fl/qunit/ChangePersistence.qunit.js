@@ -2182,7 +2182,7 @@ function (
 			assert.deepEqual(mUpdatedDependenciesMap, this.oChangePersistence._mChanges, "the updated dependencies map is saved in the internal changes map");
 		});
 
-		QUnit.test("deleteChanges shall remove the given change from the map", function(assert) {
+		QUnit.test("deleteChanges with bRunTimeCreatedChange parameter set, shall remove the given change from the map", function(assert) {
 			var oAppComponent = {
 				id :"mockAppComponent"
 			};
@@ -2215,15 +2215,17 @@ function (
 			});
 
 			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
+			sandbox.spy(this.oChangePersistence, "_deleteChangeInMap");
 
 			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
 				.then(function (fnGetChangesMap) {
 					var mChanges = fnGetChangesMap().mChanges;
 					var oChangeForDeletion = mChanges["controlId"][1]; // second change for 'controlId' shall be removed
-					this.oChangePersistence.deleteChange(oChangeForDeletion);
+					this.oChangePersistence.deleteChange(oChangeForDeletion, true);
 					assert.equal(mChanges["controlId"].length, 1, "'controlId' has only one change in the map");
 					assert.equal(mChanges["controlId"][0].getId(), "change1", "the change has the ID 'change1'");
 					assert.equal(mChanges["anotherControlId"].length, 1, "'anotherControlId' has still one change in the map");
+					assert.ok(this.oChangePersistence._deleteChangeInMap.calledWith(oChangeForDeletion, true), "then _deleteChangeInMap() was called with the correct parameters");
 				}.bind(this));
 		});
 
@@ -3409,6 +3411,7 @@ function (
 			};
 			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
 			Utils.setMaxLayerParameter("USER");
+			var mDependencies = {}, mDependentChangesOnMe = {};
 
 			var oChangeContent1 = {
 				fileName: "Gizorillus1",
@@ -3443,35 +3446,28 @@ function (
 			this.oChange1 = new Change(oChangeContent1);
 			this.oChange2 = new Change(oChangeContent2);
 			this.oChange3 = new Change(oChangeContent3);
-			this.oChange1Id = this.oChange1.getId();
-			this.oChange2Id = this.oChange2.getId();
-			this.oChange3Id = this.oChange3.getId();
 
-			this.mChanges = {
+			mDependencies[this.oChange1.getId()] = {
+				"dependencies": [this.oChange2.getId()]
+			};
+			mDependentChangesOnMe[this.oChange2.getId()] = [this.oChange1.getId(), this.oChange3.getId()];
+
+			this.oChangePersistence._mChanges = {
+				"aChanges": [this.oChange1, this.oChange2, this.oChange3],
 				"mChanges": {
 					"control1": [this.oChange1, this.oChange2]
-				},
-				"mDependencies": {},
-				"mDependentChangesOnMe": {}
+				 },
+				"mDependencies": mDependencies,
+				"mDependentChangesOnMe": mDependentChangesOnMe
 			};
-			this.mChanges["mDependencies"][this.oChange1Id] = {"dependencies": [this.oChange2Id]};
-			this.mChanges["mDependentChangesOnMe"][this.oChange2Id] = [this.oChange1Id, this.oChange3Id];
-			this.mChanges.aChanges = [this.oChange1, this.oChange2, this.oChange3];
 
-			this.oChangePersistence._mChanges = this.mChanges;
+			this.oChangePersistence._mChangesInitial = fnBaseUtilMerge({}, this.oChangePersistence._mChanges);
 		},
 		afterEach: function () {
 			this.oChange1.destroy();
 			this.oChange2.destroy();
 			this.oChange3.destroy();
-			delete this.oChange1Id;
-			delete this.oChange2Id;
-			delete this.oChange3Id;
-			delete this.mChanges;
 			sandbox.restore();
-			controls.forEach(function(control){
-				control.destroy();
-			});
 		}
 	}, function() {
 		QUnit.test("when '_deleteChangeInMap' is called", function (assert) {
@@ -3479,8 +3475,19 @@ function (
 			assert.equal(this.oChangePersistence._mChanges.mChanges["control1"].length, 1, "then one change deleted from map");
 			assert.strictEqual(this.oChangePersistence._mChanges.mChanges["control1"][0].getId(), this.oChange2.getId(), "then only second change present");
 			assert.deepEqual(this.oChangePersistence._mChanges.mDependencies, {}, "then dependencies are cleared for change1");
-			assert.equal(this.oChangePersistence._mChanges["mDependentChangesOnMe"][this.oChange2Id].length, 1, "then mDependentChangesOnMe for change2 only has one change");
-			assert.strictEqual(this.oChangePersistence._mChanges["mDependentChangesOnMe"][this.oChange2Id][0], this.oChange3Id, "then mDependentChangesOnMe for change2 still has change3");
+			assert.equal(this.oChangePersistence._mChanges["mDependentChangesOnMe"][this.oChange2.getId()].length, 1, "then mDependentChangesOnMe for change2 only has one change");
+			assert.strictEqual(this.oChangePersistence._mChanges["mDependentChangesOnMe"][this.oChange2.getId()][0], this.oChange3.getId(), "then mDependentChangesOnMe for change2 still has change3");
+		});
+
+		QUnit.test("when '_deleteChangeInMap' is called with a change created at runtime", function (assert) {
+			this.oChangePersistence._deleteChangeInMap(this.oChange1, true);
+			assert.equal(this.oChangePersistence._mChanges.mChanges["control1"].length, 1, "then one change deleted from map");
+			assert.strictEqual(this.oChangePersistence._mChanges.mChanges["control1"][0].getId(), this.oChange2.getId(), "then only second change present");
+			assert.ok(!jQuery.isEmptyObject(this.oChangePersistence._mChanges.mDependencies), "then dependencies in _mChanges are not cleared for change1");
+			assert.ok(jQuery.isEmptyObject(this.oChangePersistence._mChangesInitial.mDependencies), "then dependencies in _mChangesInitial are cleared for change1");
+			assert.equal(this.oChangePersistence._mChanges["mDependentChangesOnMe"][this.oChange2.getId()].length, 2, "then _mChanges.mDependentChangesOnMe for change2 is unchanged");
+			assert.equal(this.oChangePersistence._mChangesInitial["mDependentChangesOnMe"][this.oChange2.getId()].length, 1, "then _mChangesInitial.mDependentChangesOnMe for change2 has only one change left");
+			assert.strictEqual(this.oChangePersistence._mChangesInitial["mDependentChangesOnMe"][this.oChange2.getId()][0], this.oChange3.getId(), "then _mChangesInitial.mDependentChangesOnMe for change2 still has change3");
 		});
 	});
 

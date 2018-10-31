@@ -546,13 +546,13 @@ sap.ui.define([
 
 			if (mPropertyBag.changeType === "setDefault") {
 				mNewChangeData.fileType = "ctrl_variant_management_change";
-				mNewChangeData.selector = {id : sVariantManagementReference};
+				mNewChangeData.selector = JsControlTreeModifier.getSelector(sVariantManagementReference, mPropertyBag.appComponent);
 			} else {
 				if (mPropertyBag.changeType === "setTitle") {
 					BaseChangeHandler.setTextInChange(mNewChangeData, "title", mPropertyBag.title, "XFLD");
 				}
 				mNewChangeData.fileType = "ctrl_variant_change";
-				mNewChangeData.selector = {id : mPropertyBag.variantReference};
+				mNewChangeData.selector = JsControlTreeModifier.getSelector(mPropertyBag.variantReference,  mPropertyBag.appComponent);
 			}
 
 			oChange = this.oFlexController.createBaseChange(mNewChangeData, mPropertyBag.appComponent);
@@ -738,7 +738,7 @@ sap.ui.define([
 		var oVariantManagementControl = oEvent.getSource();
 		var bSetDefault = oEvent.getParameter("def");
 		var oAppComponent = Utils.getAppComponentForControl(oVariantManagementControl);
-		var sVariantManagementReference = this._getLocalId(oVariantManagementControl.getId(), oAppComponent);
+		var sVariantManagementReference = this.getLocalId(oVariantManagementControl.getId(), oAppComponent);
 		var sSourceVariantReference = this.getCurrentVariantReference(sVariantManagementReference);
 		var aVariantChanges = this.oVariantController.getVariantChanges(sVariantManagementReference, sSourceVariantReference, true);
 
@@ -794,8 +794,14 @@ sap.ui.define([
 		}
 	};
 
-	VariantModel.prototype._getLocalId = function(sId, oAppComponent) {
+	VariantModel.prototype.getLocalId = function(sId, oAppComponent) {
 		return JsControlTreeModifier.getSelector(sId, oAppComponent).id;
+	};
+
+	VariantModel.prototype.getVariantManagementReferenceForControl = function(oVariantManagementControl) {
+		var sControlId = oVariantManagementControl.getId();
+		var oAppComponent = Utils.getAppComponentForControl(oVariantManagementControl);
+		return (oAppComponent && oAppComponent.getLocalId(sControlId)) || sControlId;
 	};
 
 	VariantModel.prototype.switchToDefaultForVariantManagement = function (sVariantManagementReference) {
@@ -817,9 +823,7 @@ sap.ui.define([
 	};
 
 	VariantModel.prototype.registerToModel = function(oVariantManagementControl) {
-		var sVariantManagementReference =
-			this._getLocalId(oVariantManagementControl, Utils.getAppComponentForControl(oVariantManagementControl));
-
+		var sVariantManagementReference = this.getVariantManagementReferenceForControl(oVariantManagementControl);
 		this._ensureStandardVariantExists(sVariantManagementReference);
 
 		if (oVariantManagementControl) {
