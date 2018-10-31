@@ -2203,22 +2203,6 @@
 			// cleanup
 			oInputBase.destroy();
 		});
-
-		QUnit.test("Tabindex should be added to begin /end icons", function (assert) {
-			var oInputBase = new sap.m.InputBase();
-			var mIconSettings = { src: "sap-icon://slim-arrow-down", noTabStop: true };
-			var mLeftNonFocusableIcon = mIconSettings;
-			var mRightNonFocusableIcon = mIconSettings;
-			var oLeftNonFocusableIcon = oInputBase.addBeginIcon(mLeftNonFocusableIcon);
-			var oRightNonFocusableIcon = oInputBase.addEndIcon(mRightNonFocusableIcon);
-
-			oInputBase.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			assert.strictEqual(oLeftNonFocusableIcon.getDomRef().getAttribute("tabindex"), "-1", "The tabindex of the button is set to -1");
-			assert.strictEqual(oRightNonFocusableIcon.getDomRef().getAttribute("tabindex"), "-1", "The tabindex of the button is set to -1");
-			oInputBase.destroy();
-		});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
