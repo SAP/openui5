@@ -2,7 +2,9 @@
 sap.ui.define(["sap/base/strings/camelize"], function(camelize) {
 	"use strict";
 
-	QUnit.test("Camelize", function(assert) {
+	QUnit.module("Camelize");
+
+	QUnit.test("camelize", function(assert) {
 		assert.expect(2);
 
 		var sCamelCase = camelize("this-is-a-camel-case-string");
