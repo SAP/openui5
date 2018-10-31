@@ -211,6 +211,7 @@
 		  "name": "Button",
 		  "category": "Action",
 		  "since": "1.10",
+		  "formFactors": "SML",
 		  "samples": ["sap.m.sample.Button"]
 		},
 		{
@@ -236,6 +237,7 @@
 		  "name": "Check Box",
 		  "category": "User Input",
 		  "since": "1.10",
+		  "formFactors": "SML",
 		  "samples": [
 			  "sap.m.sample.CheckBox",
 			  "sap.m.sample.CheckBoxTriState"
@@ -253,6 +255,7 @@
 		  "name": "ComboBox",
 		  "category": "User Input",
 		  "since": "1.22",
+		  "formFactors": "SML",
 		  "samples": [
 			"sap.m.sample.ComboBox",
 			"sap.m.sample.ComboBox2Columns",
@@ -294,7 +297,7 @@
 		  "name": "Date Picker",
 		  "category": "User Input",
 		  "since": "1.22",
-		  "formFactors": "L",
+		  "formFactors": "SML",
 		  "samples": ["sap.m.sample.DatePicker", "sap.m.sample.DatePickerMassEdit"]
 		},
 		{
@@ -534,6 +537,7 @@
 		  "name": "Input",
 		  "category": "User Input",
 		  "since": "1.10",
+		  "formFactors": "SML",
 		  "samples": [
 			"sap.m.sample.InputAssisted",
 			"sap.m.sample.InputAssistedTwoValues",
@@ -572,6 +576,7 @@
 		  "name": "Label",
 		  "category": "Display",
 		  "since": "1.10",
+		  "formFactors": "SML",
 		  "samples": [
 			"sap.m.sample.Label",
 			"sap.m.sample.LabelProperties",
@@ -583,6 +588,7 @@
 		  "name": "Link",
 		  "category": "Action",
 		  "since": "1.12",
+		  "formFactors": "SML",
 		  "samples": [
 			"sap.m.sample.Link",
 			"sap.m.sample.LinkSubtle",
@@ -801,6 +807,7 @@
 		  "name": "Object Status",
 		  "category": "Display",
 		  "since": "1.12",
+		  "formFactors": "SML",
 		  "samples": [
 			"sap.m.sample.ObjectStatus",
 			"sap.m.sample.ObjectHeader"
@@ -917,6 +924,7 @@
 		  "name": "Progress Indicator",
 		  "category": "Display",
 		  "since": "1.14",
+		  "formFactors": "SML",
 		  "samples": ["sap.m.sample.ProgressIndicator"]
 		},
 		{
@@ -949,6 +957,7 @@
 		  "name": "Rating Indicator",
 		  "category": "User Input",
 		  "since": "1.14",
+		  "formFactors": "SML",
 		  "samples": ["sap.m.sample.RatingIndicator"]
 		},
 		{
@@ -995,6 +1004,7 @@
 		  "name": "Select",
 		  "category": "User Input",
 		  "since": "1.10",
+		  "formFactors": "SML",
 		  "samples": [
 			"sap.m.sample.Select",
 			"sap.m.sample.Select2Columns"
@@ -1024,6 +1034,7 @@
 		  "name": "Multi Combo Box",
 		  "category": "User Input",
 		  "since": "1.22",
+		  "formFactors": "SML",
 		  "samples": [
 			"sap.m.sample.MultiComboBox",
 			"sap.m.sample.MultiComboBoxDefaultFiltering",
@@ -1153,6 +1164,7 @@
 		  "name": "Text",
 		  "category": "Display",
 		  "since": "1.10",
+		  "formFactors": "SML",
 		  "samples": [
 			"sap.m.sample.Text",
 			"sap.m.sample.TextMaxLines",
