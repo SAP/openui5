@@ -38,7 +38,7 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @public
-	 * @param {object} [oFormatOptions] Formatting options. For a list of all available options, see {@link sap.ui.core.format.NumberFormat#constructor NumberFormat}.
+	 * @param {object} [oFormatOptions] Formatting options. For a list of all available options, see {@link sap.ui.core.format.NumberFormat#getUnitInstance NumberFormat}.
 	 * @param {object} [oFormatOptions.source] Additional set of format options to be used if the property in the model is not of type <code>string</code> and needs formatting as well.
 	 * 										   If an empty object is given, the grouping is disabled and a dot is used as decimal separator.
 	 * @param {object} [oConstraints] Value constraints
@@ -81,7 +81,7 @@ sap.ui.define([
 		// This way we ensure that the bound dynamic format options (e.g. decimals, precision)
 		// are taken into account with priority. Otherwise the format options defined for units on the Configuration
 		// might overwrite the given dynamic format options of the type.
-		if (sUnitToBeFormatted) {
+		if (sUnitToBeFormatted && !this.oFormatOptions.customUnits) {
 			// checks the global Configuration and CLDR for Units/UnitMappings
 			var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
 			var oLocaleData = LocaleData.getInstance(oLocale);
@@ -158,7 +158,7 @@ sap.ui.define([
 	 * Other internal types than 'string' are not supported by the Unit type.
 	 * If a source format has been defined for this type, the formatValue does also accept
 	 * a string value as input, which will be parsed into an array using the source format.
-	 * If aValues is not defined or null, null will be returned.
+	 * If vValues is not defined or null, null will be returned.
 	 *
 	 * @function
 	 * @name sap.ui.model.type.Unit.prototype.formatValue
@@ -218,7 +218,7 @@ sap.ui.define([
 		var vResult, oBundle;
 		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
-				this.oOutputFormat = this.oOutputFormat || this._getInstance();
+				this.oOutputFormat = this._getInstance(this.aDynamicValues);
 				vResult = this.oOutputFormat.parse(vValue);
 				if (!Array.isArray(vResult)) {
 					oBundle = sap.ui.getCore().getLibraryResourceBundle();
