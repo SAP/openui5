@@ -10,12 +10,12 @@ sap.ui.define([
 
 	opaTest("Should see the initial page of the app", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartTheApp();
+		Given.iStartMyApp();
 
 		// Assertions
 		Then.onTheAppPage.iShouldSeeTheApp();
 
 		//Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 });

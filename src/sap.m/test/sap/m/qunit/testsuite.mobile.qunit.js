@@ -63,7 +63,7 @@ sap.ui.define(function() {
 				},
 				group: "Demokit Other Content",
 				module: [
-					"sap/ui/demo/basicTemplate/test/unit/allTests"
+					"sap/ui/demo/basicTemplate/test/unit/AllTests"
 				]
 			},
 			"demokit/cart/webapp/test/integration/opaTestsWithComponent": {

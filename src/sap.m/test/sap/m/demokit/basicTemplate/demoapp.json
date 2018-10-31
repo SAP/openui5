@@ -11,16 +11,16 @@
 		"webapp/view/App.view.xml",
 		"webapp/css/style.css",
 		"webapp/test/integration/pages/App.js",
-		"webapp/test/integration/arrangements/Arrangement.js",
+		"webapp/test/integration/arrangements/Startup.js",
 		"webapp/test/integration/AllJourneys.js",
-		"webapp/test/integration/navigationJourney.js",
+		"webapp/test/integration/NavigationJourney.js",
 		"webapp/test/integration/opaTests.qunit.html",
-		"webapp/test/unit/controller/App.controller.js",
+		"webapp/test/unit/controller/App.js",
 		"webapp/test/unit/model/formatter.js",
-		"webapp/test/unit/allTests.js",
+		"webapp/test/unit/AllTests.js",
 		"webapp/test/unit/unitTests.qunit.html",
 		"webapp/test/testsuite.qunit.html",
-		"ui5.yaml",
-		"package.json"
+		"package.json",
+		"ui5.yaml"
 	]
 }
