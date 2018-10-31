@@ -52,6 +52,13 @@
 		}
 	}
 
+	// check for optimized sources
+	window["sap-ui-optimized"] = window["sap-ui-optimized"]
+		|| (/\.head/.test(loadScripts) && !/pending/.test(loadScripts));
+
+	// prevent a reboot in full debug mode as this would invalidate our listeners
+	window["sap-ui-debug-no-reboot"] = true;
+
 	// cascade 1: polyfills, can all be loaded in parallel
 	loadScripts([
 		"sap/ui/thirdparty/baseuri.js",
