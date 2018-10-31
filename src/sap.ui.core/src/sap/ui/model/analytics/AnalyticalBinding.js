@@ -3566,6 +3566,9 @@ sap.ui.define([
 		for (var i = 0; i < iLevel; i++) {
 			sDimensionMember = oContext.getProperty(this.aAggregationLevel[i]);
 			if (sDimensionMember != null) {
+				if (sDimensionMember.__edmType === "Edm.Time") {
+					sDimensionMember = sDimensionMember.ms;
+				}
 				sGroupId += encodeURIComponent(sDimensionMember) + "/"; // encode to escape slashes and at signs in the value
 			} else {
 				sGroupId += "@/";
