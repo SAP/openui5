@@ -13,13 +13,7 @@ sap.ui.define([
 
 	return {
 		typeDeterminationAndDelete : function (Given, When, Then, sUIComponent) {
-			var oExpectedLogChangeSetID = {
-					component : "sap.ui.test.TestUtils",
-					level : Log.Level.ERROR,
-					message : "--changeset_id-",
-					details : "No mock data found"
-				},
-				bRealOData = TestUtils.isRealOData(),
+			var bRealOData = TestUtils.isRealOData(),
 				sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
 			// close schedules dialog
@@ -345,9 +339,6 @@ sap.ui.define([
 
 				//*****************************************************************************
 				// Multiple Deletion Journey within Schedules
-				// TODO: take care about TestUtils log message like this:
-				//   "changeset_id-1490715882516-48 - No mock data found sap.ui.test.TestUtils"
-				//   support changesets in $batch caused by multiple deletion requests
 
 				selectSalesOrderWithId("0500000005");
 
@@ -390,8 +381,7 @@ sap.ui.define([
 				deleteBusinessPartner();
 
 			}
-			Then.onAnyPage.checkLog(!bRealOData ?
-				[oExpectedLogChangeSetID, oExpectedLogChangeSetID] : undefined);
+			Then.onAnyPage.checkLog();
 
 			Then.iTeardownMyUIComponent();
 		}

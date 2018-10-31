@@ -252,6 +252,7 @@ sap.ui.define([
 		});
 	});
 
+	//*********************************************************************************************
 	QUnit.test("useFakeServer: HEAD /Foo/any (direct)", function (assert) {
 		TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mServerFixture);
 
@@ -260,6 +261,122 @@ sap.ui.define([
 			assert.strictEqual(oXHR.responseText, "", "body");
 			assert.strictEqual(oXHR.getAllResponseHeaders(), headerString({"OData-Version": "4.0"}),
 				"headers");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("useFakeServer: change set - success", function (assert) {
+		TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mServerFixture);
+
+		return request("POST", "/Foo/$batch", {"OData-Version" : "4.0"}, [
+			"--batch_id-1538663822135-19",
+			"Content-Type: multipart/mixed;boundary=changeset_id-1538663822135-20",
+			"",
+			"--changeset_id-1538663822135-20",
+			"Content-Type:application/http",
+			"Content-Transfer-Encoding:binary",
+			"Content-ID:0.0",
+			"",
+			"PATCH any HTTP/1.1",
+			"Accept:application/json;odata.metadata=minimal;IEEE754Compatible=true",
+			"Accept-Language:en-US",
+			"X-CSRF-Token:n0Uqj99BFa41yJb2QELx7g",
+			"Content-Type:application/json;charset=UTF-8;IEEE754Compatible=true",
+			"",
+			'{"foo":"bar"}',
+			"--changeset_id-1538663822135-20",
+			"Content-Type:application/http",
+			"Content-Transfer-Encoding:binary",
+			"Content-ID:1.0",
+			"",
+			"PATCH bar HTTP/1.1",
+			"Accept:application/json;odata.metadata=minimal;IEEE754Compatible=true",
+			"Accept-Language:en-US",
+			"X-CSRF-Token:",
+			"Content-Type:application/json;charset=UTF-8;IEEE754Compatible=true",
+			"",
+			'{"foo":"bar"}',
+			"--changeset_id-1538663822135-20--",
+			"--batch_id-1538663822135-19--"
+		].join("\r\n")).then(function (oXHR) {
+			assert.strictEqual(oXHR.responseText, [
+				"--batch_id-1538663822135-19",
+				"Content-Type: multipart/mixed;boundary=changeset_id-1538663822135-20",
+				"",
+				"--changeset_id-1538663822135-20",
+				"Content-Type: application/http",
+				"Content-Transfer-Encoding: binary",
+				"Content-ID: 0.0",
+				"",
+				"HTTP/1.1 200",
+				"OData-Version: 4.0",
+				"Content-Type: application/json;charset=UTF-8;IEEE754Compatible=true",
+				"",
+				'{"foo":"bar"}',
+				"--changeset_id-1538663822135-20",
+				"Content-Type: application/http",
+				"Content-Transfer-Encoding: binary",
+				"Content-ID: 1.0",
+				"",
+				"HTTP/1.1 200",
+				"OData-Version: 4.0",
+				"Content-Type: application/json;charset=utf-8",
+				"",
+				'{"@odata.etag":"abc123"}',
+				"--changeset_id-1538663822135-20--",
+				"--batch_id-1538663822135-19--",
+				""
+			].join("\r\n"));
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("useFakeServer: change set - failure", function (assert) {
+		TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mServerFixture);
+
+		return request("POST", "/Foo/$batch", {"OData-Version" : "4.0"}, [
+			"--batch_id-1538663822135-19",
+			"Content-Type: multipart/mixed;boundary=changeset_id-1538663822135-20",
+			"--changeset_id-1538663822135-20",
+			"Content-Type:application/http",
+			"Content-Transfer-Encoding:binary",
+			"Content-ID:0.0",
+			"",
+			"POST any HTTP/1.1",
+			"Accept:application/json;odata.metadata=minimal;IEEE754Compatible=true",
+			"Accept-Language:en-US",
+			"X-CSRF-Token:n0Uqj99BFa41yJb2QELx7g",
+			"Content-Type:application/json;charset=UTF-8;IEEE754Compatible=true",
+			"",
+			'{"foo":"bar"}',
+			"--changeset_id-1538663822135-20",
+			"Content-Type:application/http",
+			"Content-Transfer-Encoding:binary",
+			"Content-ID:1.0",
+			"",
+			"POST baz HTTP/1.1",
+			"Accept:application/json;odata.metadata=minimal;IEEE754Compatible=true",
+			"Accept-Language:en-US",
+			"X-CSRF-Token:n0Uqj99BFa41yJb2QELx7g",
+			"Content-Type:application/json;charset=UTF-8;IEEE754Compatible=true",
+			"",
+			'{"foo":0}',
+			"--changeset_id-1538663822135-20--",
+			"--batch_id-1538663822135-19--"
+		].join("\r\n")).then(function (oXHR) {
+			assert.strictEqual(oXHR.responseText, [
+				"--batch_id-1538663822135-19",
+				"Content-Type: application/http",
+				"Content-Transfer-Encoding: binary",
+				"",
+				"HTTP/1.1 400",
+				"OData-Version: 4.0",
+				"Content-Type: application/json;charset=utf-8",
+				"",
+				'{"message":"Failure"}',
+				"--batch_id-1538663822135-19--",
+				""
+			].join("\r\n"));
 		});
 	});
 
