@@ -4,7 +4,7 @@ sap.ui.define([
 ], function (Opa5, Storage) {
 	"use strict";
 
-	return Opa5.extend("sap.ui.demo.cart.test.integration.arrangement.iframe.Arrangement", {
+	return Opa5.extend("sap.ui.demo.cart.test.integration.arrangements.iframe.Startup", {
 		iStartMyApp : function (bKeepStorage, oAdditionalUrlParameters) {
 			// The cart local storage should be deleted when the app starts except when testing it.
 			if (!bKeepStorage) {
