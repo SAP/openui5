@@ -1205,6 +1205,8 @@ sap.ui.define([
 					}
 					that.mHeaders["X-CSRF-Token"]
 						= jqXHR.getResponseHeader("X-CSRF-Token") || that.mHeaders["X-CSRF-Token"];
+					that.mHeaders["SAP-ContextId"]
+						= jqXHR.getResponseHeader("SAP-ContextId") || undefined;
 
 					fnResolve({
 						body : oResponse,
@@ -1222,6 +1224,9 @@ sap.ui.define([
 							send(true);
 						}, fnReject);
 					} else {
+						if (jqXHR.getResponseHeader("SAP-Err-Id") === "ICMENOSESSION") {
+							that.mHeaders["SAP-ContextId"] = undefined;
+						}
 						fnReject(_Helper.createError(jqXHR, sRequestUrl, sOriginalResourcePath));
 					}
 				});

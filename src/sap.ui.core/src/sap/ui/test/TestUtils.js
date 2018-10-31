@@ -409,6 +409,9 @@ sap.ui.define([
 					aResponses = mUrlToResponses[oRequest.method + " " + oRequest.url];
 
 				aResponses = (aResponses || []).filter(function (oResponse) {
+					if (typeof oResponse.ifMatch === "function") {
+						return oResponse.ifMatch(oRequest);
+					}
 					return !oResponse.ifMatch || oResponse.ifMatch.test(oRequest.requestBody);
 				});
 				if (aResponses.length) {
