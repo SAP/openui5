@@ -93,5 +93,73 @@
         "references": []
       }
     ]
+  },
+  "1.58.1": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "1636cc363d88fa762cf1641f4c7a97710b684a4a",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: returns empty string now when file has no extension",
+        "references": []
+      },
+      {
+        "id": "5b949cddb0f47691289555d76bc2cca0a982b3fd",
+        "type": "FIX",
+        "text": " unified.ColorPicker: Hue value of 360 is the same as 0",
+        "references": []
+      }
+    ]
+  },
+  "1.58.2": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "a1014eaffc2820c10b3256282bbf1182472fe5d5",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: button is not cut when displaying two months and years in Bulgarian",
+        "references": []
+      },
+      {
+        "id": "8df161e39f2358bc23e983ebd063b841b4faea10",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
+        "references": []
+      },
+      {
+        "id": "57008d240c667899928c7783b1b4852148b47a89",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Now the dialog\u0027s style is not broken",
+        "references": []
+      }
+    ]
+  },
+  "1.58.3": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "0185262652f208d2faa47ea0117804f5a83fa9f0",
+        "type": "FIX",
+        "text": " PlanningCalendar: Spaces in internal aria-label are removed",
+        "references": []
+      },
+      {
+        "id": "94347d186859480390989f2748d44efad15d9b37",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: correct width of the input when invalidated",
+        "references": []
+      }
+    ]
+  },
+  "1.58.5": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "27293da9f3ad3ea8e2e451d84e271c590cd82de8",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarTimeInterval: navigates to the correct date",
+        "references": []
+      }
+    ]
   }
 }

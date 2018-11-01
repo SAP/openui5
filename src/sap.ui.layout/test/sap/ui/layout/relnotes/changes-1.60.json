@@ -75,5 +75,16 @@
         "references": []
       }
     ]
+  },
+  "1.60.1": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "2b5787d8a970db03cc882d6cd410a23a2dcd932d",
+        "type": "FIX",
+        "text": " SimpleForm: Layout rendered wrong if set late",
+        "references": []
+      }
+    ]
   }
 }

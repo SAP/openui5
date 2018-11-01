@@ -99,5 +99,62 @@
         "references": []
       }
     ]
+  },
+  "1.54.1": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "cd7876f03d42cf2c186c077a149d7a04a6895398",
+        "type": "FIX",
+        "text": " Always return a Promise for ControllerExtensions",
+        "references": []
+      },
+      {
+        "id": "c7e11b718c7e385daa17d5553d32e1b0203ab1e9",
+        "type": "FIX",
+        "text": " QUnit Designtime Library tests in Firefox",
+        "references": []
+      },
+      {
+        "id": "0e864484cf4a9edaaa857b68120fd51d7446d674",
+        "type": "FIX",
+        "text": " Fix several issues in variant management control",
+        "references": []
+      },
+      {
+        "id": "14313fb06d2d9b933f23c82a32535b70d9a717c3",
+        "type": "FIX",
+        "text": " sap.ui.fl: MoveControls now reverts to the correct position",
+        "references": []
+      }
+    ]
+  },
+  "1.54.2": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "c6c8c95b564e9e9ecfb807e5f5e031323bda6a4b",
+        "type": "FIX",
+        "text": " Add getPreparedChange to ctrl variant commands",
+        "references": []
+      },
+      {
+        "id": "2d8a8bb3786c7956ade92abf2d0efaa293480598",
+        "type": "FIX",
+        "text": " Fix open issues",
+        "references": []
+      }
+    ]
+  },
+  "1.54.3": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "0341c611eb8263a158dd653cc319a4d69b93f355",
+        "type": "FIX",
+        "text": " sap.ui.fl: Variant selection in URL should not change history",
+        "references": []
+      }
+    ]
   }
 }

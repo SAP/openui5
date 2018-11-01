@@ -5,31 +5,48 @@
       {
         "id": "5f8acc5fe57840c5549e1b0798715bb2d4269d98",
         "type": "FEATURE",
-        "text": "sap.f.DynamicPageTitle: Responsiveness and prioritization enabled.",
+        "text": " sap.f.DynamicPageTitle: Responsiveness and prioritization enabled.",
         "references": []
       },
       {
         "id": "6d5bf5b37f34964be6b00eceeddc128cf7fe8782",
         "type": "FEATURE",
-        "text": "sap.f.SemanticPage: Draft indicator position is changed",
+        "text": " sap.f.SemanticPage: Draft indicator position is changed",
         "references": []
       },
       {
         "id": "1130ca4a29482881d350e2416c2da6701e74c364",
         "type": "FEATURE",
-        "text": "sap.f.semantic.SemanticPage: Edit text action is added.",
+        "text": " sap.f.semantic.SemanticPage: Edit text action is added.",
         "references": []
       },
       {
         "id": "35847319218700ad82e5eef6de42d22474685df9",
         "type": "FIX",
-        "text": "Corrected shared-config.js path",
+        "text": " Corrected shared-config.js path",
         "references": []
       },
       {
         "id": "7baefb3c99206edbfbd337e5b556e9ee5ac8f703",
         "type": "FIX",
-        "text": "sap.m.Avatar: DetailBox aggregation lifecycle improvement",
+        "text": " sap.m.Avatar: DetailBox aggregation lifecycle improvement",
+        "references": []
+      }
+    ]
+  },
+  "1.50.1": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "de7f7cfd74bf3495ffbd24aba007fbc94bb3de1e",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: corrected width of the footer with custom sap.m.Bar",
+        "references": []
+      },
+      {
+        "id": "0627575f9208abcf1dd7c8edca51869d8b922986",
+        "type": "FIX",
+        "text": " sap.f.dynamicPage: fixed ScrollContainer in Designtime",
         "references": []
       }
     ]

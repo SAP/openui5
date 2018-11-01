@@ -57,5 +57,50 @@
         "references": []
       }
     ]
+  },
+  "1.58.1": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "93d9da777d87e1d3568f97c17861e0b4f11c2783",
+        "type": "FIX",
+        "text": " ResponsiveGridLayout: Form cells must have overflow hidden",
+        "references": []
+      }
+    ]
+  },
+  "1.58.2": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "2a2797e56a366a8f87f94ddb6846cb497679d6a8",
+        "type": "FIX",
+        "text": "sap.ui.layout - Flexibility: Check actions based on form layout",
+        "references": []
+      }
+    ]
+  },
+  "1.58.3": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "2bc732670f8e5463c134d47623b6d24a7ae88265",
+        "type": "FIX",
+        "text": " AlignedFlowLayout: Accessibility issue fixed",
+        "references": []
+      },
+      {
+        "id": "d171b6a7d1aa32aea72cfa28d6767e8e3e78eebd",
+        "type": "FIX",
+        "text": " HideSimpleForm change handler doesn\u0027t perform revert after restart",
+        "references": []
+      },
+      {
+        "id": "a4f6fe5f1af769519fb6246f00a50ebd901fabc4",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter minSize property is now working correctly",
+        "references": []
+      }
+    ]
   }
 }

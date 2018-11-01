@@ -1041,5 +1041,76 @@
         "references": []
       }
     ]
+  },
+  "1.60.1": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "ee484109be42705500f11f17c51a97c70fbe997a",
+        "type": "FIX",
+        "text": " Upload Collection 1902 Enhancements - Patch 1",
+        "references": []
+      },
+      {
+        "id": "3fc20a8a92d51d48eebc1b6113fe8ae75d1eaa39",
+        "type": "FIX",
+        "text": " sap.m.Carousel: content of scroll containers is now destroyed correctly",
+        "references": []
+      },
+      {
+        "id": "b4f9b214523dd005313b3b0ed5eff14445e8c29a",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Adjust width when dialog contains long items",
+        "references": []
+      },
+      {
+        "id": "d74539ec9a877fce62bd507d33c7bf47e9b89ac1",
+        "type": "FIX",
+        "text": " sap.m.GrowingEnablement: small threshold does not work",
+        "references": []
+      },
+      {
+        "id": "606b4938853344e5efdcac842b99a80e09498388",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Change prevented on button click",
+        "references": []
+      },
+      {
+        "id": "ec93ba982caac90b91a27055ae74b52a76209737",
+        "type": "FIX",
+        "text": " sap.m.ListBase: ariaLabelledBy should not be announced twice.",
+        "references": []
+      },
+      {
+        "id": "b5908cdec710f4bc678ff04b88ab76c5e2c0e29b",
+        "type": "FIX",
+        "text": " sap.m.MessageListItem: Prevent unneeded creation of InvisibleText",
+        "references": []
+      },
+      {
+        "id": "91071e5427ebc6450542116bf5a97123162da18d",
+        "type": "FIX",
+        "text": " sap.m.NotificationListBase: A problem with forwarding aggregation is now fixed.",
+        "references": []
+      },
+      {
+        "id": "adc417f0855e0303296d7673456e7122e3834ba7",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: wraps on IE",
+        "references": []
+      },
+      {
+        "id": "4d44e761bfa6315b9982ba664d0425891a6fede1",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Width changed is not fired when in Popover",
+        "references": []
+      },
+      {
+        "id": "abf78628645cf7ea8b321018240f2142ae12a001",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Current step in branching fixed",
+        "references": []
+      }
+    ]
   }
 }

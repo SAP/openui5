@@ -153,5 +153,136 @@
         "references": []
       }
     ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "b92d6a8b67ac4dff77d9efe21589fbf9c5757e5a",
+        "type": "FIX",
+        "text": " sap.ui.commons.Menu: MenuTextFieldItem can now be focused on hover opened from IE",
+        "references": []
+      }
+    ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "a7d4e06057275545441699d96ec83a1dd3dc68c0",
+        "type": "FIX",
+        "text": " FileUploader: Accessing upload iframe adjusted",
+        "references": []
+      },
+      {
+        "id": "8814ebdfa2caf9d82637b85320af0a5821da3f87",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar, CalendarLegend: contrast ratio is fixed",
+        "references": []
+      },
+      {
+        "id": "b96197cdf87d030e87101e0777cb97de4c54153b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: weekNumberSelect event now works correctly in IE and Edge",
+        "references": []
+      },
+      {
+        "id": "d4a647abeb3449e4b3abe4e53198df0f3d4313f8",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: pressing of ESCAPE is now propagated to the parent",
+        "references": []
+      },
+      {
+        "id": "1d830a66948523fe98b6f160f65016abbb8139ef",
+        "type": "FIX",
+        "text": " sap.ui.unified.Month: Now select event is fired correctly",
+        "references": []
+      }
+    ]
+  },
+  "1.56.4": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "d5a71bdc319644109ca21716e7cccfe8c14b7510",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: CW selection behavior corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.56.6": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "c5d02e4a063e4938ff8cea5c2b9578b4c1490ec7",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarRow: Minimal width of appointments now corrected",
+        "references": []
+      },
+      {
+        "id": "577ee1428ae408674fbec1563665054e7fd60443",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: now has correct active state of semantic buttons",
+        "references": []
+      },
+      {
+        "id": "5f431a797ef570a3f1feba0c641dcd978a188f8b",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: returns empty string now when file has no extension",
+        "references": []
+      },
+      {
+        "id": "45e0089bd59dd12df29ceb3868350d225823eaba",
+        "type": "FIX",
+        "text": " ui.unified.FileUploader: Documentation improved",
+        "references": []
+      }
+    ]
+  },
+  "1.56.7": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "fe8d2122698444bef6af6aa8c6ed940b2f98e105",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
+        "references": []
+      },
+      {
+        "id": "5945e3adaacc9c9815bbe44d237ddb91d8dd7e5b",
+        "type": "FIX",
+        "text": " unified.ColorPicker: Hue value of 360 is the same as 0",
+        "references": []
+      }
+    ]
+  },
+  "1.56.9": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "ff36784485094eb65b50a83ff17a5ad3a75c74ce",
+        "type": "FIX",
+        "text": " PlanningCalendar: Spaces in internal aria-label are removed",
+        "references": []
+      },
+      {
+        "id": "66606550883058e95e4059a7149921c243b5121f",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: correct width of the input when invalidated",
+        "references": []
+      }
+    ]
+  },
+  "1.56.13": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "a0ad506ccb2e720a465824922611bb9020a5a3a7",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarTimeInterval: navigates to the correct date",
+        "references": []
+      }
+    ]
   }
 }
