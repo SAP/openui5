@@ -2,11 +2,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	function(UIComponent) {
 		"use strict";
 
-		var Component = UIComponent.extend("sap.ui.layout.sample.NestedGrids.Component", {
+		var Component = UIComponent.extend("sap.ui.layout.sample.GridTemplateRows.Component", {
 
 			metadata : {
 				rootView : {
-					"viewName": "sap.ui.layout.sample.NestedGrids.NestedGrids",
+					"viewName": "sap.ui.layout.sample.GridTemplateRows.GridTemplateRows",
 					"type": "XML",
 					"async": true
 				},
@@ -20,8 +20,8 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 				config : {
 					sample : {
 						files : [
-							"NestedGrids.view.xml",
-							"NestedGrids.controller.js",
+							"GridTemplateRows.view.xml",
+							"GridTemplateRows.controller.js",
 							"main.css"
 						]
 					}
