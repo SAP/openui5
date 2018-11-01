@@ -29,6 +29,13 @@
 	white-space: normal;
 }
 
+html[data-sap-ui-browser^='ie'] {
+	.sapMObjectIdentifierTitle .sapMLnk,
+	.sapMObjectIdentifierTitle .sapMText {
+		display: inline-block;
+	}
+}
+
 .sapMObjectIdentifierTitle .sapMText {
 	color: @sapUiGroupTitleTextColor;
 }
