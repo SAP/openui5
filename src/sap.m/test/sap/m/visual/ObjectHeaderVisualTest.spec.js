@@ -35,6 +35,11 @@ describe("sap.m.ObjectHeaderVisualTest", function() {
 		expect(takeScreenshot()).toLookAs("intro-clicked");
 	});
 
+	it("Set circle shape image",function() {
+		element(by.id("change_image_shape")).click();
+		expect(takeScreenshot()).toLookAs("circle-image");
+	});
+
 	it("Set none responsive",function() {
 		element(by.id("change_OH_type")).click();
 		expect(takeScreenshot()).toLookAs("old-OH");
