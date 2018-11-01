@@ -19,13 +19,10 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/security/encodeURL",
-	"sap/ui/core/library"
+	"sap/ui/core/CalendarType"
 ],
-	function(Sorter, FilterProcessor, DateFormat, Log, assert, jQuery, encodeURL, library ) {
+	function(Sorter, FilterProcessor, DateFormat, Log, assert, jQuery, encodeURL, CalendarType ) {
 	"use strict";
-
-	// shortcut for sap.ui.core.CalendarType
-	var CalendarType = library.CalendarType;
 
 	var rDecimal = /^([-+]?)0*(\d+)(\.\d+|)$/,
 		rTrailingDecimal = /\.$/,

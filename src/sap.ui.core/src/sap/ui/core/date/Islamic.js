@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.date.Islamic
-sap.ui.define(['./UniversalDate', "sap/base/Log"],
-	function(UniversalDate, Log) {
+sap.ui.define(['./UniversalDate', '../CalendarType', 'sap/base/Log'],
+	function(UniversalDate, CalendarType, Log) {
 	"use strict";
 
 
@@ -26,7 +26,7 @@ sap.ui.define(['./UniversalDate', "sap/base/Log"],
 				aArgs = toGregorianArguments(aArgs);
 			}
 			this.oDate = this.createDate(Date, aArgs);
-			this.sCalendarType = sap.ui.core.CalendarType.Islamic;
+			this.sCalendarType = CalendarType.Islamic;
 		}
 	});
 

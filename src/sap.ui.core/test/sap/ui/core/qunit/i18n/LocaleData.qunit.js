@@ -1,13 +1,10 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/CalendarType",
 	"sap/ui/core/Locale",
-	"sap/ui/core/LocaleData",
-	"sap/ui/core/library"
-], function(Locale, LocaleData, coreLibrary) {
+	"sap/ui/core/LocaleData"
+], function(CalendarType, Locale, LocaleData) {
 	"use strict";
-
-	// shortcut for enum from sap.ui.core namespace
-	var CalendarType = coreLibrary.CalendarType;
 
 	QUnit.module("Locale data types", {
 		beforeEach: function(assert) {

@@ -4,7 +4,7 @@
 
 // Provides class sap.ui.core.format.DateFormat
 sap.ui.define([
-	'sap/ui/core/library',
+	'sap/ui/core/CalendarType',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/date/UniversalDate',
@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery"
 ],
 	function(
-		library,
+		CalendarType,
 		Locale,
 		LocaleData,
 		UniversalDate,
@@ -24,9 +24,6 @@ sap.ui.define([
 		jQuery
 	) {
 	"use strict";
-
-	// shortcut
-	var CalendarType = library.CalendarType;
 
 	/**
 	 * Constructor for DateFormat - must not be used: To get a DateFormat instance, please use getDateInstance, getDateTimeInstance or getTimeInstance.

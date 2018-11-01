@@ -5,8 +5,8 @@
 /**
  * Initialization Code and shared classes of library sap.ui.core.
  */
-sap.ui.define(['sap/ui/base/DataType', './Core'],
-	function(DataType) {
+sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
+	function(DataType, CalendarType) {
 	"use strict";
 
 	// delegate further initialization of this library to the Core
@@ -758,45 +758,9 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 		Large : "Large"
 	};
 
-	/**
-	 * The types of Calendar
-	 *
-	 * @enum {string}
-	 * @public
-	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	thisLib.CalendarType = {
-
-		/**
-		 * The Gregorian calendar
-		 * @public
-		 */
-		Gregorian: "Gregorian",
-
-		/**
-		 * The Islamic calendar
-		 * @public
-		 */
-		Islamic: "Islamic",
-
-		/**
-		 * The Japanese emperor calendar
-		 * @public
-		 */
-		Japanese: "Japanese",
-
-		/**
-		 * The Persian Jalali calendar
-		 * @public
-		 */
-		Persian: "Persian",
-
-		/**
-		 * The Thai buddhist calendar
-		 * @public
-		 */
-		Buddhist: "Buddhist"
-	};
+	// Note: the imported module sap/ui/core/CalendarType already defines the global sap.ui.core.CalendarType,
+	// this assignment here is only kept as a reminder
+	// thisLib.CalendarType = CalendarType;
 
 	/**
 	 * @classdesc A string type that represents CSS color values.

@@ -3,8 +3,8 @@
  */
 
 //Provides the locale object sap.ui.core.LocaleData
-sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', './Locale', 'sap/base/assert', 'sap/base/util/LoaderExtensions'],
-	function(jQuery, BaseObject, Locale, assert, LoaderExtensions) {
+sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', './CalendarType', './Locale', 'sap/base/assert', 'sap/base/util/LoaderExtensions'],
+	function(jQuery, BaseObject, CalendarType, Locale, assert, LoaderExtensions) {
 	"use strict";
 
 	/**
@@ -1440,10 +1440,6 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', './Locale', 'sa
 			var sCalendarPreference = this._get("calendarPreference"),
 				aCalendars = sCalendarPreference ? sCalendarPreference.split(" ") : [],
 				sCalendarName, sType, i;
-
-			// lazy load of sap.ui.core library to avoid cyclic dependencies
-			sap.ui.getCore().loadLibrary('sap.ui.core');
-			var CalendarType = sap.ui.require("sap/ui/core/library").CalendarType;
 
 			for ( i = 0 ; i < aCalendars.length ; i++ ) {
 				// No support for calendar subtypes (islamic) yet, so ignore part after -
