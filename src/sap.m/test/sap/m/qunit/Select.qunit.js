@@ -9079,4 +9079,40 @@ sap.ui.define([
 			assert.equal(typeof oConfig.onAfterExitOverflow, "function", "onAfterExitOverflow function is set");
 			assert.ok(oConfig.propsUnrelatedToSize.indexOf("selectedItemId") > -1, "selectedItemId is in the propsUnrelatedToSize array");
 		});
+
+		QUnit.module("Select with icons");
+
+		QUnit.test("Item's icon changing ", function(assert) {
+			var COMPETITOR = "sap-icon://competitor",
+				PAPER_PLANE = "sap-icon://paper-plane",
+				oSelect = new Select({
+				items: [
+					new ListItem({
+						key: "1",
+						text: "Competitor",
+						icon: COMPETITOR
+					}),
+					new ListItem({
+						key: "1",
+						text: "Paper Plane",
+						icon: PAPER_PLANE
+					})
+				]
+			});
+
+			oSelect.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var oValueIcon = oSelect._getValueIcon();
+
+			assert.strictEqual(oSelect.getItems()[0].getIcon(), COMPETITOR, "Select item icon was set.");
+			assert.strictEqual(oValueIcon.getSrc(), COMPETITOR, "Icon was set in internal aggregation.");
+
+			oSelect.setSelectedItem(oSelect.getItems()[1].getId());
+
+			assert.strictEqual(oValueIcon.getSrc(), PAPER_PLANE, "Icon was changed, when the selected item was changed.");
+			assert.strictEqual(oValueIcon.getSrc(), oSelect.getSelectedItem().getIcon(), "Icon was changed in internal aggregation.");
+
+			oSelect.destroy();
+		});
 	});

@@ -998,7 +998,8 @@
 		  "since": "1.10",
 		  "samples": [
 			"sap.m.sample.Select",
-			"sap.m.sample.Select2Columns"
+			"sap.m.sample.Select2Columns",
+			"sap.m.sample.SelectWithIcons"
 		  ]
 		},
 		{
@@ -1006,7 +1007,10 @@
 		  "name": "SelectList",
 		  "category": "List",
 		  "since": "1.26",
-		  "samples": ["sap.m.sample.SelectList"]
+			"samples": [
+				"sap.m.sample.SelectList",
+				"sap.m.sample.SelectListWithIcons"
+			]
 		},
 		{
 		  "id": "sap.m.semantic.SemanticPage",
@@ -2031,9 +2035,19 @@
 		  "description": "Use the select dropdown list with two columns layout if you need to display additional information to your options, like e.g. currencies to countries or abbreviations to systems."
 		},
 		{
+		  "id": "sap.m.sample.SelectWithIcons",
+		  "name": "Select - with icons",
+		  "description": "Illustrates the usage of a Select with icons"
+		},
+		{
 		  "id": "sap.m.sample.SelectList",
 		  "name": "SelectList",
 		  "description": "A SelectList allows the user to select one item from a list of choices."
+		},
+		{
+		  "id": "sap.m.sample.SelectListWithIcons",
+		  "name": "SelectList - with icons",
+		  "description": "A SelectList with icons."
 		},
 		{
 		  "id": "sap.m.sample.SemanticPage",

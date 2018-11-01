@@ -9,6 +9,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
+	'sap/ui/core/Icon',
 	'sap/ui/core/IconPool',
 	'./Button',
 	'./Bar',
@@ -30,6 +31,7 @@ function(
 	library,
 	Control,
 	EnabledPropagator,
+	Icon,
 	IconPool,
 	Button,
 	Bar,
@@ -275,6 +277,14 @@ function(
 
 					/**
 					 * Defines the items contained within this control.
+					 *
+					 * <b>Note:</b> For items with icons you can use {@link sap.ui.core.ListItem}.
+					 *
+					 * Example:
+					 *
+					 * <pre>
+					 * <code> &lt;ListItem text="Paper plane" icon="sap-icon://paper-plane"&gt;&lt;/ListItem&gt; </code>
+					 * </pre>
 					 */
 					items: {
 						type: "sap.ui.core.Item",
@@ -292,6 +302,15 @@ function(
 					 */
 					picker: {
 						type: "sap.ui.core.PopupInterface",
+						multiple: false,
+						visibility: "hidden"
+					},
+
+					/**
+					 * Icon, displayed in the left most area of the <code>Select</code> input.
+					 */
+					_valueIcon: {
+						type: "sap.ui.core.Icon",
 						multiple: false,
 						visibility: "hidden"
 					},
@@ -578,7 +597,28 @@ function(
 		 * @private
 		 */
 		Select.prototype.setValue = function(sValue) {
-			this.$("label").text(sValue);
+			var oSelectedItem = this.getSelectedItem();
+
+			this.$().find(".sapMSelectListItemText").text(sValue);
+
+			if (oSelectedItem && oSelectedItem.isA("sap.ui.core.ListItem")) {
+				this._getValueIcon().setSrc(!!oSelectedItem.getIcon() ? oSelectedItem.getIcon() : null);
+			}
+		};
+
+
+		Select.prototype._getValueIcon = function() {
+			var oValueIcon = this.getAggregation("_valueIcon"),
+				sIconSrc = this.getSelectedItem().getIcon() || null;
+
+			if (!oValueIcon) {
+				oValueIcon = new Icon({src: sIconSrc});
+				this.setAggregation("_valueIcon", oValueIcon, true);
+			}
+
+			oValueIcon.toggleStyleClass("sapMSelectListItemIcon", !!sIconSrc);
+
+			return oValueIcon;
 		};
 
 		/**
@@ -1100,6 +1140,7 @@ function(
 			this.close();
 			this.setSelection(oItem);
 			this.fireChange({ selectedItem: oItem });
+			// check and update icon
 			this.setValue(this._getSelectedItemText());
 		};
 

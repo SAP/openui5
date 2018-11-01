@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/core/Element", "sap/ui/Device"],
-	function(Element, Device) {
+sap.ui.define(["sap/ui/core/Element", "sap/ui/core/Icon", "sap/ui/core/IconPool", "sap/ui/Device"],
+	function(Element, Icon, IconPool, Device) {
 		"use strict";
 
 		/**
@@ -170,6 +170,9 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/Device"],
 				oRm.writeClasses();
 				oRm.writeAttribute("disabled", "disabled"); // fixes span obtaining focus in IE
 				oRm.write(">");
+
+				this._renderIcon(oRm, oItem);
+
 				oRm.writeEscaped(oItem.getText());
 				oRm.write("</span>");
 
@@ -186,6 +189,8 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/Device"],
 
 				oRm.write("</span>");
 			} else {
+				this._renderIcon(oRm, oItem);
+
 				oRm.writeEscaped(oItem.getText());
 			}
 
@@ -215,14 +220,34 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/Device"],
 		 * @param {object} mStates
 		 */
 		SelectListRenderer.writeItemAccessibilityState = function(oRm, oList, oItem, mStates) {
-			var sRole = (oItem instanceof sap.ui.core.SeparatorItem) ? "separator" : "option";
+			var sRole = (oItem.isA("sap.ui.core.SeparatorItem")) ? "separator" : "option";
+
+			var sDesc;
+
+			if (!oItem.getText() && oItem.getIcon && oItem.getIcon()) {
+				var oIconInfo = IconPool.getIconInfo(oItem.getIcon());
+				if (oIconInfo) {
+					sDesc = oIconInfo.text || oIconInfo.name;
+				}
+			}
 
 			oRm.writeAccessibilityState(oItem, {
 				role: sRole,
 				selected: mStates.selected,
 				setsize: mStates.setsize,
-				posinset: mStates.posinset
+				posinset: mStates.posinset,
+				label: sDesc
 			});
+		};
+
+		SelectListRenderer._renderIcon = function(oRm, oItem) {
+			if (oItem.getIcon && oItem.getIcon()) {
+				var oIcon = new Icon({src: oItem.getIcon()});
+
+				oIcon.addStyleClass("sapMSelectListItemIcon");
+
+				oRm.renderControl(oIcon);
+			}
 		};
 
 		return SelectListRenderer;
