@@ -1706,8 +1706,8 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
  * API Detail page specific CSS improving readability
  * Note: Keep in mind this is applicable only for the sap_belize and sap_belize_plus themes
  */
-.sapUiTheme-sap_belize .sapUiSizeCompact .apiDetailPage .sapUxAPBlockContainerDesktop,
-.sapUiTheme-sap_belize_plus .sapUiSizeCompact .apiDetailPage .sapUxAPBlockContainerDesktop {
+.sapUiTheme-sap_belize .sapUiSizeCompact .apiDetailPage .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer,
+.sapUiTheme-sap_belize_plus .sapUiSizeCompact .apiDetailPage .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {
 	padding-top: 0;
 }
 

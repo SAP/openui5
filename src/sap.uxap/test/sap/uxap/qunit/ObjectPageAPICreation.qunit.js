@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/NavContainer",
 	"sap/ui/core/HTML",
-	"sap/base/Log"],
+	"sap/base/Log",
+	"sap/ui/Device"],
 function (
 	jQuery,
 	lib,
@@ -34,7 +35,8 @@ function (
 	App,
 	NavContainer,
 	HTML,
-	Log
+	Log,
+	Device
 ) {
 
 	"use strict";
@@ -368,28 +370,30 @@ function (
 		oObjectPage.setUseIconTabBar(false);
 		oObjectPage.addHeaderContent(oHeaderContent);
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			setTimeout(function() {
 
-			// assert that the page internally rounds (ceils) the header content heights
-			assert.notEqual(oObjectPage.iHeaderContentHeight, iNonIntegerHeaderContentHeight, "cached headerContent height is rounded");
-			assert.strictEqual(oObjectPage.iHeaderContentHeight, 100, "cached headerContent height is ceiled");
+				// assert that the page internally rounds (ceils) the header content heights
+				assert.notEqual(oObjectPage.iHeaderContentHeight, iNonIntegerHeaderContentHeight, "cached headerContent height is rounded");
+				assert.strictEqual(oObjectPage.iHeaderContentHeight, 100, "cached headerContent height is ceiled");
 
-			// Act: make an action that causes the page to have (1) first visible section selected but (2) header snapped
-			oObjectPage.removeSection(0);
+				// Act: make an action that causes the page to have (1) first visible section selected but (2) header snapped
+				oObjectPage.removeSection(0);
 
-			// as the above causes invalidation, hook to onAfterRendering to check resulting state:
-			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
-				setTimeout(function() {
-					sectionIsSelected(oObjectPage, assert, oExpected);
-					assert.strictEqual(oObjectPage._$opWrapper.scrollTop(), oObjectPage.iHeaderContentHeight, "top section is selected");
-					assert.strictEqual(oObjectPage._bStickyAnchorBar, true, "anchor bar is snapped");
-					assert.strictEqual(oObjectPage._bHeaderExpanded, false, "header is snapped");
+				// as the above causes invalidation, hook to onAfterRendering to check resulting state:
+				oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
+					setTimeout(function () {
+						sectionIsSelected(oObjectPage, assert, oExpected);
+						assert.strictEqual(oObjectPage._$opWrapper.scrollTop() - 1, oObjectPage.iHeaderContentHeight, "top section is selected");
+						assert.strictEqual(oObjectPage._bStickyAnchorBar, true, "anchor bar is snapped");
+						assert.strictEqual(oObjectPage._bHeaderExpanded, false, "header is snapped");
 
-					oObjectPage._onScroll({target: { scrollTop: iNonIntegerHeaderContentHeight}}); // scrollEnablement kicks in to restore last saved Y position, which is not rounded (ceiled)
-					assert.strictEqual(oObjectPage._bStickyAnchorBar, true, "anchor bar is still snapped");
-					assert.strictEqual(oObjectPage._bHeaderExpanded, false, "header is still snapped");
-					done();
-				}, 0);
-			});
+						oObjectPage._onScroll({target: {scrollTop: iNonIntegerHeaderContentHeight}}); // scrollEnablement kicks in to restore last saved Y position, which is not rounded (ceiled)
+						assert.strictEqual(oObjectPage._bStickyAnchorBar, true, "anchor bar is still snapped");
+						assert.strictEqual(oObjectPage._bHeaderExpanded, false, "header is still snapped");
+						done();
+					}, 100);
+				});
+			}, 500);
 		});
 		helpers.renderObject(oObjectPage);
 	});
@@ -437,32 +441,33 @@ function (
 		oObjectPage.setUseIconTabBar(false);
 		oObjectPage.setHeaderTitle(oFactory.getHeaderTitle());
 		oObjectPage.addHeaderContent(oFactory.getHeaderContent());
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			setTimeout(function () {
 
-		setTimeout(function () {
-
-			// initially, the second section is selected (from the module setup)
-			oExpected = {
-				oSelectedSection: oSecondSection,
-				sSelectedTitle: oSecondSection.getSubSections()[0].getTitle()
-			};
-			sectionIsSelected(oObjectPage, assert, oExpected);
-			assert.equal(oObjectPage._bHeaderExpanded, false, "Header is snapped");
+				// initially, the second section is selected (from the module setup)
+				oExpected = {
+					oSelectedSection: oSecondSection,
+					sSelectedTitle: oSecondSection.getSubSections()[0].getTitle()
+				};
+				sectionIsSelected(oObjectPage, assert, oExpected);
+				assert.equal(oObjectPage._bHeaderExpanded, false, "Header is snapped");
 
 
-			// Act: unset the currently selected section
-			oObjectPage.setSelectedSection(null);
+				// Act: unset the currently selected section
+				oObjectPage.setSelectedSection(null);
 
-			// Check: the selection moved to the first visible section
-			oExpected = {
-				oSelectedSection: oFirstSection,
-				sSelectedTitle: oFirstSection.getSubSections()[0].getTitle() //subsection is promoted
-			};
-			sectionIsSelected(oObjectPage, assert, oExpected);
-			setTimeout(function() {
-				assert.equal(oObjectPage._bHeaderExpanded, true, "Header is expnded");
-				done();
-			}, 0);
-		}, this.iLoadingDelay);
+				// Check: the selection moved to the first visible section
+				oExpected = {
+					oSelectedSection: oFirstSection,
+					sSelectedTitle: oFirstSection.getSubSections()[0].getTitle() //subsection is promoted
+				};
+				sectionIsSelected(oObjectPage, assert, oExpected);
+				setTimeout(function () {
+					assert.equal(oObjectPage._bHeaderExpanded, true, "Header is expnded");
+					done();
+				}, 0);
+			}, this.iLoadingDelay);
+		});
 
 		helpers.renderObject(this.oObjectPage);
 	});
@@ -504,9 +509,13 @@ function (
 			done = assert.async(); //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
 
 		// add header content
-		oObjectPage.setUseIconTabBar(false);
-		oObjectPage.setHeaderTitle(oFactory.getHeaderTitle());
-		oObjectPage.addHeaderContent(oFactory.getHeaderContent());
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
+			setTimeout(function () {
+				oObjectPage.setUseIconTabBar(false);
+				oObjectPage.setHeaderTitle(oFactory.getHeaderTitle());
+				oObjectPage.addHeaderContent(oFactory.getHeaderContent());
+			}, 500);
+		});
 
 		setTimeout(function () {
 
@@ -739,7 +748,7 @@ function (
 			assert.strictEqual(oObjectPage._bStickyAnchorBar, bExpectedSnapped, "header snapped state is correct");
 		}
 		if (iExpectedScrollTop !== undefined) {
-			assert.strictEqual(Math.ceil(oObjectPage._$opWrapper[0].scrollTop), Math.ceil(iExpectedScrollTop), "scroll position is correct");
+			assert.ok(isTolerableDifference(Math.ceil(oObjectPage._$opWrapper[0].scrollTop), Math.floor(iExpectedScrollTop), ["msie", "edge"], 1), "scroll position is correct");
 		}
 	}
 
@@ -2498,7 +2507,7 @@ function (
 			$titleDescription.innerText = sShortText;
 
 			setTimeout(function() {
-				assert.strictEqual(layoutCalcSpy.callCount, 1, "layout recalculations called");
+				assert.strictEqual(layoutCalcSpy.callCount, 2, "layout recalculations called twice");
 				assert.strictEqual(headerCalcSpy.callCount, 1, "header height recalculation called");
 				done();
 			}, 100);
@@ -2545,6 +2554,19 @@ function (
 	function checkObjectExists(sSelector) {
 		var oObject = jQuery(sSelector);
 		return oObject.length !== 0;
+	}
+
+	function isTolerableDifference(iPos, iPos2, aBrowser, iTolerance) {
+		var iAcceptableOffset = 0, i;
+
+		for (i = 0; i < aBrowser.length; i++) {
+			if (Device.browser[aBrowser[i]]) {
+				iAcceptableOffset = iTolerance;
+				break;
+			}
+		}
+
+		return Math.abs(iPos - iPos2) <= iAcceptableOffset;
 	}
 
 });

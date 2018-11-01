@@ -145,8 +145,6 @@ sap.ui.define([
 		return this._getTitleDomId();
 	});
 
-	ObjectPageSubSection.MEDIA_RANGE = Device.media.RANGESETS.SAP_STANDARD;
-
 	/**
 	 * Retrieves the resource bundle for the <code>sap.uxap</code> library.
 	 * @static
@@ -177,7 +175,6 @@ sap.ui.define([
 				"actions"
 			]
 		});
-		this._attachMediaContainerWidthChange(this._synchronizeBlockLayouts, this);
 
 		//switch logic for the default mode
 		this._switchSubSectionMode(this.getMode());
@@ -377,8 +374,6 @@ sap.ui.define([
 			this._oSeeMoreButton.destroy();
 			this._oSeeMoreButton = null;
 		}
-
-		this._detachMediaContainerWidthChange(this._synchronizeBlockLayouts, this);
 
 		this._cleanProxiedAggregations();
 
@@ -668,52 +663,6 @@ sap.ui.define([
 	ObjectPageSubSection.prototype._hasAutoLayout = function (oBlock) {
 		return !(oBlock instanceof BlockBase) || oBlock.getColumnLayout() == "auto";
 	};
-
-
-	/*************************************************************************************
-	 * TitleOnLeft layout
-	 ************************************************************************************/
-
-	ObjectPageSubSection.prototype._onDesktopMediaRange = function (oCurrentMedia) {
-		return this._onMediaRange(oCurrentMedia, ["LargeDesktop", "Desktop"]);
-	};
-
-	ObjectPageSubSection.prototype._onTabletMediaRange = function (oCurrentMedia) {
-		return this._onMediaRange(oCurrentMedia, ["Tablet"]);
-	};
-
-	ObjectPageSubSection.prototype._onPhoneMediaRange = function (oCurrentMedia) {
-		return this._onMediaRange(oCurrentMedia, ["Phone"]);
-	};
-
-	ObjectPageSubSection.prototype._onMediaRange = function (oCurrentMedia, aCompareWithMedia) {
-		var oMedia = oCurrentMedia || this._getCurrentMediaContainerRange();
-		return aCompareWithMedia.indexOf(oMedia.name) > -1;
-	};
-
-	ObjectPageSubSection.prototype._synchronizeBlockLayouts = function (oCurrentMedia) {
-		if (this._getUseTitleOnTheLeft()) {
-			this.$("header").toggleClass("titleOnLeftLayout", this._onDesktopMediaRange(oCurrentMedia));
-		}
-		this._toggleBlockLayoutResponsiveStyles(oCurrentMedia);
-	};
-
-	ObjectPageSubSection.prototype._toggleBlockLayoutResponsiveStyles = function (oCurrentMedia) {
-		this.$().find(".sapUxAPBlockContainer").toggleClass("sapUxAPBlockContainerDesktop", this._onDesktopMediaRange(oCurrentMedia));
-		this.$().find(".sapUxAPBlockContainer").toggleClass("sapUxAPBlockContainerTablet", this._onTabletMediaRange(oCurrentMedia));
-		this.$().find(".sapUxAPBlockContainer").toggleClass("sapUxAPBlockContainerPhone", this._onPhoneMediaRange(oCurrentMedia));
-	};
-
-	ObjectPageSubSection.prototype._getMediaString = function (oCurrentMedia) {
-		if (this._onPhoneMediaRange(oCurrentMedia)) {
-			return "Phone";
-		}
-		if (this._onTabletMediaRange(oCurrentMedia)) {
-			return "Tablet";
-		}
-		return "Desktop";
-	};
-
 
 	/*************************************************************************************
 	 *  blocks & moreBlocks aggregation proxy

@@ -148,9 +148,7 @@ sap.ui.define([
 
 	QUnit.test("Phone view", function (assert) {
 		//display hierarchical select
-		jQuery("html")
-			.removeClass("sapUiMedia-Std-Phone sapUiMedia-Std-Desktop sapUiMedia-Std-Tablet")
-			.addClass("sapUiMedia-Std-Phone");
+		this.oObjectPage.toggleStyleClass("sapUxAPObjectPageLayout-Std-Phone", true);
 		this.oObjectPage.invalidate();
 
 		// allow for re-render
