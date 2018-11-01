@@ -772,7 +772,7 @@
 		/*
 		 * Whether processing of the module is complete.
 		 * This is very similar to, but not the same as state >= READY because declareModule() sets state=READY very early.
-		 * That state transition is 'legacy' from the library-all files; it needs to checked whether it can be removed.
+		 * That state transition is 'legacy' from the library-all files; it needs to be checked whether it can be removed.
 		 */
 		this.settled = false;
 		this.url =
@@ -1452,6 +1452,13 @@
 
 		// check if module has been loaded already
 		if ( oModule.state !== INITIAL ) {
+
+			if ( oModule.state === EXECUTING && oModule.data != null && !bAsync && oModule.async ) {
+				oModule.state = PRELOADED;
+				oModule.async = bAsync;
+				oModule.pending = null; // TODO or is this still needed ?
+			}
+
 			if ( oModule.state === PRELOADED ) {
 				oModule.state = LOADED;
 				oModule.async = bAsync;
