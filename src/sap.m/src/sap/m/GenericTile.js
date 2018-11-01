@@ -214,6 +214,10 @@ sap.ui.define([
 		this._oTitle.cacheLineHeight = false;
 		this.setAggregation("_titleText", this._oTitle, true);
 
+		this._oSubTitle = new Text(this.getId() + "-subTitle");
+		this._oSubTitle.cacheLineHeight = false;
+		this.addDependent(this._oSubTitle);
+
 		this._sFailedToLoad = this._oRb.getText("INFOTILE_CANNOT_LOAD_TILE");
 		this._sLoading = this._oRb.getText("INFOTILE_LOADING");
 
@@ -249,9 +253,15 @@ sap.ui.define([
 		this.setProperty("wrappingType", sWrappingType, true);
 		this._oTitle.setWrappingType(sWrappingType);
 		this._oFailedText.setWrappingType(sWrappingType);
+		this._oSubTitle.setWrappingType(sWrappingType);
 		return this;
 	};
 
+	GenericTile.prototype.setSubheader = function (sSubheader) {
+		this.setProperty("subheader", sSubheader);
+		this._oSubTitle.setText(sSubheader);
+		return this;
+	};
 
 	/**
 	 * Handler for the core's init event. In order for the tile to adjust its rendering to the current theme,
@@ -1112,9 +1122,14 @@ sap.ui.define([
 	 * @returns {boolean} true or false
 	 */
 	GenericTile.prototype._isSubheaderTextTruncated = function () {
-		var $Subheader = this.$("subHdr-text"), iWidth;
+		var $Subheader;
+		if (this.getMode() === library.GenericTileMode.LineMode) {
+			$Subheader = this.$("subHdr-text");
+		} else {
+			$Subheader = this.$("subTitle");
+		}
 		if ($Subheader.length > 0) {
-			iWidth = Math.ceil($Subheader[0].getBoundingClientRect().width);
+			var iWidth = Math.ceil($Subheader[0].getBoundingClientRect().width);
 			return ($Subheader[0] && iWidth < $Subheader[0].scrollWidth);
 		} else {
 			return false;

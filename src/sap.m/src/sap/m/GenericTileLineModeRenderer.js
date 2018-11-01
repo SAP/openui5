@@ -165,7 +165,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 		oRm.writeClasses();
 		oRm.writeAttribute("id", oControl.getId() + "-subHdr-text");
 		oRm.write(">");
-		oRm.writeEscaped(oControl.getSubheader());
+		oRm.writeEscaped(oControl._oSubTitle.getText());
 		oRm.write("</span>");
 	};
 
