@@ -1,7 +1,7 @@
 {
-	"_version": "1.12.0",
+	"_version": "1.8.0",
 	"sap.app": {
-		"id": "test.cardcontent.customcomponent",
+		"id": "sap.f.cardsdemo.cardcontent.customcomponent",
 		"type": "application",
 		"i18n": "i18n.properties",
 		"title": "{{title}}",
@@ -12,7 +12,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "test.cardcontent.customcomponent.View",
+			"viewName": "sap.f.cardsdemo.cardcontent.customcomponent.View",
 			"type": "XML",
 			"async": true,
 			"id": "app"

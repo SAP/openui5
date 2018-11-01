@@ -1,0 +1,189 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:grid="sap.ui.layout.cssgrid"
+    controllerName="sap.f.cardsdemo.controller.Zflow"
+    displayBlock="true">
+
+	<Page title="{i18n>appTitle}">
+
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="Using Z-flow configuration sap.ui.layout.cssgrid.CSSGrid"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<content>
+
+			<Panel expandable="true" headerText="Notes">
+				<VBox>
+					<Text text="The example uses sap.ui.layout.cssgrid.CSSGrid"/>
+					<Text text="Every card has a dimension (2x2, 6x2, etc...)"/>
+					<Text text="The Grid defines the meaning of card dimensions"/>
+					<Text text="Cards tries to fill empty spaces if any (Done by grid configuration)."/>
+					<Text text="Breathing works."/>
+					<Text text="The Grid is configured by the Fiori 3 specification."/>
+					<Text text="The cards dimensions are not changed on resize and the items just wrap on the next line."/>
+				</VBox>
+			</Panel>
+
+			<Panel>
+				<Label text="Grid Auto Flow - Dense (If the cards should try to fill empty spaces in the grid)"/>
+				<Switch change="onSwitchChange" state="true"/>
+			</Panel>
+
+			<Panel>
+				<grid:CSSGrid id="cssgrid" handleItemLayoutData="false">
+
+					<grid:customLayout>
+						<grid:GridResponsiveLayout>
+							<grid:layoutS>
+								<grid:GridSettings
+									gridTemplateColumns="repeat(4, 1fr)"
+									gridAutoRows="80px"
+									gridAutoFlow="RowDense"
+									gridRowGap="8px"
+									gridColumnGap="8px"/>
+							</grid:layoutS>
+							<grid:layoutM>
+								<grid:GridSettings
+									gridTemplateColumns="repeat(8, 1fr)"
+									gridAutoRows="80px"
+									gridAutoFlow="RowDense"
+									gridRowGap="16px"
+									gridColumnGap="16px"/>
+							</grid:layoutM>
+							<grid:layoutL>
+								<grid:GridSettings
+									gridTemplateColumns="repeat(12, 1fr)"
+									gridAutoRows="80px"
+									gridAutoFlow="RowDense"
+									gridRowGap="16px"
+									gridColumnGap="16px"/>
+							</grid:layoutL>
+							<grid:layoutXL>
+								<grid:GridSettings
+									gridTemplateColumns="repeat(16, 1fr)"
+									gridAutoRows="80px"
+									gridAutoFlow="RowDense"
+									gridRowGap="16px"
+									gridColumnGap="16px"/>
+							</grid:layoutXL>
+						</grid:GridResponsiveLayout>
+					</grid:customLayout>
+
+					<grid:items>
+
+						<f:Card id="default2x2"
+							verticalSize="2"
+							horizontalSize="2"
+							icon="sap-icon://accept"
+							title="Card Title 2x2"
+							subtitle="Card Subtitle"
+							status="Count"/>
+
+						<f:Card id="default4x2"
+							verticalSize="2"
+							horizontalSize="4"
+							icon="sap-icon://accept"
+							title="Card Title  4x2"
+							subtitle="Card Subtitle"
+							status="Count"/>
+
+						<f:Card id="default1x1"
+							verticalSize="1"
+							horizontalSize="1"
+							icon="sap-icon://accept"
+							title="Card Title 1x1"
+							subtitle="Card Subtitle"
+							status="Count"/>
+
+						<f:Card id="default2x1"
+							verticalSize="1"
+							horizontalSize="2"
+							icon="sap-icon://accept"
+							title="Card Title 2x1"
+							subtitle="Card Subtitle"
+							status="Count"/>
+
+						<f:Card id="ddefault1x1"
+							verticalSize="1"
+							horizontalSize="1"
+							icon="sap-icon://accept"
+							title="Card Title 1x1"
+							subtitle="Card Subtitle"
+							status="Count"/>
+
+						<f:Card id="default4x1"
+							verticalSize="1"
+							horizontalSize="4"
+							icon="sap-icon://accept"
+							title="Card Title  4x1"
+							subtitle="Card Subtitle"
+							status="Count"/>
+
+						<f:Card id="ddefault6x2"
+							verticalSize="6"
+							horizontalSize="2"
+							icon="sap-icon://accept"
+							title="Card Title 2x6"
+							subtitle="Card Subtitle"
+							status="Count"/>
+
+						<f:Card id="default4x4"
+							verticalSize="4"
+							horizontalSize="4"
+							icon="sap-icon://accept"
+							title="Card Title 4x4"
+							subtitle="Card Subtitle"
+							status="Count"/>
+
+						<f:Card id="default4x4Image"
+							verticalSize="4"
+							horizontalSize="4"
+							icon="../images/Woman_avatar_01.png"
+							title="Card Title 4x4 with image"
+							subtitle="Card Subtitle"
+							status="Count"/>
+
+						<f:Card id="1default2x2"
+							verticalSize="2"
+							horizontalSize="2"
+							icon="sap-icon://accept"
+							title="Card Title 2x2"
+							subtitle="Card Subtitle"
+							status="Count"/>
+
+						<f:Card id="2default2x2"
+							verticalSize="2"
+							horizontalSize="2"
+							icon="sap-icon://accept"
+							title="Card Title 2x2"
+							subtitle="Card Subtitle"
+							status="Count"/>
+
+						<f:Card id="default6x4"
+							verticalSize="4"
+							horizontalSize="6"
+							icon="sap-icon://accept"
+							title="Card Title 6x4"
+							subtitle="Card Subtitle"
+							status="Count"/>
+
+						<f:Card id="2default6x4"
+							verticalSize="4"
+							horizontalSize="6"
+							icon="sap-icon://accept"
+							title="Card Title 6x4"
+							subtitle="Card Subtitle"
+							status="Count"/>
+
+					</grid:items>
+				</grid:CSSGrid>
+			</Panel>
+		</content>
+	</Page>
+</mvc:View>

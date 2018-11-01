@@ -118,6 +118,12 @@ sap.ui.define([
 			width: { type: "sap.ui.core.CSSSize", defaultValue: "100%" },
 
 			/**
+			 * If the control should set grid properties or let the children do it
+			 * @experimental Since 1.61. Property might be removed or changed.
+			 */
+			handleItemLayoutData: { type: "boolean", defaultValue: true },
+
+			/**
 			 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-columns MDN web docs: grid-template-columns}
 			 *
 			 * <b>Note:</b> Not supported in IE11, Edge 15.
@@ -306,7 +312,14 @@ sap.ui.define([
 	 * @private
 	 */
 	CSSGrid.prototype._onGridChange = function (oChanges) {
-		if (oChanges.name !== "items" || !oChanges.child) { return; }
+
+		if (!this.getHandleItemLayoutData()) {
+			return;
+		}
+
+		if (oChanges.name !== "items" || !oChanges.child) {
+			return;
+		}
 
 		if (oChanges.mutation === "insert") {
 			oChanges.child.addEventDelegate(this._oItemDelegate, oChanges.child);

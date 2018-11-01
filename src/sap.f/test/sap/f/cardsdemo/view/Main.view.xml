@@ -1,0 +1,63 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:grid="sap.ui.layout.cssgrid"
+    controllerName="sap.f.cardsdemo.controller.Main"
+    displayBlock="true">
+
+	<Page title="{i18n>appTitle}">
+
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="Card layout use cases"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<content>
+			<VBox class="centered">
+				<f:GridList class="sapUiMediumMarginBottom sapUiMediumMarginTop" items="{ path: '/' }">
+
+					<f:customLayout>
+						<grid:GridBoxLayout boxMinWidth="20rem"/>
+					</f:customLayout>
+
+					<CustomListItem type="Navigation" press="onSelectExample">
+						<VBox height="100%">
+							<VBox justifyContent="SpaceBetween">
+								<layoutData>
+									<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+								</layoutData>
+
+								<VBox class="sapUiSmallMargin">
+									<Title text="{title}" wrapping="true"/>
+									<Text text="{description}" wrapping="true"/>
+									<Title text="Use case" wrapping="true" class="sapUiSmallMarginTop"/>
+									<Text text="{usage}" wrapping="true"/>
+								</VBox>
+							</VBox>
+						</VBox>
+					</CustomListItem>
+				</f:GridList>
+
+				<VBox>
+					<Title text="Possible API usage - standalone card, CSSGrid" wrapping="true"/>
+					<Text text="horizontalSize property - type int, default 2. Used when the card is used in CSSGrid or when all cards on the screen have to match size restrictions" wrapping="true"/>
+					<Text text="verticalSize property - type int, default 2. Used when the card is used in CSSGrid or when all cards on the screen have to match size restrictions" wrapping="true"/>
+					<Text text="horizontalSizeMultiplier property - ???" wrapping="true"/>
+					<Text text="verticalSizeMultiplier property - ???" wrapping="true"/>
+				</VBox>
+
+				<VBox class="sapUiSmallMarginTop">
+					<Title text="Possible API usage - standalone card, other layouts" wrapping="true"/>
+					<Text text="width property - Used when maximum flexibility is needed"/>
+					<Text text="height property - Used when maximum flexibility is needed"/>
+					<Text text="min-height, max-height, min-width, min-height - ???"/>
+				</VBox>
+
+			</VBox>
+		</content>
+	</Page>
+</mvc:View>
