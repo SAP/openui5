@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/RenderManager",
 	"sap/m/ToolbarSeparator",
 	"sap/m/Button",
+	"sap/m/Title",
 	"sap/m/Label",
 	"sap/ui/core/Control",
 	"sap/m/SearchField",
@@ -23,6 +24,7 @@ sap.ui.define([
 	RenderManager,
 	ToolbarSeparator,
 	Button,
+	Title,
 	Label,
 	Control,
 	SearchField,
@@ -202,14 +204,18 @@ sap.ui.define([
 		var oBtn = new Button({
 			text : "Button Text"
 		});
+		var oTitle = new Title({
+			text : "Title text"
+		});
 		var oTB = new Toolbar({
-			content : oBtn
+			content : [oTitle, oBtn]
 		}).applyTagAndContextClassFor("header");
 		oTB.placeAt("qunit-fixture");
 		Core.applyChanges();
 
 		//Assert
 		assert.equal(oTB.$().attr("role"), "toolbar", "Toolbar has attribute role='toolbar'");
+		assert.equal(oTB.$().attr("aria-labelledby"), oTitle.getId(), "Toolbar is labelled by its title by default");
 		assert.equal(oTB.$().attr("aria-disabled"), undefined, "Toolbar has no attribute aria-disabled");
 
 		//Act
