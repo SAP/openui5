@@ -274,6 +274,26 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
+	QUnit.test("Active toolbar role", function(assert) {
+		// Arrange + System under Test
+		var oLabel = new Label({
+			text : "Toolbar Label"
+		});
+		var oTB = new Toolbar({
+			active: true,
+			content : oLabel
+		});
+		oTB.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		//Assert
+		assert.equal(oTB.$().attr("role"), "button", "Active toolbar should have role button");
+
+		//Cleanup
+		oLabel.destroy();
+		oTB.destroy();
+	});
+
 	QUnit.module("Properties");
 
 	QUnit.test("Should be able to add/remove undefined controls", function(assert) {
