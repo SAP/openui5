@@ -36,7 +36,8 @@
 					.subscribe("dtTool", "dragStart", Preview.dragStart, Preview)
 					.subscribe("dtTool", "dragEnd", Preview.dragEnd, Preview)
 					.subscribe("dtTool", "editorDTData", Preview.editorDTData, Preview)
-					.subscribe("dtTool", "outlineUpdated", Preview.outlineUpdated, Preview);
+					.subscribe("dtTool", "undo", Preview.undo, Preview)
+					.subscribe("dtTool", "redo", Preview.redo, Preview);
 
 				oPostMessageBus.publish({
 					target : window.parent,
@@ -52,6 +53,7 @@
 
 <body class='sapUiBody'>
 	<div id="content"></div>
+	<div id="dragDropContainer" style="display: none;"></div>
 </body>
 
 </html>

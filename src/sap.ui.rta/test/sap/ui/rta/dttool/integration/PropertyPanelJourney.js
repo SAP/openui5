@@ -8,9 +8,9 @@ sap.ui.require(
 		QUnit.module("PropertyPanel");
 
 		opaTest("Select the Tree Item and check the PropertyPanel", function (Given, When, Then) {
-			When.onTheAppView.iExpandTheOutlineByNLevels(6, [1, 2, 3, 4, 8, 9, 12], [0, 1, 2, 3, 5, 6])
-				.and.iSelectTheNthTreeItem(8);
-			Then.onTheAppView.theCorrectOverlayIsSelected("__overlay14")
+			When.onTheAppView.iExpandTheOutlineByNLevels(6, [1, 2, 3, 4, 6, 7, 10], [0, 1, 2, 3, 4, 5])
+				.and.iSelectTheNthTreeItem(7);
+			Then.onTheAppView.theCorrectOverlayIsSelected("__overlay8")
 				.and.thePropertyPanelToolbarShouldDisplayTheCorrectLabel("Switch")
 				.and.thePassedPropertyShouldBeDisplayedInPropertyPanel("state")
 				.and.thePassedPropertyInPropertyPanelItemHasContent("state");
@@ -19,7 +19,7 @@ sap.ui.require(
 		});
 
 		opaTest("Select another Tree Item and check the PropertyPanel", function (Given, When, Then) {
-			When.onTheAppView.iSelectTheNthTreeItem(5);
+			When.onTheAppView.iSelectTheNthTreeItem(9);
 			Then.onTheAppView.theCorrectOverlayIsSelected("__overlay5")
 				.and.thePropertyPanelToolbarShouldDisplayTheCorrectLabel("H Box")
 				.and.thePassedPropertyShouldBeDisplayedInPropertyPanel("wrap")

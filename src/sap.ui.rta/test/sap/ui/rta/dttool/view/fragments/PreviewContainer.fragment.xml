@@ -24,6 +24,8 @@
 						<SegmentedButtonItem id="stopRTA" text="{i18n>stopRTA}"/>
 					</items>
 				</SegmentedButton>
+				<Button id="undo" enabled="false" icon="sap-icon://undo" press="onUndo"/>
+				<Button id="redo" enabled="false" icon="sap-icon://redo" press="onRedo"/>
 			</Toolbar>
 		</customHeader>
 		<html:IFrame
