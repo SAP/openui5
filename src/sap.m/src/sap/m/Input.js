@@ -228,7 +228,14 @@ function(
 			 * Specifies whether the suggestions highlighting is enabled.
 			 * @since 1.46
 			 */
-			enableSuggestionsHighlighting: {type: "boolean", group: "Behavior", defaultValue: true}
+			enableSuggestionsHighlighting: {type: "boolean", group: "Behavior", defaultValue: true},
+
+			/**
+			 * Specifies whether autocomplete is enabled.
+			 * Works only if "showSuggestion" property is set to true.
+			 * @since 1.61
+			 */
+			autocomplete: {type: "boolean", group: "Behavior", defaultValue: true}
 		},
 		defaultAggregation : "suggestionItems",
 		aggregations : {
@@ -632,10 +639,6 @@ function(
 			this._closeSuggestionPopup();
 		}
 
-		if (!Device.support.touch) {
-			this._doSelect();
-		}
-
 		this._bSelectingItem = false;
 	};
 
@@ -787,10 +790,6 @@ function(
 
 		if (!(this._bUseDialog && this instanceof sap.m.MultiInput && this._isMultiLineMode)) {
 			this._closeSuggestionPopup();
-		}
-
-		if (!Device.support.touch) {
-			this._doSelect();
 		}
 
 		this._bSelectingItem = false;

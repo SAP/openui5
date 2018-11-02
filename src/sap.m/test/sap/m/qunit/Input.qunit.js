@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/Button",
 	"sap/m/SuggestionItem",
+	"sap/ui/events/KeyCodes",
 	"jquery.sap.global"
 ], function(
 	qutils,
@@ -40,7 +41,8 @@ sap.ui.define([
 	DialogRenderer,
 	Dialog,
 	Button,
-	SuggestionItem
+	SuggestionItem,
+	KeyCodes
 ) {
 	// shortcut for sap.m.InputTextFormatMode
 	var InputTextFormatMode = mobileLibrary.InputTextFormatMode;
@@ -251,6 +253,7 @@ sap.ui.define([
 		oInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(300);
 		oPopup = oInput._oSuggPopover._oPopover;
+		oInput.$().trigger("focusout");
 		sap.ui.test.qunit.triggerTouchEvent("tap", oPopup.getContent()[0].getItems()[1].getDomRef());
 		this.clock.tick(300);
 
@@ -1272,7 +1275,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Suggestion on Phone with changing the input value in SuggestionItemSelected event handler", function(assert){
-
 		if (Device.browser.internet_explorer && Device.browser.version < 11) {// TODO remove after 1.62 version
 			assert.ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
 			return;
@@ -3379,4 +3381,107 @@ sap.ui.define([
 
 		assert.equal(scrollDiv.offsetWidth, scrollDiv.scrollWidth, "Dialog doesn't have a scrollbar");
 	});
+
+	QUnit.module("Type-ahead");
+
+	QUnit.test("Autocomplete on desktop", function (assert) {
+		// arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			filterSuggests: false,
+			suggestionItems: [
+				new Item({text: "Germany"}),
+				new Item({text: "Bulgaria"}),
+				new Item("UK", {key: "UK", text: "United Kingdom"}),
+				new Item({text: "Italy"})
+			]
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
+
+		// act
+		oInput._$input.focus().trigger(oFakeKeydown).val("G").trigger("input");
+		this.clock.tick(300);
+
+		// assert
+		assert.ok(oInput._oSuggPopover._bDoTypeAhead, "Type ahead should be allowed when pressing 'G'.");
+		assert.strictEqual(oInput.getValue(), "Germany", "Input value should be autocompleted.");
+		assert.strictEqual(oInput.getSelectedText(), "ermany", "Suggested value should be selected");
+
+		// act
+		sap.ui.test.qunit.triggerKeydown(oInput._$input, KeyCodes.ENTER);
+
+		// assert
+		assert.strictEqual(oInput.getValue(), "Germany", "Pressing 'enter' should finalize autocompletion.");
+		assert.strictEqual(oInput.getSelectedText(), "", "Text shouldn't be selected after pressing 'enter'");
+
+		// act
+		sap.ui.test.qunit.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
+
+		// assert
+		assert.notOk(oInput._oSuggPopover._bDoTypeAhead, "Autocomplete shouldn't be allowed when deleting.");
+
+		// clean up
+		oInput.destroy();
+		oInput = null;
+	});
+
+	QUnit.test("Autocomplete on phone", function (assert) {
+		if (Device.browser.internet_explorer && Device.browser.version < 11) { // TODO remove after 1.62 version
+			assert.ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
+			return;
+		}
+
+		// arrange
+		var oSystem = {
+			desktop : false,
+			phone : true,
+			tablet : false
+		};
+
+		this.stub(Device, "system", oSystem);
+		this.stub(jQuery.device, "is", oSystem);
+
+		var oInput = new Input({
+			showSuggestion: true,
+			filterSuggests: false,
+			suggestionItems: [
+				new Item({text: "Germany"}),
+				new Item({text: "Bulgaria"}),
+				new Item("UK", {key: "UK", text: "United Kingdom"}),
+				new Item({text: "Italy"})
+			]
+		}).placeAt("content");
+
+		var oPopover = oInput._oSuggPopover,
+			oPopupInput = oInput._oSuggPopover._oPopupInput;
+
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oPopover._oPopover.open();
+		this.clock.tick(300);
+		oPopupInput.onfocusin();
+		oPopupInput._$input.focus().trigger("keydown").val("uni").trigger("input");
+		this.clock.tick(300);
+
+		// assert
+		assert.ok(oInput._oSuggPopover._bDoTypeAhead, "Type ahead should be allowed when pressing 'B'.");
+		assert.strictEqual(oPopupInput.getValue(), "united Kingdom", "Input value should be autocompleted and character casing should be preserved.");
+		assert.strictEqual(oPopupInput.getSelectedText(), "ted Kingdom", "Suggested value should be selected");
+
+		// act
+		sap.ui.test.qunit.triggerKeydown(oPopupInput._$input, KeyCodes.ENTER);
+		this.clock.tick(300);
+
+		// assert
+		assert.strictEqual(oInput.getValue(), "United Kingdom", "Pressing enter should finalize autocompletion.");
+
+		// clean up
+		oInput.destroy();
+		oInput = null;
+	});
+
 });
