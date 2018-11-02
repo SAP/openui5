@@ -255,7 +255,7 @@ function(
 	 *
 	 * To instantiate an existing Fragment, call this method as:
 	 *    sap.ui.fragment(sName, sType, [oController]);
-	 * The sName must correspond to an XML Fragment which can be loaded
+	 * The sName must correspond to a Fragment module which can be loaded
 	 * via the module system (fragmentName + suffix ".fragment.[typeextension]") and which defines the Fragment content.
 	 * If oController is given, the (event handler) methods referenced in the Fragment will be called on this controller.
 	 * Note that Fragments may require a Controller to be given and certain methods to be available.
@@ -348,13 +348,32 @@ function(
 	 * all contained controls.
 	 *
 	 * @example <caption>Loading an XML fragment (default type)</caption>
-	 *
 	 * sap.ui.require(["sap/ui/core/Fragment"], function(Fragment){
 	 *  Fragment.load({
 	 *      name: "my.useful.VerySimpleUiPart"
 	 *  }).then(function(myButton){
 	 *     // ...
 	 *  });
+	 * });
+	 *
+	 * @example <caption>Definition of XML fragments</caption>
+	 * sap.ui.require(["sap/ui/core/Fragment"], function(Fragment){
+	 *     Fragment.load({
+	 *         type: "XML",
+	 *         definition: '<Button xmlns="sap.m" id="xmlfragbtn" text="This is an XML Fragment" press="doSomething"></Button>'
+	 *     }).then(function(oButton){
+	 *         // ...
+	 *     });
+	 * });
+	 *
+	 * @example <caption>Definition of HTML fragments</caption>
+	 * sap.ui.require(["sap/ui/core/Fragment"], function(Fragment){
+	 *     Fragment.load({
+	 *         type: "HTML",
+	 *         definition: '<div id="htmlfragbtn" data-sap-ui-type="sap.m.Button" data-text="This is an HTML Fragment"></div>'
+	 *     }).then(function(oButton){
+	 *         // ...
+	 *     });
 	 * });
 	 *
 	 * @param {object} mOptions options map
@@ -365,7 +384,7 @@ function(
 	 *    Note that Fragments may require a Controller to be given and certain methods to be implemented by it.
 	 * @param {string} [mOptions.type=XML] the Fragment type, e.g. "XML", "JS", or "HTML" (see above). Default is "XML"
 	 * @param {string} [mOptions.definition] definition of the Fragment content. When this property is supplied, the "name" parameter must not be used.
-	 *    The type of this property depends on the Fragment type, e.g. it could be a string for XML Fragments.
+	 * Please see the above example on how to use the 'definition' parameter.
 	 * @param {string} [mOptions.id] the ID of the Fragment
 	 * @param {sap.ui.core.mvc.Controller} [mOptions.controller] the Controller which should be used by the controls in the Fragment.
 	 *    Note that some Fragments may not need a Controller while others may need one and certain methods to be implemented by it.
