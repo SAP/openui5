@@ -238,8 +238,8 @@ function(
 			 *
 			 * There are also some known limitations with respect to the scrolling behavior. A few are given below:
 			 * <ul>
-			 * <li>If the control is placed in certain layout containers, for example, the <code>sap.ui.layout.Grid</code> control,
-			 * the sticky elements of the control are not fixed at the top of the viewport. The control behaves in a similar way when placed within the <code>sap.m.ObjectPage</code> control.</li>
+			 * <li>If the control is placed in layout containers that have the <code>overflow: hidden</code> or <code>overflow: auto</code> style definition, this can
+			 * prevent the sticky elements of the control from becoming fixed at the top of the viewport.</li>
 			 * <li>If sticky column headers are enabled in the <code>sap.m.Table</code> control, setting focus on the column headers will let the table scroll to the top.</li>
 			 * </ul>
 			 * @since 1.58
