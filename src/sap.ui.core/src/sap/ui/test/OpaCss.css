@@ -9,6 +9,7 @@
    Enables the vertical scrolling */
 .sapUiOpaBodyComponent #qunit {
 	position: fixed;
+	top: 0;
 	left: 0;
 	width: 20%;
 	height: 100%;
