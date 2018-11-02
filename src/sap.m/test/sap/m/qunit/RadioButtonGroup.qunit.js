@@ -331,6 +331,7 @@ sap.ui.define([
 
 		// act
 		this.rbg.setEnabled(false);
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.equal(aButtons[0].getEnabled(), false, "First RadioButton is disabled");
@@ -350,11 +351,16 @@ sap.ui.define([
 
 	QUnit.test("setEditable doesn't modify RadioButton state", function(assert) {
 		var aButtons = this.rbg.getButtons();
+		var oPropagateStateStub = this.stub(RadioButton.prototype, "_setEditableParent");
 
 		// act
 		this.rbg.setEditable(false);
+		sap.ui.getCore().applyChanges();
 
 		// assert
+		assert.ok(oPropagateStateStub.called, "Propagation should be called");
+		assert.ok(oPropagateStateStub.alwaysCalledWith(false), "Editable should be propagated to all buttons");
+		assert.strictEqual(oPropagateStateStub.callCount, 3, "Propagation should be called 3 times");
 		assert.equal(aButtons[0].getEditable(), true, "First RadioButton is editable");
 		assert.equal(aButtons[1].getEditable(), false, "Second RadioButton is read only");
 		assert.equal(aButtons[2].getEditable(), true, "Third RadioButton is editable");
