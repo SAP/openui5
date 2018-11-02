@@ -28,11 +28,18 @@ sap.ui.define(['./BarInPageEnabler'],
 	 * @param {sap.ui.core.Control} oToolbar an object representation of the control that should be rendered
 	 */
 	ToolbarRenderer.decorateRootElement = function (oRm, oToolbar) {
+		var sAriaLabelledBy;
+
 		oRm.addClass("sapMTB");
 
 		// ARIA
+		if (!oToolbar.getAriaLabelledBy().length) {
+			sAriaLabelledBy = oToolbar.getTitleId();
+		}
+
 		oRm.writeAccessibilityState(oToolbar, {
-			role: oToolbar._getAccessibilityRole()
+			role: oToolbar._getAccessibilityRole(),
+			labelledBy: sAriaLabelledBy
 		});
 
 		oRm.addClass("sapMTBNewFlex");
