@@ -362,8 +362,8 @@ sap.ui.define([
 
 			// if the Overlay is near the top position of the Viewport, the Popover makes wrong calculation for positioning it.
 			// The MiniMenu has been placed above the Overlay even if there has not been enough place.
-			// Therefore we have to calculate the top position and also consider the high of the Arrow (10 Pixels).
-			var iFakeDivTop = oOverlayDimensions.top - 10 > oViewportDimensions.top ? 0 : oViewportDimensions.top - (oOverlayDimensions.top - 10);
+			// Therefore we have to calculate the top position and also consider the high of the Toolbar (46 Pixels).
+			var iFakeDivTop = oOverlayDimensions.top - 50 > oViewportDimensions.top ? 0 : oViewportDimensions.top - (oOverlayDimensions.top - 50);
 
 			// place a Target DIV (for the moment at wrong position)
 			jQuery("#" + sFakeDivId).remove();
