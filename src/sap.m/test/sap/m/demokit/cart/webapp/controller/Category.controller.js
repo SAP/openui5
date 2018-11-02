@@ -30,11 +30,13 @@ sap.ui.define([
 			});
 			this.getView().setModel(oViewModel, "view");
 			var oComponent = this.getOwnerComponent();
-			this._router = oComponent.getRouter();
-			this._router.getRoute("category").attachMatched(this._loadCategories, this);
-			this._router.getRoute("categoryPhone").attachMatched(this._loadCategories, this);
-			this._router.getRoute("productCart").attachMatched(this._loadCategories, this);
-			this._router.getRoute("product").attachMatched(this._loadCategories, this);
+			this._oRouter = oComponent.getRouter();
+			this._oRouter.getRoute("category").attachMatched(this._loadCategories, this);
+			this._oRouter.getRoute("categoryPhone").attachMatched(this._loadCategories, this);
+			this._oRouter.getRoute("productCart").attachMatched(this._loadCategories, this);
+			this._oRouter.getRoute("product").attachMatched(this._loadCategories, this);
+			this._oRouter.getRoute("comparison").attachMatched(this._loadCategories, this);
+			this._oRouter.getRoute("comparisonCart").attachMatched(this._loadCategories, this);
 		},
 
 		_loadCategories: function(oEvent) {
@@ -69,7 +71,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Craete a unique array of suppliers to be used in the supplier flter option
+		 * Create a unique array of suppliers to be used in the supplier flter option
 		 * @private
 		 */
 		_loadSuppliers: function () {
@@ -94,6 +96,8 @@ sap.ui.define([
 					this.getModel("view").setProperty("/Suppliers", aUniqueSuppliers);
 				}.bind(this)
 			});
+
+			this._clearComparison();
 		},
 
 		fnDataReceived: function() {
@@ -136,7 +140,7 @@ sap.ui.define([
 
 			// keep the cart context when showing a product
 			var bCartVisible = this.getModel("appView").getProperty("/layout").startsWith("Three");
-			this._router.navTo(bCartVisible ? "productCart" : "product", {
+			this._oRouter.navTo(bCartVisible ? "productCart" : "product", {
 				id: sCategoryId,
 				productId: sProductId
 			}, !Device.system.phone);
@@ -292,7 +296,6 @@ sap.ui.define([
 			} else {
 				oCustomFilter.setFilterCount(0);
 			}
-
 		},
 
 		/**
@@ -304,6 +307,21 @@ sap.ui.define([
 			oSlider.setValue(oSlider.getMin());
 			oSlider.setValue2(oSlider.getMax());
 			oCustomFilter.setFilterCount(0);
+		},
+
+		/**
+		 * Navigation to comparison view
+		 * @param {sap.ui.base.Event} oEvent the press event of the link text in sap.m.ObjectListItem
+		 */
+		compareProducts: function (oEvent) {
+			var oProduct = oEvent.getSource().getBindingContext().getObject();
+			var sItem1Id = this.getModel("comparison").getProperty("/item1");
+			var sItem2Id = this.getModel("comparison").getProperty("/item2");
+			this._oRouter.navTo("comparison", {
+				id : oProduct.Category,
+				item1Id : (sItem1Id ? sItem1Id : oProduct.ProductId),
+				item2Id : (sItem1Id && sItem1Id != oProduct.ProductId ? oProduct.ProductId : sItem2Id)
+			}, true);
 		}
 	});
 });
