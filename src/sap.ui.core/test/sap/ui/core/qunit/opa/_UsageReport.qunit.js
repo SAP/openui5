@@ -53,4 +53,10 @@ sap.ui.define([
 		assert.strictEqual(this.requests[1].requestBody, "name=module", "Should send the second request only when suite data is received");
 	});
 
+	QUnit.test("Should send XHR requests that will be ignored by autoWaiter", function (assert) {
+		var oUsageReport = new _UsageReport({enableUsageReport: true, usageReportUrl: "myURL"});
+		oUsageReport.begin();
+		assert.strictEqual(this.requests[0].method, "XHR_WAITER_IGNORE:POST", "Should use autoWaiter ignore prefix");
+	});
+
 });

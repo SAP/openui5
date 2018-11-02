@@ -38,6 +38,18 @@ sap.ui.define([
 	// Check if sinon is already faking the Xhr
 	hookIntoSinonRestore();
 
+	// Hook into XHR opent for sinon XHRs
+	var fnOriginalFakeOpen = sinon.FakeXMLHttpRequest.prototype.open;
+	sinon.FakeXMLHttpRequest.prototype.open = function () {
+		return fnOriginalFakeOpen.apply(this, hookIntoXHROpen.apply(this, arguments));
+	};
+
+	// Hook into XHR open for regular XHRs
+	var fnOriginalOpen = XMLHttpRequest.prototype.open;
+	XMLHttpRequest.prototype.open = function () {
+		return fnOriginalOpen.apply(this, hookIntoXHROpen.apply(this, arguments));
+	};
+
 	// Hook into Xhr send for sinon Xhrs
 	var fnOriginalFakeSend = sinon.FakeXMLHttpRequest.prototype.send;
 	sinon.FakeXMLHttpRequest.prototype.send = function () {
@@ -52,7 +64,28 @@ sap.ui.define([
 		return fnOriginalSend.apply(this, arguments);
 	};
 
+	function hookIntoXHROpen(sMethod, sUrl) {
+		var sIgnoreTag = "XHR_WAITER_IGNORE:";
+
+		// attach method and url to XHR object
+		this.url = sUrl;
+		this.method = sMethod;
+
+		// mark OPA XHRs 'ignored'
+		if (sMethod.startsWith(sIgnoreTag)) {
+			var sMethodWithoutTag = sMethod.substring(sIgnoreTag.length);
+			arguments[0] = sMethodWithoutTag;
+			this.method = sMethodWithoutTag;
+			this.ignored = true;
+		}
+
+		return arguments;
+	}
+
 	function hookIntoXHRSend(bIsFake) {
+		if (this.ignored) {
+			return;
+		}
 		var sXHRType = bIsFake ? "FakeXHR" : "XHR";
 		var oNewPendingXHRInfo = {url: this.url, method: this.method, fake: bIsFake, trace: _utils.resolveStackTrace()};
 		var oNewPendingXHRLog = createLogForSingleRequest(oNewPendingXHRInfo);
@@ -67,14 +100,6 @@ sap.ui.define([
 			}
 		});
 	}
-
-	// Hook into Xhr open to get the url and method
-	var fnOriginalOpen = XMLHttpRequest.prototype.open;
-	XMLHttpRequest.prototype.open = function (sMethod, sUrl) {
-		this.method = sMethod;
-		this.url = sUrl;
-		return fnOriginalOpen.apply(this, arguments);
-	};
 
 	function createLogForSingleRequest (oXHR) {
 		var sMessage = oXHR.fake ? "\nFakeXHR: " : "\nXHR: ";

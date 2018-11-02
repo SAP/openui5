@@ -122,6 +122,13 @@ sap.ui.define([
 		sinon.assert.calledWithMatch(this.oTraceSpy, new Error().stack ? "callingFunction" : "No stack trace available");
 	});
 
+	QUnit.test("Should ignore sinon XHRs sent by OPA", function (assert) {
+		var oXHR = new XMLHttpRequest();
+		oXHR.open("XHR_WAITER_IGNORE:POST", "/foo");
+		oXHR.send();
+		assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
+	});
+
 	QUnit.module("XHRWaiter - sinon cleanup");
 
 	QUnit.test("Should restore the send function", function (assert) {
@@ -250,6 +257,13 @@ sap.ui.define([
 		return whenRequestDone(oXHR).then(function () {
 			assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 		});
+	});
+
+	QUnit.test("Should ignore native XHRs sent by OPA", function (assert) {
+		var oXHR = new XMLHttpRequest();
+		oXHR.open("XHR_WAITER_IGNORE:POST", "/foo");
+		oXHR.send();
+		assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 	});
 
 	QUnit.module("XHRWaiter - fake XHR in iFrame");
