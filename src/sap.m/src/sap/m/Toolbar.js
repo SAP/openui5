@@ -361,10 +361,9 @@ function(
 	};
 
 	Toolbar.prototype._getAccessibilityRole = function () {
-		var aContent = this.getContent(),
-			sRole = this._getRootAccessibilityRole();
+		var sRole = this._getRootAccessibilityRole();
 
-		if (this.getActive() && (!aContent || aContent.length === 0)) {
+		if (this.getActive()) {
 			sRole = "button";
 		}
 
