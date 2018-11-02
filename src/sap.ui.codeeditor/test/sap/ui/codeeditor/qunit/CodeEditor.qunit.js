@@ -67,4 +67,12 @@ sap.ui.define([], function () {
 			// ASSERT
 			assert.strictEqual(document.activeElement.classList.contains("ace_text-input"), true, "When code editor is  editable focus should be on the code editor");
 		});
+
+		QUnit.test("ACE Editor is read only when editable is false", function (assert) {
+			//Arrange
+			this.oCodeEditor.setEditable(false);
+
+			// ASSERT
+			assert.strictEqual(this.oCodeEditor._oEditor.getReadOnly(), true, "When code editor is not editable the ACE editor is read-only");
+		});
 });
