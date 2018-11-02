@@ -27,12 +27,13 @@ sap.ui.loader.config({
 
 sap.ui.define([
 	'sap/ui/core/Control',
+	'sap/ui/Device',
 	'sap/ui/codeeditor/js/ace/ace',
 	'sap/ui/codeeditor/js/ace/ext-language_tools',
 	'sap/ui/codeeditor/js/ace/ext-beautify',
 	'sap/ui/codeeditor/js/ace/mode-javascript',
 	'sap/ui/codeeditor/js/ace/mode-json'
-], function(Control) {
+], function(Control, Device) {
 	"use strict";
 
 	// TODO remove after 1.62 version
@@ -248,6 +249,22 @@ sap.ui.define([
 					value: sValue,
 					oldValue: sCurrentValue
 				});
+			}
+		});
+
+		// if editor is in dialog with transform applied, the tooltip position has to be adjusted
+		this._oEditor.addEventListener("showGutterTooltip", function(tooltip) {
+			if (Device.browser.internet_explorer) {
+				// the transform property does not effect the position of tooltip in IE
+				return;
+			}
+
+			var $tooltip = jQuery(tooltip.$element),
+				$dialog = $tooltip.parents(".sapMDialog");
+
+			if ($dialog && $dialog.css("transform")) {
+				var mDialogPosition = $dialog.position();
+				$tooltip.css("transform", "translate(-" + mDialogPosition.left + "px, -" + mDialogPosition.top + "px)");
 			}
 		});
 	};
