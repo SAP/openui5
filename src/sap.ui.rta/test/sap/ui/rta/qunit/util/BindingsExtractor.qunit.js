@@ -1,7 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
-	'sap/ui/rta/util/BindingsExtractor'
+	"sap/ui/rta/util/BindingsExtractor"
 ],
 function(
 	BindingsExtractor
