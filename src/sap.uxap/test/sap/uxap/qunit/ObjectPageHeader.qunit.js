@@ -209,6 +209,89 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 		 assert.notEqual(oPlaceholder1.id, oPlaceholder2.id, "two different placeholders in DOM");
 	});
 
+	QUnit.module("layout calculation", {
+	});
+	QUnit.test("No extra scroll event upon layout calculation", function (assert) {
+
+		var done = assert.async();
+
+		var op = new sap.uxap.ObjectPageLayout({
+				height: "300px",
+				selectedSection: "s2",
+				showTitleInHeaderContent: true,
+				useIconTabBar: true,
+				headerTitle: [
+					new sap.uxap.ObjectPageHeader({
+						objectTitle: "Long title that wraps and goes over more lines",
+						objectSubtitle: "Long subtitle that wraps and goes over more lines",
+						objectImageURI: "qunit/img/HugeHeaderPicture.png",
+						showTitleSelector: true,
+						showMarkers:true,
+						markFavorite:true,
+						markLocked:true,
+						markFlagged:true,
+						objectImageShape: "Circle",
+						actions: [ new sap.m.Button({text: "Action"})]
+					})
+				],
+				headerContent: [
+					new sap.m.Text({
+						width: "200px",
+						text: "Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."
+					})
+				],
+				sections: [
+					new sap.uxap.ObjectPageSection("s1", {
+						title: "section1",
+						subSections: [
+							new sap.uxap.ObjectPageSubSection({
+								blocks: [new sap.m.Text({ text: "Block content"})]
+							})
+						]
+					}),
+					new sap.uxap.ObjectPageSection("s2", {
+						title: "2 subsections",
+						subSections: [
+							new sap.uxap.ObjectPageSubSection({
+								title: "subsection1",
+								blocks: [new sap.m.Text({ text: "Block content"})]
+							}),
+							new sap.uxap.ObjectPageSubSection("s2_2", {
+								title: "subsection2",
+								blocks: [new sap.m.Text({ text: "Block content"})]
+							})
+						]
+					})
+				]
+			}),
+		scrollSpy = sinon.spy(op, "_onScroll");
+
+		op.placeAt("qunit-fixture");
+
+		op.attachEventOnce("onAfterRenderingDOMReady", function() {
+			op.scrollToSection("s2_2");// second subsection (in order to snap the header)
+			setTimeout(function() {
+				op.setSelectedSection("s1");
+				setTimeout(function() {
+					op.setSelectedSection("s1");
+					setTimeout(function() {
+						scrollSpy.reset(); // reset scroll spy for clean test
+
+						// Act
+						op.getHeaderTitle()._adaptLayout();
+						setTimeout(function() {
+							assert.ok(!scrollSpy.called, "no extra scroll upon header layout calculation");
+							op.destroy(); // cleanup
+							done();
+						}, 1000);
+					}, 1000);
+				}, 1000);
+			}, 1000);
+		});
+
+
+	});
+
 	QUnit.module("Breadcrumbs API", {
 		beforeEach: function (assert) {
 			var done = assert.async();
