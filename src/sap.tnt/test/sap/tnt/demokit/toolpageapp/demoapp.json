@@ -32,6 +32,7 @@
 		"webapp/test/unit/model/formatter.js",
 		"webapp/test/unit/model/models.js",
 		"webapp/test/unit/allTests.js",
+		"webapp/test/unit/unitTests.qunit.js",
 		"webapp/test/unit/unitTests.qunit.html",
 		"webapp/view/App.view.xml",
 		"webapp/view/Home.view.xml",

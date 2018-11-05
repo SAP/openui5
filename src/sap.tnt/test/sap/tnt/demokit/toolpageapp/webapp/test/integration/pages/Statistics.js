@@ -1,23 +1,21 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"sap/ui/test/actions/Press"
-], function (Opa5, PropertyStrictEquals, Press) {
+	"sap/ui/test/actions/Press",
+	"sap/ui/VersionInfo"
+], function (Opa5, PropertyStrictEquals, Press, VersionInfo) {
 	"use strict";
 
 	var sViewName = "Statistics";
 
 	// run OPA tests for the current environment (D3 = OpenUI5, MicroCharts = SAPUI5)
 	var sChartViewName = sViewName + "D3";
-	try {
-		sap.ui.require([
-			"sap/suite/ui/microchart/AreaMicroChart"
-		], function () {
+
+	VersionInfo.load().then(function (oVersionInfo) {
+		if (oVersionInfo.name.startsWith("SAPUI5")) {
 			sChartViewName = sViewName + "Micro";
-		});
-	} catch (oException) {
-		// nothing
-	}
+		}
+	});
 
 	Opa5.createPageObjects({
 		onTheStatisticsPage: {
