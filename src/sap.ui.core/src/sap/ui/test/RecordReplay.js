@@ -120,7 +120,7 @@ sap.ui.define([
 	 * Interact with specific control.
 	 *
 	 * @param {object} oOptions Options for the interaction
-	 * @param {Object} oOptions.control control selector for the control to interact with
+	 * @param {Object} oOptions.selector control selector for the control to interact with
 	 * The returned promise will be rejected if the control is not specified or does not have a DOM reference
 	 * @param {sap.ui.test.RecordReplay.InteractionType} oOptions.interactionType Interaction type;
 	 * Currently supported interaction types are {@link sap.ui.test.RecordReplay.InteractionType}
@@ -131,7 +131,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RecordReplay.interactWithControl = function (oOptions) {
-		var sControl = JSON.stringify(oOptions.control);
+		var sControl = JSON.stringify(oOptions.selector);
 
 		return new Promise(function (resolve, reject) {
 			var oAction;
@@ -143,7 +143,7 @@ sap.ui.define([
 					" . Supported interaction types are: " + Object.keys(RecordReplay.InteractionType).join(", ")));
 			}
 			try {
-				var oControl = _ControlFinder._findControls(oOptions.control)[0];
+				var oControl = _ControlFinder._findControls(oOptions.selector)[0];
 				if (!oControl) {
 					throw new Error("No controls found using selector " + sControl);
 				}
