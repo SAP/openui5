@@ -118,7 +118,7 @@ sap.ui.define([
     QUnit.test("Should press on a control", function (assert) {
         var fnDone = assert.async();
         RecordReplay.interactWithControl({
-            control: this.mSearchFieldSelector,
+            selector: this.mSearchFieldSelector,
             interactionType: RecordReplay.InteractionType.Press
         }).then(function () {
             assert.ok(this.oActionSpy.called, "Should press the search button");
@@ -129,7 +129,7 @@ sap.ui.define([
         var fnDone = assert.async();
         this.oSearchField.setShowSearchButton(false);
         RecordReplay.interactWithControl({
-            control: this.mSearchFieldSelector,
+            selector: this.mSearchFieldSelector,
             interactionType: RecordReplay.InteractionType.EnterText,
             enterText: "Test"
         }).then(function () {
@@ -144,7 +144,7 @@ sap.ui.define([
     QUnit.test("Should complain when interaction is not supported", function (assert) {
         var fnDone = assert.async();
         RecordReplay.interactWithControl({
-            control: this.mSearchFieldSelector,
+            selector: this.mSearchFieldSelector,
             interactionType: "SomeOtherType"
         }).catch(function (oError) {
             assert.ok(oError.toString().match(/Unsupported interaction type/), "Should reject when interaction is not supported");
@@ -155,7 +155,7 @@ sap.ui.define([
         var fnDone = assert.async();
         this.oSearchField.destroy();
         RecordReplay.interactWithControl({
-            control: {},
+            selector: {},
             interactionType: RecordReplay.InteractionType.Press
         }).catch(function (oError) {
             assert.ok(oError.toString().match(/No controls found using selector/), "Should reject when control selector matches no controls");
