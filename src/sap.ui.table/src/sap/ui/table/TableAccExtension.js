@@ -411,7 +411,11 @@ sap.ui.define([
 
 			ExtensionHelper.performCellModifications(this, $Cell, aDefaultLabels, null, aLabels, aDescriptions, sText,
 				function(aLabels, aDescriptions, bRowChange, bColChange, bInitial) {
-					if (!bHidden && TableUtils.isRowSelectionAllowed(oTable) && bRowChange) {
+					var bContainsTreeIcon = $Cell.find(".sapUiTableTreeIcon").length == 1;
+
+					if ((bContainsTreeIcon || TableUtils.Grouping.isInGroupingRow($Cell)) && (bRowChange || bColChange)){
+						aDescriptions.push(oTable.getId() + (!oTableInstances.row._bIsExpanded ? "-rowexpandtext" : "-rowcollapsetext"));
+					} else if (!bHidden && TableUtils.isRowSelectionAllowed(oTable) && bRowChange){
 						aDescriptions.push(oTableInstances.row.getId() + "-rowselecttext");
 					}
 				}
@@ -443,6 +447,7 @@ sap.ui.define([
 
 			if (bIsInGroupingRow) {
 				aLabels.push(sTableId + "-ariarowgrouplabel");
+				aLabels.push(sTableId + (oRow._bIsExpanded ? "-rowcollapsetext" : "-rowexpandtext"));
 				//aLabels.push(oRow.getId() + "-groupHeader"); //Not needed: Screenreader seems to announce this automatically
 			}
 
@@ -539,6 +544,7 @@ sap.ui.define([
 			if (bIsInGroupingRow) {
 				aLabels.push(sTableId + "-ariarowgrouplabel");
 				aLabels.push(sTableId + "-rows-row" + iRow + "-groupHeader");
+				aLabels.push(sTableId + (oRow._bIsExpanded ? "-rowcollapsetext" : "-rowexpandtext"));
 			}
 
 			if (bIsInSumRow) {
@@ -1049,7 +1055,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (sReason !== "Focus") {
+		if (sReason !== "Focus" && sReason !== TableUtils.RowsUpdateReason.Expand && sReason !== TableUtils.RowsUpdateReason.Collapse) {
 			// Set cell to busy when the focus stays on the same cell and only the content is replaced (e.g. on scroll or expand),
 			// to force screenreader announcements
 			if (oInfo.isOfType(CellType.DATACELL | CellType.ROWHEADER)) {
