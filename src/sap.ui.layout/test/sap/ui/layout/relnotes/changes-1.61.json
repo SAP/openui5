@@ -1,0 +1,13 @@
+{
+  "1.61.0": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "205d428f9dda89f38e95a81db5852e742242486d",
+        "type": "FIX",
+        "text": " SimpleForm: Layout rendered wrong if set late",
+        "references": []
+      }
+    ]
+  }
+}

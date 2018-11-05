@@ -49,6 +49,102 @@
         "type": "FIX",
         "text": " sap.m.NotificationListBase: A problem with forwarding aggregation is now fixed.",
         "references": []
+      },
+      {
+        "id": "d1caef4aa441e81ce473eb596c23dcf6548d2cb4",
+        "type": "FEATURE",
+        "text": " Upload Collection 1902 Enhancements - Patch 1",
+        "references": []
+      },
+      {
+        "id": "7a8ee6fb942f2ba417abb37bfeab79ffbde0483c",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectHeader: Rounded images are now supported",
+        "references": []
+      },
+      {
+        "id": "7a11fc513644a65ab2aadbea221e748f3dc883f5",
+        "type": "FEATURE",
+        "text": " sap.m.Select, sap.m.SelectList: Allowed usage of icons",
+        "references": []
+      },
+      {
+        "id": "f86b27c44c66ddf552d3039146a0ac1da7e99043",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Change prevented on button click",
+        "references": []
+      },
+      {
+        "id": "5fb9e6fe8541376655074821792134766ec4a4df",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Fix layouting issues with flex parents",
+        "references": []
+      },
+      {
+        "id": "220c809ad3d872336834e02f1e822e1fa79345a6",
+        "type": "FIX",
+        "text": " sap.m.ListBase: ariaLabelledBy should not be announced twice.",
+        "references": []
+      },
+      {
+        "id": "3e7dcf1b7ffc1b1c2ad9d2e36a9263eb6d9f36a3",
+        "type": "FIX",
+        "text": " sap.m.NotificationListGroup: Background color is now correct",
+        "references": []
+      },
+      {
+        "id": "e42a87f7c02c39e8be5623e4b7764cd25add8925",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: wraps on IE",
+        "references": []
+      },
+      {
+        "id": "175599d0c20845f37037f3e7c652fb7363dbeec8",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Failing OPA tests are fixed",
+        "references": []
+      },
+      {
+        "id": "6e22f19270b0d31f35188f3365e4843bb924df5a",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Width calculation for invisible items fixed",
+        "references": []
+      },
+      {
+        "id": "c2135e21352bce68c06caedc5b368758d6e3eb08",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Propagation for editable state fixed",
+        "references": []
+      },
+      {
+        "id": "fe1eccbd281b7bb3d2efd969eddd47c8f60b515b",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Width changed is not fired when in Popover",
+        "references": []
+      },
+      {
+        "id": "7832ec521396158a19a1867bd8c4ca7892cd487a",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Accessibility role in active state fixed",
+        "references": []
+      },
+      {
+        "id": "4d19c935f05bcac094c57605cf9ff7e5f830204e",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Aria self labelling added",
+        "references": []
+      },
+      {
+        "id": "f011439c029ec65ff880cd57bbb4529ff74498e4",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Current step in branching fixed",
+        "references": []
+      },
+      {
+        "id": "1b04208729caba5ba834a0b7a647ca98a8413d18",
+        "type": "FIX",
+        "text": " sap.ui.support: Accessibility category added to some rules",
+        "references": []
       }
     ]
   }

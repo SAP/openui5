@@ -13,6 +13,12 @@
         "type": "FIX",
         "text": " sap.ui.model.analytics.odata4analytics#_renderPropertyFilterValue",
         "references": []
+      },
+      {
+        "id": "9053b21ed36ca0afb88616ab877ba272da5c4864",
+        "type": "FIX",
+        "text": " Unit Type: Only parse and format valid values",
+        "references": []
       }
     ]
   }
