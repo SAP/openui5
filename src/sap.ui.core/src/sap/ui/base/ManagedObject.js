@@ -4720,7 +4720,8 @@ sap.ui.define([
 			sName,
 			oClone,
 			escape = ManagedObject.bindingParser.escape,
-			i;
+			i,
+			oTarget;
 
 		// Clone properties (only those with non-default value)
 		var aKeys = Object.keys(mProps);
@@ -4765,7 +4766,7 @@ sap.ui.define([
 				}
 			}
 
-			// clone inactive children
+			// Clone inactive children
 			var aInactiveChildren = getStashedControls(this.getId());
 			for (var i = 0, l = aInactiveChildren.length; i < l; i++) {
 					var oClonedChild = aInactiveChildren[i].clone(sIdSuffix);
@@ -4794,6 +4795,46 @@ sap.ui.define([
 		// Create clone instance
 		oClone = new oClass(sId, mSettings);
 
+		/**
+		 * Clones the BindingInfo for the aggregation/property with the given name of this ManagedObject and binds
+		 * the aggregation/property with the given target name on the given clone using the same BindingInfo.
+		 *
+		 * @param {string} sName the name of the binding to clone
+		 * @param {sap.ui.base.ManagedObject} oClone the object on which to establish the cloned binding
+		 * @param {string} sTargetName the name of the clone's aggregation to bind
+		 */
+		function cloneBinding(oSource, sName, oClone, sTargetName) {
+			var oBindingInfo = oSource.mBindingInfos[sName];
+			oBindingInfo = oBindingInfo || oSource.getBindingInfo(sName); // fallback for forwarded bindings
+			var oCloneBindingInfo = jQuery.extend({}, oBindingInfo);
+
+			// clone the template if it is not sharable
+			if (!oBindingInfo.templateShareable && oBindingInfo.template && oBindingInfo.template.clone) {
+				oCloneBindingInfo.template = oBindingInfo.template.clone(sIdSuffix, aLocalIds);
+				delete oCloneBindingInfo.factory;
+			} else if ( oBindingInfo.templateShareable === MAYBE_SHAREABLE_OR_NOT ) {
+				// a 'clone' operation implies sharing the template (if templateShareable is not set to false)
+				oBindingInfo.templateShareable = oCloneBindingInfo.templateShareable = true;
+				Log.error(
+					"During a clone operation, a template was found that neither was marked with 'templateShareable:true' nor 'templateShareable:false'. " +
+					"The framework won't destroy the template. This could cause errors (e.g. duplicate IDs) or memory leaks " +
+					"(The template is used in aggregation '" + sName + "' of object '" + oSource.getId() + "')." +
+					"For more information, see documentation under 'Aggregation Binding'.");
+			}
+
+			// remove the runtime binding data (otherwise the property will not be connected again!)
+			delete oCloneBindingInfo.binding;
+			delete oCloneBindingInfo.modelChangeHandler;
+			delete oCloneBindingInfo.dataStateChangeHandler;
+			delete oCloneBindingInfo.modelRefreshHandler;
+
+			if (oBindingInfo.factory || oBindingInfo.template) {
+				oClone.bindAggregation(sTargetName, oCloneBindingInfo);
+			} else {
+				oClone.bindProperty(sTargetName, oCloneBindingInfo);
+			}
+		}
+
 		/* Clone element bindings: Clone the objects not the parameters
 		 * Context will only be updated when adding the control to the control tree;
 		 * Maybe we have to call updateBindingContext() here?
@@ -4810,43 +4851,16 @@ sap.ui.define([
 		// Clone bindings
 		if (bCloneBindings) {
 			for (sName in this.mBindingInfos) {
-				var oBindingInfo = this.mBindingInfos[sName];
-				var oCloneBindingInfo = jQuery.extend({}, oBindingInfo);
-
-				// clone the template if it is not sharable
-				if (!oBindingInfo.templateShareable && oBindingInfo.template && oBindingInfo.template.clone) {
-					oCloneBindingInfo.template = oBindingInfo.template.clone(sIdSuffix,	aLocalIds);
-					delete oCloneBindingInfo.factory;
-				} else if ( oBindingInfo.templateShareable === MAYBE_SHAREABLE_OR_NOT ) {
-					// a 'clone' operation implies sharing the template (if templateShareable is not set to false)
-					oBindingInfo.templateShareable = oCloneBindingInfo.templateShareable = true;
-					Log.error(
-						"During a clone operation, a template was found that neither was marked with 'templateShareable:true' nor 'templateShareable:false'. " +
-						"The framework won't destroy the template. This could cause errors (e.g. duplicate IDs) or memory leaks " +
-						"(The template is used in aggregation '" + sName + "' of object '" + this.getId() + "')." +
-						"For more information, see documentation under 'Aggregation Binding'.");
-				}
-
-				 // remove the runtime binding data (otherwise the property will not be connected again!)
-				delete oCloneBindingInfo.binding;
-				delete oCloneBindingInfo.modelChangeHandler;
-				delete oCloneBindingInfo.dataStateChangeHandler;
-				delete oCloneBindingInfo.modelRefreshHandler;
-
-				if (oBindingInfo.factory || oBindingInfo.template) {
-					oClone.bindAggregation(sName, oCloneBindingInfo);
-				} else {
-					oClone.bindProperty(sName, oCloneBindingInfo);
-				}
+				cloneBinding(this, sName, oClone, sName);
 			}
 		}
 
-		//clone the support info
+		// Clone the support info
 		if (ManagedObject._supportInfo) {
 			ManagedObject._supportInfo.addSupportInfo(oClone.getId(), ManagedObject._supportInfo.byId(this.getId()));
 		}
 
-		//Clone the meta data contexts interpretation
+		// Clone the meta data contexts interpretation
 		if (this._cloneMetadataContexts) {
 			this._cloneMetadataContexts(oClone);
 		}
@@ -4855,7 +4869,10 @@ sap.ui.define([
 			for (sName in this.mForwardedAggregations) {
 				var oForwarder = oClone.getMetadata().getAggregationForwarder(sName);
 				if (oForwarder) {
-					oForwarder.getTarget(oClone, true);
+					oTarget = oForwarder.getTarget(oClone, true);
+					if (oForwarder.forwardBinding && this.isBound(sName)) { // forwarded bindings have not been cloned yet
+						cloneBinding(this, sName, oTarget, oForwarder.targetAggregationName);
+					}
 				}
 			}
 		}
