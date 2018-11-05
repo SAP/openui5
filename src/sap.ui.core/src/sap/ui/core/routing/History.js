@@ -248,6 +248,19 @@ sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log", "sap/ui/t
 		if (this._oNextHash && this._oNextHash.bWasReplaced && this._oNextHash.sHash === sNewHash) {
 			//Since a replace has taken place, the current history entry is also replaced
 			this.aHistory[this.iHistoryPosition] = sNewHash;
+
+			if (sFullHash !== undefined && !Device.browser.msie && this === History.getInstance()) {
+				// after the hash is replaced, the history state is cleared.
+				// We need to update the last entry in _aStateHistory and save the
+				// history back to the browser history state
+				History._aStateHistory[History._aStateHistory.length - 1] = sFullHash;
+				window.history.replaceState({
+					sap: {
+						history: History._aStateHistory
+					}
+				}, window.document.title);
+			}
+
 			this._oNextHash = null;
 			//reset the direction to Unknown when hash is replaced after history is already initialized
 			if (!this._bIsInitial) {

@@ -598,4 +598,27 @@ sap.ui.define([
 			});
 		});
 	});
+
+	QUnit.test("Direction determination after a hash is replaced", function(assert) {
+		assert.expect(7);
+		var that = this;
+		return this.setup().then(function() {
+			return that.checkDirection(function() {
+				that.oExtendedHashChanger.replaceHash("replaced");
+			}, function(sHash) {
+				if (sHash === "replaced") {
+					assert.strictEqual(that.oHistory.getDirection(), "Unknown", "The direction should be Unknown after the hash is replaced");
+				}
+			});
+		}).then(function() {
+			that.oExtendedHashChanger.setHash("afterReplaced");
+			assert.strictEqual(that.oHistory.getDirection(), "NewEntry", "The direction is new entry");
+		}).then(function() {
+			return that.checkDirection(function() {
+				window.history.back();
+			}, function(sHash) {
+				assert.strictEqual(that.oHistory.getDirection(), "Backwards", "The direction should be Backwards");
+			});
+		});
+	});
 });
