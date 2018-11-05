@@ -14,7 +14,8 @@ sap.ui.define(function () {
 				"xx-waitForTheme": true
 			},
 			coverage: {
-				only: ["sap/ui/dt"]
+				only: ["sap/ui/dt"],
+				branchTracking: true
 			},
 			page: "test-resources/sap/ui/dt/qunit/testsandbox.qunit.html?test={name}",
 			autostart: true
