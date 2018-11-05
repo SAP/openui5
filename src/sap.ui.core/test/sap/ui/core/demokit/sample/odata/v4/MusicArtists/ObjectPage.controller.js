@@ -133,11 +133,9 @@ sap.ui.define([
 			this.byId("draftIndicator").showDraftSaving();
 		},
 
-		//TODO refresh the ObjectPage context to refresh the publication list once Context#refresh
-		// is available
-//		onRefresh : function () {
-//			this.getView().getBindingContext().refresh();
-//		},
+		onRefresh : function () {
+			this.getView().getBindingContext().refresh();
+		},
 
 		onSave : function () {
 			var oOldBindingContext = this.byId("objectPageForm").getBindingContext(),

@@ -524,7 +524,7 @@ sap.ui.define([
 	 *   the context from the list binding's collection because the entity does not match the
 	 *   binding's filter anymore, see {@link sap.ui.model.odata.v4.ODataListBinding#filter};
 	 *   a removed context is destroyed, see {@link #destroy}. If the context belongs to a context
-	 *   binding, the parameter must not be used and leads to an error.
+	 *   binding, the parameter must not be used.
 	 *   Supported since 1.55.0
 	 * @throws {Error}
 	 *   If the group ID is not valid, if the binding is not refreshable or has pending changes, or
@@ -535,16 +535,18 @@ sap.ui.define([
 	 * @since 1.53.0
 	 */
 	Context.prototype.refresh = function (sGroupId, bAllowRemoval) {
+		this.oModel.checkGroupId(sGroupId);
 		if (this.oBinding.refreshSingle) {
-			this.oModel.checkGroupId(sGroupId);
 			this.oBinding.refreshSingle(this, this.oModel.lockGroup(sGroupId, true, this),
 				bAllowRemoval);
 		} else {
-			if (bAllowRemoval !== undefined) {
-				throw new Error("Must not call refresh on a context belonging to a context binding "
-					+ "with parameter bAllowRemoval");
+			if (arguments.length > 1) {
+				throw new Error("Unsupported parameter bAllowRemoval: " + bAllowRemoval);
 			}
-			this.oBinding.refresh(sGroupId);
+
+			if (!this.oBinding.refreshReturnValueContext(this, sGroupId)) {
+				this.oBinding.refresh(sGroupId);
+			}
 		}
 	};
 

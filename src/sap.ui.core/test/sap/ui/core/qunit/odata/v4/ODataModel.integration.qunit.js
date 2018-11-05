@@ -8740,7 +8740,9 @@ sap.ui.define([
 	// $select parameters used for loading the active entity. This way, all fields in the object
 	// page can be populated from the bound action response.
 	QUnit.test("bound operation: $$inheritExpandSelect", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var fnDataReceived = this.spy(),
+			fnDataRequested = this.spy(),
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="objectPage">\
 	<Text id="id" text="{ArtistID}" />\
@@ -8778,6 +8780,8 @@ sap.ui.define([
 			var oOperation = that.oModel.bindContext("special.cases.EditAction(...)",
 					that.oView.getBindingContext(), {$$inheritExpandSelect : true});
 
+			oOperation.attachDataReceived(fnDataReceived);
+			oOperation.attachDataRequested(fnDataRequested);
 			that.expectRequest({
 					method : "POST",
 					url : "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction"
@@ -8823,9 +8827,33 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
+					+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
+					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
+					"ArtistID" : "42",
+					"IsActiveEntity" : false,
+					"Name" : "Changed",
+					"DraftAdministrativeData" : {
+						"DraftID" : "1",
+						"InProcessByUser" : "JOHNDOE"
+					}
+				})
+				.expectChange("name", "Changed")
+				//TODO unexpected change events -> CPOUI5UISERVICESV3-1572
+				.expectChange("id", "42")
+				.expectChange("isActive", "No")
+				.expectChange("inProcessByUser", "JOHNDOE");
+
+			// code under test
+			that.oView.getBindingContext().refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
 			var oOperation = that.oModel.bindContext("special.cases.ActivationAction(...)",
 					that.oView.getBindingContext(), {$$inheritExpandSelect : true});
 
+			assert.strictEqual(fnDataReceived.callCount, 1, "dataReceived");
+			assert.strictEqual(fnDataRequested.callCount, 1, "dataRequested");
 			that.expectRequest({
 					method : "POST",
 					url : "Artists(ArtistID='42',IsActiveEntity=false)"
