@@ -520,4 +520,42 @@ sap.ui.define([
 		assert.notEqual(sSlugValueBefore, sSlugValueAfter, "Slug value is set correctly by the method 'addHeaderParameter' of the beforeUploadStarts event");
 		assert.equal(sSecurityTokenValueBefore, sSecurityTokenValueAfter, "SecurityToken value is set correctly by the method 'addHeaderParameter' of the beforeUploadStarts event");
 	});
+
+	/* ============== */
+	/* Inner Controls */
+	/* ============== */
+
+	QUnit.test("Inner controls are created lazily, not eagerly.", function (assert) {
+		assert.expect(22);
+		var oItem = new UploadCollectionItem({
+				fileName: "otto4711.txt",
+				documentId: "4712"
+			});
+
+		assert.notOk(oItem._oListItem, "Inner list item should not be created eagerly.");
+		assert.notOk(oItem._oIcon, "Inner icon should be created eagerly.");
+		assert.notOk(oItem._oProgressLabel, "Inner progress label should not be created eagerly.");
+		assert.notOk(oItem._oBusyIndicator, "Inner busy indicator should not be created eagerly.");
+		assert.notOk(oItem._oFileNameLink, "Inner hyperlink should not be created eagerly.");
+		assert.notOk(oItem._oEditButton, "Inner edit button should not be created eagerly.");
+		assert.notOk(oItem._oFileNameEdit, "Inner file name edit should not be created eagerly.");
+		assert.notOk(oItem._oDeleteButton, "Inner delete button should not be created eagerly.");
+		assert.notOk(oItem._oTerminateButton, "Inner terminate button should not be created eagerly.");
+		assert.notOk(oItem._oConfirmRenameButton, "Inner confirm button for rename dialog should not be created eagerly.");
+		assert.notOk(oItem._oCancelRenameButton, "Inner cancel button for rename dialog should not be created eagerly.");
+
+		this.oUploadCollection.insertItem(oItem);
+
+		assert.ok(oItem._getListItem(), "Inner list item should be created.");
+		assert.ok(oItem._getIcon(), "Inner icon should be created.");
+		assert.ok(oItem._getProgressLabel(), "Inner progress label should be created.");
+		assert.ok(oItem._getBusyIndicator(), "Inner busy indicator should be created.");
+		assert.ok(oItem._getFileNameLink(), "Inner hyperlink should be created.");
+		assert.ok(oItem._getEditButton(), "Inner edit button should be created.");
+		assert.ok(oItem._getFileNameEdit(), "Inner file name edit should be created.");
+		assert.ok(oItem._getDeleteButton(), "Inner delete button should be created.");
+		assert.ok(oItem._getTerminateButton(), "Inner terminate button should be created.");
+		assert.ok(oItem._getConfirmRenameButton(), "Inner confirm button for rename dialog should be created.");
+		assert.ok(oItem._getCancelRenameButton(), "Inner cancel button for rename dialog should be created.");
+	});
 });
