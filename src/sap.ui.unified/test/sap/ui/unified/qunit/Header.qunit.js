@@ -335,7 +335,7 @@ sap.ui.define([
 
 				// assert
 				assert.equal(this.oHeader._ariaLabelButton3, sExpectedText, "inner property should be set properly");
-				assert.equal(this.oHeader.$("B3").attr("aria-label"), jQuery.sap.encodeHTML(sExpectedText), "The DOM should be properly updated");
+				assert.equal(this.oHeader.$("B3").attr("aria-label"), sExpectedText, "The DOM should be properly updated");
 				assert.equal(oInvalidateSpy.callCount, 0, "invalidate should not be called");
 
 				// cleanup
@@ -363,7 +363,7 @@ sap.ui.define([
 
 				// assert
 				assert.equal(this.oHeader._ariaLabelButton4, sExpectedText, "inner property should be set properly");
-				assert.equal(this.oHeader.$("B4").attr("aria-label"), jQuery.sap.encodeHTML(sExpectedText), "The DOM should be properly updated");
+				assert.equal(this.oHeader.$("B4").attr("aria-label"), sExpectedText, "The DOM should be properly updated");
 				assert.equal(oInvalidateSpy.callCount, 0, "invalidate should not be called");
 
 				// cleanup
