@@ -42,7 +42,7 @@ sap.ui.define([
                     oLogger.debug("Begin report with ID " + data.id);
                 }.bind(this))
                 .fail(function (err) {
-                    oLogger.debug("Failed to begin report. Error: " + err);
+                    oLogger.debug("Failed to begin report. Error: " + JSON.stringify(err));
                 });
         },
         moduleUpdate: function (oDetails) {
@@ -51,7 +51,7 @@ sap.ui.define([
                     oLogger.debug("Sent report for module " + oDetails.name);
                 })
                 .fail(function (err) {
-                    oLogger.debug("Failed to send report for module '" + oDetails.name + "'. Error: " + err);
+                    oLogger.debug("Failed to send report for module '" + oDetails.name + "'. Error: " + JSON.stringify(err));
                 });
         },
         testDone: function (oDetails) {
@@ -80,7 +80,7 @@ sap.ui.define([
                     oLogger.debug("Completed report with ID " + this._id);
                 }.bind(this))
                 .fail(function (err) {
-                    oLogger.debug("Failed to complete report with ID " + this._id + ". Error: " + err);
+                    oLogger.debug("Failed to complete report with ID " + this._id + ". Error: " + JSON.stringify(err));
                 }.bind(this));
         },
         _reportTest: function (oDetails) {
@@ -89,7 +89,7 @@ sap.ui.define([
                     oLogger.debug("Sent report for test " + oDetails.name);
                 })
                 .fail(function (err) {
-                    oLogger.debug("Failed send report for test '" + oDetails.name + "'. Error: " + err);
+                    oLogger.debug("Failed send report for test '" + oDetails.name + "'. Error: " + JSON.stringify(err));
                 });
         },
         _postSuiteJson: function (sUrlSuffix, oData) {
@@ -103,7 +103,7 @@ sap.ui.define([
     function postJson(sUrl, oData) {
         return jQueryDOM.ajax({
             url: sUrl,
-            type: "POST",
+            type: "XHR_WAITER_IGNORE:POST",
             data: oData,
             dataType: "json"
         });
