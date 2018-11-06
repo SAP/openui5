@@ -1,9 +1,4 @@
-jQuery.sap.require("sap.ui.qunit.qunit-css");
-jQuery.sap.require("sap.ui.thirdparty.qunit");
-jQuery.sap.require("sap.ui.qunit.qunit-junit");
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/actions/Press",
@@ -16,7 +11,7 @@ sap.ui.require([
 
 	var arrangements = new Opa5({
 		iStartMyApp: function () {
-			return this.iStartMyAppInAFrame("../../index.html");
+			return this.iStartMyAppInAFrame("test-resources/sap/m/qunit/planningcalendar/index.html");
 		}
 	});
 
@@ -172,5 +167,4 @@ sap.ui.require([
 	sap.ui.require([
 		"sap/ui/demo/PlanningCalendar/test/integration/PlanningCalendarJourney"
 	]);
-})
-;
+});
