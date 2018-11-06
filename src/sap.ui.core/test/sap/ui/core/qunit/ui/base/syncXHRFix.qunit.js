@@ -2,18 +2,22 @@
 sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Device', 'sap/ui/base/syncXHRFix'], function(jQuery, Device, syncXHRFix) {
 	'use strict';
 
-	// Fix is only required in Firefox
-	if (Device.browser.firefox && window.Proxy) {
-		syncXHRFix();
-	}
+	var baseURL = "test-resources/sap/ui/core/qunit/ui/base/";
 
-	QUnit.module("sap/ui/base/syncXHRFix (window.XMLHttpRequest)");
+	QUnit.module("sap/ui/base/syncXHRFix (window.XMLHttpRequest)", {
+		before: function() {
+			// Fix is only required in Firefox
+			if (Device.browser.firefox && window.Proxy) {
+				syncXHRFix();
+			}
+		}
+	});
 
 	QUnit.test("sync/async", function(assert) {
 		var bSyncOngoing = false,
 			done = assert.async();
 		jQuery.ajax({
-			url: "",
+			url: baseURL + "small.txt",
 			async: true,
 			cache: false
 		}).then(function() {
@@ -22,7 +26,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Device', 'sap/ui/base/syncXHR
 		});
 		bSyncOngoing = true;
 		jQuery.ajax({
-			url: "",
+			url: baseURL + "big.txt",
 			async: false,
 			cache: false
 		});
@@ -51,13 +55,13 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Device', 'sap/ui/base/syncXHR
 		}
 		asyncXHR.addEventListener("readystatechange", asyncListener1);
 		asyncXHR.onreadystatechange = asyncListener2;
-		asyncXHR.open("GET", "#", true);
+		asyncXHR.open("GET", baseURL + "small.txt", true);
 		assert.equal(asyncXHR.readyState, 1, "After open, readyState should be 1");
 		asyncXHR.send();
 		assert.equal(asyncXHR.readyState, 1, "After send, readyState should still be 1");
 
 		var syncXHR = new XMLHttpRequest();
-		syncXHR.open("GET", "#", false);
+		syncXHR.open("GET", baseURL + "small.txt", false);
 		assert.equal(syncXHR.readyState, 1, "After open, readyState should be 1");
 		bSyncOngoing = true;
 		syncXHR.send();
@@ -82,11 +86,11 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Device', 'sap/ui/base/syncXHR
 		}
 		asyncXHR.addEventListener("readystatechange", asyncListener1);
 		asyncXHR.onreadystatechange = asyncListener2;
-		asyncXHR.open("GET", "#", true);
+		asyncXHR.open("GET", baseURL + "small.txt", true);
 		asyncXHR.send();
 
 		var syncXHR = new XMLHttpRequest();
-		syncXHR.open("GET", "#", false);
+		syncXHR.open("GET", baseURL + "small.txt", false);
 		bSyncOngoing = true;
 		syncXHR.send();
 		bSyncOngoing = false;
@@ -102,7 +106,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Device', 'sap/ui/base/syncXHR
 	QUnit.test("async readyState without listener", function(assert) {
 		var asyncXHR = new XMLHttpRequest(),
 			done = assert.async();
-		asyncXHR.open("GET", "#", true);
+		asyncXHR.open("GET", baseURL + "small.txt", true);
 		asyncXHR.send();
 		asyncXHR.onreadystatechange = function () {
 			if (this.readyState == XMLHttpRequest.DONE) {
@@ -175,7 +179,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Device', 'sap/ui/base/syncXHR
 		oResolved.then(function() {
 			bSyncOngoing = true;
 			jQuery.ajax({
-				url: "",
+				url: baseURL + "small.txt",
 				async: false,
 				cache: false
 			});
@@ -213,7 +217,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Device', 'sap/ui/base/syncXHR
 
 		oResolved.then(function() {
 			jQuery.ajax({
-				url: "",
+				url: baseURL + "small.txt",
 				async: false,
 				cache: false
 			});
