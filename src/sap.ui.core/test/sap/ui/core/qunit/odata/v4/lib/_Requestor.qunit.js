@@ -1401,14 +1401,14 @@ sap.ui.define([
 		response : undefined, method : "DELETE"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("submitBatch: report unbound messages, " + i, function (assert) {
-			var mHeaders = {"sap-messages" : {}},
+			var mHeaders = {"SAP-Messages" : {}},
 				oRequestor = _Requestor.create("/Service/", oModelInterface),
 				oRequestorMock = this.mock(oRequestor),
 				oRequestPromise = oRequestor.request(oFixture.method, "Products(42)",
 					new _GroupLock("group1"));
 
 			oRequestorMock.expects("reportUnboundMessages")
-				.withExactArgs("Products(42)", sinon.match.same(mHeaders["sap-messages"]));
+				.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
 			oRequestorMock.expects("sendBatch") // arguments don't matter
 				.resolves([createResponse(oFixture.response, mHeaders)]);
 
