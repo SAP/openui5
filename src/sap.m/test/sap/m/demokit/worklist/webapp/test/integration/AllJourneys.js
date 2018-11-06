@@ -1,15 +1,15 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"./arrangements/Arrangement",
+	"./arrangements/Startup",
 	"./WorklistJourney",
 	"./NavigationJourney",
 	"./NotFoundJourney",
 	"./ObjectJourney"
-], function (Opa5, Arrangement) {
+], function (Opa5, Startup) {
 	"use strict";
 
 	Opa5.extendConfig({
-		arrangements: new Arrangement(),
+		arrangements: new Startup(),
 		viewNamespace: "sap.ui.demo.worklist.view.",
 		autoWait: true
 	});

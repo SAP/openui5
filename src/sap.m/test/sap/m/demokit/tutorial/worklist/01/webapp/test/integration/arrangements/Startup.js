@@ -4,7 +4,7 @@ sap.ui.define([
 	"use strict";
 
 	function getFrameUrl (sHash, sUrlParameters) {
-		var sUrl = sap.ui.require.toUrl("sap/ui/demo/worklist/test/mockServer.html");
+		var sUrl = sap.ui.require.toUrl("mycompany/myapp/MyWorklistApp/test/mockServer.html");
 		sUrlParameters = sUrlParameters ? "?" + sUrlParameters : "";
 
 		if (sHash) {
@@ -16,7 +16,7 @@ sap.ui.define([
 		return sUrl + sUrlParameters + sHash;
 	}
 
-	return Opa5.extend("sap.ui.demo.worklist.test.integration.arrangements.Arrangement", {
+	return Opa5.extend("mycompany.myapp.MyWorklistApp.test.integration.arrangements.Startup", {
 
 		iStartMyApp: function (oOptions) {
 			var sUrlParameters;
@@ -44,7 +44,7 @@ sap.ui.define([
 
 			return this.waitFor({
 				success : function() {
-					oOptions.hash = "/Objects/" + encodeURIComponent(sObjectId);
+					oOptions.hash = "/Products/" + encodeURIComponent(sObjectId);
 					this.iStartMyApp(oOptions);
 				}
 			});

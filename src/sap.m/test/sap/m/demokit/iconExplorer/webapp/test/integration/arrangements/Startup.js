@@ -9,7 +9,7 @@ sap.ui.define([
 	// store a local copy to the original function
 	var _fnIconPoolGetIconNames = IconPool.getIconNames;
 
-	return Opa5.extend("sap.ui.demo.iconexplorer.test.integration.arrangements.Arrangement", {
+	return Opa5.extend("sap.ui.demo.iconexplorer.test.integration.arrangements.Startup", {
 
 		iStartMyApp: function (oOptions) {
 			// reset local storage key to have stable testing environment

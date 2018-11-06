@@ -16,7 +16,7 @@ sap.ui.define([
 		return sUrl + sUrlParameters + sHash;
 	}
 
-	return Opa5.extend("mycompany.myapp.MyWorklistApp.test.integration.arrangements.Arrangement", {
+	return Opa5.extend("mycompany.myapp.MyWorklistApp.test.integration.arrangements.Startup", {
 
 		iStartMyApp: function (oOptions) {
 			var sUrlParameters;
