@@ -1458,6 +1458,8 @@ sap.ui.define([
 	}, {
 		error : {},
 		reported : {}
+	}, {
+		// no error -> nothing reported
 	}].forEach(function (oFixture, i) {
 		QUnit.test("_execute: bound operation failure with messages #" + i, function (assert) {
 			var oParentContext = Context.create(this.oModel, {/*binding*/}, "/TEAMS('42')"),

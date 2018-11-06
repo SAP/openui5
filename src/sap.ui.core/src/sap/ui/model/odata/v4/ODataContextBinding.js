@@ -287,9 +287,11 @@ sap.ui.define([
 				if (oOperationMetadata && oOperationMetadata.$IsBound) {
 					sBindingParameter = oOperationMetadata.$Parameter[0].$Name;
 					oError.resourcePath = that.oContext.getPath().slice(1);
-					adjustTarget(oError.error);
-					if (oError.error.details) {
-						oError.error.details.forEach(adjustTarget);
+					if (oError.error) {
+						adjustTarget(oError.error);
+						if (oError.error.details) {
+							oError.error.details.forEach(adjustTarget);
+						}
 					}
 				}
 
