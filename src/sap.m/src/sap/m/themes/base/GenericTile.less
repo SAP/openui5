@@ -77,6 +77,7 @@
 	font-size: @sapMFontHeader5Size;
 }
 
+.sapMGTSubHdrTxt > .sapMText,
 .sapMGTSubHdrTxt {
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -667,6 +668,9 @@ html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-
 		line-height: 1.1875rem;
 	}
 
+	&.sapMGT:not(.sapMGTLineMode) .sapMGTSubHdrTxt > .sapMText {
+		line-height: 1.1875rem;
+	}
 	&.sapMGT:not(.sapMGTLineMode) .sapMGTSubHdrTxt {
 		line-height: 1.1875rem;
 	}
@@ -721,8 +725,8 @@ html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-
 	.sapMGTHdrTxt > .sapMText {
 		font-size: @sapMFontHeader6Size;
 	}
-
-	.sapMGTSubHdrTxt {
+	.sapMGTSubHdrTxt,
+	.sapMGTSubHdrTxt > .sapMText {
 		font-size: @sapMFontSmallSize;
 	}
 }

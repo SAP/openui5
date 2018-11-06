@@ -419,6 +419,12 @@ sap.ui.define([
 		assert.strictEqual(library.WrappingType.Hyphenated, this.oGenericTile._oTitle.getWrappingType(), "Title wrapping type should be Hyphenated");
 	});
 
+	QUnit.test("Wrapping type is propagated to subTitle", function (assert) {
+		this.oGenericTile.setWrappingType(library.WrappingType.Hyphenated);
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(library.WrappingType.Hyphenated, this.oGenericTile._oSubTitle.getWrappingType(), "Subtitle wrapping type should be Hyphenated");
+	});
+
 	QUnit.module("FrameType rendering tests", {
 		beforeEach: function() {
 			this.oGenericTile = new GenericTile({
