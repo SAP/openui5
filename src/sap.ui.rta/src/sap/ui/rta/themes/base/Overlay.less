@@ -7,20 +7,22 @@
 @_sap_ui_rta_Overlay_HoverBG : fade(darken(@_sap_ui_rta_Overlay_BaseBG, 100%), 10.8%);
 @_sap_ui_rta_Overlay_ActiveHoverBG : fade(@sapUiSelected, 20%);
 
-.sapUiRtaRoot .sapUiRtaMarginBottom {
-	margin-bottom: 40px;
-}
+.sapUiRtaRoot {
+	.sapUiRtaMarginBottom {
+		margin-bottom: 40px;
+	}
 
-.sapUiRtaRoot .sapUiRtaPaddingTop {
-	padding-top: 40px;
+	.sapUiRtaPaddingTop {
+		padding-top: 40px;
+	}
+
+	.sapUiRtaStretchPaddingTop {
+		padding-top: 24px;
+	}
 }
 
 .sapUiSizeCozy .sapUiRtaRoot .sapUiRtaStretchPaddingTop {
 	padding-top: 32px;
-}
-
-.sapUiSizeCompact .sapUiRtaRoot .sapUiRtaStretchPaddingTop {
-	padding-top: 24px;
 }
 
 .sapUiRta {

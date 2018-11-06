@@ -76,8 +76,10 @@ sap.ui.define([
 			}
 		},
 
-		addBoxesWithMixedControls: function(oParent, iCount) {
-			for (var i = 0; i < iCount; i++) {
+		addBoxesWithMixedControls: function(oParent, iCount, iOffset) {
+			var i = iOffset ? iOffset : 0;
+			iCount = iOffset ? iOffset + iCount : iCount;
+			for (i; i < iCount; i++) {
 				oParent.addContent(
 					new VBox("box" + i, {
 						items: [
