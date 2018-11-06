@@ -75,7 +75,7 @@ sap.ui.define([
 		// Arrange
 		var oView = this.oView;
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return oView;
 		});
 
@@ -94,7 +94,7 @@ sap.ui.define([
 	QUnit.test("Should resolve with correct values for view creation", function (assert) {
 		// Arrange
 		var that = this,
-			oStub = this.stub(this.oViews, "_getView", function (oOptions) {
+			oStub = this.stub(this.oViews, "_getView").callsFake(function (oOptions) {
 				return that.oView;
 			});
 
@@ -110,7 +110,7 @@ sap.ui.define([
 	QUnit.test("Should pass the correct values to the view creation", function (assert) {
 		// Arrange
 		var that = this,
-			oStub = this.stub(this.oViews, "_getView", function (oOptions) {
+			oStub = this.stub(this.oViews, "_getView").callsFake(function (oOptions) {
 				assert.strictEqual(oOptions.name, "bar.foo");
 				assert.strictEqual(oOptions.type, "XML");
 				assert.strictEqual(oOptions.id, "baz");
@@ -130,7 +130,7 @@ sap.ui.define([
 		// Arrange
 		var that = this,
 			oSpy = this.spy(this.oViews, "_getView"),
-			oStub = this.stub(this.oViews, "_getViewWithGlobalId", function (oOptions) {
+			oStub = this.stub(this.oViews, "_getViewWithGlobalId").callsFake(function (oOptions) {
 				assert.strictEqual(oOptions.name, "bar.foo");
 				assert.strictEqual(oOptions.type, "XML");
 				assert.strictEqual(oOptions.id, "baz");
@@ -154,7 +154,7 @@ sap.ui.define([
 		var oExistingView = this.oView,
 			oView = createView(['<View xmlns="sap.ui.core.mvc">', '</View>']);
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return oView;
 		});
 
@@ -179,7 +179,7 @@ sap.ui.define([
 
 	QUnit.test("Should log an error if the target view can't be loaded", function (assert) {
 		// Arrange
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return {
 				loaded: function() {
 					return Promise.reject("View with name bar.foo could not be loaded");
@@ -215,7 +215,7 @@ sap.ui.define([
 			this.oViews
 		);
 
-		this.stub(this.oViews, "_getView", function (oOptions) {
+		this.stub(this.oViews, "_getView").callsFake(function (oOptions) {
 			if (oOptions.name === "myTarget") {
 				return oView;
 			} else {
@@ -245,7 +245,7 @@ sap.ui.define([
 		// sinon.spy instead of this.spy has to be used because the stubbed version is used async and this.spy is restored syncly.
 		var oSpy = sinon.spy(Log, "error");
 		var oView = this.oView;
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return oView;
 		});
 
@@ -269,7 +269,7 @@ sap.ui.define([
 		var oSpy = sinon.spy(Log, "error");
 		var oView = this.oView;
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return oView;
 		});
 
@@ -294,7 +294,7 @@ sap.ui.define([
 		var oSpy = sinon.spy(Log, "error");
 		var oView = this.oView;
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return oView;
 		});
 		this.oTarget._oOptions.controlAggregation = undefined;
@@ -318,7 +318,7 @@ sap.ui.define([
 		var oSpy = sinon.spy(Log, "error");
 		var oView = this.oView;
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return oView;
 		});
 		this.oTarget._oOptions.controlId = "foo";
@@ -619,7 +619,7 @@ sap.ui.define([
 				oParameters = oEvent.getParameters();
 			});
 
-		this.stub(this.oViews, "_getView", function () {
+		this.stub(this.oViews, "_getView").callsFake(function () {
 			return that.oView;
 		});
 

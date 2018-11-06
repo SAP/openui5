@@ -92,7 +92,8 @@ sap.ui.define(function() {
 				title: "sap.ui.model.odata.ODataMetadata - QUnit Tests",
 				module: [
 					"test-resources/sap/ui/core/qunit/odata/ODataMetadata.qunit"
-				]
+				],
+				sinon: 1 // because MockServer is used which has a hard dependency to sinon V1
 			},
 			ODataModel: {
 				title: "sap.ui.model.odata.ODataModel - QUnit Tests",
@@ -113,7 +114,8 @@ sap.ui.define(function() {
 				title: "sap.ui.model.odata.ODataTreeBinding - QUnit Tests",
 				module: [
 					"test-resources/sap/ui/core/qunit/odata/v1/ODataTreeBinding.qunit"
-				]
+				],
+				sinon: 1 // because MockServer is used which has a hard dependency to sinon V1
 			},
 			ODataUtils: {
 				title: "sap.ui.model.odata.ODataUtils - QUnit Tests",

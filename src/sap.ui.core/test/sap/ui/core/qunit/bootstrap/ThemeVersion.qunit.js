@@ -16,7 +16,7 @@ sap.ui.define([
 
 	QUnit.module("default", {
 		initFakeServer: function(sResponseCode) {
-			this.oServer = this.sandbox.useFakeXMLHttpRequest();
+			this.oServer = this._oSandbox.useFakeServer();
 			this.oServer.autoRespond = true;
 			return this.oServer;
 		}

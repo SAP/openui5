@@ -10,7 +10,7 @@ sap.ui.define(function() {
 				version: 2					// Whether QUnit should be loaded and if so, what version
 			},
 			sinon: {
-				version: 1					// Whether Sinon should be loaded and if so, what version
+				version: 4					// Whether Sinon should be loaded and if so, what version
 			},
 			ui5: {
 				language: "en-US",

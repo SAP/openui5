@@ -84,7 +84,7 @@ sap.ui.define([
 
 				var fnOldSyncPromiseAll = SyncPromise.all;
 				MyGlobal.reset();
-				this.SyncPromiseAllStub = sinon.stub(SyncPromise, "all", function(args) {
+				this.SyncPromiseAllStub = sinon.stub(SyncPromise, "all").callsFake(function(args) {
 					 return fnOldSyncPromiseAll(args.reverse()).then(function(oRes) {
 						 return oRes.reverse();
 					 });

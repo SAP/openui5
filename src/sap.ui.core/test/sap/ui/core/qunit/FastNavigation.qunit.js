@@ -64,6 +64,8 @@ sap.ui.define([
 		};
 
 
+		QUnit.module("");
+
 		QUnit.test("Page initialized", function(assert) {
 			assert.ok(jQuery("#content").children().length > 0, "Page initialized");
 		});

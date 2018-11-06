@@ -2,7 +2,7 @@ sap.ui.define(function() {
 
 	"use strict";
 	return {
-		name: "TestSuite for sap.ui.core: GTP testcase CORE/CORE",
+		name: "TestSuite for sap.ui.core: GTP testcase CORE/I18N",
 		defaults: {
 			ui5: {
 				language: "en-US"
@@ -11,7 +11,7 @@ sap.ui.define(function() {
 				version: 2
 			},
 			sinon: {
-				version: 1
+				version: 4
 			}
 		},
 		tests: {
@@ -22,13 +22,11 @@ sap.ui.define(function() {
 			"Japanese": {
 			},
 			"Locale": {
-				sinon: false
 			},
 			"LocaleData": {
 				qunit: {
 					reorder: false // currency digits test seems to depend on execution order
-				},
-				sinon: false
+				}
 			},
 			"LocaleData-ar_SA": {
 				qunit: {

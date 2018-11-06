@@ -38,7 +38,7 @@ sap.ui.define(["sap/ui/Device", "jquery.sap.mobile"],function(Device /*, jquery.
 			tablet: true
 		};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		jQuery.sap.setMobileWebAppCapable(true);
 		var $amwac = jQuery("meta").filter("[name=apple-mobile-web-app-capable]");

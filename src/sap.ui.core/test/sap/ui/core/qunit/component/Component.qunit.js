@@ -1326,25 +1326,24 @@ sap.ui.define([
 
 	QUnit.test("Relative URLs for ResourceModel (enhanceWith)", function(assert) {
 
-		var oModelConfigSpy = sinon.spy(Component, "_createManifestModelConfigurations");
+		var oModelConfigSpy = this.spy(Component, "_createManifestModelConfigurations");
 
 		// load the test component
-		var oComponent = sap.ui.component({
-			manifestUrl : "/anylocation/manifest.json"
+		return Component.create({
+			manifest : "/anylocation/manifest.json"
+		}).then(function(oComponent) {
+
+			var aI18NCmpEnhanceWith = oModelConfigSpy.returnValues[0]["i18n-component"].settings[0].enhanceWith;
+			assert.strictEqual(aI18NCmpEnhanceWith[0].bundleUrl, "test-resources/sap/ui/core/samples/components/button/custom/i18n.properties", "Bundle URL of enhancing model must not be modified!");
+			assert.strictEqual(aI18NCmpEnhanceWith[1].bundleUrlRelativeTo, "manifest", "Bundle URL should be relative to manifest!");
+			assert.strictEqual(aI18NCmpEnhanceWith[1].bundleUrl, "../anylocation/other/i18n.properties", "Bundle URL of enhancing model must not be modified!");
+
+			var aI18NMFEnhanceWith = oModelConfigSpy.returnValues[0]["i18n-manifest"].settings[0].enhanceWith;
+			assert.strictEqual(aI18NMFEnhanceWith[0].bundleUrlRelativeTo, "manifest", "Bundle URL should be relative to manifest!");
+			assert.strictEqual(aI18NMFEnhanceWith[0].bundleUrl, "../anylocation/custom/i18n.properties", "Bundle URL of enhancing model must be adopted relative to manifest!");
+			assert.strictEqual(aI18NMFEnhanceWith[1].bundleUrl, "test-resources/sap/ui/core/samples/components/button/other/i18n.properties", "Bundle URL of enhancing model must not be modified!");
+
+			oComponent.destroy();
 		});
-
-		var aI18NCmpEnhanceWith = oModelConfigSpy.returnValues[0]["i18n-component"].settings[0].enhanceWith;
-		assert.strictEqual(aI18NCmpEnhanceWith[0].bundleUrl, "test-resources/sap/ui/core/samples/components/button/custom/i18n.properties", "Bundle URL of enhancing model must not be modified!");
-		assert.strictEqual(aI18NCmpEnhanceWith[1].bundleUrlRelativeTo, "manifest", "Bundle URL should be relative to manifest!");
-		assert.strictEqual(aI18NCmpEnhanceWith[1].bundleUrl, "../anylocation/other/i18n.properties", "Bundle URL of enhancing model must not be modified!");
-
-		var aI18NMFEnhanceWith = oModelConfigSpy.returnValues[0]["i18n-manifest"].settings[0].enhanceWith;
-		assert.strictEqual(aI18NMFEnhanceWith[0].bundleUrlRelativeTo, "manifest", "Bundle URL should be relative to manifest!");
-		assert.strictEqual(aI18NMFEnhanceWith[0].bundleUrl, "../anylocation/custom/i18n.properties", "Bundle URL of enhancing model must be adopted relative to manifest!");
-		assert.strictEqual(aI18NMFEnhanceWith[1].bundleUrl, "test-resources/sap/ui/core/samples/components/button/other/i18n.properties", "Bundle URL of enhancing model must not be modified!");
-
-		oModelConfigSpy.restore();
-		oComponent.destroy();
-
 	});
 });

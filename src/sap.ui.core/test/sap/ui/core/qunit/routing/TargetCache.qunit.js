@@ -17,7 +17,7 @@ sap.ui.define([
 					return sClass === "sap.ui.core.UIComponent";
 				}
 			};
-			this.oCreateStub = sinon.stub(Component, "create", function () {
+			this.oCreateStub = sinon.stub(Component, "create").callsFake(function () {
 				return Promise.resolve(that.oComponent);
 			});
 			this.oCache = new TargetCache({
@@ -181,7 +181,7 @@ sap.ui.define([
 				}
 			};
 
-			this.oCreateStub = sinon.stub(Component, "create", function () {
+			this.oCreateStub = sinon.stub(Component, "create").callsFake(function () {
 				return Promise.resolve(that.oComponent);
 			});
 		},

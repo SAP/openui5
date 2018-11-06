@@ -614,7 +614,7 @@
 		// we intercept head.appendChild calls and listen to the load/error events of the script in question
 		var scriptCompleted = new Promise(function(resolve, reject) {
 			var _fnOriginalAppendChild = document.head.appendChild;
-			sinon.stub(document.head, "appendChild", function(oElement) {
+			sinon.stub(document.head, "appendChild").callsFake(function(oElement) {
 				// when the script tag for the module is appended, register for its load/error events
 				if ( oElement.getAttribute("data-sap-ui-module") === "fixture/async-sync-conflict/unique-executions.js" ) {
 					oElement.addEventListener("load", resolve);

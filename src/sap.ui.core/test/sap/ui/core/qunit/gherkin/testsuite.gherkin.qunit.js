@@ -5,10 +5,6 @@ sap.ui.define(function() {
 		name: "TestSuite for sap.ui.core: NOT-YET-GTP testcase CORE/GHERKIN",
 		defaults: {
 			title: "QUnit Page for sap.ui.test.gherkin.{name}",
-			loader: {
-				paths: {
-				}
-			},
 			/*
 			 * Note: technically, all tests here work with qunit-2 and sinon-4.
 			 * But the two test-harnesses have hard-coded dependencies to qunit-1, so we stick to

@@ -665,7 +665,7 @@ sap.ui.define([
 		assert.equal(Control.prototype.setDelay, Control.prototype.setBusyIndicatorDelay,
 			"Control#setDelay should be available and a reference to #setBusyIndicatorDelay after applying legacy support");
 
-		sinon.assert.notCalled(this.oLogSpy, "No error should be logged");
+		assert.ok(this.oLogSpy.notCalled, "No error should be logged");
 
 	});
 

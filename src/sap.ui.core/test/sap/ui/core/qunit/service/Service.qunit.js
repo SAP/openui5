@@ -1,8 +1,9 @@
 /*global QUnit, sinon, my */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/Component",
 	"sap/ui/core/service/ServiceFactoryRegistry"
-], function(Log, ServiceFactoryRegistry) {
+], function(Log, Component, ServiceFactoryRegistry) {
 	"use strict";
 
 	sap.ui.define("my/Service", ["sap/ui/core/service/Service"], function(Service) {
@@ -470,7 +471,7 @@ sap.ui.define([
 
 
 			// fake server
-			var oServer = this.oServer = sinon.sandbox.useFakeServer();
+			var oServer = this.oServer = this._oSandbox.useFakeServer();
 
 			oServer.xhr.useFilters = true;
 			oServer.xhr.filters = [];
@@ -489,7 +490,7 @@ sap.ui.define([
 
 
 			// log spy
-			this.oLogSpy = sinon.spy(Log, "error");
+			this.oLogSpy = this.spy(Log, "error");
 
 			// register the Service Factories before component creation
 			ServiceFactoryRegistry.register("my.ServiceFactoryAlias", new my.ServiceFactory());
@@ -498,9 +499,11 @@ sap.ui.define([
 			ServiceFactoryRegistry.register("settings.ServiceFactoryAlias", new my.ServiceFactory());
 
 			// create the component
-			this.oComponent = sap.ui.component({
-				manifestUrl : "/anylocation/manifest.json"
-			});
+			return Component.create({
+				manifest: "/anylocation/manifest.json"
+			}).then(function(oComponent) {
+				this.oComponent = oComponent;
+			}.bind(this));
 		},
 
 		afterEach : function() {
@@ -512,12 +515,6 @@ sap.ui.define([
 
 			this.oComponent.destroy();
 			delete this.oComponent;
-
-			this.oLogSpy.restore();
-			delete this.oLogSpy;
-
-			this.oServer.restore();
-			delete this.oServer;
 			delete this.oManifest;
 
 		}

@@ -35,14 +35,14 @@ sap.ui.define([
 
 	QUnit.test("Content Density class: Cozy", function(assert) {
 		delete TechnicalInfo._sContentDensityClass;
-		this.stub(sap.ui.Device.support, "touch", true);
+		this.stub(sap.ui.Device.support, "touch").value(true);
 
 		assert.strictEqual(TechnicalInfo._getContentDensityClass(), "sapUiSizeCozy", "The content density is set to 'Cozy'");
 	});
 
 	QUnit.test("Content Density class: Compact", function(assert) {
 		delete TechnicalInfo._sContentDensityClass;
-		this.stub(sap.ui.Device.support, "touch", false);
+		this.stub(sap.ui.Device.support, "touch").value(false);
 
 		assert.strictEqual(TechnicalInfo._getContentDensityClass(), "sapUiSizeCompact", "The content density is set to 'Compact'");
 	});

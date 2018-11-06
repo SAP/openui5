@@ -418,7 +418,7 @@ sap.ui.define([
 	QUnit.test("Open two modal popups and close the second one, the focus should stay in the first popup after block layer gets focus", function(assert) {
 		var done = assert.async();
 		var sandbox = sinon.sandbox.create();
-		sandbox.stub(Device, "system", {
+		sandbox.stub(Device, "system").value({
 			desktop: true
 		});
 
@@ -1160,7 +1160,7 @@ sap.ui.define([
 		this.oPopup = new Popup(oPopupDomRef, /*bModal*/ true);
 		this.$Ref = this.oPopup._$();
 
-		sandbox.stub(Device, "browser", {
+		sandbox.stub(Device, "browser").value({
 			msie: true,
 			version: 11
 		});
@@ -1414,7 +1414,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RTL with 'my' set to 'CenterBottom', changing position again after popup is opened should work", function(assert) {
-		var oStub = sinon.stub(Core.getConfiguration(), "getRTL", function() {
+		var oStub = sinon.stub(Core.getConfiguration(), "getRTL").callsFake(function() {
 			return true;
 		});
 
@@ -1474,7 +1474,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		var sandbox = sinon.sandbox.create();
-		sandbox.stub(Device, 'system', {
+		sandbox.stub(Device, 'system').value({
 			desktop: true
 		});
 

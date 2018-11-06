@@ -6,6 +6,12 @@ sap.ui.define([
 ], function (UIComponent, JSView, Route) {
 	"use strict";
 
+	function addClock() {
+		if ( this.clock == null && this._oSandbox ) {
+			this.clock = this._oSandbox.useFakeTimers();
+		}
+	}
+
 	var oRouterStub = {
 		fireRouteMatched : function () {},
 		fireRoutePatternMatched : function () {},
@@ -14,6 +20,10 @@ sap.ui.define([
 			return false;
 		}
 	};
+
+	QUnit.module("Basics", {
+		beforeEach: addClock
+	});
 
 	QUnit.test("Should fired beforeMatched before matched", function(assert) {
 		var oRoute = new Route(oRouterStub, { name : "testRoute" });

@@ -1,5 +1,10 @@
 /*global QUnit */
-sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/core/util/DraftEnabledMockServer"], function (MockServer, DraftEnabledMockServer) {
+sap.ui.define([
+	"sap/ui/core/util/MockServer",
+	"sap/ui/core/util/DraftEnabledMockServer",
+	"jquery.sap.global",
+	"jquery.sap.sjax"
+], function(MockServer, DraftEnabledMockServer, jQuery) {
 	"use strict";
 
 	QUnit.module("sap/ui/core/util/DraftEnabledMockServer");

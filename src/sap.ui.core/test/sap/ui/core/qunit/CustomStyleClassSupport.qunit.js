@@ -38,7 +38,7 @@ sap.ui.define([
 		myControl.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(jQuery.sap.byId("myControl").length, 1, "The control should be rendered");
+		assert.equal(myControl.$().length, 1, "The control should be rendered");
 		myControl.destroy();
 	});
 
@@ -76,7 +76,7 @@ sap.ui.define([
 		assert.expect(4); // control shouldn't rerender itself
 
 		assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class");
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), false, "class should not be in HTML");
+		assert.equal(this.myControl.$().hasClass(sMyClass), false, "class should not be in HTML");
 
 		// ThemeScopingChanged Event should not be fired
 		sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
@@ -92,7 +92,7 @@ sap.ui.define([
 	QUnit.test("call addStyleClass with whitespaces and check with hasStyleClass", function(assert) {
 		this.myControl.addStyleClass("\r \n \t \f  ");
 
-		assert.equal(jQuery.sap.byId("myControl")[0].className, "", "class in HTML shouldn't be changed");
+		assert.equal(this.myControl.$()[0].className, "", "class in HTML shouldn't be changed");
 		assert.equal(this.myControl.hasStyleClass(" "), false, "White space(s) class name should be ignored");
 		assert.equal(this.myControl.hasStyleClass("\r"), false, "White space(s) class name should be ignored");
 		assert.equal(this.myControl.hasStyleClass("\n"), false, "White space(s) class name should be ignored");
@@ -113,7 +113,7 @@ sap.ui.define([
 
 		assert.equal(this.myControl.hasStyleClass(sMyClass), true, "control should now have the class");
 		assert.equal(this.myControl.hasStyleClass(" "), false, "white space class should be ignored");
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), true, "class should now be in HTML");
+		assert.equal(this.myControl.$().hasClass(sMyClass), true, "class should now be in HTML");
 
 		// ThemeScopingChanged Event should not be fired
 		sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
@@ -132,7 +132,7 @@ sap.ui.define([
 		this.myControl.removeStyleClass(" ");
 
 		assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class");
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), false, "class should not be in HTML");
+		assert.equal(this.myControl.$().hasClass(sMyClass), false, "class should not be in HTML");
 
 		this.myControl.removeStyleClass(sMyClass); // should not cause an error or rendering
 
@@ -148,12 +148,12 @@ sap.ui.define([
 		this.myControl.toggleStyleClass(sMyClass);
 
 		assert.equal(this.myControl.hasStyleClass(sMyClass), true, "control should now have the class");
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), true, "class should now be in HTML");
+		assert.equal(this.myControl.$().hasClass(sMyClass), true, "class should now be in HTML");
 
 		this.myControl.toggleStyleClass(sMyClass);
 
 		assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class");
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), false, "class should not be in HTML");
+		assert.equal(this.myControl.$().hasClass(sMyClass), false, "class should not be in HTML");
 
 		// ThemeScopingChanged Event should not be fired
 		sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
@@ -167,12 +167,12 @@ sap.ui.define([
 		this.myControl.toggleStyleClass(sMyClass, true);
 
 		assert.equal(this.myControl.hasStyleClass(sMyClass), true, "control should now have the class");
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), true, "class should now be in HTML");
+		assert.equal(this.myControl.$().hasClass(sMyClass), true, "class should now be in HTML");
 
 		this.myControl.toggleStyleClass(sMyClass, false);
 
 		assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class");
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), false, "class should not be in HTML");
+		assert.equal(this.myControl.$().hasClass(sMyClass), false, "class should not be in HTML");
 
 		// ThemeScopingChanged Event should not be fired
 		sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
@@ -186,12 +186,12 @@ sap.ui.define([
 		this.myControl.addStyleClass(sMyClass);
 		this.myControl.addStyleClass(sMyClass);
 
-		assert.equal(jQuery.sap.byId("myControl")[0].className, "abc", "class should be in HTML only once");
+		assert.equal(this.myControl.$()[0].className, "abc", "class should be in HTML only once");
 
 		this.myControl.removeStyleClass(sMyClass);
 
 		assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class");
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), false, "class should not be in HTML");
+		assert.equal(this.myControl.$().hasClass(sMyClass), false, "class should not be in HTML");
 
 		// ThemeScopingChanged Event should not be fired
 		sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
@@ -206,25 +206,25 @@ sap.ui.define([
 		this.myControl.removeStyleClass(""); // call with empty string shouldn't have any effect
 
 		assert.equal(this.myControl.hasStyleClass(sCombinedClass), true, "control should now have the combined class " + sCombinedClass);
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sCombinedClass), true, "class should now be in HTML");
+		assert.equal(this.myControl.$().hasClass(sCombinedClass), true, "class should now be in HTML");
 
 		assert.equal(this.myControl.hasStyleClass(sMyClass), true, "control should now have the class " + sMyClass);
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), true, "class should now be in HTML");
+		assert.equal(this.myControl.$().hasClass(sMyClass), true, "class should now be in HTML");
 
 		assert.equal(this.myControl.hasStyleClass(sMyClass1), true, "control should now have the class " + sMyClass);
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass1), true, "class should now be in HTML");
+		assert.equal(this.myControl.$().hasClass(sMyClass1), true, "class should now be in HTML");
 
 
 		this.myControl.removeStyleClass(sCombinedClass + " unknownClass"); // remove unknown class shouldn't have any effect
 
 		assert.equal(this.myControl.hasStyleClass(sCombinedClass), false, "control should not have the combined class " + sCombinedClass);
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sCombinedClass), false, "class should not be in HTML");
+		assert.equal(this.myControl.$().hasClass(sCombinedClass), false, "class should not be in HTML");
 
 		assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class " + sMyClass);
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), false, "class should not be in HTML");
+		assert.equal(this.myControl.$().hasClass(sMyClass), false, "class should not be in HTML");
 
 		assert.equal(this.myControl.hasStyleClass(sMyClass1), false, "control should not have the class " + sMyClass1);
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass1), false, "class should not be in HTML");
+		assert.equal(this.myControl.$().hasClass(sMyClass1), false, "class should not be in HTML");
 
 		// ThemeScopingChanged Event should not be fired
 		sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
@@ -239,37 +239,37 @@ sap.ui.define([
 		this.myControl.removeStyleClass(""); // call with empty string shouldn't have any effect
 
 		assert.equal(this.myControl.hasStyleClass(sCombinedClass), true, "control should now have the combined class " + sCombinedClass);
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sCombinedClass), true, "class should now be in HTML");
+		assert.equal(this.myControl.$().hasClass(sCombinedClass), true, "class should now be in HTML");
 
 		assert.equal(this.myControl.hasStyleClass(sMyClass), true, "control should now have the class " + sMyClass);
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), true, "class should now be in HTML");
+		assert.equal(this.myControl.$().hasClass(sMyClass), true, "class should now be in HTML");
 
 		assert.equal(this.myControl.hasStyleClass(sMyClass1), true, "control should now have the class " + sMyClass);
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass1), true, "class should now be in HTML");
+		assert.equal(this.myControl.$().hasClass(sMyClass1), true, "class should now be in HTML");
 
 
 		this.myControl.removeStyleClass(sMyClass1 + " unknownClass"); // remove unknown class shouldn't have any effect
 
 		assert.equal(this.myControl.hasStyleClass(sCombinedClass), false, "control should not have the combined class " + sCombinedClass);
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sCombinedClass), false, "class should not be in HTML");
+		assert.equal(this.myControl.$().hasClass(sCombinedClass), false, "class should not be in HTML");
 
 		assert.equal(this.myControl.hasStyleClass(sMyClass), true, "control should still have the class " + sMyClass);
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), true, "class should still be in HTML");
+		assert.equal(this.myControl.$().hasClass(sMyClass), true, "class should still be in HTML");
 
 		assert.equal(this.myControl.hasStyleClass(sMyClass1), false, "control should not have the class " + sMyClass1);
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass1), false, "class should not be in HTML");
+		assert.equal(this.myControl.$().hasClass(sMyClass1), false, "class should not be in HTML");
 
 
 		this.myControl.removeStyleClass(sMyClass + " unknownClass"); // remove unknown class shouldn't have any effect
 
 		assert.equal(this.myControl.hasStyleClass(sCombinedClass), false, "control should not have the combined class " + sCombinedClass);
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sCombinedClass), false, "class should not be in HTML");
+		assert.equal(this.myControl.$().hasClass(sCombinedClass), false, "class should not be in HTML");
 
 		assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class " + sMyClass);
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), false, "class should not be in HTML");
+		assert.equal(this.myControl.$().hasClass(sMyClass), false, "class should not be in HTML");
 
 		assert.equal(this.myControl.hasStyleClass(sMyClass1), false, "control should not have the class " + sMyClass1);
-		assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass1), false, "class should not be in HTML");
+		assert.equal(this.myControl.$().hasClass(sMyClass1), false, "class should not be in HTML");
 
 		// ThemeScopingChanged Event should not be fired
 		sinon.assert.notCalled(this.fireThemeScopingChangedSpy);

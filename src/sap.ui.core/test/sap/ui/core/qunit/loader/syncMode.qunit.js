@@ -496,7 +496,7 @@
 			var _fnOriginalAppendChild = oHead.appendChild;
 
 			this.callsFakeAppendChild = function(){};
-			this.oAppendChildStub = sinon.stub(oHead, "appendChild", function(oElement) {
+			this.oAppendChildStub = sinon.stub(oHead, "appendChild").callsFake(function(oElement) {
 				this.callsFakeAppendChild(oElement);
 				_fnOriginalAppendChild.apply(oHead, arguments);
 			}.bind(this));

@@ -8,7 +8,7 @@ sap.ui.define(function () {
 				version: 1
 			},
 			sinon: {
-				version: 1,
+				version: 4,
 				qunitBridge: true
 			},
 			ui5: {

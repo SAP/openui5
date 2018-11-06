@@ -50,6 +50,8 @@ sap.ui.define([
 	oLabel.setText("testText");
 	oLabel.placeAt("target1");
 
+	QUnit.module("XMLModel");
+
 	QUnit.test("test model getProperty with context", function(assert) {
 		var oContext = oModel.createBindingContext("/member/6");
 		var value = oModel.getProperty("@lastName", oContext); // relative path when using context

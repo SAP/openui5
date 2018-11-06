@@ -25,7 +25,7 @@ sap.ui.define(function() {
 					theme: "sap_bluecrystal"
 				},
 				sinon: {
-					version: 1,
+					version: 4,
 					qunitBridge: true
 				}
 			},

@@ -1,10 +1,23 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/core/util/MockServer",
-	"sap/ui/core/Control",
-	"sap/ui/core/Element",
-	"sap/ui/model/odata/ODataModel"
-], function (MockServer, Control, Element, ODataModel) {
+    "sap/ui/core/util/MockServer",
+    "sap/ui/core/Control",
+    "sap/ui/core/Element",
+    "sap/ui/model/odata/ODataModel",
+    "jquery.sap.global",
+    "sap/ui/Device",
+    "sap/ui/model/odata/v2/ODataModel",
+    "sap/ui/commons/Label"
+], function(
+    MockServer,
+	Control,
+	Element,
+	ODataModel,
+	jQuery,
+	Device,
+	v2ODataModel,
+	Label
+) {
 	"use strict";
 
 	// notepad control for list binding test
@@ -1202,7 +1215,7 @@ sap.ui.define([
 
 
 	QUnit.test("test Callbacks Merge", function (assert) {
-		if (sap.ui.Device.browser.msie) {
+		if (Device.browser.msie) {
 			assert.ok(true, "IE does not support HTTP MERGE");
 			return;
 		}
@@ -1262,7 +1275,7 @@ sap.ui.define([
 
 
 	QUnit.test("test Callbacks Patch", function (assert) {
-		if (sap.ui.Device.browser.msie) {
+		if (Device.browser.msie) {
 			assert.ok(true, "IE does not support HTTP PATCH");
 			return;
 		}
@@ -3808,7 +3821,7 @@ sap.ui.define([
 		oMockServer.setRequests(aRequests);
 		oMockServer.start();
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sUri, true);
+		var oModel = new v2ODataModel(sUri, true);
 		oModel.setDeferredBatchGroups(["myId"]);
 
 		var fnReadResult = function (oResponse) {
@@ -3886,7 +3899,7 @@ sap.ui.define([
 		oMockServer.setRequests(aRequests);
 		oMockServer.start();
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sUri, true);
+		var oModel = new v2ODataModel(sUri, true);
 		oModel.setDeferredBatchGroups(["myId"]);
 
 		oModel.read("/LeaveItemCollection", {
@@ -4360,7 +4373,7 @@ sap.ui.define([
 		});
 	});
 
-	var oLabel = new sap.ui.commons.Label("myLabel");
+	var oLabel = new Label("myLabel");
 	oLabel.placeAt("target1");
 
 	QUnit.test("test getProperty on label", function (assert) {
@@ -4515,7 +4528,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel("/myservice", true);
+		var oModel = new v2ODataModel("/myservice", true);
 
 		oModel.getMetaModel().loaded().then(function () {
 			oModel.createEntry("CustomerSet", { properties: { ID: "0001", Name: "Gustav" } });
