@@ -4,30 +4,10 @@
 	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
 	<meta charset="utf-8">
 	<title>Opa tests for sap.m.ColorPalettePopover</title>
-	<!-- Bootstrap UI5 -->
-	<script
-			id="sap-ui-bootstrap"
-			src="../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-frameOptions="deny"
-			data-sap-ui-theme="sap_belize"
-			data-sap-ui-resourceroots='{
-				"cp.opa.test.app": "../../",
-				"cp.opa.test.env": "../"
-			}'></script>
-	<!-- QUnit framework (using QUnit 2.x for module nesting feature) -->
-	<link rel="stylesheet" href="../../../../../../../resources/sap/ui/thirdparty/qunit-2.css" type="text/css">
-	<script src="../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
-
-	<script src="../../../../../../../resources/sap/ui/qunit/qunit-coverage.js"
-			data-sap-ui-cover-only="[ColorPalette.js, ColorPalettePopover.js]"></script>
-	<!--<script src="../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>-->
-	<script src="../../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-	<script>
-		// we want to be able to load our tests asynchronously - pause QUnit until we loaded everything
-		QUnit.config.autostart = false;
-		// Require OPA All journeys file
-		sap.ui.require(["cp/opa/test/env/integration/AllJourneys"]);
+	<base href="../../../../../../../">
+	<script src="resources/sap/ui/test/starter/runTest.js"
+		data-sap-ui-testsuite="test-resources/sap/m/qunit/colorpalette/test/integration/testsuite.qunit"
+		data-sap-ui-test="AllJourneys">
 	</script>
 </head>
 <body>
