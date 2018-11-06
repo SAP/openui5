@@ -5,10 +5,12 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/UploadCollectionParameter",
 	"sap/m/library",
+	"sap/m/ObjectAttribute",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/format/FileSizeFormat",
 	"sap/ui/Device"
-], function(jQuery, Controller, ObjectMarker, MessageToast, UploadCollectionParameter, MobileLibrary, JSONModel, FileSizeFormat, Device) {
+], function(jQuery, Controller, ObjectMarker, MessageToast, UploadCollectionParameter, MobileLibrary, ObjectAttribute,
+			JSONModel, FileSizeFormat, Device) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.UploadCollection.Page", {
@@ -20,7 +22,7 @@ sap.ui.define([
 			this.getView().setModel(new JSONModel(Device), "device");
 
 			this.getView().setModel(new JSONModel({
-				"maximumFilenameLength": 10,
+				"maximumFilenameLength": 55,
 				"maximumFileSize": 500,
 				"mode": MobileLibrary.ListMode.SingleSelectMaster,
 				"uploadEnabled": true,
@@ -51,12 +53,27 @@ sap.ui.define([
 				"mime": ["text/plain", "video/mp4", "image/jpg", "application/msword"]
 			}), "fileTypes");
 
+			this.oUC = this.byId("UploadCollection");
+
 			// Sets the text to the label
-			this.byId("UploadCollection").addEventDelegate({
+			this.oUC.addEventDelegate({
 				onBeforeRendering: function() {
 					this.byId("attachmentTitle").setText(this.getAttachmentTitleText());
 				}.bind(this)
 			});
+
+			this.oUC.attachAfterItemAdded(function (oEvent) {
+				var oNewItem = oEvent.getParameter("item");
+				this.updateItemButtons(oNewItem, this.oUC.getMode() !== MobileLibrary.ListMode.MultiSelect);
+				this._oLastItemAdded = oNewItem;
+			}.bind(this));
+		},
+
+		updateItemButtons: function (oItem, bButtonsVisible) {
+			oItem.setEnableEdit(bButtonsVisible);
+			oItem.setVisibleEdit(bButtonsVisible);
+			oItem.setEnableDelete(bButtonsVisible);
+			oItem.setVisibleDelete(bButtonsVisible);
 		},
 
 		createObjectMarker: function(sId, oContext) {
@@ -93,43 +110,16 @@ sap.ui.define([
 			oUploadCollection.addHeaderParameter(oCustomerHeaderToken);
 		},
 
-		onFileDeleted: function(oEvent) {
-			this.deleteItemById(oEvent.getParameter("documentId"));
+		onFileDeleted: function() {
 			MessageToast.show("FileDeleted event triggered.");
 		},
 
-		deleteItemById: function(sItemToDeleteId) {
-			var oData = this.byId("UploadCollection").getModel().getData();
-			var aItems = jQuery.extend(true, {}, oData).items;
-			jQuery.each(aItems, function(index) {
-				if (aItems[index] && aItems[index].documentId === sItemToDeleteId) {
-					aItems.splice(index, 1);
-				}
-			});
-			this.byId("UploadCollection").getModel().setData({
-				"items": aItems
-			});
-			this.byId("attachmentTitle").setText(this.getAttachmentTitleText());
-		},
-
 		deleteMultipleItems: function(aItemsToDelete) {
-			var oData = this.byId("UploadCollection").getModel().getData();
-			var nItemsToDelete = aItemsToDelete.length;
-			var aItems = jQuery.extend(true, {}, oData).items;
-			var i = 0;
-			jQuery.each(aItems, function(index) {
-				if (aItems[index]) {
-					for (i = 0; i < nItemsToDelete; i++) {
-						if (aItems[index].documentId === aItemsToDelete[i].getDocumentId()) {
-							aItems.splice(index, 1);
-						}
-					}
-				}
+			var oUploadCollection = this.byId("UploadCollection");
+			aItemsToDelete.forEach(function (oItem) {
+				oUploadCollection.removeAggregation("items", oItem, true);
 			});
-			this.byId("UploadCollection").getModel().setData({
-				"items": aItems
-			});
-			this.byId("attachmentTitle").setText(this.getAttachmentTitleText());
+			oUploadCollection.invalidate();
 		},
 
 		onFilenameLengthExceed: function() {
@@ -160,46 +150,17 @@ sap.ui.define([
 		},
 
 		onUploadComplete: function(oEvent) {
-			var oUploadCollection = this.byId("UploadCollection");
-			var oData = oUploadCollection.getModel().getData();
-
-			oData.items.unshift({
-				"documentId": jQuery.now().toString(), // generate Id,
-				"fileName": oEvent.getParameter("files")[0].fileName,
-				"mimeType": "",
-				"thumbnailUrl": "",
-				"url": "",
-				"attributes": [
-					{
-						"title": "Uploaded By",
-						"text": "You",
-						"active": false
-					},
-					{
-						"title": "Uploaded On",
-						"text": new Date(jQuery.now()).toLocaleDateString(),
-						"active": false
-					},
-					{
-						"title": "File Size",
-						"text": "505000",
-						"active": false
-					}
-				],
-				"statuses": [
-					{
-						"title": "",
-						"text": "",
-						"state": "None"
-					}
-				],
-				"markers": [
-					{
-					}
-				],
-				"selected": false
-			});
-			this.getView().getModel().refresh();
+			var oItem = oEvent.getParameter("item");
+			if (oItem) {
+				oItem.setDocumentId(jQuery.now().toString());
+				// Remove default no-title size attribute and add them fresh
+				oItem.removeAllAttributes();
+				oItem.removeAllAggregation("_propertyAttributes", true);
+				oItem.addAggregation("attributes", new ObjectAttribute({title: "Uploaded By", text: "You", active: false}, true));
+				oItem.addAggregation("attributes", new ObjectAttribute({title: "Uploaded On", text: new Date(jQuery.now()).toLocaleDateString(), active: false}, true));
+				oItem.addAggregation("attributes", new ObjectAttribute({title: "File Size", text: this._oLastItemAdded._getFileObject().size, active: false}, true));
+				oItem.invalidate();
+			}
 
 			// Sets the text to the label
 			this.byId("attachmentTitle").setText(this.getAttachmentTitleText());
@@ -218,15 +179,6 @@ sap.ui.define([
 			});
 			oEvent.getParameters().addHeaderParameter(oCustomerHeaderSlug);
 			MessageToast.show("BeforeUploadStarts event triggered.");
-		},
-
-		onUploadTerminated: function() {
-			/*
-			// get parameter file name
-			var sFileName = oEvent.getParameter("fileName");
-			// get a header parameter (in case no parameter specified, the callback function getHeaderParameter returns all request headers)
-			var oRequestHeaders = oEvent.getParameters().getHeaderParameter();
-			*/
 		},
 
 		onFileTypeChange: function(oEvent) {
@@ -261,16 +213,11 @@ sap.ui.define([
 		},
 
 		onModeChange: function(oEvent) {
-			var oSettingsModel = this.getView().getModel("settings");
-			if (oEvent.getParameters().selectedItem.getProperty("key") === MobileLibrary.ListMode.MultiSelect) {
-				oSettingsModel.setProperty("/visibleEdit", false);
-				oSettingsModel.setProperty("/visibleDelete", false);
-				this.enableToolbarItems(true);
-			} else {
-				oSettingsModel.setProperty("/visibleEdit", true);
-				oSettingsModel.setProperty("/visibleDelete", true);
-				this.enableToolbarItems(false);
-			}
+			var bMulti = (oEvent.getParameters().selectedItem.getProperty("key") === MobileLibrary.ListMode.MultiSelect);
+			this.oUC.getItems().forEach(function (oItem) {
+				this.updateItemButtons(oItem, !bMulti);
+			}.bind(this));
+			this.enableToolbarItems(bMulti);
 		},
 
 		enableToolbarItems: function(status) {

@@ -447,7 +447,11 @@ sap.ui.define([
 						 * Since 1.28.0.
 						 * @since 1.28.0
 						 */
-						files: {type: "object[]"}
+						files: {type: "object[]"},
+						/**
+						 * The item whose upload has just been completed.
+						 */
+						item: {type: "sap.m.UploadCollectionItem"}
 					}
 				},
 				/**
@@ -561,6 +565,13 @@ sap.ui.define([
 		});
 		this.setAggregation("_list", this._oList, true);
 		this._oList.addStyleClass("sapMUCList");
+		this._oListEventDelegate = {
+			onclick: function(oEvent) {
+				this._handleClick(oEvent, null);
+			}.bind(this)
+		};
+		this._oList.addDelegate(this._oListEventDelegate);
+
 		this.setAggregation("_noDataIcon", new Icon(this.getId() + "-no-data-icon", {
 			src: "sap-icon://document",
 			size: "6rem",
@@ -926,24 +937,20 @@ sap.ui.define([
 		this._bindDragEnterLeave();
 		this._registerSizeHandler();
 
-		if (this.getInstantUpload()) {
-			if (this._oEditModeItem) {
-				var $oEditBox = this._oEditModeItem.$(UploadCollectionItem.FILE_NAME_EDIT_ID + "-inner");
-				if ($oEditBox) {
-					if (!Device.os.ios) {
-						$oEditBox.focus(function () {
-							$oEditBox.selectText(0, $oEditBox.val().length);
-						});
-					}
-					$oEditBox.focus();
-					this._oListEventDelegate = {
-						onclick: function (event) {
-							this._handleClick(event, this._oEditModeItem);
-						}.bind(this)
-					};
-					this._oList.addDelegate(this._oListEventDelegate);
+		if (this._oEditModeItem) {
+			var $oEditBox = this._oEditModeItem._getFileNameEdit().$("inner");
+			if ($oEditBox) {
+				if (!Device.os.ios) {
+					$oEditBox.focus(function () {
+						$oEditBox.selectText(0, $oEditBox.val().length);
+					});
 				}
-			} else if (this._sFocusId) {
+				$oEditBox.focus();
+			}
+		}
+
+		if (this.getInstantUpload()) {
+			if (this._sFocusId) {
 				// Set focus on line item after status = Edit
 				this._setFocusToLineItem(this._sFocusId);
 				this._sFocusId = null;
@@ -1418,7 +1425,7 @@ sap.ui.define([
 		}
 
 		this.fireFileDeleted({
-			documentId: this._oItemToBeDeleted.documentId,
+			documentId: this._oItemToBeDeleted.getDocumentId(),
 			item: this._oItemToBeDeleted
 		});
 		this.removeItem(this._oItemToBeDeleted);
@@ -1790,19 +1797,19 @@ sap.ui.define([
 
 	/**
 	 * Handling of the Event uploadTerminated of the fileUploader
-	 * @param {sap.ui.base.Event} event Event of the fileUploader
+	 * @param {sap.ui.base.Event} oEvent Event of the fileUploader
 	 * @private
 	 */
-	UploadCollection.prototype._onUploadTerminated = function (event) {
-		var sRequestId = this._getRequestId(event);
-		var sFileName = event.getParameter("fileName");
+	UploadCollection.prototype._onUploadTerminated = function (oEvent) {
+		var sRequestId = this._getRequestId(oEvent);
+		var sFileName = oEvent.getParameter("fileName");
 
 		var oItem = this._mRequestIdToItemMap[sRequestId];
 		this.removeItem(oItem);
 
 		this.fireUploadTerminated({
 			fileName: sFileName,
-			getHeaderParameter: this._getHeaderParameterWithinEvent.bind(event)
+			getHeaderParameter: this._getHeaderParameterWithinEvent.bind(oEvent)
 		});
 	};
 
@@ -1836,7 +1843,8 @@ sap.ui.define([
 						status: oEvent.getParameter("status"),
 						headers: oEvent.getParameter("headers")
 					}
-				]
+				],
+				item: oItem
 			});
 		}
 		this.invalidate();
@@ -2138,26 +2146,26 @@ sap.ui.define([
 
 	/**
 	 * Handle of keyboard activity ESC.
-	 * @param {sap.ui.base.Event} event The SAPUI5 event object
+	 * @param {sap.ui.base.Event} oEvent The SAPUI5 oEvent object
 	 * @private
 	 */
-	UploadCollection.prototype._handleESC = function (event) {
+	UploadCollection.prototype._handleESC = function (oEvent) {
 		if (this._oEditModeItem) {
 			this._sFocusId = this._oEditModeItem + "-cli";
-			this._handleCancel(event, this._oEditModeItem);
+			this._handleCancel(oEvent, this._oEditModeItem);
 		}
 	};
 
 	/**
 	 * Handle of keyboard activity F2.
-	 * @param {sap.ui.base.Event} event The SAPUI5 event object
+	 * @param {sap.ui.base.Event} oEvent The SAPUI5 oEvent object
 	 * @private
 	 */
-	UploadCollection.prototype._handleF2 = function (event) {
+	UploadCollection.prototype._handleF2 = function (oEvent) {
 		if (this._oEditModeItem) {
-			this._handleOk(event, this._oEditModeItem);
+			this._handleOk(oEvent, this._oEditModeItem);
 		} else if (this.getSelectedItem()) {
-			this._handleEdit(event, this.getSelectedItem());
+			this._handleEdit(oEvent, this.getSelectedItem());
 		}
 	};
 

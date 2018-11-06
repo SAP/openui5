@@ -2511,10 +2511,10 @@ sap.ui.define(function() {
 					version: 2
 				},
 				sinon: {
-					version: 4
+					version: 1
 				},
 				coverage: {
-					only: "[sap/m/UploadCollection.js,sap/m/UploadCollectionParameter.js,sap/m/UploadCollectionToolbarPlaceholder.js,sap/m/UploadCollectionRenderer.js]"
+					only: "[sap/m/UploadCollection.js,sap/m/UploadCollectionParameter.js,sap/m/UploadCollectionToolbarPlaceholder.js,sap/m/UploadCollectionRenderer.js,sap/m/UploadCollectionItem.js]"
 				},
 				ui5: {
 					language: "en"
@@ -2526,23 +2526,10 @@ sap.ui.define(function() {
 					"./UploadCollectionMemoryLeak.qunit",
 					"./UploadCollectionOpenFileDialog.qunit",
 					"./UploadCollectionToolbar.qunit",
+					"./uploadCollection/UploadCollection.qunit",
+					"./uploadCollection/UploadCollectionItem.qunit",
 					"./uploadCollection/UploadCollectionRestrictions.qunit"
 				]
-			},
-			UploadCollectionItem: {
-				title: "Test Page for sap.m.UploadCollectionItem",
-				ui5: {
-					language: "en"
-				},
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
-				coverage: {
-					only: "sap/m/UploadCollectionItem.js"
-				}
 			},
 			VBox: {
 				title: "QUnit Page for sap.m.VBox"

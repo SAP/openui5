@@ -25,6 +25,7 @@
 			instantUpload="false"
 			noDataDescription="Drop files or use the &quot;+&quot; button for pending upload"
 			change="onChange"
+			afterItemAdded="onAfterItemAdded"
 			fileDeleted="onFileDeleted"
 			filenameLengthExceed="onFilenameLengthExceed"
 			fileSizeExceed="onFileSizeExceed"
