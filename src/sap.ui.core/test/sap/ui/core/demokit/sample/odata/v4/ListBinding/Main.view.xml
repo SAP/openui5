@@ -12,6 +12,10 @@
 		<Select ariaLabelledBy="teamTitle" id="TeamSelect" change="onTeamSelect"
 			autoAdjustWidth="true"
 			items="{
+				events : {
+					dataRequested : '.onTeamsRequested',
+					dataReceived : '.onTeamsReceived'
+				},
 				path : '/TEAMS',
 				parameters : {
 					$expand : {
