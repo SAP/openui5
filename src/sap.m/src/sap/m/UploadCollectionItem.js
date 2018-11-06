@@ -235,6 +235,14 @@ sap.ui.define([
 		return this._oFile;
 	};
 
+	UploadCollectionItem.prototype._handleItemSetSelected = function () {
+		this._getListItem().setSelected(this.getSelected());
+	};
+
+	/* ============== */
+	/* Inner Controls */
+	/* ============== */
+
 	UploadCollectionItem.prototype._getListItem = function () {
 		var sListItemId,
 			oBusyIndicator, oItemIcon,
@@ -268,8 +276,48 @@ sap.ui.define([
 		return this._oListItem;
 	};
 
-	UploadCollectionItem.prototype._handleItemSetSelected = function () {
-		this._getListItem().setSelected(this.getSelected());
+	UploadCollectionItem.prototype._getIcon = function () {
+		var oParent = this.getParent(),
+			sThumbnailUrl, sThumbnail, sStyleClass;
+
+		if (!this._oIcon) {
+			sThumbnailUrl = this.getThumbnailUrl();
+			if (sThumbnailUrl) {
+				this._oIcon = IconPool.createControlByURI({
+					id: this.getId() + "-ia_imageHL",
+					src: UploadCollectionItem._getThumbnail(sThumbnailUrl, this.getFileName()),
+					decorative: false
+				}, Image).addStyleClass("sapMUCItemImage sapMUCItemIcon");
+				this._oIcon.setAlt(this._getAriaLabelForPicture()); //Set the alt property directly to avoid some additional logic in the icon's constructor
+			} else {
+				sThumbnail = UploadCollectionItem._getThumbnail(undefined, this.getFileName());
+				this._oIcon = new Icon(this.getId() + "-ia_iconHL", {
+					src: sThumbnail,
+					decorative: false,
+					useIconTooltip: false
+				});
+				this._oIcon.setAlt(this._getAriaLabelForPicture()); //Set the alt property directly to avoid some additional logic in the icon's constructor
+				//Sets the right style class depending on the icon/placeholder status (clickable or not)
+				if (!this._bContainsError && jQuery.trim(this.getUrl())) {
+					sStyleClass = "sapMUCItemIcon";
+				} else {
+					sStyleClass = "sapMUCItemIconInactive";
+				}
+				if (sThumbnail === UploadCollectionItem.CARD_ICON) {
+					if (!this._bContainsError && jQuery.trim(this.getUrl())) {
+						sStyleClass = sStyleClass + " sapMUCItemPlaceholder";
+					} else {
+						sStyleClass = sStyleClass + " sapMUCItemPlaceholderInactive";
+					}
+				}
+				this._oIcon.addStyleClass(sStyleClass);
+			}
+			if (this._getPressEnabled() && !this._bContainsError) {
+				this._oIcon.attachPress(this, oParent._onItemPressed, oParent);
+			}
+		}
+
+		return this._oIcon;
 	};
 
 	UploadCollectionItem.prototype._getProgressLabel = function () {
@@ -309,6 +357,23 @@ sap.ui.define([
 		}
 	};
 
+	UploadCollectionItem.prototype._getFileNameLink = function () {
+		var oParent = this.getParent();
+		if (!this._oFileNameLink) {
+			this._oFileNameLink = new Link({
+				id: this.getId() + "-ta_filenameHL",
+				press: [this, oParent._onItemPressed, oParent]
+			});
+			this._oFileNameLink.setEnabled(this._getPressEnabled() && !this._bContainsError);
+			this._oFileNameLink.addStyleClass("sapMUCFileName");
+			this._oFileNameLink.setModel(this.getModel());
+			this._oFileNameLink.setText(this.getFileName());
+			this.addDependent(this._oFileNameLink);
+		}
+
+		return this._oFileNameLink;
+	};
+
 	UploadCollectionItem.prototype._getEditButton = function () {
 		var oParent = this.getParent();
 		if (!this._oEditButton) {
@@ -326,6 +391,55 @@ sap.ui.define([
 		}
 
 		return this._oEditButton;
+	};
+
+	UploadCollectionItem.prototype._getFileNameEdit = function () {
+		var oParent = this.getParent(),
+			oFile,
+			iMaxLength;
+
+		if (!this._oFileNameEdit) {
+			oFile = UploadCollectionItem._splitFileName(this.getFileName());
+			iMaxLength = oParent.getMaximumFilenameLength();
+
+			this._oFileNameEdit = new Input({
+				id: this.getId() + "-" + UploadCollectionItem.FILE_NAME_EDIT_ID,
+				type: Library.InputType.Text
+			});
+			this._oFileNameEdit.addStyleClass("sapMUCEditBox");
+			this._oFileNameEdit.setModel(this.getModel());
+			this._oFileNameEdit.setFieldWidth("75%");
+			this._oFileNameEdit.setDescription(oFile.extension);
+			if (oFile.extension && (iMaxLength - oFile.extension.length) > 0) {
+				this._oFileNameEdit.setProperty("maxLength", iMaxLength - oFile.extension.length, true);
+			}
+			this._updateFileNameEdit();
+			this.addDependent(this._oFileNameEdit);
+		}
+
+		return this._oFileNameEdit;
+	};
+
+	UploadCollectionItem.prototype._updateFileNameEdit = function () {
+		var oEdit = this._getFileNameEdit();
+
+		if (!this._bIsEdited) {
+			var oFile = UploadCollectionItem._splitFileName(this.getFileName());
+			oEdit.setValue(oFile.name);
+		}
+		if (this._bContainsError) {
+			oEdit.setValueState(ValueState.Error);
+			oEdit.setValueStateText("");
+			oEdit.setShowValueStateMessage(true);
+		} else {
+			oEdit.setValueState(ValueState.None);
+			if (oEdit.getValue().length === 0) {
+				oEdit.setValueStateText(this._oRb.getText("UPLOADCOLLECTION_TYPE_FILENAME"));
+			} else {
+				oEdit.setValueStateText(this._oRb.getText("UPLOADCOLLECTION_EXISTS"));
+			}
+			oEdit.setShowValueStateMessage(false);
+		}
 	};
 
 	UploadCollectionItem.prototype._getDeleteButton = function () {
@@ -396,6 +510,10 @@ sap.ui.define([
 
 		return this._oCancelRenameButton;
 	};
+
+	/* ============== */
+	/* Rendering etc. */
+	/* ============== */
 
 	UploadCollectionItem.prototype._renderButtons = function (oRm) {
 		var aButtons = this._getButtons(),
@@ -495,24 +613,11 @@ sap.ui.define([
 		}
 	};
 
-	UploadCollectionItem.prototype._getFileNameLink = function () {
-		var oParent = this.getParent();
-		if (!this._oFileNameLink) {
-			this._oFileNameLink = new Link({
-				id: this.getId() + "-ta_filenameHL",
-				press: [this, oParent._onItemPressed, oParent]
-			});
-			this._oFileNameLink.setEnabled(this._getPressEnabled() && !this._bContainsError);
-			this._oFileNameLink.addStyleClass("sapMUCFileName");
-			this._oFileNameLink.setModel(this.getModel());
-			this._oFileNameLink.setText(this.getFileName());
-			this.addDependent(this._oFileNameLink);
-		}
-
-		return this._oFileNameLink;
-	};
-
 	UploadCollectionItem.prototype._setIsEdited = function (bIsEdited) {
+		if (bIsEdited && !this._bIsEdited) {
+			var oFile = UploadCollectionItem._splitFileName(this.getFileName());
+			this._getFileNameEdit().setValue(oFile.name);
+		}
 		this._bIsEdited = bIsEdited;
 		this._setContainsError(false);
 		this.invalidate();
@@ -527,52 +632,9 @@ sap.ui.define([
 		this._updateFileNameEdit();
 	};
 
-	UploadCollectionItem.prototype._updateFileNameEdit = function () {
-		if (!this._bIsEdited) {
-			var oFile = UploadCollectionItem._splitFileName(this.getFileName());
-			this._oFileNameEdit.setValue(oFile.name);
-		}
-		if (this._bContainsError) {
-			this._oFileNameEdit.setValueState(ValueState.Error);
-			this._oFileNameEdit.setValueStateText("");
-			this._oFileNameEdit.setShowValueStateMessage(false);
-		} else {
-			this._oFileNameEdit.setValueState(ValueState.None);
-			if (this._oFileNameEdit.getValue().length === 0) {
-				this._oFileNameEdit.setValueStateText(this._oRb.getText("UPLOADCOLLECTION_TYPE_FILENAME"));
-			} else {
-				this._oFileNameEdit.setValueStateText(this._oRb.getText("UPLOADCOLLECTION_EXISTS"));
-			}
-			this._oFileNameEdit.setShowValueStateMessage(true);
-		}
-	};
-
-	UploadCollectionItem.prototype._getFileNameEdit = function () {
-		var oParent = this.getParent(),
-			oFile,
-			iMaxLength;
-
-		if (!this._oFileNameEdit) {
-			oFile = UploadCollectionItem._splitFileName(this.getFileName());
-			iMaxLength = oParent.getMaximumFilenameLength();
-
-			this._oFileNameEdit = new Input({
-				id: this.getId() + "-" + UploadCollectionItem.FILE_NAME_EDIT_ID,
-				type: Library.InputType.Text
-			});
-			this._oFileNameEdit.addStyleClass("sapMUCEditBox");
-			this._oFileNameEdit.setModel(this.getModel());
-			this._oFileNameEdit.setFieldWidth("75%");
-			this._oFileNameEdit.setDescription(oFile.extension);
-			if (oFile.extension && (iMaxLength - oFile.extension.length) > 0) {
-				this._oFileNameEdit.setProperty("maxLength", iMaxLength - oFile.extension.length, true);
-			}
-			this._updateFileNameEdit();
-			this.addDependent(this._oFileNameEdit);
-		}
-
-		return this._oFileNameEdit;
-	};
+	/* ============ */
+	/* Restrictions */
+	/* ============ */
 
 	/**
 	 * Checks if and how the file type restriction changed for this item.
@@ -937,50 +999,6 @@ sap.ui.define([
 	UploadCollectionItem.prototype._getAriaLabelForPicture = function () {
 		// Prerequisite: the items have field names or the app provides explicit texts for pictures
 		return this.getAriaLabelForPicture() || this.getFileName();
-	};
-
-	UploadCollectionItem.prototype._getIcon = function () {
-		var oParent = this.getParent(),
-			sThumbnailUrl, sThumbnail, sStyleClass;
-
-		if (!this._oIcon) {
-			sThumbnailUrl = this.getThumbnailUrl();
-			if (sThumbnailUrl) {
-				this._oIcon = IconPool.createControlByURI({
-					id: this.getId() + "-ia_imageHL",
-					src: UploadCollectionItem._getThumbnail(sThumbnailUrl, this.getFileName()),
-					decorative: false
-				}, Image).addStyleClass("sapMUCItemImage sapMUCItemIcon");
-				this._oIcon.setAlt(this._getAriaLabelForPicture()); //Set the alt property directly to avoid some additional logic in the icon's constructor
-			} else {
-				sThumbnail = UploadCollectionItem._getThumbnail(undefined, this.getFileName());
-				this._oIcon = new Icon(this.getId() + "-ia_iconHL", {
-					src: sThumbnail,
-					decorative: false,
-					useIconTooltip: false
-				});
-				this._oIcon.setAlt(this._getAriaLabelForPicture()); //Set the alt property directly to avoid some additional logic in the icon's constructor
-				//Sets the right style class depending on the icon/placeholder status (clickable or not)
-				if (!this._bContainsError && jQuery.trim(this.getUrl())) {
-					sStyleClass = "sapMUCItemIcon";
-				} else {
-					sStyleClass = "sapMUCItemIconInactive";
-				}
-				if (sThumbnail === UploadCollectionItem.CARD_ICON) {
-					if (!this._bContainsError && jQuery.trim(this.getUrl())) {
-						sStyleClass = sStyleClass + " sapMUCItemPlaceholder";
-					} else {
-						sStyleClass = sStyleClass + " sapMUCItemPlaceholderInactive";
-					}
-				}
-				this._oIcon.addStyleClass(sStyleClass);
-			}
-			if (this._getPressEnabled() && !this._bContainsError) {
-				this._oIcon.attachPress(this, oParent._onItemPressed, oParent);
-			}
-		}
-
-		return this._oIcon;
 	};
 
 	UploadCollectionItem.prototype._getButtons = function () {
