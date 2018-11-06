@@ -29,7 +29,7 @@ sap.ui.define([
 			if (sPreviousHash !== undefined) {
 				window.history.go(-1);
 			} else {
-				this.getOwnerComponent().getRouter().navTo("masterlist", null, true);
+				this.getOwnerComponent().getRouter().navTo("masterList", null, true);
 			}
 		},
 
