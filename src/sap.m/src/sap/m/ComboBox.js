@@ -602,8 +602,6 @@ sap.ui.define([
 				return;
 			}
 
-			this.$().addClass("sapMFocus");
-
 			var bToggleOpenState = (this.getPickerType() === "Dropdown");
 
 			this.loadItems(function() {
@@ -830,6 +828,10 @@ sap.ui.define([
 				// notice that the "aria-activedescendant" attribute is set when the currently active descendant is
 				// visible and in view
 				oItem && oDomRef.setAttribute("aria-activedescendant", oItem.getId());
+			}
+
+			if (oItem) {
+				this.$().removeClass("sapMFocus");
 			}
 
 			// if there is a selected item, scroll and show the list
