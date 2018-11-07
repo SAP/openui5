@@ -276,7 +276,7 @@ sap.ui.define([
 
 			// load the ResourceBundle relative to the manifest
 			return ResourceBundle.create({
-				url: this.resolveUri(oI18nURI, "manifest").toString(),
+				url: this._resolveUri(oI18nURI, "manifest").toString(),
 				async: bAsync
 			});
 
@@ -419,7 +419,7 @@ sap.ui.define([
 						// load javascript file
 						var m = sFile.match(/\.js$/i);
 						if (m) {
-							//var sJsUrl = this.resolveUri(new URI(sFile.slice(0, m.index))).toString();
+							//var sJsUrl = this.resolveUri(sFile.slice(0, m.index));
 							var sJsUrl = sComponentName.replace(/\./g, '/') + (sFile.slice(0, 1) === '/' ? '' : '/') + sFile.slice(0, m.index);
 							Log.info("Component \"" + sComponentName + "\" is loading JS: \"" + sJsUrl + "\"");
 							// call internal sap.ui.require variant that accepts a requireJS path and loads the module synchronously
@@ -435,7 +435,7 @@ sap.ui.define([
 				for (var j = 0; j < aCSSResources.length; j++) {
 					var oCSSResource = aCSSResources[j];
 					if (oCSSResource.uri) {
-						var sCssUrl = this.resolveUri(new URI(oCSSResource.uri)).toString();
+						var sCssUrl = this.resolveUri(oCSSResource.uri);
 						Log.info("Component \"" + sComponentName + "\" is loading CSS: \"" + sCssUrl + "\"");
 						includeStylesheet(sCssUrl, {
 							id: oCSSResource.id,
@@ -562,7 +562,7 @@ sap.ui.define([
 						Log.error("Resource root for \"" + sResourceRoot + "\" is absolute and therefore won't be registered! \"" + sResourceRootPath + "\"", this.getComponentName());
 						continue;
 					}
-					sResourceRootPath = this.resolveUri(oResourceRootURI).toString();
+					sResourceRootPath = this._resolveUri(oResourceRootURI).toString();
 					var mPaths = {};
 					mPaths[sResourceRoot.replace(/\./g, "/")] = sResourceRootPath;
 					sap.ui.loader.config({paths:mPaths});
@@ -590,12 +590,29 @@ sap.ui.define([
 		 * or optional relative to the manifest when passing 'manifest'
 		 * as second parameter.
 		 *
+		 * @param {string} sUri URI to resolve as string
+		 * @param {string} [sRelativeTo='component'] defines to which base URI the given URI will be resolved to; one of ‘component' (default) or 'manifest'
+		 * @return {string} resolved URI as string
+		 * @public
+		 * @since 1.60.1
+		 */
+		resolveUri: function(sUri, sRelativeTo) {
+			var oUri = this._resolveUri(new URI(sUri), sRelativeTo);
+			return oUri && oUri.toString();
+		},
+
+
+		/**
+		 * Resolves the given URI relative to the Component by default
+		 * or optional relative to the manifest when passing 'manifest'
+		 * as second parameter.
+		 *
 		 * @param {URI} oUri URI to resolve
 		 * @param {string} [sRelativeTo] defines to which base URI the given URI will be resolved to; one of ‘component' (default) or 'manifest'
 		 * @return {URI} resolved URI
 		 * @private
 		 */
-		resolveUri: function(oUri, sRelativeTo) {
+		_resolveUri: function(oUri, sRelativeTo) {
 			return Manifest._resolveUriRelativeTo(oUri, sRelativeTo === "manifest" ? this._oManifestBaseUri : this._oBaseUri);
 		},
 
