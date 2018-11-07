@@ -141,7 +141,7 @@ sap.ui.require([
 										new RadioButton("rb7", {text: "Success", select: handleValueStateChange}),
 										new RadioButton("rb8", {text: "Warning", select: handleValueStateChange}),
 										new RadioButton("rb9", {text: "Error", select: handleValueStateChange}),
-										new RadioButton("rb10", {text: "Highlight", select: handleValueStateChange}),
+										new RadioButton("rb10", {text: "Information", select: handleValueStateChange}),
 										new RadioButton("rb11", {text: "None", select: handleValueStateChange})
 									]
 								})
