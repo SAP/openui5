@@ -1366,7 +1366,7 @@ sap.ui.define([
 
 							// resolve relative to component
 							var oAnnotationSourceManifest = mConfig.origin.dataSources[aAnnotations[i]] || oManifest;
-							var sAnnotationUri = oAnnotationSourceManifest.resolveUri(oAnnotationUri).toString();
+							var sAnnotationUri = oAnnotationSourceManifest._resolveUri(oAnnotationUri).toString();
 
 							// add uri to annotationURI array in settings (this parameter applies for ODataModel v1 & v2)
 							oModelConfig.settings = oModelConfig.settings || {};
@@ -1404,7 +1404,7 @@ sap.ui.define([
 
 				// resolve URI relative to component which defined it
 				var oUriSourceManifest = (bIsDataSourceUri ? mConfig.origin.dataSources[oModelConfig.dataSource] : mConfig.origin.models[sModelName]) || oManifest;
-				oUri = oUriSourceManifest.resolveUri(oUri);
+				oUri = oUriSourceManifest._resolveUri(oUri);
 
 				// inherit sap-specific parameters from document (only if "sap.app/dataSources" reference is defined)
 				if (oModelConfig.dataSource) {
@@ -1614,7 +1614,7 @@ sap.ui.define([
 				/* eslint-disable no-loop-func */
 				oModelConfig.settings.enhanceWith.forEach(function(mBundle) {
 					if (mBundle.bundleUrl) {
-						mBundle.bundleUrl = oManifest.resolveUri(new URI(mBundle.bundleUrl), mBundle.bundleUrlRelativeTo).toString();
+						mBundle.bundleUrl = oManifest.resolveUri(mBundle.bundleUrl, mBundle.bundleUrlRelativeTo);
 					}
 				});
 				/* eslint-enable no-loop-func */
