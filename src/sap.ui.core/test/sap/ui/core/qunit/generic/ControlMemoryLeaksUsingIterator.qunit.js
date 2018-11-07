@@ -16,12 +16,15 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/ControlIterator",
 	"sap/ui/qunit/utils/MemoryLeakCheck",
+	"sap/base/util/UriParameters",
 	"./helper/_LoadingIndicator",
 	"./helper/_cleanupStyles"
-], function(ControlIterator, MemoryLeakCheck, LoadingIndicator) {
+], function(ControlIterator, MemoryLeakCheck, UriParameters, LoadingIndicator) {
 	"use strict";
 
-	var loadingIndicator = new LoadingIndicator("Discovering and loading all libraries and controls... this will take a while... ");
+	var loadingIndicator = new LoadingIndicator("Discovering and loading all libraries and controls... this will take a while... ",
+			"NOTE: you can select a specific library using the URL parameter 'library' (e.g. ...&library=sap.m) and/or a specific control using the URL parameter 'control' " +
+			"with the full name of the control (e.g. ...&control=sap.m.Button). Giving both reduces the scanning time.");
 
 	var aExcludedControls = [
 		"sap.m.internal.NumericInput",
@@ -51,10 +54,7 @@ sap.ui.define([
 	function collectControls() {
 		var aControls = [];
 
-		ControlIterator.run(function(sControlName, oControlClass, oInfo) { // loop over all controls
-			loadingIndicator.update(sControlName); // not really updated visually (except in Firefox), but in theory the info is there  :-)
-			aControls.push({name: sControlName, controlClass: oControlClass, info: oInfo});
-		},{
+		var mOptions = {
 			excludedControls: aExcludedControls,
 			excludedLibraries: ["sap.viz"],
 			done: function(oResultInfo) {
@@ -69,7 +69,22 @@ sap.ui.define([
 
 				QUnit.start();
 			}
-		});
+		};
+
+		var sLib = new UriParameters(window.location.href).get("library");
+		if (sLib) {
+			mOptions.librariesToTest = [sLib];
+		}
+
+		var sControl = new UriParameters(window.location.href).get("control");
+		if (sControl) {
+			mOptions.controlsToTest = [sControl];
+		}
+
+		ControlIterator.run(function(sControlName, oControlClass, oInfo) { // loop over all controls
+			loadingIndicator.update(sControlName);
+			aControls.push({name: sControlName, controlClass: oControlClass, info: oInfo});
+		}, mOptions);
 	}
 
 	collectControls();
