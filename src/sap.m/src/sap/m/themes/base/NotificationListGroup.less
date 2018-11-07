@@ -216,30 +216,3 @@ html[data-sap-ui-browser*='ie'] .sapMNLG-SubHeader .sapMBtnInner {
 		}
 	}
 }
-
-/* Focus Styles
-  ========================================================================== */
-
-html.sap-desktop .sapMNLG:focus::before {
-	border: 1px dotted @sapUiContentFocusColor;
-	position: absolute;
-	content: " ";
-	top: 1px;
-	right: 1px;
-	bottom: 1px;
-	left: 1px;
-	z-index: 2;
-	pointer-events: none;
-}
-
-html.sap-desktop .sapMLIB.sapMNLG:focus {
-	outline: none;
-}
-
-html[data-sap-ui-browser^="ie"].sap-desktop,// TODO remove after 1.62 version
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMNLG:focus::before {
-		border: 1px dashed @sapUiContentFocusColor;
-
-	}
-}
