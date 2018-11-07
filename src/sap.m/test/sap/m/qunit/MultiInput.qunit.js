@@ -1689,4 +1689,24 @@ sap.ui.define([
 		// clean up
 		oMultiInput.destroy();
 	});
+
+	QUnit.module("Destroyers");
+
+	QUnit.test("Destroy properly internal lists", function (assert) {
+		// arrange
+		var oMultiInput = new MultiInput({
+			editable: true
+		});
+		var oList  = oMultiInput._oSelectedItemsList;
+		oMultiInput.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oMultiInput.destroy();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(!oMultiInput._oSelectedItemsList, "The SelectedItemsList gets detached");
+		assert.ok(oMultiInput._oSelectedItemsList != oList, "The SelectedItemsList gets cleaned properly");
+	});
 });

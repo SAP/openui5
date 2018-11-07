@@ -280,6 +280,11 @@ function(
 			this._oSelectedItemPicker = null;
 		}
 
+		if (this._oSelectedItemsList) {
+			this._oSelectedItemsList.destroy();
+			this._oSelectedItemsList = null;
+		}
+
 		if (this._getReadOnlyPopover()) {
 			var oReadOnlyPopover = this._getReadOnlyPopover();
 			oReadOnlyPopover.destroy();
