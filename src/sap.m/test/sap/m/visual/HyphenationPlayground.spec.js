@@ -100,10 +100,6 @@ describe("sap.m.HyphenationPlayground", function() {
 		}
 	};
 
-	it("should load test page", function () {
-		expect(takeScreenshot()).toLookAs("0_initial");
-	});
-
 	for ( var index = 0; index < aLangCodes.length; index++) {
 		fnTakePictures(aLangCodes[index], index + 1);
 	}
