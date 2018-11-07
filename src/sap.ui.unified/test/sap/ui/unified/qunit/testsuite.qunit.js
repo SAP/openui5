@@ -59,6 +59,9 @@ sap.ui.define(function() {
 					noConflict: true,
 					theme: "sap_belize"
 				},
+				qunit: {
+					reorder: false
+				},
 				coverage: {
 					only: ["sap/ui/layout/CalendarRow"]
 				}
@@ -81,6 +84,9 @@ sap.ui.define(function() {
 				ui5: {
 					noConflict: true,
 					theme: "sap_belize"
+				},
+				qunit: {
+					reorder: false
 				},
 				sinon: {
 					useFakeTimers: true
