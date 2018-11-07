@@ -244,6 +244,35 @@ sap.ui.define(function() {
 					libs: "sap.ui.core"
 				}
 			},
+			"PreloadCfg-optimized-ui5loader-async": {
+				group: "Configuration",
+				loader: {
+					async: true
+				},
+				ui5: {
+
+				},
+				beforeBootstrap: "./PreloadCfg.beforeBootstrap.qunit",
+				module: "./PreloadCfg.qunit"
+			},
+			"PreloadCfg-optimized-ui5loader-sync": {
+				group: "Configuration",
+				page: "test-resources/sap/ui/core/qunit/bootstrap/PreloadCfg-optimized-sync.qunit.html"
+			},
+			"PreloadCfg-debug-ui5loader-async": {
+				group: "Configuration",
+				loader: {
+					async: true
+				},
+				ui5: {
+					debug: true
+				},
+				module: "./PreloadCfg.qunit"
+			},
+			"PreloadCfg-debug-ui5loader-sync": {
+				group: "Configuration",
+				page: "test-resources/sap/ui/core/qunit/bootstrap/PreloadCfg-debug-sync.qunit.html"
+			},
 			"PegasusEnvironment": {
 				group: "Bootstrap",
 				page: "test-resources/sap/ui/core/qunit/bootstrap/PegasusEnvironment.qunit.html",
