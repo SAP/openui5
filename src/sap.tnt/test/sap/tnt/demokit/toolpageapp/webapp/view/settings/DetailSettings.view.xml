@@ -44,7 +44,7 @@
 							'view>/currentUser',
 							'view>/lastLogin'
 						],
-						formatter: 'sap.base.strings.formatMessage'
+						formatter: '.formatter.formatMessage'
 						}"
 					type="Information"
 					showIcon="true">
