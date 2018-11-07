@@ -5,3 +5,21 @@
 
 @_sap_m_NotificationListItem_Background: @sapUiListBackground;
 @_sap_m_NotificationListItemGrouped_Background: darken(@sapUiListBackground,5);
+//Special case for visual specification of sap.m.NotificationListGroup
+.sapContrastPlus .sapContrast,
+.sapContrast .sapContrastPlus,
+.sapContrastPlus.sapContrast {
+
+  .sapMNLI {
+    background: fade(@sapUiListBackground, 60);
+  }
+  .sapMNLG-GroupHeader {
+    background: fade(@sapUiListBackground, 60);
+  }
+
+  .sapMNLG-Body {
+    .sapMNLI {
+      background: fade(darken(@sapUiListBackground,5), 60) ;
+    }
+  }
+}
