@@ -1570,7 +1570,8 @@ sap.ui.define([
 			return DescriptorVariantFactory.createNew({
 				"id" : "a.id",
 				"reference": "a.reference",
-				"isAppVariantRoot":	false
+				"isAppVariantRoot":	false,
+				"version" : "1.52.0"
 			}).then(function(_oDescriptorVariant) {
 				oDescriptorVariant = _oDescriptorVariant;
 				var mExpectedJson = {
@@ -1582,6 +1583,7 @@ sap.ui.define([
 					"layer": "CUSTOMER",
 					"namespace": "apps/a.reference/appVariants/a.id/",
 					"packageName": "$TMP",
+					"version" : "1.52.0",
 					"content": []
 				};
 				var mJsonResult = oDescriptorVariant.getJson();
@@ -1601,6 +1603,7 @@ sap.ui.define([
 					"layer": "CUSTOMER",
 					"namespace": "apps/a.reference/appVariants/a.id/",
 					"packageName": "$TMP",
+					"version" : "1.52.0",
 					"content": [{
 						"changeType": "changeType",
 						"content": {
@@ -1706,6 +1709,13 @@ sap.ui.define([
 				DescriptorVariantFactory.createNew({
 					"id" : "a.id",
 					"reference": 1
+				});
+			});
+			assert.throws(function(){
+				DescriptorVariantFactory.createNew({
+					"id" : "a.id",
+					"reference" : "a.reference",
+					"version" : 2 //wrong type, string expected
 				});
 			});
 			assert.throws(function(){

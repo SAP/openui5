@@ -27,6 +27,7 @@ sap.ui.define([
 	 * @param {object} mParameters parameters
 	 * @param {string} mParameters.id the id of the app variant/CDM app config id to be provided for a new app variant/CDM app config and for deleting a app variant/CDM app config
 	 * @param {string} mParameters.reference the proposed referenced descriptor or app variant/CDM app config id (might be overwritten by the backend) to be provided when creating a new app variant/CDM app config
+	 * @param {string} mParameters.version optional version of the app variant
 	 * @param {string} [mParameters.layer='CUSTOMER] the proposed layer (might be overwritten by the backend) when creating a new app variant/CDM app config
 	 * @param {boolean} [mParameters.isAppVariantRoot=true] indicator whether this is an app variant, default is true
 	 * @param {object} mFileContent file content of the existing app variant/CDM app config to be provided if app variant/CDM app config shall be created from an existing
@@ -61,12 +62,11 @@ sap.ui.define([
 			}
 			this._mode = 'NEW';
 			this._skipIam = mParameters.skipIam;
-
+			this._version = mParameters.version;
 		} else if (mFileContent) {
 			this._mMap = mFileContent;
 			this._mode = 'FROM_EXISTING';
 		}
-
 		this._oSettings = oSettings;
 		this._sTransportRequest = null;
 		this._content = [];
@@ -265,6 +265,9 @@ sap.ui.define([
 				if ( typeof this._referenceVersion != "undefined" ) {
 					mResult.referenceVersion = this._referenceVersion;
 				}
+				if (this._version){
+					mResult.version = this._version;
+				}
 				return mResult;
 
 			case 'FROM_EXISTING':
@@ -303,6 +306,7 @@ sap.ui.define([
 	 * @param {object} mParameters the parameters
 	 * @param {string} mParameters.reference the proposed referenced descriptor or app variant/CDM app config id (might be overwritten by the backend)
 	 * @param {string} mParameters.id the id for the app variant/CDM app config id
+	 * @param {string} mParameters.version optional version of the app variant
 	 * @param {string} [mParameters.layer='CUSTOMER'] the proposed layer for the app variant/CDM app config (might be overwritten by the backend)
 	 * @param {boolean} [mParameters.isAppVariantRoot=true] indicator whether this is an app variant, default is true
 	 * @param {boolean} [mParameters.skipIam=false] indicator whether the default IAM item creation and registration is skipped
@@ -315,6 +319,10 @@ sap.ui.define([
 	DescriptorVariantFactory.createNew = function(mParameters) {
 		Utils.checkParameterAndType(mParameters, "reference", "string");
 		Utils.checkParameterAndType(mParameters, "id", "string");
+
+		if (mParameters.version){
+			Utils.checkParameterAndType(mParameters, "version", "string");
+		}
 
 		//default layer to CUSTOMER
 		if (!mParameters.layer){
