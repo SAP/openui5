@@ -266,7 +266,7 @@ sap.ui.define([
 			oArrowRect = $Arrow.rect();
 
 			sBorderWidth = oTP1.$().css("border-left-width");
-			iBorderWidth = parseInt(sBorderWidth, 10);
+			iBorderWidth = parseInt(sBorderWidth);
 
 			bTest = oTP1.isOpen();
 			assert.ok(bTest, "ToolPopup was opened");
@@ -311,7 +311,7 @@ sap.ui.define([
 			oArrowRect = $Arrow.rect();
 
 			sBorderWidth = oTP1.$().css("border-top-width");
-			iBorderWidth = parseInt(sBorderWidth, 10);
+			iBorderWidth = parseInt(sBorderWidth);
 
 			bTest = oTP1.isOpen();
 			assert.ok(bTest, "ToolPopup was opened");
@@ -503,7 +503,7 @@ sap.ui.define([
 			oArrowRect = $Arrow.rect();
 
 			sBorderWidth = oTP3.$().css("border-left-width");
-			iBorderWidth = parseInt(sBorderWidth, 10);
+			iBorderWidth = parseInt(sBorderWidth);
 
 			if (bTest) {
 				bTest = oTPRect.left + oTPRect.width <= oBtnRect.left;

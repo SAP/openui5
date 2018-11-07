@@ -222,9 +222,7 @@ sap.ui.define([
 				// ignored by parseInt.
 				// TODO: Cache the value.
 				var iHideDelay = parseInt(
-					Parameters.get("_sap_ui_unified_SplitContainer_AnimationDuration"),
-					10
-				);
+					Parameters.get("_sap_ui_unified_SplitContainer_AnimationDuration"));
 				// Maybe we could also allow "s"-values and then multiply everything below 20 with 1000...?
 
 				this._closeContentDelayId = setTimeout(function() {

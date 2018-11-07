@@ -42,7 +42,7 @@ sap.ui.define([
 								"Cache-Control": "no-cache, no-store, must-revalidate",
 								"Pragma": "no-cache",
 								"Expires": "0"
-							}, aViews[parseInt(request.url.slice(-10, -9), 10) - 1].content);
+							}, aViews[parseInt(request.url.slice(-10, -9)) - 1].content);
 						};
 						request.onSend = function() {
 							if (!request.async) {

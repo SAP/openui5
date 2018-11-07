@@ -190,7 +190,7 @@ sap.ui.define([
 			if (sErrorText) {
 				throw new FormatException(sErrorText);
 			}
-			return parseInt(sValue, 10);
+			return parseInt(sValue);
 		case "string":
 			return getFormatter(this).format(sValue);
 		default:

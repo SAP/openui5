@@ -1086,7 +1086,7 @@ sap.ui.define([
 			},
 			sSize = aSizes[aMap[sColumn]];
 
-		return parseInt(sSize, 10);
+		return parseInt(sSize);
 	};
 
 
@@ -1144,7 +1144,7 @@ sap.ui.define([
 
 		Object.keys(aMap).forEach(function(sColumn) {
 			sSize = aSizes[aMap[sColumn]];
-			iSize = parseInt(sSize, 10);
+			iSize = parseInt(sSize);
 			if (iSize) {
 				iCount++;
 			}
@@ -1735,7 +1735,7 @@ sap.ui.define([
 
 		if (bAsArray) {
 			vResult = vResult.split("/").map(function (sColumnWidth) {
-				return parseInt(sColumnWidth, 10);
+				return parseInt(sColumnWidth);
 			});
 		}
 

@@ -333,7 +333,7 @@ sap.ui.define([
 		if (sParam && sParam.match(/^false$/i)) {
 			return false;
 		}
-		var iValue = parseInt(sParam,10);
+		var iValue = parseInt(sParam);
 		return (typeof iValue === 'number' && isNaN(iValue)) ? sParam : iValue;
 	};
 

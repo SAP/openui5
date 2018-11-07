@@ -467,7 +467,7 @@ sap.ui.define([
 		} else {
 			oMinMaxElement = oResult.value[0];
 			if ("UI5__count" in oMinMaxElement) {
-				this.iLeafCount = parseInt(oMinMaxElement.UI5__count, 10);
+				this.iLeafCount = parseInt(oMinMaxElement.UI5__count);
 				oResult["@odata.count"] = this.iLeafCount + 1;
 				if (iStart > 0) { // drop row with UI5__count only
 					oResult.value.shift();

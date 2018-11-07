@@ -142,7 +142,7 @@ sap.ui.define([
 	QUnit.test("Menu Button with long text should be able to have width, bigger than 12rem", function (assert) {
 		var $menuButton = $("#UxAP-69_anchorBar--ObjectPageLayout-anchBar-UxAP-69_anchorBar--section16-anchor");
 
-		assert.ok(parseInt($menuButton.css("width"), 10) > (12 * parseInt($("body").css("font-size"), 10)),
+		assert.ok(parseInt($menuButton.css("width")) > (12 * parseInt($("body").css("font-size"))),
 			"Max width style of MenuButton is overridden so that it is bigger than 12rem");
 	});
 

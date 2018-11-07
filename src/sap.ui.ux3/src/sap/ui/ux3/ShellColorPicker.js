@@ -110,7 +110,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 	ShellColorPicker.parseCssRgbString = function(sRgbString) {
 		sRgbString = jQuery.trim(sRgbString.replace(/rgb\(/, "").replace(/\)/, ""));
 		var aRgb = sRgbString.split(",");
-		var oRgbColor = {r:parseInt(aRgb[0], 10), g:parseInt(aRgb[1], 10), b:parseInt(aRgb[2], 10)};
+		var oRgbColor = {r:parseInt(aRgb[0]), g:parseInt(aRgb[1]), b:parseInt(aRgb[2])};
 		return ShellColorPicker.rgbToHsl(oRgbColor);
 	};
 

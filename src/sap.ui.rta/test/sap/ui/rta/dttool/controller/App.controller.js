@@ -220,7 +220,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent the event
 		 */
 		onSplitterResize : function (oEvent) {
-			jQuery(".sapUiDtToolSplitter").css("height", window.innerHeight - parseInt(jQuery(".sapMPageHeader").css("height"), 10) + "px");
+			jQuery(".sapUiDtToolSplitter").css("height", window.innerHeight - parseInt(jQuery(".sapMPageHeader").css("height")) + "px");
 		},
 
 		/**

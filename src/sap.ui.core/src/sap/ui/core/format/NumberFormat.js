@@ -1249,7 +1249,7 @@ sap.ui.define([
 		}
 
 		if (oOptions.isInteger) {
-			vResult = oOptions.parseAsString ? sValue : parseInt(sValue, 10);
+			vResult = oOptions.parseAsString ? sValue : parseInt(sValue);
 		} else {
 			sValue = sValue.replace(oDecimalRegExp, ".");
 			if (sValue.indexOf(sPercentSign) !== -1) {
@@ -1293,7 +1293,7 @@ sap.ui.define([
 		sBase = aResult[2].replace(/\./g,"");
 		iDecimalLength = aResult[3] ? aResult[3].length : 0;
 		iFractionLength = aResult[4] ? aResult[4].length : 0;
-		iExponent = parseInt(aResult[5], 10);
+		iExponent = parseInt(aResult[5]);
 
 		if (iExponent > 0) {
 			if (iExponent < iFractionLength) {
@@ -1626,7 +1626,7 @@ sap.ui.define([
 		}
 
 		sRoundingMode = sRoundingMode || NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO;
-		iMaxFractionDigits = parseInt(iMaxFractionDigits, 10);
+		iMaxFractionDigits = parseInt(iMaxFractionDigits);
 
 		if (typeof sRoundingMode === "function") {
 			// Support custom function for rounding the number

@@ -123,7 +123,7 @@ sap.ui.define([
 		///////////////////////////////// Property "activeContent" /////////////////////////////////
 
 	ContentSwitcher.prototype.setActiveContent = function(iNumber) {
-		iNumber = parseInt(iNumber, 10);
+		iNumber = parseInt(iNumber);
 
 		if (isNaN(iNumber) || iNumber < 1) {
 			iNumber = 1;

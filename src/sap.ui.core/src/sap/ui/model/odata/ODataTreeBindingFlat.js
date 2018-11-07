@@ -530,7 +530,7 @@ sap.ui.define([
 
 		// $inlinecount is in oData.__count, the $count is just oData
 		if (!this._bLengthFinal) {
-			var iCount = oData.__count ? parseInt(oData.__count, 10) : 0;
+			var iCount = oData.__count ? parseInt(oData.__count) : 0;
 			this._aNodes[iCount - 1] = undefined;
 			this._bLengthFinal = true;
 		}
@@ -803,7 +803,7 @@ sap.ui.define([
 		// $inlinecount is in oData.__count
 		// $count is just the 'oData' argument
 		if (oParentNode.childCount == undefined && oData && oData.__count) {
-			var iCount = oData.__count ? parseInt(oData.__count, 10) : 0;
+			var iCount = oData.__count ? parseInt(oData.__count) : 0;
 			oParentNode.childCount = iCount;
 			oParentNode.children[iCount - 1] = undefined;
 
@@ -2255,7 +2255,7 @@ sap.ui.define([
 		// transform the changed index MAP into a real array of indices
 		for (iIndex in mIndicesFound) {
 			if (mIndicesFound[iIndex]) {
-				aRowIndices.push(parseInt(iIndex, 10));
+				aRowIndices.push(parseInt(iIndex));
 			}
 		}
 
@@ -2599,7 +2599,7 @@ sap.ui.define([
 				// found it
 				return {
 					node: this._aNodeCache[sIndex],
-					index: parseInt(sIndex, 10)
+					index: parseInt(sIndex)
 				};
 			}
 		}
@@ -2690,7 +2690,7 @@ sap.ui.define([
 
 				for (var i = 0; i < aChangeResponses.length; i++) {
 					var oResponse = aChangeResponses[i];
-					var iStatusCode = parseInt(oResponse.statusCode, 10);
+					var iStatusCode = parseInt(oResponse.statusCode);
 					if (iStatusCode < 200 || iStatusCode > 299) {
 						bSomethingFailed = true;
 						break;

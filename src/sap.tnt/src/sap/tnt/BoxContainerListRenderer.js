@@ -299,7 +299,7 @@ function (library, Device) {
 	};
 
 	BoxContainerListRenderer.getBoxesPerRowClass = function (sSpan, iIndex) {
-		var iSpan = parseInt(sSpan.substr(iIndex, sSpan.length), 10);
+		var iSpan = parseInt(sSpan.substr(iIndex, sSpan.length));
 		if (iSpan && iSpan > 0 && iSpan < 13) {
 			return "sapTntBoxContainerSpan" + sSpan;
 		}

@@ -378,7 +378,7 @@ sap.ui.define([
 			assert.ok(!sPos, "No aria-posinset attribute set " + sAdditionalText);
 		} else {
 			if (sPos){
-				assert.equal(parseInt(sPos, 10), iExpPos, "aria-posinset attribute set " + sAdditionalText);
+				assert.equal(parseInt(sPos), iExpPos, "aria-posinset attribute set " + sAdditionalText);
 			} else {
 				assert.ok(false, "aria-posinset attribute set " + sAdditionalText);
 			}
@@ -388,7 +388,7 @@ sap.ui.define([
 			assert.ok(!sSize, "No aria-setsize attribute set " + sAdditionalText);
 		} else {
 			if (sSize){
-				assert.equal(parseInt(sSize, 10), iExpSize, "aria-setsize attribute set " + sAdditionalText);
+				assert.equal(parseInt(sSize), iExpSize, "aria-setsize attribute set " + sAdditionalText);
 			} else {
 				assert.ok(false, "aria-setsize attribute set " + sAdditionalText);
 			}

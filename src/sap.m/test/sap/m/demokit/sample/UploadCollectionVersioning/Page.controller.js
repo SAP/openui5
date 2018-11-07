@@ -172,7 +172,7 @@ sap.ui.define([
 					// Uploaded on
 					aItems[i].attributes[1].text = new Date(jQuery.now()).toLocaleDateString();
 					// Version
-					var iVersion = parseInt(aItems[i].attributes[3].text, 10);
+					var iVersion = parseInt(aItems[i].attributes[3].text);
 					iVersion++;
 					aItems[i].attributes[3].text = iVersion;
 				}

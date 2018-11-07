@@ -121,7 +121,7 @@ sap.ui.define([
 					var aAnnotationsMockdata = this.oMockServer._oMockdata.GLAccountHierarchyInChartOfAccountsLiSet;
 					for (var i = 0; i < aAnnotationsMockdata.length; i++) {
 						//convert string based level properties (NUMC fields) to real numbers
-						aAnnotationsMockdata[i].FinStatementHierarchyLevelVal = parseInt(aAnnotationsMockdata[i].FinStatementHierarchyLevelVal, 10);
+						aAnnotationsMockdata[i].FinStatementHierarchyLevelVal = parseInt(aAnnotationsMockdata[i].FinStatementHierarchyLevelVal);
 					}
 
 					this.oMockServer.start();
@@ -135,16 +135,16 @@ sap.ui.define([
 			var sOperationMode = oViewModel.getProperty("/operationMode");
 
 			// threshold for OperationMode.Auto
-			var iBindingThreshold = parseInt(oView.byId("bindingThreshold").getValue(), 10);
+			var iBindingThreshold = parseInt(oView.byId("bindingThreshold").getValue());
 
 			// table threshold
-			var iTableThreshold = parseInt(oView.byId("tableThreshold").getValue(), 10);
+			var iTableThreshold = parseInt(oView.byId("tableThreshold").getValue());
 
 			// the root level of the tree
-			var iRootLevel = parseInt(oViewModel.getProperty("/rootLevel"), 10);
+			var iRootLevel = parseInt(oViewModel.getProperty("/rootLevel"));
 
 			// initial # of expanded levels
-			var iInitialLevel = parseInt(oViewModel.getProperty("/initialLevel"), 10);
+			var iInitialLevel = parseInt(oViewModel.getProperty("/initialLevel"));
 
 			// application filter values
 			var sFilterProperty = oViewModel.getProperty("/filterProperty");

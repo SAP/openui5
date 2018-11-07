@@ -73,7 +73,7 @@
 		"no-void": 2,
 		"no-warning-comments": 1,
 		"no-with": 2,
-		"radix": 2,
+		"radix": [2, "as-needed"],
 		"wrap-iife": [2, "any"],
 		"yoda": 2,
 

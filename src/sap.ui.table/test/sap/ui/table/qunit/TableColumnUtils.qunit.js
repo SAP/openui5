@@ -705,7 +705,7 @@ sap.ui.define([
 		var aOriginalColumnWidths = [];
 		for (var i = 0; i < aVisibleColumns.length; i++) {
 			var oColumn = aVisibleColumns[i];
-			aOriginalColumnWidths.push(parseInt(oColumn.getWidth(), 10));
+			aOriginalColumnWidths.push(parseInt(oColumn.getWidth()));
 		}
 
 		function assertUnchanged(aExcludedColumns) {
@@ -714,13 +714,13 @@ sap.ui.define([
 					continue;
 				}
 				var oColumn = aVisibleColumns[i];
-				assert.strictEqual(parseInt(oColumn.getWidth(), 10), aOriginalColumnWidths[i],
+				assert.strictEqual(parseInt(oColumn.getWidth()), aOriginalColumnWidths[i],
 					"Column " + (i + 1) + " has its original width of " + aOriginalColumnWidths[i] + "px");
 			}
 		}
 
 		function assertColumnWidth(iColumnIndex, iWidth) {
-			var iActualColumnWidth = parseInt(aVisibleColumns[iColumnIndex].getWidth(), 10);
+			var iActualColumnWidth = parseInt(aVisibleColumns[iColumnIndex].getWidth());
 			assert.strictEqual(iActualColumnWidth, iWidth,
 				"Column " + (iColumnIndex + 1) + " width is " + iActualColumnWidth + "px and should be " + iWidth + "px");
 		}

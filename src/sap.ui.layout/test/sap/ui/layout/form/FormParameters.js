@@ -63,22 +63,22 @@ sap.ui.require([
 		switch (sKey) {
 		case "RGL":
 			oLayout = new ResponsiveGridLayout("RGL", {
-				labelSpanS: parseInt(sap.ui.getCore().byId("I-labelSpanS").getValue(), 10),
-				labelSpanM: parseInt(sap.ui.getCore().byId("I-labelSpanM").getValue(), 10),
-				labelSpanL: parseInt(sap.ui.getCore().byId("I-labelSpanL").getValue(), 10),
-				labelSpanXL: parseInt(sap.ui.getCore().byId("I-labelSpanXL").getValue(), 10),
+				labelSpanS: parseInt(sap.ui.getCore().byId("I-labelSpanS").getValue()),
+				labelSpanM: parseInt(sap.ui.getCore().byId("I-labelSpanM").getValue()),
+				labelSpanL: parseInt(sap.ui.getCore().byId("I-labelSpanL").getValue()),
+				labelSpanXL: parseInt(sap.ui.getCore().byId("I-labelSpanXL").getValue()),
 				adjustLabelSpan: sap.ui.getCore().byId("CB-adjustLabelSpan").getSelected(),
-				emptySpanS: parseInt(sap.ui.getCore().byId("I-emptySpanS").getValue(), 10),
-				emptySpanM: parseInt(sap.ui.getCore().byId("I-emptySpanM").getValue(), 10),
-				emptySpanL: parseInt(sap.ui.getCore().byId("I-emptySpanL").getValue(), 10),
-				emptySpanXL: parseInt(sap.ui.getCore().byId("I-emptySpanXL").getValue(), 10),
-				columnsM: parseInt(sap.ui.getCore().byId("I-columnsM").getValue(), 10),
-				columnsL: parseInt(sap.ui.getCore().byId("I-columnsL").getValue(), 10),
-				columnsXL: parseInt(sap.ui.getCore().byId("I-columnsXL").getValue(), 10),
+				emptySpanS: parseInt(sap.ui.getCore().byId("I-emptySpanS").getValue()),
+				emptySpanM: parseInt(sap.ui.getCore().byId("I-emptySpanM").getValue()),
+				emptySpanL: parseInt(sap.ui.getCore().byId("I-emptySpanL").getValue()),
+				emptySpanXL: parseInt(sap.ui.getCore().byId("I-emptySpanXL").getValue()),
+				columnsM: parseInt(sap.ui.getCore().byId("I-columnsM").getValue()),
+				columnsL: parseInt(sap.ui.getCore().byId("I-columnsL").getValue()),
+				columnsXL: parseInt(sap.ui.getCore().byId("I-columnsXL").getValue()),
 				singleContainerFullSize: sap.ui.getCore().byId("CB-singleContainerFullSize").getSelected(),
-				breakpointM: parseInt(sap.ui.getCore().byId("I-breakpointM").getValue(), 10),
-				breakpointL: parseInt(sap.ui.getCore().byId("I-breakpointL").getValue(), 10),
-				breakpointXL: parseInt(sap.ui.getCore().byId("I-breakpointXL").getValue(), 10)
+				breakpointM: parseInt(sap.ui.getCore().byId("I-breakpointM").getValue()),
+				breakpointL: parseInt(sap.ui.getCore().byId("I-breakpointL").getValue()),
+				breakpointXL: parseInt(sap.ui.getCore().byId("I-breakpointXL").getValue())
 			});
 			break;
 
@@ -100,11 +100,11 @@ sap.ui.require([
 
 		case "CL":
 			oLayout = new ColumnLayout("CL", {
-				columnsM: parseInt(sap.ui.getCore().byId("I-columnsM-CL").getValue(), 10),
-				columnsL: parseInt(sap.ui.getCore().byId("I-columnsL-CL").getValue(), 10),
-				columnsXL: parseInt(sap.ui.getCore().byId("I-columnsXL-CL").getValue(), 10),
-				labelCellsLarge: parseInt(sap.ui.getCore().byId("I-labelCellsLarge").getValue(), 10),
-				emptyCellsLarge: parseInt(sap.ui.getCore().byId("I-emptyCellsLarge").getValue(), 10)
+				columnsM: parseInt(sap.ui.getCore().byId("I-columnsM-CL").getValue()),
+				columnsL: parseInt(sap.ui.getCore().byId("I-columnsL-CL").getValue()),
+				columnsXL: parseInt(sap.ui.getCore().byId("I-columnsXL-CL").getValue()),
+				labelCellsLarge: parseInt(sap.ui.getCore().byId("I-labelCellsLarge").getValue()),
+				emptyCellsLarge: parseInt(sap.ui.getCore().byId("I-emptyCellsLarge").getValue())
 			});
 			break;
 
@@ -119,7 +119,7 @@ sap.ui.require([
 	};
 
 	var handleFieldsChange = function(oEvent){
-		var iFields = parseInt(oEvent.getParameter("value"), 10);
+		var iFields = parseInt(oEvent.getParameter("value"));
 		var oElement = sap.ui.getCore().byId("E-Fields");
 		var aFields = oElement.getFields();
 
@@ -179,7 +179,7 @@ sap.ui.require([
 											change: function(oEvent){
 												var oLayout = sap.ui.getCore().byId("RGL");
 												var sValue = oEvent.getParameter("value");
-												oLayout.setLabelSpanS(parseInt(sValue, 10));
+												oLayout.setLabelSpanS(parseInt(sValue));
 											}}),
 										 new Input("I-labelSpanM",{
 											value: sap.ui.getCore().byId("RGL").getLabelSpanM(),
@@ -187,7 +187,7 @@ sap.ui.require([
 											change: function(oEvent){
 												var oLayout = sap.ui.getCore().byId("RGL");
 												var sValue = oEvent.getParameter("value");
-												oLayout.setLabelSpanM(parseInt(sValue, 10));
+												oLayout.setLabelSpanM(parseInt(sValue));
 											}}),
 										 new Input("I-labelSpanL",{
 											value: sap.ui.getCore().byId("RGL").getLabelSpanL(),
@@ -195,7 +195,7 @@ sap.ui.require([
 											change: function(oEvent){
 												var oLayout = sap.ui.getCore().byId("RGL");
 												var sValue = oEvent.getParameter("value");
-												oLayout.setLabelSpanL(parseInt(sValue, 10));
+												oLayout.setLabelSpanL(parseInt(sValue));
 											}}),
 										 new Input("I-labelSpanXL",{
 											value: sap.ui.getCore().byId("RGL").getLabelSpanXL(),
@@ -203,7 +203,7 @@ sap.ui.require([
 											change: function(oEvent){
 												var oLayout = sap.ui.getCore().byId("RGL");
 												var sValue = oEvent.getParameter("value");
-												oLayout.setLabelSpanXL(parseInt(sValue, 10));
+												oLayout.setLabelSpanXL(parseInt(sValue));
 											}})]
 					}),
 					new FormElement({
@@ -224,7 +224,7 @@ sap.ui.require([
 											change: function(oEvent){
 												var oLayout = sap.ui.getCore().byId("RGL");
 												var sValue = oEvent.getParameter("value");
-												oLayout.setEmptySpanS(parseInt(sValue, 10));
+												oLayout.setEmptySpanS(parseInt(sValue));
 											}}),
 										 new Input("I-emptySpanM",{
 											value: sap.ui.getCore().byId("RGL").getEmptySpanM(),
@@ -232,7 +232,7 @@ sap.ui.require([
 											change: function(oEvent){
 												var oLayout = sap.ui.getCore().byId("RGL");
 												var sValue = oEvent.getParameter("value");
-												oLayout.setEmptySpanM(parseInt(sValue, 10));
+												oLayout.setEmptySpanM(parseInt(sValue));
 											}}),
 										 new Input("I-emptySpanL",{
 											value: sap.ui.getCore().byId("RGL").getEmptySpanL(),
@@ -240,7 +240,7 @@ sap.ui.require([
 											change: function(oEvent){
 												var oLayout = sap.ui.getCore().byId("RGL");
 												var sValue = oEvent.getParameter("value");
-												oLayout.setEmptySpanL(parseInt(sValue, 10));
+												oLayout.setEmptySpanL(parseInt(sValue));
 											}}),
 										 new Input("I-emptySpanXL",{
 											value: sap.ui.getCore().byId("RGL").getEmptySpanXL(),
@@ -248,7 +248,7 @@ sap.ui.require([
 											change: function(oEvent){
 												var oLayout = sap.ui.getCore().byId("RGL");
 												var sValue = oEvent.getParameter("value");
-												oLayout.setEmptySpanXL(parseInt(sValue, 10));
+												oLayout.setEmptySpanXL(parseInt(sValue));
 											}})]
 					}),
 					new FormElement({
@@ -259,7 +259,7 @@ sap.ui.require([
 											change: function(oEvent){
 												var oLayout = sap.ui.getCore().byId("RGL");
 												var sValue = oEvent.getParameter("value");
-												oLayout.setColumnsM(parseInt(sValue, 10));
+												oLayout.setColumnsM(parseInt(sValue));
 											}}),
 										 new Input("I-columnsL",{
 											value: sap.ui.getCore().byId("RGL").getColumnsL(),
@@ -267,7 +267,7 @@ sap.ui.require([
 											change: function(oEvent){
 												var oLayout = sap.ui.getCore().byId("RGL");
 												var sValue = oEvent.getParameter("value");
-												oLayout.setColumnsL(parseInt(sValue, 10));
+												oLayout.setColumnsL(parseInt(sValue));
 											}}),
 										 new Input("I-columnsXL",{
 											value: sap.ui.getCore().byId("RGL").getColumnsXL(),
@@ -275,7 +275,7 @@ sap.ui.require([
 											change: function(oEvent){
 												var oLayout = sap.ui.getCore().byId("RGL");
 												var sValue = oEvent.getParameter("value");
-												oLayout.setColumnsXL(parseInt(sValue, 10));
+												oLayout.setColumnsXL(parseInt(sValue));
 											}})]
 					}),
 					new FormElement({
@@ -296,7 +296,7 @@ sap.ui.require([
 											change: function(oEvent){
 												var oLayout = sap.ui.getCore().byId("RGL");
 												var sValue = oEvent.getParameter("value");
-												oLayout.setBreakpointM(parseInt(sValue, 10));
+												oLayout.setBreakpointM(parseInt(sValue));
 											}}),
 										 new Input("I-breakpointL",{
 											value: sap.ui.getCore().byId("RGL").getBreakpointL(),
@@ -304,7 +304,7 @@ sap.ui.require([
 											change: function(oEvent){
 												var oLayout = sap.ui.getCore().byId("RGL");
 												var sValue = oEvent.getParameter("value");
-												oLayout.setBreakpointL(parseInt(sValue, 10));
+												oLayout.setBreakpointL(parseInt(sValue));
 											}}),
 										 new Input("I-breakpointXL",{
 											value: sap.ui.getCore().byId("RGL").getBreakpointXL(),
@@ -312,7 +312,7 @@ sap.ui.require([
 											change: function(oEvent){
 												var oLayout = sap.ui.getCore().byId("RGL");
 												var sValue = oEvent.getParameter("value");
-												oLayout.setBreakpointXL(parseInt(sValue, 10));
+												oLayout.setBreakpointXL(parseInt(sValue));
 											}})]
 					})
 				]
@@ -357,7 +357,7 @@ sap.ui.require([
 											change: function(oEvent){
 												var oLayout = sap.ui.getCore().byId("CL");
 												var sValue = oEvent.getParameter("value");
-												oLayout.setColumnsM(parseInt(sValue, 10));
+												oLayout.setColumnsM(parseInt(sValue));
 											}}),
 										 new Input("I-columnsL-CL",{
 											value: 2,
@@ -365,7 +365,7 @@ sap.ui.require([
 											change: function(oEvent){
 												var oLayout = sap.ui.getCore().byId("CL");
 												var sValue = oEvent.getParameter("value");
-												oLayout.setColumnsL(parseInt(sValue, 10));
+												oLayout.setColumnsL(parseInt(sValue));
 											}}),
 										 new Input("I-columnsXL-CL",{
 											value: 2,
@@ -373,7 +373,7 @@ sap.ui.require([
 											change: function(oEvent){
 												var oLayout = sap.ui.getCore().byId("CL");
 												var sValue = oEvent.getParameter("value");
-												oLayout.setColumnsXL(parseInt(sValue, 10));
+												oLayout.setColumnsXL(parseInt(sValue));
 											}})]
 					}),
 					new FormElement({
@@ -384,7 +384,7 @@ sap.ui.require([
 											change: function(oEvent){
 												var oLayout = sap.ui.getCore().byId("CL");
 												var sValue = oEvent.getParameter("value");
-												oLayout.setLabelCellsLarge(parseInt(sValue, 10));
+												oLayout.setLabelCellsLarge(parseInt(sValue));
 											}})]
 					}),
 					new FormElement({
@@ -395,7 +395,7 @@ sap.ui.require([
 											change: function(oEvent){
 												var oLayout = sap.ui.getCore().byId("CL");
 												var sValue = oEvent.getParameter("value");
-												oLayout.setEmptyCellsLarge(parseInt(sValue, 10));
+												oLayout.setEmptyCellsLarge(parseInt(sValue));
 											}})]
 					})
 				]

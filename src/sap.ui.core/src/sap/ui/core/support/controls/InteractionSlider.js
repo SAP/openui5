@@ -119,7 +119,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', "sap/ui/events/KeyCodes"],
 
         InteractionSlider.prototype._calculateSliderSize = function () {
             var oldSliderWidth = this.sizes.width;
-            this.sizes.handleWidth = parseInt(this._getSlideHandleWidth(), 10);
+            this.sizes.handleWidth = parseInt(this._getSlideHandleWidth());
             this.sizes.width = this.nodes.slider.offsetWidth;
 
             if (this.sizes.width !== this.sizes.handleWidth) {
@@ -145,7 +145,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', "sap/ui/events/KeyCodes"],
         };
 
         InteractionSlider.prototype._updateUI = function () {
-            this.sizes.handleWidth = parseInt(this._getSlideHandleWidth(), 10);
+            this.sizes.handleWidth = parseInt(this._getSlideHandleWidth());
             this.drag.handleOffsetLeft = this.nodes.handle.offsetLeft;
         };
 

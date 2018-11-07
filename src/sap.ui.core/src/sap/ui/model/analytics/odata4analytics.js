@@ -3045,7 +3045,7 @@ sap.ui.define([
 		 */
 		_renderPropertyFilterValue : function(sFilterValue, sPropertyEDMTypeName) {
 			if (sPropertyEDMTypeName === "Edm.Time" && rOnlyDigits.test(sFilterValue)) {
-				sFilterValue = {ms : parseInt(sFilterValue, 10), __edmType : "Edm.Time"};
+				sFilterValue = {ms : parseInt(sFilterValue), __edmType : "Edm.Time"};
 			}
 
 			// initial implementation called odata4analytics.helper.renderPropertyFilterValue,

@@ -682,7 +682,7 @@ sap.ui.define([
 			case "Edm.Int16":
 			case "Edm.Int32":
 			case "Edm.SByte":
-				return checkNaN(parseInt(sLiteral, 10));
+				return checkNaN(parseInt(sLiteral));
 			case "Edm.Date":
 			case "Edm.DateTimeOffset":
 			case "Edm.Decimal":

@@ -992,7 +992,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._headerBiggerThanAllowedToPin = function (iControlHeight) {
-		if (!(typeof iControlHeight === "number" && !isNaN(parseInt(iControlHeight, 10)))) {
+		if (!(typeof iControlHeight === "number" && !isNaN(parseInt(iControlHeight)))) {
 			iControlHeight = this._getOwnHeight();
 		}
 

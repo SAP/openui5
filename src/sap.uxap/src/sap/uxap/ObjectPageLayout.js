@@ -514,8 +514,8 @@ sap.ui.define([
 		this.iAnchorBarHeight = 0;                  // original height of the anchorBar
 		this.iTotalHeaderSize = 0;                  // total size of headerTitle + headerContent
 
-		this._iREMSize = parseInt(jQuery("body").css("font-size"), 10);
-		this._iOffset = parseInt(0.25 * this._iREMSize, 10);
+		this._iREMSize = parseInt(jQuery("body").css("font-size"));
+		this._iOffset = parseInt(0.25 * this._iREMSize);
 
 		this._iResizeId = ResizeHandler.register(this, this._onUpdateScreenSize.bind(this));
 		this._iAfterRenderingDomReadyTimeout = null;
@@ -1769,7 +1769,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._computeScrollDuration = function (iAppSpecifiedDuration, oTargetSection) {
-		var iDuration = parseInt(iAppSpecifiedDuration, 10);
+		var iDuration = parseInt(iAppSpecifiedDuration);
 		iDuration = iDuration >= 0 ? iDuration : this._iScrollToSectionDuration;
 
 		if (this.getUseIconTabBar()

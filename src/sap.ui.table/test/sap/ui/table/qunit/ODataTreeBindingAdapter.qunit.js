@@ -34,7 +34,7 @@ sap.ui.define([
 	var aAnnotationsMockdata = oAnnotationMockServer._oMockdata.GLAccountHierarchyInChartOfAccountsLiSet;
 	for (var i = 0; i < aAnnotationsMockdata.length; i++) {
 		//convert string based level properties (NUMC fields) to real numbers
-		aAnnotationsMockdata[i].FinStatementHierarchyLevelVal = parseInt(aAnnotationsMockdata[i].FinStatementHierarchyLevelVal, 10);
+		aAnnotationsMockdata[i].FinStatementHierarchyLevelVal = parseInt(aAnnotationsMockdata[i].FinStatementHierarchyLevelVal);
 	}
 
 	var oModel, oBinding;

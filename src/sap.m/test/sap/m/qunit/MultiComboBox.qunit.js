@@ -5761,7 +5761,7 @@ sap.ui.define([
 
 		output = oMultiComboBox._calculateSpaceForTokenizer();
 
-		assert.strictEqual(isNaN(parseInt(output, 10)), false, "_calculateSpaceForTokenizer returns a valid value");
+		assert.strictEqual(isNaN(parseInt(output)), false, "_calculateSpaceForTokenizer returns a valid value");
 
 		oMultiComboBox.destroy();
 	});

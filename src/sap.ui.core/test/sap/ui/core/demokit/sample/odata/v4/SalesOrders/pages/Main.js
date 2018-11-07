@@ -913,7 +913,7 @@ sap.ui.require([
 						controlType : "sap.m.Button",
 						id : "MessagesButton",
 						success : function (oButton) {
-							Opa5.assert.strictEqual(parseInt(oButton.getText(), 10), iExpectedCount,
+							Opa5.assert.strictEqual(parseInt(oButton.getText()), iExpectedCount,
 								"Message count is as expected: " + iExpectedCount);
 						},
 						viewName : sViewName

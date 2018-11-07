@@ -140,7 +140,7 @@ sap.ui.define([
 
 	function checkSpan(iCol, iRow, assert, span) {
 		var oColumn = oTable.getColumns()[iCol];
-		var colSpan = parseInt(oTable.$().find("td[data-sap-ui-colindex=\"" + oColumn.getIndex() + "\"]")[iRow].getAttribute("colspan") || 1, 10);
+		var colSpan = parseInt(oTable.$().find("td[data-sap-ui-colindex=\"" + oColumn.getIndex() + "\"]")[iRow].getAttribute("colspan") || 1);
 		span = span || TableUtils.Column.getHeaderSpan(oColumn, iRow);
 		assert.strictEqual(colSpan, span, "Col:" + iCol + ", Row: " + iRow + " - Header has correct span");
 	}

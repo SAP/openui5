@@ -442,8 +442,8 @@ sap.ui.define([
 
 		// test the initial dimensions
 		var oDomRef = document.getElementById(sControlId);
-		assert.equal(oDomRef.offsetWidth, parseInt(oImage.getWidth(), 10), "oImage.offsetWidth should equal " + parseInt(oImage.getWidth(), 10));
-		assert.equal(oDomRef.offsetHeight, parseInt(oImage.getHeight(), 10), "oImage.offsetHeight should equal " + parseInt(oImage.getHeight(), 10));
+		assert.equal(oDomRef.offsetWidth, parseInt(oImage.getWidth()), "oImage.offsetWidth should equal " + parseInt(oImage.getWidth()));
+		assert.equal(oDomRef.offsetHeight, parseInt(oImage.getHeight()), "oImage.offsetHeight should equal " + parseInt(oImage.getHeight()));
 
 		// Clean up
 		oImage.destroy();

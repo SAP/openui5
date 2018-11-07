@@ -1366,7 +1366,7 @@ sap.ui.define([
 			// transform the changed index MAP into a real array of indices
 			for (iIndex in mIndicesFound) {
 				if (mIndicesFound[iIndex]) {
-					aRowIndices.push(parseInt(iIndex, 10));
+					aRowIndices.push(parseInt(iIndex));
 				}
 			}
 

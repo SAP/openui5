@@ -137,7 +137,7 @@
 
 		render(sLinkHTML).then(function() {
 			// Note: we use a 0.1 second timer resolution so that the blocking div disappears quickly
-			var count = 10 * (parseInt(utils.getAttribute("data-sap-ui-delay"), 10) || 2) + 9;
+			var count = 10 * (parseInt(utils.getAttribute("data-sap-ui-delay")) || 2) + 9;
 
 			function countDown() {
 				if ( count === 6 ) {

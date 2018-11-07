@@ -633,7 +633,7 @@ sap.ui.define([
 		var iCalc, iForewordBlocksToCheck = iMax, indexOffset;
 
 		if (!this._hasAutoLayout(oBlock)) {
-			return Math.min(iMax, parseInt(oBlock.getColumnLayout(), 10));
+			return Math.min(iMax, parseInt(oBlock.getColumnLayout()));
 		}
 
 		for (indexOffset = 1; indexOffset <= iForewordBlocksToCheck; indexOffset++) {
@@ -654,7 +654,7 @@ sap.ui.define([
 		if (!oBlock) {
 			iLayoutCols = 0;
 		} else if (oBlock instanceof BlockBase && oBlock.getColumnLayout() != "auto") {
-			iLayoutCols = parseInt(oBlock.getColumnLayout(), 10);
+			iLayoutCols = parseInt(oBlock.getColumnLayout());
 		}
 
 		return iLayoutCols;

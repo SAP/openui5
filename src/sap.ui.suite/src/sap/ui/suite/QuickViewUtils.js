@@ -162,7 +162,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/core/Control', 'sap/ui/core/E
 				if (!oControl._sorted) {
 					var aItems = oControl.removeAllAggregation("items", true);
 					aItems.sort(function(a, b) {
-						return (parseInt(a.getOrder(), 10) - parseInt(b.getOrder(), 10));
+						return (parseInt(a.getOrder()) - parseInt(b.getOrder()));
 					});
 					jQuery.each(aItems, function(i,oItem) {oControl.addAggregation("items",oItem,false);});
 					oControl._sorted = true;

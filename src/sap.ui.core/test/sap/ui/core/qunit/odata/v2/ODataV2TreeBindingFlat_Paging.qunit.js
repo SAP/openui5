@@ -206,11 +206,11 @@ sap.ui.define([
 			});
 
 			function getSkipFromCall(args) {
-				return parseInt(args[1].urlParameters[0].replace("$skip=", ""), 10);
+				return parseInt(args[1].urlParameters[0].replace("$skip=", ""));
 			}
 
 			function getTopFromCall(args) {
-				return parseInt(args[1].urlParameters[1].replace("$top=", ""), 10);
+				return parseInt(args[1].urlParameters[1].replace("$top=", ""));
 			}
 
 			function handler1 (oEvent) {
@@ -262,11 +262,11 @@ sap.ui.define([
 			});
 
 			function getSkipFromCall(args) {
-				return parseInt(args[1].urlParameters[0].replace("$skip=", ""), 10);
+				return parseInt(args[1].urlParameters[0].replace("$skip=", ""));
 			}
 
 			function getTopFromCall(args) {
-				return parseInt(args[1].urlParameters[1].replace("$top=", ""), 10);
+				return parseInt(args[1].urlParameters[1].replace("$top=", ""));
 			}
 
 			function handler1 (oEvent) {
@@ -382,11 +382,11 @@ sap.ui.define([
 			});
 
 			function getSkipFromCall(args) {
-				return parseInt(args[1].urlParameters[0].replace("$skip=", ""), 10);
+				return parseInt(args[1].urlParameters[0].replace("$skip=", ""));
 			}
 
 			function getTopFromCall(args) {
-				return parseInt(args[1].urlParameters[1].replace("$top=", ""), 10);
+				return parseInt(args[1].urlParameters[1].replace("$top=", ""));
 			}
 
 			function handler1 (oEvent) {
@@ -438,11 +438,11 @@ sap.ui.define([
 			});
 
 			function getSkipFromCall(args) {
-				return parseInt(args[1].urlParameters[0].replace("$skip=", ""), 10);
+				return parseInt(args[1].urlParameters[0].replace("$skip=", ""));
 			}
 
 			function getTopFromCall(args) {
-				return parseInt(args[1].urlParameters[1].replace("$top=", ""), 10);
+				return parseInt(args[1].urlParameters[1].replace("$top=", ""));
 			}
 
 			function handler1 (oEvent) {

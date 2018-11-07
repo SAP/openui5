@@ -76,7 +76,7 @@ sap.ui.define(['sap/ui/core/Core', './library'],
 	    }
 	    var plarge = 62;
 
-	    var circlesize = parseInt(Math.sqrt((value - minvalue) / (maxvalue - minvalue) * (plarge * plarge - psmall * psmall) + psmall * psmall), 10);
+	    var circlesize = parseInt(Math.sqrt((value - minvalue) / (maxvalue - minvalue) * (plarge * plarge - psmall * psmall) + psmall * psmall));
 
 	    var digits = (value + '').length;
 	    var fontsize = circlesize * 0.55;
@@ -108,7 +108,7 @@ sap.ui.define(['sap/ui/core/Core', './library'],
 		rm.addStyle("width", circlesize + "px");
 		rm.addStyle("height", circlesize + "px");
 		rm.addStyle("line-height", circlesize + "px");
-		rm.addStyle("font-size", parseInt(fontsize, 10) + "px");
+		rm.addStyle("font-size", parseInt(fontsize) + "px");
 		rm.addStyle("border-radius", circlesize + "px");
 		rm.addStyle("-moz-border-radius", circlesize + "px");
 	    rm.writeClasses();

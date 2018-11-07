@@ -236,7 +236,7 @@ sap.ui.define([
 			return;
 		}
 
-		var iTokenizerWidth = parseInt(this.getMaxWidth(), 10),
+		var iTokenizerWidth = parseInt(this.getMaxWidth()),
 			aTokens = this.getTokens().reverse(),
 			iTokensCount = aTokens.length,
 			iLabelWidth, iFreeSpace,

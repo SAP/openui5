@@ -1370,7 +1370,7 @@ sap.ui.define([
 
 		if (!this._iSocActListWidth) {
 			if (this.getDividerWidth()) {
-				this._iSocActListWidth = parseInt(this.getDividerWidth(), 10);
+				this._iSocActListWidth = parseInt(this.getDividerWidth());
 			} else {
 				// min width of the social actions part is determined by the number of
 				// actually displayed social actions

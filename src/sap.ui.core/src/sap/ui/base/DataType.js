@@ -389,7 +389,7 @@ sap.ui.define([
 					return typeof vValue === "number" && Math.floor(vValue) == vValue;
 				},
 				parseValue: function(sValue) {
-					return parseInt(sValue, 10);
+					return parseInt(sValue);
 				}
 			}),
 

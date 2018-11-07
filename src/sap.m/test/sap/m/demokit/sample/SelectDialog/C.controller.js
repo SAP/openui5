@@ -47,7 +47,7 @@ sap.ui.define([
 			// Set growing threshold
 			var sGrowingThreshold = oEvent.getSource().data("threshold");
 			if (sGrowingThreshold) {
-				this._oDialog.setGrowingThreshold(parseInt(sGrowingThreshold, 10));
+				this._oDialog.setGrowingThreshold(parseInt(sGrowingThreshold));
 			}
 
 			// clear the old search filter

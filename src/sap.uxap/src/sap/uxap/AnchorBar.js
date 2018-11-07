@@ -256,7 +256,7 @@ sap.ui.define([
 		var sBackgroundDesign = this.getBackgroundDesign();
 
 		if (this._bHasButtonsBar) {
-			this._iREMSize = parseInt(jQuery("body").css("font-size"), 10);
+			this._iREMSize = parseInt(jQuery("body").css("font-size"));
 			this._iTolerance = this._iREMSize * 1;  // 1 rem
 			this._iOffset = this._iREMSize * 3;  // 3 rem
 		}

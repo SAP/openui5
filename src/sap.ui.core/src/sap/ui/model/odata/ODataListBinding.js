@@ -445,7 +445,7 @@ sap.ui.define([
 
 			// update iLength (only when the inline count was requested and is available)
 			if (bInlineCountRequested && oData.__count) {
-				that.iLength = parseInt(oData.__count, 10);
+				that.iLength = parseInt(oData.__count);
 				that.bLengthFinal = true;
 			}
 
@@ -570,7 +570,7 @@ sap.ui.define([
 		}
 
 		function _handleSuccess(oData) {
-			that.iLength = parseInt(oData, 10);
+			that.iLength = parseInt(oData);
 			that.bLengthFinal = true;
 		}
 

@@ -761,7 +761,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
 				return {mru: -1, lru: -1};
 			} else {
 				while (++i < iLength) {
-					var iIndex = parseInt(aLruIndexKeys[i], 10);
+					var iIndex = parseInt(aLruIndexKeys[i]);
 					if (mru < iIndex) {
 						mru = iIndex;
 					}

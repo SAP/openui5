@@ -242,7 +242,7 @@ sap.ui.define([
           var $li = $parent.parent().parent();
           $li.toggleClass('sapUiInteractionItemExpanded');
 
-          var index = parseInt($li.attr('data-interaction-index'), 10);
+          var index = parseInt($li.attr('data-interaction-index'));
           this.interactions[index].isExpanded = !expanded;
 
           var $container = $li.find('ul');
@@ -558,8 +558,8 @@ sap.ui.define([
              var $requestLi = $element.parents('li[data-request-index]');
              var $interactionLi = $element.parents('li[data-interaction-index]');
 
-             var interactionIndex = parseInt($interactionLi.attr('data-interaction-index'), 10);
-             var requestIndex = parseInt($requestLi.attr('data-request-index'), 10);
+             var interactionIndex = parseInt($interactionLi.attr('data-interaction-index'));
+             var requestIndex = parseInt($requestLi.attr('data-request-index'));
 
              var interaction = that.interactions[interactionIndex];
              var request = interaction.requests[requestIndex];
@@ -755,8 +755,8 @@ sap.ui.define([
           var $requestLi = $element.parents('li[data-request-index]');
           var $interactionLi = $element.parents('li[data-interaction-index]');
 
-          var interactionIndex = parseInt($interactionLi.attr('data-interaction-index'), 10);
-          var requestIndex = parseInt($requestLi.attr('data-request-index'), 10);
+          var interactionIndex = parseInt($interactionLi.attr('data-interaction-index'));
+          var requestIndex = parseInt($requestLi.attr('data-request-index'));
 
           var request = this.interactions[interactionIndex].requests[requestIndex];
 
@@ -795,7 +795,7 @@ sap.ui.define([
           function initializePopOverInteractionData() {
 
              var $li = jQuery(this).parent().parent();
-             var index = parseInt($li.attr('data-interaction-index'), 10);
+             var index = parseInt($li.attr('data-interaction-index'));
              var interaction = that.interactions[index];
 
              if (!interaction) {

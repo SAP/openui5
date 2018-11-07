@@ -516,8 +516,8 @@ sap.ui.define([
 			this._oItemNavigation.setCycling(true);
 			this.addDelegate(this._oItemNavigation);
 
-			this._iCalloutWidth = parseInt(250, 10);
-			this._iCalloutHeight = parseInt(200, 10);
+			this._iCalloutWidth = parseInt(250);
+			this._iCalloutHeight = parseInt(200);
 
 			this._visibleItems = 5;
 
@@ -837,7 +837,7 @@ sap.ui.define([
 				var sId = that.getId() + "-notifiers";
 				var $domRef = jQuery.sap.byId(sId);
 				if ($domRef.length > 0) {
-					var iTotalWidth = parseInt($domRef.width(), 10);
+					var iTotalWidth = parseInt($domRef.width());
 
 					var $children = $domRef.children();
 
@@ -1256,13 +1256,13 @@ sap.ui.define([
 				if (iIndex != -1) {
 					var iPercentage = sParam.substring(0, iIndex);
 					var iHeight = jQuery(window).height();
-					iHeight = parseInt(iHeight / 100 * iPercentage, 10);
+					iHeight = parseInt(iHeight / 100 * iPercentage);
 
 					// Ensure that the MaxHeight is at least 1 px larger than the
 					// Default
 					// Maybe disabling the resize feature would be the better
 					// approach in this case
-					var _iHeight = parseInt(this.getHeightOfStatus(sap.ui.ux3.NotificationBarStatus.Default), 10);
+					var _iHeight = parseInt(this.getHeightOfStatus(sap.ui.ux3.NotificationBarStatus.Default));
 					if (iHeight < _iHeight) {
 						iHeight = _iHeight + 1;
 					}

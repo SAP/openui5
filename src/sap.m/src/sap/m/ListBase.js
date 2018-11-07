@@ -2245,8 +2245,8 @@ function(
 		if (this._iStickyValue & 4 /* ColumnHeaders */) {
 			var oTblHeaderDomRef = this.getDomRef("tblHeader").firstChild;
 			var oTblHeaderRect = oTblHeaderDomRef.getBoundingClientRect();
-			iTHRectBottom = parseInt(oTblHeaderRect.bottom, 10);
-			iTHRectHeight = parseInt(oTblHeaderRect.height, 10);
+			iTHRectBottom = parseInt(oTblHeaderRect.bottom);
+			iTHRectHeight = parseInt(oTblHeaderRect.height);
 		}
 
 		if (this._iStickyValue & 2 /* InfoToolbar */) {
@@ -2254,8 +2254,8 @@ function(
 			var oInfoToolbarContainer = this.getDomRef().querySelector(".sapMListInfoTBarContainer");
 			if (oInfoToolbarContainer) {
 				var oInfoToolbarContainerRect = oInfoToolbarContainer.getBoundingClientRect();
-				iInfoTBarContainerRectBottom = parseInt(oInfoToolbarContainerRect.bottom, 10);
-				iInfoTBarContainerRectHeight = parseInt(oInfoToolbarContainerRect.height, 10);
+				iInfoTBarContainerRectBottom = parseInt(oInfoToolbarContainerRect.bottom);
+				iInfoTBarContainerRectHeight = parseInt(oInfoToolbarContainerRect.height);
 			}
 		}
 
@@ -2263,8 +2263,8 @@ function(
 			var oHeaderToolbarDomRef = this.getDomRef().querySelector(".sapMListHdr");
 			if (oHeaderToolbarDomRef) {
 				var oHeaderToolbarRect = oHeaderToolbarDomRef.getBoundingClientRect();
-				iHeaderToolbarRectBottom = parseInt(oHeaderToolbarRect.bottom, 10);
-				iHeaderToolbarRectHeight = parseInt(oHeaderToolbarRect.height, 10);
+				iHeaderToolbarRectBottom = parseInt(oHeaderToolbarRect.bottom);
+				iHeaderToolbarRectHeight = parseInt(oHeaderToolbarRect.height);
 			}
 		}
 

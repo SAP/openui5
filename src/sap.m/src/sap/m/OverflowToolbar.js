@@ -1199,10 +1199,10 @@ sap.ui.define([
 	 * @private
 	 */
 	OverflowToolbar.prototype._getOverflowButtonSize = function () {
-		var iBaseFontSize = parseInt(library.BaseFontSize, 10),
+		var iBaseFontSize = parseInt(library.BaseFontSize),
 			fCoefficient = this.$().parents().hasClass('sapUiSizeCompact') ? 2.5 : 3;
 
-		return parseInt(iBaseFontSize * fCoefficient, 10);
+		return parseInt(iBaseFontSize * fCoefficient);
 	};
 
 
@@ -1259,12 +1259,12 @@ sap.ui.define([
 		var iOptimalWidth,
 			oLayoutData = oControl.getLayoutData(),
 			bShrinkable = oLayoutData && oLayoutData.isA("sap.m.ToolbarLayoutData") ? oLayoutData.getShrinkable() : false,
-			iMinWidth = bShrinkable ? parseInt(oLayoutData.getMinWidth(), 10) : 0,
+			iMinWidth = bShrinkable ? parseInt(oLayoutData.getMinWidth()) : 0,
 			bVisible = oControl.getVisible();
 
 		// For spacers, get the min-width + margins
 		if (oControl.isA("sap.m.ToolbarSpacer")) {
-			iOptimalWidth = parseInt(oControl.$().css('min-width'), 10) || 0 + oControl.$().outerWidth(true) - oControl.$().outerWidth();
+			iOptimalWidth = parseInt(oControl.$().css('min-width')) || 0 + oControl.$().outerWidth(true) - oControl.$().outerWidth();
 		// For elements with LayoutData get minWidth + margins
 		} else if (bShrinkable && iMinWidth > 0 && bVisible) {
 			iOptimalWidth = iMinWidth + oControl.$().outerWidth(true) - oControl.$().outerWidth();

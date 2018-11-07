@@ -593,12 +593,12 @@ sap.ui.define([
 				if (
 					aRegexExecOnVariantTitle.length === 3
 					&& sTitleTrimmed === aRegexExecOnVariantTitle[iIndexForTrimmedTitle]
-					&& iTitleCounter <= parseInt(aRegexExecOnVariantTitle[iIndexForCounter], 10)
+					&& iTitleCounter <= parseInt(aRegexExecOnVariantTitle[iIndexForCounter])
 				) {
 					// Extract integer part & increment counter
 					iTitleCounter =
 						aRegexExecOnVariantTitle[iIndexForCounter]
-							? (parseInt(aRegexExecOnVariantTitle[iIndexForCounter], 10) + 1)
+							? (parseInt(aRegexExecOnVariantTitle[iIndexForCounter]) + 1)
 							: iTitleCounter;
 
 				} else if (aRegexExecOnVariantTitle.length === 2

@@ -100,7 +100,7 @@ sap.ui.define([
 			this._itemWidth = IndexLayout._DEFAULT_ITEM_WIDTH;
 			this.setProperty("itemWidth", this._itemWidth, true);
 		} else {
-			this._itemWidth = parseInt(sItemWidth, 10);
+			this._itemWidth = parseInt(sItemWidth);
 		}
 		_refresh(this);
 		return this;
@@ -113,7 +113,7 @@ sap.ui.define([
 			this._itemHeight = IndexLayout._DEFAULT_ITEM_HEIGHT;
 			this.setProperty("itemHeight", this._itemHeight, true);
 		} else {
-			this._itemHeight = parseInt(sItemHeight, 10);
+			this._itemHeight = parseInt(sItemHeight);
 		}
 		_refresh(this);
 		return this;

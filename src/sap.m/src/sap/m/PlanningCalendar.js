@@ -3445,7 +3445,7 @@ sap.ui.define([
 						$Indicator = jQuery(oDragSession.getIndicator()),
 						sIntervalType = oTimeline.getIntervalType(),
 						oRowStartDate = getRowTimeline(oRow).getStartDate(),
-						iStartIndex = parseInt(oDragSession.getData("text").split("|")[1], 10),
+						iStartIndex = parseInt(oDragSession.getData("text").split("|")[1]),
 						iEndIndex = oTimeline.indexOfAggregation("_intervalPlaceholders", oDragSession.getDropControl()),
 						oNewPos;
 

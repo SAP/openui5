@@ -43,7 +43,7 @@ sap.ui.define([
 		if (oConstraints) {
 			vMaxLength = oConstraints.maxLength;
 			if (typeof vMaxLength === "string") {
-				vMaxLength = parseInt(vMaxLength, 10);
+				vMaxLength = parseInt(vMaxLength);
 			}
 			if (typeof vMaxLength === "number" && !isNaN(vMaxLength) && vMaxLength > 0) {
 				oType.oConstraints = {maxLength : vMaxLength };

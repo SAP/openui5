@@ -171,7 +171,7 @@ sap.ui.define([
 				}
 				return parseFloat(sValue);
 			case "Int":
-				vValue = parseInt(sValue, 10);
+				vValue = parseInt(sValue);
 				return _Helper.isSafeInteger(vValue) ? vValue : {$Int : sValue};
 			case "String":
 				return sValue;
@@ -650,7 +650,7 @@ sap.ui.define([
 	 * @returns {number} The value as number or undefined
 	 */
 	MetadataConverter.prototype.setNumber = function (sValue) {
-		return sValue ? parseInt(sValue, 10) : undefined;
+		return sValue ? parseInt(sValue) : undefined;
 	};
 
 	/**

@@ -104,7 +104,7 @@ sap.ui.define([
 	BreadCrumbs.PAGEUP_AND_PAGEDOWN_JUMP_SIZE = 5;
 
 	BreadCrumbs.prototype.init = function () {
-		this._iREMSize = parseInt(jQuery("body").css("font-size"), 10);
+		this._iREMSize = parseInt(jQuery("body").css("font-size"));
 		this._iContainerMaxHeight = this._iREMSize * 2;
 	};
 

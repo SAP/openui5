@@ -165,14 +165,14 @@ sap.ui.define([
 		var aFESR = sFESR.split(",");
 		assert.strictEqual(aFESR[0].length, 32, "root_context_id - length");
 		assert.strictEqual(aFESR[1].length, 32, "transaction_id - length");
-		assert.strictEqual(parseInt(aFESR[2], 10), 3, "client_navigation_time");
-		assert.strictEqual(parseInt(aFESR[3], 10), 6, "client_round_trip_time");
+		assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
+		assert.strictEqual(parseInt(aFESR[3]), 6, "client_round_trip_time");
 		// end to end will be negative due to mocked request timings, hence -1
-		assert.strictEqual(parseInt(aFESR[4], 10), -1, "end_to_end_time");
-		assert.strictEqual(parseInt(aFESR[5], 10), 3, "network_round_trips");
+		assert.strictEqual(parseInt(aFESR[4]), -1, "end_to_end_time");
+		assert.strictEqual(parseInt(aFESR[5]), 3, "network_round_trips");
 		assert.strictEqual(aFESR[6].length, 40, "client_id - length");
-		assert.strictEqual(parseInt(aFESR[7], 10), 0, "network_time");
-		assert.strictEqual(parseInt(aFESR[8], 10), 6, "request_time");
+		assert.strictEqual(parseInt(aFESR[7]), 0, "network_time");
+		assert.strictEqual(parseInt(aFESR[8]), 6, "request_time");
 		assert.strictEqual(aFESR[9], Device.os.name + "_" + Device.os.version, "client_os");
 		assert.strictEqual(aFESR[10], "SAP_UI5", "client_type");
 	});
@@ -193,7 +193,7 @@ sap.ui.define([
 		assert.ok(!isNaN(aFESRopt[8]), "client_processing_time is a number");
 		assert.ok(aFESRopt[9] === "X" || !aFESRopt[9], "compressed");
 		assert.ok(!isNaN(aFESRopt[14]), "global busy indicator duration is a number");
-		assert.ok(parseInt(aFESRopt[16], 10) >= 0 && parseInt(aFESRopt[16], 10) <= 4, "extension_3 (client device) between 0 and 4");
+		assert.ok(parseInt(aFESRopt[16]) >= 0 && parseInt(aFESRopt[16]) <= 4, "extension_3 (client device) between 0 and 4");
 		assert.ok(aFESRopt[18].length >= 14 && aFESRopt[18].length <= 20, "extension_5 (interaction start time) between 1 and 20 chars - length");
 		assert.ok(aFESRopt[19].length >= 1 && aFESRopt[19].length <= 70, "application_name between 1 and 70 chars - length");
 	});
@@ -220,10 +220,10 @@ sap.ui.define([
 		var sFESR = getHeaderContent(this.spy.args, "SAP-Perf-FESRec");
 		assert.ok(sFESR, "mandatory header present");
 		var aFESR = sFESR.split(",");
-		assert.strictEqual(parseInt(aFESR[2], 10), 3, "client_navigation_time");
-		assert.strictEqual(parseInt(aFESR[3], 10), 6, "client_round_trip_time");
-		assert.strictEqual(parseInt(aFESR[5], 10), 3, "network_round_trips");
-		assert.strictEqual(parseInt(aFESR[8], 10), 6, "request_time");
+		assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
+		assert.strictEqual(parseInt(aFESR[3]), 6, "client_round_trip_time");
+		assert.strictEqual(parseInt(aFESR[5]), 3, "network_round_trips");
+		assert.strictEqual(parseInt(aFESR[8]), 6, "request_time");
 	});
 
 	QUnit.test("request timings with overlap", function(assert) {
@@ -245,10 +245,10 @@ sap.ui.define([
 		var sFESR = getHeaderContent(this.spy.args, "SAP-Perf-FESRec");
 		assert.ok(sFESR, "mandatory header present");
 		var aFESR = sFESR.split(",");
-		assert.strictEqual(parseInt(aFESR[2], 10), 3, "client_navigation_time");
-		assert.strictEqual(parseInt(aFESR[3], 10), 4, "client_round_trip_time");
-		assert.strictEqual(parseInt(aFESR[5], 10), 3, "network_round_trips");
-		assert.strictEqual(parseInt(aFESR[8], 10), 6, "request_time");
+		assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
+		assert.strictEqual(parseInt(aFESR[3]), 4, "client_round_trip_time");
+		assert.strictEqual(parseInt(aFESR[5]), 3, "network_round_trips");
+		assert.strictEqual(parseInt(aFESR[8]), 6, "request_time");
 
 	});
 
@@ -271,10 +271,10 @@ sap.ui.define([
 		var sFESR = getHeaderContent(this.spy.args, "SAP-Perf-FESRec");
 		assert.ok(sFESR, "mandatory header present");
 		var aFESR = sFESR.split(",");
-		assert.strictEqual(parseInt(aFESR[2], 10), 3, "client_navigation_time");
-		assert.strictEqual(parseInt(aFESR[3], 10), 6, "client_round_trip_time");
-		assert.strictEqual(parseInt(aFESR[5], 10), 3, "network_round_trips");
-		assert.strictEqual(parseInt(aFESR[8], 10), 8, "request_time");
+		assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
+		assert.strictEqual(parseInt(aFESR[3]), 6, "client_round_trip_time");
+		assert.strictEqual(parseInt(aFESR[5]), 3, "network_round_trips");
+		assert.strictEqual(parseInt(aFESR[8]), 8, "request_time");
 
 	});
 
@@ -296,11 +296,11 @@ sap.ui.define([
 		var sFESR = getHeaderContent(this.spy.args, "SAP-Perf-FESRec");
 		assert.ok(sFESR, "mandatory header present");
 		var aFESR = sFESR.split(",");
-		assert.strictEqual(parseInt(aFESR[2], 10), 3, "client_navigation_time");
-		assert.strictEqual(parseInt(aFESR[3], 10), 6, "client_round_trip_time");
-		assert.strictEqual(parseInt(aFESR[5], 10), 3, "completed network_round_trips");
-		assert.strictEqual(parseInt(aFESR[7], 10), 0, "network_time");
-		assert.strictEqual(parseInt(aFESR[8], 10), 6, "request_time");
+		assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
+		assert.strictEqual(parseInt(aFESR[3]), 6, "client_round_trip_time");
+		assert.strictEqual(parseInt(aFESR[5]), 3, "completed network_round_trips");
+		assert.strictEqual(parseInt(aFESR[7]), 0, "network_time");
+		assert.strictEqual(parseInt(aFESR[8]), 6, "request_time");
 
 		assert.strictEqual(this.oInteraction.completeRoundtrips, 3, "complete request counted");
 	});
@@ -329,7 +329,7 @@ sap.ui.define([
 		var spy = this.spy(oReq, "setRequestHeader");
 		oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now());
 		oReq.send();
-		var iBusyDurationRequest = parseInt(getHeaderContent(spy.args, "SAP-Perf-FESRec-opt").split(",")[14], 10);
+		var iBusyDurationRequest = parseInt(getHeaderContent(spy.args, "SAP-Perf-FESRec-opt").split(",")[14]);
 		assert.ok(iBusyDurationRequest + 1 >= oMeasurement.busyDuration && iBusyDurationRequest - 1 <= oMeasurement.busyDuration,
 			"Header is filled; FESR entry: " + iBusyDurationRequest + "; Measurement: " + oMeasurement.busyDuration);
 		spy.restore();

@@ -1016,7 +1016,7 @@ sap.ui.define([
 		return m && m[1];
 	}()) || oCfgData.loglevel;
 	if ( oCfgData.loglevel ) {
-		Log.setLevel(Log.Level[oCfgData.loglevel.toUpperCase()] || parseInt(oCfgData.loglevel,10));
+		Log.setLevel(Log.Level[oCfgData.loglevel.toUpperCase()] || parseInt(oCfgData.loglevel));
 	}
 
 	Log.info("SAP Logger started.");

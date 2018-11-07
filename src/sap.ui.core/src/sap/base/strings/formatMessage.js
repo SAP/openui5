@@ -83,7 +83,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			} else if ($3) {
 				// a welformed curly brace
 				//   --> emit the argument but ignore other parameters
-				return String(aValues[parseInt($3, 10)]);
+				return String(aValues[parseInt($3)]);
 			}
 			// e.g. malformed curly braces
 			//   --> throw Error

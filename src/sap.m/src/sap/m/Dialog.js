@@ -1822,8 +1822,8 @@ function(
 						// max-height is taken into account if we use calculated height and a wrong value is set for the dialog content's height.
 						// If no value is set for the height style fall back to calculated height.
 						// * Calculated height is the value taken by $dialog.height().
-						dialogHeight = parseInt($dialog[0].style.height, 10) || parseInt($dialog.height(), 10);
-						dialogBordersHeight = parseInt($dialog.css("border-top-width"), 10) + parseInt($dialog.css("border-bottom-width"), 10);
+						dialogHeight = parseInt($dialog[0].style.height) || parseInt($dialog.height());
+						dialogBordersHeight = parseInt($dialog.css("border-top-width")) + parseInt($dialog.css("border-bottom-width"));
 						$dialogContent.height(dialogHeight + dialogBordersHeight);
 					}
 				}
@@ -1879,7 +1879,7 @@ function(
 					that._$dialog.addClass('sapMDialogResizing');
 
 					var styles = {};
-					var minWidth = parseInt(that._$dialog.css('min-width'), 10);
+					var minWidth = parseInt(that._$dialog.css('min-width'));
 					var maxLeftOffset = initial.x + initial.width - minWidth;
 
 					var handleOffsetX = $target.width() - e.offsetX;

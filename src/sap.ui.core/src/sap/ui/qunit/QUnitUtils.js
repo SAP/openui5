@@ -58,7 +58,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 			if (!sTimeout || isNaN(sTimeout)) {
 				sTimeout = "30000"; // 30s: default timeout of an individual QUnit test!
 			}
-			QUnit.config.testTimeout = parseInt(sTimeout, 10);
+			QUnit.config.testTimeout = parseInt(sTimeout);
 		}
 
 		if ( bLegacySupport ) {
@@ -146,7 +146,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 				// date by one additional day since this is broken in
 				// PhantomJS => this is a workaround for the upper BUG!
 				var m = /^(\d{4})(?:-(\d+)?-(\d+))(?:[T ](\d+):(\d+)(?::(\d+)(?:\.(\d+))?)?)?(?:Z(-?\d*))?$/.exec(sDateString);
-				if (m && parseInt(m[1], 10) >= 2034) {
+				if (m && parseInt(m[1]) >= 2034) {
 					iMillis += 24 * 60 * 60 * 1000;
 				}
 			}

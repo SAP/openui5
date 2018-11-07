@@ -190,7 +190,7 @@ sap.ui.define([
 			vValue;
 
 		if (sValue) {
-			vValue = parseInt(sValue, 10);
+			vValue = parseInt(sValue);
 			if (!_Helper.isSafeInteger(vValue)) {
 				vValue = sValue;
 			}

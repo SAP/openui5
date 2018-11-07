@@ -73,9 +73,9 @@ sap.ui.define([
 				sColumnCount = oView.byId("inputColumn").getValue() || 0,
 				sRowCount = oView.byId("inputRow").getValue() || 0,
 				sBottomRowCount = oView.byId("inputButtomRow").getValue() || 0,
-				iColumnCount = parseInt(sColumnCount,10),
-				iRowCount = parseInt(sRowCount,10),
-				iBottomRowCount = parseInt(sBottomRowCount,10),
+				iColumnCount = parseInt(sColumnCount),
+				iRowCount = parseInt(sRowCount),
+				iBottomRowCount = parseInt(sBottomRowCount),
 				iTotalColumnCount = oTable.getColumns().length,
 				iTotalRowCount = oTable.getRows().length;
 

@@ -606,7 +606,7 @@ sap.ui.define(['jquery.sap.global'],
 		var iPos = sSize.search('px');
 		if (iPos > -1) {
 			sUnit = "px";
-			fValue = parseInt(sSize.slice(0,iPos), 10);
+			fValue = parseInt(sSize.slice(0,iPos));
 			return ({ Value: fValue, Unit: sUnit });
 		}
 
