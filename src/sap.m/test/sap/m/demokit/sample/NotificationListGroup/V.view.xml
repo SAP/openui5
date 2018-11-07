@@ -1,6 +1,6 @@
 <mvc:View
 		controllerName="sap.m.sample.NotificationListGroup.C"
-		class="sapUiBodyBackground sapContrastPlus"
+		class="sapUiBodyBackground sapContrastPlus sapContrast"
 		xmlns:l="sap.ui.layout"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m">
