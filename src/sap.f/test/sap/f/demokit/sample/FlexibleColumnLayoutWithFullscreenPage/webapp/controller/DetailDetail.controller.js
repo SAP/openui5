@@ -9,29 +9,37 @@ sap.ui.define([
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this.oModel = this.getOwnerComponent().getModel();
 
-			this.oRouter.getRoute("detailDetail").attachPatternMatched(this._onSupplierMatched, this);
+			this.oRouter.getRoute("detail").attachPatternMatched(this._onProductMatched, this);
+			this.oRouter.getRoute("detailDetail").attachPatternMatched(this._onProductMatched, this);
+			this.oRouter.getRoute("detailDetailDetail").attachPatternMatched(this._onProductMatched, this);
 		},
-		handleAboutPress: function () {
-			var oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(3);
-			this.oRouter.navTo("page2", {layout: oNextUIState.layout});
+		handleItemPress: function (oEvent) {
+			var supplierPath = oEvent.getSource().getBindingContext("products").getPath(),
+				supplier = supplierPath.split("/").slice(-1).pop();
+
+			this.oRouter.navTo("detailDetailDetail", {layout: sap.f.LayoutType.ThreeColumnsMidExpanded, category: this._category, product: this._product, supplier: supplier});
 		},
 		handleFullScreen: function () {
 			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/midColumn/fullScreen");
-			this.oRouter.navTo("detailDetail", {layout: sNextLayout, product: this._product, supplier: this._supplier});
+			this.navigateToView(sNextLayout, "detailDetail");
 		},
 		handleExitFullScreen: function () {
 			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/midColumn/exitFullScreen");
-			this.oRouter.navTo("detailDetail", {layout: sNextLayout, product: this._product, supplier: this._supplier});
+			this.navigateToView(sNextLayout, "detailDetail");
 		},
 		handleClose: function () {
 			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/midColumn/closeColumn");
-			this.oRouter.navTo("detail", {layout: sNextLayout, product: this._product});
+			this.navigateToView(sNextLayout, "detailDetail");
 		},
-		_onSupplierMatched: function (oEvent) {
-			this._supplier = oEvent.getParameter("arguments").supplier || this._supplier || "0";
+		navigateToView: function (sNextLayout, sNextView) {
+			this.oRouter.navTo(sNextView, {layout: sNextLayout, category: this._category, product: this._product});
+		},
+		_onProductMatched: function (oEvent) {
 			this._product = oEvent.getParameter("arguments").product || this._product || "0";
+			this._category = oEvent.getParameter("arguments").category || this._category;
+
 			this.getView().bindElement({
-				path: "/ProductCollectionStats/Filters/1/values/" + this._supplier,
+				path: "/ProductCollection/" + this._product,
 				model: "products"
 			});
 		}

@@ -1,126 +1,67 @@
-<m:View displayBlock="true" controllerName="sap.f.FlexibleColumnLayoutWithFullscreenPage.controller.Detail" height="100%"
-		xmlns="sap.uxap"
-		xmlns:m="sap.m"
-		xmlns:f="sap.f"
-		xmlns:form="sap.ui.layout.form">
+<core:View displayBlock="true" controllerName="sap.f.FlexibleColumnLayoutWithFullscreenPage.controller.Detail" height="100%"
+	  xmlns="sap.m"
+	  xmlns:f="sap.f"
+	  xmlns:core="sap.ui.core">
+	<f:DynamicPage id="dynamicPageId"
+				   toggleHeaderOnTitleClick="false">
+		<!-- DynamicPage Title -->
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading>
+					<Title text="Products"/>
+				</f:heading>
+			</f:DynamicPageTitle>
+		</f:title>
 
-	<ObjectPageLayout id="ObjectPageLayout"
-					 showTitleInHeaderContent="true"
-					alwaysShowContentHeader="false"
-					preserveHeaderStateOnScroll="false"
-					headerContentPinnable="true"
-					isChildPage="true"
-					upperCaseAnchorBar="false">
-				<headerTitle>
-					<ObjectPageDynamicHeaderTitle>
-						<expandedHeading>
-							<m:Title text="{products>Name}" wrapping="true" class="sapUiSmallMarginEnd"/>
-						</expandedHeading>
+		<!-- DynamicPage Content -->
+		<f:content>
+			<Table id="productsTable"
+				   inset="false"
+				   items="{
+						path: 'products>/ProductCollection'
+					}"
+				   class="sapFDynamicPageAlignContent"
+				   width="auto">
+				<headerToolbar>
+					<OverflowToolbar>
+						<ToolbarSpacer/>
+						<SearchField search="onSearch" width="17.5rem"/>
+						<OverflowToolbarButton icon="sap-icon://add" type="Transparent" press="onAdd"/>
+						<OverflowToolbarButton icon="sap-icon://sort" type="Transparent" press="onSort"/>
+					</OverflowToolbar>
+				</headerToolbar>
+				<columns>
+					<Column width="12em">
+						<Text text="Product" />
+					</Column>
+					<Column	hAlign="End">
+						<Text text="Price" />
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem type="Navigation" press="onListItemPress">
+						<cells>
+							<ObjectIdentifier title="{products>Name}" text="{products>ProductId}" />
+							<ObjectNumber
+									number="{
+										parts:[{path:'products>Price'},{path:'products>CurrencyCode'}],
+										type: 'sap.ui.model.type.Currency',
+										formatOptions: {showMeasure: false}
+									}"
+									unit="{products>CurrencyCode}" />
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</f:content>
 
-						<snappedHeading>
-							<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
-								<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
-									<f:Avatar src="../../../../../../../{products>ProductPicUrl}" displaySize="S" displayShape="Square"/>
-									<m:Title text="{products>Name}" wrapping="true" class="sapUiTinyMarginEnd"/>
-								</m:FlexBox>
-							</m:FlexBox>
-						</snappedHeading>
-
-						<actions>
-							<m:Button
-									text="Edit"
-									type="Emphasized"
-									press="toggleAreaPriority"/>
-							<m:Button
-									text="Delete"
-									type="Transparent"/>
-							<m:Button
-									text="Copy"
-									type="Transparent"/>
-							<m:Button
-									text="Toggle Footer"
-									type="Transparent"
-									press="onToggleFooter"/>
-							<m:Button
-									icon="sap-icon://action"
-									type="Transparent"/>
-						</actions>
-
-					</ObjectPageDynamicHeaderTitle>
-				</headerTitle>
-
-				<headerContent>
-					<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Stretch">
-						<f:Avatar src="../../../../../../../{products>ProductPicUrl}"
-								  displaySize="L"
-								  displayShape="Square"
-								  class="sapUiTinyMarginEnd">
-						</f:Avatar>
-						<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
-							<m:Label text="Main Category"/>
-							<m:Text text="{products>MainCategory}"/>
-						</m:VBox>
-						<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
-							<m:Label text="Subcategory"/>
-							<m:Text text="{products>Category}"/>
-						</m:VBox>
-						<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
-							<m:Label text="Price"/>
-							<m:ObjectNumber number="{products>CurrencyCode} {products>Price}" emphasized="false"/>
-						</m:VBox>
-					</m:FlexBox>
-				</headerContent>
-
-		<sections>
-			<ObjectPageSection title="General Information">
-				<subSections>
-					<ObjectPageSubSection>
-						<blocks>
-							<form:SimpleForm
-								maxContainerCols="2"
-								editable="false"
-								layout="ResponsiveGridLayout"
-								labelSpanL="12"
-								labelSpanM="12"
-								emptySpanL="0"
-								emptySpanM="0"
-								columnsL="1"
-								columnsM="1">
-								<form:content>
-									<m:Label text="Product ID"/>
-									<m:Text text="{products>ProductId}"/>
-									<m:Label text="Description"/>
-									<m:Text text="{products>Description}"/>
-									<m:Label text="Supplier"/>
-									<m:Text text="{products>SupplierName}"/>
-								</form:content>
-							</form:SimpleForm>
-						</blocks>
-					</ObjectPageSubSection>
-				</subSections>
-			</ObjectPageSection>
-
-			<ObjectPageSection title="Suppliers">
-				<subSections>
-					<ObjectPageSubSection>
-						<blocks>
-							<m:Table id="suppliersTable"
-									 items="{path : 'products>/ProductCollectionStats/Filters/1/values'}">
-								<m:columns>
-									<m:Column />
-								</m:columns>
-								<m:items>
-									<m:ColumnListItem type="Navigation" press="handleItemPress">
-										<m:cells>
-											<m:ObjectIdentifier text="{products>text}" />
-										</m:cells>
-									</m:ColumnListItem>
-								</m:items>
-							</m:Table>
-						</blocks>
-					</ObjectPageSubSection>
-				</subSections>
-			</ObjectPageSection>
-		</sections>
-	</ObjectPageLayout>
-</m:View>
+		<!-- DynamicPage Footer -->
+		<f:footer>
+			<OverflowToolbar>
+				<ToolbarSpacer/>
+				<Button type="Accept" text="Accept"/>
+				<Button type="Reject" text="Reject"/>
+			</OverflowToolbar>
+		</f:footer>
+	</f:DynamicPage>
+</core:View>
