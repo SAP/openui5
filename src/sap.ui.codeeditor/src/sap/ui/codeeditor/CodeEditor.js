@@ -28,12 +28,13 @@ sap.ui.loader.config({
 sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/Device',
+	'sap/ui/core/ResizeHandler',
 	'sap/ui/codeeditor/js/ace/ace',
 	'sap/ui/codeeditor/js/ace/ext-language_tools',
 	'sap/ui/codeeditor/js/ace/ext-beautify',
 	'sap/ui/codeeditor/js/ace/mode-javascript',
 	'sap/ui/codeeditor/js/ace/mode-json'
-], function(Control, Device) {
+], function(Control, Device, ResizeHandler) {
 	"use strict";
 
 	// TODO remove after 1.62 version
@@ -402,6 +403,20 @@ sap.ui.define([
 	/**
 	 * @private
 	 */
+	CodeEditor.prototype.onBeforeRendering = function() {
+		this._deregisterResizeListener();
+	};
+
+	/**
+	 * @private
+	 */
+	CodeEditor.prototype.exit = function() {
+		this._deregisterResizeListener();
+	};
+
+	/**
+	 * @private
+	 */
 	CodeEditor.prototype.onAfterRendering = function() {
 		var oDomRef = this.getDomRef(),
 			oPropertyDefaults = this.getMetadata().getPropertyDefaults();
@@ -417,6 +432,8 @@ sap.ui.define([
 
 		// force text update
 		this._oEditor.renderer.updateText();
+
+		this._registerResizeListener();
 	};
 
 	/**
@@ -499,6 +516,27 @@ sap.ui.define([
 			document.activeElement.blur(); // prevent virtual keyboard from opening when control is not editable
 		}
 		this._oEditor.getSession().setUseWorker(true);
+	};
+
+	/**
+	 * @private
+	 */
+	CodeEditor.prototype._registerResizeListener = function() {
+		// listen once for resize of the _oEditorDomRef, in some ui5 containers (sap.m.App for example) this can happen very late and ace editor does not handle it
+		this._iResizeListenerId = ResizeHandler.register(this._oEditorDomRef, function() {
+			this._oEditor.resize(); // force the ace editor to recalculate height
+			ResizeHandler.deregister(this._iResizeListenerId);
+		}.bind(this));
+	};
+
+	/**
+	 * @private
+	 */
+	CodeEditor.prototype._deregisterResizeListener = function() {
+		// Unregister the resize listener used for fixing initial resize, to prevent double registering.
+		if (this._iResizeListenerId) {
+			ResizeHandler.deregister(this._iResizeListenerId);
+		}
 	};
 
 	return CodeEditor;
