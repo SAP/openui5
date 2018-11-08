@@ -8,6 +8,7 @@ sap.ui.define([
 	'../Device',
 	'../Global',
 	'../base/Object',
+	'./CalendarType',
 	'./Locale',
 	'sap/ui/thirdparty/URI',
 	"sap/base/util/UriParameters",
@@ -21,6 +22,7 @@ sap.ui.define([
 		Device,
 		Global,
 		BaseObject,
+		CalendarType,
 		Locale,
 		URI,
 		UriParameters,
@@ -32,7 +34,7 @@ sap.ui.define([
 	"use strict";
 
 	// lazy dependencies. Can't be declared as this would result in cyclic dependencies
-	var CalendarType, LocaleData;
+	var LocaleData;
 
 	/**
 	 * Creates a new Configuration object.
@@ -836,11 +838,7 @@ sap.ui.define([
 		getCalendarType :  function() {
 			var sName;
 
-			// lazy load of sap.ui.core library and LocaleData to avoid cyclic dependencies
-			if ( !CalendarType ) {
-				Global.getCore().loadLibrary('sap.ui.core');
-				CalendarType = sap.ui.require("sap/ui/core/library").CalendarType;
-			}
+			// lazy load of LocaleData to avoid cyclic dependencies
 			if ( !LocaleData ) {
 				LocaleData = sap.ui.requireSync("sap/ui/core/LocaleData");
 			}

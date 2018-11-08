@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.date.Persian
-sap.ui.define(['./UniversalDate'],
-	function(UniversalDate) {
+sap.ui.define(['./UniversalDate', '../CalendarType'],
+	function(UniversalDate, CalendarType) {
 	"use strict";
 
 
@@ -26,7 +26,7 @@ sap.ui.define(['./UniversalDate'],
 				aArgs = toGregorianArguments(aArgs);
 			}
 			this.oDate = this.createDate(Date, aArgs);
-			this.sCalendarType = sap.ui.core.CalendarType.Persian;
+			this.sCalendarType = CalendarType.Persian;
 		}
 	});
 
