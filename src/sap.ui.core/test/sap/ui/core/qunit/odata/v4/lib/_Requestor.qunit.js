@@ -47,7 +47,7 @@ sap.ui.define([
 	function createMock(assert, oPayload, sTextStatus, mResponseHeaders) {
 		var jqXHR = new jQuery.Deferred();
 
-		setTimeout(function () {
+		Promise.resolve().then(function () {
 			jqXHR.resolve(oPayload, sTextStatus, { // mock jqXHR for success handler
 				getResponseHeader : function (sName) {
 					mResponseHeaders = mResponseHeaders || {
@@ -59,6 +59,8 @@ sap.ui.define([
 						return mResponseHeaders["Content-Type"] || null;
 					case "DataServiceVersion":
 						return mResponseHeaders["DataServiceVersion"] || null;
+					case "Keep-Alive":
+						return mResponseHeaders["Keep-Alive"] || null;
 					case "OData-Version":
 						return mResponseHeaders["OData-Version"] || null;
 					case "SAP-ContextId":
@@ -72,7 +74,7 @@ sap.ui.define([
 					}
 				}
 			});
-		}, 0);
+		});
 
 		return jqXHR;
 	}
@@ -125,6 +127,45 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_Requestor is an object, not a constructor function", function (assert) {
 		assert.strictEqual(typeof _Requestor, "object");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("constructor", function (assert) {
+		var mHeaders = {},
+			oHelperMock = this.mock(_Helper),
+			mQueryParams = {},
+			oRequestor;
+
+		oHelperMock.expects("buildQuery")
+			.withExactArgs(sinon.match.same(mQueryParams)).returns("?~");
+
+		oRequestor = _Requestor.create(sServiceUrl, oModelInterface, mHeaders, mQueryParams);
+
+		assert.deepEqual(oRequestor.mBatchQueue, {});
+		assert.strictEqual(oRequestor.mHeaders, mHeaders);
+		assert.strictEqual(oRequestor.oModelInterface, oModelInterface);
+		assert.strictEqual(oRequestor.sQueryParams, "?~");
+		assert.deepEqual(oRequestor.mRunningChangeRequests, {});
+		assert.strictEqual(oRequestor.oSecurityTokenPromise, null);
+		assert.strictEqual(oRequestor.iSessionTimer, 0);
+		assert.strictEqual(oRequestor.iSerialNumber, 0);
+		assert.strictEqual(oRequestor.sServiceUrl, sServiceUrl);
+
+		oHelperMock.expects("buildQuery").withExactArgs(undefined).returns("");
+
+		oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+
+		assert.deepEqual(oRequestor.mHeaders, {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("destroy", function (assert) {
+		var oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+
+		this.mock(oRequestor).expects("clearSessionContext").withExactArgs();
+
+		// code under test
+		oRequestor.destroy();
 	});
 
 	//*********************************************************************************************
@@ -288,8 +329,10 @@ sap.ui.define([
 					getResponseHeader : function (sName) {
 						// Note: getResponseHeader treats sName case insensitive!
 						switch (sName) {
-							case "X-CSRF-Token" : return o.sRequired;
+							case "Keep-Alive" : return null;
+							case "SAP-ContextId" : return null;
 							case "SAP-Err-Id" : return null;
+							case "X-CSRF-Token" : return o.sRequired;
 							default: assert.ok(false, "unexpected header " + sName);
 						}
 					},
@@ -445,34 +488,78 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("sendRequest(), store SAP-ContextId from server", function (assert) {
+	QUnit.test("sendRequest(): setSessionContext", function (assert) {
 		var oJQueryMock = this.mock(jQuery),
-			oRequestor = _Requestor.create("/", oModelInterface);
+			oRequestor = _Requestor.create("/", oModelInterface),
+			oRequestorMock = this.mock(oRequestor);
 
 		oJQueryMock.expects("ajax")
 			.withExactArgs("/", sinon.match.object)
 			.returns(createMock(assert, {/*oPayload*/}, "OK", {
+				"Keep-Alive" : "timeout=120, max=42",
 				"OData-Version" : "4.0",
 				"SAP-ContextId" : "abc123"
 			}));
+		oRequestorMock.expects("setSessionContext").withExactArgs("abc123", "timeout=120, max=42");
 
 		// code under test
-		return oRequestor.sendRequest("GET", "").then(function () {
-			assert.strictEqual(oRequestor.mHeaders["SAP-ContextId"], "abc123");
+		return oRequestor.sendRequest("GET", "");
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bErrorId, i) {
+		QUnit.test("sendRequest(): error & session, bErrorId=" + bErrorId, function (assert) {
+			var oJQueryMock = this.mock(jQuery),
+				oRequestor = _Requestor.create("/", oModelInterface),
+				that = this;
 
 			oJQueryMock.expects("ajax")
-				.withExactArgs("/", sinon.match({headers : {"SAP-ContextId" : "abc123"}}))
-				.returns(createMock(assert, {/*oPayload*/}, "OK"));
+				.withExactArgs("/", sinon.match.object)
+				.returns(createMock(assert, {/*oPayload*/}, "OK", {
+					"OData-Version" : "4.0",
+					"SAP-ContextId" : "abc123"
+				}));
 
 			// code under test
 			return oRequestor.sendRequest("GET", "").then(function () {
-				assert.strictEqual(oRequestor.mHeaders["SAP-ContextId"], undefined);
+				var oExpectedError = new Error(),
+					jqXHRMock;
+
+				assert.strictEqual(oRequestor.mHeaders["SAP-ContextId"], "abc123");
+
+				jqXHRMock = new jQuery.Deferred();
+				setTimeout(function () {
+					jqXHRMock.reject({
+						getResponseHeader : function (sName) {
+							switch (sName) {
+								case "SAP-ContextId": return null;
+								case "SAP-Err-Id" : return bErrorId ? "ICMENOSESSION" : null;
+								case "X-CSRF-Token" : return null;
+								default : assert.ok(false, "unexpected header " + sName);
+							}
+						},
+						"status" : 500
+					});
+				}, 0);
+				oJQueryMock.expects("ajax")
+					.withExactArgs("/", sinon.match({headers : {"SAP-ContextId" : "abc123"}}))
+					.returns(jqXHRMock);
+				that.mock(oRequestor).expects("clearSessionContext").exactly(bErrorId ? 1 : 0)
+					.withExactArgs();
+				that.mock(_Helper).expects("createError").returns(oExpectedError);
+
+				// code under test
+				return oRequestor.sendRequest("GET", "").then(function () {
+					assert.ok(false);
+				}, function (oError) {
+					assert.strictEqual(oError, oExpectedError);
+				});
 			});
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("sendRequest(), SAP-ContextId & time out", function (assert) {
+	QUnit.test("sendRequest(): error in session", function (assert) {
 		var oJQueryMock = this.mock(jQuery),
 			oRequestor = _Requestor.create("/", oModelInterface),
 			that = this;
@@ -487,17 +574,15 @@ sap.ui.define([
 		// code under test
 		return oRequestor.sendRequest("GET", "").then(function () {
 			var oExpectedError = new Error(),
-				jqXHRMock;
+				jqXHRMock = new jQuery.Deferred();
 
-			assert.strictEqual(oRequestor.mHeaders["SAP-ContextId"], "abc123");
-
-			jqXHRMock = new jQuery.Deferred();
 			setTimeout(function () {
 				jqXHRMock.reject({
 					getResponseHeader : function (sName) {
 						switch (sName) {
+							case "Keep-Alive": return "timeout=42";
+							case "SAP-ContextId": return "abc123";
 							case "X-CSRF-Token" : return null;
-							case "SAP-Err-Id" : return "ICMENOSESSION";
 							default : assert.ok(false, "unexpected header " + sName);
 						}
 					},
@@ -507,13 +592,14 @@ sap.ui.define([
 			oJQueryMock.expects("ajax")
 				.withExactArgs("/", sinon.match({headers : {"SAP-ContextId" : "abc123"}}))
 				.returns(jqXHRMock);
+			that.mock(oRequestor).expects("setSessionContext")
+				.withExactArgs("abc123", "timeout=42");
 			that.mock(_Helper).expects("createError").returns(oExpectedError);
 
 			// code under test
 			return oRequestor.sendRequest("GET", "").then(function () {
 				assert.ok(false);
 			}, function (oError) {
-				assert.strictEqual(oRequestor.mHeaders["SAP-ContextId"], undefined);
 				assert.strictEqual(oError, oExpectedError);
 			});
 		});
@@ -3136,6 +3222,209 @@ sap.ui.define([
 			assert.strictEqual(oRequestor.cleanUpChangeSets(oFixture.requests), oFixture.changes);
 
 			checkRequests(oFixture.requests, oFixture.result);
+		});
+	});
+
+	//*****************************************************************************************
+	QUnit.test("clearSessionContext", function (assert) {
+		var oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
+			iSessionTimer = {/*a number*/};
+
+		oRequestor.mHeaders["SAP-ContextId"] = "context";
+		oRequestor.iSessionTimer = iSessionTimer;
+		this.mock(window).expects("clearInterval").withExactArgs(sinon.match.same(iSessionTimer));
+
+		// code under test
+		oRequestor.clearSessionContext();
+
+		assert.strictEqual(oRequestor.iSessionTimer, 0);
+		assert.notOk("SAP-ContextId" in oRequestor.mHeaders);
+
+		// code under test
+		oRequestor.clearSessionContext();
+	});
+
+	//*****************************************************************************************
+	[
+		{keepAlive : null},
+		{keepAlive : "timeout=60, max=42", timeout : 55000},
+		{keepAlive : "max=42, timeout=120", timeout : 115000},
+		{keepAlive : "timeout=60", timeout : 55000},
+		{keepAlive : "timeout=59", error : true},
+		{keepAlive : "timeout=0, max=42", error : true},
+		{keepAlive : "timeout=-100, max=42", error : true},
+		{keepAlive : "sessiontimeout=120, max=42", error : true}
+	].forEach(function (oFixture) {
+		QUnit.test("setSessionContext: Keep-Alive=" + oFixture.keepAlive, function (assert) {
+			var oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
+				iSessionTimer = {};
+
+			this.mock(oRequestor).expects("clearSessionContext").withExactArgs();
+			if (oFixture.timeout) {
+				this.mock(window).expects("setInterval")
+					.withExactArgs(sinon.match.func, oFixture.timeout)
+					.returns(iSessionTimer);
+			} else if (oFixture.error) {
+				this.oLogMock.expects("warning")
+					.withExactArgs("Unsupported Keep-Alive header", oFixture.keepAlive,
+						"sap.ui.model.odata.v4.lib._Requestor");
+			}
+
+			// code under test
+			oRequestor.setSessionContext("context", oFixture.keepAlive);
+
+			assert.strictEqual(oRequestor.mHeaders["SAP-ContextId"], "context");
+			assert.strictEqual(oRequestor.iSessionTimer, oFixture.timeout ? iSessionTimer : 0);
+		});
+	});
+
+	//*****************************************************************************************
+	QUnit.test("setSessionContext: no SAP-ContextId", function (assert) {
+		var oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+
+		this.mock(window).expects("setInterval").never();
+		this.mock(oRequestor).expects("clearSessionContext").withExactArgs();
+
+		// code under test
+		oRequestor.setSessionContext(null, "timeout=120");
+	});
+
+	//*****************************************************************************************
+	QUnit.test("setSessionContext: succesful ping", function (assert) {
+		var oExpectation,
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface, {}, {
+				"sap-client" : "120"
+			});
+
+		oExpectation = this.mock(window).expects("setInterval")
+			.withExactArgs(sinon.match.func, 115000);
+
+		oRequestor.setSessionContext("context", "timeout=120, max=42");
+
+		this.mock(jQuery).expects("ajax").withExactArgs(sServiceUrl + "?sap-client=120", {
+				headers : sinon.match({
+					"SAP-ContextId" : "context"
+				}),
+				method : "HEAD"
+			})
+			.returns(createMock(assert, undefined, "OK", {}));
+
+		// code under test
+		oExpectation.callArg(0); //callback
+	});
+
+	//*****************************************************************************************
+	[false, true].forEach(function (bErrorId) {
+		QUnit.test("setSessionContext: error in ping, " + bErrorId, function (assert) {
+			var that = this;
+
+			return new Promise(function (resolve) {
+				var oExpectation,
+					oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+
+				oExpectation = that.mock(window).expects("setInterval")
+					.withExactArgs(sinon.match.func, 115000);
+
+				oRequestor.setSessionContext("context", "timeout=120, max=42");
+
+				that.mock(jQuery).expects("ajax").withExactArgs(sServiceUrl, {
+						headers : sinon.match({
+							"SAP-ContextId" : "context"
+						}),
+						method : "HEAD"
+					})
+					.callsFake(function () {
+						var jqXHR = new jQuery.Deferred();
+
+						setTimeout(function () {
+							jqXHR.reject({
+								getResponseHeader : function (sName) {
+									assert.strictEqual(sName, "SAP-Err-Id");
+									return bErrorId ? "ICMENOSESSION" : null;
+								},
+								"status" : 500
+							});
+							resolve();
+						}, 0);
+						return jqXHR;
+					});
+				that.mock(oRequestor).expects("clearSessionContext").exactly(bErrorId ? 1 : 0)
+					.withExactArgs();
+
+				// code under test
+				oExpectation.callArg(0); //callback
+			});
+		});
+	});
+
+	//*****************************************************************************************
+	QUnit.test("setSessionContext: callback termination", function (assert) {
+		var oClock,
+			oExpectation,
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+
+		oClock = sinon.useFakeTimers();
+		try {
+			oExpectation = this.mock(window).expects("setInterval")
+				.withExactArgs(sinon.match.func, 115000);
+
+			oRequestor.setSessionContext("context", "timeout=120, max=42");
+
+			oClock.tick(15 * 60 * 1000); // 15 min
+			this.mock(jQuery).expects("ajax").never();
+			this.mock(oRequestor).expects("clearSessionContext").withExactArgs();
+
+			// code under test
+			oExpectation.callArg(0); //callback
+		} finally {
+			oClock.restore();
+		}
+	});
+
+	//*****************************************************************************************
+	QUnit.test("keep the session alive", function (assert) {
+		var oClock,
+			oJQueryMock = this.mock(jQuery),
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
+			sResourcePath = "Employees('1')/namespace.Prepare";
+
+		oClock = sinon.useFakeTimers();
+		return new Promise(function (resolve) {
+			oJQueryMock.expects("ajax")
+				.withExactArgs(sServiceUrl + sResourcePath, {
+					data : undefined,
+					headers : sinon.match.object,
+					method : "POST"
+				})
+				.returns(createMock(assert, {}, "OK", {
+					"OData-Version" : "4.0",
+					"SAP-ContextId" : "context",
+					"Keep-Alive" : "timeout=600, max=42"
+				}));
+
+			// send a request that starts a session with timeout=600 (10 min)
+			return oRequestor.sendRequest("POST", sResourcePath).then(function () {
+				oJQueryMock.expects("ajax").withExactArgs(sServiceUrl, {
+						headers : sinon.match({
+							"SAP-ContextId" : "context"
+						}),
+						method : "HEAD"
+					})
+					.returns(createMock(assert, undefined, "OK", {}));
+
+				// expect a "ping" request after 9 min 55 sec
+				oClock.tick(595000);
+
+				// expect no "ping" request, but a terminated session after another 9 min 55 sec
+				// (more than 15 min have passed since the latest request)
+				oClock.tick(595000);
+
+				assert.notOk("SAP-ContextId" in oRequestor.mHeaders);
+				resolve();
+			});
+		}).finally(function () {
+			oRequestor.destroy();
+			oClock.restore();
 		});
 	});
 });

@@ -8,10 +8,11 @@ sap.ui.define([
 	"./_GroupLock",
 	"./_Helper",
 	"./_V2Requestor",
+	"sap/base/Log",
 	"sap/base/util/deepEqual",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/thirdparty/jquery"
-], function (_Batch, _GroupLock, _Helper, asV2Requestor, deepEqual, SyncPromise, jQuery) {
+], function (_Batch, _GroupLock, _Helper, asV2Requestor, Log, deepEqual, SyncPromise, jQuery) {
 	"use strict";
 
 	var mBatchHeaders = { // headers for the $batch request
@@ -82,6 +83,7 @@ sap.ui.define([
 		this.sQueryParams = _Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
 		this.mRunningChangeRequests = {};
 		this.oSecurityTokenPromise = null; // be nice to Chrome v8
+		this.iSessionTimer = 0;
 		this.iSerialNumber = 0;
 		this.sServiceUrl = sServiceUrl;
 	}
@@ -355,6 +357,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Clears the session context and its keep-alive timer.
+	 *
+	 * @private
+	 */
+	Requestor.prototype.clearSessionContext = function () {
+		delete this.mHeaders["SAP-ContextId"];
+		if (this.iSessionTimer) {
+			clearInterval(this.iSessionTimer);
+			this.iSessionTimer = 0;
+		}
+	};
+
+	/**
 	 * Converts the value for a "$expand" in mQueryParams.
 	 *
 	 * @param {object} mExpandItems The expand items, a map from path to options
@@ -459,6 +474,15 @@ sap.ui.define([
 	 */
 	Requestor.prototype.convertResourcePath = function (sResourcePath) {
 		return sResourcePath;
+	};
+
+	/**
+	 * Destroys this requestor.
+	 *
+	 * @private
+	 */
+	Requestor.prototype.destroy = function () {
+		this.clearSessionContext();
 	};
 
 	/**
@@ -1205,8 +1229,8 @@ sap.ui.define([
 					}
 					that.mHeaders["X-CSRF-Token"]
 						= jqXHR.getResponseHeader("X-CSRF-Token") || that.mHeaders["X-CSRF-Token"];
-					that.mHeaders["SAP-ContextId"]
-						= jqXHR.getResponseHeader("SAP-ContextId") || undefined;
+					that.setSessionContext(jqXHR.getResponseHeader("SAP-ContextId"),
+						jqXHR.getResponseHeader("Keep-Alive"));
 
 					fnResolve({
 						body : oResponse,
@@ -1215,7 +1239,8 @@ sap.ui.define([
 						resourcePath : sResourcePath
 					});
 				}, function (jqXHR, sTextStatus, sErrorMessage) {
-					var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
+					var sContextId = jqXHR.getResponseHeader("SAP-ContextId"),
+						sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
 
 					if (!bIsFreshToken && jqXHR.status === 403
 							&& sCsrfToken && sCsrfToken.toLowerCase() === "required") {
@@ -1224,9 +1249,15 @@ sap.ui.define([
 							send(true);
 						}, fnReject);
 					} else {
-						if (jqXHR.getResponseHeader("SAP-Err-Id") === "ICMENOSESSION") {
-							that.mHeaders["SAP-ContextId"] = undefined;
-						}
+						if (sContextId) {
+							// an error response within the session (e.g. a failed save) refreshes
+							// the session
+							that.setSessionContext(sContextId,
+								jqXHR.getResponseHeader("Keep-Alive"));
+						} else if (jqXHR.getResponseHeader("SAP-Err-Id") === "ICMENOSESSION") {
+							// The server could not find the context ID ("ICM Error NO SESSION")
+							that.clearSessionContext();
+						} // else keep the session untouched
 						fnReject(_Helper.createError(jqXHR, sRequestUrl, sOriginalResourcePath));
 					}
 				});
@@ -1237,6 +1268,54 @@ sap.ui.define([
 			}
 			return send();
 		});
+	};
+
+	/**
+	 * Sets the session context. Starts a keep-alive timer in case there is a session context and
+	 * a keep-alive timeout of 60 seconds or more is indicated. This timer runs for at most 15
+	 * minutes.
+	 *
+	 * @param {string} [sContextId] The value of the header 'SAP-ContextId'
+	 * @param {string} [sKeepAlive] The value of the header 'Keep-Alive', a comma-separated list of
+	 *   parameters, each consisting of an identifier and a value separated by the equal sign ('=');
+	 *   only the parameter "timeout" is used
+	 *
+	 * @private
+	 */
+	Requestor.prototype.setSessionContext = function (sContextId, sKeepAlive) {
+		var aMatches = /\btimeout=(\d+)/.exec(sKeepAlive),
+			iKeepAliveSeconds = aMatches && parseInt(aMatches[1]),
+			iSessionTimeout = Date.now() + 15 * 60 * 1000, // 15 min
+			that = this;
+
+		this.clearSessionContext(); // stop the current session and its timer
+		if (sContextId) {
+			// start a new session and a new timer with the current header values (should be the
+			// same as before)
+			that.mHeaders["SAP-ContextId"] = sContextId;
+			if (iKeepAliveSeconds >= 60) {
+				this.iSessionTimer = setInterval(function () {
+					if (Date.now() >= iSessionTimeout) { // 15 min have passed
+						that.clearSessionContext(); // give up
+					} else {
+						jQuery.ajax(that.sServiceUrl + that.sQueryParams, {
+							method : "HEAD",
+							headers : {
+								"SAP-ContextId" : that.mHeaders["SAP-ContextId"]
+							}
+						}).fail(function (jqXHR) {
+							if (jqXHR.getResponseHeader("SAP-Err-Id") === "ICMENOSESSION") {
+								// The server could not find the context ID ("ICM Error NO SESSION")
+								that.clearSessionContext();
+							} // else keep the timer running
+						});
+					}
+				}, (iKeepAliveSeconds - 5) * 1000);
+			} else if (sKeepAlive) {
+				Log.warning("Unsupported Keep-Alive header", sKeepAlive,
+					"sap.ui.model.odata.v4.lib._Requestor");
+			}
+		}
 	};
 
 	/**

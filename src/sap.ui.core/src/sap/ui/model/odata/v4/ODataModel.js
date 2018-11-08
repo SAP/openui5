@@ -881,7 +881,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Destroys this model and its meta model.
+	 * Destroys this model, its requestor and its meta model.
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#destroy
@@ -889,6 +889,7 @@ sap.ui.define([
 	 */
 	// @override
 	ODataModel.prototype.destroy = function () {
+		this.oRequestor.destroy();
 		this.oMetaModel.destroy();
 		return Model.prototype.destroy.apply(this, arguments);
 	};
