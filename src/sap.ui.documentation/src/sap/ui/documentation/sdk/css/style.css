@@ -2,7 +2,8 @@ a.sapLogo {
 	margin-left: 1rem;
 }
 
-.sapUiMedia-Std-Phone a.sapLogo {
+.sapUiMedia-Std-Phone a.sapLogo,
+.sap-phone a.sapLogo {
 	display: none;
 }
 
@@ -180,7 +181,8 @@ html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
 }
 
 /* header navigation on phone */
-.sapUiMedia-Std-Phone .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect {
+.sapUiMedia-Std-Phone .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect,
+.sap-phone .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect {
 	height: 3rem;
 }
 
