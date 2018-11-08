@@ -5,90 +5,117 @@ sap.ui.require([
 	'sap/ui/core/library',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/model/json/JSONModel',
-	'sap/ui/core/UIComponent'
-], function(Model, Message, library, ComponentContainer, JSONModel, UIComponent){
+	'sap/ui/core/UIComponent',
+	'sap/ui/qunit/utils/createAndAppendDiv'
+], function(Model, Message, library, ComponentContainer, JSONModel, UIComponent, createAndAppendDiv){
 	"use strict";
-	var oModel;
 
 	// create content div
-	var oDIV = document.createElement("div");
-	oDIV.id = "content";
-	document.body.appendChild(oDIV);
-
-	function spyDataState(oControl, fnTest) {
-		if (oControl.refreshDataState) {
-			var fnRefresh = oControl.refreshDataState;
-			oControl.refreshDataState = function(sName, oDataState) {
-				sap.m.Input.prototype.refreshDataState.apply(oControl, arguments);
-				fnTest(sName, oDataState);
-				oControl.refreshDataState = fnRefresh;
-			};
-		}
-	}
-	//create some components for testing
-	var oCompCont = new ComponentContainer("CompCont", {
-		name: "components",
-		id: "myMessageTest1"
-	});
-	var oCompCont2 = new ComponentContainer("CompCont2", {
-		name: "components.enabled",
-		id: "myMessageTest2",
-		handleValidation: true
-	});
-	var oCompCont3 = new ComponentContainer("CompCont3", {
-		name: "components.disabled",
-		id: "myMessageTest3",
-		handleValidation: true
-	});
-
-	oCompCont.placeAt("content");
-	oCompCont2.placeAt("content");
-	oCompCont3.placeAt("content");
-
-	var initModel = function(sType) {
-		if (sType === "json") {
-			oModel = new JSONModel();
-			var oData = {
-				form: {
-					firstname: "Fritz",
-					lastname: "Heiner",
-					street: "im",
-					nr: 1,
-					zip: "12345"
-				}
-			};
-			oModel.setData(oData);
-		}
-		sap.ui.getCore().setModel(oModel);
-	};
+	createAndAppendDiv('content');
 
 	QUnit.module("MessageManager components", {
+		before: function(){
+			this.spyDataState = function(oControl, fnTest) {
+				if (oControl.refreshDataState) {
+					var fnRefresh = oControl.refreshDataState;
+					oControl.refreshDataState = function(sName, oDataState) {
+						sap.m.Input.prototype.refreshDataState.apply(oControl, arguments);
+						fnTest(sName, oDataState);
+						oControl.refreshDataState = fnRefresh;
+					};
+				}
+			};
+
+			//create some components for testing
+			var oCompCont = new ComponentContainer("CompCont", {
+				name: "components",
+				id: "myMessageTest1"
+			});
+			var pCompContRendered = new Promise(function(res, rej){
+				oCompCont.addEventDelegate({
+					onAfterRendering: function (oEvent) {
+						res();
+					}
+				});
+			});
+
+			var oCompContEnabled = new ComponentContainer("CompCont2", {
+				name: "components.enabled",
+				id: "myMessageTest2",
+				handleValidation: true
+			});
+			var pCompContEnabledRendered = new Promise(function(res, rej){
+				oCompContEnabled.addEventDelegate({
+					onAfterRendering: function (oEvent) {
+						res();
+					}
+				});
+			});
+
+			var oCompContDisabled = new ComponentContainer("CompCont3", {
+				name: "components.disabled",
+				id: "myMessageTest3",
+				handleValidation: true
+			});
+			var pCompContDisabledRendered = new Promise(function(res, rej){
+				oCompContDisabled.addEventDelegate({
+					onAfterRendering: function (oEvent) {
+						res();
+					}
+				});
+			});
+
+
+			oCompCont.placeAt("content");
+			oCompContEnabled.placeAt("content");
+			oCompContDisabled.placeAt("content");
+
+			this.initModel = function() {
+				this.oModel = new JSONModel();
+				var oData = {
+					form: {
+						firstname: "Fritz",
+						lastname: "Heiner",
+						street: "im",
+						nr: 1,
+						zip: "12345"
+					}
+				};
+				this.oModel.setData(oData);
+				sap.ui.getCore().setModel(this.oModel);
+			};
+
+
+			return Promise.all([pCompContRendered, pCompContEnabledRendered, pCompContDisabledRendered]);
+		},
+
 		beforeEach : function() {
-			initModel("json");
+			this.initModel();
 		},
 
 		afterEach : function() {
-			oModel.destroy();
+			this.oModel.destroy();
 		}
 	});
 
-	QUnit.test("componentEnabled", function(assert) {
+	QUnit.test("componentEnabled", function (assert) {
 		var done = assert.async();
+
 		var oCompZip = sap.ui.getCore().byId("zip_enabled");
 
-		spyDataState(oCompZip, function(sName, oDataState) {
+		this.spyDataState(oCompZip, function (sName, oDataState) {
 			assert.ok(oDataState.getMessages().length == 1, 'Format Message created');
 			assert.ok(oCompZip.getValueState() === library.ValueState.Error, 'Input: ValueState set correctly');
 			assert.ok(oCompZip.getValueStateText() === 'Enter a value with no more than 5 characters', 'Input: ValueStateText set correctly');
 		});
-		var oCoreValHandler = function(oEvent) {
-			assert.ok(false,"should never be called");
+		var oCoreValHandler = function (oEvent) {
+			assert.ok(false, "should never be called");
 		};
 		sap.ui.getCore().attachValidationError(oCoreValHandler);
 		oCompZip.setValue('123456');
 
-		jQuery.sap.delayedCall(0, this, function() {
-			spyDataState(oCompZip, function(sName, oDataState) {
+		setTimeout(function () {
+			this.spyDataState(oCompZip, function (sName, oDataState) {
 				assert.ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
 				assert.ok(oCompZip.getValueState() === library.ValueState.None, 'Input: ValueState set correctly');
 				assert.ok(oCompZip.getValueStateText() === '', 'Input: ValueStateText set correctly');
@@ -96,8 +123,7 @@ sap.ui.require([
 			});
 			oCompZip.setValue('12345');
 			sap.ui.getCore().detachValidationError(oCoreValHandler);
-		});
-
+		}.bind(this), 0);
 	});
 
 	QUnit.test("componentDisabled", function(assert) {
@@ -120,6 +146,7 @@ sap.ui.require([
 	QUnit.test("component handle validation undefined", function(assert) {
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
+
 		var oCompZip = sap.ui.getCore().byId("zip");
 		var oChangeHandler = function(oEvent) {
 			if (oEvent.getParameter("dataState").getMessages() && oEvent.getParameter("dataState").getMessages().length > 0) {
