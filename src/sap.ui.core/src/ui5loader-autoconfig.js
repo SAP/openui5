@@ -145,8 +145,8 @@
 		if ( window["sap-ui-optimized"] && vDebugInfo ) {
 			// if current sources are optimized and any debug sources should be used, enable the "-dbg" suffix
 			window['sap-ui-loaddbg'] = true;
-			// if debug sources should be used in general, restart with debug URL
-			if ( vDebugInfo === true ) {
+			// if debug sources should be used in general, restart with debug URL (if not disabled, e.g. by test runner)
+			if ( vDebugInfo === true && !window["sap-ui-debug-no-reboot"] ) {
 				var sDebugUrl;
 				if ( sBootstrapUrl != null ) {
 					sDebugUrl = sBootstrapUrl.replace(/\/(?:sap-ui-cachebuster\/)?([^\/]+)\.js/, "/$1-dbg.js");
@@ -276,7 +276,7 @@
 				'signals': 'sap/ui/thirdparty/signals',
 				'URI': 'sap/ui/thirdparty/URI',
 				'URITemplate': 'sap/ui/thirdparty/URITemplate',
-				'esprima': 'sap/ui/demokit/js/esprima'
+				'esprima': 'sap/ui/documentation/sdk/thirdparty/esprima'
 			}
 		},
 
@@ -458,6 +458,10 @@
 				exports: 'Scroller' // 'requestAnimationFrame', 'cancelRequestAnimationFrame', 'core'
 			},
 			'sap/ui/demokit/js/esprima': {
+				amd: true,
+				exports: 'esprima'
+			},
+			'sap/ui/documentation/sdk/thirdparty/esprima': {
 				amd: true,
 				exports: 'esprima'
 			},

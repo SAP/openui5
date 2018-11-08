@@ -319,7 +319,7 @@ sap.ui.define([
 					// Check whether tick is clicked
 					iTickPos = sMyTargetId.search('-tick');
 					if ( iTickPos >= 0) {
-						var iTickNum = parseInt( sMyTargetId.slice( this.getId().length + 5), 10);
+						var iTickNum = parseInt( sMyTargetId.slice( this.getId().length + 5));
 						iNewPos = this.fTickDist * iTickNum;
 						var iTotalUnits;
 						if (this.bTextLabels) {
@@ -1104,7 +1104,7 @@ sap.ui.define([
 
 			if ( this.getSmallStepWidth() > 0 ) {
 				// Move grip according to step-width
-				var iStepNum   = parseInt( ( fNewValue - this.getMin() ) / this.getSmallStepWidth() , 10);
+				var iStepNum   = parseInt( ( fNewValue - this.getMin() ) / this.getSmallStepWidth());
 				var fLeftStep  = ( iStepNum * this.getSmallStepWidth() ) + this.getMin();
 				var fRightStep = ( ( iStepNum + 1 ) * this.getSmallStepWidth() ) + this.getMin();
 

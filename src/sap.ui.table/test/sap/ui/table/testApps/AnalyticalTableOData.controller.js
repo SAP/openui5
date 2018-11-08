@@ -1,14 +1,14 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel"
-], function (Controller, JSONModel) {
+], function(Controller, JSONModel) {
 	"use strict";
 
 	var TABLESETTINGS = window.TABLESETTINGS;
 
 	return Controller.extend("sap.ui.table.testApps.AnalyticalTableOData", {
 
-		onInit: function () {
+		onInit: function() {
 			var oFormData = {
 				serviceURL: "",
 				collection: "",
@@ -39,7 +39,7 @@ sap.ui.define([
 			this.aVisibleRow = [];
 		},
 
-		onCreateTableClick: function (){
+		onCreateTableClick: function(){
 
 			var oView = this.getView(),
 				oDataModel = oView.getModel();
@@ -47,7 +47,7 @@ sap.ui.define([
 			var sServiceUrl = oDataModel.getProperty("/serviceURL");
 			var sCollection = oDataModel.getProperty("/collection");
 			var sResultSet = oDataModel.getProperty("/resultSet");
-			var iRowCount = parseInt(oDataModel.getProperty("/visibleRowCount"), 10);
+			var iRowCount = parseInt(oDataModel.getProperty("/visibleRowCount"));
 
 			var oStoredData = TABLESETTINGS.getAnalyticalService();
 			sServiceUrl = sServiceUrl || oStoredData.url;
@@ -99,20 +99,20 @@ sap.ui.define([
 			oTableContainer.addContent(oTable);
 
 			oTable.addDelegate({
-				onBeforeRendering: function () {
+				onBeforeRendering: function() {
 					jQuery.sap.measure.start("onBeforeRendering","",["Render"]);
 					jQuery.sap.measure.start("rendering","",["Render"]);
 				},
-				onAfterRendering: function () {
+				onAfterRendering: function() {
 					jQuery.sap.measure.start("onAfterRendering","",["Render"]);
 				}
 			}, true);
 
 			oTable.addDelegate({
-				onBeforeRendering: function () {
+				onBeforeRendering: function() {
 					jQuery.sap.measure.end("onBeforeRendering");
 				},
-				onAfterRendering: function () {
+				onAfterRendering: function() {
 					jQuery.sap.measure.end("onAfterRendering");
 					jQuery.sap.measure.end("rendering");
 				}

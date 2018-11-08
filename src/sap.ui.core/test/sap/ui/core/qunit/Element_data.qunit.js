@@ -1,10 +1,15 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/core/Element",
+	"sap/ui/core/CustomData",
+	"sap/ui/core/library",
+	"sap/ui/core/mvc/View",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Button"
-], function(Element, JSONModel, Button) {
+], function(Element, CustomData, library, View, JSONModel, Button) {
 	"use strict";
+
+	var ViewType = library.mvc.ViewType;
 
 	QUnit.module("Custom Data", {
 		beforeEach: function() {
@@ -199,24 +204,27 @@ sap.ui.define([
 			+ 'xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">'
 			+ '<Button id="myBtn" text="test" app:coords="{/data}"></Button></mvc:View>';
 		// instantiate the View
-		var myView = sap.ui.xmlview({
-			viewContent : xml
-		});
-		// create a Model with some dummy data and assign it to the View
-		var oModel = new JSONModel({
-			data : {
-				x : 100,
-				y : 250
-			}
-		});
-		myView.setModel(oModel);
+		return View.create({
+			type: ViewType.XML,
+			definition: xml
+		}).then(function(myView) {
+			// create a Model with some dummy data and assign it to the View
+			var oModel = new JSONModel({
+				data : {
+					x : 100,
+					y : 250
+				}
+			});
+			myView.setModel(oModel);
 
-		var btn = myView.byId("myBtn");
-		assert.ok(btn && btn instanceof Button, "The Button instance from the XML View should exist");
+			var btn = myView.byId("myBtn");
+			assert.ok(btn && btn instanceof Button, "The Button instance from the XML View should exist");
 
-		var data = btn.data("coords");
-		assert.ok(data && typeof data === "object", "Data object should be attached to the Button");
-		assert.equal(data.x, 100, "Data object should contain the original data");
+			var data = btn.data("coords");
+			assert.ok(data && typeof data === "object", "Data object should be attached to the Button");
+			assert.equal(data.x, 100, "Data object should contain the original data");
+		});
+
 	});
 
 

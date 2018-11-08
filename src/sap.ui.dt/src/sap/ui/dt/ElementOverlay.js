@@ -203,7 +203,10 @@ function (
 			oMutationObserver.addToWhiteList(this._sObservableNodeId);
 			oMutationObserver.attachDomChanged(this._onDomChanged, this);
 		} else {
-			Log.error('sap.ui.dt.ElementOverlay#_subscribeToMutationObserver: please provide a root control with proper domRef and id to ensure that RTA is working properly');
+			throw Util.createError(
+				'ElementOverlay#_subscribeToMutationObserver',
+				'Please provide a root control with proper domRef and id to ensure that DesignTime is working properly'
+			);
 		}
 	};
 
@@ -300,29 +303,25 @@ function (
 
 				// if element is destroyed during designtime metadata loading
 				if (!oElement || oElement.bIsDestroyed) {
-					new Error("sap.ui.dt.ElementOverlay#loadDesignTimeMetadata / Can't set metadata to overlay which element has been destroyed already");
+					throw Util.createError(
+						"ElementOverlay#loadDesignTimeMetadata",
+						"Can't set metadata to overlay which element has been destroyed already"
+					);
 				}
 
 				this.setDesignTimeMetadata(mDesignTimeMetadata);
 			}.bind(this))
 			.catch(function (vError) {
-				var oError = Util.wrapError(vError);
-
-				// adding payload for external errors
-				if (Util.isForeignError(oError)) {
-					var sLocation = 'sap.ui.dt.ElementOverlay#loadDesignTimeMetadata';
-					oError.name = 'Error in ' + sLocation;
-					oError.message = Util.printf(
-						"{0} / Can't load designtime metadata data for overlay with id='{1}', element id='{2}' ({3}): {4}",
-						sLocation,
+				throw Util.propagateError(
+					vError,
+					"ElementOverlay#loadDesignTimeMetadata",
+					Util.printf(
+						"Can't load designtime metadata data for overlay with id='{1}', element id='{2}': {3}",
 						this.getId(),
-						this.getElement().getId(),
-						this.getElement().getMetadata().getName(),
-						oError.message
-					);
-				}
-
-				throw oError;
+						this.getAssociation('element'), // Can't use this.getElement(), because the element might be destroyed already
+						Util.wrapError(vError).message
+					)
+				);
 			}.bind(this));
 	};
 
@@ -538,7 +537,7 @@ function (
 	 * @returns {object[]} - returns an array with scroll containers description
 	 */
 	ElementOverlay.prototype.getScrollContainers = function () {
-		return this.getDesignTimeMetadata().getScrollContainers();
+		return this.getDesignTimeMetadata().getScrollContainers(this.getElement());
 	};
 
 	/**

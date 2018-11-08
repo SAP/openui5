@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Title",
 	"sap/m/Panel",
-	"sap/ui/core/HTML"],
-function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, ObjectPageDynamicHeaderTitle, Text, Title, Panel, HTML) {
+	"sap/ui/core/HTML",
+	"sap/ui/Device"],
+function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, ObjectPageDynamicHeaderTitle, Text, Title, Panel, HTML, Device) {
 	"use strict";
 
 	var oFactory = {
@@ -145,7 +146,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			}
 
 			//Assert
-			assert.strictEqual(oObjectPage._$opWrapper[0].scrollTop, iExpectedPosition, "Assert section: \"" + section + "\" position: " + iExpectedPosition);
+			assert.ok(isPositionsMatch(oObjectPage._$opWrapper[0].scrollTop, iExpectedPosition), "Assert section: \"" + section + "\" position: " + iExpectedPosition);
 		}
 		clock.restore();
 		oObjectPageContentScrollingView.destroy();
@@ -172,7 +173,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			oObjectPage.rerender();
 			setTimeout(function() {
 				iScrollPositionAfterRerender = oObjectPage._$opWrapper[0].scrollTop;
-				assert.strictEqual(iScrollPositionAfterRerender, iScrollPositionBeforeRerender, "scrollPosition is preserved");
+				assert.ok(isPositionsMatch(iScrollPositionAfterRerender, iScrollPositionBeforeRerender), "scrollPosition is preserved");
 				ObjectPageContentScrollingView.destroy();
 				done();
 			}, 1000); // throttling delay
@@ -197,7 +198,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			setTimeout(function() {
 				iScrollPosition = oObjectPage._$opWrapper[0].scrollTop;
 				iExpectedPosition =  oObjectPage._oSectionInfo["UxAP-objectPageContentScrolling--subsection2-1"].positionTop;
-				assert.strictEqual(iScrollPosition, iExpectedPosition, "scrollPosition is correct");
+				assert.ok(isPositionsMatch(iScrollPosition, iExpectedPosition), "scrollPosition is correct");
 				ObjectPageContentScrollingView.destroy();
 				done();
 			}, 1000); // throttling delay
@@ -216,23 +217,28 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			iScrollPositionAfterRemove,
 			iExpectedPositionAfterRemove;
 
-		oObjectPage.setSelectedSection(oThirdSection.getId());
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			setTimeout(function () {
+				oObjectPage.setSelectedSection(oThirdSection.getId());
+			}, 500);
+		});
 
 		ObjectPageContentScrollingView.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-
-		setTimeout(function() {
-			oObjectPage.removeSection(oFirstSection);
-			setTimeout(function() {
-				iScrollPositionAfterRemove = oObjectPage._$opWrapper[0].scrollTop;
-				iExpectedPositionAfterRemove = jQuery("#" + oThirdSection.getId() + " .sapUxAPObjectPageSectionContainer").position().top; // top of third section content
-				assert.strictEqual(iScrollPositionAfterRemove, iExpectedPositionAfterRemove, "scrollPosition is correct");
-				ObjectPageContentScrollingView.destroy();
-				oFirstSection.destroy();
-				done();
-			}, 1000); // throttling delay
-		}, 1000); //dom calc delay
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			setTimeout(function () {
+				oObjectPage.removeSection(oFirstSection);
+				setTimeout(function () {
+					iScrollPositionAfterRemove = oObjectPage._$opWrapper[0].scrollTop;
+					iExpectedPositionAfterRemove = Math.ceil(jQuery("#" + oThirdSection.getId() + " .sapUxAPObjectPageSectionContainer").position().top); // top of third section content
+					assert.ok(isPositionsMatch(iScrollPositionAfterRemove, iExpectedPositionAfterRemove), "scrollPosition is correct");
+					ObjectPageContentScrollingView.destroy();
+					oFirstSection.destroy();
+					done();
+				}, 500); // throttling delay
+			}, 500); //dom calc delay
+		});
 	});
 
 	QUnit.test("Deleting the bellow section preserves the scroll position", function (assert) {
@@ -258,7 +264,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			iScrollPositionBeforeRemove = oObjectPage._$opWrapper[0].scrollTop;
 			setTimeout(function() {
 				iScrollPositionAfterRemove = oObjectPage._$opWrapper[0].scrollTop;
-				assert.strictEqual(iScrollPositionAfterRemove, iScrollPositionBeforeRemove, "scrollPosition is preserved");
+				assert.ok(isPositionsMatch(iScrollPositionAfterRemove, iScrollPositionBeforeRemove), "scrollPosition is preserved");
 				ObjectPageContentScrollingView.destroy();
 				oThirdSection.destroy();
 				done();
@@ -381,7 +387,12 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			oResizableControl = new HTML({ content: "<div style='height: 100px'></div>"}),
 			done = assert.async();
 
-		oObjectPageLayout.setSelectedSection(oLastSection);
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+			setTimeout(function () {
+				oObjectPageLayout.setSelectedSection(oLastSection);
+			}, 500);
+		});
+
 		oLastSubSection.addBlock(oResizableControl);
 
 		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
@@ -417,29 +428,30 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		oLastSection.getSubSections()[0].addBlock(oSmallHeightControl);
 
 		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
-
-			iFirstSectionSpacerHeight = oObjectPageLayout._$spacer.get(0).offsetHeight;
-
-			// show the bigger section
-			oObjectPageLayout.setSelectedSection(oLastSection.getId());
-
 			setTimeout(function() {
+				iFirstSectionSpacerHeight = oObjectPageLayout._$spacer.get(0).offsetHeight;
 
-				// assert context
-				iLastSectionSpacerHeight = oObjectPageLayout._$spacer.get(0).offsetHeight;
-				assert.notEqual(iLastSectionSpacerHeight, iFirstSectionSpacerHeight, "spacer for smaller section is different");
+				// show the bigger section
+				oObjectPageLayout.setSelectedSection(oLastSection.getId());
 
-				//Act: return to initial section
-				oObjectPageLayout.setSelectedSection(oFirstSection.getId());
+				setTimeout(function () {
 
-				setTimeout(function() {
+					// assert context
+					iLastSectionSpacerHeight = oObjectPageLayout._$spacer.get(0).offsetHeight;
+					assert.notEqual(iLastSectionSpacerHeight, iFirstSectionSpacerHeight, "spacer for smaller section is different");
 
-					// Check: spacer is correctly restored
-					assert.ok(oObjectPageLayout._$spacer.get(0).offsetHeight === iFirstSectionSpacerHeight, "spacer height is correct");
-					oObjectPageLayout.destroy();
-					done();
+					//Act: return to initial section
+					oObjectPageLayout.setSelectedSection(oFirstSection.getId());
+
+					setTimeout(function () {
+
+						// Check: spacer is correctly restored
+						assert.ok(oObjectPageLayout._$spacer.get(0).offsetHeight === iFirstSectionSpacerHeight, "spacer height is correct");
+						oObjectPageLayout.destroy();
+						done();
+					}, 10);
 				}, 10);
-			}, 10);
+			}, 500);
 		});
 
 		// arrange
@@ -549,6 +561,11 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		return oHeaderTitle.classList.contains("sapUxAPObjectPageHeaderStickied") &&
 				oHeaderContent.classList.contains("sapUxAPObjectPageHeaderDetailsHidden") &&
 				oHeaderContent.style["overflow"] == "hidden";
+	}
+
+	function isPositionsMatch(iPos, iPos2) {
+		var iAcceptableOffset = Device.browser.edge ? 1 : 0;
+		return Math.abs(iPos - iPos2) <= iAcceptableOffset;
 	}
 
 });

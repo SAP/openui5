@@ -203,7 +203,7 @@ sap.ui.define([
 				if (stepSize.endsWith("px")) {
 					stepSize = stepSize.substr(0, stepSize.length - 2);
 				}
-				stepSize = parseInt(stepSize, 10);
+				stepSize = parseInt(stepSize);
 			}
 		}
 		$ffsize.remove();
@@ -275,7 +275,7 @@ sap.ui.define([
 					width:0,
 					height:0
 			};
-			oContent[this.getVertical() ? "height" : "width"] = this._bStepMode ? (this.getSteps() * this._iTouchStepTreshold) : parseInt(this.getContentSize(), 10);
+			oContent[this.getVertical() ? "height" : "width"] = this._bStepMode ? (this.getSteps() * this._iTouchStepTreshold) : parseInt(this.getContentSize());
 
 			this._oTouchScroller.setDimensions(0, 0, oContent.width, oContent.height);
 

@@ -19,7 +19,7 @@ sap.ui.define([
 	 */
 	function TestSuite() {
 		this.aPages = [];
-	};
+	}
 
 	TestSuite.prototype.getTestPages = function() {
 		return this.aPages;
@@ -69,7 +69,7 @@ sap.ui.define([
 									simple: aTests.every((test) => !test.suite)
 								}, oTestPageConfig));
 							}, function(oError) {
-								Log.error("failed to load page '" + sTestPage + "'");
+								Log.error("failed to load page '" + oTestPageConfig.fullpage + "'");
 								$frame.remove();
 								resolve(Object.assign({error: oError}, oTestPageConfig));
 							});
@@ -129,9 +129,11 @@ sap.ui.define([
 				catch( () => [] );
 		}
 
+		var origTestSuite = window.jsUnitTestSuite;
 		window.jsUnitTestSuite = TestSuite;
-
-		return checkTestPage({fullpage: sEntryPage});
+		return checkTestPage({fullpage: sEntryPage}).finally(function() {
+			window.jsUnitTestSuite = origTestSuite;
+		});
 
 	}
 
@@ -143,7 +145,7 @@ sap.ui.define([
 					if ( Array.isArray(test.tests) ) {
 						test.tests.forEach(collect);
 						if ( test.simple ) {
-							allSuites.push(test.name);
+							allSuites.push(test.fullpage);
 						}
 					}
 				}

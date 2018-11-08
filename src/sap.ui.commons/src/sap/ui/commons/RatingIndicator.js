@@ -365,7 +365,7 @@ sap.ui.define([
 		}
 		var itemvalue = oSymbol.attr("itemvalue");
 		if (itemvalue) {
-			return parseInt(itemvalue, 10);
+			return parseInt(itemvalue);
 		}
 		return -1;
 	};

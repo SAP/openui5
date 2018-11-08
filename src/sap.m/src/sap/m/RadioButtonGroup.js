@@ -172,11 +172,23 @@ sap.ui.define([
 			 * @public
 			 */
 			RadioButtonGroup.prototype.onBeforeRendering = function() {
+				var aButtons = this.getButtons();
+				var iButtonCount = aButtons.length;
+				var aVisibleRBs = aButtons.filter(function (oRadioButton) {
+						oRadioButton._setEditableParent(this.getEditable());
 
-				if (this.getSelectedIndex() > this.getButtons().length) {
+						return oRadioButton.getVisible();
+					}, this);
+
+				if (this.getSelectedIndex() > iButtonCount) {
 					Log.warning("Invalid index, set to 0");
 					this.setSelectedIndex(0);
 				}
+
+				aVisibleRBs.forEach(function (oRadioButton, iIndex) {
+					oRadioButton._setPosinset(iIndex);
+					oRadioButton._setSetsize(aVisibleRBs.length);
+				}, this);
 			};
 
 			/**
@@ -185,25 +197,7 @@ sap.ui.define([
 			 * @public
 			 */
 			RadioButtonGroup.prototype.onAfterRendering = function() {
-
 				this._initItemNavigation();
-
-				// update ARIA information of RadioButtons with visible buttons only
-				var aVisibleRBs;
-
-				if (this.getVisible()) {
-					aVisibleRBs = this.aRBs.filter(function(oButton) {
-						return oButton.getVisible();
-					});
-				} else {
-					aVisibleRBs = [];
-				}
-
-				for (var i = 0; i < aVisibleRBs.length; i++) {
-					var oRBDomRef = aVisibleRBs[i].getDomRef();
-					oRBDomRef.setAttribute("aria-posinset", i + 1);
-					oRBDomRef.setAttribute("aria-setsize", aVisibleRBs.length);
-				}
 			};
 
 			/**

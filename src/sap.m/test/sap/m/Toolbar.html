@@ -19,11 +19,6 @@
 	jQuery.sap.require("sap.m.Toolbar");
 	jQuery.sap.require("sap.ui.core.IconPool");
 
-	// for behaviour testing
-	if (oUriParameters.get("oldFlex")) {
-		sap.m.ToolbarRenderer.hasNewFlexBoxSupport = false;
-	}
-
 	var oApp = new sap.m.App();
 	var sAddIconURI = sap.ui.core.IconPool.getIconURI("add");
 

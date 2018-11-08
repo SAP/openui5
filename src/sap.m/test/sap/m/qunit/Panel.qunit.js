@@ -543,10 +543,10 @@ sap.ui.define([
 		this.oPanel.setAggregation("headerToolbar", this.createToolbar("50px"));
 		sap.ui.getCore().applyChanges();
 
-		var fontSize = parseInt(jQuery("body").css("font-size"), 10);
+		var fontSize = parseInt(jQuery("body").css("font-size"));
 		var $toolbar = this.oPanel.$().find(".sapMTB");
 
-		assert.equal(parseInt($toolbar.css("margin-left"), 10), 3 * fontSize, "toolbar margin-left should be " + (3 * fontSize) + "px");
+		assert.equal(parseInt($toolbar.css("margin-left")), 3 * fontSize, "toolbar margin-left should be " + (3 * fontSize) + "px");
 	});
 
 	QUnit.test("Expandable panel with headerToolbar - first toolbar child should not have margin-left", function(assert) {

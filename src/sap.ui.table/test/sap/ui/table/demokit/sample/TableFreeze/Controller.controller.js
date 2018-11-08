@@ -8,7 +8,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.sample.TableFreeze.Controller", {
 
-		onInit : function () {
+		onInit : function() {
 			// set explored app's demo model on this sample
 			var oJSONModel = this.initSampleDataModel();
 			this.getView().setModel(oJSONModel);
@@ -21,7 +21,7 @@ sap.ui.define([
 
 			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json", {
 				dataType: "json",
-				success: function (oData) {
+				success: function(oData) {
 					var aTemp1 = [];
 					var aTemp2 = [];
 					var aSuppliersData = [];
@@ -47,7 +47,7 @@ sap.ui.define([
 
 					oModel.setData(oData);
 				},
-				error: function () {
+				error: function() {
 					jQuery.sap.log.error("failed to load json");
 				}
 			});
@@ -55,7 +55,7 @@ sap.ui.define([
 			return oModel;
 		},
 
-		formatAvailableToObjectState : function (bAvailable) {
+		formatAvailableToObjectState : function(bAvailable) {
 			return bAvailable ? "Success" : "Error";
 		},
 
@@ -67,15 +67,15 @@ sap.ui.define([
 			MessageToast.show("Details for product with id " + this.getView().getModel().getProperty("ProductId", oEvent.getSource().getBindingContext()));
 		},
 
-		buttonPress : function (oEvent) {
+		buttonPress : function(oEvent) {
 			var oView = this.getView(),
 				oTable = oView.byId("table1"),
 				sColumnCount = oView.byId("inputColumn").getValue() || 0,
 				sRowCount = oView.byId("inputRow").getValue() || 0,
 				sBottomRowCount = oView.byId("inputButtomRow").getValue() || 0,
-				iColumnCount = parseInt(sColumnCount,10),
-				iRowCount = parseInt(sRowCount,10),
-				iBottomRowCount = parseInt(sBottomRowCount,10),
+				iColumnCount = parseInt(sColumnCount),
+				iRowCount = parseInt(sRowCount),
+				iBottomRowCount = parseInt(sBottomRowCount),
 				iTotalColumnCount = oTable.getColumns().length,
 				iTotalRowCount = oTable.getRows().length;
 

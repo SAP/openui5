@@ -17,6 +17,8 @@
 			title: "Responsive Object Header fullScreenOptimized with two states",
 			titleActive: true,
 			titlePress: function() {},
+			icon: "../../sap/m/images/Woman_04.png",
+			imageShape: sap.m.ObjectHeaderPictureShape.Square,
 			number: "624,00",
 			numberUnit: "Euro",
 			numberTextDirection: sap.ui.core.TextDirection.LTR,
@@ -95,6 +97,13 @@
 				}
 		});
 
+		var shapeBtn = new sap.m.Button("change_image_shape", {
+			text: "Set circle shape image",
+			press: function() {
+					oh1.setImageShape(sap.m.ObjectHeaderPictureShape.Circle);
+				}
+		});
+
 		var condBtn = new sap.m.Button("change_to_condensed", {
 			text: "Set to condensed mode",
 			press: function() {
@@ -106,6 +115,7 @@
 		statesBtn.placeAt("body");
 		oneStateButton.placeAt("body");
 		typeBtn.placeAt("body");
+		shapeBtn.placeAt("body");
 		condBtn.placeAt("body");
 		</script>
 	</head>

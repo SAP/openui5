@@ -9,6 +9,8 @@ sap.ui.define([
 	oDIV.id = "content";
 	document.body.appendChild(oDIV);
 
+	QUnit.module("");
+
 	QUnit.test("Hidden Text is really hidden", function(assert) {
 		var iWidth = jQuery.sap.byId("content").width();
 		var iHeight = jQuery.sap.byId("content").height();

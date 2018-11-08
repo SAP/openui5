@@ -26,7 +26,7 @@ sap.ui.define([
 			this.oPostMessageBus.subscribe("dtTool", "iFrameReady", this.onIFrameReady, this)
 				.subscribe("dtTool", "files", this.retrieveXMLFiles, this)
 				.subscribe("dtTool", "updateDesignTimeFile", this.onUpdateDTFile, this)
-				.subscribe("dtTool", "selectOverlayInOutline", this.loadPropertyData, this);
+				.subscribe("dtTool", "updatePropertyFile", this.loadPropertyData, this);
 
 			this.getView().setModel(new JSONModel());
 
@@ -72,6 +72,9 @@ sap.ui.define([
 				this._sId = oEvent.getParameter("arguments").codeID;
 
 				ControlsInfo.loadData().then(function(oData) {
+					//TODO: Workaround
+					oData.samples[this._sId] = {id: this._sId, name: "Custom: " + this._sId};
+
 					this._loadCode(oData);
 				}.bind(this));
 			}
@@ -154,7 +157,11 @@ sap.ui.define([
 			var aFiles = oEvent.data.files;
 
 			if (aFiles) {
-				var sRef = this.sSampleId ? jQuery.sap.getModulePath(this.sSampleId) : "test-resources/sap/ui/rta/dttool/emptyView";
+				//FIXME: The resource roots should be set in the html file but they are overwritten somewhere
+				sap.ui.loader.config({
+					paths: {"sap/m/sample": "./../../../../sap/m/demokit/sample/"}
+				});
+				var sRef = this.sSampleId ? sap.ui.require.toUrl(this.sSampleId.replace(/\./g, "/")) : "test-resources/sap/ui/rta/dttool/emptyView";
 
 				Promise.all(aFiles.map(function (sFile) {
 
@@ -191,21 +198,28 @@ sap.ui.define([
 		 * Fetches a source file from a given location (if it's not in the cache)
 		 * @param {string} sRef the path of the file location
 		 * @param {string} sFile the file name
-		 * @return {string} the source file
+		 * @param {boolean} bUseTestResources whether to load the resource from the test directory
+		 * @return {Promise<string>} the source file
 		 */
-		fetchSourceFile : function (sRef, sFile) {
+		fetchSourceFile : function (sRef, sFile, bUseTestResources) {
+			return new Promise(function (fnResolve, fnReject) {
+				if (bUseTestResources && /(.*)\/resources\//.test(sRef)) {
+					sRef = sRef.replace("/resources/", "/test-resources/");
+				}
+				var sUrl = sRef + "/" + sFile;
 
-			return new Promise(function (resolve, reject) {
-
-				var sUrl = (window.location.pathname.endsWith("integration/opaTest.qunit.html") ? "../" : "") + "../../../../../" + sRef + "/" + sFile;
-
-				var fnSuccess = function (result) {
-					this._oCodeCache[sUrl] = result;
-					resolve(result);
+				var fnSuccess = function (sResult) {
+					this._oCodeCache[sUrl] = sResult;
+					fnResolve(sResult);
 				}.bind(this);
-				var fnError = function (result) {
+				var fnError = function () {
 					this._oCodeCache[sUrl] = "not found: '" + sUrl + "'";
-					reject();
+					if (bUseTestResources) {
+						fnReject();
+					} else {
+						//TODO: Workaround - Check if file is inside test-resouces
+						return this.fetchSourceFile(sRef, sFile, true);
+					}
 				}.bind(this);
 
 				if (!(sUrl in this._oCodeCache)) {
@@ -214,10 +228,10 @@ sap.ui.define([
 						async: true,
 						dataType: "text",
 						success: fnSuccess,
-						error: fnError
+						error: fnError.bind(this)
 					});
 				} else {
-					resolve(this._oCodeCache[sUrl]);
+					fnResolve(this._oCodeCache[sUrl]);
 				}
 			}.bind(this));
 		},
@@ -229,14 +243,11 @@ sap.ui.define([
 		 * @param {string} oEvent.data.module the design time module
 		 */
 		onUpdateDTFile : function (oEvent) {
-
 			if (oEvent) {
-				var sName = oEvent.data.name,
-					sDT = oEvent.data.module;
+				var sName = oEvent.data.name;
+				var sDT = oEvent.data.module;
 
-				if (sName){
-					var sDTFileName = sName.match(/^.*\.(.*?)$/)[1] + ".designtime.js";
-				}
+				var sDTFileName = sName ? sName.match(/^.*\.(.*?)$/)[1] + ".designtime.js" : null;
 
 				var fnNoDT = function () {
 
@@ -254,12 +265,15 @@ sap.ui.define([
 					this._replaceDTFileInEditor(sDTFileName, sFakeDTFile);
 				}.bind(this);
 
-				if (!sDT) {
+				if (!sName && !sDT) {
+					this._addFile(null, null, false, "designtime.js");
+					return;
+				} else if (!sDT) {
 					fnNoDT();
 					return;
 				}
 
-				var sRef = jQuery.sap.getModulePath(sDT.replace(/\/\w+\.designtime/, "")).replace(/\.\.\//g, "");
+				var sRef = sap.ui.require.toUrl(sDT.replace(/\/\w+\.designtime/, ""))/*.replace(/\.\.\//g, "")*/;
 
 				if (this.mEdited[sDTFileName]) {
 					this._replaceDTFileInEditor(sDTFileName, this.mEdited[sDTFileName]);
@@ -281,7 +295,6 @@ sap.ui.define([
 		 */
 		_replaceDTFileInEditor : function (sFileName, sDTFile) {
 			this._addFile(sFileName, sDTFile, true, "designtime.js");
-			this._updateCodeEditor(sFileName);
 		},
 
 		/**
@@ -294,7 +307,10 @@ sap.ui.define([
 			}
 			var oCodeEditor = this._getCodeEditor();
 			var oAceInstance = oCodeEditor._getEditorInstance();
-			var sType = sFileName.match(/.*\.(.*?)$/)[1].replace("js", "javascript");
+			var sType = sFileName.match(/.*\.(.*?)$/)[1];
+			if (sType === "js") { //Don't use replace because of json
+				sType = "javascript";
+			}
 
 			// set the <code>CodeEditor</code> new code base and its type - xml, js, json or css.
 			oCodeEditor.setValue(this._getCode(sFileName));
@@ -391,49 +407,53 @@ sap.ui.define([
 		 */
 		loadPropertyData: function (oEvent) {
 			var sControlId = oEvent.data.id;
-			DTToolUtils.getRTAClient().getService("property").then(function (oPropertyService) {
-				oPropertyService.get(sControlId).then(function(oPropertyData){
-					var sProperties = JSON.stringify(oPropertyData, null, "\t");
-					var sFileName = sControlId + ".properties.json";
-					this._addFile(sFileName, sProperties, false, "properties.json");
-					this._updateCodeEditor(sFileName);
+			var oActions = oEvent.data.actions || [];
+			if (sControlId) {
+				DTToolUtils.getRTAClient().getService("property").then(function (oPropertyService) {
+					oPropertyService.get(sControlId).then(function(oPropertyData){
+						var sProperties = JSON.stringify(Object.assign({actions: oActions}, oPropertyData), null, "\t");
+						var sFileName = sControlId.split("--").slice(-1)[0] + ".properties.json";
+						this._addFile(sFileName, sProperties, false, "properties.json");
+					}.bind(this));
 				}.bind(this));
-			}.bind(this));
+			} else {
+				this._addFile(null, null, false, "properties.json");
+			}
 		},
 
 		/**
 		 * removes a file with the same type from the icon tab header and editor and adds a new one if sFileName and sRawFile are passed
 		 * @param {string} sFileName the name of the new file
 		 * @param {string} sDTFile the content of the new file
-		 * @param {string} bIsDTFile Whether the file is a DTM file or not
+		 * @param {boolean} bIsDTFile Whether the file is a DTM file or not
 		 * @param {string} sFileType The type of the file which should be removed
 		 */
 		_addFile: function (sFileName, sRawFile, bIsDTFile, sFileType) {
+			var sFileTypeMatcher = /^.*\.(.*\..*)$/;
 			var oModel = this.getView().getModel();
 			var aFiles = oModel.getProperty("/files");
 			if (!sFileType) {
-				sFileType = sFileName.match(/^.*?\.(.*)$/)[1];
+				sFileType = sFileName.match(sFileTypeMatcher)[1];
 			}
 
 			aFiles.some(function (oFile, iIndex) {
-				if (oFile.name.match(/^.*?\.(.*)$/)[1] === sFileType) {
+				if (oFile.name.match(sFileTypeMatcher)[1] === sFileType) {
 					aFiles.splice(iIndex, 1);
 					return true;
 				}
 			});
 
-			if (sFileName && sRawFile) {
+			if (sRawFile) {
 				aFiles.push({
-					name: sFileName,
+					name: sFileName || "untitled." + (sFileType || ""),
 					raw: sRawFile,
 					dt: bIsDTFile
 				});
-			} else {
-				sFileName = aFiles[0].name;
 			}
 
 			oModel.setProperty("/fileName", sFileName);
 			oModel.setProperty("/files", aFiles);
+			this._updateCodeEditor(sFileName);
 		},
 
 		/**

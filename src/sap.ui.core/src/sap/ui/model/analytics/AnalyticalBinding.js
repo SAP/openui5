@@ -3289,7 +3289,7 @@ sap.ui.define([
 			var bNewLengthSet = false;
 
 			if (oData.__count) {
-				this.mServiceLength[sGroupId] = parseInt(oData.__count, 10);
+				this.mServiceLength[sGroupId] = parseInt(oData.__count);
 				this.mLength[sGroupId] = this.mServiceLength[sGroupId] - iDiscardedEntriesCount;
 				this.mFinalLength[sGroupId] = true;
 
@@ -3885,6 +3885,9 @@ sap.ui.define([
 		for (var i = 0; i < iLevel; i++) {
 			sDimensionMember = oContext.getProperty(this.aAggregationLevel[i]);
 			if (sDimensionMember != null) {
+				if (sDimensionMember.__edmType === "Edm.Time") {
+					sDimensionMember = sDimensionMember.ms;
+				}
 				sGroupId += encodeURIComponent(sDimensionMember) + "/"; // encode to escape slashes and at signs in the value
 			} else {
 				sGroupId += "@/";

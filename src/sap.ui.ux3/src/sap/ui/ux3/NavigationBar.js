@@ -232,7 +232,7 @@ sap.ui.define([
 		}
 
 		var arrow = this.getDomRef("arrow");
-		this._iLastArrowPos = arrow ? parseInt(this._bRtl ? arrow.style.right : arrow.style.left, 10) : -100;
+		this._iLastArrowPos = arrow ? parseInt(this._bRtl ? arrow.style.right : arrow.style.left) : -100;
 	};
 
 
@@ -797,7 +797,7 @@ sap.ui.define([
 				this._iLastArrowPos = -100;
 			} else {
 				var arrow = this.getDomRef("arrow");
-				this._iLastArrowPos = parseInt(this._bRtl ? arrow.style.right : arrow.style.left, 10);
+				this._iLastArrowPos = parseInt(this._bRtl ? arrow.style.right : arrow.style.left);
 			}
 
 			oListDomRef.innerHTML = "";

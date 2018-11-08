@@ -48,6 +48,8 @@ sap.ui.define([
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
+	// shortcut for sap.m.ObjectHeaderPictureShape
+	var ObjectHeaderPictureShape = library.ObjectHeaderPictureShape;
 
 
 	/**
@@ -140,6 +142,14 @@ sap.ui.define([
 			 * If bandwidth is the key for the application, set this value to <code>false</code>.
 			 */
 			iconDensityAware : {type : "boolean", group : "Misc", defaultValue : true},
+
+			/**
+			 * Determines whether the picture should be displayed in a square or with a circle-shaped mask just like in {@link sap.uxap.ObjectPageHeader}.
+			 *
+			 * <b>Note:</b> This property takes effect only on Images and it is ignored for Icons.
+			 * @since 1.61
+			 */
+			imageShape: {type: "sap.m.ObjectHeaderPictureShape", group : "Appearance", defaultValue: ObjectHeaderPictureShape.Square},
 
 			/**
 			 * Sets the favorite state for the <code>ObjectHeader</code>. The <code>showMarkers</code>

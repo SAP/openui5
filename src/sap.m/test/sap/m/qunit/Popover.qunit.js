@@ -978,7 +978,7 @@ sap.ui.define([
 		assert.ok(oPopover.isOpen(), "Popover is opened");
 
 		// change the position of button, popover should be closed
-		oButton.$().css("bottom", parseInt(oButton.$().css("bottom"), 10) + 33);
+		oButton.$().css("bottom", parseInt(oButton.$().css("bottom")) + 33);
 		this.clock.tick(600);
 
 		assert.ok(!oPopover.isOpen(), "Popover is closed because open by control is moved");
@@ -991,7 +991,7 @@ sap.ui.define([
 		oPopover.setFollowOf(false);
 
 		// change the position of button, popover should not be closed this time
-		oButton.$().css("bottom", parseInt(oButton.$().css("bottom"), 10) - 33);
+		oButton.$().css("bottom", parseInt(oButton.$().css("bottom")) - 33);
 
 		this.clock.tick(300);
 		assert.ok(oPopover.isOpen(), "Popover is still open");

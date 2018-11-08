@@ -496,7 +496,7 @@
 			var _fnOriginalAppendChild = oHead.appendChild;
 
 			this.callsFakeAppendChild = function(){};
-			this.oAppendChildStub = sinon.stub(oHead, "appendChild", function(oElement) {
+			this.oAppendChildStub = sinon.stub(oHead, "appendChild").callsFake(function(oElement) {
 				this.callsFakeAppendChild(oElement);
 				_fnOriginalAppendChild.apply(oHead, arguments);
 			}.bind(this));
@@ -552,7 +552,7 @@
 		var that = this;
 
 		//when the desired script tag is added to the head,
-		// fire an ErrorEvent for the first call,
+		// set the src attribute to an invalid value to trigger an error event
 		// let the second call pass
 		//in order to simulate an SSO scenario in which the first call to a script fails, but the second succeeds
 		var bFirstFailure = true;
@@ -561,18 +561,10 @@
 				if (oElement.src.indexOf("forced-async-loading/bundle-first-failing.js") > -1) {
 					if (bFirstFailure) {
 						bFirstFailure = false;
-						var oEvent;
-						try {
-							oEvent = new ErrorEvent('error');
-						} catch (e) {
-							// on older IE11 installations, event constructor fails
-							oEvent = document.createEvent('ErrorEvent');
-							oEvent.initEvent('error', false, false);
-						}
-						// FIXME: dispatch event in a new task to get the timing right, might fail if browser reacts too fast to script tag
-						setTimeout(function() {
-							oElement.dispatchEvent(oEvent);
-						}, 0);
+
+						//set the src to a non existing file such that an error event is fired to simulate a failing request
+						oElement.src = "non-existing-file";
+
 						//check the module state
 						var bIsResourceLoaded = jQuery.sap.isResourceLoaded("fixture/forced-async-loading/bundle-first-failing.js");
 						assert.ok(bIsResourceLoaded, "Module should be in loading state");

@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/RenderManager",
 	"sap/m/ToolbarSeparator",
 	"sap/m/Button",
+	"sap/m/Title",
 	"sap/m/Label",
 	"sap/ui/core/Control",
 	"sap/m/SearchField",
@@ -23,6 +24,7 @@ sap.ui.define([
 	RenderManager,
 	ToolbarSeparator,
 	Button,
+	Title,
 	Label,
 	Control,
 	SearchField,
@@ -202,14 +204,18 @@ sap.ui.define([
 		var oBtn = new Button({
 			text : "Button Text"
 		});
+		var oTitle = new Title({
+			text : "Title text"
+		});
 		var oTB = new Toolbar({
-			content : oBtn
+			content : [oTitle, oBtn]
 		}).applyTagAndContextClassFor("header");
 		oTB.placeAt("qunit-fixture");
 		Core.applyChanges();
 
 		//Assert
 		assert.equal(oTB.$().attr("role"), "toolbar", "Toolbar has attribute role='toolbar'");
+		assert.equal(oTB.$().attr("aria-labelledby"), oTitle.getId(), "Toolbar is labelled by its title by default");
 		assert.equal(oTB.$().attr("aria-disabled"), undefined, "Toolbar has no attribute aria-disabled");
 
 		//Act
@@ -262,6 +268,26 @@ sap.ui.define([
 
 		//Assert
 		assert.equal(oTB.$().attr("aria-labelledby"), oLabel.getId(), "Toolbar has attribute aria-labelledby for internal and external labels");
+
+		//Cleanup
+		oLabel.destroy();
+		oTB.destroy();
+	});
+
+	QUnit.test("Active toolbar role", function(assert) {
+		// Arrange + System under Test
+		var oLabel = new Label({
+			text : "Toolbar Label"
+		});
+		var oTB = new Toolbar({
+			active: true,
+			content : oLabel
+		});
+		oTB.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		//Assert
+		assert.equal(oTB.$().attr("role"), "button", "Active toolbar should have role button");
 
 		//Cleanup
 		oLabel.destroy();
@@ -423,72 +449,6 @@ sap.ui.define([
 		oLabel.setText("x");
 		assert.strictEqual(spy.callCount, 1, "Property change is detected");
 		oLabel.destroy();
-		oTB.destroy();
-	});
-
-	QUnit.test("if there is no flexiable content toolbar should just render the items", function(assert) {
-		// stub for latest flex support
-		var spy = this.spy(Toolbar.prototype, "_registerContentResize");
-		var oTB = createToolbar({
-			Toolbar : {},
-			Button : {text : "text"},
-			ToolbarSpacer : { width : "100px"},
-			Label : {text: "text", layoutData : new ToolbarLayoutData({ shrinkable : false })}
-		});
-
-		assert.ok(!oTB._sResizeListenerId, "Toolbar does not have any resize handler");
-		assert.strictEqual(spy.callCount, 0, "Content resize handler is not needed");
-		oTB.destroy();
-	});
-
-	QUnit.test("should behave correct according to latest flex box support", function(assert) {
-		// stub for latest flex support
-		var spy = this.spy(Toolbar.prototype, "_registerContentResize");
-		this.stub(ToolbarRenderer, "hasNewFlexBoxSupport", true);
-		var oTB = createToolbar({
-			Toolbar : {},
-			Label : {text: "text"}
-		});
-
-		assert.ok(oTB.$().hasClass("sapMTBNewFlex"), "Toolbar has correct sapMTBNewFlex class");
-		assert.ok(!oTB._sResizeListenerId, "Toolbar does not have any resize handler");
-		assert.strictEqual(spy.callCount, 0, "Content resize handler is not needed");
-		oTB.destroy();
-	});
-
-	QUnit.test("should behave correct according to old flex box support", function(assert) {
-		// stub for latest old flex support
-		var spy = this.spy(Toolbar.prototype, "_registerContentResize");
-		this.stub(ToolbarRenderer, "hasNewFlexBoxSupport", false);
-		var oTB = createToolbar({
-			Toolbar : {},
-			Label : {text: "text"}
-		});
-
-		assert.ok(oTB._sResizeListenerId, "Toolbar has resize handler");
-		assert.ok(oTB.$().hasClass("sapMTBOldFlex"), "Toolbar has correct sapMTBOldFlex class");
-		assert.strictEqual(oTB.$().find(".sapMLabel").css("display"), "block", "Display is set to block for shrinkable item");
-		assert.strictEqual(spy.callCount, 1, "Content resize handler is registered once");
-		oTB.destroy();
-	});
-
-	QUnit.test("should detect endpoint changes", function(assert) {
-		var oTB = createToolbar({
-			Toolbar : {},
-			Label : {text: "label"},
-			Button : {text: "button"}
-		});
-
-		var iInitEndPoint = oTB._getEndPoint();
-		assert.ok(iInitEndPoint, "After rendering some control endpoint must be more than 0px");
-
-		// change label
-		oTB.getContent()[0].setText("this is a long label");
-		Core.applyChanges();
-
-		// compare width the inital endpoint
-		var iLastEndPoint = oTB._getEndPoint();
-		assert.strictEqual(iLastEndPoint - iInitEndPoint > 0,  true, "Text is longer so endpoint must be bigger than inital values");
 		oTB.destroy();
 	});
 

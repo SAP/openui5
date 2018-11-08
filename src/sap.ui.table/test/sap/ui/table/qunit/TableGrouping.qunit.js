@@ -759,7 +759,7 @@ sap.ui.define([
 		afterEach: function() {
 			destroyTables();
 		},
-		testAsync: function (mTestConfig) {
+		testAsync: function(mTestConfig) {
 			return new Promise(function(resolve) {
 				function onRowsUpdated() {
 					if (Device.browser.msie) {

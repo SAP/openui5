@@ -475,7 +475,7 @@ sap.ui.define([
 			jQuery.sap.delayedCall(400, this, "restorePreviousFocus");
 
 			jQuery.each(oRect, function (key, val) {
-				oRect[key] = parseInt(val, 10);
+				oRect[key] = parseInt(val);
 			});
 
 			this._oRect = oRect;

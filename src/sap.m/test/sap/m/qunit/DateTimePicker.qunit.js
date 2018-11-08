@@ -129,23 +129,43 @@ sap.ui.define([
 		//Cleanup - redundant
 	});
 
+	QUnit.test("maxDate being yesterday should not throw error on open", function (assert) {
+		// Arrange
+		var oYesterdayDate = new Date(),
+			oDP = new DateTimePicker("DatePicker").placeAt("qunit-fixture");
+
+		oYesterdayDate.setDate(oYesterdayDate.getDate() - 1);
+
+		// Act
+		oDP.setMaxDate(oYesterdayDate);
+		sap.ui.getCore().applyChanges();
+		qutils.triggerEvent("click", "DatePicker-icon");
+
+		// Assert
+		assert.ok(true, "No error is thrown when DateTimePicker opens and maxDate is yesterday");
+
+		// Clean
+		oDP.destroy();
+	});
+
+
 	QUnit.module("Rendering");
 
 	QUnit.test("date format", function(assert) {
-		assert.ok(!jQuery("#DTP1").children("div.sapMInputBaseContentWrapper").children("input").val(), "DTP1: empty date");
-		assert.equal(jQuery("#DTP2").children("div.sapMInputBaseContentWrapper").children("input").val(), "17+02+2016:10+11", "DTP2: defined output format used");
-		assert.equal(jQuery("#DTP3").children("div.sapMInputBaseContentWrapper").children("input").val(), "2/17/16, 10:11 AM", "DTP3: defined output format used");
-		assert.equal(jQuery("#DTP4").children("div.sapMInputBaseContentWrapper").children("input").val(), "Feb 17, 2016, 10:11:12 AM", "DTP4: defined output format from binding used");
+		assert.ok(!jQuery("#DTP1").find("input").val(), "DTP1: empty date");
+		assert.equal(jQuery("#DTP2").find("input").val(), "17+02+2016:10+11", "DTP2: defined output format used");
+		assert.equal(jQuery("#DTP3").find("input").val(), "2/17/16, 10:11 AM", "DTP3: defined output format used");
+		assert.equal(jQuery("#DTP4").find("input").val(), "Feb 17, 2016, 10:11:12 AM", "DTP4: defined output format from binding used");
 	});
 
 	QUnit.test("placeholder", function(assert) {
 		if (Device.support.input.placeholder) {
-			assert.equal(jQuery("#DTP1").children("div.sapMInputBaseContentWrapper").children("input").attr("placeholder"), "MMM d, y, h:mm:ss a" , "DTP1: placeholder");
-			assert.equal(jQuery("#DTP2").children("div.sapMInputBaseContentWrapper").children("input").attr("placeholder"), "dd+MM+yyyy:HH+mm", "DTP2: placeholder");
-			assert.equal(jQuery("#DTP3").children("div.sapMInputBaseContentWrapper").children("input").attr("placeholder"), "M/d/yy, h:mm a", "DTP3: placeholder");
-			assert.equal(jQuery("#DTP4").children("div.sapMInputBaseContentWrapper").children("input").attr("placeholder"), "MMM d, y, h:mm:ss a", "DTP4: placeholder from binding used");
+			assert.equal(jQuery("#DTP1").find("input").attr("placeholder"), "MMM d, y, h:mm:ss a" , "DTP1: placeholder");
+			assert.equal(jQuery("#DTP2").find("input").attr("placeholder"), "dd+MM+yyyy:HH+mm", "DTP2: placeholder");
+			assert.equal(jQuery("#DTP3").find("input").attr("placeholder"), "M/d/yy, h:mm a", "DTP3: placeholder");
+			assert.equal(jQuery("#DTP4").find("input").attr("placeholder"), "MMM d, y, h:mm:ss a", "DTP4: placeholder from binding used");
 		} else {
-			assert.ok(!jQuery("#DTP1").children("div.sapMInputBaseContentWrapper").children("input").attr("placeholder"), "No placeholder attribute");
+			assert.ok(!jQuery("#DTP1").find("input").attr("placeholder"), "No placeholder attribute");
 		}
 	});
 
@@ -332,9 +352,9 @@ sap.ui.define([
 		bValid = true;
 		sId = "";
 		oDTP2.focus();
-		jQuery("#DTP2").children("div.sapMInputBaseContentWrapper").children("input").val("37+02+2016:10+11");
+		jQuery("#DTP2").find("input").val("37+02+2016:10+11");
 		qutils.triggerKeyboardEvent("DTP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DTP2").children("div.sapMInputBaseContentWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		jQuery("#DTP2").find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DTP2", "Change event fired");
 		assert.equal(sValue, "37+02+2016:10+11", "Value of event has entered value if invalid");
 		assert.ok(!bValid, "Value is not valid");
@@ -346,9 +366,9 @@ sap.ui.define([
 		bValid = true;
 		sId = "";
 		oDTP2.focus();
-		jQuery("#DTP2").children("div.sapMInputBaseContentWrapper").children("input").val("18+02+2016:10+30");
+		jQuery("#DTP2").find("input").val("18+02+2016:10+30");
 		qutils.triggerKeyboardEvent("DTP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DTP2").children("div.sapMInputBaseContentWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		jQuery("#DTP2").find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DTP2", "Change event fired");
 		assert.equal(sValue, "2016-02-18,10-30-00", "Value of event has entered value if valid");
 		assert.ok(bValid, "Value is valid");

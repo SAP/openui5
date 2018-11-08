@@ -3,13 +3,27 @@ sap.ui.define([
 	"sap/ui/core/postmessage/Bus",
 	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/fl/Utils",
-	"sap/ui/rta/RuntimeAuthoring"
+	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/dttool/plugins/OutsideElementMover",
+	"sap/ui/rta/dttool/plugins/OutsideDragDrop",
+	"sap/base/util/ObjectPath",
+	"sap/base/util/LoaderExtensions",
+	"sap/base/util/uid"
 ], function (
 	DragDropUtil,
 	PostMessageBus,
 	FakeLrepConnectorLocalStorage,
 	Utils,
-	RuntimeAuthoring
+	RuntimeAuthoring,
+	OverlayRegistry,
+	CommandFactory,
+	OutsideElementMover,
+	OutsideDragDrop,
+	ObjectPath,
+	LoaderExtensions,
+	uid
 ) {
 	"use strict";
 	var Preview = {};
@@ -31,9 +45,31 @@ sap.ui.define([
 			data : {}
 		});
 
+		var fnEnsureXMLNodeStableIds = function ($XML) {
+			if (!$XML.id){
+				$XML.id = uid();
+			}
+			if ($XML.childNodes) {
+				Array.prototype.slice.call($XML.childNodes).forEach(fnEnsureXMLNodeStableIds);
+			}
+			return $XML;
+		};
+
+		// TODO: Temporary solution
+		var fnLoaderExtensionsOriginal =  LoaderExtensions.loadResource;
+		LoaderExtensions.loadResource = function(sModuleName, mOptions) {
+			if (typeof sModuleName === "string" && sModuleName.indexOf("create"/*"create.fragment.xml"*/) > -1 && !mOptions.async) {
+				var oDocument = fnLoaderExtensionsOriginal.call(this, sModuleName, {dataType: "xml"});
+				return (new XMLSerializer()).serializeToString(fnEnsureXMLNodeStableIds(oDocument));
+			}
+			return fnLoaderExtensionsOriginal.apply(this, arguments);
+		};
+
 		if (this.oUiComponent) {
 			this.oUiComponent.destroy();
-			this.oRta.destroy();
+			if (this.oRta) {
+				this.oRta.destroy();
+			}
 
 			if (this.oUiComponentContainer) {
 				this.oUiComponentContainer.destroy();
@@ -65,10 +101,10 @@ sap.ui.define([
 	};
 
 	Preview.refreshIframe = function(sCompName){
-		var sCompId = "sampleComp-" + sCompName;
+		this.sCompId = "sampleComp-" + sCompName;
 
 		this.oUiComponent = sap.ui.getCore().createComponent({
-			id : sCompId,
+			id : this.sCompId,
 			name : sCompName
 		});
 
@@ -91,7 +127,6 @@ sap.ui.define([
 			component: this.oUiComponent
 		}).placeAt("content");
 
-
 		this.setupRTA();
 
 		oPostMessageBus.publish({
@@ -112,21 +147,34 @@ sap.ui.define([
 		this.oRta = new RuntimeAuthoring({
 			rootControl: this.oUiComponent.getRootControl(),
 			flexSettings: {
-				developerMode: false
-			}
+				developerMode: true
+			},
+			showToolbars: false
 		});
 
 		this.oRta.getService("selection").then(function (oSelectionManager) {
 			this.oSelectionManager = oSelectionManager;
 		}.bind(this));
 
-		/**
-		 * Show RTA Toolbar inside the iFrame
-		 */
-		this.oRta.setShowToolbars(false);
-
+		//Add the custom plugin that handles drag & drop from outside
+		var oCommandFactory = new CommandFactory({
+			flexSettings: {
+				layer: "VENDOR"
+			}
+		});
+		var oOutsideElementMover = new OutsideElementMover({
+			commandFactory: oCommandFactory
+		});
 		var mPlugins = this.oRta.getDefaultPlugins();
-		this.oRta.setPlugins(mPlugins);
+		var mPluginExtension = {
+			dragDrop: new OutsideDragDrop({
+				elementMover: oOutsideElementMover,
+				commandFactory: oCommandFactory,
+				dragStarted: this.oRta._handleStopCutPaste.bind(this.oRta)
+			})
+		};
+		var mExtendedPlugins = Object.assign({}, mPlugins, mPluginExtension);
+		this.oRta.setPlugins(mExtendedPlugins);
 
 		this.oRta.attachEvent("start", this.onRTAStarted, this);
 		this.oRta.start();
@@ -147,6 +195,7 @@ sap.ui.define([
 			this.oRta.stop();
 		}
 
+		//Close files inside code editor
 		oPostMessageBus.publish({
 			target : window.parent,
 			origin : window.parent.origin,
@@ -154,6 +203,16 @@ sap.ui.define([
 			eventId : "updateDesignTimeFile",
 			data : {}
 		});
+
+		oPostMessageBus.publish({
+			target : window.parent,
+			origin : window.parent.origin,
+			channelId : "dtTool",
+			eventId : "updatePropertyFile",
+			data : {}
+		});
+
+		this.checkUndoRedo(true);
 	};
 
 
@@ -167,7 +226,7 @@ sap.ui.define([
 			}
 
 			this.oDesignTime.getSelectionManager().attachChange(this.onOverlaySelected, this);
-
+			window._oRTA = this.oRta;
 			oPostMessageBus.publish({
 				target : window.parent,
 				origin : window.parent.origin,
@@ -180,6 +239,10 @@ sap.ui.define([
 				if (this.oRta.getPlugins()[sPluginName].attachElementModified) {
 					this.oRta.getPlugins()[sPluginName].attachElementModified(this.onElementModified, this);
 				}
+			}.bind(this));
+
+			this.oRta.attachUndoRedoStackModified(function () {
+				this.checkUndoRedo();
 			}.bind(this));
 		}.bind(this));
 	};
@@ -251,7 +314,7 @@ sap.ui.define([
 
 	Preview.updateOutline = function (oElement, bNotify) {
 
-		var oOverlay = this.getOverlayByElement(oElement);
+		var oOverlay = OverlayRegistry.getOverlay(this.oDragElement);
 
 		var sOverlayId;
 
@@ -273,19 +336,6 @@ sap.ui.define([
 				notify : bNotify
 			}
 		});
-	};
-
-	Preview.getOverlayByElement = function (oElement) {
-
-		var oOverlay;
-
-		this.oDesignTime.getElementOverlays().some(function (oElementOverlay) {
-			if (oElementOverlay.getElement().getId() === oElement.getId()) {
-				oOverlay = oElementOverlay;
-				return true;
-			}
-		});
-		return oOverlay;
 	};
 
 	Preview.loadOutline = function (oEvent) {
@@ -322,6 +372,23 @@ sap.ui.define([
 				});
 			});
 		}
+	};
+
+	Preview.getOverlayActions = function (sElementId) {
+		var oActions = OverlayRegistry.getOverlay(sElementId).getDesignTimeMetadata().getData().actions || {};
+		//Filter complex action parameters to pass them through the PostMessageBus
+		//This is necessary to remove properties like domRef which can sometimes be present on an action
+		Object.keys(oActions).forEach(function (oActionKey) {
+			Object.keys(oActions[oActionKey]).forEach(function (oActionParameterKey) {
+				var sActionParameterType = typeof oActions[oActionKey][oActionParameterKey];
+				if (sActionParameterType === "function") {
+					oActions[oActionKey][oActionParameterKey] = "Function";
+				} else if (sActionParameterType === "object" && oActions[oActionKey][oActionParameterKey] !== null) {
+					oActions[oActionKey][oActionParameterKey] = "Object";
+				}
+			});
+		});
+		return oActions;
 	};
 
 	Preview.onOverlaySelected = function (oEvent) {
@@ -370,23 +437,22 @@ sap.ui.define([
 				}))
 			});
 
-		} else if (oEvent.getParameter("selection")[0]) {
-
 			oPostMessageBus.publish({
 				target : window.parent,
 				origin : window.parent.origin,
 				channelId : "dtTool",
-				eventId : "selectOverlayInOutline",
+				eventId : "updatePropertyFile",
 				data : {
-					id : oEvent.getParameter("selection")[0].getId()
+					actions: this.getOverlayActions(oElement.getId()),
+					id: oElement.getId()
 				}
 			});
+
 		}
 	};
 	Preview.propertyChange = function (oEvent) {
-
-		var sPropertyName = oEvent.data.propertyName,
-			vNewValue = oEvent.data.newValue;
+		var sPropertyName = oEvent.data.propertyName;
+		var vNewValue = oEvent.data.newValue;
 
 		var oElement = this.getSelection().getElement();
 		var aMatch = sPropertyName.match(/(.)(.*)/);
@@ -396,18 +462,16 @@ sap.ui.define([
 			oElement[sMethodName](vNewValue);
 		}
 
-		if (sPropertyName === "text" || sPropertyName === "title" || sPropertyName === "label") {
-
-			oPostMessageBus.publish({
-				target : window.parent,
-				origin : window.parent.origin,
-				channelId : "dtTool",
-				eventId : "updateOutline",
-				data : {
-					id : oElement.getId()
-				}
-			});
-		}
+		oPostMessageBus.publish({
+			target : window.parent,
+			origin : window.parent.origin,
+			channelId : "dtTool",
+			eventId : "updatePropertyFile",
+			data : {
+				actions: this.getOverlayActions(oElement.getId()),
+				id: oElement.getId()
+			}
+		});
 	};
 
 	Preview.editorDTData = function (oEvent) {
@@ -452,84 +516,33 @@ sap.ui.define([
 
 	Preview.dragStart = function (oEvent) {
 
-		var sClassName = oEvent.data.className,
-			sModule = oEvent.data.module;
+		var sClassName = oEvent.data.className;
 
-		if (sModule) {
-
-			jQuery.sap.loadResource(jQuery.sap.loadResource("sap/m/designtime/Button.create.fragment.xml"), {async: true}).then( function(oDocument) {
-				if (oDocument && oDocument.documentElement) {
-					this.oDragElement = sap.ui.xmlfragment({
-						fragmentContent: oDocument.documentElement
-					});
-					if (this.oDragElement.getMetadata().getName() !== sClassName) {
-						jQuery.sap.log.error("Expected instance of " + sClassName + " as root element in" + sModule + " but found " + this.oDragElement.getMetadata().getName());
-					}
-					DragDropUtil.startDragWithElement(this.oDragElement, this.oDesignTime);
-				}
+		this.getClass(sClassName).then(function (aResults) {
+			var Constructor = aResults;
+			this.oDragElement = sap.ui.getCore().getComponent(this.sCompId).runAsOwner(function () {
+				return new Constructor();
 			});
-
-			//  sap.ui.xmlfragment(sModule.replace(/\//g, ".").replace(".fragment.xml",""));
-			// if (this.oDragElement.getMetadata().getName() !== sClassName) {
-			// 	jQuery.sap.log.error("Expected instance of " + sClassName + " as root element in" + sModule + " but found " + this.oDragElement.getMetadata().getName());
-			// }
-			// DragDropUtil.startDragWithElement(this.oDragElement, oDt);
-		} else {
-			this.getClass(sClassName).then(function (aResults) {
-				var Constructor = aResults;
-				this.oDragElement = new Constructor();
-				if (this.oDragElement.setText) {
-					this.oDragElement.setText("text");
-				} else if (this.oDragElement.setSrc) {
-					this.oDragElement.setSrc("sap-icon://dishwasher");
-				}
-
-				DragDropUtil.startDragWithElement(this.oDragElement, this.oDesignTime);
-			}.bind(this));
-		}
+			this.oDragElement
+				.placeAt("dragDropContainer")
+				.addEventDelegate({
+					"onAfterRendering": function () {
+						DragDropUtil.startDragWithElement(this.oDragElement, this.oRta, oEvent);
+					}.bind(this)
+				});
+		}.bind(this));
 	};
 
 	Preview.dragEnd = function () {
-		if (this.oDragElement) {
-			DragDropUtil.dropElement(this.oDragElement, this.oDesignTime);
-			var oOverlay = this.getOverlayByElement(this.oDragElement);
-
-			if (!(oOverlay && oOverlay.getParent())) {
-				oOverlay.destroy();
-				return;
-			}
-
-			this.updateOutline(this.oDragElement, true);
-			oOverlay.setSelectable(true);
-			this.oSelectionManager.set(oOverlay);
-
-			oPostMessageBus.publish({
-				target : window.parent,
-				origin : window.parent.origin,
-				channelId : "dtTool",
-				eventId : "RTAstarted",
-				data : {}
-			});
+		if (!this.oDragElement) {
+			return;
 		}
-	};
-
-	Preview.outlineUpdated = function () {
-		if (this.oDragElement) {
-			oPostMessageBus.publish({
-				target : window.parent,
-				origin : window.parent.origin,
-				channelId : "dtTool",
-				eventId : "selectOverlayInOutline",
-				data : {
-					id : this.oDragElement.getId()
-				}
-			});
-			this.oDragElement = null;
-		}
+		DragDropUtil.dropElement(this.oDragElement, this.oRta);
+		delete this.oDragElement;
 	};
 
 	Preview.getClass = function (sClassName) {
-		var oClass = jQuery.sap.getObject(sClassName);
+		var oClass = ObjectPath.get(sClassName);
 
 		return new Promise(function (resolve, reject) {
 			if (oClass) {
@@ -551,8 +564,33 @@ sap.ui.define([
 		}
 	};
 
+	Preview.undo = function () {
+		if (this.oRta) {
+			this.oRta.undo();
+		}
+	};
+
+	Preview.redo = function () {
+		if (this.oRta) {
+			this.oRta.redo();
+		}
+	};
+
+	Preview.checkUndoRedo = function (bRtaStopped) {
+		oPostMessageBus.publish({
+			target : window.parent,
+			origin : window.parent.origin,
+			channelId : "dtTool",
+			eventId : "setUndoRedo",
+			data : {
+				bCanUndo: this.oRta && !bRtaStopped ? this.oRta.canUndo() : false,
+				bCanRedo: this.oRta && !bRtaStopped ? this.oRta.canRedo() : false
+			}
+		});
+	};
+
 	return Preview;
-	});
+});
 
 
 

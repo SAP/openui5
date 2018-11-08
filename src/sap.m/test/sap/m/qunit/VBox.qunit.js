@@ -34,10 +34,8 @@ sap.ui.define([
 		]
 	});
 	oVBox1.setDisplayInline(false);
-	// 			oVBox1.setWrap('Wrap');
 	oVBox1.setJustifyContent('Center');
 	oVBox1.setAlignItems('End');
-	// 			oVBox1.setAlignContent('End');
 	oVBox1.setRenderType('List');
 	oVBox1.placeAt("content");
 
@@ -64,10 +62,8 @@ sap.ui.define([
 	});
 	oVBox2.setDirection("ColumnReverse");
 	oVBox2.setDisplayInline(true);
-	// 			oVBox2.setWrap('Nowrap');
 	oVBox2.setJustifyContent('End');
 	oVBox2.setAlignItems('Center');
-	// 			oVBox2.setAlignContent('Center');
 	oVBox2.setRenderType('Div');
 	oVBox2.placeAt("content");
 
@@ -93,30 +89,25 @@ sap.ui.define([
 	});
 
 	QUnit.module('Final spec property tests');
+
 	QUnit.test("display", function(assert){
 		// phantomjs wants to add the webkit prefix here...
 		assert.equal(jQuery("#vbox1").css('display'), (Device.browser.phantomJS ? "-webkit-" : "") + "flex", "VBox display property should be set correctly in standard-compatible browsers");
 		assert.equal(jQuery("#vbox2").css('display'), (Device.browser.phantomJS ? "-webkit-" : "") + "inline-flex", "VBox display property should be set correctly in standard-compatible browsers");
 	});
+
 	QUnit.test("flex-direction", function(assert){
 		assert.equal(jQuery("#vbox1").css('flex-direction'), "column", "VBox flex-direction property should be set correctly in standard-compatible browsers");
 		assert.equal(jQuery("#vbox2").css('flex-direction'), "column-reverse", "VBox flex-direction property should be set correctly in standard-compatible browsers");
 	});
-	// 				QUnit.test("flex-wrap", function(assert){
-	//					// skip nowrap for Chrome as it has a bug in some versions where it returns "none" instead
-	// 					assert.equal(jQuery("#vbox1").css('flex-wrap'), "wrap", "VBox flex-wrap property should be set correctly in standard-compatible browsers");
-	// 					if(!jQuery.browser.webkit) assert.equal(jQuery("#vbox2").css('flex-wrap'), "nowrap", "VBox flex-wrap property should be set correctly in standard-compatible browsers");
-	// 				});
+
 	QUnit.test("justify-content", function(assert){
 		assert.equal(jQuery("#vbox1").css('justify-content'), "center", "VBox justify-content property should be set correctly in standard-compatible browsers");
 		assert.equal(jQuery("#vbox2").css('justify-content'), "flex-end", "VBox justify-content property should be set correctly in standard-compatible browsers");
 	});
+
 	QUnit.test("align-items", function(assert){
 		assert.equal(jQuery("#vbox1").css('align-items'), "flex-end", "VBox align-items property should be set correctly in standard-compatible browsers");
 		assert.equal(jQuery("#vbox2").css('align-items'), "center", "VBox align-items property should be set correctly in standard-compatible browsers");
 	});
-	// 				QUnit.test("align-content", function(assert){
-	// 					assert.equal(jQuery("#vbox1").css('align-content'), "flex-end", "VBox align-content property should be set correctly in standard-compatible browsers");
-	// 					assert.equal(jQuery("#vbox2").css('align-content'), "center", "VBox align-content property should be set correctly in standard-compatible browsers");
-	// 				});
 });

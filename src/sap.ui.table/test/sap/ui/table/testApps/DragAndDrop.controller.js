@@ -2,13 +2,13 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageToast"
-], function (Controller, JSONModel, MessageToast) {
+], function(Controller, JSONModel, MessageToast) {
 	"use strict";
 
 	var TABLESETTINGS = window.TABLESETTINGS;
 
 	return Controller.extend("sap.ui.table.testApps.DragAndDrop", {
-		onInit: function () {
+		onInit: function() {
 			var oTable = this.byId("table");
 			var oTreeTable = this.byId("treetable");
 			var oModel = new JSONModel();

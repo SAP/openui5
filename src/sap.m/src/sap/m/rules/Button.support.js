@@ -23,7 +23,7 @@ sap.ui.define(["sap/ui/support/library"],
 	var oButtonRule = {
 		id : "onlyIconButtonNeedsTooltip",
 		audiences: [Audiences.Control],
-		categories: [Categories.Usability],
+		categories: [Categories.Accessibility],
 		enabled: true,
 		minversion: "1.28",
 		title: "Button: Consists of only an icon, needs a tooltip",

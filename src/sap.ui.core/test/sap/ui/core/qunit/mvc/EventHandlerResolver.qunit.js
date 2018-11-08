@@ -78,7 +78,7 @@ sap.ui.define([
 		fnFromController(oDummyEvent);
 		assert.equal(oController.fnControllerMethod.callCount, 1, "Controller method should be called");
 
-		oController.fnControllerMethod.reset();
+		oController.fnControllerMethod.resetHistory();
 		var fnFromController2 = EventHandlerResolver.resolveEventHandler("fnControllerMethod()", oController)[0];
 		fnFromController2(oDummyEvent);
 		assert.equal(oController.fnControllerMethod.callCount, 1, "Controller method without dot should be called");
@@ -239,7 +239,7 @@ sap.ui.define([
 		};
 
 		for (var sTestString in mTestSet) {
-			spy.reset();
+			spy.resetHistory();
 			fnFromController = EventHandlerResolver.resolveEventHandler(sTestString, oController)[0];
 			fnFromController(oDummyEvent);
 			assert.deepEqual(spy.args[0], [mTestSet[sTestString]], "Bound model property value should be correctly calculated for: " + sTestString);
@@ -256,7 +256,7 @@ sap.ui.define([
 		};
 
 		for (var sTestString in mTestSet) {
-			spy.reset();
+			spy.resetHistory();
 			fnFromController = EventHandlerResolver.resolveEventHandler(sTestString, oController)[0];
 			fnFromController(oDummyEvent);
 			assert.deepEqual(spy.args[0], mTestSet[sTestString], "Bound model property value should be correctly calculated for: " + sTestString);
@@ -274,7 +274,7 @@ sap.ui.define([
 		};
 
 		for (var sTestString in mTestSet) {
-			spy.reset();
+			spy.resetHistory();
 			fnFromController = EventHandlerResolver.resolveEventHandler(sTestString, oController)[0];
 			fnFromController(oDummyEvent);
 			assert.strictEqual(spy.args[0][0], mTestSet[sTestString], "Bound model property value should be correctly calculated for: " + sTestString);

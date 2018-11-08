@@ -6,6 +6,8 @@ This page explains the initial setup, development workflow, and how tests are ex
 
 Setting up the OpenUI5 development environment
 ------------------------------------------
+_**Note: This section is currently being reworked.** The steps described below are subject to change._  
+_If you are looking for the Grunt based development environment, please head over to the [legacy Grunt development environment documentation](developing_legacy_grunt.md)._
 
 OpenUI5 content is developed in an environment based on Node.js. The [UI5 Build and Development Tooling](https://github.com/SAP/ui5-tooling) is used as development server and build tool. To set up this environment follow these simple steps:
 

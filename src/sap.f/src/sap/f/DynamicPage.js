@@ -319,7 +319,8 @@ sap.ui.define([
 
 	DynamicPage.prototype.onAfterRendering = function () {
 
-		var bShouldSnapWithScroll;
+		var bShouldSnapWithScroll,
+			iCurrentScrollPosition;
 
 		if (this._preserveHeaderStateOnScroll()) {
 			// Ensure that in this tick DP and it's aggregations are rendered
@@ -342,7 +343,8 @@ sap.ui.define([
 			bShouldSnapWithScroll = this.getHeader() && !this.getPreserveHeaderStateOnScroll() && this._canSnapHeaderOnScroll();
 
 			if (bShouldSnapWithScroll) {
-				this._setScrollPosition(this._getSnappingHeight());
+				iCurrentScrollPosition = this._getScrollBar().getScrollPosition();
+				this._setScrollPosition(iCurrentScrollPosition ? iCurrentScrollPosition : this._getSnappingHeight());
 			} else {
 				this._toggleHeaderVisibility(false);
 				this._moveHeaderToTitleArea();
@@ -681,15 +683,22 @@ sap.ui.define([
 
 		var iOffset = Math.ceil(this._getHeaderHeight()),
 			iCurrentScrollPosition = this._getScrollPosition(),
+			iCurrentScrollBarPosition = this._getScrollBar().getScrollPosition(),
 			iNewScrollPosition;
 
 		if (!iOffset) {
 			return;
 		}
 
-		iNewScrollPosition = this._bHeaderInTitleArea ?
+		// if the user has left the page and iCurrentScrollPosition is 0, we restore the previously scrolled position (if any),
+		// using the already saved scroll position of the ScrollBar
+		if (!iCurrentScrollPosition && iCurrentScrollBarPosition) {
+			iNewScrollPosition = this._getScrollBar().getScrollPosition();
+		} else {
+			iNewScrollPosition = this._bHeaderInTitleArea ?
 			iCurrentScrollPosition - iOffset :
 			iCurrentScrollPosition + iOffset;
+		}
 
 		iNewScrollPosition = Math.max(iNewScrollPosition, 0);
 
@@ -983,7 +992,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._headerBiggerThanAllowedToPin = function (iControlHeight) {
-		if (!(typeof iControlHeight === "number" && !isNaN(parseInt(iControlHeight, 10)))) {
+		if (!(typeof iControlHeight === "number" && !isNaN(parseInt(iControlHeight)))) {
 			iControlHeight = this._getOwnHeight();
 		}
 

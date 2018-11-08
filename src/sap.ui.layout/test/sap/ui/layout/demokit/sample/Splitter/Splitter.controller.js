@@ -95,7 +95,7 @@ sap.ui.define([
 				value : oLD.getMinSize(),
 				change : (function(oLayoutData) {
 					return function(oEvent) {
-						oLayoutData.setMinSize(parseInt(oEvent.getParameter("newValue"), 10));
+						oLayoutData.setMinSize(parseInt(oEvent.getParameter("newValue")));
 					};
 				})(oLD)
 			}));

@@ -195,6 +195,32 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
+	QUnit.test("Image shape", function(assert){
+		// Arrange
+		var oObjectHeader = createObjectHeader({
+			icon: "../images/SAPUI5.jpg"
+		});
+
+		// System under Test
+		oObjectHeader.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Assert
+		var $objectHeader = oObjectHeader.$("titleIcon");
+		assert.ok($objectHeader.hasClass("sapMOHRIcon" + oObjectHeader.getImageShape()), "Object has class \"sapMOHRIconSquare\".");
+
+		//Act
+		oObjectHeader.setImageShape(sap.m.ObjectHeaderPictureShape.Circle);
+		oCore.applyChanges();
+
+		// Assert
+		$objectHeader = oObjectHeader.$("titleIcon");
+		assert.ok($objectHeader.hasClass("sapMOHRIcon" + oObjectHeader.getImageShape()), "Object has class \"sapMOHRIconCircle\".");
+
+		// Clean up
+		oObjectHeader.destroy();
+	});
+
 	QUnit.test("Title with icon should be rendered", function(assert){
 		// Arrange
 		var oObjectHeader = new ObjectHeader({

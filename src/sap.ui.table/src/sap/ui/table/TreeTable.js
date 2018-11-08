@@ -5,6 +5,7 @@
 // Provides control sap.ui.table.TreeTable.
 sap.ui.define([
 	'./Table',
+	"./TableRenderer",
 	'sap/ui/model/ClientTreeBindingAdapter',
 	'sap/ui/model/TreeBindingCompatibilityAdapter',
 	'./library',
@@ -15,6 +16,7 @@ sap.ui.define([
 ],
 	function(
 		Table,
+		TableRenderer,
 		ClientTreeBindingAdapter,
 		TreeBindingCompatibilityAdapter,
 		library,
@@ -176,7 +178,7 @@ sap.ui.define([
 		}
 	};
 
-	TreeTable.prototype.setSelectionMode = function (sSelectionMode) {
+	TreeTable.prototype.setSelectionMode = function(sSelectionMode) {
 		var oBinding = this.getBinding("rows");
 		if (oBinding && oBinding.clearSelection) {
 			oBinding.clearSelection();
@@ -287,7 +289,7 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	TreeTable.prototype.collapseAll = function () {
+	TreeTable.prototype.collapseAll = function() {
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
 			oBinding.collapseToLevel(0);
@@ -310,7 +312,7 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	TreeTable.prototype.expandToLevel = function (iLevel) {
+	TreeTable.prototype.expandToLevel = function(iLevel) {
 		var oBinding = this.getBinding("rows");
 
 		assert(oBinding && oBinding.expandToLevel, "TreeTable.expandToLevel is not supported with your current Binding. Please check if you are running on an ODataModel V2.");
@@ -346,7 +348,7 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	TreeTable.prototype.isIndexSelected = function (iRowIndex) {
+	TreeTable.prototype.isIndexSelected = function(iRowIndex) {
 		var oBinding = this.getBinding("rows");
 		//when using the treebindingadapter, check if the node is selected
 		if (oBinding && oBinding.isIndexSelected) {
@@ -367,7 +369,7 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	TreeTable.prototype.setSelectedIndex = function (iRowIndex) {
+	TreeTable.prototype.setSelectedIndex = function(iRowIndex) {
 		if (this.getSelectionMode() === SelectionMode.None) {
 			return this;
 		}
@@ -403,7 +405,7 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	TreeTable.prototype.getSelectedIndices = function () {
+	TreeTable.prototype.getSelectedIndices = function() {
 		//when using the treebindingadapter, check if the node is selected
 		var oBinding = this.getBinding("rows");
 
@@ -427,7 +429,7 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	TreeTable.prototype.setSelectionInterval = function (iFromIndex, iToIndex) {
+	TreeTable.prototype.setSelectionInterval = function(iFromIndex, iToIndex) {
 		var sSelectionMode = this.getSelectionMode();
 
 		if (sSelectionMode === SelectionMode.None) {
@@ -465,7 +467,7 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	TreeTable.prototype.addSelectionInterval = function (iFromIndex, iToIndex) {
+	TreeTable.prototype.addSelectionInterval = function(iFromIndex, iToIndex) {
 		var sSelectionMode = this.getSelectionMode();
 
 		if (sSelectionMode === SelectionMode.None) {
@@ -498,7 +500,7 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	TreeTable.prototype.removeSelectionInterval = function (iFromIndex, iToIndex) {
+	TreeTable.prototype.removeSelectionInterval = function(iFromIndex, iToIndex) {
 		var oBinding = this.getBinding("rows");
 		//TBA check
 		if (oBinding && oBinding.findNode && oBinding.removeSelectionInterval) {
@@ -520,7 +522,7 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	TreeTable.prototype.selectAll = function () {
+	TreeTable.prototype.selectAll = function() {
 		if (!TableUtils.hasSelectAll(this)) {
 			return this;
 		}
@@ -563,7 +565,7 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	TreeTable.prototype.clearSelection = function () {
+	TreeTable.prototype.clearSelection = function() {
 		var oBinding = this.getBinding("rows");
 
 		if (oBinding && oBinding.clearSelection) {
@@ -575,7 +577,7 @@ sap.ui.define([
 		return this;
 	};
 
-	TreeTable.prototype.getContextByIndex = function (iRowIndex) {
+	TreeTable.prototype.getContextByIndex = function(iRowIndex) {
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
 			return oBinding.getContextByIndex(iRowIndex);
@@ -626,7 +628,7 @@ sap.ui.define([
 	 * Depending on the binding it is either retrieved from the binding or the selection model.
 	 * @private
 	 */
-	TreeTable.prototype._getSelectedIndicesCount = function () {
+	TreeTable.prototype._getSelectedIndicesCount = function() {
 		var iSelectedIndicesCount;
 
 		//when using the treebindingadapter, check if the node is selected
@@ -642,7 +644,7 @@ sap.ui.define([
 		return iSelectedIndicesCount;
 	};
 
-	TreeTable.prototype.setUseGroupMode = function (bGroup) {
+	TreeTable.prototype.setUseGroupMode = function(bGroup) {
 		this.setProperty("useGroupMode", !!bGroup);
 		if (!!bGroup) {
 			TableUtils.Grouping.setGroupMode(this);

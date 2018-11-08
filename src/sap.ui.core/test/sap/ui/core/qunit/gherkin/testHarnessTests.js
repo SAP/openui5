@@ -197,8 +197,8 @@ sap.ui.define([
 						var sTestResult = oFrame$("#qunit-testresult").text();
 						var rRegex = /\d+ assertions of (\d+) passed, (\d+) failed\./i;
 						var sResults = rRegex.exec(sTestResult);
-						var iFailedTests = parseInt(sResults[2], 10);
-						var iTotalTests = parseInt(sResults[1], 10);
+						var iFailedTests = parseInt(sResults[2]);
+						var iTotalTests = parseInt(sResults[1]);
 						Opa5.assert.strictEqual(iFailedTests, 1, "Verified failed tests");
 						Opa5.assert.strictEqual(iTotalTests, 1, "Verified total tests");
 
@@ -232,8 +232,8 @@ sap.ui.define([
 						var sTestResult = oFrame$("#qunit-testresult").text();
 						var rRegex = /\d+ assertions of (\d+) passed, (\d+) failed\./i;
 						var sResults = rRegex.exec(sTestResult);
-						var iFailedTests = parseInt(sResults[2], 10);
-						var iTotalTests = parseInt(sResults[1], 10);
+						var iFailedTests = parseInt(sResults[2]);
+						var iTotalTests = parseInt(sResults[1]);
 						Opa5.assert.strictEqual(iFailedTests, 1, "Verified failed tests");
 						Opa5.assert.strictEqual(iTotalTests, 1, "Verified total tests");
 
@@ -264,8 +264,8 @@ sap.ui.define([
 						var sTestResult = oFrame$("#qunit-testresult").text();
 						var rRegex = /\d+ assertions of (\d+) passed, (\d+) failed\./i;
 						var sResults = rRegex.exec(sTestResult);
-						var iFailedTests = parseInt(sResults[2], 10);
-						var iTotalTests = parseInt(sResults[1], 10);
+						var iFailedTests = parseInt(sResults[2]);
+						var iTotalTests = parseInt(sResults[1]);
 						Opa5.assert.strictEqual(iFailedTests, 3, "Verified failed tests");
 						Opa5.assert.strictEqual(iTotalTests, 13, "Verified total tests");
 

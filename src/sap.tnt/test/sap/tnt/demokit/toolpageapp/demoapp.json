@@ -23,6 +23,7 @@
 		"webapp/test/integration/AllJourneys.js",
 		"webapp/test/integration/NavigationJourney.js",
 		"webapp/test/integration/opaTests.qunit.html",
+		"webapp/test/integration/opaTests.qunit.js",
 		"webapp/test/integration/pages/App.js",
 		"webapp/test/integration/arrangements/Arrangement.js",
 		"webapp/test/integration/pages/Home.js",

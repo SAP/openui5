@@ -455,7 +455,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var oDevWarning;
 			if (!this._sVersionStr
 				|| (this._sVersionStr.indexOf("SNAPSHOT") > -1)
-				|| (this._sVersionStr.split(".").length > 1 && parseInt(this._sVersionStr.split(".")[1], 10) % 2 === 1)) {
+				|| (this._sVersionStr.split(".").length > 1 && parseInt(this._sVersionStr.split(".")[1]) % 2 === 1)) {
 				oDevWarning = new TextView({
 					text: "Development version! Work in Progress!",
 					semanticColor: TextViewColor.Negative,

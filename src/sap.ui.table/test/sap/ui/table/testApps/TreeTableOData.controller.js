@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/MessagePopover",
 	"sap/m/MessagePopoverItem"
-], function (Controller, MessageToast, JSONModel, Dialog, Text, TextArea, Button, MessagePopover, MessagePopoverItem) {
+], function(Controller, MessageToast, JSONModel, Dialog, Text, TextArea, Button, MessagePopover, MessagePopoverItem) {
 	"use strict";
 
 	var oTable;
@@ -30,7 +30,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.testApps.TreeTableOData", {
 
-		onInit: function () {
+		onInit: function() {
 			this._oMessageManager = sap.ui.getCore().getMessageManager();
 			var oMessageModel = this._oMessageManager.getMessageModel();
 
@@ -82,7 +82,7 @@ sap.ui.define([
 		/**
 		 * Rebinds/Creates the TreeTable
 		 */
-		onCreateTableClick: function (oEvent, oTreeState) {
+		onCreateTableClick: function(oEvent, oTreeState) {
 			var oView = this.getView(),
 			oViewModel = oView.getModel();
 
@@ -121,7 +121,7 @@ sap.ui.define([
 					var aAnnotationsMockdata = this.oMockServer._oMockdata.GLAccountHierarchyInChartOfAccountsLiSet;
 					for (var i = 0; i < aAnnotationsMockdata.length; i++) {
 						//convert string based level properties (NUMC fields) to real numbers
-						aAnnotationsMockdata[i].FinStatementHierarchyLevelVal = parseInt(aAnnotationsMockdata[i].FinStatementHierarchyLevelVal, 10);
+						aAnnotationsMockdata[i].FinStatementHierarchyLevelVal = parseInt(aAnnotationsMockdata[i].FinStatementHierarchyLevelVal);
 					}
 
 					this.oMockServer.start();
@@ -135,16 +135,16 @@ sap.ui.define([
 			var sOperationMode = oViewModel.getProperty("/operationMode");
 
 			// threshold for OperationMode.Auto
-			var iBindingThreshold = parseInt(oView.byId("bindingThreshold").getValue(), 10);
+			var iBindingThreshold = parseInt(oView.byId("bindingThreshold").getValue());
 
 			// table threshold
-			var iTableThreshold = parseInt(oView.byId("tableThreshold").getValue(), 10);
+			var iTableThreshold = parseInt(oView.byId("tableThreshold").getValue());
 
 			// the root level of the tree
-			var iRootLevel = parseInt(oViewModel.getProperty("/rootLevel"), 10);
+			var iRootLevel = parseInt(oViewModel.getProperty("/rootLevel"));
 
 			// initial # of expanded levels
-			var iInitialLevel = parseInt(oViewModel.getProperty("/initialLevel"), 10);
+			var iInitialLevel = parseInt(oViewModel.getProperty("/initialLevel"));
 
 			// application filter values
 			var sFilterProperty = oViewModel.getProperty("/filterProperty");
@@ -264,7 +264,7 @@ sap.ui.define([
 			window.oTable = oTable;
 		},
 
-		ensureCorrectChangeGroup: function (sEntityType) {
+		ensureCorrectChangeGroup: function(sEntityType) {
 			this._sTreeChangeGroup = this._sTreeChangeGroup || ("sapTreeHM-" + jQuery.sap.uid());
 
 			// make sure we have a change group
@@ -287,22 +287,22 @@ sap.ui.define([
 		/**
 		 * Performance Tools
 		 */
-		attachPerformanceTools: function (oTable) {
+		attachPerformanceTools: function(oTable) {
 			oTable.addDelegate({
-				onBeforeRendering: function () {
+				onBeforeRendering: function() {
 					jQuery.sap.measure.start("onBeforeRendering","",["Render"]);
 					jQuery.sap.measure.start("rendering","",["Render"]);
 				},
-				onAfterRendering: function () {
+				onAfterRendering: function() {
 					jQuery.sap.measure.start("onAfterRendering","",["Render"]);
 				}
 			}, true);
 
 			oTable.addDelegate({
-				onBeforeRendering: function () {
+				onBeforeRendering: function() {
 					jQuery.sap.measure.end("onBeforeRendering");
 				},
-				onAfterRendering: function () {
+				onAfterRendering: function() {
 					jQuery.sap.measure.end("onAfterRendering");
 					jQuery.sap.measure.end("rendering");
 				}
@@ -346,7 +346,7 @@ sap.ui.define([
 		/**
 		 * jQuery Measure Tools
 		 */
-		attachMeasurementTools: function () {
+		attachMeasurementTools: function() {
 			var oViewModel = this.getView().getModel();
 			var aJSMeasure = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
 				return oMeasurement.categories.indexOf("JS") > -1 ? oMeasurement : null;
@@ -383,7 +383,7 @@ sap.ui.define([
 		/**
 		 * Set up the Cut and Paste Model
 		 */
-		setupCutAndPaste: function () {
+		setupCutAndPaste: function() {
 			if (this._oClipboardModel) {
 				this._oClipboardModel.destroy();
 			}
@@ -426,7 +426,7 @@ sap.ui.define([
 				beginButton: new Button({
 					text: 'OK',
 					enabled: false,
-					press: function () {
+					press: function() {
 						var sBusinessEntityKey = sap.ui.getCore().byId('businessEntityValueTextArea').getValue();
 
 						// create entry
@@ -454,7 +454,7 @@ sap.ui.define([
 
 				endButton: new Button({
 					text: 'Cancel',
-					press: function () {
+					press: function() {
 						oDialog.close();
 					}
 				}),
@@ -470,7 +470,7 @@ sap.ui.define([
 		/**
 		 * Cut out logic
 		 */
-		onCut: function () {
+		onCut: function() {
 			var iSelectedIndex = oTable.getSelectedIndex();
 			var oBinding = oTable.getBinding();
 			var oModel = oBinding.getModel();
@@ -495,7 +495,7 @@ sap.ui.define([
 		/**
 		 * Paste logic
 		 */
-		onPaste: function () {
+		onPaste: function() {
 			var oTable = this.byId("tableOData");
 			var iSelectedIndex = oTable.getSelectedIndex();
 			if (this._oClipboardModel && iSelectedIndex != -1) {
@@ -508,7 +508,7 @@ sap.ui.define([
 		/**
 		 * Shows an error dialog with the given error message.
 		 */
-		showErrorDialogue: function (sErrorCode, sErrorText) {
+		showErrorDialogue: function(sErrorCode, sErrorText) {
 			var oDialog = new Dialog({
 				title: 'Request Failed with Error: ' + sErrorCode,
 				contentWidth: "600px",
@@ -520,7 +520,7 @@ sap.ui.define([
 				],
 				beginButton: new Button({
 					text: 'OK',
-					press: function () {
+					press: function() {
 						oDialog.close();
 					}
 				}),
@@ -535,7 +535,7 @@ sap.ui.define([
 		/**
 		 * Submit the changes on the model
 		 */
-		onSave: function () {
+		onSave: function() {
 			MessageToast.show("Submitting changes...");
 			var oBinding = oTable.getBinding();
 
@@ -545,7 +545,7 @@ sap.ui.define([
 
 			// send collected change data to the back-end
 			oBinding.submitChanges({
-				success: function (oData) {
+				success: function(oData) {
 					// remove busy state of table
 					oTable.setBusy(false);
 					// re-setup and clear the clipboard
@@ -553,7 +553,7 @@ sap.ui.define([
 
 					this.getView().getModel().setProperty("/pendingChanges", false);
 				}.bind(this),
-				error: function (oEvent) {
+				error: function(oEvent) {
 					oTable.setBusy(false);
 				}
 			});
@@ -564,7 +564,7 @@ sap.ui.define([
 		/**
 		 * Refresh and restore tree state even if no changes have been made
 		 */
-		onRefreshAndRestore: function () {
+		onRefreshAndRestore: function() {
 			MessageToast.show("Refreshing and restoring...");
 			var oBinding = oTable.getBinding();
 
@@ -574,7 +574,7 @@ sap.ui.define([
 
 			// send collected change data to the back-end
 			oBinding._restoreTreeState().then(
-				function () {
+				function() {
 					// remove busy state of table
 					oTable.setBusy(false);
 					// re-setup and clear the clipboard
@@ -583,7 +583,7 @@ sap.ui.define([
 					oBinding._fireChange();
 					this.getView().getModel().setProperty("/pendingChanges", false);
 				}.bind(this),
-				function (oEvent) {
+				function(oEvent) {
 					oTable.setBusy(false);
 					oBinding._fireChange();
 				});
@@ -592,7 +592,7 @@ sap.ui.define([
 		/**
 		 * Expand selected node to level four
 		 */
-		onExpandNodeToLevel4: function () {
+		onExpandNodeToLevel4: function() {
 			var oBinding = oTable.getBinding();
 
 			var iSelectedIndex = oTable.getSelectedIndex();
@@ -607,7 +607,7 @@ sap.ui.define([
 		/**
 		 * Opens the Clipboard for cut out contexts
 		 */
-		openClipboard: function () {
+		openClipboard: function() {
 			if (!this._oPasteDialog) {
 				this._oPasteDialog = sap.ui.xmlfragment("sap.ui.table.testApps.TreeTableODataClipboard", this);
 			}
@@ -658,7 +658,7 @@ sap.ui.define([
 		/**
 		 * Handler for saving the tree state.
 		 */
-		onSaveTreeState: function () {
+		onSaveTreeState: function() {
 			var b = oTable.getBinding();
 			this._oTreeState = b.getCurrentTreeState();
 		},
@@ -666,7 +666,7 @@ sap.ui.define([
 		/**
 		 * Rebinds the table with the previously saved state.
 		 */
-		onRestoreTreeState: function () {
+		onRestoreTreeState: function() {
 			this.onCreateTableClick(undefined, this._oTreeState);
 		},
 

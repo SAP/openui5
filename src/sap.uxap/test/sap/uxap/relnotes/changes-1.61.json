@@ -1,0 +1,25 @@
+{
+  "1.61.0": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "b852e15810e0ea4cf34e658b4002701a7c8d867e",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected content height calculation",
+        "references": []
+      },
+      {
+        "id": "a7a75bb64bf4204752c61f3ea973cd4b984e953a",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageLayout: Breakpoints are now triggered",
+        "references": []
+      },
+      {
+        "id": "9e1dc552962b73f82ca73a2e8f8fb10b33b1b002",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fixed RTA behavior",
+        "references": []
+      }
+    ]
+  }
+}

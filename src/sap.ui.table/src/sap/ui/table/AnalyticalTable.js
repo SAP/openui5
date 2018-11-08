@@ -7,6 +7,7 @@ sap.ui.define([
 	'./AnalyticalColumn',
 	'./Table',
 	'./TreeTable',
+	"./TableRenderer",
 	'./library',
 	'sap/ui/model/analytics/ODataModelAdapter',
 	'sap/ui/model/SelectionModel',
@@ -23,6 +24,7 @@ sap.ui.define([
 		AnalyticalColumn,
 		Table,
 		TreeTable,
+		TableRenderer,
 		library,
 		ODataModelAdapter,
 		SelectionModel,
@@ -157,7 +159,7 @@ sap.ui.define([
 	 * Overidden from Table.js
 	 * @overrides
 	 */
-	AnalyticalTable.prototype._getFixedBottomRowContexts = function () {
+	AnalyticalTable.prototype._getFixedBottomRowContexts = function() {
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
 			return [oBinding.getGrandTotalNode()];
@@ -317,14 +319,14 @@ sap.ui.define([
 	/**
 	 * Overwritten from Table.js - does nothing since the selection is stored in the
 	 */
-	AnalyticalTable.prototype._initSelectionModel = function (sSelectionMode) {
+	AnalyticalTable.prototype._initSelectionModel = function(sSelectionMode) {
 		this._oSelection = new SelectionModel(sSelectionMode);
 		return this;
 	};
 
 	AnalyticalTable.prototype.setSelectionMode = TreeTable.prototype.setSelectionMode;
 
-	AnalyticalTable.prototype._applyAnalyticalBindingInfo = function (oBindingInfo) {
+	AnalyticalTable.prototype._applyAnalyticalBindingInfo = function(oBindingInfo) {
 		// extract the sorters from the columns (TODO: reconsider this!)
 		var aColumns = this.getColumns();
 		for (var i = 0, l = aColumns.length; i < l; i++) {
@@ -362,7 +364,7 @@ sap.ui.define([
 		}
 	};
 
-	AnalyticalTable.prototype._applyODataModelAnalyticalAdapter = function (oModel) {
+	AnalyticalTable.prototype._applyODataModelAnalyticalAdapter = function(oModel) {
 		if (oModel) {
 			ODataModelAdapter.apply(oModel);
 		}
@@ -827,7 +829,7 @@ sap.ui.define([
 		}
 	};
 
-	AnalyticalTable.prototype.refreshRows = function () {
+	AnalyticalTable.prototype.refreshRows = function() {
 		Table.prototype.refreshRows.apply(this, arguments);
 		// make sure we have a sum row displayed if necessary
 		// check is performed after the metadata was loaded
@@ -902,7 +904,7 @@ sap.ui.define([
 				}
 			}
 
-			aUngroupedDimensions = jQuery.grep(aDimensions, function (s) {
+			aUngroupedDimensions = jQuery.grep(aDimensions, function(s) {
 				return aGroupedDimensions.indexOf(aGroupedDimensions, s) == -1;
 			});
 
@@ -996,7 +998,7 @@ sap.ui.define([
 		}
 	};
 
-	AnalyticalTable.prototype.getGroupedColumns = function () {
+	AnalyticalTable.prototype.getGroupedColumns = function() {
 		return this._aGroupedColumns;
 	};
 

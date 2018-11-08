@@ -289,7 +289,7 @@ sap.ui.define([
 			SELECTED_VALUE = 18,
 			STEP = this.ANOTHER_STEP,
 			fnHasValueMultipleOfStepOrEqualToSelectedValue = function(oItem) {
-				var iItemValue = parseInt(oItem.getText(), 10);
+				var iItemValue = parseInt(oItem.getText());
 				return iItemValue === SELECTED_VALUE
 						|| iItemValue % STEP === 0;
 			};
@@ -437,10 +437,10 @@ sap.ui.define([
 		var aList = TimePickerSliders.prototype._generatePickerListValues(iStart, iEnd, 1, false);
 		assert.strictEqual(jQuery.isArray(aList), true, "the method returns an array");
 		assert.strictEqual(aList.length, iEnd - iStart + 1, "the method returns an array with the correct number of objects");
-		assert.strictEqual(parseInt(aList[0].getKey(), 10), iStart, "the key property of the first element of the array is correct");
-		assert.strictEqual(parseInt(aList[0].getText(), 10), iStart, "the text property of the first element of the array is correct");
-		assert.strictEqual(parseInt(aList[aList.length - 1].getKey(), 10), iEnd, "the key property of the last element of the array is correct");
-		assert.strictEqual(parseInt(aList[aList.length - 1].getText(), 10), iEnd, "the text property of the last element of the array is correct");
+		assert.strictEqual(parseInt(aList[0].getKey()), iStart, "the key property of the first element of the array is correct");
+		assert.strictEqual(parseInt(aList[0].getText()), iStart, "the text property of the first element of the array is correct");
+		assert.strictEqual(parseInt(aList[aList.length - 1].getKey()), iEnd, "the key property of the last element of the array is correct");
+		assert.strictEqual(parseInt(aList[aList.length - 1].getText()), iEnd, "the text property of the last element of the array is correct");
 	});
 
 	QUnit.test("ValueHelp icon is not visible when timepicker is not enabled", function (assert) {
@@ -2147,7 +2147,7 @@ sap.ui.define([
 				//arrange
 				sCurrentSelectionValue = oSlider.getSelectedValue();
 				if (!bIsFormatType) {
-					sNewSelectedValue = sExpectedSelectionValue = parseInt(sCurrentSelectionValue, 10) + iLoopIndex + "";
+					sNewSelectedValue = sExpectedSelectionValue = parseInt(sCurrentSelectionValue) + iLoopIndex + "";
 				} else {
 					sNewSelectedValue = sCurrentSelectionValue === "am" ? "pm" : "am";
 					if (sLocaleId) {

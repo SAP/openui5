@@ -41,7 +41,7 @@ sap.ui.define([
 		},
 		additionalInfoValidation : function () {
 			var name = this.byId("ProductName").getValue();
-			var weight = parseInt(this.byId("ProductWeight").getValue(), 10);
+			var weight = parseInt(this.byId("ProductWeight").getValue());
 
 			if (isNaN(weight)) {
 				this.model.setProperty("/productWeightState", "Error");

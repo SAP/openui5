@@ -418,7 +418,7 @@ sap.ui.define([
 	QUnit.test("Open two modal popups and close the second one, the focus should stay in the first popup after block layer gets focus", function(assert) {
 		var done = assert.async();
 		var sandbox = sinon.sandbox.create();
-		sandbox.stub(Device, "system", {
+		sandbox.stub(Device, "system").value({
 			desktop: true
 		});
 
@@ -942,7 +942,7 @@ sap.ui.define([
 
 		var fnGetZIndexFromDomRef = function(oDomRef) {
 			if (oDomRef) {
-				return parseInt(jQuery(oDomRef).css("z-index"), 10);
+				return parseInt(jQuery(oDomRef).css("z-index"));
 			} else {
 				return -1;
 			}
@@ -1012,8 +1012,8 @@ sap.ui.define([
 			var $oPopup = this.oPopup._$(/*bForceReRender*/ false, /*bGetOnly*/ true);
 
 			assert.ok($oDomRefBL.length, "BlockLayer added to DOM");
-			var iBLIndex = parseInt($oDomRefBL.css("z-index"), 10);
-			var iPopupIndex = parseInt($oPopup.css("z-index"), 10);
+			var iBLIndex = parseInt($oDomRefBL.css("z-index"));
+			var iPopupIndex = parseInt($oPopup.css("z-index"));
 			assert.ok(iBLIndex && iPopupIndex && iBLIndex < iPopupIndex, "Z-index of BlockLayer must be smaller than the popup's z-index");
 
 			this.oPopup.close();
@@ -1098,13 +1098,13 @@ sap.ui.define([
 		var done = assert.async();
 		var fnOpened = function() {
 			var $oPop1 = oPopup1._$(/*bForceReRender*/ false, /*bGetOnly*/ true);
-			var iZIndex1 = parseInt($oPop1.css("z-index"), 10);
+			var iZIndex1 = parseInt($oPop1.css("z-index"));
 
 			var $oPop2 = oPopup2._$(/*bForceReRender*/ false, /*bGetOnly*/ true);
-			var iZIndex2 = parseInt($oPop2.css("z-index"), 10);
+			var iZIndex2 = parseInt($oPop2.css("z-index"));
 
 			var $oDomRefBL = jQuery("#sap-ui-blocklayer-popup");
-			var iZIndexBL = parseInt($oDomRefBL.css("z-index"), 10);
+			var iZIndexBL = parseInt($oDomRefBL.css("z-index"));
 
 			assert.ok($oDomRefBL.length, "BlockLayer should be added to DOM");
 
@@ -1129,10 +1129,10 @@ sap.ui.define([
 
 		var fnClosed2 = function() {
 			var $oPop1 = oPopup1._$(/*bForceReRender*/ false, /*bGetOnly*/ true);
-			var iZIndex1 = parseInt($oPop1.css("z-index"), 10);
+			var iZIndex1 = parseInt($oPop1.css("z-index"));
 
 			var $oDomRefBL = jQuery("#sap-ui-blocklayer-popup");
-			var iZIndexBL = parseInt($oDomRefBL.css("z-index"), 10);
+			var iZIndexBL = parseInt($oDomRefBL.css("z-index"));
 
 			assert.ok($oDomRefBL.length, "BlockLayer should still in DOM");
 
@@ -1160,7 +1160,7 @@ sap.ui.define([
 		this.oPopup = new Popup(oPopupDomRef, /*bModal*/ true);
 		this.$Ref = this.oPopup._$();
 
-		sandbox.stub(Device, "browser", {
+		sandbox.stub(Device, "browser").value({
 			msie: true,
 			version: 11
 		});
@@ -1414,7 +1414,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RTL with 'my' set to 'CenterBottom', changing position again after popup is opened should work", function(assert) {
-		var oStub = sinon.stub(Core.getConfiguration(), "getRTL", function() {
+		var oStub = sinon.stub(Core.getConfiguration(), "getRTL").callsFake(function() {
 			return true;
 		});
 
@@ -1427,14 +1427,14 @@ sap.ui.define([
 		var iRight;
 		var fnOpened = function() {
 			// save the css 'right' before apply the new position
-			iRight = parseInt(this.oPopup.getContent().style.right, 10);
+			iRight = parseInt(this.oPopup.getContent().style.right);
 
 			assert.ok(!isNaN(iRight));
 
 			// move the popup 10px to the right
 			this.oPopup.setPosition(my, at, of, (iOffsetX + 10) + " " + iOffsetY);
 
-			assert.notEqual(parseInt(this.oPopup.getContent().style.right, 10), iRight, "The position should be changed");
+			assert.notEqual(parseInt(this.oPopup.getContent().style.right), iRight, "The position should be changed");
 			oStub.restore();
 			done();
 		};
@@ -1474,7 +1474,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		var sandbox = sinon.sandbox.create();
-		sandbox.stub(Device, 'system', {
+		sandbox.stub(Device, 'system').value({
 			desktop: true
 		});
 

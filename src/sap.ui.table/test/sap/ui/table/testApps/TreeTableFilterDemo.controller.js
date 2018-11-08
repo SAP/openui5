@@ -1,11 +1,11 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel"
-], function (Controller, JSONModel) {
+], function(Controller, JSONModel) {
 	"use strict";
 	return Controller.extend("sap.ui.table.testApps.TreeTableFilterDemo", {
 
-		onInit: function () {
+		onInit: function() {
 			var oView = this.getView();
 			var oTableContainer = oView.byId("tableContainerPanel");
 			var oTable = oTableContainer.getContent()[0];
@@ -26,7 +26,7 @@ sap.ui.define([
 			window.oTable = oTable;
 		},
 
-		onActivateServicePress: function () {
+		onActivateServicePress: function() {
 			var oView = this.getView();
 
 			var sServiceUrl = oView.byId("serviceURL").getValue();
@@ -40,7 +40,7 @@ sap.ui.define([
 			this.bindTable();
 		},
 
-		bindTable: function (sOperationMode, aFilters, iNumberOfExpandedLevels) {
+		bindTable: function(sOperationMode, aFilters, iNumberOfExpandedLevels) {
 			var oView = this.getView();
 			var oTableContainer = oView.byId("tableContainerPanel");
 			var oTable = oTableContainer.getContent()[0];
@@ -68,7 +68,7 @@ sap.ui.define([
 			});
 		},
 
-		filterButtonPress: function () {
+		filterButtonPress: function() {
 			var oView = this.getView();
 			var sFilters = oView.byId("filterDescription").getValue() || "";
 			var aFilters = sFilters ? [new sap.ui.model.Filter("DESCRIPTION", "Contains", sFilters)] : [];
@@ -77,8 +77,8 @@ sap.ui.define([
 			// Peform a selfmade count request, to decide if the Table can be bound in Client Mode
 			oView.getModel().read("/orgHierarchy/$count", {
 				filters: aFilters,
-				success: function (oData) {
-					var iThreshold = parseInt(oView.byId("bindingThreshold").getValue(), 10);
+				success: function(oData) {
+					var iThreshold = parseInt(oView.byId("bindingThreshold").getValue());
 
 					if (oData <= iThreshold) {
 						that.bindTable("Client", aFilters, 3);
@@ -90,18 +90,18 @@ sap.ui.define([
 							content: new sap.m.Text({text: "There are " + oData + " filter matches for your request. Do you still want to apply the filters?"}),
 							beginButton: new sap.m.Button({
 								text: "Yes",
-								press: function () {
+								press: function() {
 									that.bindTable("Client", aFilters, 3);
 									oDialog.close();
 								}
 							}),
 							endButton: new sap.m.Button({
 								text: "No",
-								press: function () {
+								press: function() {
 									oDialog.close();
 								}
 							}),
-							afterClose: function () {
+							afterClose: function() {
 								oDialog.destroy();
 							}
 						});

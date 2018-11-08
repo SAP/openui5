@@ -26,11 +26,11 @@ sap.ui.define(["sap/ui/core/BusyIndicator"], function (BusyIndicator) {
 			var oClientRects = $Animation.get(0).getClientRects()[0];
 
 			// this is the position where the animation is
-			var iAnimationRight = parseInt(oClientRects.right, 10);
+			var iAnimationRight = parseInt(oClientRects.right);
 
 			var iDocWidth = document.body.offsetWidth;
 			// this is the position where the animation should be
-			var iDocLeftPosition = parseInt((iDocWidth / 2), 10);
+			var iDocLeftPosition = parseInt(iDocWidth / 2);
 
 			// calculating the mid of the animation with a buffer of 10 pixels
 			var bCentered = iDocLeftPosition - 10 < iAnimationRight &&

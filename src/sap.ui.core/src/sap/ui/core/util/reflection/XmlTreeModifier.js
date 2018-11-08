@@ -134,7 +134,7 @@ sap.ui.define([
 				}
 				return bAsync ? Promise.resolve(oNewElementNode) : oNewElementNode;
 			} else {
-				oError = new Error("Can't create a control with duplicated id " + sId);
+				oError = new Error("Can't create a control with duplicated ID " + sId);
 				if (bAsync) {
 					return Promise.reject(oError);
 				}

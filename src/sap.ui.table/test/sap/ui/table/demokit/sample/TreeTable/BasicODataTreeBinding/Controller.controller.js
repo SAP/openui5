@@ -5,7 +5,7 @@ sap.ui.define([
 
     return Controller.extend("sap.ui.table.sample.TreeTable.BasicODataTreeBinding.Controller", {
 
-        onInit : function () {
+        onInit : function() {
             //nothing to do for us
         }
 

@@ -87,8 +87,8 @@ sap.ui.define(["sap/ui/core/library"],
 		case ValueState.Success:
 			oRm.addClass("sapMPIBarPositive");
 			break;
-		case ValueState.Highlight:
-			oRm.addClass("sapMPIBarHighlight");
+		case ValueState.Information:
+			oRm.addClass("sapMPIBarInformation");
 			break;
 		default:
 			oRm.addClass("sapMPIBarNeutral");

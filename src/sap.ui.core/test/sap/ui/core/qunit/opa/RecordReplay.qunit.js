@@ -36,7 +36,7 @@ sap.ui.define([
             domElement: $("#myView--mySearch")[0]
         }).then(function (mSelector) {
             assert.strictEqual(mSelector.id, "myView--mySearch", "Should generate a selector");
-            assert.strictEqual(mSelector.interaction.idSuffix, "", "Should not include interaction suffix");
+            assert.ok(!mSelector.interaction, "Should not include interaction suffix");
         }).finally(fnDone);
     });
 
@@ -102,10 +102,13 @@ sap.ui.define([
     QUnit.module("RecordReplay - Interaction", {
         beforeEach: function () {
             this.oActionSpy = sinon.spy();
+            this.mSearchFieldSelector = {
+                controlType: "sap.m.SearchField"
+            };
             this.oSearchField = new SearchField();
             this.oSearchField.attachSearch(this.oActionSpy);
             this.oSearchField.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+            sap.ui.getCore().applyChanges();
         },
         afterEach: function () {
             this.oSearchField.destroy();
@@ -115,7 +118,7 @@ sap.ui.define([
     QUnit.test("Should press on a control", function (assert) {
         var fnDone = assert.async();
         RecordReplay.interactWithControl({
-            control: this.oSearchField,
+            selector: this.mSearchFieldSelector,
             interactionType: RecordReplay.InteractionType.Press
         }).then(function () {
             assert.ok(this.oActionSpy.called, "Should press the search button");
@@ -126,7 +129,7 @@ sap.ui.define([
         var fnDone = assert.async();
         this.oSearchField.setShowSearchButton(false);
         RecordReplay.interactWithControl({
-            control: this.oSearchField,
+            selector: this.mSearchFieldSelector,
             interactionType: RecordReplay.InteractionType.EnterText,
             enterText: "Test"
         }).then(function () {
@@ -141,21 +144,21 @@ sap.ui.define([
     QUnit.test("Should complain when interaction is not supported", function (assert) {
         var fnDone = assert.async();
         RecordReplay.interactWithControl({
-            control: this.oSearchField,
+            selector: this.mSearchFieldSelector,
             interactionType: "SomeOtherType"
         }).catch(function (oError) {
             assert.ok(oError.toString().match(/Unsupported interaction type/), "Should reject when interaction is not supported");
         }).finally(fnDone);
     });
 
-    QUnit.test("Should complain when interaction is not possible", function (assert) {
+    QUnit.test("Should fail if control selector does not match any control", function (assert) {
         var fnDone = assert.async();
         this.oSearchField.destroy();
         RecordReplay.interactWithControl({
-            control: this.oSearchField,
+            selector: {},
             interactionType: RecordReplay.InteractionType.Press
         }).catch(function (oError) {
-            assert.ok(oError.toString().match(/Control .* has no dom representation/), "Should reject when DOM reference is missing");
+            assert.ok(oError.toString().match(/No controls found using selector/), "Should reject when control selector matches no controls");
         }).finally(fnDone);
     });
 

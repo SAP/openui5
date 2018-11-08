@@ -99,7 +99,7 @@ sap.ui.define([
 		assert.equal(jQuery("#F1--title").text(), "Test", "Title rendered");
 		assert.ok(jQuery("#F1--title").is("h4"), "Title is rendered as H4 as default");
 		assert.ok(!jQuery("#F1--title").hasClass("sapUiFormTitleEmph"), "Title rendered not emphasized");
-		assert.equal(jQuery("#F1--title").width(), parseInt(jQuery("#F1").children().first().innerWidth(), 10), "Title rendered as large as the Layout");
+		assert.equal(jQuery("#F1--title").width(), parseInt(jQuery("#F1").children().first().innerWidth()), "Title rendered as large as the Layout");
 		assert.equal(jQuery("#F1").attr("aria-labelledby"), "F1--title", "aria-labelledby points to Title");
 
 		oForm.destroyTitle();

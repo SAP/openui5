@@ -21,7 +21,8 @@ sap.ui.define([
 				"xx-waitForTheme": true
 			},
 			coverage: {
-				only: ["sap/ui/rta"]
+				only: ["sap/ui/rta"],
+				branchTracking: true
 			},
 			page: "test-resources/sap/ui/rta/qunit/testsandbox.qunit.html?test={name}",
 			autostart: true
@@ -38,21 +39,9 @@ sap.ui.define([
 					}
 				}
 			},
-			"LREPSerializer": {
+			"util/PopupManager": {
 				coverage: {
-					only: ["sap/ui/rta/command/LREPSerializer"]
-				},
-				ui5: {
-					resourceroots: {
-						"qunit": "test-resources/sap/ui/rta/qunit/",
-						"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
-						"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
-					}
-				}
-			},
-			"PopupManager": {
-				coverage: {
-					only: ["sap/ui/rta/PopupManager"]
+					only: ["sap/ui/rta/util/PopupManager"]
 				}
 			},
 			"test/RTAControlEnabling": {
@@ -284,6 +273,19 @@ sap.ui.define([
 					only: ["sap/ui/rta/command/CreateContainer"]
 				}
 			},
+			"command/LREPSerializer": {
+				group: "Command",
+				coverage: {
+					only: ["sap/ui/rta/command/LREPSerializer"]
+				},
+				ui5: {
+					resourceroots: {
+						"qunit": "test-resources/sap/ui/rta/qunit/",
+						"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
+						"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
+					}
+				}
+			},
 			"command/Move": {
 				group: "Command",
 				coverage: {
@@ -461,9 +463,9 @@ sap.ui.define([
 						}
 					}
 				},
-				"BindingsExtractor": {
+				"util/BindingsExtractor": {
 					coverage: {
-						only: ["sap/ui/rta/BindingsExtractor"]
+						only: ["sap/ui/rta/util/BindingsExtractor"]
 					},
 					ui5: {
 						resourceroots: {

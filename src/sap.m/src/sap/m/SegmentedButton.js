@@ -309,10 +309,10 @@ function(
 				if (sWidth) {
 					if (sWidth.indexOf("%") !== -1) {
 						// Width in Percent
-						iSumPercents += parseInt(sWidth.slice(0, -1), 10);
+						iSumPercents += parseInt(sWidth.slice(0, -1));
 					} else {
 						// Width in Pixels
-						iSumPixels += parseInt(sWidth.slice(0, -2), 10);
+						iSumPixels += parseInt(sWidth.slice(0, -2));
 					}
 				} else {
 					iNoWidths++;
@@ -394,7 +394,7 @@ function(
 
 		iCurrentWidth = this.$().width();
 
-		if (this._previousWidth !== undefined && iCurrentWidth !== this._previousWidth) {
+		if (this._previousWidth !== undefined && iCurrentWidth !== this._previousWidth && !this._bInOverflow) {
 			this.fireEvent("_containerWidthChanged");
 		}
 
@@ -872,7 +872,7 @@ function(
 	 */
 	SegmentedButton.prototype._selectChangeHandler = function(oEvent) {
 		var oSelectedItem = oEvent.getParameter("selectedItem"),
-			sNewKey = parseInt(oSelectedItem.getKey(), 10),
+			sNewKey = parseInt(oSelectedItem.getKey()),
 			oButton = this.getButtons()[sNewKey],
 			sButtonId = oButton.getId();
 

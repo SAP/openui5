@@ -12,6 +12,11 @@ sap.ui.define(function() {
 			qunit: {
 				version: 2
 			},
+			sinon: {
+				version: 4,
+				qunitBridge: true,
+				useFakeTimers: false
+			},
 			module: "test-resources/sap/ui/core/qunit/{name}.qunit"
 		},
 		tests: {
@@ -25,12 +30,8 @@ sap.ui.define(function() {
 				}
 			},
 			CustomFastNavigation: {
-				/* own page kept because of custom styles and DOM */
+				/* own page kept because of custom styles and DOM (but uses runTest.js) */
 				page: "test-resources/sap/ui/core/qunit/CustomFastNavigation.qunit.html",
-				sinon: {
-					version: 1,
-					qunitBridge: true
-				},
 				autostart: false
 			},
 			ElementFocusWhenMissing: {
@@ -51,34 +52,24 @@ sap.ui.define(function() {
 			},
 			FastNavigation: {
 				title: "QUnit page for Fast Keyboard Navigation (F6)",
-				sinon: {
-					version: 1,
-					qunitBridge: true
-				},
 				autostart: false
 			},
 			FocusHandler: {
 				ui5: {
-					libs: "sap.m",
-					theme: "sap_belize"
+					libs: "sap.m"
 				}
 			},
+			"jquery.sap.events": {
+				/* own page kept because of custom styles and DOM (but uses runTest.js) */
+				page: "test-resources/sap/ui/core/qunit/jquery.sap.events.qunit.html",
+				title: "QUnit tests: jquery.sap.events.js, Core Event Handling"
+			},
 			ResizeHandler: {
-				/* own page kept because of custom styles and DOM */
+				/* own page kept because of custom styles and DOM (but uses runTest.js) */
 				page: "test-resources/sap/ui/core/qunit/ResizeHandler.qunit.html",
 				title: "QUnit tests: sap.ui.core.ResizeHandler",
 				ui5: {
 					theme: "base"
-				}
-			},
-			"jquery.sap.events": {
-				/* own page kept because of custom styles and DOM */
-				page: "test-resources/sap/ui/core/qunit/jquery.sap.events.qunit.html",
-				title: "QUnit tests: jquery.sap.events.js, Core Event Handling",
-				sinon: {
-					version: 1,
-					qunitBridge: true,
-					useFakeTimers: false
 				}
 			}
 		}

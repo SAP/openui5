@@ -64,7 +64,7 @@ sap.ui.define([], function() {
 		m = m || [];
 
 		function norm(v) {
-			v = parseInt(v,10);
+			v = parseInt(v);
 			return isNaN(v) ? 0 : v;
 		}
 		vMajor = norm(m[0]);

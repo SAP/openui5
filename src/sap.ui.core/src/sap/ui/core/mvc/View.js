@@ -865,6 +865,16 @@ sap.ui.define([
 	/**
 	 * Creates a view of the given type, name and with the given id.
 	 *
+	 * If the option <code>viewName</code> is given, the corresponding view module is loaded if needed.
+	 *
+	 * See also the API references for the specific view factories:
+	 * <ul>
+	 * <li>{@link sap.ui.core.mvc.XMLView.create}</li>
+	 * <li>{@link sap.ui.core.mvc.JSView.create}</li>
+	 * <li>{@link sap.ui.core.mvc.JSONView.create}</li>
+	 * <li>{@link sap.ui.core.mvc.HMTLView.create}</li>
+	 * </ul>
+	 *
 	 * @param {object} mOptions A parameter map for the view instantiation. Specialized view types could bring in additional parameter.
 	 * @param {string} [mOptions.id] Specifies an ID for the View instance. If no ID is given, an ID will be generated.
 	 * @param {string} [mOptions.viewName] Name of the view resource in module name notation (without suffix)
@@ -872,6 +882,8 @@ sap.ui.define([
 	 * view types are listed in the enumeration  {@link sap.ui.core.mvc.ViewType}.
 	 * @param {any} [mOptions.viewData] The view data can hold user specific data. This data is available
 	 * during the whole lifecycle of the view and the controller
+	 * @param {any} [mOptions.definition] The view definition. Only supported for XML and HTML views.
+	 * See also {@link sap.ui.core.mvc.XMLView#create} and {@link sap.ui.core.mvc.HTMLView#create} for more information.
 	 * @param {object} [mOptions.preprocessors] Can hold a map from the specified preprocessor type (e.g. "xml") to an array of
 	 * preprocessor configurations; each configuration consists of a <code>preprocessor</code> property (optional when
 	 * registered as on-demand preprocessor) and may contain further preprocessor-specific settings. The preprocessor can

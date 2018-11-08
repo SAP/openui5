@@ -126,7 +126,7 @@ sap.ui.define([
 		assert.ok(Opa.config.arrangements instanceof Opa5, "assertions should be an instance of Opa5");
 	});
 
-	QUnit.test("Should merge OPA5 instances of arrangements, actions and assertions", function (assert) { 
+	QUnit.test("Should merge OPA5 instances of arrangements, actions and assertions", function (assert) {
 		["arrangements", "actions", "assertions"].forEach(function (sProperty) {
 			var InitialConfig = Opa5.extend("sap.ui.test.InitialConfig", {
 				overwriteProto: "foo-init",
@@ -384,7 +384,7 @@ sap.ui.define([
 			});
 			Opa5.assert.strictEqual(aFalsyOptions.length, 5, "Should assign empty values to all options");
 			return fnOriginalSchedule.apply(this, arguments);
-		}
+		};
 		var oPromise = new Promise(function (resolve) {
 			setTimeout(function () {
 				bPromiseDone = true;

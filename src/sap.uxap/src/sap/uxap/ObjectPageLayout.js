@@ -427,6 +427,12 @@ sap.ui.define([
 		PHONE: 600
 	};
 
+	ObjectPageLayout.MEDIA = {
+		PHONE: "sapUxAPObjectPageLayout-Std-Phone",
+		TABLET: "sapUxAPObjectPageLayout-Std-Tablet",
+		DESKTOP: "sapUxAPObjectPageLayout-Std-Desktop"
+	};
+
 	ObjectPageLayout.DYNAMIC_HEADERS_MEDIA = {
 		PHONE: "sapFDynamicPage-Std-Phone",
 		TABLET: "sapFDynamicPage-Std-Tablet",
@@ -508,8 +514,8 @@ sap.ui.define([
 		this.iAnchorBarHeight = 0;                  // original height of the anchorBar
 		this.iTotalHeaderSize = 0;                  // total size of headerTitle + headerContent
 
-		this._iREMSize = parseInt(jQuery("body").css("font-size"), 10);
-		this._iOffset = parseInt(0.25 * this._iREMSize, 10);
+		this._iREMSize = parseInt(jQuery("body").css("font-size"));
+		this._iOffset = parseInt(0.25 * this._iREMSize);
 
 		this._iResizeId = ResizeHandler.register(this, this._onUpdateScreenSize.bind(this));
 		this._iAfterRenderingDomReadyTimeout = null;
@@ -949,8 +955,10 @@ sap.ui.define([
 		this.oCore.getEventBus().publish("sap.ui", "ControlForPersonalizationRendered", this);
 
 		if (this._hasDynamicTitle()) {
-			this._updateMedia(this._getWidth(this));
+			this._updateMedia(this._getWidth(this), ObjectPageLayout.DYNAMIC_HEADERS_MEDIA);
 		}
+
+		this._updateMedia(this._getWidth(this), ObjectPageLayout.MEDIA);
 
 		this._updateToggleHeaderVisualIndicators();
 		this._updateTitleVisualState();
@@ -1761,7 +1769,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._computeScrollDuration = function (iAppSpecifiedDuration, oTargetSection) {
-		var iDuration = parseInt(iAppSpecifiedDuration, 10);
+		var iDuration = parseInt(iAppSpecifiedDuration);
 		iDuration = iDuration >= 0 ? iDuration : this._iScrollToSectionDuration;
 
 		if (this.getUseIconTabBar()
@@ -1913,29 +1921,29 @@ sap.ui.define([
 	* <b>Note:</b>
 	* The method is called, when the <code>ObjectPageDynamicPageHeaderTitle</code> is being used.
 	* @param {Number} iWidth - the actual width of the control
+	* @param {Object} oMedia - object containing CSS classes for the respective media (Phone, Tablet, etc.)
 	* @private
 	*/
-	ObjectPageLayout.prototype._updateMedia = function (iWidth) {
-		// Applies the provided CSS Media (DYNAMIC_HEADERS_MEDIA) class and removes the rest.
+	ObjectPageLayout.prototype._updateMedia = function (iWidth, oMedia) {
+		// Applies the provided CSS Media (oMedia) class and removes the rest.
 		// Example: If the <code>sapFDynamicPage-Std-Phone</code> class should be applied,
 		// the <code>sapFDynamicPage-Std-Tablet</code> and <code>sapFDynamicPage-Std-Desktop</code> classes will be removed.
 		var fnUpdateMediaStyleClass = function (sMediaClass) {
-			Object.keys(ObjectPageLayout.DYNAMIC_HEADERS_MEDIA).forEach(function (sMedia) {
-				var sCurrentMediaClass = ObjectPageLayout.DYNAMIC_HEADERS_MEDIA[sMedia],
+			Object.keys(oMedia).forEach(function (sMedia) {
+				var sCurrentMediaClass = oMedia[sMedia],
 					bEnable = sMediaClass === sCurrentMediaClass;
 
 				this.toggleStyleClass(sCurrentMediaClass, bEnable);
 			}, this);
 		}.bind(this),
-		mMedia = ObjectPageLayout.DYNAMIC_HEADERS_MEDIA,
 		mBreakpoints = ObjectPageLayout.BREAK_POINTS;
 
 		if (iWidth <= mBreakpoints.PHONE) {
-			fnUpdateMediaStyleClass(mMedia.PHONE);
+			fnUpdateMediaStyleClass(oMedia.PHONE);
 		} else if (iWidth <= mBreakpoints.TABLET) {
-			fnUpdateMediaStyleClass(mMedia.TABLET);
+			fnUpdateMediaStyleClass(oMedia.TABLET);
 		} else {
-			fnUpdateMediaStyleClass(mMedia.DESKTOP);
+			fnUpdateMediaStyleClass(oMedia.DESKTOP);
 		}
 	};
 
@@ -2081,7 +2089,7 @@ sap.ui.define([
 				bStickyTitleMode = true; // by the time the bottom of the page is reached, the header will be snapped on scroll => obtain the *sticky* title height
 			}
 
-			iSpacerHeight = this._computeSpacerHeight(oLastVisibleSubSection, iLastVisibleHeight, bAllowScrollSectionToTop);
+			iSpacerHeight = this._computeSpacerHeight(oLastVisibleSubSection, iLastVisibleHeight, bAllowScrollSectionToTop, bStickyTitleMode);
 
 			this._$spacer.height(iSpacerHeight + "px");
 			Log.debug("ObjectPageLayout :: bottom spacer is now " + iSpacerHeight + "px");
@@ -2155,8 +2163,8 @@ sap.ui.define([
 	/* *
 	* Computes the height of the viewport bellow the sticky area
 	* */
-	ObjectPageLayout.prototype._getScrollableViewportHeight = function() {
-		return this._$opWrapper.length ? this._getDOMRefHeight(this._$opWrapper.get(0)) : 0;
+	ObjectPageLayout.prototype._getScrollableViewportHeight = function(bIsStickyMode) {
+		return this.getDomRef().getBoundingClientRect().height - this._getStickyAreaHeight(bIsStickyMode);
 	};
 
 	ObjectPageLayout.prototype._getSectionPositionTop = function(oSectionBase, bShouldStick) {
@@ -2213,10 +2221,10 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._checkContentBottomRequiresSnap = function(oSection) {
 		var bSnappedMode = false; // calculate for expanded mode
-		return this._getSectionPositionBottom(oSection, bSnappedMode) >= (this._getScrollableViewportHeight() + this._getSnapPosition());
+		return this._getSectionPositionBottom(oSection, bSnappedMode) >= (this._getScrollableViewportHeight(bSnappedMode) + this._getSnapPosition());
 	};
 
-	ObjectPageLayout.prototype._computeSpacerHeight = function(oLastVisibleSubSection, iLastVisibleHeight, bAllowSpaceToSnapViaScroll) {
+	ObjectPageLayout.prototype._computeSpacerHeight = function(oLastVisibleSubSection, iLastVisibleHeight, bAllowSpaceToSnapViaScroll, bStickyTitleMode) {
 
 		var iSpacerHeight,
 			iScrollableViewportHeight,
@@ -2226,7 +2234,7 @@ sap.ui.define([
 			iFooterHeight = this.$("footerWrapper").outerHeight();
 		}
 
-		iScrollableViewportHeight = this._getScrollableViewportHeight();
+		iScrollableViewportHeight = this._getScrollableViewportHeight(bStickyTitleMode);
 
 		if (!bAllowSpaceToSnapViaScroll) {
 			iLastVisibleHeight = this._getSectionPositionBottom(oLastVisibleSubSection, false); /* in expanded mode, all the content above lastSection bottom is visible */
@@ -2444,8 +2452,10 @@ sap.ui.define([
 			// Let the dynamic header know size changed first, because this might lead to header dimensions changes
 			if (oTitle && oTitle.isDynamic()) {
 				oTitle._onResize(iCurrentWidth);
-				this._updateMedia(iCurrentWidth); // Update media classes when ObjectPageDynamicHeaderTitle is used.
+				this._updateMedia(iCurrentWidth, ObjectPageLayout.DYNAMIC_HEADERS_MEDIA); // Update media classes when ObjectPageDynamicHeaderTitle is used.
 			}
+
+			this._updateMedia(iCurrentWidth, ObjectPageLayout.MEDIA);
 
 			this._adjustHeaderHeights();
 

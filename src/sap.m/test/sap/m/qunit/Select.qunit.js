@@ -3593,21 +3593,21 @@ sap.ui.define([
 			var oSuccessSelect = new Select({ valueState: ValueState.Success }),
 				oWarningSelect = new Select({ valueState: ValueState.Warning }),
 				oErrorSelect = new Select({ valueState: ValueState.Error }),
-				oHighlightSelect = new Select({ valueState: ValueState.Highlight }),
+				oInformationSelect = new Select({ valueState: ValueState.Information }),
 				sCoreLib = "sap.ui.core";
 
 			// arrange
 			oSuccessSelect.placeAt("content");
 			oWarningSelect.placeAt("content");
 			oErrorSelect.placeAt("content");
-			oHighlightSelect.placeAt("content");
+			oInformationSelect.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
 			// assert
 			assert.ok(oSuccessSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS")) > -1, "success select is labelled by invisible text");
 			assert.ok(oWarningSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_WARNING")) > -1, "warning select is labelled by invisible text");
 			assert.ok(oErrorSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_ERROR")) > -1, "error select is labelled by invisible text");
-			assert.ok(oHighlightSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_HIGHLIGHT")) > -1, "highlight select is labelled by invisible text");
+			assert.ok(oInformationSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_INFORMATION")) > -1, "Information select is labelled by invisible text");
 
 			// act
 			oSuccessSelect.setValueState("None");
@@ -3625,7 +3625,7 @@ sap.ui.define([
 			oSuccessSelect.destroy();
 			oWarningSelect.destroy();
 			oErrorSelect.destroy();
-			oHighlightSelect.destroy();
+			oInformationSelect.destroy();
 		});
 
 		QUnit.module("setTooltip()");
@@ -3667,29 +3667,29 @@ sap.ui.define([
 					tooltip: sSampleText,
 					valueState: ValueState.Error
 				}),
-				oHighlightSelect = new Select({
+				oInformationSelect = new Select({
 					tooltip: sSampleText,
-					valueState: ValueState.Highlight
+					valueState: ValueState.Information
 				});
 
 			// arrange
 			oSuccessSelect.placeAt("content");
 			oWarningSelect.placeAt("content");
 			oErrorSelect.placeAt("content");
-			oHighlightSelect.placeAt("content");
+			oInformationSelect.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
 			// assert
 			assert.strictEqual(oSuccessSelect.$().attr("title"), sSampleText, "select title attribute is correct");
 			assert.strictEqual(oWarningSelect.$().attr("title"), sSampleText, "select title attribute is correct");
 			assert.strictEqual(oErrorSelect.$().attr("title"), sSampleText, "select title attribute is correct");
-			assert.strictEqual(oHighlightSelect.$().attr("title"), sSampleText, "select title attribute is correct");
+			assert.strictEqual(oInformationSelect.$().attr("title"), sSampleText, "select title attribute is correct");
 
 			// cleanup
 			oSuccessSelect.destroy();
 			oWarningSelect.destroy();
 			oErrorSelect.destroy();
-			oHighlightSelect.destroy();
+			oInformationSelect.destroy();
 		});
 
 		QUnit.module("removeItem()");
@@ -9078,5 +9078,41 @@ sap.ui.define([
 			assert.equal(typeof oConfig.onBeforeEnterOverflow, "function", "onBeforeEnterOverflow function is set");
 			assert.equal(typeof oConfig.onAfterExitOverflow, "function", "onAfterExitOverflow function is set");
 			assert.ok(oConfig.propsUnrelatedToSize.indexOf("selectedItemId") > -1, "selectedItemId is in the propsUnrelatedToSize array");
+		});
+
+		QUnit.module("Select with icons");
+
+		QUnit.test("Item's icon changing ", function(assert) {
+			var COMPETITOR = "sap-icon://competitor",
+				PAPER_PLANE = "sap-icon://paper-plane",
+				oSelect = new Select({
+				items: [
+					new ListItem({
+						key: "1",
+						text: "Competitor",
+						icon: COMPETITOR
+					}),
+					new ListItem({
+						key: "1",
+						text: "Paper Plane",
+						icon: PAPER_PLANE
+					})
+				]
+			});
+
+			oSelect.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var oValueIcon = oSelect._getValueIcon();
+
+			assert.strictEqual(oSelect.getItems()[0].getIcon(), COMPETITOR, "Select item icon was set.");
+			assert.strictEqual(oValueIcon.getSrc(), COMPETITOR, "Icon was set in internal aggregation.");
+
+			oSelect.setSelectedItem(oSelect.getItems()[1].getId());
+
+			assert.strictEqual(oValueIcon.getSrc(), PAPER_PLANE, "Icon was changed, when the selected item was changed.");
+			assert.strictEqual(oValueIcon.getSrc(), oSelect.getSelectedItem().getIcon(), "Icon was changed in internal aggregation.");
+
+			oSelect.destroy();
 		});
 	});

@@ -16,6 +16,7 @@ sap.ui.define([
 	'./SuggestionsPopover',
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/assert",
+	"./InputRenderer",
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "selectText"
 	"sap/ui/dom/jquery/selectText"
@@ -33,6 +34,7 @@ function(
 	SuggestionsPopover,
 	containsOrEquals,
 	assert,
+	InputRenderer,
 	jQuery
 ) {
 	"use strict";

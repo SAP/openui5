@@ -30,6 +30,13 @@ sap.ui.define([
 			MessageToast.show("Event change triggered");
 		},
 
+		onAfterItemAdded: function(oEvent) {
+			var oItem = oEvent.getParameter("item");
+			if (oItem) {
+				oItem.removeAllAggregation("_propertyAttributes", true);
+			}
+		},
+
 		onFileDeleted: function(oEvent) {
 			MessageToast.show("Event fileDeleted triggered");
 		},
@@ -80,20 +87,14 @@ sap.ui.define([
 		},
 
 		onUploadComplete: function(oEvent) {
-			var sUploadedFileName = oEvent.getParameter("files")[0].fileName;
+			var oItem = oEvent.getParameter("item"),
+				oUploadCollection = this.byId("UploadCollection");
+
 			setTimeout(function() {
-				var oUploadCollection = this.byId("UploadCollection");
-
-				for (var i = 0; i < oUploadCollection.getItems().length; i++) {
-					if (oUploadCollection.getItems()[i].getFileName() === sUploadedFileName) {
-						oUploadCollection.removeItem(oUploadCollection.getItems()[i]);
-						break;
-					}
-				}
-
+				oUploadCollection.removeItem(oItem);
 				// delay the success message in order to see other messages before
 				MessageToast.show("Event uploadComplete triggered");
-			}.bind(this), 8000);
+			}, 8000);
 		},
 
 		onSelectChange: function(oEvent) {

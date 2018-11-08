@@ -1,4 +1,4 @@
-/* global QUnit, sinon */
+/* global QUnit */
 sap.ui.define(["sap/ui/Device"], function(Device) {
 	"use strict";
 	var oCache,
@@ -36,10 +36,8 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			}).then(function() {
 				QUnit.module("Basic", {
 					beforeEach: function() {
-						this.sandbox = sinon.sandbox.create();
 					},
 					afterEach: function() {
-						this.sandbox.restore();
 						return deleteDatabaseEntries();
 					}
 				});
@@ -297,16 +295,14 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 
 				QUnit.module("Index", {
 					beforeEach: function() {
-						this.sandbox = sinon.sandbox.create();
 					},
 					afterEach: function() {
-						this.sandbox.restore();
 						return deleteDatabaseEntries();
 					}
 				});
 
 				QUnit.test("Entries have ui5 version index equal to current ui5 version", function(assert) {
-					this.sandbox.stub(sap.ui, "version", "1.36.1");
+					this.stub(sap.ui, "version").value("1.36.1");
 
 					return oCache.set("key1_1.36.1", "myValue").then(function() {
 						return oCache.set("key2_1.36.1", "myValue");
@@ -328,14 +324,14 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 
 				QUnit.test("Entries with different ui5 version than current does not exist", function(assert) {
 					var that = this,
-						stub = this.sandbox.stub(sap.ui, "version", "1.36.1");
+						stub = this.stub(sap.ui, "version").value("1.36.1");
 
 					return oCache.set("key1_1.36.1", "myValue").then(function() {
 						return oCache.set("key2_1.36.1", "myValue");
 					}).then(function() {
 						//switch the version
 						stub.restore();
-						stub = that.sandbox.stub(sap.ui, "version", "1.36.2");
+						stub = that.stub(sap.ui, "version").value("1.36.2");
 						return reInitCacheManager(oCache);
 					}).then(function() {
 						return verifyCacheEntries(null, ["key1_1.36.1", "key2_1.36.1"], assert);
@@ -365,11 +361,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				 */
 				QUnit.module("Transactions", {
 					beforeEach: function() {
-						this.sandbox = sinon.sandbox.create();
 						this.o1MB = get1MbEntry();
 					},
 					afterEach: function() {
-						this.sandbox.restore();
 						return deleteDatabaseEntries();
 					}
 				});
@@ -462,11 +456,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 
 				QUnit.module("LRU", {
 					beforeEach: function() {
-						this.sandbox = sinon.sandbox.create();
 						return deleteDatabaseEntries();
 					},
 					afterEach: function() {
-						this.sandbox.restore();
 						return deleteDatabaseEntries();
 					},
 					putItems: function(aItems) {
@@ -488,7 +480,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 						callEnd = callEnd || callStart;
 						var originalFnPut = window.IDBObjectStore.prototype.put;
 						var counter = 1;
-						this.sandbox.stub(window.IDBObjectStore.prototype, "put", function(entry, key) {
+						this.stub(window.IDBObjectStore.prototype, "put").callsFake(function(entry, key) {
 							if (key === expectedKey && (counter >= callStart && counter <= callEnd)) {
 								jQuery.sap.log.debug("Sinon aborts the transaction [mocking put] for key=[" + expectedKey + "] " + counter + "nd time");
 								counter++;
@@ -516,7 +508,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 						var originalFnDel = window.IDBObjectStore.prototype.delete;
 						var counter = 1;
 						var that = this;
-						this.sandbox.stub(window.IDBObjectStore.prototype, "delete", function(key) {
+						this.stub(window.IDBObjectStore.prototype, "delete").callsFake(function(key) {
 							if (key === expectedKey && (counter >= callStart && counter <= callEnd)) {
 								jQuery.sap.log.debug("Sinon aborts the transaction [mocking delete] for key=[" + expectedKey + "] " + counter + "nd time");
 								counter++;
@@ -583,7 +575,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 							if (Object.keys(oItem).length != 1) {
 								throw new Error("There should be only one key inside an item, but they are not " + JSON.stringify(oItem));
 							}
-							var iPosition = parseInt(Object.keys(oItem)[0], 10);
+							var iPosition = parseInt(Object.keys(oItem)[0]);
 							var oKey = oItem[iPosition];
 							if (oKey) {
 								assert.equal(oCache._metadata.__byKey__[oKey], iPosition, "LRU map structure __byKey__ should contain the entry with key '" + oKey + "'");

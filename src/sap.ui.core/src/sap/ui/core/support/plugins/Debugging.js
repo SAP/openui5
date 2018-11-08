@@ -410,7 +410,7 @@ sap.ui.define([
 				className: className,
 				methodName: methodName,
 				active: active,
-				type: parseInt(type, 10),
+				type: parseInt(type),
 				callback: this.getId() + "ReceiveClassMethods"
 			});
 		};

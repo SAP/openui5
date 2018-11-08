@@ -430,19 +430,19 @@ sap.ui.define([
 	});
 
 	/* ----------------------------------------------- */
-	/* Test: 'ValueState=Highlight'						   */
+	/* Test: 'ValueState=Information'				   */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'ValueState=Highlight'", function(assert) {
+	QUnit.test("'ValueState=Information'", function(assert) {
 		// system under test
-		var oCheckBox = new CheckBox({valueState: ValueState.Highlight});
+		var oCheckBox = new CheckBox({valueState: ValueState.Information});
 
 		// arrange
 		oCheckBox.placeAt("content");
 		Core.applyChanges();
 
 		// assertions
-		assert.ok(oCheckBox.$().hasClass("sapMCbHighlight"), "The CheckBox has value state highlight css class.");
+		assert.ok(oCheckBox.$().hasClass("sapMCbInfo"), "The CheckBox has value state information css class.");
 
 		// cleanup
 		oCheckBox.destroy();
@@ -507,10 +507,10 @@ sap.ui.define([
 
 
 	/* ----------------------------------------------------------------------- */
-	/* Test: getTabIndex (tabIndex previously set explicitely via setTabIndex) */
+	/* Test: getTabIndex (tabIndex previously set explicitly via setTabIndex) */
 	/* ----------------------------------------------------------------------- */
 
-	QUnit.test("'getTabIndex (tabIndex previously set explicitely via setTabIndex)'", function(assert) {
+	QUnit.test("'getTabIndex (tabIndex previously set explicitly via setTabIndex)'", function(assert) {
 
 		// system under test
 		var oCheckBox = new CheckBox();

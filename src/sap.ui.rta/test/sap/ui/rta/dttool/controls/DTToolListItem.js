@@ -72,7 +72,7 @@ sap.ui.define([
 			var vNewValue = oEvent.getParameter("value");
 
 			if (this.getType() === "int") {
-				vNewValue = parseInt(vNewValue, 10);
+				vNewValue = parseInt(vNewValue);
 			} else if (this.getType() === "float") {
 				vNewValue = parseFloat(vNewValue);
 			}

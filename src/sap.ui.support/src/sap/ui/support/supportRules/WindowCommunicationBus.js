@@ -60,6 +60,11 @@ function (jQuery) {
 	 * @param {object} oContext Context for the subscribed channel
 	 */
 	CommunicationBus.subscribe = function (sChannelName, fnCallback, oContext) {
+
+		if (this.bSilentMode) {
+			return;
+		}
+
 		if (!this.channels[sChannelName]) {
 			this.channels[sChannelName] = [{
 				callback: fnCallback,
@@ -85,6 +90,11 @@ function (jQuery) {
 	 * @param {string} aParams Settings passed to the SupportAssistant
 	 */
 	CommunicationBus.publish = function (sChannelName, aParams) {
+
+		if (this.bSilentMode) {
+			return;
+		}
+
 		var receivingWindow = this._getReceivingWindow(),
 			dataObject = {
 				channelName: sChannelName,

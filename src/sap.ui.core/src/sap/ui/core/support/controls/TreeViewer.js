@@ -29,10 +29,10 @@ function(ManagedObject, encodeXML) {
 	var iLevel = 1;
 	var iIdx = -1;
 	function nextWithIndent(oNode) {
-		var iLevel = parseInt(oNode.getAttribute("level"), 10);
+		var iLevel = parseInt(oNode.getAttribute("level"));
 		oNode = oNode.nextSibling;
 		while (oNode) {
-			if (parseInt(oNode.getAttribute("level"), 10) == iLevel) {
+			if (parseInt(oNode.getAttribute("level")) == iLevel) {
 				return oNode;
 			}
 			oNode = oNode.nextSibling;
@@ -301,7 +301,7 @@ function(ManagedObject, encodeXML) {
 
 	TreeViewer.prototype._iSelectedIndex = -1;
 	TreeViewer.prototype._selectNode = function(iIndex, aReasons) {
-		iIndex = parseInt(iIndex, 10);
+		iIndex = parseInt(iIndex);
 		var oNode = this._getStartNodeByIndex(iIndex);
 		if (this._oSelectedNode === oNode) {
 			return;
@@ -317,9 +317,9 @@ function(ManagedObject, encodeXML) {
 	};
 
 	TreeViewer.prototype._onInfoClick = function(iIndex, iInfoIndex) {
-		iIndex = parseInt(iIndex, 10);
+		iIndex = parseInt(iIndex);
 		this._selectNode(iIndex, ["template"]);
-		this.fnInfoPress(this._getDataObjectByIndex(iIndex), parseInt(iInfoIndex, 10));
+		this.fnInfoPress(this._getDataObjectByIndex(iIndex), parseInt(iInfoIndex));
 		return true;
 	};
 
@@ -333,12 +333,12 @@ function(ManagedObject, encodeXML) {
 		if (!oDomRef || oDomRef.getAttribute("visible") === "true") {
 			return;
 		}
-		var iLevel = parseInt(oDomRef.getAttribute("level"), 10);
+		var iLevel = parseInt(oDomRef.getAttribute("level"));
 		oDomRef = oDomRef.previousSibling;
 		while (oDomRef) {
-			var iCurrentLevel = parseInt(oDomRef.getAttribute("level"), 10);
+			var iCurrentLevel = parseInt(oDomRef.getAttribute("level"));
 			if (iCurrentLevel < iLevel && oDomRef.getAttribute("collapsed") === "true") {
-				this._toggleNode(parseInt(oDomRef.getAttribute("idx"), 10));
+				this._toggleNode(parseInt(oDomRef.getAttribute("idx")));
 			}
 			oDomRef = oDomRef.previousSibling;
 		}
@@ -370,13 +370,13 @@ function(ManagedObject, encodeXML) {
 	};
 
 	TreeViewer.prototype._toggleNode = function(iIndex) {
-		iIndex = parseInt(iIndex, 10);
+		iIndex = parseInt(iIndex);
 		var oNode = this._getStartNodeByIndex(iIndex);
 		if (oNode) {
-			var iLevel = parseInt(oNode.getAttribute("level"), 10);
+			var iLevel = parseInt(oNode.getAttribute("level"));
 			var oNextNode = oNode.nextSibling;
 			while (oNextNode) {
-				if (parseInt(oNextNode.getAttribute("level"), 10) > iLevel) {
+				if (parseInt(oNextNode.getAttribute("level")) > iLevel) {
 					if (oNode.getAttribute("collapsed") === "true") {
 						if (oNextNode.getAttribute("collapsed") === "true") {
 							oNextNode.setAttribute("visible", "true");
@@ -391,7 +391,7 @@ function(ManagedObject, encodeXML) {
 						oNextNode.setAttribute("visible", "false");
 					}
 				}
-				if (parseInt(oNextNode.getAttribute("level"), 10) === iLevel) {
+				if (parseInt(oNextNode.getAttribute("level")) === iLevel) {
 					if (oNode.getAttribute("collapsed") === "true") {
 						oNextNode.setAttribute("visible", "true");
 					} else {

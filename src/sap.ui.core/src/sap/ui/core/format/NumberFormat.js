@@ -285,7 +285,7 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.minFractionDigits=0] defines minimal number of decimal digits
 	 * @param {int} [oFormatOptions.maxFractionDigits=99] defines maximum number of decimal digits
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
-	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimal in the shortified format string. If this isn't specified, the 'decimals' options is used
+	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimal in the shortened format string. If this isn't specified, the 'decimals' options is used
 	 * @param {int} [oFormatOptions.shortLimit] only use short number formatting for values above this limit
 	 * @param {int} [oFormatOptions.shortRefNumber] @since 1.40 specifies a number from which the scale factor for 'short' or 'long' style format is generated. The generated scale factor is
 	 *  used for all numbers which are formatted with this format instance. This option has effect only when the option 'style' is set to 'short' or 'long'. This option is by default set
@@ -340,7 +340,7 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.minFractionDigits=0] defines minimal number of decimal digits
 	 * @param {int} [oFormatOptions.maxFractionDigits=0] defines maximum number of decimal digits
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
-	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimal in the shortified format string. If this isn't specified, the 'decimals' options is used
+	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimal in the shortened format string. If this isn't specified, the 'decimals' options is used
 	 * @param {int} [oFormatOptions.shortLimit] only use short number formatting for values above this limit
 	 * @param {int} [oFormatOptions.shortRefNumber] @since 1.40 specifies a number from which the scale factor for 'short' or 'long' style format is generated. The generated scale factor is
 	 *  used for all numbers which are formatted with this format instance. This option has effect only when the option 'style' is set to 'short' or 'long'. This option is by default set
@@ -395,7 +395,7 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.minFractionDigits] defines minimal number of decimal digits
 	 * @param {int} [oFormatOptions.maxFractionDigits] defines maximum number of decimal digits
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
-	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimal in the shortified format string. If this isn't specified, the 'decimals' options is used
+	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimal in the shortened format string. If this isn't specified, the 'decimals' options is used
 	 * @param {int} [oFormatOptions.shortLimit] only use short number formatting for values above this limit
 	 * @param {int} [oFormatOptions.shortRefNumber] @since 1.40 specifies a number from which the scale factor for 'short' or 'long' style format is generated. The generated scale factor is
 	 *  used for all numbers which are formatted with this format instance. This option has effect only when the option 'style' is set to 'short' or 'long'. This option is by default set
@@ -455,7 +455,7 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.minFractionDigits] defines minimal number of decimal digits
 	 * @param {int} [oFormatOptions.maxFractionDigits] defines maximum number of decimal digits
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
-	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimal in the shortified format string. If this isn't specified, the 'decimals' options is used
+	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimal in the shortened format string. If this isn't specified, the 'decimals' options is used
 	 * @param {int} [oFormatOptions.shortLimit] only use short number formatting for values above this limit
 	 * @param {int} [oFormatOptions.shortRefNumber] @since 1.40 specifies a number from which the scale factor for 'short' or 'long' style format is generated. The generated scale factor is
 	 *  used for all numbers which are formatted with this format instance. This option has effect only when the option 'style' is set to 'short' or 'long'. This option is by default set
@@ -520,7 +520,7 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.minFractionDigits=0] defines minimal number of decimal digits
 	 * @param {int} [oFormatOptions.maxFractionDigits=99] defines maximum number of decimal digits
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
-	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimal in the shortified format string. If this isn't specified, the 'decimals' options is used
+	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimal in the shortened format string. If this isn't specified, the 'decimals' options is used
 	 * @param {int} [oFormatOptions.shortLimit] only use short number formatting for values above this limit
 	 * @param {int} [oFormatOptions.shortRefNumber] @since 1.40 specifies a number from which the scale factor for 'short' or 'long' style format is generated. The generated scale factor is
 	 *  used for all numbers which are formatted with this format instance. This option has effect only when the option 'style' is set to 'short' or 'long'. This option is by default set
@@ -535,7 +535,7 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the used decimal separator
 	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
 	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
-	 * @param {string{ [oFormatOptions.percentSign] defines the used percent symbol
+	 * @param {string} [oFormatOptions.percentSign] defines the used percent symbol
 	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
 	 *  back to the standard notation. For example ".5e-3" is parsed to "0.0005".
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
@@ -903,7 +903,7 @@ sap.ui.define([
 		iLength = sIntegerPart.length;
 
 		if (oOptions.groupingEnabled) {
-			// Speical grouping for lakh crore/crore crore in India
+			// Special grouping for lakh crore/crore crore in India
 			if (bIndianCurrency) {
 				var aGroups = [3, 2, 2], iCurGroupSize, iIndex = 0;
 				iPosition = sIntegerPart.length;
@@ -972,7 +972,7 @@ sap.ui.define([
 				sPattern = sPattern.replace(/'.'/g, ".");
 			}
 
-			// The currency pattern is definde in some locale, for example in "ko", as: ¤#,##0.00;(¤#,##0.00)
+			// The currency pattern is defined in some locale, for example in "ko", as: ¤#,##0.00;(¤#,##0.00)
 			// where the pattern after ';' should be used for negative numbers.
 			// Therefore it's needed to check whether the pattern contains ';' and use the later part for
 			// negative values
@@ -1249,7 +1249,7 @@ sap.ui.define([
 		}
 
 		if (oOptions.isInteger) {
-			vResult = oOptions.parseAsString ? sValue : parseInt(sValue, 10);
+			vResult = oOptions.parseAsString ? sValue : parseInt(sValue);
 		} else {
 			sValue = sValue.replace(oDecimalRegExp, ".");
 			if (sValue.indexOf(sPercentSign) !== -1) {
@@ -1293,7 +1293,7 @@ sap.ui.define([
 		sBase = aResult[2].replace(/\./g,"");
 		iDecimalLength = aResult[3] ? aResult[3].length : 0;
 		iFractionLength = aResult[4] ? aResult[4].length : 0;
-		iExponent = parseInt(aResult[5], 10);
+		iExponent = parseInt(aResult[5]);
 
 		if (iExponent > 0) {
 			if (iExponent < iFractionLength) {
@@ -1457,7 +1457,7 @@ sap.ui.define([
 		}
 
 		if (!sCldrFormat || sCldrFormat == "0") {
-			//no format or special "0" format => number doesn't need to be shortified
+			//no format or special "0" format => number doesn't need to be shortened
 			return undefined;
 		} else {
 			oShortFormat = {};
@@ -1481,7 +1481,7 @@ sap.ui.define([
 				}
 			} else {
 				//value pattern has not be recognized
-				//we cannot shortify
+				//we cannot shorten
 				return undefined;
 			}
 		}
@@ -1626,7 +1626,7 @@ sap.ui.define([
 		}
 
 		sRoundingMode = sRoundingMode || NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO;
-		iMaxFractionDigits = parseInt(iMaxFractionDigits, 10);
+		iMaxFractionDigits = parseInt(iMaxFractionDigits);
 
 		if (typeof sRoundingMode === "function") {
 			// Support custom function for rounding the number

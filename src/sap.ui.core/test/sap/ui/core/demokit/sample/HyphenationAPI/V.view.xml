@@ -29,7 +29,7 @@
 			   content=""/>
 	</Panel>
 	<Panel id="containerLayoutRU"
-		   headerText="Russan language"
+		   headerText="Russian language"
 		   width="100%">
 		<c:HTML id="hyphenatedTextRU"
 			   content=""/>

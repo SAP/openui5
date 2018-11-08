@@ -1275,6 +1275,10 @@ function (
 					templateShareable : true
 				}
 			}).setModel(oModel);
+
+			this.oList.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+
 			this.oVBox31 = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0];
 			this.oText1 = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0].getItems()[0];
 			this.oText2 = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0].getItems()[1];
@@ -1418,6 +1422,9 @@ function (
 					templateShareable : true
 				}
 			}).setModel(oModel);
+
+			this.oList.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.removeRegistryItem({controlType : "sap.m.List"});

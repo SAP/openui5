@@ -480,9 +480,9 @@ sap.ui.define([
 
 					var iAbsoluteRowIndex;
 					if (oCellInfo.isOfType(TableUtils.CELLTYPE.DATACELL)) {
-						iAbsoluteRowIndex = oTable.getRows()[parseInt($Cell.closest("tr", oTable.getDomRef()).attr("data-sap-ui-rowindex"), 10)].getIndex();
+						iAbsoluteRowIndex = oTable.getRows()[parseInt($Cell.closest("tr", oTable.getDomRef()).attr("data-sap-ui-rowindex"))].getIndex();
 					} else { // CELLTYPES.ROWHEADER, CELLTYPES.ROWACTION
-						iAbsoluteRowIndex = oTable.getRows()[parseInt($Cell.attr("data-sap-ui-rowindex"), 10)].getIndex();
+						iAbsoluteRowIndex = oTable.getRows()[parseInt($Cell.attr("data-sap-ui-rowindex"))].getIndex();
 					}
 
 					return setSelectionState(iAbsoluteRowIndex);
@@ -743,7 +743,7 @@ sap.ui.define([
 				oColumn = sap.ui.getCore().byId(sColumnId);
 
 				oCellInfo.type = TableUtils.CELLTYPE.DATACELL;
-				oCellInfo.rowIndex = parseInt($Cell.parent().data("sap-ui-rowindex"), 10);
+				oCellInfo.rowIndex = parseInt($Cell.parent().data("sap-ui-rowindex"));
 				oCellInfo.columnIndex = oColumn.getIndex();
 				oCellInfo.columnSpan = 1;
 
@@ -751,22 +751,22 @@ sap.ui.define([
 				rRowIndex = /_([\d]+)/;
 				sColumnId = $Cell.attr("id");
 				aRowIndexMatch = rRowIndex.exec(sColumnId);
-				iRowIndex =  aRowIndexMatch && aRowIndexMatch[1] != null ? parseInt(aRowIndexMatch[1], 10) : 0;
+				iRowIndex =  aRowIndexMatch && aRowIndexMatch[1] != null ? parseInt(aRowIndexMatch[1]) : 0;
 
 				oCellInfo.type = TableUtils.CELLTYPE.COLUMNHEADER;
 				oCellInfo.rowIndex = iRowIndex;
-				oCellInfo.columnIndex = parseInt($Cell.data("sap-ui-colindex"), 10);
-				oCellInfo.columnSpan = parseInt($Cell.attr("colspan") || 1, 10);
+				oCellInfo.columnIndex = parseInt($Cell.data("sap-ui-colindex"));
+				oCellInfo.columnSpan = parseInt($Cell.attr("colspan") || 1);
 
 			} else if ($Cell.hasClass("sapUiTableRowHdr")) { // Row Header Cell
 				oCellInfo.type = TableUtils.CELLTYPE.ROWHEADER;
-				oCellInfo.rowIndex = parseInt($Cell.data("sap-ui-rowindex"), 10);
+				oCellInfo.rowIndex = parseInt($Cell.data("sap-ui-rowindex"));
 				oCellInfo.columnIndex = -1;
 				oCellInfo.columnSpan = 1;
 
 			} else if ($Cell.hasClass("sapUiTableRowAction")) { // Row Action Cell
 				oCellInfo.type = TableUtils.CELLTYPE.ROWACTION;
-				oCellInfo.rowIndex = parseInt($Cell.data("sap-ui-rowindex"), 10);
+				oCellInfo.rowIndex = parseInt($Cell.data("sap-ui-rowindex"));
 				oCellInfo.columnIndex = -2;
 				oCellInfo.columnSpan = 1;
 
@@ -998,7 +998,7 @@ sap.ui.define([
 		isFirstScrollableRow : function(oTable, row) {
 			if (isNaN(row)) {
 				var $Ref = jQuery(row);
-				row = parseInt($Ref.add($Ref.parent()).filter("[data-sap-ui-rowindex]").data("sap-ui-rowindex"), 10);
+				row = parseInt($Ref.add($Ref.parent()).filter("[data-sap-ui-rowindex]").data("sap-ui-rowindex"));
 			}
 			var iFixed = oTable.getFixedRowCount() || 0;
 			return row == iFixed;
@@ -1015,7 +1015,7 @@ sap.ui.define([
 		isLastScrollableRow : function(oTable, row) {
 			if (isNaN(row)) {
 				var $Ref = jQuery(row);
-				row = parseInt($Ref.add($Ref.parent()).filter("[data-sap-ui-rowindex]").data("sap-ui-rowindex"), 10);
+				row = parseInt($Ref.add($Ref.parent()).filter("[data-sap-ui-rowindex]").data("sap-ui-rowindex"));
 			}
 			var iFixed = oTable.getFixedBottomRowCount() || 0;
 			return row == oTable.getVisibleRowCount() - iFixed - 1;
@@ -1038,7 +1038,7 @@ sap.ui.define([
 			var sContentDensity;
 			var aContentDensityStyleClasses = ["sapUiSizeCondensed", "sapUiSizeCompact", "sapUiSizeCozy"];
 
-			var fnGetContentDensity = function (sFnName, oObject) {
+			var fnGetContentDensity = function(sFnName, oObject) {
 				if (!oObject[sFnName]) {
 					return;
 				}

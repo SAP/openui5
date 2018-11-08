@@ -13,11 +13,10 @@
 				text="To add files, you can also use drag &amp; drop on your desktop or tablet." />
 			<Label text="Notes" />
 			<TextArea id="TextArea" cols="200" height="100px" />
-			<Button id="restrictor" text="File name length => 10" press="onRestrictMore"/>
 		</VBox>
 		<UploadCollection
 			id="UploadCollection"
-			maximumFilenameLength="55"
+			maximumFilenameLength="10"
 			maximumFileSize="2000"
 			fileType="txt,mp4"
 			mimeType="text/plain,video/mp4"
@@ -26,6 +25,7 @@
 			instantUpload="false"
 			noDataDescription="Drop files or use the &quot;+&quot; button for pending upload"
 			change="onChange"
+			afterItemAdded="onAfterItemAdded"
 			fileDeleted="onFileDeleted"
 			filenameLengthExceed="onFilenameLengthExceed"
 			fileSizeExceed="onFileSizeExceed"

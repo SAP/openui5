@@ -3,10 +3,6 @@
 /* Base theme                   */
 /* ============================ */
 
-.sapMInputBase.sapMInput {
-	display: inline-flex;
-}
-
 .sapMInputDescriptionText {
 	padding-left: 0.5rem;
 	font-size: @sapMFontMediumSize;
@@ -15,6 +11,12 @@
 	font-family: @sapUiFontFamily;
 	font-style: normal;
 	font-weight: normal;
+	white-space: nowrap;
+}
+
+.sapMInput.sapMInputWithDescription {
+	overflow: hidden;
+	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 

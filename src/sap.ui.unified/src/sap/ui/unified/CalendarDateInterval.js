@@ -253,9 +253,7 @@ sap.ui.define([
 				sAriaLabel = sAriaLabel + " " + sEndYear;
 			}
 			oHeader.setTextButton1(sText, true);
-			if (oTexts.bShort) {
-				oHeader.setAriaLabelButton1(sAriaLabel);
-			}
+			oHeader.setAriaLabelButton1(sAriaLabel);
 		}
 	};
 

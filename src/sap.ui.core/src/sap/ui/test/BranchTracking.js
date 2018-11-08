@@ -52,7 +52,7 @@
 	 *   positive number
 	 */
 	function getAttributeAsInteger(oElement, sAttributeName, iDefault) {
-		var iValue = parseInt(oElement.getAttribute(sAttributeName), 10);
+		var iValue = parseInt(oElement.getAttribute(sAttributeName));
 
 		// Note: if the value is not a number, the result is NaN which is not greater than 0
 		return iValue > 0 ? iValue : iDefault;

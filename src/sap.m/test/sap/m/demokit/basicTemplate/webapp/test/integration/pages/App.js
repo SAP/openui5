@@ -12,7 +12,7 @@ sap.ui.define([
 
 				iShouldSeeTheApp: function () {
 					return this.waitFor({
-						id: "page",
+						id: "app",
 						viewName: sViewName,
 						success: function () {
 							Opa5.assert.ok(true, "The App view is displayed");

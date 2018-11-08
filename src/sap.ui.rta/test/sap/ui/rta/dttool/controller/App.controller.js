@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/core/postmessage/Bus",
 	"sap/ui/core/util/LibraryInfo",
 	"sap/ui/core/routing/HashChanger",
-	"sap/ui/rta/dttool/util/DTToolUtils"
+	"sap/ui/rta/dttool/util/DTToolUtils",
+	"sap/base/Log"
 ], function (
 	jQuery,
 	Controller,
@@ -29,7 +30,8 @@ sap.ui.define([
 	PostMessageBus,
 	LibraryInfo,
 	HashChanger,
-	DTToolUtils
+	DTToolUtils,
+	Log
 ) {
 	"use strict";
 	return Controller.extend("sap.ui.rta.dttool.controller.App", {
@@ -58,9 +60,8 @@ sap.ui.define([
 				.subscribe("dtTool", "selectOverlayInOutline", this.onSelectOverlayInOutline, this)
 				.subscribe("dtTool", "updatePropertyPanel", this.onUpdatePropertyPanel, this)
 				.subscribe("dtTool", "loadLibs", this.onLoadLibs, this)
-				.subscribe("dtTool", "updateOutline", this.onUpdateOutline, this)
-				.subscribe("dtTool", "dtData", this.onDTData, this);
-
+				.subscribe("dtTool", "dtData", this.onDTData, this)
+				.subscribe("dtTool", "setUndoRedo", this.onToggleUndoRedoEnabled, this);
 
 
 			var oModel = new JSONModel();
@@ -147,10 +148,9 @@ sap.ui.define([
 
 		/**
 		 * called when a palette item is dragged
-		 * @param {object} oPaletteDomRef the dom ref of the dragged palette item
 		 * @param {sap.ui.base.Event} oEvent the dragstart event
 		 */
-		onDragStart : function (oPaletteDomRef, oEvent) {
+		onDragStart : function (oEvent) {
 			oEvent.stopPropagation();
 			var oItemDom = window.document.activeElement;
 			if (oItemDom.tagName === "TR" && oItemDom.id) {
@@ -177,7 +177,6 @@ sap.ui.define([
 						data : oData
 					});
 				}
-				oPaletteDomRef.addEventListener("dragend", this.onDragEnd.bind(this));
 			}
 		},
 
@@ -221,7 +220,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent the event
 		 */
 		onSplitterResize : function (oEvent) {
-			jQuery(".sapUiDtToolSplitter").css("height", window.innerHeight - parseInt(jQuery(".sapMPageHeader").css("height"), 10) + "px");
+			jQuery(".sapUiDtToolSplitter").css("height", window.innerHeight - parseInt(jQuery(".sapMPageHeader").css("height")) + "px");
 		},
 
 		/**
@@ -248,65 +247,84 @@ sap.ui.define([
 		 * @param {object} oEvent the event
 		 * @param {string[]} oEvent.data.libs the libraries
 		 */
-		onLoadLibs : function (oEvent) {
+		onLoadLibs: function (oEvent) {
+			//Todo: Workaround to remove invalid libs
+			var aLibs = oEvent.data.libs.filter(function(sLib) {
+				return sLib !== "sap.ui.rta.toolbar" && sLib !== "sap.ui.core";
+			});
 
-			var aLibs = oEvent.data.libs;
+			DTMetadata.loadLibraries(aLibs).then(function(mLibData) {
+				var oPaletteData = {
+					groups: []
+				};
+				Object.keys(mLibData).forEach(function(sKey) {
+					var mLib = mLibData[sKey];
+					Object.keys(mLib)
+					.map(function(sLibDataKey) {
+						return mLib[sLibDataKey];
+					})
+					.filter(function(oLibItem) {
+						return oLibItem.palette && oLibItem.palette.group && !oLibItem.palette.ignore;
+					})
+					.forEach(function(oLibItem) {
+						var sGroupName = oLibItem.palette.group.toLowerCase();
+						var oLibData = oPaletteData.groups.find(function(oGroup) {
+							return oGroup.groupName === sGroupName;
+						});
+						oLibData = oLibData ? oLibData : oPaletteData.groups[oPaletteData.groups.push({
+							number: 0,
+							groupName: sGroupName,
+							controls: []
+						}) - 1];
+						oLibData.controls.push({
+							icon: oLibItem.palette.icons ? oLibItem.palette.icons.svg : "",
+							name: oLibItem.displayName.singular,
+							description: oLibItem.descriptions ? "" + oLibItem.descriptions.short.match(/[^\n\r]*/) : "",
+							className: oLibItem.className,
+							createTemplate: oLibItem.templates && oLibItem.templates.create
+						});
+						oLibData.number++;
+					});
+				});
 
-			aLibs.map(function (sLib) {
-				DTMetadata.loadLibraries([sLib]).then(function(mLibData, oModel) {
-					var oPaletteData = Object.keys(mLibData[sLib]).reduce(function (oFilteredData, sKey) {
-						if (mLibData[sLib][sKey].palette && mLibData[sLib][sKey].palette.group && !mLibData[sLib][sKey].palette.ignore) {
-
-							var sGroup = mLibData[sLib][sKey].palette.group.toLowerCase();
-
-							var oControlData = {
-								icon : mLibData[sLib][sKey].palette.icons ? mLibData[sLib][sKey].palette.icons.svg : "",
-								name : mLibData[sLib][sKey].displayName.singular,
-								description : mLibData[sLib][sKey].descriptions ? "" + mLibData[sLib][sKey].descriptions.short.match(/[^\n\r]*/) : "",
-								className : mLibData[sLib][sKey].className,
-								createTemplate : mLibData[sLib][sKey].templates && mLibData[sLib][sKey].templates.create
-							};
-
-							if (!oFilteredData.groups.some(function (oGroup) {
-								if (oGroup.groupName === sGroup) {
-									oGroup.controls.push(oControlData);
-									oGroup.number++;
-									return true;
-								}
-							})) {
-								oFilteredData.groups.push({
-									groupName : sGroup,
-									number : 1,
-									controls : [oControlData]
-								});
-							}
+				this._getPaletteModel().setProperty("/", oPaletteData);
+				new Promise(function(fnResolve) {
+					var oPaletteControl = this.getView().byId("palette");
+					var oEventDelegate = {
+						"onAfterRendering": function () {
+							oPaletteControl.removeEventDelegate(oEventDelegate);
+							fnResolve(oPaletteControl);
 						}
-						return oFilteredData;
-					}, Object.keys(this._getPaletteModel().getData()).length === 0 ? {groups : []} : this._getPaletteModel().getData());
-
-					this._getPaletteModel().setProperty("/", oPaletteData);
-
-					var oPalette = this.getView().byId("palette");
-					oPalette.setBusy(false);
-				}.bind(this));
+					};
+					oPaletteControl.addEventDelegate(oEventDelegate);
+				}.bind(this))
+				.then(function(oPaletteControl) {
+					oPaletteControl.setBusy(false);
+					this.setDraggable();
+				}.bind(this))
+				.catch(function(e) {
+					Log.error("Couldn't load all libraries: " + e);
+				});
 			}.bind(this));
-			this.setDraggable();
 		},
 
 		/**
 		 * Makes all palette entry dom refs draggable by setting draggable = true and adding an Event Listener
 		 */
 		setDraggable : function () {
-			setTimeout(function () {
-				var aPaletteDomRefs = this.getPaletteDomRefs();
+			var aPaletteDomRefs = this.getPaletteDomRefs();
 
-				aPaletteDomRefs.forEach(function (oPaletteDomRef) {
-					if (oPaletteDomRef) {
-						oPaletteDomRef.setAttribute("draggable", true);
-						oPaletteDomRef.addEventListener("dragstart", this.onDragStart.bind(this, oPaletteDomRef));
-					}
-				}.bind(this));
-			}.bind(this), 0);
+			aPaletteDomRefs.forEach(function (oPaletteDomRef) {
+				if (oPaletteDomRef) {
+					oPaletteDomRef.setAttribute("draggable", true);
+					//Todo: Temporary solution, should replace jQuery and somehow detach the event listeners in a different way
+					jQuery(oPaletteDomRef)
+						.off("dragstart")
+						.off("dragend")
+						.on("dragstart", this.onDragStart.bind(this))
+						.on("dragend", this.onDragEnd.bind(this));
+				}
+			}.bind(this));
 		},
 
 		/**
@@ -349,22 +367,170 @@ sap.ui.define([
 		},
 
 		/**
+		 * Called when the undo button is pressed
+		 */
+		onUndo: function () {
+			this.oPostMessageBus.publish({
+				target : DTToolUtils.getIframeWindow(),
+				origin : DTToolUtils.getIframeWindow().origin,
+				channelId : "dtTool",
+				eventId : "undo",
+				data : {}
+			});
+		},
+
+		/**
+		 * Called when the redo button is pressed
+		 */
+		onRedo: function () {
+			this.oPostMessageBus.publish({
+				target : DTToolUtils.getIframeWindow(),
+				origin : DTToolUtils.getIframeWindow().origin,
+				channelId : "dtTool",
+				eventId : "redo",
+				data : {}
+			});
+		},
+
+		/**
+		 * Check if undo/redo are available and disable them otherwise
+		 * @param {sap.ui.base.Event} oEvent the event
+		 */
+		onToggleUndoRedoEnabled: function (oEvent) {
+			this.byId("undo").setEnabled(oEvent.data.bCanUndo);
+			this.byId("redo").setEnabled(oEvent.data.bCanRedo);
+		},
+
+		/**
 		* Called when RTA has started in the iframe
 		*/
 		onRTAstarted : function  () {
 			this.oRTAClient.getService("outline").then(function (oOutlineProvider) {
 				oOutlineProvider.get().then(function (oOutline) {
-				var oModel = this._getOutlineModel();
-				oModel.setProperty("/", [oOutline[0]]);
+					var oModel = this._getOutlineModel();
+					oModel.setProperty("/", [oOutline[0]]);
 
-				var oTree = this._getTree();
-				var oPropertyPanel = this._getPropertyPanel();
+					var oTree = this._getTree();
+					var oPropertyPanel = this._getPropertyPanel();
 
-				oTree.setBusy(false);
-				oPropertyPanel.setBusy(false);
+					oTree.setBusy(false);
+					oPropertyPanel.setBusy(false);
 
+					this.updateOutlineMap();
+					oOutlineProvider.attachEvent("update", this.onDynamicOutlineUpdate.bind(this));
 				}.bind(this));
 			}.bind(this));
+		},
+
+		onDynamicOutlineUpdate: function (aOutlineUpdate) {
+			aOutlineUpdate.forEach(function (oUpdate) {
+				var oSource = (this.mOutlineItems.get(oUpdate.element.id) || {}).parent;
+				var oTarget = (this.mOutlineItems.get(oUpdate.targetId) || {}).self;
+
+				var fnDeleteOld = function (oSource, oUpdateInfo) {
+					var oDeletedElement;
+					oSource.elements.forEach(function (oItem, iIndex) {
+						if (oItem.id === oUpdateInfo.element.id) {
+							oDeletedElement = oSource.elements.splice(iIndex, 1)[0];
+						}
+					});
+					return oDeletedElement;
+				};
+
+				var fnFindTargetAggregation = function (oTarget, oUpdateInfo) {
+					if (oTarget.technicalName !== oUpdateInfo.targetAggregation) {
+						var oTargetAggregation = (oTarget.elements || []).find(function (oElement) {
+							return oElement.technicalName === oUpdateInfo.targetAggregation;
+						});
+						if (oTargetAggregation) {
+							return oTargetAggregation;
+						}
+					}
+					return oTarget;
+				};
+
+				var fnCreateNew = function (oTarget, oElementToAdd, oUpdateInfo) {
+					oTarget.elements.splice(oUpdateInfo.targetIndex, 0, oElementToAdd);
+				};
+
+				var bOutlineUpdateHappened = false;
+				if (oTarget) {
+					//If the target is an element, the corresponding aggregation should be selected instead
+					oTarget = fnFindTargetAggregation(oTarget, oUpdate);
+				}
+
+				switch (oUpdate.type) {
+					case "new":
+						if (oTarget) { //Only add if the element has a valid parent
+							fnCreateNew(oTarget, oUpdate.element, oUpdate);
+							this.oRTAClient.getService("selection").then(function (oSelectionManager) {
+								oSelectionManager.set(oUpdate.element.id);
+								this.onSelectOverlayInOutline({data: {id: oUpdate.element.id}});
+							}.bind(this));
+							bOutlineUpdateHappened = true;
+						}
+						this.mOutlineItems.set(oUpdate.element.id, {self: oUpdate.element, parent: oTarget});
+						break;
+					case "move":
+						var oMovedElement;
+						if (oSource) {
+							oMovedElement = fnDeleteOld(oSource, oUpdate);
+						}
+						if (oTarget) {
+							fnCreateNew(oTarget, oMovedElement || oUpdate.element, oUpdate);
+						}
+						if (oSource || oTarget) {
+							this.mOutlineItems.get(oUpdate.element.id).parent = oTarget; //Set parent to null if the move has no target
+							this.onSelectOverlayInOutline({data: {id: oUpdate.element.id}});
+							bOutlineUpdateHappened = true;
+						}
+						break;
+					case "elementPropertyChange":
+						if (oUpdate.name === "visible" && oUpdate.value === false && oSource) {
+							fnDeleteOld(oSource, oUpdate);
+							this.mOutlineItems.delete(oUpdate.element.id);
+							bOutlineUpdateHappened = true;
+						} else if (oUpdate.name === "visible" && oUpdate.value === true && oTarget) {
+							fnCreateNew(oTarget, oUpdate.element, oUpdate);
+							this.oRTAClient.getService("selection").then(function (oSelectionManager) {
+								oSelectionManager.set(oUpdate.element.id);
+								this.onSelectOverlayInOutline({data: {id: oUpdate.element.id}});
+							}.bind(this));
+							bOutlineUpdateHappened = true;
+						}
+						break;
+					case "destroy":
+						if (oSource) {
+							fnDeleteOld(oSource, oUpdate);
+							this.mOutlineItems.delete(oUpdate.element.id);
+							bOutlineUpdateHappened = true;
+						}
+						break;
+					default:
+						break;
+				}
+				if (bOutlineUpdateHappened) {
+					this._getOutlineModel().setProperty("/", this.oOutlineModelData);
+				}
+			}.bind(this));
+		},
+
+		updateOutlineMap: function () {
+			this.oOutlineModelData = this._getOutlineModel().getProperty("/");
+			this.mOutlineItems = new Map();
+			var fnIndexChildren = function (oParent, oItem) {
+				if (oItem.type === "element") {
+					this.mOutlineItems.set(oItem.id, {parent: oParent, self: oItem});
+				}
+				if (oItem.elements) {
+					oItem.elements.forEach(function (oChild) {
+						if (oChild) {
+							fnIndexChildren(oItem, oChild);
+						}
+					});
+				}
+			}.bind(this);
+			fnIndexChildren(null, this.oOutlineModelData[0]);
 		},
 
 		/**
@@ -413,40 +579,6 @@ sap.ui.define([
 			} else {
 				this._getPropertyModel().setProperty("/", {});
 			}
-		},
-
-		/**
-		 * Updates the outline starting form a given overlay
-		 * @param {object} oEvent the event
-		 * @param {string} oEvent.data.id the id of the overlay
-		 * @param {boolean} oEvent.data.notify if true the iFrame will be informed when the outline was updated succesfully
-		 */
-		onUpdateOutline : function (oEvent) {
-
-			var sId = oEvent.data.id,
-				bNotify = oEvent.data.notify;
-
-			var oModel = this._getOutlineModel();
-
-			var sPath = this.findOverlayInOutline(sId, oModel.getData());
-
-			this.oRTAClient.getService("outline").then(function (oOutlineProvider) {
-				oOutlineProvider.get(sId).then(function (oOutline) {
-
-					oModel.setProperty(sPath, oOutline[0]);
-					if (bNotify) {
-
-						this.oPostMessageBus.publish({
-							target : DTToolUtils.getIframeWindow(),
-							origin : DTToolUtils.getIframeWindow().origin,
-							channelId : "dtTool",
-							eventId : "outlineUpdated",
-							data : {}
-						});
-					}
-
-				}.bind(this));
-			}.bind(this));
 		},
 
 		/**
@@ -665,11 +797,17 @@ sap.ui.define([
 				});
 			}
 
+			//Set new controls draggable
 			oPaletteModel.setProperty("/", oPaletteData);
-
-			if (!bDontAddListeners) {
-				this.setDraggable();
-			}
+			this.getView().byId("palette").getItems().map(function (oPaletteCategory) {
+				oPaletteCategory.getContent()[0].getContent()[0].addEventDelegate({
+					"onAfterRendering": function () {
+						if (!bDontAddListeners) {
+							this.setDraggable();
+						}
+					}.bind(this)
+				});
+			}.bind(this));
 		},
 
 		/**
@@ -851,6 +989,12 @@ sap.ui.define([
 				});
 			}
 			return this.oPaletteNumbers;
+		},
+
+		onExit: function () {
+			this.oPostMessageBus.destroy();
+			DTToolUtils.setRTAClient(undefined);
+			this.oRTAClient.destroy();
 		}
 	});
 });

@@ -132,14 +132,6 @@ sap.ui.define([
 		return iVisibleButtons;
 	}
 
-	function setFlexboxMode(sMode) {
-		if (sMode === "new") {
-			this.stub(ToolbarRenderer, "hasNewFlexBoxSupport", true);
-		} else if (sMode === "old") {
-			this.stub(ToolbarRenderer, "hasNewFlexBoxSupport", false);
-		}
-	}
-
 	QUnit.module("DOM Rendering");
 	QUnit.test("Creating a toolbar should add it in DOM", function (assert) {
 		var oOverflowTB = createOverflowToolbar();
@@ -154,12 +146,9 @@ sap.ui.define([
 
 
 	function testAllFlexBoxModes(sName, fnTest) {
-		["new", "old"].forEach(function(sMode) {
-			QUnit.test("[" + sMode.toUpperCase() + " flexbox] " + sName, function (assert) {
-				setFlexboxMode.call(this, "new");
-				fnTest.call(this, assert);
-			});
-		}, this);
+		QUnit.test(sName, function (assert) {
+			fnTest.call(this, assert);
+		});
 	}
 
 	testAllFlexBoxModes("Shrinking a toolbar should move some buttons to the overflow", function (assert) {
@@ -1212,10 +1201,45 @@ sap.ui.define([
 			oOverflowTB.destroy();
 			newButton.destroy();
 		});
-
-
 	});
 
+	QUnit.test("[addContent] Calling addContent with falsy value does not throw an exception", function (assert) {
+		var aContent = getDefaultContent(),
+				oOverflowTB = createOverflowToolbar({}, aContent),
+				newButton,
+				newButton2 = "";
+
+			oOverflowTB.addContent(newButton);
+
+			//Assert
+			assert.ok(true, "does not throw an exception with undefined");
+
+			oOverflowTB.addContent(newButton2);
+
+			//Assert
+			assert.ok(true, "does not throw an exception with empty string");
+
+			oOverflowTB.destroy();
+	});
+
+	QUnit.test("[insertContent] Calling insertContent with falsy value does not throw an exception", function (assert) {
+		var aContent = getDefaultContent(),
+				oOverflowTB = createOverflowToolbar({}, aContent),
+				newButton,
+				newButton2 = "";
+
+			oOverflowTB.insertContent(newButton, 1);
+
+			//Assert
+			assert.ok(true, "does not throw an exception with undefined");
+
+			oOverflowTB.insertContent(newButton2, 1);
+
+			//Assert
+			assert.ok(true, "does not throw an exception with empty string");
+
+			oOverflowTB.destroy();
+	});
 
 	QUnit.test("[insertContent] Adding controls with insertContent inserts them at the proper index of the aggregation", function (assert) {
 		var aContent,
@@ -1476,37 +1500,70 @@ sap.ui.define([
 		oOverflowTB.destroy();
 	});
 
-	QUnit.test("Changing width of sap.m.SegmentedButton triggers _resetAndInvalidateToolbar", function (assert) {
-		var aContent = getDefaultContent(),
+	QUnit.test("Changing width of sap.m.SegmentedButton fires _containerWidthChanged event, which triggers _resetAndInvalidateToolbar when in Toolbar",
+	function (assert) {
+		var oSegmentedButton = new sap.m.SegmentedButton({
+				selectedKey: "Item1",
+				items: [
+					new sap.m.SegmentedButtonItem({id: "idSBItem1", key: "Item1", text: "Item 1", icon: "sap-icon://home"}),
+					new sap.m.SegmentedButtonItem({id: "idSBItem2", key: "Item2", text: "Item 2", icon: "sap-icon://home"})
+				]
+			}),
+			aContent = [oSegmentedButton],
 			oOverflowTB,
 			oSpyInvalidationEvent,
-			iInvalidationCountBefore;
+			oStubWidth;
+
 
 		// arrange
-		var oSegmentedButton = new sap.m.SegmentedButton({
-			selectedKey: "Item1",
-			items: [
-				new sap.m.SegmentedButtonItem({id: "idSBItem1", key: "Item1", text: "Item 1"}),
-				new sap.m.SegmentedButtonItem({id: "idSBItem2", key: "Item2", text: "Item 2"})
-			]
-		});
-
-		aContent.push(oSegmentedButton);
-		oSpyInvalidationEvent = this.spy(sap.m.OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
+		oSpyInvalidationEvent = this.spy(oSegmentedButton, "fireEvent");
 		oOverflowTB = createOverflowToolbar({}, aContent);
-
-		this.clock.tick(1000);
-
-		iInvalidationCountBefore = oSpyInvalidationEvent.callCount;
-
-		// act - simulating width of the SegmentedButton is changed and event is fired
-		oSegmentedButton.fireEvent("_containerWidthChanged");
-
 		this.clock.tick(1000);
 
 		// assert
-		assert.strictEqual(oSpyInvalidationEvent.callCount, iInvalidationCountBefore + 1,
+		assert.notOk(oSpyInvalidationEvent.calledWith("_containerWidthChanged"), "_containerWidthChanged event is not fired on first rendering");
+
+		// act - simulate image load, which changes width and calls _updateWidth
+		oStubWidth = this.stub(oSegmentedButton, "_previousWidth", 100);
+		oSegmentedButton._updateWidth();
+
+		// assert
+		assert.ok(oSpyInvalidationEvent.calledWith("_containerWidthChanged"),
 			"Layout recalculation triggered (when SegmentedButton's width is changed, _resetAndInvalidateToolbar is called)");
+
+		oStubWidth.restore();
+		oOverflowTB.destroy();
+	});
+
+	QUnit.test("Changing width of sap.m.SegmentedButton does not fire _containerWidthChanged event, when in Associative Popover",
+	function (assert) {
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			selectedKey: "Item1",
+			items: [
+				new sap.m.SegmentedButtonItem({id: "idSBItem1", key: "Item1", text: "Item 1", icon: "sap-icon://home"}),
+				new sap.m.SegmentedButtonItem({id: "idSBItem2", key: "Item2", text: "Item 2", icon: "sap-icon://home"})
+			]
+		}),
+		aContent = [oSegmentedButton],
+		oOverflowTB,
+		oSpyInvalidationEvent,
+		oOverflowButton;
+
+		// arrange
+		oSpyInvalidationEvent = this.spy(oSegmentedButton, "fireEvent");
+		oOverflowTB = createOverflowToolbar({width: "50px"}, aContent);
+		this.clock.tick(1000);
+
+		// assert
+		assert.notOk(oSpyInvalidationEvent.calledWith("_containerWidthChanged"), "_containerWidthChanged event is not fired on first rendering");
+
+		// act - click the overflow button
+		oOverflowButton = oOverflowTB._getOverflowButton();
+		oOverflowButton.firePress();
+
+		// assert
+		assert.notOk(oSpyInvalidationEvent.calledWith("_containerWidthChanged"),
+			"_containerWidthChanged event is not fired when SegmentedButton is in the Associative Popover, even though the SegmentedButton's size is changed");
 
 		oOverflowTB.destroy();
 	});
@@ -1727,14 +1784,14 @@ sap.ui.define([
 		assert.strictEqual(oOverflowTB._bControlsInfoCached, true, "After a toolbar is created, _bControlsInfoCached is set to true");
 		assert.strictEqual(oOverflowTB._aMovableControls.length, 4, "4 of the buttons are properly marked as movable to the popover");
 		assert.strictEqual(oOverflowTB._aToolbarOnlyControls.length, 2, "The 2 texts are properly marked as toolbar only");
-		assert.strictEqual(oOverflowTB._aActionSheetOnlyControls.length, 1, "The button with special layout is properly marked as popover only");
+		assert.strictEqual(oOverflowTB._aPopoverOnlyControls.length, 1, "The button with special layout is properly marked as popover only");
 
 		// Note: control sizes and total content size are not checked here because they depend on margins and calculations are not always predictable
 
 		oOverflowTB.destroy();
 	});
 
-	QUnit.test("no actionSheet when actionSheet content is not visible", function (assert) {
+	QUnit.test("no Popover when Popover content is not visible", function (assert) {
 		var oToolbarOnlyControl = new Text({
 				maxLines: 1, wrapping: true, text: "Sales and Total sales by Product and Quarter",
 				layoutData: new OverflowToolbarLayoutData({
@@ -2082,6 +2139,24 @@ sap.ui.define([
 		assert.strictEqual(sSize, 50, "Size is equal to minWidth + margins");
 	});
 
+	QUnit.test("Size of a control with LayoutData, shrinkable = true and minWidth and visible = false, is reported correctly", function (assert) {
+		var oTestButton = new Button(
+							{
+								text: "This is text",
+								visible: false,
+								layoutData: new OverflowToolbarLayoutData({
+									shrinkable: true,
+									minWidth: "50px"
+								})
+							});
+		oTestButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		var sSize = OverflowToolbar._getOptimalControlWidth(oTestButton);
+		assert.strictEqual(sSize, 0, "Size is equal to 0");
+	});
+
 	QUnit.test("Size of a control with LayoutData, shrinkable = false and minWidth, is reported correctly", function (assert) {
 		var oTestButton = new Button(
 							{
@@ -2325,31 +2400,6 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oOTB._bIsBeingDestroyed, true, "Toolbar is destroyed");
 		assert.strictEqual(oPopover, null, "Popover is destroyed");
-	});
-
-	QUnit.module("Forcing rerender on resize");
-
-	QUnit.test("The OverflowToolbar is reset and rerendered on resize, if _bForceReRenderOnResize is true", function (assert) {
-
-		var oOTB = new OverflowToolbar();
-
-		// Arrange
-		oOTB._bForceRerenderOnResize = true;
-		oOTB.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		var oResetToolbarSpy = this.spy(OverflowToolbar.prototype, "_resetToolbar"),
-			oRerenderSpy = this.spy(OverflowToolbar.prototype, "rerender");
-
-		// Act
-		oOTB._handleResize();
-
-		// Assert
-		assert.ok(oResetToolbarSpy.calledOnce, "_resetToolbar is called once.");
-		assert.ok(oRerenderSpy.calledOnce, "rerender is called once.");
-
-		// Cleanup
-		oOTB.destroy();
 	});
 
 	QUnit.module("Private API: _markControlsWithShrinkableLayoutData", {

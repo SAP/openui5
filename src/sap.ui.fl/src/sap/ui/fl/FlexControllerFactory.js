@@ -96,10 +96,9 @@ sap.ui.define([
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);
 			// Some embedded components might not have an app component, e.g. sap.ushell.plugins.rta, sap.ushell.plugins.rta-personalize
 			if (oAppComponent) {
-				var oVariantModel = oAppComponent && oAppComponent.getModel(sVariantModelName);
+				var oVariantModel = oAppComponent.getModel(sVariantModelName);
 				if (oVariantModel) {
 					oComponent.setModel(oVariantModel, sVariantModelName);
-					oVariantModel.addEmbeddedComponent(oComponent);
 				}
 			}
 		}

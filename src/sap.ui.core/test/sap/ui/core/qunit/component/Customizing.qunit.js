@@ -32,20 +32,33 @@ sap.ui.define([
 
 
 	// UI Construction
+	var oComp, oCompCont;
 
-	// load and start the customized application
-	var oComp = sap.ui.component({
-		name: "testdata.customizing.customer",
-		id: "theComponent"
-	});
-	var oCompCont = new ComponentContainer({
-		component: oComp
-	});
-	oCompCont.placeAt("content");
+	function createComponentAndContainer() {
+		// load and start the customized application
+		return Component.create({
+			name: "testdata.customizing.customer",
+			id: "theComponent",
+			manifest: false
+		}).then(function(_oComp) {
+			oComp = _oComp;
+			oCompCont = new ComponentContainer({
+				component: oComp
+			});
+			oCompCont.placeAt("content");
+		});
+	}
 
+	function destroyComponentAndContainer() {
+		oComp.destroy();
+		oCompCont.destroy();
+	}
 
 	// TESTS
-	QUnit.module("CustomizingConfiguration");
+	QUnit.module("CustomizingConfiguration", {
+		before: createComponentAndContainer,
+		after: destroyComponentAndContainer
+	});
 
 	QUnit.test("CustomizingConfiguration available", function(assert) {
 		assert.expect(1);
@@ -209,8 +222,6 @@ sap.ui.define([
 		beforeEach: function(assert) {
 
 			//First, destroy component, reset call collector array...
-			oComp.destroy();
-			oCompCont.destroy();
 			iStandardSub2ControllerCalled = 0;
 			iCustomSub2ControllerCalled = 0;
 			aLifeCycleCalls.length = 0; // clear call collection
@@ -284,9 +295,8 @@ sap.ui.define([
 
 			};
 
-		}
-
-
+		},
+		afterEach: destroyComponentAndContainer
 	});
 
 	QUnit.test("Register ExtensionProvider (sync)", function(assert) {
@@ -307,16 +317,7 @@ sap.ui.define([
 		//...and reinitialize - with registered ExtensionProvider
 		Controller.registerExtensionProvider("sap.my.sync.ExtensionProvider");
 
-		oComp = sap.ui.component({
-			name: "testdata.customizing.customer",
-			id: "theComponent"
-		});
-
-		oCompCont = new ComponentContainer({
-			component: oComp
-		});
-		oCompCont.placeAt("content");
-
+		return createComponentAndContainer();
 	});
 
 	QUnit.test("Register ExtensionProvider (async)", function(assert) {
@@ -357,15 +358,7 @@ sap.ui.define([
 		//...and reinitialize - with registered ExtensionProvider
 		Controller.registerExtensionProvider("sap.my.async.ExtensionProvider");
 
-		oComp = sap.ui.component({
-			name: "testdata.customizing.customer",
-			id: "theComponent"
-		});
-
-		oCompCont = new ComponentContainer({
-			component: oComp
-		});
-		oCompCont.placeAt("content");
+		return  createComponentAndContainer();
 
 	});
 

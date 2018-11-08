@@ -5,6 +5,7 @@
 //Provides control sap.m.PlanningCalendar.
 sap.ui.define([
 	'sap/ui/core/Control',
+	'sap/ui/base/ManagedObject',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/unified/library',
 	'sap/ui/unified/calendar/CalendarUtils',
@@ -43,6 +44,7 @@ sap.ui.define([
 	"sap/ui/dom/jquery/control"
 ], function(
 	Control,
+	ManagedObject,
 	ManagedObjectObserver,
 	unifiedLibrary,
 	CalendarUtils,
@@ -656,7 +658,7 @@ sap.ui.define([
 
 		this._resizeProxy = jQuery.proxy(handleResize, this);
 		this._fnCustomSortedAppointments = undefined; //transfers a custom appointments sorter function to the CalendarRow
-
+		this.iWidth = 0;
 	};
 
 	PlanningCalendar.prototype.exit = function(){
@@ -2136,7 +2138,7 @@ sap.ui.define([
 	}
 
 	PlanningCalendar.prototype._applyContextualSettings = function () {
-		return Control.prototype._applyContextualSettings.call(this, {contextualWidth: this.$().width()});
+		return Control.prototype._applyContextualSettings.call(this, ManagedObject._defaultContextualSettings);
 	};
 
 	function adaptCalHeaderForWeekNumbers(bShowWeekNumbers, bCurrentIntervalAllowsWeekNumbers) {
@@ -2147,14 +2149,20 @@ sap.ui.define([
 		this.$().toggleClass("sapMPlanCalWithDayNamesLine", bShowDayNamesLine && bCurrentIntervalAllowsDayNamesLine);
 	}
 
-	function handleResize(oEvent, bNoRowResize){
-
-		this._applyContextualSettings();
-
+	function handleResize(oEvent, bNoRowResize) {
 		if (oEvent.size.width <= 0) {
 			// only if visible at all
 			return;
 		}
+
+		// guard against resize loops
+		// 1870423752
+		if (Math.abs(this.iWidth - oEvent.size.width) < 15) {
+			return;
+		}
+		this.iWidth = oEvent.size.width;
+
+		this._applyContextualSettings();
 
 		var aRows = this.getRows();
 		var oRow;
@@ -3437,7 +3445,7 @@ sap.ui.define([
 						$Indicator = jQuery(oDragSession.getIndicator()),
 						sIntervalType = oTimeline.getIntervalType(),
 						oRowStartDate = getRowTimeline(oRow).getStartDate(),
-						iStartIndex = parseInt(oDragSession.getData("text").split("|")[1], 10),
+						iStartIndex = parseInt(oDragSession.getData("text").split("|")[1]),
 						iEndIndex = oTimeline.indexOfAggregation("_intervalPlaceholders", oDragSession.getDropControl()),
 						oNewPos;
 

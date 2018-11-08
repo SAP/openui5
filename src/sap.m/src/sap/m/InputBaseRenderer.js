@@ -115,6 +115,12 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/Device'],
 			this.writeIcons(oRm, aBeginIcons);
 		}
 
+		// wraps elements with a dynamic size e.g. input and tokenizer
+		oRm.write("<div");
+		oRm.addClass("sapMInputBaseDynamicContent");
+		oRm.writeClasses();
+		oRm.write(">");
+
 		this.prependInnerContent(oRm, oControl);
 
 		// start inner
@@ -187,6 +193,10 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/Device'],
 		// finish inner
 		this.writeInnerContent(oRm, oControl);
 		this.closeInputTag(oRm, oControl);
+
+		// close dynamic content div
+		oRm.write("</div>");
+
 
 		// write the end icons after the inner part
 		if (aEndIcons.length) {
@@ -493,9 +503,15 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/Device'],
 	 * @param {string} sPosition An aggregation from which the icon should be rendered - begin or end.
 	 */
 	InputBaseRenderer.writeIcons = function (oRm, aIcons) {
+		oRm.write("<div");
+		oRm.writeAttribute("tabindex", "-1");
+		oRm.addClass("sapMInputBaseIconContainer");
+		oRm.writeClasses();
+		oRm.write(">");
 		aIcons.forEach(function (oIcon) {
 			oRm.renderControl(oIcon);
 		});
+		oRm.write("</div>");
 	};
 
 	/**

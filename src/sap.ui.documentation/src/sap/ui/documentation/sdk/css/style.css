@@ -1706,8 +1706,8 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
  * API Detail page specific CSS improving readability
  * Note: Keep in mind this is applicable only for the sap_belize and sap_belize_plus themes
  */
-.sapUiTheme-sap_belize .sapUiSizeCompact .apiDetailPage .sapUxAPBlockContainerDesktop,
-.sapUiTheme-sap_belize_plus .sapUiSizeCompact .apiDetailPage .sapUxAPBlockContainerDesktop {
+.sapUiTheme-sap_belize .sapUiSizeCompact .apiDetailPage .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer,
+.sapUiTheme-sap_belize_plus .sapUiSizeCompact .apiDetailPage .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {
 	padding-top: 0;
 }
 
@@ -2107,6 +2107,7 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 .sapUISDKExternalLink {
 	cursor: pointer;
 	width: 1rem;
+	margin-left: -0.25rem;
 }
 .sapUIDisclaimerLink img:first-child {
 	margin-left: 0.8rem;
@@ -2115,5 +2116,6 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 	display: inline;
 }
 .sapUiDisclaimerCommunityLink {
-	margin-top: 1.25rem;
+	margin-top: 1.5rem;
+	margin-left: -0.125rem;
 }

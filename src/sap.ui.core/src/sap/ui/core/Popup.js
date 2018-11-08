@@ -1483,7 +1483,7 @@ sap.ui.define([
 				// convert offset to my
 				aMy = oPosition.my.split(" ");
 				aOffset = offset.split(" ");
-				var aSign = [parseInt(aOffset[0], 10) < 0 ? "" : "+", parseInt(aOffset[1], 10) < 0 ? "" : "+"]; // no "-" sign because already in numer of offset
+				var aSign = [parseInt(aOffset[0]) < 0 ? "" : "+", parseInt(aOffset[1]) < 0 ? "" : "+"]; // no "-" sign because already in numer of offset
 
 				oPosition.my = aMy[0] + aSign[0] + aOffset[0] + " " + aMy[1] + aSign[1] + aOffset[1];
 				oPosition.offset = null;
@@ -1716,7 +1716,7 @@ sap.ui.define([
 	 */
 	Popup.prototype._mirrorOffset = function(sOffset) {
 		var aOffset = jQuery.trim(sOffset).split(/\s/);
-		var posX = parseInt(aOffset[0], 10);
+		var posX = parseInt(aOffset[0]);
 		return (-posX) + " " + aOffset[aOffset.length - 1]; // array could be longer than 2 with multiple whitespace characters
 	};
 

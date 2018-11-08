@@ -94,7 +94,7 @@ sap.ui.define([
 								if (isNaN(oValue)) {
 									throw new FormatException("Cannot format date: " + oValue + " is not a valid Timestamp");
 								} else {
-									oValue = parseInt(oValue, 10);
+									oValue = parseInt(oValue);
 								}
 							}
 							oValue = new Date(oValue);

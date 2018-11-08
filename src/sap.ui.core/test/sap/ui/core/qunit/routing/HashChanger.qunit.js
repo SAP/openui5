@@ -8,6 +8,8 @@ sap.ui.define([
 	"use strict";
 
 
+	QUnit.module("Lifecycle Basics");
+
 	// NEEDS TO BE THE FIRST TEST - tests the initial state of a global singleton in a closure
 	QUnit.test("Should always overwrite the hashchanger", function (assert) {
 		// this function must not be called before this test is executed so it acutally tests something

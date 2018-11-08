@@ -10,7 +10,6 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
-	'sap/ui/core/ResizeHandler',
 	'./ToolbarRenderer',
 	"sap/ui/thirdparty/jquery"
 ],
@@ -21,7 +20,6 @@ function(
 	library,
 	Control,
 	EnabledPropagator,
-	ResizeHandler,
 	ToolbarRenderer,
 	jQuery
 ) {
@@ -257,22 +255,8 @@ function(
 		};
 	};
 
-	Toolbar.prototype.onBeforeRendering = function() {
-		this._cleanup();
-	};
-
 	Toolbar.prototype.onAfterRendering = function() {
-		// if there is no shrinkable item, layout is not needed
-		if (!this._checkContents()) {
-			return;
-		}
-
-		// layout the toolbar
-		this._doLayout();
-	};
-
-	Toolbar.prototype.exit = function() {
-		this._cleanup();
+		this._checkContents();
 	};
 
 	Toolbar.prototype.onLayoutDataChange = function() {
@@ -334,35 +318,9 @@ function(
 	// mark shrinkable contents and render layout data
 	// returns shrinkable and flexible content count
 	Toolbar.prototype._checkContents = function() {
-		var iShrinkableItemCount = 0;
 		this.getContent().forEach(function(oControl) {
-			if (Toolbar.checkShrinkable(oControl)) {
-				iShrinkableItemCount++;
-			}
+			Toolbar.checkShrinkable(oControl);
 		});
-
-		return iShrinkableItemCount;
-	};
-
-	// apply the layout calculation according to flexbox support
-	Toolbar.prototype._doLayout = function() {
-		if (ToolbarRenderer.hasNewFlexBoxSupport) {
-			return;
-		}
-
-		this._resetOverflow();
-	};
-
-	// reset overflow and mark with classname if overflows
-	Toolbar.prototype._resetOverflow = function() {
-		this._deregisterResize();
-		var $This = this.$();
-		var oDomRef = $This[0] || {};
-		$This.removeClass("sapMTBOverflow");
-		var bOverflow = oDomRef.scrollWidth > oDomRef.clientWidth;
-		bOverflow && $This.addClass("sapMTBOverflow");
-		this._iEndPoint = this._getEndPoint();
-		this._registerResize();
 	};
 
 	// gets called when new control is inserted into content aggregation
@@ -402,90 +360,10 @@ function(
 		oControl.toggleStyleClass(Toolbar.shrinkClass, bPercent);
 	};
 
-	// register interval timer to detect inner content size is changed
-	Toolbar.prototype._registerContentResize = function() {
-		sap.ui.getCore().attachIntervalTimer(this._handleContentResize, this);
-	};
-
-	// deregister interval timer for inner content
-	Toolbar.prototype._deregisterContentResize = function() {
-		sap.ui.getCore().detachIntervalTimer(this._handleContentResize, this);
-	};
-
-	// register toolbar resize handler
-	Toolbar.prototype._registerToolbarResize = function() {
-		// register resize handler only if toolbar has relative width
-		if (Toolbar.isRelativeWidth(this.getWidth())) {
-			var fnResizeProxy = jQuery.proxy(this._handleToolbarResize, this);
-			this._sResizeListenerId = ResizeHandler.register(this, fnResizeProxy);
-		}
-	};
-
-	// deregister toolbar resize handlers
-	Toolbar.prototype._deregisterToolbarResize = function() {
-		sap.ui.getCore().detachIntervalTimer(this._handleContentResize, this);
-		if (this._sResizeListenerId) {
-			ResizeHandler.deregister(this._sResizeListenerId);
-			this._sResizeListenerId = "";
-		}
-	};
-
-	// register resize handlers
-	Toolbar.prototype._registerResize = function() {
-		this._registerToolbarResize();
-		this._registerContentResize();
-	};
-
-	// deregister resize handlers
-	Toolbar.prototype._deregisterResize = function() {
-		this._deregisterToolbarResize();
-		this._deregisterContentResize();
-	};
-
-	// cleanup resize handlers
-	Toolbar.prototype._cleanup = function() {
-		this._deregisterResize();
-	};
-
-	// get the end position of last content
-	Toolbar.prototype._getEndPoint = function() {
-		var oLastChild = (this.getDomRef() || {}).lastElementChild;
-		if (oLastChild) {
-			var iEndPoint = oLastChild.offsetLeft;
-			if (!sap.ui.getCore().getConfiguration().getRTL()) {
-				iEndPoint += oLastChild.offsetWidth;
-			}
-		}
-
-		return iEndPoint || 0;
-	};
-
-	// handle toolbar resize
-	Toolbar.prototype._handleToolbarResize = function() {
-		this._handleResize(false);
-	};
-
-	// handle inner content resize
-	Toolbar.prototype._handleContentResize = function() {
-		this._handleResize(true);
-	};
-
-	// generic resize handler
-	Toolbar.prototype._handleResize = function(bCheckEndPoint) {
-		// check whether end point is changed or not
-		if (bCheckEndPoint && this._iEndPoint == this._getEndPoint()) {
-			return;
-		}
-
-		// re-layout the toolbar
-		this._doLayout();
-	};
-
 	Toolbar.prototype._getAccessibilityRole = function () {
-		var aContent = this.getContent(),
-			sRole = this._getRootAccessibilityRole();
+		var sRole = this._getRootAccessibilityRole();
 
-		if (this.getActive() && (!aContent || aContent.length === 0)) {
+		if (this.getActive()) {
 			sRole = "button";
 		}
 

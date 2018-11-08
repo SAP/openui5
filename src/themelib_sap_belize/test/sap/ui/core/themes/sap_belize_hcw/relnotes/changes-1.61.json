@@ -1,0 +1,19 @@
+{
+  "1.61.0": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "a7a75bb64bf4204752c61f3ea973cd4b984e953a",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageLayout: Breakpoints are now triggered",
+        "references": []
+      },
+      {
+        "id": "3e7dcf1b7ffc1b1c2ad9d2e36a9263eb6d9f36a3",
+        "type": "FIX",
+        "text": " sap.m.NotificationListGroup: Background color is now correct",
+        "references": []
+      }
+    ]
+  }
+}

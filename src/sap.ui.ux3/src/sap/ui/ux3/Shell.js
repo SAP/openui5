@@ -426,14 +426,10 @@ sap.ui.define([
 	 */
 	Shell.prototype._updateThemeVariables = function() {
 		Shell.SIDE_BAR_BASE_WIDTH = parseInt(
-			Parameters.get("sapUiUx3ShellSideBarBaseWidth"),
-			10
-		);
+			Parameters.get("sapUiUx3ShellSideBarBaseWidth"));
 
 		Shell.PANE_OVERFLOW_BUTTON_HEIGHT = parseInt(
-			Parameters.get("sapUiUx3ShellPaneOverflowButtonHeight"),
-			10
-		);
+			Parameters.get("sapUiUx3ShellPaneOverflowButtonHeight"));
 		// Save the original button height to be referenced as maximum height
 		Shell.PANE_OVERFLOW_BUTTON_MAX_HEIGHT = Shell.PANE_OVERFLOW_BUTTON_HEIGHT;
 	};
@@ -1433,7 +1429,7 @@ sap.ui.define([
 				iHeight = 10;
 			} else if (sVisibleStatus === sap.ui.ux3.NotificationBarStatus.Max || sVisibleStatus === sap.ui.ux3.NotificationBarStatus.Default) {
 				if (this.getHeaderType() === sap.ui.ux3.ShellHeaderType.BrandOnly && bIsThingInspector) {
-					iHeight = parseInt(oNotificationBar.getHeightOfStatus(sap.ui.ux3.NotificationBarStatus.Default), 10);
+					iHeight = parseInt(oNotificationBar.getHeightOfStatus(sap.ui.ux3.NotificationBarStatus.Default));
 				} else {
 					iHeight = 10;
 				}
@@ -1546,7 +1542,7 @@ sap.ui.define([
 
 				if (this._oOpenToolPopup && this._topSyncRefId) {
 					var $syncRef = jQuery.sap.byId(this._topSyncRefId);
-					this._oOpenToolPopup.$().css("z-index", parseInt($syncRef.css("z-index"), 10) + 1);
+					this._oOpenToolPopup.$().css("z-index", parseInt($syncRef.css("z-index")) + 1);
 				}
 			});
 		};
@@ -2502,9 +2498,9 @@ sap.ui.define([
 
 		if (this.getFullHeightContent()) {
 			var bPad = this.getApplyContentPadding();
-			var iTop = !bPad ? 0 : parseInt($canvas.css("paddingTop"), 10);
-			var iLeft = !bPad ? 0 : parseInt($canvas.css("paddingLeft"), 10);
-			var iRight = !bPad ? 0 : parseInt($canvas.css("paddingRight"), 10);
+			var iTop = !bPad ? 0 : parseInt($canvas.css("paddingTop"));
+			var iLeft = !bPad ? 0 : parseInt($canvas.css("paddingLeft"));
+			var iRight = !bPad ? 0 : parseInt($canvas.css("paddingRight"));
 
 			var _iFacetBarHeight = iFacetBarHeight ? iFacetBarHeight : this._calcFacetBarHeight();
 
@@ -2525,7 +2521,7 @@ sap.ui.define([
 				|| sNotificationBarVisibleStatus === sap.ui.ux3.NotificationBarStatus.Max) {
 				$content.css("bottom", oNotify.getHeightOfStatus(sap.ui.ux3.NotificationBarStatus.Default));
 			} else {
-				var iBottom = !bPad ? 0 : parseInt($canvas.css("paddingBottom"), 10);
+				var iBottom = !bPad ? 0 : parseInt($canvas.css("paddingBottom"));
 				if (oNotify && sNotificationBarVisibleStatus === sap.ui.ux3.NotificationBarStatus.Min) {
 					iBottom += sap.ui.ux3.NotificationBar.HOVER_ITEM_HEIGHT;
 				}

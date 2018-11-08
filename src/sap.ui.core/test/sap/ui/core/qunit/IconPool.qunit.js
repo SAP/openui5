@@ -1,5 +1,5 @@
 
-/* global QUnit, sinon*/
+/* global QUnit */
 sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/ui/core/Icon",
@@ -40,7 +40,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("createControlByURI", function(assert) {
-		var oAssertStub = this.stub(jQuery.sap, "assert", function(bCondition) {
+		var oAssertStub = this.stub(jQuery.sap, "assert").callsFake(function(bCondition) {
 			if (!bCondition) {
 				assert.ok(false, "Condition check shouldn't fail");
 			}
@@ -213,19 +213,17 @@ sap.ui.define([
 		var iCountStyles = jQuery("head > style[type='text/css']").length;
 
 		// inserting a font that is not registered must fail
-		var oErrorSpy = sinon.spy(Log, "error");
+		var oErrorSpy = this.spy(Log, "error");
 
 		IconPool.insertFontFaceStyle("unRegisteredFont", jQuery.sap.getModulePath("sap.tnt.themes.base.fonts", "/"));
 		assert.strictEqual(jQuery("head > style[type='text/css']").length, iCountStyles, "Inserting a unregistered font does not insert a new style tag");
 		assert.strictEqual(oErrorSpy.callCount, 1, "Inserting an unregistered font logs an error");
-
-		oErrorSpy.restore();
 	});
 
 	QUnit.test("insertFontFaceStyle: the default font must not be overwritten", function(assert) {
 		var iCountStyles = jQuery("head > style[type='text/css']").length;
 
-		var oErrorSpy = sinon.spy(Log, "error");
+		var oErrorSpy = this.spy(Log, "error");
 
 		IconPool.registerFont({
 			fontFamily: "SAP-icons-TNT",
@@ -237,21 +235,17 @@ sap.ui.define([
 		IconPool.insertFontFaceStyle("SAP-icons", jQuery.sap.getModulePath("sap.tnt.themes.base.fonts", "/"), "overwriteDefaultFont");
 		assert.strictEqual(jQuery("head > style[type='text/css']").length, iCountStyles, "Inserting a new font as 'SAP-icons' must not insert a new style tag");
 		assert.strictEqual(oErrorSpy.callCount, 1, "Inserting an unregistered font logs an error");
-
-		oErrorSpy.restore();
 	});
 
 	QUnit.test("registerFont without fontURI", function(assert) {
-		var oErrorSpy = sinon.spy(Log, "error");
+		var oErrorSpy = this.spy(Log, "error");
 
 		IconPool.registerFont({});
 		assert.strictEqual(oErrorSpy.callCount, 1, "Registering a font without the configuration parameter fontURI throws an error");
-
-		oErrorSpy.restore();
 	});
 
 	QUnit.test("registerFont: trying to overwrite the default font family logs an error", function(assert) {
-		var oErrorSpy = sinon.spy(Log, "error");
+		var oErrorSpy = this.spy(Log, "error");
 
 		IconPool.registerFont({
 			fontFamily: "SAP-icons",
@@ -259,12 +253,10 @@ sap.ui.define([
 			fontURI: jQuery.sap.getModulePath("sap.tnt.themes.base.fonts")
 		});
 		assert.strictEqual(oErrorSpy.callCount, 1, "Re-registering the default font family logs an error");
-
-		oErrorSpy.restore();
 	});
 
 	QUnit.test("registerFont two times throws a warning", function(assert) {
-		var oWarningSpy = sinon.spy(Log, "warning");
+		var oWarningSpy = this.spy(Log, "warning");
 
 		IconPool.registerFont({
 			fontFamily: "TwoTimes",
@@ -277,12 +269,10 @@ sap.ui.define([
 			lazy: true
 		});
 		assert.strictEqual(oWarningSpy.callCount, 1, "Registering a font with the same name twice throws a warning");
-
-		oWarningSpy.restore();
 	});
 
 	QUnit.test("registerFont does not throw an error when an icon has been manually registered with the same collection name", function(assert) {
-		var oErrorSpy = sinon.spy(Log, "error");
+		var oErrorSpy = this.spy(Log, "error");
 
 		// single char
 		IconPool.addIcon("someIcon", "testAddIcon", {
@@ -293,15 +283,13 @@ sap.ui.define([
 		IconPool.getIconInfo("sap-icon://testAddIcon/someNonExistingIcon");
 
 		assert.strictEqual(oErrorSpy.callCount, 0, "Fetching a manually registered icon does not throw an error");
-
-		oErrorSpy.restore();
 	});
 
 	QUnit.test("registerFont (async metadata)", function(assert) {
 		var done = assert.async();
 
 		// stub the ajax method
-		var stub = sinon.stub(jQuery, 'ajax');
+		var stub = this.stub(jQuery, 'ajax');
 		stub.yieldsTo('success', {
 			"technicalsystem": "0xe000"
 		});
@@ -327,16 +315,14 @@ sap.ui.define([
 			assert.equal(oIconInfo.content, String.fromCharCode(0xe000), "Icon content has been resolved properly");
 			done();
 		});
-
-		jQuery.ajax.restore();
 	});
 
 	QUnit.test("registerFont (async metadata error)", function(assert) {
 		var done = assert.async();
 
 		// stub the ajax method
-		var oErrorSpy = sinon.spy(Log, "error");
-		var stub = sinon.stub(jQuery, 'ajax');
+		var oErrorSpy = this.spy(Log, "error");
+		var stub = this.stub(jQuery, 'ajax');
 		stub.yieldsTo('error', {});
 
 		// register TNT icon font
@@ -351,16 +337,13 @@ sap.ui.define([
 			assert.ok(true, "The _loadFontMetadata promise failed");
 			assert.strictEqual(oErrorSpy.callCount, 1, "Loading a font with wrong metadata triggers an error");
 
-			oErrorSpy.restore();
 			done();
 		});
-
-		jQuery.ajax.restore();
 	});
 
 	QUnit.test("registerFont (lazy loading)", function(assert) {
 		// stub the ajax method
-		var stub = sinon.stub(jQuery, 'ajax');
+		var stub = this.stub(jQuery, 'ajax');
 		stub.yieldsTo('success', {
 			"technicalsystem": "0xe000"
 		});
@@ -380,13 +363,11 @@ sap.ui.define([
 
 		IconPool.getIconInfo("sap-icon://tntlazy/technicalsystem");
 		assert.ok(stub.calledOnce, "The font metadata is loaded only once");
-
-		stub.restore();
 	});
 
 	QUnit.test("registerFont (no lazy loading)", function(assert) {
 		// stub the ajax method
-		var stub = sinon.stub(jQuery, 'ajax');
+		var stub = this.stub(jQuery, 'ajax');
 		stub.yieldsTo('success', {
 			"technicalsystem": "0xe000"
 		});
@@ -402,17 +383,15 @@ sap.ui.define([
 
 		IconPool.getIconInfo("sap-icon://tntnolazy/technicalsystem");
 		assert.ok(stub.calledOnce, "The font metadata is loaded only once");
-
-		stub.restore();
 	});
 
 	QUnit.test("registerFont (no metadataURI)", function(assert) {
 		var done = assert.async();
-		var stub = sinon.stub(jQuery, "ajax", function(sURL, oOptions) {
+		var stub = this.stub(jQuery, "ajax").callsFake(function(sURL, oOptions) {
 			// check that metadataURL is composed correctly
 			if (sURL.indexOf("sap/METADATA.json") >= 0) {
 				assert.ok(true, "The metadataURI parameter has been composed correctly");
-				stub.restore();
+				stub.restore(); // restore explicitly to avoid further asserts
 				done();
 			}
 		});
@@ -465,7 +444,7 @@ sap.ui.define([
 
 	QUnit.test("Calling getIconInfo with 'sync' mode on a separate icon font returns the result immediately", function(assert) {
 		// stub the ajax method
-		var stub = sinon.stub(jQuery, 'ajax');
+		var stub = this.stub(jQuery, 'ajax');
 		stub.yieldsTo('success', {
 			"customicon": "0xe001"
 		});
@@ -482,13 +461,11 @@ sap.ui.define([
 		assert.equal(oIconInfo.collection, "somefont", "Icon collection is correct");
 		assert.equal(oIconInfo.fontFamily, "some-font-family", "Icon font family is correct");
 		assert.equal(oIconInfo.content, String.fromCharCode(0xe001), "Icon content has been resolved properly");
-
-		stub.restore();
 	});
 
 	QUnit.test("Calling getIconInfo with 'sync' mode on a separate icon font and without an iconCollection parameter returns the result immediately", function(assert) {
 		// stub the ajax method
-		var stub = sinon.stub(jQuery, 'ajax');
+		var stub = this.stub(jQuery, 'ajax');
 		stub.yieldsTo('success', {
 			"customicon": "0xe001"
 		});
@@ -505,8 +482,6 @@ sap.ui.define([
 		assert.equal(oIconInfo.collection, "somefont1", "Icon collection is correct");
 		assert.equal(oIconInfo.fontFamily, "some-font-family1", "Icon font family is correct");
 		assert.equal(oIconInfo.content, String.fromCharCode(0xe001), "Icon content has been resolved properly");
-
-		stub.restore();
 	});
 
 	QUnit.module("Async getIconInfo");
@@ -545,12 +520,11 @@ sap.ui.define([
 				assert.equal(oIconInfo.collection, "tntfakeasync", "Icon collection is correct");
 				assert.equal(oIconInfo.fontFamily, "SAP-icons-TNT", "Icon font family is correct");
 				assert.equal(oIconInfo.content, String.fromCharCode(0xe00f), "Icon content has been resolved properly");
-				jQuery.ajax.restore();
 				done();
 			});
 		};
 
-		sinon.stub(jQuery, "ajax", function(sURL, oOptions) {
+		this.stub(jQuery, "ajax").callsFake(function(sURL, oOptions) {
 			// introduce the least amount of delay for this test
 			setTimeout(function() {
 				oOptions.success({
@@ -627,11 +601,10 @@ sap.ui.define([
 			assert.equal(oIconInfo.fontFamily, "SAP-icons-TNT", "Icon font family is correct");
 			assert.equal(oIconInfo.content, String.fromCharCode(0xe00f), "Icon content has been resolved properly");
 
-			jQuery.ajax.restore();
 			done();
 		};
 
-		sinon.stub(jQuery, "ajax", function(sURL, oOptions) {
+		this.stub(jQuery, "ajax").callsFake(function(sURL, oOptions) {
 			// introduce the least amount of delay for this test
 			setTimeout(function() {
 				oOptions.success({

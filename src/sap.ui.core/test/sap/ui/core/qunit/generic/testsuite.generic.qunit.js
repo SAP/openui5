@@ -51,6 +51,16 @@ sap.ui.define(function() {
 				// tests are added asynchronously, hence autostart is disabled and QUnit.start is called later
 				autostart: false
 			},
+			ControlRenderer: {
+				title: "QUnit Page for memory leak detection in UI5 controls",
+				ui5: {
+					bindingSyntax: "complex"
+				},
+				qunit: {
+					// make sure results are consistent/stable and the "statistics" test in the end is actually run in the end
+					reorder: false
+				}
+			},
 			ControlMemoryLeaksUsingIterator: {
 				title: "QUnit Page for memory leak detection in UI5 controls",
 				ui5: {

@@ -35,7 +35,7 @@ sap.ui.define(function () {
 				group: "BasicTemplate",
 				page: "test-resources/sap/m/demokit/basicTemplate/webapp/test/integration/opaTests.qunit.html"
 			},
-			"test-resources/sap/m/demokit/basicTemplate/webapp/test/unit/allTests": {
+			"test-resources/sap/m/demokit/basicTemplate/webapp/test/unit/AllTests": {
 				group: "BasicTemplate",
 				page: "test-resources/sap/m/demokit/basicTemplate/webapp/test/unit/unitTests.qunit.html"
 			},

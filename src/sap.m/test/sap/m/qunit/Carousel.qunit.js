@@ -39,7 +39,7 @@ sap.ui.define([
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
-	<!-- use the sinon faketimers for this test -->
+	// use the sinon faketimers for this test
 
 	var sinonClockTickValue = 600;
 
@@ -500,6 +500,19 @@ sap.ui.define([
 		var oNotRenderedCarousel = new Carousel();
 		oNotRenderedCarousel.destroy();
 		assert.strictEqual(oNotRenderedCarousel._mScrollContainerMap, undefined, "Empty Carousel's container map has been cleaned up");
+	});
+
+	QUnit.test("Destroy carousel scrollbars' content", function (assert) {
+		// Arrange
+		var oScrollContainer = this.oCarousel._aScrollContainers[0],
+			oHtml = oScrollContainer.getContent()[0],
+			spy = sinon.spy(oHtml, "destroy");
+
+		// Act
+		this.oCarousel.destroy();
+
+		// Assert
+		assert.ok(spy.calledOnce, "'.destroy()' should be called for ScrollContainer's content when Carousel is destroyed");
 	});
 
 	//================================================================================

@@ -390,7 +390,7 @@
 						return oTable.getVisibleRowCount();
 					},
 					action: function(oTable, sValue) {
-						oTable.setVisibleRowCount(parseInt(sValue, 10) || 0);
+						oTable.setVisibleRowCount(parseInt(sValue) || 0);
 					}
 				}
 			}
@@ -474,7 +474,7 @@
 						return oColumn.getMinWidth();
 					},
 					action: function(oColumn, vValue) {
-						oColumn.setMinWidth(parseInt(vValue, 10) || 0);
+						oColumn.setMinWidth(parseInt(vValue) || 0);
 					}
 				}
 			}
@@ -606,7 +606,7 @@
 						return oTable.getFixedColumnCount();
 					},
 					action: function(oTable, sValue) {
-						oTable.setFixedColumnCount(parseInt(sValue, 10) || 0);
+						oTable.setFixedColumnCount(parseInt(sValue) || 0);
 					}
 				},
 				FIXEDROWS: {
@@ -616,7 +616,7 @@
 						return oTable.getFixedRowCount();
 					},
 					action: function(oTable, sValue) {
-						oTable.setFixedRowCount(parseInt(sValue, 10) || 0);
+						oTable.setFixedRowCount(parseInt(sValue) || 0);
 					}
 				},
 				FIXEDBOTTOMROWS: {
@@ -626,7 +626,7 @@
 						return oTable.getFixedBottomRowCount();
 					},
 					action: function(oTable, sValue) {
-						oTable.setFixedBottomRowCount(parseInt(sValue, 10) || 0);
+						oTable.setFixedBottomRowCount(parseInt(sValue) || 0);
 					}
 				},
 				ROWACTIONS: {
@@ -1507,16 +1507,16 @@
 			contentWidth: "1000px",
 			content: [oSettingsTable],
 			endButton: new sap.m.Button({
-				text: "Cancel", press: function () { oDialog.close(); }
+				text: "Cancel", press: function() { oDialog.close(); }
 			}),
 			beginButton: new sap.m.Button({
 				text: "Ok",
-				press: function () {
+				press: function() {
 					changeSettings();
 					oDialog.close();
 				}
 			}),
-			afterClose: function () { oDialog.destroy(); }
+			afterClose: function() { oDialog.destroy(); }
 		});
 		oDialog.open();
 	}

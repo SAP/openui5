@@ -1,4 +1,4 @@
-/*global QUnit, sinon */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/Control",
@@ -790,11 +790,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Under iOS WebView with iOS version 8", function(assert) {
-		this.stub(Device, "os", {
+		this.stub(Device, "os").value({
 			ios: true,
 			version: 8
 		});
-		this.stub(Device, "browser", {
+		this.stub(Device, "browser").value({
 			safari: true,
 			webview: true,
 			mobile: true
@@ -806,11 +806,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Under iOS with iOS version 8 (not a webview)", function(assert) {
-		this.stub(Device, "os", {
+		this.stub(Device, "os").value({
 			ios: true,
 			version: 8
 		});
-		this.stub(Device, "browser", {
+		this.stub(Device, "browser").value({
 			safari: true,
 			webview: false,
 			mobile: true
@@ -822,7 +822,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Under Chrome (Samsung Device, version >= 32)", function(assert) {
-		this.stub(Device, "browser", {
+		this.stub(Device, "browser").value({
 			chrome: true,
 			mobile: true,
 			version: 32
@@ -838,7 +838,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Under Chrome (version >= 32)", function(assert) {
-		this.stub(Device, "browser", {
+		this.stub(Device, "browser").value({
 			chrome: true,
 			mobile: true,
 			version: 32
@@ -900,7 +900,7 @@ sap.ui.define([
 			var done = assert.async();
 			assert.expect(3);
 
-			var getSelectionStub = sinon.stub(window, "getSelection", function () { return "someText"; });
+			this.stub(window, "getSelection").callsFake(function () { return "someText"; });
 
 			sap.ui.require(["jquery.sap.events"], function(jQUeryEvents) {
 				var uiArea = sap.ui.getCore().getUIArea("uiArea");
@@ -923,15 +923,13 @@ sap.ui.define([
 
 				//trigger sapcontextmenu custom event
 				oElement.trigger("taphold");
-
-				getSelectionStub.restore();
 			});
 		});
 
 		QUnit.test("Simulated event for contextmenu under iOS without selected text", function(assert) {
 			var done = assert.async();
 
-			var getSelectionStub = sinon.stub(window, "getSelection", function () { return ""; });
+			this.stub(window, "getSelection").callsFake(function () { return ""; });
 
 			sap.ui.require(["jquery.sap.events"], function(jQUeryEvents) {
 				var uiArea = sap.ui.getCore().getUIArea("uiArea");
@@ -949,8 +947,6 @@ sap.ui.define([
 
 				//trigger sapcontextmenu custom event
 				oTestControl1.$().trigger("taphold");
-
-				getSelectionStub.restore();
 			});
 		});
 	} else {

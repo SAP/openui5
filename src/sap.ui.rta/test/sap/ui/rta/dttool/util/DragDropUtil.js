@@ -29,39 +29,31 @@ function(
 
 	var DragUtil = {};
 
-	function _getDragPlugin(oDesignTime) {
-		var oDragDropPlugin;
-		oDesignTime.getPlugins().some(function(oPlugin) {
-			if (oPlugin instanceof sap.ui.dt.plugin.DragDrop) {
-				oDragDropPlugin = oPlugin;
-				return true;
-			}
-		});
-		return oDragDropPlugin;
+	function _getDragPlugin(oRta) {
+		return oRta.getPlugins()["dragDrop"];
 	}
 
 	/**
 	 * Creates an Overlay for the element and starts the drag process, as soon as it's ready
 	 *
 	 * @param {Object} oElement element that is being dragged
-	 * @param {Object} oDesignTime designtime in which the overlay should be created
+	 * @param {Object} oRta Runtime Authoring instance
 	 * @param {Object} oEvent drag-event
 	 * @returns {Promise} Returns a Promise which resolves when the drag has been started or rejects if there is no Drag Plugin in the designtime
 	 */
-	DragUtil.startDragWithElement = function(oElement, oDesignTime, oEvent) {
-		var oDragDropPlugin = _getDragPlugin(oDesignTime);
+	DragUtil.startDragWithElement = function(oElement, oRta, oEvent) {
+		var oOutsideDragDropPlugin = _getDragPlugin(oRta);
 
-		if (!oDragDropPlugin) {
+		if (!oOutsideDragDropPlugin) {
 			return Promise.reject(new Error("There is no DragDrop Plugin in the given designtime. This is needed to start Drag&Drop."));
 		}
 
-		return oDesignTime.createOverlay({
+		return oRta._oDesignTime.createOverlay({
 			element: oElement,
 			root: true
 		}).then(function(oOverlay) {
-			oOverlay.fromOutside = true;
 			oOverlay.placeInOverlayContainer();
-			oDragDropPlugin.startDrag(oOverlay, oEvent);
+			oOutsideDragDropPlugin.onDragStart(oOverlay, oEvent);
 		});
 	};
 
@@ -69,17 +61,17 @@ function(
 	 * Drops the Element and ends the drag process
 	 *
 	 * @param {Object} oElement element that is being dragged
-	 * @param {Object} oDesignTime designtime which the elements overlay belongs to
+	 * @param {Object} oRta Runtime authoring instance
 	 */
-	DragUtil.dropElement = function(oElement, oDesignTime) {
-		var oDragDropPlugin = _getDragPlugin(oDesignTime);
+	DragUtil.dropElement = function(oElement, oRta) {
+		var oDragDropPlugin = _getDragPlugin(oRta);
 
 		if (!oDragDropPlugin) {
 			return;
 		}
 
-		var oDraggedOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oElement);
-		oDragDropPlugin.endDrag(oDraggedOverlay);
+		var oDraggedOverlay = OverlayRegistry.getOverlay(oElement);
+		oDragDropPlugin.onDragEnd(oDraggedOverlay);
 	};
 
 	return DragUtil;

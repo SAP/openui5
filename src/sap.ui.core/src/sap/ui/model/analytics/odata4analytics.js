@@ -33,7 +33,8 @@ sap.ui.define([
 	 * @alias sap.ui.model.analytics.odata4analytics
 	 * @protected
 	 */
-	var odata4analytics = odata4analytics || {};
+	var odata4analytics = odata4analytics || {},
+		rOnlyDigits = /^\d+$/;
 
 	odata4analytics.constants = {};
 	odata4analytics.constants["SAP_NAMESPACE"] = "http://www.sap.com/Protocols/SAPData";
@@ -3043,7 +3044,12 @@ sap.ui.define([
 		 * @private
 		 */
 		_renderPropertyFilterValue : function(sFilterValue, sPropertyEDMTypeName) {
-			// initial implementation called odata4analytics.helper.renderPropertyFilterValue, which had problems with locale-specific input values
+			if (sPropertyEDMTypeName === "Edm.Time" && rOnlyDigits.test(sFilterValue)) {
+				sFilterValue = {ms : parseInt(sFilterValue), __edmType : "Edm.Time"};
+			}
+
+			// initial implementation called odata4analytics.helper.renderPropertyFilterValue,
+			// which had problems with locale-specific input values
 			// this is handled in the ODataModel
 			return encodeURL(
 					this._oModel.getODataModel().formatValue(sFilterValue, sPropertyEDMTypeName));

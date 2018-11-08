@@ -761,7 +761,7 @@ function (
 		Core.applyChanges();
 		this.clock.tick(1000);
 
-		var iFlexBasisBefore = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"), 10);
+		var iFlexBasisBefore = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"));
 
 		// Act
 		oLabel.setText("Some non-empty text");
@@ -769,7 +769,7 @@ function (
 		this.clock.tick(1000);
 
 		// Assert
-		var sFlexBasisAfter = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"), 10);
+		var sFlexBasisAfter = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"));
 		assert.ok(sFlexBasisAfter > iFlexBasisBefore + 50, "Flex-basis increased to show the new text");
 	});
 
@@ -779,7 +779,7 @@ function (
 		Core.applyChanges();
 		this.clock.tick(1000);
 
-		var iFlexBasisBefore = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"), 10);
+		var iFlexBasisBefore = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"));
 
 		// Act
 		oLink.setText("Some non-empty text");
@@ -787,7 +787,7 @@ function (
 		this.clock.tick(1000);
 
 		// Assert
-		var sFlexBasisAfter = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"), 10);
+		var sFlexBasisAfter = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"));
 		assert.ok(sFlexBasisAfter > iFlexBasisBefore + 50, "Flex-basis increased to show the new text");
 	});
 
@@ -2491,6 +2491,44 @@ function (
 		assert.equal(oScrollPositionSpy.called, false, "scrollBar scrollPosition setter is not called again");
 	});
 
+	QUnit.test("DynamicPage preserves scroll position after rerendering", function (assert) {
+		var iExpectedScrollPosition = 500,
+			oDynamicPage = this.oDynamicPage,
+			oSetScrollPositionSpy;
+
+		//arrange
+		oDynamicPage.setHeaderExpanded(false);
+		oDynamicPage.$wrapper.scrollTop(iExpectedScrollPosition);
+		oDynamicPage._onWrapperScroll({target: {scrollTop: iExpectedScrollPosition}});
+		oSetScrollPositionSpy = this.spy(oDynamicPage, "_setScrollPosition");
+		//act
+		oDynamicPage.rerender();
+
+		//assert
+		assert.ok(oSetScrollPositionSpy.calledWith, iExpectedScrollPosition,
+			"DynamicPage Scroll position is correct after rerender");
+	});
+
+	QUnit.test("DynamicPage preserves scroll position when navigating to another page and then comming back", function (assert) {
+		var iExpectedScrollPosition = 500,
+			oDynamicPage = this.oDynamicPage,
+			oStub = this.stub(this.oDynamicPage, "_getScrollPosition", function () {
+				return 0;
+			}); // Scroll position of wrapper is set to 0 when navigating to another page
+
+		//arrange
+		oDynamicPage.$wrapper.scrollTop(iExpectedScrollPosition);
+		oDynamicPage._onWrapperScroll({target: {scrollTop: iExpectedScrollPosition}});
+
+		//act
+		oDynamicPage._offsetContentOnMoveHeader();
+		oStub.restore(); // restore getScrollPosition to return the real scroll value
+
+		//assert
+		assert.equal(oDynamicPage._getScrollPosition(), iExpectedScrollPosition,
+			"DynamicPage Scroll position is correct after navigating to another page and then comming back");
+	});
+
 	QUnit.test("DynamicPage _headerSnapAllowed() returns the correct value", function (assert) {
 		var oDynamicPage = this.oDynamicPage;
 
@@ -3271,7 +3309,7 @@ function (
 	QUnit.test("Test flex-basis styles change when an action is added", function(assert) {
 		// arrange
 		var oTitle = Core.byId("comp---view--DynamicPageTitle"),
-			nOldFlexBasis = parseInt(oTitle.$("mainActions").css("flex-basis"), 10),
+			nOldFlexBasis = parseInt(oTitle.$("mainActions").css("flex-basis")),
 			nNewFlexBasis;
 
 		// act
@@ -3282,7 +3320,7 @@ function (
 
 		Core.applyChanges();
 
-		nNewFlexBasis = parseInt(oTitle.$("mainActions").css("flex-basis"), 10);
+		nNewFlexBasis = parseInt(oTitle.$("mainActions").css("flex-basis"));
 
 		// assert
 		assert.ok(nNewFlexBasis > nOldFlexBasis, "New flex-basis value should be greater since an action was added.");

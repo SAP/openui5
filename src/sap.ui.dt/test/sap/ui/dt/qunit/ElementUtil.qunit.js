@@ -844,6 +844,10 @@ function(
 					template : this.oItemTemplate
 				}
 			}).setModel(oModel);
+
+			this.oList.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
 			this.oVBox1 = this.oList.getItems()[1].getContent()[0];
 			this.oListItem0 = this.oList.getItems()[0];
 			this.oText1 = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0].getItems()[0];

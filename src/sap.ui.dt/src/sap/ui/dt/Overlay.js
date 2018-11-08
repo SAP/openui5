@@ -203,14 +203,15 @@ function (
 					}
 				}.bind(this))
 				.catch(function(vError) {
-					var oError = Util.wrapError(vError);
-
-					// adding payload for external errors
-					if (Util.isForeignError(oError)) {
-						var sLocation = 'sap.ui.dt.Overlay#asyncInit';
-						oError.name = 'Error in ' + sLocation;
-						oError.message = Util.printf("{0} / Can't initialize overlay (id='{1}') properly: {2}", sLocation, this.getId(), oError.message);
-					}
+					var oError = Util.propagateError(
+						vError,
+						"Overlay#asyncInit",
+						Util.printf(
+							"Can't initialize overlay (id='{0}') properly. Original error: {1}",
+							this.getId(),
+							Util.wrapError(vError).message
+						)
+					);
 
 					this.fireInitFailed({
 						error: oError

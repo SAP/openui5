@@ -280,12 +280,12 @@ sap.ui.define([
 			// of container height but only for px values
 			var customMaxHeight = this.getHeight();
 			if (customMaxHeight && customMaxHeight.toLowerCase().indexOf("px") != -1) {
-				splitterHeight = parseInt(customMaxHeight, 10);
+				splitterHeight = parseInt(customMaxHeight);
 			}
 			// for % values we use the splitter div height if the % is < 100% else
 			// we leave the size as the parent height
 			if (customMaxHeight && customMaxHeight.toLowerCase().indexOf("%") != -1) {
-				var percentValue = parseInt(customMaxHeight, 10);
+				var percentValue = parseInt(customMaxHeight);
 				if (percentValue < 100) {
 					splitterHeight = jQuery(this.splitterDIV).height();
 				}

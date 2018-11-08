@@ -157,9 +157,9 @@ sap.ui.define([
 
 		var oStatic = sap.ui.getCore().getStaticAreaRef();
 		// if oDOMNode belongs to a static area child, get z-index of this child:
-		var thatZ = parseInt(jQuery(oDOMNode).closest(jQuery(oStatic).children()).css("z-index"), 10);
+		var thatZ = parseInt(jQuery(oDOMNode).closest(jQuery(oStatic).children()).css("z-index"));
 		// z-index of this:
-		var thisZ = parseInt(this.$().css("z-index"), 10);
+		var thisZ = parseInt(this.$().css("z-index"));
 
 		// true if the element has the z-index inside of static area that is higher as the z-index of my control
 		return thatZ && thisZ && thatZ >= thisZ;

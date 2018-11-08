@@ -28,7 +28,7 @@ sap.ui.define([
 			};
 		},
 		initFakeServer: function(sResponseCode) {
-			this.oServer = this.sandbox.useFakeXMLHttpRequest();
+			this.oServer = this._oSandbox.useFakeServer();
 			this.oServer.autoRespond = true;
 			this.oServer.respondWith("GET", jQuery.sap.getResourcePath("sap-ui-version", ".json"), [
 				sResponseCode || 200,

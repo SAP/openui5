@@ -85,7 +85,7 @@ function(
 				]
 			});
 			this.oLayout2.placeAt("qunit-fixture");
-
+			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout2]
@@ -537,6 +537,7 @@ function(
 				content: [this.oBoundList, this.oUnboundList, this.oFactoryBoundList]
 			});
 			this.oVerticalLayout.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements : [this.oVerticalLayout]

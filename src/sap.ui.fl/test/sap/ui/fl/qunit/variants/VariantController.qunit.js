@@ -237,10 +237,10 @@ sap.ui.define([
 		});
 		var aExpectedNew = [aChanges[0], aChanges[1]];
 		var aExpectedRevert = [];
-		mChanges.aNew.forEach(function (oChange, i) {
+		mChanges.changesToBeApplied.forEach(function (oChange, i) {
 			assert.deepEqual(oChange._oDefinition, aExpectedNew[i]._oDefinition, "the change content returns correctly");
 		});
-		assert.equal(mChanges.aRevert.length, 0, "the revert array is empty");
+		assert.equal(mChanges.changesToBeReverted.length, 0, "the revert array is empty");
 
 		//switch back from variant1 to variant0
 		mCurrentChanges = {
@@ -255,10 +255,10 @@ sap.ui.define([
 		});
 		aExpectedNew = [];
 		aExpectedRevert = [aChanges[1], aChanges[0]];
-		mChanges.aRevert.forEach(function (oChange, i) {
+		mChanges.changesToBeReverted.forEach(function (oChange, i) {
 			assert.deepEqual(oChange._oDefinition, aExpectedRevert[i]._oDefinition, "the change content returns correctly");
 		});
-		assert.equal(mChanges.aNew.length, 0, "the new array is empty");
+		assert.equal(mChanges.changesToBeApplied.length, 0, "the new array is empty");
 
 	});
 
@@ -318,10 +318,10 @@ sap.ui.define([
 		});
 		var aExpectedNew = [aChanges[3], aChanges[4]];
 		var aExpectedRevert = [aChanges[2], aChanges[1]];
-		mChanges.aNew.forEach(function (oChange, i) {
+		mChanges.changesToBeApplied.forEach(function (oChange, i) {
 			assert.deepEqual(oChange._oDefinition, aExpectedNew[i]._oDefinition, "the change content returns correctly");
 		});
-		mChanges.aRevert.forEach(function (oChange, i) {
+		mChanges.changesToBeReverted.forEach(function (oChange, i) {
 			assert.deepEqual(oChange._oDefinition, aExpectedRevert[i]._oDefinition, "the change content returns correctly");
 		});
 	});
@@ -382,10 +382,10 @@ sap.ui.define([
 		});
 		var aExpectedNew = [aChanges[3], aChanges[4]];
 		var aExpectedRevert = [aChanges[2], aChanges[1]];
-		mChanges.aNew.forEach(function (oChange, i) {
+		mChanges.changesToBeApplied.forEach(function (oChange, i) {
 			assert.deepEqual(oChange._oDefinition, aExpectedNew[i]._oDefinition, "the change content returns correctly");
 		});
-		mChanges.aRevert.forEach(function (oChange, i) {
+		mChanges.changesToBeReverted.forEach(function (oChange, i) {
 			assert.deepEqual(oChange._oDefinition, aExpectedRevert[i]._oDefinition, "the change content returns correctly");
 		});
 	});
@@ -411,88 +411,17 @@ sap.ui.define([
 			variantManagementReference: "idMain1--variantManagementOrdersTable",
 			currentVariantReference: "variant0",
 			newVariantReference: "idMain1--variantManagementOrdersTable",
-			component: oControlComponent,
 			changesMap: {
 				"dummyControlSelector": aMapChanges
 			}
 		});
 
-		assert.strictEqual(mSwitches.aRevert.length, 2, "then 2 changes needs to be reverted");
-		assert.strictEqual(mSwitches.aNew.length, 1, "then one change needs to be applied");
-		assert.strictEqual(mSwitches.aRevert[0].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges[2].getDefinition().fileName, "then to be reverted change is correct");
-		assert.strictEqual(mSwitches.aRevert[1].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges[1].getDefinition().fileName, "then to be reverted change is correct");
-		assert.strictEqual(mSwitches.aNew[0].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[1].controlChanges[1].getDefinition().fileName, "then to be applied change is correct");
-		assert.deepEqual(mSwitches.component, oControlComponent, "then the passed component is received");
+		assert.strictEqual(mSwitches.changesToBeReverted.length, 2, "then 2 changes needs to be reverted");
+		assert.strictEqual(mSwitches.changesToBeApplied.length, 1, "then one change needs to be applied");
+		assert.strictEqual(mSwitches.changesToBeReverted[0].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges[2].getDefinition().fileName, "then to be reverted change is correct");
+		assert.strictEqual(mSwitches.changesToBeReverted[1].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges[1].getDefinition().fileName, "then to be reverted change is correct");
+		assert.strictEqual(mSwitches.changesToBeApplied[0].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[1].controlChanges[1].getDefinition().fileName, "then to be applied change is correct");
 		oControlComponent.destroy();
-	});
-
-	QUnit.test("when calling 'getChangesForVariantSwitch' with an array of embedded components", function(assert) {
-		var oComponent = {
-			name: "MyComponent",
-			appVersion: "1.2.3",
-			getId : function() {return "RTADemoAppMD";}
-		};
-		var aMapChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges.map(function (oChangeContent) {
-			return new Change(oChangeContent);
-		});
-		var oChangePersistence = new ChangePersistence(oComponent);
-		var oVariantController = oChangePersistence._oVariantController;
-
-		oVariantController._setChangeFileContent(this.oResponse);
-
-		sandbox.stub(oVariantController, "_getComponentForChange").returns({id: "applicableComponentId"});
-
-		var mSwitches = oVariantController.getChangesForVariantSwitch({
-			variantManagementReference: "idMain1--variantManagementOrdersTable",
-			currentVariantReference: "variant0",
-			newVariantReference: "idMain1--variantManagementOrdersTable",
-			component: [
-				{id: "notApplicableComponentId"},
-				{id: "applicableComponentId"}
-			],
-			changesMap: {
-				"dummyControlSelector": aMapChanges
-			}
-		});
-
-		assert.strictEqual(mSwitches.aRevert.length, 2, "then 2 changes needs to be reverted");
-		assert.strictEqual(mSwitches.aNew.length, 1, "then one change needs to be applied");
-		assert.strictEqual(mSwitches.aRevert[0].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges[2].getDefinition().fileName, "then to be reverted change is correct");
-		assert.strictEqual(mSwitches.aRevert[1].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges[1].getDefinition().fileName, "then to be reverted change is correct");
-		assert.strictEqual(mSwitches.aNew[0].getId(), this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[1].controlChanges[1].getDefinition().fileName, "then to be applied change is correct");
-		assert.deepEqual(mSwitches.component, {id: "applicableComponentId"}, "then the correct embedded component is received");
-	});
-
-	QUnit.test("when calling '_getComponentForChange' with an array of embedded components", function(assert) {
-		var oChangeContent1 = {"fileName":"change1", "variantReference":"variant0", "selector": { id : "selector1", idIsLocal: true }};
-		var oChangeContent2 = {"fileName":"change2", "variantReference":"variant0", "selector": { id : "selector2", idIsLocal: true }};
-		var oComponent = {
-			name: "MyComponent",
-			appVersion: "1.2.3",
-			getId : function() {return "RTADemoAppMD";}
-		};
-		var oMockManagedObject = new ManagedObject();
-		var aMapChanges = [oChangeContent1, oChangeContent2].map(function (oChangeContent) {
-			return new Change(oChangeContent);
-		});
-		var oMockComponent1 = {id: "componentId1"};
-		var oMockComponent2 = {id: "componentId2"};
-		var oChangePersistence = new ChangePersistence(oComponent);
-		var oVariantController = oChangePersistence._oVariantController;
-		var aEmbeddedComponents = [
-			oMockComponent1,
-			oMockComponent2
-		];
-
-		this.oChangePersistence = new ChangePersistence(oComponent);
-
-		sandbox.stub(JsControlTreeModifier, "bySelector")
-			.withArgs(oChangeContent1.selector, oMockComponent1).returns(oMockManagedObject)
-			.withArgs(oChangeContent2.selector, oMockComponent2).returns(oMockManagedObject);
-
-		assert.deepEqual(oVariantController._getComponentForChange(aMapChanges[0], aEmbeddedComponents), oMockComponent1, "then the correct embedded component is returned");
-		assert.deepEqual(oVariantController._getComponentForChange(aMapChanges[1], aEmbeddedComponents), oMockComponent2, "then the correct embedded component is returned");
-		oMockManagedObject.destroy();
 	});
 
 	QUnit.test("when calling 'loadChangesMapForComponent' and afterwards 'loadSwitchChangesMapForComponent' of the ChangePersistence", function(assert) {
@@ -521,10 +450,10 @@ sap.ui.define([
 			component: oComponent
 		});
 
-		mSwitches.aNew.forEach(function (oChange, i) {
+		mSwitches.changesToBeApplied.forEach(function (oChange, i) {
 			assert.deepEqual(oChange._oDefinition, aExpectedNew[i]._oDefinition, "the change content returns correctly");
 		});
-		mSwitches.aRevert.forEach(function (oChange, i) {
+		mSwitches.changesToBeReverted.forEach(function (oChange, i) {
 			assert.deepEqual(oChange._oDefinition, aExpectedRevert[i]._oDefinition, "the change content returns correctly");
 		});
 	});
@@ -1180,10 +1109,7 @@ sap.ui.define([
 		}
 	});
 
-
-	QUnit.test("when '_updateCurrentVariant' is triggered from a variant model to carry switch and revert of changes, with an embedded component", function(assert) {
-		sandbox.stub(this.oFlexController._oChangePersistence._oVariantController, "_getComponentForChange").returns(this.oComponent);
-
+	QUnit.test("when '_updateCurrentVariant' is triggered from a variant model to carry switch and revert of changes", function(assert) {
 		assert.expect(21);
 		assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[this.aRevertedChanges[1].getId()] instanceof Object);
 		fnGetChanges.call(this, this.aRevertedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 8, assert);
@@ -1193,16 +1119,14 @@ sap.ui.define([
 		var oCurrentVariant = this.oModel.getVariant("variant0");
 		assert.equal(oCurrentVariant.content.fileName, "variant0", "'getVariant' of the model returns the correct variant object");
 
-		return this.oModel.updateCurrentVariant("idMain1--variantManagementOrdersTable", "idMain1--variantManagementOrdersTable", [])
+		return this.oModel.updateCurrentVariant("idMain1--variantManagementOrdersTable", "idMain1--variantManagementOrdersTable")
 		/*Dependencies still not updated as control doesn't exist*/
-
-		.then(function() {
-			assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[this.aExpectedChanges[1].getId()] instanceof Object);
-			fnGetChanges.call(this, this.aExpectedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
-
-			sCurrentVariant = this.oModel.getCurrentVariantReference("idMain1--variantManagementOrdersTable");
-			assert.equal(sCurrentVariant, "idMain1--variantManagementOrdersTable", "the current variant key after switch is correct");
-		}.bind(this));
+			.then(function () {
+				assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[this.aExpectedChanges[1].getId()] instanceof Object);
+				fnGetChanges.call(this, this.aExpectedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
+				sCurrentVariant = this.oModel.getCurrentVariantReference("idMain1--variantManagementOrdersTable");
+				assert.equal(sCurrentVariant, "idMain1--variantManagementOrdersTable", "the current variant key after switch is correct");
+			}.bind(this));
 	});
 
 	QUnit.test("when triggering _addChange and _removeChange on a control via the VariantModel", function(assert) {

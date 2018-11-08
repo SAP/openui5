@@ -193,7 +193,7 @@ sap.ui.define([
 	QUnit.test("Should log a warning if a router gets destroyed while the hash changes", function (assert) {
 
 		// Arrange
-		var oStub = this.stub(Log, "warning", jQuery.noop),
+		var oStub = this.stub(Log, "warning").callsFake(jQuery.noop),
 			oFirstRouter = fnCreateRouter({
 				"matchingRoute" : {
 					pattern: "matches"
@@ -209,7 +209,7 @@ sap.ui.define([
 		oFirstRouter.initialize();
 		oRouterToBeDestroyed.initialize();
 
-		this.stub(oFirstRouter, "parse", function() {
+		this.stub(oFirstRouter, "parse").callsFake(function() {
 			Router.prototype.parse.apply(this, arguments);
 			oRouterToBeDestroyed.destroy();
 		});
@@ -251,7 +251,7 @@ sap.ui.define([
 				}
 			});
 
-		this.stub(router._oViews, "_getViewWithGlobalId", function() {
+		this.stub(router._oViews, "_getViewWithGlobalId").callsFake(function() {
 			return createView(
 					['<View xmlns="sap.ui.core.mvc">',
 						'</View>']);
@@ -296,7 +296,7 @@ sap.ui.define([
 			}
 		});
 
-		var oViewCreateStub = sinon.stub(sap.ui, "view", function() {
+		var oViewCreateStub = sinon.stub(sap.ui, "view").callsFake(function() {
 			var oView = {
 				loaded: function() {
 					return Promise.resolve(oView);
@@ -470,8 +470,8 @@ sap.ui.define([
 
 		aRoutes.forEach(function(oRoute, i) {
 			oRoute.attachPatternMatched(aListenerSpies[i]);
-			aRouteMatchedSpies.push(sinon.spy(oRoute, "_routeMatched"));
-		});
+			aRouteMatchedSpies.push(this.spy(oRoute, "_routeMatched"));
+		}, this);
 
 		// Act
 		oRouter.parse(sPattern);
@@ -484,9 +484,6 @@ sap.ui.define([
 			assert.strictEqual(aListenerSpies[0].callCount, 1, "first route gets pattern matched");
 			assert.strictEqual(aListenerSpies[1].callCount, 1, "parent does also get pattern matched because of greedyness");
 			assert.strictEqual(aListenerSpies[2].callCount, 0, "child gets not pattern matched");
-
-			// Cleanup
-			aRouteMatchedSpies.forEach(sinon.restore);
 
 			oRouter.destroy();
 		});
@@ -517,8 +514,8 @@ sap.ui.define([
 
 		aRoutes.forEach(function(oRoute, i) {
 			oRoute.attachPatternMatched(aListenerSpies[i]);
-			aRouteMatchedSpies.push(sinon.spy(oRoute, "_routeMatched"));
-		});
+			aRouteMatchedSpies.push(this.spy(oRoute, "_routeMatched"));
+		}, this);
 
 		// Act
 		oRouter.parse(sPattern);
@@ -531,9 +528,6 @@ sap.ui.define([
 			assert.strictEqual(aListenerSpies[0].callCount, 1, "first route gets pattern matched");
 			assert.strictEqual(aListenerSpies[1].callCount, 0, "second doesn't get matched");
 			assert.strictEqual(aListenerSpies[2].callCount, 1, "last gets pattern matched");
-
-			// Cleanup
-			aRouteMatchedSpies.forEach(sinon.restore);
 
 			oRouter.destroy();
 		});
@@ -618,7 +612,7 @@ sap.ui.define([
 				pattern : "{foo}/{bar}"
 			} ]);
 
-		this.stub(router._oViews, "_getViewWithGlobalId", function() {
+		this.stub(router._oViews, "_getViewWithGlobalId").callsFake(function() {
 			return createView(
 					['<View xmlns="sap.ui.core.mvc">',
 						'</View>']);
@@ -686,7 +680,7 @@ sap.ui.define([
 				]
 			} ]);
 
-		this.stub(router._oViews, "_getViewWithGlobalId", function() {
+		this.stub(router._oViews, "_getViewWithGlobalId").callsFake(function() {
 			return createView(
 					['<View xmlns="sap.ui.core.mvc">',
 						'</View>']);
@@ -1254,7 +1248,7 @@ sap.ui.define([
 
 	QUnit.test("Should create a view", function (assert) {
 		var that = this,
-			fnStub = this.stub(sap.ui, "view", function (oViewOptions) {
+			fnStub = this.stub(sap.ui, "view").callsFake(function (oViewOptions) {
 				assert.strictEqual(oViewOptions.viewName, "foo", "DId pass the viewname");
 				assert.strictEqual(oViewOptions.type, "bar", "DId pass the type");
 				assert.strictEqual(oViewOptions.id, "baz", "DId pass the id");
@@ -1273,7 +1267,7 @@ sap.ui.define([
 
 	QUnit.test("Should set a view to the cache", function (assert) {
 		var oReturnValue,
-			fnStub = this.stub(sap.ui, "view", function () {
+			fnStub = this.stub(sap.ui, "view").callsFake(function () {
 				return this.oView;
 			});
 
@@ -1334,7 +1328,7 @@ sap.ui.define([
 				oParameters = oEvent.getParameters();
 			});
 
-		this.stub(sap.ui, "view", function () {
+		this.stub(sap.ui, "view").callsFake(function () {
 			return oView;
 		});
 
@@ -1358,7 +1352,7 @@ sap.ui.define([
 			this.sTitle = "myTitle";
 
 			var oView = createXmlView();
-			this.fnStub = sinon.stub(sap.ui, "view", function () {
+			this.fnStub = sinon.stub(sap.ui, "view").callsFake(function () {
 				return oView;
 			});
 
@@ -1575,7 +1569,7 @@ sap.ui.define([
 			this.oApp = new App();
 
 			var oView = createXmlView();
-			this.fnStub = sinon.stub(sap.ui, "view", function () {
+			this.fnStub = sinon.stub(sap.ui, "view").callsFake(function () {
 				return oView;
 			});
 
@@ -1930,13 +1924,13 @@ sap.ui.define([
 
 		sinon.assert.calledOnce(this.oRouteMatchedSpies["home"]);
 		return this.oRouteMatchedSpies["home"].returnValues[0].then(function() {
-			sinon.assert.calledOnce(fnEventSpy, "titleChanged event is fired");
+			assert.ok(fnEventSpy.calledOnce, "titleChanged event is fired");
 			assert.equal(oParameters.title, sHomeTitle, "title parameter is set");
 			assert.equal(oParameters.history.length, 0, "No new history entry is created");
 			assert.equal(this.oRouter._aHistory[0].title, sHomeTitle, "title is updated in title history stack");
 
 			oModel.setProperty("/title", sNewTitle);
-			sinon.assert.calledTwice(fnEventSpy, "titleChanged event is fired again");
+			assert.ok(fnEventSpy.calledTwice, "titleChanged event is fired again");
 			assert.equal(oParameters.title, sNewTitle, "title parameter is set");
 			assert.equal(oParameters.history.length, 0, "No new history entry is created");
 			assert.equal(this.oRouter._aHistory[0].title, sNewTitle, "title is updated in title history stack");
@@ -2319,7 +2313,7 @@ sap.ui.define([
 			fnOwnerSpy = this.spy(oUIComponent, "runAsOwner"),
 			oView = createXmlView(),
 			oRouter = fnCreateRouter({}, {}, oUIComponent),
-				fnViewStub = this.stub(sap.ui, "view", function () {
+				fnViewStub = this.stub(sap.ui, "view").callsFake(function () {
 					return oView;
 			});
 
@@ -2366,7 +2360,7 @@ sap.ui.define([
 
 	QUnit.test("Should display a target referenced by a route", function (assert) {
 		// Arrange
-		this.stub(Views.prototype, "_getView", function () {
+		this.stub(Views.prototype, "_getView").callsFake(function () {
 			return createXmlView();
 		});
 
@@ -2401,7 +2395,7 @@ sap.ui.define([
 
 	QUnit.test("Should display multiple targets referenced by a route", function (assert) {
 		// Arrange
-		this.stub(Views.prototype, "_getView", function () {
+		this.stub(Views.prototype, "_getView").callsFake(function () {
 			return createXmlView();
 		});
 
@@ -2439,7 +2433,7 @@ sap.ui.define([
 
 	QUnit.test("Should display child targets referenced by a route", function (assert) {
 		// Arrange
-		this.stub(Views.prototype, "_getView", function () {
+		this.stub(Views.prototype, "_getView").callsFake(function () {
 			return createXmlView();
 		});
 
@@ -2584,10 +2578,10 @@ sap.ui.define([
 
 		this.oRouter.attachBypassed(fnBypassed);
 
-		var fnDisplayFooStub = this.stub(this.oRouter.getTarget("foo"), "_display", function() {
+		var fnDisplayFooStub = this.stub(this.oRouter.getTarget("foo"), "_display").callsFake(function() {
 				return Promise.resolve();
 			}),
-			fnDisplayBarStub = this.stub(this.oRouter.getTarget("bar"), "_display", function() {
+			fnDisplayBarStub = this.stub(this.oRouter.getTarget("bar"), "_display").callsFake(function() {
 				return Promise.resolve().then(function() {
 					assert.strictEqual(fnBypassed.callCount, 0, "bypass event isn't fired yet");
 				});

@@ -68,18 +68,25 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Launchers and app params");
+	QUnit.module("Launchers and app params", {
+		beforeEach: function () {
+			this.mOriginalSearch = new URI().search(true);
+			delete this.mOriginalSearch.testId;
+
+			Opa5.extendConfig({
+				appParams: {
+					key: "value"
+				}
+			});
+		},
+		afterEach: function () {
+			Opa5.resetConfig();
+		}
+	});
 
 	QUnit.test("Should start a component with app params", function(assert) {
-		// System under Test
 		var fnDone = assert.async();
 		var oOpa5 = new Opa5();
-
-		Opa5.extendConfig({
-			appParams: {
-				key: "value"
-			}
-		});
 
 		oOpa5.iStartMyUIComponent({
 			componentConfig: {
@@ -89,81 +96,53 @@ sap.ui.define([
 
 		oOpa5.waitFor({
 			success: function () {
-				// should not check for while appParams object
-				// as the test itself could be started with some params
-				var oUriParams = new URI(window.location.href).search(true);
-				assert.strictEqual(oUriParams.key, "value",
-					"App param should be presented");
-			}
+				var oUriParams = new URI().search(true);
+				assert.strictEqual(oUriParams.key, "value", "Should include params from OPA config");
+				for (var sKey in this.mOriginalSearch) {
+					assert.strictEqual(oUriParams[sKey], this.mOriginalSearch[sKey], "Should include initial param " + sKey);
+				}
+			}.bind(this)
 		});
 
 		oOpa5.iTeardownMyApp();
 
 		Opa5.emptyQueue().done(function () {
-			Opa5.resetConfig();
+			var oUriParams = new URI().search(true);
+			assert.ok(!oUriParams.key, "Should remove params from OPA config");
+			for (var sKey in this.mOriginalSearch) {
+				assert.strictEqual(oUriParams[sKey], this.mOriginalSearch[sKey], "Should not remove initial params");
+			}
 			fnDone();
-		});
+		}.bind(this));
 	});
 
-	QUnit.test("Should start an IFrame with app params", function(assert) {
-		// System under Test
-		var fnDone = assert.async();
-		var oOpa5 = new Opa5();
+	[EMPTY_SITE_URL, [EMPTY_SITE_URL]].forEach(function (vUrl) {
+		QUnit.test("Should start an IFrame with app params and source " + vUrl, function(assert) {
+			var fnDone = assert.async();
+			var oOpa5 = new Opa5();
 
-		Opa5.extendConfig({
-			appParams: {
-				key: "value"
-			}
-		});
+			oOpa5.iStartMyAppInAFrame(vUrl);
 
-		oOpa5.iStartMyAppInAFrame(EMPTY_SITE_URL);
+			oOpa5.waitFor({
+				success: function () {
+					var oUriParams = new URI(Opa5.getWindow().location.href).search(true);
+					assert.strictEqual(oUriParams.key, "value", "Should include params from OPA config");
+					for (var sKey in this.mOriginalSearch) {
+						assert.strictEqual(oUriParams[sKey], this.mOriginalSearch[sKey], "Should include initial param " + sKey);
+					}
+				}
+			});
 
-		oOpa5.waitFor({
-			success: function () {
-				// should not check for while appParams object
-				// as the test itself could be started with some params
-				var oUriParams = new URI(Opa5.getWindow().location.href).search(true);
-				assert.strictEqual(oUriParams.key, "value",
-					"App param should be presented");
-			}
-		});
+			oOpa5.iTeardownMyApp();
 
-		oOpa5.iTeardownMyApp();
-
-		Opa5.emptyQueue().done(function () {
-			Opa5.resetConfig();
-			fnDone();
-		});
-	});
-
-	QUnit.test("Should start an IFrame with app params and non-string uri", function(assert) {
-		// System under Test
-		var fnDone = assert.async();
-		var oOpa5 = new Opa5();
-
-		Opa5.extendConfig({
-			appParams: {
-				key: "value"
-			}
-		});
-
-		oOpa5.iStartMyAppInAFrame([EMPTY_SITE_URL]);
-
-		oOpa5.waitFor({
-			success: function () {
-				// should not check for while appParams object
-				// as the test itself could be started with some params
-				var oUriParams = new URI(Opa5.getWindow().location.href).search(true);
-				assert.strictEqual(oUriParams.key, "value",
-					"App param should be presented");
-			}
-		});
-
-		oOpa5.iTeardownMyApp();
-
-		Opa5.emptyQueue().done(function () {
-			Opa5.resetConfig();
-			fnDone();
+			Opa5.emptyQueue().done(function () {
+				var oUriParams = new URI().search(true);
+				assert.ok(!oUriParams.key, "Should remove params from OPA config");
+				for (var sKey in this.mOriginalSearch) {
+					assert.strictEqual(oUriParams[sKey], this.mOriginalSearch[sKey], "Should not remove initial params");
+				}
+				fnDone();
+			});
 		});
 	});
 

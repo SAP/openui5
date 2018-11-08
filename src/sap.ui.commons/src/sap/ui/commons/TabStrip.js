@@ -466,7 +466,7 @@ sap.ui.define([
 
 		// get focused index and visible index of tab
 		var iFocusedIndex = this.oItemNavigation.getFocusedIndex();
-		var iVisibleIndex = parseInt(oTab.$().attr("aria-posinset"), 10) - 1;
+		var iVisibleIndex = parseInt(oTab.$().attr("aria-posinset")) - 1;
 		var sFocusedControlId = sap.ui.getCore().getCurrentFocusedControlId();
 
 		// delete only tab from DOM ->no rerendering of other tabs necessary

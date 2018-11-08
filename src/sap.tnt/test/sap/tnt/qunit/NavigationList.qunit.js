@@ -443,19 +443,28 @@ sap.ui.define([
 	});
 
 	QUnit.test("click group expander", function (assert) {
+		// arrange
+		this.clock.restore(); // use real timeouts for this test
+		var done = assert.async();
 
+		// assert
 		assert.ok(jQuery(this.navigationList.$().children()[0].children[1]).hasClass('sapTntNavLIHiddenGroupItems') == false, "sapTntNavLIHiddenGroupItems class is not set");
 
-		// var $groupIcon = jQuery('.sapTntNavLI .sapTntNavLIExpandIcon').first();
-		//
-		// $groupIcon.trigger('tap');
-		//
-		// sap.ui.getCore().applyChanges();
-		//
-		// // wait 500ms
-		// this.clock.tick(500);
-		//
-		// assert.ok(jQuery(this.navigationList.$().children()[0].children[1]).hasClass('sapTntNavLIHiddenGroupItems'), "sapTntNavLIHiddenGroupItems class is set");
+		// arrange
+		var $groupIcon = jQuery('.sapTntNavLI .sapTntNavLIExpandIcon').first();
+
+		// act
+		$groupIcon.trigger('tap');
+
+		sap.ui.getCore().applyChanges();
+
+		setTimeout(function () {
+			// assert
+			assert.ok(jQuery(this.navigationList.$().children()[0].children[1]).hasClass('sapTntNavLIHiddenGroupItems'), "sapTntNavLIHiddenGroupItems class is set");
+
+			done();
+		}.bind(this), 1000);
+
 	});
 
 	QUnit.test("select group", function (assert) {

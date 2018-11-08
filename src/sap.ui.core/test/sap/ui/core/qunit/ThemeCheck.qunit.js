@@ -39,7 +39,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/ThemeCheck"], function(Device, Them
 		var aLibraryCss = aLibraries.map(function(lib) {
 			return {
 				name: lib,
-				domRef: jQuery.sap.domById("sap-ui-theme-" + lib)
+				domRef: document.getElementById("sap-ui-theme-" + lib)
 			};
 		});
 
@@ -63,7 +63,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/ThemeCheck"], function(Device, Them
 
 	function testThemeLoaded(assert) {
 		aLibraries.forEach(function(lib) {
-			var oLibraryCss = jQuery.sap.domById("sap-ui-theme-" + lib);
+			var oLibraryCss = document.getElementById("sap-ui-theme-" + lib);
 			var sSheetHref = getSheetHref(oLibraryCss);
 			assert.equal(sSheetHref, oLibraryCss.href, "href of loaded " + lib + " stylesheet should be equal with link href.");
 		});
@@ -101,7 +101,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/ThemeCheck"], function(Device, Them
 			testThemeCheckCleanup(assert);
 
 			// Check if the custom.css has been included
-			var oCustomCss = jQuery.sap.domById("sap-ui-core-customcss");
+			var oCustomCss = document.getElementById("sap-ui-core-customcss");
 			if (!oCustomCss) {
 				assert.ok(false, "Custom CSS file hasn't been included");
 			} else {
@@ -127,7 +127,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/ThemeCheck"], function(Device, Them
 			testThemeCheckCleanup(assert);
 
 			// Check if the custom.css has been included
-			var oCustomCss = jQuery.sap.domById("sap-ui-core-customcss");
+			var oCustomCss = document.getElementById("sap-ui-core-customcss");
 			if (!oCustomCss) {
 				assert.ok(false, "Custom CSS file hasn't been included");
 			} else {
@@ -153,7 +153,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/ThemeCheck"], function(Device, Them
 			testThemeCheckCleanup(assert);
 
 			// Check if the custom.css has been included
-			var oCustomCss = jQuery.sap.domById("sap-ui-core-customcss");
+			var oCustomCss = document.getElementById("sap-ui-core-customcss");
 			assert.strictEqual(oCustomCss, null, "Custom CSS file should not be included.");
 
 			done();
@@ -165,7 +165,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/ThemeCheck"], function(Device, Them
 
 		sap.ui.getCore().getConfiguration().setRTL(true);
 		aLibraries.forEach(function(lib) {
-			var oLibraryCss = jQuery.sap.domById("sap-ui-theme-" + lib);
+			var oLibraryCss = document.getElementById("sap-ui-theme-" + lib);
 			assert.ok(oLibraryCss, "Link for " + lib + " stylesheet should be available.");
 			var oOldLibraryCss = document.querySelectorAll("link[data-sap-ui-foucmarker='sap-ui-theme-" + lib + "']");
 			assert.equal(oOldLibraryCss && oOldLibraryCss.length || 0, 0, "Old stylesheet for library " + lib + " has been removed.");
@@ -185,7 +185,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/ThemeCheck"], function(Device, Them
 			done();
 		});
 
-		sap.ui.getCore().loadLibrary("sap.ui.customthemefallback.testlib");
+		sap.ui.getCore().loadLibrary("sap.ui.customthemefallback.testlib", {async: true});
 	});
 
 	QUnit.test("sap.ui.getCore().loadLibraries()", function(assert) {

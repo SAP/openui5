@@ -91,8 +91,8 @@ sap.ui.define(['sap/ui/Device'], function(Device) {
 			if (rParserError.test(sErrorText)) {
 				oParseError.reason = RegExp.$1;
 				oParseError.url = RegExp.$2;
-				oParseError.line = parseInt(RegExp.$3, 10);
-				oParseError.linepos = parseInt(RegExp.$4, 10);
+				oParseError.line = parseInt(RegExp.$3);
+				oParseError.linepos = parseInt(RegExp.$4);
 				oParseError.srcText = RegExp.$5;
 
 			}
@@ -109,8 +109,8 @@ sap.ui.define(['sap/ui/Device'], function(Device) {
 			if (rParserError.test(sErrorText)) {
 				oParseError.reason = RegExp.$4;
 				oParseError.url = "";
-				oParseError.line = parseInt(RegExp.$2, 10);
-				oParseError.linepos = parseInt(RegExp.$3, 10);
+				oParseError.line = parseInt(RegExp.$2);
+				oParseError.linepos = parseInt(RegExp.$3);
 				oParseError.srcText = "";
 				oParseError.type = RegExp.$1;
 

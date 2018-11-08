@@ -8,9 +8,13 @@ function($, Core) {
 		TABLET: 1024,
 		PHONE: 600,
 		DESKTOP: 2000
-	};
-
-	var MEDIA = {
+	},
+	MEDIA = {
+		PHONE: "sapUxAPObjectPageLayout-Std-Phone",
+		TABLET: "sapUxAPObjectPageLayout-Std-Tablet",
+		DESKTOP: "sapUxAPObjectPageLayout-Std-Desktop"
+	},
+	DYNAMIC_HEADERS_MEDIA = {
 		PHONE: "sapFDynamicPage-Std-Phone",
 		TABLET: "sapFDynamicPage-Std-Tablet",
 		DESKTOP: "sapFDynamicPage-Std-Desktop"
@@ -111,26 +115,35 @@ function($, Core) {
 	});
 
 	QUnit.test("ObjectPage _updateMedia: correct media class is applied", function (assert) {
-		assert.expect(9);
+		assert.expect(18);
 
 		var oObjectPage = this.referencedObjectPage2,
-			fnCheckMediaClasses = function(oAssert, sMediaClass) {
-				Object.keys(MEDIA).forEach(function (sMedia) {
-					var sCurrentMediaClass = MEDIA[sMedia],
+			fnCheckMediaClasses = function(sMediaClass, oMedia) {
+				Object.keys(oMedia).forEach(function (sMedia) {
+					var sCurrentMediaClass = oMedia[sMedia],
 						bMediaShouldBeApplied = sMediaClass === sCurrentMediaClass;
 
-					oAssert.strictEqual(oObjectPage.hasStyleClass(sCurrentMediaClass), bMediaShouldBeApplied, sCurrentMediaClass + " is applied: " + bMediaShouldBeApplied);
+					assert.strictEqual(oObjectPage.hasStyleClass(sCurrentMediaClass), bMediaShouldBeApplied, sCurrentMediaClass + " is applied: " + bMediaShouldBeApplied);
 				}, this);
 			};
 
-		oObjectPage._updateMedia(BREAK_POINTS.PHONE);
-		fnCheckMediaClasses(assert, MEDIA.PHONE);
+		oObjectPage._updateMedia(BREAK_POINTS.PHONE, MEDIA);
+		fnCheckMediaClasses(MEDIA.PHONE, MEDIA);
 
-		oObjectPage._updateMedia(BREAK_POINTS.TABLET);
-		fnCheckMediaClasses(assert, MEDIA.TABLET);
+		oObjectPage._updateMedia(BREAK_POINTS.TABLET, MEDIA);
+		fnCheckMediaClasses(MEDIA.TABLET, MEDIA);
 
-		oObjectPage._updateMedia(BREAK_POINTS.DESKTOP);
-		fnCheckMediaClasses(assert, MEDIA.DESKTOP);
+		oObjectPage._updateMedia(BREAK_POINTS.DESKTOP, MEDIA);
+		fnCheckMediaClasses(MEDIA.DESKTOP, MEDIA);
+
+		oObjectPage._updateMedia(BREAK_POINTS.PHONE, DYNAMIC_HEADERS_MEDIA);
+		fnCheckMediaClasses(DYNAMIC_HEADERS_MEDIA.PHONE, DYNAMIC_HEADERS_MEDIA);
+
+		oObjectPage._updateMedia(BREAK_POINTS.TABLET, DYNAMIC_HEADERS_MEDIA);
+		fnCheckMediaClasses(DYNAMIC_HEADERS_MEDIA.TABLET, DYNAMIC_HEADERS_MEDIA);
+
+		oObjectPage._updateMedia(BREAK_POINTS.DESKTOP, DYNAMIC_HEADERS_MEDIA);
+		fnCheckMediaClasses(DYNAMIC_HEADERS_MEDIA.DESKTOP, DYNAMIC_HEADERS_MEDIA);
 	});
 
 	QUnit.module("ObjectPage with DynamicHeaderTitle", {

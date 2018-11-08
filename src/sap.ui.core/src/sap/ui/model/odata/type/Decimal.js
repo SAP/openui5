@@ -85,7 +85,7 @@ sap.ui.define([
 		}
 
 		function validateInt(vValue, iDefault, iMinimum, sName) {
-			var iValue = typeof vValue === "string" ? parseInt(vValue, 10) : vValue;
+			var iValue = typeof vValue === "string" ? parseInt(vValue) : vValue;
 
 			if (iValue === undefined) {
 				return iDefault;

@@ -1,0 +1,65 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:l="sap.ui.layout"
+    controllerName="sap.f.cardsdemo.controller.Zflow"
+    displayBlock="true">
+
+	<Page title="{i18n>appTitle}">
+
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="Using Z-flow configuration sap.ui.layout.cssgrid.CSSGrid"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<content>
+
+			<Panel expandable="true" headerText="Notes">
+				<VBox>
+					<Text text="The cards fit their container."/>
+				</VBox>
+			</Panel>
+
+			<Panel>
+				<l:Splitter height="600px">
+					<l:Splitter orientation="Vertical">
+						<f:Card id="default2x2"
+							icon="sap-icon://accept"
+							title="Card Title 2x2"
+							subtitle="Card Subtitle"
+							status="Count"
+							fitContainer="true"/>
+
+						<f:Card id="default4x2withcomponent"
+							icon="sap-icon://accept"
+							title="Card Title  4x2"
+							subtitle="Card Subtitle"
+							status="Count"
+							component="sap.f.cardsdemo.cardcontent.listcomponent"
+							fitContainer="true"/>
+					</l:Splitter>
+					<l:Splitter orientation="Vertical">
+						<f:Card id="default1x1"
+							icon="sap-icon://accept"
+							title="Card Title 1x1"
+							subtitle="Card Subtitle"
+							status="Count"
+							fitContainer="true"/>
+
+						<f:Card id="default2x1"
+							icon="sap-icon://accept"
+							title="Card Title 2x1"
+							subtitle="Card Subtitle"
+							status="Count"
+							fitContainer="true"/>
+					</l:Splitter>
+				</l:Splitter>
+			</Panel>
+		</content>
+	</Page>
+</mvc:View>

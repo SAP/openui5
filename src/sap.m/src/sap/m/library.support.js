@@ -9,11 +9,15 @@ sap.ui.define([
 	"./rules/Breadcrumbs.support",
 	"./rules/Button.support",
 	"./rules/CheckBox.support",
+	"./rules/DatePicker.support",
+	"./rules/DateRangeSelection.support",
 	"./rules/Dialog.support",
+	"./rules/FacetFilter.support",
 	"./rules/IconTabBar.support",
 	"./rules/Image.support",
 	"./rules/Input.support",
 	"./rules/Link.support",
+	"./rules/MaskInput.support",
 	"./rules/MessagePage.support",
 	"./rules/ObjectHeader.support",
 	"./rules/ObjectListItem.support",
@@ -22,20 +26,26 @@ sap.ui.define([
 	"./rules/Panel.support",
 	"./rules/Select.support",
 	"./rules/SelectDialog.support",
+	"./rules/StepInput.support",
 	"./rules/Table.support",
 	"./rules/Title.support",
-	"./rules/Tokenizer.support"
+	"./rules/Tokenizer.support",
+	"./rules/ViewSettingsDialog.support"
 ],
 	function(
 		SupportLib,
 		BreadcrumbsSupport,
 		ButtonSupport,
 		CheckBoxSupport,
+		DatePickerSupport,
+		DateRangeSelectionSupport,
 		DialogSupport,
+		FacetFilterSupport,
 		IconTabBarSupport,
 		ImageSupport,
 		InputSupport,
 		LinkSupport,
+		MaskInputSupport,
 		MessagePageSupport,
 		ObjectHeaderSupport,
 		ObjectListItemSupport,
@@ -44,9 +54,11 @@ sap.ui.define([
 		PanelSupport,
 		SelectSupport,
 		SelectDialogSupport,
+		StepInputSupport,
 		TableSupport,
 		TitleSupport,
-		TokenizerSupport
+		TokenizerSupport,
+		ViewSettingsDialogSupport
 	) {
 	"use strict";
 
@@ -57,11 +69,15 @@ sap.ui.define([
 			BreadcrumbsSupport,
 			ButtonSupport,
 			CheckBoxSupport,
+			DatePickerSupport,
+			DateRangeSelectionSupport,
 			DialogSupport,
+			FacetFilterSupport,
 			IconTabBarSupport,
 			ImageSupport,
 			InputSupport,
 			LinkSupport,
+			MaskInputSupport,
 			MessagePageSupport,
 			ObjectHeaderSupport,
 			ObjectListItemSupport,
@@ -70,9 +86,11 @@ sap.ui.define([
 			PanelSupport,
 			SelectSupport,
 			SelectDialogSupport,
+			StepInputSupport,
 			TableSupport,
 			TitleSupport,
-			TokenizerSupport
+			TokenizerSupport,
+			ViewSettingsDialogSupport
 		]
 	};
 

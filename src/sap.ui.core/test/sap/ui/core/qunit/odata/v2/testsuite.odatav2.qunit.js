@@ -33,28 +33,33 @@ sap.ui.define(function() {
 				title: "sap.ui.model.odata.v2.ODataTreeBinding - QUnit tests",
 				path: {
 					"mockdata": "test-resources/sap/ui/core/qunit/model"
-				}
+				},
+				sinon: 1 // because MockServer is used which has a hard dependency to sinon V1
 			},
 			ODataV2TreeBindingFlat_MockSrv: {
-				title: "sap.ui.model.odata.ODataTreeBindingFlat - MockServer based QUnit tests"
+				title: "sap.ui.model.odata.ODataTreeBindingFlat - MockServer based QUnit tests",
+				sinon: 1 // because MockServer is used which has a hard dependency to sinon V1
 			},
 			ODataV2TreeBindingFlat_FakeSrv: {
 				title: "sap.ui.model.odata.ODataTreeBindingFlat - Fake service QUnit tests"
 			},
 			V2ODataModel: {
 				title: "sap.ui.model.odata.v2.ODataModel - Mockserver QUnit tests",
+				sinon: 1, // because MockServer is used which has a hard dependency to sinon V1
 				ui5: {
 					language: "en-US"
 				}
 			},
 			V2ODataModelB: {
 				title: "sap.ui.model.odata.v2.ODataModel - Mockserver QUnit tests",
+				sinon: 1, // because MockServer is used which has a hard dependency to sinon V1
 				ui5: {
 					language: "en-US"
 				}
 			},
 			V2ODataModelDataState: {
 				title: "sap.ui.model.DataState - v2.Model Datastate QUnit tests",
+				sinon: 1, // because MockServer is used which has a hard dependency to sinon V1
 				ui5: {
 					language: "en"
 				}

@@ -53,14 +53,19 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeXML", "sap/ui/core/Icon
             var mSizeSettings = CardRenderer.getSizeSettings(oCard),
                 vRaster = oCard.getRaster(),
                 iHorizontalSize = oCard.getHorizontalSize(),
-                iVerticalSize = oCard.getVerticalSize();
+				iVerticalSize = oCard.getVerticalSize(),
+				bFitContainer = oCard.getFitContainer();
 
             oRm.write("<section");
             oRm.writeElementData(oCard);
             oRm.writeAttributeEscaped("aria-label", oCard.getTitle() + "-" + oCard.getSubtitle());
             oRm.writeAttribute("tabindex", "0");
-            oRm.addClass("sapFCard");
-            oRm.addClass("sapFCard" + iHorizontalSize + "x" + iVerticalSize);
+			oRm.addClass("sapFCard");
+			if (bFitContainer) {
+                oRm.addClass("sapFCardFitContainer");
+			} else {
+				oRm.addClass("sapFCard" + iHorizontalSize + "x" + iVerticalSize);
+			}
             if (oCard.getBusy()) {
                 oRm.addClass("sapFCardLoading");
             }
@@ -69,15 +74,17 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeXML", "sap/ui/core/Icon
             }
             oRm.writeClasses();
 
-            if (vRaster === "CSSGrid") {
-                oRm.addStyle("grid-column", "span " + iHorizontalSize);
-                oRm.addStyle("grid-row", "span " + iVerticalSize);
-            } else {
-                oRm.addStyle("min-width", "calc(" + iHorizontalSize + " * " + vRaster.minWidth + ")");
-                oRm.addStyle("min-height", "calc(" + iVerticalSize + " * " + vRaster.minHeight + ")");
-                oRm.addStyle("max-width", "calc(" + iHorizontalSize + " * " + vRaster.maxWidth + ")");
-                oRm.addStyle("max-height", "calc(" + iVerticalSize + " * " + vRaster.maxHeight + ")");
-            }
+			if (!bFitContainer) {
+				if (vRaster === "CSSGrid") {
+					oRm.addStyle("grid-column", "span " + iHorizontalSize);
+					oRm.addStyle("grid-row", "span " + iVerticalSize);
+				} else {
+					oRm.addStyle("min-width", "calc(" + iHorizontalSize + " * " + vRaster.minWidth + ")");
+					oRm.addStyle("min-height", "calc(" + iVerticalSize + " * " + vRaster.minHeight + ")");
+					oRm.addStyle("max-width", "calc(" + iHorizontalSize + " * " + vRaster.maxWidth + ")");
+					oRm.addStyle("max-height", "calc(" + iVerticalSize + " * " + vRaster.maxHeight + ")");
+				}
+			}
             //styles
             var sColor = oCard.getColor(),
                 sBackgroundColor = oCard.getBackgroundColor(),

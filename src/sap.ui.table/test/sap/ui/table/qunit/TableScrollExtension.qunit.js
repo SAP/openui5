@@ -656,7 +656,7 @@ sap.ui.define([
 
 		function getHeight(oElement) {
 			if (Device.browser.msie || Device.browser.edge) {
-				return parseInt(window.getComputedStyle(oElement).height, 10);
+				return parseInt(window.getComputedStyle(oElement).height);
 			} else {
 				return oElement.getBoundingClientRect().height;
 			}

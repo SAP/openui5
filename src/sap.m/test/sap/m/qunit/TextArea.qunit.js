@@ -112,8 +112,8 @@ sap.ui.define([
 				assert.equal($textarea.attr("rows"), props.rows, "TextArea has correct max rows : " + props.rows);
 				assert.equal($textarea.attr("cols"), props.cols, "TextArea has correct max cols : " + props.cols);
 				assert.equal($textarea.attr("maxLength"), props.maxLength, "TextArea has correct max length : " + props.maxLength);
-				assert.strictEqual($outer.outerWidth(), parseInt(props.width, 10), "TextArea has correct width : " + props.width);
-				assert.strictEqual($outer.outerHeight(), parseInt(props.height, 10), "TextArea has correct height : " + props.height);
+				assert.strictEqual($outer.outerWidth(), parseInt(props.width), "TextArea has correct width : " + props.width);
+				assert.strictEqual($outer.outerHeight(), parseInt(props.height), "TextArea has correct height : " + props.height);
 				assert.strictEqual($textarea.val(), sut.getValue(), "TextArea has correct value");
 			},
 			applySetters = function(setters) {

@@ -84,6 +84,7 @@ sap.ui.define([
 			"sap.m.ListType",
 			"sap.m.LoadState",
 			"sap.m.MenuButtonMode",
+			"sap.m.ObjectHeaderPictureShape",
 			"sap.m.OverflowToolbarPriority",
 			"sap.m.P13nPanelType",
 			"sap.m.PageBackgroundDesign",
@@ -2419,6 +2420,30 @@ sap.ui.define([
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
+	/**
+	 * Used by the <code>ObjectHeader</code> control to define which shape to use for the image.
+	 *
+	 * @author SAP SE
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration will also be described in the UI5 (legacy) designtime metamodel
+	 * @since 1.61
+	 */
+	thisLib.ObjectHeaderPictureShape = {
+
+		/**
+		 * Circle shape for the images in the <code>ObjectHeader</code>.
+		 * @public
+		 */
+		Circle: "Circle",
+
+		/**
+		 * Square shape for the images in the <code>ObjectHeader</code>.
+		 * @public
+		 */
+		Square: "Square"
+
+	};
 
 	/**
 	 * Type of panels used in the personalization dialog.

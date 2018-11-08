@@ -473,7 +473,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			var iRowIndex = 0;
-			if (oRowIndicator === parseInt(oRowIndicator, 10)) {
+			if (oRowIndicator === parseInt(oRowIndicator)) {
 				iRowIndex = oRowIndicator;
 			}
 

@@ -1,5 +1,5 @@
 /*global QUnit */
-sap.ui.define(["sap/ui/core/util/MockServer"], function (MockServer) {
+sap.ui.define(["sap/ui/core/util/MockServer", "jquery.sap.global"], function(MockServer, jQuery) {
 	"use strict";
 
 	QUnit.module("sap/ui/core/util/MockServer: given APF model and data in MockServer", {

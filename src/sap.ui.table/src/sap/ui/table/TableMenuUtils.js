@@ -272,7 +272,7 @@ sap.ui.define([
 							text: MenuUtils.TableUtils.getResourceText("TBL_FILTER")
 						});
 
-						oCellContextMenuItem._onSelect = function (oColumn, iRowIndex) {
+						oCellContextMenuItem._onSelect = function(oColumn, iRowIndex) {
 							// "this" is the table instance.
 							var oRowContext = this.getContextByIndex(iRowIndex);
 							var sFilterProperty = oColumn.getFilterProperty();

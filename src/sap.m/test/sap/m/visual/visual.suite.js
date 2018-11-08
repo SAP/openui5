@@ -18,6 +18,7 @@ module.exports = [
 	"HyphenationPlayground.spec.js",
 	"IconTabBar.spec.js",
 	"Image.spec.js",
+	"InputVisualTests.spec.js",
 	"Label.spec.js",
 	"LightBox.spec.js",
 	"Link.spec.js",

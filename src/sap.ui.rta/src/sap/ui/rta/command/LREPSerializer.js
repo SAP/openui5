@@ -120,7 +120,7 @@ sap.ui.define([
 							return;
 						}
 						if (oCommand instanceof FlexCommand){
-							var oAppComponent = oCommand.getAppComponent(true);
+							var oAppComponent = oCommand.getAppComponent();
 							if (oAppComponent) {
 								var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 								var oPreparedChange = oCommand.getPreparedChange();

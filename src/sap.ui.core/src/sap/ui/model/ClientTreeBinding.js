@@ -32,6 +32,11 @@ sap.ui.define([
 	 * @class
 	 * Tree binding implementation for client models.
 	 *
+	 * Please Note that a hierarchy's "state" (i.e. the information about expanded, collapsed, selected, and deselected nodes) may become
+	 * inconsistent when the structure of the model data is changed at runtime. This is because each node is identified internally by its
+	 * index position relative to its parent, plus its parent's ID. Therefore, inserting or removing a node in the model data will likely
+	 * lead to a shift in the index positions of other nodes, causing them to lose their state and/or to gain the state of another node.
+	 *
 	 * @alias sap.ui.model.ClientTreeBinding
 	 * @extends sap.ui.model.TreeBinding
 	 * @protected

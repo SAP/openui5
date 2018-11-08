@@ -1,0 +1,120 @@
+{
+	"_version": "1.8.0",
+	"sap.app": {
+		"id": "sap.f.cardsdemo",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+  	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.cardsdemo.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"minUI5Version": "1.30",
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.f.cardsdemo.i18n.i18n"
+				}
+			}
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "sap.f.cardsdemo.view",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"transition": "slide",
+				"bypassed": {
+					"target": "notFound"
+				},
+				"async": true
+			},
+			"routes": [{
+				"pattern": "",
+				"name": "appMain",
+				"target": "main"
+			}, {
+				"pattern": "grid",
+				"name": "grid",
+				"target": "grid"
+			}, {
+				"pattern": "zflow",
+				"name": "zflow",
+				"target": "zflow"
+			}, {
+				"pattern": "flexibleHeight",
+				"name": "flexibleHeight",
+				"target": "flexibleHeight"
+			}, {
+				"pattern": "splitter",
+				"name": "splitter",
+				"target": "splitter"
+			}, {
+				"pattern": "nolayout",
+				"name": "nolayout",
+				"target": "nolayout"
+			}],
+			"targets": {
+				"main": {
+					"viewId": "main",
+					"viewName": "Main",
+					"viewLevel": 1
+				},
+				"grid": {
+					"viewId": "grid",
+					"viewName": "Grid",
+					"viewLevel": 1
+				},
+				"zflow": {
+					"viewId": "zflow",
+					"viewName": "Zflow",
+					"viewLevel": 1
+				},
+				"flexibleHeight": {
+					"viewId": "flexibleHeight",
+					"viewName": "FlexibleHeight",
+					"viewLevel": 1
+				},
+				"splitter": {
+					"viewId": "splitter",
+					"viewName": "Splitter",
+					"viewLevel": 1
+				},
+				"nolayout": {
+					"viewId": "nolayout",
+					"viewName": "NoLayout",
+					"viewLevel": 1
+				},
+				"notFound": {
+					"viewId": "notFound",
+					"viewName": "NotFound",
+					"transition": "show"
+				}
+			}
+		}
+	}
+}

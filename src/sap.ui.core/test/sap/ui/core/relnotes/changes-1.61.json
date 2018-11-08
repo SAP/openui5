@@ -1,0 +1,25 @@
+{
+  "1.61.0": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "08c40843ca84d19de79a402b311376690775eda6",
+        "type": "FIX",
+        "text": " performance/trace/FESR: deal with unsupported window.Performance API",
+        "references": []
+      },
+      {
+        "id": "da57892154aec7ce634cdb4db6a90e38244280d9",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.odata4analytics#_renderPropertyFilterValue",
+        "references": []
+      },
+      {
+        "id": "9053b21ed36ca0afb88616ab877ba272da5c4864",
+        "type": "FIX",
+        "text": " Unit Type: Only parse and format valid values",
+        "references": []
+      }
+    ]
+  }
+}

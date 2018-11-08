@@ -55,9 +55,7 @@ function(
 
 			endHour: { type: "int", group: "Appearance", defaultValue: 17 },
 
-			showFullDay: { type: "boolean", group: "Appearance", defaultValue: true },
-
-			appointmentsVisualization : { type : "sap.ui.unified.CalendarAppointmentVisualization", group : "Appearance", defaultValue : sap.ui.unified.CalendarAppointmentVisualization.Standard }
+			showFullDay: { type: "boolean", group: "Appearance", defaultValue: true }
 
 		},
 
@@ -187,13 +185,6 @@ function(
 	OnePersonCalendar.prototype.setShowFullDay = function (bValue) {
 		this.setProperty("showFullDay", bValue, true);
 		this._getGrid().setProperty("showFullDay", bValue);
-
-		return this;
-	};
-
-	OnePersonCalendar.prototype.setAppointmentsVisualization = function (oValue) {
-		this.setProperty("appointmentsVisualization", oValue, true);
-		this._getGrid().setProperty("appointmentsVisualization", oValue);
 
 		return this;
 	};
@@ -427,11 +418,12 @@ function(
 	OnePersonCalendar.prototype._alignColumns = function (oView) {
 		var oDate = this.getStartDate() || new Date(),
 			oUniDate = new UniversalDate(UniversalDate.UTC(oDate.getFullYear(), oDate.getMonth(), oDate.getDate())),
+			oGrid = this._getGrid(),
 			oStartDate;
 
 		this._setSelectedDateToCalendar();
 		if (oView.getKey() === sap.m.OnePersonCalendarView.Day) {
-			this._getGrid()._setColumns(1);
+			oGrid._setColumns(1);
 			this._getHeader().setPickerText(this._formatPickerText(oUniDate));
 			this.getStartDate() ? this.setStartDate(this.getStartDate()) : this.setStartDate(new Date());
 		} else if (oView.getKey() === sap.m.OnePersonCalendarView.WorkWeek) {
@@ -441,17 +433,27 @@ function(
 
 			if (this.getStartDate() && this.getStartDate().getDay() === oLocaleData.getWeekendEnd()) {
 				this.getStartDate().setUTCDate(this.getStartDate().getUTCDate() + 1);
-				this._getGrid().setStartDate(this.getStartDate());
+				oGrid.setStartDate(this.getStartDate());
 			}
 			this.getStartDate() && this.setStartDate(this.getStartDate());
-			this._getGrid()._setColumns(5);
+			oGrid._setColumns(5);
 			oStartDate = this._getFirstAndLastWeekDate(oUniDate);
 			this._getHeader().setPickerText(this._formatPickerText(oStartDate.firstDate, oStartDate.lastDate));
 		} else if (oView.getKey() === sap.m.OnePersonCalendarView.Week) {
-			this._getGrid()._setColumns(7);
+			oGrid._setColumns(7);
 			this.getStartDate() && this.setStartDate(this.getStartDate());
 			oStartDate = this._getFirstAndLastWeekDate(oUniDate);
 			this._getHeader().setPickerText(this._formatPickerText(oStartDate.firstDate, oStartDate.lastDate));
+		}
+
+		this._setColumnHeaderVisibility(oView);
+	};
+
+	OnePersonCalendar.prototype._setColumnHeaderVisibility = function (oView) {
+		if (oView.getKey() === sap.m.OnePersonCalendarView.Day) {
+			this._getGrid()._getColumnHeaders().setVisible(false);
+		} else {
+			this._getGrid()._getColumnHeaders().setVisible(true);
 		}
 	};
 

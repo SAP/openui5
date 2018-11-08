@@ -311,12 +311,12 @@ sap.ui.define([
 			return this;
 		}
 
-		iMin = parseInt(iMin, 10);
+		iMin = parseInt(iMin);
 		if (isNaN(iMin) || iMin < 0 || iMin > 11) {
 			iMin = 0;
 		}
 
-		iMax = parseInt(iMax, 10);
+		iMax = parseInt(iMax);
 		if (isNaN(iMax) || iMax < 0 || iMax > 11) {
 			iMax = 11;
 		}
@@ -335,7 +335,7 @@ sap.ui.define([
 
 			for (var i = 0; i < aMonths.length; i++) {
 				var $DomRef = jQuery(aMonths[i]);
-				var iMonth = parseInt( $DomRef.attr("id").slice( iIDLength), 10);
+				var iMonth = parseInt( $DomRef.attr("id").slice( iIDLength));
 				if (iMonth < this._iMinMonth || iMonth > this._iMaxMonth) {
 					$DomRef.addClass("sapUiCalItemDsbl");
 					$DomRef.attr("aria-disabled", true);
@@ -354,7 +354,7 @@ sap.ui.define([
 
 		if (this.getMonths() < 12) {
 			var oFirstMonth = this._oItemNavigation.getItemDomRefs()[0];
-			return parseInt( oFirstMonth.id.slice( this.getId().length + 2), 10);
+			return parseInt( oFirstMonth.id.slice( this.getId().length + 2));
 		} else {
 			return 0;
 		}

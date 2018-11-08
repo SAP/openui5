@@ -52,6 +52,13 @@
 		}
 	}
 
+	// check for optimized sources
+	window["sap-ui-optimized"] = window["sap-ui-optimized"]
+		|| (/\.head/.test(loadScripts) && !/pending/.test(loadScripts));
+
+	// prevent a reboot in full debug mode as this would invalidate our listeners
+	window["sap-ui-debug-no-reboot"] = true;
+
 	// cascade 1: polyfills, can all be loaded in parallel
 	loadScripts([
 		"sap/ui/thirdparty/baseuri.js",
@@ -130,7 +137,7 @@
 
 		render(sLinkHTML).then(function() {
 			// Note: we use a 0.1 second timer resolution so that the blocking div disappears quickly
-			var count = 10 * (parseInt(utils.getAttribute("data-sap-ui-delay"), 10) || 2) + 9;
+			var count = 10 * (parseInt(utils.getAttribute("data-sap-ui-delay")) || 2) + 9;
 
 			function countDown() {
 				if ( count === 6 ) {

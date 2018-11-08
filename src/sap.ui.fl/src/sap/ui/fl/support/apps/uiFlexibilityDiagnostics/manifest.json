@@ -1,5 +1,5 @@
 {
-	"_version": "1.3.0",
+	"_version": "1.12.0",
 	"sap.app": {
 		"id": "sap.ui.fl.support.apps.uiFlexibilityDiagnostics",
 		"type": "application",

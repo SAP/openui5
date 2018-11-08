@@ -240,9 +240,9 @@ sap.ui.define(['./UniversalDate', "sap/base/Log"],
 
 	function parseDate(sDate) {
 		return {
-			year: parseInt(sDate.substr(0, 4), 10),
-			month: parseInt(sDate.substr(4, 2), 10),
-			day: parseInt(sDate.substr(6, 2), 10)
+			year: parseInt(sDate.substr(0, 4)),
+			month: parseInt(sDate.substr(4, 2)),
+			day: parseInt(sDate.substr(6, 2))
 		};
 	}
 

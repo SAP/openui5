@@ -221,6 +221,8 @@ function (
 					template : this.oItemTemplate
 				}
 			}).setModel(oModel);
+			this.oList.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.removeRegistryItem({controlType : "sap.m.List"});

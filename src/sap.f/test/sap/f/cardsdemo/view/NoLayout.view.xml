@@ -1,0 +1,136 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+    displayBlock="true">
+
+	<Page title="{i18n>appTitle}">
+
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="No layout provided (inline-block)"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<content>
+
+			<Panel expandable="true" headerText="Notes">
+				<VBox>
+					<Text text="There is no layout in this example. Cards wrap when there is not enough space."/>
+					<Text text="Every card has fixed width and height specified with a multiplier."/>
+					<Text text="A 2x1 card width would be 2*80px and height 1*80px."/>
+					<Text text="Margins are added by the cards."/>
+					<Text text="Empty spaces between the cards are not handled."/>
+					<Text text="No breathing."/>
+					<Text text="The app developer / card developer has to ensure the content is not bigger than the card itself"/>
+				</VBox>
+			</Panel>
+
+			<Panel>
+				<f:Card id="somedfault"
+					verticalSize="1"
+					horizontalSize="1"
+					icon="sap-icon://accept"
+					title="Card Title 1x1"
+					subtitle="Card Subtitle"
+					status="Count"/>
+
+				<f:Card id="default1x1"
+					verticalSize="1"
+					horizontalSize="1"
+					icon="sap-icon://accept"
+					title="Card Title 1x1"
+					subtitle="Card Subtitle"
+					status="Count"/>
+
+				<f:Card id="default2x1"
+					verticalSize="1"
+					horizontalSize="2"
+					icon="sap-icon://accept"
+					title="Card Title 2x1"
+					subtitle="Card Subtitle"
+					status="Count"/>
+
+				<f:Card id="default4x1"
+					verticalSize="1"
+					horizontalSize="4"
+					icon="sap-icon://accept"
+					title="Card Title  4x1"
+					subtitle="Card Subtitle"
+					status="Count"/>
+
+				<f:Card id="default2x2"
+					verticalSize="2"
+					horizontalSize="2"
+					icon="sap-icon://accept"
+					title="Card Title 2x2"
+					subtitle="Card Subtitle"
+					status="Count"/>
+
+				<f:Card id="default4x2"
+					verticalSize="2"
+					horizontalSize="4"
+					icon="sap-icon://accept"
+					title="Card Title  4x2"
+					subtitle="Card Subtitle"
+					status="Count"/>
+
+				<f:Card id="default4x4"
+					verticalSize="4"
+					horizontalSize="4"
+					icon="sap-icon://accept"
+					title="Card Title 4x4"
+					subtitle="Card Subtitle"
+					status="Count"/>
+
+				<f:Card id="default4x4Image"
+					verticalSize="4"
+					horizontalSize="4"
+					icon="../images/Woman_avatar_01.png"
+					title="Card Title 4x4 with image"
+					subtitle="Card Subtitle"
+					status="Count"/>
+
+				<f:Card id="default6x4"
+					verticalSize="4"
+					horizontalSize="6"
+					icon="sap-icon://accept"
+					title="Card Title 6x4"
+					subtitle="Card Subtitle"
+					status="Count"/>
+
+				<f:Card id="default6x4Busy"
+					verticalSize="4"
+					horizontalSize="6"
+					busy="true"
+					icon="sap-icon://accept"
+					title="Card Title 6x4 Loading State"
+					subtitle="Content Loading State and a truncated subtitle subtitle subtitle"
+					status="Count"/>
+
+				<f:Card id="default2x2Image"
+					verticalSize="2"
+					horizontalSize="2"
+					icon="sap-icon://accept"
+					backgroundImage="../images/Lamp_avatar_01.jpg"
+					backgroundImageSize="strech"
+					color="white"
+					iconBackgroundColor="rgba(255 255 255 0.3)"
+					title="Card with background image"
+					subtitle="Subtitle for the card"
+					status="Count"/>
+
+				<f:Card id="card6x6withcomponent"
+					verticalSize="6"
+					horizontalSize="6"
+					icon="sap-icon://accept"
+					title="Card with Component"
+					component="sap.f.cardsdemo.cardcontent.customcomponent"
+					subtitle="Card Component Container is created internally"
+					status=""/>
+			</Panel>
+		</content>
+	</Page>
+</mvc:View>

@@ -63,7 +63,7 @@ sap.ui.define(function() {
 				},
 				group: "Demokit Other Content",
 				module: [
-					"sap/ui/demo/basicTemplate/test/unit/allTests"
+					"sap/ui/demo/basicTemplate/test/unit/AllTests"
 				]
 			},
 			"demokit/cart/webapp/test/integration/opaTestsWithComponent": {
@@ -2166,14 +2166,20 @@ sap.ui.define(function() {
 				},
 				module: [
 					"./rules/Button.qunit",
+					"./rules/DatePicker.qunit",
+					"./rules/DateRangeSelection.qunit",
 					"./rules/Dialog.qunit",
+					"./rules/FacetFilter.qunit",
 					"./rules/IconTabBar.qunit",
 					"./rules/Input.qunit",
+					"./rules/MaskInput.qunit",
 					"./rules/ObjectHeader.qunit",
 					"./rules/ObjectListItem.qunit",
 					"./rules/ObjectMarker.qunit",
 					"./rules/ObjectStatus.qunit",
-					"./rules/Title.qunit"
+					"./rules/StepInput.qunit",
+					"./rules/Title.qunit",
+					"./rules/ViewSettingsDialog.qunit"
 				]
 			},
 			ScrollContainer: {
@@ -2505,10 +2511,10 @@ sap.ui.define(function() {
 					version: 2
 				},
 				sinon: {
-					version: 4
+					version: 1
 				},
 				coverage: {
-					only: "[sap/m/UploadCollection.js,sap/m/UploadCollectionParameter.js,sap/m/UploadCollectionToolbarPlaceholder.js,sap/m/UploadCollectionRenderer.js]"
+					only: "[sap/m/UploadCollection.js,sap/m/UploadCollectionParameter.js,sap/m/UploadCollectionToolbarPlaceholder.js,sap/m/UploadCollectionRenderer.js,sap/m/UploadCollectionItem.js]"
 				},
 				ui5: {
 					language: "en"
@@ -2519,23 +2525,11 @@ sap.ui.define(function() {
 					"./UploadCollectionItem.qunit",
 					"./UploadCollectionMemoryLeak.qunit",
 					"./UploadCollectionOpenFileDialog.qunit",
-					"./UploadCollectionToolbar.qunit"
+					"./UploadCollectionToolbar.qunit",
+					"./uploadCollection/UploadCollection.qunit",
+					"./uploadCollection/UploadCollectionItem.qunit",
+					"./uploadCollection/UploadCollectionRestrictions.qunit"
 				]
-			},
-			UploadCollectionItem: {
-				title: "Test Page for sap.m.UploadCollectionItem",
-				ui5: {
-					language: "en"
-				},
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
-				coverage: {
-					only: "sap/m/UploadCollectionItem.js"
-				}
 			},
 			VBox: {
 				title: "QUnit Page for sap.m.VBox"

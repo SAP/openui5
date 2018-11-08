@@ -6,14 +6,13 @@
 /* define the default raster for the card sizes for a certain theme */
 /* TODO: connect to the parameters for theme editor */
 /*       reuse the values also for the default raster of the cssgrid cells */
-/*       Is there also a js way to access this */ 
+/*       Is there also a js way to access this */
 .sapFCardDefaultRaster {
 	min-width: 5rem;
     min-height: 5rem;
     max-width: 5rem;
     max-height: 5rem;
 }
-
 .sapFCard {
     background: #fff;
     border-radius: 0.5rem;
@@ -28,6 +27,13 @@
     vertical-align: top;
     margin: 0.9rem 0 0 0.9rem; /*TODO: this should be controlled by the outer layout*/
     border: 1px dotted transparent;
+}
+.sapFCard.sapFCardFitContainer {
+	width: 100%;
+	height: 100%;
+	margin: 0 0 0 0;
+	box-shadow: none;
+	border: none;
 }
 .sapUiLayoutCSSGrid>.sapFCard {
     margin: 0; /*TODO: inside of a css grid the margin is actually controlled by the grid-gap property already (see TODO comment above), so removing margin here */
@@ -185,7 +191,6 @@ html.sap-desktop .sapFCard:focus {
     background-color: #fff;
     position: absolute;
     top: 4.5rem;
-    bottom:0;
     width: 100%;
     display: block;
 }

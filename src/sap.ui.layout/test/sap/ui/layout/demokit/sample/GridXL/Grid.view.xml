@@ -10,7 +10,7 @@
 			<Text text="{0/introText2}" class="sapUiTinyMarginBottom" />
 			<Text text="{0/introText3}" class="sapUiTinyMarginBottom" />
 		</l:VerticalLayout>
-		<Image src="resources/sap/ui/demokit/demoapps/img/demoAppsTeaser.png"
+		<Image src="resources/sap/ui/documentation/sdk/images/demoAppsTeaser.png"
 			densityAware="false" width="100%">
 			<layoutData>
 				<l:GridData visibleOnSmall="false" />

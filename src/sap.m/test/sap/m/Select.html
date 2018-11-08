@@ -456,6 +456,10 @@
 			text: "Only Icon type with auto adjustable width"
 		});
 
+		var oText7 = new sap.m.Text({
+			text: "Select which items have icons"
+		});
+
 		var oSelect1 = new sap.m.Select({
 			name: "select-name0",
 			items: [
@@ -884,6 +888,35 @@
 			}
 		});
 
+		var oSelect22 = new sap.m.Select({
+			autoAdjustWidth: true,
+			items: [
+				new sap.ui.core.ListItem({
+					key: "0",
+					text: "Bottom",
+					icon: "sap-icon://arrow-bottom"
+				}),
+
+				new sap.ui.core.ListItem({
+					key: "1",
+					text: "Left",
+					icon: "sap-icon://arrow-left"
+				}),
+
+				new sap.ui.core.ListItem({
+					key: "2",
+					text: "Right",
+					icon: "sap-icon://arrow-right"
+				}),
+
+				new sap.ui.core.ListItem({
+					key: "3",
+					text: "Top",
+					icon: "sap-icon://arrow-top"
+				})
+			]
+		});
+
 		// lists
 		var oList0 = new sap.m.List({
 			headerText: "Input List Item",
@@ -951,6 +984,9 @@
 
 				oText6,
 				oSelect12,
+
+				oText7,
+				oSelect22,
 
 				// other possible options
 				oLabel2,

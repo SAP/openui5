@@ -1037,7 +1037,7 @@ sap.ui.define([
 							var $Of = jQuery(oPosition.of);
 							var iOffset = 0;
 							if (oPosition.offset) {
-								iOffset = parseInt(oPosition.offset.split(" ")[0], 10);
+								iOffset = parseInt(oPosition.offset.split(" ")[0]);
 							}
 							$Ref.css("right", (jQuery(window).width() - $Of.outerWidth() - $Of.offset().left + iOffset) + "px");
 						}
@@ -1057,7 +1057,7 @@ sap.ui.define([
 						//Calculate the target height
 						var jListRef = jQuery(oList._lb.getDomRef());
 						var iListHeight = jListRef[0].scrollHeight + oList.$("exp").height() + jListRef.outerHeight() - jListRef.height() + 1;
-						var iMaxListHeight = jQuery(window).height() - parseInt(jListRef.offset().top, 10) + jQuery(window).scrollTop() - jListHeader.outerHeight();
+						var iMaxListHeight = jQuery(window).height() - parseInt(jListRef.offset().top) + jQuery(window).scrollTop() - jListHeader.outerHeight();
 						var iTargetHeight = Math.min(iListHeight, iMaxListHeight);
 						//Set the list as popup content and open the popup
 						oList._oPopup.setContent(jListContRef[0]);

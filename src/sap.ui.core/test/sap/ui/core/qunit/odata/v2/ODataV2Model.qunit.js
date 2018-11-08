@@ -4809,7 +4809,7 @@ sap.ui.define([
 				this.oModel.refreshSecurityToken();
 				this.oModel.create("/Categories(1)", {}, {
 					success: function() {
-						assert.ok(!resetSpy.called, "No reset, as token was explicitely refreshed before");
+						assert.ok(!resetSpy.called, "No reset, as token was explicitly refreshed before");
 						assert.ok(refreshSpy.calledTwice, "Token was fetched in explicit refresh call");
 						done();
 					}

@@ -136,6 +136,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Defines the event names which should be used by {@link sap.ui.core.routing.History} to track the hash changes
+	 *
+	 * @return {array} the event names
+	 * @protected
+	 */
+	HashChanger.prototype.getEventNamesForHistory = function() {
+		return ["hashChanged"];
+	};
+
+	/**
 	 * Cleans the event registration
 	 * @see sap.ui.base.Object.prototype.destroy
 	 * @protected

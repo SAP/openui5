@@ -5,7 +5,7 @@
 	"use strict";
 
 	var param = /(?:\?|&)sap-ui-qunitversion=(\d+)(?:&|$)/.exec(window.location.search);
-	var version = param && parseInt( param[1], 10 ) || 1;
+	var version = param && parseInt( param[1]) || 1;
 	switch ( version ) {
 	case 1:
 		jQuery.sap.require("sap.ui.thirdparty.qunit");

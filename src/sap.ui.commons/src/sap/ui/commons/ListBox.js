@@ -661,7 +661,7 @@ sap.ui.define([
 		}
 		var attr = jQuery(oSource).attr("data-sap-ui-lbx-index");
 		if (typeof attr == "string" && attr.length > 0) {
-			var iIndex = parseInt(attr, 10); // Get the selected index from the HTML
+			var iIndex = parseInt(attr); // Get the selected index from the HTML
 
 			var aItems = this.getItems();
 			var oItem = aItems[iIndex]; // oItem could be a separator, though!

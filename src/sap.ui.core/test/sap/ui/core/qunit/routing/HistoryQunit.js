@@ -27,6 +27,19 @@ sap.ui.define([
 		};
 	};
 
+	// Helper to abstract from Sinon 1 and Sinon 4
+	// (this module is used with both versions)
+	function stubWith(sandbox, object, property, value) {
+		if ( sinon.log ) {// sinon has no version property, but 'log' was removed with 2.x
+			return sandbox.stub(object, property, value);
+		} else if ( typeof value === "function" ) {
+			return sandbox.stub(object, property).callsFake(value);
+		} else {
+			return sandbox.stub(object, property).value(value);
+		}
+	}
+
+
 	QUnit.test("Should record a hash change", function(assert) {
 		//System under Test
 		var oHashChanger = HashChanger.getInstance();
@@ -443,6 +456,30 @@ sap.ui.define([
 		assert.strictEqual(sDirection, "Forwards", "After going back to foo, bar should be forwards");
 	});
 
+	QUnit.test("Should attach listener to each of the history relevant event names", function(assert) {
+		var oHashChanger = new HashChanger(),
+			aEventNames = ["foo", "bar"];
+
+		oHashChanger.getEventNamesForHistory = function() {
+			return aEventNames;
+		};
+
+		aEventNames.forEach(function(sEvent) {
+			assert.ok(!oHashChanger.hasListeners(sEvent), "HashChanger doesn't have listener for event " + sEvent + " before History is attached to it");
+		});
+		assert.ok(!oHashChanger.hasListeners("hashChanged"), "HashChanger doesn't have listener for event hashChanged");
+
+		var oHistory = new History(oHashChanger);
+
+		aEventNames.forEach(function(sEvent) {
+			assert.ok(oHashChanger.hasListeners(sEvent), "HashChanger has listener for event " + sEvent + " after History is attached to it");
+		});
+		assert.ok(!oHashChanger.hasListeners("hashChanged"), "HashChanger doesn't have listener for event hashChanged");
+
+		oHistory.destroy();
+		oHashChanger.destroy();
+	});
+
 	QUnit.module("history.state enhancement", {
 		beforeEach: function(assert) {
 			var that = this;
@@ -451,7 +488,7 @@ sap.ui.define([
 			// The fireEvent method nees to be stubbed instead of the fireHashChanged because the original
 			// fireHashChanged is already registered as an event handler to hasher at HashChanger.init and
 			// the stub of it here can't affect the hasher event handler anymore
-			this.oFireHashChangeStub = sinon.stub(this.oExtendedHashChanger, "fireEvent", function(sEventName, oParameter) {
+			this.oFireHashChangeStub = stubWith(sinon, this.oExtendedHashChanger, "fireEvent", function(sEventName, oParameter) {
 				if (sEventName === "hashChanged") {
 					if (that.fnBeforeFireHashChange) {
 						that.fnBeforeFireHashChange();
@@ -571,6 +608,29 @@ sap.ui.define([
 					assert.strictEqual(that.oHistory.getDirection(), "Unknown", "the direction should be Unknown");
 					oSpy.restore();
 				}
+			});
+		});
+	});
+
+	QUnit.test("Direction determination after a hash is replaced", function(assert) {
+		assert.expect(7);
+		var that = this;
+		return this.setup().then(function() {
+			return that.checkDirection(function() {
+				that.oExtendedHashChanger.replaceHash("replaced");
+			}, function(sHash) {
+				if (sHash === "replaced") {
+					assert.strictEqual(that.oHistory.getDirection(), "Unknown", "The direction should be Unknown after the hash is replaced");
+				}
+			});
+		}).then(function() {
+			that.oExtendedHashChanger.setHash("afterReplaced");
+			assert.strictEqual(that.oHistory.getDirection(), "NewEntry", "The direction is new entry");
+		}).then(function() {
+			return that.checkDirection(function() {
+				window.history.back();
+			}, function(sHash) {
+				assert.strictEqual(that.oHistory.getDirection(), "Backwards", "The direction should be Backwards");
 			});
 		});
 	});

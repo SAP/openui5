@@ -14,7 +14,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.sample.OData2.Controller", {
 
-		onInit : function () {
+		onInit : function() {
 			this.oMockServer = new MockServer({
 				rootUri : sServiceUrl
 			});
@@ -47,7 +47,7 @@ sap.ui.define([
 			});
 		},
 
-		onExit : function () {
+		onExit : function() {
 			this.oMockServer.destroy();
 			this.oMockServer = null;
 			MockServer.config({autoRespondAfter: 0});
@@ -73,7 +73,7 @@ sap.ui.define([
 				return null;
 			}
 
-			iLen = iLen ? parseInt(iLen, 10) : 10;
+			iLen = iLen ? parseInt(iLen) : 10;
 
 			if (iLen > 50) {
 				sColumnWidth = "15rem";

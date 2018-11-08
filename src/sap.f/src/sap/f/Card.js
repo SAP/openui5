@@ -9,16 +9,20 @@ sap.ui.define([
     "sap/ui/core/ComponentContainer",
     "sap/f/cards/CardComponent",
     "sap/base/Log",
+	"sap/ui/core/Core",
     "./CardRenderer"
 ], function(
     library,
     Control,
     ComponentContainer,
     CardContentComponent,
-    Log,
+	Log,
+	Core,
     CardRenderer
 ) {
     "use strict";
+
+	var _contentHeight = 0;
 
     /**
      * Constructor for a new <code>Card</code>.
@@ -150,8 +154,15 @@ sap.ui.define([
                  */
                 backgroundImageSize: {
                     type: "string"
-                }
-
+				},
+				fitContainer: {
+					type: "boolean",
+					defaultValue: false
+				},
+				automaticResize: {
+					type: "boolean",
+					defaultValue: false
+				}
             },
             aggregations: {
                 /**
@@ -177,7 +188,7 @@ sap.ui.define([
      * TODO: Use JS access to the less parameters instead
      */
     Card.prototype.getRaster = function () {
-        if (this.getParent().isA("sap.ui.layout.CSSGrid")) {
+        if (this.getParent().isA("sap.ui.layout.cssgrid.CSSGrid")) {
             return "CSSGrid";
         } else {
             if (!Card.defaultRaster) {
@@ -214,6 +225,14 @@ sap.ui.define([
         return this;
     };
 
+	Card.prototype.onBeforeRendering = function () {
+		this._deregisterContentResizeListener();
+	};
+
+	Card.prototype.exit = function () {
+		this._deregisterContentResizeListener();
+	};
+
     /**
      * Setters
      */
@@ -241,9 +260,48 @@ sap.ui.define([
                     oSubtitleDomRef.classList.remove("sapFCardTextScroll");
                 }
             }
-        }
+		}
 
-    };
+		if (!this.getFitContainer() && this.getAutomaticResize()) {
+			this._registerContentResizeListener();
+		}
+	};
+
+	Card.prototype._registerContentResizeListener = function () {
+		var oContent = this.$();
+		var oContentDomRef = oContent && oContent.closest("sapFCardContent");
+		if (!this.bRegistered && oContentDomRef) {
+			this.bRegistered = true;
+			Core.attachIntervalTimer(this._checkCardContentSizes, this);
+		}
+	};
+
+	Card.prototype._deregisterContentResizeListener = function () {
+		if (this.bRegistered) {
+			this.bRegistered = false;
+			Core.detachIntervalTimer(this._checkCardContentSizes, this);
+		}
+	};
+
+	Card.prototype._checkCardContentSizes = function () {
+		var iContentHeight = this.$().children(".sapFCardContent").outerHeight(true);
+		if (iContentHeight !== _contentHeight) {
+			_contentHeight = iContentHeight;
+			// TODO: Don't trigger resize all the time when height is changing. Maybe only once every 30ms.
+			this._onContentResize();
+		}
+	};
+
+	Card.prototype._onContentResize = function () {
+		var iCardHeight = 0;
+		iCardHeight += this.$().children(".sapFCardHeader").outerHeight(true);
+		iCardHeight += this.$().children(".sapFCardSeparator").outerHeight(true);
+		iCardHeight += this.$().children(".sapFCardContent").outerHeight(true);
+
+		if (iCardHeight > this.$().height()) {
+			this.setVerticalSize(this.getVerticalSize() + 1);
+		}
+	};
 
     Card.prototype.setTitle = function (sValue) {
         this.setProperty("title", sValue, true);

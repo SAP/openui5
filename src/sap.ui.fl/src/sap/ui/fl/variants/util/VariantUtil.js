@@ -56,8 +56,8 @@ sap.ui.define([
 				oHashChanger.attachEvent("hashChanged", VariantUtil._navigationHandler, this);
 
 				// de-register method to process hash changes
-				var fnOriginalDestroy = this.oComponent.destroy;
-				this.oComponent.destroy = function () {
+				var fnOriginalDestroy = this.oAppComponent.destroy;
+				this.oAppComponent.destroy = function () {
 					// deregister navigation filter if ushell is available
 					VariantUtil._setOrUnsetCustomNavigationForParameter.call(this, false);
 					// detach handler to check if hash was replaced
@@ -68,7 +68,7 @@ sap.ui.define([
 					this.oVariantController.resetMap();
 					// destroy VariantModel
 					this.destroy();
-					fnOriginalDestroy.apply(this.oComponent, arguments);
+					fnOriginalDestroy.apply(this.oAppComponent, arguments);
 				}.bind(this);
 
 				VariantUtil._navigationHandler.call(this);
@@ -87,7 +87,7 @@ sap.ui.define([
 			}
 			if (mPropertyBag.updateURL) {
 				flUtils.setTechnicalURLParameterValues(
-					mPropertyBag.component || this.oComponent,
+					mPropertyBag.component || this.oAppComponent,
 					sVariantParameterName,
 					mPropertyBag.parameters
 				);

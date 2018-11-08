@@ -5,9 +5,11 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/String",
 	"sap/ui/core/Control",
+	"sap/ui/core/UIComponent",
 	"sap/ui/model/Sorter",
-	"sap/ui/base/ManagedObjectMetadata"
-], function(ManagedObject, Element, JSONModel, StringType, Control, Sorter, ManagedObjectMetadata) {
+	"sap/ui/base/ManagedObjectMetadata",
+	"sap/base/strings/escapeRegExp"
+], function(ManagedObject, Element, JSONModel, StringType, Control, UIComponent, Sorter, ManagedObjectMetadata, escapeRegExp) {
 	"use strict";
 	var mObjects = {};
 
@@ -1240,7 +1242,7 @@ sap.ui.define([
 			}
 		});
 
-		var MyComponent = sap.ui.core.UIComponent.extend("MyComponent", {
+		var MyComponent = UIComponent.extend("MyComponent", {
 			createContent: function() {
 				this.oMyTemplate = new Element("template");
 				this.oMyRootControl = new MyControl({
@@ -1299,7 +1301,7 @@ sap.ui.define([
 		sinon.assert.calledWith(oLogSpy,
 			sinon.match(/templateShareable/) // msg should contain the term templateShareable
 			.and(sinon.match(/['"<]elements[>"']/)) // msg should contain the name of the aggregation
-			.and(sinon.match(new RegExp('[\'"<]' + jQuery.sap.escapeRegExp(this.obj.getId()) + '[>"\']'))) // and the name of the aggregating object
+			.and(sinon.match(new RegExp('[\'"<]' + escapeRegExp(this.obj.getId()) + '[>"\']'))) // and the name of the aggregating object
 		);
 		oLogSpy.restore();
 

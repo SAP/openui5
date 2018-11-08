@@ -87,7 +87,9 @@ function(
 
 			pressNext: {},
 
-			dateSelect: {}
+			dateSelect: {},
+
+			cancel: {}
 		}
 
 	}});
@@ -129,6 +131,10 @@ function(
 		});
 		this.oPicker = new Calendar(sOPHId + "-Cal");
 		this.oPicker.attachEvent("select", this._handlePickerDateSelect, this);
+		this.oPicker.attachEvent("cancel", function (oEvent) {
+			this.fireCancel();
+			this._oPopup.close();
+		}, this);
 		this.setAggregation("_picker", this.oPicker);
 		this.oPickerBtn = new Button(sNavToolbarId + "-PickerBtn", {
 			text: this.getPickerText(),
@@ -170,7 +176,13 @@ function(
 		}
 
 		if (this.oPickerBtn) {
+			this.oPickerBtn.destroy();
 			this.oPickerBtn = null;
+		}
+
+		if (this.oPicker) {
+			this.oPicker.destroy();
+			this.oPicker = null;
 		}
 	};
 

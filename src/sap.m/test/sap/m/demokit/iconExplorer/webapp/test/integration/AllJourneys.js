@@ -1,6 +1,6 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"./arrangements/Arrangement",
+	"./arrangements/Startup",
 	"sap/ui/demo/iconexplorer/localService/mockserver",
 	"sap/ui/test/opaQunit",
 	"./HomeJourney",
@@ -10,13 +10,13 @@ sap.ui.define([
 	"./NotFoundJourney",
 	"./FavoriteJourney",
 	"./SearchJourney"
-	], function (Opa5, Arrangement, mockserver) {
+	], function (Opa5, Startup, mockserver) {
 	"use strict";
 
 	mockserver.init();
 
 	Opa5.extendConfig({
-		arrangements: new Arrangement(),
+		arrangements: new Startup(),
 		viewNamespace: "sap.ui.demo.iconexplorer.view."
 	});
 });

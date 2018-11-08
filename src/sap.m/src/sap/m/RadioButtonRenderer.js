@@ -27,11 +27,12 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library', 'sap/ui/D
 		// get control properties
 		var sId = oRadioButton.getId();
 		var bEnabled = oRadioButton.getEnabled();
-		var bEditable = oRadioButton.getEditable();
-		var bReadOnly = !bEnabled || !bEditable;
+		var bNonEditableParent = !oRadioButton.getProperty("editableParent");
+		var bNonEditable = !oRadioButton.getEditable() || bNonEditableParent;
+		var bReadOnly = !bEnabled || bNonEditable;
 		var bInErrorState = ValueState.Error === oRadioButton.getValueState();
 		var bInWarningState = ValueState.Warning === oRadioButton.getValueState();
-		var bInHighlightState = ValueState.Highlight === oRadioButton.getValueState();
+		var bInInformationState = ValueState.Information === oRadioButton.getValueState();
 		var bUseEntireWidth = oRadioButton.getUseEntireWidth();
 
 		// Radio Button style class
@@ -54,9 +55,12 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library', 'sap/ui/D
 		// ARIA
 		oRm.writeAccessibilityState(oRadioButton, {
 			role: "radio",
+			posinset: oRadioButton.getProperty("posinset"),
+			setsize: oRadioButton.getProperty("setsize"),
+			readonly: bNonEditableParent || undefined,
 			selected: null, // Avoid output aria-selected
 			checked: oRadioButton.getSelected() === true ? true : undefined, // aria-checked=false is default value and must not be set explicitly
-			disabled: !oRadioButton.getEditable() ? true : undefined, // Avoid output aria-disabled=false when the button is editable
+			disabled: bNonEditable ? true : undefined, // Avoid output aria-disabled=false when the button is editable
 			labelledby: { value: sId + "-label", append: true },
 			describedby: { value: (sTooltipWithStateMessage ? sId + "-Descr" : undefined), append: true }
 		});
@@ -70,7 +74,7 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library', 'sap/ui/D
 			oRm.addClass("sapMRbDis");
 		}
 
-		if (!bEditable) {
+		if (bNonEditable) {
 			oRm.addClass("sapMRbRo");
 		}
 
@@ -82,8 +86,8 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library', 'sap/ui/D
 			oRm.addClass("sapMRbWarn");
 		}
 
-		if (bInHighlightState) {
-			oRm.addClass("sapMRbHighlight");
+		if (bInInformationState) {
+			oRm.addClass("sapMRbInfo");
 		}
 
 		oRm.writeClasses();

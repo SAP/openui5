@@ -96,18 +96,28 @@ sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log", "sap/ui/t
 	};
 
 	History.prototype._setHashChanger = function(oHashChanger) {
+		var aHashChangeEvents = oHashChanger.getEventNamesForHistory();
 		if (this._oHashChanger) {
 			this._unRegisterHashChanger();
 		}
 
 		this._oHashChanger = oHashChanger;
-		this._oHashChanger.attachEvent("hashChanged", this._onHashChange, this);
+
+		aHashChangeEvents.forEach(function(sEvent) {
+			this._oHashChanger.attachEvent(sEvent, this._onHashChange, this);
+		}.bind(this));
+
 		this._oHashChanger.attachEvent("hashReplaced", this._hashReplaced, this);
 		this._oHashChanger.attachEvent("hashSet", this._hashSet, this);
 	};
 
 	History.prototype._unRegisterHashChanger = function() {
-		this._oHashChanger.detachEvent("hashChanged", this._onHashChange, this);
+		var aHashChangeEvents = this._oHashChanger.getEventNamesForHistory();
+
+		aHashChangeEvents.forEach(function(sEvent) {
+			this._oHashChanger.detachEvent(sEvent, this._onHashChange, this);
+		}.bind(this));
+
 		this._oHashChanger.detachEvent("hashReplaced", this._hashReplaced, this);
 		this._oHashChanger.detachEvent("hashSet", this._hashSet, this);
 
@@ -238,6 +248,19 @@ sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log", "sap/ui/t
 		if (this._oNextHash && this._oNextHash.bWasReplaced && this._oNextHash.sHash === sNewHash) {
 			//Since a replace has taken place, the current history entry is also replaced
 			this.aHistory[this.iHistoryPosition] = sNewHash;
+
+			if (sFullHash !== undefined && !Device.browser.msie && this === History.getInstance()) {
+				// after the hash is replaced, the history state is cleared.
+				// We need to update the last entry in _aStateHistory and save the
+				// history back to the browser history state
+				History._aStateHistory[History._aStateHistory.length - 1] = sFullHash;
+				window.history.replaceState({
+					sap: {
+						history: History._aStateHistory
+					}
+				}, window.document.title);
+			}
+
 			this._oNextHash = null;
 			//reset the direction to Unknown when hash is replaced after history is already initialized
 			if (!this._bIsInitial) {

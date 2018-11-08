@@ -1,3 +1,4 @@
+/*global QUnit */
 sap.ui.define("fixture/multiple-modules-per-file/conflicting-named-defines", function() {
 	"use strict";
 	return {

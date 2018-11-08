@@ -74,7 +74,7 @@ sap.ui.define([
 					assert.strictEqual(oControl.getItems().length, Object.keys(oEnum).length, "right number of enum values");
 					Object.keys(oEnum).forEach(fnCheckEnumVals.bind(this, oControl));
 				} else if (aTypes[i1] === "int") {
-						vValue = parseInt(vValue, 10);
+						vValue = parseInt(vValue);
 				} else if (aTypes[i1] === "float") {
 						vValue = parseFloat(vValue);
 				}

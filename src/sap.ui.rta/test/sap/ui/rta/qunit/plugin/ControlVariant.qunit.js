@@ -228,8 +228,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("when _isEditable is called with VariantManagement overlay", function(assert) {
+			sandbox.spy(this.oControlVariantPlugin, "hasStableId");
 			var bEditable = this.oControlVariantPlugin._isEditable(this.oVariantManagementOverlay);
 			assert.ok(bEditable, "then VariantManagement overlay is editable");
+			assert.ok(this.oControlVariantPlugin.hasStableId.calledWith(this.oVariantManagementOverlay), "then the VariantManagement overlay was checked for a stable ID");
 		});
 
 		QUnit.test("when registerElementOverlay is called with VariantManagement control Overlay", function(assert) {
@@ -960,7 +962,7 @@ sap.ui.define([
 
 			var $editableControl = this.oVariantManagementOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oVariantManagementControl, vDomRef); /* Text control */
 			var $control = jQuery(this.oVariantManagementControl.getDomRef()); /* Main control */
-			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.$().outerWidth(), 10);
+			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.$().outerWidth());
 
 			$control.css({
 				"width": "10px",
@@ -978,7 +980,7 @@ sap.ui.define([
 				"position": "fixed"
 			});
 
-			var iWidthDiff = parseInt($control.outerWidth(), 10) - parseInt($editableControl.parent().outerWidth(), 10);
+			var iWidthDiff = parseInt($control.outerWidth()) - parseInt($editableControl.parent().outerWidth());
 			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 
 			var $editableWrapper = this.oVariantManagementOverlay.$().find(".sapUiRtaEditableField");
@@ -990,9 +992,9 @@ sap.ui.define([
 
 			var $editableControl = this.oVariantManagementOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oVariantManagementControl, vDomRef); /* Text control */
 			var $control = jQuery(this.oVariantManagementControl.getDomRef()); /* Main control */
-			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.$().innerWidth(), 10);
+			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.$().innerWidth());
 
-			var iWidthDiff = parseInt($control.outerWidth(), 10) - parseInt($editableControl.outerWidth(), 10);
+			var iWidthDiff = parseInt($control.outerWidth()) - parseInt($editableControl.outerWidth());
 			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 
 			var $editableWrapper = this.oVariantManagementOverlay.$().find(".sapUiRtaEditableField");
@@ -1015,7 +1017,7 @@ sap.ui.define([
 				"min-width": "20px",
 				"position": "fixed"
 			});
-			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.$().innerWidth(), 10);
+			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.$().innerWidth());
 
 			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 
@@ -1217,6 +1219,8 @@ sap.ui.define([
 				content: [this.oLayoutOuter, this.oObjectPageLayout]
 			}).placeAt("qunit-fixture");
 
+			sap.ui.getCore().applyChanges();
+
 			var oVariantManagementDesignTimeMetadata = {
 				"sap.ui.fl.variants.VariantManagement": {}
 			};
@@ -1312,6 +1316,9 @@ sap.ui.define([
 				"sap.ui.fl.variants.VariantManagement": {}
 			};
 
+			this.oVariantManagementControl.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+
 			this.oDesignTime = new DesignTime({
 				designTimeMetadata : oVariantManagementDesignTimeMetadata,
 				rootElements : [this.oVariantManagementControl]
@@ -1329,6 +1336,7 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			sandbox.restore();
+			this.oVariantManagementControl.destroy();
 			this.oDesignTime.destroy();
 			this.oData = null;
 			this.oModel.destroy();

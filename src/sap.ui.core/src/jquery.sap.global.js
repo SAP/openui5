@@ -1016,7 +1016,7 @@ sap.ui.define([
 		return m && m[1];
 	}()) || oCfgData.loglevel;
 	if ( oCfgData.loglevel ) {
-		Log.setLevel(Log.Level[oCfgData.loglevel.toUpperCase()] || parseInt(oCfgData.loglevel,10));
+		Log.setLevel(Log.Level[oCfgData.loglevel.toUpperCase()] || parseInt(oCfgData.loglevel));
 	}
 
 	Log.info("SAP Logger started.");
@@ -1492,7 +1492,10 @@ sap.ui.define([
 	 * @deprecated since 1.58 use native function <code>performance.getEntriesByType("resource")</code> instead
 	 */
 	jQuery.sap.measure.getRequestTimings = function() {
-		return window.performance.getEntriesByType("resource");
+		if (window.performance.getEntriesByType) {
+			return window.performance.getEntriesByType("resource");
+		}
+		return [];
 	};
 
 	/**

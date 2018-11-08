@@ -692,8 +692,8 @@ sap.ui.define([
 			} catch (e) {
 				childHeight = this.getDefaultItemHeight();
 			}
-			maxWidth = Math.max(maxWidth, parseInt(childWidth, 10));
-			maxHeight = Math.max(maxHeight, parseInt(childHeight, 10));
+			maxWidth = Math.max(maxWidth, parseInt(childWidth));
+			maxHeight = Math.max(maxHeight, parseInt(childHeight));
 		}
 
 		if (maxWidth == 0 || isNaN(maxWidth)) {

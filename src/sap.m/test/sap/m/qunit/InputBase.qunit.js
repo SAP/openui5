@@ -767,9 +767,9 @@ sap.ui.define([
 
 	fnSetValueStateTestCase1({
 		control: new InputBase({
-			valueState: ValueState.Highlight
+			valueState: ValueState.Information
 		}),
-		output: "sapMInputBaseContentWrapperHighlight"
+		output: "sapMInputBaseContentWrapperInformation"
 	});
 
 	fnSetValueStateTestCase1({
@@ -1188,7 +1188,7 @@ sap.ui.define([
 								break;
 
 							case 4:
-								oValueStateInput.setValueState("Highlight");
+								oValueStateInput.setValueState("Information");
 								break;
 						}
 					}
@@ -1225,15 +1225,15 @@ sap.ui.define([
 		assert.strictEqual(jQuery.sap.byId("vsinput-message-text").text(), oCoreRB.getText("VALUE_STATE_ERROR"));
 		assert.strictEqual(jQuery.sap.byId("vsinput-message").text(), oMobileRB.getText("INPUTBASE_VALUE_STATE_ERROR") + oCoreRB.getText("VALUE_STATE_ERROR"));
 
-		// highlight state
+		// information state
 		oValueStateInput.updateDomValue("1234");
 		sap.ui.test.qunit.triggerEvent("input", oValueStateInput.getFocusDomRef());
 		this.clock.tick(1000);
 		oValueStateInput.getValueState();
-		assert.strictEqual(oValueStateInput.getValueState(), "Highlight");
-		assert.ok(jQuery.sap.domById("vsinput-message"), "Highlight message popup is open");
-		assert.strictEqual(jQuery.sap.byId("vsinput-message-text").text(), oCoreRB.getText("VALUE_STATE_HIGHLIGHT"));
-		assert.strictEqual(jQuery.sap.byId("vsinput-message").text(), oMobileRB.getText("INPUTBASE_VALUE_STATE_HIGHLIGHT") + oCoreRB.getText("VALUE_STATE_HIGHLIGHT"));
+		assert.strictEqual(oValueStateInput.getValueState(), "Information");
+		assert.ok(jQuery.sap.domById("vsinput-message"), "Information message popup is open");
+		assert.strictEqual(jQuery.sap.byId("vsinput-message-text").text(), oCoreRB.getText("VALUE_STATE_INFORMATION"));
+		assert.strictEqual(jQuery.sap.byId("vsinput-message").text(), oMobileRB.getText("INPUTBASE_VALUE_STATE_INFORMATION") + oCoreRB.getText("VALUE_STATE_INFORMATION"));
 
 		// none state
 		oValueStateInput.updateDomValue("12345");
@@ -1833,8 +1833,8 @@ sap.ui.define([
 		oInput.setValueState(ValueState.Success);
 		assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Success does not make control invalid");
 
-		oInput.setValueState(ValueState.Highlight);
-		assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Highlight does not make control invalid");
+		oInput.setValueState(ValueState.Information);
+		assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Information does not make control invalid");
 
 		oInput.setValueState(ValueState.Error);
 		assert.strictEqual($Input.attr("aria-invalid"), "true", "valueState=Error makes control invalid");
@@ -2247,22 +2247,6 @@ sap.ui.define([
 		assert.strictEqual(fnOnInputBaseSpy.callCount, 1, "writeInnerId() is called");
 
 		// cleanup
-		oInputBase.destroy();
-	});
-
-	QUnit.test("Tabindex should be added to begin /end icons", function (assert) {
-		var oInputBase = new InputBase();
-		var mIconSettings = { src: "sap-icon://slim-arrow-down", noTabStop: true };
-		var mLeftNonFocusableIcon = mIconSettings;
-		var mRightNonFocusableIcon = mIconSettings;
-		var oLeftNonFocusableIcon = oInputBase.addBeginIcon(mLeftNonFocusableIcon);
-		var oRightNonFocusableIcon = oInputBase.addEndIcon(mRightNonFocusableIcon);
-
-		oInputBase.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		assert.strictEqual(oLeftNonFocusableIcon.getDomRef().getAttribute("tabindex"), "-1", "The tabindex of the button is set to -1");
-		assert.strictEqual(oRightNonFocusableIcon.getDomRef().getAttribute("tabindex"), "-1", "The tabindex of the button is set to -1");
 		oInputBase.destroy();
 	});
 });

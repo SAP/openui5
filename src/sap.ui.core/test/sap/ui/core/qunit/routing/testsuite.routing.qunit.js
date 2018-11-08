@@ -7,7 +7,7 @@ sap.ui.define(function(require) {
 		defaults: {
 			page: "test-resources/sap/ui/core/qunit/routing/RoutingTest.qunit.html?test={name}",
 			sinon: {
-				version: 1,
+				version: 4,
 				useFakeTimers: false
 			},
 			loader: {
@@ -37,24 +37,28 @@ sap.ui.define(function(require) {
 			"sync/Route": {
 				title: "QUnit Page for sap.ui.core.routing.Route (sync)",
 				sinon: {
+					version: 4, // Note: test manages clock on its own to allow use of sinon-4 and new bridge
 					useFakeTimers:true
 				}
 			},
 			"sync/Router": {
 				title: "QUnit Page for sap.ui.core.routing.Router (sync)",
 				sinon: {
+					version: 4, // Note: test manages clock on its own to allow use of sinon-4 and new bridge
 					useFakeTimers:true
 				}
 			},
 			"sync/Target": {
 				title: "QUnit Page for sap.ui.core.routing.Target (sync)",
 				sinon: {
+					version: 4, // Note: test manages clock on its own to allow use of sinon-4 and new bridge
 					useFakeTimers:true
 				}
 			},
 			"sync/Targets": {
 				title: "QUnit Page for sap.ui.core.routing.Targets (sync)",
 				sinon: {
+					version: 4, // Note: test manages clock on its own to allow use of sinon-4 and new bridge
 					useFakeTimers:true
 				}
 			},

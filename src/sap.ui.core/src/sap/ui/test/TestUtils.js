@@ -560,7 +560,7 @@ sap.ui.define([
 				oSandbox.add(oServer);
 				oServer.autoRespond = true;
 				if (sAutoRespondAfter) {
-					oServer.autoRespondAfter = parseInt(sAutoRespondAfter, 10);
+					oServer.autoRespondAfter = parseInt(sAutoRespondAfter);
 				}
 
 				// Send all requests except $batch through respondFromFixture

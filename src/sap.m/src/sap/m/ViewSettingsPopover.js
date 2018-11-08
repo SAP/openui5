@@ -727,7 +727,7 @@ sap.ui.define([
 			}
 
 			iButtonWidth = aSegmentedButtonAggregations[0].$().width();
-			iButtonMargin = parseInt(aSegmentedButtonAggregations[0].$().css('margin-right'), 10);
+			iButtonMargin = parseInt(aSegmentedButtonAggregations[0].$().css('margin-right'));
 			iButtonsLen = aSegmentedButtonAggregations.length;
 
 			if (library._bSizeCompact || !!document.querySelector('.sapUiSizeCompact')) {

@@ -23,6 +23,8 @@ sap.ui.define([
 	'./DialogRenderer',
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core",
+	"sap/ui/core/Configuration",
 	// jQuery Plugin "control"
 	"sap/ui/dom/jquery/control",
 	// jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
@@ -47,7 +49,9 @@ function(
 	TitlePropagationSupport,
 	DialogRenderer,
 	Log,
-	jQuery
+	jQuery,
+	Core,
+	Configuration
 ) {
 		"use strict";
 
@@ -59,6 +63,15 @@ function(
 
 		// shortcut for sap.ui.core.ValueState
 		var ValueState = coreLibrary.ValueState;
+
+
+		var sAnimationMode = Core.getConfiguration().getAnimationMode();
+		var bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
+
+		// the time should be longer the longest transition in the CSS (200ms),
+		// because of focusing and transition relate issues especially in IE,
+		// where 200ms transition sometimes seems to last a little longer
+		var iAnimationDuration = bUseAnimations ? 300 : 10;
 
 		/**
 		* Constructor for a new Dialog.
@@ -366,7 +379,7 @@ function(
 		Dialog._mIcons[ValueState.Success] = IconPool.getIconURI("message-success");
 		Dialog._mIcons[ValueState.Warning] = IconPool.getIconURI("message-warning");
 		Dialog._mIcons[ValueState.Error] = IconPool.getIconURI("message-error");
-		Dialog._mIcons[ValueState.Highlight] = IconPool.getIconURI("hint");
+		Dialog._mIcons[ValueState.Information] = IconPool.getIconURI("hint");
 
 		/* =========================================================== */
 		/*                  begin: Lifecycle functions                 */
@@ -571,6 +584,9 @@ function(
 
 			this.fireBeforeOpen();
 			oPopup.attachOpened(this._handleOpened, this);
+
+			// reset scroll fix check
+			this._iLastWidthAndHeightWithScroll = null;
 
 			// Open popup
 			oPopup.setContent(this);
@@ -782,7 +798,7 @@ function(
 			$Ref.addClass("sapMDialogOpen");
 
 			$Ref.css("display", "block");
-			setTimeout(fnOpened, 300); // the time should be longer the longest transition in the CSS (200ms), because of focusing and transition relate issues especially in IE where 200ms transition sometimes seems to last a little longer// TODO remove after 1.62 version
+			setTimeout(fnOpened, iAnimationDuration);
 		};
 
 		/**
@@ -795,7 +811,7 @@ function(
 		Dialog.prototype._closeAnimation = function ($Ref, iRealDuration, fnClose) {
 			$Ref.removeClass("sapMDialogOpen");
 
-			setTimeout(fnClose, 300);
+			setTimeout(fnClose, iAnimationDuration);
 		};
 
 		/**
@@ -920,8 +936,8 @@ function(
 				$dialogContent.scrollTop(dialogContentScrollTop);
 			}
 
-			// IE and EDGE have specific container behavior (e.g. div with 500px width is about 15px smaller when it has vertical scrollbar
-			if ((oBrowser.internet_explorer || oBrowser.edge)) {
+			// IE, EDGE and Firefox (when width is auto) have specific container behavior (e.g. div with 500px width is about 17px smaller when it has vertical scrollbar
+			if ((oBrowser.internet_explorer || oBrowser.edge || oBrowser.firefox)) {
 
 				var iVerticalScrollBarWidth = Math.ceil($dialogContent.outerWidth() - dialogClientWidth),
 					iCurrentWidthAndHeight = $dialogContent.width() + "x" + $dialogContent.height();
@@ -932,9 +948,11 @@ function(
 						!this.getStretch() && 							// - when the dialog is not stretched
 						$dialogContent.width() < maxDialogWidth) {		// - if the dialog can't grow anymore
 
+						$dialog.addClass("sapMDialogVerticalScrollIncluded");
 						$dialogContent.css({"padding-right" : iVerticalScrollBarWidth});
 						this._iLastWidthAndHeightWithScroll = iCurrentWidthAndHeight;
 					} else {
+						$dialog.removeClass("sapMDialogVerticalScrollIncluded");
 						$dialogContent.css({"padding-right" : ""});
 						this._iLastWidthAndHeightWithScroll = null;
 					}
@@ -1410,17 +1428,6 @@ function(
 			if (!this._oToolbar) {
 				this._oToolbar = new AssociativeOverflowToolbar(this.getId() + "-footer").addStyleClass("sapMTBNoBorders");
 
-				// When using phone we set _bForceRerenderOnResize property of
-				// the toolbar to true, in order to reset and rerender it on resize.
-				// BCP: 1870031078
-				if (Device.system.phone) {
-					this._oToolbar._bForceRerenderOnResize = true;
-				}
-
-				this._oToolbar._isControlsInfoCached = function () {
-					return false;
-				};
-
 				this.setAggregation("_toolbar", this._oToolbar);
 			}
 
@@ -1443,8 +1450,8 @@ function(
 					return rb.getText("LIST_ITEM_STATE_WARNING");
 				case (ValueState.Error):
 					return rb.getText("LIST_ITEM_STATE_ERROR");
-				case (ValueState.Highlight):
-					return rb.getText("LIST_ITEM_STATE_HIGHLIGHT");
+				case (ValueState.Information):
+					return rb.getText("LIST_ITEM_STATE_INFORMATION");
 				default:
 					return "";
 			}
@@ -1815,8 +1822,8 @@ function(
 						// max-height is taken into account if we use calculated height and a wrong value is set for the dialog content's height.
 						// If no value is set for the height style fall back to calculated height.
 						// * Calculated height is the value taken by $dialog.height().
-						dialogHeight = parseInt($dialog[0].style.height, 10) || parseInt($dialog.height(), 10);
-						dialogBordersHeight = parseInt($dialog.css("border-top-width"), 10) + parseInt($dialog.css("border-bottom-width"), 10);
+						dialogHeight = parseInt($dialog[0].style.height) || parseInt($dialog.height());
+						dialogBordersHeight = parseInt($dialog.css("border-top-width")) + parseInt($dialog.css("border-bottom-width"));
 						$dialogContent.height(dialogHeight + dialogBordersHeight);
 					}
 				}
@@ -1872,7 +1879,7 @@ function(
 					that._$dialog.addClass('sapMDialogResizing');
 
 					var styles = {};
-					var minWidth = parseInt(that._$dialog.css('min-width'), 10);
+					var minWidth = parseInt(that._$dialog.css('min-width'));
 					var maxLeftOffset = initial.x + initial.width - minWidth;
 
 					var handleOffsetX = $target.width() - e.offsetX;

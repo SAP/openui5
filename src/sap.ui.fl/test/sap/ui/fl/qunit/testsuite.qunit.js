@@ -15,7 +15,8 @@ sap.ui.define(function () {
 				"xx-waitForTheme": true
 			},
 			coverage: {
-				only: ["sap/ui/fl"]
+				only: ["sap/ui/fl"],
+				branchTracking: true
 			},
 			page: "test-resources/sap/ui/fl/qunit/testsandbox.qunit.html?test={name}",
 			autostart: true
@@ -70,9 +71,9 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/FakeLrepConnector"]
 				}
 			},
-			"FakeLrepConnectorLocalStorage": {
+			"FakeLrepConnectorStorage": {
 				coverage: {
-					only: ["sap/ui/fl/FakeLrepConnectorLocalStorage"]
+					only: ["sap/ui/fl/FakeLrepConnectorStorage"]
 				},
 				ui5: {
 					resourceroots: {
@@ -284,9 +285,9 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/EventHistory"]
 				}
 			},
-			"FakeLrepLocalStorage": {
+			"FakeLrepStorage": {
 				coverage: {
-					only: ["sap/ui/fl/FakeLrepLocalStorage"]
+					only: ["sap/ui/fl/FakeLrepStorage"]
 				}
 			},
 			"library": {

@@ -125,7 +125,7 @@ sap.ui.define([], function () {
 		oRm.write("<a tabindex='-1' ");
 
 		// write attributes for the link
-		if (!oCurrentStep || !!parseInt(oCurrentStep.style.zIndex, 10)) {
+		if (!oCurrentStep || !!parseInt(oCurrentStep.style.zIndex)) {
 			oRm.write("aria-disabled='true'");
 		}
 		oRm.writeAttribute("class", CLASSES.ANCHOR);

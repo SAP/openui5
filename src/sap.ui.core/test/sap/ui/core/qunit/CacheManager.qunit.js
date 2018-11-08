@@ -107,9 +107,9 @@ sap.ui.define([
 			// Real cache manager implementation should be used.
 			return Promise.all(aSupportedEnv.map(function(oEnv) {
 				// Arrange
-				that.stub(Device.system, oEnv.system, true);
-				that.stub(Device.browser, "name", oEnv.browserName);
-				that.stub(Device.browser, "version", oEnv.browserVersion);
+				that.stub(Device.system, oEnv.system).value(true);
+				that.stub(Device.browser, "name").value(oEnv.browserName);
+				that.stub(Device.browser, "version").value(oEnv.browserVersion);
 
 				// Act && Assert
 				return createInstance(oEnv, "LRUPersistentCache");
@@ -119,13 +119,13 @@ sap.ui.define([
 					// Arrange
 					for (var systemType in Device.system.SYSTEMTYPE) {
 						if (Device.system.SYSTEMTYPE[systemType] === oEnv.system) {
-							that.stub(Device.system, oEnv.system, true);
+							that.stub(Device.system, oEnv.system).value(true);
 						} else {
-							that.stub(Device.system, Device.system.SYSTEMTYPE[systemType], false);
+							that.stub(Device.system, Device.system.SYSTEMTYPE[systemType]).value(false);
 						}
 					}
-					that.stub(Device.browser, "name", oEnv.browserName);
-					that.stub(Device.browser, "version", oEnv.browserVersion);
+					that.stub(Device.browser, "name").value(oEnv.browserName);
+					that.stub(Device.browser, "version").value(oEnv.browserVersion);
 
 					// Act && Assert
 					return createInstance(oEnv, "CacheManagerNOP");

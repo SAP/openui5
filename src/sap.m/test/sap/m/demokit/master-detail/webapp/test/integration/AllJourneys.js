@@ -5,15 +5,15 @@
 
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"./arrangements/Arrangement",
+	"./arrangements/Startup",
 	"./MasterJourney",
 	"./NavigationJourney",
 	"./NotFoundJourney",
 	"./BusyJourney"
-], function (Opa5, Arrangement) {
+], function (Opa5, Startup) {
 	"use strict";
 	Opa5.extendConfig({
-		arrangements: new Arrangement(),
+		arrangements: new Startup(),
 		viewNamespace: "sap.ui.demo.masterdetail.view.",
 		autoWait: true
 	});

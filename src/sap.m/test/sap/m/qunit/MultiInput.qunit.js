@@ -185,7 +185,7 @@ sap.ui.define([
 
 		output = multiInput._calculateSpaceForTokenizer();
 
-		assert.strictEqual(isNaN(parseInt(output, 10)), false, "_calculateSpaceForTokenizer returns a valid value");
+		assert.strictEqual(isNaN(parseInt(output)), false, "_calculateSpaceForTokenizer returns a valid value");
 	});
 
 	QUnit.test("token data binding", function(assert) {
@@ -1688,5 +1688,25 @@ sap.ui.define([
 
 		// clean up
 		oMultiInput.destroy();
+	});
+
+	QUnit.module("Destroyers");
+
+	QUnit.test("Destroy properly internal lists", function (assert) {
+		// arrange
+		var oMultiInput = new MultiInput({
+			editable: true
+		});
+		var oList  = oMultiInput._oSelectedItemsList;
+		oMultiInput.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oMultiInput.destroy();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(!oMultiInput._oSelectedItemsList, "The SelectedItemsList gets detached");
+		assert.ok(oMultiInput._oSelectedItemsList != oList, "The SelectedItemsList gets cleaned properly");
 	});
 });

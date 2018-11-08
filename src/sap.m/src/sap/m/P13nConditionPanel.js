@@ -586,10 +586,10 @@ sap.ui.define([
 					if (oKeyField.precision || oKeyField.scale) {
 						oContraints = {};
 						if (oKeyField.precision) {
-							oContraints["maxIntegerDigits"] = parseInt(oKeyField.precision, 10);
+							oContraints["maxIntegerDigits"] = parseInt(oKeyField.precision);
 						}
 						if (oKeyField.scale) {
-							oContraints["maxFractionDigits"] = parseInt(oKeyField.scale, 10);
+							oContraints["maxFractionDigits"] = parseInt(oKeyField.scale);
 						}
 					}
 					oKeyField.typeInstance = new FloatType(oContraints);
@@ -1161,7 +1161,7 @@ sap.ui.define([
 	};
 
 	P13nConditionPanel.prototype._getMaxConditionsAsNumber = function() {
-		return this.getMaxConditions() === "-1" ? 9999 : parseInt(this.getMaxConditions(), 10);
+		return this.getMaxConditions() === "-1" ? 9999 : parseInt(this.getMaxConditions());
 	};
 
 	P13nConditionPanel.prototype.onAfterRendering = function() {
@@ -1825,7 +1825,7 @@ sap.ui.define([
 		if (oCurrentKeyField && oCurrentKeyField.maxLength && oControl.setMaxLength) {
 			var l = -1;
 			if (typeof oCurrentKeyField.maxLength === "string") {
-				l = parseInt(oCurrentKeyField.maxLength, 10);
+				l = parseInt(oCurrentKeyField.maxLength);
 			}
 			if (typeof oCurrentKeyField.maxLength === "number") {
 				l = oCurrentKeyField.maxLength;
@@ -2876,7 +2876,7 @@ sap.ui.define([
 	 * @returns {string} the filled template text
 	 */
 	P13nConditionPanel._templateReplace = function(sTemplate, aValues) {
-		return sTemplate.replace(/\$\d/g, function(sMatch) { return aValues[parseInt(sMatch.substr(1), 10)]; });
+		return sTemplate.replace(/\$\d/g, function(sMatch) { return aValues[parseInt(sMatch.substr(1))]; });
 	};
 
 	/**

@@ -38,6 +38,10 @@ sap.ui.define([
 		promisify: true
 	}));
 
+	function jQueryById(id) {
+		return new jQuery(document.getElementById(id));
+	}
+
 	return Promise.all(a).then(function() {
 
 		QUnit.module("Basic", {
@@ -280,7 +284,7 @@ sap.ui.define([
 		QUnit.module("includeStyleSheet");
 
 		QUnit.test("basic", function(assert) {
-			var oTestArea = jQuery.sap.domById("includeStyleSheetTest");
+			var oTestArea = document.getElementById("includeStyleSheetTest");
 			var sBefore = jQuery(oTestArea).css("backgroundColor");
 			var iLinkCnt = document.getElementsByTagName("LINK").length;
 			var done = assert.async();
@@ -292,7 +296,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("basic (Promise)", function(assert) {
-			var oTestArea = jQuery.sap.domById("includeStyleSheetTest");
+			var oTestArea = document.getElementById("includeStyleSheetTest");
 			var sBefore = jQuery(oTestArea).css("backgroundColor");
 			var iLinkCnt = document.getElementsByTagName("LINK").length;
 			return jQuery.sap.includeStyleSheet({
@@ -307,13 +311,13 @@ sap.ui.define([
 
 		QUnit.test("don't load twice", function(assert) {
 			var sStyleSheetUrl = "resources/sap/ui/layout/themes/sap_belize/library.css";
-			var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
+			var $link = jQueryById("sap-ui-theme-sap.ui.layout");
 			assert.equal($link.length, 1, "initially, there should be exactly one matching link)");
 			assert.equal($link.attr("data-marker"), "42", "initially, the link object should be the declarative one");
 
 			jQuery.sap.includeStyleSheet(sStyleSheetUrl, "sap-ui-theme-sap.ui.layout");
 
-			var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
+			var $link = jQueryById("sap-ui-theme-sap.ui.layout");
 			assert.equal($link.length, 1, "after includeStylesheet, there still should be exactly one matching link");
 			assert.equal($link.attr("data-marker"), "42", "after includeStylesheet, the link object still should be the old one");
 
@@ -324,15 +328,16 @@ sap.ui.define([
 
 			jQuery.sap.includeStyleSheet(sAbsoluteStylesheetUrl, "sap-ui-theme-sap.ui.layout");
 
-			var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
+			var $link = jQueryById("sap-ui-theme-sap.ui.layout");
 			assert.equal($link.length, 1, "after includeStylesheet with absolute URL, there still should be exactly one matching link");
 			assert.equal($link.attr("data-marker"), "42", "after includeStylesheet with absolute URL, the link object still should be the old one");
 
-			sap.ui.getCore().loadLibrary("sap.ui.layout");
+			return sap.ui.getCore().loadLibrary("sap.ui.layout", {async: true}).then(function() {
+				var $link = jQueryById("sap-ui-theme-sap.ui.layout");
+				assert.equal($link.length, 1, "after loadLibrary, there should be exactly one matching link");
+				assert.equal($link.attr("data-marker"), "42", "after loadLibrary, the link object still should be the old one");
+			});
 
-			var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
-			assert.equal($link.length, 1, "after loadLibrary, there should be exactly one matching link");
-			assert.equal($link.attr("data-marker"), "42", "after loadLibrary, the link object still should be the old one");
 		});
 
 		QUnit.test("stylesheet count", function(assert) {
@@ -688,9 +693,11 @@ sap.ui.define([
 			}, 100);
 		});
 
-		QUnit.test("setTimeout/setInterval with strings", 2, function(assert) {
+		QUnit.test("setTimeout/setInterval with strings", function(assert) {
 			var iInterval,
 				done = assert.async();
+
+			assert.expect(2);
 
 			/* eslint-disable no-implied-eval */
 			setTimeout("window.bTimeout = true", 0);

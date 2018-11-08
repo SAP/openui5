@@ -1,0 +1,19 @@
+{
+  "1.61.0": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "e61926df34c27f8aec7becbe05322b31f0afc988",
+        "type": "FEATURE",
+        "text": " ui.unified.Month: Keyboard interval selection aligned",
+        "references": []
+      },
+      {
+        "id": "02e6c6fe4fcc7f225c91466a073f0b54e0dd5fbe",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarDateInterval: button text is read correctly now",
+        "references": []
+      }
+    ]
+  }
+}

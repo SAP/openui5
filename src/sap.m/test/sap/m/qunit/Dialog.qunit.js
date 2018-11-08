@@ -88,6 +88,12 @@ sap.ui.define([
 		}
 	}
 
+	function isTextTruncated($element) {
+		var iTolerance = 5;
+
+		return $element[0].scrollWidth > ($element.innerWidth() + iTolerance);
+	}
+
 	var oDialog = new Dialog("dialog", {
 		title: "World Domination",
 		subHeader: new Bar({
@@ -272,11 +278,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("OverflowToolbar expected to rerender on mobile", function (assert) {
+		// arrange
 		var oSystem = {
-			desktop: false,
-			tablet: false,
-			phone: true
-		};
+				desktop: false,
+				tablet: false,
+				phone: true
+			},
+			iCallsCount;
 
 		this.stub(Device, "system", oSystem);
 
@@ -297,21 +305,25 @@ sap.ui.define([
 			]
 		});
 
-		var oRerenderSpy = this.spy(OverflowToolbar.prototype, "rerender");
+		var oRerenderSpy = this.spy(OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
 
+		// act
 		this.oDialog.open();
-
+		iCallsCount = oRerenderSpy.callCount;
 		this.oDialog._oToolbar._handleResize();
 
-		assert.ok(oRerenderSpy.calledOnce, "OverflowToolbar is rerendered when on mobile in Dialog");
+		// assert
+		assert.equal(oRerenderSpy.callCount, iCallsCount + 1, "OverflowToolbar is reseted and invalidated when on mobile in Dialog");
 	});
 
 	QUnit.test("OverflowToolbar expected to not rerender on desktop", function (assert) {
+		// arrange
 		var oSystem = {
-			desktop: true,
-			tablet: false,
-			phone: false
-		};
+				desktop: true,
+				tablet: false,
+				phone: false
+			},
+			iCallsCount;
 
 		this.stub(Device, "system", oSystem);
 
@@ -332,13 +344,15 @@ sap.ui.define([
 			]
 		});
 
-		var oRerenderSpy = this.spy(OverflowToolbar.prototype, "rerender");
+		var oRerenderSpy = this.spy(OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
 
+		// act
 		this.oDialog.open();
-
+		iCallsCount = oRerenderSpy.callCount;
 		this.oDialog._oToolbar._handleResize();
 
-		assert.notOk(oRerenderSpy.called, "OverflowToolbar is not rerendered when on desktop in Dialog");
+		// assert
+		assert.equal(oRerenderSpy.callCount, iCallsCount, "OverflowToolbar is not reseted and invalidated when on desktop in Dialog");
 	});
 
 	QUnit.module("Open and Close");
@@ -1277,22 +1291,22 @@ sap.ui.define([
 
 
 		// Arrange
-		var oDialogHighlight = new Dialog({
-			state: ValueState.Highlight
+		var oDialogInformation = new Dialog({
+			state: ValueState.Information
 		});
-		overwriteAnimationIE(oDialogHighlight);
-		sValueState = rb.getText("LIST_ITEM_STATE_HIGHLIGHT");
+		overwriteAnimationIE(oDialogInformation);
+		sValueState = rb.getText("LIST_ITEM_STATE_INFORMATION");
 
 		// Act
-		oDialogHighlight.open();
+		oDialogInformation.open();
 		this.clock.tick(500);
-		sInvisibleTextContent = oDialogHighlight.getAggregation("_valueState").getText();
+		sInvisibleTextContent = oDialogInformation.getAggregation("_valueState").getText();
 
 		// Assert
-		assert.strictEqual(sInvisibleTextContent, sValueState, "Highlight state value should be the same.");
+		assert.strictEqual(sInvisibleTextContent, sValueState, "Information state value should be the same.");
 
 		// Clean up
-		oDialogHighlight.destroy();
+		oDialogInformation.destroy();
 	});
 
 	QUnit.test("Check if header toolbar role is set correctly", function(assert) {
@@ -1570,5 +1584,62 @@ sap.ui.define([
 		// Cleanup
 		oSpy.restore();
 		oControl.destroy();
+	});
+
+	QUnit.module("Dialog with vertical scroll and list items",{
+		beforeEach: function() {
+			this.oDialog = new Dialog({
+				title: 'Will have vertical scroll',
+				contentHeight: "10rem", // ensure that we have a vertical scroll
+				content: [
+					new sap.m.List({
+						items: [
+							new sap.m.StandardListItem({
+								title: "Item 1"
+							}),
+							new sap.m.StandardListItem({
+								title: "Item 2"
+							}),
+							new sap.m.StandardListItem({
+								title: "Item 3"
+							}),
+							new sap.m.StandardListItem({
+								id: "longTextItem", // this item has to be visible without truncation by default
+								title: "Item with some long text. Item with some long text."
+							}),
+							new sap.m.StandardListItem({
+								title: "Item 4"
+							})
+						]
+					})
+				]
+			});
+		},
+		afterEach: function() {
+			this.oDialog.destroy();
+		}
+	});
+
+	QUnit.test("Item texts are not truncated when width is auto", function(assert) {
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		var $longTextItem = this.oDialog.$().find("#longTextItem .sapMSLITitleOnly");
+
+		// assert
+		assert.strictEqual(isTextTruncated($longTextItem), false, "Long text is not truncated when width is auto");
+	});
+
+	QUnit.test("Text is truncated when width is too small", function(assert) {
+		// make the dialog very small to ensure truncation
+		this.oDialog.setContentWidth("20rem");
+
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		var $longTextItem = this.oDialog.$().find("#longTextItem .sapMSLITitleOnly");
+
+		// assert
+		assert.strictEqual(isTextTruncated($longTextItem), true, "Text is truncated when width is small");
 	});
 });

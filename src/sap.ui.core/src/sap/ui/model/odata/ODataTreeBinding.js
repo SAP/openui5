@@ -153,7 +153,7 @@ sap.ui.define([
 			}
 
 			sNodeId = oContext.getProperty(this.oTreeProperties["hierarchy-node-for"]);
-			mRequestParameters.level = parseInt(oContext.getProperty(this.oTreeProperties["hierarchy-level-for"]), 10) + 1;
+			mRequestParameters.level = parseInt(oContext.getProperty(this.oTreeProperties["hierarchy-level-for"])) + 1;
 		} else {
 			var sNavPath = this._getNavPath(oContext.getPath());
 
@@ -309,7 +309,7 @@ sap.ui.define([
 
 		function _handleSuccess(oData) {
 			that.oFinalLengths[sNodeId] = true;
-			that.oLengths[sNodeId] = parseInt(oData, 10);
+			that.oLengths[sNodeId] = parseInt(oData);
 		}
 
 		function _handleError(oError) {
@@ -365,7 +365,7 @@ sap.ui.define([
 				if (!that.bHasTreeAnnotations) {
 					// update length (only when the inline count was requested and is available)
 					if (bInlineCountRequested && oData.__count) {
-						that.oLengths[sNodeId] = parseInt(oData.__count, 10);
+						that.oLengths[sNodeId] = parseInt(oData.__count);
 						that.oFinalLengths[sNodeId] = true;
 					} else {
 						if (that.oModel.isCountSupported()) {

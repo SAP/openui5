@@ -18,6 +18,7 @@ sap.ui.define(["sap/ui/core/library"], function(coreLibrary) {
 	var classNameBase = 'sapMNLB';
 	var classNameListBaseItem = 'sapMLIB';
 	var classNameAuthor = 'sapMNLB-AuthorPicture';
+	var classNameGroupHeader = 'sapMNLG-GroupHeader';
 	var classNameBaseHeader = 'sapMNLB-Header';
 	var classNameHeader = 'sapMNLG-Header';
 	var classNameBody = 'sapMNLG-Body';
@@ -70,8 +71,18 @@ sap.ui.define(["sap/ui/core/library"], function(coreLibrary) {
 			oRm.write('>');
 
 			if (_bShowGroupHdrFooter) {
+
+				oRm.write('<div');
+				oRm.addClass(classNameGroupHeader);
+				oRm.writeClasses();
+				oRm.write('>');
+
 				this.renderHeader(oRm, oControl);
 				this.renderSubHeader(oRm, oControl);
+
+				oRm.write('</div>');
+
+
 				this.renderBody(oRm, oControl);
 			}
 

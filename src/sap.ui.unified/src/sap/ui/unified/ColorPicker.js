@@ -470,7 +470,7 @@ sap.ui.define([
 
 		// Color picker cursor size in px obtained from less parameter. Keep in mind width and height are the same.
 		var circleSize = this.bResponsive ? "_sap_ui_unified_ColorPicker_CircleSize" : "_sap_ui_commons_ColorPicker_CircleSize";
-		this._iCPCursorSize = parseInt(Parameters.get(circleSize), 10);
+		this._iCPCursorSize = parseInt(Parameters.get(circleSize));
 
 		// Init _processChanges and _bHSLMode according to default control mode
 		this._processChanges = this._processHSVChanges;
@@ -887,7 +887,7 @@ sap.ui.define([
 			max: 360,
 			step: 1,
 			tooltip: oRb.getText("COLORPICKER_HUE"),
-			value: parseInt(this.oHueField.getValue(), 10)
+			value: parseInt(this.oHueField.getValue())
 		}).addStyleClass(CONSTANTS.SliderClass).addAriaLabelledBy(oHueInvisibleText);
 
 		// Attaching events with parameter passed so the handler will know in which mode to execute
@@ -1143,7 +1143,7 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._handleSliderChange = function(oEvent, oData) {
 		// get the new value
-		var sliderValue = parseInt(this.oSlider.getValue(), 10);
+		var sliderValue = parseInt(this.oSlider.getValue());
 
 		// set the new hue value in the hue input field
 		this.oHueField.setValue(sliderValue);
@@ -1237,7 +1237,7 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._handleHueValueChange = function() {
 		// get the new value
-		var hueValue = parseInt(this.oHueField.getValue(), 10);
+		var hueValue = parseInt(this.oHueField.getValue());
 		hueValue = this._getValueInRange(hueValue, 0, 360);
 
 		// set the new value (maybe the value has been changed in the above lines)
@@ -1256,7 +1256,7 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._handleSatValueChange = function() {
 		// get the new value
-		var satValue = parseInt(this.oSatField.getValue(),10);
+		var satValue = parseInt(this.oSatField.getValue());
 		satValue = this._getValueInRange(satValue, 0, 100);
 
 		// set the new value (maybe the value has been changed in the above lines)
@@ -1273,7 +1273,7 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._handleValValueChange = function() {
 		// get the new value
-		var valValue = parseInt(this.oValField.getValue(), 10);
+		var valValue = parseInt(this.oValField.getValue());
 		valValue = this._getValueInRange(valValue, 0, 100);
 
 		// set the new value (maybe the value has been changed in the above lines)
@@ -1290,7 +1290,7 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._handleLitValueChange = function() {
 		// get the new value
-		var litValue = parseInt(this.oLitField.getValue(), 10);
+		var litValue = parseInt(this.oLitField.getValue());
 		litValue = this._getValueInRange(litValue, 0, 100);
 
 		// set the new value (maybe the value has been changed in the above lines)
@@ -1308,7 +1308,7 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._handleRedValueChange = function() {
 		// get the new value
-		var redValue = parseInt(this.oRedField.getValue(), 10);
+		var redValue = parseInt(this.oRedField.getValue());
 		redValue = this._getValueInRange(redValue, 0, 255);
 
 		// set the new value (maybe the value has been changed in the above lines)
@@ -1324,7 +1324,7 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._handleGreenValueChange = function() {
 		// get the new value
-		var greenValue = parseInt(this.oGreenField.getValue(), 10);
+		var greenValue = parseInt(this.oGreenField.getValue());
 		greenValue = this._getValueInRange(greenValue, 0, 255);
 
 		// set the new value (maybe the value has been changed in the above lines)
@@ -1341,7 +1341,7 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._handleBlueValueChange = function() {
 		// get the new value
-		var blueValue = parseInt(this.oBlueField.getValue(), 10);
+		var blueValue = parseInt(this.oBlueField.getValue());
 		blueValue = this._getValueInRange(blueValue, 0, 255);
 
 		// set the new value (maybe the value has been changed in the above lines)
@@ -1359,9 +1359,9 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._processHSVChanges = function() {
 		// get HSV-values
-		var hueValue = parseInt(this.oHueField.getValue(), 10);
-		var satValue = parseInt(this.oSatField.getValue(), 10);
-		var valValue = parseInt(this.oValField.getValue(), 10);
+		var hueValue = parseInt(this.oHueField.getValue());
+		var satValue = parseInt(this.oSatField.getValue());
+		var valValue = parseInt(this.oValField.getValue());
 
 		// calculate and set new RGB-values
 		this._calculateRGB(hueValue, satValue, valValue);
@@ -1396,9 +1396,9 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._processHSLChanges = function() {
 		// get HSL-values
-		var iHueValue = parseInt(this.oHueField.getValue(), 10),
-			iSatValue = parseInt(this.oSatField.getValue(), 10),
-			iLitValue = parseInt(this.oLitField.getValue(), 10);
+		var iHueValue = parseInt(this.oHueField.getValue()),
+			iSatValue = parseInt(this.oSatField.getValue()),
+			iLitValue = parseInt(this.oLitField.getValue());
 
 		if (iHueValue > 360) {
 			iHueValue %= 360;
@@ -1438,9 +1438,9 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._processRGBChanges = function() {
 		// calculate and set HEX-value from the RGB-values
-		var redValue   = Math.round(parseInt(this.oRedField.getValue(),10)),
-			greenValue = Math.round(parseInt(this.oGreenField.getValue(),10)),
-			blueValue  = Math.round(parseInt(this.oBlueField.getValue(),10)),
+		var redValue   = Math.round(parseInt(this.oRedField.getValue())),
+			greenValue = Math.round(parseInt(this.oGreenField.getValue())),
+			blueValue  = Math.round(parseInt(this.oBlueField.getValue())),
 			// 765 is the sum of red, green and blue values if they are all equal to 255 which in combination gives pure white
 			bPureWhite = (redValue + greenValue + blueValue) === 765;
 
@@ -1466,7 +1466,7 @@ sap.ui.define([
 		this.oSatField.setValue(this.Color.s);
 
 		// update slider value
-		this.oSlider.setValue(parseInt(this.oHueField.getValue(),10));
+		this.oSlider.setValue(parseInt(this.oHueField.getValue()));
 
 		// store the values in variable
 		this.Color.r = redValue;
@@ -1559,7 +1559,7 @@ sap.ui.define([
 		} else {
 			this.oValField.setValue(this.Color.v);
 		}
-		this.oSlider.setValue(parseInt(this.oHueField.getValue(),10));
+		this.oSlider.setValue(parseInt(this.oHueField.getValue()));
 		this.oAlphaSlider.setValue(flAlphaValue);
 		this.Color.a = flAlphaValue;
 
@@ -2080,9 +2080,9 @@ sap.ui.define([
 
 			// it's a hsv string, get the values
 			aHSVColor = sColor.split(",");
-			iH = parseInt(aHSVColor[0], 10);
-			iS = parseInt(aHSVColor[1], 10);
-			iV = parseInt(aHSVColor[2], 10);
+			iH = parseInt(aHSVColor[0]);
+			iS = parseInt(aHSVColor[1]);
+			iV = parseInt(aHSVColor[2]);
 
 			//get RGB values
 			this._calculateRGB(iH, iS, iV);
@@ -2136,7 +2136,7 @@ sap.ui.define([
 		// split string to array of values
 		aHSLColor = sColor.split(",");
 
-		iH = parseInt(aHSLColor[0], 10);
+		iH = parseInt(aHSLColor[0]);
 		// Parsing iS and iL as floats as they could be of both float or int type
 		iS = parseFloat(aHSLColor[1]);
 		iL = parseFloat(aHSLColor[2]);
@@ -2226,7 +2226,7 @@ sap.ui.define([
 			}
 			// it's a rgb string, get the values and convert to Hex
 			aValues = sColor.split(",");
-			this._calculateHEX(parseInt(aValues[0], 10), parseInt(aValues[1], 10), parseInt(aValues[2], 10));
+			this._calculateHEX(parseInt(aValues[0]), parseInt(aValues[1]), parseInt(aValues[2]));
 			// get HSV values
 			this._processHexChanges(this.sHexString);
 			this.Color.old = this.Color.hex;

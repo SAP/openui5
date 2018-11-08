@@ -1,13 +1,13 @@
 /*global QUnit, sinon*/
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
-	"sap/f/semantic/SemanticPage",
-	"qunit/SemanticUtil"
+	"qunit/SemanticUtil",
+	"sap/ui/model/resource/ResourceModel",
+	"sap/ui/core/Core"
 ],
 function (
-	$,
-	SemanticPage,
-	SemanticUtil
+	SemanticUtil,
+	ResourceModel,
+	Core
 ) {
 	"use strict";
 
@@ -730,6 +730,39 @@ function (
 			"SemanticPage customShareActions has been destroyed - items count: " + iContentCount);
 		assert.ok(oButton.bIsDestroyed, "SemanticPage item has been destroyed.");
 		assert.ok(oButton2.bIsDestroyed, "SemanticPage item has been destroyed.");
+	});
+
+	// This test is needed to ensure that the buttons added to customShareActions can be bound
+	// the same way as other buttons
+	// Due to the buttons being shown in the static UI area there might be issues with bindings
+	QUnit.test("test SemanticPage customShareActions content bindings", function (assert) {
+		var sButtonText = "Action 1";
+		var aTexts = [];
+		aTexts["action1"] = sButtonText;
+
+		var oMockResourceBundle = {
+			getText: function(sKey, aArgs, bIgnoreKeyFallback) {
+				return aTexts[sKey];
+			}
+		};
+
+		var i18n = new ResourceModel({
+			bundle: oMockResourceBundle
+		});
+
+		this.oSemanticPage.setModel(i18n, "i18n");
+
+
+		var oCustomShareButton = new sap.m.Button({
+			icon: "sap-icon://excel-attachment",
+			text: "{i18n>action1}"
+		});
+
+		this.oSemanticPage.addCustomShareAction(oCustomShareButton);
+
+		Core.applyChanges();
+
+		assert.strictEqual(oCustomShareButton.getText(), sButtonText, "Expected text from binding in button is there");
 	});
 
 	QUnit.test("test adding of CSS SemanticPage class not mentioned in CONTENT_PADDING_CLASSES_TO_FORWARD," +
