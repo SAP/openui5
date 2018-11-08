@@ -1152,7 +1152,7 @@ sap.ui.define([
 					mDefaultScrollbarHeight[Device.browser.BROWSER.CHROME] = 16;
 					mDefaultScrollbarHeight[Device.browser.BROWSER.FIREFOX] = 16;
 					mDefaultScrollbarHeight[Device.browser.BROWSER.INTERNET_EXPLORER] = 18;
-					mDefaultScrollbarHeight[Device.browser.BROWSER.EDGE] = 12;
+					mDefaultScrollbarHeight[Device.browser.BROWSER.EDGE] = 16;
 					mDefaultScrollbarHeight[Device.browser.BROWSER.SAFARI] = 16;
 					mDefaultScrollbarHeight[Device.browser.BROWSER.ANDROID] = 8;
 					iUsedHeight += mDefaultScrollbarHeight[Device.browser.name];
