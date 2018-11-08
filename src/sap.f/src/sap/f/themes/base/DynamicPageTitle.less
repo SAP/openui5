@@ -184,6 +184,11 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 			color: @sapUiGroupTitleTextColor;
 			font-size: @sapMFontHeader3Size;
 			margin-top: 0.1875rem;
+
+			/* Override Title styles, required by VD */
+			.sapMTitle {
+				font-size: @sapMFontHeader3Size;
+			}
 		}
 
 		.sapFDynamicPageTitleMainHeadingSnappedExpandContent {
@@ -214,11 +219,6 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 		max-width: none;
 	}
   }
-
-	/* Override Title and Label styles, required by VD */
-	.sapMTitle {
-		font-size: @sapMFontHeader3Size;
-	}
 }
 
 .sapFDynamicPageTitleMain.sapFDynamicPageTitleMainNoContent > .sapFDynamicPageTitleMainInner {
