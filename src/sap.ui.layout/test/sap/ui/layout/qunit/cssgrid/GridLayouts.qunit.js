@@ -71,7 +71,7 @@ sap.ui.define([
 		var oExpectedStyles = getExpectedStyles();
 
 		// Act
-		GridLayoutBase.renderSingleGridLayout(this.oRenderManagerMock, oGridLayout);
+		oGridLayout.renderSingleGridLayout(this.oRenderManagerMock);
 
 		// Assert
 		for (var sProp in oExpectedStyles) {
@@ -91,7 +91,7 @@ sap.ui.define([
 		});
 
 		// Act
-		GridLayoutBase.renderSingleGridLayout(this.oRenderManagerMock, oGridLayout);
+		oGridLayout.renderSingleGridLayout(this.oRenderManagerMock);
 
 		// Assert
 		assert.equal(Object.keys(this.oRenderManagerMock.styles).length, 1, "Should have only one property set when the GridLayout is responsive");
