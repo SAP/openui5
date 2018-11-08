@@ -11,7 +11,7 @@ sap.ui.define([
 	opaTest("Should open the Hello dialog", function (Given, When, Then) {
 
 		// Arrangements
-		Given.iStartMyAppInAFrame(sap.ui.require.toUrl("sap/ui/demo/walkthrough/test/mockserver") + ".html");
+		Given.iStartMyAppInAFrame(sap.ui.require.toUrl("sap/ui/demo/walkthrough/test/mockServer") + ".html");
 
 		//Actions
 		When.onTheAppPage.iPressTheSayHelloWithDialogButton();
