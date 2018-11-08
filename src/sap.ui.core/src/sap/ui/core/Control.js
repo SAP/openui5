@@ -825,7 +825,7 @@ sap.ui.define([
 	 * @return {boolean} <code>true</code> when blocked
 	 * @private
 	 * @ui5-restricted sap.ui.core, sap.m, sap.viz
-	 * @alias sap.ui.core.Control#getBlocked
+	 * @name sap.ui.core.Control#getBlocked
 	 */
 
 	/**
