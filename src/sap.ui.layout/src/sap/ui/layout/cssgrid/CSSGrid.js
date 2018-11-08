@@ -153,6 +153,7 @@ sap.ui.define([
 
 			/**
 			 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-gap MDN web docs: grid-gap}
+			 * It is a shorthand for gridRowGap and gridColumnGap. If some of them is set, the gridGap value will have less priority and will be overwritten.
 			 *
 			 * <b>Note:</b> Not supported in IE11, Edge 15.
 			 */
