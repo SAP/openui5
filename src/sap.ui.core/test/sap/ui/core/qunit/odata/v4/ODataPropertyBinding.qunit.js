@@ -1551,6 +1551,7 @@ sap.ui.define([
 	QUnit.test("refreshInternal", function (assert) {
 		var oBinding = this.oModel.bindProperty("NAME"),
 			oBindingMock = this.mock(oBinding),
+			oCheckUpdatePromise = {},
 			oContext = Context.create(this.oModel, {}, "/EMPLOYEES/42");
 
 		this.mock(ODataPropertyBinding.prototype).expects("fetchCache").thrice()
@@ -1561,13 +1562,14 @@ sap.ui.define([
 		oBindingMock.expects("checkUpdate").withExactArgs(false, ChangeReason.Context);
 		oBinding.setContext(oContext);
 
-		oBindingMock.expects("checkUpdate").withExactArgs(true, ChangeReason.Refresh, "myGroup");
+		oBindingMock.expects("checkUpdate").withExactArgs(true, ChangeReason.Refresh, "myGroup")
+			.returns(oCheckUpdatePromise);
 
 		// code under test
-		oBinding.refreshInternal("myGroup", true);
+		assert.strictEqual(oBinding.refreshInternal("myGroup", true), oCheckUpdatePromise);
 
 		// code under test
-		oBinding.refreshInternal("myGroup", false);
+		assert.strictEqual(oBinding.refreshInternal("myGroup", false).getResult(), undefined);
 	});
 
 	//*********************************************************************************************

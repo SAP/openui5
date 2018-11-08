@@ -601,6 +601,8 @@ sap.ui.define([
 	 *   The group ID to be used for refresh
 	 * @param {boolean} [bCheckUpdate]
 	 *   If <code>true</code>, a property binding is expected to check for updates.
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving without a defined result when the refresh is finished
 	 *
 	 * @abstract
 	 * @function

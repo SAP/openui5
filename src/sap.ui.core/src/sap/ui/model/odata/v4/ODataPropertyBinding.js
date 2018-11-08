@@ -418,9 +418,9 @@ sap.ui.define([
 	 */
 	ODataPropertyBinding.prototype.refreshInternal = function (sGroupId, bCheckUpdate) {
 		this.fetchCache(this.oContext);
-		if (bCheckUpdate) {
-			this.checkUpdate(true, ChangeReason.Refresh, sGroupId);
-		}
+		return bCheckUpdate
+			? this.checkUpdate(true, ChangeReason.Refresh, sGroupId)
+			: SyncPromise.resolve();
 	};
 
 	/**
