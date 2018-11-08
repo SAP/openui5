@@ -887,14 +887,17 @@ sap.ui.define([
 	 * @private
 	 */
 	UploadCollectionItem._splitFileName = function (sFileName, bWithDot) {
-		var oResult = {};
-		var oRegex = /(?:\.([^.]+))?$/;
-		var aFileExtension = oRegex.exec(sFileName);
-		oResult.name = sFileName.slice(0, sFileName.indexOf(aFileExtension[0]));
-		if (bWithDot) {
-			oResult.extension = aFileExtension[0];
-		} else {
-			oResult.extension = aFileExtension[1];
+		var oResult = {name: "", extension: ""},
+			oRegex = /(?:\.([^.]+))?$/,
+			aFileExtension = oRegex.exec(sFileName);
+
+		if (sFileName) {
+			oResult.name = sFileName.slice(0, sFileName.indexOf(aFileExtension[0]));
+			if (bWithDot) {
+				oResult.extension = aFileExtension[0];
+			} else {
+				oResult.extension = aFileExtension[1];
+			}
 		}
 		return oResult;
 	};
