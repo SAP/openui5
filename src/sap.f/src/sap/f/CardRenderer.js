@@ -5,36 +5,8 @@
 // Provides default renderer for control sap.f.Card
 sap.ui.define(["sap/f/library", "sap/base/security/encodeXML", "sap/ui/core/IconPool"],
     function (library, encodeXML, IconPool) {
-        "use strict";
-        var mSizes = {
-            "1x1": {
-                icon: true
-            },
-            "2x1": {
-                icon: false,
-                title: true,
-                subtitle: true
-            },
-            "4x1": {
-                icon: true,
-                title: true,
-                subtitle: true,
-                status: true
-            },
-            "2x2": {
-                icon: true,
-                title: true,
-                subtitle: true,
-                status: false
-            },
-            "*x*": {
-                icon: true,
-                title: true,
-                subtitle: true,
-                status: true,
-                content: true
-            }
-        };
+		"use strict";
+
         /**
          * <code>Card</code> renderer.
          * @author SAP SE
@@ -49,47 +21,50 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeXML", "sap/ui/core/Icon
          * @param {sap.ui.core.Control} oCard an object representation of the control that should be rendered
          */
         CardRenderer.render = function (oRm, oCard) {
-            //start
-            var mSizeSettings = CardRenderer.getSizeSettings(oCard),
-                vRaster = oCard.getRaster(),
-                iHorizontalSize = oCard.getHorizontalSize(),
-				iVerticalSize = oCard.getVerticalSize(),
-				bFitContainer = oCard.getFitContainer();
 
+			// TODO: Don't expect fully loaded Manifest in here.
+			// We should rather render a base card with certain size and then load manifest information and update the header/content.
+			if (!oCard._oCardManifest) {
+				oRm.write("<section");
+				oRm.writeElementData(oCard);
+				oRm.writeAttribute("tabindex", "0");
+				oRm.addClass("sapFCard");
+
+				if (oCard.getBusy()) {
+					oRm.addClass("sapFCardLoading");
+				}
+
+				oRm.addStyle("width", "100%");
+				oRm.addStyle("height", "100%");
+
+				oRm.writeClasses();
+				oRm.writeStyles();
+				oRm.write(">");
+				oRm.write("</section>");
+				return;
+			}
+
+            //start
             oRm.write("<section");
             oRm.writeElementData(oCard);
-            oRm.writeAttributeEscaped("aria-label", oCard.getTitle() + "-" + oCard.getSubtitle());
+            oRm.writeAttributeEscaped("aria-label", oCard._oCardManifest.get("sap.card/title") + "-" + oCard._oCardManifest.get("sap.card/subTitle"));
             oRm.writeAttribute("tabindex", "0");
 			oRm.addClass("sapFCard");
-			if (bFitContainer) {
-                oRm.addClass("sapFCardFitContainer");
-			} else {
-				oRm.addClass("sapFCard" + iHorizontalSize + "x" + iVerticalSize);
-			}
+
             if (oCard.getBusy()) {
                 oRm.addClass("sapFCardLoading");
             }
-            if (!mSizeSettings.content) {
-                oRm.addClass("sapFCardNoContent");
-            }
             oRm.writeClasses();
 
-			if (!bFitContainer) {
-				if (vRaster === "CSSGrid") {
-					oRm.addStyle("grid-column", "span " + iHorizontalSize);
-					oRm.addStyle("grid-row", "span " + iVerticalSize);
-				} else {
-					oRm.addStyle("min-width", "calc(" + iHorizontalSize + " * " + vRaster.minWidth + ")");
-					oRm.addStyle("min-height", "calc(" + iVerticalSize + " * " + vRaster.minHeight + ")");
-					oRm.addStyle("max-width", "calc(" + iHorizontalSize + " * " + vRaster.maxWidth + ")");
-					oRm.addStyle("max-height", "calc(" + iVerticalSize + " * " + vRaster.maxHeight + ")");
-				}
-			}
             //styles
-            var sColor = oCard.getColor(),
-                sBackgroundColor = oCard.getBackgroundColor(),
-                sBackgroundImage = oCard.getBackgroundImage(),
-                sBackgroundImageSize = oCard.getBackgroundImageSize();
+            var sColor = oCard._oCardManifest.get("sap.card/color"),
+                sBackgroundColor = oCard._oCardManifest.get("sap.card/backgroundColor"),
+                sBackgroundImage = oCard._oCardManifest.get("sap.card/backgroundImage"),
+				sBackgroundImageSize = oCard._oCardManifest.get("sap.card/backgroundImageSize");
+
+			oRm.addStyle("width", oCard._oCardManifest.get("sap.card/width"));
+			oRm.addStyle("height", oCard._oCardManifest.get("sap.card/height"));
+
             if (sColor) {
                 oRm.addStyle("color", sColor);
                 //TODO: Use this only in focus case
@@ -109,64 +84,56 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeXML", "sap/ui/core/Icon
             oRm.write(">");
 
             //header
-            CardRenderer.renderHeaderSection(oRm, oCard, mSizeSettings);
+            CardRenderer.renderHeaderSection(oRm, oCard);
 
             //content
-            if (mSizeSettings.content) {
-                oRm.write("<div class=\"sapFCardSeparator\" />");
-                CardRenderer.renderContentSection(oRm, oCard);
-            }
+			oRm.write("<div class=\"sapFCardSeparator\" />");
+			CardRenderer.renderContentSection(oRm, oCard);
 
             //end
-            oRm.write("</section>");
-
+			oRm.write("</section>");
         };
 
         /*
          * renders the header of the card
          */
-        CardRenderer.renderHeaderSection = function (oRm, oCard, mSizeSettings) {
+        CardRenderer.renderHeaderSection = function (oRm, oCard) {
             oRm.write("<header");
             oRm.addClass("sapFCardHeader");
             oRm.writeClasses();
             oRm.writeStyles();
             oRm.write(">");
-            if (mSizeSettings.icon && oCard.getIcon()) {
+            if (oCard._oCardManifest.get("sap.card/icon")) {
                 CardRenderer.renderHeaderIcon(oRm, oCard);
             }
 
+			oRm.write("<div>");
+			var sTitle = oCard._oCardManifest.get("sap.card/title");
+			oRm.write("<h1");
+			oRm.addClass("sapFCardTitle");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.writeEscaped(sTitle);
+			oRm.write("</h1>");
+			if (sTitle) {
+				var sSubtitle = oCard._oCardManifest.get("sap.card/subTitle");
+				oRm.write("<h2");
+				oRm.addClass("sapFCardSubtitle");
+				oRm.writeClasses();
+				oRm.write(">");
+				oRm.writeEscaped(sSubtitle);
+				oRm.write("</h2>");
+			}
+			oRm.write("</div>");
 
-            if (mSizeSettings.title) {
-                oRm.write("<div>");
-                var sTitle = oCard.getTitle();
-                oRm.write("<h1");
-                oRm.addClass("sapFCardTitle");
-                oRm.writeClasses();
-                oRm.write(">");
-                oRm.writeEscaped(sTitle);
-                oRm.write("</h1>");
-                if (mSizeSettings.subtitle) {
-                    var sSubtitle = oCard.getSubtitle();
-                    oRm.write("<h2");
-                    oRm.addClass("sapFCardSubtitle");
-                    oRm.writeClasses();
-                    oRm.write(">");
-                    oRm.writeEscaped(sSubtitle);
-                    oRm.write("</h2>");
-                }
-                oRm.write("</div>");
-            }
-
-            if (mSizeSettings.status && oCard.getStatus()) {
-                var sStatus = oCard.getStatus();
-                if (sStatus) {
-                    oRm.write("<span");
-                    oRm.addClass("sapFCardStatus");
-                    oRm.writeClasses();
-                    oRm.write(">");
-                    oRm.writeEscaped(sStatus);
-                    oRm.write("</span>");
-                }
+			var sStatus = oCard._oCardManifest.get("sap.card/status");
+            if (sStatus) {
+				oRm.write("<span");
+				oRm.addClass("sapFCardStatus");
+				oRm.writeClasses();
+				oRm.write(">");
+				oRm.writeEscaped(sStatus);
+				oRm.write("</span>");
             }
             oRm.write("</header>");
         };
@@ -175,11 +142,11 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeXML", "sap/ui/core/Icon
          * renders the icon of the card
          */
         CardRenderer.renderHeaderIcon = function (oRm, oCard) {
-            var sIcon = oCard.getIcon(),
-                vIconInfo = IconPool.getIconInfo(oCard.getIcon(), undefined, "mixed"),
+            var sIcon = oCard._oCardManifest.get("sap.card/icon"),
+                vIconInfo = IconPool.getIconInfo(oCard._oCardManifest.get("sap.card/icon"), undefined, "mixed"),
                 bIconInfo = false,
-                sColor = oCard.getIconColor() || oCard.getColor(),
-                sIconBackgroundColor = oCard.getIconBackgroundColor();
+                sColor = oCard._oCardManifest.get("sap.card/iconColor") || oCard._oCardManifest.get("sap.card/color"),
+                sIconBackgroundColor = oCard._oCardManifest.get("sap.card/iconBackgroundColor");
             if (vIconInfo instanceof Promise) {
                 // if the icon info is still being loaded,
                 // an invalidation is triggered after the icon info is available
@@ -222,16 +189,5 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeXML", "sap/ui/core/Icon
             oRm.write("</section>");
         };
 
-        /*
-         * renders the content of the card
-         */
-        CardRenderer.getSizeSettings = function (oCard) {
-            var iVertical = oCard.getVerticalSize(),
-                iHorizontal = oCard.getHorizontalSize(),
-                mSettings = mSizes[iHorizontal + "x" + iVertical] || mSizes["*x*"];
-            mSettings.vertical = iVertical;
-            mSettings.horizontal = iHorizontal;
-            return mSettings;
-        };
         return CardRenderer;
     }, /* bExport= */ true);

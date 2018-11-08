@@ -1,0 +1,612 @@
+{
+	"noLayout": {
+		"card1": {
+			"sap.card": {
+				"height": "80px",
+				"width": "80px",
+				"icon": "sap-icon://accept",
+				"title": "Card Title 1x1",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard"
+			}
+		},
+		"card2": {
+			"sap.card": {
+				"height": "80px",
+				"width": "80px",
+				"icon": "sap-icon://accept",
+				"title": "Card Title 1x1",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard"
+			}
+		},
+		"card3": {
+			"sap.card": {
+				"height": "80px",
+				"width": "160px",
+				"icon": "sap-icon://accept",
+				"title": "Card Title 2x1",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard"
+			}
+		},
+		"card4": {
+			"sap.card": {
+				"height": "80px",
+				"width": "320px",
+				"icon": "sap-icon://accept",
+				"title": "Card Title  4x1",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard"
+			}
+		},
+		"card5": {
+			"sap.card": {
+				"height": "160px",
+				"width": "160px",
+				"icon": "sap-icon://accept",
+				"title": "Card Title 2x2",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard"
+			}
+		},
+		"card6": {
+			"sap.card": {
+				"height": "160px",
+				"width": "320px",
+				"icon": "sap-icon://accept",
+				"title": "Card Title  4x2",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard"
+			}
+		},
+		"card7": {
+			"sap.card": {
+				"height": "320px",
+				"width": "320px",
+				"icon": "sap-icon://accept",
+				"title": "Card Title 4x4",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard"
+			}
+		},
+		"card8": {
+			"sap.card": {
+				"height": "320px",
+				"width": "320px",
+				"icon": "../images/Woman_avatar_01.png",
+				"title": "Card Title 4x4 with image",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard"
+			}
+		},
+		"card9": {
+			"sap.card": {
+				"height": "320px",
+				"width": "480px",
+				"icon": "sap-icon://accept",
+				"title": "Card Title 6x4",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard"
+			}
+		},
+		"card10": {
+			"sap.card": {
+				"height": "320px",
+				"width": "480px",
+				"busy": "true",
+				"icon": "sap-icon://accept",
+				"title": "Card Title 6x4 Loading State",
+				"subTitle": "Content Loading State and a truncated subtitle subtitle subtitle",
+				"status": "Count",
+				"type": "CustomCard"
+			}
+		},
+		"card11": {
+			"sap.card": {
+				"height": "160px",
+				"width": "160px",
+				"icon": "sap-icon://accept",
+				"backgroundImage": "../images/Lamp_avatar_01.jpg",
+				"backgroundImageSize": "strech",
+				"color": "white",
+				"iconBackgroundColor": "rgba(255 255 255 0.3)",
+				"title": "Card with background image",
+				"subTitle": "Subtitle for the card",
+				"status": "Count",
+				"type": "CustomCard"
+			}
+		},
+		"card12": {
+			"sap.card": {
+				"height": "480px",
+				"width": "480px",
+				"icon": "sap-icon://accept",
+				"title": "Card with Component",
+				"manifest": "sap.f.cardsdemo.cardcontent.customcomponent",
+				"subTitle": "Card Component Container is created internally",
+				"status": "",
+				"type": "CustomCard"
+			}
+		}
+	},
+	"splitter": {
+		"card1": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 2x2",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card2": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 1x1",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card3": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 2x1",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		}
+	},
+	"flexibleHeight": {
+		"card1": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 2x2",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card2": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 2x2",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card3": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 1x1",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card4": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 2x1",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card5": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 1x1",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card6": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 4x1",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card7": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 2x6",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card8": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 4x4",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card9": {
+			"sap.card": {
+				"icon": "../images/Woman_avatar_01.png",
+				"title": "Card Title 4x4 with image",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card10": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 2x2",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card11": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 2x2",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card12": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 6x4",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card13": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 6x4",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		}
+	},
+	"grid": {
+		"card1": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 2x2",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card2": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 4x2",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card3": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 1x1",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card4": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 2x1",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card5": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 1x1",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card6": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 4x1",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card7": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 2x6",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card8": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 4x4",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card9": {
+			"sap.card": {
+				"icon": "../images/Woman_avatar_01.png",
+				"title": "Card Title 4x4 with image",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card10": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 2x2",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card11": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 2x2",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card12": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 6x4",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card13": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 6x4",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		}
+	},
+	"zflow": {
+		"card1": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 2x2",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card2": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 4x2",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card3": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 1x1",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card4": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 2x1",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card5": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 1x1",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card6": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 4x1",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card7": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 2x6",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card8": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 4x4",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card9": {
+			"sap.card": {
+				"icon": "../images/Woman_avatar_01.png",
+				"title": "Card Title 4x4 with image",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card10": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 2x2",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card11": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 2x2",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card12": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 6x4",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		},
+		"card13": {
+			"sap.card": {
+				"icon": "sap-icon://accept",
+				"title": "Card Title 6x4",
+				"subTitle": "Card Subtitle",
+				"status": "Count",
+				"type": "CustomCard",
+				"width": "100%",
+				"height": "100%"
+			}
+		}
+	}
+}

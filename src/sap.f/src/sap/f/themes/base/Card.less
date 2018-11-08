@@ -24,19 +24,9 @@
     -webkit-font-smoothing: antialiased;
     -webkit-text-stroke: 0.3px rgba(250, 250, 250, 0.2);
     padding: 0;
-    vertical-align: top;
-    margin: 0.9rem 0 0 0.9rem; /*TODO: this should be controlled by the outer layout*/
+	vertical-align: top;
+	box-sizing: border-box;
     border: 1px dotted transparent;
-}
-.sapFCard.sapFCardFitContainer {
-	width: 100%;
-	height: 100%;
-	margin: 0 0 0 0;
-	box-shadow: none;
-	border: none;
-}
-.sapUiLayoutCSSGrid>.sapFCard {
-    margin: 0; /*TODO: inside of a css grid the margin is actually controlled by the grid-gap property already (see TODO comment above), so removing margin here */
 }
 
 html.sap-desktop .sapFCard:focus {
@@ -162,8 +152,6 @@ html.sap-desktop .sapFCard:focus {
 .sapFCard>.sapFCardSeparator {
     height: 1px;
     margin: -2px 0.5rem;
-    position: relative;
-    overflow: hidden;
     background-color: #f0f0f0;
 }
 
@@ -185,12 +173,4 @@ html.sap-desktop .sapFCard:focus {
     80% { left: 50%;}
     95% {left: 120%;}
     to {left: 100%;}
-}
-
-.sapFCard>section.sapFCardContent {
-    background-color: #fff;
-    position: absolute;
-    top: 4.5rem;
-    width: 100%;
-    display: block;
 }

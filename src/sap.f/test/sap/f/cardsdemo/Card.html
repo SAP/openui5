@@ -9,6 +9,11 @@
 			margin-right: auto !important;
 			max-width: 1400px;
 		}
+		/* TODO: What do we do when a 1x1 Card has too big content. Should we care? Or is this app developer responsibility? */
+		/* This style ensure small cards content don't enlarge the columns of the grid */
+		.sapUiLayoutCSSGridItemWrapper {
+			min-width: 0;
+		}
 	</style>
 	<script type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"

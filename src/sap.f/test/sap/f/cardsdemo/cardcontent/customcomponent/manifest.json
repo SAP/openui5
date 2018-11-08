@@ -2,7 +2,7 @@
 	"_version": "1.8.0",
 	"sap.app": {
 		"id": "sap.f.cardsdemo.cardcontent.customcomponent",
-		"type": "application",
+		"type": "card",
 		"i18n": "i18n.properties",
 		"title": "{{title}}",
 		"description": "{{subtitle}}",
@@ -23,6 +23,8 @@
 				"sap.m": { }
 			}
 		}
-
-    }
+	},
+	"sap.card": {
+		"type": "CustomCard"
+	}
 }
