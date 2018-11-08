@@ -1,24 +1,39 @@
 /*global QUnit*/
-jQuery.sap.require("sap.ui.layout.changeHandler.AddSimpleFormGroup");
-jQuery.sap.require("sap.ui.layout.form.SimpleForm");
-jQuery.sap.require("sap.ui.layout.form.FormElement");
-jQuery.sap.require("sap.ui.layout.form.FormContainer");
-jQuery.sap.require("sap.ui.fl.Change");
-jQuery.sap.require("sap.ui.core.util.reflection.JsControlTreeModifier");
-jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
-
-(function () {
+sap.ui.define([
+	"sap/ui/layout/changeHandler/AddSimpleFormGroup",
+	"sap/ui/layout/form/SimpleForm",
+	"sap/ui/layout/form/FormElement",
+	"sap/ui/layout/form/FormContainer",
+	"sap/ui/fl/Change",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/util/reflection/XmlTreeModifier",
+	"sap/ui/core/Title",
+	"sap/m/Label",
+	"sap/m/Input"
+], function(
+	AddSimpleFormGroup,
+	SimpleForm,
+	FormElement,
+	FormContainer,
+	Change,
+	JsControlTreeModifier,
+	XmlTreeModifier,
+	Title,
+	Label,
+	Input
+) {
 	"use strict";
+
 
 	QUnit.module("using sap.ui.layout.changeHandler.AddSimpleFormGroup on simpleform with title and having old index", {
 		beforeEach: function () {
 
-			this.oTitle0 = new sap.ui.core.Title({id: "Title0", text: "Title 0"});
-			this.oLabel0 = new sap.m.Label({id: "Label0", text: "Label 0", visible: true});
-			this.oLabel1 = new sap.m.Label({id: "Label1", text: "Label 1"});
-			this.oInput0 = new sap.m.Input({id: "Input0", visible: true});
-			this.oInput1 = new sap.m.Input({id: "Input1"});
-			this.oSimpleForm = new sap.ui.layout.form.SimpleForm({
+			this.oTitle0 = new Title({id: "Title0", text: "Title 0"});
+			this.oLabel0 = new Label({id: "Label0", text: "Label 0", visible: true});
+			this.oLabel1 = new Label({id: "Label1", text: "Label 1"});
+			this.oInput0 = new Input({id: "Input0", visible: true});
+			this.oInput1 = new Input({id: "Input1"});
+			this.oSimpleForm = new SimpleForm({
 				id: "SimpleForm", title: "Simple Form",
 				content: [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
@@ -47,7 +62,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 				"id": "newId",
 				"index": 5
 			};
-			this.oLegacyChangeWrapper = new sap.ui.fl.Change(oLegacyChange);
+			this.oLegacyChangeWrapper = new Change(oLegacyChange);
 
 			var oChangeWithLocalIds = jQuery.extend(true, {}, mCommonChangeData);
 			oChangeWithLocalIds.content.group = {
@@ -57,7 +72,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 				},
 				"index": 5
 			};
-			this.oChangeWithLocalIdsWrapper = new sap.ui.fl.Change(oChangeWithLocalIds);
+			this.oChangeWithLocalIdsWrapper = new Change(oChangeWithLocalIds);
 
 			var oChangeWithGlobalIds = jQuery.extend(true, {}, mCommonChangeData);
 			oChangeWithGlobalIds.content.group = {
@@ -67,7 +82,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 				},
 				"index": 5
 			};
-			this.oChangeWithGlobalIdsWrapper = new sap.ui.fl.Change(oChangeWithGlobalIds);
+			this.oChangeWithGlobalIdsWrapper = new Change(oChangeWithGlobalIds);
 
 			this.oMockedComponent = {
 				createId: function (sString) {
@@ -80,11 +95,11 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 
 			this.mPropertyBag = {
 				appComponent: this.oMockedComponent,
-				modifier: sap.ui.core.util.reflection.JsControlTreeModifier
+				modifier: JsControlTreeModifier
 			};
 
-			this.oChangeHandler = sap.ui.layout.changeHandler.AddSimpleFormGroup;
-			this.oXmlTreeModifier = sap.ui.core.util.reflection.XmlTreeModifier;
+			this.oChangeHandler = AddSimpleFormGroup;
+			this.oXmlTreeModifier = XmlTreeModifier;
 		},
 
 		afterEach: function () {
@@ -144,11 +159,11 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 	QUnit.module("using sap.ui.layout.changeHandler.AddSimpleFormGroup on simpleform without title and having old index", {
 		beforeEach: function () {
 
-			this.oLabel0 = new sap.m.Label({id: "Label0", text: "Label 0", visible: true});
-			this.oLabel1 = new sap.m.Label({id: "Label1", text: "Label 1"});
-			this.oInput0 = new sap.m.Input({id: "Input0", visible: true});
-			this.oInput1 = new sap.m.Input({id: "Input1"});
-			this.oSimpleForm = new sap.ui.layout.form.SimpleForm({
+			this.oLabel0 = new Label({id: "Label0", text: "Label 0", visible: true});
+			this.oLabel1 = new Label({id: "Label1", text: "Label 1"});
+			this.oInput0 = new Input({id: "Input0", visible: true});
+			this.oInput1 = new Input({id: "Input1"});
+			this.oSimpleForm = new SimpleForm({
 				id: "SimpleForm", title: "Simple Form",
 				content: [this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
@@ -177,7 +192,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 				"id": "newId",
 				"index": 0
 			};
-			this.oLegacyChangeWrapper = new sap.ui.fl.Change(oLegacyChange);
+			this.oLegacyChangeWrapper = new Change(oLegacyChange);
 
 			var oChangeWithLocalIds = jQuery.extend(true, {}, mCommonChangeData);
 			oChangeWithLocalIds.content.group = {
@@ -187,7 +202,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 				},
 				"index": 0
 			};
-			this.oChangeWithLocalIdsWrapper = new sap.ui.fl.Change(oChangeWithLocalIds);
+			this.oChangeWithLocalIdsWrapper = new Change(oChangeWithLocalIds);
 
 			var oChangeWithGlobalIds = jQuery.extend(true, {}, mCommonChangeData);
 			oChangeWithGlobalIds.content.group = {
@@ -197,7 +212,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 				},
 				"index": 0
 			};
-			this.oChangeWithGlobalIdsWrapper = new sap.ui.fl.Change(oChangeWithGlobalIds);
+			this.oChangeWithGlobalIdsWrapper = new Change(oChangeWithGlobalIds);
 
 			this.oMockedComponent = {
 				createId: function (sString) {
@@ -210,11 +225,11 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 
 			this.mPropertyBag = {
 				appComponent: this.oMockedComponent,
-				modifier: sap.ui.core.util.reflection.JsControlTreeModifier
+				modifier: JsControlTreeModifier
 			};
 
-			this.oChangeHandler = sap.ui.layout.changeHandler.AddSimpleFormGroup;
-			this.oXmlTreeModifier = sap.ui.core.util.reflection.XmlTreeModifier;
+			this.oChangeHandler = AddSimpleFormGroup;
+			this.oXmlTreeModifier = XmlTreeModifier;
 		},
 
 		afterEach: function () {
@@ -272,7 +287,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 			"changeType": "addSimpleFormGroup",
 			"content": {}
 		};
-		var oChangeWrapper = new sap.ui.fl.Change(oChange);
+		var oChangeWrapper = new Change(oChange);
 		var oSpecificChangeInfo = {index: 5, newControlId: "newId", newLabel: "New Control"};
 
 		this.oChangeHandler.completeChangeContent(oChangeWrapper, oSpecificChangeInfo, this.mPropertyBag);
@@ -283,7 +298,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 	});
 
 	QUnit.test('when calling completeChangeContent with incomplete specificChangeInfo', function (assert) {
-		var oChangeWrapper = new sap.ui.fl.Change({
+		var oChangeWrapper = new Change({
 			"selector": {
 				"id": "SimpleForm"
 			},
@@ -301,12 +316,12 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 
 	QUnit.module("using sap.ui.layout.changeHandler.AddSimpleFormGroup on simpleform with title and having relative index", {
 		beforeEach: function () {
-			this.oTitle0 = new sap.ui.core.Title({id: "Title0", text: "Title 0"});
-			this.oLabel0 = new sap.m.Label({id: "Label0", text: "Label 0", visible: true});
-			this.oLabel1 = new sap.m.Label({id: "Label1", text: "Label 1"});
-			this.oInput0 = new sap.m.Input({id: "Input0", visible: true});
-			this.oInput1 = new sap.m.Input({id: "Input1"});
-			this.oSimpleForm = new sap.ui.layout.form.SimpleForm({
+			this.oTitle0 = new Title({id: "Title0", text: "Title 0"});
+			this.oLabel0 = new Label({id: "Label0", text: "Label 0", visible: true});
+			this.oLabel1 = new Label({id: "Label1", text: "Label 1"});
+			this.oInput0 = new Input({id: "Input0", visible: true});
+			this.oInput1 = new Input({id: "Input1"});
+			this.oSimpleForm = new SimpleForm({
 				id: "SimpleForm", title: "Simple Form",
 				content: [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
@@ -335,7 +350,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 				"id": "newId",
 				"relativeIndex": 1
 			};
-			this.oLegacyChangeWrapper = new sap.ui.fl.Change(oLegacyChange);
+			this.oLegacyChangeWrapper = new Change(oLegacyChange);
 
 			var oChangeWithLocalIds = jQuery.extend(true, {}, mCommonChangeData);
 			oChangeWithLocalIds.content.group = {
@@ -345,7 +360,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 				},
 				"relativeIndex": 1
 			};
-			this.oChangeWithLocalIdsWrapper = new sap.ui.fl.Change(oChangeWithLocalIds);
+			this.oChangeWithLocalIdsWrapper = new Change(oChangeWithLocalIds);
 
 			var oChangeWithGlobalIds = jQuery.extend(true, {}, mCommonChangeData);
 			oChangeWithGlobalIds.content.group = {
@@ -355,7 +370,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 				},
 				"relativeIndex": 1
 			};
-			this.oChangeWithGlobalIdsWrapper = new sap.ui.fl.Change(oChangeWithGlobalIds);
+			this.oChangeWithGlobalIdsWrapper = new Change(oChangeWithGlobalIds);
 
 			this.oMockedComponent = {
 				createId: function (sString) {
@@ -368,11 +383,11 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 
 			this.mPropertyBag = {
 				appComponent: this.oMockedComponent,
-				modifier: sap.ui.core.util.reflection.JsControlTreeModifier
+				modifier: JsControlTreeModifier
 			};
 
-			this.oChangeHandler = sap.ui.layout.changeHandler.AddSimpleFormGroup;
-			this.oXmlTreeModifier = sap.ui.core.util.reflection.XmlTreeModifier;
+			this.oChangeHandler = AddSimpleFormGroup;
+			this.oXmlTreeModifier = XmlTreeModifier;
 		},
 
 		afterEach: function () {
@@ -412,11 +427,11 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 	QUnit.module("using sap.ui.layout.changeHandler.AddSimpleFormGroup on simpleform without title and having relative index", {
 		beforeEach: function () {
 
-			this.oLabel0 = new sap.m.Label({id: "Label0", text: "Label 0", visible: true});
-			this.oLabel1 = new sap.m.Label({id: "Label1", text: "Label 1"});
-			this.oInput0 = new sap.m.Input({id: "Input0", visible: true});
-			this.oInput1 = new sap.m.Input({id: "Input1"});
-			this.oSimpleForm = new sap.ui.layout.form.SimpleForm({
+			this.oLabel0 = new Label({id: "Label0", text: "Label 0", visible: true});
+			this.oLabel1 = new Label({id: "Label1", text: "Label 1"});
+			this.oInput0 = new Input({id: "Input0", visible: true});
+			this.oInput1 = new Input({id: "Input1"});
+			this.oSimpleForm = new SimpleForm({
 				id: "SimpleForm", title: "Simple Form",
 				content: [this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
@@ -445,7 +460,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 				"id": "newId",
 				"relativeIndex": 0
 			};
-			this.oLegacyChangeWrapper = new sap.ui.fl.Change(oLegacyChange);
+			this.oLegacyChangeWrapper = new Change(oLegacyChange);
 
 			var oChangeWithLocalIds = jQuery.extend(true, {}, mCommonChangeData);
 			oChangeWithLocalIds.content.group = {
@@ -455,7 +470,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 				},
 				"relativeIndex": 0
 			};
-			this.oChangeWithLocalIdsWrapper = new sap.ui.fl.Change(oChangeWithLocalIds);
+			this.oChangeWithLocalIdsWrapper = new Change(oChangeWithLocalIds);
 
 			var oChangeWithGlobalIds = jQuery.extend(true, {}, mCommonChangeData);
 			oChangeWithGlobalIds.content.group = {
@@ -465,7 +480,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 				},
 				"relativeIndex": 0
 			};
-			this.oChangeWithGlobalIdsWrapper = new sap.ui.fl.Change(oChangeWithGlobalIds);
+			this.oChangeWithGlobalIdsWrapper = new Change(oChangeWithGlobalIds);
 
 			this.oMockedComponent = {
 				createId: function (sString) {
@@ -478,11 +493,11 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 
 			this.mPropertyBag = {
 				appComponent: this.oMockedComponent,
-				modifier: sap.ui.core.util.reflection.JsControlTreeModifier
+				modifier: JsControlTreeModifier
 			};
 
-			this.oChangeHandler = sap.ui.layout.changeHandler.AddSimpleFormGroup;
-			this.oXmlTreeModifier = sap.ui.core.util.reflection.XmlTreeModifier;
+			this.oChangeHandler = AddSimpleFormGroup;
+			this.oXmlTreeModifier = XmlTreeModifier;
 		},
 
 		afterEach: function () {
@@ -521,19 +536,19 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 	QUnit.module("using sap.ui.layout.changeHandler.AddSimpleFormGroup on simpleform with two form containers having title and relative index", {
 		beforeEach: function () {
 
-			this.oTitle0 = new sap.ui.core.Title({id: "Title0", text: "Title 0"});
-			this.oLabel0 = new sap.m.Label({id: "Label0", text: "Label 0", visible: true});
-			this.oLabel1 = new sap.m.Label({id: "Label1", text: "Label 1"});
-			this.oInput0 = new sap.m.Input({id: "Input0", visible: true});
-			this.oInput1 = new sap.m.Input({id: "Input1"});
+			this.oTitle0 = new Title({id: "Title0", text: "Title 0"});
+			this.oLabel0 = new Label({id: "Label0", text: "Label 0", visible: true});
+			this.oLabel1 = new Label({id: "Label1", text: "Label 1"});
+			this.oInput0 = new Input({id: "Input0", visible: true});
+			this.oInput1 = new Input({id: "Input1"});
 
-			this.oTitle1 = new sap.ui.core.Title({id: "Title1", text: "Title 1"});
-			this.oLabel2 = new sap.m.Label({id: "Label2", text: "Label 2", visible: true});
-			this.oLabel3 = new sap.m.Label({id: "Label3", text: "Label 3"});
-			this.oInput2 = new sap.m.Input({id: "Input2", visible: true});
-			this.oInput3 = new sap.m.Input({id: "Input3"});
+			this.oTitle1 = new Title({id: "Title1", text: "Title 1"});
+			this.oLabel2 = new Label({id: "Label2", text: "Label 2", visible: true});
+			this.oLabel3 = new Label({id: "Label3", text: "Label 3"});
+			this.oInput2 = new Input({id: "Input2", visible: true});
+			this.oInput3 = new Input({id: "Input3"});
 
-			this.oSimpleForm = new sap.ui.layout.form.SimpleForm({
+			this.oSimpleForm = new SimpleForm({
 				id: "SimpleForm", title: "Simple Form",
 				content: [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1, this.oTitle1, this.oLabel2, this.oInput2, this.oLabel3, this.oInput3]
 			});
@@ -562,7 +577,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 				"id": "newId",
 				"relativeIndex": 1
 			};
-			this.oLegacyChangeWrapper = new sap.ui.fl.Change(oLegacyChange);
+			this.oLegacyChangeWrapper = new Change(oLegacyChange);
 
 			var oChangeWithLocalIds = jQuery.extend(true, {}, mCommonChangeData);
 			oChangeWithLocalIds.content.group = {
@@ -572,7 +587,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 				},
 				"relativeIndex": 1
 			};
-			this.oChangeWithLocalIdsWrapper = new sap.ui.fl.Change(oChangeWithLocalIds);
+			this.oChangeWithLocalIdsWrapper = new Change(oChangeWithLocalIds);
 
 			var oChangeWithGlobalIds = jQuery.extend(true, {}, mCommonChangeData);
 			oChangeWithGlobalIds.content.group = {
@@ -582,7 +597,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 				},
 				"relativeIndex": 1
 			};
-			this.oChangeWithGlobalIdsWrapper = new sap.ui.fl.Change(oChangeWithGlobalIds);
+			this.oChangeWithGlobalIdsWrapper = new Change(oChangeWithGlobalIds);
 
 			this.oMockedComponent = {
 				createId: function (sString) {
@@ -595,11 +610,11 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 
 			this.mPropertyBag = {
 				appComponent: this.oMockedComponent,
-				modifier: sap.ui.core.util.reflection.JsControlTreeModifier
+				modifier: JsControlTreeModifier
 			};
 
-			this.oChangeHandler = sap.ui.layout.changeHandler.AddSimpleFormGroup;
-			this.oXmlTreeModifier = sap.ui.core.util.reflection.XmlTreeModifier;
+			this.oChangeHandler = AddSimpleFormGroup;
+			this.oXmlTreeModifier = XmlTreeModifier;
 		},
 
 		afterEach: function () {
@@ -640,5 +655,4 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 
 		_testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oLegacyChangeWrapper, "New Control", 5, assert);
 	});
-
-})();
+});

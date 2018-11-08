@@ -1,29 +1,38 @@
 /*global QUnit*/
 
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/layout/changeHandler/HideSimpleForm",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/fl/Change",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/core/util/reflection/XmlTreeModifier"
+	"sap/ui/core/util/reflection/XmlTreeModifier",
+	"sap/ui/core/Title",
+	"sap/m/Label",
+	"sap/m/Input",
+	"sap/m/Toolbar",
+	"sap/m/Title"
 ], function(
 	HideSimpleForm,
 	SimpleForm,
 	Change,
 	JsControlTreeModifier,
-	XmlTreeModifier
+	XmlTreeModifier,
+	Title,
+	Label,
+	Input,
+	Toolbar,
+	mobileTitle
 ) {
 	"use strict";
 
 	QUnit.module("using HideSimpleForm with old change format", {
 		beforeEach: function () {
 
-			this.oTitle0 = new sap.ui.core.Title({id : "Title0", text : "Title 0"});
-			this.oLabel0 = new sap.m.Label({id : "Label0",  text : "Label 0", visible : true});
-			this.oLabel1 = new sap.m.Label({id : "Label1",  text : "Label 1"});
-			this.oInput0 = new sap.m.Input({id : "Input0", visible : true});
-			this.oInput1 = new sap.m.Input({id : "Input1"});
+			this.oTitle0 = new Title({id : "Title0", text : "Title 0"});
+			this.oLabel0 = new Label({id : "Label0",  text : "Label 0", visible : true});
+			this.oLabel1 = new Label({id : "Label1",  text : "Label 1"});
+			this.oInput0 = new Input({id : "Input0", visible : true});
+			this.oInput1 = new Input({id : "Input1"});
 			this.oSimpleForm = new SimpleForm({
 				id : "SimpleForm", title : "Simple Form",
 				content : [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
@@ -69,11 +78,11 @@ sap.ui.require([
 	QUnit.module("using HideSimpleForm with a new change format", {
 		beforeEach: function () {
 
-			this.oTitle0 = new sap.ui.core.Title({id : "component---Title0",  text : "Title 0"});
-			this.oLabel0 = new sap.m.Label({id : "component---Label0",  text : "Label 0", visible : true});
-			this.oLabel1 = new sap.m.Label({id : "component---Label1",  text : "Label 1"});
-			this.oInput0 = new sap.m.Input({id : "component---Input0", visible : true});
-			this.oInput1 = new sap.m.Input({id : "component---Input1"});
+			this.oTitle0 = new Title({id : "component---Title0",  text : "Title 0"});
+			this.oLabel0 = new Label({id : "component---Label0",  text : "Label 0", visible : true});
+			this.oLabel1 = new Label({id : "component---Label1",  text : "Label 1"});
+			this.oInput0 = new Input({id : "component---Input0", visible : true});
+			this.oInput1 = new Input({id : "component---Input1"});
 			this.oSimpleForm = new SimpleForm({
 				id : "component---SimpleForm", title : "Simple Form",
 				content : [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
@@ -247,21 +256,21 @@ sap.ui.require([
 	QUnit.module("using HideSimpleForm with a simpleform with toolbar", {
 		beforeEach: function () {
 
-			this.oToolbar0 = new sap.m.Toolbar({id : "Toolbar0"});
-			var oTitle0 = new sap.m.Title("Title0", {text : "Title 0"});
+			this.oToolbar0 = new Toolbar({id : "Toolbar0"});
+			var oTitle0 = new mobileTitle("Title0", {text : "Title 0"});
 			this.oToolbar0.addContent(oTitle0);
-			this.oLabel0 = new sap.m.Label({id : "Label0",  text : "Label 0", visible : true});
-			this.oLabel1 = new sap.m.Label({id : "Label1",  text : "Label 1"});
-			this.oInput0 = new sap.m.Input({id : "Input0", visible : true});
-			this.oInput1 = new sap.m.Input({id : "Input1"});
+			this.oLabel0 = new Label({id : "Label0",  text : "Label 0", visible : true});
+			this.oLabel1 = new Label({id : "Label1",  text : "Label 1"});
+			this.oInput0 = new Input({id : "Input0", visible : true});
+			this.oInput1 = new Input({id : "Input1"});
 
-			this.oToolbar1 = new sap.m.Toolbar({id : "Toolbar1"});
-			var oTitle1 = new sap.m.Title("Title1", {text : "Title 1"});
+			this.oToolbar1 = new Toolbar({id : "Toolbar1"});
+			var oTitle1 = new mobileTitle("Title1", {text : "Title 1"});
 			this.oToolbar1.addContent(oTitle1);
-			this.oLabel10 = new sap.m.Label({id : "Label10",  text : "Label 10", visible : true});
-			this.oLabel11 = new sap.m.Label({id : "Label11",  text : "Label 11"});
-			this.oInput10 = new sap.m.Input({id : "Input10", visible : true});
-			this.oInput11 = new sap.m.Input({id : "Input11"});
+			this.oLabel10 = new Label({id : "Label10",  text : "Label 10", visible : true});
+			this.oLabel11 = new Label({id : "Label11",  text : "Label 11"});
+			this.oInput10 = new Input({id : "Input10", visible : true});
+			this.oInput11 = new Input({id : "Input11"});
 
 			this.oSimpleForm = new SimpleForm({
 				id : "SimpleForm", title : "Simple Form",
@@ -358,18 +367,18 @@ sap.ui.require([
 	QUnit.module("using HideSimpleForm with a simpleform with toolbar", {
 		beforeEach: function () {
 
-			this.oLabel0 = new sap.m.Label({id : "Label30",  text : "Label 0", visible : true});
-			this.oLabel1 = new sap.m.Label({id : "Label31",  text : "Label 1"});
-			this.oInput0 = new sap.m.Input({id : "Input30", visible : true});
-			this.oInput1 = new sap.m.Input({id : "Input31"});
+			this.oLabel0 = new Label({id : "Label30",  text : "Label 0", visible : true});
+			this.oLabel1 = new Label({id : "Label31",  text : "Label 1"});
+			this.oInput0 = new Input({id : "Input30", visible : true});
+			this.oInput1 = new Input({id : "Input31"});
 
-			this.oToolbar1 = new sap.m.Toolbar({id : "Toolbar31"});
-			var oTitle1 = new sap.m.Title("Title31", {text : "Title 1"});
+			this.oToolbar1 = new Toolbar({id : "Toolbar31"});
+			var oTitle1 = new mobileTitle("Title31", {text : "Title 1"});
 			this.oToolbar1.addContent(oTitle1);
-			this.oLabel10 = new sap.m.Label({id : "Label130",  text : "Label 10", visible : true});
-			this.oLabel11 = new sap.m.Label({id : "Label311",  text : "Label 11"});
-			this.oInput10 = new sap.m.Input({id : "Input310", visible : true});
-			this.oInput11 = new sap.m.Input({id : "Input311"});
+			this.oLabel10 = new Label({id : "Label130",  text : "Label 10", visible : true});
+			this.oLabel11 = new Label({id : "Label311",  text : "Label 11"});
+			this.oInput10 = new Input({id : "Input310", visible : true});
+			this.oInput11 = new Input({id : "Input311"});
 
 			this.oSimpleForm = new SimpleForm({
 				id : "SimpleForm", title : "Simple Form",
