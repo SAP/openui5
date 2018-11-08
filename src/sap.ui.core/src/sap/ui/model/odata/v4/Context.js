@@ -536,7 +536,17 @@ sap.ui.define([
 	 */
 	Context.prototype.refresh = function (sGroupId, bAllowRemoval) {
 		this.oModel.checkGroupId(sGroupId);
+		this.oBinding.checkSuspended();
+		if (this.oBinding.hasPendingChangesForPath(this.getPath())
+				|| this.oBinding.hasPendingChangesInDependents(this)) {
+			throw new Error("Cannot refresh entity due to pending changes: " + this);
+		}
+
 		if (this.oBinding.refreshSingle) {
+			if (!this.oBinding.isRefreshable()) {
+				throw new Error("Binding is not refreshable; cannot refresh entity: " + this);
+			}
+
 			this.oBinding.refreshSingle(this, this.oModel.lockGroup(sGroupId, true, this),
 				bAllowRemoval);
 		} else {

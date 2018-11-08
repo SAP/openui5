@@ -866,9 +866,6 @@ sap.ui.define([
 	 * @param {string} sGroupId
 	 *   The group ID for the refresh
 	 * @returns {boolean} Whether the given context is this binding's return value context
-	 * @throws {Error}
-	 *   If this binding or bindings dependent on the given context have pending changes, or
-	 *   if the root binding of this binding is suspended.
 	 *
 	 * @private
 	 */
@@ -878,12 +875,6 @@ sap.ui.define([
 
 		if (this.oReturnValueContext !== oContext) {
 			return false;
-		}
-
-		this.checkSuspended();
-		if (this.hasPendingChangesForPath(oContext.getPath())
-			|| this.hasPendingChangesInDependents(oContext)) {
-			throw new Error("Cannot refresh entity due to pending changes: " + oContext);
 		}
 
 		this.mCacheQueryOptions = this.computeOperationQueryOptions();

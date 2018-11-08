@@ -2467,13 +2467,6 @@ sap.ui.define([
 				"/SalesOrderList('77')");
 
 		oBinding.oReturnValueContext = oReturnValueContext;
-		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oBinding).expects("hasPendingChangesForPath")
-			.withExactArgs("/SalesOrderList('77')")
-			.returns(false);
-		this.mock(oBinding).expects("hasPendingChangesInDependents")
-			.withExactArgs(sinon.match.same(oReturnValueContext))
-			.returns(false);
 		this.mock(oBinding).expects("computeOperationQueryOptions").withExactArgs()
 			.returns(mQueryOptions);
 		this.mock(_Cache).expects("createSingle")
@@ -2500,38 +2493,6 @@ sap.ui.define([
 		assert.strictEqual(
 			oBinding.refreshReturnValueContext(oBinding.getBoundContext(), "group"),
 			false);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("refreshReturnValueContext, error on pending changes, suspended", function (assert) {
-		var oContext = Context.create(this.oModel, {}, "/SalesOrderList('42')"),
-			oBinding = this.bindContext("bound.Operation(...)", oContext),
-			oBindingMock = this.mock(oBinding),
-			oReturnValueContext = Context.create(this.oModel, oBinding,
-				"/SalesOrderList('77')");
-
-		oBinding.oReturnValueContext = oReturnValueContext;
-		oBindingMock.expects("checkSuspended").withExactArgs().twice();
-		oBindingMock.expects("hasPendingChangesForPath")
-			.withExactArgs("/SalesOrderList('77')")
-			.returns(true);
-
-		// code under test
-		assert.throws(function () {
-			oBinding.refreshReturnValueContext(oReturnValueContext, "group");
-		}, new Error("Cannot refresh entity due to pending changes: /SalesOrderList('77')"));
-
-		oBindingMock.expects("hasPendingChangesForPath")
-			.withExactArgs("/SalesOrderList('77')")
-			.returns(false);
-		oBindingMock.expects("hasPendingChangesInDependents")
-			.withExactArgs(sinon.match.same(oReturnValueContext))
-			.returns(true);
-
-		// code under test
-		assert.throws(function () {
-			oBinding.refreshReturnValueContext(oReturnValueContext, "group");
-		}, new Error("Cannot refresh entity due to pending changes: /SalesOrderList('77')"));
 	});
 
 	//*********************************************************************************************
