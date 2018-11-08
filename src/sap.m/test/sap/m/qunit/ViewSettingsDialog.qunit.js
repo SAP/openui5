@@ -3068,6 +3068,25 @@ sap.ui.define([
 		oViewSettingsDialog.destroy();
 	});
 
+	QUnit.test("ViewSettingsItem from sortItems should pass it's tooltip to the StandardListItem", function (assert) {
+		// Arrange
+		var oViewSettingsItem = new ViewSettingsItem({
+			text: "Sort item",
+			tooltip: "Tooltip for the sort item"
+		}),
+		oViewSettingsDialog = new ViewSettingsDialog({
+			sortItems: oViewSettingsItem
+		});
+
+		//Assert
+		//since the header is the 0 element, get the actual first item
+		assert.ok(oViewSettingsDialog._sortList.getItems()[1].getTooltip(),
+			"Tooltip from ViewSettingsItem is passed to the StandardListItem");
+
+		// Cleanup
+		oViewSettingsDialog.destroy();
+	});
+
 	QUnit.module("Accessibility", {
 		beforeEach : function () {
 			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
