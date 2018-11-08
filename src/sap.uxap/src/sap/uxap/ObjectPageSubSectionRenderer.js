@@ -21,7 +21,7 @@ sap.ui.define(function () {
 
 		aActions = oControl.getActions() || [];
 		bHasActions = aActions.length > 0;
-		bHasTitle = (oControl._getInternalTitleVisible() && (oControl.getTitle() !== ""));
+		bHasTitle = (oControl._getInternalTitleVisible() && (oControl.getTitle().trim() !== ""));
 		bHasTitleLine = bHasTitle || bHasActions;
 		bHasVisibleActions = oControl._hasVisibleActions();
 

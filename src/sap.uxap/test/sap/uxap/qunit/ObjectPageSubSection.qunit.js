@@ -1167,41 +1167,6 @@ function($, Core, Lib, ObjectPageSection, ObjectPageSubSectionClass, BlockBase, 
 		assert.strictEqual(oSubSectionWithTitle.getTitle(), document.getElementById(sSubSectionWithTitleAriaLabelledBy).innerText, "Subsection title is properly labelled");
 	});
 
-	QUnit.module("SubSection Header");
-
-	QUnit.test("Header rendering depending on title value", function (assert) {
-		assert.expect(3);
-
-		var aSubSectionTitlesData = [
-			{value: "", headerRendered: false, msg: "SubSection header is not rendered as the title is an empty string"},
-			{value: "   ", headerRendered: true, msg: "SubSection header is rendered as the title is not an empty string"},
-			{value: "abc", headerRendered: true, msg: "SubSection header is rendered as the title is not an empty string"}
-		],
-		oSection = new ObjectPageSection({
-			title:"Personal",
-			subSections: [
-				new ObjectPageSubSectionClass({
-					title: "Initial",
-					blocks: new Label({text: "Block1" })
-				})
-			]
-		}),
-		oSubSection = oSection.getSubSections()[0];
-		oSection.placeAt('qunit-fixture');
-
-		aSubSectionTitlesData.forEach(function(oTitleData) {
-			// act
-			oSubSection.setTitle(oTitleData.value);
-			Core.applyChanges();
-
-			// assert
-			assert.strictEqual(oSubSection.$("header").length > 0, oTitleData.headerRendered, oTitleData.msg);
-		});
-
-		// clean up
-		oSection.destroy();
-	});
-
 	QUnit.module("Title ID propagation");
 
 	QUnit.test("_initTitlePropagationSupport is called on init", function (assert) {
