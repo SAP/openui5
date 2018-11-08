@@ -58,13 +58,13 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 		var mProperties = oControl.getMetadata().getAllProperties();
 
 		for (var sPropertyName in mProperties) {
-			var oProperty = mProperties[sPropertyName];
-			try {
-				if (oControl[oProperty._sGetter]() === oProperty.getDefaultValue()) { // if no value has been set yet by the control factory  TODO: use "isPropertyInitial", once available
+			if (oControl.isPropertyInitial(sPropertyName)) { // if no value has been set yet by the control factory
+				var oProperty = mProperties[sPropertyName];
+				try {
 					oControl[oProperty._sMutator]("dummyValueForMemLeakTest"); // just try a string for everything now, TODO: check type
+				} catch (e) {
+					// type check error, ignore (we stupidly always try with a string, even if the property has a different type)
 				}
-			} catch (e) {
-				// type check error, ignore (we stupidly always try with a string, even if the property has a different type)
 			}
 		}
 		if (!oControl.getTooltip()) {
