@@ -146,7 +146,7 @@ sap.ui.define([
 	 * Resolves the complete URL of a request using the back-end URL and the relative URL from the request
 	 *
 	 * @param {String} sRelativeUrl - relative URL of the current request
-	 * @returns {sap.ui.core.URI} returns the complete uri for this request
+	 * @returns {String} returns the complete uri for this request
 	 * @private
 	 */
 	LrepConnector.prototype._resolveUrl = function(sRelativeUrl) {

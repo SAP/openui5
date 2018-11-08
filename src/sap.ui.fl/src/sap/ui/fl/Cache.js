@@ -284,17 +284,17 @@ sap.ui.define([
 		if (bChangesBundleLoaded) {
 			return Promise.resolve(LoaderExtensions.loadResource(sResourcePath));
 		} else {
-			if (!sap.ui.getCore().getConfiguration().getDebug()) {
-				return Promise.resolve([]);
+			var oConfiguration = sap.ui.getCore().getConfiguration();
+			if (oConfiguration.getDebug() || oConfiguration.isFlexBundleRequestForced()) {
+				// try to load the source in case a debugging takes place and the component could have no Component-preload
+				try {
+					return Promise.resolve(LoaderExtensions.loadResource(sResourcePath));
+				} catch (e) {
+					Log.warning("flexibility did not find a changesBundle.json  for the application");
+				}
 			}
 
-			// try to load the source in case a debugging takes place and the component could have no Component-preload
-			try {
-				return Promise.resolve(LoaderExtensions.loadResource(sResourcePath));
-			} catch (e) {
-				Log.warning("flexibility did not find a changesBundle.json  for the application");
-				return Promise.resolve([]);
-			}
+			return Promise.resolve([]);
 		}
 	};
 

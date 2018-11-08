@@ -130,7 +130,6 @@ sap.ui.define([
 					"versionedLibCss"       : { type : "boolean",  defaultValue : false },
 					"manifestFirst"         : { type : "boolean",  defaultValue : false },
 					"flexibilityServices"   : { type : "string",  defaultValue : "/sap/bc/lrep" },
-
 					"whitelistService"      : { type : "string",   defaultValue : null,      noUrl: true }, // url/to/service
 					"frameOptions"          : { type : "string",   defaultValue : "default", noUrl: true }, // default/allow/deny/trusted (default => allow)
 					"frameOptionsConfig"    : { type : "object",   defaultValue : undefined, noUrl:true },  // advanced frame options configuration
@@ -161,6 +160,7 @@ sap.ui.define([
 					"xx-xml-processing"     : { type : "string",  defaultValue : "" },
 					"xx-avoidAriaApplicationRole" : { type : "boolean",  defaultValue : false}, // Avoid ACC role 'application'
 					"xx-hyphenation" : { type : "string",  defaultValue : ""}, // (empty string)|native|thirdparty
+					"xx-flexBundleRequestForced" : { type : "boolean",  defaultValue : false },
 					"statistics"            : { type : "boolean",  defaultValue : false }
 			};
 
@@ -1313,6 +1313,17 @@ sap.ui.define([
 		 */
 		getManifestFirst : function() {
 			return this.manifestFirst;
+		},
+
+		/**
+		 * Returns a flag if the changes-bundle for flexibility should be requested in case they are not preloaded
+		 *
+		 * @returns {boolean} flag if the changes-bundle for flexibility should be requested in case they are not preloaded
+		 * @private
+		 * @since 1.60.0
+		 */
+		isFlexBundleRequestForced : function() {
+			return this["xx-flexBundleRequestForced"];
 		},
 
 		/**
