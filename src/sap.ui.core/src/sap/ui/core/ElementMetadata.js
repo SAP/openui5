@@ -7,11 +7,12 @@
 // Provides class sap.ui.core.ElementMetadata
 sap.ui.define([
 	'sap/ui/thirdparty/jquery',
+	'sap/base/Log',
 	'sap/base/util/ObjectPath',
 	'sap/ui/base/ManagedObjectMetadata',
 	'sap/ui/core/Renderer'
 ],
-	function(jQuery, ObjectPath, ManagedObjectMetadata, Renderer) {
+	function(jQuery, Log, ObjectPath, ManagedObjectMetadata, Renderer) {
 	"use strict";
 
 
@@ -81,6 +82,12 @@ sap.ui.define([
 		}
 
 		// if not, try to load a module with the same name
+		Log.warning("Synchronous loading of Renderer for control class '" + this.getName() + "', due to missing Renderer dependency.", "SyncXHR", null, function() {
+			return {
+				type: "SyncXHR",
+				name: sRendererName
+			};
+		});
 		var fnClass = sap.ui.requireSync(sRendererName.replace(/\./g, "/"));
 		return fnClass || ObjectPath.get(sRendererName);
 	};

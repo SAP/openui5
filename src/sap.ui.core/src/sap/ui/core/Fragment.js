@@ -587,6 +587,16 @@ function(
 					this._xContent = mSettings.fragmentContent;
 				}
 			} else {
+				/*
+				// TO-BE-ACTIVATED:
+				// Logging currently disabled because of missing async path
+				Log.warning("Synchronous loading of fragment, due to Fragment.init() call for '" + mSettings.fragmentName + "'. Use 'sap/ui/core/Fragment' module with Fragment.load() instead.", "SyncXHR", null, function() {
+					return {
+						type: "SyncXHR",
+						name: "Fragment"
+					};
+				});
+				*/
 				this._xContent = XMLTemplateProcessor.loadTemplate(mSettings.fragmentName, "fragment");
 			}
 

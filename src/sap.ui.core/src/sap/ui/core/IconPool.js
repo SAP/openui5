@@ -784,6 +784,13 @@ sap.ui.define([
 							mFontRegistry[collectionName].metadataXhr.abort("Replaced by sync request");
 							mFontRegistry[collectionName].metadataXhr = null;
 						}
+						Log.warning("Synchronous loading of font meta data in IconPool, due to .getIconInfo() call" +
+							" for '" + collectionName + "'. Use loading mode 'async' to avoid this call.", "SyncXHR", null, function() {
+							return {
+								type: "SyncXHR",
+								name: "IconPool"
+							};
+						});
 						// load the metadata synchronously
 						jQuery.ajax(oConfig.metadataURI, {
 							dataType: "json",

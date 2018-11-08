@@ -604,6 +604,12 @@ sap.ui.define([
 				if (bAsync) {
 					sap.ui.require(["sap/ui/core/support/Support", "sap/ui/support/Bootstrap"], fnCallbackSupportBootstrapInfo);
 				} else {
+					Log.warning("Synchronous loading of Support mode. Set preload configuration to 'async' or switch to asynchronous bootstrap to prevent these synchronous request.", "SyncXHR", null, function() {
+						return {
+							type: "SyncXHR",
+							name: "support-mode"
+						};
+					});
 					fnCallbackSupportBootstrapInfo(
 						sap.ui.requireSync("sap/ui/core/support/Support"),
 						sap.ui.requireSync("sap/ui/support/Bootstrap")
@@ -881,6 +887,14 @@ sap.ui.define([
 				fnCallback();
 			});
 		}
+
+		Log.warning("Modules and libraries declared via bootstrap-configuration are loaded synchronously. Set preload configuration to" +
+			" 'async' or switch to asynchronous bootstrap to prevent these requests.", "SyncXHR", null, function() {
+			return {
+				type: "SyncXHR",
+				name: "legacy-module"
+			};
+		});
 
 		this.oConfiguration.modules.forEach( function(mod) {
 			var m = mod.match(/^(.*)\.library$/);
@@ -1284,7 +1298,14 @@ sap.ui.define([
 			var sApplication = oConfig.getApplication();
 			if (sApplication) {
 
-				Log.warning("The configuration 'application' is deprecated. Please use the configuration 'component' instead! Please migrate from sap.ui.app.Application to sap.ui.core.Component.");
+				Log.warning("The configuration 'application' is deprecated. Please use the configuration 'component' instead! " +
+				"Please migrate from sap.ui.app.Application to sap.ui.core.Component.", "SyncXHR", null, function () {
+					return {
+						type: "Deprecation",
+						name: "sap.ui.core"
+					};
+				});
+
 				Log.info("Loading Application: " + sApplication,null,METHOD);
 				sap.ui.requireSync(sApplication.replace(/\./g, "/"));
 				var oClass = ObjectPath.get(sApplication);
@@ -3206,6 +3227,13 @@ sap.ui.define([
 	 * @deprecated Since 1.29.1 Require 'sap/ui/core/tmpl/Template' and use {@link sap.ui.core.tmpl.Template.byId Template.byId} instead.
 	 */
 	Core.prototype.getTemplate = function(sId) {
+		Log.warning("Synchronous loading of 'sap/ui/core/tmpl/Template'. Use 'sap/ui/core/tmpl/Template' module and" +
+			" call Template.byId instead", "SyncXHR", null, function() {
+			return {
+				type: "SyncXHR",
+				name: "Core.prototype.getTemplate"
+			};
+		});
 		var Template = sap.ui.requireSync('sap/ui/core/tmpl/Template');
 		return Template.byId(sId);
 	};
@@ -3618,7 +3646,17 @@ sap.ui.define([
 	 */
 	Core.prototype.getEventBus = function() {
 		if (!this.oEventBus) {
-			var EventBus = sap.ui.requireSync('sap/ui/core/EventBus');
+			var EventBus = sap.ui.require('sap/ui/core/EventBus');
+			if (!EventBus) {
+				Log.warning("Synchronous loading of EventBus. Ensure that 'sap/ui/core/EventBus' module is loaded" +
+					" before this function is called.", "SyncXHR", null, function() {
+					return {
+						type: "SyncXHR",
+						name: "core-eventbus"
+					};
+				});
+				EventBus = sap.ui.requireSync('sap/ui/core/EventBus');
+			}
 			var oEventBus = this.oEventBus = new EventBus();
 			this._preserveHandler = function(event) {
 				// for compatibility reasons

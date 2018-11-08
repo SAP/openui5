@@ -467,7 +467,7 @@ sap.ui.define([
 			 * locations. All registered files will be considered by the cachebuster
 			 * and the URLs will be prefixed with the timestamp of the index file.
 			 *
-			 * @param {string} base URL of an application providing a cachebuster index file
+			 * @param {string} sBaseUrl base URL of an application providing a cachebuster index file
 			 *
 			 * @public
 			 */
