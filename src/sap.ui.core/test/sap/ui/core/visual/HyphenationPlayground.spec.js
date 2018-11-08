@@ -1,6 +1,6 @@
 /*global describe,it,element,by,takeScreenshot,expect,browser*/
 
-describe("sap.m.HyphenationPlayground", function() {
+describe("sap.ui.core.HyphenationPlayground", function() {
 	"use strict";
 
 	browser.testrunner.currentSuite.meta.controlName = 'sap.ui.core.hyphenation.Hyphenation'; // Hyphenation API

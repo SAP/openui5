@@ -15,7 +15,6 @@ module.exports = [
 	"DateTimePicker.spec.js",
 	"Dialog.spec.js",
 	"FacetFilter.spec.js",
-	"HyphenationPlayground.spec.js",
 	"IconTabBar.spec.js",
 	"Image.spec.js",
 	"InputVisualTests.spec.js",
