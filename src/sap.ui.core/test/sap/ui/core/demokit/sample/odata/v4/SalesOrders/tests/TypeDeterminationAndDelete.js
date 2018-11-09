@@ -104,7 +104,7 @@ sap.ui.define([
 			function moreSalesOrders() {
 				When.waitFor({
 					controlType : "sap.m.CustomListItem",
-					id : /SalesOrders-trigger/,
+					id : /SalesOrderList-trigger/,
 					matchers : new Interactable(),
 					success : function (aControls) {
 						new Press().executeOn(aControls[0]);
@@ -117,7 +117,7 @@ sap.ui.define([
 				if (!aSchedules) {
 					// select all
 					When.waitFor({
-						id : "SalesOrderSchedules-sa",
+						id : "SO_2_SCHDL-sa",
 						viewName : sViewName,
 						controlType : "sap.m.CheckBox",
 						success : function (oCheckBox) {
@@ -159,7 +159,7 @@ sap.ui.define([
 				When.waitFor({
 					searchOpenDialogs : true,
 					controlType : "sap.m.Dialog",
-					id : "SalesOrderSchedulesDialog",
+					id : "salesOrderSchedulesDialog",
 					success : function (aControls) {
 						//new Press().executeOn(aControls[0].getButtons()[0]); // confirm deletion
 						Opa5.assert.ok(true, "'Schedules' opened");
@@ -170,7 +170,7 @@ sap.ui.define([
 			// find the sales order with given Id and click on it to select the sales order
 			function selectSalesOrderWithId(sSalesOrderId) {
 				When.waitFor({
-					id : /SalesOrders_ID/,
+					id : /SalesOrderID/,
 					viewName : sViewName,
 					controlType : "sap.m.Text",
 					matchers : new Properties({text: sSalesOrderId}),
@@ -185,7 +185,7 @@ sap.ui.define([
 			function verifyMoreButton(bVisible) {
 				Then.waitFor({
 					controlType : "sap.m.CustomListItem",
-					id : /SalesOrders-trigger/,
+					id : /SalesOrderList-trigger/,
 					visible : false,
 					check: function(aControls) {
 						return aControls[0].$().is(":visible") === bVisible;
@@ -202,7 +202,7 @@ sap.ui.define([
 			function verifyTypeDetermination() {
 				Then.waitFor({
 					controlType : "sap.m.Table",
-					id : "SalesOrders",
+					id : "SalesOrderList",
 					check : function (oSalesOrderTable) {
 						return  oSalesOrderTable.getItems().length > 0;
 					},
@@ -212,7 +212,7 @@ sap.ui.define([
 
 						// check for valid automatic type determination for each cell content in 1st
 						// row
-						oView.byId("SalesOrders").getItems()[0].getCells()
+						oView.byId("SalesOrderList").getItems()[0].getCells()
 							.forEach(function (oCell) {
 								var oBinding = oCell.getBinding("text");
 
@@ -236,10 +236,10 @@ sap.ui.define([
 			function verifyVisibleSalesOrderIds(aExpectedSalesOrderIds, sMessage) {
 				Then.waitFor({
 					controlType : "sap.m.Text",
-					// sales order IDs are in controls with ID "SalesOrders_ID"
-					id : /--SalesOrders_ID-/,
+					// sales order IDs are in controls with ID "SalesOrderList:SalesOrderID"
+					id : /--SalesOrderID-/,
 					success : function () {
-						var aSalesOrderIds = sap.ui.getCore().byId(sViewName).byId("SalesOrders")
+						var aSalesOrderIds = sap.ui.getCore().byId(sViewName).byId("SalesOrderList")
 								.getItems().map(function (oItem) {
 									return oItem.getCells()[0].getText();
 							});
@@ -262,7 +262,7 @@ sap.ui.define([
 						var oCore = sap.ui.getCore(),
 						aScheduleIds = [];
 
-						oCore.byId(sViewName).byId("SalesOrderSchedules")
+						oCore.byId(sViewName).byId("SO_2_SCHDL")
 							.getItems().forEach(function (oItem, i) {
 								aScheduleIds.push(oItem.getCells()[0].getText());
 							});

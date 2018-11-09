@@ -36,19 +36,19 @@ sap.ui.define([
 			When.onTheMainPage.pressSaveSalesOrdersButton();
 			When.onTheSuccessInfo.confirm();
 			When.onTheMainPage.rememberCreatedSalesOrder();
-			Then.onTheMainPage.checkTableLength(0, "SalesOrderLineItems");
+			Then.onTheMainPage.checkTableLength(0, "SO_2_SOITEM");
 
 			// Create a new sales order line item; no refresh allowed; cancel created item
 			When.onTheMainPage.pressCreateSalesOrderItemButton();
-			Then.onTheMainPage.checkTableLength(1, "SalesOrderLineItems");
+			Then.onTheMainPage.checkTableLength(1, "SO_2_SOITEM");
 			Then.onTheMainPage.checkSalesOrderItemsCount(0); // server side count is still 0
 			When.onTheMainPage.pressRefreshSalesOrdersButton();
 			When.onTheRefreshConfirmation.cancel();
 			// canceling different group does not remove created sales order item
 			When.onTheMainPage.pressCancelSalesOrderListChangesButton();
-			Then.onTheMainPage.checkTableLength(1, "SalesOrderLineItems");
+			Then.onTheMainPage.checkTableLength(1, "SO_2_SOITEM");
 			When.onTheMainPage.pressCancelSalesOrderChangesButton();
-			Then.onTheMainPage.checkTableLength(0, "SalesOrderLineItems");
+			Then.onTheMainPage.checkTableLength(0, "SO_2_SOITEM");
 
 			// Delete transient sales order line item
 			When.onTheMainPage.pressCreateSalesOrderItemButton();
@@ -56,7 +56,7 @@ sap.ui.define([
 			When.onTheMainPage.deleteSelectedSalesOrderLineItem();
 			When.onTheSalesOrderLineItemDeletionConfirmation.confirm();
 			When.onTheSuccessInfo.confirm();
-			Then.onTheMainPage.checkTableLength(0, "SalesOrderLineItems");
+			Then.onTheMainPage.checkTableLength(0, "SO_2_SOITEM");
 
 			// Create a sales order line item; save, update and delete it
 			When.onTheMainPage.pressCreateSalesOrderItemButton();
@@ -121,7 +121,7 @@ sap.ui.define([
 				When.onTheMainPage.deleteSelectedSalesOrderLineItem();
 				When.onTheSalesOrderLineItemDeletionConfirmation.confirm();
 				When.onTheSuccessInfo.confirm();
-				Then.onTheMainPage.checkTableLength(0, "SalesOrderLineItems");
+				Then.onTheMainPage.checkTableLength(0, "SO_2_SOITEM");
 
 				// Confirmation of new created sales order, non-transient but still having -1 path
 				// Note: The sales order must have at least one line item
@@ -146,13 +146,13 @@ sap.ui.define([
 			When.onTheMainPage.pressCreateSalesOrderItemButton();
 			When.onTheMainPage.pressSaveSalesOrderButton();
 			When.onTheSuccessInfo.confirm();
-			Then.onTheMainPage.checkTableLength(bRealOData ? 1 : 0, "SalesOrderLineItems");
+			Then.onTheMainPage.checkTableLength(bRealOData ? 1 : 0, "SO_2_SOITEM");
 			// test: refresh single refreshes also dependent bindings
 			When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
-			Then.onTheMainPage.checkTableLength(bRealOData ? 1 : 0, "SalesOrderLineItems");
+			Then.onTheMainPage.checkTableLength(bRealOData ? 1 : 0, "SO_2_SOITEM");
 
 			// delete all created SalesOrders again
-			When.onAnyPage.cleanUp("SalesOrders");
+			When.onAnyPage.cleanUp("SalesOrderList");
 			Then.onAnyPage.checkLog(aExpectedErrors);
 			Then.onAnyPage.analyzeSupportAssistant();
 			Then.iTeardownMyUIComponent();

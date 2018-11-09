@@ -34,7 +34,7 @@ sap.ui.define([
 			When.onAdaptUIDialog.checkCheckBox("LifecycleStatus");
 
 			When.onAdaptUIDialog.applyDialog();
-			Then.onTheMainPageRTA.checkNewColumnAppears("SalesOrders", "N", 7);
+			Then.onTheMainPageRTA.checkNewColumnAppears("SalesOrderList", "N", 7);
 
 			// unheck LifecycleStatus
 			When.onTheMainPageRTA.pressAdaptUIButton("AdaptUISalesOrdersTable");
@@ -93,7 +93,7 @@ sap.ui.define([
 			Then.onAdaptUIDialog.checkCheckBoxIsSelected("NoteLanguage", true);
 			When.onAdaptUIDialog.applyDialog();
 
-			Then.onTheMainPageRTA.checkNewColumnAppears("SalesOrderLineItems", "E", 12);
+			Then.onTheMainPageRTA.checkNewColumnAppears("SO_2_SOITEM", "E", 12);
 
 			Then.onAnyPage.checkLog();
 			Then.onAnyPage.analyzeSupportAssistant();

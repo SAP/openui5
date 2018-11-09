@@ -259,7 +259,7 @@ sap.ui.define([
 			}
 
 			// delete the last created SalesOrder again
-			When.onAnyPage.cleanUp("SalesOrders");
+			When.onAnyPage.cleanUp("SalesOrderList");
 			Then.onAnyPage.checkLog(bRealOData
 				? [oExpectedLog, oExpectedLog, oExpectedLog]
 				: undefined);
