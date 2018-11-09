@@ -4,6 +4,10 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="UTF-8">
+	<script src="../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m, sap.tnt, sap.ui.layout, sap.ui.core"
+	data-sap-ui-theme="sap_belize">
+   </script>
+
 	<title>Hyphenation Playground</title>
 	<style>
 		.custom .sapUiRFLContainer {
@@ -49,9 +53,7 @@
 			margin: 0 4rem !important;
 		}
 	</style>
-	<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m, sap.tnt, sap.ui.layout, sap.ui.core"
-	 data-sap-ui-theme="sap_belize">
-	</script>
+
 	<script>
 		sap.ui.require(['sap/ui/core/hyphenation/Hyphenation', 'sap/m/FlexBox', "sap/base/util/UriParameters"],
 			function (HyphenationDelegate, FlexBox, UriParameters) {
