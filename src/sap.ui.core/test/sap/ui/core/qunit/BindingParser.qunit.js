@@ -441,15 +441,16 @@ sap.ui.define([
 
 
 	[{
-		expression: "{={birthday/day} > 10 && {birthday/month} > 0 && {birthday/month} < 4}",
+		expression: "{= ${birthday/day} > 10 && ${birthday/month} > 0 && ${birthday/month} < 4}",
 		parts: [{path: 'birthday/day'}, {path: 'birthday/month'}, {path: 'birthday/month'}]
 	}, {
-		expression: "{={path:'birthday/day',model:'special}Name'} > 10}",
+		expression: "{= ${path:'birthday/day',model:'special}Name'} > 10}",
 		parts: [{path: 'birthday/day', model:'special}Name'}]
 	}].forEach(function(oFixture, iIndex) {
 
 		QUnit.test("Expression binding: " + oFixture.expression , function (assert) {
 			var oBindingInfo,
+				oContext = {},
 				oParseResult = {
 					result: {
 						formatter: function () {/*empty*/},
@@ -458,11 +459,11 @@ sap.ui.define([
 					at: oFixture.expression.length - 1
 				};
 
-			this.mock(ExpressionParser).expects("parse")
-				.withExactArgs(sinon.match.func, oFixture.expression, 2)
+			this.mock(ExpressionParser).expects("parse").withExactArgs(sinon.match.func,
+					oFixture.expression, 2, null, sinon.match.same(oContext))
 				.returns(oParseResult);
 
-			oBindingInfo = parse(oFixture.expression);
+			oBindingInfo = parse(oFixture.expression, oContext, false, false, true);
 
 			assert.deepEqual(oBindingInfo, {
 				formatter: oParseResult.result.formatter,
@@ -483,7 +484,7 @@ sap.ui.define([
 			sInput = "{=invalid}";
 
 		this.mock(ExpressionParser).expects("parse")
-			.withExactArgs(sinon.match.func, sInput, 2)
+			.withExactArgs(sinon.match.func, sInput, 2, null, null)
 			.throws(oError);
 
 		assert.throws(function () {
@@ -496,7 +497,7 @@ sap.ui.define([
 			sMsg = "Expected '}' and instead saw ',' in expression binding {='foo',} at position 7";
 
 		this.mock(ExpressionParser).expects("parse")
-			.withExactArgs(sinon.match.func, sInput, 2)
+			.withExactArgs(sinon.match.func, sInput, 2, null, null)
 			.returns({at: sInput.length - 2, result: {}});
 
 		assert.throws(function () {

@@ -833,7 +833,11 @@ sap.ui.define([
 		 * @param {string} sInput - the string to be parsed
 		 * @param {int} [iStart=0] - the index to start parsing
 		 * @param {object} [mGlobals]
-		 *   global variables allowed in the expression as map of variable name to its value
+		 *   global variables allowed in the expression as map of variable name to its value;
+		 *   note that there is a default map of known global variables
+		 * @param {object} [mLocals={}]
+		 *   local variables additionally allowed in the expression (shadowing global ones)
+		 *   as map of variable name to its value
 		 * @returns {object} the parse result with the following properties
 		 *   result: object with the properties
 		 *     formatter: the formatter function to evaluate the expression which
@@ -846,12 +850,16 @@ sap.ui.define([
 		 *   If the expression string is invalid or unsupported. The at property of
 		 *   the error contains the position where parsing failed.
 		 */
-		parse: function (fnResolveBinding, sInput, iStart, mGlobals) {
+		parse: function (fnResolveBinding, sInput, iStart, mGlobals, mLocals) {
 			var oResult, oTokens;
 
 			Measurement.average(sPerformanceParse, "", aPerformanceCategories);
 			oTokens = tokenize(fnResolveBinding, sInput, iStart);
-			oResult = parse(oTokens.tokens, sInput, mGlobals || mDefaultGlobals);
+			mGlobals = mGlobals || mDefaultGlobals;
+			if (mLocals) {
+				mGlobals = Object.assign({}, mGlobals, mLocals);
+			}
+			oResult = parse(oTokens.tokens, sInput, mGlobals);
 			Measurement.end(sPerformanceParse);
 			if (!oTokens.parts.length) {
 				return {

@@ -7,12 +7,13 @@ sap.ui.define([
 	"sap/base/util/JSTokenizer",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ExpressionParser",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Icon",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/performance/Measurement"
-], function (jQuery, Log, JSTokenizer, BindingParser, ExpressionParser, Icon, JSONModel, ODataUtils,
-		Measurement) {
+], function (jQuery, Log, JSTokenizer, BindingParser, ExpressionParser, ManagedObject, Icon,
+		JSONModel, ODataUtils, Measurement) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -317,6 +318,59 @@ sap.ui.define([
 			);
 		}
 	);
+
+	//*********************************************************************************************
+	QUnit.test("Locals: function call, undefined, shadowing", function (assert) {
+		var sInput = "{= MODEL.someFunction(undefined, ${A}) + Infinity }",
+			mLocals = {
+				Infinity : 42, // local shadows global
+				MODEL : {
+					someFunction : function (a, b) {
+						return a + "," + b;
+					}
+				}
+			},
+			oBindingInfo;
+
+		// code under test
+		oBindingInfo = BindingParser.complexParser(sInput, mLocals, false, false, true);
+
+		assert.deepEqual(oBindingInfo.formatter("foo"), "undefined,foo42");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Locals: constant", function (assert) {
+		var sInput = "{= MODEL.someFunction() }",
+			mLocals = {
+				MODEL : {
+					someFunction : function () {
+						return "foo";
+					}
+				}
+			};
+
+		this.mock(ManagedObject).expects("bindingParser")
+			.withExactArgs(sInput, sinon.match.same(mLocals), true)
+			.callsFake(function (sString, oContext, bUnescape) {
+				// bStaticContext = true, just like XMLPreprocessor would do it
+				return BindingParser.complexParser(sString, oContext, bUnescape, false, true);
+			});
+
+		// "code under test"
+		check(assert, sInput, "foo", mLocals);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parse: no globals - no undefined!", function (assert) {
+		this.oLogMock.expects("warning").withExactArgs(
+			"Unsupported global identifier 'undefined' in expression parser input 'undefined'",
+			undefined, "sap.ui.base.ExpressionParser");
+
+		this.mock(Object).expects("assign").never(); // no copy needed!
+
+		// code under test
+		ExpressionParser.parse(null, "undefined", 0, {});
+	});
 
 	//*********************************************************************************************
 	[
