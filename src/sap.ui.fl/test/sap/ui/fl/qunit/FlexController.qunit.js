@@ -3297,15 +3297,12 @@ function (
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 
 			sandbox.stub(this.oFlexController, "_setMergeError");
-			this.oAddAppliedCustomDataStub = sandbox.stub(FlexCustomData, "addAppliedCustomData");
+			this.oAddAppliedCustomDataSpy = sandbox.spy(FlexCustomData, "addAppliedCustomData");
 
 			this.oErrorLogStub = sandbox.stub(Log, "error");
 
-			sandbox.stub(FlexCustomData, "hasFailedCustomDataJs").callsFake(function(oControl) {
-				if (oControl.getId() === this.sLabelId2) {
-					return {customDataEntries: ["a5"]};
-				}
-				return {customDataEntries: []};
+			this.hasFailedCustomDataStub = sandbox.stub(FlexCustomData, "hasFailedCustomDataJs").callsFake(function(oControl) {
+				return (oControl.getId() === this.sLabelId2) ? true : false;
 			}.bind(this));
 
 			this.oChangeHandlerApplyChangeStub = sandbox.stub().returns(new Promise(function(fnResolve) {
@@ -3356,7 +3353,33 @@ function (
 			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl);
 			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
 			.then(function() {
-				assert.equal(this.oAddAppliedCustomDataStub.callCount, 3, "addCustomData was called 3 times");
+				assert.equal(this.oAddAppliedCustomDataSpy.callCount, 3, "addCustomData was called 3 times");
+			}.bind(this));
+		});
+
+		QUnit.test("with 3 async queued changes dependend on each other and the first throwing an error", function(assert) {
+			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
+
+			var oChangeHandlerApplyChangeRejectStub = sandbox.stub().throws(new Error());
+			this.oGetChangeHandlerStub.restore();
+			this.hasFailedCustomDataStub.restore();
+			this.oGetChangeHandlerStub = sandbox.stub(this.oFlexController, "_getChangeHandler")
+			.onCall(0).returns({
+				applyChange: oChangeHandlerApplyChangeRejectStub
+			})
+			.onCall(1).returns({
+				applyChange: this.oChangeHandlerApplyChangeStub
+			})
+			.onCall(2).returns({
+				applyChange: this.oChangeHandlerApplyChangeStub
+			});
+
+			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl);
+
+			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
+			.then(function() {
+				assert.equal(this.oErrorLogStub.callCount, 1, "then the changeHandler threw an error");
+				assert.equal(this.oAddAppliedCustomDataSpy.callCount, 2, "addCustomData was called 2 times");
 			}.bind(this));
 		});
 
@@ -3368,7 +3391,7 @@ function (
 			this.oFlexController.waitForChangesToBeApplied(this.oControl);
 			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
 			.then(function() {
-				assert.equal(this.oAddAppliedCustomDataStub.callCount, 3, "addCustomData was called 3 times");
+				assert.equal(this.oAddAppliedCustomDataSpy.callCount, 3, "addCustomData was called 3 times");
 			}.bind(this));
 		});
 
@@ -3412,17 +3435,63 @@ function (
 		});
 
 		QUnit.test("with 3 async queued changes with 1 change whose selector points to no control", function(assert) {
-			assert.expect(1);
 			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange4];
+			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl);
+			this.oFlexController.waitForChangesToBeApplied(this.oControl);
+			assert.ok(!!this.oChange.aPromiseFn);
+			assert.ok(!!this.oChange2.aPromiseFn);
+			assert.notOk(!!this.oChange4.aPromiseFn);
+		});
+
+		QUnit.test("with 3 async queued changes dependend on each other with an unavailable control dependency", function(assert) {
+			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
+
+			var oChangeHandlerApplyChangeStub = sandbox.stub().callsFake(function() {});
+			this.oGetChangeHandlerStub.restore();
+			this.oGetChangeHandlerStub = sandbox.stub(this.oFlexController, "_getChangeHandler")
+			.onCall(0).returns({
+				applyChange: oChangeHandlerApplyChangeStub
+			})
+			.onCall(1).returns({
+				applyChange: this.oChangeHandlerApplyChangeStub
+			})
+			.onCall(2).returns({
+				applyChange: this.oChangeHandlerApplyChangeStub
+			});
+
+			var mDependencies = {
+				"a2": {
+					"changeObject": this.oChange2,
+					"dependencies": ["a"],
+					"controlsDependencies": ["missingControl1"]
+				},
+				"a3": {
+					"changeObject": this.oChange3,
+					"dependencies": ["a", "a2"]
+				}
+			};
+			var mDependentChangesOnMe = {
+				"a": ["a2", "a3"],
+				"a2": ["a3"]
+			};
+			this.oChange2.addDependentControl(["missingControl1"], "combinedButtons", { modifier: JsControlTreeModifier, appComponent: new UIComponent()});
+			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
+			this.mChanges.mDependencies = mDependencies;
+			this.mChanges.mDependentChangesOnMe = mDependentChangesOnMe;
+
 			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl);
 			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
 			.then(function() {
-				assert.equal(this.oAddAppliedCustomDataStub.callCount, 2, "addCustomData was called 2 times");
+				assert.equal(this.oAddAppliedCustomDataSpy.callCount, 1, "addCustomData was called once");
+				assert.notOk(!!this.oChange.aPromiseFn, "change was applied before waitForChangesToBeApplied was called");
+				assert.notOk(!!this.oChange2.aPromiseFn, "change was filtered out");
+				assert.notOk(!!this.oChange3.aPromiseFn, "change was filtered out");
+				delete this.oChange2.getDefinition().dependentSelector;
 			}.bind(this));
 		});
 
 		QUnit.test("with 4 async queued changes depending on on another with the last change whose selector points to no control", function(assert) {
-			assert.expect(1);
+			var done = assert.async();
 			var mDependencies = {
 				"a2": {
 					"changeObject": this.oChange2,
@@ -3443,13 +3512,18 @@ function (
 			this.mChanges.mDependencies = mDependencies;
 			this.mChanges.mDependentChangesOnMe = mDependentChangesOnMe;
 
-			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl);
-			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl2);
-
-			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
+			this.oFlexController.waitForChangesToBeApplied(this.oControl)
 			.then(function() {
-				assert.equal(this.oAddAppliedCustomDataStub.callCount, 3, "addCustomData was called 3 times");
+				assert.equal(this.oAddAppliedCustomDataSpy.callCount, 3, "addCustomData was called 3 times");
+				assert.ok(!!this.oChange.aPromiseFn);
+				assert.ok(!!this.oChange2.aPromiseFn);
+				assert.notOk(!!this.oChange3.aPromiseFn);
+				assert.notOk(!!this.oChange4.aPromiseFn);
+				done();
 			}.bind(this));
+
+			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl2);
+			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl);
 		});
 
 		QUnit.test("with 4 async queued changes depending on on another and the last change already failed", function(assert) {
@@ -3479,7 +3553,7 @@ function (
 
 			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
 			.then(function() {
-				assert.equal(this.oAddAppliedCustomDataStub.callCount, 4, "addCustomData was called 4 times");
+				assert.equal(this.oAddAppliedCustomDataSpy.callCount, 4, "addCustomData was called 4 times");
 			}.bind(this));
 		});
 

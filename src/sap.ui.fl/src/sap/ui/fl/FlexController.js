@@ -338,7 +338,7 @@ sap.ui.define([
 	};
 
 	FlexController.prototype._checkDependencies = function(oChange, mDependencies, mChanges, oAppComponent, aRelevantChanges) {
-		var bResult = this._checkChange(oChange, oAppComponent);
+		var bResult = this._canChangePotentiallyBeApplied(oChange, oAppComponent);
 		if (!bResult) {
 			return [];
 		}
@@ -357,27 +357,24 @@ sap.ui.define([
 		return aRelevantChanges;
 	};
 
-	FlexController.prototype._checkChange = function(oChange, oAppComponent) {
+	FlexController.prototype._canChangePotentiallyBeApplied = function(oChange, oAppComponent) {
 		// is control available
-		var sControlId;
-		var oSelector = oChange.getSelector();
-		if (oSelector.idIsLocal) {
-			sControlId = oAppComponent.createId(oSelector.id);
-		} else {
-			sControlId = oSelector.id;
-		}
-		var oControl = sap.ui.getCore().byId(sControlId);
-		if (!oControl) {
-			return false;
-		}
+		var aSelectors = oChange.getDependentControlSelectorList();
+		aSelectors.push(oChange.getSelector());
+		return !aSelectors.some(function(oSelector) {
+			return !JsControlTreeModifier.bySelector(oSelector, oAppComponent);
+		});
+	};
 
-		// check if the change has already failed. Here only changes that failed on JS-modifier are relevant,
-		// because if a change failed on XML, it will try to apply it again on JS.
-		var oFailedCustomData = FlexCustomData.hasFailedCustomDataJs(oControl, oChange, JsControlTreeModifier).customData;
-		if (oFailedCustomData) {
-			return false;
-		}
-		return true;
+	FlexController.prototype._hasChangeProcessingCompleted = function(oControl, oChange, JsControlTreeModifier) {
+		var aCustomDataFunctionNames = [
+			"hasAppliedCustomData",
+			"hasFailedCustomDataJs",
+			"hasNotApplicableCustomData"
+		];
+		return aCustomDataFunctionNames.some(function(sCustomDataFunction) {
+			return !!FlexCustomData[sCustomDataFunction](oControl, oChange, JsControlTreeModifier);
+		});
 	};
 
 	/**
@@ -392,12 +389,12 @@ sap.ui.define([
 		var mDependencies = Object.assign({}, mChangesMap.mDependencies);
 		var mChanges = mChangesMap.mChanges;
 		var aChangesForControl = mChanges[oControl.getId()] || [];
-		var aNotAppliedChanges = aChangesForControl.filter(function(oChange) {
-			return !this._isChangeCurrentlyApplied(oControl, oChange, JsControlTreeModifier);
+		var aNotYetProcessedChanges = aChangesForControl.filter(function(oChange) {
+			return !this._hasChangeProcessingCompleted(oControl, oChange, JsControlTreeModifier);
 		}, this);
 		var oAppComponent = Utils.getAppComponentForControl(oControl);
 		var aRelevantChanges = [];
-		aNotAppliedChanges.forEach(function(oChange) {
+		aNotYetProcessedChanges.forEach(function(oChange) {
 			var aChanges = this._checkDependencies(oChange, mDependencies, mChangesMap.mChanges, oAppComponent, []);
 			aRelevantChanges = aRelevantChanges.concat(aChanges);
 		}, this);
