@@ -145,8 +145,8 @@ sap.ui.define([
 		});
 
 		// Check that the mixin members are initialized
-		assert.ok(oMixin.hasOwnProperty("mCacheByContext"));
-		assert.ok(oBinding.hasOwnProperty("mCacheByContext"));
+		assert.ok(oMixin.hasOwnProperty("mCacheByResourcePath"));
+		assert.ok(oBinding.hasOwnProperty("mCacheByResourcePath"));
 	});
 
 	//*********************************************************************************************

@@ -556,7 +556,7 @@ sap.ui.define([
 		}
 		this.oModel.bindingDestroyed(this);
 		this.removeReadGroupLock();
-		this.mCacheByContext = undefined;
+		this.mCacheByResourcePath = undefined;
 		this.oCachePromise = SyncPromise.resolve(); // be nice to #withCache
 		this.mCacheQueryOptions = undefined;
 		this.oContext = undefined;

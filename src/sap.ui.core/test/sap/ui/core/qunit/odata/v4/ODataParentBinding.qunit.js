@@ -81,8 +81,8 @@ sap.ui.define([
 		assert.strictEqual(oBinding.bPatchSuccess, true);
 
 		// members introduced by ODataBinding; check inheritance
-		assert.ok(oBinding.hasOwnProperty("mCacheByContext"));
-		assert.strictEqual(oBinding.mCacheByContext, undefined);
+		assert.ok(oBinding.hasOwnProperty("mCacheByResourcePath"));
+		assert.strictEqual(oBinding.mCacheByResourcePath, undefined);
 	});
 
 	//*********************************************************************************************
@@ -1794,7 +1794,7 @@ sap.ui.define([
 				},
 				oCreateError = new Error("canceled"),
 				oBinding = new ODataParentBinding({
-					mCacheByContext : {},
+					mCacheByResourcePath : {},
 					oCachePromise : SyncPromise.resolve(oCache)
 				}),
 				oCreateResult = {},
@@ -1803,7 +1803,7 @@ sap.ui.define([
 				fnCancel = function () {},
 				oInitialData = {};
 
-			oBinding.mCacheByContext[sCanonicalPath] = oCache;
+			oBinding.mCacheByResourcePath[sCanonicalPath] = oCache;
 
 			this.mock(oCache).expects("create")
 				.withExactArgs("updateGroupId", "EMPLOYEES", "", sinon.match.same(oInitialData),
@@ -1815,11 +1815,11 @@ sap.ui.define([
 				.then(function (oResult) {
 					assert.strictEqual(bCancel, false);
 					assert.strictEqual(oResult, oCreateResult);
-					assert.notOk(sCanonicalPath in oBinding.mCacheByContext);
+					assert.notOk(sCanonicalPath in oBinding.mCacheByResourcePath);
 				}, function (oError) {
 					assert.strictEqual(bCancel, true);
 					assert.strictEqual(oError, oCreateError);
-					assert.strictEqual(oBinding.mCacheByContext[sCanonicalPath], oCache);
+					assert.strictEqual(oBinding.mCacheByResourcePath[sCanonicalPath], oCache);
 				});
 		});
 	});
@@ -1830,7 +1830,7 @@ sap.ui.define([
 				create : function () {}
 			},
 			oBinding = new ODataParentBinding({
-				mCacheByContext : undefined,
+				mCacheByResourcePath : undefined,
 				oCachePromise : SyncPromise.resolve(oCache)
 			}),
 			oCreateResult = {},

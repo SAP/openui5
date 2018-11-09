@@ -412,7 +412,7 @@ sap.ui.define([
 					if (oCache.$resourcePath) {
 						// Ensure that a cache containing a persisted created entity is recreated
 						// when the parent binding changes to another row and back again.
-						delete that.mCacheByContext[oCache.$resourcePath];
+						delete that.mCacheByResourcePath[oCache.$resourcePath];
 					}
 					return oCreatedEntity;
 				});

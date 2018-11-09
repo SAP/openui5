@@ -114,7 +114,7 @@ sap.ui.define([
 			oBinding = this.bindContext("/EMPLOYEES('42')");
 
 		assert.ok(oBinding.hasOwnProperty("oCachePromise"));
-		assert.ok(oBinding.hasOwnProperty("mCacheByContext"));
+		assert.ok(oBinding.hasOwnProperty("mCacheByResourcePath"));
 		assert.ok(oBinding.hasOwnProperty("mCacheQueryOptions"));
 		assert.ok(oBinding.hasOwnProperty("sGroupId"));
 		assert.ok(oBinding.hasOwnProperty("bInheritExpandSelect"));
@@ -536,8 +536,8 @@ sap.ui.define([
 		assert.strictEqual(oBinding.sGroupId, undefined);
 		assert.strictEqual(oBinding.hasOwnProperty("sUpdateGroupId"), true);
 		assert.strictEqual(oBinding.sUpdateGroupId, undefined);
-		assert.strictEqual(oBinding.hasOwnProperty("mCacheByContext"), true);
-		assert.strictEqual(oBinding.mCacheByContext, undefined);
+		assert.strictEqual(oBinding.hasOwnProperty("mCacheByResourcePath"), true);
+		assert.strictEqual(oBinding.mCacheByResourcePath, undefined);
 	});
 
 	//*********************************************************************************************
@@ -1853,7 +1853,7 @@ sap.ui.define([
 		oParentBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
 
-		oBinding.mCacheByContext = {/*mCacheByContext*/};
+		oBinding.mCacheByResourcePath = {/*mCacheByResourcePath*/};
 		oBinding.mCacheQueryOptions = {/*mCacheQueryOptions*/};
 		this.oOperation = {bAction : undefined};
 		this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
@@ -1865,7 +1865,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 		assert.strictEqual(oBinding.oCachePromise.isFulfilled(), true);
 		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
-		assert.strictEqual(oBinding.mCacheByContext, undefined);
+		assert.strictEqual(oBinding.mCacheByResourcePath, undefined);
 		assert.strictEqual(oBinding.oContext, undefined,
 			"context removed as in ODPropertyBinding#destroy");
 		assert.strictEqual(oBinding.oElementContext, undefined);

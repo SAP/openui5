@@ -159,21 +159,20 @@ sap.ui.define([
 						that.mCacheQueryOptions = jQuery.extend(true, {},
 							that.oModel.mUriParameters, mQueryOptions);
 						if (that.bRelative) { // quasi-absolute or relative binding
-							// mCacheByContext has to be reset if parameters are changing
-							that.mCacheByContext = that.mCacheByContext || {};
-							oCache = that.mCacheByContext[sResourcePath];
+							// mCacheByResourcePath has to be reset if parameters are changing
+							that.mCacheByResourcePath = that.mCacheByResourcePath || {};
+							oCache = that.mCacheByResourcePath[sResourcePath];
 							if (oCache) {
 								oCache.setActive(true);
 							} else {
-								oCache = that.doCreateCache(
-									_Helper.buildPath(sResourcePath, that.sPath),
-										that.mCacheQueryOptions, oContext);
-								that.mCacheByContext[sResourcePath] = oCache;
+								oCache = that.doCreateCache(sResourcePath, that.mCacheQueryOptions,
+									oContext);
+								that.mCacheByResourcePath[sResourcePath] = oCache;
 								oCache.$resourcePath = sResourcePath;
 							}
 						} else { // absolute binding
-							oCache = that.doCreateCache(that.sPath.slice(1),
-								that.mCacheQueryOptions, oContext);
+							oCache = that.doCreateCache(sResourcePath, that.mCacheQueryOptions,
+								oContext);
 						}
 						return oCache;
 					} else {
@@ -276,34 +275,43 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fetches the OData resource path for the given context. If '$$canonicalPath' is set or the
-	 * context's path contains indexes, the resource path is the context's canonical path.
-	 * Otherwise it is the context's path.
+	 * Fetches the OData resource path for this binding using the given context.
+	 * If '$$canonicalPath' is set or the context's path contains indexes, the resource path uses
+	 * the context's canonical path, otherwise it uses the context's path.
 	 *
-	 * @param {sap.ui.model.Context|sap.ui.model.odata.v4.Context} [oContext]
-	 *   A context
+	 * @param {sap.ui.model.Context|sap.ui.model.odata.v4.Context} [oContext=this.oContext]
+	 *   A context; if omitted, the binding's context is used
 	 * @returns {SyncPromise} A promise resolving with the resource path or <code>undefined</code>
-	 *   if no context is given
+	 *   for an unresolved binding. If computation of the canonical path fails, the promise is
+	 *   rejected.
 	 *
 	 * @private
 	 */
 	ODataBinding.prototype.fetchResourcePath = function (oContext) {
-		var sResourcePath;
+		var bCanonicalPath,
+			sContextPath,
+			oContextPathPromise,
+			that = this;
 
+		if (!this.bRelative) {
+			return SyncPromise.resolve(this.sPath.slice(1));
+		}
+		oContext = oContext || this.oContext;
 		if (!oContext) {
 			return SyncPromise.resolve();
 		}
 
-		sResourcePath = oContext.getPath().slice(1);
-		if (oContext.fetchCanonicalPath
+		sContextPath = oContext.getPath();
+		bCanonicalPath = oContext.fetchCanonicalPath
 			&& (this.mParameters && this.mParameters["$$canonicalPath"]
-				|| rIndexInPath.test(sResourcePath))) {
-			return oContext.fetchCanonicalPath().then(function (sCanonicalPath) {
-				return sCanonicalPath.slice(1);
-			});
-		}
+				|| rIndexInPath.test(sContextPath));
+		oContextPathPromise = bCanonicalPath
+			? oContext.fetchCanonicalPath()
+			: SyncPromise.resolve(sContextPath);
 
-		return SyncPromise.resolve(sResourcePath);
+		return oContextPathPromise.then(function (sContextResourcePath) {
+			return _Helper.buildPath(sContextResourcePath, that.sPath).slice(1);
+		});
 	};
 
 	/**
@@ -475,15 +483,16 @@ sap.ui.define([
 					return true;
 				}
 			}
-			if (oDependent.mCacheByContext) {
-				bHasPendingChanges = Object.keys(oDependent.mCacheByContext).some(function (sPath) {
-					return oDependent.mCacheByContext[sPath].hasPendingChangesForPath("");
-				});
+			if (oDependent.mCacheByResourcePath) {
+				bHasPendingChanges = Object.keys(oDependent.mCacheByResourcePath)
+					.some(function (sPath) {
+						return oDependent.mCacheByResourcePath[sPath].hasPendingChangesForPath("");
+					});
 				if (bHasPendingChanges) {
 					return true;
 				}
 			}
-			// Ask dependents, they might have no cache, but pending changes in mCacheByContext
+			// Ask dependents, they might have no cache, but pending changes in mCacheByResourcePath
 			return oDependent.hasPendingChangesInDependents();
 		});
 	};
@@ -611,11 +620,11 @@ sap.ui.define([
 		if (sResolvedPath) {
 			oModel.reportBoundMessages(sResolvedPath.slice(1), {});
 		}
-		if (this.mCacheByContext) {
-			Object.keys(this.mCacheByContext).forEach(function (sResourcePath) {
+		if (this.mCacheByResourcePath) {
+			Object.keys(this.mCacheByResourcePath).forEach(function (sResourcePath) {
 				oModel.reportBoundMessages(sResourcePath, {});
 			});
-			this.mCacheByContext = undefined;
+			this.mCacheByResourcePath = undefined;
 		}
 	};
 
@@ -683,13 +692,14 @@ sap.ui.define([
 				}
 				oDependent.resetInvalidDataState();
 			}
-			// mCacheByContext may have changes nevertheless
-			if (oDependent.mCacheByContext) {
-				Object.keys(oDependent.mCacheByContext).forEach(function (sPath) {
-					oDependent.mCacheByContext[sPath].resetChangesForPath("");
+			// mCacheByResourcePath may have changes nevertheless
+			if (oDependent.mCacheByResourcePath) {
+				Object.keys(oDependent.mCacheByResourcePath).forEach(function (sPath) {
+					oDependent.mCacheByResourcePath[sPath].resetChangesForPath("");
 				});
 			}
-			// Reset dependents, they might have no cache, but pending changes in mCacheByContext
+			// Reset dependents, they might have no cache, but pending changes in
+			// mCacheByResourcePath
 			oDependent.resetChangesInDependents();
 		});
 	};
@@ -761,7 +771,7 @@ sap.ui.define([
 
 		// maps a canonical path of a quasi-absolute or relative binding to a cache object that may
 		// be reused
-		this.mCacheByContext = undefined;
+		this.mCacheByResourcePath = undefined;
 	};
 
 }, /* bExport= */ false);

@@ -415,12 +415,12 @@ sap.ui.define([
 		this.mock(_AggregationHelper).expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregationCloned))
 			.returns({$apply : sApply});
-		oBinding.mCacheByContext = {
+		oBinding.mCacheByResourcePath = {
 			"/Products" : {}
 		};
 		oBindingMock.expects("fetchCache").callsFake(function () {
-			// test if mCacheByContext is set to undefined before fetchCache is called
-			assert.strictEqual(oBinding.mCacheByContext, undefined, "mCacheByContext");
+			// test if mCacheByResourcePath is set to undefined before fetchCache is called
+			assert.strictEqual(oBinding.mCacheByResourcePath, undefined, "mCacheByResourcePath");
 		});
 		oBindingMock.expects("reset").withExactArgs(undefined);
 
