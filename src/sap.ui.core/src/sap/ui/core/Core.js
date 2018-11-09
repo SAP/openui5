@@ -419,19 +419,23 @@ sap.ui.define([
 			if ( window["sap-ui-debug"] === true ) {
 				sPreloadMode = "";
 			}
-			// when the preload mode is 'auto', it will be set to 'sync' for optimized sources
+			// when the preload mode is 'auto', it will be set to 'async' or 'sync' for optimized sources
+			// depending on whether the ui5loader is configured async
 			if ( sPreloadMode === "auto" ) {
-				sPreloadMode = window["sap-ui-optimized"] ? "sync" : "";
+				if (window["sap-ui-optimized"]) {
+					sPreloadMode = sap.ui.loader.config().async ? "async" : "sync";
+				} else {
+					sPreloadMode = "";
+				}
 			}
 			// write back the determined mode for later evaluation (e.g. loadLibrary)
 			this.oConfiguration.preload = sPreloadMode;
 
-			var bAsync = sPreloadMode === "async";
-
-			// If UI5 has been booted asynchronously, bAsync can be also set to true.
-			if (sap.ui.loader.config().async) {
-				bAsync = true;
-			}
+			// This flag controls the core initialization flow.
+			// We can switch to async when an async preload is used or the ui5loader
+			// is in async mode. The latter might also happen for debug scenarios
+			// where no preload is used at all.
+			var bAsync = sPreloadMode === "async" || sap.ui.loader.config().async;
 
 			// evaluate configuration for library preload file types
 			this.oConfiguration['xx-libraryPreloadFiles'].forEach(function(v){
