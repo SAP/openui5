@@ -967,7 +967,7 @@ sap.ui.define([
 				that.resolve = resolve;
 				// After three seconds everything should have run through
 				// Resolve to have the missing requests and changes reported
-				window.setTimeout(resolve, 3000);
+				setTimeout(resolve, 3000);
 				that.checkFinish(assert);
 			}).then(function () {
 				var sControlId, aExpectedValuesPerRow, i, j;

@@ -835,23 +835,44 @@ sap.ui.define([
 		var oModel = {
 				getDependentBindings : function () {}
 			},
+			bBinding1Updated = false,
 			oBinding1 = {
-				checkUpdate : function () {}
+				checkUpdate : function () {
+					return new SyncPromise(function (resolve) {
+						setTimeout(function () {
+							bBinding1Updated = true;
+							resolve();
+						});
+					});
+				}
 			},
+			bBinding2Updated = false,
 			oBinding2 = {
-				checkUpdate : function () {}
+				checkUpdate : function () {
+					return new SyncPromise(function (resolve) {
+						setTimeout(function () {
+							bBinding2Updated = true;
+							resolve();
+						});
+					});
+				}
 			},
 			oParentBinding = {},
+			oPromise,
 			oContext = Context.create(oModel, oParentBinding, "/EMPLOYEES/42", 42);
 
 		this.mock(oModel).expects("getDependentBindings")
 			.withExactArgs(sinon.match.same(oContext))
 			.returns([oBinding1, oBinding2]);
-		this.mock(oBinding1).expects("checkUpdate").withExactArgs();
-		this.mock(oBinding2).expects("checkUpdate").withExactArgs();
 
 		// code under test
-		oContext.checkUpdate();
+		oPromise = oContext.checkUpdate();
+
+		assert.strictEqual(oPromise.isFulfilled(), false);
+		return oPromise.then(function () {
+			assert.strictEqual(bBinding1Updated, true);
+			assert.strictEqual(bBinding2Updated, true);
+		});
 	});
 
 	//*********************************************************************************************

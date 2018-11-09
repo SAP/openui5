@@ -124,12 +124,16 @@ sap.ui.define([
 	/**
 	 * Updates all dependent bindings of this context.
 	 *
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving without a defined result when the update is finished
 	 * @private
 	 */
 	Context.prototype.checkUpdate = function () {
-		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
-			oDependentBinding.checkUpdate();
-		});
+		return SyncPromise.all(
+			this.oModel.getDependentBindings(this).map(function (oDependentBinding) {
+				return oDependentBinding.checkUpdate();
+			})
+		);
 	};
 
 	/**
