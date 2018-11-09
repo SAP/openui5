@@ -95,7 +95,7 @@ sap.ui.define([
 				When.onTheMainPage.changeNoteInDetails("Sales Order Details Note Changed - 1");
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				// this is only possible if it has got a new ETag via refresh single
-				When.onTheMainPage.changeNoteInNewSalesOrder("Sales Order Note Changed - 1");
+				When.onTheMainPage.changeNoteInSalesOrders(0, "Sales Order Note Changed - 1");
 				When.onTheMainPage.pressSaveSalesOrdersButton();
 
 				// change again Note in details causes error because of outdated ETag

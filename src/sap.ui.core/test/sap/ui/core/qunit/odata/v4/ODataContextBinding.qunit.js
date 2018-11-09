@@ -1458,6 +1458,8 @@ sap.ui.define([
 	}, {
 		error : {},
 		reported : {}
+	}, {
+		// no error -> nothing reported
 	}].forEach(function (oFixture, i) {
 		QUnit.test("_execute: bound operation failure with messages #" + i, function (assert) {
 			var oParentContext = Context.create(this.oModel, {/*binding*/}, "/TEAMS('42')"),
@@ -1707,66 +1709,52 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[
-		{$expand : {"NavProperty" : {}}, $select : ["p0"]},
-		{$select : ["p0"]},
-		{$expand : {"NavProperty" : {}}}
-	].forEach(function (mCacheQueryOptions) {
-		var sTitle = "createCacheAndRequest: bound function, $$inheritExpandSelect,"
-			+ " parent query options " + JSON.stringify(mCacheQueryOptions);
-		QUnit.test(sTitle, function (assert) {
-			var bAutoExpandSelect = {/*false, true*/},
-				oContext = Context.create(this.oModel, {
-					mCacheQueryOptions : mCacheQueryOptions
-				}, "/foo"),
-				oBinding = this.bindContext("bound.Function(...)", oContext,
-					{$$inheritExpandSelect : true}),
-				mQueryOptions = {"functionQueryOption" : "bar"},
-				mExpectedQueryOptions = jQuery.extend({}, mQueryOptions, mCacheQueryOptions),
-				fnGetEntity = {}, // do not call!
-				oGroupLock = {},
-				oJQueryMock = this.mock(jQuery),
-				oOperationMetadata = {$kind : "Function"},
-				mParameters = {},
-				sPath = "/Entity('1')/navigation/bound.Function(...)",
-				oPromise = {},
-				sResourcePath = "Entity('1')/navigation/bound.Function()",
-				oSingleCache = {
-					fetchValue : function () {}
-				};
+	QUnit.test("createCacheAndRequest: $$inheritExpandSelect", function (assert) {
+		var bAutoExpandSelect = {/*false, true*/},
+			oContext = Context.create(this.oModel, {}, "/foo"),
+			oBinding = this.bindContext("bound.Function(...)", oContext,
+				{$$inheritExpandSelect : true}),
+			mExpectedQueryOptions = {},
+			fnGetEntity = {}, // do not call!
+			oGroupLock = {},
+			oOperationMetadata = {$kind : "Function"},
+			mParameters = {},
+			sPath = "/Entity('1')/navigation/bound.Function(...)",
+			oPromise = {},
+			sResourcePath = "Entity('1')/navigation/bound.Function()",
+			oSingleCache = {
+				fetchValue : function () {}
+			};
 
-			this.oModel.bAutoExpandSelect = bAutoExpandSelect;
-			oJQueryMock.expects("extend").withExactArgs({},
-				sinon.match.same(oBinding.oOperation.mParameters))
-				.returns(mParameters);
-			oJQueryMock.expects("extend").withExactArgs({},
-				sinon.match.same(oBinding.oModel.mUriParameters),
-				sinon.match.same(oBinding.mQueryOptions))
-				.returns(mQueryOptions);
-			this.mock(this.oModel.oRequestor).expects("getPathAndAddQueryOptions")
-				.withExactArgs(sPath, sinon.match.same(oOperationMetadata),
-					sinon.match.same(mParameters), mExpectedQueryOptions,
-					sinon.match.same(fnGetEntity))
-				.returns(sResourcePath);
-			this.mock(oBinding).expects("hasReturnValueContext")
-				.withExactArgs(sinon.match.same(oOperationMetadata))
-				.returns(true);
-			this.mock(_Cache).expects("createSingle")
-				.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
-					mExpectedQueryOptions, sinon.match.same(bAutoExpandSelect), false,
-					"/Entity/navigation/bound.Function/@$ui5.overload/0/$ReturnType", true)
-				.returns(oSingleCache);
-			this.mock(oSingleCache).expects("fetchValue")
-				.withExactArgs(sinon.match.same(oGroupLock)).returns(oPromise);
+		this.oModel.bAutoExpandSelect = bAutoExpandSelect;
+		this.mock(oBinding).expects("hasReturnValueContext")
+			.withExactArgs(sinon.match.same(oOperationMetadata))
+			.returns(true);
+		this.mock(jQuery).expects("extend")
+			.withExactArgs({}, sinon.match.same(oBinding.oOperation.mParameters))
+			.returns(mParameters);
+		this.mock(oBinding).expects("computeOperationQueryOptions").withExactArgs()
+			.returns(mExpectedQueryOptions);
+		this.mock(this.oModel.oRequestor).expects("getPathAndAddQueryOptions")
+			.withExactArgs(sPath, sinon.match.same(oOperationMetadata),
+				sinon.match.same(mParameters), sinon.match.same(mExpectedQueryOptions),
+				sinon.match.same(fnGetEntity))
+			.returns(sResourcePath);
+		this.mock(_Cache).expects("createSingle")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
+				sinon.match.same(mExpectedQueryOptions), sinon.match.same(bAutoExpandSelect),
+				false, "/Entity/navigation/bound.Function/@$ui5.overload/0/$ReturnType", true)
+			.returns(oSingleCache);
+		this.mock(oSingleCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(oGroupLock)).returns(oPromise);
 
-			assert.strictEqual(
-				// code under test
-				oBinding.createCacheAndRequest(oGroupLock, sPath, oOperationMetadata, fnGetEntity),
-				oPromise);
-			assert.strictEqual(oBinding.oOperation.bAction, false);
-			assert.strictEqual(oBinding.oCachePromise.getResult(), oSingleCache);
-			assert.deepEqual(oBinding.mCacheQueryOptions, mExpectedQueryOptions);
-		});
+		assert.strictEqual(
+			// code under test
+			oBinding.createCacheAndRequest(oGroupLock, sPath, oOperationMetadata, fnGetEntity),
+			oPromise);
+		assert.strictEqual(oBinding.oOperation.bAction, false);
+		assert.strictEqual(oBinding.oCachePromise.getResult(), oSingleCache);
+		assert.strictEqual(oBinding.mCacheQueryOptions, mExpectedQueryOptions);
 	});
 
 	//*********************************************************************************************
@@ -2432,6 +2420,118 @@ sap.ui.define([
 		assert.throws(function () {
 			oBinding.getResolvedPath();
 		}, new Error("No key predicate known at " + sPath));
+	});
+
+	//*********************************************************************************************
+	[{
+		parent : {$expand : {"Nav" : {}}, $select : ["prop"], $filter : "~"},
+		expected : {$expand : {"Nav" : {}}, $select : ["prop"], "sap-client" : "111", foo : "bar"}
+	}, {
+		parent : {$expand : {"Nav" : {}}},
+		expected : {$expand : {"Nav" : {}}, "sap-client" : "111", foo : "bar"}
+	}, {
+		parent : {$select : ["prop"]},
+		expected : {$select : ["prop"], "sap-client" : "111", foo : "bar"}
+	}].forEach(function (oFixture, i) {
+		[false, true].forEach(function (bInherit) {
+			QUnit.test("computeOperationQueryOptions, " + i + "," + bInherit, function (assert) {
+				var oContext = Context.create(this.oModel, {
+						mCacheQueryOptions : oFixture.parent
+					}, "/SalesOrderList('4711')"),
+					oBinding = this.bindContext("bound.Operation(...)", oContext,
+						{foo : "bar", $$inheritExpandSelect : bInherit});
+
+				this.mock(jQuery).expects("extend").withExactArgs({},
+					sinon.match.same(oBinding.oModel.mUriParameters),
+					sinon.match.same(oBinding.mQueryOptions))
+					.returns({"sap-client" : "111", foo : "bar"});
+
+				// code under test
+				assert.deepEqual(oBinding.computeOperationQueryOptions(),
+					bInherit ? oFixture.expected : {"sap-client" : "111", foo : "bar"});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshReturnValueContext", function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/SalesOrderList('42')"),
+			oBinding = this.bindContext("bound.Operation(...)", oContext),
+			oCache = {},
+			aDependentBindings = [
+				{ refreshInternal : function () {} },
+				{ refreshInternal : function () {} }
+			],
+			mQueryOptions = {},
+			oReturnValueContext = Context.create(this.oModel, oBinding,
+				"/SalesOrderList('77')");
+
+		oBinding.oReturnValueContext = oReturnValueContext;
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("hasPendingChangesForPath")
+			.withExactArgs("/SalesOrderList('77')")
+			.returns(false);
+		this.mock(oBinding).expects("hasPendingChangesInDependents")
+			.withExactArgs(sinon.match.same(oReturnValueContext))
+			.returns(false);
+		this.mock(oBinding).expects("computeOperationQueryOptions").withExactArgs()
+			.returns(mQueryOptions);
+		this.mock(_Cache).expects("createSingle")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "SalesOrderList('77')",
+				sinon.match.same(mQueryOptions), true)
+			.returns(oCache);
+		this.mock(oBinding).expects("createReadGroupLock")
+			.withExactArgs("group", true);
+		this.mock(oBinding).expects("getDependentBindings").withExactArgs()
+			.returns(aDependentBindings);
+		this.mock(aDependentBindings[0]).expects("refreshInternal")
+			.withExactArgs("group", true);
+		this.mock(aDependentBindings[1]).expects("refreshInternal")
+			.withExactArgs("group", true);
+
+		// code under test
+		assert.strictEqual(oBinding.refreshReturnValueContext(oReturnValueContext, "group"),
+			true);
+
+		assert.strictEqual(oBinding.mCacheQueryOptions, mQueryOptions);
+		assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
+
+		// code under test
+		assert.strictEqual(
+			oBinding.refreshReturnValueContext(oBinding.getBoundContext(), "group"),
+			false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshReturnValueContext, error on pending changes, suspended", function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/SalesOrderList('42')"),
+			oBinding = this.bindContext("bound.Operation(...)", oContext),
+			oBindingMock = this.mock(oBinding),
+			oReturnValueContext = Context.create(this.oModel, oBinding,
+				"/SalesOrderList('77')");
+
+		oBinding.oReturnValueContext = oReturnValueContext;
+		oBindingMock.expects("checkSuspended").withExactArgs().twice();
+		oBindingMock.expects("hasPendingChangesForPath")
+			.withExactArgs("/SalesOrderList('77')")
+			.returns(true);
+
+		// code under test
+		assert.throws(function () {
+			oBinding.refreshReturnValueContext(oReturnValueContext, "group");
+		}, new Error("Cannot refresh entity due to pending changes: /SalesOrderList('77')"));
+
+		oBindingMock.expects("hasPendingChangesForPath")
+			.withExactArgs("/SalesOrderList('77')")
+			.returns(false);
+		oBindingMock.expects("hasPendingChangesInDependents")
+			.withExactArgs(sinon.match.same(oReturnValueContext))
+			.returns(true);
+
+		// code under test
+		assert.throws(function () {
+			oBinding.refreshReturnValueContext(oReturnValueContext, "group");
+		}, new Error("Cannot refresh entity due to pending changes: /SalesOrderList('77')"));
 	});
 
 	//*********************************************************************************************

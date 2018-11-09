@@ -14,19 +14,14 @@ sap.ui.require([
 		onTheMainPage : {
 			actions : {
 				refreshEmployees : function () {
-					return this.waitFor({
-						actions : new Press(),
-						controlType : "sap.m.Button",
-						id : "refreshEmployees",
-						viewName : sViewName
-					});
+					return Helper.pressButton(this, sViewName, "refreshEmployees");
 				},
 				selectFirstEmployee : function () {
 					return this.waitFor({
 						controlType : "sap.m.Text",
 						id : /--Employee_ID/,
 						success : function (aControls) {
-							aControls[0].$().tap();
+							new Press().executeOn(aControls[0]);
 							Opa5.assert.ok(true, "First Employee selected");
 						},
 						viewName : sViewName

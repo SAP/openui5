@@ -304,7 +304,7 @@ sap.ui.define([
 				// now the server has one more element
 				addToCount(that.mChangeListeners, sPath, aCollection, 1);
 				_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
-				that.visitResponse(oCreatedEntity, aResult[1], false,
+				that.visitResponse(oCreatedEntity, aResult[1],
 					_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)), sPath + "/-1",
 					bKeepTransientPath);
 				if (!bKeepTransientPath) {
@@ -775,7 +775,7 @@ sap.ui.define([
 					_Helper.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 					if (!bPatchWithoutSideEffects) {
 						// visit response to report the messages
-						that.visitResponse(oPatchResult, aResult[1], false,
+						that.visitResponse(oPatchResult, aResult[1],
 							_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sEntityPath)),
 							sEntityPath
 						);
@@ -887,18 +887,20 @@ sap.ui.define([
 	 *   property "value"
 	 * @param {object} mTypeForMetaPath A map from meta path to the entity type (as delivered by
 	 *   {@link #fetchTypes})
-	 * @param {boolean} [bWrapped] Whether the result is wrapped into an object as property "value"
 	 * @param {string} [sRootMetaPath=this.sMetaPath] The meta path for <code>oRoot</code>
 	 * @param {string} [sRootPath=""] Path to <code>oRoot</code>, relative to the cache; used to
 	 *   compute the target property of messages; for operations with return context the
 	 *   <code>sRootMetaPath</code> cannot be derived automatically via <code>sRootPath</code>
 	 * @param {boolean} [bKeepTransientPath] Whether the transient path shall be used to report
 	 *   messages
+	 * @param {number} [iStart]
+	 *    The index in the collection where "oRoot.value" needs to be inserted or undefined if
+	 *    "oRoot" references a single entity
 	 *
 	 * @private
 	 */
-	Cache.prototype.visitResponse = function (oRoot, mTypeForMetaPath, bWrapped, sRootMetaPath,
-			sRootPath, bKeepTransientPath) {
+	Cache.prototype.visitResponse = function (oRoot, mTypeForMetaPath, sRootMetaPath, sRootPath,
+			bKeepTransientPath, iStart) {
 		var bHasMessages = false,
 			aKeyPredicates,
 			mPathToODataMessages = {},
@@ -946,17 +948,19 @@ sap.ui.define([
 		 * @param {string} sContextUrl The context URL for message longtexts
 		 */
 		function visitArray(aInstances, sMetaPath, sCollectionPath, sContextUrl) {
-			var mByPredicate = {}, i, vInstance, sPredicate;
+			var mByPredicate = {}, i, iIndex, vInstance, sPredicate;
 
 			for (i = 0; i < aInstances.length; i++) {
 				vInstance = aInstances[i];
+				iIndex = sCollectionPath === "" ? iStart + i : i;
+
 				if (vInstance && typeof vInstance === "object") {
-					visitInstance(vInstance, sMetaPath, sCollectionPath, sContextUrl, true);
+					visitInstance(vInstance, sMetaPath, sCollectionPath, sContextUrl, iIndex);
 					sPredicate = _Helper.getPrivateAnnotation(vInstance, "predicate");
 					if (!sCollectionPath) {
-						// remember the key predicates of the root entries to remove all messages
-						// for entities that have been read
-						aKeyPredicates.push(sPredicate);
+						// remember the key predicates / indices of the root entries to remove all
+						// messages for entities that have been read
+						aKeyPredicates.push(sPredicate || iIndex.toString());
 					}
 					if (sPredicate) {
 						mByPredicate[sPredicate] = vInstance;
@@ -974,11 +978,10 @@ sap.ui.define([
 		 * @param {string} sMetaPath The meta path of the instance in mTypeForMetaPath
 		 * @param {string} sInstancePath The path of the instance in the cache
 		 * @param {string} sContextUrl The context URL for message longtexts
-		 * @param {boolean} [bCollection=false]
-		 *    Whether the instance is part of a collection and the predicate must be added to the
-		 *    instance path
+		 * @param {number} [iIndex]
+		 *    The index in the collection if the instance is part of a collection
 		 */
-		function visitInstance(oInstance, sMetaPath, sInstancePath, sContextUrl, bCollection) {
+		function visitInstance(oInstance, sMetaPath, sInstancePath, sContextUrl, iIndex) {
 			var sPredicate,
 				oType = mTypeForMetaPath[sMetaPath],
 				sMessageProperty = oType && oType[sMessagesAnnotation]
@@ -987,8 +990,8 @@ sap.ui.define([
 
 			sContextUrl = buildContextUrl(sContextUrl, oInstance["@odata.context"]);
 			sPredicate = that.calculateKeyPredicate(oInstance, mTypeForMetaPath, sMetaPath);
-			if (bCollection) {
-				sInstancePath += sPredicate;
+			if (iIndex !== undefined) {
+				sInstancePath = _Helper.buildPath(sInstancePath, sPredicate || iIndex);
 			} else if (!bKeepTransientPath && sPredicate && sInstancePath.endsWith("/-1")) {
 				sInstancePath = sInstancePath.slice(0, -3) + sPredicate;
 			}
@@ -1031,7 +1034,7 @@ sap.ui.define([
 			});
 		}
 
-		if (bWrapped) {
+		if (iStart !== undefined) {
 			aKeyPredicates = [];
 			visitArray(oRoot.value, sRootMetaPath || this.sMetaPath, "",
 				buildContextUrl(sRequestUrl, oRoot["@odata.context"]));
@@ -1257,7 +1260,7 @@ sap.ui.define([
 			this.iLimit = parseInt(sCount);
 			setCount(this.mChangeListeners, "", this.aElements, this.iLimit);
 		}
-		this.visitResponse(oResult, mTypeForMetaPath, true);
+		this.visitResponse(oResult, mTypeForMetaPath, undefined, undefined, undefined, iStart);
 		for (i = 0; i < iResultLength; i++) {
 			oElement = oResult.value[i];
 			this.aElements[iStart + i] = oElement;
@@ -1458,7 +1461,7 @@ sap.ui.define([
 			var oElement = aResult[0];
 			// _Helper.updateExisting cannot be used because navigation properties cannot be handled
 			that.aElements[iIndex] = that.aElements.$byPredicate[sPredicate] = oElement;
-			that.visitResponse(oElement, aResult[1], false, that.sMetapath, sPredicate);
+			that.visitResponse(oElement, aResult[1], that.sMetapath, sPredicate);
 			return oElement;
 		});
 
@@ -1537,8 +1540,7 @@ sap.ui.define([
 						// _Helper.updateExisting cannot be used because navigation properties
 						// cannot be handled
 						that.aElements[iIndex] = that.aElements.$byPredicate[sPredicate] = oResult;
-						that.visitResponse(oResult, mTypeForMetaPath, false, that.sMetapath,
-							sPredicate);
+						that.visitResponse(oResult, mTypeForMetaPath, that.sMetapath, sPredicate);
 					}
 				});
 		});
@@ -1726,7 +1728,7 @@ sap.ui.define([
 					fnDataRequested, undefined, this.sMetaPath),
 				this.fetchTypes()
 			]).then(function (aResult) {
-				that.visitResponse(aResult[0], aResult[1], false,
+				that.visitResponse(aResult[0], aResult[1],
 					that.bFetchOperationReturnType ? that.sMetaPath + "/$Type" : undefined);
 				return aResult[0];
 			});
@@ -1796,7 +1798,7 @@ sap.ui.define([
 		this.oPromise = SyncPromise.all(aPromises).then(function (aResult) {
 			that.bPosting = false;
 			if (that.bFetchOperationReturnType) {
-				that.visitResponse(aResult[0], aResult[1], false, that.sMetaPath + "/$Type");
+				that.visitResponse(aResult[0], aResult[1], that.sMetaPath + "/$Type");
 			}
 			return aResult[0];
 		}, function (oError) {

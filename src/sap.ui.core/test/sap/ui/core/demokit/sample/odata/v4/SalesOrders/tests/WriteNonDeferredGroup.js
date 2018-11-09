@@ -42,14 +42,14 @@ sap.ui.define([
 			// POST restarted automatically after note corrected
 			When.onTheMainPage.createInvalidSalesOrderViaAPI();
 			When.onTheMessagePopover.close();
-			When.onTheMainPage.changeNoteInNewSalesOrder("My Note");
+			When.onTheMainPage.changeNoteInSalesOrders(0, "My Note");
 			When.onTheSuccessInfo.confirm();
 			Then.onTheMainPage.checkNote(0, "My Note");
 
 			// Test: update of SalesOrder note -> error, restart after note corrected
-			When.onTheMainPage.changeNoteInNewSalesOrder("RAISE_ERROR");
+			When.onTheMainPage.changeNoteInSalesOrders(0, "RAISE_ERROR");
 			When.onTheMessagePopover.close();
-			When.onTheMainPage.changeNoteInNewSalesOrder("My patched Note");
+			When.onTheMainPage.changeNoteInSalesOrders(0, "My patched Note");
 			Then.onTheMainPage.checkNote(0, "My patched Note");
 			aExpectedLogs.push(oExpectedPatchLog0);
 			if (sGroupId.includes("irect")) { // Note: better check group submit mode, but how?

@@ -419,15 +419,22 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks whether any of the dependent bindings has pending changes.
+	 * Returns whether any dependent binding of the given context has pending changes; checks all
+	 * dependent bindings of this binding if no context is given.
 	 *
+	 * @param {sap.ui.model.odata.v4.Context} [oContext]
+	 *   A context
 	 * @returns {boolean}
 	 *   <code>true</code> if the binding has pending changes
 	 *
 	 * @private
 	 */
-	ODataBinding.prototype.hasPendingChangesInDependents = function () {
-		return this.getDependentBindings().some(function (oDependent) {
+	ODataBinding.prototype.hasPendingChangesInDependents = function (oContext) {
+		var aDependents = oContext
+				? this.oModel.getDependentBindings(oContext)
+				: this.getDependentBindings();
+
+		return aDependents.some(function (oDependent) {
 			var oCache, bHasPendingChanges;
 
 			if (oDependent.oCachePromise.isFulfilled()) {

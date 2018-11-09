@@ -14,33 +14,34 @@ sap.ui.define([
 	return sap.ui.controller("sap.ui.core.sample.odata.v4.SalesOrdersRTATest.Main", {
 
 		onInit : function () {
-			var oAdaptSalesOrdersButton = new Button({
+			var oView = this.getView(),
+				oAdaptSalesOrdersButton = new Button({
 					icon : "sap-icon://settings",
-					id : "AdaptUISalesOrdersTable",
+					id : oView.createId("AdaptUISalesOrdersTable"),
 					press : this.onAdaptSalesOrders.bind(this),
 					tooltip : "Adapt Sales Orders Table"
 				});
 
 			this.iIdCounter = 0;
-			oAdaptSalesOrdersButton.addDependent(sap.ui.xmlfragment(
+			oAdaptSalesOrdersButton.addDependent(sap.ui.xmlfragment(oView.getId(),
 				"sap.ui.core.sample.odata.v4.SalesOrdersRTATest.AdaptDialog", this));
 			this.byId("SalesOrdersToolbar").addContent(oAdaptSalesOrdersButton);
 
 			this.byId("SalesOrderDetailsToolbar").addContent(new Button({
 				icon : "sap-icon://settings",
-				id : "AdaptUISalesOrdersDetails",
+				id : oView.createId("AdaptUISalesOrdersDetails"),
 				press : this.onAdaptSODetails.bind(this),
 				tooltip : "Adapt Sales Order Details"
 			}));
 			this.byId("BusinessPartner").addContent(new Button({
 				icon : "sap-icon://settings",
-				id : "AdaptUIBusinessPartner",
+				id : oView.createId("AdaptUIBusinessPartner"),
 				press : this.onAdaptBusinessPartner.bind(this),
 				tooltip : "Adapt Business Partner Table"
 			}));
 			this.byId("SalesOrderLineItemsTitleToolbar").addContent(new Button({
 				icon : "sap-icon://settings",
-				id : "AdaptUISalesOrderLineItems",
+				id : oView.createId("AdaptUISalesOrderLineItems"),
 				press : this.onAdaptSalesOrderItems.bind(this),
 				tooltip : "Adapt Sales Order Line Items Table"
 			}));
@@ -146,7 +147,7 @@ sap.ui.define([
 			if ((!oItemsBinding || oItemsBinding !== oRootBinding) && !oRootBinding.isSuspended()) {
 				oRootBinding.suspend();
 			}
-			sap.ui.getCore().byId("AdaptDialog").open();
+			oView.byId("AdaptDialog").open();
 		},
 
 		onAdaptBusinessPartner : function () {
@@ -256,12 +257,13 @@ sap.ui.define([
 				oBinding = oControl.getBinding("items") // list binding
 					|| oControl.getObjectBinding() // context binding
 					|| oControl.getBindingContext().getBinding(), // parent binding
-				oRootBinding = oBinding.getRootBinding();
+				oRootBinding = oBinding.getRootBinding(),
+				oView = this.getView();
 
 			if (oRootBinding.isSuspended()) {
 				oRootBinding.resume();
 			}
-			sap.ui.getCore().byId("AdaptDialog").close();
+			oView.byId("AdaptDialog").close();
 		}
 	});
 });

@@ -80,8 +80,9 @@
 						</Input>
 						<Label labelFor="NewNote" text="Note"/>
 						<Input id="NewNote" value="{Note}"/>
-						<Label labelFor="NewCurrencyCode" text="Currency Code"/>
-						<demo:ValueHelp id="NewCurrencyCode" value="{CurrencyCode}"/>
+						<Label id="SalesOrderList:CurrencyCode::Label" text="Currency Code"/>
+						<demo:ValueHelp ariaLabelledBy="SalesOrderList:CurrencyCode::Label"
+							id="NewCurrencyCode" value="{CurrencyCode}"/>
 					</form:SimpleForm>
 				</Dialog>
 			</dependents>

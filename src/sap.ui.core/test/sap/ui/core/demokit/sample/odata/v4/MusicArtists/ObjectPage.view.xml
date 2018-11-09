@@ -109,6 +109,7 @@
 					<DraftIndicator id="draftIndicator"/>
 				</contentLeft>
 				<contentRight>
+					<Button press="onRefresh" text="Refresh" />
 					<Button enabled="{= !${ui-op>/bEditMode}}" id="edit" press="onEdit"
 						text="Edit" />
 					<Button enabled="{ui-op>/bEditMode}" id="discard" press="onDiscard"
