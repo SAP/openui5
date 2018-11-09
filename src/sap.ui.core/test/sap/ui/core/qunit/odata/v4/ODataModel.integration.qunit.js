@@ -4765,7 +4765,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("EMPLOYEES('01')?$select=ID,Name", {
+			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('01')?$select=ID,Name", {
 					ID : "01",
 					Name : "Frederic Fall",
 					"@odata.etag" : "ETag"
@@ -4804,7 +4804,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("EMPLOYEES('03')?$select=ID,Name", {
+			that.expectRequest("TEAMS('2')/TEAM_2_EMPLOYEES('03')?$select=ID,Name", {
 					ID : "03",
 					Name : "Jonathan Smith",
 					"@odata.etag" : "ETag"
@@ -10464,6 +10464,57 @@ sap.ui.define([
 					? "/TEAMS/-1/TEAM_2_EMPLOYEES/-1"
 					: "/TEAMS('23')/TEAM_2_EMPLOYEES('7')");
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: if a 1 to n navigation occurs we use the deep path for this case instead of the
+	// canonical path; the app can opt-out of this behavior with a binding specific parameter
+	// CPOUI5UISERVICESV3-1567
+	[false, true].forEach(function (bUseCanonicalPath) {
+		QUnit.test("read with deep path, $$canonicalPath: " + bUseCanonicalPath, function (assert) {
+			var sEntityPath = bUseCanonicalPath
+					? "BusinessPartnerList('23')"
+					: "SalesOrderList('0500000000')/SO_2_BP",
+				oModel = createSalesOrdersModel({autoExpandSelect : true}),
+				sParameters = bUseCanonicalPath
+					? "parameters : {$$canonicalPath : true}"
+					: "parameters : {$$ownRequest : true}",
+				sView = '\
+<FlexBox binding="{/SalesOrderList(\'0500000000\')/SO_2_BP}">\
+	<Text text="{BusinessPartnerID}" />\
+	<FlexBox binding="{path : \'\',\
+		' + sParameters + '\
+		}">\
+		<layoutData><FlexItemData/></layoutData>\
+		<Text id="street" text="{Address/Street}" />\
+	</FlexBox>\
+	<Table items="{path : \'BP_2_PRODUCT\',\
+		' + sParameters + '\
+		}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Text text="{ProductID}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>';
+
+			this.expectRequest("SalesOrderList('0500000000')/SO_2_BP?$select=BusinessPartnerID", {
+					"BusinessPartnerID" : "23"
+				})
+				.expectRequest(sEntityPath + "?$select=Address/Street,BusinessPartnerID", {
+					"Address" : {
+						"Street" : "Bakerstreet"
+					},
+					"BusinessPartnerID" : "23"
+				})
+				.expectRequest(sEntityPath + "/BP_2_PRODUCT?$select=ProductID&$skip=0&$top=100", {
+					value : [{
+						"ProductID" : "1"
+					}]
+				});
+
+			return this.createView(assert, sView, oModel);
 		});
 	});
 });
