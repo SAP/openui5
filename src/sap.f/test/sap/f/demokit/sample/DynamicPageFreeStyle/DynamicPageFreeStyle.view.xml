@@ -1,9 +1,7 @@
 <mvc:View
-		xmlns:c="sap.ui.core"
 		controllerName="sap.f.sample.DynamicPageFreeStyle.DynamicPageFreeStyle"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m"
-		xmlns:sf="sap.ui.layout.form"
 		xmlns:f="sap.f"
 		xmlns:layout="sap.ui.layout"
 		height="100%">
@@ -30,6 +28,9 @@
 					<f:snappedContent>
 						<Label text="This is a subheading"/>
 					</f:snappedContent>
+					<f:snappedTitleOnMobile>
+						<Title text="Header Title On Phone"/>
+					</f:snappedTitleOnMobile>
 					<f:content>
 						<GenericTag text="Shortage expected" status="Warning">
 							<ObjectNumber number="100" unit="EUR" emphasized="false" state="Warning"/>

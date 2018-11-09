@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/f/DynamicPageTitle",
 	"qunit/DynamicPageUtil",
 	"sap/ui/core/Core",
-	"sap/m/Link"
+	"sap/m/Link",
+	"sap/m/Title"
 ],
 function (
 	$,
@@ -15,7 +16,8 @@ function (
 	DynamicPageTitle,
 	DynamicPageUtil,
 	Core,
-	Link
+	Link,
+	Title
 ) {
 	"use strict";
 
@@ -893,5 +895,199 @@ function (
 
 		// Check
 		assert.strictEqual(oTitleClone.getNavigationActions().length, iExpectedNavActionsCount, "title clone also has the same nav actions count");
+	});
+
+	/* --------------------------- DynamicPage Title Aggregations ---------------------------------- */
+	QUnit.module("DynamicPage Title - SnappedTitleOnMobile Aggregation", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPage();
+			this.oDynamicPage.setHeaderExpanded(false);
+			this.oDynamicPageTitle = this.oDynamicPage.getTitle();
+			this.oDynamicPageTitle.setAggregation("snappedTitleOnMobile", new Title("Test"));
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPageTitle.destroy();
+			this.oDynamicPage = null;
+			this.oDynamicPageTitle = null;
+		}
+	});
+
+	QUnit.test("SnappedTitleOnMobile on Phone", function (assert) {
+		// Arrange
+		oUtil.toMobileMode();
+		oUtil.renderObject(this.oDynamicPage);
+
+		var $TopArea = this.oDynamicPageTitle.$topArea,
+			$MainArea = this.oDynamicPageTitle.$mainArea,
+			bIsExpandButtonVisible = this.oDynamicPageTitle._getShowExpandButton(),
+			$STOMWrapper = this.oDynamicPageTitle.$snappedTitleOnMobileWrapper,
+			oSnappedWrapper = this.oDynamicPageTitle.$snappedWrapper.context,
+			$titleWrapper = this.oDynamicPage.$("header");
+
+		// Assert
+		assert.notOk($titleWrapper.hasClass("sapFDynamicPageTitleSnapped"), "DynamicPageTitleWrapper hasn't the sapFDynamicPageTitleSnapped CSS class.");
+		assert.ok($titleWrapper.hasClass("sapFDynamicPageTitleSnappedTitleOnMobile"),
+				"DynamicPageTitleWrapper has the sapFDynamicPageTitleSnappedTitleOnMobile CSS class.");
+		assert.ok($STOMWrapper, "SnappedTitleOnMobile wrapper exists.");
+		assert.notOk(oSnappedWrapper, "Snapped wrapper does not exist.");
+		assert.notOk($STOMWrapper.hasClass("sapUiHidden"), "SnappedTitleOnMobile is visible.");
+		assert.ok($MainArea.hasClass("sapUiHidden"), "Dynamic Page Title Main area isn't visible while SnappedTitleOnMobile is.");
+		assert.notOk(bIsExpandButtonVisible, "Expand Button isn't visible while SnappedTitleOnMobile is.");
+
+		// Act
+		Device.orientation.landscape = true;
+		Device.orientation.portrait = false;
+
+		// Assert
+		assert.notOk($titleWrapper.hasClass("sapFDynamicPageTitleSnapped"), "DynamicPageTitleWrapper hasn't the sapFDynamicPageTitleSnapped CSS class.");
+		assert.ok($titleWrapper.hasClass("sapFDynamicPageTitleSnappedTitleOnMobile"),
+				"DynamicPageTitleWrapper has the sapFDynamicPageTitleSnappedTitleOnMobile CSS class.");
+
+		// Act
+		this.oDynamicPage.setHeaderExpanded(true);
+		bIsExpandButtonVisible = this.oDynamicPageTitle._getShowExpandButton();
+
+		// Assert
+		assert.ok($STOMWrapper.hasClass("sapUiHidden"), "SnappedTitleOnMobile is hidden while title is expanded.");
+		assert.notOk($TopArea.hasClass("sapUiHidden"), "Dynamic Page Title Top area is visible while SnappedTitleOnMobile isn't.");
+		assert.notOk($MainArea.hasClass("sapUiHidden"), "Dynamic Page Title Main area is visible while SnappedTitleOnMobile isn't.");
+		assert.notOk(bIsExpandButtonVisible, "Expand Button isn't visible while SnappedTitleOnMobile is.");
+		assert.notOk(oSnappedWrapper, "SnappedTitleOnMobile does not exist.");
+
+		// Cleanup
+		oUtil.toDesktopMode();
+		Device.orientation.landscape = false;
+		Device.orientation.portrait = true;
+	});
+
+	QUnit.test("No SnappedTitleOnMobile on Phone", function (assert) {
+		// Arrange
+		oUtil.toMobileMode();
+		this.oDynamicPageTitle.setAggregation("snappedTitleOnMobile", null);
+		oUtil.renderObject(this.oDynamicPage);
+
+		var $TopArea = this.oDynamicPageTitle.$topArea,
+			$MainArea = this.oDynamicPageTitle.$mainArea,
+			bIsExpandButtonVisible = this.oDynamicPageTitle._getShowExpandButton(),
+			oSTOMWrapper = this.oDynamicPageTitle.$snappedTitleOnMobileWrapper.context,
+			$SnappedWrapper = this.oDynamicPageTitle.$snappedWrapper,
+			$titleWrapper = this.oDynamicPage.$("header");
+
+		// Assert
+		assert.ok($titleWrapper.hasClass("sapFDynamicPageTitleSnapped"), "DynamicPageTitleWrapper has the sapFDynamicPageTitleSnapped CSS class.");
+		assert.notOk($titleWrapper.hasClass("sapFDynamicPageTitleSnappedTitleOnMobile"),
+				"DynamicPageTitleWrapper hasn't the sapFDynamicPageTitleSnappedTitleOnMobile CSS class.");
+		assert.notOk(oSTOMWrapper, "SnappedTitleOnMobile wrapper does not exist.");
+		assert.ok($SnappedWrapper, "Snapped wrapper exists.");
+		assert.notOk($SnappedWrapper.hasClass("sapUiHidden"), "Snapped wrapper is visible.");
+		assert.notOk($MainArea.hasClass("sapUiHidden"), "Dynamic Page Title Main area is visible while snapped.");
+		assert.ok(bIsExpandButtonVisible, "Expand Button is visible while Snapped wrapper is.");
+
+		// Act
+		Device.orientation.landscape = true;
+		Device.orientation.portrait = false;
+
+		// Assert
+		assert.ok($titleWrapper.hasClass("sapFDynamicPageTitleSnapped"), "DynamicPageTitleWrapper has the sapFDynamicPageTitleSnapped CSS class.");
+		assert.notOk($titleWrapper.hasClass("sapFDynamicPageTitleSnappedTitleOnMobile."),
+				"DynamicPageTitleWrapper hasn't the sapFDynamicPageTitleSnappedTitleOnMobile CSS class");
+
+		// Act
+		this.oDynamicPage.setHeaderExpanded(true);
+		bIsExpandButtonVisible = this.oDynamicPageTitle._getShowExpandButton();
+
+		// Assert
+		assert.notOk(oSTOMWrapper, "SnappedTitleOnMobile wrapper does not exist.");
+		assert.ok($SnappedWrapper, "Snapped wrapper exists.");
+		assert.notOk($TopArea.hasClass("sapUiHidden"), "Dynamic Page Title Top area is visible while Snapped Wrapper isn't.");
+		assert.notOk($MainArea.hasClass("sapUiHidden"), "Dynamic Page Title Main area is visible while Snapped Wrapper isn't.");
+		assert.notOk(bIsExpandButtonVisible, "Expand Button isn't visible while Snapped wrapper isn't.");
+
+		// Cleanup
+		oUtil.toDesktopMode();
+		Device.orientation.landscape = false;
+		Device.orientation.portrait = true;
+	});
+
+	QUnit.test("SnappedTitleOnMobile on Tablet", function (assert) {
+		// Arrange
+		oUtil.toTabletMode();
+		oUtil.renderObject(this.oDynamicPage);
+
+		var $TopArea = this.oDynamicPageTitle.$topArea,
+			$MainArea = this.oDynamicPageTitle.$mainArea,
+			bIsExpandButtonVisible = this.oDynamicPageTitle._getShowExpandButton(),
+			oSTOMWrapper = this.oDynamicPageTitle.$snappedTitleOnMobileWrapper.context,
+			$SnappedWrapper = this.oDynamicPageTitle.$snappedWrapper,
+			$titleWrapper = this.oDynamicPage.$("header");
+
+		// Assert
+		assert.ok($titleWrapper.hasClass("sapFDynamicPageTitleSnapped"), "DynamicPageTitleWrapper has the sapFDynamicPageTitleSnapped CSS class.");
+		assert.notOk($titleWrapper.hasClass("sapFDynamicPageTitleSnappedTitleOnMobile"),
+				"DynamicPageTitleWrapper hasn't the sapFDynamicPageTitleSnappedTitleOnMobile CSS class.");
+		assert.notOk(oSTOMWrapper, "SnappedTitleOnMobile wrapper does not exist.");
+		assert.ok($SnappedWrapper, "Snapped wrapper exists.");
+		assert.notOk($SnappedWrapper.hasClass("sapUiHidden"), "Snapped wrapper is visible.");
+		assert.notOk($MainArea.hasClass("sapUiHidden"), "Dynamic Page Title Main area is visible while snapped.");
+		assert.ok(bIsExpandButtonVisible, "Expand Button is visible while Snapped wrapper is.");
+
+		// Act
+		Device.orientation.landscape = true;
+		Device.orientation.portrait = false;
+
+		// Assert
+		assert.ok($titleWrapper.hasClass("sapFDynamicPageTitleSnapped"), "DynamicPageTitleWrapper has the sapFDynamicPageTitleSnapped CSS class.");
+		assert.notOk($titleWrapper.hasClass("sapFDynamicPageTitleSnappedTitleOnMobile."),
+				"DynamicPageTitleWrapper hasn't the sapFDynamicPageTitleSnappedTitleOnMobile CSS class");
+
+		// Act
+		this.oDynamicPage.setHeaderExpanded(true);
+		bIsExpandButtonVisible = this.oDynamicPageTitle._getShowExpandButton();
+
+		// Assert
+		assert.notOk(oSTOMWrapper, "SnappedTitleOnMobile wrapper does not exist.");
+		assert.ok($SnappedWrapper, "Snapped wrapper exists.");
+		assert.notOk($TopArea.hasClass("sapUiHidden"), "Dynamic Page Title Top area is visible while Snapped Wrapper isn't.");
+		assert.notOk($MainArea.hasClass("sapUiHidden"), "Dynamic Page Title Main area is visible while Snapped Wrapper isn't.");
+		assert.notOk(bIsExpandButtonVisible, "Expand Button isn't visible while Snapped wrapper isn't.");
+
+		// Cleanup
+		oUtil.toDesktopMode();
+		Device.orientation.landscape = false;
+		Device.orientation.portrait = true;
+	});
+
+	QUnit.test("SnappedTitleOnMobile on Desktop", function (assert) {
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+
+		var $TopArea = this.oDynamicPageTitle.$topArea,
+			$MainArea = this.oDynamicPageTitle.$mainArea,
+			bIsExpandButtonVisible = this.oDynamicPageTitle._getShowExpandButton(),
+			oSTOMWrapper = this.oDynamicPageTitle.$snappedTitleOnMobileWrapper.context,
+			$SnappedWrapper = this.oDynamicPageTitle.$snappedWrapper,
+			$titleWrapper = this.oDynamicPage.$("header");
+
+		// Assert
+		assert.ok($titleWrapper.hasClass("sapFDynamicPageTitleSnapped"), "DynamicPageTitleWrapper has the sapFDynamicPageTitleSnapped CSS class.");
+		assert.notOk($titleWrapper.hasClass("sapFDynamicPageTitleSnappedTitleOnMobile"),
+				"DynamicPageTitleWrapper hasn't the sapFDynamicPageTitleSnappedTitleOnMobile CSS class.");
+		assert.notOk(oSTOMWrapper, "SnappedTitleOnMobile wrapper does not exist.");
+		assert.ok($SnappedWrapper, "Snapped wrapper exists.");
+		assert.notOk($SnappedWrapper.hasClass("sapUiHidden"), "Snapped wrapper is visible.");
+		assert.notOk($MainArea.hasClass("sapUiHidden"), "Dynamic Page Title Main area is visible while snapped.");
+		assert.ok(bIsExpandButtonVisible, "Expand Button is visible while Snapped wrapper is.");
+
+		// Act
+		this.oDynamicPage.setHeaderExpanded(true);
+		bIsExpandButtonVisible = this.oDynamicPageTitle._getShowExpandButton();
+
+		// Assert
+		assert.notOk(oSTOMWrapper, "SnappedTitleOnMobile wrapper does not exist.");
+		assert.ok($SnappedWrapper, "Snapped wrapper exists.");
+		assert.notOk($TopArea.hasClass("sapUiHidden"), "Dynamic Page Title Top area is visible while Snapped Wrapper isn't.");
+		assert.notOk($MainArea.hasClass("sapUiHidden"), "Dynamic Page Title Main area is visible while Snapped Wrapper isn't.");
+		assert.notOk(bIsExpandButtonVisible, "Expand Button isn't visible while Snapped wrapper isn't.");
 	});
 });
