@@ -4,13 +4,15 @@ sap.ui.define([
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/type/Float",
+	"sap/ui/model/type/Date",
 	"sap/m/Label",
 	"sap/m/Input"
 ], function(
 	JSONModel,
 	ChangeReason,
 	BindingMode,
-	Float,
+	FloatType,
+	DateType,
 	Label,
 	Input
 ) {
@@ -36,7 +38,11 @@ sap.ui.define([
 			{value : 3.55},
 			{value : 5.322},
 			{value : 222.322}
-		]
+		],
+		rawdate: new Date(2018,3,30),
+		rawnumber: 3,
+		internaldate: "2018-04-30",
+		internalnumber: "3.000"
 	};
 
 	function clone(data) {
@@ -47,6 +53,7 @@ sap.ui.define([
 		beforeEach: function() {
 			// Note: some tests modify the model data, therefore we clone it
 			this.currentTestData = clone(constTestData);
+			this.currentTestData.rawdate = new Date(2018,3,30); //JSON cloning breaks Date objects
 			this.oModel = new JSONModel();
 			this.oModel.setData(this.currentTestData);
 			sap.ui.getCore().setModel(this.oModel);
@@ -108,7 +115,7 @@ sap.ui.define([
 		}, this);
 
 		bindings.forEach(function(binding, i) {
-			binding.setType(new Float(), "string");
+			binding.setType(new FloatType(), "string");
 			assert.equal(binding.getExternalValue(), this.currentTestData.values[i].value.toString(), "Property binding value");
 		}, this);
 
@@ -127,7 +134,7 @@ sap.ui.define([
 
 		bindings.forEach(function(binding, i) {
 			binding.attachChange(callBackOnChange);
-			binding.setType(new Float(), "string");
+			binding.setType(new FloatType(), "string");
 			binding.setExternalValue((binding.getValue() + i).toString());
 			assert.equal(binding.getValue(), this.currentTestData.values[i].value, "Property binding value " + this.currentTestData.values[i].value);
 			assert.equal(binding.getExternalValue(), this.currentTestData.values[i].value.toString(), "Property binding value " + this.currentTestData.values[i].value);
@@ -139,6 +146,46 @@ sap.ui.define([
 			binding.detachChange(callBackOnChange);
 		}, this);
 
+	});
+
+	QUnit.test("PropertyBinding getRawValue", function(assert) {
+		var oDateBinding = this.oModel.bindProperty("/rawdate"),
+			oFloatBinding = this.oModel.bindProperty("/rawnumber");
+		oDateBinding.setType(new DateType({pattern:"yyyy-MM-dd"}), "string");
+		oFloatBinding.setType(new FloatType({decimals: 3}), "string");
+		assert.deepEqual(oDateBinding.getRawValue(), new Date(2018,3,30), "getRawValues returns raw values");
+		assert.strictEqual(oFloatBinding.getRawValue(), 3, "getRawValues returns raw values");
+	});
+
+	QUnit.test("PropertyBinding setRawValue", function(assert) {
+		var oDateBinding = this.oModel.bindProperty("/rawdate"),
+			oFloatBinding = this.oModel.bindProperty("/rawnumber");
+		oDateBinding.setType(new DateType({pattern:"yyyy-MM-dd"}), "string");
+		oFloatBinding.setType(new FloatType({decimals: 3}), "string");
+		oDateBinding.setRawValue(new Date(2018,7,30));
+		assert.equal(oDateBinding.getExternalValue(), "2018-08-30", "setRawValue changes binding value");
+		oFloatBinding.setRawValue(5);
+		assert.equal(oFloatBinding.getExternalValue(), "5.000", "setRawValue changes binding value");
+		});
+
+	QUnit.test("PropertyBinding getInternalValue", function(assert) {
+		var oDateBinding = this.oModel.bindProperty("/internaldate"),
+			oFloatBinding = this.oModel.bindProperty("/internalnumber");
+		oDateBinding.setType(new DateType({source:{pattern:"yyyy-MM-dd"}}), "string");
+		oFloatBinding.setType(new FloatType({source:{decimals: 3}}), "string");
+		assert.deepEqual(oDateBinding.getInternalValue(), new Date(2018,3,30), "getInternvalValues returns internal values");
+		assert.strictEqual(oFloatBinding.getInternalValue(), 3, "getInternvalValues returns internval values");
+	});
+
+	QUnit.test("PropertyBinding setInternalValue", function(assert) {
+		var oDateBinding = this.oModel.bindProperty("/internaldate"),
+			oFloatBinding = this.oModel.bindProperty("/inernalnumber");
+		oDateBinding.setType(new DateType({source:{pattern:"yyyy-MM-dd"}}), "string");
+		oFloatBinding.setType(new FloatType({source:{decimals: 3}}), "string");
+		oDateBinding.setInternalValue(new Date(2018,7,30));
+		assert.equal(oDateBinding.getRawValue(), "2018-08-30", "setInternalValue changes binding value");
+		oFloatBinding.setInternalValue(5);
+		assert.equal(oFloatBinding.getRawValue(), "5.000", "setInternalValue changes binding value");
 	});
 
 	QUnit.test("PropertyBinding binding mode", function(assert) {

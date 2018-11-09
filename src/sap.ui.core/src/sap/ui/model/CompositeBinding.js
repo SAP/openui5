@@ -181,6 +181,51 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the current external value of the bound target which is formatted via a type or formatter function.
+	 *
+	 * @return {object} the current value of the bound target
+	 *
+	 * @throws {sap.ui.model.FormatException}
+	 *
+	 * @public
+	 */
+	CompositeBinding.prototype.getExternalValue = function() {
+		var aValues = [],
+			oInternalType = this.sInternalType && DataType.getType(this.sInternalType),
+			oValue;
+
+		switch (this.sInternalTyoe) {
+			case "raw":
+				return this.getRawValue();
+			case "internal":
+				return this.getInternalValue();
+			default:
+				if (this.bRawValues) {
+					aValues = this.getValue();
+				} else {
+					this.aBindings.forEach(function(oBinding) {
+						aValues.push(this.bInternalValues ? oBinding.getInternalValue() : oBinding.getExternalValue());
+					}.bind(this));
+				}
+
+				if (this.fnFormatter) {
+					oValue = this.fnFormatter.apply(this, aValues);
+				} else if (this.oType) {
+					oValue = this.oType.formatValue(aValues, this.sInternalType);
+				} else if (oInternalType instanceof DataType && oInternalType.isArrayType()) {
+					oValue = aValues;
+				} else if (aValues.length > 1) {
+					// default: multiple values are joined together as space separated list if no formatter or type specified
+					oValue = aValues.join(" ");
+				} else {
+					oValue = aValues[0];
+				}
+
+				return oValue;
+		}
+	};
+
+	/**
 	 * Sets the external value of a composite binding. If no CompositeType is assigned to the binding, the default
 	 * implementation assumes a space separated list of values. This will cause the setValue to be called for each
 	 * nested binding, except for undefined values in the array.
@@ -191,8 +236,15 @@ sap.ui.define([
 	 */
 	CompositeBinding.prototype.setExternalValue = function(oValue) {
 		var aValues, aCurrentValues,
-			oInternalType = this.sInternalType && DataType.getType(this.sInternalType),
-			that = this;
+			oInternalType = this.sInternalType && DataType.getType(this.sInternalType);
+
+		if (this.sInternalType === "raw") {
+			this.setRawValue(oValue);
+			return;
+		} else if (this.sInternalType === "internal") {
+			this.setInternalValue(oValue);
+			return;
+		}
 
 		// No twoway binding when using formatters
 		if (this.fnFormatter) {
@@ -230,84 +282,120 @@ sap.ui.define([
 			aValues = [oValue];
 		}
 
-		if (this.bRawValues) {
-			// When using raw values, also call validators of nested bindings
-			try {
-				this.aBindings.forEach(function(oBinding, i) {
-					if (oBinding.oType) {
-						oBinding.oType.validateValue(aValues[i]);
-					}
-				});
-			} catch (oException) {
-				oDataState.setInvalidValue(oValue);
-				this.checkDataState(); //data ui state is dirty inform the control
-				throw oException;
+		this.aBindings.forEach(function(oBinding, iIndex) {
+			oValue = aValues[iIndex];
+			if (this.bRawValues) {
+				oBinding.setRawValue(oValue);
+			} else if (this.bInternalValues) {
+				oBinding.setInternalValue(oValue);
+			} else {
+				oBinding.setExternalValue(oValue);
 			}
-			this.setValue(aValues);
-		} else {
-			jQuery.each(this.aBindings, function(i, oBinding) {
-				oValue = aValues[i];
-				if (oValue !== undefined) {
-					if (that.bInternalValues) {
-						oBinding.setInternalValue(oValue);
-					} else {
-						oBinding.setExternalValue(oValue);
-					}
-				}
-			});
-		}
+		}.bind(this));
 
 		oDataState.setValue(this.getValue());
 		oDataState.setInvalidValue(undefined);
 	};
 
 	/**
-	 * Returns the current external value of the bound target which is formatted via a type or formatter function.
+	 * Returns the current internal value of the bound target which is an array of the
+	 * internal (JS native) values of nested bindings
 	 *
-	 * @return {object} the current value of the bound target
-	 *
-	 * @throws {sap.ui.model.FormatException}
+	 * @return {array} the current values of the nested bindings
 	 *
 	 * @public
 	 */
-	CompositeBinding.prototype.getExternalValue = function() {
-		var aValues = [];
-
-		if (this.bRawValues) {
-			aValues = this.getValue();
-		} else {
-			this.aBindings.forEach(function(oBinding) {
-				aValues.push(this.bInternalValues ? oBinding.getInternalValue() : oBinding.getExternalValue());
-			}.bind(this));
-		}
-		return this._toExternalValue(aValues);
+	CompositeBinding.prototype.getInternalValue = function() {
+		return this.aBindings.map(function(oBinding) {
+			return oBinding.getInternalValue();
+		});
 	};
 
 	/**
-	 * Returns the current external value of the given value which is formatted via a type or formatter function.
+	 * Sets the internal value of the bound target. Parameter must be an array of
+	 * values matching the internal (JS native) types of nested bindings.
 	 *
-	 * @param {any[]} aValues - An array of values that are formatted to one value
-	 * @returns {any} the current value of the bound target
-	 * @throws {sap.ui.model.FormatException}
-	 * @private
+	 * @param {array} aValues the new values of the nested bindings
+	 *
+	 * @public
 	 */
-	CompositeBinding.prototype._toExternalValue = function(aValues) {
-		var oValue,
-			oInternalType = this.sInternalType && DataType.getType(this.sInternalType);
-		if (this.fnFormatter) {
-			oValue = this.fnFormatter.apply(this, aValues);
-		} else if (this.oType) {
-			oValue = this.oType.formatValue(aValues, this.sInternalType);
-		} else if (oInternalType instanceof DataType && oInternalType.isArrayType()) {
-			oValue = aValues;
-		} else if (aValues.length > 1) {
-			// default: multiple values are joined together as space separated list if no formatter or type specified
-			oValue = aValues.join(" ");
-		} else {
-			oValue = aValues[0];
+	CompositeBinding.prototype.setInternalValue = function(aValues) {
+		var oDataState = this.getDataState(), aValidateValues = aValues;
+		if (this.oType) {
+			try {
+				if (!this.bInternalValues) {
+					aValidateValues = this.aBindings.map(function(oBinding, i) {
+						return oBinding._internalToRaw(aValidateValues[i]);
+					});
+					if (!this.bRawValues) {
+						aValidateValues = this.aBindings.map(function(oBinding, i) {
+							return oBinding._rawToExternal(aValidateValues[i]);
+						});
+					}
+				}
+				this.oType.validateValue(aValidateValues);
+			} catch (oException) {
+				oDataState.setInvalidValue(aValues);
+				this.checkDataState(); //data ui state is dirty inform the control
+				throw oException;
+			}
 		}
+		this.aBindings.forEach(function(oBinding, iIndex) {
+			oBinding.setInternalValue(aValues[iIndex]);
+		});
+		oDataState.setValue(this.getValue());
+		oDataState.setInvalidValue(undefined);
+	};
 
-		return oValue;
+	/**
+	 * Returns the current raw value of the bound target which is an array of the
+	 * raw (model) values of nested bindings
+	 *
+	 * @return {array} the current values of the nested bindings
+	 *
+	 * @public
+	 */
+	CompositeBinding.prototype.getRawValue = function() {
+		return this.aBindings.map(function(oBinding) {
+			return oBinding.getRawValue();
+		});
+	};
+
+	/**
+	 * Sets the raw value of the bound target. Parameter must be an array of
+	 * values matching the raw (model) types of nested bindings.
+	 *
+	 * @param {array} aValues the new values of the nested bindings
+	 *
+	 * @public
+	 */
+	CompositeBinding.prototype.setRawValue = function(aValues) {
+		var oDataState = this.getDataState(), aValidateValues = aValues;
+		if (this.oType) {
+			try {
+				if (!this.bRawValues) {
+					if (this.bInternalValues) {
+						aValidateValues = this.aBindings.map(function(oBinding, i) {
+							return oBinding._rawToInternal(aValidateValues[i]);
+						});
+					} else {
+						aValidateValues = this.aBindings.map(function(oBinding, i) {
+							return oBinding._rawToExternal(aValidateValues[i]);
+						});
+					}
+				}
+				this.oType.validateValue(aValidateValues);
+			} catch (oException) {
+				oDataState.setInvalidValue(aValues);
+				this.checkDataState(); //data ui state is dirty inform the control
+				throw oException;
+			}
+		}
+		this.aBindings.forEach(function(oBinding, iIndex) {
+			oBinding.setRawValue(aValues[iIndex]);
+		});
+		oDataState.setValue(this.getValue());
+		oDataState.setInvalidValue(undefined);
 	};
 
 	/**

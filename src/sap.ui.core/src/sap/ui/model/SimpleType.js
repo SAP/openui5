@@ -111,6 +111,9 @@ sap.ui.define(['sap/ui/base/DataType', './Type', './FormatException', './ParseEx
 	 * @protected
 	 */
 	SimpleType.prototype.getModelFormat = function() {
+		if (this.oInputFormat) {
+			return this.oInputFormat;
+		}
 		return oModelFormat;
 	};
 
