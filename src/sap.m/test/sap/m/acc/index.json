@@ -108,7 +108,7 @@
 		{
 			"control": "sap.m.FormattedText",
 			"url": "FormattedText.html",
-			"appComponent": "CA-UI5-CTR-PIR"
+			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.GenericTile",
@@ -158,7 +158,7 @@
 		{
 			"control": "sap.m.Link",
 			"url": "../Link.html",
-			"appComponent": "CA-UI5-CTR-PIR"
+			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.List",
@@ -425,7 +425,7 @@
 		{
 			"control": "sap.m.Switch",
 			"url": "../Switch.html",
-			"appComponent": "CA-UI5-CTR-PIR"
+			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.TabContainer",
@@ -515,7 +515,7 @@
 		{
 			"control": "sap.m.ViewSettingsPopover",
 			"url": "../ViewSettingsPopover.html",
-			"appComponent": "CA-UI5-CTR-BAL"
+			"appComponent": "CA-UI5-TBL"
 		},
 		{
 			"control": "sap.m.Wizard",

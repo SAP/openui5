@@ -56,7 +56,7 @@
 			"control" : "sap.ui.unified.FileUploader",
 			"url" : "FileUploader.html",
 			"desc" : "FileUploader test using sap.m library",
-			"appComponent" : "CA-UI5-CTR-PIR"
+			"appComponent" : "CA-UI5-CTR-BAL"
 		}
 	]
 }
