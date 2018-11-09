@@ -6,31 +6,86 @@ This page explains the initial setup, development workflow, and how tests are ex
 
 Setting up the OpenUI5 development environment
 ------------------------------------------
+OpenUI5 content is developed in an environment based on Node.js. The [UI5 Build and Development Tooling](https://github.com/SAP/ui5-tooling) is used as development server and build tool.
 
-OpenUI5 content is developed in an environment based on Node.js. The [UI5 Build and Development Tooling](https://github.com/SAP/ui5-tooling) is used as development server and build tool. To set up this environment follow these simple steps:
+### Basic Setup
+This setup allows to start a server for the OpenUI5 project in an easy way.
 
-1. Install Node.js (get it from [nodejs.org](http://nodejs.org/)); this also includes npm, the [node package manager](https://docs.npmjs.com/getting-started/what-is-npm)
-2. Install [Yarn](https://yarnpkg.com/en/) from [here](https://yarnpkg.com/en/docs/install) (*also see [FAQ: What's the thing with Yarn?](https://github.com/SAP/ui5-tooling#whats-the-thing-with-yarn)*)
-2. Install the UI5 Build and Development Tooling CLI globally
-```sh
-npm install @ui5/cli -g
-```
-3. Clone the OpenUI5 Git repository (you can download and install Git from [git-scm.com](http://git-scm.com/download))
+1. Install [Node.js](http://nodejs.org/). This also includes npm, the [node package manager](https://docs.npmjs.com/getting-started/what-is-npm)
+2. Clone the OpenUI5 Git repository (you can download and install Git from [git-scm.com](http://git-scm.com/download))
 ```sh
 git clone https://github.com/SAP/openui5.git
 ```
-4. Install all npm dependencies **using Yarn** (this will also link all OpenUI5 libraries with each other)
+3. Install all npm dependencies (optionally, you can use Yarn for this, see [Advanced Setup](#advanced-setup))
 ```sh
 cd openui5
-yarn
+npm install
 ```
-5. Start the server and open the testsuite
+4. Start the server and open the TestSuite
 ```sh
 npm run testsuite
 ```
-6. Your default browser should open automatically and show the testsuite - You're done!
+*To just start the server:*
+```sh
+npm start
+```
+5. Your default browser should open automatically and show the TestSuite - **You're done!**
 
-Instead of using an npm script you can also navigate into the testsuite directory (`cd src/testsuite`) and start the UI5 server manually by executing `ui5 serve`. This way you can also configure the server by setting parameters like `--port=9090`. See the [UI5 CLI documentation](https://github.com/SAP/ui5-cli#serve) for details.
+#### Configuring the TestSuite server
+The OpenUI5 TestSuite server can be configured using environment variables. For example to allow remote access to the server (i.e. from an interface other than your computers loopback/localhost) you can configure the server like this:
+```sh
+OPENUI5_SRV_ACC_RMT_CON=true npm start
+```
+
+##### Available server configurations
+- `OPENUI5_SRV_OPEN=index.html`
+- `OPENUI5_SRV_ACC_RMT_CON=true`
+- `OPENUI5_SRV_PORT=9090`
+
+### Advanced Setup
+The basic setup described above makes use of a custom setup focused on starting the [UI5 Server](https://github.com/SAP/ui5-server) for the OpenUI5 TestSuite project in an easy way.
+
+The advanced setup allows you to use the [UI5 CLI](https://github.com/SAP/ui5-cli) and all of its features. The use of [Yarn](https://yarnpkg.com) is required in this setup, as [npm can't handle workspaces yet](https://github.com/SAP/ui5-tooling#whats-the-thing-with-yarn).
+
+**You need to use the advanced setup if you plan to do any of the following:**
+- **Build** an OpenUI5 project
+- **Serve** a project with HTTPS or HTTP/2
+- Use any of the other **[UI5 CLI](https://github.com/SAP/ui5-cli) features** and parameters
+
+#### Setup
+1. Install the UI5 Build and Development Tooling CLI globally
+See [UI5 Tooling: Installing the UI5 CLI](https://github.com/SAP/ui5-tooling#installing-the-ui5-cli)
+2. Install [Yarn](https://yarnpkg.com) from [here](https://yarnpkg.com/en/docs/install) (*also see [FAQ: What's the thing with Yarn?](https://github.com/SAP/ui5-tooling#whats-the-thing-with-yarn)*)
+3. In the OpenUI5 repository root directory, install all dependencies using Yarn (this also links all OpenUI5 libraries between each other)
+```sh
+yarn
+```
+4. Navigate into the TestSuite project and start the UI5 Server
+```sh
+cd src/testsuite
+ui5 serve --open index.html
+```
+
+#### Workflow
+Now you can use the UI5 CLI in any of your local OpenUI5 libraries. Check the [UI5 CLI documentation](https://github.com/SAP/ui5-cli) for details.
+
+Whenever you make changes to your OpenUI5 repositories `node_modules` directory (e.g. by executing `npm install`) you may need to recreate the links between the OpenUI5 libraries. You can always do this by executing `yarn` in the OpenUI5 root directory. Also see [FAQ: What's the thing with Yarn?](https://github.com/SAP/ui5-tooling#whats-the-thing-with-yarn)
+
+### Legacy Setup
+You can continue to use the legacy Grunt-based setup. However the setups described above are recommended for working with the OpenUI5 repository.
+
+To use the legacy setup, execute `npm run start-grunt` (in the past this was the default `npm start` behavior).
+
+For details please refer to the [legacy Grunt development environment documentation](developing_legacy_grunt.md).
+
+#### Differences to the Standard Setups ([Basic](#basic-setup) and [Advanced](#advanced-setup))
+1. `/testsuite` Path-prefix:
+
+    Standard Setup: | `http://localhost:8080/test-resources/testsuite/testframe.html`
+    :---- | :----
+    Legacy Setup | `http://localhost:8080/testsuite/test-resources/testsuite/testframe.html`
+2. SDK Documentation generated by [`grunt docs`](https://github.com/SAP/openui5/blob/master/docs/tools_legacy_grunt.md#docs) can only be served using the legacy setup
+
 
 The Development Process
 -----------------------
