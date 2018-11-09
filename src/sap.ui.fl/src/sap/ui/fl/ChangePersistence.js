@@ -147,7 +147,6 @@ sap.ui.define([
 	 * @public
 	 */
 	ChangePersistence.prototype._preconditionsFulfilled = function(aActiveContexts, bIncludeVariants, oChangeContent) {
-
 		if (!oChangeContent.fileName) {
 			Utils.log.warning("A change without fileName is detected and excluded from component: " + this._mComponent.name);
 			return false;
@@ -287,7 +286,11 @@ sap.ui.define([
 			var aContextObjects = oWrappedChangeFileContent.changes.contexts || [];
 			return new Promise(function (resolve) {
 				ContextManager.getActiveContexts(aContextObjects).then(function (aActiveContexts) {
-					resolve(aChanges.filter(this._preconditionsFulfilled.bind(this, aActiveContexts, bIncludeVariants)).map(getChange.bind(this, oWrappedChangeFileContent)));
+					resolve(aChanges
+						.map(function(vChange) { return vChange instanceof Change ? vChange.getDefinition() : vChange; })
+						.filter(this._preconditionsFulfilled.bind(this, aActiveContexts, bIncludeVariants))
+						.map(getChange.bind(this, oWrappedChangeFileContent))
+					);
 				}.bind(this));
 			}.bind(this));
 		}.bind(this));
