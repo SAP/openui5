@@ -26,7 +26,7 @@
 		"webapp/test/integration/PostJourney.js",
 		"webapp/test/integration/WorklistJourney.js",
 		"webapp/test/mockServer.html",
-		"webapp/test/test.html",
+		"webapp/test.html",
 		"webapp/test/testsuite.qunit.html",
 		"webapp/test/unit/AllTests.js",
 		"webapp/test/unit/model/DateFormatter.js",
