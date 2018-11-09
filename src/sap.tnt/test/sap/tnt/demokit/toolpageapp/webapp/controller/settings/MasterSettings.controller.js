@@ -1,10 +1,12 @@
 sap.ui.define([
 	'sap/ui/demo/toolpageapp/controller/BaseController',
 	'sap/m/MessageToast',
-	'sap/ui/model/json/JSONModel'
-], function (BaseController, MessageToast, JSONModel) {
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/demo/toolpageapp/model/formatter'
+], function (BaseController, MessageToast, JSONModel, formatter) {
 	"use strict";
 	return BaseController.extend("sap.ui.demo.toolpageapp.controller.settings.MasterSettings", {
+		formatter: formatter,
 
 		onInit: function () {
 			var oViewModel = new JSONModel({
