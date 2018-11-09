@@ -547,4 +547,44 @@ sap.ui.define([
 		fnTestCase("63px", "63px", "");
 
 	});
+
+	QUnit.test("Sorted property and sort icon", function(assert) {
+		var sut = new Column({
+			hAlign: "Center",
+			header: new Label({
+				text: "Column"
+			})
+		}),
+		parent = new Table({
+			columns : sut,
+			items: new ColumnListItem({
+				cells: new Text({
+					text: "cell"
+				})
+			})
+		});
+
+		parent.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(sut.getSortIndicator(), "None", "Default value for sorted is None");
+
+		// sort ascending
+		sut.setSortIndicator("Ascending");
+		assert.equal(sut.getSortIndicator(), "Ascending", "Column is sorted");
+		var oSutDomRef = sut.getDomRef();
+		assert.equal(oSutDomRef.getAttribute("aria-sort"), "ascending", "Column is sorted in ascending order");
+
+		// sort descending
+		sut.setSortIndicator("Descending");
+		assert.equal(sut.getSortIndicator(), "Descending", "Column is sorted");
+		assert.equal(oSutDomRef.getAttribute("aria-sort"), "descending", "Column is sorted in descending order");
+
+		// sorting removed
+		sut.setSortIndicator("None");
+		assert.equal(sut.getSortIndicator(), "None", "Sorting removed");
+		assert.equal(oSutDomRef.getAttribute("aria-sort"), "none", "Sorting removed");
+
+		parent.destroy();
+	});
 });
