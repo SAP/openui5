@@ -225,16 +225,22 @@ sap.ui.define([
 
 	QUnit.module("Interfaces");
 
-	var aCommonFunctions = ["renderControl", "write", "writeEscaped", "translate", "writeAcceleratorKey", "writeControlData", "writeInvisiblePlaceholderData",
-		"writeElementData", "writeAttribute", "writeAttributeEscaped", "addClass", "writeClasses",
-		"addStyle", "writeStyles", "writeAccessibilityState", "writeIcon",
-		"getConfiguration", "getHTML", "cleanupControlWithoutRendering"
-	];
+	var aCommonMethods = ["renderControl", "translate", "getConfiguration", "getHTML", "cleanupControlWithoutRendering"];
+
+	var aStringRendererMethods = ["write", "writeEscaped", "writeAcceleratorKey", "writeControlData", "writeInvisiblePlaceholderData",
+		"writeElementData", "writeAttribute", "writeAttributeEscaped", "addClass", "writeClasses", "addStyle", "writeStyles",
+		"writeAccessibilityState", "writeIcon"];
+
+	var aDomRendererMethods = ["openStart", "openEnd", "close", "voidStart", "voidEnd", "text", "attr", "class", "style", "controlData",
+	"elementData", "accessibilityState", "invisiblePlaceholderData", "icon", "unsafeHtml"];
+
+	var aInterfaceMethods = aCommonMethods.concat(aStringRendererMethods, aDomRendererMethods);
+
 	var aNonRendererFunctions = ["render", "flush", "destroy"];
 
 	QUnit.test("Full Interface", function(assert) {
 		var rm = sap.ui.getCore().createRenderManager();
-		var aAllFunctions = aCommonFunctions.concat(aNonRendererFunctions);
+		var aAllFunctions = aInterfaceMethods.concat(aNonRendererFunctions);
 		for (var s in rm) {
 			assert.ok(aAllFunctions.indexOf(s) >= 0, "Full Interface provides function '" + s + "'.");
 		}
@@ -245,7 +251,7 @@ sap.ui.define([
 		var oControl0 = new TestControl("TestContr0");
 		fnCheckRendererInterface = function(rmIf) {
 			for (var s in rmIf) {
-				assert.ok(aCommonFunctions.indexOf(s) >= 0, "Renderer Interface provides function '" + s + "'.");
+				assert.ok(aInterfaceMethods.indexOf(s) >= 0, "Renderer Interface provides function '" + s + "'.");
 			}
 		};
 		rm.renderControl(oControl0);
@@ -474,6 +480,205 @@ sap.ui.define([
 		sText = encodeXML("TestACCContr1 test1 hello1");
 		checkACCOutput(sOutput, "aria-describedby=\"" + sText + "\"");
 		sText = encodeXML("TestACCContr1 test2 hello2");
+		checkACCOutput(sOutput, "aria-labelledby=\"" + sText + "\"");
+	});
+
+	// DOM rendering methods
+
+	QUnit.module("Writer API: Semantic Syntax (DOM) Rendering Methods");
+
+	QUnit.test("RenderManager.openStart", function (assert) {
+		checkRMWriter(assert, "<span ", true, 0, function(rm) {
+			return rm.openStart("span");
+		});
+	});
+
+	QUnit.test("RenderManager.openEnd", function (assert) {
+		checkRMWriter(assert, ">", true, 0, function(rm) {
+			return rm.openEnd();
+		});
+	});
+
+	QUnit.test("RenderManager.close", function (assert) {
+		checkRMWriter(assert, "</span>", true, 0, function(rm) {
+			return rm.close("span");
+		});
+	});
+
+	QUnit.test("RenderManager.voidStart", function (assert) {
+		checkRMWriter(assert, "<img ", true, 0, function(rm) {
+			return rm.voidStart("img");
+		});
+	});
+
+	QUnit.test("RenderManager.voidEnd", function (assert) {
+		checkRMWriter(assert, "/>", true, 0, function(rm) {
+			return rm.voidEnd();
+		});
+	});
+
+	QUnit.test("RenderManager.text", function (assert) {
+		checkRMWriter(assert, "Hello,&#x20;how&#x20;are&#x20;you&#x3f;", true, 0, function(rm) {
+			return rm.text("Hello, how are you?");
+		});
+	});
+
+	QUnit.test("RenderManager.attr", function (assert) {
+		checkRMWriter(assert, " attrName=\"attr&#x20;value&#x20;&amp;&lt;&quot;&#x27;&#x5c;\"", true, 0, function(rm) {
+			return rm.attr("attrName", "attr value &<\"\'\\");
+		});
+	});
+
+	QUnit.test("RenderManager.class", function (assert) {
+		checkRMWriter(assert, "", true, 0, function(rm) {
+			rm.class("sampleClassName");
+			assert.equal(rm.aStyleStack[rm.aStyleStack.length - 1].aClasses[rm.aStyleStack[rm.aStyleStack.length - 1].aClasses.length - 1], "sampleClassName", "Class added to list of styles");
+			return rm.class("");
+		});
+	});
+
+	QUnit.test("RenderManager.style", function(assert) {
+		checkRMWriter(assert, "", true, 0, function(rm) {
+			rm.style("att1", "val1");
+			assert.equal(rm.aStyleStack[rm.aStyleStack.length - 1].aStyle[rm.aStyleStack[rm.aStyleStack.length - 1].aStyle.length - 1], "att1:val1", "Style added to list of styles");
+			return rm.addStyle("att2", "val2");
+		});
+	});
+
+	QUnit.test("Semantic Syntax Combined", function(assert) {
+		checkRMWriter(assert, "" +
+		"<span  id=\"sampleId\" class=\"sampleClassName\" >some&#x20;text<img  src=\"..&#x2f;img.jpg\"/>some&#x20;more&#x20;text</span>" +
+		"", true, 0, function(rm) {
+
+			rm.openStart("span");
+			rm.class("sampleClassName");
+			rm.attr("id", "sampleId");
+			rm.openEnd();
+			rm.text("some text");
+			rm.voidStart("img");
+			rm.attr("src", "../img.jpg");
+			rm.voidEnd();
+			rm.text("some more text");
+			rm.close("span");
+			return rm.text();
+		});
+	});
+
+	QUnit.test("RenderManager.controlData", function(assert) {
+		checkRMWriter(assert, " id=\"TestElem123\" data-sap-ui=\"TestElem123\"", true, 0, function(rm) {
+			return rm.controlData(new Control("TestElem123"));
+		});
+	});
+
+	QUnit.test("RenderManager.elementData", function(assert) {
+		checkRMWriter(assert, " id=\"TestElem1234\" data-sap-ui=\"TestElem1234\"", true, 0, function(rm) {
+			return rm.elementData(new Element("TestElem1234"));
+		});
+	});
+
+	QUnit.test("RenderManager.accessibilityState", function(assert) {
+		var oControl1 = new ACCTestControl("TestACCContr123");
+		var oControl2 = new ACCTestControl("TestACCContr234", {
+			"editable": false, //readonly
+			"enabled": false, //disabled
+			"visible": false, //hidden
+			"required": true, //required
+			"selected": true, //selected
+			"checked": true, //checked
+			"ariaDescribedBy": [oControl1, "test123"],
+			"ariaLabelledBy": [oControl1, "test234"]
+		});
+
+		function checkACCOutput(sOutput, sValue) {
+			assert.ok(sOutput.indexOf(sValue) >= 0, "Output contains " + sValue + " ('" + sOutput + "')");
+		}
+
+		//Check defaults
+		var rm = new RenderManager();
+		assert.ok(rm === rm.writeAccessibilityState(oControl1), "Writer function returns RenderManager again for chaining.");
+		var sOutput = rm.aBuffer.join("");
+		assert.ok(sOutput.length === 0, "No output for defaults: " + sOutput);
+
+		//Check auto-generation
+		rm = new RenderManager();
+		rm.writeAccessibilityState(oControl2);
+		sOutput = rm.aBuffer.join("");
+		checkACCOutput(sOutput, "aria-readonly=\"true\"");
+		checkACCOutput(sOutput, "aria-disabled=\"true\"");
+		checkACCOutput(sOutput, "aria-hidden=\"true\"");
+		checkACCOutput(sOutput, "aria-required=\"true\"");
+		checkACCOutput(sOutput, "aria-selected=\"true\"");
+		checkACCOutput(sOutput, "aria-checked=\"true\"");
+		// escape it because attributes' values are escaped since 1.19.0 & 1.18.5 & 1.16.10
+		var sText = jQuery.sap.escapeHTML("TestACCContr123 test123");
+		checkACCOutput(sOutput, "aria-describedby=\"" + sText + "\"");
+		sText = jQuery.sap.escapeHTML("TestACCContr123 test234");
+		checkACCOutput(sOutput, "aria-labelledby=\"" + sText + "\"");
+
+		//Check reset
+		rm = new RenderManager();
+		rm.writeAccessibilityState(oControl2, {
+			"readonly": null,
+			"disabled": null,
+			"hidden": null,
+			"required": null,
+			"selected": null,
+			"checked": null,
+			"describedby": null,
+			"labelledby": null
+		});
+		sOutput = rm.aBuffer.join("");
+		assert.ok(sOutput.length == 0, "No output for reset values: " + sOutput);
+
+		//Check custom attributes only
+		rm = new RenderManager();
+		rm.writeAccessibilityState({
+			"hello1": "hello2"
+		});
+		sOutput = rm.aBuffer.join("");
+		checkACCOutput(sOutput, "aria-hello1=\"hello2\"");
+
+		//Check control and custom attributes
+		rm = new RenderManager();
+		rm.writeAccessibilityState(oControl2, {
+			"hello1": "hello2"
+		});
+		sOutput = rm.aBuffer.join("");
+		checkACCOutput(sOutput, "aria-readonly=\"true\"");
+		checkACCOutput(sOutput, "aria-disabled=\"true\"");
+		checkACCOutput(sOutput, "aria-hidden=\"true\"");
+		checkACCOutput(sOutput, "aria-required=\"true\"");
+		checkACCOutput(sOutput, "aria-selected=\"true\"");
+		checkACCOutput(sOutput, "aria-checked=\"true\"");
+		// escape it because attributes' values are escaped since 1.19.0 & 1.18.5 & 1.16.10
+		sText = jQuery.sap.escapeHTML("TestACCContr123 test123");
+		checkACCOutput(sOutput, "aria-describedby=\"" + sText + "\"");
+		sText = jQuery.sap.escapeHTML("TestACCContr123 test234");
+		checkACCOutput(sOutput, "aria-labelledby=\"" + sText + "\"");
+		checkACCOutput(sOutput, "aria-hello1=\"hello2\"");
+
+		//Check append for describedby and labelledby
+		rm = new RenderManager();
+		rm.writeAccessibilityState(oControl2, {
+			"readonly": {
+				value: false,
+				append: true
+			},
+			"describedby": {
+				value: "hello1",
+				append: true
+			},
+			"labelledby": {
+				value: "hello2",
+				append: true
+			}
+		});
+		sOutput = rm.aBuffer.join("");
+		checkACCOutput(sOutput, "aria-readonly=\"false\"");
+		// escape it because attributes' values are escaped since 1.19.0 & 1.18.5 & 1.16.10
+		sText = jQuery.sap.escapeHTML("TestACCContr123 test123 hello1");
+		checkACCOutput(sOutput, "aria-describedby=\"" + sText + "\"");
+		sText = jQuery.sap.escapeHTML("TestACCContr123 test234 hello2");
 		checkACCOutput(sOutput, "aria-labelledby=\"" + sText + "\"");
 	});
 
