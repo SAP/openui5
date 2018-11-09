@@ -181,6 +181,25 @@
 			assert.equal(corePath, "http://core.something.corp/sap/ui/core/themes/my_theme/img/x.png", "path should be as configured");
 			assert.equal(commonsPath, "http://commons.something.corp/sap/ui/commons/themes/my_theme/img/x.png", "path should be as configured");
 			assert.equal(otherPath, "http://custom.something.corp/sap/ui/other/themes/my_theme/img/x.png", "path should be as configured");
+
+			// Set theme root for all libs with forceUpdate
+			sap.ui.getCore().setThemeRoot("test_theme", "/foo/", true);
+
+			corePath = oRealCore._getThemePath("sap.ui.core", "test_theme");
+			var oCoreLink = document.getElementById("sap-ui-theme-sap.ui.core");
+
+			assert.equal(corePath, "/foo/sap/ui/core/themes/test_theme/", "path should be as configured");
+			assert.equal(oCoreLink.getAttribute("href"), "/foo/sap/ui/core/themes/test_theme/library.css", "Stylesheet should have been updated");
+
+			// Set theme root for sap.ui.core lib with forceUpdate
+			sap.ui.getCore().setThemeRoot("test_theme", ["sap.ui.core"], "/bar/", true);
+
+			corePath = oRealCore._getThemePath("sap.ui.core", "test_theme");
+			oCoreLink = document.getElementById("sap-ui-theme-sap.ui.core");
+
+			assert.equal(corePath, "/bar/sap/ui/core/themes/test_theme/", "path should be as configured");
+			assert.equal(oCoreLink.getAttribute("href"), "/bar/sap/ui/core/themes/test_theme/library.css", "Stylesheet should have been updated");
+
 		});
 
 		// now check the location of the preconfigured themes
