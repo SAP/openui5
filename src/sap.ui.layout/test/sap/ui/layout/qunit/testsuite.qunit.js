@@ -56,6 +56,12 @@ sap.ui.define([
 
 			"ExploredSamples": {
 				loader: {
+					map: {
+						"*": {
+							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
+							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
+						}
+					},
 					paths: {
 						"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
 					}
@@ -65,7 +71,7 @@ sap.ui.define([
 					version: 2
 				},
 				sinon: {
-					version: 1 // because MockServer is used by samples
+					version: 4
 				},
 				ui5: {
 					libs: ["sap.ui.layout", "sap.m", "sap.tnt", "sap.ui.documentation"],

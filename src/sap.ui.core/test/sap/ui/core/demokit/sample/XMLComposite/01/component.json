@@ -4,6 +4,7 @@
             "stretch": true,
             "files": [
                 "Component.js",
+                "component.json",
                 "V.view.xml",
                 "C.controller.js",
                 "comp/SearchField.js",

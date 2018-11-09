@@ -58,12 +58,20 @@ sap.ui.define([
 			},
 			"ExploredSamples": {
 				group: "Library",
+				loader: {
+					map: {
+						"*": {
+							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
+							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
+						}
+					}
+				},
 				runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
 				qunit: {
 					version: 2
 				},
 				sinon: {
-					version: 1 // because MockServer is used by samples
+					version: 4
 				},
 				ui5: {
 					libs: ["sap.ui.table", "sap.m", "sap.ui.layout", "sap.ui.documentation"],
