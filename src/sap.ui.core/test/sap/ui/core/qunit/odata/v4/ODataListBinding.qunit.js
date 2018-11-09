@@ -4836,6 +4836,9 @@ sap.ui.define([
 			oExpectation = this.mock(oCache).expects("refreshSingle")
 				.withExactArgs(new _GroupLock(sExpectedGroupId), oContext.iIndex, sinon.match.func)
 				.returns(oRefreshSinglePromise);
+			this.mock(oBinding).expects("hasPendingChangesInDependents")
+				.withExactArgs(sinon.match.same(oContext))
+				.returns(false);
 			this.mock(this.oModel).expects("getDependentBindings")
 				.withExactArgs(sinon.match.same(oContext))
 				.returns([oChild0, oChild1]);
@@ -5018,14 +5021,25 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("refreshSingle, error handling: has pending changes", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
+			oBindingMock = this.mock(oBinding),
 			oContext = {
 				iIndex : 43,
 				getPath : function () { return "/EMPLOYEES('1')"; },
 				toString : function () { return "foo"; }
 			};
 
-		this.mock(oBinding).expects("hasPendingChangesForPath")
+		oBindingMock.expects("hasPendingChangesForPath")
 			.withExactArgs("/EMPLOYEES('1')").returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oBinding.refreshSingle(oContext, new _GroupLock());
+		}, new Error("Cannot refresh entity due to pending changes: foo"));
+
+		oBindingMock.expects("hasPendingChangesForPath")
+			.withExactArgs("/EMPLOYEES('1')").returns(false);
+		oBindingMock.expects("hasPendingChangesInDependents")
+			.withExactArgs(sinon.match.same(oContext)).returns(true);
 
 		assert.throws(function () {
 			// code under test
