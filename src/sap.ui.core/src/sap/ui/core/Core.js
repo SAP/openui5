@@ -1131,11 +1131,12 @@ sap.ui.define([
 	 * @param {string} sThemeName Name of the theme for which to configure the location
 	 * @param {string[]} [aLibraryNames] Optional library names to which the configuration should be restricted
 	 * @param {string} sThemeBaseUrl Base URL below which the CSS file(s) will be loaded from
+	 * @param {boolean} [bForceUpdate=false] Force updating URLs of currently loaded theme
 	 * @return {sap.ui.core.Core} the Core, to allow method chaining
 	 * @since 1.10
 	 * @public
 	 */
-	Core.prototype.setThemeRoot = function(sThemeName, aLibraryNames, sThemeBaseUrl) {
+	Core.prototype.setThemeRoot = function(sThemeName, aLibraryNames, sThemeBaseUrl, bForceUpdate) {
 		assert(typeof sThemeName === "string", "sThemeName must be a string");
 		assert((Array.isArray(aLibraryNames) && typeof sThemeBaseUrl === "string") || (typeof aLibraryNames === "string" && sThemeBaseUrl === undefined), "either the second parameter must be a string (and the third is undefined), or it must be an array and the third parameter is a string");
 
@@ -1144,7 +1145,8 @@ sap.ui.define([
 		}
 
 		// normalize parameters
-		if (sThemeBaseUrl === undefined) {
+		if (typeof aLibraryNames === "string") {
+			bForceUpdate = sThemeBaseUrl;
 			sThemeBaseUrl = aLibraryNames;
 			aLibraryNames = undefined;
 		}
@@ -1160,6 +1162,11 @@ sap.ui.define([
 		} else {
 			// registration of theme default base URL
 			this._mThemeRoots[sThemeName] = sThemeBaseUrl;
+		}
+
+		// Update theme urls when theme roots of currently loaded theme have changed
+		if (bForceUpdate && sThemeName === this.sTheme) {
+			this._updateThemeUrls(this.sTheme);
 		}
 
 		return this;
