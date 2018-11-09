@@ -114,5 +114,52 @@
 				text "Minimum order quantity is 2".</li>
 			<li>Close the message popover.</li>
 		</ol>
+		<h3>Error messages in Sales Orders application</h3>
+		<h4>PATCH scenario</h4>
+		<ol>
+			<li>Within table <code>Sales Order List</code> in the row for sales order with ID <code>
+			  0500000004</code> enter value <code>RAISE_ERROR</code> in input field <code>Note
+			  </code>.
+			<li>Press the <code>Save sales orders</code> button in the <code>Sales Order List
+			  </code> table</li>
+			<li><b>Check:</b> The message popover is opened and you got an error regarding the
+				invalid <code>Note</code> value.</li>
+			<li><b>Check:</b> The <code>Note</code> field of the sales order with the ID
+				<code>0500000004</code> has a colored border indicating the error.</li>
+			<li><b>Check:</b> When clicking into the <code>Note</code> field of the sales order with
+				the ID <code>0500000004</code> the same error is highlighted below/beside the input
+				field.</li>
+			<li>Close the message popover.</li>
+			<li><b>Check:</b> The <code>Note</code> error state indicator is gone.</li>
+			<li>Enter a different value in the <code>Note</code> input field.</li>
+			<li>Press the <code>Save sales orders</code> button in the <code>Sales Order List</code>
+				</li>
+			<li><b>Check:</b> The error is gone.</li>
+		</ol>
+		<h4>POST scenario</h4>
+		<ol>
+			<li>Select sales order with number "0500000004".</li>
+			<li>Press the <code>Create sales order line item</code> button in the
+				<code>Sales Order Line Items</code> table.</li>
+			<li>In the <code>Quantity</code> input field for the newly created sales order line
+				item enter value <code>0.000</code>.</li>
+			<li>Press the <code>Save sales order</code> button in the
+				<code>Sales Order Details</code> section.</li>
+			<li><b>Check:</b> The message popover is opened and you get an error regarding
+				invalid <code>Quantity</code> value.</li>
+			<li><b>Check:</b> The <code>Quantity</code> field of the new sales order line item
+				has a colored border indicating an error.</li>
+			<li><b>Check:</b> When clicking into the <code>Quantity</code> the same error is
+				highlighted below/beside the input field.</li>
+			<li>Close the message popover.</li>
+			<li><b>Check:</b> The <code>Note</code> error state indicator is gone.</li>
+			<li>Enter a value greater then 0 in the <code>Quantity</code> input field.</li>
+			<li>Press the <code>Save sales order</code> button in the
+				<code>Sales Order Details</code> section.</li>
+			<li>Confirm the success popup.</li>
+			<li><b>Check:</b> No error is shown (and the items gets again it's initial values,
+				because of the refreshSingle() triggered by the <code>Save sales order</code> in the
+				<code>Sales Order Details</code> section.</li>
+		</ol>
 	</body>
 </html>

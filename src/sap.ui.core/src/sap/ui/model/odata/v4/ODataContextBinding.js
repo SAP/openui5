@@ -287,9 +287,11 @@ sap.ui.define([
 				if (oOperationMetadata && oOperationMetadata.$IsBound) {
 					sBindingParameter = oOperationMetadata.$Parameter[0].$Name;
 					oError.resourcePath = that.oContext.getPath().slice(1);
-					adjustTarget(oError.error);
-					if (oError.error.details) {
-						oError.error.details.forEach(adjustTarget);
+					if (oError.error) {
+						adjustTarget(oError.error);
+						if (oError.error.details) {
+							oError.error.details.forEach(adjustTarget);
+						}
 					}
 				}
 
@@ -461,6 +463,30 @@ sap.ui.define([
 	};
 
 	/**
+	 *  Returns this operation binding's cache query options.
+	 *
+	 *  @returns {object} The query options
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.computeOperationQueryOptions = function () {
+		var oParentQueryOptions,
+			mQueryOptions = jQuery.extend({}, this.oModel.mUriParameters, this.mQueryOptions);
+
+		if (this.bInheritExpandSelect) {
+			oParentQueryOptions = this.oContext.getBinding().mCacheQueryOptions;
+			if ("$select" in oParentQueryOptions) {
+				mQueryOptions.$select = oParentQueryOptions.$select;
+			}
+			if ("$expand" in oParentQueryOptions) {
+				mQueryOptions.$expand = oParentQueryOptions.$expand;
+			}
+		}
+
+		return mQueryOptions;
+	};
+
+	/**
 	 * Creates a single cache and sends a GET/POST request.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
@@ -490,39 +516,26 @@ sap.ui.define([
 			oModel = this.oModel,
 			sMetaPath = oModel.getMetaModel().getMetaPath(sPath) + "/@$ui5.overload/0/$ReturnType",
 			mParameters = jQuery.extend({}, this.oOperation.mParameters),
-			oParentQueryOptions,
-			oRequestor = oModel.oRequestor,
-			mQueryOptions = jQuery.extend({}, oModel.mUriParameters, this.mQueryOptions);
+			oRequestor = oModel.oRequestor;
 
 		if (!bAction && oOperationMetadata.$kind !== "Function") {
 			throw new Error("Not an operation: " + sPath);
 		}
 
-		if (this.bInheritExpandSelect) {
-			if (bHasReturnValueContext) {
-				// has return value context => the parent binding has cache query options
-				oParentQueryOptions = this.oContext.getBinding().mCacheQueryOptions;
-				if ("$select" in oParentQueryOptions) {
-					mQueryOptions.$select = oParentQueryOptions.$select;
-				}
-				if ("$expand" in oParentQueryOptions) {
-					mQueryOptions.$expand = oParentQueryOptions.$expand;
-				}
-			} else {
-				throw new Error("Must not set parameter $$inheritExpandSelect on binding which has "
-					+ "no return value context");
-			}
+		if (this.bInheritExpandSelect && !bHasReturnValueContext) {
+			throw new Error("Must not set parameter $$inheritExpandSelect on binding which has "
+				+ "no return value context");
 		}
 
 		this.oOperation.bAction = bAction;
 		if (bAction && fnGetEntity) {
 			vEntity = fnGetEntity();
 		}
+		this.mCacheQueryOptions = this.computeOperationQueryOptions();
 		sPath = oRequestor.getPathAndAddQueryOptions(sPath, oOperationMetadata, mParameters,
-			mQueryOptions, vEntity);
-		this.mCacheQueryOptions = mQueryOptions;
-		oCache = _Cache.createSingle(oRequestor, sPath, mQueryOptions, oModel.bAutoExpandSelect,
-			bAction, sMetaPath, bHasReturnValueContext);
+			this.mCacheQueryOptions, vEntity);
+		oCache = _Cache.createSingle(oRequestor, sPath, this.mCacheQueryOptions,
+			oModel.bAutoExpandSelect, bAction, sMetaPath, bHasReturnValueContext);
 		this.oCachePromise = SyncPromise.resolve(oCache);
 		return bAction
 			? oCache.post(oGroupLock, mParameters, vEntity)
@@ -843,6 +856,46 @@ sap.ui.define([
 				that.oReadGroupLock = undefined;
 			}
 		});
+	};
+
+	/**
+	 * Refreshes the given context if it is this binding's return value context.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   The context to refresh
+	 * @param {string} sGroupId
+	 *   The group ID for the refresh
+	 * @returns {boolean} Whether the given context is this binding's return value context
+	 * @throws {Error}
+	 *   If this binding or bindings dependent on the given context have pending changes, or
+	 *   if the root binding of this binding is suspended.
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.refreshReturnValueContext = function (oContext, sGroupId) {
+		var oCache,
+			oModel = this.oModel;
+
+		if (this.oReturnValueContext !== oContext) {
+			return false;
+		}
+
+		this.checkSuspended();
+		if (this.hasPendingChangesForPath(oContext.getPath())
+			|| this.hasPendingChangesInDependents(oContext)) {
+			throw new Error("Cannot refresh entity due to pending changes: " + oContext);
+		}
+
+		this.mCacheQueryOptions = this.computeOperationQueryOptions();
+		oCache = _Cache.createSingle(oModel.oRequestor,
+			this.oReturnValueContext.getPath().slice(1), this.mCacheQueryOptions, true);
+		this.oCachePromise = SyncPromise.resolve(oCache);
+		this.createReadGroupLock(sGroupId, true);
+		this.getDependentBindings().forEach(function (oDependentBinding) {
+			oDependentBinding.refreshInternal(sGroupId, true);
+		});
+
+		return true;
 	};
 
 	/**

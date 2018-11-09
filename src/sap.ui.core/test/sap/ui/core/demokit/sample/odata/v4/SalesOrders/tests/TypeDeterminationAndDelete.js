@@ -13,13 +13,7 @@ sap.ui.define([
 
 	return {
 		typeDeterminationAndDelete : function (Given, When, Then, sUIComponent) {
-			var oExpectedLogChangeSetID = {
-					component : "sap.ui.test.TestUtils",
-					level : Log.Level.ERROR,
-					message : "--changeset_id-",
-					details : "No mock data found"
-				},
-				bRealOData = TestUtils.isRealOData(),
+			var bRealOData = TestUtils.isRealOData(),
 				sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
 			// close schedules dialog
@@ -42,7 +36,7 @@ sap.ui.define([
 					viewName : sViewName,
 					controlType : "sap.m.Button",
 					success : function (oButton) {
-						oButton.$().tap();
+						new Press().executeOn(oButton);
 					}
 				});
 
@@ -50,7 +44,7 @@ sap.ui.define([
 					controlType : "sap.m.Dialog",
 					matchers : new Properties({icon : "sap-icon://message-success"}),
 					success : function (aControls) {
-						aControls[0].getButtons()[0].$().tap(); // confirm deletion
+						new Press().executeOn(aControls[0].getButtons()[0]); // confirm deletion
 						Opa5.assert.ok(true, "Deleted all selected Schedules");
 					}
 				});
@@ -63,7 +57,7 @@ sap.ui.define([
 					id : "deleteBusinessPartner",
 					viewName : sViewName,
 					success : function (oButton) {
-						oButton.$().tap();
+						new Press().executeOn(oButton);
 					}
 				});
 
@@ -71,7 +65,7 @@ sap.ui.define([
 					controlType : "sap.m.Dialog",
 					matchers : new Properties({icon : "sap-icon://message-success"}),
 					success : function (aControls) {
-						aControls[0].getButtons()[0].$().tap(); // confirm success
+						new Press().executeOn(aControls[0].getButtons()[0]); // confirm success
 						Opa5.assert.ok(true, "Business Partner deleted");
 					}
 				});
@@ -91,7 +85,7 @@ sap.ui.define([
 					controlType : "sap.m.Dialog",
 					matchers : new Properties({title : "Sales Order Deletion"}),
 					success : function (aControls) {
-						aControls[0].getButtons()[0].$().tap(); // confirm deletion
+						new Press().executeOn(aControls[0].getButtons()[0]); // confirm deletion
 					}
 				});
 
@@ -99,7 +93,7 @@ sap.ui.define([
 					controlType : "sap.m.Dialog",
 					matchers : new Properties({icon : "sap-icon://message-success"}),
 					success : function (aControls) {
-						aControls[0].getButtons()[0].$().tap(); // confirm success
+						new Press().executeOn(aControls[0].getButtons()[0]); // confirm success
 						Opa5.assert.ok(true, "Selected Sales Order deleted");
 					}
 				});
@@ -113,7 +107,7 @@ sap.ui.define([
 					id : /SalesOrders-trigger/,
 					matchers : new Interactable(),
 					success : function (aControls) {
-						aControls[0].$().tap();
+						new Press().executeOn(aControls[0]);
 						Opa5.assert.ok(true, "'More' Button pressed");
 					}
 				});
@@ -127,7 +121,7 @@ sap.ui.define([
 						viewName : sViewName,
 						controlType : "sap.m.CheckBox",
 						success : function (oCheckBox) {
-							oCheckBox.$().tap();
+							new Press().executeOn(oCheckBox);
 							Opa5.assert.ok(true, "All Schedules selected");
 						}
 					});
@@ -142,7 +136,7 @@ sap.ui.define([
 								aSchedules.forEach(function(sSchedule) {
 									var sKey = oListItem.getCells()[0].getText();
 									if (sKey === sSchedule) {
-										oListItem.getMultiSelectControl().$().tap();
+										new Press().executeOn(oListItem.getMultiSelectControl());
 										Opa5.assert.ok(true, "Schedule '" + sKey + "' selected");
 									}
 								} );
@@ -167,7 +161,7 @@ sap.ui.define([
 					controlType : "sap.m.Dialog",
 					id : "SalesOrderSchedulesDialog",
 					success : function (aControls) {
-						//aControls[0].getButtons()[0].$().tap(); // confirm deletion
+						//new Press().executeOn(aControls[0].getButtons()[0]); // confirm deletion
 						Opa5.assert.ok(true, "'Schedules' opened");
 					}
 				});
@@ -181,7 +175,7 @@ sap.ui.define([
 					controlType : "sap.m.Text",
 					matchers : new Properties({text: sSalesOrderId}),
 					success : function (aControls) {
-						aControls[0].$().tap();
+						new Press().executeOn(aControls[0]);
 						Opa5.assert.ok(true, "Sales Order selected: " + sSalesOrderId);
 					}
 				});
@@ -345,9 +339,6 @@ sap.ui.define([
 
 				//*****************************************************************************
 				// Multiple Deletion Journey within Schedules
-				// TODO: take care about TestUtils log message like this:
-				//   "changeset_id-1490715882516-48 - No mock data found sap.ui.test.TestUtils"
-				//   support changesets in $batch caused by multiple deletion requests
 
 				selectSalesOrderWithId("0500000005");
 
@@ -390,8 +381,7 @@ sap.ui.define([
 				deleteBusinessPartner();
 
 			}
-			Then.onAnyPage.checkLog(!bRealOData ?
-				[oExpectedLogChangeSetID, oExpectedLogChangeSetID] : undefined);
+			Then.onAnyPage.checkLog();
 
 			Then.iTeardownMyUIComponent();
 		}

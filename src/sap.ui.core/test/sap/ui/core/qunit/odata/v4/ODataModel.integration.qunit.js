@@ -1414,9 +1414,9 @@ sap.ui.define([
 			oResponseMessage = {
 				"code" : "1",
 				"message" : "Text",
-				"transition" : false,
+				"numericSeverity" : 3,
 				"target" : "ID",
-				"numericSeverity" : 3
+				"transition" : false
 			},
 			that = this;
 
@@ -1676,9 +1676,9 @@ sap.ui.define([
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Text",
-							"transition" : false,
+							"numericSeverity" : 3,
 							"target" : "Name",
-							"numericSeverity" : 3
+							"transition" : false
 						}]
 					}
 				}, {
@@ -1718,6 +1718,87 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Messages for collection entries without key properties
+	QUnit.test("Absolute ODLB: messages for entries without key properties", function (assert) {
+		var oMessage1 = {
+				"code" : "1",
+				"message" : "Text",
+				"persistent" : false,
+				"target" : "/EMPLOYEES/1/Name",
+				"type" : "Warning"
+			},
+			oMessage2 = {
+				"code" : "2",
+				"message" : "Text2",
+				"persistent" : false,
+				"target" : "/EMPLOYEES/2/Name",
+				"type" : "Warning"
+			},
+			sView = '\
+<t:Table id="table" rows="{\
+			path : \'/EMPLOYEES\',\
+			parameters : {$select : \'Name,__CT__FAKE__Message/__FAKE__Messages\'}\
+		}"\ threshold="0" visibleRowCount="2">\
+	<t:Column>\
+		<t:template>\
+			<Text id="name" text="{Name}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest(
+			"EMPLOYEES?$select=Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=2", {
+				"value" : [{
+					"Name" : "Jonathan Smith",
+					"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
+				}, {
+					"Name" : "Frederic Fall",
+					"__CT__FAKE__Message" : {
+						"__FAKE__Messages" : [{
+							"code" : "1",
+							"message" : "Text",
+							"transition" : false,
+							"target" : "Name",
+							"numericSeverity" : 3
+						}]
+					}
+				}]
+			})
+			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
+			.expectMessages([oMessage1]);
+
+		return this.createView(assert, sView, createTeaBusiModel()).then(function () {
+			var oTable = that.oView.byId("table");
+
+			that.expectRequest(
+				"EMPLOYEES?$select=Name,__CT__FAKE__Message/__FAKE__Messages&$skip=2&$top=1", {
+					"value" : [{
+						"Name" : "Peter Burke",
+						"__CT__FAKE__Message" : {
+							"__FAKE__Messages" : [{
+								"code" : "2",
+								"message" : "Text2",
+								"transition" : false,
+								"target" : "Name",
+								"numericSeverity" : 3
+							}]
+						}
+					}]
+				})
+				.expectChange("name", null, null)
+				.expectChange("name", "Frederic Fall", 1)
+				.expectChange("name", "Peter Burke", 2)
+				.expectMessages([oMessage1, oMessage2]);
+
+			oTable.setFirstVisibleRow(1);
+			return that.waitForChanges();
+		});
+		//TODO: using an index for a bound message leads to a wrong target if for example
+		//      an entity with a lower index gets deleted, see CPOUI5UISERVICESV3-413
+	});
+
+	//*********************************************************************************************
 	// Scenario: Refresh an ODataContextBinding with a message, the entity is deleted in between
 	QUnit.test("Absolute ODCB refresh & message", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
@@ -1735,9 +1816,9 @@ sap.ui.define([
 					"__FAKE__Messages" : [{
 						"code" : "1",
 						"message" : "Text",
-						"transition" : false,
+						"numericSeverity" : 3,
 						"target" : "Name",
-						"numericSeverity" : 3
+						"transition" : false
 					}]
 				}
 			})
@@ -2625,8 +2706,8 @@ sap.ui.define([
 				"Messages" : [{
 					"code" : "23",
 					"message" : "Enter a minimum quantity of 2",
-					"target" : "Quantity",
-					"numericSeverity" : 3
+					"numericSeverity" : 3,
+					"target" : "Quantity"
 				}]
 			})
 			.expectChange("quantity", "1.000")
@@ -3379,19 +3460,19 @@ sap.ui.define([
 				assert.strictEqual(iPatchCompleted, 1, "patchCompleted 1");
 
 				that.expectMessages([{
-						"code": undefined,
-						"message": "500 Service not available",
-						"persistent": true,
-						"target": "",
+						"code" : undefined,
+						"message" : "500 Service not available",
+						"persistent" : true,
+						"target" : "",
 						"technical" : true,
-						"type": "Error"
+						"type" : "Error"
 					}, {
-						"code": undefined,
-						"message": "HTTP request was not processed because $batch failed",
-						"persistent": true,
-						"target": "",
+						"code" : undefined,
+						"message" : "HTTP request was not processed because $batch failed",
+						"persistent" : true,
+						"target" : "",
 						"technical" : true,
-						"type": "Error"
+						"type" : "Error"
 					}])
 					.expectChange("lifecycleStatus", "P")
 					.expectRequest({
@@ -8599,9 +8680,9 @@ sap.ui.define([
 					"Messages" : [{
 						"code" : "23",
 						"message" : "Just A Message",
-						"target" : "Name",
+						"numericSeverity" : 1,
 						"transition" : true,
-						"numericSeverity" : 1
+						"target" : "Name"
 					}]
 				}).expectMessages([{
 					code : "23",
@@ -8659,7 +8740,9 @@ sap.ui.define([
 	// $select parameters used for loading the active entity. This way, all fields in the object
 	// page can be populated from the bound action response.
 	QUnit.test("bound operation: $$inheritExpandSelect", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var fnDataReceived = this.spy(),
+			fnDataRequested = this.spy(),
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="objectPage">\
 	<Text id="id" text="{ArtistID}" />\
@@ -8697,6 +8780,8 @@ sap.ui.define([
 			var oOperation = that.oModel.bindContext("special.cases.EditAction(...)",
 					that.oView.getBindingContext(), {$$inheritExpandSelect : true});
 
+			oOperation.attachDataReceived(fnDataReceived);
+			oOperation.attachDataRequested(fnDataRequested);
 			that.expectRequest({
 					method : "POST",
 					url : "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction"
@@ -8710,9 +8795,9 @@ sap.ui.define([
 					"Messages" : [{
 						"code" : "23",
 						"message" : "Just A Message",
+						"numericSeverity" : 1,
 						"target" : "Name",
-						"transition" : true,
-						"numericSeverity" : 1
+						"transition" : true
 					}],
 					"DraftAdministrativeData" : {
 						"DraftID" : "1",
@@ -8742,9 +8827,33 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
+					+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
+					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
+					"ArtistID" : "42",
+					"IsActiveEntity" : false,
+					"Name" : "Changed",
+					"DraftAdministrativeData" : {
+						"DraftID" : "1",
+						"InProcessByUser" : "JOHNDOE"
+					}
+				})
+				.expectChange("name", "Changed")
+				//TODO unexpected change events -> CPOUI5UISERVICESV3-1572
+				.expectChange("id", "42")
+				.expectChange("isActive", "No")
+				.expectChange("inProcessByUser", "JOHNDOE");
+
+			// code under test
+			that.oView.getBindingContext().refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
 			var oOperation = that.oModel.bindContext("special.cases.ActivationAction(...)",
 					that.oView.getBindingContext(), {$$inheritExpandSelect : true});
 
+			assert.strictEqual(fnDataReceived.callCount, 1, "dataReceived");
+			assert.strictEqual(fnDataRequested.callCount, 1, "dataRequested");
 			that.expectRequest({
 					method : "POST",
 					url : "Artists(ArtistID='42',IsActiveEntity=false)"
@@ -9252,9 +9361,9 @@ sap.ui.define([
 							"__FAKE__Messages" : [{
 								"code" : "1",
 								"message" : "Text",
-								"transition" : false,
+								"numericSeverity" : 3,
 								"target" : "Name",
-								"numericSeverity" : 3
+								"transition" : false
 							}]
 						}
 					}]
@@ -9336,9 +9445,9 @@ sap.ui.define([
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Text",
-							"transition" : false,
+							"numericSeverity" : 3,
 							"target" : "Name",
-							"numericSeverity" : 3
+							"transition" : false
 						}]
 					}
 				}, {
@@ -9406,9 +9515,9 @@ sap.ui.define([
 					"__FAKE__Messages" : [{
 						"code" : "1",
 						"message" : "Text",
-						"transition" : false,
+						"numericSeverity" : 3,
 						"target" : "Name",
-						"numericSeverity" : 3
+						"transition" : false
 					}]
 				}
 			})
@@ -9467,9 +9576,9 @@ sap.ui.define([
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Text",
-							"transition" : false,
+							"numericSeverity" : 3,
 							"target" : "Name",
-							"numericSeverity" : 3
+							"transition" : false
 						}]
 					}
 				}, {
@@ -9532,9 +9641,9 @@ sap.ui.define([
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Text",
-							"transition" : false,
+							"numericSeverity" : 3,
 							"target" : "Name",
-							"numericSeverity" : 3
+							"transition" : false
 						}]
 					}
 				}
@@ -9608,9 +9717,9 @@ sap.ui.define([
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Enter a name",
-							"transition" : false,
+							"numericSeverity" : 3,
 							"target" : "Name",
-							"numericSeverity" : 3
+							"transition" : false
 						}]
 					}
 				})
@@ -9713,9 +9822,9 @@ sap.ui.define([
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Enter a name",
-							"transition" : false,
+							"numericSeverity" : 3,
 							"target" : "Name",
-							"numericSeverity" : 3
+							"transition" : false
 						}]
 					}
 				})
@@ -9793,9 +9902,9 @@ sap.ui.define([
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Enter a name",
-							"transition" : false,
+							"numericSeverity" : 3,
 							"target" : "Name",
-							"numericSeverity" : 3
+							"transition" : false
 						}]
 					}
 				})
@@ -9997,19 +10106,19 @@ sap.ui.define([
 						}
 					}, new Error("500 Internal Server Error"))
 					.expectMessages([{
-						"code": undefined,
-						"message": "500 Internal Server Error",
-						"persistent": true,
-						"target": "",
-						"technical": true,
-						"type": "Error"
+						"code" : undefined,
+						"message" : "500 Internal Server Error",
+						"persistent" : true,
+						"target" : "",
+						"technical" : true,
+						"type" : "Error"
 					}, {
-						"code": undefined,
-						"message": "HTTP request was not processed because $batch failed",
-						"persistent": true,
-						"target": "",
-						"technical": true,
-						"type": "Error"
+						"code" : undefined,
+						"message" : "HTTP request was not processed because $batch failed",
+						"persistent" : true,
+						"target" : "",
+						"technical" : true,
+						"type" : "Error"
 					}]);
 				that.oLogMock.expects("error").twice(); // don't care about console here
 
@@ -10319,9 +10428,9 @@ sap.ui.define([
 							"__FAKE__Messages" : [{
 								"code" : "1",
 								"message" : "Enter a name",
-								"transition" : false,
+								"numericSeverity" : 3,
 								"target" : "Name",
-								"numericSeverity" : 3
+								"transition" : false
 							}]
 						}
 					})

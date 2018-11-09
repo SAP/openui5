@@ -16,7 +16,7 @@ sap.ui.define([
 			});
 
 		// SalesOrdersTable
-			When.onTheMainPageRTA.pressAdaptUIButton(/AdaptUISalesOrdersTable/);
+			When.onTheMainPageRTA.pressAdaptUIButton("AdaptUISalesOrdersTable");
 
 			Then.onAdaptUIDialog.checkCheckBoxIsSelected("SalesOrderID", true);
 			Then.onAdaptUIDialog.checkCheckBoxIsSelected("CompanyName", true);
@@ -37,7 +37,7 @@ sap.ui.define([
 			Then.onTheMainPageRTA.checkNewColumnAppears("SalesOrders", "N", 7);
 
 			// unheck LifecycleStatus
-			When.onTheMainPageRTA.pressAdaptUIButton(/AdaptUISalesOrdersTable/);
+			When.onTheMainPageRTA.pressAdaptUIButton("AdaptUISalesOrdersTable");
 			Then.onAdaptUIDialog.checkCheckBoxIsSelected("LifecycleStatus", true);
 			When.onAdaptUIDialog.checkCheckBox("LifecycleStatus");
 
@@ -45,7 +45,7 @@ sap.ui.define([
 
 		// SalesOrderDetails
 			When.onTheMainPage.selectSalesOrder(1);
-			When.onTheMainPageRTA.pressAdaptUIButton(/AdaptUISalesOrdersDetails/);
+			When.onTheMainPageRTA.pressAdaptUIButton("AdaptUISalesOrdersDetails");
 
 			// uncheck SalesOrderID
 			When.onAdaptUIDialog.checkCheckBox("SalesOrderID");
@@ -57,14 +57,14 @@ sap.ui.define([
 			Then.onTheMainPageRTA.checkNewPropertyAppears(/RTA_LifecycleStatus1/);
 
 			// uncheck LifecycleStatus
-			When.onTheMainPageRTA.pressAdaptUIButton(/AdaptUISalesOrdersDetails/);
+			When.onTheMainPageRTA.pressAdaptUIButton("AdaptUISalesOrdersDetails");
 			Then.onAdaptUIDialog.checkCheckBoxIsSelected("LifecycleStatus", true);
 			When.onAdaptUIDialog.checkCheckBox("LifecycleStatus");
 
 			When.onAdaptUIDialog.applyDialog();
 
 		// BusinessPartner
-			When.onTheMainPageRTA.pressAdaptUIButton(/AdaptUIBusinessPartner/);
+			When.onTheMainPageRTA.pressAdaptUIButton("AdaptUIBusinessPartner");
 
 			// uncheck BusinessPartnerID
 			When.onAdaptUIDialog.checkCheckBox("BusinessPartnerID");
@@ -77,13 +77,13 @@ sap.ui.define([
 
 
 			// unheck BusinessPartnerRole
-			When.onTheMainPageRTA.pressAdaptUIButton(/AdaptUIBusinessPartner/);
+			When.onTheMainPageRTA.pressAdaptUIButton("AdaptUIBusinessPartner");
 			Then.onAdaptUIDialog.checkCheckBoxIsSelected("BusinessPartnerRole", true);
 			When.onAdaptUIDialog.checkCheckBox("BusinessPartnerRole");
 			When.onAdaptUIDialog.applyDialog();
 
 		// SalesOrdersLineItem
-			When.onTheMainPageRTA.pressAdaptUIButton(/AdaptUISalesOrderLineItems/);
+			When.onTheMainPageRTA.pressAdaptUIButton("AdaptUISalesOrderLineItems");
 			// uncheck SalesOrderID
 			When.onAdaptUIDialog.checkCheckBox("ProductID");
 			Then.onAdaptUIDialog.checkCheckBoxIsSelected("ProductID", false);

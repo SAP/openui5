@@ -1281,13 +1281,15 @@ sap.ui.define([
 					try {
 						that.doCheckVersionHeader(getResponseHeader.bind(vResponse), vRequest.url,
 							true);
-						that.reportUnboundMessages(vRequest.url, vResponse.headers["sap-messages"]);
+						that.reportUnboundMessages(vRequest.url,
+							getResponseHeader.call(vResponse, "sap-messages"));
 						vRequest.$resolve(that.doConvertResponse(oResponse, vRequest.$metaPath));
 					} catch (oErr) {
 						vRequest.$reject(oErr);
 					}
 				} else {
-					that.reportUnboundMessages(vRequest.url, vResponse.headers["sap-messages"]);
+					that.reportUnboundMessages(vRequest.url,
+						getResponseHeader.call(vResponse, "sap-messages"));
 					vRequest.$resolve();
 				}
 			});

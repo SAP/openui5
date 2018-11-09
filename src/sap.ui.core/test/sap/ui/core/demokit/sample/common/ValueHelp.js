@@ -65,9 +65,10 @@ sap.ui.define([
 		addAssociation : function() {
 			var oField = this.getAggregation("field");
 
+			Control.prototype.addAssociation.apply(this, arguments);
 			if (oField) {
 				oField.addAssociation.apply(oField, arguments);
-			} // else: will be called again later
+			}
 			return this;
 		},
 
@@ -83,6 +84,7 @@ sap.ui.define([
 			if (oField) {
 				oField.removeAssociation.apply(oField, arguments);
 			}
+			Control.prototype.removeAssociation.apply(this, arguments);
 			return this;
 		},
 
@@ -126,6 +128,7 @@ sap.ui.define([
 							});
 					}
 					that.setAggregation("field", oField);
+					that.getAriaLabelledBy().forEach(oField.addAriaLabelledBy.bind(oField));
 				});
 			}
 		},
