@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/commons/RatingIndicator",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/jquery/EventExtension" // implicitly used?
 ], function(qutils, RatingIndicator, jQuery) {
 	"use strict";
@@ -250,7 +250,8 @@ sap.ui.define([
 		var oSymbols = jQuery("#oRating1").children();
 		oSymbols.each(function(index){
 			assert.equal(jQuery(this).hasClass("sapUiRatingItmHov"), true, "HOVER: Symbol " + (index + 1) + " hovered:");
-			assert.ok(jQuery.sap.endsWith(jQuery(this).children("img").attr("src"), index < 4 ? "hover.png" : "unselected.png"), "HOVER: Correct Hover Symbol for " + (index + 1) + ": " + jQuery(this).children("img").attr("src"));
+			var sSrc = jQuery(this).children("img").attr("src") || "";
+			assert.ok(sSrc.endsWith(index < 4 ? "hover.png" : "unselected.png"), "HOVER: Correct Hover Symbol for " + (index + 1) + ": " + sSrc);
 		});
 		qutils.triggerEvent("mouseout", "oRating1-itm-4");
 		oSymbols = jQuery("#oRating1").children();

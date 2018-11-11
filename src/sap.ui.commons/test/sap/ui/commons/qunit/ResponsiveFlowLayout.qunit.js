@@ -4,7 +4,8 @@ sap.ui.define([
 	"sap/ui/commons/layout/ResponsiveFlowLayout",
 	"sap/ui/commons/layout/ResponsiveFlowLayoutData",
 	"sap/ui/commons/Button",
-	"jquery.sap.global"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/jqueryui/jquery-ui-position" // jQuery.fn.position
 ], function(
 	createAndAppendDiv,
 	ResponsiveFlowLayout,
@@ -57,7 +58,7 @@ sap.ui.define([
 			oBtn1.getLayoutData().setLinebreak(false);
 			oBtn2.getLayoutData().setLinebreak(false);
 
-			var $layout = jQuery.sap.byId("uiArea1");
+			var $layout = jQuery("#uiArea1");
 			$layout.css("width", "300px");
 			sap.ui.getCore().applyChanges();
 		}
@@ -65,8 +66,8 @@ sap.ui.define([
 
 	QUnit.test("Button doubled size?", function(assert) {
 		assert.expect(1);
-		var $btn1 = jQuery.sap.byId("button1-cont0_0");
-		var $btn2 = jQuery.sap.byId("button2-cont0_1");
+		var $btn1 = jQuery("#button1-cont0_0");
+		var $btn2 = jQuery("#button2-cont0_1");
 		var rangeTolerance = 10;
 
 		var w1 = $btn1.width() * 2;
@@ -85,8 +86,8 @@ sap.ui.define([
 		oBtn2.getLayoutData().setLinebreak(true);
 		sap.ui.getCore().applyChanges();
 
-		var $btn1 = jQuery.sap.byId("button1-cont0_0");
-		var $btn2 = jQuery.sap.byId("button2-cont1_0");
+		var $btn1 = jQuery("#button1-cont0_0");
+		var $btn2 = jQuery("#button2-cont1_0");
 
 		var bTest = ($btn1.length > 0) && ($btn2.length > 0);
 
@@ -99,7 +100,7 @@ sap.ui.define([
 			oBtn1.getLayoutData().setLinebreak(false);
 			oBtn2.getLayoutData().setLinebreak(false);
 
-			var $layout = jQuery.sap.byId("uiArea1");
+			var $layout = jQuery("#uiArea1");
 			$layout.css("width", "400px");
 			sap.ui.getCore().applyChanges();
 		}
@@ -109,15 +110,15 @@ sap.ui.define([
 		var done = assert.async();
 		assert.expect(2);
 
-		var $layout = jQuery.sap.byId("uiArea1");
+		var $layout = jQuery("#uiArea1");
 		// this sets the layout to a size where the size falls below the min-width of a button
 		$layout.css("width", "150px");
 		sap.ui.getCore().applyChanges();
 
 		// have to wait more than 300ms until the layout recognized the minimization
 		setTimeout(function() {
-			var $btn1 = jQuery.sap.byId("button1-cont0_0");
-			var $btn2 = jQuery.sap.byId("button2-cont0_1");
+			var $btn1 = jQuery("#button1-cont0_0");
+			var $btn2 = jQuery("#button2-cont0_1");
 
 			var bTest = ($btn1.length > 0) && ($btn2.length > 0);
 			assert.ok(bTest, "Buttons are logically in one single line");
@@ -141,8 +142,8 @@ sap.ui.define([
 
 		// have to wait more than 300ms until the layout recognized the minimization
 		setTimeout(function() {
-			var $btn1 = jQuery.sap.byId("button1-cont0_0");
-			var $btn2 = jQuery.sap.byId("button2-cont0_1");
+			var $btn1 = jQuery("#button1-cont0_0");
+			var $btn2 = jQuery("#button2-cont0_1");
 
 			var bTest = ($btn1.length > 0) && ($btn2.length > 0);
 			if (bTest) {

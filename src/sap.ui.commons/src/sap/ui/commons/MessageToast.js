@@ -4,14 +4,21 @@
 
 // Provides control sap.ui.commons.MessageToast.
 sap.ui.define([
-  'jquery.sap.global',
+  'sap/ui/thirdparty/jquery',
   './library',
   'sap/ui/core/Control',
+  './MessageToastRenderer',
+  'sap/ui/core/Popup',
   'sap/ui/thirdparty/jqueryui/jquery-ui-core',
-  "./MessageToastRenderer"
+  'sap/ui/thirdparty/jqueryui/jquery-ui-position' // jQuery.fn.position
 ],
-	function(jQuery, library, Control, jqueryuicore, MessageToastRenderer) {
+	function(jQuery, library, Control, MessageToastRenderer, Popup) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.core.Popup.Dock
+	var Dock = Popup.Dock;
 
 
 
@@ -70,7 +77,7 @@ sap.ui.define([
 		// - bShadow: "false" as the MessageBar Popup is displayed without shadow in all themes.
 		//            Shadow is added but not at the Popup level because in contains a down-arrow.
 		//            Therefore the shadow is added to an inner container, excluding this down-arrow.
-		this.oPopup   = new sap.ui.core.Popup(this, false, false, false);
+		this.oPopup   = new Popup(this, false, false, false);
 		// Asking the Popup to fire our "next" event once a "toast()" is over.
 		this.oPopup.attachClosed(this.next, this);
 	};
@@ -102,10 +109,10 @@ sap.ui.define([
 	  var rtl = sap.ui.getCore().getConfiguration().getRTL();
 
 	  // 1) Calculating the distance between the Icon and the right side of its MessageBar container:
-	  var jIcon = jQuery.sap.byId(this.sAnchorId); // Anchor against which our Arrow has to align
+	  var jIcon = jQuery(this.sAnchorId ? document.getElementById(this.sAnchorId) : null); // Anchor against which our Arrow has to align
 	//if (!jIcon) return;
 	  var iconPosition  = jIcon.position();
-	  var jBar = jQuery.sap.byId(this.getAnchorId()); // Anchor against which our Toast has to align
+	  var jBar = jQuery(this.getAnchorId() ? document.getElementById(this.getAnchorId()) : null); // Anchor against which our Toast has to align
 	//if (!jBar) return;
 	  var barWidth = jBar.outerWidth();
 	  if (iconPosition) {
@@ -129,7 +136,7 @@ sap.ui.define([
 		  var moveRightOffset = rtl ? (defaultArrowRightOffset - targetRightOffset + 2) + "px"
 									: (defaultArrowRightOffset - targetRightOffset - 2) + "px";
 			if (defaultArrowRightOffset >= targetRightOffset) {
-			var jArrow = jQuery.sap.byId(this.getId() + "Arrow");
+			var jArrow = jQuery(document.getElementById(this.getId() + "Arrow"));
 			if (sap.ui.getCore().getConfiguration().getRTL()) {
 				jArrow.css('marginRight', moveRightOffset); // Positive padding
 			} else {
@@ -171,13 +178,13 @@ sap.ui.define([
 	  var rtl = sap.ui.getCore().getConfiguration().getRTL();
 
 		// Defining or fetching the Popup attributes:
-	  var popupSnapPoint  = rtl ? sap.ui.core.Popup.Dock.LeftBottom : sap.ui.core.Popup.Dock.RightBottom;
-	  var anchorSnapPoint = rtl ? sap.ui.core.Popup.Dock.LeftTop    : sap.ui.core.Popup.Dock.RightTop;
+	  var popupSnapPoint  = rtl ? Dock.LeftBottom : Dock.RightBottom;
+	  var anchorSnapPoint = rtl ? Dock.LeftTop    : Dock.RightTop;
 	  var relativeAnchorPosition = this.sLeftOffset + " 5";
 	  var anchor = null;
 	  var anchorId = this.getAnchorId();
 	  if (anchorId) {
-		anchor = jQuery.sap.domById(anchorId);
+		anchor = document.getElementById(anchorId);
 	  }
 	  if (!anchor) {
 		anchor = document.body;
@@ -254,4 +261,4 @@ sap.ui.define([
 
 	return MessageToast;
 
-}, /* bExport= */ true);
+});

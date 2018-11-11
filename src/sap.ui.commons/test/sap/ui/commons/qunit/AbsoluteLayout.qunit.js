@@ -2,9 +2,10 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Control",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/commons/layout/AbsoluteLayout",
-	"sap/ui/commons/layout/PositionContainer"
+	"sap/ui/commons/layout/PositionContainer",
+	"sap/ui/thirdparty/jqueryui/jquery-ui-position" // jQuery.fn.position
 ], function(
 	createAndAppendDiv,
 	Control,

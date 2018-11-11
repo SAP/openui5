@@ -2,9 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['sap/base/Log', 'sap/ui/core/library', 'sap/ui/core/ValueStateSupport'],
+	function(Log, coreLibrary, ValueStateSupport) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 
 	/**
@@ -31,12 +35,12 @@ sap.ui.define(['jquery.sap.global'],
 			}
 			if (oContent.getVisible && !oContent.getVisible()) {
 				// invisible -> render nothing
-				jQuery.sap.log.warning("Content is not visivle - nothing is rendered", this);
+				Log.warning("Content is not visivle - nothing is rendered", this);
 				return;
 			}
 		} else {
 			// no content -> render nothing
-			jQuery.sap.log.warning("No content provided - nothing is rendered", this);
+			Log.warning("No content provided - nothing is rendered", this);
 			return;
 		}
 
@@ -73,20 +77,20 @@ sap.ui.define(['jquery.sap.global'],
 		}
 
 		switch (oInPlaceEdit.getValueState()) {
-		case sap.ui.core.ValueState.Error:
+		case ValueState.Error:
 			rm.addClass('sapUiIpeErr');
 		break;
-		case sap.ui.core.ValueState.Success:
+		case ValueState.Success:
 			rm.addClass('sapUiIpeSucc');
 		break;
-		case sap.ui.core.ValueState.Warning:
+		case ValueState.Warning:
 			rm.addClass('sapUiIpeWarn');
 		break;
 		default:
 		break;
 		}
 
-		var tooltip = sap.ui.core.ValueStateSupport.enrichTooltip(oInPlaceEdit, oInPlaceEdit.getTooltip_AsString());
+		var tooltip = ValueStateSupport.enrichTooltip(oInPlaceEdit, oInPlaceEdit.getTooltip_AsString());
 		if (tooltip) {
 			rm.writeAttributeEscaped('title', tooltip);
 		}

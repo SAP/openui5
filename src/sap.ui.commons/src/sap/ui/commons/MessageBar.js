@@ -4,16 +4,18 @@
 
 // Provides control sap.ui.commons.MessageBar.
 sap.ui.define([
-  'jquery.sap.global',
+  'sap/ui/thirdparty/jquery',
+  'sap/base/Log',
   './library',
   'sap/ui/core/Control',
   'sap/ui/core/Popup',
   './MessageToast',
   './MessageList',
-  "./MessageBarRenderer"
+  './MessageBarRenderer'
 ],
 	function(
 	  jQuery,
+	  Log,
 	  library,
 	  Control,
 	  Popup,
@@ -22,6 +24,11 @@ sap.ui.define([
 	  MessageBarRenderer
 	) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.commons.MessageType
+	var MessageType = library.MessageType;
 
 
 
@@ -159,7 +166,7 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageBar.prototype.onmousedown = function (oEvent) {
-	//jQuery.sap.log.debug("MESSAGEBAR: ONMOUSEDOWN");
+	//Log.debug("MESSAGEBAR: ONMOUSEDOWN");
 		var oSource  = oEvent.target;
 		var jSource = jQuery(oSource);
 
@@ -201,7 +208,7 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageBar.prototype.handleMove = function (event) {
-	//jQuery.sap.log.debug("MESSAGEBAR: HANDLEMOVE");
+	//Log.debug("MESSAGEBAR: HANDLEMOVE");
 		if (!this.sDragMode) {
 			return;
 		}
@@ -245,7 +252,7 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageBar.prototype.onmouseup = function (oEvent) {
-	//jQuery.sap.log.debug("MESSAGEBAR: ONMOUSEUP");
+	//Log.debug("MESSAGEBAR: ONMOUSEUP");
 		if (!this.sDragMode) {
 			return;
 		}
@@ -301,7 +308,7 @@ sap.ui.define([
 	  } else if (jSource.hasClass("sapUiMsgBarHome")) {
 			this.backHome();
 	  } else {
-		jQuery.sap.log.debug("Warning: MessageBar unsupported click on " + jSource.attr('className'));
+		Log.debug("Warning: MessageBar unsupported click on " + jSource.attr('className'));
 	  }
 	}
 
@@ -473,7 +480,7 @@ sap.ui.define([
 	  var anchor = null;
 	  var anchorId = this.getAnchorID();
 	  if (anchorId) {
-		anchor = jQuery.sap.domById(anchorId);
+		anchor = document.getElementById(anchorId);
 	  }
 	  if (!anchor) {
 		anchor = document.body;
@@ -530,12 +537,12 @@ sap.ui.define([
 		var id = this.getId();
 
 	  // Updating the Error Count and Visibility:
-	  var oCount = jQuery.sap.domById(id + "__ErrorCount");
+	  var oCount = document.getElementById(id + "__ErrorCount");
 	  if (!oCount) {
 		// The MessageBar has to be available on the DOM in order to update it!
 		// This code is required as the MessageBar is first created.
 		  this.open();
-		oCount = jQuery.sap.domById(id + "__ErrorCount");
+		oCount = document.getElementById(id + "__ErrorCount");
 	  }
 	  var count   = this.aErrors.length;
 	  var oldText = oCount.innerHTML;
@@ -548,14 +555,14 @@ sap.ui.define([
 
 		if (newText == "(0)") {
 		  // Allowing empty queues not to be displayed:
-		  jIcon  = jQuery.sap.byId(id + "__ErrorImg");
-		  jCount = jQuery.sap.byId(id + "__ErrorCount");
+		  jIcon  = jQuery(document.getElementById(id + "__ErrorImg"));
+		  jCount = jQuery(document.getElementById(id + "__ErrorCount"));
 		  jIcon.addClass("sapUiMsgBarZeroCount");
 		  jCount.addClass("sapUiMsgBarZeroCount");
 		} else if (oldText == "(0)") {
 		  // Displaying the non-empty queue:
-		  jIcon  = jQuery.sap.byId(id + "__ErrorImg");
-		  jCount = jQuery.sap.byId(id + "__ErrorCount");
+		  jIcon  = jQuery(document.getElementById(id + "__ErrorImg"));
+		  jCount = jQuery(document.getElementById(id + "__ErrorCount"));
 		  jIcon.removeClass("sapUiMsgBarZeroCount");
 		  jCount.removeClass("sapUiMsgBarZeroCount");
 		}
@@ -563,7 +570,7 @@ sap.ui.define([
 
 
 	  // Updating the Warning Count and Visibility:
-	  oCount  = jQuery.sap.domById(id + "__WarningCount");
+	  oCount  = document.getElementById(id + "__WarningCount");
 	  count   = this.aWarnings.length;
 	  oldText = oCount.innerHTML;
 	  newText = "(" + count + ")";
@@ -575,14 +582,14 @@ sap.ui.define([
 
 		if (newText == "(0)") {
 		  // Allowing empty queues not to be displayed:
-		  jIcon  = jQuery.sap.byId(id + "__WarningImg");
-		  jCount = jQuery.sap.byId(id + "__WarningCount");
+		  jIcon  = jQuery(document.getElementById(id + "__WarningImg"));
+		  jCount = jQuery(document.getElementById(id + "__WarningCount"));
 		  jIcon.addClass("sapUiMsgBarZeroCount");
 		  jCount.addClass("sapUiMsgBarZeroCount");
 		} else if (oldText == "(0)") {
 		  // Displaying the non-empty queue:
-		  jIcon  = jQuery.sap.byId(id + "__WarningImg");
-		  jCount = jQuery.sap.byId(id + "__WarningCount");
+		  jIcon  = jQuery(document.getElementById(id + "__WarningImg"));
+		  jCount = jQuery(document.getElementById(id + "__WarningCount"));
 		  jIcon.removeClass("sapUiMsgBarZeroCount");
 		  jCount.removeClass("sapUiMsgBarZeroCount");
 		}
@@ -590,7 +597,7 @@ sap.ui.define([
 
 
 	  // Updating the Success Count and Visibility:
-	  oCount  = jQuery.sap.domById(id + "__SuccessCount");
+	  oCount  = document.getElementById(id + "__SuccessCount");
 	  count   = this.aSuccesses.length;
 	  oldText = oCount.innerHTML;
 	  newText = "(" + count + ")";
@@ -602,14 +609,14 @@ sap.ui.define([
 
 		if (newText == "(0)") {
 		  // Allowing empty queues not to be displayed:
-		  jIcon  = jQuery.sap.byId(id + "__SuccessImg");
-		  jCount = jQuery.sap.byId(id + "__SuccessCount");
+		  jIcon  = jQuery(document.getElementById(id + "__SuccessImg"));
+		  jCount = jQuery(document.getElementById(id + "__SuccessCount"));
 		  jIcon.addClass("sapUiMsgBarZeroCount");
 		  jCount.addClass("sapUiMsgBarZeroCount");
 		} else if (oldText == "(0)") {
 		  // Displaying the non-empty queue:
-		  jIcon  = jQuery.sap.byId(id + "__SuccessImg");
-		  jCount = jQuery.sap.byId(id + "__SuccessCount");
+		  jIcon  = jQuery(document.getElementById(id + "__SuccessImg"));
+		  jCount = jQuery(document.getElementById(id + "__SuccessCount"));
 		  jIcon.removeClass("sapUiMsgBarZeroCount");
 		  jCount.removeClass("sapUiMsgBarZeroCount");
 		}
@@ -725,23 +732,23 @@ sap.ui.define([
 
 		// Now, inserting each message into its proper queue:
 		  switch (aMessages[i].getType()) {
-			case sap.ui.commons.MessageType.Error:
+			case MessageType.Error:
 			  // Adding the "new" Error message:
 			this.aErrors.push(aMessages[i]);
 			  break;
 
-			case sap.ui.commons.MessageType.Warning:
+			case MessageType.Warning:
 			  // Adding the "new" Warning message:
 			this.aWarnings.push(aMessages[i]);
 			  break;
 
-			case sap.ui.commons.MessageType.Success:
+			case MessageType.Success:
 			  // Adding the "new" Success message:
 			this.aSuccesses.push(aMessages[i]);
 			  break;
 
 			default:
-			  jQuery.sap.log.debug("ERROR: MessageBar supplied messageType=" + aMessages[i].getType());
+			  Log.debug("ERROR: MessageBar supplied messageType=" + aMessages[i].getType());
 		  } // end switch
 		} // end for
 
@@ -847,4 +854,4 @@ sap.ui.define([
 
 	return MessageBar;
 
-}, /* bExport= */ true);
+});

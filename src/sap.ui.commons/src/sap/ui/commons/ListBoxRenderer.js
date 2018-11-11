@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.commons.ListBox
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'jquery.sap.strings'],
-	function(jQuery, Renderer, IconPool /* , jQuerySap */) {
+sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/security/encodeXML', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/ui/Device', 'jquery.sap.strings'],
+	function(jQuery, encodeXML, Renderer, IconPool, Device) {
 	"use strict";
 
 
@@ -25,13 +25,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/IconPoo
 	 * @param {sap.ui.commons.ListBox} oListBox The ListBox control that should be rendered.
 	 */
 	ListBoxRenderer.render = function(rm, oListBox) {
-		var r = ListBoxRenderer;
 
 		// TODO: this is a prototype experimenting with an alternative to onAfterRendering for size calculations and corrections
 		// Do not copy this approach for now!
 		// Main problem: renderers are supposed to create a string, not DOM elements, e.g. so they could also run on the server. At least that was the idea in former times.
-		if (r.borderWidths === undefined) {
-			if (sap.ui.Device.browser.internet_explorer) { // all known IE versions have this issue (min-width does not include borders)  TODO: update
+		if (ListBoxRenderer.borderWidths === undefined) {
+			if (Device.browser.msie) { // all known IE versions have this issue (min-width does not include borders)  TODO: update
 				var oFakeLbx = document.createElement("div");
 				var oStaticArea = sap.ui.getCore().getStaticAreaRef();
 				oStaticArea.appendChild(oFakeLbx);
@@ -39,11 +38,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/IconPoo
 				var $fakeLbx = jQuery(oFakeLbx);
 				$fakeLbx.css("width", "50px");
 				$fakeLbx.css("min-width", "100px");
-				r.borderWidths = oFakeLbx.offsetWidth - 100;
+				ListBoxRenderer.borderWidths = oFakeLbx.offsetWidth - 100;
 				oStaticArea.removeChild(oFakeLbx);
 			} else {
 				// all other browsers are fine
-				r.borderWidths = 0;
+				ListBoxRenderer.borderWidths = 0;
 			}
 		}
 
@@ -88,9 +87,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/IconPoo
 		// min/max-widths need fixes in IE
 		var sMinWidth = oListBox.getMinWidth();
 		var sMaxWidth = oListBox.getMaxWidth();
-		if (sap.ui.Device.browser.internet_explorer) {
-			sMinWidth = r.fixWidth(sMinWidth);
-			sMaxWidth = r.fixWidth(sMaxWidth);
+		if (Device.browser.msie) {
+			sMinWidth = ListBoxRenderer.fixWidth(sMinWidth);
+			sMaxWidth = ListBoxRenderer.fixWidth(sMaxWidth);
 		}
 		if (sMinWidth) {
 			rm.addStyle("min-width", sMinWidth);
@@ -220,7 +219,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/IconPoo
 						rm.addClass("sapUiLbxIIco");
 						rm.addClass("sapUiLbxIIcoFont");
 						var oIconInfo = IconPool.getIconInfo(sIcon);
-						rm.addStyle("font-family", "'" + jQuery.sap.encodeHTML(oIconInfo.fontFamily) + "'");
+						rm.addStyle("font-family", "'" + encodeXML(oIconInfo.fontFamily) + "'");
 						if (oIconInfo && !oIconInfo.skipMirroring) {
 							rm.addClass("sapUiIconMirrorInRTL");
 						}
@@ -288,7 +287,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/IconPoo
 	 */
 	ListBoxRenderer.fixWidth = function(sCssWidth) {
 		if (ListBoxRenderer.borderWidths > 0) {
-			if (sCssWidth && jQuery.sap.endsWithIgnoreCase(sCssWidth, "px")) {
+			if (/px$/i.test(sCssWidth)) {
 				var iWidth = parseInt(sCssWidth.substr(0, sCssWidth.length - 2));
 				var newWidth = iWidth - ListBoxRenderer.borderWidths;
 				if (newWidth >= 0) {

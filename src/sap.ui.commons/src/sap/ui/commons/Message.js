@@ -4,13 +4,14 @@
 
 // Provides control sap.ui.commons.Message.
 sap.ui.define([
-  'jquery.sap.global',
+  'sap/ui/thirdparty/jquery',
   './Dialog',
   './library',
   'sap/ui/core/Control',
-  "./MessageRenderer"
+  './MessageRenderer',
+  './Button'
 ],
-	function(jQuery, Dialog, library, Control, MessageRenderer) {
+	function(jQuery, Dialog, library, Control, MessageRenderer, Button) {
 	"use strict";
 
 
@@ -138,7 +139,7 @@ sap.ui.define([
 		// Reading the HTML details as is, styles included:
 		var	htmlDetails = this.fnCallBack(this.getId());
 		this.oDetails   = new Message({type: this.getType(), text: htmlDetails});
-		this.oBtnOK     = new sap.ui.commons.Button({text: OK, press:Message.closeDetails});
+		this.oBtnOK     = new Button({text: OK, press:Message.closeDetails});
 		this.oContainer = new Dialog();
 		this.oContainer.addContent(this.oDetails);
 		this.oContainer.setTitle(title);
@@ -244,7 +245,6 @@ sap.ui.define([
 
 
 	// Begin of Dialog-Offsets-Stacking facilities
-	(function() {
 		var oLastOffsets = null;
 		/**
 		 * @static
@@ -263,7 +263,6 @@ sap.ui.define([
 		Message.prototype.getNextOffsets = function(){
 			return Message.getNextOffsets();
 		};
-	}());
 	// End of Dialog-Offsets-Stacking facilities
 
 
@@ -290,4 +289,4 @@ sap.ui.define([
 
 	return Message;
 
-}, /* bExport= */ true);
+});

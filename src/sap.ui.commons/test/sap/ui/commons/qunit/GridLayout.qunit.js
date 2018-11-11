@@ -15,8 +15,9 @@ sap.ui.define([
 	"sap/ui/commons/form/GridContainerData",
 	"sap/ui/commons/Image",
 	"sap/ui/commons/library",
-	"jquery.sap.global",
-	"sap/ui/Device"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/Device",
+	"sap/base/Log"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -34,7 +35,8 @@ sap.ui.define([
 	Image,
 	commonsLibrary,
 	jQuery,
-	Device
+	Device,
+	Log
 ) {
 	"use strict";
 
@@ -427,7 +429,7 @@ sap.ui.define([
 	}).placeAt("uiArea3");
 
 	var countCells = function(sID, iMax){
-		var aRows = jQuery.sap.byId(sID).find("tr");
+		var aRows = jQuery(document.getElementById(sID)).find("tr");
 		var bOK = true;
 		for ( var i = 0; i < aRows.length; i++){
 			var aCells = jQuery(aRows[i]).children();
@@ -453,10 +455,10 @@ sap.ui.define([
 	QUnit.module("Rendering");
 
 	QUnit.test("Grid", function(assert) {
-		assert.ok(jQuery.sap.domById("F1"), "Form1 is rendered");
-		assert.ok(jQuery.sap.domById("Layout1"), "Grid1 is rendered");
+		assert.ok(document.getElementById("F1"), "Form1 is rendered");
+		assert.ok(document.getElementById("Layout1"), "Grid1 is rendered");
 		assert.ok(jQuery("#Layout1").is("table"), "Grid1 is rendered as table");
-		assert.ok(jQuery.sap.domById("F1T"), "Form1 title is rendered");
+		assert.ok(document.getElementById("F1T"), "Form1 title is rendered");
 		assert.ok(jQuery("#F1T").is("h4"), "Form title is rendered as H4 as default");
 		assert.ok(jQuery("#F1T").parent().is("th"), "Form1 title is in <TH>");
 		assert.equal(jQuery("#F1T").parent().attr("colspan"), "17", "Form1 title is stretched over full width");
@@ -467,25 +469,25 @@ sap.ui.define([
 	});
 
 	QUnit.test("Container Full-Size", function(assert) {
-		assert.ok(!jQuery.sap.domById("C1--Exp"), "Container1 no expander is rendered");
+		assert.ok(!document.getElementById("C1--Exp"), "Container1 no expander is rendered");
 		assert.ok(jQuery('h5:contains("Container1")').get(0), "Title (as text) is renderd");
 		assert.equal(jQuery('h5:contains("Container1")').parent().attr("title"), "Container tooltip", "Container tooltip is renderd");
 	});
 
 	QUnit.test("Element", function(assert) {
-		assert.ok(jQuery.sap.domById("C1E1"), "Element is rendered");
+		assert.ok(document.getElementById("C1E1"), "Element is rendered");
 		assert.ok(jQuery("#C1E1").is("tr"), "Element of foll size grid is rendered as table row");
-		assert.ok(!jQuery.sap.domById("C7E7"), "invisible Element is not rendered");
+		assert.ok(!document.getElementById("C7E7"), "invisible Element is not rendered");
 	});
 
 	QUnit.test("FormControls Full-Size", function(assert) {
 		assert.ok(jQuery('label:contains("Label1")').get(0), "Label (as text) is renderd");
 		assert.equal(jQuery('label:contains("Label1")').parent().attr("colspan"), "3", "Label 1 rendered over 3 grid cells");
-		assert.ok(jQuery.sap.domById("C1E1_T1"), "TextField is rendered");
+		assert.ok(document.getElementById("C1E1_T1"), "TextField is rendered");
 		assert.equal(jQuery("#C1E1_T1").get(0).style.width, "100%", "Element1: Field 1 rendered width = 100%");
 		assert.equal(jQuery("#C1E1_T1").parent().attr("colspan"), "14", "Element1: Field 1 rendered over 14 grid cells");
 		assert.ok(!jQuery("#C1E1_T1").parent().attr("rowspan") || (Device.browser.internet_explorer && jQuery("#C1E1_T1").parent().attr("rowspan") == "1"), "Element1: Field 1 no rowspan");
-		assert.ok(jQuery.sap.domById("C1E2_L1"), "Label (as control) is rendered");
+		assert.ok(document.getElementById("C1E2_L1"), "Label (as control) is rendered");
 		assert.equal(jQuery("#C1E2_T1").parent().attr("colspan"), "7", "Element2: Field 1 rendered over 7 grid cells");
 		assert.equal(jQuery("#C1E2_T2").parent().attr("colspan"), "7", "Element2: Field 2 rendered over 7 grid cells");
 		assert.equal(jQuery("#C1E3_L1").parent().attr("colspan"), "3", "Element3: Label (with hCells=auto) rendered over 3 grid cells");
@@ -523,23 +525,23 @@ sap.ui.define([
 		assert.equal(jQuery("#C1E12_T1").parent().attr("colspan"), "6", "Element12: Field 1 rendered over 6 grid cells");
 		assert.equal(jQuery("#C1E13_T1").parent().attr("rowspan"), "2", "Element13: Field 1 (with vCells=2) rendered with rowspan 2");
 		assert.equal(jQuery("#C1E13_T1").parent().parent().next().children().length, 0, "Empty dummy row rendered after full-size rowspan");
-		assert.ok(jQuery.sap.domById("C1E14_T1"), "Element14: TextField is rendered");
+		assert.ok(document.getElementById("C1E14_T1"), "Element14: TextField is rendered");
 		assert.equal(jQuery("#C1E15_T1").parent().attr("rowspan"), "2", "Element15: Field 1 (with vCells=2) rendered with rowspan 2");
 		assert.equal(jQuery("#C1E15_T1").parent().parent().next().children().length, 0, "Empty dummy row rendered after full-size rowspan");
-		assert.ok(jQuery.sap.domById("C1E16_T1"), "Element16: TextField is rendered");
-		assert.ok(jQuery.sap.domById("C1E18"), "Element18: empty element is rendered");
+		assert.ok(document.getElementById("C1E16_T1"), "Element16: TextField is rendered");
+		assert.ok(document.getElementById("C1E18"), "Element18: empty element is rendered");
 		assert.equal(jQuery("#C1E17_T1").parent().parent().next().next().children().first().children().first().attr("id"), "C1E19_L", "Element19: Label rendered 2 rows below element 17");
 
-		assert.ok(!jQuery.sap.domById("C8E1_T1"), "Content of invisible Container is not rendered");
+		assert.ok(!document.getElementById("C8E1_T1"), "Content of invisible Container is not rendered");
 	});
 
 	QUnit.test("Container Half-Size", function(assert) {
-		assert.ok(jQuery.sap.domById("C2T"), "Title2 (as Control) is rendered");
+		assert.ok(document.getElementById("C2T"), "Title2 (as Control) is rendered");
 		assert.equal(jQuery("#C2T").attr("title"), "Title tooltip", "Title2 (as Control): tooltip is rendered");
-		assert.ok(jQuery.sap.domById("C2T-ico"), "Title2 (as Control): image is rendered");
+		assert.ok(document.getElementById("C2T-ico"), "Title2 (as Control): image is rendered");
 		assert.ok((jQuery("#C2T").parent().next().is("td") && !jQuery("#C2T").parent().next().hasClass("sapUiGridHeader")), "Separator cell is rendered");
 		assert.equal(jQuery("#C2T").parent().next().children().length, 0, "Separator cell has no content");
-		assert.ok(!jQuery.sap.domById("C3T-ico"), "Title3 (as Control): no image is rendered");
+		assert.ok(!document.getElementById("C3T-ico"), "Title3 (as Control): no image is rendered");
 
 		assert.ok(!jQuery("#C6E1_L1").parent().parent().prev().children().first().hasClass("sapUiGridHeader"), "Container6 no header rendered");
 
@@ -548,15 +550,15 @@ sap.ui.define([
 		assert.ok(jQuery("#F3C2E1_T1").parent().parent().next().children().first().hasClass("sapUiGridHeader"), "Form3(singleColumn) - Container3 - Element1: next half container rendered below");
 
 		// as button is loaded async, check if already there and rendered, if not, start test async
-		if (sap.ui.require("sap/ui/commons/Button") && jQuery.sap.domById("C3--Exp")) {
-			assert.ok(!jQuery.sap.domById("C2--Exp"), "Container2 no expander is rendered");
-			assert.ok(jQuery.sap.domById("C3--Exp"), "Container3 expander is rendered");
+		if (sap.ui.require("sap/ui/commons/Button") && document.getElementById("C3--Exp")) {
+			assert.ok(!document.getElementById("C2--Exp"), "Container2 no expander is rendered");
+			assert.ok(document.getElementById("C3--Exp"), "Container3 expander is rendered");
 		} else {
 			var fnDone = assert.async();
 			sap.ui.require(["sap/ui/commons/Button"], function() {
 				sap.ui.getCore().applyChanges(); // to wait for re-rendering
-				assert.ok(!jQuery.sap.domById("C2--Exp"), "Container2 no expander is rendered");
-				assert.ok(jQuery.sap.domById("C3--Exp"), "Container3 expander is rendered");
+				assert.ok(!document.getElementById("C2--Exp"), "Container2 no expander is rendered");
+				assert.ok(document.getElementById("C3--Exp"), "Container3 expander is rendered");
 				fnDone();
 			});
 		}
@@ -587,7 +589,7 @@ sap.ui.define([
 		assert.ok((jQuery("#C6E1_I1").parent().next().next().next().is("td") && jQuery("#C6E1_I1").parent().next().next().next().attr("colspan") == "8" && jQuery("#C6E1_I1").parent().next().next().next().children().length == 0), "Container6 - empty dummy cell rendered beside (because no second half-size container in row)");
 		assert.ok(jQuery("#C6E1_I1").get(0).style.width != "100%", "Container6 - Element1: Image not rendered width = 100%");
 
-		assert.ok(!jQuery.sap.domById("C6E3_T1"), "Content of invisible Element is not rendered");
+		assert.ok(!document.getElementById("C6E3_T1"), "Content of invisible Element is not rendered");
 	});
 
 	QUnit.module("Interaction");
@@ -597,7 +599,7 @@ sap.ui.define([
 		var oContainer = sap.ui.getCore().byId("C3");
 		qutils.triggerMouseEvent("C3--Exp", "click");
 		sap.ui.getCore().applyChanges();
-		assert.ok(!jQuery.sap.domById("C3E1_T1"), "Container3 content area is not visible after click on expander");
+		assert.ok(!document.getElementById("C3E1_T1"), "Container3 content area is not visible after click on expander");
 		assert.ok((jQuery("#C2E1_T1").parent().next().next().is("td") && jQuery("#C2E1_T1").parent().next().next().attr("colspan") == "8" && jQuery("#C2E1_T1").parent().next().next().children().length == 0), "Container3 - empty dummy cell rendered");
 		assert.ok(!(jQuery("#C2E1_L1").parent().parent().next().children().first().is("td") && jQuery("#C2E1_L1").parent().parent().next().children().first().attr("colspan") == "8" && jQuery("#C2E1_L1").parent().parent().next().children().first().children().length == 0), "Container2 - NO empty dummy cell rendered");
 		assert.equal(oContainer.getExpanded(), false, "Container3 getExpanded()");
@@ -629,70 +631,70 @@ sap.ui.define([
 	});
 
 	QUnit.test("Keyboard Navigation", function(assert) {
-		jQuery.sap.byId("C1E1_T1").focus();
-		assert.equal(jQuery.sap.byId("C1E1_T1").is(":focus"), true, "Mouseclick: Container 1, Element 1, Field 1 - Selected");
+		jQuery("#C1E1_T1").focus();
+		assert.equal(jQuery("#C1E1_T1").is(":focus"), true, "Mouseclick: Container 1, Element 1, Field 1 - Selected");
 		qutils.triggerKeyboardEvent("C1E1_T1", "ARROW_DOWN");
-		assert.equal(jQuery.sap.byId("C1E2_T1").is(":focus"), true, "Arrow Down: Container 1, Element 2, Field 1 - Selected");
+		assert.equal(jQuery("#C1E2_T1").is(":focus"), true, "Arrow Down: Container 1, Element 2, Field 1 - Selected");
 		qutils.triggerKeyboardEvent("C1E2_T1", "ARROW_RIGHT");
-		assert.equal(jQuery.sap.byId("C1E2_T2").is(":focus"), true, "Arrow Right: Container 1, Element 2, Field 2 - Selected");
+		assert.equal(jQuery("#C1E2_T2").is(":focus"), true, "Arrow Right: Container 1, Element 2, Field 2 - Selected");
 		qutils.triggerKeyboardEvent("C1E2_T2", "ARROW_DOWN");
-		assert.equal(jQuery.sap.byId("C1E3_T2").is(":focus"), true, "Arrow Down: Container 1, Element 3, Field 2 - Selected");
+		assert.equal(jQuery("#C1E3_T2").is(":focus"), true, "Arrow Down: Container 1, Element 3, Field 2 - Selected");
 		qutils.triggerKeyboardEvent("C1E3_T2", "ARROW_RIGHT");
-		assert.equal(jQuery.sap.byId("C1E3_T3").is(":focus"), true, "Arrow Right: Container 1, Element 3, Field 3 - Selected");
+		assert.equal(jQuery("#C1E3_T3").is(":focus"), true, "Arrow Right: Container 1, Element 3, Field 3 - Selected");
 		qutils.triggerKeyboardEvent("C1E3_T3", "ARROW_UP");
-		assert.equal(jQuery.sap.byId("C1E2_T2").is(":focus"), true, "Arrow Up: Container 1, Element 2, Field 2 - Selected");
+		assert.equal(jQuery("#C1E2_T2").is(":focus"), true, "Arrow Up: Container 1, Element 2, Field 2 - Selected");
 		qutils.triggerKeyboardEvent("C1E2_T2", "ARROW_LEFT");
-		assert.equal(jQuery.sap.byId("C1E2_T1").is(":focus"), true, "Arrow Left: Container 1, Element 2, Field 1 - Selected");
+		assert.equal(jQuery("#C1E2_T1").is(":focus"), true, "Arrow Left: Container 1, Element 2, Field 1 - Selected");
 		qutils.triggerKeyboardEvent("C1E2_T1", "F6");
-		assert.equal(jQuery.sap.byId("C2E1_T1").is(":focus"), true, "F6: Container 2, Element 1, Field 1 - Selected");
+		assert.equal(jQuery("#C2E1_T1").is(":focus"), true, "F6: Container 2, Element 1, Field 1 - Selected");
 		qutils.triggerKeyboardEvent("C2E1_T1", "F6", true, false, false);
-		assert.equal(jQuery.sap.byId("C1E1_T1").is(":focus"), true, "Shift + F6: Container 1, Element 1, Field 1 - Selected");
+		assert.equal(jQuery("#C1E1_T1").is(":focus"), true, "Shift + F6: Container 1, Element 1, Field 1 - Selected");
 		qutils.triggerKeyboardEvent("C1E1_T1", "END", false, false, true);
-		assert.equal(jQuery.sap.byId("C7E6_T1").is(":focus"), true, "Ctrl + End: Container 7, Element 6, Field 1 - Selected");
+		assert.equal(jQuery("#C7E6_T1").is(":focus"), true, "Ctrl + End: Container 7, Element 6, Field 1 - Selected");
 		qutils.triggerKeyboardEvent("C7E6_T1", "HOME");
-		assert.equal(jQuery.sap.byId("C7E1_T1").is(":focus"), true, "HOME: Container 7, Element 1, Field 1 - Selected");
+		assert.equal(jQuery("#C7E1_T1").is(":focus"), true, "HOME: Container 7, Element 1, Field 1 - Selected");
 		qutils.triggerKeyboardEvent("C7E1_T1", "F6");
-		assert.equal(jQuery.sap.byId("C1E1_T1").is(":focus"), false, "F6: Container 1, Element 1, Field 1 - NOT Selected (No cycling!)");
-		jQuery.sap.byId("C1E1_T1").focus();
+		assert.equal(jQuery("#C1E1_T1").is(":focus"), false, "F6: Container 1, Element 1, Field 1 - NOT Selected (No cycling!)");
+		jQuery("#C1E1_T1").focus();
 		qutils.triggerKeyboardEvent("C1E1_T1", "F6");
-		assert.equal(jQuery.sap.byId("C2E1_T1").is(":focus"), true, "F6: Container 2, Element 1, Field 1 - Selected");
+		assert.equal(jQuery("#C2E1_T1").is(":focus"), true, "F6: Container 2, Element 1, Field 1 - Selected");
 		qutils.triggerKeyboardEvent("C2E1_T1", "ARROW_RIGHT");
-		assert.equal(jQuery.sap.byId("C4E1_T1").is(":focus"), true, "Arrow Right: Container 4, Element 1, Field 1 - Selected");
+		assert.equal(jQuery("#C4E1_T1").is(":focus"), true, "Arrow Right: Container 4, Element 1, Field 1 - Selected");
 		qutils.triggerKeyboardEvent("C4E1_T1", "ARROW_LEFT");
-		assert.equal(jQuery.sap.byId("C2E1_T1").is(":focus"), true, "Arrow Left: Container 2, Element 1, Field 1 - Selected");
+		assert.equal(jQuery("#C2E1_T1").is(":focus"), true, "Arrow Left: Container 2, Element 1, Field 1 - Selected");
 		qutils.triggerKeyboardEvent("C2E1_T1", "HOME", false, false, true);
-		assert.equal(jQuery.sap.byId("C1E1_T1").is(":focus"), true, "Ctrl + Home: Container 1, Element 1, Field 1 - Selected");
+		assert.equal(jQuery("#C1E1_T1").is(":focus"), true, "Ctrl + Home: Container 1, Element 1, Field 1 - Selected");
 		qutils.triggerKeyboardEvent("C1E1_T1", "END");
-		assert.equal(jQuery.sap.byId("C1E19_T1").is(":focus"), true, "END: Container 1, Element 19, Field 1 - Selected");
+		assert.equal(jQuery("#C1E19_T1").is(":focus"), true, "END: Container 1, Element 19, Field 1 - Selected");
 		qutils.triggerKeyboardEvent("C1E19_T1", "HOME");
 		qutils.triggerKeyboardEvent("C1E1_T1", "ARROW_DOWN");
 		qutils.triggerKeyboardEvent("C1E2_T1", "ARROW_DOWN");
 		qutils.triggerKeyboardEvent("C1E3_T1", "ARROW_DOWN");
 		qutils.triggerKeyboardEvent("C1E4_T1", "ARROW_DOWN");
 		qutils.triggerKeyboardEvent("C1E5_T1", "ARROW_DOWN");
-		assert.equal(jQuery.sap.byId("C1E6_T1").is(":focus"), true, "Home + 5 times Arrow Down: Container 1, Element 6, Field 1 - Selected");
+		assert.equal(jQuery("#C1E6_T1").is(":focus"), true, "Home + 5 times Arrow Down: Container 1, Element 6, Field 1 - Selected");
 		qutils.triggerKeyboardEvent("C1E6_T1", "ARROW_RIGHT");
-		assert.equal(jQuery.sap.byId("C1E6_T3").is(":focus"), true, "Arrow Right: Container 1, Element 6, Field 3 - Selected");
+		assert.equal(jQuery("#C1E6_T3").is(":focus"), true, "Arrow Right: Container 1, Element 6, Field 3 - Selected");
 		qutils.triggerKeyboardEvent("C1E6_T3", "ARROW_RIGHT");
-		assert.equal(jQuery.sap.byId("C1E7_T1").is(":focus"), true, "Arrow Right: Container 1, Element 7, Field 1 - Selected");
+		assert.equal(jQuery("#C1E7_T1").is(":focus"), true, "Arrow Right: Container 1, Element 7, Field 1 - Selected");
 		qutils.triggerKeyboardEvent("C1E7_T1", "ARROW_RIGHT");
-		assert.equal(jQuery.sap.byId("C1E7_T2").is(":focus"), true, "Arrow Right: Container 1, Element 7, Field 2 - Selected");
+		assert.equal(jQuery("#C1E7_T2").is(":focus"), true, "Arrow Right: Container 1, Element 7, Field 2 - Selected");
 		qutils.triggerKeyboardEvent("C1E7_T2", "ARROW_RIGHT");
-		assert.equal(jQuery.sap.byId("C1E7_T3").is(":focus"), true, "Arrow Right: Container 1, Element 7, Field 3 - Selected");
+		assert.equal(jQuery("#C1E7_T3").is(":focus"), true, "Arrow Right: Container 1, Element 7, Field 3 - Selected");
 		qutils.triggerKeyboardEvent("C1E7_T3", "ARROW_LEFT");
-		assert.equal(jQuery.sap.byId("C1E7_T2").is(":focus"), true, "Arrow Left: Container 1, Element 7, Field 2 - Selected");
+		assert.equal(jQuery("#C1E7_T2").is(":focus"), true, "Arrow Left: Container 1, Element 7, Field 2 - Selected");
 		qutils.triggerKeyboardEvent("C1E7_T2", "ARROW_LEFT");
-		assert.equal(jQuery.sap.byId("C1E7_T1").is(":focus"), true, "Arrow Left: Container 1, Element 7, Field 1 - Selected");
+		assert.equal(jQuery("#C1E7_T1").is(":focus"), true, "Arrow Left: Container 1, Element 7, Field 1 - Selected");
 		qutils.triggerKeyboardEvent("C1E7_T1", "ARROW_LEFT");
-		assert.equal(jQuery.sap.byId("C1E6_T3").is(":focus"), true, "Arrow Left: Container 1, Element 6, Field 3 - Selected");
+		assert.equal(jQuery("#C1E6_T3").is(":focus"), true, "Arrow Left: Container 1, Element 6, Field 3 - Selected");
 		qutils.triggerKeyboardEvent("C1E6_T3", "ARROW_LEFT");
-		assert.equal(jQuery.sap.byId("C1E6_T1").is(":focus"), true, "Arrow Left: Container 1, Element 6, Field 1 - Selected");
+		assert.equal(jQuery("#C1E6_T1").is(":focus"), true, "Arrow Left: Container 1, Element 6, Field 1 - Selected");
 	});
 
 	QUnit.module("Error handling");
 
 	QUnit.test("too much fields", function(assert) {
-		var aLogEntries = jQuery.sap.log.getLogEntries();
+		var aLogEntries = Log.getLogEntries();
 		var findLogEntry = function(sMessage, iLevel){
 			for ( var i = 0; i < aLogEntries.length; i++){
 				var oLogEntry = aLogEntries[i];
@@ -702,15 +704,15 @@ sap.ui.define([
 			}
 			return false;
 		};
-		assert.ok(jQuery.sap.domById("C7E1_T1"), "Element1: TextField1 is rendered");
-		assert.ok(!jQuery.sap.domById("C7E1_T2"), "Element1: TextField2 is not rendered");
+		assert.ok(document.getElementById("C7E1_T1"), "Element1: TextField1 is rendered");
+		assert.ok(!document.getElementById("C7E1_T2"), "Element1: TextField2 is not rendered");
 		assert.ok(findLogEntry('Element "C7E1" - Too much fields for one row!',1),"Error entry in log found for Element1");
 
 		var bOK, i;
 
 		bOK = true;
 		for ( i = 1; i <= 13; i++){
-			if ( !jQuery.sap.domById("C7E2_T" + i) ) {
+			if ( !document.getElementById("C7E2_T" + i) ) {
 				bOK = false;
 			}
 		}
@@ -718,22 +720,22 @@ sap.ui.define([
 
 		bOK = true;
 		for ( i = 14; i <= 15; i++){
-			if ( jQuery.sap.domById("C7E2_T" + i) ) {
+			if ( document.getElementById("C7E2_T" + i) ) {
 				bOK = false;
 			}
 		}
 		assert.ok(bOK, "Element2: TextFields 14-15 are not rendered");
 		assert.ok(findLogEntry('Element "C7E2" - Too much fields for one row!',1),"Error entry in log found for Element2");
 
-		assert.ok(jQuery.sap.domById("C7E3_T1"), "Element3: TextField1 is rendered");
-		assert.ok(jQuery.sap.domById("C7E3_T2"), "Element3: TextField2 is rendered");
-		assert.ok(!jQuery.sap.domById("C7E3_T3"), "Element3: TextField3 is not rendered");
+		assert.ok(document.getElementById("C7E3_T1"), "Element3: TextField1 is rendered");
+		assert.ok(document.getElementById("C7E3_T2"), "Element3: TextField2 is rendered");
+		assert.ok(!document.getElementById("C7E3_T3"), "Element3: TextField3 is not rendered");
 		assert.ok(findLogEntry('Element "C7E3" - Too much fields for one row!',1),"Error entry in log found for Element3");
 
 
-		assert.ok(jQuery.sap.domById("C7E4_T1"), "Element4: TextField1 is rendered");
+		assert.ok(document.getElementById("C7E4_T1"), "Element4: TextField1 is rendered");
 		assert.equal(jQuery("#C7E4_T1").parent().attr("rowspan"), "2", "Element4: Field 1 (with vCells=2) rendered with rowspan 2");
-		assert.ok(!jQuery.sap.domById("C7E5_T1"), "Element5: TextField1 (full size) is not rendered");
+		assert.ok(!document.getElementById("C7E5_T1"), "Element5: TextField1 (full size) is not rendered");
 		assert.ok(findLogEntry('Element "C7E5" - Too much fields for one row!',1),"Error entry in log found for Element5");
 	});
 

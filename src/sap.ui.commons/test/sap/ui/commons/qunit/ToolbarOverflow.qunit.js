@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/commons/Button",
@@ -8,14 +9,16 @@ sap.ui.define([
 	"sap/ui/commons/ComboBox",
 	"sap/ui/core/ListItem",
 	"sap/ui/commons/Toolbar",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/RenderManager",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/commons/library",
 	"sap/ui/layout/SplitterLayoutData",
 	"sap/ui/layout/Splitter",
-	"jquery.sap.keycodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jqueryui/jquery-ui-position" // jQuery.fn.position
 ], function(
+	Log,
 	qutils,
 	createAndAppendDiv,
 	Button,
@@ -29,7 +32,8 @@ sap.ui.define([
 	HorizontalLayout,
 	commonsLibrary,
 	SplitterLayoutData,
-	Splitter
+	Splitter,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -154,8 +158,8 @@ sap.ui.define([
 		var oButton = sap.ui.getCore().byId(aItemsOnTheSecondRow[1]);
 		oButton.setVisible(false);
 		function clickOverflowButton() {
-			var oOverflowBtnElement = jQuery.sap.byId(sOverflowButtonId);
-			qutils.triggerKeydown(oOverflowBtnElement, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+			var oOverflowBtnElement = oCtrl.$("mn");
+			qutils.triggerKeydown(oOverflowBtnElement, KeyCodes.ARROW_DOWN, false, false, false);
 		}
 
 		setTimeout(function () { // give the Toolbar some time to recognize the change
@@ -279,7 +283,7 @@ sap.ui.define([
 				oCtrl.getDomRef = sinon.stub(oCtrl, 'getDomRef').returns(null);
 				oCtrl.getDomRef.withArgs("pu").returns(oDiv);
 
-				var oErrorSpy = sinon.spy(jQuery.sap.log, 'error');
+				var oErrorSpy = sinon.spy(Log, 'error');
 				RenderManager.getRenderer(oCtrl).emptyOverflowPopup(oCtrl);
 				oCtrl.getDomRef.restore();
 
@@ -478,26 +482,18 @@ sap.ui.define([
 	//          helper functions
 	// ==================================================
 
-	/*
-	 * Helper method using internal knowledge of the renderer to get the DomRef of oCtrl's overflow button
-	 */
-	function getOverflowButtonId(oToolbar) {
-		return oToolbar.getId() + "-mn";
-	}
 
 	/*
-	 * Returns the overflow popup DomRef for oCtrl or undefined if it does not exist
+	 * Returns the overflow popup DomRef for oCtrl or null if it does not exist
 	 */
 	function getPopupDomRef(oToolbar) {
-		return jQuery.sap.domById(oToolbar.getId() + "-pu");
+		return oToolbar.getDomRef("pu");
 	}
 	function isPopupVisible(oToolbar) {
-		var oPopup = getPopupDomRef(oToolbar);
-		return jQuery.sap.byId(oPopup.id).css("display") === "block";
+		return oToolbar.$("pu").css("display") === "block";
 	}
 	function isOverflowVisible(oToolbar) {
-		var sOverflowButtonId = getOverflowButtonId(oToolbar);
-		return jQuery.sap.byId(sOverflowButtonId).css("display") === "block";
+		return oToolbar.$("mn").css("display") === "block";
 	}
 	function getPopupContentIds(oToolbar) {
 		var oPopup = getPopupDomRef(oToolbar);
@@ -511,13 +507,13 @@ sap.ui.define([
 	}
 
 	function clickOverflowButton(oToolbar) {
-		var oOverflowBtnElement = jQuery.sap.byId(getOverflowButtonId(oToolbar));
-		qutils.triggerKeydown(oOverflowBtnElement, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+		var oOverflowBtnElement = oToolbar.$("mn");
+		qutils.triggerKeydown(oOverflowBtnElement, KeyCodes.ARROW_DOWN, false, false, false);
 	}
 
 	function checkTestButtonDoesNotExpandFromOverflowPopup(assert, oCtrl, buttonId) {
 		var oTestButton = jQuery('#' + buttonId);
-		var oPopup = jQuery(oCtrl.getDomRef('pu'));
+		var oPopup = oCtrl.$('pu');
 
 		var iButtonRightPosition = oTestButton.position().left + oTestButton.width();
 		var iToolbarRightPosition = oPopup.position().left + oPopup.width();

@@ -4,9 +4,9 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/commons/TextArea",
 	"sap/ui/core/library",
-	"jquery.sap.global",
-	"jquery.sap.keycodes"
-], function(qutils, createAndAppendDiv, TextArea, coreLibrary, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/KeyCodes"
+], function(qutils, createAndAppendDiv, TextArea, coreLibrary, jQuery, KeyCodes) {
 	"use strict";
 
 	// shortcut for sap.ui.core.Wrapping
@@ -110,7 +110,7 @@ sap.ui.define([
 		oTA.setValue("This is a long text that should be cut.");
 		assert.equal(oTA.getValue(), "This is a long text ", "Set Valuee with long text > MaxLength:");
 
-		var oTADom = jQuery.sap.domById('oTA2');
+		var oTADom = document.getElementById('oTA2');
 		oTADom.focus();
 		// async because of IE9 and focus() with jQuery < 1.6.2
 		var delayedCall = function(){
@@ -130,7 +130,7 @@ sap.ui.define([
 		assert.ok(jQuery("#oTA2").get(0), "Visible: expected defined");
 
 		var oTA = oTAs["oTA2"];
-		var oTADom = jQuery.sap.domById('oTA2');
+		var oTADom = document.getElementById('oTA2');
 		assert.ok(jQuery(oTADom).hasClass("sapUiTfStd"), "Visible: Standard Class");
 		assert.equal(jQuery(oTADom).hasClass("sapUiTfRo"), false, "Visible: no ReadOnly Class");
 		oTA.setEditable(false);
@@ -151,14 +151,14 @@ sap.ui.define([
 		assert.ok(jQuery(oTADom).hasClass("sapUiTfStd"), "Visible:toggle to standard: Standard Class");
 		assert.equal(jQuery(oTADom).hasClass("sapUiTfRo"), false, "Visible:toggle to standard: no ReadOnly Class");
 
-		oTADom = jQuery.sap.domById('oTA4');
+		oTADom = document.getElementById('oTA4');
 		assert.ok(jQuery(oTADom).hasClass("sapUiTfWarn"), "Visible: Warning Class");
 
-		oTADom = jQuery.sap.domById('oTA5');
+		oTADom = document.getElementById('oTA5');
 		assert.ok(jQuery(oTADom).hasClass("sapUiTfRo"), "Visible: ReadOnly Class");
 		assert.equal(jQuery(oTADom).hasClass("sapUiTfStd"), false, "Visible: no Standard Class");
 
-		oTADom = jQuery.sap.domById('oTA3');
+		oTADom = document.getElementById('oTA3');
 		oTADom.focus();
 		assert.ok(jQuery(oTADom).hasClass("sapUiTfErr"), "Visible: Error Class");
 		// async because of IE9 with focus() and jQuery < 1.6.2
@@ -175,7 +175,7 @@ sap.ui.define([
 		oTA.addAriaDescribedBy("D1");
 		oTA.addAriaLabelledBy("L1");
 		sap.ui.getCore().applyChanges();
-		var $oTA = jQuery.sap.byId("oTA1");
+		var $oTA = jQuery("#oTA1");
 		assert.equal($oTA.attr("role"), "textbox", "oTA1: Role");
 		assert.equal($oTA.attr("aria-required"), "false", "oTA1: aria-required");
 		assert.equal($oTA.attr("aria-readonly"), "false", "oTA1: aria-readonly");
@@ -185,10 +185,10 @@ sap.ui.define([
 		assert.equal($oTA.attr("aria-describedby"), "D1", "oTA1: aria-describesby");
 		assert.equal($oTA.attr("aria-labelledby"), "L1", "oTA1: aria-labelledby");
 
-		$oTA = jQuery.sap.byId("oTA3");
+		$oTA = jQuery("#oTA3");
 		assert.equal($oTA.attr("aria-invalid"), "true", "oTA3: aria-invalid");
 
-		$oTA = jQuery.sap.byId("oTA5");
+		$oTA = jQuery("#oTA5");
 		assert.equal($oTA.attr("aria-readonly"), "true", "oTA5: aria-readonly");
 	});
 
@@ -204,11 +204,11 @@ sap.ui.define([
 		function handleLiveChange(oEvent){bLiveChange = true;}
 		oTA.attachChange(handleChange);
 		oTA.attachLiveChange(handleLiveChange);
-		jQuery.sap.domById('oTA1').focus();
+		document.getElementById('oTA1').focus();
 
 		qutils.triggerCharacterInput("oTA1", "A");
 		qutils.triggerEvent("input", "oTA1");
-		qutils.triggerKeyup("oTA1", jQuery.sap.KeyCodes.A, true, false, false);
+		qutils.triggerKeyup("oTA1", KeyCodes.A, true, false, false);
 		assert.equal(oTA.getValue(), "", "Value after Typing");
 		assert.equal(oTA.getLiveValue(), "A", "LiveValue after typing");
 		assert.equal(bChange, false, "Change event fired after typing");
@@ -218,7 +218,7 @@ sap.ui.define([
 
 		qutils.triggerCharacterInput("oTA1", "b");
 		qutils.triggerEvent("input", "oTA1");
-		qutils.triggerKeyup("oTA1", jQuery.sap.KeyCodes.B, false, false, false);
+		qutils.triggerKeyup("oTA1", KeyCodes.B, false, false, false);
 		assert.equal(oTA.getValue(), "", "Value after Typing");
 		assert.equal(oTA.getLiveValue(), "Ab", "LiveValue after typing");
 		assert.equal(bChange, false, "Change event fired after typing");
@@ -226,7 +226,7 @@ sap.ui.define([
 		bChange = false;
 		bLiveChange = false;
 
-		jQuery.sap.domById('oTA2').focus();
+		document.getElementById('oTA2').focus();
 		setTimeout(function(){
 			assert.equal(oTA.getValue(), "Ab", "Value after focus out");
 			assert.equal(oTA.getLiveValue(), "Ab", "LiveValue after focus out");
@@ -236,10 +236,10 @@ sap.ui.define([
 			bLiveChange = false;
 
 			// Escape
-			jQuery.sap.domById('oTA1').focus();
+			document.getElementById('oTA1').focus();
 			qutils.triggerCharacterInput("oTA1", "c");
 			qutils.triggerEvent("input", "oTA1");
-			qutils.triggerKeyup("oTA1", jQuery.sap.KeyCodes.C, false, false, false);
+			qutils.triggerKeyup("oTA1", KeyCodes.C, false, false, false);
 			assert.equal(oTA.getValue(), "Ab", "Value after Typing");
 			assert.equal(oTA.getLiveValue(), "Abc", "LiveValue after typing");
 			assert.equal(bChange, false, "Change event fired after typing");
@@ -247,9 +247,9 @@ sap.ui.define([
 			bChange = false;
 			bLiveChange = false;
 
-			qutils.triggerKeyEvent("keydown", "oTA1", jQuery.sap.KeyCodes.ESCAPE);
-			qutils.triggerKeyEvent("keypress", "oTA1", jQuery.sap.KeyCodes.ESCAPE);
-			qutils.triggerKeyup("oTA1", jQuery.sap.KeyCodes.ESCAPE, false, false, false);
+			qutils.triggerKeyEvent("keydown", "oTA1", KeyCodes.ESCAPE);
+			qutils.triggerKeyEvent("keypress", "oTA1", KeyCodes.ESCAPE);
+			qutils.triggerKeyup("oTA1", KeyCodes.ESCAPE, false, false, false);
 			assert.equal(oTA.getValue(), "Ab", "Value after escape");
 			assert.equal(oTA.getLiveValue(), "Ab", "LiveValue after escape");
 			assert.equal(bChange, false, "Change event fired after escape");

@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/commons/TextField",
 	"sap/ui/commons/Button",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/commons/Dialog",
 	"sap/ui/core/UIArea",
 	"sap/ui/Device",
@@ -11,7 +11,9 @@ sap.ui.define([
 	"sap/ui/commons/Link",
 	"sap/ui/commons/Label",
 	"sap/ui/core/HTML",
-	"jquery.sap.keycodes"
+	"sap/base/Log",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/dom/jquery/Selectors" // :sapTabbable
 ], function(
 	qutils,
 	TextField,
@@ -23,7 +25,9 @@ sap.ui.define([
 	ResizeHandler,
 	Link,
 	Label,
-	HTML
+	HTML,
+	Log,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -52,13 +56,13 @@ sap.ui.define([
 			this.btnOk = new Button(OK_BUTTON_ID, {
 				text: 'OK',
 				press: function() {
-					jQuery.sap.log.debug('OK button is clicked');
+					Log.debug('OK button is clicked');
 				}
 			});
 			this.btnCancel = new Button(CANCEL_BUTTON_ID, {
 				text: 'Cancel',
 				press: function() {
-					jQuery.sap.log.debug('Cancel button is clicked');
+					Log.debug('Cancel button is clicked');
 				}
 			});
 
@@ -230,8 +234,7 @@ sap.ui.define([
 				deregisterSpy = sinon.spy(ResizeHandler, 'deregister');
 
 		function fnOpened() {
-			var sHeaderId = that.oDialog.getId() + '-hdr';
-			var headerDomRef = jQuery.sap.domById(sHeaderId);
+			var headerDomRef = that.oDialog.getDomRef("hdr");
 
 			qutils.triggerMouseEvent(headerDomRef, 'mousedown');
 			assert.strictEqual(mouseDownSpy.callCount, 1, 'should be called');
@@ -272,8 +275,7 @@ sap.ui.define([
 
 
 		function fnOpened() {
-			var sGripId = that.oDialog.getId() + '-grip',
-					gripHandleRef = jQuery.sap.domById(sGripId);
+			var gripHandleRef = that.oDialog.getDomRef('grip');
 
 			qutils.triggerMouseEvent(gripHandleRef, 'mousedown');
 
@@ -364,7 +366,7 @@ sap.ui.define([
 			done = assert.async();
 
 		function fnOpened() {
-			qutils.triggerKeydown(that.oDialog.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+			qutils.triggerKeydown(that.oDialog.getDomRef(), KeyCodes.ENTER);
 			assert.equal(fnBtnClickSpy.calledOnce, true, 'should click the default button if set');
 			that.oDialog.close();
 			fnBtnClickSpy.restore();
@@ -386,7 +388,7 @@ sap.ui.define([
 
 		this.oDialog.oPopup.attachClosed(fnClosed);
 		this.oDialog.open();
-		qutils.triggerKeydown(this.oDialog.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown(this.oDialog.getDomRef(), KeyCodes.ESCAPE);
 	});
 
 	QUnit.test('Moving the dialog', function(assert) {
@@ -398,8 +400,7 @@ sap.ui.define([
 			popupPositionSpy = sinon.spy(this.oDialog.oPopup, 'setPosition');
 
 		function fnOpened() {
-			var sHeaderId = that.oDialog.getId() + '-hdr';
-			var headerDomRef = jQuery.sap.domById(sHeaderId);
+			var headerDomRef = that.oDialog.getDomRef('hdr');
 
 			qutils.triggerMouseEvent(headerDomRef, 'mousedown');
 			assert.strictEqual(mouseDownSpy.callCount, 1, 'should be called');
@@ -436,8 +437,7 @@ sap.ui.define([
 			invalidateSpy = sinon.spy(this.oDialog, 'invalidate');
 
 		function fnOpened() {
-			var sGripId = that.oDialog.getId() + '-grip',
-				gripHandleRef = jQuery.sap.domById(sGripId);
+			var gripHandleRef = that.oDialog.getDomRef('grip');
 
 			qutils.triggerMouseEvent(gripHandleRef, 'mousedown');
 			assert.strictEqual(mouseDownSpy.callCount, 1, 'should call onmousedown handler');
@@ -540,7 +540,7 @@ sap.ui.define([
 			done = assert.async();
 
 		this.oDialog.oPopup.attachOpened(function opened(){
-			assert.strictEqual(jQuery.sap.domById(that.oDialog._mParameters.firstFocusable).id, that.DIALOG_ID + '-fhfe', "should focus the first fake focusable element (Header)");
+			assert.strictEqual(document.getElementById(that.oDialog._mParameters.firstFocusable).id, that.DIALOG_ID + '-fhfe', "should focus the first fake focusable element (Header)");
 			done();
 		});
 		this.oDialog.addContent(this.oLabel);

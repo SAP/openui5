@@ -3,9 +3,19 @@
  */
 
 // Provides default renderer for control sap.ui.commons.CheckBox
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
-	function(jQuery, ValueStateSupport) {
+sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library'],
+	function(ValueStateSupport, coreLibrary) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
+
+	// shortcut for sap.ui.core.AccessibleRole
+	var AccessibleRole = coreLibrary.AccessibleRole;
 
 
 	/**
@@ -18,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 	/**
 	 * Renders the HTML for the CheckBox, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that is used for writing to the render output buffer.
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that is used for writing to the render output buffer.
 	 * @param {sap.ui.commons.CheckBox} oCheckBox The CheckBox control that should be rendered.
 	 */
 	CheckBoxRenderer.render = function(rm, oCheckBox) {
@@ -29,7 +39,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		rm.writeControlData(oCheckBox);
 
 		// ARIA
-		rm.writeAccessibilityState(oCheckBox, {"role" : sap.ui.core.AccessibleRole.Checkbox.toLowerCase()});
+		rm.writeAccessibilityState(oCheckBox, {"role" : AccessibleRole.Checkbox.toLowerCase()});
 		rm.writeAttributeEscaped("aria-labelledby", oCheckBox.getId() + "-label");
 
 		// Collect state information
@@ -38,8 +48,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		var inErrorState = false;
 		var inWarningState = false;
 		if (oCheckBox.getValueState() != null) {
-			inErrorState = sap.ui.core.ValueState.Error == oCheckBox.getValueState();
-			inWarningState = sap.ui.core.ValueState.Warning == oCheckBox.getValueState();
+			inErrorState = ValueState.Error == oCheckBox.getValueState();
+			inWarningState = ValueState.Warning == oCheckBox.getValueState();
 		}
 
 		// Add classes and properties depending on the state
@@ -139,9 +149,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 	/**
 	 * Write the CheckBox label either flat or - in case the text direction is different from the environment - within a span tag with an explicit "dir".
 	 */
-	CheckBoxRenderer.renderText = function(oRenderManager, sText, eTextDirection) {
-		var rm = oRenderManager;
-		if (!eTextDirection || eTextDirection == sap.ui.core.TextDirection.Inherit) {
+	CheckBoxRenderer.renderText = function(rm, sText, eTextDirection) {
+		if (!eTextDirection || eTextDirection == TextDirection.Inherit) {
 			rm.writeEscaped(sText);
 		} else {
 			rm.write("<span style=\"direction:" + eTextDirection.toLowerCase() + ";\">");

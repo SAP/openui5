@@ -3,9 +3,19 @@
  */
 
 // Provides default renderer for control sap.ui.commons.TriStateCheckBox
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
-	function(jQuery, ValueStateSupport) {
+sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library'],
+	function(ValueStateSupport, coreLibrary) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
+
+	// shortcut for sap.ui.core.AccessibleRole
+	var AccessibleRole = coreLibrary.AccessibleRole;
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 
 	/**
@@ -39,8 +49,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		var tooltip = ValueStateSupport.enrichTooltip(oControl, oControl.getTooltip_AsString());
 		var ariaLabelId = "sapUiAriaLabel" + oControl.getIdForLabel();
 		if (oControl.getValueState() != null) {
-			inErrorState = sap.ui.core.ValueState.Error == oControl.getValueState();
-			inWarningState = sap.ui.core.ValueState.Warning == oControl.getValueState();
+			inErrorState = ValueState.Error == oControl.getValueState();
+			inWarningState = ValueState.Warning == oControl.getValueState();
 		}
 
 		// write the HTML into the render manager
@@ -50,11 +60,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 
 		oRm.addClass("sapUiTriCb");
 
-		if (!!oControl.getWidth()) {
+		if (oControl.getWidth()) {
 			oRm.writeAttribute("style", "width:" + oControl.getWidth() + ";");
 		}
 		oRm.writeAccessibilityState(oControl, {
-			"role" : sap.ui.core.AccessibleRole.Checkbox.toLowerCase(),
+			"role" : AccessibleRole.Checkbox.toLowerCase(),
 			"checked" : ariaState
 			});
 		oRm.writeClasses();
@@ -127,10 +137,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 	 * Add sLabelId as id for aria-labelledby support
 	 *
 	 */
-	 TriStateCheckBoxRenderer.renderText = function(sLabelId, oRenderManager, sText, eTextDirection) {
-		var oRm = oRenderManager;
+	TriStateCheckBoxRenderer.renderText = function(sLabelId, oRm, sText, eTextDirection) {
 		oRm.write("<span id=" + sLabelId + " class=\"sapUiTriCbLbl\"");
-		if (!eTextDirection || eTextDirection == sap.ui.core.TextDirection.Inherit) {
+		if (!eTextDirection || eTextDirection == TextDirection.Inherit) {
 			oRm.write(">");
 			oRm.writeEscaped(sText);
 		} else {

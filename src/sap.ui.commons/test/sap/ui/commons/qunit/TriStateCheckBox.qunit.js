@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/commons/TriStateCheckBox",
-	"jquery.sap.global"
+	"sap/ui/thirdparty/jquery"
 ], function(createAndAppendDiv, TriStateCheckBox, jQuery) {
 	"use strict";
 
@@ -72,23 +72,23 @@ sap.ui.define([
 	});
 
 	QUnit.test("Visibility", function(assert) {
-		assert.ok(jQuery.sap.domById("tcb1"), "TriStateCheckBox 1 should exist in page");
+		assert.ok(document.getElementById("tcb1"), "TriStateCheckBox 1 should exist in page");
 		tcb1.setVisible(false);
 		sap.ui.getCore().applyChanges();
-		assert.equal(jQuery.sap.domById("tcb1"), null, "TriStateCheckBox 1 should not be rendered when set to invisible");
+		assert.equal(document.getElementById("tcb1"), null, "TriStateCheckBox 1 should not be rendered when set to invisible");
 		tcb1.setVisible(true);
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.domById("tcb1"), "TriStateCheckBox 1 should exist in page");
+		assert.ok(document.getElementById("tcb1"), "TriStateCheckBox 1 should exist in page");
 	});
 
 	QUnit.test("Width", function(assert) {
-		assert.strictEqual(jQuery.sap.domById("tcb1").offsetWidth, 300, "actual width is wrong");
+		assert.strictEqual(document.getElementById("tcb1").offsetWidth, 300, "actual width is wrong");
 		tcb1.setWidth("401px");
 		sap.ui.getCore().applyChanges();
-		assert.strictEqual(jQuery.sap.domById("tcb1").offsetWidth, 401, "actual width is wrong after change");
+		assert.strictEqual(document.getElementById("tcb1").offsetWidth, 401, "actual width is wrong after change");
 		tcb1.setWidth("300px");
 		sap.ui.getCore().applyChanges();
-		assert.strictEqual(jQuery.sap.domById("tcb1").offsetWidth, 300, "actual width is wrong after change");
+		assert.strictEqual(document.getElementById("tcb1").offsetWidth, 300, "actual width is wrong after change");
 	});
 
 	QUnit.test("ToggleOK", function(assert){
@@ -100,7 +100,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("CssClassesOk", function(assert) {
-		var sSpan = jQuery.sap.domById("tcb1");
+		var sSpan = document.getElementById("tcb1");
 		var sClasses = sSpan.className;
 		assert.notStrictEqual(sClasses, null, "sClasses is null");
 		assert.ok(sClasses.indexOf("sapUiTriCb") > -1, "c1 className is missing 'sapUiTriCb'");
@@ -114,14 +114,14 @@ sap.ui.define([
 		tcb1.setEditable(false);
 
 		sap.ui.getCore().applyChanges();
-		sSpan = jQuery.sap.domById("tcb1").firstChild;
+		sSpan = document.getElementById("tcb1").firstChild;
 		sClasses = sSpan.className;
 		assert.ok(sClasses.indexOf("sapUiTriCbDis") > -1, "className of child is missing 'sapUiTriCbDis'");
 		assert.ok(sClasses.indexOf("sapUiTriCbRo") > -1, "className of child is missing 'sapUiTriCbRo'");
 
 		tcb1.toggle("Mixed");
 		sap.ui.getCore().applyChanges();
-		sSpan = jQuery.sap.domById("tcb1").firstChild;
+		sSpan = document.getElementById("tcb1").firstChild;
 		sClasses = sSpan.className;
 		assert.ok(sClasses.indexOf("sapUiTriCbMix") > -1, "className of child is missing 'sapUiTriCbMix'");
 		assert.ok(sClasses.indexOf("sapUiTriCbRo") > -1, "className of child is missing 'sapUiTriCbRo after toggle'");
@@ -129,7 +129,7 @@ sap.ui.define([
 		tcb1.setEditable(true);
 		tcb1.setEnabled(true);
 		sap.ui.getCore().applyChanges();
-		sSpan = jQuery.sap.domById("tcb1").firstChild;
+		sSpan = document.getElementById("tcb1").firstChild;
 		sClasses = sSpan.className;
 		assert.ok(sClasses.indexOf("sapUiTriCbDis") == -1, "tcb1 className is containing 'sapUiCbDis' after being reenabled");
 		assert.ok(sClasses.indexOf("sapUiTriCbRo") == -1, "tcb1 className is containing 'sapUiCbRo' after switching back to editable");

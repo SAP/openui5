@@ -3,9 +3,13 @@
  */
 
 // Provides control sap.ui.commons.TreeNode.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSupport', 'sap/ui/core/Element'],
-	function(jQuery, library, CustomStyleClassSupport, Element) {
+sap.ui.define(['sap/ui/thirdparty/jquery', './library', 'sap/ui/core/CustomStyleClassSupport', 'sap/ui/core/Element', './Tree'],
+	function(jQuery, library, CustomStyleClassSupport, Element, Tree) {
 	"use strict";
+
+
+	// shortcut for sap.ui.commons.TreeSelectionMode
+	var TreeSelectionMode = library.TreeSelectionMode;
 
 
 	/**
@@ -395,13 +399,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 			oDomClicked.focus();
 
 		} else if (jQuery(oDomClicked).is(".sapUiTreeNodeContent") || jQuery(oDomClicked).is(".sapUiTreeIcon")) {
-			var sSelectionType = sap.ui.commons.Tree.SelectionType.Select;
-			if (oTree.getSelectionMode() == sap.ui.commons.TreeSelectionMode.Multi) {
+			var sSelectionType = Tree.SelectionType.Select;
+			if (oTree.getSelectionMode() == TreeSelectionMode.Multi) {
 				if (oEvent.shiftKey) {
-					sSelectionType = sap.ui.commons.Tree.SelectionType.Range;
+					sSelectionType = Tree.SelectionType.Range;
 				}
 				if (oEvent.metaKey || oEvent.ctrlKey) {
-					sSelectionType = sap.ui.commons.Tree.SelectionType.Toggle;
+					sSelectionType = Tree.SelectionType.Toggle;
 				}
 			}
 			oTree.setSelection(this, false, sSelectionType);
@@ -620,4 +624,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 
 	return TreeNode;
 
-}, /* bExport= */ true);
+});

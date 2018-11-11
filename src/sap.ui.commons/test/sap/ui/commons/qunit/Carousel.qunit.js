@@ -4,10 +4,10 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/commons/Carousel",
 	"sap/ui/commons/Image",
-	"jquery.sap.global",
 	"sap/ui/commons/library",
-	"jquery.sap.keycodes"
-], function(qutils, createAndAppendDiv, Carousel, Image, jQuery, commonsLibrary) {
+	"sap/ui/events/KeyCodes",
+	"sap/ui/dom/jquery/Focusable"
+], function(qutils, createAndAppendDiv, Carousel, Image, commonsLibrary, KeyCodes) {
 	"use strict";
 
 	// shortcut for sap.ui.commons.enums.Orientation
@@ -123,11 +123,11 @@ sap.ui.define([
 		var that = this;
 		setTimeout(
 			function() {
-				assert.strictEqual(jQuery.sap.byId(that.oCarousel1.getId() + '-scrolllist').find('li:first')[0],
-						jQuery.sap.byId(that.oCarousel1.getId() + '-item-IMG2')[0],
+				assert.strictEqual(that.oCarousel1.$('scrolllist').find('li:first')[0],
+						that.oCarousel1.$('item-IMG2')[0],
 					"Image 2 should be at first position.");
-				assert.strictEqual(jQuery.sap.byId(that.oCarousel2.getId() + '-scrolllist').find('li:first')[0],
-						jQuery.sap.byId(that.oCarousel2.getId() + '-item-IMG9')[0],
+				assert.strictEqual(that.oCarousel2.$('scrolllist').find('li:first')[0],
+						that.oCarousel2.$('item-IMG9')[0],
 					"Image 9 should be at first position.");
 				done();
 			}, Math.max(this.oCarousel1.getAnimationDuration(), this.oCarousel2.getAnimationDuration()) + 750);
@@ -140,11 +140,11 @@ sap.ui.define([
 		var that = this;
 		setTimeout(
 			function() {
-				assert.strictEqual(jQuery.sap.byId(that.oCarousel1.getId() + '-scrolllist').find('li:first')[0],
-						jQuery.sap.byId(that.oCarousel1.getId() + '-item-IMG6')[0],
+				assert.strictEqual(that.oCarousel1.$('scrolllist').find('li:first')[0],
+						that.oCarousel1.$('item-IMG6')[0],
 					"Image 6 should be at first position.");
-				assert.strictEqual(jQuery.sap.byId(that.oCarousel2.getId() + '-scrolllist') .find('li:first')[0],
-						jQuery.sap.byId(that.oCarousel2.getId() + '-item-IMG10')[0],
+				assert.strictEqual(that.oCarousel2.$('scrolllist') .find('li:first')[0],
+						that.oCarousel2.$('item-IMG10')[0],
 					"Image 10 should be at first position.");
 				done();
 			}, Math.max(this.oCarousel1.getAnimationDuration(), this.oCarousel2.getAnimationDuration()) + 750);
@@ -152,9 +152,9 @@ sap.ui.define([
 
 	QUnit.test("Navigation ByID - test showElementWithId()", function(assert) {
 		this.oCarousel1.showElementWithId('IMG4');
-		assert.strictEqual(jQuery.sap.byId(this.oCarousel1.getId() + '-scrolllist').find('li:first')[0], jQuery.sap.byId(this.oCarousel1.getId() + '-item-IMG4')[0], "Image 4 should be at first position.");
+		assert.strictEqual(this.oCarousel1.$('scrolllist').find('li:first')[0], this.oCarousel1.$('item-IMG4')[0], "Image 4 should be at first position.");
 		this.oCarousel2.showElementWithId('IMG10');
-		assert.strictEqual(jQuery.sap.byId(this.oCarousel2.getId() + '-scrolllist').find('li:first')[0], jQuery.sap.byId(this.oCarousel2.getId() + '-item-IMG10')[0], "Image 10 should be at first position.");
+		assert.strictEqual(this.oCarousel2.$('scrolllist').find('li:first')[0], this.oCarousel2.$('item-IMG10')[0], "Image 10 should be at first position.");
 	});
 
 	QUnit.test("Test properties defaults as they are like a contract and part of API", function(assert) {
@@ -178,12 +178,12 @@ sap.ui.define([
 
 		this.oCarousel1.setFirstVisibleIndex(7);  // invalid value
 		sap.ui.getCore().applyChanges();
-		assert.strictEqual(jQuery.sap.byId(this.oCarousel1.getId() + '-scrolllist').find('li:first')[0], jQuery.sap.byId(this.oCarousel1.getId() + '-item-IMG1')[0], "Image 1 should be at first position, as 7 is not valid.");
+		assert.strictEqual(this.oCarousel1.$('scrolllist').find('li:first')[0], this.oCarousel1.$('item-IMG1')[0], "Image 1 should be at first position, as 7 is not valid.");
 		assert.strictEqual(this.oCarousel1.getFirstVisibleIndex(), 0, "The default value should be 0, as 7 is not valid value");
 
 		this.oCarousel1.setFirstVisibleIndex(5);  // the last element
 		sap.ui.getCore().applyChanges();
-		assert.strictEqual(jQuery.sap.byId(this.oCarousel1.getId() + '-scrolllist').find('li:first')[0], jQuery.sap.byId(this.oCarousel1.getId() + '-item-IMG6')[0], "Image 6 should be at first position.");
+		assert.strictEqual(this.oCarousel1.$('scrolllist').find('li:first')[0], this.oCarousel1.$('item-IMG6')[0], "Image 6 should be at first position.");
 
 	});
 
@@ -216,15 +216,15 @@ sap.ui.define([
 		var oPrevButton = this.oCarousel1.$("prevbutton");
 		assert.strictEqual(oPrevButton.length, 1 ,"Previous element is rendered...");
 		var oEvent = {
-			target: jQuery.sap.byId(this.oCarousel1.getId() + '-prevbutton')[0]
+			target: this.oCarousel1.$('prevbutton')[0]
 		};
 		this.oCarousel1.onclick(oEvent);
 //				oPrevButton.trigger("tap");
 		var that = this;
 		setTimeout(
 				function() {
-					assert.strictEqual(jQuery.sap.byId(that.oCarousel1.getId() + '-scrolllist').find('li:first')[0],
-							jQuery.sap.byId(that.oCarousel1.getId() + '-item-IMG6')[0],
+					assert.strictEqual(that.oCarousel1.$('scrolllist').find('li:first')[0],
+							that.oCarousel1.$('item-IMG6')[0],
 							"Image 6 should be at first position.");
 					done();
 				}, this.oCarousel1.getAnimationDuration() + 750);
@@ -236,14 +236,14 @@ sap.ui.define([
 		var oNextButton = this.oCarousel1.$("nextbutton");
 		assert.strictEqual(oNextButton.length, 1 ,"Next element is rendered...");
 		var oEvent = {
-			target: jQuery.sap.byId(this.oCarousel1.getId() + '-nextbutton')[0]
+			target: this.oCarousel1.$('nextbutton')[0]
 		};
 		this.oCarousel1.onclick(oEvent);
 		var that = this;
 		setTimeout(
 				function() {
-					assert.strictEqual(jQuery.sap.byId(that.oCarousel1.getId() + '-scrolllist').find('li:first')[0],
-							jQuery.sap.byId(that.oCarousel1.getId() + '-item-IMG2')[0],
+					assert.strictEqual(that.oCarousel1.$('scrolllist').find('li:first')[0],
+							that.oCarousel1.$('item-IMG2')[0],
 							"Image 2 should be at first position.");
 					done();
 				}, this.oCarousel1.getAnimationDuration() + 750);
@@ -254,14 +254,14 @@ sap.ui.define([
 		assert.strictEqual(this.oCarousel1.$().length, 1 ,"Control is rendered...");
 
 		var oEvent = {
-			target: jQuery.sap.byId(this.oCarousel1.getId() + '-alabala')[0]
+			target: this.oCarousel1.$('alabala')[0]
 		};
 		this.oCarousel1.onclick(oEvent);
 		var that = this;
 		setTimeout(
 				function() {
-					assert.strictEqual(jQuery.sap.byId(that.oCarousel1.getId() + '-scrolllist').find('li:first')[0],
-							jQuery.sap.byId(that.oCarousel1.getId() + '-item-IMG1')[0],
+					assert.strictEqual(that.oCarousel1.$('scrolllist').find('li:first')[0],
+							that.oCarousel1.$('item-IMG1')[0],
 							"Image 1 should be at first position.");
 					done();
 				}, this.oCarousel1.getAnimationDuration() + 750);
@@ -285,15 +285,15 @@ sap.ui.define([
 		assert.strictEqual(this.oCarousel1._bActionMode, undefined, "Action mode should be false by default");
 		this.oCarousel1._oItemNavigation.setFocusedIndex(0);
 		var $item = this.oCarousel1._oItemNavigation.getFocusedDomRef();
-		qutils.triggerKeydown($item, jQuery.sap.KeyCodes.F2); // trigger F2 in order to start the mode
-		qutils.triggerKeydown($item, jQuery.sap.KeyCodes.ARROW_DOWN); // trigger arrow down in order to move to the next el.
+		qutils.triggerKeydown($item, KeyCodes.F2); // trigger F2 in order to start the mode
+		qutils.triggerKeydown($item, KeyCodes.ARROW_DOWN); // trigger arrow down in order to move to the next el.
 		var that = this;
 
 		setTimeout(
 				function() {
 
-					assert.strictEqual(jQuery.sap.byId(that.oCarousel1.getId() + '-scrolllist').find('li:first')[0],
-							jQuery.sap.byId(that.oCarousel1.getId() + '-item-IMG2')[0],
+					assert.strictEqual(that.oCarousel1.$('scrolllist').find('li:first')[0],
+							that.oCarousel1.$('item-IMG2')[0],
 							"Image 2 should be at first position.");
 					done();
 
@@ -307,8 +307,8 @@ sap.ui.define([
 		assert.strictEqual(this.oCarousel1._bActionMode, undefined, "Action mode should be undefined by default");
 		this.oCarousel1._oItemNavigation.setFocusedIndex(0);
 		var $item = this.oCarousel1._oItemNavigation.getFocusedDomRef();
-		qutils.triggerKeydown($item, jQuery.sap.KeyCodes.F2); // trigger F2 in order to start the mode
-		qutils.triggerKeydown($item, jQuery.sap.KeyCodes.ARROW_UP); // trigger arrow up in order to move to the previous el.
+		qutils.triggerKeydown($item, KeyCodes.F2); // trigger F2 in order to start the mode
+		qutils.triggerKeydown($item, KeyCodes.ARROW_UP); // trigger arrow up in order to move to the previous el.
 		var that = this;
 		var oEvent = {
 			target: this.oCarousel1.$().find(".sapUiCrslScl").lastFocusableDomRef(),
@@ -323,8 +323,8 @@ sap.ui.define([
 		setTimeout(
 				function() {
 
-					assert.strictEqual(jQuery.sap.byId(that.oCarousel1.getId() + '-scrolllist').find('li:first')[0],
-							jQuery.sap.byId(that.oCarousel1.getId() + '-item-IMG6')[0],
+					assert.strictEqual(that.oCarousel1.$('scrolllist').find('li:first')[0],
+							that.oCarousel1.$('item-IMG6')[0],
 							"Image 6 should be at first position.");
 //
 					that.oCarousel1._enterActionMode($item);
@@ -335,7 +335,7 @@ sap.ui.define([
 					that.oCarousel1._leaveActionMode({});
 					assert.strictEqual(that.oCarousel1._bActionMode, false, "Action mode should be false ");
 					// press Escape - should leave the action mode
-					qutils.triggerKeydown($item, jQuery.sap.KeyCodes.ESCAPE);
+					qutils.triggerKeydown($item, KeyCodes.ESCAPE);
 					assert.strictEqual(that.oCarousel1._bActionMode, false, "Action mode should be false ");
 
 					// remove from DOM and execute onresize test

@@ -6,9 +6,9 @@ sap.ui.define([
 	"sap/ui/core/ListItem",
 	"sap/ui/core/library",
 	"sap/ui/model/json/JSONModel",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/commons/ListBox",
-	"jquery.sap.keycodes"
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -17,7 +17,8 @@ sap.ui.define([
 	coreLibrary,
 	JSONModel,
 	jQuery,
-	ListBox
+	ListBox,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -50,8 +51,7 @@ sap.ui.define([
 			ariaLabelledBy : aAriaLabelledBy
 			}),
 		sComboInputId = sComboId + "-input",
-		sComboIconId = sComboId + "-icon",
-		sComboListBoxId = sComboId + "-lb";
+		sComboIconId = sComboId + "-icon";
 
 	oCombo.placeAt("uiArea1");
 
@@ -85,10 +85,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("TestRenderedOK", function(assert){
-		assert.notEqual(jQuery.sap.domById(sComboId), null, "ComboBox outer HTML Element should be rendered.");
+		assert.notEqual(oCombo.getDomRef(), null, "ComboBox outer HTML Element should be rendered.");
 		assert.equal(jQuery("#testCmb > input").length, 1, "ComboBox should provide an input element.");
 		assert.equal(oCombo.getValue(), sCheckText, "Default value / text should still be set.");
-		assert.equal(jQuery.sap.domById(sComboInputId).value, sCheckText, "Default value / text should be in the HTML.");
+		assert.equal(document.getElementById(sComboInputId).value, sCheckText, "Default value / text should be in the HTML.");
 		assert.equal(oCombo.getFocusDomRef().value, sCheckText, "Default value / text should be in the HTML and accessible via getDomRef.");
 
 		// in jQuery 1.6.2 this has changed
@@ -104,9 +104,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("ARIA", function(assert) {
-		var oCB = jQuery.sap.byId(sComboId);
+		var oCB = oCombo.$();
 		var oCBInput = jQuery("#testCmb > input");
-		//var oCB2 = jQuery.sap.byId(sComboId + "2");
+		//var oCB2 = oCombo2.$();
 		var oCBInput2 = jQuery("#testCmb2 > input");
 		assert.equal(oCB.attr("role"), "combobox", "Role");
 		assert.equal(oCB.attr("aria-owns"), "testCmb-input testCmb-lb", "aria-owns");
@@ -224,7 +224,7 @@ sap.ui.define([
 			assert.equal(oCombo.getSelectedKey(), "", "selectedKey should not be set yet");
 			assert.equal(oCombo.getSelectedItemId(), "", "selectedItemId should not be set yet");
 
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ENTER, false, false, false);
 
 			assert.equal(oCombo.getValue(), "second item", "ComboBox' value should have been autocompleted.");
 			assert.equal(oCombo.getFocusDomRef().value, "second item", "ComobBox' value should not change after autocomplete in HTML.");
@@ -248,7 +248,7 @@ sap.ui.define([
 			assert.equal(oCombo.getSelectedKey(), "", "selectedKey should not be set yet");
 			assert.equal(oCombo.getSelectedItemId(), "", "selectedItemId should not be set yet");
 
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ENTER, false, false, false);
 
 			assert.equal(oCombo.getValue(), "third item", "ComboBox' value should have been autocompleted.");
 			assert.equal(oCombo.getFocusDomRef().value, "third item", "ComobBox' value should not change after autocomplete in HTML.");
@@ -267,8 +267,8 @@ sap.ui.define([
 		assert.equal(oCombo.getSelectedKey(), "key3", "selectedKey should not have changed");
 		assert.equal(oCombo.getSelectedItemId(), "ti", "selectedItemId should not have changed");
 
-		qutils.triggerKeyEvent("keydown", sComboInputId, jQuery.sap.KeyCodes.ESCAPE);
-		qutils.triggerKeyEvent("keypress", sComboInputId, jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeyEvent("keydown", sComboInputId, KeyCodes.ESCAPE);
+		qutils.triggerKeyEvent("keypress", sComboInputId, KeyCodes.ESCAPE);
 
 		assert.equal(oCombo.getValue(), "third item", "ComboBox' value should have not been changed.");
 		assert.equal(oCombo.getFocusDomRef().value, "third item", "ComboBox' value should have been set back in HTML.");
@@ -285,27 +285,27 @@ sap.ui.define([
 	QUnit.test("TestArrowDownOK", function(assert){
 		resetBeforeTest(assert);
 
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ARROW_DOWN, false, false, false);
 		assert.equal(oCombo.getValue(), "", "ComboBox' value should not have changed in HTML.");
 		assert.equal(oCombo.getFocusDomRef().value, "first item", "ComobBox' value should have changed in HTML.");
 
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ARROW_DOWN, false, false, false);
 		assert.equal(oCombo.getValue(), "", "ComboBox' value should not have changed in HTML.");
 		assert.equal(oCombo.getFocusDomRef().value, "second item", "ComobBox' value should have changed in HTML.");
 
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ARROW_DOWN, false, false, false);
 		assert.equal(oCombo.getValue(), "", "ComboBox' value should not have changed in HTML.");
 		assert.equal(oCombo.getFocusDomRef().value, "third item", "ComobBox' value should have changed in HTML.");
 
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ARROW_DOWN, false, false, false);
 		assert.equal(oCombo.getValue(), "", "ComboBox' value should not have changed in HTML.");
 		assert.equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' value should have changed in HTML.");
 
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ARROW_DOWN, false, false, false);
 		assert.equal(oCombo.getValue(), "", "ComboBox' value should not have changed in HTML.");
 		assert.equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' value should have changed in HTML.");
 
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ENTER, false, false, false);
 
 		assert.equal(oCombo.getValue(), "last item", "ComboBox' value should hold selected value.");
 		assert.equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' value should not have changed in HTML.");
@@ -318,23 +318,23 @@ sap.ui.define([
 		assert.equal(oCombo.getValue(), "last item", "ComboBox' value should be last item.");
 		assert.equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' value should match to HTML.");
 
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ARROW_UP, false, false, false);
 		assert.equal(oCombo.getValue(), "last item", "ComboBox' value should not have changed in HTML.");
 		assert.equal(oCombo.getFocusDomRef().value, "third item", "ComobBox' value should have changed in HTML.");
 
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ARROW_UP, false, false, false);
 		assert.equal(oCombo.getValue(), "last item", "ComboBox' value should not have changed in HTML.");
 		assert.equal(oCombo.getFocusDomRef().value, "second item", "ComobBox' value should have changed in HTML.");
 
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ARROW_UP, false, false, false);
 		assert.equal(oCombo.getValue(), "last item", "ComboBox' value should not have changed in HTML.");
 		assert.equal(oCombo.getFocusDomRef().value, "first item", "ComobBox' value should have changed in HTML.");
 
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ARROW_UP, false, false, false);
 		assert.equal(oCombo.getValue(), "last item", "ComboBox' value should not have changed in HTML.");
 		assert.equal(oCombo.getFocusDomRef().value, "first item", "ComobBox' value should have changed in HTML.");
 
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ENTER, false, false, false);
 
 		assert.equal(oCombo.getValue(), "first item", "ComboBox' value should hold selected value.");
 		assert.equal(oCombo.getFocusDomRef().value, "first item", "ComobBox' value should not have changed in HTML.");
@@ -351,7 +351,7 @@ sap.ui.define([
 	QUnit.test("TestEndOK", function(assert){
 		resetBeforeTest(assert);
 
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.END, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.END, false, false, false);
 		assert.equal(oCombo.getValue(), "", "ComboBox' value should not have changed when not proposal list not open.");
 		assert.equal(oCombo.getFocusDomRef().value, "", "ComobBox' value should not have changed in HTML when not proposal list not open.");
 		assert.equal(oCombo.getSelectedKey(), "", "selectedKey should not have changed");
@@ -359,7 +359,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("TestHomeOK", function(assert){
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.HOME, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.HOME, false, false, false);
 		assert.equal(oCombo.getValue(), "", "ComboBox' value should not have changed when not proposal list not open.");
 		assert.equal(oCombo.getFocusDomRef().value, "", "ComobBox' value should not have changed in HTML when not proposal list not open.");
 		assert.equal(oCombo.getSelectedKey(), "", "selectedKey should not have changed");
@@ -367,12 +367,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("TestPageDownOK", function(assert){
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.PAGE_DOWN, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.PAGE_DOWN, false, false, false);
 		assert.ok(true, "Implementation pending. Specification prio 3");
 	});
 
 	QUnit.test("TestPageUpOK", function(assert){
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.PAGE_UP, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.PAGE_UP, false, false, false);
 		assert.ok(true, "Implementation pending. Specification prio 3");
 	});
 
@@ -387,13 +387,13 @@ sap.ui.define([
 		var done = assert.async();
 		resetBeforeTest(assert);
 
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.F4, false, false, false);
 		setTimeout( function(){
 			// as Popup calls fireOpended for IE9 async
-			assert.ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+			assert.ok(oCombo.$("lb").is(":visible"), "ListBox should be visible after F4 press");
 
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			assert.ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after second F4 press");
+			qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.F4, false, false, false);
+			assert.ok(oCombo.$("lb").is(":hidden"), "ListBox should be hidden after second F4 press");
 			done();
 		}, 10);
 
@@ -401,13 +401,13 @@ sap.ui.define([
 
 	QUnit.test("TestOpenCloseViaKeyboardARROWOK", function(assert){
 		var done = assert.async();
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, true, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ARROW_DOWN, false, true, false);
 		setTimeout( function(){
 			// as Popup calls fireOpended for IE9 async
-			assert.ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after Alt + Arrow Down press");
+			assert.ok(oCombo.$("lb").is(":visible"), "ListBox should be visible after Alt + Arrow Down press");
 
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_UP, false, true, false);
-			assert.ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after Alt + Arrow Up press");
+			qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ARROW_UP, false, true, false);
+			assert.ok(oCombo.$("lb").is(":hidden"), "ListBox should be hidden after Alt + Arrow Up press");
 			done();
 		}, 10);
 
@@ -420,10 +420,10 @@ sap.ui.define([
 		qutils.triggerEvent("click", sComboIconId);
 		setTimeout( function(){
 			// as Popup calls fireOpended for IE9 async
-			assert.ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after click on F4 help button");
+			assert.ok(oCombo.$("lb").is(":visible"), "ListBox should be visible after click on F4 help button");
 
 			qutils.triggerEvent("click", sComboIconId);
-			assert.ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after second click on F4 help button");
+			assert.ok(oCombo.$("lb").is(":hidden"), "ListBox should be hidden after second click on F4 help button");
 			done();
 		}, 10);
 
@@ -447,10 +447,10 @@ sap.ui.define([
 		var done = assert.async();
 		assert.expect(16); // two from reset, 12 from this method and 2 from the event handler (initiated via click events)
 
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.F4, false, false, false);
 		setTimeout( function(){
 			// as Popup calls fireOpended for IE9 async
-			assert.ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+			assert.ok(oCombo.$("lb").is(":visible"), "ListBox should be visible after F4 press");
 
 			qutils.triggerEvent("click", "si-txt");
 			assert.equal(oCombo.getValue(), "second item", "ComboBox' second item should have been selected.");
@@ -458,10 +458,10 @@ sap.ui.define([
 			assert.equal(oCombo.getSelectedKey(), "key2", "selectedKey should fit to the selected item");
 			assert.equal(oCombo.getSelectedItemId(), "si", "selectedItemId should fit to the selected item");
 
-			assert.ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after item selection");
+			assert.ok(oCombo.$("lb").is(":hidden"), "ListBox should be hidden after item selection");
 
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			assert.ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+			qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.F4, false, false, false);
+			assert.ok(oCombo.$("lb").is(":visible"), "ListBox should be visible after F4 press");
 
 			qutils.triggerEvent("click", "li-txt");
 			assert.equal(oCombo.getValue(), "last item", "ComboBox' second item should have been selected.");
@@ -469,7 +469,7 @@ sap.ui.define([
 			assert.equal(oCombo.getSelectedKey(), "key4", "selectedKey should fit to the selected item");
 			assert.equal(oCombo.getSelectedItemId(), "li", "selectedItemId should fit to the selected item");
 
-			assert.ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after item selection");
+			assert.ok(oCombo.$("lb").is(":hidden"), "ListBox should be hidden after item selection");
 			done();
 		}, 10);
 	});
@@ -485,33 +485,33 @@ sap.ui.define([
 		var done = assert.async();
 		resetBeforeTest(assert);
 
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.F4, false, false, false);
 		setTimeout( function(){
 			// as Popup calls fireOpended for IE9 async
-			assert.ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+			assert.ok(oCombo.$("lb").is(":visible"), "ListBox should be visible after F4 press");
 
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.END, false, false, false);
+			qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.END, false, false, false);
 			assert.equal(oCombo.getValue(), "", "ComboBox' value should not have changed in HTML.");
 			assert.equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' value should match to HTML.");
 			assert.equal(oCombo.getSelectedKey(), "", "selectedKey should not have changed");
 			assert.equal(oCombo.getSelectedItemId(), "", "selectedItemId should not have changed");
 
 			// also check that second 'END' stays the same
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.END, false, false, false);
+			qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.END, false, false, false);
 			assert.equal(oCombo.getValue(), "", "ComboBox' value should not have changed in HTML.");
 			assert.equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' value should match to HTML.");
 			assert.equal(oCombo.getSelectedKey(), "", "selectedKey should not have changed");
 			assert.equal(oCombo.getSelectedItemId(), "", "selectedItemId should not have changed");
 
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			assert.ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden again after second F4 press");
+			qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.F4, false, false, false);
+			assert.ok(oCombo.$("lb").is(":hidden"), "ListBox should be hidden again after second F4 press");
 
 			assert.equal(oCombo.getValue(), "", "ComboBox' value should not have changed in HTML.");
 			assert.equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' value should match to HTML.");
 			assert.equal(oCombo.getSelectedKey(), "", "selectedKey should not have changed");
 			assert.equal(oCombo.getSelectedItemId(), "", "selectedItemId should not have changed");
 
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ENTER, false, false, false);
 
 			assert.equal(oCombo.getValue(), "last item", "ComboBox' value should hold selected value.");
 			assert.equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' value should not have changed in HTML.");
@@ -523,28 +523,28 @@ sap.ui.define([
 
 	QUnit.test("TestHomeWhenOpenedOK", function(assert){
 		var done = assert.async();
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.F4, false, false, false);
 		setTimeout( function(){
 			// as Popup calls fireOpended for IE9 async
-			assert.ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+			assert.ok(oCombo.$("lb").is(":visible"), "ListBox should be visible after F4 press");
 
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.HOME, false, false, false);
+			qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.HOME, false, false, false);
 			assert.equal(oCombo.getValue(), "last item", "ComboBox' value should not have changed in HTML.");
 			assert.equal(oCombo.getFocusDomRef().value, "first item", "ComobBox' value should have changed in HTML.");
 			assert.equal(oCombo.getSelectedKey(), "key4", "selectedKey should not have changed");
 			assert.equal(oCombo.getSelectedItemId(), "li", "selectedItemId should not have changed");
 
 			// also check that second 'Home' stays the same
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.HOME, false, false, false);
+			qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.HOME, false, false, false);
 			assert.equal(oCombo.getValue(), "last item", "ComboBox' value should not have changed in HTML.");
 			assert.equal(oCombo.getFocusDomRef().value, "first item", "ComobBox' value should not have changed in HTML.");
 			assert.equal(oCombo.getSelectedKey(), "key4", "selectedKey should not have changed");
 			assert.equal(oCombo.getSelectedItemId(), "li", "selectedItemId should not have changed");
 
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			assert.ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden again after second F4 press");
+			qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.F4, false, false, false);
+			assert.ok(oCombo.$("lb").is(":hidden"), "ListBox should be hidden again after second F4 press");
 
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ENTER, false, false, false);
 
 			assert.equal(oCombo.getValue(), "first item", "ComboBox' value should hold selected value.");
 			assert.equal(oCombo.getFocusDomRef().value, "first item", "ComobBox' value should not have changed in HTML.");
@@ -580,7 +580,7 @@ sap.ui.define([
 		jQuery.each(sText.split(''), function(idx, val){
 			qutils.triggerCharacterInput(sComboInputId, val);
 		});
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ENTER, false, false, false);
 
 		assert.equal(oCombo.getValue(), sText, "ComboBox should provide new value via getter method.");
 		assert.equal(oCombo.getSelectedKey(), "", "selectedKey should fit to the selected item");
@@ -630,10 +630,10 @@ sap.ui.define([
 
 		oCombo.attachChange(oTest2);
 
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ARROW_DOWN, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ARROW_DOWN, false, false, false);
 
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ENTER, false, false, false);
 
 		assert.equal(oCombo.getValue(), "second item", "ComboBox' value should be \"second item\".");
 		assert.equal(oCombo.getInputDomRef().value, "second item", "ComobBox' selected value should be shown in HTML.");
@@ -655,9 +655,9 @@ sap.ui.define([
 
 		oCombo.attachChange(oTest3);
 
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
-		qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ARROW_DOWN, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ARROW_DOWN, false, false, false);
+		qutils.triggerKeyboardEvent(sComboInputId, KeyCodes.ARROW_DOWN, false, false, false);
 
 		oCombo2.focus();
 	});
@@ -708,7 +708,7 @@ sap.ui.define([
 	QUnit.test("initial binding", function(assert){
 		// even if selectedKey is set before items it must be used after items are added
 		assert.equal(oCombo4.getValue(), "Item 2", "Text of second item must be set");
-		assert.equal(jQuery.sap.domById(oCombo4.getId() + "-input").value, "Item 2", "Text of second item must be set in the HTML.");
+		assert.equal(oCombo4.getDomRef("input").value, "Item 2", "Text of second item must be set in the HTML.");
 		assert.equal(oCombo4.getSelectedKey(), "I2", "Key of second item must be selected");
 	});
 
@@ -722,7 +722,7 @@ sap.ui.define([
 		oModel.checkUpdate();
 		setTimeout( function() {
 			assert.equal(oCombo4.getValue(), "Item C", "Text of third item must be set");
-			assert.equal(jQuery.sap.domById(oCombo4.getId() + "-input").value, "Item C", "Text of third item must be set in the HTML.");
+			assert.equal(oCombo4.getDomRef("input").value, "Item C", "Text of third item must be set in the HTML.");
 			assert.equal(oCombo4.getSelectedKey(), "IC", "Key of third item must be selected");
 			done();
 		},0);
@@ -737,7 +737,7 @@ sap.ui.define([
 		oModel.checkUpdate();
 		setTimeout( function() {
 			assert.equal(oCombo4.getValue(), "Item C", "Text must not be changed");
-			assert.equal(jQuery.sap.domById(oCombo4.getId() + "-input").value, "Item C", "Text of third item must not be changed in the HTML.");
+			assert.equal(oCombo4.getDomRef("input").value, "Item C", "Text of third item must not be changed in the HTML.");
 			assert.equal(oCombo4.getSelectedKey(), "IC", "Key must not be changed");
 			done();
 		},0);
@@ -751,7 +751,7 @@ sap.ui.define([
 		oCombo4.addItem(new ListItem("Item-Z",{text:"Item Z", key:"IZ"}));
 		oCombo4.insertItem(new ListItem("Item-Y",{text:"Item Y", key:"IY"}), 1);
 		assert.equal(oCombo4.getValue(), "Item Y", "Text of second item must be set");
-		assert.equal(jQuery.sap.domById(oCombo4.getId() + "-input").value, "Item Y", "Text of second item must be set in the HTML.");
+		assert.equal(oCombo4.getDomRef("input").value, "Item Y", "Text of second item must be set in the HTML.");
 		assert.equal(oCombo4.getSelectedKey(), "IY", "Key of second item must be selected");
 		assert.equal(oCombo4.getSelectedItemId(), "Item-Y", "ID of second item must be selected");
 	});

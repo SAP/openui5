@@ -4,15 +4,20 @@
 
 // Provides control sap.ui.commons.Button.
 sap.ui.define([
-    'jquery.sap.global',
     './library',
     'sap/ui/core/Control',
     'sap/ui/core/EnabledPropagator',
     'sap/ui/core/IconPool',
-    "./ButtonRenderer"
+    './ButtonRenderer',
+    'sap/ui/Device'
 ],
-	function(jQuery, library, Control, EnabledPropagator, IconPool, ButtonRenderer) {
+	function(library, Control, EnabledPropagator, IconPool, ButtonRenderer, Device) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.commons.ButtonStyle
+	var ButtonStyle = library.ButtonStyle;
 
 
 
@@ -112,7 +117,7 @@ sap.ui.define([
 			 * Style of the button.
 			 * (e.g. emphasized)
 			 */
-			style : {type : "sap.ui.commons.ButtonStyle", group : "Appearance", defaultValue : sap.ui.commons.ButtonStyle.Default}
+			style : {type : "sap.ui.commons.ButtonStyle", group : "Appearance", defaultValue : ButtonStyle.Default}
 		},
 		associations : {
 
@@ -198,15 +203,15 @@ sap.ui.define([
 			this.getRenderer().onactive(this);
 		}
 		// webkit && firefox on mac does not focus a Button on click, it even unfocuses it onmousedown!
-		if (bFocus && (!!sap.ui.Device.browser.webkit || (!!sap.ui.Device.browser.firefox && navigator.platform.indexOf("Mac") === 0))) {
-			if (sap.ui.Device.browser.mobile && !!sap.ui.Device.browser.webkit) {
+		if (bFocus && (Device.browser.webkit || (Device.browser.firefox && navigator.platform.indexOf("Mac") === 0))) {
+			if (Device.browser.mobile && Device.browser.webkit) {
 				//In mobile Webkit Browsers (IPad) the focus must be set immediately to ensure that a focusout happens wherever the
 				//focus currently is. The deleayedCall below is still needed due to the reason described above. (CSN 2536817 2012)
 				this.focus();
 			}
-			jQuery.sap.delayedCall(0, this, function(){
+			setTimeout(function(){
 				this.focus();
-			});
+			}.bind(this), 0);
 		}
 	};
 
@@ -341,7 +346,7 @@ sap.ui.define([
 	Button.prototype.getAccessibilityInfo = function() {
 		var sDesc = this.getText() || this.getTooltip_AsString();
 		if (!sDesc && this.getIcon()) {
-			var oIconInfo = sap.ui.core.IconPool.getIconInfo(this.getIcon());
+			var oIconInfo = IconPool.getIconInfo(this.getIcon());
 			if (oIconInfo) {
 				sDesc = oIconInfo.text || oIconInfo.name;
 			}
@@ -359,4 +364,4 @@ sap.ui.define([
 
 	return Button;
 
-}, /* bExport= */ true);
+});

@@ -3,9 +3,16 @@
  */
 
 // Provides default renderer for control sap.ui.commons.RadioButton
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
-	function(jQuery, ValueStateSupport) {
+sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library'],
+	function(ValueStateSupport, coreLibrary) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 
 	/**
@@ -20,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 	/**
 	 * Renders the HTML for the RadioButton, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the render output buffer.
 	 * @param {sap.ui.commons.RadioButton} oRadioButton The RadioButton control that should be rendered.
 	 */
 	RadioButtonRenderer.render = function(rm, oRadioButton) {
@@ -37,7 +44,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		rm.writeAccessibilityState(oRadioButton, {
 			role: "radio",
 			checked: oRadioButton.getSelected() === true,
-			invalid: oRadioButton.getValueState() == sap.ui.core.ValueState.Error,
+			invalid: oRadioButton.getValueState() == ValueState.Error,
 			disabled: !oRadioButton.getEditable(),
 			labelledby: sId + "-label",
 			describedby: tooltip ? sId + "-Descr" : undefined
@@ -49,8 +56,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		var inErrorState = false;
 		var inWarningState = false;
 		if (oRadioButton.getValueState() != null) {
-			inErrorState = sap.ui.core.ValueState.Error == oRadioButton.getValueState();
-			inWarningState = sap.ui.core.ValueState.Warning == oRadioButton.getValueState();
+			inErrorState = ValueState.Error == oRadioButton.getValueState();
+			inWarningState = ValueState.Warning == oRadioButton.getValueState();
 		}
 
 		// Add classes and properties depending on the state
@@ -147,9 +154,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 	/**
 	 * Write RadioButton label - either flat, or, in case the text direction is different from the environment, within a <span> with an explicit "dir".
 	 */
-	RadioButtonRenderer.renderText = function(oRenderManager, sText, eTextDirection) {
-		var rm = oRenderManager;
-		if (!eTextDirection || eTextDirection == sap.ui.core.TextDirection.Inherit) {
+	RadioButtonRenderer.renderText = function(rm, sText, eTextDirection) {
+		if (!eTextDirection || eTextDirection == TextDirection.Inherit) {
 			rm.writeEscaped(sText);
 		} else {
 			rm.write("<span style=\"direction:" + eTextDirection.toLowerCase() + ";\">");

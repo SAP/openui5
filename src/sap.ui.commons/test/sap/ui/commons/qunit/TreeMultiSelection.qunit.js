@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/commons/Tree",
 	"sap/ui/commons/TreeNode",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel"
 ], function(createAndAppendDiv, Tree, TreeNode, jQuery, JSONModel) {
 	"use strict";
@@ -78,9 +78,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Rendering of Standard tree", function(assert) {
-		assert.notEqual(jQuery.sap.domById("tree"), null,	"Tree is rendered.");
-		assert.notEqual(jQuery.sap.domById("tree" + "-Header"), null,	"Tree header is there.");
-		assert.notEqual(jQuery.sap.domById("tree" + "-TreeCont"),	null, "Tree content is there");
+		assert.notEqual(document.getElementById("tree"), null,	"Tree is rendered.");
+		assert.notEqual(document.getElementById("tree" + "-Header"), null,	"Tree header is there.");
+		assert.notEqual(document.getElementById("tree" + "-TreeCont"),	null, "Tree content is there");
 	});
 
 	QUnit.module("Selection Mode 'Single'", {

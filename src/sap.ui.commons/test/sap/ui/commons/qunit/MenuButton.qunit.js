@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/commons/MenuButton",
 	"sap/ui/commons/Menu",
 	"sap/ui/commons/MenuItem",
-	"jquery.sap.global"
+	"sap/ui/thirdparty/jquery"
 ], function(qutils, createAndAppendDiv, MenuButton, Menu, MenuItem, jQuery) {
 	"use strict";
 
@@ -37,8 +37,8 @@ sap.ui.define([
 	QUnit.module("Basic");
 
 	QUnit.test("Initial Rendering", function(assert) {
-		assert.notEqual(jQuery.sap.domById(oMenuButton1.getId()), null, "MenuButton HTML Element should be rendered");
-		assert.equal(jQuery.sap.domById(oMenu1.getId()), null, "Menu HTML Element is not yet rendered");
+		assert.notEqual(oMenuButton1.getDomRef(), null, "MenuButton HTML Element should be rendered");
+		assert.equal(oMenu1.getDomRef(), null, "Menu HTML Element is not yet rendered");
 	});
 
 	QUnit.test("Property - Default Values", function(assert) {
@@ -69,10 +69,10 @@ sap.ui.define([
 	QUnit.test("Test Open/Close via Mouse", function(assert) {
 		oMenuButton1.focus();
 		qutils.triggerEvent("click", oMenuButton1.getId());
-		assert.ok(jQuery.sap.byId(oMenu1.getId()).is(":visible"), "Menu is visible after click");
+		assert.ok(oMenu1.$().is(":visible"), "Menu is visible after click");
 
 		qutils.triggerEvent("click", "menuitem1");
-		assert.ok(jQuery.sap.byId(oMenu1.getId()).length == 0, "Menu is hidden after click on a menuitem and DOM is removed");
+		assert.ok(oMenu1.$().length == 0, "Menu is hidden after click on a menuitem and DOM is removed");
 
 	});
 
@@ -80,11 +80,11 @@ sap.ui.define([
 		oMenuButton1.focus();
 		qutils.triggerKeyboardEvent(oMenuButton1.getId(), "SPACE");
 		qutils.triggerEvent("click", oMenuButton1.getId()); //In real life the space will followed by a click
-		assert.ok(jQuery.sap.byId(oMenu1.getId()).is(":visible"), "Menu is visible after SPACE is pressed");
+		assert.ok(oMenu1.$().is(":visible"), "Menu is visible after SPACE is pressed");
 
 		qutils.triggerKeyboardEvent(oMenuItem1.getId(), "SPACE"); //keydown
 		qutils.triggerKeyEvent("keyup", oMenuItem1.getId(), "SPACE"); //keyup
-		assert.ok(jQuery.sap.byId(oMenu1.getId()).length == 0, "Menu is hidden after SPACE is pressed on a menuitem and DOM is removed");
+		assert.ok(oMenu1.$().length == 0, "Menu is hidden after SPACE is pressed on a menuitem and DOM is removed");
 	});
 
 	QUnit.module("Events");

@@ -4,12 +4,17 @@
 
 // Provides control sap.ui.commons.Toolbar.
 sap.ui.define([
-    'jquery.sap.global',
+    'sap/ui/thirdparty/jquery',
     './library',
     'sap/ui/core/Control',
     'sap/ui/core/Popup',
     'sap/ui/core/delegate/ItemNavigation',
-    './ToolbarRenderer'
+    './ToolbarRenderer',
+    'sap/base/assert',
+    'sap/ui/dom/containsOrEquals',
+    'sap/ui/core/ResizeHandler',
+    'sap/ui/core/Element',
+    'sap/ui/events/KeyCodes'
 ],
 	function(
 	    jQuery,
@@ -17,9 +22,17 @@ sap.ui.define([
 		Control,
 		Popup,
 		ItemNavigation,
-		ToolbarRenderer
+		ToolbarRenderer,
+		assert,
+		containsOrEquals,
+		ResizeHandler,
+		Element,
+		KeyCodes
 	) {
 		"use strict";
+
+		// shortcut for sap.ui.commons.ToolbarDesign
+		var ToolbarDesign = library.ToolbarDesign;
 
 		/**
 		 * Constructor for a new Toolbar.
@@ -61,7 +74,7 @@ sap.ui.define([
 					design: {
 						type: "sap.ui.commons.ToolbarDesign",
 						group: "Appearance",
-						defaultValue: sap.ui.commons.ToolbarDesign.Flat
+						defaultValue: ToolbarDesign.Flat
 					},
 
 					/**
@@ -140,8 +153,7 @@ sap.ui.define([
 			this.oDomRef = this.getDomRef();
 			this.oInnerRef = this.oDomRef.firstChild.firstChild;
 			jQuery(this.oInnerRef).css("visibility", "visible");
-			var sOverflowId = this.getId() + "-mn";
-			this.oOverflowDomRef = jQuery.sap.domById(sOverflowId);
+			this.oOverflowDomRef = this.getDomRef("mn");
 
 			// Initialize the ItemNavigation if required
 			if (!this.oItemNavigation) {
@@ -153,11 +165,11 @@ sap.ui.define([
 			// and the subsequent keydown will make the browser fire a click event on that button
 			this.$("mn").bind("keydown", jQuery.proxy(this._handleKeyDown, this));
 
-			this.sResizeListenerId = sap.ui.core.ResizeHandler.register(this.oDomRef, jQuery.proxy(this.ontoolbarresize, this));
+			this.sResizeListenerId = ResizeHandler.register(this.oDomRef, jQuery.proxy(this.ontoolbarresize, this));
 			var iRightItemsLength = this.getRightItems().length;
 			this.bHasRightItems = iRightItemsLength > 0;
 			if (this.bHasRightItems) {
-				this.sRightSideResizeListenerId = sap.ui.core.ResizeHandler.register(this.oDomRef.lastChild, jQuery.proxy(this.onrightsideresize, this));
+				this.sRightSideResizeListenerId = ResizeHandler.register(this.oDomRef.lastChild, jQuery.proxy(this.onrightsideresize, this));
 				// Re-initialize the ItemNavigation with changed DomRefs after rendering and set the overflow icon properly
 				this.updateAfterResize(true);
 				this._observeVisibleItemCountChange(40);
@@ -176,7 +188,7 @@ sap.ui.define([
 		 * @private
 		 */
 		Toolbar.prototype._handleKeyDown = function (oEvent) {
-			if ((oEvent.keyCode == jQuery.sap.KeyCodes.SPACE)
+			if ((oEvent.keyCode == KeyCodes.SPACE)
 				&& (oEvent.target.id === this.getId() + "-mn")) {
 				this.handleOverflowButtonTriggered();
 				oEvent.preventDefault();
@@ -234,7 +246,7 @@ sap.ui.define([
 
 			// no additional update needed
 			if (this.sUpdateItemNavigationTimer) {
-				jQuery.sap.clearDelayedCall(this.sUpdateItemNavigationTimer);
+				clearTimeout(this.sUpdateItemNavigationTimer);
 				this.sUpdateItemNavigationTimer = null;
 			}
 		};
@@ -249,7 +261,7 @@ sap.ui.define([
 			// Stop the periodic overflow checker
 			if (!this.getDomRef()) {
 				if (this._detectVisibleItemCountChangeTimer) {
-					jQuery.sap.clearDelayedCall(this._detectVisibleItemCountChangeTimer);
+					clearTimeout(this._detectVisibleItemCountChangeTimer);
 					this._detectVisibleItemCountChangeTimer = null;
 				}
 				return;
@@ -284,7 +296,7 @@ sap.ui.define([
 
 			//} else {
 			// should never happen, as there is always one visible item
-			// don't log, as this is called several times per second...   jQuery.sap.log.warning("Toolbar " + this.getId() + ": illegal state");
+			// don't log, as this is called several times per second...   Log.warning("Toolbar " + this.getId() + ": illegal state");
 			//}
 
 			this._observeVisibleItemCountChange(350);
@@ -296,7 +308,9 @@ sap.ui.define([
 		};
 
 		Toolbar.prototype._observeVisibleItemCountChange = function (i) {
-			this._detectVisibleItemCountChangeTimer = jQuery.sap.delayedCall(i, this, "_detectVisibleItemCountChange");
+			this._detectVisibleItemCountChangeTimer = setTimeout(function() {
+				this._detectVisibleItemCountChange();
+			}.bind(this), i);
 		};
 
 
@@ -420,7 +434,7 @@ sap.ui.define([
 						// This is the overflow button, there was no line break
 						iVisibleItems = i;
 						// Therefore, iVisibleItems should be the total number of children minus 1 (the overflow menu)
-						jQuery.sap.assert(iVisibleItems === (count - 1), "visible items (" + iVisibleItems + ") must be one less than the items count (" + count + ")");
+						assert(iVisibleItems === (count - 1), "visible items (" + iVisibleItems + ") must be one less than the items count (" + count + ")");
 						oLastVisibleItem = aElements[i - 1];
 						oFirstInvisibleItem = null;
 						iLastVisibleItemTop = oLastVisibleItem.offsetTop;
@@ -518,7 +532,7 @@ sap.ui.define([
 		Toolbar.prototype.handleOverflowButtonTriggered = function () {
 			// Initialize the popup
 			if (!this.bPopupInitialized) {
-				this._oOverflowPopup = new sap.ui.commons.ToolbarOverflowPopup(this);
+				this._oOverflowPopup = new ToolbarOverflowPopup(this);
 				this.popup = new Popup(this._oOverflowPopup, false, true, true);
 				this.popup.setAutoCloseAreas([this.getId() + "-mn"]);
 				this.bPopupInitialized = true;
@@ -619,7 +633,7 @@ sap.ui.define([
 		 * @private
 		 */
 		Toolbar.prototype.prepareFocusInfoRedirect = function (oCtrl) {
-			//jQuery.sap.assert(oCtrl._orig_getFocusInfo === undefined);
+			//assert(oCtrl._orig_getFocusInfo === undefined);
 
 			// Check if the toolbar item (Control) has already _orig_getFocusInfo and if yes, do not set it again
 			if (oCtrl && !oCtrl._orig_getFocusInfo) {
@@ -646,8 +660,8 @@ sap.ui.define([
 		 * @private
 		 */
 		Toolbar.prototype.cleanupFocusInfoRedirect = function (oCtrl) {
-			//jQuery.sap.assert(oCtrl._orig_getFocusInfo !== undefined);
-			//jQuery.sap.assert(typeof(oCtrl._orig_getFocusInfo) === "function");
+			//assert(oCtrl._orig_getFocusInfo !== undefined);
+			//assert(typeof(oCtrl._orig_getFocusInfo) === "function");
 			if (oCtrl) {
 				oCtrl.getFocusInfo = oCtrl._orig_getFocusInfo;
 				delete oCtrl._orig_getFocusInfo;
@@ -758,7 +772,7 @@ sap.ui.define([
 					//else
 					var oContent;
 					if (oCtrl && this.popup && (oContent = this.popup.getContent()) &&
-						jQuery.sap.containsOrEquals(oContent.getDomRef(), oCtrl.getDomRef())) {
+						containsOrEquals(oContent.getDomRef(), oCtrl.getDomRef())) {
 						oContent.applyFocusInfo(oFocusInfo.childInfo);
 						return;
 					}
@@ -780,14 +794,14 @@ sap.ui.define([
 		 * @name sap.ui.commons.ToolbarOverflowPopup
 		 * @function
 		 */
-		sap.ui.core.Element.extend("sap.ui.commons.ToolbarOverflowPopup", /** @lends sap.ui.commons.ToolbarOverflowPopup.prototype */ {
+		var ToolbarOverflowPopup = Element.extend("sap.ui.commons.ToolbarOverflowPopup", /** @lends sap.ui.commons.ToolbarOverflowPopup.prototype */ {
 
 			constructor: function (oToolbar) {
 				this.oToolbar = oToolbar;
 				var sId = oToolbar.getId() + "-pu";
 
 				// Call super constructor
-				sap.ui.core.Element.call(this, sId);
+				Element.call(this, sId);
 			},
 
 			exit: function() {
@@ -884,7 +898,9 @@ sap.ui.define([
 				this.updateAfterResize(true);
 			} else {
 				if (!this.sUpdateItemNavigationTimer) {
-					this.sUpdateItemNavigationTimer = jQuery.sap.delayedCall(0, this, "updateAfterResize", [true]);
+					this.sUpdateItemNavigationTimer = setTimeout(function() {
+						this.updateAfterResize(true);
+					}.bind(this), 0);
 				}
 			}
 		};
@@ -951,24 +967,24 @@ sap.ui.define([
 
 			// stop the periodic overflow checker
 			if (this._detectVisibleItemCountChangeTimer) {
-				jQuery.sap.clearDelayedCall(this._detectVisibleItemCountChangeTimer);
+				clearTimeout(this._detectVisibleItemCountChangeTimer);
 				this._detectVisibleItemCountChangeTimer = null;
 			}
 
 			// stop the delay call of update itemNavigation because its updated onAfterRendering
 			if (this.sUpdateItemNavigationTimer) {
-				jQuery.sap.clearDelayedCall(this.sUpdateItemNavigationTimer);
+				clearTimeout(this.sUpdateItemNavigationTimer);
 				this.sUpdateItemNavigationTimer = null;
 			}
 
 			// Cleanup resize event registration before re-rendering
 			if (this.sResizeListenerId) {
-				sap.ui.core.ResizeHandler.deregister(this.sResizeListenerId);
+				ResizeHandler.deregister(this.sResizeListenerId);
 				this.sResizeListenerId = null;
 			}
 
 			if (this.sRightSideResizeListenerId) {
-				sap.ui.core.ResizeHandler.deregister(this.sRightSideResizeListenerId);
+				ResizeHandler.deregister(this.sRightSideResizeListenerId);
 				this.sRightSideResizeListenerId = null;
 			}
 		};
@@ -1040,4 +1056,4 @@ sap.ui.define([
 			}
 		}
 
-	}, /* bExport= */ true);
+	});

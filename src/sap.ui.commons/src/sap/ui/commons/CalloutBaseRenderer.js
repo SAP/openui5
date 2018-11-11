@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 
@@ -17,12 +17,11 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the Callout that should be rendered
 	 */
-	CalloutBaseRenderer.render = function(oRenderManager, oControl){
+	CalloutBaseRenderer.render = function(rm, oControl){
 
-		var rm = oRenderManager;
 		var accessibility = sap.ui.getCore().getConfiguration().getAccessibility();
 		var sId = oControl.getId();
 

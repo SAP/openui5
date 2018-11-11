@@ -3,8 +3,11 @@
  */
 
 // Provides control sap.ui.commons.TextArea.
-sap.ui.define(['jquery.sap.global', './TextField', './library', "./TextAreaRenderer"],
-	function(jQuery, TextField, library, TextAreaRenderer) {
+sap.ui.define(['sap/ui/thirdparty/jquery', './TextField', './library', './TextAreaRenderer', 'sap/ui/Device', 'sap/ui/events/KeyCodes',
+    'sap/ui/dom/jquery/cursorPos', // jQuery.fn.cursorPos
+    'sap/ui/dom/jquery/selectText' // jQuery.fn.selectText
+],
+	function(jQuery, TextField, library, TextAreaRenderer, Device, KeyCodes) {
 	"use strict";
 
 	/**
@@ -146,7 +149,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', "./TextAreaRende
 		TextField.prototype.onsapfocusleave.apply(this, arguments);
 
 		var oFocusDomRef = this.getFocusDomRef();
-		if (oFocusDomRef && !!sap.ui.Device.browser.firefox) { // Only for FF -> deselect text
+		if (oFocusDomRef && Device.browser.firefox) { // Only for FF -> deselect text
 			if (oFocusDomRef.selectionStart != oFocusDomRef.selectionEnd) {
 				jQuery(oFocusDomRef).selectText(oFocusDomRef.selectionStart, oFocusDomRef.selectionStart);
 			}
@@ -187,7 +190,6 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', "./TextAreaRende
 			return;
 		}
 
-		var oKC = jQuery.sap.KeyCodes;
 		var iKC = oEvent.which || oEvent.keyCode;
 		var oDom = this.getDomRef();
 
@@ -205,7 +207,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', "./TextAreaRende
 		}
 
 		// Only real characters and ENTER, no backspace
-		if (oDom.value.length >= this.getMaxLength() && ( iKC > oKC.DELETE || iKC == oKC.ENTER || iKC == oKC.SPACE) && !oEvent.ctrlKey) {
+		if (oDom.value.length >= this.getMaxLength() && ( iKC > KeyCodes.DELETE || iKC == KeyCodes.ENTER || iKC == KeyCodes.SPACE) && !oEvent.ctrlKey) {
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
 		}
@@ -243,7 +245,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', "./TextAreaRende
 
 	TextArea.prototype.onsapnext = function(oEvent) {
 
-		if (jQuery(this.getFocusDomRef()).data("sap.InNavArea") && oEvent.keyCode != jQuery.sap.KeyCodes.END) {
+		if (jQuery(this.getFocusDomRef()).data("sap.InNavArea") && oEvent.keyCode != KeyCodes.END) {
 			// parent handles arrow navigation
 			oEvent.preventDefault();
 			return;
@@ -255,7 +257,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', "./TextAreaRende
 
 	TextArea.prototype.onsapprevious = function(oEvent) {
 
-		if (jQuery(this.getFocusDomRef()).data("sap.InNavArea") && oEvent.keyCode != jQuery.sap.KeyCodes.HOME) {
+		if (jQuery(this.getFocusDomRef()).data("sap.InNavArea") && oEvent.keyCode != KeyCodes.HOME) {
 			// parent handles arrow navigation
 			oEvent.preventDefault();
 			return;
@@ -386,4 +388,4 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', "./TextAreaRende
 
 	return TextArea;
 
-}, /* bExport= */ true);
+});

@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.commons.RoadMap
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Device', 'sap/base/security/encodeXML', 'sap/ui/thirdparty/jqueryui/jquery-ui-position'],
+	function(jQuery, Device, encodeXML) {
 	"use strict";
 
 
@@ -21,13 +21,11 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oRoadMap the Roadmap control for which the renderer action should be performed
 	 * @private
 	 */
-	RoadMapRenderer.render = function(oRenderManager, oRoadMap){
-		var rm = oRenderManager;
-
+	RoadMapRenderer.render = function(rm, oRoadMap){
 		oRoadMap.doBeforeRendering(); //Inform the Roadmap that the rendering starts
 
 		rm.write("<div");
@@ -92,17 +90,17 @@ sap.ui.define(['jquery.sap.global'],
 	RoadMapRenderer.selectStepWithId = function(oRoadMap, sId){
 		var sCurrentId = oRoadMap.getSelectedStep();
 		if (sCurrentId) {
-			jQuery.sap.byId(sCurrentId).removeClass("sapUiRoadMapSelected");
+			jQueryById(sCurrentId).removeClass("sapUiRoadMapSelected");
 		}
 		if (sId) {
-			jQuery.sap.byId(sId).addClass("sapUiRoadMapSelected");
+			jQueryById(sId).addClass("sapUiRoadMapSelected");
 		}
 		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
 			if (sCurrentId) {
-				jQuery.sap.byId(sCurrentId + "-box").removeAttr("aria-checked");
+				jQueryById(sCurrentId + "-box").removeAttr("aria-checked");
 			}
 			if (sId) {
-				jQuery.sap.byId(sId + "-box").attr("aria-checked", true);
+				jQueryById(sId + "-box").attr("aria-checked", true);
 			}
 		}
 	};
@@ -152,10 +150,10 @@ sap.ui.define(['jquery.sap.global'],
 
 			//Animation function to hide / show a step (depending on the current expand state)
 			var fAnim = function(sId, bOpen, fComplete){
-				var jRef = jQuery.sap.byId(sId);
+				var jRef = jQueryById(sId);
 				if (!jQuery.fx.off && !bSkipAnim) { //Animation only if turned on globally and if should not be skipped
 					jRef.width(bOpen ? "0px" : oRoadMap.iStepWidth);
-					var oLabel = jQuery.sap.byId(sId + "-label");
+					var oLabel = jQueryById(sId + "-label");
 					oLabel.addClass("sapUiRoadMapHidden");
 					if (bOpen) {
 						jRef.toggleClass("sapUiRoadMapHidden");
@@ -256,7 +254,7 @@ sap.ui.define(['jquery.sap.global'],
 			var jStepArea = oRoadMap.$("steparea");
 			var oPos = getStepEndPosition(oRoadMap, false);
 			if (oRoadMap.getFirstVisibleStep()) {
-				var jStep = jQuery.sap.byId(oRoadMap.getFirstVisibleStep());
+				var jStep = jQueryById(oRoadMap.getFirstVisibleStep());
 				if (jStep.length) {
 					oPos = getPositionLeft(jStepArea, jStep);
 				}
@@ -317,7 +315,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @private
 	 */
 	RoadMapRenderer.setStepLabel = function(oStep, sLabel){
-		var l = sLabel ? jQuery.sap.encodeHTML(sLabel) : "";
+		var l = sLabel ? encodeXML(sLabel) : "";
 		oStep.$("label").html(l);
 		oStep.$("expandend-label").html(l);
 
@@ -489,12 +487,12 @@ sap.ui.define(['jquery.sap.global'],
 		while (sText.length > 0 && jClone.height() > jStepLabel.height()) {
 			//TODO: Do we need special RTL handling here?
 			sText = sText.substr(0, sText.length - 1);
-			jClone.html(jQuery.sap.encodeHTML(sText + "..."));
+			jClone.html(encodeXML(sText + "..."));
 			bIsShortened = true;
 		}
 
 		if (bIsShortened) {
-			jStepLabel.html("<span>" + jQuery.sap.encodeHTML(sText) + "</span>");
+			jStepLabel.html("<span>" + encodeXML(sText) + "</span>");
 			jStepLabel.attr("title", oStep.getLabel());
 		} else {
 			jStepLabel.attr("title", getStepTooltip(oStep));
@@ -534,6 +532,9 @@ sap.ui.define(['jquery.sap.global'],
 
 	//********* Private *********
 
+	var jQueryById = function(sId) {
+		return jQuery(sId ? document.getElementById(sId) : null);
+	};
 
 	//Writes the delimiter HTML into the rendermanger
 	var renderDelimiter = function(rm, oRoadMap, bStart){
@@ -842,14 +843,14 @@ sap.ui.define(['jquery.sap.global'],
 	//  -IE:      right side has scrollleft=0, scrolling is indicated with positive values
 	//  -Safari:  left side has scrollleft=0, scrolling is indicated with positive values
 	var getRTLFactor = function(){
-		return sap.ui.getCore().getConfiguration().getRTL() && !sap.ui.Device.browser.internet_explorer ? -1 : 1;
+		return sap.ui.getCore().getConfiguration().getRTL() && !Device.browser.msie ? -1 : 1;
 	};
 
 
 	//Calculates the scroll left attribute (with fix for Safari in RTL mode) to make the position and scroll calculations running
 	//(see comment on getRTLFactor for RTL behavior)
 	var getScrollLeft = function(jStepArea){
-		if (sap.ui.getCore().getConfiguration().getRTL() && !!sap.ui.Device.browser.webkit) {
+		if (sap.ui.getCore().getConfiguration().getRTL() && Device.browser.webkit) {
 			return ( -1) * (jStepArea.get(0).scrollWidth - jStepArea.scrollLeft() - jStepArea.width());
 		}
 		return jStepArea.scrollLeft();
@@ -860,7 +861,7 @@ sap.ui.define(['jquery.sap.global'],
 	//(see comment on getRTLFactor for RTL behavior)
 	var getStepEndPosition = function(oRoadMap, bLast){
 		var iScrollWidth = oRoadMap.$("steparea").get(0).scrollWidth;
-		if (sap.ui.getCore().getConfiguration().getRTL() && !!sap.ui.Device.browser.webkit) {
+		if (sap.ui.getCore().getConfiguration().getRTL() && Device.browser.webkit) {
 			return bLast ? 0 : ( -1) * iScrollWidth;
 		}
 		return bLast ? iScrollWidth : 0;

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['sap/base/Log', 'sap/ui/core/Core'],
+	function(Log, Core) {
 	"use strict";
 
 	/**
@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global'],
 	try {
 		sap.ui.getCore().loadLibrary("sap.ui.unified");
 	} catch (e) {
-		jQuery.sap.log.error("The controls/elements 'sap.ui.commons.Menu*' needs library 'sap.ui.unified'.");
+		Log.error("The controls/elements 'sap.ui.commons.Menu*' needs library 'sap.ui.unified'.");
 		throw (e);
 	}
 

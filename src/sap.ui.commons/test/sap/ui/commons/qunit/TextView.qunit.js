@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/commons/TextView",
 	"sap/ui/commons/library",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library"
 ], function(
 	createAndAppendDiv,
@@ -74,32 +74,32 @@ sap.ui.define([
 
 	QUnit.test("Text Output", function(assert) {
 		// check if result is in HTML
-		var oTVDom = jQuery.sap.domById('TV1');
+		var oTVDom = document.getElementById('TV1');
 		assert.equal(oTVDom.innerHTML,"This is a simple Text for the QUnit Test.", "Displayed Text");
 
 		// is text escaped
 		oTV1.setText("~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>");
 		sap.ui.getCore().applyChanges();
-		oTVDom = jQuery.sap.domById('TV1');
+		oTVDom = document.getElementById('TV1');
 		assert.equal(jQuery(oTVDom).text(),"~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>", "Escaping HTML-Text");
 	});
 
 	QUnit.test("Wrapping", function(assert) {
 		// wrapping on/off
-		var	oTVDom = jQuery.sap.domById('TV1');
+		var	oTVDom = document.getElementById('TV1');
 		var iLineHeight = oTVDom.clientHeight;
-		oTVDom = jQuery.sap.domById('TV2');
+		oTVDom = document.getElementById('TV2');
 		assert.equal(oTVDom.clientHeight,(iLineHeight * 4), "Wrapping TRUE, 4 Lines (line-height: 21)");
 
 		oTV2.setWrapping(false);
 		sap.ui.getCore().applyChanges();
-		oTVDom = jQuery.sap.domById('TV2');
+		oTVDom = document.getElementById('TV2');
 		assert.equal(oTVDom.clientHeight,(iLineHeight * 3), "Wrapping FALSE, 3 Lines (line-height: 21)");
 	});
 
 	QUnit.test("Width", function(assert) {
 		// width -> cutting
-		var oTVDom = jQuery.sap.domById('TV2');
+		var oTVDom = document.getElementById('TV2');
 		assert.equal(oTVDom.clientWidth,165, "Defined width");
 		assert.ok(oTVDom.clientWidth < oTVDom.scrollWidth, "Text ist cut: defined true");
 	});
@@ -219,27 +219,27 @@ sap.ui.define([
 		oTV1.setDesign(TextViewDesign.Standard);
 		oTV1.setEnabled(true);
 		sap.ui.getCore().applyChanges();
-		var oTVDom = jQuery.sap.domById('TV1');
+		var oTVDom = document.getElementById('TV1');
 		assert.equal(jQuery(oTVDom).css("text-align"),"left","Default (Begin) Text Align");
 
 		oTV1.setTextAlign(TextAlign.Right);
 		sap.ui.getCore().applyChanges();
-		oTVDom = jQuery.sap.domById('TV1');
+		oTVDom = document.getElementById('TV1');
 		assert.equal(jQuery(oTVDom).css("text-align"),"right","Text Align Right");
 
 		oTV1.setTextAlign(TextAlign.End);
 		sap.ui.getCore().applyChanges();
-		oTVDom = jQuery.sap.domById('TV1');
+		oTVDom = document.getElementById('TV1');
 		assert.equal(jQuery(oTVDom).css("text-align"),"right","Text Align End");
 
 		oTV1.setTextDirection(TextDirection.RTL);
 		sap.ui.getCore().applyChanges();
-		oTVDom = jQuery.sap.domById('TV1');
+		oTVDom = document.getElementById('TV1');
 		assert.equal(jQuery(oTVDom).css("text-align"),"left","Text Align End in RTL");
 
 		oTV1.setTextAlign(TextAlign.Left);
 		sap.ui.getCore().applyChanges();
-		oTVDom = jQuery.sap.domById('TV1');
+		oTVDom = document.getElementById('TV1');
 		assert.equal(jQuery(oTVDom).css("text-align"),"left","Text Align Left in RTL");
 
 		oTV1.setTextDirection(TextDirection.Inherit);
@@ -256,7 +256,7 @@ sap.ui.define([
 		var oTVDom;
 		try {
 			sap.ui.getCore().applyChanges();
-			oTVDom = jQuery.sap.domById('TV1');
+			oTVDom = document.getElementById('TV1');
 			assert.equal(oTVDom.innerHTML,"", "Null Text");
 		} catch (e) {
 			// do nothing -> check is nit exectites in error case and "expect" brings error
@@ -264,25 +264,25 @@ sap.ui.define([
 
 		oTV1.setText("Hello World!");
 		sap.ui.getCore().applyChanges();
-		oTVDom = jQuery.sap.domById('TV1');
+		oTVDom = document.getElementById('TV1');
 		assert.equal(oTVDom.innerHTML,"Hello World!", "Text entered again");
 	});
 
 	QUnit.test("ARIA", function(assert) {
-		var oTV1Dom = jQuery.sap.domById('TV1');
-		var oTVDom = jQuery.sap.domById('TV2');
+		var oTV1Dom = document.getElementById('TV1');
+		var oTVDom = document.getElementById('TV2');
 		assert.equal(jQuery(oTV1Dom).attr("role"),"document","ARIA role 'document'");
 		assert.equal(jQuery(oTVDom).attr("role"),undefined,"ARIA role default");
 		assert.equal(jQuery(oTVDom).attr("aria-disabled"),"false","ARIA-disabled: for enabled field");
 		assert.equal(jQuery(oTVDom).attr("aria-invalid"),"false","ARIA-invalid: for normal field");
 
-		oTVDom = jQuery.sap.domById('TV1');
+		oTVDom = document.getElementById('TV1');
 		assert.equal(jQuery(oTVDom).attr("aria-invalid"),"true","ARIA-invalid: for negative field");
 
 		oTV1.setSemanticColor(TextViewColor.Default);
 		oTV1.setEnabled(false);
 		sap.ui.getCore().applyChanges();
-		oTVDom = jQuery.sap.domById('TV1');
+		oTVDom = document.getElementById('TV1');
 		assert.equal(jQuery(oTVDom).attr("aria-disabled"),"true","ARIA-disabled: for disabled field");
 
 	});

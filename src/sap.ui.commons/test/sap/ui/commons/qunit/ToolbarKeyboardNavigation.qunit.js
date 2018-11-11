@@ -4,10 +4,10 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/commons/library",
 	"sap/ui/commons/Toolbar",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/commons/Button",
-	"jquery.sap.keycodes"
-], function(qutils, createAndAppendDiv, commonsLibrary, Toolbar, jQuery, Button) {
+	"sap/ui/events/KeyCodes"
+], function(qutils, createAndAppendDiv, commonsLibrary, Toolbar, jQuery, Button, KeyCodes) {
 	"use strict";
 
 	// shortcut for sap.ui.commons.ToolbarDesign
@@ -61,7 +61,7 @@ sap.ui.define([
 		beforeEach: function (assert) {
 			oCtrl = sap.ui.getCore().getControl(sToolbarId);
 			assert.notStrictEqual(oCtrl, null, "oCtrl must exist");
-			assert.notStrictEqual(jQuery.sap.domById(sToolbarId), null, "Toolbar DomRef must exist");
+			assert.notStrictEqual(oCtrl.getDomRef(), null, "Toolbar DomRef must exist");
 			initToolbar();
 		},
 		afterEach: function () {
@@ -178,15 +178,15 @@ sap.ui.define([
 	//------------------------------------------
 	function clickRightArrow(target) {
 		var oDomRef = typeof target == "string" ? document.getElementById(target) : target.getDomRef();
-		qutils.triggerKeydown(oDomRef, jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
+		qutils.triggerKeydown(oDomRef, KeyCodes.ARROW_RIGHT, false, false, false);
 	}
 	function clickLeftArrow(target) {
 		var oDomRef = typeof target == "string" ? document.getElementById(target) : target.getDomRef();
-		qutils.triggerKeydown(oDomRef, jQuery.sap.KeyCodes.ARROW_LEFT, false, false, false);
+		qutils.triggerKeydown(oDomRef, KeyCodes.ARROW_LEFT, false, false, false);
 	}
 	function clickDownArrow(target) {
 		var oDomRef = typeof target == "string" ? document.getElementById(target) : target.getDomRef();
-		qutils.triggerKeydown(oDomRef, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+		qutils.triggerKeydown(oDomRef, KeyCodes.ARROW_DOWN, false, false, false);
 	}
 	function assertFocusedElement(assert, oExpectedFocusedControl, sMessage) {
 		var oExpectedElement = oExpectedFocusedControl.getFocusDomRef();
@@ -196,7 +196,7 @@ sap.ui.define([
 	}
 
 	function getPopupDomRef() {
-		var child = jQuery.sap.domById(sToolbarId + "-pu");
+		var child = oToolbar.getDomRef("pu");
 		if (child) {
 			return child.parentNode;
 		} else {

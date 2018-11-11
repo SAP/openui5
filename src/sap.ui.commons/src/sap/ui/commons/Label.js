@@ -4,15 +4,25 @@
 
 // Provides control sap.ui.commons.Label.
 sap.ui.define([
-    'jquery.sap.global',
     './library',
     'sap/ui/core/Control',
-    'sap/ui/core/Popup',
     'sap/ui/core/LabelEnablement',
-    "./LabelRenderer"
+    './LabelRenderer',
+    'sap/ui/core/library'
 ],
-	function(jQuery, library, Control, Popup, LabelEnablement, LabelRenderer) {
+	function(library, Control, LabelEnablement, LabelRenderer, coreLibrary) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.core.TextAlign
+	var TextAlign = coreLibrary.TextAlign;
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
+
+	// shortcut for sap.ui.commons.LabelDesign
+	var LabelDesign = library.LabelDesign;
 
 
 
@@ -50,12 +60,12 @@ sap.ui.define([
 			 *
 			 * Defines whether the labels are in bold format.
 			 */
-			design : {type : "sap.ui.commons.LabelDesign", group : "Appearance", defaultValue : sap.ui.commons.LabelDesign.Standard},
+			design : {type : "sap.ui.commons.LabelDesign", group : "Appearance", defaultValue : LabelDesign.Standard},
 
 			/**
 			 * Determines the text direction - right-to-left (RTL) and left-to-right (LTR).
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
 			/**
 			 * Specifies whether a line wrapping width shall be displayed when the text value is longer than the width is.
@@ -81,7 +91,7 @@ sap.ui.define([
 			/**
 			 * Determines the alignment of the text. Available options are <code>Begin</code>, <code>Center</code>, <code>End</code>, <code>Left</code>, and <code>Right</code>.
 			 */
-			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin},
+			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Begin},
 
 			/**
 			 * Allows to enforce the required indicator even when the associated control doesn't have a getRequired method (a required property) or when the flag is not set.
@@ -201,4 +211,4 @@ sap.ui.define([
 
 	return Label;
 
-}, /* bExport= */ true);
+});

@@ -3,9 +3,13 @@
  */
 
 // Provides default renderer for control sap.ui.commons.layout.AbsoluteLayout
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['sap/ui/core/library'],
+	function(coreLibrary) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.Scrolling
+	var Scrolling = coreLibrary.Scrolling;
 
 
 	/**
@@ -16,17 +20,14 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 
-	(function() {
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	AbsoluteLayoutRenderer.render = function(oRenderManager, oControl){
-		var rm = oRenderManager;
-
+	AbsoluteLayoutRenderer.render = function(rm, oControl){
 		oControl.doBeforeRendering();
 
 		rm.write("<div");
@@ -74,7 +75,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @private
 	 */
 	AbsoluteLayoutRenderer.updateLayoutSize = function(oLayout) {
-		jQuery(oLayout.getDomRef()).css("width", oLayout.getWidth()).css("height", oLayout.getHeight());
+		oLayout.$().css("width", oLayout.getWidth()).css("height", oLayout.getHeight());
 	};
 
 
@@ -84,8 +85,8 @@ sap.ui.define(['jquery.sap.global'],
 	 * @private
 	 */
 	AbsoluteLayoutRenderer.updateLayoutScolling = function(oLayout) {
-		var jLayout = jQuery(oLayout.getDomRef());
-		for (var sScrollingType in sap.ui.core.Scrolling) {
+		var jLayout = oLayout.$();
+		for (var sScrollingType in Scrolling) {
 			jLayout.removeClass("sapUiLayoutAbsOvrflwY" + sScrollingType).removeClass("sapUiLayoutAbsOvrflwX" + sScrollingType);
 		}
 		jLayout.addClass("sapUiLayoutAbsOvrflwY" + oLayout.getVerticalScrolling()).addClass("sapUiLayoutAbsOvrflwX" + oLayout.getHorizontalScrolling());
@@ -98,7 +99,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @private
 	 */
 	AbsoluteLayoutRenderer.updatePositionStyles = function(oPosition) {
-		jQuery(oPosition.getDomRef()).attr("style", getComputedStyles(oPosition));
+		oPosition.$().attr("style", getComputedStyles(oPosition));
 	};
 
 
@@ -108,7 +109,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @private
 	 */
 	AbsoluteLayoutRenderer.removePosition = function(oPosition) {
-		jQuery(oPosition.getDomRef()).remove();
+		oPosition.$().remove();
 	};
 
 
@@ -118,7 +119,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @private
 	 */
 	AbsoluteLayoutRenderer.removeAllPositions = function(oLayout) {
-		jQuery(oLayout.getDomRef()).html("");
+		oLayout.$().html("");
 	};
 
 
@@ -155,9 +156,9 @@ sap.ui.define(['jquery.sap.global'],
 
 		var sHTML = "<div id=\"" + oPosition.getId() + "\" data-sap-ui=\"" + oPosition.getId() + "\" class=\"sapUiLayoutAbsPos\"></div>";
 		if (!oPredecessorPosition) {
-			jQuery(oLayout.getDomRef()).prepend(sHTML);
+			oLayout.$().prepend(sHTML);
 		} else {
-			jQuery(oPredecessorPosition.getDomRef()).after(sHTML);
+			oPredecessorPosition.$().after(sHTML);
 		}
 
 		AbsoluteLayoutRenderer.updatePositionedControl(oPosition);
@@ -189,7 +190,6 @@ sap.ui.define(['jquery.sap.global'],
 		return aBuffer.join("");
 	};
 
-	}());
 
 	return AbsoluteLayoutRenderer;
 

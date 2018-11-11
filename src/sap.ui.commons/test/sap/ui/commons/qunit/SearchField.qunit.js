@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/commons/SearchField",
 	"sap/ui/core/search/OpenSearchProvider",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library"
 ], function(
 	qutils,
@@ -43,7 +43,7 @@ sap.ui.define([
 	var oSearch8 = createSearchField(8, {searchProvider: new OpenSearchProvider({
 		suggestType: "xml",
 		suggestUrl: "test-resources/sap/ui/commons/qunit/searchprovidertest.xml",
-		icon:jQuery.sap.getModulePath("sap.ui.core", '/') + "mimes/logo/txtonly_16x16.ico"
+		icon: sap.ui.require.toUrl("sap/ui/core/mimes/logo/txtonly_16x16.ico")
 	})});
 	var oSearch9 = createSearchField(9, {searchProvider: new OpenSearchProvider({
 		suggestType: "json",
@@ -96,7 +96,7 @@ sap.ui.define([
 		}
 
 		setTimeout(function(){
-			if (!jQuery.sap.startsWith(jQuery("html").attr("data-sap-ui-browser"), "ie")){ //TODO check why this does not work for IE
+			if (!/^ie/.test(jQuery("html").attr("data-sap-ui-browser"))){ //TODO check why this does not work for IE
 				checkFocus(assert, oSearchField.getFocusDomRef().id, "SearchField has " + (bReadOnly ? "no " : "") + "focus before user action", !bReadOnly);
 			}
 			var bEventHandlerCalled = false;

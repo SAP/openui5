@@ -4,9 +4,9 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/commons/ValueHelpField",
 	"sap/ui/core/library",
-	"jquery.sap.global",
-	"jquery.sap.keycodes"
-], function(qutils, createAndAppendDiv, ValueHelpField, coreLibrary, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/KeyCodes"
+], function(qutils, createAndAppendDiv, ValueHelpField, coreLibrary, jQuery, KeyCodes) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -57,16 +57,16 @@ sap.ui.define([
 	QUnit.test("Output", function(assert) {
 		// default ValueHelpField
 
-		assert.equal(jQuery.sap.domById("VHF3").offsetWidth, 200, "width of the field");
+		assert.equal(document.getElementById("VHF3").offsetWidth, 200, "width of the field");
 
 		// other images
-		assert.ok(jQuery.sap.byId("VHF4").children("img").get(0), "With URL: Icon image rendered");
-		assert.equal(jQuery.sap.byId("VHF4").children("img").attr('src'), "test-resources/sap/ui/commons/images/help.gif", "URL image displayed");
+		assert.ok(jQuery("#VHF4").children("img").get(0), "With URL: Icon image rendered");
+		assert.equal(jQuery("#VHF4").children("img").attr('src'), "test-resources/sap/ui/commons/images/help.gif", "URL image displayed");
 
 	});
 
 	QUnit.test("ARIA", function(assert) {
-		var oVHF = jQuery.sap.byId("VHF1");
+		var oVHF = jQuery("#VHF1");
 		var oVHFInput = jQuery("#VHF1 > input");
 		assert.equal(oVHF.attr("aria-owns"), "VHF1-input VHF1-icon", "aria-owns");
 		assert.equal(oVHFInput.attr("aria-describedby"), "D1 D2", "aria-describesby");
@@ -74,7 +74,7 @@ sap.ui.define([
 		assert.equal(oVHFInput.attr("aria-multiline"), "false", "aria-multiline");
 		assert.equal(oVHFInput.attr("aria-autocomplete"), "none", "aria-autocomplete");
 		assert.ok(!oVHFInput.attr("aria-invalid"), "aria-invalid");
-		oVHF = jQuery.sap.byId("VHF4");
+		oVHF = jQuery("#VHF4");
 		oVHFInput = jQuery("#VHF4 > input");
 		assert.equal(oVHFInput.attr("aria-invalid"), "true", "aria-invalid");
 });
@@ -84,21 +84,21 @@ sap.ui.define([
 
 		//own image - but no own hover image -> no change
 		qutils.triggerMouseEvent("VHF4-icon", "mouseover");
-		assert.equal(jQuery.sap.byId("VHF4").children("img").attr('src'), "test-resources/sap/ui/commons/images/help.gif", "URL image displayed");
+		assert.equal(jQuery("#VHF4").children("img").attr('src'), "test-resources/sap/ui/commons/images/help.gif", "URL image displayed");
 		qutils.triggerMouseEvent("VHF4-icon", "mouseout");
 
 		//own image + own hover image
 		qutils.triggerMouseEvent("VHF5-icon", "mouseover");
-		assert.equal(jQuery.sap.byId("VHF5").children("img").attr('src'), "test-resources/sap/ui/commons/images/close.gif", "URL image displayed");
+		assert.equal(jQuery("#VHF5").children("img").attr('src'), "test-resources/sap/ui/commons/images/close.gif", "URL image displayed");
 		qutils.triggerMouseEvent("VHF5-icon", "mouseout");
-		assert.equal(jQuery.sap.byId("VHF5").children("img").attr('src'), "test-resources/sap/ui/commons/images/help.gif", "URL image displayed");
+		assert.equal(jQuery("#VHF5").children("img").attr('src'), "test-resources/sap/ui/commons/images/help.gif", "URL image displayed");
 
 	});
 
 	QUnit.test("Change Image", function(assert) {
 		oVHF1.setIconURL("test-resources/sap/ui/commons/images/ui5.png");
 		sap.ui.getCore().applyChanges();
-		assert.equal(jQuery.sap.byId("VHF1").children("img").attr('src'), "test-resources/sap/ui/commons/images/ui5.png", "URL image displayed");
+		assert.equal(jQuery("#VHF1").children("img").attr('src'), "test-resources/sap/ui/commons/images/ui5.png", "URL image displayed");
 
 		// go back to default
 		oVHF1.setIconURL("");
@@ -107,19 +107,19 @@ sap.ui.define([
 		// disabled - regular image given - no disabled image -> regular image should be displayed (with opacity)
 		oVHF3.setIconURL("test-resources/sap/ui/commons/images/save.png");
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.byId("VHF3-icon").hasClass("sapUiTfValueHelpDsblIcon"), "opacity class set");
+		assert.ok(jQuery("#VHF3-icon").hasClass("sapUiTfValueHelpDsblIcon"), "opacity class set");
 		// disabled image
 		oVHF3.setIconDisabledURL("test-resources/sap/ui/commons/images/new.png");
 		sap.ui.getCore().applyChanges();
-		assert.ok(!jQuery.sap.byId("VHF3-icon").hasClass("sapUiTfValueHelpDsblIcon"), "opacity class not set");
+		assert.ok(!jQuery("#VHF3-icon").hasClass("sapUiTfValueHelpDsblIcon"), "opacity class not set");
 
 		// hover image change
 		oVHF5.setIconHoverURL("test-resources/sap/ui/commons/images/personalize.gif");
 		sap.ui.getCore().applyChanges();
 		qutils.triggerMouseEvent("VHF5-icon", "mouseover");
-		assert.equal(jQuery.sap.byId("VHF5").children("img").attr('src'), "test-resources/sap/ui/commons/images/personalize.gif", "URL image displayed");
+		assert.equal(jQuery("#VHF5").children("img").attr('src'), "test-resources/sap/ui/commons/images/personalize.gif", "URL image displayed");
 		qutils.triggerMouseEvent("VHF5-icon", "mouseout");
-		assert.equal(jQuery.sap.byId("VHF5").children("img").attr('src'), "test-resources/sap/ui/commons/images/help.gif", "URL image displayed");
+		assert.equal(jQuery("#VHF5").children("img").attr('src'), "test-resources/sap/ui/commons/images/help.gif", "URL image displayed");
 
 	});
 
@@ -130,7 +130,7 @@ sap.ui.define([
 		assert.equal(sEvent, "ValueHelpRequest","Click - event fired");
 		sEvent = "";
 
-		qutils.triggerKeyboardEvent("VHF1", jQuery.sap.KeyCodes.F4, false, false, false);
+		qutils.triggerKeyboardEvent("VHF1", KeyCodes.F4, false, false, false);
 		assert.equal(sEvent, "ValueHelpRequest","F4 - event fired");
 		sEvent = "";
 
@@ -139,7 +139,7 @@ sap.ui.define([
 		assert.equal(sEvent, "","Click - no event fired");
 		sEvent = "";
 
-		qutils.triggerKeyboardEvent("VHF2", jQuery.sap.KeyCodes.F4, false, false, false);
+		qutils.triggerKeyboardEvent("VHF2", KeyCodes.F4, false, false, false);
 		assert.equal(sEvent, "","F4 - event fired");
 		sEvent = "";
 
@@ -148,7 +148,7 @@ sap.ui.define([
 		assert.equal(sEvent, "","Click - no event fired");
 		sEvent = "";
 
-		qutils.triggerKeyboardEvent("VHF3", jQuery.sap.KeyCodes.F4, false, false, false);
+		qutils.triggerKeyboardEvent("VHF3", KeyCodes.F4, false, false, false);
 		assert.equal(sEvent, "","F4 - event fired");
 		sEvent = "";
 

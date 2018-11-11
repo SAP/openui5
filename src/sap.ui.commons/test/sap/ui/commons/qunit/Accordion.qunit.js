@@ -5,14 +5,16 @@ sap.ui.define([
 	"sap/ui/commons/Accordion",
 	"sap/ui/commons/AccordionSection",
 	"sap/ui/commons/Button",
-	"jquery.sap.keycodes"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
 	Accordion,
 	AccordionSection,
 	Button,
-	jQuery
+	jQuery,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -256,18 +258,18 @@ sap.ui.define([
 		jQuery("section1-minL").focus();
 		qutils.triggerEvent("click", "section1-minL");
 		qutils.triggerKeyboardEvent("accordion1", "ARROW_RIGHT");
-		qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeyboardEvent("accordion1", KeyCodes.SPACE);
 
 //				Navigate up by 1, section is disabled, so it will jump top section 2
 //				Section 2 is now opened and section 4 is now collapsed
 		jQuery("section4-minL").focus();
 		qutils.triggerKeyboardEvent("section4-minL", "ARROW_LEFT");
-		qutils.triggerKeyboardEvent("section2-minL", jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeyboardEvent("section2-minL", KeyCodes.SPACE);
 		assert.strictEqual(aSections[1].getCollapsed(), false, "Section 2 is now opened");
 		assert.strictEqual(aSections[3].getCollapsed(), true, "Section 4 is now closed");
 
 //				Close it and the default section will reopen, in this case, it is section1
-		qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeyboardEvent("accordion1", KeyCodes.SPACE);
 		assert.strictEqual(aSections[1].getCollapsed(), false, "Section 2 is now open");
 		assert.strictEqual(aSections[0].getCollapsed(), true, "Section 1 is now closed");
 
@@ -286,7 +288,7 @@ sap.ui.define([
 		jQuery("section1-minL").focus();
 		qutils.triggerEvent("click", "section1-minL");
 		// test handling END button
-		qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.END);
+		qutils.triggerKeyboardEvent("accordion1", KeyCodes.END);
 		assert.strictEqual(aSections[3].$("hdr").is(":focus"), true, "Section 4 is now focused");
 
 		// test END button, when the last section is disabled
@@ -309,7 +311,7 @@ sap.ui.define([
 		jQuery("section1-minL").focus();
 		qutils.triggerEvent("click", "section1-minL");
 		// test handling END button
-		qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.END);
+		qutils.triggerKeyboardEvent("accordion1", KeyCodes.END);
 		assert.strictEqual(aSections[3].$("hdr").is(":focus"), true, "Section 4 is now focused as the last 2 are disabled");
 
 	});
@@ -353,10 +355,10 @@ sap.ui.define([
 		assert.strictEqual(aSections[2].getCollapsed(), false, "Section 3 is open by default as first 2 are disabled");
 
 		// navigate to the last section
-		qutils.triggerKeyboardEvent("section3-minL", jQuery.sap.KeyCodes.ARROW_DOWN);
+		qutils.triggerKeyboardEvent("section3-minL", KeyCodes.ARROW_DOWN);
 		assert.strictEqual(aSections[3].$("hdr").is(":focus"), true, "Section 4 is now focused ");
 
-		qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.HOME);
+		qutils.triggerKeyboardEvent("accordion1", KeyCodes.HOME);
 		assert.strictEqual(aSections[2].$("hdr").is(":focus"), true, "Section 3 is now focused as first 2 are disabled");
 	});
 
@@ -372,19 +374,19 @@ sap.ui.define([
 
 		jQuery("section1-minL").focus();
 		qutils.triggerEvent("click", "section1-minL");
-		qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.ARROW_DOWN);
-		qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeyboardEvent("accordion1", KeyCodes.ARROW_DOWN);
+		qutils.triggerKeyboardEvent("accordion1", KeyCodes.SPACE);
 
 //				Navigate up by 1, section is disabled, so it will jump top section 2
 //				Section 2 is now opened and section 4 is now collapsed
 		jQuery("section4-minL").focus();
 		qutils.triggerKeyboardEvent("section4-minL", "ARROW_UP");
-		qutils.triggerKeyboardEvent("section2-minL", jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeyboardEvent("section2-minL", KeyCodes.SPACE);
 		assert.strictEqual(aSections[1].getCollapsed(), false, "Section 2 is now opened as 3 is disabled");
 		assert.strictEqual(aSections[3].getCollapsed(), true, "Section 4 is now closed");
 
 //				Close it and the default section will reopen, in this case, it is section1
-		qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeyboardEvent("accordion1", KeyCodes.SPACE);
 		assert.strictEqual(aSections[1].getCollapsed(), false, "Section 2 is now open");
 		assert.strictEqual(aSections[0].getCollapsed(), true, "Section 1 is now closed");
 
@@ -396,7 +398,7 @@ sap.ui.define([
 		assert.strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
 
 		jQuery("section2-minL").focus();
-		qutils.triggerKeyboardEvent("section2-minL", jQuery.sap.KeyCodes.PAGE_DOWN, {ctrlKey: true});			//, {ctrlKey: true}
+		qutils.triggerKeyboardEvent("section2-minL", KeyCodes.PAGE_DOWN, {ctrlKey: true});			//, {ctrlKey: true}
 		//next section will be focused and open
 		assert.strictEqual(aSections[3].$("hdr").is(":focus"), true, "Section 4 is now focused as Section 3 is disabled");
 		assert.strictEqual(aSections[3].getCollapsed(), false, "Section 4 is now open");
@@ -409,7 +411,7 @@ sap.ui.define([
 		assert.strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
 
 		jQuery("section4-minL").focus();
-		qutils.triggerKeyboardEvent("section4-minL", jQuery.sap.KeyCodes.PAGE_UP, {ctrlKey: true});			//, {ctrlKey: true}
+		qutils.triggerKeyboardEvent("section4-minL", KeyCodes.PAGE_UP, {ctrlKey: true});			//, {ctrlKey: true}
 		//prev section will be focused and open
 		assert.strictEqual(aSections[1].$("hdr").is(":focus"), true, "Section 2 is now focused as Section 3 is disabled");
 		assert.strictEqual(aSections[1].getCollapsed(), false, "Section 2 is open now as Section 3 is disabled");
@@ -421,7 +423,7 @@ sap.ui.define([
 		var aSections = this.oAccordion1.getSections();
 		assert.strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
 
-		qutils.triggerKeyboardEvent("section1-minL", jQuery.sap.KeyCodes.ARROW_DOWN, {ctrlKey: true});			//, {ctrlKey: true}
+		qutils.triggerKeyboardEvent("section1-minL", KeyCodes.ARROW_DOWN, {ctrlKey: true});			//, {ctrlKey: true}
 		//Section 2 will become the first section and Section 1 will become the second one section
 		assert.strictEqual(this.oAccordion1.getSections()[0].getTitle(), "My section 2", "Section 2 is now at the fist position");
 		assert.strictEqual(this.oAccordion1.getSections()[1].getTitle(), "My section 1", "Section1 is now at the second position");
@@ -432,7 +434,7 @@ sap.ui.define([
 		var aSections = this.oAccordion1.getSections();
 		assert.strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
 
-		qutils.triggerKeyboardEvent("section2-minL", jQuery.sap.KeyCodes.ARROW_UP, {ctrlKey: true});			//, {ctrlKey: true}
+		qutils.triggerKeyboardEvent("section2-minL", KeyCodes.ARROW_UP, {ctrlKey: true});			//, {ctrlKey: true}
 		//Section 2 will become the first section and Section 1 will become the second one section
 		assert.strictEqual(this.oAccordion1.getSections()[0].getTitle(), "My section 2", "Section 2 is now at the fist position");
 		assert.strictEqual(this.oAccordion1.getSections()[1].getTitle(), "My section 1", "Section 1 is now at the second position");

@@ -5,9 +5,10 @@ sap.ui.define([
 	"sap/ui/commons/AutoComplete",
 	"sap/ui/commons/ListBox",
 	"sap/ui/core/ListItem",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
-	"jquery.sap.keycodes"
+	"sap/ui/events/KeyCodes",
+	"jquery.sap.strings" // jQuery.sap.endsWithIgnoreCase
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -15,7 +16,8 @@ sap.ui.define([
 	ListBox,
 	ListItem,
 	jQuery,
-	Device
+	Device,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -325,7 +327,7 @@ sap.ui.define([
 		popupClosingTest(assert, this.oAuto1, function(oAuto){
 			jQuery(oAuto.getInputDomRef()).val("");
 			qutils.triggerEvent("input", oAuto.getFocusDomRef());
-			qutils.triggerKeyup(oAuto.getFocusDomRef(), jQuery.sap.KeyCodes.BACKSPACE);
+			qutils.triggerKeyup(oAuto.getFocusDomRef(), KeyCodes.BACKSPACE);
 		});
 	});
 

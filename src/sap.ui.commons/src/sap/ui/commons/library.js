@@ -5,11 +5,11 @@
 /**
  * Initialization Code and shared classes of library sap.ui.commons.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
+sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	'sap/ui/core/library', // library dependency
 	'sap/ui/layout/library', // library dependency
 	'sap/ui/unified/library'], // library dependency
-	function(jQuery, DataType) {
+	function(DataType, ObjectPath) {
 
 	"use strict";
 
@@ -1314,9 +1314,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 
 	//implement table helper factory with m controls
 	//possible is set before layout lib is loaded.
-	var oTableHelper = jQuery.sap.getObject("sap.ui.table.TableHelper", 4);
+	var oTableHelper = ObjectPath.get("sap.ui.table.TableHelper");
 	if (!oTableHelper || !oTableHelper.bFinal) {
-		jQuery.sap.setObject("sap.ui.table.TableHelper", {
+		ObjectPath.set("sap.ui.table.TableHelper", {
 			createLabel: function(mConfig){
 				return new sap.ui.commons.Label(mConfig);
 			},

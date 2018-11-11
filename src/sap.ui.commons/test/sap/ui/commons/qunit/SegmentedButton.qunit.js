@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/commons/SegmentedButton",
 	"sap/ui/commons/Button",
-	"jquery.sap.global"
+	"sap/ui/thirdparty/jquery"
 ], function(qutils, createAndAppendDiv, SegmentedButton, Button, jQuery) {
 	"use strict";
 
@@ -42,45 +42,48 @@ sap.ui.define([
 
 	QUnit.test("Output", function(assert) {
 
-		assert.ok(jQuery.sap.byId("mySB").get(0), "SegmentedButton rendered");
-		assert.ok(jQuery.sap.byId("But2").hasClass('sapUiSegButtonSelected'), "Button with id 'But2' selected");
+		assert.ok(jQuery("#mySB").get(0), "SegmentedButton rendered");
+		assert.ok(jQuery("#But2").hasClass('sapUiSegButtonSelected'), "Button with id 'But2' selected");
 
-		assert.equal(jQuery.sap.byId("But2").children("img").attr('src'), url("card_hover.png"), "Button selected: Use iconHovered instead of icon!");
-		assert.equal(jQuery.sap.byId("mySB-radiogroup").children("button").length, 6, "All Buttons rendered");
+		assert.equal(jQuery("#But2").children("img").attr('src'), url("card_hover.png"), "Button selected: Use iconHovered instead of icon!");
+		assert.equal(jQuery("#mySB-radiogroup").children("button").length, 6, "All Buttons rendered");
 	});
 
 	QUnit.test("ARIA", function(assert) {
 		var done = assert.async();
-		assert.equal(jQuery.sap.byId("mySB-radiogroup").attr("role"), "radiogroup", "role = radiogroup");
-		assert.equal(jQuery.sap.byId("mySB-radiogroup").attr("aria-disabled"), "false", "aria-disabled = false");
+		assert.equal(jQuery("#mySB-radiogroup").attr("role"), "radiogroup", "role = radiogroup");
+		assert.equal(jQuery("#mySB-radiogroup").attr("aria-disabled"), "false", "aria-disabled = false");
 		oSegmentedButton.setEnabled(false);
 		setTimeout(function() {
-			assert.equal(jQuery.sap.byId("mySB-radiogroup").attr("aria-disabled"), "true", "aria-disabled = true");
+			assert.equal(jQuery("#mySB-radiogroup").attr("aria-disabled"), "true", "aria-disabled = true");
 			oSegmentedButton.setEnabled(true);
 			done();
 		},500);
 	});
 
 	QUnit.test("Visibility", function(assert) {
-		assert.ok(jQuery.sap.byId("mySB").get(0), "SegmentedButton rendered");
+		assert.ok(jQuery("#mySB").get(0), "SegmentedButton rendered");
 		oSegmentedButton.setVisible(false);
 		sap.ui.getCore().applyChanges();
-		assert.ok(!jQuery.sap.byId("mySB").get(0), "SegmentedButton not rendered");
+		assert.ok(!jQuery("#mySB").get(0), "SegmentedButton not rendered");
 		oSegmentedButton.setVisible(true);
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.byId("mySB").get(0), "SegmentedButton rendered");
+		assert.ok(jQuery("#mySB").get(0), "SegmentedButton rendered");
 	});
 
 	QUnit.test("Icons", function(assert) {
 		var done = assert.async();
 		oSegmentedButton.setSelectedButton("But3");
 		setTimeout(function() {
-			assert.equal(jQuery.sap.byId("But2").children("img").attr('src'), url("card.png"), "Button deselected: Use icon again");
-			assert.equal(jQuery.sap.byId("But3").children("img").attr('src'), url("tiles_hover.png"), "Button selected: Use iconHovered instead of icon!");
-			jQuery.sap.focus(jQuery.sap.domById("But1"));
+			assert.equal(jQuery("#But2").children("img").attr('src'), url("card.png"), "Button deselected: Use icon again");
+			assert.equal(jQuery("#But3").children("img").attr('src'), url("tiles_hover.png"), "Button selected: Use iconHovered instead of icon!");
+			var oButtonRef = document.getElementById("But1");
+			if ( oButtonRef ) {
+				oButtonRef.focus();
+			}
 			setTimeout(function() {
-				assert.equal(jQuery.sap.byId("But3").children("img").attr('src'), url("tiles_hover.png"), "Button selected: Use iconHovered instead of icon even it has no focus!");
-				assert.equal(jQuery.sap.byId("But1").children("img").attr('src'), url("list.png"), "Button hovered: Use icon when focused!");
+				assert.equal(jQuery("#But3").children("img").attr('src'), url("tiles_hover.png"), "Button selected: Use iconHovered instead of icon even it has no focus!");
+				assert.equal(jQuery("#But1").children("img").attr('src'), url("list.png"), "Button hovered: Use icon when focused!");
 				done();
 			},500);
 		},500);

@@ -131,6 +131,11 @@ sap.ui.define([
 
 			this.oRC.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
+
+			// TODO-BRIDGE remove once the sinon-4 sandbox supports fake timers
+			if ( this.clock == null ) {
+				this.clock = this._oSandbox.useFakeTimers();
+			}
 		},
 		afterEach : function () {
 			this.oRC.destroy();
@@ -200,6 +205,11 @@ sap.ui.define([
 
 			this.oRC.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
+
+			// TODO-BRIDGE remove once the sinon-4 sandbox supports fake timers
+			if ( this.clock == null ) {
+				this.clock = this._oSandbox.useFakeTimers();
+			}
 		},
 		afterEach : function () {
 			this.oRC.destroy();

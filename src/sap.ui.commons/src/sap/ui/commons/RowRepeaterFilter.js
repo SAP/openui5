@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.RowRepeaterFilter.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
-	function(jQuery, library, Element) {
+sap.ui.define(['./library', 'sap/ui/core/Element'],
+	function(library, Element) {
 	"use strict";
 
 
@@ -50,13 +50,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 		}
 	}});
 
-	///**
-	// * This file defines behavior for the control,
-	// */
-	//sap.ui.commons.RowRepeaterFilter.prototype.init = function(){
-	//   // do something for initialization...
-	//};
 
 	return RowRepeaterFilter;
 
-}, /* bExport= */ true);
+});

@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/commons/layout/HorizontalLayout",
 	"sap/ui/commons/Button",
 	"sap/ui/commons/TextField",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/Device"
 ], function(
@@ -34,15 +34,15 @@ sap.ui.define([
 
 
 	QUnit.test("Children Rendered", function(assert) {
-		assert.ok(jQuery.sap.domById('B1'), "Button should be rendered");
-		assert.ok(jQuery.sap.domById('TF1'), "TextField should be rendered");
-		assert.ok(jQuery.sap.domById('B2'), "Second button should be rendered");
+		assert.ok(document.getElementById('B1'), "Button should be rendered");
+		assert.ok(document.getElementById('TF1'), "TextField should be rendered");
+		assert.ok(document.getElementById('B2'), "Second button should be rendered");
 	});
 
 	QUnit.test("Layout", function(assert) {
-		var oButton = jQuery.sap.byId('B1');
-		var oText = jQuery.sap.byId('TF1');
-		var oImage = jQuery.sap.byId('B2');
+		var oButton = jQuery('#B1');
+		var oText = jQuery('#TF1');
+		var oImage = jQuery('#B2');
 		assert.ok(oButton.offset().left < oText.offset().left, "Left offset of Button < TextField");
 		assert.ok(oText.offset().left < oImage.offset().left, "Left offset of TextField < Second button");
 
@@ -54,9 +54,9 @@ sap.ui.define([
 		sap.ui.getCore().byId("TF1").setWidth("5000px");
 		sap.ui.getCore().applyChanges();
 
-		var oButton = jQuery.sap.byId('B1');
-		var oText = jQuery.sap.byId('TF1');
-		var oImage = jQuery.sap.byId('B2');
+		var oButton = jQuery('#B1');
+		var oText = jQuery('#TF1');
+		var oImage = jQuery('#B2');
 		assert.ok(oButton.offset().left < oText.offset().left, "Left offset of Button < TextField");
 		assert.ok(oText.offset().left < oImage.offset().left, "Left offset of TextField < Second button");
 	});
@@ -65,9 +65,9 @@ sap.ui.define([
 		oLayout1.setAllowWrapping(true);
 		sap.ui.getCore().applyChanges();
 
-		var oButton = jQuery.sap.byId('B1');
-		var oText = jQuery.sap.byId('TF1');
-		var oImage = jQuery.sap.byId('B2');
+		var oButton = jQuery('#B1');
+		var oText = jQuery('#TF1');
+		var oImage = jQuery('#B2');
 		assert.equal(oText.offset().left, oButton.offset().left, "Left offset of Button == TextField");
 		assert.equal(oImage.offset().left, oText.offset().left, "Left offset of TextField == Second button");
 	});
