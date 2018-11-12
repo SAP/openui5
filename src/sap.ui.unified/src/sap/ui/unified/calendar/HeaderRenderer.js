@@ -117,7 +117,7 @@ sap.ui.define(["sap/base/security/encodeXML"],
 			oRm.writeAttribute('tabindex', "-1");
 			oRm.writeClasses();
 			if (this.getAriaLabelButton(oHead, i)) {
-				mAccProps["label"] = encodeXML(this.getAriaLabelButton(oHead, i));
+				mAccProps["label"] = this.getAriaLabelButton(oHead, i);
 			}
 			oRm.writeAccessibilityState(null, mAccProps);
 			mAccProps = {};
