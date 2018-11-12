@@ -800,6 +800,7 @@ function (
 				width: "300px"
 			});
 			this.oPanel.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
 			this.oDesignTime = new DesignTime({
 				designTimeMetadata: {
 					"sap.m.Panel": {
