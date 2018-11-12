@@ -496,6 +496,10 @@ sap.ui.define([
 					Given.iTeardownMyUIComponent();
 				});
 			});
+
+			opaTest("Fake test to have a root module with at least one test, otherwise qunit-2 will fail", function () {
+				Opa5.assert.ok(true, "assert ok");
+			});
 		});
 
 		QUnit.module("Keyboard navigation", function () {
@@ -558,6 +562,10 @@ sap.ui.define([
 				// Cleanup
 				Given.iTeardownMyUIComponent();
 			});
+		});
+
+		opaTest("Fake test to have a root module with at least one test, otherwise qunit-2 will fail", function () {
+			Opa5.assert.ok(true, "assert ok");
 		});
 	});
 });
