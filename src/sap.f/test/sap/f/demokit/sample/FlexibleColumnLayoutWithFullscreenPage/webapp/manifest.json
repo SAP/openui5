@@ -77,7 +77,7 @@
 					"controlAggregation": "midColumnPages"
 				},
 				"detailDetailDetail": {
-					"viewName": "detailDetailDetail",
+					"viewName": "DetailDetailDetail",
 					"controlAggregation": "endColumnPages"
 				}
 			}
