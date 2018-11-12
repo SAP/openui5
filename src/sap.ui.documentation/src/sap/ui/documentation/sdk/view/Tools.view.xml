@@ -256,7 +256,7 @@
 								<custom:TitleLink
 										level="H1"
 										titleStyle="H1"
-										text="SAPUI5 Evo Tooling"
+										text="UI5 Build and Development Tooling"
 										href="https://github.com/SAP/ui5-tooling"
 										target="_blank"/>
 								<Image
