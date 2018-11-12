@@ -218,10 +218,11 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 			beforeEach: function() { // not needed before EACH, because there is only one test creating controls right now, but 1.) "before" is never called and 2.) there might be more later.
 				mOriginalElements = getAllAliveControls();
 			},
-			afterEach: function() {
+			afterEach: function(assert) {
 				for (var sId in MemoryLeakCheck.oCore.mElements) {
 					if (!mOriginalElements[sId]) {
 						var oControl = sap.ui.getCore().byId(sId);
+						assert.ok(oControl.getMetadata().getName(), "Cleanup of id: " + sId + ", control: " + oControl.getMetadata().getName());
 						oControl.destroy();
 					}
 				}
