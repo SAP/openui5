@@ -87,6 +87,7 @@ function(
 			var fnDone = assert.async();
 			this.oButton = new Button("button1", {text : "Button"});
 			this.oSimpleForm.addContent(this.oButton);
+			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				var oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
