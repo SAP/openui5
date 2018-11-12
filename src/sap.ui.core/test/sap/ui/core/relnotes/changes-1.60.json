@@ -414,6 +414,24 @@
         "type": "FIX",
         "text": " sap.ui.model.analytics.odata4analytics#_renderPropertyFilterValue",
         "references": []
+      },
+      {
+        "id": "68eab4ac33f4050d637e93fc02bc9793aefe8ff6",
+        "type": "FIX",
+        "text": " performance/trace/FESR: deal with unsupported window.Performance API",
+        "references": []
+      },
+      {
+        "id": "9b9631b727a7bf908e0ed2836d923c3f1ba3f345",
+        "type": "FIX",
+        "text": " routing.History: maintain the history state after hash replacement",
+        "references": []
+      },
+      {
+        "id": "bba33ddc1e9254c005802f8c66ffe66c50e3734b",
+        "type": "FIX",
+        "text": " sap/ui/core/Manifest: finalize resolveUri API",
+        "references": []
       }
     ]
   }

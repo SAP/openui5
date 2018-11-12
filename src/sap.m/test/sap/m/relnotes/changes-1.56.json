@@ -1833,5 +1833,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.15": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "f353eb8a4625142e407ffa71fab05902f7023fad",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Adjust width when dialog contains long items",
+        "references": []
+      }
+    ]
   }
 }

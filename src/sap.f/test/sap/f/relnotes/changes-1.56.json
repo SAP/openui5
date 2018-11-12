@@ -189,5 +189,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.15": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "252b65e9c664adc1facf46ceb28459fbb05221ec",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Fixed Fiori 2.0 tutorial",
+        "references": []
+      }
+    ]
   }
 }
