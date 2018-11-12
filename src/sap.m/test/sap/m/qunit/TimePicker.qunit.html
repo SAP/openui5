@@ -3748,7 +3748,8 @@
 
 		QUnit.test("tap on the input icon on Tablet opens the picker", function(assert) {
 			// releated to BCP: 1670338556
-			var tp = new sap.m.TimePicker();
+			var tp = new sap.m.TimePicker(),
+				oIsIconClickedSpy = this.spy(tp, "_isIconClicked");
 			tp.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
@@ -3761,18 +3762,49 @@
 			tp.onfocusin(oEvent);
 			this.clock.tick(1000);
 
+			//assert
 			assert.strictEqual(jQuery(".sapMPopover").is(":visible"), true, "When tapped on the button the picker stays opened");
+			assert.strictEqual(oIsIconClickedSpy.callCount, 1, "_isIconClicked function is called on focusin");
 
 			oEvent.target = tp.getDomRef();
 
 			tp.onfocusin(oEvent);
 			this.clock.tick(1000);
 
+			//assert
 			assert.strictEqual(jQuery(".sapMPopover").is(":visible"), false, "When focus on the field the picker is closed");
+			assert.strictEqual(oIsIconClickedSpy.callCount, 2, "_isIconClicked function is called on focusin");
 
+			// clean up
 			tp.destroy();
+			oIsIconClickedSpy.restore();
 		});
 
+
+		QUnit.test("_isIconClicked works correctly", function(assert) {
+			// releated to BCP: 1880695361
+			//arrange
+			var tp = new sap.m.TimePicker(),
+				oEvent;
+
+			oEvent = { target: ".sapUiIcon" };
+
+			//assert
+			assert.strictEqual(tp._isIconClicked(oEvent), true, "_isIconClicked returns true when the event has target sapUiIcon");
+
+			oEvent = { target: ".sapMInputBaseIconContainer" };
+
+			//assert
+			assert.strictEqual(tp._isIconClicked(oEvent), true, "_isIconClicked returns true when the event has target sapMInputBaseIconContainer");
+
+			oEvent = { target: ".someOtherClass" };
+
+			//assert
+			assert.strictEqual(tp._isIconClicked(oEvent), false, "_isIconClicked returns false when the event has some other target");
+
+			// clean up
+			tp.destroy();
+		});
 		QUnit.test("upon focusout, change event fires only once", function(assert) {
 			//system under test
 			var	oTp2 = new sap.m.TimePicker({

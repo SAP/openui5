@@ -384,13 +384,17 @@ function(
 		 */
 		TimePicker.prototype.onfocusin = function (oEvent) {
 			var oPicker = this._getPicker();
-			var bIconClicked = jQuery(oEvent.target).hasClass("sapUiIcon");
+			var bIconClicked = this._isIconClicked(oEvent);
 
 			MaskEnabler.onfocusin.apply(this, arguments);
 
 			if (oPicker && oPicker.isOpen() && !bIconClicked) {
 				this._closePicker();
 			}
+		};
+
+		TimePicker.prototype._isIconClicked = function (oEvent) {
+			return jQuery(oEvent.target).hasClass("sapUiIcon") || jQuery(oEvent.target).hasClass("sapMInputBaseIconContainer");
 		};
 
 		/**
