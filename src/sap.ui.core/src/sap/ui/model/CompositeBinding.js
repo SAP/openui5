@@ -284,12 +284,15 @@ sap.ui.define([
 
 		this.aBindings.forEach(function(oBinding, iIndex) {
 			oValue = aValues[iIndex];
-			if (this.bRawValues) {
-				oBinding.setRawValue(oValue);
-			} else if (this.bInternalValues) {
-				oBinding.setInternalValue(oValue);
-			} else {
-				oBinding.setExternalValue(oValue);
+			// if a value is undefined skip the update of the nestend binding - this allows partial updates
+			if (oValue !== undefined) {
+				if (this.bRawValues) {
+					oBinding.setRawValue(oValue);
+				} else if (this.bInternalValues) {
+					oBinding.setInternalValue(oValue);
+				} else {
+					oBinding.setExternalValue(oValue);
+				}
 			}
 		}.bind(this));
 
@@ -341,7 +344,10 @@ sap.ui.define([
 			}
 		}
 		this.aBindings.forEach(function(oBinding, iIndex) {
-			oBinding.setInternalValue(aValues[iIndex]);
+			var vValue = aValues[iIndex];
+			if (vValue !== undefined) {
+				oBinding.setInternalValue(vValue);
+			}
 		});
 		oDataState.setValue(this.getValue());
 		oDataState.setInvalidValue(undefined);
@@ -392,7 +398,10 @@ sap.ui.define([
 			}
 		}
 		this.aBindings.forEach(function(oBinding, iIndex) {
-			oBinding.setRawValue(aValues[iIndex]);
+			var vValue = aValues[iIndex];
+			if (vValue !== undefined) {
+				oBinding.setRawValue(vValue);
+			}
 		});
 		oDataState.setValue(this.getValue());
 		oDataState.setInvalidValue(undefined);

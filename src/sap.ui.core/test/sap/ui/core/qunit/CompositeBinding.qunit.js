@@ -217,11 +217,21 @@ sap.ui.define([
 		assert.equal(this.model.getProperty("/c"), 1, "setExternalValue() does change model values for contained bindings");
 	});
 
+	QUnit.test("setExternalValue with undefined values", function(assert) {
+		this.composite.setExternalValue("-3- 2.00");
+		assert.equal(this.model.getProperty("/c"), 3, "setExternalValue() does change does not change value, if it is undefined");
+	});
+
 	QUnit.test("getRawValue/setRawValue", function(assert) {
 		assert.deepEqual(this.composite.getRawValue(), [1, 2, 3], "getRawValue() returns array of raw values");
 		this.composite.setRawValue([3, 2, 1]);
 		assert.equal(this.model.getProperty("/a"), 3, "setRawValue() can change value of binding with formatter");
 		assert.equal(this.model.getProperty("/c"), 1, "setRawValue() does change model values for contained bindings");
+	});
+
+	QUnit.test("setRawValue with undefined values", function(assert) {
+		this.composite.setRawValue([3,2]);
+		assert.equal(this.model.getProperty("/c"), 3, "setRawValue() does change does not change value, if it is undefined");
 	});
 
 	QUnit.test("getInternalValue/setInternalValue", function(assert) {
@@ -235,6 +245,11 @@ sap.ui.define([
 		this.compositeinternal.setInternalValue([new Date(2018,7,1), 5]);
 		assert.equal(this.model.getProperty("/d"), "2018-08-01", "setInternalValue() accepts JS native values");
 		assert.equal(this.model.getProperty("/e"), "5.000", "setInternalValue() accepts JS native values");
+	});
+
+	QUnit.test("setInternalValue with undefined values", function(assert) {
+		this.composite.setRawValue([3,2]);
+		assert.equal(this.model.getProperty("/c"), 3, "setInternalValue() does change does not change value, if it is undefined");
 	});
 
 	QUnit.test("internal type set to raw/internal", function(assert) {
