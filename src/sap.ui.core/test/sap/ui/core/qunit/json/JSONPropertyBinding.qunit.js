@@ -174,7 +174,7 @@ sap.ui.define([
 		oDateBinding.setType(new DateType({source:{pattern:"yyyy-MM-dd"}}), "string");
 		oFloatBinding.setType(new FloatType({source:{decimals: 3}}), "string");
 		assert.deepEqual(oDateBinding.getInternalValue(), new Date(2018,3,30), "getInternvalValues returns internal values");
-		assert.strictEqual(oFloatBinding.getInternalValue(), 3, "getInternvalValues returns internval values");
+		assert.strictEqual(oFloatBinding.getInternalValue(), 3, "getInternvalValues returns internal values");
 	});
 
 	QUnit.test("PropertyBinding setInternalValue", function(assert) {
@@ -186,6 +186,19 @@ sap.ui.define([
 		assert.equal(oDateBinding.getRawValue(), "2018-08-30", "setInternalValue changes binding value");
 		oFloatBinding.setInternalValue(5);
 		assert.equal(oFloatBinding.getRawValue(), "5.000", "setInternalValue changes binding value");
+	});
+
+	QUnit.test("PropertyBinding with internal type raw/internal", function(assert) {
+		var oDateBinding = this.oModel.bindProperty("/internaldate"),
+			oFloatBinding = this.oModel.bindProperty("/internalnumber");
+		oDateBinding.setType(new DateType({source:{pattern:"yyyy-MM-dd"}}), "raw");
+		oFloatBinding.setType(new FloatType({source:{decimals: 3}}), "raw");
+		assert.deepEqual(oDateBinding.getExternalValue(), "2018-04-30", "getExternalValue returns raw values");
+		assert.strictEqual(oFloatBinding.getExternalValue(), "3.000", "getExternalValue returns raw values");
+		oDateBinding.setType(new DateType({source:{pattern:"yyyy-MM-dd"}}), "internal");
+		oFloatBinding.setType(new FloatType({source:{decimals: 3}}), "internal");
+		assert.deepEqual(oDateBinding.getExternalValue(), new Date(2018,3,30), "getExternalValue returns internal values");
+		assert.strictEqual(oFloatBinding.getExternalValue(), 3, "getExternalValue returns internal values");
 	});
 
 	QUnit.test("PropertyBinding binding mode", function(assert) {

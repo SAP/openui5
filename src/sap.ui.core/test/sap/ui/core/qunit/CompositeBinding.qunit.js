@@ -237,6 +237,18 @@ sap.ui.define([
 		assert.equal(this.model.getProperty("/e"), "5.000", "setInternalValue() accepts JS native values");
 	});
 
+	QUnit.test("internal type set to raw/internal", function(assert) {
+		var oType = new MyCompositeType();
+		this.compositeinternal.setType(oType, "raw");
+		var aValues = this.compositeinternal.getExternalValue();
+		assert.equal(aValues[0], "2018-04-30", "getExternalValue returns raw date value");
+		assert.equal(aValues[1], "2.000", "getExternalValue returns raw number value");
+		this.compositeinternal.setType(oType, "internal");
+		aValues = this.compositeinternal.getExternalValue();
+		assert.deepEqual(aValues[0], new Date(2018,3,30), "getExternalValue returns internal date value");
+		assert.strictEqual(aValues[1], 2, "getExternalValue returns internal number value");
+	});
+
 	QUnit.test("with bUseRawValues", function(assert) {
 		assert.equal(this.compositeraw.getExternalValue(), "1 2 3", "getExternalValue() returns space separated list of values");
 		this.compositeraw.setExternalValue("3 2 1");
