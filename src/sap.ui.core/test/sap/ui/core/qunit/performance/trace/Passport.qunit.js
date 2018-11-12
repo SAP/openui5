@@ -48,8 +48,6 @@ sap.ui.define(['sap/ui/performance/trace/Passport'], function(Passport) {
 	});
 
 	QUnit.test("getTransactionId", function(assert) {
-		assert.equal(typeof Passport.getTransactionId(), "undefined", "Returns undefined - no transaction yet");
-
 		var oReq = new XMLHttpRequest();
 		oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now(), false);
 		var sTransactionId1 = Passport.getTransactionId();
