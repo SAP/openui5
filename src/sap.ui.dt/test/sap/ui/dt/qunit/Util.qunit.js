@@ -286,6 +286,31 @@ function(
 		});
 	});
 
+	QUnit.module('debounce()', function() {
+		QUnit.test("when a function is called with a timeout several times", function(assert) {
+			var done = assert.async();
+			var iFunctionCalled = 0;
+			var iDebounceCalled = 0;
+			var fnDebounce = Util.debounce(function() {
+				iDebounceCalled++;
+				assert.equal(iFunctionCalled, 5, "the function was called 10 times");
+				assert.equal(iDebounceCalled, 1, "the debounce callback was only called once");
+				done();
+			}, 15);
+
+			function callDebounceDelayed() {
+				setTimeout(function() {
+					iFunctionCalled++;
+					fnDebounce();
+					if (iFunctionCalled < 5) {
+						callDebounceDelayed();
+					}
+				}, 10);
+			}
+			callDebounceDelayed();
+		});
+	});
+
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});

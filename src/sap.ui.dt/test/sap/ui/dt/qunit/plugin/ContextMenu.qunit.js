@@ -659,8 +659,7 @@ sap.ui.define([
 			this.oContextMenuPlugin._bFocusLocked = true;
 			assert.notOk(this.oContextMenuPlugin._checkForPluginLock(), "then return false when no busy plugin exists");
 			assert.notOk(this.oContextMenuPlugin._bFocusLocked, "then reset the focus lock when no busy plugin exists");
-			var oBusyPlugin = { isBusy: function() { return true; } };
-			this.oContextMenuPlugin._aPluginsWithBusyFunction.push(oBusyPlugin);
+			oSandbox.stub(this.oRenamePlugin, "isBusy").returns(true);
 			assert.ok(this.oContextMenuPlugin._checkForPluginLock(), "then return true when busy plugin exists");
 		});
 

@@ -4,14 +4,14 @@
 
 // Provides class sap.ui.rta.plugin.Plugin.
 sap.ui.define([
-	'sap/ui/dt/Plugin',
-	'sap/ui/fl/Utils',
-	'sap/ui/fl/registry/ChangeRegistry',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/OverlayUtil',
-	'sap/ui/dt/ElementOverlay',
-	'sap/ui/fl/changeHandler/JsControlTreeModifier',
-	'sap/ui/base/ManagedObject'
+	"sap/ui/dt/Plugin",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/OverlayUtil",
+	"sap/ui/dt/ElementOverlay",
+	"sap/ui/fl/changeHandler/JsControlTreeModifier",
+	"sap/ui/base/ManagedObject"
 ],
 function(
 	Plugin,
@@ -154,7 +154,7 @@ function(
 		var bSkipEvaluation = aPlugins.some(function (oPlugin) {
 			// If a plugin is busy, do not evaluate
 			// When the action is finished, if the affected controls are modified, the evaluation will be done anyway
-			return oPlugin.isBusy && oPlugin.isBusy();
+			return oPlugin.isBusy();
 		});
 		if (bSkipEvaluation){
 			return;

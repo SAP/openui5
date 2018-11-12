@@ -207,6 +207,23 @@ function(
 			assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef).get(0), this.oButton.getDomRef(), "then the value of domRef is correct");
 		});
 
+		QUnit.test("when getAssociatedDomRef is called on an action with domRef as a function and no element", function(assert) {
+			var oDesignTimeMetadata = new DesignTimeMetadata({
+				data : {
+					actions : {
+						rename : {
+							domRef : function (oElement){
+								return oElement.getDomRef();
+							}
+						}
+					}
+				}
+			});
+
+			var vDomRef = oDesignTimeMetadata.getAction("rename", this.oButton).domRef;
+			assert.notOk(oDesignTimeMetadata.getAssociatedDomRef(undefined, vDomRef), "then undefined is returned");
+		});
+
 		QUnit.test("when getAssociatedDomRef is called on an action with domRef as a string", function(assert) {
 			var oDesignTimeMetadata = new DesignTimeMetadata({
 				data : {
