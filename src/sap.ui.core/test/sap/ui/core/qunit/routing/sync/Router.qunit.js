@@ -159,6 +159,7 @@ sap.ui.define([
 		var oRouter = new Router([ { name : "myRoute", pattern : "foo" } ], {}, null, {myTarget : {}});
 
 		var oTargets = oRouter.getTargets(),
+			oViews = oRouter.getViews(),
 			oRoute = oRouter.getRoute("myRoute");
 
 		//Act
@@ -168,10 +169,12 @@ sap.ui.define([
 		assert.ok(oRouter.bIsDestroyed, "did set the destroy flag");
 		assert.ok(oTargets.bIsDestroyed, "did destroy the targets");
 		assert.ok(oRoute.bIsDestroyed, "did destroy the route");
+		assert.ok(oViews.bIsDestroyed, "did destroy the views");
 		assert.strictEqual(oRouter._oRouter, null, "did free the crossroads router");
 		assert.strictEqual(oRouter._oRoutes, null, "did free the UI5 routes");
 		assert.strictEqual(oRouter._oTargets, null, "did free the UI5 targets");
 		assert.strictEqual(oRouter._oConfig, null, "did free the config");
+		assert.strictEqual(oRouter._oViews, null, "did free the view cache");
 
 	});
 

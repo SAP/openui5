@@ -395,6 +395,12 @@ sap.ui.define([
 			destroy : function () {
 				EventProvider.prototype.destroy.apply(this);
 
+				// destroy the view cache
+				if (this._oViews) {
+					this._oViews.destroy();
+					this._oViews = null;
+				}
+
 				if (!this._bIsInitialized) {
 					Log.info("Router is not initialized, but got destroyed.", this);
 				}
