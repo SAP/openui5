@@ -957,6 +957,7 @@ if (typeof window.sap.ui !== "object") {
 	//        enabled browser. Therfore we manually override that in jQuery.support!
 	//        This has been tested with PhantomJS 1.9.7 and 2.0.0!
 	if (Device.browser.phantomJS) {
+		oLogger.log(ERROR, "PhantomJS is not supported! UI5 might break on PhantomJS in future releases. Please use Chrome Headless instead.");
 		Device.support.touch = false;
 	}
 
