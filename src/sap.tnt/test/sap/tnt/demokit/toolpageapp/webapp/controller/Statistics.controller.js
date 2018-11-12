@@ -1,7 +1,8 @@
 sap.ui.define([
 		'sap/ui/demo/toolpageapp/controller/BaseController',
-		'sap/ui/model/json/JSONModel'
-	], function (BaseController, JSONModel) {
+		'sap/ui/model/json/JSONModel',
+		"sap/ui/VersionInfo"
+	], function (BaseController, JSONModel, VersionInfo) {
 		"use strict";
 		return BaseController.extend("sap.ui.demo.toolpageapp.controller.Statistics", {
 
@@ -16,17 +17,16 @@ sap.ui.define([
 				});
 				this.setModel(oViewModel, "view");
 
-				// Load charts for the current ennvironment (D3 = OpenUI5, MicroCharts = SAPUI5)
-				try {
-					sap.ui.require([
-						"sap/suite/ui/microchart/AreaMicroChart"
-					], function () {
+				// Load charts for the current environment (D3 = OpenUI5, MicroCharts = SAPUI5)
+				VersionInfo.load().then(function (oVersionInfo) {
+					if (oVersionInfo.name.startsWith("SAPUI5")) {
+						// SAPUI5 distribution: use micro charts
 						this.byId("statisticsContainer").addContent(sap.ui.xmlview({id: this.getView().createId("charts"), viewName : "sap.ui.demo.toolpageapp.view.StatisticsMicro"}));
-					}.bind(this));
-				} catch (oException) {
-					// no microcharts available: use d3 view
-					this.byId("statisticsContainer").addContent(sap.ui.xmlview({id: this.getView().createId("charts"), viewName : "sap.ui.demo.toolpageapp.view.StatisticsD3"}));
-				}
+					} else {
+						// OpenUI5 distribution: use D3 charts
+						this.byId("statisticsContainer").addContent(sap.ui.xmlview({id: this.getView().createId("charts"), viewName : "sap.ui.demo.toolpageapp.view.StatisticsD3"}));
+					}
+				}.bind(this));
 			},
 
 			onRefresh: function () {
