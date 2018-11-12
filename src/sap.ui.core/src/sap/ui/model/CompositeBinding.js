@@ -194,7 +194,7 @@ sap.ui.define([
 			oInternalType = this.sInternalType && DataType.getType(this.sInternalType),
 			oValue;
 
-		switch (this.sInternalTyoe) {
+		switch (this.sInternalType) {
 			case "raw":
 				return this.getRawValue();
 			case "internal":
