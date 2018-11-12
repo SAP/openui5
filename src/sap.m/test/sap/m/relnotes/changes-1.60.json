@@ -1110,6 +1110,12 @@
         "type": "FIX",
         "text": " sap.m.Wizard: Current step in branching fixed",
         "references": []
+      },
+      {
+        "id": "84bdd4b42941e68476960c331cb410b0d640192b",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Rollback the latest refactoring",
+        "references": []
       }
     ]
   }

@@ -93,5 +93,16 @@
         "references": []
       }
     ]
+  },
+  "1.60.1": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "36af3654fb11cd531fa3a2706ec5ea1ffabcbd5d",
+        "type": "FIX",
+        "text": " sap.ui.fl - Change for VariantManagement stored as instance",
+        "references": []
+      }
+    ]
   }
 }
