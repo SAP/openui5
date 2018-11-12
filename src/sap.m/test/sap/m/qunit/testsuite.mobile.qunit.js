@@ -2525,10 +2525,7 @@ sap.ui.define(function() {
 					"./UploadCollectionItem.qunit",
 					"./UploadCollectionMemoryLeak.qunit",
 					"./UploadCollectionOpenFileDialog.qunit",
-					"./UploadCollectionToolbar.qunit",
-					"./uploadCollection/UploadCollection.qunit",
-					"./uploadCollection/UploadCollectionItem.qunit",
-					"./uploadCollection/UploadCollectionRestrictions.qunit"
+					"./UploadCollectionToolbar.qunit"
 				]
 			},
 			VBox: {

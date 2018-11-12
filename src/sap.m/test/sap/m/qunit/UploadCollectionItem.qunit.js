@@ -9,6 +9,7 @@ sap.ui.define([
 ], function(UploadCollectionItem, ObjectAttribute, ObjectMarker, mlibrary, Device, File) {
 	"use strict";
 
+
 	var ObjectMarkerType = mlibrary.ObjectMarkerType;
 	var ObjectMarkerVisibility = mlibrary.ObjectMarkerVisibility;
 	var URLHelper = mlibrary.URLHelper;
@@ -34,14 +35,14 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Check if the deprecated properties were set with initial load", function(assert) {
+	QUnit.test("Check if the deprecated properties were set with initial load", function(assert) {
 		assert.ok(this.oUploadCollectionItem, "UploadCollectionItem instantiated");
 		assert.equal(this.oUploadCollectionItem.getContributor(), "Susan Baker", "Contributor property is set");
 		assert.equal(this.oUploadCollectionItem.getUploadedDate(), "2014-07-30", "UploadedDate property is set");
 		assert.equal(this.oUploadCollectionItem.getFileSize(), "20", "FileSize property is set");
 	});
 
-	QUnit.skip("Check the correct sequence and completeness of deprecated properties in the aggregation attributes", function(assert) {
+	QUnit.test("Check the correct sequence and completeness of deprecated properties in the aggregation attributes", function(assert) {
 		var aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
 		assert.equal(aAggregation.length, "3", "Empty aggregation filled with 3 attributes");
 		assert.equal(aAggregation[0].getText(), "2014-07-30", "1. attribute: uploadedDate");
@@ -49,7 +50,7 @@ sap.ui.define([
 		assert.equal(aAggregation[2].getText(), "20", "3. attribute: fileSize");
 	});
 
-	QUnit.skip("Check deprecated properties before and after a change with the corresponding setter function", function(assert) {
+	QUnit.test("Check deprecated properties before and after a change with the corresponding setter function", function(assert) {
 		var aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
 		//before change
 		assert.equal(aAggregation.length, "3", "Empty aggregation filled with 3 attributes");
@@ -85,7 +86,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Set deprecated properties in mixed sequence", function(assert) {
+	QUnit.test("Set deprecated properties in mixed sequence", function(assert) {
 		assert.ok(this.oUploadCollectionItem, "UploadCollectionItem instantiated");
 		//fileSize
 		this.oUploadCollectionItem.setFileSize(20);
@@ -120,7 +121,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Check of the removeAllAggregation/removeAllAttributes", function(assert) {
+	QUnit.test("Check of the removeAllAggregation/removeAllAttributes", function(assert) {
 		assert.ok(this.oUploadCollectionItem, "UploadCollectionItem instantiated");
 
 		//removeAllAggregation
@@ -137,7 +138,7 @@ sap.ui.define([
 		assert.equal(aAggregation, null, "Original attributes with RemoveAllAggregation were deleted");
 	});
 
-	QUnit.skip("Check of the removeAllAggregation with deprecated Properties", function(assert) {
+	QUnit.test("Check of the removeAllAggregation with deprecated Properties", function(assert) {
 		this.oUploadCollectionItem.setFileSize(45);
 		this.oUploadCollectionItem.setUploadedDate("2015-08-31");
 		this.oUploadCollectionItem.setContributor("John Doe");
@@ -158,7 +159,7 @@ sap.ui.define([
 		assert.equal(aAggregation[2].getText(), "45", "Attribute 'fileSize' set");
 	});
 
-	QUnit.skip("Set deprecated properties with prefilled attributes aggregation", function(assert) {
+	QUnit.test("Set deprecated properties with prefilled attributes aggregation", function(assert) {
 		var aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
 		assert.equal(aAggregation.length, 1, "1 attribute available");
 		this.oUploadCollectionItem.setFileSize(45);
@@ -203,7 +204,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Test getAllAttributes", function(assert) {
+	QUnit.test("Test getAllAttributes", function(assert) {
 		//set deprecated properties
 		this.oUploadCollectionItem.setContributor("deprecatedContributor");
 		this.oUploadCollectionItem.setUploadedDate("deprecatedDate");
@@ -237,7 +238,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Test set and get selected", function(assert) {
+	QUnit.test("Test set and get selected", function(assert) {
 		//Arrange
 		var oStub = sinon.stub(this.oUploadCollectionItem, "fireEvent");
 
@@ -268,7 +269,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Test accessing marker", function(assert) {
+	QUnit.test("Test accessing marker", function(assert) {
 		//Arrange
 		//Act
 		var aMarkers = this.oUploadCollectionItem.getMarkers();
@@ -304,7 +305,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Test that XMLHttpRequest is correct", function(assert) {
+	QUnit.test("Test that XMLHttpRequest is correct", function(assert) {
 		if (Device.browser.name === "sf" || !Device.browser.phantomJS) {
 			assert.expect(0);
 			return;
@@ -322,7 +323,7 @@ sap.ui.define([
 		assert.equal(sURL, sExpectedURL, "The URL of the request is correct");
 	});
 
-	QUnit.skip("Check that sap.ui.core.util.File.save was called and it was called with the right arguments", function(assert) {
+	QUnit.test("Check that sap.ui.core.util.File.save was called and it was called with the right arguments", function(assert) {
 		if (Device.browser.name === "sf" || !Device.browser.phantomJS) {
 			assert.expect(0);
 			return;
@@ -344,7 +345,7 @@ sap.ui.define([
 	});
 
 	// REMARK: phantom.js reacts like Safari
-	QUnit.skip("Check if in case of safari sap.m.URLHelper is called", function(assert) {
+	QUnit.test("Check if in case of safari sap.m.URLHelper is called", function(assert) {
 		if (Device.browser.name !== "sf" || Device.browser.phantomJS) {
 			assert.expect(0);
 			return;
@@ -383,9 +384,9 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Check that sap.m.URLHelper.redirect is called if askForLocation is set to false", function(assert) {
+	QUnit.test("Check that sap.m.URLHelper.redirect is called if askForLocation is set to false", function(assert) {
 		//Arrange
-		var stub = this.sandbox.stub(URLHelper, "redirect");
+		var stub = this.stub(URLHelper, "redirect");
 
 		//Act
 		var bDownloadResult = this.oUploadCollectionItem.download(false);
@@ -396,7 +397,7 @@ sap.ui.define([
 		assert.ok(stub.calledWith(this.oUploadCollectionItem.getUrl(), true), "Redirect was called with the right arguments");
 	});
 
-	QUnit.skip("Test to download an item without URL", function(assert) {
+	QUnit.test("Test to download an item without URL", function(assert) {
 		//Arrange
 		this.oUploadCollectionItem.setUrl(null);
 
@@ -407,7 +408,7 @@ sap.ui.define([
 		assert.equal(bDownloadResult, false, "Item was downloaded successfully.");
 	});
 
-	QUnit.skip("_splitFileName extracts the correct information", function(assert) {
+	QUnit.test("_splitFileName extracts the correct information", function(assert) {
 		//Arrange
 		var sFileName = "pic1.jpg";
 		//Act
@@ -431,14 +432,14 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Instance created and returned", function(assert) {
+	QUnit.test("Instance created and returned", function(assert) {
 		//Act
 		var oResult = this.oItem._getControl("sap.m.Button");
 		//Assert
 		assert.equal(oResult.getMetadata().getName(), "sap.m.Button", "Correct instance created and returned");
 	});
 
-	QUnit.skip("Instance created and settings applied", function(assert) {
+	QUnit.test("Instance created and settings applied", function(assert) {
 		//Act
 		var oResult = this.oItem._getControl("sap.m.Button", {
 			text: "myText"
@@ -447,7 +448,14 @@ sap.ui.define([
 		assert.equal(oResult.getText(), "myText", "Settings applied");
 	});
 
-	QUnit.skip("Internal instances destroyed if item is destroyed", function(assert) {
+	QUnit.test("Instance created and internally stored", function(assert) {
+		//Act
+		this.oItem._getControl("sap.m.Button");
+		//Assert
+		assert.equal(this.oItem._aManagedInstances.length, 1, "Created instance internally stored");
+	});
+
+	QUnit.test("Internal instances destroyed if item is destroyed", function(assert) {
 		//Arrange
 		var oResult = this.oItem._getControl("sap.m.Button");
 		//Act
@@ -456,28 +464,29 @@ sap.ui.define([
 		assert.equal(oResult._bIsBeingDestroyed, true, "Created instance marked as destroyed");
 	});
 
-	QUnit.skip("Instance getter created if name provided", function(assert) {
+	QUnit.test("Instance getter created if name provided", function(assert) {
 		//Act
 		var oResult = this.oItem._getControl("sap.m.Button", null, "Otto");
 		//Assert
 		assert.equal(this.oItem._getOtto(), oResult, "Generated getter returns sames object");
 	});
 
-	QUnit.skip("Function _getItemPressEnabled", function(assert) {
+	QUnit.test("Function _getItemPressEnabled", function(assert) {
 		//Assert
 		assert.equal(this.oItem._getPressEnabled(this.oItem), false, "Press disbaled when no handler or URL exists");
 	});
 
-	QUnit.skip("Function _getItemPressEnabled with press handler", function(assert) {
+	QUnit.test("Function _getItemPressEnabled with press handler", function(assert) {
 		//Act
 		this.oItem.attachPress("press", function() {});
 		//Assert
 		assert.equal(this.oItem._getPressEnabled(this.oItem), true, "Press enabled when handler exists");
 	});
-	QUnit.skip("Function _getItemPressEnabled with URL", function(assert) {
+	QUnit.test("Function _getItemPressEnabled with URL", function(assert) {
 		//Act
 		this.oItem.setProperty("url", "test.url");
 		//Assert
 		assert.equal(this.oItem._getPressEnabled(this.oItem), true, "Press enabled when URL exists");
 	});
+
 });
