@@ -16,16 +16,13 @@
 		</VBox>
 		<UploadCollection
 			id="UploadCollection"
-			maximumFilenameLength="10"
-			maximumFileSize="2000"
-			fileType="txt,mp4"
-			mimeType="text/plain,video/mp4"
+			maximumFilenameLength="55"
+			maximumFileSize="10"
 			multiple="true"
 			sameFilenameAllowed="true"
 			instantUpload="false"
 			noDataDescription="Drop files or use the &quot;+&quot; button for pending upload"
 			change="onChange"
-			afterItemAdded="onAfterItemAdded"
 			fileDeleted="onFileDeleted"
 			filenameLengthExceed="onFilenameLengthExceed"
 			fileSizeExceed="onFileSizeExceed"

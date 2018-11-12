@@ -28,7 +28,6 @@
 				fileRenamed="onFileRenamed"
 				fileSizeExceed="onFileSizeExceed"
 				fileType="{fileTypes>/selected}"
-				mimeType="{fileTypes>/mime}"
 				selectionChange="onSelectionChange"
 				typeMissmatch="onTypeMissmatch"
 				uploadComplete="onUploadComplete"
@@ -69,7 +68,6 @@
 					<UploadCollectionItem
 						documentId="{documentId}"
 						fileName="{fileName}"
-						fileSize="{fileSize}"
 						mimeType="{mimeType}"
 						thumbnailUrl="{thumbnailUrl}"
 						url="{url}"

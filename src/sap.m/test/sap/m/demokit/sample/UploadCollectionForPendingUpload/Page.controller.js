@@ -14,11 +14,6 @@ sap.ui.define([
 			this.getView().setModel(new JSONModel(Device), "device");
 		},
 
-		onRestrictMore: function(oEvent) {
-			var oUploadCollection = this.byId("UploadCollection");
-			oUploadCollection.setMaximumFilenameLength(10);
-		},
-
 		onChange: function(oEvent) {
 			var oUploadCollection = oEvent.getSource();
 			// Header Token
@@ -28,13 +23,6 @@ sap.ui.define([
 			});
 			oUploadCollection.addHeaderParameter(oCustomerHeaderToken);
 			MessageToast.show("Event change triggered");
-		},
-
-		onAfterItemAdded: function(oEvent) {
-			var oItem = oEvent.getParameter("item");
-			if (oItem) {
-				oItem.removeAllAggregation("_propertyAttributes", true);
-			}
 		},
 
 		onFileDeleted: function(oEvent) {
@@ -87,14 +75,20 @@ sap.ui.define([
 		},
 
 		onUploadComplete: function(oEvent) {
-			var oItem = oEvent.getParameter("item"),
-				oUploadCollection = this.byId("UploadCollection");
-
+			var sUploadedFileName = oEvent.getParameter("files")[0].fileName;
 			setTimeout(function() {
-				oUploadCollection.removeItem(oItem);
+				var oUploadCollection = this.byId("UploadCollection");
+
+				for (var i = 0; i < oUploadCollection.getItems().length; i++) {
+					if (oUploadCollection.getItems()[i].getFileName() === sUploadedFileName) {
+						oUploadCollection.removeItem(oUploadCollection.getItems()[i]);
+						break;
+					}
+				}
+
 				// delay the success message in order to see other messages before
 				MessageToast.show("Event uploadComplete triggered");
-			}, 8000);
+			}.bind(this), 8000);
 		},
 
 		onSelectChange: function(oEvent) {
