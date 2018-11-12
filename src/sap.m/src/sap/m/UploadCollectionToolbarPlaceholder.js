@@ -5,7 +5,7 @@
 sap.ui.define([
 	'./library',
 	'sap/ui/core/Control'
-], function (library, Control) {
+], function(library, Control) {
 	"use strict";
 
 	/**
@@ -37,4 +37,5 @@ sap.ui.define([
 	});
 
 	return UploadCollectionToolbarPlaceholder;
+
 });

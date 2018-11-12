@@ -106,7 +106,6 @@ sap.ui.define([
 			"sap.m.TimePickerMaskMode",
 			"sap.m.TileSizeBehavior",
 			"sap.m.ToolbarDesign",
-			"sap.m.UploadState",
 			"sap.m.VerticalPlacementType",
 			"sap.m.semantic.SemanticRuleSetType"
 		],
@@ -3541,36 +3540,6 @@ sap.ui.define([
 		 * @public
 		 */
 		Hyphenated : "Hyphenated"
-	};
-
-	/**
-	 * States of the upload process for {@link sap.m.UploadCollectionItem}.
-	 *
-	 * @enum {string}
-	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	thisLib.UploadState = {
-		/**
-		 * The file has been uploaded successfuly.
-		 * @public
-		 */
-		Complete: "Complete",
-		/**
-		 * The file cannot be uploaded due to an error.
-		 * @public
-		 */
-		Error: "Error",
-		/**
-		 * The file is awaiting an explicit command to start being uploaded.
-		 * @public
-		 */
-		Ready: "Ready",
-		/**
-		 * The file is currently being uploaded.
-		 * @public
-		 */
-		Uploading: "Uploading"
 	};
 
 	//lazy imports for MessageToast

@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/ListSeparators",
 	"sap/m/ListMode",
-	"sap/m/UploadState",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/base/ManagedObject",
 	"sap/m/OverflowToolbar",
@@ -22,11 +21,13 @@ sap.ui.define([
 	"sap/m/UploadCollectionParameter",
 	"sap/ui/model/Sorter",
 	"sap/ui/core/Element",
-	"sap/ui/events/KeyCodes"
-], function (jQuery, UploadCollection, UploadCollectionItem, Toolbar, Label, UploadCollectionRenderer,
-			 ListItemBaseRenderer, Dialog, Device, ListSeparators, ListMode, UploadState, JSONModel, ManagedObject,
-			 OverflowToolbar, MessageBox, FileUploader, ObjectMarker, Event, UploadCollectionParameter, Sorter, Element, KeyCodes) {
+	"sap/ui/events/jquery/EventExtension",
+	"jquery.sap.keycodes"
+], function(jQuery, UploadCollection, UploadCollectionItem, Toolbar, Label, UploadCollectionRenderer,
+			ListItemBaseRenderer, Dialog, Device, ListSeparators, ListMode, JSONModel, ManagedObject, OverflowToolbar,
+			MessageBox, FileUploader, ObjectMarker, Event, UploadCollectionParameter, Sorter, Element) {
 	"use strict";
+
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
 
@@ -142,7 +143,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Composite Controls are rendered", function (assert) {
+	QUnit.test("Composite Controls are rendered", function (assert) {
 		//Assert
 		assert.ok(jQuery.sap.domById("uploadCollection-list"), "Item list is rendered");
 		assert.ok(jQuery.sap.domById("uploadCollection-toolbar"), "Toolbar of the item list is rendered");
@@ -150,7 +151,7 @@ sap.ui.define([
 		assert.ok(jQuery.sap.domById(this.oUploadCollection.getId() + "-" + this.oUploadCollection._iFUCounter + "-uploader"), "FileUploader is rendered");
 	});
 
-	QUnit.skip("Marker is rendered with text and icon", function (assert) {
+	QUnit.test("Marker is rendered with text and icon", function (assert) {
 		//Arrange
 		//Act
 		var oFirstItem = this.oUploadCollection.getItems()[0];
@@ -161,7 +162,7 @@ sap.ui.define([
 		assert.ok(aMarkers[0].$().hasClass("sapMUCObjectMarker"), "Css class sapMUCObjectMarker is present");
 	});
 
-	QUnit.skip("Marker is rendered with the calculated width for the file name", function (assert) {
+	QUnit.test("Marker is rendered with the calculated width for the file name", function (assert) {
 		//Arrange
 		//Act
 		var oFirstItem = this.oUploadCollection.getItems()[0];
@@ -172,7 +173,7 @@ sap.ui.define([
 		assert.ok(sFileNameStyle.indexOf("max-width: calc(100%") >= 0, "FileName max width was calculated due to marker presence");
 	});
 
-	QUnit.skip("Marker is not displayed when the item is in edit mode", function (assert) {
+	QUnit.test("Marker is not displayed when the item is in edit mode", function (assert) {
 		//Arrange
 		var oFirstItem = this.oUploadCollection.getItems()[0];
 		var oMarkerFirstItem = oFirstItem.getMarkers()[0];
@@ -192,7 +193,7 @@ sap.ui.define([
 		assert.ok(!sMarkerSecondItemStyle || sMarkerSecondItemStyle.indexOf("display: none") === -1, "Second Item in normal mode: Marker is displayed");
 	});
 
-	QUnit.skip("Item with a non clickable placeholder is rendered", function (assert) {
+	QUnit.test("Item with a non clickable placeholder is rendered", function (assert) {
 		//Arrange
 		var oItem = this.oUploadCollection.getItems()[0];
 		//Act
@@ -204,7 +205,7 @@ sap.ui.define([
 		assert.ok($IconItem.hasClass("sapMUCItemPlaceholderInactive"), "Css class 'sapMUCItemPlaceholderInactive' is present");
 	});
 
-	QUnit.skip("Item with a clickable placeholder is rendered", function (assert) {
+	QUnit.test("Item with a clickable placeholder is rendered", function (assert) {
 		//Arrange
 		var oItem = this.oUploadCollection.getItems()[0];
 		//Act
@@ -220,7 +221,7 @@ sap.ui.define([
 		assert.ok($IconItem.hasClass("sapMUCItemPlaceholder"), "Css class 'sapMUCItemPlaceholder' is present");
 	});
 
-	QUnit.skip("Item with a clickable icon is rendered", function (assert) {
+	QUnit.test("Item with a clickable icon is rendered", function (assert) {
 		//Arrange
 		var oItem = this.oUploadCollection.getItems()[1];
 		//Act
@@ -234,7 +235,7 @@ sap.ui.define([
 		assert.ok(!$IconItem.hasClass("sapMUCItemPlaceholderInactive"), "Css class 'sapMUCItemPlaceholderInactive' is not present");
 	});
 
-	QUnit.skip("Item with a non clickable icon is rendered", function (assert) {
+	QUnit.test("Item with a non clickable icon is rendered", function (assert) {
 		//Arrange
 		var oItem = this.oUploadCollection.getItems()[1];
 		var sUrl = oItem.getUrl();
@@ -252,7 +253,7 @@ sap.ui.define([
 		assert.ok(!$IconItem.hasClass("sapMUCItemPlaceholderInactive"), "Css class 'sapMUCItemPlaceholderInactive' is not present");
 	});
 
-	QUnit.skip("hideUploadButton hideTerminateUploadButton properties are initialized correctly", function (assert) {
+	QUnit.test("hideUploadButton hideTerminateUploadButton properties are initialized correctly", function (assert) {
 		//Arrange
 		//Act
 		//Assert
@@ -262,14 +263,14 @@ sap.ui.define([
 		assert.strictEqual(bUploadButtonEnabled, true, "terminationEnabled property is set to true by default");
 	});
 
-	QUnit.skip("File upload button is visible", function (assert) {
+	QUnit.test("File upload button is visible", function (assert) {
 		//Arrange
 		//Act
 		//Assert
 		assert.equal(this.oUploadCollection._getFileUploader().getVisible(), true, "File Uploader is visible");
 	});
 
-	QUnit.skip("setUploadButtonInvisible returns when the existing value is passed", function (assert) {
+	QUnit.test("setUploadButtonInvisible returns when the existing value is passed", function (assert) {
 		//Arrange
 		var bUploadButtonInvisible = true,
 			stubGetUploadButtonInvisible = sinon.stub(this.oUploadCollection, "getUploadButtonInvisible").returns(bUploadButtonInvisible),
@@ -286,7 +287,7 @@ sap.ui.define([
 		assert.deepEqual(oInstance, this.oUploadCollection, "Reference to this returned");
 	});
 
-	QUnit.skip("setUploadButtonInvisible updates the property but doesn't update other (invisible) file uploaders in the instant upload scenario", function (assert) {
+	QUnit.test("setUploadButtonInvisible updates the property but doesn't update other (invisible) file uploaders in the instant upload scenario", function (assert) {
 		//Arrange
 		var bUploadButtonInvisible = true,
 			bIsInstantUpload = true,
@@ -305,7 +306,7 @@ sap.ui.define([
 		assert.deepEqual(oInstance, this.oUploadCollection, "Reference to this returned");
 	});
 
-	QUnit.skip("setUploadButtonInvisible updates other file uploaders if it's not the instant upload", function (assert) {
+	QUnit.test("setUploadButtonInvisible updates other file uploaders if it's not the instant upload", function (assert) {
 		//Arrange
 		var bUploadButtonInvisible = true,
 			bIsInstantUpload = false,
@@ -325,7 +326,7 @@ sap.ui.define([
 		assert.deepEqual(oInstance, this.oUploadCollection, "Reference to this returned");
 	});
 
-	QUnit.skip("File upload button is not visible after setting uploadButtonInvisible to true", function (assert) {
+	QUnit.test("File upload button is not visible after setting uploadButtonInvisible to true", function (assert) {
 		//Arrange
 		this.oUploadCollection.setUploadButtonInvisible(true);
 		//Act
@@ -333,7 +334,7 @@ sap.ui.define([
 		assert.equal(this.oUploadCollection._getFileUploader().getVisible(), false, "File Uploader is not visible");
 	});
 
-	QUnit.skip("Info toolbar is not present", function (assert) {
+	QUnit.test("Info toolbar is not present", function (assert) {
 		//Arrange
 		//Act
 		var oInfoToolbar = this.oUploadCollection.getInfoToolbar();
@@ -343,7 +344,7 @@ sap.ui.define([
 		assert.ok(!oInfoToolbarList, "Info toolbar list is not present");
 	});
 
-	QUnit.skip("Info toolbar is rendered", function (assert) {
+	QUnit.test("Info toolbar is rendered", function (assert) {
 		//Arrange
 		//Act
 		var oInfoToolbar = new Toolbar("uploadCollection-infoToolbar", {
@@ -359,7 +360,7 @@ sap.ui.define([
 		assert.ok(jQuery.sap.domById("uploadCollection-infoToolbar-Label"), "Info toolbar label is rendered");
 	});
 
-	QUnit.skip("No data rendering", function (assert) {
+	QUnit.test("No data rendering", function (assert) {
 		//Arrange
 		this.oUploadCollection.unbindAggregation("items");
 		var oSpy = sinon.spy(UploadCollectionRenderer, "renderNoData"),
@@ -374,7 +375,7 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
-	QUnit.skip("No data rendering in upload disabled state", function (assert) {
+	QUnit.test("No data rendering in upload disabled state", function (assert) {
 		//Arrange
 		this.oUploadCollection.unbindAggregation("items");
 		this.oUploadCollection.setUploadEnabled(false);
@@ -385,7 +386,7 @@ sap.ui.define([
 		assert.notOk(jQuery.sap.domById(this.oUploadCollection.getId() + "-no-data-description"), "No data description is not rendered in upload disabled state");
 	});
 
-	QUnit.skip("No data rendering - with default text", function (assert) {
+	QUnit.test("No data rendering - with default text", function (assert) {
 		//Arrange
 		this.oUploadCollection.unbindAggregation("items");
 		var sNoDataText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_NO_DATA_TEXT");
@@ -399,7 +400,7 @@ sap.ui.define([
 		assert.equal(jQuery.sap.byId(this.oUploadCollection.getId() + "-no-data-description").text(), sNoDataDescription, "default no data description is rendered in upload collection");
 	});
 
-	QUnit.skip("No data rendering - with user specified no data text", function (assert) {
+	QUnit.test("No data rendering - with user specified no data text", function (assert) {
 		//Arrange
 		this.oUploadCollection.setNoDataText("myNoDataText");
 		this.oUploadCollection.unbindAggregation("items");
@@ -409,7 +410,7 @@ sap.ui.define([
 		assert.equal(jQuery.sap.byId(this.oUploadCollection.getId() + "-no-data-text").text(), "myNoDataText", "The no data text set by user is rendered");
 	});
 
-	QUnit.skip("No data rendering - with user specified no data description", function (assert) {
+	QUnit.test("No data rendering - with user specified no data description", function (assert) {
 		//Arrange
 		this.oUploadCollection.setNoDataDescription("myNoDataDescription");
 		this.oUploadCollection.unbindAggregation("items");
@@ -419,7 +420,7 @@ sap.ui.define([
 		assert.equal(jQuery.sap.byId(this.oUploadCollection.getId() + "-no-data-description").text(), "myNoDataDescription", "The no data description set by user is rendered");
 	});
 
-	QUnit.skip("Reset renderNoData of the ListRenderer to the original function", function (assert) {
+	QUnit.test("Reset renderNoData of the ListRenderer to the original function", function (assert) {
 		//Arrange
 		var oListRenderNoDataBefore = this.oUploadCollection._oList.getRenderer().renderNoData;
 		var oListRenderNoDataAfter;
@@ -444,12 +445,12 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("File upload button is not visible", function (assert) {
+	QUnit.test("File upload button is not visible", function (assert) {
 		//Assert
 		assert.equal(this.oUploadCollection._getFileUploader().getVisible(), false, "File Uploader is not visible");
 	});
 
-	QUnit.skip("File upload button is visible after setting uploadButtonInvisible to false", function (assert) {
+	QUnit.test("File upload button is visible after setting uploadButtonInvisible to false", function (assert) {
 		//Arrange
 		this.oUploadCollection.setUploadButtonInvisible(false);
 		//Assert
@@ -468,7 +469,12 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Setter delegation to FileUploader for property 'fileType'", function (assert) {
+	QUnit.test("Return type of overridden setter for property 'fileType'", function (assert) {
+		assert.equal(this.oUploadCollection.setFileType(), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
+		assert.equal(this.oUploadCollection.setFileType(["gif", "jpg"]), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
+	});
+
+	QUnit.test("Setter delegation to FileUploader for property 'fileType'", function (assert) {
 		//Arrange
 		var oSpy = sinon.spy(this.oUploadCollection._getFileUploader(), "setFileType");
 
@@ -479,7 +485,12 @@ sap.ui.define([
 		assert.equal(oSpy.callCount, 1, "Setter function of FileUploader has been called.");
 	});
 
-	QUnit.skip("Setter delegation to FileUploader for property 'maximumFilenameLength'", function (assert) {
+	QUnit.test("Return type of overridden setter for property 'maximumFilenameLength'", function (assert) {
+		assert.equal(this.oUploadCollection.setMaximumFilenameLength(), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
+		assert.equal(this.oUploadCollection.setMaximumFilenameLength(10), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
+	});
+
+	QUnit.test("Setter delegation to FileUploader for property 'maximumFilenameLength'", function (assert) {
 		//Arrange
 		var oSpy = sinon.spy(this.oUploadCollection._getFileUploader(), "setMaximumFilenameLength");
 
@@ -490,7 +501,12 @@ sap.ui.define([
 		assert.equal(oSpy.callCount, 1, "Setter function of FileUploader has been called.");
 	});
 
-	QUnit.skip("Setter delegation to FileUploader for property 'maximumFileSize'", function (assert) {
+	QUnit.test("Return type of overridden setter for property 'maximumFileSize'", function (assert) {
+		assert.equal(this.oUploadCollection.setMaximumFileSize(), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
+		assert.equal(this.oUploadCollection.setMaximumFileSize(10), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
+	});
+
+	QUnit.test("Setter delegation to FileUploader for property 'maximumFileSize'", function (assert) {
 		//Arrange
 		var oSpy = sinon.spy(this.oUploadCollection._getFileUploader(), "setMaximumFileSize");
 
@@ -501,7 +517,11 @@ sap.ui.define([
 		assert.equal(oSpy.callCount, 1, "Setter function of FileUploader has been called.");
 	});
 
-	QUnit.skip("Setter delegation to FileUploader for property 'mimeType'", function (assert) {
+	QUnit.test("Return type of overridden setter for property 'mimeType'", function (assert) {
+		assert.equal(this.oUploadCollection.setMimeType(), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
+	});
+
+	QUnit.test("Setter delegation to FileUploader for property 'mimeType'", function (assert) {
 		//Arrange
 		var oSpy = sinon.spy(this.oUploadCollection._getFileUploader(), "setMimeType");
 
@@ -512,7 +532,11 @@ sap.ui.define([
 		assert.equal(oSpy.callCount, 1, "Setter function of FileUploader has been called.");
 	});
 
-	QUnit.skip("Setter delegation to FileUploader for property 'multiple'", function (assert) {
+	QUnit.test("Return type of overridden setter for property 'multiple'", function (assert) {
+		assert.equal(this.oUploadCollection.setMultiple(true), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
+	});
+
+	QUnit.test("Setter delegation to FileUploader for property 'multiple'", function (assert) {
 		//Arrange
 		var oSpy = sinon.spy(this.oUploadCollection._getFileUploader(), "setMultiple");
 
@@ -523,16 +547,21 @@ sap.ui.define([
 		assert.equal(oSpy.callCount, 1, "Setter function of FileUploader has been called.");
 	});
 
-	QUnit.skip("Return type of overridden setter for property 'showSeparators'", function (assert) {
+	QUnit.test("Return type of overridden setter for property 'showSeparators'", function (assert) {
 		//Arrange
 		var oSpy = sinon.spy(this.oUploadCollection._oList, "setShowSeparators");
 
 		//Act
 		//Assert
+		assert.equal(this.oUploadCollection.setShowSeparators(ListSeparators.None), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
 		assert.equal(oSpy.callCount, 1, "Setter function of List has been called.");
 	});
 
-	QUnit.skip("Setter delegation to FileUploader for property 'uploadEnabled'", function (assert) {
+	QUnit.test("Return type of overridden setter for property 'uploadEnabled'", function (assert) {
+		assert.equal(this.oUploadCollection.setUploadEnabled(false), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
+	});
+
+	QUnit.test("Setter delegation to FileUploader for property 'uploadEnabled'", function (assert) {
 		//Arrange
 		var oSpy = sinon.spy(this.oUploadCollection._getFileUploader(), "setEnabled");
 
@@ -543,7 +572,11 @@ sap.ui.define([
 		assert.equal(oSpy.callCount, 1, "Setter function of FileUploader has been called.");
 	});
 
-	QUnit.skip("Setter delegation to FileUploader for property 'uploadUrl'", function (assert) {
+	QUnit.test("Return type of overridden setter for property 'uploadUrl'", function (assert) {
+		assert.equal(this.oUploadCollection.setUploadUrl("http://bla.de"), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
+	});
+
+	QUnit.test("Setter delegation to FileUploader for property 'uploadUrl'", function (assert) {
 		//Arrange
 		var oSpy = sinon.spy(this.oUploadCollection._getFileUploader(), "setUploadUrl");
 
@@ -554,7 +587,13 @@ sap.ui.define([
 		assert.equal(oSpy.callCount, 1, "Setter function of FileUploader has been called.");
 	});
 
-	QUnit.skip("Setter delegation to FileUploader for property 'mode'", function (assert) {
+	QUnit.test("Return type of overridden setter for property 'mode'", function (assert) {
+		assert.equal(this.oUploadCollection.setMode(ListMode.Delete), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
+		assert.equal(this.oUploadCollection.setMode(ListMode.None), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
+		assert.equal(this.oUploadCollection.setMode(ListMode.MultiSelect), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
+	});
+
+	QUnit.test("Setter delegation to FileUploader for property 'mode'", function (assert) {
 		//Arrange
 		var oSpy = sinon.spy(this.oUploadCollection._oList, "setMode");
 
@@ -565,7 +604,7 @@ sap.ui.define([
 		assert.equal(oSpy.callCount, 1, "Setter function of FileUploader has been called.");
 	});
 
-	QUnit.skip("getInternalRequestHeaderNames returns correct request headers", function (assert) {
+	QUnit.test("getInternalRequestHeaderNames returns correct request headers", function (assert) {
 		//Act
 		var aResult = this.oUploadCollection.getInternalRequestHeaderNames();
 		//Assert
@@ -573,7 +612,7 @@ sap.ui.define([
 		assert.deepEqual(aResult[1], this.oUploadCollection._headerParamConst.requestIdName);
 	});
 
-	QUnit.skip("Return value of overridden getter for aggregation 'toolbar'", function (assert) {
+	QUnit.test("Return value of overridden getter for aggregation 'toolbar'", function (assert) {
 		//Arrange
 		this.oUploadCollection._oHeaderToolbar = new OverflowToolbar();
 
@@ -614,7 +653,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Function _findById returns correct item from the list based on the id", function (assert) {
+	QUnit.test("Function _findById returns correct item from the list based on the id", function (assert) {
 		//Arrange
 		var sId0 = "item0", sId1 = "item1",
 			aListItems = [
@@ -628,14 +667,14 @@ sap.ui.define([
 						return sId1;
 					}
 				}
-			],
-			//Act
-			oItem = UploadCollection._findById(sId1, aListItems);
+			];
+		//Act
+		var oItem = UploadCollection._findById(sId1, aListItems);
 		//Assert
 		assert.deepEqual(oItem, aListItems[1], "Correct item has been returned by _findById");
 	});
 
-	QUnit.skip("Function _getFileNameControl", function (assert) {
+	QUnit.test("Function _getFileNameControl", function (assert) {
 		//Arrange
 		this.oItem._requestIdName = 0;
 		var oFileName = this.oUploadCollection._getFileNameControl(this.oItem, this),
@@ -647,7 +686,7 @@ sap.ui.define([
 		assert.equal(oFileName.mEventRegistry.press.length, 1, "One press handler attached in case the function is called more times");
 	});
 
-	QUnit.skip("Delete press event is fired", function (assert) {
+	QUnit.test("Delete press event is fired", function (assert) {
 		//Arrange
 		var bDeleteButtonPressed = false;
 		var oItem = new UploadCollectionItem({
@@ -665,7 +704,7 @@ sap.ui.define([
 		assert.equal(bDeleteButtonPressed, true, "Delete press event is fired");
 	});
 
-	QUnit.skip("Custom event on FileNameLink press", function (assert) {
+	QUnit.test("Custom event on FileNameLink press", function (assert) {
 		//Arrange
 		var oFileName,
 			bLinkPressed = false;
@@ -679,7 +718,7 @@ sap.ui.define([
 		assert.equal(bLinkPressed, true, "Custom event triggered on FileNameLink press");
 	});
 
-	QUnit.skip("Default event on FileNameLink press", function (assert) {
+	QUnit.test("Default event on FileNameLink press", function (assert) {
 		//Arrange
 		var oFileName,
 			oStub = sinon.stub(this.oUploadCollection, "_triggerLink");
@@ -693,29 +732,29 @@ sap.ui.define([
 		oStub.restore();
 	});
 
-	QUnit.skip("Check if _createIcon returns an Icon", function (assert) {
+	QUnit.test("Check if _createIcon returns an Icon", function (assert) {
 		//Act
-		this.oIcon = this.oUploadCollection._getIcon(this.oItem, "item", this.oItem.getFileName(), this);
+		this.oIcon = this.oUploadCollection._createIcon(this.oItem, "item", this.oItem.getFileName(), this);
 		//Assert
 		assert.ok(this.oIcon.sId.indexOf("-ia_iconHL") > -1, "_createIcon returned an icon");
 	});
 
-	QUnit.skip("Check if _createIcon returns an Image", function (assert) {
+	QUnit.test("Check if _createIcon returns an Image", function (assert) {
 		//Act
 		this.oItem.setThumbnailUrl("sap-icon://document");
-		this.oIcon = this.oUploadCollection._getIcon(this.oItem, "item", this.oItem.getFileName(), this);
+		this.oIcon = this.oUploadCollection._createIcon(this.oItem, "item", this.oItem.getFileName(), this);
 		//Assert
 		assert.ok(this.oIcon.sId.indexOf("-ia_imageHL") > -1, "_createIcon returned an image");
 	});
 
-	QUnit.skip("Function _createIcon uses ManagedObject's setter for alt property if an icon is created", function (assert) {
+	QUnit.test("Function _createIcon uses ManagedObject's setter for alt property if an icon is created", function (assert) {
 		//Act
-		this.oIcon = this.oUploadCollection._getIcon(this.oItem, "item", this.oItem.getFileName(), this);
+		this.oIcon = this.oUploadCollection._createIcon(this.oItem, "item", this.oItem.getFileName(), this);
 		//Assert
 		assert.ok(this.oSpySetProperty.calledWith("alt", "anyFileName"), "Setter for alt property called with correct parameters");
 	});
 
-	QUnit.skip("Function _createIcon doesn't set alt property during ManagedObject's create method if an icon is created", function (assert) {
+	QUnit.test("Function _createIcon doesn't set alt property during ManagedObject's create method if an icon is created", function (assert) {
 		//Arrange
 		var oSettings = {
 			src: "sap-icon://document",
@@ -723,21 +762,21 @@ sap.ui.define([
 			useIconTooltip: false
 		};
 		//Act
-		this.oIcon = this.oUploadCollection._getIcon(this.oItem, "item", this.oItem.getFileName(), this);
+		this.oIcon = this.oUploadCollection._createIcon(this.oItem, "item", this.oItem.getFileName(), this);
 		//Assert
 		assert.ok(this.oSpyApplySettings.calledWith(oSettings), "Alt property is not set in ManagedObject's constructor");
 	});
 
-	QUnit.skip("Function _createIcon uses ManagedObject's setter for alt property if an image is created", function (assert) {
+	QUnit.test("Function _createIcon uses ManagedObject's setter for alt property if an image is created", function (assert) {
 		//Arrange
 		this.oItem.setThumbnailUrl("anyFolder/myThumbnailFile.jpg");
 		//Act
-		this.oIcon = this.oUploadCollection._getIcon(this.oItem, "item", this.oItem.getFileName(), this);
+		this.oIcon = this.oUploadCollection._createIcon(this.oItem, "item", this.oItem.getFileName(), this);
 		//Assert
 		assert.ok(this.oSpySetProperty.calledWith("alt", "anyFileName"), "Setter for alt property called with correct parameters");
 	});
 
-	QUnit.skip("Function _createIcon doesn't set alt property during ManagedObject's create method if an image is created", function (assert) {
+	QUnit.test("Function _createIcon doesn't set alt property during ManagedObject's create method if an image is created", function (assert) {
 		//Arrange
 		this.oItem.setThumbnailUrl("anyFolder/myThumbnailFile.jpg");
 		var oSettings = {
@@ -746,12 +785,12 @@ sap.ui.define([
 			decorative: false
 		};
 		//Act
-		this.oIcon = this.oUploadCollection._getIcon(this.oItem, "item", this.oItem.getFileName(), this);
+		this.oIcon = this.oUploadCollection._createIcon(this.oItem, "item", this.oItem.getFileName(), this);
 		//Assert
 		assert.ok(this.oSpyApplySettings.calledWith(oSettings), "Alt property is not set in ManagedObject's constructor");
 	});
 
-	QUnit.skip("Function _createDeleteButton", function (assert) {
+	QUnit.test("Function _createDeleteButton", function (assert) {
 		//Arrange
 		var oItem = new UploadCollectionItem({
 			fileName: "anyFileName",
@@ -769,13 +808,13 @@ sap.ui.define([
 		assert.equal(oDeleteButton.mEventRegistry.press.length, 1, "One press handler attached in case the function is called several times");
 	});
 
-	QUnit.skip("Set number of attachments title (default text)", function (assert) {
+	QUnit.test("Set number of attachments title (default text)", function (assert) {
 		var sText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_ATTACHMENTS", [999]);
 		this.oUploadCollection._setNumberOfAttachmentsTitle(999);
 		assert.strictEqual(this.oUploadCollection._oNumberOfAttachmentsTitle.getText(), sText, "Correct Title text for number of attachments.");
 	});
 
-	QUnit.skip("Set number of attachments title", function (assert) {
+	QUnit.test("Set number of attachments title", function (assert) {
 		var sText = "My own text for attachments";
 		this.oUploadCollection.setNumberOfAttachmentsText("My own text for attachments");
 		this.oUploadCollection._setNumberOfAttachmentsTitle();
@@ -783,41 +822,41 @@ sap.ui.define([
 		assert.strictEqual(jQuery(jQuery.sap.domById("uploadCollection-numberOfAttachmentsTitle")).text(), sText);
 	});
 
-	QUnit.skip("Set tooltip of FileUploader", function (assert) {
+	QUnit.test("Set tooltip of FileUploader", function (assert) {
 		var sText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_UPLOAD");
 		assert.strictEqual(this.oUploadCollection._oFileUploader.getTooltip(), sText, "Correct tooltip of FileUploader");
 		assert.strictEqual(this.oUploadCollection._oFileUploader.getButtonText(), sText, "Correct tooltip of FileUploader");
 	});
 
-	// QUnit.skip("Determine icon from filename", function (assert) {
-	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName"), "sap-icon://document", "Document icon returned in case no file extension exists.");
-	//
-	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.pdf"), "sap-icon://pdf-attachment", "Correct icon for file type .pdf determined");
-	//
-	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.jpg"), "sap-icon://card", "Correct icon for file type .jpg determined");
-	// 	assert.equal(this.oUploadCollection._getIconFromFileName("complexFileName.JPEG"), "sap-icon://card", "Correct icon for file type 'JPEG' determined");
-	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.png"), "sap-icon://card", "Correct icon for file type .png determined");
-	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.bmp"), "sap-icon://card", "Correct icon for file type .bmp determined");
-	//
-	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.txt"), "sap-icon://document-text", "Correct icon for file type .txt determined");
-	//
-	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.doc"), "sap-icon://doc-attachment", "Correct icon for file type .doc determined");
-	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.docx"), "sap-icon://doc-attachment", "Correct icon for file type .docx determined");
-	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.odt"), "sap-icon://doc-attachment", "Correct icon for file type .odt determined");
-	//
-	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.xls"), "sap-icon://excel-attachment", "Correct icon for file type .xls determined");
-	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.csv"), "sap-icon://excel-attachment", "Correct icon for file type .csv determined");
-	//
-	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.ppt"), "sap-icon://ppt-attachment", "Correct icon for file type .ppt determined");
-	// 	assert.equal(this.oUploadCollection._getIconFromFileName("fileName.pptx"), "sap-icon://ppt-attachment", "Correct icon for file type .pptx determined");
-	//
-	// 	assert.equal(this.oUploadCollection._getIconFromFileName("complexFileName.123.pdf.jpg.png.bmp.ppt"), "sap-icon://ppt-attachment", "Correct icon for file type determined");
-	// });
+	QUnit.test("Determine icon from filename", function (assert) {
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName"), "sap-icon://document", "Document icon returned in case no file extension exists.");
 
-	QUnit.skip("Determine thumbnail of an item", function (assert) {
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.pdf"), "sap-icon://pdf-attachment", "Correct icon for file type .pdf determined");
+
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.jpg"), "sap-icon://card", "Correct icon for file type .jpg determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("complexFileName.JPEG"), "sap-icon://card", "Correct icon for file type 'JPEG' determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.png"), "sap-icon://card", "Correct icon for file type .png determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.bmp"), "sap-icon://card", "Correct icon for file type .bmp determined");
+
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.txt"), "sap-icon://document-text", "Correct icon for file type .txt determined");
+
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.doc"), "sap-icon://doc-attachment", "Correct icon for file type .doc determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.docx"), "sap-icon://doc-attachment", "Correct icon for file type .docx determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.odt"), "sap-icon://doc-attachment", "Correct icon for file type .odt determined");
+
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.xls"), "sap-icon://excel-attachment", "Correct icon for file type .xls determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.csv"), "sap-icon://excel-attachment", "Correct icon for file type .csv determined");
+
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.ppt"), "sap-icon://ppt-attachment", "Correct icon for file type .ppt determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.pptx"), "sap-icon://ppt-attachment", "Correct icon for file type .pptx determined");
+
+		assert.equal(this.oUploadCollection._getIconFromFilename("complexFileName.123.pdf.jpg.png.bmp.ppt"), "sap-icon://ppt-attachment", "Correct icon for file type determined");
+	});
+
+	QUnit.test("Determine thumbnail of an item", function (assert) {
 		var sThumbnailUrl = "anyFolder/myThumbnailFile.jpg";
 		var sFilename = "complexFileName.123.pdf.jpg.png.bmp.ppt";
-		this.oUploadCollection._getIconFromFileName = function () {
+		this.oUploadCollection._getIconFromFilename = function () {
 			return "_getIconFromFilename called";
 		};
 
@@ -835,7 +874,7 @@ sap.ui.define([
 		assert.equal(this.oUploadCollection._getThumbnail(sThumbnailUrl, sFilename), "_getIconFromFilename called", "Correct thumbnail determined by file name, file name is null");
 	});
 
-	QUnit.skip("Determine and set unique key for a file", function (assert) {
+	QUnit.test("Determine and set unique key for a file", function (assert) {
 		var sFileName = "someFileName", sRequestId = "1", sFileNameRequestIdValue, aRequestHeaders = [
 			{
 				name: this.oUploadCollection._headerParamConst.requestIdName,
@@ -856,6 +895,126 @@ sap.ui.define([
 		assert.equal(sFileNameRequestIdValue, this.encodeToAscii(sFileName) + sRequestId, "Unique key for a File is set correctly into requestHeaders");
 	});
 
+	QUnit.test("handleTerminate - Function _handleTerminate called on terminate button press", function (assert) {
+		var oDialogOpenStub = sinon.stub(Dialog.prototype, "open");
+		var oHandleTerminateSpy = sinon.spy(this.oUploadCollection, "_handleTerminate");
+		var oFileUploader = this.oUploadCollection._getFileUploader();
+		oFileUploader._aXhr = [];
+		var oFile2 = {
+			name: "Document.txt"
+		};
+		oFileUploader.fireChange({
+			files: [oFile2]
+		});
+
+		this.oUploadCollection.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		var oTerminateButton = this.oUploadCollection.aItems[0]._getTerminateButton();
+		oTerminateButton.firePress();
+
+		assert.equal(oHandleTerminateSpy.callCount, 1, "_handleTerminate on UploadCollection was called.");
+
+		// Clean up
+		var oDialog = sap.ui.getCore().byId(this.oUploadCollection.getId() + "deleteDialog");
+		oDialog.destroy();
+		oDialogOpenStub.restore();
+	});
+
+	QUnit.test("handleTerminate opens a dialog which could be cancelled.", function (assert) {
+		var done = assert.async();
+		var oItem = new UploadCollectionItem({
+			fileName: "otto4711.txt"
+		});
+		this.oUploadCollection._handleTerminate({}, oItem);
+		sap.ui.getCore().applyChanges();
+		var oDialog = sap.ui.getCore().byId(this.oUploadCollection.getId() + "deleteDialog");
+		assert.ok(oDialog.getDomRef(), "Dialog was rendered.");
+		oDialog.attachAfterClose(function () {
+			assert.ok(true, "Dialog is closed.");
+			done();
+		});
+		oDialog.getButtons()[1].firePress();
+		sap.ui.getCore().applyChanges();
+	});
+
+	QUnit.test("Function _handleDelete creates the popup and changes the internal state of UploadCollection correctly", function (assert) {
+		//Arrange
+		var sItemId = this.oUploadCollection.aItems[0].sId,
+			oMessageBoxStub = sinon.stub(MessageBox, "show"),
+			oCloseMessageBoxStub = sinon.stub(this.oUploadCollection, "_onCloseMessageBoxDeleteItem"),
+			sCompactClass = "sapUiSizeCompact",
+			oEvent = {
+				getParameters: function () {
+					return {
+						id: sItemId + "-deleteButton"
+					};
+				}
+			};
+		//Act
+		this.oUploadCollection.addStyleClass(sCompactClass);
+		this.oUploadCollection._handleDelete(oEvent);
+		oMessageBoxStub.getCall(0).args[1].onClose();
+		//Assert
+		assert.ok(oCloseMessageBoxStub.called, "The _onCloseMessageBoxDeleteItem is correctly registered to handle the closing of MessageBox");
+		assert.equal(this.oUploadCollection.sDeletedItemId, sItemId, "The internal id of the item that may be deleted is updated correctly");
+		assert.equal(oMessageBoxStub.getCall(0).args[1].dialogId, "messageBoxDeleteFile", "Correct dialog id has been handed to the show function");
+		assert.equal(oMessageBoxStub.getCall(0).args[1].actions[0], MessageBox.Action.OK, "OK action is included in the MessageBox call");
+		assert.equal(oMessageBoxStub.getCall(0).args[1].actions[1], MessageBox.Action.CANCEL, "Cancel action is included in the MessageBox call");
+		assert.equal(oMessageBoxStub.getCall(0).args[1].styleClass, sCompactClass, "Compact class has been handed from UploadCollection to the MessageBox successfully");
+		//Restore
+		oMessageBoxStub.restore();
+	});
+
+	QUnit.test("handleTerminate - abort on FileUploader is called.", function (assert) {
+		var done = assert.async();
+		// Prepare FileUploader Spy
+		this.oUploadCollection._getFileUploader()._aXhr = [];
+		sinon.spy(this.oUploadCollection._getFileUploader(), "abort");
+		// Prepare UploadCollectionItem
+		var oItem = new UploadCollectionItem({
+			fileName: "otto4711.txt"
+		});
+		oItem._status = UploadCollection._uploadingStatus;
+		oItem._requestIdName = 0;
+		this.oUploadCollection.insertItem(oItem);
+		sap.ui.getCore().applyChanges();
+		// Call termination
+		this.oUploadCollection._handleTerminate({}, oItem);
+		var oDialog = sap.ui.getCore().byId(this.oUploadCollection.getId() + "deleteDialog");
+		oDialog.attachAfterClose(function () {
+			assert.ok(true, "Dialog is closed.");
+			done();
+		});
+		oDialog.getButtons()[0].firePress();
+		assert.equal(this.oUploadCollection._getFileUploader().abort.callCount, 1, "Abort on FileUploader was called.");
+	});
+
+	QUnit.test("handleTerminate - deleteFile is fired if the upload is done before a confirmation of the termination.", function (assert) {
+		var done = assert.async();
+		// Prepare UploadCollectionItem and UploadCollection itself
+		var oItem = new UploadCollectionItem({
+			fileName: "otto4711.txt",
+			documentId: "4712"
+		});
+		oItem._status = UploadCollection._displayStatus;
+		this.oUploadCollection.insertItem(oItem);
+		this.oUploadCollection.attachFileDeleted(function (oEvent) {
+			assert.equal(oEvent.getParameter("documentId"), "4712", "Correct documentId passed.");
+			assert.deepEqual(oEvent.getParameter("item"), oItem, "Correct item passed.");
+		});
+		sap.ui.getCore().applyChanges();
+		// Call termination
+		this.oUploadCollection._handleTerminate({}, oItem);
+		var oDialog = sap.ui.getCore().byId(this.oUploadCollection.getId() + "deleteDialog");
+		oDialog.attachAfterClose(function () {
+			assert.ok(true, "Dialog is closed.");
+			done();
+		});
+		oDialog.getButtons()[0].firePress();
+		sap.ui.getCore().applyChanges();
+	});
+
 	QUnit.module("List API Methods", {
 		beforeEach: function () {
 			this.oUploadCollection = new UploadCollection("uploadCollection", {
@@ -874,7 +1033,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Event 'selectionChange' is attached once", function (assert) {
+	QUnit.test("Event 'selectionChange' is attached once", function (assert) {
 		//Arrange
 		var nListeners = this.oUploadCollection._oList.mEventRegistry.selectionChange.length;
 		//Act
@@ -884,7 +1043,7 @@ sap.ui.define([
 		assert.equal(this.oUploadCollection._oList.mEventRegistry.selectionChange.length, nListeners, "Event 'selectionChange' is attached once");
 	});
 
-	QUnit.skip("Set and get selected items in Multiple Mode", function (assert) {
+	QUnit.test("Set and get selected items in Multiple Mode", function (assert) {
 		//Arrange
 		var aAllItems = this.oUploadCollection.getItems();
 		this.oUploadCollection.setMode(ListMode.MultiSelect);
@@ -905,7 +1064,7 @@ sap.ui.define([
 		assert.ok(this.oUploadCollection.getSelectedItems()[2] instanceof UploadCollectionItem, "Third item returned is UploadCollectionItem");
 	});
 
-	QUnit.skip("Set and reset selected items in Multiple Mode", function (assert) {
+	QUnit.test("Set and reset selected items in Multiple Mode", function (assert) {
 		//Arrange
 		var aAllItems = this.oUploadCollection.getItems();
 		this.oUploadCollection.setMode(ListMode.MultiSelect);
@@ -923,7 +1082,7 @@ sap.ui.define([
 		assert.ok(this.oUploadCollection.getItems()[1].getSelected(), "The getSelected of UploadCollectionItem has been set correctly");
 	});
 
-	QUnit.skip("Set and reset selected items in Single Mode", function (assert) {
+	QUnit.test("Set and reset selected items in Single Mode", function (assert) {
 		//Arrange
 		var aAllItems = this.oUploadCollection.getItems();
 		this.oUploadCollection.setMode(ListMode.SingleSelect);
@@ -940,7 +1099,7 @@ sap.ui.define([
 		assert.equal(this.oUploadCollection.getItems()[0].getSelected(), false, "The getSelected of UploadCollectionItem has been reset correctly");
 	});
 
-	QUnit.skip("Set and get selected items by Id", function (assert) {
+	QUnit.test("Set and get selected items by Id", function (assert) {
 		//Arrange
 		var aAllItems = this.oUploadCollection.getItems();
 		this.oUploadCollection.setMode(ListMode.MultiSelect);
@@ -958,7 +1117,7 @@ sap.ui.define([
 		assert.ok(this.oUploadCollection.getSelectedItems()[1] instanceof UploadCollectionItem, "Second item returned is UploadCollectionItem");
 	});
 
-	QUnit.skip("Get selected items without selection", function (assert) {
+	QUnit.test("Get selected items without selection", function (assert) {
 		//Arrange
 
 		//Act
@@ -967,7 +1126,7 @@ sap.ui.define([
 		assert.equal(this.oUploadCollection.getSelectedItems().length, 0, "0 items have been selected");
 	});
 
-	QUnit.skip("Set and get selected item", function (assert) {
+	QUnit.test("Set and get selected item", function (assert) {
 		//Arrange
 		var aAllItems = this.oUploadCollection.getItems();
 		this.oUploadCollection.setMode(ListMode.SingleSelect);
@@ -980,7 +1139,7 @@ sap.ui.define([
 		assert.ok(this.oUploadCollection.getSelectedItem() instanceof UploadCollectionItem, "Item returned is UploadCollectionItem");
 	});
 
-	QUnit.skip("Set and get selected item by Id", function (assert) {
+	QUnit.test("Set and get selected item by Id", function (assert) {
 		//Arrange
 		var aAllItems = this.oUploadCollection.getItems();
 		this.oUploadCollection.setMode(ListMode.SingleSelectLeft);
@@ -995,7 +1154,7 @@ sap.ui.define([
 		assert.ok(this.oUploadCollection.getSelectedItem() instanceof UploadCollectionItem, "Item returned is UploadCollectionItem");
 	});
 
-	QUnit.skip("Get selected item without selection", function (assert) {
+	QUnit.test("Get selected item without selection", function (assert) {
 		//Arrange
 
 		//Act
@@ -1004,7 +1163,7 @@ sap.ui.define([
 		assert.equal(this.oUploadCollection.getSelectedItem(), null, "Selected item is correct");
 	});
 
-	QUnit.skip("Set all and get selected items", function (assert) {
+	QUnit.test("Set all and get selected items", function (assert) {
 		//Arrange
 		var aAllItems = this.oUploadCollection.getItems();
 		this.oUploadCollection.setMode(ListMode.MultiSelect);
@@ -1022,7 +1181,7 @@ sap.ui.define([
 		assert.equal(this.oUploadCollection.getSelectedItem(), aAllItems[0], "getSelectedItem() returns first selected item for multiple selection");
 	});
 
-	QUnit.skip("Set and reset all items manually to check sync state of UCIs and UC.", function (assert) {
+	QUnit.test("Set and reset all items manually to check sync state of UCIs and UC.", function (assert) {
 		//Arrange
 		var aAllItems = this.oUploadCollection.getItems();
 		this.oUploadCollection.setMode(ListMode.MultiSelect);
@@ -1039,7 +1198,7 @@ sap.ui.define([
 		assert.equal(this.oUploadCollection.getSelectedItems().length, 0, "0 items are selected");
 	});
 
-	QUnit.skip("Set and get mode", function (assert) {
+	QUnit.test("Set and get mode", function (assert) {
 		//Arrange
 		assert.equal(this.oUploadCollection.getMode(), ListMode.None, "Mode before setting value was 'None'");
 
@@ -1050,7 +1209,7 @@ sap.ui.define([
 		assert.equal(this.oUploadCollection.getMode(), ListMode.SingleSelectMaster, "Mode after setting value 'SingleSelectMaster'");
 	});
 
-	QUnit.skip("Avoid setting sap.m.ListMode.Delete for UploadCollection using constructor", function (assert) {
+	QUnit.test("Avoid setting sap.m.ListMode.Delete for UploadCollection using constructor", function (assert) {
 		//Arrange
 		this.oUploadCollection.destroy();
 
@@ -1068,7 +1227,7 @@ sap.ui.define([
 		assert.equal(this.oUploadCollection.getMode(), ListMode.None, "Mode after setting 'Delete' is 'None'");
 	});
 
-	QUnit.skip("Avoid setting sap.m.ListMode.Delete for UploadCollection using setter", function (assert) {
+	QUnit.test("Avoid setting sap.m.ListMode.Delete for UploadCollection using setter", function (assert) {
 		//Arrange
 
 		//Act
@@ -1078,7 +1237,7 @@ sap.ui.define([
 		assert.equal(this.oUploadCollection.getMode(), ListMode.None, "Mode after setting 'Delete' is 'None'");
 	});
 
-	QUnit.skip("Avoid setting sap.m.ListMode.Delete for UploadCollection on override existing value", function (assert) {
+	QUnit.test("Avoid setting sap.m.ListMode.Delete for UploadCollection on override existing value", function (assert) {
 		//Arrange
 		this.oUploadCollection.destroy();
 		this.oUploadCollection = new UploadCollection("uploadCollection", {
@@ -1096,6 +1255,45 @@ sap.ui.define([
 
 		//Assert
 		assert.equal(this.oUploadCollection.getMode(), ListMode.None, "Mode after setting 'Delete' is 'None'");
+	});
+
+	QUnit.test("Function _handleSelectionChange triggers the selection change", function (assert) {
+		//Arrange
+		var sListItem = "listItem", sListItems = "listItems", sSelected = "selected",
+			aUploadCollectionListItems = ["dummy"],
+			oUploadCollectionItem = new UploadCollectionItem(),
+			bSelected = true,
+			oListItem = {
+				getSelected: function () {
+					return true;
+				}
+			},
+			oEvent = {
+				getParameter: function (name) {
+					if (name === sListItem) {
+						return oListItem;
+					} else if (name === sListItems) {
+						return aUploadCollectionListItems;
+					} else if (name === sSelected) {
+						return bSelected;
+					}
+				}
+			},
+			oGetUploadCollectionItemsByListItems = sinon.stub(this.oUploadCollection, "_getUploadCollectionItemsByListItems")
+				.returns(aUploadCollectionListItems),
+			oGetUploadCollectionItemByListItem = sinon.stub(this.oUploadCollection, "_getUploadCollectionItemByListItem")
+				.returns(oUploadCollectionItem),
+			oFireSelectionChangeStub = sinon.stub(this.oUploadCollection, "fireSelectionChange"),
+			oSetSelectedStub = sinon.stub(oUploadCollectionItem, "setSelected");
+		//Act
+		this.oUploadCollection._handleSelectionChange(oEvent);
+		//Assert
+		assert.strictEqual(oGetUploadCollectionItemByListItem.getCall(0).args[0], oListItem, "The function _getUploadCollectionItemByListItem has been called with correct argument");
+		assert.strictEqual(oGetUploadCollectionItemsByListItems.getCall(0).args[0], aUploadCollectionListItems, "The function _getUploadCollectionItemsByListItems has been called with correct argument");
+		assert.strictEqual(oFireSelectionChangeStub.getCall(0).args[0]["selectedItem"], oUploadCollectionItem, "The selectionChange event has correct selectedItem parameter");
+		assert.strictEqual(oFireSelectionChangeStub.getCall(0).args[0]["selectedItems"], aUploadCollectionListItems, "The selectionChange event has correct selectedItems parameter");
+		assert.strictEqual(oFireSelectionChangeStub.getCall(0).args[0]["selected"], bSelected, "The selectionChange event has correct selected parameter");
+		assert.strictEqual(oSetSelectedStub.getCall(0).args[0], oListItem.getSelected(), "The setSelected method has been called with correct argument");
 	});
 
 	QUnit.module("Download Item Tests", {
@@ -1116,7 +1314,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("To download an item without URL fails.", function (assert) {
+	QUnit.test("To download an item without URL fails.", function (assert) {
 		//Arrange
 		var oItem = this.oUploadCollection.getItems()[0];
 		oItem.setUrl(null);
@@ -1126,7 +1324,7 @@ sap.ui.define([
 		assert.equal(bIsDownloaded, false, "Download fails because the item has not URL.");
 	});
 
-	QUnit.skip("Download an item returns true.", function (assert) {
+	QUnit.test("Download an item returns true.", function (assert) {
 		//Arrange
 		var stub = sinon.stub(this.oUploadCollection, "downloadItem");
 		var oItem = this.oUploadCollection.getItems()[3];
@@ -1155,7 +1353,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Terminate upload button is visible by default.", function (assert) {
+	QUnit.test("Terminate upload button is visible by default.", function (assert) {
 		//Arrange
 		var oItem = this.oUploadCollection.getItems()[0];
 		var spyGetTerminationEnabled = sinon.spy(this.oUploadCollection, "getTerminationEnabled");
@@ -1166,7 +1364,7 @@ sap.ui.define([
 		assert.strictEqual(oDeleteButton.getVisible(), true, "The terminate button is visible.");
 	});
 
-	QUnit.skip("Terminate upload button is not visible when terminationEnabled is false.", function (assert) {
+	QUnit.test("Terminate upload button is not visible when terminationEnabled is false.", function (assert) {
 		//Arrange
 		this.oUploadCollection.setTerminationEnabled(false);
 		var oItem = this.oUploadCollection.getItems()[0];
@@ -1178,7 +1376,7 @@ sap.ui.define([
 		assert.strictEqual(oDeleteButton.getVisible(), false, "The terminate button is not visible.");
 	});
 
-	QUnit.skip("Terminate upload button is not visible when button exists and terminationEnabled is false.", function (assert) {
+	QUnit.test("Terminate upload button is not visible when button exists and terminationEnabled is false.", function (assert) {
 		//Arrange
 		this.oUploadCollection.setTerminationEnabled(false);
 		var oItem = this.oUploadCollection.getItems()[0];
@@ -1192,7 +1390,7 @@ sap.ui.define([
 		assert.strictEqual(oDeleteButton.getVisible(), false, "The terminate button is not visible.");
 	});
 
-	QUnit.skip("Terminate upload button is visible when button exists and terminationEnabled is true.", function (assert) {
+	QUnit.test("Terminate upload button is visible when button exists and terminationEnabled is true.", function (assert) {
 		//Arrange
 		this.oUploadCollection.setTerminationEnabled(true);
 		var oItem = this.oUploadCollection.getItems()[0];
@@ -1206,7 +1404,7 @@ sap.ui.define([
 		assert.strictEqual(oDeleteButton.getVisible(), true, "The terminate button is visible.");
 	});
 
-	QUnit.skip("_setFileUploaderVisibility updates the visibility of the file upload placeholder.", function (assert) {
+	QUnit.test("_setFileUploaderVisibility updates the visibility of the file upload placeholder.", function (assert) {
 		//Arrange
 		var bUploadButtonInvisible = true;
 		var oFileUploader = new FileUploader();
@@ -1245,7 +1443,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Focus is only set once after delete", function (assert) {
+	QUnit.test("Focus is only set once after delete", function (assert) {
 		//Arrange
 		var oSpy = sinon.spy(this.oUploadCollection, "_setFocusAfterDeletion");
 		this.oUploadCollection.sDeletedItemId = "someId";
@@ -1285,7 +1483,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Rendering of uploadProgress 50% uploaded", function (assert) {
+	QUnit.test("Rendering of uploadProgress 50% uploaded", function (assert) {
 		// at present it is very hard to simulate IE9 in QUnits with requestID
 		if (Device.browser.msie && Device.browser.version <= 9) {
 			assert.expect(0);
@@ -1318,7 +1516,7 @@ sap.ui.define([
 		assert.equal(jQuery.sap.domById(this.oUploadCollection.aItems[0].sId + "-ia_indicator").getAttribute("aria-valuenow"), "50", "Correct ARIA-valuenow attribute");
 	});
 
-	QUnit.skip("Rendering of uploadProgress 100% uploaded", function (assert) {
+	QUnit.test("Rendering of uploadProgress 100% uploaded", function (assert) {
 		// at present it is very hard to simulate IE9 in QUnits with requestID
 		if (Device.browser.msie && Device.browser.version <= 9) {
 			assert.expect(0);
@@ -1377,49 +1575,69 @@ sap.ui.define([
 	});
 
 	QUnit.test("Drag file enter UIArea", function (assert) {
+		//Arrange
 		var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
+		//Act
 		this.$RootNode.trigger("dragenter");
+		//Assert
 		assert.notOk(this.oUploadCollection.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is visible");
 		assert.ok(oStubCheckForFiles.called, "The check for files has been performed");
 	});
 
 	QUnit.test("Drag file over UIArea", function (assert) {
+		//Arrange
 		var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
+		//Act
 		this.$RootNode.trigger("dragover");
+		//Assert
 		assert.notOk(this.oUploadCollection.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is visible");
 		assert.ok(oStubCheckForFiles.called, "The check for files has been performed");
 	});
 
 	QUnit.test("Drag file leave UIArea", function (assert) {
+		//Arrange
 		this.oUploadCollection.$("drag-drop-area").removeClass("sapMUCDragDropOverlayHide");
 		this.oUploadCollection._oLastEnterUIArea = this.$RootNode[0];
+		//Act
 		this.$RootNode.trigger("dragleave");
+		//Assert
 		assert.ok(this.oUploadCollection.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is not visible");
 	});
 
 	QUnit.test("Drag file enter UploadCollection", function (assert) {
+		//Arrange
 		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
 		var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
+		//Act
 		$DragDropArea.trigger("dragenter");
+		//Assert
 		assert.notOk($DragDropArea.hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is visible");
 		assert.ok(oStubCheckForFiles.called, "The check for files has been performed");
 	});
 
 	QUnit.test("Drag file leave UploadCollection", function (assert) {
+		//Arrange
 		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
 		this.oUploadCollection.$("drag-drop-area").removeClass("sapMUCDragDropOverlayHide");
+		//Act
 		$DragDropArea.trigger("dragleave");
+		//Assert
 		assert.notOk($DragDropArea.hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is visible");
 	});
 
 	QUnit.test("Drop file in UIArea", function (assert) {
+		//Arrange
 		this.oUploadCollection.$("drag-drop-area").removeClass("sapMUCDragDropOverlayHide");
+		//Act
 		this.$RootNode.trigger("drop");
+		//Assert
 		assert.ok(this.oUploadCollection.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is not visible");
 	});
 
 	QUnit.test("Drop file in UploadCollection", function (assert) {
+		//Arrange
 		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
+		var oSpySendFiles = sinon.spy(this.oUploadCollection._getFileUploader(), "_sendFilesFromDragAndDrop");
 		var oStubFilesAllowed = sinon.stub(this.oUploadCollection._getFileUploader(), "_areFilesAllowed").returns(true);
 		var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		var oEvent = jQuery.Event("drop", {
@@ -1431,10 +1649,13 @@ sap.ui.define([
 		});
 		$DragDropArea.removeClass("sapMUCDragDropOverlayHide");
 		$DragDropArea.addClass("sapMUCDropIndicator");
+		//Act
 		$DragDropArea.trigger(oEvent);
 
+		//Assert
 		assert.notOk($DragDropArea.hasClass("sapMUCDropIndicator"), "The UploadCollection drop indicator is hidden after drop");
 		assert.ok($DragDropArea.hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag and drop overlay is hidden after drop");
+		assert.equal(oSpySendFiles.callCount, 1, "The API method of FileUploader for UploadCollection was called");
 		assert.equal(this.oSpyOnChange.callCount, 1, "The _onChange event is triggered when file is dropped in UC");
 		assert.ok(oStubFilesAllowed.called, "The check for files from FileUploader has been performed");
 		assert.ok(oStubCheckForFiles.called, "The check for files has been performed");
@@ -1442,9 +1663,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Dropping more than one file is not allowed when multiple is false", function (assert) {
+		//Arrange
 		this.oUploadCollection.setMultiple(false);
 		sap.ui.getCore().applyChanges();
-		sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
+		var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		var oStubMessageBox = sinon.stub(MessageBox, "error");
 		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
 		var oFileList = [
@@ -1461,55 +1683,77 @@ sap.ui.define([
 				}
 			}
 		});
+		//Act
 		$DragDropArea.trigger(oEvent);
+		//Assert
 		assert.ok(this.oSpyOnChange.notCalled, "Files are not dropped in UploadCollection");
 		assert.ok(oStubMessageBox.called, "Error Messagebox is displayed");
+		//Restore
 		oStubMessageBox.restore();
+		oStubCheckForFiles.restore();
 	});
 
 	QUnit.test("Drag drop icon is hidden when height of drag drop area smaller than 10rem", function (assert) {
+		//Arrange
 		sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		this.oUploadCollection.$("drag-drop-area").height(150);
+		//Act
 		this.$RootNode.trigger("dragenter");
+		//Assert
 		assert.ok(this.oUploadCollection.getAggregation("_dragDropIcon").$().is(":hidden"), "The drag and drop icon is hidden");
 	});
 
 	QUnit.test("Drag drop icon is hidden when height of drag drop area smaller than 10rem", function (assert) {
+		//Arrange
 		sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		this.oUploadCollection.$("drag-drop-area").height(150);
+		//Act
 		this.$RootNode.trigger("dragenter");
+		//Assert
 		assert.ok(this.oUploadCollection.getAggregation("_dragDropIcon").$().is(":hidden"), "The drag and drop icon is hidden");
 	});
 
 	QUnit.test("Private function _isDragAndDropAllowed: success case", function (assert) {
 		var bDragAndDropAllowed;
+		//Arrange
+		//Act
 		bDragAndDropAllowed = this.oUploadCollection._isDragAndDropAllowed();
+		//Assert
 		assert.ok(bDragAndDropAllowed, "Function returns true when both uploadEnabled is set to true and uploadButtonInvisible is set to false");
 	});
 
 	QUnit.test("Private function _isDragAndDropAllowed: failure case", function (assert) {
 		var bDragAndDropAllowed;
+		//Arrange
 		this.oUploadCollection.setUploadEnabled(false);
+		//Act
 		bDragAndDropAllowed = this.oUploadCollection._isDragAndDropAllowed();
+		//Assert
 		assert.notOk(bDragAndDropAllowed, "Function returns false when uploadEnabled is set to false");
 	});
 
 	QUnit.test("Drag and drop is not allowed", function (assert) {
 		var $DragDropArea;
+		//Arrange
 		this.oUploadCollection.setUploadButtonInvisible(true);
 		this.oUploadCollection.rerender();
 		$DragDropArea = this.oUploadCollection.$("drag-drop-area");
+		//Act
 		$DragDropArea.trigger("dragenter");
+		//Assert
 		assert.ok(this.oUploadCollection.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "Drag and drop is not possible when either upload is disabled or the upload button is invisible");
 	});
 
 	QUnit.test("Change of uploadButtonInvisible property", function (assert) {
 		var oBindSpy,
 			oUnBindSpy;
+		//Arrange
 		oBindSpy = sinon.spy(this.oUploadCollection, "_bindDragEnterLeave");
 		oUnBindSpy = sinon.spy(this.oUploadCollection, "_unbindDragEnterLeave");
+		//Act
 		this.oUploadCollection.setUploadButtonInvisible(true);
 		this.oUploadCollection.setUploadButtonInvisible(false);
+		//Assert
 		assert.ok(oUnBindSpy.calledOnce, "The change of uploadButtonInvisible to true leads to an unbind of the dragEnterLeave event");
 		assert.ok(oBindSpy.calledOnce, "The change of uploadButtonInvisible to false leads to a bind of the dragEnterLeave event");
 	});
@@ -1518,6 +1762,7 @@ sap.ui.define([
 		var bActual,
 			oEvent;
 
+		//Arrange
 		oEvent = {
 			originalEvent: {
 				dataTransfer: {
@@ -1527,7 +1772,9 @@ sap.ui.define([
 				}
 			}
 		};
+		//Act
 		bActual = this.oUploadCollection._checkForFiles(oEvent);
+		//Assert
 		assert.ok(bActual, "The check successfully recognizes files in the event data");
 	});
 
@@ -1535,6 +1782,7 @@ sap.ui.define([
 		var bActual,
 			oEvent;
 
+		//Arrange
 		oEvent = {
 			originalEvent: {
 				dataTransfer: {
@@ -1545,7 +1793,9 @@ sap.ui.define([
 				}
 			}
 		};
+		//Act
 		bActual = this.oUploadCollection._checkForFiles(oEvent);
+		//Assert
 		assert.notOk(bActual, "The check successfully recognizes that there are no files in the event data");
 	});
 
@@ -1715,20 +1965,23 @@ sap.ui.define([
 	});
 
 	QUnit.test("Event fileDeleted", function (assert) {
-		var oFile1 = this.oUploadCollection.getItems()[1];
-
+		var oFileDelete = this.oUploadCollection.getItems()[1];
 		this.oUploadCollection.attachFileDeleted(onDelete);
-		this.oUploadCollection._oItemToBeDeleted = oFile1;
+		this.oUploadCollection._oItemForDelete = {
+			documentId: oFileDelete.getDocumentId(),
+			_iLineNumber: 1
+		};
 		this.oUploadCollection._onCloseMessageBoxDeleteItem(MessageBox.Action.OK);
 
+		// Assert
 		function onDelete(oEvent) {
 			// deprecated
-			assert.equal(oEvent.getParameter("documentId"), "5082cc4d-da9f-2835-2c0a-8100ed47bcde", "Document ID in the 'FileDeleted' event should be correct.");
+			assert.equal(oEvent.getParameter("documentId"), "5082cc4d-da9f-2835-2c0a-8100ed47bcde", "Correct documentId in event delete");
 			// new
-			assert.equal(oEvent.getParameter("item").getId(), oFile1.getId(), "Item in the 'FileDeleted' event should be correct.");
+			assert.equal(oEvent.getParameter("item"), oFileDelete, "Correct item in event delete");
 		}
 
-		assert.notOk(this.oUploadCollection._oItemToBeDeleted, "Item to be deleted should be null.");
+		assert.notOk(this.oUploadCollection._oItemForDelete, "oItemForDelete is null");
 		assert.expect(3);
 	});
 
@@ -1766,14 +2019,46 @@ sap.ui.define([
 			assert.equal(oEvent.getParameter("documentId"), "5082cc4d-da9f-2835-2c0a-8100ed47bcdf", "Correct documentId in event fileRenamed provided by oEvent.getParameter('documentId')");
 			assert.equal(oEvent.getParameters()["documentId"], "5082cc4d-da9f-2835-2c0a-8100ed47bcdf", "Correct documentId in event fileRenamed provided by oEvent.getParameters().getParameters()['documentId']");
 			// new
-			assert.equal(oEvent.getParameter("item").getId(), this._oEditModeItem.getId(), "Correct item in event fileRenamed");
-			assert.equal(oEvent.getParameter("item").getFileName(), this._oEditModeItem.getFileName(), "Correct item in event fileRenamed");
+			assert.equal(oEvent.getParameter("item"), this._oItemForRename, "Correct item in event fileRenamed");
+			assert.equal(oEvent.getParameter("item").getFileName(), this._oItemForRename.getFileName(), "Correct item in event fileRenamed");
 		}
 
 		this.oUploadCollection.attachFileRenamed(onFileRenamed);
-		this.oUploadCollection._oEditModeItem = this.oUploadCollection.getItems()[2]; // contributor : "J Edgar Hoover", documentId : "5082cc4d-da9f-2835-2c0a-8100ed47bcdf"
-		this.oUploadCollection._oEditModeItem.setFileName("renamedFileName.txt");
+		this.oUploadCollection._oItemForRename = this.oUploadCollection.getItems()[2]; // contributor : "J Edgar Hoover", documentId : "5082cc4d-da9f-2835-2c0a-8100ed47bcdf"
+		this.oUploadCollection._oItemForRename.setFileName("renamedFileName.txt");
 		this.oUploadCollection._onEditItemOk("renamedFileName.txt");
+	});
+
+	QUnit.test("uploadComplete", function (assert) {
+		var oFileUploaderEventMock = {
+			fileName: "file1",
+			response: {"propertyOne": "ValueOne"},
+			readyStateXHR: 4,
+			status: 200,
+			responseRaw: "{ \"propertyOne\" : \"ValueOne\" }",
+			headers: {
+				"headerOne": "headerValueOne",
+				"headerTwo": "headerValueTwo"
+			}
+		};
+
+		function uploadComplete(oEvent) {
+			// Deprecated
+			assert.equal(oEvent.getParameters().getParameter("fileName"), "file1", "Correct file1 name in complete event");
+			assert.equal(oEvent.getParameters().getParameter("response"), oFileUploaderEventMock.response, "Correct response in complete event");
+			assert.equal(oEvent.getParameters().getParameter("readyStateXHR"), oFileUploaderEventMock.readyStateXHR, "Correct readyStateXHR in complete event");
+			assert.equal(oEvent.getParameters().getParameter("status"), oFileUploaderEventMock.status, "Correct status in complete event");
+			// check for properly provided parameters
+			assert.equal(oEvent.getParameter("files")[0].fileName, "file1", "Correct file1 name in complete event");
+			assert.equal(oEvent.getParameter("files")[0].response, oFileUploaderEventMock.response, "Correct response in complete event");
+			assert.equal(oEvent.getParameter("files")[0].reponse, oFileUploaderEventMock.response, "Correct reponse in complete event - deprecated event property");
+			assert.equal(oEvent.getParameter("files")[0].status, oFileUploaderEventMock.status, "Correct status in complete event");
+			assert.equal(oEvent.getParameter("files")[0].responseRaw, oFileUploaderEventMock.responseRaw, "Correct raw response in complete event");
+			assert.equal(oEvent.getParameter("files")[0].headers, oFileUploaderEventMock.headers, "Correct headers in complete event");
+		}
+
+		this.oUploadCollection.attachUploadComplete(uploadComplete);
+		this.oUploadCollection._onUploadComplete(new Event("uploadComplete", this.oUploadCollection._getFileUploader(), oFileUploaderEventMock));
 	});
 
 	QUnit.test("Event terminate", function (assert) {
@@ -1782,10 +2067,6 @@ sap.ui.define([
 			{
 				name: "someRequestHeaderName",
 				value: "someRequestHeaderValue"
-			},
-			{
-				name: this.oUploadCollection._headerParamConst.requestIdName,
-				value: "1"
 			}
 		];
 		var oUploadCollectionParamter = new UploadCollectionParameter({
@@ -1801,7 +2082,6 @@ sap.ui.define([
 			assert.equal(oEvent.getParameters().getHeaderParameter()[0].getValue(), oUploadCollectionParamter.getValue(), "Name of the request header parameter retrieved correctly, , header parameter name not specified");
 		}
 
-		this.oUploadCollection._mRequestIdToItemMap["1"] = this.oUploadCollection.getItems()[0];
 		this.oUploadCollection.attachUploadTerminated(onUploadTerminated);
 		this.oUploadCollection._getFileUploader().fireUploadAborted({
 			fileName: sFileName,
@@ -1881,23 +2161,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("Edit", function (assert) {
-		var oItem0 = this.oUploadCollection.getItems()[0],
-			oItem1 = this.oUploadCollection.getItems()[1],
-			oItem2 = this.oUploadCollection.getItems()[2],
-			oItem3 = this.oUploadCollection.getItems()[3];
-
-		// trigger edit button of line 2 and check the status of the line
-		var sEditButtonId = oItem1.getId() + "-editButton";
+		//trigger edit button of line 2 and check the status of the line
+		var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
 		sap.ui.getCore().byId(sEditButtonId).firePress();
 		sap.ui.getCore().applyChanges();
-		assert.ok(oItem1._bIsEdited, "Item 2 has status 'Edit'");
-		assert.equal(oItem1, this.oUploadCollection._oEditModeItem, "EditModeItem is set correct");
+		assert.equal(this.oUploadCollection.aItems[1]._status, "Edit", "Item 2 has status 'Edit'");
+		assert.equal(this.oUploadCollection.aItems[1].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct");
 
-		var oInputField1 = oItem1.$("ta_editFileName-inner");
+		var oInputField1 = jQuery.sap.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName-inner");
 		oInputField1[0].value = "NewDocument_toCancel";
 		sap.ui.getCore().applyChanges();
 
-		// check cancel
+		//check cancel
 		var oEvent = {};
 		oEvent.oSource = {};
 		oEvent.oSource.getId = function () {
@@ -1906,65 +2181,85 @@ sap.ui.define([
 		oEvent.target = this.oUploadCollection.$().find(".sapMUCItem").eq(1).find(".sapMUCCancelBtn")[0];
 
 		oData.items[1].fileName = "NewDocument_toCancel";
-		this.oUploadCollection._handleClick(oEvent, oItem1.getId());
+		this.oUploadCollection._handleClick(oEvent, this.oUploadCollection.aItems[1].sId);
 		sap.ui.getCore().applyChanges();
-		assert.notOk(oItem1._bIsEdited, "Item 2 has status 'display' after 'cancel'");
+		assert.equal(this.oUploadCollection.aItems[1]._status, "display", "Item 2 has status 'display' after 'cancel'");
 
-		// check file name after cancel
-		var sFileNameField = sap.ui.getCore().byId(oItem1.getId() + "-ta_filenameHL").getProperty("text");
-		assert.equal("Notes.txt", sFileNameField, "File name is correct after 'cancel'");
+		//check file name after cancel
+		var sFileNameField = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
+		assert.equal("Notes.txt", sFileNameField, "Filename is correct after 'cancel'");
 
-		// check save
+		//check save
 		sap.ui.getCore().byId(sEditButtonId).firePress();
 		sap.ui.getCore().applyChanges();
-		var oInputField2 = oItem1.$("ta_editFileName-inner");
+		var oInputField2 = jQuery.sap.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName-inner");
 		oInputField2[0].value = "NewDocument";
 		sap.ui.getCore().applyChanges();
 		oData.items[1].fileName = "NewDocument.txt";
-		oEvent.target.id = oItem1.getId() + "-cli";
-		oEvent.oSource.sId = oItem1.getId();
-		this.oUploadCollection._handleClick(oEvent, oItem1.getId());
+		oEvent.target.id = this.oUploadCollection.aItems[1].sId + "-cli";
+		oEvent.oSource.sId = this.oUploadCollection.aItems[1].sId;
+		this.oUploadCollection._handleClick(oEvent, this.oUploadCollection.aItems[1].sId);
 		sap.ui.getCore().applyChanges();
-		assert.notOk(oItem1._bIsEdited, "Item 2 has status 'display' after 'ok'");
+		assert.equal(this.oUploadCollection.aItems[1]._status, "display", "Item 2 has status 'display' after 'ok'");
 
-		// check changed file name after save
-		sFileNameField = sap.ui.getCore().byId(oItem1.getId() + "-ta_filenameHL").getProperty("text");
-		assert.equal("NewDocument.txt", sFileNameField, "Changed file name (NewDocument) is correct saved");
+		//check changed file name after save
+		var sFileNameField = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
+		assert.equal("NewDocument.txt", sFileNameField, "Changed filename (NewDocument) is correct saved");
 
-		// check sameFileNameAllowed == false!
-		var sEditButtonId2 = oItem2.getId() + "-editButton";
+		//check sameFileNameAllowed == false!
+		var sEditButtonId2 = this.oUploadCollection.aItems[2].sId + "-editButton";
 		sap.ui.getCore().byId(sEditButtonId2).firePress();
 		sap.ui.getCore().applyChanges();
-		assert.ok(oItem2._bIsEdited, "Item 2 has status 'Edit'");
-		assert.equal(oItem2, this.oUploadCollection._oEditModeItem, "EditModeItem is set correct");
+		assert.equal(this.oUploadCollection.aItems[2]._status, "Edit", "Item 2 has status 'Edit'");
+		assert.equal(this.oUploadCollection.aItems[2].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct");
 
-		var oInputField3 = oItem2.$("ta_editFileName-inner");
+		var oInputField3 = jQuery.sap.byId(this.oUploadCollection.aItems[2].sId + "-ta_editFileName-inner");
 		oInputField3[0].value = "NewDocument";
 		oData.items[2].fileName = "NewDocument.txt";
-		oEvent.target.id = oItem2.getId();
-		this.oUploadCollection._handleClick(oEvent, oItem2);
+		oEvent.target.id = this.oUploadCollection.aItems[2].sId;
+		this.oUploadCollection._handleClick(oEvent, this.oUploadCollection.aItems[2].sId);
 		sap.ui.getCore().applyChanges();
-		var bShowValueStateMessage = sap.ui.getCore().byId(oItem2.getId() + "-ta_editFileName").getShowValueStateMessage();
-		assert.ok(bShowValueStateMessage, "Error message has to be shown, because the file name still exists");
-		assert.ok(oItem2._bContainsError, "Error state is set");
+		var bShowValueStateMessage = sap.ui.getCore().byId(this.oUploadCollection.aItems[2].sId + "-ta_editFileName").getShowValueStateMessage();
+		assert.equal(bShowValueStateMessage, true, "Error message has to be shown, because the file name still exists");
+		assert.equal(this.oUploadCollection.sErrorState, "Error", "Error state is set");
 
-		oEvent.target.id = oItem2.getId() + "-cancelButton";
-		this.oUploadCollection._handleClick(oEvent, oItem2);
+		// edit and delete buttons in case duplicated file name entered
+		var oEditButton0 = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-editButton");
+		var oEditButton1 = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-editButton");
+		var oDeleteButton0 = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-deleteButton");
+		var oDeleteButton1 = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-deleteButton");
+		assert.equal(oEditButton0.getEnabled(), false, "Edit button of item 1 is NOT enabled");
+		assert.equal(oEditButton1.getEnabled(), false, "Edit button of item 2 is NOT enabled");
+		assert.equal(oDeleteButton0.getEnabled(), false, "Delete button of item 1 is NOT enabled");
+		assert.equal(oDeleteButton1.getEnabled(), false, "Delete button of item 2 is NOT enabled");
+
+		oEvent.target.id = this.oUploadCollection.aItems[2].sId + "-cancelButton";
+		this.oUploadCollection._handleClick(oEvent, this.oUploadCollection.aItems[2].sId);
 		sap.ui.getCore().applyChanges();
-		assert.notOk(oItem2._bIsEdited, "Item 3 has status 'display' after 'cancel'");
+		assert.equal(this.oUploadCollection.aItems[2]._status, "display", "Item 3 has status 'display' after 'cancel'");
 
 		// edit and delete buttons
-		assert.ok(oItem0._getEditButton().getEnabled(), "Edit button of item 1 is enabled");
-		assert.ok(oItem1._getEditButton().getEnabled(), "Edit button of item 2 is enabled");
-		assert.ok(oItem0._getDeleteButton().getEnabled(), "Delete button of item 1 is enabled");
-		assert.ok(oItem1._getDeleteButton().getEnabled(), "Delete button of item 2 is enabled");
-		assert.notOk(oItem2._getEditButton().getEnabled(), "Edit button of item 3 is NOT enabled");
-		assert.notOk(oItem3._getEditButton().getEnabled(), "Edit button of item 4 is NOT enabled");
-		assert.notOk(oItem2._getDeleteButton().getEnabled(), "Delete button of item 3 is NOT enabled");
-		assert.notOk(oItem3._getDeleteButton().getEnabled(), "Delete button of item 4 is NOT enabled");
+		oEditButton0 = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-editButton");
+		oEditButton1 = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-editButton");
+		oDeleteButton0 = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-deleteButton");
+		oDeleteButton1 = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-deleteButton");
+		assert.equal(oEditButton0.getEnabled(), true, "Edit button of item 1 is enabled");
+		assert.equal(oEditButton1.getEnabled(), true, "Edit button of item 2 is enabled");
+		assert.equal(oDeleteButton0.getEnabled(), true, "Delete button of item 1 is enabled");
+		assert.equal(oDeleteButton1.getEnabled(), true, "Delete button of item 2 is enabled");
+
+		var oEditButton2 = sap.ui.getCore().byId(this.oUploadCollection.aItems[2].sId + "-editButton");
+		var oEditButton3 = sap.ui.getCore().byId(this.oUploadCollection.aItems[3].sId + "-editButton");
+		var oDeleteButton2 = sap.ui.getCore().byId(this.oUploadCollection.aItems[2].sId + "-deleteButton");
+		var oDeleteButton3 = sap.ui.getCore().byId(this.oUploadCollection.aItems[3].sId + "-deleteButton");
+		assert.equal(oEditButton2.getEnabled(), false, "Edit button of item 3 is NOT enabled");
+		assert.equal(oEditButton3.getEnabled(), false, "Edit button of item 4 is NOT enabled");
+		assert.equal(oDeleteButton2.getEnabled(), false, "Delete button of item 3 is NOT enabled");
+		assert.equal(oDeleteButton3.getEnabled(), false, "Delete button of item 4 is NOT enabled");
+
 	});
 
-	QUnit.skip("Cancel with different event target", function (assert) {
+	QUnit.test("Cancel with different event target", function (assert) {
 		// Arrange
 		var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
 		sap.ui.getCore().byId(sEditButtonId).firePress();
@@ -1986,7 +2281,7 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
-	QUnit.skip("Cancelling the edit mode of an item while another item is being uploaded", function (assert) {
+	QUnit.test("Cancelling the edit mode of an item while another item is being uploaded", function (assert) {
 		//Arrange
 		var oItem = new UploadCollectionItem({
 			fileName: "File.jpg"
@@ -2002,7 +2297,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//Act
-		this.oUploadCollection._handleCancel(null, this.oUploadCollection._oEditModeItem);
+		this.oUploadCollection._handleCancel(null, this.oUploadCollection.editModeItem);
 		//Assert
 		assert.equal(this.oUploadCollection.aItems[1]._status, UploadCollection._displayStatus, "Cancelling the edit mode has been successfully executed");
 
@@ -2047,7 +2342,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Delete the file name in edit", function (assert) {
+	QUnit.test("Delete the file name in edit", function (assert) {
 		sap.ui.getCore().applyChanges();
 		var bShowValueStateMessage = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName").getShowValueStateMessage();
 		var sValueState = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName").getValueState();
@@ -2057,7 +2352,7 @@ sap.ui.define([
 		assert.equal(this.oUploadCollection.sErrorState, "Error", "Error state is set on UploadCOllection control");
 	});
 
-	QUnit.skip("Exiting edit mode after an attemt to save an empty file in case same file names are allowed", function (assert) {
+	QUnit.test("Exiting edit mode after an attemt to save an empty file in case same file names are allowed", function (assert) {
 		//Arrange
 		this.oUploadCollection.setSameFilenameAllowed(true);
 		jQuery.sap.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName-inner")[0].value = "Nonempty name";
@@ -2065,7 +2360,7 @@ sap.ui.define([
 		this.oUploadCollection._handleClick(this.oObj, this.oUploadCollection.aItems[1].sId);
 		//Assert
 		assert.equal(this.oUploadCollection.sErrorState, null, "Error state has been removed");
-		assert.equal(this.oUploadCollection._oEditModeItem, null, "Edit mode successfully exited");
+		assert.equal(this.oUploadCollection.editModeItem, null, "Edit mode successfully exited");
 		assert.equal(this.oUploadCollection.aItems[1].errorState, null, "Error value state has been removed from the item as well");
 
 	});
@@ -2088,7 +2383,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Display", function (assert) {
+	QUnit.test("Display", function (assert) {
 		//check status = "display"
 		var iLength = this.oUploadCollection.aItems.length;
 		for (var i = 0; i < iLength; i++) {
@@ -2103,7 +2398,7 @@ sap.ui.define([
 		assert.equal(oFileName.getEnabled(), true, "File name is enabled");
 	});
 
-	QUnit.skip("Link is triggered by icon press", function (assert) {
+	QUnit.test("Link is triggered by icon press", function (assert) {
 		//Arrange
 		var oStub = sinon.stub(UploadCollection.prototype, "_triggerLink");
 
@@ -2119,7 +2414,7 @@ sap.ui.define([
 		oStub.restore();
 	});
 
-	QUnit.skip("Link is not triggered by icon press", function (assert) {
+	QUnit.test("Link is not triggered by icon press", function (assert) {
 		//Arrange
 		var oStub = sinon.stub(UploadCollection.prototype, "_triggerLink");
 
@@ -2159,7 +2454,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Rendering", function (assert) {
+	QUnit.test("Rendering", function (assert) {
 		//Arrange
 		sinon.spy(this.oUploadCollection._oList, "addItemGroup");
 		var aList = this.oUploadCollection._oList,
@@ -2222,7 +2517,7 @@ sap.ui.define([
 		}
 	}
 
-	QUnit.skip("Default values", function (assert) {
+	QUnit.test("Default values", function (assert) {
 		var sFileType,
 			sMaximumFilenameLength = 0,
 			nMaximumFileSize = 0,
@@ -2247,12 +2542,12 @@ sap.ui.define([
 		assert.strictEqual(this.oUploadCollection.getProperty("uploadUrl"), sUploadUrl, "Property 'uploadUrl': default value is '" + sUploadUrl + "'");
 	});
 
-	QUnit.skip("fileType", function (assert) {
+	QUnit.test("fileType", function (assert) {
 		var aFileTypes = ["jpg", "png", "bmp", "unittest"];
 		testSetter(this.oUploadCollection, "fileType", aFileTypes, true, assert);
 	});
 
-	QUnit.skip("fileType conversion", function (assert) {
+	QUnit.test("fileType conversion", function (assert) {
 		var aFileTypes = ["jpg", "png", "bmp", "unittest"];
 		var aFileTypesExpected = aFileTypes.toString();
 		var aFileTypesMix = ["JpG", "png", "bMp", "uniTTest"];
@@ -2261,7 +2556,7 @@ sap.ui.define([
 		assert.equal(aFileTypes, aFileTypesExpected, "Property 'fileType': Conversion to lower case");
 	});
 
-	QUnit.skip("fileType empty", function (assert) {
+	QUnit.test("fileType empty", function (assert) {
 		//undefined
 		var aFileTypesEmpty;
 		this.oUploadCollection.setFileType(aFileTypesEmpty);
@@ -2277,34 +2572,34 @@ sap.ui.define([
 		assert.equal(sFileTypesEmpty, sFileTypesExpected, "Property 'fileType': Call with an empty array!");
 	});
 
-	QUnit.skip("maximumFilenameLength", function (assert) {
+	QUnit.test("maximumFilenameLength", function (assert) {
 		var iMaximumFilenameLength = 4711;
 		testSetter(this.oUploadCollection, "maximumFilenameLength", iMaximumFilenameLength, true, assert);
 	});
 
-	QUnit.skip("maximumFileSize", function (assert) {
+	QUnit.test("maximumFileSize", function (assert) {
 		var iMaximumFileSize = 4711;
 		testSetter(this.oUploadCollection, "maximumFileSize", iMaximumFileSize, true, assert);
 	});
 
-	QUnit.skip("mimeType", function (assert) {
+	QUnit.test("mimeType", function (assert) {
 		var aMimeTypes = ["text", "image", "unittest"];
 		testSetter(this.oUploadCollection, "mimeType", aMimeTypes, true, assert);
 	});
 
-	QUnit.skip("multiple", function (assert) {
+	QUnit.test("multiple", function (assert) {
 		var bMultiple = true;
 		testSetter(this.oUploadCollection, "multiple", bMultiple, true, assert);
 	});
 
-	QUnit.skip("noDataText", function (assert) {
+	QUnit.test("noDataText", function (assert) {
 		var sNoDataText = "myNoDataText";
 		testSetter(this.oUploadCollection, "noDataText", sNoDataText, true, assert);
 		sap.ui.getCore().applyChanges();
 		assert.equal(jQuery.sap.byId(this.oUploadCollection.getId() + "-no-data-text").text(), sNoDataText, "Property 'noDataText' properly rendered in DOM");
 	});
 
-	QUnit.skip("sameFilenameAllowed", function (assert) {
+	QUnit.test("sameFilenameAllowed", function (assert) {
 		var bSameFilenameAllowed = true;
 		var oFileUploader = this.oUploadCollection._getFileUploader();
 		testSetter(this.oUploadCollection, "sameFilenameAllowed", bSameFilenameAllowed, false, assert);
@@ -2314,17 +2609,17 @@ sap.ui.define([
 		assert.equal(oFileUploader.getSameFilenameAllowed(), true, "Property 'sameFilenameAllowed' should stay 'true' ");
 	});
 
-	QUnit.skip("showSeparators", function (assert) {
+	QUnit.test("showSeparators", function (assert) {
 		var bShowSeparators = "All";
 		testSetter(this.oUploadCollection, "showSeparators", bShowSeparators, false, assert);
 	});
 
-	QUnit.skip("uploadEnabled", function (assert) {
+	QUnit.test("uploadEnabled", function (assert) {
 		var bUploadEnabled = false;
 		testSetter(this.oUploadCollection, "uploadEnabled", bUploadEnabled, true, assert);
 	});
 
-	QUnit.skip("uploadUrl", function (assert) {
+	QUnit.test("uploadUrl", function (assert) {
 		var sUploadUrl = "my/upload/url";
 		testSetter(this.oUploadCollection, "uploadUrl", sUploadUrl, true, assert);
 	});
@@ -2363,7 +2658,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Model refresh with empty data", function (assert) {
+	QUnit.test("Model refresh with empty data", function (assert) {
 		this.oModel.setProperty("/items", null);
 		sap.ui.getCore().applyChanges();
 		assert.strictEqual(this.oUploadCollection.getItems().length, 0);
@@ -2371,7 +2666,7 @@ sap.ui.define([
 		assert.strictEqual(this.oUploadCollection._oList.getItems().length, 0);
 	});
 
-	QUnit.skip("Model refresh with more data", function (assert) {
+	QUnit.test("Model refresh with more data", function (assert) {
 		this.oModel.setProperty("/items", [
 			{
 				"contributor": "Susan Baker",
@@ -2397,7 +2692,7 @@ sap.ui.define([
 		assert.strictEqual(this.oUploadCollection._oList.getItems().length, 2);
 	});
 
-	QUnit.skip("Model refresh like ODataModel - check number of list preparation", function (assert) {
+	QUnit.test("Model refresh like ODataModel - check number of list preparation", function (assert) {
 		sinon.spy(this.oUploadCollection, "_fillList");
 		this.oModel.setProperty("/items", null);
 		this.oModel.setProperty("/items", [
@@ -2420,7 +2715,6 @@ sap.ui.define([
 		beforeEach: function () {
 			this.fnSpy = sinon.spy(Element.prototype, "setTooltip");
 			this.oUploadCollection = new UploadCollection("uploadCollection", {
-				mode: "MultiSelect",
 				items: {
 					path: "/items",
 					template: createItemTemplate(),
@@ -2438,61 +2732,76 @@ sap.ui.define([
 	});
 
 	QUnit.test("Method setTooltip", function (assert) {
+		//Assert
 		assert.ok(this.fnSpy.called, "Method setTooltip called");
 		assert.ok(this.fnSpy.calledWith("Susan Baker"), "Method setTooltip called with the correct text");
 	});
 
 	QUnit.test("Icon", function (assert) {
-		var oIcon = sap.ui.getCore().byId(this.oUploadCollection.getItems()[0].getId() + "-ia_iconHL");
-		var $Icon = this.oUploadCollection.getItems()[0].$("ia_iconHL")[0];
+		var oIcon = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-ia_iconHL");
+		var $Icon = jQuery.sap.domById(this.oUploadCollection.aItems[0].sId + "-ia_iconHL");
 		assert.strictEqual(oIcon.getAlt(), "textForIconOfItemSusanBaker", "The icon has correct alt text");
 		assert.strictEqual($Icon.getAttribute("aria-label"), "textForIconOfItemSusanBaker", "The DOM object icon has correct tooltip");
 	});
 
 	QUnit.test("Image", function (assert) {
-		var oImage = sap.ui.getCore().byId(this.oUploadCollection.getItems()[3].getId() + "-ia_imageHL");
-		var $Image = this.oUploadCollection.getItems()[3].$("ia_imageHL")[0];
+		var oImage = sap.ui.getCore().byId(this.oUploadCollection.aItems[3].sId + "-ia_imageHL");
+		var $Image = jQuery.sap.domById(this.oUploadCollection.aItems[3].sId + "-ia_imageHL");
 		assert.strictEqual(oImage.getAlt(), "textForImageOfItemKateBrown", "The image has correct alt text");
 		assert.strictEqual($Image.getAttribute("aria-label"), "textForImageOfItemKateBrown", "The DOM object image has correct tooltip");
 	});
 
 	QUnit.test("Edit Button", function (assert) {
-		var oEditButton = sap.ui.getCore().byId(this.oUploadCollection.getItems()[0].getId() + "-editButton");
+		var oEditButton = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-editButton");
 		assert.strictEqual(oEditButton.getTooltip(), this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_EDITBUTTON_TEXT"), "The edit button has correct tooltip");
 	});
 
 	QUnit.test("Delete Button", function (assert) {
-		var oDeleteButton = sap.ui.getCore().byId(this.oUploadCollection.getItems()[0].getId() + "-deleteButton");
+		var oDeleteButton = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-deleteButton");
 		assert.strictEqual(oDeleteButton.getTooltip(), this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_DELETEBUTTON_TEXT"), "The delete button has correct tooltip");
 	});
 
 	QUnit.test("F2 button pressed for the item in display mode", function (assert) {
+		//Arrange
 		var oListItem = this.oUploadCollection._oList.getItems()[0],
+			sUCItemId = this.oUploadCollection.getItems()[0].getId(),
 			oPressEvent = {
 				target: {
 					id: oListItem.getId()
 				}
 			},
-			oHandleEditStub = sinon.stub(this.oUploadCollection, "_handleEdit");
-		this.oUploadCollection.setSelectedItem(this.oUploadCollection.getItems()[1], true);
+			oEditButton = sap.ui.getCore().byId(sUCItemId + "-editButton"),
+			oFirePressStub = sinon.stub(oEditButton, "firePress"),
+			oHandleClickStub = sinon.stub(this.oUploadCollection, "_handleClick");
+		this.oUploadCollection.editModeItem = this.oUploadCollection.getItems()[1].getId();
+		//Act
 		this.oUploadCollection._handleF2(oPressEvent);
-		assert.equal(oHandleEditStub.callCount, 1, "Method handling item editation should be called.");
+		//Assert
+		assert.deepEqual(oHandleClickStub.getCall(0).args[0], oPressEvent, "Press event has been forwarded to _handkeClick that has been called for other item that is already in the edit mode ");
+		assert.deepEqual(oHandleClickStub.getCall(0).args[1], this.oUploadCollection.editModeItem, "The function _handleClick gets the id of the item previously residing in the edit mode");
+		assert.strictEqual(oFirePressStub.callCount, 1, "The press event has been triggered on the correct edit button");
 	});
 
 	QUnit.test("F2 button pressed for item in editing mode when focused on the list item", function (assert) {
+		//Arrange
 		var oListItem = this.oUploadCollection._oList.getItems()[0],
 			oPressEvent = {
 				target: {
 					id: oListItem.getId()
 				}
 			},
-			oHandleClickStub = sinon.stub(this.oUploadCollection, "_handleOk");
-		this.oUploadCollection._oEditModeItem = this.oUploadCollection.getItems()[0];
+			oHandleClickStub = sinon.stub(this.oUploadCollection, "_handleClick");
+		this.oUploadCollection.editModeItem = this.oUploadCollection.getItems()[0].getId();
+		oListItem._status = undefined;
+		//Act
 		this.oUploadCollection._handleF2(oPressEvent);
-		assert.equal(oHandleClickStub.callCount, 1, "Method handling confirmation of item editaion should be called.");
+		//Assert
+		assert.deepEqual(oHandleClickStub.getCall(0).args[0], oPressEvent, "The press event has been triggered on the F2 button");
+		assert.deepEqual(oHandleClickStub.getCall(0).args[1], this.oUploadCollection.editModeItem, "The press event has been triggered on the F2 button");
 	});
 
 	QUnit.test("F2 button pressed for item in editing mode when focused on the input field", function (assert) {
+		//Arrange
 		var sUCItemId = this.oUploadCollection.getItems()[0].getId(),
 			oPressEvent = {
 				target: {
@@ -2500,70 +2809,89 @@ sap.ui.define([
 				}
 			},
 			oHandleOkStub = sinon.stub(this.oUploadCollection, "_handleOk");
-		this.oUploadCollection._oEditModeItem = this.oUploadCollection.getItems()[0].getId();
+		this.oUploadCollection.editModeItem = this.oUploadCollection.getItems()[0].getId();
+		//Act
 		this.oUploadCollection._handleF2(oPressEvent);
+		//Assert
 		assert.deepEqual(oHandleOkStub.getCall(0).args[0], oPressEvent, "The press event has been triggered on the F2 button");
-		assert.deepEqual(oHandleOkStub.getCall(0).args[1], this.oUploadCollection._oEditModeItem, "The press event has been triggered on the F2 button");
+		assert.deepEqual(oHandleOkStub.getCall(0).args[1], this.oUploadCollection.editModeItem, "The press event has been triggered on the F2 button");
+		assert.deepEqual(oHandleOkStub.getCall(0).args[2], true, "The press event has been triggered on the F2 button");
 	});
 
 	QUnit.test("Pressing keyboard DEL button while focused on list item", function (assert) {
-		var oItem0 = this.oUploadCollection.getItems()[0],
+		//Arrange
+		var sUCItemId = this.oUploadCollection.getItems()[0].getId(),
 			oPressEvent = {
 				target: {
-					id: oItem0.getId() + "-cli"
+					id: sUCItemId + "-cli"
 				}
 			},
-			oHandleDeleteStub = sinon.stub(this.oUploadCollection, "_handleDelete");
-		this.oUploadCollection.setSelectedItem(oItem0, true);
+			oDeleteButton = sap.ui.getCore().byId(sUCItemId + "-deleteButton"),
+			oFirePressStub = sinon.stub(oDeleteButton, "firePress");
+		//Act
 		this.oUploadCollection._handleDEL(oPressEvent);
-		assert.equal(oHandleDeleteStub.callCount, 1, "Method handling item deletion should be called.");
+		//Assert
+		assert.strictEqual(oFirePressStub.callCount, 1, "The press event has been triggered on the delete button");
 	});
 
 	QUnit.test("Pressing keyboard F2 button results in correct handler call", function (assert) {
+		//Arrange
 		var oEvent = {
-				keyCode: KeyCodes.F2,
+				keyCode: jQuery.sap.KeyCodes.F2,
 				setMarked: sinon.stub()
 			},
 			oHandleF2Stub = sinon.stub(this.oUploadCollection, "_handleF2");
+		//Act
 		this.oUploadCollection.onkeydown(oEvent);
+		//Assert
 		assert.deepEqual(oHandleF2Stub.getCall(0).args[0], oEvent, "Correct handler has been executed");
 		assert.ok(oEvent.setMarked.called, "Event has been marked");
 	});
 
 	QUnit.test("Pressing keyboard ESCAPE button results in correct handler call", function (assert) {
+		//Arrange
 		var oEvent = {
-				keyCode: KeyCodes.ESCAPE,
+				keyCode: jQuery.sap.KeyCodes.ESCAPE,
 				setMarked: sinon.stub()
 			},
 			oHandleESCAPEStub = sinon.stub(this.oUploadCollection, "_handleESC");
+		//Act
 		this.oUploadCollection.onkeydown(oEvent);
+		//Assert
 		assert.deepEqual(oHandleESCAPEStub.getCall(0).args[0], oEvent, "Correct handler has been executed");
 		assert.ok(oEvent.setMarked.called, "Event has been marked");
 	});
 
 	QUnit.test("Pressing keyboard DELETE button results in correct handler call", function (assert) {
+		//Arrange
 		var oEvent = {
-				keyCode: KeyCodes.DELETE,
+				keyCode: jQuery.sap.KeyCodes.DELETE,
 				setMarked: sinon.stub()
 			},
 			oHandleDELETEStub = sinon.stub(this.oUploadCollection, "_handleDEL");
+		//Act
 		this.oUploadCollection.onkeydown(oEvent);
+		//Assert
 		assert.deepEqual(oHandleDELETEStub.getCall(0).args[0], oEvent, "Correct handler has been executed");
 		assert.ok(oEvent.setMarked.called, "Event has been marked");
 	});
 
 	QUnit.test("Pressing keyboard ENTER button results in correct handler call", function (assert) {
+		//Arrange
 		var oEvent = {
-				keyCode: KeyCodes.ENTER,
+				keyCode: jQuery.sap.KeyCodes.ENTER,
 				setMarked: sinon.stub()
 			},
 			oHandleENTERStub = sinon.stub(this.oUploadCollection, "_handleENTER");
+		//Act
 		this.oUploadCollection.onkeydown(oEvent);
+		//Assert
 		assert.deepEqual(oHandleENTERStub.getCall(0).args[0], oEvent, "Correct handler has been executed");
 		assert.ok(oEvent.setMarked.called, "Event has been marked");
 	});
 
 	QUnit.test("Pressing other keyboard buttons is correctly processed", function (assert) {
+		//Arrange
 		var oEvent = {
 				keyCode: "Dummy",
 				setMarked: sinon.stub()
@@ -2573,7 +2901,9 @@ sap.ui.define([
 			oHandleDELETEStub = sinon.stub(this.oUploadCollection, "_handleDEL"),
 			oHandleESCAPEStub = sinon.stub(this.oUploadCollection, "_handleESC"),
 			oSetMarkedStub = oEvent.setMarked;
+		//Act
 		this.oUploadCollection.onkeydown(oEvent);
+		//Assert
 		assert.equal(oHandleF2Stub.called, false, "Handler for F2 has not been called");
 		assert.equal(oHandleENTERStub.called, false, "Handler for ENTER has not been called");
 		assert.equal(oHandleDELETEStub.called, false, "Handler for DELETE has not been called");
@@ -2598,25 +2928,32 @@ sap.ui.define([
 			this.oUploadCollection = null;
 		}
 	});
-
-	QUnit.skip("First rendering after initialisation of UploadCollection", function (assert) {
+	QUnit.test("First rendering after initialisation of UploadCollection", function (assert) {
+		//Arrange
+		//Act
+		//Assert
 		assert.strictEqual(!!this.oUploadCollection._oListEventDelegate, false, "No event delegations saved for deletion");
 	});
-
-	QUnit.skip("In edit mode", function (assert) {
-		this.oUploadCollection._oEditModeItem = this.oUploadCollection.getItems()[0].getId();
+	QUnit.test("In edit mode", function (assert) {
+		//Arrange
+		this.oUploadCollection.editModeItem = this.oUploadCollection.getItems()[0].getId();
+		//Act
 		this.oUploadCollection.invalidate();
 		sap.ui.getCore().applyChanges();
+		//Assert
 		assert.strictEqual(!!this.oUploadCollection._oListEventDelegate, true, "Event delegations saved to be deleted on the beginning of the next rendering cycle");
 	});
-
-	QUnit.skip("After exiting edit mode", function (assert) {
-		this.oUploadCollection._oEditModeItem = this.oUploadCollection.getItems()[0].getId();
+	QUnit.test("After exiting edit mode", function (assert) {
+		//Arrange
+		this.oUploadCollection.editModeItem = this.oUploadCollection.getItems()[0].getId();
 		this.oUploadCollection.invalidate();
 		sap.ui.getCore().applyChanges();
-		this.oUploadCollection._oEditModeItem = null;
+		this.oUploadCollection.editModeItem = null;
+		//Act
 		this.oUploadCollection.invalidate();
 		sap.ui.getCore().applyChanges();
+		//Assert
 		assert.strictEqual(!!this.oUploadCollection._oListEventDelegate, false, "Event delegation has been successfully deleted while exiting edit mode");
 	});
+
 });
