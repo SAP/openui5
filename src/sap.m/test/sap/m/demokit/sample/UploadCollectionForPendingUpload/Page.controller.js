@@ -14,11 +14,6 @@ sap.ui.define([
 			this.getView().setModel(new JSONModel(Device), "device");
 		},
 
-		onRestrictMore: function(oEvent) {
-			var oUploadCollection = this.byId("UploadCollection");
-			oUploadCollection.setMaximumFilenameLength(10);
-		},
-
 		onChange: function(oEvent) {
 			var oUploadCollection = oEvent.getSource();
 			// Header Token

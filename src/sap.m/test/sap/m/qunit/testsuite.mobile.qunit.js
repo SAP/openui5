@@ -2519,8 +2519,7 @@ sap.ui.define(function() {
 					"./UploadCollectionItem.qunit",
 					"./UploadCollectionMemoryLeak.qunit",
 					"./UploadCollectionOpenFileDialog.qunit",
-					"./UploadCollectionToolbar.qunit",
-					"./uploadCollection/UploadCollectionRestrictions.qunit"
+					"./UploadCollectionToolbar.qunit"
 				]
 			},
 			UploadCollectionItem: {

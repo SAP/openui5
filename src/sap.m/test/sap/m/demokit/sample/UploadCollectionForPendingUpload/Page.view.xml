@@ -16,10 +16,8 @@
 		</VBox>
 		<UploadCollection
 			id="UploadCollection"
-			maximumFilenameLength="10"
-			maximumFileSize="2000"
-			fileType="txt,mp4"
-			mimeType="text/plain,video/mp4"
+			maximumFilenameLength="55"
+			maximumFileSize="10"
 			multiple="true"
 			sameFilenameAllowed="true"
 			instantUpload="false"
