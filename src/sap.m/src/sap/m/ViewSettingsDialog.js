@@ -306,6 +306,8 @@ function(
 			selected: {
 			}
 		}, {
+			tooltip: {}
+		},{
 			type : ListType.Active
 		}, {
 			mode : ListMode.SingleSelectLeft,
@@ -463,7 +465,7 @@ function(
 		}
 	};
 
-	ViewSettingsDialog.prototype._aggregationToListItems = function(sAggregationName, oItemPropertyMap, oListItemInitials, oListOptions) {
+	ViewSettingsDialog.prototype._aggregationToListItems = function(sAggregationName, oItemPropertyMap, oItemAggregationMap, oListItemInitials, oListOptions) {
 		var sType = this._getListType(sAggregationName),
 			sListName = "_" + sType + "List";
 
@@ -473,6 +475,7 @@ function(
 
 		this.mToList[sType] = {
 			"itemPropertyMap": oItemPropertyMap,
+			"itemAggregationMap": oItemAggregationMap,
 			"listItemOptions": oListItemInitials,
 			"listOptions": oListOptions,
 			"listName": sListName
@@ -503,8 +506,11 @@ function(
 	ViewSettingsDialog.prototype._createListItem = function(sType, oVSItem) {
 		var oOptions = this.mToList[sType].listItemOptions,
 			mItemPropertyMap = this.mToList[sType].itemPropertyMap,
-			sListProp;
+			mItemAggregationMap = this.mToList[sType].itemAggregationMap,
+			sListProp,
+			oCreatedListItem;
 
+		// Pass the properties
 		for (var sProperty in mItemPropertyMap) {
 			if (mItemPropertyMap.hasOwnProperty(sProperty)) {
 				sListProp = mItemPropertyMap[sProperty].listProp || sProperty;
@@ -512,7 +518,16 @@ function(
 			}
 		}
 
-		return new StandardListItem(oOptions).data('item', oVSItem);
+		// Pass the aggregations
+		for (var sAggregationName in mItemAggregationMap) {
+			if (mItemAggregationMap.hasOwnProperty(sAggregationName)) {
+				oOptions[sAggregationName] = oVSItem.getAggregation(sAggregationName);
+			}
+		}
+
+		oCreatedListItem = new StandardListItem(oOptions).data('item', oVSItem);
+
+		return oCreatedListItem;
 	};
 
 	ViewSettingsDialog.prototype._createListItemPropertyValue = function(sType, sPropertyName, oVSItem) {
