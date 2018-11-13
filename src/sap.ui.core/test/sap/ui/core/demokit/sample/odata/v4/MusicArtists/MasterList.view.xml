@@ -2,8 +2,8 @@
 	controllerName="sap.ui.core.sample.odata.v4.MusicArtists.MasterList"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
-	<Page id="masterlist" title="Artist List">
-		<List class="sapUiResponsiveMargin" growing="true" growingThreshold="10" id="artistList"
+	<Page id="masterList" title="Artist List">
+		<List class="sapUiResponsiveMargin" growing="true" growingThreshold="10" id="Artists"
 			items="{
 				filters : {
 					path : 'IsActiveEntity',
@@ -19,9 +19,9 @@
 			<headerToolbar>
 				<Toolbar>
 					<ToolbarSpacer/>
-					<Button id="create" press="onCreate" text="Create" />
+					<Button press="onCreate" text="Create" />
 					<ToolbarSeparator/>
-					<Button id="refresh" press="onRefresh" text="Refresh" />
+					<Button press="onRefresh" text="Refresh" />
 				</Toolbar>
 			</headerToolbar>
 			<items>
