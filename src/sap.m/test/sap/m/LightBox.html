@@ -6,6 +6,10 @@
 			.sapMFlexItem {
 				margin:0 0 0 2rem;
 			}
+
+			.sapMLightBoxImage {
+				 margin: 10px;
+			}
 		</style>
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
@@ -14,6 +18,10 @@
 		</script>
 
 		<script>
+			var oIcon = new sap.ui.core.Icon({
+				src: "sap-icon://help"
+			});
+
 			var oLightBox = new sap.m.LightBox('lB1', {
 				imageContent: new sap.m.LightBoxItem({
 					imageSrc: 'images/demo/nature/elephant.jpg',
@@ -177,13 +185,6 @@
 				densityAware: false
 			});
 
-			var compactSizeButton = new sap.m.Button('toggleCompactModeButton', {
-				text : 'Toggle Compact mode',
-				press : function() {
-					jQuery('body').toggleClass('sapUiSizeCompact');
-				}
-			});
-
 			var oPage = new sap.m.Page("myPage", {
 				content: [
 					oImage,
@@ -194,14 +195,13 @@
 					oImageVerticalMin,
 					oImageHorizontalMin,
 					oInvalidImage,
-					oInvalidImage2,
-					compactSizeButton
+					oInvalidImage2
 				]
 			});
 
 			var oApp = new sap.m.App("myApp", {
 				initialPage:"myPage"
-			});			
+			});
 			oApp.addPage(oPage);
 
 			oApp.placeAt("body");
