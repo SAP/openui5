@@ -1,48 +1,21 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
-
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-	<meta charset="UTF-8">
-
-	<title>OData V4</title>
-
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>OData V4 Tutorial</title>
 	<script id="sap-ui-bootstrap"
-			src="../../../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-theme="sap_belize"
-			data-sap-ui-compatVersion="edge"
-			data-sap-ui-preload="async"
-			data-sap-ui-resourceroots='{"sap.ui.core.tutorial.odatav4": ""}'>
-	</script>
-
-	<script>
-		sap.ui.getCore().attachInit(function () {
-			sap.ui.require([
-				"sap/ui/core/tutorial/odatav4/localService/mockserver",
-				"sap/m/Shell",
-				"sap/ui/core/ComponentContainer"
-			], function (mockserver, Shell, ComponentContainer) {
-				// Requests to the service are intercepted and fake responses returned.
-				// Comment this out to connect to the real service.
-				mockserver.start();
-
-				new Shell({
-					app : new ComponentContainer({
-						height : "100%",
-						component : sap.ui.component({
-							name : "sap.ui.core.tutorial.odatav4",
-							manifestFirst : true,
-							id : "odatav4"
-						})
-					})
-				}).placeAt("content");
-			})
-		});
+		src="../../../../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_belize"
+		data-sap-ui-resourceroots='{
+			"sap.ui.core.tutorial.odatav4": "./"
+		}'
+		data-sap-ui-oninit="module:sap/ui/core/tutorial/odatav4/initMockServer"
+		data-sap-ui-compatVersion="edge"
+		data-sap-ui-async="true">
 	</script>
 </head>
-
-<body class="sapUiBody" id="content">
+<body class="sapUiBody">
+	<div data-sap-ui-component data-name="sap.ui.core.tutorial.odatav4" data-id="container" data-settings='{"id" : "odatav4"}'></div>
 </body>
-
 </html>
