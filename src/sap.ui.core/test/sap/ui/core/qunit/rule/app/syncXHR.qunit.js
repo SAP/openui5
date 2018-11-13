@@ -9,9 +9,13 @@ sap.ui.define([
 	"sap/ui/core/XMLComposite",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/jquery",
-	"test-resources/sap/ui/support/TestHelper"
-], function(Control, Component, IconPool, AppCacheBuster, Manifest, Fragment, XMLComposite, sinon, jQuery, testRule) {
+	"test-resources/sap/ui/support/TestHelper",
+	"sap/ui/qunit/utils/createAndAppendDiv"
+], function(Control, Component, IconPool, AppCacheBuster, Manifest, Fragment, XMLComposite, sinon, jQuery, testRule, createAndAppendDiv) {
 	"use strict";
+
+	// create content div
+	createAndAppendDiv('content');
 
 	var iIncrement = 0;
 	var fnIncrement = function(iNumber){
@@ -22,22 +26,28 @@ sap.ui.define([
 	};
 
 	QUnit.module("Renderer", {
-		beforeEach: function() {
-			var No = Control.extend("No", {
-				metadata: {
-					properties: {}
+		beforeEach: function(assert) {
+			assert.ok(sap.ui.getCore().isInitialized(), "Core must be initialized");
+			return new Promise(function(resolve) {
+
+				var No = Control.extend("NoRendererControl", {
+					metadata: {
+						properties: {}
+					}
+				});
+				var n = new No();
+				n.placeAt("content");
+				try {
+					sap.ui.getCore().applyChanges();
+				} catch (e) {
+					// prevent 404 exception from breaking the test
+					// the rule TestHelper does not support assert throwing
+					// the actual check should be on a log for a sync XHR to "NoRendererControlRenderer.js"
+					assert.ok(e, "404 should be fired for '" + e.message + "'");
+					resolve();
 				}
 			});
 
-			try {
-				var n = new No();
-				n.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-			} catch (e) {
-				// prevent 404 exception from breaking the test
-				// the rule TestHelper does not support assert throwing
-				// the actual check should be on a log for a sync XHR to "NoRenderer.js"
-			}
 		}
 	});
 
