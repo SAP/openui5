@@ -383,7 +383,7 @@ function (
 				oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
 					setTimeout(function () {
 						sectionIsSelected(oObjectPage, assert, oExpected);
-						assert.strictEqual(oObjectPage._$opWrapper.scrollTop() - 1, oObjectPage.iHeaderContentHeight, "top section is selected");
+						assert.ok(isTolerableDifference(oObjectPage._$opWrapper.scrollTop() - 1, oObjectPage.iHeaderContentHeight, ["chrome"], 1), "top section is selected");
 						assert.strictEqual(oObjectPage._bStickyAnchorBar, true, "anchor bar is snapped");
 						assert.strictEqual(oObjectPage._bHeaderExpanded, false, "header is snapped");
 
@@ -2507,7 +2507,7 @@ function (
 			$titleDescription.innerText = sShortText;
 
 			setTimeout(function() {
-				assert.strictEqual(layoutCalcSpy.callCount, 2, "layout recalculations called twice");
+				assert.strictEqual(layoutCalcSpy.callCount, 1, "layout recalculations called once");
 				assert.strictEqual(headerCalcSpy.callCount, 1, "header height recalculation called");
 				done();
 			}, 100);

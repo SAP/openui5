@@ -882,6 +882,8 @@ sap.ui.define([
 
 		this._cacheDomElements();
 
+		this._updateMedia(this._getWidth(this), ObjectPageLayout.MEDIA);
+
 		this._$opWrapper.on("scroll", this._onScroll.bind(this));
 
 		//the dom is already ready (re-rendering case), thus we compute the header immediately
@@ -958,8 +960,6 @@ sap.ui.define([
 		if (this._hasDynamicTitle()) {
 			this._updateMedia(this._getWidth(this), ObjectPageLayout.DYNAMIC_HEADERS_MEDIA);
 		}
-
-		this._updateMedia(this._getWidth(this), ObjectPageLayout.MEDIA);
 
 		this._updateToggleHeaderVisualIndicators();
 		this._updateTitleVisualState();
