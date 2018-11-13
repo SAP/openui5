@@ -3,15 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/m/MessageBox",
-	"sap/m/MessagePopover",
-	"sap/m/MessagePopoverItem",
 	"sap/m/MessageToast",
 	"sap/ui/core/ValueState",
-	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/sample/common/Controller",
 	"sap/ui/util/XMLHelper"
-], function (MessageBox, MessagePopover, MessagePopoverItem, MessageToast, ValueState, Controller,
-		XMLHelper) {
+], function (MessageToast, ValueState, Controller, XMLHelper) {
 	"use strict";
 
 	function showSuccessMessage(sContext) {
@@ -19,21 +15,8 @@ sap.ui.define([
 	}
 
 	return Controller.extend("sap.ui.core.sample.ViewTemplate.types.Types", {
-		showErrorPopover : function (sButtonID) {
-			this.messagePopover.openBy(this.byId(sButtonID));
-		},
-
 		onInit : function () {
-
-			this.messagePopover = new MessagePopover({
-				items : {
-					path :"message>/",
-					template : new MessagePopoverItem({description : "{message>description}",
-						type : "{message>type}", title :"{message>message}"})
-				}
-			});
-			this.messagePopover.setModel(sap.ui.getCore().getMessageManager().getMessageModel(),
-				"message");
+			this.initMessagePopover("messagesButton");
 			this.getView().bindObject("/EdmTypesCollection(ID='1')");
 			this.getView().bindObject("v2>/EdmTypesCollection(ID='1')");
 			this.getView().bindObject("v4>/EdmTypesCollection(ID='1')");
@@ -42,8 +25,7 @@ sap.ui.define([
 		onReset : function () {
 			var i,
 				oModel = this.getView().getModel(),
-				aObjects = this.getView().findAggregatedObjects(true),
-				that = this;
+				aObjects = this.getView().findAggregatedObjects(true);
 
 			if (this.getView().getModel("ui").getProperty("/v2")) {
 				for (i = 0; i < aObjects.length; i += 1) {
@@ -57,9 +39,6 @@ sap.ui.define([
 					method : "POST",
 					success : function () {
 						showSuccessMessage("reset");
-					},
-					error : function (oError) {
-						that.showErrorPopover("resetButton");
 					}
 				});
 			} else {
@@ -68,8 +47,6 @@ sap.ui.define([
 						//TODO: refresh needed as long there is no synchronisation
 						oModel.refresh();
 						showSuccessMessage("reset");
-					}, function () {
-						that.showErrorPopover("resetButton");
 					});
 			}
 		},
@@ -84,24 +61,18 @@ sap.ui.define([
 		},
 
 		onSave : function () {
-			var oModel = this.getView().getModel(),
-				that = this;
+			var oModel = this.getView().getModel();
 
 			if (this.getView().getModel("ui").getProperty("/v2")) {
 				oModel.attachEventOnce("requestCompleted", this, function(oEvent) {
 					if (oEvent.getParameter("success")) {
 						showSuccessMessage("saved");
-					} else {
-						that.showErrorPopover("saveButton");
 					}
 				});
 				oModel.submitChanges();
 			} else {
 				oModel.submitBatch("EDMTypes").then(function () {
 					showSuccessMessage("saved");
-				},
-				function () {
-					that.showErrorPopover("saveButton");
 				});
 			}
 		},

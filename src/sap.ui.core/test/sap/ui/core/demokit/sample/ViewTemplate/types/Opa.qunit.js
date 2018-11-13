@@ -3,10 +3,9 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/TestUtils"
-], function (Log, Opa5, opaTest, TestUtils) {
+], function (Log, opaTest, TestUtils) {
 	/*global QUnit */
 	"use strict";
 
@@ -31,6 +30,7 @@ sap.ui.define([
 			When.onTheMainPage.changeBoolean();
 			When.onTheMainPage.pressButton("saveButton");
 			When.onTheMainPage.pressButton("resetButton");
+			When.onTheMainPage.pressMessagePopoverCloseButton();
 		}
 		When.onTheMainPage.enterBoolean("XXX");
 		Then.onTheMainPage.checkControlIsDirty("booleanInput", true);

@@ -54,8 +54,8 @@
 				tooltip="{:= ${ui>/bRealOData} ? 'real OData service' : 'mock OData service' }"
 				type="Transparent"/>
 			<Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
-				press="onMessagePopoverPress" text="{ui>/iMessages}"
-				type="{= (${ui>/iMessages} ? 'Emphasized' : 'Default')}"/>
+				press="onToggleMessagePopover" text="{ui>/iMessages}"
+				type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
 			<dependents>
 				<Dialog id="createSalesOrderDialog" title="Create New Sales Order">
 					<buttons>
