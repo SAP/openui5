@@ -309,6 +309,17 @@ sap.ui.define([
 		beforeEach: function() {
 			jQuery.sap.fesr.setActive(true);
 			jQuery.sap.interaction.notifyStepStart(null, true);
+			this.oReq = new XMLHttpRequest();
+			// first request without FESR header
+			this.oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
+			this.oReq.send();
+			jQuery.sap.interaction.notifyStepEnd();
+			jQuery.sap.interaction.notifyStepStart(null, true);
+			this.oReq = new XMLHttpRequest();
+			// second request with FESR header belonging to first interaction
+			this.oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
+			this.oReq.send();
+			jQuery.sap.interaction.notifyStepEnd();
 		}, afterEach: function() {
 			jQuery.sap.interaction.notifyStepEnd();
 			jQuery.sap.measure.endInteraction(true);
@@ -325,6 +336,7 @@ sap.ui.define([
 		jQuery.sap.interaction.notifyStepStart(null, true);
 		var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 		assert.ok(oMeasurement.busyDuration >= 0, "Global Busy duration is bigger than or equal to zero.");
+
 		var oReq = new XMLHttpRequest();
 		var spy = this.spy(oReq, "setRequestHeader");
 		oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now());
@@ -336,34 +348,45 @@ sap.ui.define([
 	});
 
 	// Check if global busy indicator measurement works with delay
-	// Remove this test due to instability
-	// QUnit.test("Busy indicator with delay", function(assert) {
-	// 	BusyIndicator.show(1);
-	// 	var done = assert.async();
-	// 	assert.expect(2);
-	// 	var fnSpy = this.spy;
-	// 	setTimeout(function() {
-	// 		BusyIndicator.hide();
-	// 		jQuery.sap.interaction.notifyStepEnd();
-	// 		jQuery.sap.interaction.notifyStepStart(null, true);
-	// 		var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
-	// 		assert.ok(oMeasurement.busyDuration > 0, "Global Busy duration is bigger than zero.");
-	// 		var oReq = new XMLHttpRequest();
-	// 		var spy = fnSpy(oReq, "setRequestHeader");
-	// 		oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now());
-	// 		oReq.send();
-	// 		var iBusyDurationRequest = parseInt(getHeaderContent(spy.args, "SAP-Perf-FESRec-opt").split(",")[14]);
-	// 		assert.ok(iBusyDurationRequest+1 >= oMeasurement.busyDuration && iBusyDurationRequest-1 <= oMeasurement.busyDuration,
-	// 			"Header is filled; FESR entry: " + iBusyDurationRequest + "; Measurement: " + oMeasurement.busyDuration);
-	// 		spy.restore();
-	// 		done();
-	// 	}, 100);
-	// });
+	QUnit.test("Busy indicator with delay", function(assert) {
+		BusyIndicator.show(1);
+		var done = assert.async();
+		assert.expect(2);
+		var fnSpy = this.spy;
+		setTimeout(function() {
+			BusyIndicator.hide();
+			jQuery.sap.interaction.notifyStepEnd();
+			jQuery.sap.interaction.notifyStepStart(null, true);
+			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
+			assert.ok(oMeasurement.busyDuration > 0, "Global Busy duration is bigger than zero.");
+
+			var oReq = new XMLHttpRequest();
+			var spy = fnSpy(oReq, "setRequestHeader");
+			oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now());
+			oReq.send();
+			var iBusyDurationRequest = parseInt(getHeaderContent(spy.args, "SAP-Perf-FESRec-opt").split(",")[14]);
+			assert.ok(iBusyDurationRequest + 1 >= oMeasurement.busyDuration && iBusyDurationRequest - 1 <= oMeasurement.busyDuration,
+				"Header is filled; FESR entry: " + iBusyDurationRequest + "; Measurement: " + oMeasurement.busyDuration);
+			spy.restore();
+			done();
+		}, 100);
+	});
 
 	QUnit.module("component integration", {
 		beforeEach: function() {
 			jQuery.sap.fesr.setActive(true);
 			jQuery.sap.interaction.notifyStepStart(null, true);
+			this.oReq = new XMLHttpRequest();
+			// first request without FESR header
+			this.oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
+			this.oReq.send();
+			jQuery.sap.interaction.notifyStepEnd();
+			jQuery.sap.interaction.notifyStepStart(null, true);
+			this.oReq = new XMLHttpRequest();
+			// second request with FESR header belonging to first interaction
+			this.oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
+			this.oReq.send();
+			jQuery.sap.interaction.notifyStepEnd();
 		}, afterEach: function() {
 			jQuery.sap.interaction.notifyStepEnd();
 			jQuery.sap.measure.endInteraction(true);
@@ -408,10 +431,9 @@ sap.ui.define([
 			var sComponentName70Chars = aHeaderValues[19];
 			assert.strictEqual(sComponentName70Chars.length, 70);
 			assert.strictEqual(sComponentName70Chars, "sap.ui.fesr.test.a.component.name.with.seventy.characters.Component.js");
-			done();
-
 			spy.restore();
-		}, 100);
+			done();
+		}, 0);
 	});
 
 });
