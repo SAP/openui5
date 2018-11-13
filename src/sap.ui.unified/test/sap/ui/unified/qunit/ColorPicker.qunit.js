@@ -1,9 +1,13 @@
-/*global QUnit, window */
+/*global QUnit, sinon, window */
 
 sap.ui.define([
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/unified/ColorPicker"
-], function(sinon, ColorPicker) {
+	"sap/ui/unified/ColorPicker",
+	"sap/m/InputBase",
+	"sap/m/Label",
+	"sap/m/RadioButtonGroup",
+	"sap/m/RadioButton",
+	"sap/m/Slider"
+], function(ColorPicker, InputBase, Label, RadioButtonGroup, RadioButton, Slider) {
 	"use strict";
 
 	(function () {
@@ -26,11 +30,11 @@ sap.ui.define([
 			oAssert.ok(oHelper.bFinal, "All further overwriting of this object is prohibited");
 
 			// Assert - Factory
-			oAssert.ok(oFactory.createLabel() instanceof sap.m.Label,
+			oAssert.ok(oFactory.createLabel() instanceof Label,
 				"Factory label control should be instance of sap.m.Label");
 
 			oInput = oFactory.createInput("MYCUSTOMINPUTID");
-			oAssert.ok(oInput instanceof sap.m.InputBase,
+			oAssert.ok(oInput instanceof InputBase,
 				"Factory input control should be instance of sap.m.InputBase");
 			oAssert.strictEqual(oInput.getId(), "MYCUSTOMINPUTID",
 				"Factory input control should have 'MYCUSTOMINPUTID' assigned as ID");
@@ -39,16 +43,16 @@ sap.ui.define([
 			oRBGroup = oFactory.createRadioButtonGroup({
 				buttons: oHelper.factory.createRadioButtonItem()
 			});
-			oAssert.ok(oRBGroup instanceof sap.m.RadioButtonGroup,
+			oAssert.ok(oRBGroup instanceof RadioButtonGroup,
 				"Factory RadioButtonGroup control should be instance of sap.m.RadioButtonGroup");
-			oAssert.ok(oRBGroup.getButtons()[0] instanceof sap.m.RadioButton,
+			oAssert.ok(oRBGroup.getButtons()[0] instanceof RadioButton,
 				"Factory RadioButtonGroup items aggregation should be propagated to buttons " +
 				"aggregation and returned item from createRadioButtonItem should be instance of " +
 				"sap.m.RadioButton");
 
 			// Slider
 			oSlider = oFactory.createSlider("MYCUSTOMSLIDERID", {step: 0.1});
-			oAssert.ok(oSlider instanceof sap.m.Slider, "Factory Slider control should be instance of sap.m.Slider");
+			oAssert.ok(oSlider instanceof Slider, "Factory Slider control should be instance of sap.m.Slider");
 			oAssert.strictEqual(oSlider.getId(), "MYCUSTOMSLIDERID",
 				"Factory Slider control should have 'MYCUSTOMSLIDERID' assigned as ID");
 		});
@@ -316,7 +320,7 @@ sap.ui.define([
 
 		QUnit.test("_createRowFromInput", function (oAssert) {
 			// Arrange
-			var oInput = new sap.m.InputBase(),
+			var oInput = new InputBase(),
 				sTooltipID = "COLORPICKER_HEX",
 				sTooltipResult = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText(sTooltipID),
 				oLabel,

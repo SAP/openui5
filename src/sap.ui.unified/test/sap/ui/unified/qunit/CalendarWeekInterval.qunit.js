@@ -1,75 +1,85 @@
 /*global QUnit, window */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1, no-console: 1*/
+
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/CalendarWeekInterval",
-	"sap/ui/unified/calendar/CalendarDate"
-], function(qutils, CalendarWeekInterval, CalendarDate) {
+	"sap/ui/unified/calendar/CalendarDate",
+	"sap/m/PlanningCalendar",
+	"sap/m/PlanningCalendarRow",
+	"sap/ui/unified/CalendarAppointment",
+	"sap/m/SearchField",
+	"sap/m/Button",
+	"sap/ui/unified/DateTypeRange",
+	"sap/base/Log",
+	"sap/ui/unified/library"
+], function(qutils, CalendarWeekInterval, CalendarDate, PlanningCalendar, PlanningCalendarRow,
+	CalendarAppointment, SearchField, Button, DateTypeRange, Log, unifiedLibrary) {
 	"use strict";
 
+	var CalendarDayType = unifiedLibrary.CalendarDayType;
 	// set language to en-US, since we have specific language strings tested
 	sap.ui.getCore().getConfiguration().setLanguage("en_US");
 
 	QUnit.module("Events", {
 		beforeEach: function () {
-			this.oPC = new sap.m.PlanningCalendar('pc1', {
+			this.oPC = new PlanningCalendar('pc1', {
 				startDate: new Date(2015, 0, 1, 8, 0, 0),
 				viewKey: "Week",
 				rows: [
-					new sap.m.PlanningCalendarRow("pc1-Row1", {
+					new PlanningCalendarRow("pc1-Row1", {
 						icon: "sap-icon://employee",
 						title: "Max Mustermann",
 						text: "Musterteam",
 						tooltip: "Header tooltip",
 						intervalHeaders: [
-							new sap.ui.unified.CalendarAppointment("pc1-row1-R1H1",{
+							new CalendarAppointment("pc1-row1-R1H1",{
 								startDate: new Date(2015, 0, 1, 9, 0),
 								endDate: new Date(2015, 0, 1, 11, 0),
-								type: sap.ui.unified.CalendarDayType.Type02,
+								type: CalendarDayType.Type02,
 								title: "SAPUI5",
 								tooltip: "Test",
 								icon: "sap-icon://sap-ui5"
 							})
 						],
 						appointments: [
-							new sap.ui.unified.CalendarAppointment("pc1-row1-R1A1", {
+							new CalendarAppointment("pc1-row1-R1A1", {
 								startDate: new Date(2015, 0, 1, 8, 0),
 								endDate: new Date(2015, 0, 1, 9, 0),
-								type: sap.ui.unified.CalendarDayType.Type01,
+								type: CalendarDayType.Type01,
 								title: "App 1",
 								icon: "../../ui/unified/images/m_01.png",
 								tooltip: "Tooltip",
 								text: "Text"
 							}),
-							new sap.ui.unified.CalendarAppointment("pc1-row1-R1A2", {
+							new CalendarAppointment("pc1-row1-R1A2", {
 								startDate: new Date(2015, 0, 1, 7, 0),
 								endDate: new Date(2015, 0, 1, 11, 0),
-								type: sap.ui.unified.CalendarDayType.Type02,
+								type: CalendarDayType.Type02,
 								title: "App 2",
 								icon: "sap-icon://home",
 								tooltip: "Tooltip",
 								text: "Text",
 								tentative: true
 							}),
-							new sap.ui.unified.CalendarAppointment("pc1-row1-R1A3", {
+							new CalendarAppointment("pc1-row1-R1A3", {
 								startDate: new Date(2015, 0, 2, 8, 30),
 								endDate: new Date(2015, 0, 2, 9, 30),
-								type: sap.ui.unified.CalendarDayType.Type03,
+								type: CalendarDayType.Type03,
 								title: "App3",
 								icon: "sap-icon://home",
 								tooltip: "Tooltip"
 							}),
-							new sap.ui.unified.CalendarAppointment("pc1-row1-R1A4", {
+							new CalendarAppointment("pc1-row1-R1A4", {
 								startDate: new Date(2014, 6, 1),
 								endDate: new Date(2014, 6, 2),
-								type: sap.ui.unified.CalendarDayType.Type04,
+								type: CalendarDayType.Type04,
 								title: "Meeting 4",
 								tooltip: "Tooltip 4",
 								selected: true
 							})
 						]
 					}),
-					new sap.m.PlanningCalendarRow("pc1-Row2", {
+					new PlanningCalendarRow("pc1-Row2", {
 						icon: "../../ui/unified/images/m_01.png",
 						title: "Edward",
 						text: "the great",
@@ -77,20 +87,20 @@ sap.ui.define([
 						nonWorkingDays: [2,3],
 						nonWorkingHours: [11, 12],
 						intervalHeaders: [
-							new sap.ui.unified.CalendarAppointment("pc1-row2-R2H1",{
+							new CalendarAppointment("pc1-row2-R2H1",{
 								startDate: new Date(2015, 0, 2),
 								endDate: new Date(2015, 0, 2, 23, 59),
-								type: sap.ui.unified.CalendarDayType.Type01,
+								type: CalendarDayType.Type01,
 								title: "SAPUI5",
 								tooltip: "Test",
 								icon: "sap-icon://sap-ui5"
 							})
 						],
 						appointments: [
-							new sap.ui.unified.CalendarAppointment("pc1-row2-R2A1", {
+							new CalendarAppointment("pc1-row2-R2A1", {
 								startDate: new Date(2015, 0, 1),
 								endDate: new Date(2015, 0, 2, 23, 59),
-								type: sap.ui.unified.CalendarDayType.Type01,
+								type: CalendarDayType.Type01,
 								title: "App 1",
 								tooltip: "Tooltip",
 								text: "Text"
@@ -99,33 +109,33 @@ sap.ui.define([
 					})
 				],
 				specialDates: [
-					new sap.ui.unified.DateTypeRange("pc1-SD1", {
+					new DateTypeRange("pc1-SD1", {
 						startDate: new Date(2015, 0, 6),
-						type: sap.ui.unified.CalendarDayType.Type01,
+						type: CalendarDayType.Type01,
 						tooltip: "Heilige 3 Könige"
 					}),
-					new sap.ui.unified.DateTypeRange("pc1-SD2", {
+					new DateTypeRange("pc1-SD2", {
 						startDate: new Date(2015, 0, 1, 12, 0),
 						endDate: new Date(2015, 0, 1, 14, 0),
-						type: sap.ui.unified.CalendarDayType.Type02,
+						type: CalendarDayType.Type02,
 						tooltip: "Lunch"
 					})
 				],
-				toolbarContent: [new sap.m.SearchField(), new sap.m.Button()],
+				toolbarContent: [new SearchField(), new Button()],
 				appointmentSelect: function(oEvent){
-					console.log("Appointment select event fired");
+					Log.info("Appointment select event fired");
 				},
 				startDateChange: function(oEvent){
-					console.log("Start date change event fired");
+					Log.info("Start date change event fired");
 				},
 				rowSelectionChange:  function(oEvent){
-					console.log("Row selection change event fired");
+					Log.info("Row selection change event fired");
 				},
 				viewChange: function(oEvent){
-					console.log("ViewChange event fired");
+					Log.info("ViewChange event fired");
 				},
 				intervalSelect: function (oEvent) {
-					console.log("IntervalSelect event fired");
+					Log.info("IntervalSelect event fired");
 				}
 			});
 			this.oPC.placeAt("content");

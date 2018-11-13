@@ -1,14 +1,15 @@
 /*global QUnit, window */
 sap.ui.define([
 	"sap/ui/unified/Menu",
-	"sap/ui/unified/MenuItem"
-], function(Menu, MenuItem) {
+	"sap/ui/unified/MenuItem",
+	"sap/m/Label"
+], function(Menu, MenuItem, Label) {
 	"use strict";
 
 	QUnit.module("Accessibility");
 
 	QUnit.test("ariaLabelledBy", function (assert) {
-		var oLabel = new sap.m.Label("menuItemLabel", {
+		var oLabel = new Label("menuItemLabel", {
 			text: "Some label"
 		});
 		var oMenuItem = new MenuItem({

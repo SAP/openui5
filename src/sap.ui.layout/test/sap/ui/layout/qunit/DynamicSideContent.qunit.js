@@ -1,8 +1,8 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/layout/DynamicSideContent"
-], function(jQuery, DynamicSideContent) {
+	"sap/ui/layout/DynamicSideContent",
+	"sap/m/Button"
+], function(DynamicSideContent, Button) {
 	"use strict";
 
 	(function ($) {
@@ -158,7 +158,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("'SideContent' aggregation is set correctly",function(assert) {
-			var oButton = new sap.m.Button("button1");
+			var oButton = new Button("button1");
 
 			sinon.spy(this._oDSC, "_rerenderControl");
 
@@ -172,7 +172,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("'MainContent' aggregation is set correctly",function(assert) {
-			var oButton = new sap.m.Button("button1");
+			var oButton = new Button("button1");
 
 			sinon.spy(this._oDSC, "_rerenderControl");
 

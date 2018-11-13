@@ -1,16 +1,19 @@
 /*global QUnit, window */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/CalendarLegend",
 	"sap/ui/unified/CalendarLegendRenderer",
 	"sap/ui/unified/CalendarRowRenderer",
 	"sap/ui/unified/CalendarLegendItem",
-	"sap/ui/core/InvisibleText"
-], function(qutils, CalendarLegend, CalendarLegendRenderer, CalendarRowRenderer, CalendarLegendItem, InvisibleText) {
+	"sap/ui/core/InvisibleText",
+	"sap/ui/unified/CalendarRow",
+	"sap/ui/unified/CalendarAppointment",
+	"sap/ui/unified/library"
+], function(qutils, CalendarLegend, CalendarLegendRenderer, CalendarRowRenderer,
+	CalendarLegendItem, InvisibleText, CalendarRow, CalendarAppointment, unifiedLibrary) {
 	"use strict";
 
-	var CalendarDayType = sap.ui.unified.CalendarDayType;
+	var CalendarDayType = unifiedLibrary.CalendarDayType;
 	var oFormatYyyyMMddHHmm = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMddHHmm", calendarType: sap.ui.core.CalendarType.Gregorian});
 
 	var sSelectedAppointmentId = "";
@@ -59,7 +62,7 @@ sap.ui.define([
 
 	};
 
-	var oRow1 = new sap.ui.unified.CalendarRow("Row1",  {
+	var oRow1 = new CalendarRow("Row1",  {
 		startDate: new Date("2015", "01", "01", "10", "15"),
 		select: handleSelect,
 		startDateChange: handleStartDateChange,
@@ -192,7 +195,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 	};
 
-	var oRow2 = new sap.ui.unified.CalendarRow("Row2",  {
+	var oRow2 = new CalendarRow("Row2",  {
 		startDate: new Date("2015", "01", "01", "10", "15"),
 		height: "100px",
 		width: "500px",
@@ -991,8 +994,6 @@ sap.ui.define([
 
 	QUnit.test("_setCustomAppointmentsSorterCallback after initial rendering", function (assert) {
 		//arrange and act
-		var $Appointment1 = jQuery("#App1");
-
 		oRow1._setCustomAppointmentsSorterCallback(function(oApp1, oApp2) {
 			if (oApp1.getType() > oApp2.getType()) {
 				return 1;
@@ -1026,23 +1027,23 @@ QUnit.module("RTL", {
 			this.bOriginalRTLMode = sap.ui.getCore().getConfiguration().getRTL();
 			sap.ui.getCore().getConfiguration().setRTL(true);
 
-			this.oRowRTL = new sap.ui.unified.CalendarRow("RowRTL",  {
+			this.oRowRTL = new CalendarRow("RowRTL",  {
 				startDate: new Date("2015", "01", "01", "10", "15"),
 				intervalType: sap.ui.unified.CalendarIntervalType.Day,
 				appointments: [
-					new sap.ui.unified.CalendarAppointment("App0RTL", {
+					new CalendarAppointment("App0RTL", {
 						startDate: new Date("2015", "01", "01", "08", "15"),
 						endDate: new Date("2015", "01", "01", "08", "20")
 					}),
-					new sap.ui.unified.CalendarAppointment("App1RTL", {
+					new CalendarAppointment("App1RTL", {
 						startDate: new Date("2015", "01", "01", "11", "15"),
 						endDate: new Date("2015", "01", "01", "13", "15")
 					}),
-					new sap.ui.unified.CalendarAppointment("App2RTL", {
+					new CalendarAppointment("App2RTL", {
 							startDate: new Date("2015", "01", "01", "09", "45"),
 							endDate: new Date("2015", "01", "01", "11", "45")
 						}),
-					new sap.ui.unified.CalendarAppointment("App3RTL", {
+					new CalendarAppointment("App3RTL", {
 							startDate: new Date("2015", "01", "01", "15", "00"),
 							endDate: new Date("2015", "01", "01", "15", "30")
 						})
@@ -1097,11 +1098,11 @@ QUnit.test("Now indicator is displayed on the right", function(assert) {
 
 QUnit.module("Accessibility", {
 	beforeEach: function () {
-		this.sut = new sap.ui.unified.CalendarRow({
+		this.sut = new CalendarRow({
 			startDate: new Date(2017, 3, 1, 12, 0, 0, 0),
 			width: "100%",
 			appointments: [
-				new sap.ui.unified.CalendarAppointment({
+				new CalendarAppointment({
 					startDate: new Date(2017, 3, 1, 13, 0, 0, 0),
 					endDate: new Date(2017, 3, 1, 18, 30, 0, 0),
 					type: sap.ui.unified.CalendarDayType.None,
@@ -1110,7 +1111,7 @@ QUnit.module("Accessibility", {
 					text: "Appointment in the past",
 					key: "app-0"
 				}),
-				new sap.ui.unified.CalendarAppointment({
+				new CalendarAppointment({
 					startDate: new Date(2017, 3, 1, 9, 15, 0, 0),
 					endDate: new Date(2017, 3, 1, 19, 45, 0, 0),
 					type: sap.ui.unified.CalendarDayType.Type01,
@@ -1120,7 +1121,7 @@ QUnit.module("Accessibility", {
 					icon: "sap-icon://call",
 					key: "app-1"
 				}),
-				new sap.ui.unified.CalendarAppointment({
+				new CalendarAppointment({
 					startDate: new Date(2017, 3, 1, 14, 0, 0, 0),
 					endDate: new Date(2017, 3, 1, 16, 0, 0, 0),
 					type: sap.ui.unified.CalendarDayType.Type02,
@@ -1181,13 +1182,11 @@ QUnit.module("Pure unit testing");
 					new CalendarLegendItem({type: CalendarDayType.Type02, text: "On Duty"})
 				],
 			sResult1,
-			sResult2,
-			sResult3;
+			sResult2;
 
 		//Act
 		sResult1 = CalendarRowRenderer.getAriaTextForType(CalendarDayType.Type01, aLegendItems1to2);
 		sResult2 = CalendarRowRenderer.getAriaTextForType(CalendarDayType.Type03, aLegendItems1to2);
-		sResult3 = CalendarRowRenderer.getAriaTextForType(CalendarDayType.Type03);
 
 		//Assert
 		assert.equal(sResult1, "Day off", "When the given type  matches legend item's type");

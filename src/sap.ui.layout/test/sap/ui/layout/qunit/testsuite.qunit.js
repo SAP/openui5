@@ -158,7 +158,6 @@ sap.ui.define([
 			"DynamicSideContent": {
 				group: "DynamicSideContent",
 				ui5: {
-					libs: ["sap.ui.layout", "sap.m"],
 					noConflict: true,
 					theme: "sap_belize"
 				},

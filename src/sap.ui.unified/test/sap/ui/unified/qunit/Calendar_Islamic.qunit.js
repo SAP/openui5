@@ -1,12 +1,12 @@
 /*global QUnit, window */
 
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/Calendar",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/core/LocaleData"
-], function(qutils, Calendar, UniversalDate, DateFormat, LocaleData) {
+	"sap/ui/core/LocaleData",
+	"sap/ui/unified/DateRange"
+], function(Calendar, UniversalDate, DateFormat, LocaleData, DateRange) {
 	"use strict";
 
 	var oLocaleData = LocaleData.getInstance(new sap.ui.core.Locale("en-US"));
@@ -18,12 +18,12 @@ sap.ui.define([
 		calendarType: sap.ui.core.CalendarType.Gregorian
 	});
 
-	var oCal1 = new sap.ui.unified.Calendar("Cal1", {}).placeAt("content");
+	var oCal1 = new Calendar("Cal1", {}).placeAt("content");
 
 	function initializeCalendar(sSelectedDate) {
 		var oDate = oFormat.parse(sSelectedDate, true);
 		oCal1.destroySelectedDates();
-		oCal1.addSelectedDate(new sap.ui.unified.DateRange({startDate : oDate}));
+		oCal1.addSelectedDate(new DateRange({startDate : oDate}));
 		sap.ui.getCore().applyChanges();
 		oCal1.displayDate(oDate);
 	}
