@@ -18,7 +18,8 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 				oAnchorBar = null,
 				bIsHeaderContentVisible = oControl.getHeaderContent() && oControl.getHeaderContent().length > 0 && oControl.getShowHeaderContent(),
 				bIsTitleInHeaderContent = oControl.getShowTitleInHeaderContent() && oControl.getShowHeaderContent(),
-				bRenderHeaderContent = bIsHeaderContentVisible || bIsTitleInHeaderContent;
+				bRenderHeaderContent = bIsHeaderContentVisible || bIsTitleInHeaderContent,
+				sRootAriaLabelText = oControl._getRootAriaLabelText();
 
 			if (oControl.getShowAnchorBar() && oControl._getInternalAnchorBarVisible()) {
 				oAnchorBar = oControl.getAggregation("_anchorBar");
@@ -26,9 +27,8 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 
 			oRm.write("<div");
 			oRm.writeControlData(oControl);
-			if (oHeader) {
-				oRm.writeAttributeEscaped("aria-label", oHeader.getObjectTitle());
-			}
+			oRm.writeAttribute("role", "region");
+			oRm.writeAttributeEscaped("aria-label", sRootAriaLabelText);
 			oRm.addClass("sapUxAPObjectPageLayout");
 			oRm.writeClasses();
 			oRm.addStyle("height", oControl.getHeight());
