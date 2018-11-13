@@ -2017,7 +2017,7 @@ sap.ui.define([
 					oBinding = new ODataBinding(mTemplate),
 					oContext = {
 						fetchCanonicalPath : function () {},
-						getPath : function() {}
+						getPath : function () {}
 					};
 
 				this.mock(oContext).expects("getPath").withExactArgs().returns(sContextPath);
@@ -2037,7 +2037,7 @@ sap.ui.define([
 		var oBinding = new ODataBinding({bRelative : true, mParameters : {$$canonicalPath : true}}),
 			oContext = {
 				fetchCanonicalPath : function () {},
-				getPath : function() {}
+				getPath : function () {}
 			},
 			oError = {};
 

@@ -205,7 +205,7 @@ sap.ui.define([
 		}
 	}].forEach(function (oFixture) {
 		QUnit.test("getQueryOptionsForPath: binding with mParameters, " + oFixture.path,
-				function(assert) {
+				function (assert) {
 			var oModel = new ODataModel({
 					serviceUrl : "/service/?sap-client=111",
 					synchronizationMode : "None"
@@ -230,7 +230,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getQueryOptionsForPath: absolute binding, no parameters", function(assert) {
+	QUnit.test("getQueryOptionsForPath: absolute binding, no parameters", function (assert) {
 		var oBinding = new ODataParentBinding({
 				mParameters : {},
 				bRelative : false
@@ -243,7 +243,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getQueryOptionsForPath: quasi-absolute binding, no parameters", function(assert) {
+	QUnit.test("getQueryOptionsForPath: quasi-absolute binding, no parameters", function (assert) {
 		var oBinding = new ODataParentBinding({
 				mParameters : {},
 				bRelative : true
@@ -257,13 +257,13 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getQueryOptionsForPath: relative binding using this (base) context", function(assert) {
+	QUnit.test("getQueryOptionsForPath: relative binding using this (base) context",
+			function (assert) {
 		var oBinding = new ODataParentBinding({
 				oContext : {}, // no V4 context
 				mParameters : {},
 				bRelative : true
 			});
-
 
 		this.mock(jQuery).expects("extend").never();
 
@@ -272,7 +272,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getQueryOptionsForPath: inherit query options", function(assert) {
+	QUnit.test("getQueryOptionsForPath: inherit query options", function (assert) {
 		var oBinding = new ODataParentBinding({
 				oContext : {
 						getQueryOptionsForPath : function () {}
@@ -1359,21 +1359,21 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("fetchIfChildCanUseCache: $count or instance annotation in child path",
-		function (assert) {
-			var oBinding = new ODataParentBinding({
-				oModel : {
-					getMetaModel : function () { return {}; }
-				}
-			});
+			function (assert) {
+		var oBinding = new ODataParentBinding({
+			oModel : {
+				getMetaModel : function () { return {}; }
+			}
+		});
 
-			// code under test
-			assert.strictEqual(
-				oBinding.fetchIfChildCanUseCache(null, "$count").getResult(), true);
-			assert.strictEqual(
-				oBinding.fetchIfChildCanUseCache(null, "EMPLOYEE_2_EQUIPMENTS/$count").getResult(),
-				true);
-			assert.strictEqual(
-				oBinding.fetchIfChildCanUseCache(null, "@odata.etag").getResult(), true);
+		// code under test
+		assert.strictEqual(
+			oBinding.fetchIfChildCanUseCache(null, "$count").getResult(), true);
+		assert.strictEqual(
+			oBinding.fetchIfChildCanUseCache(null, "EMPLOYEE_2_EQUIPMENTS/$count").getResult(),
+			true);
+		assert.strictEqual(
+			oBinding.fetchIfChildCanUseCache(null, "@odata.etag").getResult(), true);
 	});
 
 	//*********************************************************************************************
@@ -2017,7 +2017,7 @@ sap.ui.define([
 		current : {},
 		result : {}
 	}].forEach(function (oFixture, i) {
-		QUnit.test("updateAggregatedQueryOptions " + i, function(assert) {
+		QUnit.test("updateAggregatedQueryOptions " + i, function (assert) {
 			var oBinding = new ODataParentBinding({
 					mAggregatedQueryOptions : oFixture.aggregated
 				}),

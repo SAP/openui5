@@ -3140,7 +3140,7 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock1))
 					.exactly(bSkipRefresh ? 0 : 1)
 					.returns(SyncPromise.resolve(oRefreshedEntity));
-			}).then(function(oEntity) {
+			}).then(function (oEntity) {
 				that.mock(_Helper).expects("getPrivateAnnotation")
 					.withExactArgs(bSkipRefresh
 						? sinon.match.same(oCreatedEntity)
@@ -3168,7 +3168,7 @@ sap.ui.define([
 	}, {
 		oInitialData : {"@$ui5.keepTransientPath" : true},
 		sExpectedPath : "/TEAMS/1/TEAM_2_EMPLOYEES/-1"
-	}].forEach(function(oFixture) {
+	}].forEach(function (oFixture) {
 		var sTitle = "create: relative binding, inital data: "
 				+ JSON.stringify(oFixture.oInitialData) + ", predicate: " + oFixture.sPredicate;
 

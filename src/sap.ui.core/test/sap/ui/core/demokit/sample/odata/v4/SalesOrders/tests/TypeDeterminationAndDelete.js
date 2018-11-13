@@ -132,8 +132,8 @@ sap.ui.define([
 						viewName : sViewName,
 						controlType : "sap.m.ColumnListItem",
 						success : function (aListItems) {
-							aListItems.forEach(function(oListItem){
-								aSchedules.forEach(function(sSchedule) {
+							aListItems.forEach(function (oListItem){
+								aSchedules.forEach(function (sSchedule) {
 									var sKey = oListItem.getCells()[0].getText();
 									if (sKey === sSchedule) {
 										new Press().executeOn(oListItem.getMultiSelectControl());
@@ -187,7 +187,7 @@ sap.ui.define([
 					controlType : "sap.m.CustomListItem",
 					id : /SalesOrderList-trigger/,
 					visible : false,
-					check: function(aControls) {
+					check: function (aControls) {
 						return aControls[0].$().is(":visible") === bVisible;
 					},
 					success : function (aControls) {

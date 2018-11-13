@@ -2409,7 +2409,7 @@ sap.ui.define([
 	//TODO type casts, operations?
 
 	//*********************************************************************************************
-	QUnit.test("fetchUpdateData: transient entity", function(assert) {
+	QUnit.test("fetchUpdateData: transient entity", function (assert) {
 		var oContext = Context.create(this.oModel, undefined, "/TEAMS/-1"),
 			sPropertyPath = "Name";
 
@@ -2429,7 +2429,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchUpdateData: fetchObject fails", function(assert) {
+	QUnit.test("fetchUpdateData: fetchObject fails", function (assert) {
 		var oModel = this.oModel,
 			oContext = {
 				getModel : function () { return oModel; }
@@ -2508,7 +2508,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchCanonicalPath: success", function(assert) {
+	QUnit.test("fetchCanonicalPath: success", function (assert) {
 		var oContext = {};
 
 		this.mock(this.oMetaModel).expects("fetchUpdateData")
@@ -2525,7 +2525,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchCanonicalPath: not an entity", function(assert) {
+	QUnit.test("fetchCanonicalPath: not an entity", function (assert) {
 		var oContext = {
 				getPath : function () { return "/TEAMS('4711')/Name"; }
 			};
@@ -2548,7 +2548,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchCanonicalPath: fetchUpdateData fails", function(assert) {
+	QUnit.test("fetchCanonicalPath: fetchUpdateData fails", function (assert) {
 		var oContext = {},
 			oExpectedError = new Error();
 

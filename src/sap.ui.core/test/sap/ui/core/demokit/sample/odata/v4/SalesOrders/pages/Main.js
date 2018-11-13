@@ -229,7 +229,7 @@ sap.ui.require([
 								// navigation property
 								"SO_2_BP" : null
 							});
-						oNewContext.created().then(function() {
+						oNewContext.created().then(function () {
 							MessageBox.success("SalesOrder created: " +
 								oNewContext.getProperty("SalesOrderID"));
 							});
@@ -822,7 +822,7 @@ sap.ui.require([
 							Opa5.assert.strictEqual(aItems.length, iExpectedCount,
 								"Check Messages: message count is as expected: " + iExpectedCount);
 							aExpectedMessages.forEach(function (oExpectedMessage, i) {
-								var bFound = aItems.some(function(oItem) {
+								var bFound = aItems.some(function (oItem) {
 									return oItem.getTitle() === oExpectedMessage.message &&
 										oItem.getType() === oExpectedMessage.type;
 								});
@@ -969,10 +969,10 @@ sap.ui.require([
 		 */
 		onTheRefreshConfirmation : {
 			actions : {
-				cancel : function() {
+				cancel : function () {
 					return handleMessageBox(this, "Refresh", false, "Cancel 'pending changes'");
 				},
-				confirm : function() {
+				confirm : function () {
 					return handleMessageBox(this, "Refresh", true, "Confirm 'pending changes'");
 				}
 			},

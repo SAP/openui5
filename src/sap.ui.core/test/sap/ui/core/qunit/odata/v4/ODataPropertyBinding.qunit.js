@@ -1607,7 +1607,7 @@ sap.ui.define([
 	[
 		"getValueListType", "requestValueListType", "requestValueListInfo"
 	].forEach(function (sFunctionName) {
-		QUnit.test(sFunctionName + ": forward", function(assert) {
+		QUnit.test(sFunctionName + ": forward", function (assert) {
 			var oContext = Context.create(this.oModel, {}, "/ProductList('42')"),
 				oPropertyBinding = this.oModel.bindProperty("Category", oContext),
 				vResult = {};
@@ -1622,7 +1622,7 @@ sap.ui.define([
 			assert.strictEqual(oPropertyBinding[sFunctionName](), vResult);
 		});
 
-		QUnit.test(sFunctionName + ": unresolved", function(assert) {
+		QUnit.test(sFunctionName + ": unresolved", function (assert) {
 			var oPropertyBinding = this.oModel.bindProperty("Category");
 
 			this.mock(this.oModel).expects("resolve")

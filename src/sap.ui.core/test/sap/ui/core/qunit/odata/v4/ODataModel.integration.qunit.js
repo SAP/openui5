@@ -704,7 +704,7 @@ sap.ui.define([
 					'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:t="sap.ui.table">'
 						+ sViewXML
 						+ '</mvc:View>'
-			}).then(function(oView) {
+			}).then(function (oView) {
 				Object.keys(that.mChanges).forEach(function (sControlId) {
 					var oControl = oView.byId(sControlId);
 
