@@ -24,7 +24,7 @@
 				<Button
 					type="Back"
 					id="buttonNavigateBack"
-					press="onNavBack"/>
+					press=".onNavBack"/>
 				<ToolbarSpacer/>
 				<Button
 					id="fontSelector"
@@ -35,21 +35,21 @@
 					type="transparent"
 					icon="sap-icon://slim-arrow-down"
 					iconFirst="false"
-					press="onSelectFont"/>
+					press=".onSelectFont"/>
 				<ToolbarSpacer/>
 				<Button
 					id="surprise"
 					visible="{= ${device>/system/phone} ? false : true}"
 					tooltip="{i18n>overviewRandomIconButtonTooltip}"
 					icon="sap-icon://activate"
-					press="onSurpriseMe"
+					press=".onSurpriseMe"
 					ariaLabelledBy="labelRandomButton"/>
 				<Button
 					id="download"
 					visible="{= ${device>/system/phone} ? false : true}"
 					tooltip="{i18n>overviewDownloadButtonTooltip}"
 					icon="sap-icon://download"
-					press="onDownload"
+					press=".onDownload"
 					ariaLabelledBy="labelDownloadButton"/>
 			</Toolbar>
 		</customHeader>
@@ -65,7 +65,7 @@
 			<!-- -->
 			<IconTabBar
 				id="iconTabBar"
-				select="onTabSelect"
+				select=".onTabSelect"
 				stretchContentHeight="true"
 				expandable="false"
 				backgroundDesign="Solid"
@@ -116,7 +116,7 @@
 										<items>
 											<SearchField
 												id="searchField"
-												liveChange="onSearch"
+												liveChange=".onSearch"
 												class="sapUiTinyMarginEnd"
 												tooltip="{i18n>searchPlaceholder}"
 												width="auto"
@@ -130,7 +130,7 @@
 												items="{groups}"
 												class=" sapUiTinyMarginEnd"
 												tooltip="{i18n>overviewSelectCategoryTooltip}"
-												selectionChange="onSelectCategory"
+												selectionChange=".onSelectCategory"
 												visible="{= ${device>/system/phone} ? false : true}"
 												ariaLabelledBy="labelCategory"
 												width="auto">
@@ -156,8 +156,8 @@
 									</OverflowToolbar>
 								</Panel>
 								<Panel
-										id="resultContainer"
-										accessibleRole="Region">
+									id="resultContainer"
+									accessibleRole="Region">
 								</Panel>
 								</ScrollContainer>
 							</l:SplitPane>
@@ -190,7 +190,7 @@
 														icon="sap-icon://copy"
 														type="Emphasized"
 														tooltip="{i18n>previewCopyIconToClipboard}"
-														press="onCopyCodeToClipboard"
+														press=".onCopyCodeToClipboard"
 														class="sapUiTinyMarginBegin"
 														ariaLabelledBy="labelCopyButton"/>
 												</l:fixContent>
@@ -209,7 +209,7 @@
 														icon="sap-icon://copy"
 														type="Emphasized"
 														tooltip="{i18n>previewCopyIconToClipboard}"
-														press="onCopyIconToClipboard"
+														press=".onCopyIconToClipboard"
 														class="sapUiTinyMarginBegin"
 														ariaLabelledBy="labelCopyButton"/>
 												</l:fixContent>
@@ -231,7 +231,7 @@
 														icon="sap-icon://copy"
 														type="Emphasized"
 														tooltip="{i18n>previewCopyIconToClipboard}"
-														press="onCopyUnicodeToClipboard"
+														press=".onCopyUnicodeToClipboard"
 														class="sapUiTinyMarginBegin"
 														ariaLabelledBy="labelCopyButton"/>
 												</l:fixContent>
@@ -426,7 +426,7 @@
 											<Token
 												text="{name}"
 												class="tagsToken"
-												press="onTagSelect"/>
+												press=".onTagSelect"/>
 										</Tokenizer>
 									</Panel>
 									</l:VerticalLayout>
@@ -444,7 +444,7 @@
 				showHeader="false">
 				<List
 					id="selectFontList"
-					selectionChange="onChangeFont"
+					selectionChange=".onChangeFont"
 					mode="SingleSelectMaster"
 					items="{
 						path: '/AllFonts',

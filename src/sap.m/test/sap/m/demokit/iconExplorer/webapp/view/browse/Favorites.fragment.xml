@@ -7,7 +7,7 @@
 		width="auto"
 		class="sapUiSmallMargin"
 		mode="SingleSelectMaster"
-		selectionChange="onSelectionChange"
+		selectionChange=".onSelectionChange"
 		items="{
 			path: 'fav>/icons',
 			sorter: {
@@ -19,7 +19,7 @@
 		noDataText="{view>/overviewNoDataText}"
 		growing="true"
 		growingThreshold="{view>/growingThreshold}"
-		updateFinished="onUpdateFinished">
+		updateFinished=".onUpdateFinished">
 		<columns>
 			<Column
 				id="iconColumn"
@@ -85,7 +85,7 @@
 							allowWrapping="true">
 						<Token
 							text="{fav>name}"
-							select="onTagSelect"
+							select=".onTagSelect"
 							editable="false"
 							class="tagsToken"/>
 					</l:HorizontalLayout>
@@ -96,7 +96,7 @@
 							formatter: '.formatter.favoriteRating'
 						}"
 						maxValue="1"
-						change="onToggleFavorite"/>
+						change=".onToggleFavorite"/>
 				</cells>
 			</ColumnListItem>
 		</items>

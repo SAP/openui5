@@ -5,11 +5,9 @@ sap.ui.define([
 	"sap/ui/demo/iconexplorer/controller/BaseController",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/model/json/JSONModel",
-	"test/unit/helper/FakeI18nModel",
+	"sap/ui/demo/iconexplorer/test/unit/helper/FakeI18nModel",
 	"sap/ui/demo/iconexplorer/model/formatter",
-	"sap/m/Input",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
+	"sap/m/Input"
 ], function(OverviewController, BaseController, ManagedObject, JSONModel, FakeI18n, formatter, Input) {
 	"use strict";
 

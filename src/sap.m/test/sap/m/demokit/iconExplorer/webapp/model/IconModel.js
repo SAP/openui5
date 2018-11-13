@@ -1,14 +1,9 @@
-/*!
- * ${copyright}
- */
-
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/IconPool",
 	"sap/ui/demo/iconexplorer/model/Sorter",
 	"sap/base/Log"
-], function (jQuery, JSONModel, IconPool, Sorter, Log) {
+], function (JSONModel, IconPool, Sorter, Log) {
 	"use strict";
 
 	return JSONModel.extend("sap.ui.demo.iconexplorer.model.IconModel", {
@@ -196,15 +191,12 @@ sap.ui.define([
 			["groups.json", "tags.json"].forEach(function (sName) {
 				aPromises.push(new Promise(function (fnResolve, fnReject) {
 					// load font metadata asynchronously
-					jQuery.ajax({
-						url: sap.ui.require.toUrl("sap/ui/demo/iconexplorer") + "/model/" + sFontName + "/" + sName,
-						dataType: "json",
-						success: function (oData) {
-							fnResolve(oData);
-						},
-						error: function (oError) {
-							fnReject(oError);
-						}
+					var oJSONModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/iconexplorer") + "/model/" + sFontName + "/" + sName);
+					oJSONModel.attachRequestCompleted(function ()  {
+						fnResolve(this.getData());
+					});
+					oJSONModel.attachRequestFailed(function (oError) {
+						fnReject(oError);
 					});
 				}));
 			} );
