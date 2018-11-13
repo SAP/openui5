@@ -97,16 +97,11 @@ sap.ui.define([
 					throw new Error("Invalid path: " + sPath);
 				}
 				this.oAggregation = null;
-				this.mAggregatedQueryOptions = {};
-				this.bAggregatedQueryOptionsInitial = true;
 				this.aApplicationFilters = _Helper.toArray(vFilters);
 				ODataListBinding.checkCaseSensitiveFilters(this.aApplicationFilters);
 
 				this.oCachePromise = SyncPromise.resolve();
 				this.sChangeReason = oModel.bAutoExpandSelect ? "AddVirtualContext" : undefined;
-				// auto-$expand/$select: promises to wait until child bindings have provided
-				// their path and query options
-				this.aChildCanUseCachePromises = [];
 				this.oDiff = undefined;
 				this.aFilters = [];
 				this.bHasAnalyticalInfo = false;
@@ -632,6 +627,8 @@ sap.ui.define([
 		this.mPreviousContextsByPath = undefined;
 		this.aPreviousData = undefined;
 		this.aSorters = undefined;
+
+		asODataParentBinding.prototype.destroy.apply(this);
 		ListBinding.prototype.destroy.apply(this);
 	};
 

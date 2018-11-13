@@ -116,15 +116,10 @@ sap.ui.define([
 					throw new Error("Invalid path: " + sPath);
 				}
 
-				this.mAggregatedQueryOptions = {};
-				this.bAggregatedQueryOptionsInitial = true;
 				this.oCachePromise = SyncPromise.resolve();
 				this.sGroupId = undefined;
 				this.bInheritExpandSelect = false;
 				this.oOperation = undefined;
-				// auto-$expand/$select: promises to wait until child bindings have provided
-				// their path and query options
-				this.aChildCanUseCachePromises = [];
 				// a lock to ensure that submitBatch waits for an expected read
 				this.oReadGroupLock = undefined;
 				this.oReturnValueContext = null;
@@ -564,11 +559,12 @@ sap.ui.define([
 		this.mCacheByContext = undefined;
 		this.oCachePromise = SyncPromise.resolve(); // be nice to #withCache
 		this.mCacheQueryOptions = undefined;
-		this.aChildCanUseCachePromises = SyncPromise.resolve();
 		this.oContext = undefined;
 		this.oOperation = undefined;
 		this.mParameters = undefined;
 		this.mQueryOptions = undefined;
+
+		asODataParentBinding.prototype.destroy.apply(this);
 		ContextBinding.prototype.destroy.apply(this);
 	};
 
