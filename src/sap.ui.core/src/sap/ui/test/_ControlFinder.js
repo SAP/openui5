@@ -142,29 +142,13 @@ sap.ui.define([
      * @returns {string} ID suffix or undefined
      * @private
      */
-    _ControlFinder._getDomElementIDSuffix = function (oElement) {
-        var sId = oElement.id;
+    _ControlFinder._getDomElementIDSuffix = function (oElement, oControl) {
+        var sElementId = oElement.id;
         var sDelimiter = "-";
 
-        if (!ManagedObjectMetadata.isGeneratedId(sId)) {
-            var iDelimiterIndex;
-            var iCounter = 1;
-
-            // find the first single-dash delimiter
-            while (iCounter < sId.length - 1 && !iDelimiterIndex) {
-                if (sId[iCounter] === sDelimiter && sId[iCounter - 1] !== sDelimiter && sId[iCounter + 1] !== sDelimiter) {
-                    iDelimiterIndex = iCounter;
-                } else {
-                    iCounter++;
-                }
-            }
-
-            if (iDelimiterIndex) {
-                var sControlRelativeID = sId.substring(iDelimiterIndex + 1);
-                if (!sControlRelativeID.match(/[0-9]$/)) {
-                    return sControlRelativeID;
-                }
-            }
+        if (!ManagedObjectMetadata.isGeneratedId(sElementId)) {
+            var iSuffixStart = oControl.getId().length;
+            return sElementId.charAt(iSuffixStart) === sDelimiter && sElementId.substring(iSuffixStart + 1);
         }
     };
 
