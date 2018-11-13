@@ -230,20 +230,48 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oControl = new sap.m.Button("someControlId");
 			this.oControl.addCustomData(new sap.ui.core.CustomData({
-				key: "sap.ui.fl.appliedChanges",
-				value: "a,b,c"
+				key: "sap.ui.fl.appliedChanges.a",
+				value: "true"
 			}));
 			this.oControl.addCustomData(new sap.ui.core.CustomData({
-				key: "sap.ui.fl.failedChanges.js",
+				key: "sap.ui.fl.appliedChanges.b",
+				value: "true"
+			}));
+			this.oControl.addCustomData(new sap.ui.core.CustomData({
+				key: "sap.ui.fl.appliedChanges.c",
+				value: "true"
+			}));
+			this.oControl.addCustomData(new sap.ui.core.CustomData({
+				key: "sap.ui.fl.failedChanges.js.d",
 				value: "d,e"
 			}));
 			this.oControl.addCustomData(new sap.ui.core.CustomData({
-				key: "sap.ui.fl.failedChanges.xml",
-				value: "f,g,h,i"
+				key: "sap.ui.fl.failedChanges.js.e",
+				value: "d,e"
 			}));
 			this.oControl.addCustomData(new sap.ui.core.CustomData({
-				key: "sap.ui.fl.notApplicableChanges",
-				value: "j,k"
+				key: "sap.ui.fl.failedChanges.xml.f",
+				value: "true"
+			}));
+			this.oControl.addCustomData(new sap.ui.core.CustomData({
+				key: "sap.ui.fl.failedChanges.xml.g",
+				value: "true"
+			}));
+			this.oControl.addCustomData(new sap.ui.core.CustomData({
+				key: "sap.ui.fl.failedChanges.xml.h",
+				value: "true"
+			}));
+			this.oControl.addCustomData(new sap.ui.core.CustomData({
+				key: "sap.ui.fl.failedChanges.xml.i",
+				value: "true"
+			}));
+			this.oControl.addCustomData(new sap.ui.core.CustomData({
+				key: "sap.ui.fl.notApplicableChanges.j",
+				value: "true"
+			}));
+			this.oControl.addCustomData(new sap.ui.core.CustomData({
+				key: "sap.ui.fl.notApplicableChanges.k",
+				value: "true"
 			}));
 		},
 		afterEach: function () {

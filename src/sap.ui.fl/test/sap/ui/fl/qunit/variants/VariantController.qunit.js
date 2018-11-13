@@ -10,10 +10,9 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/FlexCustomData",
 	"sap/m/Text",
 	"sap/ui/core/Component",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/base/ManagedObject",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -26,10 +25,9 @@ sap.ui.define([
 	VariantModel,
 	FlexControllerFactory,
 	Utils,
+	FlexCustomData,
 	Text,
 	Component,
-	JsControlTreeModifier,
-	ManagedObject,
 	jQuery,
 	sinon
 ) {
@@ -69,7 +67,7 @@ sap.ui.define([
 					done();
 				}.bind(this));
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			sandbox.restore();
 		}
 	});
@@ -157,7 +155,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("when calling 'getChangesForComponent' of the ChangePersistence", function(assert) {
-		var done = assert.async();
 		var aExpectedChanges0 = this.oResponse.changes.changes;
 		var aExpectedChanges1 = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges;
 		var aExpectedChanges2 = this.oResponse.changes.variantSection["variantManagementOrdersObjectPage"].variants[0].controlChanges;
@@ -180,7 +177,6 @@ sap.ui.define([
 			aChanges.forEach(function (oChange, i) {
 				assert.deepEqual(oChange._oDefinition, aExpectedChanges[i]._oDefinition, "the change content returns correctly");
 			});
-			done();
 		});
 	});
 
@@ -259,7 +255,6 @@ sap.ui.define([
 			assert.deepEqual(oChange._oDefinition, aExpectedRevert[i]._oDefinition, "the change content returns correctly");
 		});
 		assert.equal(mChanges.changesToBeApplied.length, 0, "the new array is empty");
-
 	});
 
 	QUnit.test("when calling 'getChangesForVariantSwitch' of the VariantController", function(assert) {
@@ -1056,7 +1051,7 @@ sap.ui.define([
 				revertChange: sandbox.stub()
 			});
 
-			sandbox.stub(this.oFlexController, "_writeCustomData");
+			sandbox.stub(FlexCustomData, "_writeCustomData");
 
 			this.mPropertyBag = {
 				viewId: "view1--view2",
@@ -1098,7 +1093,7 @@ sap.ui.define([
 
 				}.bind(this));
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			sandbox.restore();
 			delete this.oFlexController;
 			delete this.aRevertedChanges;
@@ -1121,21 +1116,18 @@ sap.ui.define([
 
 		return this.oModel.updateCurrentVariant("idMain1--variantManagementOrdersTable", "idMain1--variantManagementOrdersTable")
 		/*Dependencies still not updated as control doesn't exist*/
-			.then(function () {
-				assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[this.aExpectedChanges[1].getId()] instanceof Object);
-				fnGetChanges.call(this, this.aExpectedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
-				sCurrentVariant = this.oModel.getCurrentVariantReference("idMain1--variantManagementOrdersTable");
-				assert.equal(sCurrentVariant, "idMain1--variantManagementOrdersTable", "the current variant key after switch is correct");
-			}.bind(this));
+		.then(function () {
+			assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[this.aExpectedChanges[1].getId()] instanceof Object);
+			fnGetChanges.call(this, this.aExpectedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
+			sCurrentVariant = this.oModel.getCurrentVariantReference("idMain1--variantManagementOrdersTable");
+			assert.equal(sCurrentVariant, "idMain1--variantManagementOrdersTable", "the current variant key after switch is correct");
+		}.bind(this));
 	});
 
 	QUnit.test("when triggering _addChange and _removeChange on a control via the VariantModel", function(assert) {
 		var oMockControl = new Text("RTADemoAppMD---detail--GroupElementDatesShippingStatus");
 
-		var mCustomData = {aCustomDataEntries : [this.aRevertedChanges[1].getId()]};
-		sandbox.stub(this.oFlexController, "_getAppliedCustomData").returns(mCustomData);
 		sandbox.stub(this.oFlexController._oChangePersistence, "_addPropagationListener");
-
 
 		this.oFlexController.deleteChange(this.aRevertedChanges[1], this.oComponent);
 		assert.ok(this.oModelRemoveChangeStub.calledOnce, "remove change was called from model");
@@ -1148,7 +1140,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a VariantController with variants", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 
 			this.oTechnicalParameters = {
 				"sap-ui-fl-control-variant-id" : ["variant0"]
@@ -1202,7 +1194,7 @@ sap.ui.define([
 
 			this.oVariantController = new VariantController("MyComponent", "1.2.3", this.oFakeVariantResponse);
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			delete this.oVariantController;
 		}
 	});

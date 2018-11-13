@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/FlexController",
+	"sap/ui/fl/FlexCustomData",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/Settings",
@@ -28,6 +29,7 @@ sap.ui.define([
 ],
 function (
 	FlexController,
+	FlexCustomData,
 	Change,
 	ChangeRegistry,
 	Settings,
@@ -83,35 +85,6 @@ function (
 		};
 	}
 
-	function getCustomDataByKeyJS(oControl, sKey, assert) {
-		var oReturn;
-		oControl.getCustomData().some(function(oCustomData) {
-			if (oCustomData.getKey() === sKey) {
-				oReturn = oCustomData;
-				return true;
-			}
-		});
-		if (oReturn) {
-			assert.ok(oReturn, "the " + sKey + " custom data is set");
-		}
-		return oReturn;
-	}
-
-	function getCustomDataByKeyXML(oControl, sKey, assert) {
-		var oReturn;
-		var oCustomDataAggregationNode = oControl.getElementsByTagName("customData")[0];
-		assert.ok(oCustomDataAggregationNode, "the CustomData Aggregation is there");
-		var aChildren = Array.prototype.slice.call(oCustomDataAggregationNode.childNodes);
-		aChildren.some(function(oCustomData) {
-			if (oCustomData.getAttribute("key") === sKey) {
-				oReturn = oCustomData;
-				return true;
-			}
-		});
-		assert.ok(oReturn, "the " + sKey + " CustomData is set");
-		return oReturn;
-	}
-
 	var labelChangeContent = getLabelChangeContent("a");
 	var labelChangeContent2 = getLabelChangeContent("a2");
 	var labelChangeContent3 = getLabelChangeContent("a3");
@@ -147,6 +120,7 @@ function (
 			sandbox.stub(JsControlTreeModifier, "getControlType").returns(oControlType);
 			sandbox.stub(this.oFlexController, "addChange").returns(oChange);
 			sandbox.stub(this.oFlexController, "_getControlIfTemplateAffected").returns({control: {}, controlType: "dummy", bTemplateAffected: false});
+			sandbox.stub(this.oFlexController._oChangePersistence, "deleteChange");
 
 			return this.oFlexController.createAndApplyChange(oChangeSpecificData, oControl)
 				.catch(function() {
@@ -173,7 +147,7 @@ function (
 				}
 			});
 
-			sandbox.stub(this.oFlexController, "_writeCustomData");
+			sandbox.stub(FlexCustomData, "_writeCustomData");
 			sandbox.stub(this.oFlexController, "_getChangeHandler").returns({
 				completeChangeContent: completeChangeContentStub,
 				applyChange: changeHandlerApplyChangeStub
@@ -203,7 +177,6 @@ function (
 			var aResolveArray = this.oFlexController._resolveGetChangesForView(mPropertyBagStub, "thisIsNoArray");
 			assert.ok(oUtilsLogStub.calledOnce, "a error was logged");
 			assert.equal(aResolveArray.length, 0, "an empty array was returned");
-
 		});
 
 		QUnit.test("_resolveGetChangesForView does not crash and logs an error if dependent selectors are missing", function (assert) {
@@ -262,7 +235,7 @@ function (
 				}
 			});
 
-			sandbox.stub(this.oFlexController, "_writeCustomData");
+			sandbox.stub(FlexCustomData, "_writeCustomData");
 			sandbox.stub(this.oFlexController, "_getChangeHandler").returns({
 				completeChangeContent: completeChangeContentStub,
 				applyChange: changeHandlerApplyChangeStub
@@ -1444,7 +1417,7 @@ function (
 		});
 
 		QUnit.test("when calling 'revertChangesOnControl' with a change type only registered for a control inside the template", function (assert) {
-			sandbox.stub(this.oFlexController, "_getAppliedCustomData").returns({customDataEntries: ["change4711"]});
+			sandbox.stub(FlexCustomData, "getAppliedCustomDataValue").returns("change4711");
 			this.oChange.setRevertData({
 				originalValue: false
 			});
@@ -2243,6 +2216,8 @@ function (
 				revertChange: this.oChangeHandlerRevertChangeStub
 			});
 			sandbox.stub(Log, "error");
+			this.oAddAppliedCustomDataStub = sandbox.stub(FlexCustomData, "addAppliedCustomData");
+			this.oDestroyAppliedCustomDataStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
 		},
 		afterEach: function () {
 			this.oControl.destroy();
@@ -2251,18 +2226,8 @@ function (
 	}, function() {
 		QUnit.test("returns true promise value when change is already applied", function (assert) {
 			sandbox.restore();
-			var sChangeId = this.oChange.getId();
-			var oAppliedCustomData = new CustomData({
-				key: FlexController.appliedChangesCustomDataKey,
-				value: sChangeId
-			});
-			var mAppliedCustomData = {
-				customData : oAppliedCustomData,
-				customDataValue : sChangeId,
-				customDataEntries : [sChangeId]
-			};
 			sandbox.stub(this.oFlexController, "_getChangeHandler").returns({});
-			sandbox.stub(this.oFlexController, "_getAppliedCustomData").returns(mAppliedCustomData);
+			sandbox.stub(FlexCustomData, "getAppliedCustomDataValue").returns("true");
 
 			return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {
 				modifier: JsControlTreeModifier,
@@ -2273,22 +2238,16 @@ function (
 			});
 		});
 
-		QUnit.test("when the control in refreshed with the same ID as the previous control during change application", function (assert) {
+		QUnit.test("when the control is refreshed with the same id as the previous control during change application", function (assert) {
 			sandbox.restore();
-			var sExistingCustomDataValue = "alreadyExistingCustomData";
-
 			sandbox.stub(this.oFlexController, "_getChangeHandler").returns({
 				applyChange: function() {
-					var oFlexCustomData = new CustomData({
-						key: FlexController.appliedChangesCustomDataKey,
-						value: sExistingCustomDataValue
-					});
 					var sId = this.oControl.getId();
 					this.oControl.destroy();
 					this.oControl = new Text(sId);
-					JsControlTreeModifier.insertAggregation(this.oControl, "customData", oFlexCustomData);
 					return this.oControl;
-				}.bind(this)
+				}.bind(this),
+				revertChange: function() {}
 			});
 
 			return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {
@@ -2296,26 +2255,15 @@ function (
 				appComponent: {}
 			})
 			.then(function () {
-				var aAppliedChanges = this.oFlexController._getAppliedCustomData(this.oControl, JsControlTreeModifier).customDataEntries;
+				assert.ok(this.oFlexController._isChangeCurrentlyApplied(this.oControl, this.oChange, JsControlTreeModifier), "the change is applied");
 				assert.ok(this.oControl instanceof Text, "then the refreshed control was initialized in changeHandler.applyChange()");
-				assert.deepEqual(aAppliedChanges, [sExistingCustomDataValue, this.oChange.getId()], "then custom data is appended to the previously existing custom data value on the refreshed control");
 			}.bind(this));
 		});
 
-		QUnit.test("does not directly return with undefined when 'jsOnly' is set to true", function (assert) {
+		QUnit.test("does not directly return with success: false when 'jsOnly' is set to true", function (assert) {
 			sandbox.restore();
-			var sChangeId = this.oChange.getId();
-			var oAppliedCustomData = new CustomData({
-				key: FlexController.appliedChangesCustomDataKey,
-				value: sChangeId
-			});
-			var mAppliedCustomData = {
-				customData : oAppliedCustomData,
-				customDataValue : sChangeId,
-				customDataEntries : [sChangeId]
-			};
 			sandbox.stub(this.oFlexController, "_getChangeHandler").returns({});
-			sandbox.stub(this.oFlexController, "_getAppliedCustomData").returns(mAppliedCustomData);
+			sandbox.stub(this.oFlexController, "_isChangeCurrentlyApplied").returns(true);
 			this.oChange.getDefinition().jsOnly = true;
 
 			return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {
@@ -2330,6 +2278,7 @@ function (
 		QUnit.test("adds custom data on the first sync change applied on a control", function (assert) {
 			var oRevertData = {foo: "bar"};
 			sandbox.restore();
+			this.oAddAppliedCustomDataStub = sandbox.stub(FlexCustomData, "addAppliedCustomData");
 			sandbox.stub(this.oFlexController, "isChangeHandlerRevertible").returns(true);
 			this.oChangeHandlerApplyChangeStub = sandbox.stub().callsFake(function() {
 				this.oChange.setRevertData(oRevertData);
@@ -2342,36 +2291,14 @@ function (
 
 			.then(function() {
 				assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				assert.equal(oAppliedChangeCustomData.getValue(), this.oChange.getId(), "the change id is the value");
-				var oRevertCustomData = getCustomDataByKeyJS(this.oControl, this.oFlexController._getCustomDataRevertKey(this.oChange), assert);
-				assert.equal(oRevertCustomData.getValue(), this.oFlexController._escapeCurlyBracketsInString(JSON.stringify(oRevertData)), "then the revert data got serialized to the custom data with the correct value");
-			}.bind(this));
-		});
-
-		QUnit.test("does not write revertData to customData for non-revertible changes", function (assert) {
-			var oRevertData = {foo: "bar"};
-			sandbox.restore();
-			sandbox.stub(this.oFlexController, "isChangeHandlerRevertible").returns(false);
-			this.oChangeHandlerApplyChangeStub = sandbox.stub().callsFake(function() {
-				this.oChange.setRevertData(oRevertData);
-			}.bind(this));
-			sandbox.stub(this.oFlexController, "_getChangeHandler").returns({
-				applyChange: this.oChangeHandlerApplyChangeStub,
-				revertChange: this.oChangeHandlerRevertChangeStub
-			});
-			return this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl)
-
-			.then(function() {
-				assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
-				var oRevertCustomData = getCustomDataByKeyJS(this.oControl, this.oFlexController._getCustomDataRevertKey(this.oChange), assert);
-				assert.notOk(oRevertCustomData, "the revertCustomData did is not available");
+				assert.equal(this.oAddAppliedCustomDataStub.callCount, 1, "the customData was written");
 			}.bind(this));
 		});
 
 		QUnit.test("adds custom data on the first async change applied on a control", function (assert) {
 			var oRevertData = {foo: "bar"};
 			sandbox.restore();
+			this.oAddAppliedCustomDataStub = sandbox.stub(FlexCustomData, "addAppliedCustomData");
 			sandbox.stub(this.oFlexController, "isChangeHandlerRevertible").returns(true);
 			this.oChangeHandlerApplyChangeStub = sandbox.stub().callsFake(function() {
 				this.oChange.setRevertData(oRevertData);
@@ -2388,65 +2315,28 @@ function (
 
 			.then(function () {
 				assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
-				var oRevertCustomData = getCustomDataByKeyJS(this.oControl, this.oFlexController._getCustomDataRevertKey(this.oChange), assert);
-				assert.equal(oRevertCustomData.getValue(), this.oFlexController._escapeCurlyBracketsInString(JSON.stringify(oRevertData)), "then the revert data got serialized to the custom data with the correct value");
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				assert.ok(oAppliedChangeCustomData, "CustomData was set");
-				assert.equal(oAppliedChangeCustomData.getValue(), this.oChange.getId(), "the change id is the value");
+				assert.equal(this.oAddAppliedCustomDataStub.callCount, 1, "the customData was written");
 			}.bind(this));
 		});
 
-		QUnit.test("deletes the changeId from custom data after reverting the change", function (assert) {
-			var oFlexCustomData = new CustomData({
-				key: FlexController.appliedChangesCustomDataKey,
-				value: this.oChange.getId()
-			});
-			this.oControl.addCustomData(oFlexCustomData);
+		QUnit.test("deletes the custom data after reverting the change and saves the revertData to the change", function (assert) {
+			var oRevertData = {value: "a"};
+			sandbox.stub(FlexCustomData, "getParsedRevertDataFromCustomData").returns(oRevertData);
+			sandbox.stub(this.oFlexController, "_isChangeCurrentlyApplied").returns(true);
 			return this.oFlexController.revertChangesOnControl([this.oChange], this.oControl)
-
-			.then(function() {
-				assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 1, "the changeHandler was called");
-				assert.equal(oFlexCustomData.getValue(), "", "the changeId got deleted from the customData");
-			}.bind(this));
-		});
-
-		QUnit.test("when a change with revertData only in customData gets reverted", function(assert) {
-			var oRevertData = {
-				foo: "bar"
-			};
-			var oRevertCustomData = new CustomData({
-				key: this.oFlexController._getCustomDataRevertKey(this.oChange)
-			});
-			// the unbind in the modifier is needed
-			JsControlTreeModifier.setProperty(oRevertCustomData, "value", JSON.stringify(oRevertData));
-			var oFlexCustomData = new CustomData({
-				key: FlexController.appliedChangesCustomDataKey,
-				value: this.oChange.getId()
-			});
-			this.oControl.addCustomData(oFlexCustomData);
-			this.oControl.addCustomData(oRevertCustomData);
-			return this.oFlexController.revertChangesOnControl([this.oChange], this.oControl)
-
 			.then(function() {
 				assert.deepEqual(this.oChange.getRevertData(), oRevertData, "the revert data was saved in the change");
 				assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 1, "the changeHandler was called");
-				assert.equal(oFlexCustomData.getValue(), "", "the changeId got deleted from the customData");
-				assert.equal(this.oControl.getCustomData().length, 1, "the revert data CustomData got deleted");
+				assert.equal(this.oDestroyAppliedCustomDataStub.callCount, 1, "the customData was destroyed");
 			}.bind(this));
 		});
 
 		QUnit.test("deletes the changeId from custom data without reverting the change", function (assert) {
-			var oFlexCustomData = new CustomData({
-				key: FlexController.appliedChangesCustomDataKey,
-				value: this.oChange.getId()
-			});
-			this.oControl.addCustomData(oFlexCustomData);
+			sandbox.stub(this.oFlexController, "_isChangeCurrentlyApplied").returns(true);
 			return this.oFlexController.removeFromAppliedChangesOnControl(this.oChange, {}, this.oControl)
-
 			.then(function() {
 				assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 0, "the changeHandler was NOT called");
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				assert.equal(oAppliedChangeCustomData.getValue(), "", "the changeId got deleted from the customData");
+				assert.equal(this.oDestroyAppliedCustomDataStub.callCount, 1, "the customData was destroyed");
 			}.bind(this));
 		});
 
@@ -2455,10 +2345,9 @@ function (
 			var mergeErrorStub = sandbox.stub(this.oFlexController, "_setMergeError");
 
 			return this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl)
-
 			.then(function() {
 				assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 1, "apply change functionality was called");
-				getCustomDataByKeyJS(this.oControl, FlexController.failedChangesCustomDataKeyJs, assert);
+				assert.equal(this.oAddAppliedCustomDataStub.callCount, 0, "the customData was not added");
 				assert.equal(mergeErrorStub.callCount, 1, "set merge error was called");
 			}.bind(this));
 		});
@@ -2482,7 +2371,7 @@ function (
 				assert.notOk(oResult.success, "success in the return object is set to false");
 				assert.equal(oResult.error.message, "myError");
 				assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "apply change functionality was called");
-				getCustomDataByKeyJS(this.oControl, FlexController.failedChangesCustomDataKeyJs, assert);
+				assert.equal(this.oAddAppliedCustomDataStub.callCount, 0, "the customData was not added");
 				assert.equal(mergeErrorStub.callCount, 1, "set merge error was called");
 				assert.strictEqual(this.oChange.PROCESSED, true, "then PROCESSED property for change was set to true");
 			}.bind(this));
@@ -2490,6 +2379,7 @@ function (
 
 		QUnit.test("when checkTargetAndApplyChange is called and applyChanges throws a not-Applicable exception", function (assert) {
 			sandbox.restore();
+			 var oAddFailedCustomDataStub = sandbox.stub(FlexCustomData, "addFailedCustomData");
 			var sNotApplicableMessage1 = "myNotApplicableMessage1",
 				sNotApplicableMessage2 = "myNotApplicableMessage2";
 			var mergeErrorStub = sandbox.stub(this.oFlexController, "_setMergeError");
@@ -2510,11 +2400,10 @@ function (
 			})
 
 			.then(function(oResult) {
-				var oNotApplicableChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.notApplicableChangesCustomDataKey, assert);
+				assert.equal(oAddFailedCustomDataStub.callCount, 1, "failed custom data was added");
 				assert.notOk(oResult.success, "success in the return object is set to false");
 				assert.equal(oResult.error.message, sNotApplicableMessage1);
 				assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "apply change functionality was called");
-				assert.equal(oNotApplicableChangeCustomData.getValue(), this.oChange.getId(), "the correct value is passed to the custom data");
 				assert.equal(mergeErrorStub.callCount, 0, "set merge error was not called");
 			}.bind(this))
 
@@ -2526,78 +2415,30 @@ function (
 			}.bind(this))
 
 			.then(function(oResult) {
-				var oControlCustomData =  getCustomDataByKeyJS(this.oControl, FlexController.notApplicableChangesCustomDataKey, assert);
-				var sChangeId = this.oChange.getId(),
-					sExpectedCustomDataValue = sChangeId + "," + sChangeId;
+				assert.equal(oAddFailedCustomDataStub.callCount, 2, "failed custom data was added again");
 				assert.notOk(oResult.success, "success in the return object is set to false");
 				assert.equal(oResult.error.message, sNotApplicableMessage2);
 				assert.ok(this.oChangeHandlerApplyChangeStub.calledTwice, "apply change functionality was called");
-				assert.equal(oControlCustomData.getValue(), sExpectedCustomDataValue, "the correct value is passed to the custom data");
 				assert.equal(mergeErrorStub.callCount, 0, "set merge error was not called");
 			}.bind(this))
 			;
 		});
 
-		QUnit.test("concatenate custom data on the later changes applied on a control", function (assert) {
-			var sAlreadyAppliedChangeId = "id_123_anAlreadyAppliedChange";
-			var oFlexCustomData = new CustomData({
-				key: FlexController.appliedChangesCustomDataKey,
-				value: sAlreadyAppliedChangeId
-			});
-			this.oControl.addCustomData(oFlexCustomData);
-
-			return this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl)
-
-			.then(function() {
-				assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				var sExpectedFlexCustomDataValue = sAlreadyAppliedChangeId + "," + this.oChange.getId();
-				assert.equal(oAppliedChangeCustomData.getValue(), sExpectedFlexCustomDataValue, "the change id is the value");
-				assert.strictEqual(this.oChange.PROCESSED, true, "then PROCESSED property for change was set to true");
-			}.bind(this));
-		});
-
-		QUnit.test("delete only reverted changeId from custom data", function (assert) {
-			var sAlreadyAppliedChangeId = "id_123_anAlreadyAppliedChange";
-			var sAlreadyAppliedChangeId2 = "id_456_anAlreadyAppliedChange";
-			var oFlexCustomData = new CustomData({
-				key: FlexController.appliedChangesCustomDataKey,
-				value: sAlreadyAppliedChangeId + "," + sAlreadyAppliedChangeId2 + "," + this.oChange.getId()
-			});
-			this.oControl.addCustomData(oFlexCustomData);
-
-			return this.oFlexController.revertChangesOnControl([this.oChange], this.oControl)
-
-			.then(function() {
-				assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 1, "the changeHandler was called");
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				var sExpectedCustomDataValue = "id_123_anAlreadyAppliedChange,id_456_anAlreadyAppliedChange";
-				assert.equal(oAppliedChangeCustomData.getValue(), sExpectedCustomDataValue, "only the changeId was deleted from the custom data");
-			}.bind(this));
-		});
-
 		QUnit.test("does not call the change handler if the change was already applied", function (assert) {
-			var oFlexCustomData = new CustomData({
-				key: FlexController.appliedChangesCustomDataKey,
-				value: this.oChange.getId()
-			});
-			this.oControl.addCustomData(oFlexCustomData);
+			sandbox.stub(this.oFlexController, "_isChangeCurrentlyApplied").returns(true);
 
 			return this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl)
-
 			.then(function() {
 				assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 0, "the change was NOT applied");
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				assert.equal(oAppliedChangeCustomData.getValue(), this.oChange.getId(), "the change id is the value");
 			}.bind(this));
 		});
 
-		QUnit.test("does not call the change handler if the change wasn't applied", function(assert) {
-			return this.oFlexController.revertChangesOnControl([this.oChange], this.oControl)
+		QUnit.test("does not call the revert change handler if the change wasn't applied", function(assert) {
+			sandbox.stub(this.oFlexController, "_isChangeCurrentlyApplied").returns(false);
 
+			return this.oFlexController.revertChangesOnControl([this.oChange], this.oControl)
 			.then(function() {
 				assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 0, "the changeHandler was not called");
-				assert.equal(this.oControl.getCustomData().length, 0, "the customData was not created yet");
 			}.bind(this));
 		});
 
@@ -2734,18 +2575,14 @@ function (
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("calls the change handler twice for two unapplied changes and concatenate the custom data correct", function (assert) {
+		QUnit.test("calls the change handler twice for two unapplied changes", function (assert) {
 			return this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl)
-
 			.then(function() {
 				assert.ok(this.oChangeHandlerApplyChangeStub.calledTwice, "both changes were applied");
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				var sExpectedValue = this.oChange.getId() + "," + this.oChange2.getId();
-				assert.equal(oAppliedChangeCustomData.getValue(), sExpectedValue, "the concatenated change ids are the value");
 			}.bind(this));
 		});
 
-		QUnit.test("calls the change handler twice for two unapplied async changes and concatenate the custom data correct", function (assert) {
+		QUnit.test("calls the change handler twice for two unapplied async changes", function (assert) {
 			sandbox.restore();
 			sandbox.stub(this.oFlexController, "isChangeHandlerRevertible").returns(true);
 			this.oChangeHandlerApplyChangeStub = sandbox.stub().returns(Promise.resolve());
@@ -2756,40 +2593,24 @@ function (
 
 			.then(function () {
 				assert.strictEqual(this.oChangeHandlerApplyChangeStub.callCount, 2, "all changes were applied");
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				var sExpectedValue = this.oChange.getId() + "," + this.oChange2.getId();
-				assert.equal(oAppliedChangeCustomData.getValue(), sExpectedValue, "the concatenated change ids are the value");
 			}.bind(this));
 		});
 
-		QUnit.test("calls the change handler twice and delete the IDs from the custom data", function (assert) {
-			var oFlexCustomData = new CustomData({
-				key: FlexController.appliedChangesCustomDataKey,
-				value: this.oChange.getId() + "," + this.oChange2.getId()
-			});
-			this.oControl.addCustomData(oFlexCustomData);
+		QUnit.test("calls the revert change handler twice", function (assert) {
+			sandbox.stub(this.oFlexController, "_isChangeCurrentlyApplied").returns(true);
 			return this.oFlexController.revertChangesOnControl([this.oChange, this.oChange2], this.oControl)
 
 			.then(function() {
 				assert.ok(this.oDeleteChangeInMapSpy.calledTwice, "both changes were deleted from the map");
 				assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 2, "both changes were reverted");
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				assert.equal(oAppliedChangeCustomData.getValue(), "", "then both changeIds got deleted");
 			}.bind(this));
 		});
 
-		QUnit.test("calls the change handler twice and delete the IDs from the custom data separately", function (assert) {
-			var oFlexCustomData = new CustomData({
-				key: FlexController.appliedChangesCustomDataKey,
-				value: this.oChange.getId() + "," + this.oChange2.getId()
-			});
-			this.oControl.addCustomData(oFlexCustomData);
+		QUnit.test("calls the revert change handler twice separately", function (assert) {
+			sandbox.stub(this.oFlexController, "_isChangeCurrentlyApplied").returns(true);
 			return this.oFlexController.revertChangesOnControl([this.oChange], this.oControl)
-
 			.then(function() {
 				assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 1, "first change was reverted");
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				assert.equal(oAppliedChangeCustomData.getValue(), this.oChange2.getId(), "then only the first changeId got deleted");
 			}.bind(this))
 
 			.then(function() {
@@ -2798,77 +2619,22 @@ function (
 
 			.then(function() {
 				assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 2, "both changes were reverted");
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				assert.equal(oAppliedChangeCustomData.getValue(), "", "then both changeIds got deleted");
-			}.bind(this));
-		});
-
-		QUnit.test("concatenate custom data on the later changes (first already applied) applied on a control", function (assert) {
-			var oFlexCustomData = new CustomData({
-				key: FlexController.appliedChangesCustomDataKey,
-				value: this.oChange.getId()
-			});
-
-			this.oControl.addCustomData(oFlexCustomData);
-
-			return this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl)
-
-			.then(function() {
-				assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
-				assert.equal(this.oChangeHandlerApplyChangeStub.getCall(0).args[0], this.oChange2, "the second change was applied");
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				var sExpectedValue = this.oChange.getId() + "," + this.oChange2.getId();
-				assert.equal(oAppliedChangeCustomData.getValue(), sExpectedValue, "the concatenated change ids are the value");
-			}.bind(this));
-		});
-
-		QUnit.test("concatenate custom data on the later changes (second already applied) applied on a control", function (assert) {
-			var oFlexCustomData = new CustomData({
-				key: FlexController.appliedChangesCustomDataKey,
-				value: this.oChange2.getId()
-			});
-			this.oControl.addCustomData(oFlexCustomData);
-
-			return this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl)
-
-			.then(function() {
-				assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
-				assert.equal(this.oChangeHandlerApplyChangeStub.getCall(0).args[0], this.oChange, "the first change was applied");
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				var sExpectedValue = this.oChange2.getId() + "," + this.oChange.getId();
-				assert.equal(oAppliedChangeCustomData.getValue(), sExpectedValue, "the concatenated change ids are the value");
 			}.bind(this));
 		});
 
 		QUnit.test("change handler not called for two applied changes", function (assert) {
-			var sFlexCustomDataValue = this.oChange.getId() + "," + this.oChange2.getId();
-			var oFlexCustomData = new CustomData({
-				key: FlexController.appliedChangesCustomDataKey,
-				value: sFlexCustomDataValue
-			});
-			this.oControl.addCustomData(oFlexCustomData);
+			sandbox.stub(this.oFlexController, "_isChangeCurrentlyApplied").returns(true);
 
 			return this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl)
-
 			.then(function() {
 				assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 0, "no changes were applied");
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				assert.equal(oAppliedChangeCustomData.getValue(), sFlexCustomDataValue, "the concatenated change ids are the value");
 			}.bind(this));
 		});
 
-		QUnit.test("does not call the change handler if the change wasn't applied, with already existing customData", function(assert) {
-			var oFlexCustomData = new CustomData({
-				key: FlexController.appliedChangesCustomDataKey,
-				value: this.oChange.getId()
-			});
-			this.oControl.addCustomData(oFlexCustomData);
-
+		QUnit.test("does not call the revert change handler if the change wasn't applied", function(assert) {
 			return this.oFlexController.revertChangesOnControl([this.oChange2], this.oControl)
-
 			.then(function() {
 				assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 0, "the changeHandler was not called");
-				assert.equal(oFlexCustomData.getValue(), this.oChange.getId(), "then the custom data is still the same");
 			}.bind(this));
 		});
 	});
@@ -2942,14 +2708,10 @@ function (
 				revertChange: oAsyncChangeHandlerRevertChangeStub
 			});
 			return this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl)
-
 			.then(function () {
 				assert.strictEqual(oAsyncChangeHandlerApplyChangeStub.callCount, 2, "all async changes were applied");
 				assert.strictEqual(oSyncChangeHandlerApplyChangeStub.callCount, 1, "all sync changes were applied");
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				var sExpectedValue = this.oChange.getId() + "," + this.oChange2.getId() + "," + this.oChange3.getId();
-				assert.equal(oAppliedChangeCustomData.getValue(), sExpectedValue, "the concatenated change ids are the value");
-			}.bind(this))
+			})
 
 			.then(function() {
 				return this.oFlexController.revertChangesOnControl([this.oChange, this.oChange2, this.oChange3], this.oControl);
@@ -2958,9 +2720,7 @@ function (
 			.then(function() {
 				assert.equal(oAsyncChangeHandlerRevertChangeStub.callCount, 2, "the async changeHandler was called");
 				assert.equal(oSyncChangeHandlerRevertChangeStub.callCount, 1, "the sync changeHandler was called");
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				assert.equal(oAppliedChangeCustomData.getValue(), "", "the changeId got deleted from the customData");
-			}.bind(this));
+			});
 		});
 
 		QUnit.test("calls the change handler thrice for three unapplied changes (sync, async, async) and then reverts them", function (assert) {
@@ -2987,15 +2747,12 @@ function (
 			.onCall(5).returns({
 				revertChange: oAsyncChangeHandlerRevertChangeStub
 			});
-			return this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl)
 
+			return this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl)
 			.then(function () {
 				assert.strictEqual(oAsyncChangeHandlerApplyChangeStub.callCount, 2, "all async changes were applied");
 				assert.strictEqual(oSyncChangeHandlerApplyChangeStub.callCount, 1, "all sync changes were applied");
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				var sExpectedValue = this.oChange.getId() + "," + this.oChange2.getId() + "," + this.oChange3.getId();
-				assert.equal(oAppliedChangeCustomData.getValue(), sExpectedValue, "the concatenated change ids are the value");
-			}.bind(this))
+			})
 
 			.then(function() {
 				return this.oFlexController.revertChangesOnControl([this.oChange, this.oChange2, this.oChange3], this.oControl);
@@ -3004,11 +2761,8 @@ function (
 			.then(function() {
 				assert.equal(oAsyncChangeHandlerRevertChangeStub.callCount, 2, "the async changeHandler was called");
 				assert.equal(oSyncChangeHandlerRevertChangeStub.callCount, 1, "the sync changeHandler was called");
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				assert.equal(oAppliedChangeCustomData.getValue(), "", "the changeId got deleted from the customData");
-			}.bind(this));
+			});
 		});
-
 
 		QUnit.test("calls apply change on control with async changehandler and reverts them", function (assert) {
 			var fnDelayedPromise = new Promise(function(fnResolve) {
@@ -3031,7 +2785,6 @@ function (
 			.onCall(5).returns({ revertChange: oThirdAsyncChangeHandlerRevertChangeStub });
 
 			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl)
-
 			.then(function () {
 				assert.strictEqual(oFirstAsyncChangeHandlerApplyChangeStub.callCount, 1, "then the first async change is applied");
 				assert.strictEqual(oSecondAsyncChangeHandlerApplyChangeStub.callCount, 1, "then the second async change is applied");
@@ -3039,15 +2792,13 @@ function (
 			});
 
 			assert.equal(this.oChange.QUEUED, true, "then first change is pending");
-			return this.oFlexController.revertChangesOnControl([this.oChange, this.oChange2, this.oChange3], this.oControl)
 
+			return this.oFlexController.revertChangesOnControl([this.oChange, this.oChange2, this.oChange3], this.oControl)
 			.then(function() {
 				assert.notOk(this.oChange.QUEUED, "then first change is not pending anymore");
 				assert.strictEqual(oFirstAsyncChangeHandlerRevertChangeStub.callCount, 1, "then the first async change is reverted");
 				assert.strictEqual(oSecondAsyncChangeHandlerRevertChangeStub.callCount, 1, "then the second async change is reverted");
 				assert.strictEqual(oThirdAsyncChangeHandlerRevertChangeStub.callCount, 1, "then the third async change is reverted");
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				assert.equal(oAppliedChangeCustomData.getValue(), "", "the changeId got deleted from the customData");
 				assert.ok(oFirstAsyncChangeHandlerRevertChangeStub.calledAfter(oFirstAsyncChangeHandlerApplyChangeStub), "then the first revert was called after the first apply change");
 				assert.ok(oSecondAsyncChangeHandlerRevertChangeStub.calledAfter(oSecondAsyncChangeHandlerApplyChangeStub), "then the second revert was called after the second apply change");
 				assert.ok(oThirdAsyncChangeHandlerRevertChangeStub.calledAfter(oThirdAsyncChangeHandlerApplyChangeStub), "then the third revert was called after the third apply change");
@@ -3086,6 +2837,9 @@ function (
 			this.oChange = new Change(oLabelChangeContent);
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 
+			this.oAddAppliedCustomDataStub = sandbox.stub(FlexCustomData, "addAppliedCustomData");
+			this.oDestroyAppliedCustomDataStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
+			this.oAddFailedCustomDataStub = sandbox.stub(FlexCustomData, "addFailedCustomData");
 			this.oChangeHandlerApplyChangeStub = sandbox.stub();
 			this.oChangeHandlerRevertChangeStub = sandbox.stub();
 			sandbox.stub(this.oFlexController, "_getChangeHandler").returns({
@@ -3112,31 +2866,8 @@ function (
 				assert.equal(vReturn.error.message, "Change cannot be applied in XML. Retrying in JS.", "the function returns success: false and an error as parameter");
 				assert.notOk(vReturn.success, "the function returns success: false and an error as parameter");
 				assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 0, "the changeHandler was not called");
-				assert.notOk(this.oControl.getElementsByTagName("customData")[0], "the custom data is not set");
+				assert.equal(this.oAddAppliedCustomDataStub.callCount, 0, "the custom data was not added");
 			}.bind(this));
-		});
-
-		QUnit.test("throws an error if change is not revertible and undo should be recorded", function(assert) {
-			this.oXmlString =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
-					'<Label id="' + this.sLabelId  + '" />' +
-				'</mvc:View>';
-			this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
-			this.oControl = this.oView.childNodes[0];
-
-			sandbox.stub(Settings, "getInstanceOrUndef").returns({_oSettings: {recordUndo: true}});
-			sandbox.stub(this.oFlexController, "isChangeHandlerRevertible").returns(false);
-			var oMergeErrorStub = sandbox.stub(this.oFlexController, "_setMergeError");
-			var oStartRecordSpy = sandbox.spy(RTAControlTreeModifier, "startRecordingUndo");
-			var oStopRecordSpy = sandbox.spy(RTAControlTreeModifier, "stopRecordingUndo");
-
-			return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView})
-
-			.then(function () {
-				assert.equal(oMergeErrorStub.callCount, 1, "an error was thrown");
-				assert.equal(oStartRecordSpy.callCount, 0, "the recording got started");
-				assert.equal(oStopRecordSpy.callCount, 0, "the recording got stopped");
-			});
 		});
 
 		QUnit.test("throws an error if change is not revertible and undo should be recorded", function(assert) {
@@ -3170,6 +2901,7 @@ function (
 			this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
 			this.oControl = this.oView.childNodes[0];
 			this.oChange.aPromiseFn = [];
+			this.oAddAppliedCustomDataStub.restore();
 
 			// dependant promises
 			var oDependentChangePromise = new Promise(function(resolve, reject) {
@@ -3217,6 +2949,7 @@ function (
 
 			var oRevertData = {foo: "bar"};
 			sandbox.restore();
+			this.oAddAppliedCustomDataStub = sandbox.stub(FlexCustomData, "addAppliedCustomData");
 			this.oChangeHandlerApplyChangeStub = sandbox.stub().callsFake(function() {
 				this.oChange.setRevertData(oRevertData);
 			}.bind(this));
@@ -3226,13 +2959,9 @@ function (
 			});
 
 			return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView})
-
 			.then(function() {
 				assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
-				var oAppliedChangeCustomData = getCustomDataByKeyXML(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				assert.equal(oAppliedChangeCustomData.getAttribute("value"), this.oChange.getId(), "the change id is the value");
-				var oRevertChangeCustomData = getCustomDataByKeyXML(this.oControl, this.oFlexController._getCustomDataRevertKey(this.oChange), assert);
-				assert.equal(oRevertChangeCustomData.getAttribute("value"), this.oFlexController._escapeCurlyBracketsInString(JSON.stringify(oRevertData)), "then the revert data got serialized to the custom data with the correct value");
+				assert.equal(this.oAddAppliedCustomDataStub.callCount, 1, "custom data was added");
 			}.bind(this));
 		});
 
@@ -3241,7 +2970,7 @@ function (
 				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 					'<Label id="' + this.sLabelId  + '" />' +
 				'</mvc:View>';
-			this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
+				this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
 			this.oControl = this.oView.childNodes[0];
 			this.oChangeHandlerApplyChangeStub.throws();
 			var mergeErrorStub = sandbox.stub(this.oFlexController, "_setMergeError");
@@ -3250,8 +2979,7 @@ function (
 
 			.then(function() {
 				assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "apply change functionality was called");
-				var oCustomData = getCustomDataByKeyXML(this.oControl, FlexController.failedChangesCustomDataKeyXml, assert);
-				assert.equal(oCustomData.getAttribute("value"), this.oChange.getId(), "the change id is the value");
+				assert.equal(this.oAddFailedCustomDataStub.callCount, 1, "custom data was added");
 				assert.equal(mergeErrorStub.callCount, 1, "set merge error was called");
 			}.bind(this));
 		});
@@ -3263,87 +2991,18 @@ function (
 			this.oXmlString =
 				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
 					'<Label id="' + this.sLabelId  + '" >' +
-						'<customData>' +
-							'<core:CustomData key="' + FlexController.appliedChangesCustomDataKey + '" value="a"/>' +
-							'<core:CustomData key="' + this.oFlexController._getCustomDataRevertKey(this.oChange) + '" value=\'' + JSON.stringify(oRevertData) + '\'/>' +
-						'</customData>' +
 					'</Label>' +
 				'</mvc:View>';
 			this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
 			this.oControl = this.oView.childNodes[0];
+			sandbox.stub(FlexCustomData, "getParsedRevertDataFromCustomData").returns(oRevertData);
+			sandbox.stub(this.oFlexController, "_isChangeCurrentlyApplied").returns(true);
 
 			return this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView}, true)
-
 			.then(function() {
 				assert.deepEqual(this.oChange.getRevertData(), oRevertData, "the revert data was saved in the change");
 				assert.ok(this.oChangeHandlerRevertChangeStub.calledOnce, "the change was reverted");
-				var oCustomData = getCustomDataByKeyXML(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				assert.equal(oCustomData.getAttribute("value"), "", "the change id got deleted");
-				assert.equal(this.oControl.getElementsByTagName("customData")[0].childNodes.length, 1, "the revertData CustomData got deleted");
-			}.bind(this));
-		});
-
-		QUnit.test("reverts add custom data on the first sync change applied on a control", function (assert) {
-			this.oXmlString =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
-					'<Label id="' + this.sLabelId  + '" >' +
-						'<customData><core:CustomData key="' + FlexController.appliedChangesCustomDataKey + '" value="a"/></customData>' +
-					'</Label>' +
-				'</mvc:View>';
-			this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
-			this.oControl = this.oView.childNodes[0];
-
-			return this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView}, true)
-
-			.then(function() {
-				assert.ok(this.oChangeHandlerRevertChangeStub.calledOnce, "the change was reverted");
-				var oCustomData = getCustomDataByKeyXML(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				assert.equal(oCustomData.getAttribute("value"), "", "the change id got deleted");
-			}.bind(this));
-		});
-
-		QUnit.test("reverts add custom data on the first async change applied on a control", function (assert) {
-			this.oXmlString =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core">' +
-					'<Label id="' + this.sLabelId  + '" >' +
-						'<customData><core:CustomData key="' + FlexController.appliedChangesCustomDataKey + '" value="a"/></customData>' +
-					'</Label>' +
-				'</mvc:View>';
-			this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
-			this.oControl = this.oView.childNodes[0].childNodes[0];
-			sandbox.restore();
-			this.oChangeHandlerRevertChangeStub = sandbox.stub().returns(Promise.resolve());
-			sandbox.stub(this.oFlexController, "_getChangeHandler").returns({
-				revertChange: this.oChangeHandlerRevertChangeStub
-			});
-			return this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView}, true)
-
-			.then(function() {
-				assert.ok(this.oChangeHandlerRevertChangeStub.calledOnce, "the change was reverted");
-				var oCustomData = getCustomDataByKeyXML(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				assert.equal(oCustomData.getAttribute("value"), "", "the change id got deleted");
-			}.bind(this));
-		});
-
-		QUnit.test("concatenate custom data on the later changes applied on a control", function (assert) {
-			var sAlreadyAppliedChangeId = "id_123_anAlreadyAppliedChange";
-
-			this.oXmlString =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
-					'<Label id="' + this.sLabelId + '" >' +
-						'<customData><core:CustomData key="' + FlexController.appliedChangesCustomDataKey + '" value="' + sAlreadyAppliedChangeId + '"/></customData>' +
-						'</Label>' +
-				'</mvc:View>';
-			this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
-			this.oControl = this.oView.childNodes[0];
-
-			return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView})
-
-			.then(function() {
-				assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
-				var oCustomData = getCustomDataByKeyXML(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				var sExpectedFlexCustomDataValue = sAlreadyAppliedChangeId + "," + this.oChange.getId();
-				assert.equal(oCustomData.getAttribute("value"), sExpectedFlexCustomDataValue, "the change ID is the value");
+				assert.equal(this.oDestroyAppliedCustomDataStub.callCount, 1, "the customData got deleted");
 			}.bind(this));
 		});
 
@@ -3351,22 +3010,20 @@ function (
 			this.oXmlString =
 				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
 					'<Label id="' + this.sLabelId + '" >' +
-						'<customData><core:CustomData key="' + FlexController.appliedChangesCustomDataKey + '" value="' + this.oChange.getId() + '"/></customData>' +
 					'</Label>' +
 				'</mvc:View>';
 			this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
 			this.oControl = this.oView.childNodes[0];
+			sandbox.stub(this.oFlexController, "_isChangeCurrentlyApplied").returns(true);
 
 			return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView})
 
 			.then(function() {
 				assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 0, "the change handler was not called again");
-				var oCustomData = getCustomDataByKeyXML(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				assert.equal(oCustomData.getAttribute("value"), this.oChange.getId(), "the change id is the value");
 			}.bind(this));
 		});
 
-		QUnit.test("does not call the change handler if the change was not applied before", function(assert) {
+		QUnit.test("does not call the revert change handler if the change was not applied before", function(assert) {
 			this.oXmlString =
 				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
 					'<Label id="' + this.sLabelId + '" >' +
@@ -3586,6 +3243,7 @@ function (
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 
 			this.oChangeHandlerApplyChangeStub = sandbox.stub().returns(Promise.resolve(true));
+			this.oAddAppliedCustomDataStub = sandbox.stub(FlexCustomData, "addAppliedCustomData");
 			sandbox.useFakeTimers();
 			sandbox.clock = 1000;
 
@@ -3599,19 +3257,20 @@ function (
 		}
 	}, function() {
 		QUnit.test("adds custom data on the first change applied on a control", function (assert) {
+			var oRevertData = {foo: "bar"};
 			this.oXmlString =
 				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
-				'<Label id="' + this.sLabelId  + '" />' +
+					'<Label id="' + this.sLabelId  + '" />' +
 				'</mvc:View>';
 			this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
 			this.oControl = this.oView.childNodes[0];
+			this.oChange.setRevertData(oRevertData);
 
 			return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView})
 
 			.then(function() {
 				assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
-				var oCustomData = getCustomDataByKeyXML(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				assert.equal(oCustomData.getAttribute("value"), this.oChange.getId(), "the change id is the value");
+				assert.equal(this.oAddAppliedCustomDataStub.callCount, 1, "custom data was added");
 			}.bind(this));
 		});
 	});
@@ -3638,10 +3297,11 @@ function (
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 
 			sandbox.stub(this.oFlexController, "_setMergeError");
+			this.oAddAppliedCustomDataStub = sandbox.stub(FlexCustomData, "addAppliedCustomData");
 
 			this.oErrorLogStub = sandbox.stub(Log, "error");
 
-			sandbox.stub(FlexController.prototype, "_getFailedCustomDataJs").callsFake(function(oControl) {
+			sandbox.stub(FlexCustomData, "hasFailedCustomDataJs").callsFake(function(oControl) {
 				if (oControl.getId() === this.sLabelId2) {
 					return {customDataEntries: ["a5"]};
 				}
@@ -3691,26 +3351,24 @@ function (
 		});
 
 		QUnit.test("with 3 async queued changes", function(assert) {
+			assert.expect(1);
 			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
 			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl);
 			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
 			.then(function() {
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				var sExpectedValue = this.oChange.getId() + "," + this.oChange2.getId() + "," + this.oChange3.getId();
-				assert.equal(oAppliedChangeCustomData.getValue(), sExpectedValue, "then the concatenated change ids are the value");
+				assert.equal(this.oAddAppliedCustomDataStub.callCount, 3, "addCustomData was called 3 times");
 			}.bind(this));
 		});
 
 		QUnit.test("twice with 3 async queued changes", function(assert) {
+			assert.expect(1);
 			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
 			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl);
 
 			this.oFlexController.waitForChangesToBeApplied(this.oControl);
 			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
 			.then(function() {
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				var sExpectedValue = this.oChange.getId() + "," + this.oChange2.getId() + "," + this.oChange3.getId();
-				assert.equal(oAppliedChangeCustomData.getValue(), sExpectedValue, "then the concatenated change ids are the value");
+				assert.equal(this.oAddAppliedCustomDataStub.callCount, 3, "addCustomData was called 3 times");
 			}.bind(this));
 		});
 
@@ -3754,17 +3412,17 @@ function (
 		});
 
 		QUnit.test("with 3 async queued changes with 1 change whose selector points to no control", function(assert) {
+			assert.expect(1);
 			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange4];
 			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl);
 			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
 			.then(function() {
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				var sExpectedValue = this.oChange.getId() + "," + this.oChange2.getId();
-				assert.equal(oAppliedChangeCustomData.getValue(), sExpectedValue, "then the concatenated change ids are the value");
+				assert.equal(this.oAddAppliedCustomDataStub.callCount, 2, "addCustomData was called 2 times");
 			}.bind(this));
 		});
 
 		QUnit.test("with 4 async queued changes depending on on another with the last change whose selector points to no control", function(assert) {
+			assert.expect(1);
 			var mDependencies = {
 				"a2": {
 					"changeObject": this.oChange2,
@@ -3790,13 +3448,12 @@ function (
 
 			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
 			.then(function() {
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				var sExpectedValue = this.oChange.getId() + "," + this.oChange2.getId();
-				assert.equal(oAppliedChangeCustomData.getValue(), sExpectedValue, "then the concatenated change ids are the value");
+				assert.equal(this.oAddAppliedCustomDataStub.callCount, 3, "addCustomData was called 3 times");
 			}.bind(this));
 		});
 
 		QUnit.test("with 4 async queued changes depending on on another and the last change already failed", function(assert) {
+			assert.expect(1);
 			var mDependencies = {
 				"a2": {
 					"changeObject": this.oChange2,
@@ -3822,9 +3479,7 @@ function (
 
 			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
 			.then(function() {
-				var oAppliedChangeCustomData = getCustomDataByKeyJS(this.oControl, FlexController.appliedChangesCustomDataKey, assert);
-				var sExpectedValue = this.oChange.getId() + "," + this.oChange2.getId();
-				assert.equal(oAppliedChangeCustomData.getValue(), sExpectedValue, "then the concatenated change ids are the value");
+				assert.equal(this.oAddAppliedCustomDataStub.callCount, 4, "addCustomData was called 4 times");
 			}.bind(this));
 		});
 
