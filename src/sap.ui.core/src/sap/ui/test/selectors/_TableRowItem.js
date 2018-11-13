@@ -38,13 +38,13 @@ sap.ui.define([
                 var mRowSelector = {};
                 // tables may not have an items binding eg: forms as tables
                 if (oTableBindingInfo && sRowBindingContextPath) {
-                    mRowSelector = {
+                    mRowSelector = $.extend(this._createSelectorBase(oRow, {}), {
                         bindingPath: {
                             modelName: oTableBindingInfo.model || undefined,
                             path: sRowBindingContextPath
                         },
                         ancestor: mTableSelector
-                    };
+                    });
                 }
 
                 this._oLogger.debug("Control " + oControl + " has table row binding context path " + sRowBindingContextPath);
