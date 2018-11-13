@@ -5,10 +5,10 @@
  ******************************************************************************/
 
 sap.ui.define([
-    'sap/ui/core/mvc/Controller',
-    'sap/m/MessageToast',
-    'sap/ui/ux3/NavigationBar',
-    'sap/base/Log'
+	'sap/ui/core/mvc/Controller',
+	'sap/m/MessageToast',
+	'sap/ui/ux3/NavigationBar',
+	'sap/base/Log'
 ], function (Controller, MessageToast, NavigationBar, Log) {
 	"use strict";
 
@@ -26,10 +26,7 @@ sap.ui.define([
 		},
 
 		getResourceBundle: function () {
-			if (!this.oBundle) {
-				this.oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
-			}
-			return this.oBundle;
+			return this.getView().getModel("i18n").getResourceBundle();
 		}
 
 	});

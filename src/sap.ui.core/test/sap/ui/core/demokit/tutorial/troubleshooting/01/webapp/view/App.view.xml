@@ -6,11 +6,11 @@
 
 <mvc:View
 	controllerName="sap.ui.demo.HeapOfShards.controller.App"
+	displayBlock="true"
+	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:doesnotexist="sap.ui.doesnotexist"
-	xmlns:table="sap.ui.table"
-	displayBlock="true"
-	xmlns="sap.m">
+	xmlns:table="sap.ui.table">
 	<App>
 		<pages>
 			<Page
@@ -30,7 +30,7 @@
 							id="myButton"
 							icon="sap-icon://action"
 							text="{i18n>doSomething}"
-							press="onPress"
+							press=".onPress"
 							type="Emphasized"/>
 						<Label
 							id="LabelWithMissingI18NText"

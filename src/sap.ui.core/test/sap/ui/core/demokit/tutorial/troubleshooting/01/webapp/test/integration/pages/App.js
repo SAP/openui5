@@ -1,9 +1,8 @@
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/actions/Press"
-], function(jQuery, Opa5, PropertyStrictEquals, Press) {
+], function(Opa5, PropertyStrictEquals, Press) {
 	"use strict";
 
 	var sViewName = "App";
@@ -32,7 +31,7 @@ sap.ui.define([
 							new PropertyStrictEquals({name: "icon", value: "sap-icon://action"}),
 							function () {
 								// check full id as well
-								return !!jQuery("#HeapOfShards---app--myButton");
+								return !!document.getElementById("HeapOfShards---app--myButton");
 							}
 						],
 						success: function () {
@@ -47,7 +46,7 @@ sap.ui.define([
 						//increase opa's polling because the message toast is only shown for a brief moment
 						pollingInterval: 100,
 						check: function() {
-							return !!Opa5.getJQuery()(".sapMMessageToast").length;
+							return !!document.getElementsByClassName("sapMMessageToast").length;
 						},
 						success: function() {
 							Opa5.assert.ok( "The message toast was displayed");
@@ -61,8 +60,7 @@ sap.ui.define([
 						id: "LabelWithMissingI18NText",
 						viewName: sViewName,
 						success: function(oLabel) {
-							Opa5.assert.strictEqual(oLabel.getText(), "Label_Missing_I18N_Text", "The label shows the" +
-								"right text");
+							Opa5.assert.strictEqual(oLabel.getText(), "Label_Missing_I18N_Text", "The label shows the right text");
 						},
 						errorMessage: "The button label was not found or has a wrong text"
 					});
