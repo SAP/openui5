@@ -18,7 +18,9 @@ sap.ui.define([
 	"sap/ui/core/HTML",
 	"sap/base/Log",
 	"sap/ui/Device",
-	"sap/ui/core/mvc/XMLView"],
+	"sap/ui/core/mvc/XMLView",
+	"sap/m/OverflowToolbar",
+	"sap/uxap/ObjectPageAccessibleLandmarkInfo"],
 function (
 	jQuery,
 	lib,
@@ -38,7 +40,9 @@ function (
 	HTML,
 	Log,
 	Device,
-	XMLView
+	XMLView,
+	OverflowToolbar,
+	ObjectPageAccessibleLandmarkInfo
 ) {
 
 	"use strict";
@@ -97,7 +101,7 @@ function (
 	},
 
 		helpers = {
-			generateObjectPageWithContent: function (oFactory, iNumberOfSection, bUseIconTabBar) {
+			generateObjectPageWithContent: function (oFactory, iNumberOfSection, bUseIconTabBar, bFooter) {
 				var oObjectPage = bUseIconTabBar ? oFactory.getObjectPageLayoutWithIconTabBar() : oFactory.getObjectPage(),
 					oSection,
 					oSubSection;
@@ -107,6 +111,10 @@ function (
 					oSubSection = oFactory.getSubSection(i, oFactory.getBlocks());
 					oSection.addSubSection(oSubSection);
 					oObjectPage.addSection(oSection);
+				}
+
+				if (bFooter) {
+					oObjectPage.setFooter(new OverflowToolbar());
 				}
 
 				return oObjectPage;
@@ -2570,6 +2578,41 @@ function (
 		});
 
 		helpers.renderObject(this.oObjectPage);
+	});
+
+	QUnit.module("ObjectPage landmarkInfo API");
+
+	QUnit.test("DynamicPage landmark info is set correctly", function (assert) {
+		var oObjectPage = helpers.generateObjectPageWithContent(oFactory, 3, false, true),
+			oLandmarkInfo = new ObjectPageAccessibleLandmarkInfo({
+				rootRole: "Region",
+				rootLabel: "Root",
+				contentRole: "Main",
+				contentLabel: "Content",
+				headerRole: "Banner",
+				headerLabel: "Header",
+				footerRole: "Region",
+				footerLabel: "Footer",
+				navigationRole: "Navigation",
+				navigationLabel: "Navigation"
+			});
+
+		oObjectPage.placeAt('qunit-fixture');
+		oObjectPage.setLandmarkInfo(oLandmarkInfo);
+		Core.applyChanges();
+
+		assert.strictEqual(oObjectPage.$().attr("role"), "region", "Root role is set correctly.");
+		assert.strictEqual(oObjectPage.$().attr("aria-label"), "Root", "Root label is set correctly.");
+		assert.strictEqual(oObjectPage.$("sectionsContainer").attr("role"), "main", "Content role is set correctly.");
+		assert.strictEqual(oObjectPage.$("sectionsContainer").attr("aria-label"), "Content", "Content label is set correctly.");
+		assert.strictEqual(oObjectPage.$("headerTitle").attr("role"), "banner", "Header role is set correctly.");
+		assert.strictEqual(oObjectPage.$("headerTitle").attr("aria-label"), "Header", "Header label is set correctly.");
+		assert.strictEqual(oObjectPage.$("footerWrapper").attr("role"), "region", "Footer role is set correctly.");
+		assert.strictEqual(oObjectPage.$("footerWrapper").attr("aria-label"), "Footer", "Footer label is set correctly.");
+		assert.strictEqual(oObjectPage.$("anchorBar").attr("role"), "navigation", "Navigation role is set correctly.");
+		assert.strictEqual(oObjectPage.$("anchorBar").attr("aria-label"), "Navigation", "Navigation label is set correctly.");
+
+		oObjectPage.destroy();
 	});
 
 	function checkObjectExists(sSelector) {

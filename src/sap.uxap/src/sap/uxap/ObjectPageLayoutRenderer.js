@@ -22,7 +22,14 @@ sap.ui.define(["sap/ui/Device"],
 				bUseIconTabBar = oControl.getUseIconTabBar(),
 				bTitleClickable = oControl.getToggleHeaderOnTitleClick() && oControl.getHeaderTitle() && oControl.getHeaderTitle().supportsToggleHeaderOnTitleClick(),
 				sRootAriaLabelText = oControl._getRootAriaLabelText(),
-				sBackgroundDesign = oControl.getBackgroundDesignAnchorBar();
+				sBackgroundDesign = oControl.getBackgroundDesignAnchorBar(),
+				oLandmarkInfo = oControl.getLandmarkInfo(),
+				sHeaderTag = oControl._getHeaderTag(oLandmarkInfo),
+				sFooterTag = oControl._getFooterTag(oLandmarkInfo),
+				bHeaderRoleSet = oLandmarkInfo && oLandmarkInfo.getHeaderRole(),
+				bRootRoleSet = oLandmarkInfo && oLandmarkInfo.getRootRole(),
+				bRootLabelSet = oLandmarkInfo && oLandmarkInfo.getRootLabel(),
+				bNavigationRoleSet = oLandmarkInfo && oLandmarkInfo.getNavigationRole();
 
 			if (oControl.getShowAnchorBar() && oControl._getInternalAnchorBarVisible()) {
 				oAnchorBar = oControl.getAggregation("_anchorBar");
@@ -30,8 +37,12 @@ sap.ui.define(["sap/ui/Device"],
 
 			oRm.write("<div");
 			oRm.writeControlData(oControl);
-			oRm.writeAttribute("role", "region");
-			oRm.writeAttributeEscaped("aria-label", sRootAriaLabelText);
+			if (!bRootRoleSet) {
+				oRm.writeAttribute("role", "region");
+			}
+			if (!bRootLabelSet) {
+				oRm.writeAttributeEscaped("aria-label", sRootAriaLabelText);
+			}
 			oRm.addClass("sapUxAPObjectPageLayout");
 			if (bTitleClickable) {
 				oRm.addClass("sapUxAPObjectPageLayoutTitleClickEnabled");
@@ -43,6 +54,7 @@ sap.ui.define(["sap/ui/Device"],
 			oRm.writeClasses();
 			oRm.addStyle("height", oControl.getHeight());
 			oRm.writeStyles();
+			oRm.writeAccessibilityState(oControl, oControl._formatLandmarkInfo(oLandmarkInfo, "Root"));
 			oRm.write(">");
 
 			// custom scrollbar
@@ -51,13 +63,16 @@ sap.ui.define(["sap/ui/Device"],
 			}
 
 			// Header
-			oRm.write("<header ");
-			oRm.writeAttribute("role", "banner");
+			oRm.write("<" + sHeaderTag + " ");
+			if (!bHeaderRoleSet) {
+				oRm.writeAttribute("role", "banner");
+			}
 			oRm.writeAttributeEscaped("id", oControl.getId() + "-headerTitle");
 			oRm.writeAttribute("data-sap-ui-customfastnavgroup", true);
 			oRm.addClass("sapUxAPObjectPageHeaderTitle");
 			oRm.addClass("sapContrastPlus");
 			oRm.writeClasses();
+			oRm.writeAccessibilityState(oControl, oControl._formatLandmarkInfo(oLandmarkInfo, "Header"));
 			oRm.write(">");
 			if (oHeader) {
 				oRm.renderControl(oHeader);
@@ -69,6 +84,10 @@ sap.ui.define(["sap/ui/Device"],
 			// Sticky anchorBar placeholder
 			oRm.write("<div ");
 			oRm.writeAttributeEscaped("id", oControl.getId() + "-stickyAnchorBar");
+			// write ARIA role
+			if (!bNavigationRoleSet) {
+				oRm.writeAttribute("role", "navigation");
+			}
 			oRm.addClass("sapUxAPObjectPageStickyAnchorBar");
 			oRm.addClass("sapUxAPObjectPageNavigation");
 
@@ -77,13 +96,14 @@ sap.ui.define(["sap/ui/Device"],
 			}
 
 			oRm.writeClasses();
+			oRm.writeAccessibilityState(oControl, oControl._formatLandmarkInfo(oLandmarkInfo, "Navigation"));
 			oRm.write(">");
 
 			// if the content is expanded render bars outside the scrolling div
 			this._renderAnchorBar(oRm, oControl, oAnchorBar, oControl._bHeaderInTitleArea);
 
 			oRm.write("</div>");
-			oRm.write("</header>");
+			oRm.write("</" + sHeaderTag + ">");
 
 			oRm.write("<div ");
 			oRm.writeAttributeEscaped("id", oControl.getId() + "-opwrapper");
@@ -109,7 +129,9 @@ sap.ui.define(["sap/ui/Device"],
 			oRm.write("<section ");
 			oRm.writeAttributeEscaped("id", oControl.getId() + "-anchorBar");
 			// write ARIA role
-			oRm.writeAttribute("role", "navigation");
+			if (!bNavigationRoleSet) {
+				oRm.writeAttribute("role", "navigation");
+			}
 			oRm.addClass("sapUxAPObjectPageNavigation");
 			oRm.addClass("sapContrastPlus");
 
@@ -118,6 +140,7 @@ sap.ui.define(["sap/ui/Device"],
 			}
 
 			oRm.writeClasses();
+			oRm.writeAccessibilityState(oControl, oControl._formatLandmarkInfo(oLandmarkInfo, "Navigation"));
 			oRm.write(">");
 
 			this._renderAnchorBar(oRm, oControl, oAnchorBar, !oControl._bHeaderInTitleArea);
@@ -133,6 +156,7 @@ sap.ui.define(["sap/ui/Device"],
 				oRm.addClass("sapUxAPObjectPageContainerNoBar");
 			}
 			oRm.writeClasses();
+			oRm.writeAccessibilityState(oControl, oControl._formatLandmarkInfo(oLandmarkInfo, "Content"));
 			oRm.write(">");
 			aSections = oControl._getSectionsToRender();
 			if (Array.isArray(aSections)) {
@@ -155,7 +179,7 @@ sap.ui.define(["sap/ui/Device"],
 			oRm.write("</div>");  // END scroll
 
 			oRm.write("</div>"); // END wrapper
-			this._renderFooterContentInternal(oRm, oControl);
+			this._renderFooterContentInternal(oRm, oControl, sFooterTag, oLandmarkInfo);
 
 			oRm.write("</div>"); // END page
 		};
@@ -241,14 +265,14 @@ sap.ui.define(["sap/ui/Device"],
 		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 		 * @param {sap.ui.core.Control} oObjectPageLayout an object representation of the control that should be rendered
 		 */
-		ObjectPageLayoutRenderer._renderFooterContentInternal = function (oRm, oObjectPageLayout) {
+		ObjectPageLayoutRenderer._renderFooterContentInternal = function (oRm, oObjectPageLayout, sFooterTag, oLandmarkInfo) {
 			var oFooter = oObjectPageLayout.getFooter();
 
 			if (!oFooter) {
 				return;
 			}
 
-			oRm.write("<footer");
+			oRm.write("<" + sFooterTag);
 			oRm.writeAttributeEscaped("id", oObjectPageLayout.getId() + "-footerWrapper");
 			oRm.addClass("sapUxAPObjectPageFooter sapMFooter-CTX sapContrast sapContrastPlus");
 
@@ -257,10 +281,11 @@ sap.ui.define(["sap/ui/Device"],
 			}
 
 			oRm.writeClasses();
+			oRm.writeAccessibilityState(oObjectPageLayout, oObjectPageLayout._formatLandmarkInfo(oLandmarkInfo, "Footer"));
 			oRm.write(">");
 			oFooter.addStyleClass("sapUxAPObjectPageFloatingFooter");
 			oRm.renderControl(oFooter);
-			oRm.write("</footer>");
+			oRm.write("</" + sFooterTag + ">");
 		};
 
 		/**
