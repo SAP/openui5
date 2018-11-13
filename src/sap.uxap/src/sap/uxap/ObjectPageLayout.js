@@ -1960,7 +1960,11 @@ sap.ui.define([
 			sPreviousSectionId,
 			bAllowScrollSectionToTop,
 			bStickyTitleMode = !this._bHeaderExpanded,
-			oDomRef = this.getDomRef();
+			bIsFirstVisibleSubSection,
+			bParentIsFirstVisibleSection,
+			bIsFullscreenSection,
+			oDomRef = this.getDomRef(),
+			bUseIconTabBar = this.getUseIconTabBar();
 
 		if (!oDomRef || !this._bDomReady) { //calculate the layout only if the object page is full ready
 			return false; // return success flag
@@ -1973,7 +1977,7 @@ sap.ui.define([
 		if (this.iScreenHeight === 0) {
 			return; // element is hidden or not in DOM => the resulting calculations would be invalid
 		}
-		var iSubSectionsCount = 0;
+		var iSubSectionIndex = -1;
 
 		this._aSectionBases.forEach(function (oSectionBase) {
 			var oInfo = this._oSectionInfo[oSectionBase.getId()],
@@ -1986,7 +1990,7 @@ sap.ui.define([
 			}
 
 			if (!oInfo.isSection) {
-				iSubSectionsCount++;
+				iSubSectionIndex++;
 			}
 
 			oInfo.$dom = $this;
@@ -2060,6 +2064,15 @@ sap.ui.define([
 				}
 			}
 
+			if (!oInfo.isSection) {
+
+				bParentIsFirstVisibleSection = bUseIconTabBar /* there is only single section per tab */ || (oSectionBase.getParent() === this._oFirstVisibleSection);
+				bIsFirstVisibleSubSection = bParentIsFirstVisibleSection && (iSubSectionIndex === 0); /* index of *visible* subSections is first */
+				bIsFullscreenSection = oSectionBase.hasStyleClass(ObjectPageSubSection.FIT_CONTAINER_CLASS);
+
+				oSectionBase._setHeight(this._computeSubSectionHeight(bIsFirstVisibleSubSection, bIsFullscreenSection));
+			}
+
 		}, this);
 
 		//calculate the bottom spacer height and update the last section/subSection bottom (with our algorithm of having section tops based on the next section, we need to have a special handling for the very last subSection)
@@ -2083,7 +2096,7 @@ sap.ui.define([
 
 			// checks whether to ensure extra bottom space that allows scrolling the section up to the top of the page (right bellow the anchorBar)
 			bAllowScrollSectionToTop = this._bStickyAnchorBar /* if already in sticky mode, then preserve it, even if the section does not require scroll for its [entire content] display */
-			|| (iSubSectionsCount > 1) /* bringing any section (other than the first) bellow the anchorBar requires snap */
+			|| (iSubSectionIndex > 0) /* bringing any section (other than the first) bellow the anchorBar requires snap */
 			|| this._checkContentBottomRequiresSnap(oLastVisibleSubSection); /* check snap is needed in order to display the full section content in the viewport */
 
 			if (bAllowScrollSectionToTop && !this._shouldPreserveHeaderInTitleArea()) {
@@ -2101,6 +2114,27 @@ sap.ui.define([
 		this._setSectionInfoIsDirty(false);
 
 		return true; // return success flag
+	};
+
+	ObjectPageLayout.prototype._computeSubSectionHeight = function(bFirstVisibleSubSection, bFullscreenSection) {
+
+		var iSectionsContainerHeight;
+
+		if (!bFullscreenSection) {
+			return ""; // default height
+		}
+
+		// size the section to have the full height of its container
+		if (bFirstVisibleSubSection) {
+			// first visible is initially displayed in container with *expanded* header
+			// => obtain container height when *expanded* header
+			iSectionsContainerHeight = this._getSectionsContainerHeight(false /* expanded header */);
+		} else {
+			// non-first visible is displayed in container with *snapped* header
+			// => obtain container height when *snapped* header
+			iSectionsContainerHeight = this._getSectionsContainerHeight(true /*snapped header */);
+		}
+		return iSectionsContainerHeight + "px";
 	};
 
 	ObjectPageLayout.prototype._updateCustomScrollerHeight = function(bRequiresSnap) {
@@ -2166,6 +2200,18 @@ sap.ui.define([
 	* */
 	ObjectPageLayout.prototype._getScrollableViewportHeight = function(bIsStickyMode) {
 		return this.getDomRef().getBoundingClientRect().height - this._getStickyAreaHeight(bIsStickyMode);
+	};
+
+	ObjectPageLayout.prototype._getSectionsContainerHeight = function(bIsStickyMode) {
+
+		var iScrollContainerHeight = this._getScrollableViewportHeight(bIsStickyMode);
+		if (!bIsStickyMode) {
+			// for expanded mode, subtract the heights of headerContent and anchorBar
+			// as they are also part of the scrollable content when *expanded* header,
+			// but we need the height of the *sections area bellow* them
+			iScrollContainerHeight -= (this.iHeaderContentHeight + this.iAnchorBarHeight);
+		}
+		return iScrollContainerHeight;
 	};
 
 	ObjectPageLayout.prototype._getSectionPositionTop = function(oSectionBase, bShouldStick) {

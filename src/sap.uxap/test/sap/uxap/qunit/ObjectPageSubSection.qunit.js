@@ -1215,4 +1215,61 @@ function($, Core, Lib, ObjectPageSection, ObjectPageSubSectionClass, BlockBase, 
 			"The previously set Borrowed Title DOM ID should be returned");
 	});
 
+	QUnit.module("Content fit container", {
+		beforeEach: function() {
+			this.oObjectPage = new ObjectPageLayout({
+				sections: [ new ObjectPageSection({
+					subSections: [new ObjectPageSubSectionClass({
+						blocks: [ new sap.m.Panel({ height: "100%" })]
+					})]
+				})]
+			});
+
+			this.oObjectPage.placeAt('qunit-fixture');
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("sapUxAPObjectPageSubSectionFitContainer expands the subSection to fit the container", function (assert) {
+		var oPage = this.oObjectPage,
+			oSection = this.oObjectPage.getSections()[0],
+			oSubSection = oSection.getSubSections()[0],
+			oSpy = sinon.spy(oSubSection, "_setHeight"),
+			done = assert.async();
+
+		//act
+		oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
+
+		//setup
+		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			//check
+			var iViewportHeight = oPage._getScrollableViewportHeight(false);
+			assert.ok(oSpy.calledWith(iViewportHeight + "px"), true, "_setHeight is called");
+			done();
+		}, this);
+	});
+
+	QUnit.test("sapUxAPObjectPageSubSectionFitContainer class can be added late", function (assert) {
+		var oPage = this.oObjectPage,
+			oSection = this.oObjectPage.getSections()[0],
+			oSubSection = oSection.getSubSections()[0],
+			oSpy = sinon.spy(oPage, "_requestAdjustLayoutAndUxRules"),
+			done = assert.async();
+
+		//setup
+		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			oSpy.reset();
+
+			//act
+			oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
+
+			//check
+			assert.strictEqual(oSpy.called, true, "_requestAdjustLayoutAndUxRules is called");
+			done();
+		}, this);
+	});
+
 });
