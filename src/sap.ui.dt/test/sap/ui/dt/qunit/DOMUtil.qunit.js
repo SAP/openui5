@@ -452,7 +452,19 @@ function(
 		});
 	});
 
+
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	var oCore = sap.ui.getCore();
+	if (oCore.isThemeApplied()) {
+		QUnit.start();
+	} else {
+		var fnThemeChanged = function () {
+			QUnit.start();
+			oCore.detachThemeChanged(fnThemeChanged);
+		};
+		oCore.attachThemeChanged(fnThemeChanged);
+	}
 });
