@@ -38,8 +38,20 @@ sap.ui.define([
 		Opa._usageReport.done(oDetails);
 	});
 
+	/* When you require this file, it will also introduce global variables: opaTest, opaSkip and opaTodo.
+	 * It will also alter some settings of QUnit.config - testTimout will be increased to 90 if you do not specify your own.
+	 * QUnit.reorder will be set to false, because OPA tests are often depending on each other.
+	 */
+
+	// Export to global namespace to be backwards compatible
+	window.opaSkip = opaSkip;
+	window.opaTest = opaTest;
+	// QUnit.todo introduced in v2
+	window.opaTodo = QUnit.todo ? opaTodo : opaTest;
+
 	/**
-	 * QUnit test adapter for opa.js has the same signature as a test of QUnit.
+	 * QUnit test adapter for OPA: add a test to be executed by QUnit
+	 * Has the same signature as QUnit.test (QUnit version is also considered)
 	 * Suggested usage:
 	 * <pre><code>
 	 * sap.ui.require(["sap/ui/test/Opa5", "sap/ui/test/opaQunit"], function (Opa5, opaTest) {
@@ -64,31 +76,155 @@ sap.ui.define([
 	 * });
 	 * </code></pre>
 	 *
-	 * When you require this file, it will also introduce a global variable: opaTest.
-	 * It will also alter some settings of QUnit.config - testTimout will be increased to 90 if you do not specify your own.
-	 * QUnit.reorder will be set to false, because OPA tests are often depending on each other.
 	 * @public
 	 * @alias sap.ui.test.opaQunit
 	 * @function
 	 * @static
-	 * @param {string} testName The name of the created QUnit test.
-	 * @param {int|function} expected Integer showing how many QUnit assertions are expected by the test. If a function is passed, it is interpreted as callback and the expected is skipped.
-	 * @param {function} callback The test function. It will get 3 arguments passed to it.
-	 * <ol>
-	 *     <li>
-	 *         Will be {@link sap.ui.test.Opa.config} .arrangements.
-	 *     </li>
-	 *     <li>
-	 *        Will be {@link sap.ui.test.Opa.config} .actions.
-	 *     </li>
-	 *     <li>
-	 *         Will be {@link sap.ui.test.Opa.config} .assertions.
-	 *     </li>
-	 * </ol>
-	 * @returns {QUnit.test} A function to register opaTests
+	 * @param {string} testName name of the QUnit test.
+	 * @param {int|function} expected integer value only supported in QUnit v1.x: denotes how many assertions are expected to be made in the test.
+	 * If a function is passed instead, it is considered to be the callback parameter
+	 * @param {function} callback the test function. Expects 3 arguments, in order:
+	 * {@link sap.ui.test.Opa.config}.arrangements, {@link sap.ui.test.Opa.config}.actions, {@link sap.ui.test.Opa.config}.assertions.
+	 * These arguments will be prefilled by OPA
+	 * @param {boolean} async available only in QUnit v1.x. Indicates whether the test is asynchronous. False by default.
 	 */
-	var opaTest = function (testName, expected, callback, async) {
-		var config = Opa.config;
+	function opaTest() {
+		callQUnit("test", arguments, function (assert, fnDone) {
+			Opa._usageReport.opaEmpty();
+			resetOPA();
+			fnDone();
+		}, function (assert, fnDone, oOptions) {
+			Opa._usageReport.opaEmpty(oOptions);
+
+			// add the error message to QUnit test results
+			// will cause exception in case of QUnit timeout since the last test has already finished
+			// ("Cannot read property 'failedAssertions' of null")
+			assert.ok(false, oOptions.errorMessage);
+
+			resetOPA();
+			// let OPA finish before QUnit starts executing the next test
+			// call fnStart only if QUnit did not timeout
+			if (!oOptions.qunitTimeout) {
+				setTimeout(fnDone, 0);
+			}
+		});
+	}
+
+	/**
+	 * QUnit test adapter for OPA: add a test to be executed by QUnit
+	 * The test is expected to have at least one failing assertion during its run, or to timeout with either OPA or QUnit timeout
+	 * Has the same signature as QUnit.todo (QUnit version is also considered)
+	 *
+	 * @public
+	 * @function
+	 * @static
+	 * @param {string} testName name of the QUnit test.
+	 * @param {int|function} expected integer value only supported in QUnit v1.x: denotes how many assertions are expected to be made in the test.
+	 * If a function is passed instead, it is considered to be the callback parameter
+	 * @param {function} callback the test function. Expects 3 arguments, in order:
+	 * {@link sap.ui.test.Opa.config}.arrangements, {@link sap.ui.test.Opa.config}.actions, {@link sap.ui.test.Opa.config}.assertions.
+	 * These arguments will be prefilled by OPA
+	 * @param {boolean} async available only in QUnit v1.x. Indicates whether the test is asynchronous. False by default.
+	 */
+	function opaTodo() {
+		callQUnit("todo", arguments, function (assert, fnDone) {
+			resetOPA();
+			fnDone();
+		}, function (assert, fnDone, oOptions) {
+			if (oOptions.qunitTimeout) {
+				resetOPA();
+			} else {
+				// to pass the test, add error in case of OPA timeout
+				assert.ok(false, oOptions.errorMessage);
+				resetOPA();
+				// let OPA finish before QUnit starts executing the next test
+				// call fnStart only if QUnit did not timeout
+				setTimeout(fnDone, 0);
+			}
+		});
+	}
+
+	/**
+	 * QUnit test adapter for OPA: add a test to be skipped by QUnit
+	 * Has the same signature as QUnit.skip (QUnit version is also considered)
+	 *
+	 * @public
+	 * @function
+	 * @static
+	 * @param {string} testName name of the QUnit test.
+	 * @param {int|function} expected integer value only supported in QUnit v1.x: denotes how many assertions are expected to be made in the test.
+	 * If a function is passed instead, it is considered to be the callback parameter
+	 * @param {function} callback the test function. Expects 3 arguments, in order:
+	 * {@link sap.ui.test.Opa.config}.arrangements, {@link sap.ui.test.Opa.config}.actions, {@link sap.ui.test.Opa.config}.assertions.
+	 * These arguments will be prefilled by OPA
+	 * @param {boolean} async available only in QUnit v1.x. Indicates whether the test is asynchronous. False by default.
+	 */
+	function opaSkip(testName, expected, callback, async) {
+		configQUnit();
+		var fnTestBody = function () {};
+		if (isQUnit2()) {
+			QUnit.skip(testName, fnTestBody);
+		} else {
+			QUnit.skip(testName, expected, fnTestBody, async);
+		}
+	}
+
+	// configure QUnit, modify test callback to include OPA start, and enqueue the test with QUnit
+	function callQUnit(sQUnitFn, aArgs, fnDone, fnFail) {
+		configQUnit();
+		// parse arguments passed to OPA adapter
+		var mTestBodyArgs = {
+			testName: aArgs[0],
+			expected: aArgs.length === 2 ? null : aArgs[1],
+			callback: aArgs.length === 2 ? aArgs[1] : aArgs[2],
+			async: aArgs[3]
+		};
+
+		if (isQUnit2() && typeof mTestBodyArgs.async !== "undefined") {
+			throw new Error("Qunit >=2.0 is used, which no longer supports the 'async' parameter for tests.");
+		}
+
+		// create and configure the callback to be executed by QUnit at test runtime
+		var fnTestBody = createTestBody(mTestBodyArgs, fnDone, fnFail);
+
+		// build arguments for the adapted QUnit function
+		var mQUnitFnArgs = [mTestBodyArgs.testName, fnTestBody, mTestBodyArgs.async];
+
+		if (!isQUnit2()) {
+			mQUnitFnArgs.splice(1, 0, mTestBodyArgs.expected);
+		}
+
+		// call adapted QUnit function
+		QUnit[sQUnitFn].apply(this, mQUnitFnArgs);
+	}
+
+	// include OPA configuration and queue execution in test callback
+	function createTestBody(mConfig, fnDone, fnFail) {
+		return function(assert) {
+			var fnAsync = assert.async();
+			Opa.config.testName = mConfig.testName;
+			Opa.assert = assert;
+			Opa5.assert = assert;
+
+			if (isQUnit2() && mConfig.expected !== null) {
+				assert.expect(mConfig.expected);
+			}
+
+			// fill in OPA queue
+			// preserve QUnit 'this' in order to access it from waitFor statements
+			mConfig.callback.call(this, Opa.config.arrangements, Opa.config.actions, Opa.config.assertions);
+
+			Opa.emptyQueue()
+				.done(function () {
+					fnDone(assert, fnAsync);
+				})
+				.fail(function (oOptions) {
+					fnFail(assert, fnAsync, oOptions);
+				});
+		};
+	}
+
+	function configQUnit() {
 		//Increase QUnit's timeout to 90 seconds to match default OPA timeouts
 		// is only done if there is no timeout or the timeout is the default of QUnit
 		if (!QUnit.config.testTimeout || QUnit.config.testTimeout === 30000) {
@@ -97,64 +233,16 @@ sap.ui.define([
 		QUnit.config.reorder = false;
 		// better chance that screenshots will capture the current failure
 		QUnit.config.scrolltop = false;
+	}
 
-		if (arguments.length === 2) {
-			callback = expected;
-			expected = null;
-		}
+	function resetOPA() {
+		Opa.assert = undefined;
+		Opa5.assert = undefined;
+	}
 
-		if ( QUnit.test.length === 2 && async === true ) {
-			throw new Error("Qunit >=2.0 is used, which no longer supports the 'async' parameter for tests.");
-		}
-
-		var testBody = function(assert) {
-			var fnStart = assert.async();
-			config.testName = testName;
-
-			// provide current "assert" object to the tests
-			Opa.assert = assert;
-			Opa5.assert = assert;
-
-			if ( QUnit.test.length === 2 && expected !== null ) {
-				assert.expect(expected);
-			}
-
-			callback.call(this, config.arrangements, config.actions, config.assertions);
-
-			Opa.emptyQueue()
-				.done(function() {
-					Opa._usageReport.opaEmpty();
-					Opa.assert = undefined;
-					Opa5.assert = undefined;
-					fnStart();
-				})
-				.fail(function (oOptions) {
-					Opa._usageReport.opaEmpty(oOptions);
-
-					// add the error message to QUnit test results
-					// will cause exception in case of QUnit timeout since the last test has already finished
-					// ("Cannot read property 'failedAssertions' of null")
-					assert.ok(false, oOptions.errorMessage);
-
-					Opa.assert = undefined;
-					Opa5.assert = undefined;
-					// let OPA finish before QUnit starts executing the next test
-					// call fnStart only if QUnit did not timeout
-					if (!oOptions.qunitTimeout) {
-						setTimeout(fnStart, 0);
-					}
-				});
-		};
-
-		if ( QUnit.test.length === 2 ) {
-			return QUnit.test(testName, testBody);
-		} else {
-			return QUnit.test(testName, expected, testBody, async);
-		}
-
-	};
-	// Export to global namespace to be backwards compatible
-	window.opaTest = opaTest;
+	function isQUnit2() {
+		return QUnit.test.length === 2;
+	}
 
 	QUnit.config.urlConfig.push({
 		id: "opaExecutionDelay",
