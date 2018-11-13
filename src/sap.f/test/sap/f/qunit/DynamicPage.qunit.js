@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/m/Breadcrumbs",
 	"sap/m/Link",
 	"sap/m/Panel",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/f/DynamicPageAccessibleLandmarkInfo"
 ],
 function (
 	$,
@@ -27,7 +28,8 @@ function (
 	Breadcrumbs,
 	Link,
 	Panel,
-	Button
+	Button,
+	DynamicPageAccessibleLandmarkInfo
 ) {
 	"use strict";
 
@@ -383,6 +385,31 @@ function (
 
 		// assert
 		assert.ok(!oStateChangeListener.called, "stateChange event was not fired");
+	});
+
+	QUnit.test("DynamicPage landmark info is set correctly", function (assert) {
+		var oLandmarkInfo = new DynamicPageAccessibleLandmarkInfo({
+			rootRole: "Region",
+			rootLabel: "Root",
+			contentRole: "Main",
+			contentLabel: "Content",
+			headerRole: "Banner",
+			headerLabel: "Header",
+			footerRole: "Region",
+			footerLabel: "Footer"
+		});
+
+		this.oDynamicPage.setLandmarkInfo(oLandmarkInfo);
+		Core.applyChanges();
+
+		assert.strictEqual(this.oDynamicPage.$().attr("role"), "region", "Root role is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$().attr("aria-label"), "Root", "Root label is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$("content").attr("role"), "main", "Content role is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$("content").attr("aria-label"), "Content", "Content label is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$("header").attr("role"), "banner", "Header role is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$("header").attr("aria-label"), "Header", "Header label is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$("footerWrapper").attr("role"), "region", "Footer role is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$("footerWrapper").attr("aria-label"), "Footer", "Footer label is set correctly.");
 	});
 
 	QUnit.module("DynamicPage - API - header initially snapped", {

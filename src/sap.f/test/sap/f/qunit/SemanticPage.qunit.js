@@ -2,12 +2,14 @@
 sap.ui.define([
 	"qunit/SemanticUtil",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/f/DynamicPageAccessibleLandmarkInfo"
 ],
 function (
 	SemanticUtil,
 	ResourceModel,
-	Core
+	Core,
+	DynamicPageAccessibleLandmarkInfo
 ) {
 	"use strict";
 
@@ -879,6 +881,31 @@ function (
 		// Assert
 		assert.equal(this.oSemanticPage.getSaveAsTileAction(), null, "saveAsTileAction aggregation does not exist anymore");
 		assert.ok(oSaveAsTileAction.bIsDestroyed, "oSaveAsTileAction button has been destroyed.");
+	});
+
+	QUnit.test("SemanticPage landmark info is set correctly", function (assert) {
+		var oLandmarkInfo = new DynamicPageAccessibleLandmarkInfo({
+			rootRole: "Region",
+			rootLabel: "Root",
+			contentRole: "Main",
+			contentLabel: "Content",
+			headerRole: "Banner",
+			headerLabel: "Header",
+			footerRole: "Region",
+			footerLabel: "Footer"
+		});
+
+		this.oSemanticPage.setLandmarkInfo(oLandmarkInfo);
+		Core.applyChanges();
+
+		assert.strictEqual(this.oSemanticPage.$("page").attr("role"), "region", "Root role is set correctly.");
+		assert.strictEqual(this.oSemanticPage.$("page").attr("aria-label"), "Root", "Root label is set correctly.");
+		assert.strictEqual(this.oSemanticPage.$("page-content").attr("role"), "main", "Content role is set correctly.");
+		assert.strictEqual(this.oSemanticPage.$("page-content").attr("aria-label"), "Content", "Content label is set correctly.");
+		assert.strictEqual(this.oSemanticPage.$("page-header").attr("role"), "banner", "Header role is set correctly.");
+		assert.strictEqual(this.oSemanticPage.$("page-header").attr("aria-label"), "Header", "Header label is set correctly.");
+		assert.strictEqual(this.oSemanticPage.$("page-footerWrapper").attr("role"), "region", "Footer role is set correctly.");
+		assert.strictEqual(this.oSemanticPage.$("page-footerWrapper").attr("aria-label"), "Footer", "Footer label is set correctly.");
 	});
 
 	/* --------------------------- SemanticPage Rendering ---------------------------------- */
