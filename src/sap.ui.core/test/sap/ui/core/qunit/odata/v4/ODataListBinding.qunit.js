@@ -202,7 +202,6 @@ sap.ui.define([
 		 */
 		getCacheMock : function () {
 			var oCache = {
-					hasPendingChangesForPath : function () { return false; },
 					read : function () {},
 					toString : function () { return "/service/EMPLOYEES"; }
 				};
@@ -3092,8 +3091,6 @@ sap.ui.define([
 			assert.strictEqual(oBinding.aContexts[-1], oContext, "Transient context");
 			assert.ok(bChangeFired, "Change event fired");
 
-			oCacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
-
 			// code under test
 			oBinding.hasPendingChanges();
 
@@ -4809,7 +4806,6 @@ sap.ui.define([
 			var oBinding = this.bindList("/EMPLOYEES"),
 				oBindingMock = this.mock(oBinding),
 				oCache = {
-					hasPendingChangesForPath : function () {return false;},
 					refreshSingle : function () {}
 				},
 				oCheckUpdateCall,
@@ -4830,14 +4826,10 @@ sap.ui.define([
 			oBinding.aContexts[-1] = {}; // to ensure that view and model coordinates differ
 			oBinding.oCachePromise = SyncPromise.resolve(oCache);
 
-			oBindingMock.expects("isRefreshable").withExactArgs().returns(true);
 			oBindingMock.expects("getGroupId").withExactArgs().returns("$auto");
 			oExpectation = this.mock(oCache).expects("refreshSingle")
 				.withExactArgs(new _GroupLock(sExpectedGroupId), oContext.iIndex, sinon.match.func)
 				.returns(oRefreshSinglePromise);
-			this.mock(oBinding).expects("hasPendingChangesInDependents")
-				.withExactArgs(sinon.match.same(oContext))
-				.returns(false);
 			this.mock(this.oModel).expects("getDependentBindings")
 				.withExactArgs(sinon.match.same(oContext))
 				.returns([oChild0, oChild1]);
@@ -4884,7 +4876,6 @@ sap.ui.define([
 				var oBinding = this.bindList("/EMPLOYEES"),
 					oBindingMock = this.mock(oBinding),
 					oCache = {
-						hasPendingChangesForPath : function () {return false;},
 						refreshSingleWithRemove : function () {}
 					},
 					oCacheRequestPromise,
@@ -4949,10 +4940,6 @@ sap.ui.define([
 					}
 				}));
 
-				oBindingMock.expects("isRefreshable").withExactArgs().returns(true);
-				oBindingMock.expects("hasPendingChangesForPath")
-					.withExactArgs(bTransient ? "/EMPLOYEES/-1" : "/EMPLOYEES('1')")
-					.returns(false);
 				oBindingMock.expects("getGroupId").returns("groupId");
 				this.mock(oGroupLock).expects("setGroupId").withExactArgs("groupId");
 				oExpectation = this.mock(oCache).expects("refreshSingleWithRemove")
@@ -4977,7 +4964,6 @@ sap.ui.define([
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
 			oCache = {
-				hasPendingChangesForPath : function () {return false;},
 				refreshSingle : function () {}
 			},
 			oContext,
@@ -4998,52 +4984,6 @@ sap.ui.define([
 
 		// code under test
 		oBinding.refreshSingle(oContext, oGroupLock);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("refreshSingle, error handling: binding is not refreshable", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES"),
-			oContext = {
-				iIndex : 43,
-				isRefreshable : function () {},
-				toString : function () { return "foo"; }
-			};
-
-		this.mock(oBinding).expects("isRefreshable").withExactArgs().returns(false);
-
-		assert.throws(function () {
-			// code under test
-			oBinding.refreshSingle(oContext, new _GroupLock());
-		}, new Error("Binding is not refreshable; cannot refresh entity: foo"));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("refreshSingle, error handling: has pending changes", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES"),
-			oBindingMock = this.mock(oBinding),
-			oContext = {
-				iIndex : 43,
-				getPath : function () { return "/EMPLOYEES('1')"; },
-				toString : function () { return "foo"; }
-			};
-
-		oBindingMock.expects("hasPendingChangesForPath")
-			.withExactArgs("/EMPLOYEES('1')").returns(true);
-
-		assert.throws(function () {
-			// code under test
-			oBinding.refreshSingle(oContext, new _GroupLock());
-		}, new Error("Cannot refresh entity due to pending changes: foo"));
-
-		oBindingMock.expects("hasPendingChangesForPath")
-			.withExactArgs("/EMPLOYEES('1')").returns(false);
-		oBindingMock.expects("hasPendingChangesInDependents")
-			.withExactArgs(sinon.match.same(oContext)).returns(true);
-
-		assert.throws(function () {
-			// code under test
-			oBinding.refreshSingle(oContext, new _GroupLock());
-		}, new Error("Cannot refresh entity due to pending changes: foo"));
 	});
 
 	//*********************************************************************************************
@@ -5070,8 +5010,6 @@ sap.ui.define([
 			oBindingMock.expects("fireDataReceived")
 				.exactly(bDataRequested ? 1 : 0)
 				.withExactArgs(bDataRequested ? {error : oError} : 0);
-			this.mock(oBinding).expects("hasPendingChangesForPath")
-				.withExactArgs("/EMPLOYEES('1')").returns(false);
 			oExpectation = this.mock(oCache).expects("refreshSingle")
 				.withExactArgs(sinon.match.same(oGroupLock), 42, sinon.match.func)
 				.returns(Promise.reject(oError));

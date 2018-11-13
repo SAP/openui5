@@ -1507,23 +1507,11 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which resolves with the entity when the entity is updated in the
 	 *   cache, or <code>undefined</code> if <code>bAllowRemoval</code> is set to true.
-	 * @throws {Error}
-	 *   If this binding is not refreshable or if this binding or bindings dependent on the given
-	 *   context have pending changes, or if the root binding of this binding is suspended.
 	 *
 	 * @private
 	 */
 	ODataListBinding.prototype.refreshSingle = function (oContext, oGroupLock, bAllowRemoval) {
 		var that = this;
-
-		if (!this.isRefreshable()) {
-			throw new Error("Binding is not refreshable; cannot refresh entity: " + oContext);
-		}
-
-		if (this.hasPendingChangesForPath(oContext.getPath())
-				|| this.hasPendingChangesInDependents(oContext)) {
-			throw new Error("Cannot refresh entity due to pending changes: " + oContext);
-		}
 
 		return this.oCachePromise.then(function (oCache) {
 			var bDataRequested = false,
