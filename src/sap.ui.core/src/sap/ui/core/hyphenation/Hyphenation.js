@@ -81,7 +81,36 @@ function (jQuery, ManagedObject, Log, Locale, LocaleData) {
 	 * @type {map}
 	 * @private
 	 */
-	var mLanguageNamesInEnglish = (new LocaleData(new Locale("en"))).getLanguages();
+	var mLanguageNamesInEnglish = {
+		"bg": "Bulgarian",
+		"ca": "Catalan",
+		"hr": "Croatian",
+		"cs": "Czech",
+		"da": "Danish",
+		"nl": "Dutch",
+		"en": "English",
+		"et": "Estonian",
+		"fi": "Finnish",
+		"fr": "French",
+		"de": "German",
+		"el": "Greek",
+		"hi": "Hindi",
+		"hu": "Hungarian",
+		"it": "Italian",
+		"lt": "Lithuanian",
+		"nb": "Norwegian Bokmål",
+		"no": "Norwegian",
+		"pl": "Polish",
+		"pt": "Portuguese",
+		"ru": "Russian",
+		"sr": "Serbian",
+		"sl": "Slovenian",
+		"es": "Spanish",
+		"sv": "Swedish",
+		"th": "Thai",
+		"tr": "Turkish",
+		"uk": "Ukrainian"
+	  };
 
 	var oBrowserSupportCSS = {};
 	var oSupportCheck = {};
