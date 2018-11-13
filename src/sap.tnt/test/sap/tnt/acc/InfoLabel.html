@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Test Page for sap.tntInfoLabel</title>
+
+    <style>
+        .vBoxBorder {
+            border: 1px solid black;
+        }
+    </style>
+    <script src="shared-config.js"></script>
+    <script
+            src="../../../../resources/sap-ui-core.js"
+            id="sap-ui-bootstrap"
+            data-sap-ui-libs="sap.tnt, sap.m">
+    </script>
+    <script>
+
+        sap.ui.getCore().attachInit(function () {
+            var oData = {
+                infoLabels: [
+                    {text: "default color scheme"},
+                    {text: "color scheme 1", colorScheme: 1},
+                    {text: "color scheme 2", colorScheme: 2}
+                ]
+            };
+
+            var oModel = new sap.ui.model.json.JSONModel();
+            oModel.setData(oData);
+
+            sap.ui.getCore().setModel(oModel);
+
+            var oInfoLabelTemplate = new sap.tnt.InfoLabel({
+                text: "{text}",
+                colorScheme: "{colorScheme}"
+            });
+
+            var initialPage = new sap.m.Page("infoLabelPage", {
+                title: "sap.tnt.InfoLabel Control Test Page",
+                content: [
+                    new sap.m.VBox("vb1", {
+                        items: {
+                            path: "/infoLabels",
+                            template: oInfoLabelTemplate
+                        },
+                        width: "200px"
+                    }).addStyleClass("vBoxBorder")
+                ]
+            });
+
+            var app = new sap.m.App("myApp", {initialPage: "infoLabelPage"});
+            app.placeAt("body");
+            app.addPage(initialPage);
+        });
+    </script>
+</head>
+
+<body id="body" class="sapUiBody" role="application">
+</body>
+
+</html>
