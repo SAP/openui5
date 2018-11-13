@@ -5,9 +5,9 @@
  * List Card
  */
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/List', 'sap/m/StandardListItem', 'sap/ui/base/ManagedObject'],
-	function (jQuery, Control, JSONModel, List, StandardListItem, ManagedObject) {
+	function (jQuery, Control, JSONModel, sapMList, StandardListItem, ManagedObject) {
 		"use strict";
-		var ListCard = Control.extend("sap.f.cards.ListCard", {
+		var List = Control.extend("sap.f.cards.content.List", {
 			metadata: {
 				properties: {
 					/**
@@ -53,7 +53,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/model/json/JS
 					 * }
 					 * </pre>
 					 */
-					listdata: {
+					data: {
 						type: "object"
 					},
 					/**
@@ -71,7 +71,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/model/json/JS
 					 *     "type": "string",
 					 * }
 					 */
-					fields: {
+					item: {
 						type: "object"
 					}
 				},
@@ -90,9 +90,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/model/json/JS
 				oRm.write("</div>");
 			}
 		});
-		ListCard.prototype.init = function () {
+		List.prototype.init = function () {
 			//create a list control
-			this.oList = new List({
+			this.oList = new sapMList({
 				id: this.getId() + "-list",
 				growing: false,
 				showNoData: false,
@@ -110,9 +110,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/model/json/JS
 			this.setAggregation("_content", this.oList);
 			var oModel = new JSONModel();
 			this.setModel(oModel);
-			this._oItemTemplate = new StandardListItem();
+			this._oItemTemplate = new StandardListItem({
+				iconDensityAware: false,
+				iconInset: false
+			});
 		};
-		ListCard.prototype.exit = function () {
+		List.prototype.exit = function () {
 			if (this._oItemTemplate) {
 				this._oItemTemplate.destroy();
 				this._oItemTemplate = null;
@@ -123,19 +126,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/model/json/JS
 				this.oList = null;
 			}
 		};
-		ListCard.prototype.destroy = function () {
+		List.prototype.destroy = function () {
 			this.setAggregation("_content", null);
 			this.setModel(null);
 			return Control.prototype.destroy.apply(this, arguments);
 		};
 
-		ListCard.prototype.setFields = function (mFields) {
-			this.setProperty("fields", mFields, true);
-			if (!mFields) {
+		List.prototype.setItem = function (mItems) {
+			this.setProperty("item", mItems, true);
+			if (!mItems) {
 				return this;
 			}
-			this._oItemTemplate.bindProperty("title", ManagedObject.bindingParser(mFields["title"].value));
-			this._oItemTemplate.bindProperty("description", ManagedObject.bindingParser(mFields["description"].value));
+			this._oItemTemplate.bindProperty("title", ManagedObject.bindingParser(mItems["title"].value));
+			this._oItemTemplate.bindProperty("description", ManagedObject.bindingParser(mItems["description"].value));
+			this._oItemTemplate.bindProperty("icon", ManagedObject.bindingParser(mItems["icon"].value));
 			var oList = this.getAggregation("_content");
 			if (oList.isBound("items")) {
 				oList.bindItems({
@@ -146,17 +150,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/model/json/JS
 			return this;
 		};
 
-		ListCard.prototype.setListdata = function (oListData) {
-			this.setProperty("listdata", oListData, true);
+		List.prototype.setData = function (oListData) {
+			this.setProperty("data", oListData, true);
 			if (!oListData) {
 				return this;
 			}
 			//handling the request
 			var oRequest = oListData.request,
-				oResponse = oListData.response;
-			if (oResponse.json && !oRequest) {
-				this.getModel().setData(oResponse.json);
+				oJson = oListData.json;
+
+			if (oJson && !oRequest) {
+				this.getModel().setData(oJson);
 			}
+			//Todo fix request and adapt the new response
 			if (oRequest) {
 				//create url
 				var oUrl = oRequest.url,
@@ -175,14 +181,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/model/json/JS
 				}
 				this.getModel().loadData(sUrl, oRequest.parameters, true, oRequest.method || "GET", false, true, mHeaders);
 			}
-			if (oResponse.path) {
-				this.getAggregation("_content").bindItems({
-					path: oResponse.path,
-					template: this._oItemTemplate
-				});
-			}
+
+			this.getAggregation("_content").bindItems({
+				path: "/",
+				template: this._oItemTemplate
+			});
+
 			return this;
 		};
 
-	return ListCard;
-});
+		return List;
+	});

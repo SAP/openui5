@@ -1,0 +1,24 @@
+<mvc:View
+        xmlns="sap.m"
+        xmlns:mvc="sap.ui.core.mvc"
+        xmlns:f="sap.f"
+        displayBlock="true">
+
+    <Page title="{i18n>appTitle}">
+
+        <subHeader>
+            <Toolbar>
+                <ToolbarSpacer/>
+                <Title text="List Content Card "/>
+                <ToolbarSpacer/>
+            </Toolbar>
+        </subHeader>
+
+        <content>
+
+            <Panel>
+                <f:Card id="listCount" manifest="{manifests>/listContent/card13}"/>
+            </Panel>
+        </content>
+    </Page>
+</mvc:View>

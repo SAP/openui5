@@ -27,7 +27,7 @@ sap.ui.define(["sap/ui/base/DataType",
 		controls: [
 			"sap.f.Avatar",
 			"sap.f.Card",
-			"sap.f.cards.ListCard",
+			"sap.f.cards.content.List",
 			"sap.f.DynamicPage",
 			"sap.f.DynamicPageHeader",
 			"sap.f.DynamicPageTitle",
