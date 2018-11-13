@@ -9,14 +9,19 @@ sap.ui.define([
 	"sap/ui/core/Manifest",
 	"sap/f/CardManifest",
 	"sap/base/Log",
-	"sap/f/CardRenderer"
+	"sap/f/CardRenderer",
+	"sap/m/Text",
+	"sap/f/Avatar"
 ], function (
 	library,
 	Control,
 	ComponentContainer,
 	Manifest,
 	CardManifest,
-	Log
+	Log,
+	CardRenderer,
+	Text,
+	Avatar
 ) {
 	"use strict";
 	/**
@@ -48,60 +53,78 @@ sap.ui.define([
 	 * @alias sap.f.Card
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	//raster size
+		//raster size
 	var Card = Control.extend("sap.f.Card", /** @lends sap.f.Card.prototype */ {
-		metadata: {
-			library: "sap.f",
-			properties: {
+			metadata: {
+				library: "sap.f",
+				properties: {
 
-				/**
-				 * Reference path to the manifest as string or a JSON object representing the manifest data for the card
-				 * and the card content.
-				 * Properties that are set directly on the Card will win over the settings in the manifest.
-				 * Example manifest JSON for a ListCard
-				 * <pre>
-				 * {
-				 *    "sap.app" : {
-				 *        "type" : "card"
-				 *    }
-				 *    "sap.card" : {
-				 *       "title": "Card Title",
-				 *       "subTitle": "Card Subtitle",
-				 *       "icon": "sap-icon://accept",
-				 *       "iconColor" : "green",
-				 *       //other properties from the Card interface (metadata)
-				 *       "type": "ListCard",
-				 *       "settings": {
-				 *          //settings for the card type
-				 *       }
-				 *    }
-				 * }</pre>
-				 */
-				manifest: {
-					type: "any",
-					defaultValue: ""
-				}
+					/**
+					 * Reference path to the manifest as string or a JSON object representing the manifest data for the card
+					 * and the card content.
+					 * Properties that are set directly on the Card will win over the settings in the manifest.
+					 * Example manifest JSON for a ListCard
+					 * <pre>
+					 * {
+					 *    "sap.app" : {
+					 *        "type" : "card"
+					 *    }
+					 *    "sap.card" : {
+					 *       "title": "Card Title",
+					 *       "subTitle": "Card Subtitle",
+					 *       "icon": "sap-icon://accept",
+					 *       "iconColor" : "green",
+					 *       //other properties from the Card interface (metadata)
+					 *       "type": "ListCard",
+					 *       "settings": {
+					 *          //settings for the card type
+					 *       }
+					 *    }
+					 * }</pre>
+					 */
+					manifest: {
+						type: "any",
+						defaultValue: ""
+					}
 
-			},
-			aggregations: {
-				/**
-				 * @private
-				 */
-				_content: {
-					multiple: false,
-					visibility: "hidden"
+				},
+				aggregations: {
+					/**
+					 * @private
+					 */
+					_content: {
+						multiple: false,
+						visibility: "hidden"
+					}
+
+				},
+				events: {
+					/*
+					ready: {},
+					contentRequested: {},
+					contentReady: {},
+					*/
 				}
-			},
-			events: {
-				/*
-				ready: {},
-				contentRequested: {},
-				contentReady: {},
-				*/
 			}
-		}
-	});
+		});
 
+	/**
+	 * Initializes the control
+	 * @private
+	 */
+	Card.prototype.init = function() {
+	};
+
+	/**
+	 * Called on destroying the control
+	 * @private
+	 */
+	Card.prototype.exit = function () {
+		if (this._oCardManifest) {
+			this._oCardManifest.destroy();
+			this._oCardManifest = null;
+		}
+	};
 	/**
 	 * Looks up the a dom element for a given selector within the card exluding the content node.
 	 * If found calls the fnModify passing the dom element
@@ -195,7 +218,10 @@ sap.ui.define([
 	};
 
 	Card.prototype.applyManifestSettings = function (sComponentName) {
-		this.setPropertyFromManifest("title");
+
+		this._createTitle();
+		this._createSubTitle();
+		this._createAvatar();
 		this.setPropertyFromManifest("subTitle");
 		this.setPropertyFromManifest("icon");
 		this.setPropertyFromManifest("iconColor");
@@ -219,13 +245,52 @@ sap.ui.define([
 		} else if (sCardType === "ListCard") {
 			sap.ui.require(["sap/f/cards/ListCard"], function (ListCard) {
 				var mSettings = this._oCardManifest.get("sap.card/settings");
-				mSettings = jQuery.extend(true, {}, mSettings);
-				var oContent = new ListCard(mSettings);
+				var oClonedSettings = jQuery.extend(true, {}, mSettings);
+				var oContent = new ListCard(oClonedSettings);
 				this.setContent(oContent);
 				this.setBusy(false);
 			}.bind(this));
 		}
 	};
 
+	Card.prototype._createTitle = function () {
+		if (!this._oTitle) {
+			this._oTitle = new Text({
+				id: this.getId() + "-title",
+				maxLines: 3,
+				text: this._oCardManifest.get("sap.card/title")
+			}).addStyleClass("sapFCardTitle");
+		}
+
+		return this;
+	};
+
+	Card.prototype._createSubTitle = function () {
+		if (!this._oSubTitle) {
+			this._oSubTitle = new Text({
+				id: this.getId() + "-subTitle",
+				maxLines: 3,
+				text: this._oCardManifest.get("sap.card/subTitle")
+			}).addStyleClass("sapFCardSubtitle");
+		}
+
+		return this;
+	};
+
+	Card.prototype._createAvatar = function () {
+		if (!this._oAvatar) {
+			this._oAvatar = new Avatar({
+				id: this.getId() + "-avatar",
+				src: this._oCardManifest.get("sap.card/icon/src")
+			}).addStyleClass("sapFCardIcon");
+			var sDisplayShape = this._oCardManifest.get("sap.card/icon/displayShape");
+
+			if (sDisplayShape) {
+				this._oAvatar.setDisplayShape(sDisplayShape);
+			}
+		}
+
+		return this;
+	};
 	return Card;
 });

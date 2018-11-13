@@ -30,7 +30,6 @@
 					<Text text="The Grid is configured by the Fiori 3 specification."/>
 				</VBox>
 			</Panel>
-
 			<Panel>
 				<Label text="Grid Auto Flow - Dense (If the cards should try to fill empty spaces in the grid)"/>
 				<Switch change="onSwitchChange" state="true"/>

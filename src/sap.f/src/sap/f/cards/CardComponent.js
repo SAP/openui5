@@ -6,7 +6,6 @@
  */
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'], function (jQuery, UIComponent) {
 	"use strict";
-
 	var CardComponent = UIComponent.extend("sap.f.cards.CardComponent", {
 		constructor: function (mSettings) {
 			UIComponent.apply(this, arguments);
@@ -14,11 +13,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'], function (jQuery
 		},
 		metadata: {}
 	});
-
 	CardComponent.prototype.applySettings = function () {
 		UIComponent.prototype.applySettings.apply(this, arguments);
 	};
-
 	CardComponent.prototype.createContent = function () {
 		return UIComponent.prototype.createContent.apply(this, arguments);
 	};
@@ -35,6 +32,5 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'], function (jQuery
 			oRenderManager.renderControl(oControl);
 		}
 	};
-
 	return CardComponent;
 });
