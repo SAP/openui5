@@ -26,7 +26,7 @@ sap.ui.define(['sap/ui/core/LayoutData', 'sap/ui/layout/library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @since 1.54.0
+	 * @since 1.56.0
 	 * @alias sap.ui.layout.form.ColumnContainerData
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
