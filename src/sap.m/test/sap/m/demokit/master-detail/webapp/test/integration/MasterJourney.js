@@ -10,7 +10,7 @@ sap.ui.define([
 
 	opaTest("Should see the master list with all entries", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartTheApp();
+		Given.iStartMyApp();
 
 		// Assertions
 		Then.onTheMasterPage.iShouldSeeTheList().
@@ -113,7 +113,7 @@ sap.ui.define([
 		Then.onTheMasterPage.theListShouldContainAGroupHeader();
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 });

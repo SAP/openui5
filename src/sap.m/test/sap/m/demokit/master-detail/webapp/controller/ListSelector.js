@@ -1,3 +1,4 @@
+/* global Promise */
 sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/base/Log"

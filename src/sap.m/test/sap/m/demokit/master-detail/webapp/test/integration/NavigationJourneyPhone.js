@@ -12,7 +12,7 @@ sap.ui.define([
 
 	opaTest("Should see the objects list", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartTheApp();
+		Given.iStartMyApp();
 
 		// Assertions
 		Then.onTheMasterPage.iShouldSeeTheList();
@@ -42,8 +42,10 @@ sap.ui.define([
 			and.iPressOnTheObjectAtPosition(2);
 
 		// Assertions
-		Then.onTheDetailPage.iShouldSeeTheRememberedObject().
-			and.iTeardownMyAppFrame();
+		Then.onTheDetailPage.iShouldSeeTheRememberedObject();
+
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
 
 });

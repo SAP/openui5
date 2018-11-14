@@ -1,18 +1,20 @@
 <mvc:View
 	controllerName="sap.ui.demo.masterdetail.controller.App"
-	xmlns:mvc="sap.ui.core.mvc"
 	displayBlock="true"
-	xmlns="sap.f"
-	xmlns:m="sap.m"
-	height="100%">
-	<m:App
-		id="app"
-		busy="{appView>/busy}"
-		busyIndicatorDelay="{appView>/delay}">
-		<FlexibleColumnLayout
-			id="layout"
-			layout="{appView>/layout}"
-			backgroundDesign="Translucent">
-		</FlexibleColumnLayout>
-	</m:App>
+	height="100%"
+	xmlns="sap.m"
+	xmlns:f="sap.f"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Shell appWidthLimited="false">
+		<App
+			id="app"
+			busy="{appView>/busy}"
+			busyIndicatorDelay="{appView>/delay}">
+			<f:FlexibleColumnLayout
+				id="layout"
+				layout="{appView>/layout}"
+				backgroundDesign="Translucent">
+			</f:FlexibleColumnLayout>
+		</App>
+	</Shell>
 </mvc:View>

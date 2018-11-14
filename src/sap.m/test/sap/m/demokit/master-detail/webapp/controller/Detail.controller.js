@@ -1,6 +1,6 @@
 /*global location */
 sap.ui.define([
-		"sap/ui/demo/masterdetail/controller/BaseController",
+		"./BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/demo/masterdetail/model/formatter"
 	], function (BaseController, JSONModel, formatter) {

@@ -1,10 +1,7 @@
 /*global QUnit,sinon*/
-/*eslint-env browser*/
 
 sap.ui.define([
-	"sap/ui/demo/masterdetail/controller/ListSelector",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
+	"sap/ui/demo/masterdetail/controller/ListSelector"
 ], function(ListSelector) {
 	"use strict";
 

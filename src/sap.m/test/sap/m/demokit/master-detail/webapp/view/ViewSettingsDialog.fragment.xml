@@ -4,7 +4,7 @@
 
 	<ViewSettingsDialog
 			id="viewSettingsDialog"
-			confirm="onConfirmViewSettingsDialog">
+			confirm=".onConfirmViewSettingsDialog">
 		<sortItems>
 			<ViewSettingsItem
 				text="{i18n>masterSort1}"

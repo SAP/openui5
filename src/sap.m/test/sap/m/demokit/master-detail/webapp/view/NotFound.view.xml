@@ -1,7 +1,7 @@
 <mvc:View
 	controllerName="sap.ui.demo.masterdetail.controller.NotFound"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m">
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
 
 	<MessagePage
 		id="page"
@@ -9,7 +9,7 @@
 		text="{i18n>notFoundText}"
 		icon="sap-icon://document"
 		showNavButton="true"
-		navButtonPress="onNavBack">
+		navButtonPress=".onNavBack">
 	</MessagePage>
 
 </mvc:View>
