@@ -11,7 +11,7 @@
 				<content>
 					<Label text="First Name:"/>
 					<Input value="{empFirstName}"/>
-					<Label text="First Name:"/>
+					<Label text="Last Name:"/>
 					<Input value="{empLastName}"/>
 					<Label text="Salary:"/>
 					<Input value="{salary}" description="EUR"/>
