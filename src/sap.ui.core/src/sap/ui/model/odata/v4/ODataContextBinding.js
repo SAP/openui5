@@ -252,6 +252,8 @@ sap.ui.define([
 						sResponsePredicate = _Helper.getPrivateAnnotation(
 							oResponseEntity, "predicate");
 						if (sContextPredicate === sResponsePredicate) {
+							// this is synchronous, because the entity to be patched is available in
+							// the context (we already read its predicate)
 							that.oContext.patch(oResponseEntity);
 						}
 
