@@ -1,7 +1,5 @@
 /*global QUnit*/
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 		"sap/ui/core/Title",
 		"sap/ui/core/mvc/View",
 		"sap/ui/layout/changeHandler/AddFormField",
@@ -20,8 +18,6 @@ sap.ui.require([
 		XmlTreeModifier
 	) {
 		'use strict';
-
-		QUnit.start();
 
 		QUnit.module("AddField for Form", {
 			beforeEach: function () {

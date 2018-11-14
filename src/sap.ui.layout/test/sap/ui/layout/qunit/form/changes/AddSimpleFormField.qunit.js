@@ -1,7 +1,5 @@
 /*global QUnit*/
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/Title",
 	"sap/m/Toolbar",
 	"sap/ui/core/mvc/View",
@@ -10,9 +8,11 @@ sap.ui.require([
 	"sap/ui/commons/TextView",
 	"sap/ui/fl/Change",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/core/util/reflection/XmlTreeModifier"
+	"sap/ui/core/util/reflection/XmlTreeModifier",
+	"sap/m/Label",
+	"sap/m/Input"
 ],
-function (
+function(
 	Title,
 	Toolbar,
 	View,
@@ -21,11 +21,11 @@ function (
 	TextView,
 	Change,
 	JsControlTreeModifier,
-	XmlTreeModifier
+	XmlTreeModifier,
+	Label,
+	Input
 ) {
 	'use strict';
-
-	QUnit.start();
 
 	QUnit.module("AddField for SimpleForm", {
 		beforeEach: function () {
@@ -148,8 +148,8 @@ function (
 
 	QUnit.test('Add smart field to SimpleForm with toolbar instead of title', function (assert) {
 		this.oToolbar = new Toolbar("NewGroup");
-		this.oLabel0 = new sap.m.Label({id : "Label0",  text : "Label 0"});
-		this.oInput0 = new sap.m.Input({id : "Input0"});
+		this.oLabel0 = new Label({id : "Label0",  text : "Label 0"});
+		this.oInput0 = new Input({id : "Input0"});
 
 		this.oSimpleForm = new SimpleForm({content : [
 			this.oToolbar, this.oLabel0, this.oInput0
@@ -187,8 +187,8 @@ function (
 	QUnit.test('Add smart field to second group of SimpleForm', function (assert) {
 		this.oToolbar = new Toolbar("NewGroup");
 		this.oTitle = new Title("AnotherGroup");
-		this.oLabel0 = new sap.m.Label({id : "Label0",  text : "Label 0"});
-		this.oInput0 = new sap.m.Input({id : "Input0"});
+		this.oLabel0 = new Label({id : "Label0",  text : "Label 0"});
+		this.oInput0 = new Input({id : "Input0"});
 
 		this.oSimpleForm = new SimpleForm({content : [
 			this.oToolbar, this.oLabel0, this.oInput0, this.oTitle
@@ -226,8 +226,8 @@ function (
 	QUnit.test('Add smart field to first group of SimpleForm with two groups', function (assert) {
 		this.oToolbar = new Toolbar("NewGroup");
 		this.oTitle = new Title("AnotherGroup");
-		this.oLabel0 = new sap.m.Label({id : "Label0",  text : "Label 0"});
-		this.oInput0 = new sap.m.Input({id : "Input0"});
+		this.oLabel0 = new Label({id : "Label0",  text : "Label 0"});
+		this.oInput0 = new Input({id : "Input0"});
 
 		this.oSimpleForm = new SimpleForm({content : [
 			this.oToolbar, this.oLabel0, this.oInput0, this.oTitle
@@ -263,8 +263,8 @@ function (
 	});
 
 	QUnit.test('Add smart field to SimpleForm without title/toolbar', function (assert) {
-		this.oLabel0 = new sap.m.Label({id : "Label0",  text : "Label 0"});
-		this.oInput0 = new sap.m.Input({id : "Input0"});
+		this.oLabel0 = new Label({id : "Label0",  text : "Label 0"});
+		this.oInput0 = new Input({id : "Input0"});
 
 		this.oSimpleForm = new SimpleForm({content : [
 			this.oLabel0, this.oInput0
