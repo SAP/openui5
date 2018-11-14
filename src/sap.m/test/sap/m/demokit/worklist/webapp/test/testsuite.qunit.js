@@ -1,4 +1,5 @@
 /* global window, parent, location */
+
 // eslint-disable-next-line sap-no-global-define
 window.suite = function() {
 	"use strict";
