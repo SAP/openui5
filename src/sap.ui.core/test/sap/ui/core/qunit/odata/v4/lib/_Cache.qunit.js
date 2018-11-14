@@ -83,6 +83,15 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Cache", {
 		beforeEach : function () {
+			var oModelInterface = {
+					fnFetchMetadata : function () {
+						throw new Error("Unsupported operation");
+					},
+					lockGroup : function () {
+						throw new Error("Unsupported operation");
+					}
+				};
+
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
@@ -94,7 +103,9 @@ sap.ui.define([
 				getGroupSubmitMode : function (sGroupId) {
 					return defaultGetGroupProperty(sGroupId);
 				},
-				getModelInterface : function () {},
+				getModelInterface : function () {
+					return oModelInterface;
+				},
 				getServiceUrl : function () { return "/~/"; },
 				hasChanges : function () {},
 				isActionBodyOptional : function () {},
@@ -937,7 +948,6 @@ sap.ui.define([
 				oGroupLockClone = new _GroupLock(sGroupId),
 				oGroupLockMock = this.mock(oGroupLock),
 				oHelperMock = this.mock(_Helper),
-				oModelInterface = {lockGroup : function () {}},
 				oOldData = {},
 				oPatchResult = {
 					"@odata.etag" : 'W/"20010101000000.0000000"',
@@ -1046,9 +1056,7 @@ sap.ui.define([
 					assert.strictEqual(oResult, oError);
 				});
 
-			this.oRequestorMock.expects("getModelInterface").withExactArgs()
-				.returns(oModelInterface);
-			this.mock(oModelInterface).expects("lockGroup")
+			this.mock(this.oRequestor.getModelInterface()).expects("lockGroup")
 				.withExactArgs(sGroupId, true, sinon.match.same(oCache))
 				.returns(oRequestLock);
 
@@ -1189,7 +1197,6 @@ sap.ui.define([
 				sFullPath = "path/to/entity/Address/City",
 				oGroupLock = new _GroupLock("group"),
 				oHelperMock = this.mock(_Helper),
-				oModelInterface = {lockGroup : function () {}},
 				oOldData = {},
 				oPatchResult = {},
 				oPatchPromise = Promise.reject(oError1),
@@ -1314,9 +1321,7 @@ sap.ui.define([
 					assert.strictEqual(oResult, oError2);
 				});
 
-			this.oRequestorMock.expects("getModelInterface").withExactArgs()
-				.returns(oModelInterface);
-			this.mock(oModelInterface).expects("lockGroup")
+			this.mock(this.oRequestor.getModelInterface()).expects("lockGroup")
 				.withExactArgs("group", true, sinon.match.same(oCache))
 				.returns(oRequestLock);
 
@@ -1341,7 +1346,6 @@ sap.ui.define([
 			fnError = this.spy(),
 			oError = new Error(),
 			oGroupLock = new _GroupLock("group"),
-			oModelInterface = {lockGroup : function () {}},
 			oPatchPromise = Promise.reject(oError),
 			oRequestCall,
 			oRequestLock = {unlock : function () {}},
@@ -1380,9 +1384,7 @@ sap.ui.define([
 				assert.strictEqual(oResult, oError);
 			});
 
-		this.oRequestorMock.expects("getModelInterface").withExactArgs()
-			.returns(oModelInterface);
-		this.mock(oModelInterface).expects("lockGroup")
+		this.mock(this.oRequestor.getModelInterface()).expects("lockGroup")
 			.withExactArgs("group", true, sinon.match.same(oCache))
 			.returns(oRequestLock);
 
@@ -4598,7 +4600,9 @@ sap.ui.define([
 				oVisitResponseExpectation;
 
 			this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
-					sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths))
+					sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
+					sinon.match.same(this.oRequestor.getModelInterface().fnFetchMetadata),
+					"/Employees/$Type")
 				.returns(mMergedQueryOptions);
 			this.oRequestorMock.expects("buildQueryString")
 				.withExactArgs("/Employees", sinon.match.same(mMergedQueryOptions), false, true)
@@ -4635,7 +4639,9 @@ sap.ui.define([
 			aPaths = ["ROOM_ID"];
 
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
-				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths))
+				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
+				sinon.match.same(this.oRequestor.getModelInterface().fnFetchMetadata),
+				"/Employees/$Type")
 			.returns(null);
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
@@ -4660,7 +4666,9 @@ sap.ui.define([
 			aPaths = ["ROOM_ID"];
 
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
-				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths))
+				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
+				sinon.match.same(this.oRequestor.getModelInterface().fnFetchMetadata),
+				"/Employees/$Type")
 			.returns(mMergedQueryOptions);
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs("/Employees", sinon.match.same(mMergedQueryOptions), false, true)
@@ -4686,7 +4694,9 @@ sap.ui.define([
 			aPaths = ["B/C"];
 
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
-				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths))
+				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
+				sinon.match.same(this.oRequestor.getModelInterface().fnFetchMetadata),
+				"/Employees/$Type")
 			.throws(oError);
 
 		assert.throws(function () {

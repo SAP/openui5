@@ -1835,7 +1835,9 @@ sap.ui.define([
 	 * @public
 	 */
 	SingleCache.prototype.requestSideEffects = function (oGroupLock, aPaths, sResourcePath) {
-		var mQueryOptions = _Helper.intersectQueryOptions(this.mQueryOptions, aPaths),
+		var mQueryOptions = _Helper.intersectQueryOptions(this.mQueryOptions, aPaths,
+				this.oRequestor.getModelInterface().fnFetchMetadata,
+				this.sMetaPath + "/$Type"), // add $Type because of return value context
 			that = this;
 
 		if (mQueryOptions === null) {

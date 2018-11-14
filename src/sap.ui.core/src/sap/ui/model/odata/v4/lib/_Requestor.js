@@ -561,7 +561,7 @@ sap.ui.define([
 	 * Fetches the metadata instance for the given meta path.
 	 *
 	 * @param {string} sMetaPath
-	 *   The meta path, for example "SalesOrderList/SO_2_BP"
+	 *   The meta path, for example "/SalesOrderList/SO_2_BP"
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved with the metadata instance for the given meta path
 	 *
@@ -575,7 +575,7 @@ sap.ui.define([
 	 * Fetches the type of the given meta path from the metadata.
 	 *
 	 * @param {string} sMetaPath
-	 *   The meta path, e.g. SalesOrderList/SO_2_BP
+	 *   The meta path, e.g. "/SalesOrderList/SO_2_BP"
 	 * @param {boolean} [bAsName]
 	 *   If <code>true</code>, the name of the type is delivered instead of the type itself. This
 	 *   must be used when asking for a property type to avoid that the function logs an error

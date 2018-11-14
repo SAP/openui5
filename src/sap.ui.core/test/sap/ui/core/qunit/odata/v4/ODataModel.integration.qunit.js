@@ -8901,20 +8901,12 @@ sap.ui.define([
 			that.oView.byId("name").getBinding("text").setValue("TAFKAP");
 
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
-				+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
-				+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
-					"ArtistID" : "42",
+				+ "?$select=DraftAdministrativeData"
+				+ "&$expand=DraftAdministrativeData($select=InProcessByUser)", {
 					"DraftAdministrativeData" : {
-						"DraftID" : "23",
 						"InProcessByUser" : "bar"
-					},
-					"IsActiveEntity" : false,
-					"Messages" : [],
-					"Name" : "TAFKAP"
+					}
 				})
-				.expectChange("id", "42") //TODO @see CPOUI5UISERVICESV3-1572
-				.expectChange("isActive", "No") //TODO @see CPOUI5UISERVICESV3-1572
-				.expectChange("name", "TAFKAP") //TODO @see CPOUI5UISERVICESV3-1572
 				.expectChange("inProcessByUser", "bar");
 				// no change in messages
 
@@ -8925,8 +8917,8 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			assert.strictEqual(fnDataReceived.callCount, 1, "dataReceived");
-			assert.strictEqual(fnDataRequested.callCount, 1, "dataRequested");
+			assert.strictEqual(fnDataReceived.callCount, 0, "no dataReceived");
+			assert.strictEqual(fnDataRequested.callCount, 0, "no dataRequested");
 
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
 					+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
@@ -8955,8 +8947,8 @@ sap.ui.define([
 			var oOperation = that.oModel.bindContext("special.cases.ActivationAction(...)",
 					that.oView.getBindingContext(), {$$inheritExpandSelect : true});
 
-			assert.strictEqual(fnDataReceived.callCount, 2, "dataReceived");
-			assert.strictEqual(fnDataRequested.callCount, 2, "dataRequested");
+			assert.strictEqual(fnDataReceived.callCount, 1, "dataReceived");
+			assert.strictEqual(fnDataRequested.callCount, 1, "dataRequested");
 			that.expectRequest({
 					method : "POST",
 					url : "Artists(ArtistID='42',IsActiveEntity=false)"
@@ -10205,17 +10197,13 @@ sap.ui.define([
 					batchNo : 1,
 					method : "GET",
 					url : "Artists(ArtistID='42',IsActiveEntity=true)"
-					+ "?$select=ArtistID,IsActiveEntity"
-					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)"
+						+ "?$select=DraftAdministrativeData"
+						+ "&$expand=DraftAdministrativeData($select=InProcessByUser)"
 				}, {
-					"ArtistID" : "42",
 					"DraftAdministrativeData" : {
-						"DraftID" : "23",
 						"InProcessByUser" : "bar"
 					}
-//					"IsActiveEntity" : true
 				})
-				.expectChange("id", "42") //TODO @see CPOUI5UISERVICESV3-1572
 				.expectChange("inProcessByUser", "bar")
 				.expectChange("inProcessByUser2", "bar");
 

@@ -13,6 +13,43 @@ sap.ui.define([
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
 
+	/**
+	 * Returns a mock "fnFetchMetadata" (see _Requestor#getModelInterface) which returns metadata
+	 * for a meta path according to the given map.
+	 *
+	 * @param {object} mMetaPath2Type
+	 *   A map from meta path to symbolic type, for example
+	 *   <code>{"/Me/A" : "", "/Me/to1" : "1", "/Me/toN" : "N"}</code>, where "" means structural
+	 *   property, "N" means collection-valued navigation property and "1" means navigation property
+	 * @returns {function}
+	 *   "fnFetchMetadata"
+	 */
+	function getFetchMetadata(mMetaPath2Type) {
+		return function (sMetaPath) {
+			switch (mMetaPath2Type[sMetaPath]) {
+				case "":
+					return SyncPromise.resolve({
+						$kind : "Property"
+					});
+
+				case "1":
+					return SyncPromise.resolve({
+						$kind : "NavigationProperty"
+//						$IsCollection : false
+					});
+
+				case "N":
+					return SyncPromise.resolve({
+						$kind : "NavigationProperty",
+						$IsCollection : true
+					});
+
+				default:
+					throw new Error(sMetaPath);
+			}
+		};
+	}
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Helper", {
 		beforeEach : function () {
@@ -1436,76 +1473,305 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("addChildrenWithAncestor: no ancestors", function (assert) {
+		var aAncestors = [],
+			mChildren = {};
+
+		this.mock(aAncestors).expects("indexOf").never(); // no need to ask :-)
+
+		// code under test
+		_Helper.addChildrenWithAncestor(["A"], aAncestors, mChildren);
+
+		assert.deepEqual(mChildren, {});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("intersectQueryOptions: real intersection", function (assert) {
-		var aCacheSelects = [],
+		var aCacheSelects = [/*"A", "B/b", "C", ...*/],
 			mCacheQueryOptions = {
-				$expand : {"B" : null},
+				$expand : {"to1" : null},
 				$select : aCacheSelects,
 				"sap-client" : "123"
 			},
 			sCacheQueryOptions = JSON.stringify(mCacheQueryOptions),
 			mChildren,
+			fnFetchMetadata = getFetchMetadata({
+				"/Me/A/a" : "",
+				"/Me/B/b" : "",
+				"/Me/to1" : "1"
+			}),
 			oHelperMock = this.mock(_Helper),
-			aPaths = [];
+			aPaths = [/*"to1", "A/a", "B"*/];
 
-		oHelperMock.expects("addChildrenWithAncestor")
-			.withExactArgs(sinon.match.same(aPaths), ["B"], {});
-		oHelperMock.expects("addChildrenWithAncestor")
-			.withExactArgs(["B"], sinon.match.same(aPaths), {});
 		oHelperMock.expects("addChildrenWithAncestor")
 			.withExactArgs(sinon.match.same(aPaths), sinon.match.same(aCacheSelects), {})
 			.callsFake(function (aChildren, aAncestors, mChildren0) {
 				mChildren = mChildren0;
-				mChildren.A = true;
+				mChildren["A/a"] = true;
 			});
 		oHelperMock.expects("addChildrenWithAncestor")
 			.withExactArgs(sinon.match.same(aCacheSelects), sinon.match.same(aPaths),
 				sinon.match.object)
 			.callsFake(function (aChildren, aAncestors, mChildren0) {
 				assert.strictEqual(mChildren0, mChildren);
-				mChildren.B = true;
+				mChildren["B/b"] = true;
+			});
+		oHelperMock.expects("addChildrenWithAncestor")
+			.withExactArgs(["to1"], sinon.match.same(aPaths), {})
+			.callsFake(function (aChildren, aAncestors, mSet) {
+				mSet.to1 = true;
 			});
 
 		assert.deepEqual(
 			// code under test
-			_Helper.intersectQueryOptions(mCacheQueryOptions, aPaths),
-			{$select : ["A", "B"], "sap-client" : "123"});
+			_Helper.intersectQueryOptions(mCacheQueryOptions, aPaths, fnFetchMetadata, "/Me"),
+			{$expand : {"to1" : null}, $select : ["A/a", "B/b"], "sap-client" : "123"});
 
 		assert.strictEqual(JSON.stringify(mCacheQueryOptions), sCacheQueryOptions, "unmodified");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("intersectQueryOptions: no need to GET anything", function (assert) {
-		// code under test
-		assert.strictEqual(_Helper.intersectQueryOptions({$select : ["A"]}, ["B"]), null);
-
-		// code under test
-		assert.strictEqual(_Helper.intersectQueryOptions({$select : ["A"]}, []), null);
-
+	QUnit.test("intersectQueryOptions: empty $select", function (assert) {
 		// code under test
 		assert.strictEqual(_Helper.intersectQueryOptions({$select : []}, ["B"]), null);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("intersectQueryOptions: property path via navigation property", function (assert) {
-		// Note: this might be used to resort to other measures...
+	[{
+		$expand : {
+			"toN" : null
+		},
+		aPaths : ["toN/a"],
+		sNavigationProperty : "/Me/toN"
+	}, {
+		$expand : {
+			"A/toN" : null
+		},
+		aPaths : ["A"],
+		sNavigationProperty : "/Me/A/toN"
+	}].forEach(function (o, i) {
+		var sMessage = "Unsupported collection-valued navigation property " + o.sNavigationProperty;
+
+		QUnit.test("intersectQueryOptions: " + sMessage, function (assert) {
+			var mCacheQueryOptions = {
+					$expand : o.$expand,
+					$select : ["A"]
+				},
+				sCacheQueryOptions = JSON.stringify(mCacheQueryOptions),
+				mMetaPath2Type = {};
+
+			mMetaPath2Type[o.sNavigationProperty] = "N";
+			assert.throws(function () {
+				// code under test
+				_Helper.intersectQueryOptions(mCacheQueryOptions, o.aPaths,
+					getFetchMetadata(mMetaPath2Type), "/Me");
+				// Note: this error might be used by the caller to resort to other measures...
+			}, new Error(sMessage));
+
+			assert.strictEqual(JSON.stringify(mCacheQueryOptions), sCacheQueryOptions, "unmodified");
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		aPaths : [],
+		mResult : null // nothing to do
+	}, {
+		aPaths : ["X", "Y", "Z"],
+		mResult : null // nothing to do
+	}, {
+		aPaths : ["A/to1"],
+		mResult : null // nothing to do, only navigation property has changed, but it is unused
+	}, {
+		aPaths : ["A/toN"],
+		mResult : null // nothing to do, only navigation property has changed, but it is unused
+	}, {
+		aPaths : ["A/to1/D", "B/C/toN", "X"],
+		mResult : null // nothing to do, only navigation property has changed, but it is unused
+	}, {
+		aPaths : ["A/C"],
+		mResult : {
+			$select : ["A/C"], // only structural properties
+			"sap-client" : "123"
+		}
+	}, {
+		aPaths : ["A", "toC"],
+		mResult : {
+			$expand : {
+				"toC" : null
+			},
+			$select : ["A"],
+			"sap-client" : "123"
+		}
+	}, {
+		aPaths : ["toA", "toC"], // toB omitted
+		mResult : {
+			$expand : {
+				"toA" : null,
+				"toC" : null
+			},
+			$select : ["toA"], // avoid $select= in URL, use any navigation property
+			"sap-client" : "123"
+		}
+	}, {
+		aPaths : ["toC", "toB", "toB/b", "D"], // Note "toB" is stronger than "toB/b"!
+		mResult : {
+			$expand : {
+				"toB" : {$select : ["a"]},
+				"toC" : null,
+				"D/E/toD" : {$select : ["d"]}
+			},
+			$select : ["toB"], // avoid $select= in URL, use any navigation property
+			"sap-client" : "123"
+		}
+	}, {
+		aPaths : ["toA/a", "toB/z"],
+		mResult : {
+			$expand : {
+				"toA" : {
+					$select : ["a"]
+				}
+			},
+			$select : ["toA"], // avoid $select= in URL, use any navigation property
+			"sap-client" : "123"
+		}
+	}, {
+		aPaths : ["A", "toA/a"],
+		mResult : {
+			$expand : {
+				"toA" : {
+					$select : ["a"]
+				}
+			},
+			$select : ["A"],
+			"sap-client" : "123"
+		}
+	}, {
+		aPaths : ["toE/e", "toG/g"],
+		mResult : {
+			$expand : {
+				"toE" : {
+					$select : ["e"]
+				},
+				"toG" : {
+					$select : ["g"]
+				}
+			},
+			$select : ["toE"], // avoid $select= in URL, use any navigation property
+			"sap-client" : "123"
+		}
+//	}, { //TODO who would need this?
+//		aPaths : ["E"],
+//		mResult : {
+//			$select : ["E/toF"],
+//			"sap-client" : "123"
+//		}
+	}].forEach(function (o, i) {
+		var sTitle = "intersectQueryOptions: " + o.aPaths + ", " + i;
+
+		QUnit.test(sTitle, function (assert) {
+			var mCacheQueryOptions = {
+					$expand : {
+						"toA" : null,
+						"toB" : {$select : ["a"]},
+						"toC" : null,
+						"D/E/toD" : {$select : ["d"]},
+						"toE" : {},
+						"toG" : true
+					},
+					$select : ["A", "B", "C", "E/toF"],
+					"sap-client" : "123"
+				},
+				sCacheQueryOptions = JSON.stringify(mCacheQueryOptions),
+				fnFetchMetadata = getFetchMetadata({
+					"/Me/A" : "",
+					"/Me/A/C" : "",
+					"/Me/A/to1" : "1",
+					"/Me/A/toN" : "N",
+					"/Me/B/C/toN" : "N",
+					"/Me/B/C" : "",
+					"/Me/D/E/toD" : "1",
+					"/Me/E/toF" : "1",
+					"/Me/toA" : "1",
+					"/Me/toA/a" : "",
+					"/Me/toB" : "1",
+					"/Me/toC" : "1",
+					"/Me/toE" : "1",
+					"/Me/toE/e" : "",
+					"/Me/toG" : "1",
+					"/Me/toG/g" : ""
+				});
+
+			assert.deepEqual(
+				// code under test
+				_Helper.intersectQueryOptions(mCacheQueryOptions, o.aPaths, fnFetchMetadata, "/Me"),
+				o.mResult);
+
+			assert.strictEqual(JSON.stringify(mCacheQueryOptions), sCacheQueryOptions,
+				"unmodified");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("intersectQueryOptions: recursion", function (assert) {
 		var mCacheQueryOptions = {
 				$expand : {
-					"B" : {
-						$select : ["C", "D"]
-					},
-					"ComplexProperty/toEntity" : null
+					"toC" : null,
+					"D/E/toD" : {$select : ["d"]}
 				},
-				$select : ["A"]
+				$select : [],
+				"sap-client" : "123"
 			},
-			sCacheQueryOptions = JSON.stringify(mCacheQueryOptions);
+			mCacheQueryOptions0 = {},
+			mCacheQueryOptions1 = {},
+			fnFetchMetadata = getFetchMetadata({
+				"/Me/D/E/toD" : "1",
+				"/Me/toC" : "1"
+			}),
+			oHelperMock = this.mock(_Helper),
+			aPaths = ["toC/d", "D/E/toD/d"],
+			aStrippedPaths0 = ["d"],
+			aStrippedPaths1 = ["d"];
 
-		assert.throws(function () {
+		oHelperMock.expects("intersectQueryOptions")
+			.withExactArgs(sinon.match.same(mCacheQueryOptions),
+				sinon.match.same(aPaths), sinon.match.same(fnFetchMetadata), "/Me")
+			.callThrough(); // for code under test
+		// intersect for $select tested already above - no sinon.match.same tests
+		oHelperMock.expects("addChildrenWithAncestor").withExactArgs(aPaths, [], {});
+		oHelperMock.expects("addChildrenWithAncestor").withExactArgs([], aPaths, {});
+		// first navigation property
+		oHelperMock.expects("addChildrenWithAncestor")
+			.withExactArgs(["toC"], sinon.match.same(aPaths), {});
+		oHelperMock.expects("stripPathPrefix").withExactArgs("toC", sinon.match.same(aPaths))
+			.returns(aStrippedPaths0);
+		oHelperMock.expects("intersectQueryOptions")
+			.withExactArgs({}, sinon.match.same(aStrippedPaths0), sinon.match.same(fnFetchMetadata),
+				"/Me/toC")
+			.returns(mCacheQueryOptions0);
+		// second navigation property
+		oHelperMock.expects("addChildrenWithAncestor")
+			.withExactArgs(["D/E/toD"], sinon.match.same(aPaths), {});
+		oHelperMock.expects("stripPathPrefix").withExactArgs("D/E/toD", sinon.match.same(aPaths))
+			.returns(aStrippedPaths1);
+		oHelperMock.expects("intersectQueryOptions")
+			.withExactArgs(sinon.match.same(mCacheQueryOptions.$expand["D/E/toD"]),
+				sinon.match.same(aStrippedPaths1), sinon.match.same(fnFetchMetadata),
+				"/Me/D/E/toD")
+			.returns(mCacheQueryOptions1);
+
+		assert.deepEqual(
 			// code under test
-			_Helper.intersectQueryOptions(mCacheQueryOptions, ["B/C", "B/D", "ComplexProperty"]);
-		}, new Error("Unsupported navigation property in B/C,B/D,ComplexProperty/toEntity"));
+			_Helper.intersectQueryOptions(mCacheQueryOptions, aPaths, fnFetchMetadata, "/Me"),
+			{
+				$expand : {
+					"toC" : mCacheQueryOptions0,
+					"D/E/toD" : mCacheQueryOptions1
+				},
+				$select : ["toC"], // avoid $select= in URL, use any navigation property
+				"sap-client" : "123"
+			});
 
-		assert.strictEqual(JSON.stringify(mCacheQueryOptions), sCacheQueryOptions, "unmodified");
 	});
 
 	//*********************************************************************************************
@@ -1524,48 +1790,55 @@ sap.ui.define([
 				$select : ["A", "*", "Z"],
 				"sap-client" : "123"
 			},
-			sCacheQueryOptions = JSON.stringify(mCacheQueryOptions);
+			fnFetchMetadata = getFetchMetadata({
+				"/Me/B" : "",
+				"/Me/B/C" : "",
+				"/Me/B/toN" : "N",
+				"/Me/D" : "",
+				"/Me/toN" : "N"
+			});
 
-		// code under test
-		assert.deepEqual(_Helper.intersectQueryOptions(mCacheQueryOptions, ["B/C", "D"]),
-			{$select : ["B/C", "D"], "sap-client" : "123"});
+		function test() {
+			var sCacheQueryOptions = JSON.stringify(mCacheQueryOptions);
 
-		assert.strictEqual(JSON.stringify(mCacheQueryOptions), sCacheQueryOptions, "unmodified");
-	});
-	//TODO ignore "B/C" in case B or C is a navigation property (because it is not expanded)
-
-	//*********************************************************************************************
-	QUnit.test("intersectQueryOptions: missing $select means *", function (assert) {
-		var  mCacheQueryOptions = {
-				$expand : {"n/a" : null},
-//				$select : ["*"],
-				"sap-client" : "123"
-			},
-			sCacheQueryOptions = JSON.stringify(mCacheQueryOptions);
-
-		// code under test
-		assert.deepEqual(_Helper.intersectQueryOptions(mCacheQueryOptions, ["B/C", "D"]),
-			{$select : ["B/C", "D"], "sap-client" : "123"});
-
-		assert.strictEqual(JSON.stringify(mCacheQueryOptions), sCacheQueryOptions, "unmodified");
-	});
-	//TODO ignore "B/C" in case B or C is a navigation property (because it is not expanded)
-
-	//*********************************************************************************************
-	QUnit.test("intersectQueryOptions: * inside $select, but $expand required", function (assert) {
-		var  mCacheQueryOptions = {
-				$expand : {"B" : null},
-				$select : ["A", "*", "Z"],
-				"sap-client" : "123"
-			},
-			sCacheQueryOptions = JSON.stringify(mCacheQueryOptions);
-
-		assert.throws(function () {
 			// code under test
-			_Helper.intersectQueryOptions(mCacheQueryOptions, ["B/C", "D"]);
-		}, new Error("Unsupported navigation property in B/C"));
+			assert.deepEqual(
+				_Helper.intersectQueryOptions(mCacheQueryOptions, ["B/C", "D", "B/toN", "toN"],
+					fnFetchMetadata, "/Me"),
+				{$select : ["B/C", "D"], "sap-client" : "123"});
 
-		assert.strictEqual(JSON.stringify(mCacheQueryOptions), sCacheQueryOptions, "unmodified");
+			assert.strictEqual(JSON.stringify(mCacheQueryOptions), sCacheQueryOptions,
+				"unmodified");
+		}
+
+		test();
+		delete mCacheQueryOptions.$select; // missing $select means *
+		test();
+	});
+
+	//*********************************************************************************************
+	[["toN/a"], ["toN"]].forEach(function (aPaths) {
+		var sTitle = "intersectQueryOptions: unsupported collection-valued navigation property"
+			+ ", paths : " + aPaths;
+
+		QUnit.test(sTitle, function (assert) {
+			var  mCacheQueryOptions = {
+					$expand : {"toN" : null},
+					$select : []
+				},
+				sCacheQueryOptions = JSON.stringify(mCacheQueryOptions),
+				fnFetchMetadata = getFetchMetadata({
+					"/Me/toN" : "N"
+				});
+
+			assert.throws(function () {
+				// code under test
+				_Helper.intersectQueryOptions(mCacheQueryOptions, aPaths, fnFetchMetadata, "/Me");
+			}, new Error("Unsupported collection-valued navigation property /Me/toN"));
+
+			assert.strictEqual(JSON.stringify(mCacheQueryOptions), sCacheQueryOptions,
+				"unmodified");
+		});
 	});
 
 	//*********************************************************************************************

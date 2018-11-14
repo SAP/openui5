@@ -65,6 +65,13 @@
 											value="{BreakupYear}" />
 									</f:fields>
 								</f:FormElement>
+<!-- TODO: enable this as soon as FIORITECHP1-9095 is done
+								<f:FormElement label="Last Changed">
+									<f:fields>
+										<Text text="{DraftAdministrativeData/LastChangeDateTime}" />
+									</f:fields>
+								</f:FormElement>
+-->
 							</f:formElements>
 						</f:FormContainer>
 					</f:formContainers>

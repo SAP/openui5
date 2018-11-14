@@ -648,7 +648,9 @@ sap.ui.define([
 	 * objects. Use this method to explicitly load side effects in case implicit loading is switched
 	 * off via the binding-specific parameter <code>$$patchWithoutSideEffects</code>. The method
 	 * must only be called on the bound context of a context binding or on the return value context
-	 * of an operation binding. Key predicates must be available in this context's path.
+	 * of an operation binding. Key predicates must be available in this context's path. Avoid
+	 * navigation properties as part of a binding's $select system query option as they may trigger
+	 * pointless requests.
 	 *
 	 * The request always uses the update group ID for this context's binding, see "$$updateGroupId"
 	 * at {@link sap.ui.model.odata.v4.ODataModel#bindContext}; this way, it can easily be part of

@@ -5,8 +5,9 @@
 //Provides class sap.ui.model.odata.v4.lib._Helper
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/util/isEmptyObject",
 	"sap/ui/thirdparty/URI"
-], function (Log, URI) {
+], function (Log, isEmptyObject, URI) {
 	"use strict";
 
 	var rAmpersand = /&/g,
@@ -55,24 +56,26 @@ sap.ui.define([
 		 *   is modified
 		 */
 		addChildrenWithAncestor : function (aChildren, aAncestors, mChildren) {
-			aChildren.forEach(function (sPath) {
-				var aSegments;
+			if (aAncestors.length) {
+				aChildren.forEach(function (sPath) {
+					var aSegments;
 
-				if (aAncestors.indexOf(sPath) >= 0) {
-					mChildren[sPath] = true;
-					return;
-				}
-
-				aSegments = sPath.split("/");
-				aSegments.pop();
-				while (aSegments.length) {
-					if (aAncestors.indexOf(aSegments.join("/")) >= 0) {
+					if (aAncestors.indexOf(sPath) >= 0) {
 						mChildren[sPath] = true;
-						break;
+						return;
 					}
+
+					aSegments = sPath.split("/");
 					aSegments.pop();
-				}
-			});
+					while (aSegments.length) {
+						if (aAncestors.indexOf(aSegments.join("/")) >= 0) {
+							mChildren[sPath] = true;
+							break;
+						}
+						aSegments.pop();
+					}
+				});
+			}
 		},
 
 		/**
@@ -638,51 +641,123 @@ sap.ui.define([
 		 *   "14.5.13 Expression edm:PropertyPath" strings describing which properties need to be
 		 *   loaded because they may have changed due to side effects of a previous update; must not
 		 *   be empty
+		 * @param {function} fnFetchMetadata
+		 *   Function which fetches metadata for a given meta path
+		 * @param {string} sRootMetaPath
+		 *   The meta path for the cache root's type, for example "/SalesOrderList/SO_2_BP" or
+		 *   "/Artists/foo.EditAction/@$ui5.overload/0/$ReturnType/$Type", such that an OData simple
+		 *   identifier may be appended
 		 * @returns {object}
 		 *   The updated query options or <code>null</code> if no request is needed
 		 * @throws {Error}
-		 *   If a path string is empty or the intersection requires a $expand
+		 *   If a path string is empty or the intersection requires a $expand of a collection-valued
+		 *   navigation property
 		 */
-		intersectQueryOptions : function (mCacheQueryOptions, aPaths) {
-			var aExpands,
+		intersectQueryOptions : function (mCacheQueryOptions, aPaths, fnFetchMetadata,
+				sRootMetaPath) {
+			var aExpands = [],
 				mExpands = {},
 				mResult,
 				aSelects,
 				mSelects = {};
 
 			/*
-			 * Computes the intersection of the given lists of paths by using the given hash set.
+			 * Throws an error if the given meta path points to a collection-valued navigation
+			 * property.
 			 *
-			 * @param {string[]} aArray0 - A list of non-empty paths
-			 * @param {string[]} aArray1 - A list of non-empty paths
-			 * @param {object} mSet - A hash set of paths; should initially be empty and is modified
+			 * @param {string} sMetaPath
+			 *   An absolute meta path
+			 * @throws {Error}
+			 *   If the given meta path points to a collection-valued navigation property
 			 */
-			function intersect(aArray0, aArray1, mSet) {
-				_Helper.addChildrenWithAncestor(aArray0, aArray1, mSet);
-				_Helper.addChildrenWithAncestor(aArray1, aArray0, mSet);
+			function checkCollection(sMetaPath) {
+				if (fnFetchMetadata(sMetaPath).getResult().$IsCollection) {
+					throw new Error("Unsupported collection-valued navigation property "
+						+ sMetaPath);
+				}
+			}
+
+			/*
+			 * Filter where only structural properties pass through.
+			 *
+			 * @param {boolean} bSkipFirstSegment
+			 *   Whether first segment of the path is known to be a structural property
+			 * @param {string} sMetaPath
+			 *   A meta path relative to the cache's root
+			 * @returns {boolean}
+			 *   Whether the given meta path contains only structural properties
+			 */
+			function filterStructural(bSkipFirstSegment, sMetaPath) {
+				var aSegments = sMetaPath.split("/");
+
+				return aSegments.every(function (sSegment, i) {
+					return i === 0 && bSkipFirstSegment
+						|| fnFetchMetadata(
+								sRootMetaPath + "/" + aSegments.slice(0, i + 1).join("/")
+							).getResult().$kind === "Property";
+				});
 			}
 
 			if (aPaths.indexOf("") >= 0) {
 				throw new Error("Unsupported empty navigation property path");
 			}
-			if (mCacheQueryOptions.$expand) {
-				intersect(aPaths, Object.keys(mCacheQueryOptions.$expand), mExpands);
-				aExpands = Object.keys(mExpands);
-				if (aExpands.length) {
-					throw new Error("Unsupported navigation property in " + aExpands);
-				}
-			}
+
 			if (mCacheQueryOptions.$select && mCacheQueryOptions.$select.indexOf("*") < 0) {
-				intersect(aPaths, mCacheQueryOptions.$select, mSelects);
-				aSelects = Object.keys(mSelects);
-				if (!aSelects.length) {
-					return null;
-				}
+				_Helper.addChildrenWithAncestor(aPaths, mCacheQueryOptions.$select, mSelects);
+				_Helper.addChildrenWithAncestor(mCacheQueryOptions.$select, aPaths, mSelects);
+				aSelects = Object.keys(mSelects).filter(filterStructural.bind(null, true));
 			} else {
-				aSelects = aPaths;
+				aSelects = aPaths.filter(filterStructural.bind(null, false));
 			}
-			mResult = jQuery.extend({}, mCacheQueryOptions, {$select : aSelects});
-			delete mResult.$expand;
+
+			if (mCacheQueryOptions.$expand) {
+				aExpands = Object.keys(mCacheQueryOptions.$expand);
+				aExpands.forEach(function (sNavigationPropertyPath) {
+					var mChildQueryOptions,
+						sMetaPath = sRootMetaPath + "/" + sNavigationPropertyPath,
+						mSet = {},
+						aStrippedPaths;
+
+					_Helper.addChildrenWithAncestor([sNavigationPropertyPath], aPaths, mSet);
+					if (!isEmptyObject(mSet)) {
+						checkCollection(sMetaPath);
+						// complete navigation property may change, same expand as initially
+						mExpands[sNavigationPropertyPath]
+							= mCacheQueryOptions.$expand[sNavigationPropertyPath];
+						return;
+					}
+
+					aStrippedPaths = _Helper.stripPathPrefix(sNavigationPropertyPath, aPaths);
+					if (aStrippedPaths.length) {
+						checkCollection(sMetaPath);
+						// details of the navigation property may change, compute intersection
+						// recursively
+						mChildQueryOptions = _Helper.intersectQueryOptions(
+							mCacheQueryOptions.$expand[sNavigationPropertyPath] || {},
+							aStrippedPaths, fnFetchMetadata,
+							sRootMetaPath + "/" + sNavigationPropertyPath);
+						if (mChildQueryOptions) {
+							mExpands[sNavigationPropertyPath] = mChildQueryOptions;
+						}
+					}
+				});
+			}
+
+			if (!aSelects.length && isEmptyObject(mExpands)) {
+				return null;
+			}
+
+			if (!aSelects.length) { // avoid $select= in URL, use any navigation property
+				aSelects = Object.keys(mExpands).slice(0, 1);
+			}
+
+			mResult = Object.assign({}, mCacheQueryOptions, {$select : aSelects});
+			if (isEmptyObject(mExpands)) {
+				delete mResult.$expand;
+			} else {
+				mResult.$expand = mExpands;
+			}
+
 			return mResult;
 		},
 
@@ -853,7 +928,7 @@ sap.ui.define([
 
 			if (vIfMatchValue && typeof vIfMatchValue === "object") {
 				vIfMatchValue = vIfMatchValue["@odata.etag"];
-				mHeaders = jQuery.extend({}, mHeaders);
+				mHeaders = Object.assign({}, mHeaders);
 				if (vIfMatchValue === undefined) {
 					delete mHeaders["If-Match"];
 				} else {
@@ -1042,7 +1117,7 @@ sap.ui.define([
 			 */
 			function buildPropertyPaths(oObject, sObjectName) {
 				Object.keys(oObject).forEach(function (sProperty) {
-					var sPropertyPath = sObjectName ? sObjectName + "/" + sProperty : sProperty,
+					var sPropertyPath = _Helper.buildPath(sObjectName, sProperty),
 						vPropertyValue = oObject[sProperty];
 
 					if (vPropertyValue !== null && typeof vPropertyValue === "object") {
