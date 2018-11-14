@@ -429,7 +429,6 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.create = function (oInitialData, bSkipRefresh) {
 		var oContext,
-			vCreatePath, // {string|SyncPromise}
 			oCreatePromise,
 			oGroupLock,
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
@@ -443,15 +442,8 @@ sap.ui.define([
 		}
 		this.checkSuspended();
 
-		vCreatePath = sResolvedPath.slice(1);
-		if (this.bRelative && this.oContext.fetchCanonicalPath) {
-			vCreatePath = this.oContext.fetchCanonicalPath().then(function (sCanonicalPath) {
-				return _Helper.buildPath(sCanonicalPath, that.sPath).slice(1);
-			});
-		}
-
 		oGroupLock = this.lockGroup(this.getUpdateGroupId(), true); // only for createInCache
-		oCreatePromise = this.createInCache(oGroupLock, vCreatePath, "", oInitialData,
+		oCreatePromise = this.createInCache(oGroupLock, this.fetchResourcePath(), "", oInitialData,
 			function () {
 				// cancel callback
 				oContext.destroy();

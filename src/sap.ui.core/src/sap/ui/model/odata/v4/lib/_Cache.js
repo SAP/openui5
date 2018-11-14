@@ -251,8 +251,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group ID
-	 * @param {string|sap.ui.base.SyncPromise} vPostPath
-	 *   The path for the POST request or a SyncPromise that resolves with that path
+	 * @param {sap.ui.base.SyncPromise} oPostPathPromise
+	 *   A SyncPromise resolving with the resource path for the POST request
 	 * @param {string} sPath
 	 *   The collection's path within the cache
 	 * @param {string} [oEntityData={}]
@@ -267,7 +267,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype.create = function (oGroupLock, vPostPath, sPath, oEntityData,
+	Cache.prototype.create = function (oGroupLock, oPostPathPromise, sPath, oEntityData,
 			fnCancelCallback, fnErrorCallback) {
 		var aCollection,
 			bKeepTransientPath = oEntityData && oEntityData["@$ui5.keepTransientPath"],
@@ -344,7 +344,7 @@ sap.ui.define([
 		}
 		aCollection[-1] = oEntityData;
 
-		return SyncPromise.resolve(vPostPath).then(function (sPostPath) {
+		return oPostPathPromise.then(function (sPostPath) {
 			sPostPath += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
 			return request(sPostPath, oGroupLock);
 		});
