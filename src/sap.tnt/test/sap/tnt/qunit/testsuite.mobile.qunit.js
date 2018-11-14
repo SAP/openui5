@@ -30,22 +30,6 @@ sap.ui.define(function () {
 			autostart: true
 		},
 		tests: {
-			"demokit/toolpageapp/webapp/test/integration/opaTests": {
-				title: "Integration Tests for ToolPage app",
-				ui5: {
-					preload: "async"
-				},
-				loader: {
-					paths: {
-						"sap/ui/demo/toolpageapp": "test-resources/sap/tnt/demokit/toolpageapp/webapp/"
-					}
-				},
-				group: "Demokit Other Content",
-				module: [
-					"sap/ui/demo/toolpageapp/test/integration/AllJourneys"
-				],
-				autostart: false
-			},
 			"InfoLabel": {
 				coverage: {
 					only : ["sap/tnt/InfoLabel"]
