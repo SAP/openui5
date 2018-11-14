@@ -63,7 +63,7 @@ function (
 		return FlexCustomData._getCustomDataKey(oChange, sIdentifier);
 	}
 
-	QUnit.module("Given a control with no flex custom Data", {
+	QUnit.module("Given a control with no flex custom data", {
 		beforeEach: function () {
 			this.oAppComponent = new UIComponent();
 			this.oControl = new Control("control");
@@ -116,7 +116,7 @@ function (
 		});
 	});
 
-	QUnit.module("Given a control with flex custom Data", {
+	QUnit.module("Given a control with flex custom data", {
 		beforeEach: function () {
 			this.oAppComponent = new UIComponent();
 			this.oControl = new Control("control");
