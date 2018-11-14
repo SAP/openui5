@@ -4491,8 +4491,8 @@ sap.ui.define([
 	// implement Form helper factory with m controls
 	// possible is set before layout lib is loaded.
 	ObjectPath.set("sap.ui.layout.form.FormHelper", {
-		createLabel: function(sText){
-			return new sap.m.Label({text: sText});
+		createLabel: function(sText, sId){
+			return new sap.m.Label(sId, {text: sText});
 		},
 		createButton: function(sId, fnPressFunction, fnCallback){
 			var that = this;

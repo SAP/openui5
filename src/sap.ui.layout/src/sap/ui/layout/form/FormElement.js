@@ -129,7 +129,7 @@ sap.ui.define([
 		var oLabel = vAny;
 		if (typeof oLabel === "string") {
 			if (!this._oLabel) {
-				this._oLabel = library.form.FormHelper.createLabel(oLabel);
+				this._oLabel = library.form.FormHelper.createLabel(oLabel, this.getId() + "-label");
 				this.setAggregation("_label", this._oLabel, true); // use Aggregation to allow model inheritance
 				this._oLabel.disableRequiredChangeCheck(true);
 				if (this._oLabel.isRequired) {
