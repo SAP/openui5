@@ -28,5 +28,11 @@
 		"description": "The cards don't change their dimensions based on breakpoints. They just wrap when not enough space",
 		"route": "zflow",
 		"usage": "The chosen card container is a CSSGrid and stable UI is NOT needed."
-	}
+	},
+    {
+      "title": "Content List Card",
+      "description": "This is a playground for development purposes only",
+      "route": "listContent",
+      "usage": "Development purposes only!"
+    }
 ]

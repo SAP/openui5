@@ -242,11 +242,11 @@ sap.ui.define([
 				this.setContent(oContent);
 			}
 			this.setBusy(false);
-		} else if (sCardType === "ListCard") {
-			sap.ui.require(["sap/f/cards/ListCard"], function (ListCard) {
-				var mSettings = this._oCardManifest.get("sap.card/settings");
+		} else if (sCardType === "List") {
+			sap.ui.require(["sap/f/cards/content/List"], function (List) {
+				var mSettings = this._oCardManifest.get("sap.card/content");
 				var oClonedSettings = jQuery.extend(true, {}, mSettings);
-				var oContent = new ListCard(oClonedSettings);
+				var oContent = new List(oClonedSettings);
 				this.setContent(oContent);
 				this.setBusy(false);
 			}.bind(this));
