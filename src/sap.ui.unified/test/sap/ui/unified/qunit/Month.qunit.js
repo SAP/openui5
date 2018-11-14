@@ -5,13 +5,18 @@ sap.ui.define([
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/unified/CalendarLegend",
 	"sap/ui/unified/CalendarLegendRenderer",
-	"sap/ui/unified/CalendarDayType",
 	"sap/ui/unified/CalendarLegendItem",
-	"sap/ui/unified/DateTypeRange"
-], function(Month, CalendarDate, CalendarLegend, CalendarLegendRenderer, CalendarDayType, CalendarLegendItem, DateTypeRange) {
+	"sap/m/Button",
+	"sap/ui/unified/DateRange",
+	"sap/ui/unified/DateTypeRange",
+	"sap/ui/unified/library"
+], function(Month, CalendarDate, CalendarLegend, CalendarLegendRenderer,
+	CalendarLegendItem, Button, DateRange, DateTypeRange, unifiedLibrary) {
 	"use strict";
 
 	(function () {
+
+		var CalendarDayType = unifiedLibrary.CalendarDayType;
 		/**
 		 * Generate correct Date even for years before 1901
 		 * @param {int} iYear [0..9999] Full Year
@@ -227,7 +232,7 @@ sap.ui.define([
 					type: CalendarDayType.Type01,
 					startDate: createDate(2017, 1, 20)
 				}),
-				oButton = new sap.m.Button({text: "Btn"}).placeAt("qunit-fixture");
+				oButton = new Button({text: "Btn"}).placeAt("qunit-fixture");
 
 			this.oM.setDate(createDate(2017, 1, 1));
 			sap.ui.getCore().applyChanges();
@@ -291,7 +296,7 @@ sap.ui.define([
 			oAssert.strictEqual(this.oM._bNoFocus, false, "When invalidating without origin focus should be returned");
 
 			// Act - invalidate with mock origin which is of type sap.ui.unified.DateRange with parent aggregation "specialDates"
-			this.oM.invalidate(new sap.ui.unified.DateRange().setParent(this.oM, "specialDates"));
+			this.oM.invalidate(new DateRange().setParent(this.oM, "specialDates"));
 
 			// Assert
 			oAssert.strictEqual(this.oM._bNoFocus, false, "When invalidating with origin DateRange and parent " +
@@ -514,7 +519,7 @@ sap.ui.define([
 				}),
 				$HoveredDate,
 				$HoveredDateBefore,
-				oSelectedDate = new sap.ui.unified.DateRange({ startDate: new Date(2017, 6, 19) });
+				oSelectedDate = new DateRange({ startDate: new Date(2017, 6, 19) });
 
 			oMonth.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();

@@ -1,22 +1,23 @@
-/*global QUnit, window */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit, sinon, window */
+
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/CalendarMonthInterval",
-	"sap/ui/core/LocaleData",
-	"sap/ui/thirdparty/sinon"
-], function(qutils, CalendarMonthInterval, LocaleData, sinon) {
+	"sap/ui/unified/CalendarLegend",
+	"sap/ui/unified/CalendarLegendItem",
+	"sap/ui/unified/DateRange",
+	"sap/ui/unified/DateTypeRange",
+	"sap/ui/unified/library"
+], function(qutils, CalendarMonthInterval, CalendarLegend, CalendarLegendItem,
+	DateRange, DateTypeRange, unifiedLibrary) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested
 	sap.ui.getCore().getConfiguration().setLanguage("en_US");
-	// use sinon to simulate the June 24th 2015
-	//sinon.useFakeTimers(Date.UTC(2015, 6, 24));
 
+	var CalendarDayType = unifiedLibrary.CalendarDayType;
 	var bSelectFired = false;
 	var oSelectedDate;
-	var oLocaleUS = new sap.ui.core.Locale("en-US");
-	var oLocaleDataUS = LocaleData.getInstance(oLocaleUS);
 
 	var bStartDateChanged = false;
 	var handleStartDateChange = function(oEvent){
@@ -40,21 +41,21 @@ sap.ui.define([
 				oSelectedDate = aSelectedDates[0].getStartDate();
 			}
 		},
-	startDateChange: handleStartDateChange
+		startDateChange: handleStartDateChange
 	}).placeAt("content");
 
-	var oLegend = new sap.ui.unified.CalendarLegend("Legend1", {
+	var oLegend = new CalendarLegend("Legend1", {
 		items: [
-				new sap.ui.unified.CalendarLegendItem("T1", {type: sap.ui.unified.CalendarDayType.Type01, text: "Type 1"}),
-				new sap.ui.unified.CalendarLegendItem("T2", {type: sap.ui.unified.CalendarDayType.Type02, text: "Type 2"}),
-				new sap.ui.unified.CalendarLegendItem("T3", {type: sap.ui.unified.CalendarDayType.Type03, text: "Type 3"}),
-				new sap.ui.unified.CalendarLegendItem("T4", {type: sap.ui.unified.CalendarDayType.Type04, text: "Type 4"}),
-				new sap.ui.unified.CalendarLegendItem("T5", {type: sap.ui.unified.CalendarDayType.Type05, text: "Type 5"}),
-				new sap.ui.unified.CalendarLegendItem("T6", {type: sap.ui.unified.CalendarDayType.Type06, text: "Type 6"}),
-				new sap.ui.unified.CalendarLegendItem("T7", {type: sap.ui.unified.CalendarDayType.Type07, text: "Type 7"}),
-				new sap.ui.unified.CalendarLegendItem("T8", {type: sap.ui.unified.CalendarDayType.Type08, text: "Type 8"}),
-				new sap.ui.unified.CalendarLegendItem("T9", {type: sap.ui.unified.CalendarDayType.Type09, text: "Type 9"}),
-				new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "Type 10"})
+				new CalendarLegendItem("T1", {type: CalendarDayType.Type01, text: "Type 1"}),
+				new CalendarLegendItem("T2", {type: CalendarDayType.Type02, text: "Type 2"}),
+				new CalendarLegendItem("T3", {type: CalendarDayType.Type03, text: "Type 3"}),
+				new CalendarLegendItem("T4", {type: CalendarDayType.Type04, text: "Type 4"}),
+				new CalendarLegendItem("T5", {type: CalendarDayType.Type05, text: "Type 5"}),
+				new CalendarLegendItem("T6", {type: CalendarDayType.Type06, text: "Type 6"}),
+				new CalendarLegendItem("T7", {type: CalendarDayType.Type07, text: "Type 7"}),
+				new CalendarLegendItem("T8", {type: CalendarDayType.Type08, text: "Type 8"}),
+				new CalendarLegendItem("T9", {type: CalendarDayType.Type09, text: "Type 9"}),
+				new CalendarLegendItem("T10", {type: CalendarDayType.Type10, text: "Type 10"})
 				]
 	});
 
@@ -67,21 +68,25 @@ sap.ui.define([
 		months: 18,
 		intervalSelection: true,
 		pickerPopup: true,
-		selectedDates: [new sap.ui.unified.DateRange({startDate: new Date("2015", "11", "4"), endDate: new Date("2016", "1", "6")})],
-		specialDates: [new sap.ui.unified.DateTypeRange({startDate: new Date("2015", "8", "8"), type: sap.ui.unified.CalendarDayType.Type01, tooltip: "Text"}),
-						new sap.ui.unified.DateTypeRange({startDate: new Date("2015", "9", "9"), endDate: new Date("2015", "10", "10"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"})],
+		selectedDates: [new DateRange({startDate: new Date("2015", "11", "4"), endDate: new Date("2016", "1", "6")})],
+		specialDates: [new DateTypeRange({startDate: new Date("2015", "8", "8"), type: CalendarDayType.Type01, tooltip: "Text"}),
+						new DateTypeRange({startDate: new Date("2015", "9", "9"), endDate: new Date("2015", "10", "10"), type: CalendarDayType.Type02, tooltip: "Text"})],
 		legend: oLegend
 	}).placeAt("content");
 
 	var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"});
-	var oFormatYyyymm = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMM"});
-	var oToday = new Date();
-	oToday.setDate(1);
 
 	QUnit.module("Rendering");
 
 	QUnit.test("rendered months", function(assert) {
-		var $MonthsRow = sap.ui.getCore().byId("Cal1").getAggregation("monthsRow").$();
+		// use sinon to simulate the June 24th 2015
+		sinon.useFakeTimers(Date.UTC(2015, 6, 24));
+		var oToday = new Date();
+		oToday.setDate(1);
+		var oCal = new CalendarMonthInterval("Cal",{}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var $MonthsRow = sap.ui.getCore().byId("Cal").getAggregation("monthsRow").$();
 		var aMonths = $MonthsRow.find(".sapUiCalItem");
 		assert.equal(aMonths.length, 12, "Calendar1: 12 months rendered");
 		assert.equal(jQuery(aMonths[0]).attr("data-sap-month"), oFormatYyyymmdd.format(oToday), "Calendar1: curent date is in first month");
@@ -91,6 +96,8 @@ sap.ui.define([
 		assert.equal(aMonths.length, 18, "Calendar2: 18 months rendered");
 		assert.equal(jQuery(aMonths[0]).attr("data-sap-month"), "20150801", "Calendar2: first month");
 		assert.equal(jQuery(aMonths[0]).text(), "August", "Calendar2: first month name is long");
+
+		oCal.destroy();
 	});
 
 	QUnit.test("Header", function(assert) {
@@ -361,8 +368,8 @@ sap.ui.define([
 
 	QUnit.test("When the picker is opened, it allows only months to be selected.", function(assert) {
 		// arrange
-		var oSpyCancel = this.spy(sap.ui.unified.CalendarMonthInterval.prototype, "fireCancel"),
-			oCalP = new CalendarMonthInterval("CalP",{
+		this.spy(sap.ui.unified.CalendarMonthInterval.prototype, "fireCancel");
+		var oCalP = new CalendarMonthInterval("CalP",{
 			startDate: new Date("2015", "7", "13"),
 			pickerPopup: true
 		}).placeAt("qunit-fixture");
