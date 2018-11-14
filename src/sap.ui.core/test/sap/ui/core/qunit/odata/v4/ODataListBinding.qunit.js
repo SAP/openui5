@@ -1655,19 +1655,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refreshInternal: absolute binding", function (assert) {
-		var oBinding;
-
-		oBinding = this.bindList("/TEAMS", undefined, undefined, undefined,
-			{$$groupId : "group"});
-
-		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", true);
-
-		//code under test
-		oBinding.refreshInternal("myGroup");
-	});
-
-	//*********************************************************************************************
 	QUnit.test("refreshInternal: relative binding with base context", function (assert) {
 		var oBinding;
 
@@ -1677,7 +1664,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", true);
 
 		//code under test
-		oBinding.refreshInternal("myGroup");
+		return oBinding.refreshInternal("myGroup");
 	});
 
 	//*********************************************************************************************
@@ -1701,16 +1688,16 @@ sap.ui.define([
 			{$$groupId : "group"});
 
 		oCache = oCache1;
-		this.mock(oBinding).expects("createReadGroupLock")
-			.withExactArgs("myGroup", false);
+		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", false);
 		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs();
 		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh);
 
 		//code under test
-		oBinding.refreshInternal("myGroup");
-
-		assert.strictEqual(oBinding.oCachePromise.getResult(), oCache1);
+		return oBinding.refreshInternal("myGroup").then(function () {
+			assert.strictEqual(oBinding.oCachePromise.getResult(), oCache1);
+		});
 	});
+	// TODO wait for refresh of dependent bindings
 
 	//*********************************************************************************************
 	QUnit.test("refreshInternal: relative without own cache", function (assert) {
@@ -1763,6 +1750,7 @@ sap.ui.define([
 		return Promise.all([oReadPromise1, oReadPromise2]).then(function () {
 			var aContexts = oBinding.aContexts;
 
+			that.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", true);
 			that.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh);
 			oModelMock.expects("getDependentBindings")
 				.withExactArgs(sinon.match.same(aContexts[0]))
@@ -1775,7 +1763,7 @@ sap.ui.define([
 			that.mock(oChild2).expects("refreshInternal").withExactArgs("myGroup", false);
 
 			//code under test
-			oBinding.refreshInternal("myGroup");
+			return oBinding.refreshInternal("myGroup");
 		});
 	});
 

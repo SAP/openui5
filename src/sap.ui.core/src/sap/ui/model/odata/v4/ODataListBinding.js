@@ -1465,7 +1465,7 @@ sap.ui.define([
 			that = this;
 
 		this.createReadGroupLock(sGroupId, this.isRefreshable());
-		this.oCachePromise.then(function (oCache) {
+		return this.oCachePromise.then(function (oCache) {
 			if (oCache) {
 				that.removeCachesAndMessages();
 				that.fetchCache(that.oContext);

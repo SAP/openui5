@@ -729,6 +729,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Refreshes all dependent bindings with the given parameters and waits for them to have
+	 * finished.
+	 *
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for refresh
+	 * @param {boolean} [bCheckUpdate]
+	 *   If <code>true</code>, a property binding is expected to check for updates.
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving when all dependent bindings are refreshed
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.refreshDependentBindings = function (sGroupId, bCheckUpdate) {
+		return SyncPromise.all(this.getDependentBindings().map(function (oDependentBinding) {
+			return oDependentBinding.refreshInternal(sGroupId, bCheckUpdate);
+		}));
+	};
+
+	/**
 	 * Unlocks a ReadGroupLock and removes it from the binding.
 	 *
 	 * @private
