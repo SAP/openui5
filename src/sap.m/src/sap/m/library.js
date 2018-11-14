@@ -2363,40 +2363,40 @@ sap.ui.define([
 	thisLib.OverflowToolbarPriority = {
 
 		/**
-		 * NeverOverflow priority forces OverflowToolbar items to remain always in the toolbar
+		 * Forces <code>OverflowToolbar</code> items to remain always in the toolbar.
 		 * @public
 		 */
 		NeverOverflow : "NeverOverflow",
 
 		/**
-		 * Deprecated - Use <code>sap.m.OverflowToolbarPriority.NeverOverflow</code> instead
+		 * Deprecated - Use <code>sap.m.OverflowToolbarPriority.NeverOverflow</code> instead.
 		 * @deprecated Since version 1.48
 		 * @public
 		 */
 		Never : "Never",
 
 		/**
-		 * High priority OverflowToolbar items overflow after the items with lower priority
+		 * Items with priority <code>High</code> overflow after the items with lower priority.
 		 * @public
 		 */
 		High : "High",
 
 		/**
-		 * Low priority  OverflowToolbar items overflow before the items with higher priority such as High priority items
+		 * Items with priority <code>Low</code> overflow before the items with higher priority,
+		 * such as <code>High</code> priority items.
 		 * @public
 		 */
 		Low : "Low",
 
 		/**
-		 * Disappear priority  OverflowToolbar items overflow before the items with higher priority
-		 * such as Low and High priority items and remain hidden in the overflow area.
-		 *
+		 * Items with priority <code>Disappear</code> overflow before the items with higher priority,
+		 * such as <code>Low</code> and <code>High</code>, and remain hidden in the overflow area.
 		 * @public
 		 */
 		Disappear : "Disappear",
 
 		/**
-		 * AlwaysOverflow priority forces OverflowToolbar items to remain always in the overflow area
+		 * Forces <code>OverflowToolbar</code> items to remain always in the overflow area.
 		 * @public
 		 */
 		AlwaysOverflow : "AlwaysOverflow",
