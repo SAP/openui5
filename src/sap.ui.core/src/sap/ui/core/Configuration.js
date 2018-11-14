@@ -155,7 +155,7 @@ sap.ui.define([
 					"xx-cache-excludedKeys" : { type : "string[]", defaultValue : []},
 					"xx-cache-serialization": { type : "boolean",  defaultValue : false},
 					"xx-nosync"             : { type : "string",   defaultValue : "" },
-					"xx-waitForTheme"       : { type : "boolean",  defaultValue : false},
+					"xx-waitForTheme"       : { type : "string",  defaultValue : ""}, // rendering|init
 					"xx-avoidAriaApplicationRole" : { type : "boolean",  defaultValue : false}, // Avoid ACC role 'application'
 					"xx-hyphenation" : { type : "string",  defaultValue : ""}, // (empty string)|native|thirdparty|disable
 					"xx-flexBundleRequestForced" : { type : "boolean",  defaultValue : false },
@@ -491,6 +491,16 @@ sap.ui.define([
 						}
 					});
 				}
+			}
+
+			// default legacy boolean to new enum value
+			// TODO: remove when making the configuration non-experimental
+			if ( config["xx-waitForTheme"] === "true" ) {
+				config["xx-waitForTheme"] = "rendering";
+			}
+			if ( config["xx-waitForTheme"] !== "rendering" && config["xx-waitForTheme"] !== "init" ) {
+				// invalid value or false from legacy boolean setting
+				config["xx-waitForTheme"] = undefined;
 			}
 
 			// log  all non default value
