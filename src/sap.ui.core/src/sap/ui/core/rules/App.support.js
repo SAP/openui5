@@ -311,5 +311,31 @@ sap.ui.define(["sap/ui/support/library"], function(SupportLib) {
 		}
 	};
 
-	return [oControllerSyncCodeCheckRule, oGlobalAPIRule, oJquerySapRule, oSyncFactoryLoadingRule, oGlobalSyncXhrRule, oDeprecatedAPIRule];
+	/**
+	 * Check for usage of Controller Extension API.
+	 */
+	var oControllerExtensionRule = {
+		id: "controllerExtension",
+		audiences: [Audiences.Internal],
+		categories: [Categories.Usage],
+		enabled: true,
+		minversion: "1.61",
+		title: "Wrong usage of Controller Extension API",
+		description: "Your controller extension definition is a subclass of sap.ui.core.mvc.Controller.",
+		resolution: "Your controller extension module should return a plain object.",
+		check: function(oIssueManager, oCoreFacade, oScope) {
+			var oLoggedObjects = oScope.getLoggedObjects("ControllerExtension");
+			oLoggedObjects.forEach(function(oLoggedObject) {
+				oIssueManager.addIssue({
+					severity: Severity.Medium,
+					details: oLoggedObject.message,
+					context: {
+						id: "WEBPAGE"
+					}
+				});
+			});
+		}
+	};
+
+	return [oControllerSyncCodeCheckRule, oGlobalAPIRule, oJquerySapRule, oSyncFactoryLoadingRule, oGlobalSyncXhrRule, oDeprecatedAPIRule, oControllerExtensionRule];
 }, true);

@@ -406,10 +406,24 @@ sap.ui.define([
 			function extendAsync(sCustomControllerName, oController) {
 				return loadControllerClass(sCustomControllerName, bAsync)
 					.then(function(oCustomControllerDef) {
-						if ((oCustomControllerDef = mRegistry[sCustomControllerName]) !== undefined) { //variable init, not comparison!
-							mixinControllerDefinition(oController, oCustomControllerDef);
+						// loadControllerClass resolves with the base sap/ui/core/mvc/Controller class,
+						// in case 'sCustomControllerName' is not a module but was defined with sap.ui.controller("...", {})
+						oCustomControllerDef = mRegistry[sCustomControllerName] || oCustomControllerDef;
+
+						if (oCustomControllerDef !== undefined) {
+							if (oCustomControllerDef.getMetadata && oCustomControllerDef.getMetadata().isA("sap.ui.core.mvc.Controller")) {
+								Log.warning("Attempt to load Extension Controller " + sCustomControllerName + " was not successful", "Controller extension should be a plain object.", null, function() {
+									return {
+										type: "ControllerExtension",
+										name: sCustomControllerName
+									};
+								});
+							} else {
+								mixinControllerDefinition(oController, oCustomControllerDef);
+							}
 							return oController;
 						}
+
 					}, function(err) {
 						Log.error("Attempt to load Extension Controller " + sCustomControllerName + " was not successful - is the Controller correctly defined in its file?");
 					});
