@@ -1,0 +1,18 @@
+[{
+	"Name": "1. Notebook Basic 15",
+	"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+	"Id": "HT-1000",
+	"SubCategoryId": "Notebooks"
+},
+{
+	"Name": "2. Notebook Basic 17",
+	"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+	"Id": "HT-1001",
+	"SubCategoryId": "Notebooks"
+},
+{
+	"Name": "3. Notebook Basic 18",
+	"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+	"Id": "HT-1002",
+	"SubCategoryId": "Notebooks"
+}]

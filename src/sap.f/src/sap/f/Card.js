@@ -250,6 +250,14 @@ sap.ui.define([
 				this.setContent(oContent);
 				this.setBusy(false);
 			}.bind(this));
+		} else if (sCardType === "KPIContent") {
+			sap.ui.require(["sap/f/cards/KPIContent"], function (KPIContent) {
+				var mSettings = this._oCardManifest.get("sap.card/settings");
+				var oClonedSettings = jQuery.extend(true, {}, mSettings);
+				var oContent = new KPIContent(oClonedSettings);
+				this.setContent(oContent);
+				this.setBusy(false);
+			}.bind(this));
 		}
 	};
 

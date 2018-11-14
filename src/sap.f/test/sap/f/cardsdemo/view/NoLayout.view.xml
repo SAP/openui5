@@ -29,6 +29,8 @@
 			</Panel>
 
 			<Panel>
+				<f:Card id="card0" manifest="{manifests>/noLayout/card01}"/>
+				<f:Card id="card000" manifest="{manifests>/noLayout/card0}"/>
 				<f:Card id="somedfault" manifest="{manifests>/noLayout/card1}"/>
 				<f:Card id="default1x1" manifest="{manifests>/noLayout/card2}"/>
 				<f:Card id="default2x1" manifest="{manifests>/noLayout/card3}"/>
@@ -42,6 +44,8 @@
 				<f:Card id="default6x4Busy" manifest="{manifests>/noLayout/card10}"/>
 				<f:Card id="default2x2Image" manifest="{manifests>/noLayout/card11}"/>
 				<f:Card id="card6x6withcomponent" manifest="{manifests>/noLayout/card12}"/>
+				<f:Card id="list" manifest="{manifests>/noLayout/listContent}"/>
+				<f:Card id="listcard2" manifest="{manifests>/noLayout/listcard2}"/>
 			</Panel>
 		</content>
 	</Page>
