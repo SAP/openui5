@@ -6,38 +6,32 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta charset="UTF-8">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	<title>Heap Of Shards</title>
-	<!-- set data-sap-ui-preload="sync" to enable the user to fix it in the
+
+	<!-- set data-sap-ui-async="true" to enable the user to fix it in the
 	troubleshooting tutorial step 4: Diagnostics Window -->
 	<script id="sap-ui-bootstrap"
 		src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"
-		data-sap-ui-libs="sap.m, sap.f"
 		data-sap-ui-theme="sap_belize"
+		data-sap-ui-libs="sap.f"
+		data-sap-ui-resourceroots='{
+			"sap.ui.demo.HeapOfShards": "./",
+			"sap.ui.demo.DoesNotExist": "./DoesNotExist"
+		}'
+		data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
 		data-sap-ui-compatVersion="edge"
-		data-sap-ui-preload="sync"
-		data-sap-ui-resourceroots='{"sap.ui.demo.HeapOfShards": "./", "sap.ui.demo.DoesNotExist": "./DoesNotExist"}'>
+		data-sap-ui-async="true">
 	</script>
 
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 
-	<script>
-		sap.ui.getCore().attachInit(function() {
-			new sap.m.Shell({
-				app : new sap.ui.core.ComponentContainer({
-					height : "100%",
-					name : "sap.ui.demo.HeapOfShards",
-					settings : {
-						id : "HeapOfShards"
-					}
-				})
-			}).placeAt("content");
-		});
-	</script>
 </head>
 
-<body class="sapUiBody" id="content"></body>
+<body class="sapUiBody">
+	<div data-sap-ui-component data-name="sap.ui.demo.HeapOfShards" data-id="container" data-settings='{"id" : "HeapOfShards"}'></div>
+</body>
 
 </html>
