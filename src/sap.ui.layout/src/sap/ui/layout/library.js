@@ -900,6 +900,27 @@ sap.ui.define([
 		ColumnDense: "ColumnDense"
 	};
 
+	/**
+	 * @classdesc A string type that represents how many boxes per row should be displayed for each screen size. The breakpoints are for extra large (XL), large (L), medium (M) and small (S) screen sizes.
+	 *
+	 * <b>Note:</b> The parameters must be provided in the order <XL L M S>.
+	 *
+	 * @example <code>XL7 L6 M4 S2</code>
+	 * @example <code>XL12 L12 M12 S1</code>
+	 * @since 1.61.0
+	 * @public
+	 * @namespace
+	 * @final
+	 * @ui5-metamodel This simple type will also be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.layout.BoxesPerRowConfig = DataType.createType("sap.ui.layout.BoxesPerRowConfig", {
+			isValid : function(vValue) {
+				return /^(([Xx][Ll](?:[1-9]|1[0-2]))? ?([Ll](?:[1-9]|1[0-2]))? ?([Mm](?:[1-9]|1[0-2]))? ?([Ss](?:[1-9]|1[0-2]))?)$/.test(vValue);
+			}
+		},
+		DataType.getType("string")
+	);
+
 	return sap.ui.layout;
 
 });

@@ -28,7 +28,7 @@ sap.ui.define(["sap/ui/layout/cssgrid/GridLayoutBase"], function (GridLayoutBase
 			rm.addStyle("width", oControl.getWidth());
 		}
 
-		GridLayoutBase.renderSingleGridLayout(rm, oControl.getGridLayoutConfiguration());
+		oControl.getGridLayoutConfiguration().renderSingleGridLayout(rm);
 
 		rm.writeStyles();
 		rm.writeClasses();
