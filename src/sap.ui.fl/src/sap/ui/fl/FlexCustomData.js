@@ -17,7 +17,7 @@ sap.ui.define([
 	 * 	- 'sap.ui.fl.failedChanges.js.<sChangeId>'
 	 * 	- 'sap.ui.fl.failedChanges.xml.<sChangeId>'
 	 * 	- 'sap.ui.fl.notApplicableChanges.<sChangeId>'
-	 * The value for applied changes is the serialized revert data, for every other its just 'true'
+	 * The value for applied changes is the serialized revert data, for every other it's just 'true'
 	 * notApplicable describes a state where the change could not be applied, but it's still fine
 	 * and doesn't harm the other changes (e.g. duplicate addFields change)
 	 * The CustomData is also persisted in the view cache if it's active
@@ -35,13 +35,13 @@ sap.ui.define([
 	FlexCustomData.notApplicableChangesCustomDataKey = "sap.ui.fl.notApplicableChanges";
 
 	/**
-	 * Checks the custom data of the provided control for applied changes and returns the value or undefined
+	 * Checks the custom data of the provided control for applied changes and returns the value or 'undefined'
 	 *
 	 * @param {sap.ui.core.Control} oControl The Control that should be checked
-	 * @param {sap.ui.fl.Change} oChange - Change instance
+	 * @param {sap.ui.fl.Change} oChange The change instance
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier The control tree modifier
 	 *
-	 * @returns {string} Returns the custom data or undefined
+	 * @returns {string|undefined} Returns the custom data or 'undefined'
 	 */
 	FlexCustomData.getAppliedCustomDataValue = function(oControl, oChange, oModifier) {
 		var mCustomData = this._getCustomData(oControl, oModifier, this._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey));
@@ -49,13 +49,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks the custom data of the provided control. If there is custom data value it gets parsed and returned as object
+	 * Checks the custom data of the provided control. If there is a custom data value it gets parsed and returned as object
 	 *
 	 * @param {sap.ui.core.Control} oControl The Control that should be checked
-	 * @param {sap.ui.fl.Change} oChange - Change instance
+	 * @param {sap.ui.fl.Change} oChange The change instance
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier The control tree modifier
 	 *
-	 * @returns {object} Returns the revert data from the custom data as object or undefined
+	 * @returns {object|undefined} Returns the revert data from the custom data as object or 'undefined'
 	 */
 	FlexCustomData.getParsedRevertDataFromCustomData = function(oControl, oChange, oModifier) {
 		var sCustomDataValue = this.getAppliedCustomDataValue(oControl, oChange, oModifier);
@@ -63,13 +63,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks the custom data of the provided control and returns true if the failed change key is there
+	 * Checks the custom data of the provided control and returns 'true' if the failed change key is there
 	 *
 	 * @param {sap.ui.core.Control} oControl The Control that should be checked
-	 * @param {sap.ui.fl.Change} oChange - Change instance
+	 * @param {sap.ui.fl.Change} oChange The change instance
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier The control tree modifier
 	 *
-	 * @returns {boolean} Returns true if the custom data is there
+	 * @returns {boolean} Returns 'true' if the custom data is there
 	 */
 	FlexCustomData.hasFailedCustomDataJs = function(oControl, oChange, oModifier) {
 		var mCustomData = this._getCustomData(oControl, oModifier, this._getCustomDataKey(oChange, FlexCustomData.failedChangesCustomDataKeyJs));
@@ -77,17 +77,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds applied custom data to the control. The value of the custom data is, depending on if the change is revertible,
-	 * either the revert data of the change (stringified and '{' and '}' escaped) of simply 'true'
+	 * Adds applied custom data to the control. Depending on whether the change is revertible,
+	 * the value of the custom data is either the revert data of the change (stringified and '{' and '}' escaped) or simply 'true'
 	 *
-	 * @param {sap.ui.core.Control} oControl The Control that should be checked
-	 * @param {sap.ui.fl.Change} oChange Change instance
-	 * @param {object} mPropertyBag propertyBag
+	 * @param {sap.ui.core.Control} oControl The control that should be checked
+	 * @param {sap.ui.fl.Change} oChange The change instance
+	 * @param {object} mPropertyBag The propertyBag
 	 * @param {object} mPropertyBag.view The view to process
-	 * @param {object} mPropertyBag.modifier Polymorph reuse operations handling the changes on the given view type
-	 * @param {object} mPropertyBag.appDescriptor App descriptor containing the metadata of the current application
-	 * @param {object} mPropertyBag.appComponent Component instance that is currently loading
-	 * @param {boolean} bRevertible true if the change is revertible
+	 * @param {object} mPropertyBag.modifier The polymorph reuse operations handling the changes on the given view type
+	 * @param {object} mPropertyBag.appDescriptor The app descriptor containing the metadata of the current application
+	 * @param {object} mPropertyBag.appComponent The component instance that is currently loading
+	 * @param {boolean} bRevertible 'true' if the change is revertible
 	 */
 	FlexCustomData.addAppliedCustomData = function(oControl, oChange, mPropertyBag, bRevertible) {
 		var sCustomDataValue;
@@ -106,13 +106,13 @@ sap.ui.define([
 	 * Adds failed custom data to the control. The value is just 'true'
 	 *
 	 * @param {sap.ui.core.Control} oControl The Control that should be checked
-	 * @param {sap.ui.fl.Change} oChange Change instance
-	 * @param {object} mPropertyBag propertyBag
+	 * @param {sap.ui.fl.Change} oChange The change instance
+	 * @param {object} mPropertyBag The propertyBag
 	 * @param {object} mPropertyBag.view The view to process
-	 * @param {object} mPropertyBag.modifier Polymorph reuse operations handling the changes on the given view type
-	 * @param {object} mPropertyBag.appDescriptor App descriptor containing the metadata of the current application
-	 * @param {object} mPropertyBag.appComponent Component instance that is currently loading
-	 * @param {string} sIdentifier identifier which custom data key has to be used
+	 * @param {object} mPropertyBag.modifier The polymorph reuse operations handling the changes on the given view type
+	 * @param {object} mPropertyBag.appDescriptor The app descriptor containing the metadata of the current application
+	 * @param {object} mPropertyBag.appComponent The component instance that is currently loading
+	 * @param {string} sIdentifier Identifies which custom data key has to be used
 	 */
 	FlexCustomData.addFailedCustomData = function(oControl, oChange, mPropertyBag, sIdentifier) {
 		var sCustomDataKey = this._getCustomDataKey(oChange, sIdentifier);
@@ -123,7 +123,7 @@ sap.ui.define([
 	 * Destroys the applied custom data for the given control
 	 *
 	 * @param {sap.ui.core.Control} oControl The Control that should be checked
-	 * @param {sap.ui.fl.Change} oChange - Change instance
+	 * @param {sap.ui.fl.Change} oChange - The change instance
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier The control tree modifier
 	 */
 	FlexCustomData.destroyAppliedCustomData = function(oControl, oChange, oModifier) {
@@ -135,16 +135,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the identifier which custom data key has to be used depending on the success, the error and the modifier.
+	 * Returns the identifier indicating which custom data key has to be used depending on the success, the error and the modifier.
 	 * The correct key is determined like this:
 	 * 	1. if bSuccess is true: FlexCustomData.appliedChangesCustomDataKey
 	 * 	2. if bError is false: FlexCustomData.notApplicableChangesCustomDataKey
 	 * 	3. if bXmlModifier is true: FlexCustomData.failedChangesCustomDataKeyXml
 	 * 	4. FlexCustomData.failedChangesCustomDataKeyJs
 	 *
-	 * @param {boolean} bSuccess true if the change has been applied successfully
-	 * @param {boolean} bError true if the change has thrown an error
-	 * @param {boolean} bXmlModifier true if the change has been applied in XML
+	 * @param {boolean} bSuccess 'true' if the change has been applied successfully
+	 * @param {boolean} bError 'true' if the change has thrown an error
+	 * @param {boolean} bXmlModifier 'true' if the change has been applied in XML
 	 *
 	 * @returns {string} Returns the correct identifier as a string
 	 */
