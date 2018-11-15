@@ -15,7 +15,7 @@ sap.ui.define([
 	/*eslint max-nested-callbacks: 0 */
 
 	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
-		oDoFetchQueryOptionsPromise = SyncPromise.resolve({}),
+		oEmptyQueryOptionsPromise = SyncPromise.resolve({}),
 		mSupportedEvents = {
 			AggregatedDataStateChange : true,
 			change : true,
@@ -343,7 +343,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.doFetchQueryOptions = function () {
-		return oDoFetchQueryOptionsPromise;
+		return this.isRoot() ? SyncPromise.resolve(this.mQueryOptions) : oEmptyQueryOptionsPromise;
 	};
 
 	/**
@@ -398,6 +398,17 @@ sap.ui.define([
 			throw new Error(this + " is not resolved yet");
 		}
 		return this.getModel().getMetaModel().getValueListType(sResolvedPath);
+	};
+
+	/**
+	 * Returns whether the binding is absolute or quasi-absolute.
+	 *
+	 * @returns {boolean} - Whether the binding is absolute or quasi-absolute
+	 *
+	 * @private
+	 */
+	ODataPropertyBinding.prototype.isRoot = function () {
+		return !this.bRelative || this.oContext && !this.oContext.getBinding;
 	};
 
 	/**
