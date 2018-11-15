@@ -129,3 +129,27 @@ control testing:
 A common scenario is asserting the busy state of a control. Testing whether a control is not busy
 is meaningless when `autoWait` is globally enabled. An example of testing for busyness with enabled
 `autoWait` can be found in the [OPA5 samples](https://openui5nightly.hana.ondemand.com/#/entity/sap.ui.test.Opa5).
+
+## Deactivating tests in need of adaptation
+
+As of version 1.61, you can use the `opaTodo` and `opaSkip` methods in addition to `opaTest`.
+They are similar to `Qunit.todo` and `QUnit.skip` and have the same signatures as their QUnit counterparts.
+
+In QUnit1, `opaTodo` is equivalent to `opaTest` as `QUnit.todo` is not yet avalilable. In QUnit2, `opaTodo`
+will succeed if the test has at least one failing assertion or if it timeouts with either OPA5 or QUnit timeout.
+
+If a test needs to be adapted after recent changes, you might need to temporarily disable it in order
+to have a successful build. A test which is commented out can easily be forgotten and its coverage value lost.
+`opaTodo` will prompt you to un-comment the test once an adaptation is provided.
+
+`opaTodo` and `opaSkip` are readily available to your test as globals.
+
+Example:
+
+```javascript
+oOpa.waitFor({
+    success: function () {
+        Opa5.assert.ok(false, "Should not report test that needs adaptation");
+    }
+});
+```
