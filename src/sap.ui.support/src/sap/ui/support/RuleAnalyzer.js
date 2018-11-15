@@ -53,9 +53,10 @@ sap.ui.define([
 			 *  <li>A string that refers to the ID of a system preset.</li>
 			 *  <li>An object array with a plain list of rules.</li>
 			 * </ul>
+			 * @param {object} [oMetadata] Metadata in custom format. Its only purpose is to be included in the analysis report.
 			 * @returns {Promise} Notifies the finished state by starting the Analyzer
 			 */
-			analyze: function (oExecutionScope, vPresetOrRules) {
+			analyze: function (oExecutionScope, vPresetOrRules, oMetadata) {
 				// Temporary fix until the module is fully refactored.
 				var oLoadingPromise = new Promise(function (resolve) {
 					Bootstrap.initSupportRules(["true", "silent"], {
@@ -67,11 +68,11 @@ sap.ui.define([
 
 				return oLoadingPromise.then(function () {
 					if (RuleSetLoader._rulesCreated) {
-						return Main.analyze(oExecutionScope, vPresetOrRules);
+						return Main.analyze(oExecutionScope, vPresetOrRules, oMetadata);
 					}
 
 					return RuleSetLoader._oMainPromise.then(function () {
-						return Main.analyze(oExecutionScope, vPresetOrRules);
+						return Main.analyze(oExecutionScope, vPresetOrRules, oMetadata);
 					});
 				});
 			},

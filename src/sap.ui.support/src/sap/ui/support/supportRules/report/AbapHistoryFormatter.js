@@ -24,7 +24,8 @@ sap.ui.define([], function () {
 				title: oRulePreset && oRulePreset.title || "",
 				description: oRulePreset && oRulePreset.description || "",
 				dateExported: oRulePreset && oRulePreset.dateExported || ""
-			}
+			},
+			analysisMetadata: oRun.analysisMetadata || null
 		};
 	}
 
