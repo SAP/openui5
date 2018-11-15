@@ -1,17 +1,18 @@
 sap.ui.define([
-    "sap/ui/demo/theming/controller/BaseController",
-    "sap/ui/model/json/JSONModel",
-    "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator",
-    "sap/ui/model/Sorter",
-    "sap/ui/Device",
-    "sap/ui/demo/theming/model/formatter",
-    "sap/m/MessageToast",
-    "sap/ui/thirdparty/jquery",
-    "sap/ui/core/theming/Parameters",
-    "sap/ui/core/library"
+	"sap/ui/demo/theming/controller/BaseController",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/Sorter",
+	"sap/ui/Device",
+	"sap/ui/demo/theming/model/formatter",
+	"sap/m/MessageToast",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/theming/Parameters",
+	"sap/ui/core/library",
+	"sap/ui/core/Fragment"
 ], function(
-    BaseController,
+	BaseController,
 	JSONModel,
 	Filter,
 	FilterOperator,
@@ -21,11 +22,10 @@ sap.ui.define([
 	MessageToast,
 	jQuery,
 	Parameters,
-	coreLibrary
+	coreLibrary,
+	Fragment
 ) {
-    "use strict";
-
-	//var TYPING_DELAY = 200; // ms
+	"use strict";
 
 	return BaseController.extend("sap.ui.demo.theming.controller.Overview", {
 
@@ -39,12 +39,10 @@ sap.ui.define([
 		 * @public
 		 */
 		onInit: function () {
-			var oTable = this.byId("oTable");
+			var oTable = this.byId("table");
 			var oTableItem = this.byId("oTableItem");
 			this._oTable = oTable;
-			this._oPreviousQueryContext = {};
 			this._oCurrentQueryContext = null;
-
 
 			//Keeps the filter and search state
 			this._oTableFilterState = {
@@ -84,29 +82,27 @@ sap.ui.define([
 				]
 			};
 			oComboBoxModel.setData(mData);
-			this.getView().setModel(oComboBoxModel);
+			sap.ui.getCore().setModel(oComboBoxModel);
 			var oValue = "Details for ''Belize''";
 			this.byId("title").setText(oValue);
 
-			sap.ui.getCore().setModel(oModel, "myModel");
+			this.getView().setModel(oModel);
 			oModel.setSizeLimit(100000);
 
-			oTable.setModel(oModel);
 			oTable.bindAggregation("items", "/Data", oTableItem);
 
-			var that = this;
 			this.getParameterMetadata(function (oParameterMetadata) {
-				var oData = that.createDataStructure(oParameterMetadata);
+				var oData = this.createDataStructure(oParameterMetadata);
 				oModel.setData(oData);
-			});
+			}.bind(this));
 
 			//Called when the user chooses a new theme in the ComboBox
 			//Creates a new Data Structure for the table including the updated theme data
 			sap.ui.getCore().attachThemeChanged(function () {
 				this.getParameterMetadata(function (oParameterMetadata) {
-					var oData = that.createDataStructure(oParameterMetadata);
+					var oData = this.createDataStructure(oParameterMetadata);
 					oModel.setData(oData);
-				});
+				}.bind(this));
 			}, this);
 		},
 		getParameterMetadata: function (fnCallback) {
@@ -130,7 +126,7 @@ sap.ui.define([
 
 							aAllThemes = oFileThemeParameters.match(patternThemeFull);
 
-							aAllThemes.forEach(function (element, index) {
+							aAllThemes.forEach(function (element) {
 								oFileThemeParameters.indexOf(element);
 								oThemeParameter = {};
 
@@ -138,7 +134,7 @@ sap.ui.define([
 
 								aProperties = sElement.match(pattern);
 
-								aProperties.forEach(function (element, index) {
+								aProperties.forEach(function (element) {
 									element = element.replace(/\\/g, "");
 									if (element.indexOf("Label") > -1) {
 										oThemeParameter.label = element.substring(element.indexOf('"') + 1, element.lastIndexOf('"'));
@@ -609,26 +605,21 @@ sap.ui.define([
 		},
 		//Event handler for the class information Button
 		//Opens a QuickView with detailed information about the semantic parameter structure
-		openQuickView: function (oEvent, oModel) {
-			this.createPopover();
-			this._oQuickView.setModel(oModel);
-
-			//Delay because addDependent will do a async rerendering and the actionSheet will immediately close without it
-			var oButton = oEvent.getSource();
-			setTimeout(function () {
-				this._oQuickView.openBy(oButton);
-			}, 0);
-		},
 		onPressInformation: function (oEvent) {
-			this.openQuickView(oEvent);
-		},
-		createPopover: function () {
-			if (!this._oQuickView) {
-				this._oQuickView = sap.ui.xmlfragment("sap.ui.demo.theming.view.QuickViewClass", this);
-				this.getView().addDependent(this._oQuickView);
+			var oButton = oEvent.getSource();
+			if (!this.byId("quickView")) {
+				Fragment.load({
+					id: this.getView().getId(),
+					name: "sap.ui.demo.theming.view.QuickViewClass",
+					controller: this
+				}).then(function(oQuickView){
+					this.getView().addDependent(oQuickView);
+					oQuickView.openBy(oButton);
+				}.bind(this));
+			} else {
+				this.byId("quickView").openBy(oButton);
 			}
 		},
-
 		//Sets the app to busy, when selecting a new theme
 		onAction: function (oEvt) {
 			var oPanel = this.byId("page");
@@ -704,7 +695,7 @@ sap.ui.define([
 		//Event handler for the class ToggleButton
 		//Sorts the list ascending by class
 		sortClass: function (oEvent) {
-			var oTable = this.byId("oTable");
+			var oTable = this.byId("table");
 			var oTableItem = this.byId("oTableItem");
 			if (oEvent.getSource().getPressed()) {
 				var oClassSorter = new Sorter("class", false, function (oContext) {

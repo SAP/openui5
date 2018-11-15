@@ -2,10 +2,7 @@
 	controllerName="sap.ui.demo.theming.controller.Overview"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core"
-	xmlns:f="sap.f"
-	xmlns:semantic="sap.m.semantic"
 	xmlns:mylib="sap.ui.demo.theming.control">
 	<Page
 		id="page"
@@ -32,198 +29,198 @@
 			<core:InvisibleText id="textGroupByClass" text="{i18n>TextGroupByClass}"/>
 			<!-- -->
 			<Panel id="idPanel"
-						 class="padding"
-						 accessibleRole="Search">
-					<headerToolbar>
-						<OverflowToolbar>
-							<SearchField
-								width="auto"
-								id="searchField"
-								tooltip="{i18n>masterSearchTooltip}"
-								liveChange="onSearch"
-								ariaLabelledBy="textSearch">
+				class="padding"
+				accessibleRole="Form">
+				<headerToolbar>
+					<OverflowToolbar>
+						<SearchField
+							width="auto"
+							id="searchField"
+							tooltip="{i18n>masterSearchTooltip}"
+							liveChange=".onSearch"
+							ariaLabelledBy="textSearch">
+							<layoutData>
+								<OverflowToolbarLayoutData/>
+							</layoutData>
+						</SearchField>
+						<ComboBox
+							width="auto"
+							id="comboBox"
+							items="{/items}"
+							change=".onThemeChange"
+							placeholder="{i18n>ComboBoxPlaceholder}"
+							tooltip="{i18n>ComboBoxTooltip}"
+							ariaLabelledBy="textComboBox">
+							<core:Item key="{key}" text="{text}"/>
 								<layoutData>
-									<OverflowToolbarLayoutData/>
+									<OverflowToolbarLayoutData />
 								</layoutData>
-							</SearchField>
-							<ComboBox
-								width="auto"
-								id="comboBox"
-								items="{/items}"
-								change="onThemeChange"
-								placeholder="{i18n>ComboBoxPlaceholder}"
-								tooltip="{i18n>ComboBoxTooltip}"
-								ariaLabelledBy="textComboBox">
-								<core:Item key="{key}" text="{text}"/>
-									<layoutData>
-										<OverflowToolbarLayoutData />
-									</layoutData>
-							</ComboBox>
-							<ToolbarSpacer/>
-							<Label text="{i18n>ToolbarFilter}"/>
-								<ToggleButton
-									type="Transparent"
-									id="tbText"
-									press="onPressText"
-									icon="sap-icon://text-formatting"
-									text="{i18n>ToggleButtonTextText}"
-									ariaLabelledBy="textFilter"
-									tooltip="{i18n>TooltipText}"/>
-								<ToolbarSeparator
-									visible="{= !${device>/system/phone} }"/>
-								<ToggleButton
-									type="Transparent"
-									id="tbColor"
-									press="onPressColor"
-									icon="sap-icon://palette"
-									text="{i18n>ToggleButtonColorText}"
-									ariaLabelledBy="textFilter"
-									tooltip="{i18n>TooltipColor}"/>
-								<ToggleButton
-									type="Transparent"
-									id="tbDimension"
-									press="onPressDimension"
-									icon="sap-icon://dimension"
-									text="{i18n>ToggleButtonDimensionText}"
-									ariaLabelledBy="textFilter"
-									tooltip="{i18n>TooltipDimension}"/>
-								<ToggleButton
-									type="Transparent"
-									id="tbImage"
-									press="onPressImage"
-									icon="sap-icon://background"
-									text="{i18n>ToggleButtonImageText}"
-									ariaLabelledBy="textFilter"
-									tooltip="{i18n>TooltipImage}"/>
-								<ToggleButton
-									type="Transparent"
-									id="tbOpacity"
-									press="onPressOpacity"
-									icon="sap-icon://customize"
-									text="{i18n>ToggleButtonOpacityText}"
-									ariaLabelledBy="textFilter"
-									tooltip="{i18n>TooltipOpacity}"/>
-								<ToolbarSeparator
-									visible="{= ${device>/system/desktop} }"/>
-								<ToggleButton
-									type="Transparent"
-									id="tbExpert"
-									press="onPressExpert"
-									text="{i18n>ToggleButtonExpertText}"
-									ariaLabelledBy="textFilter"
-									tooltip="{i18n>TooltipExpert}"/>
-								<ToggleButton
-									type="Transparent"
-									id="tbQuick"
-									press="onPressQuick"
-									text="{i18n>ToggleButtonQuickText}"
-									ariaLabelledBy="textFilter"
-									tooltip="{i18n>TooltipQuick}"/>
-						</OverflowToolbar>
-					</headerToolbar>
+						</ComboBox>
+						<ToolbarSpacer/>
+						<Label text="{i18n>ToolbarFilter}"/>
+							<ToggleButton
+								type="Transparent"
+								id="tbText"
+								press=".onPressText"
+								icon="sap-icon://text-formatting"
+								text="{i18n>ToggleButtonTextText}"
+								ariaLabelledBy="textFilter"
+								tooltip="{i18n>TooltipText}"/>
+							<ToolbarSeparator
+								visible="{= !${device>/system/phone} }"/>
+							<ToggleButton
+								type="Transparent"
+								id="tbColor"
+								press=".onPressColor"
+								icon="sap-icon://palette"
+								text="{i18n>ToggleButtonColorText}"
+								ariaLabelledBy="textFilter"
+								tooltip="{i18n>TooltipColor}"/>
+							<ToggleButton
+								type="Transparent"
+								id="tbDimension"
+								press=".onPressDimension"
+								icon="sap-icon://dimension"
+								text="{i18n>ToggleButtonDimensionText}"
+								ariaLabelledBy="textFilter"
+								tooltip="{i18n>TooltipDimension}"/>
+							<ToggleButton
+								type="Transparent"
+								id="tbImage"
+								press=".onPressImage"
+								icon="sap-icon://background"
+								text="{i18n>ToggleButtonImageText}"
+								ariaLabelledBy="textFilter"
+								tooltip="{i18n>TooltipImage}"/>
+							<ToggleButton
+								type="Transparent"
+								id="tbOpacity"
+								press=".onPressOpacity"
+								icon="sap-icon://customize"
+								text="{i18n>ToggleButtonOpacityText}"
+								ariaLabelledBy="textFilter"
+								tooltip="{i18n>TooltipOpacity}"/>
+							<ToolbarSeparator
+								visible="{= ${device>/system/desktop} }"/>
+							<ToggleButton
+								type="Transparent"
+								id="tbExpert"
+								press=".onPressExpert"
+								text="{i18n>ToggleButtonExpertText}"
+								ariaLabelledBy="textFilter"
+								tooltip="{i18n>TooltipExpert}"/>
+							<ToggleButton
+								type="Transparent"
+								id="tbQuick"
+								press=".onPressQuick"
+								text="{i18n>ToggleButtonQuickText}"
+								ariaLabelledBy="textFilter"
+								tooltip="{i18n>TooltipQuick}"/>
+					</OverflowToolbar>
+				</headerToolbar>
 			</Panel>
 			<Table
-			 id="oTable"
-			 inset="false"
-	     items="{path: '/Data'}"
-	   	 class="alignment"
-	   	 mode= "SingleSelectMaster"
-			 ariaLabelledBy="title">
-				 <headerToolbar>
-					 <OverflowToolbar>
-						 <Title
-							 id="title"
-							 text=""/>
-						 <ToolbarSpacer/>
-						 <Label
-							 id="labelTags"
-							 text="{i18n>LabelTags}"/>
-						 <ToggleButton
-							 type="Transparent"
-							 id="tbButton"
-							 press="onPressButton"
-							 text="{i18n>ToggleButtonButtonText}"
-							 ariaLabelledBy="textTag"
-							 tooltip="{i18n>TooltipButton}"/>
-						 <ToggleButton
-							 type="Transparent"
-							 id="tbChart"
-							 press="onPressChart"
-							 text="{i18n>ToggleButtonChartText}"
-							 ariaLabelledBy="textTag"
-							 tooltip="{i18n>TooltipChart}"/>
-						 <ToggleButton
-							 type="Transparent"
-							 id="tbContent"
-							 press="onPressContent"
-							 text="{i18n>ToggleButtonContentText}"
-							 ariaLabelledBy="textTag"
-							 tooltip="{i18n>TooltipContent}"/>
-						 <ToggleButton
-							 type="Transparent"
-							 id="tbField"
-							 press="onPressField"
-							 text="{i18n>ToggleButtonFieldText}"
-							 ariaLabelledBy="textTag"
-							 tooltip="{i18n>TooltipField}"/>
-						 <ToggleButton
-							 type="Transparent"
-							 id="tbGroup"
-							 press="onPressGroup"
-						   text="{i18n>ToggleButtonGroupText}"
-							 ariaLabelledBy="textTag"
-							 tooltip="{i18n>TooltipGroup}"/>
-					 	 <ToggleButton
-							 type="Transparent"
-							 id="tbLink"
-							 press="onPressLink"
-							 text="{i18n>ToggleButtonLinkText}"
-							 ariaLabelledBy="textTag"
-							 tooltip="{i18n>TooltipLink}"/>
-						 <ToggleButton
-							 type="Transparent"
-							 id="tbList"
-							 press="onPressList"
-							 text="{i18n>ToggleButtonListText}"
-							 ariaLabelledBy="textTag"
-							 tooltip="{i18n>TooltipList}"/>
-						 <ToggleButton
-							 type="Transparent"
-							 id="tbPage"
-							 press="onPressPage"
-							 text="{i18n>ToggleButtonPageText}"
-							 ariaLabelledBy="textTag"
-							 tooltip="{i18n>TooltipPage}"/>
-						 <ToggleButton
-							 type="Transparent"
-							 id="tbScrollbar"
-							 press="onPressScrollbar"
-							 text="{i18n>ToggleButtonScrollbarText}"
-							 ariaLabelledBy="textTag"
-							 tooltip="{i18n>TooltipScrollbar}"/>
-						 <ToggleButton
-							 type="Transparent"
-							 id="tbShell"
-							 press="onPressShell"
-							 text="{i18n>ToggleButtonShellText}"
-							 ariaLabelledBy="textTag"
-							 tooltip="{i18n>TooltipShell}"/>
-						 <ToggleButton
-							 type="Transparent"
-							 id="tbTile"
-							 press="onPressTile"
-							 text="{i18n>ToggleButtonTileText}"
-							 ariaLabelledBy="textTag"
-							 tooltip="{i18n>TooltipTile}"/>
-						 <ToggleButton
-							 type="Transparent"
-							 id="tbToolbar"
-							 press="onPressToolbar"
-							 text="{i18n>ToggleButtonToolbarText}"
-							 ariaLabelledBy="textTag"
-							 tooltip="{i18n>TooltipToolbar}"/>
-					 </OverflowToolbar>
-				 </headerToolbar>
+				id="table"
+				inset="false"
+				items="{path: '/Data'}"
+				class="alignment"
+				mode= "SingleSelectMaster"
+				ariaLabelledBy="title">
+				<headerToolbar>
+					<OverflowToolbar>
+						<Title
+							id="title"
+							text=""/>
+						<ToolbarSpacer/>
+						<Label
+							id="labelTags"
+							text="{i18n>LabelTags}"/>
+						<ToggleButton
+							type="Transparent"
+							id="tbButton"
+							press=".onPressButton"
+							text="{i18n>ToggleButtonButtonText}"
+							ariaLabelledBy="textTag"
+							tooltip="{i18n>TooltipButton}"/>
+						<ToggleButton
+							type="Transparent"
+							id="tbChart"
+							press=".onPressChart"
+							text="{i18n>ToggleButtonChartText}"
+							ariaLabelledBy="textTag"
+							tooltip="{i18n>TooltipChart}"/>
+						<ToggleButton
+							type="Transparent"
+							id="tbContent"
+							press=".onPressContent"
+							text="{i18n>ToggleButtonContentText}"
+							ariaLabelledBy="textTag"
+							tooltip="{i18n>TooltipContent}"/>
+						<ToggleButton
+							type="Transparent"
+							id="tbField"
+							press=".onPressField"
+							text="{i18n>ToggleButtonFieldText}"
+							ariaLabelledBy="textTag"
+							tooltip="{i18n>TooltipField}"/>
+						<ToggleButton
+							type="Transparent"
+							id="tbGroup"
+							press=".onPressGroup"
+							text="{i18n>ToggleButtonGroupText}"
+							ariaLabelledBy="textTag"
+							tooltip="{i18n>TooltipGroup}"/>
+						<ToggleButton
+							type="Transparent"
+							id="tbLink"
+							press=".onPressLink"
+							text="{i18n>ToggleButtonLinkText}"
+							ariaLabelledBy="textTag"
+							tooltip="{i18n>TooltipLink}"/>
+						<ToggleButton
+							type="Transparent"
+							id="tbList"
+							press=".onPressList"
+							text="{i18n>ToggleButtonListText}"
+							ariaLabelledBy="textTag"
+							tooltip="{i18n>TooltipList}"/>
+						<ToggleButton
+							type="Transparent"
+							id="tbPage"
+							press=".onPressPage"
+							text="{i18n>ToggleButtonPageText}"
+							ariaLabelledBy="textTag"
+							tooltip="{i18n>TooltipPage}"/>
+						<ToggleButton
+							type="Transparent"
+							id="tbScrollbar"
+							press=".onPressScrollbar"
+							text="{i18n>ToggleButtonScrollbarText}"
+							ariaLabelledBy="textTag"
+							tooltip="{i18n>TooltipScrollbar}"/>
+						<ToggleButton
+							type="Transparent"
+							id="tbShell"
+							press=".onPressShell"
+							text="{i18n>ToggleButtonShellText}"
+							ariaLabelledBy="textTag"
+							tooltip="{i18n>TooltipShell}"/>
+						<ToggleButton
+							type="Transparent"
+							id="tbTile"
+							press=".onPressTile"
+							text="{i18n>ToggleButtonTileText}"
+							ariaLabelledBy="textTag"
+							tooltip="{i18n>TooltipTile}"/>
+						<ToggleButton
+							type="Transparent"
+							id="tbToolbar"
+							press=".onPressToolbar"
+							text="{i18n>ToggleButtonToolbarText}"
+							ariaLabelledBy="textTag"
+							tooltip="{i18n>TooltipToolbar}"/>
+					</OverflowToolbar>
+				</headerToolbar>
 				<columns>
 					<Column width="100px">
 						<Text  text="{i18n>TableColumnPreviewText}"/>
@@ -269,7 +266,7 @@
 									id="showInformation"
 									icon="sap-icon://hint"
 									tooltip="{i18n>ToggleButtonInformationTooltip}"
-									press="onPressInformation"
+									press=".onPressInformation"
 									class="sapUiHideOnTablet"
 									ariaLabelledBy="textClassInformation"/>
 								<ToggleButton
@@ -277,7 +274,7 @@
 									type="Transparent"
 									icon="sap-icon://group-2"
 									tooltip="{i18n>ToggleButtonGroupTooltip}"
-									press="sortClass"
+									press=".sortClass"
 									ariaLabelledBy="textGroupByClass"/>
 							</items>
 						</FlexBox>
@@ -295,7 +292,7 @@
 								<Button
 								icon="sap-icon://copy"
 								type="Transparent"
-								press="onCopyCodeToClipboard"
+								press=".onCopyCodeToClipboard"
 								class="sapUiTinyMarginBegin"
 								ariaLabelledBy="textCopy"/>
 							<Label
@@ -308,10 +305,14 @@
 							<Text text="{parameter}"/>
 							<Text text="{theming}"/>
 							<ObjectNumber
-								number="{path: 'class',
-									formatter: '.formatter.addClass'}"
-								state="{parts: [{path: 'class'}],
-									formatter:  '.formatter.weightState'}"/>
+								number="{
+									path: 'class',
+									formatter: '.formatter.addClass'
+								}"
+								state="{
+									parts: [{path: 'class'}],
+									formatter:  '.formatter.weightState'
+								}"/>
 						</cells>
 					</ColumnListItem>
 				</items>

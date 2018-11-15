@@ -1,40 +1,22 @@
 sap.ui.define([
-		"sap/ui/demo/theming/controller/BaseController",
-		"sap/ui/model/json/JSONModel",
-		"sap/base/Log"
-	], function (BaseController, JSONModel, Log) {
-		"use strict";
+	"sap/ui/demo/theming/controller/BaseController",
+	"sap/ui/model/json/JSONModel",
+	"sap/base/Log"
+], function (BaseController, JSONModel, Log) {
+	"use strict";
 
-		return BaseController.extend("sap.ui.demo.theming.controller.App", {
+	return BaseController.extend("sap.ui.demo.theming.controller.App", {
 
-			/**
-			 * Called when the app is started.
-			 */
-			onInit : function () {
-				var oViewModel,
-					fnSetAppNotBusy,
-					iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
+		/**
+		 * Called when the app is started.
+		 */
+		onInit : function () {
+			// reduce the log level to speed up the app performance
+			Log.setLevel(Log.Level.WARNING);
 
-				oViewModel = new JSONModel({
-					busy : true,
-					delay : 0
-				});
-				this.setModel(oViewModel, "view");
+			// apply content density mode to root view
+			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
+		}
+	});
 
-				// reduce the log level to speed up the app performance
-				Log.setLevel(Log.Level.WARNING);
-
-				fnSetAppNotBusy = function() {
-					oViewModel.setProperty("/busy", false);
-					oViewModel.setProperty("/delay", iOriginalBusyDelay);
-				};
-
-				// ensure that the app is busy until the icon meta data is loaded
-				fnSetAppNotBusy();
-				// apply content density mode to root view
-				this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
-			}
-		});
-
-	}
-);
+});
