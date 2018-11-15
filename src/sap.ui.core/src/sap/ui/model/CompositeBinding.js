@@ -191,7 +191,7 @@ sap.ui.define([
 	 */
 	CompositeBinding.prototype.getExternalValue = function() {
 		var aValues = [],
-			oInternalType = this.sInternalType && DataType.getType(this.sInternalType),
+			oInternalType,
 			oValue;
 
 		switch (this.sInternalType) {
@@ -200,6 +200,7 @@ sap.ui.define([
 			case "internal":
 				return this.getInternalValue();
 			default:
+				oInternalType = this.sInternalType && DataType.getType(this.sInternalType);
 				if (this.bRawValues) {
 					aValues = this.getValue();
 				} else {
@@ -236,7 +237,7 @@ sap.ui.define([
 	 */
 	CompositeBinding.prototype.setExternalValue = function(oValue) {
 		var aValues, aCurrentValues,
-			oInternalType = this.sInternalType && DataType.getType(this.sInternalType);
+			oInternalType, oDataState;
 
 		if (this.sInternalType === "raw") {
 			this.setRawValue(oValue);
@@ -246,13 +247,15 @@ sap.ui.define([
 			return;
 		}
 
+		oInternalType = this.sInternalType && DataType.getType(this.sInternalType);
+
 		// No twoway binding when using formatters
 		if (this.fnFormatter) {
 			Log.warning("Tried to use twoway binding, but a formatter function is used");
 			return;
 		}
 
-		var oDataState = this.getDataState();
+		oDataState = this.getDataState();
 
 		if (this.oType) {
 			try {
