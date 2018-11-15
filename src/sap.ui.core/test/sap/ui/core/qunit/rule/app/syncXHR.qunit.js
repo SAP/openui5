@@ -1,5 +1,6 @@
 /* global QUnit */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/Control",
 	"sap/ui/core/Component",
 	"sap/ui/core/IconPool",
@@ -11,8 +12,11 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"test-resources/sap/ui/support/TestHelper",
 	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(Control, Component, IconPool, AppCacheBuster, Manifest, Fragment, XMLComposite, sinon, jQuery, testRule, createAndAppendDiv) {
+], function(Log, Control, Component, IconPool, AppCacheBuster, Manifest, Fragment, XMLComposite, sinon, jQuery, testRule, createAndAppendDiv) {
 	"use strict";
+
+	// the rules rely on a certain log level for analyzing issues
+	Log.setLevel(4);
 
 	// create content div
 	createAndAppendDiv('content');
