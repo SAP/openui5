@@ -119,6 +119,16 @@ sap.ui.define(function () {
 					only : "[/odata/type/,/odata/v4/]"
 				}
 			},
+			"OPA.Sticky" : {
+				module : [
+					"sap/ui/core/sample/common/pages/Any",
+					"sap/ui/core/sample/odata/v4/Sticky/Opa.qunit",
+					"sap/ui/core/sample/odata/v4/Sticky/pages/Main"
+				],
+				coverage : {
+					only : "[/odata/type/,/odata/v4/]"
+				}
+			},
 			"OPA.ViewTemplate.Types" : {
 				module : [
 					"sap/ui/core/sample/common/pages/Any",

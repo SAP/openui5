@@ -38,9 +38,9 @@ sap.ui.define([
 	 *   the XHR's status as text
 	 * @param {object} mResponseHeaders
 	 *   the header attributes of the response; supported header attributes are "Content-Type",
-	 *   "DataServiceVersion", "OData-Version", "sap-messages" and "X-CSRF-Token" all with default
-	 *   value <code>null</code>; if no response headers are given at all the default value for
-	 *   "OData-Version" is "4.0";
+	 *   "DataServiceVersion", "OData-Version", "SAP-ContextId", "sap-messages" and "X-CSRF-Token"
+	 *   all with default value <code>null</code>; if no response headers are given at all the
+	 *   default value for "OData-Version" is "4.0";
 	 * @returns {object}
 	 *   a mock for jQuery's XHR wrapper
 	 */
@@ -61,6 +61,8 @@ sap.ui.define([
 						return mResponseHeaders["DataServiceVersion"] || null;
 					case "OData-Version":
 						return mResponseHeaders["OData-Version"] || null;
+					case "SAP-ContextId":
+						return mResponseHeaders["SAP-ContextId"] || null;
 					case "sap-messages":
 						return mResponseHeaders["sap-messages"] || null;
 					case "X-CSRF-Token":
@@ -285,8 +287,11 @@ sap.ui.define([
 				oTokenRequiredResponse = {
 					getResponseHeader : function (sName) {
 						// Note: getResponseHeader treats sName case insensitive!
-						assert.strictEqual(sName, "X-CSRF-Token");
-						return o.sRequired;
+						switch (sName) {
+							case "X-CSRF-Token" : return o.sRequired;
+							case "SAP-Err-Id" : return null;
+							default: assert.ok(false, "unexpected header " + sName);
+						}
 					},
 					"status" : o.iStatus || 403
 				};
@@ -436,6 +441,81 @@ sap.ui.define([
 
 		return oRequestor.sendRequest("GET", "").then(function () {
 			assert.strictEqual(oRequestor.mHeaders["X-CSRF-Token"], "abc123");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("sendRequest(), store SAP-ContextId from server", function (assert) {
+		var oJQueryMock = this.mock(jQuery),
+			oRequestor = _Requestor.create("/", oModelInterface);
+
+		oJQueryMock.expects("ajax")
+			.withExactArgs("/", sinon.match.object)
+			.returns(createMock(assert, {/*oPayload*/}, "OK", {
+				"OData-Version" : "4.0",
+				"SAP-ContextId" : "abc123"
+			}));
+
+		// code under test
+		return oRequestor.sendRequest("GET", "").then(function () {
+			assert.strictEqual(oRequestor.mHeaders["SAP-ContextId"], "abc123");
+
+			oJQueryMock.expects("ajax")
+				.withExactArgs("/", sinon.match({headers : {"SAP-ContextId" : "abc123"}}))
+				.returns(createMock(assert, {/*oPayload*/}, "OK"));
+
+			// code under test
+			return oRequestor.sendRequest("GET", "").then(function () {
+				assert.strictEqual(oRequestor.mHeaders["SAP-ContextId"], undefined);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("sendRequest(), SAP-ContextId & time out", function (assert) {
+		var oJQueryMock = this.mock(jQuery),
+			oRequestor = _Requestor.create("/", oModelInterface),
+			that = this;
+
+		oJQueryMock.expects("ajax")
+			.withExactArgs("/", sinon.match.object)
+			.returns(createMock(assert, {/*oPayload*/}, "OK", {
+				"OData-Version" : "4.0",
+				"SAP-ContextId" : "abc123"
+			}));
+
+		// code under test
+		return oRequestor.sendRequest("GET", "").then(function () {
+			var oExpectedError = new Error(),
+				jqXHRMock;
+
+			assert.strictEqual(oRequestor.mHeaders["SAP-ContextId"], "abc123");
+
+			jqXHRMock = new jQuery.Deferred();
+			setTimeout(function () {
+				jqXHRMock.reject({
+					getResponseHeader : function (sName) {
+						switch (sName) {
+							case "X-CSRF-Token" : return null;
+							case "SAP-Err-Id" : return "ICMENOSESSION";
+							default : assert.ok(false, "unexpected header " + sName);
+						}
+					},
+					"status" : 500
+				});
+			}, 0);
+			oJQueryMock.expects("ajax")
+				.withExactArgs("/", sinon.match({headers : {"SAP-ContextId" : "abc123"}}))
+				.returns(jqXHRMock);
+			that.mock(_Helper).expects("createError").returns(oExpectedError);
+
+			// code under test
+			return oRequestor.sendRequest("GET", "").then(function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oRequestor.mHeaders["SAP-ContextId"], undefined);
+				assert.strictEqual(oError, oExpectedError);
+			});
 		});
 	});
 
