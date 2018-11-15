@@ -54,7 +54,7 @@ sap.ui.define([
 
 
 	var oHtml = new HTML({
-		content : '<h1 id="qunit-header">QUnit Page for sap.m.Page</h1><h2 id="qunit-banner"></h2><h2 id="qunit-userAgent"></h2><ol id="qunit-tests"></ol>'
+		content : '<h1 id="qunit-header">Header</h1><h2 id="qunit-banner"></h2><h2 id="qunit-userAgent"></h2><ol id="qunit-tests"></ol>'
 	});
 	var oButton = new Button("bigButton", {
 		text: "Test",
