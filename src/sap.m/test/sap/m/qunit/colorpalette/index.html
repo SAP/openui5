@@ -17,15 +17,7 @@
 				"cp.opa.test.mock": "model/localService"
 			}'></script>
 		<!-- Application launch configuration -->
-		<script>
-			sap.ui.getCore().attachInit(function() {
-				new sap.ui.core.ComponentContainer({
-					height: "100%",
-					width: "100%",
-					name: "cp.opa.test.app"
-				}).placeAt("content");
-			});
-		</script>
+		<script src="js/initSut.js" defer></script>
 	</head>
 	<!-- UI Content -->
 	<body id="content" class="sapUiBody" role="application"></body>
