@@ -842,9 +842,8 @@ sap.ui.define([
 				return;
 			}
 
+			this._getAccExtension().updateAccForCurrentCell(sReason);
 			this._updateTableContent();
-
-			this._getAccExtension().updateAccForCurrentCell(false);
 			this._updateSelection();
 
 			this._aRowHeights = this._collectRowHeights(false);
