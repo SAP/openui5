@@ -2975,8 +2975,9 @@ sap.ui.define([
 			.withExactArgs("update", true, sinon.match.object)
 			.returns(oGroupLock);
 		oExpectation = this.mock(oBinding.oCachePromise.getResult()).expects("create")
-			.withExactArgs(oGroupLock, "EMPLOYEES", "", sinon.match.same(oInitialData),
-				sinon.match.func, sinon.match.func)
+			.withExactArgs(oGroupLock, sinon.match(function (oPromise) {
+					return oPromise.getResult() === "EMPLOYEES";
+				}), "", sinon.match.same(oInitialData), sinon.match.func, sinon.match.func)
 			// we only want to observe fnCancelCallback, hence we neither resolve, nor reject
 			.returns(new SyncPromise(function () {}));
 
@@ -3048,8 +3049,10 @@ sap.ui.define([
 			oBindingMock.expects("lockGroup").withExactArgs(oFixture.sUpdateGroupId, true)
 				.returns(oGroupLock);
 			oCacheMock.expects("create")
-				.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES", "",
-					sinon.match.same(oFixture.oInitialData), sinon.match.func, sinon.match.func)
+				.withExactArgs(sinon.match.same(oGroupLock), sinon.match(function (oPromise) {
+						return oPromise.getResult() === "EMPLOYEES";
+					}), "", sinon.match.same(oFixture.oInitialData), sinon.match.func,
+					sinon.match.func)
 				.returns(oCreatePromise);
 			oBinding.attachEventOnce("change", function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Add);
@@ -3129,8 +3132,9 @@ sap.ui.define([
 			oBindingMock.expects("lockGroup").withExactArgs("$auto", true)
 				.returns(oGroupLock0);
 			oCacheMock.expects("create")
-				.withExactArgs(sinon.match.same(oGroupLock0), "EMPLOYEES", "",
-					sinon.match.same(oInitialData), sinon.match.func, sinon.match.func)
+				.withExactArgs(sinon.match.same(oGroupLock0), sinon.match(function (oPromise) {
+						return oPromise.getResult() === "EMPLOYEES";
+					}), "", sinon.match.same(oInitialData), sinon.match.func, sinon.match.func)
 				.returns(oCreatePromise);
 			oCreatePromise.then(function () {
 				oBindingMock.expects("lockGroup").withExactArgs("$auto")
@@ -3180,23 +3184,20 @@ sap.ui.define([
 				oCreatedEntity = {},
 				oCreatePromise = SyncPromise.resolve(Promise.resolve(oCreatedEntity)),
 				oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext),
-				oExpectation,
 				oGroupLock = {},
+				oPostPathPromise = {},
 				that = this;
 
-			this.mock(_Helper).expects("buildPath")
-				.withExactArgs("/TEAMS('02')", "TEAM_2_EMPLOYEES")
-				.returns("/TEAMS('02')/TEAM_2_EMPLOYEES");
-			this.mock(oContext).expects("fetchCanonicalPath")
+			this.mock(oBinding).expects("fetchResourcePath")
 				.withExactArgs()
-				.returns(SyncPromise.resolve("/TEAMS('02')"));
+				.returns(oPostPathPromise);
 			this.mock(oBinding).expects("checkSuspended").withExactArgs()
 				.thrice(); // from create and twice getContexts
 			this.mock(oBinding).expects("getUpdateGroupId").returns("updateGroup");
 			this.mock(oBinding).expects("lockGroup").withExactArgs("updateGroup", true)
 				.returns(oGroupLock);
-			oExpectation = this.mock(oBinding).expects("createInCache")
-				.withExactArgs(sinon.match.same(oGroupLock), /*vPostPath*/sinon.match.object, "",
+			this.mock(oBinding).expects("createInCache")
+				.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(oPostPathPromise), "",
 					sinon.match.same(oFixture.oInitialData), sinon.match.func)
 				.returns(oCreatePromise);
 			oCreatePromise.then(function (oEntityCreated) {
@@ -3234,8 +3235,6 @@ sap.ui.define([
 
 			return oContext.created().then(function () {
 				assert.strictEqual(oContext.getPath(), oFixture.sExpectedPath);
-				assert.strictEqual(oExpectation.args[0][1].getResult(),
-					"TEAMS('02')/TEAM_2_EMPLOYEES");
 
 				that.mock(oBinding).expects("reset").withExactArgs();
 				that.mock(oBinding).expects("fetchCache")
@@ -3255,22 +3254,20 @@ sap.ui.define([
 			aDiffData,
 			oGroupLock = {},
 			oInitialData = {},
+			oPostPathPromise = {},
 			that = this;
 
 		oBinding.enableExtendedChangeDetection(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs()
 			.twice(); // from create and getContexts
-		this.mock(_Helper).expects("buildPath")
-			.withExactArgs("/TEAMS('02')", "TEAM_2_EMPLOYEES")
-			.returns("/TEAMS('02')/TEAM_2_EMPLOYEES");
-		this.mock(oContext).expects("fetchCanonicalPath")
+		this.mock(oBinding).expects("fetchResourcePath")
 			.withExactArgs()
-			.returns(SyncPromise.resolve("/TEAMS('02')"));
+			.returns(oPostPathPromise);
 		this.mock(oBinding).expects("getUpdateGroupId").returns("updateGroup");
 		this.mock(oBinding).expects("lockGroup").withExactArgs("updateGroup", true)
 			.returns(oGroupLock);
 		this.mock(oBinding).expects("createInCache")
-			.withExactArgs(oGroupLock, /*vPostPath*/sinon.match.object, "",
+			.withExactArgs(oGroupLock, sinon.match.same(oPostPathPromise), "",
 				sinon.match.same(oInitialData), sinon.match.func)
 			.returns(SyncPromise.resolve({}));
 
@@ -3321,8 +3318,9 @@ sap.ui.define([
 		oBindingMock.expects("lockGroup").withExactArgs("update", true)
 			.returns(oGroupLock);
 		oCacheMock.expects("create")
-			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES", "",
-				sinon.match.same(oInitialData), sinon.match.func, sinon.match.func)
+			.withExactArgs(sinon.match.same(oGroupLock), sinon.match(function (oPromise) {
+					return oPromise.getResult() === "EMPLOYEES";
+				}), "", sinon.match.same(oInitialData), sinon.match.func, sinon.match.func)
 			.returns(oCreatePromise);
 
 		oBindingMock.expects("refreshSingle").never();
@@ -3349,8 +3347,10 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("refreshSingle").returns(SyncPromise.resolve({}));
 		this.mock(oBinding.oCachePromise.getResult()).expects("create")
-			.withExactArgs(new _GroupLock("update", true, oBinding, 2), "EMPLOYEES", "", undefined,
-				sinon.match.func, sinon.match.func)
+			.withExactArgs(new _GroupLock("update", true, oBinding, 2),
+				sinon.match(function (oPromise) {
+					return oPromise.getResult() === "EMPLOYEES";
+				}), "", undefined, sinon.match.func, sinon.match.func)
 			.returns(SyncPromise.resolve({}));
 		oContext = oBinding.create();
 		oCacheMock.expects("read")
@@ -3408,8 +3408,10 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("refreshSingle").returns(SyncPromise.resolve({}));
 		oCacheMock.expects("create")
-			.withExactArgs(new _GroupLock("update", true, oBinding, 2), "EMPLOYEES", "", undefined,
-				sinon.match.func, sinon.match.func)
+			.withExactArgs(new _GroupLock("update", true, oBinding, 2),
+				sinon.match(function (oPromise) {
+					return oPromise.getResult() === "EMPLOYEES";
+				}), "", undefined, sinon.match.func, sinon.match.func)
 			.returns(SyncPromise.resolve({}));
 		oContext = oBinding.create();
 		oCacheMock.expects("read")
