@@ -88,6 +88,8 @@ sap.ui.define([
 			if (sideContentAggregation) {
 				var newState = Device.system.phone ? true :  isSideExpanded;
 				sideContentAggregation.setExpanded(newState);
+			} else {
+				return this;
 			}
 
 			if (!domRef) {
