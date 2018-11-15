@@ -76,4 +76,12 @@ describe('sap.tnt.ToolPage', function() {
 	it('should display tool header', function () {
 		expect(takeScreenshot(toolHeader)).toLookAs('8_tool_header');
 	});
+
+	// no side navigation
+	it('should NOT display side navigation', function () {
+		element(by.id('menuToggleButton')).click();
+		element(by.css('#NList > li:first-of-type .sapUiIcon[title=Expand]')).click();
+		element(by.css('#NList > li:first-of-type > .sapTntNavLIGroupItems > li:nth-of-type(4)')).click();
+		expect(takeScreenshot(element(by.id('page3')))).toLookAs('9_no_side_navigation');
+	});
 });

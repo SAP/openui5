@@ -64,6 +64,10 @@ sap.ui.define([],
 		};
 
 		ToolPageRenderer.renderAsideContent = function (rm, control) {
+			if (!control.getSideContent()) {
+				return;
+			}
+
 			var isDesktop = sap.ui.Device.system.desktop;
 			var sideContentAggregation = control.getAggregation('sideContent');
 			var isSideExpanded = control.getSideExpanded();
