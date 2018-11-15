@@ -5243,6 +5243,18 @@ sap.ui.define([
 		assert.deepEqual(oBinding.getFilterInfo(bIncludeOrigin),
 			oExpectedFilterInfo);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects", function (assert) {
+		var oBinding = this.bindList("/Set"),
+			sGroupId = "group",
+			oPromise = {};
+
+		this.mock(oBinding).expects("refreshInternal").withExactArgs(sGroupId).returns(oPromise);
+
+		// code under test
+		assert.strictEqual(oBinding.requestSideEffects(sGroupId, ["n/a"]), oPromise);
+	});
 });
 
 //TODO integration: 2 entity sets with same $expand, but different $select

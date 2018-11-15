@@ -44,6 +44,38 @@ sap.ui.define([
 		},
 
 		/**
+		 * Adds all given children to the given hash set which either appear in the given list or
+		 * have some ancestor in it.
+		 *
+		 * Note: "a/b/c" is deemed a child of the ancestors "a/b" and "a", but not "b" or "a/b/c/d".
+		 *
+		 * @param {string[]} aChildren - List of non-empty child paths (unmodified)
+		 * @param {string[]} aAncestors - List of ancestor paths (unmodified)
+		 * @param {object} mChildren - Hash set of child paths, maps string to <code>true</code>;
+		 *   is modified
+		 */
+		addChildrenWithAncestor : function (aChildren, aAncestors, mChildren) {
+			aChildren.forEach(function (sPath) {
+				var aSegments;
+
+				if (aAncestors.indexOf(sPath) >= 0) {
+					mChildren[sPath] = true;
+					return;
+				}
+
+				aSegments = sPath.split("/");
+				aSegments.pop();
+				while (aSegments.length) {
+					if (aAncestors.indexOf(aSegments.join("/")) >= 0) {
+						mChildren[sPath] = true;
+						break;
+					}
+					aSegments.pop();
+				}
+			});
+		},
+
+		/**
 		 * Builds a relative path from the given arguments. Iterates over the arguments and appends
 		 * them to the path if defined and non-empty. The arguments are expected to be strings or
 		 * integers, but this is not checked.
@@ -595,6 +627,66 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns a copy of given query options where "$select" is replaced by the intersection
+		 * with the given property paths. "$expand" is removed.
+		 *
+		 * @param {object} mCacheQueryOptions
+		 *   A map of query options as returned by
+		 *   {@link sap.ui.model.odata.v4.ODataModel#buildQueryOptions}
+		 * @param {string[]} aPaths
+		 *   The "14.5.11 Expression edm:NavigationPropertyPath" or
+		 *   "14.5.13 Expression edm:PropertyPath" strings describing which properties need to be
+		 *   loaded because they may have changed due to side effects of a previous update; must not
+		 *   be empty
+		 * @returns {object}
+		 *   The updated query options or <code>null</code> if no request is needed
+		 * @throws {Error}
+		 *   If a path string is empty or the intersection requires a $expand
+		 */
+		intersectQueryOptions : function (mCacheQueryOptions, aPaths) {
+			var aExpands,
+				mExpands = {},
+				mResult,
+				aSelects,
+				mSelects = {};
+
+			/*
+			 * Computes the intersection of the given lists of paths by using the given hash set.
+			 *
+			 * @param {string[]} aArray0 - A list of non-empty paths
+			 * @param {string[]} aArray1 - A list of non-empty paths
+			 * @param {object} mSet - A hash set of paths; should initially be empty and is modified
+			 */
+			function intersect(aArray0, aArray1, mSet) {
+				_Helper.addChildrenWithAncestor(aArray0, aArray1, mSet);
+				_Helper.addChildrenWithAncestor(aArray1, aArray0, mSet);
+			}
+
+			if (aPaths.indexOf("") >= 0) {
+				throw new Error("Unsupported empty navigation property path");
+			}
+			if (mCacheQueryOptions.$expand) {
+				intersect(aPaths, Object.keys(mCacheQueryOptions.$expand), mExpands);
+				aExpands = Object.keys(mExpands);
+				if (aExpands.length) {
+					throw new Error("Unsupported navigation property in " + aExpands);
+				}
+			}
+			if (mCacheQueryOptions.$select && mCacheQueryOptions.$select.indexOf("*") < 0) {
+				intersect(aPaths, mCacheQueryOptions.$select, mSelects);
+				aSelects = Object.keys(mSelects);
+				if (!aSelects.length) {
+					return null;
+				}
+			} else {
+				aSelects = aPaths;
+			}
+			mResult = jQuery.extend({}, mCacheQueryOptions, {$select : aSelects});
+			delete mResult.$expand;
+			return mResult;
+		},
+
+		/**
 		 * Checks that the value is a safe integer.
 		 *
 		 * @param {number} iNumber The value
@@ -790,6 +882,28 @@ sap.ui.define([
 				oPrivateNamespace = oObject["@$ui5._"] = {};
 			}
 			oPrivateNamespace[sAnnotation] = vValue;
+		},
+
+		/**
+		 * Strips the given prefix from all given paths. If a path does not start with the prefix,
+		 * it is ignored (note that "A" is not a path prefix of "AA", but of "A/A").
+		 * A remainder never starts with a slash and may well be empty.
+		 *
+		 * @param {string} sPrefix
+		 *   A prefix (which must not end with a slash)
+		 * @param {string[]} aPaths
+		 *   A list of paths
+		 * @returns {string[]}
+		 *   The list of remainders for all paths which start with the given prefix
+		 */
+		stripPathPrefix : function (sPrefix, aPaths) {
+			var sPathPrefix = sPrefix + "/";
+
+			return aPaths.filter(function (sPath) {
+				return sPath === sPrefix || sPath.startsWith(sPathPrefix);
+			}).map(function (sPath) {
+				return sPath.slice(sPathPrefix.length);
+			});
 		},
 
 		/**

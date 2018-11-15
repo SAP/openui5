@@ -1579,6 +1579,14 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects
+	 */
+	ODataListBinding.prototype.requestSideEffects = function (sGroupId, aPaths, oContext) {
+		return this.refreshInternal(sGroupId);
+	};
+
+	/**
 	 * Resets the binding's contexts array and its members related to current contexts and length
 	 * calculation. All bindings dependent to the header context are requested to check for updates.
 	 *

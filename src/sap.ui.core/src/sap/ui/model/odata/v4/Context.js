@@ -4,11 +4,12 @@
 
 //Provides class sap.ui.model.odata.v4.Context
 sap.ui.define([
+	"./lib/_GroupLock",
 	"./lib/_Helper",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Context"
-], function (_Helper, Log, SyncPromise, BaseContext) {
+], function (_GroupLock, _Helper, Log, SyncPromise, BaseContext) {
 	"use strict";
 
 	/*
@@ -635,6 +636,82 @@ sap.ui.define([
 		this.oBinding.checkSuspended();
 
 		return Promise.resolve(fetchPrimitiveValue(this, sPath, bExternalFormat));
+	};
+
+	/**
+	 * Loads side effects for this context using the given
+	 * "14.5.11 Expression edm:NavigationPropertyPath" or "14.5.13 Expression edm:PropertyPath"
+	 * objects. Use this method to explicitly load side effects in case implicit loading is switched
+	 * off via the binding-specific parameter <code>$$patchWithoutSideEffects</code>. The method
+	 * must only be called on the bound context of a context binding or on the return value context
+	 * of an operation binding. Key predicates must be available in this context's path.
+	 *
+	 * The request always uses the update group ID for this context's binding, see "$$updateGroupId"
+	 * at {@link sap.ui.model.odata.v4.ODataModel#bindContext}; this way, it can easily be part of
+	 * the same batch request as the corresponding update. <b>Caution:</b> If a dependent binding
+	 * uses a different update group ID, it may lose its pending changes.
+	 *
+	 * The events 'dataRequested' and 'dataReceived' are not fired. Whatever should happen in the
+	 * event handler attached to...
+	 * <ul>
+	 * <li>'dataRequested', can instead be done before calling {@link #requestSideEffects}.</li>
+	 * <li>'dataReceived', can instead be done once the <code>oPromise</code> returned by
+	 * {@link #requestSideEffects} fulfills or rejects (using
+	 * <code>oPromise.then(function () {...}, function () {...})</code>).</li>
+	 * </ul>
+	 *
+	 * @param {object[]} aPathExpressions
+	 *   The "14.5.11 Expression edm:NavigationPropertyPath" or
+	 *   "14.5.13 Expression edm:PropertyPath" objects describing which properties need to be
+	 *   loaded because they may have changed due to side effects of a previous update
+	 * @returns {Promise}
+	 *   Promise resolved with <code>undefined</code>, or rejected with an error if loading of side
+	 *   effects fails. Use it to set fields affected by side effects to read-only before
+	 *   {@link #requestSideEffects} and make them editable again when the promise resolves; in the
+	 *   error handler, you can repeat the loading of side effects.
+	 * @throws {Error}
+	 *   If <code>aPathExpressions</code> contains objects other than
+	 *   "14.5.11 Expression edm:NavigationPropertyPath" or "14.5.13 Expression edm:PropertyPath",
+	 *   or if this context is neither the bound context of a context binding which uses own service
+	 *   data requests nor the return value context of an operation binding, or if the root binding
+	 *   of this context's binding is suspended
+	 *
+	 * @public
+	 * @see sap.ui.model.odata.v4.ODataContextBinding#execute
+	 * @see sap.ui.model.odata.v4.ODataContextBinding#getBoundContext
+	 * @see sap.ui.model.odata.v4.ODataModel#bindContext
+	 * @since 1.61.0
+	 */
+	Context.prototype.requestSideEffects = function (aPathExpressions) {
+		var oCache = this.oBinding.oCachePromise.getResult(),
+			aPaths;
+
+		this.oBinding.checkSuspended();
+		if (!oCache || !oCache.requestSideEffects) {
+			throw new Error("Unsupported context: " + this);
+		}
+		if (!aPathExpressions || !aPathExpressions.length) {
+			throw new Error("Missing edm:(Navigation)PropertyPath expressions");
+		}
+
+		aPaths = aPathExpressions.map(function (oPath) {
+			if (oPath && typeof oPath === "object") {
+				if (oPath.$PropertyPath) {
+					return oPath.$PropertyPath;
+				}
+				if ("$NavigationPropertyPath" in oPath) {
+					return oPath.$NavigationPropertyPath;
+				}
+			}
+			throw new Error("Not an edm:(Navigation)PropertyPath expression: "
+				+ JSON.stringify(oPath));
+		});
+
+		return Promise.resolve(
+				this.oBinding.requestSideEffects(this.getUpdateGroupId(), aPaths, this)
+			).then(function () {
+				// return undefined;
+			});
 	};
 
 	/**

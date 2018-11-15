@@ -174,6 +174,8 @@ sap.ui.define([
 					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
 				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata"
 					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"},
+				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata?sap-client=123"
+					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"},
 				"/serviceroot.svc/$metadata"
 					: {source : "odata/v4/data/BusinessPartnerTest.metadata.xml"},
 				"/special/cases/$metadata"
@@ -8618,9 +8620,9 @@ sap.ui.define([
 	// Scenario: Object page bound to active entity: Call the "Edit" bound action on an active
 	// entity which responds with the inactive entity. The execute for the "Edit" operation binding
 	// resolves with the context for the inactive entity. Data for the inactive entity is displayed
-	// when setting this context on the object page. It can be edited. The controls on the object
-	// page bound to the return value context are cleared when the return value context is
-	// destroyed by e.g. resetting the context of the operation binding.
+	// when setting this context on the object page. It can be edited and side effects can be
+	// requested. The controls on the object page bound to the return value context are cleared when
+	// the return value context is destroyed by e.g. resetting the context of the operation binding.
 	// The second test uses a bound function instead of an action to check that the different
 	// access to the cache also works.
 	[{
@@ -8637,23 +8639,29 @@ sap.ui.define([
 					+ oFixture.operation + (oFixture.method === "GET" ? "()" : ""),
 				sView = '\
 <FlexBox id="objectPage">\
+	<Text id="city" text="{Address/City}" />\
 	<Text id="id" text="{ArtistID}" />\
 	<Text id="isActive" text="{IsActiveEntity}" />\
 	<Text id="name" text="{Name}" />\
 </FlexBox>',
 				that = this;
 
-			this.expectChange("id")
+			this.expectChange("city")
+				.expectChange("id")
 				.expectChange("isActive")
 				.expectChange("name");
 
 			return this.createView(assert, sView, oModel).then(function () {
 				that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?"
-						+ "$select=ArtistID,IsActiveEntity,Name", {
+						+ "$select=Address/City,ArtistID,IsActiveEntity,Name", {
+						"Address" : {
+							"City" : "Liverpool"
+						},
 						"ArtistID" : "42",
 						"IsActiveEntity" : true,
 						"Name" : "Hour Frustrated"
 					})
+					.expectChange("city", "Liverpool")
 					.expectChange("id", "42")
 					.expectChange("isActive", "Yes")
 					.expectChange("name", "Hour Frustrated");
@@ -8666,14 +8674,18 @@ sap.ui.define([
 			}).then(function () {
 				oOperation = that.oModel.bindContext("special.cases." + oFixture.operation
 					+ "(...)", that.oView.getBindingContext(), {
-						$select : "ArtistID,IsActiveEntity,Name,Messages"
+						$select : "Address/City,ArtistID,IsActiveEntity,Name,Messages"
 					});
 
 				that.expectRequest({
 					method : oFixture.method,
-					url : sRequestPath + "?$select=ArtistID,IsActiveEntity,Messages,Name",
+					url : sRequestPath
+						+ "?$select=Address/City,ArtistID,IsActiveEntity,Messages,Name",
 					payload : oFixture.method === "GET" ? undefined : {}
 				}, {
+					"Address" : {
+						"City" : "Liverpool"
+					},
 					"ArtistID" : "42",
 					"IsActiveEntity" : false,
 					"Name" : "Hour Frustrated",
@@ -8721,7 +8733,29 @@ sap.ui.define([
 
 				return that.waitForChanges(assert);
 			}).then(function () {
-				that.expectChange("id", null)
+				var oInactiveArtistContext = that.oView.byId("objectPage").getBindingContext();
+
+				that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
+						+ "?$select=Address/City,Name", {
+						"Address" : {
+							"City" : "London"
+						},
+						"Name" : "bar" // unrealistic side effect
+					})
+					.expectChange("city", "London")
+					.expectChange("name", "bar");
+
+				return Promise.all([
+					oInactiveArtistContext.requestSideEffects([{
+						$PropertyPath : "Address/City"
+					}, {
+						$PropertyPath : "Name"
+					}]),
+					that.waitForChanges(assert)
+				]);
+			}).then(function () {
+				that.expectChange("city", null)
+					.expectChange("id", null)
 					.expectChange("isActive", null)
 					.expectChange("name", null);
 
@@ -8739,9 +8773,18 @@ sap.ui.define([
 	// $$inheritExpandSelect set so that it triggers the POST request with the same $expand and
 	// $select parameters used for loading the active entity. This way, all fields in the object
 	// page can be populated from the bound action response.
+	// Read side effects which include navigation properties while there are pending changes.
 	QUnit.test("bound operation: $$inheritExpandSelect", function (assert) {
 		var fnDataReceived = this.spy(),
 			fnDataRequested = this.spy(),
+			oJustAMessage = {
+				code : "23",
+				message : "Just A Message",
+				target :
+					"/Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction/Name",
+				persistent : true,
+				type : "Success"
+			},
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="objectPage">\
@@ -8762,9 +8805,9 @@ sap.ui.define([
 					+ "&$select=ArtistID,IsActiveEntity,Messages,Name"
 					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
 					"ArtistID" : "42",
+					"DraftAdministrativeData" : null,
 					"IsActiveEntity" : true,
-					"Name" : "Hour Frustrated",
-					"DraftAdministrativeData" : null
+					"Name" : "Hour Frustrated"
 				})
 				.expectChange("id", "42")
 				.expectChange("isActive", "Yes")
@@ -8789,9 +8832,13 @@ sap.ui.define([
 						+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)",
 					payload : {}
 				}, {
+					"@odata.etag" : "ETag0",
 					"ArtistID" : "42",
+					"DraftAdministrativeData" : {
+						"DraftID" : "1",
+						"InProcessByUser" : "JOHNDOE"
+					},
 					"IsActiveEntity" : false,
-					"Name" : "Hour Frustrated",
 					"Messages" : [{
 						"code" : "23",
 						"message" : "Just A Message",
@@ -8799,18 +8846,8 @@ sap.ui.define([
 						"target" : "Name",
 						"transition" : true
 					}],
-					"DraftAdministrativeData" : {
-						"DraftID" : "1",
-						"InProcessByUser" : "JOHNDOE"
-					}
-				}).expectMessages([{
-					code : "23",
-					message : "Just A Message",
-					target :
-						"/Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction/Name",
-					persistent : true,
-					type : "Success"
-				}]);
+					"Name" : "Hour Frustrated"
+				}).expectMessages([oJustAMessage]);
 
 			return Promise.all([
 				// code under test
@@ -8827,22 +8864,64 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			var oInactiveArtistContext = that.oView.getBindingContext();
+
+			that.expectChange("name", "TAFKAP")
+				.expectRequest({
+					method : "PATCH",
+					url : "Artists(ArtistID='42',IsActiveEntity=false)",
+					headers : {"If-Match" : "ETag0"},
+					payload : {"Name" : "TAFKAP"}
+				}, {/* response does not matter here */});
+
+			that.oView.byId("name").getBinding("text").setValue("TAFKAP");
+
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
+				+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
+				+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
+					"ArtistID" : "42",
+					"DraftAdministrativeData" : {
+						"DraftID" : "23",
+						"InProcessByUser" : "bar"
+					},
+					"IsActiveEntity" : false,
+					"Messages" : [],
+					"Name" : "TAFKAP"
+				})
+				.expectChange("id", "42") //TODO @see CPOUI5UISERVICESV3-1572
+				.expectChange("isActive", "No") //TODO @see CPOUI5UISERVICESV3-1572
+				.expectChange("name", "TAFKAP") //TODO @see CPOUI5UISERVICESV3-1572
+				.expectChange("inProcessByUser", "bar")
+				.expectMessages([oJustAMessage]);
+
+			return Promise.all([
+				oInactiveArtistContext.requestSideEffects([{
+					$PropertyPath : "DraftAdministrativeData/InProcessByUser"
+				}]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.strictEqual(fnDataReceived.callCount, 1, "dataReceived");
+			assert.strictEqual(fnDataRequested.callCount, 1, "dataRequested");
+
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
 					+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
 					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
 					"ArtistID" : "42",
-					"IsActiveEntity" : false,
-					"Name" : "Changed",
 					"DraftAdministrativeData" : {
 						"DraftID" : "1",
 						"InProcessByUser" : "JOHNDOE"
-					}
+					},
+					"IsActiveEntity" : false,
+					"Messages" : [],
+					"Name" : "Changed"
 				})
 				.expectChange("name", "Changed")
 				//TODO unexpected change events -> CPOUI5UISERVICESV3-1572
 				.expectChange("id", "42")
 				.expectChange("isActive", "No")
-				.expectChange("inProcessByUser", "JOHNDOE");
+				.expectChange("inProcessByUser", "JOHNDOE")
+				.expectMessages([oJustAMessage]);
 
 			// code under test
 			that.oView.getBindingContext().refresh();
@@ -8852,8 +8931,8 @@ sap.ui.define([
 			var oOperation = that.oModel.bindContext("special.cases.ActivationAction(...)",
 					that.oView.getBindingContext(), {$$inheritExpandSelect : true});
 
-			assert.strictEqual(fnDataReceived.callCount, 1, "dataReceived");
-			assert.strictEqual(fnDataRequested.callCount, 1, "dataRequested");
+			assert.strictEqual(fnDataReceived.callCount, 2, "dataReceived");
+			assert.strictEqual(fnDataRequested.callCount, 2, "dataRequested");
 			that.expectRequest({
 					method : "POST",
 					url : "Artists(ArtistID='42',IsActiveEntity=false)"
@@ -8863,13 +8942,15 @@ sap.ui.define([
 					payload : {}
 				}, {
 					"ArtistID" : "42",
-					"IsActiveEntity" : true,
-					"Name" : "Hour Frustrated",
 					"DraftAdministrativeData" : {
 						"DraftID" : "1",
 						"InProcessByUser" : ""
-					}
-				});
+					},
+					"IsActiveEntity" : true,
+					"Messages" : [],
+					"Name" : "Hour Frustrated"
+				})
+				.expectMessages([oJustAMessage]);
 
 			return Promise.all([
 				oOperation.execute(),
@@ -9929,24 +10010,27 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Modify a property without side effects, i.e. the PATCH request's response is
-	// ignored.
-	QUnit.test("$$patchWithoutSideEffects", function (assert) {
-		var oModel = createSalesOrdersModel({
+	// ignored; read the side effects later on via API Context#requestSideEffects and check that the
+	// corresponding fields on the UI change.
+	QUnit.test("$$patchWithoutSideEffects, then requestSideEffects", function (assert) {
+		var oModel = createModel(sSalesOrderService + "?sap-client=123", {
 				autoExpandSelect : true,
-				updateGroupId : "$auto"
+				groupId : "$direct", // GET should not count for batchNo
+				updateGroupId : "update"
 			}),
 			sView = '\
 <FlexBox binding="{\
 			path : \'/SalesOrderList(\\\'42\\\')\',\
 			parameters : {$$patchWithoutSideEffects : true}\
 		}"\
-		id="objectPageForm">\
+		id="form">\
 	<Text id="netAmount" text="{NetAmount}"/>\
 	<Text id="grossAmount" text="{GrossAmount}"/>\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("SalesOrderList('42')?$select=GrossAmount,NetAmount,SalesOrderID", {
+		this.expectRequest("SalesOrderList('42')?sap-client=123"
+					+ "&$select=GrossAmount,NetAmount,SalesOrderID", {
 				"@odata.etag" : "ETag0",
 				"GrossAmount" : "119.00",
 				"NetAmount" : "100.00"
@@ -9958,8 +10042,9 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectChange("netAmount", "200.00")
 				.expectRequest({
+					batchNo : 1,
 					method : "PATCH",
-					url : "SalesOrderList('42')",
+					url : "SalesOrderList('42')?sap-client=123",
 					headers : {"If-Match" : "ETag0"},
 					payload : {"NetAmount" : "200"}
 				}, {
@@ -9971,30 +10056,268 @@ sap.ui.define([
 
 			that.oView.byId("netAmount").getBinding("text").setValue("200");
 
-			return that.waitForChanges(assert);
+			return Promise.all([
+					oModel.submitBatch("update"),
+					that.waitForChanges(assert)
+				]);
 		}).then(function () {
-			that.expectChange("netAmount", "0.00")
-				.expectRequest({
+			var oPromise;
+
+			that.expectChange("netAmount", "0.00"); // external value: 200.00 -> 0.00
+
+			that.oView.byId("netAmount").getBinding("text").setValue("0");
+
+			// code under test
+			oPromise = that.oView.byId("form").getBindingContext().requestSideEffects([{
+					$PropertyPath : "NetAmount" // order MUST not matter
+				}, {
+					$PropertyPath : "GrossAmount"
+				}, {
+					$PropertyPath : "TaxAmount" // must be ignored due to intersection
+				}]).then(function (vResult) {
+					assert.strictEqual(vResult, undefined);
+				});
+
+			that.expectRequest({
+					batchNo : 2,
 					method : "PATCH",
-					url : "SalesOrderList('42')",
+					url : "SalesOrderList('42')?sap-client=123",
 					headers : {"If-Match" : "ETag1"}, // new ETag is used!
 					payload : {"NetAmount" : "0"}
+				}, {
+//					"@odata.etag" : "ETag2", // not ignored, but unused by the rest of this test
+					"GrossAmount" : "0.00", // side effect
+					"NetAmount" : "0.00", // "side effect": decimal places added
+					"Messages" : [{ // "side effect": ignored by $$patchWithoutSideEffects
+						"code" : "n/a",
+						"message" : "n/a",
+						"numericSeverity" : 3,
+						"target" : "NetAmount"
+					}]
+//					"SalesOrderID" : "42"
+				})
+				.expectRequest({
+					batchNo : 2,
+					method : "GET",
+					url : "SalesOrderList('42')?sap-client=123&$select=GrossAmount,NetAmount"
 				}, {
 //					"@odata.etag" : "ETag2",
 					"GrossAmount" : "0.00", // side effect
 					"NetAmount" : "0.00", // "side effect": decimal places added
-//					"SalesOrderID" : "42",
-					"Messages" : [{
+					"Messages" : [{ // side effect: reported, even if not selected
 						"code" : "23",
 						"message" : "Enter a minimum amount of 1",
-						"target" : "NetAmount",
-						"numericSeverity" : 3
+						"numericSeverity" : 3,
+						"target" : "NetAmount"
 					}]
-				});
+				})
+				.expectChange("grossAmount", "0.00")
+				.expectChange("netAmount", "0.00") // internal value has changed: 0 -> 0.00
+				.expectMessages([{
+					"code" : "23",
+					"message" : "Enter a minimum amount of 1",
+					"persistent" : false,
+					"target" : "/SalesOrderList('42')/NetAmount",
+					"technical" : false,
+					"type" : "Warning"
+				}]);
 
-			that.oView.byId("netAmount").getBinding("text").setValue("0");
+			return Promise.all([
+				oModel.submitBatch("update"),
+				oPromise,
+				that.oView.byId("form").getBindingContext().requestSideEffects([{
+					$PropertyPath : "TaxAmount" // must be ignored due to intersection
+				}]), // no GET request, no issue with locks!
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 
-			return that.waitForChanges(assert);
+	//*********************************************************************************************
+	// Scenario: Read side effects which include navigation properties while there are pending
+	// changes.
+	QUnit.test("requestSideEffects with navigation properties", function (assert) {
+		var oModel = createSpecialCasesModel({
+				autoExpandSelect : true,
+				groupId : "$direct", // GET should not count for batchNo
+				updateGroupId : "update"
+			}),
+			sView = '\
+<FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
+	<Text id="id" text="{ArtistID}" />\
+	<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}" />\
+	<Text binding="{DraftAdministrativeData}" id="inProcessByUser2" text="{InProcessByUser}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+				+ "?$select=ArtistID,IsActiveEntity"
+				+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
+				"@odata.etag" : "ETag0",
+				"ArtistID" : "42",
+				"DraftAdministrativeData" : {
+					"DraftID" : "23",
+					"InProcessByUser" : "foo"
+				}
+//				"IsActiveEntity" : true
+			})
+			.expectChange("id", "42")
+			.expectChange("inProcessByUser", "foo")
+			.expectChange("inProcessByUser2", "foo");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("id", "TAFKAP");
+
+			that.oView.byId("id").getBinding("text").setValue("TAFKAP");
+
+			that.expectRequest({
+					batchNo : 1,
+					method : "PATCH",
+					url : "Artists(ArtistID='42',IsActiveEntity=true)",
+					headers : {"If-Match" : "ETag0"},
+					payload : {"ArtistID" : "TAFKAP"}
+				}, {/* response does not matter here */})
+				.expectRequest({
+					batchNo : 1,
+					method : "GET",
+					url : "Artists(ArtistID='42',IsActiveEntity=true)"
+					+ "?$select=ArtistID,IsActiveEntity"
+					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)"
+				}, {
+					"ArtistID" : "42",
+					"DraftAdministrativeData" : {
+						"DraftID" : "23",
+						"InProcessByUser" : "bar"
+					}
+//					"IsActiveEntity" : true
+				})
+				.expectChange("id", "42") //TODO @see CPOUI5UISERVICESV3-1572
+				.expectChange("inProcessByUser", "bar")
+				.expectChange("inProcessByUser2", "bar");
+
+			return Promise.all([
+				that.oView.byId("form").getBindingContext().requestSideEffects([{
+					$PropertyPath : "DraftAdministrativeData/InProcessByUser"
+				}]),
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Read side effects via $NavigationPropertyPath. The dependent binding must be
+	// refreshed.
+	QUnit.test("requestSideEffects with $NavigationPropertyPath", function (assert) {
+		var oModel = createSpecialCasesModel({
+				autoExpandSelect : true,
+				groupId : "$direct",
+				updateGroupId : "$auto"
+			}),
+			sView = '\
+<FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
+	<Text id="id" text="{ArtistID}" />\
+	<Text binding="{path : \'DraftAdministrativeData\', parameters : {$$ownRequest : true}}"\
+		id="inProcessByUser" text="{InProcessByUser}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+				+ "?$select=ArtistID,IsActiveEntity", {
+				"ArtistID" : "42"
+//				"IsActiveEntity" : true
+			})
+			.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/DraftAdministrativeData"
+				+ "?$select=DraftID,InProcessByUser", {
+//				"DraftID" : "23",
+				"InProcessByUser" : "foo"
+			})
+			.expectChange("id", "42")
+			.expectChange("inProcessByUser", "foo");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/DraftAdministrativeData"
+					+ "?$select=DraftID,InProcessByUser", {
+//					"DraftID" : "23",
+					"InProcessByUser" : "bar"
+				})
+				.expectChange("inProcessByUser", "bar");
+
+			return Promise.all([
+				that.oView.byId("form").getBindingContext().requestSideEffects([{
+					$NavigationPropertyPath : "DraftAdministrativeData"
+				}]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+					+ "?$select=ArtistID,IsActiveEntity", {
+					"ArtistID" : "42"
+//					"IsActiveEntity" : true
+				})
+				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/DraftAdministrativeData"
+					+ "?$select=DraftID,InProcessByUser", {
+//					"DraftID" : "23",
+					"InProcessByUser" : "foo"
+				})
+				.expectChange("id", "42") //TODO @see CPOUI5UISERVICESV3-1572
+				.expectChange("inProcessByUser", "foo");
+
+			return Promise.all([
+				that.oView.byId("form").getBindingContext().requestSideEffects([{
+					$NavigationPropertyPath : ""
+				}, {
+					$NavigationPropertyPath : "DraftAdministrativeData"
+				}]),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: read side effects which affect dependent bindings.
+	QUnit.test("requestSideEffects: dependent bindings", function (assert) {
+		var oModel = createSpecialCasesModel({
+				autoExpandSelect : true,
+				groupId : "$direct", // GET should not count for batchNo
+				updateGroupId : "update"
+			}),
+			sView = '\
+<FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
+	<Text id="id" text="{ArtistID}" />\
+	<Text binding="{\
+			path : \'DraftAdministrativeData\',\
+			parameters : {$$ownRequest : true}\
+		}" id="inProcessByUser" text="{InProcessByUser}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+				+ "?$select=ArtistID,IsActiveEntity", {
+				"ArtistID" : "42"
+//				"IsActiveEntity" : true
+			}).expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/DraftAdministrativeData"
+				+ "?$select=DraftID,InProcessByUser", {
+				"DraftID" : "23",
+				"InProcessByUser" : "foo"
+			})
+			.expectChange("id", "42")
+			.expectChange("inProcessByUser", "foo");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/DraftAdministrativeData"
+					+ "?$select=InProcessByUser", {
+					"InProcessByUser" : "bar"
+				})
+				.expectChange("inProcessByUser", "bar");
+
+			return Promise.all([
+				that.oView.byId("form").getBindingContext().requestSideEffects([{
+					$PropertyPath : "DraftAdministrativeData/InProcessByUser"
+				}]),
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 

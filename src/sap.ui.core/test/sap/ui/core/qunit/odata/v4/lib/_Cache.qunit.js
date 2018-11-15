@@ -2274,7 +2274,9 @@ sap.ui.define([
 				sinon.match.same(oCacheValue), sinon.match.same(oData));
 
 		// code under test
-		oCache.patch(sPath, oData);
+		return oCache.patch(sPath, oData).then(function (vResult) {
+			assert.strictEqual(vResult, oCacheValue);
+		});
 	});
 
 	//*********************************************************************************************
@@ -4574,6 +4576,123 @@ sap.ui.define([
 					});
 				});
 		});
+	});
+
+	//*********************************************************************************************
+	[undefined, "Me"].forEach(function (sReadPath) {
+		var sTitle = "SingleCache#requestSideEffects, sResourcePath = " + sReadPath;
+
+		QUnit.test(sTitle, function (assert) {
+			var sResourcePath = "Employees('42')",
+				oCache = this.createSingle(sResourcePath, {
+					"sap-client" : "123",
+					$select : ["ROOM_ID"]
+				}),
+				oGroupLock = new _GroupLock("$auto"),
+				mMergedQueryOptions = {},
+				oNewValue = {},
+				oOldValue = {},
+				oPatchExpectation,
+				aPaths = ["ROOM_ID"],
+				mTypeForMetaPath = {},
+				oVisitResponseExpectation;
+
+			this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
+					sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths))
+				.returns(mMergedQueryOptions);
+			this.oRequestorMock.expects("buildQueryString")
+				.withExactArgs("/Employees", sinon.match.same(mMergedQueryOptions), false, true)
+				.returns("?~");
+			this.oRequestorMock.expects("request")
+				.withExactArgs("GET", (sReadPath || sResourcePath) + "?~",
+					sinon.match.same(oGroupLock))
+				.resolves(oNewValue);
+			this.mock(oCache).expects("fetchTypes").withExactArgs()
+				.returns(SyncPromise.resolve(mTypeForMetaPath));
+			oVisitResponseExpectation = this.mock(oCache).expects("visitResponse")
+				.withExactArgs(sinon.match.same(oNewValue), sinon.match.same(mTypeForMetaPath),
+					"/Employees");
+			oPatchExpectation = this.mock(oCache).expects("patch")
+				.withExactArgs("", sinon.match.same(oNewValue))
+				.returns(SyncPromise.resolve(oOldValue));
+
+			// code under test
+			return oCache.requestSideEffects(oGroupLock, aPaths, sReadPath)
+				.then(function (vResult) {
+					assert.strictEqual(vResult, oOldValue);
+					assert.ok(oVisitResponseExpectation.calledBefore(oPatchExpectation));
+				});
+		});
+	});
+	//TODO CollectionCache#refreshSingle claims that
+	// "_Helper.updateExisting cannot be used because navigation properties cannot be handled"
+	// --> what does that mean for our usage of Cache#patch?
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache#requestSideEffects: no need to GET anything", function (assert) {
+		var oCache = this.createSingle("Employees('42')"),
+			oOldValue = {},
+			aPaths = ["ROOM_ID"];
+
+		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
+				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths))
+			.returns(null);
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
+			.returns(SyncPromise.resolve(oOldValue));
+		this.oRequestorMock.expects("buildQueryString").never();
+		this.oRequestorMock.expects("request").never();
+		this.mock(_Helper).expects("updateExisting").never(); // ==> #patch also not called
+
+		// code under test
+		return oCache.requestSideEffects(new _GroupLock("$auto"), aPaths)
+			.then(function (vResult) {
+				assert.strictEqual(vResult, oOldValue);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache#requestSideEffects: request fails", function (assert) {
+		var oCache = this.createSingle("Employees('42')"),
+			oError = new Error(),
+			oGroupLock = new _GroupLock("$auto"),
+			mMergedQueryOptions = {},
+			aPaths = ["ROOM_ID"];
+
+		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
+				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths))
+			.returns(mMergedQueryOptions);
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs("/Employees", sinon.match.same(mMergedQueryOptions), false, true)
+			.returns("?~");
+		this.oRequestorMock.expects("request")
+			.withExactArgs("GET", "Employees('42')?~", sinon.match.same(oGroupLock))
+			.rejects(oError);
+		this.mock(_Helper).expects("updateExisting").never(); // ==> #patch also not called
+
+		// code under test
+		return oCache.requestSideEffects(oGroupLock, aPaths)
+			.then(function () {
+				assert.ok(false, "unexpected success");
+			}, function (oError0) {
+				assert.strictEqual(oError0, oError);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache#requestSideEffects: $expand in intersection", function (assert) {
+		var oCache = this.createSingle("Employees('42')"),
+			oError = new Error("Unsupported navigation property in B/C"),
+			aPaths = ["B/C"];
+
+		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
+				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths))
+			.throws(oError);
+
+		assert.throws(function () {
+			// code under test
+			oCache.requestSideEffects(new _GroupLock("$auto"), aPaths);
+		}, oError);
 	});
 
 	//*********************************************************************************************

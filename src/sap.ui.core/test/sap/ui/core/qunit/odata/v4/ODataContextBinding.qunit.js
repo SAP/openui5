@@ -2509,6 +2509,266 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	[false, true].forEach(function (bWithContext) {
+		[false, true].forEach(function (bRecursionRejects) {
+			var sTitle = "requestSideEffects, with context: " + bWithContext
+					+ "; recursion rejects: " + bRecursionRejects;
+
+			QUnit.test(sTitle, function (assert) {
+				// Note: w/o a context, the binding would be relative in real life
+				var oBinding = this.bindContext("/Me/name.space.Operation(...)"),
+					oCache = {
+						requestSideEffects : function () {}
+					},
+					oChild0 = {
+						oCachePromise : SyncPromise.resolve({}),
+						getPath : function () {},
+						requestSideEffects : function () {}
+					},
+					oChild1 = {
+						oCachePromise : SyncPromise.resolve({}),
+						getPath : function () {},
+						requestSideEffects : function () {}
+					},
+					oChild2 = {
+						oCachePromise : SyncPromise.resolve(), // no own cache
+						requestSideEffects : function () {}
+					},
+					oChild3 = {
+						oCachePromise : SyncPromise.resolve({}),
+						getPath : function () {},
+						requestSideEffects : function () {}
+					},
+					oContext = bWithContext
+						? {getPath : function () {}}
+						: undefined,
+					oError = new Error(),
+					sGroupId = "group",
+					oGroupLock = {},
+					oHelperMock = this.mock(_Helper),
+					aPaths = [],
+					aPaths0 = ["A"],
+					aPaths1 = [/*empty!*/],
+					aPaths3 = ["A"],
+					oResult;
+
+				oBinding.oCachePromise = SyncPromise.resolve(oCache); // simulate execute
+				this.mock(this.oModel).expects("lockGroup").withExactArgs(sGroupId)
+					.returns(oGroupLock);
+				if (bWithContext) {
+					this.mock(oContext).expects("getPath").withExactArgs().returns("/Me");
+				}
+				this.mock(oCache).expects("requestSideEffects")
+					.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths),
+						bWithContext ? "Me" : undefined)
+					.resolves({/*the updated data*/});
+				if (bWithContext) {
+					this.mock(this.oModel).expects("getDependentBindings")
+						.withExactArgs(sinon.match.same(oContext))
+						.returns([oChild0, oChild1, oChild2, oChild3]);
+				} else {
+					this.mock(oBinding).expects("getDependentBindings").withExactArgs()
+						.returns([oChild0, oChild1, oChild2, oChild3]);
+				}
+				this.mock(oChild0).expects("getPath").withExactArgs().returns("foo");
+				oHelperMock.expects("stripPathPrefix")
+					.withExactArgs("foo", sinon.match.same(aPaths))
+					.returns(aPaths0);
+				this.mock(oChild0).expects("requestSideEffects")
+					.withExactArgs(sGroupId, sinon.match.same(aPaths0))
+					.resolves();
+				this.mock(oChild1).expects("getPath").withExactArgs().returns("bar");
+				oHelperMock.expects("stripPathPrefix")
+					.withExactArgs("bar", sinon.match.same(aPaths))
+					.returns(aPaths1);
+				this.mock(oChild1).expects("requestSideEffects").never();
+				this.mock(oChild2).expects("requestSideEffects").never();
+				this.mock(oChild3).expects("getPath").withExactArgs().returns("baz");
+				oHelperMock.expects("stripPathPrefix")
+					.withExactArgs("baz", sinon.match.same(aPaths))
+					.returns(aPaths3);
+				this.mock(oChild3).expects("requestSideEffects")
+					.withExactArgs(sGroupId, sinon.match.same(aPaths3))
+					.returns(bRecursionRejects ? Promise.reject(oError) : Promise.resolve());
+				if (bRecursionRejects) {
+					this.mock(this.oModel).expects("reportError")
+						.withExactArgs("Failed to request side effects", sClassName,
+							sinon.match.same(oError));
+				}
+
+				// code under test
+				oResult = oBinding.requestSideEffects(sGroupId, aPaths, oContext);
+
+				assert.ok(oResult.isPending(), "instanceof SyncPromise");
+
+				return oResult.then(function () {
+						assert.notOk(bRecursionRejects);
+					}, function (oError0) {
+						assert.ok(bRecursionRejects);
+						assert.strictEqual(oError0, oError);
+					});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects: no cache", function (assert) {
+		var oBinding = this.bindContext("/Me/name.space.Operation(...)");
+
+		// @see sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects
+		// @throws {Error} - If this binding does not use own service data requests
+		assert.throws(function () {
+			// code under test
+			oBinding.requestSideEffects("group", [], {/*oContext*/});
+		}, TypeError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects: fails", function (assert) {
+		var oBinding = this.bindContext("/Me/name.space.Operation(...)"),
+			oCache = {
+				requestSideEffects : function () {}
+			},
+			oContext = {
+				getPath : function () {}
+			},
+			oError = new Error(),
+			sGroupId = "group",
+			oGroupLock = {},
+			aPaths = [];
+
+		oBinding.oCachePromise = SyncPromise.resolve(oCache); // simulate execute
+		this.mock(this.oModel).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
+		this.mock(oContext).expects("getPath").withExactArgs().returns("/Me");
+		this.mock(oCache).expects("requestSideEffects")
+			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), "Me")
+			.rejects(oError);
+		this.mock(this.oModel).expects("reportError")
+			.withExactArgs("Failed to request side effects", sClassName, sinon.match.same(oError));
+
+		// code under test
+		return oBinding.requestSideEffects(sGroupId, aPaths, oContext).then(function (vResult) {
+				assert.ok(false, "unexpected success");
+			}, function (oError0) {
+				assert.strictEqual(oError0, oError);
+			});
+	});
+
+	//*********************************************************************************************
+	["", "A"].forEach(function (sPath) {
+		//*****************************************************************************************
+		[false, true].forEach(function (bReturnValueContext) {
+			var sTitle = "requestSideEffects: context refresh required; is return value context: "
+					+ bReturnValueContext + "; empty path: " + !sPath;
+
+			QUnit.test(sTitle, function (assert) {
+				var oBinding = this.bindContext("/Me/name.space.Operation(...)"),
+					oCache = {
+						requestSideEffects : function () {}
+					},
+					oContext = {
+						getPath : function () {}
+					},
+					oError = new Error("Unsupported navigation property in B/C"),
+					sGroupId = "group",
+					oGroupLock = {},
+					aPaths = [sPath],
+					oRefreshInternalPromise = {},
+					oRefreshPromise = bReturnValueContext ? SyncPromise.resolve() : null;
+
+				oBinding.oCachePromise = SyncPromise.resolve(oCache); // simulate execute
+				if (sPath === "") {
+					this.mock(oCache).expects("requestSideEffects").never();
+				} else {
+					this.mock(this.oModel).expects("lockGroup").withExactArgs(sGroupId)
+						.returns(oGroupLock);
+					this.mock(oContext).expects("getPath").withExactArgs().returns("/Me");
+					this.mock(oCache).expects("requestSideEffects")
+						.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), "Me")
+						.throws(oError);
+				}
+				this.mock(oBinding).expects("refreshReturnValueContext")
+					.withExactArgs(sinon.match.same(oContext), sGroupId)
+					.returns(oRefreshPromise);
+				this.mock(oBinding).expects("refreshInternal").withExactArgs(sGroupId, true)
+					.exactly(bReturnValueContext ? 0 : 1)
+					.returns(oRefreshInternalPromise);
+				this.mock(this.oModel).expects("getDependentBindings").never();
+				this.mock(oBinding).expects("getDependentBindings").never();
+
+				// code under test
+				assert.strictEqual(oBinding.requestSideEffects(sGroupId, aPaths, oContext),
+					bReturnValueContext ? oRefreshPromise : oRefreshInternalPromise
+				);
+			});
+		});
+
+		//*****************************************************************************************
+		QUnit.test("requestSideEffects: binding refresh required; empty path: " + !sPath,
+				function (assert) {
+			var oParentContext = Context.create(this.oModel, null, "/Me"),
+				oBinding = this.bindContext("Address", oParentContext),
+				oCache = {
+					requestSideEffects : function () {}
+				},
+				oError = new Error("Unsupported navigation property in B/C"),
+				sGroupId = "group",
+				oGroupLock = {},
+				aPaths = [sPath],
+				oPromise = {};
+
+			oBinding.oCachePromise = SyncPromise.resolve(oCache); // mock cache creation
+			if (sPath === "") {
+				this.mock(oCache).expects("requestSideEffects").never();
+			} else {
+				this.mock(this.oModel).expects("lockGroup").withExactArgs(sGroupId)
+					.returns(oGroupLock);
+				this.mock(oCache).expects("requestSideEffects")
+					.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths),
+						undefined)
+					.throws(oError);
+			}
+			this.mock(oBinding).expects("refreshReturnValueContext").never();
+			this.mock(oBinding).expects("refreshInternal").withExactArgs(sGroupId, true)
+				.returns(oPromise);
+			this.mock(this.oModel).expects("getDependentBindings").never();
+			this.mock(oBinding).expects("getDependentBindings").never();
+
+			// code under test
+			assert.strictEqual(oBinding.requestSideEffects(sGroupId, aPaths), oPromise);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects: do not stifle exceptions", function (assert) {
+		var oBinding = this.bindContext("/Me/name.space.Operation(...)"),
+			oCache = {
+				requestSideEffects : function () {}
+			},
+			oContext = {
+				getPath : function () {},
+				refresh : function () {}
+			},
+			oError = new TypeError("Unexpected error"),
+			sGroupId = "group",
+			oGroupLock = {},
+			aPaths = [];
+
+		oBinding.oCachePromise = SyncPromise.resolve(oCache); // simulate execute
+		this.mock(this.oModel).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
+		this.mock(oContext).expects("getPath").withExactArgs().returns("/Me");
+		this.mock(oCache).expects("requestSideEffects")
+			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), "Me")
+			.throws(oError);
+		this.mock(oContext).expects("refresh").never();
+
+		assert.throws(function () {
+			// code under test
+			oBinding.requestSideEffects(sGroupId, aPaths, oContext);
+		}, oError);
+	});
+
+	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		//*****************************************************************************************
 		QUnit.test("Action import on navigation property", function (assert) {
