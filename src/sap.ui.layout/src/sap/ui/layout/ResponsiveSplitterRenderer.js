@@ -26,7 +26,7 @@ sap.ui.define(['sap/ui/core/IconPool'],
 		var aPages = oControl.getAggregation("_pages");
 
 		if (aPages) {
-			oControl.getAggregation("_pages").forEach(oRm.renderControl);
+			oControl.getAggregation("_pages").forEach(oRm.renderControl, oRm);
 			this.renderPaginator(oRm, oControl);
 		}
 

@@ -38,7 +38,7 @@ sap.ui.define(function () {
 	};
 
 	WizardStepRenderer.renderContent = function (oRm, oStep) {
-		oStep.getContent().forEach(oRm.renderControl);
+		oStep.getContent().forEach(oRm.renderControl, oRm);
 		oRm.renderControl(oStep.getAggregation("_nextButton"));
 	};
 
