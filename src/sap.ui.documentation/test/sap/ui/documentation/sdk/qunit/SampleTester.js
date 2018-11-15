@@ -44,6 +44,11 @@ sap.ui.define([
 		return name.replace(/\./g, "/");
 	}
 
+	function isLocaleSpecificResource(sResource) {
+		// check for a locale-like name suffix and the extension .properties
+		return /_[a-zA-Z]{2}(?:_[^/]+)?\.properties$/.test(sResource);
+	}
+
 	function RequestCollector(sandbox, baseUrl) {
 		var oRequireLoadSpy = sandbox.spy(sap.ui.require, "load");
 		var oAsyncRequestSpy = sandbox.spy(jQuery, "ajax");
@@ -190,8 +195,8 @@ sap.ui.define([
 					var pRequested = Promise.all(
 						aRequestedResources.map(function(sResource) {
 
-							// ignore local-specific i18n file names (like i18n_en_US.properties and i18n_en.properties)
-							if (sResource.split("/").pop().indexOf("i18n_") === 0) {
+							// ignore locale-specific i18n file names (like i18n_en_US.properties and i18n_en.properties)
+							if ( isLocaleSpecificResource(sResource) ) {
 								return;
 							}
 
