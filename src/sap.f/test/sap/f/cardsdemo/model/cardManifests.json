@@ -4,7 +4,7 @@
 			"sap.card": {
 				"height": "180px",
 				"width": "180px",
-				"type": "KPIContent",
+				"type": "KPI",
 				"settings": {
 					"data": {
 						"request": {
@@ -22,7 +22,7 @@
 			"sap.card": {
 				"height": "180px",
 				"width": "180px",
-				"type": "KPIContent",
+				"type": "KPI",
 				"settings": {
 					"data": {
 						"json": {
@@ -178,221 +178,221 @@
 				"type": "CustomCard"
 			}
 		},
-      "card13": {
-        "sap.card": {
-          "title": "L3 Request list content Card",
-          "subTitle": "Card Subtitle",
-          "type": "List",
-          "icon":  {
-            "src": "sap-icon://accept"
-          },
-          "status": "100 of 200",
-          "width": "300px",
-		  "height": "400px",
-		  "content": {
-            "data": {
-              "json": [
-                {
-                  "Name": "Notebook Basic 15",
-                  "Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
-                  "Id": "HT-1000",
-                  "SubCategoryId": "Notebooks",
-                  "icon": "sap-icon://accept"
-                },
-                {
-                  "Name": "Notebook Basic 17",
-                  "Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
-                  "Id": "HT-1001",
-                  "SubCategoryId": "Notebooks",
-                  "icon": "sap-icon://accept"
-                },
-                {
-                  "Name": "Notebook Basic 18",
-                  "Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
-                  "Id": "HT-1002",
-                  "SubCategoryId": "Notebooks",
-                  "icon": "sap-icon://accept"
-                },
-                {
-                  "Name": "Notebook Basic 19",
-                  "Description": "Notebook Basic 19 with 2,80 GHz quad core, 19\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
-                  "Id": "HT-1003",
-                  "SubCategoryId": "Notebooks",
-                  "icon": "sap-icon://accept"
-                },
-                {
-                  "Name": "ITelO Vault",
-                  "Description": "Digital Organizer with State-of-the-Art Storage Encryption",
-                  "Id": "HT-1007",
-                  "SubCategoryId": "PDAs & Organizers",
-                  "icon": "sap-icon://accept"
-                },
-                {
-                  "Name": "Notebook Professional 15",
-                  "Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
-                  "Id": "HT-1010",
-                  "SubCategoryId": "Notebooks",
-                  "icon": "sap-icon://accept"
-                },
-                {
-                  "Name": "Notebook Professional 26",
-                  "Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
-                  "Id": "HT-1022",
-                  "SubCategoryId": "Notebooks",
-                  "icon": "sap-icon://accept"
-                },
-                {
-                  "Name": "Notebook Professional 27",
-                  "Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
-                  "Id": "HT-1024",
-                  "SubCategoryId": "Notebooks",
-                  "icon": "sap-icon://accept"
-                }
-              ]
-            },
-            "item": {
-              "icon": {
-                "label": "{{icon_label}}",
-                "value": "{icon}"
-              },
-              "title": {
-                "label": "{{title_label}}",
-                "value": "{Name}"
-              },
-              "description": {
-                "label": "{{description_label}}",
-                "value": "{Description}"
-              }
-            }
-          }
-        }
-      },
-	  "listContent": {
-		"sap.card": {
-		  "title": "L4 Card Title 2x3",
-		  "subTitle": "Card Subtitle",
-		  "icon":  {
-			"src": "sap-icon://accept"
-		  },
-		  "status": "Count",
-		  "width": "200px",
-		  "height": "300px",
-		  "type": "List",
-		  "content": {
-			"data": {
-				"json": [{
-				  "Name": "Notebook Basic 15",
-				  "Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
-				  "Id": "HT-1000",
-				  "SubCategoryId": "Notebooks"
-				},
-				  {
+		"card13": {
+			"sap.card": {
+			"title": "L3 Request list content Card",
+			"subTitle": "Card Subtitle",
+			"type": "List",
+			"icon":  {
+				"src": "sap-icon://accept"
+			},
+			"status": "100 of 200",
+			"width": "400px",
+			"height": "400px",
+			"content": {
+				"data": {
+				"json": [
+					{
+					"Name": "Notebook Basic 15",
+					"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+					"Id": "HT-1000",
+					"SubCategoryId": "Notebooks",
+					"icon": "sap-icon://accept"
+					},
+					{
 					"Name": "Notebook Basic 17",
 					"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
 					"Id": "HT-1001",
-					"SubCategoryId": "Notebooks"
-				  },
-				  {
+					"SubCategoryId": "Notebooks",
+					"icon": "sap-icon://accept"
+					},
+					{
 					"Name": "Notebook Basic 18",
 					"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
 					"Id": "HT-1002",
-					"SubCategoryId": "Notebooks"
-				  },
-				  {
+					"SubCategoryId": "Notebooks",
+					"icon": "sap-icon://accept"
+					},
+					{
 					"Name": "Notebook Basic 19",
 					"Description": "Notebook Basic 19 with 2,80 GHz quad core, 19\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
 					"Id": "HT-1003",
-					"SubCategoryId": "Notebooks"
-				  },
-				  {
+					"SubCategoryId": "Notebooks",
+					"icon": "sap-icon://accept"
+					},
+					{
 					"Name": "ITelO Vault",
 					"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
 					"Id": "HT-1007",
-					"SubCategoryId": "PDAs & Organizers"
-				  },
-				  {
+					"SubCategoryId": "PDAs & Organizers",
+					"icon": "sap-icon://accept"
+					},
+					{
 					"Name": "Notebook Professional 15",
 					"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
 					"Id": "HT-1010",
-					"SubCategoryId": "Notebooks"
-				  },
-				  {
+					"SubCategoryId": "Notebooks",
+					"icon": "sap-icon://accept"
+					},
+					{
 					"Name": "Notebook Professional 26",
 					"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
 					"Id": "HT-1022",
-					"SubCategoryId": "Notebooks"
-				  },
-				  {
+					"SubCategoryId": "Notebooks",
+					"icon": "sap-icon://accept"
+					},
+					{
 					"Name": "Notebook Professional 27",
 					"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
 					"Id": "HT-1024",
-					"SubCategoryId": "Notebooks"
-				  }
+					"SubCategoryId": "Notebooks",
+					"icon": "sap-icon://accept"
+					}
 				]
-			},
-			"item": {
-			  "icon": {
-				"label": "{{icon_label}}",
-				"value": "{SubCategoryId}",
-				"type": "mapper",
-				"importance": 1
-			  },
-			  "title": {
-				"label": "{{title_label}}",
-				"value": "{Name}",
-				"type": "string",
-				"importance": 0
-			  },
-			  "description": {
-				"label": "{{description_label}}",
-				"value": "{Description}",
-				"type": "string",
-				"importance": 0
-			  }
-			}
-		  }
-		}
-	  },
-	  "listcard2": {
-        "sap.card": {
-          "title": "L1 Card Title 2x3",
-          "subTitle": "Card Subtitle",
-          "icon":  {
-            "src": "sap-icon://accept"
-          },
-          "status": "100 of 200",
-          "width": "300px",
-          "height": "auto",
-          "type": "List",
-          "content": {
-            "data": {
-				"request": {
-					"url": "./cardcontent/someitems.json"
+				},
+				"item": {
+				"icon": {
+					"label": "{{icon_label}}",
+					"value": "{icon}"
+				},
+				"title": {
+					"label": "{{title_label}}",
+					"value": "{Name}"
+				},
+				"description": {
+					"label": "{{description_label}}",
+					"value": "{Description}"
 				}
-            },
-            "item": {
-              "icon": {
-                "label": "{{icon_label}}",
-                "value": "{SubCategoryId}",
-                "type": "mapper",
-                "importance": 1
-              },
-              "title": {
-                "label": "{{title_label}}",
-                "value": "{Name}",
-                "type": "string",
-                "importance": 0
-              },
-              "description": {
-                "label": "{{description_label}}",
-                "value": "{Description}",
-                "type": "string",
-                "importance": 0
-              }
-            }
-          }
-        }
-      }
+				}
+			}
+			}
+		},
+		"listContent": {
+			"sap.card": {
+			"title": "L4 Card Title 2x3",
+			"subTitle": "Card Subtitle",
+			"icon":  {
+				"src": "sap-icon://accept"
+			},
+			"status": "Count",
+			"width": "400px",
+			"height": "300px",
+			"type": "List",
+			"content": {
+				"data": {
+					"json": [{
+					"Name": "Notebook Basic 15",
+					"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+					"Id": "HT-1000",
+					"SubCategoryId": "Notebooks"
+					},
+					{
+						"Name": "Notebook Basic 17",
+						"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+						"Id": "HT-1001",
+						"SubCategoryId": "Notebooks"
+					},
+					{
+						"Name": "Notebook Basic 18",
+						"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+						"Id": "HT-1002",
+						"SubCategoryId": "Notebooks"
+					},
+					{
+						"Name": "Notebook Basic 19",
+						"Description": "Notebook Basic 19 with 2,80 GHz quad core, 19\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+						"Id": "HT-1003",
+						"SubCategoryId": "Notebooks"
+					},
+					{
+						"Name": "ITelO Vault",
+						"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+						"Id": "HT-1007",
+						"SubCategoryId": "PDAs & Organizers"
+					},
+					{
+						"Name": "Notebook Professional 15",
+						"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+						"Id": "HT-1010",
+						"SubCategoryId": "Notebooks"
+					},
+					{
+						"Name": "Notebook Professional 26",
+						"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+						"Id": "HT-1022",
+						"SubCategoryId": "Notebooks"
+					},
+					{
+						"Name": "Notebook Professional 27",
+						"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+						"Id": "HT-1024",
+						"SubCategoryId": "Notebooks"
+					}
+					]
+				},
+				"item": {
+				"icon": {
+					"label": "{{icon_label}}",
+					"value": "{SubCategoryId}",
+					"type": "mapper",
+					"importance": 1
+				},
+				"title": {
+					"label": "{{title_label}}",
+					"value": "{Name}",
+					"type": "string",
+					"importance": 0
+				},
+				"description": {
+					"label": "{{description_label}}",
+					"value": "{Description}",
+					"type": "string",
+					"importance": 0
+				}
+				}
+			}
+			}
+		},
+		"listcard2": {
+			"sap.card": {
+			"title": "L1 Card Title 2x3",
+			"subTitle": "Card Subtitle",
+			"icon":  {
+				"src": "sap-icon://accept"
+			},
+			"status": "100 of 200",
+			"width": "400px",
+			"height": "auto",
+			"type": "List",
+			"content": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
+				"item": {
+				"icon": {
+					"label": "{{icon_label}}",
+					"value": "{SubCategoryId}",
+					"type": "mapper",
+					"importance": 1
+				},
+				"title": {
+					"label": "{{title_label}}",
+					"value": "{Name}",
+					"type": "string",
+					"importance": 0
+				},
+				"description": {
+					"label": "{{description_label}}",
+					"value": "{Description}",
+					"type": "string",
+					"importance": 0
+				}
+				}
+			}
+			}
+		}
 	},
 	"splitter": {
 		"card1": {
@@ -945,6 +945,97 @@
 				"type": "CustomCard",
 				"width": "100%",
 				"height": "100%"
+			}
+		}
+	},
+	"listContent": {
+		"card13": {
+			"sap.card": {
+			"title": "Request list content Card",
+			"subTitle": "Card Subtitle",
+			"type": "List",
+			"icon":  {
+				"src": "sap-icon://accept"
+			},
+			"status": "100 of 200",
+			"width": "400px",
+			"height": "400px",
+			"content": {
+				"data": {
+					"json": [
+						{
+						"Name": "Notebook Basic 15",
+						"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+						"Id": "HT-1000",
+						"SubCategoryId": "Notebooks",
+						"icon": "sap-icon://accept"
+					},
+					{
+						"Name": "Notebook Basic 17",
+						"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+						"Id": "HT-1001",
+						"SubCategoryId": "Notebooks",
+						"icon": "sap-icon://accept"
+					},
+					{
+						"Name": "Notebook Basic 18",
+						"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+						"Id": "HT-1002",
+						"SubCategoryId": "Notebooks",
+						"icon": "sap-icon://accept"
+					},
+					{
+						"Name": "Notebook Basic 19",
+						"Description": "Notebook Basic 19 with 2,80 GHz quad core, 19\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+						"Id": "HT-1003",
+						"SubCategoryId": "Notebooks",
+						"icon": "sap-icon://accept"
+					},
+					{
+						"Name": "ITelO Vault",
+						"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+						"Id": "HT-1007",
+						"SubCategoryId": "PDAs & Organizers",
+						"icon": "sap-icon://accept"
+					},
+					{
+						"Name": "Notebook Professional 15",
+						"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+						"Id": "HT-1010",
+						"SubCategoryId": "Notebooks",
+						"icon": "sap-icon://accept"
+					},
+					{
+						"Name": "Notebook Professional 26",
+						"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+						"Id": "HT-1022",
+						"SubCategoryId": "Notebooks",
+						"icon": "sap-icon://accept"
+					},
+					{
+						"Name": "Notebook Professional 27",
+						"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+						"Id": "HT-1024",
+						"SubCategoryId": "Notebooks",
+						"icon": "sap-icon://accept"
+					}
+					]
+				},
+				"item": {
+					"icon": {
+					"label": "{{icon_label}}",
+					"value": "{icon}"
+					},
+					"title": {
+					"label": "{{title_label}}",
+					"value": "{Name}"
+					},
+					"description": {
+					"label": "{{description_label}}",
+					"value": "{Description}"
+					}
+				}
+			}
 			}
 		}
 	}

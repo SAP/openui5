@@ -9,7 +9,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Obje
 	function (Control, JSONModel, ObjectNumber, VBox, Text, Data, ManagedObject) {
 		"use strict";
 
-		var KPIContent = Control.extend("sap.f.cards.KPIContent", {
+		var KPI = Control.extend("sap.f.cards.content.KPI", {
 			metadata: {
 				properties: {
 					data: {
@@ -38,7 +38,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Obje
 			}
 		});
 
-		KPIContent.prototype.init = function () {
+		KPI.prototype.init = function () {
 
 			this.setModel(new JSONModel());
 
@@ -49,7 +49,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Obje
 			this.setAggregation("_content", oVBox);
 		};
 
-		KPIContent.prototype.onBeforeRendering = function () {
+		KPI.prototype.onBeforeRendering = function () {
 			this.getAggregation("_content").getItems()[0].setText(this.getTitle());
 
 			var oObjectNumber = this.getAggregation("_content").getItems()[1];
@@ -57,7 +57,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Obje
 			oObjectNumber.bindProperty("unit", this.getBindingInfo("unit"));
 		};
 
-		KPIContent.prototype.applySettings = function (mSettings, oScope) {
+		KPI.prototype.applySettings = function (mSettings, oScope) {
 
 			var oData = mSettings.data;
 
@@ -73,7 +73,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Obje
 			return this;
 		};
 
-		KPIContent.prototype.setData = function (oData) {
+		KPI.prototype.setData = function (oData) {
 
 			this.setProperty("data", oData);
 
@@ -99,7 +99,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Obje
 			return this;
 		};
 
-		KPIContent.prototype._updateModel = function (oData, sPath) {
+		KPI.prototype._updateModel = function (oData, sPath) {
 			this.getModel().setData(oData);
 			var oObjectNumber = this.getAggregation("_content").getItems()[1];
 			oObjectNumber.bindElement({
@@ -107,5 +107,5 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Obje
 			});
 		};
 
-		return KPIContent;
+		return KPI;
 	});
