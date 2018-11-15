@@ -183,6 +183,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the user ID of the owner
+	 * @returns {string} ID of the owner
+	 *
+	 * @public
+	 */
+	Change.prototype.getOwnerId = function () {
+		return this._oDefinition.support ? this._oDefinition.support.user : "";
+	};
+
+	/**
 	 * Returns the text in the current language for a given id
 	 *
 	 * @param {string} sTextId
