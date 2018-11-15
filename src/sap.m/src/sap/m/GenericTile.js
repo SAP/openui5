@@ -408,7 +408,6 @@ sap.ui.define([
 			// attach handler in order to check the device type based on width and invalidate on change
 			Device.media.attachHandler(this._handleMediaChange, this, DEVICE_SET);
 		}
-            this._oTitle.clampText();
 	};
 
 	/**
