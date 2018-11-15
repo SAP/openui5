@@ -4,9 +4,10 @@
 /**
  * List Card
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/List', 'sap/m/StandardListItem', 'sap/ui/base/ManagedObject'],
-	function (jQuery, Control, JSONModel, sapMList, StandardListItem, ManagedObject) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/List', 'sap/m/StandardListItem', 'sap/ui/base/ManagedObject', "sap/f/cards/Data"],
+	function (jQuery, Control, JSONModel, sapMList, StandardListItem, ManagedObject, Data) {
 		"use strict";
+
 		var List = Control.extend("sap.f.cards.content.List", {
 			metadata: {
 				properties: {
@@ -17,22 +18,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/model/json/JS
 					 * <pre>
 					 * {
 					 *    "type": "json",
-					 *    "response": {
-					 *        "json": [{
-					 *            "Name": "Notebook Basic 15",
-					 *             "Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
-					 *        }],
-					 *        "path": "/"
-					 *    }
+					 *    "json": [{
+					 *        "Name": "Notebook Basic 15",
+					 *        "Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+					 *    }]
 					 * }
 					 * </pre>
 					 * Example with simple URL request (string)
 					 * <pre>
 					 * {
 					 *    "type": "json",
-					 *    "request": "./cardcontent/listcard/data.json",
-					 *    "path": "/"
-					 *
+					 *    "request": "./cardcontent/listcard/data.json"
 					 * }
 					 * </pre>
 					 * Example with a configured request (object)
@@ -46,9 +42,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/model/json/JS
 					 *          "Content-Type" : "application/json; charset=utf-8"
 					 *       },
 					 *       "credentials" : "include"
-					 *    },
-					 *    "response": {
-					 *       "path": "/"
 					 *    }
 					 * }
 					 * </pre>
@@ -90,6 +83,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/model/json/JS
 				oRm.write("</div>");
 			}
 		});
+
 		List.prototype.init = function () {
 			//create a list control
 			this.oList = new sapMList({
@@ -115,6 +109,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/model/json/JS
 				iconInset: false
 			});
 		};
+
 		List.prototype.exit = function () {
 			if (this._oItemTemplate) {
 				this._oItemTemplate.destroy();
@@ -126,6 +121,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/model/json/JS
 				this.oList = null;
 			}
 		};
+
 		List.prototype.destroy = function () {
 			this.setAggregation("_content", null);
 			this.setModel(null);
@@ -150,45 +146,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/model/json/JS
 			return this;
 		};
 
-		List.prototype.setData = function (oListData) {
-			this.setProperty("data", oListData, true);
-			if (!oListData) {
+		List.prototype.setData = function (oData) {
+
+			this.setProperty("data", oData, true);
+
+			if (!oData) {
 				return this;
 			}
-			//handling the request
-			var oRequest = oListData.request,
-				oJson = oListData.json;
 
-			if (oJson && !oRequest) {
-				this.getModel().setData(oJson);
+			var oRequest = oData.request;
+
+			if (oData.json && !oRequest) {
+				this._updateModel(oData.json, oData.path);
 			}
-			//Todo fix request and adapt the new response
+
 			if (oRequest) {
-				//create url
-				var oUrl = oRequest.url,
-					sUrl = "";
-				if (typeof oUrl === "object") {
-					if (!oUrl.port) {
-						oUrl.port = oUrl.protocol === "https" ? "443" : "80";
-					}
-					sUrl = oUrl.protocol + "://" + oUrl.host + ":" + (oUrl.port) + oUrl.path;
-				} else if (typeof oUrl === "string") {
-					sUrl = oUrl;
-				}
-				var mHeaders = oRequest.headers || {};
-				if (oListData.type === "json" && !mHeaders["Accept"]) {
-					mHeaders["Accept"] = "application/json;charset=utf-8";
-				}
-				this.getModel().loadData(sUrl, oRequest.parameters, true, oRequest.method || "GET", false, true, mHeaders);
+				Data.fetch(oRequest).then(function (oData) {
+					this._updateModel(oData, oData.path);
+				}.bind(this)).catch(function (oError) {
+					// TODO: Handle errors. Maybe add error message
+				});
 			}
-
-			this.getAggregation("_content").bindItems({
-				path: "/",
-				template: this._oItemTemplate
-			});
 
 			return this;
 		};
 
-		return List;
-	});
+		List.prototype._updateModel = function (oData, sPath) {
+			this.getModel().setData(oData);
+			this.getAggregation("_content").bindItems({
+				path: sPath || "/",
+				template: this._oItemTemplate
+			});
+		};
+
+	return List;
+});
