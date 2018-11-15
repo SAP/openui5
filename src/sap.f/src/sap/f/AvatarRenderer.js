@@ -39,7 +39,9 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeXML"],
 				sTooltip = oAvatar.getTooltip_AsString(),
 				sDefaultTooltip = oAvatar._getDefaultTooltip(),
 				aLabelledBy = oAvatar.getAriaLabelledBy(),
-				aDescribedBy = oAvatar.getAriaDescribedBy();
+				aDescribedBy = oAvatar.getAriaDescribedBy(),
+				sAriaLabelTooltip = sTooltip && sInitials ? sDefaultTooltip + " " + sTooltip : sDefaultTooltip,
+				sAriLabelInitials = sInitials ? sDefaultTooltip + " " + sInitials : sDefaultTooltip;
 
 			oRm.write("<span");
 			oRm.writeControlData(oAvatar);
@@ -66,9 +68,9 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeXML"],
 			}
 			if (sTooltip) {
 				oRm.writeAttributeEscaped("title", sTooltip);
-				oRm.writeAttributeEscaped("aria-label", sTooltip);
+				oRm.writeAttributeEscaped("aria-label", sAriaLabelTooltip);
 			} else {
-				oRm.writeAttributeEscaped("aria-label", sDefaultTooltip);
+				oRm.writeAttributeEscaped("aria-label", sAriLabelInitials);
 			}
 			// aria-labelledby references
 			if (aLabelledBy && aLabelledBy.length > 0) {
