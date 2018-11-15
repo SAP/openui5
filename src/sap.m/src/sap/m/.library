@@ -106,6 +106,7 @@
                 <module>sap/m/DisplayListItem</module>
                 <module>sap/m/GroupHeaderListItem</module>
                 <module>sap/m/InputListItem</module>
+                <module>sap/m/ActionListItem</module>
                 <module>sap/m/StandardListItem</module>
                 <module>sap/m/CustomListItem</module>
                 <module>sap/m/CustomTreeItem</module>
