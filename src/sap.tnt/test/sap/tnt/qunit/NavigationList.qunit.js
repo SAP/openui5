@@ -8,7 +8,8 @@ sap.ui.define([
 	'sap/m/App',
 	'sap/m/Page',
 	'sap/tnt/NavigationList',
-	'sap/tnt/NavigationListItem'
+	'sap/tnt/NavigationListItem',
+	'sap/ui/qunit/utils/waitForThemeApplied'
 ], function(
 	jQuery,
 	Log,
@@ -17,7 +18,8 @@ sap.ui.define([
 	App,
 	Page,
 	NavigationList,
-	NavigationListItem) {
+	NavigationListItem,
+	waitForThemeApplied) {
 	'use strict';
 
 	// create JSON model instance
@@ -553,4 +555,6 @@ sap.ui.define([
 		assert.ok(popover.bIsDestroyed, "popover should be destroyed");
 		assert.ok(!this.navigationList._popover, "should clean popover reference");
 	});
+
+	return waitForThemeApplied();
 });
