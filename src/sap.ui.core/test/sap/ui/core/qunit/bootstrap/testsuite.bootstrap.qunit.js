@@ -330,8 +330,7 @@ sap.ui.define(function() {
 					preload: "async"
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
-				module: "./ThemeVersion.qunit",
-				autostart : false
+				module: "./ThemeVersion.qunit"
 			},
 			"ThemeVersion-off-sync": {
 				group: "Theme Versioning",
@@ -342,8 +341,7 @@ sap.ui.define(function() {
 					preload: "sync"
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
-				module: "./ThemeVersion.qunit",
-				autostart : false
+				module: "./ThemeVersion.qunit"
 			},
 			"ThemeVersion-on-async-customcss": {
 				group: "Theme Versioning",
@@ -354,8 +352,7 @@ sap.ui.define(function() {
 					preload: "async"
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
-				module: "./ThemeVersion.qunit",
-				autostart : false
+				module: "./ThemeVersion.qunit"
 			},
 			"ThemeVersion-on-async": {
 				group: "Theme Versioning",
@@ -366,8 +363,7 @@ sap.ui.define(function() {
 					preload: "async"
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
-				module: "./ThemeVersion.qunit",
-				autostart : false
+				module: "./ThemeVersion.qunit"
 			},
 			"ThemeVersion-on-sync-customcss": {
 				group: "Theme Versioning",
@@ -378,8 +374,7 @@ sap.ui.define(function() {
 					preload: "sync"
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
-				module: "./ThemeVersion.qunit",
-				autostart : false
+				module: "./ThemeVersion.qunit"
 			},
 			"ThemeVersion-on-sync": {
 				group: "Theme Versioning",
@@ -390,8 +385,7 @@ sap.ui.define(function() {
 					preload: "sync"
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
-				module: "./ThemeVersion.qunit",
-				autostart : false
+				module: "./ThemeVersion.qunit"
 			},
 			"polyfill/ComputedStyle": {
 				group: "Polyfills",

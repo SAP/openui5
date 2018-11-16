@@ -1,6 +1,7 @@
 sap.ui.define([
-	"sap/ui/core/theming/Parameters"
-], function(Parameters) {
+	"sap/ui/core/theming/Parameters",
+	"sap/ui/qunit/utils/waitForThemeApplied"
+], function(Parameters, themeApplied) {
 	"use strict";
 	/* global QUnit */
 
@@ -13,15 +14,6 @@ sap.ui.define([
 			}
 			sap.ui.getCore().attachThemeChanged(onChanged);
 		});
-	}
-
-	// Wait until the theme is applied
-	function themeApplied() {
-		if (sap.ui.getCore().isThemeApplied()) {
-			return Promise.resolve();
-		} else {
-			return themeChanged();
-		}
 	}
 
 	var sPath = sap.ui.require.toUrl("testdata/core");

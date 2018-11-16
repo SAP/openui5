@@ -1,5 +1,9 @@
 /*global QUnit, sinon */
-sap.ui.define(["sap/ui/Device", "sap/ui/core/ThemeCheck"], function(Device, ThemeCheck){
+sap.ui.define([
+	"sap/ui/Device",
+	"sap/ui/core/ThemeCheck",
+	"sap/ui/qunit/utils/waitForThemeApplied"
+], function(Device, ThemeCheck, themeApplied) {
 	"use strict";
 
 	// Wait until the theme is changed
@@ -11,15 +15,6 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/ThemeCheck"], function(Device, Them
 			}
 			sap.ui.getCore().attachThemeChanged(onChanged);
 		});
-	}
-
-	// Wait until the theme is applied
-	function themeApplied() {
-		if (sap.ui.getCore().isThemeApplied()) {
-			return Promise.resolve();
-		} else {
-			return themeChanged();
-		}
 	}
 
 	function getSheetHref(oLink) {

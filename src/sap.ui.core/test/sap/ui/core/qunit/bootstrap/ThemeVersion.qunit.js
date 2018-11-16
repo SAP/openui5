@@ -2,8 +2,9 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/thirdparty/URI",
-	"sap/ui/core/theming/Parameters"
-], function($, URI, Parameters) {
+	"sap/ui/core/theming/Parameters",
+	"sap/ui/qunit/utils/waitForThemeApplied"
+], function($, URI, Parameters, waitForThemeApplied) {
 	"use strict";
 
 	// use options and version info as determined by ThemeVersion.beforeBootstrap.qunit.js
@@ -167,19 +168,5 @@ sap.ui.define([
 		sap.ui.getCore().getConfiguration().setRTL(false);
 	});
 
-	// Wait until the theme is applied
-	new Promise(function(resolve, reject) {
-		if (sap.ui.getCore().isThemeApplied()) {
-			resolve();
-		} else {
-			var themeChanged = function() {
-				resolve();
-				sap.ui.getCore().detachThemeChanged(themeChanged);
-			};
-			sap.ui.getCore().attachThemeChanged(themeChanged);
-		}
-	}).then(function() {
-		QUnit.start();
-	});
-
+	return waitForThemeApplied();
 });
