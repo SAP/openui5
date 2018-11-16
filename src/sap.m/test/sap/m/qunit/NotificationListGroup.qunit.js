@@ -949,6 +949,38 @@ sap.ui.define([
 		assert.strictEqual(ariaSetsize, 3, 'Should update aria-setsize to the group\'s lenght');
 	});
 
+	QUnit.test('Focusing a notification inside the notification group with hidden items', function (assert) {
+		// arrange
+		var firstNotification = new NotificationListItem();
+		var secondNotification = new NotificationListItem({visible: false});
+		var thirdNotification = new NotificationListItem();
+
+		this.NotificationListGroup.addItem(firstNotification);
+		this.NotificationListGroup.addItem(secondNotification);
+		this.NotificationListGroup.addItem(thirdNotification);
+
+		// act
+		sap.ui.getCore().applyChanges();
+		this.NotificationListGroup._notificationFocusHandler({srcControl: firstNotification});
+
+		var ariaPosinset = firstNotification.getDomRef().getAttribute('aria-posinset');
+		var ariaSetsize = firstNotification.getDomRef().getAttribute('aria-setsize');
+
+		// assert
+		assert.strictEqual(ariaPosinset, "1", 'Should update aria-posinset to its index in the group');
+		assert.strictEqual(ariaSetsize, "2", 'Should update aria-setsize to the group\'s count of visible items only');
+
+		// act
+		this.NotificationListGroup._notificationFocusHandler({srcControl: thirdNotification});
+
+		ariaPosinset = thirdNotification.getDomRef().getAttribute('aria-posinset');
+		ariaSetsize = thirdNotification.getDomRef().getAttribute('aria-setsize');
+
+		// assert
+		assert.strictEqual(ariaPosinset, "2", 'Should update aria-posinset to the newly focused notifications in the group');
+		assert.strictEqual(ariaSetsize, "2", 'Should update aria-setsize to the group\'s count of visible items only');
+	});
+
 	//================================================================================
 	// Notification List Group ARIA support
 	//================================================================================
