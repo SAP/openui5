@@ -1,0 +1,226 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Notification List Group - sap.m</title>
+
+	<style>
+		#content {
+			padding: 30px 0 0 30px;
+		}
+	</style>
+
+	<script src="../shared-config.js"></script>
+	<script src="../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m">
+	</script>
+
+	<script>
+
+		jQuery.sap.require('sap.m.MessageToast');
+
+		var listItem = new sap.m.NotificationListItem('firstNotification', {
+			title: 'Notification List Title1',
+			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+			showCloseButton: false,
+			authorPicture: 'sap-icon://car-rental',
+			authorName: 'Bai Marin',
+			datetime: '5 minutes',
+			priority: sap.ui.core.Priority.None
+		});
+
+		var listItem2 = new sap.m.NotificationListItem({
+			title: 'Notification List Title2',
+			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+			datetime: '2 hours',
+			unread: true,
+			priority: sap.ui.core.Priority.Medium,
+			buttons: [
+				new sap.m.Button({
+					text: 'Accept',
+					type: sap.m.ButtonType.Accept,
+					tap: function () {
+						sap.m.MessageToast.show('Accept button pressed');
+					}
+				}),
+				new sap.m.Button({
+					text: 'Cancel',
+					type: sap.m.ButtonType.Reject,
+					tap: function () {
+						listItem2.close();
+					}
+				})
+			]
+		});
+
+		var listItem3 = new sap.m.NotificationListItem({
+			title: 'Notification List Title3',
+			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+			datetime: '2 hours',
+			unread: true,
+			priority: sap.ui.core.Priority.Low,
+			buttons: [
+				new sap.m.Button({
+					text: 'Accept',
+					type: sap.m.ButtonType.Accept,
+					tap: function () {
+						sap.m.MessageToast.show('Accept button pressed');
+					}
+				}),
+				new sap.m.Button({
+					text: 'Cancel',
+					type: sap.m.ButtonType.Reject,
+					tap: function () {
+						listItem2.close();
+					}
+				})
+			]
+		});
+
+
+		var listGroup = new sap.m.NotificationListGroup({
+			id: 'notificationGroup',
+			title: 'Notification List Item Group',
+			datetime: 'More than 5 minutes',
+			authorPicture: 'images/SAPLogo.jpg',
+			authorName: 'Lorem Ipsum',
+			buttons: [
+				new sap.m.Button({
+					text: 'Accept All',
+					type: sap.m.ButtonType.Accept,
+					tap: function () {
+						sap.m.MessageToast.show('Accept all button pressed');
+					}
+				}),
+				new sap.m.Button({
+					text: 'Cancel All',
+					type: sap.m.ButtonType.Reject
+				})
+			],
+			items: [
+				listItem,
+				listItem2,
+				listItem3
+			],
+			onCollapse: function (event) {
+				var collapseExpandText = (event.oSource.getCollapsed() ? 'Collapse' : 'Expand') + ' event fired';
+				sap.m.MessageToast.show(collapseExpandText);
+			}
+		});
+
+		var singleItemGroup = new sap.m.NotificationListGroup({
+			id: 'notificationGroup2',
+			title: 'Single Notification List Item Group',
+			datetime: 'More than 15 minutes',
+			authorPicture: 'images/SAPLogo.jpg',
+			authorName: 'Lorem Ipsum',
+			visible: true,
+			buttons: [
+				new sap.m.Button({
+					text: 'Accept All',
+					type: sap.m.ButtonType.Accept,
+					tap: function () {
+						sap.m.MessageToast.show('Accept all button pressed');
+					}
+				}),
+				new sap.m.Button({
+					text: 'Cancel All',
+					type: sap.m.ButtonType.Reject
+				})
+			],
+			items: [
+				new sap.m.NotificationListItem({
+					title: 'Single Item Notification',
+					description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+					datetime: '2 hours',
+					unread: true,
+					visible: true,
+					showCloseButton: false,
+					priority: sap.ui.core.Priority.High,
+					buttons: [
+						new sap.m.Button({
+							text: 'Accept',
+							type: sap.m.ButtonType.Accept,
+							tap: function () {
+								sap.m.MessageToast.show('Accept button pressed');
+							}
+						}),
+						new sap.m.Button({
+							text: 'Cancel',
+							type: sap.m.ButtonType.Reject,
+							tap: function () {
+								sap.m.MessageToast.show('Cancel button pressed');
+							}
+						})
+					]
+				}),
+				new sap.m.NotificationListItem({
+					title: 'Hidden Item Notification',
+					description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+					datetime: '3 hours',
+					unread: true,
+					visible: false,
+					showCloseButton: true,
+					priority: sap.ui.core.Priority.Medium,
+					buttons: [
+						new sap.m.Button({
+							text: 'Accept',
+							type: sap.m.ButtonType.Accept,
+							tap: function () {
+								sap.m.MessageToast.show('Accept button pressed');
+							}
+						}),
+						new sap.m.Button({
+							text: 'Cancel',
+							type: sap.m.ButtonType.Reject,
+							tap: function () {
+								sap.m.MessageToast.show('Cancel button pressed');
+							}
+						})
+					]
+				})
+			]
+		});
+
+		var noItemsGroup = new sap.m.NotificationListGroup({
+			id: 'notificationGroup3',
+			title: 'Notification List With 0 Items',
+			datetime: 'More than 25 minutes',
+			authorPicture: 'images/SAPLogo.jpg',
+			authorName: 'Lorem Ipsum',
+			showEmptyGroup: true,
+			buttons: [
+				new sap.m.Button({
+					text: 'Accept All',
+					type: sap.m.ButtonType.Accept,
+					tap: function () {
+						sap.m.MessageToast.show('Accept all button pressed');
+					}
+				}),
+				new sap.m.Button({
+					text: 'Cancel All',
+					type: sap.m.ButtonType.Reject
+				})
+			],
+			items: [
+			]
+		});
+
+		var list = new sap.m.List({
+			items: [
+				listGroup,
+				singleItemGroup,
+				noItemsGroup
+			]
+		});
+
+		list.setWidth('700px').placeAt('content');
+	</script>
+</head>
+
+<body id="body" class="sapUiBody">
+<div id="content"></div>
+</body>
+
+</html>
