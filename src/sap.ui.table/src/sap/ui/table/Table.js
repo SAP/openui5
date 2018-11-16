@@ -2299,8 +2299,9 @@ sap.ui.define([
 		var bAutoModeAndRendered = bAutoMode && this.bOutput;
 		if (!bAutoMode || bAutoModeAndRendered) {
 			// the correct number of records to be requested can only be determined when the table row content height is known or if the
-			// visible row count mode is not Auto
-			if (this.bOutput) {
+			// visible row count mode is not Auto.
+			// If rows are already present - do not try to create/refresh them.
+			if (this.bOutput && this.getRows().length === 0) {
 				oBinding.attachEventOnce("dataRequested", function() {
 					// doing it in a timeout will allow the data request to be sent before the rows get created
 					if (that._mTimeouts.refreshRowsAdjustRows) {
@@ -3970,6 +3971,11 @@ sap.ui.define([
 
 		this._iPendingRequests--;
 		this._bPendingRequest = false;
+
+		// clear any lazy row creation timeout as rows will anyway be created due to binding events
+		if (this._mTimeouts.refreshRowsAdjustRows) {
+			window.clearTimeout(this._mTimeouts.refreshRowsAdjustRows);
+		}
 
 		// The AnalyticalBinding updates the length after it fires dataReceived, therefore the total row count will not change here. Later,
 		// when the contexts are retrieved in Table#_getRowContexts, the AnalyticalBinding updates the length and Table#_updateTotalRowCount
