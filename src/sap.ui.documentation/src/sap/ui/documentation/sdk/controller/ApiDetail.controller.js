@@ -61,15 +61,16 @@ sap.ui.define([
 
 				var oComponent = this.getOwnerComponent();
 
-				// Cache allowed members
-				this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
-
 				this._sTopicid = formatter.decodeModuleName(oEvent.getParameter("arguments").id);
 				this._sEntityType = oEvent.getParameter("arguments").entityType;
 				this._sEntityId = formatter.decodeModuleName(oEvent.getParameter("arguments").entityId);
 
 				// API Reference lifecycle
 				oComponent.loadVersionInfo()
+					.then(function () {
+						// Cache allowed members
+						this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
+					}.bind(this))
 					.then(oComponent.fetchAPIIndex.bind(oComponent))
 					.then(this._processApiIndexAndLoadApiJson.bind(this))
 					.then(this._findEntityInApiJsonData.bind(this))
