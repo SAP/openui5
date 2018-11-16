@@ -28,28 +28,74 @@ sap.ui.define([
 		audiences: [Audiences.Application],
 		categories: [Categories.Performance],
 		enabled: true,
-		minversion: "1.32",
+		minversion: "1.58",
 		title: "Preload Configuration",
 		description: "Checks whether the preload configuration was set correctly to async",
-		resolution: "Add \"data-sap-ui-preload=\"async\"\" to script tag that includes \"sap-ui-core.js\"",
-		resolutionurls: [{
-			text: "Performance: Speed Up Your App",
-			href: "https://sapui5.hana.ondemand.com/#/topic/408b40efed3c416681e1bd8cdd8910d4"
-		}],
-		check: function(oIssueManager, oCoreFacade) {
-			// Check for FLP scenario
-			var oUshellLib = sap.ui.getCore().getLoadedLibraries()["sap.ushell"],
-				bIsDebug = sap.ui.getCore().getConfiguration().getDebug();
-
-			if (!bIsDebug && sap.ui.getCore().getConfiguration().getPreload() !== "async" && !oUshellLib) {
-				oIssueManager.addIssue({
-					severity: Severity.High,
-					details: "Preloading libraries asynchronously improves the application performance massively.",
-					context: {
-						id: "WEBPAGE"
-					}
-				});
+		resolutionurls: [
+			{
+				text: "Performance: Speed Up Your App",
+				href: "https://sapui5.hana.ondemand.com/#/topic/408b40efed3c416681e1bd8cdd8910d4"
+			},
+			{
+				text: "Best Practices for Loading Modules Asynchronously",
+				href: "https://openui5.hana.ondemand.com/#/topic/00737d6c1b864dc3ab72ef56611491c4.html#loio00737d6c1b864dc3ab72ef56611491c4"
 			}
+		]
+	};
+
+	oPreloadAsyncCheck.check = function(oIssueManager, oCoreFacade) {
+		// Check for debug mode
+		var bIsDebug = sap.ui.getCore().getConfiguration().getDebug();
+		if (bIsDebug) {
+			return;
+		}
+		// Check for FLP scenario
+		var oUshellLib = sap.ui.getCore().getLoadedLibraries()["sap.ushell"];
+		if (oUshellLib) {
+			return;
+		}
+
+		var vPreloadMode = sap.ui.getCore().getConfiguration().getPreload(),
+			bLoaderIsAsync = sap.ui.loader.config().async;
+
+		var sDetails = "It is recommended to use the configuration parameter " +
+			"'data-sap-ui-async=\"true\"' instead of 'data-sap-ui-preload=\"async\"'. " +
+			"With this option single modules and preload files will be loaded asynchronously. " +
+			"Note: Enabling this behaviour requires testing and active cooperation by the application.";
+
+		// "data-sap-ui-preload" attribute is set to async and could be replaced with "data-sap-ui-async" (recommended).
+		if (vPreloadMode === "async") {
+			oPreloadAsyncCheck.resolution = "Replace 'data-sap-ui-preload=\"async\"' with 'data-sap-ui-async=\"true\"' " +
+				"in the bootstrap script.";
+			oIssueManager.addIssue({
+				severity: Severity.High,
+				details: sDetails,
+				context: {
+					id: "WEBPAGE"
+				}
+			});
+		// "data-sap-ui-preload" attribute is set to any value, but not async.
+		// This should be changed to async or (if possible) replaced with "data-sap-ui-async".
+		} else if (vPreloadMode !== "") {
+			oPreloadAsyncCheck.resolution = "Change to 'data-sap-ui-preload=\"async\"' or replace the attribute with " +
+				"'data-sap-ui-async=\"true\"' in the bootstrap script.";
+			oIssueManager.addIssue({
+				severity: Severity.High,
+				details: sDetails,
+				context: {
+					id: "WEBPAGE"
+				}
+			});
+		// "data-sap-ui-async" is false or not set. It should be added and set to true.
+		} else if (!bLoaderIsAsync) {
+			oPreloadAsyncCheck.resolution = "Add 'data-sap-ui-async=\"true\"' to bootstrap script.";
+			oIssueManager.addIssue({
+				severity: Severity.High,
+				details: sDetails,
+				context: {
+					id: "WEBPAGE"
+				}
+			});
 		}
 	};
 
