@@ -97,35 +97,11 @@
 		</p>
 		Other packages and versions are available <a href="#versionList">below</a>. For an overview of the current maintenance state of the different OpenUI5 versions, please check the <a href="https://openui5.hana.ondemand.com/versionoverview.html">version overview page</a>.
 
-		<div id="noUnstableVersion" style="display: none">
-			<h3>Latest unstable development build:</h3>
-			Currently there is no newer preview release available. It will be added, as {{versionNext}} development progresses.
+		<div id="noUnstableVersion">
+			<h3>Unstable Development Builds - Change in Release Strategy</h3>
+			The change to <a href="https://blogs.sap.com/2018/11/15/openui5-at-your-fingertips-and-with-monthly-releases/">a monthly release cycle for OpenUI5</a> is a great way to get fresh innovations every month, making unstable development builds redundant. 
 		</div>
 
-		<div id="unstableVersion">
-			<script type="text/template" id="unstableVersionTemplate">
-				<h3>Latest unstable development build: {{versionFull}} ({{date}})</h3>
-					Caution: this is a preview release, do not use for productive applications!
-				<div class="downloadbuttons">
-					<a
-						href="https://openui5.hana.ondemand.com/downloads/openui5-runtime-{{versionFull}}.zip"
-						class="downloadbutton beta">
-						Download UNSTABLE Runtime
-					</a>
-					<a
-						href="https://openui5.hana.ondemand.com/downloads/openui5-sdk-{{versionFull}}.zip"
-						class="downloadbutton beta">
-						Download UNSTABLE SDK
-					</a><br>
-					<a
-							href="https://openui5.hana.ondemand.com/{{versionFull}}/#/releasenotes.html"
-							target="_blank">
-						Change Log
-					</a><br>
-					The online SDK of this preview release can be accessed on <a href="https://openui5nightly.hana.ondemand.com/#/topic/{{id}}">openui5nightly</a>.
-				</div>
-			</script>
-		</div>
 		<a name="cdn"></a><h3>Content Delivery Network (use OpenUI5 without downloading)</h3>
 		There is a network of distributed servers that automatically provides OpenUI5 from the closest location to the user. In your app you can simply load UI5 by referring to:
 		<ul>
