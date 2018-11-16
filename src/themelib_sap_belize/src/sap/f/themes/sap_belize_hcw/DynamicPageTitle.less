@@ -10,7 +10,7 @@
 
 .sapFDynamicPageTitle.sapFDynamicPageTitleFocus {
 	outline-width: 0.125rem;
-	outline-offset: -0.125rem;
+	outline-offset: -0.25rem; // due to bottom border overlapping
 }
 
 .sapFDynamicPageTitle .sapFDynamicPageTitleActionsBar {
@@ -29,7 +29,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		content: " ";
 		box-sizing: border-box;
 		width: 100%;
-		height: 100%;
+		height: 98%; // due to bottom border overlapping
 		position: absolute;
 		left: 0;
 		top: 0;
@@ -48,7 +48,7 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 		content: " ";
 		box-sizing: border-box;
 		width: 100%;
-		height: 100%;
+		height: 98%; // due to bottom border overlapping
 		position: absolute;
 		left: 0;
 		top: 0;
