@@ -52,16 +52,12 @@
 			"minUI5Version": "1.38.0",
 			"libs": {
 				"sap.ui.core": {
-					"minVersion": "1.38.0"
 				},
 				"sap.m": {
-					"minVersion": "1.38.0"
 				},
 				"sap.ui.layout": {
-					"minVersion": "1.38.0"
 				},
 				"sap.f": {
-					"minVersion": "1.38.0"
 				}
 			}
 		},

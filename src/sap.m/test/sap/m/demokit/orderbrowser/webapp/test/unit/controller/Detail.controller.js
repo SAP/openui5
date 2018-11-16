@@ -1,11 +1,11 @@
 /*global QUnit,sinon*/
 
 sap.ui.define([
-    "sap/ui/demo/orderbrowser/controller/Detail.controller",
-    "sap/m/library",
-    "sap/ui/thirdparty/sinon"
+	"sap/ui/demo/orderbrowser/controller/Detail.controller",
+	"sap/m/library",
+	"sap/ui/thirdparty/sinon"
 ], function(Detail, mobileLibrary) {
-    "use strict";
+	"use strict";
 
 	QUnit.module("DetailController" ,{
 		beforeEach: function (){

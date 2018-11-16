@@ -1,7 +1,7 @@
 <mvc:View
 	controllerName="sap.ui.demo.orderbrowser.controller.NotFound"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m">
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
 
 	<MessagePage
 		id="page"
