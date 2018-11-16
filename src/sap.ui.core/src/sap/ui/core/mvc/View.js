@@ -362,7 +362,11 @@ sap.ui.define([
 						defaultController = typeof sControllerReplacement === "string" ? sControllerReplacement : sControllerReplacement.controllerName;
 					}
 					// create controller
-					oController = sap.ui.controller(defaultController, true /* oControllerImpl = true: do not extend controller inside factory; happens below (potentially async)! */, bAsync);
+					if (bAsync) {
+						oController = Controller.create({name: defaultController});
+					} else {
+						oController = sap.ui.controller(defaultController, true /* oControllerImpl = true: do not extend controller inside factory; happens below (potentially async)! */);
+					}
 				}
 			} else if (oController) {
 				// if passed controller is not extended yet we need to do it.
