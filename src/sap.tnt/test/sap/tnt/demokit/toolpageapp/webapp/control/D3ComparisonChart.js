@@ -1,8 +1,8 @@
 sap.ui.define([
-    "sap/ui/thirdparty/jquery",
-    "sap/ui/demo/toolpageapp/control/D3Chart",
-    "sap/ui/thirdparty/d3",
-    "sap/ui/core/theming/Parameters"
+	"sap/ui/thirdparty/jquery",
+	"./D3Chart",
+	"sap/ui/thirdparty/d3",
+	"sap/ui/core/theming/Parameters"
 ], function($, D3Chart, d3, Parameters) {
 	"use strict";
 

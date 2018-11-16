@@ -8,7 +8,7 @@
 	<m:Page
 		showHeader="{device>/system/phone}"
 		showNavButton="{device>/system/phone}"
-		navButtonPress="onNavButtonPress">
+		navButtonPress=".onNavButtonPress">
 		<m:landmarkInfo>
 			<m:PageAccessibleLandmarkInfo
 				rootRole="Region"
@@ -26,12 +26,12 @@
 							id="save"
 							text="{i18n>save}"
 							hideText="false"
-							press="onSavePressed"
+							press=".onSavePressed"
 							type="Emphasized"/>
 						<ObjectPageHeaderActionButton
 							id="cancel"
 							text="{i18n>cancel}"
-							press="onCancelPressed"
+							press=".onCancelPressed"
 							hideText="false"/>
 					</actions>
 				</ObjectPageHeader>
@@ -45,7 +45,7 @@
 							'view>/lastLogin'
 						],
 						formatter: '.formatter.formatMessage'
-						}"
+					}"
 					type="Information"
 					showIcon="true">
 				</m:MessageStrip>

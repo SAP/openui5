@@ -10,7 +10,7 @@
 					"Run Integration Tests": "test-resources/sap/tnt/demokit/toolpageapp/webapp/test/integration/opaTests.qunit.html"
 				},
 				"icon": "retail-store",
-				"desc": "Tool page for admins, built with the sap.tnt.ToolPage",
+				"desc": "Backoffice tool, built with the sap.tnt.ToolPage",
 				"config": "test-resources/sap/tnt/demokit/toolpageapp/demoapp.json"
 			}
 		]

@@ -25,5 +25,4 @@ sap.ui.define([
 		imageSourceTestCase.call(this, assert, false, "./images/homeImage.jpg");
 	});
 
-
 });

@@ -1,24 +1,24 @@
 sap.ui.define([
-    'sap/ui/demo/toolpageapp/controller/BaseController',
-    'sap/ui/core/Fragment',
-    'sap/ui/core/mvc/Controller',
-    'sap/ui/model/json/JSONModel',
-    'sap/m/ResponsivePopover',
-    'sap/m/MessagePopover',
-    'sap/m/ActionSheet',
-    'sap/m/Button',
-    'sap/m/Link',
-    'sap/m/Bar',
-    'sap/ui/layout/VerticalLayout',
-    'sap/m/NotificationListItem',
-    'sap/m/MessagePopoverItem',
-    'sap/ui/core/CustomData',
-    'sap/m/MessageToast',
-    'sap/ui/Device',
-    'sap/ui/core/syncStyleClass',
-    'sap/m/library'
+	'./BaseController',
+	'sap/ui/core/Fragment',
+	'sap/ui/core/mvc/Controller',
+	'sap/ui/model/json/JSONModel',
+	'sap/m/ResponsivePopover',
+	'sap/m/MessagePopover',
+	'sap/m/ActionSheet',
+	'sap/m/Button',
+	'sap/m/Link',
+	'sap/m/Bar',
+	'sap/ui/layout/VerticalLayout',
+	'sap/m/NotificationListItem',
+	'sap/m/MessagePopoverItem',
+	'sap/ui/core/CustomData',
+	'sap/m/MessageToast',
+	'sap/ui/Device',
+	'sap/ui/core/syncStyleClass',
+	'sap/m/library'
 ], function(
-    BaseController,
+	BaseController,
 	Fragment,
 	Controller,
 	JSONModel,
@@ -37,7 +37,7 @@ sap.ui.define([
 	syncStyleClass,
 	mobileLibrary
 ) {
-    "use strict";
+	"use strict";
 
 	// shortcut for sap.m.PlacementType
 	var PlacementType = mobileLibrary.PlacementType;
