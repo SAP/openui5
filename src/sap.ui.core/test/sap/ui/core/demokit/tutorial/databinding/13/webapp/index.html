@@ -1,64 +1,20 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>SAPUI5 Data Binding Tutorial</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Data Binding Tutorial</title>
 	<script id="sap-ui-bootstrap"
 		src="../../../../../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_belize"
 		data-sap-ui-libs="sap.m"
-		data-sap-ui-resourceroots='{"sap.ui.demo.db": "./"}'
+		data-sap-ui-resourceroots='{
+			"sap.ui.demo.db": "./"
+		}'
 		data-sap-ui-compatVersion="edge"
-		data-sap-ui-preload="async">
+		data-sap-ui-async="true">
 	</script>
-	<script>
-		sap.ui.define([
-			"sap/ui/model/json/JSONModel",
-			"sap/ui/model/resource/ResourceModel"
-		], function (JSONModel, ResourceModel) {
-			"use strict";
-
-			// Attach an anonymous function to the SAPUI5 'init' event
-			sap.ui.getCore().attachInit(function () {
-				var oProductModel = new JSONModel();
-				oProductModel.loadData("./model/Products.json");
-				sap.ui.getCore().setModel(oProductModel, "products");
-
-				var oModel = new JSONModel({
-					firstName: "Harry",
-					lastName: "Hawk",
-					enabled: true,
-					address: {
-						street: "Dietmar-Hopp-Allee 16",
-						city: "Walldorf",
-						zip: "69190",
-						country: "Germany"
-					},
-					"salesToDate": 12345.6789,
-					"currencyCode": "EUR"
-				});
-
-				// Assign the model object to the SAPUI5 core
-				sap.ui.getCore().setModel(oModel);
-
-				var oResourceBundle = new ResourceModel({
-					bundleName: "sap.ui.demo.db.i18n.i18n"
-				});
-
-				sap.ui.getCore().setModel(oResourceBundle, "i18n");
-
-				// Create view
-				var oView = sap.ui.xmlview({viewName: "sap.ui.demo.db.view.App"});
-
-				// Register the view with the message manager
-				sap.ui.getCore().getMessageManager().registerObject(oView, true);
-
-				// Insert the view into the DOM
-				oView.placeAt("content");
-			});
-		});
-	</script>
+	<script src="index.js"></script>
 </head>
-<body class="sapUiBody" id="content">
-</body>
+<body class="sapUiBody" id="content"></body>
 </html>
