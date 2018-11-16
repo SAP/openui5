@@ -1,19 +1,18 @@
 sap.ui.define([
-    "sap/ui/demo/iconexplorer/controller/BaseController",
-    "sap/ui/core/IconPool",
-    "sap/ui/model/json/JSONModel",
-    "sap/ui/demo/iconexplorer/model/formatter",
-    "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator",
-    "sap/ui/Device",
-    "sap/m/MessageToast",
-    "sap/m/Label",
-    "sap/m/ToggleButton",
-    "sap/m/library",
-    "sap/ui/thirdparty/jquery",
-    "sap/ui/core/theming/Parameters"
+	"sap/ui/demo/iconexplorer/controller/BaseController",
+	"sap/ui/core/IconPool",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/demo/iconexplorer/model/formatter",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/Device",
+	"sap/m/MessageToast",
+	"sap/m/Label",
+	"sap/m/ToggleButton",
+	"sap/m/library",
+	"sap/ui/core/theming/Parameters"
 ], function(
-    BaseController,
+	BaseController,
 	IconPool,
 	JSONModel,
 	formatter,
@@ -24,7 +23,6 @@ sap.ui.define([
 	Label,
 	ToggleButton,
 	mobileLibrary,
-	jQuery,
 	Parameters
 ) {
 	"use strict";
@@ -387,13 +385,14 @@ sap.ui.define([
 		 * @private
 		 */
 		_copyStringToClipboard: function (copyText, successText, exceptionText) {
-			var $temp = jQuery("<input>");
+			var oTemp = document.createElement("input");
 
 			try {
-				jQuery("body").append($temp);
-				$temp.val(copyText).select();
+				document.body.append(oTemp);
+				oTemp.value = copyText;
+				oTemp.select();
 				document.execCommand("copy");
-				$temp.remove();
+				oTemp.remove();
 
 				MessageToast.show(successText);
 			} catch (oException) {

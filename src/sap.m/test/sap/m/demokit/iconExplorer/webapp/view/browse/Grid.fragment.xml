@@ -19,7 +19,7 @@
 		growing="true"
 		growingScrollToLoad="true"
 		growingThreshold="{view>/growingThreshold}"
-		updateFinished="onUpdateFinished">
+		updateFinished=".onUpdateFinished">
 
 		<CustomListItem class="wrappingListItem sapUiTinyMargin">
 			<l:VerticalLayout
@@ -41,7 +41,7 @@
 						formatter: '.formatter.favoriteRating'
 					}"
 					maxValue="1"
-					change="onToggleFavorite"/>
+					change=".onToggleFavorite"/>
 			</l:VerticalLayout>
 		</CustomListItem>
 	</List>

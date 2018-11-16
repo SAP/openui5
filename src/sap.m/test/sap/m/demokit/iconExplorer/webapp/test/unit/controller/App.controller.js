@@ -3,9 +3,7 @@
 sap.ui.define([
 	"sap/ui/demo/iconexplorer/controller/App.controller",
 	"sap/ui/core/Control",
-	"sap/ui/core/mvc/Controller",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
+	"sap/ui/core/mvc/Controller"
 ], function (AppController, Control, Controller) {
 	"use strict";
 

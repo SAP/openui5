@@ -1,8 +1,8 @@
 sap.ui.define([
-    "sap/ui/model/json/JSONModel",
-    "sap/ui/demo/iconexplorer/model/formatter",
-    "sap/ui/demo/iconexplorer/controller/BaseController",
-    "sap/ui/core/Icon"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/demo/iconexplorer/model/formatter",
+	"sap/ui/demo/iconexplorer/controller/BaseController",
+	"sap/ui/core/Icon"
 ], function(JSONModel, formatter, BaseController, Icon) {
 	"use strict";
 
