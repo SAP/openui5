@@ -24,7 +24,7 @@ sap.ui.define([
 		init : function (oOptionsParameter) {
 			var oOptions = oOptionsParameter || {};
 
-			return new Promise(function(fnResolve) {
+			return new Promise(function(fnResolve, fnReject) {
 				var sManifestUrl = sap.ui.require.toUrl(_sAppPath + "manifest.json"),
 					oManifestModel = new JSONModel(sManifestUrl);
 
@@ -96,8 +96,10 @@ sap.ui.define([
 				});
 
 				oManifestModel.attachRequestFailed(function () {
-					Log.error("Failed to load application manifest");
-					fnResolve();
+					var sError = "Failed to load application manifest";
+
+					Log.error(sError);
+					fnReject(new Error(sError));
 				});
 			});
 		},
