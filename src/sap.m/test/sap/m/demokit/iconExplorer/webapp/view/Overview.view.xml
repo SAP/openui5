@@ -32,7 +32,7 @@
 						path: 'view>/fontName',
 						formatter: '.formatter.fontName'
 					}"
-					type="transparent"
+					type="Transparent"
 					icon="sap-icon://slim-arrow-down"
 					iconFirst="false"
 					press=".onSelectFont"/>

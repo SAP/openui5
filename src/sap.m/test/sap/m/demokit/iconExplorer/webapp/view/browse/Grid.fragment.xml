@@ -32,7 +32,7 @@
 					useIconTooltip="false"/>
 				<Label
 					text="{name}"
-					textAlign="center"
+					textAlign="Center"
 					class="sapUiTinyMarginTopBottom"/>
 				<RatingIndicator
 					iconUnselected="sap-icon://unfavorite"
