@@ -927,6 +927,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the model's bindings.
+	 *
+	 * @returns {sap.ui.model.Binding[]}
+	 *   An array with all bindings, or an empty array if there are no bindings
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.getAllBindings = function () {
+		return this.aAllBindings;
+	};
+
+	/**
 	 * Cannot get a shared context for a path. Contexts are created by bindings instead and there
 	 * may be multiple contexts for the same path.
 	 *

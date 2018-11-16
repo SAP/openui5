@@ -10307,6 +10307,421 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario:
+	// Two Master/Detail binding hierarchies for sales orders and sales order line items. When
+	// refreshing a single sales order, line items requests are triggered and messages are updated
+	// only for this single sales order and its dependent sales order line items. For other sales
+	// orders and their dependent sales order line items cached data is not discarded and messages
+	// are kept untouched. If there are unresolved bindings, their cached data which depends on the
+	// refreshed sales order is discarded and the corresponding messages are removed. Resolved
+	// bindings for other binding hierarchies are not affected. (CPOUI5UISERVICESV3-1575)
+	QUnit.test("sap.ui.model.odata.v4.Context#refresh: caches and messages", function (assert) {
+		var sView = '\
+<Table id="tableSalesOrder" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="salesOrder" text="{SalesOrderID}" />\
+	</ColumnListItem>\
+</Table>\
+<Table id="tableSOItems" items="{\
+			path : \'SO_2_SOITEM\',\
+			parameters : {\
+				$$ownRequest : true,\
+				$select : \'Messages\'\
+			}}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="note" text="{Note}" />\
+	</ColumnListItem>\
+</Table>\
+<!-- same paths in different control hierarchies -->\
+<Table id="tableSalesOrder2" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="salesOrder2" text="{SalesOrderID}" />\
+	</ColumnListItem>\
+</Table>\
+<!-- to determine which request is fired the second table requests only 5 entries -->\
+<Table id="tableSOItems2" growing="true" growingThreshold="5"\
+		items="{path : \'SO_2_SOITEM\', parameters : {}}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="note2" text="{Note}" />\
+	</ColumnListItem>\
+</Table>',
+			oExpectedMessage0 = {
+				"code" : "1",
+				"message" : "Message0",
+				"persistent" : false,
+				"target" : "/SalesOrderList('0500000347')"
+					+ "/SO_2_SOITEM(SalesOrderID='0500000347',ItemPosition='0')/Note",
+				"type" : "Warning"
+			},
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			that = this;
+
+		that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+					"value" : [
+						{"SalesOrderID" : "0500000347"},
+						{"SalesOrderID" : "0500000348"}
+					]
+				})
+			.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+					"value" : [
+						{"SalesOrderID" : "0500000347"},
+						{"SalesOrderID" : "0500000348"}
+					]
+				})
+			.expectChange("salesOrder", ["0500000347", "0500000348"])
+			.expectChange("note", [])
+			.expectChange("salesOrder2", ["0500000347", "0500000348"])
+			.expectChange("note2", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			// Select the first sales order in both hierarchies to get their items and messages
+			that.expectRequest("SalesOrderList('0500000347')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=5", {
+					"value" : [
+						{"ItemPosition" : "0", "Note" : "Test1", "SalesOrderID" : "0500000347"},
+						{"ItemPosition" : "1", "Note" : "Test2", "SalesOrderID" : "0500000347"}
+					]
+				})
+				.expectRequest("SalesOrderList('0500000347')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,Messages,Note,SalesOrderID&$skip=0&$top=100", {
+					"value" : [{
+						"ItemPosition" : "0",
+						"Messages" : [{
+							"code" : "1",
+							"message" : "Message0",
+							"numericSeverity" : 3,
+							"target" : "Note",
+							"transition" : false
+						}],
+						"Note" : "Test1",
+						"SalesOrderID" : "0500000347"
+					}, {
+						"ItemPosition" : "1",
+						"Messages" : [],
+						"Note" : "Test2",
+						"SalesOrderID" : "0500000347"
+					}]
+				})
+				.expectChange("note", ["Test1", "Test2"])
+				.expectChange("note2", ["Test1", "Test2"])
+				.expectMessages([oExpectedMessage0]);
+
+			that.oView.byId("tableSOItems").setBindingContext(
+				that.oView.byId("tableSalesOrder").getItems()[0].getBindingContext());
+			that.oView.byId("tableSOItems2").setBindingContext(
+				that.oView.byId("tableSalesOrder2").getItems()[0].getBindingContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// Select the second sales order to get its items and messages
+			that.expectRequest("SalesOrderList('0500000348')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,Messages,Note,SalesOrderID&$skip=0&$top=100", {
+					"value" : [{
+						"ItemPosition" : "0",
+						"Messsages" : [],
+						"Note" : "Test3",
+						"SalesOrderID" : "0500000348"
+					}, {
+						"ItemPosition" : "1",
+						"Messages" : [{
+							"code" : "1",
+							"message" : "Message1",
+							"numericSeverity" : 3,
+							"target" : "Note",
+							"transition" : false
+						}],
+						"Note" : "Test4",
+						"SalesOrderID" : "0500000348"
+					}]
+				})
+				.expectChange("note", ["Test3", "Test4"])
+				.expectMessages([oExpectedMessage0, {
+					"code" : "1",
+					"message" : "Message1",
+					"persistent" : false,
+					"target" : "/SalesOrderList('0500000348')"
+						+ "/SO_2_SOITEM(SalesOrderID='0500000348',ItemPosition='1')/Note",
+					"type" : "Warning"
+				}]);
+
+			// code under test
+			that.oView.byId("tableSOItems").setBindingContext(
+				that.oView.byId("tableSalesOrder").getItems()[1].getBindingContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// refresh the second sales order; the message for the first sales order is kept
+			that.expectRequest("SalesOrderList('0500000348')?$select=SalesOrderID", {
+					"SalesOrderID" : "0500000348"})
+				.expectRequest("SalesOrderList('0500000348')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,Messages,Note,SalesOrderID&$skip=0&$top=100", {
+					"value" : [{
+						"ItemPosition" : "0",
+						"Messages" : [],
+						"Note" : "Test3a",
+						"SalesOrderID" : "0500000348"
+					}, {
+						"ItemPosition" : "1",
+						"Messages" : [],
+						"Note" : "Test4a",
+						"SalesOrderID" : "0500000348"
+					}]
+				})
+				.expectChange("note", ["Test3a", "Test4a"])
+				.expectMessages([oExpectedMessage0]);
+
+			// code under test
+			that.oView.byId("tableSalesOrder").getItems()[1].getBindingContext().refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// select the first sales order again; no requests, the cache for the items is still
+			// alive
+			that.expectChange("note", ["Test1", "Test2"]);
+				// no change in messages
+
+			// code under test
+			that.oView.byId("tableSOItems").setBindingContext(
+				that.oView.byId("tableSalesOrder").getItems()[0].getBindingContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// remove the binding context for the sales order items to get an unresolved binding
+			// with caches
+			that.expectChange("note", []);
+				// no change in messages
+
+			that.oView.byId("tableSOItems").setBindingContext(null);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// refresh the first sales order, caches and messages of unresolved bindings for this
+			// sales order are discarded
+			that.expectRequest("SalesOrderList('0500000347')?$select=SalesOrderID", {
+					"SalesOrderID" : "0500000347"})
+				.expectMessages([]);
+
+			that.oView.byId("tableSalesOrder").getItems()[0].getBindingContext().refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// select the first sales order to get its items and messages, request is
+			// triggered because the cache for the sales order line items is discarded
+			that.expectRequest("SalesOrderList('0500000347')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,Messages,Note,SalesOrderID&$skip=0&$top=100", {
+					"value" : [{
+						"ItemPosition" : "0",
+						"Messages" : [{
+							"code" : "1",
+							"message" : "Message0",
+							"numericSeverity" : 3,
+							"target" : "Note",
+							"transition" : false
+						}],
+						"Note" : "Test1",
+						"SalesOrderID" : "0500000347"
+					}, {
+						"ItemPosition" : "1",
+						"Messages" : [],
+						"Note" : "Test2",
+						"SalesOrderID" : "0500000347"
+					}]
+				})
+				.expectChange("note", ["Test1", "Test2"])
+				.expectMessages([oExpectedMessage0]);
+
+			// code under test
+			that.oView.byId("tableSOItems").setBindingContext(
+				that.oView.byId("tableSalesOrder").getItems()[0].getBindingContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// select the second sales order again; no requests, cache is still alive
+			that.expectChange("note", ["Test3a", "Test4a"]);
+				// no change in messages
+
+			// code under test
+			that.oView.byId("tableSOItems").setBindingContext(
+				that.oView.byId("tableSalesOrder").getItems()[1].getBindingContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// remove the binding context for the items of the second binding hierarchy
+			that.expectChange("note2", []);
+				// no change in messages
+
+			that.oView.byId("tableSOItems2").setBindingContext(null);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// select the same sales order again in the second binding hierarchy; no requests, cache
+			// is still alive; cache was not affected by refreshing sales order "0500000347" in the
+			// first binding hierarchy
+			that.expectChange("note2", ["Test1", "Test2"]);
+				// no change in messages
+
+			that.oView.byId("tableSOItems2").setBindingContext(
+				that.oView.byId("tableSalesOrder2").getItems()[0].getBindingContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// remove the binding context for the items of the binding hierarchy
+			that.expectChange("note", []);
+				// no change in messages
+
+			that.oView.byId("tableSOItems").setBindingContext(null);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// Refresh the whole binding
+			that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+					"value" : [
+						{"SalesOrderID" : "0500000347"},
+						{"SalesOrderID" : "0500000348"}
+					]
+				})
+				.expectMessages([]);
+
+			that.oView.byId("tableSalesOrder").getBinding("items").refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// select the same sales order again in the binding hierarchy, new request is sent;
+			//TODO if Binding.refresh considers unbound bindings this request is expected.
+			// Will be fixed with CPOUI5UISERVICESV3-1701
+/*			that.expectRequest("SalesOrderList('0500000347')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,Messages,Note,SalesOrderID&$skip=0&$top=100", {
+					"value" : [
+						{"ItemPosition" : "0", "Note" : "Test1", "SalesOrderID" : "0500000347"},
+						{"ItemPosition" : "1", "Note" : "Test2", "SalesOrderID" : "0500000347"}
+					]
+				})
+*/
+			that.expectChange("note", ["Test1", "Test2"]);
+
+			that.oView.byId("tableSOItems").setBindingContext(
+				that.oView.byId("tableSalesOrder").getItems()[0].getBindingContext());
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Change a property in a dependent binding with an own cache below a list binding.
+	// Unset the binding context for the dependent binding and expect that there are still pending
+	// changes for the formerly set context. Set the binding context to the second entry of the
+	// equipments table and refresh the context of the second entry and expect that refresh is
+	// possible. (CPOUI5UISERVICESV3-1575)
+	QUnit.test("Context: Pending change in a hidden cache", function (assert) {
+		var oContext0,
+			oContext1,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="equipments" items="{/Equipments}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{ID}" />\
+	</ColumnListItem>\
+</Table>\
+<VBox id="employeeDetails"\
+		binding="{path : \'EQUIPMENT_2_EMPLOYEE\', parameters : {$$updateGroupId : \'foo\'\}}">\
+	<Text id="employeeName" text="{Name}"/>\
+</VBox>',
+			that = this;
+
+		this.expectRequest("Equipments?$select=Category,ID&$skip=0&$top=100", {
+				value : [
+					{"Category" : "Electronics", "ID" : 23},
+					{"Category" : "Vehicle", "ID" : 42}
+				]
+			})
+			.expectChange("id", ["23", "42"])
+			.expectChange("employeeName");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oContext0 = that.oView.byId("equipments").getItems()[0].getBindingContext();
+
+			that.expectRequest("Equipments(Category='Electronics',ID=23)/EQUIPMENT_2_EMPLOYEE?"
+					+ "$select=ID,Name", {
+					"ID" : "1",
+					"Name" : "John Smith"
+				})
+				.expectChange("employeeName", "John Smith");
+
+			// select the first row in the equipments table
+			that.oView.byId("employeeDetails").setBindingContext(oContext0);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("employeeName", "Peter Burke");
+
+			// change the name of the employee
+			that.oView.byId("employeeName").getBinding("text").setValue("Peter Burke");
+
+			assert.ok(oContext0.hasPendingChanges());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("employeeName", null);
+
+			that.oView.byId("employeeDetails").setBindingContext(null);
+
+			assert.ok(oContext0.hasPendingChanges());
+			assert.throws(function () {
+				oContext0.refresh();
+			}, /Cannot refresh entity due to pending changes:/);
+
+			//TODO: hasPendingChanges on binding will be fixed with CPOUI5UISERVICESV3-1701
+//			assert.ok(that.oView.byId("equipments").getBinding("items").hasPendingChanges());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oContext1 = that.oView.byId("equipments").getItems()[1].getBindingContext();
+
+			that.expectRequest("Equipments(Category='Vehicle',ID=42)/EQUIPMENT_2_EMPLOYEE?"
+					+ "$select=ID,Name", {
+					"ID" : "2",
+					"Name" : "Frederic Fall"
+				})
+				.expectChange("employeeName", "Frederic Fall");
+
+			// select the second row in the equipments table
+			that.oView.byId("employeeDetails").setBindingContext(oContext1);
+
+			// code under test
+			assert.ok(that.oView.byId("equipments").getBinding("items").hasPendingChanges());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("Equipments(Category='Vehicle',ID=42)?$select=Category,ID", {
+					"Category" : "Vehicle",
+					"ID" : 42
+				})
+				.expectRequest("Equipments(Category='Vehicle',ID=42)/EQUIPMENT_2_EMPLOYEE?"
+					+ "$select=ID,Name", {
+					"ID" : "2",
+					"Name" : "Frederic Fall"
+				});
+
+			// refresh the second row in the equipments table
+			oContext1.refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("employeeName", "Peter Burke");
+
+			// select the first row in the equipments table
+			that.oView.byId("employeeDetails").setBindingContext(oContext0);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Delete an entity with messages from an ODataListBinding
 	QUnit.test("Delete an entity with messages from an ODataListBinding", function (assert) {
 		var oDeleteMessage = {

@@ -474,7 +474,8 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
-	ODataPropertyBinding.prototype.refreshInternal = function (sGroupId, bCheckUpdate) {
+	ODataPropertyBinding.prototype.refreshInternal = function (sResourcePathPrefix, sGroupId,
+			bCheckUpdate) {
 		if (this.isRootBindingSuspended()) {
 			this.sResumeChangeReason = ChangeReason.Refresh;
 			return SyncPromise.resolve();

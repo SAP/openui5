@@ -468,6 +468,28 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks whether there are pending changes in caches stored by resource path at this binding
+	 * which have the given resource path as prefix.
+	 *
+	 * @param {string} sResourcePathPrefix
+	 *   The resource path prefix to identify the relevant caches
+	 * @returns {boolean}
+	 *   <code>true</code> if there are pending changes in caches
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.hasPendingChangesInCaches = function (sResourcePathPrefix) {
+		var that = this;
+
+		if (!this.mCacheByResourcePath) {
+			return false;
+		}
+		return Object.keys(this.mCacheByResourcePath).some(function (sResourcePath) {
+			return sResourcePath.startsWith(sResourcePathPrefix)
+				&& that.mCacheByResourcePath[sResourcePath].hasPendingChangesForPath("");
+		});
+	};
+	/**
 	 * Returns whether any dependent binding of the given context has pending changes; checks all
 	 * dependent bindings of this binding if no context is given.
 	 *
@@ -598,7 +620,7 @@ sap.ui.define([
 		this.oModel.checkGroupId(sGroupId);
 
 		// The actual refresh is specific to the binding and is implemented in each binding class.
-		this.refreshInternal(sGroupId, true);
+		this.refreshInternal("", sGroupId, true);
 	};
 
 	/**
@@ -606,10 +628,13 @@ sap.ui.define([
 	 * forwards to this method doing the actual work. Interaction between contexts also runs via
 	 * these internal methods.
 	 *
+	 * @param {string} sResourcePathPrefix
+	 *   The resource path prefix which is used to delete the dependent caches and corresponding
+	 *   messages; may be "" but not <code>undefined</code>
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh
 	 * @param {boolean} [bCheckUpdate]
-	 *   If <code>true</code>, a property binding is expected to check for updates.
+	 *   If <code>true</code>, a property binding is expected to check for updates
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving without a defined result when the refresh is finished
 	 * @throws {Error}
@@ -623,22 +648,33 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Remove all parked caches and all non-persistent messages of this binding.
+	 * Remove this binding's caches and non-persistent messages. Only caches with a resource path
+	 * starting with the given resource path prefix and messages with a target path starting with
+	 * the given prefix are removed.
+	 *
+	 * @param {string} sResourcePathPrefix
+	 *   The resource path prefix which is used to delete the dependent caches and corresponding
+	 *   messages; may be "" but not <code>undefined</code>
 	 *
 	 * @private
 	 */
-	ODataBinding.prototype.removeCachesAndMessages = function () {
+	ODataBinding.prototype.removeCachesAndMessages = function (sResourcePathPrefix) {
 		var oModel = this.oModel,
-			sResolvedPath = oModel.resolve(this.sPath, this.oContext);
+			sResolvedPath = oModel.resolve(this.sPath, this.oContext),
+			that = this;
 
 		if (sResolvedPath) {
+			// The caller of this function replaces the current cache just after this function call;
+			// remove only the related messages
 			oModel.reportBoundMessages(sResolvedPath.slice(1), {});
 		}
 		if (this.mCacheByResourcePath) {
 			Object.keys(this.mCacheByResourcePath).forEach(function (sResourcePath) {
-				oModel.reportBoundMessages(sResourcePath, {});
+				if (sResourcePath.startsWith(sResourcePathPrefix)) {
+					oModel.reportBoundMessages(sResourcePath, {});
+					delete that.mCacheByResourcePath[sResourcePath];
+				}
 			});
-			this.mCacheByResourcePath = undefined;
 		}
 	};
 

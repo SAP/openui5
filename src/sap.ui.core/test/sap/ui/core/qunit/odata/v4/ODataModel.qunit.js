@@ -2048,6 +2048,22 @@ sap.ui.define([
 		// code under test
 		oModel.reportBoundMessages("FOO", {});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getAllBindings", function (assert) {
+		var oModel = createModel(),
+			oBinding1 = new Binding(oModel, "relative"),
+			oBinding2 = new Binding(oModel, "/absolute");
+
+		// code under test
+		assert.deepEqual(oModel.getAllBindings(), []);
+
+		oModel.bindingCreated(oBinding1);
+		oModel.bindingCreated(oBinding2);
+
+		// code under test
+		assert.deepEqual(oModel.getAllBindings(), [oBinding1, oBinding2]);
+	});
 });
 
 //TODO constructor: test that the service root URL is absolute?

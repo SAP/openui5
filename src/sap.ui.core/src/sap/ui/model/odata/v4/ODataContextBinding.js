@@ -239,7 +239,7 @@ sap.ui.define([
 		 */
 		function fireChangeAndRefreshDependentBindings() {
 			that._fireChange({reason : ChangeReason.Change});
-			return that.refreshDependentBindings(oGroupLock.getGroupId(), true);
+			return that.refreshDependentBindings("", oGroupLock.getGroupId(), true);
 		}
 
 		oGroupLock.setGroupId(this.getGroupId());
@@ -362,7 +362,7 @@ sap.ui.define([
 		if (!this.oOperation) {
 			this.fetchCache(this.oContext);
 			if (sChangeReason) {
-				this.refreshInternal(undefined, true);
+				this.refreshInternal("", undefined, true);
 			} else {
 				this.checkUpdate();
 			}
@@ -880,7 +880,8 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
-	ODataContextBinding.prototype.refreshInternal = function (sGroupId, bCheckUpdate) {
+	ODataContextBinding.prototype.refreshInternal = function (sResourcePathPrefix, sGroupId,
+			bCheckUpdate) {
 		var that = this;
 
 		if (this.oOperation && this.oOperation.bAction !== false) {
@@ -889,7 +890,7 @@ sap.ui.define([
 
 		if (this.isRootBindingSuspended()) {
 			this.refreshSuspended(sGroupId);
-			return this.refreshDependentBindings(sGroupId, bCheckUpdate);
+			return this.refreshDependentBindings(sResourcePathPrefix, sGroupId, bCheckUpdate);
 		}
 
 		this.createReadGroupLock(sGroupId, this.isRoot());
@@ -909,12 +910,12 @@ sap.ui.define([
 			}
 			if (oCache) {
 				// remove all cached Caches before fetching a new one
-				that.removeCachesAndMessages();
+				that.removeCachesAndMessages(sResourcePathPrefix);
 				that.fetchCache(that.oContext);
 				// Do not fire a change event, or else ManagedObject destroys and recreates the
 				// binding hierarchy causing a flood of events
 			}
-			return that.refreshDependentBindings(sGroupId, bCheckUpdate);
+			return that.refreshDependentBindings(sResourcePathPrefix, sGroupId, bCheckUpdate);
 		});
 	};
 
@@ -944,7 +945,7 @@ sap.ui.define([
 			this.oReturnValueContext.getPath().slice(1), this.mCacheQueryOptions, true);
 		this.oCachePromise = SyncPromise.resolve(oCache);
 		this.createReadGroupLock(sGroupId, true);
-		return this.refreshDependentBindings(sGroupId, true);
+		return this.refreshDependentBindings("", sGroupId, true);
 	};
 
 	/**
@@ -988,7 +989,7 @@ sap.ui.define([
 			}
 		}
 		return oContext && this.refreshReturnValueContext(oContext, sGroupId)
-			|| this.refreshInternal(sGroupId, true);
+			|| this.refreshInternal("", sGroupId, true);
 	};
 
 	/**
@@ -1007,7 +1008,7 @@ sap.ui.define([
 		if (!this.oOperation) {
 			this.mAggregatedQueryOptions = {};
 			this.bAggregatedQueryOptionsInitial = true;
-			this.removeCachesAndMessages();
+			this.removeCachesAndMessages("");
 			this.fetchCache(this.oContext);
 			this.getDependentBindings().forEach(function (oDependentBinding) {
 				oDependentBinding.resumeInternal(bCheckUpdate);

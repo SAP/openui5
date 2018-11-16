@@ -1794,10 +1794,10 @@ sap.ui.define([
 			.returns(oCheckUpdatePromise);
 
 		// code under test
-		assert.strictEqual(oBinding.refreshInternal("myGroup", true), oCheckUpdatePromise);
+		assert.strictEqual(oBinding.refreshInternal("", "myGroup", true), oCheckUpdatePromise);
 
 		// code under test
-		assert.strictEqual(oBinding.refreshInternal("myGroup", false).getResult(), undefined);
+		assert.strictEqual(oBinding.refreshInternal("", "myGroup", false).getResult(), undefined);
 	});
 
 	//*********************************************************************************************

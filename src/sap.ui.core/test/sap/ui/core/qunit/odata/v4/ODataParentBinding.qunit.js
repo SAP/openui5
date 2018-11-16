@@ -1551,7 +1551,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("fetchResourcePath")
 			.withExactArgs(sinon.match.same(oBinding.oContext))
 			.returns(SyncPromise.resolve(oPathPromise)); // data for path "/TEAMS/1" has changed
-		this.mock(oBinding).expects("refreshInternal").withExactArgs()
+		this.mock(oBinding).expects("refreshInternal").withExactArgs("")
 			.returns(new SyncPromise(function (resolve) {
 				setTimeout(function () {
 					bRefreshed = true;
@@ -2311,7 +2311,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("refreshDependentBindings", function (assert) {
-		var oBinding = new ODataParentBinding(),
+		var oBinding = new ODataParentBinding({oContext : {/* sap.ui.model.Context */}}),
 			bCheckUpdate = {},
 			aDependentBindings = [{
 				refreshInternal : function () {}
@@ -2332,19 +2332,24 @@ sap.ui.define([
 					resolve();
 				});
 			}),
+			sResourcePathPrefix = {/*Path needed to avoid deleting all Caches*/},
 			oPromise;
 
 		this.mock(oBinding).expects("getDependentBindings").withExactArgs()
 			.returns(aDependentBindings);
 		this.mock(aDependentBindings[0]).expects("refreshInternal")
-			.withExactArgs("group", sinon.match.same(bCheckUpdate))
+			.withExactArgs(sinon.match.same(sResourcePathPrefix), "group",
+					sinon.match.same(bCheckUpdate)
+				)
 			.returns(oDependent0Promise);
 		this.mock(aDependentBindings[1]).expects("refreshInternal")
-			.withExactArgs("group", sinon.match.same(bCheckUpdate))
+			.withExactArgs(sinon.match.same(sResourcePathPrefix), "group",
+					sinon.match.same(bCheckUpdate)
+				)
 			.returns(oDependent1Promise);
 
 		// code under test
-		oPromise = oBinding.refreshDependentBindings("group", bCheckUpdate);
+		oPromise = oBinding.refreshDependentBindings(sResourcePathPrefix, "group", bCheckUpdate);
 
 		assert.ok(oPromise.isPending(), "a SyncPromise");
 		return oPromise.then(function () {
@@ -2585,7 +2590,7 @@ sap.ui.define([
 			this.mock(oChild3).expects("requestSideEffects")
 				.withExactArgs(sGroupId, sinon.match.same(aPaths3))
 				.returns(oPromise3);
-			this.mock(oChild4).expects("refreshInternal").withExactArgs(sGroupId)
+			this.mock(oChild4).expects("refreshInternal").withExactArgs("", sGroupId)
 				.returns(oPromise4);
 
 			// code under test

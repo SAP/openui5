@@ -348,7 +348,7 @@ sap.ui.define([
 					if (oCache.$resourcePath === sResourcePath) {
 						return updateDependents();
 					}
-					return that.refreshInternal(); // entity of context changed
+					return that.refreshInternal(""); // entity of context changed
 				}).catch(function (oError) {
 					that.oModel.reportError("Failed to update " + that, sClassName, oError);
 				});
@@ -752,10 +752,13 @@ sap.ui.define([
 	 * Refreshes all dependent bindings with the given parameters and waits for them to have
 	 * finished.
 	 *
+	 * @param {string} sResourcePathPrefix
+	 *   The resource path prefix which is used to delete the dependent caches and corresponding
+	 *   messages; may be "" but not <code>undefined</code>
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh
 	 * @param {boolean} [bCheckUpdate]
-	 *   If <code>true</code>, a property binding is expected to check for updates.
+	 *   If <code>true</code>, a property binding is expected to check for updates
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving when all dependent bindings are refreshed; it is rejected if the
 	 *   binding's root binding is suspended and a group ID different from the binding's group ID is
@@ -763,9 +766,10 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataParentBinding.prototype.refreshDependentBindings = function (sGroupId, bCheckUpdate) {
+	ODataParentBinding.prototype.refreshDependentBindings = function (sResourcePathPrefix, sGroupId,
+			bCheckUpdate) {
 		return SyncPromise.all(this.getDependentBindings().map(function (oDependentBinding) {
-			return oDependentBinding.refreshInternal(sGroupId, bCheckUpdate);
+			return oDependentBinding.refreshInternal(sResourcePathPrefix, sGroupId, bCheckUpdate);
 		}));
 	};
 
@@ -997,7 +1001,7 @@ sap.ui.define([
 						oDependentBinding.requestSideEffects(sGroupId, aStrippedPaths));
 				}
 			} else if (mNavigationPropertyPaths[sPath]) {
-				aPromises.push(oDependentBinding.refreshInternal(sGroupId));
+				aPromises.push(oDependentBinding.refreshInternal("", sGroupId));
 			} else {
 				oDependentBinding.visitSideEffects(sGroupId, aPaths, null,
 					mNavigationPropertyPaths, aPromises, sPath);
