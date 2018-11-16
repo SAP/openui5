@@ -14,24 +14,11 @@ function onLoad() {
 	var oUnstableVersion = null;
 
 	jQuery.getJSON("./OpenUI5Downloads.json", function (oResult) {
-		var bBeta = false;
-
+		
 		$.each(oResult, function (sIndex, oEntry) {
 			//shorten version number from X.XX.XX to X.XX
 			var sShortVersion = oEntry.version;
 			sShortVersion = sShortVersion.substring(0, sShortVersion.lastIndexOf("."));
-
-			//check if beta token is set to true
-			if (oEntry.beta) {
-				if (oUnstableVersion === null) {
-					oUnstableVersion = oEntry;
-				}
-				else if (oEntry.version > oUnstableVersion.version) {
-					oUnstableVersion = oEntry;
-				}
-				bBeta = true;
-				return;
-			}
 
 			//publish available version
 			var sContent = sVersionTemplate
