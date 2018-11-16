@@ -358,6 +358,9 @@ function(
 		};
 
 		var NumericInput = Input.extend("sap.m.internal.NumericInput", {
+			metadata: {
+				library: "sap.m"
+			},
 			constructor: function(sId, mSettings) {
 				return Input.apply(this, arguments);
 			},

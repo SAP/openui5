@@ -1283,6 +1283,9 @@ function(
 		var CustomSelectRenderer = Renderer.extend(SelectRenderer);
 
 		var CustomSelect = Select.extend("sap.m.internal.TabStripSelect", {
+			metadata: {
+				library: "sap.m"
+			},
 			renderer: CustomSelectRenderer
 		});
 
@@ -1374,6 +1377,9 @@ function(
 		};
 
 		var CustomSelectList = SelectList.extend("sap.m.internal.TabStripSelectList", {
+			metadata: {
+				library: "sap.m"
+			},
 			renderer: CustomSelectListRenderer
 		});
 
