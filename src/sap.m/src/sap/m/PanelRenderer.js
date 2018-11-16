@@ -149,7 +149,7 @@ sap.ui.define(["sap/m/library"],
 	};
 
 	PanelRenderer.renderChildren = function (oRm, aChildren) {
-		aChildren.forEach(oRm.renderControl);
+		aChildren.forEach(oRm.renderControl, oRm);
 	};
 
 	PanelRenderer.endContent = function (oRm) {

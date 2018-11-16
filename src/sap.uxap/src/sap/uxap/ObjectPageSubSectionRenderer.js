@@ -87,7 +87,7 @@ sap.ui.define(function () {
 				oRm.writeClasses();
 				oRm.writeAttribute("data-sap-ui-customfastnavgroup", true);
 				oRm.write(">");
-				aActions.forEach(oRm.renderControl);
+				aActions.forEach(oRm.renderControl, oRm);
 				oRm.write("</div>");
 			}
 
