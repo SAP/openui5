@@ -45,10 +45,42 @@
 	</Panel>
 	<Panel headerText="{i18n>panel3HeaderText}" class="sapUiResponsiveMargin" width="auto">
 		<content>
-			<List id="ProductList" headerText="{i18n>productListTitle}" items="{
-				path: 'products>/Products',
-				factory: '.productListFactory'
-			}"/>
+			<List
+				id="ProductList"
+				headerText="{i18n>productListTitle}"
+				items="{
+					path: 'products>/Products',
+					factory: '.productListFactory'
+				}">
+				<dependents>
+					<StandardListItem
+						id="productSimple"
+						icon="sap-icon://warning"
+						title="{products>ProductName} ({products>QuantityPerUnit})"
+						info="{i18n>Discontinued}"
+						type="Active"
+						infoState="Error"
+						press=".onItemSelected">
+					</StandardListItem>
+					<ObjectListItem
+						id="productExtended"
+						title="{products>ProductName} ({products>QuantityPerUnit})"
+						number="{
+							parts: [
+								{path: 'products>UnitPrice'},
+								{path: '/currencyCode'}
+							],
+							type: 'sap.ui.model.type.Currency',
+							formatOptions : {
+								showMeasure : false
+							}
+						}"
+						type="Active"
+						numberUnit="{/currencyCode}"
+						press=".onItemSelected">
+					</ObjectListItem>
+				</dependents>
+			</List>
 		</content>
 	</Panel>
 	<Panel id="productDetailsPanel" headerText="{i18n>panel4HeaderText}" class="sapUiResponsiveMargin" width="auto">
