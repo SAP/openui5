@@ -4802,16 +4802,22 @@ sap.ui.define([
 				oCache = {
 					refreshSingle : function () {}
 				},
-				oCheckUpdateCall,
-				oChild0 = {refreshInternal : function () {}},
-				oChild1 = {refreshInternal : function () {}},
+				bContextUpdated = false,
 				oContext,
+				bDependentsRefreshed = false,
 				oEntity = {},
 				oExpectation,
 				sExpectedGroupId = sGroupId || "$auto",
 				oGroupLock = new _GroupLock(sGroupId),
 				oPromise,
-				oRefreshSinglePromise = SyncPromise.resolve(Promise.resolve(oEntity));
+				oRefreshDependentsPromise = new SyncPromise(function (resolve) {
+					setTimeout(function () {
+						bDependentsRefreshed = true;
+						resolve();
+					});
+				}),
+				oRefreshSinglePromise = SyncPromise.resolve(Promise.resolve(oEntity)),
+				that = this;
 
 			// initialize with 3 contexts and bLengthFinal===true
 			oBinding.createContexts(0, 4, createData(3, 0, true, 3));
@@ -4824,25 +4830,30 @@ sap.ui.define([
 			oExpectation = this.mock(oCache).expects("refreshSingle")
 				.withExactArgs(new _GroupLock(sExpectedGroupId), oContext.iIndex, sinon.match.func)
 				.returns(oRefreshSinglePromise);
-			this.mock(this.oModel).expects("getDependentBindings")
-				.withExactArgs(sinon.match.same(oContext))
-				.returns([oChild0, oChild1]);
-			this.mock(oChild0).expects("refreshInternal").withExactArgs(sExpectedGroupId, false);
-			this.mock(oChild1).expects("refreshInternal").withExactArgs(sExpectedGroupId, false);
-			oCheckUpdateCall = this.mock(oContext).expects("checkUpdate").withExactArgs();
+			this.mock(oBinding).expects("refreshDependentBindings")
+				.withExactArgs(sExpectedGroupId, false)
+				.returns(oRefreshDependentsPromise);
 			oRefreshSinglePromise.then(function () {
 				// checkUpdate must only be called when the cache's refreshSingle is finished
-				assert.strictEqual(oCheckUpdateCall.callCount, 0);
+				that.mock(oContext).expects("checkUpdate").withExactArgs()
+					.returns(new SyncPromise(function (resolve) {
+						setTimeout(function () {
+							bContextUpdated = true;
+							resolve();
+						});
+					}));
 			});
 
 			// code under test
 			oPromise = oBinding.refreshSingle(oContext, oGroupLock)
 				.then(function (oRefreshedEntity) {
-					// checkUpdate must have been called when refreshSingle is finished
-					assert.strictEqual(oCheckUpdateCall.callCount, 1);
 					assert.strictEqual(oRefreshedEntity, oEntity,
 						"promise resolves with entity returned from server");
+					assert.strictEqual(bContextUpdated, true);
+					assert.strictEqual(bDependentsRefreshed, true);
 				});
+
+			assert.strictEqual(oPromise.isFulfilled(), false);
 
 			oBindingMock.expects("fireDataRequested").withExactArgs();
 
@@ -4874,11 +4885,17 @@ sap.ui.define([
 					},
 					oCacheRequestPromise,
 					oContext,
-					oDependent0 = {refreshInternal : function () {}},
-					oDependent1 = {refreshInternal : function () {}},
+					bContextUpdated = false,
+					bDependentsRefreshed = false,
 					oExpectation,
 					oGroupLock = new _GroupLock(),
 					iIndex = bTransient ? -1 : 1,
+					oRefreshDependentsPromise = new SyncPromise(function (resolve) {
+						setTimeout(function () {
+							bDependentsRefreshed = true;
+							resolve();
+						});
+					}),
 					that = this;
 
 				// initialize with 6 contexts, bLengthFinal===true and bKeyPredicates===true
@@ -4922,15 +4939,10 @@ sap.ui.define([
 						assert.strictEqual(oBinding.aContexts[1].iIndex, 1);
 						assert.strictEqual(oBinding.iMaxLength, 5);
 					} else {
-						that.mock(oGroupLock).expects("getGroupId").twice()
-							.returns("resultingGroupId");
-						that.mock(that.oModel).expects("getDependentBindings")
-							.withExactArgs(sinon.match.same(oContext))
-							.returns([oDependent0, oDependent1]);
-						that.mock(oDependent0).expects("refreshInternal")
-							.withExactArgs("resultingGroupId", false);
-						that.mock(oDependent1).expects("refreshInternal")
-							.withExactArgs("resultingGroupId", false);
+						that.mock(oGroupLock).expects("getGroupId").returns("resultingGroupId");
+						oBindingMock.expects("refreshDependentBindings")
+							.withExactArgs("resultingGroupId", false)
+							.returns(oRefreshDependentsPromise);
 					}
 				}));
 
@@ -4945,10 +4957,19 @@ sap.ui.define([
 				oBindingMock.expects("fireDataReceived").withExactArgs({data : {}});
 				this.mock(oContext).expects("checkUpdate")
 					.exactly(bOnRemoveCalled ? 0 : 1)
-					.withExactArgs();
+					.withExactArgs()
+					.returns(new SyncPromise(function (resolve) {
+						setTimeout(function () {
+							bContextUpdated = true;
+							resolve();
+						});
+					}));
 
 				// code under test
-				return oBinding.refreshSingle(oContext, oGroupLock, true);
+				return oBinding.refreshSingle(oContext, oGroupLock, true).then(function () {
+					assert.strictEqual(bContextUpdated, !bOnRemoveCalled);
+					assert.strictEqual(bDependentsRefreshed, !bOnRemoveCalled);
+				});
 			});
 		});
 	});

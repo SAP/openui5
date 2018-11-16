@@ -340,6 +340,8 @@ sap.ui.define([
 	 * Checks dependent bindings for updates or refreshes the binding if the resource path of its
 	 * parent context changed.
 	 *
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving without a defined result when the update is finished
 	 * @throws {Error} If called with parameters
 	 */
 	// @override
@@ -348,9 +350,9 @@ sap.ui.define([
 
 		function updateDependents() {
 			// Do not fire a change event in ListBinding, there is no change in the list of contexts
-			that.getDependentBindings().forEach(function (oDependentBinding) {
-				oDependentBinding.checkUpdate();
-			});
+			return SyncPromise.all(that.getDependentBindings().map(function (oDependentBinding) {
+				return oDependentBinding.checkUpdate();
+			}));
 		}
 
 		if (arguments.length > 0) {
@@ -358,21 +360,18 @@ sap.ui.define([
 				+ " called with parameters");
 		}
 
-		this.oCachePromise.then(function (oCache) {
+		return this.oCachePromise.then(function (oCache) {
 			if (oCache && that.bRelative) {
-				that.fetchResourcePath(that.oContext).then(function (sResourcePath) {
-					// entity of context changed
-					if (oCache.$resourcePath !== sResourcePath) {
-						that.refreshInternal();
-					} else {
-						updateDependents();
+				return that.fetchResourcePath(that.oContext).then(function (sResourcePath) {
+					if (oCache.$resourcePath === sResourcePath) {
+						return updateDependents();
 					}
+					return that.refreshInternal(); // entity of context changed
 				}).catch(function (oError) {
 					that.oModel.reportError("Failed to update " + that, sClassName, oError);
 				});
-			} else {
-				updateDependents();
 			}
+			return updateDependents();
 		});
 	};
 

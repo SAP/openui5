@@ -1504,7 +1504,7 @@ sap.ui.define([
 
 		return this.oCachePromise.then(function (oCache) {
 			var bDataRequested = false,
-				oPromise;
+				aPromises = [];
 
 			function fireDataReceived(oData) {
 				if (bDataRequested) {
@@ -1515,13 +1515,6 @@ sap.ui.define([
 			function fireDataRequested() {
 				bDataRequested = true;
 				that.fireDataRequested();
-			}
-
-			function refreshDependentBindings() {
-				that.oModel.getDependentBindings(oContext).forEach(function (oDependentBinding) {
-					// with bCheckUpdate = false because it is done after data is received
-					oDependentBinding.refreshInternal(oGroupLock.getGroupId(), false);
-				});
 			}
 
 			function onRemove(iIndex) {
@@ -1544,21 +1537,26 @@ sap.ui.define([
 			}
 
 			oGroupLock.setGroupId(that.getGroupId());
-			oPromise =
+			aPromises.push(
 				(bAllowRemoval
 					? oCache.refreshSingleWithRemove(oGroupLock, oContext.iIndex, fireDataRequested,
 						onRemove)
 					: oCache.refreshSingle(oGroupLock, oContext.iIndex, fireDataRequested))
 				.then(function (oEntity) {
+					var aUpdatePromises = [];
+
 					fireDataReceived({data : {}});
 					if (oContext.oBinding) { // do not update destroyed context
-						oContext.checkUpdate();
+						aUpdatePromises.push(oContext.checkUpdate());
 						if (bAllowRemoval) {
-							refreshDependentBindings();
+							aUpdatePromises.push(
+								that.refreshDependentBindings(oGroupLock.getGroupId(), false));
 						}
 					}
 
-					return oEntity;
+					return SyncPromise.all(aUpdatePromises).then(function () {
+						return oEntity;
+					});
 				}, function (oError) {
 					fireDataReceived({error : oError});
 					throw oError;
@@ -1566,15 +1564,18 @@ sap.ui.define([
 					oGroupLock.unlock(true);
 					that.oModel.reportError("Failed to refresh entity: " + oContext, sClassName,
 						oError);
-				});
+				})
+			);
 
 			if (!bAllowRemoval) {
 				// call refreshInternal on all dependent bindings to ensure that all resulting data
 				// requests are in the same batch request
-				refreshDependentBindings();
+				aPromises.push(that.refreshDependentBindings(oGroupLock.getGroupId(), false));
 			}
 
-			return oPromise;
+			return SyncPromise.all(aPromises).then(function (aResults) {
+				return aResults[0];
+			});
 		});
 	};
 

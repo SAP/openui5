@@ -1603,85 +1603,84 @@ sap.ui.define([
 	[
 		{sPath : "/Employees"}, // absolute binding
 		{sPath : "TEAM_2_MANAGER"}, // relative binding without context
-		{sPath : "/Employees(ID='1')", oContext : {}} // absolute binding with context (edge case)
+		{sPath : "/Employees(ID='1')", oContext : {}}, // absolute binding with context (edge case)
+		{sPath : "TEAM_2_MANAGER", oContext : {}} // relative binding with standard context
 	].forEach(function (oFixture) {
-		QUnit.test("checkUpdate: absolute binding or relative binding without context"
-				+ JSON.stringify(oFixture),
-			function (assert) {
-				var bRelative = oFixture.sPath[0] !== '/',
-					oBinding = new ODataParentBinding({
-						oCachePromise : SyncPromise.resolve(
-							bRelative ? undefined : { /* cache */}),
-						oContext : oFixture.oContext,
-						sPath : oFixture.sPath,
-						bRelative : bRelative
-					}),
-					fnGetContext = function () {
-						return {
-							created : function () {}
-						};
-					},
-					oDependent0 = {
-						checkUpdate : function () {},
-						getContext : fnGetContext
-					},
-					oDependent1 = {
-						checkUpdate : function () {},
-						getContext : fnGetContext
+		QUnit.test("checkUpdate: " + JSON.stringify(oFixture), function (assert) {
+			var bRelative = oFixture.sPath[0] !== '/',
+				oBinding = new ODataParentBinding({
+					oCachePromise : SyncPromise.resolve(
+						bRelative ? undefined : { /* cache */}),
+					oContext : oFixture.oContext,
+					sPath : oFixture.sPath,
+					bRelative : bRelative
+				}),
+				fnGetContext = function () {
+					return {
+						created : function () {}
 					};
+				},
+				oDependent0 = {
+					checkUpdate : function () {},
+					getContext : fnGetContext
+				},
+				bDependent0Refreshed = false,
+				oDependent0Promise = new SyncPromise(function (resolve) {
+					setTimeout(function () {
+						bDependent0Refreshed = true;
+						resolve();
+					});
+				}),
+				oDependent1 = {
+					checkUpdate : function () {},
+					getContext : fnGetContext
+				},
+				bDependent1Refreshed = false,
+				oDependent1Promise = new SyncPromise(function (resolve) {
+					setTimeout(function () {
+						bDependent1Refreshed = true;
+						resolve();
+					});
+				});
 
-				this.mock(oBinding).expects("getDependentBindings")
-					.withExactArgs()
-					.returns([oDependent0, oDependent1]);
-				this.mock(oDependent0).expects("checkUpdate").withExactArgs();
-				this.mock(oDependent1).expects("checkUpdate").withExactArgs();
+			this.mock(oBinding).expects("getDependentBindings")
+				.withExactArgs()
+				.returns([oDependent0, oDependent1]);
+			this.mock(oDependent0).expects("checkUpdate").withExactArgs()
+				.returns(oDependent0Promise);
+			this.mock(oDependent1).expects("checkUpdate").withExactArgs()
+				.returns(oDependent1Promise);
 
-				// code under test
-				oBinding.checkUpdate();
-
-				assert.throws(function () {
-					// code under test
-					oBinding.checkUpdate(true);
-				}, new Error("Unsupported operation:"
-					+ " sap.ui.model.odata.v4.ODataParentBinding#checkUpdate must not be called"
-					+ " with parameters"));
-
-			}
-		);
+			// code under test
+			return oBinding.checkUpdate().then(function (oResult) {
+				assert.strictEqual(bDependent0Refreshed, true);
+				assert.strictEqual(bDependent1Refreshed, true);
+			});
+		});
 	});
 	//TODO fire change event only if the binding's length changed, i.e. if getContexts will provide
 	//  a different result compared to the previous call
 
 	//*********************************************************************************************
-	QUnit.test("checkUpdate: relative binding with standard context", function (assert) {
+	QUnit.test("checkUpdate: no cache, no dependents", function (assert) {
 		var oBinding = new ODataParentBinding({
-				oCachePromise : SyncPromise.resolve(undefined),
-				oContext : {/*simulate standard context*/},
-				sPath : "TEAM_2_MANAGER",
 				bRelative : true
-			}),
-			fnGetContext = function () {
-				return {
-					created : function () {}
-				};
-			},
-			oDependent0 = {
-				checkUpdate : function () {},
-				getContext : fnGetContext
-			},
-			oDependent1 = {
-				checkUpdate : function () {},
-				getContext : fnGetContext
-			};
+			});
 
-		this.mock(oBinding).expects("getDependentBindings")
-			.withExactArgs()
-			.returns([oDependent0, oDependent1]);
-		this.mock(oDependent0).expects("checkUpdate").withExactArgs();
-		this.mock(oDependent1).expects("checkUpdate").withExactArgs();
+		this.mock(oBinding).expects("getDependentBindings").withExactArgs().returns([]);
 
 		// code under test
-		oBinding.checkUpdate();
+		assert.strictEqual(oBinding.checkUpdate().isFulfilled(), true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate: with parameters", function (assert) {
+		assert.throws(function () {
+			// code under test
+			new ODataParentBinding().checkUpdate(true);
+		}, new Error("Unsupported operation:"
+			+ " sap.ui.model.odata.v4.ODataParentBinding#checkUpdate must not be called"
+			+ " with parameters"));
 	});
 
 	//*********************************************************************************************
@@ -1696,17 +1695,25 @@ sap.ui.define([
 				refreshInternal : function () {},
 				bRelative : true
 			}),
-			oPathPromise = Promise.resolve("TEAMS('8192')/TEAM_2_MANAGER");
+			oPathPromise = Promise.resolve("TEAMS('8192')/TEAM_2_MANAGER"),
+			bRefreshed = false;
 
 		this.mock(oBinding).expects("fetchResourcePath")
 			.withExactArgs(sinon.match.same(oBinding.oContext))
 			.returns(SyncPromise.resolve(oPathPromise)); // data for path "/TEAMS/1" has changed
-		this.mock(oBinding).expects("refreshInternal").withExactArgs();
+		this.mock(oBinding).expects("refreshInternal").withExactArgs()
+			.returns(new SyncPromise(function (resolve) {
+				setTimeout(function () {
+					bRefreshed = true;
+					resolve();
+				});
+			}));
 
 		// code under test
-		oBinding.checkUpdate();
-
-		return oPathPromise;
+		return oBinding.checkUpdate().then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
+			assert.strictEqual(bRefreshed, true);
+		});
 	});
 
 	//*********************************************************************************************
@@ -1732,10 +1739,24 @@ sap.ui.define([
 				checkUpdate : function () {},
 				getContext : fnGetContext
 			},
+			bDependent0Refreshed = false,
+			oDependent0Promise = new SyncPromise(function (resolve) {
+				setTimeout(function () {
+					bDependent0Refreshed = true;
+					resolve();
+				});
+			}),
 			oDependent1 = {
 				checkUpdate : function () {},
 				getContext : fnGetContext
 			},
+			bDependent1Refreshed = false,
+			oDependent1Promise = new SyncPromise(function (resolve) {
+				setTimeout(function () {
+					bDependent1Refreshed = true;
+					resolve();
+				});
+			}),
 			oPathPromise = Promise.resolve(sPath);
 
 		this.mock(oBinding).expects("fetchResourcePath")
@@ -1744,13 +1765,16 @@ sap.ui.define([
 		this.mock(oBinding).expects("getDependentBindings")
 			.withExactArgs()
 			.returns([oDependent0, oDependent1]);
-		this.mock(oDependent0).expects("checkUpdate").withExactArgs();
-		this.mock(oDependent1).expects("checkUpdate").withExactArgs();
+		this.mock(oDependent0).expects("checkUpdate").withExactArgs()
+			.returns(oDependent0Promise);
+		this.mock(oDependent1).expects("checkUpdate").withExactArgs()
+			.returns(oDependent1Promise);
 
 		// code under test
-		oBinding.checkUpdate();
-
-		return oPathPromise;
+		return oBinding.checkUpdate().then(function (oResult) {
+			assert.strictEqual(bDependent0Refreshed, true);
+			assert.strictEqual(bDependent1Refreshed, true);
+		});
 	});
 
 	//*********************************************************************************************
