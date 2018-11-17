@@ -20,7 +20,7 @@ sap.ui.define([
 				supplier = supplierPath.split("/").slice(-1).pop(),
 				oNextUIState = this.oOwnerComponent.getHelper().getNextUIState(2);
 
-				this.oRouter.navTo("detailDetail", {layout: oNextUIState.layout, supplier: supplier, product: this._product});
+			this.oRouter.navTo("detailDetail", {layout: oNextUIState.layout, supplier: supplier, product: this._product});
 		},
 
 		_onProductMatched: function (oEvent) {
@@ -58,4 +58,4 @@ sap.ui.define([
 			this.oRouter.getRoute("detail").detachPatternMatched(this._onProductMatched, this);
 		}
 	});
-}, true);
+});
