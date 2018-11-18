@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/core/Control",
 	"sap/m/Page",
+	"sap/m/Button",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/thirdparty/sinon-4"
@@ -19,6 +20,7 @@ sap.ui.define([
 	VerticalLayout,
 	Control,
 	Page,
+	Button,
 	UIComponent,
 	ComponentContainer,
 	sinon
@@ -27,6 +29,7 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 
+	// TODO: split big monolithic test into simple parts - 1 feature = 1 test case, not all at once!
 	QUnit.module("Given that RuntimeAuthoring and Property service are created", {
 		before: function () {
 			var MockComponent = UIComponent.extend("MockController", {
@@ -55,6 +58,7 @@ sap.ui.define([
 			oPage.addContent(
 				this.oLayout = new VerticalLayout("layout1", {
 					content: [
+						// FIXME: don't create an instance of an abstract class!
 						this.oControl = new Control("mockControl")
 					]
 				})
@@ -344,6 +348,39 @@ sap.ui.define([
 			return this.oProperty.get(this.oControl.getId()).then(function(oPropertyData) {
 				assert.deepEqual(this.oExpectedPropertyData, oPropertyData, "then the correct result object received from the service");
 			}.bind(this));
+		});
+	});
+
+	QUnit.module("get()", function () {
+		QUnit.test("when control's bindings are not initialized", function (assert) {
+			var oButton = new Button('button', {
+				visible: false,
+				text: "{i18n>ButtonName}"
+			});
+			var oPage = new Page('page', {
+				content: [
+					oButton
+				]
+			});
+
+			oPage.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var oRta = new RuntimeAuthoring({
+				showToolbars: false,
+				rootControl: oPage
+			});
+
+			oRta.start();
+
+			return oRta.getService("property").then(function (oService) {
+				return oService.get(oButton.getId()).then(function (mResult) {
+					var mBinding = mResult.properties.text.binding;
+					assert.strictEqual(mBinding.parts[0].model, "i18n");
+					assert.strictEqual(mBinding.parts[0].path, "ButtonName");
+					assert.strictEqual(mBinding.bindingValues, undefined);
+				});
+			});
 		});
 	});
 

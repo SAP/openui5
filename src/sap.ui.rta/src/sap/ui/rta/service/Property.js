@@ -62,9 +62,9 @@ sap.ui.define([
 			var oOverlay = OverlayRegistry.getOverlay(sControlId);
 			// if overlay could not be found
 			if (!oOverlay) {
-				return DtUtil.createError("services.Property#get", "A valid control id was not passed", "sap.ui.rta");
+				return DtUtil.createError("service.Property#get", "A valid control id was not passed", "sap.ui.rta");
 			}
-			var oElement = ElementUtil.getElementInstance(sControlId);
+			var oElement = oOverlay.getElement();
 
 			var mMetadataProperties = oElement.getMetadata().getAllProperties();
 
@@ -317,18 +317,30 @@ sap.ui.define([
 			if (!mPropertyBindingInfo) {
 				return;
 			}
-			return merge({
-					parts: mPropertyBindingInfo.parts,
+
+			return merge(
+				{},
+				// adding parts
+				mPropertyBindingInfo.parts
+				&& {
+					parts: mPropertyBindingInfo.parts
+				},
+				// adding value
+				mPropertyBindingInfo.binding
+				&& {
 					bindingValues: {
 						values: mPropertyBindingInfo.binding.getValue()
 					}
 				},
-				mPropertyBindingInfo.binding.getOriginalValue
+				// adding original value
+				mPropertyBindingInfo.binding
+				&& mPropertyBindingInfo.binding.getOriginalValue
 				&& {
 					bindingValues: {
 						originalValues: mPropertyBindingInfo.binding.getOriginalValue()
 					}
 				},
+				// adding bindingString
 				mPropertyBindingInfo.bindingString
 				&& {
 					bindingString: mPropertyBindingInfo.bindingString
