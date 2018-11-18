@@ -41,7 +41,7 @@ sap.ui.define([
 				// configure mock server with a delay of 1s
 				MockServer.config({
 					autoRespond : true,
-					autoRespondAfter : (oUriParameters.get("serverDelay") || 1000)
+					autoRespondAfter : (oUriParameters.get("serverDelay") || 500)
 				});
 
 				// Simulate a manual back-end call
