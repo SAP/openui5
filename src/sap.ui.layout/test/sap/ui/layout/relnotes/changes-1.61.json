@@ -7,6 +7,24 @@
         "type": "FIX",
         "text": " SimpleForm: Layout rendered wrong if set late",
         "references": []
+      },
+      {
+        "id": "c0c5a3461ff9b193efa49ce8f46027ebf4fbbd1a",
+        "type": "FIX",
+        "text": " ColumnElementData and ColumnContainerData @since wrong",
+        "references": []
+      },
+      {
+        "id": "19f40d3bf7900f28c7b3a465438f81040a3f3563",
+        "type": "FIX",
+        "text": " Form: use stable IDs for labels created by FormElement",
+        "references": []
+      },
+      {
+        "id": "fd965eb86b0fcffc5ad127236d5a8a4470472a56",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: Improved focus outline",
+        "references": []
       }
     ]
   }

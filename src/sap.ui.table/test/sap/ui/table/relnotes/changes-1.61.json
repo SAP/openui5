@@ -1,0 +1,19 @@
+{
+  "1.61.0": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "c38217ccba0f2a304a20e5e3159055cde7009cf7",
+        "type": "FIX",
+        "text": " Table: Horizontal scroll position on focus in RTL with Unit Tests",
+        "references": []
+      },
+      {
+        "id": "ddc255ca23f04cac76a3504ba03aac4bde2a3821",
+        "type": "FIX",
+        "text": " TreeTable: ACC - Avoid duplicate announcement on expand/collapse",
+        "references": []
+      }
+    ]
+  }
+}

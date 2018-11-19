@@ -145,6 +145,144 @@
         "type": "FIX",
         "text": " sap.ui.support: Accessibility category added to some rules",
         "references": []
+      },
+      {
+        "id": "469d610e6f13b55082a674ba43f7a8bed1a12ff7",
+        "type": "FEATURE",
+        "text": " sap.m.FeedListItem: Prepare support for read/unread state",
+        "references": []
+      },
+      {
+        "id": "3312cf62d1baae6e9cecfca1dd8936654d8fe20f",
+        "type": "FEATURE",
+        "text": "sap.m.GenericTile: Hyphenation support for Subheader texts",
+        "references": []
+      },
+      {
+        "id": "19f40d3bf7900f28c7b3a465438f81040a3f3563",
+        "type": "FIX",
+        "text": " Form: use stable IDs for labels created by FormElement",
+        "references": []
+      },
+      {
+        "id": "e359ecb5d8eb4453ccc52cd906c3c48d03ed4c27",
+        "type": "FIX",
+        "text": " Upload Collection 1902 Enhancements - Patch 2",
+        "references": []
+      },
+      {
+        "id": "ae47c987fc817adde3391ba67c38b04642346034",
+        "type": "FIX",
+        "text": " m.ViewSettingsDialog: Tooltip for sort items is now shown",
+        "references": []
+      },
+      {
+        "id": "8b4b38abe63ee4083eaab6259bbf17370147ee29",
+        "type": "FIX",
+        "text": " sap.m.Combobox: Duplicated focus removed",
+        "references": []
+      },
+      {
+        "id": "f72e1df5e94319f66ccdcf36a0c5df6f7320e866",
+        "type": "FIX",
+        "text": " sap.m.Fiori20Adapter: Ensure first NavContainer page is adapted",
+        "references": []
+      },
+      {
+        "id": "ad3275cea614b68d3c8e10106cceaea7f95ff01a",
+        "type": "FIX",
+        "text": " sap.m.GenericTile : Reverted the clampText() as there is performance degradation for FLP due to its implementation.",
+        "references": []
+      },
+      {
+        "id": "00c2b240711693cede078fb2afe0f324010bfa48",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Arrows in IconTabHeader is now fixed",
+        "references": []
+      },
+      {
+        "id": "11f739dbf6cec63049239e69e381652d8f93ef64",
+        "type": "FIX",
+        "text": " sap.m.LightBox: Magnifier icon is vertically alligned",
+        "references": []
+      },
+      {
+        "id": "c795885efc70b031355a552dd3afbb265b3d1cef",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Prevent removing tokens in disabled state",
+        "references": []
+      },
+      {
+        "id": "e34ed537115ee68e731d22c1bd8614e05e96fd7b",
+        "type": "FIX",
+        "text": " sap.m.NotificationListGroup: Accessibility improved",
+        "references": []
+      },
+      {
+        "id": "1a5e935cf986e67cbdbeed158dee9e501207fe59",
+        "type": "FIX",
+        "text": " sap.m.NotificationListGroup: Background colors are now correct",
+        "references": []
+      },
+      {
+        "id": "8d81e5fe20c1a1e9c5c370283f5a5958f32d6baa",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: Readability of focus outline improved",
+        "references": []
+      },
+      {
+        "id": "3149a47c69fb26097aeb4c215442ecf875791ff7",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: test page example fixed",
+        "references": []
+      },
+      {
+        "id": "5059e87f6291089f457f9584c3758d679072f67d",
+        "type": "FIX",
+        "text": " sap.m.Page: QUnit minor fix",
+        "references": []
+      },
+      {
+        "id": "e67765234fd51d084b8216e20e61cc239a79d4e0",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Respects the given height",
+        "references": []
+      },
+      {
+        "id": "50ffe0256f7fdf6b00fceb3fc413bf6d49363952",
+        "type": "FIX",
+        "text": " sap.m.SemanticPage: Accessibility sample improved",
+        "references": []
+      },
+      {
+        "id": "91244455e2b99d699a94634c4071860db9515995",
+        "type": "FIX",
+        "text": " sap.m.TabStrip: Works correctly now when selectedItem is null",
+        "references": []
+      },
+      {
+        "id": "0a654e504b622534d3fb16727fedfaddd57b23e7",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Popover opens on iPad / Tablet correctly",
+        "references": []
+      },
+      {
+        "id": "484049550ccfc4a9aac9b5d5816516427c459ba4",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Item\u0027s file name can be bound to null",
+        "references": []
+      },
+      {
+        "id": "d4733639198f6acc9ca243f959f1c8784697327c",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Rollback the latest refactoring",
+        "references": []
+      },
+      {
+        "id": "109a7b35d9da56d698c974726e0a16ee80219e3c",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Fix ACC page",
+        "references": []
       }
     ]
   }
