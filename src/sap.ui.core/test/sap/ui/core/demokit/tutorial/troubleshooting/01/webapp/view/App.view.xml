@@ -11,33 +11,35 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:doesnotexist="sap.ui.doesnotexist"
 	xmlns:table="sap.ui.table">
-	<App>
-		<pages>
-			<Page
-				title="{i18n>title}"
-				class="sapUiContentPadding">
-				<content>
-					<MessageStrip
-						text="{i18n>warning}"
-						type="Warning"
-						showIcon="true"
-						showCloseButton="false"
-						class="sapUiMediumMarginBottom">
-					</MessageStrip>
+	<Shell>
+		<App>
+			<pages>
+				<Page
+					title="{i18n>title}"
+					class="sapUiContentPadding">
+					<content>
+						<MessageStrip
+							text="{i18n>warning}"
+							type="Warning"
+							showIcon="true"
+							showCloseButton="false"
+							class="sapUiMediumMarginBottom">
+						</MessageStrip>
 
-					<VBox>
-						<Button 
-							id="myButton"
-							icon="sap-icon://action"
-							text="{i18n>doSomething}"
-							press=".onPress"
-							type="Emphasized"/>
-						<Label
-							id="LabelWithMissingI18NText"
-							text="{i18n>Label_Missing_I18N_Text}"/>
-					</VBox>
-				</content>
-			</Page>
-		</pages>
-	</App>
+						<VBox>
+							<Button
+								id="myButton"
+								icon="sap-icon://action"
+								text="{i18n>doSomething}"
+								press=".onPress"
+								type="Emphasized"/>
+							<Label
+								id="LabelWithMissingI18NText"
+								text="{i18n>Label_Missing_I18N_Text}"/>
+						</VBox>
+					</content>
+				</Page>
+			</pages>
+		</App>
+	</Shell>
 </mvc:View>
