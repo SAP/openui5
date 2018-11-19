@@ -32,7 +32,7 @@
 				<core:Icon size="2rem" src="sap-icon://{view>/iconPath}{name}" color="Default" useIconTooltip="false"/>
 				<core:Icon size="2.5rem" src="sap-icon://{view>/iconPath}{name}" color="Default" useIconTooltip="false"/>
 				<core:Icon size="3rem" src="sap-icon://{view>/iconPath}{name}" color="Default" useIconTooltip="false"/>
-				<Label text="{name}" textAlign="center" class="sapUiTinyMarginTopBottom"/>
+				<Label text="{name}" textAlign="Center" class="sapUiTinyMarginTopBottom"/>
 				<RatingIndicator
 					iconUnselected="sap-icon://unfavorite"
 					value="{

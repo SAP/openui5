@@ -2,22 +2,19 @@ sap.ui.define([
 	"sap/ui/core/Control"
 ], function(Control) {
 	"use strict";
-	var ColorPreview = Control.extend("sap.ui.demo.theming.control.ColorPreview", {
+
+	return Control.extend("sap.ui.demo.theming.control.ColorPreview", {
 		metadata: {
 			properties: {
 				"color": "string"
 			}
 		},
 
-		init : function(){
-			this._controlId = this.getId();
-		},
-
 		renderer: function(oRm, oControl) {
 			oRm.write("<div");
 			oRm.writeControlData(oControl);
 			oRm.addClass("myColorPreview");
-			if (oControl.getColor() != undefined){
+			if (oControl.getColor() !== undefined){
 				oRm.addClass("sapThemeForegroundBorderColor-asBorderColor");
 				oRm.addClass("myColorPreviewBorder");
 
@@ -33,5 +30,4 @@ sap.ui.define([
 			oRm.write("</div>");
 		}
 	});
-	return ColorPreview;
 });
