@@ -1123,7 +1123,7 @@ sap.ui.define([
 		 * @private
 		 */
 		this.getRendererInterface = function() {
-			return oStringRendererInterface;
+			return oDomRendererInterface;
 		};
 
 		this.getInterface = function() {
