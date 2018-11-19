@@ -10,7 +10,8 @@ sap.ui.define([
 	'sap/m/IconTabHeader',
 	'sap/m/IconTabFilter',
 	'sap/tnt/ToolHeader',
-	'sap/tnt/ToolHeaderUtilitySeparator'
+	'sap/tnt/ToolHeaderUtilitySeparator',
+	'sap/ui/qunit/utils/waitForThemeApplied'
 ], function(
 	jQuery,
 	App,
@@ -21,7 +22,8 @@ sap.ui.define([
 	IconTabHeader,
 	IconTabFilter,
 	ToolHeader,
-	ToolHeaderUtilitySeparator) {
+	ToolHeaderUtilitySeparator,
+	waitForThemeApplied) {
 
 	'use strict';
 
@@ -279,4 +281,6 @@ sap.ui.define([
 
 		assert.ok(this.iconTabHeader.$().find('.sapMITBFilterHidden').length > 0, 'Some tabs are hidden');
 	});
+
+	return waitForThemeApplied();
 });
