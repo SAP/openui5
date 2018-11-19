@@ -1156,7 +1156,7 @@ function (
 						this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBar')
 						&& this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBarVertical')
 					);
-					this.oScrollControlOverlay.attachEventOnce("geometryChanged",function (){
+					this.oScrollControlOverlay.attachEventOnce("geometryChanged", function () {
 						assert.ok(
 							!this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBar')
 							&& !this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBarVertical')
@@ -1166,6 +1166,61 @@ function (
 						fnDone();
 					}, this);
 					this.oTextArea.setHeight("50px");
+					sap.ui.getCore().applyChanges();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("when scrollcontainer is removed, the corresponding overlay must be hidden", function (assert) {
+			var fnDone = assert.async();
+			var oVerticalLayout = new VerticalLayout('layout', {
+				content: [
+					this.oScrollControl = new SimpleScrollControl({
+						id: "scrollControl",
+						content1: [
+							this.oTextArea = new TextArea({
+								height: "500px",
+								width: "400px",
+								value: "foo"
+							})
+						],
+						content2: [
+							new TextArea({
+								height: "500px",
+								width: "400px",
+								value: "bar"
+							})
+						],
+						footer: [
+							new Button({
+								text: "Button"
+							})
+						]
+					})
+				]
+			});
+
+
+			oVerticalLayout.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oDesignTime = new DesignTime({
+				rootElements: [oVerticalLayout]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				// setTimeout is needed, because synced event doesn't wait until all async processes are done
+				setTimeout(function () {
+					this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
+					var $ScrollContainerOverlayDomRef = this.oScrollControlOverlay.getScrollContainerById(0);
+					assert.strictEqual($ScrollContainerOverlayDomRef.css("display"), "block");
+					this.oScrollControlOverlay.attachEvent("geometryChanged", function () {
+						assert.strictEqual($ScrollContainerOverlayDomRef.css("display"), "none");
+						this.oDesignTime.destroy();
+						oVerticalLayout.destroy();
+						fnDone();
+					}, this);
+					this.oScrollControl.setScrollcontainerEnabled(false);
 					sap.ui.getCore().applyChanges();
 				}.bind(this));
 			}.bind(this));
