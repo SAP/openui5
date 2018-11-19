@@ -168,7 +168,7 @@ sap.ui.define([
 	 */
 	GridBoxLayout.prototype._calcWidth = function (oControl) {
 		if (this._hasBoxWidth()) {
-			var sWidth = this._hasBoxWidth();
+			var sWidth = this.getBoxWidth() || this.getBoxMinWidth();
 			this._loopOverGridItems(oControl, function (oGridItem) {
 				oGridItem.style.width = sWidth;
 			});
