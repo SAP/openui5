@@ -579,6 +579,7 @@ sap.ui.define([
 
 	var CustomText = Text.extend("sap.m.internal.ObjectMarkerCustomText", {
 		metadata: {
+			library: "sap.m",
 			properties: {
 				icon: {type : "sap.ui.core.URI", group : "Data", defaultValue : null}
 			},
@@ -631,6 +632,7 @@ sap.ui.define([
 
 	var CustomLink = Link.extend("sap.m.internal.ObjectMarkerCustomLink", {
 		metadata: {
+			library: "sap.m",
 			properties: {
 				icon: {type : "sap.ui.core.URI", group : "Data", defaultValue : null}
 			},

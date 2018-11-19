@@ -2892,6 +2892,9 @@ sap.ui.define([
 	 * Represents planning calendar row that holds header and timeline inside the internal table.
 	 */
 	var PlanningCalendarRowListItem = ColumnListItem.extend("sap.m.internal.PlanningCalendarRowListItem", {
+		metadata: {
+			library: "sap.m"
+		},
 		renderer: ColumnListItemRenderer
 	});
 
