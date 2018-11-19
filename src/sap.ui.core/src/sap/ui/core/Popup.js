@@ -906,7 +906,10 @@ sap.ui.define([
 		// call stack. Therefore the blur of the previous focused element should be done
 		// at the end of this open method to first show the block layer which changes the
 		// top most displayed popup
-		if (this._shouldGetFocusAfterOpen() && document.activeElement) {
+		if (this._shouldGetFocusAfterOpen() && document.activeElement && !this.isInPopup(document.activeElement)) {
+			// when the current active element is in a popup, it's not blured at this position
+			// because the focus isn't set to the new popup yet and bluring in the previous popup
+			// will mess up the modal or autoclose in the previous popup
 			oDomRefToFocus = this._getDomRefToFocus();
 
 			// If the focus needs to be set into the popup and it's different than the current

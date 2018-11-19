@@ -1565,4 +1565,38 @@ sap.ui.define([
 		oModalPopup.open(0);
 	});
 
+	QUnit.test("The previous active element isn't blurred if the popup is opened within a popup", function(assert) {
+		var done = assert.async();
+		var oParentPopup = new Popup(jQuery("<div id='modalPopup'><button id='modalButton'>open modal popup</button></div>")[0]);
+		oParentPopup.setModal(true);
+		var fnOpened = function() {
+			assert.ok(true, "the first popup is opened");
+			var oPopupDomRef = jQuery("<div id='autoclosePopup'><button id='autocloseButton'>open</button></div>")[0];
+			var oPopup = new Popup(oPopupDomRef);
+			oPopup.setAutoClose(true);
+			oPopup.setPosition(
+				Popup.Dock.BeginTop,
+				Popup.Dock.BeginBottom,
+				jQuery.sap.domById("modalButton")
+			);
+
+			assert.equal(document.activeElement.id, "modalButton", "the focus is set into the first popup");
+
+			var oBlurSpy = sinon.spy(document.activeElement, "blur");
+
+			var fnOpened1 = function() {
+				assert.ok(true, "the second popup is opened");
+				assert.equal(oBlurSpy.callCount, 0, "the previous focus element isn't blurred");
+				oPopup.destroy();
+				oParentPopup.destroy();
+
+				done();
+			};
+			oPopup.attachOpened(fnOpened1);
+			oPopup.open(0);
+		};
+
+		oParentPopup.attachOpened(fnOpened);
+		oParentPopup.open(0);
+	});
 });
