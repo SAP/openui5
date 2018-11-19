@@ -330,6 +330,7 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	 *
 	 * @param {object} mParameters parameters of the change type
 	 * @param {string} mParameters.dataSourceId the id of the data source to be removed
+	 * @param {boolean} [mParameters.removeUnusedAnnotation] option to remove also no longer referenced dataSources of type ODataAnnotion
 	 *
 	 * @return {Promise} resolving when creating the descriptor inline change was successful (without backend access)
 	 *
