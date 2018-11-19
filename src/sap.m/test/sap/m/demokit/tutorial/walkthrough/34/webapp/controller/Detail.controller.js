@@ -1,8 +1,8 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller",
-    "sap/ui/core/routing/History",
-    "sap/m/MessageToast",
-    "sap/ui/core/UIComponent"
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/routing/History",
+	"sap/m/MessageToast",
+	"sap/ui/core/UIComponent"
 ], function(Controller, History, MessageToast, UIComponent) {
 	"use strict";
 
