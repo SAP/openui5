@@ -91,18 +91,23 @@ sap.ui.define([
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string;
 	 *   note that this flag can safely be ignored for all "new" features (after 1.47) which
 	 *   should just sort always
+	 * @param {string} [sOriginalResourcePath=sResourcePath]
+	 *   The path by which this resource has originally been requested and thus can be identified on
+	 *   the client. Only required for deferred operation requests.
 	 *
 	 * @private
 	 */
-	function Cache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect) {
+	function Cache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+			sOriginalResourcePath) {
 		this.bActive = true;
 		this.mChangeListeners = {}; // map from path to an array of change listeners
 		this.sMetaPath = _Helper.getMetaPath("/" + sResourcePath);
+		this.sOriginalResourcePath = sOriginalResourcePath || sResourcePath;
 		this.mPatchRequests = {}; // map from path to an array of (PATCH) promises
 		this.mPostRequests = {}; // map from path to an array of entity data (POST bodies)
 		this.oRequestor = oRequestor;
-		this.bSortExpandSelect = bSortExpandSelect;
 		this.sResourcePath = sResourcePath;
+		this.bSortExpandSelect = bSortExpandSelect;
 		this.bSentReadRequest = false;
 		this.oTypePromise = undefined;
 		this.setQueryOptions(mQueryOptions);
@@ -1048,7 +1053,7 @@ sap.ui.define([
 			visitInstance(oRoot, sRootMetaPath || this.sMetaPath, sRootPath || "", sRequestUrl);
 		}
 		if (bHasMessages) {
-			this.oRequestor.reportBoundMessages(this.sResourcePath, mPathToODataMessages,
+			this.oRequestor.reportBoundMessages(this.sOriginalResourcePath, mPathToODataMessages,
 				aKeyPredicates);
 		}
 	};
@@ -1666,6 +1671,9 @@ sap.ui.define([
 	 *   A map of key-value pairs representing the query string
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
+	 * @param {string} [sOriginalResourcePath=sResourcePath]
+	 *   The path by which this resource has originally been requested and thus can be identified on
+	 *   the client. Only required for deferred operation requests.
 	 * @param {boolean} [bPost]
 	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may lead to
 	 *   a request, {@link #read} may only read from the cache; otherwise {@link #post} throws an
@@ -1678,8 +1686,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost,
-			sMetaPath, bFetchOperationReturnType) {
+	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+			sOriginalResourcePath, bPost, sMetaPath, bFetchOperationReturnType) {
 		Cache.apply(this, arguments);
 
 		this.bFetchOperationReturnType = bFetchOperationReturnType;
@@ -1771,7 +1779,6 @@ sap.ui.define([
 	SingleCache.prototype.post = function (oGroupLock, oData, oEntity) {
 		var sGroupId = oGroupLock.getGroupId(),
 			sHttpMethod = "POST",
-			aPromises,
 			that = this;
 
 		if (!this.bPost) {
@@ -1794,18 +1801,15 @@ sap.ui.define([
 				oData = undefined;
 			}
 		}
-		aPromises = [
+		this.oPromise = SyncPromise.all([
 			this.oRequestor.request(sHttpMethod, this.sResourcePath + this.sQueryString, oGroupLock,
-				{"If-Match" : oEntity}, oData)
-		];
-		if (this.bFetchOperationReturnType) {
-			aPromises.push(this.fetchTypes());
-		}
-		this.oPromise = SyncPromise.all(aPromises).then(function (aResult) {
+				{"If-Match" : oEntity}, oData),
+			this.fetchTypes()
+		]).then(function (aResult) {
 			that.bPosting = false;
-			if (that.bFetchOperationReturnType) {
-				that.visitResponse(aResult[0], aResult[1], that.sMetaPath + "/$Type");
-			}
+			that.visitResponse(aResult[0], aResult[1],
+				that.bFetchOperationReturnType ? that.sMetaPath + "/$Type" : undefined);
+
 			return aResult[0];
 		}, function (oError) {
 			that.bPosting = false;
@@ -1931,6 +1935,9 @@ sap.ui.define([
 	 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
+	 * @param {string} [sOriginalResourcePath=sResourcePath]
+	 *   The path by which this resource has originally been requested and thus can be identified on
+	 *   the client. Only required for deferred operation requests.
 	 * @param {boolean} [bPost]
 	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may
 	 *   lead to a request, {@link #read} may only read from the cache; otherwise {@link #post}
@@ -1946,9 +1953,9 @@ sap.ui.define([
 	 * @public
 	 */
 	Cache.createSingle = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			bPost, sMetaPath, bFetchOperationReturnType) {
-		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost,
-			sMetaPath, bFetchOperationReturnType);
+			sOriginalResourcePath, bPost, sMetaPath, bFetchOperationReturnType) {
+		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+			sOriginalResourcePath, bPost, sMetaPath, bFetchOperationReturnType);
 	};
 
 	/**

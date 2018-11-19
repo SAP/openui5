@@ -1501,9 +1501,8 @@ sap.ui.define([
 		var bAutoExpandSelect = {/*false, true*/},
 			oBinding = this.bindContext("n/a(...)"),
 			oGroupLock = {},
-			bHasReturnValueContext = {},
 			oJQueryMock = this.mock(jQuery),
-			oOperationMetadata = {$kind : "Function"},
+			oOperationMetadata = {$kind : "Function", $ReturnType : {$Type : "Edm.String"}},
 			mParameters = {},
 			sPath = "/FunctionImport(...)",
 			oPromise = {},
@@ -1525,14 +1524,10 @@ sap.ui.define([
 				sinon.match.same(oOperationMetadata), sinon.match.same(mParameters),
 				sinon.match.same(mQueryOptions), undefined)
 			.returns(sResourcePath);
-		this.mock(oBinding).expects("hasReturnValueContext")
-			.withExactArgs(sinon.match.same(oOperationMetadata))
-			.returns(bHasReturnValueContext);
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
-				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect), false,
-				"/FunctionImport/@$ui5.overload/0/$ReturnType",
-				sinon.match.same(bHasReturnValueContext))
+				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect),
+				sPath.slice(1), false, "/FunctionImport/@$ui5.overload/0/$ReturnType", false)
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(oGroupLock)).returns(oPromise);
@@ -1551,9 +1546,8 @@ sap.ui.define([
 			oBinding = this.bindContext("n/a(...)"),
 			fnGetEntity = {}, // do not call!
 			oGroupLock = {},
-			bHasReturnValueContext = {},
 			oJQueryMock = this.mock(jQuery),
-			oOperationMetadata = {$kind : "Function"},
+			oOperationMetadata = {$kind : "Function", $ReturnType : {$Type : "name.space.Type"}},
 			mParameters = {},
 			sPath = "/Entity('1')/navigation/bound.Function(...)",
 			oPromise = {},
@@ -1575,14 +1569,11 @@ sap.ui.define([
 				sinon.match.same(oOperationMetadata), sinon.match.same(mParameters),
 				sinon.match.same(mQueryOptions), sinon.match.same(fnGetEntity))
 			.returns(sResourcePath);
-		this.mock(oBinding).expects("hasReturnValueContext")
-			.withExactArgs(sinon.match.same(oOperationMetadata))
-			.returns(bHasReturnValueContext);
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
-				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect), false,
-				"/Entity/navigation/bound.Function/@$ui5.overload/0/$ReturnType",
-				sinon.match.same(bHasReturnValueContext))
+				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect),
+				sPath.slice(1), false,
+				"/Entity/navigation/bound.Function/@$ui5.overload/0/$ReturnType", true)
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(oGroupLock)).returns(oPromise);
@@ -1600,9 +1591,8 @@ sap.ui.define([
 		var bAutoExpandSelect = {/*false, true*/},
 			oBinding = this.bindContext("n/a(...)"),
 			oGroupLock = {},
-			bHasReturnValueContext = {},
 			oJQueryMock = this.mock(jQuery),
-			oOperationMetadata = {$kind : "Action"},
+			oOperationMetadata = {$kind : "Action" /*no $ReturnType*/},
 			mParameters = {},
 			sPath = "/ActionImport(...)",
 			oPromise = {},
@@ -1624,14 +1614,10 @@ sap.ui.define([
 				sinon.match.same(oOperationMetadata), sinon.match.same(mParameters),
 				sinon.match.same(mQueryOptions), undefined)
 			.returns(sResourcePath);
-		this.mock(oBinding).expects("hasReturnValueContext")
-			.withExactArgs(sinon.match.same(oOperationMetadata))
-			.returns(bHasReturnValueContext);
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
-				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect), true,
-				"/ActionImport/@$ui5.overload/0/$ReturnType",
-				sinon.match.same(bHasReturnValueContext))
+				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect),
+				sPath.slice(1), true, "/ActionImport/@$ui5.overload/0/$ReturnType", undefined)
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("post")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(mParameters), undefined)
@@ -1654,9 +1640,8 @@ sap.ui.define([
 					return oEntity;
 				}),
 				oGroupLock = {},
-				bHasReturnValueContext = {},
 				oJQueryMock = this.mock(jQuery),
-				oOperationMetadata = {$kind : "Action"},
+				oOperationMetadata = {$kind : "Action", $ReturnType : {$Type : "name.space.Type"}},
 				mParameters = {},
 				sPath = "/Entity('1')/navigation/bound.Action(...)",
 				oPromise = {},
@@ -1679,14 +1664,11 @@ sap.ui.define([
 					sinon.match.same(mParameters), sinon.match.same(mQueryOptions),
 					sinon.match.same(oEntity))
 				.returns(sResourcePath);
-			this.mock(oBinding).expects("hasReturnValueContext")
-				.withExactArgs(sinon.match.same(oOperationMetadata))
-				.returns(bHasReturnValueContext);
 			this.mock(_Cache).expects("createSingle")
 				.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
-					sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect), true,
-					"/Entity/navigation/bound.Action/@$ui5.overload/0/$ReturnType",
-					sinon.match.same(bHasReturnValueContext))
+					sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect),
+					sPath.slice(1), true,
+					"/Entity/navigation/bound.Action/@$ui5.overload/0/$ReturnType", true)
 				.returns(oSingleCache);
 			this.mock(oSingleCache).expects("post")
 				.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(mParameters),
@@ -1712,7 +1694,7 @@ sap.ui.define([
 			mExpectedQueryOptions = {},
 			fnGetEntity = {}, // do not call!
 			oGroupLock = {},
-			oOperationMetadata = {$kind : "Function"},
+			oOperationMetadata = {$kind : "Function", $ReturnType : {$Type : "name.space.Type"}},
 			mParameters = {},
 			sPath = "/Entity('1')/navigation/bound.Function(...)",
 			oPromise = {},
@@ -1738,7 +1720,8 @@ sap.ui.define([
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 				sinon.match.same(mExpectedQueryOptions), sinon.match.same(bAutoExpandSelect),
-				false, "/Entity/navigation/bound.Function/@$ui5.overload/0/$ReturnType", true)
+				sPath.slice(1), false,
+				"/Entity/navigation/bound.Function/@$ui5.overload/0/$ReturnType", true)
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(oGroupLock)).returns(oPromise);
@@ -1757,10 +1740,6 @@ sap.ui.define([
 		var oBinding = this.bindContext("n/a(...)"),
 			oGroupLock = {},
 			oOperationMetadata = {$kind : "n/a"};
-
-		this.mock(oBinding).expects("hasReturnValueContext")
-			.withExactArgs(sinon.match.same(oOperationMetadata))
-			.returns(false);
 
 		assert.throws(function () {
 			// code under test

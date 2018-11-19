@@ -283,7 +283,7 @@ sap.ui.define([
 				});
 
 			// attach formatter to check value for dynamically created control
-			this.setFormatterInList(assert, oText, sId);
+			this.setFormatter(assert, oText, sId, true);
 			oTemplate.addCell(oText);
 			// ensure template control is not destroyed on re-creation of the "items" aggregation
 			delete oTable.getBindingInfo("items").template;
@@ -353,23 +353,15 @@ sap.ui.define([
 							technical : oMessage.getTechnical(),
 							type : oMessage.getType()
 						};
-					});
+					}).sort(compareMessages),
+				aExpectedMessages = this.aMessages.slice().sort(compareMessages);
 
-			function sortMessages(aMessages) {
-				aMessages.sort(function (oMessage1, oMessage2) {
-					var s1 = oMessage1.message,
-						s2 = oMessage2.message;
-
-					if (s1 < s2) {
-						return -1;
-					}
-					return s1 > s2 ? 1 : 0;
-				});
-				return aMessages;
+			function compareMessages(oMessage1, oMessage2) {
+					return oMessage1.message.localeCompare(oMessage2.message);
 			}
 
-			assert.deepEqual(sortMessages(aCurrentMessages), sortMessages(this.aMessages),
-				this.aMessages.length + " messages in message manager");
+			assert.deepEqual(aCurrentMessages, aExpectedMessages,
+				this.aMessages.length + " expected messages in message manager");
 		},
 
 		/**
@@ -446,6 +438,27 @@ sap.ui.define([
 				}
 			}
 			this.checkFinish(assert);
+		},
+
+		/**
+		 * Checks the control's value state after waiting some time for the control to set it.
+		 *
+		 * @param {object} assert The QUnit assert object
+		 * @param {string} sControlId The control ID
+		 * @param {sap.ui.core.ValueState} sState The expected value state
+		 * @param {string} sText The expected text
+		 *
+		 * @returns {Promise} A promise resolving when the check is done
+		 */
+		checkValueState : function (assert, sControlId, sState, sText) {
+			var oControl = this.oView.byId(sControlId);
+
+			return resolveLater(function () {
+				assert.strictEqual(oControl.getValueState(), sState,
+					sControlId + ": value state: " + oControl.getValueState());
+				assert.strictEqual(oControl.getValueStateText(), sText,
+					sControlId + ": value state text: " + oControl.getValueStateText());
+			});
 		},
 
 		/**
@@ -720,7 +733,7 @@ sap.ui.define([
 					var oControl = oView.byId(sControlId);
 
 					if (oControl) {
-						that.setFormatterInList(assert, oControl, sControlId);
+						that.setFormatter(assert, oControl, sControlId, true);
 					}
 				});
 
@@ -906,52 +919,26 @@ sap.ui.define([
 
 		/**
 		 * Sets the formatter function which calls {@link #checkValue} for the given control.
-		 * Note that you may only use controls that have a 'text' property.
+		 * Note that you may only use controls that have a 'text' or a 'value' property.
 		 *
 		 * @param {object} assert The QUnit assert object
 		 * @param {sap.ui.base.ManagedObject} oControl The control
 		 * @param {string} sControlId The (symbolic) control ID for which changes are expected
+		 * @param {boolean} [bInList] Whether the control resides in a list item
 		 */
-		setFormatter : function (assert, oControl, sControlId) {
-			var oBindingInfo = oControl.getBindingInfo("text"),
+		setFormatter : function (assert, oControl, sControlId, bInList) {
+			var oBindingInfo = oControl.getBindingInfo("text") || oControl.getBindingInfo("value"),
 				fnOriginalFormatter = oBindingInfo.formatter,
 				that = this;
 
 			oBindingInfo.formatter = function (sValue) {
-				var sExpectedValue = fnOriginalFormatter
-						? fnOriginalFormatter.apply(this, arguments)
-						: sValue;
+				var oContext = bInList && this.getBindingContext();
 
-				that.checkValue(assert, sExpectedValue, sControlId);
-
-				return sValue;
-			};
-		},
-
-		/**
-		 * Sets the formatter function which calls {@link #checkValue} for the given control within
-		 * a list item.
-		 * Note that you may only use controls that have a 'text' property.
-		 *
-		 * @param {object} assert The QUnit assert object
-		 * @param {object} oControl The control
-		 * @param {string} sControlId The control ID for which changes are expected
-		 */
-		setFormatterInList : function (assert, oControl, sControlId) {
-			var oBindingInfo = oControl.getBindingInfo("text"),
-				fnOriginalFormatter = oBindingInfo.formatter,
-				that = this;
-
-			oBindingInfo.formatter = function (sValue) {
-				var sExpectedValue = fnOriginalFormatter
-						? fnOriginalFormatter.apply(this, arguments)
-						: sValue;
-
-				that.checkValue(assert, sExpectedValue, sControlId,
-					this.getBindingContext()
-					&& (this.getBindingContext().getIndex
-						? this.getBindingContext().getIndex()
-						: this.getBindingContext().getPath()));
+				if (fnOriginalFormatter) {
+					sValue = fnOriginalFormatter.apply(this, arguments);
+				}
+				that.checkValue(assert, sValue, sControlId,
+					oContext && (oContext.getIndex ? oContext.getIndex() : oContext.getPath()));
 
 				return sValue;
 			};
@@ -1925,8 +1912,22 @@ sap.ui.define([
 	QUnit.test("ActionImport", function (assert) {
 		var sView = '\
 <FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
-	<Text id="name" text="{Name}" />\
+	<Input id="name" value="{Name}" />\
 </FlexBox>',
+			oModelMessage = {
+				code : "1",
+				message : "Warning Text",
+				persistent : false,
+				target : "/ChangeTeamBudgetByID(...)/Name",
+				type : "Warning"
+			},
+			oResponseMessage = {
+				code : "1",
+				message : "Warning Text",
+				numericSeverity : 3,
+				target : "Name",
+				transition : false
+			},
 			that = this;
 
 		this.expectChange("name", null);
@@ -1940,8 +1941,12 @@ sap.ui.define([
 						"TeamID" : "TEAM_01"
 					}
 				}, {
-					"Name" : "Business Suite"
+					"Name" : "Business Suite",
+					"__CT__FAKE__Message" : {
+						"__FAKE__Messages" : [oResponseMessage]
+					}
 				})
+				.expectMessages([oModelMessage])
 				.expectChange("name", "Business Suite");
 
 			return Promise.all([
@@ -1952,6 +1957,8 @@ sap.ui.define([
 					.execute(),
 				that.waitForChanges(assert)
 			]);
+		}).then(function () {
+			return that.checkValueState(assert, "name", "Warning", "Warning Text");
 		});
 	});
 
@@ -4555,7 +4562,7 @@ sap.ui.define([
 							text : "{ID}"
 						});
 					}
-					that.setFormatterInList(assert, oListItem, "text");
+					that.setFormatter(assert, oListItem, "text", true);
 
 					return new ColumnListItem({cells : [oListItem]});
 				}
@@ -5822,7 +5829,7 @@ sap.ui.define([
 		return this.createView(assert, sView).then(function () {
 			var oText = new Text("id", {text : "{Team_Id}"});
 
-			that.setFormatterInList(assert, oText, "id");
+			that.setFormatter(assert, oText, "id", true);
 			that.expectRequest("TEAMS", {
 					"value" : aValues
 				})
@@ -8723,7 +8730,8 @@ sap.ui.define([
 				}).expectMessages([{
 					code : "23",
 					message : "Just A Message",
-					target : "/" + sRequestPath + "/Name",
+					target : "/Artists(ArtistID='42',IsActiveEntity=true)/special.cases."
+						+ oFixture.operation + "(...)/Name",
 					persistent : true,
 					type : "Success"
 				}]);
@@ -8801,6 +8809,19 @@ sap.ui.define([
 	QUnit.test("bound operation: $$inheritExpandSelect", function (assert) {
 		var fnDataReceived = this.spy(),
 			fnDataRequested = this.spy(),
+			oJustAMessage = {
+				code : "23",
+				message : "Just A Message",
+				//TODO:
+				// take care that relative bindings for the returnValueContext become
+				// also the messages returned by the operation with the right target.
+				// Idea: report errors also with the path of the returnValueContext, in this example
+				// "Artists(ArtistID='42',IsActiveEntity=true)/Name"
+				target : "/Artists(ArtistID='42',IsActiveEntity=true)"
+					+ "/special.cases.EditAction(...)/Name",
+				persistent : true,
+				type : "Success"
+			},
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="objectPage">\
@@ -8864,14 +8885,7 @@ sap.ui.define([
 					}],
 					"Name" : "Hour Frustrated"
 				})
-				.expectMessages([{
-					code : "23",
-					message : "Just A Message",
-					target :
-						"/Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction/Name",
-					persistent : true,
-					type : "Success"
-				}]);
+				.expectMessages([oJustAMessage]);
 
 			return Promise.all([
 				// code under test

@@ -96,6 +96,8 @@
 					Type="Collection(com.sap.gateway.default.iwbep.tea_busi.v0001.Worker)"/>
 				<NavigationProperty Name="TEAM_2_MANAGER"
 					Type="com.sap.gateway.default.iwbep.tea_busi.v0001.MANAGER" Nullable="false"/>
+				<Property Name="__CT__FAKE__Message" Type="SAP__self.__CT__FAKE__Message" />
+				<Annotation Term="com.sap.vocabularies.Common.v1.Messages" Path="__CT__FAKE__Message/__FAKE__Messages" />
 			</EntityType>
 			<ComplexType Name="ComplexType_City">
 				<Property Name="POSTALCODE" Type="Edm.String" Nullable="true" MaxLength="16"/>

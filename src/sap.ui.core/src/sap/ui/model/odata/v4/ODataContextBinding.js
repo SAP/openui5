@@ -488,7 +488,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a single cache and sends a GET/POST request.
+	 * Creates a single cache for an operation and sends a GET/POST request.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group ID to be used for the request
@@ -513,9 +513,9 @@ sap.ui.define([
 		var bAction = oOperationMetadata.$kind === "Action",
 			oCache,
 			vEntity = fnGetEntity,
-			bHasReturnValueContext = this.hasReturnValueContext(oOperationMetadata),
 			oModel = this.oModel,
 			sMetaPath = oModel.getMetaModel().getMetaPath(sPath) + "/@$ui5.overload/0/$ReturnType",
+			sOriginalResourcePath = sPath.slice(1),
 			mParameters = jQuery.extend({}, this.oOperation.mParameters),
 			oRequestor = oModel.oRequestor;
 
@@ -523,7 +523,7 @@ sap.ui.define([
 			throw new Error("Not an operation: " + sPath);
 		}
 
-		if (this.bInheritExpandSelect && !bHasReturnValueContext) {
+		if (this.bInheritExpandSelect && !this.hasReturnValueContext(oOperationMetadata)) {
 			throw new Error("Must not set parameter $$inheritExpandSelect on binding which has "
 				+ "no return value context");
 		}
@@ -536,7 +536,9 @@ sap.ui.define([
 		sPath = oRequestor.getPathAndAddQueryOptions(sPath, oOperationMetadata, mParameters,
 			this.mCacheQueryOptions, vEntity);
 		oCache = _Cache.createSingle(oRequestor, sPath, this.mCacheQueryOptions,
-			oModel.bAutoExpandSelect, bAction, sMetaPath, bHasReturnValueContext);
+			oModel.bAutoExpandSelect, sOriginalResourcePath, bAction, sMetaPath,
+			oOperationMetadata.$ReturnType
+				&& !oOperationMetadata.$ReturnType.$Type.startsWith("Edm."));
 		this.oCachePromise = SyncPromise.resolve(oCache);
 		return bAction
 			? oCache.post(oGroupLock, mParameters, vEntity)

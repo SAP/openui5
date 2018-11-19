@@ -144,7 +144,8 @@ sap.ui.define([
 		 *   The cache
 		 */
 		createSingle : function (sResourcePath, mQueryOptions, bPost) {
-			return _Cache.createSingle(this.oRequestor, sResourcePath, mQueryOptions, false, bPost);
+			return _Cache.createSingle(this.oRequestor, sResourcePath, mQueryOptions, undefined,
+				false, bPost);
 		},
 
 		/**
@@ -238,8 +239,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_Cache: single cache with optional meta path", function (assert) {
 		var sMetaPath = "/com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM",
-			oSingleCache = _Cache.createSingle(this.oRequestor, "TEAMS('42')", undefined, false,
-				false, sMetaPath);
+			oSingleCache = _Cache.createSingle(this.oRequestor, "TEAMS('42')", undefined, undefined,
+				false, false, sMetaPath);
 
 		assert.strictEqual(oSingleCache.sMetaPath, sMetaPath);
 
@@ -1525,7 +1526,7 @@ sap.ui.define([
 		// create after the mocks have been set up, otherwise they won't be called
 		oCache = _Cache.createSingle(this.oRequestor,
 			"TEAMS(TeamId='42',IsActiveEntity=true)/name.space.EditAction",
-			{}, true, true,
+			{}, "TEAMS(...)", true, true,
 			"/TEAMS/name.space.EditAction/@$ui5.overload/0/$ReturnType",
 			true /*bFetchOperationReturnType*/);
 
@@ -2258,6 +2259,37 @@ sap.ui.define([
 			"/foo/bar/img_3.jpg");
 		assert.strictEqual(oData.value[0].foo[0].bar[0].messages[0].longtextUrl,
 			"/foo/bar/Longtext(3)");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#visitResponse: operation message", function (assert) {
+		var sResourcePath = "OperationImport(...)",
+			oCache = _Cache.createSingle(this.oRequestor, "OperationImport", {},
+				false, sResourcePath, false, undefined, true),
+			oData = {
+				messages : [{
+					message : "text"
+				}]
+			},
+			mExpectedMessages = {
+				"" : [{
+					message : "text"
+				}]
+			},
+			mTypeForMetaPath = {
+				"/OperationImport" : {
+					"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "messages"},
+					$Key : ["id"],
+					id : {$Type : "Edm.Int32"}
+				}
+			};
+
+		mExpectedMessages[""].$count = 1;
+		this.oRequestorMock.expects("reportBoundMessages")
+			.withExactArgs(sResourcePath, mExpectedMessages, undefined);
+
+		// code under test
+		oCache.visitResponse(oData, mTypeForMetaPath);
 	});
 
 	//*********************************************************************************************
@@ -4100,7 +4132,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(Promise.resolve(mTypeForMetaPath)));
 
 		oCache = _Cache.createSingle(this.oRequestor, sResourcePath, mQueryParams, true, undefined,
-			sMetaPath);
+			undefined, sMetaPath);
 		oCacheMock = this.mock(oCache);
 
 		oCacheMock.expects("registerChange").withExactArgs(undefined, sinon.match.same(oListener1));
@@ -4163,8 +4195,8 @@ sap.ui.define([
 		this.mock(_Cache.prototype).expects("fetchTypes")
 			.returns(SyncPromise.resolve(Promise.resolve(mTypeForMetaPath)));
 
-		oCache = _Cache.createSingle(this.oRequestor, sResourcePath, mQueryParams, true, undefined,
-			sMetaPath, true);
+		oCache = _Cache.createSingle(this.oRequestor, sResourcePath, mQueryParams, true,
+			sResourcePath + "(...)", undefined, sMetaPath, true);
 		oCacheMock = this.mock(oCache);
 
 		this.oRequestorMock.expects("request")
@@ -4313,8 +4345,8 @@ sap.ui.define([
 			var oGroupLock = new _GroupLock("group"),
 				sMetaPath = "/TEAMS/name.space.EditAction/@$ui5.overload/0/$ReturnType",
 				sResourcePath = "TEAMS(TeamId='42',IsActiveEntity=true)/name.space.EditAction",
-				oCache = _Cache.createSingle(this.oRequestor, sResourcePath, {}, true, true,
-					sMetaPath, bFetchOperationReturnType),
+				oCache = _Cache.createSingle(this.oRequestor, sResourcePath, {}, true,
+					sResourcePath + "(...)", true, sMetaPath, bFetchOperationReturnType),
 				oReturnValue = {},
 				mTypes = {};
 
@@ -4324,13 +4356,11 @@ sap.ui.define([
 					{"If-Match" : undefined}, undefined)
 				.resolves(oReturnValue);
 			this.mock(oCache).expects("fetchTypes")
-				.exactly(bFetchOperationReturnType ? 1 : 0)
 				.withExactArgs()
 				.resolves(mTypes);
 			this.mock(oCache).expects("visitResponse")
-				.exactly(bFetchOperationReturnType ? 1 : 0)
 				.withExactArgs(sinon.match.same(oReturnValue), sinon.match.same(mTypes),
-					sMetaPath + "/$Type");
+					bFetchOperationReturnType ? sMetaPath + "/$Type" : undefined);
 
 			// code under test
 			return oCache.post(oGroupLock);
