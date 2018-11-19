@@ -9,7 +9,7 @@ sap.ui.define([
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/core/ResizeHandler',
-	'sap/ui/core/Item',
+	'sap/ui/core/ListItem',
 	'sap/ui/core/IconPool',
 	'./SegmentedButtonRenderer'
 ],
@@ -19,7 +19,7 @@ function(
 	EnabledPropagator,
 	ItemNavigation,
 	ResizeHandler,
-	Item,
+	ListItem,
 	IconPool,
 	SegmentedButtonRenderer
 	) {
@@ -892,6 +892,7 @@ function(
 		var iKey = 0,
 			iSelectedKey = 0,
 			sButtonText,
+			sButtonIcon,
 			oSelect = this.getAggregation("_select");
 
 
@@ -902,8 +903,10 @@ function(
 		oSelect.destroyItems();
 		this._getVisibleButtons().forEach(function (oButton) {
 			sButtonText = oButton.getText();
-			oSelect.addItem(new Item({
+			sButtonIcon = oButton.getIcon();
+			oSelect.addItem(new ListItem({
 				key: iKey.toString(),
+				icon: sButtonIcon ? sButtonIcon : "",
 				text: sButtonText ? sButtonText : oButton.getTooltip_AsString(),
 				enabled: oButton.getEnabled()
 			}));
