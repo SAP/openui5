@@ -16,7 +16,7 @@ sap.ui.define([
 			// configure
 			MockServer.config({
 				autoRespond: true,
-				autoRespondAfter: 1000
+				autoRespondAfter: 500
 			});
 
 			sLocalServicePath = sap.ui.require.toUrl("sap/ui/table/sample/TreeTable/BasicODataTreeBinding/") + "localService";
