@@ -12,9 +12,9 @@ sap.ui.define([
 	"use strict";
 
     var _ControlSelectorValidator = ManagedObject.extend("sap.ui.test.selectors._ControlSelectorValidator", {
-        constructor: function (aSelectors, mValidationAncestor) {
+        constructor: function (aSelectors, oValidationAncestor) {
             this.aSelectors = aSelectors;
-            this.mValidationAncestor = mValidationAncestor;
+            this.oValidationAncestor = oValidationAncestor;
             this._oLogger = _OpaLogger.getLogger("sap.ui.test.selectors._ControlSelectorValidator");
         },
 
@@ -24,10 +24,10 @@ sap.ui.define([
                 // use $.extend because _findControls will manipulate the selector object
                 var aLocatedControls = _ControlFinder._findControls($.extend({}, mSelector));
 
-                if (this.validationAncestor && aLocatedControls.length > 1) {
+                if (this.oValidationAncestor && aLocatedControls.length > 1) {
                     // the control should be unique among siblings
                     aLocatedControls = aLocatedControls.filter(function (oControl) {
-                        return this._hasAncestor(oControl, this.validationAncestor);
+                        return this._hasAncestor(oControl, this.oValidationAncestor);
                     }.bind(this));
                 }
 
