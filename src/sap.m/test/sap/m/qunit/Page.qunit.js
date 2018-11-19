@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/OverflowToolbar",
 	"sap/ui/Device",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/core/theming/Parameters",
 	"jquery.sap.global"
 ], function(
@@ -26,6 +27,7 @@ sap.ui.define([
 	JSONModel,
 	OverflowToolbar,
 	Device,
+	waitForThemeApplied,
 	Parameters,
 	jQuery
 ) {
@@ -685,4 +687,6 @@ sap.ui.define([
 		oSpy.restore();
 		oControl.destroy();
 	});
+
+	return waitForThemeApplied();
 });
