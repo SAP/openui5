@@ -26,6 +26,7 @@
                         <f:Card id="kpicard2" manifest="{manifests>/kpiManifests/kpicard2}"/>
                         <f:Card id="kpicard3" manifest="{manifests>/kpiManifests/kpicard3}"/>
                         <f:Card id="kpicard4" manifest="{manifests>/kpiManifests/kpicard4}"/>
+                        <f:Card id="kpicard5" manifest="{manifests>/kpiManifests/tablecard1}"/>
                     </grid:items>
                 </grid:CSSGrid>
             </Panel>
