@@ -1,9 +1,13 @@
 /* global QUnit*/
 
 sap.ui.define([
-	'sap/ui/dt/Util'
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/dt/Util"
 ],
 function(
+	jQuery,
+	sinon,
 	Util
 ) {
 	'use strict';
@@ -288,26 +292,24 @@ function(
 
 	QUnit.module('debounce()', function() {
 		QUnit.test("when a function is called with a timeout several times", function(assert) {
+			var clock = sinon.useFakeTimers();
 			var done = assert.async();
 			var iFunctionCalled = 0;
 			var iDebounceCalled = 0;
 			var fnDebounce = Util.debounce(function() {
 				iDebounceCalled++;
-				assert.equal(iFunctionCalled, 5, "the function was called 10 times");
+				assert.equal(iFunctionCalled, 5, "the function was called 5 times");
 				assert.equal(iDebounceCalled, 1, "the debounce callback was only called once");
+				clock.restore();
 				done();
-			}, 15);
+			}, 20);
 
-			function callDebounceDelayed() {
-				setTimeout(function() {
-					iFunctionCalled++;
-					fnDebounce();
-					if (iFunctionCalled < 5) {
-						callDebounceDelayed();
-					}
-				}, 10);
+			for (var i = 0; i < 5; i++) {
+				iFunctionCalled++;
+				fnDebounce();
+				clock.tick(11);
 			}
-			callDebounceDelayed();
+			clock.tick(10);
 		});
 	});
 
