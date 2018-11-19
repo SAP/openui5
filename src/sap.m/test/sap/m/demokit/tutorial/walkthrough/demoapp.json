@@ -1,5 +1,5 @@
 {
-	"cwd": "test-resources/sap/m/demokit/tutorial/walkthrough/37/",
+	"cwd": "test-resources/sap/m/demokit/tutorial/walkthrough/38/",
 	"files" : [
 		"webapp/Component.js",
 		"webapp/control/ProductRating.js",
