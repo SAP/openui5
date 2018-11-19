@@ -161,8 +161,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/model/json/JS
 			}
 
 			if (oRequest) {
-				Data.fetch(oRequest).then(function (oData) {
-					this._updateModel(oData, oData.path);
+				Data.fetch(oRequest).then(function (data) {
+					this._updateModel(data, oData.path);
 				}.bind(this)).catch(function (oError) {
 					// TODO: Handle errors. Maybe add error message
 				});

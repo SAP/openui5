@@ -30,9 +30,15 @@
 		"usage": "The chosen card container is a CSSGrid and stable UI is NOT needed."
 	},
     {
-      "title": "Content List Card",
-      "description": "This is a playground for development purposes only",
+      "title": "List Card",
+      "description": "Example page for Card of type List",
       "route": "listContent",
+      "usage": "Development purposes only!"
+    },
+    {
+      "title": "Table Card",
+      "description": "Example page for Card of type Table",
+      "route": "tableContent",
       "usage": "Development purposes only!"
     }
 ]

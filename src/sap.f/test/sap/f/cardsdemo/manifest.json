@@ -77,10 +77,14 @@
 		"pattern": "nolayout",
 		"name": "nolayout",
 		"target": "nolayout"
-	  },{
+	  }, {
         "pattern": "listContent",
         "name": "listContent",
         "target": "listContent"
+      }, {
+        "pattern": "tableContent",
+        "name": "tableContent",
+        "target": "tableContent"
       }
       ],
 	  "targets": {
@@ -122,6 +126,11 @@
         "listContent": {
           "viewId": "listContent",
           "viewName": "ListContent",
+          "viewLevel": 1
+        },
+        "tableContent": {
+          "viewId": "tableContent",
+          "viewName": "TableContent",
           "viewLevel": 1
         }
 	  }

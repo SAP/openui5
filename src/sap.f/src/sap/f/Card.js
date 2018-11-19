@@ -5,7 +5,6 @@
 sap.ui.define([
 	"./library",
 	"sap/ui/core/Control",
-	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Manifest",
 	"sap/f/CardManifest",
 	"sap/base/Log",
@@ -15,7 +14,6 @@ sap.ui.define([
 ], function (
 	library,
 	Control,
-	ComponentContainer,
 	Manifest,
 	CardManifest,
 	Log,
@@ -24,6 +22,9 @@ sap.ui.define([
 	Avatar
 ) {
 	"use strict";
+
+	var aCardContentTypes = ["List", "KPI", "Table"];
+
 	/**
 	 * Constructor for a new <code>Card</code>.
 	 *
@@ -191,7 +192,7 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	Card.prototype.setPropertyFromManifest = function (sProperty, sFromPath, sFromAlternativePath) {
+	Card.prototype._setPropertyFromManifest = function (sProperty, sFromPath, sFromAlternativePath) {
 		if (this._oCardManifest && this.isPropertyInitial(sProperty)) {
 			var vValue;
 			if (sFromPath) {
@@ -222,17 +223,24 @@ sap.ui.define([
 		this._createTitle();
 		this._createSubTitle();
 		this._createAvatar();
-		this.setPropertyFromManifest("subTitle");
-		this.setPropertyFromManifest("icon");
-		this.setPropertyFromManifest("iconColor");
-		this.setPropertyFromManifest("iconBackgroundColor");
-		this.setPropertyFromManifest("backgroundColor");
-		this.setPropertyFromManifest("color");
-		this.setPropertyFromManifest("backgroundImage");
-		this.setPropertyFromManifest("backgroundSize");
+
+		this._setPropertyFromManifest("subTitle");
+		this._setPropertyFromManifest("icon");
+		this._setPropertyFromManifest("iconColor");
+		this._setPropertyFromManifest("iconBackgroundColor");
+		this._setPropertyFromManifest("backgroundColor");
+		this._setPropertyFromManifest("color");
+		this._setPropertyFromManifest("backgroundImage");
+		this._setPropertyFromManifest("backgroundSize");
+
+		this._setContent(sComponentName);
+	};
+
+	Card.prototype._setContent = function (sComponentName) {
 		var sCardType = this._oCardManifest.get("sap.card/type");
-		if (sCardType === "CustomCard") {
-			if (sComponentName) {
+
+		if (sCardType === "CustomCard" && sComponentName) {
+			sap.ui.require(["sap/ui/core/ComponentContainer"], function (ComponentContainer) {
 				var oContent = new ComponentContainer({
 					name: sComponentName,
 					async: true,
@@ -240,21 +248,13 @@ sap.ui.define([
 					settings: {}
 				});
 				this.setContent(oContent);
-			}
-			this.setBusy(false);
-		} else if (sCardType === "List") {
-			sap.ui.require(["sap/f/cards/content/List"], function (List) {
-				var mSettings = this._oCardManifest.get("sap.card/content");
-				var oClonedSettings = jQuery.extend(true, {}, mSettings);
-				var oContent = new List(oClonedSettings);
-				this.setContent(oContent);
 				this.setBusy(false);
 			}.bind(this));
-		} else if (sCardType === "KPI") {
-			sap.ui.require(["sap/f/cards/content/KPI"], function (KPI) {
-				var mSettings = this._oCardManifest.get("sap.card/settings");
+		} else if (aCardContentTypes.indexOf(sCardType) > -1) {
+			sap.ui.require(["sap/f/cards/content/" + sCardType], function (CardContent) {
+				var mSettings = this._oCardManifest.get("sap.card/content");
 				var oClonedSettings = jQuery.extend(true, {}, mSettings);
-				var oContent = new KPI(oClonedSettings);
+				var oContent = new CardContent(oClonedSettings);
 				this.setContent(oContent);
 				this.setBusy(false);
 			}.bind(this));
