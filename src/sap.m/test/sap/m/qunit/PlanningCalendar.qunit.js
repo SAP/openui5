@@ -1193,6 +1193,16 @@ sap.ui.define([
 		var aTest = sStyle.match(/height:(\s?)(\d+(.?)(\d+))/);
 		var iheight = aTest ? aTest[2] : 0;
 		assert.equal(iheight, 90 + "", "height set on DOM");
+
+		// set fixed height because when in percent computed initially value in pixels
+		// differs with 1 or 2 pixels from the "final" value
+		oPC1.setHeight("800px");
+		sap.ui.getCore().applyChanges();
+		var $Table = oPC1.getDomRef().querySelector("table");
+
+		// Table height is the PlanningCalendar height minus the height of the toolbars
+		var sStyle = oPC1.$().height() - oPC1._oInfoToolbar.$().height() - oPC1._oToolbar.$().height() + "px";
+		assert.equal($Table.style.height, sStyle, "The height is set correctly to the Table");
 	});
 
 	QUnit.test("showIntervalHeaders", function(assert) {
