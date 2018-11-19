@@ -295,6 +295,19 @@ function(
 			assert.equal(fnGetOwnerIdForControl.callCount, 3);
 		});
 
+		QUnit.test("_getComponentIdForControl shall return an empty string if component id is not found without any errors", function (assert) {
+			var oButton = new Button();
+			var oLayout = new VerticalLayout({
+				content: [
+					oButton
+				]
+			});
+			var spyConsole = sandbox.spy(console, "assert");
+			assert.strictEqual(Utils._getComponentIdForControl(oButton), "");
+			assert.ok(spyConsole.notCalled);
+			oLayout.destroy();
+		});
+
 		QUnit.test("getComponentName shall return the component name for a component", function (assert) {
 			var oMetadata = {
 				_sComponentName: 'testcomponent.Component',
