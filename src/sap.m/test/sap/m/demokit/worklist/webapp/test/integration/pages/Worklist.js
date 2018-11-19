@@ -1,12 +1,12 @@
 sap.ui.define([
-    "sap/ui/test/Opa5",
-    "sap/ui/test/actions/Press",
-    "sap/ui/test/actions/EnterText",
-    "sap/ui/test/matchers/AggregationLengthEquals",
-    "sap/ui/test/matchers/AggregationFilled",
-    "sap/ui/test/matchers/PropertyStrictEquals",
-    "./Common",
-    "./shareOptions"
+	"sap/ui/test/Opa5",
+	"sap/ui/test/actions/Press",
+	"sap/ui/test/actions/EnterText",
+	"sap/ui/test/matchers/AggregationLengthEquals",
+	"sap/ui/test/matchers/AggregationFilled",
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"./Common",
+	"./shareOptions"
 ], function(
     Opa5,
 	Press,
