@@ -263,7 +263,8 @@ sap.ui.define([
 				});
 		}
 
-		// relative binding with parameters which are not query options (such as $$groupId)
+		// relative list or context binding with parameters which are not query options
+		// (such as $$groupId)
 		if (this.mParameters && Object.keys(this.mParameters).length) {
 			return oQueryOptionsPromise;
 		}

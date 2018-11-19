@@ -170,6 +170,8 @@ sap.ui.define([
 					: {source : "model/RMTSAMPLEFLIGHT.metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
 					: {source : "odata/v4/data/metadata.xml"},
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?c1=a&c2=b"
+					: {source : "odata/v4/data/metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
 					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
 				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata"
@@ -6580,6 +6582,29 @@ sap.ui.define([
 		{"ProductSet('HT-1000')/CreatedAt" : {"d" : {"CreatedAt" : "/Date(1502323200000)/"}}},
 		{"text" : "2017-08-10T00:00:00.0000000Z"},
 		"createModelForV2SalesOrderService"
+	);
+
+	//*********************************************************************************************
+	// Scenario: Absolute ODataPropertyBinding with custom query options. CPOUI5UISERVICESV3-1590.
+	testViewStart("Absolute ODataPropertyBinding with custom query options",
+		'<Text id="text" text="{path: \'/TEAMS(\\\'42\\\')/Name\',\
+			parameters : {custom : \'foo\', c2 : \'x\'}}"/>',
+		{"TEAMS('42')/Name?c1=a&c2=x&custom=foo" : {"value" : "Business Suite"}},
+		{"text" : "Business Suite"},
+		createModel(sTeaBusi + "?c1=a&c2=b")
+	);
+
+	//*********************************************************************************************
+	// Scenario: Relative ODataPropertyBinding with parameters like custom query options or
+	// $$groupId never sends own request. CPOUI5UISERVICESV3-1590.
+	testViewStart("Relative ODataPropertyBinding with parameters",
+		'<FlexBox binding="{/TEAMS(\'42\')}">\
+			<Text id="text" text="{path: \'Name\',\
+				parameters : {custom : \'foo\', $$groupId : \'binding\'}}" />\
+		</FlexBox>',
+		{"TEAMS('42')" : {"Name" : "Business Suite"}},
+		{"text" : "Business Suite"},
+		createTeaBusiModel()
 	);
 
 	//*********************************************************************************************

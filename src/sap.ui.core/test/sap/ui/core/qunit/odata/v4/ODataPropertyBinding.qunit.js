@@ -1636,8 +1636,16 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("doFetchQueryOptions", function (assert) {
-		var oBinding = this.oModel.bindProperty("foo"),
+		var oBinding = this.oModel.bindProperty("path", undefined, {custom : "foo"}),
 			oPromise;
+
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
+
+		// code under test
+		assert.deepEqual(oBinding.doFetchQueryOptions().getResult(), {custom : "foo"});
+
+		oBinding = this.oModel.bindProperty("path", undefined, {custom : "foo"});
+		this.mock(oBinding).expects("isRoot").twice().withExactArgs().returns(false);
 
 		// code under test
 		oPromise = oBinding.doFetchQueryOptions();
@@ -1647,6 +1655,31 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oBinding.doFetchQueryOptions(), oPromise,
 			"all bindings share the same promise");
+	});
+
+	//*********************************************************************************************
+	[{
+		path : "/absolute",
+		context : undefined,
+		result : true
+	}, {
+		path : "relative",
+		context : undefined,
+		result : false
+	}, {
+		path : "quasiAbsolute",
+		context : {getPath : function () {}},
+		result : true
+	}, {
+		path : "relativeToV4Context",
+		context : {getPath : function () {}, getBinding : function () {}},
+		result : false
+	}].forEach(function (oFixture, i) {
+		QUnit.test("isRoot, " + i, function (assert) {
+			var oBinding = this.oModel.bindProperty(oFixture.path, oFixture.context);
+
+			assert.strictEqual(!!oBinding.isRoot(), oFixture.result);
+		});
 	});
 
 	//*********************************************************************************************
