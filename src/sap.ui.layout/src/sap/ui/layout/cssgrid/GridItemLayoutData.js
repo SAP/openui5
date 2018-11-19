@@ -124,6 +124,11 @@ sap.ui.define([
 	 */
 	GridItemLayoutData._getElement = function (oItem) {
 		var oItemDom = oItem.getDomRef();
+
+		if (!oItemDom) {
+			return undefined;
+		}
+
 		var oWrapper = oItemDom.parentNode;
 
 		if (oWrapper && oWrapper.classList.contains("sapUiLayoutCSSGridItemWrapper")) {
