@@ -114,11 +114,7 @@
 															   class="sapUiDocumentationParamsTable">
 												<custom:Row>
 													<custom:ParamText text="{name}" phoneText="{phoneName}" depth="{depth}" optional="{optional}"/>
-													<layout:VerticalLayout content="{path: 'types', templateShareable: 'false'}" width="100%">
-														<m:Link text="{name}"
-																href="#/api/{name}"
-																enabled="{= !!${linkEnabled} }"/>
-													</layout:VerticalLayout>
+													<m:Text text="{type}" wrapping="false"/>
 													<m:Text text="{defaultValue}" wrapping="false"/>
 													<custom:JSDocText text="{description}"/>
 												</custom:Row>
@@ -130,13 +126,7 @@
 															   columnTitles="Returns,Description"
 															   class="sapUiDocumentation2ColumnsEqualTable">
 												<custom:Row>
-													<layout:VerticalLayout class="sapUiDocumentationOrList" width="100%">
-														<template:repeat list="{data>/returnValue/types}" var="rtype">
-															<m:Link text="{rtype>value}"
-																	href="#/api/{= ${path: 'rtype>value'}.replace('[]', '') }"
-																	enabled="{= !!${rtype>linkEnabled} }"/>
-														</template:repeat>
-													</layout:VerticalLayout>
+													<m:Text text="{data>/returnValue/type}" wrapping="false"/>
 													<custom:JSDocText text="{path: 'data>/returnValue/description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 												</custom:Row>
 											</custom:LightTable>
