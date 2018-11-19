@@ -11,16 +11,20 @@
 				 margin: 10px;
 			}
 		</style>
-		<script src="shared-config.js"></script>
-		<script src="../../../resources/sap-ui-core.js"
+		<script src="../shared-config.js"></script>
+		<script src="../../../../resources/sap-ui-core.js"
 				id="sap-ui-bootstrap"
 				data-sap-ui-libs="sap.m, sap.ui.layout">
 		</script>
 
 		<script>
+			var oIcon = new sap.ui.core.Icon({
+				src: "sap-icon://help"
+			});
+
 			var oLightBox = new sap.m.LightBox('lB1', {
 				imageContent: new sap.m.LightBoxItem({
-					imageSrc: 'images/demo/nature/elephant.jpg',
+					imageSrc: '../images/demo/nature/elephant.jpg',
 					title: 'I am a title',
 					subtitle: 'Sample image',
 					alt: 'picture of elephant'
@@ -29,7 +33,7 @@
 
 			var oLightBoxBig = new sap.m.LightBox('lB2', {
 				imageContent: new sap.m.LightBoxItem({
-					imageSrc: 'images/demo/nature/aLotOfElephants.jpg',
+					imageSrc: '../images/demo/nature/aLotOfElephants.jpg',
 					title: 'I am a title',
 					subtitle: 'Very big image',
 					alt: 'picture of elephant'
@@ -41,7 +45,7 @@
 					title: 'I am a title',
 					subtitle: 'Big horizontal image',
 					alt: 'picture of elephant',
-					imageSrc: 'images/demo/nature/horses.jpg'
+					imageSrc: '../images/demo/nature/horses.jpg'
 				})
 			});
 
@@ -50,7 +54,7 @@
 					title: 'I am a title',
 					subtitle: 'Big vertical image',
 					alt: 'picture of flat fish',
-					imageSrc: 'images/demo/nature/flatFish.jpg'
+					imageSrc: '../images/demo/nature/flatFish.jpg'
 				})
 			});
 
@@ -59,7 +63,7 @@
 					title: 'I am a title',
 					subtitle: 'Image smaller than the minimal size of the light box',
 					alt: 'picture of elephant',
-					imageSrc: 'images/demo/smallImgs/150x150.jpg'
+					imageSrc: '../images/demo/smallImgs/150x150.jpg'
 				})
 			});
 
@@ -68,7 +72,7 @@
 					title: 'Image with small width but',
 					subtitle: 'height bigger than the min size of the light box',
 					alt: 'picture of elephant',
-					imageSrc: 'images/demo/smallImgs/150x288.jpg'
+					imageSrc: '../images/demo/smallImgs/150x288.jpg'
 				})
 			});
 
@@ -77,7 +81,7 @@
 					title: 'Image with small height but',
 					subtitle: 'width bigger than the min size of the light box',
 					alt: 'picture of elephant',
-					imageSrc: 'images/demo/smallImgs/320x150.jpg'
+					imageSrc: '../images/demo/smallImgs/320x150.jpg'
 				})
 			});
 
@@ -98,7 +102,7 @@
 			});
 
 			var oImage = new sap.m.Image('image1', {
-				src: 'images/demo/nature/elephant.jpg',
+				src: '../images/demo/nature/elephant.jpg',
 				alt: 'click to open the lightbox',
 				decorative: false,
 				width: '100px',
@@ -107,7 +111,7 @@
 			});
 
 			var oImageBigPicture = new sap.m.Image('image2', {
-				src: 'images/demo/nature/ALotOfElephants_small.jpg',
+				src: '../images/demo/nature/ALotOfElephants_small.jpg',
 				alt: 'click to open the lightbox',
 				decorative: false,
 				width: '100px',
@@ -116,7 +120,7 @@
 			});
 
 			var oImageHorizontal = new sap.m.Image('image3', {
-				src: 'images/demo/nature/horses.jpg',
+				src: '../images/demo/nature/horses.jpg',
 				alt: 'click to open the lightbox',
 				decorative: false,
 				width: '100px',
@@ -125,7 +129,7 @@
 			});
 
 			var oImageVertical = new sap.m.Image('image4', {
-				src: 'images/demo/nature/flatFish.jpg',
+				src: '../images/demo/nature/flatFish.jpg',
 				alt: 'click to open the lightbox',
 				decorative: false,
 				width: '100px',
@@ -134,7 +138,7 @@
 			});
 
 			var oImageSquare = new sap.m.Image('image5', {
-				src: 'images/demo/smallImgs/150x150.jpg',
+				src: '../images/demo/smallImgs/150x150.jpg',
 				alt: 'click to open the lightbox',
 				decorative: false,
 				width: '100px',
@@ -143,7 +147,7 @@
 			});
 
 			var oImageVerticalMin = new sap.m.Image('image6', {
-				src: 'images/demo/smallImgs/150x288.jpg',
+				src: '../images/demo/smallImgs/150x288.jpg',
 				alt: 'click to open the lightbox',
 				decorative: false,
 				width: '100px',
@@ -152,7 +156,7 @@
 			});
 
 			var oImageHorizontalMin = new sap.m.Image('image7', {
-				src: 'images/demo/smallImgs/320x150.jpg',
+				src: '../images/demo/smallImgs/320x150.jpg',
 				alt: 'click to open the lightbox',
 				decorative: false,
 				width: '100px',
@@ -161,7 +165,7 @@
 			});
 
 			var oInvalidImage = new sap.m.Image('image8', {
-				src: 'images/demo/nature/elephant.jpg',
+				src: '../images/demo/nature/elephant.jpg',
 				alt: 'opens light box with image that has a wrong source set. The lightbox will display an error message',
 				decorative: false,
 				width: '100px',
@@ -170,7 +174,7 @@
 			});
 
 			var oInvalidImage2 = new sap.m.Image('image9', {
-				src: 'images/SAPUI5Icon.png',
+				src: '../images/SAPUI5Icon.png',
 				alt: 'opens light box with image that has a wrong source set. The lightbox will display an error message',
 				decorative: false,
 				width: "88px",
@@ -179,13 +183,6 @@
 				mode: sap.m.ImageMode.Background,
 				detailBox: oLightBoxInvalidImage2,
 				densityAware: false
-			});
-
-			var compactSizeButton = new sap.m.Button('toggleCompactModeButton', {
-				text : 'Toggle Compact mode',
-				press : function() {
-					jQuery('body').toggleClass('sapUiSizeCompact');
-				}
 			});
 
 			var oPage = new sap.m.Page("myPage", {
@@ -198,8 +195,7 @@
 					oImageVerticalMin,
 					oImageHorizontalMin,
 					oInvalidImage,
-					oInvalidImage2,
-					compactSizeButton
+					oInvalidImage2
 				]
 			});
 

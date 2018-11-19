@@ -152,7 +152,7 @@
 		},
 		{
 			"control": "sap.m.LightBox",
-			"url": "../LightBox.html",
+			"url": "LightBox.html",
 			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
@@ -238,12 +238,12 @@
 		},
 		{
 			"control": "sap.m.NotificationListGroup",
-			"url": "../NotificationListGroup.html",
+			"url": "NotificationListGroup.html",
 			"appComponent" : "CA-UI5-CTR-ROD"
 		},
 		{
 			"control": "sap.m.NotificationListItem",
-			"url": "../NotificationListItem.html",
+			"url": "NotificationListItem.html",
 			"appComponent" : "CA-UI5-CTR-ROD"
 		},
 		{
