@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
-	"sap/m/MessageBox",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/UriParameters"
@@ -14,7 +13,6 @@ sap.ui.define([
 	RtaUtils,
 	FlexUtils,
 	AppVariantUtils,
-	MessageBox,
 	BusyIndicator,
 	jQuery,
 	UriParameters

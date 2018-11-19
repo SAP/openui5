@@ -54,7 +54,7 @@ sap.ui.define([
 
 			// Stubbing checkFlpCustomizingIsReady
 			var checkFlpCustomizingIsReadyStub = sinon.stub( oS4HanaCloudBackend, "checkFlpCustomizingIsReady" );
-			checkFlpCustomizingIsReadyStub.withArgs('VALID_IAM_ID').returns( Promise.resolve( true ) );
+			checkFlpCustomizingIsReadyStub.withArgs('VALID_IAM_ID').resolves( true );
 
 			function isReady( sIamAppId ) {
 				assert.equal(sIamAppId, "VALID_IAM_ID", "then notifyFlpCustomizingIsReady calls isReady( \"VALID_IAM_ID\" )");
@@ -78,9 +78,9 @@ sap.ui.define([
 
 			// Stubbing checkFlpCustomizingIsReady
 			var checkFlpCustomizingIsReadyStub = sinon.stub( oS4HanaCloudBackend, "checkFlpCustomizingIsReady" );
-			checkFlpCustomizingIsReadyStub.withArgs('VALID_IAM_ID').onFirstCall().returns( Promise.resolve( false ) );
-			checkFlpCustomizingIsReadyStub.onSecondCall().returns( Promise.resolve( false ) );
-			checkFlpCustomizingIsReadyStub.onThirdCall().returns( Promise.resolve( true ) );
+			checkFlpCustomizingIsReadyStub.withArgs('VALID_IAM_ID').onFirstCall().resolves( false );
+			checkFlpCustomizingIsReadyStub.onSecondCall().resolves( false );
+			checkFlpCustomizingIsReadyStub.onThirdCall().resolves( true );
 
 			function isReady( sIamAppId ) {
 				assert.equal(sIamAppId, "VALID_IAM_ID", "then finally notifyFlpCustomizingIsReady calls isReady( \"VALID_IAM_ID\" )");
@@ -108,9 +108,9 @@ sap.ui.define([
 
 			// Stubbing checkFlpCustomizingIsReady
 			var checkFlpCustomizingIsReadyStub = sinon.stub( oS4HanaCloudBackend, "checkFlpCustomizingIsReady" );
-			checkFlpCustomizingIsReadyStub.withArgs('VALID_IAM_ID').onFirstCall().returns( Promise.resolve( false ) );
-			checkFlpCustomizingIsReadyStub.onSecondCall().returns( Promise.resolve( false ) );
-			checkFlpCustomizingIsReadyStub.onThirdCall().returns( Promise.resolve( false ) );
+			checkFlpCustomizingIsReadyStub.withArgs('VALID_IAM_ID').onFirstCall().resolves( false );
+			checkFlpCustomizingIsReadyStub.onSecondCall().resolves( false );
+			checkFlpCustomizingIsReadyStub.onThirdCall().resolves( false );
 
 			function isReady() {
 				throw "isReady must not be called";

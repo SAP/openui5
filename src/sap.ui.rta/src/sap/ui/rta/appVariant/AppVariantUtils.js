@@ -6,8 +6,11 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/Utils",
 	"sap/m/MessageBox",
+	"sap/m/MessageToast",
 	"sap/ui/rta/Utils",
 	"sap/ui/fl/descriptorRelated/internal/Utils",
+	"sap/ui/fl/transport/TransportSelection",
+	"sap/ui/fl/transport/Transports",
 	"sap/base/util/uid",
 	"sap/base/Log",
 	"sap/ui/thirdparty/hasher"
@@ -17,8 +20,11 @@ sap.ui.define([
 		DescriptorInlineChangeFactory,
 		FlexUtils,
 		MessageBox,
+		MessageToast,
 		RtaUtils,
 		DescriptorUtils,
+		TransportSelection,
+		Transports,
 		uid,
 		Log,
 		hasher
@@ -335,7 +341,12 @@ sap.ui.define([
 		};
 
 		AppVariantUtils.showRelevantDialog = function(oInfo, bSuccessful) {
-			var sTitle, sRightButtonText;
+			var sTitle,
+				sRightButtonText,
+				sOKButtonText,
+				sCopyIdButtonText,
+				aActions = [];
+
 			if (bSuccessful) {
 				sTitle = this.getText("SAVE_APP_VARIANT_SUCCESS_MESSAGE_TITLE");
 				sRightButtonText = this.getText("SAVE_APP_VARIANT_OK_TEXT");
@@ -344,13 +355,14 @@ sap.ui.define([
 				sRightButtonText = this.getText("SAVE_APP_VARIANT_CLOSE_TEXT");
 			}
 
-			var sCopyIdButtonText;
-
-			var aActions = [];
-
-			if (oInfo.copyId) {
+			if (oInfo && oInfo.copyId) {
 				sCopyIdButtonText = this.getText("SAVE_APP_VARIANT_COPY_ID_TEXT");
 				aActions.push(sCopyIdButtonText);
+			} else if (oInfo && oInfo.deleteAppVariant) {
+				sTitle = this.getText("DELETE_APP_VARIANT_INFO_MESSAGE_TITLE");
+				sOKButtonText = this.getText("DELETE_APP_VARIANT_OK_TEXT");
+				aActions.push(sOKButtonText);
+				sRightButtonText = this.getText("DELETE_APP_VARIANT_CLOSE_TEXT");
 			}
 
 			aActions.push(sRightButtonText);
@@ -364,6 +376,10 @@ sap.ui.define([
 						resolve();
 					} else if (oInfo.overviewDialog && sAction === sRightButtonText) {
 						resolve(false);
+					} else if (oInfo.deleteAppVariant && sAction === sOKButtonText) {
+						resolve();
+					} else if (oInfo.deleteAppVariant && sAction === sRightButtonText) {
+						reject();
 					} else if (sAction === sRightButtonText) {
 						reject();
 					} else if (sAction === sCopyIdButtonText) {
@@ -373,7 +389,7 @@ sap.ui.define([
 				};
 
 				MessageBox.show(oInfo.text, {
-					icon: bSuccessful ? MessageBox.Icon.INFORMATION : MessageBox.Icon.ERROR,
+					icon: (bSuccessful || oInfo.deleteAppVariant) ? MessageBox.Icon.INFORMATION : MessageBox.Icon.ERROR,
 					onClose : fnCallback,
 					title: sTitle,
 					actions: aActions,
@@ -386,10 +402,84 @@ sap.ui.define([
 			sap.ui.getCore().getEventBus().publish("sap.ui.rta.appVariant.manageApps.controller.ManageApps", "navigate");
 		};
 
+		/**
+		 * Navigates to the Fiorilaunchpad
+		 */
+		AppVariantUtils.navigateToFLPHomepage = function() {
+			var oApplication = sap.ushell.services.AppConfiguration.getCurrentApplication();
+			var oComponentInstance = oApplication.componentHandle.getInstance();
+
+			if (oComponentInstance) {
+				var oCrossAppNav = sap.ushell.Container.getService("CrossApplicationNavigation");
+				if (oCrossAppNav.toExternal){
+					oCrossAppNav.toExternal({target: {shellHash: "#"}}, oComponentInstance);
+				}
+			}
+
+			return Promise.resolve();
+		};
+
+		AppVariantUtils.onTransportInDialogSelected = function(oAppVariantDescriptor, oTransportInfo){
+			if (oTransportInfo){
+				if (oTransportInfo.transport && oTransportInfo.packageName !== "$TMP") {
+					if (oTransportInfo.transport) {
+						return oAppVariantDescriptor.setTransportRequest(oTransportInfo.transport).then(function() {
+							return oAppVariantDescriptor;
+						});
+					}
+				}
+				return Promise.resolve(oAppVariantDescriptor);
+			}
+			return Promise.resolve(false);
+		};
+
+		AppVariantUtils.openTransportSelection = function(oTransportInput) {
+			var oTransportSelection = new TransportSelection();
+			return oTransportSelection.openTransportSelection(oTransportInput, this, RtaUtils.getRtaStyleClassName());
+		};
+
 		AppVariantUtils.triggerDeleteAppVariantFromLREP = function(sAppVariantId) {
 			return DescriptorVariantFactory.createDeletion(sAppVariantId).then(function(oAppVariantDescriptor) {
-				return oAppVariantDescriptor.submit();
-			});
+				var sNamespace = oAppVariantDescriptor.getNamespace();
+				var oTransportInput = this.getTransportInput("", sNamespace, "manifest", "appdescr_variant");
+
+				var mTransportObject = {};
+				if (oTransportInput) {
+					mTransportObject.package = oTransportInput.getPackage();
+					mTransportObject.namespace = oTransportInput.getNamespace();
+					mTransportObject.name = oTransportInput.getId();
+					mTransportObject.type = oTransportInput.getDefinition().fileType;
+				}
+
+				var oTransports = new Transports();
+
+				return oTransports.getTransports(mTransportObject).then(function(oGetTransportsResult) {
+					if (!oGetTransportsResult.localonly && oGetTransportsResult.transports.length === 0 && !this.isS4HanaCloud(oAppVariantDescriptor.getSettings())) {
+						return RtaUtils._showMessageBox(
+							MessageBox.Icon.INFORMATION,
+							"DELETE_APP_VARIANT_NO_TRANSPORT",
+							"MSG_DELETE_APP_VARIANT_NOT_POSSIBLE");
+					} else {
+						return this.openTransportSelection(oTransportInput)
+						.then(function(oTransportInfo) {
+							return this.onTransportInDialogSelected(oAppVariantDescriptor, oTransportInfo);
+						}.bind(this))
+						.then(function() {
+							return oAppVariantDescriptor.submit();
+						})
+						.then(function() {
+							var sMessage = this.getText("DELETE_APP_VARIANT_SUCCESS_MESSAGE");
+							MessageToast.show(sMessage);
+							return true;
+						}.bind(this));
+					}
+				}.bind(this)).catch(function(oError) {
+					this.publishEventBus();
+					var oErrorInfo = this.buildErrorInfo("MSG_DELETE_APP_VARIANT_FAILED", oError, sAppVariantId);
+					return this.showRelevantDialog(oErrorInfo, false);
+				}.bind(this));
+
+			}.bind(this));
 		};
 
 		return AppVariantUtils;

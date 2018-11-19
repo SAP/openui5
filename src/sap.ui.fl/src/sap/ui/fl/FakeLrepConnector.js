@@ -138,8 +138,31 @@ sap.ui.define([
 			handleMakeChangesTransportable(sUri, sMethod, oData, mOptions, resolve, reject);
 			handleManifirstSupport(sUri, sMethod, oData, mOptions, resolve, reject);
 			handleResetChanges(sUri, sMethod, oData, mOptions, resolve, reject);
+			handleGetDescriptorVariant(sUri, sMethod, oData, mOptions, resolve, reject);
 		});
 	};
+
+	function handleGetDescriptorVariant(sUri, sMethod, oData, mOptions, resolve) {
+		var regExp = /\/sap\/bc\/lrep\/appdescr_variants\/([\w.]+)/;
+		var match = regExp.exec(sUri);
+		if (match && sMethod === 'GET') {
+			var oResponse = {
+				"content": [],
+				"fileName": "manifest",
+				"fileType": "appdescr_variant",
+				"id": match[1],
+				"layer": "CUSTOMER",
+				"namespace": "apps/sap.ui.test.application/appVariants/" + match[1],
+				"packageName": "$TMP",
+				"reference": "sap.ui.test.application"
+			};
+			resolve({
+				response: JSON.stringify(oResponse)
+			});
+		} else if (match && sMethod === 'DELETE') {
+			resolve();
+		}
+	}
 
 	function handleResetChanges(sUri, sMethod, oData, mOptions, resolve) {
 		if (sUri.match(/^\/sap\/bc\/lrep\/changes\//) && sMethod === 'DELETE') {
@@ -180,7 +203,7 @@ sap.ui.define([
 							"transportId": "U31K008488",
 							"description": "The Ultimate Transport",
 							"owner": "Fantasy Owner",
-							"locked": false
+							"locked": true
 						}
 					],
 					"localonly": false,
