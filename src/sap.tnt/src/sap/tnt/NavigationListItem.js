@@ -80,6 +80,23 @@ sap.ui.define(["./library", "sap/ui/core/Item", 'sap/ui/core/Icon',
 		NavigationListItem.collapseIcon = 'sap-icon://navigation-down-arrow';
 
 		/**
+		 * If the item doesn't have a key, the function returns the ID of the NavigationListItem,
+		 * so the NavigationList can remember the selected item.
+		 *
+		 * @private
+		 */
+		NavigationListItem.prototype._getUniqueKey = function () {
+
+			var sKey = this.getKey();
+
+			if (sKey) {
+				return sKey;
+			}
+
+			return this.getId();
+		};
+
+		/**
 		 * Returns the <code>sap.ui.core.Icon</code> control used to display the expand/collapse icon.
 		 * @returns {sap.ui.core.Icon}
 		 * @private
