@@ -49,7 +49,7 @@ sap.ui.define(function() {
 				}
 			},
 			Controller: {
-				sinon: false
+				sinon: true
 			},
 			EventHandlerResolver: {
 				title: "QUnit Page for async sap.ui.core.mvc.EventHandlerResolver"

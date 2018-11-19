@@ -1,0 +1,26 @@
+{
+	"sap.app": {
+		"id": "test",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "mvc.testdata.ControllerExtensionTest.Test2.Test",
+			"type": "XML",
+			"id": "app",
+			"async": true
+		},
+		"extends": {
+			"extensions": {
+				"sap.ui.controllerExtensions": {
+					"mvc.testdata.ControllerExtensionTest.Test2.Test": {
+						"controllerName": "mvc.testdata.ControllerExtensionTest.Test2.WrongControllerExtension"
+					}
+				}
+			}
+		}
+	}
+}

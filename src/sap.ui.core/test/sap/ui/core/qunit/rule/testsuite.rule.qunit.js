@@ -48,6 +48,14 @@ sap.ui.define(function () {
 				bootCore: false,
 				page: "test-resources/sap/ui/core/qunit/rule/syncXHRBootstrapDebug.qunit.html"
 			},
+			"app/controllerExtension": {
+				title: "QUnit Tests for controller extensions",
+				loader: {
+					paths: {
+						"mvc": "test-resources/sap/ui/core/qunit/mvc"
+					}
+				}
+			},
 			"misc/silentEventBus": {
 				title: "QUnit Tests for 'silent event bus usage' rules"
 			}

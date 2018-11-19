@@ -1,8 +1,9 @@
 /*global QUnit */
 sap.ui.define([
 	'sap/ui/core/Component',
-	'sap/ui/core/mvc/Controller'
-], function(Component, Controller) {
+	'sap/ui/core/mvc/Controller',
+	'sap/base/Log'
+], function(Component, Controller, Log) {
 	"use strict";
 
 	QUnit.module("getComponent");
@@ -108,6 +109,35 @@ sap.ui.define([
 			})
 			.then(function (oController) {
 				assert.equal(oController.double(8), 16, "Controller implementation was correctly returned");
+				done();
+			});
+		});
+	});
+
+	QUnit.module("ControllerExtensionTests");
+
+	QUnit.test("Extend Controller with ExtensionDefinition", function(assert) {
+		var done = assert.async();
+
+		sap.ui.loader.config({
+			paths: {
+				"mvc": "test-resources/sap/ui/core/qunit/mvc"
+			}
+		});
+
+		sap.ui.require(["sap/ui/core/Component"], function(Component) {
+			Component.create({
+				name: "mvc.testdata.ControllerExtensionTest.Test1"
+			})
+			.then(function(oComponent) {
+				return oComponent.getRootControl().loaded();
+			})
+			.then(function(oView) {
+				var oController = oView.getController();
+
+				assert.ok(oController.triple, "Controller should be extended with 'triple' function");
+				assert.equal(oController.double(3), 6, "Controller implementation works correctly");
+				assert.equal(oController.triple(3), 9, "Controller implementation works correctly");
 				done();
 			});
 		});
