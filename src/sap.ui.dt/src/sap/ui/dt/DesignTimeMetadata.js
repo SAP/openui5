@@ -114,24 +114,26 @@ function(
 	 * Returns a DOM representation for an Element or aggregation, if it can be found or undefined
 	 * @param {Object} oElement Element we need DomRef for
 	 * @param {String|Function} vDomRef Selector or Function for fetchting DomRef
-	 * @param {String} sAggregationName Aggregation Name
+	 * @param {String} [sAggregationName] Aggregation Name
 	 * @return {jQuery} Returns associated DOM references wrapped by jQuery object
 	 * @public
 	 */
 	DesignTimeMetadata.prototype.getAssociatedDomRef = function(oElement, vDomRef, sAggregationName) {
-		var oElementDomRef = ElementUtil.getDomRef(oElement);
-		var aArguments = [];
-		aArguments.push(oElement);
-		if (sAggregationName) {
-			aArguments.push(sAggregationName);
-		}
+		if (oElement) {
+			var oElementDomRef = ElementUtil.getDomRef(oElement);
+			var aArguments = [];
+			aArguments.push(oElement);
+			if (sAggregationName) {
+				aArguments.push(sAggregationName);
+			}
 
-		if (typeof (vDomRef) === "function") {
-			var vRes = vDomRef.apply(null, aArguments);
+			if (typeof (vDomRef) === "function") {
+				var vRes = vDomRef.apply(null, aArguments);
 
-			return vRes ? jQuery(vRes) : vRes;
-		} else if (oElementDomRef && typeof (vDomRef) === "string") {
-			return DOMUtil.getDomRefForCSSSelector(oElementDomRef, vDomRef);
+				return vRes ? jQuery(vRes) : vRes;
+			} else if (oElementDomRef && typeof (vDomRef) === "string") {
+				return DOMUtil.getDomRefForCSSSelector(oElementDomRef, vDomRef);
+			}
 		}
 	};
 

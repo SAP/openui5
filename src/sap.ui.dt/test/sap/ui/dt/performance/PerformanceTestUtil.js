@@ -141,19 +141,6 @@ sap.ui.define([
 			});
 		},
 
-		debounce: function(fn, iWait) {
-			iWait = iWait || 0;
-
-			var iTimerId;
-
-			return function () {
-				if (iTimerId) {
-					clearTimeout(iTimerId);
-				}
-				iTimerId = setTimeout(fn, iWait);
-			};
-		},
-
 		measureApplyStylePerformance: function(sCustomMetricName, iWaitUntilDoneInMs) {
 			window.wpp = {
 				customMetrics: {}

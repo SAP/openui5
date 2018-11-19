@@ -293,5 +293,24 @@ sap.ui.define([
 		}, {});
 	};
 
+	/**
+	 * Returns a function that will be called as soon as it's not being invoked for a specified amount of time
+	 *
+	 * @param {function} fn function that should be called
+	 * @param {number} iWait number of milliseconds the function waits
+	 * @returns {function} Returns the function
+	 */
+	Util.debounce = function(fn, iWait) {
+		iWait = iWait || 0;
+
+		var iTimerId;
+		return function () {
+			if (iTimerId) {
+				clearTimeout(iTimerId);
+			}
+			iTimerId = setTimeout(fn, iWait);
+		};
+	};
+
 	return Util;
 }, true);

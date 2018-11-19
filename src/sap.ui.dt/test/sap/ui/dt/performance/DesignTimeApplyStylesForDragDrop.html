@@ -23,10 +23,12 @@
 			sap.ui.getCore().attachInit(function() {
 				sap.ui.require([
 					"dt/performance/PerformanceTestUtil",
+					"sap/ui/dt/Util",
 					"sap/m/Panel",
 					"sap/ui/layout/VerticalLayout"
 				], function(
 					PerformanceTestUtil,
+					Util,
 					Panel,
 					VerticalLayout
 				){
@@ -58,12 +60,12 @@
 
 			window.measureApplyStylesDragDropOneByOne = function () {
 				sap.ui.require([
-					"dt/performance/PerformanceTestUtil",
 					"sap/ui/dt/OverlayRegistry",
+					"sap/ui/dt/Util",
 					"sap/base/Log"
 				], function (
-					PerformanceTestUtil,
 					OverlayRegistry,
+					Util,
 					BaseLog
 				){
 					var oSourceElementOverlay = OverlayRegistry.getOverlay("SourcePanel");
@@ -78,7 +80,7 @@
 					var iCountCall = 0;
 					var bMeasurementDone = false;
 
-					var fnDebouncedFn = PerformanceTestUtil.debounce(function () {
+					var fnDebouncedFn = Util.debounce(function () {
 						if (!bMeasurementDone) {
 							bMeasurementDone = true;
 							window.wpp.customMetrics.applyStylesDragDrop = aStack[aStack.length - 1] - aStack[0];
@@ -114,13 +116,13 @@
 
 			window.measureApplyStylesDragDropAtOnce = function () {
 				sap.ui.require([
-					"dt/performance/PerformanceTestUtil",
 					"sap/ui/dt/OverlayRegistry",
+					"sap/ui/dt/Util",
 					"sap/base/Log",
 					"sap/ui/thirdparty/jquery"
 				], function (
-					PerformanceTestUtil,
 					OverlayRegistry,
+					Util,
 					BaseLog,
 					jQuery
 				){
@@ -136,7 +138,7 @@
 					var iCountCall = 0;
 					var bMeasurementDone = false;
 
-					var fnDebouncedFn = PerformanceTestUtil.debounce(function () {
+					var fnDebouncedFn = Util.debounce(function () {
 						if (!bMeasurementDone) {
 							bMeasurementDone = true;
 							window.wpp.customMetrics.applyStylesDragDrop = aStack[aStack.length - 1] - aStack[0];
