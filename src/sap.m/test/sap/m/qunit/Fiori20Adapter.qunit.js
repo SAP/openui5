@@ -1796,10 +1796,17 @@ sap.ui.define([
 
 
 	QUnit.module("Fiori2 adaptation of ObjectPage header", {
-		beforeEach: function () {
-			this.oPage = sap.ui.xmlview("oplView", {viewContent:sObjectPageView});
-			this.oPage.placeAt("content");
-			Core.applyChanges();
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "oplView",
+				definition: sObjectPageView
+			}).then(function (oView) {
+				this.oPage = oView;
+				this.oPage.placeAt("content");
+				Core.applyChanges();
+				done();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oPage.destroy();

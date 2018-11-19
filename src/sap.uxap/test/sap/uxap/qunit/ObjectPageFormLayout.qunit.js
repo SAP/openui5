@@ -1,23 +1,35 @@
 /*global QUnit, sinon*/
 sap.ui.define(["sap/ui/thirdparty/jquery",
-                "sap/ui/core/Core"],
-function($, Core) {
+                "sap/ui/core/Core",
+                "sap/ui/core/mvc/XMLView"],
+function($, Core, XMLView) {
 	"use strict";
-
-	QUnit.module("form layout");
 
 	var iRenderingDelay = 1000;
 
+	QUnit.module("Form Layout", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			this.clock = sinon.useFakeTimers();
+			XMLView.create({
+				id: "UxAP-FormLayout",
+				viewName: "view.UxAP-FormLayout"
+			}).then(function (oView) {
+				this.oObjectPageFormView = oView;
+				this.oObjectPageFormView.placeAt("qunit-fixture");
+				Core.applyChanges();
+				done();
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.oObjectPageFormView.destroy();
+			this.clock.restore();
+		}
+	});
+
 	QUnit.test("ObjectPage form layout", function (assert) {
-		this.clock = sinon.useFakeTimers();
-
-		var oObjectPageFormView = sap.ui.xmlview("UxAP-FormLayout", {viewName: "view.UxAP-FormLayout" });
-	    oObjectPageFormView.placeAt('qunit-fixture');
-	    Core.applyChanges();
-
-		var oFormBlock = oObjectPageFormView.byId("personalFormBlock");
-
-		var aGridCells = oFormBlock.$().find(".sapUiForm .sapUiFormResGridMain>div");
+		var oFormBlock = this.oObjectPageFormView.byId("personalFormBlock"),
+			aGridCells = oFormBlock.$().find(".sapUiForm .sapUiFormResGridMain>div");
 
 		assert.strictEqual(aGridCells.length, 4, "form grid has 4 cells");
 
@@ -48,22 +60,32 @@ function($, Core) {
 
 		aGridCells = oFormBlock.$().find(".sapUiForm .sapUiFormResGridMain > div.sapUiRespGridSpanL12.sapUiRespGridSpanM12.sapUiRespGridSpanS12");
 		assert.strictEqual(aGridCells.length, 4, "when 1-column span, all cells have L12 M12 S12");
+	});
 
-		oObjectPageFormView.destroy();
+	QUnit.module("Simple Form Layout", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			this.clock = sinon.useFakeTimers();
+			XMLView.create({
+				id: "UxAP-SimpleFormLayout",
+				viewName: "view.UxAP-SimpleFormLayout"
+			}).then(function (oView) {
+				this.oObjectPageFormView = oView;
+				this.oObjectPageFormView.placeAt("qunit-fixture");
+				Core.applyChanges();
+				done();
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.oObjectPageFormView.destroy();
+			this.clock.restore();
+		}
 	});
 
 	QUnit.test("ObjectPage simple form layout", function (assert) {
-		this.clock = sinon.useFakeTimers();
-
-		var oObjectPageFormView = sap.ui.xmlview("UxAP-SimpleFormLayout", {viewName: "view.UxAP-SimpleFormLayout" });
-	    oObjectPageFormView.placeAt('qunit-fixture');
-	    Core.applyChanges();
-
-		var oFormBlock = oObjectPageFormView.byId("personalSimpleFormBlock");
-
-		var aGridCells = oFormBlock.$().find(".sapUiForm .sapUiFormResGridMain>div");
-
-		var oTestInput = Core.byId("__input0"),
+		var oFormBlock = this.oObjectPageFormView.byId("personalSimpleFormBlock"),
+			aGridCells = oFormBlock.$().find(".sapUiForm .sapUiFormResGridMain>div"),
+			oTestInput = Core.byId("__input0"),
 			iTestInputTop = parseInt(oTestInput.$().offset().top);
 
 		assert.strictEqual(aGridCells.length, 4, "form grid has 4 cells");
@@ -102,8 +124,6 @@ function($, Core) {
 		this.clock.tick(iRenderingDelay);
 
 		assert.strictEqual(parseInt(oTestInput.$().offset().top) < (iTestInputTop - oTestInput.$().height()), true, "Input field should be visible");
-
-		oObjectPageFormView.destroy();
 	});
 
 });

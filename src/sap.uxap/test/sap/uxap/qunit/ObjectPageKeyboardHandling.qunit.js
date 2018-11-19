@@ -4,50 +4,46 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/Device"],
-function($, Core, KeyCodes, QUtils, Device) {
+	"sap/ui/Device",
+	"sap/ui/core/mvc/XMLView"],
+function($, Core, KeyCodes, QUtils, Device, XMLView) {
 	"use strict";
 
 	var sAnchorSelector = ".sapUxAPAnchorBarScrollContainer .sapUxAPAnchorBarButton";
-
-	sap.ui.controller("viewController", {});
-
-	var viewController = sap.ui.controller("viewController");
-
-	var anchorBarView = sap.ui.xmlview("UxAP-70_KeyboardHandling", {
-		viewName: "view.UxAP-70_KeyboardHandling",
-		controller: viewController
-	});
 
 	function getAnchorBar() {
 		return Core.byId("UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar");
 	}
 
-	anchorBarView.placeAt("qunit-fixture");
-
 	QUnit.module("AnchorBar", {
-		beforeEach: function () {
+		beforeEach: function (assert) {
+			var done = assert.async();
 			this.clock = sinon.useFakeTimers();
 			Device.system.phone = false;
-			jQuery("html")
-				.removeClass("sapUiMedia-Std-Phone sapUiMedia-Std-Desktop sapUiMedia-Std-Tablet")
-				.addClass("sapUiMedia-Std-Desktop");
-			var sFocusable = "0",
-				sTabIndex = "tabIndex";
-			this.oObjectPage = anchorBarView.byId("ObjectPageLayout");
-			this.oObjectPage._setAsCurrentSection("__section1");
-
-			this.assertCorrectTabIndex = function ($elment, sMessage, assert) {
-				assert.strictEqual($elment.attr(sTabIndex), sFocusable, sMessage);
-			};
+			XMLView.create({
+				id: "UxAP-70_KeyboardHandling",
+				viewName: "view.UxAP-70_KeyboardHandling"
+			}).then(function (oView) {
+				this.anchorBarView = oView;
+				jQuery("html")
+					.removeClass("sapUiMedia-Std-Phone sapUiMedia-Std-Desktop sapUiMedia-Std-Tablet")
+					.addClass("sapUiMedia-Std-Desktop");
+				var sFocusable = "0",
+					sTabIndex = "tabIndex";
+				this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
+				this.oObjectPage._setAsCurrentSection(this.oObjectPage.getSections()[0].sId);
+				this.assertCorrectTabIndex = function ($elment, sMessage, assert) {
+					assert.strictEqual($elment.attr(sTabIndex), sFocusable, sMessage);
+				};
+				this.anchorBarView.placeAt("qunit-fixture");
+				Core.applyChanges();
+				this.clock.tick(500);
+				done();
+			}.bind(this));
 		},
-		afterEach: function() {
-			// trigger 'escape' keypress event to potentially close the popover
-			var oActiveElement = document.activeElement;
-			QUtils.triggerKeydown(oActiveElement, KeyCodes.ESCAPE);
-			QUtils.triggerKeyup(oActiveElement, KeyCodes.ESCAPE);
-			this.clock.tick(500);
-
+		afterEach: function () {
+			this.anchorBarView.destroy();
+			this.oObjectPage = null;
 			this.clock.restore();
 		}
 	});
@@ -56,7 +52,8 @@ function($, Core, KeyCodes, QUtils, Device) {
 		var aAnchors = $(sAnchorSelector),
 			oFirstAnchorButton = Core.byId(aAnchors[0].id),
 			oAnchor4Button = Core.byId(aAnchors[4].id),
-			oAnchor4Section = Core.byId("__section9");
+			aSections = this.oObjectPage.getSections(),
+			oAnchor4Section = aSections[4];
 
 		this.assertCorrectTabIndex(oFirstAnchorButton.$(), "If no previously selected anchor button, " +
 			"the first focusable anchor button should be the first one in the container", assert);
@@ -186,22 +183,36 @@ function($, Core, KeyCodes, QUtils, Device) {
 	});
 
 	QUnit.module("Section/Subsection", {
-		beforeEach: function () {
-			var sFocusable = "0",
-				sTabIndex = "tabIndex";
-			this.oObjectPage = anchorBarView.byId("ObjectPageLayout");
-
-			this.assertCorrectTabIndex = function ($elment, sMessage, assert) {
-				assert.strictEqual($elment.attr(sTabIndex), sFocusable, sMessage);
-			};
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-70_KeyboardHandling",
+				viewName: "view.UxAP-70_KeyboardHandling"
+			}).then(function (oView) {
+				this.anchorBarView = oView;
+				var sFocusable = "0",
+					sTabIndex = "tabIndex";
+				this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
+				this.assertCorrectTabIndex = function ($elment, sMessage, assert) {
+					assert.strictEqual($elment.attr(sTabIndex), sFocusable, sMessage);
+				};
+				this.anchorBarView.placeAt("qunit-fixture");
+				Core.applyChanges();
+				done();
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.anchorBarView.destroy();
+			this.oObjectPage = null;
 		}
 	});
 
 	QUnit.test("TAB/SHIFT+TAB", function (assert) {
-		var $firstSection = Core.byId("__section1").$(),
-			oCurrentSection = Core.byId("__section9"),
-			oPersonalSection = Core.byId("__section16"),
-			oContactSubSection = Core.byId("__section14");
+		var aSections = this.oObjectPage.getSections(),
+			$firstSection = aSections[0].$(),
+			oCurrentSection = aSections[4],
+			oPersonalSection = aSections[7],
+			oContactSubSection = aSections[7].getSubSections()[0];
 
 		this.assertCorrectTabIndex($firstSection, "If no previously selected section, " +
 			"the first focusable section should be the first one in the container", assert);
@@ -223,79 +234,91 @@ function($, Core, KeyCodes, QUtils, Device) {
 	});
 
 	QUnit.test("RIGHT/DOWN", function (assert) {
+		var aSections = this.oObjectPage.getSections(),
+			aSubSections = aSections[8].getSubSections();
+
 		// Section
-		document.getElementById("__section1").focus();
-		QUtils.triggerKeydown("__section1", KeyCodes.ARROW_RIGHT);
-		assert.equal(jQuery(document.activeElement).attr("id"), "__section3", "Next section should be focused after arrow right");
-		QUtils.triggerKeydown("__section3", KeyCodes.ARROW_DOWN);
-		assert.equal(jQuery(document.activeElement).attr("id"), "__section5", "Next section should be focused after arrow down");
+		aSections[0].$().focus();
+		QUtils.triggerKeydown(aSections[0].sId, KeyCodes.ARROW_RIGHT);
+		assert.equal(jQuery(document.activeElement).attr("id"), aSections[1].sId, "Next section should be focused after arrow right");
+		QUtils.triggerKeydown(aSections[1].sId, KeyCodes.ARROW_DOWN);
+		assert.equal(jQuery(document.activeElement).attr("id"), aSections[2].sId, "Next section should be focused after arrow down");
 
 		// Subsection
-		document.getElementById("__section17").focus();
-		QUtils.triggerKeydown("__section17", KeyCodes.ARROW_RIGHT);
-		assert.equal(jQuery(document.activeElement).attr("id"), "__section18", "Next subsection should be focused after arrow right");
-		QUtils.triggerKeydown("__section18", KeyCodes.ARROW_DOWN);
-		assert.equal(jQuery(document.activeElement).attr("id"), "__section19", "Next subsection should be focused after arrow down");
+		aSubSections[0].$().focus();
+		QUtils.triggerKeydown(aSubSections[0].sId, KeyCodes.ARROW_RIGHT);
+		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[1].sId, "Next subsection should be focused after arrow right");
+		QUtils.triggerKeydown(aSubSections[1].sId, KeyCodes.ARROW_DOWN);
+		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[2].sId, "Next subsection should be focused after arrow down");
 	});
 
 	QUnit.test("LEFT/UP", function (assert) {
+		var aSections = this.oObjectPage.getSections(),
+			aSubSections = aSections[8].getSubSections();
+
 		// Section
-		document.getElementById("__section5").focus();
-		QUtils.triggerKeydown("__section5", KeyCodes.ARROW_LEFT);
-		assert.equal(jQuery(document.activeElement).attr("id"), "__section3", "Previous section should be focused after arrow left");
-		QUtils.triggerKeydown("__section3", KeyCodes.ARROW_UP);
-		assert.equal(jQuery(document.activeElement).attr("id"), "__section1", "Previous section should be focused after arrow up");
+		aSections[2].$().focus();
+		QUtils.triggerKeydown(aSections[2].sId, KeyCodes.ARROW_LEFT);
+		assert.equal(jQuery(document.activeElement).attr("id"), aSections[1].sId, "Previous section should be focused after arrow left");
+		QUtils.triggerKeydown(aSections[1].sId, KeyCodes.ARROW_UP);
+		assert.equal(jQuery(document.activeElement).attr("id"), aSections[0].sId, "Previous section should be focused after arrow up");
 
 		// Subsection
-		document.getElementById("__section19").focus();
-		QUtils.triggerKeydown("__section19", KeyCodes.ARROW_LEFT);
-		assert.equal(jQuery(document.activeElement).attr("id"), "__section18", "Previous subsection should be focused after arrow left");
-		QUtils.triggerKeydown("__section18", KeyCodes.ARROW_UP);
-		assert.equal(jQuery(document.activeElement).attr("id"), "__section17", "Previous subsection should be focused after arrow up");
+		aSubSections[2].$().focus();
+		QUtils.triggerKeydown(aSubSections[2].sId, KeyCodes.ARROW_LEFT);
+		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[1].sId, "Previous subsection should be focused after arrow left");
+		QUtils.triggerKeydown(aSubSections[1].sId, KeyCodes.ARROW_UP);
+		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[0].sId, "Previous subsection should be focused after arrow up");
 	});
 
 	QUnit.test("HOME/END", function (assert) {
+		var aSections = this.oObjectPage.getSections(),
+			aSubSections = aSections[8].getSubSections();
+
 		// Section
-		document.getElementById("__section1").focus();
-		QUtils.triggerKeydown("__section1", KeyCodes.END);
+		aSections[0].$().focus();
+		QUtils.triggerKeydown(aSections[0].sId, KeyCodes.END);
 		assert.equal(jQuery(document.activeElement).attr("id"), "UxAP-70_KeyboardHandling--section-with-multiple-sub-section", "Last section should be focused after END key");
 		QUtils.triggerKeydown("UxAP-70_KeyboardHandling--section-with-multiple-sub-section", KeyCodes.HOME);
-		assert.equal(jQuery(document.activeElement).attr("id"), "__section1", "First section should be focused after HOME key");
+		assert.equal(jQuery(document.activeElement).attr("id"), aSections[0].sId, "First section should be focused after HOME key");
 
 		// Subsection
-		document.getElementById("__section17").focus();
-		QUtils.triggerKeydown("__section17", KeyCodes.END);
-		assert.equal(jQuery(document.activeElement).attr("id"), "__section26", "Last subsection should be focused after END key");
-		QUtils.triggerKeydown("__section26", KeyCodes.HOME);
-		assert.equal(jQuery(document.activeElement).attr("id"), "__section17", "First subsection should be focused after HOME key");
+		aSubSections[0].$().focus();
+		QUtils.triggerKeydown(aSubSections[0].sId, KeyCodes.END);
+		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[9].sId, "Last subsection should be focused after END key");
+		QUtils.triggerKeydown(aSubSections[9].sId, KeyCodes.HOME);
+		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[0].sId, "First subsection should be focused after HOME key");
 	});
 
 	QUnit.test("PAGE_DOWN/PAGE_UP", function (assert) {
+		var aSections = this.oObjectPage.getSections(),
+			aSubSections = aSections[8].getSubSections();
+
 		// Section
-		document.getElementById("__section1").focus();
-		QUtils.triggerKeydown("__section1", KeyCodes.PAGE_DOWN);
-		assert.equal(jQuery(document.activeElement).attr("id"), "__section13", "6th section down should be focused after PAGE DOWN");
-		QUtils.triggerKeydown("__section13", KeyCodes.PAGE_UP);
-		assert.equal(jQuery(document.activeElement).attr("id"), "__section1", "6th section up should be focused after PAGE UP");
-		document.getElementById("__section27").focus();
-		QUtils.triggerKeydown("__section27", KeyCodes.PAGE_DOWN);
+		aSections[0].$().focus();
+		QUtils.triggerKeydown(aSections[0].sId, KeyCodes.PAGE_DOWN);
+		assert.equal(jQuery(document.activeElement).attr("id"), aSections[6].sId, "6th section down should be focused after PAGE DOWN");
+		QUtils.triggerKeydown(aSections[6].sId, KeyCodes.PAGE_UP);
+		assert.equal(jQuery(document.activeElement).attr("id"), aSections[0].sId, "6th section up should be focused after PAGE UP");
+		aSections[8].$().focus();
+		QUtils.triggerKeydown(aSections[8].sId, KeyCodes.PAGE_DOWN);
 		assert.equal(jQuery(document.activeElement).attr("id"), "UxAP-70_KeyboardHandling--section-with-multiple-sub-section", "Last section down should be focused after PAGE DOWN");
-		document.getElementById("__section3").focus();
-		QUtils.triggerKeydown("__section3", KeyCodes.PAGE_UP);
-		assert.equal(jQuery(document.activeElement).attr("id"), "__section1", "First section up should be focused after PAGE UP");
+		aSections[1].$().focus();
+		QUtils.triggerKeydown(aSections[1].sId, KeyCodes.PAGE_UP);
+		assert.equal(jQuery(document.activeElement).attr("id"), aSections[0].sId, "First section up should be focused after PAGE UP");
 
 		// Subsection
-		document.getElementById("__section17").focus();
-		QUtils.triggerKeydown("__section17", KeyCodes.PAGE_DOWN);
-		assert.equal(jQuery(document.activeElement).attr("id"), "__section23", "6th subsection down should be focused after PAGE DOWN");
-		QUtils.triggerKeydown("__section23", KeyCodes.PAGE_UP);
-		assert.equal(jQuery(document.activeElement).attr("id"), "__section17", "6th subsection up should be focused after PAGE UP");
-		document.getElementById("__section24").focus();
-		QUtils.triggerKeydown("__section24", KeyCodes.PAGE_DOWN);
-		assert.equal(jQuery(document.activeElement).attr("id"), "__section26", "Last subsection down should be focused after PAGE DOWN");
-		document.getElementById("__section19").focus();
-		QUtils.triggerKeydown("__section19", KeyCodes.PAGE_UP);
-		assert.equal(jQuery(document.activeElement).attr("id"), "__section17", "First subsection up should be focused after PAGE UP");
+		aSubSections[0].$().focus();
+		QUtils.triggerKeydown(aSubSections[0].sId, KeyCodes.PAGE_DOWN);
+		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[6].sId, "6th subsection down should be focused after PAGE DOWN");
+		QUtils.triggerKeydown(aSubSections[6].sId, KeyCodes.PAGE_UP);
+		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[0].sId, "6th subsection up should be focused after PAGE UP");
+		aSubSections[7].$().focus();
+		QUtils.triggerKeydown(aSubSections[7].sId, KeyCodes.PAGE_DOWN);
+		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[9].sId, "Last subsection down should be focused after PAGE DOWN");
+		aSubSections[2].$().focus();
+		QUtils.triggerKeydown(aSubSections[2].sId, KeyCodes.PAGE_UP);
+		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[0].sId, "First subsection up should be focused after PAGE UP");
 	});
 
 	/*******************************************************************************
@@ -343,57 +366,72 @@ function($, Core, KeyCodes, QUtils, Device) {
 		assert.strictEqual($btnToolbar.is(":focus"), true, "Button must be focused");
 	});
 
-	function testKeyboardEvent(sTestName, sKeyPressed, sButtonId, sSectionId) {
-		QUnit.test(sTestName, function (assert) {
-			assert.expect(1);
-			var fDone = assert.async();
+	QUnit.test("ObjectPageSection F7 - from toolbar move focus to coresponding section upon Space press", function (assert) {
+		assert.expect(1);
+		var fDone = assert.async(),
+			sSectionId = this.oObjectPage.getSections()[1].sId,
+			sButtonId = "UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar-" + sSectionId + "-anchor",
+			sKeyPressed = "SPACE";
+
+		setTimeout(function () {
+			var oAnchorBarButtonControl = Core.byId(sButtonId),
+			$anchorBarButton = oAnchorBarButtonControl.$(),
+			$subSection = Core.byId(sSectionId).$();
+
+			$anchorBarButton.focus();
+
+			QUtils.triggerKeyup($anchorBarButton, sKeyPressed);
 
 			setTimeout(function () {
-				var oAnchorBarButtonControl = Core.byId(sButtonId),
-				$anchorBarButton = oAnchorBarButtonControl.$(),
-				$subSection = Core.byId(sSectionId).$();
+				assert.strictEqual($subSection.is(":focus"), true, "SubSection must be focused");
+				fDone();
+			}, 1000);
+		}, 0);
+	});
 
-				$anchorBarButton.focus();
+	QUnit.test("ObjectPageSection F7 - from toolbar move focus to coresponding section upon Enter press", function (assert) {
+		assert.expect(1);
+		var fDone = assert.async(),
+			sSectionId = this.oObjectPage.getSections()[2].sId,
+			sButtonId = "UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar-" + sSectionId + "-anchor",
+			sKeyPressed = "ENTER";
 
-				switch (sKeyPressed) {
-					case "ENTER":
-						QUtils.triggerKeydown($anchorBarButton, sKeyPressed);
-						break;
-					case "SPACE":
-						QUtils.triggerKeyup($anchorBarButton, sKeyPressed);
-						break;
-					default:
-						oAnchorBarButtonControl.firePress();
-						break;
-				}
+		setTimeout(function () {
+			var oAnchorBarButtonControl = Core.byId(sButtonId),
+			$anchorBarButton = oAnchorBarButtonControl.$(),
+			$subSection = Core.byId(sSectionId).$();
 
-				setTimeout(function () {
-					assert.strictEqual($subSection.is(":focus"), true, "SubSection must be focused");
-					fDone();
-				}, 1000);
-			}, 0);
-		});
-	}
+			$anchorBarButton.focus();
 
-	testKeyboardEvent(
-		"ObjectPageSection F7 - from toolbar move focus to coresponding section upon Space press",
-		"SPACE",
-		"UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar-__section3-anchor",
-		"__section3"
-	);
+			QUtils.triggerKeydown($anchorBarButton, sKeyPressed);
 
-	testKeyboardEvent(
-		"ObjectPageSection F7 - from toolbar move focus to coresponding section upon Enter press",
-		"ENTER",
-		"UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar-__section5-anchor",
-		"__section5"
-	);
+			setTimeout(function () {
+				assert.strictEqual($subSection.is(":focus"), true, "SubSection must be focused");
+				fDone();
+			}, 1000);
+		}, 0);
+	});
 
-	testKeyboardEvent(
-		"ObjectPageSection F7 - from toolbar move focus to coresponding section upon mouse click",
-		"Click",
-		"UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar-__section11-anchor",
-		"__section11"
-	);
+	QUnit.test("ObjectPageSection F7 - from toolbar move focus to coresponding section upon mouse click", function (assert) {
+		assert.expect(1);
+		var fDone = assert.async(),
+			sSectionId = this.oObjectPage.getSections()[5].sId,
+			sButtonId = "UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar-" + sSectionId + "-anchor";
+
+		setTimeout(function () {
+			var oAnchorBarButtonControl = Core.byId(sButtonId),
+			$anchorBarButton = oAnchorBarButtonControl.$(),
+			$subSection = Core.byId(sSectionId).$();
+
+			$anchorBarButton.focus();
+
+			oAnchorBarButtonControl.firePress();
+
+			setTimeout(function () {
+				assert.strictEqual($subSection.is(":focus"), true, "SubSection must be focused");
+				fDone();
+			}, 1000);
+		}, 0);
+	});
 
 });

@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/uxap/BlockBase",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
-	"sap/uxap/ObjectPageSubSection"],
-function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection) {
+	"sap/uxap/ObjectPageSubSection",
+	"sap/ui/core/mvc/XMLView"],
+function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection, XMLView) {
 	"use strict";
 
 	QUnit.module("BlockBase");
@@ -88,10 +89,28 @@ function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPa
 		oObjectPageLayout.destroy();
 	});
 
+	QUnit.module("BlockBase Height", {
+
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-InfoBlocks",
+				viewName: "view.UxAP-InfoBlocks"
+			}).then(function (oView) {
+				this.oObjectPageInfoView = oView;
+				this.oObjectPageInfoView.placeAt('qunit-fixture');
+				Core.applyChanges();
+				done();
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.oObjectPageInfoView.destroy();
+		}
+	});
+
 	QUnit.test("ObjectPage blocks height", function (assert) {
 
-		var oObjectPageInfoView = sap.ui.xmlview("UxAP-InfoBlocks", {viewName: "view.UxAP-InfoBlocks" }),
-			oOPL = oObjectPageInfoView.byId("ObjectPageLayout"),
+		var oOPL = this.oObjectPageInfoView.byId("ObjectPageLayout"),
 			oTargetSubSection = oOPL.getSections()[0].getSubSections()[4],
 			iTargetScrollTop,
 			iActualScrollTop,
@@ -119,10 +138,7 @@ function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPa
 			iActualScrollTop = Math.ceil(oOPL._$opWrapper.scrollTop());
 			assert.ok(iTargetScrollTop === iActualScrollTop || iTargetScrollTop === iActualScrollTop + 1, "scrollTop of lazy-loaded section not did not change upon lazy-loading");
 			done();
-			oObjectPageInfoView.destroy();
 		});
-		oObjectPageInfoView.placeAt('qunit-fixture');
-		Core.applyChanges();
 	});
 
 });

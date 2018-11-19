@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/m/NavContainer",
 	"sap/ui/core/HTML",
 	"sap/base/Log",
-	"sap/ui/Device"],
+	"sap/ui/Device",
+	"sap/ui/core/mvc/XMLView"],
 function (
 	jQuery,
 	lib,
@@ -36,7 +37,8 @@ function (
 	NavContainer,
 	HTML,
 	Log,
-	Device
+	Device,
+	XMLView
 ) {
 
 	"use strict";
@@ -1288,14 +1290,19 @@ function (
 	});
 
 	QUnit.module("ObjectPage API: AnchorBar", {
-		beforeEach: function () {
-			this.appControl = new App();
-			this.oSampleView = sap.ui.xmlview("objectPageViewSample", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "objectPageViewSample",
 				viewName: "view.UxAP-77_ObjectPageSample"
-			});
-			this.appControl.addPage(this.oSampleView);
-			this.appControl.placeAt("qunit-fixture");
-			Core.applyChanges();
+			}).then(function (oView) {
+				this.oSampleView = oView;
+				this.appControl = new App();
+				this.appControl.addPage(this.oSampleView);
+				this.appControl.placeAt("qunit-fixture");
+				Core.applyChanges();
+				done();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.appControl.destroy();
@@ -1338,13 +1345,19 @@ function (
 	});
 
 	QUnit.module("ObjectPage API: ObjectPageHeader", {
-		beforeEach: function () {
-			this.appControl = new App();
-			this.oSampleView = sap.ui.xmlview("objectPageViewSample", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "objectPageViewSample",
 				viewName: "view.UxAP-77_ObjectPageSample"
-			});
-			this.appControl.addPage(this.oSampleView);
-			this.appControl.placeAt("qunit-fixture");
+			}).then(function (oView) {
+				this.oSampleView = oView;
+				this.appControl = new App();
+				this.appControl.addPage(this.oSampleView);
+				this.appControl.placeAt("qunit-fixture");
+				Core.applyChanges();
+				done();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.appControl.destroy();
@@ -1397,17 +1410,25 @@ function (
 	});
 
 	QUnit.module("ObjectPage API", {
-		beforeEach: function () {
-			this.appControl = new App();
-
-			this.oSampleView = sap.ui.xmlview("objectPageViewSample", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "objectPageViewSample",
 				viewName: "view.UxAP-77_ObjectPageSample"
-			});
-			this.oView = sap.ui.xmlview("objectPageView", {
-				viewName: "view.UxAP-77_ObjectPage"
-			});
-			this.appControl.addPage(this.oView);
-			this.appControl.placeAt("qunit-fixture");
+			}).then(function (oView) {
+				this.oSampleView = oView;
+				XMLView.create({
+					id: "objectPageView",
+					viewName: "view.UxAP-77_ObjectPage"
+				}).then(function (oView) {
+					this.oView = oView;
+					this.appControl = new App();
+					this.appControl.addPage(this.oView);
+					this.appControl.placeAt("qunit-fixture");
+					Core.applyChanges();
+					done();
+				}.bind(this));
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.appControl.destroy();
