@@ -22,9 +22,6 @@ sap.ui.define([
 	Avatar
 ) {
 	"use strict";
-
-	var aCardContentTypes = ["List", "KPI", "Table"];
-
 	/**
 	 * Constructor for a new <code>Card</code>.
 	 *
@@ -250,15 +247,26 @@ sap.ui.define([
 				this.setContent(oContent);
 				this.setBusy(false);
 			}.bind(this));
-		} else if (aCardContentTypes.indexOf(sCardType) > -1) {
-			sap.ui.require(["sap/f/cards/content/" + sCardType], function (CardContent) {
-				var mSettings = this._oCardManifest.get("sap.card/content");
-				var oClonedSettings = jQuery.extend(true, {}, mSettings);
-				var oContent = new CardContent(oClonedSettings);
-				this.setContent(oContent);
-				this.setBusy(false);
-			}.bind(this));
+		} else {
+			switch (sCardType.toLowerCase()) {
+			case "list":  sap.ui.require(["sap/f/cards/content/List"], this._setCardContent.bind(this));
+				break;
+			case "kpi": sap.ui.require(["sap/f/cards/content/KPI"], this._setCardContent.bind(this));
+				break;
+			case "table": sap.ui.require(["sap/f/cards/content/Table"], this._setCardContent.bind(this));
+				break;
+			case "analytical": sap.ui.require(["sap/f/cards/content/Analytical"], this._setCardContent.bind(this));
+				break;
+			}
 		}
+	};
+
+	Card.prototype._setCardContent = function(CardContent) {
+		var mSettings = this._oCardManifest.get("sap.card/content");
+		var oClonedSettings = jQuery.extend(true, {}, mSettings);
+		var oContent = new CardContent(oClonedSettings);
+		this.setContent(oContent);
+		this.setBusy(false);
 	};
 
 	Card.prototype._createTitle = function () {

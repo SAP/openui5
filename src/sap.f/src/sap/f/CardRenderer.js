@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.f.Card
-sap.ui.define(["sap/f/library", "sap/base/security/encodeXML", "sap/ui/core/IconPool"],
-	function (library, encodeXML, IconPool) {
+sap.ui.define(["sap/f/library", "sap/base/security/encodeXML", "sap/ui/core/IconPool", "sap/base/security/encodeCSS"],
+	function (library, encodeXML, IconPool, encodeCSS) {
 		"use strict";
 
 		/**
@@ -144,15 +144,15 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeXML", "sap/ui/core/Icon
 			if (sColor) {
 				oRm.addStyle("color", sColor);
 				//TODO: Use this only in focus case
-				oRm.addStyle("border-color", sColor + " !important");
+				oRm.addStyle("border-color", encodeCSS(sColor) + " !important");
 			}
 			if (sBackgroundColor) {
-				oRm.addStyle("background-color", sBackgroundColor);
+				oRm.addStyle("background-color", encodeCSS(sBackgroundColor));
 			}
 			if (sBackgroundImage) {
-				oRm.addStyle("background-image", "url('" + sBackgroundImage + "')");
+				oRm.addStyle("background-image", "url('" + encodeCSS(sBackgroundImage) + "')");
 				if (sBackgroundImageSize) {
-					oRm.addStyle("background-size", sBackgroundImageSize);
+					oRm.addStyle("background-size", encodeCSS(sBackgroundImageSize));
 				}
 			}
 			oRm.addClass("sapFCardContent");
