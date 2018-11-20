@@ -1408,13 +1408,6 @@ sap.ui.define([
 		<Text text="{ID}" />\
 	</ColumnListItem>\
 </Table>',
-			oModelMessage = {
-				"code" : "1",
-				"message" : "Text",
-				"persistent" : false,
-				"target" : "/EMPLOYEES('0')/ID",
-				"type" : "Warning"
-			},
 			oResponseMessage = {
 				"code" : "1",
 				"message" : "Text",
@@ -1433,7 +1426,13 @@ sap.ui.define([
 					}
 				}]
 			})
-			.expectMessages([oModelMessage]);
+			.expectMessages([{
+				"code" : "1",
+				"message" : "Text",
+				"persistent" : false,
+				"target" : "/EMPLOYEES('0')/ID",
+				"type" : "Warning"
+			}]);
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
 			.then(function () {
@@ -1445,8 +1444,8 @@ sap.ui.define([
 						"__CT__FAKE__Message" : {
 							"__FAKE__Messages" : [oResponseMessage]
 						}
-					})
-					.expectMessages([oModelMessage]);
+					});
+				// no change in messages
 
 				// code under test
 				oContext.refresh();
@@ -8802,14 +8801,6 @@ sap.ui.define([
 	QUnit.test("bound operation: $$inheritExpandSelect", function (assert) {
 		var fnDataReceived = this.spy(),
 			fnDataRequested = this.spy(),
-			oJustAMessage = {
-				code : "23",
-				message : "Just A Message",
-				target :
-					"/Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction/Name",
-				persistent : true,
-				type : "Success"
-			},
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="objectPage">\
@@ -8872,7 +8863,15 @@ sap.ui.define([
 						"transition" : true
 					}],
 					"Name" : "Hour Frustrated"
-				}).expectMessages([oJustAMessage]);
+				})
+				.expectMessages([{
+					code : "23",
+					message : "Just A Message",
+					target :
+						"/Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction/Name",
+					persistent : true,
+					type : "Success"
+				}]);
 
 			return Promise.all([
 				// code under test
@@ -8916,8 +8915,8 @@ sap.ui.define([
 				.expectChange("id", "42") //TODO @see CPOUI5UISERVICESV3-1572
 				.expectChange("isActive", "No") //TODO @see CPOUI5UISERVICESV3-1572
 				.expectChange("name", "TAFKAP") //TODO @see CPOUI5UISERVICESV3-1572
-				.expectChange("inProcessByUser", "bar")
-				.expectMessages([oJustAMessage]);
+				.expectChange("inProcessByUser", "bar");
+				// no change in messages
 
 			return Promise.all([
 				oInactiveArtistContext.requestSideEffects([{
@@ -8945,8 +8944,8 @@ sap.ui.define([
 				//TODO unexpected change events -> CPOUI5UISERVICESV3-1572
 				.expectChange("id", "42")
 				.expectChange("isActive", "No")
-				.expectChange("inProcessByUser", "JOHNDOE")
-				.expectMessages([oJustAMessage]);
+				.expectChange("inProcessByUser", "JOHNDOE");
+				// no change in messages
 
 			// code under test
 			that.oView.getBindingContext().refresh();
@@ -8974,8 +8973,8 @@ sap.ui.define([
 					"IsActiveEntity" : true,
 					"Messages" : [],
 					"Name" : "Hour Frustrated"
-				})
-				.expectMessages([oJustAMessage]);
+				});
+				// no change in messages
 
 			return Promise.all([
 				oOperation.execute(),
