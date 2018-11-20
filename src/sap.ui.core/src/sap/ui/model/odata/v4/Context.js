@@ -12,6 +12,10 @@ sap.ui.define([
 ], function (_GroupLock, _Helper, Log, SyncPromise, BaseContext) {
 	"use strict";
 
+	var oModule,
+		// index of virtual context used for auto-$expand/$select
+		iVIRTUAL = -9007199254740991/*Number.MIN_SAFE_INTEGER*/;
+
 	/*
 	 * Fetches and formats the primitive value at the given path.
 	 *
@@ -259,7 +263,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Context.prototype.fetchValue = function (sPath, oListener, bCached) {
-		if (this.iIndex === -2) {
+		if (this.iIndex === iVIRTUAL) {
 			return SyncPromise.resolve(); // no cache access for virtual contexts
 		}
 		// Create an absolute path based on the context's path to ensure that fetchValue uses key
@@ -757,14 +761,14 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise} A sync promise on the result of the processor
 	 */
 	Context.prototype.withCache = function (fnProcessor, sPath) {
-		if (this.iIndex === -2) {
+		if (this.iIndex === iVIRTUAL) {
 			return SyncPromise.resolve(); // no cache access for virtual contexts
 		}
 		return this.oBinding.withCache(fnProcessor,
 			sPath[0] === "/" ? sPath : _Helper.buildPath(this.sPath, sPath));
 	};
 
-	return {
+	oModule = {
 		/**
 		 * Creates a context for an OData V4 model.
 		 *
@@ -795,4 +799,11 @@ sap.ui.define([
 			return new Context(oModel, oBinding, sPath, iIndex, oCreatePromise);
 		}
 	};
+
+	/*
+	 * Index of virtual context used for auto-$expand/$select.
+	 */
+	Object.defineProperty(oModule, "VIRTUAL", {value : iVIRTUAL});
+
+	return oModule;
 }, /* bExport= */ false);
