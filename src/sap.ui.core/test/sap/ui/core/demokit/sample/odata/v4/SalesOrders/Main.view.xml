@@ -62,9 +62,8 @@
 						<Button id="confirmCreateSalesOrder" text="OK"
 							press="onCloseSalesOrderDialog" type="Accept"/>
 					</buttons>
-					<form:SimpleForm editable="true" layout="ResponsiveGridLayout"
-						ariaLabelledBy="createSalesOrderDialog">
-						<Label labelFor="BuyerID::new" text="Buyer ID"/>
+					<form:SimpleForm editable="true" layout="ResponsiveGridLayout">
+						<Label text="Buyer ID"/>
 						<!-- TODO Q: derive maxLength from type's constraints?! A: SmartField?! -->
 						<Input id="BuyerID::new"
 							maxLength="10"
@@ -78,7 +77,7 @@
 									text="{BusinessPartnerID}"/>
 							</suggestionItems>
 						</Input>
-						<Label labelFor="Note::new" text="Note"/>
+						<Label text="Note"/>
 						<Input id="Note::new" value="{Note}"/>
 						<Label id="CurrencyCode::Label" text="Currency Code"/>
 						<demo:ValueHelp ariaLabelledBy="CurrencyCode::Label"
@@ -264,15 +263,15 @@
 				<Toolbar design="Transparent" id="salesOrderDetailsToolbar">
 					<Title text="Sales Order"/>
 				</Toolbar>
-				<Label labelFor="SalesOrderID::detail" text="Sales Order ID" />
+				<Label text="Sales Order ID" />
 				<Text id="SalesOrderID::detail" text="{SalesOrderID}" />
-				<Label labelFor="CreatedAt::detail" text="Created At" />
-				<Text id="CreatedAt::detail" text="{CreatedAt}" />
-				<Label labelFor="ChangedAt::detail" text="Changed At" />
-				<Text id="ChangedAt::detail" text="{ChangedAt}" />
-				<Label labelFor="LifecycleStatusDesc::detail" text="Lifecycle Status Desc" />
-				<Text id="LifecycleStatusDesc::detail" text="{LifecycleStatusDesc}" />
-				<Label labelFor="Note::detail" text="Note" />
+				<Label text="Created At" />
+				<Text text="{CreatedAt}" />
+				<Label text="Changed At" />
+				<Text text="{ChangedAt}" />
+				<Label text="Lifecycle Status Desc" />
+				<Text text="{LifecycleStatusDesc}" />
+				<Label text="Note" />
 				<Input id="Note::detail" value="{Note}" editable="{= %{LifecycleStatus} === 'N'}"/>
 				<Toolbar design="Transparent" id="SO_2_BP::detail" binding="{SO_2_BP}">
 					<Title text="Business Partner"/>
@@ -280,15 +279,15 @@
 						id="deleteBusinessPartner" press="onDeleteBusinessPartner"
 						tooltip="Delete business partner"/>
 				</Toolbar>
-				<Label labelFor="BusinessPartnerID::detail" text="Business Partner ID" />
-				<Text id="BusinessPartnerID::detail" text="{SO_2_BP/BusinessPartnerID}" />
-				<Label labelFor="CompanyName::detail" text="CompanyName" />
-				<Text id="CompanyName::detail" text="{SO_2_BP/CompanyName}" />
-				<Label labelFor="PhoneNumber::detail" text="PhoneNumber" />
+				<Label text="Business Partner ID" />
+				<Text text="{SO_2_BP/BusinessPartnerID}" />
+				<Label text="CompanyName" />
+				<Text text="{SO_2_BP/CompanyName}" />
+				<Label text="PhoneNumber" />
 				<Input id="PhoneNumber::detail" value="{SO_2_BP/PhoneNumber}" />
-				<Label labelFor="City::detail" text="City" />
+				<Label text="City" />
 				<Input id="City::detail" value="{SO_2_BP/Address/City}"/>
-				<Label labelFor="PostalCode::detail" text="Postal Code" />
+				<Label text="Postal Code" />
 				<Input id="PostalCode::detail" value="{SO_2_BP/Address/PostalCode}"/>
 			</form:SimpleForm>
 			<Table id="SO_2_SOITEM"
@@ -411,9 +410,9 @@
 			<form:SimpleForm ariaLabelledBy="supplierDetailsTitle"
 				binding="{SOITEM_2_PRODUCT/PRODUCT_2_BP}" editable="true" id="PRODUCT_2_BP"
 				layout="ResponsiveGridLayout">
-				<Label labelFor="PRODUCT_2_BP:CompanyName" text="Supplier" />
-				<Text id="PRODUCT_2_BP:CompanyName" text="{CompanyName} {LegalForm}" />
-				<Label labelFor="PRODUCT_2_BP:PhoneNumber" text="Phone Number" />
+				<Label text="Supplier" />
+				<Text text="{CompanyName} {LegalForm}" />
+				<Label text="Phone Number" />
 				<Input id="PRODUCT_2_BP:PhoneNumber" value="{PhoneNumber}"
 					enabled="{= !!%{CompanyName}}"/>
 			</form:SimpleForm>
