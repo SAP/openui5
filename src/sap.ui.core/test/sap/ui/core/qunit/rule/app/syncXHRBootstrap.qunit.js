@@ -38,7 +38,7 @@
 			).then(function() {
 				var oHistory = RuleAnalyzer.getLastAnalysisHistory();
 
-				assert.equal(oHistory.issues.length, 1, " there should be " + 1 + " issues");
+				assert.equal(oHistory.issues.length, 2, " there should be " + 2 + " issues");
 
 				// If there are issues found check the rule id
 				assert.equal(oHistory.issues[0].rule.id, "globalSyncXHR", " should be an issue from rule " + "globalSyncXHR");
