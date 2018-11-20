@@ -1,8 +1,9 @@
 sap.ui.define([
 	'./BaseController',
 	'sap/ui/model/json/JSONModel',
-	"sap/ui/VersionInfo"
-], function (BaseController, JSONModel, VersionInfo) {
+	"sap/ui/VersionInfo",
+	"sap/ui/core/mvc/XMLView"
+], function (BaseController, JSONModel, VersionInfo, XMLView) {
 	"use strict";
 	return BaseController.extend("sap.ui.demo.toolpageapp.controller.Statistics", {
 
@@ -19,13 +20,13 @@ sap.ui.define([
 
 			// Load charts for the current environment (D3 = OpenUI5, MicroCharts = SAPUI5)
 			VersionInfo.load().then(function (oVersionInfo) {
-				if (oVersionInfo.name.startsWith("SAPUI5")) {
-					// SAPUI5 distribution: use micro charts
-					this.byId("statisticsContainer").addContent(sap.ui.xmlview({id: this.getView().createId("charts"), viewName : "sap.ui.demo.toolpageapp.view.StatisticsMicro"}));
-				} else {
-					// OpenUI5 distribution: use D3 charts
-					this.byId("statisticsContainer").addContent(sap.ui.xmlview({id: this.getView().createId("charts"), viewName : "sap.ui.demo.toolpageapp.view.StatisticsD3"}));
-				}
+				var sType = (oVersionInfo.name.startsWith("SAPUI5") ? "Micro" : "D3");
+				XMLView.create({
+					id: this.getView().createId("charts"),
+					viewName: "sap.ui.demo.toolpageapp.view.Statistics" + sType
+				}).then(function (oView) {
+					this.byId("statisticsContainer").addContent(oView);
+				}.bind(this));
 			}.bind(this));
 		},
 
