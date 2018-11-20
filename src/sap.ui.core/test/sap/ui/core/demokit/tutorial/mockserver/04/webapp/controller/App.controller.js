@@ -11,7 +11,7 @@ sap.ui.define([
 		 * Upon pressing, we bind the items aggregation of the list to the "Meetups" entityset.
 		 * We pass a custom URL parameter "first=3" (assuming our OData BE knows how to process it).
 		 */
-		onPressAction: function() {
+		onPress: function() {
 			var oList = this.byId("list");
 			oList.bindItems({
 				path: "/Meetups",

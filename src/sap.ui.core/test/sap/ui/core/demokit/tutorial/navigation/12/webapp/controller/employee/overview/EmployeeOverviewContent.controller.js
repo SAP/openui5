@@ -1,12 +1,12 @@
 sap.ui.define([
-    "sap/ui/demo/nav/controller/BaseController",
-    "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator",
-    "sap/ui/model/Sorter",
-    "sap/m/ViewSettingsDialog",
-    "sap/m/ViewSettingsItem"
+	"sap/ui/demo/nav/controller/BaseController",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/Sorter",
+	"sap/m/ViewSettingsDialog",
+	"sap/m/ViewSettingsItem"
 ], function(
-    BaseController,
+	BaseController,
 	Filter,
 	FilterOperator,
 	Sorter,

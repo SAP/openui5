@@ -1,13 +1,13 @@
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/model/json/JSONModel",
 	'sap/ui/thirdparty/sinon',
 	"sap/base/Log"
-], function (jQuery, sinon, Log) {
+], function (JSONModel, sinon, Log) {
 	"use strict";
 
 	var oSandbox = sinon.sandbox.create(),
 		aUsers, // The array that holds the cached user data
-		sMetadata,  // The string that holds the cached mock service metadata
+		sMetadata, // The string that holds the cached mock service metadata
 		sLogComponent = "sap.ui.core.tutorial.odatav4.mockserver", // Component for writing logs into the console
 		rBaseUrl = /services.odata.org\/TripPinRESTierService/;
 
@@ -16,29 +16,33 @@ sap.ui.define([
 		/**
 		 * Creates a Sinon fake service, intercepting all http requests to
 		 * the URL defined in variable sBaseUrl above.
+		 * @returns{Promise} a promise that is resolved when the mock server is started
 		 */
-		start : function () {
+		init : function () {
 			// Read the mock data
-			readData();
-			// Initialize the sinon fake server
-			oSandbox.useFakeServer();
-			// Make sure that requests are responded to automatically. Otherwise we would need to do that manually.
-			oSandbox.server.autoRespond = true;
+			return readData().then(function () {
+				// Initialize the sinon fake server
+				oSandbox.useFakeServer();
+				// Make sure that requests are responded to automatically. Otherwise we would need to do that manually.
+				oSandbox.server.autoRespond = true;
 
-			// Register the requests for which responses should be faked.
-			oSandbox.server.respondWith(rBaseUrl, handleAllRequests);
+				// Register the requests for which responses should be faked.
+				oSandbox.server.respondWith(rBaseUrl, handleAllRequests);
 
-			// Apply a filter to the fake XmlHttpRequest.
-			// Otherwise, ALL requests (e.g. for the component, views etc.) would be intercepted.
-			sinon.FakeXMLHttpRequest.useFilters = true;
-			sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl) {
-				// If the filter returns true, the request will NOT be faked.
-				// We only want to fake requests that go to the intended service.
-				return !rBaseUrl.test(sUrl);
+				// Apply a filter to the fake XmlHttpRequest.
+				// Otherwise, ALL requests (e.g. for the component, views etc.) would be intercepted.
+				sinon.FakeXMLHttpRequest.useFilters = true;
+				sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl) {
+					// If the filter returns true, the request will NOT be faked.
+					// We only want to fake requests that go to the intended service.
+					return !rBaseUrl.test(sUrl);
+				});
+
+				// Set the logging level for console entries from the mock server
+				Log.setLevel(3, sLogComponent);
+
+				Log.info("Running the app with mock data", sLogComponent);
 			});
-
-			// Set the logging level for console entries from the mock server
-			Log.setLevel(3, sLogComponent);
 		},
 
 		/**
@@ -155,32 +159,52 @@ sap.ui.define([
 	/**
 	 * Reads and caches the fake service metadata and data from their
 	 * respective files.
+	 * @returns{Promise} a promise that is resolved when the data is loaded
 	 */
 	function readData() {
-		var oResult;
-
-		// Read metadata file
-		//TODO: global jquery call found
-		oResult = jQuery.sap.sjax({
-			url : "./localService/metadata.xml",
-			dataType : "text"
+		var oMetadataPromise = new Promise(function (fnResolve, fnReject) {
+			var oRequest = new XMLHttpRequest();
+			oRequest.onload = function () {
+				// 404 is not an error for XMLHttpRequest so we need to handle it here
+				if (oRequest.status === 404) {
+					var sError = "resource './localService/metadata.xml' not found";
+					Log.error(sError, sLogComponent);
+					fnReject(new Error(sError, sLogComponent));
+				}
+				sMetadata = this.responseText;
+				fnResolve();
+			};
+			oRequest.onerror = function() {
+				var sError = "error loading resource './localService/metadata.xml'";
+				Log.error(sError, sLogComponent);
+				fnReject(new Error(sError, sLogComponent));
+			};
+			oRequest.open("GET", "./localService/metadata.xml");
+			oRequest.send();
 		});
-		if (!oResult.success) {
-			throw new Error("'./localService/metadata.xml'" + ": resource not found");
-		} else {
-			sMetadata = oResult.data;
-		}
 
-		//TODO: global jquery call found
-		oResult = jQuery.sap.sjax({
-			url : "./localService/mockdata/people.json",
-			dataType : "text"
+		var oMockDataPromise = new Promise(function (fnResolve, fnReject) {
+			var oMockDataModel = new JSONModel("./localService/mockdata/people.json");
+
+			oMockDataModel.attachRequestCompleted(function (oEvent) {
+				// 404 is not an error for JSONModel so we need to handle it here
+				if (oEvent.getParameter("errorobject") && oEvent.getParameter("errorobject").statusCode === 404) {
+					var sError = "resource './localService/mockdata/people.json' not found";
+					Log.error(sError, sLogComponent);
+					fnReject(new Error(sError, sLogComponent));
+				}
+				aUsers = this.getData().value;
+				fnResolve();
+			});
+
+			oMockDataModel.attachRequestFailed(function () {
+				var sError = "error loading resource './localService/mockdata/people.json'";
+				Log.error(sError, sLogComponent);
+				fnReject(new Error(sError, sLogComponent));
+			});
 		});
-		if (!oResult.success) {
-			throw new Error("'./localService/mockdata/people.json'" + ": resource not found");
-		} else {
-			aUsers = JSON.parse(oResult.data).value;
-		}
+
+		return Promise.all([oMetadataPromise, oMockDataPromise]);
 	}
 
 	/**
