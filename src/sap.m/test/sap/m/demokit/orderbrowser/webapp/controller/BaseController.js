@@ -54,7 +54,7 @@ sap.ui.define([
 		onNavBack : function() {
 			var sPreviousHash = History.getInstance().getPreviousHash();
 
-				if (sPreviousHash !== undefined) {
+			if (sPreviousHash !== undefined) {
 				history.go(-1);
 			} else {
 				this.getRouter().navTo("master", {}, true);
@@ -62,5 +62,4 @@ sap.ui.define([
 		}
 
 	});
-
 });

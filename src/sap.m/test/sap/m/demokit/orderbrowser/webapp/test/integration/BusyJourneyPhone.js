@@ -2,36 +2,30 @@
 
 sap.ui.define([
 	"sap/ui/test/opaQunit",
+	"sap/ui/Device",
 	"./pages/App",
 	"./pages/Master"
-], function (opaTest) {
+], function (opaTest, Device) {
 	"use strict";
+
+	var iDelay = (Device.browser.msie || Device.browser.edge) ? 1500 : 1000;
 
 	QUnit.module("Phone busy indication");
 
 	opaTest("Should see a global busy indication while loading the metadata", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartTheAppWithDelay("", 5000);
+		Given.iStartMyApp({delay: iDelay});
 
 		// Assertions
 		Then.onTheAppPage.iShouldSeeTheBusyIndicator();
-
-		// Cleanup
-		Then.iTeardownMyAppFrame();
 	});
 
 	opaTest("Should see a busy indication on the master after loading the metadata", function (Given, When, Then) {
-		// Arrangements
-		Given.iStartTheAppWithDelay("", 2000);
-
-		//Actions
-		When.onTheAppPage.iWaitUntilTheBusyIndicatorIsGone();
-
 		// Assertions
 		Then.onTheMasterPage.iShouldSeeTheBusyIndicator();
 
-		// Cleanup
-		Then.iTeardownMyAppFrame();
+		//Cleanup
+		Then.iTeardownMyApp();
 	});
 
 });

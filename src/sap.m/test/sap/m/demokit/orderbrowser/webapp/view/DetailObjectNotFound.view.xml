@@ -2,7 +2,6 @@
 	controllerName="sap.ui.demo.orderbrowser.controller.BaseController"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
-
 	<MessagePage
 		id="page"
 		title="{i18n>detailTitle}"
@@ -16,5 +15,4 @@
 		}"
 		navButtonPress="onNavBack">
 	</MessagePage>
-
 </mvc:View>
