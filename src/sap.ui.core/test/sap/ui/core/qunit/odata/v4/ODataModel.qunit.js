@@ -1042,6 +1042,7 @@ sap.ui.define([
 		var oModel = createModel(),
 			oModelPrototypeMock = this.mock(Model.prototype);
 
+		this.mock(oModel.oRequestor).expects("destroy").withExactArgs();
 		oModelPrototypeMock.expects("destroy").on(oModel).withExactArgs(1, 2, 3).returns("foo");
 		oModelPrototypeMock.expects("destroy").on(oModel.getMetaModel()).withExactArgs();
 
