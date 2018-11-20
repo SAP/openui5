@@ -1,10 +1,10 @@
 sap.ui.define([
-    "sap/ui/core/UIComponent",
-    "sap/ui/Device",
-    "sap/ui/demo/orderbrowser/model/models",
-    "sap/ui/demo/orderbrowser/controller/ListSelector",
-    "sap/ui/demo/orderbrowser/controller/ErrorHandler",
-    "sap/ui/thirdparty/jquery"
+	"sap/ui/core/UIComponent",
+	"sap/ui/Device",
+	"sap/ui/demo/orderbrowser/model/models",
+	"sap/ui/demo/orderbrowser/controller/ListSelector",
+	"sap/ui/demo/orderbrowser/controller/ErrorHandler",
+	"sap/ui/thirdparty/jquery"
 ], function (UIComponent, Device, models, ListSelector, ErrorHandler, jQuery) {
 	"use strict";
 

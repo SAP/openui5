@@ -1,12 +1,12 @@
 sap.ui.define([
-    "sap/ui/test/Opa5",
-    "sap/ui/test/actions/Press",
-    "sap/ui/test/actions/EnterText",
-    "sap/ui/demo/orderbrowser/test/integration/pages/Common",
-    "sap/ui/test/matchers/AggregationLengthEquals",
-    "sap/ui/test/matchers/AggregationFilled",
-    "sap/ui/test/matchers/PropertyStrictEquals",
-    "sap/ui/thirdparty/jquery"
+	"sap/ui/test/Opa5",
+	"sap/ui/test/actions/Press",
+	"sap/ui/test/actions/EnterText",
+	"sap/ui/demo/orderbrowser/test/integration/pages/Common",
+	"sap/ui/test/matchers/AggregationLengthEquals",
+	"sap/ui/test/matchers/AggregationFilled",
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/thirdparty/jquery"
 ], function(
     Opa5,
 	Press,
