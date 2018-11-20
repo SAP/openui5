@@ -93,7 +93,7 @@ sap.ui.define([
 
 		/**
 		 * Event handler for navigating back.
-		 * We navigate back in the browser historz
+		 * We navigate back in the browser history
 		 * @public
 		 */
 		onNavBack : function() {
