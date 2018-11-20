@@ -69,6 +69,12 @@ function (History, IssueManager, RuleSetLoader) {
 		},
 		sReferenceFormattedHistory = "Run1-executedonRulePreset/ID:TestPreset/TestPreset---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|ruleid:breadcrumbsInOverflowToolbar||name:BreadcrumbsinOverflowToolbar||library:sap.m||categories:Usability||audiences:Control||description:TheBreadcrumbsshouldnotbeplacedinsideanOverflowToolbar||resolution:Placebreadcrumbsinanothercontainer.|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|id|classname|status|details|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------";
 
+	var oExampleAnalysisMetadata = {
+		"scenarioCode": "<any-code>",
+		"scenarioName": "<any-name>",
+		"scenarioDescription": "<any-desc>"
+	};
+
 	var compareJSON = function (oTemplateObj, oComparedObj) {
 		var aKeys = (typeof oTemplateObj === "string" || !oTemplateObj) ? [] : Object.keys(oTemplateObj);
 		var sError = "";
@@ -224,7 +230,8 @@ function (History, IssueManager, RuleSetLoader) {
 					title: "Test Preset",
 					description: "Description of test preset",
 					dateExported: ""
-				}
+				},
+				_oAnalysisMetadata: oExampleAnalysisMetadata
 			};
 		},
 		afterEach: function () {
@@ -306,6 +313,10 @@ function (History, IssueManager, RuleSetLoader) {
 		assert.strictEqual(oHistoryItem.sapUi5Version.name, oVersion.name, "Sap ui5 version name is correct");
 		assert.strictEqual(oHistoryItem.sapUi5Version.version, oVersion.version, "Sap ui5 version key is correct");
 		assert.strictEqual(oHistoryItem.sapUi5Version.buildTimestamp, oVersion.buildTimestamp, "Sap ui5 version build timestamp is correct");
+
+		assert.ok(oHistoryItem.hasOwnProperty("analysisMetadata"), "Should have analysisMetadata");
+		assert.deepEqual(oHistoryItem.analysisMetadata, oExampleAnalysisMetadata, "Analysis metadata is correct (unchanged)");
+
 	});
 
 	QUnit.test("History getFormattedHistory - String format passed", function (assert) {
