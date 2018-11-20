@@ -1228,9 +1228,7 @@ function(
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.showMaster = function() {
-		var _this$ = this._oMasterNav.$(),
-			that = this,
-			fnAnimationEnd = jQuery.proxy(this._afterShowMasterAnimation, this),
+		var that = this,
 			_curPage = this._getRealPage(this._oDetailNav.getCurrentPage());
 
 		function afterPopoverOpen(){
@@ -1247,28 +1245,30 @@ function(
 				this._oPopOver.openBy(this._oShowMasterBtn, true);
 				this._bMasterOpening = true;
 			}
-		} else {
-			if ((this._portraitHide() || this._hideMode())
-				&& (!this._bMasterisOpen || this._bMasterClosing)) {
-					_this$.bind("webkitTransitionEnd transitionend", fnAnimationEnd);
+		} else if ((this._portraitHide() || this._hideMode())
+					&& (!this._bMasterisOpen || this._bMasterClosing)) {
 
-				this.fireBeforeMasterOpen();
-				this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterVisible", true);
-				this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterHidden", false);
-				this._bMasterOpening = true;
-				that._removeMasterButton(_curPage);
+			this._oMasterNav.$().one(
+				"webkitTransitionEnd transitionend",
+				jQuery.proxy(this._afterShowMasterAnimation, this)
+			);
 
-				// workaround for bug in current webkit versions: in slided-in elements the z-order may be wrong and will be corrected once a re-layout is enforced
-				// see http://code.google.com/p/chromium/issues/detail?id=246965
-				if (Device.browser.webkit) {
-					var oMNav = this._oMasterNav;
+			this.fireBeforeMasterOpen();
+			this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterVisible", true);
+			this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterHidden", false);
+			this._bMasterOpening = true;
+			that._removeMasterButton(_curPage);
+
+			// workaround for bug in current webkit versions: in slided-in elements the z-order may be wrong and will be corrected once a re-layout is enforced
+			// see http://code.google.com/p/chromium/issues/detail?id=246965
+			if (Device.browser.webkit) {
+				var oMNav = this._oMasterNav;
+				window.setTimeout(function(){
+					oMNav.$().css("box-shadow", "none"); // remove box-shadow
 					window.setTimeout(function(){
-						oMNav.$().css("box-shadow", "none"); // remove box-shadow
-						window.setTimeout(function(){
-							oMNav.$().css("box-shadow", "");  // add it again
-						},50);
-					},0);
-				}
+						oMNav.$().css("box-shadow", "");  // add it again
+					},50);
+				},0);
 			}
 		}
 		return this;
@@ -1283,23 +1283,23 @@ function(
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.hideMaster = function() {
-		var _this$ = this._oMasterNav.$(),
-			fnAnimationEnd = jQuery.proxy(this._afterHideMasterAnimation, this);
 		if (this._portraitPopover()) {
 			if (this._oPopOver.isOpen()) {
 				this._oPopOver.close();
 				this._bMasterClosing = true;
 			}
-		} else {
-			if ((this._portraitHide() || this._hideMode()) &&
-				(this._bMasterisOpen || this._oMasterNav.$().hasClass("sapMSplitContainerMasterVisible"))) {
-					_this$.bind("webkitTransitionEnd transitionend", fnAnimationEnd);
+		} else if ((this._portraitHide() || this._hideMode()) &&
+					(this._bMasterisOpen || this._oMasterNav.$().hasClass("sapMSplitContainerMasterVisible"))) {
 
-				this.fireBeforeMasterClose();
-				this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterVisible", false);
-				this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterHidden", true);
-				this._bMasterClosing = true;
-			}
+			this._oMasterNav.$().one(
+				"webkitTransitionEnd transitionend",
+				jQuery.proxy(this._afterHideMasterAnimation, this)
+			);
+
+			this.fireBeforeMasterClose();
+			this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterVisible", false);
+			this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterHidden", true);
+			this._bMasterClosing = true;
 		}
 		return this;
 	};
@@ -1313,11 +1313,6 @@ function(
 	};
 
 	SplitContainer.prototype._afterHideMasterAnimation = function() {
-		if (this._portraitHide() || this._hideMode()) {
-				var $MasterNav = this._oMasterNav.$();
-				$MasterNav.unbind("webkitTransitionEnd transitionend", this._afterHideMasterAnimation);
-		}
-
 		var oCurPage = this._getRealPage(this._oDetailNav.getCurrentPage());
 		this._setMasterButton(oCurPage);
 

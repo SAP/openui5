@@ -950,6 +950,60 @@
 				assert.equal(this.sut._oShowMasterBtn.getTooltip(), 'Show Master 2 Page ', 'Initial tooltip is correct');
 			});
 
+			QUnit.test("Show and hide master navigation several times", function(assert) {
+				var done = assert.async();
+
+				var oSplitContainer = new sap.m.SplitContainer({
+						masterPages: new sap.m.Page(),
+						detailPages: new sap.m.Page(),
+						mode: "HideMode"
+					}),
+					oPage = new sap.m.Page({
+						content: oSplitContainer
+					}),
+					oApp = new sap.m.App({
+						pages: oPage
+					});
+
+				oApp.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var iHidesCounter = 0,
+					iDesiredHides = 3;
+
+				var fnOnOpen = function() {
+					assert.ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "Master should be visible after open");
+					assert.ok(oSplitContainer._bMasterisOpen, "The flag 'master is open' is true after open");
+
+					if (iHidesCounter < iDesiredHides) {
+						setTimeout(function () {
+							oSplitContainer.hideMaster();
+						});
+					}
+				};
+
+				var fnOnClose = function() {
+					iHidesCounter ++;
+
+					assert.ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "Master should not be visible after close");
+					assert.ok(oSplitContainer._bMasterisOpen === false, "The flag 'master is open' is false after close");
+
+					if (iHidesCounter < iDesiredHides) {
+						setTimeout(function () {
+							oSplitContainer.showMaster();
+						});
+					} else {
+						oApp.destroy();
+						done();
+					}
+				};
+
+				oSplitContainer.attachAfterMasterOpen(fnOnOpen);
+				oSplitContainer.attachAfterMasterClose(fnOnClose);
+
+				oSplitContainer.showMaster();
+			});
+
 			QUnit.module("SplitContainer public API test", {
 				beforeEach : function () {
 					this.sut = splitContainerSetup();
