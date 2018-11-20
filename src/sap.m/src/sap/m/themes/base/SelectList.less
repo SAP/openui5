@@ -3,8 +3,8 @@
 /* Base theme                        */
 /* ================================= */
 
-@_sap_m_SelectListItem_Height: 2.5rem;
-@_sap_m_SelectListItem_CompactHeight: 2rem;
+@_sap_m_SelectList_ItemHeight: 2.5rem;
+@_sap_m_SelectList_ItemCompactHeight: 2rem;
 
 /* ------------------------------ */
 /* commons styles                 */
@@ -51,7 +51,7 @@
 	user-select: none;
 	color: @sapUiListTextColor;
 	font-size: @sapMFontMediumSize;
-	height: @_sap_m_SelectListItem_Height;
+	height: @_sap_m_SelectList_ItemHeight;
 	cursor: pointer;
 }
 
@@ -60,7 +60,7 @@
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	padding: 0 1rem 0 1rem;
-	line-height: @_sap_m_SelectListItem_Height;
+	line-height: @_sap_m_SelectList_ItemHeight;
 }
 
 .sapMSelectListItemIcon {
@@ -187,9 +187,9 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 /* ------------------------------ */
 
 .sapUiSizeCompact .sapMSelectListItemBase {
-	height: @_sap_m_SelectListItem_CompactHeight;
+	height: @_sap_m_SelectList_ItemCompactHeight;
 }
 
 .sapUiSizeCompact .sapMSelectListItem {
-	line-height: @_sap_m_SelectListItem_CompactHeight;
+	line-height: @_sap_m_SelectList_ItemCompactHeight;
 }
