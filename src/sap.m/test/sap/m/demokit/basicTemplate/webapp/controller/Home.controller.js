@@ -1,6 +1,6 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/demo/basicTemplate/model/formatter"
+	"../model/formatter"
 ], function(Controller, formatter) {
 	"use strict";
 
