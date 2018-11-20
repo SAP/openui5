@@ -2,10 +2,13 @@
 
 sap.ui.define([
 	"sap/ui/test/opaQunit",
+	"sap/ui/Device",
 	"./pages/Worklist",
 	"./pages/App"
-], function (opaTest) {
+], function (opaTest, Device) {
 	"use strict";
+
+	var iDelay = (Device.browser.msie || Device.browser.edge) ? 1500 : 1000;
 
 	QUnit.module("Worklist");
 
@@ -35,13 +38,14 @@ sap.ui.define([
 		Then.onTheWorklistPage.theTableHasEntries();
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 	opaTest("Should see the busy indicator on app view while worklist view metadata is loaded", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartMyApp({
-			delay: 5000
+			delay: iDelay,
+			autoWait: false
 		});
 
 		// Assertions
@@ -56,7 +60,7 @@ sap.ui.define([
 		Then.onTheWorklistPage.iShouldSeeTheWorklistTableBusyIndicator();
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 });

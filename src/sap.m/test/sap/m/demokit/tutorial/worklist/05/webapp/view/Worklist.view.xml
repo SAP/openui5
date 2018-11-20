@@ -11,13 +11,13 @@
 		showFooter="true">
 
 		<semantic:titleHeading>
-			<Title text="{i18n>worklistTitle}" />
+			<Title text="{i18n>worklistTitle}"/>
 		</semantic:titleHeading>
 
 		<semantic:content>
 			<IconTabBar
 				id="iconTabBar"
-				select="onQuickFilter"
+				select=".onQuickFilter"
 				expandable="false"
 				headerBackgroundDesign="Transparent">
 				<items>
@@ -53,7 +53,7 @@
 						growing="true"
 						growingScrollToLoad="true"
 						noDataText="{worklistView>/tableNoDataText}"
-						updateFinished="onUpdateFinished"
+						updateFinished=".onUpdateFinished"
 						width="auto"
 						mode="MultiSelect"
 						items="{
@@ -146,13 +146,13 @@
 			</IconTabBar>
 		</semantic:content>
 		<semantic:sendEmailAction>
-			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
+			<semantic:SendEmailAction id="shareEmail" press=".onShareEmailPress"/>
 		</semantic:sendEmailAction>
 		<semantic:positiveAction>
-			<semantic:PositiveAction text="{i18n>TableProductsReorder}" press="onUpdateStockObjects"/>
+			<semantic:PositiveAction text="{i18n>TableProductsReorder}" press=".onUpdateStockObjects"/>
 		</semantic:positiveAction>
 		<semantic:negativeAction>
-			<semantic:NegativeAction text="{i18n>TablePorductsUnlist}" press="onUnlistObjects"/>
+			<semantic:NegativeAction text="{i18n>TablePorductsUnlist}" press=".onUnlistObjects"/>
 		</semantic:negativeAction>
 	</semantic:SemanticPage>
 </mvc:View>

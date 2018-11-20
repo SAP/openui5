@@ -1,6 +1,6 @@
 /*global location*/
 sap.ui.define([
-	"mycompany/myapp/MyWorklistApp/controller/BaseController",
+	"./BaseController",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/routing/History",
 	"mycompany/myapp/MyWorklistApp/model/formatter",
@@ -58,6 +58,7 @@ sap.ui.define([
 		 */
 		onNavBack : function() {
 			var sPreviousHash = History.getInstance().getPreviousHash();
+
 			if (sPreviousHash !== undefined) {
 				history.go(-1);
 			} else {
@@ -167,5 +168,7 @@ sap.ui.define([
 				productComments : aEntries
 			});
 		}
+
 	});
+
 });

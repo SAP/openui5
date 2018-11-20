@@ -2,10 +2,10 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/UIComponent",
 	"sap/m/library"
-], function(Controller, UIComponent, mobileLibrary) {
-    "use strict";
+], function (Controller, UIComponent, mobileLibrary) {
+	"use strict";
 
-	return Controller.extend("mycompany.myapp.MyWorklistApp.controller.BaseController", {
+    return Controller.extend("mycompany.myapp.MyWorklistApp.controller.BaseController", {
 		/**
 		 * Convenience method for accessing the router.
 		 * @public
@@ -57,5 +57,7 @@ sap.ui.define([
 				oViewModel.getProperty("/shareSendEmailMessage")
 			);
 		}
+
 	});
+
 });

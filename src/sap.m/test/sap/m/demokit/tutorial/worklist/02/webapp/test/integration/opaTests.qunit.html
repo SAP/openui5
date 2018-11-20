@@ -1,35 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Integration tests for Worklist</title>
-	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
-	<meta charset="UTF-8">
+	<meta charset="utf-8">
+	<title>Integration tests for Manage Products</title>
 
 	<script id="sap-ui-bootstrap"
 		src="../../../../../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme='sap_belize'
 		data-sap-ui-resourceroots='{
 			"mycompany.myapp.MyWorklistApp": "../../"
 		}'
-		data-sap-ui-preload="async">
+		data-sap-ui-animation="false"
+		data-sap-ui-compatVersion="edge"
+		data-sap-ui-async="true">
 	</script>
 
-	<script src="../../../../../../../../../../resources/sap/ui/qunit/qunit-2-css.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../../../../../../../../../resources/sap/ui/thirdparty/qunit-2.css">
+
 	<script src="../../../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
 	<script src="../../../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
-	<script>
-		/* global QUnit */
-
-		QUnit.config.autostart = false;
-
-		sap.ui.getCore().attachInit(function() {
-			sap.ui.require([
-				"mycompany/myapp/MyWorklistApp/test/integration/AllJourneys"
-			], function() {
-				QUnit.start();
-			});
-		});
-	</script>
+	<script src="opaTests.qunit.js"></script>
 </head>
 <body>
 	<div id="qunit"></div>
