@@ -77,6 +77,33 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks the custom data of the provided control and returns 'true' if the applied change key is there
+	 *
+	 * @param {sap.ui.core.Control} oControl The Control that should be checked
+	 * @param {sap.ui.fl.Change} oChange The change instance
+	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier The control tree modifier
+	 *
+	 * @returns {boolean} Returns 'true' if the custom data is there
+	 */
+	FlexCustomData.hasAppliedCustomData = function(oControl, oChange, oModifier) {
+		return !!this.getAppliedCustomDataValue(oControl, oChange, oModifier);
+	};
+
+	/**
+	 * Checks the custom data of the provided control and returns 'true' if the notApplicable change key is there
+	 *
+	 * @param {sap.ui.core.Control} oControl The Control that should be checked
+	 * @param {sap.ui.fl.Change} oChange The change instance
+	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier The control tree modifier
+	 *
+	 * @returns {boolean} Returns 'true' if the custom data is there
+	 */
+	FlexCustomData.hasNotApplicableCustomData = function(oControl, oChange, oModifier) {
+		var mCustomData = this._getCustomData(oControl, oModifier, this._getCustomDataKey(oChange, FlexCustomData.notApplicableChangesCustomDataKey));
+		return !!mCustomData.customDataValue;
+	};
+
+	/**
 	 * Adds applied custom data to the control. Depending on whether the change is revertible,
 	 * the value of the custom data is either the revert data of the change (stringified and '{' and '}' escaped) or simply 'true'
 	 *

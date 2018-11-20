@@ -114,6 +114,14 @@ function (
 		QUnit.test("hasFailedCustomDataJs", function(assert) {
 			assert.notOk(FlexCustomData.hasFailedCustomDataJs(this.oControl, this.oChange, this.mPropertyBag.modifier), "the control has no failed flex custom data");
 		});
+
+		QUnit.test("hasNotApplicableCustomData", function(assert) {
+			assert.notOk(FlexCustomData.hasNotApplicableCustomData(this.oControl, this.oChange, this.mPropertyBag.modifier), "the control has no 'not applicable' flex custom data");
+		});
+
+		QUnit.test("hasAppliedCustomData", function(assert) {
+			assert.notOk(FlexCustomData.hasAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag.modifier), "the control has no applied flex custom data");
+		});
 	});
 
 	QUnit.module("Given a control with flex custom data", {
@@ -188,6 +196,16 @@ function (
 		QUnit.test("hasFailedCustomDataJs", function(assert) {
 			assert.ok(FlexCustomData.hasFailedCustomDataJs(this.oControl, this.oChange4, this.mPropertyBag.modifier), "the control has failed flex custom data");
 			assert.notOk(FlexCustomData.hasFailedCustomDataJs(this.oControl, this.oChange3, this.mPropertyBag.modifier), "the control has no failed flex custom data with the wrong change");
+		});
+
+		QUnit.test("hasNotApplicableCustomData", function(assert) {
+			assert.ok(FlexCustomData.hasNotApplicableCustomData(this.oControl, this.oChange2, this.mPropertyBag.modifier), "the control has 'not applicable' flex custom data");
+			assert.notOk(FlexCustomData.hasNotApplicableCustomData(this.oControl, this.oChange3, this.mPropertyBag.modifier), "the control has NO 'not applicable' flex custom data with the wrong change");
+		});
+
+		QUnit.test("hasAppliedCustomData", function(assert) {
+			assert.notOk(FlexCustomData.hasAppliedCustomData(this.oControl, this.oChange4, this.mPropertyBag.modifier), "the control has NO applied flex custom data");
+			assert.ok(FlexCustomData.hasAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag.modifier), "the control has applied flex custom data");
 		});
 	});
 
