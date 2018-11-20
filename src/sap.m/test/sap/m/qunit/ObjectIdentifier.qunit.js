@@ -1008,12 +1008,12 @@ sap.ui.define([
 		var sTitle = "My Title",
 			sText = "My Text",
 			sLabelId = new Label({text: "column name"}).getId(),
-			sut = new ObjectIdentifier({
+			sut = new ObjectIdentifier("sut", {
 				title : sTitle,
 				titleActive: true,
 				text : sText
 			}),
-			sut2 = new ObjectIdentifier({
+			sut2 = new ObjectIdentifier("sut1", {
 				title : sTitle,
 				titleActive: true,
 				text : sText,
@@ -1030,7 +1030,9 @@ sap.ui.define([
 
 		//Assert
 		assert.ok(sut.$("title").children(0).attr("aria-labelledby").indexOf(sLabelId) !== -1, "Correct ariaLabeldBy is set on after rendering of the control");
+		assert.ok(sut.$("title").children(0).attr("aria-labelledby").indexOf("sut-text") !== -1, "text id is presented in aria-labelledby of the control");
 		assert.ok(sut2.$("title").children(0).attr("aria-labelledby").indexOf(sLabelId) !== -1, "Correct ariaLabeldBy is set on creating of the control");
+		assert.ok(sut2.$("title").children(0).attr("aria-labelledby").indexOf("sut1-text") !== -1, "text id is presented in aria-labelledby of the control");
 
 		//Cleanup
 		sut.destroy();
