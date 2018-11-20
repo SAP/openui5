@@ -108,6 +108,9 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/library"],
 
 			if (oSubHeader && oSubHeader.getVisible()) {
 				oRm.addClass("sapMDialogWithSubHeader");
+				if (oSubHeader.getDesign() == library.ToolbarDesign.Info) {
+					oRm.addClass("sapMDialogSubHeaderInfoBar");
+				}
 			}
 
 			if (bMessage) {

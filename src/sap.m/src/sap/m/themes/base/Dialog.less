@@ -7,6 +7,7 @@
 @_sap_m_Dialog_BarHeight: 3rem;
 @_sap_m_Dialog_BarCompactHeight: 2.5rem;
 @_sap_m_Dialog_Padding: 1rem;
+@_sap_m_Dialog_InfoDesignBarHeight : 2rem;
 
 .sapMDialog,
 .sapMMessageDialog .sapMDialogScrollCont,
@@ -467,14 +468,20 @@ html.sap-tablet:not(.sap-combi) .sapMDialog {
 	&.sapMDialogWithSubHeader {
 		padding-top: @_sap_m_Dialog_BarHeight + @_sap_m_Dialog_BarHeight;
 
+		&.sapMDialogSubHeaderInfoBar {
+			padding-top: @_sap_m_Dialog_BarHeight + @_sap_m_Dialog_InfoDesignBarHeight;
+		}
+
 		&.sapMDialog-NoHeader {
 			padding-top: @_sap_m_Dialog_BarHeight;
 
 			& > .sapMDialogSubHeader {
 				top: 0;
+
 			}
 		}
 	}
+
 
 	& > .sapMDialogTitle {
 		height: @_sap_m_Dialog_BarHeight;

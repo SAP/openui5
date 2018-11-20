@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/m/ScrollContainer",
 	"sap/m/Text",
 	"sap/m/OverflowToolbar",
+	"sap/m/Toolbar",
 	"sap/m/Input",
 	"sap/ui/core/library",
 	"sap/m/StandardListItem",
@@ -37,6 +38,7 @@ sap.ui.define([
 	ScrollContainer,
 	Text,
 	OverflowToolbar,
+	Toolbar,
 	Input,
 	coreLibrary,
 	StandardListItem,
@@ -1624,6 +1626,8 @@ sap.ui.define([
 		this.oDialog.open();
 		this.clock.tick(500);
 
+		sap.ui.getCore().applyChanges();
+
 		var $longTextItem = this.oDialog.$().find("#longTextItem .sapMSLITitleOnly");
 
 		// assert
@@ -1641,5 +1645,42 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(isTextTruncated($longTextItem), true, "Text is truncated when width is small");
+	});
+	QUnit.module("Dialog with specific tool bar design");
+
+	QUnit.test("Toolbar with design - Info", function(assert) {
+		this.oDialog = new Dialog({
+			title: "Header",
+			subHeader: new Toolbar({
+				design:"Info",
+				content: new Text({ text: "Sub header" })
+			}),
+			content: new Text({ text: "Content" }),
+			draggable: true
+		});
+
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		// assert
+		assert.ok(this.oDialog.$().hasClass("sapMDialogSubHeaderInfoBar"), "Dialog must have specific class which adjust the height");
+		this.oDialog.destroy();
+	});
+
+	QUnit.test("Toolbar with design - Auto", function(assert) {
+		this.oDialog = new Dialog({
+			title: "Header",
+			subHeader: new Toolbar({
+				content: new Text({ text: "Sub header" })
+			}),
+			content: new Text({ text: "Content" }),
+			draggable: true
+		});
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		// assert
+		assert.ok(!this.oDialog.$().hasClass("sapMDialogSubHeaderInfoBar"), "Dialog must not have specific class which adjust the height");
+		this.oDialog.destroy();
 	});
 });
