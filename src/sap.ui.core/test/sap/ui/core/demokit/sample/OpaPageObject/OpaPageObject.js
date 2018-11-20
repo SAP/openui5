@@ -19,7 +19,7 @@ sap.ui.require([
 	QUnit.module("Page 1 journey");
 
 	Opa5.extendConfig({
-		viewNamespace : "view.",
+		viewNamespace : "appUnderTest.view.",
 		arrangements : new Common(),
 		autoWait : true
 	});

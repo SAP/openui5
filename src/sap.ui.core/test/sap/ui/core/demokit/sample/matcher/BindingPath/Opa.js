@@ -14,7 +14,7 @@ sap.ui.require([
 	QUnit.module("Binding Path");
 
 	Opa5.extendConfig({
-		viewNamespace: "view.",
+		viewNamespace: "appUnderTest.view.",
 		autoWait: true
 	});
 

@@ -13,7 +13,7 @@ sap.ui.require([
 	QUnit.module("Test the App");
 
 	Opa5.extendConfig({
-		viewNamespace: "view.",
+		viewNamespace: "appUnderTest.view.",
 		autoWait : true
 	});
 

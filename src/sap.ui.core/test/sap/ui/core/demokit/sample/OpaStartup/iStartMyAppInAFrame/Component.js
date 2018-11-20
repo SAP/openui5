@@ -20,7 +20,9 @@ sap.ui.define([
 						"iStartMyAppInAFrame.js",
 						"applicationUnderTest/index.html",
 						"applicationUnderTest/view/Main.view.xml",
-						"applicationUnderTest/controller/Main.controller.js"
+						"applicationUnderTest/controller/Main.controller.js",
+						"applicationUnderTest/Component.js",
+						"applicationUnderTest/manifest.json"
 					]
 				}
 			}

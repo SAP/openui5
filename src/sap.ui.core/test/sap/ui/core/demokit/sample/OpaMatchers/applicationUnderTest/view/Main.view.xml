@@ -1,20 +1,22 @@
 <mvc:View controllerName="appUnderTest.view.Main"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
-	<App>
-		<Page id="myPage">
-			<headerContent>
-				<Button id="changingButton" text="My text will change after 5 seconds" class="mySuperButton"/>
-			</headerContent>
-			<content>
-				<Button text="Button in a Page" id="buttonInAPage"></Button>
-			</content>
-			<footer>
-				<Toolbar>
-					<Button text="You won't find me" />
-					<Button text="Me neither" />
-				</Toolbar>
-			</footer>
-		</Page>
-	</App>
+	<Shell>
+		<App>
+			<Page id="myPage">
+				<headerContent>
+					<Button id="changingButton" text="My text will change after 5 seconds" class="mySuperButton"/>
+				</headerContent>
+				<content>
+					<Button text="Button in a Page" id="buttonInAPage"></Button>
+				</content>
+				<footer>
+					<Toolbar>
+						<Button text="You won't find me" />
+						<Button text="Me neither" />
+					</Toolbar>
+				</footer>
+			</Page>
+		</App>
+	</Shell>
 </mvc:View>

@@ -20,7 +20,8 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 						"Opa.js",
 						"applicationUnderTest/view/Main.view.xml",
 						"applicationUnderTest/index.html",
-						"applicationUnderTest/Component.js"
+						"applicationUnderTest/Component.js",
+						"applicationUnderTest/manifest.json"
 					]
 				}
 			}

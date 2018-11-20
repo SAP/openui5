@@ -20,7 +20,7 @@ sap.ui.require([
 
 	opaTest("Should start and teardown an app in a frame" + sTestNameExt, function (Given, When, Then) {
 		Opa5.extendConfig({
-			viewNamespace: "view.",
+			viewNamespace: "appUnderTest.view.",
 			autoWait: true
 		});
 
@@ -45,7 +45,7 @@ sap.ui.require([
 
 	opaTest("Should start an application in a frame and wait for it to load fully", function (Given, When, Then) {
 		Opa5.extendConfig({
-			viewNamespace: "view.",
+			viewNamespace: "appUnderTest.view.",
 			autoWait: false
 		});
 
@@ -74,7 +74,7 @@ sap.ui.require([
 
 	opaTest("Should start an application in an iFrame with a fixed size", function (Given, When, Then) {
 		Opa5.extendConfig({
-			viewNamespace: "view.",
+			viewNamespace: "appUnderTest.view.",
 			autoWait: true
 		});
 

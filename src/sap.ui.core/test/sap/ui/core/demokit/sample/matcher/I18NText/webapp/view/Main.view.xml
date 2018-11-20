@@ -1,36 +1,38 @@
 <mvc:View
 	id="mainView"
-	controllerName="webapp.controller.Main"
+	controllerName="appUnderTest.controller.Main"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
-	<App>
-		<Page title="List Page">
-			<content>
-				<List
-					id="productList"
-					items="{/ProductCollection}"
-					mode="MultiSelect"
-					includeItemInSelection="true"
-					updateFinished="onListUpdated">
-					<headerToolbar>
-						<Toolbar>
-							<content>
-								<Title id="listTitle"/>
-								<ToolbarSpacer/>
-								<!-- this button has no ID -->
-								<Button
-									text="{i18n>loadButtonText}"
-									press="onLoadProducts" />
-							</content>
-						</Toolbar>
-					</headerToolbar>
-					<items>
-						<StandardListItem
-							title="{Name}"
-							description="{ProductId}"/>
-					</items>
-				</List>
-			</content>
-		</Page>
-	</App>
+	<Shell>
+		<App>
+			<Page title="List Page">
+				<content>
+					<List
+						id="productList"
+						items="{/ProductCollection}"
+						mode="MultiSelect"
+						includeItemInSelection="true"
+						updateFinished="onListUpdated">
+						<headerToolbar>
+							<Toolbar>
+								<content>
+									<Title id="listTitle"/>
+									<ToolbarSpacer/>
+									<!-- this button has no ID -->
+									<Button
+										text="{i18n>loadButtonText}"
+										press="onLoadProducts" />
+								</content>
+							</Toolbar>
+						</headerToolbar>
+						<items>
+							<StandardListItem
+								title="{Name}"
+								description="{ProductId}"/>
+						</items>
+					</List>
+				</content>
+			</Page>
+		</App>
+	</Shell>
 </mvc:View>
