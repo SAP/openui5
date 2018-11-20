@@ -262,6 +262,46 @@ function(
 		assert.equal(oSmartField.getBindingPath("value"),"BindingPath1", "the field was inserted in the right place");
 	});
 
+	QUnit.test('Add smart field to group of SimpleForm twice', function (assert) {
+		this.oToolbar = new Toolbar("NewGroup");
+		this.oTitle = new Title("AnotherGroup");
+		this.oLabel0 = new sap.m.Label({id : "Label0",  text : "Label 0"});
+		this.oInput0 = new sap.m.Input({id : "Input0"});
+
+		this.oSimpleForm = new SimpleForm({content : [
+			this.oToolbar, this.oLabel0, this.oInput0, this.oTitle
+		]});
+
+		var oView = new View({content : [
+			this.oSimpleForm
+		]});
+
+		var oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
+
+		var mSpecificChangeInfo = {
+				"newControlId": "addedFieldId",
+				"parentId": oFormContainer.getId(),
+				"index" : 2,
+				"bindingPath" : "BindingPath1",
+				"oDataServiceVersion" : "2.0"
+		};
+		var oChange = new Change({"changeType" : "addSimpleFormField"});
+		var oPropertyBag = {
+			modifier: JsControlTreeModifier,
+			view : oView,
+			appComponent : this.oMockedAppComponent
+		};
+
+		AddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo, oPropertyBag);
+		assert.ok(AddFieldChangeHandler.applyChange(oChange, this.oSimpleForm, oPropertyBag),
+			"the first change to add a field was applied");
+		assert.throws(function() {
+			AddFieldChangeHandler.applyChange(oChange, this.oSimpleForm, oPropertyBag);
+		}, function(oReturn) {
+			return oReturn && oReturn.message ? oReturn.message.indexOf("Control to be created already exists") >= 0 : false;
+		}, "the second change to add the same field throws a not applicable info message");
+	});
+
 	QUnit.test('Add smart field to SimpleForm without title/toolbar', function (assert) {
 		this.oLabel0 = new Label({id : "Label0",  text : "Label 0"});
 		this.oInput0 = new Input({id : "Input0"});

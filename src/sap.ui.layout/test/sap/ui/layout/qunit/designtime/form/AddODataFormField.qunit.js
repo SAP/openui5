@@ -109,6 +109,57 @@ sap.ui.define([
 
 		});
 
+		QUnit.test('Add the same smart field to Form two times', function (assert) {
+			var oTitle = new Title("NewGroup");
+
+			this.oForm = new Form({
+				id: "idForm",
+				layout: new sap.ui.layout.form.ResponsiveGridLayout(),
+				formContainers: new sap.ui.layout.form.FormContainer({
+					id: "idFormContainer",
+					formElements: [new sap.ui.layout.form.FormElement()]
+				}),
+				title : oTitle
+			});
+			var oView = new View({content : [
+				this.oForm
+			]});
+
+			var mSpecificChangeInfo = {
+				"newControlId": "addedFieldId",
+				"parentId": "idFormContainer",
+				"index" : 1,
+				"bindingPath" : "BindingPath1",
+				"oDataServiceVersion" : "2.0"
+			};
+			var oChange = new Change({"changeType" : "addFormField"});
+			var oPropertyBag = {
+				modifier : JsControlTreeModifier,
+				view : oView,
+				appComponent : this.oMockedAppComponent
+			};
+
+			AddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo, oPropertyBag);
+
+			assert.equal(this.oForm.getFormContainers()[0].getFormElements().length, 1,
+				"the form has only one form element in the beginning");
+			assert.ok(AddFieldChangeHandler.applyChange(oChange, this.oForm, oPropertyBag),
+				"the first change to add a field was applied");
+			assert.throws(function() {
+				AddFieldChangeHandler.applyChange(oChange, this.oForm, oPropertyBag);
+			}, function(oReturn) {
+				return oReturn && oReturn.message ? oReturn.message.indexOf("Control to be created already exists") >= 0 : false;
+			}, "the second change to add the same field throws a not applicable info message");
+
+			var oFormContainer = this.oForm.getFormContainers()[0];
+			var oFormElements = oFormContainer.getFormElements();
+			var oNewFormElement = oFormElements[1];
+
+			assert.equal(oFormElements.length, 2, "the form has now 2 form elements");
+			assert.equal(oNewFormElement.getId(), "addedFieldId", "the new form element has a stable id");
+			assert.equal(oNewFormElement.getLabel().getId(), "addedFieldId-field-label", "the new label was inserted for the first form element");
+		});
+
 		QUnit.module("AddFormField for Form in XML", {
 			beforeEach: function () {
 				this.oMockedAppComponent = {

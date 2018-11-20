@@ -626,6 +626,18 @@ sap.ui.define([
 		_testApplyChangeWithJsControlTreeModifier.call(this, this.oLegacyChangeWrapper, "newId", 5, assert);
 	});
 
+	QUnit.test("when calling applyChange with JsControlTreeModifier twice with the same control to add", function (assert) {
+		_testApplyChangeWithJsControlTreeModifier.call(this, this.oLegacyChangeWrapper, "newId", 5, assert);
+		// add the same change another time
+		assert.throws(function() {
+			this.oChangeHandler.applyChange(this.oLegacyChangeWrapper, this.oSimpleForm, this.mPropertyBag);
+		}, function(oReturn) {
+			return oReturn && oReturn.message ? oReturn.message.indexOf("Control to be created already exists") >= 0 : false;
+		}, "the second change to add the same group throws a not applicable info message");
+		assert.equal(this.oSimpleForm.getContent()[5].getId(), "newId", "the FormContainer has the correct id");
+		assert.equal(this.oSimpleForm.getContent()[5].getText(), "New Control", "the FormContainer is still available");
+	});
+
 	QUnit.test("when calling applyChange with JsControlTreeModifier with a change containing local ids", function (assert) {
 		_testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithLocalIdsWrapper, "component---newId", 5, assert);
 	});

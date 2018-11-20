@@ -428,6 +428,17 @@ sap.ui.define([
 					libs: ["sap.ui.layout", "sap.m"]
 				},
 				module: "./form/changes/UnhideSimpleForm.qunit"
+			},
+
+			"flex/AddFormContainer": {
+				skip: !bSapUiCompAvailable,
+				group: "Change Handler",
+				title: "QUnit - sap.ui.layout.changes.AddFormContainer",
+				ui5: {
+					libs: ["sap.ui.layout", "sap.ui.rta", "sap.ui.comp"]
+				},
+				module: "./designtime/form/AddFormContainer.qunit",
+				sinon: false
 			}
 
 		}
