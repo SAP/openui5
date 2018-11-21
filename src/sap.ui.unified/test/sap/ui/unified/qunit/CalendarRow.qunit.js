@@ -564,6 +564,56 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Appointment - setSelected(false) updates internal array of selected appointments", function(assert) {
+		// Prepare
+		var oApp = new CalendarAppointment({
+			startDate: new Date(),
+			endDate: new Date(),
+			selected: true
+		}), oCalendarRow = new CalendarRow({
+			appointments: [oApp]});
+
+		oCalendarRow.placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
+
+		// Pre-Assert
+		assert.deepEqual(oCalendarRow.aSelectedAppointments, [oApp.getId()], "Selected appointment is part of CalendarRow's aSelectedAppointments array");
+
+		// Act
+		oApp.setSelected(false);
+
+		// Assert
+		assert.deepEqual(oCalendarRow.aSelectedAppointments, [], "Deselected appointment is removed from CalendarRow's aSelectedAppointments array");
+
+		// Cleanup
+		oCalendarRow.destroy();
+	});
+
+	QUnit.test("Appointment - setSelected(true) updates internal array of selected appointments", function(assert) {
+		// Prepare
+		var oApp = new CalendarAppointment({
+			startDate: new Date(),
+			endDate: new Date(),
+			selected: false
+		}), oCalendarRow = new CalendarRow({
+			appointments: [oApp]});
+
+		oCalendarRow.placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
+
+		// Pre-Assert
+		assert.deepEqual(oCalendarRow.aSelectedAppointments, [], "Initially appointment is not part of CalendarRow's aSelectedAppointments array");
+
+		// Act
+		oApp.setSelected(true);
+
+		// Assert
+		assert.deepEqual(oCalendarRow.aSelectedAppointments, [oApp.getId()], "Selected appointment is part of CalendarRow's aSelectedAppointments array");
+
+		// Cleanup
+		oCalendarRow.destroy();
+	});
+
 	QUnit.test("Appointments - days view", function(assert) {
 		oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Day);
 		sap.ui.getCore().applyChanges();
