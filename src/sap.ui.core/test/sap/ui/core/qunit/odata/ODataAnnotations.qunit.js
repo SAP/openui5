@@ -5162,8 +5162,12 @@ sap.ui.define([
 			{"Path" : "Criticality"});
 		assert.deepEqual(
 			oAnnotations["NorthwindModel.Product"]["com.sap.vocabularies.UI.v1.LineItem#foo"]
-				["com.sap.vocabularies.UI.v1.Criticality#bar"],
+				["com.sap.vocabularies.UI.v1.Criticality"],
 			{"Path" : "Criticality"});
+		assert.deepEqual(
+			oAnnotations["NorthwindModel.Product"]["com.sap.vocabularies.UI.v1.LineItem#foo"]
+				["com.sap.vocabularies.UI.v1.Criticality#bar"],
+			{"Path" : "Criticality/bar"});
 		assert.deepEqual(
 			oAnnotations["NorthwindModel.Product"]["com.sap.vocabularies.UI.v1.Facets"][0]
 				.Facets["com.sap.vocabularies.Common.v1.Label"],
@@ -5184,6 +5188,8 @@ sap.ui.define([
 			["NorthwindModel.Product", "com.sap.vocabularies.UI.v1.LineItem",
 				"com.sap.vocabularies.UI.v1.Criticality"],
 			["NorthwindModel.Product", "com.sap.vocabularies.UI.v1.LineItem#foo",
+				"com.sap.vocabularies.UI.v1.Criticality"],
+			["NorthwindModel.Product", "com.sap.vocabularies.UI.v1.LineItem#foo",
 				"com.sap.vocabularies.UI.v1.Criticality#bar"],
 			["NorthwindModel.Product", "com.sap.vocabularies.UI.v1.Facets", 0, "Facets",
 				"com.sap.vocabularies.Common.v1.Label"],
@@ -5192,7 +5198,9 @@ sap.ui.define([
 				"com.sap.vocabularies.Common.v1.Label"],
 			["NorthwindModel.Product", "unittest.ui5.parentAnnotation",
 				"unittest.ui5.dynamicExpression6", "Apply", "Parameters", 0, "Value",
-				"com.sap.vocabularies.Common.v1.Label"]
+				"com.sap.vocabularies.Common.v1.Label"],
+			["NorthwindModel.Product", "com.sap.vocabularies.UI.v1.LineItem#inherited",
+				"com.sap.vocabularies.UI.v1.Criticality"]
 		]);
 
 		assert.deepEqual(oAnnotations["NorthwindModel.Product"], oExpectedProductAnnotations);
@@ -5202,7 +5210,7 @@ sap.ui.define([
 
 	var fnTestNestedAnnotations = function(iModelVersion, assert) {
 		var done = assert.async();
-		assert.expect(437);
+		assert.expect(467);
 
 		cleanOdataCache();
 		var mTest = mAdditionalTestsServices["Nested Annotations"];
@@ -5244,8 +5252,11 @@ sap.ui.define([
 								"EnumMember" : "com.sap.vocabularies.UI.v1.ImportanceType/Medium"
 							}
 						}],
-						"com.sap.vocabularies.UI.v1.LineItem#foo@com.sap.vocabularies.UI.v1.Criticality#bar" : {
+						"com.sap.vocabularies.UI.v1.LineItem#foo@com.sap.vocabularies.UI.v1.Criticality" : {
 							"Path" : "Criticality"
+						},
+						"com.sap.vocabularies.UI.v1.LineItem#foo@com.sap.vocabularies.UI.v1.Criticality#bar" : {
+							"Path" : "Criticality/bar"
 						},
 						"com.sap.vocabularies.UI.v1.Facets" : [{
 							"Facets" : [{
@@ -5399,6 +5410,16 @@ sap.ui.define([
 									}]
 								}
 							}
+						},
+						"com.sap.vocabularies.Common.v1.Label#inherited": {
+							"String": "Inheritance",
+							"com.sap.vocabularies.Common.v1.Label": {
+								"String": "No Inheritance"
+							}
+						},
+						"com.sap.vocabularies.UI.v1.LineItem#inherited": [],
+						"com.sap.vocabularies.UI.v1.LineItem#inherited@com.sap.vocabularies.UI.v1.Criticality": {
+							"Path": "Criticality"
 						}
 					};
 
