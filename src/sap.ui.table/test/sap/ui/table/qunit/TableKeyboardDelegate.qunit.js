@@ -6131,6 +6131,19 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 		},
 
+		testAsync: function(mSettings) {
+			mSettings.act();
+
+			return new Promise(function(resolve) {
+				oTable.attachEventOnce("_rowsUpdated", function() {
+					setTimeout(function() {
+						mSettings.assert();
+						resolve();
+					}, 10);
+				});
+			});
+		},
+
 		/**
 		 * Navigates through the whole table, from the first to the last cell including scrolling, using TAB while in action mode.
 		 * Navigates back using Shift+TAB.
@@ -6603,67 +6616,114 @@ sap.ui.define([
 			var oElem;
 			var iVisibleRows = oTable.getVisibleRowCount();
 			var i;
+			var pTestSequence = Promise.resolve();
+			var fnTestAsync = this.testAsync;
 
 			oElem = this.getElement(0, iColumnIndex);
 			oElem.focus();
 			checkFocus(oElem, assert);
-			qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, true); // Use Ctrl to enter the action mode.
-			oElem = checkFocus(this.getElement(1, iColumnIndex, true), assert);
 
-			if (iColumnIndex === -1) {
-				// In case of row header cells enter the action mode manually.
-				oTable._getKeyboardExtension()._actionMode = true;
-			}
-			assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
-
-			// Navigate down to the last visible row.
-			for (i = 2; i < iVisibleRows; i++) {
-				qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, bCtrlKey);
-				oElem = checkFocus(this.getElement(i, iColumnIndex, true), assert);
-				assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
-			}
-
-			// Scroll to the last row.
-			for (i = iVisibleRows; i < iNumberOfRows; i++) {
-				qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, bCtrlKey);
-				oElem = checkFocus(this.getElement(iVisibleRows - 1, iColumnIndex, true), assert);
-				assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
-			}
-
-			// Navigating down on the last row switches the action mode off.
-			qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, bCtrlKey);
-			oElem = checkFocus(this.getElement(iVisibleRows - 1, iColumnIndex), assert);
-			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
-
-			// Navigate up to the first visible row.
-			for (i = iVisibleRows - 2; i >= 0; i--) {
-				// At the last row, always press Ctrl to switch to the action mode again.
-				qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, i === iVisibleRows - 2 || bCtrlKey);
-				oElem = checkFocus(this.getElement(i, iColumnIndex, true), assert);
+			pTestSequence = pTestSequence.then(function() {
+				qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, true); // Use Ctrl to enter the action mode.
+				oElem = checkFocus(this.getElement(1, iColumnIndex, true), assert);
 
 				if (iColumnIndex === -1) {
 					// In case of row header cells enter the action mode manually.
 					oTable._getKeyboardExtension()._actionMode = true;
 				}
+
 				assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+			}.bind(this));
+
+			// Navigate down to the last visible row.
+			for (i = 2; i < iVisibleRows; i++) {
+				/*eslint-disable no-loop-func*/
+				pTestSequence = pTestSequence.then(function(iRowIndex) {
+					qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, bCtrlKey);
+
+					oElem = checkFocus(this.getElement(iRowIndex, iColumnIndex, true), assert);
+					assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+				}.bind(this, i));
+				/*eslint-enable no-loop-func*/
+			}
+
+			// Scroll to the last row.
+			for (i = iVisibleRows; i < iNumberOfRows; i++) {
+				/*eslint-disable no-loop-func*/
+				pTestSequence = pTestSequence.then(function() {
+					return fnTestAsync({
+						act: function() {
+							qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, bCtrlKey);
+						},
+						assert: function() {
+							oElem = checkFocus(this.getElement(iVisibleRows - 1, iColumnIndex, true), assert);
+							assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+						}.bind(this)
+					});
+				}.bind(this));
+				/*eslint-enable no-loop-func*/
+			}
+
+			// Navigating down on the last row switches the action mode off.
+			pTestSequence = pTestSequence.then(function() {
+				qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, bCtrlKey);
+
+				oElem = checkFocus(this.getElement(iVisibleRows - 1, iColumnIndex), assert);
+				assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+			}.bind(this));
+
+			// Navigate up to the first visible row.
+			for (i = iVisibleRows - 2; i >= 0; i--) {
+				/*eslint-disable no-loop-func*/
+				pTestSequence = pTestSequence.then(function(iRowIndex) {
+					// At the last row, always press Ctrl to switch to the action mode again.
+					qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, iRowIndex === iVisibleRows - 2 || bCtrlKey);
+
+					if (iColumnIndex === -1) {
+						// In case of row header cells enter the action mode manually.
+						oTable._getKeyboardExtension()._actionMode = true;
+					}
+
+					oElem = checkFocus(this.getElement(iRowIndex, iColumnIndex, true), assert);
+					assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+				}.bind(this, i));
+				/*eslint-enable no-loop-func*/
 			}
 
 			// Scroll up to the first row.
 			for (i = iVisibleRows; i < iNumberOfRows; i++) {
-				qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, bCtrlKey);
-				oElem = checkFocus(this.getElement(0, iColumnIndex, true), assert);
-				assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+				/*eslint-disable no-loop-func*/
+				pTestSequence = pTestSequence.then(function() {
+					return fnTestAsync({
+						act: function() {
+							qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, bCtrlKey);
+						},
+						assert: function() {
+							oElem = checkFocus(this.getElement(0, iColumnIndex, true), assert);
+							assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+						}.bind(this)
+					});
+				}.bind(this));
+				/*eslint-enable no-loop-func*/
 			}
 
 			// Navigating up on the first row switches the action mode off.
-			qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, bCtrlKey);
-			checkFocus(this.getElement(0, iColumnIndex), assert);
-			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+			pTestSequence = pTestSequence.then(function() {
+				qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, bCtrlKey);
+
+				checkFocus(this.getElement(0, iColumnIndex), assert);
+				assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+			}.bind(this));
 
 			// Ctrl+Up on the first row does not navigate to the column header.
-			qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, true);
-			checkFocus(this.getElement(0, iColumnIndex), assert);
-			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+			pTestSequence = pTestSequence.then(function() {
+				qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, true);
+
+				checkFocus(this.getElement(0, iColumnIndex), assert);
+				assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+			}.bind(this));
+
+			return pTestSequence;
 		}
 	});
 
@@ -6749,47 +6809,53 @@ sap.ui.define([
 	});
 
 	QUnit.test("Ctrl+Up & Ctrl+Down - On first column", function(assert) {
-		this.testActionModeUpDownNavigation(assert, 0, true);
+		var done = assert.async();
+		var oElement;
 
-		var oElement = getCell(0, 1).find("span")[0];
+		this.testActionModeUpDownNavigation(assert, 0, true).then(function() {
+			oElement = getCell(0, 1).find("span")[0];
+			oElement.tabIndex = -1;
+			oElement.focus();
+			checkFocus(oElement, assert);
+			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 
-		oElement.tabIndex = -1;
-		oElement.focus();
-		checkFocus(oElement, assert);
-		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+			qutils.triggerKeydown(oElement, Key.Arrow.UP, false, false, true);
+			checkFocus(getCell(0, 1), assert);
+			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 
-		qutils.triggerKeydown(oElement, Key.Arrow.UP, false, false, true);
-		checkFocus(getCell(0, 1), assert);
-		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+			oTable._getScrollExtension().scrollVerticallyMax(true);
+			oElement = getCell(oTable.getVisibleRowCount() - 1, 1).find("span")[0];
+			oElement.tabIndex = -1;
+			oElement.focus();
+			checkFocus(oElement, assert);
+			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 
-		oTable._getScrollExtension().scrollVerticallyMax(true);
-		oElement = getCell(oTable.getVisibleRowCount() - 1, 1).find("span")[0];
-		oElement.tabIndex = -1;
-		oElement.focus();
-		checkFocus(oElement, assert);
-		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
-
-		qutils.triggerKeydown(oElement, Key.Arrow.DOWN, false, false, true);
-		checkFocus(getCell(oTable.getVisibleRowCount() - 1, 1), assert);
-		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+			qutils.triggerKeydown(oElement, Key.Arrow.DOWN, false, false, true);
+			checkFocus(getCell(oTable.getVisibleRowCount() - 1, 1), assert);
+			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+		}).then(done);
 	});
 
 	QUnit.test("Up & Down - On first column", function(assert) {
-		this.testActionModeUpDownNavigation(assert, 0, false);
+		var done = assert.async();
+		this.testActionModeUpDownNavigation(assert, 0, false).then(done);
 	});
 
 	QUnit.test("Ctrl+Up & Ctrl+Down - On Row Headers", function(assert) {
-		this.testActionModeUpDownNavigation(assert, -1, true);
+		var done = assert.async();
+		this.testActionModeUpDownNavigation(assert, -1, true).then(done);
 	});
 
 	QUnit.test("Ctrl+Up & Ctrl+Down - On Row Actions", function(assert) {
+		var done = assert.async();
 		initRowActions(oTable, 1, 1);
-		this.testActionModeUpDownNavigation(assert, -2, true);
+		this.testActionModeUpDownNavigation(assert, -2, true).then(done);
 	});
 
 	QUnit.test("Up & Down - On Row Actions", function(assert) {
+		var done = assert.async();
 		initRowActions(oTable, 1, 1);
-		this.testActionModeUpDownNavigation(assert, -2, false);
+		this.testActionModeUpDownNavigation(assert, -2, false).then(done);
 	});
 
 	QUnit.test("Ctrl+Up & Ctrl+Down - Navigate between interchanging interactive and non-interactive cells", function(assert) {
@@ -6925,5 +6991,69 @@ sap.ui.define([
 		qutils.triggerKeydown(document.activeElement, Key.Arrow.UP, false, false, false);
 		checkFocus(getCell(0, 1), assert);
 		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+	});
+
+	QUnit.test("Allow interactive elements to handle \"sapfocusleave\" on navigation without focus change (on scroll)", function(assert) {
+		var aEvents = [];
+		var done = assert.async();
+
+		oTable.setFixedColumnCount(0);
+		oTable.setVisibleRowCount(1);
+		oTable.setSelectionMode(tableLibrary.SelectionMode.None);
+		oTable.removeAllColumns();
+		addColumn("Focus&TabSpan", "Focus&TabSpan", false, true, true);
+		oTable.getColumns()[0].getTemplate().addEventDelegate({
+			onsapfocusleave: function() {
+				aEvents.push("sapfocusleave");
+			},
+			onfocusin: function() {
+				aEvents.push("focusin");
+			}
+		});
+		sap.ui.getCore().applyChanges();
+
+		var oCellContent = oTable.getRows()[0].getCells()[0].getDomRef();
+
+		function test(sTitle, fnAct) {
+			fnAct();
+			aEvents = [];
+
+			return new Promise(function(resolve) {
+				oTable.attachEventOnce("_rowsUpdated", function() {
+					setTimeout(function() {
+						oCellContent = oTable.getRows()[0].getCells()[0].getDomRef();
+						assert.ok(oTable._getKeyboardExtension().isInActionMode(), sTitle + ": Table is in Action Mode");
+						assert.deepEqual(aEvents, ["sapfocusleave", "focusin"], sTitle + ": The events were correctly fired");
+						resolve();
+					}, 10);
+				});
+			});
+		}
+
+		oCellContent.focus();
+
+		test("Arrow down", function() {
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.DOWN, false, false, false);
+		}).then(function() {
+			return test("Arrow up", function() {
+				qutils.triggerKeydown(document.activeElement, Key.Arrow.UP, false, false, false);
+			});
+		}).then(function() {
+			return test("Ctrl+Arrow down", function() {
+				qutils.triggerKeydown(document.activeElement, Key.Arrow.DOWN, false, false, true);
+			});
+		}).then(function() {
+			return test("Ctrl+Arrow up", function() {
+				qutils.triggerKeydown(document.activeElement, Key.Arrow.UP, false, false, true);
+			});
+		}).then(function() {
+			return test("Tab", function() {
+				simulateTabEvent(document.activeElement, false);
+			});
+		}).then(function() {
+			return test("Shift+Tab", function() {
+				simulateTabEvent(document.activeElement, true);
+			});
+		}).then(done);
 	});
 });

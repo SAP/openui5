@@ -302,7 +302,7 @@ sap.ui.define([
 		var $ActiveElement = jQuery(document.activeElement);
 		var $Element = jQuery(oElement);
 
-		assert.deepEqual($Element[0], document.activeElement, "Focus is on: " + $ActiveElement.attr("id") + ", should be on: " + $Element.attr("id"));
+		assert.deepEqual(document.activeElement, $Element[0], "Focus is on: " + $ActiveElement.attr("id") + ", should be on: " + $Element.attr("id"));
 
 		return $ActiveElement;
 	};
