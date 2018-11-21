@@ -776,7 +776,15 @@ sap.ui.define([
 				var bScrolled = false;
 
 				if (!bIsAbsoluteLastRow && bIsLastScrollableRow) {
-					bScrolled = this._getScrollExtension().scroll(true, null, true);
+					// The FocusHandler triggers the "sapfocusleave" event in a timeout of 0ms after a blur event. To give the control in the cell
+					// enough time to react to the "sapfocusleave" event (e.g. sap.m.Input - changes its value), scrolling is performed
+					// asynchronously.
+					var bAllowSapFocusLeave = oCellInfo.type === CellType.DATACELL;
+					bScrolled = this._getScrollExtension().scroll(true, false, true, bAllowSapFocusLeave, function() {
+						if (bAllowSapFocusLeave) {
+							document.activeElement.blur();
+						}
+					});
 				}
 
 				if (bIsAbsoluteLastRow) {
@@ -897,7 +905,15 @@ sap.ui.define([
 				var bScrolled = false;
 
 				if (!bIsAbsoluteFirstRow && bIsFirstScrollableRow) {
-					bScrolled = this._getScrollExtension().scroll(false, null, true);
+					// The FocusHandler triggers the "sapfocusleave" event in a timeout of 0ms after a blur event. To give the control in the cell
+					// enough time to react to the "sapfocusleave" event (e.g. sap.m.Input - changes its value), scrolling is performed
+					// asynchronously.
+					var bAllowSapFocusLeave = oCellInfo.type === CellType.DATACELL;
+					bScrolled = this._getScrollExtension().scroll(false, false, true, bAllowSapFocusLeave, function() {
+						if (bAllowSapFocusLeave) {
+							document.activeElement.blur();
+						}
+					});
 				}
 
 				if (bIsAbsoluteFirstRow) {
