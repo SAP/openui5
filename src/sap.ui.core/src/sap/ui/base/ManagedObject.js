@@ -10,6 +10,7 @@ sap.ui.define([
 	'./ManagedObjectMetadata',
 	'./Object',
 	'../model/BindingMode',
+	'../model/StaticBinding',
 	'../model/CompositeBinding',
 	'../model/Context',
 	'../model/FormatException',
@@ -30,6 +31,7 @@ sap.ui.define([
 	ManagedObjectMetadata,
 	BaseObject,
 	BindingMode,
+	StaticBinding,
 	CompositeBinding,
 	Context,
 	FormatException,
@@ -3191,16 +3193,19 @@ sap.ui.define([
 				formatOptions: oBindingInfo.formatOptions,
 				constraints: oBindingInfo.constraints,
 				model: oBindingInfo.model,
-				mode: oBindingInfo.mode
+				mode: oBindingInfo.mode,
+				value: oBindingInfo.value
 			};
 			delete oBindingInfo.path;
 			delete oBindingInfo.targetType;
 			delete oBindingInfo.mode;
 			delete oBindingInfo.model;
+			delete oBindingInfo.value;
 		}
 
 		for ( var i = 0; i < oBindingInfo.parts.length; i++ ) {
 
+			// Plain strings as parts are taken as paths of bindings
 			var oPart = oBindingInfo.parts[i];
 			if (typeof oPart == "string") {
 				oPart = { path: oPart };
@@ -3208,20 +3213,22 @@ sap.ui.define([
 			}
 
 			// if a model separator is found in the path, extract model name and path
-			iSeparatorPos = oPart.path.indexOf(">");
-			if (iSeparatorPos > 0) {
-				oPart.model = oPart.path.substr(0, iSeparatorPos);
-				oPart.path = oPart.path.substr(iSeparatorPos + 1);
+			if (oPart.path !== undefined) {
+				iSeparatorPos = oPart.path.indexOf(">");
+				if (iSeparatorPos > 0) {
+					oPart.model = oPart.path.substr(0, iSeparatorPos);
+					oPart.path = oPart.path.substr(iSeparatorPos + 1);
+				}
 			}
 			// if a formatter exists the binding mode can be one way or one time only
 			if (oBindingInfo.formatter && oPart.mode != BindingMode.OneWay && oPart.mode != BindingMode.OneTime) {
 				oPart.mode = BindingMode.OneWay;
 			}
 
-			if (!this.getModel(oPart.model)) {
+			// Check for model availability for model bindings
+			if (oPart.value === undefined && !this.getModel(oPart.model)) {
 				bAvailable = false;
 			}
-
 		}
 
 		// if property is already bound, unbind it first
@@ -3307,18 +3314,22 @@ sap.ui.define([
 				oType = new clType(oPart.formatOptions, oPart.constraints);
 			}
 
-			oBinding = oModel.bindProperty(oPart.path, oContext, oPart.parameters || oBindingInfo.parameters);
+			if (oPart.value !== undefined) {
+				oBinding = new StaticBinding(oPart.value);
+			} else {
+				oBinding = oModel.bindProperty(oPart.path, oContext, oPart.parameters || oBindingInfo.parameters);
+			}
 			oBinding.setType(oType, oPart.targetType || sInternalType);
 			oBinding.setFormatter(oPart.formatter);
 			if (oPart.suspended) {
 				oBinding.suspend(true);
 			}
 
-			sMode = oPart.mode || oModel.getDefaultBindingMode();
+			sMode = oPart.mode || (oModel && oModel.getDefaultBindingMode()) || BindingMode.TwoWay;
 			oBinding.setBindingMode(sMode);
 
 			// Only if all parts have twoway binding enabled, the composite binding will also have twoway binding
-			if (sMode != BindingMode.TwoWay) {
+			if (sMode !== BindingMode.TwoWay) {
 				sCompositeMode = BindingMode.OneWay;
 			}
 
