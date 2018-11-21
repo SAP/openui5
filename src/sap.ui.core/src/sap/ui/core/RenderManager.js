@@ -1208,15 +1208,15 @@ sap.ui.define([
 	RenderManager.prototype.writeInvisiblePlaceholderData = function(oElement) {
 		assert(BaseObject.isA(oElement, 'sap.ui.core.Element'), "oElement must be an instance of sap.ui.core.Element");
 
-		var sPlaceholderId = RenderManager.createInvisiblePlaceholderId(oElement);
+		var sPlaceholderId = RenderManager.createInvisiblePlaceholderId(oElement),
+			sPlaceholderHtml = ' ' +
+				'id="' + sPlaceholderId + '" ' +
+				'class="sapUiHiddenPlaceholder" ' +
+				'data-sap-ui="' + sPlaceholderId + '" ' +
+				'style="display: none;"' +
+				'aria-hidden="true" ';
 
-		this.attr("id", sPlaceholderId);
-		this.class("sapUiHiddenPlaceholder");
-		this.attr("data-sap-ui", sPlaceholderId);
-		this.style("display", "none");
-		this.attr("aria-hidden", "true");
-		this.writeClasses();
-		this.writeStyles();
+		this.write(sPlaceholderHtml);
 
 		return this;
 	};
