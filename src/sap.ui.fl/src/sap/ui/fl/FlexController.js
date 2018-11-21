@@ -654,7 +654,9 @@ sap.ui.define([
 				if (!bRevertible && oSettings && oSettings._oSettings.recordUndo && oRtaControlTreeModifier) {
 					oChange.setUndoOperations(oRtaControlTreeModifier.stopRecordingUndo());
 				}
-				FlexCustomData.addAppliedCustomData(oControl, oChange, mPropertyBag, bRevertible);
+				// only save the revert data in the custom data when the change is revertible and being processed in XML,
+				// as it's only relevant for viewCache at the moment
+				FlexCustomData.addAppliedCustomData(oControl, oChange, mPropertyBag, bRevertible && bXmlModifier);
 				if (oChange.aPromiseFn) {
 					oChange.aPromiseFn.forEach(function(oPromiseFn) {
 						oPromiseFn.resolve(oChange);
