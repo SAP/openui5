@@ -195,6 +195,13 @@ function(
 		}
 	};
 
+	ElementDesignTimeMetadata.prototype.getToolHooks = function() {
+		return this.getData().tool || {
+			start: function() {},
+			stop: function() {}
+		};
+	};
+
 	/**
 	 * Returns property "ignore" of aggregation DT metadata
 	 * @param {Object} oElement Element whose aggregation has to be checked
