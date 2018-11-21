@@ -2292,6 +2292,7 @@ function (
 			.then(function() {
 				assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
 				assert.equal(this.oAddAppliedCustomDataStub.callCount, 1, "the customData was written");
+				assert.notOk(this.oAddAppliedCustomDataStub.lastCall.args[3], "the last parameter is false ('bSaveRevertData')");
 			}.bind(this));
 		});
 
@@ -2962,6 +2963,7 @@ function (
 			.then(function() {
 				assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
 				assert.equal(this.oAddAppliedCustomDataStub.callCount, 1, "custom data was added");
+				assert.ok(this.oAddAppliedCustomDataStub.lastCall.args[3], "the last parameter is true ('bSaveRevertData')");
 			}.bind(this));
 		});
 
