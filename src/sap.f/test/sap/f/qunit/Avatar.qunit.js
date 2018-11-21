@@ -352,7 +352,15 @@ function(oCore) {
 			sDefaultTooltip = oCore.getLibraryResourceBundle("sap.f").getText("AVATAR_TOOLTIP");
 
 		assert.strictEqual($oAvatar.attr("role"), "img", "Aria role should be 'img'");
-		assert.strictEqual($oAvatar.attr("aria-label"), "sampleTooltip", "Aria-label equals the defined tooltip");
+		assert.strictEqual($oAvatar.attr("aria-label"), sDefaultTooltip, "Aria-label should be the default one if no initials set");
+
+		//act
+		this.oAvatar.setInitials("BP");
+		oCore.applyChanges();
+		$oAvatar = this.oAvatar.$();
+
+		//assert
+		assert.strictEqual($oAvatar.attr("aria-label"), sDefaultTooltip + " sampleTooltip", "Aria-label should include the tooltip if both tootltip and initials are set");
 
 		//act
 		this.oAvatar.setTooltip("");
@@ -360,7 +368,15 @@ function(oCore) {
 		$oAvatar = this.oAvatar.$();
 
 		//assert
-		assert.strictEqual($oAvatar.attr("aria-label"), sDefaultTooltip, "Aria-label should be the default one");
+		assert.strictEqual($oAvatar.attr("aria-label"), sDefaultTooltip + " BP", "Aria-label should include the defined initials if no tooltip is set");
+
+		//act
+		this.oAvatar.setInitials("");
+		oCore.applyChanges();
+		$oAvatar = this.oAvatar.$();
+
+		//assert
+		assert.strictEqual($oAvatar.attr("aria-label"), sDefaultTooltip, "Aria-label should be the default one if no tooltip and initials are set");
 
 		//act
 		this.oAvatar.attachPress();
