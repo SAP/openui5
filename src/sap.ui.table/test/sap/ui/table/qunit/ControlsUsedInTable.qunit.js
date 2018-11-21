@@ -23,9 +23,10 @@ sap.ui.define([
 	"sap/m/HBox",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
-	"sap/ui/table/TreeTable"
-], function(TableUtils, JSONModel, Device, UriParameters, Text, Label, ObjectStatus, Icon, Button, Input, DatePicker, Select, ComboBox, MultiComboBox, CheckBox,
-			Link, Currency, ProgressIndicator, RatingIndicator, HBox, Table, Column, TreeTable) {
+	"sap/ui/table/TreeTable",
+	"sap/ui/qunit/utils/waitForThemeApplied"
+], function(TableUtils, JSONModel, Device, UriParameters, Text, Label, ObjectStatus, Icon, Button, Input, DatePicker, Select, ComboBox, MultiComboBox,
+			CheckBox, Link, Currency, ProgressIndicator, RatingIndicator, HBox, Table, Column, TreeTable, waitForThemeApplied) {
 	"use strict";
 
 	var bExecuteAllTests = (new UriParameters()).get("sap-ui-xx-table-testall") === "true";
@@ -548,4 +549,6 @@ sap.ui.define([
 	//	window.oTable = oTable;
 	//	window.oTreeTable = oTreeTable;
 	//};
+
+	return waitForThemeApplied();
 });
