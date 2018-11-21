@@ -95,6 +95,11 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/FlexControllerFactory"]
 				}
 			},
+			"FlexCustomData": {
+				coverage: {
+					only: ["sap/ui/fl/FlexCustomData"]
+				}
+			},
 			"Variant": {
 				coverage: {
 					only: ["sap/ui/fl/Variant"]

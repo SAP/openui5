@@ -267,15 +267,9 @@ function(
 					"the new title with the right id is cached");
 					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes[4].childNodes[0].localName, "CustomData",
 					"the custom data marker that the change is applied is cached");
-					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes[4].childNodes[0].getAttribute("key"), "sap.ui.fl.appliedChanges",
+					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes[4].childNodes[0].getAttribute("key"), "sap.ui.fl.appliedChanges.id_1504610195273_78_addSimpleFormGroup",
 					"the custom data marker that the change is applied is cached");
-					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes[4].childNodes[0].getAttribute("value"), "id_1504610195273_78_addSimpleFormGroup",
-					"the custom data marker that the change is applied is cached");
-					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes[4].childNodes[1].localName, "CustomData",
-					"the custom data marker that the change is applied is cached");
-					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes[4].childNodes[1].getAttribute("key"), "sap.ui.fl.appliedChanges.id_1504610195273_78_addSimpleFormGroup.revertData",
-					"the custom data marker that the change is applied is cached");
-					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes[4].childNodes[1].getAttribute("value"), "\\{\"groupId\":\"sap.ui.fl.qunit.integration.async.testComponentWithView---rootView--id-1504610195259-77\"\\}",
+					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes[4].childNodes[0].getAttribute("value"), "\\{\"groupId\":\"sap.ui.fl.qunit.integration.async.testComponentWithView---rootView--id-1504610195259-77\"\\}",
 					"the custom data marker that the change is applied is cached");
 					assert.ok(oAddGroupChangeHandlerSpy.calledOnce, "the change handler was called only once");
 					var oPassedModifier = oAddGroupChangeHandlerSpy.getCall(0).args[2].modifier;

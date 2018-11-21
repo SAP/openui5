@@ -102,15 +102,27 @@ sap.ui.define([
 		});
 	};
 
-	Extractor._enhanceWithChangetypeSpecificData = function(oExport, sExportParameterName, mControlData, sControlDataParameterName, sCustomDataChanges) {
-		if (sCustomDataChanges) {
-			mControlData[sControlDataParameterName] = sCustomDataChanges.split(",");
+	Extractor._enhanceWithChangetypeSpecificData = function(oExport, sExportParameterName, mControlData, sControlDataParameterName, aCustomDataChanges) {
+		if (aCustomDataChanges) {
+			mControlData[sControlDataParameterName] = aCustomDataChanges;
 			mControlData[sControlDataParameterName].map(function (sChangeId) {
 				if (!(sChangeId in oExport[sExportParameterName])) {
 					oExport[sExportParameterName].push(sChangeId);
 				}
 			});
 		}
+	};
+
+	Extractor._getChangesForControlFromCustomData = function(oControl, sIdentifier) {
+		var aCustomData = oControl.getCustomData();
+		var aChangeIds = [];
+		aCustomData.forEach(function(oCustomData) {
+			var sKey = oCustomData.getKey();
+			if (sKey.startsWith(sIdentifier)) {
+				aChangeIds.push(sKey.replace(sIdentifier, ""));
+			}
+		});
+		return aChangeIds;
 	};
 
 	Extractor._enhanceExportWithControlData = function (oChangePersistence, oExport) {
@@ -128,10 +140,10 @@ sap.ui.define([
 
 			if (oControl) {
 				mControlData.bPresent = true;
-				this._enhanceWithChangetypeSpecificData(oExport, "aAppliedChanges", mControlData, "aAppliedChanges", oControl.data("sap.ui.fl.appliedChanges"));
-				this._enhanceWithChangetypeSpecificData(oExport, "aFailedChanges", mControlData, "aFailedChangesJs", oControl.data("sap.ui.fl.failedChanges.js"));
-				this._enhanceWithChangetypeSpecificData(oExport, "aFailedChanges", mControlData, "aFailedChangesXml", oControl.data("sap.ui.fl.failedChanges.xml"));
-				this._enhanceWithChangetypeSpecificData(oExport, "aNotApplicableChanges", mControlData, "aNotApplicableChanges", oControl.data("sap.ui.fl.notApplicableChanges"));
+				this._enhanceWithChangetypeSpecificData(oExport, "aAppliedChanges", mControlData, "aAppliedChanges", this._getChangesForControlFromCustomData(oControl, "sap.ui.fl.appliedChanges."));
+				this._enhanceWithChangetypeSpecificData(oExport, "aFailedChanges", mControlData, "aFailedChangesJs", this._getChangesForControlFromCustomData(oControl, "sap.ui.fl.failedChanges.js."));
+				this._enhanceWithChangetypeSpecificData(oExport, "aFailedChanges", mControlData, "aFailedChangesXml", this._getChangesForControlFromCustomData(oControl, "sap.ui.fl.failedChanges.xml."));
+				this._enhanceWithChangetypeSpecificData(oExport, "aNotApplicableChanges", mControlData, "aNotApplicableChanges", this._getChangesForControlFromCustomData(oControl, "sap.ui.fl.notApplicableChanges."));
 			}
 			oExport.mControlData[sControlId] = mControlData;
 		}.bind(this));
