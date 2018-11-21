@@ -1798,5 +1798,51 @@
         "references": []
       }
     ]
+  },
+  "1.56.14": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "f0f2a03a68a5f35b171ec46d62ff9bee53599459",
+        "type": "FIX",
+        "text": " sap.m.Carousel: content of scroll containers is now destroyed correctly",
+        "references": []
+      },
+      {
+        "id": "b9cc1597d776eb27ea80b8061ac2e63e85bab49c",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Deleting a special characters now work correctly",
+        "references": []
+      },
+      {
+        "id": "2f5c0e525fb08e1b385c34a2985ba1d6f3a00f30",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: now implements getAccessibilityInfo function",
+        "references": []
+      },
+      {
+        "id": "17bd4de0fe3876417567fd560d30ededab9e76bd",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: pass tooltip to the StandardListItem",
+        "references": []
+      },
+      {
+        "id": "1f2cfe20b582aa74af9c5546b2a1c95cfb1ccb6a",
+        "type": "FIX",
+        "text": " sap.m.Wizard: nextStep handling in branching fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.56.15": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "f353eb8a4625142e407ffa71fab05902f7023fad",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Adjust width when dialog contains long items",
+        "references": []
+      }
+    ]
   }
 }

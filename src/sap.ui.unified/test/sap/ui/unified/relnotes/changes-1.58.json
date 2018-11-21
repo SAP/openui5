@@ -161,5 +161,28 @@
         "references": []
       }
     ]
+  },
+  "1.58.6": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "76c5c5135c79baf2b1136ed811aa0abffc5c1dea",
+        "type": "FIX",
+        "text": " sap.m.ColorPalette: Now the Dialog responds to the new size of the Color Picker",
+        "references": []
+      },
+      {
+        "id": "37704a0276c736e61b8f570ce969cb86d339d705",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: aria-label is not encoded twice now",
+        "references": []
+      },
+      {
+        "id": "fc701c67e4b72ef3b7ccd027d6fc6f7062b836d8",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Menu works correctly on combi devices",
+        "references": []
+      }
+    ]
   }
 }

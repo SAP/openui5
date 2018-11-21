@@ -102,5 +102,22 @@
         "references": []
       }
     ]
+  },
+  "1.58.6": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "1c37b09d72f71e9e0fd1306682e25fd2ea53dace",
+        "type": "FIX",
+        "text": " ColumnElementData and ColumnContainerData @since wrong",
+        "references": []
+      },
+      {
+        "id": "df33d5784668adc68658faf09b6e2b76457e3e9d",
+        "type": "FIX",
+        "text": " SimpleForm: Layout rendered wrong if set late",
+        "references": []
+      }
+    ]
   }
 }

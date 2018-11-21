@@ -3505,5 +3505,63 @@
         "references": []
       }
     ]
+  },
+  "1.52.21": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "d7a5a30a49c6092649bac747526fc6fd47aea12d",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Deleting a special characters now work correctly",
+        "references": []
+      },
+      {
+        "id": "cb26309a2e497cc41f6bfafe27ae617b3639e157",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: now implements getAccessibilityInfo function",
+        "references": []
+      },
+      {
+        "id": "075be1013317be93f185c1aed656ce9e2a869b27",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: getAccessibilityInfo method added",
+        "references": []
+      },
+      {
+        "id": "039fccf381f1bbd14de5113a4a42f22e3551240c",
+        "type": "FIX",
+        "text": " sap.m.Switch: Fixed focus outline",
+        "references": []
+      },
+      {
+        "id": "1fae9181e093b6eb274d58f1a0a89e0d90b96b0f",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: pass tooltip to the StandardListItem",
+        "references": []
+      },
+      {
+        "id": "d79ca0e4d20bf247e7d90d744a320c9e7e5128f0",
+        "type": "FIX",
+        "text": " sap.m.Wizard: nextStep handling in branching fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.52.22": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "27e4dba2e61486adb9c68a0b079db7d90be70d16",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Adjust width when dialog contains long items",
+        "references": []
+      },
+      {
+        "id": "8db2e8a303f9adf0975a83b36132f713ad95fd4c",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Current step in branching fixed",
+        "references": []
+      }
+    ]
   }
 }

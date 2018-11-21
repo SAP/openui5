@@ -42,5 +42,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.14": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "cfe1ed40d3fa7c921bd3b9699bb6705bd7a83414",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: hover on selected non-working date is correct now",
+        "references": []
+      }
+    ]
   }
 }

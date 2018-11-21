@@ -1408,5 +1408,82 @@
         "references": []
       }
     ]
+  },
+  "1.58.6": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "2c28dfc70f814904658efe002a1c8c801fa86e52",
+        "type": "FIX",
+        "text": " ResponsivePopover: Rectursive invalidation prevented",
+        "references": []
+      },
+      {
+        "id": "5a46525b210095833fd0fda296daaa83ecac8aa9",
+        "type": "FIX",
+        "text": " m.ViewSettingsDialog: Tooltip for sort items is now shown",
+        "references": []
+      },
+      {
+        "id": "a55e32d6820faa54632723f2ceb3511cdd73b9e8",
+        "type": "FIX",
+        "text": " sap.m.Carousel: content of scroll containers is now destroyed correctly",
+        "references": []
+      },
+      {
+        "id": "76c5c5135c79baf2b1136ed811aa0abffc5c1dea",
+        "type": "FIX",
+        "text": " sap.m.ColorPalette: Now the Dialog responds to the new size of the Color Picker",
+        "references": []
+      },
+      {
+        "id": "8db0816fe72917c6eee35d10251ce9964ac479a6",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Deleting a special characters now work correctly",
+        "references": []
+      },
+      {
+        "id": "123b424e2df70d1d63e890bd983c56b6ce79049c",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Adjust width when dialog contains long items",
+        "references": []
+      },
+      {
+        "id": "959e3f326b6e0637de85156e7142c40951d29a3a",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Change prevented on button click",
+        "references": []
+      },
+      {
+        "id": "a855104419841e68c3528e31504be79e6074fb45",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Navigation now can be opened several times",
+        "references": []
+      },
+      {
+        "id": "329fbfcbd84bd90bc11ce7c15067aeb049f59320",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Popover opens on iPad / Tablet correctly",
+        "references": []
+      },
+      {
+        "id": "fe2090d30ed77c75c868c9286cc95002d4405060",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Current step in branching fixed",
+        "references": []
+      },
+      {
+        "id": "367c84ace3c5b83a2b4916dd709f9e9fd10957eb",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Multiple handler attachment removed",
+        "references": []
+      },
+      {
+        "id": "c7af93fd25580c0ca7010222e374293977e103ad",
+        "type": "FIX",
+        "text": " sap.m.Wizard: nextStep handling in branching fixed",
+        "references": []
+      }
+    ]
   }
 }
