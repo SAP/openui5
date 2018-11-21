@@ -48,6 +48,6 @@ sap.ui.define([
 		date: function(oDate) {
 			return new DateFormatter({ now: Date.now }).format(oDate);
 		}
-};
+	};
 
 });

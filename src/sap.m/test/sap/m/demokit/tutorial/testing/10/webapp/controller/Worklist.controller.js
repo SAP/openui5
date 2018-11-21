@@ -1,10 +1,10 @@
 /*global history*/
 
 sap.ui.define([
-	'sap/ui/demo/bulletinboard/controller/BaseController',
+	'./BaseController',
 	'sap/ui/model/json/JSONModel',
-	'sap/ui/demo/bulletinboard/model/formatter',
-	'sap/ui/demo/bulletinboard/model/FlaggedType',
+	'../model/formatter',
+	'../model/FlaggedType',
 	'sap/m/library'
 ], function (BaseController, JSONModel, formatter, FlaggedType, mobileLibrary) {
 	"use strict";

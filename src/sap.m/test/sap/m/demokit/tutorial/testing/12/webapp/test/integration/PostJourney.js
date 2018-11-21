@@ -37,6 +37,6 @@ sap.ui.define([
 		Then.onThePostPage.theTitleShouldDisplayTheName("Jeans");
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 });

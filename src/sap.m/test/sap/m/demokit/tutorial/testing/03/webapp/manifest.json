@@ -9,6 +9,7 @@
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
+		"resources": "resources.json",
 		"dataSources": {
 			"mainService": {
 				"uri": "/here/goes/your/serviceUrl/",
@@ -39,7 +40,7 @@
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.30.0",
+			"minUI5Version": "1.60.0",
 			"libs": {
 				"sap.ui.core": {},
 				"sap.m": {},

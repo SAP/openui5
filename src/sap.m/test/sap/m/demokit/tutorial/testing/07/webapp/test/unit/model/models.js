@@ -1,21 +1,19 @@
 /*global QUnit*/
-
 sap.ui.define([
 	"sap/ui/demo/bulletinboard/model/models",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
-], function (models) {
+	"sap/ui/Device"
+], function (models, Device) {
 	"use strict";
 
 	QUnit.module("createDeviceModel", {
-		afterEach: function () {
+		afterEach : function () {
 			this.oDeviceModel.destroy();
 		}
 	});
 
 	function isPhoneTestCase(assert, bIsPhone) {
 		// Arrange
-		this.stub(sap.ui.Device, "system", {phone: bIsPhone});
+		this.stub(Device, "system", {phone: bIsPhone});
 
 		// System under test
 		this.oDeviceModel = models.createDeviceModel();
@@ -34,7 +32,7 @@ sap.ui.define([
 
 	function isTouchTestCase(assert, bIsTouch) {
 		// Arrange
-		this.stub(sap.ui.Device, "support", {touch: bIsTouch});
+		this.stub(Device, "support", {touch: bIsTouch});
 
 		// System under test
 		this.oDeviceModel = models.createDeviceModel();

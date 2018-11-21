@@ -23,19 +23,24 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 							"webapp/test/integration/pages/Worklist.js",
 							"webapp/test/integration/AllJourneys.js",
 							"webapp/test/integration/opaTests.qunit.html",
+							"webapp/test/integration/opaTests.qunit.js",
 							"webapp/test/integration/WorklistJourney.js",
 							"webapp/test/unit/model/formatter.js",
 							"webapp/test/unit/model/models.js",
 							"webapp/test/unit/AllTests.js",
 							"webapp/test/unit/unitTests.qunit.html",
+							"webapp/test/unit/unitTests.qunit.js",
 							"webapp/test.html",
 							"webapp/test/mockServer.html",
+							"webapp/test/initMockServer.js",
 							"webapp/view/App.view.xml",
 							"webapp/view/Worklist.view.xml",
 							"webapp/Component.js",
 							"webapp/manifest.json",
 							"ui5.yaml",
 							"package.json"
+
+
 						]
 					}
 				}
