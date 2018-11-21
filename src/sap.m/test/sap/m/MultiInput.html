@@ -1148,8 +1148,8 @@
 			new sap.m.Token({text: "Token 3", key: "0003"}),
 			]);
 		var oCondensedTable = new sap.ui.table.Table("condensed-table", {
-			minAutoRowCount: 2,
-			visibleRowCountMode: "Auto",
+			visibleRowCount: 2,
+			visibleRowCountMode: "Fixed",
 			rows: "{/modelData}"
 		}).addStyleClass("sapUiMediumMarginBottom");
 		oCondensedTable.addColumn(new sap.ui.table.Column({
