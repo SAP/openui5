@@ -46,7 +46,7 @@ sap.ui.define([
 
 			return this.waitFor({
 				success : function() {
-					oOptions.hash = "/Objects/" + encodeURIComponent(sObjectId);
+					oOptions.hash = "Objects/" + encodeURIComponent(sObjectId);
 					this.iStartMyApp(oOptions);
 				}
 			});
