@@ -1,6 +1,10 @@
-/**
-	Base Toolbar
-*/
+/******************************************************************
+	Style of the RTA Toolbar (all types) - base Theme
+*******************************************************************/
+@_sap_ui_rta_Toolbar_Base_SegBBtnHoverBG : lighten(@sapSelectedColor,32%);						//#c2e2f9
+@_sap_ui_rta_Toolbar_Base_TextColor: @sapUiWhite;												//#fff
+@_sap_ui_rta_Toolbar_Base_BaseColor : darken(desaturate(@sapChart_OrderedColor_1, 48%), 14%);	//#435060
+
 
 .sapUiRtaToolbar {
 	position: absolute;
@@ -8,11 +12,79 @@
 	left: 0;
 	right: 0;
 	padding: 0 20px;
-	height: 46px; /* Overrider `.sapUiSizeCompact .sapMTB` */
-
+	height: 48px; /* Overrider `.sapUiSizeCompact .sapMTB` */
 
 	.sapMBtn {
 		margin: 0 4px;
+		&.sapMBtnDisabled .sapMBtnInner{
+			opacity: 0.5;
+		}
+	}
 
+	.sapMBtnTransparent,
+	:not(.sapMBtnDisabled) .sapMBtnTransparent > .sapMBtnIcon,
+	:not(.sapMBtnDisabled) .sapMBtnGhost > .sapMBtnIcon {
+		color: @_sap_ui_rta_Toolbar_Base_TextColor;
+	}
+
+	.sapMSegB > .sapMSegBBtn {
+		background-color: @_sap_ui_rta_Toolbar_Base_BaseColor;
+		color: @_sap_ui_rta_Toolbar_Base_TextColor;
+		border: none;
+		position: relative;
+	}
+
+	.sapMSegBBtn.sapMSegBBtnFocusable {
+
+		&:hover,
+		&.sapMSegBBtnSel:hover {
+			color: @_sap_ui_rta_Toolbar_Base_SegBBtnHoverBG;
+		}
+
+		&:focus {
+			outline: 1px dotted @_sap_ui_rta_Toolbar_Base_TextColor;
+			outline-offset: -1px;
+		}
+
+		&.sapMSegBBtnSel {
+
+			&:hover::after {
+				border-bottom: 2px solid @_sap_ui_rta_Toolbar_Base_SegBBtnHoverBG;
+			}
+
+			&:hover {
+				background-color: @_sap_ui_rta_Toolbar_Base_BaseColor;
+			}
+
+			&::after {
+				position: absolute;
+				display: block;
+				content: '';
+				border-bottom: 2px solid @_sap_ui_rta_Toolbar_Base_TextColor;
+				left: 0.4375rem;
+				right: 0.4375rem;
+			}
+			+ .sapMSegBBtn{
+				border-left: none;
+			}
+		}
+	}
+
+	.sapMSegBBtnFocusable.sapMBtnActive:hover {
+		background-color: @_sap_ui_rta_Toolbar_Base_BaseColor;
+		&::after {
+			border-bottom: 2px solid @_sap_ui_rta_Toolbar_Base_SegBBtnHoverBG;
+		}
+	}
+
+	.sapMBtn .sapMBtnContent,
+	.sapMBtn .sapMBtnTransparent .sapMBtnIcon {
+		text-shadow: none; /* Override shadow of `.sapMBtnInner` in sap.m */
+		color: @_sap_ui_rta_Toolbar_Base_TextColor;
+	}
+
+	.sapMBtn:focus .sapMFocusable {
+		outline: none;
+		border: 1px dotted @_sap_ui_rta_Toolbar_Base_TextColor;
 	}
 }

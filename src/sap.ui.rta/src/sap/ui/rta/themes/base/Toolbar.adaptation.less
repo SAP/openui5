@@ -1,8 +1,14 @@
+/******************************************************************
+	Style of the RTA Toolbar (type: adaptation) - base Theme
+*******************************************************************/
+@_sap_ui_rta_Toolbar_Adaptation_BaseColor : darken(desaturate(@sapChart_OrderedColor_1, 48%), 14%); //435060
+
 .sapUiRtaToolbar.sapUiRtaToolbarAdaptation {
 	.sapMFlexBox {
 		margin-left: 0;
 		margin-right: 0;
 		height: inherit;
+		background-color: @_sap_ui_rta_Toolbar_Adaptation_BaseColor;
 	}
 
 	.sapMHBox.sapMFlexBox:first-child.sapMTBShrinkItem {
@@ -13,7 +19,8 @@
 		.sapMFlexItem:first-child {
 			.sapMTB {
 				border-bottom: none;
-				height: 46px;
+				height: 48px;
+				background-color: @_sap_ui_rta_Toolbar_Adaptation_BaseColor;
 			}
 
 			.sapMSegB {
