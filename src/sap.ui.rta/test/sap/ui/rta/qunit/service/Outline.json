@@ -154,6 +154,12 @@
 																"technicalName": "footer",
 																"editable": false,
 																"type": "aggregation"
+															},
+															{
+																"editable": false,
+																"id": "objPage",
+																"technicalName": "landmarkInfo",
+																"type": "aggregation"
 															}
 														]
 													}

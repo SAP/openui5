@@ -53,6 +53,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;
 
+	// shortcut for sap.ui.core.AccessibleLandmarkRole
+	var AccessibleLandmarkRole = coreLibrary.AccessibleLandmarkRole;
+
 	// shortcut for sap.uxap.ObjectPageSubSectionLayout
 	var ObjectPageSubSectionLayout = library.ObjectPageSubSectionLayout;
 
@@ -342,6 +345,15 @@ sap.ui.define([
 				footer: {type: "sap.m.IBar", multiple: false},
 
 				/**
+				 * Accessible landmark settings to be applied on the containers of the <code>sap.uxap.ObjectPageLayout</code> control.
+				 *
+				 * If not set, no landmarks will be written.
+				 *
+				 * @since 1.61
+				 */
+				landmarkInfo : {type : "sap.uxap.ObjectPageAccessibleLandmarkInfo", multiple : false},
+
+				/**
 				 * Internal aggregation to hold the reference to the AnchorBar.
 				 */
 				_anchorBar: {type: "sap.uxap.AnchorBar", multiple: false, visibility: "hidden"},
@@ -439,6 +451,10 @@ sap.ui.define([
 		TABLET: "sapFDynamicPage-Std-Tablet",
 		DESKTOP: "sapFDynamicPage-Std-Desktop"
 	};
+
+	ObjectPageLayout.DIV = "div";
+	ObjectPageLayout.HEADER = "header";
+	ObjectPageLayout.FOOTER = "footer";
 
 	/**
 	 * Retrieves thе next entry starting from the given one within the <code>sap.ui.core.TitleLevel</code> enumeration.
@@ -3966,6 +3982,62 @@ sap.ui.define([
 		if (sNewText !== sCurrentText) {
 			this.$().attr("aria-label", sNewText);
 		}
+	};
+
+	/**
+	 * Formats <code>ObjectPageAccessibleLandmarkInfo</code> role and label of the provided <code>ObjectPageLayout</code> part.
+	 *
+	 * @param {sap.uxap.ObjectPageAccessibleLandmarkInfo} oLandmarkInfo ObjectPageLayout LandmarkInfo
+	 * @param {string} sPartName part of the page
+	 * @returns {sap.f.ObjectPageAccessibleLandmarkInfo} The formatted landmark info
+	 * @private
+	 */
+	ObjectPageLayout.prototype._formatLandmarkInfo = function (oLandmarkInfo, sPartName) {
+		if (oLandmarkInfo) {
+			var sRole = oLandmarkInfo["get" + sPartName + "Role"]() || "",
+				sLabel = oLandmarkInfo["get" + sPartName + "Label"]() || "";
+
+			if (sRole === AccessibleLandmarkRole.None) {
+				sRole = '';
+			}
+
+			return {
+				role: sRole.toLowerCase(),
+				label: sLabel
+			};
+		}
+
+		return {};
+	};
+
+	/**
+	 * Returns HTML tag of the page header.
+	 *
+	 * @param {sap.uxap.ObjectPageAccessibleLandmarkInfo} oLandmarkInfo ObjectPageLayout LandmarkInfo
+	 * @returns {string} The HTML tag of the page header.
+	 * @private
+	 */
+	ObjectPageLayout.prototype._getHeaderTag = function (oLandmarkInfo) {
+		if (oLandmarkInfo && oLandmarkInfo.getHeaderRole() !== AccessibleLandmarkRole.None) {
+			return ObjectPageLayout.DIV;
+		}
+
+		return ObjectPageLayout.HEADER;
+	};
+
+	/**
+	 * Returns HTML tag of the page footer.
+	 *
+	 * @param {sap.uxap.ObjectPageAccessibleLandmarkInfo} oLandmarkInfo ObjectPageLayout LandmarkInfo
+	 * @returns {string} The HTML tag of the page footer.
+	 * @private
+	 */
+	ObjectPageLayout.prototype._getFooterTag = function (oLandmarkInfo) {
+		if (oLandmarkInfo && oLandmarkInfo.getFooterRole() !== AccessibleLandmarkRole.None) {
+			return ObjectPageLayout.DIV;
+		}
+
+		return ObjectPageLayout.FOOTER;
 	};
 
 	function exists(vObject) {
