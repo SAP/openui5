@@ -385,7 +385,7 @@ function (
 				oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
 					setTimeout(function () {
 						sectionIsSelected(oObjectPage, assert, oExpected);
-						assert.ok(isTolerableDifference(oObjectPage._$opWrapper.scrollTop() - 1, oObjectPage.iHeaderContentHeight, ["chrome"], 1), "top section is selected");
+						assert.ok(isTolerableDifference(oObjectPage._$opWrapper.scrollTop(), oObjectPage.iHeaderContentHeight, ["chrome"], 1), "top section is selected");
 						assert.strictEqual(oObjectPage._bStickyAnchorBar, true, "anchor bar is snapped");
 						assert.strictEqual(oObjectPage._bHeaderExpanded, false, "header is snapped");
 
