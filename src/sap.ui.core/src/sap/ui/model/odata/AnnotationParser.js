@@ -57,6 +57,19 @@ var mMultipleArgumentDynamicExpressions = {
 	Collection: true
 };
 
+/**
+ * Gets the qualifier for an <Annotation> element, possibly inherited from the direct parent
+ * <Annotations> element.
+ *
+ * @param {Element} oAnnotationNode An <Annotation> element
+ * @returns {string} The qualifier or some falsy value
+ */
+function getQualifier(oAnnotationNode) {
+	return oAnnotationNode.getAttribute("Qualifier")
+		|| oAnnotationNode.parentNode.nodeName === "Annotations"
+			&& oAnnotationNode.parentNode.getAttribute("Qualifier");
+}
+
 
 /**
  * Static class for annotations parsing in the ODataModel (version 1 and 2 only).
@@ -266,7 +279,7 @@ var AnnotationParser =  {
 				for (var nodeIndexValue = 0; nodeIndexValue < propertyAnnotationNodes.length; nodeIndexValue += 1) {
 					propertyAnnotationNode = AnnotationParser._oXPath.nextNode(propertyAnnotationNodes, nodeIndexValue);
 					sTermValue = AnnotationParser.replaceWithAlias(propertyAnnotationNode.getAttribute("Term"));
-					var sQualifierValue = annotationNode.getAttribute("Qualifier") || propertyAnnotationNode.getAttribute("Qualifier");
+					var sQualifierValue = getQualifier(propertyAnnotationNode);
 					if (sQualifierValue) {
 						sTermValue += "#" + sQualifierValue;
 					}
@@ -315,7 +328,7 @@ var AnnotationParser =  {
 						}
 						oAnnotationTarget = mTarget[sContainerAnnotation];
 					}
-					AnnotationParser._parseAnnotation(annotation, annotationNode, propertyAnnotationNode, oAnnotationTarget);
+					AnnotationParser._parseAnnotation(annotation, propertyAnnotationNode, oAnnotationTarget);
 				}
 				// --- Setup of Expand nodes. ---
 				expandNodes = AnnotationParser._oXPath.selectNodes("//d:Annotations[contains(@Target, '" + targetAnnotation
@@ -403,9 +416,7 @@ var AnnotationParser =  {
 	 * @static
 	 */
 	backupAnnotationAtArray : function (oElement, mAnnotations) {
-		var oAnnotationsElement = oElement,
-			sAnnotationsQualifier,
-			sQualifier,
+		var sQualifier,
 			aSegments = [];
 
 		// returns the current oElement's index in its parentElement's "children" collection
@@ -416,15 +427,10 @@ var AnnotationParser =  {
 				}).indexOf(oElement);
 		}
 
-		while (oAnnotationsElement.nodeName !== "Annotations") {
-			oAnnotationsElement = oAnnotationsElement.parentNode;
-		}
-		sAnnotationsQualifier = oAnnotationsElement.getAttribute("Qualifier");
-
-		while (oElement !== oAnnotationsElement) {
+		while (oElement.nodeName !== "Annotations") {
 			switch (oElement.nodeName) {
 				case "Annotation":
-					sQualifier = oElement.getAttribute("Qualifier") || sAnnotationsQualifier;
+					sQualifier = getQualifier(oElement);
 					aSegments.unshift(oElement.getAttribute("Term")
 						+ (sQualifier ? "#" + sQualifier : ""));
 					break;
@@ -454,7 +460,7 @@ var AnnotationParser =  {
 			}
 			oElement = oElement.parentNode;
 		}
-		aSegments.unshift(oAnnotationsElement.getAttribute("Target"));
+		aSegments.unshift(oElement.getAttribute("Target"));
 
 		aSegments = aSegments.map(function (vSegment) {
 			return typeof vSegment === "string"
@@ -525,11 +531,19 @@ var AnnotationParser =  {
 
 	/*
 	 * Sets the parsed annotation term at the given oAnnotationTarget object.
+	 *
+	 * @param {string} sAnnotationTarget
+	 *   The target path used to determine EDM types
+	 * @param {Element} oAnnotationNode
+	 *   The <Annotation> node to parse
+	 * @param {object|object[]} oAnnotationTarget
+	 *   The target at which the annotation value is added
+	 *
 	 * @static
 	 * @private
 	 */
-	_parseAnnotation: function (sAnnotationTarget, oAnnotationsNode, oAnnotationNode, oAnnotationTarget) {
-		var sQualifier = oAnnotationNode.getAttribute("Qualifier") || oAnnotationsNode.getAttribute("Qualifier");
+	_parseAnnotation: function (sAnnotationTarget, oAnnotationNode, oAnnotationTarget) {
+		var sQualifier = getQualifier(oAnnotationNode);
 		var sTerm = AnnotationParser.replaceWithAlias(oAnnotationNode.getAttribute("Term"));
 		if (sQualifier) {
 			sTerm += "#" + sQualifier;
@@ -888,7 +902,16 @@ var AnnotationParser =  {
 		return sValue;
 	},
 
-	/*
+	/**
+	 * Determines the annotation value (static or dynamic expression) at the given element.
+	 *
+	 * @param {Element} oDocumentNode
+	 *   The element
+	 * @param {string} [sAnnotationTarget]
+	 *   The target path used to determine EDM types
+	 * @returns {object|object[]}
+	 *   The annotation value
+	 *
 	 * @static
 	 * @private
 	 */
@@ -976,7 +999,7 @@ var AnnotationParser =  {
 			if (oNestedAnnotations.length > 0) {
 				for (i = 0; i < oNestedAnnotations.length; i++) {
 					var oNestedAnnotationNode = xPath.nextNode(oNestedAnnotations, i);
-					AnnotationParser._parseAnnotation(sAnnotationTarget, oDocumentNode, oNestedAnnotationNode, vPropertyValue);
+					AnnotationParser._parseAnnotation(sAnnotationTarget, oNestedAnnotationNode, vPropertyValue);
 				}
 
 			}
