@@ -1,7 +1,7 @@
 {
 	"cwd": "test-resources/sap/m/demokit/basicTemplate/",
 	"files" : [
-		"webapp/controller/App.controller.js",
+		"webapp/controller/Home.controller.js",
 		"webapp/css/style.css",
 		"webapp/i18n/i18n.properties",
 		"webapp/model/formatter.js",
