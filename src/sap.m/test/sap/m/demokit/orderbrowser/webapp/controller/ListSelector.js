@@ -14,7 +14,7 @@ sap.ui.define([
 		 * @alias sap.ui.demo.orderbrowser.controller.ListSelector
 		 */
 
-		constructor : function () {
+		constructor: function () {
 			this._oWhenListHasBeenSet = new Promise(function (fnResolveListHasBeenSet) {
 				this._fnResolveListHasBeenSet = fnResolveListHasBeenSet;
 			}.bind(this));
@@ -48,11 +48,10 @@ sap.ui.define([
 		 * @param {sap.m.List} oList The list all the select functions will be invoked on.
 		 * @public
 		 */
-		setBoundMasterList : function (oList) {
+		setBoundMasterList: function (oList) {
 			this._oList = oList;
 			this._fnResolveListHasBeenSet(oList);
 		},
-
 
 		/**
 		 * Tries to select and scroll to a list item with a matching binding context. If there are no items matching the binding context or the ListMode is none,
@@ -60,19 +59,24 @@ sap.ui.define([
 		 * @param {string} sBindingPath the binding path matching the binding path of a list item
 		 * @public
 		 */
-		selectAListItem : function (sBindingPath) {
+		selectAListItem: function (sBindingPath) {
+
 			this.oWhenListLoadingIsDone.then(
 				function () {
 					var oList = this._oList,
 						oSelectedItem;
+
 					if (oList.getMode() === "None") {
 						return;
 					}
+
 					oSelectedItem = oList.getSelectedItem();
+
 					// skip update if the current selection is already matching the object path
 					if (oSelectedItem && oSelectedItem.getBindingContext().getPath() === sBindingPath) {
 						return;
 					}
+
 					oList.getItems().some(function (oItem) {
 						if (oItem.getBindingContext() && oItem.getBindingContext().getPath() === sBindingPath) {
 							oList.setSelectedItem(oItem);
@@ -85,18 +89,17 @@ sap.ui.define([
 				}
 			);
 		},
+
 		/**
 		 * Removes all selections from master list.
 		 * Does not trigger 'selectionChange' event on master list, though.
 		 * @public
 		 */
-		clearMasterListSelection : function () {
+		clearMasterListSelection: function () {
 			//use promise to make sure that 'this._oList' is available
 			this._oWhenListHasBeenSet.then(function () {
 				this._oList.removeSelections(true);
 			}.bind(this));
 		}
-
 	});
-
 });

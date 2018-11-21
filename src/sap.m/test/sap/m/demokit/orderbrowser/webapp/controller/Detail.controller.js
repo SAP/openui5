@@ -2,7 +2,7 @@
 sap.ui.define([
 	"./BaseController",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/demo/orderbrowser/model/formatter",
+	"../model/formatter",
 	"sap/m/library"
 ], function(BaseController, JSONModel, formatter, mobileLibrary) {
 	"use strict";
@@ -256,5 +256,4 @@ sap.ui.define([
 		}
 
 	});
-}
-);
+});

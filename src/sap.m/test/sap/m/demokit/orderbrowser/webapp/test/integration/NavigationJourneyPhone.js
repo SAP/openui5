@@ -2,8 +2,8 @@
 
 sap.ui.define([
 	"sap/ui/test/opaQunit",
-	"./pages/Browser",
 	"./pages/Master",
+	"./pages/Browser",
 	"./pages/Detail"
 ], function (opaTest) {
 	"use strict";
@@ -12,7 +12,7 @@ sap.ui.define([
 
 	opaTest("Should see the objects list", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartTheApp();
+		Given.iStartMyApp();
 
 		// Assertions
 		Then.onTheMasterPage.iShouldSeeTheList();
@@ -41,7 +41,7 @@ sap.ui.define([
 		Then.onTheDetailPage.iShouldSeeTheRememberedObject();
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 });

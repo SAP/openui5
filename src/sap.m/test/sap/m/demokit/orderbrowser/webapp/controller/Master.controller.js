@@ -8,9 +8,9 @@ sap.ui.define([
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/Device",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/format/DateFormat",
-	"sap/ui/demo/orderbrowser/model/formatter"
-], function (BaseController, JSONModel, Filter, FilterOperator, Sorter, GroupHeaderListItem, Device, Fragment, DateFormat, formatter) {
+	"../model/formatter",
+	"sap/ui/core/format/DateFormat"
+], function (BaseController, JSONModel, Filter, FilterOperator, Sorter, GroupHeaderListItem, Device, Fragment, formatter, DateFormat) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.orderbrowser.controller.Master", {
@@ -110,16 +110,13 @@ sap.ui.define([
 
 		/**
 		 * After list data is available, this handler method updates the
-		 * master list counter and hides the pull to refresh control, if
-		 * necessary.
+		 * master list counter
 		 * @param {sap.ui.base.Event} oEvent the update finished event
 		 * @public
 		 */
 		onUpdateFinished : function (oEvent) {
 			// update the master list object counter after new data is loaded
 			this._updateListItemCount(oEvent.getParameter("total"));
-			// hide pull to refresh if necessary
-			//this.byId("pullToRefresh").hide();
 		},
 
 		/**
@@ -161,46 +158,35 @@ sap.ui.define([
 		},
 
 		/**
-		 * Event handler for the list selection event
-		 * @param {sap.ui.base.Event} oEvent the list selectionChange event
+		 * Event handler for the filter, sort and group buttons to open the ViewSettingsDialog.
+		 * @param {sap.ui.base.Event} oEvent the button press event
 		 * @public
 		 */
-		onSelectionChange : function (oEvent) {
-			// get the list item, either from the listItem parameter or from the event's source itself (will depend on the device-dependent mode).
-			this._showDetail(oEvent.getParameter("listItem") || oEvent.getSource());
-		},
-
-		/**
-		 * Event handler for the bypassed event, which is fired when no routing pattern matched.
-		 * If there was an object selected in the master list, that selection is removed.
-		 * @public
-		 */
-		onBypassed : function () {
-			this._oList.removeSelections(true);
-		},
-
-		/**
-		 * Used to create GroupHeaders with non-capitalized caption.
-		 * These headers are inserted into the master list to
-		 * group the master list's items.
-		 * @param {Object} oGroup group whose text is to be displayed
-		 * @public
-		 * @returns {sap.m.GroupHeaderListItem} group header with non-capitalized caption.
-		 */
-		createGroupHeader : function (oGroup) {
-			return new GroupHeaderListItem({
-				title : oGroup.text,
-				upperCase : false
-			});
-		},
-
-		/**
-		 * Event handler for navigating back.
-		 * We navigate back in the browser history
-		 * @public
-		 */
-		onNavBack : function() {
-			history.go(-1);
+		onOpenViewSettings : function (oEvent) {
+			var sDialogTab = "filter";
+			if (oEvent.getSource() instanceof sap.m.Button) {
+				var sButtonId = oEvent.getSource().sId;
+				if (sButtonId.match("sort")) {
+					sDialogTab = "sort";
+				} else if (sButtonId.match("group")) {
+					sDialogTab = "group";
+				}
+			}
+			// load asynchronous XML fragment
+			if (!this.byId("viewSettingsDialog")) {
+				Fragment.load({
+					id: this.getView().getId(),
+					name: "sap.ui.demo.orderbrowser.view.ViewSettingsDialog",
+					controller: this
+				}).then(function(oDialog){
+					// connect dialog to the root view of this component (models, lifecycle)
+					this.getView().addDependent(oDialog);
+					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
+					oDialog.open(sDialogTab);
+				}.bind(this));
+			} else {
+				this.byId("viewSettingsDialog").open(sDialogTab);
+			}
 		},
 
 		/**
@@ -256,6 +242,46 @@ sap.ui.define([
 			this._oList.getBinding("items").sort(aSorters);
 		},
 
+		/**
+		 * Event handler for the list selection event
+		 * @param {sap.ui.base.Event} oEvent the list selectionChange event
+		 * @public
+		 */
+		onSelectionChange : function (oEvent) {
+			var oList = oEvent.getSource(),
+				bSelected = oEvent.getParameter("selected");
+
+			// skip navigation when deselecting an item in multi selection mode
+			if (!(oList.getMode() === "MultiSelect" && !bSelected)) {
+				// get the list item, either from the listItem parameter or from the event's source itself (will depend on the device-dependent mode).
+				this._showDetail(oEvent.getParameter("listItem") || oEvent.getSource());
+			}
+		},
+
+		/**
+		 * Event handler for the bypassed event, which is fired when no routing pattern matched.
+		 * If there was an object selected in the master list, that selection is removed.
+		 * @public
+		 */
+		onBypassed : function () {
+			this._oList.removeSelections(true);
+		},
+
+		/**
+		 * Used to create GroupHeaders with non-capitalized caption.
+		 * These headers are inserted into the master list to
+		 * group the master list's items.
+		 * @param {Object} oGroup group whose text is to be displayed
+		 * @public
+		 * @returns {sap.m.GroupHeaderListItem} group header with non-capitalized caption.
+		 */
+		createGroupHeader : function (oGroup) {
+			return new GroupHeaderListItem({
+				title : oGroup.text,
+				upperCase : false
+			});
+		},
+
 		/* =========================================================== */
 		/* begin: internal methods                                     */
 		/* =========================================================== */
@@ -283,9 +309,9 @@ sap.ui.define([
 		 * @private
 		 */
 		_showDetail : function (oItem) {
+			var bReplace = !Device.system.phone;
 			// set the layout property of FCL control to show two columns
 			this.getModel("appView").setProperty("/layout", "TwoColumnsMidExpanded");
-			var bReplace = !Device.system.phone;
 			this.getRouter().navTo("object", {
 				objectId : oItem.getBindingContext().getProperty("OrderID")
 			}, bReplace);
@@ -293,7 +319,7 @@ sap.ui.define([
 
 		/**
 		 * Sets the item count on the master list header
-		 * @param {int} iTotalItems the total number of items in the list
+		 * @param {integer} iTotalItems the total number of items in the list
 		 * @private
 		 */
 		_updateListItemCount : function (iTotalItems) {
@@ -329,40 +355,7 @@ sap.ui.define([
 			var oViewModel = this.getModel("masterView");
 			oViewModel.setProperty("/isFilterBarVisible", (this._oListFilterState.aFilter.length > 0));
 			oViewModel.setProperty("/filterBarLabel", this.getResourceBundle().getText("masterFilterBarText", [sFilterBarText]));
-		},
-
-		/**
-		 * Event handler for the filter and group buttons to open the ViewSettingsDialog.
-		 * @param {sap.ui.base.Event} oEvent the button press event
-		 * @public
-		 */
-		onOpenViewSettings : function (oEvent) {
-			var sDialogTab = "filter";
-			if (oEvent.getSource() instanceof sap.m.Button) {
-				var sButtonId = oEvent.getSource().sId;
-				if (sButtonId.match("sort")) {
-					sDialogTab = "sort";
-				} else if (sButtonId.match("group")) {
-					sDialogTab = "group";
-				}
-			}
-			// load asynchronous XML fragment
-			if (!this.byId("viewSettingsDialog")) {
-				Fragment.load({
-					id: this.getView().getId(),
-					name: "sap.ui.demo.orderbrowser.view.ViewSettingsDialog",
-					controller: this
-				}).then(function(oDialog){
-					// connect dialog to the root view of this component (models, lifecycle)
-					this.getView().addDependent(oDialog);
-					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
-					oDialog.open(sDialogTab);
-				}.bind(this));
-			} else {
-				this.byId("viewSettingsDialog").open(sDialogTab);
-			}
 		}
 
 	});
-
 });

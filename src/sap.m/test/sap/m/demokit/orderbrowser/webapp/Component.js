@@ -1,11 +1,10 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/Device",
-	"sap/ui/demo/orderbrowser/model/models",
-	"sap/ui/demo/orderbrowser/controller/ListSelector",
-	"sap/ui/demo/orderbrowser/controller/ErrorHandler",
-	"sap/ui/thirdparty/jquery"
-], function (UIComponent, Device, models, ListSelector, ErrorHandler, jQuery) {
+	"./model/models",
+	"./controller/ListSelector",
+	"./controller/ErrorHandler"
+], function (UIComponent, Device, models, ListSelector, ErrorHandler) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.orderbrowser.Component", {
@@ -56,7 +55,7 @@ sap.ui.define([
 		getContentDensityClass : function() {
 			if (this._sContentDensityClass === undefined) {
 				// check whether FLP has already set the content density class; do nothing in this case
-				if (jQuery(document.body).hasClass("sapUiSizeCozy") || jQuery(document.body).hasClass("sapUiSizeCompact")) {
+				if (document.body.classList.contains("sapUiSizeCozy") || document.body.classList.contains("sapUiSizeCompact")) {
 					this._sContentDensityClass = "";
 				} else if (!Device.support.touch) { // apply "compact" mode if touch is not supported
 					this._sContentDensityClass = "sapUiSizeCompact";

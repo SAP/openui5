@@ -2,9 +2,9 @@
 
 sap.ui.define([
 	"sap/ui/test/opaQunit",
-	"./pages/Browser",
 	"./pages/Master",
-	"./pages/NotFound"
+	"./pages/NotFound",
+	"./pages/Browser"
 ], function (opaTest) {
 	"use strict";
 
@@ -12,7 +12,7 @@ sap.ui.define([
 
 	opaTest("Should see the resource not found page when navigating to an invalid hash", function (Given, When, Then) {
 		//Arrangement
-		Given.iStartTheApp();
+		Given.iStartMyApp();
 
 		//Actions
 		When.onTheMasterPage.iWaitUntilTheListIsLoaded();
@@ -23,24 +23,24 @@ sap.ui.define([
 			and.theNotFoundPageShouldSayResourceNotFound();
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 	opaTest("Should see the not found master and detail page if an invalid object id has been called", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartTheApp({ hash : "/Orders/SomeInvalidObjectId" });
+		Given.iStartMyApp({ hash : "/Orders/SomeInvalidObjectId" });
 
 		// Assertions
 		Then.onTheNotFoundPage.iShouldSeeTheObjectNotFoundPage().
 			and.theNotFoundPageShouldSayObjectNotFound();
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 	opaTest("Should see the not found text for no search results", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartTheApp();
+		Given.iStartMyApp();
 
 		//Actions
 		When.onTheMasterPage.iSearchForSomethingWithNoResults();
@@ -49,7 +49,7 @@ sap.ui.define([
 		Then.onTheMasterPage.iShouldSeeTheNoDataTextForNoSearchResults();
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 });

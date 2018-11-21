@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
-	"sap/ui/demo/orderbrowser/test/integration/pages/Common",
+	"./Common",
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/AggregationFilled",
 	"sap/ui/test/matchers/PropertyStrictEquals"
@@ -12,6 +12,7 @@ sap.ui.define([
 
 	Opa5.createPageObjects({
 		onTheDetailPage : {
+
 			baseClass : Common,
 
 			actions : {
@@ -219,7 +220,7 @@ sap.ui.define([
 
 				theAppShowsFCLDesign: function (sLayout) {
 					return this.waitFor({
-						id : "app",
+						id : "layout",
 						viewName : "App",
 						matchers : new PropertyStrictEquals({name: "layout", value: sLayout}),
 						success : function () {

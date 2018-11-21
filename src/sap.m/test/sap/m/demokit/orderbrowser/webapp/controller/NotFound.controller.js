@@ -9,7 +9,7 @@ sap.ui.define([
 			this.getRouter().getTarget("notFound").attachDisplay(this._onNotFoundDisplayed, this);
 		},
 
-		_onNotFoundDisplayed: function () {
+		_onNotFoundDisplayed : function () {
 			this.getModel("appView").setProperty("/layout", "OneColumn");
 		}
 	});

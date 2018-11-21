@@ -1,43 +1,29 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title>Integration tests for Browse Orders</title>
-	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
-	<meta charset="UTF-8">
+	<head>
+		<title>Integration tests for Browse Orders</title>
+		<meta charset="UTF-8">
 
-	<script
-		id="sap-ui-bootstrap"
-		src="../../../../../../../../resources/sap-ui-core.js"
-		data-sap-ui-resourceroots='{
-			"sap.ui.demo.orderbrowser": "../../"
-		}'
-		data-sap-ui-preload="async">
-	</script>
+		<script id="sap-ui-bootstrap"
+			src="../../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme='sap_belize'
+			data-sap-ui-resourceroots='{
+				"sap.ui.demo.orderbrowser": "../../"
+			}'
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-async="true">
+		</script>
 
-	<link rel="stylesheet" type="text/css" href="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.css">
+		<link rel="stylesheet" type="text/css" href="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.css">
 
-	<script src="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
-	<script src="../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script src="../../../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script src="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+		<script src="../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
-	<script>
-		/* global QUnit */
-		// we want to be able to load our tests asynchronously - pause QUnit until we loaded everything
-		QUnit.config.autostart = false;
+		<script src="opaTests.qunit.js"></script>
 
-		sap.ui.getCore().attachInit(function () {
-			"use strict";
-			sap.ui.require([
-				"sap/ui/demo/orderbrowser/test/integration/AllJourneys"
-			], function () {
-				// configuration has been applied and the tests in the journeys have been loaded - start QUnit
-				QUnit.start();
-			});
-		});
-	</script>
-</head>
-<body>
-	<div id="qunit"></div>
-	<div id="qunit-fixture"></div>
-</body>
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+	</body>
 </html>

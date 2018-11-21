@@ -1,14 +1,20 @@
 <mvc:View
 	controllerName="sap.ui.demo.orderbrowser.controller.App"
 	displayBlock="true"
-	busy="{appView>/busy}"
-	busyIndicatorDelay="{appView>/delay}"
 	height="100%"
-	xmlns="sap.f"
+	xmlns="sap.m"
+	xmlns:f="sap.f"
 	xmlns:mvc="sap.ui.core.mvc">
-	<FlexibleColumnLayout
-		id="app"
-		layout="{appView>/layout}"
-		backgroundDesign="Translucent">
-	</FlexibleColumnLayout>
+	<Shell appWidthLimited="false">
+		<App
+			id="app"
+			busy="{appView>/busy}"
+			busyIndicatorDelay="{appView>/delay}">
+			<f:FlexibleColumnLayout
+				id="layout"
+				layout="{appView>/layout}"
+				backgroundDesign="Translucent">
+			</f:FlexibleColumnLayout>
+		</App>
+	</Shell>
 </mvc:View>
