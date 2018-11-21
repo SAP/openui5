@@ -46,12 +46,12 @@ General
 JavaScript Coding Guidelines
 ----------------------------
 
--   No global JavaScript variables; organize all global objects in an `sap.\*` namespace structure or extend the `jQuery.sap` object. The methods `sap.ui.define(...)` and `jQuery.sap.declare(sModuleName)` assist in doing so, find [more details here](guidelines/jsnamespaces.md).
+-   No global JavaScript variables; Use AMD modules for encapsulation. For more information, see [Best Practices for Loading Modules](https://openui5.hana.ondemand.com/#/topic/00737d6c1b864dc3ab72ef56611491c4.html) and [API Reference: `sap.ui.define`](https://openui5.hana.ondemand.com/#/api/sap.ui/methods/sap.ui.define).
     -   This also means: no undeclared variables
     -   When using global variables introduced by other libraries, declare the usage in a special "global"-comment: `/*global JSZip, OpenAjax */`
 -   Do not access internal (private) members of other objects
 -   Do not use console.log()
--   Use jQuery.sap.byId("&lt;someId&gt;") instead of jQuery("\#&lt;someId&gt;") when &lt;someId&gt; is not a known string - certain characters in IDs need to be escaped for jQuery to work correctly
+-   Use `jQuery(window.document.getElementById("<someId>")` instead of `jQuery("#<someId>")` when &lt;someId&gt; is not a known string - certain characters in IDs need to be escaped for jQuery to work correctly
 -   Keep modifications of jQuery and other embedded Open Source to a minimum and document them clearly with the term "SAP modification"
     -   Such modifications may not alter the standard behavior of the used library in a way that breaks other libraries
 
@@ -136,7 +136,7 @@ But do NOT use hungarian notation for API method parameters: the documentation w
 | <code>MyClass.prototype._onMetadataLoaded = function() {...}</code> | Members that are attached to an event and thus are used as event listeners should be prefixed with `on`. Since event listeners usually are used in a private manner they should be prefixed with a <code>_</code> as well. |
 | <code>MyClass.prototype.metadataLoaded = function() { return new Promise({...}); }</code> | Members that return a <code>Promise</code> should be named with a verbal phrase in past tense that states what they do |
 | <code>MyClass.prototype.setSomething = function() {... return this;}</code> | API methods with no return value should return `this` to enable method chaining |
-| <code>SuperClass.extend(…)</code> | Subclasses should use this way to extend a class<br>If there is no base class, the prototype is automatically initialized by JavaScript as an empty object literal and must not be assigned manually. Consider inheriting from `sap.ui.base.Object` |
+| <code>SuperClass.extend(…)</code> | Subclasses should use this way to extend a class<br>If there is no base class, the prototype is automatically initialized by JavaScript as an empty object literal and must not be assigned manually. Consider inheriting from `sap/ui/base/Object` |
 | `SuperClass.apply(this, arguments);` | Subclasses have to call (or apply) their parent's constructor |
 
 -   Constructor + methods + statics are combined in a single JS source file named and located after the qualified name of the class (precondition for the class loading)
