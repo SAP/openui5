@@ -3,7 +3,7 @@
 /* Belize theme                      */
 /* ================================= */
 
-@_sap_m_SelectListItemBelizeFocus_Height: 4px; // 2 borders * 1px + 2 offsets (top and bottom) * 1px
+@_sap_m_SelectList_ItemBelizeFocus_Height: 4px; // 2 borders * 1px + 2 offsets (top and bottom) * 1px
 
 /* selected */
 .sapMSelectListItemBaseSelected {
@@ -58,7 +58,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		.sapMSelectListCell::before {
 			border-top: 1px dotted @sapUiContentFocusColor;
 			border-bottom: 1px dotted @sapUiContentFocusColor;
-			height: calc(@_sap_m_SelectListItem_Height ~" - " @_sap_m_SelectListItemBelizeFocus_Height);
+			height: calc(@_sap_m_SelectList_ItemHeight ~" - " @_sap_m_SelectList_ItemBelizeFocus_Height);
 		}
 
 		.sapMSelectListFirstCell.sapMSelectListCell::before {
@@ -75,7 +75,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
 		.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected {
 			.sapMSelectListCell::before {
-				height: calc(@_sap_m_SelectListItem_CompactHeight ~" - " @_sap_m_SelectListItemBelizeFocus_Height);
+				height: calc(@_sap_m_SelectList_ItemCompactHeight ~" - " @_sap_m_SelectList_ItemBelizeFocus_Height);
 			}
 		}
 	}
