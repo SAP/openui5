@@ -1557,7 +1557,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.initialize = function() {
 		// Call initialize on all bindings in case metadata was not available when they were created
-		var aBindings = this.aBindings.slice(0);
+		var aBindings = this.getBindings();
 		aBindings.forEach(function(oBinding) {
 			oBinding.initialize();
 		});
@@ -1665,7 +1665,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype._refresh = function(bForceUpdate, sGroupId, mChangedEntities, mEntityTypes) {
 		// Call refresh on all bindings instead of checkUpdate to properly reset cached data in bindings
-		var aBindings = this.aBindings.slice(0);
+		var aBindings = this.getBindings();
 		//the refresh calls read synchronous; we use this.sRefreshGroupId in this case
 		this.sRefreshGroupId = sGroupId;
 		aBindings.forEach(function(oBinding) {
@@ -1696,7 +1696,7 @@ sap.ui.define([
 			clearTimeout(this.sUpdateTimer);
 			this.sUpdateTimer = null;
 		}
-		var aBindings = this.aBindings.slice(0);
+		var aBindings = this.getBindings();
 		aBindings.forEach(function(oBinding) {
 			if (!bMetaModelOnly || this.isMetaModelPath(oBinding.getPath())) {
 				oBinding.checkUpdate(bForceUpdate, mChangedEntities);
@@ -1712,7 +1712,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype.checkDataState = function(mLaunderingState) {
-		var aBindings = this.aBindings.slice(0);
+		var aBindings = this.getBindings();
 		aBindings.forEach(function(oBinding) {
 			if (oBinding.checkDataState) {
 				oBinding.checkDataState(mLaunderingState);

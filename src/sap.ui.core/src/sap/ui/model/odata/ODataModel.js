@@ -987,7 +987,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.initialize = function() {
 		// Call initialize on all bindings in case metadata was not available when they were created
-		var aBindings = this.aBindings.slice(0);
+		var aBindings = this.getBindings();
 		jQuery.each(aBindings, function(iIndex, oBinding) {
 			oBinding.initialize();
 		});
@@ -1013,7 +1013,7 @@ sap.ui.define([
 
 	ODataModel.prototype._refresh = function(bForceUpdate, mChangedEntities, mEntityTypes) {
 		// Call refresh on all bindings instead of checkUpdate to properly reset cached data in bindings
-		var aBindings = this.aBindings.slice(0);
+		var aBindings = this.getBindings();
 		jQuery.each(aBindings, function(iIndex, oBinding) {
 			oBinding.refresh(bForceUpdate, mChangedEntities, mEntityTypes);
 		});
@@ -1043,7 +1043,7 @@ sap.ui.define([
 			clearTimeout(this.sUpdateTimer);
 			this.sUpdateTimer = null;
 		}
-		var aBindings = this.aBindings.slice(0);
+		var aBindings = this.getBindings();
 		jQuery.each(aBindings, function(iIndex, oBinding) {
 			if (!bMetaModelOnly || this.isMetaModelPath(oBinding.getPath())) {
 				oBinding.checkUpdate(bForceUpdate, mChangedEntities);
