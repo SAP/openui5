@@ -83,6 +83,15 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Cache", {
 		beforeEach : function () {
+			var oModelInterface = {
+					fnFetchMetadata : function () {
+						throw new Error("Unsupported operation");
+					},
+					lockGroup : function () {
+						throw new Error("Unsupported operation");
+					}
+				};
+
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
@@ -94,7 +103,9 @@ sap.ui.define([
 				getGroupSubmitMode : function (sGroupId) {
 					return defaultGetGroupProperty(sGroupId);
 				},
-				getModelInterface : function () {},
+				getModelInterface : function () {
+					return oModelInterface;
+				},
 				getServiceUrl : function () { return "/~/"; },
 				hasChanges : function () {},
 				isActionBodyOptional : function () {},
@@ -937,7 +948,6 @@ sap.ui.define([
 				oGroupLockClone = new _GroupLock(sGroupId),
 				oGroupLockMock = this.mock(oGroupLock),
 				oHelperMock = this.mock(_Helper),
-				oModelInterface = {lockGroup : function () {}},
 				oOldData = {},
 				oPatchResult = {
 					"@odata.etag" : 'W/"20010101000000.0000000"',
@@ -1046,9 +1056,7 @@ sap.ui.define([
 					assert.strictEqual(oResult, oError);
 				});
 
-			this.oRequestorMock.expects("getModelInterface").withExactArgs()
-				.returns(oModelInterface);
-			this.mock(oModelInterface).expects("lockGroup")
+			this.mock(this.oRequestor.getModelInterface()).expects("lockGroup")
 				.withExactArgs(sGroupId, true, sinon.match.same(oCache))
 				.returns(oRequestLock);
 
@@ -1189,7 +1197,6 @@ sap.ui.define([
 				sFullPath = "path/to/entity/Address/City",
 				oGroupLock = new _GroupLock("group"),
 				oHelperMock = this.mock(_Helper),
-				oModelInterface = {lockGroup : function () {}},
 				oOldData = {},
 				oPatchResult = {},
 				oPatchPromise = Promise.reject(oError1),
@@ -1314,9 +1321,7 @@ sap.ui.define([
 					assert.strictEqual(oResult, oError2);
 				});
 
-			this.oRequestorMock.expects("getModelInterface").withExactArgs()
-				.returns(oModelInterface);
-			this.mock(oModelInterface).expects("lockGroup")
+			this.mock(this.oRequestor.getModelInterface()).expects("lockGroup")
 				.withExactArgs("group", true, sinon.match.same(oCache))
 				.returns(oRequestLock);
 
@@ -1341,7 +1346,6 @@ sap.ui.define([
 			fnError = this.spy(),
 			oError = new Error(),
 			oGroupLock = new _GroupLock("group"),
-			oModelInterface = {lockGroup : function () {}},
 			oPatchPromise = Promise.reject(oError),
 			oRequestCall,
 			oRequestLock = {unlock : function () {}},
@@ -1380,9 +1384,7 @@ sap.ui.define([
 				assert.strictEqual(oResult, oError);
 			});
 
-		this.oRequestorMock.expects("getModelInterface").withExactArgs()
-			.returns(oModelInterface);
-		this.mock(oModelInterface).expects("lockGroup")
+		this.mock(this.oRequestor.getModelInterface()).expects("lockGroup")
 			.withExactArgs("group", true, sinon.match.same(oCache))
 			.returns(oRequestLock);
 
@@ -2274,7 +2276,9 @@ sap.ui.define([
 				sinon.match.same(oCacheValue), sinon.match.same(oData));
 
 		// code under test
-		oCache.patch(sPath, oData);
+		return oCache.patch(sPath, oData).then(function (vResult) {
+			assert.strictEqual(vResult, oCacheValue);
+		});
 	});
 
 	//*********************************************************************************************
@@ -2645,7 +2649,7 @@ sap.ui.define([
 		iStart : 42,
 		sResourcePath : "Employees?$skip=42"
 	}].forEach(function (oFixture, i) {
-		QUnit.test("CollectionCache#getResourcePath: " + i , function(assert) {
+		QUnit.test("CollectionCache#getResourcePath: " + i , function (assert) {
 			var oCache = this.createCache("Employees");
 
 			oCache.sQueryString = oFixture.sQueryString;
@@ -3290,11 +3294,12 @@ sap.ui.define([
 					sinon.match.object, sinon.match.func, sinon.match.func, undefined,
 					sResourcePath + "/-1")
 				.returns(Promise.resolve({}));
-			return oCache.create(oGroupLock, "Employees", "").then(function () {
-				assert.strictEqual(
-					oCache.read(0, 10, 0, new _GroupLock("group")).getResult().value.$count, 27,
-					"now including the created element");
-			});
+			return oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "")
+				.then(function () {
+					assert.strictEqual(
+						oCache.read(0, 10, 0, new _GroupLock("group")).getResult().value.$count, 27,
+						"now including the created element");
+				});
 		});
 	});
 
@@ -3382,31 +3387,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#create: Promise as vPostPath", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "TEAMS"),
-			aCollection = [],
-			oGroupLock = new _GroupLock("updateGroup"),
-			oPostPathPromise = SyncPromise.resolve("TEAMS"),
-			mTypeForMetaPath = {};
-
-		oCache.fetchValue = function () {};
-		aCollection.$byPredicate = {};
-		this.mock(oCache).expects("fetchValue")
-			.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
-			.returns(SyncPromise.resolve(aCollection));
-		this.oRequestorMock.expects("request")
-			.withExactArgs("POST", "TEAMS", sinon.match.same(oGroupLock), null,
-				/*oPayload*/sinon.match.object, /*fnSubmit*/sinon.match.func,
-				/*fnCancel*/sinon.match.func, undefined, "TEAMS/-1")
-			.returns(SyncPromise.resolve({}));
-		this.mock(oCache).expects("fetchTypes").withExactArgs()
-			.returns(SyncPromise.resolve(mTypeForMetaPath));
-
-		// code under test
-		return oCache.create(oGroupLock, oPostPathPromise, "", {});
-	});
-
-	//*********************************************************************************************
 	[undefined, false, true].forEach(function (bKeepTransientPath) {
 		QUnit.test("_Cache#create: bKeepTransientPath: " + bKeepTransientPath, function (assert) {
 			var oCache = new _Cache(this.oRequestor, "TEAMS"),
@@ -3473,7 +3453,8 @@ sap.ui.define([
 			}
 
 			// code under test
-			oCreatePromise = oCache.create(oGroupLock, sPostPath, sPathInCache, oInitialData);
+			oCreatePromise = oCache.create(oGroupLock, SyncPromise.resolve(sPostPath), sPathInCache,
+				oInitialData);
 
 			// initial data is synchronously available
 			assert.strictEqual(aCollection[-1], oEntityDataCleaned);
@@ -3565,7 +3546,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[undefined, {}].forEach(function(oCacheData, i) {
+	[undefined, {}].forEach(function (oCacheData, i) {
 		QUnit.test("_Cache#create: allowed for collections only - " + i, function (assert) {
 			var oCache = new _Cache(this.oRequestor, "TEAMS"),
 				sPathInCache = "0/TEAM_2_MANAGER";
@@ -3685,7 +3666,7 @@ sap.ui.define([
 				sinon.match.same(aSelect));
 
 		// code under test
-		oPostPromise = oCache.create(oGroupLock, "Employees", "", oEntityData);
+		oPostPromise = oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "", oEntityData);
 
 		assert.strictEqual(oCache.hasPendingChangesForPath(""), true, "pending changes for root");
 		assert.strictEqual(oCache.hasPendingChangesForPath("foo"), false,
@@ -3789,8 +3770,8 @@ sap.ui.define([
 			.withExactArgs()
 			.returns(oFetchTypesPromise);
 
-		oCreatePromise = oCache.create(oCreateGroupLock, "Employees", "", {}, undefined,
-			fnErrorCallback);
+		oCreatePromise = oCache.create(oCreateGroupLock, SyncPromise.resolve("Employees"), "", {},
+			undefined, fnErrorCallback);
 
 		checkUpdateSuccess("before submitBatch").then(function () {
 			oRequestExpectation2 = that.oRequestorMock.expects("request");
@@ -3874,9 +3855,10 @@ sap.ui.define([
 				.returns(Promise.resolve({Name: "John Doe", Age: 47}));
 
 			// code under test
-			oCache.create(oGroupLock, "Employees", "", {Name: null}, function () {
-				throw new Error("unexpected call to fnCancelCallback");
-			}, function () { /* fnErrorCallback */ });
+			oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "", {Name: null},
+				function () {
+					throw new Error("unexpected call to fnCancelCallback");
+				}, function () { /* fnErrorCallback */ });
 
 			return oFailedPostPromise.then(undefined, function () {
 				var aPromises = [],
@@ -3885,7 +3867,7 @@ sap.ui.define([
 				// code under test - try to update via wrong $direct/auto group
 				aPromises.push(oCache.update(new _GroupLock(sWrongGroupId), "Name", "John Doe",
 						that.spy(), "n/a", "-1")
-					.then(undefined, function(oError) {
+					.then(undefined, function (oError) {
 						assert.strictEqual(oError.message, "The entity will be created via group '"
 							+ sUpdateGroupId + "'. Cannot patch via group '" + sWrongGroupId + "'");
 					}));
@@ -3915,7 +3897,8 @@ sap.ui.define([
 		this.oRequestorMock.expects("request").returns(Promise.resolve({}));
 
 		// code under test
-		oPromise = oCache.create(new _GroupLock("updateGroup"), "Employees", "");
+		oPromise = oCache.create(new _GroupLock("updateGroup"), SyncPromise.resolve("Employees"),
+			"");
 
 		assert.deepEqual(oCache.aElements[-1], {
 			"@$ui5._" : {"transient" : "updateGroup"}
@@ -3945,7 +3928,8 @@ sap.ui.define([
 			.returns(Promise.reject(oCanceledError));
 
 		// code under test
-		return oCache.create(oGroupLock, "Employees", "", undefined, function () {
+		return oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "", undefined,
+			function () {
 				bFnCancelCallbackCalled = true;
 			}).then(function () {
 				assert.ok(false, "Unexpected success");
@@ -3972,7 +3956,7 @@ sap.ui.define([
 				undefined, undefined)
 			.returns(Promise.resolve(oReadResult));
 
-		oCache.create(oGroupLock, "Employees", "", oEntityData);
+		oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "", oEntityData);
 
 		// code under test
 		return oCache.read(-1, 3, 0, new _GroupLock("group")).then(function (oResult) {
@@ -4006,7 +3990,8 @@ sap.ui.define([
 		this.spy(oRequestor, "request");
 		this.mock(oCache).expects("fetchTypes").withExactArgs().returns(SyncPromise.resolve({}));
 
-		oCreatePromise = oCache.create(oGroupLock, "Employees", "", {}, fnCancelCallback)
+		oCreatePromise = oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "", {},
+			fnCancelCallback)
 			.catch(function (oError) {
 				assert.ok(oError.canceled);
 			});
@@ -4059,9 +4044,10 @@ sap.ui.define([
 		this.mock(oCache).expects("fetchTypes").withExactArgs()
 			.returns(SyncPromise.resolve(mTypeForMetaPath));
 
-		oCreatedPromise = oCache.create(oGroupLock, "Employees", "", {}, function () {
-			throw new Error();
-		});
+		oCreatedPromise = oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "", {},
+			function () {
+				throw new Error();
+			});
 
 		// simulate submitBatch
 		oRequestor.mBatchQueue[sGroupId][0][0].$resolve(oEntity);
@@ -4595,6 +4581,131 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	[undefined, "Me"].forEach(function (sReadPath) {
+		var sTitle = "SingleCache#requestSideEffects, sResourcePath = " + sReadPath;
+
+		QUnit.test(sTitle, function (assert) {
+			var sResourcePath = "Employees('42')",
+				oCache = this.createSingle(sResourcePath, {
+					"sap-client" : "123",
+					$select : ["ROOM_ID"]
+				}),
+				oGroupLock = new _GroupLock("$auto"),
+				mMergedQueryOptions = {},
+				oNewValue = {},
+				oOldValue = {},
+				oPatchExpectation,
+				aPaths = ["ROOM_ID"],
+				mTypeForMetaPath = {},
+				oVisitResponseExpectation;
+
+			this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
+					sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
+					sinon.match.same(this.oRequestor.getModelInterface().fnFetchMetadata),
+					"/Employees/$Type")
+				.returns(mMergedQueryOptions);
+			this.oRequestorMock.expects("buildQueryString")
+				.withExactArgs("/Employees", sinon.match.same(mMergedQueryOptions), false, true)
+				.returns("?~");
+			this.oRequestorMock.expects("request")
+				.withExactArgs("GET", (sReadPath || sResourcePath) + "?~",
+					sinon.match.same(oGroupLock))
+				.resolves(oNewValue);
+			this.mock(oCache).expects("fetchTypes").withExactArgs()
+				.returns(SyncPromise.resolve(mTypeForMetaPath));
+			oVisitResponseExpectation = this.mock(oCache).expects("visitResponse")
+				.withExactArgs(sinon.match.same(oNewValue), sinon.match.same(mTypeForMetaPath),
+					"/Employees");
+			oPatchExpectation = this.mock(oCache).expects("patch")
+				.withExactArgs("", sinon.match.same(oNewValue))
+				.returns(SyncPromise.resolve(oOldValue));
+
+			// code under test
+			return oCache.requestSideEffects(oGroupLock, aPaths, sReadPath)
+				.then(function (vResult) {
+					assert.strictEqual(vResult, oOldValue);
+					assert.ok(oVisitResponseExpectation.calledBefore(oPatchExpectation));
+				});
+		});
+	});
+	//TODO CollectionCache#refreshSingle claims that
+	// "_Helper.updateExisting cannot be used because navigation properties cannot be handled"
+	// --> what does that mean for our usage of Cache#patch?
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache#requestSideEffects: no need to GET anything", function (assert) {
+		var oCache = this.createSingle("Employees('42')"),
+			oOldValue = {},
+			aPaths = ["ROOM_ID"];
+
+		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
+				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
+				sinon.match.same(this.oRequestor.getModelInterface().fnFetchMetadata),
+				"/Employees/$Type")
+			.returns(null);
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
+			.returns(SyncPromise.resolve(oOldValue));
+		this.oRequestorMock.expects("buildQueryString").never();
+		this.oRequestorMock.expects("request").never();
+		this.mock(_Helper).expects("updateExisting").never(); // ==> #patch also not called
+
+		// code under test
+		return oCache.requestSideEffects(new _GroupLock("$auto"), aPaths)
+			.then(function (vResult) {
+				assert.strictEqual(vResult, oOldValue);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache#requestSideEffects: request fails", function (assert) {
+		var oCache = this.createSingle("Employees('42')"),
+			oError = new Error(),
+			oGroupLock = new _GroupLock("$auto"),
+			mMergedQueryOptions = {},
+			aPaths = ["ROOM_ID"];
+
+		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
+				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
+				sinon.match.same(this.oRequestor.getModelInterface().fnFetchMetadata),
+				"/Employees/$Type")
+			.returns(mMergedQueryOptions);
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs("/Employees", sinon.match.same(mMergedQueryOptions), false, true)
+			.returns("?~");
+		this.oRequestorMock.expects("request")
+			.withExactArgs("GET", "Employees('42')?~", sinon.match.same(oGroupLock))
+			.rejects(oError);
+		this.mock(_Helper).expects("updateExisting").never(); // ==> #patch also not called
+
+		// code under test
+		return oCache.requestSideEffects(oGroupLock, aPaths)
+			.then(function () {
+				assert.ok(false, "unexpected success");
+			}, function (oError0) {
+				assert.strictEqual(oError0, oError);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache#requestSideEffects: $expand in intersection", function (assert) {
+		var oCache = this.createSingle("Employees('42')"),
+			oError = new Error("Unsupported navigation property in B/C"),
+			aPaths = ["B/C"];
+
+		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
+				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
+				sinon.match.same(this.oRequestor.getModelInterface().fnFetchMetadata),
+				"/Employees/$Type")
+			.throws(oError);
+
+		assert.throws(function () {
+			// code under test
+			oCache.requestSideEffects(new _GroupLock("$auto"), aPaths);
+		}, oError);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("PropertyCache#fetchValue", function (assert) {
 		var oCache,
 			oCacheMock,
@@ -4675,7 +4786,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("PropertyCache#update", function(assert) {
+	QUnit.test("PropertyCache#update", function (assert) {
 		var oCache = _Cache.createProperty(this.oRequestor, "foo");
 
 		// code under test
@@ -4688,7 +4799,7 @@ sap.ui.define([
 	[{}, {"Bar/Baz" : {}}].forEach(function (mTypeForMetaPath) {
 		var sTitle = "_Cache#calculateKeyPredicate: no key; " + JSON.stringify(mTypeForMetaPath);
 
-		QUnit.test(sTitle, function(assert) {
+		QUnit.test(sTitle, function (assert) {
 			var oCache = new _Cache(this.oRequestor, "Foo"),
 				oHelperMock = this.mock(_Helper),
 				vInstance = {},
@@ -4704,7 +4815,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#calculateKeyPredicate: with key", function(assert) {
+	QUnit.test("_Cache#calculateKeyPredicate: with key", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "Foo"),
 			oHelperMock = this.mock(_Helper),
 			vInstance = {},
@@ -4726,7 +4837,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#calculateKeyPredicate: with key but no data for key", function(assert) {
+	QUnit.test("_Cache#calculateKeyPredicate: with key but no data for key", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "Foo"),
 			oHelperMock = this.mock(_Helper),
 			vInstance = {},
@@ -4745,7 +4856,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#visitResponse: compute count and calculate key predicates for single object",
-			function(assert) {
+			function (assert) {
 		var oCache = new _Cache(this.oRequestor, "TEAMS('42')/Foo"),
 			oCacheMock = this.mock(oCache),
 			oResult = {
@@ -4830,7 +4941,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#visitResponse: compute count and calculate key predicates for an array",
-			function(assert) {
+			function (assert) {
 		var oCache = new _Cache(this.oRequestor, "TEAMS"),
 			oCacheMock = this.mock(oCache),
 			oHelperMock = this.mock(_Helper),
@@ -4959,7 +5070,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#read uses visitResponse", function(assert) {
+	QUnit.test("CollectionCache#read uses visitResponse", function (assert) {
 		var sResourcePath = "Employees",
 			oCache = this.createCache(sResourcePath),
 			oCacheMock = this.mock(oCache),
@@ -4984,7 +5095,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#refreshSingle", function(assert) {
+	QUnit.test("CollectionCache#refreshSingle", function (assert) {
 		var fnDataRequested = this.spy(),
 			sKeyPredicate = "('13')",
 			oElement = {"@$ui5._" : {"predicate" : sKeyPredicate}},
@@ -5164,7 +5275,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bRemoved) {
-		QUnit.test("refreshSingleWithRemove: parallel delete, " + bRemoved, function(assert) {
+		QUnit.test("refreshSingleWithRemove: parallel delete, " + bRemoved, function (assert) {
 			var fnOnRemove = this.spy(),
 				sResourcePath = "Employees",
 				oCache = this.createCache(sResourcePath, {$filter: "age gt 40"}),
@@ -5211,7 +5322,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refreshSingleWithRemove: server returns more than one entity", function(assert) {
+	QUnit.test("refreshSingleWithRemove: server returns more than one entity", function (assert) {
 		var fnOnRemove = this.spy(),
 			sResourcePath = "Employees",
 			oCache = this.createCache(sResourcePath, {$filter: "age gt 40"}),
@@ -5247,7 +5358,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("makeUpdateData", function(assert) {
+	QUnit.test("makeUpdateData", function (assert) {
 		assert.deepEqual(_Cache.makeUpdateData(["Age"], 42), {"Age" : 42});
 		assert.deepEqual(_Cache.makeUpdateData(["Address", "City"], "Walldorf"),
 			{"Address" : {"City" : "Walldorf"}});

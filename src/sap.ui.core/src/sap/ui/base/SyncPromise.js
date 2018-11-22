@@ -5,6 +5,10 @@
 sap.ui.define([], function () {
 	"use strict";
 
+	var oResolved = new SyncPromise(function (resolve, reject) {
+			resolve();
+		}); // a SyncPromise which is resolved w/o arguments
+
 	/*
 	 * @see https://promisesaplus.com
 	 *
@@ -416,7 +420,8 @@ sap.ui.define([], function () {
 	/**
 	 * Returns <code>vResult</code> if it is already a {@link sap.ui.base.SyncPromise}, or a new
 	 * {@link sap.ui.base.SyncPromise} wrapping the given thenable <code>vResult</code> or
-	 * fulfilling with the given result.
+	 * fulfilling with the given result. In case <code>vResult === undefined</code>, the same
+	 * instance is reused to improve performance.
 	 *
 	 * @param {any} [vResult]
 	 *   The thenable to wrap or the result to synchronously fulfill with
@@ -424,9 +429,15 @@ sap.ui.define([], function () {
 	 *   The {@link sap.ui.base.SyncPromise}
 	 */
 	SyncPromise.resolve = function (vResult) {
-		return vResult instanceof SyncPromise
-			? vResult
-			: new SyncPromise(function (resolve, reject) {
+		if (vResult === undefined) {
+			return oResolved;
+		}
+
+		if (vResult instanceof SyncPromise) {
+			return vResult;
+		}
+
+		return new SyncPromise(function (resolve, reject) {
 				resolve(vResult);
 			});
 	};

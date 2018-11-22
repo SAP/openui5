@@ -430,6 +430,10 @@ sap.ui.define([
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
+	 * @param {boolean} [mParameters.$$canonicalPath]
+	 *   Whether a binding relative to a {@link sap.ui.model.odata.v4.Context} uses the canonical
+	 *   path computed from its context's path for data service requests; only the value
+	 *   <code>true</code> is allowed.
 	 * @param {string} [mParameters.$$groupId]
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the
@@ -541,6 +545,10 @@ sap.ui.define([
 	 * @param {object} [mParameters.$$aggregation]
 	 *   An object holding the information needed for data aggregation, see
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation} for details.
+	 * @param {boolean} [mParameters.$$canonicalPath]
+	 *   Whether a binding relative to a {@link sap.ui.model.odata.v4.Context} uses the canonical
+	 *   path computed from its context's path for data service requests; only the value
+	 *   <code>true</code> is allowed.
 	 * @param {string} [mParameters.$$groupId]
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the
@@ -582,12 +590,12 @@ sap.ui.define([
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
 	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameter "$$groupId".
-	 *   Note: The binding creates its own data service request if it is absolute or if it has any
-	 *   parameters or if it is relative and has a context created via
-	 *   {@link #createBindingContext}.
 	 *   All "5.2 Custom Query Options" are allowed except for those with a name starting with
 	 *   "sap-". All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
+	 *   Note: The binding only creates its own data service request if it is absolute or if it is
+	 *   relative to a context created via {@link #createBindingContext}. The binding parameters are
+	 *   ignored in case the binding creates no own data service request.
 	 * @param {string} [mParameters.$$groupId]
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the
@@ -873,7 +881,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Destroys this model and its meta model.
+	 * Destroys this model, its requestor and its meta model.
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#destroy
@@ -881,6 +889,7 @@ sap.ui.define([
 	 */
 	// @override
 	ODataModel.prototype.destroy = function () {
+		this.oRequestor.destroy();
 		this.oMetaModel.destroy();
 		return Model.prototype.destroy.apply(this, arguments);
 	};

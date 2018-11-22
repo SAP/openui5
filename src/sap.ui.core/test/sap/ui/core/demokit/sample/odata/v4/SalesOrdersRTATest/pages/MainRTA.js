@@ -21,7 +21,7 @@ sap.ui.require([
 					return this.waitFor({
 						actions : new EnterText({ clearTextFirst : true, text : sNewNoteValue }),
 						controlType : "sap.m.Input",
-						id : "NewNote",
+						id : "Note::new",
 						success : function (oNewNoteInput) {
 							Opa5.assert.ok(true, "Note text set to " + sNewNoteValue);
 						},

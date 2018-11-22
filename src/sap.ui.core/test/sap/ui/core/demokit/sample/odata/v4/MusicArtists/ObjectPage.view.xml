@@ -5,10 +5,11 @@
 	xmlns:core="sap.ui.core"
 	xmlns:f="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc">
-	<Page id="objectpage" navButtonPress="onBack" showHeader="true" showNavButton="true">
+	<Page navButtonPress="onBack" showHeader="true" showNavButton="true">
 		<content>
 			<VBox class="sapUiSmallMargin">
-				<f:Form editable="true" id="objectPageForm">
+				<f:Form editable="true" id="objectPageForm"
+					validateFieldGroup="onValidateFieldGroup">
 					<f:title>
 						<core:Title text="Artist Details" />
 					</f:title>
@@ -33,44 +34,50 @@
 							<f:formElements>
 								<f:FormElement label="Name">
 									<f:fields>
-										<Input id="name" editable="{ui-op>/bEditMode}"
-											value="{Name}" />
+										<Input editable="{ui-op>/bEditMode}" value="{Name}" />
 									</f:fields>
 								</f:FormElement>
 								<f:FormElement label="Country of Origin">
 									<f:fields>
-										<Input id="country" editable="{ui-op>/bEditMode}"
+										<Input change="onChange" editable="{ui-op>/bEditMode}"
+											fieldGroupIds="countryGroup"
 											value="{CountryOfOrigin}" />
-										<Input id="country_text" editable="false"
+										<Input editable="false" fieldGroupIds="countryGroup"
 											value="{CountryOfOrigin_Text}" />
 									</f:fields>
 								</f:FormElement>
 								<f:FormElement label="Region of Origin">
 									<f:fields>
-										<Input id="region" editable="{ui-op>/bEditMode}"
+										<Input editable="{ui-op>/bEditMode}"
 											value="{RegionOfOrigin}" />
-										<Input id="region_text" editable="false"
-											value="{RegionOfOrigin_Text}" />
+										<Input editable="false" value="{RegionOfOrigin_Text}" />
 									</f:fields>
 								</f:FormElement>
 								<f:FormElement label="Founding Year">
 									<f:fields>
-										<Input id="founding" editable="{ui-op>/bEditMode}"
+										<Input editable="{ui-op>/bEditMode}"
 											value="{FoundingYear}" />
 									</f:fields>
 								</f:FormElement>
 								<f:FormElement label="Breakup Year">
 									<f:fields>
-										<Input id="breakup" editable="{ui-op>/bEditMode}"
+										<Input editable="{ui-op>/bEditMode}"
 											value="{BreakupYear}" />
 									</f:fields>
 								</f:FormElement>
+<!-- TODO: enable this as soon as FIORITECHP1-9095 is done
+								<f:FormElement label="Last Changed">
+									<f:fields>
+										<Text text="{DraftAdministrativeData/LastChangeDateTime}" />
+									</f:fields>
+								</f:FormElement>
+-->
 							</f:formElements>
 						</f:FormContainer>
 					</f:formContainers>
 				</f:Form>
 				<List class="sapUiResponsiveMargin" growing="true" growingThreshold="10"
-					id="publicationList"
+					id="_Publication"
 					items="{
 						parameters : {$$ownRequest : true},
 						path : '_Publication',
@@ -81,11 +88,9 @@
 						<Toolbar>
 						<Title text="Publications"/>
 							<ToolbarSpacer/>
-							<Button id="create" enabled="{ui-op>/bEditMode}" press="onCreate"
-								text="Create" />
+							<Button enabled="{ui-op>/bEditMode}" press="onCreate" text="Create" />
 							<ToolbarSeparator/>
-							<!-- refresh on ODLB relative to v4.Context is not possible -->
-							<Button id="refresh" enabled="false" press="onRefresh" text="Refresh" />
+							<Button press="onRefresh" text="Refresh" />
 						</Toolbar>
 					</headerToolbar>
 					<items>
@@ -110,11 +115,9 @@
 				</contentLeft>
 				<contentRight>
 					<Button press="onRefresh" text="Refresh" />
-					<Button enabled="{= !${ui-op>/bEditMode}}" id="edit" press="onEdit"
-						text="Edit" />
-					<Button enabled="{ui-op>/bEditMode}" id="discard" press="onDiscard"
-						text="Discard" />
-					<Button enabled="{ui-op>/bEditMode}" id="save" press="onSave" text="Save" />
+					<Button enabled="{= !${ui-op>/bEditMode}}" press="onEdit" text="Edit" />
+					<Button enabled="{ui-op>/bEditMode}" press="onDiscard" text="Discard" />
+					<Button enabled="{ui-op>/bEditMode}" press="onSave" text="Save" />
 				</contentRight>
 			</Bar>
 		</footer>

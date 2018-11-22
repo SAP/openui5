@@ -1042,6 +1042,7 @@ sap.ui.define([
 		var oModel = createModel(),
 			oModelPrototypeMock = this.mock(Model.prototype);
 
+		this.mock(oModel.oRequestor).expects("destroy").withExactArgs();
 		oModelPrototypeMock.expects("destroy").on(oModel).withExactArgs(1, 2, 3).returns("foo");
 		oModelPrototypeMock.expects("destroy").on(oModel.getMetaModel()).withExactArgs();
 
@@ -1129,7 +1130,7 @@ sap.ui.define([
 		"/foo",
 		"/EMPLOYEES('4711')/#com.sap.foo.bar.AcFoo",
 		"/EMPLOYEES('4711')/#com.sap.foo.bar.AcFoo/Title"
-	].forEach(function(sPath) {
+	].forEach(function (sPath) {
 		QUnit.test("createBindingContext - absolute path, no context " + sPath, function (assert) {
 			var oBindingContext,
 				oModel = createModel();
@@ -1152,7 +1153,7 @@ sap.ui.define([
 	}, {
 		entityPath : "/foo",
 		propertyPath : "#com.sap.foo.bar.AcBar/Title"
-	}].forEach(function(oFixture) {
+	}].forEach(function (oFixture) {
 		var sResolvedPath = oFixture.entityPath + "/" + oFixture.propertyPath,
 			sTitle = "createBindingContext - relative path and context " + sResolvedPath;
 

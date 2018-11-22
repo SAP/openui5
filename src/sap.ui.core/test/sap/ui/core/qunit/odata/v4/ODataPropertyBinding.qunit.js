@@ -145,8 +145,8 @@ sap.ui.define([
 		});
 
 		// Check that the mixin members are initialized
-		assert.ok(oMixin.hasOwnProperty("mCacheByContext"));
-		assert.ok(oBinding.hasOwnProperty("mCacheByContext"));
+		assert.ok(oMixin.hasOwnProperty("mCacheByResourcePath"));
+		assert.ok(oBinding.hasOwnProperty("mCacheByResourcePath"));
 	});
 
 	//*********************************************************************************************
@@ -1551,6 +1551,7 @@ sap.ui.define([
 	QUnit.test("refreshInternal", function (assert) {
 		var oBinding = this.oModel.bindProperty("NAME"),
 			oBindingMock = this.mock(oBinding),
+			oCheckUpdatePromise = {},
 			oContext = Context.create(this.oModel, {}, "/EMPLOYEES/42");
 
 		this.mock(ODataPropertyBinding.prototype).expects("fetchCache").thrice()
@@ -1561,13 +1562,14 @@ sap.ui.define([
 		oBindingMock.expects("checkUpdate").withExactArgs(false, ChangeReason.Context);
 		oBinding.setContext(oContext);
 
-		oBindingMock.expects("checkUpdate").withExactArgs(true, ChangeReason.Refresh, "myGroup");
+		oBindingMock.expects("checkUpdate").withExactArgs(true, ChangeReason.Refresh, "myGroup")
+			.returns(oCheckUpdatePromise);
 
 		// code under test
-		oBinding.refreshInternal("myGroup", true);
+		assert.strictEqual(oBinding.refreshInternal("myGroup", true), oCheckUpdatePromise);
 
 		// code under test
-		oBinding.refreshInternal("myGroup", false);
+		assert.strictEqual(oBinding.refreshInternal("myGroup", false).getResult(), undefined);
 	});
 
 	//*********************************************************************************************
@@ -1605,7 +1607,7 @@ sap.ui.define([
 	[
 		"getValueListType", "requestValueListType", "requestValueListInfo"
 	].forEach(function (sFunctionName) {
-		QUnit.test(sFunctionName + ": forward", function(assert) {
+		QUnit.test(sFunctionName + ": forward", function (assert) {
 			var oContext = Context.create(this.oModel, {}, "/ProductList('42')"),
 				oPropertyBinding = this.oModel.bindProperty("Category", oContext),
 				vResult = {};
@@ -1620,7 +1622,7 @@ sap.ui.define([
 			assert.strictEqual(oPropertyBinding[sFunctionName](), vResult);
 		});
 
-		QUnit.test(sFunctionName + ": unresolved", function(assert) {
+		QUnit.test(sFunctionName + ": unresolved", function (assert) {
 			var oPropertyBinding = this.oModel.bindProperty("Category");
 
 			this.mock(this.oModel).expects("resolve")
@@ -1634,8 +1636,16 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("doFetchQueryOptions", function (assert) {
-		var oBinding = this.oModel.bindProperty("foo"),
+		var oBinding = this.oModel.bindProperty("path", undefined, {custom : "foo"}),
 			oPromise;
+
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
+
+		// code under test
+		assert.deepEqual(oBinding.doFetchQueryOptions().getResult(), {custom : "foo"});
+
+		oBinding = this.oModel.bindProperty("path", undefined, {custom : "foo"});
+		this.mock(oBinding).expects("isRoot").twice().withExactArgs().returns(false);
 
 		// code under test
 		oPromise = oBinding.doFetchQueryOptions();
@@ -1645,6 +1655,31 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oBinding.doFetchQueryOptions(), oPromise,
 			"all bindings share the same promise");
+	});
+
+	//*********************************************************************************************
+	[{
+		path : "/absolute",
+		context : undefined,
+		result : true
+	}, {
+		path : "relative",
+		context : undefined,
+		result : false
+	}, {
+		path : "quasiAbsolute",
+		context : {getPath : function () {}},
+		result : true
+	}, {
+		path : "relativeToV4Context",
+		context : {getPath : function () {}, getBinding : function () {}},
+		result : false
+	}].forEach(function (oFixture, i) {
+		QUnit.test("isRoot, " + i, function (assert) {
+			var oBinding = this.oModel.bindProperty(oFixture.path, oFixture.context);
+
+			assert.strictEqual(!!oBinding.isRoot(), oFixture.result);
+		});
 	});
 
 	//*********************************************************************************************

@@ -5,7 +5,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.MusicArtists.MasterList", {
 		onCreate : function (oEvent) {
-			var oEntityContext = this.getView().byId("artistList").getBinding("items")
+			var oEntityContext = this.getView().byId("Artists").getBinding("items")
 					.create(undefined, true),
 				oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 
@@ -15,7 +15,7 @@ sap.ui.define([
 		},
 
 		onRefresh : function () {
-			this.getView().byId("artistList").getBinding("items").refresh();
+			this.getView().byId("Artists").getBinding("items").refresh();
 		},
 
 		onSelect : function (oEvent) {

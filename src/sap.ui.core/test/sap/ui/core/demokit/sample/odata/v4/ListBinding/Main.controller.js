@@ -88,37 +88,6 @@ sap.ui.define([
 			this.byId("GetEmployeeMaxAge").getObjectBinding().execute();
 		},
 
-		onBeforeRendering : function () {
-			var oView = this.getView();
-
-			oView.setBusy(true);
-
-			function setTeamContext() {
-				var oEmployees = oView.byId("Employees"),
-					oTeamContext = oView.byId("TeamSelect").getBinding("items")
-						.getCurrentContexts()[0];
-
-				oView.byId("TeamDetails").setBindingContext(oTeamContext);
-				oEmployees.getBinding("items").attachEventOnce("change", setEmployeeContext);
-				oEmployees.setBindingContext(oTeamContext);
-			}
-
-			function setEmployeeContext() {
-				var oEmployeesControl = oView.byId("Employees"),
-					oEmployeeContext = oEmployeesControl.getBinding("items")
-						.getCurrentContexts()[0];
-
-				oView.byId("EmployeeEquipments").setBindingContext(oEmployeeContext);
-				if (oEmployeesControl.getItems()[0]) {
-					oEmployeesControl.setSelectedItem(oEmployeesControl.getItems()[0]);
-				}
-				oView.setBusy(false);
-			}
-
-			oView.byId("TeamSelect").getBinding("items")
-				.attachEventOnce("dataReceived", setTeamContext);
-		},
-
 		onCancel: function (oEvent) {
 			this.getView().getModel().resetChanges();
 		},
@@ -220,6 +189,33 @@ sap.ui.define([
 			oEmployeesControl.setBindingContext(oTeamContext);
 			oEmployeesBinding.attachEventOnce("change", setEquipmentContext);
 			oView.byId("TeamDetails").setBindingContext(oTeamContext);
+		},
+
+		onTeamsRequested : function (oEvent) {
+			this.getView().setBusy(true);
+		},
+
+		onTeamsReceived : function (oEvent) {
+			var oView = this.getView(),
+				oEmployees = oView.byId("Employees"),
+				oTeamBinding = oView.byId("TeamSelect").getBinding("items"),
+				oTeamContext = oTeamBinding.getCurrentContexts()[0];
+
+			function setEmployeeContext() {
+				var oEmployeesControl = oView.byId("Employees"),
+					oEmployeeContext = oEmployeesControl.getBinding("items")
+						.getCurrentContexts()[0];
+
+				oView.byId("EmployeeEquipments").setBindingContext(oEmployeeContext);
+				if (oEmployeesControl.getItems()[0]) {
+					oEmployeesControl.setSelectedItem(oEmployeesControl.getItems()[0]);
+				}
+			}
+
+			oView.setBusy(false);
+			oView.byId("TeamDetails").setBindingContext(oTeamContext);
+			oEmployees.getBinding("items").attachEventOnce("change", setEmployeeContext);
+			oEmployees.setBindingContext(oTeamContext);
 		},
 
 		onUpdateEmployee : function (oEvent) {

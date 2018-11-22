@@ -25,21 +25,21 @@ sap.ui.define([
 			this.iIdCounter = 0;
 			oAdaptSalesOrdersButton.addDependent(sap.ui.xmlfragment(oView.getId(),
 				"sap.ui.core.sample.odata.v4.SalesOrdersRTATest.AdaptDialog", this));
-			this.byId("SalesOrdersToolbar").addContent(oAdaptSalesOrdersButton);
+			this.byId("salesOrderListToolbar").addContent(oAdaptSalesOrdersButton);
 
-			this.byId("SalesOrderDetailsToolbar").addContent(new Button({
+			this.byId("salesOrderDetailsToolbar").addContent(new Button({
 				icon : "sap-icon://settings",
 				id : oView.createId("AdaptUISalesOrdersDetails"),
 				press : this.onAdaptSODetails.bind(this),
 				tooltip : "Adapt Sales Order Details"
 			}));
-			this.byId("BusinessPartner").addContent(new Button({
+			this.byId("SO_2_BP::detail").addContent(new Button({
 				icon : "sap-icon://settings",
 				id : oView.createId("AdaptUIBusinessPartner"),
 				press : this.onAdaptBusinessPartner.bind(this),
 				tooltip : "Adapt Business Partner Table"
 			}));
-			this.byId("SalesOrderLineItemsTitleToolbar").addContent(new Button({
+			this.byId("lineItemsToolbar").addContent(new Button({
 				icon : "sap-icon://settings",
 				id : oView.createId("AdaptUISalesOrderLineItems"),
 				press : this.onAdaptSalesOrderItems.bind(this),
@@ -151,8 +151,8 @@ sap.ui.define([
 		},
 
 		onAdaptBusinessPartner : function () {
-			var oControl = this.byId("SalesOrderDetails"),
-				iStart = oControl.getContent().indexOf(this.byId("BusinessPartner")) + 1;
+			var oControl = this.byId("SalesOrderList::detail"),
+				iStart = oControl.getContent().indexOf(this.byId("SO_2_BP::detail")) + 1;
 
 			this.adaptControl(oControl, iStart, undefined, "/BusinessPartnerList");
 		},
@@ -179,8 +179,8 @@ sap.ui.define([
 				}));
 				// Note: after re-creation of the binding, one has to set the new header context
 				//   for the $count binding in the title
-				if (oControl === that.byId("SalesOrders")) {
-					that.byId("SalesOrdersTitle").setBindingContext(
+				if (oControl === that.byId("SalesOrderList")) {
+					that.byId("salesOrderListTitle").setBindingContext(
 						oControl.getBinding("items").getHeaderContext());
 				}
 			}
@@ -237,17 +237,17 @@ sap.ui.define([
 		},
 
 		onAdaptSalesOrders : function () {
-			this.adaptControl(this.byId("SalesOrders"));
+			this.adaptControl(this.byId("SalesOrderList"));
 			this.getView().getModel("ui").setProperty("/bSalesOrderSelected", false);
 		},
 
 		onAdaptSalesOrderItems : function () {
-			this.adaptControl(this.byId("SalesOrderLineItems"));
+			this.adaptControl(this.byId("SO_2_SOITEM"));
 		},
 
 		onAdaptSODetails : function () {
-			var oControl = this.byId("SalesOrderDetails"),
-				iEnd = oControl.getContent().indexOf(this.byId("BusinessPartner"));
+			var oControl = this.byId("SalesOrderList::detail"),
+				iEnd = oControl.getContent().indexOf(this.byId("SO_2_BP::detail"));
 
 			this.adaptControl(oControl, 1, iEnd);
 		},
