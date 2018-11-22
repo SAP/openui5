@@ -18,7 +18,7 @@
 					}
 				}"
 				numberUnit="{view>/currency}"
-				numberState="{=	${invoice>ExtendedPrice} > 50 ? 'Error' : 'Success' }" />
+				numberState="{=	${invoice>ExtendedPrice} > 50 ? 'Error' : 'Success' }"/>
 		</items>
 	</List>
 </mvc:View>

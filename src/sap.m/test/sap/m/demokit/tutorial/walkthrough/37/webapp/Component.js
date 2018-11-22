@@ -50,7 +50,7 @@ sap.ui.define([
 
 		getContentDensityClass : function() {
 			if (!this._sContentDensityClass) {
-				if (!sap.ui.Device.support.touch) {
+				if (!Device.support.touch) {
 					this._sContentDensityClass = "sapUiSizeCompact";
 				} else {
 					this._sContentDensityClass = "sapUiSizeCozy";

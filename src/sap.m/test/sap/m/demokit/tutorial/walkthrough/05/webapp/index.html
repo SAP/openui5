@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="utf-8">
 	<title>SAPUI5 Walkthrough</title>
 	<script
@@ -9,25 +8,13 @@
 		src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_belize"
 		data-sap-ui-libs="sap.m"
-		data-sap-ui-compatVersion="edge"
-		data-sap-ui-preload="async"
 		data-sap-ui-resourceroots='{
 			"sap.ui.demo.walkthrough": "./"
-		}'>
+		}'
+		data-sap-ui-compatVersion="edge"
+		data-sap-ui-async="true">
 	</script>
-	<script>
-		sap.ui.getCore().attachInit(function () {
-			sap.ui.require([
-				"sap/ui/core/mvc/XMLView"
-			], function (XMLView) {
-				XMLView.create({
-					viewName: "sap.ui.demo.walkthrough.view.App"
-				}).then(function (oView) {
-					oView.placeAt("content");
-				});
-			});
-		});
-	</script>
+	<script src="index.js"></script>
 </head>
 <body class="sapUiBody" id="content">
 </body>
