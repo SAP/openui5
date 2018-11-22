@@ -750,6 +750,53 @@ function(
 		});
 	});
 
+	function fnCreateComponentMockup(mTechnicalParameters) {
+		return {
+			getComponentData: function(){
+				return {
+					technicalParameters: mTechnicalParameters
+				};
+			}
+		};
+	}
+
+	QUnit.module("get URL technical parameter values for control variant", {
+		beforeEach: function () {
+			this._oHashRegister = {
+				currentIndex: undefined,
+				hashParams : [],
+				variantControlIds : []
+			};
+			this.oAppComponent = { };
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("when calling 'getCurrentControlVariantId' with a Component containing a valid URL parameter", function(assert){
+			var sVariantTechnicalParameterName = VariantUtil.variantTechnicalParameterName;
+			var oComponentMock, mParameters = {};
+			mParameters[sVariantTechnicalParameterName] = ["value1,value2"];
+			mParameters["second-tech-parameter"] = ["value3"];
+			oComponentMock = fnCreateComponentMockup(mParameters);
+			assert.deepEqual(VariantUtil.getCurrentControlVariantId(oComponentMock),
+				"value1,value2",
+				"then the function returns the first value of the control variant technical parameter");
+		});
+
+		QUnit.test("when calling 'getCurrentControlVariantId' with technical parameters not existing", function(assert){
+			var oComponentMock = fnCreateComponentMockup({});
+			assert.strictEqual(VariantUtil.getCurrentControlVariantId(oComponentMock), undefined,
+				"then the function returns undefined");
+		});
+
+		QUnit.test("when calling 'getCurrentControlVariantId' with an invalid component", function(assert){
+			var oComponentMock = {};
+			assert.strictEqual(VariantUtil.getCurrentControlVariantId(oComponentMock), undefined,
+				"then the function returns undefined");
+		});
+	});
+
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});

@@ -61,20 +61,13 @@ sap.ui.define([
 			}
 			var sFlexReference = Utils.getComponentClassName(oAppComponent);
 			var sAppVersion = Utils.getAppVersionFromManifest(oAppComponent.getManifest());
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference, sAppVersion);
-			return oChangePersistence.getCacheKey().then(function(sCacheKey){
-				if (!sCacheKey || sCacheKey === ChangePersistence.NOTAG) {
-					Utils.log.warning("No cache key could be determined for the view; flexibility XML view preprocessing is skipped. " +
-						"The processing will be done later on the JS controls.");
-					return Promise.resolve(oView);
-				}
-
-				var oFlexController = FlexControllerFactory.create(sFlexReference, sAppVersion);
-				return oFlexController.processXmlView(oView, mProperties).then(function() {
-					Utils.log.debug("flex processing view " + mProperties.id + " finished");
-					return oView;
-				});
-			}, function () {
+			var oFlexController = FlexControllerFactory.create(sFlexReference, sAppVersion);
+			return oFlexController.processXmlView(oView, mProperties)
+			.then(function() {
+				Utils.log.debug("flex processing view " + mProperties.id + " finished");
+				return oView;
+			})
+			.catch(function () {
 				Utils.log.warning("Error happens when getting flex cache key! flexibility XML view preprocessing is skipped. " +
 				"The processing will be done later on the JS controls.");
 				return Promise.resolve(oView);
