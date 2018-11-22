@@ -6,11 +6,13 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/fl/Utils",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/ui/dom/includeScript"
 ], function(jQuery,
 			uri,
 			FlexUtils,
-			fnBaseMerge
+			fnBaseMerge,
+			fnIncludeScript
 ) {
 	"use strict";
 
@@ -507,18 +509,26 @@ sap.ui.define([
 			return mFlexData;
 		}
 
-		var mOptions = {
-			"async": true,
-			"contentType": "application/javascript",
-			"processData": true,
-			"type": "GET"
-		};
 
-
-		return this.send(sFlexModulesUri, undefined, undefined, mOptions).then(function () {
+		return this._loadModules(sFlexModulesUri).then(function () {
 			/* the modules within the server response are preloaded by the browser processing the request.
 			 * The promise chain only needs to return the response of the first server request. */
 			return mFlexData;
+		});
+	};
+
+	/**
+	 * Loads the modules in a CSP-compliant way via the UI5 core scripting mechanism.
+	 * This function has been extracted from the function <code>_onChangeResponseReceived</code>.
+	 * The purpose of this is to have a function that can be stubbed for testing.
+	 *
+	 * @param sFlexModulesUri
+	 * @returns {Promise} Returns a Promise resolved empty after the script was included
+	 * @private
+	 */
+	LrepConnector.prototype._loadModules = function (sFlexModulesUri) {
+		return new Promise(function(resolve, reject) {
+			fnIncludeScript(sFlexModulesUri, undefined, resolve, reject);
 		});
 	};
 
