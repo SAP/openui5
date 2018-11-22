@@ -826,7 +826,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adapts the layout of the tiven headerTitle domElement
+	 * Adapts the layout of the given headerTitle domElement
 	 *
 	 * @param {object} $headerDomRef The reference to the header dom element
 	 * @param {object} oEvent The event of child-element that brought the need to adapt the headerTitle layout
@@ -834,8 +834,14 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageHeader.prototype._adaptLayoutForDomElement = function ($headerDomRef, oEvent) {
+		var $domElement;
 
-		var $domElement = $headerDomRef ? $headerDomRef : this.getDomRef();
+		if ($headerDomRef) {
+			$domElement = $headerDomRef.length ? $headerDomRef[0] : $headerDomRef;
+		} else {
+			$domElement = this.getDomRef();
+		}
+
 		if (isDomElementHidden($domElement)) {
 			return;
 		}
