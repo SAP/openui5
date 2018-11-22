@@ -87,12 +87,12 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.modifier The polymorph reuse operations handling the changes on the given view type
 	 * @param {object} mPropertyBag.appDescriptor The app descriptor containing the metadata of the current application
 	 * @param {object} mPropertyBag.appComponent The component instance that is currently loading
-	 * @param {boolean} bRevertible 'true' if the change is revertible
+	 * @param {boolean} bSaveRevertData 'true' if the revert data should be saved as value
 	 */
-	FlexCustomData.addAppliedCustomData = function(oControl, oChange, mPropertyBag, bRevertible) {
+	FlexCustomData.addAppliedCustomData = function(oControl, oChange, mPropertyBag, bSaveRevertData) {
 		var sCustomDataValue;
 		var sCustomDataKey = this._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey);
-		if (bRevertible) {
+		if (bSaveRevertData) {
 			// '{' and '}' have to be escaped in order to correctly create the custom data from the view cache. Same effect as unbindProperty during runtime
 			sCustomDataValue = this._escapeCurlyBracketsInString(JSON.stringify(oChange.getRevertData()));
 		} else {
