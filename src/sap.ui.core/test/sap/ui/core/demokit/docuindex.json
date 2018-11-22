@@ -51,7 +51,7 @@
 			},
 			{
 				"id" : "sap.ui.core.mvc.ControllerExtension",
-				"name" : "Control Extensions",
+				"name" : "Controller Extensions",
 				"category" : "Display",
 				"since" : "1.56",
 				"samples" : [
