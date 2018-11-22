@@ -6,9 +6,9 @@ sap.ui.define([
 
 	QUnit.module("CSP Compliance");
 
-	if (Device.browser.msie || Device.browser.edge) {
+	if (Device.browser.msie) {
 		QUnit.test("Skip CSP Test", function (assert) {
-			assert.ok(true, "Skip actual CSP Test for MS Internet Explorer and Edge Browser, as they expect non-standard CSP Headers");
+			assert.ok(true, "Skip actual CSP Test for MS Internet Explorer as it expects non-standard CSP Headers");
 		});
 	} else {
 		QUnit.test("Check for occurred CSP violations", function (assert) {
