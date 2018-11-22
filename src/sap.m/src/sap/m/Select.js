@@ -1488,6 +1488,7 @@ function(
 
 			if (this.isOpen()) {
 				this.close();
+				this._checkSelectionChange();
 			}
 		};
 
