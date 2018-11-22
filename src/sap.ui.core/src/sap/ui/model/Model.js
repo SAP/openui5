@@ -729,11 +729,9 @@ sap.ui.define([
 	 * @param {sap.ui.model.Binding} oBinding the binding to be removed
 	 */
 	Model.prototype.removeBinding = function(oBinding) {
-		for (var i = 0; i < this.aBindings.length; i++) {
-			if (this.aBindings[i] == oBinding) {
-				this.aBindings.splice(i, 1);
-				break;
-			}
+		var i = this.aBindings.indexOf(oBinding);
+		if (i !== -1) {
+			this.aBindings.splice(i, 1);
 		}
 	};
 
