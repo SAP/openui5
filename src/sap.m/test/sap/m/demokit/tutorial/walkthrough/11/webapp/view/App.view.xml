@@ -12,7 +12,7 @@
 						<content>
 							<Button
 								text="{i18n>showHelloButtonText}"
-								press="onShowHello"/>
+								press=".onShowHello"/>
 							<Input
 								value="{/recipient/name}"
 								description="Hello {/recipient/name}"

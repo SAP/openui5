@@ -15,7 +15,7 @@
 							<content>
 								<Button
 									text="{i18n>showHelloButtonText}"
-									press="onShowHello"
+									press=".onShowHello"
 									class="sapUiSmallMarginEnd"/>
 								<Input
 									value="{/recipient/name}"

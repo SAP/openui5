@@ -9,9 +9,12 @@ sap.ui.define([
 	QUnit.module("Navigation");
 
 	opaTest("Should open the Hello dialog", function (Given, When, Then) {
-
 		// Arrangements
-		Given.iStartMyAppInAFrame(sap.ui.require.toUrl("sap/ui/demo/walkthrough/test/mockServer") + ".html");
+		Given.iStartMyUIComponent({
+			componentConfig: {
+				name: "sap.ui.demo.walkthrough"
+			}
+		});
 
 		//Actions
 		When.onTheAppPage.iPressTheSayHelloWithDialogButton();
@@ -20,6 +23,6 @@ sap.ui.define([
 		Then.onTheAppPage.iShouldSeeTheHelloDialog();
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 });
