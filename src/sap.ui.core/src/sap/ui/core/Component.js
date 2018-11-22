@@ -593,12 +593,18 @@ sap.ui.define([
 		// make user specific data available during component instantiation
 		this.oComponentData = mSettings && mSettings.componentData;
 
-		// static initialization (loading dependencies, includes, ... / register customzing)
+		// static initialization (loading dependencies, includes, ... / register customizing)
 		//   => either init the static or the instance manifest
 		if (!this._isVariant()) {
 			this.getMetadata().init();
 		} else {
 			this._oManifest.init(this);
+			// in case of variants we ensure to register the module path for the variant
+			// to allow module loading of code extensibility relative to the manifest
+			var sAppId = this._oManifest.getEntry("/sap.app/id");
+			if (sAppId) {
+				registerModulePath(sAppId, this._oManifest.resolveUri("./", "manifest"));
+			}
 		}
 
 		// init the component models
