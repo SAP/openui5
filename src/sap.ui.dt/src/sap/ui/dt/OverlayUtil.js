@@ -439,6 +439,11 @@ function(
 		var oRelevantContainerOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
 		var aRelevantOverlays = [];
 
+		// Overlay might be destroyed in the meantime
+		if (!oRelevantContainerOverlay) {
+			return aRelevantOverlays;
+		}
+
 		// Get all the siblings and parents of the overlay
 		var mRelevantOverlays = OverlayUtil._findAllSiblingsAndParents(oOverlay, oRelevantContainerOverlay, 0);
 
