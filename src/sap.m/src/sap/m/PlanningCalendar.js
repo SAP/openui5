@@ -2145,8 +2145,8 @@ sap.ui.define([
 
 	}
 
-	PlanningCalendar.prototype._applyContextualSettings = function () {
-		return Control.prototype._applyContextualSettings.call(this, ManagedObject._defaultContextualSettings);
+	PlanningCalendar.prototype._applyContextualSettings = function (oSettings) {
+		return Control.prototype._applyContextualSettings.call(this, oSettings || ManagedObject._defaultContextualSettings);
 	};
 
 	function adaptCalHeaderForWeekNumbers(bShowWeekNumbers, bCurrentIntervalAllowsWeekNumbers) {
@@ -2170,7 +2170,9 @@ sap.ui.define([
 		}
 		this.iWidth = oEvent.size.width;
 
-		this._applyContextualSettings();
+		this._applyContextualSettings({
+			contextualWidth: this.iWidth
+		});
 
 		var aRows = this.getRows();
 		var oRow;
