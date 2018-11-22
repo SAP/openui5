@@ -15,7 +15,7 @@ sap.ui.define([
 	/*eslint max-nested-callbacks: 0 */
 
 	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
-		oDoFetchQueryOptionsPromise = SyncPromise.resolve({}),
+		oEmptyQueryOptionsPromise = SyncPromise.resolve({}),
 		mSupportedEvents = {
 			AggregatedDataStateChange : true,
 			change : true,
@@ -343,7 +343,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.doFetchQueryOptions = function () {
-		return oDoFetchQueryOptionsPromise;
+		return this.isRoot() ? SyncPromise.resolve(this.mQueryOptions) : oEmptyQueryOptionsPromise;
 	};
 
 	/**
@@ -401,6 +401,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns whether the binding is absolute or quasi-absolute.
+	 *
+	 * @returns {boolean} - Whether the binding is absolute or quasi-absolute
+	 *
+	 * @private
+	 */
+	ODataPropertyBinding.prototype.isRoot = function () {
+		return !this.bRelative || this.oContext && !this.oContext.getBinding;
+	};
+
+	/**
 	 * Change handler for the cache. The cache calls this method when the value is changed.
 	 *
 	 * @param {any} vValue
@@ -418,9 +429,9 @@ sap.ui.define([
 	 */
 	ODataPropertyBinding.prototype.refreshInternal = function (sGroupId, bCheckUpdate) {
 		this.fetchCache(this.oContext);
-		if (bCheckUpdate) {
-			this.checkUpdate(true, ChangeReason.Refresh, sGroupId);
-		}
+		return bCheckUpdate
+			? this.checkUpdate(true, ChangeReason.Refresh, sGroupId)
+			: SyncPromise.resolve();
 	};
 
 	/**

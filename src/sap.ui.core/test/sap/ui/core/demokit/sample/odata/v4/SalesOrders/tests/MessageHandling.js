@@ -66,7 +66,8 @@ sap.ui.define([
 			When.onTheMainPage.selectSalesOrder(1);
 			Then.onTheMainPage.checkMessageCount(2);
 			Then.onTheMainPage.checkNoteValueState(1, "Warning", sPersistentMessage);
-			Then.onTheMainPage.checkInputValueState("SOD_Note", "Warning", sPersistentMessage);
+			Then.onTheMainPage.checkInputValueState("Note::detail", "Warning",
+				sPersistentMessage);
 			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(1, "Error",
 				sTransientMessage);
 
@@ -96,7 +97,7 @@ sap.ui.define([
 
 			When.onTheMainPage.pressMessagePopoverCloseButton();
 			Then.onTheMainPage.checkNoteValueState(1, "None", "");
-			Then.onTheMainPage.checkInputValueState("SOD_Note", "None", "");
+			Then.onTheMainPage.checkInputValueState("Note::detail", "None", "");
 			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(1, "Error",
 				sTransientMessage);
 

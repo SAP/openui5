@@ -996,6 +996,12 @@ sap.ui.define([
 			assert.strictEqual(oSyncPromise.finally(fnOnFinally), oResult);
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("resolve() re-uses the same instance", function (assert) {
+		// code under test
+		assert.strictEqual(SyncPromise.resolve(), SyncPromise.resolve(undefined));
+	});
 });
 //TODO Promise.race
 //TODO treat rejection via RangeError, ReferenceError, SyntaxError(?), TypeError, URIError specially?!

@@ -5,8 +5,9 @@
 //Provides class sap.ui.model.odata.v4.lib._Helper
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/util/isEmptyObject",
 	"sap/ui/thirdparty/URI"
-], function (Log, URI) {
+], function (Log, isEmptyObject, URI) {
 	"use strict";
 
 	var rAmpersand = /&/g,
@@ -40,6 +41,40 @@ sap.ui.define([
 				} else if (mMap[sPath].indexOf(oItem) < 0) {
 					mMap[sPath].push(oItem);
 				}
+			}
+		},
+
+		/**
+		 * Adds all given children to the given hash set which either appear in the given list or
+		 * have some ancestor in it.
+		 *
+		 * Note: "a/b/c" is deemed a child of the ancestors "a/b" and "a", but not "b" or "a/b/c/d".
+		 *
+		 * @param {string[]} aChildren - List of non-empty child paths (unmodified)
+		 * @param {string[]} aAncestors - List of ancestor paths (unmodified)
+		 * @param {object} mChildren - Hash set of child paths, maps string to <code>true</code>;
+		 *   is modified
+		 */
+		addChildrenWithAncestor : function (aChildren, aAncestors, mChildren) {
+			if (aAncestors.length) {
+				aChildren.forEach(function (sPath) {
+					var aSegments;
+
+					if (aAncestors.indexOf(sPath) >= 0) {
+						mChildren[sPath] = true;
+						return;
+					}
+
+					aSegments = sPath.split("/");
+					aSegments.pop();
+					while (aSegments.length) {
+						if (aAncestors.indexOf(aSegments.join("/")) >= 0) {
+							mChildren[sPath] = true;
+							break;
+						}
+						aSegments.pop();
+					}
+				});
 			}
 		},
 
@@ -595,6 +630,138 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns a copy of given query options where "$select" is replaced by the intersection
+		 * with the given property paths. "$expand" is removed.
+		 *
+		 * @param {object} mCacheQueryOptions
+		 *   A map of query options as returned by
+		 *   {@link sap.ui.model.odata.v4.ODataModel#buildQueryOptions}
+		 * @param {string[]} aPaths
+		 *   The "14.5.11 Expression edm:NavigationPropertyPath" or
+		 *   "14.5.13 Expression edm:PropertyPath" strings describing which properties need to be
+		 *   loaded because they may have changed due to side effects of a previous update; must not
+		 *   be empty
+		 * @param {function} fnFetchMetadata
+		 *   Function which fetches metadata for a given meta path
+		 * @param {string} sRootMetaPath
+		 *   The meta path for the cache root's type, for example "/SalesOrderList/SO_2_BP" or
+		 *   "/Artists/foo.EditAction/@$ui5.overload/0/$ReturnType/$Type", such that an OData simple
+		 *   identifier may be appended
+		 * @returns {object}
+		 *   The updated query options or <code>null</code> if no request is needed
+		 * @throws {Error}
+		 *   If a path string is empty or the intersection requires a $expand of a collection-valued
+		 *   navigation property
+		 */
+		intersectQueryOptions : function (mCacheQueryOptions, aPaths, fnFetchMetadata,
+				sRootMetaPath) {
+			var aExpands = [],
+				mExpands = {},
+				mResult,
+				aSelects,
+				mSelects = {};
+
+			/*
+			 * Throws an error if the given meta path points to a collection-valued navigation
+			 * property.
+			 *
+			 * @param {string} sMetaPath
+			 *   An absolute meta path
+			 * @throws {Error}
+			 *   If the given meta path points to a collection-valued navigation property
+			 */
+			function checkCollection(sMetaPath) {
+				if (fnFetchMetadata(sMetaPath).getResult().$IsCollection) {
+					throw new Error("Unsupported collection-valued navigation property "
+						+ sMetaPath);
+				}
+			}
+
+			/*
+			 * Filter where only structural properties pass through.
+			 *
+			 * @param {boolean} bSkipFirstSegment
+			 *   Whether first segment of the path is known to be a structural property
+			 * @param {string} sMetaPath
+			 *   A meta path relative to the cache's root
+			 * @returns {boolean}
+			 *   Whether the given meta path contains only structural properties
+			 */
+			function filterStructural(bSkipFirstSegment, sMetaPath) {
+				var aSegments = sMetaPath.split("/");
+
+				return aSegments.every(function (sSegment, i) {
+					return i === 0 && bSkipFirstSegment
+						|| fnFetchMetadata(
+								sRootMetaPath + "/" + aSegments.slice(0, i + 1).join("/")
+							).getResult().$kind === "Property";
+				});
+			}
+
+			if (aPaths.indexOf("") >= 0) {
+				throw new Error("Unsupported empty navigation property path");
+			}
+
+			if (mCacheQueryOptions.$select && mCacheQueryOptions.$select.indexOf("*") < 0) {
+				_Helper.addChildrenWithAncestor(aPaths, mCacheQueryOptions.$select, mSelects);
+				_Helper.addChildrenWithAncestor(mCacheQueryOptions.$select, aPaths, mSelects);
+				aSelects = Object.keys(mSelects).filter(filterStructural.bind(null, true));
+			} else {
+				aSelects = aPaths.filter(filterStructural.bind(null, false));
+			}
+
+			if (mCacheQueryOptions.$expand) {
+				aExpands = Object.keys(mCacheQueryOptions.$expand);
+				aExpands.forEach(function (sNavigationPropertyPath) {
+					var mChildQueryOptions,
+						sMetaPath = sRootMetaPath + "/" + sNavigationPropertyPath,
+						mSet = {},
+						aStrippedPaths;
+
+					_Helper.addChildrenWithAncestor([sNavigationPropertyPath], aPaths, mSet);
+					if (!isEmptyObject(mSet)) {
+						checkCollection(sMetaPath);
+						// complete navigation property may change, same expand as initially
+						mExpands[sNavigationPropertyPath]
+							= mCacheQueryOptions.$expand[sNavigationPropertyPath];
+						return;
+					}
+
+					aStrippedPaths = _Helper.stripPathPrefix(sNavigationPropertyPath, aPaths);
+					if (aStrippedPaths.length) {
+						checkCollection(sMetaPath);
+						// details of the navigation property may change, compute intersection
+						// recursively
+						mChildQueryOptions = _Helper.intersectQueryOptions(
+							mCacheQueryOptions.$expand[sNavigationPropertyPath] || {},
+							aStrippedPaths, fnFetchMetadata,
+							sRootMetaPath + "/" + sNavigationPropertyPath);
+						if (mChildQueryOptions) {
+							mExpands[sNavigationPropertyPath] = mChildQueryOptions;
+						}
+					}
+				});
+			}
+
+			if (!aSelects.length && isEmptyObject(mExpands)) {
+				return null;
+			}
+
+			if (!aSelects.length) { // avoid $select= in URL, use any navigation property
+				aSelects = Object.keys(mExpands).slice(0, 1);
+			}
+
+			mResult = Object.assign({}, mCacheQueryOptions, {$select : aSelects});
+			if (isEmptyObject(mExpands)) {
+				delete mResult.$expand;
+			} else {
+				mResult.$expand = mExpands;
+			}
+
+			return mResult;
+		},
+
+		/**
 		 * Checks that the value is a safe integer.
 		 *
 		 * @param {number} iNumber The value
@@ -761,7 +928,7 @@ sap.ui.define([
 
 			if (vIfMatchValue && typeof vIfMatchValue === "object") {
 				vIfMatchValue = vIfMatchValue["@odata.etag"];
-				mHeaders = jQuery.extend({}, mHeaders);
+				mHeaders = Object.assign({}, mHeaders);
 				if (vIfMatchValue === undefined) {
 					delete mHeaders["If-Match"];
 				} else {
@@ -790,6 +957,28 @@ sap.ui.define([
 				oPrivateNamespace = oObject["@$ui5._"] = {};
 			}
 			oPrivateNamespace[sAnnotation] = vValue;
+		},
+
+		/**
+		 * Strips the given prefix from all given paths. If a path does not start with the prefix,
+		 * it is ignored (note that "A" is not a path prefix of "AA", but of "A/A").
+		 * A remainder never starts with a slash and may well be empty.
+		 *
+		 * @param {string} sPrefix
+		 *   A prefix (which must not end with a slash)
+		 * @param {string[]} aPaths
+		 *   A list of paths
+		 * @returns {string[]}
+		 *   The list of remainders for all paths which start with the given prefix
+		 */
+		stripPathPrefix : function (sPrefix, aPaths) {
+			var sPathPrefix = sPrefix + "/";
+
+			return aPaths.filter(function (sPath) {
+				return sPath === sPrefix || sPath.startsWith(sPathPrefix);
+			}).map(function (sPath) {
+				return sPath.slice(sPathPrefix.length);
+			});
 		},
 
 		/**
@@ -928,7 +1117,7 @@ sap.ui.define([
 			 */
 			function buildPropertyPaths(oObject, sObjectName) {
 				Object.keys(oObject).forEach(function (sProperty) {
-					var sPropertyPath = sObjectName ? sObjectName + "/" + sProperty : sProperty,
+					var sPropertyPath = _Helper.buildPath(sObjectName, sProperty),
 						vPropertyValue = oObject[sProperty];
 
 					if (vPropertyValue !== null && typeof vPropertyValue === "object") {

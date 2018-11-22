@@ -7,6 +7,7 @@
 					<PropertyRef Name="ArtistID"/>
 					<PropertyRef Name="IsActiveEntity"/>
 				</Key>
+				<Property Name="Address" Type="special.cases.Address"/>
 				<Property Name="ArtistID" Type="Edm.String" Nullable="false"/>
 				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false"/>
 				<Property Name="Name" Type="Edm.String" MaxLength="255"/>
@@ -29,6 +30,9 @@
 				<Property Name="Key" Type="special.cases.ComplexKey"/>
 				<Property Name="Value" Type="Edm.String"/>
 			</EntityType>
+			<ComplexType Name="Address">
+				<Property Name="City" Type="Edm.String"/>
+			</ComplexType>
 			<ComplexType Name="ComplexKey">
 				<Property Name="P1" Type="Edm.String"/>
 				<Property Name="P2" Type="Edm.Int32"/>

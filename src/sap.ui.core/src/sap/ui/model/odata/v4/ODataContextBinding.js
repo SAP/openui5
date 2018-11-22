@@ -116,15 +116,10 @@ sap.ui.define([
 					throw new Error("Invalid path: " + sPath);
 				}
 
-				this.mAggregatedQueryOptions = {};
-				this.bAggregatedQueryOptionsInitial = true;
 				this.oCachePromise = SyncPromise.resolve();
 				this.sGroupId = undefined;
 				this.bInheritExpandSelect = false;
 				this.oOperation = undefined;
-				// auto-$expand/$select: promises to wait until child bindings have provided
-				// their path and query options
-				this.aChildCanUseCachePromises = [];
 				// a lock to ensure that submitBatch waits for an expected read
 				this.oReadGroupLock = undefined;
 				this.oReturnValueContext = null;
@@ -221,12 +216,11 @@ sap.ui.define([
 
 		/*
 		 * Fires a "change" event and refreshes dependent bindings.
+		 * @returns {sap.ui.base.SyncPromise} A promise resolving when the refresh is finished
 		 */
 		function fireChangeAndRefreshDependentBindings() {
 			that._fireChange({reason : ChangeReason.Change});
-			that.getDependentBindings().forEach(function (oDependentBinding) {
-				oDependentBinding.refreshInternal(oGroupLock.getGroupId(), true);
-			});
+			return that.refreshDependentBindings(oGroupLock.getGroupId(), true);
 		}
 
 		oGroupLock.setGroupId(this.getGroupId());
@@ -251,22 +245,27 @@ sap.ui.define([
 			}).then(function (oResponseEntity) {
 				var sContextPredicate, sResponsePredicate;
 
-				fireChangeAndRefreshDependentBindings();
-				if (that.hasReturnValueContext(oOperationMetadata)) {
-					sContextPredicate = _Helper.getPrivateAnnotation(
-						that.oContext.fetchValue().getResult(), "predicate");
-					sResponsePredicate = _Helper.getPrivateAnnotation(oResponseEntity, "predicate");
-					if (sContextPredicate === sResponsePredicate) {
-						that.oContext.patch(oResponseEntity);
-					}
+				return fireChangeAndRefreshDependentBindings().then(function () {
+					if (that.hasReturnValueContext(oOperationMetadata)) {
+						sContextPredicate = _Helper.getPrivateAnnotation(
+							that.oContext.fetchValue().getResult(), "predicate");
+						sResponsePredicate = _Helper.getPrivateAnnotation(
+							oResponseEntity, "predicate");
+						if (sContextPredicate === sResponsePredicate) {
+							// this is synchronous, because the entity to be patched is available in
+							// the context (we already read its predicate)
+							that.oContext.patch(oResponseEntity);
+						}
 
-					if (that.oReturnValueContext) {
-						that.oReturnValueContext.destroy();
+						if (that.oReturnValueContext) {
+							that.oReturnValueContext.destroy();
+						}
+						that.oReturnValueContext = Context.create(that.oModel, that,
+							sResolvedPath.slice(0, sResolvedPath.indexOf("("))
+								+ sResponsePredicate);
+						return that.oReturnValueContext;
 					}
-					that.oReturnValueContext = Context.create(that.oModel, that,
-						sResolvedPath.slice(0, sResolvedPath.indexOf("(")) + sResponsePredicate);
-					return that.oReturnValueContext;
-				}
+				});
 			}, function (oError) {
 				var sBindingParameter;
 
@@ -297,8 +296,9 @@ sap.ui.define([
 
 				// Note: this must be done after the targets have been normalized, because otherwise
 				// a child reports the messages from the error response with wrong targets
-				fireChangeAndRefreshDependentBindings();
-				throw oError;
+				return fireChangeAndRefreshDependentBindings().then(function () {
+					throw oError;
+				});
 			}).catch(function (oError) {
 				oGroupLock.unlock(true);
 				if (that.oReturnValueContext) {
@@ -327,8 +327,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.applyParameters = function (mParameters, sChangeReason) {
-		this.checkBindingParameters(mParameters, ["$$groupId", "$$inheritExpandSelect",
-				"$$ownRequest", "$$patchWithoutSideEffects", "$$updateGroupId"]);
+		this.checkBindingParameters(mParameters, ["$$canonicalPath", "$$groupId",
+				"$$inheritExpandSelect", "$$ownRequest", "$$patchWithoutSideEffects",
+				"$$updateGroupId"]);
 
 		this.sGroupId = mParameters.$$groupId;
 		this.sUpdateGroupId = mParameters.$$updateGroupId;
@@ -560,14 +561,15 @@ sap.ui.define([
 		}
 		this.oModel.bindingDestroyed(this);
 		this.removeReadGroupLock();
-		this.mCacheByContext = undefined;
+		this.mCacheByResourcePath = undefined;
 		this.oCachePromise = SyncPromise.resolve(); // be nice to #withCache
 		this.mCacheQueryOptions = undefined;
-		this.aChildCanUseCachePromises = SyncPromise.resolve();
 		this.oContext = undefined;
 		this.oOperation = undefined;
 		this.mParameters = undefined;
 		this.mQueryOptions = undefined;
+
+		asODataParentBinding.prototype.destroy.apply(this);
 		ContextBinding.prototype.destroy.apply(this);
 	};
 
@@ -827,11 +829,13 @@ sap.ui.define([
 		var that = this;
 
 		if (this.oOperation && this.oOperation.bAction !== false) {
-			return;
+			return SyncPromise.resolve();
 		}
 
 		this.createReadGroupLock(sGroupId, this.isRefreshable());
-		this.oCachePromise.then(function (oCache) {
+		return this.oCachePromise.then(function (oCache) {
+			var oReadGroupLock = that.oReadGroupLock;
+
 			if (!that.oElementContext) { // refresh after delete
 				that.oElementContext = Context.create(that.oModel, that,
 					that.oModel.resolve(that.sPath, that.oContext));
@@ -839,22 +843,18 @@ sap.ui.define([
 					that._fireChange({reason : ChangeReason.Refresh});
 				}
 			}
-			if (!that.oOperation) {
-				if (oCache) {
-					// remove all cached Caches before fetching a new one
-					that.removeCachesAndMessages();
-					that.fetchCache(that.oContext);
-					// Do not fire a change event, or else ManagedObject destroys and recreates the
-					// binding hierarchy causing a flood of events
-				}
-				that.getDependentBindings().forEach(function (oDependentBinding) {
-					oDependentBinding.refreshInternal(sGroupId, bCheckUpdate);
-				});
-			} else {
-				// ignore returned promise, error handling takes place in _execute
-				that._execute(that.oReadGroupLock);
+			if (that.oOperation) {
 				that.oReadGroupLock = undefined;
+				return that._execute(oReadGroupLock);
 			}
+			if (oCache) {
+				// remove all cached Caches before fetching a new one
+				that.removeCachesAndMessages();
+				that.fetchCache(that.oContext);
+				// Do not fire a change event, or else ManagedObject destroys and recreates the
+				// binding hierarchy causing a flood of events
+			}
+			return that.refreshDependentBindings(sGroupId, bCheckUpdate);
 		});
 	};
 
@@ -865,10 +865,9 @@ sap.ui.define([
 	 *   The context to refresh
 	 * @param {string} sGroupId
 	 *   The group ID for the refresh
-	 * @returns {boolean} Whether the given context is this binding's return value context
-	 * @throws {Error}
-	 *   If this binding or bindings dependent on the given context have pending changes, or
-	 *   if the root binding of this binding is suspended.
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving without a defined result when the refresh is finished if the context is
+	 *   this binding's return value context; <code>null</code> otherwise
 	 *
 	 * @private
 	 */
@@ -877,13 +876,7 @@ sap.ui.define([
 			oModel = this.oModel;
 
 		if (this.oReturnValueContext !== oContext) {
-			return false;
-		}
-
-		this.checkSuspended();
-		if (this.hasPendingChangesForPath(oContext.getPath())
-			|| this.hasPendingChangesInDependents(oContext)) {
-			throw new Error("Cannot refresh entity due to pending changes: " + oContext);
+			return null;
 		}
 
 		this.mCacheQueryOptions = this.computeOperationQueryOptions();
@@ -891,11 +884,61 @@ sap.ui.define([
 			this.oReturnValueContext.getPath().slice(1), this.mCacheQueryOptions, true);
 		this.oCachePromise = SyncPromise.resolve(oCache);
 		this.createReadGroupLock(sGroupId, true);
-		this.getDependentBindings().forEach(function (oDependentBinding) {
-			oDependentBinding.refreshInternal(sGroupId, true);
-		});
+		return this.refreshDependentBindings(sGroupId, true);
+	};
 
-		return true;
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects
+	 */
+	ODataContextBinding.prototype.requestSideEffects = function (sGroupId, aPaths, oContext) {
+		var oCache = this.oCachePromise.getResult(),
+			aDependentBindings,
+			oModel = this.oModel,
+			aPromises = [];
+
+		/*
+		 * Push the given promise to "aPromises" and report errors.
+		 *
+		 * @param {Promise} oPromise - A promise
+		 */
+		function push(oPromise) {
+			aPromises.push(oPromise.catch(function (oError) {
+				oModel.reportError("Failed to request side effects", sClassName, oError);
+				throw oError;
+			}));
+		}
+
+		if (aPaths.indexOf("") < 0) {
+			try {
+				push(oCache.requestSideEffects(oModel.lockGroup(sGroupId), aPaths,
+					oContext && oContext.getPath().slice(1)));
+
+				aDependentBindings = oContext
+					? oModel.getDependentBindings(oContext)
+					: this.getDependentBindings();
+				aDependentBindings.forEach(function (oDependentBinding) {
+					var aStrippedPaths;
+
+					if (oDependentBinding.oCachePromise.getResult()) {
+						// dependent binding which has its own cache
+						aStrippedPaths
+							= _Helper.stripPathPrefix(oDependentBinding.getPath(), aPaths);
+						if (aStrippedPaths.length) {
+							push(oDependentBinding.requestSideEffects(sGroupId, aStrippedPaths));
+						}
+					}
+				});
+
+				return SyncPromise.all(aPromises);
+			} catch (e) {
+				if (!e.message.startsWith("Unsupported navigation property")) {
+					throw e;
+				}
+			}
+		}
+		return oContext && this.refreshReturnValueContext(oContext, sGroupId)
+			|| this.refreshInternal(sGroupId, true);
 	};
 
 	/**

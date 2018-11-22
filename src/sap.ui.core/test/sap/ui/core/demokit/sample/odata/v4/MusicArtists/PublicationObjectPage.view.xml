@@ -5,10 +5,10 @@
 	xmlns:core="sap.ui.core"
 	xmlns:f="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc">
-	<Page id="objectpage" navButtonPress="onBack" showHeader="true" showNavButton="true">
+	<Page id="publicationObjectPage" navButtonPress="onBack" showHeader="true" showNavButton="true">
 		<content>
 			<VBox class="sapUiSmallMargin">
-				<f:Form editable="true" id="publicationObjectPageForm">
+				<f:Form editable="true">
 					<f:title>
 						<core:Title text="Publication Details" />
 					</f:title>
@@ -33,21 +33,19 @@
 							<f:formElements>
 								<f:FormElement label="Name">
 									<f:fields>
-										<Input id="name" editable="{ui-op>/bEditMode}"
-											value="{Name}" />
+										<Input editable="{ui-op>/bEditMode}" value="{Name}" />
 									</f:fields>
 								</f:FormElement>
 								<f:FormElement label="Release Date">
 									<f:fields>
-										<Input id="releaseDate" editable="{ui-op>/bEditMode}"
+										<Input editable="{ui-op>/bEditMode}"
 											value="{ReleaseDate}" />
 									</f:fields>
 								</f:FormElement>
 								<f:FormElement label="Price">
 									<f:fields>
-										<Input id="price" editable="{ui-op>/bEditMode}"
-											value="{Price}" />
-										<Input id="price_curr" editable="{ui-op>/bEditMode}"
+										<Input editable="{ui-op>/bEditMode}" value="{Price}" />
+										<Input editable="{ui-op>/bEditMode}"
 											value="{CurrencyCode}" />
 									</f:fields>
 								</f:FormElement>

@@ -12,6 +12,17 @@ sap.ui.define([
 
 	var mServerFixture = {
 			"/Foo/bar" : {source : "bar.json"},
+			"/Foo/baz" : [{
+				ifMatch : function (oRequest) {
+					return oRequest.requestHeaders["SAP-ContextId"] === "session";
+				},
+				headers : {"Content-Type" : "application/json;charset=utf-8"},
+				message: '{"@odata.etag":"abc123"}'
+			}, {
+				code: 404,
+				headers : {"Content-Type" : "text/plain"},
+				message: "Missing SAP-ContextId"
+			}],
 			"DELETE /Foo/bar" : {
 				code : 500,
 				headers : {"Content-Type" : "text/plain;charset=utf-8"},
@@ -96,6 +107,27 @@ sap.ui.define([
 			"OData-Version" : "4.0",
 			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 		}
+	}, {
+		method : "GET",
+		url : "/Foo/baz",
+		status : 404,
+		responseHeaders : {
+			"OData-Version" : "4.0",
+			"Content-Type" : "text/plain"
+		},
+		responseBody : "Missing SAP-ContextId"
+	}, {
+		method : "GET",
+		url : "/Foo/baz",
+		status : 200,
+		requestHeaders : {
+			"SAP-ContextId" : "session"
+		},
+		responseHeaders : {
+			"OData-Version" : "4.0",
+			"Content-Type" : "application/json;charset=utf-8"
+		},
+		responseBody : '{"@odata.etag":"abc123"}'
 	}, {
 		method : "DELETE",
 		url : "/Foo/any",

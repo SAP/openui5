@@ -835,23 +835,44 @@ sap.ui.define([
 		var oModel = {
 				getDependentBindings : function () {}
 			},
+			bBinding1Updated = false,
 			oBinding1 = {
-				checkUpdate : function () {}
+				checkUpdate : function () {
+					return new SyncPromise(function (resolve) {
+						setTimeout(function () {
+							bBinding1Updated = true;
+							resolve();
+						});
+					});
+				}
 			},
+			bBinding2Updated = false,
 			oBinding2 = {
-				checkUpdate : function () {}
+				checkUpdate : function () {
+					return new SyncPromise(function (resolve) {
+						setTimeout(function () {
+							bBinding2Updated = true;
+							resolve();
+						});
+					});
+				}
 			},
 			oParentBinding = {},
+			oPromise,
 			oContext = Context.create(oModel, oParentBinding, "/EMPLOYEES/42", 42);
 
 		this.mock(oModel).expects("getDependentBindings")
 			.withExactArgs(sinon.match.same(oContext))
 			.returns([oBinding1, oBinding2]);
-		this.mock(oBinding1).expects("checkUpdate").withExactArgs();
-		this.mock(oBinding2).expects("checkUpdate").withExactArgs();
 
 		// code under test
-		oContext.checkUpdate();
+		oPromise = oContext.checkUpdate();
+
+		assert.strictEqual(oPromise.isFulfilled(), false);
+		return oPromise.then(function () {
+			assert.strictEqual(bBinding1Updated, true);
+			assert.strictEqual(bBinding2Updated, true);
+		});
 	});
 
 	//*********************************************************************************************
@@ -866,21 +887,37 @@ sap.ui.define([
 	QUnit.test("refresh, list binding", function (assert) {
 		var bAllowRemoval = {/*false, true, undefined*/},
 			oBinding = {
+				checkSuspended : function () {},
+				hasPendingChangesForPath : function () {},
+				hasPendingChangesInDependents : function () {},
+				isRefreshable : function () {},
 				refresh : function () {},
 				refreshSingle : function () {}
 			},
+			oBindingMock = this.mock(oBinding),
 			oGroupLock = {},
 			oModel = {
 				checkGroupId : function () {},
 				lockGroup : function () {}
 			},
+			oModelMock = this.mock(oModel),
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
 
-		this.mock(oModel).expects("checkGroupId");
-		this.mock(oModel).expects("lockGroup").withExactArgs("myGroup", true, oContext)
+		oModelMock.expects("checkGroupId");
+		oModelMock.expects("lockGroup").withExactArgs("myGroup", true, oContext)
 			.returns(oGroupLock);
-		this.mock(oBinding).expects("refresh").never();
-		this.mock(oBinding).expects("refreshSingle")
+		oBindingMock.expects("checkSuspended").withExactArgs();
+		oBindingMock.expects("hasPendingChangesForPath")
+			.withExactArgs("/EMPLOYEES/42")
+			.returns(false);
+		oBindingMock.expects("hasPendingChangesInDependents")
+			.withExactArgs(sinon.match.same(oContext))
+			.returns(false);
+		oBindingMock.expects("isRefreshable")
+			.withExactArgs()
+			.returns(true);
+		oBindingMock.expects("refresh").never();
+		oBindingMock.expects("refreshSingle")
 			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock),
 				sinon.match.same(bAllowRemoval));
 
@@ -892,9 +929,13 @@ sap.ui.define([
 	[false, true].forEach(function (bReturnValueContext) {
 		QUnit.test("refresh, context binding, " + bReturnValueContext, function (assert) {
 			var oBinding = {
+					checkSuspended : function () {},
+					hasPendingChangesForPath : function () {},
+					hasPendingChangesInDependents : function () {},
 					refresh : function () {},
 					refreshReturnValueContext : function () {}
 				},
+				oBindingMock = this.mock(oBinding),
 				oModel = {
 					checkGroupId : function () {}
 				},
@@ -902,16 +943,31 @@ sap.ui.define([
 				oContext =  Context.create(oModel, oBinding, "/EMPLOYEES('42')");
 
 			oModelMock.expects("checkGroupId").withExactArgs("myGroup");
-			this.mock(oBinding).expects("refreshReturnValueContext")
+			oBindingMock.expects("checkSuspended").withExactArgs();
+			oBindingMock.expects("hasPendingChangesForPath")
+				.withExactArgs("/EMPLOYEES('42')")
+				.returns(false);
+			oBindingMock.expects("hasPendingChangesInDependents")
+				.withExactArgs(sinon.match.same(oContext))
+				.returns(false);
+			oBindingMock.expects("refreshReturnValueContext")
 				.withExactArgs(sinon.match.same(oContext), "myGroup")
 				.returns(bReturnValueContext);
-			this.mock(oBinding).expects("refresh").withExactArgs("myGroup")
+			oBindingMock.expects("refresh").withExactArgs("myGroup")
 				.exactly(bReturnValueContext ? 0 : 1);
 
 			// code under test
 			oContext.refresh("myGroup");
 
 			oModelMock.expects("checkGroupId").withExactArgs("myGroup");
+			oBindingMock.expects("checkSuspended").withExactArgs();
+			oBindingMock.expects("hasPendingChangesForPath")
+				.withExactArgs("/EMPLOYEES('42')")
+				.returns(false);
+			oBindingMock.expects("hasPendingChangesInDependents")
+				.withExactArgs(sinon.match.same(oContext))
+				.returns(false);
+
 			assert.throws(function () {
 				// code under test
 				oContext.refresh("myGroup", undefined);
@@ -936,6 +992,80 @@ sap.ui.define([
 			// code under test
 			Context.create(oModel, oBinding, "/EMPLOYEES", 42).refresh(sGroupId);
 		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refresh, error handling: has pending changes", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {},
+				hasPendingChangesForPath : function () {},
+				hasPendingChangesInDependents : function () {}
+			},
+			oBindingMock = this.mock(oBinding),
+			sGroupId = "myGroup",
+			oModel = {
+				checkGroupId : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oContext =  Context.create(oModel, oBinding, "/EMPLOYEES('42')");
+
+		oModelMock.expects("checkGroupId").withExactArgs(sGroupId);
+		oBindingMock.expects("checkSuspended").withExactArgs();
+		oBindingMock.expects("hasPendingChangesForPath")
+			.withExactArgs("/EMPLOYEES('42')")
+			.returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oContext.refresh(sGroupId);
+		}, new Error("Cannot refresh entity due to pending changes: /EMPLOYEES('42')"));
+
+		oModelMock.expects("checkGroupId").withExactArgs(sGroupId);
+		oBindingMock.expects("checkSuspended").withExactArgs();
+		oBindingMock.expects("hasPendingChangesForPath")
+			.withExactArgs("/EMPLOYEES('42')")
+			.returns(false);
+		oBindingMock.expects("hasPendingChangesInDependents")
+			.withExactArgs(sinon.match.same(oContext))
+			.returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oContext.refresh(sGroupId);
+		}, new Error("Cannot refresh entity due to pending changes: /EMPLOYEES('42')"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refresh, error handling: list binding is not refreshable", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {},
+				hasPendingChangesForPath : function () {},
+				hasPendingChangesInDependents : function () {},
+				isRefreshable : function () {},
+				refreshSingle : function () {}
+			},
+			oBindingMock = this.mock(oBinding),
+			sGroupId = "myGroup",
+			oModel = {
+				checkGroupId : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oContext =  Context.create(oModel, oBinding, "/EMPLOYEES('42')");
+
+		oModelMock.expects("checkGroupId").withExactArgs(sGroupId);
+		oBindingMock.expects("checkSuspended").withExactArgs();
+		oBindingMock.expects("hasPendingChangesForPath")
+			.withExactArgs("/EMPLOYEES('42')")
+			.returns(false);
+		oBindingMock.expects("hasPendingChangesInDependents")
+			.withExactArgs(sinon.match.same(oContext))
+			.returns(false);
+		oBindingMock.expects("isRefreshable").withExactArgs().returns(false);
+
+		assert.throws(function () {
+			// code under test
+			oContext.refresh(sGroupId);
+		}, new Error("Binding is not refreshable; cannot refresh entity: /EMPLOYEES('42')"));
 	});
 
 	//*********************************************************************************************
@@ -1001,5 +1131,145 @@ sap.ui.define([
 
 		// code under test
 		return oContext.patch(oData);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects", function (assert) {
+		var oCache = {
+				// currently used to detect a context binding
+				requestSideEffects : function () {}
+			},
+			oBinding = {
+				oCachePromise : SyncPromise.resolve(oCache),
+				checkSuspended : function () {},
+				requestSideEffects : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')"),
+			sUpdateGroupId = "update";
+
+		assert.throws(function () {
+			// code under test
+			oContext.requestSideEffects();
+		}, new Error("Missing edm:(Navigation)PropertyPath expressions"));
+
+		assert.throws(function () {
+			// code under test
+			oContext.requestSideEffects([]);
+		}, new Error("Missing edm:(Navigation)PropertyPath expressions"));
+
+		[
+			undefined,
+			"foo",
+			{},
+			{$AnnotationPath : "foo"},
+			{$If : [true, {$PropertyPath : "TEAM_ID"}]}, // "a near miss" ;-)
+			{$PropertyPath : ""}
+		].forEach(function (oPath) {
+			var sJSON = JSON.stringify(oPath);
+
+			assert.throws(function () {
+				// code under test
+				oContext.requestSideEffects([oPath]);
+			}, new Error("Not an edm:(Navigation)PropertyPath expression: " + sJSON), sJSON);
+		});
+
+		this.mock(oContext).expects("getUpdateGroupId").withExactArgs().returns(sUpdateGroupId);
+		this.mock(oBinding).expects("requestSideEffects")
+			// Note: $select not yet sorted
+			.withExactArgs(sUpdateGroupId, ["TEAM_ID", "EMPLOYEE_2_MANAGER", "ROOM_ID", ""],
+				sinon.match.same(oContext))
+			.returns(SyncPromise.resolve({}));
+
+		// code under test
+		return oContext.requestSideEffects([{
+				$PropertyPath : "TEAM_ID"
+			}, {
+				$NavigationPropertyPath : "EMPLOYEE_2_MANAGER"
+			}, {
+				$PropertyPath : "ROOM_ID"
+			}, {
+				$NavigationPropertyPath : ""
+			}]).then(function (oResult) {
+				assert.strictEqual(oResult, undefined);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects: suspended binding", function (assert) {
+		var oBinding = {
+				oCachePromise : SyncPromise.resolve({/*oCache*/}),
+				checkSuspended : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')"),
+			oError = new Error("Must not call...");
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs().throws(oError);
+
+		assert.throws(function () {
+			// code under test
+			oContext.requestSideEffects();
+		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects: promise rejected", function (assert) {
+		var oCache = {
+				// currently used to detect a context binding
+				requestSideEffects : function () {}
+			},
+			oBinding = {
+				oCachePromise : SyncPromise.resolve(oCache),
+				checkSuspended : function () {},
+				requestSideEffects : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')"),
+			oError = new Error("Failed intentionally"),
+			oResult,
+			sUpdateGroupId = "update";
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("getUpdateGroupId").withExactArgs().returns(sUpdateGroupId);
+		this.mock(oBinding).expects("requestSideEffects")
+			.withExactArgs(sUpdateGroupId, ["TEAM_ID"], sinon.match.same(oContext))
+			.returns(SyncPromise.reject(oError));
+
+		// code under test
+		oResult = oContext.requestSideEffects([{$PropertyPath : "TEAM_ID"}]);
+
+		assert.ok(oResult instanceof Promise);
+
+		return oResult.then(function () {
+				assert.ok(false, "unexpected success");
+			}, function (oError0) {
+				assert.strictEqual(oError0, oError);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects: no own cache", function (assert) {
+		var oBinding = {
+				oCachePromise : SyncPromise.resolve(),
+				checkSuspended : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')");
+
+		assert.throws(function () {
+			// code under test
+			oContext.requestSideEffects();
+		}, new Error("Unsupported context: " + oContext));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects: not a context binding's context", function (assert) {
+		var oBinding = {
+				oCachePromise : SyncPromise.resolve({/*no requestSideEffects*/}),
+				checkSuspended : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')");
+
+		assert.throws(function () {
+			// code under test
+			oContext.requestSideEffects();
+		}, new Error("Unsupported context: " + oContext));
 	});
 });

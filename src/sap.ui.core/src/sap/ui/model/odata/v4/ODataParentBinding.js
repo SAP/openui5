@@ -21,7 +21,22 @@ sap.ui.define([
 	 * @extends sap.ui.model.odata.v4.ODataBinding
 	 * @mixin
 	 */
-	function ODataParentBinding() {}
+	function ODataParentBinding() {
+		// initialize members introduced by ODataBinding
+		asODataBinding.call(this);
+
+		// the aggregated query options
+		this.mAggregatedQueryOptions = {};
+		// whether the aggregated query options are processed the first time
+		this.bAggregatedQueryOptionsInitial = true;
+		// auto-$expand/$select: promises to wait until child bindings have provided
+		// their path and query options
+		this.aChildCanUseCachePromises = [];
+		// counts the sent but not yet completed PATCHes
+		this.iPatchCounter = 0;
+		// whether all sent PATCHes have been successfully processed
+		this.bPatchSuccess = true;
+	}
 
 	asODataBinding(ODataParentBinding.prototype);
 
@@ -322,9 +337,11 @@ sap.ui.define([
 	};
 
 	/*
-	 * Checks dependent bindings for updates or refreshes the binding if the canonical path of its
+	 * Checks dependent bindings for updates or refreshes the binding if the resource path of its
 	 * parent context changed.
 	 *
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving without a defined result when the update is finished
 	 * @throws {Error} If called with parameters
 	 */
 	// @override
@@ -333,9 +350,9 @@ sap.ui.define([
 
 		function updateDependents() {
 			// Do not fire a change event in ListBinding, there is no change in the list of contexts
-			that.getDependentBindings().forEach(function (oDependentBinding) {
-				oDependentBinding.checkUpdate();
-			});
+			return SyncPromise.all(that.getDependentBindings().map(function (oDependentBinding) {
+				return oDependentBinding.checkUpdate();
+			}));
 		}
 
 		if (arguments.length > 0) {
@@ -343,21 +360,18 @@ sap.ui.define([
 				+ " called with parameters");
 		}
 
-		this.oCachePromise.then(function (oCache) {
-			if (oCache && that.bRelative && that.oContext.fetchCanonicalPath) {
-				that.oContext.fetchCanonicalPath().then(function (sCanonicalPath) {
-					// entity of context changed
-					if (oCache.$canonicalPath !== sCanonicalPath) {
-						that.refreshInternal();
-					} else {
-						updateDependents();
+		return this.oCachePromise.then(function (oCache) {
+			if (oCache && that.bRelative) {
+				return that.fetchResourcePath(that.oContext).then(function (sResourcePath) {
+					if (oCache.$resourcePath === sResourcePath) {
+						return updateDependents();
 					}
+					return that.refreshInternal(); // entity of context changed
 				}).catch(function (oError) {
 					that.oModel.reportError("Failed to update " + that, sClassName, oError);
 				});
-			} else {
-				updateDependents();
 			}
+			return updateDependents();
 		});
 	};
 
@@ -367,7 +381,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oUpdateGroupLock
 	 *   The group ID to be used for the POST request
-	 * @param {string|SyncPromise} vCreatePath
+	 * @param {string|sap.ui.base.SyncPromise} vCreatePath
 	 *   The path for the POST request or a SyncPromise that resolves with that path
 	 * @param {string} sPathInCache
 	 *   The path within the cache where to create the entity
@@ -394,10 +408,10 @@ sap.ui.define([
 								+ "' failed; will be repeated automatically",
 							"sap.ui.model.odata.v4.ODataParentBinding", oError);
 				}).then(function (oCreatedEntity) {
-					if (oCache.$canonicalPath) {
+					if (oCache.$resourcePath) {
 						// Ensure that a cache containing a persisted created entity is recreated
 						// when the parent binding changes to another row and back again.
-						delete that.mCacheByContext[oCache.$canonicalPath];
+						delete that.mCacheByResourcePath[oCache.$resourcePath];
 					}
 					return oCreatedEntity;
 				});
@@ -452,6 +466,16 @@ sap.ui.define([
 			iCount = 2 + (iCount || 0);
 			addUnlockTask();
 		}
+	};
+
+	/**
+	 * Destroys the object. The object must not be used anymore after this function was called.
+	 *
+	 * @public
+	 * @since 1.61
+	 */
+	ODataParentBinding.prototype.destroy = function () {
+		this.aChildCanUseCachePromises = [];
 	};
 
 	/**
@@ -704,6 +728,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Refreshes all dependent bindings with the given parameters and waits for them to have
+	 * finished.
+	 *
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for refresh
+	 * @param {boolean} [bCheckUpdate]
+	 *   If <code>true</code>, a property binding is expected to check for updates.
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving when all dependent bindings are refreshed
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.refreshDependentBindings = function (sGroupId, bCheckUpdate) {
+		return SyncPromise.all(this.getDependentBindings().map(function (oDependentBinding) {
+			return oDependentBinding.refreshInternal(sGroupId, bCheckUpdate);
+		}));
+	};
+
+	/**
 	 * Unlocks a ReadGroupLock and removes it from the binding.
 	 *
 	 * @private
@@ -714,6 +757,31 @@ sap.ui.define([
 			this.oReadGroupLock = undefined;
 		}
 	};
+
+	/**
+	 * Loads side effects for the given context of this binding.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID to be used for requesting side effects
+	 * @param {string[]} aPaths
+	 *   The "14.5.11 Expression edm:NavigationPropertyPath" or
+	 *   "14.5.13 Expression edm:PropertyPath" strings describing which properties need to be loaded
+	 *   because they may have changed due to side effects of a previous update
+	 * @param {sap.ui.model.odata.v4.Context} [oContext]
+	 *   The context instance for which to request side effects; if missing, the whole binding is
+	 *   affected
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving without a defined result, or rejected with an error if loading of side
+	 *   effects fails
+	 * @throws {Error}
+	 *   If this binding does not use own service data requests
+	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects
+	 * @private
+	 * @see sap.ui.model.odata.v4.Context#requestSideEffects
+	 */
 
 	/**
 	 * Resumes this binding. The binding can again fire change events and trigger data service
@@ -915,16 +983,15 @@ sap.ui.define([
 		return mQueryOptions;
 	};
 
-	return function (oPrototype) {
-		if (oPrototype) {
+	function asODataParentBinding(oPrototype) {
+		if (this) {
+			ODataParentBinding.apply(this, arguments);
+		} else {
 			jQuery.extend(oPrototype, ODataParentBinding.prototype);
-			return;
 		}
-		// initialize members introduced by ODataBinding
-		asODataBinding.call(this);
-		// initialize members introduced by ODataParentBinding
-		this.iPatchCounter = 0; // counts the sent but not yet completed PATCHes
-		this.bPatchSuccess = true; // whether all sent PATCHes have been successfully processed
-	};
+	}
 
+	asODataParentBinding.prototype.destroy = ODataParentBinding.prototype.destroy;
+
+	return asODataParentBinding;
 }, /* bExport= */ false);

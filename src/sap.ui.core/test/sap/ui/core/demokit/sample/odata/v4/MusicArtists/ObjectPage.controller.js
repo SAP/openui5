@@ -60,12 +60,16 @@ sap.ui.define([
 			if (sPreviousHash !== undefined) {
 				window.history.go(-1);
 			} else {
-				this.getOwnerComponent().getRouter().navTo("masterlist", null, true);
+				this.getOwnerComponent().getRouter().navTo("masterList", null, true);
 			}
 		},
 
+		onChange : function () {
+			this.bSideEffectFieldChanged = true;
+		},
+
 		onCreate : function () {
-			var oEntityContext = this.getView().byId("publicationList").getBinding("items")
+			var oEntityContext = this.getView().byId("_Publication").getBinding("items")
 					.create(),
 				that = this;
 
@@ -87,7 +91,7 @@ sap.ui.define([
 					oView.setBindingContext(that.oActiveArtistContext);
 				} else {
 					// we started with a newly created entity so go back to master list
-					sap.ui.core.UIComponent.getRouterFor(that).navTo("masterlist", true);
+					sap.ui.core.UIComponent.getRouterFor(that).navTo("masterList", true);
 				}
 				oView.setBusy(false);
 			});
@@ -157,6 +161,25 @@ sap.ui.define([
 
 		onSelect : function (oEvent) {
 			this._navToPublication(oEvent.getSource().getBindingContext().getPath());
+		},
+
+		onValidateFieldGroup : function (oEvent) {
+			if (this.bSideEffectFieldChanged) {
+				this.bSideEffectFieldChanged = false;
+				//TODO lock fields affected by side effects
+				this.byId("objectPageForm").getBindingContext().requestSideEffects([{
+//						$PropertyPath : "CountryOfOrigin"
+//					}, {
+						$PropertyPath : "CountryOfOrigin_Text"
+					}]).then(
+						function () {
+							// unlock fields affected by side effects
+						},
+						function () {
+							// user has option to retry loading side effects or cancel
+						}
+					);
+			}
 		}
 	});
 });

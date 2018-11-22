@@ -261,7 +261,7 @@ sap.ui.define([
 			},
 			mQueryOptions = {$count : true};
 
-		assert.throws(function() {
+		assert.throws(function () {
 			// code under test
 			_AggregationCache.create(this.oRequestor, "Foo", oAggregation, mQueryOptions);
 		}, new Error("Unsupported system query option: $count"));
@@ -272,7 +272,7 @@ sap.ui.define([
 		var oAggregation = {groupLevels : ["BillToParty"]},
 			mQueryOptions = {$filter : "answer eq 42"};
 
-		assert.throws(function() {
+		assert.throws(function () {
 			// code under test
 			_AggregationCache.create(this.oRequestor, "Foo", oAggregation, mQueryOptions);
 		}, new Error("Unsupported system query option: $filter"));

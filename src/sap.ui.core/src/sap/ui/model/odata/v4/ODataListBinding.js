@@ -97,16 +97,11 @@ sap.ui.define([
 					throw new Error("Invalid path: " + sPath);
 				}
 				this.oAggregation = null;
-				this.mAggregatedQueryOptions = {};
-				this.bAggregatedQueryOptionsInitial = true;
 				this.aApplicationFilters = _Helper.toArray(vFilters);
 				ODataListBinding.checkCaseSensitiveFilters(this.aApplicationFilters);
 
 				this.oCachePromise = SyncPromise.resolve();
 				this.sChangeReason = oModel.bAutoExpandSelect ? "AddVirtualContext" : undefined;
-				// auto-$expand/$select: promises to wait until child bindings have provided
-				// their path and query options
-				this.aChildCanUseCachePromises = [];
 				this.oDiff = undefined;
 				this.aFilters = [];
 				this.bHasAnalyticalInfo = false;
@@ -243,7 +238,8 @@ sap.ui.define([
 			sOperationMode;
 
 		this.checkBindingParameters(mParameters,
-			["$$aggregation", "$$groupId", "$$operationMode", "$$ownRequest", "$$updateGroupId"]);
+			["$$aggregation", "$$canonicalPath", "$$groupId", "$$operationMode", "$$ownRequest",
+				"$$updateGroupId"]);
 
 		sOperationMode = mParameters.$$operationMode || this.oModel.sOperationMode;
 		// Note: $$operationMode is validated before, this.oModel.sOperationMode also
@@ -433,7 +429,6 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.create = function (oInitialData, bSkipRefresh) {
 		var oContext,
-			vCreatePath, // {string|SyncPromise}
 			oCreatePromise,
 			oGroupLock,
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
@@ -447,15 +442,8 @@ sap.ui.define([
 		}
 		this.checkSuspended();
 
-		vCreatePath = sResolvedPath.slice(1);
-		if (this.bRelative && this.oContext.fetchCanonicalPath) {
-			vCreatePath = this.oContext.fetchCanonicalPath().then(function (sCanonicalPath) {
-				return _Helper.buildPath(sCanonicalPath, that.sPath).slice(1);
-			});
-		}
-
 		oGroupLock = this.lockGroup(this.getUpdateGroupId(), true); // only for createInCache
-		oCreatePromise = this.createInCache(oGroupLock, vCreatePath, "", oInitialData,
+		oCreatePromise = this.createInCache(oGroupLock, this.fetchResourcePath(), "", oInitialData,
 			function () {
 				// cancel callback
 				oContext.destroy();
@@ -631,6 +619,8 @@ sap.ui.define([
 		this.mPreviousContextsByPath = undefined;
 		this.aPreviousData = undefined;
 		this.aSorters = undefined;
+
+		asODataParentBinding.prototype.destroy.apply(this);
 		ListBinding.prototype.destroy.apply(this);
 	};
 
@@ -1467,7 +1457,7 @@ sap.ui.define([
 			that = this;
 
 		this.createReadGroupLock(sGroupId, this.isRefreshable());
-		this.oCachePromise.then(function (oCache) {
+		return this.oCachePromise.then(function (oCache) {
 			if (oCache) {
 				that.removeCachesAndMessages();
 				that.fetchCache(that.oContext);
@@ -1506,27 +1496,15 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which resolves with the entity when the entity is updated in the
 	 *   cache, or <code>undefined</code> if <code>bAllowRemoval</code> is set to true.
-	 * @throws {Error}
-	 *   If this binding is not refreshable or if this binding or bindings dependent on the given
-	 *   context have pending changes, or if the root binding of this binding is suspended.
 	 *
 	 * @private
 	 */
 	ODataListBinding.prototype.refreshSingle = function (oContext, oGroupLock, bAllowRemoval) {
 		var that = this;
 
-		if (!this.isRefreshable()) {
-			throw new Error("Binding is not refreshable; cannot refresh entity: " + oContext);
-		}
-
-		if (this.hasPendingChangesForPath(oContext.getPath())
-				|| this.hasPendingChangesInDependents(oContext)) {
-			throw new Error("Cannot refresh entity due to pending changes: " + oContext);
-		}
-
 		return this.oCachePromise.then(function (oCache) {
 			var bDataRequested = false,
-				oPromise;
+				aPromises = [];
 
 			function fireDataReceived(oData) {
 				if (bDataRequested) {
@@ -1537,13 +1515,6 @@ sap.ui.define([
 			function fireDataRequested() {
 				bDataRequested = true;
 				that.fireDataRequested();
-			}
-
-			function refreshDependentBindings() {
-				that.oModel.getDependentBindings(oContext).forEach(function (oDependentBinding) {
-					// with bCheckUpdate = false because it is done after data is received
-					oDependentBinding.refreshInternal(oGroupLock.getGroupId(), false);
-				});
 			}
 
 			function onRemove(iIndex) {
@@ -1566,21 +1537,26 @@ sap.ui.define([
 			}
 
 			oGroupLock.setGroupId(that.getGroupId());
-			oPromise =
+			aPromises.push(
 				(bAllowRemoval
 					? oCache.refreshSingleWithRemove(oGroupLock, oContext.iIndex, fireDataRequested,
 						onRemove)
 					: oCache.refreshSingle(oGroupLock, oContext.iIndex, fireDataRequested))
 				.then(function (oEntity) {
+					var aUpdatePromises = [];
+
 					fireDataReceived({data : {}});
 					if (oContext.oBinding) { // do not update destroyed context
-						oContext.checkUpdate();
+						aUpdatePromises.push(oContext.checkUpdate());
 						if (bAllowRemoval) {
-							refreshDependentBindings();
+							aUpdatePromises.push(
+								that.refreshDependentBindings(oGroupLock.getGroupId(), false));
 						}
 					}
 
-					return oEntity;
+					return SyncPromise.all(aUpdatePromises).then(function () {
+						return oEntity;
+					});
 				}, function (oError) {
 					fireDataReceived({error : oError});
 					throw oError;
@@ -1588,16 +1564,27 @@ sap.ui.define([
 					oGroupLock.unlock(true);
 					that.oModel.reportError("Failed to refresh entity: " + oContext, sClassName,
 						oError);
-				});
+				})
+			);
 
 			if (!bAllowRemoval) {
 				// call refreshInternal on all dependent bindings to ensure that all resulting data
 				// requests are in the same batch request
-				refreshDependentBindings();
+				aPromises.push(that.refreshDependentBindings(oGroupLock.getGroupId(), false));
 			}
 
-			return oPromise;
+			return SyncPromise.all(aPromises).then(function (aResults) {
+				return aResults[0];
+			});
 		});
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects
+	 */
+	ODataListBinding.prototype.requestSideEffects = function (sGroupId, aPaths, oContext) {
+		return this.refreshInternal(sGroupId);
 	};
 
 	/**
