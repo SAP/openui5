@@ -10893,6 +10893,9 @@ sap.ui.define([
 					})
 				]
 			});
+
+			this.oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
 			this.oComboBox.destroy();
@@ -10963,6 +10966,16 @@ sap.ui.define([
 
 		assert.strictEqual(aFilteredItems.length, 1, "One item should be filtered");
 		assert.strictEqual(aFilteredItems[0].getText(), "Hong Kong", "Hong Kong item is matched by 'K'");
+	});
+
+	QUnit.test("Adding a special character should not throw an exception", function (assert) {
+
+		var oFocusDomRef = this.oComboBox.getFocusDomRef();
+
+		oFocusDomRef.value = "*";
+		sap.ui.qunit.QUnitUtils.triggerEvent("input", oFocusDomRef);
+
+		assert.ok(true, "No exception should be thrown");
 	});
 
 	QUnit.module("Input Text Selecting without data binding", {
