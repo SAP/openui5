@@ -6,30 +6,31 @@ sap.ui.define([],
 		"use strict";
 
 		/**
-		 * OnePersonHeader renderer.
+		 * PlanningCalendarHeader renderer.
 		 * @namespace
 		 */
-		var OnePersonHeaderRenderer = {};
+		var PlanningCalendarHeaderRenderer = {};
 
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.m.OnePersonHeader} oHeader An object representation of the <code>OnePersonHeaderRenderer</code> control that should be rendered.
+		 * @param {sap.m.PlanningCalendarHeader} oHeader An object representation of the <code>PlanningCalendarHeaderRenderer</code> control that should be rendered.
 		 */
-		OnePersonHeaderRenderer.render = function(oRm, oHeader){
+		PlanningCalendarHeaderRenderer.render = function(oRm, oHeader){
+			var oActionsToolbar = oHeader.getAggregation("_actionsToolbar"),
+				oNavigationToolbar = oHeader.getAggregation("_navigationToolbar");
+
 			oRm.write("<div");
 			oRm.writeControlData(oHeader);
-			oRm.addClass("sapMOnePerHead");
+			oRm.addClass("sapMPCHead");
 			oRm.writeClasses();
 			oRm.write(">");
 
-			var oActionsToolbar = oHeader.getAggregation("_actionsToolbar");
 			if (oActionsToolbar) {
 				oRm.renderControl(oActionsToolbar);
 			}
 
-			var oNavigationToolbar = oHeader.getAggregation("_navigationToolbar");
 			if (oNavigationToolbar) {
 				oRm.renderControl(oNavigationToolbar);
 			}
@@ -37,6 +38,6 @@ sap.ui.define([],
 			oRm.write("</div>");
 		};
 
-		return OnePersonHeaderRenderer;
+		return PlanningCalendarHeaderRenderer;
 
 	}, /* bExport= */ true);

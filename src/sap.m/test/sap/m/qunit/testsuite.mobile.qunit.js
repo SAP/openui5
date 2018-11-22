@@ -1025,6 +1025,12 @@ sap.ui.define(function() {
 					theme: "sap_bluecrystal"
 				}
 			},
+			SinglePlanningCalendar: {
+				title: "QUnit Page for sap.m.SinglePlanningCalendar",
+				ui5: {
+					language: "en"
+				}
+			},
 			SlideTile: {
 				title: "Test Page for sap.m.SlideTile",
 				qunit: {

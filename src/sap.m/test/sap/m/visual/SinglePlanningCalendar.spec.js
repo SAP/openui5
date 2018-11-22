@@ -1,6 +1,6 @@
 /*global describe,beforeEach, it,element,by,takeScreenshot,expect*/
 
-describe("sap.m.OnePersonCalendar", function() {
+describe("sap.m.SinglePlanningCalendar", function() {
 	"use strict";
 
 	beforeEach(function() {
@@ -11,11 +11,11 @@ describe("sap.m.OnePersonCalendar", function() {
 
 	it('should load test page on day view', function () {
 		// element(by.id("overrideTime")).click();
-		expect(takeScreenshot(element(by.id("OnePersonCalendar")))).toLookAs("day_view");
+		expect(takeScreenshot(element(by.id("SinglePlanningCalendar")))).toLookAs("day_view");
 	});
 
 	it("should navigate to work week view", function () {
-		var oSPC = element(by.id("OnePersonCalendar"));
+		var oSPC = element(by.id("SinglePlanningCalendar"));
 
 		element(by.id("__item2-button")).click();
 		// element(by.id("overrideTime")).click();
@@ -24,7 +24,7 @@ describe("sap.m.OnePersonCalendar", function() {
 	});
 
 	it("should navigate to week view", function () {
-		var oSPC = element(by.id("OnePersonCalendar"));
+		var oSPC = element(by.id("SinglePlanningCalendar"));
 
 		element(by.id("__item3-button")).click();
 		// element(by.id("overrideTime")).click();
@@ -33,7 +33,7 @@ describe("sap.m.OnePersonCalendar", function() {
 	});
 
 	it("should show full day", function () {
-		var oSPC = element(by.id("OnePersonCalendar"));
+		var oSPC = element(by.id("SinglePlanningCalendar"));
 
 		// element(by.id("overrideTime")).click();
 		element(by.id("showFullDayButton")).click();
@@ -42,10 +42,10 @@ describe("sap.m.OnePersonCalendar", function() {
 	});
 
 	it("should show full day", function () {
-		var oSPC = element(by.id("OnePersonCalendar"));
+		var oSPC = element(by.id("SinglePlanningCalendar"));
 
 		// element(by.id("overrideTime")).click();
-		element(by.id("OnePersonCalendar-Header-NavToolbar-PickerBtn")).click();
+		element(by.id("SinglePlanningCalendar-Header-NavToolbar-PickerBtn")).click();
 
 		expect(takeScreenshot(oSPC)).toLookAs("opened_picker");
 	});

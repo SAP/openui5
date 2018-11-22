@@ -6,38 +6,34 @@ function() {
 	"use strict";
 
 	/**
-	 * OnePersonCalendar renderer.
+	 * SinglePlanningCalendar renderer.
 	 * @namespace
 	 */
-	var OnePersonCalendarRenderer = {};
+	var SinglePlanningCalendarRenderer = {};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.m.OnePersonCalendar} oCalendar An object representation of the <code>OnePersonCalendarRenderer</code> control that should be rendered.
+	 * @param {sap.m.SinglePlanningCalendar} oCalendar An object representation of the <code>SinglePlanningCalendarRenderer</code> control that should be rendered.
 	 */
-	OnePersonCalendarRenderer.render = function(oRm, oCalendar){
+	SinglePlanningCalendarRenderer.render = function(oRm, oCalendar){
 		oRm.write("<div");
 		oRm.writeControlData(oCalendar);
-		oRm.addClass("sapMOnePerCal");
+		oRm.addClass("sapMSinglePC");
 		oRm.addClass("sapUiSizeCompact"); // TODO: for now force Compact mode
 		oRm.writeClasses();
 		oRm.write(">");
 
-		var oHeader = oCalendar._getHeader();
-		if (oHeader) {
-			oRm.renderControl(oHeader);
-		}
+		var oHeader = oCalendar._getHeader(),
+			oGrid = oCalendar._getGrid();
 
-		var oGrid = oCalendar._getGrid();
-		if (oGrid) {
-			oRm.renderControl(oGrid);
-		}
+		oRm.renderControl(oHeader);
+		oRm.renderControl(oGrid);
 
 		oRm.write("</div>");
 	};
 
-	return OnePersonCalendarRenderer;
+	return SinglePlanningCalendarRenderer;
 
 }, /* bExport= */ true);

@@ -1,12 +1,12 @@
-@_sap_m_OnePersonGrid_RowHeadersWidth: 4rem;
-@_sap_m_OnePersonGrid_RowHeight: 4rem;
-@_sap_m_OnePersonGrid_CompactRowHeight: 3rem;
+@_sap_m_SinglePlanningCalendarGrid_RowHeadersWidth: 4rem;
+@_sap_m_SinglePlanningCalendarGrid_RowHeight: 4rem;
+@_sap_m_SinglePlanningCalendarGrid_CompactRowHeight: 3rem;
 
 /*****************
 	COLUMN HEADERS
 *****************/
-.sapMOnePersonColumnHeader {
-	padding-left: @_sap_m_OnePersonGrid_RowHeadersWidth;
+.sapMSinglePCColumnHeader {
+	padding-left: @_sap_m_SinglePlanningCalendarGrid_RowHeadersWidth;
 
 	.sapUiCalItems {
 		display: block;
@@ -45,72 +45,72 @@
 	GRID CONTENT
 *****************/
 /* ROW HEADERS */
-.sapMOnePersonGridContent {
+.sapMSinglePCGridContent {
 	display: flex;
 	position: relative;
 }
 
-.sapMOnePersonRowHeaders {
+.sapMSinglePCRowHeaders {
 	display: flex;
 	flex-direction: column;
 	font-size: 0.875rem;
 }
 
-.sapMOnePersonRowHeader {
+.sapMSinglePCRowHeader {
 	flex: 1;
 	transform: translateY(-0.5rem);
 }
 
-.sapMOnePersonRowHeaderHidden {
+.sapMSinglePCRowHeaderHidden {
 	visibility: hidden;
 }
 
-.sapMOnePersonRowHeaderAMPM,
-.sapMOnePersonNowMarkerAMPM {
+.sapMSinglePCRowHeaderAMPM,
+.sapMSinglePCNowMarkerAMPM {
 	font-size: 0.625rem;
 }
 
-.sapMOnePersonRowHeaderAMPM {
+.sapMSinglePCRowHeaderAMPM {
 	top: -3px;
 	position: relative;
 }
 
 /* GRID COLUMNS */
-.sapMOnePersonColumns,
-.sapMOnePersonBlockersColumns {
+.sapMSinglePCColumns,
+.sapMSinglePCBlockersColumns {
 	flex: 1;
 	display: flex;
 }
 
-.sapMOnePersonBlockersColumns {
-	margin-left: @_sap_m_OnePersonGrid_RowHeadersWidth;
+.sapMSinglePCBlockersColumns {
+	margin-left: @_sap_m_SinglePlanningCalendarGrid_RowHeadersWidth;
 	min-height: 1.75rem;
 	position: relative;
 }
 
-.sapMOnePersonColumn,
-.sapMOnePersonBlockersColumn {
+.sapMSinglePCColumn,
+.sapMSinglePCBlockersColumn {
 	position: relative;
 	flex: 1;
 }
 
-.sapMOnePersonRow,
-.sapMOnePersonBlockersColumn {
+.sapMSinglePCRow,
+.sapMSinglePCBlockersColumn {
 	box-sizing: border-box;
 	border: 0.0625rem solid;
 	border-top-width: 0;
-	height: @_sap_m_OnePersonGrid_RowHeight;
+	height: @_sap_m_SinglePlanningCalendarGrid_RowHeight;
 	position: relative;
 }
 
-.sapMOnePersonBlockersColumn {
+.sapMSinglePCBlockersColumn {
 	border-top-width: 0.0625rem;
 	border-bottom-width: 0.125rem;
 	height: auto;
 }
 
 /* NOW MARKER */
-.sapMOnePersonNowMarker {
+.sapMSinglePCNowMarker {
 	display: flex;
 	align-items: center;
 	font-size: 0.75rem;
@@ -121,26 +121,26 @@
 	left: 0;
 }
 
-.sapMOnePersonNowMarkerHidden {
+.sapMSinglePCNowMarkerHidden {
 	display: none;
 }
 
-.sapMOnePersonRowHeader,
-.sapMOnePersonNowMarkerText {
+.sapMSinglePCRowHeader,
+.sapMSinglePCNowMarkerText {
 	box-sizing: border-box;
 	display: block;
 	padding-right: 0.5rem;
 	text-align: end;
-	width: @_sap_m_OnePersonGrid_RowHeadersWidth;
+	width: @_sap_m_SinglePlanningCalendarGrid_RowHeadersWidth;
 }
 
-.sapMOnePersonNowMarker::after {
+.sapMSinglePCNowMarker::after {
 	content: "";
 	border-top: 0.125rem solid;
 	flex: 1;
 }
 
-.sapMOnePersonColumnToday .sapMOnePersonRow::before {
+.sapMSinglePCColumnToday .sapMSinglePCRow::before {
 	content: "";
 	box-sizing: border-box;
 	border: 0.125rem solid;
@@ -152,8 +152,8 @@
 }
 
 /* APPOINTMENTS */
-.sapMOnePersonAppointments,
-.sapMOnePersonBlockers {
+.sapMSinglePCAppointments,
+.sapMSinglePCBlockers {
 	position: absolute;
 	z-index: 2;
 	top: 0;
@@ -162,7 +162,7 @@
 	bottom: 0;
 }
 
-.sapMOnePersonAppointmentWrap.sapUiCalendarRowApps {
+.sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
 	// TODO: this styles will be removed when Appointments refactoring occured
 	box-sizing: border-box;
 	padding: 0.0625rem;
@@ -187,7 +187,7 @@
 	}
 }
 
-.sapMOnePersonBlockersColumns .sapMOnePersonAppointmentWrap.sapUiCalendarRowApps .sapUiCalendarApp {
+.sapMSinglePCBlockersColumns .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps .sapUiCalendarApp {
 	height: 1.438rem;
 
 	.sapUiCalendarAppTitle {
@@ -195,7 +195,7 @@
 	}
 }
 
-.sapMOnePersonBlockersColumns .sapUiCalendarAppCont {
+.sapMSinglePCBlockersColumns .sapUiCalendarAppCont {
 	display: flex;
 	align-items: center;
 	padding: 0 0.25rem;
@@ -219,7 +219,7 @@
 	right: 0;
 }
 
-.sapMOnePersonGrid .sapUiCalendarRowApps {
+.sapMSinglePCGrid .sapUiCalendarRowApps {
 	// TODO: this styles will be removed when Appointments refactoring occured
 	position: absolute;
 	min-height: auto;
@@ -227,7 +227,7 @@
 	overflow: visible;
 }
 
-.sapUiCalendarRowVisFilled .sapMOnePersonAppointmentWrap {
+.sapUiCalendarRowVisFilled .sapMSinglePCAppointmentWrap {
 	// TODO: this styles will be removed when Appointments refactoring occured
 	.sapUiCalendarApp,
 	.sapUiCalendarApp:hover:not(:active) {
@@ -238,7 +238,7 @@
 .sapUiSizeCompact {
 	// TODO: Consider refactoring of the CSS of PlanningCalendar DatesRow CSS and fix the styles in one place
 	// for sapUiCalItems
-	.sapMOnePersonColumnHeader .sapUiCalItems {
+	.sapMSinglePCColumnHeader .sapUiCalItems {
 		.sapUiCalItem {
 			display: flex;
 			flex-direction: row-reverse;
@@ -260,12 +260,12 @@
 		}
 	}
 
-	.sapMOnePersonRow {
-		height: @_sap_m_OnePersonGrid_CompactRowHeight;
+	.sapMSinglePCRow {
+		height: @_sap_m_SinglePlanningCalendarGrid_CompactRowHeight;
 	}
 }
 
-.sapMOnePersonGrid .sapUiCalendarAppIcon {
+.sapMSinglePCGrid .sapUiCalendarAppIcon {
 	position: absolute;
 	top: 0.2rem;
 }

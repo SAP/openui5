@@ -571,6 +571,45 @@ sap.ui.define([
 			return UniversalDate.getWeekByDate(oCalendarDate.getCalendarType(), oCalendarDate.getYear(), oCalendarDate.getMonth(), oCalendarDate.getDate());
 		};
 
+		/**
+		 * Evaluates whether the given minutes are less than the current.
+		 * The function uses local js date for comparison.
+		 * @param {int} iMinutes The minutes to check
+		 * @return {boolean} true if the give minutes are less than the current
+		 * @private
+		 */
+		CalendarUtils._areCurrentMinutesLessThan = function (iMinutes) {
+			var iCurrentMinutes = new Date().getMinutes();
+
+			return iMinutes >= iCurrentMinutes;
+		};
+
+		/**
+		 * Evaluates whether the given minutes are more than the current.
+		 * The function uses local js date for comparison.
+		 * @param {int} iMinutes The minutes to check
+		 * @return {boolean} true if the give minutes are more than the current
+		 * @private
+		 */
+		CalendarUtils._areCurrentMinutesMoreThan = function (iMinutes) {
+			var iCurrentMinutes = new Date().getMinutes();
+
+			return iMinutes <= iCurrentMinutes;
+		};
+
+		/**
+		 * Evaluates whether the given date is part of the weekend.
+		 * @param {sap.ui.unified.calendar.CalendarDate} oCalDate The date to be checked
+		 * @param {object} oLocaleData locale date for the used locale
+		 * @return {boolean} True if the date is part of the weekend
+		 * @private
+		 */
+		CalendarUtils._isWeekend = function (oCalDate, oLocaleData) {
+			var iDay = oCalDate.getDay();
+
+			return iDay === oLocaleData.getWeekendStart() || iDay === oLocaleData.getWeekendEnd();
+		};
+
 		return CalendarUtils;
 
 	}, /* bExport= */ true);

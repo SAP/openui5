@@ -204,9 +204,6 @@ sap.ui.define([
 			"sap.m.ObjectMarker",
 			"sap.m.ObjectNumber",
 			"sap.m.ObjectStatus",
-			"sap.m.OnePersonCalendar",
-			"sap.m.OnePersonGrid",
-			"sap.m.OnePersonHeader",
 			"sap.m.OverflowToolbar",
 			"sap.m.OverflowToolbarButton",
 			"sap.m.OverflowToolbarToggleButton",
@@ -222,6 +219,7 @@ sap.ui.define([
 			"sap.m.Panel",
 			"sap.m.PDFViewer",
 			"sap.m.PlanningCalendar",
+			"sap.m.PlanningCalendarHeader",
 			"sap.m.Popover",
 			"sap.m.ProgressIndicator",
 			"sap.m.PullToRefresh",
@@ -241,6 +239,8 @@ sap.ui.define([
 			"sap.m.SelectList",
 			"sap.m.SelectionDetails",
 			"sap.m.Shell",
+			"sap.m.SinglePlanningCalendar",
+			"sap.m.SinglePlanningCalendarGrid",
 			"sap.m.Slider",
 			"sap.m.SliderTooltip",
 			"sap.m.SliderTooltipContainer",
@@ -293,7 +293,6 @@ sap.ui.define([
 			"sap.m.IconTabFilter",
 			"sap.m.IconTabSeparator",
 			"sap.m.LightBoxItem",
-			"sap.m.OnePersonView",
 			"sap.m.OverflowToolbarLayoutData",
 			"sap.m.MaskInputRule",
 			"sap.m.MenuItem",
@@ -313,6 +312,10 @@ sap.ui.define([
 			"sap.m.SegmentedButtonItem",
 			"sap.m.SelectionDetailsItem",
 			"sap.m.SelectionDetailsItemLine",
+			"sap.m.SinglePlanningCalendarDayView",
+			"sap.m.SinglePlanningCalendarWeekView",
+			"sap.m.SinglePlanningCalendarWorkWeekView",
+			"sap.m.SinglePlanningCalendarView",
 			"sap.m.SuggestionItem",
 			"sap.m.TabContainerItem",
 			"sap.m.TabStripItem",
@@ -680,39 +683,6 @@ sap.ui.define([
 		 * @public
 		 */
 		OneMonth : "One Month"
-
-	};
-
-	/**
-	 * A list of the default built-in views in a {@link sap.m.OnePersonCalendar}, described by their keys.
-	 * Disclaimer: this control is in beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
-	 *
-	 * @enum {string}
-	 * @private
-	 * @since 1.58.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	thisLib.OnePersonCalendarView = {
-
-		/**
-		 * Represents the key of the built-in view, in which the intervals have the size of one day.
-		 * @private
-		 */
-		Day : "Day",
-
-		/**
-		 * Represents the key of the built-in view, in which the intervals have the size of one day
-		 * where 5 days are displayed, starting with the first working day of the week.
-		 * @private
-		 */
-		WorkWeek : "Work Week",
-
-		/**
-		 * Represents the key of the built-in view, in which the intervals have the size of one day
-		 * where 7 days are displayed, starting with the first day of the week.
-		 * @private
-		 */
-		Week : "Week"
 
 	};
 
