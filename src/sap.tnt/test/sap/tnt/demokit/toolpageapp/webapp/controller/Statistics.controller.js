@@ -21,13 +21,25 @@ sap.ui.define([
 			// Load charts for the current environment (D3 = OpenUI5, MicroCharts = SAPUI5)
 			VersionInfo.load().then(function (oVersionInfo) {
 				var sType = (oVersionInfo.name.startsWith("SAPUI5") ? "Micro" : "D3");
+
+				if (sType === "Micro") {
+					// For SAPUI5, we need first to load the microchart library and then create the view
+					sap.ui.getCore().loadLibrary("sap.suite.ui.microchart", {async: true}).then(function () {
+						this._createView(sType);
+					}.bind(this));
+				} else {
+					this._createView(sType);
+				}
+			}.bind(this));
+
+			this._createView = function (sType) {
 				XMLView.create({
 					id: this.getView().createId("charts"),
 					viewName: "sap.ui.demo.toolpageapp.view.Statistics" + sType
 				}).then(function (oView) {
 					this.byId("statisticsContainer").addContent(oView);
 				}.bind(this));
-			}.bind(this));
+			};
 		},
 
 		onRefresh: function () {
